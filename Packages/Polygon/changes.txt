@@ -1,4 +1,10 @@
 //-----------------------------------------------------------------------//
+// 2.10
++ Removed test of old-fashioned stl functionality (value_type,
+  iterator_category and distance_type functions) from test.
++ Removed include file guards.
+
+//-----------------------------------------------------------------------//
 // 2.9.1
 + Added a typename in Polygon_2_algorithms.C
 
