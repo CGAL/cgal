@@ -70,7 +70,7 @@ void test_HalfedgeDS_polyhedron_default() {
     CGAL_assertion( hds.size_of_border_halfedges() == 1);
     CGAL_assertion( hds.size_of_border_edges() == 1);
     typedef HDS::Halfedge_iterator Halfedge_iterator;
-    Halfedge_iterator i = hds.halfedges_begin();
+    CGAL_assertion_code( Halfedge_iterator i = hds.halfedges_begin(); )
     CGAL_assertion(!(i == hds.halfedges_end()));
 }
 void test_HalfedgeDS_default() {
@@ -97,14 +97,14 @@ void test_HalfedgeDS_default() {
     CGAL_assertion( D.is_valid( false, 4));
 
     HDS hds2(hds); // copy constructor.
-    Decorator D2(hds2);
+    CGAL_assertion_code( Decorator D2(hds2); )
     CGAL_assertion( D2.is_valid( false, 4));
 
     hds = hds2; // assignment.
     CGAL_assertion( D.is_valid( false, 4));
 
     typedef HDS::Halfedge_iterator Halfedge_iterator;
-    Halfedge_iterator i = hds.halfedges_begin();
+    CGAL_assertion_code( Halfedge_iterator i = hds.halfedges_begin(); )
     CGAL_assertion(!(i == hds.halfedges_end()));
 }
 #ifndef CGAL_HALFEDGEDS_USING_LIST_H
@@ -146,14 +146,14 @@ void test_HalfedgeDS_using_list() {
     CGAL_assertion( D.is_valid( false, 4));
 
     HDS hds2(hds); // copy constructor.
-    Decorator D2(hds2);
+    CGAL_assertion_code( Decorator D2(hds2); )
     CGAL_assertion( D2.is_valid( false, 4));
 
     hds = hds2; // assignment.
     CGAL_assertion( D.is_valid( false, 4));
 
     typedef HDS::Halfedge_iterator Halfedge_iterator;
-    Halfedge_iterator i = hds.halfedges_begin();
+    CGAL_assertion_code( Halfedge_iterator i = hds.halfedges_begin(); )
     CGAL_assertion(!(i == hds.halfedges_end()));
 }
 
@@ -226,7 +226,7 @@ void test_HalfedgeDS_using_vector() {
     CGAL_assertion( D.is_valid( false, 4));
 
     HDS hds2(hds); // copy constructor.
-    Decorator D2(hds2);
+    CGAL_assertion_code( Decorator D2(hds2); )
     CGAL_assertion( D2.is_valid( false, 4));
 
     hds = hds2; // assignment.
