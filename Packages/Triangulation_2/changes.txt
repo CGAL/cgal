@@ -1,11 +1,12 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-Ver 4.65 (11 September 00)
+Ver 4.65 (12 September 00)
 -fixes in copy_triangulation of Triangulation_hierarchy_2
 for VCC (redefinition of variables in loops).
 -change dummy template parameters of _test_cls_triangulation_short_2
 form "Triangulation" to "Triangul"
+- change dummy template parameters of _test_triangulation_circulators.C
 
 Ver 4.64 (7 September 00)
 change dummy tempate parameter name in Triangulation_hierarchy_2.h
