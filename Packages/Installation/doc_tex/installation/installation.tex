@@ -114,7 +114,7 @@ that they reasonnably conform to the ISO 14882 standard for \CC.
       \mswin\ 95/98/2000/XP/NT4\footnotemark[10]\\\hline
     \sunprocc{5.3, 5.4, 5.5} \footnotemark[11]                 
     & Solaris 2.6+\\\hline
-    \msvc{7.0, 7.1} (\textsc{.NET}) \footnotemark[12]           
+    \msvc{7.1} (\textsc{.NET}) \footnotemark[12]           
     & \mswin\ 95/98/2000/XP/NT4\footnotemark[10]\\\hline
     \icl{7.1} \footnotemark[13]                          
     & \mswin\ 95/98/2000/XP/NT4\footnotemark[10]\\\hline
@@ -1610,19 +1610,6 @@ Here goes an incomplete list of problems encountered, and
 \cgal-specific workarounds, if available.  Compiler error messages are
 meant to be hints only, and do not pretend to be complete, as well.
 \begin{enumerate}
-%
-\item Partial specialization of template parameters is not
-supported. Do not use it. Error messages say that ``the class has
-already been declared'', or ``unrecognizable template
-declaration/definition''. See
-\nonlinkedpath'config/testfiles/CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION.C'\\
- for a test program illustrating the problem. \label{msvc::parspec}
-%
-\item Compiler does not always match the most
-specialized instance of a function template correctly. So you get
-``error C2667: none of 2 overload have a best conversion''.\\
-See \texttt{config/testfiles/CGAL\_CFG\_MATCHING\_BUG\_2.C} \\
-for a test program illustrating the problem.\label{msvc::matchbug2}
 %
 \item Compiler does not support the Koenig
 lookup. That is, it does not search in the namespace of the arguments for

@@ -2,6 +2,9 @@
 //	Revision History for package Installation
 //=====================================================================
 
+17 Feb 2004 Sylvain Pion
+- Remove mentions about obsolete workarounds in installation.tex
+
 30/01/2004 Sylvain Pion
 - install_cgal : change 3.0 to 3.1.
 
