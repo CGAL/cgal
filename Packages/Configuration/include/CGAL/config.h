@@ -39,10 +39,6 @@
 //             do some post processing for the flags
 //----------------------------------------------------------------------//
 
-// The following are now obsolete, they used to depend on config macros.
-#define CGAL_TYPENAME_MSVC_NULL typename
-
-
 #ifdef CGAL_CFG_NO_NAMESPACE
 #  define CGAL_USING_NAMESPACE_STD
 #  define CGAL_STD
