@@ -1,0 +1,4 @@
+# Changes in version 2.1.2
+
+Added std prefix to test programs.
+Minor changes in cgal_test script.
