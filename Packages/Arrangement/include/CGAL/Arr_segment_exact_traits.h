@@ -45,12 +45,12 @@ public:
   typedef typename Base::X_curve_2 X_curve_2;
   typedef X_curve_2                Curve_2;
 
+  typedef typename Base::Curve_point_status Curve_point_status;
+
   // Obsolete, for backward compatibility
   typedef Point_2                  Point;
   typedef X_curve_2                X_curve;
   typedef Curve_2                  Curve;
-
-  typedef typename Base::Curve_point_status Curve_point_status;
 
 protected:
   typedef typename Base::Curve_status Curve_status;
