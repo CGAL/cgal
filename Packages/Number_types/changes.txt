@@ -1,3 +1,7 @@
+24 November 2004 Sylvain Pion
+- Remove useless (and potentially misleading) reference to the obsolete
+  BigNum package (by Serpette, Vuillemin, Herve).
+
 17 November 2004 Sylvain Pion
 - Disable square(MP_Float) [minor] optimization until the bug is fixed.
 
