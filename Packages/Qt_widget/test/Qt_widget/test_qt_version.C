@@ -1,3 +1,7 @@
+#ifdef CGAL_USE_LEDA
+#define CGAL_NO_LEDA_HANDLE
+#endif
+
 #ifndef CGAL_USE_QT
 #include <iostream>
 int main(int, char*)
