@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 5.18 (2/8/01)
+- Susan added missing .gif files in doc_tex/*_ref directories
+
 Ver 5.17 (31/7/01)
 - Susan moved doc_tex/*_ref directories up one level and fixed htmlfiles
   accordingly

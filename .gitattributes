@@ -427,6 +427,8 @@ Packages/Triangulation_2/doc_tex/TDS_2/Flip.gif -text svneol=unset#unset
 Packages/Triangulation_2/doc_tex/TDS_2/Three.gif -text svneol=unset#unset
 Packages/Triangulation_2/doc_tex/TDS_2/flip.ltex -text
 Packages/Triangulation_2/doc_tex/TDS_2/insert.ltex -text
+Packages/Triangulation_2/doc_tex/TDS_2_ref/Flip.gif -text svneol=unset#unset
+Packages/Triangulation_2/doc_tex/TDS_2_ref/Three.gif -text svneol=unset#unset
 Packages/Triangulation_2/doc_tex/Triangulation_2/Embedding.ipe -text
 Packages/Triangulation_2/doc_tex/Triangulation_2/Flip.gif -text svneol=unset#unset
 Packages/Triangulation_2/doc_tex/Triangulation_2/Flip.ipe -text
@@ -476,10 +478,20 @@ Packages/Triangulation_2/doc_tex/Triangulation_2/vertical.ipe -text
 Packages/Triangulation_2/doc_tex/Triangulation_2/walk.gif -text svneol=unset#unset
 Packages/Triangulation_2/doc_tex/Triangulation_2/walk.ipe -text
 Packages/Triangulation_2/doc_tex/Triangulation_2/walls.ipe -text
+Packages/Triangulation_2/doc_tex/Triangulation_2_ref/constraints.gif -text svneol=unset#unset
+Packages/Triangulation_2/doc_tex/Triangulation_2_ref/infinite_vertex.gif -text svneol=unset#unset
+Packages/Triangulation_2/doc_tex/Triangulation_2_ref/insert1.gif -text svneol=unset#unset
+Packages/Triangulation_2/doc_tex/Triangulation_2_ref/insert2.gif -text svneol=unset#unset
+Packages/Triangulation_2/doc_tex/Triangulation_2_ref/insert3.gif -text svneol=unset#unset
+Packages/Triangulation_2/doc_tex/Triangulation_2_ref/neighbors.gif -text svneol=unset#unset
+Packages/Triangulation_2/doc_tex/Triangulation_2_ref/remove.gif -text svneol=unset#unset
+Packages/Triangulation_2/doc_tex/Triangulation_2_ref/walk.gif -text svneol=unset#unset
 Packages/Triangulation_2/doc_tex/basic/TDS_2/Flip.gif -text svneol=unset#unset
 Packages/Triangulation_2/doc_tex/basic/TDS_2/Three.gif -text svneol=unset#unset
 Packages/Triangulation_2/doc_tex/basic/TDS_2/flip.ltex -text
 Packages/Triangulation_2/doc_tex/basic/TDS_2/insert.ltex -text
+Packages/Triangulation_2/doc_tex/basic/TDS_2_ref/Flip.gif -text svneol=unset#unset
+Packages/Triangulation_2/doc_tex/basic/TDS_2_ref/Three.gif -text svneol=unset#unset
 Packages/Triangulation_2/doc_tex/basic/Triangulation_2/Embedding.ipe -text
 Packages/Triangulation_2/doc_tex/basic/Triangulation_2/Flip.gif -text svneol=unset#unset
 Packages/Triangulation_2/doc_tex/basic/Triangulation_2/Flip.ipe -text
@@ -529,6 +541,14 @@ Packages/Triangulation_2/doc_tex/basic/Triangulation_2/vertical.ipe -text
 Packages/Triangulation_2/doc_tex/basic/Triangulation_2/walk.gif -text svneol=unset#unset
 Packages/Triangulation_2/doc_tex/basic/Triangulation_2/walk.ipe -text
 Packages/Triangulation_2/doc_tex/basic/Triangulation_2/walls.ipe -text
+Packages/Triangulation_2/doc_tex/basic/Triangulation_2_ref/constraints.gif -text svneol=unset#unset
+Packages/Triangulation_2/doc_tex/basic/Triangulation_2_ref/infinite_vertex.gif -text svneol=unset#unset
+Packages/Triangulation_2/doc_tex/basic/Triangulation_2_ref/insert1.gif -text svneol=unset#unset
+Packages/Triangulation_2/doc_tex/basic/Triangulation_2_ref/insert2.gif -text svneol=unset#unset
+Packages/Triangulation_2/doc_tex/basic/Triangulation_2_ref/insert3.gif -text svneol=unset#unset
+Packages/Triangulation_2/doc_tex/basic/Triangulation_2_ref/neighbors.gif -text svneol=unset#unset
+Packages/Triangulation_2/doc_tex/basic/Triangulation_2_ref/remove.gif -text svneol=unset#unset
+Packages/Triangulation_2/doc_tex/basic/Triangulation_2_ref/walk.gif -text svneol=unset#unset
 Packages/Triangulation_3/doc_tex/TriangulationDS_3/comborient.eps -text
 Packages/Triangulation_3/doc_tex/TriangulationDS_3/comborient.gif -text svneol=unset#unset
 Packages/Triangulation_3/doc_tex/TriangulationDS_3/design.gif svneol=native#unset
