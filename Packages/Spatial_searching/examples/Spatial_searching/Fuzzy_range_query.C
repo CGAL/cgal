@@ -9,12 +9,11 @@
 typedef CGAL::MP_Float NT;
 typedef CGAL::Homogeneous_d<NT> K;
 typedef K::Point_d Point_d;
-typedef K::Iso_box_d Iso_box;
 typedef CGAL::Random_points_in_iso_box_d<Point_d>       Random_points_iterator;
 typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator;
 typedef CGAL::Kd_tree<K> Tree;
 typedef CGAL::Fuzzy_sphere<K> Fuzzy_sphere;
-typedef CGAL::Fuzzy_iso_box<K, Iso_box> Fuzzy_iso_box;
+typedef CGAL::Fuzzy_iso_box<K> Fuzzy_iso_box;
 
 int main() {
   const int D = 4;
