@@ -176,17 +176,15 @@ of some points implies the destruction of the hiding face.
 
 \ccThree{Vertex_handle}{T.push_back(const Point &p);}{}
 
-\ccMethod{bool insert(const Weighted_point& p, Face_handle f=Face_handle());}
-{inserts  weighted point \ccc{p} and 
-returns true if a new vertex is created. 
-If a weighted point with the same center point but a 
-different weight already exists in the triangulation, 
-it is removed and replaced by the new point.
+\ccMethod{Vertex_handle insert(const Weighted_point& p, Face_handle f=Face_handle());}
+{inserts  weighted point \ccc{p} in the regular triangulation.
+If the point $p$ does not appear as a vertex of the triangulation,
+the returned Vertex_handle correspond to a hidden vertex.
 If given the parameter \ccc{f} is used as an hint
 for the place to start the location process of point \ccc{p}.}
 
 
-\ccMethod{bool insert(const Weighted_point &p,
+\ccMethod{Vertex_handle insert(const Weighted_point &p,
 	 	       Locate_type  lt,
 		       Face_handle loc, int li );}
 {insert a weighted point \ccc{p} whose bare-point is assumed to be
@@ -204,10 +202,8 @@ located in  \ccc{lt,loc,li}.}
  \ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
  is \ccc{Weighted_point}.}
 
-\ccMethod{int   remove(Vertex_handle v);}
-{removes the vertex from the triangulation and
-returns the number of new vertices created by the insertion of previously
-hidden points.}
+\ccMethod{void   remove(Vertex_handle v);}
+{removes the vertex from the triangulation.}
 
 \ccHeading{Access functions}
 

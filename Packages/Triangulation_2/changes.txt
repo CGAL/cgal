@@ -6,6 +6,8 @@ ver 7.80 ()
 - make Infinite_tester public (for Sun)
 - fixes  (for intel )in nested Vertex_handle and Face_handle ;
   add const & in constructors from circulators and iterators
+- suppressed the requirement for a Direction_2 from the traits class
+  of Delaunay_triangulation_2 and Regular_triangulation_2
 
 
 ver 7.79 (05/06/03)
