@@ -66,9 +66,9 @@ public:
     try {
 #endif
       const Handle_wrapper<T> *wp = 
-	dynamic_cast<const Handle_wrapper<T> *>(Ptr());
+      	dynamic_cast<const Handle_wrapper<T> *>(Ptr());
       if ( wp == static_cast<Handle_wrapper<T> *>(0) )
-	return false;
+      	return false;
       t = *(wp);
 #if (defined(_MSC_VER) && (_MSC_VER <= 1200))
     }

@@ -101,6 +101,31 @@ Sphere_point<R> antipode() const
 /*{\Mop returns the antipode of |\Mvar|.}*/
 { return ORIGIN + -(Base(*this)-ORIGIN); }
 
+/*
+Sphere_point<R> simplified() const {
+  int d = (hx().degree() > hy().degree() ? hx().degree() : hy().degree());
+  d = (d > hz().degree() ? d : hz().degree());
+  CGAL_assertion(d < 3);
+  return Sphere_point(x()(d),y()(d),z()(d));  
+}
+*/
+
+Sphere_point<R> normalized() const {
+
+  RT g = (hx()==0) ? ((hy()==0) ? ((hz()==0) ? 1: hz()): hy()): hx();
+  
+  if(hy() != 0) g = gcd(g,hy());
+  if(hz() != 0) g = gcd(g,hz());
+	  
+  g = g.abs();
+
+  RT x = hx()/g;
+  RT y = hy()/g;
+  RT z = hz()/g;
+
+  return Sphere_point(Base(x,y,z,1));
+}
+
 }; // Sphere_point<R>
 
 template <typename R>

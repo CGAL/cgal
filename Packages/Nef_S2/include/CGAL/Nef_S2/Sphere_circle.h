@@ -60,13 +60,17 @@ create any great circle that contains $p$ and $q$.}*/
   }
 }
 
-Sphere_circle(const Plane_3& h) : Base(h) 
+ Sphere_circle(const Plane_3& h) : Base(h) 
 /*{\Mcreate creates the circle of $S_2$ corresponding to the plane
 |h|. If |h| does not contain the origin, then |\Mvar| becomes the
 circle parallel to |h| containing the origin.}*/
-{ if ( h.d() != 0 ) *this = Plane_3(h.a(), h.b(), h.c(), RT(0)); } 
+{ 
+  if(h.d() != 0) *this = Plane_3(h.a(),h.b(),h.c(),RT(0));
+  if(h.a().degree() != 0 || h.b().degree() != 0 || h.c().degree() != 0) *this = normalized(*this);
+} 
 
-Sphere_circle(const RT& x, const RT& y, const RT& z) : Base(x,y,z,0) {} 
+Sphere_circle(const RT& x, const RT& y, const RT& z): Base(x,y,z,0) {}
+
 /*{\Mcreate creates the circle orthogonal to the vector $(x,y,z)$.}*/
 
 Sphere_circle(Sphere_circle<R> c, const Sphere_point<R>& p) 
