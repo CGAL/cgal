@@ -99,6 +99,7 @@ public:
   typedef GT  Geom_traits;
 
   typedef typename GT::Point_3 Point;
+  typedef typename GT::Vector_3 Vector;
   typedef typename GT::Segment_3 Segment;
   typedef typename GT::Triangle_3 Triangle;
   typedef typename GT::Tetrahedron_3 Tetrahedron;
@@ -610,6 +611,19 @@ private:
   // c belongs to the hat of v and has a facet on its boundary
   // traverses the boundary of the hat and finds adjacencies
   // traversal is done counterclockwise as seen from v
+
+ protected:
+
+  Comparison_result compare_x(const Point& p, const Point& q) const;
+  Comparison_result compare_y(const Point& p, const Point& q) const;  
+  Comparison_result compare_z(const Point& p, const Point& q) const;
+  Orientation orientation(const Point& p, const Point& q, const Point& r, const Point& s) const;
+  Orientation orientation_in_plane(const Point& p, 
+				   const Point& q, 
+				   const Point& r,
+				   const Point& s) const;
+  bool collinear(const Point& p, const Point& q, const Point& r) const;
+  bool equal(const Point& p, const Point& q) const;
 
 public:
 
@@ -1207,7 +1221,7 @@ test_dim_down(Vertex_handle v)
     if ( ! cit->has_vertex(v,iv) )
       return false;
     for ( i=1; i<4; i++ ) {
-	if ( geom_traits().orientation
+	if ( orientation
 	     (p1,p2,p3,cit->vertex((iv+i)&3)->point()) != COPLANAR )
 	  return false;
     }
@@ -1730,7 +1744,7 @@ locate(const Point & p,
 	// We could make a loop of these 4 blocks, for clarity, but not speed.
 	Cell_handle next = c->neighbor(i);
 	if (previous != next) {
-	  o[0] = geom_traits().orientation(p, p1, p2, p3);
+	  o[0] = orientation(p, p1, p2, p3);
 	  if ( o[0] == test_or) {
 	    previous = c;
 	    c = next;
@@ -1741,7 +1755,7 @@ locate(const Point & p,
 
 	next = c->neighbor((i+1)&3);
 	if (previous != next) {
-	  o[1] = geom_traits().orientation(p0, p, p2, p3);
+	  o[1] = orientation(p0, p, p2, p3);
 	  if ( o[1] == test_or) {
 	    previous = c;
 	    c = next;
@@ -1752,7 +1766,7 @@ locate(const Point & p,
 
 	next = c->neighbor((i+2)&3);
 	if (previous != next) {
-	  o[2] = geom_traits().orientation(p0, p1, p, p3);
+	  o[2] = orientation(p0, p1, p, p3);
 	  if ( o[2] == test_or) {
 	    previous = c;
 	    c = next;
@@ -1763,7 +1777,7 @@ locate(const Point & p,
 
 	next = c->neighbor((i+3)&3);
 	if (previous != next) {
-	  o[3] = geom_traits().orientation(p0, p1, p2, p);
+	  o[3] = orientation(p0, p1, p2, p);
 	  if ( o[3] == test_or) {
 	    // previous = c; // not necessary because it's the last one.
 	    c = next;
@@ -1805,9 +1819,9 @@ locate(const Point & p,
 	      ( o[ (li+2-i)&3 ] != COPLANAR ) ? ((li+2)&3) :
 	      ((li+3)&3);
 	    CGAL_triangulation_assertion
-	      ( geom_traits().collinear( p,
-					 c->vertex( li )->point(),
-					 c->vertex( lj )->point() ) );
+	      ( collinear( p,
+			   c->vertex( li )->point(),
+			   c->vertex( lj )->point() ) );
 	    break;
 	  }
 	case 3:
@@ -1838,7 +1852,7 @@ locate(const Point & p,
 
       //first tests whether p is coplanar with the current triangulation
       Facet_iterator finite_fit = finite_facets_begin();
-      if ( geom_traits().orientation
+      if ( orientation
 	   ( p, 
 	     (*finite_fit).first->vertex(0)->point(),
 	     (*finite_fit).first->vertex(1)->point(),
@@ -1868,17 +1882,17 @@ locate(const Point & p,
 	const Point & p0 = c->vertex( i )->point();
 	const Point & p1 = c->vertex( ccw(i) )->point();
 	const Point & p2 = c->vertex( cw(i) )->point();
-	o[0] = geom_traits().orientation_in_plane(p0,p1,p2,p);
+	o[0] = orientation_in_plane(p0,p1,p2,p);
 	if ( o[0] == NEGATIVE ) {
 	  c = c->neighbor( cw(i) );
 	  continue;
 	}
-	o[1] = geom_traits().orientation_in_plane(p1,p2,p0,p);
+	o[1] = orientation_in_plane(p1,p2,p0,p);
 	if ( o[1] == NEGATIVE ) {
 	  c = c->neighbor( i );
 	  continue;
 	}
-	o[2] = geom_traits().orientation_in_plane(p2,p0,p1,p);
+	o[2] = orientation_in_plane(p2,p0,p1,p);
 	if ( o[2] == NEGATIVE ) {
 	  c = c->neighbor( ccw(i) );
 	  continue;
@@ -1932,7 +1946,7 @@ locate(const Point & p,
 
       //first tests whether p is collinear with the current triangulation
       Edge_iterator finite_eit = finite_edges_begin();
-      if ( ! geom_traits().collinear
+      if ( !collinear
 	   (p,
 	    (*finite_eit).first->vertex(0)->point(),
 	    (*finite_eit).first->vertex(1)->point()) ) {
@@ -1945,14 +1959,14 @@ locate(const Point & p,
       Point p0 = c->vertex(0)->point();
       Point p1 = c->vertex(1)->point();
       CGAL_triangulation_assertion
-	( ( geom_traits().compare_x(p0,p1) != EQUAL ) ||
-	  ( geom_traits().compare_y(p0,p1) != EQUAL ) ||
-	  ( geom_traits().compare_z(p0,p1) != EQUAL ) );
-      o = geom_traits().compare_x(p0,p1);
+	( ( compare_x(p0,p1) != EQUAL ) ||
+	  ( compare_y(p0,p1) != EQUAL ) ||
+	  ( compare_z(p0,p1) != EQUAL ) );
+      o = compare_x(p0,p1);
       if ( o == EQUAL ) {
-	o = geom_traits().compare_y(p0,p1);
+	o = compare_y(p0,p1);
 	if ( o == EQUAL ) {
-	  o = geom_traits().compare_z(p0,p1);
+	  o = compare_z(p0,p1);
 	  xyz = 3;
 	}
 	else {
@@ -1978,41 +1992,41 @@ locate(const Point & p,
 	switch ( xyz ) {
 	case 1:
 	  {
-	    o = geom_traits().compare_x(p0,p1);
-	    o0 = geom_traits().compare_x(p0,p);
-	    o1 = geom_traits().compare_x(p,p1);
+	    o = compare_x(p0,p1);
+	    o0 = compare_x(p0,p);
+	    o1 = compare_x(p,p1);
 	    break;
 	  }
 	case 2:
 	  {
-	    o = geom_traits().compare_y(p0,p1);
-	    o0 = geom_traits().compare_y(p0,p);
-	    o1 = geom_traits().compare_y(p,p1);
+	    o = compare_y(p0,p1);
+	    o0 = compare_y(p0,p);
+	    o1 = compare_y(p,p1);
 	    break;
 	  }
 	default: // case 3
 	  {
-	    o = geom_traits().compare_z(p0,p1);
-	    o0 = geom_traits().compare_z(p0,p);
-	    o1 = geom_traits().compare_z(p,p1);
+	    o = compare_z(p0,p1);
+	    o0 = compare_z(p0,p);
+	    o1 = compare_z(p,p1);
 	  }
 	}
-	// 	  o = geom_traits().compare_x(p0,p1);
+	// 	  o = compare_x(p0,p1);
 	// 	  if ( o == EQUAL ) {
-	// 	    o = geom_traits().compare_y(p0,p1);
+	// 	    o = compare_y(p0,p1);
 	// 	    if ( o == EQUAL ) {
-	// 	      o = geom_traits().compare_z(p0,p1);
-	// 	      o0 = geom_traits().compare_z(p0,p);
-	// 	      o1 = geom_traits().compare_z(p,p1);
+	// 	      o = compare_z(p0,p1);
+	// 	      o0 = compare_z(p0,p);
+	// 	      o1 = compare_z(p,p1);
 	// 	    }
 	// 	    else {
-	// 	      o0 = geom_traits().compare_y(p0,p);
-	// 	      o1 = geom_traits().compare_y(p,p1);
+	// 	      o0 = compare_y(p0,p);
+	// 	      o1 = compare_y(p,p1);
 	// 	    }
 	// 	  }
 	// 	  else {
-	// 	    o0 = geom_traits().compare_x(p0,p);
-	// 	    o1 = geom_traits().compare_x(p,p1);
+	// 	    o0 = compare_x(p0,p);
+	// 	    o1 = compare_x(p,p1);
 	// 	  }
 	  
 	if (o0 == EQUAL) {
@@ -2045,7 +2059,7 @@ locate(const Point & p,
       // 	    notfound = false;
       // 	  }
       // 	  else {
-      // 	    if ( geom_traits().compare_x(p,c->vertex(1)->point()) 
+      // 	    if ( compare_x(p,c->vertex(1)->point()) 
       // 		 == LARGER ) {
       // 	      c = c->neighbor(0);
       // 	    }
@@ -2064,7 +2078,7 @@ locate(const Point & p,
   case 0:
     {
       Vertex_iterator vit = finite_vertices_begin();
-      if ( ! geom_traits().equal( p, vit->point() ) ) {
+      if ( ! equal( p, vit->point() ) ) {
 	lt = OUTSIDE_AFFINE_HULL;
       }
       else {
@@ -2104,13 +2118,13 @@ side_of_tetrahedron(const Point & p,
   // ON_UNBOUNDED_SIDE if p lies strictly outside the tetrahedron
 {
   CGAL_triangulation_precondition
-    ( geom_traits().orientation(p0,p1,p2,p3) == POSITIVE );
+    ( orientation(p0,p1,p2,p3) == POSITIVE );
 
   Orientation o0,o1,o2,o3;
-  if ( ((o0 = geom_traits().orientation(p,p1,p2,p3)) == NEGATIVE) ||
-       ((o1 = geom_traits().orientation(p0,p,p2,p3)) == NEGATIVE) ||
-       ((o2 = geom_traits().orientation(p0,p1,p,p3)) == NEGATIVE) ||
-       ((o3 = geom_traits().orientation(p0,p1,p2,p)) == NEGATIVE) ) {
+  if ( ((o0 = orientation(p,p1,p2,p3)) == NEGATIVE) ||
+       ((o1 = orientation(p0,p,p2,p3)) == NEGATIVE) ||
+       ((o2 = orientation(p0,p1,p,p3)) == NEGATIVE) ||
+       ((o3 = orientation(p0,p1,p2,p)) == NEGATIVE) ) {
     lt = OUTSIDE_CONVEX_HULL;
     return ON_UNBOUNDED_SIDE;
   }
@@ -2207,13 +2221,13 @@ side_of_cell(const Point & p,
       v2=c->vertex((inf+2)&3), 
       v3=c->vertex((inf+3)&3);
     if ( (inf&1) == 0 ) {
-      o = geom_traits().orientation(p,
+      o = orientation(p,
 				    v1->point(),
 				    v2->point(),
 				    v3->point());
     }
     else {
-      o =  geom_traits().orientation(v3->point(),
+      o =  orientation(v3->point(),
 				     p,
 				     v1->point(),
 				     v2->point());
@@ -2296,16 +2310,16 @@ side_of_triangle(const Point & p,
   // ON_UNBOUNDED_SIDE if p lies strictly outside the triangle
 {
   CGAL_triangulation_precondition
-    ( ! geom_traits().collinear(p0,p1,p2) );
+    ( !collinear(p0,p1,p2) );
   CGAL_triangulation_precondition
-    ( geom_traits().orientation(p,p0,p1,p2) == COPLANAR );
+    ( orientation(p,p0,p1,p2) == COPLANAR );
 
   // edge p0 p1 :
-  Orientation o0 = geom_traits().orientation_in_plane(p0,p1,p2,p);
+  Orientation o0 = orientation_in_plane(p0,p1,p2,p);
   // edge p1 p2 :
-  Orientation o1 = geom_traits().orientation_in_plane(p1,p2,p0,p);
+  Orientation o1 = orientation_in_plane(p1,p2,p0,p);
   // edge p2 p0 :
-  Orientation o2 = geom_traits().orientation_in_plane(p2,p0,p1,p);
+  Orientation o2 = orientation_in_plane(p2,p0,p1,p);
 
   if ( (o0 == NEGATIVE) ||
        (o1 == NEGATIVE) ||
@@ -2380,7 +2394,7 @@ side_of_facet(const Point & p,
   if ( ! is_infinite(c,3) ) {
     // The following precondition is useless because it is written
     // in side_of_facet  
-    // 	CGAL_triangulation_precondition( geom_traits().orientation
+    // 	CGAL_triangulation_precondition( orientation
     // 					 (p, 
     // 					  c->vertex(0)->point,
     // 					  c->vertex(1)->point,
@@ -2407,7 +2421,7 @@ side_of_facet(const Point & p,
   int inf = c->index(infinite);
     // The following precondition is useless because it is written
     // in side_of_facet  
-    // 	CGAL_triangulation_precondition( geom_traits().orientation
+    // 	CGAL_triangulation_precondition( orientation
     // 					 (p,
     // 					  c->neighbor(inf)->vertex(0)->point(),
     // 					  c->neighbor(inf)->vertex(1)->point(),
@@ -2439,7 +2453,7 @@ side_of_facet(const Point & p,
   Cell_handle n = c->neighbor(inf);
   // n must be a finite cell
   Orientation o =
-    geom_traits().orientation_in_plane
+    orientation_in_plane
     ( v1->point(), 
       v2->point(), 
       n->vertex(n->index(c))->point(),
@@ -2514,28 +2528,28 @@ side_of_segment(const Point & p,
   // ON_UNBOUNDED_SIDE if p lies strictly outside the edge
 {
   CGAL_triangulation_precondition
-    ( ! geom_traits().equal(p0,p1) );
+    ( ! equal(p0,p1) );
   CGAL_triangulation_precondition
-    ( geom_traits().collinear(p,p0,p1) );
+    (collinear(p,p0,p1) );
       
-  Comparison_result c = geom_traits().compare_x(p0,p1);
+  Comparison_result c = compare_x(p0,p1);
   Comparison_result c0;
   Comparison_result c1;
 
   if ( c == EQUAL ) {
-    c = geom_traits().compare_y(p0,p1);
+    c = compare_y(p0,p1);
     if ( c == EQUAL ) {
-      c0 = geom_traits().compare_z(p0,p);
-      c1 = geom_traits().compare_z(p,p1);
+      c0 = compare_z(p0,p);
+      c1 = compare_z(p,p1);
     }
     else {
-      c0 = geom_traits().compare_y(p0,p);
-      c1 = geom_traits().compare_y(p,p1);
+      c0 = compare_y(p0,p);
+      c1 = compare_y(p,p1);
     }
   }
   else {
-    c0 = geom_traits().compare_x(p0,p);
-    c1 = geom_traits().compare_x(p,p1);
+    c0 = compare_x(p0,p);
+    c1 = compare_x(p,p1);
   }
       
   //      if ( (c0 == SMALLER) && (c1 == SMALLER) ) {
@@ -2582,7 +2596,7 @@ side_of_edge(const Point & p,
 			   lt, li);
   // else infinite edge
   int inf = c->index(infinite);
-  if ( geom_traits().equal( p, c->vertex(1-inf)->point() ) ) {
+  if ( equal( p, c->vertex(1-inf)->point() ) ) {
     lt = VERTEX;
     li = 1-inf;
     return ON_BOUNDARY;
@@ -2595,23 +2609,23 @@ side_of_edge(const Point & p,
     v0 = n->vertex(0),
     v1 = n->vertex(1);
   Comparison_result c01 = 
-    geom_traits().compare_x(v0->point(), v1->point());
+    compare_x(v0->point(), v1->point());
   Comparison_result cp;
   if ( c01 == EQUAL ) {
-    c01 = geom_traits().compare_y(v0->point(),v1->point());
+    c01 = compare_y(v0->point(),v1->point());
     if ( i_e == 0 ) {
-      cp = geom_traits().compare_y( v1->point(), p );
+      cp = compare_y( v1->point(), p );
     }
     else {
-      cp = geom_traits().compare_y( p, v0->point() );
+      cp = compare_y( p, v0->point() );
     }
   }
   else {
     if ( i_e == 0 ) {
-      cp = geom_traits().compare_x( v1->point(), p );
+      cp = compare_x( v1->point(), p );
     }
     else {
-      cp = geom_traits().compare_x( p, v0->point() );
+      cp = compare_x( p, v0->point() );
     }
   }
   if ( c01 == cp ) {
@@ -2642,34 +2656,34 @@ flip( Cell_handle c, int i )
   if ( is_infinite( c ) || is_infinite( n ) ) return false;
   
   if ( i%2 == 1 ) {
-    if ( geom_traits().orientation( c->vertex((i+1)&3)->point(),
+    if ( orientation( c->vertex((i+1)&3)->point(),
 				    c->vertex((i+2)&3)->point(),
 				    n->vertex(in)->point(),
 				    c->vertex(i)->point() )
 	 != LEFTTURN ) return false;
-    if ( geom_traits().orientation( c->vertex((i+2)&3)->point(),
+    if ( orientation( c->vertex((i+2)&3)->point(),
 				    c->vertex((i+3)&3)->point(),
 				    n->vertex(in)->point(),
 				    c->vertex(i)->point() )
 	 != LEFTTURN ) return false;
-    if ( geom_traits().orientation( c->vertex((i+3)&3)->point(),
+    if ( orientation( c->vertex((i+3)&3)->point(),
 				    c->vertex((i+1)&3)->point(),
 				    n->vertex(in)->point(),
 				    c->vertex(i)->point() )
 	 != LEFTTURN ) return false;
   }
   else {
-    if ( geom_traits().orientation( c->vertex((i+2)&3)->point(),
+    if ( orientation( c->vertex((i+2)&3)->point(),
 				    c->vertex((i+1)&3)->point(),
 				    n->vertex(in)->point(),
 				    c->vertex(i)->point() )
 	 != LEFTTURN ) return false;
-    if ( geom_traits().orientation( c->vertex((i+3)&3)->point(),
+    if ( orientation( c->vertex((i+3)&3)->point(),
 				    c->vertex((i+2)&3)->point(),
 				    n->vertex(in)->point(),
 				    c->vertex(i)->point() )
 	 != LEFTTURN ) return false;
-    if ( geom_traits().orientation( c->vertex((i+1)&3)->point(),
+    if ( orientation( c->vertex((i+1)&3)->point(),
 				    c->vertex((i+3)&3)->point(),
 				    n->vertex(in)->point(),
 				    c->vertex(i)->point() )
@@ -2701,19 +2715,19 @@ flip_flippable( Cell_handle c, int i )
   
   if ( i%2 == 1 ) {
     CGAL_triangulation_precondition
-      ( geom_traits().orientation( c->vertex((i+1)&3)->point(),
+      ( orientation( c->vertex((i+1)&3)->point(),
 				   c->vertex((i+2)&3)->point(),
 				   n->vertex(in)->point(),
 				   c->vertex(i)->point() )
 	== LEFTTURN );
     CGAL_triangulation_precondition
-      ( geom_traits().orientation( c->vertex((i+2)&3)->point(),
+      ( orientation( c->vertex((i+2)&3)->point(),
 				   c->vertex((i+3)&3)->point(),
 				   n->vertex(in)->point(),
 				   c->vertex(i)->point() )
 	== LEFTTURN );
     CGAL_triangulation_precondition
-      ( geom_traits().orientation( c->vertex((i+3)&3)->point(),
+      ( orientation( c->vertex((i+3)&3)->point(),
 				   c->vertex((i+1)&3)->point(),
 				   n->vertex(in)->point(),
 				   c->vertex(i)->point() )
@@ -2721,19 +2735,19 @@ flip_flippable( Cell_handle c, int i )
   }
   else {
     CGAL_triangulation_precondition
-      ( geom_traits().orientation( c->vertex((i+2)&3)->point(),
+      ( orientation( c->vertex((i+2)&3)->point(),
 				   c->vertex((i+1)&3)->point(),
 				   n->vertex(in)->point(),
 				   c->vertex(i)->point() )
 	== LEFTTURN );
     CGAL_triangulation_precondition
-      ( geom_traits().orientation( c->vertex((i+3)&3)->point(),
+      ( orientation( c->vertex((i+3)&3)->point(),
 				   c->vertex((i+2)&3)->point(),
 				   n->vertex(in)->point(),
 				   c->vertex(i)->point() )
 	== LEFTTURN );
     CGAL_triangulation_precondition
-      ( geom_traits().orientation( c->vertex((i+1)&3)->point(),
+      ( orientation( c->vertex((i+1)&3)->point(),
 				   c->vertex((i+3)&3)->point(),
 				   n->vertex(in)->point(),
 				   c->vertex(i)->point() )
@@ -2778,12 +2792,12 @@ flip( Cell_handle c, int i, int j )
   Cell_handle n = c->neighbor( next_around_edge(i,j) );
   int in = n->index( c->vertex(i) );
   int jn = n->index( c->vertex(j) );
-  if ( geom_traits().orientation( c->vertex(next_around_edge(i,j))->point(),
+  if ( orientation( c->vertex(next_around_edge(i,j))->point(),
 				  c->vertex(next_around_edge(j,i))->point(),
 				  n->vertex(next_around_edge(jn,in))->point(),
 				  c->vertex(j)->point() )
        != LEFTTURN ) return false;
-  if ( geom_traits().orientation( c->vertex(i)->point(),
+  if ( orientation( c->vertex(i)->point(),
 				  c->vertex(next_around_edge(j,i))->point(),
 				  n->vertex(next_around_edge(jn,in))->point(),
 				  c->vertex(next_around_edge(i,j))->point() )
@@ -2832,13 +2846,13 @@ flip_flippable( Cell_handle c, int i, int j )
   CGAL_triangulation_precondition_code
     ( int jn = n->index( c->vertex(j) ); );
   CGAL_triangulation_precondition
-    ( geom_traits().orientation( c->vertex(next_around_edge(i,j))->point(),
+    ( orientation( c->vertex(next_around_edge(i,j))->point(),
 				 c->vertex(next_around_edge(j,i))->point(),
 				 n->vertex(next_around_edge(jn,in))->point(),
 				 c->vertex(j)->point() )
        == LEFTTURN );
   CGAL_triangulation_precondition
-    ( geom_traits().orientation( c->vertex(i)->point(),
+    ( orientation( c->vertex(i)->point(),
 				 c->vertex(next_around_edge(j,i))->point(),
 				 n->vertex(next_around_edge(jn,in))->point(),
 				 c->vertex(next_around_edge(i,j))->point() )
@@ -2955,7 +2969,7 @@ insert_in_facet(const Point & p, Cell_handle c, int i)
     ( Locate_type lt;
       int li; int lj; );
   CGAL_triangulation_precondition
-    ( (geom_traits().orientation( p, 
+    ( (orientation( p, 
 				  c->vertex((i+1)&3)->point(),
 				  c->vertex((i+2)&3)->point(),
 				  c->vertex((i+3)&3)->point() ) == COPLANAR)
@@ -2986,7 +3000,7 @@ insert_in_edge(const Point & p, Cell_handle c, int i, int j)
 	( Locate_type lt;
 	  int li; );
       CGAL_triangulation_precondition
-	( geom_traits().collinear( c->vertex(i)->point(),
+	(collinear( c->vertex(i)->point(),
 				   p,
 				   c->vertex(j)->point() )
 	  &&
@@ -3006,7 +3020,7 @@ insert_in_edge(const Point & p, Cell_handle c, int i, int j)
 	( Locate_type lt;
 	  int li; )
 	CGAL_triangulation_precondition
-	  ( geom_traits().collinear( c->vertex(i)->point(),
+	  (collinear( c->vertex(i)->point(),
 				     p,
 				     c->vertex(j)->point() )
 	    &&
@@ -3271,9 +3285,9 @@ insert_outside_affine_hull(const Point & p)
 	( Cell_handle c = infinite_cell();
 	  Cell_handle n = c->neighbor(c->index(infinite_vertex())); )
 	CGAL_triangulation_precondition
-	  ( ! geom_traits().collinear(p,
-				      n->vertex(0)->point(),
-				      n->vertex(1)->point()) );
+	  ( !collinear(p,
+		       n->vertex(0)->point(),
+		       n->vertex(1)->point()) );
 	// no reorientation : the first non-collinear point determines
 	// the orientation of the plane
 	reorient = false;
@@ -3284,11 +3298,11 @@ insert_outside_affine_hull(const Point & p)
       Cell_handle c = infinite_cell();
       Cell_handle n = c->neighbor(c->index(infinite_vertex()));
       CGAL_triangulation_precondition
-	( geom_traits().orientation(n->vertex(0)->point(),
+	( orientation(n->vertex(0)->point(),
 				    n->vertex(1)->point(),
 				    n->vertex(2)->point(),
 				    p) != COPLANAR );
-      reorient = ( geom_traits().orientation( n->vertex(0)->point(),
+      reorient = ( orientation( n->vertex(0)->point(),
 					      n->vertex(1)->point(),
 					      n->vertex(2)->point(),
 					      p ) == NEGATIVE );
@@ -3509,7 +3523,7 @@ is_valid(bool verbose, int level) const
     {
       Cell_iterator it;
       for ( it = finite_cells_begin(); it != cells_end(); ++it ) {
-	// 	if ( geom_traits().orientation(it->vertex(0)->point(),
+	// 	if ( orientation(it->vertex(0)->point(),
 	// 			      it->vertex(1)->point(),
 	// 			      it->vertex(2)->point(),
 	// 			      it->vertex(3)->point()) != LEFTTURN ) {
@@ -3569,6 +3583,86 @@ is_valid(Cell_handle c, bool verbose, int level) const
   return true;
 } //end is_valid(cell)
 
+
+
+template <class Gt, class Tds >
+inline
+Comparison_result
+Triangulation_3<Gt, Tds>::
+compare_x(const Point& p, const Point& q) const
+{
+  return geom_traits().compare_x_3_object()(p,q);
+}
+
+
+template <class Gt, class Tds >
+inline
+Comparison_result
+Triangulation_3<Gt, Tds>::
+compare_y(const Point& p, const Point& q) const
+{
+  return geom_traits().compare_y_3_object()(p,q);
+}
+
+
+template <class Gt, class Tds >
+inline
+Comparison_result
+Triangulation_3<Gt, Tds>::
+compare_z(const Point& p, const Point& q) const
+{
+  return geom_traits().compare_z_3_object()(p,q);
+}
+
+
+template <class Gt, class Tds >
+inline
+Orientation
+Triangulation_3<Gt, Tds>::
+orientation(const Point& p, const Point& q, const Point& r, const Point& s) const
+{
+  return geom_traits().orientation_3_object()(p,q,r,s);
+}
+
+
+template <class Gt, class Tds >
+inline
+Orientation
+Triangulation_3<Gt, Tds>::
+orientation_in_plane(const Point& q, const Point& r, const Point& s, const Point& p ) const
+{
+  // We better generate the vector once the dimension changes
+  Vector v = geom_traits().cross_product_object()(r-q, s-q);
+
+  return geom_traits().coplanar_orientation_3_object()(q, r, p, v);
+  //  return geom_traits().orientation_in_plane(q, r, s, p);
+
+}
+
+
+
+
+template <class Gt, class Tds >
+inline
+bool
+Triangulation_3<Gt, Tds>::
+collinear(const Point& p, const Point& q, const Point& r) const
+{
+  return geom_traits().collinear_3_object()(p,q,r);
+}
+
+
+template <class Gt, class Tds >
+inline
+bool
+Triangulation_3<Gt, Tds>::
+equal(const Point& p, const Point& q) const
+{
+  return geom_traits().equal_3_object()(p,q);
+}
+
+
+
 template < class GT, class Tds >
 bool
 Triangulation_3<GT,Tds>::
@@ -3577,7 +3671,7 @@ is_valid_finite(Cell_handle c, bool verbose, int) const
   switch ( dimension() ) {
   case 3:
     {
-      if ( geom_traits().orientation(c->vertex(0)->point(),
+      if ( orientation(c->vertex(0)->point(),
 				     c->vertex(1)->point(),
 				     c->vertex(2)->point(),
 				     c->vertex(3)->point()) 
@@ -3598,7 +3692,7 @@ is_valid_finite(Cell_handle c, bool verbose, int) const
 	if ( ( ! is_infinite
 	       ( c->neighbor(i)->vertex(c->neighbor(i)->index(c)) ) )
 	     && 
-	     geom_traits().orientation_in_plane
+	     orientation_in_plane
 	     ( c->vertex(cw(i))->point(),
 	       c->vertex(ccw(i))->point(),
 	       c->vertex(i)->point(),
@@ -3633,12 +3727,12 @@ is_valid_finite(Cell_handle c, bool verbose, int) const
 	   ( c->neighbor(0)->vertex(c->neighbor(0)->index(c)) ) ) {
 	Point n0 = 
 	  c->neighbor(0)->vertex(c->neighbor(0)->index(c))->point();  
-	if ( ( geom_traits().compare_x( p0, p1 )
-	       != geom_traits().compare_x( p1, n0 ) )
-	     || ( geom_traits().compare_y( p0, p1 )
-		  != geom_traits().compare_y( p1, n0 ) )
-	     || ( geom_traits().compare_z( p0, p1 )
-		  != geom_traits().compare_z( p1, n0 ) ) ) {
+	if ( ( compare_x( p0, p1 )
+	       != compare_x( p1, n0 ) )
+	     || ( compare_y( p0, p1 )
+		  != compare_y( p1, n0 ) )
+	     || ( compare_z( p0, p1 )
+		  != compare_z( p1, n0 ) ) ) {
 	  if (verbose) { std::cerr << "badly oriented edge "
 				   << p0 << ", " << p1 << std::endl
 				   << "with neighbor 0"
@@ -3654,12 +3748,12 @@ is_valid_finite(Cell_handle c, bool verbose, int) const
 	   ( c->neighbor(1)->vertex(c->neighbor(1)->index(c)) ) ) { 
 	Point n1 = 
 	  c->neighbor(1)->vertex(c->neighbor(1)->index(c))->point();
-	if ( ( geom_traits().compare_x( p1, p0 )
-	       != geom_traits().compare_x( p0, n1 ) )
-	     || ( geom_traits().compare_y( p1, p0 )
-		  != geom_traits().compare_y( p0, n1 ) )
-	     || ( geom_traits().compare_z( p1, p0 )
-		  != geom_traits().compare_z( p0, n1 ) ) ) {
+	if ( ( compare_x( p1, p0 )
+	       != compare_x( p0, n1 ) )
+	     || ( compare_y( p1, p0 )
+		  != compare_y( p0, n1 ) )
+	     || ( compare_z( p1, p0 )
+		  != compare_z( p0, n1 ) ) ) {
 	  if (verbose) { std::cerr << "badly oriented edge "
 				   << p0 << ", " << p1 << std::endl
 				   << "with neighbor 1"
