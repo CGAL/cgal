@@ -61,7 +61,7 @@ $(Package).tar.gz:
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
 	--exclude=TODO --exclude=cgal_test \
 	version maintainer description.txt long_description.txt \
-	src include doc_tex doc_ps test demo examples
+	changes.txt src include doc_tex doc_ps test demo examples
 
 doc: doc_ps/$(Package).ps
 
