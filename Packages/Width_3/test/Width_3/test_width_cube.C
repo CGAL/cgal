@@ -18,12 +18,14 @@
 // revision      : $Revision$
 // revision_date : $Date$
 //
-// author(s)     : Thomas Herrmann
+// author(s)     : Thomas Herrmann, Lutz Kettner
 // maintainer    : Thomas Herrmann <herrmann@ifor.math.ethz.ch>
 // coordinator   : ETH Zuerich (Bernd Gaertner <gaertner@inf.ethz.ch>)
 //
 // implementation: 3D Width of a Point Set
 // ============================================================================
+
+#define CGAL_USE_POLYHEDRON_DESIGN_ONE 1
 
 // short cuts for M$-VC++
 #ifdef _MSC_VER
@@ -33,73 +35,60 @@
 #endif
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/leda_real.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/Plane_3.h>
-#include <CGAL/Vector_3.h>
-#include <CGAL/Halfedge_data_structure_polyhedron_default_3.h>
-#include <CGAL/Polyhedron_default_traits_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/convex_hull_3.h>
-#include <iostream>
-#include <vector>
 #include <CGAL/Width_default_traits_3.h>
 #include <CGAL/Width_3.h>
+#include <iostream>
+#include <vector>
 
-typedef leda_real NrType;
-typedef CGAL::Cartesian<NrType> RepClass;
-typedef RepClass::RT RT;
-typedef CGAL::Point_3<RepClass> Point;
-typedef CGAL::Width_default_traits_3<RepClass> Widthtraits;
-typedef CGAL::Width_3<Widthtraits> Width;
-typedef CGAL::Halfedge_data_structure_polyhedron_default_3<RepClass> HDS;
-typedef CGAL::Polyhedron_default_traits_3<RepClass> Polytraits;
-typedef CGAL::Polyhedron_3<Polytraits,HDS> Polyhedron;
+#ifdef CGAL_USE_LEDA
+#include <CGAL/leda_real.h>
+typedef leda_real                             RT;
+#else
+typedef double                                RT;
+#endif
 
+typedef CGAL::Cartesian<RT>                   Kernel;
+typedef Kernel::RT                            RT;
+typedef Kernel::Point_3                       Point_3;
+typedef Kernel::Plane_3                       Plane_3;
+typedef CGAL::Width_default_traits_3<Kernel>  Width_traits;
+typedef CGAL::Width_3<Width_traits>           Width;
+typedef CGAL::Polyhedron_3<Kernel>            Polyhedron;
 
 int main(int argc, char* argv[]) {
-  //*** Cube: Cartesian < leda_real >***
-  std::vector<Point> pointlist;
-  Point p1(1,1,1);
-  Point q1(-1,1,1);
-  Point r1(1,-1,1);
-  Point s1(-1,-1,1);
-  Point p2(1,1,-1);
-  Point q2(-1,1,-1);
-  Point r2(1,-1,-1);
-  Point s2(-1,-1,-1);
-  pointlist.push_back(p1);
-  pointlist.push_back(q1);
-  pointlist.push_back(r1);
-  pointlist.push_back(s1);
-  pointlist.push_back(p2);
-  pointlist.push_back(q2);
-  pointlist.push_back(r2);
-  pointlist.push_back(s2);
+    // Create a cube using exact Cartesian coordinates
+  std::vector<Point_3> points;
+  points.push_back( Point_3( 1, 1, 4));
+  points.push_back( Point_3(-1, 1, 4));
+  points.push_back( Point_3( 1,-1, 4));
+  points.push_back( Point_3(-1,-1, 4));
+  points.push_back( Point_3( 1, 1, 2));
+  points.push_back( Point_3(-1, 1, 2));
+  points.push_back( Point_3( 1,-1, 2));
+  points.push_back( Point_3(-1,-1, 2));
 
-  // Compute convex hull of pointlist (cube)
+  // Compute convex hull of points (cube)
   Polyhedron P;
-  CGAL::convex_hull_3(pointlist.begin(),pointlist.end(),P);
-  
+  CGAL::convex_hull_3( points.begin(), points.end(), P);
+
   // Compute width of cube
   Width cube(P);
-  
-  // Output of width, width-planes and optimal direction
-  RT WNum, WDenom;
-  cube.get_squared_width(WNum,WDenom);
-  std::cout<<"Squared Width: "<<WNum<<"/"<<WDenom<<std::endl;
 
-  CGAL::Plane_3<RepClass> e1,e2;
-  std::cout<<"Direction: "<<cube.get_build_direction()<<std::endl;
+  // Output of square width, width-planes, and optimal direction
+  RT wnum, wdenom;
+  cube.get_squared_width( wnum, wdenom);
+  std::cout << "Squared Width: " << wnum << "/" << wdenom << std::endl;
 
-  CGAL::Vector_3<RepClass> dir;
+  std::cout << "Direction: " << cube.get_build_direction() << std::endl;
+
+  Plane_3 e1, e2;
   cube.get_width_planes(e1,e2);
-  std::cout<<"Planes:"<<std::endl;
-  std::cout<<"E1: "<<e1<<std::endl<<"E2: "<<e2<<std::endl;
+  std::cout << "Planes: E1: " << e1 << ".  E2: " << e2 << std::endl;
 
-  int nos=cube.get_number_of_optimal_solutions();
-  std::cout<<"Number of optimal solutions: "<<nos<<std::endl;
-
+  int nos = cube.get_number_of_optimal_solutions();
+  std::cout << "Number of optimal solutions: "<< nos << std::endl;
   return(0);
 }
 

@@ -117,7 +117,7 @@
  #define DEBUGPRINT(doit,msg,var)
  #define DEBUGMSG(doit,msg)
  #define INFOMSG(doit,msg)
- #define NDEBUG // discard assertions
+// #define NDEBUG // discard assertions. Changed since it violates std: L.K.
 #endif
 
 #include <assert.h>

@@ -1,3 +1,12 @@
+1.9 (12 Jul 2001)
+- Adapted to new polyhedral surface design (release 3).
+- Ported from dd_geo/chull to convex_hull_3.
+- Changed to new concept naming convention, i.e., WidthTraits_3.
+- Changed traits class to new kernel design naming. However, the unchanged
+  member functions make this traits not compliant with kernel traits.
+- Edited Width_3.tex quite a bit. Removed redundant descriptions of type
+  requirements that are actually described in the WidthTraits_3.
+
 1.8
 - Moving to CVS Server and completed truncated text in description.txt
 

@@ -19,7 +19,7 @@
 // revision      : $Revision$
 // revision_date : $Date$
 //
-// author(s)     : Thomas Herrmann
+// author(s)     : Thomas Herrmann, Lutz Kettner
 // coordinator   : ETH Zuerich (Bernd Gaertner <gaertner@inf.ethz.ch>)
 //
 // implementation: 3D Width of a Point Set
@@ -29,30 +29,23 @@
 #define CGAL_WIDTH_POLYHEDRON_3_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Halfedge_data_structure_using_list.h>
+// include a file from polyhedron to determine old or new design
+#include <CGAL/Polyhedron_default_traits_3.h>
+
+#ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
 #include <CGAL/Halfedge_data_structure_bases.h>
+#else // CGAL_USE_POLYHEDRON_DESIGN_ONE //
+#include <CGAL/HalfedgeDS_vertex_base.h>
+#include <CGAL/HalfedgeDS_halfedge_base.h>
+#include <CGAL/HalfedgeDS_face_base.h>
+#endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
+
 #include <map>
 #include <CGAL/width_assertions.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template<class InputPoint, class InputNormal, class InputPlane, 
-  class Width_Traits>
-class Width_polyhedron_default_traits_3{
- public:
-  typedef InputPoint Point;
-  typedef InputNormal Normal;
-  typedef InputPlane Plane;
-  Width_Traits tco;
-  void reverse_normal( Normal& normal) const { 
-    tco.inverse_normal(normal); 
-  }
-  void reverse_plane( Plane& plane) const { 
-    tco.opposite_plane(plane); 
-  }
-  Width_polyhedron_default_traits_3() {}
-  ~Width_polyhedron_default_traits_3() {}
-};
+#ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
 
 template<class InputPoint, class Width_Traits>
 class Width_vertex_default_base : public CGAL::Vertex_max_base<InputPoint> {
@@ -114,40 +107,76 @@ class Width_facet_default_base : public CGAL::Facet_max_base {
  public:
   typedef CGAL::Tag_true     Supports_facet_plane;
   typedef CGAL::Tag_true     Supports_facet_normal;
-  typedef InputNormal Normal;
-  typedef InputPlane Plane;
+  typedef InputNormal Vector_3;
+  typedef InputPlane  Plane_3;
   Width_Traits tco;
  protected:
-  Plane   pln;
+  Plane_3   pln;
  public:
-  Normal normal() const { 
-    return tco.orthogonal_vector(pln);
-  }
-  Plane& plane() { 
+  Plane_3& plane() { 
     return pln;
   }
-  const Plane& plane() const { 
+  const Plane_3& plane() const { 
     return pln;
   }
 };
+
+#else // CGAL_USE_POLYHEDRON_DESIGN_ONE //
+
+template <class Refs, class Traits>
+class Width_vertex_default_base 
+    : public CGAL::HalfedgeDS_vertex_base< 
+        Refs, Tag_true, CGAL_TYPENAME_MSVC_NULL Traits::Point_3> {
+private:
+    typedef Traits          WT;
+    typedef typename WT::RT RT;
+    WT tco;
+public:
+    typedef typename Traits::Point_3 Point_3;
+    Width_vertex_default_base() {}
+    Width_vertex_default_base( const Point_3& p){
+        RT px,py,pz,ph;
+        tco.get_point_coordinates(p,px,py,pz,ph);
+        pt=tco.make_point(px,py,pz,ph);
+    }
+};
+
+struct Width_polyhedron_items_3 {
+    template < class Refs, class Traits>
+    struct Vertex_wrapper {
+        typedef Width_vertex_default_base< Refs, Traits>  Vertex;
+    };
+    template < class Refs, class Traits>
+    struct Halfedge_wrapper {
+        typedef CGAL::HalfedgeDS_halfedge_base< Refs>     Halfedge;
+    };
+    template < class Refs, class Traits>
+    struct Face_wrapper {
+        typedef typename Traits::Plane Plane;
+        typedef CGAL::HalfedgeDS_face_base< Refs, Plane>  Face;
+    };
+};
+
+#endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
+
 
 template <class InputPolyhedron, class Width_Traits>
 class Data_access {
  public:
   typedef InputPolyhedron Polyhedron;
-  typedef typename Polyhedron::Vertex Vertex;
-  typedef typename Polyhedron::Facet Facet;
-  typedef typename Polyhedron::Halfedge Halfedge;
-  typedef typename Polyhedron::Facet_handle Facet_handle;
-  typedef typename Polyhedron::Vertex_handle Vertex_handle;
-  typedef typename Polyhedron::Halfedge_handle Halfedge_handle;
-  typedef typename Polyhedron::Point PolyPoint;
-  typedef typename Polyhedron::Plane Plane;
-  typedef typename Polyhedron::Vertex_iterator Vertex_iterator;
-  typedef typename Polyhedron::Facet_iterator Facet_iterator;
+  typedef typename Polyhedron::Vertex            Vertex;
+  typedef typename Polyhedron::Facet             Facet;
+  typedef typename Polyhedron::Halfedge          Halfedge;
+  typedef typename Polyhedron::Facet_handle      Facet_handle;
+  typedef typename Polyhedron::Vertex_handle     Vertex_handle;
+  typedef typename Polyhedron::Halfedge_handle   Halfedge_handle;
+  typedef typename Polyhedron::Point_3           PolyPoint;
+  typedef typename Polyhedron::Plane_3           Plane;
+  typedef typename Polyhedron::Vertex_iterator   Vertex_iterator;
+  typedef typename Polyhedron::Facet_iterator    Facet_iterator;
   typedef typename Polyhedron::Halfedge_iterator Halfedge_iterator;
  private:
-  typedef typename Width_Traits::RT RT;
+  typedef typename Width_Traits::RT              RT;
   Width_Traits tco;
  public:
   Data_access() {}
@@ -274,6 +303,7 @@ class Data_access {
   }
 #endif
 };
+
 
 CGAL_END_NAMESPACE
 

@@ -18,12 +18,14 @@
 // revision      : $Revision$
 // revision_date : $Date$
 //
-// author(s)     : Thomas Herrmann
+// author(s)     : Thomas Herrmann, Lutz Kettner
 // maintainer    : Thomas Herrmann <herrmann@ifor.math.ethz.ch>
 // coordinator   : ETH Zuerich (Bernd Gaertner <gaertner@inf.ethz.ch>)
 //
 // implementation: 3D Width of a Point Set
 // ============================================================================
+
+#define CGAL_USE_POLYHEDRON_DESIGN_ONE 1
 
 // short cuts for MIPS
 #if ( _COMPILER_VERSION == 730)
@@ -37,55 +39,48 @@
 #endif
 
 #include <CGAL/Homogeneous.h>
-#include <CGAL/leda_integer.h>
-#include <CGAL/leda_real.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/Plane_3.h>
-#include <CGAL/Vector_3.h>
-#include <iostream>
-#include <vector>
 #include <CGAL/Width_default_traits_3.h>
 #include <CGAL/Width_3.h>
+#include <iostream>
+#include <vector>
 
-typedef leda_integer NrType;
-typedef CGAL::Homogeneous<NrType> RepClass;
-typedef RepClass::RT RT;
-typedef CGAL::Point_3<RepClass> Point;
-typedef CGAL::Width_default_traits_3<RepClass> Widthtraits;
-typedef CGAL::Width_3<Widthtraits> Width;
+#ifdef CGAL_USE_LEDA
+#include <CGAL/leda_integer.h>
+typedef leda_integer                          RT;
+#else
+typedef long                                  RT;
+#endif
+
+typedef CGAL::Homogeneous<RT>                 Kernel;
+typedef Kernel::Point_3                       Point_3;
+typedef Kernel::Plane_3                       Plane_3;
+typedef CGAL::Width_default_traits_3<Kernel>  Width_traits;
+typedef CGAL::Width_3<Width_traits>           Width;
 
 int main(int argc, char* argv[]) {
-  // *** Simplex: Homogeneous< leda_integer > ***
-  std::vector<Point> pointlist;
-  Point p(2,0,0,1);
-  Point q(0,1,0,1);
-  Point r(0,0,1,1);
-  Point s(0,0,0,1);
-  pointlist.push_back(p);
-  pointlist.push_back(q);
-  pointlist.push_back(r);
-  pointlist.push_back(s);
+    // Create a simplex using homogeneous integer coordinates
+    std::vector<Point_3> points;
+    points.push_back( Point_3(2,0,0,1));
+    points.push_back( Point_3(0,1,0,1));
+    points.push_back( Point_3(0,0,1,1));
+    points.push_back( Point_3(0,0,0,1));
 
-  // Compute width of simplex
-  Width simplex(pointlist.begin(),pointlist.end());
+    // Compute width of simplex
+    Width simplex( points.begin(), points.end());
 
-  // Output of width, width-planes and optimal direction
-  RT WNum, WDenom;
-  simplex.get_squared_width(WNum,WDenom);
-  std::cout<<"Squared Width: "<<WNum<<"/"<<WDenom<<std::endl;
+    // Output of squared width, width-planes, and optimal direction
+    RT wnum, wdenom;
+    simplex.get_squared_width( wnum, wdenom);
+    std::cout << "Squared Width: " << wnum << "/" << wdenom << std::endl;
 
-  CGAL::Plane_3<RepClass> e1,e2;
-  std::cout<<"Direction: "<<simplex.get_build_direction()<<std::endl;
+    std::cout << "Direction: " << simplex.get_build_direction() << std::endl;
 
-  CGAL::Vector_3<RepClass> dir;
-  simplex.get_width_planes(e1,e2);
-  std::cout<<"Planes:"<<std::endl;
-  std::cout<<"E1: "<<e1<<std::endl<<"E2: "<<e2<<std::endl;
+    Plane_3  e1, e2;
+    std::cout << "Planes: E1: " << e1 << ".  E2: " << e2 <<std::endl;
 
-  std::cout<<"Number of optimal solutions: "
-	   <<simplex.get_number_of_optimal_solutions()<<std::endl;
-
-  return(0);
+    std::cout << "Number of optimal solutions: "
+              << simplex.get_number_of_optimal_solutions() << std::endl;
+    return(0);
 }
 
 

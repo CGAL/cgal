@@ -14,7 +14,7 @@
 
 \ccAutoIndexingOff
 
-\begin{ccRefClass}{Width_default_traits_3<R>}
+\begin{ccRefClass}{Width_default_traits_3<K>}
 \ccIndexTraitsClassBegin{Width_default_traits_3}{Width_3}{}
 
 \ccAutoIndexingOn
@@ -28,92 +28,83 @@ using the three-dimensional \cgal\ kernel.
 \ccInclude{CGAL/Width_default_traits_3.h}
 
 % -----------------------------------------------------------------------------
-\ccRequirements
+\ccHeading{Requirements}
 
-The template parameter \ccc{R} is a model for \ccc{Kernel}
+The template parameter \ccc{K} is a model for \ccc{Kernel}
 
 % -----------------------------------------------------------------------------
 \ccIsModel
 
-\ccRefConceptPage{Width_traits_3}
+\ccRefConceptPage{WidthTraits_3}
 
 % -----------------------------------------------------------------------------
 \ccTypes
 
 \ccSaveThreeColumns
-\ccSetTwoColumns{Width_default_traits_3<R>:: ChullTraits;}{}
+\ccSetTwoColumns{Width_default_traits_3<K>:: ChullTraits;}{}
+\ccThree{typedef Convex_hull_traits_3<K>}{ChullTraits;}{}
 
 \ccGlueBegin
-\ccNestedType{Point}{typedef to \ccc{CGAL::Point_3<R>}.}
-\ccNestedType{Plane}{typedef to \ccc{CGAL::Plane_3<R>}.}
-\ccNestedType{Vector}{typedef to \ccc{CGAL::Vector_3<R>}.}
-\ccNestedType{RT}{typedef to \ccc{R::RT}.}
-\ccNestedType{ChullTraits}{typedef to \ccc{chull_traits_3<R>}.}
+\ccTypedef{typedef typename K::Point_3 Point_3;}{}
+\ccTypedef{typedef typename K::Plane_3 Plane_3;}{}
+\ccTypedef{typedef typename K::Vector_3 Vector_3;}{}
+\ccTypedef{typedef typename K::RT RT;}{}
+\ccTypedef{typedef Convex_hull_traits_3<K> ChullTraits;}{}
 \ccGlueEnd
 
 % -----------------------------------------------------------------------------
 \ccCreation
 \ccCreationVariable{traits}
+\ccSetThreeColumns{Vector_3}{traits.get_hw( Point_3 p);}{}
+\ccThreeToTwo
 
 \ccConstructor{ Width_default_traits_3( );}{default constructor.}
 
 % -----------------------------------------------------------------------------
 \ccOperations
 
-\ccSetThreeColumns{Vector}{get_point_coefficients();}{}
 \ccGlueBegin
-\ccMemberFunction{ RT get_hx(const Point& p) const;}{returns the
+\ccMemberFunction{ RT get_hx(const Point_3& p) const;}{returns the
   homogeneous $x$-coordinate of point $p$.}  
 
-\ccMemberFunction{ RT get_hy(const Point& p) const;}{returns the
+\ccMemberFunction{ RT get_hy(const Point_3& p) const;}{returns the
   homogeneous $y$-coordinate of point $p$.}  
 
-\ccMemberFunction{ RT get_hz(const Point& p) const;}{returns the
+\ccMemberFunction{ RT get_hz(const Point_3& p) const;}{returns the
   homogeneous $z$-coordinate of point $p$.}  
 
-\ccMemberFunction{ RT get_hw(const Point& p) const;}{returns the
+\ccMemberFunction{ RT get_hw(const Point_3& p) const;}{returns the
   homogenizing coordinate of point $p$.}  
 
-\ccMemberFunction{ void get_point_coordinates(const Point& p, RT& px,
+\ccMemberFunction{ void get_point_coordinates(const Point_3& p, RT& px,
   RT& py, RT& pz, RT& ph) const;}{returns all homogeneous coordinates
   of point $p$ at once.}
 \ccGlueEnd
 
 \ccGlueBegin
-\ccMemberFunction{ RT get_a(const Plane& f) const;}{returns the first
+\ccMemberFunction{ RT get_a(const Plane_3& f) const;}{returns the first
   coefficient of plane $f$.}
-\ccMemberFunction{ RT get_b(const Plane& f) const;}{returns the second
+\ccMemberFunction{ RT get_b(const Plane_3& f) const;}{returns the second
   coefficient of plane $f$.}
-\ccMemberFunction{ RT get_c(const Plane& f) const;}{returns the third
+\ccMemberFunction{ RT get_c(const Plane_3& f) const;}{returns the third
   coefficient of plane $f$.}
-\ccMemberFunction{ RT get_d(const Plane& f) const;}{returns the fourth
+\ccMemberFunction{ RT get_d(const Plane_3& f) const;}{returns the fourth
   coefficient of plane $f$.}
-\ccMemberFunction{ void get_plane_coefficients(const Plane& f, 
+\ccMemberFunction{ void get_plane_coefficients(const Plane_3& f, 
   RT& a, RT& b, RT& c, RT& d)
   const;}{returns all four plane coefficients of $f$ at once.}
 \ccGlueEnd
 
 \ccGlueBegin
-\ccMemberFunction{ Point make_point(const RT& hx, const RT& hy, const RT& hz, 
+\ccMemberFunction{ Point_3 make_point(const RT& hx, const RT& hy, const RT& hz,
   const RT& hw) const;}{returns a point of type
-  \ccc{Point} with homogeneous coordinates $hx$, $hy$, $hz$ and $hw$.}
-\ccMemberFunction{ Plane make_plane(const RT& a, const RT& b, const
-  RT& c, const RT& d) const;}{returns a plane of type \ccc{Plane}
+  \ccc{Point_3} with homogeneous coordinates $hx$, $hy$, $hz$ and $hw$.}
+\ccMemberFunction{ Plane_3 make_plane(const RT& a, const RT& b, const
+  RT& c, const RT& d) const;}{returns a plane of type \ccc{Plane_3}
   whose coefficients are $a$, $b$, $c$ and $d$.}
 \ccMemberFunction{ Vector make_vector(const RT& a, const RT& b, const
-  RT& c) const;}{returns a vector of type \ccc{Vector} with the four 
+  RT& c) const;}{returns a vector of type \ccc{Vector_3} with the four 
   coefficients $a$, $b$, $c$ and 1.}
-\ccGlueEnd
-
-\ccGlueBegin
-\ccMemberFunction{ void inverse_normal(Vector& normal);}{inverts the
-  vector \ccc{normal}, \ie \ccc{normal} becomes \ccc{-normal}.}
-\ccMemberFunction{ void opposite_plane(Plane& pl);}{computes the
-  opposite plane of \ccc{pl}, \ie the orientation of plane \ccc{pl} is
-  inverted.}
-\ccMemberFunction{ Vector orthogonal_vector(Plane& pl);} {returns the
-  vector, that is orthogonal to the plane \ccc{pl} and that points to
-  the positive side of \ccc{pl}.}
 \ccGlueEnd
 
 \ccRestoreThreeColumns
@@ -122,7 +113,7 @@ The template parameter \ccc{R} is a model for \ccc{Kernel}
 \ccSeeAlso
 
 \ccRefIdfierPage{CGAL::Width_3<Traits>}\\[1ex]
-\ccRefConceptPage{Width_traits_3}
+\ccRefConceptPage{WidthTraits_3}
 
 % -----------------------------------------------------------------------------
 

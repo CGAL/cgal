@@ -19,7 +19,7 @@
 // revision      : $Revision$
 // revision_date : $Date$
 //
-// author(s)     : Thomas Herrmann
+// author(s)     : Thomas Herrmann, Lutz Kettner
 // coordinator   : ETH Zuerich (Bernd Gaertner <gaertner@inf.ethz.ch>)
 //
 // implementation: 3D Width of a Point Set
@@ -28,29 +28,36 @@
 #ifndef CGAL_WIDTH_3_H
 #define CGAL_WIDTH_3_H
 
+#include <CGAL/basic.h>
 #include <cstdlib>
 #include <iostream>
-#include <CGAL/dd_geo/chull.h>
-#include <CGAL/dd_geo/chull_support_3.h>
-#include <CGAL/Halfedge_data_structure_using_list.h>
+#include <CGAL/convex_hull_3.h>
+// include a file from polyhedron to determine old or new design
 #include <CGAL/Polyhedron_3.h> 
+
+#ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
+#include <CGAL/Halfedge_data_structure_using_list.h>
+#else // CGAL_USE_POLYHEDRON_DESIGN_ONE //
+#include <CGAL/HalfedgeDS_list.h>
+#endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
+
 #include <CGAL/assertions.h>
 #include <CGAL/Width_polyhedron_3.h>
 #include <CGAL/width_assertions.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template<class _Traits>
+template<class Traits_>
 class Width_3 {
   // +----------------------------------------------------------------------+
   // | Typedef Area                                                         |
   // +----------------------------------------------------------------------+
  private:
-  typedef _Traits Traits;
-  typedef typename Traits::Point Point;
-  typedef typename Traits::RT RT;
-  typedef typename Traits::Vector Vector_3;
-  typedef typename Traits::Plane Plane_3;
+  typedef Traits_                   Traits;
+  typedef typename Traits::Point_3  Point_3;
+  typedef typename Traits::Vector_3 Vector_3;
+  typedef typename Traits::Plane_3  Plane_3;
+  typedef typename Traits::RT       RT;
 
   // +----------------------------------------------------------------------+
   // | Variable Declaration                                                 |
@@ -63,7 +70,7 @@ class Width_3 {
   // Width itself
   RT WNum,WDenom;
 
-  //Planes and directions are derived from these varibales 
+  // Planes and directions are derived from these variables 
 
   // A list with all quadruples A/K, B/K, C/K, D/K
   std::vector< std::vector<RT> > allsolutions;
@@ -75,8 +82,7 @@ class Width_3 {
   Traits tco;
   
   //The new origin to know how to translate back
-  Point neworigin;
-
+  Point_3 neworigin;
 
 
   // +----------------------------------------------------------------------+
@@ -93,6 +99,7 @@ class Width_3 {
     simplify_solution(a,b,c,d,k);
 #endif
   }
+
   void get_squared_width(RT& num, RT& denom) {
     num=WNum;
     denom=WDenom;
@@ -165,45 +172,34 @@ class Width_3 {
   // | The Con- and Destructors                                             |
   // +----------------------------------------------------------------------+
  public:
-  Width_3(): A(0), B(0), C(0), D(2), K(1), WNum(0), 
-    WDenom(1) {}
+  Width_3(): A(0), B(0), C(0), D(2), K(1), WNum(0), WDenom(1) {}
 
   template<class InputIterator>
-    Width_3(const InputIterator begin, const InputIterator beyond):
+  Width_3( InputIterator begin, InputIterator beyond):
     A(0), B(0), C(0), D(2), K(1), WNum(0), WDenom(1) {
     INFOMSG(INFO,"Waiting for new HDS to build class Width_Polyhedron!"
 	    <<std::endl<<"Working with extern additional data structures.");
-    
     typedef typename Traits::ChullTraits CHT;
-    typedef CGAL::Width_polyhedron_default_traits_3<Point, 
-      Vector_3, Plane_3, Traits> PolyTraits;
-    typedef CGAL::Width_vertex_default_base<Point,Traits> VertexStructure;
-    typedef CGAL::Width_halfedge_default_base HalfedgeStructure;
-    typedef CGAL::Width_facet_default_base<Vector_3,Plane_3,Traits> 
-      FacetStructure;
-    typedef CGAL::Halfedge_data_structure_using_list<VertexStructure,
-      HalfedgeStructure,FacetStructure> HDS;
-    typedef CGAL::Polyhedron_3< PolyTraits, HDS > LocalPolyhedron;
-    typedef chull< CHT, Point, Plane_3> ChullType;
-    ChullType CH(3);
-    InputIterator first=begin;
-    for ( ; first != beyond ; ++first)  CH.insert(*first);
-
-#ifndef DDGEO_STL_ITERATORS
-    GRAPH<Point,int> G; 
-    d3_surface_map( CH, G);
-    G.compute_faces();
-    Build_polyhedron_from_GRAPH< HDS>  polyhedron_maker( G );
-#else
-    Build_polyhedron_from_chull< HDS, ChullType>  polyhedron_maker( CH);
-#endif // DDGEO_STL_ITERATORS
+#ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
+    // We are in namespace CGAL.
+    typedef Width_vertex_default_base<Point_3,Traits>       VertexStructure;
+    typedef Width_halfedge_default_base                     HalfedgeStructure;
+    typedef Width_facet_default_base<Vector_3,Plane_3,Traits> 
+                                                            FacetStructure;
+    typedef Halfedge_data_structure_using_list<
+        VertexStructure, HalfedgeStructure, FacetStructure> HDS;
+    typedef Polyhedron_3< Traits, HDS >                     LocalPolyhedron;
+#else // CGAL_USE_POLYHEDRON_DESIGN_ONE //
+    typedef Width_polyhedron_items_3                        Items;
+    typedef Polyhedron_3< Traits, Items, HalfedgeDS_list>   LocalPolyhedron;
+#endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
     LocalPolyhedron P;
-    P.delegate( polyhedron_maker );
+    convex_hull_3( begin, beyond, P, CHT());
     width_3_convex(P);
   }
   
   template <class InputPolyhedron>
-    Width_3(InputPolyhedron& Poly):
+  Width_3(InputPolyhedron& Poly):
     A(0), B(0), C(0), D(2), K(1), WNum(0), WDenom(1) {
     // Compute convex hull with new width_polyhedron structure
     INFOMSG(INFO,"Working with extern additional data structures.");
@@ -1044,7 +1040,7 @@ class Width_3 {
     DEBUGMSG(EE_COMPUTATION,"\nBegin EE_COMPUTATION");
     //Compute end points of e and two witnesses: Each in one of the two
     //facets participating 
-    Point p,q;
+    Point_3 p,q;
     p=e->opposite()->vertex()->point();
     q=e->vertex()->point();
     typename InputDA::Vertex_handle w1=e->next()->vertex();
@@ -1181,7 +1177,7 @@ class Width_3 {
 		  Halfedge_handle_& e,
 		  std::vector<Halfedge_handle_>& impassable) {
     DEBUGMSG(EE_PAIRS,"\nBegin EE_PAIRS");
-    Point p,q;
+    Point_3 p,q;
     p=e->opposite()->vertex()->point();
     q=e->vertex()->point();
     typename InputDA::Vertex_handle w1=e->next()->vertex();
