@@ -17,7 +17,6 @@ General
 - Can we have : typedef Vertex * Vertex_handle; ?
   Problem is const-correctness (see HDS and its Vertex_const_handle...).
 - Deriver Triangulation de TDS ?
-- virer push-back
 
 TEST SUITE
 - faire tourner GCOV sur la test-suite, et rajouter ce qu'il faut pour
@@ -50,6 +49,8 @@ T3
   cf Polyhedron_3, file I/O.
 
 Delaunay
+- le numero de vertex necessaire au remove devrait etre un requirement de
+  Delaunay sur VertexBase, et le compteur, un data member de Delaunay.
 - optimiser remove
 - For Delaunay, we can use the visibility (non stochastic) walk.  How to
   choose ?  Is it worth the complexity (benchmark first) ?
