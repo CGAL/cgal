@@ -116,16 +116,18 @@
 % Try if a style file exists. Give a warning if not (no error as 
 % for \lcStyleFile itself.) Try local files and LATEX_CONV_INPUTS files
 % first, then try \lciConfigPath.
+% Param 1: filename of style file without suffix. 
+%          The file #1.sty must then exist in the search path (preference)
+%          or the config path.
 \newcommand{\lcTryStyleFile}[1]{%
     \lciIfDefined{\lciLoadedStyle_#XC1}{}{%
         \lciIfDefined{\lciSkipStyle_#XC1}{}{%
             \lciTryInputStyleFile{\lciConfigPath}{#XC1}%
             \gdef{\lciLoadedStyle_#XC1}{}}}}
 \newcommand{\lciTryInputStyleFile}[2]{%
-    \lciIfFileExists{#XC1#C2.sty}{\lciInclude{#XC1#C2.sty}}{%
-        \lciIfFileExists{#C2}{\lciInclude{#C2}}{%
-            \lciIfFileExists{#XC1#C2}{\lciInclude{#XC1#C2}}{%
-                \lciMessage{\nWARNING: Style file '#C2' does not exist.\n}}}}}
+    \lciIfFileExists{#C2.sty}{\lciInclude{#C2.sty}}{%
+        \lciIfFileExists{#XC1#C2.sty}{\lciInclude{#XC1#C2.sty}}{%
+            \lciMessage{\nWARNING: Style file '#C2.sty' does not exist.\n}}}}
 
 
 % ___________________________________________________________________________
