@@ -40,7 +40,7 @@ class Progress_indicator_ostream : public Progress_indicator
   }
   void operator++(int) {
     Base::operator++();
-#ifndef CGAL_DISABLE_PROGRESS_INDICATOR_STATUS
+#ifdef CGAL_ENABLE_PROGRESS_INDICATOR_STATUS
     os.width(6);
     os<<percentage()<<'%'<<separator;
     os<<separator;
