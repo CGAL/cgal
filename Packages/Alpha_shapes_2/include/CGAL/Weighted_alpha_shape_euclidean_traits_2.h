@@ -48,13 +48,13 @@ public:
   
   result_type operator()(const T& p, const T& q, const T& r)
     {
-      return std::max
+      return max
 	(return_type(0), CGAL::squared_radius_orthogonalcircle(p, q, r));
     }
 
   result_type operator()(const T& p, const T& q)
     {
-      return std::max
+      return max
 	(return_type(0), CGAL::squared_radius_smallest_orthogonalcircle(p, q));
     }
 };
