@@ -51,10 +51,10 @@ public:
   typedef typename StatusLine::iterator StatusLineIter;
 
   typedef std::list<Point_2> VerticalXPointList;
-  typedef VerticalXPointList::iterator VerticalXPointListIter; 
+  typedef typename VerticalXPointList::iterator VerticalXPointListIter; 
 
   typedef std::list<SubCurve *> VerticalCurveList;
-  typedef VerticalCurveList::iterator VerticalCurveListIter;
+  typedef typename VerticalCurveList::iterator VerticalCurveListIter;
 
   /*! Constructor */
   Sweep_line_event(const Point_2 &point, Traits *traits) :
@@ -477,7 +477,7 @@ Sweep_line_event<SweepLineTraits_2, CurveWrap>::
 PrintVerticalXPoints()
 {
   std::cout << "Vertical intersection points for " << m_point << ":\n";
-  std::list<Point_2>::iterator iter = m_verticalCurveXPoints.begin();
+  typename std::list<Point_2>::iterator iter = m_verticalCurveXPoints.begin();
   while ( iter != m_verticalCurveXPoints.end() )
   {
     std::cout << "\t" << *iter << "\n";
