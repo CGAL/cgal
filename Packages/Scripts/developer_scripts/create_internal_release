@@ -791,6 +791,7 @@ sub make_testscripts()
     print "Creating makefiles in examples\n";
     foreach $DIR (glob("*")) {
 	if ( -d $DIR ) {
+	    system("$SCRIPTSDIR/../developer_scripts/examples/C2vcproj", $DIR); # Windows specific stuff
 	    chdir $DIR;
 	    if ( -f 'Makefile') {
 		rename 'Makefile', 'makefile';

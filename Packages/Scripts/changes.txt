@@ -1,3 +1,6 @@
+21 May Sylvain Pion
+- create_internal_release : Call C2vcproj (was done elsewhere before).
+
 13 May Radu Ursu
 - added cgalversiondate macro in version.tex, generated 
   by create_internal_release script  
