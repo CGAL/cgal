@@ -30,6 +30,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/memory.h>
+#include <CGAL/vector.h>
 #include <CGAL/HalfedgeDS_iterator_adaptor.h>
 #include <CGAL/HalfedgeDS_items_decorator.h>
 #include <algorithm>
@@ -76,7 +77,8 @@ public:
     typedef typename Allocator::template rebind< Face> Face_alloc_rebind;
     typedef typename Face_alloc_rebind::other          Face_allocator;
 
-    typedef std::vector<Vertex, Vertex_allocator>      Vertex_vector;
+    //typedef std::vector<Vertex, Vertex_allocator>      Vertex_vector;
+    typedef ::CGALi::vector<Vertex, Vertex_allocator>  Vertex_vector;
     typedef typename Vertex_vector::iterator           Vertex_I;
     typedef typename Vertex_vector::const_iterator     Vertex_CI;
     typedef HalfedgeDS_iterator_adaptor<Vertex_I>      Vertex_iterator;
@@ -84,7 +86,8 @@ public:
     typedef Vertex_iterator                            Vertex_handle;
     typedef Vertex_const_iterator                      Vertex_const_handle;
 
-    typedef std::vector<Halfedge, Halfedge_allocator>  Halfedge_vector;
+    //typedef std::vector<Halfedge, Halfedge_allocator>  Halfedge_vector;
+    typedef ::CGALi::vector<Halfedge, Halfedge_allocator>  Halfedge_vector;
     typedef typename Halfedge_vector::iterator         Halfedge_I;
     typedef typename Halfedge_vector::const_iterator   Halfedge_CI;
     typedef HalfedgeDS_iterator_adaptor<Halfedge_I>    Halfedge_iterator;
@@ -92,7 +95,8 @@ public:
     typedef Halfedge_iterator                          Halfedge_handle;
     typedef Halfedge_const_iterator                    Halfedge_const_handle;
 
-    typedef std::vector<Face, Face_allocator>          Face_vector;
+    //typedef std::vector<Face, Face_allocator>          Face_vector;
+    typedef ::CGALi::vector<Face, Face_allocator>      Face_vector;
     typedef typename Face_vector::iterator             Face_I;
     typedef typename Face_vector::const_iterator       Face_CI;
     typedef HalfedgeDS_iterator_adaptor<Face_I>        Face_iterator;

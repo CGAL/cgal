@@ -1,5 +1,10 @@
 HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
+
+3.24 (26 Mar 2002)
+
+     - Changed HalfedgeDS_vector to use CGALi::vector class.
+
 3.23 (21 Mar 2002)
 
      - Split typedef and static section of HalfedgeDS_list and 
