@@ -1,0 +1,8 @@
+Version 1.2 (16 May 01) [af]
+- put it in namespace. 
+- changed Largest_Empty_Rect to Largest_empty_iso_rectangle_2
+- changed point_data to Point_data
+- put the poygon related stuff in comments (will probably be removed later)
+- changed template argument: not NT but a traits class
+- replaced add_point(..) with insert(..)
+- replaced Bbox with Iso_rectangle_2
