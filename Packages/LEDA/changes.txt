@@ -1,0 +1,1 @@
+1.0 first version of the new package
