@@ -45,16 +45,31 @@ The underlying algorithm can cope with all kinds of input, e.g.~$P$ may be
 empty or points may occur more than once. The algorithm computes a support
 set $S$ which remains fixed until the next insert or clear operation.
 
+{\bf Please note:} This class is (almost) obsolete. The class
+\ccc{CGAL::Min_sphere_of_spheres_d<Traits>} solves a more general problem
+and is faster then \ccRefName\, even if used only for points in two
+dimensions as input. Most importantly, 
+\ccc{CGAL::Min_sphere_of_spheres_d<Traits>} has
+a specialized implementation for floating-point arithmetic which
+ensures correct results in a large number of cases (including
+highly degenerate ones). In contrast, \ccRefName\ is not tuned for
+floating-point computations. The only advantage of 
+\ccRefName\ over \ccc{CGAL::Min_sphere_of_spheres_d<Traits>} is that the
+former can deal with points in homogeneous coordinates, in which 
+case the algorithm is division-free. Thus, \ccRefName\ might still
+be an option in case your input number type cannot (efficiently) 
+divide.
+
 \ccInclude{CGAL/Min_circle_2.h}
 
 % -----------------------------------------------------------------------------
 \ccRequirements
 \ccIndexRequirements
 
-The template parameter \ccc{Traits} is a model for \ccc{Min_circle_2_traits}.
+The template parameter \ccc{Traits} is a model for \ccc{MinCircle2Traits}.
 
-We provide the model \ccc{Min_circle_2_traits_2} using the two-dimensional
-\cgal~kernel.
+We provide the model \ccc{CGAL::Min_circle_2_traits_2} using the 
+two-dimensional \cgal~kernel.
 
 % -----------------------------------------------------------------------------
 \ccTypes
@@ -296,6 +311,7 @@ An object \ccVar\ is valid, iff
 
 \ccRefIdfierPage{CGAL::Min_ellipse_2<Traits>}\\
 \ccRefIdfierPage{CGAL::Min_sphere_d<Traits>}\\[1ex]
+\ccRefIdfierPage{CGAL::Min_sphere_of_spheres_d<Traits>}\\[1ex]
 \ccRefIdfierPage{CGAL::Min_circle_2_traits_2<K>}\\[1ex]
 \ccRefConceptPage{MinCircle2Traits}
 
