@@ -1,3 +1,0 @@
-fixes for iterator_traits deficiencies for VC 7.0 beta1
-
-This subdirectory must come first in the list of include subdirectories.
