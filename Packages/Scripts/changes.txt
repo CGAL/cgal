@@ -1,3 +1,6 @@
+06 May 2004 Sylvain Pion
+- autotest_cgal : don't assume "." is in $PATH.
+
 04 May 2004 Radu Ursu
 - SUN has a problem when export is on the same call with the assignement,
   so I had to split the call in autotest_cgal into 2 pieces: 
