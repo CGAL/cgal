@@ -39,11 +39,9 @@ public:
   enum Point_type{REG, BOT_RIGHT, BOT_LEFT, TOP_LEFT, TOP_RIGHT};
   typedef typename T::FT NT;
   typedef typename T::Point_2               Point;
-  //  typedef typename T::Vector_2              Vector_2; 
   typedef typename T::Iso_rectangle_2       Iso_rectangle_2;
-
-
   typedef T                        Traits;
+
 private:
 
   bool cache_valid;
@@ -85,28 +83,27 @@ private:
   // was x_smaller
   bool less_xy(const Point_data *a, const Point_data *b) const
   {
-    return geom_traits().less_xy_2_object()(a->p, b->p);
+    return traits().less_xy_2_object()(a->p, b->p);
   }
 
   // was y_smaller
   bool less_yx(const Point_data *a, const Point_data *b) {
-    return geom_traits().less_yx_2_object()(a->p, b->p);
+    return traits().less_yx_2_object()(a->p, b->p);
     }
 
   // was x_larger
   bool larger_xy(const Point_data *a, const Point_data *b) {
-    return geom_traits().compare_xy_2_object()(a->p, b->p) == LARGER;
+    return traits().compare_xy_2_object()(a->p, b->p) == LARGER;
   }
 
   // was y_larger
   bool larger_yx(const Point_data *a, const Point_data *b) {
-    //Comparison_result c = geom_traits().compare_yx_2_object()(a->p, b->p);
-    Comparison_result c = geom_traits().compare_y_2_object()(a->p, b->p);
+
+    Comparison_result c = traits().compare_y_2_object()(a->p, b->p);
     if(c == LARGER) {
       return true;
     } else if (c == EQUAL) {
-      return geom_traits().less_x_2_object()(b->p, a->p); //af: check
-      /*geom_traits().less_xy_2_object()(b->p, a->p);*/
+      return traits().less_x_2_object()(b->p, a->p); 
     } 
     return false;
   }
@@ -243,7 +240,7 @@ public:
                            const Point*> const_iterator;
 
 
-  const Traits & geom_traits() const {return _gt;};
+  const Traits & traits() const {return _gt;};
 
   // ctor
   Largest_empty_iso_rectangle_2(const Point& bl, const Point& tr);
@@ -384,8 +381,8 @@ Largest_empty_iso_rectangle_2<T>::
 Largest_empty_iso_rectangle_2(
                const Largest_empty_iso_rectangle_2<T>& ler)
 : cache_valid(false), _gt(),
-  x_sorted(Less_xy(geom_traits())),
-  y_sorted(Less_yx(geom_traits()))
+  x_sorted(Less_xy(traits())),
+  y_sorted(Less_yx(traits()))
 {
   copy_memory(ler);
 }
@@ -433,9 +430,9 @@ Largest_empty_iso_rectangle_2<T>::insert(const Point& _p)
 
   cache_valid = false;
   Point_data_set_of_y *right_tent =
-    new Point_data_set_of_y(Less_yx(geom_traits()));
+    new Point_data_set_of_y(Less_yx(traits()));
   Point_data_set_of_y *left_tent =
-    new Point_data_set_of_y(Less_yx(geom_traits()));
+    new Point_data_set_of_y(Less_yx(traits()));
   po = new Point_data(_p,right_tent,left_tent,REG);
 
   x_sorted.insert(po);
@@ -458,8 +455,8 @@ Largest_empty_iso_rectangle_2<T>::remove(const Point& _p)
   if(iter1 == x_sorted.end() || (*iter1)->type != REG)
     return(false);
 
-  delete((*iter1)->right_tent); // af: was iter
-  delete((*iter2)->left_tent);  // af: was iter
+  delete((*iter1)->right_tent);
+  delete((*iter2)->left_tent);
 
   x_sorted.erase(iter1);
   y_sorted.erase(iter2);
@@ -563,9 +560,9 @@ Largest_empty_iso_rectangle_2<T>::insert(const Point& _p,
 
   cache_valid = false;
   Point_data_set_of_y *right_tent =
-    new Point_data_set_of_y(Less_yx(geom_traits()));
+    new Point_data_set_of_y(Less_yx(traits()));
   Point_data_set_of_y *left_tent = 
-    new Point_data_set_of_y(Less_yx(geom_traits()));
+    new Point_data_set_of_y(Less_yx(traits()));
   po = new Point_data(_p,right_tent,left_tent,i_type);
 
   x_sorted.insert(po);
@@ -1162,8 +1159,8 @@ Largest_empty_iso_rectangle_2<T>::Largest_empty_iso_rectangle_2(
   const Point& bl,
   const Point& tr)
   : cache_valid(false), _gt(),
-    x_sorted(Less_xy(geom_traits())),
-    y_sorted(Less_yx(geom_traits()))
+    x_sorted(Less_xy(traits())),
+    y_sorted(Less_yx(traits()))
 {
   // precondition: bl and tr
   init(bl, tr);
@@ -1174,8 +1171,8 @@ template<class T>
 Largest_empty_iso_rectangle_2<T>::Largest_empty_iso_rectangle_2(
   const Iso_rectangle_2 &b)
   : cache_valid(false), _gt(),
-    x_sorted(Less_xy(geom_traits())),
-    y_sorted(Less_yx(geom_traits()))
+    x_sorted(Less_xy(traits())),
+    y_sorted(Less_yx(traits()))
 {
   init(b.min(), b.max());
 }
@@ -1184,8 +1181,8 @@ Largest_empty_iso_rectangle_2<T>::Largest_empty_iso_rectangle_2(
 template<class T>
 Largest_empty_iso_rectangle_2<T>::Largest_empty_iso_rectangle_2()
   : cache_valid(false), _gt(),
-    x_sorted(Less_xy(geom_traits())),
-    y_sorted(Less_yx(geom_traits()))
+    x_sorted(Less_xy(traits())),
+    y_sorted(Less_yx(traits()))
 {
   Point bl(0,0);
   Point tr(1,1);
