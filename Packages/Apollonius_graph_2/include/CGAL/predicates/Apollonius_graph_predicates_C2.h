@@ -11,8 +11,7 @@
 // release       : 
 // release_date  : 
 //
-// file          : include/CGAL/predicates/
-//                                    Apollonius_graph_predicates_C2.h
+// file          : include/CGAL/predicates//Apollonius_graph_predicates_C2.h
 // package       : Apollonius_graph_2
 // source        : $RCSfile$
 // revision      : $Revision$
