@@ -32,7 +32,6 @@
 #include <CGAL/Quotient.h>
 
 #include <CGAL/representation_tags.h>
-#include <CGAL/predicate_objects_on_points_2.h>
 #include <CGAL/Kernel/function_objects.h>
 #include <CGAL/PointHd.h>
 

@@ -57,7 +57,6 @@
 
 #include <CGAL/Cartesian/basic_constructions_2.h>
 
-#include <CGAL/predicate_objects_on_points_2.h>
 #include <CGAL/Kernel/function_objects.h>
 
 #include <CGAL/Cartesian/Point_3.h>

@@ -1,5 +1,6 @@
 2.61   (?? January 2002)
 - Fixes for VC++.
+- removed obsolete include of predicate_objects_on_points_2.h
 
 2.60   (23 January 2002)
 - Remove Point_2_base and such typedefs.
