@@ -33,7 +33,7 @@ ch_value_type(const Iterator&)
   typedef typename std::iterator_traits<Iterator>::value_type  v_type;
   return static_cast<v_type*>(0);
 }
-#if defined(__sun) && (__SUNPRO_CC == 0x530) 
+#ifdef CGAL_CFG_MATCHING_BUG_3
 template <class Iterator>
 inline 
 typename std::iterator_traits<Iterator*>::value_type*
