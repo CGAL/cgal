@@ -1,4 +1,4 @@
-1.68 (17 Sep 2003) [af]
+1.59 (17 Sep 2003) [af]
 - Removed Polygon_traits
 
 1.58 (16 Sep 2003) [af]
