@@ -19,7 +19,8 @@ CXXFLAGS = -I../../../Triangulation_2/include \
            -I../../include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
-           $(OTHER_CXXFLAGS)
+           $(OTHER_CXXFLAGS) \
+	   -g 
 
 #---------------------------------------------------------------------#
 #                    linker flags

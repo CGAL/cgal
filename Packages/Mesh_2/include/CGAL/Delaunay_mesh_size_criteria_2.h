@@ -98,7 +98,7 @@ public:
 	Construct_triangle_2;
       typedef typename Geom_traits::FT FT;
 
-      Geom_traits traits;
+      Geom_traits traits; /** @warning traits with data!! */
 
       Compute_area_2 area_2 = 
         traits.compute_area_2_object();
@@ -121,31 +121,33 @@ public:
 	c = CGAL::to_double(squared_distance(pa, pb));
       
       double min_sine; // squared minimum sine
-      double max_lenght; // squared max edge length
+      double max_length; // squared max edge length
       
       if(a<b)
 	{
 	  if(a<c) min_sine = area/(b*c);
 	  else min_sine = area/(a*b);
 	  
-	  if(b<c) max_lenght = c;
-	  else max_lenght = b;
+	  if(b<c) max_length = c;
+	  else max_length = b;
 	}
       else
 	{
 	  if(b<c) min_sine = area/(a*c);
 	  else min_sine = area/(a*b);
 	  
-	  if(a<c) max_lenght = c;
-	  else max_lenght = a;
+	  if(a<c) max_length = c;
+	  else max_length = a;
 	}
       
       q.first = min_sine;
-      q.second = max_lenght;
+      q.second = 1; // normalized by size bound to deal with
+                    // size field
       
       if( min_sine < this->B ) return true;
       if( SB == 0 ) return false;
-      return ( max_lenght > SB );
+      q.second = max_length / SB;
+      return ( max_length > SB ); /** @todo If max_length > SB
     }
   };
 

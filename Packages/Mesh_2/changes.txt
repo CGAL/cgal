@@ -1,3 +1,7 @@
+20 October 2004 Laurent Rineau
+- fixed details in Delaunay_mesh_size_criteria_2.h
+  and marked todo and warning
+
 19 October 2004 Laurent Rineau
 - Revert changes from 2004/10/17. Refine_edges_for_refine_faces no
   longer exists. The conflicts zone of a point is calculated by using
