@@ -149,56 +149,6 @@ operator<<(Geomview_stream &G,
            const Polyhedron_3<Traits,HDS> &P);}
 {Inserts the polyhedron \ccc{P} into the stream \ccVar.}
 
-%% There is no tetrahedralization class at the moment
-%% 
-%% \ccFunction{template <class Traits>
-%%             Geomview_stream&
-%%             operator<<(Geomview_stream& G,
-%%                        const Tetrahedralization_3<Traits>& T);}
-%% {Inserts the tetrahedralization \ccc{T} into the stream \ccVar.}
-%% 
-%% For geometric structures as a tetrahedalization only one Geomview
-%% object is created. If you want to select a single simplex you have
-%% to insert the simplices individually with the following operator.
-%% 
-%% \ccFunction{template <class V>
-%%             Geomview_stream&
-%%             operator<<(Geomview_stream& G,
-%%                        const Tetrahedralization_simplex<V>* s);}
-%% {Inserts the tetrahedralization simplex \ccc{s} into the stream \ccVar.}
-%% 
-%% 
-%% \ccFunction{template < class V >
-%%             Geomview_stream&
-%%             operator>>(Geomview_stream &G,
-%%                        Tetrahedralization_simplex<V>*& s);}
-%% {Assigns the pointer to the tetrahedralization simplex the user selected
-%%  with the right mouse button to variable \ccc{s}. 
-%% \ccPrecond It is in the responsibility of the user to guarantee that the
-%% pointer still points to memory allocated for a simplex.}
-%% 
-%% 
-%% \ccFunction{template <class P>
-%%             Geomview_stream&
-%%             operator<<(Geomview_stream& G,
-%%                        const Tetrahedralization_vertex<P>* v);}
-%% {Inserts the tetrahedralization vertex \ccc{v} into the stream \ccVar.
-%%  Vertices are drawn as a cube with twice \ccc{G.get_vertex_radius}
-%%  as side length. This value is 1/100'th of the \ccc{x}-length of the
-%% initial bounding box.}
-%% 
-%% 
-%% \ccFunction{template < class P>
-%%             Geomview_stream&
-%%             operator>>(Geomview_stream &G,
-%%                        Tetrahedralization_vertex<V>*& v);}
-%% {Assigns the pointer to the tetrahedralization vertex the user selected
-%%  with the right mouse button to variable \ccc{v}. 
-%% \ccPrecond It is in the responsibility of the user to guarantee that the
-%% pointer still points to memory allocated for a vertex.}
-%% 
-%% end of commented section
-
 \ccHeading{Colors}
 
 Geomview distinguishes between edge and face colors. The edge color
@@ -303,17 +253,6 @@ stream is in ascii mode.}
 
 \ccMethod{void set_binary_mode();}{}
 \ccMethod{void set_ascii_mode();}{}
-
-For convenience we offer the manipulators \ccc{ascii} and \ccc{binary}
-that can be inserted in the stream.
-
-\ccMethod{Geomview_stream&
-            operator<<(ascii);}
-{Sets the stream in ascii mode.}
-
-\ccMethod{Geomview_stream&
-            operator<<(binary);}
-{Sets the stream in binary mode.}
 
 \end{ccAdvanced}
 
