@@ -128,12 +128,12 @@
 % -----------------------------------------------------------------------
 %\setlength{\ccRefTabLift}{12.5mm}
 
-% you may also want to use these commands, but be careful to check that
-% other redefinitions of ccRefPageBegin and End don't cause strange problems
+% Be careful to check that other redefinitions of ccRefPageBegin and 
+% ccRefPageEnd don't cause strange problems
 % (e.g. if ccAdvanced is used to bracket a ref page)
 % -------------------------------------------------------------------------
-%\def\ccRefPageBegin{\ccParDims\cgalcolumnlayout}
-%\def\ccRefPageEnd{\ccParDims\cgalcolumnlayout}
+\def\ccRefPageBegin{\ccParDims\cgalcolumnlayout}
+\def\ccRefPageEnd{\ccParDims\cgalcolumnlayout}
 
 
 % All identifiers reside in CGAL scope by default
