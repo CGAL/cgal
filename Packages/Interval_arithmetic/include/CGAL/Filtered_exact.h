@@ -486,6 +486,12 @@ double
 to_double (const Filtered_exact<CT, ET, Type, Protected, Cache>& fil)
 { return CGAL::to_double(fil.value()); }
 
+template < class CT, class ET, class Type, bool Protected, class Cache >
+inline
+std::pair<double, double>
+to_interval (const Filtered_exact<CT, ET, Type, Protected, Cache>& fil)
+{ return CGAL::to_interval(fil.value()); }
+
 namespace NTS {
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
