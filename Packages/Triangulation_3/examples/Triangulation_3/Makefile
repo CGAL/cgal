@@ -30,8 +30,9 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: example1 example_tds
-	./example1
+all: example_simple example_hierarchy example_tds
+	./example_simple
+	./example_hierarchy
 	./example_tds
 
 example_simple: ../../src/Triangulation_3.o example_simple.o

@@ -1,3 +1,8 @@
+Version 1.64 (20 June 01)
+- new demo for vertex removal
+- new example for hierarchy
+- doc fixes for tds (new signature for insert methods)
+
 Version 1.63 (20 June 01)
 - doc for hierarchy fixed
 - cleanup in examples, demo
