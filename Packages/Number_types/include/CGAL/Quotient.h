@@ -7,10 +7,10 @@
 // intended for general use.
 //
 // ----------------------------------------------------------------------
-// 
-// release       : 
-// release_date  : 
-// 
+//
+// release       :
+// release_date  :
+//
 // file          : Quotient.h
 // package       : Number_types
 // revision      : $Revision$
@@ -65,17 +65,16 @@ class Quotient
   typedef Tag_false  Has_gcd;
   typedef Tag_true   Has_division;
   typedef Tag_false  Has_sqrt;
-  
-  Quotient() : num( NT(0) ), den( NT(1) ) {}
+
+  Quotient() : num(0), den(1) {}
 
   template <class T>
-  Quotient(const T& n) : num(n), den( NT(1) ) {}
+  Quotient(const T& n) : num(n), den(1) {}
 
-  Quotient(const NT& n, const NT& d) : num(n), den(d)
-  { CGAL_kernel_precondition( d!= NT(0) ); }
-  
-  Quotient(const Quotient<NT>& r) : num(r.num), den(r.den) {}
-  
+  template <class T1, class T2>
+  Quotient(const T1& n, const T2& d) : num(n), den(d)
+  { CGAL_precondition( d != 0 ); }
+
   Quotient<NT>& operator+= (const Quotient<NT>& r);
   Quotient<NT>& operator-= (const Quotient<NT>& r);
   Quotient<NT>& operator*= (const Quotient<NT>& r);
@@ -88,9 +87,9 @@ class Quotient
   Quotient<NT>& operator-= (const CGAL_int(NT)& r);
   Quotient<NT>& operator*= (const CGAL_int(NT)& r);
   Quotient<NT>& operator/= (const CGAL_int(NT)& r);
-  
+
   Quotient<NT>&    normalize();
-  
+
   const NT&   numerator()   const { return num; }
   const NT&   denominator() const { return den; }
 
@@ -107,22 +106,22 @@ Quotient<NT>::normalize()
 {
   if (num == den)
   {
-      num = den = NT(1);
-      return (*this);
+      num = den = 1;
+      return *this;
   }
   if (-num == den)
   {
-      num = NT(-1);
-      den = NT( 1);
-      return (*this);
+      num = -1;
+      den = 1;
+      return *this;
   }
   NT ggt = gcd(num, den);
-  if (ggt != NT(1) )
+  if (ggt != 1 )
   {
       num /= ggt;
       den /= ggt;
   }
-  return (*this);
+  return *this;
 }
 
 template <class NT>
@@ -132,7 +131,7 @@ Quotient<NT>::operator+= (const Quotient<NT>& r)
 {
     num = num * r.den + r.num * den;
     den *= r.den;
-    return (*this);
+    return *this;
 }
 
 template <class NT>
@@ -142,7 +141,7 @@ Quotient<NT>::operator-= (const Quotient<NT>& r)
 {
     num = num * r.den - r.num * den;
     den *= r.den;
-    return (*this);
+    return *this;
 }
 
 template <class NT>
@@ -152,7 +151,7 @@ Quotient<NT>::operator*= (const Quotient<NT>& r)
 {
     num *= r.num;
     den *= r.den;
-    return (*this);
+    return *this;
 }
 
 template <class NT>
@@ -160,10 +159,10 @@ CGAL_KERNEL_INLINE
 Quotient<NT>&
 Quotient<NT>::operator/= (const Quotient<NT>& r)
 {
-    CGAL_kernel_precondition( r.num != NT(0) );
+    CGAL_precondition( r.num != 0 );
     num *= r.den;
     den *= r.num;
-    return (*this);
+    return *this;
 }
 
 template <class NT>
@@ -171,8 +170,8 @@ CGAL_KERNEL_INLINE
 Quotient<NT>&
 Quotient<NT>::operator+= (const NT& r)
 {
-    num = num + r * den;
-    return (*this);
+    num += r * den;
+    return *this;
 }
 
 template <class NT>
@@ -180,8 +179,8 @@ CGAL_KERNEL_INLINE
 Quotient<NT>&
 Quotient<NT>::operator-= (const NT& r)
 {
-    num = num - r * den;
-    return (*this);
+    num -= r * den;
+    return *this;
 }
 
 template <class NT>
@@ -189,8 +188,8 @@ CGAL_KERNEL_INLINE
 Quotient<NT>&
 Quotient<NT>::operator*= (const NT& r)
 {
-    num *= r ;
-    return (*this);
+    num *= r;
+    return *this;
 }
 
 template <class NT>
@@ -198,9 +197,9 @@ CGAL_KERNEL_INLINE
 Quotient<NT>&
 Quotient<NT>::operator/= (const NT& r)
 {
-    CGAL_kernel_precondition( r != NT(0) );
-    den *= r ;
-    return (*this);
+    CGAL_precondition( r != 0 );
+    den *= r;
+    return *this;
 }
 
 template <class NT>
@@ -208,8 +207,8 @@ CGAL_KERNEL_INLINE
 Quotient<NT>&
 Quotient<NT>::operator+= (const CGAL_int(NT)& r)
 {
-    num = num + r * den;
-    return (*this);
+    num += r * den;
+    return *this;
 }
 
 template <class NT>
@@ -217,8 +216,8 @@ CGAL_KERNEL_INLINE
 Quotient<NT>&
 Quotient<NT>::operator-= (const CGAL_int(NT)& r)
 {
-    num = num - r * den;
-    return (*this);
+    num -= r * den;
+    return *this;
 }
 
 template <class NT>
@@ -227,7 +226,7 @@ Quotient<NT>&
 Quotient<NT>::operator*= (const CGAL_int(NT)& r)
 {
     num *= r;
-    return (*this);
+    return *this;
 }
 
 template <class NT>
@@ -235,9 +234,9 @@ CGAL_KERNEL_INLINE
 Quotient<NT>&
 Quotient<NT>::operator/= (const CGAL_int(NT)& r)
 {
-    CGAL_kernel_precondition( r != NT(0) );
+    CGAL_precondition( r != 0 );
     den *= r;
-    return (*this);
+    return *this;
 }
 
 template <class NT>
@@ -248,7 +247,7 @@ quotient_cmp(const Quotient<NT>& x, const Quotient<NT>& y)
     // No assumptions on the sign of  den  are made
 
     // code assumes that SMALLER == - 1;
-    CGAL_kernel_precondition( SMALLER == static_cast<Comparison_result>(-1) );
+    CGAL_precondition( SMALLER == static_cast<Comparison_result>(-1) );
 
     int xsign = CGAL_NTS sign(x.num) * CGAL_NTS sign(x.den) ;
     int ysign = CGAL_NTS sign(y.num) * CGAL_NTS sign(y.den) ;
@@ -259,8 +258,8 @@ quotient_cmp(const Quotient<NT>& x, const Quotient<NT>& y)
     if (diff == 0)
     {
         int msign = CGAL_NTS sign(x.den) * CGAL_NTS sign(y.den);
-        NT leftop  = x.num * y.den * NT(msign);
-        NT rightop = y.num * x.den * NT(msign);
+        NT leftop  = x.num * y.den * msign;
+        NT rightop = y.num * x.den * msign;
         return CGAL_NTS compare(leftop, rightop);
     }
     else
@@ -318,7 +317,7 @@ operator>>(std::istream& in, Quotient<NT>& r)
 #else
       while (in.get(c) && CGAL_CLIB_STD::isspace(c));
 #endif // CGAL_CFG_NO_LOCALE
-      CGAL_kernel_assertion( in );
+      CGAL_assertion( in );
       in.putback(c);
       in >> den;
   }
@@ -724,18 +723,19 @@ template <class NT>
 double
 to_double(const Quotient<NT>& q)   /* TODO */
 {
-  if (q.num == NT(0) )
-  { return 0; }
+  if (q.num == 0 )
+    return 0;
 
   double nd = CGAL::to_double( q.num );
 
-  if (q.den == NT(1) )
-  { return nd; }
+  if (q.den == 1 )
+    return nd;
 
   double dd = CGAL::to_double( q.den );
 
-  if ( is_finite( q.den )&&(is_finite( q.num )) )
-  { return nd/dd ; }
+  if ( is_finite( q.den ) && is_finite( q.num ) )
+    return nd/dd;
+
   if ( CGAL_NTS abs(q.num) > CGAL_NTS abs(q.den) )
   {
       NT  nt_div = q.num / q.den;
@@ -746,7 +746,7 @@ to_double(const Quotient<NT>& q)   /* TODO */
   if ( CGAL_NTS abs(q.num) < CGAL_NTS abs(q.den) )
   { return 1.0 / CGAL::to_double( NT(1) / q ); }
 
-  return nd/dd ;
+  return nd/dd;
 }
 
 template <class RT>
