@@ -166,9 +166,9 @@ public:
   class  SweepLinePlanarmap {};
 
   Sweep_line_tight_2()  : m_traits(new Traits()), m_traitsOwner(true),
-    m_includeEndPoints(true) {}
+    m_includeEndPoints(true), m_found_intersection(false)  {}
   Sweep_line_tight_2(Traits *t) : m_traits(t), m_traitsOwner(false),
-    m_includeEndPoints(true) {}
+    m_includeEndPoints(true), m_found_intersection(false) {}
 
   virtual ~Sweep_line_tight_2();
 
@@ -249,6 +249,21 @@ public:
     SweepLineGetInterCurveList tag;
   }
 
+  bool do_curves_intersect(CurveInputIterator begin, 
+                            CurveInputIterator end)
+  {
+    Init(begin, end);
+    SL_DEBUG(
+      PrintSubCurves();
+      PrintEventQueue();
+    )
+    m_includeEndPoints = false;
+    std::vector<Point_2> dummy;
+    Sweep(std::back_inserter(dummy), SweepLineGetPoints(), true);
+    return m_found_intersection;
+  }
+
+
 protected:
 
   void Init(CurveInputIterator begin, CurveInputIterator end);
@@ -262,7 +277,7 @@ protected:
    *  between them and their neighbours on the sweep line.
    */
   template <class OutpoutIterator, class Op>
-  void Sweep(OutpoutIterator out, Op tag)
+  void Sweep(OutpoutIterator out, Op tag, bool stop_at_first_int=false)
   {
     EventQueueIter eventIter = m_queue->begin();
     m_prevPos = eventIter->first;
@@ -308,6 +323,9 @@ protected:
       m_miniq.clear();
       eventIter = m_queue->begin();
     }
+
+    if ( stop_at_first_int && m_found_intersection )
+      return;
   }
 
   void FirstPass();
@@ -664,6 +682,7 @@ protected:
 	    if ( !m_includeEndPoints && 
 		 !isInternalXPoint((*slIter)->getLeftEnd())) {
 	      *out = (*slIter)->getLeftEnd(); ++out;
+	      m_found_intersection = true;
 	    }
 	  }
 	  ++slIter;
@@ -688,6 +707,7 @@ protected:
       if (m_includeEndPoints || m_currentEvent->isInternalIntersectionPoint())
       {
         *out = eventPoint; ++out;    
+	m_found_intersection = true;
       }
       return;
     }
@@ -708,6 +728,7 @@ protected:
     if ( m_includeEndPoints || m_currentEvent->isInternalIntersectionPoint() )
     {
       *out = eventPoint; ++out;
+      m_found_intersection = true;
     }
   }
 
@@ -730,6 +751,8 @@ protected:
   /*! if false, overlapping subcurves are reported only one. 
     Otherwise, they are reported as many times as they appeard. */
   bool m_overlapping;
+
+  /*! if true, end points are reported as intersection points */
   bool m_includeEndPoints;
 
   /*! used to hold all event, processed or not, so that they can 
@@ -773,6 +796,9 @@ protected:
       point.*/
   SubCurveList m_verticals;
   CurveList m_verticalSubCurves;
+
+  /*! when an intersection point is found this is turned to true */
+  bool m_found_intersection;
 
   /*! a counter the is used to assign unique ids to the curves. */
   int m_curveId;
@@ -1794,7 +1820,7 @@ HandleVerticalCurveBottom(SweepLineGetPoints &tag)
       
 	e->addCurveToLeft(*slIter, m_sweepLinePos);
 	e->addCurveToRight(*slIter);
-	
+
 	PRINT_NEW_EVENT(xp, e);
 	m_queue->insert(EventQueueValueType(xp, e));
       } else {
@@ -1839,8 +1865,9 @@ HandleVerticalCurveXAtEnd(Subcurve *vcurve, Subcurve *curve,
   if (m_traits->curve_is_in_x_range((curve)->getCurve(), topEnd) &&
       m_traits->curve_get_point_status((curve)->getCurve(), topEnd) == EQUAL)
   {
-    if ( !curve->isEndPoint(topEnd))
+    if ( !curve->isEndPoint(topEnd)) {
       topEndEvent->markInternalIntersectionPoint();
+    }
     return true;
   } 
 
@@ -1850,8 +1877,9 @@ HandleVerticalCurveXAtEnd(Subcurve *vcurve, Subcurve *curve,
       m_traits->curve_get_point_status((curve)->getCurve(),
 				       m_currentEvent->getPoint()) == EQUAL)
   {
-    if ( !curve->isEndPoint(m_currentEvent->getPoint()))
+    if ( !curve->isEndPoint(m_currentEvent->getPoint())) {
       m_currentEvent->markInternalIntersectionPoint();
+    }
     return true;
   }
   return false;
