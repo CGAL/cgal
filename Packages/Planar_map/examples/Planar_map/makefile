@@ -6,15 +6,7 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-#CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.18_g++-2.95.3
-
-
-#makefile_sparc_SunOS-5.6_g++-3.0.
-
-#makefile_i686_Linux-2.2.18_g++-3.0.
-
-#makefile_i686_Linux-2.2.18_g++-2.95.3
-
+# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -22,8 +14,6 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-           $(TESTSUITE_CXXFLAGS) \
-           $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
@@ -33,13 +23,11 @@ CXXFLAGS = \
 #---------------------------------------------------------------------#
 
 LIBPATH = \
-          $(TESTSUITE_LIBPATH) \
-          $(CGAL_LIBPATH)
+          $(CGAL_WINDOW_LIBPATH)
 
 LDFLAGS = \
-          $(TESTSUITE_LDFLAGS) \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_LDFLAGS)
+          $(CGAL_WINDOW_LDFLAGS)
 
 #---------------------------------------------------------------------#
 #                    target entries
