@@ -300,15 +300,15 @@ The following example demonstrates the most common use of
 #include <CGAL/Segment_2_Line_2_intersection.h>
 /* or #include <CGAL/intersections.h> */
 
-template <class R>
-void foo(Segment_2<R> seg, Line_2<R> line)
-{
-    Object result;
-    Point_2<R> ipoint;
-    Segment_2<R> iseg;
 
-    result = intersection(seg, line);
-    if (assign(ipoint, result)) {
+void foo(CGAL::Segment_2<R> seg, CGAL::Line_2<R> line)
+{
+    CGAL::Object result;
+    CGAL::Point_2<R> ipoint;
+    CGAL::Segment_2<R> iseg;
+
+    result = CGAL::intersection(seg, line);
+    if (CGAL::assign(ipoint, result)) {
 \end{verbatim}%
 \ccHtmlLinksOff%
 \begin{verbatim}
@@ -317,7 +317,7 @@ void foo(Segment_2<R> seg, Line_2<R> line)
 \ccHtmlLinksOn%
 \begin{verbatim}
     } else
-        if (assign(iseg, result)) {
+        if (CGAL::assign(iseg, result)) {
 \end{verbatim}%
 \ccHtmlLinksOff%
 \begin{verbatim}

@@ -1,3 +1,6 @@
+2.53    (16 Jul 2002)
+- added CGAL:: to intersection example
+
 2.52    (30 May 2002)
 - small fix to doc_tex/kernel/Ref/Plane_3.tex
 - removed kernel_overview from HTML doc (since repeated in reference intro)
