@@ -19,7 +19,7 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Andreas Fabri and Hervé Brönnimann
+// Author(s)     : Andreas Fabri and Herve Bronnimann
 
 #ifndef CGAL_CARTESIAN_POINT_3_H
 #define CGAL_CARTESIAN_POINT_3_H

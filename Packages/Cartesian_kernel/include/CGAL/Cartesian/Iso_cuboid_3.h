@@ -19,7 +19,7 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Hervé Brönnimann
+// Author(s)     : Herve Bronnimann
 
 #ifndef CGAL_CARTESIAN_ISO_CUBOID_3_H
 #define CGAL_CARTESIAN_ISO_CUBOID_3_H

@@ -19,7 +19,7 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Geert-Jan Giezeman and Sven Schönherr
+// Author(s)     : Geert-Jan Giezeman and Sven Schoenherr
 
 #ifndef CGAL_CONFIG_H
 #include <CGAL/config.h>

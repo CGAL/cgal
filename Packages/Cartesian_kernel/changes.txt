@@ -1,3 +1,6 @@
+4 September 2004 Menelaos Karavelas
+- re-wrote author names in copyright notices using 7-bit characters
+
 22 June 2004 Sylvain Pion
 - Undeprecate construction functors from NTs.
 

@@ -19,7 +19,7 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Sven Schoenherr, Hervé Brönnimann, Sylvain Pion
+// Author(s)     : Sven Schoenherr, Herve Bronnimann, Sylvain Pion
 
 #ifndef CGAL_CONSTRUCTIONS_KERNEL_FTC2_H
 #define CGAL_CONSTRUCTIONS_KERNEL_FTC2_H

@@ -21,7 +21,7 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : script by Geert-Jan Giezeman and Sven Schönherr 
+// Author(s)     : script by Geert-Jan Giezeman and Sven Schoenherr 
 
 
 
