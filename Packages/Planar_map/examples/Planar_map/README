@@ -74,3 +74,11 @@ example10:
     example10 < example10.cin
   to run the program.
 
+example10:
+  This example demonstrates the use of the quick insert operations. They are
+  applied through two overloaded insert methods. They are more efficient, as
+  the search for the previous halfedge in the circular list of halfedges that
+  share the same target vertex is unnecessary, saving its computation time.
+  In this example a planar map similar to the planar map of example 1 and 2
+  is constructed. The Planar_map out-streaming feature is demonstrated as
+  well. Note the format of the stream.
