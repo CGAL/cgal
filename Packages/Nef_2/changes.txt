@@ -1,7 +1,14 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
 
+1.6 (11 Apr 2002)
+
+     - Removed HalfedgeDS_using_in_place_list.h and HalfedgeDS_default.h
+       in include/CGAL/Nef_2. They are not used anymore (there counterparts
+       in include/CGAl are used in general except for MSC).
+
 1.5 (24 Mar 2002)
+
      - added iterator access function documentation
      - converted to use of CGAL_NTS gcd function 
 
