@@ -46,7 +46,7 @@ void bench()
   {
     std::cout << "error due to constant propagation" << std::endl;
     const volatile double ddd = 10.0;
-    b = IA_nt(21)/ddd;
+    b = IA_nt(21.0)/ddd;
     assert(!b.is_point());
   }
   std::cout << c << std::endl;
