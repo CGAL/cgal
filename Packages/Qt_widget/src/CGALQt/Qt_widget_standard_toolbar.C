@@ -224,7 +224,7 @@ namespace CGAL {
 	// nolayer is on and cannot be set off like that.
 
 	QToolButton* tBt = 
-	  dynamic_cast<QToolButton*>(button_group->find(i));
+	  static_cast<QToolButton*>(button_group->find(i));
 	if( tBt != 0)
 	  tBt->setOn(false);
 
