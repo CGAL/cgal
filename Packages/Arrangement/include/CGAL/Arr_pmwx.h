@@ -25,11 +25,11 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template<class _Planar_map>
-class Arr_pmwx : public _Planar_map
+template<class Planar_map_>
+class Arr_pmwx : public Planar_map_
 {
 public:
-  typedef _Planar_map Planar_map;
+  typedef Planar_map_ Planar_map;
   typedef typename Planar_map::Traits Traits;
   typedef typename Planar_map::Traits_wrap Pm_traits_wrap;
   typedef typename Planar_map::Halfedge_handle Halfedge_handle;
@@ -42,7 +42,7 @@ public:
   typedef typename Planar_map::Holes_iterator Holes_iterator;
   typedef typename Traits::X_curve X_curve;
   typedef typename Traits::Point Point;
-  typedef PMChangeNotification<Planar_map> PMWXChangeNotification; 
+  typedef Pm_change_notification<Planar_map> Pmwx_change_notification; 
 
   Arr_pmwx() : Planar_map()
   { 
@@ -68,12 +68,12 @@ public:
 
   Halfedge_handle insert_from_vertex(const X_curve& c, 
 				     Vertex_handle v1, 
-				     PMWXChangeNotification *en = NULL)
+				     Pmwx_change_notification *en = NULL)
   {
     return insert(c, en);
   }
 
-  Halfedge_handle insert(const X_curve& c, PMWXChangeNotification *en = NULL)
+  Halfedge_handle insert(const X_curve& c, Pmwx_change_notification *en = NULL)
   {
     Halfedge_handle last_edge;
     //step 0 :ensure that cv source is left of target
@@ -667,7 +667,7 @@ private:
 				Point& p1, 
 				Point& p2,
 				Halfedge_handle& h, 
-				PMWXChangeNotification *en) const 
+				Pmwx_change_notification *en) const 
   {
     Point p_cand1, p_cand2;
     bool found = false;
@@ -763,7 +763,7 @@ private:
 				 Point& p1, 
 				 Point& p2, 
 				 Halfedge_handle& h, 
-				 PMWXChangeNotification *en) const
+				 Pmwx_change_notification *en) const
   {
     Ccb_halfedge_circulator first,ccb_circ;
     bool FindFlag=false;

@@ -13,8 +13,10 @@
 //
 // file          : include/CGAL/Arrangement_2.h
 // package       : Arrangement (1.77)
-// maintainer    : Eyal Flato <flato@math.tau.ac.il> Eti Ezra <estere@post.tau.ac.il> SHai Hirsh <shaihi@post.tau.ac.il> 
-// author(s)     : Iddo Hanniel
+// maintainer    : Eyal Flato <flato@math.tau.ac.il> 
+// author(s)     : Iddo Hanniel, 
+//                 Eti Ezra <estere@post.tau.ac.il>,
+//                 Shai Hirsch <shaihi@post.tau.ac.il> 
 // coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
 //
 // ======================================================================
@@ -78,7 +80,7 @@ public:
 #else
   typedef Arr_pmwx<Planar_map> Pmwx;
 #endif
-  typedef typename Pmwx::PMWXChangeNotification  PMWXChangeNotification; 
+  typedef typename Pmwx::Pmwx_change_notification  Pmwx_change_notification;
 
   typedef Arrangement_2<_Dcel,_Traits,Base_node> Self;
 
@@ -1241,8 +1243,8 @@ bool is_valid(bool verbose = false) const
 ///////////////////////////////////////////////////////////////////
 //               INSERTION FUNCTIONS
 Curve_iterator insert_from_vertex(const typename Traits::Curve& cv, 
-				  Vertex_handle src, 
-				  PMWXChangeNotification *en = NULL) 
+				  Vertex_handle src,
+				   Pmwx_change_notification *en = NULL)
 {
   CGAL_precondition( traits->point_is_same( src->point(), 
 					    traits->curve_source( cv)));
@@ -1284,7 +1286,7 @@ Curve_iterator insert_from_vertex(const typename Traits::Curve& cv,
       Subcurve_iterator scit=cn->levels[0].begin();
       In_place_list<Subcurve_node,true> edge_list;    
       for (; scit!=cn->levels[0].end(); ++scit) {
-        ArrHierarchyOps aho(this, edge_list, &(*scit), en);
+        Arr_hierarchy_ops aho(this, edge_list, &(*scit), en);
         Halfedge_handle h = pm.insert_from_vertex
 	  ( scit->curve(), curr_v.current_iterator(), &aho);
 	curr_v = h->target();          // vertex for next insertion
@@ -1309,7 +1311,7 @@ Curve_iterator insert_from_vertex(const typename Traits::Curve& cv,
   else { //insert x_curve directly - sub_curve vector is empty
 
     if (do_update) { //insertion of edge level only if in update mode
-      ArrHierarchyOps aho(this, cn->edge_level, cn, en);
+      Arr_hierarchy_ops aho(this, cn->edge_level, cn, en);
       pm.insert_from_vertex(cv, src.current_iterator(), &aho);
       cn->past_end_child=&(*(cn->edge_level.end()));
       cn->begin_child=&(*(cn->edge_level.begin()));
@@ -1327,7 +1329,7 @@ Curve_iterator insert_from_vertex(const typename Traits::Curve& cv,
 
 
 Curve_iterator insert(const typename Traits::Curve& cv,
-		      PMWXChangeNotification *en = NULL) 
+		      Pmwx_change_notification *en = NULL) 
 {
   
   CGAL_precondition( ! traits->point_is_same( traits->curve_source( cv),
@@ -1370,7 +1372,7 @@ Curve_iterator insert(const typename Traits::Curve& cv,
       Subcurve_iterator scit=cn->levels[0].begin();
       In_place_list<Subcurve_node,true> edge_list;    
       for (; scit!=cn->levels[0].end(); ++scit) {
-	ArrHierarchyOps aho(this, edge_list, &(*scit), en);
+	Arr_hierarchy_ops aho(this, edge_list, &(*scit), en);
 	if (first_insert) {
 	  h = pm.insert(scit->curve(), &aho);
 	  first_insert = false;
@@ -1401,7 +1403,7 @@ Curve_iterator insert(const typename Traits::Curve& cv,
   else { //insert x_curve directly - sub_curve vector is empty
 
     if (do_update) { //insertion of edge level only if in update mode
-      ArrHierarchyOps aho(this, cn->edge_level, cn, en);
+      Arr_hierarchy_ops aho(this, cn->edge_level, cn, en);
       pm.insert(cv, &aho);
       cn->past_end_child=&(*(cn->edge_level.end()));
       cn->begin_child=&(*(cn->edge_level.begin()));
@@ -1424,7 +1426,7 @@ template <class F_iterator>
 Curve_iterator insert(const typename Traits::Curve& cv,
                       F_iterator F_begin,
                       F_iterator F_end,
-		      PMWXChangeNotification *en = NULL) 
+		      Pmwx_change_notification *en = NULL) 
 {
   if (F_begin==F_end)
     return insert(cv); //if list is empty return the regular insert function
@@ -1516,7 +1518,7 @@ Curve_iterator insert(const typename Traits::Curve& cv,
     Subcurve_iterator scit=cn->levels[i-1].begin();
     In_place_list<Subcurve_node,true> edge_list;    
     for (; scit!=cn->levels[i-1].end(); ++scit) {
-      ArrHierarchyOps aho(this, edge_list, &(*scit), en);
+       Arr_hierarchy_ops aho(this, edge_list, &(*scit), en);
       pm.insert(scit->curve(), &aho);
 
       scit->begin_child=&(*(edge_list.begin()));
@@ -1842,7 +1844,7 @@ void set_update(bool u) {
         In_place_list<Subcurve_node,true> edge_list;        
         Subcurve_iterator scit=last_updated->level_begin(num - 1);
         for (; scit!=last_updated->level_end(num - 1); ++scit) {
-	  ArrHierarchyOps aho(this, edge_list, &(*scit));
+	  Arr_hierarchy_ops aho(this, edge_list, &(*scit));
           pm.insert(scit->curve(), &aho);
           scit->begin_child=&(*(edge_list.begin()));
 	  //add edge_list at end of edge_level :
@@ -1858,7 +1860,7 @@ void set_update(bool u) {
         scit->past_end_child=&(*(last_updated->edge_level.end())); 
       }
       else { //num==0, no subcurve level, insert Curve directly.
-	ArrHierarchyOps aho(this, last_updated->edge_level, &(*last_updated));
+	Arr_hierarchy_ops aho(this, last_updated->edge_level, &(*last_updated));
 	pm.insert(last_updated->curve(), &aho);
 	last_updated->past_end_child=&(*(last_updated->edge_level.end()));
         last_updated->begin_child=&(*(last_updated->edge_level.begin()));
@@ -1872,14 +1874,14 @@ void set_update(bool u) {
 
 // object given as a parameter to insert function of pmwx
 // such that insert will not know about curve hirarchy
-class ArrHierarchyOps : public PMWXChangeNotification
+class Arr_hierarchy_ops : public Pmwx_change_notification
 {
 public:
   typedef Self Arr;
-  ArrHierarchyOps(Arr *arr_,
+  Arr_hierarchy_ops(Arr *arr_,
 		  In_place_list<Subcurve_node,true>& edge_list_,
 		  Subcurve_node* ftr_,
-		  PMWXChangeNotification *user_notifier_ = NULL ) : 
+		  Pmwx_change_notification *user_notifier_ = NULL ) : 
     arr(arr_), edge_list(edge_list_), ftr(ftr_), user_notifier(user_notifier_)
   {}
 	
@@ -1930,10 +1932,10 @@ public:
   Arr *arr;
   In_place_list<Subcurve_node,true> &edge_list;
   Subcurve_node* ftr;
-  PMWXChangeNotification *user_notifier;
+  Pmwx_change_notification *user_notifier;
 };
 
-friend class ArrHierarchyOps;
+friend class Arr_hierarchy_ops;
 ////////////////////////////////////////////////////////////////////////
 // pushes the curve cv corresponding to halfedge e to the edge_node_list
 // push_back if original_direction
@@ -2210,7 +2212,7 @@ Subcurve_iterator replace(Subcurve_iterator sc,
   Subcurve_iterator aux;
   for (; scit!=levels[i-1].end(); ++scit) {
     In_place_list<Subcurve_node,true> el;    
-    ArrHierarchyOps aho(this, el, &(*scit));
+    Arr_hierarchy_ops aho(this, el, &(*scit));
     pm.insert(scit->curve(), &aho);
     scit->begin_child=&(*(el.begin()));
     

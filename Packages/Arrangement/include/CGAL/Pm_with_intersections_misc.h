@@ -28,7 +28,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template<class Planar_map_>
-class PMChangeNotification
+class Pm_change_notification
 {
 public:
   typedef Planar_map_ Planar_map;
