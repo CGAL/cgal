@@ -73,9 +73,9 @@ template < class CT, class ET, class Type = Dynamic,
 class Filtered_exact
 {
 public:
-  typedef Tag_false  Has_gcd_tag;
-  typedef Tag_true   Has_division_tag;
-  typedef Tag_true   Has_sqrt_tag;
+  typedef Tag_false  Has_gcd;
+  typedef Tag_true   Has_division;
+  typedef Tag_true   Has_sqrt;
 
 private:
   typedef Filtered_exact<CT, ET, Type, Protection, Cache> Fil;

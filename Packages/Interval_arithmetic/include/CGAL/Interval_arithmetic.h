@@ -46,9 +46,9 @@ CGAL_BEGIN_NAMESPACE
 template <bool Protected = true>
 struct Interval_nt : public Interval_base
 {
-  typedef Tag_false   Has_gcd_tag;
-  typedef Tag_true    Has_division_tag;
-  typedef Tag_true    Has_sqrt_tag;
+  typedef Tag_false   Has_gcd;
+  typedef Tag_true    Has_division;
+  typedef Tag_true    Has_sqrt;
 
   typedef Interval_nt<Protected> IA;
 

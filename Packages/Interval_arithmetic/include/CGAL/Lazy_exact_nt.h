@@ -234,9 +234,9 @@ template <typename ET>
 class Lazy_exact_nt : public Handle
 {
 public :
-  typedef Tag_false  Has_gcd_tag;
-  typedef Tag_true   Has_divisition_tag
-  typedef Tag_true   Has_sqrt_tag;
+  typedef Tag_false  Has_gcd;
+  typedef Tag_true   Has_divisition
+  typedef Tag_true   Has_sqrt;
 
   typedef Lazy_exact_nt<ET> Self;
   typedef Lazy_exact_rep<ET> Self_rep;
