@@ -21,8 +21,8 @@
 //
 // Author(s)     : Francois Rebufat <Francois.Rebufat@sophia.inria.fr>
 
-#ifndef DRAWABLE_OBJECT_H
-#define DRAWABLE_OBJECT_H
+#ifndef CGAL_DRAWABLE_OBJECT_H
+#define CGAL_DRAWABLE_OBJECT_H
 
 #include "PS_Stream_3.C"
 
