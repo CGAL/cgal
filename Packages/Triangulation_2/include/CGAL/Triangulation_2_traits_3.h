@@ -53,21 +53,32 @@ public:
 template <class R>
 class Side_of_oriented_circle_2_3
 {
-  // p,q,r and the plane are assumed to be oriented such that
+  // 2d triangulation needs a side_of_oriented_circle
+  // that in fact is a side_of_bounded_circle
+  // meaning that
   // bounded side of circle = positive side
 public:
-  typedef typename  R::Point_3        Point;
+  typedef typename  R::Point_3                   Point;
+  typedef typename  R::Coplanar_orientation_3    Orientation_2;
   typedef typename  R::Coplanar_side_of_bounded_circle_3
-                                     Side_of_bounded_circle_2_3;
+                                                 Side_of_bounded_circle_2_3;
   Oriented_side operator() (const Point& p, 
 			    const Point& q, 
 			    const Point& r,
 			    const Point& s) {
     Side_of_bounded_circle_2_3  side;
+    //Orientation_2               orientation;
     Bounded_side bs = side(p,q,r,s);
-    return ( bs == ON_UNBOUNDED_SIDE) ? ON_NEGATIVE_SIDE :
-                (bs == ON_BOUNDED_SIDE ) ? ON_POSITIVE_SIDE :
+    //if (orientation(p,q,r) == POSITIVE) {
+      return ( bs == ON_UNBOUNDED_SIDE) ? ON_NEGATIVE_SIDE :
+	       (bs == ON_BOUNDED_SIDE ) ? ON_POSITIVE_SIDE :
                                ON_ORIENTED_BOUNDARY;
+      //}
+      //else {
+      return ( bs == ON_UNBOUNDED_SIDE) ? ON_POSITIVE_SIDE :
+	       (bs == ON_BOUNDED_SIDE ) ? ON_NEGATIVE_SIDE :
+                               ON_ORIENTED_BOUNDARY;
+      //}
   }   
 };
 

@@ -38,11 +38,10 @@ typedef CGAL::Quotient<Rtype>   Ftype;
 typedef CGAL::Cartesian<Ftype>         Test_rep_cartesian;
 typedef CGAL::Homogeneous<Rtype>       Test_rep_homogeneous;
 
-// typedef CGAL::Quotient<CGAL::Gmpz> CT;
-// typedef CGAL::Quotient<CGAL::Gmpz> ET;
-// typedef CGAL::Filtered_exact<CT,ET> coord_type;
-// typedef CGAL::Quotient<CGAL::Gmpz> coord_type;
-// typedef CGAL::Cartesian<coord_type> Test_rep_cartesian;
-// typedef CGAL::Homogeneous<CGAL::Gmpz> Test_rep_homogeneous;
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Filtered_kernel.h>
+typedef CGAL::Simple_cartesian<double>  K1;
+typedef CGAL::Filtered_kernel<K1>       K;
+struct TestK : public K {}; 
 
 #endif

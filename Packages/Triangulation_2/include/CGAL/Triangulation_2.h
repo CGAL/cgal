@@ -826,7 +826,7 @@ flip(Face_handle f, int i)
 			      f->mirror_vertex(i)->point()) == RIGHTTURN &&
                   orientation(f->vertex(i)->point(),
 			      f->vertex(ccw(i))->point(),
-			      f->mirror_vertex(i)->point()) == LEFTTURN); 
+			      f->mirror_vertex(i)->point()) ==  LEFTTURN); 
   _tds.flip( &(*f), i);
   return;
 }

@@ -65,6 +65,13 @@ public:
 
   typedef Constraint_hierarchy_2<Vertex_handle, bool> Constraint_hierarchy;
 
+  // for user interface with the constraint hierarchy
+  typedef Constraint_hierarchy::H_vertex_it   Vertices_in_constraint;
+  typedef Constraint_hierarchy::H_context     Context;
+  typedef Constraint_hierarchy::H_context_iterator
+                                              Context_iterator;
+ 
+
 protected:
   Constraint_hierarchy hierarchy;
   Intersection_tag     itag;
@@ -116,6 +123,19 @@ public:
 
   //SUPPRESSION
   // to be done next
+
+  // Query of the constraint hierarchy
+  Context   context(Vertex_handle va, Vertex_handle vb);
+  int number_of_enclosing_constraints(Vertex_handle va, 
+				      Vertex_handle vb);
+  Context_iterator   contexts_begin(Vertex_handle va, 
+				    Vertex_handle vb);
+  Context_iterator   contexts_end(Vertex_handle va, 
+				  Vertex_handle vb);
+  Vertices_in_constraint vertices_in_constraint_begin(Vertex_handle va, 
+						      Vertex_handle vb);
+  Vertices_in_constraint vertices_in_constraint_end(Vertex_handle va, 
+						    Vertex_handle vb);
 
 protected:
   Vertex_handle intersect(Face_handle f, int i, 
@@ -182,9 +202,9 @@ insert(const Point& a, Face_handle start)
   return insert(a,lt,loc,li);
 }
 
-template < class Gt, class Tds >
-Constrained_triangulation_plus_2<Gt,Tds>::Vertex_handle
-Constrained_triangulation_plus_2<Gt,Tds>::
+template < class Tr, class I_tag >
+Constrained_triangulation_plus_2<Tr,I_tag>::Vertex_handle
+Constrained_triangulation_plus_2<Tr,I_tag>::
 insert(const Point& a, Locate_type lt, Face_handle loc, int li)
 {
   Vertex_handle v1, v2;
@@ -470,6 +490,60 @@ operator<<(std::ostream& os,
   return os ;
 }
 
+// Constraint Hierarchy Queries
+template <class Tr, class I_tag >
+inline
+Constrained_triangulation_plus_2<Tr,I_tag>::Context
+Constrained_triangulation_plus_2<Tr,I_tag>::
+context(Vertex_handle va, Vertex_handle vb)
+{
+  return hierarchy.context(va,vb);
+}
+
+
+template <class Tr, class I_tag >
+inline int
+Constrained_triangulation_plus_2<Tr,I_tag>::
+number_of_enclosing_constraints(Vertex_handle va, Vertex_handle vb)
+{
+ return hierarchy.number_of_enclosing_constraints(va,vb); 
+}
+
+template <class Tr, class I_tag >
+inline
+Constrained_triangulation_plus_2<Tr,I_tag>::Context_iterator
+Constrained_triangulation_plus_2<Tr,I_tag>::
+contexts_begin(Vertex_handle va, Vertex_handle vb)
+{
+  return hierarchy.contexts_begin(va,vb);
+}
+
+template <class Tr, class I_tag >
+inline
+Constrained_triangulation_plus_2<Tr,I_tag>::Context_iterator
+Constrained_triangulation_plus_2<Tr,I_tag>::
+contexts_end(Vertex_handle va, Vertex_handle vb)
+{
+  return hierarchy.context_end(va,vb);
+}
+
+template <class Tr, class I_tag >
+inline
+Constrained_triangulation_plus_2<Tr,I_tag>::Vertices_in_constraint
+Constrained_triangulation_plus_2<Tr,I_tag>::
+vertices_in_constraint_begin(Vertex_handle va, Vertex_handle vb)
+{
+  return  hierarchy.vertices_in_constraint_begin(va,vb);
+}
+
+template <class Tr, class I_tag >
+inline
+Constrained_triangulation_plus_2<Tr,I_tag>::Vertices_in_constraint
+Constrained_triangulation_plus_2<Tr,I_tag>::
+vertices_in_constraint_end(Vertex_handle va, Vertex_handle vb)
+{
+  return  hierarchy.vertices_in_constraint_end(va,vb);
+}
 
 CGAL_END_NAMESPACE
 
