@@ -8,14 +8,14 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.4-I-21 $
-// release_date  : $CGAL_Date: 2001/10/26 $
+// release       : $CGAL_Revision: CGAL-2.4-I-75 $
+// release_date  : $CGAL_Date: 2002/04/10 $
 //
 // file          : include/CGAL/Point_set_2.h
-// package       : Point_set_2 (2.3)
+// package       : Point_set_2 (2.3.2)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 2.3
-// revision_date : 16 Nov 2001 
+// revision      : 2.3.2
+// revision_date : 11 April 2002 
 // author(s)     : Matthias Baesken
 //
 // coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>)
@@ -91,7 +91,7 @@ public:
   typedef typename Geom_traits::Compare_distance_2          Comparedist;         
   typedef typename Geom_traits::Construct_center_2          Circlecenter;   
   
-  typedef Unique_hash_map<Vertex*, Numb_type>               MAP_TYPE;  
+  typedef Unique_hash_map<Vertex_handle, Numb_type>               MAP_TYPE;  
   
    Comparedist                   tr_comparedist;
    Orientation_2                 tr_orientation;  
@@ -253,36 +253,36 @@ public:
      init_dfs();
 
      MAP_TYPE                                        priority_number;              // here we save the priorities ...
-     compare_vertices<Vertex*,Numb_type,MAP_TYPE>    comp(& priority_number);      // comparison object ...
-     std::priority_queue<Vertex*, std::vector<Vertex*>, CGAL::compare_vertices<Vertex*,Numb_type,MAP_TYPE> > PQ(comp);
+     compare_vertices<Vertex_handle,Numb_type,MAP_TYPE>    comp(& priority_number);      // comparison object ...
+     std::priority_queue<Vertex_handle, std::vector<Vertex_handle>, CGAL::compare_vertices<Vertex_handle,Numb_type,MAP_TYPE> > PQ(comp);
 
      priority_number[v.ptr()] = 0;
-     PQ.push(v.ptr());
+     PQ.push(v);
      
      mark_vertex(v);
       
      while ( k > 0 )
      { 
        // find minimum from PQ ...
-       Vertex* w = PQ.top();
+       Vertex_handle w = PQ.top();
        PQ.pop();
    
-       res.push_back(w->handle()); 
+       res.push_back(w); 
        k--; 
 
        // get the incident vertices of w ...
-       Vertex_circulator vc = incident_vertices(w->handle());
+       Vertex_circulator vc = incident_vertices(w);
        Vertex_circulator start =vc;
-       Vertex* act;
+       Vertex_handle act;
      
        do {
-         act = &(*vc);
+         act = vc->handle();
 	 
-         if ( (!is_marked(act)) && (! is_infinite(act->handle())) )
+         if ( (!is_marked(act)) && (! is_infinite(act)) )
          { 
              priority_number[act] = tr_sqrdist(p,act->point());
              PQ.push(act);	      
-             mark_vertex(act->handle());
+             mark_vertex(act);
          }	   
 	             
          vc++;
@@ -296,13 +296,8 @@ public:
   // for marking nodes in search procedures
   int cur_mark;
    
-  /*std::map<Vertex*,int, std::less<Vertex*> > mark;  */
-  Unique_hash_map<Vertex*, int>  mark;
-  
-  
-  /*typedef typename std::map<Vertex*,int, std::less<Vertex*> >::iterator map_iterator;*/
-
-  
+  Unique_hash_map<Vertex_handle, int>  mark;
+    
   void init_vertex_marks()
   {
      cur_mark = 0;
@@ -318,17 +313,14 @@ public:
   void mark_vertex(Vertex_handle vh)
   // mark vh as visited ...
   {
-    Vertex* v = vh.ptr();
-    mark[v] = cur_mark;
+    mark[vh] = cur_mark;
   }
   
   bool is_marked(Vertex_handle vh)
   {
-    Vertex* v = vh.ptr();
-    
-    if (! mark.is_defined(v)) return false;
+    if (! mark.is_defined(vh)) return false;
 
-    return (mark[v] == cur_mark);
+    return (mark[vh] == cur_mark);
   }
   
   void dfs(Vertex_handle v,const Circle& C, std::list<Vertex_handle>& L)

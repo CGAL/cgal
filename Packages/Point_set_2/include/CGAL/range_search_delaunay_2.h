@@ -8,14 +8,14 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.4-I-21 $
-// release_date  : $CGAL_Date: 2001/10/26 $
+// release       : $CGAL_Revision: CGAL-2.4-I-75 $
+// release_date  : $CGAL_Date: 2002/04/10 $
 //
 // file          : include/CGAL/range_search_delaunay_2.h
-// package       : Point_set_2 (2.3)
+// package       : Point_set_2 (2.3.2)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 2.3
-// revision_date : 16 Nov 2001 
+// revision      : 2.3.2
+// revision_date : 11 April 2002 
 // author(s)     : Matthias Baesken
 //
 // coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>)
@@ -58,8 +58,7 @@ void dfs(const Dt& delau,
     if (! first_vertex) *res = v;
     
     //mark_vertex v
-    Vertex* vptr = v.ptr();
-    mark[vptr] = true;
+    mark[v] = true;
     
     // get incident vertices of v ...
     Vertex_circulator vc = delau.incident_vertices(v);
@@ -73,9 +72,7 @@ void dfs(const Dt& delau,
  
        if (! delau.is_infinite(act)) {
 	 // test, if act is marked ...
-	 Vertex* vtest = act.ptr();
-    
-         bool is_marked = mark[vtest];     
+         bool is_marked = mark[act];     
        
          if ((! is_marked) && !( test(C,act->point()) == ON_UNBOUNDED_SIDE) ) 
            dfs(delau, mark, act, C, res, false);       
@@ -114,8 +111,7 @@ bool dfs(const Dt& delau,
     }
     
     //mark_vertex v
-    Vertex* vptr = v.ptr();
-    mark[vptr] = true;
+    mark[v] = true;
     
     // get incident vertices of v ...
     Vertex_circulator vc = delau.incident_vertices(v);
@@ -129,9 +125,7 @@ bool dfs(const Dt& delau,
  
        if (! delau.is_infinite(act)) {
 	 // test, if act is marked ...
-	 Vertex* vtest = act.ptr();
-    
-         bool is_marked = mark[vtest];    
+         bool is_marked = mark[act];    
        
          if ((! is_marked) && !( test(C,act->point()) == ON_UNBOUNDED_SIDE) ) 
            if (dfs(delau, mark, act, C, res, false, return_if_predicate_succeded, pred)) return true;       
@@ -202,7 +196,7 @@ OutputIterator range_search(Dt& delau,
    }
      
    //std::map<Vertex*,int, std::less<Vertex*> > mark;
-   Unique_hash_map<Vertex*, bool> mark;
+   Unique_hash_map<Vertex_handle, bool> mark;
      
    dfs(delau,mark,v,C,res,new_v);
      
@@ -347,7 +341,7 @@ OutputIterator range_search(Dt& delau,
    }
      
    //std::map<Vertex*,int, std::less<Vertex*> > mark;
-   Unique_hash_map<Vertex*, bool> mark;
+   Unique_hash_map<Vertex_handle, bool> mark;
    
    dfs_using_predicate(delau,mark,v,C,res,new_v, return_if_succeded, pred);
      

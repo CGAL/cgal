@@ -8,14 +8,14 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.4-I-21 $
-// release_date  : $CGAL_Date: 2001/10/26 $
+// release       : $CGAL_Revision: CGAL-2.4-I-75 $
+// release_date  : $CGAL_Date: 2002/04/10 $
 //
 // file          : include/CGAL/nearest_neighbor_delaunay_2.h
-// package       : Point_set_2 (2.3)
+// package       : Point_set_2 (2.3.2)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 2.3
-// revision_date : 16 Nov 2001 
+// revision      : 2.3.2
+// revision_date : 11 April 2002 
 // author(s)     : Matthias Baesken
 //
 // coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>)
@@ -214,7 +214,7 @@ void nearest_neighbors_list(const Dt& delau, typename Dt::Vertex_handle v, int k
   typedef typename Dt::Point                          Point;
   typedef typename Gt::FT                             Numb_type;  // field number type ...
   typedef typename Gt::Compute_squared_distance_2     Compute_squared_distance_2;   
-  typedef Unique_hash_map<Vertex*, Numb_type>         MAP_TYPE;
+  typedef Unique_hash_map<Vertex_handle, Numb_type>         MAP_TYPE;
 
   int n = delau.number_of_vertices();
    
@@ -226,49 +226,45 @@ void nearest_neighbors_list(const Dt& delau, typename Dt::Vertex_handle v, int k
      
   Point p = v->point();
      
-  Unique_hash_map<Vertex*, int>  mark;
+  Unique_hash_map<Vertex_handle, int>  mark;
   int cur_mark = 1;
 
   MAP_TYPE  priority_number; // here we save the priorities ...
   
-  compare_vertices<Vertex*,Numb_type,MAP_TYPE> comp(& priority_number);      // comparison object ...
-  std::priority_queue<Vertex*, std::vector<Vertex*>, CGAL::compare_vertices<Vertex*,Numb_type,MAP_TYPE> > PQ(comp);
+  compare_vertices<Vertex_handle,Numb_type,MAP_TYPE> comp(& priority_number);      // comparison object ...
+  std::priority_queue<Vertex_handle, std::vector<Vertex_handle>, CGAL::compare_vertices<Vertex_handle,Numb_type,MAP_TYPE> > PQ(comp);
 
   priority_number[v.ptr()] = 0;
   PQ.push(v.ptr());
      
   // mark vertex v
-  Vertex* vptr = v.ptr();
-  mark[vptr] = cur_mark;
+  mark[v] = cur_mark;
       
   while ( k > 0 )
   { 
     // find minimum from PQ ...
-    Vertex* w = PQ.top(); 
+    Vertex_handle w = PQ.top(); 
     PQ.pop();
    
-    res.push_back(w->handle());
+    res.push_back(w);
     k--; 
 
     // get the incident vertices of w ...
     Vertex_circulator vc = delau.incident_vertices(w->handle());
     Vertex_circulator start =vc;
-    Vertex* act;
+    Vertex_handle act;
      
     do {
-         act = &(*vc);
+         act = vc->handle();
 	 
 	 // test, if act is marked ...
 	 bool is_marked = mark.is_defined(act);  
 	 
-         if ( (! is_marked) && (! delau.is_infinite(act->handle())) )
+         if ( (! is_marked) && (! delau.is_infinite(act)) )
          { 
              priority_number[act] = Compute_squared_distance_2()(p,act->point());
              PQ.push(act);
-	     	      
-             //mark vertex 
-	     Vertex* vptr = act->handle().ptr();
-             mark[vptr] = cur_mark;
+             mark[act] = cur_mark;
          }	   
 	             
          vc++;
