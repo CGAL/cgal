@@ -8,11 +8,11 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.3-I-44 $
-// release_date  : $CGAL_Date: 2001/03/09 $
+// release       : $CGAL_Revision: CGAL-2.4-I-65 $
+// release_date  : $CGAL_Date: 2002/03/19 $
 //
 // file          : include/CGAL/Planar_map_2.h
-// package       : pm (5.45)
+// package       : Planar_map (5.87)
 // maintainer    : Eyal Flato <flato@math.tau.ac.il>
 // source        : 
 // revision      : 
@@ -143,7 +143,10 @@ public:
   bool read (std::istream &in);
 
   template <class Scanner>
-  bool read (std::istream &in, Scanner& scanner);
+  bool read (std::istream &in, Scanner& scanner){
+    clear(); 
+	return scan_planar_map(scanner);
+  }
   
   virtual ~Planar_map_2 ();
 
@@ -153,6 +156,7 @@ public:
   Halfedge_handle insert_in_face_interior(const X_curve&       cv, 
                                           Face_handle          f, 
                                           Change_notification *en = NULL);
+
 		
   Halfedge_handle insert_from_vertex(const X_curve& cv, 
 				     Vertex_handle v1, bool source, 
@@ -187,7 +191,22 @@ public:
   template <class X_curve_iterator>
   Halfedge_iterator insert(const X_curve_iterator& begin,
 			   const X_curve_iterator& end,
-                           Change_notification    *en = NULL);
+                           Change_notification    *en = NULL)
+  {
+    X_curve_iterator it=begin;
+    Halfedge_iterator out;
+    if (it!=end) 
+    {
+      out=insert(*it, en);
+      it++;
+    }
+    while (it!=end)
+    {
+      insert(*it, en);
+      it++;
+    }
+    return out;
+  }
   
   Halfedge_handle split_edge(Halfedge_handle       e, 
                              const X_curve       & c1, 
@@ -293,10 +312,186 @@ private:
   ///////////////////////////////////////////////////////////////////////// 
 
   template <class Scanner>
-  bool  scan_planar_map (Scanner& scanner);
+  bool  scan_planar_map (Scanner& scanner)
+  {
+    if (!build_dcel(scanner))
+      return false;
+
+    return true;
+  }
 
   template <class Scanner>
-  bool  build_dcel (Scanner& scanner);
+  bool  build_dcel (Scanner& scanner)
+  {
+    typedef typename Dcel::Vertex	                  D_vertex;
+    typedef typename Dcel::Halfedge                 D_halfedge;
+    typedef typename Dcel::Face	                  D_face;
+  
+    typedef typename  Dcel::Vertex_iterator          D_vetrex_iterator;
+    typedef typename  Dcel::Vertex_const_iterator    D_vetrex_const_iterator;
+    typedef typename  Dcel::Halfedge_iterator        D_halfedge_iterator;
+    typedef typename  Dcel::Halfedge_const_iterator  D_halfedge_const_iterator;
+    typedef typename  Dcel::Face_iterator            D_face_iterator;
+    typedef typename  Dcel::Face_const_iterator      D_face_const_iterator;
+
+    // keeping a vector of halfedges (to access them easily by their indices).
+    std::vector<D_halfedge* >  halfedges_vec;  
+
+    std::vector<D_vertex* >    vertices_vec; 
+ 
+    if ( ! scanner.in())
+      return 0;
+
+    scanner.scan_pm_vhf_sizes();
+    if ( ! scanner.in()){
+      std::cerr << "can't read vhf values"<<std::endl;
+      clear();
+      return false;
+    }
+
+    // read in all vertices
+    unsigned int  i;
+    for (i = 0; i < scanner.number_of_vertices(); i++) {
+      D_vertex* nv = d.new_vertex();
+      Point p;
+
+      // scanner.scan_vertex_attributes (nv);
+      // if ( ! scanner.in()){
+      // std::cerr << "can't read vertex attributes"<<std::endl;
+      // clear();
+      // return false;
+      // }
+
+      scanner.scan_vertex (nv);
+      if ( ! scanner.in()){
+	std::cerr << "can't read vertex"<<std::endl;
+	clear();
+	return false;
+      }
+      //nv->set_point(p);
+
+      // for debug.
+      //std::cout<<"Reading vertex no " <<i<<" point is ";
+      //std::cout<<nv->point()<<std::endl;
+
+      vertices_vec.push_back(nv);
+
+      bb->insert(nv->point());
+    
+      //scanner.skip_to_next_vertex();
+      //if ( ! scanner.in()){
+      //  std::cerr << "can't skip to next vertex"<<std::endl;
+      //  scanner.in().clear( std::ios::badbit);
+      //  clear();
+      //  return false;
+      // }
+    }
+  
+    for (i = 0; i < scanner.number_of_halfedges(); i++, i++){
+      D_halfedge *nh = NULL;
+      void  *nv1, *nv2;
+      std::size_t index1, index2;
+      X_curve cv;
+
+      // std::cout<<"Reading Edge no " <<i<<std::endl;
+
+      nh = d.new_edge();
+    
+      // scanner.scan_halfedge_attributes (nh);
+      // if ( ! scanner.in()){
+      // std::cerr << "can't read halfedge attributes"<<std::endl;
+      // clear();
+      // return false;
+      // }
+
+      scanner.scan_index(index1);
+      if ( ! scanner.in()){
+	std::cerr << "can't read source of halfedge"<<std::endl;
+	clear();
+	return false;
+      }
+      cv = scanner.scan_halfedge(nh);
+      if ( ! scanner.in()){
+	std::cerr << "can't read halfedge"<<std::endl;
+	clear();
+	return false;
+      }
+      //nh->set_curve(cv);
+
+      // scanner.scan_halfedge_attributes (nh->opposite());
+      // if ( ! scanner.in()){
+      // std::cerr << "can't read halfedge attributes"<<std::endl;
+      // clear();
+      // return false;
+      // }
+
+      scanner.scan_index (index2);
+      if ( ! scanner.in()){
+	std::cerr << "can't read source of halfedge"<<std::endl;
+	clear();
+	return false;
+      }
+      scanner.scan_halfedge(nh->opposite());
+      if ( ! scanner.in()){
+	std::cerr << "can't read halfedge"<<std::endl;
+	clear();
+	return false;
+      }
+      //nh->opposite()->set_curve(cv);
+
+      nv1 = vertices_vec[index1];
+      ((D_vertex*) nv1)->set_halfedge(nh); 
+      nh->set_vertex((D_vertex*) nv1);
+      //for debug
+      //std::cout<<((D_vertex*) nv1)->point()<<std::endl;
+    
+      nv2 = vertices_vec[index2];
+      ((D_vertex*) nv2)->set_halfedge(nh->opposite()); 
+      nh->opposite()->set_vertex((D_vertex*) nv2);
+      //for debug
+      //std::cout<<((D_vertex*) nv2)->point()<<std::endl;
+
+      pl->insert(D_halfedge_iterator(nh->opposite()), cv);
+      bb->insert(cv);
+    
+      halfedges_vec.push_back(nh);
+      halfedges_vec.push_back(nh->opposite());
+
+      //scanner.skip_to_next_halfedge();
+      //if ( ! scanner.in()){
+      //  std::cerr << "can't skip to next halfedge"<<std::endl;
+      //  scanner.in().clear( std::ios::badbit);
+      //  clear();
+      //  return false;
+      //} 
+    }
+  
+    // read in all facets
+    for (i = 0; i < scanner.number_of_faces(); i++) {
+      //std::size_t  num_of_holes, num_halfedges_on_outer_ccb;
+    
+      //std::cout<<"Reading Face no " <<i<<std::endl;
+   
+      D_face* nf = u_face; //this is the unbounded face.
+      if (i > 0)  // else - allocate the bounded face.
+	nf = d.new_face();
+
+      scanner.scan_face(nf);
+      if ( ! scanner.in()){
+	std::cerr << "can't read face"<<std::endl;
+	clear();
+	return false;
+      }
+    }
+  
+    if ( ! scanner.in() ) {
+      scanner.in().clear( std::ios::badbit);
+      return false;
+    } 
+  
+    return true;
+}	
+
 
 protected:
   Point_location_base *pl;
@@ -512,21 +707,12 @@ read (std::istream &in )
   return scan_planar_map(scanner);
 }
 //-----------------------------------------------------------------------------
-template < class Dcel, class Traits > 
-template <class Scanner>
-bool 
-Planar_map_2< Dcel, Traits >::
-read (std::istream &in, Scanner& scanner){
-  clear(); 
-  return scan_planar_map(scanner);
-}
-//-----------------------------------------------------------------------------
 template < class Dcel, class Traits >
 typename Planar_map_2< Dcel, Traits >::Halfedge_handle 
 Planar_map_2< Dcel, Traits >::
 insert_in_face_interior(const Planar_map_2< Dcel, Traits >::X_curve & cv, 
 			Planar_map_2< Dcel, Traits >::Face_handle     f, 
-			Change_notification *en = NULL)
+			Change_notification *en)
 {
   Halfedge_handle h = Topological_map<Dcel>::insert_in_face_interior(f);
   h->set_curve(cv);  //should set the curve of the twin as well but for now
@@ -556,7 +742,7 @@ insert_from_vertex(
   const Planar_map_2< Dcel, Traits >::X_curve  & cv,
   Planar_map_2< Dcel, Traits >::Vertex_handle    v1, 
   bool                                           source,
-  Change_notification                          * en = NULL)
+  Change_notification                          * en )
 {
   //find the previous of cv.
   Halfedge_around_vertex_circulator
@@ -608,7 +794,7 @@ insert_at_vertices(
   const Planar_map_2< Dcel, Traits >::X_curve & cv, 
   Planar_map_2< Dcel, Traits >::Vertex_handle   v1, 
   Planar_map_2< Dcel, Traits >::Vertex_handle   v2, 
-  Change_notification                         * en = NULL)
+  Change_notification                         * en )
 {
   Size num_before=number_of_faces();
 			
@@ -844,7 +1030,7 @@ typename Planar_map_2< Dcel, Traits >::Halfedge_handle
 Planar_map_2< Dcel, Traits >::
 insert(
        const Planar_map_2< Dcel, Traits >::X_curve & cv, 
-       Change_notification                         * en = NULL )
+       Change_notification                         * en  )
 {
   CGAL_assertion(bb);
   bb->insert(cv);
@@ -900,36 +1086,13 @@ insert(
 }
 //-----------------------------------------------------------------------------
 template < class Dcel, class Traits >
-template <class X_curve_iterator>
-typename Planar_map_2< Dcel, Traits >::Halfedge_iterator
-Planar_map_2< Dcel, Traits >::
-insert(const X_curve_iterator & begin,
-       const X_curve_iterator & end,
-       Change_notification    * en = NULL )
-{
-  X_curve_iterator it=begin;
-  Halfedge_iterator out;
-  if (it!=end) 
-  {
-    out=insert(*it, en);
-    it++;
-  }
-  while (it!=end)
-  {
-    insert(*it, en);
-    it++;
-  }
-  return out;
-}
-//-----------------------------------------------------------------------------
-template < class Dcel, class Traits >
 typename Planar_map_2< Dcel, Traits >::Halfedge_handle 
 Planar_map_2< Dcel, Traits >::
 split_edge( 
 	   Planar_map_2< Dcel, Traits >::Halfedge_handle   e, 
 	   const Planar_map_2< Dcel, Traits >::X_curve   & c1, 
 	   const Planar_map_2< Dcel, Traits >::X_curve   & c2,
-	   Change_notification                           * en = NULL )
+	   Change_notification                           * en )
 {
     
   CGAL_precondition(traits->point_is_same(traits->curve_source(c2),
@@ -989,7 +1152,7 @@ merge_edge(
 	   Planar_map_2< Dcel, Traits >::Halfedge_handle   e1, 
 	   Planar_map_2< Dcel, Traits >::Halfedge_handle   e2, 
 	   const Planar_map_2< Dcel, Traits >::X_curve   & cv, 
-	   Change_notification                           * en = NULL)
+	   Change_notification                           * en)
 {
   CGAL_precondition( (traits->point_is_same(traits->curve_source(cv),
 					    e1->source()->point() )&&
@@ -1224,191 +1387,6 @@ x_curve_container(X_curve_container &l) const
   }
 }
 //-----------------------------------------------------------------------------
-template < class Dcel, class Traits >
-template < class Scanner > 
-bool
-Planar_map_2< Dcel, Traits >::
-scan_planar_map( Scanner& scanner )
-{
-  if (!build_dcel(scanner))
-    return false;
-
-  return true;
-}
-//-----------------------------------------------------------------------------
-template <class Dcel, class Traits> 
-template <class Scanner>
-bool Planar_map_2< Dcel, Traits >:: 	
-build_dcel( Scanner& scanner )
-{
-  typedef typename Dcel::Vertex	                  D_vertex;
-  typedef typename Dcel::Halfedge                 D_halfedge;
-  typedef typename Dcel::Face	                  D_face;
-  
-  typedef typename  Dcel::Vertex_iterator          D_vetrex_iterator;
-  typedef typename  Dcel::Vertex_const_iterator    D_vetrex_const_iterator;
-  typedef typename  Dcel::Halfedge_iterator        D_halfedge_iterator;
-  typedef typename  Dcel::Halfedge_const_iterator  D_halfedge_const_iterator;
-  typedef typename  Dcel::Face_iterator            D_face_iterator;
-  typedef typename  Dcel::Face_const_iterator      D_face_const_iterator;
-
-  // keeping a vector of halfedges (to access them easily by their indices).
-  std::vector<D_halfedge* >  halfedges_vec;  
-
-  std::vector<D_vertex* >    vertices_vec; 
- 
-  if ( ! scanner.in())
-    return 0;
-
-  scanner.scan_pm_vhf_sizes();
-  if ( ! scanner.in()){
-    std::cerr << "can't read vhf values"<<std::endl;
-    clear();
-    return false;
-  }
-
-  // read in all vertices
-  unsigned int  i;
-  for (i = 0; i < scanner.number_of_vertices(); i++) {
-    D_vertex* nv = d.new_vertex();
-    Point p;
-
-    // scanner.scan_vertex_attributes (nv);
-    // if ( ! scanner.in()){
-    // std::cerr << "can't read vertex attributes"<<std::endl;
-    // clear();
-    // return false;
-    // }
-
-    scanner.scan_vertex (nv);
-    if ( ! scanner.in()){
-      std::cerr << "can't read vertex"<<std::endl;
-      clear();
-      return false;
-    }
-    //nv->set_point(p);
-
-    // for debug.
-    //std::cout<<"Reading vertex no " <<i<<" point is ";
-    //std::cout<<nv->point()<<std::endl;
-
-    vertices_vec.push_back(nv);
-
-    bb->insert(nv->point());
-    
-    //scanner.skip_to_next_vertex();
-    //if ( ! scanner.in()){
-    //  std::cerr << "can't skip to next vertex"<<std::endl;
-    //  scanner.in().clear( std::ios::badbit);
-    //  clear();
-    //  return false;
-    // }
-  }
-  
-  for (i = 0; i < scanner.number_of_halfedges(); i++, i++){
-    D_halfedge *nh = NULL;
-    void  *nv1, *nv2;
-    std::size_t index1, index2;
-    X_curve cv;
-
-    // std::cout<<"Reading Edge no " <<i<<std::endl;
-
-    nh = d.new_edge();
-    
-    // scanner.scan_halfedge_attributes (nh);
-    // if ( ! scanner.in()){
-    // std::cerr << "can't read halfedge attributes"<<std::endl;
-    // clear();
-    // return false;
-    // }
-
-    scanner.scan_index(index1);
-    if ( ! scanner.in()){
-      std::cerr << "can't read source of halfedge"<<std::endl;
-      clear();
-      return false;
-    }
-    cv = scanner.scan_halfedge(nh);
-    if ( ! scanner.in()){
-      std::cerr << "can't read halfedge"<<std::endl;
-      clear();
-      return false;
-    }
-    //nh->set_curve(cv);
-
-    // scanner.scan_halfedge_attributes (nh->opposite());
-    // if ( ! scanner.in()){
-    // std::cerr << "can't read halfedge attributes"<<std::endl;
-    // clear();
-    // return false;
-    // }
-
-    scanner.scan_index (index2);
-    if ( ! scanner.in()){
-      std::cerr << "can't read source of halfedge"<<std::endl;
-      clear();
-      return false;
-    }
-    scanner.scan_halfedge(nh->opposite());
-    if ( ! scanner.in()){
-      std::cerr << "can't read halfedge"<<std::endl;
-      clear();
-      return false;
-    }
-    //nh->opposite()->set_curve(cv);
-
-    nv1 = vertices_vec[index1];
-    ((D_vertex*) nv1)->set_halfedge(nh); 
-    nh->set_vertex((D_vertex*) nv1);
-    //for debug
-    //std::cout<<((D_vertex*) nv1)->point()<<std::endl;
-    
-    nv2 = vertices_vec[index2];
-    ((D_vertex*) nv2)->set_halfedge(nh->opposite()); 
-    nh->opposite()->set_vertex((D_vertex*) nv2);
-    //for debug
-    //std::cout<<((D_vertex*) nv2)->point()<<std::endl;
-
-    pl->insert(D_halfedge_iterator(nh->opposite()), cv);
-    bb->insert(cv);
-    
-    halfedges_vec.push_back(nh);
-    halfedges_vec.push_back(nh->opposite());
-
-    //scanner.skip_to_next_halfedge();
-    //if ( ! scanner.in()){
-    //  std::cerr << "can't skip to next halfedge"<<std::endl;
-    //  scanner.in().clear( std::ios::badbit);
-    //  clear();
-    //  return false;
-    //} 
-  }
-  
-  // read in all facets
-  for (i = 0; i < scanner.number_of_faces(); i++) {
-    //std::size_t  num_of_holes, num_halfedges_on_outer_ccb;
-    
-    //std::cout<<"Reading Face no " <<i<<std::endl;
-   
-    D_face* nf = u_face; //this is the unbounded face.
-    if (i > 0)  // else - allocate the bounded face.
-      nf = d.new_face();
-
-    scanner.scan_face(nf);
-    if ( ! scanner.in()){
-      std::cerr << "can't read face"<<std::endl;
-      clear();
-      return false;
-    }
-  }
-  
-  if ( ! scanner.in() ) {
-    scanner.in().clear( std::ios::badbit);
-    return false;
-  } 
-  
-  return true;
-}	
   
 CGAL_END_NAMESPACE
 
