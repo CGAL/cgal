@@ -29,8 +29,10 @@
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Timer.h>
 
+#ifdef CGAL_NEF3_TRIANGULATE_FACETS
 #include <CGAL/Polygon_triangulation_traits_2.h>
 #include <CGAL/Nef_3/triangulate_nef3_facet.h>
+#endif
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 509
@@ -67,8 +69,6 @@ public:
   typedef typename SNC_structure::Object_handle Object_handle;
   typedef typename SNC_structure::Halfedge_const_handle Halfedge_const_handle;
   typedef typename SNC_structure::Halffacet_const_handle Halffacet_const_handle;
-  typedef typename SNC_structure::Halffacet_triangle_handle 
-                                  Halffacet_triangle_handle;
   typedef typename SNC_structure::Point_3 Point_3;
   typedef typename SNC_structure::Segment_3 Segment_3;
   typedef typename SNC_structure::Ray_3 Ray_3;
@@ -163,8 +163,6 @@ public:
   typedef typename SNC_structure::Object_handle Object_handle;
   typedef typename SNC_structure::Halfedge_const_handle Halfedge_const_handle;
   typedef typename SNC_structure::Halffacet_const_handle Halffacet_const_handle; 
-  typedef typename SNC_structure::Halffacet_triangle_handle 
-                                  Halffacet_triangle_handle;	
   typedef typename SNC_structure::Point_3 Point_3;
   typedef typename SNC_structure::Segment_3 Segment_3;
   typedef typename SNC_structure::Ray_3 Ray_3;
@@ -184,6 +182,9 @@ public:
   typedef typename Decorator_traits::Halfedge_iterator Halfedge_iterator;
   typedef typename Decorator_traits::Halffacet_iterator Halffacet_iterator;
   typedef typename Decorator_traits::Volume_handle Volume_handle;
+#ifdef CGAL_NEF3_TRIANGULATE_FACETS
+  typedef typename K3_tree_traits::Facet_triangle_handle Facet_triangle_handle;
+#endif
 
   typedef typename SNC_candidate_provider::Object_list Object_list;
   typedef typename Object_list::iterator Object_list_iterator;
@@ -206,6 +207,7 @@ public:
 //    (Base) *this = SNC_decorator(*W);
 	set_snc(*W);
     initialized = true;
+    candidate_provider = new SNC_candidate_provider;
     Object_list objects;
     Vertex_iterator v;
     Halfedge_iterator e;
@@ -225,17 +227,16 @@ public:
 	( f, std::back_inserter(triangles), Triangulation_traits());
       for( Triangles_iterator ti = triangles.begin(); 
            ti != triangles.end(); ++ti) {
-        Halffacet_triangle_handle th( f, *ti);
-        objects.push_back(Object_handle(th));
-	CGAL_assertion( CGAL::assign( th, *(--objects.end())));
-	CGAL_assertion( th.get_triangle() == *ti);
+//        Facet_triangle_handle th = candidate_provider->register_triangle(f,*ti);
+        objects.push_back(Object_handle(candidate_provider->register_triangle(f,*ti)));
       }
 #else
       objects.push_back(Object_handle(Halffacet_handle(f)));
 #endif // CGAL_NEF3_TRIANGULATE_FACETS
     }
     Object_list_iterator oli=objects.begin()+v_end;
-    candidate_provider = new SNC_candidate_provider(objects,oli);
+    std::cerr << "create_tree " << objects.size() << std::endl;
+    candidate_provider->create_tree(objects,oli);
 //    CGAL_NEF_TRACEN(*candidate_provider);
     TIMER(ct_t.stop());
   }
@@ -271,7 +272,9 @@ public:
     Vertex_handle v;
     Halfedge_handle e;
     Halffacet_handle f;
-    Halffacet_triangle_handle t;
+#ifdef CGAL_NEF3_TRIANGULATE_FACETS
+    Facet_triangle_handle t;
+#endif
     bool hit = false;
     Point_3 eor; // 'end of ray', the latest ray's hit point
     Objects_along_ray objects = candidate_provider->objects_along_ray(ray);
@@ -333,11 +336,12 @@ public:
             hit = true; 
             _CGAL_NEF_TRACEN("the facet becomes the new hit object");
           }
-        }
-        else if( CGAL::assign( t, *o)) {
+#ifdef CGAL_NEF3_TRIANGULATE_FACETS
+        } else if( CGAL::assign( t, *o)) {
           Point_3 q;
-          Triangle_3 tr = t.get_triangle();
+          Triangle_3& tr = t->triangle;
           _CGAL_NEF_TRACEN("trying triangle "<<tr);
+          std::cerr << ray << "," << tr << std::endl;
           if( is.does_intersect( ray, tr, q)) {
             _CGAL_NEF_TRACEN("ray intersect triangle on "<<q);
             _CGAL_NEF_TRACEN("prev. intersection? "<<hit);
@@ -345,20 +349,20 @@ public:
             if( hit && !has_smaller_distance_to_point( ray.source(), q, eor))
               continue;
             _CGAL_NEF_TRACEN("is the intersection point on the boundary of the facet? "<<
-                    is.does_contain_on_boundary( t, q));
-            if( is.does_contain_on_boundary( t, q))
+                    is.does_contain_on_boundary( t->f, q));
+            if( is.does_contain_on_boundary( t->f, q))
               continue;
             _CGAL_NEF_TRACEN("is the intersection point on the current cell? "<<
                     candidate_provider->is_point_on_cell(q,objects_iterator));
             if( !candidate_provider->is_point_on_cell( q, objects_iterator))
                 continue;
             eor = q;
-            result = Object_handle(Halffacet_handle(t));
+            result = Object_handle(t->f);
             hit = true; 
             _CGAL_NEF_TRACEN("the facet becomes the new hit object");
           }
-        }
-        else
+#endif
+        } else
           CGAL_assertion_msg( 0, "wrong handle");
       }
       if(!hit)
@@ -377,7 +381,9 @@ public:
     Vertex_handle v;
     Halfedge_handle e;
     Halffacet_handle f;
-    Halffacet_triangle_handle t;
+#ifdef CGAL_NEF3_TRIANGULATE_FACETS
+    Facet_triangle_handle t;
+#endif
     Object_list candidates = candidate_provider->objects_around_point(p);
     Object_list_iterator o = candidates.begin();
     bool found = false;
@@ -402,18 +408,19 @@ public:
           result = Object_handle(f);
           found = true;
         }
-      }
-      else if( CGAL::assign( t, *o)) {
-        Triangle_3 tr = t.get_triangle();
+#ifdef CGAL_NEF3_TRIANGULATE_FACETS
+      } else if( CGAL::assign( t, *o)) {
+        Triangle_3& tr = t->triangle;
         if( tr.has_on(p)) {
           _CGAL_NEF_TRACEN("found on triangle "<<tr);
-	  if(is.does_contain_on_boundary( t, p)) {
+	  if(is.does_contain_on_boundary( t->f, p)) {
 	    _CGAL_NEF_TRACEN("but located on the facet's boundary");
 	    continue;
 	  }
-          result = Object_handle(Halffacet_handle(t));
+          result = Object_handle(t->f);
 	  found = true;
         }
+#endif
       }
       o++;
     }
@@ -434,7 +441,9 @@ public:
     Vertex_handle v;
     Halfedge_handle e;
     Halffacet_handle f;
-    Halffacet_triangle_handle t;
+#ifdef CGAL_NEF3_TRIANGULATE_FACETS
+    Facet_triangle_handle t;
+#endif
     Object_list candidates = candidate_provider->objects_around_point(p);
     Object_list_iterator o = candidates.begin();
 
@@ -489,19 +498,20 @@ public:
           s = Segment_3(p, normalized(ip));
 	  result = Object_handle(f);
         }
+#ifdef CGAL_NEF3_TRIANGULATE_FACETS
       } else if( CGAL::assign(t, *o)) {
-        CGAL_NEF_TRACEN("test triangle of facet " << t->plane());
-        Triangle_3 tr = t.get_triangle();
+        Triangle_3& tr = t->triangle;
         CGAL_NEF_TRACEN("trying triangle "<<tr);	
 	if(tr.has_on(p)) {
-	  f = t;
+	  f = t->f;
 	  return Object_handle(f);
         }
         if( is.does_intersect( s, tr, ip)) {
-	  CGAL_assertion(!is.does_contain_on_boundary( t, ip));
+	  CGAL_assertion(!is.does_contain_on_boundary( t->f, ip));
           s = Segment_3(p, normalized(ip));
 	  result = Object_handle(t);
         }
+#endif
       } else CGAL_assertion_msg(false, "wrong handle type");
     }
 
@@ -540,12 +550,14 @@ public:
       if(f->plane().oriented_side(p) == ON_NEGATIVE_SIDE)
 	f = f->twin();
       return Object_handle(f->incident_volume());
+#ifdef CGAL_NEF3_TRIANGULATE_FACETS
     } else if( CGAL::assign(t, result)) {
-      f = t;
+      f = t->f;
       _CGAL_NEF_TRACEN("facet hit, obtaining volume...");
       if(f->plane().oriented_side(p) == ON_NEGATIVE_SIDE)
 	f = f->twin();
       return Object_handle(f->incident_volume());
+#endif
     } else if( CGAL::assign(e, result)) {
       SM_decorator SD(&*source(e));
       if( SD.is_isolated(e))
@@ -566,14 +578,16 @@ public:
                                                          e0->twin()->source()->point()));
 
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
-    Unique_hash_map< Halffacet_triangle_handle, bool> f_mark(false);
+    Unique_hash_map< Facet_triangle_handle, bool> f_mark(false);
 #endif // CGAL_NEF3_TRIANGULATE_FACETS
 
     Segment_3 s(Segment_3(e0->source()->point(),e0->twin()->source()->point()));
     Vertex_handle v;
     Halfedge_handle e;
     Halffacet_handle f;
-    Halffacet_triangle_handle t;
+#ifdef CGAL_NEF3_TRIANGULATE_FACETS
+    Facet_triangle_handle t;
+#endif
     Object_list_iterator o;
     Object_list objects = candidate_provider->objects_around_segment(s);
     CGAL_for_each( o, objects) {
@@ -606,26 +620,22 @@ public:
           call_back( e0, Object_handle(Halffacet_const_handle(f)), q);
           _CGAL_NEF_TRACEN("edge intersects facet on plane "<<plane(f)<<" on "<<q);
         }
-      }
-      else if( CGAL::assign( t, *o)) {
-        Point_3 q;
-        Triangle_3 tr = t.get_triangle();
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
+      } else if( CGAL::assign( t, *o)) {
+        Point_3 q;
+        Triangle_3& tr = t->triangle;
 	if( f_mark[t])
 	  continue;
-#endif // CGAL_NEF3_TRIANGULATE_FACETS
 	_CGAL_NEF_TRACEN("trying with triangle "<<tr);
         if( is.does_intersect( s, tr, q) &&
-            !is.does_contain_on_boundary( t, q)) {
+            !is.does_contain_on_boundary( t->f, q)) {
           q = normalized(q);
-          call_back( e0, Object_handle(Halffacet_handle(t)), q);
-          _CGAL_NEF_TRACEN("edge intersects facet triangle on plane "<<plane(t)<<" on "<<q);
-#ifdef CGAL_NEF3_TRIANGULATE_FACETS
+          call_back( e0, Object_handle(t->f), q);
+          _CGAL_NEF_TRACEN("edge intersects facet triangle on plane "<<t->f->plane()<<" on "<<q);
 	  f_mark[t] = true;
-#endif // CGAL_NEF3_TRIANGULATE_FACETS
         }
-      }
-      else
+#endif // CGAL_NEF3_TRIANGULATE_FACETS
+      } else
         CGAL_assertion_msg( 0, "wrong handle");
     }
     TIMER(it_t.stop());
@@ -641,7 +651,9 @@ public:
     Vertex_handle v;
     Halfedge_handle e;
     Halffacet_handle f;
-    Halffacet_triangle_handle t;
+#ifdef CGAL_NEF3_TRIANGULATE_FACETS
+    Facet_triangle_handle t;
+#endif
     Object_list_iterator o;
     Object_list objects = candidate_provider->objects_around_segment(s);
     CGAL_for_each( o, objects) {
@@ -665,9 +677,10 @@ public:
       }
       else if( CGAL::assign( f, *o)) {
         /* do nothing */
-      }
-      else if( CGAL::assign( t, *o)) {
+#ifdef CGAL_NEF3_TRIANGULATE_FACETS
+      } else if( CGAL::assign( t, *o)) {
         /* do nothing */
+#endif
       }
       else
         CGAL_assertion_msg( 0, "wrong handle");
@@ -682,13 +695,15 @@ public:
     _CGAL_NEF_TRACEN( "intersecting edge: "<< Segment_3(e0->source()->point(),
                                                e0->twin()->source()->point()));
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
-    Unique_hash_map< Halffacet_triangle_handle, bool> f_mark(false);
+    Unique_hash_map< Facet_triangle_handle, bool> f_mark(false);
 #endif // CGAL_NEF3_TRIANGULATE_FACETS
     Segment_3 s(Segment_3(e0->source()->point(),e0->twin()->source()->point()));
     Vertex_handle v;
     Halfedge_handle e;
     Halffacet_handle f;
-    Halffacet_triangle_handle t;
+#ifdef CGAL_NEF3_TRIANGULATE_FACETS
+    Facet_triangle_handle t;
+#endif
     Object_list_iterator o;
     Object_list objects = candidate_provider->objects_around_segment(s);
     CGAL_for_each( o, objects) {
@@ -710,26 +725,22 @@ public:
           call_back( e0, Object_handle(Halffacet_const_handle(f)), q);
           _CGAL_NEF_TRACEN("edge intersects facet on plane "<<plane(f)<<" on "<<q);
         }
-      }
-      else if( CGAL::assign( t, *o)) {
-        Point_3 q;
-        Triangle_3 tr = t.get_triangle();
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
+      } else if( CGAL::assign( t, *o)) {
+        Point_3 q;
+        Triangle_3& tr = t->triangle;
 	if( f_mark[t])
 	  continue;
-#endif // CGAL_NEF3_TRIANGULATE_FACETS
 	_CGAL_NEF_TRACEN("trying with triangle "<<tr);
         if( is.does_intersect( s, tr, q) &&
-            !is.does_contain_on_boundary( t, q)) {
+            !is.does_contain_on_boundary( t->f, q)) {
           q = normalized(q);
-          call_back( e0, Object_handle(Halffacet_handle(t)), q);
-          _CGAL_NEF_TRACEN("edge intersects facet triangle on plane "<<plane(t)<<" on "<<q);
-#ifdef CGAL_NEF3_TRIANGULATE_FACETS
+          call_back( e0, Object_handle(t->f), q);
+          _CGAL_NEF_TRACEN("edge intersects facet triangle on plane "<<t->f->plane()<<" on "<<q);
 	  f_mark[t] = true;
-#endif // CGAL_NEF3_TRIANGULATE_FACETS
         }
-      }
-      else
+#endif // CGAL_NEF3_TRIANGULATE_FACETS
+      } else
         CGAL_assertion_msg( 0, "wrong handle");
     }
     TIMER(it_t.stop());
@@ -787,7 +798,9 @@ private:
   SNC_candidate_provider* candidate_provider;
   SNC_intersection is;
  
- std::list<Halffacet_triangle_handle> triangulation;
+#ifdef CGAL_NEF3_TRIANGULATE_FACETS
+ std::list<Facet_triangle_handle> triangulation;
+#endif
 };
 
 /*
@@ -804,8 +817,6 @@ class SNC_point_locator_naive :
 public:
   typedef typename SNC_decorator::Object_handle Object_handle;
   typedef typename SNC_decorator::Halfedge_const_handle Halfedge_const_handle;
-  typedef typename SNC_decorator::Halffacet_triangle_handle 
-                                  Halffacet_triangle_handle;
   typedef typename SNC_decorator::Point_3 Point_3;
   typedef typename SNC_decorator::Segment_3 Segment_3;
   typedef typename SNC_decorator::Ray_3 Ray_3;
