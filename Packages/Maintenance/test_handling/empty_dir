@@ -1,25 +1,25 @@
 #!/bin/sh
 
 old_results_dir=/projects/CGAL/old_results
+tempdir=/tmp
 
 if [ -d "$1" ] ; then
    if [ -d "$1/Polygon" -o -d "$1/src" ] ; then
       if [ -x "$1" ] ;
       then
-         cp -r "$1" $old_results_dir
-         find "$old_results_dir/$1" -name '*.gz' | xargs gunzip
-         (cd $old_results_dir; tar cf /projects/CGAL/old_results/$1.tar $1)
-         if gzip --best /projects/CGAL/old_results/$1.tar
+         cp -r "$1" $tempdir
+         find "$tempdir/$1" -name '*.gz' | xargs gunzip
+         (cd $tempdir; tar cf $1.tar $1; gzip --best $1.tar; rm -r $1)
+         if mv $tempdir/$1.tar.gz $old_results_dir
          then
-             chgrp cgal /projects/CGAL/old_results/$1.tar.gz
-             chmod g+w /projects/CGAL/old_results/$1.tar.gz
-             rm -r /projects/CGAL/old_results/$1
+             chgrp cgal $old_results_dir/$1.tar.gz
+             chmod g+w $old_results_dir/$1.tar.gz
              cd $1
              rm */* ;
+             rm -f diffs*.gz
              rmdir * 2>/dev/null
          else
-             echo "Could not gzip /projects/CGAL/old_results/$1.tar " >&2
-             rm -r /projects/CGAL/old_results/$1
+             echo "Could not mv $tempdir/$1.tar.gz $old_results_dir"
 	 fi
       else
         echo "Could not cd to $1" >&2
