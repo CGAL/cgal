@@ -203,6 +203,8 @@ private:
   Vector normal;
 };
 
+namespace Interpolation {
+
 template < typename K >
 class Compute_area_3
 {
@@ -233,6 +235,8 @@ private:
     }
 };
 
+} // namespace Interpolation
+
 template < class K >
 class Voronoi_intersection_2_traits_3
 {
@@ -255,7 +259,7 @@ public:
 
   typedef typename Rep::Compare_distance_3          Compare_distance_2;
   //if no sqrt is supported, it casts to double:
-  typedef Compute_area_3<Rep>                       Compute_area_2;
+  typedef Interpolation::Compute_area_3<Rep>                       Compute_area_2;
 
   //the regular triangulation traits model:
   //Traits::Point_2 is a 3D point!!
