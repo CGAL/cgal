@@ -1065,7 +1065,11 @@ Packages/Manual_tools/src/latex_converter_config/gif/cc_Upsilon.gif -text svneol
 Packages/Manual_tools/src/latex_converter_config/gif/cc_Variable.gif -text svneol=unset#unset
 Packages/Manual_tools/src/latex_converter_config/gif/cc_Xi.gif -text svneol=unset#unset
 Packages/Manual_tools/src/latex_converter_config/gif/cc_advanced_begin.gif -text svneol=unset#unset
+Packages/Manual_tools/src/latex_converter_config/gif/cc_advanced_begin1.gif -text svneol=unset#unset
+Packages/Manual_tools/src/latex_converter_config/gif/cc_advanced_begin2.gif -text svneol=unset#unset
 Packages/Manual_tools/src/latex_converter_config/gif/cc_advanced_end.gif -text svneol=unset#unset
+Packages/Manual_tools/src/latex_converter_config/gif/cc_advanced_end1.gif -text svneol=unset#unset
+Packages/Manual_tools/src/latex_converter_config/gif/cc_advanced_end2.gif -text svneol=unset#unset
 Packages/Manual_tools/src/latex_converter_config/gif/cc_aleph.gif -text svneol=unset#unset
 Packages/Manual_tools/src/latex_converter_config/gif/cc_alpha.gif -text svneol=unset#unset
 Packages/Manual_tools/src/latex_converter_config/gif/cc_amalg.gif -text svneol=unset#unset
