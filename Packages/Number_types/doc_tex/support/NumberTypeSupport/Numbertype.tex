@@ -58,15 +58,15 @@ In fact \ccc{double} and \ccc{float} also fulfill the requirements.
 \ccCreationVariable{ntvar}
 
 \ccConstructor{NT();}
-	    {Declaration of a variable.}
+            {Declaration of a variable.}
 
 
 \ccConstructor{NT(const NT &ntval);}
-	    {Declaration and initialization.}
+            {Declaration and initialization.}
 
 
 \ccConstructor{NT(i)}
-	    {Declaration and initialization with a small integer
+            {Declaration and initialization with a small integer
 constant $i$, $0 \leq i \leq 127$. The neutral elements for addition
 (zero) and multiplication (one) are needed quite often, but sometimes
 other small constants are useful too. The value 127 was chosen such
@@ -225,8 +225,8 @@ named \ccc{Sgn} in order to avoid a conflict with the type
 
 \ccInclude{CGAL/number_utils_classes.h}
 
-\ccc{class Min<NT>;}\\
-\ccc{class Max<NT>;}\\
+\ccc{class Min<NT,Compare=std::less>;}\\
+\ccc{class Max<NT,Compare=std::less>;}\\
 \ccc{class Abs<NT>;}\\
 \ccc{class Sgn<NT>;}\\
 \ccc{class Is_negative<NT>;}\\

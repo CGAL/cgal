@@ -88,18 +88,26 @@ struct Abs :public CGAL_STD::unary_function< NT, NT > {
   { return abs( x); }
 };
 
-template < class NT >
+template < class NT, class Compare = std::less< NT > >
 struct Min :public CGAL_STD::binary_function< NT, NT, NT > {
   typedef Arity_tag< 2 > Arity;
+  Min() {}
+  Min(const Compare& c_) : c(c_) {}
   NT operator()( const NT& x, const NT& y) const
-  { return std::min( x, y); }
+  { return std::min( x, y, c); }
+protected:
+  Compare c;
 };
 
-template < class NT >
+template < class NT, class Compare = std::less< NT > >
 struct Max :public CGAL_STD::binary_function< NT, NT, NT > {
   typedef Arity_tag< 2 > Arity;
+  Max() {}
+  Max(const Compare& c_) : c(c_) {}
   NT operator()( const NT& x, const NT& y) const
-  { return std::max( x, y); }
+  { return std::max( x, y, c); }
+protected:
+  Compare c;
 };
 
 template < class NT >
