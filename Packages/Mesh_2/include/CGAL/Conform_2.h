@@ -144,6 +144,8 @@ private:
     }
   };
 
+  typedef typename Cluster::Vertices_map Cluster_vertices_map;
+
 #ifdef CGAL_USE_BOOST
 public:
   typedef typename boost::projection_iterator_generator<
@@ -151,13 +153,18 @@ public:
     typename Cluster_map::const_iterator>::type
   Cluster_vertices_iterator;
 
-private:
-  typedef typename Cluster::Vertices_map Cluster_vertices_map;
-
-public:
   typedef typename boost::projection_iterator_generator<
     Pair_get_first<typename Cluster_vertices_map::value_type>,
     typename Cluster_vertices_map::const_iterator>::type
+  Vertices_in_cluster_iterator;
+#else
+  typedef CGAL::Iterator_project<typename Cluster_map::const_iterator,
+    Pair_get_first<typename Cluster_map::value_type> >
+  Cluster_vertices_iterator;
+
+  typedef CGAL::Iterator_project<
+    typename Cluster_vertices_map::const_iterator,
+    Pair_get_first<typename Cluster_vertices_map::value_type> >
   Vertices_in_cluster_iterator;
 #endif // CGAL_USE_BOOST
 
@@ -235,7 +242,6 @@ public:
   // --- ACCESS FUNCTIONS ---
   int number_of_constrained_edges() const;
 
-#ifdef CGAL_USE_BOOST
   int number_of_clusters_vertices() const
     {
       return cluster_map.size();
@@ -278,8 +284,6 @@ public:
       std::make_pair(Vertices_in_cluster_iterator(c.vertices.begin()),
 		     Vertices_in_cluster_iterator(c.vertices.end()));
   }
-
-#endif
 
   // --- HELPING FUNCTION ---
   void clear();
@@ -1072,4 +1076,4 @@ delaunay_conform(Tr& t)
 CGAL_END_NAMESPACE
 
 
-#endif
+#endif //CGAL_CONFORM_2_H
