@@ -44,11 +44,6 @@ class QP_solver;
 
 // Class interface
 // ===============
-struct To_double {
-    template < class NT >
-    double  operator () ( const NT& x) { return CGAL::to_double( x); }
-};
-
 template < class _Rep >
 class Pricing_strategy_base {
   public:
