@@ -220,7 +220,7 @@ protected:
       else if (rx == LARGER)
         return p2;
       else 
-        assert(0);
+        CGAL_assertion(0);
     }
   };
 
@@ -280,12 +280,12 @@ protected:
     }
     
     Point_plus& get_rightmost_point() { 
-      assert ( ptr()->points.size() > 0);
+      CGAL_assertion ( ptr()->points.size() > 0);
       return *( ptr()->points.rbegin());
     }
     
     const Point_plus& get_rightmost_point() const { 
-      assert ( ptr()->points.size() > 0);
+      CGAL_assertion ( ptr()->points.size() > 0);
       return *( ptr()->points.rbegin());
     }
 
@@ -398,9 +398,9 @@ protected:
     // when comparing the curves to the right of the intersection point 
     // is monotonicaly increasing.
     void merge(const Self& point_node){
-      assert (intersect_p == point_node.get_point());
+      CGAL_assertion (intersect_p == point_node.get_point());
       
-      assert (curves.size() > 0 && 
+      CGAL_assertion (curves.size() > 0 && 
               point_node.curves_begin() != point_node.curves_end());
       
       Traits  traits;
@@ -605,8 +605,10 @@ protected:
         return p2;
       else if (rx == LARGER)
         return p1;
-      else
-        assert(0);
+      else{
+        CGAL_assertion(0);
+        return p1;  // otherwise - does not compile at i686_CYGWINNT-5.0-1.3.1_bcc32.
+      }
     }
     
     bool is_right(const Point &p1, const Point &p2) const 
@@ -833,8 +835,10 @@ protected:
         return p2;
       else if (rx == LARGER)
         return p1;
-      else
-      assert(0);
+      else{
+      CGAL_assertion(0);
+      return p1;  // otherwise - does not compile at i686_CYGWINNT-5.0-1.3.1_bcc32.
+      }
     }
     
   };
@@ -1698,8 +1702,10 @@ protected:
       return p1;
     else if (rx == LARGER)
       return p2;
-   else
-     assert(0);
+    else{
+     CGAL_assertion(0);
+     return p1;  // otherwise - does not compile at i686_CYGWINNT-5.0-1.3.1_bcc32.
+    }
   }
 
   const Point& rightmost(const Point &p1, const Point &p2) const
@@ -1709,8 +1715,10 @@ protected:
       return p2;
     else if (rx == LARGER)
       return p1;
-    else
-      assert(0);
+    else{
+      CGAL_assertion(0);
+      return p1;  // otherwise - does not compile at i686_CYGWINNT-5.0-1.3.1_bcc32.
+    }
   }
 
   //-------------------------------- debuging function.

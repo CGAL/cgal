@@ -1023,7 +1023,7 @@ public:
 #ifdef  CGAL_SWEEP_LINE_DEBUG     
       cout<<"* * * event point is "<<event_point<<
         " and point node is "<<point_node.get_point().point()<<std::endl;
-      assert(event_point == point_node.get_point().point());
+      CGAL_assertion(event_point == point_node.get_point().point());
 #endif
       
       event_terminated = true; // reinitializing event_terminated to true only after the updating of the subdivision.
