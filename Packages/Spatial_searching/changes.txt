@@ -1,4 +1,7 @@
 
+Version 4.08 (15 September 2003) [rursu]
+- Qt_help_window is in the CGAL namespace now
+
 Version 4.04 (10 September 2003) [rursu]
 - Qt_help_window is in the CGAL namespace now
 
