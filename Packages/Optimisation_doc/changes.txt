@@ -1,5 +1,8 @@
 Changes done to the `Optimisation_doc' package
 
+Version 1.0.4 on 17-Jul-2001
+- renamed template parameter 'R' to 'K'
+
 Version 1.0.3 on 11-Jul-2001
 - changed all concept names. 
 
