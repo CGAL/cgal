@@ -22,6 +22,7 @@
 #define SEGMENT_INTERSECTION_POINTS_2_H
 
 #include <CGAL/basic.h>
+#include <CGAL/stl_extensions.h>
 #include <iterator>
 
 namespace CGAL {

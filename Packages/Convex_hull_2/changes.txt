@@ -1,3 +1,5 @@
+- added #include <CGAL/stl_extensions.h> into segment_intersection_points_2.h.
+
 3.26 (05 Dec 2001)
 - Replaced all uses of ch_value_type with iterator_traits and Kernel_traits.
   Deleted include/CGAL/ch_value_type.h.
