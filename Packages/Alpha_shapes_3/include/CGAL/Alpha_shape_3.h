@@ -560,7 +560,7 @@ public:
 	{
 	case VERTEX            : return classify(pCell->vertex(i), alpha);
 	case EDGE              : return classify(pCell, i, j, alpha);
-	case FACE              : return classify(pCell, i, alpha);
+	case FACET             : return classify(pCell, i, alpha);
 	case CELL              : return classify(pCell, alpha);
 	case OUTSIDE_CONVEX_HULL : return EXTERIOR;
 	case OUTSIDE_AFFINE_HULL : return EXTERIOR;
@@ -1673,7 +1673,9 @@ Alpha_shape_3<Dt>::classify(const Cell_handle& s,
   if (is_infinite(s, i, j))
     return EXTERIOR;
     
-  Interval3 interval = find_interval((const Edge)(s,i,j));
+  // FIX SUGGESTED BY JUR VAN DER BERG
+  //Interval3 interval = find_interval((const Edge)(s,i,j));
+  Interval3 interval = s->get_edge_ranges(i, j);
   //  (*(_facet_interval_map.find(const_facet(s, i)))).second;
  
   if (alpha <= interval.second)
