@@ -4,16 +4,15 @@
 #include <CGAL/basic.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
 #include <CGAL/Nef_S2/SM_decorator.h>
+#ifdef _DEBUG
+#include <CGAL/Nef_3/SNC_io_parser.h>
+#endif
 
 #undef _DEBUG
 #define _DEBUG 41
 #include <CGAL/Nef_3/debug.h>
 
 CGAL_BEGIN_NAMESPACE
-
-#ifdef _DEBUG
-template <typename S> class SNC_io_parser;
-#endif
 
 template<typename SNC_structure>
 class SNC_simplify : public SNC_decorator<SNC_structure> {

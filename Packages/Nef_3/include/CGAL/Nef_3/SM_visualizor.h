@@ -110,10 +110,7 @@ public:
 /*{\Mcreation 4}*/
 SM_visualizor(const SM_explorer* E, CGAL::OGL::Unit_sphere& S)
   : MT_(true), E_(E), T_(&MT_,E_), S_(S)
-{ 
-  std::cerr << "vis" << E_->sphere_map().sncp_ << " " << T_.sphere_map()->sncp_ << std::endl;
-  T_.triangulate(); 
-}
+{ T_.triangulate(); }
 
 
 /*{\Moperations 2 1}*/
@@ -127,14 +124,39 @@ void draw_map() const
 {
   // draw sphere segments underlying edges of E_:
   SHalfedge_const_iterator e;
+  bool top=false;
+  bool bot=false;
+  CGAL_forall_sedges(e,*E_) {
+    top = top || 
+      E_->point(E_->source(e)).hz() > 0 ||
+      E_->point(E_->target(e)).hz() > 0;
+    bot = bot || 
+      E_->point(E_->source(e)).hz() < 0 ||
+      E_->point(E_->target(e)).hz() < 0;
+  }
+
+  CGAL_assertion(top || bot);
+
   CGAL_forall_sedges(e,*E_) {
     if ( E_->source(e) == E_->target(e) ) {
       S_.push_back(E_->circle(e), CO_.color(e,E_->mark(e))); 
-    } else {
+    } else 
+      /*
+      if(E_->point(E_->source(e)) == E_->point(E_->target(e)).antipode()) {
+      CGAL_assertion(!top || !bot);
+      if(!top)
+	S_.push_back(Sphere_segment(E_->point(E_->source(e)),
+				    E_->point(E_->target(e)),
+				    c),CO_.color(e,E_->mark(e)));
+      else
+     
+	c=Sphere_circle(E_->point(E_->source(e)),Sphere_point(0,0,1));
+    }
+    else
+      */ 
       S_.push_back(Sphere_segment(E_->point(E_->source(e)),
 				  E_->point(E_->target(e)),
 				  E_->circle(e)),CO_.color(e,E_->mark(e)));
-    }
   }
   // draw sphere circles underlying loops of E_:
 

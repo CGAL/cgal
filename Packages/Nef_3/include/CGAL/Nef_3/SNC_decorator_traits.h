@@ -1,10 +1,18 @@
 #ifndef SNC_DECORATOR_TRAITS_H
 #define SNC_DECORATOR_TRAITS_H
 
+#include <CGAL/Nef_S2/SM_decorator_traits.h>
+
+template <typename S> class SM_decorator;
+template <typename S> class SM_const_decorator;
+
 template <class Refs_>
 class SNC_decorator_traits : public SM_decorator_traits<Refs_> {
   typedef Refs_ Refs;
+  typedef typename Refs::Sphere_map Sphere_map;
  public:
+  typedef CGAL::SM_decorator<Sphere_map> SM_decorator;
+
   typedef typename Refs::Vertex_handle Vertex_handle;
   typedef typename Refs::Halfedge_handle Halfedge_handle;
   typedef typename Refs::Halffacet_handle Halffacet_handle;
@@ -37,7 +45,10 @@ class SNC_decorator_traits : public SM_decorator_traits<Refs_> {
 template <class Refs_>
 class SNC_decorator_const_traits {
   typedef Refs_ Refs;
+  typedef typename Refs::Sphere_map Sphere_map;
  public:
+  typedef CGAL::SM_const_decorator<Sphere_map> SM_decorator;
+
   typedef typename Refs::Vertex_const_handle Vertex_handle;
   typedef typename Refs::Halfedge_const_handle Halfedge_handle;
   typedef typename Refs::Halffacet_const_handle Halffacet_handle;
