@@ -1,3 +1,6 @@
+2.82 (24 February 2003)
+- Remove duplicate typedef.
+
 2.81 (21 February 2003)
 - True kernel extensibility.
 

@@ -93,8 +93,6 @@ struct Cartesian_base
     typedef CircleC2<Kernel>                            Circle_2;
     typedef Iso_rectangleC2<Kernel>                     Iso_rectangle_2;
     typedef Aff_transformationC2<Kernel>                Aff_transformation_2;
-    typedef Data_accessorC2<Kernel>                     Data_accessor_2;
-    typedef ConicCPA2<Point_2,Data_accessor_2>          Conic_2;
 
     typedef PointC3<Kernel>                             Point_3;
     typedef VectorC3<Kernel>                            Vector_3;
@@ -110,7 +108,8 @@ struct Cartesian_base
     typedef Aff_transformationC3<Kernel>                Aff_transformation_3;
 
     // Undocumented stuff.
-    typedef Data_accessorC2<Kernel>                       Data_accessor_2;
+    typedef Data_accessorC2<Kernel>                     Data_accessor_2;
+    typedef ConicCPA2<Point_2,Data_accessor_2>          Conic_2;
 
     // Functors types and access functions.
 #define CGAL_Kernel_pred(Y,Z) typedef CGALi::Y<Kernel> Y; \

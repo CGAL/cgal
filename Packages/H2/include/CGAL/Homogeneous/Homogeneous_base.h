@@ -94,8 +94,6 @@ struct Homogeneous_base
     typedef TriangleH2<Kernel>                      Triangle_2;
     typedef Iso_rectangleH2<Kernel>                 Iso_rectangle_2;
     typedef Aff_transformationH2<Kernel>            Aff_transformation_2;
-    typedef Data_accessorH2<Kernel>                 Data_accessor_2;
-    typedef ConicHPA2<Point_2, Data_accessor_2>     Conic_2;
 
     typedef PointH3<Kernel>                         Point_3;
     typedef VectorH3<Kernel>                        Vector_3;
@@ -112,6 +110,7 @@ struct Homogeneous_base
 
     // Undocumented stuff.
     typedef Data_accessorH2<Kernel>                 Data_accessor_2;
+    typedef ConicHPA2<Point_2, Data_accessor_2>     Conic_2;
  
     // Functors types and access functions.
 #define CGAL_Kernel_pred(Y,Z) typedef CGALi::Y<Kernel> Y; \
