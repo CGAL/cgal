@@ -76,8 +76,7 @@ namespace CGAL {
 
       FT rd;
 
-      class Priority_higher
-      {
+      class Priority_higher {
       public:
 
         bool search_nearest;
@@ -94,8 +93,7 @@ namespace CGAL {
         }
       };
 
-      class Distance_smaller
-      {
+      class Distance_smaller {
 
       public:
 
