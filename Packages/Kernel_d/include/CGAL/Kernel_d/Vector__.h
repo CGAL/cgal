@@ -44,7 +44,7 @@
 
 namespace CGALLA {
 
-#if defined(_MSC_VER)//  let's only do it  for Microsoft  || defined(__BORLANDC__)
+#if defined(_MSC_VER)//  let's only do it  for Microsoft  
 #define CGAL_SIMPLE_INTERFACE
 #endif
 
