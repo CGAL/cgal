@@ -10,12 +10,12 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class _R >
+template < class R_ >
 class Aff_transformation_rep_baseCd
   : public Rep
 {
 public:
-  typedef          _R                           R;
+  typedef          R_                           R;
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
   typedef typename R::LA                        LA;

@@ -38,13 +38,14 @@ rtag:
 	cvs rtag v`echo $(VERSION) | sed -e "s/\./_/g"` $(CVS_MODULE_NAME)
 
 submit: package
-	cp $(Package).tar.gz version description.txt long_description.txt \
+	cp $(Package).tar.gz version maintainer \
+	description.txt long_description.txt \
 	   changes.txt $(WWW_dir)
 	echo > $(TMP_file)
 	echo "submission::" >> $(TMP_file)
 	echo "http://www-sop.inria.fr/prisme/CGAL/DR:/Members" >> $(TMP_file)
 	echo "/$(Package)/$(Package).tar.gz" >> $(TMP_file)
-	mutt -s autohandle cgal-submit@cs.uu.nl <  $(TMP_file)
+	mail -s autohandle cgal-submit@cs.uu.nl <  $(TMP_file)
 	rm -f $(TMP_file)
 
 clean:

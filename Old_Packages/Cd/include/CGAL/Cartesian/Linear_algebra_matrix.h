@@ -15,21 +15,21 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class _LA >
+template < class LA_ >
 class LA_matrixCd;
 
 template < class LA >
 std::ostream &
 operator<<(std::ostream &, const LA_matrixCd<LA> &);
 
-template < class _LA >
+template < class LA_ >
 class LA_matrixCd : public Handle
 {
   // Matrix class
   // Internal representation is a single n*m vector of FTs
   // Rows are stored consecutively
 public:
-  typedef _LA                              LA;
+  typedef LA_                              LA;
   typedef typename LA::FT                  FT;
   typedef typename LA::RT                  RT;
   typedef typename LA::Vector              Vector;

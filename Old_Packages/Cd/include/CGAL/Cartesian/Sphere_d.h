@@ -15,15 +15,15 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class _R>
+template <class R_>
 class SphereC3
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
 // This is a partial specialization
-<_R,Cartesian_tag>
+<R_,Cartesian_tag>
 #endif
 {
 public:
-  typedef _R                                    R;
+  typedef R_                                    R;
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
@@ -90,7 +90,7 @@ public:
   { return bounded_side(p)==ON_UNBOUNDED_SIDE; }
 
 protected:
-  _Sphere_repC3<R> *ptr();
+  Sphere_repC3<R> *ptr();
 };
 
 CGAL_END_NAMESPACE

@@ -13,16 +13,16 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class _R >
+template < class R_ >
 class VectorCd
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
 // This is a partial specialization
-<_R,Cartesian_tag>
+<R_,Cartesian_tag>
 #endif
   : public Handle
 {
 public:
-  typedef _R                               R;
+  typedef R_                               R;
   typedef typename R::FT                   FT;
   typedef typename R::RT                   RT;
   typedef const FT*                        const_iterator;

@@ -13,21 +13,21 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class _LA >
+template < class LA_ >
 class LA_vectorCd;
 
 template < class LA >
 std::ostream &
 operator<<(std::ostream &, const LA_vectorCd<LA> &);
 
-template < class _LA >
+template < class LA_ >
 class LA_vectorCd : public Handle
 {
   // The last thing the world needs is a Vector class. Nevertheless,
   // we have to provide one because no *generic* linear algebra toolkit
   // is available -- *sigh*
 public:
-  typedef _LA                              LA;
+  typedef LA_                              LA;
   typedef typename LA::FT                  FT;
   typedef typename LA::RT                  RT;
   typedef LA_vectorCd<LA>                  Self;

@@ -29,18 +29,18 @@ CGAL_END_NAMESPACE
 
 CGAL_BEGIN_NAMESPACE
 
-template < class _R >
+template < class R_ >
 class Aff_transformationCd
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
 // This is a partial specialization
-<_R,Cartesian_tag>
+<R_,Cartesian_tag>
 #endif
   : public Handle
 {
-  friend class PlaneCd<_R CGAL_CTAG>;
+  friend class PlaneCd<R_ CGAL_CTAG>;
 
 public:
-  typedef _R                               R;
+  typedef R_                               R;
   typedef typename R::FT                   FT;
   typedef typename R::FT                   RT;
   typedef Aff_transformation_rep_baseCd<R> Aff_t_base;

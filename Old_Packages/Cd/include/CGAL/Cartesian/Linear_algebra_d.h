@@ -13,12 +13,12 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class _FT >
+template < class FT_ >
 class Linear_algebraCd
 {
 public:
-  typedef _FT                              FT;
-  typedef _FT                              RT;
+  typedef FT_                              FT;
+  typedef FT_                              RT;
   typedef Linear_algebraCd<FT>             Self;
   typedef LA_vectorCd<Self>                Vector;
   typedef LA_matrixCd<Self>                Matrix;
