@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 // 
-// file          : include/CGAL/Cartesian/Reptuples.
+// file          : include/CGAL/Cartesian/Reptuples.h
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Sylvain Pion
