@@ -1,3 +1,6 @@
+Version 6.78 (19 February 2003)
+- restablished the first const and removed the second one, and tested it before submitting ===:>-
+
 Version 6.77 (18 February 2003)
 - Removed a const (produced a warning on Sgi CC)
 
