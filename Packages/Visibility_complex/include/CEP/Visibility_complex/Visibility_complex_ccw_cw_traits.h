@@ -1,5 +1,5 @@
-#ifndef VISIBILITYC_OMPLEXC_CWC_W_TRAITS_H
-#define VISIBILITYC_OMPLEXC_CWC_W_TRAITS_H
+#ifndef VISIBILITY_COMPLEX_CCW_CW_TRAITS_H
+#define VISIBILITY_COMPLEX_CCW_CW_TRAITS_H
 
 #include <functional>
 #include <CEP/Visibility_complex/Visibility_complex_function_objects.h>
@@ -835,4 +835,4 @@ change_right_left(Visibility_complex_right_ccw_traits<_Vc>)
 
 CGAL_END_NAMESPACE
 
-#endif //  VISIBILITYC_OMPLEXC_CWC_W_TRAITS_H
+#endif //  VISIBILITY_COMPLEX_CCW_CW_TRAITS_H
