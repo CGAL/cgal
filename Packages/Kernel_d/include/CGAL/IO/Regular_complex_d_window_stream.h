@@ -40,7 +40,8 @@
 CGAL_BEGIN_NAMESPACE
 
 /*{\Mtext \headerline{Visualization and conversion in low dimensions}
-The corresponding operations can be found in |Regular_complex_d_window_stream.h|}*/
+The corresponding operations can be found in 
+|Regular_complex_d_window_stream.h|}*/
 
 template <class R>
 void d2_show(const Regular_complex_d<R>& RC, Window_stream& W);
@@ -48,12 +49,14 @@ void d2_show(const Regular_complex_d<R>& RC, Window_stream& W);
 \precond |dim == 2|.}*/
 
 template <class R>
-void d2_map(const Regular_complex_d<R>& RC, CGAL_LEDA_SCOPE::GRAPH<leda_point,int>& G);
+void d2_map(const Regular_complex_d<R>& RC, 
+            CGAL_LEDA_SCOPE::GRAPH<leda_point,int>& G);
 /*{\Mfunc constructs the representation of |R| as a bidirected graph |G|.
 \precond |dim == 2|.}*/
 
 template <class R>
-void d3_graph(const Regular_complex_d<R>& RC, CGAL_LEDA_SCOPE::GRAPH<leda_d3_point,int>& G);
+void d3_graph(const Regular_complex_d<R>& RC, 
+              CGAL_LEDA_SCOPE::GRAPH<leda_d3_point,int>& G);
 /*{\Mfunc constructs the representation of |R| as a bidirected graph |G|.
 \precond |dim == 3|.}*/
 
@@ -82,7 +85,8 @@ void d2_show(const Regular_complex_d<R>& RC, CGAL::Window_stream& W)
 
 
 template <class R>
-void d2_map(const Regular_complex_d<R>& RC, CGAL_LEDA_SCOPE::GRAPH<leda_point,int>& G)
+void d2_map(const Regular_complex_d<R>& RC, 
+            CGAL_LEDA_SCOPE::GRAPH<leda_point,int>& G)
 { 
   typedef Regular_complex_d<R>::Simplex_const_iterator Simplex_iterator;
   typedef Regular_complex_d<R>::Vertex_const_iterator Vertex_iterator;
@@ -131,7 +135,8 @@ void d2_map(const Regular_complex_d<R>& RC, CGAL_LEDA_SCOPE::GRAPH<leda_point,in
       leda_node vi = node_for[RC.vertex(s,i)];
       if ( untreated[vi] ) {
         untreated[vi] = false;
-        int j = (i + 1) % (RC.current_dimension() + 1);  // a vertex different from i;
+        // a vertex different from i;
+        int j = (i + 1) % (RC.current_dimension() + 1);  
         int k = (i + 2) % (RC.current_dimension() + 1); 
         leda_node vj = node_for[RC.vertex(s,j)];
         leda_node vk = node_for[RC.vertex(s,k)];
@@ -185,7 +190,7 @@ void d2_map(const Regular_complex_d<R>& RC, CGAL_LEDA_SCOPE::GRAPH<leda_point,in
 
 template <class R>
 void d3_graph(const Regular_complex_d<R>& RC, 
-              CGAL_LEDA_SCOPE::GRAPH< typename Regular_complex_d<R>::Point_d ,int>& G)
+       CGAL_LEDA_SCOPE::GRAPH< typename Regular_complex_d<R>::Point_d ,int>& G)
 { 
   typedef Regular_complex_d<R>::Simplex_const_iterator Simplex_iterator;
   typedef Regular_complex_d<R>::Vertex_const_iterator Vertex_iterator;

@@ -74,7 +74,7 @@ static int debugthread=3141592;
 #endif
 
 #if _DEBUG>0
-#define CTRACEN(b,t)  if(b) std::cerr << " " << t << "\n"; else std::cerr << " 0\n"
+#define CTRACEN(b,t)  if(b) std::cerr<< " " <<t<<"\n"; else std::cerr<<" 0\n"
 #else
 #define CTRACEN(b,t) 
 #endif
@@ -86,7 +86,8 @@ static int debugthread=3141592;
   if (!(cond)) {       \
     std::cerr << "   ASSERT:   " << #fstr << endl; \
     std::cerr << "   COND:     " << #cond << endl; \
-    std::cerr << "   POSITION: " << __FILE__ << " at line " << __LINE__ << std::endl; \
+    std::cerr << "   POSITION: " << __FILE__ << " at line "<< __LINE__ \
+              <<std::endl; \
     abort();           \
   }
 #endif

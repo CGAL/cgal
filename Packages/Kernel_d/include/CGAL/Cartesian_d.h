@@ -189,7 +189,8 @@ public:
 
   // Intersection objects:
   typedef CGAL::Line_line_intersectionCd<Self> Line_line_intersection_d;
-  typedef CGAL::Line_hyperplane_intersectionCd<Self> Line_hyperplane_intersection_d;
+  typedef CGAL::Line_hyperplane_intersectionCd<Self> 
+                                               Line_hyperplane_intersection_d;
   typedef CGAL::Line_d_Line_d_pair<Self> Line_d_Line_d_pair;
   typedef CGAL::Ray_d_Ray_d_pair<Self> Ray_d_Ray_d_pair;
   typedef CGAL::Segment_d_Segment_d_pair<Self> Segment_d_Segment_d_pair;

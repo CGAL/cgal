@@ -400,7 +400,7 @@ protected:
           in $f$.}*/
 
   void clear_visited_marks(Simplex_handle s) const; 
-  /*{\Xop removes the mark bits from all marked simplices reachable from $s$.}*/
+ /*{\Xop removes the mark bits from all marked simplices reachable from $s$.}*/
 
   void dimension_jump(Simplex_handle S, Vertex_handle x);
   /*{\Xop Adds a new vertex $x$ to the triangulation. The point associated
@@ -751,11 +751,11 @@ public:
               associate_vertex_with_simplex(T,k,vertex_of_simplex(S,dcur)); 
             associate_vertex_with_simplex(T,dcur,z); 
             associate_vertex_with_simplex(T,0,anti_origin_); 
-            /* in the above, it is tempting to drop the tests ( i != k ) and ( k
-               != dcur ) since the subsequent lines after will correct the
+            /* in the above, it is tempting to drop the tests ( i != k ) and 
+               ( k != dcur ) since the subsequent lines after will correct the
                erroneous assignment.  This reasoning is fallacious as the
-               procedure assoc_vertex_with_simplex also the internal data of the
-               third argument. */
+               procedure assoc_vertex_with_simplex also the internal data of 
+               the third argument. */
 
             /* compute the equation of its base facet */
             compute_equation_of_base_facet(T);
@@ -1193,11 +1193,11 @@ Convex_hull_d<R>::insert(const Point_d& x)
                   associate_vertex_with_simplex(T,k,vertex_of_simplex(S,dcur)); 
                 associate_vertex_with_simplex(T,dcur,z); 
                 associate_vertex_with_simplex(T,0,anti_origin_); 
-                /* in the above, it is tempting to drop the tests ( i != k ) and ( k
-                   != dcur ) since the subsequent lines after will correct the
-                   erroneous assignment.  This reasoning is fallacious as the
-                   procedure assoc_vertex_with_simplex also the internal data of the
-                   third argument. */
+                /* in the above, it is tempting to drop the tests ( i != k ) 
+                   and ( k != dcur ) since the subsequent lines after will 
+                   correct the erroneous assignment.  This reasoning is 
+                   fallacious as the procedure assoc_vertex_with_simplex also 
+                   the internal data of the third argument. */
 
                 /* compute the equation of its base facet */
                 compute_equation_of_base_facet(T);

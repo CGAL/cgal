@@ -55,7 +55,8 @@ void d2_show(const Delaunay_d<R,Lifted_R>& D,
 
 template <typename R, typename Lifted_R>
 void d2_map(const Delaunay_d<R,Lifted_R>& D, 
-            CGAL_LEDA_SCOPE::GRAPH< typename Delaunay_d<R,Lifted_R>::Point_d, int >& DTG, 
+            CGAL_LEDA_SCOPE::GRAPH< typename Delaunay_d<R,Lifted_R>::Point_d, 
+                                    int >& DTG, 
             typename Delaunay_d<R,Lifted_R>::Delaunay_voronoi_kind k = 
             Delaunay_d<R,Lifted_R>::NEAREST)
 /*{\Mfunc constructs a LEDA graph representation of the nearest 

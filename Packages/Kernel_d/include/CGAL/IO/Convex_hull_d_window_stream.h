@@ -182,7 +182,8 @@ void d3_surface_map(const Convex_hull_d<R>& C,
         }// end if bounded
       }// end forall
     if (!G.make_map())
-      CGAL_LEDA_SCOPE::error_handler(1,"chull::surface_graphrep: not bidirected"); 
+      CGAL_LEDA_SCOPE::error_handler(1,
+                                    "chull::surface_graphrep: not bidirected");
     return;
     }
   }

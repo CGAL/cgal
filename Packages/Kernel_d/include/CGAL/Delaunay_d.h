@@ -537,12 +537,14 @@ public:
                           bool is_cocircular) const;
 
 
-  std::list<Simplex_handle> all_simplices(Delaunay_voronoi_kind k = NEAREST) const;
+  std::list<Simplex_handle> 
+  all_simplices(Delaunay_voronoi_kind k = NEAREST) const;
   /*{\Mop returns a list of all simplices of either the nearest or the
           furthest site Delaunay triangulation of |S|.}*/
 
 
-  std::list<Vertex_handle> all_vertices(Delaunay_voronoi_kind k = NEAREST) const;
+  std::list<Vertex_handle> 
+  all_vertices(Delaunay_voronoi_kind k = NEAREST) const;
   /*{\Mop returns a list of all vertices of either the nearest or the
   furthest site Delaunay triangulation of |S|.}*/
 
@@ -567,7 +569,8 @@ public:
   { return Simplex_iterator(Base::simplices_end()); }
 
 
-  Simplex_const_iterator simplices_begin(Delaunay_voronoi_kind k = NEAREST) const
+  Simplex_const_iterator 
+  simplices_begin(Delaunay_voronoi_kind k = NEAREST) const
   { return Simplex_const_iterator(this,Base::simplices_begin(),k); }
 
   Simplex_const_iterator simplices_end() const
