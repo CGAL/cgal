@@ -1,8 +1,7 @@
 For CGAL-2.3-I-* :
 ------------------
 - mv CGAL/Interval_arithmetic/_FPU.h CGAL/FPU.h.
-- mv include/*.C *.def ; Or use template test functions within a single file ?
-- Rename ._inf and ._sup to .inf_ and .sup_, so that it's std compliant.
+- mv test/include/*.C *.def ; Or use template functions ?
 - Use Self instead of IA as the internal typedef ?
 - Implement and document enough for the new to_interval() requirement.
 - Dispatch all CGAL/Interval_arithmetic/*.h into the respective packages.

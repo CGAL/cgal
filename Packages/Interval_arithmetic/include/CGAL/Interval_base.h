@@ -41,10 +41,10 @@ struct Interval_base
   Interval_base () {}
 
   Interval_base (const double d)
-    : _inf(d), _sup(d) {}
+    : inf_(d), sup_(d) {}
 
   Interval_base (const double i, const double s)
-    : _inf(i), _sup(s)
+    : inf_(i), sup_(s)
   {
     CGAL_assertion_msg(i<=s,
 	      " Variable used before being initialized (or CGAL bug)");
@@ -58,16 +58,16 @@ struct Interval_base
 
   bool operator<  (const IA &d) const
   {
-    if (_sup  < d._inf) return true;
-    if (_inf >= d._sup) return false;
+    if (sup_  < d.inf_) return true;
+    if (inf_ >= d.sup_) return false;
     overlap_action();
     return false;
   }
 
   bool operator<= (const IA &d) const
   {
-    if (_sup <= d._inf) return true;
-    if (_inf >  d._sup) return false;
+    if (sup_ <= d.inf_) return true;
+    if (inf_ >  d.sup_) return false;
     overlap_action();
     return false;
   }
@@ -79,39 +79,39 @@ struct Interval_base
 
   bool operator== (const IA &d) const
   {
-    if (d._inf >  _sup || d._sup  < _inf) return false;
-    if (d._inf == _sup && d._sup == _inf) return true;
+    if (d.inf_ >  sup_ || d.sup_  < inf_) return false;
+    if (d.inf_ == sup_ && d.sup_ == inf_) return true;
     overlap_action();
     return false;
   }
 
   bool is_point() const
   {
-    return _sup == _inf;
+    return sup_ == inf_;
   }
 
   bool is_same (const IA & d) const
   {
-    return _inf == d._inf && _sup == d._sup;
+    return inf_ == d.inf_ && sup_ == d.sup_;
   }
 
   bool do_overlap (const IA & d) const
   {
-    return !(d._inf > _sup || d._sup < _inf);
+    return !(d.inf_ > sup_ || d.sup_ < inf_);
   }
 
-  double inf() const { return _inf; }
-  double sup() const { return _sup; }
+  double inf() const { return inf_; }
+  double sup() const { return sup_; }
 
 // protected:
-  double _inf, _sup;	// "_inf" stores the lower bound, "_sup" the upper.
+  double inf_, sup_;	// "inf_" stores the lower bound, "sup_" the upper.
 };
 
 inline
 double
 to_double (const Interval_base & d)
 {
-  return (d._sup + d._inf) * 0.5;
+  return (d.sup_ + d.inf_) * 0.5;
 }
 
 inline
@@ -119,10 +119,10 @@ bool
 is_valid (const Interval_base & d)
 {
 #if defined _MSC_VER || defined __sgi || defined __BORLANDC__
-  return is_valid(d._inf) && is_valid(d._sup) && d._inf <= d._sup;
+  return is_valid(d.inf_) && is_valid(d.sup_) && d.inf_ <= d.sup_;
 #else
   // The 2 first is_valid() are implicitely done by the 3rd test ;-)
-  return d._inf <= d._sup;
+  return d.inf_ <= d.sup_;
 #endif
 }
 
@@ -130,7 +130,7 @@ inline
 bool
 is_finite (const Interval_base & d)
 {
-  return is_finite(d._inf) && is_finite(d._sup);
+  return is_finite(d.inf_) && is_finite(d.sup_);
 }
 
 inline

@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.56 on 6 September 2000
+- Renamed data member _inf and _sup to inf_ and sup_ for standard compliance.
+
 Version 4.55 on 6 September 2000
 - Moved extern "C" declaration outside namespace CGAL for M$ VC++.
 
