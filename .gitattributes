@@ -935,6 +935,7 @@ Packages/Installation/doc_tex/installation/Fig/a-simp.ipe -text
 Packages/Installation/doc_tex/installation/Fig/c-simp.ipe -text
 Packages/Installation/doc_tex/installation/Fig/g-simp.ipe -text
 Packages/Installation/doc_tex/installation/Fig/l-simp.ipe -text
+Packages/Interpolation/doc_tex/Interpolation/nn_coords.eps -text
 Packages/Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#unset
 Packages/Interpolation/doc_tex/Interpolation/nn_coords.ipe -text
 Packages/Interpolation/doc_tex/Interpolation/nn_coords.pdf -text svneol=unset#unset
@@ -1487,6 +1488,7 @@ Packages/Polygon/doc_tex/Polygon/pgn_algos.eps -text
 Packages/Polygon/doc_tex/Polygon/pgn_algos.gif -text svneol=unset#unset
 Packages/Polygon/doc_tex/Polygon/pgn_algos.ipe -text
 Packages/Polygon/doc_tex/Polygon/pgn_algos.pdf -text svneol=unset#unset
+Packages/Polygon/doc_tex/Polygon/pgn_algos.xml -text
 Packages/Polyhedron/doc_tex/Polyhedron/fig/add_facet.ips -text
 Packages/Polyhedron/doc_tex/Polyhedron/fig/euler.ips -text
 Packages/Polyhedron/doc_tex/Polyhedron/fig/euler_center.ips -text
