@@ -121,7 +121,8 @@ sign_of_determinant2x2(
   {
 re_adjust:
     // Compute the new bound.
-    double NEW_bound = std::max(0.0, fabs(a00.value()));
+    double NEW_bound = 0.0;
+    NEW_bound = std::max(NEW_bound, fabs(a00.value()));
     NEW_bound = std::max(NEW_bound, fabs(a01.value()));
     NEW_bound = std::max(NEW_bound, fabs(a10.value()));
     NEW_bound = std::max(NEW_bound, fabs(a11.value()));
@@ -290,7 +291,8 @@ sign_of_determinant3x3(
   {
 re_adjust:
     // Compute the new bound.
-    double NEW_bound = std::max(0.0, fabs(a00.value()));
+    double NEW_bound = 0.0;
+    NEW_bound = std::max(NEW_bound, fabs(a00.value()));
     NEW_bound = std::max(NEW_bound, fabs(a01.value()));
     NEW_bound = std::max(NEW_bound, fabs(a02.value()));
     NEW_bound = std::max(NEW_bound, fabs(a10.value()));
@@ -525,7 +527,8 @@ sign_of_determinant4x4(
   {
 re_adjust:
     // Compute the new bound.
-    double NEW_bound = std::max(0.0, fabs(a00.value()));
+    double NEW_bound = 0.0;
+    NEW_bound = std::max(NEW_bound, fabs(a00.value()));
     NEW_bound = std::max(NEW_bound, fabs(a01.value()));
     NEW_bound = std::max(NEW_bound, fabs(a02.value()));
     NEW_bound = std::max(NEW_bound, fabs(a03.value()));
@@ -846,7 +849,8 @@ sign_of_determinant5x5(
   {
 re_adjust:
     // Compute the new bound.
-    double NEW_bound = std::max(0.0, fabs(a00.value()));
+    double NEW_bound = 0.0;
+    NEW_bound = std::max(NEW_bound, fabs(a00.value()));
     NEW_bound = std::max(NEW_bound, fabs(a01.value()));
     NEW_bound = std::max(NEW_bound, fabs(a02.value()));
     NEW_bound = std::max(NEW_bound, fabs(a03.value()));
@@ -1273,7 +1277,8 @@ sign_of_determinant6x6(
   {
 re_adjust:
     // Compute the new bound.
-    double NEW_bound = std::max(0.0, fabs(a00.value()));
+    double NEW_bound = 0.0;
+    NEW_bound = std::max(NEW_bound, fabs(a00.value()));
     NEW_bound = std::max(NEW_bound, fabs(a01.value()));
     NEW_bound = std::max(NEW_bound, fabs(a02.value()));
     NEW_bound = std::max(NEW_bound, fabs(a03.value()));

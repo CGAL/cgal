@@ -160,7 +160,8 @@ compare_xC2(
   {
 re_adjust:
     // Compute the new bound.
-    double NEW_bound = std::max(0.0, fabs(px.value()));
+    double NEW_bound = 0.0;
+    NEW_bound = std::max(NEW_bound, fabs(px.value()));
     NEW_bound = std::max(NEW_bound, fabs(l1a.value()));
     NEW_bound = std::max(NEW_bound, fabs(l1b.value()));
     NEW_bound = std::max(NEW_bound, fabs(l1c.value()));
@@ -384,7 +385,8 @@ compare_xC2(
   {
 re_adjust:
     // Compute the new bound.
-    double NEW_bound = std::max(0.0, fabs(l1a.value()));
+    double NEW_bound = 0.0;
+    NEW_bound = std::max(NEW_bound, fabs(l1a.value()));
     NEW_bound = std::max(NEW_bound, fabs(l1b.value()));
     NEW_bound = std::max(NEW_bound, fabs(l1c.value()));
     NEW_bound = std::max(NEW_bound, fabs(l2a.value()));
@@ -557,7 +559,8 @@ compare_y_at_xC2(
   {
 re_adjust:
     // Compute the new bound.
-    double NEW_bound = std::max(0.0, fabs(px.value()));
+    double NEW_bound = 0.0;
+    NEW_bound = std::max(NEW_bound, fabs(px.value()));
     NEW_bound = std::max(NEW_bound, fabs(py.value()));
     NEW_bound = std::max(NEW_bound, fabs(la.value()));
     NEW_bound = std::max(NEW_bound, fabs(lb.value()));
@@ -728,7 +731,8 @@ compare_y_at_xC2(
   {
 re_adjust:
     // Compute the new bound.
-    double NEW_bound = std::max(0.0, fabs(px.value()));
+    double NEW_bound = 0.0;
+    NEW_bound = std::max(NEW_bound, fabs(px.value()));
     NEW_bound = std::max(NEW_bound, fabs(l1a.value()));
     NEW_bound = std::max(NEW_bound, fabs(l1b.value()));
     NEW_bound = std::max(NEW_bound, fabs(l1c.value()));
@@ -922,7 +926,8 @@ compare_y_at_xC2(
   {
 re_adjust:
     // Compute the new bound.
-    double NEW_bound = std::max(0.0, fabs(l1a.value()));
+    double NEW_bound = 0.0;
+    NEW_bound = std::max(NEW_bound, fabs(l1a.value()));
     NEW_bound = std::max(NEW_bound, fabs(l1b.value()));
     NEW_bound = std::max(NEW_bound, fabs(l1c.value()));
     NEW_bound = std::max(NEW_bound, fabs(l2a.value()));
@@ -1154,7 +1159,8 @@ compare_y_at_xC2(
   {
 re_adjust:
     // Compute the new bound.
-    double NEW_bound = std::max(0.0, fabs(l1a.value()));
+    double NEW_bound = 0.0;
+    NEW_bound = std::max(NEW_bound, fabs(l1a.value()));
     NEW_bound = std::max(NEW_bound, fabs(l1b.value()));
     NEW_bound = std::max(NEW_bound, fabs(l1c.value()));
     NEW_bound = std::max(NEW_bound, fabs(l2a.value()));
@@ -1311,7 +1317,8 @@ compare_deltax_deltayC2(
   {
 re_adjust:
     // Compute the new bound.
-    double NEW_bound = std::max(0.0, fabs(px.value()));
+    double NEW_bound = 0.0;
+    NEW_bound = std::max(NEW_bound, fabs(px.value()));
     NEW_bound = std::max(NEW_bound, fabs(qx.value()));
     NEW_bound = std::max(NEW_bound, fabs(ry.value()));
     NEW_bound = std::max(NEW_bound, fabs(sy.value()));
@@ -1455,7 +1462,8 @@ orientationC2(
   {
 re_adjust:
     // Compute the new bound.
-    double NEW_bound = std::max(0.0, fabs(px.value()));
+    double NEW_bound = 0.0;
+    NEW_bound = std::max(NEW_bound, fabs(px.value()));
     NEW_bound = std::max(NEW_bound, fabs(py.value()));
     NEW_bound = std::max(NEW_bound, fabs(qx.value()));
     NEW_bound = std::max(NEW_bound, fabs(qy.value()));
@@ -1649,7 +1657,8 @@ side_of_oriented_circleC2(
   {
 re_adjust:
     // Compute the new bound.
-    double NEW_bound = std::max(0.0, fabs(px.value()));
+    double NEW_bound = 0.0;
+    NEW_bound = std::max(NEW_bound, fabs(px.value()));
     NEW_bound = std::max(NEW_bound, fabs(py.value()));
     NEW_bound = std::max(NEW_bound, fabs(qx.value()));
     NEW_bound = std::max(NEW_bound, fabs(qy.value()));
@@ -1829,7 +1838,8 @@ side_of_bounded_circleC2(
   {
 re_adjust:
     // Compute the new bound.
-    double NEW_bound = std::max(0.0, fabs(px.value()));
+    double NEW_bound = 0.0;
+    NEW_bound = std::max(NEW_bound, fabs(px.value()));
     NEW_bound = std::max(NEW_bound, fabs(py.value()));
     NEW_bound = std::max(NEW_bound, fabs(qx.value()));
     NEW_bound = std::max(NEW_bound, fabs(qy.value()));
@@ -1988,7 +1998,8 @@ cmp_dist_to_pointC2(
   {
 re_adjust:
     // Compute the new bound.
-    double NEW_bound = std::max(0.0, fabs(px.value()));
+    double NEW_bound = 0.0;
+    NEW_bound = std::max(NEW_bound, fabs(px.value()));
     NEW_bound = std::max(NEW_bound, fabs(py.value()));
     NEW_bound = std::max(NEW_bound, fabs(qx.value()));
     NEW_bound = std::max(NEW_bound, fabs(qy.value()));
@@ -2147,7 +2158,8 @@ cmp_signed_dist_to_lineC2(
   {
 re_adjust:
     // Compute the new bound.
-    double NEW_bound = std::max(0.0, fabs(la.value()));
+    double NEW_bound = 0.0;
+    NEW_bound = std::max(NEW_bound, fabs(la.value()));
     NEW_bound = std::max(NEW_bound, fabs(lb.value()));
     NEW_bound = std::max(NEW_bound, fabs(lc.value()));
     NEW_bound = std::max(NEW_bound, fabs(px.value()));
@@ -2316,7 +2328,8 @@ cmp_signed_dist_to_lineC2(
   {
 re_adjust:
     // Compute the new bound.
-    double NEW_bound = std::max(0.0, fabs(px.value()));
+    double NEW_bound = 0.0;
+    NEW_bound = std::max(NEW_bound, fabs(px.value()));
     NEW_bound = std::max(NEW_bound, fabs(py.value()));
     NEW_bound = std::max(NEW_bound, fabs(qx.value()));
     NEW_bound = std::max(NEW_bound, fabs(qy.value()));

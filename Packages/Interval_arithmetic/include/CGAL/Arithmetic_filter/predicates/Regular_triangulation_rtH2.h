@@ -255,7 +255,8 @@ power_testH2(
   {
 re_adjust:
     // Compute the new bound.
-    double NEW_bound = std::max(0.0, fabs(phx.value()));
+    double NEW_bound = 0.0;
+    NEW_bound = std::max(NEW_bound, fabs(phx.value()));
     NEW_bound = std::max(NEW_bound, fabs(phy.value()));
     NEW_bound = std::max(NEW_bound, fabs(phw.value()));
     NEW_bound = std::max(NEW_bound, fabs(pwt.value()));
@@ -539,7 +540,8 @@ power_testH2(
   {
 re_adjust:
     // Compute the new bound.
-    double NEW_bound = std::max(0.0, fabs(phx.value()));
+    double NEW_bound = 0.0;
+    NEW_bound = std::max(NEW_bound, fabs(phx.value()));
     NEW_bound = std::max(NEW_bound, fabs(phy.value()));
     NEW_bound = std::max(NEW_bound, fabs(phw.value()));
     NEW_bound = std::max(NEW_bound, fabs(pwt.value()));

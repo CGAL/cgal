@@ -211,7 +211,8 @@ power_testC2(
   {
 re_adjust:
     // Compute the new bound.
-    double NEW_bound = std::max(0.0, fabs(px.value()));
+    double NEW_bound = 0.0;
+    NEW_bound = std::max(NEW_bound, fabs(px.value()));
     NEW_bound = std::max(NEW_bound, fabs(py.value()));
     NEW_bound = std::max(NEW_bound, fabs(pwt.value()));
     NEW_bound = std::max(NEW_bound, fabs(qx.value()));
@@ -442,7 +443,8 @@ power_testC2(
   {
 re_adjust:
     // Compute the new bound.
-    double NEW_bound = std::max(0.0, fabs(px.value()));
+    double NEW_bound = 0.0;
+    NEW_bound = std::max(NEW_bound, fabs(px.value()));
     NEW_bound = std::max(NEW_bound, fabs(py.value()));
     NEW_bound = std::max(NEW_bound, fabs(pwt.value()));
     NEW_bound = std::max(NEW_bound, fabs(qx.value()));

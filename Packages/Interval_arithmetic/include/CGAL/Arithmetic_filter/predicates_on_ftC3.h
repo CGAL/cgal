@@ -184,7 +184,8 @@ collinearC3(
   {
 re_adjust:
     // Compute the new bound.
-    double NEW_bound = std::max(0.0, fabs(px.value()));
+    double NEW_bound = 0.0;
+    NEW_bound = std::max(NEW_bound, fabs(px.value()));
     NEW_bound = std::max(NEW_bound, fabs(py.value()));
     NEW_bound = std::max(NEW_bound, fabs(pz.value()));
     NEW_bound = std::max(NEW_bound, fabs(qx.value()));
@@ -391,7 +392,8 @@ orientationC3(
   {
 re_adjust:
     // Compute the new bound.
-    double NEW_bound = std::max(0.0, fabs(px.value()));
+    double NEW_bound = 0.0;
+    NEW_bound = std::max(NEW_bound, fabs(px.value()));
     NEW_bound = std::max(NEW_bound, fabs(py.value()));
     NEW_bound = std::max(NEW_bound, fabs(pz.value()));
     NEW_bound = std::max(NEW_bound, fabs(qx.value()));
@@ -660,7 +662,8 @@ side_of_oriented_sphereC3(
   {
 re_adjust:
     // Compute the new bound.
-    double NEW_bound = std::max(0.0, fabs(px.value()));
+    double NEW_bound = 0.0;
+    NEW_bound = std::max(NEW_bound, fabs(px.value()));
     NEW_bound = std::max(NEW_bound, fabs(py.value()));
     NEW_bound = std::max(NEW_bound, fabs(pz.value()));
     NEW_bound = std::max(NEW_bound, fabs(qx.value()));
@@ -922,7 +925,8 @@ side_of_bounded_sphereC3(
   {
 re_adjust:
     // Compute the new bound.
-    double NEW_bound = std::max(0.0, fabs(px.value()));
+    double NEW_bound = 0.0;
+    NEW_bound = std::max(NEW_bound, fabs(px.value()));
     NEW_bound = std::max(NEW_bound, fabs(py.value()));
     NEW_bound = std::max(NEW_bound, fabs(pz.value()));
     NEW_bound = std::max(NEW_bound, fabs(qx.value()));
@@ -1123,7 +1127,8 @@ cmp_dist_to_pointC3(
   {
 re_adjust:
     // Compute the new bound.
-    double NEW_bound = std::max(0.0, fabs(px.value()));
+    double NEW_bound = 0.0;
+    NEW_bound = std::max(NEW_bound, fabs(px.value()));
     NEW_bound = std::max(NEW_bound, fabs(py.value()));
     NEW_bound = std::max(NEW_bound, fabs(pz.value()));
     NEW_bound = std::max(NEW_bound, fabs(qx.value()));
@@ -1312,7 +1317,8 @@ cmp_signed_dist_to_planeC3(
   {
 re_adjust:
     // Compute the new bound.
-    double NEW_bound = std::max(0.0, fabs(pa.value()));
+    double NEW_bound = 0.0;
+    NEW_bound = std::max(NEW_bound, fabs(pa.value()));
     NEW_bound = std::max(NEW_bound, fabs(pb.value()));
     NEW_bound = std::max(NEW_bound, fabs(pc.value()));
     NEW_bound = std::max(NEW_bound, fabs(pd.value()));
@@ -1549,7 +1555,8 @@ cmp_signed_dist_to_planeC3(
   {
 re_adjust:
     // Compute the new bound.
-    double NEW_bound = std::max(0.0, fabs(ppx.value()));
+    double NEW_bound = 0.0;
+    NEW_bound = std::max(NEW_bound, fabs(ppx.value()));
     NEW_bound = std::max(NEW_bound, fabs(ppy.value()));
     NEW_bound = std::max(NEW_bound, fabs(ppz.value()));
     NEW_bound = std::max(NEW_bound, fabs(pqx.value()));
