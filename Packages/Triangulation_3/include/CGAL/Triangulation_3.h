@@ -228,13 +228,7 @@ protected:
 public:
 
   // CONSTRUCTORS
-  Triangulation_3()
-    : _tds(), _gt()
-    {
-      init_tds();
-    }
-
-  Triangulation_3(const GT & gt) 
+  Triangulation_3(const GT & gt = GT())
     : _tds(), _gt(gt)
     {
       init_tds();
@@ -246,6 +240,15 @@ public:
     {
       infinite = _tds.copy_tds(tr._tds, tr.infinite);
     }
+
+  template < typename InputIterator >
+  Triangulation_3(InputIterator first, InputIterator last,
+                  const GT & gt = GT())
+    : _gt(gt)
+  {
+      init_tds();
+      insert(first, last);
+  }
 
   void clear()
     {
@@ -2100,7 +2103,7 @@ side_of_edge(const Point & p,
   // else infinite edge
   int inf = c->index(infinite);
   switch (collinear_position(c->vertex(1-inf)->point(), p,
-	                     c->mirror_vertex(1-inf)->point())) {
+	                     c->mirror_vertex(inf)->point())) {
       case SOURCE:
 	  lt = VERTEX;
 	  li = 1-inf;
@@ -2610,35 +2613,34 @@ is_valid_finite(Cell_handle c, bool verbose, int) const
     {
       const Point & p0 = c->vertex(0)->point();
       const Point & p1 = c->vertex(1)->point();
-	    
-      if ( ! is_infinite ( c->neighbor(0)->vertex(c->neighbor(0)->index(c)) ) )
+
+      Vertex_handle v = c->neighbor(0)->vertex(c->neighbor(0)->index(c));
+      if ( ! is_infinite(v) )
       {
-	const Point & n0 =
-	    c->neighbor(0)->vertex(c->neighbor(0)->index(c))->point();  
-	if ( collinear_position(p0, p1, n0) != MIDDLE ) {
+	if ( collinear_position(p0, p1, v->point()) != MIDDLE ) {
 	  if (verbose)
 	      std::cerr << "badly oriented edge "
 		        << p0 << ", " << p1 << std::endl
 		        << "with neighbor 0"
 		        << c->neighbor(0)->vertex(1-c->neighbor(0)->index(c))
 			                 ->point() 
-		        << ", " << n0 << std::endl;
+		        << ", " << v->point() << std::endl;
 	  CGAL_triangulation_assertion(false);
 	  return false;
 	}
       }
-      if ( ! is_infinite ( c->neighbor(1)->vertex(c->neighbor(1)->index(c)) ) )
+
+      v = c->neighbor(1)->vertex(c->neighbor(1)->index(c));
+      if ( ! is_infinite(v) )
       {
-	const Point & n1 =
-	    c->neighbor(1)->vertex(c->neighbor(1)->index(c))->point();
-	if ( collinear_position(p1, p0, n1) != MIDDLE ) {
+	if ( collinear_position(p1, p0, v->point()) != MIDDLE ) {
 	  if (verbose)
 	      std::cerr << "badly oriented edge "
 		        << p0 << ", " << p1 << std::endl
 		        << "with neighbor 1"
 		        << c->neighbor(1)->vertex(1-c->neighbor(1)->index(c))
 			                 ->point() 
-		        << ", " << n1 << std::endl;
+		        << ", " << v->point() << std::endl;
 	  CGAL_triangulation_assertion(false);
 	  return false;
 	}
