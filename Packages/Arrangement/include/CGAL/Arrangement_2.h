@@ -1312,7 +1312,6 @@ bool is_valid(bool verbose = false) const
     circ_curve_is_next_curve       =  true,
     circ_curve_is_halfedge_curve   = true,
     edge_curve_is_halfedge_curve   = true;
-    not_curve_node;
 
   verr << "b) hierarchy tree check:" << std::endl;
   // for each curve tree
@@ -1360,13 +1359,17 @@ bool is_valid(bool verbose = false) const
         //cout<<"----"<<eit->curve()<<endl;
         //cout<<"***"<<eit->halfedge()->curve()<<endl;
         //cout<<"***"<<eit->halfedge()->twin()->curve()<<endl;
-        edge_curve_is_halfedge_curve &= (eit->curve() == eit->halfedge()->curve());
+        edge_curve_is_halfedge_curve &= 
+	  ( traits->curve_is_same(eit->curve(), eit->halfedge()->curve()));
         do{
-        Overlap_const_circulator next = ovlp_circ;
+	  Overlap_const_circulator next = ovlp_circ;
           ++next;
           
-          circ_curve_is_next_curve &= (ovlp_circ->curve() == next->curve());
-          circ_curve_is_halfedge_curve &= (ovlp_circ->curve() == eit->halfedge()->curve());
+          circ_curve_is_next_curve &= 
+	    (traits->curve_is_same(ovlp_circ->curve(), next->curve()));
+          circ_curve_is_halfedge_curve &= 
+	    (traits->curve_is_same(ovlp_circ->curve(), 
+				   eit->halfedge()->curve()));
 
           //cout<<ovlp_circ->curve()<<endl;
         } while (++ovlp_circ != eit->halfedge()->overlap_edges());
