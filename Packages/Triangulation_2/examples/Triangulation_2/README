@@ -1,3 +1,5 @@
+to compule and run these examples type :
+./cgal_test
 
 example: 
 Illustrates features of the triangulation package.
@@ -13,3 +15,7 @@ class in a Triangulation
 
 triangulation_prog1.C :
 the first example in the documentation
+
+colored_face.C
+illustrates how the user can derive its own base face from the default
+one to add e. g. a color.
