@@ -1,5 +1,6 @@
-2.20    (?? May 2001)
+2.20    (4 May 2001)
 - fixed typo in compare_x_at_y()
+- added Construct_point_xy_2, Construct_point_xz_2 and Construct_point_yz_2
 
 2.19    (1 May 2001)
 - Fix return type of Kernel::Orientation_?.
