@@ -11,10 +11,14 @@
 
 Concerning the code itself:
 
+- sign_det_2x2() optimisé pour l'IA (+ bench de triangulation).
+  (et régler le sort de include/CGAL/Interval_arithmetic/determinant.h.)
+	include/CGAL/Interval_arithmetic/determinant.h has no header.
+	Header check failed for include/CGAL/Interval_arithmetic/determinant.h.
+	Creating a default header.
 - Workarounds (pour MipsPro [et M$VC]):
-  - specializations partielles: en faire une specialisation complete, avec des
-    types CT et ET que le user veut bien fournir (soit par typedef, soit par
-    macro).
+  - specializations partielles: vérifier que c'est bien le bon CGAL_CFG_..
+                                que j'utilise.
   - The convert_to workaround could be enabled even for all compilers ?
     It would simplify the code, but:  slow down ?  still work for Quotient ?
 - Mariette dit que g++ 2.8.1 supporte pas
@@ -28,7 +32,6 @@ Concerning the code itself:
   function pointer pour overlap_action() ?
   Et modifier le comportement dans les fonctions save/restore ?
 - essayer de mettre a et b "register", et voir le changement de l'assembly.
-- sign_det_2x2() optimisé pour l'IA (+ bench de triangulation).
 - converter (long longs), (long doubles)...  au moins documenter que c'est pas
   supporté pour le moment.  Hint: (double) +/- 1ulp.
 - Permettre de cacher (NT tag ?) les conversions en intervalles.
@@ -68,6 +71,7 @@ Concerning the doc:
 - faire un fichier long_description comme ça doit se faire.
 - Tell the status for Mips (the rounding mode).
 - Tell the status for MipsPro (the workaround about partial specializations).
+  (#define CGAL_IA_ET, CGAL_IA_CT... cf tst5.C).
 - add a pointer to my MISC'99 paper.
 - Document "IA::number_of_failures".
 

@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 3.7 on 15 April 1999
+- Partial workaround for lack of partial specialization of the predicates.
+
 Version 3.6 on 15 April 1999
 - Final (hopefully) workaround for the rounding modes on IRIX.
 - Workaround for lack of convert_to<target>(source), replaced by
