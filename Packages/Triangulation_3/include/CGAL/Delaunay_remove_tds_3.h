@@ -66,7 +66,7 @@ public :
 
 template < class I, class Fb = Triangulation_ds_face_base_2<> >
 class Delaunay_remove_tds_face_3_2
-  : public Fb
+  : public Fb, Triangulation_cw_ccw_2
 {
 public:
 
@@ -97,11 +97,10 @@ public:
   void set_n(Face_handle f) {_n = f;}
 
 private:
-  // Dirty, so we should avoid it in another way.
   Face_handle handle() const {
-    typedef typename Fb::Triangulation_data_structure::Face Face;
-    // Cast to the derived class.
-    return static_cast<const Face *>(this)->handle();
+    Face_handle n = neighbor(0);
+    int i = ccw(n->index(vertex(1)));
+    return n->neighbor(i);
   }
 
   // Remove this face from the list
@@ -136,14 +135,14 @@ public:
   void mark_edge(int i, Face_handle h) {
     Face_handle n = neighbor(i);
     if (&*n < this) {
-      n->mark_halfedge(n->index(this->handle()));
+      n->mark_halfedge(n->index(handle()));
       unmark_halfedge(i);
       h->move_after_this(n);
     } else {
-      n->unmark_halfedge(n->index(this->handle()));
+      n->unmark_halfedge(n->index(handle()));
       mark_halfedge(i);
       if (&*h != this)
-	h->move_after_this(this->handle());
+	h->move_after_this(handle());
     }      
   }
 
@@ -151,14 +150,14 @@ public:
   void unmark_edge(int i) {
     Face_handle n = neighbor(i);
     unmark_halfedge(i);
-    int fi = n->index(this->handle());
+    int fi = n->index(handle());
     n->unmark_halfedge(fi);
   }
 
   // marks all edges adjacent to the face
   void mark_adjacent_edges() {
     for(int i = 0; i < 3; i++)
-      mark_edge(i, this->handle());
+      mark_edge(i, handle());
   }
 
   bool is_halfedge_marked(int i) const {
@@ -184,7 +183,7 @@ private:
     _n = f;
     f->set_n(n);
     n->set_p(f);
-    f->set_p(this->handle());
+    f->set_p(handle());
   }
 
   void unmark_halfedge(int i) {
@@ -350,11 +349,10 @@ Delaunay_remove_tds_3_2(const std::vector<Facet> & boundhole)
     // with advanced functions
     set_dimension(2);
 
-    Face_3_2 dummy;
-
-    Face_handle_3_2 f = &dummy;
-
-    for( Face_iterator fit2 = faces_begin(); fit2 != faces_end(); ++fit2) {
+    Face_iterator fit2 = faces_begin();
+    Face_handle_3_2 first = fit2, f = fit2;
+    
+    for(++fit2; fit2 != faces_end(); ++fit2) {
       f->set_n(fit2);
       fit2->set_p(f);
       f = fit2;
@@ -364,8 +362,8 @@ Delaunay_remove_tds_3_2(const std::vector<Facet> & boundhole)
       }
     }
     // f points to the last face
-    f->set_n(dummy.n());
-    dummy.n()->set_p(f);
+    f->set_n(first);
+    first->set_p(f);
 }
 
 CGAL_END_NAMESPACE
