@@ -22,7 +22,9 @@ kernel concept (but there are some exceptions).
 
 \subsection{An Example}
 
-Assume you have the following point class.
+Assume you have the following point class, where the coordinates are
+stored in an array of \ccc{doubles}, where we have another data member
+\ccc{color}, which shows up in the constructor.
 
 \ccHtmlLinksOff
 \begin{ccExampleCode}
@@ -77,13 +79,15 @@ public:
 \ccHtmlLinksOn
 
 
-Note that this class has no \ccc{bbox()} method, so one
+As said earlier the class is pretty minimalistic, for
+example it has no \ccc{bbox()} method.  One
 might assume that a basic library algorithm which computes 
-a bounding box (e.g, to compute the bouding box of a polygon),
-will not compile. However, this is wrong, because it makes
+a bounding box (e.g, to compute the bounding box of a polygon),
+will not compile. Luckily it will, because it does not
+use of member functions of geometric objects, but it makes
 use of the functor \ccc{Kernel::Construct_bbox_2}.
 
-To make the right thing happen with \cccMyPointC2} we
+To make the right thing happen with \ccc{MyPointC2} we
 have to provide the following functor.
 
 \ccHtmlLinksOff
@@ -124,10 +128,12 @@ public:
 \ccHtmlLinksOn
 
 The last functor we have to provide is the one which constructs
-points. That is you are not forced to add constructors
-with the \ccc{Origin} as parameter, or a constructor with 
+points. That is you are not forced to add the constructor 
+with the \ccc{Origin} as parameter to your class, nor the constructor with 
 homogeneous coordinates, and at the same time you can 
 pass the additional color argument to your point constructor.
+The functor is a kind of glue layer between the \cgal\ algorithms
+and your class.
 
 \ccHtmlLinksOff
 \begin{ccExampleCode}
@@ -239,15 +245,11 @@ CGAL_ITERATOR_TRAITS_POINTER_SPEC_TEMPLATE(MyKernel)
 \ccHtmlLinksOn
 
 
+
 Finally, we give an example how this new kernel can be used.
 
 
-
-
-
 \ccHtmlLinksOff
-
-
 \begin{ccExampleCode}
 #include <CGAL/basic.h>
 #include <CGAL/convex_hull_2.h>
@@ -278,3 +280,15 @@ int main()
 \ccHtmlLinksOn
 
 
+\subsection{Limitations}
+
+The point class must have member functions \ccc{x()} and \ccc{y()}
+(and \ccc{z()} for the 3d point). We work on that.
+
+Global functions operating on, for example
+\ccc{CGAL::Orientation(CGAL::Point_2<K>, CGAL::Point_2<K>,
+CGAL::Point_2<K>)} will not work. Instead you have to
+use the functor \ccc{MyKernel<double>::Orientation_2}.
+
+Rewriting the code is however pretty easy, as you can give
+the functor object the same name as the global function.
