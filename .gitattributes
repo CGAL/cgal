@@ -1431,6 +1431,7 @@ Packages/Qt_widget/demo/Qt_widget/Min_ellipse_2/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/Min_quadrilateral_2/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/Nef_2/nef_2.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Partition_2/demo.dsp -text
+Packages/Qt_widget/demo/Qt_widget/Partition_2/partition_2.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2/triangulation_2.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Triangulation_2_constrained/demo.dsp -text

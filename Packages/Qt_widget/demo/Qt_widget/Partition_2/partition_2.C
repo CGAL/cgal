@@ -29,34 +29,21 @@ int main(int, char*)
 #include <qthread.h>
 
 
-#include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/MP_Float.h>
-#include <CGAL/random_polygon_2.h>
-#include <CGAL/Partition_traits_2.h>
-#include <CGAL/point_generators_2.h>
-
-#include <fstream>
-#include <iomanip>
-
-typedef CGAL::MP_Float				    NT;
-typedef CGAL::Cartesian<NT>                         K;
-typedef CGAL::Partition_traits_2<K>                 Traits;
-typedef Traits::Point_2                             Point_2;
-typedef Traits::Polygon_2                           Polygon_2;
-typedef CGAL::Random_points_in_square_2<Point_2>    Point_generator;
-
-
+#include "cgal_types.h"
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 #include "Qt_widget_toolbar.h"
 #include "Qt_widget_toolbar_layers.h"
 
+#include <fstream>
+#include <iomanip>
+
+
 const QString my_title_string("Polygon partition demo with"
 			      " CGAL Qt_widget");
 
 
-Polygon_2 polygon;
+Cgal_Polygon polygon;
 
 int current_state;
 
@@ -156,7 +143,7 @@ private slots:
 
   void get_new_object(CGAL::Object obj)
   {
-    Polygon_2 poly;
+    Cgal_Polygon poly;
     if (CGAL::assign(poly, obj))
     {
       polygon = poly;
