@@ -38,8 +38,8 @@ CGAL_BEGIN_NAMESPACE
 template <class Kernel_> class Segment_cached_2;
 
 /*!
- * A traits class for maintaining an arrangement of segments, aoviding cascading
- * of computations as much as possible.
+ * A traits class for maintaining an arrangement of segments, aoviding
+ * cascading of computations as much as possible.
  */
 template <class Kernel_>
 class Arr_segment_cached_traits_2 : public Kernel_
@@ -365,8 +365,8 @@ public:
    * \param p The point around which we rotate cv1.
    * \pre p is an end-point of all three segments.
    * \return (true) if cv is between cv1 and cv2. If cv overlaps cv1 or cv2
-   * the result is always (false). If cv1 and cv2 overlap, the result is (true),
-   * unless cv1 also overlaps them.
+   * the result is always (false). If cv1 and cv2 overlap, the result is
+   * (true), unless cv1 also overlaps them.
    */
   bool curve_is_between_cw(const X_curve_2& cv, 
                            const X_curve_2& cv1, 
