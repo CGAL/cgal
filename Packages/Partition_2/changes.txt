@@ -1,3 +1,6 @@
+1.16 (26 July 2001)
+    made changes necessary to do manual split
+
 1.15 (16 July 2001)
     fixed initialization bug in Partition_vertex_map
     changed asserts to CGAL_assertions 
