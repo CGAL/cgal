@@ -17,6 +17,9 @@ Version 6.0 (?? ????? 00)
 - Changed ptr-> access to Ptr()-> .
 - Removed Cartesian_2 and Cartesian_3.
 - Removed scripts create_symlinks_[23] and remove_symlinks_[23].
+- Removed files in include/CGAL/Kernel :
+  Construction_objects.h Construction_objects_2.h Construction_objects_3.h
+  Predicate_objects.h Predicate_objects_2.h Predicate_objects_3.h
 - Handle (and representation via element_type) specification come now from
   Cartesian<>, so that we can customize them easily.
 - Alternative cartesian kernel without ref-counting : Simple_Cartesian_v2.
@@ -24,6 +27,7 @@ Version 6.0 (?? ????? 00)
 - Removed the copy ctors, as they are provided by the handles.
 - Added "if (is)" tests in all operator>>() (as per Pierre's request).
 - Various cleanups.
+- Added missing function object : Coplanar_orientation_3
 - New predicates :
   - coplanar_orientation(p, q, r, v) (3d)
   - side_of_bounded_circle(p, q, t)  (2d)
