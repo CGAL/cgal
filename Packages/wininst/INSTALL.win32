@@ -395,6 +395,7 @@ used for the project, into "Additional library path" field.
 This should be done on per configuration basis, because
 for Debug and for Release one needs different paths.
 
+
 4.2.2.3. Specifying extra libararies.
 
 Select "Project/Settings...", "Link" section, "Input" category. Add 
