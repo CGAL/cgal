@@ -50,7 +50,9 @@ int  main()
   
   while (num_curves1--) {
     cin >> x1 >> y1 >> x2 >> y2;
-    curves.push_back(X_curve(Point(x1,y1), Point(x2,y2)));
+    
+    Point p1(x1,y2), p2(x2,y2);
+    curves.push_back(X_curve(p1, p2));
   }
   
   Traits traits;
