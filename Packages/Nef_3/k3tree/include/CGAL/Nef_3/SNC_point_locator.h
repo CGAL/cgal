@@ -28,8 +28,8 @@
 // #define TIMER(instruction) instruction
 #define TIMER(instruction)
 
-#define CLOG(t) std::clog <<" "<<t<<std::endl; std::clog.flush()
-// #define CLOG(t)
+// #define CLOG(t) std::clog <<" "<<t<<std::endl; std::clog.flush()
+#define CLOG(t)
 
 CGAL_BEGIN_NAMESPACE
 
@@ -60,6 +60,7 @@ public:
   USING(Ray_3);
   USING(Direction_3);
   USING(Triangle_3);
+  USING(Aff_transformation_3);
   #undef USING
 
   const char* version() { return version_; }
@@ -86,6 +87,8 @@ public:
   virtual void initialize(SNC_structure* W) = 0;
 
   virtual Self* clone() const = 0;
+
+  virtual void transform(const Aff_transformation_3& t) = 0;
 
   //virtual bool update( Unique_hash_map<Vertex_handle, bool>& V, 
   //                   Unique_hash_map<Halfedge_handle, bool>& E, 
@@ -140,6 +143,7 @@ public:
   USING(Ray_3);
   USING(Direction_3);
   USING(Triangle_3);
+  USING(Aff_transformation_3);
   #undef USING
 
   typedef typename SNC_candidate_provider::Object_list Object_list;
@@ -196,6 +200,10 @@ public:
 
   virtual Self* clone() const { 
     return new Self; 
+  }
+
+  virtual void transform(const Aff_transformation_3& t) {
+    candidate_provider->transform(t);
   }
 
   virtual bool update( Unique_hash_map<Vertex_handle, bool>& V, 

@@ -100,6 +100,7 @@ public:
     return is_point_on_cell( p, target.get_node(), root);
   }
   void transform(const Aff_transformation_3& t) {
+    // TODO: Bounding box must be updated/transformed, too
     if(root != 0)
       root->transform(t);
   }
@@ -428,9 +429,12 @@ public:
   const Object_list& objects() const { return object_list; }
 
   void transform(const Aff_transformation_3& t) {
-    if(left_node != 0) left_node->transform(t);
-    if(right_node != 0) right_node->transform(t);
-    if(splitting_plane != Plane_3()) splitting_plane = splitting_plane.transform(t);	
+    if(left_node != 0) {
+	CGAL_assertion(right_node != 0);
+	left_node->transform(t);
+ 	right_node->transform(t);
+  	splitting_plane.transform(t);
+    }
   }
   <<definition of the node display method>>
   <<definition of the node destructor>>
@@ -888,11 +892,11 @@ public:
   typedef typename Kernel::FT  FT;
   typedef typename Kernel::RT  RT;
 
-  virtual Oriented_side operator()( const Plane_3& pl, Object_handle o);
-  virtual Oriented_side operator()( const Plane_3& pl, Vertex_handle v);
-  virtual Oriented_side operator()( const Plane_3& pl, Halfedge_handle e);
-  virtual Oriented_side operator()( const Plane_3& pl, Halffacet_handle f);
-  virtual Oriented_side operator()( const Plane_3& pl, Halffacet_triangle_handle f);
+  Oriented_side operator()( const Plane_3& pl, Object_handle o);
+  Oriented_side operator()( const Plane_3& pl, Vertex_handle v);
+  Oriented_side operator()( const Plane_3& pl, Halfedge_handle e);
+  Oriented_side operator()( const Plane_3& pl, Halffacet_handle f);
+  Oriented_side operator()( const Plane_3& pl, Halffacet_triangle_handle f);
 
   Oriented_side
   Side_of_plane<SNCstructure>::oriented_side(const Plane_3& pl, const Point_3& pnt) {
