@@ -28,6 +28,7 @@
 //Define shorter names to please linker (g++/egcs)
 
 #define Triangulation_default_data_structure_2 Tdds
+#define Triangulation_data_structure_using_list_2 Tdsul
 #define Triangulation_vertex_base_2  Tvb
 #define Triangulation_face_base_2  Tfb
 #define Triangulation_euclidean_traits_2 Et2
@@ -39,9 +40,11 @@
 
 #define Triangulation_ds_vertex_2             Tdsv
 #define Triangulation_ds_face_2               Tdsf
+#define Triangulation_dsul_vertex_2           Tdsulv
+#define Triangulation_dsul_face_2             Tdsulf
 #define Triangulation_vertex_2                Tv
 #define Triangulation_face_2                  Tf
-#define Triangulation_vertex_handle_2           Tvh
+#define Triangulation_vertex_handle_2         Tvh
 #define Triangulation_face_handle_2           Tfh
 #define Triangulation_vertex_iterator_2       Tvi
 #define Triangulation_face_iterator_2         Tfi
