@@ -107,14 +107,15 @@ public:
 
   typedef typename Geom_traits::Point_2  Point;
 
-  Constrained_Delaunay_triangulation_base_2(const Geom_traits& gt=Geom_traits() ) : 
-    Constrained_triangulation(gt) { }
+  Constrained_Delaunay_triangulation_base_2(
+			      const Geom_traits& gt=Geom_traits() )
+    : Constrained_triangulation(gt) { }
 
   Constrained_Delaunay_triangulation_base_2(const CD_triangulation_base& cdt)
     : Constrained_triangulation(cdt) {}
 
   Constrained_Delaunay_triangulation_base_2(std::list<Constraint>& lc, 
-					    const Geom_traits& gt=Geom_traits())
+					 const Geom_traits& gt=Geom_traits())
       : Constrained_triangulation(gt)
   {
     typename std::list<Constraint>::iterator itc;
