@@ -179,7 +179,17 @@ class sort_sedges : public SNC_decorator<T> {
     if(source(se1) != source(se2))
       return SORT(source(se1),source(se2));
     if(se1 == twin(se2))
-      return SORT(vertex(twin(ssource(se1))), vertex(twin(ssource(se2))));
+      if(ssource(se1) == ssource(se2)) {
+	Sphere_circle vec1 = se1->tmp_circle();
+	Sphere_circle vec2 = se2->tmp_circle();
+	if(vec1.a() != vec2.a())
+	  return vec1.a() < vec2.a();
+	else if(vec1.b() != vec2.b())
+	  return vec1.b() < vec2.b();
+	return vec1.c() < vec2.c();     	
+      }
+      else
+	return SORT(vertex(twin(ssource(se1))), vertex(twin(ssource(se2))));
     if(SORT(vertex(twin(ssource(twin(se1)))), 
 	    vertex(twin(ssource(se1)))))
       se1 = twin(se1);
@@ -770,10 +780,23 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
       SHalfedge_handle new_outedge = ei->out_sedge_;
       SHalfedge_around_svertex_circulator cb(new_outedge), ce(cb);
       CGAL_For_all(cb,ce) {
-	if(lexicographically_xyz_smaller(point(vertex(twin(ssource(cb)))), 
-					 point(vertex(twin(ssource(new_outedge))))) ||
-	   lexicographically_xyz_smaller(point(target(cb)), point(target(new_outedge))))													
-	  new_outedge = cb;
+	if(source(cb) == target(cb) && source(cb) == target(new_outedge)) {
+	  Plane_3 c(cb->tmp_circle());
+	  if(c.a() != 0) {
+	    if(c.a() < 0)
+	      new_outedge = cb;
+	  }
+	  else if(c.b() != 0) {
+	    if(c.b() < 0)
+	      new_outedge = cb;
+	  }
+	  else if(c.c() != 0) {
+	    if(c.c() < 0)
+	      new_outedge = cb;
+	  }
+	} else
+	  if(lexicographically_xyz_smaller(point(target(cb)), point(target(new_outedge))))													
+	    new_outedge = cb;
       }
       ei->out_sedge_ = new_outedge;
     }
