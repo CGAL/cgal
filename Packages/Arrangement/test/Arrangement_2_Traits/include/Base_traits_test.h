@@ -383,9 +383,7 @@ curve_compare_at_x_smth_wrapper( std::istringstream& strLine,
  * curve_get_point_status n1 n2 STATUS_RESULT, where
  * n1 - curve index in all_curves_vec
  * n2 - point index in all_points_vec
- * STATUS_RESULT - expected result, enum{ UNDER_CURVE, 
- *                                        CURVE_NOT_IN_RANGE, 
- *                                        ABOVE_CURVE, ON_CURVE } type
+ * STATUS_RESULT - expected result, enum{SMALLER,LARGER,EQUAL} type
  */
 template< class Traits_class, class Number_type >
 bool Base_traits_test< Traits_class, Number_type >::
@@ -727,18 +725,6 @@ translate_enumerator( std::string& strValue )
   }
   else if( strValue == "EQUAL" ) {
     return CGAL::EQUAL;
-  }
-  else if( strValue == "UNDER_CURVE" ) { 
-    return tr.UNDER_CURVE;
-  }
-  else if( strValue == "CURVE_NOT_IN_RANGE" ) {
-    return tr.CURVE_NOT_IN_RANGE;
-  }
-  else if( strValue == "ABOVE_CURVE" ) {
-    return tr.ABOVE_CURVE;
-  }
-  else if( strValue == "ON_CURVE" ) {
-    return tr.ON_CURVE;
   }
 
   return -220776; // My birthday :-)

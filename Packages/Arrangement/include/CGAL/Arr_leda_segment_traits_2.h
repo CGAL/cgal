@@ -60,8 +60,6 @@ public:
   typedef typename Base::X_curve_2              X_curve_2;
   typedef X_curve_2                             Curve_2;
 
-  typedef typename Base::Curve_point_status     Curve_point_status;
-
   // Obsolete, for backward compatibility
   typedef Point_2                               Point;
   typedef X_curve_2                             X_curve;
@@ -80,7 +78,7 @@ public:
                    const Point_2 & split_pt) const
   {
     //split curve at split point (x coordinate) into c1 and c2
-    CGAL_precondition(curve_get_point_status(cv,split_pt) == ON_CURVE);
+    CGAL_precondition(curve_get_point_status(cv,split_pt) == EQUAL);
     // does not suit pmwx 
 	//CGAL_precondition(curve_source(cv) != split_pt);
     //CGAL_precondition(curve_target(cv) != split_pt);

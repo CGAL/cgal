@@ -61,13 +61,6 @@ class Arr_segment_circle_traits
   typedef Circle_2                  Circle;
   typedef Conic_2                   Conic;
 
-  enum Curve_point_status {
-    UNDER_CURVE        = -1,
-    CURVE_NOT_IN_RANGE = 0,
-    ABOVE_CURVE        = 1,
-    ON_CURVE           = 2
-  };
-
   // Constructor.
   Arr_segment_circle_traits()
     {}
@@ -641,31 +634,22 @@ class Arr_segment_circle_traits
   }
 
   // Check whether the given point is above, under or on the given curve.
-  Curve_point_status curve_get_point_status (const X_curve_2& curve,
-					     const Point_2& p) const
+  Comparison_result curve_get_point_status (const X_curve_2& curve,
+					    const Point_2& p) const
   {
     CGAL_precondition(is_x_monotone(curve));
+    CGAL_precondition(curve_is_in_x_range(curve, p));
 
     // A special treatment for vertical segments:
     if (curve.is_vertical_segment())
     {
-      if (compare_x (curve.source(), p) != EQUAL)
-	return (CURVE_NOT_IN_RANGE);
+      Comparison_result res1 = _compare_y (curve.source(), p);
+      Comparison_result res2 = _compare_y (curve.target(), p);
 
-      if (_compare_y (curve.source(), p) == SMALLER &&
-	  _compare_y (curve.target(), p) == SMALLER)
-      {
-	return (ABOVE_CURVE);
-      }
-      else if (_compare_y (curve.source(), p) == LARGER &&
-	       _compare_y (curve.target(), p) == LARGER)
-      {
-	return (UNDER_CURVE);
-      }
+      if (res1 == res2)
+	return (res1);
       else
-      {
-	return (ON_CURVE);
-      }
+	return (EQUAL);
     }
 
     // Get the points on the arc with the same x co-ordinate as p.
@@ -675,29 +659,10 @@ class Arr_segment_circle_traits
     n = curve.get_points_at_x (p.x(), ps);
 
     // Make sure there is at most one point.
-    CGAL_assertion(n <= 1);
+    CGAL_assertion(n == 1);
 
-    if (n == 0)
-    {
-      // p is not in the x-range of the curve.
-      return (CURVE_NOT_IN_RANGE);
-    }
-    else
-    {
-     // Compare p with the a point of the curve with the same x co-ordinate.
-      int result = _compare_y (p, ps[0]);
-
-      if (result == SMALLER)
-	return (UNDER_CURVE);
-      else if (result == LARGER)
-	return (ABOVE_CURVE);
-      else if (result == EQUAL)
-	return (ON_CURVE);
-    }
-
-    // We should never reach here:
-    CGAL_assertion(false);
-    return (ON_CURVE);
+    // Compare p with the a point of the curve with the same x co-ordinate.
+    return (_compare_y (ps[0], p));
   }
 
   // Check whether the given curve in between c1 and c2, when going in the

@@ -67,17 +67,6 @@ public:
 protected:
   typedef typename Kernel::Segment_2    Segment_2;
 
-public:
-
-  typedef enum
-  {
-    UNDER_CURVE = -1,
-    ABOVE_CURVE = 1,
-    ON_CURVE = 2,
-    CURVE_NOT_IN_RANGE = 0
-    //CURVE_VERTICAL = 3
-  } Curve_point_status;
-
 protected:
   // Functors:
   typedef typename Kernel::Is_vertical_2        Is_vertical_2;
@@ -279,24 +268,19 @@ public:
       }
   }
 
-  Curve_point_status 
-  curve_get_point_status(const X_curve_2 &cv, const Point_2& p) const
+  Comparison_result curve_get_point_status (const X_curve_2 &cv,
+					    const Point_2& p) const
   {
     CGAL_assertion(is_x_monotone(cv));
+    CGAL_precondition(curve_is_in_x_range(cv, p));
 
-    if (!curve_is_in_x_range(cv, p))
-      return CURVE_NOT_IN_RANGE;
-    if (curve_is_vertical(cv)) {
+    if (curve_is_vertical(cv))
+    {
       if (CGAL::compare_y(curve_source(cv),p)*
 	  CGAL::compare_y(curve_target(cv),p)<=0)
-        return ON_CURVE;
-      if (CGAL::compare_y(curve_source(cv),p)==LARGER)
-	//bug fix (2/11)
-	//return ABOVE_CURVE;
-	return UNDER_CURVE;
-      if (CGAL::compare_y(curve_source(cv),p)==SMALLER)
-	//return UNDER_CURVE;
-	return ABOVE_CURVE;
+        return EQUAL;
+      else
+	return (CGAL::compare_y(curve_source(cv),p));
     }
 
     typename X_curve_2::const_iterator pit = cv.begin(),after=pit; ++after;
@@ -309,12 +293,10 @@ public:
     Comparison_result res = CGAL::compare_y_at_x(p, l);
 
     if (res == SMALLER)
-      return UNDER_CURVE;
+      return LARGER;
     if (res == LARGER)
-      return ABOVE_CURVE;
-    if (res == EQUAL)
-      return ON_CURVE;
-    return ON_CURVE;
+      return SMALLER;
+    return EQUAL;
   }
   
 
@@ -492,7 +474,7 @@ public:
 		   const Point_2& split_pt) {
     
     //split curve at split point into c1 and c2
-    CGAL_precondition(curve_get_point_status(cv,split_pt)==ON_CURVE);
+    CGAL_precondition(curve_get_point_status(cv,split_pt)==EQUAL);
     CGAL_precondition(CGAL::compare_lexicographically_xy(curve_source(cv),
 							 split_pt) != EQUAL);
     CGAL_precondition(CGAL::compare_lexicographically_xy(curve_target(cv),

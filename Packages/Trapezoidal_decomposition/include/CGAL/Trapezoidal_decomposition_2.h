@@ -231,42 +231,17 @@ public:
         {
           switch(traits->curve_get_point_status(sep,right))
           {
-            case Traits::UNDER_CURVE:
+            case LARGER:
               curr=curr->right_top_neighbour();
               break;
-            case Traits::ABOVE_CURVE:
+            case SMALLER:
               curr=curr->right_bottom_neighbour();
               break;
-            case Traits::ON_CURVE:
+            case EQUAL:
               // end reached
               curr=0;
               break;
-            default:
-#ifndef CGAL_TD_DEBUG
-                  
-              std::cout <<
-                "\nmake sure input intersects only on common end points";
-              CGAL_warning(traits->curve_get_point_status(sep,curr->right()) ==
-                           Traits::UNDER_CURVE ||
-                           traits->curve_get_point_status(sep,curr->right()) ==
-                           Traits::ABOVE_CURVE ||
-                           traits->curve_get_point_status(sep,curr->right()) ==
-                           Traits::ON_CURVE);
-                  
-#else
-              std::cout << "\nsep==" << sep << std::flush;
-              std::cout << "\ncurr->right()==" << curr->right() << std::flush;
-              std::cout <<
-                "\nmake sure input intersects only on common end points";
-              CGAL_assertion(traits->curve_get_point_status(sep,curr->right())
-                             == Traits::UNDER_CURVE ||
-                             traits->curve_get_point_status(sep,curr->right())
-                             == Traits::ABOVE_CURVE ||
-                             traits->curve_get_point_status(sep,curr->right())
-                             == Traits::ON_CURVE);
-                  
-#endif
-                  
+            default:       
               curr=0;
               break;
           }
@@ -1489,29 +1464,28 @@ output: trapezoid iterator
         // CURVE SEPRATION
           {
             pc = &curr->top();
-            typename Traits::Curve_point_status c =
-              traits->curve_get_point_status(*pc,p);
-            if (c==Traits::UNDER_CURVE)
+            Comparison_result cres = traits->curve_get_point_status(*pc,p);
+            if (cres == LARGER)
             {
               curr=curr.left();
               continue;
             }
-            else if (c==Traits::ABOVE_CURVE)
+            else if (cres == SMALLER)
             {
               curr=curr.right();
               continue;
             }
-            else if (c==Traits::ON_CURVE)
-            {  // p on CURVE
-                
+            else
+            {  
+	      // p on CURVE  
 #ifndef CGAL_TD_DEBUG
                 
-              CGAL_warning(c == Traits::ON_CURVE &&
+              CGAL_warning(cres == EQUAL &&
                 !traits->point_is_right(p,traits->curve_rightmost(*pc))&&
                 !traits->point_is_left(p,traits->curve_leftmost(*pc)));
 #else
                 
-              CGAL_postcondition(c == Traits::ON_CURVE &&
+              CGAL_postcondition(cres == EQUAL &&
                 !traits->point_is_right(p,traits->curve_rightmost(*pc))&&
                 !traits->point_is_left(p,traits->curve_leftmost(*pc)));
 #endif
@@ -1615,25 +1589,7 @@ output: trapezoid iterator
 
                   }
                 }
-            }
-            
-#ifdef CGAL_TD_DEBUG
-            
-            else //traits->curve_get_point_status(*pc,p)==
-                //Traits::CURVE_NOT_IN_RANGE
-            {
-              std::cerr << "\ncurr->top()==" << *pc;
-              std::cerr << "\np==" << p;
-              CGAL_assertion(
-                               c==Traits::UNDER_CURVE||
-                               c==Traits::ABOVE_CURVE||
-                               c==Traits::ON_CURVE
-                               );
-                return Locate_type();
-              }
-            
-#endif
-            
+            } 
           }
         else
         // !is_degenerate()

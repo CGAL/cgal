@@ -118,17 +118,6 @@ public:
   typedef X_curve_2                       X_curve;
   typedef X_curve_2                       Curve;
 
-  // Currently, I leave this in the traits
-  // Maybe we can change the usage inside Planar_map_2
-  typedef enum
-  {
-    UNDER_CURVE        = -1,
-    CURVE_NOT_IN_RANGE =  0,
-    ABOVE_CURVE        =  1,
-    ON_CURVE           =  2
-
-  } Curve_point_status;	
-
 protected:
 
   // Functors:
@@ -373,37 +362,38 @@ public:
    * Return the location of the given point with respect to the input curve.
    * \param cv The curve.
    * \param p The point.
-   * \return CURVE_NOT_IN_RANGE if p is not in the x-range of cv;
-   *         ABOVE_CURVE if cv(x(p)) < y(p);
-   *         UNDER_CURVE if cv(x(p)) > y(p);
-   *         or else ON_CURVE (if p is on the curve).
+   * \pre p is in the x-range of cv.
+   * \return SMALLER if cv(x(p)) < y(p);
+   *         LARGER if cv(x(p)) > y(p);
+   *         or else (if p is on the curve) EQUAL.
    */
-  Curve_point_status curve_get_point_status (const X_curve_2 & cv, 
-					     const Point_2 & p) const
+  Comparison_result curve_get_point_status (const X_curve_2 & cv, 
+					    const Point_2 & p) const
   {
-    if (! curve_is_in_x_range(cv, p))
-      return (CURVE_NOT_IN_RANGE);
+    CGAL_precondition(curve_is_in_x_range(cv, p));
 
     if (! cv.is_vert)
     {
       // Compare with the supporting line.
       Comparison_result res = compare_y_at_x_2_object()(p, cv.line);
-      return ((res == LARGER) ? ABOVE_CURVE :
-	      ((res == SMALLER) ? UNDER_CURVE : ON_CURVE));
+
+      if (res == LARGER)
+	return (SMALLER);
+      else if (res == SMALLER)
+	return (LARGER);
+      return (EQUAL);
     }
     else
     {
       // Compare with the vertical segment's end-points.
       Compare_y_2       compare_y = compare_y_2_object();
-      Comparison_result res1 = compare_y (p, cv.ps);
-      Comparison_result res2 = compare_y (p, cv.pt);
+      Comparison_result res1 = compare_y (cv.ps, p);
+      Comparison_result res2 = compare_y (cv.pt, p);
       
-      if (res1 == LARGER && res2 == LARGER)
-	return (ABOVE_CURVE);
-      else if (res1 == SMALLER && res2 == SMALLER)
-	return (UNDER_CURVE);
+      if (res1 == res2)
+	return (res1);
       else
-	return (ON_CURVE);
+	return (EQUAL);
     }
   }
 
@@ -666,7 +656,7 @@ public:
                    const Point_2& p) const
   {
     // Check preconditions.
-    CGAL_precondition(curve_get_point_status(cv, p) == ON_CURVE);
+    CGAL_precondition(curve_get_point_status(cv, p) == EQUAL);
     CGAL_precondition_code(Compare_xy_2 compare_xy = compare_xy_2_object());
     CGAL_precondition(compare_xy(cv.ps, p) != EQUAL);
     CGAL_precondition(compare_xy(cv.pt, p) != EQUAL);

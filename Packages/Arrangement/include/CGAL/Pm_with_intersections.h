@@ -174,7 +174,8 @@ public:
     // the intersection is only one point
     const X_curve_2 &he_cv = he->curve();
     if (traits->point_is_same(xp1, xp2)) {
-      if (traits->curve_get_point_status(he_cv, xp1) == Traits::ON_CURVE) {
+      if (traits->curve_is_in_x_range(he_cv, xp1) &&
+ 	  traits->curve_get_point_status(he_cv, xp1) == EQUAL) {
         intersection_exists = true;
       }
     }

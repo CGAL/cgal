@@ -22,9 +22,9 @@
  9/1 10/1
  0/1  5/1
 #-----------------------------------------------------------
-curve_get_point_status 0 0 ON_CURVE. 
-curve_get_point_status 0 1 ON_CURVE. 
-curve_get_point_status 0 2 UNDER_CURVE.   
-curve_get_point_status 1 0 ON_CURVE. 
-curve_get_point_status 1 1 ABOVE_CURVE. 
-curve_get_point_status 1 2 ABOVE_CURVE. 
+curve_get_point_status 0 0 EQUAL. 
+curve_get_point_status 0 1 EQUAL. 
+curve_get_point_status 0 2 LARGER.   
+curve_get_point_status 1 0 EQUAL. 
+curve_get_point_status 1 1 SMALLER. 
+curve_get_point_status 1 2 SMALLER. 

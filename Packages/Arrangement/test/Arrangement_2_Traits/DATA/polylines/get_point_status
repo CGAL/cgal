@@ -26,7 +26,6 @@
 #-----------------------------------------------------------
 # Execution block
 #-----------------------------------------------------------
-curve_get_point_status 1 0 ABOVE_CURVE.
-curve_get_point_status 1 1 UNDER_CURVE.
-curve_get_point_status 1 2 ON_CURVE.
-curve_get_point_status 0 3 CURVE_NOT_IN_RANGE.
+curve_get_point_status 1 0 SMALLER.
+curve_get_point_status 1 1 LARGER.
+curve_get_point_status 1 2 EQUAL.

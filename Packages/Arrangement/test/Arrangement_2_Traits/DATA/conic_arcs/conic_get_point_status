@@ -28,27 +28,22 @@ a 3 0 0 -2 -1 5  2 13  -1 10
 #-----------------------------------------------------------
 # Execution block
 #-----------------------------------------------------------
-curve_get_point_status 0 0 ON_CURVE. 
-curve_get_point_status 0 1 UNDER_CURVE.
-curve_get_point_status 0 2 ABOVE_CURVE.
-curve_get_point_status 0 3 CURVE_NOT_IN_RANGE.
+curve_get_point_status 0 0 EQUAL. 
+curve_get_point_status 0 1 LARGER.
+curve_get_point_status 0 2 SMALLER.
 
-curve_get_point_status 1 0 ABOVE_CURVE. 
-curve_get_point_status 1 1 ON_CURVE.
-curve_get_point_status 1 4 UNDER_CURVE.
-curve_get_point_status 0 3 CURVE_NOT_IN_RANGE.
+curve_get_point_status 1 0 SMALLER. 
+curve_get_point_status 1 1 EQUAL.
+curve_get_point_status 1 4 LARGER.
 
-curve_get_point_status 2 0 ABOVE_CURVE. 
-curve_get_point_status 2 5 ON_CURVE.
-curve_get_point_status 2 6 UNDER_CURVE.
-curve_get_point_status 2 4 CURVE_NOT_IN_RANGE.
+curve_get_point_status 2 0 SMALLER. 
+curve_get_point_status 2 5 EQUAL.
+curve_get_point_status 2 6 LARGER.
 
-curve_get_point_status 3 2 ABOVE_CURVE. 
-curve_get_point_status 3 1 ON_CURVE.
-curve_get_point_status 3 4 UNDER_CURVE.
-curve_get_point_status 3 0 CURVE_NOT_IN_RANGE.
+curve_get_point_status 3 2 SMALLER. 
+curve_get_point_status 3 1 EQUAL.
+curve_get_point_status 3 4 LARGER.
 
-curve_get_point_status 4 8 ABOVE_CURVE. 
-curve_get_point_status 4 7 ON_CURVE.
-curve_get_point_status 4 5 UNDER_CURVE.
-curve_get_point_status 4 3 CURVE_NOT_IN_RANGE.
+curve_get_point_status 4 8 SMALLER. 
+curve_get_point_status 4 7 EQUAL.
+curve_get_point_status 4 5 LARGER.

@@ -116,10 +116,11 @@ inline bool trapezoid_top_curve_is_same(X_trapezoid_const_ref left,
       (tr.is_right_unbounded()||
        point_is_right_top(tr.right(),p))&&
       (tr.is_bottom_unbounded()||
-       curve_get_point_status(tr.bottom(),p)==Traits_base::ABOVE_CURVE)&&
+       curve_get_point_status(tr.bottom(),p) == SMALLER)&&
       (tr.is_top_unbounded()||
-       curve_get_point_status(tr.top(),p)==Traits_base::UNDER_CURVE);
+       curve_get_point_status(tr.top(),p) == LARGER);
   }
+
   bool is_in_closure(const_ref tr,const Point& p) const
   {
     // test left and right sides
@@ -131,17 +132,13 @@ inline bool trapezoid_top_curve_is_same(X_trapezoid_const_ref left,
         // test bottom side
         if (!tr.is_bottom_unbounded()) 
           {
-            typename Traits_base::Curve_point_status 
-              s=curve_get_point_status(tr.bottom(),p);
-            if (s!=Traits_base::ABOVE_CURVE&&s!=Traits_base::ON_CURVE)
+            if (curve_get_point_status(tr.bottom(),p) == LARGER)
               return false;
           }
         // test top side
         if (!tr.is_top_unbounded())
           {
-            typename Traits_base::Curve_point_status 
-              s=curve_get_point_status(tr.top(),p);
-            if (s!=Traits_base::UNDER_CURVE&&s!=Traits_base::ON_CURVE)
+            if (curve_get_point_status(tr.top(),p) == SMALLER)
               return false;
           }
         return true;

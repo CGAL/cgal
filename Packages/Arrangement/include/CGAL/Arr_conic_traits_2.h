@@ -65,14 +65,6 @@ class Arr_conic_traits_2
   typedef Circle_2                   Circle;
   typedef Segment_2                  Segment;
 
-  enum Curve_point_status
-  {
-    UNDER_CURVE = -1,
-    ABOVE_CURVE = 1,
-    ON_CURVE = 2,
-    CURVE_NOT_IN_RANGE = 0,
-  };
-
 #ifdef CGAL_CONIC_ARC_USE_CACHING
  private:
 
@@ -126,7 +118,10 @@ class Arr_conic_traits_2
       // Since the curve is x-monotone, if the point x co-ordinate is to the
       // left (or to the right of both curve's source and target points), then
       // the point is obviously not in the curve's x range.
-      return (compare_x(p, curve.source()) != compare_x(p, curve.target()));
+      Comparison_result res1 = compare_x(p, curve.source());
+      Comparison_result res2 = compare_x(p, curve.target());
+
+      return ((res1 == EQUAL) || (res2 == EQUAL) || (res1 != res2));
     }
   }
 
@@ -377,46 +372,29 @@ class Arr_conic_traits_2
   }  
 
   // Check whether the given point is above, under or on the given curve.
-  Curve_point_status curve_get_point_status (const X_curve_2& curve,
-					     const Point_2& p) const
+  Comparison_result curve_get_point_status (const X_curve_2& curve,
+					    const Point_2& p) const
   {
     CGAL_precondition(is_x_monotone(curve));
+    CGAL_precondition(curve_is_in_x_range(curve,p));
 
     // A special treatment for vertical segments:
     if (curve.is_vertical_segment())
     {
-      if (compare_x (curve.source(), p) != EQUAL)
-	return (CURVE_NOT_IN_RANGE);
-
       // In case p has the same x c-ordinate of the vertical segment, compare
       // it to the segment endpoints to determine its position.
-      if (_compare_y (curve.source(), p) == SMALLER &&
-	  _compare_y (curve.target(), p) == SMALLER)
-      {
-	return (ABOVE_CURVE);
-      }
-      else if (_compare_y (curve.source(), p) == LARGER &&
-	       _compare_y (curve.target(), p) == LARGER)
-      {
-	return (UNDER_CURVE);
-      }
-      else
-      {
-	return (ON_CURVE);
-      }
-    }
+      Comparison_result res1 = _compare_y (curve.source(), p);
+      Comparison_result res2 = _compare_y (curve.target(), p);
 
-    // Since the curve is x-monotone, if the point x co-ordinate is to the
-    // left (or to the right of both curve's source and target points), then
-    // the point is obviously not in the curve's x range.
-    if (compare_x(p, curve.source()) == compare_x(p, curve.target()))
-    {
-      return (CURVE_NOT_IN_RANGE);
+      if (res1 == res2)
+	return (res1);
+      else
+	return (EQUAL);
     }
 
     // Check whether the point is exactly on the curve.
     if (curve.contains_point(p))
-      return (ON_CURVE);
+      return (EQUAL);
 
     // Get the points on the arc with the same x co-ordinate as p.
     int    n;
@@ -428,16 +406,7 @@ class Arr_conic_traits_2
     CGAL_assertion(n == 1);
 
     // Compare p with the a point of the curve with the same x co-ordinate.
-    int result = _compare_y (p, ps[0]);
-
-    if (result == SMALLER)
-      return (UNDER_CURVE);
-    else if (result == LARGER)
-      return (ABOVE_CURVE);
-
-    // We should never reach here:
-    CGAL_assertion(false);
-    return (ON_CURVE);
+    return (_compare_y(ps[0], p));
   }
 
   // Check whether the given curve in between c1 and c2, when going in the

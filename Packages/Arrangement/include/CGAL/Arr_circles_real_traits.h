@@ -137,32 +137,7 @@ public:
   typedef Circle_2                   Circle;
   typedef Vector_2                   Vector;
 
-  // The workaround below seems obsolete and produces an error on gcc-3.
-  typedef enum {
-    UNDER_CURVE = -1,
-    CURVE_NOT_IN_RANGE,
-    ABOVE_CURVE,
-    ON_CURVE
-  } Curve_point_status;
-
-// #ifndef __GNUC__
-//   enum Curve_point_status {
-//     UNDER_CURVE = -1,
-//     ABOVE_CURVE = 1,
-//     ON_CURVE = 2,
-//     CURVE_NOT_IN_RANGE = 0
-//   };
-// #else
-//   //workaround for egcs, otherwise we get an ICE
-//   typedef int Curve_point_status;
-//   static const int UNDER_CURVE = -1;
-//   static const int ABOVE_CURVE = 1;
-//   static const int ON_CURVE = 2;
-//   static const int CURVE_NOT_IN_RANGE = 0;
-// #endif
-
   Arr_circles_real_traits() {}
-
 
   Comparison_result compare_x(const Point_2& p0, const Point_2& p1) const {
     return _compare_value(p0.x(),p1.x());
@@ -407,21 +382,13 @@ public:
     }
   }
 
-  Curve_point_status 
-  curve_get_point_status(const X_curve_2 &cv, const Point_2& p) const
+  Comparison_result curve_get_point_status (const X_curve_2 &cv, 
+					    const Point_2& p) const
   {
     CGAL_precondition(is_x_monotone(cv));
-
-    if (!curve_is_in_x_range(cv, p))
-      return CURVE_NOT_IN_RANGE;
-    int res = _compare_value(p.y(), curve_calc_point(cv, p).y());
-    if (res == SMALLER)
-      return UNDER_CURVE;
-    if (res == LARGER)
-      return ABOVE_CURVE;
-    if (res == EQUAL)
-      return ON_CURVE;
-    return ON_CURVE;
+    CGAL_precondition(curve_is_in_x_range(cv, p));
+  
+    return (_compare_value(curve_calc_point(cv, p).y(), p.y()));
   }
 
 
@@ -685,7 +652,7 @@ public:
     CGAL_precondition(is_x_monotone(cv));
 
     //split curve at split point (x coordinate) into c1 and c2
-    CGAL_precondition(curve_get_point_status(cv,split_pt)==ON_CURVE);
+    CGAL_precondition(curve_get_point_status(cv,split_pt)==EQUAL);
     CGAL_precondition(compare_x(curve_source(cv),split_pt)!=EQUAL);
     CGAL_precondition(compare_x(curve_target(cv),split_pt)!=EQUAL);
 
@@ -800,16 +767,22 @@ public:
     }
 
     if (compare_x(rgt,pt)==LARGER) {
-      if ((curve_get_point_status(c1,rgt) == ON_CURVE) &&
-          (curve_get_point_status(c2,rgt) == ON_CURVE) ) {
+      if (curve_is_in_x_range(c1, rgt) &&
+	  (curve_get_point_status(c1, rgt) == EQUAL) &&
+	  curve_is_in_x_range(c2, rgt) &&
+          (curve_get_point_status(c2, rgt) == EQUAL) ) 
+      {
         p1=p2=rgt;
         return true;
       }
     }
 
     if (compare_x(lft,pt)==LARGER) {
-      if ((curve_get_point_status(c1,lft) == ON_CURVE) &&
-          (curve_get_point_status(c2,lft) == ON_CURVE) ) {
+      if (curve_is_in_x_range(c1, lft) &&
+	  (curve_get_point_status(c1,lft) == EQUAL) &&
+	  curve_is_in_x_range(c2, lft) &&
+          (curve_get_point_status(c2,lft) == EQUAL) ) 
+      {
         p1=p2=lft;
         return true;
       }

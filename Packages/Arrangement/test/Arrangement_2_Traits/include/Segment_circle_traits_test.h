@@ -175,15 +175,19 @@ curve_split_wrapper (std::istringstream& str_line)
   if (! tr.is_x_monotone(all_curves_vec[cv_index]))
   {
     std::cout << "Was NOT successful" << std::endl;
-    std::cout << "Precondition fault: Input curve is not x-monotone" << std::endl;
+    std::cout << "Precondition fault: Input curve is not x-monotone" 
+	      << std::endl;
     return (false);
   }
 
-  if (tr.curve_get_point_status (all_curves_vec[cv_index], 
-                                 all_points_vec[pt_index]) != tr.ON_CURVE)
+  if (! tr.curve_is_in_x_range (all_curves_vec[cv_index], 
+				all_points_vec[pt_index]) ||
+      tr.curve_get_point_status (all_curves_vec[cv_index], 
+                                 all_points_vec[pt_index]) != CGAL::EQUAL)
   {
     std::cout << "Was NOT successful" << std::endl;
-    std::cout << "Precondition fault: Split point is not on the curve" << std::endl;
+    std::cout << "Precondition fault: Split point is not on the curve" 
+	      << std::endl;
     return (false);
   }
 
@@ -191,8 +195,8 @@ curve_split_wrapper (std::istringstream& str_line)
       all_curves_vec[cv_index].target() == all_points_vec[pt_index])
   {
     std::cout << "Was NOT successful" << std::endl;
-    std::cout << "Precondition fault: Split point is an end point of the curve" 
-	 << std::endl;
+    std::cout << "Precondition fault: "
+	      << "Split point is an end point of the curve" << std::endl;
     return (false);
   }
 

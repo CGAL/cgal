@@ -21,15 +21,4 @@
 1
 1/1  1/1
 #-----------------------------------------------------------
-curve_get_point_status 0 0 ABOVE_CURVE. 
-#curve_get_point_status 1 0 ABOVE_CURVE. #Must fail on precondition, it's not x-monotone 
-
-#
-# No. of expected vertices :
-#8
-# No. of expected halfedges:
-#8
-# No. of expected faces    :
-#2
-# No. of expected overlaps :
-#3
+curve_get_point_status 0 0 SMALLER. 

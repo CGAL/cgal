@@ -294,7 +294,9 @@ public:
 #ifdef CGAL_TD_DEBUG
   bool is_valid(const Traits* traits) const
   {
-    typename Traits::Curve_point_status t;
+    Comparison_result t;
+    bool              b;
+
     if (is_active())
     {
       if (get_node() && **get_node()!=*this)
@@ -324,22 +326,30 @@ public:
           CGAL_warning(!(is_left_unbounded() ||is_right_unbounded()));
           return false;
         }
-        t=traits->curve_get_point_status(bottom(),left());
-        if (!(t==traits->ABOVE_CURVE || t==traits->ON_CURVE))
+
+	b=traits->curve_is_in_x_range(bottom(),left());
+	if (b)
+	  t=traits->curve_get_point_status(bottom(),left());
+
+        if (!b || t == LARGER)
         {
           std::cerr << "\nthis=";
           write(std::cerr,*this,*traits,false) << std::flush;
           std::cerr << "\nt==" << t << std::flush;
-          CGAL_warning(t==Traits::ABOVE_CURVE || t==Traits::ON_CURVE);
+          CGAL_warning(!b || t == LARGER);
           return false;
         }
-        t=traits->curve_get_point_status(bottom(),right());
-        if (!(t==traits->ABOVE_CURVE || t==traits->ON_CURVE))
+
+	b=traits->curve_is_in_x_range(bottom(),right());
+	if (b)
+	  t=traits->curve_get_point_status(bottom(),right());
+
+        if (!b || t == LARGER)
         {
           std::cerr << "\nthis=";
           write(std::cerr,*this,*traits,false) << std::flush;
           std::cerr << "\nt==" << t << std::flush;
-          CGAL_warning(!(!(t==Traits::ABOVE_CURVE || t==Traits::ON_CURVE)));
+          CGAL_warning(!b || t == LARGER);
           return false;
         }
       }
@@ -352,22 +362,30 @@ public:
           CGAL_warning(!(is_left_unbounded() || is_right_unbounded()));
           return false;
         }
-        t=traits->curve_get_point_status(top(),left());
-        if (!(t==traits->UNDER_CURVE || t==traits->ON_CURVE))
+
+	b=traits->curve_is_in_x_range(top(),left());
+	if (b)
+	  t=traits->curve_get_point_status(top(),left());
+        
+	if (!b || t == SMALLER)
         {
           std::cerr << "\nthis=";
           write(std::cerr,*this,*traits,false) << std::flush;
           std::cerr << "\nt==" << t << std::flush;
-          CGAL_warning(!(!(t==Traits::UNDER_CURVE || t==Traits::ON_CURVE)));
+          CGAL_warning(!b || t == SMALLER);
           return false;
         }
-        t=traits->curve_get_point_status(top(),right());
-        if (!(t==traits->UNDER_CURVE || t==traits->ON_CURVE))
+
+	b=traits->curve_is_in_x_range(top(),right());
+	if (b)
+	  t=traits->curve_get_point_status(top(),right());
+
+        if (!b || t == SMALLER)
         {
           std::cerr << "\nthis=";
           write(std::cerr,*this,*traits,false) << std::flush;
           std::cerr << "\nt==" << t << std::flush;
-          CGAL_warning(!(!(t==Traits::UNDER_CURVE || t==Traits::ON_CURVE)));
+          CGAL_warning(!b || t == SMALLER);
           return false;
         }
       }
@@ -451,43 +469,44 @@ public:
           CGAL_warning((!is_right_unbounded()));
           return false;
         }
-        if (!(traits->curve_get_point_status(bottom(),left()) ==
-              Traits::ON_CURVE))
+        if (!traits->curve_is_in_x_range(bottom(),left()) ||
+	    traits->curve_get_point_status(bottom(),left()) != EQUAL)
         {
           std::cerr << "\nbottom()==" << bottom() << std::flush;
           std::cerr << "\nleft()==" << left() << std::flush;
-          CGAL_warning(traits->
-                       curve_get_point_status(bottom(),
-                                              left()) == Traits::ON_CURVE);
+          CGAL_warning(traits->curve_is_in_x_range(bottom(),left()) &&
+		       traits->curve_get_point_status(bottom(),
+						      left()) == EQUAL);
           return false;
         }
-        if (!(traits->curve_get_point_status(bottom(),
-                                             right()) == Traits::ON_CURVE))
+        if (!traits->curve_is_in_x_range(bottom(),right()) ||
+	    traits->curve_get_point_status(bottom(),right()) != EQUAL)
         {
           std::cerr << "\nbottom()==" << bottom() << std::flush;
           std::cerr << "\nright()==" << right() << std::flush;
-          CGAL_warning(traits->
-                       curve_get_point_status(bottom(),
-                                              right()) == Traits::ON_CURVE);
+          CGAL_warning(traits->curve_is_in_x_range(bottom(),right()) &&
+		       traits->curve_get_point_status(bottom(),
+						      right()) == EQUAL);
           return false;
         }
-        if(!(traits->curve_get_point_status(top(), left()) ==
-             Traits::ON_CURVE))
+        if (!traits->curve_is_in_x_range(top(),left()) ||
+	    traits->curve_get_point_status(top(),left()) != EQUAL)
         {
           std::cerr << "\ntop()==" << top() << std::flush;
           std::cerr << "\nleft()==" << left() << std::flush;
-          CGAL_warning(traits->
-                       curve_get_point_status(top(),
-                                              left()) == Traits::ON_CURVE);
+          CGAL_warning(!traits->curve_is_in_x_range(top(),left()) &&
+		       traits->curve_get_point_status(top(),
+						      left()) == EQUAL);
           return false;
         }
-        if(!(traits->curve_get_point_status(top(),right())==Traits::ON_CURVE))
+        if (!traits->curve_is_in_x_range(top(),right()) ||
+	    traits->curve_get_point_status(top(),right()) != EQUAL)
         {
           std::cerr << "\ntop()==" << top() << std::flush;
           std::cerr << "\nright()==" << right() << std::flush;
-          CGAL_warning(traits->
-                       curve_get_point_status(top(),
-                                              right()) == Traits::ON_CURVE);
+          CGAL_warning(traits->curve_is_in_x_range(top(),right()) &&
+		       traits->curve_get_point_status(top(),
+						      right()) == EQUAL);
           return false;
         }
         if (traits->is_degenerate_curve(*this))
