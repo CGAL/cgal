@@ -1674,6 +1674,8 @@ void Snap_rounding_2<Rep_>::find_hot_pixels_and_create_kd_trees()
 				hp->get_center(),hp));
     }
 
+    std::cout << "number of vertices: " << hot_pixels_list.size() << std::endl;
+
     // create kd multiple tree
     // create simple_list from seg_list
     std::list<Segment_2> simple_seg_list;
@@ -1773,6 +1775,8 @@ void Snap_rounding_2<Rep_>::reroute_isr(std::set<Hot_Pixel<Rep_> *,
 template<class Rep_>
 void Snap_rounding_2<Rep_>::iterate()
   {
+    int number_of_links = 0;
+
     std::list<Point_2> seg_output;
     std::set<Hot_Pixel<Rep_> *,hot_pixel_dir_cmp<Rep_> >
       hot_pixels_intersected_set;
@@ -1810,8 +1814,11 @@ void Snap_rounding_2<Rep_>::iterate()
 	}
       }
 
+      number_of_links += seg_output.size() - 1;
       segments_output_list.push_back(seg_output);
     }
+
+    std::cout << "total number of links = " << number_of_links << std::endl;
   }
 
 template<class Rep_>
