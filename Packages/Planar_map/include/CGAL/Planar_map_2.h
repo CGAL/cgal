@@ -33,9 +33,10 @@
 #include <CGAL/Topological_map.h>
 
 #ifndef CGAL_NO_PM_DEFAULT_POINT_LOCATION
-#include <CGAL/Pm_default_point_location.h>
+#include <CGAL/Pm_trapezoid_dag_point_location.h>
 #include <CGAL/Pm_walk_along_line_point_location.h>
 #include <CGAL/Pm_naive_point_location.h>
+#include <CGAL/Pm_triangle_point_location.h>
 #include <CGAL/Pm_point_location_base.h>
 #endif // CGAL_NO_PM_DEFAULT_POINT_LOCATION
 
@@ -833,7 +834,7 @@ Planar_map_2< Dcel, Traits >::Planar_map_2()
   use_delete_traits = true;
 
 #ifndef CGAL_NO_PM_DEFAULT_POINT_LOCATION
-  pl = new Pm_default_point_location<Self>;
+  pl = new Pm_trapezoid_dag_point_location<Self>;
   use_delete_pl = true;
   pl->init(*this,*traits);
 #else
@@ -880,7 +881,7 @@ Planar_map_2(
   if (pl_ptr == NULL)
   {
 #ifndef CGAL_NO_PM_DEFAULT_POINT_LOCATION
-    pl = new Pm_default_point_location<Self>;
+    pl = new Pm_trapezoid_dag_point_location<Self>;
     use_delete_pl = true;
     pl->init(*this,*traits);
 #else
@@ -933,7 +934,7 @@ Planar_map_2(
   if (pl_ptr == NULL)
   {
 #ifndef CGAL_NO_PM_DEFAULT_POINT_LOCATION
-    pl = new Pm_default_point_location<Self>;
+    pl = new Pm_trapezoid_dag_point_location<Self>;
     use_delete_pl = true;
     pl->init(*this,*traits);
 #else
@@ -994,7 +995,7 @@ Planar_map_2(const Planar_map_2<Dcel, Traits> & pm)
   else{
     //cout<<"Default"<<std::endl;
 #ifndef CGAL_NO_PM_DEFAULT_POINT_LOCATION
-    pl = new Pm_default_point_location<Self>;
+    pl = new Pm_trapezoid_dag_point_location<Self>;
 #else
     CGAL_assertion_msg( false,
     "No default point location is defined; you must supply one.");
@@ -1058,12 +1059,14 @@ insert_in_face_interior(
   h->set_curve(cv);  //should set the curve of the twin as well but for now
   h->twin()->set_curve(cv);
   
-  //pl->insert(h);  //maybe should be above
   //iddo - for arrangement
-  pl->insert(h,cv);
+  //pl->insert(h,cv);
 
   h->source()->set_point(traits->curve_source(cv));
   h->target()->set_point(traits->curve_target(cv));
+
+  //idit - moved for point location with triangulation
+  pl->insert(h,cv);
 
   if (en != NULL)
   {
@@ -1100,13 +1103,16 @@ insert_from_vertex
   h->set_curve(cv);  
   h->twin()->set_curve(cv);
 
-  pl->insert(h, cv);            // for arrangement
+  //pl->insert(h, cv);            // for arrangement
 
   bool source = traits->point_equal(prev->target()->point(), 
                                       traits->curve_source(cv));
   (source) ?
     h->target()->set_point(traits->curve_target(cv)) :
     h->target()->set_point(traits->curve_source(cv));
+
+  //idit - moved for point location with triangulation
+  pl->insert(h,cv);
 
   if (en != NULL) en->add_edge(cv, h, true, false);
 
@@ -1302,6 +1308,7 @@ insert_at_vertices
   //pl->insert(h);
   //iddo - for arrangement
   pl->insert(h, cv);
+
   // Notifying change.
   if (en != NULL) {
     Face_handle orig_face = prev1_before_prev2 ? h->twin()->face() : h->face();
@@ -1979,3 +1986,4 @@ update_subdivision(Point_node& point_node,
 CGAL_END_NAMESPACE
 
 #endif
+

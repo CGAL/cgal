@@ -16,12 +16,12 @@
 // $Name$
 //
 // Author(s)     : Oren Nechushtan <theoren@math.tau.ac.il>
-#ifndef CGAL_PM_DEFAULT_POINT_LOCATION_C
-#define CGAL_PM_DEFAULT_POINT_LOCATION_C
+#ifndef CGAL_PM_TRAPEZOID_DAG_POINT_LOCATION_C
+#define CGAL_PM_TRAPEZOID_DAG_POINT_LOCATION_C
 
 #ifndef CGAL_PM_DEFAULT_POINT_LOCATION_H
-#include <CGAL/Pm_default_point_location.h>
-#endif // CGAL_PM_DEFAULT_POINT_LOCATION_H
+#include <CGAL/Pm_trapezoid_dag_point_location.h>
+#endif // CGAL_PM_DEFAULT_DAG_POINT_LOCATION_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -36,8 +36,8 @@ CGAL_BEGIN_NAMESPACE
 	of this region.
 	*/
 template <class Planar_map>
-typename Pm_default_point_location<Planar_map>::Halfedge_handle
-Pm_default_point_location<Planar_map>::locate(const Point& p, Locate_type& lt)
+typename Pm_trapezoid_dag_point_location<Planar_map>::Halfedge_handle
+Pm_trapezoid_dag_point_location<Planar_map>::locate(const Point& p, Locate_type& lt)
   const
 {
 		//there are different internal compiler errors if we
@@ -59,8 +59,8 @@ Pm_default_point_location<Planar_map>::locate(const Point& p, Locate_type& lt)
     }
 
 template <class Planar_map>
-typename Pm_default_point_location<Planar_map>::Halfedge_handle
-Pm_default_point_location<Planar_map>::locate(const Point& p, Locate_type& lt){
+typename Pm_trapezoid_dag_point_location<Planar_map>::Halfedge_handle
+Pm_trapezoid_dag_point_location<Planar_map>::locate(const Point& p, Locate_type& lt){
 	((Bounding_box*)get_bounding_box())->insert(p);
 	Halfedge_handle h=((cPLp)this)->locate(p,lt);
 	if (!((Bounding_box*)get_bounding_box())->locate(p,lt,h))
@@ -78,8 +78,8 @@ Pm_default_point_location<Planar_map>::locate(const Point& p, Locate_type& lt){
 	of this region.
 	*/
 template <class Planar_map>
-typename Pm_default_point_location<Planar_map>::Halfedge_handle
-Pm_default_point_location<Planar_map>::vertical_ray_shoot(
+typename Pm_trapezoid_dag_point_location<Planar_map>::Halfedge_handle
+Pm_trapezoid_dag_point_location<Planar_map>::vertical_ray_shoot(
 	const Point& p, Locate_type& lt, bool up) const{
 
 		//trying to workaround internal compiler error
@@ -100,8 +100,8 @@ Pm_default_point_location<Planar_map>::vertical_ray_shoot(
     }
 
 template <class Planar_map>
-typename Pm_default_point_location<Planar_map>::Halfedge_handle
-Pm_default_point_location<Planar_map>::vertical_ray_shoot(
+typename Pm_trapezoid_dag_point_location<Planar_map>::Halfedge_handle
+Pm_trapezoid_dag_point_location<Planar_map>::vertical_ray_shoot(
 	const Point& p, Locate_type& lt, bool up){
 /* Make sure the source point is in the bounding box on the output */
 	((Bounding_box*)get_bounding_box())->insert(p);
@@ -118,4 +118,4 @@ Pm_default_point_location<Planar_map>::vertical_ray_shoot(
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_PM_DEFAULT_POINT_LOCATION_C
+#endif // CGAL_PM_TRAPEZOID_DAG_POINT_LOCATION_C

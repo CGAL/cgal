@@ -227,7 +227,7 @@ int main(int argc, char* argv[])
 #ifdef USE_WALK_POINT_LOCATION
 #error  USE one point location
 #endif
-	CGAL::Pm_default_point_location<Planar_map> pl(false);
+	CGAL::Pm_trapezoid_dag_point_location<Planar_map> pl(false);
 	Planar_map M(&pl);
 	test(M,"default_without_rebuilding",argc,argv);
 	std::cout << std::endl;

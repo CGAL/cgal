@@ -117,7 +117,7 @@ int main(int argc, char* argv[])
 
 #if CGAL_ARR_TEST_POINT_LOCATION == 1
   // By default we use Trapezoidal Decomposition
-  #include <CGAL/Pm_default_point_location.h>  
+  #include <CGAL/Pm_trapezoid_dag_point_location.h>  
 #elif CGAL_ARR_TEST_POINT_LOCATION == 2
   #include <CGAL/Pm_naive_point_location.h>  
 #elif CGAL_ARR_TEST_POINT_LOCATION == 3
@@ -244,7 +244,7 @@ public:
 #else
   // CGAL_ARR_TEST_POINT_LOCATION == 1
   Arr_polyline_traits_test() :
-    arr(new CGAL::Pm_default_point_location<Planar_map>) {};
+    arr(new CGAL::Pm_trapezoid_dag_point_location<Planar_map>) {};
   // None
 #endif
 

@@ -17,8 +17,8 @@
 //
 // Author(s)     : Oren Nechushtan <theoren@math.tau.ac.il>
 //                 Iddo Hanniel <hanniel@math.tau.ac.il>
-#ifndef CGAL_PM_DEFAULT_POINT_LOCATION_H
-#define CGAL_PM_DEFAULT_POINT_LOCATION_H
+#ifndef CGAL_PM_TRAPEZOID_DAG_POINT_LOCATION_H
+#define CGAL_PM_TRAPEZOID_DAG_POINT_LOCATION_H
 
 #include <CGAL/Pm_point_location_base.h>
 #include <CGAL/Trapezoidal_decomposition_2.h>
@@ -27,7 +27,7 @@
 CGAL_BEGIN_NAMESPACE
 
 ////////////////////////////////////////////////////////////////////
-//  DEFAULT PLANAR MAP STRATEGY
+//  TRAPEZOID_DAG PLANAR MAP STRATEGY
 ///////////////////////////////////////////////////////////////////
 
 template <class Planar_map_>
@@ -78,11 +78,11 @@ protected:
 
 
 template <class Planar_map_>
-class Pm_default_point_location : public Pm_point_location_base<Planar_map_> {
+class Pm_trapezoid_dag_point_location : public Pm_point_location_base<Planar_map_> {
 public:
   typedef Planar_map_ Planar_map;
   typedef Pm_point_location_base<Planar_map_> Base;
-  typedef Pm_default_point_location<Planar_map> Self;
+  typedef Pm_trapezoid_dag_point_location<Planar_map> Self;
   typedef typename Planar_map::Traits Pm_traits;
   typedef typename Planar_map::Traits_wrap Pm_traits_wrap;
   typedef typename Planar_map::Locate_type Locate_type;
@@ -109,13 +109,13 @@ protected:
   typedef const Self* cPLp;
   
 public:
-  Pm_default_point_location(bool rebuild=true) : 
+  Pm_trapezoid_dag_point_location(bool rebuild=true) : 
     pm(NULL),
     traits(NULL)
   {
     td.set_needs_update(rebuild);
   }
-  ~Pm_default_point_location() 
+  ~Pm_trapezoid_dag_point_location() 
   {
     if (traits) delete traits;
   }
@@ -356,7 +356,7 @@ private:
 CGAL_END_NAMESPACE
 
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#include <CGAL/Pm_default_point_location.C>
+#include <CGAL/Pm_trapezoid_dag_point_location.C>
 #endif
 
 #endif
