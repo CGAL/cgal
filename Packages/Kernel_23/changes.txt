@@ -1,3 +1,6 @@
+Version 1.106 (09 February 2004) [rursu]
+- Updated headers in examples
+
 1.105 (24 January 2004)
 - Move orientation(p,q,r,k) in CGALi.
 

@@ -1,3 +1,14 @@
+// Copyright (c) 1999  Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
+// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
+// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
+// and Tel-Aviv University (Israel).  All rights reserved.
+//
+// This file is part of an example program for CGAL.  This example
+// program may be used, distributed and modified without limitation.
+//
+
+
 // original version see examples/Polyhedron/polyhedron_prog_incr_builder.C
 // this time we test compilation with the
 // kernel concept archetype
