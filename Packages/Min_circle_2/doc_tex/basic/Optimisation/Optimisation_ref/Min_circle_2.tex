@@ -91,7 +91,7 @@ reconstructing $mc(P)$ from a given support set $S$ of $P$.
         \ccPostcond \ccc{\ccVar.is_empty()} = \ccc{true}.}
 
 \ccHidden
-\ccConstructor{ CGAL_Min_circle_2( const CGAL_Min_circle_2<I>&);}{
+\ccConstructor{ CGAL_Min_circle_2( CGAL_Min_circle_2<I> const&);}{
         copy constructor.}
 
 \ccConstructor{ CGAL_Min_circle_2( Point const& p, I const& i = I());}{
@@ -118,8 +118,8 @@ reconstructing $mc(P)$ from a given support set $S$ of $P$.
                 CGAL_Min_circle_2( InputIterator first,
                                    InputIterator last,
                                    bool          randomize = false,
-                                   CGAL_Random&  random    = CGAL_Random(),
-                                   I const&      i         = I()          );}{
+                                   CGAL_Random&  random    = CGAL_random,
+                                   I const&      i         = I()        );}{
         introduces a variable \ccVar\ of type \ccClassTemplateName. It
         is initialized to $mc(P)$ with $P$ being the set of points in
         the range [\ccc{first},\ccc{last}). If \ccc{randomize} is
@@ -132,30 +132,34 @@ reconstructing $mc(P)$ from a given support set $S$ of $P$.
         \ccPrecond The value type of \ccc{first} and \ccc{last} is
         \ccc{Point}.}
 
-\emph{Note:} Since most compilers do not support member templates yet,
+{\em Note:} Since most compilers do not support member templates yet,
 we provide specialized constructors instead. In the current release
 there are constructors for C arrays (using pointers as iterators) and
-for STL sequence containers \ccc{vector<Point>} and \ccc{list<Point>}.
+for the STL sequence containers \ccc{vector<Point>} and \ccc{list<Point>}.
 
 \ccHidden
 \ccConstructor{ CGAL_Min_circle_2( const Point* first,
                                    const Point* last,
                                    bool         randomize = false,
-                                   CGAL_Random& random    = CGAL_Random(),
-                                   I const&     i         = I()          );}{
+                                   CGAL_Random& random    = CGAL_random,
+                                   I const&     i         = I()        );}{
         STL-like constructor for random access iterators.}
 
 \ccHidden
 \ccConstructor{ CGAL_Min_circle_2( list<Point>::const_iterator first,
                                    list<Point>::const_iterator last,
                                    bool         randomize = false,
-                                   CGAL_Random& random    = CGAL_Random(),
-                                   I const&     i         = I()          );}{
+                                   CGAL_Random& random    = CGAL_random,
+                                   I const&     i         = I()        );}{
         STL-like constructor for sequence container list<Point>.}
 
 \ccHidden
+\ccConstructor{ ~CGAL_Min_circle_2( );}{
+        destructor.}
+
+\ccHidden
 \ccMemberFunction{ CGAL_Min_circle_2<I>&
-                   operator = ( const CGAL_Min_circle_2<I>&);}{
+                   operator = ( CGAL_Min_circle_2<I> const&);}{
         assignment operator.}
 
 % -----------------------------------------------------------------------------
@@ -200,26 +204,25 @@ bounded side, i.e.\ its unbounded side equals the whole plane $\E_2$.
                    bounded_side( Point const& p) const;}{
         returns \ccc{CGAL_ON_BOUNDED_SIDE},\ccTexHtml{$\:$}{ }%
         \ccc{CGAL_ON_BOUNDARY}, or \ccc{CGAL_ON_UNBOUNDED_SIDE}
-        iff \ccc{p} lies inside, on the boundary, or outside of
-        \ccVar, resp.}
+        iff \ccc{p} lies properly inside, on the boundary, or properly
+        outside of \ccVar, resp.}
 
 \ccMemberFunction{ bool has_on_bounded_side( Point const& p) const;}{
-        returns \ccc{true}, iff \ccc{p} lies inside \ccVar.}
+        returns \ccc{true}, iff \ccc{p} lies properly inside \ccVar.}
 
 \ccMemberFunction{ bool has_on_boundary( Point const& p) const;}{
         returns \ccc{true}, iff \ccc{p} lies on the boundary
         of \ccVar.}
 
-\ccMemberFunction{ bool
-                   has_on_unbounded_side( Point const& p) const;}{
-        returns \ccc{true}, iff \ccc{p} lies outside of \ccVar.}
+\ccMemberFunction{ bool has_on_unbounded_side( Point const& p) const;}{
+        returns \ccc{true}, iff \ccc{p} lies properly outside of \ccVar.}
 
 \ccMemberFunction{ bool is_empty( ) const;}{
         returns \ccc{true}, iff \ccVar\ is empty (this implies
         degeneracy).}
 
 \ccMemberFunction{ bool is_degenerate( ) const;}{
-        returns \ccc{true}, iff \ccVar\ is degenerate, i.e. if
+        returns \ccc{true}, iff \ccVar\ is degenerate, i.e.\ if
         \ccVar\ is empty or equal to a single point, equivalently if
         the number of support points is less than 2.}
 
@@ -245,7 +248,7 @@ An object \ccVar\ is valid, iff
   \item[c)] $S$ is minimal, i.e.\ no support point is redundant.
 \end{itemize}
 Using the ready-made implementation for the interface class with exact
-arithmetic as described in Section~\ref{sec:opt_I_Impl} garantees
+arithmetic as described in Section~\ref{sec:opt_I_Impl} guarantees
 validity of \ccVar. The following function is mainly intended for
 debugging user supplied interface classes.
 
@@ -306,6 +309,8 @@ randomization can be useful in certain cases, we give an example.
 
     Min_circle  mc1( P, P+n);           /* very slow */
     Min_circle  mc2( P, P+n, true);     /* fast      */
+
+    delete[] P;
 \end{cprog}
 
 \end{ccClassTemplate}
