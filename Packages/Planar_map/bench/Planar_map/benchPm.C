@@ -36,11 +36,14 @@ typedef leda_rational                                   NT;
 
 #if defined(USE_LEDA_KERNEL)
 typedef CGAL::leda_rat_kernel_traits                    Kernel;
+#define PM_TYPE "Leda Kernel"
 #else
 #if defined(USE_MY_KERNEL)
 typedef CGAL::Pm_segment_traits_leda_kernel_2<NT>       Kernel;
+#define PM_TYPE "My Leda Kernel"
 #else
 typedef CGAL::Cartesian<NT>                             Kernel;
+#define PM_TYPE "CGAL Kernel"
 #endif
 #endif
 
@@ -278,14 +281,15 @@ int main(int argc, char * argv[])
   int iterations = parseArgs.getIterations();
   int seconds = parseArgs.getSeconds();
   bool printHeader = parseArgs.getPrintHeader();
+  int nameLength = parseArgs.getNameLength();
   const char * filename = parseArgs.getFilename();
   const std::string * fullname = parseArgs.getFullname();
-      
+  
   // Construct Incrementaly
   const char * bname =
     parseArgs.getBenchName(CGAL::Bench_parse_args::BENCH_INCREMENT);
-  Increment_pm_bench benchIncerement((std::string(bname) + " PM (" +
-                                      std::string(filename) + ")"),
+  Increment_pm_bench benchIncerement((std::string(bname) + " PM " + PM_TYPE +
+                                      " (" + std::string(filename) + ")"),
                                      seconds, false);
   Increment_pm & incrementPm = benchIncerement.getBenchUser();
   incrementPm.setFormat(inputFormat);
@@ -295,8 +299,8 @@ int main(int argc, char * argv[])
   // Construct Aggregately
   bname =
     parseArgs.getBenchName(CGAL::Bench_parse_args::BENCH_AGGREGATE);
-  Aggregate_pm_bench benchAggregate((std::string(bname) + " PM (" +
-                                     std::string(filename) + ")"),
+  Aggregate_pm_bench benchAggregate((std::string(bname) + " PM " + PM_TYPE +
+                                     " (" + std::string(filename) + ")"),
                                     seconds, false);
   Aggregate_pm & aggregatePm = benchAggregate.getBenchUser();
   aggregatePm.setFormat(inputFormat);
@@ -305,8 +309,8 @@ int main(int argc, char * argv[])
 
   // Construct and Display
   bname = parseArgs.getBenchName(CGAL::Bench_parse_args::BENCH_DISPLAY);
-  DisplayPmBench benchDisplay((std::string(bname) +
-                               " PM (" + std::string(filename) + ")"),
+  DisplayPmBench benchDisplay((std::string(bname) + " PM " + PM_TYPE +
+                               " (" + std::string(filename) + ")"),
                               seconds, false);
   Display_Pm & displayPm = benchDisplay.getBenchUser();
   displayPm.setFormat(inputFormat);
@@ -325,6 +329,7 @@ int main(int argc, char * argv[])
     }
   }
 
+  CGAL::Bench_base::setNameLength(nameLength);
   if (printHeader) CGAL::Bench_base::printHeader();
   if (benchMask & (0x1 << CGAL::Bench_parse_args::BENCH_INCREMENT))
     benchIncerement();
