@@ -29,10 +29,16 @@ LCPPDEFS+= -DUSE_LAZY_RAT
 TARGET0 := $(TARGET0)LazyRat
 LOBJDIR :=$(LOBJDIR)_lazy_rat
 else
+ifeq ($(USE_MP_FLOAT), 1)
+LCPPDEFS+= -DUSE_MP_FLOAT
+TARGET0 := $(TARGET0)MPFloat
+LOBJDIR :=$(LOBJDIR)_mp_float
+else
 ifeq ($(USE_LAZY_QUOTIENT), 1)
 LCPPDEFS+= -DUSE_LAZY_QUOTIENT
 TARGET0 := $(TARGET0)LazyQuotient
 LOBJDIR :=$(LOBJDIR)_lazy_quotient
+endif
 endif
 endif
 endif

@@ -24,6 +24,11 @@
 #include <CGAL/Lazy_exact_nt.h>
 #else
 
+#if defined(USE_MP_FLOAT)
+#include <CGAL/MP_Float.h>
+#include <CGAL/Quotient.h>
+#else
+
 #if defined(USE_LAZY_QUOTIENT)
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
@@ -31,6 +36,7 @@
 #else
 
 #include <CGAL/leda_rational.h>
+#endif
 #endif
 #endif
 #endif
@@ -59,15 +65,22 @@ typedef CGAL::Lazy_exact_nt<NT>                         WNT;
 #define NUMBER_TYPE "Lazy Leda Rat"
 #else
 
+#if defined(USE_MP_FLOAT)
+typedef CGAL::Quotient<CGAL::MP_Float>                  NT;
+typedef NT                                              WNT;
+#define NUMBER_TYPE "Quotient MP Float"
+#else
+
 #if defined(USE_LAZY_QUOTIENT)
 typedef CGAL::Quotient<CGAL::MP_Float>                  NT;
 typedef CGAL::Lazy_exact_nt<NT>                         WNT;
-#define NUMBER_TYPE "Lazy Quotient Float"
+#define NUMBER_TYPE "Lazy Quotient MP Float"
 #else
 
 typedef leda_rational                                   NT;
 typedef NT                                              WNT;
 #define NUMBER_TYPE "Leda Rat"
+#endif
 #endif
 #endif
 #endif
