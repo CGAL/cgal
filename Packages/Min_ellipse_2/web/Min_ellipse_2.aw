@@ -2930,15 +2930,15 @@ representation) and corresponding data accessors.
         }
 
         friend
-        ostream&
-        operator << ( ostream& os, const MyPointC2& p)
+        std::ostream&
+        operator << ( std::ostream& os, const MyPointC2& p)
         {
             return( os << p._x << ' ' << p._y);
         }
 
         friend
-        istream&
-        operator >> ( istream& is, MyPointC2& p)
+        std::istream&
+        operator >> ( std::istream& is, MyPointC2& p)
         {
             return( is >> p._x >> p._y);
         }
@@ -2991,15 +2991,15 @@ representation) and corresponding data accessors.
         }
 
         friend
-        ostream&
-        operator << ( ostream& os, const MyPointH2& p)
+        std::ostream&
+        operator << ( std::ostream& os, const MyPointH2& p)
         {
             return( os << p._hx << ' ' << p._hy << ' ' << p._hw);
         }
 
         friend
-        istream&
-        operator >> ( istream& is, MyPointH2& p)
+        std::istream&
+        operator >> ( std::istream& is, MyPointH2& p)
         {
             return( is >> p._hx >> p._hy >> p._hw);
         }
