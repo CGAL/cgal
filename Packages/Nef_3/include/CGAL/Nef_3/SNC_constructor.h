@@ -456,7 +456,7 @@ create_vertices_of_box_with_plane(const Plane_3& h, bool b) {
       min = 2;   
 
     //    SNC_constructor C(snc());
-    points.sort(circle_lt<Point_3>(max));
+    points.sort(circle_lt<Kernel>(max));
 
     typename std::list<Point_3>::const_iterator p,prev,next;
     for(p=points.begin();p!=points.end();p++)

@@ -849,7 +849,7 @@ public:
   void draw(Vertex_handle v) const
     { 
     Point_3 bp = Infi_box::box_point(point(v));
-    TRACEN("vertex " << bp);
+    TRACEN("vertex " << bp << " double point" << double_point(bp));
     ppoly_->push_back(double_point(bp), mark(v)); 
   }
 

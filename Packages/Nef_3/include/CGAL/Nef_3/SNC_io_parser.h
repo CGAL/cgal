@@ -19,10 +19,12 @@
 //                 Miguel Granados <granados@mpi-sb.mpg.de>
 //                 Susan Hert      <hert@mpi-sb.mpg.de>
 //                 Lutz Kettner    <kettner@mpi-sb.mpg.de>
+
 #ifndef CGAL_SNC_IO_PARSER_H
 #define CGAL_SNC_IO_PARSER_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Unique_hash_map.h>
 #include <CGAL/Nef_3/SNC_SM_decorator.h>
 #include <CGAL/Nef_3/SNC_structure.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
@@ -30,6 +32,45 @@
 #include <vector>
 
 CGAL_BEGIN_NAMESPACE
+
+template <typename T>
+class sort_vertices : public SNC_decorator<T> {
+  
+  typedef T SNC_structure;
+  typedef SNC_decorator<T>          Base;
+  typedef typename T::Vertex_handle Vertex_handle;
+  typedef typename T::Point_3       Point_3;
+  
+ public:
+  sort_vertices(T& D) : Base(D) {}
+  
+  bool operator() (Vertex_handle v1, Vertex_handle v2) const {
+    Point_3 p1(point(v1)), p2(point(v2));
+    if(p1.x() != p2.x())
+      return p1.x() < p2.x();
+    else if(p1.y() != p2.y())
+      return p1.y() < p2.y();
+    return p1.z() < p2.z();
+  }
+};
+  
+template <typename T>
+class sort_edges : public SNC_decorator<T> {
+  
+  typedef T SNC_structure;  
+  typedef SNC_decorator<T>          Base;
+  typedef typename T::Halfedge_handle Halfedge_handle;
+  
+ public:
+    sort_edges(T& D) : Base(D) {}
+    
+    bool operator() (Halfedge_handle e1, Halfedge_handle e2) const {
+      sort_vertices<T> SORT(*sncp());
+      if(source(e1) != source(e2))
+	return SORT(source(e1),source(e2));
+      return SORT(source(twin(e1)), source(twin(e2)));
+    }
+  };
 
 template <typename SNC_structure_>
 class SNC_io_parser : public SNC_decorator<SNC_structure_>
@@ -63,16 +104,22 @@ public:
   typedef void* GenPtr;
 
  private:
-  std::istream& in; 
-  std::ostream& out;
+  std::istream& in; std::ostream& out;
   bool verbose;
-  CGAL::Object_index<Vertex_iterator>   VI;
+  CGAL::Unique_hash_map<Vertex_iterator, int>  VI;
   CGAL::Object_index<Halfedge_iterator> EI;
   CGAL::Object_index<Halffacet_iterator>    FI;
   CGAL::Object_index<Volume_iterator>   CI;
   CGAL::Object_index<SHalfedge_iterator> SEI;
   CGAL::Object_index<SHalfloop_iterator>   SLI;
   CGAL::Object_index<SFace_iterator>     SFI;
+  std::list<Vertex_iterator> VL;
+  std::list<Halfedge_iterator> EL;
+  std::list<Halffacet_iterator> FL;
+  std::list<Volume_iterator> CL;
+  std::list<SHalfedge_iterator> SEL;
+  std::list<SHalfloop_iterator> SLL;
+  std::list<SFace_iterator> SFL;
   std::vector<Vertex_iterator>   Vertex_of;
   std::vector<Halfedge_iterator> Edge_of;
   std::vector<Halffacet_iterator>    Halffacet_of;
@@ -85,10 +132,14 @@ public:
 
 public:
   SNC_io_parser(std::istream& is, SNC_structure& W);
-  SNC_io_parser(std::ostream& os, SNC_structure& W);
+  SNC_io_parser(std::ostream& os, SNC_structure& W, bool standard_mode);
 
-  std::string index(Vertex_iterator v) const 
-  { return VI(v,verbose); }
+  std::string index(Vertex_iterator v) const { 
+    std::ostringstream os; 
+    os << VI[v];    
+    return os.str();
+  }
+  
   std::string index(Halfedge_iterator e) const 
   { return EI(e,verbose); }
   std::string index(Halffacet_iterator f) const 
@@ -155,13 +206,14 @@ public:
 };
 
 template <typename EW>
-SNC_io_parser<EW>::SNC_io_parser(std::istream& is, EW& W) : 
+SNC_io_parser<EW>::SNC_io_parser(std::istream& is, SNC_structure& W) : 
   Base(W), in(is), out(std::cout) 
 { CGAL_nef3_assertion(W.is_empty());
   verbose = false; }
 
+/*
 template <typename EW>
-SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, EW& W) : 
+SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W) : 
   Base(W), in(std::cin), out(os),
   VI(W.vertices_begin(),W.vertices_end(),'V'),
   EI(W.halfedges_begin(),W.halfedges_end(),'E'),
@@ -187,7 +239,52 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, EW& W) :
   SLI[W.shalfloops_end()]=-2;
   SFI[W.sfaces_end()]=-2;
 }
+*/
 
+template <typename EW>
+SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W, bool standard_mode = true) : 
+  Base(W), in(std::cin), out(os),
+  FI(W.halffacets_begin(),W.halffacets_end(),'F'),
+  CI(W.volumes_begin(),W.volumes_end(),'C'),
+  SEI(W.shalfedges_begin(),W.shalfedges_end(),'e'),
+  SLI(W.shalfloops_begin(),W.shalfloops_end(),'l'),
+  SFI(W.sfaces_begin(),W.sfaces_end(),'f'),
+  vn(W.number_of_vertices()), 
+  en(W.number_of_halfedges()), 
+  fn(W.number_of_halffacets()),
+  cn(W.number_of_volumes()),
+  sen(W.number_of_shalfedges()),
+  sln(W.number_of_shalfloops()),
+  sfn(W.number_of_sfaces())
+{ verbose = (out.iword(CGAL::IO::mode) != CGAL::IO::ASCII &&
+             out.iword(CGAL::IO::mode) != CGAL::IO::BINARY); 
+
+ Vertex_iterator vi; 
+ CGAL_nef3_forall_vertices(vi, *sncp())
+   VL.push_back(vi);
+ VL.sort(sort_vertices<SNC_structure>(*sncp()));
+ int i = 0;
+ typename std::list<Vertex_iterator>::iterator vl;
+ for(vl = VL.begin(); vl != VL.end(); vl++)
+   VI[*vl] = i++;
+
+ Halfedge_iterator ei; 
+ CGAL_nef3_forall_halfedges(ei, *sncp())
+   EL.push_back(ei);
+ EL.sort(sort_edges<SNC_structure>(*sncp()));
+ i = 0;
+ typename std::list<Halfedge_iterator>::iterator el;
+ for(el = EL.begin(); el != EL.end(); el++)
+   EI[*el] = i++;
+
+  VI[W.vertices_end()]=-2;
+  EI[W.halfedges_end()]=-2;
+  FI[W.halffacets_end()]=-2;
+  CI[W.volumes_end()]=-2;
+  SEI[W.shalfedges_end()]=-2;
+  SLI[W.shalfloops_end()]=-2;
+  SFI[W.sfaces_end()]=-2;
+}
 
 template <typename EW>
 bool SNC_io_parser<EW>::check_sep(char* sep) const
@@ -221,13 +318,17 @@ void SNC_io_parser<EW>::print() const
   if (verbose) 
     out << "/* Vertex: index { svs sve ses see sfs sfe sl,"
         << " mark, point } */\n";
-  Vertex_iterator v;
-  CGAL_nef3_forall_vertices(v,*sncp()) print_vertex(v);
+  typename std::list<Vertex_iterator>::const_iterator v;
+  for(v=VL.begin();v!=VL.end();v++)
+    print_vertex(*v);
+
   if (verbose) 
   out << "/* Edge: index { twin, source, isolated incident_object,"
       << " mark } */\n";
-  Halfedge_iterator e;
-  CGAL_nef3_forall_halfedges(e,*sncp()) print_edge(e);
+  typename std::list<Halfedge_iterator>::const_iterator e;
+  for(e=EL.begin();e!=EL.end();e++)
+    print_edge(*e);
+
   if (verbose) 
   out << "/* Facet: index { fclist, ivlist, mark, plane } */\n";
   Halffacet_iterator f;
@@ -415,7 +516,7 @@ void SNC_io_parser<EW>::print_facet(Halffacet_handle f) const
     if ( it.is_shalfedge() ) out << index(SHalfedge_handle(it)) << ' ';
   out << ", ";
   CGAL_nef3_forall_facet_cycles_of(it,f)
-    if ( it.is_shalfloop() ) out << index(SHalfloop_handle(it));
+    if ( it.is_shalfloop() ) out << index(SHalfloop_handle(it)) << ' ';
   out << ", " << index(volume(f)) << " | " 
       << plane(f) << " } " << mark(f) << std::endl;
 }

@@ -19,6 +19,7 @@
 //                 Miguel Granados <granados@mpi-sb.mpg.de>
 //                 Susan Hert      <hert@mpi-sb.mpg.de>
 //                 Lutz Kettner    <kettner@mpi-sb.mpg.de>
+
 #ifndef CGAL_SNC_ITEMS_H
 #define CGAL_SNC_ITEMS_H
 
@@ -343,17 +344,13 @@ public:
 	else 
 	  valid = valid && (sfaces_begin_ == sfaces_last_);
       }
-      else
-	valid = valid && (shalfedges_begin_ != sncp()->shalfedges_end());
-      
+
       valid = valid && (sfaces_begin_ != sncp()->sfaces_end());
       if(sfaces_begin_ == sfaces_last_) {
-	valid = valid && (shalfedges_begin_ == sncp()->shalfedges_end() ||
-	        ++SHalfedge_const_iterator(shalfedges_begin_) == shalfedges_last_);
 	valid = valid && (shalfloop_ == sncp()->shalfloops_end());
       }
       else
-       valid = valid && (sfaces_begin_->sface_cycles_begin() != 
+	valid = valid && (sfaces_begin_->sface_cycles_begin() != 
 			  sfaces_begin_->sface_cycles_end());
      
       verr << "end of CGAL::SNC_items<...>::Vertex::is_valid(): structure is "

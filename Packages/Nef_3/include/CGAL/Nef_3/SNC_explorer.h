@@ -38,7 +38,7 @@ class SNC_explorer : public SNCCDEC {
  public:
   SNC_explorer(const Base& E) : Base(E) {}
   Self& operator=(const Self& E) {
-    Base::oeprator=(E); 
+    Base::operator=(E); 
     return *this;
   }
 
