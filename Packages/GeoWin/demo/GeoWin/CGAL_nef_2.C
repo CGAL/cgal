@@ -52,8 +52,9 @@ int main(int argc, char *argv[])
 
 #include <CGAL/Cartesian.h>
 
+#include <LEDA/basic.h>
+
 #if defined(LEDA_NAMESPACE)
-using namespace leda;
 #else
 #ifndef LEDA_NAMESPACE_NAME
 #define LEDA_NAMESPACE_NAME
@@ -168,8 +169,8 @@ void draw_nef(CGAL::Window_stream& ws, const Nef_polyhedron_2<T>& P)
 // what kind of boolean operation ???
 int op_kind = 0;
 
-class geo_nef : public geowin_update<std::list<Polygon>, std::list<Segment> >,
-                public geowin_redraw
+class geo_nef : public LEDA_NAMESPACE_NAME::geowin_update<std::list<Polygon>, std::list<Segment> >,
+                public LEDA_NAMESPACE_NAME::geowin_redraw
 {
 public:
  Nef bop_result; 
@@ -245,24 +246,24 @@ public:
 };
 
 
-GeoWin* gwin;
-geo_scene result;  
+LEDA_NAMESPACE_NAME::GeoWin* gwin;
+LEDA_NAMESPACE_NAME::geo_scene result;  
 
 void call_back(int choice)
 { op_kind = choice; result->update(); gwin->redraw(); }
 
 int main()
 {
-  geowin_init_default_type((std::list<Polygon>*)0, leda_string("CGALPolygonList"));
+  LEDA_NAMESPACE_NAME::geowin_init_default_type((std::list<Polygon>*)0, leda_string("CGALPolygonList"));
    
   std::list<Polygon> L;
 
-  GeoWin GW("Boolean operations on 2d nef polyhedra");
+  LEDA_NAMESPACE_NAME::GeoWin GW("Boolean operations on 2d nef polyhedra");
   gwin = &GW;
 
   geo_nef update_obj;
   
-  geo_scene my_scene= GW.new_scene(L);  
+  LEDA_NAMESPACE_NAME::geo_scene my_scene= GW.new_scene(L);  
   
   result  = GW.new_scene(update_obj,update_obj,my_scene,leda_string("Boolean operations")); 
   GW.set_visible(result,true);

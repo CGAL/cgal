@@ -1,3 +1,6 @@
+1.4.2 (18 March 2002)
+- Nef demo changed
+
 1.4.1 (15 March 2002)
 - a lot of small changes in the demos and test programs
   to support the LEDA namespace
