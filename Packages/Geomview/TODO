@@ -1,9 +1,3 @@
-- Add flags to the stream that say :
-  - draw vertices or not
-  - draw edges or not
-  - draw surfaces or not (fill or wired).
-  Note that Geomview already has the possibility to do these things from the
-  menus, so...
 - Finish get rid of standard deprecated (and gcc 2.97 unfriendly) strstream.
   http://www.cmla.ens-cachan.fr/Utilisateurs/dosreis/C++/FAQ/
   It's harder than I thought, since g++ 2.95 doesn't have <sstream>.

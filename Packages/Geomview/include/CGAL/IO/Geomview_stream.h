@@ -24,7 +24,6 @@
 #ifndef CGAL_GEOMVIEW_STREAM_H
 #define CGAL_GEOMVIEW_STREAM_H
 
-#include <CGAL/Cartesian.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/IO/Color.h>
@@ -93,6 +92,16 @@ public:
     {
 	std::swap(w, line_width);
         return w;
+    }
+
+    bool set_wired(bool b)
+    {
+	std::swap(b, wired_flag);
+	return b;
+    }
+    bool get_wired() const
+    {
+	return wired_flag;
     }
 
     bool set_echo(bool b)
@@ -174,6 +183,7 @@ private:
     void pickplane(const Bbox_3 &bbox);
 
     Color vertex_color, edge_color, face_color;
+    bool wired_flag;  // decides if we draw surfaces or edges.
     bool echo_flag;   // decides if we echo the point we get back to Geomview.
     bool raw_flag;    // decides if we output footers and headers.
     bool trace_flag;  // makes operator<<() write a trace on cerr.

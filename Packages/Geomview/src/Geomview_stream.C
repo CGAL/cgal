@@ -39,7 +39,8 @@ Geomview_stream::Geomview_stream(const Bbox_3 &bbox,
     : bbox_count(0), triangle_count(0), sphere_count(0),
       segment_count(0), point_count(0), tetrahedron_count(0),
       vertex_color(BLACK), edge_color(BLACK), face_color(BLACK),
-      echo_flag(true), raw_flag(false), trace_flag(false), binary_flag(false),
+      wired_flag(false), echo_flag(true), raw_flag(false),
+      trace_flag(false), binary_flag(false),
       line_width(1)
 {
     setup_geomview(machine, login);
