@@ -105,51 +105,7 @@ No_number_tag number_type_tag(const CGAL::Vector_d<R>& )
   return No_number_tag();
 }
 
-#ifdef VECTOR_WRAPPER
-template <class T, class R>
-_Vector_d_rft_wrapper<R>
-multiply(const Quotient<T>& q,
-              const CGAL::Vector_d<R>& w,
-              const Quotient_tag&)
-{
-  typedef typename  R::Vector_d_base  RVector_d;
-  return _Vector_d_rft_wrapper<R>(
-                 CGAL::Vector_d<R>((q.numerator() * (const RVector_d& )(w))
-                                  / q.denominator()));
-}
-
-template < class R >
-_Vector_d_rft_wrapper<R>
-multiply(const CGAL::Vector_d<R>& v,
-              const CGAL::Vector_d<R>& w,
-              const No_number_tag&)
-{
-  typedef typename  R::Vector_d_base  RVector_d;
-  return _Vector_d_rft_wrapper<R>((const RVector_d& )(v)
-                                     * (const RVector_d& )(w));
-}
-
-template < class T, class R >
-_Vector_d_rft_wrapper<R>
-multiply(const T& n,
-              const CGAL::Vector_d<R>& w,
-              const Number_tag&)
-{
-  typedef typename  R::Vector_d_base  RVector_d;
-  typedef typename  R::RT             RT;
-  return _Vector_d_rft_wrapper<R>(
-                 CGAL::Vector_d<R>(RT(n) * (const RVector_d& )(w)));
-}
-
-template <class T, class R>
-_Vector_d_rft_wrapper<R>
-operator*(const T& t, const CGAL::Vector_d<R>& w)
-{
-  return multiply(t, w, number_type_tag(t));
-}
-#endif // VECTOR_WRAPPER
-
-#ifndef NO_OSTREAM_INSERT_VECTOR_D
+#ifndef CGAL_NO_OSTREAM_INSERT_VECTOR_D
 template < class R >
 std::ostream&
 operator<<(std::ostream& os, const CGAL::Vector_d<R>& v)
@@ -157,9 +113,9 @@ operator<<(std::ostream& os, const CGAL::Vector_d<R>& v)
   typedef typename  R::Vector_d_base  RVector_d;
   return os << (const RVector_d& )v;
 }
-#endif // NO_OSTREAM_INSERT_VECTOR_D
+#endif // CGAL_NO_OSTREAM_INSERT_VECTOR_D
 
-#ifndef NO_ISTREAM_EXTRACT_VECTOR_D
+#ifndef CGAL_NO_ISTREAM_EXTRACT_VECTOR_D
 template < class R >
 std::istream&
 operator>>(std::istream& is, CGAL::Vector_d<R>& p)
@@ -167,9 +123,8 @@ operator>>(std::istream& is, CGAL::Vector_d<R>& p)
   typedef typename  R::Vector_d_base  RVector_d;
   return is >> (RVector_d& )p;
 }
-#endif // NO_ISTREAM_EXTRACT_VECTOR_D
+#endif // CGAL_NO_ISTREAM_EXTRACT_VECTOR_D
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_VECTOR_D_H

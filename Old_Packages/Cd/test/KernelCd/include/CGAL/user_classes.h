@@ -94,12 +94,6 @@ class Triangle_3;
 template < class R >
 class Tetrahedron_3;
 
-// template < class R >
-// class _Vector_2_rft_wrapper;
-// 
-// template < class R >
-// class _Vector_3_rft_wrapper;
-
 template < class FT >
 class Linear_algebraCd;
 

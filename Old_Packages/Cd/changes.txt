@@ -1,3 +1,6 @@
+Ver 1.12 (18 June 2001)
+- Remove references to VECTOR_WRAPPER.
+
 Ver 1.11 (17 May 2001)
 - Fix BCC warning.
 
