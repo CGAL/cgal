@@ -1,3 +1,7 @@
+17 May 2004 Menelaos Karavelas
+- replaced Point by Point_2 in the demo in order to resolve clash with
+  the Mac version of Qt
+
 6 May 2000 Laurent Rineau
 - workaround for CC-5.xx, in include/CGAL/Delaunay_mesh_2.h
 

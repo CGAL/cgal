@@ -87,7 +87,7 @@ typedef CGAL::Delaunay_mesh_local_size_traits_2<K> Meshtraits;
 typedef CGAL::Constrained_Delaunay_triangulation_2<Meshtraits, Tds,
   CGAL::Exact_predicates_tag> Tr;
 
-typedef K::Point_2 Point;
+typedef K::Point_2 Point_2;
 typedef K::Circle_2 Circle;
 typedef CGAL::Polygon_2<K> CGALPolygon;
 
@@ -171,7 +171,7 @@ public:
     FT x=static_cast<FT>(widget->x_real(e->x()));
     FT y=static_cast<FT>(widget->y_real(e->y()));
 
-    widget->new_object(CGAL::make_object(Point(x, y)));
+    widget->new_object(CGAL::make_object(Point_2(x, y)));
   }
 
   void activating()
@@ -187,7 +187,7 @@ public:
 };
 
 struct Vertex_to_point {
-  const Point& operator()(const Vertex& v) const
+  const Point_2& operator()(const Vertex& v) const
     {  return v.point(); }
 };    
 
@@ -640,7 +640,7 @@ public slots:
 
   void get_cgal_object(CGAL::Object obj)
     {
-      Point p;
+      Point_2 p;
       CGALPolygon poly;
       
       if(CGAL::assign(p,obj))
@@ -653,7 +653,7 @@ public slots:
 	    traits.set_point(p);
 	    if( (fh!=NULL) && (!mesh->is_infinite(fh)) && fh->is_marked() )
 	      {
-		const Point&
+		const Point_2&
 		  a = fh->vertex(0)->point(),
 		  b = fh->vertex(1)->point(),
 		  c = fh->vertex(2)->point();
@@ -707,10 +707,10 @@ public slots:
       FT xspan = (xmax-xmin)/2,
 	yspan = (ymax-ymin)/2;
 
-      Point bb1(xcenter - FT(1.5)*xspan, ycenter - FT(1.5)*yspan);
-      Point bb2(xcenter + FT(1.5)*xspan, ycenter - FT(1.5)*yspan);
-      Point bb3(xcenter + FT(1.5)*xspan, ycenter + FT(1.5)*yspan);
-      Point bb4(xcenter - FT(1.5)*xspan, ycenter + FT(1.5)*yspan);
+      Point_2 bb1(xcenter - FT(1.5)*xspan, ycenter - FT(1.5)*yspan);
+      Point_2 bb2(xcenter + FT(1.5)*xspan, ycenter - FT(1.5)*yspan);
+      Point_2 bb3(xcenter + FT(1.5)*xspan, ycenter + FT(1.5)*yspan);
+      Point_2 bb4(xcenter - FT(1.5)*xspan, ycenter + FT(1.5)*yspan);
       mesh->insert(bb1);
       mesh->insert(bb2);
       mesh->insert(bb3);
@@ -850,7 +850,7 @@ public slots:
 	    ins >> f;
 	  }
 
-	  std::vector<Point> points(nx * ny);
+	  std::vector<Point_2> points(nx * ny);
 	  double xmin,xmax,ymin,ymax;
 	  ins >> xmin >> xmax >> ymin >> ymax;
 	  
@@ -860,7 +860,7 @@ public slots:
 	  int k2=0;
 	  for (int i2=0; i2<nx; i2++) {
 	    for (int j=0; j<ny; j++) {
-	      points[k2] = Point(xmin + i2*dx,  ymin + j*dy);
+	      points[k2] = Point_2(xmin + i2*dx,  ymin + j*dy);
 	      k2++;
 	    }
 	  }
@@ -881,7 +881,7 @@ public slots:
   
 	  CGAL::Bbox_2 b;
 	  for(int i = 0; i < num_lines; i++){
-	    Point p, q;  
+	    Point_2 p, q;  
 	    ins2 >> p;
 	    if(i == 0){
 	      b = p.bbox();
@@ -911,10 +911,10 @@ public slots:
 	  ymin -= dy;
 	  xmax += dx;
 	  ymax += dy;
-	  Point bl(xmin, ymin);
-	  Point br(xmax, ymin);
-	  Point tl(xmin, ymax);
-	  Point tr(xmax, ymax);
+	  Point_2 bl(xmin, ymin);
+	  Point_2 br(xmax, ymin);
+	  Point_2 tl(xmin, ymax);
+	  Point_2 tr(xmax, ymax);
 	  mesh->insert_constraint(bl, br);
 	  mesh->insert_constraint(br, tr);
 	  mesh->insert_constraint(tr, tl);
