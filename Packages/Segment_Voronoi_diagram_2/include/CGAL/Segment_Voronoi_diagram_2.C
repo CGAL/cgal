@@ -476,19 +476,19 @@ bool
 Segment_Voronoi_diagram_2<Gt,Svdds>::
 do_intersect(const Site& t, Vertex_handle v) const
 {
+  if ( is_infinite(v) ) { return false; }
   // add here the cases where t is a segment and intersects a point
   // and t is a point and lies in a segment
 
-  //  return false;
-  if ( !intersection_flag ) { return false; }
+  if ( !t.is_segment() || !v->is_segment() ) { return false; }
 
-  if ( t.is_segment() ) {
-    if ( !is_infinite(v) && v->is_segment() ) {
-      if ( do_intersect(t, v->site()) ) {
-	//	print_error_message();
-	return true;
-      }
-    }
+  if ( !intersection_flag ) {
+    return same_segments(t, v->site());
+  }
+
+  if ( do_intersect(t, v->site()) ) {
+    //	print_error_message();
+    return true;
   }
   return false;
 }
@@ -555,6 +555,9 @@ insert(const Site& t, Vertex_handle vnear, bool insert_endpoints)
   Vertex_circulator vc_start = vc;
   do {
     Vertex_handle vv(vc);
+    if ( same_segments(t, vv) ) {
+      return vv;
+    }
     if ( do_intersect(t, vv) ) {
       if ( t.is_segment() ) {
 	return insert_intersecting_segment(t, vv);
@@ -657,10 +660,7 @@ insert_intersecting_segment(const Site_2& t, Vertex_handle v)
 {
   CGAL_precondition( t.is_segment() && v->is_segment() );
 
-  if ( (are_same_points(t.source_site(), v->site().source_site()) &&
-	are_same_points(t.target_site(), v->site().target_site())) ||
-       (are_same_points(t.source_site(), v->site().target_site()) &&
-	are_same_points(t.target_site(), v->site().source_site())) ) {
+  if ( same_segments(t, v->site()) ) {
     return v;
   }
 
@@ -897,7 +897,7 @@ expand_conflict_region(const Face_handle& f, const Site& t,
       vcross.second = vf;
       l.clear();
       fm.clear();
-      return ;
+      return;
     }
   }
 
@@ -1242,16 +1242,39 @@ nearest_neighbor(const Site_2& p,
 
 
 template< class Gt, class Svdds >
-bool
+inline bool
 Segment_Voronoi_diagram_2<Gt,Svdds>::
 are_same_points(const Site_2& p, const Site_2& q) const
 {
   return geom_traits().are_same_points_2_object()(p, q);
 }
 
+template< class Gt, class Svdds >
+inline bool
+Segment_Voronoi_diagram_2<Gt,Svdds>::
+same_segments(const Site_2& t, Vertex_handle v) const
+{
+  if ( is_infinite(v) ) { return false; }
+  if ( t.is_point() || v->site().is_point() ) { return false; }
+  return same_segments(t, v->site());
+}
 
 template< class Gt, class Svdds >
-Oriented_side
+inline bool
+Segment_Voronoi_diagram_2<Gt,Svdds>::
+same_segments(const Site_2& p, const Site_2& q) const
+{
+  CGAL_precondition( p.is_segment() && q.is_segment() );
+
+  return
+    (are_same_points(p.source_site(), q.source_site()) &&
+     are_same_points(p.target_site(), q.target_site())) ||
+    (are_same_points(p.source_site(), q.target_site()) &&
+     are_same_points(p.target_site(), q.source_site()));
+}
+
+template< class Gt, class Svdds >
+inline Oriented_side
 Segment_Voronoi_diagram_2<Gt,Svdds>::
 side_of_bisector(const Site &t1, const Site &t2, const Site &q) const
 {
@@ -1268,7 +1291,7 @@ side_of_bisector(const Site &t1, const Site &t2, const Site &q) const
 
 
 template< class Gt, class Svdds >
-Sign
+inline Sign
 Segment_Voronoi_diagram_2<Gt,Svdds>::
 incircle(const Site &t1, const Site &t2,
 	 const Site &t3, const Site &q) const
@@ -1277,7 +1300,7 @@ incircle(const Site &t1, const Site &t2,
 }
 
 template< class Gt, class Svdds >
-Sign
+inline Sign
 Segment_Voronoi_diagram_2<Gt,Svdds>::
 incircle(const Site &t1, const Site &t2,
 	 const Site &q) const
@@ -1311,7 +1334,7 @@ incircle(const Face_handle& f, const Site& q) const
 
 
 template< class Gt, class Svdds >
-Sign
+inline Sign
 Segment_Voronoi_diagram_2<Gt,Svdds>::
 incircle(const Vertex_handle& v0, const Vertex_handle& v1,
 	 const Vertex_handle& v) const
@@ -1352,7 +1375,7 @@ incircle(const Vertex_handle& v0, const Vertex_handle& v1,
 
 
 template< class Gt, class Svdds >
-bool
+inline bool
 Segment_Voronoi_diagram_2<Gt,Svdds>::
 finite_edge_interior(const Site& t1, const Site& t2,
 		     const Site& t3, const Site& t4,
@@ -1363,7 +1386,7 @@ finite_edge_interior(const Site& t1, const Site& t2,
 }
 
 template< class Gt, class Svdds >
-bool
+inline bool
 Segment_Voronoi_diagram_2<Gt,Svdds>::
 finite_edge_interior(const Face_handle& f, int i,
 		     const Site& q, Sign sgn) const
@@ -1377,7 +1400,7 @@ finite_edge_interior(const Face_handle& f, int i,
 }
 
 template< class Gt, class Svdds >
-bool
+inline bool
 Segment_Voronoi_diagram_2<Gt,Svdds>::
 finite_edge_interior(const Vertex_handle& v1,
 		     const Vertex_handle& v2,
@@ -1394,7 +1417,7 @@ finite_edge_interior(const Vertex_handle& v1,
 }
 
 template< class Gt, class Svdds >
-bool
+inline bool
 Segment_Voronoi_diagram_2<Gt,Svdds>::
 finite_edge_interior_degenerated(const Site& t1, const Site& t2,
 				 const Site& t3, const Site& q,
@@ -1405,7 +1428,7 @@ finite_edge_interior_degenerated(const Site& t1, const Site& t2,
 }
 
 template< class Gt, class Svdds >
-bool
+inline bool
 Segment_Voronoi_diagram_2<Gt,Svdds>::
 finite_edge_interior_degenerated(const Site& t1, const Site& t2,
 				 const Site& q,	 Sign sgn) const
@@ -1476,7 +1499,7 @@ finite_edge_interior_degenerated(const Vertex_handle& v1,
 }
 
 template< class Gt, class Svdds >
-bool
+inline bool
 Segment_Voronoi_diagram_2<Gt,Svdds>::
 infinite_edge_interior(const Site& t2, const Site& t3,
 		       const Site& t4, const Site& q, Sign sgn) const

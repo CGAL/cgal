@@ -541,6 +541,8 @@ protected:
   // wrappers for the geometric predicates
 
   bool are_same_points(const Site_2& p, const Site_2& q) const;
+  bool same_segments(const Site_2& t, Vertex_handle v) const;
+  bool same_segments(const Site_2& p, const Site_2& q) const;
 
   bool is_endpoint_of_segment(const Site_2& p, const Site_2& s) const
   {
