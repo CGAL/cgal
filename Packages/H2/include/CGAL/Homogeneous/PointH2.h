@@ -11,7 +11,7 @@
 // release       : 
 // release_date  : 
 // 
-// file          : PointH2.h
+// file          : include/CGAL/Homogeneous/PointH2.h
 // package       : H2
 // revision      : $Revision$
 // revision_date : $Date$

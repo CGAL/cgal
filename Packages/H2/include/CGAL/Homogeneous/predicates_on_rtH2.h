@@ -11,7 +11,7 @@
 // release       : 
 // release_date  : 
 // 
-// file          : include/CGAL/predicates_on_rtH2.h
+// file          : include/CGAL/Homogeneous/predicates_on_rtH2.h
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
@@ -29,8 +29,8 @@ template <class RT>
 CGAL_KERNEL_INLINE
 Orientation
 orientationH2( const RT& phx, const RT& phy, const RT& phw,
-                    const RT& qhx, const RT& qhy, const RT& qhw,
-                    const RT& rhx, const RT& rhy, const RT& rhw )
+               const RT& qhx, const RT& qhy, const RT& qhw,
+               const RT& rhx, const RT& rhy, const RT& rhw )
 {
   const RT  RT0 = RT(0);
   
@@ -59,8 +59,8 @@ template <class RT>
 CGAL_KERNEL_INLINE
 bool
 left_turnH2( const RT& phx, const RT& phy, const RT& phw,
-                 const RT& qhx, const RT& qhy, const RT& qhw,
-                 const RT& rhx, const RT& rhy, const RT& rhw )
+             const RT& qhx, const RT& qhy, const RT& qhw,
+             const RT& rhx, const RT& rhy, const RT& rhw )
 {
   const RT  RT0 = RT(0);
   
@@ -83,8 +83,8 @@ template <class RT>
 inline
 bool
 leftturnH2( const RT& phx, const RT& phy, const RT& phw,
-                 const RT& qhx, const RT& qhy, const RT& qhw,
-                 const RT& rhx, const RT& rhy, const RT& rhw )
+            const RT& qhx, const RT& qhy, const RT& qhw,
+            const RT& rhx, const RT& rhy, const RT& rhw )
 {
    return left_turnH2(phx, phy, phw, qhx, qhy, qhw, rhx, rhy, rhw);
 }
@@ -94,8 +94,8 @@ template <class RT>
 CGAL_KERNEL_INLINE
 bool
 right_turnH2(const RT& phx, const RT& phy, const RT& phw,
-                 const RT& qhx, const RT& qhy, const RT& qhw,
-                 const RT& rhx, const RT& rhy, const RT& rhw )
+             const RT& qhx, const RT& qhy, const RT& qhw,
+             const RT& rhx, const RT& rhy, const RT& rhw )
 {
   const RT  RT0 = RT(0);
   
@@ -118,8 +118,8 @@ template <class RT>
 CGAL_KERNEL_INLINE
 bool
 rightturnH2(const RT& phx, const RT& phy, const RT& phw,
-                 const RT& qhx, const RT& qhy, const RT& qhw,
-                 const RT& rhx, const RT& rhy, const RT& rhw )
+            const RT& qhx, const RT& qhy, const RT& qhw,
+            const RT& rhx, const RT& rhy, const RT& rhw )
 {
    return right_turnH2(phx, phy, phw, qhx, qhy, qhw, rhx, rhy, rhw);
 }
@@ -129,8 +129,8 @@ template <class RT>
 CGAL_KERNEL_INLINE
 bool
 collinearH2(const RT& phx, const RT& phy, const RT& phw,
-                 const RT& qhx, const RT& qhy, const RT& qhw,
-                 const RT& rhx, const RT& rhy, const RT& rhw )
+            const RT& qhx, const RT& qhy, const RT& qhw,
+            const RT& rhx, const RT& rhy, const RT& rhw )
 {
   const RT  RT0 = RT(0);
   
@@ -151,9 +151,9 @@ template <class RT>
 CGAL_KERNEL_INLINE
 Bounded_side
 side_of_bounded_circleH2( const RT& qhx, const RT& qhy, const RT& qhw,
-                               const RT& rhx, const RT& rhy, const RT& rhw,
-                               const RT& shx, const RT& shy, const RT& shw,
-                               const RT& thx, const RT& thy, const RT& thw )
+                          const RT& rhx, const RT& rhy, const RT& rhw,
+                          const RT& shx, const RT& shy, const RT& shw,
+                          const RT& thx, const RT& thy, const RT& thw )
 {
   CGAL_kernel_precondition( ! collinearH2(qhx, qhy, ghw,
                                                rhx, rhy, rhw,
@@ -207,9 +207,9 @@ template <class RT>
 CGAL_KERNEL_INLINE
 Oriented_side
 side_of_oriented_circleH2(const RT& qhx, const RT& qhy, const RT& qhw,
-                               const RT& rhx, const RT& rhy, const RT& rhw,
-                               const RT& shx, const RT& shy, const RT& shw,
-                               const RT& thx, const RT& thy, const RT& thw )
+                          const RT& rhx, const RT& rhy, const RT& rhw,
+                          const RT& shx, const RT& shy, const RT& shw,
+                          const RT& thx, const RT& thy, const RT& thw )
 {
   CGAL_kernel_precondition( ! collinearH2(qhx, qhy, ghw,
                                                rhx, rhy, rhw,

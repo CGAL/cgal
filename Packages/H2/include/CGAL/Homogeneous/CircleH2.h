@@ -11,14 +11,14 @@
 // release       : 
 // release_date  : 
 // 
-// file          : CircleH2.h
+// file          : include/CGAL/Homogeneous/CircleH2.h
 // package       : H2
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Sven Schoenherr
 //                 Stefan Schirra
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
  
 
@@ -71,11 +71,12 @@ template <class R_>
 class CircleH2
   : public R_::Circle_handle_2
 {
-    typedef typename R_::FT                                FT;
-    typedef typename R_::RT                                RT;
-    typedef typename R_::Kernel_base::Point_2              Point_2;
-    typedef typename R_::Kernel_base::Vector_2             Vector_2;
-    typedef typename R_::Kernel_base::Aff_transformation_2 Aff_transformation_2;
+    typedef typename R_::FT                         FT;
+    typedef typename R_::RT                         RT;
+    typedef typename R_::Kernel_base::Point_2       Point_2;
+    typedef typename R_::Kernel_base::Vector_2      Vector_2;
+    typedef typename R_::Kernel_base::Aff_transformation_2 
+                                                    Aff_transformation_2;
 
     typedef typename R_::Circle_handle_2            Circle_handle_2_;
     typedef typename Circle_handle_2_::element_type Circle_ref_2;

@@ -11,7 +11,7 @@
 // release       : 
 // release_date  : 
 // 
-// file          : predicates_on_linesH2.h
+// file          : include/CGAL/Homogeneous/predicates_on_linesH2.h
 // package       : H2
 // revision      : $Revision$
 // revision_date : $Date$
@@ -23,10 +23,10 @@
 #ifndef CGAL_PREDICATES_ON_LINESH2_H
 #define CGAL_PREDICATES_ON_LINESH2_H
 
-#include <CGAL/PointH2.h>
-#include <CGAL/LineH2.h>
-#include <CGAL/predicates_on_pointsH2.h>
-#include <CGAL/basic_constructionsH2.h>
+#include <CGAL/Homogeneous/PointH2.h>
+#include <CGAL/Homogeneous/LineH2.h>
+#include <CGAL/Homogeneous/predicates_on_pointsH2.h>
+#include <CGAL/Homogeneous/basic_constructionsH2.h>
 
 CGAL_BEGIN_NAMESPACE
 

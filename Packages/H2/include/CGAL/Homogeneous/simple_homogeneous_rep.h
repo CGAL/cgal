@@ -10,7 +10,7 @@
 // release       : 
 // release_date  : 
 //
-// file          : include/CGAL/simple_homogeneous_rep.h
+// file          : include/CGAL/Homogeneous/simple_homogeneous_rep.h
 // package       : Kernel_basic
 // revision      : $Revision$
 // revision_date : $Date$

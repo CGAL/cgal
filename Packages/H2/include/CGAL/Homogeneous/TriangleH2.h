@@ -11,7 +11,7 @@
 // release       : 
 // release_date  : 
 // 
-// file          : TriangleH2.h
+// file          : include/CGAL/Homogeneous/TriangleH2.h
 // package       : H2
 // revision      : $Revision$
 // revision_date : $Date$
@@ -88,7 +88,8 @@ class TriangleH2
     typedef typename R_::RT                                RT;
     typedef typename R_::Kernel_base::Point_2              Point_2;
     typedef typename R_::Kernel_base::Vector_2             Vector_2;
-    typedef typename R_::Kernel_base::Aff_transformation_2 Aff_transformation_2;
+    typedef typename R_::Kernel_base::Aff_transformation_2 
+                                                          Aff_transformation_2;
 
     typedef typename R_::Triangle_handle_2            Triangle_handle_2_;
     typedef typename Triangle_handle_2_::element_type Triangle_ref_2;

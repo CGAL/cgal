@@ -10,7 +10,7 @@
 // release       : 
 // release_date  : 
 //
-// file          : include/CGAL/homogeneous_rep.h
+// file          : include/CGAL/Homogeneous/homogeneous_rep.h
 // package       : Kernel_basic
 // revision      : $Revision$
 // revision_date : $Date$
@@ -27,7 +27,7 @@
 #include <CGAL/Threetuple.h>
 #include <CGAL/Fourtuple.h>
 
-#include <CGAL/RepH3.h>
+#include <CGAL/Homogeneous/RepH3.h>
 
 #include <CGAL/Quotient.h>
 

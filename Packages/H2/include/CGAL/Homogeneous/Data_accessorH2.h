@@ -11,7 +11,7 @@
 // release       : 
 // release_date  : 
 // 
-// file          : include/CGAL/Data_accessorH2.h
+// file          : include/CGAL/Homogeneous/Data_accessorH2.h
 // package       : H2
 // revision      : $Revision$
 // revision_date : $Date$

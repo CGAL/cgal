@@ -11,7 +11,7 @@
 // release       : 
 // release_date  : 
 // 
-// file          : DirectionH2.h
+// file          : include/CGAL/Homogeneous/DirectionH2.h
 // package       : H2
 // revision      : $Revision$
 // revision_date : $Date$
@@ -143,7 +143,7 @@ DirectionH2<R>::delta(int i) const
 
 CGAL_END_NAMESPACE
 
-#include <CGAL/predicates_on_directionsH2.h>
+#include <CGAL/Homogeneous/predicates_on_directionsH2.h>
 
 CGAL_BEGIN_NAMESPACE
 

@@ -11,7 +11,7 @@
 // release       : 
 // release_date  : 
 // 
-// file          : LineH2.h
+// file          : include/CGAL/Homogeneous/LineH2.h
 // package       : H2
 // revision      : $Revision$
 // revision_date : $Date$
@@ -37,7 +37,8 @@ class LineH2
     typedef typename R_::Kernel_base::Direction_2          Direction_2;
     typedef typename R_::Kernel_base::Segment_2            Segment_2;
     typedef typename R_::Kernel_base::Ray_2                Ray_2;
-    typedef typename R_::Kernel_base::Aff_transformation_2 Aff_transformation_2;
+    typedef typename R_::Kernel_base::Aff_transformation_2 
+                                                          Aff_transformation_2;
 
     typedef typename R_::Line_handle_2            Line_handle_2_;
     typedef typename Line_handle_2_::element_type Line_ref_2;

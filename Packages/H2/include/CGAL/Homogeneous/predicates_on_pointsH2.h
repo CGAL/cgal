@@ -11,7 +11,7 @@
 // release       : 
 // release_date  : 
 // 
-// file          : include/CGAL/predicates_on_pointsH2.h
+// file          : include/CGAL/Homogeneous/predicates_on_pointsH2.h
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
@@ -23,8 +23,8 @@
 #ifndef CGAL_PREDICATES_ON_POINTSH2_H
 #define CGAL_PREDICATES_ON_POINTSH2_H
 
-#include <CGAL/PointH2.h>
-#include <CGAL/predicates_on_pointsH2.h>
+#include <CGAL/Homogeneous/PointH2.h>
+#include <CGAL/Homogeneous/predicates_on_pointsH2.h>
 
 CGAL_BEGIN_NAMESPACE
 

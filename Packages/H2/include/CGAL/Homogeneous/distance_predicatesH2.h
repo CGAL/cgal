@@ -11,7 +11,7 @@
 // release       : 
 // release_date  : 
 // 
-// file          : include/CGAL/distance_predicatesH2.h
+// file          : include/CGAL/Homogeneous/distance_predicatesH2.h
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Stefan Schirra

@@ -11,7 +11,7 @@
 // release       : 
 // release_date  : 
 // 
-// file          : RayH2.h
+// file          : include/CGAL/Homogeneous/RayH2.h
 // package       : H2
 // revision      : $Revision$
 // revision_date : $Date$
@@ -62,7 +62,8 @@ class RayH2
     typedef typename R_::Kernel_base::Direction_2          Direction_2;
     typedef typename R_::Kernel_base::Line_2               Line_2;
     typedef typename R_::Kernel_base::Vector_2             Vector_2;
-    typedef typename R_::Kernel_base::Aff_transformation_2 Aff_transformation_2;
+    typedef typename R_::Kernel_base::Aff_transformation_2 
+                                                          Aff_transformation_2;
 
     typedef typename R_::Ray_handle_2                      Ray_handle_2_;
     typedef typename Ray_handle_2_::element_type           Ray_ref_2;
