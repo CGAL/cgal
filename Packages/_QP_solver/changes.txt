@@ -1,5 +1,8 @@
 Changes done to the `_QP_solver' package
 
+Version 0.9.16 on 13-Aug-2003 [af]
+- Replaced sqrt<double> with sqrt in Partial_filtered_pricing.h
+
 Version 0.9.15 on 2-Sep-2003 [mh]
 - Fix CGAL_NTS.
 
