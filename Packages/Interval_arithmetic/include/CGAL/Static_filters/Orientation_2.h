@@ -92,9 +92,7 @@ private:
                      double qx, double qy,
 		     double rx, double ry) const
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("Orientation_2 calls"); ++calls;
-#endif
+    CGAL_PROFILER(calls, "Orientation_2 calls")
 
     double pqx = qx-px;
     double pqy = qy-py;
@@ -108,9 +106,7 @@ private:
     if (det >  _static_epsilon) return POSITIVE;
     if (det < -_static_epsilon) return NEGATIVE;
 
-#ifdef CGAL_PROFILE
-    static Profile_counter st_fail("Orientation_2 static failures"); ++st_fail;
-#endif
+    CGAL_PROFILER(st_fail, "Orientation_2 static failures")
 
     // Then semi-static filter.
     double maxx = fabs(px);
@@ -124,17 +120,12 @@ private:
     if (det > eps)  return POSITIVE;
     if (det < -eps) return NEGATIVE;
 
-#ifdef CGAL_PROFILE
-    static Profile_counter fail("Orientation_2 semi-static failures"); ++fail;
-#endif
+    CGAL_PROFILER(fail, "Orientation_2 semi-static failures")
 
     Orientation oooo = orientation(P(px,py), P(qx,qy), P(rx,ry));
-#ifdef CGAL_PROFILE
     if (oooo == ZERO) {
-        static Profile_counter det_is_null("Orientation_2 det_is_null");
-        ++det_is_null;
+	CGAL_PROFILER(det_is_null, "Orientation_2 det_is_null")
     }
-#endif
     return oooo;
   }
 

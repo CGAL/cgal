@@ -93,9 +93,7 @@ private:
 		     double rx, double ry, double rz,
 		     double sx, double sy, double sz) const
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("Orientation_3 calls"); ++calls;
-#endif
+    CGAL_PROFILER(calls, "Orientation_3 calls")
 
     double pqx = qx-px;
     double pqy = qy-py;
@@ -115,9 +113,7 @@ private:
     if (det >  _static_epsilon) return POSITIVE;
     if (det < -_static_epsilon) return NEGATIVE;
 
-#ifdef CGAL_PROFILE
-    static Profile_counter st_fail("Orientation_3 static failures"); ++st_fail;
-#endif
+    CGAL_PROFILER(st_fail, "Orientation_3 static failures")
 
     // Then semi-static filter.
     double maxx = fabs(px);
@@ -137,9 +133,7 @@ private:
     if (det > eps)  return POSITIVE;
     if (det < -eps) return NEGATIVE;
 
-#ifdef CGAL_PROFILE
-    static Profile_counter fail("Orientation_3 semi-static failures"); ++fail;
-#endif
+    CGAL_PROFILER(fail, "Orientation_3 semi-static failures")
 
     // Experiments showed that there's practically no benefit for testing when
     // the initial substractions were done exactly.  In most cases where the
@@ -154,12 +148,9 @@ private:
 
     Orientation oooo = orientation(P(px,py,pz), P(qx,qy,qz),
 	                           P(rx,ry,rz), P(sx,sy,sz));
-#ifdef CGAL_PROFILE
     if (oooo == ZERO) {
-        static Profile_counter det_is_null("Orientation_3 det_is_null");
-        ++det_is_null;
+        CGAL_PROFILER(det_is_null, "Orientation_3 det_is_null")
     }
-#endif
     return oooo;
   }
 

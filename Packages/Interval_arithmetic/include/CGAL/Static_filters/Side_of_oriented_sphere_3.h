@@ -31,11 +31,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-inline bool diff_was_exact(double a, double b, double ab)
-{
-    return ab+b == a && a-ab == b;
-}
-
 template <class Point>
 class SF_Side_of_oriented_sphere_3
 {
@@ -101,9 +96,7 @@ public:
 		   double sx, double sy, double sz,
 		   double tx, double ty, double tz) const
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("In_sphere_3 calls"); ++calls;
-#endif
+    CGAL_PROFILER(calls, "In_sphere_3 calls")
 
     double ptx = px - tx;
     double pty = py - ty;
@@ -134,9 +127,7 @@ public:
     if (det >  _static_epsilon) return ON_POSITIVE_SIDE;
     if (det < -_static_epsilon) return ON_NEGATIVE_SIDE;
 
-#ifdef CGAL_PROFILE
-    static Profile_counter st_fail("In_sphere_3 static failures"); ++st_fail;
-#endif
+    CGAL_PROFILER(st_fail, "In_sphere_3 static failures")
 
     // We compute the semi-static bound.
     double maxx = fabs(px);
@@ -168,9 +159,7 @@ public:
     if (det >  eps) return ON_POSITIVE_SIDE;
     if (det < -eps) return ON_NEGATIVE_SIDE;
 
-#ifdef CGAL_PROFILE
-    static Profile_counter fail("In_sphere_3 semi-static failures"); ++fail;
-#endif
+    CGAL_PROFILER(fail, "In_sphere_3 semi-static failures")
 
     // This predicate is different from Orientation_3 in that all arguments are
     // local.  Thus the differences have a big probability to have been exact,
@@ -189,10 +178,7 @@ public:
         diff_was_exact(sy, ty, sty) &&
         diff_was_exact(sz, tz, stz))
     {
-#ifdef CGAL_PROFILE
-        static Profile_counter exact_diff("In_sphere_3 exact diffs");
-	++exact_diff;
-#endif
+        CGAL_PROFILER(exact_diff, "In_sphere_3 exact diffs")
 
         double max2 = ptx*ptx + pty*pty + ptz*ptz;
         double qq = qtx*qtx + qty*qty + qtz*qtz;
@@ -218,24 +204,18 @@ public:
 
         if (det >  eps) return ON_POSITIVE_SIDE;
         if (det < -eps) return ON_NEGATIVE_SIDE;
-#ifdef CGAL_PROFILE
-        static Profile_counter step2("In_sphere_3 step2 failures"); ++step2;
-#endif
+        CGAL_PROFILER(step2, "In_sphere_3 step2 failures")
     }
-#ifdef CGAL_PROFILE
-    static Profile_counter step3("In_sphere_3 step3"); ++step3;
-#endif
+    CGAL_PROFILER(step3, "In_sphere_3 step3")
 
     typedef Simple_cartesian<Filtered_exact<double, MP_Float> > K;
     typedef K::Point_3 P;
 
     Oriented_side oooo = side_of_oriented_sphere(P(px,py,pz), P(qx,qy,qz),
 	                         P(rx,ry,rz), P(sx,sy,sz), P(tx,ty,tz));
-#ifdef CGAL_PROFILE
     if (oooo == ON_ORIENTED_BOUNDARY) {
-        static Profile_counter is_null("In_sphere_3 is_null"); ++is_null;
+        CGAL_PROFILER(is_null, "In_sphere_3 is_null")
     }
-#endif
     return oooo;
   }
 };
