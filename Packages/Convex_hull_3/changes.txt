@@ -1,3 +1,6 @@
+2.30    (26 Nov 2001)
+- fixed convexity testing so a tetrahedron now correctly passes the test
+
 2.29    (30 Oct 2001)
 - replaced calls to assert macro with CGAL_assertion
 

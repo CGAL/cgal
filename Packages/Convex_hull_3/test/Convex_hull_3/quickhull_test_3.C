@@ -33,6 +33,24 @@ typedef CGAL::Random_points_in_sphere_3<Point_3,Creator>  Generator;
 
 const unsigned int num = 40;
 
+void test_tetrahedron_convexity()
+{
+    Polyhedron_3 P;
+
+    P.make_tetrahedron( Point_3(1,0,0),
+                        Point_3(-1,1,0),
+                        Point_3(0,0,1),
+                        Point_3(-1,-1,0) );
+
+    for( Polyhedron_3::Facet_iterator f = P.facets_begin();
+         f != P.facets_end(); ++f )
+    {
+        CGAL::compute_plane_equation(f);
+    }
+
+    assert( CGAL::is_strongly_convex_3(P) );
+}
+
 void test_small_hull()
 {
   std::vector<Point_3> points;
@@ -58,6 +76,7 @@ void test_small_hull()
 
 int main()
 {
+  test_tetrahedron_convexity();
   test_small_hull();
   std::vector<Point_3> points;
   Generator g(500);
