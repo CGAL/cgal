@@ -31,7 +31,6 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class RayH2
-  : public R_::template Handle<Twotuple<typename R_::Point_2> >::type
 {
     typedef typename R_::FT                   FT;
     typedef typename R_::RT                   RT;
@@ -41,11 +40,10 @@ class RayH2
     typedef typename R_::Vector_2             Vector_2;
     typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
-    typedef Twotuple<Point_2>                        rep;
-    typedef typename R_::template Handle<rep>::type  base;
+    typedef Twotuple<Point_2>                        Rep;
+    typedef typename R_::template Handle<Rep>::type  Base;
 
-    const base& Base() const { return *this; }
-    base& Base() { return *this; }
+    Base base;
 
 public:
     typedef R_                                             R;
@@ -90,7 +88,7 @@ template < class R >
 inline
 const typename RayH2<R>::Point_2 &
 RayH2<R>::source() const
-{ return get(Base()).e0; }
+{ return get(base).e0; }
 
 template < class R >
 inline
@@ -122,7 +120,7 @@ const typename RayH2<R>::Point_2 &
 RayH2<R>::second_point() const
 {
   CGAL_kernel_precondition( !is_degenerate() );
-  return get(Base()).e1;
+  return get(base).e1;
 }
 
 template < class R >
@@ -217,7 +215,7 @@ template < class R >
 CGAL_KERNEL_INLINE
 bool
 RayH2<R>::is_degenerate() const
-{ return start() == get(Base()).e1; }
+{ return start() == get(base).e1; }
 
 template < class R >
 inline

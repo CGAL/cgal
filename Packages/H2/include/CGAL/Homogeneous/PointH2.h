@@ -33,7 +33,6 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class PointH2
-  : public R_::template Handle<Threetuple<typename R_::RT> >::type
 {
   typedef typename R_::FT                   FT;
   typedef typename R_::RT                   RT;
@@ -42,11 +41,10 @@ class PointH2
   typedef typename R_::Direction_2          Direction_2;
   typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
-  typedef Threetuple<RT>                           rep;
-  typedef typename R_::template Handle<rep>::type  base;
+  typedef Threetuple<RT>                           Rep;
+  typedef typename R_::template Handle<Rep>::type  Base;
 
-  const base& Base() const { return *this; }
-  base& Base() { return *this; }
+  Base base;
 
 public:
   typedef Cartesian_coordinate_iterator_2<R_> Cartesian_const_iterator;
@@ -57,29 +55,23 @@ public:
     PointH2(const Origin &)  
        : base (RT(0), RT(0), RT(1)) {}
 
-    PointH2(const PointH2<R> & p) 
-       : base (p) {}
-
-    PointH2(const Vector_2& v) 
-       : base (v) {}
-
     PointH2(const RT& hx, const RT& hy )
       : base (hx, hy, RT(1)) {}
 
     PointH2(const RT& hx, const RT& hy, const RT& hw)
     {
       if ( hw >= RT(0)   )
-        Base() = rep( hx, hy, hw);
+        base = Rep( hx, hy, hw);
       else
-        Base() = rep(-hx,-hy,-hw);
+        base = Rep(-hx,-hy,-hw);
     }
 
     bool    operator==( const PointH2<R>& p) const;
     bool    operator!=( const PointH2<R>& p) const;
 
-    const RT & hx() const { return get(Base()).e0; };
-    const RT & hy() const { return get(Base()).e1; };
-    const RT & hw() const { return get(Base()).e2; };
+    const RT & hx() const { return get(base).e0; };
+    const RT & hy() const { return get(base).e1; };
+    const RT & hw() const { return get(base).e2; };
 
     FT      x()  const { return FT(hx()) / FT(hw()); };
     FT      y()  const { return FT(hy()) / FT(hw()); };

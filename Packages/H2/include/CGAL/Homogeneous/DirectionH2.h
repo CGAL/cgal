@@ -30,7 +30,6 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class DirectionH2
-  : public R_::template Handle<Threetuple<typename R_::RT> >::type
 {
   typedef typename R_::FT                   FT;
   typedef typename R_::RT                   RT;
@@ -41,34 +40,27 @@ class DirectionH2
   typedef typename R_::Segment_2            Segment_2;
   typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
-  typedef Threetuple<RT>                           rep;
-  typedef typename R_::template Handle<rep>::type  base;
+  typedef Threetuple<RT>                           Rep;
+  typedef typename R_::template Handle<Rep>::type  Base;
 
-  const base& Base() const { return *this; }
-  base& Base() { return *this; }
+  Base base;
 
 public:
   typedef R_                                    R;
 
    DirectionH2() {}
 
-   DirectionH2(const DirectionH2<R>& d )
-      : base ( d ) {}
-
-   DirectionH2(const Point_2 & p )
-      : base ( p) {}
-
    DirectionH2(const Vector_2 & v )
-      : base ( v) {}
+   { *this = v.direction(); }
 
    DirectionH2(const Line_2 & l )
-      : base ( l.direction()) {}
+   { *this = l.direction(); }
 
    DirectionH2(const Ray_2 & r )
-      : base ( r.direction()) {}
+   { *this = r.direction(); }
 
    DirectionH2(const Segment_2 & s )
-      : base ( s.direction()) {}
+   { *this = s.direction(); }
 
    DirectionH2(const RT& x, const RT& y)
       : base (x, y, RT(1)) {}
@@ -78,9 +70,9 @@ public:
    DirectionH2(const RT& x, const RT& y, const RT& w )
    {
      if (w > RT(0)   )
-       Base() = rep(x, y, w);
+       base = Rep(x, y, w);
      else
-       Base() = rep(-x, -y, -w);
+       base = Rep(-x, -y, -w);
    }
 
     bool    operator==( const DirectionH2<R>& d) const;
@@ -93,12 +85,12 @@ public:
     Vector_2       to_vector() const;
     Vector_2       vector() const { return to_vector(); }
 
-    const RT & x() const { return get(Base()).e0; };
-    const RT & y() const { return get(Base()).e1; };
+    const RT & x() const { return get(base).e0; };
+    const RT & y() const { return get(base).e1; };
 
     const RT & delta(int i) const;
-    const RT & dx() const { return get(Base()).e0; };
-    const RT & dy() const { return get(Base()).e1; };
+    const RT & dx() const { return get(base).e0; };
+    const RT & dy() const { return get(base).e1; };
 
     DirectionH2<R> perpendicular(const Orientation &o) const;
     DirectionH2<R> transform(const Aff_transformation_2 &) const;

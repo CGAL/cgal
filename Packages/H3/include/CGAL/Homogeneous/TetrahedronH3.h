@@ -33,7 +33,6 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class TetrahedronH3
-  : public R_::template Handle<Fourtuple<typename R_::Point_3> >::type
 {
   typedef typename R_::RT                   RT;
   typedef typename R_::FT                   FT;
@@ -41,11 +40,10 @@ class TetrahedronH3
   typedef typename R_::Vector_3             Vector_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-  typedef Fourtuple<Point_3>                       rep;
-  typedef typename R_::template Handle<rep>::type  base;
+  typedef Fourtuple<Point_3>                       Rep;
+  typedef typename R_::template Handle<Rep>::type  Base;
 
-  const base& Base() const { return *this; }
-  base& Base() { return *this; }
+  Base base;
 
 public:
   typedef R_                R;
@@ -84,7 +82,7 @@ CGAL_KERNEL_INLINE
 bool
 TetrahedronH3<R>::operator==(const TetrahedronH3<R> &t) const
 {
-  if ( CGAL::identical(Base(), t.Base()) )
+  if ( CGAL::identical(base, t.base) )
       return true;
   if ( orientation() != t.orientation() )
       return false;
@@ -119,10 +117,10 @@ TetrahedronH3<R>::vertex(int i) const
 {
   switch (i%4)
   {
-     case 0:  return get(Base()).e0;
-     case 1:  return get(Base()).e1;
-     case 2:  return get(Base()).e2;
-     default: /*case 3:*/  return get(Base()).e3;
+     case 0:  return get(base).e0;
+     case 1:  return get(base).e1;
+     case 2:  return get(base).e2;
+     default: /*case 3:*/  return get(base).e3;
   }
 }
 

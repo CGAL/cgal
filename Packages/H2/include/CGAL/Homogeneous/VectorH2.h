@@ -32,7 +32,6 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class VectorH2
-  : public R_::template Handle<Threetuple<typename R_::RT> >::type
 {
   typedef typename R_::FT                   FT;
   typedef typename R_::RT                   RT;
@@ -44,11 +43,10 @@ class VectorH2
   typedef typename R_::Vector_2             Vector_2;
   typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
-  typedef Threetuple<RT>                           rep;
-  typedef typename R_::template Handle<rep>::type  base;
+  typedef Threetuple<RT>                           Rep;
+  typedef typename R_::template Handle<Rep>::type  Base;
 
-  const base& Base() const { return *this; }
-  base& Base() { return *this; }
+  Base base;
 
 public:
   typedef R_                                    R;
@@ -56,16 +54,16 @@ public:
    VectorH2() {}
 
    VectorH2(const Point_2& a, const Point_2& b)
-      : base (b-a) {}
+   { *this = R().construct_vector_2_object()(a, b); }
 
    VectorH2(const Segment_2& s)
-      : base (s.to_vector()) {}
+   { *this = R().construct_vector_2_object()(s); }
 
    VectorH2(const Ray_2& r)
-      : base (r.to_vector()) {}
+   { *this = R().construct_vector_2_object()(r); }
 
    VectorH2(const Line_2& l)
-      : base (l.to_vector()) {}
+   { *this = R().construct_vector_2_object()(l); }
 
    VectorH2(const Null_vector &)
       : base (RT(0), RT(0), RT(1)) {}
@@ -76,9 +74,9 @@ public:
    VectorH2(const RT& x, const RT& y, const RT& w )
    {
      if ( w >= RT(0)   )
-       Base() = rep( x,  y,  w);
+       base = Rep( x,  y,  w);
      else
-       Base() = rep(-x, -y, -w);
+       base = Rep(-x, -y, -w);
    }
 
    bool    operator==( const VectorH2<R>& v) const;
@@ -86,9 +84,9 @@ public:
    bool    operator==( const Null_vector&) const;
    bool    operator!=( const Null_vector& v) const;
 
-   const RT & hx() const { return get(Base()).e0; };
-   const RT & hy() const { return get(Base()).e1; };
-   const RT & hw() const { return get(Base()).e2; };
+   const RT & hx() const { return get(base).e0; };
+   const RT & hy() const { return get(base).e1; };
+   const RT & hw() const { return get(base).e2; };
 
    FT      x()  const { return FT(hx()) / FT(hw()); };
    FT      y()  const { return FT(hy()) / FT(hw()); };
@@ -188,7 +186,7 @@ template < class R >
 CGAL_KERNEL_INLINE
 typename VectorH2<R>::Direction_2
 VectorH2<R>::direction() const
-{ return Direction_2(*this); }
+{ return Direction_2(hx(), hy()); }
 
 template < class R >
 inline

@@ -1880,15 +1880,15 @@ namespace HomogeneousKernelFunctors {
 
     Vector_2
     operator()( const Segment_2& s) const
-    { return Vector_2(s); }
+    { return s.to_vector(); }
 
     Vector_2
     operator()( const Ray_2& r) const
-    { return Vector_2(r); }
+    { return r.to_vector(); }
 
     Vector_2
     operator()( const Line_2& l) const
-    { return Vector_2(l); }
+    { return l.to_vector(); }
 
     Vector_2
     operator()( Null_vector) const
@@ -1934,15 +1934,15 @@ namespace HomogeneousKernelFunctors {
 
     Vector_3
     operator()( const Segment_3& s) const
-    { return Vector_3(s); }
+    { return this->operator()(s.start(), s.end()); }
 
     Vector_3
     operator()( const Ray_3& r) const
-    { return Vector_3(r); }
+    { return r.to_vector(); }
 
     Vector_3
     operator()( const Line_3& l) const
-    { return Vector_3(l); }
+    { return l.to_vector(); }
 
     Vector_3
     operator()( const Null_vector&) const

@@ -30,7 +30,6 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class SegmentH2
-  : public R_::template Handle<Twotuple<typename R_::Point_2> >::type
 {
   typedef typename R_::FT                   FT;
   typedef typename R_::RT                   RT;
@@ -41,11 +40,10 @@ class SegmentH2
   typedef typename R_::Segment_2            Segment_2;
   typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
-  typedef Twotuple<Point_2>                        rep;
-  typedef typename R_::template Handle<rep>::type  base;
+  typedef Twotuple<Point_2>                        Rep;
+  typedef typename R_::template Handle<Rep>::type  Base;
 
-  const base& Base() const { return *this; }
-  base& Base() { return *this; }
+  Base base;
 
 public:
   typedef R_                                    R;
@@ -97,7 +95,7 @@ template < class R >
 inline
 const typename SegmentH2<R>::Point_2 &
 SegmentH2<R>::source() const
-{ return get(Base()).e0; }
+{ return get(base).e0; }
 
 template < class R >
 inline
@@ -109,7 +107,7 @@ template < class R >
 inline
 const typename SegmentH2<R>::Point_2 &
 SegmentH2<R>::target() const
-{ return get(Base()).e1; }
+{ return get(base).e1; }
 
 template < class R >
 inline

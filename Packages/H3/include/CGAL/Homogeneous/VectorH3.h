@@ -31,20 +31,21 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class VectorH3
-  : public R_::template Handle<Fourtuple<typename R_::RT> >::type
 {
   typedef typename R_::RT                   RT;
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_3              Point_3;
-  typedef typename R_::Direction_3          Direction_3;
   typedef typename R_::Vector_3             Vector_3;
+  typedef typename R_::Segment_3            Segment_3;
+  typedef typename R_::Ray_3                Ray_3;
+  typedef typename R_::Line_3               Line_3;
+  typedef typename R_::Direction_3          Direction_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-  typedef Fourtuple<RT>                            rep;
-  typedef typename R_::template Handle<rep>::type  base;
+  typedef Fourtuple<RT>                            Rep;
+  typedef typename R_::template Handle<Rep>::type  Base;
 
-  const base& Base() const { return *this; }
-  base& Base() { return *this; }
+  Base base;
 
 public:
   typedef R_                 R;
@@ -52,7 +53,16 @@ public:
   VectorH3() {}
 
   VectorH3(const Point_3& a, const Point_3& b)
-    : base(b-a) {}
+  { *this = R().construct_vector_3_object()(a, b); }
+
+  VectorH3(const Segment_3& s)
+  { *this = R().construct_vector_3_object()(s); }
+
+  VectorH3(const Ray_3& r)
+  { *this = R().construct_vector_3_object()(r); }
+
+  VectorH3(const Line_3& l)
+  { *this = R().construct_vector_3_object()(l); }
 
   VectorH3(const Null_vector&)
     : base(RT(0), RT(0), RT(0), RT(1)) {}
@@ -62,18 +72,10 @@ public:
 
   VectorH3(const RT& w, const RT& x, const RT& y, const RT& z);
 
-// undocumented:
-
-  VectorH3(const Point_3 & p)
-    : base(p) {}
-
-  VectorH3(const Direction_3 & d)   /* XXX */
-    : base(d) {}
-
-  const RT & hx() const { return get(Base()).e0 ; }
-  const RT & hy() const { return get(Base()).e1 ; }
-  const RT & hz() const { return get(Base()).e2 ; }
-  const RT & hw() const { return get(Base()).e3 ; }
+  const RT & hx() const { return get(base).e0 ; }
+  const RT & hy() const { return get(base).e1 ; }
+  const RT & hz() const { return get(base).e2 ; }
+  const RT & hw() const { return get(base).e3 ; }
   FT    x()  const { return FT(hx())/FT(hw()) ; }
   FT    y()  const { return FT(hy())/FT(hw()) ; }
   FT    z()  const { return FT(hz())/FT(hw()) ; }
@@ -106,9 +108,9 @@ CGAL_KERNEL_INLINE
 VectorH3<R>::VectorH3(const RT& x, const RT& y, const RT& z, const RT& w)
 {
   if ( w >= RT(0) )
-    Base() = rep(x, y, z, w);
+    base = Rep(x, y, z, w);
   else
-    Base() = rep(-x,-y,-z,-w);
+    base = Rep(-x,-y,-z,-w);
 }
 
 
@@ -145,7 +147,7 @@ template < class R >
 inline
 typename VectorH3<R>::Direction_3
 VectorH3<R>::direction() const
-{ return Direction_3(*this); }
+{ return Direction_3(hx(), hy(), hz()); }
 
 template < class R >
 CGAL_KERNEL_INLINE

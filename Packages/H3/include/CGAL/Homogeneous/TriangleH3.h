@@ -28,7 +28,6 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class TriangleH3
-  : public R_::template Handle<Threetuple<typename R_::Point_3> >::type
 {
   typedef typename R_::RT                   RT;
   typedef typename R_::FT                   FT;
@@ -39,11 +38,10 @@ class TriangleH3
   typedef typename R_::Tetrahedron_3        Tetrahedron_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-  typedef Threetuple<Point_3>                      rep;
-  typedef typename R_::template Handle<rep>::type  base;
+  typedef Threetuple<Point_3>                      Rep;
+  typedef typename R_::template Handle<Rep>::type  Base;
 
-  const base& Base() const { return *this; }
-  base& Base() { return *this; }
+  Base base;
 
 public:
   typedef R_                R;
@@ -100,9 +98,9 @@ TriangleH3<R>::vertex(int i) const
 {
   if (i<0) i=(i%3)+3;
   else if (i>2) i=i%3;
-  return (i==0) ? get(Base()).e0 :
-         (i==1) ? get(Base()).e1 :
-                  get(Base()).e2;
+  return (i==0) ? get(base).e0 :
+         (i==1) ? get(base).e1 :
+                  get(base).e2;
 }
 
 template < class R >

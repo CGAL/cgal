@@ -30,8 +30,6 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class LineH3
-  : public R_::template Handle<std::pair<typename R_::Point_3,
-                                         typename R_::Vector_3> >::type
 {
   typedef typename R_::RT                   RT;
   typedef typename R_::FT                   FT;
@@ -43,11 +41,10 @@ class LineH3
   typedef typename R_::Vector_3             Vector_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-  typedef std::pair<Point_3, Vector_3>          rep;
-  typedef typename R_::template Handle<rep>::type  base;
+  typedef std::pair<Point_3, Vector_3>             Rep;
+  typedef typename R_::template Handle<Rep>::type  Base;
 
-  const base& Base() const { return *this; }
-  base& Base() { return *this; }
+  Base base;
 
 public:
   typedef R_                R;
@@ -97,7 +94,7 @@ template < class R >
 inline
 const typename LineH3<R>::Point_3 &
 LineH3<R>::point() const
-{ return get(Base()).first; }
+{ return get(base).first; }
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -109,13 +106,13 @@ template < class R >
 inline
 const typename LineH3<R>::Vector_3 &
 LineH3<R>::to_vector() const
-{ return get(Base()).second; }
+{ return get(base).second; }
 
 template < class R >
 inline
 typename LineH3<R>::Direction_3
 LineH3<R>::direction() const
-{ return get(Base()).second; }
+{ return get(base).second; }
 
 template < class R >
 CGAL_KERNEL_INLINE

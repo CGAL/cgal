@@ -33,7 +33,6 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class PointH3
-  : public R_::template Handle<Fourtuple<typename R_::RT> >::type
 {
    typedef typename R_::RT                   RT;
    typedef typename R_::FT                   FT;
@@ -42,11 +41,10 @@ class PointH3
    typedef typename R_::Direction_3          Direction_3;
    typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-   typedef Fourtuple<RT>                            rep;
-   typedef typename R_::template Handle<rep>::type  base;
+   typedef Fourtuple<RT>                            Rep;
+   typedef typename R_::template Handle<Rep>::type  Base;
 
-   const base& Base() const { return *this; }
-   base& Base() { return *this; }
+   Base base;
 
 public:
    typedef Cartesian_coordinate_iterator_3<R_> Cartesian_const_iterator;
@@ -57,18 +55,15 @@ public:
   PointH3(const Origin &)
     : base (RT(0), RT(0), RT(0), RT(1)) { }
 
-  PointH3(const Vector_3& v)
-    : base(v) {}
-
   PointH3(const RT& x, const RT& y, const RT& z)
     : base(x, y, z, RT(1)) {}
 
   PointH3(const RT& x, const RT& y, const RT& z, const RT& w)
   {
     if ( w < RT(0) )
-      Base() = rep(-x,-y,-z,-w);
+      base = Rep(-x,-y,-z,-w);
     else
-      Base() = rep(x,y,z,w);
+      base = Rep(x,y,z,w);
   }
 
   FT    x()  const;
@@ -108,25 +103,25 @@ template < class R >
 inline
 const typename PointH3<R>::RT &
 PointH3<R>::hx() const
-{ return get(Base()).e0 ; }
+{ return get(base).e0 ; }
 
 template < class R >
 inline
 const typename PointH3<R>::RT &
 PointH3<R>::hy() const
-{ return get(Base()).e1 ; }
+{ return get(base).e1 ; }
 
 template < class R >
 inline
 const typename PointH3<R>::RT &
 PointH3<R>::hz() const
-{ return get(Base()).e2 ; }
+{ return get(base).e2 ; }
 
 template < class R >
 inline
 const typename PointH3<R>::RT &
 PointH3<R>::hw() const
-{ return get(Base()).e3 ; }
+{ return get(base).e3 ; }
 
 template < class R >
 CGAL_KERNEL_INLINE

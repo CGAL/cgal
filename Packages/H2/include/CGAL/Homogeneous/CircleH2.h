@@ -33,19 +33,16 @@ CGAL_BEGIN_NAMESPACE
 
 template <class R_>
 class CircleH2
-  : public R_::template Handle<Triple<typename R_::Point_2,
-                                      typename R_::FT, Orientation> >::type
 {
     typedef typename R_::FT                   FT;
     typedef typename R_::RT                   RT;
     typedef typename R_::Point_2              Point_2;
     typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
-    typedef Triple<Point_2, FT, Orientation>         rep;
-    typedef typename R_::template Handle<rep>::type  base;
+    typedef Triple<Point_2, FT, Orientation>         Rep;
+    typedef typename R_::template Handle<Rep>::type  Base;
 
-    const base& Base() const { return *this; }
-    base& Base() { return *this; }
+    Base base;
 
 public:
     typedef R_                                    R;
@@ -60,7 +57,7 @@ public:
       Point_2    cp   = circumcenter( p, q, r);
       FT         sq_r = squared_distance( p, cp);
 
-      Base() = rep(cp, sq_r, o);
+      base = Rep(cp, sq_r, o);
     }
 
     CircleH2(const Point_2& p, const Point_2& q, const Orientation& o)
@@ -71,10 +68,10 @@ public:
       {
          Point_2    cp   = midpoint( p, q);
          FT         sq_r = squared_distance( cp, p);
-         Base() = rep(cp, sq_r, o);
+         base = Rep(cp, sq_r, o);
       }
       else
-         Base() = rep(p, FT( 0), o);
+         base = Rep(p, FT( 0), o);
     }
 
     CircleH2(const Point_2& cp, const FT& squared_radius,
@@ -82,7 +79,7 @@ public:
     {
       CGAL_precondition( ( ! CGAL_NTS is_negative( squared_radius)) &&
                          ( o != COLLINEAR ) );
-      Base() = rep(cp, squared_radius, o);
+      base = Rep(cp, squared_radius, o);
     }
 
     Bbox_2
@@ -126,13 +123,13 @@ template <class R>
 inline
 const typename CircleH2<R>::Point_2 &
 CircleH2<R>::center() const
-{ return get(Base()).first; }
+{ return get(base).first; }
 
 template <class R>
 inline
 const typename CircleH2<R>::FT &
 CircleH2<R>::squared_radius() const
-{ return get(Base()).second; }
+{ return get(base).second; }
 
 template <class R>
 CGAL_KERNEL_INLINE
@@ -148,7 +145,7 @@ template <class R>
 inline
 Orientation
 CircleH2<R>::orientation() const
-{ return get(Base()).third; }
+{ return get(base).third; }
 
 template <class R>
 CGAL_KERNEL_INLINE

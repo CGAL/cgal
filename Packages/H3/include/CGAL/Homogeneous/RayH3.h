@@ -30,8 +30,6 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class RayH3
-  : public R_::template Handle<std::pair<typename R_::Point_3,
-                                         typename R_::Vector_3> >::type
 {
    typedef typename R_::RT                   RT;
    typedef typename R_::FT                   FT;
@@ -41,11 +39,10 @@ class RayH3
    typedef typename R_::Vector_3             Vector_3;
    typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-   typedef std::pair<Point_3, Vector_3>             rep;
-   typedef typename R_::template Handle<rep>::type  base;
+   typedef std::pair<Point_3, Vector_3>             Rep;
+   typedef typename R_::template Handle<Rep>::type  Base;
 
-   const base& Base() const { return *this; }
-   base& Base() { return *this; }
+   Base base;
 
 public:
    typedef R_                R;
@@ -85,20 +82,20 @@ template < class R >
 inline
 const typename RayH3<R>::Point_3 &
 RayH3<R>::source() const
-{ return get(Base()).first; }
+{ return get(base).first; }
 
 template < class R >
 inline
 const typename RayH3<R>::Point_3 &
 RayH3<R>::start() const
-{ return get(Base()).first; }
+{ return get(base).first; }
 
 template < class R >
 inline
 const typename RayH3<R>::Vector_3 &
 RayH3<R>::to_vector() const
 {
-  return get(Base()).second;
+  return get(base).second;
 }
 
 template < class R >

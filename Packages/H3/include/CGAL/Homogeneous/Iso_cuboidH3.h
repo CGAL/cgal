@@ -30,18 +30,16 @@ CGAL_BEGIN_NAMESPACE
 
 template <class R_>
 class Iso_cuboidH3
-  : public R_::template Handle<Twotuple<typename R_::Point_3> >::type
 {
   typedef typename R_::RT                   RT;
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_3              Point_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-  typedef Twotuple<Point_3>                        rep;
-  typedef typename R_::template Handle<rep>::type  base;
+  typedef Twotuple<Point_3>                        Rep;
+  typedef typename R_::template Handle<Rep>::type  Base;
 
-  const base& Base() const { return *this; }
-  base& Base() { return *this; }
+  Base base;
 
 public:
   typedef R_                 R;
@@ -140,8 +138,8 @@ Iso_cuboidH3(const typename Iso_cuboidH3<R>::Point_3& p,
       minz = q.hz()*p.hw();
       maxz = p.hz()*q.hw();
   }
-  Base() = rep(Point_3(minx, miny, minz, minw),
-               Point_3(maxx, maxy, maxz, maxw));
+  base = Rep(Point_3(minx, miny, minz, minw),
+             Point_3(maxx, maxy, maxz, maxw));
 }
 
 template < class R >
@@ -204,13 +202,13 @@ template < class R >
 inline
 const typename Iso_cuboidH3<R>::Point_3 &
 Iso_cuboidH3<R>::min() const
-{ return get(Base()).e0; }
+{ return get(base).e0; }
 
 template < class R >
 inline
 const typename Iso_cuboidH3<R>::Point_3 &
 Iso_cuboidH3<R>::max() const
-{ return get(Base()).e1; }
+{ return get(base).e1; }
 
 template < class R >
 inline

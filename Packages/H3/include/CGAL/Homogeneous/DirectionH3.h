@@ -30,7 +30,6 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class DirectionH3
-  : public R_::template Handle<Fourtuple<typename R_::RT> >::type
 {
    typedef typename R_::RT                   RT;
    typedef typename R_::FT                   FT;
@@ -41,40 +40,39 @@ class DirectionH3
    typedef typename R_::Ray_3                Ray_3;
    typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-    typedef Fourtuple<RT>                            rep;
-    typedef typename R_::template Handle<rep>::type  base;
+    typedef Fourtuple<RT>                            Rep;
+    typedef typename R_::template Handle<Rep>::type  Base;
  
-    const base& Base() const { return *this; }
-    base& Base() { return *this; }
+    Base base;
 
 public:
     typedef R_                 R;
 
   DirectionH3() {}
 
-  DirectionH3(const Point_3 & p )
-    : base(p) {}
+  //DirectionH3(const Point_3 & p )
+    //: base(p) {}
 
   DirectionH3(const Vector_3 & v )
-    : base(v) {}
+  { *this = v.direction(); }
 
   DirectionH3(const Line_3 & l )
-    : base(l.direction()) {}
+  { *this = l.direction(); }
 
   DirectionH3(const Ray_3 & r )
-    : base(r.direction()) {}
+  { *this = r.direction(); }
 
   DirectionH3(const Segment_3 & s )
-    : base(s.direction()) {}
+  { *this = s.direction(); }
 
   // the fourth argument is not documented.  Should go away ?
   DirectionH3(const RT& x, const RT& y,
               const RT& z, const RT& w = RT(1) )
   {
     if ( w >= RT(0) )
-      Base() = rep(x,y,z,w);
+      base = Rep(x,y,z,w);
     else
-      Base() = rep(-x,-y,-z,-w);
+      base = Rep(-x,-y,-z,-w);
   }
 
   DirectionH3<R>
@@ -90,15 +88,15 @@ public:
   Vector_3    to_vector() const;
   Vector_3    vector() const { return to_vector(); }
 
-  const RT & dx() const { return get(Base()).e0; }
-  const RT & dy() const { return get(Base()).e1; }
-  const RT & dz() const { return get(Base()).e2; }
-  const RT & x()  const { return get(Base()).e0; }
-  const RT & y()  const { return get(Base()).e1; }
-  const RT & z()  const { return get(Base()).e2; }
-  const RT & hx() const { return get(Base()).e0; }
-  const RT & hy() const { return get(Base()).e1; }
-  const RT & hz() const { return get(Base()).e2; }
+  const RT & dx() const { return get(base).e0; }
+  const RT & dy() const { return get(base).e1; }
+  const RT & dz() const { return get(base).e2; }
+  const RT & x()  const { return get(base).e0; }
+  const RT & y()  const { return get(base).e1; }
+  const RT & z()  const { return get(base).e2; }
+  const RT & hx() const { return get(base).e0; }
+  const RT & hy() const { return get(base).e1; }
+  const RT & hz() const { return get(base).e2; }
 
   const RT & delta(int i) const;
 };

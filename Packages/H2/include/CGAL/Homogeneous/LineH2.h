@@ -31,7 +31,6 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class LineH2
-  : public R_::template Handle<Threetuple<typename R_::RT> >::type
 {
     typedef typename R_::FT                   FT;
     typedef typename R_::RT                   RT;
@@ -43,11 +42,10 @@ class LineH2
     typedef typename R_::Line_2               Line_2;
     typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
-    typedef Threetuple<RT>                           rep;
-    typedef typename R_::template Handle<rep>::type  base;
+    typedef Threetuple<RT>                           Rep;
+    typedef typename R_::template Handle<Rep>::type  Base;
 
-    const base& Base() const { return *this; }
-    base& Base() { return *this; }
+    Base base;
 
 public:
     typedef R_                                    R;
@@ -63,9 +61,9 @@ public:
     bool           operator==(const LineH2<R>& l) const ;
     bool           operator!=(const LineH2<R>& l) const ;
 
-    const RT &     a() const { return get(Base()).e0; }
-    const RT &     b() const { return get(Base()).e1; }
-    const RT &     c() const { return get(Base()).e2; }
+    const RT &     a() const { return get(base).e0; }
+    const RT &     b() const { return get(base).e1; }
+    const RT &     c() const { return get(base).e2; }
 
     FT             x_at_y(FT y) const;
     FT             y_at_x(FT x) const;
@@ -116,7 +114,7 @@ LineH2<R>::LineH2(const typename LineH2<R>::Segment_2& s)
 {
   Point_2 p = s.start();
   Point_2 q = s.end();
-  Base() = rep (
+  base = Rep (
             p.hy()*q.hw() - p.hw()*q.hy(),
             p.hw()*q.hx() - p.hx()*q.hw(),
             p.hx()*q.hy() - p.hy()*q.hx());
@@ -128,7 +126,7 @@ LineH2<R>::LineH2(const typename LineH2<R>::Ray_2& r)
 {
   Point_2 p = r.start();
   Point_2 q = r.second_point();
-  Base() = rep (
+  base = Rep (
             p.hy()*q.hw() - p.hw()*q.hy(),
             p.hw()*q.hx() - p.hx()*q.hw(),
             p.hx()*q.hy() - p.hy()*q.hx() );
@@ -140,7 +138,7 @@ LineH2<R>::LineH2(const typename LineH2<R>::Point_2& p,
 		  const typename LineH2<R>::Vector_2& v)
 {
   Point_2 q = p + v;
-  Base() = rep (
+  base = Rep (
             p.hy()*q.hw() - p.hw()*q.hy(),
             p.hw()*q.hx() - p.hx()*q.hw(),
             p.hx()*q.hy() - p.hy()*q.hx() );
@@ -152,7 +150,7 @@ LineH2<R>::LineH2(const typename LineH2<R>::Point_2& p,
 		  const typename LineH2<R>::Direction_2& d)
 {
   Point_2 q = p + d.to_vector();
-  Base() = rep (
+  base = Rep (
             p.hy()*q.hw() - p.hw()*q.hy(),
             p.hw()*q.hx() - p.hx()*q.hw(),
             p.hx()*q.hy() - p.hy()*q.hx() );

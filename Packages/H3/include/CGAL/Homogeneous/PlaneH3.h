@@ -30,7 +30,6 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
 class PlaneH3
-  : public R_::template Handle<Fourtuple<typename R_::RT> >::type
 {
    typedef typename R_::RT                   RT;
    typedef typename R_::FT                   FT;
@@ -44,11 +43,10 @@ class PlaneH3
    typedef typename R_::Plane_3              Plane_3;
    typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-   typedef Fourtuple<RT>                            rep;
-   typedef typename R_::template Handle<rep>::type  base;
+   typedef Fourtuple<RT>                            Rep;
+   typedef typename R_::template Handle<Rep>::type  Base;
 
-   const base& Base() const { return *this; }
-   base& Base() { return *this; }
+   Base base;
 
 public:
    typedef R_                 R;
@@ -148,7 +146,7 @@ PlaneH3<R>::new_rep(const typename PlaneH3<R>::Point_3 &p,
   RT rhz = r.hz();
   RT rhw = r.hw();
 
-  Base() = rep (
+  base = Rep (
               phy*( qhz*rhw - qhw*rhz )
             - qhy*( phz*rhw - phw*rhz )     // * X
             + rhy*( phz*qhw - phw*qhz ),
@@ -170,7 +168,7 @@ template < class R >
 inline
 void
 PlaneH3<R>::new_rep(const RT &a, const RT &b, const RT &c, const RT &d)
-{ Base() = rep(a, b, c, d); }
+{ base = Rep(a, b, c, d); }
 
 template < class R >
 inline
@@ -263,25 +261,25 @@ template < class R >
 inline
 const typename PlaneH3<R>::RT &
 PlaneH3<R>::a() const
-{ return get(Base()).e0; }
+{ return get(base).e0; }
 
 template < class R >
 inline
 const typename PlaneH3<R>::RT &
 PlaneH3<R>::b() const
-{ return get(Base()).e1; }
+{ return get(base).e1; }
 
 template < class R >
 inline
 const typename PlaneH3<R>::RT &
 PlaneH3<R>::c() const
-{ return get(Base()).e2; }
+{ return get(base).e2; }
 
 template < class R >
 inline
 const typename PlaneH3<R>::RT &
 PlaneH3<R>::d() const
-{ return get(Base()).e3; }
+{ return get(base).e3; }
 
 template < class R >
 CGAL_KERNEL_INLINE

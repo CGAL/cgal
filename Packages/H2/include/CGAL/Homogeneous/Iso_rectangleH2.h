@@ -30,18 +30,16 @@ CGAL_BEGIN_NAMESPACE
 
 template <class R_>
 class Iso_rectangleH2
-  : public R_::template Handle<Twotuple<typename R_::Point_2> >::type
 {
   typedef typename R_::FT                   FT;
   typedef typename R_::RT                   RT;
   typedef typename R_::Point_2              Point_2;
   typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
-  typedef Twotuple<Point_2>                        rep;
-  typedef typename R_::template Handle<rep>::type  base;
+  typedef Twotuple<Point_2>                        Rep;
+  typedef typename R_::template Handle<Rep>::type  Base;
 
-  const base& Base() const { return *this; }
-  base& Base() { return *this; }
+  Base base;
 
 public:
   typedef R_                                    R;
@@ -102,19 +100,19 @@ Iso_rectangleH2(const typename Iso_rectangleH2<R>::Point_2& p,
   {
       if ( px_g_qx && py_g_qy )
       {
-          Base() = rep(q, p);
+          base = Rep(q, p);
       }
       else
       {
          if ( px_g_qx )
          {
-             Base() = rep(
+             base = Rep(
              Point_2(q.hx()*p.hw(), p.hy()*q.hw(), q.hw()*p.hw() ),
              Point_2(p.hx()*q.hw(), q.hy()*p.hw(), q.hw()*p.hw() ));
          }
          if ( py_g_qy )
          {
-             Base() = rep(
+             base = Rep(
              Point_2(p.hx()*q.hw(), q.hy()*p.hw(), q.hw()*p.hw() ),
              Point_2(q.hx()*p.hw(), p.hy()*q.hw(), q.hw()*p.hw() ));
          }
@@ -122,7 +120,7 @@ Iso_rectangleH2(const typename Iso_rectangleH2<R>::Point_2& p,
   }
   else
   {
-      Base() = rep(p, q);
+      base = Rep(p, q);
   }
 }
 
@@ -175,13 +173,13 @@ template < class R >
 inline
 const typename Iso_rectangleH2<R>::Point_2 &
 Iso_rectangleH2<R>::min() const
-{ return get(Base()).e0; }
+{ return get(base).e0; }
 
 template < class R >
 inline
 const typename Iso_rectangleH2<R>::Point_2 &
 Iso_rectangleH2<R>::max() const
-{ return get(Base()).e1; }
+{ return get(base).e1; }
 
 template < class R >
 inline
