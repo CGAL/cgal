@@ -94,7 +94,7 @@ inline double IA_force_to_double(double x)
 #  define CGAL_IA_FORCE_TO_DOUBLE(x) CGAL::IA_force_to_double(x)
 #else
 #  define CGAL_IA_FORCE_TO_DOUBLE(x) (x)
-#endif // __i386__
+#endif
 
 // We sometimes need to stop constant propagation,
 // because operations are done with a wrong rounding mode at compile time.
