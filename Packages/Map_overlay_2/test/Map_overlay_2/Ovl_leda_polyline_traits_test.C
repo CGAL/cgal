@@ -2,6 +2,7 @@
 //#define  OVL_DEBUG_TEST
 
 #include <CGAL/config.h> // needed for the LONGNAME flag
+#include <iostream>
 
 // Making sure test doesn't fail if LEDA is not installed
 #if ! defined(CGAL_USE_LEDA)
@@ -48,7 +49,7 @@ public:
     is >> size;
 
     for (unsigned int i = 0; i < size; ++i){
-      double x,y;
+      int x,y;
       
       is>>x>>y;
       
@@ -88,3 +89,14 @@ int main(int argc, char* argv[])
 }
 
 #endif // CGAL_ARR_TEST_LEDA_CONFLICT
+
+
+
+
+
+
+
+
+
+
+
