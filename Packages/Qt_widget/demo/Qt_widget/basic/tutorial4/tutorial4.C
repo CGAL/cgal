@@ -54,7 +54,7 @@ private:
 int main( int argc, char **argv )
 {
     QApplication app( argc, argv );
-    My_window W(600,600);
+    My_window W(400,400);
     app.setMainWidget( &W );
     W.show();
     W.setCaption("Using QMainWindow QT class");

@@ -41,8 +41,8 @@ public:
     widget->set_window(0, x, 0, y);
     
     //How to attach the standard toolbar
-    std_toolbar = new CGAL::Qt_widget_standard_toolbar(widget, this);
-    this->addToolBar(std_toolbar->toolbar(), Top, FALSE);
+    stoolbar = new CGAL::Qt_widget_standard_toolbar(widget, this,
+						    "Standard toolbar");
     
     QToolBar  *layers_toolbar;
     layers_toolbar = new QToolBar("Tools", this, 
@@ -50,10 +50,10 @@ public:
     addToolBar(layers_toolbar, Top, FALSE);
     get_point_button = new QToolButton(layers_toolbar, "Get Point");
     get_point_button->setPixmap(QPixmap( (const char**)point_xpm ));
-    get_point_button->setToggleButton(TRUE);
+    get_point_button->setToggleButton(true);
     widget->attach(&v);
     widget->attach(&get_point);
-
+    get_point_button->toggle();
     connect(get_point_button, SIGNAL(stateChanged(int)),
 	    &get_point, SLOT(stateChanged(int)));
 
@@ -77,7 +77,7 @@ private slots:
 private:
   CGAL::Qt_widget *widget;	//the instance of Qt_widget
   My_layer v;                   //an instance of a layer
-  CGAL::Qt_widget_standard_toolbar *std_toolbar; 
+  CGAL::Qt_widget_standard_toolbar *stoolbar; 
                                 //the standard toolbar
   CGAL::Qt_widget_get_point<Rep> get_point;   
 			        //the generic tool that creates Cgal points
@@ -89,7 +89,7 @@ private:
 int main( int argc, char **argv )
 {
     QApplication app( argc, argv );
-    My_window W(600,600);
+    My_window W(400,400);
     app.setMainWidget( &W );
     W.show();
     W.setCaption("Using the Standard Toolbar");

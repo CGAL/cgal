@@ -2,7 +2,7 @@
 % | CGAL Reference Manual: Reference manual for Qt_widget.tex
 % +------------------------------------------------------------------------+
 % |
-% | 10.01.2002  Radu Ursu
+% | 02.04.2003  Radu Ursu
 % | 
 % | \RCSdef{\qtwidgetRev}{$Revision$}
 % | \RCSdefDate{\qtwidgetDate}{$Date$}
@@ -18,18 +18,41 @@ The standard toolbar includes the basic tools used for zooming and translating.
 \ccInclude{CGAL/IO/Qt_widget_standard_toolbar.h}
 \ccGlue
 
+\ccInheritsFrom
+\ccc{QToolBar}
+
 \ccCreation
 \ccCreationVariable{stoolbar}
 \ccSetTwoColumns{Qt_widget_standard_toolbar}{}
 
-\ccConstructor{Qt_widget_standard_toolbar(Qt_widget *w, QMainWindow *mw);}{The
- default constructor creates a new toolbar in your application, containing all 
-the standard tools. The first param is a pointer to a Qt\_widget object, the
-second is a pointer to a QMainWindow object, that contains the toolbar.}
+\ccConstructor{Qt_widget_standard_toolbar(Qt_widget *w, QMainWindow
+*mw = 0, const char* name = 0);}{This constructor creates a new
+toolbar in your application, containing all the standard tools. The
+first parameter is a pointer to a Qt\_widget object, the second is a
+pointer to a QMainWindow object, that contains the toolbar. The last
+parameter is the name of the toolbar. If you are using this
+constructor, you should deallocate yourself the memory used for the
+toolbar. Use the other one if you want \qt\ to do it for you.}
 
-\ccMethod{const QToolBar* toolbar();}{Returns a pointer to the QToolBar
-private member. To use the standard toolbar in an application, you
-need this function in order to get the pointer to the toolbar.}
+\ccConstructor{Qt_widget_standard_toolbar(Qt_widget *w, QMainWindow
+*mw = 0, QWidget* parent, bool newline = true, const char* name =
+0);}{ The same as the previous one except from \ccc{parent} parameter that
+is used to tell \qt\ to destroy the memory after the parent is
+destroied. If \ccc{newline} is true, the toolbar will be placed on a
+new line.}
+
+\ccMethod{const QToolBar* toolbar();}{Deprecated: (in CGAL-2.4 the
+standard toolbar was not derived from \ccc{QToolBar}) Returns a pointer to
+the \ccc{QToolBar} private member. To use the standard toolbar in your 
+application, you need this function in order to get the pointer to the 
+toolbar.}
+
+\ccHeading{public slots:}
+\ccMethod{void back();}{Goes back in the history list of the standard toolbar.}
+\ccMethod{void forward();}{Goes forward in the history list of the
+standard toolbar.}
+\ccMethod{void clear_history();}{Clears the history list of the
+standard toolbar.}
 
 \ccExample
 \ccIncludeExampleCode{Qt_widget/basic/tutorial5/tutorial5.C}

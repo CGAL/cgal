@@ -48,22 +48,20 @@ public:
     widget->set_window(0, x, 0, y);
     
     //How to attach the standard toolbar
-    std_toolbar = new CGAL::Qt_widget_standard_toolbar(widget, this);
-    this->addToolBar(std_toolbar->toolbar(), Top, FALSE);
-    setUsesBigPixmaps(true);
-
+    stoolbar = new CGAL::Qt_widget_standard_toolbar(widget, this,
+						    "Standard toolbar");
     widget->attach(&v);
   }
 private:
   My_widget *widget;
   My_layer  v;
-  CGAL::Qt_widget_standard_toolbar *std_toolbar;
+  CGAL::Qt_widget_standard_toolbar *stoolbar;
 };
 
 int main( int argc, char **argv )
 {
     QApplication app( argc, argv );
-    My_window W(600,600);
+    My_window W(400,400);
     app.setMainWidget( &W );
     W.show();
     W.setCaption("Using the Standard Toolbar");

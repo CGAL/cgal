@@ -22,8 +22,8 @@ int main( int argc, char **argv )
     QApplication app( argc, argv );
     CGAL::Qt_widget * W = new CGAL::Qt_widget();
     app.setMainWidget( W );
-    W.resize(600, 600);
-    W.set_window(0, 600, 0, 600);
+    W.resize(400, 400);
+    W.set_window(0, 400, 0, 400);
     W.show();
 
     return app.exec();
@@ -51,8 +51,8 @@ app.setMainWidget(W);
 \end{ccExampleCode}
 To resize and set the scaling factor of the window you will use:
 \begin{ccExampleCode}
-W->resize(600, 600);
-W->set_window(0, 600, 0, 600);
+W->resize(400, 400);
+W->set_window(0, 400, 0, 400);
 \end{ccExampleCode}
 At the end you need to show the window when the initialization has been done:
 \begin{ccExampleCode}
@@ -197,7 +197,7 @@ The entry point is the same:
 int main( int argc, char **argv )
 {
     QApplication app( argc, argv );
-    My_window W(600,600);
+    My_window W(400,400);
     app.setMainWidget( &W );
     W.show();
     W.setCaption("Using QMainWindow QT class");
@@ -252,8 +252,7 @@ CGAL::Qt_widget_standard_toolbar *stoolbar;
 \end{ccExampleCode}
 To use it, in the constructor of \ccc{My\_window}, it is added:
 \begin{ccExampleCode}
-std_toolbar = new CGAL::Qt_widget_standard_toolbar(widget, this);
-this->addToolBar(std_toolbar->toolbar(), Top, FALSE);
+stoolbar = new CGAL::Qt_widget_standard_toolbar(widget, this, ``Standard toolbar'');
 \end{ccExampleCode}
 In this tutorial you can play a little bit with the standard toolbar
 but you will see probably something that is not quite pleasant. If you
@@ -279,7 +278,7 @@ any event.
 
 The sixth tutorial uses for the first time a layer to build \cgal\
 objects. It is declared the class \ccc{My\_input_layer} derived from
-\ccStyle{Qt\_widget\_lool}, that is used to create a \cgal\ point
+\ccStyle{Qt\_widget\_layer}, that is used to create a \cgal\ point
 every time you click on the widget.
 \begin{ccExampleCode}
 class My_input_layer : public CGAL::Qt_widget_layer{

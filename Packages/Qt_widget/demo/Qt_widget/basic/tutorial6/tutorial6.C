@@ -51,11 +51,9 @@ public:
     widget->set_window(0, x, 0, y);
     
     //How to attach the standard toolbar
-    std_toolbar = new CGAL::Qt_widget_standard_toolbar(widget, this);
-    this->addToolBar(std_toolbar->toolbar(), Top, FALSE);
-    
+    stoolbar = new CGAL::Qt_widget_standard_toolbar(widget, this,
+						       "Standard toolbar");
     widget->attach(&v);
-
     connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), 
 	    this, SLOT(get_object(CGAL::Object)));
     widget->attach(&t);
@@ -75,7 +73,7 @@ private:
   CGAL::Qt_widget *widget;
   My_layer v;
   My_input_layer t;
-  CGAL::Qt_widget_standard_toolbar *std_toolbar;
+  CGAL::Qt_widget_standard_toolbar *stoolbar;
 };
 
 #include "tutorial6.moc"
@@ -83,7 +81,7 @@ private:
 int main( int argc, char **argv )
 {
     QApplication app( argc, argv );
-    My_window W(600,600);
+    My_window W(400,400);
     app.setMainWidget( &W );
     W.show();
     W.setCaption("Using the Standard Toolbar");
