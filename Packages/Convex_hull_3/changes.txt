@@ -1,3 +1,7 @@
+2.38    (2 May 2002)
+- eliminate use of back_inserter for Delaunay triangulation since (a) the
+  push_back function is deprecated and (b) M$VC7 doesn't like this.
+
 2.37    (30 Apr 2002)
 - Used specific CGAL::Polyhedron_3 in convex_hull_3 functions to get M$ to 
   understand.
