@@ -27,7 +27,6 @@
 #  include <vector>
 #  include <algorithm>
 #  include <iostream>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
