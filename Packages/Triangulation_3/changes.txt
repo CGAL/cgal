@@ -1,3 +1,6 @@
+31 January 2005 Sylvain Pion
+- Document .point() in TDS::Vertex.
+
 14 January 2005 Sylvain Pion
 - Added incident_facets(Vertex_handle).
 
