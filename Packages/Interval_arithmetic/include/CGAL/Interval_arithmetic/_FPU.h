@@ -37,7 +37,7 @@
 #define __osf
 #endif
 
-#if defined(__i386__) || defined(i386)	/* Needed for egcs */
+#if defined(__i386__) || defined(i386)	/* Needed by some old egcs versions */
 #undef __i386
 #define __i386
 #endif
