@@ -12,10 +12,10 @@
 // release_date  : 
 //
 // file          : include/CGAL/geowin_support.h
-// package       : GeoWin (1.4.7)
+// package       : GeoWin (1.6)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 1.4.7
-// revision_date : 25 April 2002 
+// revision      : 1.6
+// revision_date : 29 July 2002 
 // author(s)     : Matthias Baesken, Ulrike Bartuschka, Stefan Naeher
 //
 // coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>)
@@ -25,24 +25,12 @@
 #ifndef CGAL_GEOWIN_SUPPORT_H
 #define CGAL_GEOWIN_SUPPORT_H
 
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/basic.h>
-#include <CGAL/Point_2.h>
-#include <CGAL/Segment_2.h>
-#include <CGAL/Circle_2.h>
-#include <CGAL/Iso_rectangle_2.h>
-#include <CGAL/Vector_2.h>
 #include <CGAL/Polygon_2_algorithms.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/intersections.h>
 #include <CGAL/IO/Window_stream.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/Segment_3.h>
-#include <CGAL/Line_3.h>
-#include <CGAL/Ray_3.h>
-#include <CGAL/Triangle_3.h>
-#include <CGAL/Tetrahedron_3.h>
 #include <CGAL/Aff_transformation_2.h>
 #include <LEDA/ps_file.h>
 #include <LEDA/d3_segment.h>
@@ -156,15 +144,6 @@ typedef std::list<CGALTetrahedron_3>    CGALTetrahedron_3_list;
 #endif
 
 
-// no fucntion templates on VC++ 6.0 ...
-#if defined (_MSC_VER) && (_MSC_VER < 1300)
-#define GEOWIN_SUPPORT_NO_TEMPLATES
-#endif
-
-#if defined (GEOWIN_SUPPORT_NO_TEMPLATES)
-#include <CGAL/geowin_support_no_templ.h>
-#else
-
 template<class REP>
 leda_point convert_to_leda(const CGAL::Point_2<REP>& obj)
 {
@@ -226,8 +205,10 @@ leda_ray convert_to_leda(const CGAL::Ray_2<REP>& r)
 template<class TRAITS,class CONTAINER>
 leda_polygon convert_to_leda(const CGAL::Polygon_2<TRAITS,CONTAINER>& p)
 {
-  CGAL::Polygon_2<TRAITS,CONTAINER>::Vertex_const_iterator it=p.vertices_begin();
-  CGAL::Polygon_2<TRAITS,CONTAINER>::Vertex_const_iterator st=p.vertices_end();
+  typedef typename CGAL::Polygon_2<TRAITS,CONTAINER>::Vertex_const_iterator  VCIT;
+
+  VCIT it=p.vertices_begin();
+  VCIT st=p.vertices_end();
 
  leda_list<leda_point> lp;
 
@@ -2054,7 +2035,6 @@ void cgal_Tetrahedron_3_d3(const T& L, leda_d3_window& W, GRAPH<leda_d3_point,in
 
 GEOWIN_END_NAMESPACE
 
-#endif
 
 #endif // CGAL_GEOWIN_SUPPORT
 

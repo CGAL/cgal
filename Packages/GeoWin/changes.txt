@@ -1,3 +1,7 @@
+1.6 (29 July 2002)
+- some demos changed
+- code cleanup (some VC 6 /KCC stuff removed)
+
 1.5.1 ( 31 May 2002)
 - 2 Nef demos added, LER demo changed
 
