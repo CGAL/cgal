@@ -26,6 +26,30 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template < class NT>
+class  Alpha_status 
+{
+private:
+  bool _is_Gabriel;
+  bool _is_on_chull;
+  NT _alpha_min;
+  NT _alpha_mid;
+  NT _alpha_max;
+
+public:
+  Alpha_status() : _is_Gabriel(false), _is_on_chull(false) {}
+  void set_alpha_min(NT alpha) {_alpha_min = alpha;}
+  void set_alpha_mid(NT alpha) {_alpha_mid = alpha;}
+  void set_alpha_max(NT alpha) {_alpha_max = alpha;}
+  void set_is_Gabriel(bool yesorno) { _is_Gabriel = yesorno;}
+  void set_is_on_chull(bool yesorno) {_is_on_chull = yesorno;}
+  NT alpha_min() const { return _alpha_min;}
+  NT alpha_mid() const { return _alpha_mid;}
+  NT alpha_max() const { return _alpha_max;}
+  bool is_Gabriel() const {return _is_Gabriel;}
+  bool is_on_chull() const {return  _is_on_chull;}
+};
+
 template < class Gt, class Cb = Triangulation_cell_base_3<Gt> >
 class Alpha_shape_cell_base_3
   : public Cb
@@ -40,14 +64,14 @@ public:
     typedef Alpha_shape_cell_base_3<Gt, Cb2>                Other;
   };
 
-  typedef typename Gt::FT                            Coord_type;
-  typedef Triple<Coord_type, Coord_type, Coord_type> Interval3;
+  typedef typename Gt::FT               NT;
+  typedef Alpha_status<NT>              Alpha_status;
+
 
 private:
 
-  Interval3 vec_facet[4];
-  Interval3 vec_edge[4][4];
-  Coord_type A;
+  Alpha_status* facet_status[4];
+  NT A;
 
 public:
   
@@ -65,36 +89,26 @@ public:
     : Cb(v0, v1, v2, v3, n0, n1, n2, n3) {}
 
 
-  const Coord_type & get_alpha() const
+  NT get_alpha() const
     {
       return A;
     }
   
-  void set_alpha(const Coord_type & AA)
+  void set_alpha(const NT & AA)
     {
       A = AA;
     }
 
-  const Interval3 & get_facet_ranges(int i) const
+  Alpha_status*  get_facet_status(int i) const
     {
-      return vec_facet[i];
+      return facet_status[i];
     }
 
-  void set_facet_ranges(int i, const Interval3& Inter)
+  void set_facet_status(int i, Alpha_status* as)
     {
-      vec_facet[i]=Inter;
+      facet_status[i]= as;
     }
-  
-  const Interval3 & get_edge_ranges(int i, int j) const
-    {
-      return vec_edge[i][j];
-    }
-
-  void set_edge_ranges(int i, int j, const Interval3& Inter)
-    {
-      vec_edge[i][j]=Inter;
-    }
-};
+  };
 
 CGAL_END_NAMESPACE
 

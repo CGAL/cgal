@@ -26,82 +26,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-//------------------ Function Objects----------------------------------
-
-template < class K >
-class Compute_squared_radius_orthogonal_sphere_3
-{
-public:
-
-  typedef typename K::Point Point;
-  typedef typename K::FT FT;
-  typedef typename K::FT return_type;
-  typedef Arity_tag< 4 >   Arity;
-
-  return_type operator()(const Point& p, const Point& q, 
-			 const Point& r, const Point& s) const
-  {   
-    FT px(p.point().x());
-    FT py(p.point().y());
-    FT pz(p.point().z());
-    FT pw(p.weight());
-    FT qx(q.point().x());
-    FT qy(q.point().y());
-    FT qz(q.point().z());
-    FT qw(q.weight());
-    FT rx(r.point().x());
-    FT ry(r.point().y()); 
-    FT rz(r.point().z());
-    FT rw(r.weight()); 
-    FT sx(s.point().x());
-    FT sy(s.point().y());
-    FT sz(s.point().z());
-    FT sw(s.weight());
-    FT res = squared_radius_orthogonal_sphereC3(px, py, pz, pw,
-					       qx, qy, qz, qw,
-					       rx, ry, rz, rw,
-					       sx, sy, sz, sw);
-      return max (FT(0), res);
-    }
-
-  return_type operator()(const Point& p, const Point& q, const Point& r) const
-  {  
-    FT px(p.point().x());
-    FT py(p.point().y());
-    FT pz(p.point().z());
-    FT pw(p.weight());
-    FT qx(q.point().x());
-    FT qy(q.point().y());
-    FT qz(q.point().z());
-    FT qw(q.weight());
-    FT rx(r.point().x());
-    FT ry(r.point().y()); 
-    FT rz(r.point().z());
-    FT rw(r.weight()); 
-    
-    FT res = squared_radius_smallest_orthogonal_sphereC3(px, py, pz, pw,
-							qx, qy, qz, qw,
-							rx, ry, rz, rw); 
-    return max (FT(0), res );
-  }
-
-  return_type operator()(const Point& p, const Point& q) const
-  {   
-    FT px(p.point().x());
-    FT py(p.point().y());
-    FT pz(p.point().z());
-    FT pw(p.weight());
-    FT qx(q.point().x());
-    FT qy(q.point().y());
-    FT qz(q.point().z());
-    FT qw(q.weight());
-
-    FT res = squared_radius_smallest_orthogonal_sphereC3(px, py, pz, pw,
-						    qx, qy, qz, qw);
-    return max (FT(0), res);
-    }
-};
-
 
    
 //------------------ Traits class -------------------------------------
@@ -111,28 +35,18 @@ class Weighted_alpha_shape_euclidean_traits_3 : public
 Regular_triangulation_euclidean_traits_3<R>
 {
 public:
- 
-  typedef Weighted_alpha_shape_euclidean_traits_3<R> Self;
   typedef Regular_triangulation_euclidean_traits_3<R> Base;
-  typedef R Rep;
-  typedef typename R::FT Coord_type;
-
-  typedef typename Base::Bare_point      Bare_Point;
-  typedef typename Base::Weighted_point  Weighted_point;
-  typedef Weighted_point Point_3;
-  typedef Weighted_point Point;
-
-  typedef CGAL::Compute_squared_radius_orthogonal_sphere_3<Self> 
-    Compute_squared_radius_orthogonal_sphere_3;
-  typedef CGAL::Side_of_bounded_orthogonal_sphere_3<R> 
-    Side_of_bounded_orthogonal_sphere_3;
+  typedef typename Base::Compute_squared_radius_smallest_orthogonal_sphere_3
+                Compute_squared_radius_smallest_orthogonal_sphere_3;
+  typedef typename Base::Side_of_bounded_orthogonal_sphere_3 
+                Side_of_bounded_orthogonal_sphere_3;
 
   //---------------------------------------------------------------------
 
-  Compute_squared_radius_orthogonal_sphere_3 
+  Compute_squared_radius_smallest_orthogonal_sphere_3 
   compute_squared_radius_3_object() const
     {
-      return Compute_squared_radius_orthogonal_sphere_3();
+      return Compute_squared_radius_smallest_orthogonal_sphere_3();
     }
   //---------------------------------------------------------------------
 

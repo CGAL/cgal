@@ -30,6 +30,7 @@ include $(CGAL_MAKEFILE)
 # rajouter CGAL_LOCAL_CXXFLAGS si on veut les packages de Local
 
 CXXFLAGS =  -I../../include \
+	    -I../../../Triangulation_3/include \
 	    $(CGAL_CXXFLAGS)
 
 # -mcpu=ultrasparc -mtune=ultrasparc \

@@ -156,17 +156,20 @@ int main()
 
   int n(50);
 
-    while(n >= 0){
-      std::cout << "Enter an alpha index (a < 0 -> quit): ";
+    while(n >=  0){
+      std::cout <<  "number of alpha values : " 
+		<<A.number_of_alphas() << std::endl;
+      std::cout << "Enter an alpha index "
+                << "(negative index -> quit, if 0 -> optimal alpha_shape): ";
       std::cin >> n; 
 #if defined(GEOMVIEW_SUPPORT)
       gv.clear();
 #endif
       //gv << (Triangulation_3) A;
-      if (n == 0)
-	A.set_alpha(*A.find_optimal_alpha(2));
-      else
-	set_alpha(A,n); 
+      if (n < 0)  break;
+      if (n == 0)   A.set_alpha(*A.find_optimal_alpha(1));
+      if (n > 0)    A.set_alpha(A.get_nth_alpha(n));
+      
 #if defined(GEOMVIEW_SUPPORT)     
       gv << A;
 #else

@@ -5,7 +5,8 @@
 #                    include platform specific settings
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
-#CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.4.23_g++-3.3.2
+
+# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -14,12 +15,13 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
            -I../../include \
-	   -I ../../../Triangulation_3/include \
+	   -I../../../Triangulation_3/include \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
+           -Iinclude \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
-           $(DEBUG_OPT)
+	   -pedantic
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -39,18 +41,18 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                test_alpha$(EXE_EXT) \
-                test_weight$(EXE_EXT) 
+                test_alpha_shape_3$(EXE_EXT) \
+                test_weighted_alpha_shape_3$(EXE_EXT) 
 
-test_alpha$(EXE_EXT): test_alpha$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_alpha test_alpha$(OBJ_EXT) $(LDFLAGS)
+test_alpha_shape_3$(EXE_EXT): test_alpha_shape_3$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_alpha_shape_3 test_alpha_shape_3$(OBJ_EXT) $(LDFLAGS)
 
-test_weight$(EXE_EXT): test_weight$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_weight test_weight$(OBJ_EXT) $(LDFLAGS)
+test_weighted_alpha_shape_3$(EXE_EXT): test_weighted_alpha_shape_3$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_weighted_alpha_shape_3 test_weighted_alpha_shape_3$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                   test_alpha.clean \
-                   test_weight.clean 
+                   test_alpha_shape_3.clean \
+                   test_weighted_alpha_shape_3.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules

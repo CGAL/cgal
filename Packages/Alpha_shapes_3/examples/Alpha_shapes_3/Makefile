@@ -27,7 +27,7 @@ include $(CGAL_MAKEFILE)
 # rajouter CGAL_LOCAL_CXXFLAGS si on veut les packages de Local
 
 CXXFLAGS =  -I../../include \
-	    $(CGAL_CXXFLAGS)
+	     $(CGAL_CXXFLAGS)
 
 # for cygwin
 #'-Iz:\Cgal-2.0\To_submit\Alpha_shapes_2\include' \

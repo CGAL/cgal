@@ -22,6 +22,7 @@
 
 #include <utility>
 #include <CGAL/Triangulation_vertex_base_3.h>
+#include <CGAL/Alpha_shape_cell_base_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -40,12 +41,12 @@ public:
   };
 
   typedef typename Gt::Point_3 Point;
-  typedef typename Gt::FT      Coord_type;
-  typedef std::pair< Coord_type, Coord_type >  Interval2;  
+  typedef typename Gt::FT      NT;
+  typedef Alpha_status<NT>     Alpha_status;
 
 private:
+  Alpha_status* _as;
 
-  Interval2 I;
 
 public:
 
@@ -58,16 +59,9 @@ public:
   Alpha_shape_vertex_base_3(const Point& p, Cell_handle c)
     : Vb(p, c) {}
 
+  Alpha_status*  get_alpha_status() const { return _as;}
+  void set_alpha_status(Alpha_status* as) {_as= as;}
 
-  const Interval2 & get_range()
-    {
-      return I;
-    }
-
-  void set_range(const Interval2 & Inter)
-    {
-      I = Inter;
-    }
 };
 
 CGAL_END_NAMESPACE
