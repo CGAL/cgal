@@ -260,7 +260,8 @@ public:
       connect(pbConform, SIGNAL(clicked()), this,
 	      SLOT(conformMesh()));
 
-      QToolBar *toolBarSteps = new QToolBar("Step actions",this);
+      toolBarSteps = new QToolBar("Step actions",this);
+      toolBarSteps->hide();
 
       pbMeshStep = 
 	new QPushButton("Mesh 1 step", toolBarSteps);
@@ -418,7 +419,6 @@ public:
       this->addToolBar(std_toolbar->toolbar(), Top, FALSE);
 
       setUsesBigPixmaps(true);
-
       // MENUS
       QPopupMenu *pmMesh = new QPopupMenu(this);
       menuBar()->insertItem("&File", pmMesh);
@@ -446,6 +446,9 @@ public:
       menu_id = pmCriteria->insertItem("Size criteria only under &mouse",
 				       this, SLOT(setLocal()),
 				       CTRL+Key_L );
+
+      menuBar()->insertItem("&Advanced", this, SLOT(advanced()));
+			   ;
 
       widget->set_window(-1.,1.,-1.,1.);
       widget->setMouseTracking(TRUE);
@@ -811,6 +814,14 @@ public slots:
 	follow_mouse->deactivate();
     }
 
+  void advanced()
+  {
+    if( toolBarSteps->isVisible() )
+      toolBarSteps->hide();
+    else
+      toolBarSteps->show();
+  }
+
 private:
   static const QString my_filters;
   bool is_mesh_initialized;
@@ -842,6 +853,7 @@ private:
   QTimer* timer;
   QPushButton *pbMeshTimer;
   QPushButton *pbMeshStep;
+  QToolBar *toolBarSteps;
   int timer_interval;
   int step_lenght;
 };
