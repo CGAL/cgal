@@ -37,7 +37,7 @@ compile_and_run()
   # running general test
   if compile $1 $2 $3 ; then
     echo "   compilation of $1 succeeded" >> $ERRORFILE  
-    REVERSE=""
+    REVERSE="no"
     run $1 $2 $3
     REVERSE="reverse"
     run $1 $2 $3
@@ -59,6 +59,12 @@ compile_and_run()
 
 run()
 {
+  OUTPUTFILE=ProgramOutput.$1.$PLATFORM
+  if [ ! -f $OUTPUTFILE ] ; then
+    touch $OUTPUTFILE 
+  fi
+  echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" >> $OUTPUTFILE
+
   if [ $3 -eq $CGAL_SEGMENT_TRAITS -o $3 -eq $CGAL_SEGMENT_LEDA_TRAITS ] ; then
     datafiles="DATA/segments/*"
   elif [ $3 -eq $CGAL_POLYLINE_TRAITS -o $3 -eq $CGAL_POLYLINE_LEDA_TRAITS ]; then
@@ -74,16 +80,16 @@ run()
 
     if [ -f $1 ] ; then
         DATANAME=`basename $DATAFILE`
-	if [ $REVERSE="reverse" ] ; then
-	    OUTPUTFILE=ProgramOutput.$3.$1.$DATANAME.$REVERSE.$PLATFORM.$2
-        else
-	    OUTPUTFILE=ProgramOutput.$3.$1.$DATANAME.$PLATFORM.$2
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" >> $OUTPUTFILE
+	echo "Output of $1 Traits=$3 and PL=$2 with $DATANAME" >> $OUTPUTFILE
+ 	if test $REVERSE = "reverse" ; then
+	    echo "Curves in reversed order." >> $OUTPUTFILE
 	fi
-	rm -f $OUTPUTFILE
+
 	COMMAND="./$1 $DATAFILE $REVERSE"
 	echo "Executing $1 $DATANAME $REVERSE ... "
 	echo
-	if eval $COMMAND > $OUTPUTFILE 2>&1 ; then
+	if eval $COMMAND >> $OUTPUTFILE 2>&1 ; then
 	echo "   execution of $1 $DATAFILE $REVERSE succeeded" >> $ERRORFILE
 	else
 	echo "   ERROR: execution of $1 $DATAFILE $REVERSE failed" >> $ERRORFILE
@@ -97,6 +103,12 @@ run()
 
 run_io()
 {
+  OUTPUTFILE=ProgramOutput.$1.$PLATFORM
+  if [ ! -f $OUTPUTFILE ] ; then
+    touch $OUTPUTFILE 
+  fi
+  echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" >> $OUTPUTFILE
+
   if [ $3 -eq $CGAL_SEGMENT_TRAITS -o $3 -eq $CGAL_SEGMENT_LEDA_TRAITS ] ; then
     datafiles="DATA/IO/segments/*"
   elif [ $3 -eq $CGAL_POLYLINE_TRAITS -o $3 -eq $CGAL_POLYLINE_LEDA_TRAITS ]; then
@@ -132,13 +144,14 @@ run_io()
         
         DATANAME=`basename $DATAFILE`
         IONAME=`basename $IOFILE`	
-        OUTPUTFILE=ProgramOutput.$3.$1.$DATANAME.$PLATFORM.$2
 
-	rm -f $OUTPUTFILE
+	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" >> $OUTPUTFILE
+	echo "Output of $1 Traits=$3 and PL=$2 with $DATANAME" >> $OUTPUTFILE
+
 	COMMAND="./$1 $IOFILE $DATAFILE"
 	echo "Executing $1 $IONAME $DATANAME  ... "
 	echo
-	if eval $COMMAND > $OUTPUTFILE 2>&1 ; then
+	if eval $COMMAND >> $OUTPUTFILE 2>&1 ; then
 	echo "   execution of $1 $DATAFILE succeeded" >> $ERRORFILE
 	else
 	echo "   ERROR: execution of $1 $DATAFILE  failed" >> $ERRORFILE
@@ -157,6 +170,8 @@ run_io()
 
 rm -f $ERRORFILE
 touch $ERRORFILE
+
+rm -f ProgramOutput.*.$PLATFORM
 
 #---------------------------------------------------------------------#
 #                    compile and run the tests
