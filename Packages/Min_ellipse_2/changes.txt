@@ -1,5 +1,8 @@
 Changes done to the `Min_ellipse_2' package.
 
+Version 3.13 on 9-Aug-2001
+- Just resubmit.
+
 Version 3.12 on 31-Jul-2001
 - Susan moved Optimisation_ref directory up one level
 
