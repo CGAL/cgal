@@ -78,4 +78,8 @@ double minimin = init_min_double();
 }
 #endif
 
+namespace CGALi {
+int dummy_symbol_for_stopping_VC_linker_warning;
+} // namespace CGALi
+
 CGAL_END_NAMESPACE

@@ -1,3 +1,7 @@
+23 June 2004 Sylvain Pion
+- Add dummy symbol in src/Interval_arithmetic.C to remove warning from
+  VC++ linker.
+
 21 June 2004 Sylvain Pion
 - Add Kernel_profiler.
 - Add predicates used by convex_hull_2.
