@@ -43,9 +43,8 @@
 #include <CGAL/Nef_3/SNC_SM_visualizor.h>
 #endif // CGAL_NEF3_SM_VISUALIZOR
 #undef _DEBUG
-#define _DEBUG 8 
-#define CGAL_NEF3_DUMP_SPHERE_MAPS
-// 19
+#define _DEBUG 19
+//#define CGAL_NEF3_DUMP_SPHERE_MAPS
 #include <CGAL/Nef_3/debug.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -595,7 +594,7 @@ public:
     return Vertex_handle(); // never reached
   }
 
-#define CGAL_NEF3_DUMP_SNC_OPERATORS
+//#define CGAL_NEF3_DUMP_SNC_OPERATORS
 
   template <typename Selection>
     void binary_operation( SNC_structure& snc1i, 
@@ -637,7 +636,7 @@ public:
 	   snc1i.number_of_vertices()<<' '<<
 	   result.number_of_vertices());
 
-    cerr << "Checkpoint SNC_d 1 " << std::endl;
+    //cerr << "Checkpoint SNC_d 1 " << std::endl;
 
     CGAL_nef3_forall_vertices( v0, *sncp()) {
       CGAL_nef3_assertion(!Ignore[v0]);
@@ -649,7 +648,7 @@ public:
       else
 	Ignore[v1] = true;
 
-    cerr << "Checkpoint SNC_d 2 " << std::endl;
+      //cerr << "Checkpoint SNC_d 2 " << std::endl;
 
       TRACEN("vertices on snc0 sn1 snc01: "<<
 	     sncp()->number_of_vertices()<<' '<<
@@ -657,7 +656,7 @@ public:
 	     result.number_of_vertices());
     }
 
-    cerr << "Checkpoint SNC_d 2c " << std::endl;
+    //cerr << "Checkpoint SNC_d 2c " << std::endl;
 
     TRACEN("=> for all v1 in snc1, qualify v1 with respect snc0");
 
@@ -685,7 +684,7 @@ public:
 	     result.number_of_vertices());
     }
 
-    cerr << "Checkpoint SNC_d 2d " << std::endl;
+    //cerr << "Checkpoint SNC_d 2d " << std::endl;
 
     TRACEN("=> edge facet intersection");
 
@@ -754,7 +753,7 @@ public:
     O.print();
 #endif // CGAL_NEF3_DUMP_SNC_OPERATORS
 
-    cerr << "Checkpoint SNC_d 3 " << std::endl;
+    //cerr << "Checkpoint SNC_d 3 " << std::endl;
 
     // remove vertices whose local view is not that of a vertex
     Vertex_iterator vi, vin;
@@ -782,7 +781,7 @@ public:
     result.simplify();
 
 
-    cerr << "Checkpoint SNC_d 4 " << std::endl;
+    //cerr << "Checkpoint SNC_d 4 " << std::endl;
 
 #ifdef CGAL_NEF3_DUMP_SNC_OPERATORS
     TRACEN("=> construction completed, result: ");

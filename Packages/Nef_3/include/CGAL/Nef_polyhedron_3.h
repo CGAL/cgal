@@ -123,11 +123,13 @@ typedef T Extended_kernel;
 static  T EK; // static extended kernel
 
   /*{\Mtypes 7}*/
-  typedef Nef_polyhedron_3<T>    Self;
+  typedef Nef_polyhedron_3<T>                   Self;
   typedef Handle_for< Nef_polyhedron_3_rep<T> > Base;
-  typedef typename T::Kernel     Kernel;
-  typedef typename T::Point_3    Point_3;
-  typedef typename T::Plane_3    Plane_3;
+  typedef typename T::Kernel                    Kernel;
+  typedef typename T::Point_3                   Point_3;
+  typedef typename T::Plane_3                   Plane_3;
+  typedef typename Kernel::Aff_transformation_3 Aff_transformation_3;
+
 
   typedef bool Mark;
   /*{\Xtypemember marking set membership or exclusion.}*/
@@ -452,7 +454,7 @@ public:
 #ifdef CGAL_NEF3_VISUALIZOR
     SNC_visualizor sncv( snc());
     sncv.draw();
-    OGL::polyhedra_.back().debug();
+    //OGL::polyhedra_.back().debug();
     OGL::start_viewer();
 #endif // CGAL_NEF3_VISUALIZOR
   }
@@ -665,6 +667,30 @@ public:
   bool operator>=( Nef_polyhedron_3<T>& N1) 
   { return N1.difference(*this).is_empty(); } 
 
+    void transform( const Aff_transformation_3& aff) {
+        SNC_decorator deco( snc());
+        Vertex_iterator vi = deco.vertices_begin();
+        // HACK to skip infbox, needs deco.is_infbox_vertex() test!
+        std::advance( vi, 8);
+        for ( ; vi != deco.vertices_end(); ++vi) {
+            vi->point() = vi->point().transform( aff);
+            SM_decorator sdeco;
+            for ( SVertex_iterator si = vi->svertices_begin();
+                  si != vi->svertices_end(); ++si) {
+                Sphere_point& sp = sdeco.point(si);
+                Point_3 p( sp.x(), sp.y(), sp.z());
+                p = p.transform( aff);
+                sp = Sphere_point( p.hx(), p.hy(), p.hz());
+                //sdeco.point(si) = Point_3(sdeco.point(si)).transform( aff);
+            }
+        }
+        Halffacet_iterator fi;
+        CGAL_nef3_forall_halffacets(fi,snc()) {
+            if ( ! deco.is_infbox_facet( fi))
+                fi->plane() = fi->plane().transform( aff);
+        }
+    }
+
   /*{\Mtext \headerline{Exploration}
   As Nef polyhedra are the result of forming complements 
   and intersections starting from a set |H| of halfspaces which are
@@ -675,6 +701,11 @@ public:
 
   /*{\Mtypes 3}*/
   //typedef typename Nef_rep::SNC_decorator SNC_decorator; // defined above
+
+    // HACK
+  typedef SNC_decorator       Explorer;
+    Explorer explorer() { return Explorer( snc()); }
+
 
   //typedef CGAL::SNC_explorer<SNC_decorator,T> SNC_explorer; //not implemented
   /*{\Mtypemember a decorator to examine the underlying plane map. 

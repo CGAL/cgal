@@ -47,8 +47,7 @@
 #include <map>
 #include <list>
 #undef _DEBUG
-#define _DEBUG 0 
-//37
+#define _DEBUG 37
 #include <CGAL/Nef_3/debug.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -255,8 +254,6 @@ public:
     s = Segment_3( s.source(), p); 
     TRACEN("shoted ray "<<s);
   }
-#undef _DEBUG
-#define _DEBUG 2
   bool does_contain_internally(const Segment_3& s, const Point_3& p) const {
     if(!s.has_on(p))
       return false;

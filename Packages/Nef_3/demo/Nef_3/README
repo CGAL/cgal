@@ -5,3 +5,39 @@ nef_3:  This program maintains a stack of Nef_3 polyhedra and accepts
 ------  a little language to manipulate this stack, load files, apply
         boolean operations, save files, etc.
 
+TODO:
+-----
+
+  - './nef_3 loadoff cube.off saveoff q.off'
+    writes cube incorrectly in reversed orientation. Since
+    './nef_3 loadoff cube.off compl saveoff q.off' also writes the cube in
+    the wrong orientation I believe the conversion from Nef to Polyhedron_3
+    is the culprit.
+
+  - './nef_3 loadoff cube.off loadoff cube2.off compl inters saveoff q.off'
+    gives the 'mark(e1)==mark(e2)' assertion. Maybe having the complement 
+    infinite volume markes is not yet supported (lack of full support for the
+    infimaximal frame).
+
+  - CGAL::Nef_polyhedron_3::transform is not complete yet
+    (I seem to miss some geometry that needs to be transformed too,
+     e.g. Sphere_circle and end-points in Sphere_segment ?)
+    Would be nice to make './nef_3 loadoff cube.off trans 1 1 1 1' work.
+
+  - An 'is_valid(bool verbose = false, int level = 0)' member function 
+    would be nice for debugging and assertions. I would suggest to
+    have something to test consistent pointers and geometry, and another
+    function to test in addition that it is a Nef_3 SNC complex (i.e. it is
+    simplified). Combined they form the is_valid() test.
+
+  - More commands, e.g.:
+      - 'include <filename>' reads <filename>, breaks it into words at 
+        whitespaces and calls 'eval( argc, argv)' recursively 
+      - 'empty' and 'full' that create the empty space and the full space
+      - 'halfspace <coefficients>' once we can handle halfspaces with infboxes
+
+  - The call to visualize never returns. That is inherent to the 'glut'
+    toolkit used. One way around could be to create a second process
+    (with fork or similar) that starts glut's main event loop. The 
+    first process then waits for the second process to stop (maybe
+    optional, that would allow in a demo to open several windows at once).

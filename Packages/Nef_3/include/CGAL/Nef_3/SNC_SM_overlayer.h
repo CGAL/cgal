@@ -41,8 +41,7 @@
 #include <CGAL/Nef_3/SNC_SM_decorator.h>
 #include <CGAL/Nef_3/SNC_SM_io_parser.h>
 #undef _DEBUG
-#define _DEBUG 8 
-//131
+#define _DEBUG 131
 #include <CGAL/Nef_3/debug.h>
 
 
