@@ -1,3 +1,9 @@
+2.66   (22 March 2002)
+- removed remaining include of Point_d.
+
+2.65   (20 March 2002)
+- removed Point_d
+
 2.64   (6 February 2002)
 - VC7 workarounds.
 

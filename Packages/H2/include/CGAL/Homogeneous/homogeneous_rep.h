@@ -33,7 +33,6 @@
 
 #include <CGAL/representation_tags.h>
 #include <CGAL/Kernel/function_objects.h>
-#include <CGAL/PointHd.h>
 
 #include <CGAL/ConicHPA2.h>
 
