@@ -126,5 +126,6 @@ int main(int argc, char *argv[])
  W.display();
  pthread_join(W.get_window_thread(), NULL);
  // W.main_loop();
+ return 0; // to satisfy MSVC...
 }
 
