@@ -1,3 +1,6 @@
+24 August 2004 Andreas Fabri
+- changes in doc_tex for pdflatex
+
 9 August 2004 Andreas Fabri
 - Removed const from return value in order to avoid a warning on MipsPro
 - Added #include <cstddef> in order to have std::ptrdiff_t
