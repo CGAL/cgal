@@ -1,4 +1,8 @@
 -----
+* 2.4 *
++ Replaced const casting by mutable keyword.
+
+-----
 * 2.3 *
 + Intersections involving bounding boxes now include Cartesian.h.
   They are not included by <CGAL/intersections_2.h> anymore.
