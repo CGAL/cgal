@@ -20,18 +20,9 @@
 #ifndef CGAL_IO_PM_WINDOW_STREAM_H
 #define CGAL_IO_PM_WINDOW_STREAM_H
 
-#ifndef CGAL_PLANAR_MAP_2_H
 #include <CGAL/Planar_map_2.h>
-#endif
-
-#ifndef CGAL_IO_PM_DRAWER_H
 #include <CGAL/IO/Pm_drawer.h>
-#endif
-
-#ifndef CGAL_IO_DRAW_PM_H
 #include  <CGAL/IO/draw_pm.h>
-#endif
-
 #include <CGAL/IO/Window_stream.h>
 
 CGAL_BEGIN_NAMESPACE
