@@ -76,17 +76,6 @@ public:
     set_scale_center(xcentre, ycentre);
   };
 
-  void back(){
-    if(history.back())
-      set_window_p(history.get_atom()->x1(), history.get_atom()->x2(),
-                history.get_atom()->y1(), history.get_atom()->y2());
-  }
-  void forward(){
-    if(history.forward())
-      set_window_p(history.get_atom()->x1(), history.get_atom()->x2(),
-                history.get_atom()->y1(), history.get_atom()->y2());
-  }
-
   // painting system
   inline QPainter& get_painter() { return (*painter); };
   inline QPixmap& get_pixmap() { return (*pixmap); };
@@ -193,6 +182,16 @@ signals:
 public slots:
   void print_to_ps();
   virtual void redraw();
+  void back(){
+    if(history.back())
+      set_window_p(history.get_atom()->x1(), history.get_atom()->x2(),
+                history.get_atom()->y1(), history.get_atom()->y2());
+  }
+  void forth(){
+    if(history.forward())
+      set_window_p(history.get_atom()->x1(), history.get_atom()->x2(),
+                history.get_atom()->y1(), history.get_atom()->y2());
+  }
 protected:
   void paintEvent(QPaintEvent *e);
   void resizeEvent(QResizeEvent *e);

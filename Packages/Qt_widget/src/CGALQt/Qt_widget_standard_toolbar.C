@@ -134,7 +134,7 @@ namespace CGAL {
   }
     void Qt_widget_standard_toolbar::forward()
   {
-    widget->forward();
+    widget->forth();
     widget->redraw();
   }
 
