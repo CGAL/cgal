@@ -14,14 +14,11 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 #           -O2 -NDEBUG \
+#           -DCGAL_NEF3_INTERSECTION_BY_KDTREE \
 
 CXXFLAGS = \
-           -DCGAL_NEF3_INTERSECTION_BY_KDTREE \
-           -DCGAL_NEF3_OVERLAY_IF_NEEDED_OFF \
            -DCGAL_NEF3_OVERLAY_BY_HAND_OFF \
            -DCGAL_NEF3_DUMP_STATISTICS \
-           -DCGAL_NEF3_SPHERE_SWEEP_OPTIMIZATION_OFF \
-           -DCGAL_NEF3_PLANE_SWEEP_OPTIMIZATION_OFF \
            -DCGAL_NEF3_TIMER_INITIALIZE_KDTREE \
            -DCGAL_NEF3_TIMER_PLANE_SWEEPS \
            -DCGAL_NEF3_TIMER_SPHERE_SWEEPS \
@@ -32,9 +29,8 @@ CXXFLAGS = \
            -DCGAL_NEF3_TIMER_OVERLAY \
 	   -DCGAL_NEF3_TIMER_BINARY_OPERATION \
 	   -DCGAL_NEF3_BOX_INTERSECTION_CUTOFF=1000 \
-           -DCGAL_NEF3_USE_GMPZ \
+           -DCGAL_NEF3_USE_LEDA_INTEGER \
            -DCGAL_NEF3_USE_HOMOGENEOUS \
-           -I/home/hachenb/CGAL/Nef_2/include \
            -I/home/hachenb/CGAL/Nef_3/include \
            -I/home/hachenb/CGAL/Nef_S2/include \
            $(CGAL_CXXFLAGS) \

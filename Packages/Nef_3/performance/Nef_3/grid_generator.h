@@ -149,17 +149,26 @@ public:
     return add_string_and_int(SFI(v,verbose),offset);
   } 
 
- template <typename Iter, typename Index>
-    void output_sorted_indexes(Iter begin, Iter end, Index i, int offset) const {
-    int low = i[begin];
-    int high = low;
-    for(Iter it=begin; it != end; it++) {
-      if(i[it] < low) low = i[it];
-      if(i[it] > high) high = i[it];
-    }
-    out << low+offset << " " << high+offset << ", ";
+  bool is_zero(Volume_iterator c) const {
+    std::string s(CI(c,verbose));
+    int i = atoi(s.c_str());
+    return (i== 0);
   }
 
+ template <typename Iter, typename Index>
+    void output_sorted_indexes(Iter begin, Iter end, Index i, int offset) const {
+   std::string s(i(begin,verbose));
+   int low = atoi(s.c_str());
+   int high = low;
+   for(Iter it=begin; it != end; it++) {
+     s = i(it,verbose);
+     int t = atoi(s.c_str());
+     if(t < low) low = t;
+     if(t > high) high = t;
+   }
+   out << low+offset << " " << high+offset << ", ";
+ }
+ 
   void print_vertex(Vertex_handle v, const Aff_transformation_3& aff) const { 
     // syntax: index { svs sve, ses see, sfs sfe, sl | point } mark
     SM_decorator SD(&*v);
@@ -171,17 +180,17 @@ public:
 			    v->shalfedges_end(), SEI, sedge_offset);
       output_sorted_indexes(v->sfaces_begin(), 
 			    v->sfaces_end(), SFI, sface_offset);
-      out << index(SD.shalfloop())+sloop_offset << " | ";
+      out << index(SD.shalfloop(),sloop_offset) << " | ";
     }
     else {
       out 
-	<< index(v->svertices_begin())+edge_offset << " "
-	<< index(v->svertices_last())+edge_offset << ", "
-	<< index(v->shalfedges_begin())+sedge_offset << " "
-	<< index(v->shalfedges_last())+sedge_offset << ", "
-	<< index(v->sfaces_begin())+sface_offset << " "
-	<< index(v->sfaces_last())+sface_offset << ", "
-	<< index(SD.shalfloop())+sloop_offset << " | ";
+	<< index(v->svertices_begin(),edge_offset) << " "
+	<< index(v->svertices_last(),edge_offset) << ", "
+	<< index(v->shalfedges_begin(),sedge_offset) << " "
+	<< index(v->shalfedges_last(),sedge_offset) << ", "
+	<< index(v->sfaces_begin(),sface_offset) << " "
+	<< index(v->sfaces_last(),sface_offset) << ", "
+	<< index(SD.shalfloop(),sloop_offset) << " | ";
     }
     Point_3 p(point(v));
     p=p.transform(aff);
@@ -198,11 +207,11 @@ public:
   void print_edge(Halfedge_handle e) const {
     // syntax: index { twin, source, isolated incident_object | spoint } mark
     SM_decorator D(&*vertex(e));
-    out << index(e)+edge_offset << " { " 
-	<< index(twin(e))+edge_offset << ", "
-	<< index(source(e))+vertex_offset << ", ";
-    if ( D.is_isolated(e) ) out << "1 " << index(D.face(e))+sface_offset;
-    else out << "0 " << index(D.first_out_edge(e))+sedge_offset;
+    out << index(e,edge_offset) << " { " 
+	<< index(twin(e),edge_offset) << ", "
+	<< index(source(e),vertex_offset) << ", ";
+    if ( D.is_isolated(e) ) out << "1 " << index(D.face(e),sface_offset);
+    else out << "0 " << index(D.first_out_edge(e),sedge_offset);
     out << " | ";
     if(reduce) {
       Standard_vector p(Infi_box::standard_vector(e->vector()));
@@ -217,18 +226,18 @@ public:
 
   void print_facet(Halffacet_handle f, const Aff_transformation_3& aff) const { 
     // syntax: index { twin, fclist, ivlist, volume | plane } mark
-    out << index(f)+facet_offset << " { "; 
-    out << index(twin(f))+facet_offset << ", ";
+    out << index(f,facet_offset) << " { "; 
+    out << index(twin(f),facet_offset) << ", ";
     Halffacet_cycle_iterator it; 
     CGAL_forall_facet_cycles_of(it,f)
       if ( it.is_shalfedge() ) 
-	out << index(SHalfedge_handle(it))+sedge_offset << ' ';
+	out << index(SHalfedge_handle(it),sedge_offset) << ' ';
     out << ", ";
     CGAL_forall_facet_cycles_of(it,f)
       if ( it.is_shalfloop() ) 
-	out << index(SHalfloop_handle(it))+sloop_offset << ' ';
+	out << index(SHalfloop_handle(it),sloop_offset) << ' ';
     out << ", " 
-	<< (index(volume(f))==0?0:index(volume(f))+volume_offset)
+	<< (is_zero(volume(f))?"0":index(volume(f),volume_offset))
 	<< " | ";
     Plane_3 p(plane(f));
     p=p.transform(aff);
@@ -242,28 +251,43 @@ public:
     out << " } " << mark(f) << std::endl;
   }
 
+  void print_outer_volume(int n) const {
+    Volume_handle c = *CL.begin();
+    out << index(c,volume_offset) << " { ";     
+    Shell_entry_iterator it;
+    int offset=0;
+    for(int i=0; i<n; ++i) {
+      CGAL_forall_shells_of(it,c) {
+	out << index(SFace_handle(it),offset) << ' ';
+      }
+      offset+=SFL.size();
+    }
+    out << "} " << mark(c) << std::endl;
+  }
+
   void print_volume(Volume_handle c) const {
     // syntax: index { shlist } mark
-    out << index(c)+volume_offset << " { "; 
+    out << index(c,volume_offset) << " { "; 
     Shell_entry_iterator it;
     CGAL_forall_shells_of(it,c) 
-      if(!reduce || Infi_box::is_standard(point(vertex(SFace_handle(it)))))
-	out << index(SFace_handle(it))+sface_offset << ' ';
+      if(!reduce || Infi_box::is_standard(point(vertex(SFace_handle(it))))) {
+	out << index(SFace_handle(it),sface_offset) << ' ';
+      }
     out << "} " << mark(c) << std::endl;
   }
 
   void print_sedge(SHalfedge_handle e) const { 
     //index { twin, sprev, snext, source, sface, prev, next, facet | circle } mark
     SM_decorator D(&*vertex(e));
-    out << index(e)+sedge_offset << " { "
-	<< index(D.twin(e))+sedge_offset << ", " 
-	<< index(D.previous(e))+sedge_offset << ", " 
-	<< index(D.next(e))+sedge_offset << ", "
-	<< index(D.source(e))+edge_offset << ", " 
-	<< index(D.face(e))+sface_offset << ", "
-	<< index(previous(e))+sedge_offset << ", " 
-	<< index(next(e))+sedge_offset << ", "
-	<< index(facet(e))+facet_offset 
+    out << index(e,sedge_offset) << " { "
+	<< index(D.twin(e),sedge_offset) << ", " 
+	<< index(D.previous(e),sedge_offset) << ", " 
+	<< index(D.next(e),sedge_offset) << ", "
+	<< index(D.source(e),edge_offset) << ", " 
+	<< index(D.face(e),sface_offset) << ", "
+	<< index(previous(e),sedge_offset) << ", " 
+	<< index(next(e),sedge_offset) << ", "
+	<< index(facet(e),facet_offset) 
 	<< " | ";
     if(reduce) {
       Standard_plane p(Infi_box::standard_plane(circle(e)));
@@ -279,10 +303,10 @@ public:
   void print_sloop(SHalfloop_handle l) const {
     // syntax: index { twin, sface, facet | circle } mark
     SM_decorator D(&*vertex(l));
-    out << index(l)+sloop_offset << " { "
-	<< index(D.twin(l))+sloop_offset << ", " 
-	<< index(D.face(l))+sface_offset << ", "
-	<< index(facet(l))+facet_offset 
+    out << index(l,sloop_offset) << " { "
+	<< index(D.twin(l),sloop_offset) << ", " 
+	<< index(D.face(l),sface_offset) << ", "
+	<< index(facet(l),facet_offset) 
 	<< " | ";  
     if(reduce) {
       Standard_plane p(Infi_box::standard_plane(circle(l)));
@@ -298,22 +322,22 @@ public:
   void print_sface(SFace_handle f) const {
     // syntax: index { vertex, fclist, ivlist, sloop, volume }
     SM_decorator D(&*f->center_vertex());
-    out << index(f)+sface_offset << " { " 
-	<< index(f->center_vertex())+vertex_offset << ", "; 
+    out << index(f,sface_offset) << " { " 
+	<< index(f->center_vertex(),vertex_offset) << ", "; 
     SFace_cycle_iterator it;
     CGAL_forall_sface_cycles_of(it,f)
       if ( it.is_shalfedge() ) 
-	out << index(SHalfedge_handle(it))+sedge_offset << ' ';
+	out << index(SHalfedge_handle(it),sedge_offset) << ' ';
     out << ", ";
     CGAL_forall_sface_cycles_of(it,f)
       if ( it.is_svertex() ) 
-	out << index(SVertex_handle(it))+edge_offset << ' ';
+	out << index(SVertex_handle(it),edge_offset) << ' ';
     out << ", ";
     CGAL_forall_sface_cycles_of(it,f)
       if ( it.is_shalfloop() ) 
-	out << index(SHalfloop_handle(it))+sloop_offset;
-    out << ", " 
-	<< (index(volume(f))==0?0:index(volume(f))+volume_offset)
+	out << index(SHalfloop_handle(it),sloop_offset);
+    out << ", "
+	<< (is_zero(volume(f))?"0":index(volume(f),volume_offset)) 
 	<< " } " 
 	<< D.mark(f) <<"\n";
   }
@@ -490,7 +514,9 @@ public:
 	for(int dz=0; dz < nz; ++dz) {
 	  typename std::list<Volume_iterator>::const_iterator c;
 	  c=CL.begin();
-	  if(!first) c++;
+	  if(first)
+	    print_outer_volume(nx*ny*nz);
+	  c++;
 	  for(;c!=CL.end();c++)
 	    print_volume(*c);
 	  volume_offset+=CL.size()-1;

@@ -27,11 +27,11 @@ class tetrahedron_generator {
   std::ostream& out;
 
   void transform(Point_3& p, int sx, int sy, int sz, RT& s) {
-    p = p.transform(Aff_transformation_3(CGAL::TRANSLATION, Vector_3(sx*2*s+s,sy*2*s+s,sz*2*s+s)));
+    p = p.transform(Aff_transformation_3(CGAL::TRANSLATION, Vector_3(sx*2*s+s,sy*2*s+s,sz*2*s+s,2)));
   }
   
   void create_tetra(int sx, int sy, int sz, RT s) {
-    Point_source P(CGAL::to_double(s));
+    Point_source P(CGAL::to_double(s)/2);
     Point_3 ps[4];
 
     for(int i=0; i<4; ++i) {
@@ -39,10 +39,16 @@ class tetrahedron_generator {
       transform(p,sx,sy,sz,s);
       ps[i] = p;
     }
-
+      
     while(ps[0]==ps[1]) {
       ps[1] = *P++;
       transform(ps[1],sx,sy,sz,s);
+    }
+      
+    if(CGAL::lexicographically_xyz_smaller(ps[1],ps[0])) {
+      Point_3 p = ps[0];
+      ps[0] = ps[1];
+      ps[1] = p;
     }
     
     while(CGAL::collinear(ps[0],ps[1],ps[2])) {
@@ -50,17 +56,44 @@ class tetrahedron_generator {
       transform(ps[2],sx,sy,sz,s);
     }
     
+    if(CGAL::lexicographically_xyz_smaller(ps[2],ps[1])) {
+      Point_3 p = ps[1];
+      ps[1] = ps[2];
+      ps[2] = p;
+      if(CGAL::lexicographically_xyz_smaller(ps[1],ps[0])) {
+	Point_3 p = ps[0];
+	ps[0] = ps[1];
+	ps[1] = p;
+      }       
+    }
+    
     while(CGAL::orientation(ps[0],ps[1],ps[2],ps[3])==CGAL::COPLANAR) {
       ps[3] = *P++;
       transform(ps[3],sx,sy,sz,s);
     }
     
+    if(CGAL::lexicographically_xyz_smaller(ps[3],ps[1])) {
+      Point_3 p = ps[1];
+      ps[1] = ps[3];
+      ps[3] = p;
+      if(CGAL::lexicographically_xyz_smaller(ps[1],ps[0])) {
+	Point_3 p = ps[0];
+	ps[0] = ps[1];
+	ps[1] = p;
+      }       
+    }
+    
     if(CGAL::orientation(ps[0],ps[1],ps[2],ps[3])!=CGAL::POSITIVE) {
-      Point_3 p = ps[0];
-      ps[0] = ps[1];
-      ps[1] = p;
+      Point_3 p = ps[2];
+      ps[2] = ps[3];
+      ps[3] = p;
     }
     CGAL_assertion(CGAL::orientation(ps[0],ps[1],ps[2],ps[3])==CGAL::POSITIVE);
+    CGAL_assertion(CGAL::orientation(ps[2],ps[0],ps[1],ps[3])==CGAL::POSITIVE);
+    CGAL_assertion(CGAL::orientation(ps[3],ps[0],ps[2],ps[1])==CGAL::POSITIVE);
+    CGAL_assertion(CGAL::orientation(ps[1],ps[0],ps[3],ps[2])==CGAL::POSITIVE);
+    CGAL_assertion(CGAL::orientation(ps[2],ps[1],ps[3],ps[0])==CGAL::POSITIVE);
+
     for(int i=0; i<4; ++i)
       points.push_back(ps[i]);
   }
@@ -182,7 +215,10 @@ class tetrahedron_generator {
     }
     
     // print volumes
-    out << 0 << " { 1 } 0" << std::endl;
+    out << 0 << " { ";
+    for(idx = 0; idx < points.size()/4; ++idx)
+      out << idx*8+1 << " ";
+    out << "} 0" << std::endl;
     for(idx = 0; idx < points.size()/4; ++idx) 
       out << idx+1 << " { " << idx*8 << " } 1" << std::endl;
     
@@ -233,7 +269,7 @@ class tetrahedron_generator {
   tetrahedron_generator(std::ostream& o) : out(o) {}
 
   void create_tetrahedra(int nx, int ny, int nz, RT s) {
-    
+
     for(int dx=0; dx < nx; ++dx)
       for(int dy=0; dy < ny; ++dy)
 	for(int dz=0; dz < nz; ++dz) 

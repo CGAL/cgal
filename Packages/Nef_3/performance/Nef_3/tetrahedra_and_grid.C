@@ -88,6 +88,7 @@ int main(int argc, char* argv[]) {
 
   Nef_polyhedron Nin;
   std::cin >> Nin;
+  Nin.transform(Aff_transformation_3(CGAL::SCALING,2,1));
   std::ostringstream out1;
   ggen g(out1, Nin);
   g.print(nx,ny,nz);
@@ -96,13 +97,17 @@ int main(int argc, char* argv[]) {
   in1 >> N1;
   RT s = g.size_x();
   N1.transform(Aff_transformation_3(CGAL::TRANSLATION,Vector_3(s,s,s,2)));
+  //  std::cerr << N1;
+  CGAL_assertion(N1.is_valid());
 
   std::ostringstream out2;
   tgen t2(out2);
-  t2.create_tetrahedra(nx+1,ny+1,nz+1,s);
+  t2.create_tetrahedra(nx,ny,nz,s);
   std::istringstream in2(out2.str());
   Nef_polyhedron N2;
-  in2 >> N2;
+  //  in2 >> N2;
+  std::cerr << N2;
+  CGAL_assertion(N2.is_valid());
 
 #if defined CGAL_NEF3_UNION
   N1.union(N2);
@@ -113,6 +118,4 @@ int main(int argc, char* argv[]) {
 #else
   N1=N1.symmetric_difference(N2);
 #endif
-
-  std::cout << N1;
 }
