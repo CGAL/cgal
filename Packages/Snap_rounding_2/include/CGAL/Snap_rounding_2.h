@@ -35,8 +35,6 @@
 
 #endif
 
-//#include <CGAL/sweep_to_produce_planar_map_subcurves.h>
-
 //#include <CGAL/Sweep_line_tight_2.h>
 #include <CGAL/Sweep_line_2.h>
 
@@ -66,7 +64,6 @@ private:
 public:
   Segment_data();
   Segment_data(NT inp_x1,NT inp_y1,NT inp_x2,NT inp_y2);
-  void debug() const;
   NT get_x1();
   NT get_y1();
   NT get_x2();
@@ -97,7 +94,6 @@ private:
   Segment_2 *bot_seg;
 
 public:
-  void debug() const;
   template<class Out>
   void draw(Out &o) const;
   Hot_Pixel(NT inp_x,NT inp_y,NT inp_pixel_size);
@@ -252,7 +248,6 @@ private:
                          hot_pixel_dir_cmp<Rep> > &hot_pixels_intersected_set,
                          int &number_of_intersections);
 
-  void debug(std::set<Hot_Pixel<Rep>,hot_pixel_dir_cmp<Rep> > &s);
   void reroute_sr(std::set<Hot_Pixel<Rep> *,hot_pixel_dir_cmp<Rep> >
                   &inp_hot_pixels_intersected_set,std::list<Point_2>
                   &seg_output);
@@ -279,10 +274,6 @@ Segment_data<Rep_>::Segment_data(const Segment_data& other)
   x2 = other.x2;
   y2 = other.y2;
 }
-
-/*template<class Rep_>
-void Segment_data<Rep_>::debug() const {std::cerr << "Segment (" << x1 << ","
-<< y1 << "):(" << x2 << ":" << y2 << ")\n";}*/
 
 template<class Rep_>
 typename Rep_::FT Segment_data<Rep_>::get_x1() {return(x1);}
@@ -342,11 +333,6 @@ void Segment_data<Rep_>::determine_direction()
       Snap_rounding_2<Rep_>::set_direction(Snap_rounding_2<Rep_>::DOWN_LEFT);
   }
 }
-
-
-template<class Rep_>
-void Hot_Pixel<Rep_>::debug() const {std::cerr << "Hot Pixel (" << x << ":"
-                      << y << ")\n";}
 
 template<class Rep_>
 template<class Out> void Hot_Pixel<Rep_>::draw(Out &o) const
@@ -676,18 +662,6 @@ void Snap_rounding_2<Rep_>::find_intersected_hot_pixels(Segment_data<Rep_>
     }
 
     number_of_intersections = hot_pixels_intersected_set.size();
-  }
-
-template<class Rep_>
-void debug(std::set<Hot_Pixel<Rep_>,hot_pixel_dir_cmp<Rep_> > &s)
-  {
-    std::cerr << "  Debugging inp_hot_pixels_intersected_set\n";
-    for(typename std::set<Hot_Pixel<Rep_>,hot_pixel_dir_cmp<Rep_> >::
-        iterator iter = s.begin();iter != s.end();++iter) {
-      std::cerr << "    ";
-      iter->debug();
-    }
-    std::cerr << "  Finish Debugging inp_hot_pixels_intersected_set\n";
   }
 
 template<class Rep_>
