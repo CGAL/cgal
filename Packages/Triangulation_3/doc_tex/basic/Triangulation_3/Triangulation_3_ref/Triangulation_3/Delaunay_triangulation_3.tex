@@ -35,7 +35,7 @@ Inherits the types of \ccc{Triangulation_3<DelaunayTriangulationTraits_3,Triangu
 
 \ccCreation
 \ccCreationVariable{dt}  %% choose variable name
-\ccThree{Vertex_handle}{dt.remove(Pont p)toto}{}
+\ccThree{Vertex_handle}{dt.remove(Point p)toto}{}
 
 \ccConstructor{Delaunay_triangulation_3();}{default constructor.}
 
@@ -102,7 +102,6 @@ When a vertex \ccc{v} is removed from a triangulation, all the cells
 incident to \ccc{v} must be removed, and the polyhedral region
 consisting of all the tetrahedra that are incident to \ccc{v} must be
 retriangulated. 
-
 So, the problem reduces to triangulating a polyhedral
 region, while preserving its boundary, or to compute a
 \textit{constrained} triangulation. This is known to be sometimes
@@ -110,60 +109,16 @@ impossible: the Sch\"onhardt polyhedron cannot be triangulated
 \cite{s-cgehd-98}. 
 
 However, when dealing with Delaunay triangulations, the case of such
-polyhedra that cannot be retriangulated ``cannot'' happen, and a very
-efficient algorithm was recently proposed \cite{d-ddt-99} and
-implemented. At least, this is what is commonly thought. The algorithm 
-just cited uses symbolic perturbations, so that degeneracies do not
-appear, whereas \cgal\ explicitly treats all degenerate cases.
-Suppose for instance that the hole created consists of cospherical
-points, some of them being coplanar.
-Figure~\ref{Triangulation3-fig-remimpos} shows the simplest
-realization of this case. Then it is \textit{impossible} to
-triangulate the interior of the polyhedron without creating edges that
-intersect already existing edges.
-
-\begin{figure}[htbp]
-\begin{ccTexOnly}
-\begin{center} 
-\includegraphics{remimpos.eps} 
-\end{center}
-\end{ccTexOnly}
-\caption{Removal is impossible in some degenerate cases.
-\label{Triangulation3-fig-remimpos}}
-\begin{ccHtmlOnly}
-<CENTER>
-<img border=0 src="./remimpos.gif" align=center alt="Removal is impossible in some degenerate cases">
-</CENTER>
-\end{ccHtmlOnly}
-\end{figure} 
-
-It may be possible in such a case to modify the triangulation outside
-the hole so that it becomes consitent with a triangulation of the
-interior of the hole, but it might turn out that the whole
-triangulation has to be modified, for some very degenerate cases such
-as data points being the vertices of a regular grid. Finding an
-algorithm that modifies the minimum number of cells is an open problem.
-
-Anyway, \cgal\ proposes a method that removes a vertex if it is
-possible. If it is not possible, the current implementation tries to
-remove the vertex, and returns \ccc{false} as soon as it finds a facet
-that cannot form a tetrahedron inside the hole with any other vertex
-of the hole. The triangulation remains valid. ({\bf Remark:} In a previous 
-release the triangulation was then completely invalidated.) 
-
-In practical cases, the probability that such a problem arises is
-of course very low.
+polyhedra that cannot be retriangulated cannot happen, so \cgal\
+proposes a vertex removal.
 
 \ccMethod{bool remove(Vertex_handle v);}
 {Removes the vertex \ccc{v} from the triangulation and returns
-\ccc{true}, if it is possible. Otherwise, it returns false.
+\ccc{true}. It returns false if something went wrong, and in this case
+the triangulation is not modified; this should not happen, but may
+happen in denegerate cases if the arithmetic chosen is not good.
 \ccPrecond{\ccc{v} is a vertex of the triangulation and it is not the
-infinite vertex}}
-
-\textit{Note that, in the current implementation, in the case when the
-removal of a vertex changes the dimension of the triangulation, the
-handles to cells and vertices are modified. This will be solved in
-future versions.} 
+infinite vertex.}}
 
 \ccHeading{Queries}
 
