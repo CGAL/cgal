@@ -58,7 +58,7 @@ namespace CGAL {
     // default case dim=2, L2.
     Weighted_Minkowski_distance() : p(2.0), The_dimension(2) 
     { 
-         The_weights = new Weight_Vector(2);
+         The_weights = new Weight_vector(2);
          The_Weights[0]=1.0;
          The_Weights[1]=1.0;
     }

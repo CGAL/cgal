@@ -35,7 +35,7 @@ namespace CGAL {
   template <class Item> class Points_container;
 
   template <class Item> struct comp_coord_val {
-    int coord;
+    int coord; 
     comp_coord_val(const int i) : coord(i) {}
     bool operator() (const Item *a, const Item *b) {
       return (*a)[coord] < (*b)[coord];
