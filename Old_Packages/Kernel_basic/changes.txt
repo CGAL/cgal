@@ -1,5 +1,7 @@
-3.37   (?? Apr 2001)
+3.37   (1 May 2001)
 - angle().
+- compare_x_at_y()
+- Less_signed_distance_to_plane_3
 
 3.36   (27 Apr 2001)
 - Rename construct_tetrahedron_object to construct_tetrahedron_3_object.

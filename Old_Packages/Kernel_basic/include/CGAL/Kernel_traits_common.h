@@ -137,6 +137,7 @@ typedef CGALi::Compare_x                           Compare_x_2;
 typedef CGALi::Compare_y                           Compare_y_2;
 typedef CGALi::Compare_xy                          Compare_xy_2;
 typedef CGALi::Compare_y_at_x                      Compare_y_at_x_2;
+typedef CGALi::Compare_x_at_y                      Compare_x_at_y_2;
 
 CGAL_Kernel_obj(Compute_y_at_x_2, compute_y_at_x_2_object)
 CGAL_Kernel_obj(Compute_squared_distance_2, compute_squared_distance_2_object)
@@ -155,6 +156,7 @@ CGAL_Kernel_obj(Compare_x_2, compare_x_2_object)
 CGAL_Kernel_obj(Compare_y_2, compare_y_2_object)
 CGAL_Kernel_obj(Compare_xy_2, compare_xy_2_object)
 CGAL_Kernel_obj(Compare_y_at_x_2, compare_y_at_x_2_object)
+CGAL_Kernel_obj(Compare_x_at_y_2, compare_x_at_y_2_object)
 
 typedef CGALi::Compare_distance_to_point<Point_2>  Compare_distance_to_point_2;
 Compare_distance_to_point_2
@@ -380,6 +382,12 @@ Less_distance_to_point_3
 less_distance_to_point_3_object(const Point_3& p) const  // XXX
 { return Less_distance_to_point_3(p); }
 
+typedef CGALi::Less_signed_distance_to_plane<Plane_3, Point_3>  
+                                               Less_signed_distance_to_plane_3;
+Less_signed_distance_to_plane_3
+less_signed_distance_to_plane_3_object() const
+{ return Less_signed_distance_to_plane_3(); }
+
 typedef CGALi::Compare_distance_to_point<Point_3> Compare_distance_to_point_3;
 Compare_distance_to_point_3
 compare_distance_to_point_3_object(const Point_3& p) const
@@ -435,6 +443,7 @@ CGAL_Kernel_obj(Collinear_are_strictly_ordered_along_line_3,
                 collinear_are_strictly_ordered_along_line_3_object)
 CGAL_Kernel_obj(Side_of_oriented_sphere_3, side_of_oriented_sphere_3_object)
 CGAL_Kernel_obj(Side_of_bounded_sphere_3, side_of_bounded_sphere_3_object)
+
 
 typedef CGALi::Construct<Point_d>                  Construct_point_d;
 

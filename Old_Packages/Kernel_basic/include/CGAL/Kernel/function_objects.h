@@ -871,6 +871,15 @@ class Compare_distance_to_point
     T  p;
 };
 
+template <class Plane, class Point>
+class Less_signed_distance_to_plane
+{
+  public:
+    bool operator()( const Plane & p, const Point& q, const Point& r)
+    { return has_smaller_signed_dist_to_plane(p,q,r); }
+};
+
+
 class Are_ordered_along_line
 {
   public:
