@@ -48,12 +48,12 @@ struct pair {
 # endif
   pair(const _T1& __a, const _T2& __b) : first(__a), second(__b) {}
 
-#if defined (__STL_MEMBER_TEMPLATES) && defined (__STL_FUNCTION_TMPL_PARTIAL_ORDER)
+//#if defined (__STL_MEMBER_TEMPLATES) && defined (__STL_FUNCTION_TMPL_PARTIAL_ORDER)
   template <class _U1, class _U2>
   pair(const pair<_U1, _U2>& __p) : first(__p.first), second(__p.second) {}
-#endif
+//#endif
 
-  pair(const pair<_T1,_T2>& __o) : first(__o.first), second(__o.second) {}
+//  pair(const pair<_T1,_T2>& __o) : first(__o.first), second(__o.second) {}
 
   __TRIVIAL_DESTRUCTOR(pair)
 };
