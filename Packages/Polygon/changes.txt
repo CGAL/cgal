@@ -1,11 +1,14 @@
-4.22 ( 16 September 2003) [af]
+4.23 (17 Sep 2003) [af]
+- Removed Polygon_traits
+
+4.22 ( 16 Sep 2003) [af]
 - Added missing typenames
 - deduced point type from the value type of the iterator
 
-4.21 ( 16 September 2003) [af]
+4.21 ( 16 Sep 2003) [af]
 - Removed dependency on Point_2<R> in Polygon_2_algorithms.h
 
-4.20 ( 16 September 2003) [af]
+4.20 ( 16 Sep 2003) [af]
 - Removed usage of class Polygon_traits<K> 
 
 4.19 (10/09/2003) [rursu]

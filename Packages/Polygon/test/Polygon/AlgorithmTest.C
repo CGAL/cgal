@@ -132,7 +132,6 @@ int main()
   cout << "--------------------------------------------------------" << endl;
   cout << endl;
   typedef CGAL::Cartesian<double> R1;
-//  CGAL::Polygon_traits_2<R1> traits1;
 
   typedef CGAL::Point_2<R1> Point1;
   test_polygon(R1(), Point1(), "data/polygon_cartesian.dat");

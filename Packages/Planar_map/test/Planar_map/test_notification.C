@@ -117,9 +117,8 @@ public:
   typedef typename Planar_map::Traits Traits;
   
 private:
-  typedef CGAL::Polygon_traits_2<R>                     Polygon_traits;
   typedef std::list<typename Traits::Point>             Polygon_Container;
-  typedef CGAL::Polygon_2<Polygon_traits, Polygon_Container> Polygon;
+  typedef CGAL::Polygon_2<R, Polygon_Container> Polygon;
   typedef typename R::FT                                NT;
   
   /* struct less_face{

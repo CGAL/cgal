@@ -1,3 +1,6 @@
+5.153 (12 Sep 2003) [af]
+- Removed Polygon_traits
+
 - Workaround for SunPro 5.4/5.5 ICE: Moved nested class Token out of the class scope [af]
 
 5.48 (Susan)
