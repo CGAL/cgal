@@ -1,3 +1,6 @@
+2.119 (24 January 2004)
+- Workaround g++ 2.95 pickyness in static_cast<>.
+
 2.118 (19 January 2004) [mk]
 - added fixes for g++ 2.95.3 and SunPRO CC 5.3 and used the
   new macro CGAL_CFG_USING_BASE_MEMBER_BUG

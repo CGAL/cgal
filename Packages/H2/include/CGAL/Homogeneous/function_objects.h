@@ -2521,7 +2521,7 @@ namespace HomogeneousKernelFunctors {
       RT  C = qhx*rhw - qhw*rhx;
       RT  D = qhy*rhw - qhw*rhy;
 
-      return static_cast<Orientation>(CGAL_NTS compare(A*D, B*C));
+      return static_cast<Orientation>((int) CGAL_NTS compare(A*D, B*C));
     }
   };
 
@@ -2765,7 +2765,7 @@ namespace HomogeneousKernelFunctors {
 	+ i * ( b*(g*p - h*o) + f*(d*o - c*p) + n*(c*h - d*g) )
 	- m * ( b*(g*l - h*k) + f*(d*k - c*l) + j*(c*h - d*g) );
 
-      return static_cast<Oriented_side>(CGAL_NTS sign(det));
+      return static_cast<Oriented_side>((int) CGAL_NTS sign(det));
     }
   };
 
