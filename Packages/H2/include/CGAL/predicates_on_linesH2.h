@@ -81,6 +81,7 @@ compare_y(const LineH2<R>& l1,
   PointH2<R> hip = gp_linear_intersection( h1, h2 );
   return compare_y( lip, hip );
 }
+
 template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 Comparison_result
@@ -134,6 +135,7 @@ Comparison_result
 compare_x_at_y(const PointH2<R>& p,
                const LineH2<R>& h)
 {
+  typedef typename R::RT RT;
   CGAL_kernel_precondition( ! h.is_horizontal() );
   Oriented_side ors = h.oriented_side( p );
   if ( h.b() < RT(0) )
@@ -142,9 +144,9 @@ compare_x_at_y(const PointH2<R>& p,
   }
   if ( ors == ON_POSITIVE_SIDE )
   {
-      return LARGER;
+      return SMALLER;
   }
-  return ( ors == ON_NEGATIVE_SIDE ) ? SMALLER : EQUAL;
+  return ( ors == ON_NEGATIVE_SIDE ) ? LARGER : EQUAL;
 }
 
 template <class R>
