@@ -91,6 +91,19 @@
     <benchPmwxLazyQuotientCachedTight file="onebig_100_x.dat"/>
   </bench>
 
+  <bench samples="1" enable="true">
+    <benchPmwxGmpq file="onebig_100_x.dat" header="true"/>
+    <benchPmwxGmpqCached file="onebig_100_x.dat"/>
+    <benchPmwxGmpqTight file="onebig_100_x.dat"/>
+    <benchPmwxGmpqCachedTight file="onebig_100_x.dat"/>
+  </bench>
+
+  <bench samples="1" enable="true">
+    <benchPmwxLazyGmpq file="onebig_100_x.dat" header="true"/>
+    <benchPmwxLazyGmpqCached file="onebig_100_x.dat"/>
+    <benchPmwxLazyGmpqTight file="onebig_100_x.dat"/>
+    <benchPmwxLazyGmpqCachedTight file="onebig_100_x.dat"/>
+  </bench>
 
 
   <bench samples="1" enable="true">
@@ -128,5 +141,18 @@
     <benchPmwxLazyQuotientCachedTight file="random_segments_100_x.dat"/>
   </bench>
 
+  <bench samples="1" enable="true">
+    <benchPmwxGmpq file="random_segments_100_x.dat" header="true"/>
+    <benchPmwxGmpqCached file="random_segments_100_x.dat"/>
+    <benchPmwxGmpqTight file="random_segments_100_x.dat"/>
+    <benchPmwxGmpqCachedTight file="random_segments_100_x.dat"/>
+  </bench>
+
+  <bench samples="1" enable="true">
+    <benchPmwxLazyGmpq file="random_segments_100_x.dat" header="true"/>
+    <benchPmwxLazyGmpqCached file="random_segments_100_x.dat"/>
+    <benchPmwxLazyGmpqTight file="random_segments_100_x.dat"/>
+    <benchPmwxLazyGmpqCachedTight file="random_segments_100_x.dat"/>
+  </bench>
 
 </bench>
