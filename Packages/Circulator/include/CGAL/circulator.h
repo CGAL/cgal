@@ -1013,6 +1013,9 @@ private:
     I m_end;
     I current;
 
+    // The following static iterator is needed so that we have a value
+    // that can be uniquely compared (the default constructed one can be
+    // different each time).
     static I null_iterator;
 
 public:
