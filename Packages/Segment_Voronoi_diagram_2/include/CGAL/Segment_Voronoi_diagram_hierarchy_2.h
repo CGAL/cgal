@@ -114,7 +114,7 @@ protected:
 protected:
   // LOCAL VARIABLES
   //----------------
-  static const int UNDEFINED_LEVEL;
+  static const int UNDEFINED_LEVEL = -1;
 
   // here is the stack of triangulations which form the hierarchy
   Base*   hierarchy[svd_hierarchy_2__maxlevel];
@@ -358,6 +358,7 @@ CGAL_END_NAMESPACE
 #endif
 
 
+#if 0
 CGAL_BEGIN_NAMESPACE
 
 template<class Gt, class STag, class DS, class LTag>
@@ -365,7 +366,7 @@ const int
 Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS,LTag>::UNDEFINED_LEVEL = -1;
 
 CGAL_END_NAMESPACE
-
+#endif
 
 #endif // CGAL_SEGMENT_VORONOI_DIAGRAM_HIERARCHY_2_H
 
