@@ -753,9 +753,10 @@ private:
   
   bool is_attached(const Face_handle& f, int i) const 
     {
-      Bounded_side b = Gt().side_of_bounded_circle((*(((*f).vertex(cw(i))))).point(),
-						   (*(((*f).vertex(ccw(i))))).point(),
-						   (*(((*f).vertex(i)))).point());
+      Bounded_side b = 
+	Gt().side_of_bounded_circle((*(((*f).vertex(cw(i))))).point(),
+				    (*(((*f).vertex(ccw(i))))).point(),
+				    (*(((*f).vertex(i)))).point());
  
       return (b == ON_BOUNDED_SIDE) ? true : false;
     }
@@ -764,9 +765,10 @@ private:
 
   Coord_type squared_radius(const Face_handle& f) const 
     {
-      return Gt().squared_radius_smallest_circumcircle(f->vertex(0)->point(),
-						       f->vertex(1)->point(),
-						       f->vertex(2)->point());
+      return 
+	Gt().squared_radius_smallest_circumcircle(f->vertex(0)->point(),
+						  f->vertex(1)->point(),
+						  f->vertex(2)->point());
     }
 
   Coord_type squared_radius(const Face_handle& f, const int& i) const 
@@ -774,8 +776,9 @@ private:
       // should be
       // return (traits().squared_radius_smallest_circumcircle(...)
       // TBC
-      return Gt().squared_radius_smallest_circumcircle(f->vertex(ccw(i))->point(),
-						       f->vertex(cw(i))->point()) ;
+      return 
+	Gt().squared_radius_smallest_circumcircle(f->vertex(ccw(i))->point(),
+						  f->vertex(cw(i))->point());
     }
 
   //---------------------------------------------------------------------
@@ -835,17 +838,18 @@ Alpha_shape_2<Gt,Tds>::Output ()
 		  // which might be infinity 
 		  // visualize the boundary
 	  
-		  CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,
-							 (*edge_alpha_it).second.second) ==
-						REGULAR));
+		  CGAL_triangulation_assertion(
+                       (classify((*edge_alpha_it).second.first,
+				 (*edge_alpha_it).second.second) ==
+			REGULAR));
 	  
 		  // if we used Edelsbrunner and Muecke's definition
 		  // regular means incident to a higher-dimensional face
 		  // thus we would write to many vertices
 		  L.push_back((segment((*edge_alpha_it).second.first,
-				       (*edge_alpha_it).second.second)).source());
+			      (*edge_alpha_it).second.second)).source());
 		  L.push_back((segment((*edge_alpha_it).second.first,
-				       (*edge_alpha_it).second.second)).target());
+			      (*edge_alpha_it).second.second)).target());
 		}
 	    }
 	}
@@ -877,13 +881,14 @@ Alpha_shape_2<Gt,Tds>::Output ()
 		  // which might be infinity 
 		  // visualize the boundary
 		
-		  CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,
-							 (*edge_alpha_it).second.second) ==
-						REGULAR));
+		  CGAL_triangulation_assertion(
+                       (classify((*edge_alpha_it).second.first,
+				 (*edge_alpha_it).second.second) ==
+			REGULAR));
 		  L.push_back((segment((*edge_alpha_it).second.first,
-				       (*edge_alpha_it).second.second)).source());
+			      (*edge_alpha_it).second.second)).source());
 		  L.push_back((segment((*edge_alpha_it).second.first,
-				       (*edge_alpha_it).second.second)).target());
+			      (*edge_alpha_it).second.second)).target());
 		}
 	    }
 	  else 
@@ -896,16 +901,17 @@ Alpha_shape_2<Gt,Tds>::Output ()
 		  // which might be infinity 
 		  // visualize the boundary
 		
-		  CGAL_triangulation_assertion(((classify((*edge_alpha_it).second.first,
-							  (*edge_alpha_it).second.second) ==
-						 REGULAR) || 
-						(classify((*edge_alpha_it).second.first,
-							  (*edge_alpha_it).second.second) ==
-						 SINGULAR)));
+		  CGAL_triangulation_assertion(
+                       ((classify((*edge_alpha_it).second.first,
+				  (*edge_alpha_it).second.second) ==
+			 REGULAR) || 
+			(classify((*edge_alpha_it).second.first,
+				  (*edge_alpha_it).second.second) ==
+			 SINGULAR)));
 		  L.push_back((segment((*edge_alpha_it).second.first,
-				       (*edge_alpha_it).second.second)).source());
+			       (*edge_alpha_it).second.second)).source());
 		  L.push_back((segment((*edge_alpha_it).second.first,
-				       (*edge_alpha_it).second.second)).target());
+			       (*edge_alpha_it).second.second)).target());
 		}
 	    }
 
@@ -1006,11 +1012,13 @@ Alpha_shape_2<Gt,Tds>::initialize_interval_edge_map(void)
 	    {
 	      if (!is_infinite(pNeighbor)) 
 		{
-		  interval =  (is_attached(pNeighbor, pNeighbor->index(&(*pFace)))) ?
+		  interval =  (is_attached(pNeighbor,
+					   pNeighbor->index(&(*pFace)))) ?
 		    make_triple(UNDEFINED,
 				find_interval(pNeighbor), 
 				INFINITY):
-		    make_triple(squared_radius(pNeighbor, pNeighbor->index(&(*pFace))), 
+		    make_triple(squared_radius(pNeighbor, 
+					       pNeighbor->index(&(*pFace))), 
 				find_interval(pNeighbor), 
 				INFINITY);
 		}
@@ -1018,7 +1026,8 @@ Alpha_shape_2<Gt,Tds>::initialize_interval_edge_map(void)
 		{
 		  // both faces are infinite by definition unattached
 		  // the edge is finite by construction
-		  CGAL_triangulation_precondition((is_infinite(pNeighbor) && is_infinite(pFace)));
+		  CGAL_triangulation_precondition((is_infinite(pNeighbor) 
+						   && is_infinite(pFace)));
 		  interval = make_triple(
 					 squared_radius(pFace, i), 
 					 INFINITY,
@@ -1028,7 +1037,8 @@ Alpha_shape_2<Gt,Tds>::initialize_interval_edge_map(void)
 	  else 
 	    { // is_infinite(pNeighbor)
 	   
-	      CGAL_triangulation_precondition((is_infinite(pNeighbor) && !is_infinite(pFace)));
+	      CGAL_triangulation_precondition((is_infinite(pNeighbor) 
+					       && !is_infinite(pFace)));
 	      if (is_attached(pFace, i))
 		interval = make_triple(UNDEFINED,
 				       find_interval(pFace),
@@ -1340,7 +1350,9 @@ Alpha_shape_2<Gt,Tds>::get_Alpha_shape_edges(back_insert_iterator<std::list<std:
 	      // and alpha is smaller than the upper boundary
 	      // which might be infinity 
 	      // visualize the boundary
-	      CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,(*edge_alpha_it).second.second) == REGULAR));
+	      CGAL_triangulation_assertion(
+		   (classify((*edge_alpha_it).second.first,
+			     (*edge_alpha_it).second.second) == REGULAR));
 	      *result++ = Edge((*edge_alpha_it).second.first,
 			       (*edge_alpha_it).second.second);
 	    }
@@ -1370,7 +1382,9 @@ Alpha_shape_2<Gt,Tds>::get_Alpha_shape_edges(back_insert_iterator<std::list<std:
 		  // and alpha is smaller than the upper boundary
 		  // which might be infinity 
 		  // visualize the boundary
-		  CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,(*edge_alpha_it).second.second) == REGULAR));
+		  CGAL_triangulation_assertion(
+                       (classify((*edge_alpha_it).second.first,
+				 (*edge_alpha_it).second.second) == REGULAR));
 		  *result++ = Edge((*edge_alpha_it).second.first,
 				   (*edge_alpha_it).second.second);
 		}
@@ -1384,8 +1398,11 @@ Alpha_shape_2<Gt,Tds>::get_Alpha_shape_edges(back_insert_iterator<std::list<std:
 		  // if alpha is smaller than the upper boundary
 		  // which might be infinity 
 		  // visualize the boundary
-		  CGAL_triangulation_assertion(((classify((*edge_alpha_it).second.first,(*edge_alpha_it).second.second) == REGULAR)
-						|| (classify((*edge_alpha_it).second.first,(*edge_alpha_it).second.second) == SINGULAR)));
+		  CGAL_triangulation_assertion((
+                       (classify((*edge_alpha_it).second.first,
+				 (*edge_alpha_it).second.second) == REGULAR)
+		       || (classify((*edge_alpha_it).second.first,
+				    (*edge_alpha_it).second.second) == SINGULAR)));
 		  *result++ = Edge((*edge_alpha_it).second.first,
 				   (*edge_alpha_it).second.second);
 		}
@@ -1675,7 +1692,8 @@ Alpha_shape_2<Gt,Tds>::op_ostream(std::ostream& os) const
 	      // write the vertex
 
 	      v = (*vertex_alpha_it).second;
-	      CGAL_triangulation_assertion((classify(v) == Alpha_shape_2<Gt,Tds>::REGULAR));
+	      CGAL_triangulation_assertion(
+                   (classify(v) == Alpha_shape_2<Gt,Tds>::REGULAR));
 	      // if we used Edelsbrunner and Muecke's definition
 	      // regular means incident to a higher-dimensional face
 	      // we would write too many vertices
@@ -1724,9 +1742,11 @@ Alpha_shape_2<Gt,Tds>::op_ostream(std::ostream& os) const
 		  f = pNeighbor;
 		}
 	  
-	      CGAL_triangulation_assertion((classify(f) == Alpha_shape_2<Gt,Tds>::INTERIOR));
+	      CGAL_triangulation_assertion(
+                   (classify(f) == Alpha_shape_2<Gt,Tds>::INTERIOR));
 
-	      CGAL_triangulation_assertion((classify(f, i) == Alpha_shape_2<Gt,Tds>::REGULAR));
+	      CGAL_triangulation_assertion(
+                   (classify(f, i) == Alpha_shape_2<Gt,Tds>::REGULAR));
 
 	      os << V[Key(&(f->vertex(f->ccw(i))))] << ' ' 
 		 << V[Key(&(f->vertex(f->cw(i))))] << endl;
@@ -1757,7 +1777,8 @@ Alpha_shape_2<Gt,Tds>::op_ostream(std::ostream& os) const
 	      // write the vertex
 
 	      v = (*vertex_alpha_it).second;
-	      CGAL_triangulation_assertion((classify(v) == Alpha_shape_2<Gt,Tds>::REGULAR));
+	      CGAL_triangulation_assertion(
+                   (classify(v) == Alpha_shape_2<Gt,Tds>::REGULAR));
 	      V[Key(&v)] = number_of_vertices++;
 	      os << v->point() << endl;
 	    }
@@ -1770,7 +1791,8 @@ Alpha_shape_2<Gt,Tds>::op_ostream(std::ostream& os) const
 	{
 
 	  v = (*vertex_alpha_it).second;
-	  CGAL_triangulation_assertion((classify(v) == Alpha_shape_2<Gt,Tds>::SINGULAR));
+	  CGAL_triangulation_assertion(
+               (classify(v) == Alpha_shape_2<Gt,Tds>::SINGULAR));
 
 	  V[Key(&v)] = number_of_vertices++;
 	  os << v->point() << endl;
@@ -1816,20 +1838,22 @@ Alpha_shape_2<Gt,Tds>::op_ostream(std::ostream& os) const
 		  pInterval->second < get_alpha()) 
 		{
 
-		  CGAL_triangulation_assertion((classify(f, i) == Alpha_shape_2<Gt,Tds>::REGULAR));
+		  CGAL_triangulation_assertion(
+                       (classify(f, i) == Alpha_shape_2<Gt,Tds>::REGULAR));
 		  // assure that all vertices are in ccw order
 		  if (classify(f) == Alpha_shape_2<Gt,Tds>::EXTERIOR) 
 		    {
  
 		      // take the reverse face
-		      typename Alpha_shape_2<Gt,Tds>::Face_handle pNeighbor = f->neighbor(i);
+		      typename Alpha_shape_2<Gt,Tds>::Face_handle 
+			pNeighbor = f->neighbor(i);
+		      
 		      i = pNeighbor->index(&(*f));
 		      f = pNeighbor;
 		    }
 	  
-		  CGAL_triangulation_assertion((classify(f) == Alpha_shape_2<Gt,Tds>::INTERIOR));
-
-		  
+		  CGAL_triangulation_assertion(
+                       (classify(f) == Alpha_shape_2<Gt,Tds>::INTERIOR));
 
 		  os << V[Key(&(f->vertex(f->ccw(i))))] << ' ' 
 		     << V[Key(&(f->vertex(f->cw(i))))] << endl;
@@ -1843,7 +1867,8 @@ Alpha_shape_2<Gt,Tds>::op_ostream(std::ostream& os) const
 		  // write the singular edges
 		  if (pInterval->first != UNDEFINED) 
 		    {
-		      CGAL_triangulation_assertion((classify(f, i) == Alpha_shape_2<Gt,Tds>::SINGULAR));
+		      CGAL_triangulation_assertion(
+                           (classify(f, i) == Alpha_shape_2<Gt,Tds>::SINGULAR));
 		      os << V[Key(&(f->vertex(f->ccw(i))))] << ' ' 
 			 << V[Key(&(f->vertex(f->cw(i))))] << endl;
 	
@@ -1938,10 +1963,10 @@ Alpha_shape_2<Gt,Tds>::op_vect_seg(std::vector<typename Gt::Segment>& V) const
 		  // visualize the boundary
 		
 		  CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,
-							   (*edge_alpha_it).second.second) ==
+						(*edge_alpha_it).second.second) ==
 						Alpha_shape_2<Gt,Tds>::REGULAR));
 		  V.push_back(segment((*edge_alpha_it).second.first,
-					(*edge_alpha_it).second.second));
+				      (*edge_alpha_it).second.second));
 		}
 	    }
 	  else 
@@ -1955,12 +1980,14 @@ Alpha_shape_2<Gt,Tds>::op_vect_seg(std::vector<typename Gt::Segment>& V) const
 		  // which might be infinity 
 		  // visualize the boundary
 	
-		  CGAL_triangulation_assertion(((classify((*edge_alpha_it).second.first,
-							    (*edge_alpha_it).second.second) ==
-						 Alpha_shape_2<Gt,Tds>::REGULAR) || 
-						(classify((*edge_alpha_it).second.first,
-							    (*edge_alpha_it).second.second) ==
-						 Alpha_shape_2<Gt,Tds>::SINGULAR)));
+		  CGAL_triangulation_assertion(
+                       ((classify((*edge_alpha_it).second.first,
+				  (*edge_alpha_it).second.second) ==
+			 Alpha_shape_2<Gt,Tds>::REGULAR) || 
+			(classify((*edge_alpha_it).second.first,
+				  (*edge_alpha_it).second.second) ==
+			 Alpha_shape_2<Gt,Tds>::SINGULAR)));
+
 		  V.push_back(segment((*edge_alpha_it).second.first,
 					(*edge_alpha_it).second.second));
 		}

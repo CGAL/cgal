@@ -56,7 +56,8 @@ Regular_triangulation_euclidean_traits_2<R, typename R::FT>
 public: 
   
   typedef typename R::FT Coord_type;
-  typedef typename Regular_triangulation_euclidean_traits_2<R, typename R::FT>::Point Point;
+  typedef typename 
+  Regular_triangulation_euclidean_traits_2<R, typename R::FT>::Point Point;
 
   //---------------------------------------------------------------------
 

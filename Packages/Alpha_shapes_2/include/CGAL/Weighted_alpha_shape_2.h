@@ -403,7 +403,7 @@ private :
 public:
 
 
-  //---------------------- heuristic initialization of weights---------------------
+  //---------------heuristic initialization of weights----------------
 
   std::vector<Point>
   initialize_weighted_points_to_the_nearest_voronoi_vertex
@@ -586,12 +586,14 @@ public:
 public:
 
   back_insert_iterator<std::list<Vertex_handle > >
-  get_Alpha_shape_vertices(back_insert_iterator<std::list<Vertex_handle > > result) const;
+  get_Alpha_shape_vertices(
+      back_insert_iterator<std::list<Vertex_handle > > result) const;
 
   //---------------------------------------------------------------------
 
   back_insert_iterator<std::list<std::pair< Face_handle, int > > >
-  get_Alpha_shape_edges(back_insert_iterator<std::list<std::pair< Face_handle, int > > > result) const;
+  get_Alpha_shape_edges(
+      back_insert_iterator<std::list<std::pair< Face_handle, int > > > result) const;
 
   //---------------------------------------------------------------------
 
@@ -778,9 +780,10 @@ private:
 
       //Difference notable avec le power_test de Mariette Gt().power_test
 
-      Oriented_side b = Gt().in_smallest_orthogonalcircle((*(((*f).vertex(cw(i))))).point(),
-							  (*(((*f).vertex(ccw(i))))).point(),
-							  (*(((*f).vertex(i)))).point());
+      Oriented_side b = 
+	Gt().in_smallest_orthogonalcircle((*(((*f).vertex(cw(i))))).point(),
+					  (*(((*f).vertex(ccw(i))))).point(),
+					  (*(((*f).vertex(i)))).point());
       return (b == ON_NEGATIVE_SIDE) ? true : false;
     }
   
@@ -788,9 +791,10 @@ private:
 
   Coord_type smallest_power(Face_handle f) const 
     {
-      return Gt().squared_radius_smallest_orthogonalcircle((f->vertex(0))->point(),
-							   (f->vertex(1))->point(),
-							   (f->vertex(2))->point());
+      return 
+	Gt().squared_radius_smallest_orthogonalcircle((f->vertex(0))->point(),
+						      (f->vertex(1))->point(),
+						      (f->vertex(2))->point());
     }
 
   Coord_type smallest_power(Face_handle f, int i) const 
@@ -798,8 +802,9 @@ private:
       // should be
       // return (traits().squared_radius_smallest_circumcircle(...)
       // TBC
-      return Gt().squared_radius_smallest_orthogonalcircle((f->vertex(ccw(i)))->point(),
-							   (f->vertex(cw(i)))->point());
+      return 
+	Gt().squared_radius_smallest_orthogonalcircle((f->vertex(ccw(i)))->point(),
+						      (f->vertex(cw(i)))->point());
     }
 
   //---------------------------------------------------------------------
@@ -859,15 +864,18 @@ Weighted_alpha_shape_2<Gt,Tds>::Output ()
 		  // which might be infinity 
 		  // visualize the boundary
 	  
-		  CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,
-							 (*edge_alpha_it).second.second) ==
-						REGULAR));
+		  CGAL_triangulation_assertion(
+                       (classify((*edge_alpha_it).second.first,
+				 (*edge_alpha_it).second.second) ==
+			REGULAR));
 	  
 		  // if we used Edelsbrunner and Muecke's definition
 		  // regular means incident to a higher-dimensional face
 		  // thus we would write to many vertices
-		  L.push_back(((*edge_alpha_it).second.first->vertex(cw((*edge_alpha_it).second.second)))->point());
-		  L.push_back(((*edge_alpha_it).second.first->vertex(ccw((*edge_alpha_it).second.second)))->point());
+		  L.push_back(((*edge_alpha_it).second.first->
+			       vertex(cw((*edge_alpha_it).second.second)))->point());
+		  L.push_back(((*edge_alpha_it).second.first->
+			       vertex(ccw((*edge_alpha_it).second.second)))->point());
 		}
 	    }
 	}
@@ -900,10 +908,12 @@ Weighted_alpha_shape_2<Gt,Tds>::Output ()
 		  // visualize the boundary
 		
 		  CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,
-							 (*edge_alpha_it).second.second) ==
+						(*edge_alpha_it).second.second) ==
 						REGULAR));
-		  L.push_back(((*edge_alpha_it).second.first->vertex(cw((*edge_alpha_it).second.second)))->point());
-		  L.push_back(((*edge_alpha_it).second.first->vertex(ccw((*edge_alpha_it).second.second)))->point());
+		  L.push_back(((*edge_alpha_it).second.first->
+			       vertex(cw((*edge_alpha_it).second.second)))->point());
+		  L.push_back(((*edge_alpha_it).second.first->
+			       vertex(ccw((*edge_alpha_it).second.second)))->point());
 		}
 	    }
 	  else 
@@ -917,13 +927,15 @@ Weighted_alpha_shape_2<Gt,Tds>::Output ()
 		  // visualize the boundary
 		
 		  CGAL_triangulation_assertion(((classify((*edge_alpha_it).second.first,
-							  (*edge_alpha_it).second.second) ==
+						 (*edge_alpha_it).second.second) ==
 						 REGULAR) || 
 						(classify((*edge_alpha_it).second.first,
-							  (*edge_alpha_it).second.second) ==
+						 (*edge_alpha_it).second.second) ==
 						 SINGULAR)));
-		  L.push_back(((*edge_alpha_it).second.first->vertex(cw((*edge_alpha_it).second.second)))->point());
-		  L.push_back(((*edge_alpha_it).second.first->vertex(ccw((*edge_alpha_it).second.second)))->point());
+		  L.push_back(((*edge_alpha_it).second.first->
+			       vertex(cw((*edge_alpha_it).second.second)))->point());
+		  L.push_back(((*edge_alpha_it).second.first->
+			       vertex(ccw((*edge_alpha_it).second.second)))->point());
 		}
 	    }
 
@@ -963,7 +975,11 @@ Weighted_alpha_shape_2<Gt,Tds>::initialize_weighted_points_to_the_nearest_vorono
 	      if (!D.is_infinite(f))		
 		{
 		  Point p=D.dual(f);
-		  // double dd=(p.point().x()-(*point_it).point().x())*(p.point().x()-(*point_it).point().x())+(p.point().y()-(*point_it).point().y())*(p.point().y()-(*point_it).point().y());
+		  // double
+		  // dd=(p.point().x()-(*point_it).point().x())*
+		  //                       (p.point().x()-(*point_it).point().x())
+		  //+(p.point().y()-(*point_it).point().y())*
+		  //                       (p.point().y()-(*point_it).point().y());
 		  double dd=squared_distance(p,(*point_it));
 		  d=min(dd,d);
 		}
@@ -997,7 +1013,8 @@ Weighted_alpha_shape_2<Gt,Tds>::initialize_weighted_points_to_the_nearest_vorono
        point_it != last; 
        ++point_it)    
     { 
-      typename Dt_int::Face_circulator face_circ=D.incident_faces(D.nearest_vertex(*point_it)),
+      typename Dt_int::Face_circulator face_circ=
+	D.incident_faces(D.nearest_vertex(*point_it)),
 	done = face_circ;
       double d=DBL_MAX;
       double dd=DBL_MAX;
@@ -1012,9 +1029,11 @@ Weighted_alpha_shape_2<Gt,Tds>::initialize_weighted_points_to_the_nearest_vorono
 		    {
 		      typename Dt_int::Edge e(f,i);
 		      
-		      if ((!D.is_infinite(e.first))&&(!D.is_infinite(e.first->neighbor(e.second))))			
+		      if ((!D.is_infinite(e.first))&&
+			  (!D.is_infinite(e.first->neighbor(e.second))))
 			{
-			  typename Gt::Segment seg(D.dual(e.first),D.dual(e.first->neighbor(e.second)));
+			  typename Gt::Segment seg(D.dual(e.first),
+						   D.dual(e.first->neighbor(e.second)));
 			  dd=squared_distance(seg,*point_it);
 			}
 		      d=min(dd,d);
@@ -1059,8 +1078,10 @@ Weighted_alpha_shape_2<Gt,Tds>::initialize_weighted_points_to_the_nearest_vertex
       Point neighbor=D.nearest_vertex(*point_it)->point();
 
       V.push_back(Point((*point_it).point(),
-			((neighbor.point().x()-(*point_it).point().x())*(neighbor.point().x()-(*point_it).point().x())
-			 +(neighbor.point().y()-(*point_it).point().y())*(neighbor.point().y()-(*point_it).point().y()))));
+			((neighbor.point().x()-(*point_it).point().x())*
+			 (neighbor.point().x()-(*point_it).point().x())
+			 +(neighbor.point().y()-(*point_it).point().y())*
+			 (neighbor.point().y()-(*point_it).point().y()))));
 
       D.insert(*point_it);
     }
@@ -1093,8 +1114,10 @@ Weighted_alpha_shape_2<Gt,Tds>::initialize_weighted_points_to_the_nearest_vertex
       Point neighbor=D.nearest_vertex(*point_it)->point();
 
       V.push_back(Point((*point_it).point(),
-			((neighbor.point().x()-(*point_it).point().x())*(neighbor.point().x()-(*point_it).point().x())
-			 +(neighbor.point().y()-(*point_it).point().y())*(neighbor.point().y()-(*point_it).point().y()))));
+			((neighbor.point().x()-(*point_it).point().x())*
+			 (neighbor.point().x()-(*point_it).point().x())
+			 +(neighbor.point().y()-(*point_it).point().y())*
+			 (neighbor.point().y()-(*point_it).point().y()))));
 
       D.insert(*point_it);
     }
@@ -1205,7 +1228,8 @@ Weighted_alpha_shape_2<Gt,Tds>::initialize_interval_edge_map(void)
 		{
 		  // both faces are infinite by definition unattached
 		  // the edge is finite by construction
-		  CGAL_triangulation_precondition((is_infinite(pNeighbor) && is_infinite(pFace)));
+		  CGAL_triangulation_precondition(
+                       (is_infinite(pNeighbor) && is_infinite(pFace)));
 		  interval = make_triple(smallest_power(pFace, i), 
 					 INFINITY,
 					 INFINITY);
@@ -1213,7 +1237,8 @@ Weighted_alpha_shape_2<Gt,Tds>::initialize_interval_edge_map(void)
 	    }
 	  else
 	    { // is_infinite(pNeighbor)
-	      CGAL_triangulation_precondition((is_infinite(pNeighbor) && !is_infinite(pFace)));
+	      CGAL_triangulation_precondition(
+                   (is_infinite(pNeighbor) && !is_infinite(pFace)));
 	      if (is_attached(pFace, i))
 		interval = make_triple(UNDEFINED,
 				       find_interval(pFace),
@@ -1497,7 +1522,8 @@ Weighted_alpha_shape_2<Gt,Tds>::get_Alpha_shape_vertices
 //-----------------------------------------------------------------------
 
 template<class Gt, class Tds>
-back_insert_iterator<std::list<std::pair<Weighted_alpha_shape_2<Gt,Tds>::Face_handle, int > > >
+back_insert_iterator
+<std::list<std::pair<typename Weighted_alpha_shape_2<Gt,Tds>::Face_handle, int > > >
 Weighted_alpha_shape_2<Gt,Tds>::get_Alpha_shape_edges
 (back_insert_iterator<std::list<std::pair< Face_handle, int > > > result) const 
 {
@@ -1538,7 +1564,9 @@ Weighted_alpha_shape_2<Gt,Tds>::get_Alpha_shape_edges
 	      // which might be infinity 
 	      // visualize the boundary
 
-	      CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,(*edge_alpha_it).second.second) == REGULAR));
+	      CGAL_triangulation_assertion(
+                   (classify((*edge_alpha_it).second.first,
+			     (*edge_alpha_it).second.second) == REGULAR));
 	      *result++ = Edge((*edge_alpha_it).second.first,
 			       (*edge_alpha_it).second.second);
 	    }
@@ -1572,7 +1600,9 @@ Weighted_alpha_shape_2<Gt,Tds>::get_Alpha_shape_edges
 		  // which might be infinity 
 		  // visualize the boundary
 	  
-		  CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,(*edge_alpha_it).second.second) == REGULAR));
+		  CGAL_triangulation_assertion(
+                       (classify((*edge_alpha_it).second.first,
+				 (*edge_alpha_it).second.second) == REGULAR));
 		  *result++ = Edge((*edge_alpha_it).second.first,
 				   (*edge_alpha_it).second.second);
 		}
@@ -1587,8 +1617,11 @@ Weighted_alpha_shape_2<Gt,Tds>::get_Alpha_shape_edges
 		  // which might be infinity 
 		  // visualize the boundary
 
-		  CGAL_triangulation_assertion(((classify((*edge_alpha_it).second.first,(*edge_alpha_it).second.second) == REGULAR) 
-						|| (classify((*edge_alpha_it).second.first,(*edge_alpha_it).second.second) == SINGULAR)));
+		  CGAL_triangulation_assertion(
+                       ((classify((*edge_alpha_it).second.first,
+				  (*edge_alpha_it).second.second) == REGULAR) 
+			|| (classify((*edge_alpha_it).second.first,
+				     (*edge_alpha_it).second.second) == SINGULAR)));
 		  *result++ = Edge((*edge_alpha_it).second.first,
 				   (*edge_alpha_it).second.second);
 		}
@@ -1768,7 +1801,8 @@ Weighted_alpha_shape_2<Gt,Tds>::find_optimal_alpha(int nb_components)
 #ifdef DEBUG
       std::cerr << "first : " << *first << " last : " << *(first+len)
 		<< " mid : " << *middle 
-		<< " nb comps : " << number_solid_components(*middle) << std::endl;
+		<< " nb comps : " << number_solid_components(*middle) 
+		<< std::endl;
 #endif // DEBUG
     
       if (number_solid_components(*middle) > nb_components) 
@@ -1833,7 +1867,9 @@ std::ostream&
 Weighted_alpha_shape_2<Gt,Tds>::op_ostream (std::ostream& os) const
 {
   
-  typedef typename Weighted_alpha_shape_2<Gt, Tds>::Interval_vertex_map Interval_vertex_map ;
+  typedef typename Weighted_alpha_shape_2<Gt, Tds>::Interval_vertex_map 
+    Interval_vertex_map ;
+
   typename Interval_vertex_map::const_iterator vertex_alpha_it;
   
   const typename Weighted_alpha_shape_2<Gt, Tds>::Interval2* pInterval2;
@@ -1849,7 +1885,9 @@ Weighted_alpha_shape_2<Gt,Tds>::op_ostream (std::ostream& os) const
 #endif
   int number_of_vertices = 0;
       
-  typedef typename Weighted_alpha_shape_2<Gt, Tds>::Interval_edge_map Interval_edge_map;
+  typedef typename Weighted_alpha_shape_2<Gt, Tds>::Interval_edge_map 
+    Interval_edge_map;
+
   typename Interval_edge_map::const_iterator edge_alpha_it;
 
   const typename Weighted_alpha_shape_2<Gt,Tds>::Interval3* pInterval;
@@ -1884,7 +1922,8 @@ Weighted_alpha_shape_2<Gt,Tds>::op_ostream (std::ostream& os) const
 	      // write the vertex
 
 	      v = (*vertex_alpha_it).second;
-	      CGAL_triangulation_assertion((A.classify(v) == Weighted_alpha_shape_2<Gt,Tds>::REGULAR));
+	      CGAL_triangulation_assertion(
+                   (A.classify(v) == Weighted_alpha_shape_2<Gt,Tds>::REGULAR));
 	      // if we used Edelsbrunner and Muecke's definition
 	      // regular means incident to a higher-dimensional face
 	      // we would write too many vertices
@@ -1929,14 +1968,18 @@ Weighted_alpha_shape_2<Gt,Tds>::op_ostream (std::ostream& os) const
 		{
 	  
 		  // take the reverse face
-		  typename Weighted_alpha_shape_2<Gt,Tds>::Face_handle pNeighbor = f->neighbor(i);
+		  typename Weighted_alpha_shape_2<Gt,Tds>::Face_handle 
+		    pNeighbor = f->neighbor(i);
+
 		  i = pNeighbor->index(&(*f));
 		  f = pNeighbor;
 		}
 	
-	      CGAL_triangulation_assertion((A.classify(f) == Weighted_alpha_shape_2<Gt,Tds>::INTERIOR));
+	      CGAL_triangulation_assertion(
+                   (A.classify(f) == Weighted_alpha_shape_2<Gt,Tds>::INTERIOR));
 
-	      CGAL_triangulation_assertion((A.classify(f, i) == Weighted_alpha_shape_2<Gt,Tds>::REGULAR));
+	      CGAL_triangulation_assertion(
+                   (A.classify(f, i) == Weighted_alpha_shape_2<Gt,Tds>::REGULAR));
 		  
 	      os << V[Key(&(f->vertex(f->ccw(i))))] << ' ' 
 		 << V[Key(&(f->vertex(f->cw(i))))] << endl;
@@ -1966,7 +2009,8 @@ Weighted_alpha_shape_2<Gt,Tds>::op_ostream (std::ostream& os) const
 	      // write the vertex
 	
 	      v = (*vertex_alpha_it).second;
-	      CGAL_triangulation_assertion((A.classify(v) == Weighted_alpha_shape_2<Gt,Tds>::REGULAR));
+	      CGAL_triangulation_assertion(
+                   (A.classify(v) == Weighted_alpha_shape_2<Gt,Tds>::REGULAR));
 	      V[Key(&v)] = number_of_vertices++;
 	      os << v->point() << endl;
 	    }
@@ -1979,7 +2023,8 @@ Weighted_alpha_shape_2<Gt,Tds>::op_ostream (std::ostream& os) const
 	{
       
 	  v = (*vertex_alpha_it).second;
-	  CGAL_triangulation_assertion((A.classify(v) == Weighted_alpha_shape_2<Gt,Tds>::SINGULAR));
+	  CGAL_triangulation_assertion(
+               (A.classify(v) == Weighted_alpha_shape_2<Gt,Tds>::SINGULAR));
       
 	  V[Key(&v)] = number_of_vertices++;
 	  os << v->point() << endl;
@@ -2025,21 +2070,23 @@ Weighted_alpha_shape_2<Gt,Tds>::op_ostream (std::ostream& os) const
 		  pInterval->second < A.get_alpha()) 
 		{
 	  
-		  CGAL_triangulation_assertion((A.classify(f, i) == Weighted_alpha_shape_2<Gt,Tds>::REGULAR));
+		  CGAL_triangulation_assertion(
+                       (A.classify(f, i) == Weighted_alpha_shape_2<Gt,Tds>::REGULAR));
 		  // assure that all vertices are in ccw order
 		  if (A.classify(f) ==
 		      Weighted_alpha_shape_2<Gt,Tds>::EXTERIOR) 
 		    {
  
 		      // take the reverse face
-		      typename Weighted_alpha_shape_2<Gt,Tds>::Face_handle pNeighbor = f->neighbor(i);
+		      typename Weighted_alpha_shape_2<Gt,Tds>::Face_handle 
+			pNeighbor = f->neighbor(i);
+
 		      i = pNeighbor->index(&(*f));
 		      f = pNeighbor;
 		    }
 	  
-		  CGAL_triangulation_assertion((A.classify(f) == Weighted_alpha_shape_2<Gt,Tds>::INTERIOR));
-
-		  
+		  CGAL_triangulation_assertion(
+                       (A.classify(f) == Weighted_alpha_shape_2<Gt,Tds>::INTERIOR));
 
 		  os << V[Key(&(f->vertex(f->ccw(i))))] << ' ' 
 		     << V[Key(&(f->vertex(f->cw(i))))] << endl;
@@ -2054,7 +2101,8 @@ Weighted_alpha_shape_2<Gt,Tds>::op_ostream (std::ostream& os) const
 		  if (pInterval->first != A.UNDEFINED) 
 		    {
 	    
-		      CGAL_triangulation_assertion((A.classify(f, i) == Weighted_alpha_shape_2<Gt,Tds>::SINGULAR));
+		      CGAL_triangulation_assertion(
+                           (A.classify(f, i) == Weighted_alpha_shape_2<Gt,Tds>::SINGULAR));
 		      os << V[Key(&(f->vertex(f->ccw(i))))] << ' ' 
 			 << V[Key(&(f->vertex(f->cw(i))))] << endl;
 	

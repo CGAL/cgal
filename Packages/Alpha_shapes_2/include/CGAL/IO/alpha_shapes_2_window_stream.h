@@ -70,9 +70,10 @@ Alpha_shape_2<Gt,Tds>::op_window(Window_stream& W) const
 	      // which might be infinity 
 	      // visualize the boundary
 	    
-	      CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,
-						       (*edge_alpha_it).second.second) ==
-					    Alpha_shape_2<Gt,Tds>::REGULAR));
+	      CGAL_triangulation_assertion(
+		   (classify((*edge_alpha_it).second.first,
+			     (*edge_alpha_it).second.second) ==
+		    Alpha_shape_2<Gt,Tds>::REGULAR));
 	      // if we used Edelsbrunner and Muecke's definition
 	      // regular means incident to a higher-dimensional face
 	      // thus we would write to many vertices
@@ -109,9 +110,10 @@ Alpha_shape_2<Gt,Tds>::op_window(Window_stream& W) const
 		  // which might be infinity 
 		  // visualize the boundary
 		
-		  CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,
-							   (*edge_alpha_it).second.second) ==
-						Alpha_shape_2<Gt,Tds>::REGULAR));
+		  CGAL_triangulation_assertion(
+                       (classify((*edge_alpha_it).second.first,
+				 (*edge_alpha_it).second.second) ==
+			Alpha_shape_2<Gt,Tds>::REGULAR));
 		  W << segment((*edge_alpha_it).second.first,
 				 (*edge_alpha_it).second.second);
 		}
@@ -127,17 +129,17 @@ Alpha_shape_2<Gt,Tds>::op_window(Window_stream& W) const
 		  // which might be infinity 
 		  // visualize the boundary
 		
-		  CGAL_triangulation_assertion(((classify((*edge_alpha_it).second.first,
-							    (*edge_alpha_it).second.second) ==
-						 Alpha_shape_2<Gt,Tds>::REGULAR) || 
-						(classify((*edge_alpha_it).second.first,
-							    (*edge_alpha_it).second.second) ==
-						 Alpha_shape_2<Gt,Tds>::SINGULAR)));
+		  CGAL_triangulation_assertion(
+                       ((classify((*edge_alpha_it).second.first,
+				  (*edge_alpha_it).second.second) ==
+			 Alpha_shape_2<Gt,Tds>::REGULAR) || 
+			(classify((*edge_alpha_it).second.first,
+				  (*edge_alpha_it).second.second) ==
+			 Alpha_shape_2<Gt,Tds>::SINGULAR)));
 		  W << segment((*edge_alpha_it).second.first,
 				 (*edge_alpha_it).second.second);
 		}
 	    }
-
 	}
     }
 
@@ -146,8 +148,7 @@ Alpha_shape_2<Gt,Tds>::op_window(Window_stream& W) const
   for (vertex_alpha_it = _interval_vertex_map.begin(); 
        vertex_alpha_it != _interval_vertex_map.end();
        ++vertex_alpha_it) 
-    {
-	
+    {	
       v = (*vertex_alpha_it).second;
       W << v->point();
     }
@@ -182,10 +183,14 @@ Window_stream&
 Weighted_alpha_shape_2<Gt,Tds>::op_window(Window_stream& W) const
 {
 
-  typedef typename Weighted_alpha_shape_2<Gt,Tds>::Interval_vertex_map Interval_vertex_map;
+  typedef 
+    typename Weighted_alpha_shape_2<Gt,Tds>::Interval_vertex_map Interval_vertex_map;
+
   typename Interval_vertex_map::const_iterator vertex_alpha_it;
 
-  typedef  typename Weighted_alpha_shape_2<Gt,Tds>::Interval_edge_map Interval_edge_map;
+  typedef  
+    typename Weighted_alpha_shape_2<Gt,Tds>::Interval_edge_map Interval_edge_map;
+
   typename Interval_edge_map::const_iterator edge_alpha_it;
 
   const typename Weighted_alpha_shape_2<Gt,Tds>::Interval3* pInterval;
@@ -217,9 +222,10 @@ Weighted_alpha_shape_2<Gt,Tds>::op_window(Window_stream& W) const
 	      // which might be infinity 
 	      // visualize the boundary
 	
-	      CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,
-						       (*edge_alpha_it).second.second) ==
-					    Weighted_alpha_shape_2<Gt,Tds>::REGULAR));
+	      CGAL_triangulation_assertion(
+                   (classify((*edge_alpha_it).second.first,
+			     (*edge_alpha_it).second.second) ==
+		    Weighted_alpha_shape_2<Gt,Tds>::REGULAR));
 	      // if we used Edelsbrunner and Muecke's definition
 	      // regular means incident to a higher-dimensional face
 	      // thus we would write to many vertices
@@ -256,9 +262,10 @@ Weighted_alpha_shape_2<Gt,Tds>::op_window(Window_stream& W) const
 		  // which might be infinity 
 		  // visualize the boundary
 	  
-		  CGAL_triangulation_assertion((classify((*edge_alpha_it).second.first,
-							   (*edge_alpha_it).second.second) ==
-						Weighted_alpha_shape_2<Gt,Tds>::REGULAR));
+		  CGAL_triangulation_assertion(
+                       (classify((*edge_alpha_it).second.first,
+				 (*edge_alpha_it).second.second) ==
+			Weighted_alpha_shape_2<Gt,Tds>::REGULAR));
 		  W << segment((*edge_alpha_it).second.first,
 				 (*edge_alpha_it).second.second);
 		}
@@ -273,17 +280,17 @@ Weighted_alpha_shape_2<Gt,Tds>::op_window(Window_stream& W) const
 		  // which might be infinity 
 		  // visualize the boundary
 	  
-		  CGAL_triangulation_assertion(((classify((*edge_alpha_it).second.first,
-							    (*edge_alpha_it).second.second) ==
-						 Weighted_alpha_shape_2<Gt,Tds>::REGULAR) || 
-						(classify((*edge_alpha_it).second.first,
-							    (*edge_alpha_it).second.second) ==
-						 Weighted_alpha_shape_2<Gt,Tds>::SINGULAR)));
+		  CGAL_triangulation_assertion(
+                       ((classify((*edge_alpha_it).second.first,
+				  (*edge_alpha_it).second.second) ==
+			 Weighted_alpha_shape_2<Gt,Tds>::REGULAR) || 
+			(classify((*edge_alpha_it).second.first,
+				  (*edge_alpha_it).second.second) ==
+			 Weighted_alpha_shape_2<Gt,Tds>::SINGULAR)));
 		  W << segment((*edge_alpha_it).second.first,
 				 (*edge_alpha_it).second.second);
 		}
-	    }
-      
+	    }    
 	}
     }
   
@@ -293,8 +300,7 @@ Weighted_alpha_shape_2<Gt,Tds>::op_window(Window_stream& W) const
   for (vertex_alpha_it = _interval_vertex_map.begin(); 
        vertex_alpha_it != _interval_vertex_map.end();
        ++vertex_alpha_it) 
-    {
-    
+    {    
       v = (*vertex_alpha_it).second;
       W << (v->point()).point();
     }
