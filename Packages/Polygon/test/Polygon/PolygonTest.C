@@ -115,8 +115,10 @@ void test_iterators(ListPolygon& p, const ListPolygon& q)
         ++e;
       } while (e != estart);
 
-    for (EI ei = p.edges_begin(); !(p.edges_end() == ei); ++ei)
+    for (EI ei = p.edges_begin(); !(p.edges_end() == ei); ++ei) {
       cout << *ei << endl;
+      cout << ei->source() << endl;
+    }
   }
 
   //-------------------------------------------------------------------//
