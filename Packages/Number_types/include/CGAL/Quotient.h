@@ -182,6 +182,66 @@ bool
 operator< (const NumberType& q, const Quotient<NumberType>& r);
 
 template <class NumberType>
+CGAL_KERNEL_INLINE
+bool
+operator!=(const Quotient<NumberType>& q, const Quotient<NumberType>& r);
+
+template <class NumberType>
+CGAL_KERNEL_INLINE
+bool
+operator<=(const Quotient<NumberType>& q, const Quotient<NumberType>& r);
+
+template <class NumberType>
+CGAL_KERNEL_INLINE
+bool
+operator> (const Quotient<NumberType>& q, const Quotient<NumberType>& r);
+
+template <class NumberType>
+CGAL_KERNEL_INLINE
+bool
+operator>=(const Quotient<NumberType>& q, const Quotient<NumberType>& r);
+
+template <class NumberType>
+CGAL_KERNEL_INLINE
+bool
+operator!=(const Quotient<NumberType>& q, const NumberType& a);
+
+template <class NumberType>
+CGAL_KERNEL_INLINE
+bool
+operator!=(const NumberType& n, const Quotient<NumberType>& q);
+
+template <class NumberType>
+CGAL_KERNEL_INLINE
+bool
+operator<=(const Quotient<NumberType>& q, const NumberType& r);
+
+template <class NumberType>
+CGAL_KERNEL_INLINE
+bool
+operator<=(const NumberType& q, const Quotient<NumberType>& r);
+
+template <class NumberType>
+CGAL_KERNEL_INLINE
+bool
+operator> (const Quotient<NumberType>& q, const NumberType& r);
+
+template <class NumberType>
+CGAL_KERNEL_INLINE
+bool
+operator> (const NumberType& q, const Quotient<NumberType>& r);
+
+template <class NumberType>
+CGAL_KERNEL_INLINE
+bool
+operator>=(const Quotient<NumberType>& q, const NumberType& r);
+
+template <class NumberType>
+CGAL_KERNEL_INLINE
+bool
+operator>=(const NumberType& q, const Quotient<NumberType>& r);
+
+template <class NumberType>
 std::istream&
 operator>>(std::istream& in, Quotient<NumberType>& q);
 
