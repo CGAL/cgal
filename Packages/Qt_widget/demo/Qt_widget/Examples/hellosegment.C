@@ -1,3 +1,5 @@
+//demo/Qt_widget/Examples/hellosegment.C
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/IO/Qt_widget.h>
 

@@ -1,3 +1,5 @@
+//demo/Qt_widget/Examples/Standard_toolbar.C
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 
@@ -32,7 +34,7 @@ public:
     }
     
     //How to attach the standard toolbar
-    stoolbar = new CGAL::Qt_widget_standard_toolbar(widget, this);
+    std_toolbar = new CGAL::Qt_widget_standard_toolbar(widget, this);
     this->addToolBar(stoolbar->toolbar(), Top, FALSE);
 
     connect(widget, SIGNAL(custom_redraw()),
@@ -47,7 +49,7 @@ private slots:	//functions
 
 private:	//members
   CGAL::Qt_widget *widget;
-  CGAL::Qt_widget_standard_toolbar *stoolbar;
+  CGAL::Qt_widget_standard_toolbar *std_toolbar;
 };
 
 // moc_source_file: standard_toolbar.C
