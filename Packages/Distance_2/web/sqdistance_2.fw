@@ -1824,9 +1824,9 @@ squared_distance(
     } else {
 // Check if all the triangle vertices lie at the same side of the segment.
         const Line_2<R> &sl = ray.supporting_line();
-        Oriented_side or = sl.oriented_side(triangle.vertex(0));
+        Oriented_side or_s = sl.oriented_side(triangle.vertex(0));
         for (i=1; i<3; i++) {
-            if (sl.oriented_side(triangle.vertex(i)) != or) {
+            if (sl.oriented_side(triangle.vertex(i)) != or_s) {
                 mindist = FT(0);
                 break;
             }
@@ -1897,17 +1897,17 @@ squared_distance(
 // the triangle segment.
         const Point_2<R> &vt1 = triangle.vertex(ind_tr1);
         const Point_2<R> &vt2 = triangle.vertex(ind_tr2);
-        Orientation or = orientation(vt1, vt2, seg.source());
-        if (orientation(vt1, vt2, seg.target()) != or) {
+        Orientation or_s = orientation(vt1, vt2, seg.source());
+        if (orientation(vt1, vt2, seg.target()) != or_s) {
             mindist = FT(0);
         }
     } else {
 // Check if all the triangle vertices lie at the same side of the segment.
         const Point_2<R> &vt1 = seg.source();
         const Point_2<R> &vt2 = seg.target();
-        Orientation or = orientation(vt1, vt2, triangle.vertex(0));
+        Orientation or_s = orientation(vt1, vt2, triangle.vertex(0));
         for (i=1; i<3; i++) {
-            if (orientation(vt1, vt2, triangle.vertex(i)) != or) {
+            if (orientation(vt1, vt2, triangle.vertex(i)) != or_s) {
                 mindist = FT(0);
                 break;
             }
@@ -1969,9 +1969,9 @@ squared_distance(
     if (ind1_2 != -1) {
         const Point_2<R> &vt1 = triangle1.vertex(ind1_1);
         const Point_2<R> &vt2 = triangle1.vertex(ind1_2);
-        Orientation or = orientation(vt1, vt2, triangle2.vertex(0));
+        Orientation or_s = orientation(vt1, vt2, triangle2.vertex(0));
         for (i=1; i<3; i++) {
-            if (orientation(vt1, vt2, triangle2.vertex(i)) != or) {
+            if (orientation(vt1, vt2, triangle2.vertex(i)) != or_s) {
                 mindist = FT(0);
                 break;
             }
@@ -1979,9 +1979,9 @@ squared_distance(
     } else {
         const Point_2<R> &vt1 = triangle2.vertex(ind2_1);
         const Point_2<R> &vt2 = triangle2.vertex(ind2_2);
-        Orientation or = orientation(vt1, vt2, triangle1.vertex(0));
+        Orientation or_s = orientation(vt1, vt2, triangle1.vertex(0));
         for (i=1; i<3; i++) {
-            if (orientation(vt1, vt2, triangle1.vertex(i)) != or) {
+            if (orientation(vt1, vt2, triangle1.vertex(i)) != or_s) {
                 mindist = FT(0);
                 break;
             }
