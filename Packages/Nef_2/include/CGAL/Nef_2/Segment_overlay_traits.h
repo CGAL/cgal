@@ -24,7 +24,7 @@
 #define _DEBUG 23
 #include <CGAL/Nef_2/debug.h>
 
-#if defined(CGAL_USE_LEDA) &&  (  __LEDA__ <= 441 )
+#if defined(CGAL_USE_LEDA)
 #include <CGAL/LEDA_basic.h>
 #include <LEDA/tuple.h>
 #include <LEDA/slist.h>
@@ -420,8 +420,8 @@ public:
 
 } // namespace CGAL
 
-#endif // defined(CGAL_USE_LEDA) && (  __LEDA__ <= 441 )
-#if !defined(CGAL_USE_LEDA) ||  (  __LEDA__ > 441 )
+#endif // defined(CGAL_USE_LEDA)
+#if !defined(CGAL_USE_LEDA)
 #include <list>
 #include <map>
 #include <string>
@@ -784,10 +784,10 @@ public:
 
 } // namespace CGAL
 
-#endif // !defined(CGAL_USE_LEDA) ||  (  __LEDA__ > 441 )
+#endif // !defined(CGAL_USE_LEDA)
 
 namespace CGAL {
-#if defined(CGAL_USE_LEDA) &&  (  __LEDA__ <= 441 )
+#if defined(CGAL_USE_LEDA)
 #define Segment_overlay_traits leda_seg_overlay_traits
 static const char* const sweepversion = "LEDA segment overlay sweep";
 #else
