@@ -189,6 +189,15 @@ public:
   Sign operator()(const Site_2& p, const Site_2& q,
 		  const Site_2& r, const Site_2& t) const
   {
+#if 1
+    std::cout << "inside vertex conflict top "
+	      << "level operator()" << std::endl;
+    std::cout << "p: " << p << std::endl;
+    std::cout << "q: " << q << std::endl;
+    std::cout << "r: " << r << std::endl;
+    std::cout << "t: " << t << std::endl;
+#endif
+
     Voronoi_vertex_2 v(p, q, r);
 
     return v.incircle(t);

@@ -142,7 +142,7 @@ public:
     std::cout << "t2: " << t2 << std::endl;
     std::cout << "q: " << q << std::endl;
 #endif
-    debug_info("oriented_side_of_bisector_2::", q);
+    //    debug_info("oriented_side_of_bisector_2::", q);
     return svd_oriented_side_of_bisector_ftC2<K,Method_tag>
       (t1, t2, q, Method_tag());
   }

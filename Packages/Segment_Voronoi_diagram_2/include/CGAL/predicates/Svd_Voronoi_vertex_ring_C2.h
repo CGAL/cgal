@@ -71,6 +71,18 @@ private:
 private:
   //--------------------------------------------------------------------------
 
+  bool same_segments(const Site_2& s1, const Site_2& s2) const
+  {
+    CGAL_precondition( s1.is_segment() && s2.is_segment() );
+    return
+      ( are_same(s1.source_site(), s2.source_site()) &&
+	are_same(s1.target_site(), s2.target_site()) ) ||
+      ( are_same(s1.source_site(), s2.target_site()) &&
+	are_same(s1.target_site(), s2.source_site()) );
+  }
+
+  //--------------------------------------------------------------------------
+
   void
   compute_ppp(const Site_2& sp, const Site_2& sq, const Site_2& sr)
   {
@@ -1112,6 +1124,24 @@ private:
       }
     }
 
+    if ( v_type == PSS ) {
+      if ( p_.is_segment() &&
+	   same_segments(p_.supporting_segment(),
+			 t.supporting_segment()) ) {
+	return POSITIVE;
+      }
+      if ( q_.is_segment() &&
+	   same_segments(q_.supporting_segment(),
+			 t.supporting_segment()) ) {
+	return POSITIVE;
+      }
+      if ( r_.is_segment() &&
+	   same_segments(r_.supporting_segment(),
+			 t.supporting_segment()) ) {
+	return POSITIVE;
+      }
+    }
+
     Sign d1, d2;
     if (  ( p_.is_point() && are_same(p_, t.source_site()) ) ||
 	  ( q_.is_point() && are_same(q_, t.source_site()) ) ||
@@ -1166,9 +1196,30 @@ private:
 	return POSITIVE;
       }
 
+      CGAL_assertion( v_type == PSS );
+
+      if ( p_.is_segment() &&
+	   same_segments(p_.supporting_segment(),
+			 t.supporting_segment()) ) {
+	return ZERO;
+      }
+
+      if ( q_.is_segment() &&
+	   same_segments(q_.supporting_segment(),
+			 t.supporting_segment()) ) {
+	return ZERO;
+      }
+
+      if ( r_.is_segment() &&
+	   same_segments(r_.supporting_segment(),
+			 t.supporting_segment()) ) {
+	return ZERO;
+      }
+#if 0
       if (  ( r_.is_point() && are_same(p_ref(), r_) ) ||
 	    ( q_.is_point() && are_same(p_ref(), q_) ) ||
 	    ( p_.is_point() && are_same(p_ref(), p_) )  ) {
+#endif
 	Site_2 pr;
 	Site_2 sp, sq;
 	if ( p_.is_point() ) {
@@ -1201,7 +1252,9 @@ private:
 	  return NEGATIVE;
 	}
 	return ZERO;
+#if 0
       }
+#endif
     } // if ( is_degenerate_Voronoi_circle() )
 
     Sign s(ZERO);
