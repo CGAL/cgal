@@ -3,8 +3,12 @@
 old_results_dir=/projects/CGAL/old_results
 tempdir=/tmp
 
-if [ -d "$1" ] ; then
-   if [ -d "$1/Polygon" -o -d "$1/src" ] ; then
+
+while [ $# -ge 1 ]
+do
+  if [ -d "$1" ] ; then
+    if [ -d "$1/Polygon" -o -d "$1/src" ] ; then
+      echo "emptying $1" >&2
       if [ -x "$1" ] ;
       then
          cp -r "$1" $tempdir
@@ -18,16 +22,21 @@ if [ -d "$1" ] ; then
              rm */* ;
              rm -f diffs*.gz
              rmdir * 2>/dev/null
+             cd ..
+             echo "Moved $1 to $old_results_dir" >&2
          else
              echo "Could not mv $tempdir/$1.tar.gz $old_results_dir"
 	 fi
       else
         echo "Could not cd to $1" >&2
       fi
-   else
+    else
       echo "$1 seems to be emptied already" >&2
-   fi
-else
-  echo "$1 is not a directory" >&2
-fi
+    fi
+  else
+    echo "$1 is not a directory" >&2
+  fi
+shift
+done
+
 
