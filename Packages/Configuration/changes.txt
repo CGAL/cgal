@@ -1,3 +1,7 @@
+2.41
+- Missing typename in CGAL_NO_ITERATOR_TRAITS.C
+  (spotted by gcc, cp-parser-branch)
+
 2.40
 - CGAL_CFG_LONGNAME_PROBLEM moved to CGAL_CFG_LONGNAME_BUG
 

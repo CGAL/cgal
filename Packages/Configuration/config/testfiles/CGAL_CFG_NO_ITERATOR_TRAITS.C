@@ -105,7 +105,7 @@ public:
 template < class I> inline
 typename iterator_traits<I>::iterator_category
 query( I) {
-    return iterator_traits<I>::iterator_category();
+    return typename iterator_traits<I>::iterator_category();
 }
 
 // A function to match bidirectional iterators.
