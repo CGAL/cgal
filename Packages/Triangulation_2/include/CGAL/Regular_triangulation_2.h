@@ -255,13 +255,8 @@ copy_triangulation(const Self &tr )
   // not good
   // clear them and next
   // scan the hidden vertices to retablish the list in faces
-<<<<<<< Regular_triangulation_2.h
-  typename Tds::Iterator_base baseit = this->_tds.iterator_base_begin();
-  for( ; baseit != this->_tds.iterator_base_end(); ++baseit){
-=======
-  typename Tds::Face_iterator_base baseit=_tds.face_iterator_base_begin();
-  for( ; baseit != _tds.face_iterator_base_end(); baseit++){
->>>>>>> 1.55.2.3
+  typename Tds::Face_iterator_base baseit= this->_tds.face_iterator_base_begin();
+  for( ; baseit !=  this->_tds.face_iterator_base_end(); baseit++){
     baseit->vertex_list().clear();
   }
   Hidden_vertices_iterator hvit = hidden_vertices_begin();
@@ -406,14 +401,8 @@ is_valid_vertex(Vertex_handle vh) const
 			 loc->neighbor(li)) );
         if ( !result) {
       std::cerr << vh->point() << " " << std::endl;
-<<<<<<< Regular_triangulation_2.h
-      std::cerr << "vh_>face " <<  static_cast<void*>(&(*vh->face()))
-		<< " " << std::endl;
-      std::cerr <<  "loc      " <<  static_cast<void*>(&(*loc)) 
-=======
       std::cerr << "vh_>face " << &*(vh->face())  << " " << std::endl;
       std::cerr <<  "loc      " <<  &*(loc )
->>>>>>> 1.55.2.3
 	        << " lt " << lt  << " li " << li << std::endl;
       show_face(vh->face());
       show_face(loc);
