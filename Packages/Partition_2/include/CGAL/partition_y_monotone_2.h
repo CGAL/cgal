@@ -47,7 +47,6 @@
 #ifndef CGAL_PARTITION_Y_MONOTONE_H
 #define CGAL_PARTITION_Y_MONOTONE_H
 
-#include <CGAL/Circulator_list.h>
 #include <CGAL/Indirect_not_less_yx_2.h>
 #include <CGAL/Indirect_edge_compare.h>
 #include <CGAL/Segment_2_Ray_2_intersection.h>
@@ -443,20 +442,29 @@ OutputIterator partition_y_monotone_2(InputIterator first,
    CGAL_partition_precondition(
     orientation_2(polygon.begin(), polygon.end(), traits) == COUNTERCLOCKWISE);
 
-   Circulator first_c(polygon.begin(), polygon.end());
-   Circulator_list<Circulator>  circ_list(first_c);
-   circ_list.sort(Indirect_not_less_yx_2<Traits>(traits));
+   Circulator circ(polygon.begin(), polygon.end()), done = circ;
+   std::vector<Circulator>  circulators;
+   CGAL_For_all(circ, done){
+     circulators.push_back(circ);
+   }
+   std::sort(circulators.begin(), circulators.end(), Indirect_not_less_yx_2<Traits>(traits));
 
 #ifdef CGAL_PARTITION_Y_MONOTONE_DEBUG
-   std::cout << "Initial vertex list: "<< circ_list << std::endl;
+   std::cout << "Initial vertex list: "<< circulators << std::endl;
+   for(std::vector<Circulator>::const_iterator it = circulators.begin();
+       it != circulators.end();
+       it++){
+     std::cout << **it << " " ; 
+   }
+   std::cout << std::endl;
 #endif
 
    typedef std::map<Circulator, Circulator, 
                     Indirect_edge_compare<Circulator, Traits> > Tree;
    Tree tree;
 
-   typename Circulator_list<Circulator>::iterator it = circ_list.begin();
-   for (; it != circ_list.end(); it++) {
+   typename Circulator_list<Circulator>::iterator it = circulators.begin();
+   for (; it != circulators.end(); it++) {
       switch (partition_y_mono_vertex_type(*it, traits)) 
       {
          case PARTITION_Y_MONO_START_VERTEX:
