@@ -31,21 +31,11 @@ int main()
 #else
 
 #include <CGAL/Cartesian.h>
-
-// Workaround for VC++ necessary for Filtered_exact.
-#ifdef CGAL_CFG_MATCHING_BUG_2
-#  define CGAL_IA_CT double
-#  define CGAL_IA_PROTECTED true
-#  define CGAL_IA_CACHE No_Filter_Cache
-#  define CGAL_IA_ET CGAL::MP_Float
-#endif
+#include <CGAL/Filtered_kernel.h>
 
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_hierarchy_3.h>
-
-#include <CGAL/MP_Float.h>
-#include <CGAL/Filtered_exact.h>
 
 #include <CGAL/IO/Geomview_stream.h>
 #include <CGAL/IO/Triangulation_geomview_ostream_3.h>
@@ -53,8 +43,7 @@ int main()
 #include <unistd.h>
 #include <vector>
 
-typedef CGAL::Filtered_exact<double, CGAL::MP_Float> NT;
-typedef CGAL::Cartesian<NT> K;
+typedef CGAL::Filtered_kernel<CGAL::Simple_cartesian<double> > K;
 
 typedef CGAL::Triangulation_vertex_base_3<K>            Vb;
 typedef CGAL::Triangulation_hierarchy_vertex_base_3<Vb>  Vbh;

@@ -1,17 +1,8 @@
 // Triangulation_3/example_simple.C
-#include <CGAL/Cartesian.h>
-
-// Workaround for VC++ necessary for Filtered_exact.
-#ifdef CGAL_CFG_MATCHING_BUG_2
-#  define CGAL_IA_CT double
-#  define CGAL_IA_PROTECTED true
-#  define CGAL_IA_CACHE No_Filter_Cache
-#  define CGAL_IA_ET CGAL::MP_Float
-#endif
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Filtered_kernel.h>
 
 #include <CGAL/Triangulation_3.h>
-#include <CGAL/MP_Float.h>
-#include <CGAL/Filtered_exact.h>
 
 #include <iostream>
 #include <fstream>
@@ -19,13 +10,7 @@
 #include <list>
 #include <vector>
 
-// using Filtered_exact number type is advised :
-
-typedef CGAL::Filtered_exact<double, CGAL::MP_Float> NT;
-
-// chosing the representation (Cartesian or homogeneous)
-
-typedef CGAL::Cartesian<NT> K;
+typedef CGAL::Filtered_kernel<CGAL::Simple_cartesian<double> > K;
 
 typedef CGAL::Triangulation_3<K> Triangulation;
 

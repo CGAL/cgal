@@ -1,9 +1,7 @@
 The demos use Geomview
 [see the chapter Geomview in the cgal manual - support library:
-Geomview 1.8.1 is required.
-Important: The last line in the startup file .geomview must be (echo
-"started"). The two commands rsh and Geomview must be in the user's
-path, otherwise the program will not be able to execute.]
+Geomview 1.8.1 is required.  The geomview command must be in the user's $PATH,
+otherwise the program will not be able to execute.]
 
 ------- demo -------------------------------------------------
 Construction of a Delaunay triangulation.
@@ -17,10 +15,6 @@ Locates a point a shows the cell containing it
 Draws the triangulation (edges and cells) in geomview,
 then the user can move one of the two displayed versions
 of the triangulation.
-
-This demo program uses "doubles". 
-For a robust version, CGAL::Filtered_exact<double, CGAL::MP_Float> 
-should be used.
 --------------------------------------------------------------
 
 ------- demo_color -------------------------------------------
@@ -43,4 +37,3 @@ Constructs a Delaunay triangulation for points on a grid.
 
 Then removes all the vertices in random order
 --------------------------------------------------------------
-
