@@ -16,30 +16,28 @@
 // $Name$
 //
 // Author(s)     : Tali Zvi <talizvi@post.tau.ac.il>
+
 #ifndef CGAL_SWEEP_LINE_FUNCTORS_H
 #define CGAL_SWEEP_LINE_FUNCTORS_H
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Point, class SweepLineTraits_2>
-class Point_less_functor 
+template <class Point, class SweepLineTraits_2> class Point_less_functor 
 {
 public:
   typedef SweepLineTraits_2 Traits;
   
-  Point_less_functor(Traits *traits) : m_traits(traits) {}
+  Point_less_functor(Traits * traits) : m_traits(traits) {}
   
-  bool operator()(const Point* p1, const Point* p2) const 
+  bool operator()(const Point * p1, const Point * p2) const 
   { 
     return (m_traits->compare_xy(*p1,*p2) == SMALLER);
   }
 
 private:
-
-  /*! a pointer to a trits class */
-  Traits *m_traits;
+  /*! a pointer to a traits class */
+  Traits * m_traits;
 };
-
 
 template <class SweepLineTraits_2, class Subcurve>
 class Status_line_curve_less_functor 
@@ -49,12 +47,12 @@ public:
   typedef typename Traits::Point_2 Point_2;
   typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
   typedef bool (Status_line_curve_less_functor::*func)
-                      (const Subcurve*, const Subcurve*) const;
+    (const Subcurve*, const Subcurve*) const;
 
   struct Compare_param {
     Compare_param(Traits *t) : m_compare_func(1), m_traits(t)  {}
     int m_compare_func;
-    Traits *m_traits;
+    Traits * m_traits;
   };
 
   Status_line_curve_less_functor(Compare_param *p) : m_compare_param(p) {
@@ -62,14 +60,13 @@ public:
     m_compare[1] = &Status_line_curve_less_functor::compare_right;
   }
 
-  bool operator()(const Subcurve* c1, const Subcurve* c2) const {
+  bool operator()(const Subcurve * c1, const Subcurve * c2) const {
     return (this->*m_compare[m_compare_param->m_compare_func])(c1, c2);
   }
 
-
-  bool compare_at(const Subcurve* c1, const Subcurve* c2)  const 
+  bool compare_at(const Subcurve * c1, const Subcurve * c2)  const 
   {
-    const Point_2 *p = &(c2->get_last_point());
+    const Point_2 * p = &(c2->get_last_point());
     if ( m_compare_param->m_traits->compare_x(c1->get_last_point(),  
 					      c2->get_last_point()) == LARGER )
       p = &(c1->get_last_point());
@@ -84,7 +81,7 @@ public:
     return false;
   }
 
-  bool compare_right(const Subcurve* c1, const Subcurve* c2)  const 
+  bool compare_right(const Subcurve * c1, const Subcurve * c2)  const 
   {
     const X_monotone_curve_2 &cv1 = c1->get_curve();
     const X_monotone_curve_2 &cv2 = c2->get_curve();
@@ -133,18 +130,12 @@ public:
     return ( c1->getId() < c2->getId() );
   }
 
-  void setReference(Point_2 point) {
-    // m_point = point; //   af: I've put it in a comment as it is not declared
-  }
-
-  Compare_param *m_compare_param;
+  Compare_param * m_compare_param;
 
 private:
   func m_compare[2];
-
-
 };
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_SWEEP_LINE_FUNCTORS_H
+#endif
