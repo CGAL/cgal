@@ -200,9 +200,6 @@ void read_data(int argc,
       is >> y2;
       seg_list.push_back(Segment_2(Point_2(x1,y1),
                                    Point_2(x2,y2)));
-      //      seg.set_data(x1,y1,x2,y2);
-      //seg_list.push_back(Segment_2(Point_2(seg.get_x1(),seg.get_y1()),
-      //                             Point_2(seg.get_x2(),seg.get_y2));
   }
 }
 
@@ -308,7 +305,8 @@ int main(int argc,char *argv[])
     read_data(argc,argv,prec,seg_list);
     get_extreme_points(seg_list,x1,y1,x2,y2);
     W.init((x1 - 3 - prec * 3).to_double(),x2 - x1 > y2 - y1 ? 
-           (x2 + 3 + prec * 3).to_double() : (y2 - y1 + x1 + 3 + prec * 3).to_double(),
+           (x2 + 3 + prec * 3).to_double() : 
+           (y2 - y1 + x1 + 3 + prec * 3).to_double(),
            (y1 - 3 - prec * 3).to_double());
     W.set_mode(leda_src_mode);
     W.set_node_width(3);
