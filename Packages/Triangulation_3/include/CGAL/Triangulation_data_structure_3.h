@@ -178,7 +178,6 @@ private:
   Cell* get_new_cell()
   {
       Cell * r = cell_container().get_new_element();
-      r->set_in_conflict_flag(0);
       r->init();
       return r;
   }
@@ -283,7 +282,7 @@ private:
     // The semantic of the flag is the following :
     // 0  -> never went on the cell
     // 1  -> cell is in conflict
-    // -1 -> cell is not in conflict
+    // 2  -> cell is not in conflict
 
     CGAL_triangulation_precondition( tester(c) );
 
@@ -297,7 +296,7 @@ private:
       if ( tester(test) )
         find_conflicts_3(test, ac, i, tester);
       else {
-        test->set_in_conflict_flag(-1);
+        test->set_in_conflict_flag(2);
         ac = c;
         i = j;
       }
@@ -320,7 +319,7 @@ private:
       if ( tester(test) )
         find_conflicts_2(test, ac, i, tester);
       else {
-        test->set_in_conflict_flag(-1);
+        test->set_in_conflict_flag(2);
         ac = c;
         i = j;
       }
@@ -1909,7 +1908,7 @@ create_star_3(Vertex* v, Cell* c, int li, Cell * prev_c, Vertex * prev_v)
       Cell *cur = c;
       Cell *n = c->neighbor(i[ii]);
       // turn around the oriented edge j1 j2
-      while ( n->get_in_conflict_flag() > 0) {
+      while ( n->get_in_conflict_flag() == 1) {
 	// The main loop is free from orientation problems.
 	// It remains only before and after...  It could probably be done.
 	CGAL_triangulation_assertion( n != c );
@@ -1980,7 +1979,7 @@ create_star_2(Vertex* v, Cell* c, int li )
   do {
     cur = bound;
     // turn around v2 until we reach the boundary of region
-    while ( cur->neighbor(cw(i1))->get_in_conflict_flag() > 0 ) {
+    while ( cur->neighbor(cw(i1))->get_in_conflict_flag() == 1 ) {
       // neighbor in conflict
       cur = cur->neighbor(cw(i1));
       i1 = cur->index( v1 );
