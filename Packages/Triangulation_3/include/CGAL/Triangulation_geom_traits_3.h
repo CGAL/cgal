@@ -167,6 +167,7 @@ public:
     {
       CGAL_triangulation_precondition( CGAL::orientation(p,q,r,test) ==
 				       COPLANAR );
+      CGAL_triangulation_precondition( ! CGAL::collinear(p,q,r) );
 
       // test belongs to the circle if and only if it belongs to a
       // sphere passing through pqr
