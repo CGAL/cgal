@@ -1,4 +1,7 @@
 03 May 2004 Radu Ursu
+- moved install_cgal call from copy_old_stuff to $CGAL_DIR 
+
+03 May 2004 Radu Ursu
 - autotest_cgal uses install_cgal --upgrade in copy_old_stuff procedure
 
 23 April 2004 Radu Ursu

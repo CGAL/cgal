@@ -335,7 +335,8 @@ copy_old_stuff()
 {
     # copy config install files
 
-    ${CGAL_DIR}/install_cgal --upgrade ${OLD_CGAL_DIR} >> ${ACTUAL_LOGFILE}
+    cd ${CGAL_DIR}
+    install_cgal --upgrade ${OLD_CGAL_DIR} >> ${ACTUAL_LOGFILE}
 
     log_done ${ACTUAL_LOGFILE}
 }
