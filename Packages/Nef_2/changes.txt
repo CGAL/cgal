@@ -1,7 +1,7 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
-
-- Unenabled specialisation of sign for VC7
+1.43 (3. September 2003) [af]
+- Unenabled specialisation of sign and of gcd for VC7
 
 1.42 (27. August 2003)
 - Remove non-const operator[] of Polynomial.
