@@ -33,7 +33,8 @@ int main()
 
   Iso_rectangle_2 b = leir.get_largest_empty_iso_rectangle();
 
-  std::cout << std::endl << "The largest empty iso rectangle is " << b << std::endl;
+  std::cout << std::endl << "The largest empty iso rectangle is " <<
+               b << std::endl;
   std::cout << "Its area is " << b.area() << std::endl;
 
   return 0;
