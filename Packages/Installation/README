@@ -54,9 +54,6 @@ This distribution of CGAL includes:
    src/               - the library source code
    src/CGALQt         - the source code for the CGAL Qt widget, which is
                         distributed under the Q Public License (QPL).
-   stlport/           - adapted version of the STLPort required for use
-                        of CGAL with Microsoft VC++ 6.0.  This library
-                        has its own license.
    winutils/          - various Windows-specific installation stuff used by
                         cgal_config.bat
 
