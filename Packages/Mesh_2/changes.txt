@@ -1,3 +1,6 @@
+1 July 2004 Laurent Rineau
+- Added Extras in Delaunay_mesh_2<Tr, Extras> too.
+
 28 June 2004 Laurent Rineau
 - Move mark_facets functions from Delaunay_mesh_2 to
   Conforming_Delaunay_triangulation_2.

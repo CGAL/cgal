@@ -27,15 +27,17 @@ CGAL_BEGIN_NAMESPACE
 /**
    Tr is a Delaunay constrained triangulation (with intersections or not)
 */
-template <class Tr>
-class Delaunay_mesh_2: public Conforming_Delaunay_triangulation_2<Tr>
+template <class Tr,
+	  class Extras = 
+	    Conforming_Delaunay_triangulation_2_default_extras<Tr> >
+class Delaunay_mesh_2: public Conforming_Delaunay_triangulation_2<Tr, Extras>
 {
 public:
   // --- public typedefs ---
-  typedef Conforming_Delaunay_triangulation_2<Tr> Conform;
+  typedef Conforming_Delaunay_triangulation_2<Tr, Extras> Conform;
 
   typedef Conform Base;
-  typedef Delaunay_mesh_2<Tr> Self;
+  typedef Delaunay_mesh_2<Tr, Extras> Self;
 
   /** \name Types inherited from the templated base class */
   //@{
@@ -68,8 +70,9 @@ public:
   /** \name CONSTRUCTORS */
   //@{
   
-  explicit Delaunay_mesh_2(const Geom_traits& gt = Geom_traits()):
-    Base(gt) {}
+  explicit Delaunay_mesh_2(const Geom_traits& gt = Geom_traits(),
+			   const Extras& extras = Extras()):
+    Base(gt, extras) {}
 
   //@}
 
@@ -165,6 +168,8 @@ private:
   typedef typename Geom_traits::Is_bad Is_bad;
   typedef typename Geom_traits::Compute_squared_distance_2
       Compute_squared_distance_2;
+//   typedef typename Geom_traits::Construct_circumcenter_2
+//       Construct_circumcenter_2;
 
   /** \name typedefs for private members types */
   typedef CGAL::Double_map<Face_handle, Quality> Bad_faces;
@@ -238,10 +243,10 @@ private:
 // ->traits
 // the measure of faces quality
 // # We can add here other contraints, such as a bound on the size
-template <class Tr>
+template <class Tr, class Extras>
 inline
-bool Delaunay_mesh_2<Tr>::
-is_bad(const Face_handle f, typename Delaunay_mesh_2<Tr>::Quality& q) const
+bool Delaunay_mesh_2<Tr, Extras>::
+is_bad(const Face_handle f, typename Delaunay_mesh_2<Tr, Extras>::Quality& q) const
 {
   const Point
     & a = f->vertex(0)->point(),
@@ -251,28 +256,28 @@ is_bad(const Face_handle f, typename Delaunay_mesh_2<Tr>::Quality& q) const
   return geom_traits().is_bad_object()(a,b,c,q);
 }
 
-template <class Tr>
+template <class Tr, class Extras>
 inline
-bool Delaunay_mesh_2<Tr>::
+bool Delaunay_mesh_2<Tr, Extras>::
 is_bad(const Face_handle f) const
 { 
   Quality q;
   return is_bad(f, q);
 }
 
-template <class Tr>
+template <class Tr, class Extras>
 inline
-typename Delaunay_mesh_2<Tr>::Seeds_const_iterator
-Delaunay_mesh_2<Tr>::
+typename Delaunay_mesh_2<Tr, Extras>::Seeds_const_iterator
+Delaunay_mesh_2<Tr, Extras>::
 seeds_begin() const
 {
   return seeds.begin();
 }
 
-template <class Tr>
+template <class Tr, class Extras>
 inline
-typename Delaunay_mesh_2<Tr>::Seeds_const_iterator
-Delaunay_mesh_2<Tr>::
+typename Delaunay_mesh_2<Tr, Extras>::Seeds_const_iterator
+Delaunay_mesh_2<Tr, Extras>::
 seeds_end() const
 {
   return seeds.end();
@@ -282,8 +287,8 @@ seeds_end() const
 
 // --- HELPING FUNCTIONS ---
 
-template <class Tr>
-void Delaunay_mesh_2<Tr>::
+template <class Tr, class Extras>
+void Delaunay_mesh_2<Tr, Extras>::
 clear() 
 {
   bad_faces.clear();
@@ -293,8 +298,8 @@ clear()
 
 // --- MARKING FUNCTIONS ---
 
-template <class Tr>
-void Delaunay_mesh_2<Tr>::
+template <class Tr, class Extras>
+void Delaunay_mesh_2<Tr, Extras>::
 mark_facets()
 {
   Conform::mark_facets(seeds.begin(), seeds.end(), seeds_mark);
@@ -303,9 +308,9 @@ mark_facets()
 // --- MESHING FUNCTIONS ---
 
 //the mesh refine function 
-template <class Tr>
+template <class Tr, class Extras>
 inline
-void Delaunay_mesh_2<Tr>::
+void Delaunay_mesh_2<Tr, Extras>::
 refine_mesh()
 {
   if(get_initialized() != GABRIEL) init();
@@ -320,9 +325,9 @@ refine_mesh()
 
 // --- REMESHING FUNCTIONS ---
 
-template <class Tr>
+template <class Tr, class Extras>
 inline
-void Delaunay_mesh_2<Tr>::
+void Delaunay_mesh_2<Tr, Extras>::
 set_geom_traits(const Geom_traits& gt,
 		bool recalculate_bad_faces/* = true */)
 {
@@ -332,9 +337,9 @@ set_geom_traits(const Geom_traits& gt,
 
 // --- STEP BY STEP FUNCTIONS ---
 
-template <class Tr>
+template <class Tr, class Extras>
 inline
-void Delaunay_mesh_2<Tr>::
+void Delaunay_mesh_2<Tr, Extras>::
 init()
 {
   bad_faces.clear();
@@ -346,9 +351,9 @@ init()
   fill_facet_map();
 }
 
-template <class Tr>
+template <class Tr, class Extras>
 inline
-bool Delaunay_mesh_2<Tr>::
+bool Delaunay_mesh_2<Tr, Extras>::
 step_by_step_refine_mesh()
 {
   if( !step_by_step_conforming_Gabriel() )
@@ -361,9 +366,9 @@ step_by_step_refine_mesh()
 
 // --- PRIVATE MEMBER FUNCTIONS ---
 
-template <class Tr>
+template <class Tr, class Extras>
 inline
-void Delaunay_mesh_2<Tr>::
+void Delaunay_mesh_2<Tr, Extras>::
 push_in_bad_faces(Face_handle fh, const Quality& q)
 {
   CGAL_assertion(fh->is_marked());
@@ -371,8 +376,8 @@ push_in_bad_faces(Face_handle fh, const Quality& q)
 }
 
 //it is necessarry for process_facet_map
-template <class Tr>
-void Delaunay_mesh_2<Tr>::
+template <class Tr, class Extras>
+void Delaunay_mesh_2<Tr, Extras>::
 fill_facet_map()
 {
   for(Finite_faces_iterator fit = finite_faces_begin();
@@ -385,8 +390,8 @@ fill_facet_map()
     }
 }
 
-template <class Tr>
-void Delaunay_mesh_2<Tr>::
+template <class Tr, class Extras>
+void Delaunay_mesh_2<Tr, Extras>::
 compute_new_bad_faces(Vertex_handle v)
 {
   Face_circulator fc = v->incident_faces(), fcbegin(fc);
@@ -399,9 +404,9 @@ compute_new_bad_faces(Vertex_handle v)
   } while(fc!=fcbegin);
 }
 
-template <class Tr>
+template <class Tr, class Extras>
 inline
-void Delaunay_mesh_2<Tr>::
+void Delaunay_mesh_2<Tr, Extras>::
 process_one_face()
 {
   Face_handle f = bad_faces.front()->second;
@@ -412,11 +417,14 @@ process_one_face()
 }
 
 //split all the bad faces
-template <class Tr>
-void Delaunay_mesh_2<Tr>::
+template <class Tr, class Extras>
+void Delaunay_mesh_2<Tr, Extras>::
 refine_face(const Face_handle f, const Quality& q)
 {
   typename Conform::Is_locally_conforming_Gabriel is_gabriel_conform;
+
+//   Construct_circumcenter_2 circumcenter =
+//     geom_traits().construct_circumcenter_2_object();
 
   const Point& pc = circumcenter(f);
 
@@ -492,9 +500,9 @@ refine_face(const Face_handle f, const Quality& q)
 }
 
 // # used by refine_face
-template <class Tr>
+template <class Tr, class Extras>
 inline
-void Delaunay_mesh_2<Tr>::
+void Delaunay_mesh_2<Tr, Extras>::
 split_face(const Face_handle& f, const Point& circum_center)
 {
   bool marked = f->is_marked();
@@ -528,10 +536,10 @@ split_face(const Face_handle& f, const Point& circum_center)
   compute_new_bad_faces(v);
 }
 
-template <class Tr>
+template <class Tr, class Extras>
 inline 
-typename Delaunay_mesh_2<Tr>::Vertex_handle
-Delaunay_mesh_2<Tr>::
+typename Delaunay_mesh_2<Tr, Extras>::Vertex_handle
+Delaunay_mesh_2<Tr, Extras>::
 virtual_insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
   // insert the point p in the edge (fh, edge_index). It updates seeds 
   // too.
@@ -596,8 +604,8 @@ virtual_insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
 }
 
 
-template <class Tr>
-bool Delaunay_mesh_2<Tr>::
+template <class Tr, class Extras>
+bool Delaunay_mesh_2<Tr, Extras>::
 is_bad_faces_valid()
 {
   typedef std::list<std::pair<Quality, Face_handle> > Bad_faces_list;
@@ -640,9 +648,9 @@ is_bad_faces_valid()
 // ->traits?
 //the shortest edge that are in a triangle
 // # used by: refine_face, squared_minimum_sine
-template <class Tr>
-typename Delaunay_mesh_2<Tr>::FT
-Delaunay_mesh_2<Tr>::
+template <class Tr, class Extras>
+typename Delaunay_mesh_2<Tr, Extras>::FT
+Delaunay_mesh_2<Tr, Extras>::
 shortest_edge_squared_length(Face_handle f)
 {
   Compute_squared_distance_2 squared_distance = 
@@ -660,6 +668,7 @@ shortest_edge_squared_length(Face_handle f)
 
 // --- GLOBAL FUNCTIONS ---
 
+// this a workaround, used just below, to fix a bug in Sun CC.
 template <class Tr>
 struct Refine_mesh_2_default_argument_helper : public Tr::Geom_traits {};
 
@@ -669,7 +678,8 @@ refine_Delaunay_mesh_2(Tr& t,
 		       const typename Tr::Geom_traits& gt
 		       = Refine_mesh_2_default_argument_helper<Tr>() )
 {
-  typedef Delaunay_mesh_2<Tr> Mesh;
+  typedef Delaunay_mesh_2<Tr,
+    Conforming_Delaunay_triangulation_2_default_extras<Tr> > Mesh;
 
   Mesh mesh;
   mesh.swap(t);
@@ -686,7 +696,8 @@ refine_Delaunay_mesh_2(Tr& t,
 		       const typename Tr::Geom_traits& gt
 		       = Refine_mesh_2_default_argument_helper<Tr>())
 {
-  typedef Delaunay_mesh_2<Tr> Mesh;
+  typedef Delaunay_mesh_2<Tr,
+    Conforming_Delaunay_triangulation_2_default_extras<Tr> > Mesh;
 
   Mesh mesh;
   mesh.swap(t);

@@ -17,8 +17,8 @@
 //
 // Author(s)     : Laurent RINEAU
 
-#ifndef CGAL_CONFORM_2_H
-#define CGAL_CONFORM_2_H
+#ifndef CONFORMING_DELAUNAY_TRIANGULATION_2_H
+#define CONFORMING_DELAUNAY_TRIANGULATION_2_H
 #include <list>
 #include <map>
 #include <queue>
@@ -46,10 +46,10 @@ struct Conforming_Delaunay_triangulation_2_default_extras
 
   bool is_bad(const Tr&, const Face_handle&, const int) const { return false;}
 
-  void signal_inserted_vertex(const Tr&,
-			      const Face_handle&,
-			      const int,
-			      const Vertex_handle&) const  {};
+  void signal_inserted_vertex_in_edge(const Tr&,
+				      const Face_handle&,
+				      const int,
+				      const Vertex_handle&) const  {};
 };
 
 /**
@@ -321,7 +321,7 @@ public:
   /** default constructor */
   explicit
   Conforming_Delaunay_triangulation_2(const Geom_traits& gt = Geom_traits(),
-				      Extras& extras_ = Extras());
+				      const Extras& extras_ = Extras());
   //@}
 
   /** \name SURCHARGED INSERTION-DELETION FONCTIONS
@@ -667,7 +667,7 @@ protected:
 template <class Tr, class Extras>
 Conforming_Delaunay_triangulation_2<Tr, Extras>::
 Conforming_Delaunay_triangulation_2(const Geom_traits& gt,
-				    Extras& extras_)
+				    const Extras& extras_)
   : Tr(gt), is_really_a_constrained_edge(*this), 
     /** \todo{ *this is used in the constructor!!} */
     extras(extras_),
@@ -686,7 +686,7 @@ number_of_constrained_edges() const
   for(Finite_edges_iterator eit = finite_edges_begin();
       eit != finite_edges_end();
       ++eit)
-    if((*eit).first->is_constrained((*eit).second))
+    if(eit->first->is_constrained(eit->second))
       ++nedges;
   return nedges;
 }
@@ -699,8 +699,8 @@ is_conforming(const Is_locally_conform& is_locally_conform)
   for(Finite_edges_iterator ei = finite_edges_begin();
       ei != finite_edges_end();
       ++ei)
-    if((*ei).first->is_constrained((*ei).second) && 
-       !is_locally_conform(*this, (*ei).first, (*ei).second) )
+    if(ei->first->is_constrained(ei->second) && 
+       !is_locally_conform(*this, ei->first, ei->second) )
       return false;
   return true;
 }
@@ -1005,11 +1005,11 @@ fill_edge_queue(const Is_locally_conform& is_locally_conform)
       ei != finite_edges_end();
       ++ei)
     {
-      if((*ei).first->is_constrained((*ei).second) && 
-	 !is_locally_conform(*this, (*ei).first, (*ei).second) )
+      if(ei->first->is_constrained(ei->second) && 
+	 !is_locally_conform(*this, ei->first, ei->second) )
 	{
-	  const Vertex_handle& va = (*ei).first->vertex(cw((*ei).second));
-	  const Vertex_handle& vb = (*ei).first->vertex(ccw((*ei).second));
+	  const Vertex_handle& va = ei->first->vertex(cw(ei->second));
+	  const Vertex_handle& vb = ei->first->vertex(ccw(ei->second));
 	  edges_to_be_conformed.push_back(std::make_pair(va, vb));
 	}
     }
@@ -1284,8 +1284,8 @@ virtual_insert_in_the_edge(Face_handle fh, int edge_index, const Point& p)
   // We should deconstrained the constrained edge, insert the two
   // subconstraints and re-constrain them
 
-  extras.signal_inserted_vertex(static_cast<const Tr&>(*this),
-				fh, edge_index, vp);
+  extras.signal_inserted_vertex_in_edge(static_cast<const Tr&>(*this),
+					fh, edge_index, vp);
 
   return vp;
 }
@@ -1377,8 +1377,7 @@ template <class Tr>
 void
 make_conforming_Gabriel_2(Tr& t)
 {
-  typedef Conforming_Delaunay_triangulation_2<Tr,
-    Conforming_Delaunay_triangulation_2_default_extras<Tr> > Conform;
+  typedef Conforming_Delaunay_triangulation_2<Tr> Conform;
 
   Conform conform;
   conform.swap(t);
@@ -1390,8 +1389,7 @@ template <class Tr>
 void
 make_conforming_Delaunay_2(Tr& t)
 {
-  typedef Conforming_Delaunay_triangulation_2<Tr,
-    Conforming_Delaunay_triangulation_2_default_extras<Tr> > Conform;
+  typedef Conforming_Delaunay_triangulation_2<Tr> Conform;
 
   Conform conform;
   conform.swap(t);
@@ -1499,7 +1497,7 @@ write_poly(const CDT& t, std::ostream &f)
   for(Finite_edges_iterator it = t.finite_edges_begin();
       it != t.finite_edges_end();
       ++it)
-    if((*it).first->is_constrained((*it).second))
+    if(it->first->is_constrained(it->second))
       ++number_of_constrained_edges;
 
   f << number_of_constrained_edges << " " << 0 << std::endl;
@@ -1508,10 +1506,10 @@ write_poly(const CDT& t, std::ostream &f)
   for(Finite_edges_iterator eit = t.finite_edges_begin();
       eit != t.finite_edges_end();
       ++eit)
-    if((*eit).first->is_constrained((*eit).second)) 
+    if(eit->first->is_constrained(eit->second)) 
       f << ++edges_counter << " "
-	<< index[(*eit).first->vertex(t.cw((*eit).second))] << " "
-	<< index[(*eit).first->vertex(t.ccw((*eit).second))] 
+	<< index[eit->first->vertex(t.cw(eit->second))] << " "
+	<< index[eit->first->vertex(t.ccw(eit->second))] 
 	<< std::endl;
 
   f << std::endl;
@@ -1527,4 +1525,4 @@ write_poly(const CDT& t, std::ostream &f)
 CGAL_END_NAMESPACE
 
 
-#endif //CGAL_CONFORM_2_H
+#endif //CONFORMING_DELAUNAY_TRIANGULATION_2_H
