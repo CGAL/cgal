@@ -718,7 +718,7 @@ set_compiler_flags()
     ADDITIONAL_LDFLAGS=
     CGAL_LIB_CXXFLAGS=
     CGAL_LIB_LDFLAGS=
-    CGAL_LIB_CREATE="ar cr "
+    CGAL_LIB_CREATE="ar cr ''"
     CGAL_SHARED_LIB_CXXFLAGS="-fpic"
     CGAL_SHARED_LIB_LDFLAGS=
     CGAL_SHARED_LIB_CREATE="false"
@@ -751,7 +751,7 @@ set_compiler_flags()
 	    #### settings Borland C++ compiler 
 	    ADDITIONAL_CXXFLAGS="-P -w-inl"
 	    CGAL_LIB_CXXFLAGS="-P"
-	    CGAL_LIB_CREATE="tlib "
+	    CGAL_LIB_CREATE="tlib ''"
 	    WINDOW_DIR=
 	    WINDOWS_COMPILER="y"
 	    SUFFIX_LIST=".obj .exe"
@@ -826,7 +826,7 @@ set_compiler_flags()
 	*SunOS*5.*CC*)
 	    #### settings for sunpro compiler on solaris
 	    ADDITIONAL_CXXFLAGS="-pto"
-	    CGAL_LIB_CREATE="\$(CGAL_CXX) -xar -o"
+	    CGAL_LIB_CREATE="\$(CGAL_CXX) -xar -o ''"
 	    CGAL_SHARED_LIB_CXXFLAGS="-pic"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
 	    WINDOW_DIR="/usr/openwin/lib"
@@ -1316,6 +1316,16 @@ cgal_ldflags()
 }
 
 #---------------------------------------------------------
+# flags for the math library 
+
+math_ldflags()
+{
+    if [ -n "${MATH_LIB}" ] ; then
+        ${_printf} "%s" "${LIB_OPT}${MATH_LIB}${LIB_SFX} "
+    fi
+}
+
+#---------------------------------------------------------
 # flags for the compiler tests
 
 compiler_test_cxxflags()
@@ -1326,7 +1336,7 @@ compiler_test_cxxflags()
 
 compiler_test_ldflags()
 {
-    ${_printf} "%s" "${CUSTOM_LDFLAGS} ${ADDITIONAL_LDFLAGS} -lm "
+    ${_printf} "%s" "${CUSTOM_LDFLAGS} ${ADDITIONAL_LDFLAGS} `math_ldflags`"
 }
 
 #---------------------------------------------------------
@@ -1350,7 +1360,7 @@ gmp_ldflags()
 	    ${_printf} "%s" "${LIBPATH_OPT}`_where_is 'GMP_LIB_DIR'` "
 	    ${_printf} "%s" "`rpath_directive 'GMP_LIB_DIR'` "
 	fi
-	${_printf} "%s" "-lgmp "
+	${_printf} "%s" "${LIB_OPT}gmp${LIB_SFX} "
     fi
 }
 
@@ -1366,10 +1376,10 @@ gmp_test_cxxflags()
 gmp_test_ldflags()
 {
     compiler_test_ldflags
+    gmp_ldflags
     if [ -n "${GMP_SUPPORT}" -a "${GMP_INSTALLATION}" = 'c' ]; then
 	cgal_ldflags
     fi
-    gmp_ldflags
 }
 
 #---------------------------------------------------------
@@ -1393,7 +1403,7 @@ cln_ldflags()
 	    ${_printf} "%s" "${LIBPATH_OPT}`_where_is 'CLN_LIB_DIR'` "
 	    ${_printf} "%s" "`rpath_directive 'CLN_LIB_DIR'` "
 	fi
-	${_printf} "%s" "-lcln "
+	${_printf} "%s" "${LIB_OPT}cln{LIB_SFX} "
     fi
 }
 
@@ -1417,6 +1427,7 @@ cln_test_ldflags()
 
 #---------------------------------------------------------
 # flags for LEDA
+
 leda_cxxflags()
 {
     if [ -n "${LEDA_SUPPORT}" -a -n "${NEED_EXTRA_LEDA_IDIR}" ]; then
@@ -1449,9 +1460,7 @@ leda_test_ldflags()
 {
     ${_printf} "%s" "`compiler_test_ldflags` "
     leda_ldflags
-    if [ -n "${MATH_LIB}" ] ; then
-        ${_printf} "%s" "${LIB_OPT}${MATH_LIB}${LIB_SFX} "
-    fi
+    math_ldflags
 }
 
 #---------------------------------------------------------
@@ -1466,14 +1475,14 @@ compiler_flags()
 # print ldflags for current setting
 linker_flags()
 {
-    ${_printf} "%s" "${CUSTOM_LDFLAGS} `cgal_ldflags`-lCGAL `leda_ldflags``gmp_ldflags``cln_ldflags`-lm"
+    ${_printf} "%s" "${CUSTOM_LDFLAGS} `cgal_ldflags`${LIB_OPT}CGAL{LIB_SFX} `leda_ldflags``gmp_ldflags``cln_ldflags``math_ldflags`"
 }
 
 # print ldflags for current setting (do not link with cgal lib,
 # used for test before lib is compiled)
 linker_flags_no_cgal_lib()
 {
-    ${_printf} "%s" "${CUSTOM_LDFLAGS} `cgal_ldflags``leda_ldflags``gmp_ldflags``cln_ldflags`-lm"
+    ${_printf} "%s" "${CUSTOM_LDFLAGS} `cgal_ldflags``leda_ldflags``gmp_ldflags``cln_ldflags``math_ldflags`"
 }
 
 # print version number of compiler $1 
@@ -2496,7 +2505,7 @@ test_for_leda_lib_in_sys_lib()
     }" > ${TMP_CXX_FILE}.C
     if _compile_test "LEDA syslibs" "${CUSTOM_CXXFLAGS} " "$1"; then
 	if _link_run_test "LEDA syslibs" \
-	    "${CUSTOM_LDFLAGS} -lP -lG -lL -lm" "$1"; then
+	    "${CUSTOM_LDFLAGS} ${LIB_OPT}P${LIB_SFX} ${LIB_OPT}G${LIB_SFX} ${LIB_OPT}L${LIB_SFX} `math_ldflags`" "$1"; then
 	    NEED_EXTRA_LEDA_LDIR=''
 	    return 0
 	fi
@@ -3893,7 +3902,7 @@ write_linker_flags()
 {
   makefile_header "linker flags" >> ${FILE}
 
-  ${_printf} "%s%s\n" "EXE_OPT = " "${EXE_OPT}" >> ${FILE}
+  ${_printf} "%s%s\n" "EXE_OPT = " "\"${EXE_OPT}\"" >> ${FILE}
 
   #
   # LEDA_LIB_DIR
@@ -3976,7 +3985,11 @@ write_linker_flags()
   WLIBS="${LIB_OPT}CGAL${LIB_SFX}"
   if [ -n "${LEDA_SUPPORT}" ] ; then
     if [ -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
-	LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}\$(LEDA_LIB_DIR)"
+	if [ -n "${WINDOWS_COMPILER}" ]; then
+	    LIB_PATH="${LIB_PATH} '${LIBPATH_OPT}\$(LEDA_LIB_DIR)'"
+	else
+	    LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}\$(LEDA_LIB_DIR)"
+	fi
 	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:\$(LEDA_LIB_DIR)"
     fi
     LIBS="${LIBS} ${LEDA_LIB_OPT}P${LIB_SFX} ${LEDA_LIB_OPT}G${LIB_SFX} ${LEDA_LIB_OPT}L${LIB_SFX}"
@@ -3986,7 +3999,11 @@ write_linker_flags()
     if [ "${GMP_INSTALLATION}" = 'x' -o \
 	 "${GMP_INSTALLATION}" = 'z' -o \
 	 "${GMP_INSTALLATION}" = 'e' ]; then
-	LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}\$(GMP_LIB_DIR)"
+	if [ -n "${WINDOWS_COMPILER}" ]; then
+	    LIB_PATH="${LIB_PATH} '${LIBPATH_OPT}\$(GMP_LIB_DIR)'"
+	else
+	    LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}\$(GMP_LIB_DIR)"
+	fi
 	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:\$(GMP_LIB_DIR)"
     fi
     LIBS="${LIBS} ${LIB_OPT}gmp${LIB_SFX}"
@@ -4002,10 +4019,8 @@ write_linker_flags()
     LIBS="${LIBS} ${LIB_OPT}cln${LIB_SFX}"
     WLIBS="${WLIBS} ${LIB_OPT}cln${LIB_SFX}"
   fi
-  if [ -n "${MATH_LIB}" ]; then
-    LIBS="${LIBS} ${LIB_OPT}${MATH_LIB}${LIB_SFX}"
-    WLIBS="${WLIBS} ${LIB_OPT}${MATH_LIB}${LIB_SFX}"
-  fi
+  LIBS="${LIBS} `math_ldflags`"
+  WLIBS="${WLIBS} `math_ldflags`"
 
   #
   # LONG_NAME_PROBLEM_LDFLAGS
@@ -4207,7 +4222,7 @@ create_include_makefile()
       makefile_print_line "${RUNTIME_LINKER_FLAG}\$(LEDA_LIB_DIR)" \
 	>> ${FILE}
     fi
-    ${_printf} "\t%s\n" "-lL ${CGAL_SHARED_LIB_LDFLAGS}" >> ${FILE}
+    ${_printf} "\t%s\n" "${LIB_OPT}L${LIB_SFX} ${CGAL_SHARED_LIB_LDFLAGS}" >> ${FILE}
   else
     ${_printf} "%s\n" \
 	"CGAL_SHARED_LIB_LDFLAGS = ${CGAL_SHARED_LIB_LDFLAGS}" >> ${FILE}
@@ -4218,7 +4233,7 @@ create_include_makefile()
   # CGAL_SHARED_LIB_CREATE
   # 
   ${_printf} "%s\n\n" \
-    "CGAL_SHARED_LIB_CREATE = ${CGAL_SHARED_LIB_CREATE} -o" \
+    "CGAL_SHARED_LIB_CREATE = ${CGAL_SHARED_LIB_CREATE} -o ''" \
     >> ${FILE}
 
   #
