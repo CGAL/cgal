@@ -74,7 +74,7 @@ public:
           double maxz = fabs(pqz);
           if (maxz < fabs(prz)) maxz = fabs(prz);
           if (maxz < fabs(psz)) maxz = fabs(psz);
-          double eps = 6.883383e-15 * maxx * maxy * maxz;
+          double eps = 6.886744e-15 * maxx * maxy * maxz;
 
           double det = det3x3_by_formula(pqx, pqy, pqz,
                                          prx, pry, prz,

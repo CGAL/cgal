@@ -95,7 +95,7 @@ public:
           if (maxt < maxy) maxt = maxy;
           if (maxt < maxz) maxt = maxz;
 
-          double eps = 1.5454305e-13 * maxx * maxy * maxz * (maxt * maxt);
+          double eps = 1.546186e-13 * maxx * maxy * maxz * (maxt * maxt);
 
           double det = det4x4_by_formula(ptx,pty,ptz,pt2,
                                          rtx,rty,rtz,rt2,
