@@ -3,19 +3,26 @@
 
 
 #include <CGAL/enum.h>
+#include <CGAL/predicates/Square_root_1.h>
+#include <CGAL/predicates/Square_root_2.h>
+
+
 
 CGAL_BEGIN_NAMESPACE
-
 
 
 template<class K>
 struct Svd_basic_predicates_C2
 {
+public:
+  //-------------------------------------------------------------------
+  // TYPES
+  //-------------------------------------------------------------------
+
   typedef typename K::RT         RT;
   typedef typename K::FT         FT;
   typedef typename K::Point_2    Point_2;
   typedef typename K::Segment_2  Segment_2;
-  typedef typename K::Line_2     Line_2;
   typedef typename K::Site_2     Site_2;
 
   typedef CGAL::Square_root_1<RT>       Sqrt_1;
@@ -23,7 +30,6 @@ struct Svd_basic_predicates_C2
   typedef CGAL::Square_root_2<Sqrt_1>   Sqrt_3;
 
 
-#if 0
   class Line_2
   {
   private:
@@ -39,8 +45,6 @@ struct Svd_basic_predicates_C2
     RT c() const { return c_; }
 
   };
-#endif
-
 
   class Homogeneous_point_2
   {
@@ -68,6 +72,11 @@ struct Svd_basic_predicates_C2
     FT x() const { return hx_ / hw_; }
     FT y() const { return hy_ / hw_; }
   };
+
+public:
+  //-------------------------------------------------------------------
+  // CONVERSIONS
+  //-------------------------------------------------------------------
 
   static
   FT to_ft(const Sqrt_1& x)

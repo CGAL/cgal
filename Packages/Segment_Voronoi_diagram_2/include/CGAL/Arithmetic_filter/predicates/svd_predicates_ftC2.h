@@ -4,7 +4,9 @@
 #include <vector>
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Arithmetic_filter.h>
+//#include <CGAL/Interval_arithmetic.h>
+//#include <CGAL/Arithmetic_filter.h>
+#include <CGAL/Filtered_exact.h>
 
 #include <CGAL/Point_2.h>
 #include <CGAL/Segment_2.h>

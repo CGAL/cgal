@@ -19,9 +19,8 @@
 #include <CGAL/Filtered_predicate.h>
 #include <CGAL/Segment_Voronoi_diagram_kernel_wrapper_2.h>
 
-
-
 #include <CGAL/Segment_Voronoi_diagram_site_2.h>
+
 
 #ifndef CGAL_REP_CLASS_DEFINED
 #error  no representation class defined
@@ -30,7 +29,7 @@
 #if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 #include <CGAL/predicates/Segment_Voronoi_diagram_predicates_C2.h>
 #include <CGAL/predicates/Segment_Voronoi_diagram_predicates_ftC2.h>
-//#include <CGAL/Segment_Voronoi_diagram_constructions_C2.h>
+#include <CGAL/Segment_Voronoi_diagram_constructions_C2.h>
 #endif
 
 
@@ -409,17 +408,19 @@ public:
   // CONSTRUCTIONS
   //--------------
   // vertex and Voronoi circle
-  typedef CGAL::Construct_svd_vertex_2<K>  Construct_svd_vertex_2;
-  typedef CGAL::Construct_svd_circle_2<K>  Construct_svd_circle_2;
+  typedef CGAL::Construct_svd_vertex_2<K,MTag>  Construct_svd_vertex_2;
+
+#if 0
+  typedef CGAL::Construct_svd_circle_2<K,MTag>  Construct_svd_circle_2;
 
   // bisectors and subsets
-  typedef CGAL::Construct_svd_bisector_2<K>
+  typedef CGAL::Construct_svd_bisector_2<K,MTag>
   /*                                           */ Construct_svd_bisector_2;
-  typedef CGAL::Construct_svd_bisector_ray_2<K>
+  typedef CGAL::Construct_svd_bisector_ray_2<K,MTag>
   /*                                       */ Construct_svd_bisector_ray_2;
-  typedef CGAL::Construct_svd_bisector_segment_2<K>
+  typedef CGAL::Construct_svd_bisector_segment_2<K,MTag>
   /*                                   */ Construct_svd_bisector_segment_2;
-
+#endif
 
 
   // PREDICATES
@@ -445,17 +446,17 @@ public:
 
   // CONSTRUCTIONS
   //--------------
-  inline Construct_svd_vertex_2
+  Construct_svd_vertex_2
   construct_svd_vertex_2_object() const { 
     return Construct_svd_vertex_2();
   }
 
+#if 0
   inline Construct_svd_circle_2
   construct_svd_circle_2_object() const {
     return Construct_svd_circle_2();
   }
 
-#if 0
   inline Construct_svd_bisector_2
   construct_svd_bisector_2_object() const {
     return Construct_svd_bisector_2();
@@ -474,47 +475,47 @@ public:
 
   // PREDICATES
   //-----------
-  inline Compare_x_2
+  Compare_x_2
   compare_x_2_object() const {
     return Compare_x_2();
   }
 
-  inline Compare_y_2
+  Compare_y_2
   compare_y_2_object() const {
     return Compare_y_2();
   }
 
-  inline Orientation_2
+  Orientation_2
   orientation_2_object() const {
     return Orientation_2();
   }
 
-  inline Are_same_points_2
+  Are_same_points_2
   are_same_points_2_object() const {
     return Are_same_points_2();
   }
 
-  inline Oriented_side_of_bisector_2
+  Oriented_side_of_bisector_2
   oriented_side_of_bisector_2_object() const {
     return Oriented_side_of_bisector_2();
   }
 
-  inline Vertex_conflict_2
+  Vertex_conflict_2
   vertex_conflict_2_object() const {
     return Vertex_conflict_2();
   }
 
-  inline Finite_edge_interior_conflict_2
+  Finite_edge_interior_conflict_2
   finite_edge_interior_conflict_2_object() const {
     return Finite_edge_interior_conflict_2();
   }
 
-  inline Infinite_edge_interior_conflict_2
+  Infinite_edge_interior_conflict_2
   infinite_edge_interior_conflict_2_object() const {
     return Infinite_edge_interior_conflict_2();
   }
 
-  inline Is_degenerate_edge_2
+  Is_degenerate_edge_2
   is_degenerate_edge_2_object() const {
     return Is_degenerate_edge_2();
   }
@@ -532,12 +533,14 @@ public:
 // sqrt FUNCTION IN THE TRAITS CODE, EVEN IF THE Ring_tag IS SET
 // I HAVE TO REMOVE IT SOMEDAY
 
+#if 0
 namespace NTS {
   Gmpq sqrt(const Gmpq& x)
   {
     return Gmpq(sqrt(to_double(x)));
   }
 }
+#endif
 
 template<class CK_, class EK_ = Simple_cartesian<Gmpq>,
 	 class FK_MTag = Sqrt_field_tag,
@@ -573,6 +576,7 @@ public:
   typedef EK_MTag                 Exact_kernel_method_tag;
   typedef C2E                     Converter;
 
+  typedef FK_MTag                 Method_tag;
   
   typedef typename CK::Point_2                Point_2;
   typedef typename CK::Line_2                 Line_2;
@@ -599,6 +603,8 @@ private:
 
   typedef typename CK::FT                     CK_FT;
   typedef typename CK::RT                     CK_RT;
+
+  typedef FK_MTag                             CK_MTag;
 
   // Types for the exact kernel
   typedef typename EK::Point_2                EK_Point_2;
@@ -636,17 +642,19 @@ public:
   // CONSTRUCTIONS
   //--------------
   // vertex and Voronoi circle
-  typedef CGAL::Construct_svd_vertex_2<CK>  Construct_svd_vertex_2;
-  typedef CGAL::Construct_svd_circle_2<CK>  Construct_svd_circle_2;
+  typedef CGAL::Construct_svd_vertex_2<CK,CK_MTag>  Construct_svd_vertex_2;
+
+#if 0
+  typedef CGAL::Construct_svd_circle_2<CK,CK_MTag>  Construct_svd_circle_2;
 
   // bisectors and subsets
-  typedef CGAL::Construct_svd_bisector_2<CK>
+  typedef CGAL::Construct_svd_bisector_2<CK,CK_MTag>
   /*                                           */ Construct_svd_bisector_2;
-  typedef CGAL::Construct_svd_bisector_ray_2<CK>
+  typedef CGAL::Construct_svd_bisector_ray_2<CK,CK_MTag>
   /*                                       */ Construct_svd_bisector_ray_2;
-  typedef CGAL::Construct_svd_bisector_segment_2<CK>
+  typedef CGAL::Construct_svd_bisector_segment_2<CK,CK_MTag>
   /*                                   */ Construct_svd_bisector_segment_2;
-
+#endif
 
 
 
@@ -750,28 +758,28 @@ public:
 
   // CONSTRUCTIONS
   //--------------
-  inline Construct_svd_vertex_2
+  Construct_svd_vertex_2
   construct_svd_vertex_2_object() const { 
     return Construct_svd_vertex_2();
   }
 
-  inline Construct_svd_circle_2
+#if 0
+  Construct_svd_circle_2
   construct_svd_circle_2_object() const {
     return Construct_svd_circle_2();
   }
 
-#if 0
-  inline Construct_svd_bisector_2
+  Construct_svd_bisector_2
   construct_svd_bisector_2_object() const {
     return Construct_svd_bisector_2();
   }
 
-  inline Construct_svd_bisector_ray_2
+  Construct_svd_bisector_ray_2
   construct_svd_bisector_ray_2_object() const {
     return Construct_svd_bisector_ray_2();
   }
 
-  inline Construct_svd_bisector_segment_2
+  Construct_svd_bisector_segment_2
   construct_svd_bisector_segment_2_object() const { 
     return Construct_svd_bisector_segment_2(); 
   }
@@ -779,47 +787,47 @@ public:
 
   // PREDICATES
   //-----------
-  inline Compare_x_2
+  Compare_x_2
   compare_x_2_object() const {
     return Compare_x_2();
   }
 
-  inline Compare_y_2
+  Compare_y_2
   compare_y_2_object() const {
     return Compare_y_2();
   }
 
-  inline Orientation_2
+  Orientation_2
   orientation_2_object() const {
     return Orientation_2();
   }
 
-  inline Are_same_points_2
+  Are_same_points_2
   are_same_points_2_object() const {
     return Are_same_points_2();
   }
 
-  inline Oriented_side_of_bisector_2
+  Oriented_side_of_bisector_2
   oriented_side_of_bisector_2_object() const {
     return Oriented_side_of_bisector_2();
   }
 
-  inline Vertex_conflict_2
+  Vertex_conflict_2
   vertex_conflict_2_object() const {
     return Vertex_conflict_2();
   }
 
-  inline Finite_edge_interior_conflict_2
+  Finite_edge_interior_conflict_2
   finite_edge_interior_conflict_2_object() const {
     return Finite_edge_interior_conflict_2();
   }
 
-  inline Infinite_edge_interior_conflict_2
+  Infinite_edge_interior_conflict_2
   infinite_edge_interior_conflict_2_object() const {
     return Infinite_edge_interior_conflict_2();
   }
 
-  inline Is_degenerate_edge_2
+  Is_degenerate_edge_2
   is_degenerate_edge_2_object() const {
     return Is_degenerate_edge_2();
   }

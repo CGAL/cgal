@@ -169,8 +169,6 @@ typename Gt::Circle_2
 Segment_Voronoi_diagram_2<Gt,Svdds>::
 circumcircle(const Site& t0, const Site& t1, const Site& t2) const
 {
-  typedef CGAL::Construct_svd_circle_2<Gt>  Construct_svd_circle_2;
-
   return Construct_svd_circle_2()(t0, t1, t2);
 }
 

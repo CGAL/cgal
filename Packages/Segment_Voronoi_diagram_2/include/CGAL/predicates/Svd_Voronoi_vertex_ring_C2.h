@@ -24,20 +24,19 @@ public:
   struct PSS_Type {};
   struct SSS_Type {};
 
-  typedef typename Base::Point_2     Point_2;
-  typedef typename Base::Segment_2   Segment_2;
-  typedef typename Base::Line_2      Line_2;
-  typedef typename Base::Site_2      Site_2;
-  typedef typename Base::FT          FT;
-  typedef typename Base::RT          RT;
+  typedef typename Base::Point_2             Point_2;
+  typedef typename Base::Segment_2           Segment_2;
+  typedef typename Base::Line_2              Line_2;
+  typedef typename Base::Site_2              Site_2;
+  typedef typename Base::FT                  FT;
+  typedef typename Base::RT                  RT;
 
-  typedef typename Base::Sqrt_1      Sqrt_1;
-  typedef typename Base::Sqrt_2      Sqrt_2;
-  typedef typename Base::Sqrt_3      Sqrt_3;
+  typedef typename Base::Sqrt_1              Sqrt_1;
+  typedef typename Base::Sqrt_2              Sqrt_2;
+  typedef typename Base::Sqrt_3              Sqrt_3;
 
   typedef typename Base::Homogeneous_point_2 Homogeneous_point_2;
 
-  typedef typename K::Circle_2       Circle_2;
 private:
   //--------------------------------------------------------------------------
 
@@ -443,7 +442,7 @@ private:
     CGAL_assertion( s_minus_vz != ZERO );
 
     if ( s_minus_vz == NEGATIVE ) {
-      l[i_no] = l[i_no].opposite();
+      l[i_no] = opposite_line(l[i_no]);
 
       for (int i = 0; i < 3; i++) {
 	a[i] = l[i].a();
@@ -1194,8 +1193,8 @@ public:
   //--------------------------------------------------------------------------
 
 
-  inline FT x() const { return hx() / hw(); }
-  inline FT y() const { return hy() / hw(); }
+  FT x() const { return hx() / hw(); }
+  FT y() const { return hy() / hw(); }
 
   FT hx() const {
     if ( v_type == PPP ) { return ux_ppp; }
@@ -1265,8 +1264,10 @@ public:
   }
 
 
-  Circle_2 circle() const {
-    return Circle_2(point(), squared_radius());
+  typename K::Circle_2 circle() const
+  {
+    typedef typename K::Circle_2  K_Circle_2;
+    return K_Circle_2(point(), squared_radius());
   }
 
   vertex_t type() const { return v_type; }

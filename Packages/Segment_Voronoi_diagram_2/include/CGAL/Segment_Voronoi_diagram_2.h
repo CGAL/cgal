@@ -49,17 +49,27 @@ private:
   // types and access methods needed for visualization
   //--------------------------------------------------
 
+  typedef typename Gt::Method_tag  Method_tag;
+
   // types
-  typedef CGAL::Construct_svd_bisector_2<Gt>
+  typedef CGAL::Construct_svd_circle_2<Gt,Method_tag>
+  Construct_svd_circle_2;
+
+  typedef CGAL::Construct_svd_bisector_2<Gt,Method_tag>
   Construct_svd_bisector_2;
 
-  typedef CGAL::Construct_svd_bisector_ray_2<Gt>
+  typedef CGAL::Construct_svd_bisector_ray_2<Gt,Method_tag>
   Construct_svd_bisector_ray_2;
 
-  typedef CGAL::Construct_svd_bisector_segment_2<Gt>
+  typedef CGAL::Construct_svd_bisector_segment_2<Gt,Method_tag>
   Construct_svd_bisector_segment_2;
 
   // access
+  Construct_svd_circle_2
+  construct_svd_circle_2_object() const{
+    return Construct_svd_circle_2();
+  }
+
   Construct_svd_bisector_2
   construct_svd_bisector_2_object() const {
     return Construct_svd_bisector_2();
