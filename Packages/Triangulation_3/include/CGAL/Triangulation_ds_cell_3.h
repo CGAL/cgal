@@ -206,7 +206,22 @@ public:
     return(Cb::cell_index(n));
   }
     
+  inline
+  Vertex* mirror_vertex(int i) const
+    {
+      CGAL_triangulation_precondition ( is_valid() && 
+					neighbor(i).is_valid() );
+      return neighbor(i)->vertex(neighbor(i)->index(this));
+    }
 
+  inline 
+  int mirror_index(int i) const
+    {
+      CGAL_triangulation_precondition ( is_valid() && 
+					neighbor(i).is_valid() );
+      return neighbor(i)->index(this);
+    }
+      
   // CHECKING
 
   bool is_valid(int dim = 3, bool verbose = false, int level = 0) const;
@@ -243,7 +258,7 @@ bool
 Triangulation_ds_cell_3<Vb,Cb>::is_valid
 (int dim, bool verbose, int level) const
   {
-    if ( ! Cb::is_valid(verbose, true) ) return false;
+    if ( ! Cb::is_valid(verbose,level) ) return false;
 
     switch (dim) {
       
@@ -436,19 +451,19 @@ Triangulation_ds_cell_3<Vb,Cb>::is_valid
 	  
 	  int j1n,j2n,j3n;
 	  if ( ! n->has_vertex(vertex((i+1)&3),j1n) ) {
-	    if (verbose) { std::cerr << "vertex " << (i+1)%4
+	    if (verbose) { std::cerr << "vertex " << ((i+1)&3)
 				     << " not vertex of neighbor " 
 				     << i << std::endl; }
 	    CGAL_triangulation_assertion(false); return false;
 	  }
 	  if ( ! n->has_vertex(vertex((i+2)&3),j2n) ) {
-	    if (verbose) { std::cerr << "vertex " << (i+2)%4
+	    if (verbose) { std::cerr << "vertex " << ((i+2)&3)
 				     << " not vertex of neighbor " 
 				     << i << std::endl; }
 	    CGAL_triangulation_assertion(false); return false;
 	  }
 	  if ( ! n->has_vertex(vertex((i+3)&3),j3n) ) {
-	    if (verbose) { std::cerr << "vertex " << (i+3)%4
+	    if (verbose) { std::cerr << "vertex " << ((i+3)&3)
 				     << " not vertex of neighbor "
 				     << i << std::endl; }
 	    CGAL_triangulation_assertion(false); return false;
