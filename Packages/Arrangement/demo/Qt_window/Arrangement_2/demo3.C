@@ -419,7 +419,8 @@ private slots:
       {
 	list_of_points.push_back(*g++);
       }
-      CGAL::Polyline_2<Seg_traits> p(list_of_points.begin(), list_of_points.end() );
+      CGAL::Polyline_2<Seg_traits> p(list_of_points.begin(),
+                                     list_of_points.end() );
 
       Cgal_Polygon pol(list_of_points.begin(), list_of_points.end() );
       
