@@ -1,0 +1,85 @@
+% =============================================================================
+% The CGAL Reference Manual
+% Chapter: Geometric Optimisation
+% Section: Smallest Enclosing Sphere of Spheres
+% -----------------------------------------------------------------------------
+% file  : doc_tex/basic/Optimisation/Optimisation_ref/Traits_model_2.tex
+% author: Kaspar Fischer (fischerk@inf.ethz.ch)
+% -----------------------------------------------------------------------------
+% $Revision$
+% $Date$
+% $CGAL_Package$
+% =============================================================================
+
+\begin{ccRefClass}{Min_sphere_of_spheres_d_traits_2<K,FT,UseSqrt,Algorithm>}
+
+% -----------------------------------------------------------------------------
+\ccDefinition
+
+The class
+\ccc{Min_sphere_of_spheres_d_traits_2<K,FT,UseSqrt,Algorithm>} is a
+model for concept \ccc{MinSphereOfSpheresTraits}.  It uses the types
+\ccc{Point_2} and \ccc{Weighted_point} from {\cgal} to represent
+circles.
+
+\ccIsModel
+\ccc{MinSphereOfSpheresTraits}
+
+\ccParameters The template parameters of class
+\ccc{Min_sphere_of_spheres_d_traits_2<K,FT,UseSqrt,Algorithm>} must
+fulfill the following requirements:
+
+\ccNestedType{K}{is a model for \ccc{Kernel}.}
+
+\ccNestedType{FT}{is a number type, which fulfills the requirements of
+type \ccc{FT} of concept \ccc{MinSphereOfSpheresTraits}: It must be
+either \ccc{double} or an exact number type.}
+
+\ccNestedType{UseSqrt}{fulfills the
+requirements of type \ccc{Use_square_roots} of concept
+\ccc{MinSphereOfSpheresTraits}:  It must be either \ccc{Tag_true} or \ccc{Tag_false}.}
+
+\ccNestedType{Algorithm}{fulfills the requirements of type
+\ccc{Algorithm} of concept \ccc{MinSphereOfSpheresTraits}: It must be either \ccc{Default_algorithm}, \ccc{LP_algorithm} or \ccc{Farthest_first_heuristic}.}
+
+\ccTypes
+In addition to the types required by the concept
+\ccc{MinSphereOfSpheresTraits}, this model also defines the types
+\ccc{Wt} and \ccc{Pt}.  Here's the complete list of defined types:
+
+\ccNestedType{FT}{}
+
+\ccNestedType{Use_square_roots}{}
+
+\ccNestedType{Algorithm}{}
+
+\ccNestedType{Wt}{typedefs to the template parameter \ccc{FT}}
+
+\ccNestedType{Pt}{typedefs to \ccc{CGAL::Point_2<K>}.}
+
+\ccNestedType{Sphere}{typedefs to \ccc{CGAL::Weighted_point<Pt,Wt>}.}
+
+\ccNestedType{Coordinate_iterator}{typedefs to
+\ccc{Pt::Cartesian_const_iterator}.}
+
+
+\ccAccessFunctions
+
+The class provides the access functions required by the model
+\ccc{MinSphereOfSpheresTraits}; they simply map to the corresponding
+routines of class \ccc{Weighted_point<Pt,Wt>}:
+
+\ccCreationVariable{traits}
+
+\ccMemberFunction{ FT radius(const
+Sphere& s);}{ maps to \ccc{s.weight()}.}
+
+\ccMemberFunction{ Coordinate_iterator center_coordinates_begin(const
+Sphere& s);}{ maps to \ccc{s.point().cartesian_begin()}.}
+
+\ccMemberFunction{ Coordinate_iterator center_coordinates_end(const
+Sphere& s);}{ maps to \ccc{s.point().cartesian_end()}.}
+
+\ccMemberFunction{ int dimension(const Sphere& s);}{ maps to \ccc{s.dimension()}.}
+
+\end{ccRefClass}
