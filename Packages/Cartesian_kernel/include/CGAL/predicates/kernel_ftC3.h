@@ -119,58 +119,6 @@ coplanar_orientationC3(const FT &px, const FT &py, const FT &pz,
 }
 
 template < class FT >
-/*CGAL_NO_FILTER*/
-CGAL_KERNEL_MEDIUM_INLINE
-Orientation
-coplanar_orientation_vectorC3(const FT &px, const FT &py, const FT &pz,
-                              const FT &qx, const FT &qy, const FT &qz,
-                              const FT &rx, const FT &ry, const FT &rz,
-                              const FT &vx, const FT &vy, const FT &vz)
-{
-  Sign svz = CGAL_NTS sign(vz);
-  if (svz != ZERO)
-      return Orientation(svz * orientationC2(px,py,qx,qy,rx,ry));
-
-  Sign svx = CGAL_NTS sign(vx);
-  if (svx != ZERO)
-      return Orientation(svx * orientationC2(py,pz,qy,qz,ry,rz));
-
-  Sign svy = CGAL_NTS sign(vy);
-  CGAL_kernel_assertion(svy != ZERO);
-  return Orientation(svy * orientationC2(pz,px,qz,qx,rz,rx));
-}
-
-template < class FT >
-CGAL_KERNEL_LARGE_INLINE
-Oriented_side
-coplanar_side_of_oriented_circleC3(const FT &px, const FT &py, const FT &pz,
-                                   const FT &qx, const FT &qy, const FT &qz,
-                                   const FT &rx, const FT &ry, const FT &rz,
-                                   const FT &tx, const FT &ty, const FT &tz,
-                                   const FT &vx, const FT &vy, const FT &vz)
-{
-    // The approach is to compute side_of_oriented_sphere(p,q,r,t+v,t),
-    // and remark that this expression simplifies internally.
-  FT ptx = px - tx;
-  FT pty = py - ty;
-  FT ptz = pz - tz;
-  FT pt2 = CGAL_NTS square(ptx) + CGAL_NTS square(pty) + CGAL_NTS square(ptz);
-  FT qtx = qx - tx;
-  FT qty = qy - ty;
-  FT qtz = qz - tz;
-  FT qt2 = CGAL_NTS square(qtx) + CGAL_NTS square(qty) + CGAL_NTS square(qtz);
-  FT rtx = rx - tx;
-  FT rty = ry - ty;
-  FT rtz = rz - tz;
-  FT rt2 = CGAL_NTS square(rtx) + CGAL_NTS square(rty) + CGAL_NTS square(rtz);
-  FT v2 = CGAL_NTS square(vx) + CGAL_NTS square(vy) + CGAL_NTS square(vz);
-  return Oriented_side(sign_of_determinant4x4(ptx,pty,ptz,pt2,
-                                              rtx,rty,rtz,rt2,
-                                              qtx,qty,qtz,qt2,
-                                              vx,vy,vz,v2));
-}
-
-template < class FT >
 CGAL_KERNEL_LARGE_INLINE
 Oriented_side
 coplanar_side_of_oriented_circleC3(const FT &px, const FT &py, const FT &pz,
