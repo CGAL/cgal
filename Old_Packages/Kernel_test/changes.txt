@@ -1,3 +1,6 @@
+3.36   (19 November 2001)
+- Remove obsolete #includes.
+
 3.35   (27 September 2001)
 - remove the need to have "-I../Kernel/include" in the submitted makefiles,
   by hard coding it in the #includes<> inside the test files.  This way it

@@ -25,10 +25,6 @@
 #include <cassert>
 #include "../Kernel/include/CGAL/Precise_numbers.h"
 #include <CGAL/Simple_homogeneous.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/Line_3.h>
-#include <CGAL/Plane_3.h>
-#include <CGAL/basic_constructionsH3.h>
 #include <CGAL/intersection_3.h>
 
 int
