@@ -14,6 +14,9 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
+# pour purify :
+#CGAL_CXX=purify g++ 
+
 CXXFLAGS = \
 	-I../../include \
 	-I./include \
@@ -26,6 +29,10 @@ CXXFLAGS = \
 #                    linker flags
 #---------------------------------------------------------------------#
 
+# pour purify :
+#CGAL_LDFLAGS= $(CGAL_LIB_DIR)/$(CGAL_OS_COMPILER)/libCGAL.a \
+#              -L$(GMP_LIB_DIR) -lgmp -lm 
+
 LDFLAGS = $(TESTSUITE_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
@@ -33,21 +40,21 @@ LDFLAGS = $(TESTSUITE_LDFLAGS) \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: test_triangulation_3 test_triangulation_geom_traits \
-     test_triangulation_tds test_delaunay_3
-	./test_triangulation_3
+all: test_triangulation_geom_traits test_triangulation_tds \
+     test_triangulation_3 test_delaunay_3
 	./test_triangulation_geom_traits
 	./test_triangulation_tds
+	./test_triangulation_3
 	./test_delaunay_3
-
-test_triangulation_3: test_triangulation_3.o 
-	$(CGAL_CXX) -o test_triangulation_3 test_triangulation_3.o $(LDFLAGS)
 
 test_triangulation_geom_traits : test_triangulation_geom_traits.o
 	$(CGAL_CXX)  -o test_triangulation_geom_traits test_triangulation_geom_traits.o $(LDFLAGS)
 
 test_triangulation_tds: test_triangulation_tds.o
 	$(CGAL_CXX)  -o test_triangulation_tds test_triangulation_tds.o $(LDFLAGS)
+
+test_triangulation_3: test_triangulation_3.o 
+	$(CGAL_CXX) -o test_triangulation_3 test_triangulation_3.o $(LDFLAGS)
 
 test_delaunay_3: test_delaunay_3.o 
 	$(CGAL_CXX) -o test_delaunay_3 test_delaunay_3.o $(LDFLAGS)
