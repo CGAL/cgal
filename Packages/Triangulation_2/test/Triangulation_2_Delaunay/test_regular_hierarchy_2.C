@@ -12,7 +12,7 @@
 // release_date  :
 // 
 // source        : $RCSfile$
-// file          : test/Triangulation/test_triangulation_2.C
+// file          : test/Triangulation/test_regular_hierarchy_2.C
 // revision      : $revision$
 // revision_date : $Date$
 // author(s)     : Francois Rebufat (Francois.Rebufat@sophia.inria.fr)
@@ -45,7 +45,7 @@ typedef CGAL::Triangulation_hierarchy_2<Rt> Regular_triangulation_cartesian;
 template class CGAL::Triangulation_hierarchy_2<Rt>;
 
 //__________
-typedef CGAL::Regular_triangulation_euclidean_traits_2  <Test_rep_cartesian, Rtype> RGt2;
+typedef CGAL::Regular_triangulation_euclidean_traits_2  <Test_rep_homogeneous, Rtype> RGt2;
 typedef CGAL::Regular_triangulation_vertex_base_2<RGt2> Vbb2;
 typedef CGAL::Triangulation_hierarchy_vertex_base_2<Vbb2> Vb2;
 typedef CGAL::Regular_triangulation_face_base_2<RGt2>  Fb2;
@@ -53,7 +53,7 @@ typedef CGAL::Triangulation_data_structure_2<Vb2,Fb2>  Tds2;
 typedef CGAL::Regular_triangulation_2<RGt2,Tds2>  Rt2;
 typedef CGAL::Triangulation_hierarchy_2<Rt2> Regular_triangulation_homogeneous;
 // Explicit instantiation of the whole class :
-//template class CGAL::Triangulation_hierarchy_2<Rt2>;
+template class CGAL::Triangulation_hierarchy_2<Rt2>;
 
 
 
