@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.15 on 25 May 1999
+- fixed the test-suite for MipsPro.
+
 Version 4.14 on 25 May 1999
 - src/workaround_4_irix.s.IRIX renamed to workaround_4_irix6.s.
 
