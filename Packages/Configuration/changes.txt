@@ -1,4 +1,9 @@
 //-----------------------------------------------------------------------//
+// Changes in 1.29
+
+Added CGAL_CFG_CCTYPE_MACRO_BUG.C
+
+//-----------------------------------------------------------------------//
 // Changes in 1.28
 
 Added CGAL_CFG_NO_STDC_NAMESPACE.C and CGAL_CFG_NO_STDIO_NAMESPACE.C.
