@@ -5,6 +5,7 @@
 
 #include <CGAL/MP_Float.h>
 #include <iostream>
+#include <CGAL/Random.h>
 
 typedef CGAL::MP_Float MPI;
 
@@ -65,8 +66,8 @@ int main(int argc, char **argv)
   std::cout.precision(20);
 
   for (; loops >= 0; loops--) {
-    double d = drand48();
-    int exp = int((drand48()-.5)*1024);
+    double d = CGAL::default_random.get_double();
+    int exp = int((CGAL::default_random.get_double()-.5)*1024);
     d = std::ldexp(d, exp);
     // d = 7.34766e-140; // Crash encore sur PC...
     // d = 1.9696110926449043849e+124;

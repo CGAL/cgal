@@ -9,28 +9,17 @@
 #include <CGAL/Lazy_exact_nt.h>
 
 #ifdef CGAL_USE_LEDA
-#include <CGAL/leda_real.h>
+#  include <CGAL/leda_real.h>
+typedef leda_real        Exact_NT;
 #else
-typedef double leda_real; // :)
+#  include <CGAL/MP_Float.h>
+typedef CGAL::MP_Float   Exact_NT; // doesn't do exact sqrt() though
 #endif
-
-#ifdef __GNUG__
-#define UNUSED __attribute__((unused))
-#else
-#define UNUSED
-#endif
-
-/*
-  Compilation with GCC-2.95:
-  g++ -W -Wall -Winline -fno-exceptions -fomit-frame-pointer -O3 -S Lazy_exact_nt.C
-  the .s gives 3 __builtin_delete with GCC-2.95.
-  GCC-2.96 does NULL propagation, and it works ;-)
-*/
 
 // typedef CGAL::Lazy_exact_nt<int> NT;
-// typedef CGAL::Lazy_exact_nt<leda_real> NT;
-typedef CGAL::Filtered_exact<CGAL::Lazy_exact_nt<leda_real>, leda_real> NT;
-// typedef leda_real NT;
+// typedef CGAL::Lazy_exact_nt<Exact_NT> NT;
+typedef CGAL::Filtered_exact<CGAL::Lazy_exact_nt<Exact_NT>, Exact_NT> NT;
+// typedef Exact_NT NT;
 
 typedef CGAL::Cartesian<NT> Kernel;
 typedef Kernel::Point_2     Point;
@@ -38,7 +27,7 @@ typedef Kernel::Point_2     Point;
 using std::cout;
 using std::endl;
 
-void predicats()
+void predicates()
 {
   Point A(NT(1.0)/NT(3),NT(2.0)/NT(3));
   Point B(NT(2.0)/NT(3),NT(3.0)/NT(3));
@@ -53,26 +42,27 @@ void predicats()
 int main ()
 {
   cout.precision(20);
-  // NT UNUSED a;
-  // NT UNUSED b(a);
-  // NT UNUSED c = b;
-  NT UNUSED d (1.0);
-  NT UNUSED e = d + d;
-  NT UNUSED z = min(e,d);
+  // NT a;
+  // NT b(a);
+  // NT c = b;
+  NT d (1.0);
+  NT e = d + d;
+  NT z = min(e,d);
+  (void) d; (void) e; (void) z; // Shut up warnings.
   cout << e/NT(3) << endl;
-  // NT UNUSED f = abs(NT(0));
+  // NT f = abs(NT(0));
   cout << "sign(3*(1/3)-1) = " << CGAL_NTS sign(NT(3)*(NT(1)/NT(3))-NT(1)) << endl;
   cout << "sign(sqrt(2)^2-2) = " << CGAL_NTS sign(CGAL_NTS square(CGAL_NTS sqrt(NT(2)))-NT(2)) << endl;
   // cout << "sign(sqrt(2)) = " << CGAL_NTS sign(CGAL_NTS sqrt(NT(2))) << endl;
   // cout << "sign(square(2)) = " << CGAL_NTS sign(CGAL_NTS square(NT(2))) << endl;
-  // bool UNUSED pipo = e < d;
+  // bool pipo = e < d;
   cout << "sizeof(rep) = " << sizeof(CGAL::Lazy_exact_rep<int>) << endl;
   cout << "sizeof(cst) = " << sizeof(CGAL::Lazy_exact_Cst<int>) << endl;
   cout << "sizeof(abs) = " << sizeof(CGAL::Lazy_exact_Abs<int>) << endl;
   cout << "sizeof(add) = " << sizeof(CGAL::Lazy_exact_Add<int>) << endl;
-  cout << "sizeof(leda_real) = " << sizeof(leda_real) << endl;
+  cout << "sizeof(Exat_NT) = " << sizeof(Exact_NT) << endl;
   cout << "sizeof(Lazy_exact_nt) = " << sizeof(CGAL::Lazy_exact_nt<int>) << endl;
-  predicats();
+  predicates();
   return 0;
 }
 
