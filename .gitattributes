@@ -1037,6 +1037,7 @@ Packages/Manual_tools/src/latex_converter_config/gif/cc_hookleftarrow.gif -text 
 Packages/Manual_tools/src/latex_converter_config/gif/cc_hookrightarrow.gif -text svneol=unset#unset
 Packages/Manual_tools/src/latex_converter_config/gif/cc_imath.gif -text svneol=unset#unset
 Packages/Manual_tools/src/latex_converter_config/gif/cc_in.gif -text svneol=unset#unset
+Packages/Manual_tools/src/latex_converter_config/gif/cc_index_arrow.gif -text svneol=unset#unset
 Packages/Manual_tools/src/latex_converter_config/gif/cc_infty.gif -text svneol=unset#unset
 Packages/Manual_tools/src/latex_converter_config/gif/cc_int.gif -text svneol=unset#unset
 Packages/Manual_tools/src/latex_converter_config/gif/cc_iota.gif -text svneol=unset#unset
@@ -1204,7 +1205,6 @@ Packages/Manual_tools/src/latex_converter_config/gif/cc_wp.gif -text svneol=unse
 Packages/Manual_tools/src/latex_converter_config/gif/cc_wr.gif -text svneol=unset#unset
 Packages/Manual_tools/src/latex_converter_config/gif/cc_xi.gif -text svneol=unset#unset
 Packages/Manual_tools/src/latex_converter_config/gif/cc_zeta.gif -text svneol=unset#unset
-Packages/Manual_tools/src/latex_converter_config/gif/index_arrow.gif -text svneol=unset#unset
 Packages/Manual_tools/src/mstring.doc -text
 Packages/Map_overlay_2/doc_tex/Map_overlay_2/overlay_example.eps -text
 Packages/Map_overlay_2/doc_tex/Map_overlay_2/simple_overlay.eps -text
