@@ -25,16 +25,22 @@
 #include <CGAL/Polygon_2_algorithms.h>
 #endif // CGAL_POLYGON_2_ALGORITHMS_H
 
-#ifndef CGAL_STD_CSTDLIB_H
-#include <CGAL/std/cstdlib>
+#ifndef CGAL_PROTECT_CSTDLIB
+#include <cstdlib>
+#define CGAL_PROTECT_CSTDLIB
 #endif
-#ifndef CGAL_STD_ALGORITHM_H
-#include <CGAL/std/algorithm>
+#ifndef CGAL_PROTECT_ALGORITHM
+#include <algorithm>
+#define CGAL_PROTECT_ALGORITHM
 #endif
-#ifndef CGAL_STD_SET_H
-#include <CGAL/std/set>
+#ifndef CGAL_PROTECT_SET
+#include <set>
+#define CGAL_PROTECT_SET
 #endif
-#include <vector.h>
+#ifndef CGAL_PROTECT_VECTOR
+#include <vector>
+#define CGAL_PROTECT_VECTOR
+#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -46,7 +52,7 @@ CGAL_BEGIN_NAMESPACE
 template <class ForwardIterator, class Traits>
 class CGAL_Simplicity_test_2 {
   private:
-    CGAL_STD::vector<ForwardIterator> d_index;
+    std::vector<ForwardIterator> d_index;
     // the attribute d_index is just a mapping between the integers and the
     // sequence of points
 
@@ -150,7 +156,7 @@ class CGAL_Simplicity_test_2 {
       //-----------------------------------------------------------------//
 
       private:
-        CGAL_STD::set<int,VertexComp> queue;
+        std::set<int,VertexComp> queue;
       public:
         EventQueue(CGAL_Simplicity_test_2<ForwardIterator, Traits>* s)
           : queue(VertexComp(s)) {}
@@ -165,7 +171,7 @@ class CGAL_Simplicity_test_2 {
         void Show() const {
           cout << "    event queue: ";
 
-          typename CGAL_STD::set<int,VertexComp>::const_iterator i;
+          typename std::set<int,VertexComp>::const_iterator i;
           for (i = queue.begin(); i != queue.end(); ++i)
             cout << *i << " ";
           cout << endl;
@@ -177,14 +183,14 @@ class CGAL_Simplicity_test_2 {
       //-----------------------------------------------------------------//
       // g++ 2.7.2 seems to have problems with the following typedef
       //
-      // typedef CGAL_STD::set<int,EdgeComp>::const_iterator const_iterator;
+      // typedef std::set<int,EdgeComp>::const_iterator const_iterator;
       //-----------------------------------------------------------------//
 
       private:
-        CGAL_STD::set<int,EdgeComp> status;
+        std::set<int,EdgeComp> status;
         // if i is an element of status, it means that 
 
-        CGAL_STD::vector<typename CGAL_STD::set<int,EdgeComp>::const_iterator> index;
+        std::vector<typename std::set<int,EdgeComp>::const_iterator> index;
         // the iterators of the edges are stored to enable fast deletion
 
         const CGAL_Simplicity_test_2<ForwardIterator, Traits>* s;
@@ -207,7 +213,7 @@ class CGAL_Simplicity_test_2 {
         {
           int n = s->NumberOfVertices();
 
-          typename CGAL_STD::set<int,EdgeComp>::const_iterator i;
+          typename std::set<int,EdgeComp>::const_iterator i;
           for (i = status.begin(); i != status.end(); ++i) {
             int v1 = *i;
             int v2 = (v1<n-1) ? v1+1 : v1+1-n; 
@@ -229,7 +235,7 @@ class CGAL_Simplicity_test_2 {
 #ifdef CGAL_POLYGON_DEBUG
         void Show() {
           cout << "    sweep status: ";
-          typename CGAL_STD::set<int,EdgeComp>::const_iterator i;
+          typename std::set<int,EdgeComp>::const_iterator i;
           for (i = status.begin(); i != status.end(); ++i)
             cout << *i << " ";
           cout << endl;
@@ -269,12 +275,12 @@ class CGAL_Simplicity_test_2 {
         }
 
         int left(int e) const
-        { typename CGAL_STD::set<int,EdgeComp>::const_iterator i = index[e];
+        { typename std::set<int,EdgeComp>::const_iterator i = index[e];
           return (i == status.begin()) ? -1 : *(--i);
         }
 
         int right(int e) const
-        { typename CGAL_STD::set<int,EdgeComp>::const_iterator i = index[e]; ++i;
+        { typename std::set<int,EdgeComp>::const_iterator i = index[e]; ++i;
           return (i == status.end()) ? -1 : *i;
         }
     };
@@ -412,7 +418,7 @@ CGAL_Simplicity_test_2<ForwardIterator, Traits>::Test(ForwardIterator first,
   cout << "--- Simplicity test ----------------------------" << endl;
   cout << endl;
   cout << "Vertices:" << endl;
-  CGAL_STD::vector<ForwardIterator>::size_type i;
+  std::vector<ForwardIterator>::size_type i;
   for (i=0; i<d_index.size(); i++)
     cout << i << " " << Vertex(i) << endl;
   cout << endl;

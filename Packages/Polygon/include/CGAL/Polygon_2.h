@@ -29,11 +29,11 @@
 #endif // CGAL_BASIC_H
 
 #ifdef CGAL_CFG_NO_MEMBER_TEMPLATES
-#include <vector.h>
-#include <list.h>
+#include <vector>
+#include <list>
 #endif
 
-#include <iterator.h>
+#include <iterator>
 
 #ifndef CGAL_CIRCULATOR_H
 #include <CGAL/circulator.h>
@@ -130,14 +130,14 @@ class Polygon_2 {
 
 #ifdef CGAL_CFG_NO_MEMBER_TEMPLATES
     // the following typedefs are required for Sun C++ 4.2
-    typedef typename CGAL_STD::vector<Point_2>::const_iterator         v_ci;
-    typedef typename CGAL_STD::vector<Point_2>::const_reverse_iterator v_cri;
-    typedef typename CGAL_STD::vector<Point_2>::iterator               v_i;
-    typedef typename CGAL_STD::vector<Point_2>::reverse_iterator       v_ri;
-    typedef typename CGAL_STD::list<Point_2>::const_iterator           l_ci;
-    typedef typename CGAL_STD::list<Point_2>::const_reverse_iterator   l_cri;
-    typedef typename CGAL_STD::list<Point_2>::iterator                 l_i;
-    typedef typename CGAL_STD::list<Point_2>::reverse_iterator         l_ri;
+    typedef typename std::vector<Point_2>::const_iterator         v_ci;
+    typedef typename std::vector<Point_2>::const_reverse_iterator v_cri;
+    typedef typename std::vector<Point_2>::iterator               v_i;
+    typedef typename std::vector<Point_2>::reverse_iterator       v_ri;
+    typedef typename std::list<Point_2>::const_iterator           l_ci;
+    typedef typename std::list<Point_2>::const_reverse_iterator   l_cri;
+    typedef typename std::list<Point_2>::iterator                 l_i;
+    typedef typename std::list<Point_2>::reverse_iterator         l_ri;
 
     Polygon_2(v_ci first, v_ci last)
       { copy(first, last, back_inserter(d_container)); }
