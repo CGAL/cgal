@@ -56,8 +56,13 @@ using std::exit;
 
 #define CGAL_USE_EXTENDED_KERNEL
 
-// typedef CGAL::Gmpz                         NT;
-typedef leda_integer                       NT;
+#ifdef CGAL_USE_LEDA
+#include <CGAL/leda_integer.h>
+typedef leda_integer NT;
+#else
+#include <CGAL/Gmpz.h>
+typedef CGAL::Gmpz NT;
+#endif
 
 #ifdef CGAL_USE_EXTENDED_KERNEL
 typedef CGAL::Extended_homogeneous_3<NT>   Kernel;
