@@ -49,7 +49,7 @@ class SF_Orientation_3
     return err;
   }
 
-  static const double epsilon = 3.90799e-14; // ori_3();
+  static const double epsilon; // = 3.90799e-14; // ori_3();
 
 protected:
 
@@ -163,6 +163,9 @@ private:
   }
 
 };
+
+template <class Point>
+const double SF_Orientation_3<Point>::epsilon = 3.90799e-14;
 
 CGAL_END_NAMESPACE
 

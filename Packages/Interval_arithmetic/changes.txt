@@ -2,6 +2,7 @@ Changes done to the Interval Arithmetic package.
 
 Version 4.117 on ?? August 2001
 - VC++ workaround when using Filtered_exact in the Static_filters.
+- static const double data members must be initialized outside the class.
 
 Version 4.116 on 27 August 2001
 - Kernel_checker allows non-copyable predicates (ie works with Static_filters).

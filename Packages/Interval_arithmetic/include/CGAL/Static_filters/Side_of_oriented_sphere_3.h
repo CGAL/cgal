@@ -56,7 +56,7 @@ class SF_Side_of_oriented_sphere_3
     return err;
   }
 
-  static const double epsilon = 3.6664e-12; // sph_3();
+  static const double epsilon; // = 3.6664e-12; // sph_3();
 
 protected:
 
@@ -238,6 +238,9 @@ public:
     return oooo;
   }
 };
+
+template <class Point>
+const double SF_Side_of_oriented_sphere_3<Point>::epsilon = 3.6664e-12;
 
 CGAL_END_NAMESPACE
 
