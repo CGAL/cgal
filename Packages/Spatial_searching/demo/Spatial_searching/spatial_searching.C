@@ -31,9 +31,10 @@ int main(int, char*){
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
-#include <CGAL/IO/Qt_widget_helpwindow.h>
+#include <CGAL/IO/Qt_help_window.h>
 #include <CGAL/IO/Qt_widget_layer.h>
 #include "spatial_searching_toolbar.h"
+#include <CGAL/IO/pixmaps/demoicon.xpm>
 
 #include <qapplication.h>
 #include <qmainwindow.h>
@@ -229,7 +230,7 @@ private slots:
   void howto(){
     QString home;
     home = "help/index.html";
-    HelpWindow *help = new HelpWindow(home, ".", 0, "help viewer");
+    Qt_help_window *help = new Qt_help_window(home, ".", 0, "help viewer");
     help->resize(400, 400);
     help->setCaption("Demo HowTo");
     help->show();
@@ -318,6 +319,8 @@ main(int argc, char **argv)
   app.setMainWidget(&widget);
   widget.setCaption(my_title_string);
   widget.setMouseTracking(TRUE);
+  QPixmap cgal_icon = QPixmap((const char**)demoicon_xpm);
+  widget.setIcon(cgal_icon);
   widget.show();
   current_state = -1;
   return app.exec();
