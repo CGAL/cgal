@@ -1189,6 +1189,10 @@ Packages/Manual_tools/src/latex_converter_config/gif/cc_wr.gif -text svneol=unse
 Packages/Manual_tools/src/latex_converter_config/gif/cc_xi.gif -text svneol=unset#unset
 Packages/Manual_tools/src/latex_converter_config/gif/cc_zeta.gif -text svneol=unset#unset
 Packages/Manual_tools/src/mstring.doc -text
+Packages/Map_overlay_2/doc_tex/Map_overlay_2/overlay_example.eps -text
+Packages/Map_overlay_2/doc_tex/Map_overlay_2/simple_overlay.eps -text
+Packages/Map_overlay_2/doc_tex/basic/Map_overlay_2/overlay_example.eps -text
+Packages/Map_overlay_2/doc_tex/basic/Map_overlay_2/simple_overlay.eps -text
 Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_pcenter1.gif -text svneol=unset#unset
 Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_pcenter2.gif -text svneol=unset#unset
 Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_pcenter3.gif -text svneol=unset#unset
