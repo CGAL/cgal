@@ -3,7 +3,7 @@
 // variable (Filter) is used before being initialized.
 
 #include <CGAL/basic.h>
-#include <CGAL/Arithmetic_filter.h>
+#include <CGAL/Filtered_exact.h>
 
 // Just to look at how good the CGAL_IA_FORCE_TO_DOUBLE macro is compiled.
 double force2mem(const double a)

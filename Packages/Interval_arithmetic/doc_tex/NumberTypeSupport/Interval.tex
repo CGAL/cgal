@@ -274,6 +274,8 @@ Notes:\\
 \ccSubsection{Robust filtered predicates}
 \label{filter}
 
+\ccInclude{CGAL/Filtered_exact.h}
+
 The class \ccc{Filtered_exact<CT,ET>} is a wrapper type for the number
 type \ccc{CT}, with the difference
 that all predicates are specialized such that they are guaranteed to be exact.
@@ -326,7 +328,7 @@ will be documented when they will be considered stable, in a next release.
 You might use at the beginning of your program a \ccc{typedef} as follows:
 
 \begin{verbatim}
-    #include<CGAL/Arithmetic_filter.h>
+    #include<CGAL/Filtered_exact.h>
     #include<CGAL/leda_real.h>
     #include<CGAL/double.h>
     typedef Filtered_exact<double, leda_real> NT;
@@ -336,7 +338,7 @@ Or if you are sure that the predicates involved do not use divisions nor
 square roots:
 
 \begin{verbatim}
-    #include<CGAL/Arithmetic_filter.h>
+    #include<CGAL/Filtered_exact.h>
     #include<CGAL/Gmpz.h>
     #include<CGAL/int.h>
     typedef Filtered_exact<int, Gmpz> NT;
@@ -346,7 +348,7 @@ And if you know that the double variables contain integer values, you can
 use:
 
 \begin{verbatim}
-    #include<CGAL/Arithmetic_filter.h>
+    #include<CGAL/Filtered_exact.h>
     #include<CGAL/Gmpz.h>
     #include<CGAL/double.h>
     typedef Filtered_exact<double, Gmpz> NT;
@@ -359,7 +361,7 @@ As a general rule, we advise the use of
 % following:
 % 
 % \begin{verbatim}
-    % #include<CGAL/Arithmetic_filter.h>
+    % #include<CGAL/Filtered_exact.h>
     % #include<CGAL/lera_real.h>
     % typedef Filtered_exact<leda_real, leda_real, Filter_Cache> NT;
 % \end{verbatim}

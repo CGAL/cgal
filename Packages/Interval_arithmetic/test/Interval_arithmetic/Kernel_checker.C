@@ -10,7 +10,7 @@
 #include <CGAL/Point_3.h>
 
 #include <CGAL/MP_Float.h>
-#include <CGAL/Arithmetic_filter.h>
+#include <CGAL/Filtered_exact.h>
 #include <CGAL/Random.h>
 
 #include <CGAL/Triangulation_data_structure_3.h>

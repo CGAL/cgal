@@ -18,7 +18,7 @@
 #endif
 
 // The number types.
-#include <CGAL/Arithmetic_filter.h>
+#include <CGAL/Filtered_exact.h>
 #include <CGAL/double.h>
 // #include <CGAL/leda_real.h>
 

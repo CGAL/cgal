@@ -34,7 +34,7 @@
 #include <CGAL/predicates/Regular_triangulation_rtH3.h>
 #endif
 
-#include <CGAL/Arithmetic_filter.h>
+#include <CGAL/Filtered_exact.h>
 
 CGAL_BEGIN_NAMESPACE
 

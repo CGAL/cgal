@@ -41,7 +41,7 @@
 // #include <CGAL/predicates/kernel_ftC3.h>
 
 #define CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
-#include <CGAL/Arithmetic_filter.h>
+#include <CGAL/Filtered_exact.h>
 
 // PLEASE PAY ATTENTION TO THE WORKAROUND AT THE TOP OF THE FILE !!!
 #ifdef CGAL_USE_LEDA

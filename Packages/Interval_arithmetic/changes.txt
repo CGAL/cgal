@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.100 on 20 June 2001
+- Arithmetic_filter.h => Filtered_exact.h.
+
 Version 4.99 on 12 June 2001
 - Add missing #include <CGAL/misc.h> since it's not done in basic.h anymore.
 - Workaround for GCC 3 only activated for 3.0.0 as it's probably going to be
