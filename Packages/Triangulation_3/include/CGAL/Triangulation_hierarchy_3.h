@@ -119,21 +119,6 @@ public:
 
   void remove(Vertex_handle v);
 
-  void remove_degree_3(Vertex_handle v)
-  {
-      remove(v);
-  }
-
-  void remove_first(Vertex_handle v)
-  {
-      remove(v);
-  }
-
-  void remove_second(Vertex_handle v)
-  {
-      remove(v);
-  }
-
   //LOCATE
   Cell_handle locate(const Point& p, Locate_type& lt, int& li, int& lj) const;
   Cell_handle locate(const Point& p) const;
