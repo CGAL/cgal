@@ -353,7 +353,7 @@ public:
        // find a vertex with degree 2 (there must be at least one)
        while (m_it != end() && (*m_it).second.size() != 2)
           m_it++;
-       assert (m_it != end());
+       CGAL_assertion (m_it != end());
 
        // insert this vertex and the two around it
        first_v_it = prev_v_it = (*(*m_it).second.begin()).endpoint();
@@ -378,7 +378,7 @@ public:
        prev_v_it  = v_it;
        v_it = next_v_it;
        m_it = find(v_it);
-       assert (m_it == end() || (*m_it).first == v_it);
+       CGAL_assertion (m_it == end() || (*m_it).first == v_it);
        
        while (v_it != first_v_it && m_it != end())
        {
@@ -409,7 +409,7 @@ public:
           prev_v_it  = v_it;
           v_it = next_v_it;
           m_it = find(v_it);
-          assert (m_it == end() || (*m_it).first == v_it);
+          CGAL_assertion (m_it == end() || (*m_it).first == v_it);
        }
 #ifdef CGAL_PARTITION_CHECK_DEBUG
        if (v_it == first_v_it)
