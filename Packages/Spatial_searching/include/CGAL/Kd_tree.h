@@ -48,7 +48,7 @@ public:
   typedef typename Compact_container<Node>::iterator Node_handle;
   typedef typename std::vector<Point_d*>::iterator Point_d_iterator;
   typedef typename Splitter::Separator Separator;
-  std::vector<Point_d>::iterator iterator;
+  typedef typename std::vector<Point_d>::const_iterator iterator;
 
 private:
 
