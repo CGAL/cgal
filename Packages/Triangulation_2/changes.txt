@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.82 (20/01/01)
+- remove const_cast for "this" in march_locate_2d of Triangulation_2
+
 Ver 4.81 (19/01/01)
 - changed makefile for submission with CVS tag
 - added missing function void insert(Vertex_handle va, Vertex_handle vb)
