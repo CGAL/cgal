@@ -1,3 +1,8 @@
+#ifndef CGAL_USE_LEDA
+#include <iostream>
+int main(){ std::cout << "This demo needs LEDA" << std::endl; return 0;}
+#else
+
 #include <CGAL/basic.h> //CGAL definitions that need to be before anything else
 #include <CGAL/Cartesian.h>
 #include <CGAL/Quotient.h>
@@ -71,3 +76,5 @@ int  main()
   
  return 0;
 }
+
+#endif
