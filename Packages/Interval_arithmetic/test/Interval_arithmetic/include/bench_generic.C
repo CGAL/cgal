@@ -4,8 +4,8 @@
 // Written by Sylvain Pion, 1997-1999.
 
 // This file is included from tst[34].C, that do just a #define:
-// #define TESTED_TYPE CGAL_Interval_nt_advanced // For tst3.C
-// #define TESTED_TYPE CGAL_Interval_nt          // For tst4.C
+// #define TESTED_TYPE CGAL::Interval_nt_advanced // For tst3.C
+// #define TESTED_TYPE CGAL::Interval_nt          // For tst4.C
 
 #define CGAL_IA_NO_EXCEPTION
 #define CGAL_IA_NO_WARNINGS
@@ -22,7 +22,7 @@ void bench()
 {
   const int loops = 10000000;
   int i;
-  CGAL_Timer t;
+  CGAL::Timer t;
   double dt;
   const double dd = 1.0000001;
   const IA a(0.12);
@@ -67,7 +67,7 @@ void bench()
   cout << c << "\tsqrt\t" << t.time()-dt << endl;
 
   dt = t.time(); t.start();
-  for (i=0; i<loops; i++) { c = CGAL_square(b); }
+  for (i=0; i<loops; i++) { c = CGAL::square(b); }
   t.stop();
   cout << c << "\tsquare\t" << t.time()-dt << endl;
 
@@ -118,10 +118,10 @@ void bench()
 
 #if 1
   cout << a<<b<<c<<d<<endl;
-  CGAL_Orientation o;
+  CGAL::Orientation o;
   dt = t.time(); t.start();
   for (i=0; i<loops; i++)
-    o = CGAL_orientationC2(a,b,c,d,e,f);
+    o = CGAL::orientationC2(a,b,c,d,e,f);
   t.stop();
   cout << (int)o << "\tori2\t" << t.time()-dt << endl;
 #endif
@@ -131,10 +131,10 @@ void bench()
 int main()
 {
 #ifdef ADVANCED
-  CGAL_FPU_set_rounding_to_infinity();
-  cout << "Benching the class CGAL_Interval_nt_advanced.\n";
+  CGAL::FPU_set_rounding_to_infinity();
+  cout << "Benching the class CGAL::Interval_nt_advanced.\n";
 #else
-  cout << "Benching the class CGAL_Interval_nt.\n";
+  cout << "Benching the class CGAL::Interval_nt.\n";
 #endif
   double d;
   if ((((int) &d) & 7) != 0)
@@ -144,8 +144,8 @@ int main()
   bench();
 
   IA a=1, b=2;
-  (int) CGAL_sign(a);
-  (int) CGAL_compare(a,b);
+  (int) CGAL::sign(a);
+  (int) CGAL::compare(a,b);
 #if 0
   // It's nice if it crashed, because c is not initialized.
   IA c;
@@ -154,7 +154,7 @@ int main()
 #endif
 
 #ifdef ADVANCED
-  CGAL_FPU_set_rounding_to_nearest();
+  CGAL::FPU_set_rounding_to_nearest();
 #endif
 
   return 0;

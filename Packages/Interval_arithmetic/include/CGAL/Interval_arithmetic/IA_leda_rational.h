@@ -24,36 +24,40 @@
 #ifndef CGAL_IA_LEDA_RATIONAL_H
 #define CGAL_IA_LEDA_RATIONAL_H
 
+CGAL_BEGIN_NAMESPACE
+
 // For this one, I hope that adding 3 ulps will be enough for an exact
 // conversion.  Since LEDA types (except real) don't give information on the
 // precision of to_double(), we can't do much...
 
 inline
-CGAL_Interval_nt_advanced
-CGAL_convert_to (const leda_rational &z, const CGAL_Interval_nt_advanced &)
+Interval_nt_advanced
+convert_to (const leda_rational &z, const Interval_nt_advanced &)
 {
 #ifdef CGAL_IA_DEBUG
-    CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
+    CGAL_assertion(FPU_get_rounding_mode() == FPU_PLUS_INFINITY);
 #endif
-    CGAL_FPU_set_rounding_to_nearest();
-    double approx = CGAL_to_double(z);
-    CGAL_FPU_set_rounding_to_infinity();
+    FPU_set_rounding_to_nearest();
+    double approx = to_double(z);
+    FPU_set_rounding_to_infinity();
 
-    const CGAL_Interval_nt_advanced result =
-	((CGAL_Interval_nt_advanced (approx)
-	  + CGAL_Interval_nt_advanced::smallest)
-	  + CGAL_Interval_nt_advanced::smallest)
-	  + CGAL_Interval_nt_advanced::smallest;
+    const Interval_nt_advanced result =
+	((Interval_nt_advanced (approx)
+	  + Interval_nt_advanced::smallest)
+	  + Interval_nt_advanced::smallest)
+	  + Interval_nt_advanced::smallest;
 // The following is bad because overflow is highly probable with rationals.
-    // return CGAL_convert_to<CGAL_Interval_nt_advanced>(z.numerator())
-	// /  CGAL_convert_to<CGAL_Interval_nt_advanced>(z.denominator());
+    // return convert_to<Interval_nt_advanced>(z.numerator())
+	// /  convert_to<Interval_nt_advanced>(z.denominator());
 #ifdef CGAL_IA_DEBUG
-    CGAL_FPU_set_rounding_to_nearest();
+    FPU_set_rounding_to_nearest();
     CGAL_assertion( leda_rational(result.lower_bound()) <= z &&
 		    leda_rational(result.upper_bound()) >= z );
-    CGAL_FPU_set_rounding_to_infinity();
+    FPU_set_rounding_to_infinity();
 #endif
     return result;
 }
+
+CGAL_END_NAMESPACE
 
 #endif	 // CGAL_IA_LEDA_RATIONAL_H

@@ -21,22 +21,26 @@
 //
 // ============================================================================
 
-#ifndef CGAL_IA_QUOTIENT_H
-#define CGAL_IA_QUOTIENT_H
+#ifndef IA_QUOTIENT_H
+#define IA_QUOTIENT_H
+
+CGAL_BEGIN_NAMESPACE
 
 // We don't know anything about the internal RT type, so there is a risk of
 // overflow, but we can't do better than the following trivial conversion.
 
 template <class RT>
 inline
-CGAL_Interval_nt_advanced
-CGAL_convert_to (const CGAL_Quotient<RT> &z, const CGAL_Interval_nt_advanced &)
+Interval_nt_advanced
+convert_to (const Quotient<RT> &z, const Interval_nt_advanced &)
 {
 #ifdef CGAL_IA_DEBUG
-    CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
+    CGAL_assertion(FPU_get_rounding_mode() == FPU_PLUS_INFINITY);
 #endif
-    return CGAL_convert_to(z.numerator(),   CGAL_Interval_nt_advanced()) /
-	   CGAL_convert_to(z.denominator(), CGAL_Interval_nt_advanced());
+    return convert_to(z.numerator(),   Interval_nt_advanced()) /
+	   convert_to(z.denominator(), Interval_nt_advanced());
 }
 
-#endif	 // CGAL_IA_QUOTIENT_H
+CGAL_END_NAMESPACE
+
+#endif	 // IA_QUOTIENT_H

@@ -10,7 +10,6 @@ Concerning the code itself:
 - Essayer de blaster les volatile dans les IA_SETFPCW, et faire des
   benchs/tests.  Sur Sparc et Intel, dernier egcs snapshot.
 - cf glibc-2.1 pour d'autres ports.
-- mettre les *_FPU_* dans un namespace à part ?
 - Supporter Quotient<> pour supporter les prédicats homogenes.
 - Essayer le fcmov-patch d'HJ Lu.
 - Add determinant_signs.h to the list of filtered files ?
@@ -71,6 +70,7 @@ Concerning the code itself:
 ? Add "-Wa,-xarch=v8plus" to fix the following "error":
   /usr/ccs/bin/as: "/var/tmp/ccBHnU0T.s", line 861: warning: 3 instructions
   required between ldfsr and next FBfcc; nops inserted
+? mettre les *_FPU_* dans un namespace à part ?
 
 Concerning the script:
 

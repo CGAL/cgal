@@ -2,7 +2,7 @@
 %   $Revision$
 %   $Date$
 
-\begin{ccClass} {CGAL_Interval_nt}
+\begin{ccClass} {Interval_nt}
 \ccSubsection{Interval Arithmetic}
 \label{interval}
 \ccChapterAuthor{Sylvain Pion}
@@ -31,9 +31,8 @@ You can find more theoretical information on this topic in
 Interval arithmetic is a large concept and we will only consider here a 
 simple arithmetic based on intervals whose bounds are {\it double}s.
 So each variable is an interval representing any value inside the interval.
-All arithmetic operations (+, -, $*$, $/$, $\sqrt{}$, \ccc{CGAL_square()},
-\ccc{CGAL_min()},
-\ccc{CGAL_max()} and \ccc{CGAL_abs()}) on intervals preserve the inclusion.
+All arithmetic operations (+, -, $*$, $/$, $\sqrt{}$, \ccc{square()},
+\ccc{min()}, \ccc{max()} and \ccc{abs()}) on intervals preserve the inclusion.
 This property can be expressed by the following formula ($x$ and $y$ are
 reals, $X$ and $Y$ are intervals, $\mathcal{OP}$ is an arithmetic operation):
 
@@ -49,22 +48,22 @@ an interval that does not contain zero, then you can safely determine its sign.
 
 \ccCreation
 
-\ccConstructor{CGAL_Interval_nt(double d);}
+\ccConstructor{Interval_nt(double d);}
 {introduces the interval [d;d].}
 
-\ccConstructor{CGAL_Interval_nt(double i, double s);}
+\ccConstructor{Interval_nt(double i, double s);}
 {introduces the interval [i;s].}
 
-Several functions \ccc{CGAL_convert_to<CGAL_Interval_nt>(NT)} provide a cast
-from all supported numerical types, to an interval \ccc{CGAL_Interval_nt}
+Several functions \ccc{convert_to<Interval_nt>(NT)} provide a cast
+from all supported numerical types, to an interval \ccc{Interval_nt}
 containing the value.  The following types are supported: \ccc{leda_real},
-\ccc{leda_rational}, \ccc{leda_integer}, \ccc{leda_bigfloat}, \ccc{CGAL_Gmpz},
-\ccc{CGAL_Fixed_precision_nt}, and all built-in types.
+\ccc{leda_rational}, \ccc{leda_integer}, \ccc{leda_bigfloat}, \ccc{Gmpz},
+\ccc{Fixed_precision_nt}, and all built-in types.
 The user can add such functions for his own number types.
 
 
 \ccOperations
-\ccSetThreeColumns{CGAL_Interval_nt}{}{\hspace*{8cm}}
+\ccSetThreeColumns{Interval_nt}{}{\hspace*{8cm}}
 
 All functions required by a class to be considered as a {\cgal} number type
 (see~\ref{Numbertype}) are present, as well as the utility functions,
@@ -73,22 +72,22 @@ access functions to the bounds of the intervals.
 
 \ccCreationVariable{I}
 
-\ccMethod{CGAL_Interval_nt operator/(CGAL_Interval_nt J);} {returns
+\ccMethod{Interval_nt operator/(Interval_nt J);} {returns
 [$-\infty$;$+\infty$] when the denominator contains 0.}
 
-\ccFunction{CGAL_Interval_nt sqrt(CGAL_Interval_nt I);} {returns
+\ccFunction{Interval_nt sqrt(Interval_nt I);} {returns
 [0;sqrt(upper\_bound(I))] when only the lower bound is negative (expectable
 case with roundoff errors), and is unspecified when the upper bound also is
 negative (unexpected case).}
 
-\ccFunction{double CGAL_to_double(CGAL_Interval_nt I);} {returns the
+\ccFunction{double to_double(Interval_nt I);} {returns the
 middle of the interval, as a double approximation of the interval.}
 
 \ccMethod{double lower_bound();} {returns the lower bound of the interval.}
 \ccMethod{double upper_bound();} {returns the upper bound of the interval.}
 
-The comparison operators ($<$, $>$, $<=$, $>=$, $==$, $!=$, \ccc{CGAL_sign()}
-and \ccc{CGAL_compare()}) have the following semantic: it is the intuitive
+The comparison operators ($<$, $>$, $<=$, $>=$, $==$, $!=$, \ccc{sign()}
+and \ccc{compare()}) have the following semantic: it is the intuitive
 one when for all couples of values in both intervals, the comparison
 is identical (case of non-overlapping intervals).  This can be expressed
 by the following formula ($x$ and $y$ are reals, $X$ and $Y$ are
@@ -107,7 +106,7 @@ $$
 Otherwise, the comparison is not safe.  Then the behaviour is the following:
 \begin{itemize}
 \item By default, the exception
-    \ccc{CGAL_Interval_nt_advanced::unsafe_comparison} is thrown.
+    \ccc{Interval_nt_advanced::unsafe_comparison} is thrown.
 \item If you compile with the flag \ccc{-DCGAL_IA_NO_EXCEPTION}, the exception
     is not thrown, but you get a warning instead.
     The return value is unspecified.
@@ -118,9 +117,9 @@ Otherwise, the comparison is not safe.  Then the behaviour is the following:
 
 \ccImplementation
 
-\ccc{CGAL_Interval_nt} derives from \ccc{CGAL_Interval_nt_advanced}, 
+\ccc{Interval_nt} derives from \ccc{Interval_nt_advanced}, 
 see Section~\ref{interval-adv}.  Nearly all operations on
-\ccc{CGAL_Interval_nt} need the rounding mode to be set to 'round to nearest'
+\ccc{Interval_nt} need the rounding mode to be set to 'round to nearest'
 (which is the default),
 and leave it in this state if they have to modify it internally.
 
@@ -129,18 +128,18 @@ and leave it in this state if they have to modify it internally.
 % Here a simple example is given showing how to make safe and fast predicates.
 % This kind of problem is going to be resolved automatically by a predicate
 % compiler, but before it is available, you can do it by hand.
-% Let's consider the \ccc{CGAL_orientation} predicate:
+% Let's consider the \ccc{orientation} predicate:
 % 
 % \begin{verbatim}
 % template < class FT >
-% CGAL_Orientation CGAL_orientation(const FT &px, const FT &py,
+% Orientation orientation(const FT &px, const FT &py,
                                   % const FT &qx, const FT &qy,
                                   % const FT &rx, const FT &ry)
 % {
   % FT d1 = (px-qx)*(qy-ry);
   % FT d2 = (py-qy)*(qx-rx);
-  % return  (d1 < d2) ? CGAL_RIGHTTURN
-       % : ((d1 == d2)? CGAL_COLLINEAR : CGAL_LEFTTURN);
+  % return  (d1 < d2) ? RIGHTTURN
+       % : ((d1 == d2)? COLLINEAR : LEFTTURN);
 % }
 % \end{verbatim}
 % 
@@ -148,9 +147,9 @@ and leave it in this state if they have to modify it internally.
 % 
 % \begin{verbatim}
 % #include <CGAL/Interval_arithmetic.h>
-% typedef CGAL_Interval_nt Dis;
+% typedef Interval_nt Dis;
 % 
-% CGAL_Orientation CGAL_orientation(const FT &px, const FT &py,
+% Orientation orientation(const FT &px, const FT &py,
                                   % const FT &qx, const FT &qy,
                                   % const FT &rx, const FT &ry)
 % {
@@ -158,11 +157,11 @@ and leave it in this state if they have to modify it internally.
   % Dis d2 = ((Dis)py-(Dis)qy)*((Dis)qx-(Dis)rx);
 % 
   % if (d1 == d2) {
-    % return CGAL_orientation((leda_real) px, (leda_real) py,
+    % return orientation((leda_real) px, (leda_real) py,
 			    % (leda_real) qx, (leda_real) qy,
 			    % (leda_real) rx, (leda_real) ry);
   % } else {
-    % return (d1 < d2) ? CGAL_RIGHTTURN : CGAL_LEFTTURN;
+    % return (d1 < d2) ? RIGHTTURN : LEFTTURN;
   % };
 % }
 % \end{verbatim}
@@ -171,11 +170,11 @@ and leave it in this state if they have to modify it internally.
 
 \begin{ccAdvanced}
 \samepage
-\begin{ccClass} {CGAL_Interval_nt_advanced}
+\begin{ccClass} {Interval_nt_advanced}
 \ccSubsection {Advanced Interval Arithmetic}
 \label{interval-adv}
 
-\ccc{CGAL_Interval_nt} derives from \ccc{CGAL_Interval_nt_advanced}.
+\ccc{Interval_nt} derives from \ccc{Interval_nt_advanced}.
 The advanced class allows you to make faster computations, but you need to set
 the rounding mode of the FPU to 'round to infinity' (see below for how to do
 that) before doing any computation with this number type, and each function
@@ -184,12 +183,12 @@ leaves the rounding mode in this state if it needs to modify it internally.
 See below for details.
 
 % The other noticeable difference is that it throws the exception
-% \ccc{CGAL_Interval_nt_advanced::unsafe_comparison} when you make unsafe
+% \ccc{Interval_nt_advanced::unsafe_comparison} when you make unsafe
 % comparisons.  This mechanism is used internally by the filtered predicate
 % scheme described in the section~/ref{filter}.
 
-The function \ccc{CGAL_convert_to<CGAL_Interval_nt>()} is replaced by the
-function \ccc{CGAL_convert_to<CGAL_Interval_nt_advanced>()} and has the same
+The function \ccc{convert_to<Interval_nt>()} is replaced by the
+function \ccc{convert_to<Interval_nt_advanced>()} and has the same
 requirements concerning the rounding mode as other functions.
 
 \ccInclude{CGAL/Interval_arithmetic.h}
@@ -198,10 +197,10 @@ requirements concerning the rounding mode as other functions.
 
 We provide the following functions to change the rounding mode:
 \begin{itemize}
-\item \ccc{CGAL_FPU_set_rounding_to_zero()}
-\item \ccc{CGAL_FPU_set_rounding_to_nearest()}
-\item \ccc{CGAL_FPU_set_rounding_to_infinity()}
-\item \ccc{CGAL_FPU_set_rounding_to_minus_infinity()}
+\item \ccc{FPU_set_rounding_to_zero()}
+\item \ccc{FPU_set_rounding_to_nearest()}
+\item \ccc{FPU_set_rounding_to_infinity()}
+\item \ccc{FPU_set_rounding_to_minus_infinity()}
 \end{itemize}
 
 \ccImplementation
@@ -224,11 +223,11 @@ That's why assembly versions are used as often as possible.
 Another trick is to store the opposite of the lower bound, instead of the
 lower bound itself, which allows us to never change the rounding mode inside
 simple operations.  Therefore, all basic operations, which are in the class 
-\ccc{CGAL_Interval_nt_advanced} assume that the rounding mode is set to 
+\ccc{Interval_nt_advanced} assume that the rounding mode is set to 
 'round to infinity', and everything works with this correctly set.  
-The class \ccc{CGAL_Interval_nt} takes care of this, but is a bit slower.
+The class \ccc{Interval_nt} takes care of this, but is a bit slower.
 
-So, if the user needs the speed of \ccc{CGAL_Interval_nt_advanced}, he must
+So, if the user needs the speed of \ccc{Interval_nt_advanced}, he must
 take care of setting the rounding mode to 'round to infinity' before each
 operations on this number type.  And if other operations might be affected by
 this, he must take care to reset it to 'round to the nearest' before them.
@@ -240,7 +239,7 @@ Platform support:\\
 This part of {\cgal} must be explicitly ported to each non yet supported
 platform.  For Intel, Sparc and Mips, only the GNU compilers use assembly
 code.  The MipsPro compiler uses the slow C code instead, and do not
-support the construction \ccc{CGAL_convert_to<>()} right now.
+support the construction \ccc{convert_to<>()} right now.
 
 % Here is the current state of supported platforms:
 % 
@@ -273,11 +272,11 @@ support the construction \ccc{CGAL_convert_to<>()} right now.
 \end{ccAdvanced}
 
 
-\begin{ccClass} {CGAL_Filtered_exact<CT,ET>}
+\begin{ccClass} {Filtered_exact<CT,ET>}
 \ccSubsection{Robust filtered predicates}
 \label{filter}
 
-The class \ccc{CGAL_Filtered_exact<CT,ET>} is a wrapper type for the number
+The class \ccc{Filtered_exact<CT,ET>} is a wrapper type for the number
 type \ccc{CT}, with the difference
 that all predicates are specialized such that they are guaranteed to be exact.
 Speed is achieved via a filtering scheme using interval arithmetic (see
@@ -285,7 +284,7 @@ Section~\ref{interval-adv}).  Here are the necessary requirements:
 
 \begin{itemize}
 \item \ccc{CT} is the construction and storage type.  The only data member of
-      the class \ccc{CGAL_Filtered_exact<CT,ET>} is the \ccc{value} of type
+      the class \ccc{Filtered_exact<CT,ET>} is the \ccc{value} of type
       \ccc{CT}.
       All arithmetic operations called
       outside the predicates will be executed with this number type.  You can
@@ -297,16 +296,16 @@ Section~\ref{interval-adv}).  Here are the necessary requirements:
       exactly.
 \item The \ccc{ET} type must be able to compute exactly the operations involved
       in the predicates called.
-\item A \ccc{CGAL_convert_to<CGAL_Interval_nt_advanced>(CT)} function must
+\item A \ccc{convert_to<Interval_nt_advanced>(CT)} function must
       be provided, that returns an interval containing the value of the
       argument of type \ccc{CT}.
       This conversion function has to be as fast as possible, and exact (in the
       sense that the interval must contain surely the initial value).  This
-      function is provided for the usual types \ccc{CGAL_Gmpz}, \ccc{leda_real},
+      function is provided for the usual types \ccc{Gmpz}, \ccc{leda_real},
       \ccc{leda_rational}, \ccc{leda_bigfloat}, \ccc{leda_integer}, and the
       built-in types.  The user can add his own types.
 %      (Note: This might become an additional requirement for number types).
-\item A \ccc{CGAL_convert_to<ET>(CT)} function must also be provided, that
+\item A \ccc{convert_to<ET>(CT)} function must also be provided, that
       returns a number of type \ccc{ET} representing exactly the argument of
       type \ccc{CT}.  It's a conversion function that is used for the exact
       computation, when the filter fails.
@@ -321,7 +320,7 @@ You might use at the beginning of your program a \ccc{typedef} as follows:
     #include<CGAL/Arithmetic_filter.h>
     #include<CGAL/leda_real.h>
     #include<CGAL/double.h>
-    typedef CGAL_Filtered_exact<double, leda_real> NT;
+    typedef Filtered_exact<double, leda_real> NT;
 \end{verbatim}
 
 Or if you are sure that the predicates involved do not use divisions nor
@@ -331,7 +330,7 @@ square roots:
     #include<CGAL/Arithmetic_filter.h>
     #include<CGAL/Gmpz.h>
     #include<CGAL/int.h>
-    typedef CGAL_Filtered_exact<int, CGAL_Gmpz> NT;
+    typedef Filtered_exact<int, Gmpz> NT;
 \end{verbatim}
 
 And if you know that the double variables contain integer values, you can
@@ -341,13 +340,13 @@ use:
     #include<CGAL/Arithmetic_filter.h>
     #include<CGAL/Gmpz.h>
     #include<CGAL/double.h>
-    typedef CGAL_Filtered_exact<double, CGAL_Gmpz> NT;
+    typedef Filtered_exact<double, Gmpz> NT;
 \end{verbatim}
 
 \ccImplementation
 
 The template definition of the low level predicates of CGAL are overloaded for
-the type \ccc{CGAL_Filtered_exact<CT,ET>}.  It is a partial specialisation,
+the type \ccc{Filtered_exact<CT,ET>}.  It is a partial specialisation,
 which implies that this is not supported by the compilers that do not support
 this C++ feature (MipsPro 7.2).
 
@@ -359,12 +358,12 @@ This script parses the template declaration of the functions and generates the
 overloaded code the following way:
 \begin{itemize}
 \item convert the entries to intervals using
-    \ccc{CGAL_convert_to<CGAL_Interval_nt_advanced>(CT)},
+    \ccc{convert_to<Interval_nt_advanced>(CT)},
 \item call the original template function with the type
-    \ccc{CGAL_Interval_nt_advanced},
+    \ccc{Interval_nt_advanced},
 \item if no exception is thrown, return the value,
 \item if an exception is thrown (the filter failed), convert the original
-    entries using \ccc{CGAL_convert_to<ET>(CT)},
+    entries using \ccc{convert_to<ET>(CT)},
 \item and call the original template function with the type \ccc{ET}.
 \end{itemize}
 

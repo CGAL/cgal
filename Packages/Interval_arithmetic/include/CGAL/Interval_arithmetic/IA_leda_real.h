@@ -24,27 +24,31 @@
 #ifndef CGAL_IA_LEDA_REAL_H
 #define CGAL_IA_LEDA_REAL_H
 
+CGAL_BEGIN_NAMESPACE
+
 inline
-CGAL_Interval_nt_advanced
-CGAL_convert_to (const leda_real &z, const CGAL_Interval_nt_advanced &)
+Interval_nt_advanced
+convert_to (const leda_real &z, const Interval_nt_advanced &)
 {
 #ifdef CGAL_IA_DEBUG
-    CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
+    CGAL_assertion(FPU_get_rounding_mode() == FPU_PLUS_INFINITY);
 #endif
-    CGAL_FPU_set_rounding_to_nearest();
-    const double approx = CGAL_to_double(z);
+    FPU_set_rounding_to_nearest();
+    const double approx = to_double(z);
     const double rel_error = z.get_double_error();
-    CGAL_FPU_set_rounding_to_infinity();
-    const CGAL_Interval_nt_advanced result =
-	( CGAL_Interval_nt_advanced(-rel_error,rel_error) + 1 )
-	* CGAL_Interval_nt_advanced(approx);
+    FPU_set_rounding_to_infinity();
+    const Interval_nt_advanced result =
+	( Interval_nt_advanced(-rel_error,rel_error) + 1 )
+	* Interval_nt_advanced(approx);
 #ifdef CGAL_IA_DEBUG
-    CGAL_FPU_set_rounding_to_nearest();
+    FPU_set_rounding_to_nearest();
     CGAL_assertion( leda_real(result.lower_bound()) <= z &&
 		    leda_real(result.upper_bound()) >= z );
-    CGAL_FPU_set_rounding_to_infinity();
+    FPU_set_rounding_to_infinity();
 #endif
     return result;
 }
+
+CGAL_END_NAMESPACE
 
 #endif	 // CGAL_IA_LEDA_REAL_H

@@ -24,14 +24,17 @@
 #ifndef CGAL_IA_FIXED_H
 #define CGAL_IA_FIXED_H
 
+CGAL_BEGIN_NAMESPACE
+
 // The Fixed is in fact a float => exact conversion.
 
 inline
-CGAL_Interval_nt_advanced
-CGAL_convert_to (const CGAL_Fixed_precision_nt &z,
-		 const CGAL_Interval_nt_advanced &)
+Interval_nt_advanced
+convert_to (const Fixed_precision_nt &z, const Interval_nt_advanced &)
 {
-    return CGAL_Interval_nt_advanced (z.to_double());
+    return Interval_nt_advanced (z.to_double());
 }
+
+CGAL_END_NAMESPACE
 
 #endif	 // CGAL_IA_FIXED_H

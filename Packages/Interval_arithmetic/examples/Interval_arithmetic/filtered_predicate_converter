@@ -14,7 +14,7 @@
 # don't have many to do).
 #
 # See the CGAL documentation:
-# Support Library, Number Types, CGAL_Filtered_exact.
+# Support Library, Number Types, Filtered_exact.
 #
 
 $in_header=1;
@@ -35,17 +35,17 @@ while (<>)
     $after_template=0;
     $in_decl=0;
     $in_def=1;
-    if (($result_type ne "CGAL_Sign") &&
+    if (($result_type ne "Sign") &&
         ($result_type ne "bool") &&
-        ($result_type ne "CGAL_Comparison_result") &&
-        ($result_type ne "CGAL_Orientation") &&
-        ($result_type ne "CGAL_Oriented_side") &&
-        ($result_type ne "CGAL_Bounded_side"))
+        ($result_type ne "Comparison_result") &&
+        ($result_type ne "Orientation") &&
+        ($result_type ne "Oriented_side") &&
+        ($result_type ne "Bounded_side"))
       {print STDERR "Warning: $result_type is unknown\n"; }
     print
 "{
   $result_type result;
-  CGAL_FPU_set_rounding_to_infinity();
+  FPU_set_rounding_to_infinity();
   try
   {
     result = $function_name(
@@ -56,11 +56,11 @@ while (<>)
       else { print ");"; }
     }
     print "
-    CGAL_FPU_set_rounding_to_nearest();
+    FPU_set_rounding_to_nearest();
   } 
-  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
+  catch (Interval_nt_advanced::unsafe_comparison)
   {
-    CGAL_FPU_set_rounding_to_nearest();
+    FPU_set_rounding_to_nearest();
     result = $function_name(
 ";
     foreach (@args) {
@@ -101,7 +101,7 @@ while (<>)
         $last_arg=$1;
       }
       s/,[\s]*/,\n\t/g; # Split to make the lines < 80 characters.
-      s/[RF]T/CGAL_Filtered_exact<CT,ET>/g;
+      s/[RF]T/Filtered_exact<CT,ET>/g;
     }
     if (/\(/) {
       /([a-zA-Z_]\w*)\s*\(/;

@@ -4,8 +4,8 @@
 // Written by Sylvain Pion, 1997-1999.
 
 // This file is included from tst[12].C, that do just a #define:
-// #define TESTED_TYPE CGAL_Interval_nt_advanced // For tst1.C
-// #define TESTED_TYPE CGAL_Interval_nt          // For tst2.C
+// #define TESTED_TYPE CGAL::Interval_nt_advanced // For tst1.C
+// #define TESTED_TYPE CGAL::Interval_nt          // For tst2.C
 
 #define CGAL_IA_NO_EXCEPTION
 #define CGAL_IA_NO_WARNINGS
@@ -84,8 +84,8 @@ int overflow_test()
 
   DEBUG( cout << "+infinity = " << HUGE_VAL; )
   DEBUG( cout << "  maxdouble = " << IA::max_double << endl; )
-  DEBUG( cout << "CGAL_largest = " << IA::largest << endl; )
-  DEBUG( cout << "CGAL_smallest = " << IA::smallest << endl; )
+  DEBUG( cout << "CGAL::largest = " << IA::largest << endl; )
+  DEBUG( cout << "CGAL::smallest = " << IA::smallest << endl; )
   while (++i < 20)
   {
     a *= a;
@@ -178,42 +178,42 @@ int utility_test()
   const IA a(-1,1), b(-1,0), c(0,0), d(0,1), e(1,2), f(-2,-1), g(1);
   IA h = (IA)1/c;
 
-  tmpflag = (CGAL_sign(c) == CGAL_ZERO) &&
-            (CGAL_sign(e) == CGAL_POSITIVE) &&
-            (CGAL_sign(f) == CGAL_NEGATIVE) ;
+  tmpflag = (CGAL::sign(c) == CGAL::ZERO) &&
+            (CGAL::sign(e) == CGAL::POSITIVE) &&
+            (CGAL::sign(f) == CGAL::NEGATIVE) ;
   DEBUG( cout << "Sign test :\t" << tmpflag << endl; )
   flag = flag && tmpflag;
 
-  tmpflag = CGAL_abs(a).is_same(IA(0,1)) && CGAL_abs(b).is_same(IA(0,1)) &&
-            CGAL_abs(c).is_same(IA(0,0)) && CGAL_abs(d).is_same(IA(0,1)) &&
-            CGAL_abs(e).is_same(IA(1,2)) && CGAL_abs(f).is_same(IA(1,2)) &&
-            CGAL_abs(g).is_same(g) ;
-  DEBUG( cout << "CGAL_abs test :\t" << tmpflag << endl; )
+  tmpflag = CGAL::abs(a).is_same(IA(0,1)) && CGAL::abs(b).is_same(IA(0,1)) &&
+            CGAL::abs(c).is_same(IA(0,0)) && CGAL::abs(d).is_same(IA(0,1)) &&
+            CGAL::abs(e).is_same(IA(1,2)) && CGAL::abs(f).is_same(IA(1,2)) &&
+            CGAL::abs(g).is_same(g) ;
+  DEBUG( cout << "CGAL::abs test :\t" << tmpflag << endl; )
   flag = flag && tmpflag;
 
-  tmpflag = CGAL_is_valid(a) && CGAL_is_valid(h);
-  DEBUG( cout << "CGAL_is_valid test :\t" << tmpflag << endl; )
+  tmpflag = CGAL::is_valid(a) && CGAL::is_valid(h);
+  DEBUG( cout << "CGAL::is_valid test :\t" << tmpflag << endl; )
   flag = flag && tmpflag;
 
-  tmpflag = CGAL_is_finite(a) && !CGAL_is_finite(h);
-  DEBUG( cout << "CGAL_is_finite test :\t" << tmpflag << endl; )
+  tmpflag = CGAL::is_finite(a) && !CGAL::is_finite(h);
+  DEBUG( cout << "CGAL::is_finite test :\t" << tmpflag << endl; )
   flag = flag && tmpflag;
 
-  tmpflag = CGAL_max(a,d).is_same(IA(0,1));
-  DEBUG( cout << "CGAL_max test :\t" << tmpflag << endl; )
+  tmpflag = CGAL::max(a,d).is_same(IA(0,1));
+  DEBUG( cout << "CGAL::max test :\t" << tmpflag << endl; )
   flag = flag && tmpflag;
 
-  tmpflag = CGAL_min(a,b).is_same(IA(-1,0));
-  DEBUG( cout << "CGAL_max test :\t" << tmpflag << endl; )
+  tmpflag = CGAL::min(a,b).is_same(IA(-1,0));
+  DEBUG( cout << "CGAL::max test :\t" << tmpflag << endl; )
   flag = flag && tmpflag;
 
-  tmpflag = CGAL_sign(f) == CGAL_NEGATIVE;
-  DEBUG( cout << "CGAL_sign test :\t" << tmpflag << endl; )
+  tmpflag = CGAL::sign(f) == CGAL::NEGATIVE;
+  DEBUG( cout << "CGAL::sign test :\t" << tmpflag << endl; )
   flag = flag && tmpflag;
 
-  tmpflag = (CGAL_compare(b,e) == CGAL_SMALLER)
-         && (CGAL_compare(g,g) == CGAL_EQUAL);
-  DEBUG( cout << "CGAL_compare test :\t" << tmpflag << endl; )
+  tmpflag = (CGAL::compare(b,e) == CGAL::SMALLER)
+         && (CGAL::compare(g,g) == CGAL::EQUAL);
+  DEBUG( cout << "CGAL::compare test :\t" << tmpflag << endl; )
   flag = flag && tmpflag;
 
   return flag;
@@ -227,10 +227,10 @@ int main()
   // cout << hex << rd_mode << endl;
 
 #ifdef ADVANCED
-  CGAL_FPU_set_rounding_to_infinity();
-  cout << "Stress-testing the class CGAL_Interval_nt_advanced.\n";
+  CGAL::FPU_set_rounding_to_infinity();
+  cout << "Stress-testing the class CGAL::Interval_nt_advanced.\n";
 #else
-  cout << "Stress-testing the class CGAL_Interval_nt.\n";
+  cout << "Stress-testing the class CGAL::Interval_nt.\n";
 #endif
 
 #if 0
@@ -258,14 +258,14 @@ int main()
   cout.precision(20);
 
 #if 0
-cout << a << "  " << CGAL_is_finite(a) << CGAL_is_valid(a) << endl;
-cout << b << "  " << CGAL_is_finite(b) << CGAL_is_valid(b) << endl;
-cout << c << "  " << CGAL_is_finite(c) << CGAL_is_valid(c);
-cout << CGAL_is_finite(c.lower_bound()) << CGAL_is_valid(c.lower_bound());
-cout << CGAL_is_finite(c.upper_bound()) << CGAL_is_valid(c.upper_bound())<<endl;
-cout << d << "  " << CGAL_is_finite(d) << CGAL_is_valid(d);
-cout << CGAL_is_finite(d.lower_bound()) << CGAL_is_valid(d.lower_bound());
-cout << CGAL_is_finite(d.upper_bound()) << CGAL_is_valid(d.upper_bound())<<endl;
+cout << a << "  " << CGAL::is_finite(a) << CGAL::is_valid(a) << endl;
+cout << b << "  " << CGAL::is_finite(b) << CGAL::is_valid(b) << endl;
+cout << c << "  " << CGAL::is_finite(c) << CGAL::is_valid(c);
+cout << CGAL::is_finite(c.lower_bound()) << CGAL::is_valid(c.lower_bound());
+cout << CGAL::is_finite(c.upper_bound()) << CGAL::is_valid(c.upper_bound())<<endl;
+cout << d << "  " << CGAL::is_finite(d) << CGAL::is_valid(d);
+cout << CGAL::is_finite(d.lower_bound()) << CGAL::is_valid(d.lower_bound());
+cout << CGAL::is_finite(d.upper_bound()) << CGAL::is_valid(d.upper_bound())<<endl;
 #endif
 
   cout << "Printing test:" << endl;
@@ -316,7 +316,7 @@ cout << CGAL_is_finite(d.upper_bound()) << CGAL_is_valid(d.upper_bound())<<endl;
   cout << (int) (0.0 < IA(1)) << endl;
 
 #ifdef ADVANCED
-  CGAL_FPU_set_rounding_to_nearest();
+  CGAL::FPU_set_rounding_to_nearest();
 #endif
 
   return !flag;

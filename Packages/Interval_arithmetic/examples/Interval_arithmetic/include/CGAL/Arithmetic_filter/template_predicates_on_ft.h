@@ -9,23 +9,25 @@
 
 #include <CGAL/Interval_arithmetic.h>
 
+CGAL_BEGIN_NAMESPACE
+
 template < class CT, class ET >
 // CGAL_KERNEL_LARGE_INLINE
-CGAL_Comparison_result
-CGAL_compare_xC2(const CGAL_Filtered_exact<CT,ET> &px,
-	const CGAL_Filtered_exact<CT,ET> &py,
-	                 const CGAL_Filtered_exact<CT,ET> &l1a,
-	const CGAL_Filtered_exact<CT,ET> &l1b,
-	const CGAL_Filtered_exact<CT,ET> &l1c,
-	                 const CGAL_Filtered_exact<CT,ET> &l2a,
-	const CGAL_Filtered_exact<CT,ET> &l2b,
-	const CGAL_Filtered_exact<CT,ET> &l2c)
+Comparison_result
+compare_xC2(const Filtered_exact<CT,ET> &px,
+	const Filtered_exact<CT,ET> &py,
+	            const Filtered_exact<CT,ET> &l1a,
+	const Filtered_exact<CT,ET> &l1b,
+	const Filtered_exact<CT,ET> &l1c,
+	            const Filtered_exact<CT,ET> &l2a,
+	const Filtered_exact<CT,ET> &l2b,
+	const Filtered_exact<CT,ET> &l2c)
 {
-  CGAL_Comparison_result result;
-  CGAL_FPU_set_rounding_to_infinity();
+  Comparison_result result;
+  FPU_set_rounding_to_infinity();
   try
   {
-    result = CGAL_compare_xC2(
+    result = compare_xC2(
 		px.interval(),
 		py.interval(),
 		l1a.interval(),
@@ -34,12 +36,12 @@ CGAL_compare_xC2(const CGAL_Filtered_exact<CT,ET> &px,
 		l2a.interval(),
 		l2b.interval(),
 		l2c.interval());
-    CGAL_FPU_set_rounding_to_nearest();
+    FPU_set_rounding_to_nearest();
   } 
-  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
+  catch (Interval_nt_advanced::unsafe_comparison)
   {
-    CGAL_FPU_set_rounding_to_nearest();
-    result = CGAL_compare_xC2(
+    FPU_set_rounding_to_nearest();
+    result = compare_xC2(
 		px.exact(),
 		py.exact(),
 		l1a.exact(),
@@ -51,6 +53,8 @@ CGAL_compare_xC2(const CGAL_Filtered_exact<CT,ET> &px,
   }
   return result;
 }
+
+CGAL_END_NAMESPACE
 
 #ifdef CGAL_ARITHMETIC_FILTER_H
 #include <CGAL/Arithmetic_filter/template_predicates_on_ft.h>

@@ -1,2 +1,2 @@
 Interval arithmetic as a number type for CGAL.
-CGAL_Filtered_exact<CT,ET> as a general filtering scheme for robust predicates.
+Filtered_exact<CT,ET> as a general filtering scheme for robust predicates.

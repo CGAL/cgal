@@ -26,8 +26,8 @@
 #define CGAL_INTERVAL_ARITHMETIC_H
 
 // This file contains the description of the two classes:
-// - CGAL_Interval_nt_advanced  (do the FPU rounding mode changes yourself)
-// - CGAL_Interval_nt		("plug-in" version, derived from the other one)
+// - Interval_nt_advanced  (do the FPU rounding mode changes yourself)
+// - Interval_nt		("plug-in" version, derived from the other one)
 //
 // The differences are:
 // - The second one is slower.
@@ -37,18 +37,19 @@
 
 #include <iostream>
 #include <CGAL/assertions.h>
-#include <CGAL/IO/io_tags.h>		// For CGAL_io_Operator().
-#include <CGAL/number_type_tags.h>	// For CGAL_number_type_tag()
-#include <CGAL/double.h>	// For CGAL_is_valid() and CGAL_is_finite().
-#include <CGAL/enum.h>  // Because we overload CGAL_{sign,compare,abs,min,max}
-#include <CGAL/number_utils.h> 		// For CGAL_max and CGAL_square<double>
+#include <CGAL/IO/io_tags.h>		// For io_Operator().
+#include <CGAL/number_type_tags.h>	// For number_type_tag()
+#include <CGAL/double.h>	// For is_valid() and is_finite().
+#include <CGAL/enum.h>  // Because we overload {sign,compare,abs,min,max}
+#include <CGAL/number_utils.h> 		// For max and square<double>
 #include <CGAL/Interval_arithmetic/_FPU.h>	// FPU rounding mode functions.
-#include <CGAL/misc.h>			// For CGAL_convert_to<>()
+#include <CGAL/misc.h>			// For convert_to<>()
 
+CGAL_BEGIN_NAMESPACE
 
-struct CGAL_Interval_nt_advanced
+struct Interval_nt_advanced
 {
-  typedef CGAL_Interval_nt_advanced IA;
+  typedef Interval_nt_advanced IA;
   struct unsafe_comparison{};			// Exception class.
   static const double min_double, max_double;	// Usefull constants.
   static const IA largest, smallest;
@@ -72,36 +73,36 @@ private:
 
 public:
   friend IA	sqrt     (const IA &);
-  friend IA	CGAL_square	(const IA &);
-  friend IA	CGAL_abs (const IA &);
-  friend IA	CGAL_min (const IA &, const IA &);
-  friend IA	CGAL_max (const IA &, const IA &);
+  friend IA	square	(const IA &);
+  friend IA	abs (const IA &);
+  friend IA	min (const IA &, const IA &);
+  friend IA	max (const IA &, const IA &);
   friend IA	operator- (const double, const IA &);
   friend IA	operator/ (const double, const IA &);
-  friend double CGAL_to_double (const IA &);
-  friend bool   CGAL_is_valid  (const IA &);
-  friend bool   CGAL_is_finite (const IA &);
-  friend CGAL_Sign CGAL_sign   (const IA &);
-  friend CGAL_Comparison_result CGAL_compare (const IA &, const IA &);
+  friend double to_double (const IA &);
+  friend bool   is_valid  (const IA &);
+  friend bool   is_finite (const IA &);
+  friend Sign sign   (const IA &);
+  friend Comparison_result compare (const IA &, const IA &);
 
   // The constructors.
-  CGAL_Interval_nt_advanced()
+  Interval_nt_advanced()
 #ifndef CGAL_NO_ASSERTIONS
       : inf(-1), sup(-1) // Buggy interval to detect use before definition.
 #endif
       {}
 
-  CGAL_Interval_nt_advanced(const double d)
+  Interval_nt_advanced(const double d)
       : inf(-d), sup(d) {}
 
-  CGAL_Interval_nt_advanced(const double i, const double s)
+  Interval_nt_advanced(const double i, const double s)
       : inf(-i), sup(s)
       { CGAL_assertion_msg(i<=s," Variable used before being initialized ?"); }
 
 #if 1 // Need to be redefined for non advanced ?
   // The copy constructors/assignment: useless.
   // The default ones are ok, but these are faster...
-  CGAL_Interval_nt_advanced(const IA & d)
+  Interval_nt_advanced(const IA & d)
       : inf(d.inf), sup(d.sup) {}
 
   IA & operator=(const IA & d)
@@ -112,7 +113,7 @@ public:
   IA  operator+(const IA & d) const
   {
 #ifdef CGAL_IA_DEBUG
-      CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
+      CGAL_assertion(FPU_get_rounding_mode() == FPU_PLUS_INFINITY);
 #endif
       return IA (-(inf + d.inf), sup + d.sup);
   }
@@ -121,7 +122,7 @@ public:
   IA  operator-(const IA & d) const
   {
 #ifdef CGAL_IA_DEBUG
-      CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
+      CGAL_assertion(FPU_get_rounding_mode() == FPU_PLUS_INFINITY);
 #endif
       return IA (-(inf + d.sup), sup + d.inf);
   }
@@ -181,27 +182,27 @@ public:
 // Usefull constants.
 
 // MIN_DOUBLE (subnormal)
-const double CGAL_Interval_nt_advanced::min_double =5e-324;
+const double Interval_nt_advanced::min_double =5e-324;
 
 // MAX_DOUBLE
-const double CGAL_Interval_nt_advanced::max_double =1.7976931348623157081e+308;
+const double Interval_nt_advanced::max_double =1.7976931348623157081e+308;
 
 // Smallest interval strictly around zero.
-const CGAL_Interval_nt_advanced CGAL_Interval_nt_advanced::smallest
-(-CGAL_Interval_nt_advanced::min_double,
-  CGAL_Interval_nt_advanced::min_double);
+const Interval_nt_advanced Interval_nt_advanced::smallest
+(-Interval_nt_advanced::min_double,
+  Interval_nt_advanced::min_double);
 
 // [-inf;+inf]
-const CGAL_Interval_nt_advanced CGAL_Interval_nt_advanced::largest
+const Interval_nt_advanced Interval_nt_advanced::largest
 (-HUGE_VAL, HUGE_VAL);
 
 
 inline
-CGAL_Interval_nt_advanced
-CGAL_Interval_nt_advanced::operator* (const CGAL_Interval_nt_advanced & d) const
+Interval_nt_advanced
+Interval_nt_advanced::operator* (const Interval_nt_advanced & d) const
 {
 #ifdef CGAL_IA_DEBUG
-      CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
+      CGAL_assertion(FPU_get_rounding_mode() == FPU_PLUS_INFINITY);
 #endif
   if (inf<=0)					// this>=0
   {
@@ -244,16 +245,16 @@ CGAL_Interval_nt_advanced::operator* (const CGAL_Interval_nt_advanced & d) const
     double tmp2 = sup*d.inf;
     double tmp3 = inf*d.inf;
     double tmp4 = sup*d.sup;
-    return IA (-CGAL_max(tmp1,tmp2), CGAL_max(tmp3,tmp4));
+    return IA (-max(tmp1,tmp2), max(tmp3,tmp4));
   };
 }
 
 inline
-CGAL_Interval_nt_advanced
-CGAL_Interval_nt_advanced::operator* (const double d) const
+Interval_nt_advanced
+Interval_nt_advanced::operator* (const double d) const
 {
 #ifdef CGAL_IA_DEBUG
-      CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
+      CGAL_assertion(FPU_get_rounding_mode() == FPU_PLUS_INFINITY);
 #endif
 #if 0
       double a = inf*fabs(d);
@@ -267,11 +268,11 @@ CGAL_Interval_nt_advanced::operator* (const double d) const
 }
 
 inline
-CGAL_Interval_nt_advanced
-CGAL_Interval_nt_advanced::operator/ (const double d) const
+Interval_nt_advanced
+Interval_nt_advanced::operator/ (const double d) const
 {
 #ifdef CGAL_IA_DEBUG
-      CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
+      CGAL_assertion(FPU_get_rounding_mode() == FPU_PLUS_INFINITY);
 #endif
   if (d>0) return IA (-(inf/d), sup/d);
   if (d<0) return IA (-(sup/(-d)), inf/(-d));
@@ -280,55 +281,55 @@ CGAL_Interval_nt_advanced::operator/ (const double d) const
 
 inline
 bool
-operator< (const double d, const CGAL_Interval_nt_advanced & t)
+operator< (const double d, const Interval_nt_advanced & t)
 { return t>d; }
 
 inline
 bool
-operator<= (const double d, const CGAL_Interval_nt_advanced & t)
+operator<= (const double d, const Interval_nt_advanced & t)
 { return t>=d; }
 
 inline
 bool
-operator> (const double d, const CGAL_Interval_nt_advanced & t)
+operator> (const double d, const Interval_nt_advanced & t)
 { return t<d; }
 
 inline
 bool
-operator>= (const double d, const CGAL_Interval_nt_advanced & t)
+operator>= (const double d, const Interval_nt_advanced & t)
 { return t<=d; }
 
 inline
 bool
-operator== (const double d, const CGAL_Interval_nt_advanced & t)
+operator== (const double d, const Interval_nt_advanced & t)
 { return t==d; }
 
 inline
 bool
-operator!= (const double d, const CGAL_Interval_nt_advanced & t)
+operator!= (const double d, const Interval_nt_advanced & t)
 { return t!=d; }
 
 inline
-CGAL_Interval_nt_advanced
-operator+ (const double d, const CGAL_Interval_nt_advanced & t)
+Interval_nt_advanced
+operator+ (const double d, const Interval_nt_advanced & t)
 { return t+d; }
 
 inline
-CGAL_Interval_nt_advanced
-operator- (const double d, const CGAL_Interval_nt_advanced & t)
-{ return CGAL_Interval_nt_advanced(-(t.sup-d), t.inf+d); }
+Interval_nt_advanced
+operator- (const double d, const Interval_nt_advanced & t)
+{ return Interval_nt_advanced(-(t.sup-d), t.inf+d); }
 // { return -(t-d); }
 
 inline
-CGAL_Interval_nt_advanced
-operator* (const double d, const CGAL_Interval_nt_advanced & t)
+Interval_nt_advanced
+operator* (const double d, const Interval_nt_advanced & t)
 { return t*d; }
 
 inline
-CGAL_Interval_nt_advanced
-operator/ (const double t, const CGAL_Interval_nt_advanced & d)
+Interval_nt_advanced
+operator/ (const double t, const Interval_nt_advanced & d)
 {
-  typedef CGAL_Interval_nt_advanced IA;
+  typedef Interval_nt_advanced IA;
   if (d.inf<0)				// d>0
   {
     if (t>=0) return IA(-((-t)/d.sup), (-t)/d.inf);
@@ -343,11 +344,11 @@ operator/ (const double t, const CGAL_Interval_nt_advanced & d)
 }
 
 inline
-CGAL_Interval_nt_advanced
-CGAL_Interval_nt_advanced::operator/ (const CGAL_Interval_nt_advanced & d) const
+Interval_nt_advanced
+Interval_nt_advanced::operator/ (const Interval_nt_advanced & d) const
 {
 #ifdef CGAL_IA_DEBUG
-      CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
+      CGAL_assertion(FPU_get_rounding_mode() == FPU_PLUS_INFINITY);
 #endif
   if (d.inf<0)				// d>0
   {
@@ -386,129 +387,129 @@ CGAL_Interval_nt_advanced::operator/ (const CGAL_Interval_nt_advanced & d) const
 }
 
 inline
-CGAL_Interval_nt_advanced &
-CGAL_Interval_nt_advanced::operator+= (const CGAL_Interval_nt_advanced & d)
+Interval_nt_advanced &
+Interval_nt_advanced::operator+= (const Interval_nt_advanced & d)
 { return *this = *this + d; }
 
 inline
-CGAL_Interval_nt_advanced &
-CGAL_Interval_nt_advanced::operator-= (const CGAL_Interval_nt_advanced & d)
+Interval_nt_advanced &
+Interval_nt_advanced::operator-= (const Interval_nt_advanced & d)
 { return *this = *this - d; }
 
 inline
-CGAL_Interval_nt_advanced &
-CGAL_Interval_nt_advanced::operator*= (const CGAL_Interval_nt_advanced & d)
+Interval_nt_advanced &
+Interval_nt_advanced::operator*= (const Interval_nt_advanced & d)
 { return *this = *this * d; }
 
 inline
-CGAL_Interval_nt_advanced &
-CGAL_Interval_nt_advanced::operator/= (const CGAL_Interval_nt_advanced & d)
+Interval_nt_advanced &
+Interval_nt_advanced::operator/= (const Interval_nt_advanced & d)
 { return *this = *this / d; }
 
 inline
-CGAL_Interval_nt_advanced
-sqrt (const CGAL_Interval_nt_advanced & d)
+Interval_nt_advanced
+sqrt (const Interval_nt_advanced & d)
 {
-  CGAL_FPU_set_rounding_to_minus_infinity();
-  CGAL_Interval_nt_advanced tmp;
+  FPU_set_rounding_to_minus_infinity();
+  Interval_nt_advanced tmp;
   // sqrt([+a,+b]) => [sqrt(+a);sqrt(+b)]
   // sqrt([-a,+b]) => [0;sqrt(+b)] => assumes roundoff error.
   // sqrt([-a,-b]) => [0;sqrt(-b)] => assumes user bug (unspecified result).
   tmp.inf = (d.inf<0) ? -sqrt(-d.inf) : 0;
-  CGAL_FPU_set_rounding_to_infinity();
+  FPU_set_rounding_to_infinity();
   tmp.sup = sqrt(d.sup);
   return tmp;
 }
 
 inline
-CGAL_Interval_nt_advanced
-CGAL_square (const CGAL_Interval_nt_advanced & d)
+Interval_nt_advanced
+square (const Interval_nt_advanced & d)
 {
     // The first one is slightly slower, but produces shorter code.
 #if 0
   double a = d.inf*fabs(d.inf);
   double b = d.sup*fabs(d.sup);
-  if (d.inf <= 0) return CGAL_Interval_nt_advanced(-a,b);
-  if (d.sup <= 0) return CGAL_Interval_nt_advanced(-b,a);
-  return CGAL_Interval_nt_advanced(0, CGAL_max(a,b));
+  if (d.inf <= 0) return Interval_nt_advanced(-a,b);
+  if (d.sup <= 0) return Interval_nt_advanced(-b,a);
+  return Interval_nt_advanced(0, max(a,b));
 #else
-  if (d.inf<=0) return CGAL_Interval_nt_advanced(-(d.inf*-d.inf), d.sup*d.sup);
-  if (d.sup<=0) return CGAL_Interval_nt_advanced(-(d.sup*-d.sup), d.inf*d.inf);
-  return CGAL_Interval_nt_advanced(0.0, CGAL_square(CGAL_max(d.inf, d.sup)));
+  if (d.inf<=0) return Interval_nt_advanced(-(d.inf*-d.inf), d.sup*d.sup);
+  if (d.sup<=0) return Interval_nt_advanced(-(d.sup*-d.sup), d.inf*d.inf);
+  return Interval_nt_advanced(0.0, square(max(d.inf, d.sup)));
 #endif
 }
 
 inline
 double
-CGAL_to_double (const CGAL_Interval_nt_advanced & d)
+to_double (const Interval_nt_advanced & d)
 { return (d.sup-d.inf)*.5; }
 
 inline
 bool
-CGAL_is_valid (const CGAL_Interval_nt_advanced & d)
-{ return CGAL_is_valid(d.inf) && CGAL_is_valid(d.sup) && (-d.inf <= d.sup); }
+is_valid (const Interval_nt_advanced & d)
+{ return is_valid(d.inf) && is_valid(d.sup) && (-d.inf <= d.sup); }
 
 inline
 bool
-CGAL_is_finite (const CGAL_Interval_nt_advanced & d)
-{ return CGAL_is_finite(d.inf) && CGAL_is_finite(d.sup); }
+is_finite (const Interval_nt_advanced & d)
+{ return is_finite(d.inf) && is_finite(d.sup); }
 
 inline
-CGAL_Sign
-CGAL_sign (const CGAL_Interval_nt_advanced & d)
+Sign
+sign (const Interval_nt_advanced & d)
 {
-  if (d.inf < 0) return CGAL_POSITIVE;
-  if (d.sup < 0) return CGAL_NEGATIVE;
-  if (-d.inf == d.sup) return CGAL_ZERO;
-  return CGAL_Sign (d.overlap_action());
+  if (d.inf < 0) return POSITIVE;
+  if (d.sup < 0) return NEGATIVE;
+  if (-d.inf == d.sup) return ZERO;
+  return Sign (d.overlap_action());
 }
 
 inline
-CGAL_Comparison_result
-CGAL_compare (const CGAL_Interval_nt_advanced & d,
-	const CGAL_Interval_nt_advanced & e)
+Comparison_result
+compare (const Interval_nt_advanced & d,
+	const Interval_nt_advanced & e)
 {
-  if (-d.inf > e.sup) return CGAL_LARGER;
-  if (-e.inf > d.sup) return CGAL_SMALLER;
-  if ( (-e.inf == d.sup) && (-d.inf == e.sup) ) return CGAL_EQUAL;
-  return CGAL_Comparison_result (d.overlap_action());
+  if (-d.inf > e.sup) return LARGER;
+  if (-e.inf > d.sup) return SMALLER;
+  if ( (-e.inf == d.sup) && (-d.inf == e.sup) ) return EQUAL;
+  return Comparison_result (d.overlap_action());
 }
 
 inline
-CGAL_Interval_nt_advanced
-CGAL_abs (const CGAL_Interval_nt_advanced & d)
+Interval_nt_advanced
+abs (const Interval_nt_advanced & d)
 {
   if (d.inf <= 0) return d;
   if (d.sup <= 0) return -d;
-  return CGAL_Interval_nt_advanced(0, CGAL_max(d.inf,d.sup));
+  return Interval_nt_advanced(0, max(d.inf,d.sup));
 }
 
 inline
-CGAL_Interval_nt_advanced
-CGAL_min (const CGAL_Interval_nt_advanced & d,
-	const CGAL_Interval_nt_advanced & e)
+Interval_nt_advanced
+min (const Interval_nt_advanced & d,
+	const Interval_nt_advanced & e)
 {
-  return CGAL_Interval_nt_advanced(-CGAL_max(d.inf, e.inf),
-	  			    CGAL_min(d.sup, e.sup));
+  return Interval_nt_advanced(-max(d.inf, e.inf),
+	  			    min(d.sup, e.sup));
 }
 
 inline
-CGAL_Interval_nt_advanced
-CGAL_max (const CGAL_Interval_nt_advanced & d,
-	const CGAL_Interval_nt_advanced & e)
+Interval_nt_advanced
+max (const Interval_nt_advanced & d,
+	const Interval_nt_advanced & e)
 {
-  return CGAL_Interval_nt_advanced(-CGAL_min(d.inf, e.inf),
-	  			    CGAL_max(d.sup, e.sup));
+  return Interval_nt_advanced(-min(d.inf, e.inf),
+	  			    max(d.sup, e.sup));
 }
 
 inline
 ostream &
-operator<< (ostream & os, const CGAL_Interval_nt_advanced & d)
+operator<< (ostream & os, const Interval_nt_advanced & d)
 { return os << "[" << d.lower_bound() << ";" << d.upper_bound() << "]"; }
 
 inline
 istream &
-operator>> (istream & is, CGAL_Interval_nt_advanced & ia)
+operator>> (istream & is, Interval_nt_advanced & ia)
 {
     double d;
     is >> d;
@@ -519,47 +520,47 @@ operator>> (istream & is, CGAL_Interval_nt_advanced & ia)
 
 // The non-advanced class.
 
-struct CGAL_Interval_nt : public CGAL_Interval_nt_advanced
+struct Interval_nt : public Interval_nt_advanced
 {
-  typedef CGAL_Interval_nt IA;
+  typedef Interval_nt IA;
 
   // Constructors are identical.
-  CGAL_Interval_nt()
+  Interval_nt()
       {}
-  CGAL_Interval_nt(const double d)
-      : CGAL_Interval_nt_advanced(d) {}
-  CGAL_Interval_nt(const double a, const double b)
-      : CGAL_Interval_nt_advanced(a,b) {}
+  Interval_nt(const double d)
+      : Interval_nt_advanced(d) {}
+  Interval_nt(const double a, const double b)
+      : Interval_nt_advanced(a,b) {}
 
   // Private constructor for casts. (remade public)
-  CGAL_Interval_nt(const CGAL_Interval_nt_advanced &d)
-      : CGAL_Interval_nt_advanced(d) {}
+  Interval_nt(const Interval_nt_advanced &d)
+      : Interval_nt_advanced(d) {}
 
   friend IA	sqrt	(const IA &);
-  friend IA	CGAL_square	(const IA &);
+  friend IA	square	(const IA &);
   // How to share those definitions ?
-  friend IA     CGAL_abs (const IA & d)
-    { return CGAL_abs((CGAL_Interval_nt_advanced) d); }
-  friend IA     CGAL_min (const IA & d, const IA & e)
-    { return CGAL_min((CGAL_Interval_nt_advanced) d,
-	              (CGAL_Interval_nt_advanced) e);
+  friend IA     abs (const IA & d)
+    { return abs((Interval_nt_advanced) d); }
+  friend IA     min (const IA & d, const IA & e)
+    { return min((Interval_nt_advanced) d,
+	              (Interval_nt_advanced) e);
     }
-  friend IA     CGAL_max (const IA & d, const IA & e)
-    { return CGAL_max((CGAL_Interval_nt_advanced) d,
-	              (CGAL_Interval_nt_advanced) e);
+  friend IA     max (const IA & d, const IA & e)
+    { return max((Interval_nt_advanced) d,
+	              (Interval_nt_advanced) e);
     }
   // friend IA     operator* (const double &, const IA &);
-  friend double CGAL_to_double (const IA & d)
-    { return CGAL_to_double((CGAL_Interval_nt_advanced) d); }
-  friend bool   CGAL_is_valid  (const IA & d)
-    { return CGAL_is_valid((CGAL_Interval_nt_advanced) d); }
-  friend bool   CGAL_is_finite (const IA & d)
-    { return CGAL_is_finite((CGAL_Interval_nt_advanced) d); }
-  friend CGAL_Sign CGAL_sign   (const IA & d)
-    { return CGAL_sign((CGAL_Interval_nt_advanced) d); }
-  friend CGAL_Comparison_result CGAL_compare (const IA & d, const IA & e)
-    { return CGAL_compare((CGAL_Interval_nt_advanced) d,
-	                  (CGAL_Interval_nt_advanced) e);
+  friend double to_double (const IA & d)
+    { return to_double((Interval_nt_advanced) d); }
+  friend bool   is_valid  (const IA & d)
+    { return is_valid((Interval_nt_advanced) d); }
+  friend bool   is_finite (const IA & d)
+    { return is_finite((Interval_nt_advanced) d); }
+  friend Sign sign   (const IA & d)
+    { return sign((Interval_nt_advanced) d); }
+  friend Comparison_result compare (const IA & d, const IA & e)
+    { return compare((Interval_nt_advanced) d,
+	                  (Interval_nt_advanced) e);
     }
 
   // This particular one needs to be redefined, a pitty...
@@ -589,52 +590,52 @@ struct CGAL_Interval_nt : public CGAL_Interval_nt_advanced
 #  define CGAL_NAMED_RETURN_VALUE_OPT_3
 #else
 #  define CGAL_NAMED_RETURN_VALUE_OPT_1
-#  define CGAL_NAMED_RETURN_VALUE_OPT_2 CGAL_Interval_nt tmp;
+#  define CGAL_NAMED_RETURN_VALUE_OPT_2 Interval_nt tmp;
 #  define CGAL_NAMED_RETURN_VALUE_OPT_3 return tmp;
 #endif
 
 inline
-CGAL_Interval_nt
-CGAL_Interval_nt::operator+ (const CGAL_Interval_nt & d) const
+Interval_nt
+Interval_nt::operator+ (const Interval_nt & d) const
 CGAL_NAMED_RETURN_VALUE_OPT_1
 {
-  CGAL_FPU_set_rounding_to_infinity();
+  FPU_set_rounding_to_infinity();
   CGAL_NAMED_RETURN_VALUE_OPT_2
   tmp.inf = inf + d.inf;
   tmp.sup = sup + d.sup;
-  CGAL_FPU_set_rounding_to_nearest();
+  FPU_set_rounding_to_nearest();
   CGAL_NAMED_RETURN_VALUE_OPT_3
 }
 
 inline
-CGAL_Interval_nt
-CGAL_Interval_nt::operator- (const CGAL_Interval_nt & d) const
+Interval_nt
+Interval_nt::operator- (const Interval_nt & d) const
 CGAL_NAMED_RETURN_VALUE_OPT_1
 {
-  CGAL_FPU_set_rounding_to_infinity();
+  FPU_set_rounding_to_infinity();
   CGAL_NAMED_RETURN_VALUE_OPT_2
   tmp.inf = inf + d.sup;
   tmp.sup = sup + d.inf;
-  CGAL_FPU_set_rounding_to_nearest();
+  FPU_set_rounding_to_nearest();
   CGAL_NAMED_RETURN_VALUE_OPT_3
 }
 
 inline
-CGAL_Interval_nt
-CGAL_Interval_nt::operator* (const CGAL_Interval_nt & d) const
+Interval_nt
+Interval_nt::operator* (const Interval_nt & d) const
 {
-  CGAL_FPU_set_rounding_to_infinity();
-  CGAL_Interval_nt tmp ( CGAL_Interval_nt_advanced::operator*(d) );
-  CGAL_FPU_set_rounding_to_nearest();
+  FPU_set_rounding_to_infinity();
+  Interval_nt tmp ( Interval_nt_advanced::operator*(d) );
+  FPU_set_rounding_to_nearest();
   return tmp;
 }
 
 inline
-CGAL_Interval_nt
-CGAL_Interval_nt::operator* (const double d) const
+Interval_nt
+Interval_nt::operator* (const double d) const
 CGAL_NAMED_RETURN_VALUE_OPT_1
 {
-  CGAL_FPU_set_rounding_to_infinity();
+  FPU_set_rounding_to_infinity();
   CGAL_NAMED_RETURN_VALUE_OPT_2
   if (d>=0) {
       tmp.inf = inf*d;
@@ -643,61 +644,61 @@ CGAL_NAMED_RETURN_VALUE_OPT_1
       tmp.inf = sup*(-d);
       tmp.sup = inf*(-d);
   }
-  CGAL_FPU_set_rounding_to_nearest();
+  FPU_set_rounding_to_nearest();
   CGAL_NAMED_RETURN_VALUE_OPT_3
 }
 
 inline
-CGAL_Interval_nt
-operator* (const double d, const CGAL_Interval_nt & t)
+Interval_nt
+operator* (const double d, const Interval_nt & t)
 { return t*d; }
 
 inline
-CGAL_Interval_nt
-CGAL_Interval_nt::operator/ (const CGAL_Interval_nt & d) const
+Interval_nt
+Interval_nt::operator/ (const Interval_nt & d) const
 {
-  CGAL_FPU_set_rounding_to_infinity();
-  CGAL_Interval_nt tmp ( CGAL_Interval_nt_advanced::operator/(d) );
-  CGAL_FPU_set_rounding_to_nearest();
+  FPU_set_rounding_to_infinity();
+  Interval_nt tmp ( Interval_nt_advanced::operator/(d) );
+  FPU_set_rounding_to_nearest();
   return tmp;
 }
 
 inline
-CGAL_Interval_nt &
-CGAL_Interval_nt::operator+= (const CGAL_Interval_nt & d)
+Interval_nt &
+Interval_nt::operator+= (const Interval_nt & d)
 { return *this = *this + d; }
 
 inline
-CGAL_Interval_nt &
-CGAL_Interval_nt::operator-= (const CGAL_Interval_nt & d)
+Interval_nt &
+Interval_nt::operator-= (const Interval_nt & d)
 { return *this = *this - d; }
 
 inline
-CGAL_Interval_nt &
-CGAL_Interval_nt::operator*= (const CGAL_Interval_nt & d)
+Interval_nt &
+Interval_nt::operator*= (const Interval_nt & d)
 { return *this = *this * d; }
 
 inline
-CGAL_Interval_nt &
-CGAL_Interval_nt::operator/= (const CGAL_Interval_nt & d)
+Interval_nt &
+Interval_nt::operator/= (const Interval_nt & d)
 { return *this = *this / d; }
 
 inline
-CGAL_Interval_nt
-sqrt (const CGAL_Interval_nt & d)
+Interval_nt
+sqrt (const Interval_nt & d)
 {
-  CGAL_Interval_nt tmp = sqrt( (CGAL_Interval_nt_advanced) d);
-  CGAL_FPU_set_rounding_to_nearest();
+  Interval_nt tmp = sqrt( (Interval_nt_advanced) d);
+  FPU_set_rounding_to_nearest();
   return tmp;
 }
 
 inline
-CGAL_Interval_nt
-CGAL_square (const CGAL_Interval_nt & d)
+Interval_nt
+square (const Interval_nt & d)
 {
-  CGAL_FPU_set_rounding_to_infinity();
-  CGAL_Interval_nt tmp = CGAL_square( (CGAL_Interval_nt_advanced) d);
-  CGAL_FPU_set_rounding_to_nearest();
+  FPU_set_rounding_to_infinity();
+  Interval_nt tmp = square( (Interval_nt_advanced) d);
+  FPU_set_rounding_to_nearest();
   return tmp;
 }
 
@@ -705,23 +706,25 @@ CGAL_square (const CGAL_Interval_nt & d)
 // The undocumented Tag things...
 
 inline
-CGAL_io_Operator
-CGAL_io_tag (const CGAL_Interval_nt_advanced &)
-{ return CGAL_io_Operator(); }
+io_Operator
+io_tag (const Interval_nt_advanced &)
+{ return io_Operator(); }
 
 inline
-CGAL_Number_tag
-CGAL_number_type_tag (CGAL_Interval_nt_advanced)
-{ return CGAL_Number_tag(); }
+Number_tag
+number_type_tag (Interval_nt_advanced)
+{ return Number_tag(); }
 
 
-// Finally we deal with the CGAL_convert_to<CGAL_Interval_nt_advanced>(NT)
+
+// Finally we deal with the convert_to<Interval_nt_advanced>(NT)
 // functions from other NTs, when necessary.
-// CGAL_convert_to<CGAL_Interval_nt>() is templated below.
+// convert_to<Interval_nt>() is templated below.
 //
 // For the builtin types (well, all those that can be casted to double
 // exactly), the template in misc.h is enough.
 
+CGAL_END_NAMESPACE
 
 #ifdef CGAL_GMPZ_H
 #include <CGAL/Interval_arithmetic/IA_Gmpz.h>
@@ -751,15 +754,19 @@ CGAL_number_type_tag (CGAL_Interval_nt_advanced)
 #include <CGAL/Interval_arithmetic/IA_Quotient.h>
 #endif
 
+CGAL_BEGIN_NAMESPACE
+
 template <class FT>
 inline
-CGAL_Interval_nt
-CGAL_convert_to (const FT & z)
+Interval_nt
+convert_to (const FT & z)
 {
-    CGAL_FPU_set_rounding_to_infinity();
-    CGAL_Interval_nt tmp(CGAL_convert_to<CGAL_Interval_nt_advanced>(z));
-    CGAL_FPU_set_rounding_to_nearest();
+    FPU_set_rounding_to_infinity();
+    Interval_nt tmp(convert_to<Interval_nt_advanced>(z));
+    FPU_set_rounding_to_nearest();
     return tmp;
 }
+
+CGAL_END_NAMESPACE
 
 #endif // CGAL_INTERVAL_ARITHMETIC_H

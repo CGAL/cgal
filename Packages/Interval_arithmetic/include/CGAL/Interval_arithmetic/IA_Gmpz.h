@@ -24,6 +24,8 @@
 #ifndef CGAL_IA_GMPZ_H
 #define CGAL_IA_GMPZ_H
 
+CGAL_BEGIN_NAMESPACE
+
 // We choose the lazy approach, which is good enough: we take the double
 // approximation, which is guaranted 1 bit error max (when rounding to
 // nearest), and return an interval around this value.
@@ -31,25 +33,27 @@
 // for that using rounding to infinity.
 
 inline
-CGAL_Interval_nt_advanced
-CGAL_convert_to (const CGAL_Gmpz &z, const CGAL_Interval_nt_advanced &)
+Interval_nt_advanced
+convert_to (const Gmpz &z, const Interval_nt_advanced &)
 {
 #ifdef CGAL_IA_DEBUG
-    CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
+    CGAL_assertion(FPU_get_rounding_mode() == FPU_PLUS_INFINITY);
 #endif
-    CGAL_FPU_set_rounding_to_nearest();
-    double approx = CGAL_to_double(z);
-    CGAL_FPU_set_rounding_to_infinity();
-    const CGAL_Interval_nt_advanced result =
-	CGAL_Interval_nt_advanced (approx) +
-	CGAL_Interval_nt_advanced::smallest;
+    FPU_set_rounding_to_nearest();
+    double approx = to_double(z);
+    FPU_set_rounding_to_infinity();
+    const Interval_nt_advanced result =
+	Interval_nt_advanced (approx) +
+	Interval_nt_advanced::smallest;
 #ifdef CGAL_IA_DEBUG
-    CGAL_FPU_set_rounding_to_nearest();
-    CGAL_assertion(	CGAL_Gmpz(result.lower_bound()) <= z &&
-			CGAL_Gmpz(result.upper_bound()) >= z);
-    CGAL_FPU_set_rounding_to_infinity();
+    FPU_set_rounding_to_nearest();
+    CGAL_assertion(	Gmpz(result.lower_bound()) <= z &&
+			Gmpz(result.upper_bound()) >= z);
+    FPU_set_rounding_to_infinity();
 #endif
     return result;
 }
+
+CGAL_END_NAMESPACE
 
 #endif	 // CGAL_IA_GMPZ_H

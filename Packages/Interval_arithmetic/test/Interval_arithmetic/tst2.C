@@ -3,5 +3,5 @@
 //  $Date$
 
 #define ADVANCED
-#define TESTED_TYPE CGAL_Interval_nt_advanced
+#define TESTED_TYPE CGAL::Interval_nt_advanced
 #include "include/tst_generic.C"
