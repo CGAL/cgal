@@ -1,9 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Kd_tree.h>
-#include <CGAL/Kd_tree_traits_point_3.h>
-#include <CGAL/Splitters.h>
-#include <CGAL/Random.h>
-#include <CGAL/Timer.h>
+#include <CGAL/Search_traits_3.h>
+#include <CGAL/point_generators_3.h>
 #include <CGAL/Fuzzy_iso_box.h>
 
 #include <vector>
@@ -11,106 +9,71 @@
 
 typedef CGAL::Simple_cartesian<double> K;
 typedef K::Point_3 Point;
-typedef K::Iso_cuboid_3 box;
-
-typedef CGAL::Kd_tree_traits_point_3<K> Traits;
-typedef CGAL::Fuzzy_iso_box<Traits,box> Fuzzy_box;	
+typedef K::Vector_3 Vector;
+typedef K::Iso_cuboid_3 Iso_cuboid;
+typedef CGAL::Random_points_in_sphere_3<Point> Random_points_iterator;
+typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator;
+typedef CGAL::Search_traits_3<K> Traits;
+typedef CGAL::Fuzzy_iso_box<Traits> Fuzzy_box;	
 typedef CGAL::Kd_tree<Traits> Tree;
-typedef Tree::Splitter Splitter;
 
 
 int main() {
 
-  const int dim=3;
-  int bucket_size=1;
-  CGAL::Timer t;
+  const int N=10000;
   
-  const int data_point_number=10000;
-  // const int data_point_number=1000000;
+  // generator for random data points in the square ( (-1,-1), (1,1) ) 
+  Random_points_iterator rpit( 1.0);
   
-   
-  typedef std::list<Point> point_list;
-  point_list data_points,res1,res2;
+  // construct list containing N random points
+  std::list<Point> all_points(N_Random_points_iterator(rpit,0),
+			      N_Random_points_iterator(N));
   
-  // get data points
+  // Insert also the N points in the tree
+  Tree tree(all_points.begin(),all_points.end());
   
-  // add random points of dimension dim to data_points
-  CGAL::Random Rnd;
-  // std::cout << "started tstrandom()" << std::endl;
-  for (int i1=0; i1<data_point_number; i1++) { 
-	    double v[dim];
-		for (int i2=0; i2<dim; i2++) v[i2]=Rnd.get_double(-1.0,1.0);
-        Point Random_point(v[0],v[1],v[2]);
-        data_points.push_front(Random_point);
-  }
-  
-  /*
-  ifstream in;
-  int data_point_number;
-  
-  in.open("data.dat");
-  in >> data_point_number;
-  
-  typedef std::list<Point> point_list;
-  point_list data_points, res1, res2;
+  Point p(0.1, 0.2, 0.3);
+  Point q(0.3, 0.5, 0.4);
 
-  for (int i = 0; i < data_point_number; i++) {
-         
-        double v[dim]; 
-   	in >> v[0];
-        in >> v[1];
-        in >> v[2];
-        Point P(dim,v,v+dim);
-        data_points.push_back(P);
-  }; 
-  */
-  
-Splitter split(bucket_size);
+  Iso_cuboid exact_ic(p,q);
 
-   
-  t.reset(); t.start(); 
-  Tree d(data_points.begin(), data_points.end(), split);
-  t.stop();
-  std::cout << "building time=" << t.time() << std::endl;
-  
-  
-  // define range query
-  
-  double p[dim];
-  double q[dim];
-  for (int i2=0; i2<dim; i2++) {
-  	p[i2]=  0.2;
-        q[i2]=  0.7;
-  }
-  
-  Point P(p[0],p[1],p[2]);
-  Point Q(q[0],q[1],q[2]);
+  Fuzzy_box exact_range(p,q);
 
-  Fuzzy_box exact_range(P,Q);
-
+  std::list<Point> result;
   // Searching the box r exactly
-  t.reset();t.start();    
-  d.search( std::back_inserter( res1 ), exact_range);
-  t.stop();
-  std::cout << "time exact search=" << t.time() << std::endl;
+  tree.search( std::back_inserter( result ), exact_range);
   
-  std::cout << "Number of the points in the box (0.2,0.2,0.2)-(0.7,0.7,0.7) = " <<
-  res1.size();
-  // std::copy (res1.begin(),res1.end(),std::ostream_iterator<point>(std::cout,"\n") );
-  std::cout << std::endl;
+  // test the results of the exact query
+  std::list<Point> copy_all_points(all_points);
+  std::list<Point>::iterator pt;
+  for (pt=result.begin(); (pt != result.end()); ++pt) {
+    assert(! exact_ic.has_on_unbounded_side(*pt));
+    copy_all_points.remove(*pt);
+  }
   
-  Fuzzy_box approximate_range(P,Q,0.1);
+  for (pt=copy_all_points.begin(); (pt != copy_all_points.end()); ++pt) {
+    assert(exact_ic.has_on_unbounded_side(*pt));
+  }
 
-  // Searching the box r approximately
-  t.reset();t.start();    
-  d.search( std::back_inserter( res2 ), approximate_range);
-  t.stop();
-  std::cout << "time approximate search=" << t.time() << std::endl;
+
+  result.clear();
+  // approximate range searching using value 0.1 for fuzziness parameter
+  Fuzzy_box approximate_range(p,q,0.05);
+  Iso_cuboid inner_ic(p+ 0.05*Vector(1,1,1),q-0.05*Vector(1,1,1));
+  Iso_cuboid outer_ic(p- 0.05*Vector(1,1,1),q+0.05*Vector(1,1,1));
+
+  tree.search(std::back_inserter( result ), approximate_range);
+  // test the results of the approximate query
+  for (pt=result.begin(); (pt != result.end()); ++pt) {
+    // a point we found may be slighlty outside the isocuboid
+    assert(! outer_ic.has_on_unbounded_side(*pt));
+    all_points.remove(*pt);
+  }
   
-  std::cout << "Number of the points in the box (0.2,0.2,0.2)-(0.7,0.7,0.7) = " <<
-  res2.size();
-  // std::copy (res.begin(),res.end(),std::ostream_iterator<point>(std::cout,"\n") );
-  std::cout << std::endl;
+  for (pt=all_points.begin(); (pt != all_points.end()); ++pt) {
+    assert(inner_ic.has_on_unbounded_side(*pt));
+  }
+  std::cout << "done" << std::endl;
 
   return 0;
 };
