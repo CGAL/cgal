@@ -106,7 +106,7 @@ public:
   {
       if (et==NULL) {
           update_exact();
-	  in = CGAL::to_interval(*et);
+	  in = CGAL_NTS to_interval(*et);
       }
       return *et;
   }

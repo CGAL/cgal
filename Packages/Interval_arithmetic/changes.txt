@@ -1,3 +1,6 @@
+20 June 2004 Sylvain Pion
+- Use CGAL_NTS instead of CGAL::.
+
 13 June 2004 Sylvain Pion
 - Remove purely static code from Static_filters.
   It's pure overhead for now : requires users' intervention, with expected low

@@ -781,8 +781,8 @@ template <class RT>
 std::pair<double,double>
 to_interval (const Quotient<RT>& z)
 {
-    Interval_nt<> quot = Interval_nt<>(CGAL::to_interval(z.numerator())) /
-		         Interval_nt<>(CGAL::to_interval(z.denominator()));
+    Interval_nt<> quot = Interval_nt<>(CGAL_NTS to_interval(z.numerator())) /
+		         Interval_nt<>(CGAL_NTS to_interval(z.denominator()));
     return std::make_pair(quot.inf(), quot.sup());
 }
 
