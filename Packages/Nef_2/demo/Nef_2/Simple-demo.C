@@ -25,7 +25,7 @@ int main()
   SETDTHREAD(71); 
   CGAL::set_pretty_mode ( std::cerr );
   std::cerr << "using " << CGAL::pointlocationversion << std::endl;
-  std::cerr << "using " << PMNS sweepversion << std::endl;
+  std::cerr << "using " << CGAL::sweepversion << std::endl;
 
   W.init(-CGAL::frame_default,CGAL::frame_default,-CGAL::frame_default);
   W.set_show_coordinates(true);

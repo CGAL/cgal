@@ -62,7 +62,7 @@ template <typename T> class Nef_polyhedron_2_rep;
 template <typename T>
 std::ostream& operator<<(std::ostream&, const Nef_polyhedron_2<T>&); 
 template <typename T>
-std::istream& operator>>(std::istream&, Nef_polyhedron_2<T>&); 
+std::istream& operator>>(std::istream&, Nef_polyhedron_2<T>&);
 template <typename T>
 class Nef_polyhedron_2_rep : public Ref_counted
 { 

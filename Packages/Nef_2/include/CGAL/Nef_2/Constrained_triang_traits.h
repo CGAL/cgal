@@ -284,34 +284,34 @@ public:
     bool ending_edges(0), starting_edges(0);
     while ( e != Halfedge_handle() ) { // walk adjacency list clockwise
       if ( SLItem[e] != SL.end() ) 
-        {
-          TRACEN("ending " << seg(e));
-          if (ending_edges) triangulate_between(e,cyclic_adj_succ(e));
-          ending_edges = true;
-          SL.erase(SLItem[e]);
-          link_bi_edge_to(e,SL.end());
-          // not in SL anymore
-        }
+      {
+        TRACEN("ending " << seg(e));
+        if (ending_edges) triangulate_between(e,cyclic_adj_succ(e));
+        ending_edges = true;
+        SL.erase(SLItem[e]);
+        link_bi_edge_to(e,SL.end());
+        // not in SL anymore
+      }
 
       else
-        {
-          TRACEN("starting "<<seg(e));
-          sit = SL.insert(sit,ss_pair(e,e));
-          link_bi_edge_to(e,sit);
-          if ( !starting_edges ) eb_high = cyclic_adj_succ(e);
-          starting_edges = true;
-        }
+      {
+        TRACEN("starting "<<seg(e));
+        sit = SL.insert(sit,ss_pair(e,e));
+        link_bi_edge_to(e,sit);
+        if ( !starting_edges ) eb_high = cyclic_adj_succ(e);
+        starting_edges = true;
+      }
 
       if (e == e_end) break;
       e = cyclic_adj_pred(e);
     }
     if (!ending_edges) 
-      {
-        Halfedge_handle e_vis = sit_pred->second;
-        Halfedge_handle e_vis_n = cyclic_adj_succ(e_vis);
-        eb_low = eb_high = new_bi_edge(event,e_vis_n); 
-        TRACEN(" producing link "<<seg(eb_low)<<"\n    before "<<seg(e_vis_n));
-      }
+    {
+      Halfedge_handle e_vis = sit_pred->second;
+      Halfedge_handle e_vis_n = cyclic_adj_succ(e_vis);
+      eb_low = eb_high = new_bi_edge(event,e_vis_n); 
+      TRACEN(" producing link "<<seg(eb_low)<<"\n    before "<<seg(e_vis_n));
+    }
 
       
 
@@ -391,38 +391,8 @@ public:
 
 
   void check_ccw_local_embedding() const
-  {
-    if ( is_isolated(event) ) return;
-    std::ostrstream error_status; 
-    CGAL::set_pretty_mode(error_status);
-    Halfedge_handle ef = first_out_edge(event) ,e=ef,en,enn;
-    error_status << "ccw_local_embedding_checker\n";
-    error_status << "  vertex " << point(event) << std::endl;
-    if ( !is_forward(ef) && is_forward(last_out_edge(event)) ) {
-      error_status << " first backward, last froward" << std::endl << '\0';
-      CGAL_assertion_msg(0,error_status.str());
-    }
-    while ( true ) {
-      en = cyclic_adj_succ(e);
-      enn = cyclic_adj_succ(en);
-      if (en == ef) break;
-      error_status << "  -> " << point(target(e));
-      error_status << " " << point(target(en)); 
-      error_status << " " << point(target(enn)) << std::endl;
-      if ( !K.strictly_ordered_ccw(dir(e),dir(en),dir(enn)) ) {
-        error_status << "ccw order violate: e,en,enn!" << std::endl << '\0';
-        CGAL_assertion_msg(0,error_status.str());
-      }
-      error_status << "  -> " << point(target(e));
-      error_status << " " << point(target(en));
-      error_status << " " << point(target(ef)) << std::endl;
-      if ( !K.strictly_ordered_ccw(dir(e),dir(en),dir(ef)) ) {
-        error_status << "ccw order violate: e,en,ef!" << std::endl << '\0';
-        CGAL_assertion_msg(0,error_status.str());
-      }
-      e = en;
-    }
-    error_status.freeze(0);
+  { PM_checker<PMDEC,GEOM> C(*this,K); 
+    C.check_order_preserving_embedding(event);
   }
 
   void check_invariants()

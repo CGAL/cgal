@@ -774,8 +774,10 @@ public:
   
   const Extended_point<RT>& p1() const { return _p1; }
   const Extended_point<RT>& p2() const { return _p2; }
-  int dx_sign() const { return (_p2.hx()-_p1.hx()).sign(); }
-  int dy_sign() const { return (_p2.hy()-_p1.hy()).sign(); }
+  int dx_sign() const 
+  { return (_p2.hx()*_p1.hw()-_p1.hx()*_p2.hw()).sign(); }
+  int dy_sign() const 
+  { return (_p2.hy()*_p1.hw()-_p1.hy()*_p2.hw()).sign(); }
 };
 
 template <class RT> 

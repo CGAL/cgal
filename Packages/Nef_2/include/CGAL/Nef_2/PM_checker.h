@@ -118,29 +118,29 @@ template <typename PMCDEC, typename GEOM>
 void PM_checker<PMCDEC,GEOM>::
 check_order_preserving_embedding(Vertex_const_handle v) const
 {
+  if ( is_isolated(v) ) return;
   std::ostrstream error_status;
   CGAL::set_pretty_mode ( error_status );
   Halfedge_const_handle ef = first_out_edge(v) ,e=ef,en,enn;
   error_status << "check_order_preserving_embedding\n";
   error_status << "vertex " << PV(v) << std::endl;
   error_status << "ef " << PE(ef) << std::endl;
-  if ( e != Halfedge_const_handle() ) {
-    while ( true ) {
-      en = cyclic_adj_succ(e);
-      enn = cyclic_adj_succ(en);
-      if (en == ef) break;
-      error_status << "  -> " << point(target(e));
-      error_status << " " << point(target(en)) << " ";
-      error_status << " " << point(target(enn)) << std::endl;
-      if ( !K.strictly_ordered_ccw(direction(e),direction(en),
-                                   direction(enn)) ||
-           !K.strictly_ordered_ccw(direction(e),direction(en),
-                                   direction(ef)) ) {
-        error_status << "ccw order violate!" << std::endl << '\0';
-        CGAL_assertion_msg(0,error_status.str());
-      }
-      e = en;
+  while ( true ) {
+    en = cyclic_adj_succ(e);
+    enn = cyclic_adj_succ(en);
+    if (en == ef) break;
+    error_status << "  -> " << point(target(e))
+                 << " " << point(target(en))  
+                 << " " << point(target(enn)) << std::endl;
+    bool ccw1 = K.strictly_ordered_ccw(direction(e),direction(en),
+				       direction(enn));
+    bool ccw2 = K.strictly_ordered_ccw(direction(e),direction(en),
+				       direction(ef));
+    if ( !(ccw1 && ccw2) ) {
+      error_status << "ccw order violate!" << std::endl << '\0';
+      CGAL_assertion_msg(0,error_status.str());
     }
+    e = en;
   }
   error_status.freeze(0);  
 }
