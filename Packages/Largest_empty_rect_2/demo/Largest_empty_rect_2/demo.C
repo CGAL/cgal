@@ -192,6 +192,14 @@ int main(int argc,char *argv[])
         automatic_show = true;
         show_biggest_rec(empty_rectangle,W);
         biggest_rect_shown = true;
+
+	// *********************************************
+	// The next two lines are only for checking
+	// cctor and operator + . Should be removed later
+	Largest_empty_rect empty_rectangle2(empty_rectangle);
+	empty_rectangle2 = empty_rectangle;
+	// *********************************************
+
       } else if(mouse_input == 4) {
         // change to manual mode
         automatic_show = false;

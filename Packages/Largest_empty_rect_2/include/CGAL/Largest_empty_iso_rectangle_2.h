@@ -194,6 +194,9 @@ private:
   void empty_tents();
   void update();
   void init(const Point& bl, const Point& tr);
+  void copy_memory(const Largest_empty_iso_rectangle_2<T>& ler);
+  void free_memory();
+
   // Auxiliary iterators for convenience
 
   template < class Node>
@@ -271,15 +274,24 @@ public:
 
   // get a begin iterator to points
   const_iterator 
-  begin();
+  begin()  const;
 
   // get a after-the-end iterator to points
-  const_iterator 
-  end();
+  const_iterator
+  end()  const;
 
 
   // dtor
   ~Largest_empty_iso_rectangle_2();
+
+  // operator=
+  Largest_empty_iso_rectangle_2<T>&
+    operator =(const Largest_empty_iso_rectangle_2<T>& ler);
+
+  // cctor
+  Largest_empty_iso_rectangle_2<T>(
+	       const Largest_empty_iso_rectangle_2<T>& ler);
+  
 };
 
 
@@ -291,11 +303,58 @@ struct Delete {
 };
 
 template<class T>
-Largest_empty_iso_rectangle_2<T>::~Largest_empty_iso_rectangle_2()
+void Largest_empty_iso_rectangle_2<T>::free_memory()
 {
   std::for_each(x_sorted.begin(), 
 	   x_sorted.end(), 
 	   Delete<Point_data*>());
+}
+
+template<class T>
+Largest_empty_iso_rectangle_2<T>::~Largest_empty_iso_rectangle_2()
+{
+  free_memory();
+}
+
+template<class T>
+void Largest_empty_iso_rectangle_2<T>::
+  copy_memory(const Largest_empty_iso_rectangle_2<T>& ler)
+{
+    // copy points
+    for(Largest_empty_iso_rectangle_2<T>::const_iterator iter = ler.begin();
+        iter != ler.end();
+	++iter) {
+      if(iter->type == REG)
+	insert((*iter)->p);
+      else
+	insert((*iter)->p,(*iter)->type);
+    }
+
+    // copy bounding box
+    bl_p = ler.bl_p;
+    tr_p = ler.tr_p;
+}
+
+template<class T>
+Largest_empty_iso_rectangle_2<T>&
+Largest_empty_iso_rectangle_2<T>::operator =(
+               const Largest_empty_iso_rectangle_2<T>& ler)
+{
+  if(this != &ler) {
+    free_memory();
+    copy_memory(ler);
+  }
+
+  return *this;
+}
+
+template<class T>
+Largest_empty_iso_rectangle_2<T>::
+Largest_empty_iso_rectangle_2(
+               const Largest_empty_iso_rectangle_2<T>& ler)
+: cache_valid(false), _gt(), x_sorted(Less_xy(geom_traits())), y_sorted(Less_yx(geom_traits()))
+{
+  copy_memory(ler);
 }
 
 template<class T>
@@ -1119,7 +1178,7 @@ Largest_empty_iso_rectangle_2<T>::Largest_empty_iso_rectangle_2(const Iso_rectan
 
 template<class T>
 typename Largest_empty_iso_rectangle_2<T>::const_iterator 
-Largest_empty_iso_rectangle_2<T>::begin()
+Largest_empty_iso_rectangle_2<T>::begin() const
 {
   Point_data_set_of_x::const_iterator i = x_sorted.begin();
   while(i != x_sorted.end() && (*i)->type != REG) 
@@ -1130,7 +1189,7 @@ Largest_empty_iso_rectangle_2<T>::begin()
 
 template<class T>
 typename Largest_empty_iso_rectangle_2<T>::const_iterator 
-Largest_empty_iso_rectangle_2<T>::end()
+Largest_empty_iso_rectangle_2<T>::end() const
 {
     return const_iterator(x_sorted.end());
 }
