@@ -1,3 +1,6 @@
+24 August 2004 Andreas Fabri
+- changes in doc_tex for pdflatex
+
 27 May 2004 Radu Ursu
 - updated headers in examples/RangeSegmentTrees/include
 

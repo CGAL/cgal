@@ -1417,8 +1417,10 @@ Packages/Nef_3/test/Nef_3/data/cube.off -text
 Packages/Nef_3/test/Nef_3/data/octa.off -text
 Packages/Nef_3/test/Nef_3/data/star.off -text
 Packages/Nef_S2/doc_tex/Nef_S2/complex.gif -text svneol=unset#unset
+Packages/Nef_S2/doc_tex/Nef_S2/complex.pdf -text svneol=unset#unset
 Packages/Nef_S2/doc_tex/Nef_S2/complex.ps -text
 Packages/Nef_S2/doc_tex/Nef_S2/halfspace.gif -text svneol=unset#unset
+Packages/Nef_S2/doc_tex/Nef_S2/halfspace.pdf -text svneol=unset#unset
 Packages/Nef_S2/doc_tex/Nef_S2/halfspace.ps -text
 Packages/Optimisation_doc/doc_tex/Optimisation/annulus.eps -text
 Packages/Optimisation_doc/doc_tex/Optimisation/annulus.gif -text svneol=unset#unset
@@ -1531,9 +1533,11 @@ Packages/Polyhedron/examples/Polyhedron/corner_with_sharp_edge.off -text
 Packages/Polyhedron/examples/Polyhedron/cross.off -text
 Packages/Qt_widget/doc_tex/Qt_widget/standard_toolbar.eps -text
 Packages/Qt_widget/doc_tex/Qt_widget/standard_toolbar.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/Qt_widget/standard_toolbar.pdf -text svneol=unset#unset
 Packages/Qt_widget/doc_tex/Qt_widget/standard_toolbar.png -text svneol=unset#unset
 Packages/Qt_widget/doc_tex/Qt_widget/triangulation.eps -text
 Packages/Qt_widget/doc_tex/Qt_widget/triangulation.gif -text svneol=unset#unset
+Packages/Qt_widget/doc_tex/Qt_widget/triangulation.pdf -text svneol=unset#unset
 Packages/Qt_widget/include/CGAL/IO/pixmaps/alpha_shape.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/arrow.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/back.xpm -text
@@ -1576,23 +1580,33 @@ Packages/Qt_widget/src/CGALQt/CGALQt.vcproj -text
 Packages/Robustness/demo/Robustness/robustness.vcproj -text
 Packages/SearchStructures/doc_tex/SearchStructures/d-range.eps -text
 Packages/SearchStructures/doc_tex/SearchStructures/d-range.gif -text svneol=unset#unset
+Packages/SearchStructures/doc_tex/SearchStructures/d-range.pdf -text svneol=unset#unset
 Packages/SearchStructures/doc_tex/SearchStructures/d-segment.eps -text
 Packages/SearchStructures/doc_tex/SearchStructures/d-segment.gif -text svneol=unset#unset
+Packages/SearchStructures/doc_tex/SearchStructures/d-segment.pdf -text svneol=unset#unset
 Packages/SearchStructures/doc_tex/SearchStructures/range2.eps -text
 Packages/SearchStructures/doc_tex/SearchStructures/range2.gif -text svneol=unset#unset
+Packages/SearchStructures/doc_tex/SearchStructures/range2.pdf -text svneol=unset#unset
 Packages/SearchStructures/doc_tex/SearchStructures/rangesegmentdesign.eps -text
+Packages/SearchStructures/doc_tex/SearchStructures/rangesegmentdesign.pdf -text svneol=unset#unset
 Packages/SearchStructures/doc_tex/SearchStructures/rsd.eps -text
 Packages/SearchStructures/doc_tex/SearchStructures/rsd.gif -text svneol=unset#unset
+Packages/SearchStructures/doc_tex/SearchStructures/rsd.pdf -text svneol=unset#unset
 Packages/SearchStructures/doc_tex/SearchStructures/segment2.eps -text
 Packages/SearchStructures/doc_tex/SearchStructures/segment2.gif -text svneol=unset#unset
+Packages/SearchStructures/doc_tex/SearchStructures/segment2.pdf -text svneol=unset#unset
 Packages/SearchStructures/doc_tex/SearchStructures/segment_ex2.eps -text
 Packages/SearchStructures/doc_tex/SearchStructures/segment_ex2.gif -text svneol=unset#unset
+Packages/SearchStructures/doc_tex/SearchStructures/segment_ex2.pdf -text svneol=unset#unset
 Packages/SearchStructures/doc_tex/SearchStructures/segment_ex4.eps -text
 Packages/SearchStructures/doc_tex/SearchStructures/segment_ex4.gif -text svneol=unset#unset
+Packages/SearchStructures/doc_tex/SearchStructures/segment_ex4.pdf -text svneol=unset#unset
 Packages/SearchStructures/doc_tex/SearchStructures_ref/segment_ex2.eps -text
 Packages/SearchStructures/doc_tex/SearchStructures_ref/segment_ex2.gif -text svneol=unset#unset
+Packages/SearchStructures/doc_tex/SearchStructures_ref/segment_ex2.pdf -text svneol=unset#unset
 Packages/SearchStructures/doc_tex/SearchStructures_ref/segment_ex4.eps -text
 Packages/SearchStructures/doc_tex/SearchStructures_ref/segment_ex4.gif -text svneol=unset#unset
+Packages/SearchStructures/doc_tex/SearchStructures_ref/segment_ex4.pdf -text svneol=unset#unset
 Packages/Segment_Voronoi_diagram_2/demo/Segment_Voronoi_diagram_2/filenew.xpm -text
 Packages/Segment_Voronoi_diagram_2/demo/Segment_Voronoi_diagram_2/fileopen.xpm -text
 Packages/Segment_Voronoi_diagram_2/demo/Segment_Voronoi_diagram_2/fileprint.xpm -text
