@@ -62,9 +62,9 @@ _test_cls_ray_2(const R& )
  CGAL::Ray_2<R> r5( p2, p4);
  CGAL::Ray_2<R> r6( p1, p4);
  CGAL::Ray_2<R> r7( p1, l12);
- CGAL::Ray_2<R> r8( p1, l24);
+ CGAL::Ray_2<R> r8( p2, l24);
  CGAL::Ray_2<R> r7v( p1, v12);
- CGAL::Ray_2<R> r8v( p1, v24);
+ CGAL::Ray_2<R> r8v( p2, v24);
  r0 = r3;
 
  std::cout << '.';
