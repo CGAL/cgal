@@ -39,13 +39,14 @@ template <class Traits>
 class Rotation_tree_node_2 : public Traits::Point_2
 {
 public:
-   typedef typename Traits::Point_2                         Point_2;
+
+   typedef typename Traits::Point_2                         Base_point;
    typedef typename std::list< Rotation_tree_node_2<Traits> >::iterator
                                                             Tree_iterator;
    typedef std::pair<Tree_iterator, bool>                   Node_ref;
 
 
-   Rotation_tree_node_2(Point_2 p) : Point_2(p)
+   Rotation_tree_node_2(Base_point p) : Base_point(p)
    { 
       _parent.second = false;
       _left_sibling.second = false;

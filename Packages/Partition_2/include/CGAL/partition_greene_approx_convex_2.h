@@ -80,13 +80,13 @@ bool is_adjacent_to(BidirectionalCirculator new_point_ref,
 
 
 // erases vertices in the range [first, last) (counterclockwise)
-template<class BidirectionalCirculator, class Polygon_2>
+template<class BidirectionalCirculator, class Polygon>
 void erase_vertices(BidirectionalCirculator first, 
                     BidirectionalCirculator last,
-                    Polygon_2& polygon, 
+                    Polygon& polygon, 
                     bool& update_required)
 {
-   typedef typename Polygon_2::iterator  Vertex_iterator;
+   typedef typename Polygon::iterator  Vertex_iterator;
    Vertex_iterator it = polygon.begin();
    Vertex_iterator temp_it;
    update_required = false;
@@ -131,9 +131,9 @@ void erase_vertices(BidirectionalCirculator first,
 }
 
 
-template <class Polygon_2, class BidirectionalCirculator, 
+template <class Polygon, class BidirectionalCirculator, 
           class OutputIterator, class Traits>
-void visible(Polygon_2& polygon,
+void visible(Polygon& polygon,
              const BidirectionalCirculator& new_point_ref, 
              Circ_pair< BidirectionalCirculator >& stack, 
              Circ_pair< BidirectionalCirculator >& bottom_chain, 
@@ -266,9 +266,9 @@ void visible(Polygon_2& polygon,
 }
 
 
-template <class Polygon_2, class BidirectionalCirculator, 
+template <class Polygon, class BidirectionalCirculator, 
           class OutputIterator, class Traits>
-void stack_extend(Polygon_2& polygon,
+void stack_extend(Polygon& polygon,
                   const BidirectionalCirculator& point_ref, 
                   Circ_pair< BidirectionalCirculator >& stack, 
                   Circ_pair< BidirectionalCirculator >& top_chain,
@@ -304,9 +304,9 @@ void stack_extend(Polygon_2& polygon,
                        result, traits);
 }
 
-template <class Polygon_2, class BidirectionalCirculator, 
+template <class Polygon, class BidirectionalCirculator, 
           class OutputIterator, class Traits>
-void change_top_chain(Polygon_2& polygon, 
+void change_top_chain(Polygon& polygon, 
                       BidirectionalCirculator new_point_ref,
                       Circ_pair< BidirectionalCirculator >& stack,
                       Circ_pair< BidirectionalCirculator >& top_chain, 
@@ -367,7 +367,7 @@ void change_top_chain(Polygon_2& polygon,
          {
             std::copy(new_point_ref, stack.before_front(), 
                       std::back_inserter(new_polygon));
-            typedef typename Polygon_2::iterator iterator;
+            typedef typename Polygon::iterator iterator;
             erase_vertices(top_chain.front(), stack.front(), polygon,
                            update_required);
             top_chain.push_front(stack.front());
@@ -427,9 +427,9 @@ void change_top_chain(Polygon_2& polygon,
    }
 }
 
-template <class Polygon_2, class BidirectionalCirculator, class OutputIterator,
+template <class Polygon, class BidirectionalCirculator, class OutputIterator,
           class Traits>
-void change_bottom_chain(Polygon_2& polygon, 
+void change_bottom_chain(Polygon& polygon, 
                          BidirectionalCirculator new_point_ref, 
                          Circ_pair< BidirectionalCirculator >& stack,
                          Circ_pair< BidirectionalCirculator >& bottom_chain, 
@@ -541,9 +541,9 @@ void change_bottom_chain(Polygon_2& polygon,
    }
 }
 
-template <class Polygon_2, class BidirectionalCirculator, 
+template <class Polygon, class BidirectionalCirculator, 
           class OutputIterator, class Traits>
-void make_polygons_from_stack(Polygon_2& polygon,
+void make_polygons_from_stack(Polygon& polygon,
                             const BidirectionalCirculator& high_point_ref, 
                             Circ_pair< BidirectionalCirculator >& stack,
                             Circ_pair< BidirectionalCirculator >& bottom_chain,
@@ -802,7 +802,6 @@ OutputIterator partition_greene_approx_convex_2(InputIterator first,
    Tee_for_output_iterator<OutputIterator, Polygon_2>    res(result);
 #endif // no postconditions
 
-//   std::list<Point_2> polygon(first, beyond);
    Polygon_2  polygon(first, beyond);
    CGAL_partition_precondition(
       orientation_2(polygon.vertices_begin(), polygon.vertices_end(),

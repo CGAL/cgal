@@ -1,3 +1,15 @@
+1.7 (8 March 2001)
+
+    Added typedefs for Traits parameters in Partitioned_polygon_2.
+
+    rearranged class declarations in Partitioned_polygon_2.h to please VC++
+    and fixed other small bugs with const vs. non-const interators, typedefs
+    for class not public.
+
+    Changed name of Polygon_2 template parameter to Polygon in some functions
+    so VC++ won't get confused with the Polygon_2 class defined elsewhere.
+    
+
 1.6 (19 January 2001)
 
     Fixed more problems with types and typedefs in Partitioned_polygon_2.

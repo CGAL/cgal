@@ -36,8 +36,6 @@
 
 namespace CGAL {
 
-template <class Traits> 
-class Partitioned_polygon_2;
 
 // this will order the diagonals around a vertex from previous to 
 // next, which means a CW order if the polygon vertices are in CCW order
@@ -93,100 +91,8 @@ private:
    Orientation      _vertex_orientation;
 };
 
-template <class Traits>
-class Partition_vertex : public Traits::Point_2
-{
-  public:
-    typedef typename Traits::Point_2                             Base_point;
-    typedef typename Partitioned_polygon_2< Traits >::iterator   I; 
-    typedef Circulator_from_iterator<I>                          Circulator;
-//
-//  It might be better if this were a set that used Indirect_CW_diag_compare
-//  as the Comapre object, but the constructor for Indirect_CW_diag_compare
-//  requires prev and next pointers, which would have to be supplied to
-//  the constructor for a Partition_vertex as well, which is difficult to
-//  do (perhaps impossible in general since you don't know what next and
-//  previous will be until the whole polygon is constructed)
-//
-    typedef std::list<Circulator>                         Diagonal_list;
-    typedef typename Diagonal_list::iterator              Diagonal_iterator;
-
-
-    Partition_vertex(Base_point p): Base_point(p) {}
-
-    void insert_diagonal(Circulator v_ref) 
-    {
-       diag_endpoint_refs.push_back(v_ref);
-    }
-
-    Diagonal_iterator diagonal_erase(Diagonal_iterator d_ref) 
-    {
-       return diag_endpoint_refs.erase(d_ref);
-    }
-
-    Diagonal_iterator diagonal_erase(Circulator diag_endpoint) 
-    {
-       Diagonal_iterator d_it = diagonals_begin();
-       for (d_it = diagonals_begin(); d_it != diagonals_end() && 
-                                     *d_it != diag_endpoint; d_it++);
-       if (d_it != diagonals_end()) return diag_endpoint_refs.erase(d_it);
-       return d_it;
-    }
-
-    Diagonal_iterator diagonals_begin() 
-    {
-       return diag_endpoint_refs.begin();
-    }
-
-    Diagonal_iterator diagonals_end() 
-    {
-       return diag_endpoint_refs.end();
-    }
-
-    bool has_unused_diagonals( )  
-    {
-       return current_diag != diag_endpoint_refs.end();
-    }
-
-    // sort the diagonals ccw around the point they have in common
-    // and remove any duplicate diagonals
-    void sort_diagonals(const Circulator& prev, const Circulator& next) 
-    {
-       diag_endpoint_refs.sort(
-          Indirect_CW_diag_compare<Circulator,Traits>(*this, prev, next));
-       diag_endpoint_refs.unique();
-       current_diag = diag_endpoint_refs.begin();
-    }
-
-    void reset_current_diagonal( ) 
-    {
-       current_diag = diag_endpoint_refs.begin();
-    }
-
-    Circulator current_diagonal( ) const
-    {  return *current_diag; }
-
-    void advance_diagonal() 
-    {
-       if (current_diag != diag_endpoint_refs.end()) 
-          current_diag++;
-    }
-   
-    void print_diagonals( ) const
-    {
-       std::cout << "from " << *this << std::endl;
-       typename std::list<Circulator>::const_iterator it;
-       for (it = diag_endpoint_refs.begin();it != diag_endpoint_refs.end();
-            it++)
-       {
-          std::cout << " to " << **it << std::endl;
-       }
-    }
-
-private:
-    Diagonal_list diag_endpoint_refs;
-    Diagonal_iterator current_diag;
-};
+template <class Traits_>
+class Partition_vertex;
 
 // 
 // requires 
@@ -196,9 +102,11 @@ private:
 //   Traits::Orientation_2
 //   Traits::leftturn_2_object
 //   Traits::orientation_2_object
-template <class Traits>
-class Partitioned_polygon_2 : public std::vector< Partition_vertex< Traits > >
+template <class Traits_>
+class Partitioned_polygon_2 : public std::vector< Partition_vertex< Traits_ > >
 {
+public:
+   typedef Traits_                                      Traits;
    typedef Partition_vertex<Traits>                     Vertex;
    typedef typename std::vector< Vertex >::iterator     Iterator;
    typedef Circulator_from_iterator<Iterator>           Circulator;
@@ -206,8 +114,10 @@ class Partitioned_polygon_2 : public std::vector< Partition_vertex< Traits > >
    typedef typename Traits::Point_2                     Point_2;
    typedef typename Traits::Leftturn_2                  Leftturn_2;
    typedef Turn_reverser<Point_2, Leftturn_2>           Rightturn_2;
+   typedef std::list<Circulator>                        Diagonal_list;
+   typedef typename Diagonal_list::iterator             Diagonal_iterator;
 
-public:
+
    Partitioned_polygon_2() : 
        _rightturn(Rightturn_2(Traits().leftturn_2_object()))
    { }
@@ -231,7 +141,6 @@ public:
    {
       Circulator first(begin(), end(), begin());
       Circulator c = first;
-      typedef Partition_vertex<Traits>::Diagonal_iterator Diagonal_iterator;
 
       Diagonal_iterator d;
 #ifdef CGAL_PARTITIONED_POLY_DEBUG
@@ -355,8 +264,6 @@ private:
       Circulator prev = vertex_ref; prev--;
       Circulator next = vertex_ref; next++;
    
-      typedef Partition_vertex<Traits>::Diagonal_iterator Diagonal_iterator;
-   
       // find diag_endpoint in vertex_ref's list of diagonals
       Diagonal_iterator d_it;
       for (d_it = (*vertex_ref).diagonals_begin();
@@ -385,6 +292,101 @@ private:
    }
 
    Rightturn_2 _rightturn;
+};
+
+template <class Traits_>
+class Partition_vertex : public Traits_::Point_2
+{
+  public:
+    typedef Traits_                                              Traits;
+    typedef typename Traits::Point_2                             Base_point;
+    typedef typename Partitioned_polygon_2< Traits >::Circulator Circulator; 
+//
+//  It might be better if this were a set that used Indirect_CW_diag_compare
+//  as the Compare object, but the constructor for Indirect_CW_diag_compare
+//  requires prev and next pointers, which would have to be supplied to
+//  the constructor for a Partition_vertex as well, which is difficult to
+//  do (perhaps impossible in general since you don't know what next and
+//  previous will be until the whole polygon is constructed)
+//
+    typedef std::list<Circulator>                         Diagonal_list;
+    typedef typename Diagonal_list::iterator              Diagonal_iterator;
+
+
+    Partition_vertex(Base_point p): Base_point(p) {}
+
+    void insert_diagonal(Circulator v_ref) 
+    {
+       diag_endpoint_refs.push_back(v_ref);
+    }
+
+    Diagonal_iterator diagonal_erase(Diagonal_iterator d_ref) 
+    {
+       return diag_endpoint_refs.erase(d_ref);
+    }
+
+    Diagonal_iterator diagonal_erase(Circulator diag_endpoint) 
+    {
+       Diagonal_iterator d_it = diagonals_begin();
+       for (d_it = diagonals_begin(); d_it != diagonals_end() && 
+                                     *d_it != diag_endpoint; d_it++);
+       if (d_it != diagonals_end()) return diag_endpoint_refs.erase(d_it);
+       return d_it;
+    }
+
+    Diagonal_iterator diagonals_begin() 
+    {
+       return diag_endpoint_refs.begin();
+    }
+
+    Diagonal_iterator diagonals_end() 
+    {
+       return diag_endpoint_refs.end();
+    }
+
+    bool has_unused_diagonals( )  
+    {
+       return current_diag != diag_endpoint_refs.end();
+    }
+
+    // sort the diagonals ccw around the point they have in common
+    // and remove any duplicate diagonals
+    void sort_diagonals(const Circulator& prev, const Circulator& next) 
+    {
+       diag_endpoint_refs.sort(
+          Indirect_CW_diag_compare<Circulator,Traits>(*this, prev, next));
+       diag_endpoint_refs.unique();
+       current_diag = diag_endpoint_refs.begin();
+    }
+
+    void reset_current_diagonal( ) 
+    {
+       current_diag = diag_endpoint_refs.begin();
+    }
+
+    Circulator current_diagonal( ) const
+    {  return *current_diag; }
+
+    void advance_diagonal() 
+    {
+       if (current_diag != diag_endpoint_refs.end()) 
+          current_diag++;
+    }
+   
+    void print_diagonals( ) const
+    {
+       std::cout << "from " << *this << std::endl;
+       typename std::list<Circulator>::const_iterator it;
+       for (it = diag_endpoint_refs.begin();it != diag_endpoint_refs.end();
+            it++)
+       {
+          std::cout << " to " << **it << std::endl;
+       }
+    }
+
+private:
+    Diagonal_list diag_endpoint_refs;
+    Diagonal_iterator current_diag;
 };
 
 }

@@ -292,8 +292,8 @@ public:
    template <class InputIterator>
    void build(InputIterator poly_first, InputIterator poly_last)
    {
-      typedef typename Traits::Polygon_2::Vertex_const_iterator
-                                                      Poly_vtx_const_iterator;
+      typedef typename Traits::Polygon_2::Vertex_iterator
+                                                      Poly_vtx_iterator;
       typedef std::pair<Self_iterator, bool>          Location_pair;
       typedef Edge_list<Traits>                       Edge_list;
       typedef typename Traits::Point_2                Point_2;
@@ -304,9 +304,9 @@ public:
       Location_pair begin_v_loc_pair;
       Location_pair prev_v_loc_pair;
    
-      Poly_vtx_const_iterator begin;
-      Poly_vtx_const_iterator end;
-      Poly_vtx_const_iterator v_it;
+      Poly_vtx_iterator begin;
+      Poly_vtx_iterator end;
+      Poly_vtx_iterator v_it;
    
       int poly_num = 0;
       for (; poly_first != poly_last; poly_first++, poly_num++)

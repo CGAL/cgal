@@ -55,10 +55,10 @@ int partition_opt_cvx_debug_list_count = 0;
 #endif
 
 
-template <class Polygon_2, class Traits>
+template <class Polygon, class Traits>
 int partition_opt_cvx_best_so_far(Partition_opt_cvx_vertex& pivot_vertex, 
                                   unsigned int extension, 
-                                  Polygon_2& polygon, const Traits& traits, 
+                                  Polygon& polygon, const Traits& traits, 
                                   Partition_opt_cvx_diagonal_list& diag_list)
 {
 #ifdef CGAL_PARTITION_OPTIMAL_CONVEX_DEBUG
@@ -114,10 +114,10 @@ int partition_opt_cvx_best_so_far(Partition_opt_cvx_vertex& pivot_vertex,
    return best_so_far.value();
 }
 
-template <class Polygon_2, class Traits>
+template <class Polygon, class Traits>
 void partition_opt_cvx_load(int current, 
                             ::std::vector< Partition_opt_cvx_vertex >& v_list, 
-                            Polygon_2& polygon, 
+                            Polygon& polygon, 
                             Matrix<Partition_opt_cvx_edge>& edges, 
                             const Traits& traits)
 {
@@ -164,9 +164,9 @@ void partition_opt_cvx_load(int current,
     }
 }
 
-template <class Polygon_2, class Traits>
+template <class Polygon, class Traits>
 int partition_opt_cvx_decompose(unsigned int edge_num1, unsigned int edge_num2, 
-                                Polygon_2& polygon, 
+                                Polygon& polygon, 
                                 Matrix<Partition_opt_cvx_edge>& edges, 
                                 const Traits& traits, 
                                 Partition_opt_cvx_diagonal_list& diag_list)
@@ -196,7 +196,7 @@ int partition_opt_cvx_decompose(unsigned int edge_num1, unsigned int edge_num2,
 #ifdef CGAL_PARTITION_OPTIMAL_CONVEX_DEBUG
    partition_opt_cvx_debug_list_count++;
 #endif
-   typedef typename Polygon_2::size_type  size_type;
+   typedef typename Polygon::size_type  size_type;
 
    for (size_type e_num = edge_num1; e_num <= edge_num2; e_num++) 
    {
@@ -250,13 +250,13 @@ int partition_opt_cvx_decompose(unsigned int edge_num1, unsigned int edge_num2,
 //
 // implementation of the naive n^3 visibility algorithm
 //
-template <class Polygon_2, class Traits>
-bool partition_opt_cvx_is_visible_n3(const Polygon_2& polygon, unsigned int i, 
+template <class Polygon, class Traits>
+bool partition_opt_cvx_is_visible_n3(const Polygon& polygon, unsigned int i, 
                                      unsigned int j, const Traits& traits)
 {
    typedef typename Traits::R             R;
    typedef typename R::Segment_2          Segment_2;
-   typedef typename Polygon_2::size_type  size_type;
+   typedef typename Polygon::size_type    size_type;
    typedef typename Traits::Leftturn_2    Leftturn_2;
    typedef typename Traits::Point_2       Point_2;
    typedef typename Traits::Construct_segment_2 Construct_segment_2;
@@ -296,19 +296,19 @@ bool partition_opt_cvx_is_visible_n3(const Polygon_2& polygon, unsigned int i,
 }
 
 
-template <class Polygon_2, class Traits>
-void partition_opt_cvx_preprocessing(Polygon_2& polygon, 
+template <class Polygon, class Traits>
+void partition_opt_cvx_preprocessing(Polygon& polygon, 
                                      Matrix<Partition_opt_cvx_edge>& edges, 
                                      const Traits& traits)
 {
-    typedef typename Polygon_2::size_type                   size_type;
+    typedef typename Polygon::size_type                   size_type;
 
-    typedef typename Traits::R                              R;
-    typedef typename Polygon_2::iterator                    Vertex_iterator;
-    typedef Vertex_visibility_traits_2<R>                   Vis_traits;
-    typedef Vertex_visibility_graph_2<Traits>               Vis_graph;
-    typedef typename Traits::Point_2                        Point_2;
-    typedef std::pair<Point_2, Point_2>                     Point_pair;
+    typedef typename Traits::R                            R;
+    typedef typename Polygon::iterator                    Vertex_iterator;
+    typedef Vertex_visibility_traits_2<R>                 Vis_traits;
+    typedef Vertex_visibility_graph_2<Traits>             Vis_graph;
+    typedef typename Traits::Point_2                      Point_2;
+    typedef std::pair<Point_2, Point_2>                   Point_pair;
 
     Vis_graph graph(polygon.begin(), polygon.end());
 
