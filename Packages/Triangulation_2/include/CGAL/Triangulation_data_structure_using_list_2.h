@@ -70,14 +70,14 @@ class Triangulation_data_structure_using_list_2
   friend std::ostream& operator<< CGAL_NULL_TMPL_ARGS
      ( std::ostream& os, 
       const Triangulation_data_structure_using_list_2<Vb,Fb>& tds);
-  // friend class Triangulation_dsul_iterator_base_2<
-//                  Triangulation_data_structure_using_list_2<Vb,Fb> >;
-//   friend class Triangulation_dsul_face_iterator_2<
-//                    Triangulation_data_structure_using_list_2<Vb,Fb> >;
-//   friend class Triangulation_dsul_edge_iterator_2<
-//                    Triangulation_data_structure_using_list_2<Vb,Fb> >;
-//   friend class Triangulation_dsul_vertex_iterator_2<
-//                    Triangulation_data_structure_using_list_2<Vb,Fb> >;
+  friend class Triangulation_dsul_iterator_base_2<
+                 Triangulation_data_structure_using_list_2<Vb,Fb> >;
+  friend class Triangulation_dsul_face_iterator_2<
+                   Triangulation_data_structure_using_list_2<Vb,Fb> >;
+  friend class Triangulation_dsul_edge_iterator_2<
+                   Triangulation_data_structure_using_list_2<Vb,Fb> >;
+  friend class Triangulation_dsul_vertex_iterator_2<
+                   Triangulation_data_structure_using_list_2<Vb,Fb> >;
 
 public:
   typedef Triangulation_dsul_vertex_2<Vb,Fb> Vertex;
@@ -189,10 +189,10 @@ public:
   Face* create_face(Face* f1, int i1, Face* f2, int i2, Face* f3, int i3);
   Face* create_face(Face* f1, int i1, Face* f2, int i2);
   Face* create_face(Face* f1, int i1, Vertex* v);
-  Face* create_face();
   Face* create_face(Vertex* v1, Vertex* v2, Vertex* v3);
   Face* create_face(Vertex* v1, Vertex* v2, Vertex* v3,
 		    Face* f1, Face* f2, Face* f3);
+  Face* create_face();
   void  delete_face(Face*);
   
 
@@ -200,12 +200,14 @@ public:
   bool is_valid(bool verbose = false, int level = 0) const;
   
   // HELPING
+private:
   const Face& dummy() const {return _dummy;}
   Face& dummy() {return _dummy;}
   const Face* past_end() const {return &(_dummy);}
   Face* past_end() {return &(_dummy);}
   void  add_face(Face* newf);
 
+public:
   void copy_tds(const Tds &tds);
   Vertex* copy_tds(const Tds &tds, const Vertex*);
 

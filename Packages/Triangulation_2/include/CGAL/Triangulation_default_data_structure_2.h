@@ -182,9 +182,14 @@ public:
   void remove_first(Vertex* v);
   void remove_dim_down(Vertex* v);
 
-  Face* add_face(Face* f1, int i1, Face* f2, int i2, Face* f3, int i3);
-  Face* add_face(Face* f1, int i1, Face* f2, int i2);
-  Face* add_face(Face* f1, int i1, Vertex* v);
+  Face* create_face(Face* f1, int i1, Face* f2, int i2, Face* f3, int i3);
+  Face* create_face(Face* f1, int i1, Face* f2, int i2);
+  Face* create_face(Face* f1, int i1, Vertex* v);
+  Face* create_face(Vertex* v1, Vertex* v2, Vertex* v3);
+  Face* create_face(Vertex* v1, Vertex* v2, Vertex* v3,
+		    Face* f1, Face* f2, Face* f3);
+  Face* create_face();
+  void  delete_face(Face*);
 
   // CHECKING
   bool is_valid(bool verbose = false, int level = 0) const;
@@ -810,7 +815,7 @@ remove_first(Vertex* v)
 template < class Gt , class Vb, class Fb>
 Triangulation_default_data_structure_2<Gt,Vb,Fb>::Face*
 Triangulation_default_data_structure_2<Gt,Vb,Fb>::
-add_face(Face* f1, int i1, Face* f2, int i2, Face* f3, int i3)
+create_face(Face* f1, int i1, Face* f2, int i2, Face* f3, int i3)
 {
   Face* newf = new Face(f1->vertex(cw(i1)),
 			f2->vertex(cw(i2)),
@@ -825,7 +830,7 @@ add_face(Face* f1, int i1, Face* f2, int i2, Face* f3, int i3)
 template < class Gt , class Vb, class Fb>
 Triangulation_default_data_structure_2<Gt,Vb,Fb>::Face*
 Triangulation_default_data_structure_2<Gt,Vb,Fb>::
-add_face(Face* f1, int i1, Face* f2, int i2)
+create_face(Face* f1, int i1, Face* f2, int i2)
 {
   Face* newf = new Face(f1->vertex(cw(i1)),
 			f2->vertex(cw(i2)),
@@ -839,13 +844,55 @@ add_face(Face* f1, int i1, Face* f2, int i2)
 template < class Gt , class Vb, class Fb>
 Triangulation_default_data_structure_2<Gt,Vb,Fb>::Face*
 Triangulation_default_data_structure_2<Gt,Vb,Fb>::
-add_face(Face* f1, int i1, Vertex* v)
+create_face(Face* f1, int i1, Vertex* v)
 {
-Face* newf = new Face(f1->vertex(cw(i1)), f1->vertex(ccw(i1)),v,
-		  NULL, NULL, f1);
+  Face* newf = new Face(f1->vertex(cw(i1)), f1->vertex(ccw(i1)),v,
+			NULL, NULL, f1);
   f1->set_neighbor(i1,newf);
   return newf;
 }
+
+
+template <class Gt, class Vb, class Fb>
+inline
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::Face*
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+create_face()
+{
+ Face* newf= new Face();
+ return newf;
+}
+
+template <class Gt, class Vb, class Fb>
+inline
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::Face*
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+create_face(Vertex* v1, Vertex* v2, Vertex* v3)
+{
+ Face* newf= new Face(v1, v2, v3);
+ return newf;
+}
+
+template <class Gt, class Vb, class Fb>
+inline
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::Face*
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+create_face(Vertex* v1, Vertex* v2, Vertex* v3,
+	    Face* f1, Face* f2, Face* f3)
+{
+  Face* newf= new Face( v1, v2, v3, f1, f2, f3);
+  return(newf);
+}
+
+template <class Gt, class Vb, class Fb>
+inline void
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+delete_face(Face* f)
+{
+  delete f;
+}
+
+
 
 // CHECKING
 template < class Gt , class Vb, class Fb>

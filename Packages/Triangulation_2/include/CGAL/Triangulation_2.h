@@ -283,12 +283,12 @@ protected:
   void fill_hole(Vertex_handle v, std::list<Edge> & hole);
   void fill_hole_delaunay(std::list<Edge> & hole);
 
-  Face_handle add_face(Face_handle f1, int i1,
+  Face_handle create_face(Face_handle f1, int i1,
 		       Face_handle f2, int i2,
 		       Face_handle f3, int i3);
-  Face_handle add_face(Face_handle f1, int i1,
+  Face_handle create_face(Face_handle f1, int i1,
 		       Face_handle f2, int i2);
-  Face_handle add_face(Face_handle f, int i, Vertex_handle v);
+  Face_handle create_face(Face_handle f, int i, Vertex_handle v);
   Vertex_handle file_input(std::istream& is);
   void file_output(std::ostream& os) const;
 
@@ -1090,7 +1090,7 @@ fill_hole ( Vertex_handle v, std::list< Edge > & hole )
 							v->point(), 
 							v2->point()) )) {
 	    //create face
-	    Face_handle  newf = add_face(ff,ii,fn,in); 
+	    Face_handle  newf = create_face(ff,ii,fn,in); 
 	    Hole::iterator tempo=hit;
 	    hit = hole.insert(hit,Edge(newf,1)); //push newf
 	    hole.erase(tempo); //erase ff
@@ -1124,7 +1124,7 @@ fill_hole ( Vertex_handle v, std::list< Edge > & hole )
 				     fn->vertex(cw(in))->point(),
 				     fn->vertex(ccw(in))->point()) 
 	   == LEFTTURN) {
-	  add_face(ff,ii,fn,in);
+	  create_face(ff,ii,fn,in);
 	  break;
 	}
     }
@@ -1149,7 +1149,7 @@ fill_hole ( Vertex_handle v, std::list< Edge > & hole )
       fn = (hole.front()).first;
       in = (hole.front()).second;
       hole.pop_front();
-      Face_handle  newf = add_face(ff,ii,fn,in);
+      Face_handle  newf = create_face(ff,ii,fn,in);
       hole.push_front(Edge(newf,1));
     }
   }
@@ -1158,14 +1158,14 @@ fill_hole ( Vertex_handle v, std::list< Edge > & hole )
   Hole::iterator hit;
   hit = hole.begin();
   //  I don't know why the following yelds a segmentation fault
-  //    add_face( (*hit).first, (*hit).second,
+  //    create_face( (*hit).first, (*hit).second,
   // 	     (* ++hit).first, (*hit).second,
   // 	     (* ++hit).first, (*hit).second);
   ff = (*hit).first;      ii = (*hit).second;
   fn = (* ++hit).first;   in = (*hit).second;
   Face_handle f3 = (* ++hit).first;
   int i3 = (*hit).second;
-  add_face(ff,ii,fn,in,f3,i3);
+  create_face(ff,ii,fn,in,f3,i3);
 }
 
 template <class Gt, class Tds >
@@ -1195,7 +1195,7 @@ fill_hole_delaunay(std::list<Edge> & first_hole)
 	f = (*hit).first;        i = (*hit).second;
 	ff = (* ++hit).first;    ii = (*hit).second;
 	fn = (* ++hit).first;    in = (*hit).second;
-	add_face(f,i,ff,ii,fn,in);
+	create_face(f,i,ff,ii,fn,in);
 	continue;
       }
   
@@ -1277,7 +1277,7 @@ fill_hole_delaunay(std::list<Edge> & first_hole)
       if (fn->has_vertex(v2, i) && i == fn->ccw(in)) {
 	//newf->set_neighbor(0,fn);
 	//fn->set_neighbor(in,newf);
-	newf = add_face(ff,ii,fn,in);
+	newf = create_face(ff,ii,fn,in);
 	hole.pop_front();
 	hole.push_front(Edge( &(*newf),1));
 	hole_list.push_front(hole);
@@ -1288,7 +1288,7 @@ fill_hole_delaunay(std::list<Edge> & first_hole)
 	if (fn->has_vertex(v2, i) && i== fn->cw(in)) {
 	  //newf->set_neighbor(1,fn);
 	  //fn->set_neighbor(in,newf);
-	  newf = add_face(fn,in,ff,ii);
+	  newf = create_face(fn,in,ff,ii);
 	  hole.pop_back();
 	  //hole.push_back(Edge(&(*newf),0));
 	  hole.push_back(Edge(&(*newf),1));
@@ -1296,7 +1296,7 @@ fill_hole_delaunay(std::list<Edge> & first_hole)
 	}
 	else{
 	  // split the hole in two holes
-	  newf = add_face(ff,ii,v2);
+	  newf = create_face(ff,ii,v2);
 	  Hole new_hole;
 	  ++cut_after;
 	  while( hole.begin() != cut_after )
@@ -1318,30 +1318,30 @@ template <class Gt, class Tds >
 inline
 Triangulation_2<Gt, Tds>::Face_handle
 Triangulation_2<Gt, Tds>::
-add_face(Face_handle f1, int i1,
+create_face(Face_handle f1, int i1,
 	 Face_handle f2, int i2,
 	 Face_handle f3, int i3)
 {
-  return static_cast<Face*>(_tds.add_face(&(*f1),i1, &(*f2),i2, &(*f3),i3));
+  return static_cast<Face*>(_tds.create_face(&(*f1),i1, &(*f2),i2, &(*f3),i3));
 }
 
 template <class Gt, class Tds >    
 inline
 Triangulation_2<Gt, Tds>::Face_handle
 Triangulation_2<Gt, Tds>::
-add_face(Face_handle f1, int i1,
+create_face(Face_handle f1, int i1,
 	 Face_handle f2, int i2)
 {
-  return static_cast<Face*>(_tds.add_face(&(*f1),i1, &(*f2),i2));
+  return static_cast<Face*>(_tds.create_face(&(*f1),i1, &(*f2),i2));
 }
 
 template <class Gt, class Tds >    
 inline
 Triangulation_2<Gt, Tds>::Face_handle
 Triangulation_2<Gt, Tds>::
-add_face(Face_handle f, int i, Vertex_handle v)
+create_face(Face_handle f, int i, Vertex_handle v)
 {
-  return static_cast<Face*>(_tds.add_face(&(*f),i, &(*v)));
+  return static_cast<Face*>(_tds.create_face(&(*f),i, &(*v)));
 }
 
 

@@ -265,6 +265,7 @@ void
 Triangulation_ds_iterator_base_2<Tds>::
 increment()
 {
+  CGAL_triangulation_precondition(_tds->dimension() >= 0);
   if (_tds->dimension() == 1 || _tds->dimension() == 0){
     pos = pos->neighbor(0);
     return;
@@ -304,6 +305,7 @@ void
 Triangulation_ds_iterator_base_2<Tds>::
 decrement()
 {
+  CGAL_triangulation_precondition(_tds->dimension() >= 0);
   if(_tds->dimension() == 0){
     pos = pos->neighbor(0);
     return;
@@ -434,9 +436,12 @@ Triangulation_ds_iterator_base_2<Tds>&
 Triangulation_ds_iterator_base_2<Tds> ::
 operator--()
 {
-  CGAL_triangulation_precondition( pos != NULL ); //past the end
-  if(pos == _tds->infinite_face())   pos = NULL; //first, return past the end
-  else decrement(); 
+  CGAL_triangulation_precondition( _tds != NULL && 
+			       pos !=  _tds->infinite_face());
+  // can't decrement first
+  // to decrement past_the_end go to first and decrement
+  if(pos == NULL)   pos = _tds->infinite_face(); 
+  decrement(); 
   return *this;
 }
         
@@ -497,6 +502,7 @@ Triangulation_ds_face_iterator_2<Tds>&
 Triangulation_ds_face_iterator_2<Tds>::
 operator++()
 {
+  CGAL_triangulation_precondition(_tds != NULL &&_tds->dimension()==2);
   Iterator_base::operator++();    
   return *this;           
 }
@@ -507,6 +513,7 @@ Triangulation_ds_face_iterator_2<Tds>&
 Triangulation_ds_face_iterator_2<Tds>::
 operator--()
 {
+  CGAL_triangulation_precondition(_tds != NULL &&_tds->dimension()==2);
   Iterator_base::operator--();    
   return *this;           
 }
@@ -563,6 +570,7 @@ void
 Triangulation_ds_vertex_iterator_2<Tds> ::
 increment()
 {
+  CGAL_triangulation_precondition(_tds->dimension() >=0);
   if ( index==_tds->dimension()) {Iterator_base::increment(); index = 0;}
   else { index +=1; }
   return;
@@ -573,6 +581,7 @@ void
 Triangulation_ds_vertex_iterator_2<Tds> ::
 decrement()
 {
+  CGAL_triangulation_precondition(_tds->dimension() >=0);
   if (index == 0) { 
     Iterator_base::decrement();
     index = _tds->dimension();
@@ -594,7 +603,12 @@ Triangulation_ds_vertex_iterator_2<Tds>&
 Triangulation_ds_vertex_iterator_2<Tds> ::
 operator++()
 {
+   CGAL_triangulation_precondition(_tds != NULL );
    CGAL_triangulation_precondition(*this != Vertex_iterator(_tds,1));
+   if (_tds->dimension()== -1) { //single vertex
+     *this = Vertex_iterator(_tds,1);
+     return *this;
+   }
    do{
      increment();
      if (*this == Vertex_iterator(_tds)) *this= Vertex_iterator(_tds,1);
@@ -607,13 +621,18 @@ Triangulation_ds_vertex_iterator_2<Tds>&
 Triangulation_ds_vertex_iterator_2<Tds> ::    
 operator--()
 {
-   CGAL_triangulation_assertion( *this != Vertex_iterator(_tds,1));
-   if( *this == Vertex_iterator(_tds)){
-     return *this=Vertex_iterator(_tds,1) ;
+   CGAL_triangulation_precondition(_tds != NULL );
+   CGAL_triangulation_assertion( *this != Vertex_iterator(_tds));
+   if (_tds->dimension()== -1) { //single vertex
+     *this = Vertex_iterator(_tds);
+     return *this;
+   }
+   if( *this == Vertex_iterator(_tds,1)){
+     *this=Vertex_iterator(_tds) ;
    }
    do   
    decrement();
-   while ( *this != Vertex_iterator(_tds,1) && !associated_vertex()); 
+   while ( *this != Vertex_iterator(_tds) && !associated_vertex()); 
    return *this;
 }
     
@@ -757,6 +776,7 @@ Triangulation_ds_edge_iterator_2<Tds>&
 Triangulation_ds_edge_iterator_2<Tds> ::
 operator++()
 {
+  CGAL_triangulation_precondition(_tds != NULL  && _tds->dimension()>=1);
   CGAL_triangulation_precondition(*this != Edge_iterator(_tds,1));
   do {
     increment();
@@ -771,13 +791,14 @@ Triangulation_ds_edge_iterator_2<Tds>&
 Triangulation_ds_edge_iterator_2<Tds> ::
 operator--()
 {
-  CGAL_triangulation_assertion(*this != Edge_iterator(_tds,1));
-  if( *this == Edge_iterator(_tds)){
-     return *this=Edge_iterator(_tds,1) ;
+  CGAL_triangulation_precondition(_tds != NULL  && _tds->dimension()>=1);
+  CGAL_triangulation_assertion(*this != Edge_iterator(_tds));
+  if( *this == Edge_iterator(_tds,1)){
+     *this=Edge_iterator(_tds) ;
    }
   do   
    decrement();
-  while ( *this != Edge_iterator(_tds,1) && !associated_edge()); 
+  while ( *this != Edge_iterator(_tds) && !associated_edge()); 
   return *this;
 }
 
