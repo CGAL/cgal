@@ -74,7 +74,7 @@ This is the mechanism that allows to decide between the cartesian or general
 case.
 
 @O@<../include/CGAL/wmult.h@>==@{@-
-@<CGAL_heading@>@(@-
+@<cgal_heading@>@(@-
 include/CGAL/wmult.h@,@-
 sqdistance_2.fw@,@-
 Geert-Jan Giezeman@,@-
@@ -85,27 +85,27 @@ Saarbruecken@)
 
 #ifdef CGAL_HOMOGENEOUS_H
 template <class RT>
-inline RT CGAL_wmult(CGAL_Homogeneous<RT>*, const RT &a, const RT & w)
+inline RT wmult(Homogeneous<RT>*, const RT &a, const RT & w)
 {
     return a*w;
 }
 
 template <class RT>
-inline RT CGAL_wmult(CGAL_Homogeneous<RT>*,
+inline RT wmult(Homogeneous<RT>*,
          const RT &a, const RT & w1, const RT & w2)
 {
     return a*w1*w2;
 }
 
 template <class RT>
-inline RT CGAL_wmult(CGAL_Homogeneous<RT>*, const RT &a,
+inline RT wmult(Homogeneous<RT>*, const RT &a,
                     const RT & w1, const RT & w2, const RT & w3)
 {
     return a*w1*w2*w3;
 }
 
 template <class RT>
-inline RT CGAL_wmult(CGAL_Homogeneous<RT>*, const RT &a,
+inline RT wmult(Homogeneous<RT>*, const RT &a,
                 const RT & w1, const RT & w2, const RT & w3, const RT & w4)
 {
     return a*w1*w2*w3*w4;
@@ -114,27 +114,27 @@ inline RT CGAL_wmult(CGAL_Homogeneous<RT>*, const RT &a,
 
 #ifdef CGAL_CARTESIAN_H
 template <class RT>
-inline RT CGAL_wmult(CGAL_Cartesian<RT> *, const RT &a, const RT & )
+inline RT wmult(Cartesian<RT> *, const RT &a, const RT & )
 {
     return a;
 }
 
 template <class RT>
-inline RT CGAL_wmult(CGAL_Cartesian<RT> *,
+inline RT wmult(Cartesian<RT> *,
       const RT &a, const RT & , const RT & )
 {
     return a;
 }
 
 template <class RT>
-inline RT CGAL_wmult(CGAL_Cartesian<RT> *, const RT &a,
+inline RT wmult(Cartesian<RT> *, const RT &a,
             const RT & , const RT & , const RT & )
 {
     return a;
 }
 
 template <class RT>
-inline RT CGAL_wmult(CGAL_Cartesian<RT> *, const RT &a,
+inline RT wmult(Cartesian<RT> *, const RT &a,
             const RT & , const RT & , const RT & , const RT & )
 {
     return a;
@@ -150,7 +150,7 @@ A routine to test whether a vector is a null vector.
 This code does not belong here.
 @$@<2D squared distance general utilities@>+=@{
 template <class R>
-bool CGAL_is_null(const CGAL_Vector_2<R> &v)
+bool is_null(const Vector_2<R> &v)
 {
     typedef typename R::RT RT;
     return v.hx()==RT(0) && v.hy()==RT(0);
@@ -176,17 +176,17 @@ Note the double occurrence of the factor@{wq@} in the latter definition.
 
 template <class R>
 R_RT_return(R)
-CGAL_wdot(const CGAL_Vector_2<R> &u,
-    const CGAL_Vector_2<R> &v)
+wdot(const Vector_2<R> &u,
+    const Vector_2<R> &v)
 {
     return  (R_RT_return(R))(u.hx()*v.hx() + u.hy()*v.hy());
 }
 
 #ifdef CGAL_HOMOGENEOUS_H
 template <class RT>
-RT CGAL_wdot(const CGAL_Point_2< CGAL_Homogeneous<RT> > &p,
-    const CGAL_Point_2<CGAL_Homogeneous<RT> > &q,
-    const CGAL_Point_2<CGAL_Homogeneous<RT> > &r)
+RT wdot(const Point_2< Homogeneous<RT> > &p,
+    const Point_2<Homogeneous<RT> > &q,
+    const Point_2<Homogeneous<RT> > &r)
 {
     return  (q.hw()*p.hx() - p.hw()*q.hx())*(q.hw()*r.hx() - r.hw()*q.hx()) +
             (q.hw()*p.hy() - p.hw()*q.hy())*(q.hw()*r.hy() - r.hw()*q.hy());
@@ -195,9 +195,9 @@ RT CGAL_wdot(const CGAL_Point_2< CGAL_Homogeneous<RT> > &p,
 
 #ifdef CGAL_CARTESIAN_H
 template <class FT>
-FT CGAL_wdot(const CGAL_Point_2< CGAL_Cartesian<FT> > &p,
-    const CGAL_Point_2< CGAL_Cartesian<FT> > &q,
-    const CGAL_Point_2< CGAL_Cartesian<FT> > &r)
+FT wdot(const Point_2< Cartesian<FT> > &p,
+    const Point_2< Cartesian<FT> > &q,
+    const Point_2< Cartesian<FT> > &r)
 {
     return  (p.hx() - q.hx())*(r.hx() - q.hx()) +
             (p.hy() - q.hy())*(r.hy() - q.hy());
@@ -228,17 +228,17 @@ definition of the wcross product for points.
 
 template <class R>
 R_RT_return(R)
-CGAL_wcross(const CGAL_Vector_2<R> &u,
-    const CGAL_Vector_2<R> &v)
+wcross(const Vector_2<R> &u,
+    const Vector_2<R> &v)
 {
     return (R_RT_return(R))(u.hx()*v.hy() - u.hy()*v.hx());
 }
 
 #ifdef CGAL_HOMOGENEOUS_H
 template <class RT>
-RT CGAL_wcross(const CGAL_Point_2< CGAL_Homogeneous<RT> > &p,
-    const CGAL_Point_2< CGAL_Homogeneous<RT> > &q,
-    const CGAL_Point_2< CGAL_Homogeneous<RT> > &r)
+RT wcross(const Point_2< Homogeneous<RT> > &p,
+    const Point_2< Homogeneous<RT> > &q,
+    const Point_2< Homogeneous<RT> > &r)
 {
     return   p.hx() * (q.hy()*r.hw() - q.hw()*r.hy() )
            + p.hy() * (q.hw()*r.hx() - q.hx()*r.hw() )
@@ -248,9 +248,9 @@ RT CGAL_wcross(const CGAL_Point_2< CGAL_Homogeneous<RT> > &p,
 
 #ifdef CGAL_CARTESIAN_H
 template <class FT>
-FT CGAL_wcross(const CGAL_Point_2< CGAL_Cartesian<FT> > &p,
-    const CGAL_Point_2< CGAL_Cartesian<FT> > &q,
-    const CGAL_Point_2< CGAL_Cartesian<FT> > &r)
+FT wcross(const Point_2< Cartesian<FT> > &p,
+    const Point_2< Cartesian<FT> > &q,
+    const Point_2< Cartesian<FT> > &r)
 {
     return (q.x()-p.x())*(r.y()-q.y()) - (q.y()-p.y())*(r.x()-q.x());
 }
@@ -269,56 +269,56 @@ Then we can use the routines @{wdot@} and @{wcross@} for this purpose.
 @D@<Sharp or obtuse@>
 
 Here are routines to decide whether an angle is sharp, straight or obtuse.
-There should also be an enum with three values (@{CGAL_ACUTE@},
-@{CGAL_STRAIGHT@},@{CGAL_OBTUSE@}) and a routine that returns such a value.
+There should also be an enum with three values (@{ACUTE@},
+@{STRAIGHT@},@{OBTUSE@}) and a routine that returns such a value.
 
 @$@<2D squared distance general utilities@>+=@{
 template <class R>
-inline bool CGAL_is_acute_angle(const CGAL_Vector_2<R> &u,
-    const CGAL_Vector_2<R> &v)
+inline bool is_acute_angle(const Vector_2<R> &u,
+    const Vector_2<R> &v)
 {
     typedef typename R::RT RT;
-    return RT(CGAL_wdot(u, v)) > RT(0) ;
+    return RT(wdot(u, v)) > RT(0) ;
 }
 
 template <class R>
-inline bool CGAL_is_straight_angle(const CGAL_Vector_2<R> &u,
-    const CGAL_Vector_2<R> &v)
+inline bool is_straight_angle(const Vector_2<R> &u,
+    const Vector_2<R> &v)
 {
     typedef typename R::RT RT;
-    return RT(CGAL_wdot(u, v)) == RT(0) ;
+    return RT(wdot(u, v)) == RT(0) ;
 }
 
 template <class R>
-inline bool CGAL_is_obtuse_angle(const CGAL_Vector_2<R> &u,
-    const CGAL_Vector_2<R> &v)
+inline bool is_obtuse_angle(const Vector_2<R> &u,
+    const Vector_2<R> &v)
 {
     typedef typename R::RT RT;
-    return RT(CGAL_wdot(u, v)) < RT(0) ;
+    return RT(wdot(u, v)) < RT(0) ;
 }
 
 template <class R>
-inline bool CGAL_is_acute_angle(const CGAL_Point_2<R> &p,
-    const CGAL_Point_2<R> &q, const CGAL_Point_2<R> &r)
+inline bool is_acute_angle(const Point_2<R> &p,
+    const Point_2<R> &q, const Point_2<R> &r)
 {
     typedef typename R::RT RT;
-    return RT(CGAL_wdot(p, q, r)) > RT(0) ;
+    return RT(wdot(p, q, r)) > RT(0) ;
 }
 
 template <class R>
-inline bool CGAL_is_straight_angle(const CGAL_Point_2<R> &p,
-    const CGAL_Point_2<R> &q, const CGAL_Point_2<R> &r)
+inline bool is_straight_angle(const Point_2<R> &p,
+    const Point_2<R> &q, const Point_2<R> &r)
 {
     typedef typename R::RT RT;
-    return RT(CGAL_wdot(p, q, r)) == RT(0) ;
+    return RT(wdot(p, q, r)) == RT(0) ;
 }
 
 template <class R>
-inline bool CGAL_is_obtuse_angle(const CGAL_Point_2<R> &p,
-    const CGAL_Point_2<R> &q, const CGAL_Point_2<R> &r)
+inline bool is_obtuse_angle(const Point_2<R> &p,
+    const Point_2<R> &q, const Point_2<R> &r)
 {
     typedef typename R::RT RT;
-    return RT(CGAL_wdot(p, q, r)) < RT(0) ;
+    return RT(wdot(p, q, r)) < RT(0) ;
 }
 @}
 
@@ -335,54 +335,54 @@ more natural to think of making a left or right turn at @{q@} when going from
 
 @$@<2D squared distance general utilities@>+=@{
 template <class R>
-CGAL_Orientation CGAL_orientation(const CGAL_Vector_2<R> &u,
-    const CGAL_Vector_2<R> &v)
+Orientation orientation(const Vector_2<R> &u,
+    const Vector_2<R> &v)
 {
     typedef typename R::RT RT;
-    RT wcr = CGAL_wcross(u,v);
-    return (wcr > RT(0)) ? CGAL_COUNTERCLOCKWISE :
-           (wcr < RT(0)) ? CGAL_CLOCKWISE
-                            : CGAL_COLLINEAR;
+    RT wcr = wcross(u,v);
+    return (wcr > RT(0)) ? COUNTERCLOCKWISE :
+           (wcr < RT(0)) ? CLOCKWISE
+                            : COLLINEAR;
 }
 
 template <class R>
-inline bool CGAL_counterclockwise(const CGAL_Vector_2<R> &u,
-    const CGAL_Vector_2<R> &v)
+inline bool counterclockwise(const Vector_2<R> &u,
+    const Vector_2<R> &v)
 {
     typedef typename R::RT RT;
-    return RT(CGAL_wcross(u,v)) > RT(0);
+    return RT(wcross(u,v)) > RT(0);
 }
 
 template <class R>
-inline bool CGAL_leftturn(const CGAL_Vector_2<R> &u,
-    const CGAL_Vector_2<R> &v)
+inline bool leftturn(const Vector_2<R> &u,
+    const Vector_2<R> &v)
 {
     typedef typename R::RT RT;
-    return RT(CGAL_wcross(u,v)) > RT(0);
+    return RT(wcross(u,v)) > RT(0);
 }
 
 template <class R>
-inline bool CGAL_clockwise(const CGAL_Vector_2<R> &u,
-    const CGAL_Vector_2<R> &v)
+inline bool clockwise(const Vector_2<R> &u,
+    const Vector_2<R> &v)
 {
     typedef typename R::RT RT;
-    return RT(CGAL_wcross(u,v)) < RT(0);
+    return RT(wcross(u,v)) < RT(0);
 }
 
 template <class R>
-inline bool CGAL_rightturn(const CGAL_Vector_2<R> &u,
-    const CGAL_Vector_2<R> &v)
+inline bool rightturn(const Vector_2<R> &u,
+    const Vector_2<R> &v)
 {
     typedef typename R::RT RT;
-    return RT(CGAL_wcross(u,v)) < RT(0);
+    return RT(wcross(u,v)) < RT(0);
 }
 
 template <class R>
-inline bool CGAL_collinear(const CGAL_Vector_2<R> &u,
-    const CGAL_Vector_2<R> &v)
+inline bool collinear(const Vector_2<R> &u,
+    const Vector_2<R> &v)
 {
     typedef typename R::RT RT;
-    return RT(CGAL_wcross(u,v)) == RT(0);
+    return RT(wcross(u,v)) == RT(0);
 }
 
 /*
@@ -400,11 +400,11 @@ of the difference vector.
 @$@<2D squared distance header declarations 1@>+=@{@-
 template <class R>
 inline R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Point_2<R> & pt1,
-    const CGAL_Point_2<R> & pt2)
+squared_distance(
+    const Point_2<R> & pt1,
+    const Point_2<R> & pt2)
 {
-    CGAL_Vector_2<R> vec(pt1-pt2);
+    Vector_2<R> vec(pt1-pt2);
     return (R_FT_return(R))(vec*vec);
 }
 
@@ -418,17 +418,17 @@ CGAL_squared_distance(
 
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Point_2<R> &pt,
-    const CGAL_Line_2<R> &line);
+squared_distance(
+    const Point_2<R> &pt,
+    const Line_2<R> &line);
 
 template <class R>
 inline R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Line_2<R> & line,
-    const CGAL_Point_2<R> & pt)
+squared_distance(
+    const Line_2<R> & line,
+    const Point_2<R> & pt)
 {
-    return CGAL_squared_distance(pt, line);
+    return squared_distance(pt, line);
 }
 @}
 
@@ -445,16 +445,16 @@ distance between the line and the point.
 @$@<2D squared distance outline definitions 1@>+=@{
 template <class R>
 R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Point_2<R> &pt,
-    const CGAL_Line_2<R> &line)
+squared_distance(
+    const Point_2<R> &pt,
+    const Line_2<R> &line)
 {
     typedef typename R::RT RT;
     typedef typename R::FT FT;
     RT x = line.a();
     RT y = line.b();
-    CGAL_Vector_2<R> normal(x, y);
-    CGAL_Vector_2<R> diff = pt - line.point();
+    Vector_2<R> normal(x, y);
+    Vector_2<R> diff = pt - line.point();
     FT signdist = diff * normal;
     return (R_FT_return(R))((signdist*signdist)/FT(x*x+y*y));
 }
@@ -467,17 +467,17 @@ CGAL_squared_distance(
 @$@<2D squared distance header declarations 1@>+=@{@-
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Point_2<R> &pt,
-    const CGAL_Ray_2<R> &ray);
+squared_distance(
+    const Point_2<R> &pt,
+    const Ray_2<R> &ray);
 
 template <class R>
 inline R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Ray_2<R> & ray,
-    const CGAL_Point_2<R> & pt)
+squared_distance(
+    const Ray_2<R> & ray,
+    const Point_2<R> & pt)
 {
-    return CGAL_squared_distance(pt, ray);
+    return squared_distance(pt, ray);
 }
 @}
 
@@ -494,15 +494,15 @@ point.
 @$@<2D squared distance outline definitions 1@>+=@{
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Point_2<R> &pt,
-    const CGAL_Ray_2<R> &ray)
+squared_distance(
+    const Point_2<R> &pt,
+    const Ray_2<R> &ray)
 {
-    CGAL_Vector_2<R> diff = pt-ray.source();
-    const CGAL_Vector_2<R> &dir = ray.direction().vector();
-    if (!CGAL_is_acute_angle(dir,diff) )
+    Vector_2<R> diff = pt-ray.source();
+    const Vector_2<R> &dir = ray.direction().vector();
+    if (!is_acute_angle(dir,diff) )
         return (R_FT_return(R))(diff*diff);
-    return CGAL_squared_distance(pt, ray.supporting_line());
+    return squared_distance(pt, ray.supporting_line());
 }
 @}
 
@@ -511,15 +511,15 @@ CGAL_squared_distance(
 @$@<2D squared distance header declarations 1@>+=@{
 template <class R>
 extern void
-CGAL_distance_index(
+distance_index(
     int &ind,
-    const CGAL_Point_2<R> &pt,
-    const CGAL_Ray_2<R> &ray);
+    const Point_2<R> &pt,
+    const Ray_2<R> &ray);
 
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance_indexed(const CGAL_Point_2<R> &pt,
-    const CGAL_Ray_2<R> &ray, int ind1, int ind2);
+squared_distance_indexed(const Point_2<R> &pt,
+    const Ray_2<R> &ray, int ind1, int ind2);
 @}
 
 @C@<Implementation@>
@@ -527,12 +527,12 @@ CGAL_squared_distance_indexed(const CGAL_Point_2<R> &pt,
 @$@<2D squared distance outline definitions 1@>+=@{
 template <class R>
 extern void
-CGAL_distance_index(
+distance_index(
     int &ind,
-    const CGAL_Point_2<R> &pt,
-    const CGAL_Ray_2<R> &ray)
+    const Point_2<R> &pt,
+    const Ray_2<R> &ray)
 {
-    if (!CGAL_is_acute_angle(ray.direction().vector(),pt-ray.source())) {
+    if (!is_acute_angle(ray.direction().vector(),pt-ray.source())) {
         ind = 0;
         return;
     }
@@ -541,12 +541,12 @@ CGAL_distance_index(
 
 template <class R>
 R_FT_return(R)
-CGAL_squared_distance_indexed(const CGAL_Point_2<R> &pt,
-    const CGAL_Ray_2<R> &ray, int ind)
+squared_distance_indexed(const Point_2<R> &pt,
+    const Ray_2<R> &ray, int ind)
 {
     if (ind == 0)
-        return CGAL_squared_distance(pt, ray.source());
-    return CGAL_squared_distance(pt, ray.supporting_line());
+        return squared_distance(pt, ray.source());
+    return squared_distance(pt, ray.supporting_line());
 }
 @}
 
@@ -556,18 +556,18 @@ CGAL_squared_distance_indexed(const CGAL_Point_2<R> &pt,
 
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Point_2<R> &pt,
-    const CGAL_Segment_2<R> &seg);
+squared_distance(
+    const Point_2<R> &pt,
+    const Segment_2<R> &seg);
 
 
 template <class R>
 inline R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Segment_2<R> & seg,
-    const CGAL_Point_2<R> & pt)
+squared_distance(
+    const Segment_2<R> & seg,
+    const Point_2<R> & pt)
 {
-    return CGAL_squared_distance(pt, seg);
+    return squared_distance(pt, seg);
 }
 
 @}
@@ -589,21 +589,21 @@ segment is taken.
 @$@<2D squared distance outline definitions 1@>+=@{
 template <class R>
 R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Point_2<R> &pt,
-    const CGAL_Segment_2<R> &seg)
+squared_distance(
+    const Point_2<R> &pt,
+    const Segment_2<R> &seg)
 {
     typedef typename R::RT RT;
     // assert that the segment is valid (non zero length).
-    CGAL_Vector_2<R> diff = pt-seg.source();
-    CGAL_Vector_2<R> segvec = seg.target()-seg.source();
-    RT d = CGAL_wdot(diff,segvec);
+    Vector_2<R> diff = pt-seg.source();
+    Vector_2<R> segvec = seg.target()-seg.source();
+    RT d = wdot(diff,segvec);
     if (d <= (RT)0)
         return (R_FT_return(R))(diff*diff);
-    RT e = CGAL_wdot(segvec,segvec);
-    if (CGAL_wmult((R*)0 ,d, segvec.hw()) > CGAL_wmult((R*)0, e, diff.hw()))
-        return CGAL_squared_distance(pt, seg.target());
-    return CGAL_squared_distance(pt, seg.supporting_line());
+    RT e = wdot(segvec,segvec);
+    if (wmult((R*)0 ,d, segvec.hw()) > wmult((R*)0, e, diff.hw()))
+        return squared_distance(pt, seg.target());
+    return squared_distance(pt, seg.supporting_line());
 }
 @}
 
@@ -612,15 +612,15 @@ CGAL_squared_distance(
 @$@<2D squared distance header declarations 1@>+=@{
 template <class R>
 extern void
-CGAL_distance_index(
+distance_index(
     int &ind,
-    const CGAL_Point_2<R> &pt,
-    const CGAL_Segment_2<R> &seg);
+    const Point_2<R> &pt,
+    const Segment_2<R> &seg);
 
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance_indexed(const CGAL_Point_2<R> &pt,
-    const CGAL_Segment_2<R> &seg, int ind1, int ind2);
+squared_distance_indexed(const Point_2<R> &pt,
+    const Segment_2<R> &seg, int ind1, int ind2);
 @}
 
 @C@<Implementation@>
@@ -628,16 +628,16 @@ CGAL_squared_distance_indexed(const CGAL_Point_2<R> &pt,
 @$@<2D squared distance outline definitions 1@>+=@{
 template <class R>
 extern void
-CGAL_distance_index(
+distance_index(
     int &ind,
-    const CGAL_Point_2<R> &pt,
-    const CGAL_Segment_2<R> &seg)
+    const Point_2<R> &pt,
+    const Segment_2<R> &seg)
 {
-    if (!CGAL_is_acute_angle(seg.target(),seg.source(),pt)) {
+    if (!is_acute_angle(seg.target(),seg.source(),pt)) {
         ind = 0;
         return;
     }
-    if (!CGAL_is_acute_angle(seg.source(),seg.target(),pt)) {
+    if (!is_acute_angle(seg.source(),seg.target(),pt)) {
         ind = 1;
         return;
     }
@@ -646,14 +646,14 @@ CGAL_distance_index(
 
 template <class R>
 R_FT_return(R)
-CGAL_squared_distance_indexed(const CGAL_Point_2<R> &pt,
-    const CGAL_Segment_2<R> &seg, int ind)
+squared_distance_indexed(const Point_2<R> &pt,
+    const Segment_2<R> &seg, int ind)
 {
     if (ind == 0)
-        return CGAL_squared_distance(pt, seg.source());
+        return squared_distance(pt, seg.source());
     if (ind == 1)
-        return CGAL_squared_distance(pt, seg.target());
-    return CGAL_squared_distance(pt, seg.supporting_line());
+        return squared_distance(pt, seg.target());
+    return squared_distance(pt, seg.supporting_line());
 }
 @}
 
@@ -664,9 +664,9 @@ CGAL_squared_distance_indexed(const CGAL_Point_2<R> &pt,
 @$@<2D squared distance header declarations 1@>+=@{@-
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Segment_2<R> &,
-    const CGAL_Segment_2<R> &);
+squared_distance(
+    const Segment_2<R> &,
+    const Segment_2<R> &);
 
 
 @}
@@ -701,28 +701,28 @@ This is checked separately.
 @$@<2D segment segment squared distance main routine@>+=@{
 template <class R>
 R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Segment_2<R> &seg1,
-    const CGAL_Segment_2<R> &seg2)
+squared_distance(
+    const Segment_2<R> &seg1,
+    const Segment_2<R> &seg2)
 {
     typedef typename R::RT RT;
     typedef typename R::FT FT;
     bool crossing1, crossing2;
     RT c1s, c1e, c2s, c2e;
     if (seg1.source() == seg1.target())
-        return CGAL_squared_distance(seg1.source(), seg2);
+        return squared_distance(seg1.source(), seg2);
     if (seg2.source() == seg2.target())
-        return CGAL_squared_distance(seg2.source(), seg1);
-    c1s = CGAL_wcross(seg2.source(), seg2.target(), seg1.source());
-    c1e = CGAL_wcross(seg2.source(), seg2.target(), seg1.target());
-    c2s = CGAL_wcross(seg1.source(), seg1.target(), seg2.source());
-    c2e = CGAL_wcross(seg1.source(), seg1.target(), seg2.target());
+        return squared_distance(seg2.source(), seg1);
+    c1s = wcross(seg2.source(), seg2.target(), seg1.source());
+    c1e = wcross(seg2.source(), seg2.target(), seg1.target());
+    c2s = wcross(seg1.source(), seg1.target(), seg2.source());
+    c2e = wcross(seg1.source(), seg1.target(), seg2.target());
     if (c1s < RT(0)) {
         crossing1 = (c1e >= RT(0));
     } else {
         if (c1e <= RT(0)) {
             if (c1s == RT(0) && c1e == RT(0))
-                return CGAL_squared_distance_parallel(seg1, seg2);
+                return squared_distance_parallel(seg1, seg2);
             crossing1 = true;
         } else {
             crossing1 = (c1s == RT(0));
@@ -733,7 +733,7 @@ CGAL_squared_distance(
     } else {
         if (c2e <= RT(0)) {
             if (c2s == RT(0) && c2e == RT(0))
-                return CGAL_squared_distance_parallel(seg1, seg2);
+                return squared_distance_parallel(seg1, seg2);
             crossing2 = true;
         } else {
             crossing2 = (c2s == RT(0));
@@ -750,7 +750,7 @@ distance of one of the endpoints of this (non crossing) segment to the
 other (crossing) segment. Which endpoint? The one that is closest to the
 supporting lines of the other segment. This latter property can easily be
 computed with the value of the cross product that was computed earlier.
-The function @{CGAL__distance_measure_sub@} makes this comparison (it
+The function @{_distance_measure_sub@} makes this comparison (it
 subtracts the two absolute values of the cross product, first corrected by
 homogenising factors).
 
@@ -762,44 +762,44 @@ distance from both endpoints to the other segment and taking the minimum.
 @$@<unused implementation@>@Z==@{
 template <class R, class RT>
 R_FT_return(R)
-CGAL__squared_distance_of_endpoint_exact(RT start_dm, RT end_dm,
-  const CGAL_Point_2<R> &start, const CGAL_Point_2<R> &end,
-  const CGAL_Segment<R> &seg)
+_squared_distance_of_endpoint_exact(RT start_dm, RT end_dm,
+  const Point_2<R> &start, const Point_2<R> &end,
+  const Segment<R> &seg)
 {
     typedef typename R::RT RT;
     RT dm;
-    dm = CGAL__distance_measure_sub(start_dm, end_dm, start, end);
+    dm = _distance_measure_sub(start_dm, end_dm, start, end);
     if (dm < RT(0)) {
-        return CGAL_squared_distance(start, seg);
+        return squared_distance(start, seg);
     } else {
-        return CGAL_squared_distance(end, seg);
+        return squared_distance(end, seg);
     }
 }
 
 template <class R, class RT>
 R_FT_return(R)
-CGAL__squared_distance_of_endpoint_inexact<R, RT>(
-  const CGAL_Point_2<R> &start, const CGAL_Point_2<R> &end,
-  const CGAL_Segment<R> &seg)
+_squared_distance_of_endpoint_inexact<R, RT>(
+  const Point_2<R> &start, const Point_2<R> &end,
+  const Segment<R> &seg)
 {
     typedef typename R::RT RT;
     RT d1, d2;
-    d1 = CGAL_squared_distance(start, seg);
-    d2 = CGAL_squared_distance(end, seg);
+    d1 = squared_distance(start, seg);
+    d2 = squared_distance(end, seg);
     return (d1 < d2) ? (R_FT_return(R))(d1) : (R_FT_return(R))(d2);
 }
 
 template <class R, class RT>
 inline R_FT_return(R)
-CGAL__squared_distance_of_endpoint<false, R, RT>(RT start_dm, RT end_dm,
-  const CGAL_Point_2<R> &start, const CGAL_Point_2<R> &end,
-  const CGAL_Segment<R> &seg)
+_squared_distance_of_endpoint<false, R, RT>(RT start_dm, RT end_dm,
+  const Point_2<R> &start, const Point_2<R> &end,
+  const Segment<R> &seg)
 {
     if (numeric_limits<R>::is_exact)
-        return CGAL__squared_distance_of_endpoint_exact(
+        return _squared_distance_of_endpoint_exact(
             start_dm, end_dm, start, end, seg);
     else
-        return CGAL__squared_distance_of_endpoint_inexact(start, end, seg);
+        return _squared_distance_of_endpoint_inexact(start, end, seg);
 }
 @}
 
@@ -808,30 +808,30 @@ CGAL__squared_distance_of_endpoint<false, R, RT>(RT start_dm, RT end_dm,
         if (crossing2)
             return (R_FT_return(R))((FT)0);
         RT dm;
-        dm = CGAL__distance_measure_sub(c2s,c2e, seg2.source(), seg2.target());
+        dm = _distance_measure_sub(c2s,c2e, seg2.source(), seg2.target());
         if (dm < RT(0)) {
-            return CGAL_squared_distance(seg2.source(), seg1);
+            return squared_distance(seg2.source(), seg1);
         } else {
             if (dm > RT(0)) {
-                return CGAL_squared_distance(seg2.target(), seg1);
+                return squared_distance(seg2.target(), seg1);
             } else {
                 // parallel, should not happen (no crossing)
-                return CGAL_squared_distance_parallel(seg1, seg2);
+                return squared_distance_parallel(seg1, seg2);
             }
         }
     } else {
         if (crossing2) {
             RT dm;
             dm =
-              CGAL__distance_measure_sub(c1s, c1e,seg1.source(),seg1.target());
+              _distance_measure_sub(c1s, c1e,seg1.source(),seg1.target());
             if (dm < RT(0)) {
-                return CGAL_squared_distance(seg1.source(), seg2);
+                return squared_distance(seg1.source(), seg2);
             } else {
                 if (dm > RT(0)) {
-                    return CGAL_squared_distance(seg1.target(), seg2);
+                    return squared_distance(seg1.target(), seg2);
                 } else {
                     // parallel, should not happen (no crossing)
-                    return CGAL_squared_distance_parallel(seg1, seg2);
+                    return squared_distance_parallel(seg1, seg2);
                 }
             }
         } else {
@@ -844,20 +844,20 @@ segment and take the minimum.
 
 @$@<2D segment segment squared distance main routine@>+=@{
             FT min1, min2;
-            RT dm = CGAL__distance_measure_sub(
+            RT dm = _distance_measure_sub(
                            c1s, c1e, seg1.source(), seg1.target());
             if (dm == RT(0))
-                return CGAL_squared_distance_parallel(seg1, seg2);
+                return squared_distance_parallel(seg1, seg2);
             min1 = (dm < RT(0)) ?
-                CGAL_squared_distance(seg1.source(), seg2):
-                CGAL_squared_distance(seg1.target(), seg2);
-            dm = CGAL__distance_measure_sub(
+                squared_distance(seg1.source(), seg2):
+                squared_distance(seg1.target(), seg2);
+            dm = _distance_measure_sub(
                            c2s, c2e, seg2.source(), seg2.target());
             if (dm == RT(0))  // should not happen.
-                return CGAL_squared_distance_parallel(seg1, seg2);
+                return squared_distance_parallel(seg1, seg2);
             min2 = (dm < RT(0)) ?
-                CGAL_squared_distance(seg2.source(), seg1):
-                CGAL_squared_distance(seg2.target(), seg1);
+                squared_distance(seg2.source(), seg1):
+                squared_distance(seg2.target(), seg1);
             return (min1 < min2)
                 ? (R_FT_return(R))(min1)
                 : (R_FT_return(R))(min2);
@@ -873,12 +873,12 @@ of the cross product (that is known), this can be computed cheaply.
 
 @$@<2D segment segment squared distance helper routine@>==@{
 template <class RT, class R>
-RT CGAL__distance_measure_sub(RT startwcross, RT endwcross,
-const CGAL_Point_2<R> &start, const CGAL_Point_2<R> &end
+RT _distance_measure_sub(RT startwcross, RT endwcross,
+const Point_2<R> &start, const Point_2<R> &end
 )
 {
-    return  CGAL_abs(CGAL_wmult((R*)0, startwcross, end.hw())) -
-            CGAL_abs(CGAL_wmult((R*)0, endwcross, start.hw()));
+    return  abs(wmult((R*)0, startwcross, end.hw())) -
+            abs(wmult((R*)0, endwcross, start.hw()));
 }
 @}
 
@@ -900,30 +900,30 @@ to make the necessary decisions.
 
 template <class R>
 R_FT_return(R)
-CGAL_squared_distance_parallel(
-    const CGAL_Segment_2<R> &seg1,
-    const CGAL_Segment_2<R> &seg2)
+squared_distance_parallel(
+    const Segment_2<R> &seg1,
+    const Segment_2<R> &seg2)
 {
     bool same_direction;
-    const CGAL_Vector_2<R> &dir1 = seg1.direction().vector();
-    const CGAL_Vector_2<R> &dir2 = seg2.direction().vector();
-    if (CGAL_abs(dir1.hx()) > CGAL_abs(dir1.hy())) {
-        same_direction = (CGAL_sign(dir1.hx()) == CGAL_sign(dir2.hx()));
+    const Vector_2<R> &dir1 = seg1.direction().vector();
+    const Vector_2<R> &dir2 = seg2.direction().vector();
+    if (abs(dir1.hx()) > abs(dir1.hy())) {
+        same_direction = (sign(dir1.hx()) == sign(dir2.hx()));
     } else {
-        same_direction = (CGAL_sign(dir1.hy()) == CGAL_sign(dir2.hy()));
+        same_direction = (sign(dir1.hy()) == sign(dir2.hy()));
     }
     if (same_direction) {
-        if (!CGAL_is_acute_angle(seg1.source(), seg1.target(), seg2.source()))
-            return CGAL_squared_distance(seg1.target(), seg2.source());
-        if (!CGAL_is_acute_angle(seg1.target(), seg1.source(), seg2.target()))
-            return CGAL_squared_distance(seg1.source(), seg2.target());
+        if (!is_acute_angle(seg1.source(), seg1.target(), seg2.source()))
+            return squared_distance(seg1.target(), seg2.source());
+        if (!is_acute_angle(seg1.target(), seg1.source(), seg2.target()))
+            return squared_distance(seg1.source(), seg2.target());
     } else {
-        if (!CGAL_is_acute_angle(seg1.source(), seg1.target(), seg2.target()))
-            return CGAL_squared_distance(seg1.target(), seg2.target());
-        if (!CGAL_is_acute_angle(seg1.target(), seg1.source(), seg2.source()))
-            return CGAL_squared_distance(seg1.source(), seg2.source());
+        if (!is_acute_angle(seg1.source(), seg1.target(), seg2.target()))
+            return squared_distance(seg1.target(), seg2.target());
+        if (!is_acute_angle(seg1.target(), seg1.source(), seg2.source()))
+            return squared_distance(seg1.source(), seg2.source());
     }
-    return CGAL_squared_distance(seg2.source(), seg1.supporting_line());
+    return squared_distance(seg2.source(), seg1.supporting_line());
 }
 @}
 
@@ -941,18 +941,18 @@ CGAL_squared_distance_parallel(
 
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Segment_2<R> &seg,
-    const CGAL_Ray_2<R> &ray);
+squared_distance(
+    const Segment_2<R> &seg,
+    const Ray_2<R> &ray);
 
 
 template <class R>
 inline R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Ray_2<R> & ray,
-    const CGAL_Segment_2<R> & seg)
+squared_distance(
+    const Ray_2<R> & ray,
+    const Segment_2<R> & seg)
 {
-    return CGAL_squared_distance(seg, ray);
+    return squared_distance(seg, ray);
 }
 
 @}
@@ -977,44 +977,44 @@ lies.
 @$@<2D ray segment squared distance computation@>+=@{
 template <class R>
 R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Segment_2<R> &seg,
-    const CGAL_Ray_2<R> &ray)
+squared_distance(
+    const Segment_2<R> &seg,
+    const Ray_2<R> &ray)
 {
     typedef typename R::RT RT;
     typedef typename R::FT FT;
-    const CGAL_Vector_2<R> &raydir = ray.direction().vector();
-    CGAL_Vector_2<R> startvec(seg.source()-ray.source());
-    CGAL_Vector_2<R> endvec(seg.target()-ray.source());
+    const Vector_2<R> &raydir = ray.direction().vector();
+    Vector_2<R> startvec(seg.source()-ray.source());
+    Vector_2<R> endvec(seg.target()-ray.source());
 
 
     bool crossing1, crossing2;
     RT c1s, c1e;
-    CGAL_Orientation ray_s_side;
+    Orientation ray_s_side;
     if (seg.source() == seg.target())
-        return CGAL_squared_distance(seg.source(), ray);
-    c1s = CGAL_wcross(raydir, startvec);
-    c1e = CGAL_wcross(raydir, endvec);
+        return squared_distance(seg.source(), ray);
+    c1s = wcross(raydir, startvec);
+    c1e = wcross(raydir, endvec);
     if (c1s < RT(0)) {
         crossing1 = (c1e >= RT(0));
     } else {
         if (c1e <= RT(0)) {
             if (c1s == RT(0) && c1e == RT(0))
-                return CGAL_squared_distance_parallel(seg, ray);
+                return squared_distance_parallel(seg, ray);
             crossing1 = true;
         } else {
             crossing1 = (c1s == RT(0));
         }
     }
-    ray_s_side = CGAL_orientation(seg.source(), seg.target(), ray.source());
+    ray_s_side = orientation(seg.source(), seg.target(), ray.source());
     switch (ray_s_side) {
-    case CGAL_LEFTTURN:
-        crossing2 = CGAL_rightturn(seg.target()-seg.source(), raydir);
+    case LEFTTURN:
+        crossing2 = rightturn(seg.target()-seg.source(), raydir);
         break;
-    case CGAL_RIGHTTURN:
-        crossing2 = CGAL_leftturn(seg.target()-seg.source(), raydir);
+    case RIGHTTURN:
+        crossing2 = leftturn(seg.target()-seg.source(), raydir);
         break;
-    case CGAL_COLLINEAR:
+    case COLLINEAR:
         crossing2 = true;
         break;
     }
@@ -1029,7 +1029,7 @@ distance of one of the endpoints of this (non crossing) segment to the
 other (crossing) segment. Which endpoint? The one that is closest to the
 intersection point of the supporting lines of the two segments. This
 latter property can easily be computed with the value of the cross product
-that was computed earlier. The function @{CGAL__distance_measure_sub@}
+that was computed earlier. The function @{_distance_measure_sub@}
 makes this comparison (it subtracts the two absolute values of the cross
 product, first corrected by homogenising factors).
 
@@ -1039,19 +1039,19 @@ product, first corrected by homogenising factors).
     if (crossing1) {
         if (crossing2)
             return (R_FT_return(R))(FT(0));
-        return CGAL_squared_distance(ray.source(), seg);
+        return squared_distance(ray.source(), seg);
     } else {
         if (crossing2) {
             RT dm;
-            dm = CGAL__distance_measure_sub(c1s, c1e, startvec, endvec);
+            dm = _distance_measure_sub(c1s, c1e, startvec, endvec);
             if (dm < RT(0)) {
-                return CGAL_squared_distance(seg.source(), ray);
+                return squared_distance(seg.source(), ray);
             } else {
                 if (dm > RT(0)) {
-                    return CGAL_squared_distance(seg.target(), ray);
+                    return squared_distance(seg.target(), ray);
                 } else {
                     // parallel, should not happen (no crossing)
-                    return CGAL_squared_distance_parallel(seg, ray);
+                    return squared_distance_parallel(seg, ray);
                 }
             }
         } else {
@@ -1065,13 +1065,13 @@ segment and take the minimum.
 @$@<2D ray segment squared distance computation@>+=@{
             FT min1, min2;
             RT dm;
-            dm = CGAL__distance_measure_sub(c1s, c1e, startvec, endvec);
+            dm = _distance_measure_sub(c1s, c1e, startvec, endvec);
             if (dm == RT(0))
-                return CGAL_squared_distance_parallel(seg, ray);
+                return squared_distance_parallel(seg, ray);
             min1 = (dm < RT(0))
-                 ? CGAL_squared_distance(seg.source(), ray)
-                 : CGAL_squared_distance(seg.target(), ray);
-            min2 = CGAL_squared_distance(ray.source(), seg);
+                 ? squared_distance(seg.source(), ray)
+                 : squared_distance(seg.target(), ray);
+            min2 = squared_distance(ray.source(), seg);
             return (min1 < min2)
                 ? (R_FT_return(R))(min1)
                 : (R_FT_return(R))(min2);
@@ -1083,37 +1083,37 @@ segment and take the minimum.
 @$@<2D ray segment squared distance parallel case@>==@{
 template <class R>
 R_FT_return(R)
-CGAL_squared_distance_parallel(
-    const CGAL_Segment_2<R> &seg,
-    const CGAL_Ray_2<R> &ray)
+squared_distance_parallel(
+    const Segment_2<R> &seg,
+    const Ray_2<R> &ray)
 {
     bool same_direction;
-    const CGAL_Vector_2<R> &dir1 = seg.direction().vector();
-    const CGAL_Vector_2<R> &dir2 = ray.direction().vector();
-    if (CGAL_abs(dir1.hx()) > CGAL_abs(dir1.hy())) {
-        same_direction = (CGAL_sign(dir1.hx()) == CGAL_sign(dir2.hx()));
+    const Vector_2<R> &dir1 = seg.direction().vector();
+    const Vector_2<R> &dir2 = ray.direction().vector();
+    if (abs(dir1.hx()) > abs(dir1.hy())) {
+        same_direction = (sign(dir1.hx()) == sign(dir2.hx()));
     } else {
-        same_direction = (CGAL_sign(dir1.hy()) == CGAL_sign(dir2.hy()));
+        same_direction = (sign(dir1.hy()) == sign(dir2.hy()));
     }
     if (same_direction) {
-        if (!CGAL_is_acute_angle(seg.source(), seg.target(), ray.source()))
-            return CGAL_squared_distance(seg.target(), ray.source());
+        if (!is_acute_angle(seg.source(), seg.target(), ray.source()))
+            return squared_distance(seg.target(), ray.source());
     } else {
-        if (!CGAL_is_acute_angle(seg.target(), seg.source(), ray.source()))
-            return CGAL_squared_distance(seg.source(), ray.source());
+        if (!is_acute_angle(seg.target(), seg.source(), ray.source()))
+            return squared_distance(seg.source(), ray.source());
     }
-    return CGAL_squared_distance(ray.source(), seg.supporting_line());
+    return squared_distance(ray.source(), seg.supporting_line());
 }
 @}
 
 @$@<2D ray segment squared distance helper routine@>==@{
 template <class RT, class R>
-RT CGAL__distance_measure_sub(RT startwcross, RT endwcross,
-const CGAL_Vector_2<R> &start, const CGAL_Vector_2<R> &end
+RT _distance_measure_sub(RT startwcross, RT endwcross,
+const Vector_2<R> &start, const Vector_2<R> &end
 )
 {
-    return  CGAL_abs(CGAL_wmult((R*)0, startwcross, end.hw())) -
-            CGAL_abs(CGAL_wmult((R*)0, endwcross, start.hw()));
+    return  abs(wmult((R*)0, startwcross, end.hw())) -
+            abs(wmult((R*)0, endwcross, start.hw()));
 }
 @}
 
@@ -1132,18 +1132,18 @@ const CGAL_Vector_2<R> &start, const CGAL_Vector_2<R> &end
 
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Segment_2<R> &seg,
-    const CGAL_Line_2<R> &line);
+squared_distance(
+    const Segment_2<R> &seg,
+    const Line_2<R> &line);
 
 
 template <class R>
 inline R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Line_2<R> & line,
-    const CGAL_Segment_2<R> & seg)
+squared_distance(
+    const Line_2<R> & line,
+    const Segment_2<R> & seg)
 {
-    return CGAL_squared_distance(seg, line);
+    return squared_distance(seg, line);
 }
 
 @}
@@ -1162,23 +1162,23 @@ The boolean @{crossing1@} tells whether the segment crosses the line.
 @$@<2D line segment squared distance computation@>+=@{
 template <class R>
 R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Segment_2<R> &seg,
-    const CGAL_Line_2<R> &line)
+squared_distance(
+    const Segment_2<R> &seg,
+    const Line_2<R> &line)
 {
     typedef typename R::RT RT;
     typedef typename R::FT FT;
-    const CGAL_Vector_2<R> &linedir = line.direction().vector();
-    const CGAL_Point_2<R> &linepoint = line.point();
-    CGAL_Vector_2<R> startvec(seg.source()-linepoint);
-    CGAL_Vector_2<R> endvec(seg.target()-linepoint);
+    const Vector_2<R> &linedir = line.direction().vector();
+    const Point_2<R> &linepoint = line.point();
+    Vector_2<R> startvec(seg.source()-linepoint);
+    Vector_2<R> endvec(seg.target()-linepoint);
 
     bool crossing1;
     RT c1s, c1e;
     if (seg.source() == seg.target())
-        return CGAL_squared_distance(seg.source(), line);
-    c1s = CGAL_wcross(linedir, startvec);
-    c1e = CGAL_wcross(linedir, endvec);
+        return squared_distance(seg.source(), line);
+    c1s = wcross(linedir, startvec);
+    c1e = wcross(linedir, endvec);
     if (c1s < RT(0)) {
         crossing1 = (c1e >= RT(0));
     } else {
@@ -1195,7 +1195,7 @@ distance is the distance of one of the endpoints of the segment to the
 line.  Which endpoint? The one that is closest to the supporting line of
 the other segment. This latter property can easily be computed with the
 value of the cross product that was computed earlier. The function
-@{CGAL__distance_measure_sub@} makes this comparison (it subtracts the two
+@{_distance_measure_sub@} makes this comparison (it subtracts the two
 absolute values of the cross product, first corrected by homogenising
 factors).
 
@@ -1206,11 +1206,11 @@ factors).
         return (R_FT_return(R))((FT)0);
     } else {
         RT dm;
-        dm = CGAL__distance_measure_sub(c1s, c1e, startvec, endvec);
+        dm = _distance_measure_sub(c1s, c1e, startvec, endvec);
         if (dm <= RT(0)) {
-            return CGAL__sqd_to_line(startvec, c1s, linedir);
+            return _sqd_to_line(startvec, c1s, linedir);
         } else {
-            return CGAL__sqd_to_line(endvec, c1e, linedir);
+            return _sqd_to_line(endvec, c1e, linedir);
         }
     }
 }
@@ -1229,12 +1229,12 @@ with hw factors. The hw factors of @{dir@} cancel.
 @$@<2D line segment squared distance helper routine@>==@{
 template <class RT, class R>
 R_FT_return(R)
-CGAL__sqd_to_line(const CGAL_Vector_2<R> &diff,
-                   const RT & wcross, const CGAL_Vector_2<R> &dir )
+_sqd_to_line(const Vector_2<R> &diff,
+                   const RT & wcross, const Vector_2<R> &dir )
 {
     typedef typename R::FT FT;
     RT numerator = wcross*wcross;
-    RT denominator = CGAL_wmult((R*)0, RT(CGAL_wdot(dir,dir)),
+    RT denominator = wmult((R*)0, RT(wdot(dir,dir)),
                     diff.hw(), diff.hw());
     FT result = R::make_FT(numerator, denominator);
     return (R_FT_return(R))(result);
@@ -1253,9 +1253,9 @@ CGAL__sqd_to_line(const CGAL_Vector_2<R> &diff,
 
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Ray_2<R> &ray1,
-    const CGAL_Ray_2<R> &ray2);
+squared_distance(
+    const Ray_2<R> &ray1,
+    const Ray_2<R> &ray2);
 
 @}
 
@@ -1275,29 +1275,29 @@ We look at the direction of the ray and on which side its starting point lies.
 @$@<2D ray ray squared distance computation@>+=@{
 template <class R>
 R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Ray_2<R> &ray1,
-    const CGAL_Ray_2<R> &ray2)
+squared_distance(
+    const Ray_2<R> &ray1,
+    const Ray_2<R> &ray2)
 {
     typedef typename R::FT FT;
-    const CGAL_Vector_2<R> &ray1dir = ray1.direction().vector();
-    const CGAL_Vector_2<R> &ray2dir = ray2.direction().vector();
-    CGAL_Vector_2<R> diffvec(ray2.source()-ray1.source());
+    const Vector_2<R> &ray1dir = ray1.direction().vector();
+    const Vector_2<R> &ray2dir = ray2.direction().vector();
+    Vector_2<R> diffvec(ray2.source()-ray1.source());
 
     bool crossing1, crossing2;
-    CGAL_Orientation dirorder;
-    dirorder = CGAL_orientation(ray1dir, ray2dir);
+    Orientation dirorder;
+    dirorder = orientation(ray1dir, ray2dir);
     switch (dirorder) {
-    case CGAL_COUNTERCLOCKWISE:
-        crossing1 = !CGAL_clockwise(diffvec, ray2dir);
-        crossing2 = !CGAL_counterclockwise(ray1dir, diffvec);
+    case COUNTERCLOCKWISE:
+        crossing1 = !clockwise(diffvec, ray2dir);
+        crossing2 = !counterclockwise(ray1dir, diffvec);
         break;
-    case CGAL_CLOCKWISE:
-        crossing1 = !CGAL_counterclockwise(diffvec, ray2dir);
-        crossing2 = !CGAL_clockwise(ray1dir, diffvec);
+    case CLOCKWISE:
+        crossing1 = !counterclockwise(diffvec, ray2dir);
+        crossing2 = !clockwise(ray1dir, diffvec);
         break;
-    case CGAL_COLLINEAR:
-        return CGAL_ray_ray_squared_distance_parallel(ray1dir,ray2dir,diffvec);
+    case COLLINEAR:
+        return ray_ray_squared_distance_parallel(ray1dir,ray2dir,diffvec);
     }
 @}
 
@@ -1315,10 +1315,10 @@ ray.
     if (crossing1) {
         if (crossing2)
             return (R_FT_return(R))((FT)0);
-        return CGAL_squared_distance(ray2.source(), ray1);
+        return squared_distance(ray2.source(), ray1);
     } else {
         if (crossing2) {
-            return CGAL_squared_distance(ray1.source(), ray2);
+            return squared_distance(ray1.source(), ray2);
         } else {
 @}
 
@@ -1329,8 +1329,8 @@ ray and take the minimum.
 
 @$@<2D ray ray squared distance computation@>+=@{
             FT min1, min2;
-            min1 = CGAL_squared_distance(ray1.source(), ray2);
-            min2 = CGAL_squared_distance(ray2.source(), ray1);
+            min1 = squared_distance(ray1.source(), ray2);
+            min2 = squared_distance(ray2.source(), ray1);
             return (min1 < min2)
                 ? (R_FT_return(R))(min1)
                 : (R_FT_return(R))(min2);
@@ -1352,30 +1352,30 @@ line of the other.
 @$@<2D ray ray squared distance parallel case@>==@{
 template <class R>
 R_FT_return(R)
-CGAL_ray_ray_squared_distance_parallel(
-    const CGAL_Vector_2<R> &ray1dir,
-    const CGAL_Vector_2<R> &ray2dir,
-    const CGAL_Vector_2<R> &from1to2)
+ray_ray_squared_distance_parallel(
+    const Vector_2<R> &ray1dir,
+    const Vector_2<R> &ray2dir,
+    const Vector_2<R> &from1to2)
 {
     typedef typename R::RT RT;
     typedef typename R::FT FT;
-    if (!CGAL_is_acute_angle(ray1dir, from1to2)) {
+    if (!is_acute_angle(ray1dir, from1to2)) {
         bool same_direction;
-        if (CGAL_abs(ray1dir.hx()) > CGAL_abs(ray1dir.hy())) {
+        if (abs(ray1dir.hx()) > abs(ray1dir.hy())) {
             same_direction =
-                (CGAL_sign(ray1dir.hx()) == CGAL_sign(ray2dir.hx()));
+                (sign(ray1dir.hx()) == sign(ray2dir.hx()));
         } else {
             same_direction =
-                (CGAL_sign(ray1dir.hy()) == CGAL_sign(ray2dir.hy()));
+                (sign(ray1dir.hy()) == sign(ray2dir.hy()));
         }
         if (!same_direction)
             return (R_FT_return(R))(from1to2*from1to2);
     }
     RT wcr, w;
-    wcr = CGAL_wcross(ray1dir, from1to2);
+    wcr = wcross(ray1dir, from1to2);
     w = from1to2.hw();
     return (R_FT_return(R))(FT(wcr*wcr)
-         / FT(CGAL_wmult((R*)0, RT(CGAL_wdot(ray1dir, ray1dir)), w, w)));
+         / FT(wmult((R*)0, RT(wdot(ray1dir, ray1dir)), w, w)));
 }
 @}
 
@@ -1390,18 +1390,18 @@ CGAL_ray_ray_squared_distance_parallel(
 
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Line_2<R> &line,
-    const CGAL_Ray_2<R> &ray);
+squared_distance(
+    const Line_2<R> &line,
+    const Ray_2<R> &ray);
 
 
 template <class R>
 inline R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Ray_2<R> & ray,
-    const CGAL_Line_2<R> & line)
+squared_distance(
+    const Ray_2<R> & ray,
+    const Line_2<R> & line)
 {
-    return CGAL_squared_distance(line, ray);
+    return squared_distance(line, ray);
 }
 
 @}
@@ -1425,19 +1425,19 @@ direction).
 @$@<2D squared distance outline definitions 1@>+=@{
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Line_2<R> &line,
-    const CGAL_Ray_2<R> &ray)
+squared_distance(
+    const Line_2<R> &line,
+    const Ray_2<R> &ray)
 {
     typedef typename R::FT FT;
-    CGAL_Vector_2<R> normalvec(line.a(), line.b());
-    CGAL_Vector_2<R> diff = ray.source()-line.point();
+    Vector_2<R> normalvec(line.a(), line.b());
+    Vector_2<R> diff = ray.source()-line.point();
     FT sign_dist = diff*normalvec;
     if (sign_dist < FT(0)) {
-        if (CGAL_is_acute_angle(normalvec, ray.direction().vector()) )
+        if (is_acute_angle(normalvec, ray.direction().vector()) )
             return (R_FT_return(R))((FT)0);
     } else {
-        if (CGAL_is_obtuse_angle(normalvec, ray.direction().vector()) )
+        if (is_obtuse_angle(normalvec, ray.direction().vector()) )
             return (R_FT_return(R))((FT)0);
     }
     return (R_FT_return(R))((sign_dist*sign_dist)/(normalvec*normalvec));
@@ -1450,9 +1450,9 @@ CGAL_squared_distance(
 
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Line_2<R> &line1,
-    const CGAL_Line_2<R> &line2);
+squared_distance(
+    const Line_2<R> &line1,
+    const Line_2<R> &line2);
 
 @}
 
@@ -1465,22 +1465,22 @@ the other line.
 @$@<2D squared distance outline definitions 1@>+=@{
 template <class R>
 bool
-CGAL__are_parallel(
-    const CGAL_Line_2<R> &line1,
-    const CGAL_Line_2<R> &line2)
+_are_parallel(
+    const Line_2<R> &line1,
+    const Line_2<R> &line2)
 {
     return line1.a()*line2.b() == line2.a()*line1.b();
 }
 
 template <class R>
 R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Line_2<R> &line1,
-    const CGAL_Line_2<R> &line2)
+squared_distance(
+    const Line_2<R> &line1,
+    const Line_2<R> &line2)
 {
     typedef typename R::FT FT;
-    if (CGAL__are_parallel(line1,line2))
-        return CGAL_squared_distance(line1.point(), line2);
+    if (_are_parallel(line1,line2))
+        return squared_distance(line1.point(), line2);
     else
         return (R_FT_return(R))((FT)0);
 }
@@ -1500,18 +1500,18 @@ set to -1 and vertex(ind1) is the closest vertex.
 @$@<2D squared distance header declarations 2@>+=@{
 template <class R>
 extern void
-CGAL_distance_index(
+distance_index(
     int &ind1,
     int &ind2,
-    const CGAL_Point_2<R> &pt,
-    const CGAL_Triangle_2<R> &triangle);
+    const Point_2<R> &pt,
+    const Triangle_2<R> &triangle);
 @}
 
 @$@<2D squared distance header declarations 2@>+=@{
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance_indexed(const CGAL_Point_2<R> &pt,
-    const CGAL_Triangle_2<R> &triangle, int ind1, int ind2);
+squared_distance_indexed(const Point_2<R> &pt,
+    const Triangle_2<R> &triangle, int ind1, int ind2);
 @}
 
 @C@<Implementation@>
@@ -1534,24 +1534,24 @@ Otherwise the point lies closest to a vertex.
 @$@<2D squared distance outline definitions 2@>+=@{
 template <class R>
 extern void
-CGAL_distance_index(
+distance_index(
     int &ind1,
     int &ind2,
-    const CGAL_Point_2<R> &pt,
-    const CGAL_Triangle_2<R> &triangle)
+    const Point_2<R> &pt,
+    const Triangle_2<R> &triangle)
 {
-    const CGAL_Point_2<R> &vt0 = triangle.vertex(0);
-    const CGAL_Point_2<R> &vt1 = triangle.vertex(1);
-    const CGAL_Point_2<R> &vt2 = triangle.vertex(2);
-    if (CGAL_leftturn(vt0, vt1, vt2)) {
-        if (CGAL_rightturn(vt0, vt1, pt)) {
-            if (!CGAL_is_acute_angle(vt0, vt1, pt)) {
-                if (CGAL_rightturn(vt1, vt2, pt)) {
-                    if (!CGAL_is_acute_angle(vt1, vt2, pt)) {
+    const Point_2<R> &vt0 = triangle.vertex(0);
+    const Point_2<R> &vt1 = triangle.vertex(1);
+    const Point_2<R> &vt2 = triangle.vertex(2);
+    if (leftturn(vt0, vt1, vt2)) {
+        if (rightturn(vt0, vt1, pt)) {
+            if (!is_acute_angle(vt0, vt1, pt)) {
+                if (rightturn(vt1, vt2, pt)) {
+                    if (!is_acute_angle(vt1, vt2, pt)) {
                         ind1 = 2; ind2 = -1;
                         return;
                     }
-                    if (!CGAL_is_acute_angle(vt2, vt1, pt)) {
+                    if (!is_acute_angle(vt2, vt1, pt)) {
                         ind1 = 1; ind2 = -1;
                         return;
                     }
@@ -1561,13 +1561,13 @@ CGAL_distance_index(
                 ind1 = 1; ind2 = -1;
                 return;
             }
-            if (!CGAL_is_acute_angle(vt1, vt0, pt)) {
-                if (CGAL_rightturn(vt2, vt0, pt)) {
-                    if (!CGAL_is_acute_angle(vt0, vt2, pt)) {
+            if (!is_acute_angle(vt1, vt0, pt)) {
+                if (rightturn(vt2, vt0, pt)) {
+                    if (!is_acute_angle(vt0, vt2, pt)) {
                         ind1 = 2; ind2 = -1;
                         return;
                     }
-                    if (!CGAL_is_acute_angle(vt2, vt0, pt)) {
+                    if (!is_acute_angle(vt2, vt0, pt)) {
                         ind1 = 0; ind2 = -1;
                         return;
                     }
@@ -1580,14 +1580,14 @@ CGAL_distance_index(
             ind1 = 0; ind2 = 1;
             return;
         } else {
-            if (CGAL_rightturn(vt1, vt2, pt)) {
-                if (!CGAL_is_acute_angle(vt1, vt2, pt)) {
-                    if (CGAL_rightturn(vt2, vt0, pt)) {
-                        if (!CGAL_is_acute_angle(vt0, vt2, pt)) {
+            if (rightturn(vt1, vt2, pt)) {
+                if (!is_acute_angle(vt1, vt2, pt)) {
+                    if (rightturn(vt2, vt0, pt)) {
+                        if (!is_acute_angle(vt0, vt2, pt)) {
                             ind1 = 2; ind2 = -1;
                             return;
                         }
-                        if (!CGAL_is_acute_angle(vt2, vt0, pt)) {
+                        if (!is_acute_angle(vt2, vt0, pt)) {
                             ind1 = 0; ind2 = -1;
                             return;
                         }
@@ -1597,19 +1597,19 @@ CGAL_distance_index(
                     ind1 = 0; ind2 = -1;
                     return;
                 }
-                if (!CGAL_is_acute_angle(vt2, vt1, pt)) {
+                if (!is_acute_angle(vt2, vt1, pt)) {
                     ind1 = 1; ind2 = -1;
                     return;
                 }
                 ind1 = 1; ind2 = 2;
                 return;
             } else {
-                if (CGAL_rightturn(vt2, vt0, pt)) {
-                    if (!CGAL_is_acute_angle(vt2, vt0, pt)) {
+                if (rightturn(vt2, vt0, pt)) {
+                    if (!is_acute_angle(vt2, vt0, pt)) {
                         ind1 = 0; ind2 = -1;
                         return;
                     }
-                    if (!CGAL_is_acute_angle(vt0, vt2, pt)) {
+                    if (!is_acute_angle(vt0, vt2, pt)) {
                         ind1 = 2; ind2 = -1;
                         return;
                     }
@@ -1622,14 +1622,14 @@ CGAL_distance_index(
             }
         }
     } else {
-        if (CGAL_rightturn(vt0, vt2, pt)) {
-            if (!CGAL_is_acute_angle(vt0, vt2, pt)) {
-                if (CGAL_rightturn(vt2, vt1, pt)) {
-                    if (!CGAL_is_acute_angle(vt2, vt1, pt)) {
+        if (rightturn(vt0, vt2, pt)) {
+            if (!is_acute_angle(vt0, vt2, pt)) {
+                if (rightturn(vt2, vt1, pt)) {
+                    if (!is_acute_angle(vt2, vt1, pt)) {
                         ind1 = 1; ind2 = -1;
                         return;
                     }
-                    if (!CGAL_is_acute_angle(vt1, vt2, pt)) {
+                    if (!is_acute_angle(vt1, vt2, pt)) {
                         ind1 = 2; ind2 = -1;
                         return;
                     }
@@ -1639,13 +1639,13 @@ CGAL_distance_index(
                 ind1 = 2; ind2 = -1;
                 return;
             }
-            if (!CGAL_is_acute_angle(vt2, vt0, pt)) {
-                if (CGAL_rightturn(vt1, vt0, pt)) {
-                    if (!CGAL_is_acute_angle(vt0, vt1, pt)) {
+            if (!is_acute_angle(vt2, vt0, pt)) {
+                if (rightturn(vt1, vt0, pt)) {
+                    if (!is_acute_angle(vt0, vt1, pt)) {
                         ind1 = 1; ind2 = -1;
                         return;
                     }
-                    if (!CGAL_is_acute_angle(vt1, vt0, pt)) {
+                    if (!is_acute_angle(vt1, vt0, pt)) {
                         ind1 = 0; ind2 = -1;
                         return;
                     }
@@ -1658,14 +1658,14 @@ CGAL_distance_index(
             ind1 = 0; ind2 = 2;
             return;
         } else {
-            if (CGAL_rightturn(vt2, vt1, pt)) {
-                if (!CGAL_is_acute_angle(vt2, vt1, pt)) {
-                    if (CGAL_rightturn(vt1, vt0, pt)) {
-                        if (!CGAL_is_acute_angle(vt0, vt1, pt)) {
+            if (rightturn(vt2, vt1, pt)) {
+                if (!is_acute_angle(vt2, vt1, pt)) {
+                    if (rightturn(vt1, vt0, pt)) {
+                        if (!is_acute_angle(vt0, vt1, pt)) {
                             ind1 = 1; ind2 = -1;
                             return;
                         }
-                        if (!CGAL_is_acute_angle(vt1, vt0, pt)) {
+                        if (!is_acute_angle(vt1, vt0, pt)) {
                             ind1 = 0; ind2 = -1;
                             return;
                         }
@@ -1675,19 +1675,19 @@ CGAL_distance_index(
                     ind1 = 0; ind2 = -1;
                     return;
                 }
-                if (!CGAL_is_acute_angle(vt1, vt2, pt)) {
+                if (!is_acute_angle(vt1, vt2, pt)) {
                     ind1 = 2; ind2 = -1;
                     return;
                 }
                 ind1 = 2; ind2 = 1;
                 return;
             } else {
-                if (CGAL_rightturn(vt1, vt0, pt)) {
-                    if (!CGAL_is_acute_angle(vt1, vt0, pt)) {
+                if (rightturn(vt1, vt0, pt)) {
+                    if (!is_acute_angle(vt1, vt0, pt)) {
                         ind1 = 0; ind2 = -1;
                         return;
                     }
-                    if (!CGAL_is_acute_angle(vt0, vt1, pt)) {
+                    if (!is_acute_angle(vt0, vt1, pt)) {
                         ind1 = 1; ind2 = -1;
                         return;
                     }
@@ -1706,16 +1706,16 @@ CGAL_distance_index(
 @$@<2D squared distance outline definitions 2@>+=@{
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance_indexed(const CGAL_Point_2<R> &pt,
-    const CGAL_Triangle_2<R> &triangle, int ind1, int ind2)
+squared_distance_indexed(const Point_2<R> &pt,
+    const Triangle_2<R> &triangle, int ind1, int ind2)
 {
     typedef typename R::FT FT;
     if (ind1 == -1)
         return (R_FT_return(R))(FT(0));
     if (ind2 == -1)
-        return CGAL_squared_distance(pt, triangle.vertex(ind1));
-    return CGAL_squared_distance(pt,
-        CGAL_Line_2<R>(triangle.vertex(ind1), triangle.vertex(ind2)));
+        return squared_distance(pt, triangle.vertex(ind1));
+    return squared_distance(pt,
+        Line_2<R>(triangle.vertex(ind1), triangle.vertex(ind2)));
 }
 @}
 
@@ -1725,18 +1725,18 @@ CGAL_squared_distance_indexed(const CGAL_Point_2<R> &pt,
 @$@<2D squared distance header declarations 2@>+=@{@-
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Point_2<R> &pt,
-    const CGAL_Triangle_2<R> &triangle);
+squared_distance(
+    const Point_2<R> &pt,
+    const Triangle_2<R> &triangle);
 
 
 template <class R>
 inline R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Triangle_2<R> & triangle,
-    const CGAL_Point_2<R> & pt)
+squared_distance(
+    const Triangle_2<R> & triangle,
+    const Point_2<R> & pt)
 {
-    return CGAL_squared_distance(pt, triangle);
+    return squared_distance(pt, triangle);
 }
 
 @}
@@ -1747,13 +1747,13 @@ CGAL_squared_distance(
 @$@<2D squared distance outline definitions 2@>+=@{
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Point_2<R> &pt,
-    const CGAL_Triangle_2<R> &triangle)
+squared_distance(
+    const Point_2<R> &pt,
+    const Triangle_2<R> &triangle)
 {
     int ind1,ind2;
-    CGAL_distance_index(ind1, ind2, pt, triangle);
-    return CGAL_squared_distance_indexed(pt, triangle, ind1, ind2);
+    distance_index(ind1, ind2, pt, triangle);
+    return squared_distance_indexed(pt, triangle, ind1, ind2);
 }
 @}
 
@@ -1762,18 +1762,18 @@ CGAL_squared_distance(
 @$@<2D squared distance header declarations 2@>+=@{@-
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Line_2<R> &line,
-    const CGAL_Triangle_2<R> &triangle);
+squared_distance(
+    const Line_2<R> &line,
+    const Triangle_2<R> &triangle);
 
 
 template <class R>
 inline R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Triangle_2<R> & triangle,
-    const CGAL_Line_2<R> & line)
+squared_distance(
+    const Triangle_2<R> & triangle,
+    const Line_2<R> & line)
 {
-    return CGAL_squared_distance(line, triangle);
+    return squared_distance(line, triangle);
 }
 
 @}
@@ -1784,12 +1784,12 @@ CGAL_squared_distance(
 @$@<2D squared distance outline definitions 2@>+=@{
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Line_2<R> &line,
-    const CGAL_Triangle_2<R> &triangle)
+squared_distance(
+    const Line_2<R> &line,
+    const Triangle_2<R> &triangle)
 {
     typedef typename R::FT FT;
-    CGAL_Oriented_side side0;
+    Oriented_side side0;
     side0 = line.oriented_side(triangle.vertex(0));
     if (line.oriented_side(triangle.vertex(1)) != side0)
         return (R_FT_return(R))(FT(0));
@@ -1797,9 +1797,9 @@ CGAL_squared_distance(
         return (R_FT_return(R))(FT(0));
     FT mindist, dist;
     int i;
-    mindist = CGAL_squared_distance(triangle.vertex(0),line);
+    mindist = squared_distance(triangle.vertex(0),line);
     for (i=1; i<3; i++) {
-        dist = CGAL_squared_distance(triangle.vertex(i),line);
+        dist = squared_distance(triangle.vertex(i),line);
         if (dist < mindist)
             mindist = dist;
     }
@@ -1812,18 +1812,18 @@ CGAL_squared_distance(
 @$@<2D squared distance header declarations 2@>+=@{@-
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Ray_2<R> &ray,
-    const CGAL_Triangle_2<R> &triangle);
+squared_distance(
+    const Ray_2<R> &ray,
+    const Triangle_2<R> &triangle);
 
 
 template <class R>
 inline R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Triangle_2<R> & triangle,
-    const CGAL_Ray_2<R> & ray)
+squared_distance(
+    const Triangle_2<R> & triangle,
+    const Ray_2<R> & ray)
 {
-    return CGAL_squared_distance(ray, triangle);
+    return squared_distance(ray, triangle);
 }
 
 @}
@@ -1834,20 +1834,20 @@ CGAL_squared_distance(
 @$@<2D squared distance outline definitions 2@>+=@{
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Ray_2<R> &ray,
-    const CGAL_Triangle_2<R> &triangle)
+squared_distance(
+    const Ray_2<R> &ray,
+    const Triangle_2<R> &triangle)
 {
     typedef typename R::FT FT;
     int i, ind_tr1, ind_tr2, ind_ray = 0, ind1;
     FT mindist, dist;
-    CGAL_distance_index(ind_tr1, ind_tr2, ray.source(), triangle);
+    distance_index(ind_tr1, ind_tr2, ray.source(), triangle);
     mindist =
-        CGAL_squared_distance_indexed(ray.source(), triangle, ind_tr1,ind_tr2);
+        squared_distance_indexed(ray.source(), triangle, ind_tr1,ind_tr2);
     for (i=0; i<3; i++) {
-        const CGAL_Point_2<R>& pt = triangle.vertex(i);
-        CGAL_distance_index(ind1, pt, ray);
-        dist = CGAL_squared_distance_indexed(pt, ray, ind1);
+        const Point_2<R>& pt = triangle.vertex(i);
+        distance_index(ind1, pt, ray);
+        dist = squared_distance_indexed(pt, ray, ind1);
         if (dist < mindist) {
             ind_ray = ind1;
             ind_tr1 = i; ind_tr2 = -1;
@@ -1861,15 +1861,15 @@ CGAL_squared_distance(
     if (ind_tr2 != -1) {
 // Check if all the segment vertices lie at the same side of
 // the triangle segment.
-        const CGAL_Point_2<R> &vt1 = triangle.vertex(ind_tr1);
-        const CGAL_Point_2<R> &vt2 = triangle.vertex(ind_tr2);
-        if (CGAL_clockwise(ray.direction().vector(), vt2-vt1)) {
+        const Point_2<R> &vt1 = triangle.vertex(ind_tr1);
+        const Point_2<R> &vt2 = triangle.vertex(ind_tr2);
+        if (clockwise(ray.direction().vector(), vt2-vt1)) {
             mindist = FT(0);
         }
     } else {
 // Check if all the triangle vertices lie at the same side of the segment.
-        const CGAL_Line_2<R> &sl = ray.supporting_line();
-        CGAL_Oriented_side or = sl.oriented_side(triangle.vertex(0));
+        const Line_2<R> &sl = ray.supporting_line();
+        Oriented_side or = sl.oriented_side(triangle.vertex(0));
         for (i=1; i<3; i++) {
             if (sl.oriented_side(triangle.vertex(i)) != or) {
                 mindist = FT(0);
@@ -1886,18 +1886,18 @@ CGAL_squared_distance(
 @$@<2D squared distance header declarations 2@>+=@{@-
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Segment_2<R> &seg,
-    const CGAL_Triangle_2<R> &triangle);
+squared_distance(
+    const Segment_2<R> &seg,
+    const Triangle_2<R> &triangle);
 
 
 template <class R>
 inline R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Triangle_2<R> & triangle,
-    const CGAL_Segment_2<R> & seg)
+squared_distance(
+    const Triangle_2<R> & triangle,
+    const Segment_2<R> & seg)
 {
-    return CGAL_squared_distance(seg, triangle);
+    return squared_distance(seg, triangle);
 }
 
 @}
@@ -1908,18 +1908,18 @@ CGAL_squared_distance(
 @$@<2D squared distance outline definitions 2@>+=@{
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Segment_2<R> &seg,
-    const CGAL_Triangle_2<R> &triangle)
+squared_distance(
+    const Segment_2<R> &seg,
+    const Triangle_2<R> &triangle)
 {
     typedef typename R::FT FT;
     int i, ind_tr1 = 0, ind_tr2 = -1, ind_seg = 0, ind1, ind2;
     FT mindist, dist;
-    mindist = CGAL_squared_distance(seg.source(), triangle.vertex(0));
+    mindist = squared_distance(seg.source(), triangle.vertex(0));
     for (i=0; i<2; i++) {
-        const CGAL_Point_2<R> &pt = seg.vertex(i);
-        CGAL_distance_index(ind1, ind2, pt, triangle);
-        dist = CGAL_squared_distance_indexed(pt, triangle, ind1, ind2);
+        const Point_2<R> &pt = seg.vertex(i);
+        distance_index(ind1, ind2, pt, triangle);
+        dist = squared_distance_indexed(pt, triangle, ind1, ind2);
         if (dist < mindist) {
             ind_seg = i;
             ind_tr1 = ind1; ind_tr2 = ind2;
@@ -1927,9 +1927,9 @@ CGAL_squared_distance(
         }
     }
     for (i=0; i<3; i++) {
-        const CGAL_Point_2<R>& pt = triangle.vertex(i);
-        CGAL_distance_index(ind1, pt, seg);
-        dist = CGAL_squared_distance_indexed(pt, seg, ind1);
+        const Point_2<R>& pt = triangle.vertex(i);
+        distance_index(ind1, pt, seg);
+        dist = squared_distance_indexed(pt, seg, ind1);
         if (dist < mindist) {
             ind_seg = ind1;
             ind_tr1 = i; ind_tr2 = -1;
@@ -1944,19 +1944,19 @@ CGAL_squared_distance(
     if (ind_tr2 != -1) {
 // Check if all the segment vertices lie at the same side of
 // the triangle segment.
-        const CGAL_Point_2<R> &vt1 = triangle.vertex(ind_tr1);
-        const CGAL_Point_2<R> &vt2 = triangle.vertex(ind_tr2);
-        CGAL_Orientation or = CGAL_orientation(vt1, vt2, seg.source());
-        if (CGAL_orientation(vt1, vt2, seg.target()) != or) {
+        const Point_2<R> &vt1 = triangle.vertex(ind_tr1);
+        const Point_2<R> &vt2 = triangle.vertex(ind_tr2);
+        Orientation or = orientation(vt1, vt2, seg.source());
+        if (orientation(vt1, vt2, seg.target()) != or) {
             mindist = FT(0);
         }
     } else {
 // Check if all the triangle vertices lie at the same side of the segment.
-        const CGAL_Point_2<R> &vt1 = seg.source();
-        const CGAL_Point_2<R> &vt2 = seg.target();
-        CGAL_Orientation or = CGAL_orientation(vt1, vt2, triangle.vertex(0));
+        const Point_2<R> &vt1 = seg.source();
+        const Point_2<R> &vt2 = seg.target();
+        Orientation or = orientation(vt1, vt2, triangle.vertex(0));
         for (i=1; i<3; i++) {
-            if (CGAL_orientation(vt1, vt2, triangle.vertex(i)) != or) {
+            if (orientation(vt1, vt2, triangle.vertex(i)) != or) {
                 mindist = FT(0);
                 break;
             }
@@ -1971,9 +1971,9 @@ CGAL_squared_distance(
 @$@<2D squared distance header declarations 2@>+=@{@-
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Triangle_2<R> &triangle1,
-    const CGAL_Triangle_2<R> &triangle2);
+squared_distance(
+    const Triangle_2<R> &triangle1,
+    const Triangle_2<R> &triangle2);
 @}
 
 @C@<Implementation@>
@@ -1982,19 +1982,19 @@ CGAL_squared_distance(
 @$@<2D squared distance outline definitions 2@>+=@{
 template <class R>
 extern R_FT_return(R)
-CGAL_squared_distance(
-    const CGAL_Triangle_2<R> &triangle1,
-    const CGAL_Triangle_2<R> &triangle2)
+squared_distance(
+    const Triangle_2<R> &triangle1,
+    const Triangle_2<R> &triangle2)
 {
     typedef typename R::FT FT;
     int i, ind1_1 = 0,ind1_2 = -1, ind2_1 = 0, ind2_2 = -1, ind1, ind2;
     FT mindist, dist;
     mindist =
-       CGAL_squared_distance(triangle1.vertex(0), triangle2.vertex(0));
+       squared_distance(triangle1.vertex(0), triangle2.vertex(0));
     for (i=0; i<3; i++) {
-        const CGAL_Point_2<R>& pt = triangle1.vertex(i);
-        CGAL_distance_index(ind1, ind2, pt, triangle2);
-        dist = CGAL_squared_distance_indexed(pt, triangle2, ind1, ind2);
+        const Point_2<R>& pt = triangle1.vertex(i);
+        distance_index(ind1, ind2, pt, triangle2);
+        dist = squared_distance_indexed(pt, triangle2, ind1, ind2);
         if (dist < mindist) {
             ind1_1 = i; ind1_2 = -1;
             ind2_1 = ind1; ind2_2 = ind2;
@@ -2002,9 +2002,9 @@ CGAL_squared_distance(
         }
     }
     for (i=0; i<3; i++) {
-        const CGAL_Point_2<R>& pt = triangle2.vertex(i);
-        CGAL_distance_index(ind1, ind2, pt, triangle1);
-        dist = CGAL_squared_distance_indexed(pt, triangle1, ind1, ind2);
+        const Point_2<R>& pt = triangle2.vertex(i);
+        distance_index(ind1, ind2, pt, triangle1);
+        dist = squared_distance_indexed(pt, triangle1, ind1, ind2);
         if (dist < mindist) {
             ind1_1 = ind1; ind1_2 = ind2;
             ind2_1 = i; ind2_2 = -1;
@@ -2018,21 +2018,21 @@ CGAL_squared_distance(
     // of overlapping triangles.
     // Check if all the vertices lie at the same side of the segment.
     if (ind1_2 != -1) {
-        const CGAL_Point_2<R> &vt1 = triangle1.vertex(ind1_1);
-        const CGAL_Point_2<R> &vt2 = triangle1.vertex(ind1_2);
-        CGAL_Orientation or = CGAL_orientation(vt1, vt2, triangle2.vertex(0));
+        const Point_2<R> &vt1 = triangle1.vertex(ind1_1);
+        const Point_2<R> &vt2 = triangle1.vertex(ind1_2);
+        Orientation or = orientation(vt1, vt2, triangle2.vertex(0));
         for (i=1; i<3; i++) {
-            if (CGAL_orientation(vt1, vt2, triangle2.vertex(i)) != or) {
+            if (orientation(vt1, vt2, triangle2.vertex(i)) != or) {
                 mindist = FT(0);
                 break;
             }
         }
     } else {
-        const CGAL_Point_2<R> &vt1 = triangle2.vertex(ind2_1);
-        const CGAL_Point_2<R> &vt2 = triangle2.vertex(ind2_2);
-        CGAL_Orientation or = CGAL_orientation(vt1, vt2, triangle1.vertex(0));
+        const Point_2<R> &vt1 = triangle2.vertex(ind2_1);
+        const Point_2<R> &vt2 = triangle2.vertex(ind2_2);
+        Orientation or = orientation(vt1, vt2, triangle1.vertex(0));
         for (i=1; i<3; i++) {
-            if (CGAL_orientation(vt1, vt2, triangle1.vertex(i)) != or) {
+            if (orientation(vt1, vt2, triangle1.vertex(i)) != or) {
                 mindist = FT(0);
                 break;
             }
@@ -2044,7 +2044,7 @@ CGAL_squared_distance(
 
 @B@<The header files@>
 @O@<../include/CGAL/squared_distance_utils.h@>==@{@-
-@<CGAL_heading@>@(@-
+@<cgal_heading@>@(@-
 include/CGAL/squared_distance_utils.h@,@-
 sqdistance_2.fw@,@-
 Geert-Jan Giezeman@,@-
@@ -2059,7 +2059,7 @@ Saarbruecken@)
 @}
 
 @O@<../include/CGAL/squared_distance_2_1.h@>==@{@-
-@<CGAL_heading@>@(@-
+@<cgal_heading@>@(@-
 include/CGAL/squared_distance_2_1.h@,@-
 sqdistance_2.fw@,@-
 Geert-Jan Giezeman@,@-
@@ -2086,7 +2086,7 @@ Saarbruecken@)
 
 
 @O@<../include/CGAL/squared_distance_2_1.C@>==@{@-
-@<CGAL_heading@>@(@-
+@<cgal_heading@>@(@-
 include/CGAL/squared_distance_2_1.C@,@-
 sqdistance_2.fw@,@-
 Geert-Jan Giezeman@,@-
@@ -2120,7 +2120,7 @@ Saarbruecken@)
 @}
 
 @O@<../include/CGAL/squared_distance_2_2.h@>==@{@-
-@<CGAL_heading@>@(@-
+@<cgal_heading@>@(@-
 include/CGAL/squared_distance_2_2.h@,@-
 sqdistance_2.fw@,@-
 Geert-Jan Giezeman@,@-
@@ -2146,7 +2146,7 @@ Saarbruecken@)
 @}
 
 @O@<../include/CGAL/squared_distance_2_2.C@>==@{@-
-@<CGAL_heading@>@(@-
+@<cgal_heading@>@(@-
 include/CGAL/squared_distance_2_2.C@,@-
 sqdistance_2.fw@,@-
 Geert-Jan Giezeman@,@-
@@ -2187,7 +2187,7 @@ Saarbruecken@)
 
 
 @O@<../include/CGAL/squared_distance_2.h@>==@{@-
-@<CGAL_heading@>@(@-
+@<cgal_heading@>@(@-
 include/CGAL/squared_distance_2.h@,@-
 sqdistance_2.fw@,@-
 Geert-Jan Giezeman@,@-

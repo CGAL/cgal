@@ -5,7 +5,7 @@
 
 #include "numrep2.h"
 
-typedef CGAL_Point_2< TestR > point_t;
+typedef CGAL::Point_2< TestR > point_t;
 
 
 
@@ -21,7 +21,7 @@ int main()
     w2 = ri.next();
     point_t tp1(to_nt(w1*x1), to_nt(w1*y1), to_nt(w1));
     point_t tp2(to_nt(w2*x2), to_nt(w2*y2), to_nt(w2));
-    d = CGAL_squared_distance(tp1, tp2);
-    cout << CGAL_to_double(d) << '\n';
+    d = CGAL::squared_distance(tp1, tp2);
+    cout << CGAL::to_double(d) << '\n';
     return 0;
 }

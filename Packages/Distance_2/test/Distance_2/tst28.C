@@ -7,9 +7,9 @@
 
 #include "numrep2.h"
 
-typedef CGAL_Point_2< TestR > point_t;
-typedef CGAL_Line_2< TestR > line_t;
-typedef CGAL_Segment_2< TestR > segment_t;
+typedef CGAL::Point_2< TestR > point_t;
+typedef CGAL::Line_2< TestR > line_t;
+typedef CGAL::Segment_2< TestR > segment_t;
 
 
 int main()
@@ -33,7 +33,7 @@ int main()
     point_t tp3(to_nt(w1*x1), to_nt(w1*y1), to_nt(w1));
     point_t tp4(to_nt(w2*x2), to_nt(w2*y2), to_nt(w2));
     segment_t seg2(tp3, tp4);
-    d = CGAL_squared_distance(line1, seg2);
-    cout << CGAL_to_double(d) << '\n';
+    d = CGAL::squared_distance(line1, seg2);
+    cout << CGAL::to_double(d) << '\n';
     return 0;
 }
