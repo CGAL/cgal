@@ -12,38 +12,38 @@ the surface of $S_2$. The orientation of the great circle is that of a
 counterclockwise walk along the circle as seen from the positive
 halfspace of the oriented plane.
 
-\ccSetOneOfTwoColumns{5.5cm}
+\ccSetOneOfTwoColumns{6.5cm}
 
 \ccTypes
 
 \ccNestedType{RT}{ ring type.  }
 
-\ccNestedType{Sphere_segment_pair}{ sphere segment pair.  }
+\ccNestedType{Plane_3}{ plane a \ccc{Sphere_circle} lies in.}
 
 \ccCreation
 
 \ccConstructor{Sphere_circle()}{ creates some great circle.  }
 
-\ccConstructor{Sphere_circle(Sphere_point p, Sphere_point
-  q)}{ If $p$ and $q$ are
+\ccConstructor{Sphere_circle(const Sphere_point& p, 
+  const Sphere_point& q)}{ If $p$ and $q$ are
   opposite of each other, then we create the unique great circle on $S_2$ 
   which contains p and q. This circle is oriented such
   that a walk along \ccc{c} meets $p$ just before the shorter segment
   between $p$ and $q$. If $p$ and $q$ are opposite of each other then
   we create any great circle that contains $p$ and $q$.  }
 
-\ccConstructor{Sphere_circle(CGAL::Plane_3 h)}{ creates the
+\ccConstructor{Sphere_circle(const Plane_3& h)}{ creates the
   circle corresponding to the plane \ccc{h}.  \ccPrecond \ccc{h}
   contains the origin.  }
 
-\ccConstructor{Sphere_circle(RT x, RT y, RT z)}{ creates the circle
-  orthogonal to the vector $(x,y,z)$.  }
+\ccConstructor{Sphere_circle(const RT& x, const RT& y, const RT& z)}
+{ creates the circle orthogonal to the vector $(x,y,z)$.  }
 
-\ccConstructor{Sphere_circle(Sphere_circle c, Sphere_point
+\ccConstructor{Sphere_circle(Sphere_circle c, const Sphere_point&
   p)}{ creates a great circle orthogonal to $c$ that contains $p$.
   \ccPrecond $p$ is not part of $c$.  }
 
-\ccSetTwoOfThreeColumns{4cm}{2cm}
+\ccSetTwoOfThreeColumns{2.5cm}{3.8cm}
 
 \ccOperations
 
@@ -58,27 +58,12 @@ halfspace of the oriented plane.
 \ccMethod{Sphere_point orthogonal_pole() ;}{ returns the point that
   is the pole of the hemisphere left of \ccc{c}.  }
 
-\ccMethod{Sphere_segment_pair split_at(const Sphere_point& p) ;}{
-  returns the pair of circle segments that is the result of splitting
-  \ccc{c} at \ccc{p} and \ccc{p.opposite()}.  }
-
-\ccMethod{Sphere_segment_pair split_at_xy_plane() ;}{ returns the pair
-  of circle segments that is the result of splitting \ccc{c} at the
-  $x$-$y$-coordinate plane if \ccc{c} is not part of it. Otherwise
-  \ccc{c} is split at the $x$-$z$-coordinate plane.  }
-
 \ccHeading{Global functions} 
 
-
-
-\ccFunction{bool equal_as_sets(const
-  Sphere_circle c1, const Sphere_circle c2) ;}{
+\ccFunction{bool equal_as_sets(
+  const Nef_polyhedron_S2<Traits>::Sphere_circle c1, 
+  const Nef_polyhedron_S2<Traits>::Sphere_circle c2) ;}{
   returns true iff \ccc{c1} and \ccc{c2} are equal as unoriented
   circles.  }
-
-\ccFunction{Sphere_point intersection(const
-  Sphere_circle c1, const Sphere_circle c2) ;}{ returns one of
-  the two intersection points of \ccc{c1} and \ccc{c2}. \ccPrecond
-  \ccc{c1 != c2} as sets.  }
 
 \end{ccRefClass}
