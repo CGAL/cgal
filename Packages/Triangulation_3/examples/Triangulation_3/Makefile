@@ -29,7 +29,7 @@ LDFLAGS = \
 	$(TESTSUITE_LDFLAGS) \
 	-B$(UTIL)/Binutils/$(UNAME)/bin/ \
 	$(CGAL_LDFLAGS)
-	# $(LONG_NAME_PROBLEM_LDFLAGS) \
+#	$(LONG_NAME_PROBLEM_LDFLAGS) \
 
 #---------------------------------------------------------------------#
 #                    target entries
