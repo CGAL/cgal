@@ -1,3 +1,8 @@
+1.81 (Eti)
+====
+- Add clear function to the Arrangement.
+- Add IO utilities to Arrangement.
+
 1.79 (Shai)
 ====
 Made typedefs public in Arr_traits_test.
