@@ -22,9 +22,9 @@
 #ifndef _POINT3D_H
 #define _POINT3D_H
 
-#include "CORE.h"
-#include "../linearAlgebra.h"
-#include "../geombase.h"
+#include <CORE/CORE.h>
+#include <CORE/linearAlgebra.h>
+#include <CORE/geombase.h>
 
  // class defination for 3d points
 class Point3d : public GeomObj{

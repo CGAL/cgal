@@ -22,8 +22,8 @@
 #ifndef _SEGMENT2D_H_
 #define _SEGMENT2D_H_
 
-#include "point2d.h"
-#include "line2d.h"
+#include <CORE/geom2d/point2d.h>
+#include <CORE/geom2d/line2d.h>
 
 /************************************************************
  *  Class Segment2d:
@@ -171,7 +171,5 @@ public:
    // syntax: {[} p {===} q {]}
 
 }; //class Segment2d
-
-extern Line2d p_bisector(Point2d& p, Point2d& q);
 
 #endif

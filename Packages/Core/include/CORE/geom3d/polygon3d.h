@@ -21,10 +21,10 @@
 #ifndef _POLYGON3D_H_
 #define _POLYGON3D_H_
 
-#include "point3d.h"
-#include "segment3d.h"
-#include "plane3d.h"
-#include "line3d.h"
+#include <CORE/geom3d/point3d.h>
+#include <CORE/geom3d/segment3d.h>
+#include <CORE/geom3d/plane3d.h>
+#include <CORE/geom3d/line3d.h>
 
 class Polygon3d : public GeomObj {
 

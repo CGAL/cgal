@@ -21,7 +21,7 @@
 #ifndef _LINE3D_H_
 #define _LINE3D_H_
 
-#include "point3d.h"
+#include <CORE/geom3d/point3d.h>
 
 class Line3d : public GeomObj{
 
