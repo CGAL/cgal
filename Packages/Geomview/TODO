@@ -22,6 +22,8 @@
   Enhance CGAL::Color for that ?
 - Is there a way to see edges like cylinders somewhat (possibly generate them
   ourselves), so that we know which one is in front of which other one ?
+- For T3D : I want to be able to tell Geomview or the CGAL program to stop
+  displaying a tetrahedron that I select, so that I can see the inside.
 
 - Make a testsuite (words from Herve):
 <<<<<<<<<<<<<<<<
