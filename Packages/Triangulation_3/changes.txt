@@ -1,4 +1,4 @@
-Version 1.88 (?? September 01)
+Version 1.88 (17 September 01)
 - Use Pointer<> directly, no need for Triangulation_*_handle_3<>.
 - New internal function in Delaunay : nearest_vertex_in_cell().
 - Compare_distance_3 is now required by Delaunay (moved from Hierarchy).

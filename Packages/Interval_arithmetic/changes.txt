@@ -1,5 +1,9 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.118 on 17 September 2001
+- CGAL_IA_NEW_FILTERS and various cleanups.
+- SunPro fixes.
+
 Version 4.117 on 29 August 2001
 - VC++ workaround when using Filtered_exact in the Static_filters.
 - static const double data members must be initialized outside the class.
