@@ -116,9 +116,11 @@ radical_axis(const Weighted_point< Point,We >& p,
 	     const Weighted_point< Point,We >& q,
 	     Cartesian_tag )
 {
-  typename Point::RT a,b,c;
+  typedef typename Point::RT RT;
+  typedef typename Point::R  Rep;
+  RT a,b,c;
   radical_axisC2(p.x(),p.y(),p.weight(),q.x(),q.y(),q.weight(),a,b,c);
-  return Line_2<typename Point::R>(a,b,c);
+  return Line_2<Rep>(a,b,c);
 }
 
 template < class Point, class We >
@@ -128,11 +130,12 @@ radical_axis(const Weighted_point< Point,We >& p,
 	     const Weighted_point< Point,We >& q,
 	      Homogeneous_tag)
 {
-  typename Point::RT a,b,c;
+  typedef typename Point::RT RT;
+  typedef typename Point::R  Rep;
+  RT a,b,c;
   radical_axisH2(p.hx(),p.hy(), p.hw(), p.weight(),
 		 q.hx(),q.hy(), q.hw(), q.weight(),a,b,c);
-
-  return Line_2<typename Point::R>(a,b,c);
+  return Line_2<Rep>(a,b,c);
 }
 
 template < class Point, class We >

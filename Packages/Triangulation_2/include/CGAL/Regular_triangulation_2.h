@@ -38,15 +38,13 @@ public:
   typedef typename Gt::Bare_point     Point;
   typedef typename Gt::Weighted_point Weighted_point;
   typedef typename Gt::Weight         Weight;
-  //  typedef typename Gt::Line_2 Line;
-  //  typedef typename Gt::Direction_2 Direction;
-  //  typedef typename Gt::Ray_2 Ray;
 
   typedef typename Triangulation::Face_handle    Face_handle;
   typedef typename Triangulation::Vertex_handle  Vertex_handle;
   typedef typename Triangulation::Edge           Edge;
   typedef typename Triangulation::Locate_type    Locate_type;
   typedef typename Triangulation::Face_circulator       Face_circulator;
+  typedef typename Triangulation::Edge_circulator       Edge_circulator;
   typedef typename Triangulation::Finite_edges_iterator Finite_edges_iterator;
   typedef typename Triangulation::Finite_faces_iterator Finite_faces_iterator;
   typedef typename Triangulation::Finite_vertices_iterator 
@@ -404,6 +402,7 @@ dual(const Edge &e) const
   typedef typename Geom_traits::Line_2        Line;
   typedef typename Geom_traits::Ray_2         Ray;
   typedef typename Geom_traits::Direction_2   Direction;
+  typedef typename Geom_traits::Segment       Segment;
   
   CGAL_triangulation_precondition (! is_infinite(e));
   if( dimension()== 1 ){
