@@ -6,38 +6,30 @@
  *            Iddo Hanniel
 \*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*/
  
-//might be needed when compiling with g++-2.7.2
-//#ifdef  __GNUG__ 
-//#include  <typeinfo>
-//#endif  /* __GNUG__ */ 
-#include  <CGAL/config.h>
+#include <CGAL/Cartesian.h>
 
 #include <iostream>
 #include <ctime>
 #include <cassert>
-
-#include  <CGAL/Cartesian.h>
-#include  <CGAL/Point_2.h>
-
 #include <list>
 
-#include  <CGAL/kdtree_d.h>
+#include <CGAL/kdtree_d.h>
 
-typedef CGAL::Point_2<CGAL::Cartesian<double> >  point;
+typedef CGAL::Cartesian<double>           K;
+typedef K::Point_2                        point;
 typedef CGAL::Kdtree_interface_2d<point>  kd_interface;
-typedef CGAL::Kdtree_d<kd_interface>  kd_tree;
-typedef kd_tree::Box  box;
-typedef std::list<point>  points_list; 
+typedef CGAL::Kdtree_d<kd_interface>      kd_tree;
+typedef kd_tree::Box                      box;
+typedef std::list<point>                  points_list;
 
-int   main()
+int main()
 {
-
-    CGAL::Kdtree_d<kd_interface>  tree(2);
-    points_list  l , res;
+    CGAL::Kdtree_d<kd_interface> tree(2);
+    points_list l, res;
 
     srand( (unsigned)time(NULL) );
 
-    std::cout << "Insering evenly 81 points  in the square (0,0)-(10,10) ...\n\n" ;
+    std::cout << "Insering evenly 81 points  in the square (0,0)-(10,10) ...\n\n";
     for (int i=1; i<10; i++)
       for (int j=1; j<10; j++)
         {
@@ -48,13 +40,12 @@ int   main()
     // building the tree for the random points
     tree.build( l );
        
-    //checking validity
+    // checking validity
     if  ( ! tree.is_valid() )
         tree.dump();
     assert( tree.is_valid() );
 
-    
-    //defining and searching the box r
+    // Defining and searching the box r
     double lx,ly,rx,ry;
     std::cout << "Define your query square.\nEnter left x coordinate: " ;
     std::cin >> lx ;
@@ -76,12 +67,5 @@ int   main()
 
     tree.delete_all();
 
-    
-
     return  0;
 }
-
-
-
-
-

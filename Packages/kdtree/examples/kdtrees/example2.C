@@ -6,43 +6,32 @@
  *            Iddo Hanniel
 \*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*/
 
-//might be needed when compiling with g++-2.7.2 
-//#ifdef  __GNUG__ 
-//#include  <typeinfo>
-//#endif  /* __GNUG__ */ 
-#include <CGAL/config.h>
+#include <CGAL/Cartesian.h>
+
 #include <iostream>
 #include <ctime>
 #include <cassert>
-
-#include  <CGAL/Cartesian.h>
-#include  <CGAL/Point_3.h>
-
 #include <list>
 
 #include  <CGAL/kdtree_d.h>
 
-typedef CGAL::Point_3<CGAL::Cartesian<double> >  point;
+typedef CGAL::Cartesian<double>           K;
+typedef K::Point_3                        point;
 typedef CGAL::Kdtree_interface_3d<point>  kd_interface;
-typedef CGAL::Kdtree_d<kd_interface>  kd_tree;
-typedef kd_tree::Box  box;
-typedef std::list<point>  points_list; 
-
-
-
-
+typedef CGAL::Kdtree_d<kd_interface>      kd_tree;
+typedef kd_tree::Box                      box;
+typedef std::list<point>                  points_list;
 
 //RANDOM FUNCTIONS
 // dblRand - a random number between 0..1 
 #ifndef  RAND_MAX
 #define  RAND_MAX    0x7fffffff
-#endif  // RAND_MAX
+#endif
 
-static inline  double    dblRand( void )
+inline double dblRand( void )
 {
-    return  (double)rand() / (double)RAND_MAX;
+    return (double)rand() / (double)RAND_MAX;
 }
-
 
 void random_points( int  num, points_list &l )
 {
@@ -56,13 +45,10 @@ void random_points( int  num, points_list &l )
       point p(x,y,z);
       l.push_front(p);
     }
-  
 }
 
-
-int   main()
+int main()
 {
-
   CGAL::Kdtree_d<kd_interface>  tree(3);
   
   srand( (unsigned)time(NULL) );
@@ -72,21 +58,19 @@ int   main()
   points_list  l , res;
   random_points( 30, l);
   
-  
   std::cout << "Listing of random points:\n" ;
   std::copy (l.begin(),l.end(),std::ostream_iterator<point>(std::cout,"\n") );
   std::cout << std::endl;
   
-  // building the tree for the random points
+  // Building the tree for the random points
   tree.build( l );
     
-  //checking validity
+  // Checking validity
   if  ( ! tree.is_valid() )
     tree.dump();
   assert( tree.is_valid() );
   
-  
-  //searching the box r
+  // Searching the box r
   box r(point(2,2,2), point(7,7,7) ,3);
   tree.search( std::back_inserter( res ), r );
   
@@ -96,15 +80,5 @@ int   main()
   
   tree.delete_all();
   
-  
-  
-  return  0;
+  return 0;
 }
-
-
-
-
-
-
-
-

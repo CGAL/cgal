@@ -7,23 +7,14 @@
  *            Iddo Hanniel
 \*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*/
 
-//might be needed when compiling with g++-2.7.2 
-//#ifdef  __GNUG__ 
-//#include  <typeinfo>
-//#endif  /* __GNUG__ */ 
-#include <CGAL/config.h>
+#include <CGAL/Cartesian.h>
+
 #include <iostream>
 #include <ctime>
 #include <cassert>
-
-#include  <CGAL/Cartesian.h>
-#include  <CGAL/Point_3.h>
-
 #include <list>
 
-#include  <CGAL/kdtree_d.h>
-
-
+#include <CGAL/kdtree_d.h>
 
 template <int  DIM>
 class Point_float_d 
@@ -76,7 +67,6 @@ std::ostream &operator<<(std::ostream &os, const Point_float_d<DIM> &p)
   std::cout << ")";
   return os;
 }
-  
 
 typedef Point_float_d<4>  point;
 typedef CGAL::Kdtree_interface<point>  kd_interface;
@@ -84,18 +74,16 @@ typedef CGAL::Kdtree_d<kd_interface>  kd_tree;
 typedef kd_tree::Box  box;
 typedef std::list<point>  points_list; 
 
-
 //RANDOM FUNCTIONS
 // dblRand - a random number between 0..1 
 #ifndef  RAND_MAX
 #define  RAND_MAX    0x7fffffff
-#endif  // RAND_MAX
+#endif
 
-static inline  double    dblRand( void )
+inline double dblRand( void )
 {
     return  (double)rand() / (double)RAND_MAX;
 }
-
 
 void random_points( int  num, points_list &l, int DIM)
 {
@@ -113,10 +101,8 @@ void random_points( int  num, points_list &l, int DIM)
     }
 }
 
-
-int   main()
+int main()
 {
-
   CGAL::Kdtree_d<kd_interface>  tree(3);
   
   srand( (unsigned)time(NULL) );
@@ -126,21 +112,19 @@ int   main()
   points_list  l , res;
   random_points( 30, l , 4);
 
-  
   std::cout << "Listing of random points:\n" ;
   std::copy (l.begin(),l.end(),std::ostream_iterator<point>(std::cout,"\n") );
   std::cout << std::endl;
   
-  // building the tree for the random points
+  // Building the tree for the random points
   tree.build( l );
   
-  //checking validity
+  // Checking validity
   if  ( ! tree.is_valid() )
     tree.dump();
   assert( tree.is_valid() );
   
-  
-  //searching the box r
+  // Searching the box r
   point p,q;
   for (int k=0;k<4;k++)
     {
@@ -157,16 +141,6 @@ int   main()
   std::cout << std::endl;
   
   tree.delete_all();
-  
-  
-  
-  return  0;
+
+  return 0;
 }
-
-
-
-
-
-
-
-
