@@ -1,13 +1,12 @@
 \chapter{Extensible Kernel}
 
+
+This manual section describe how users can plug user defined
+geometric classes in existing \cgal\ kernels.  This is best
+illustrated by an example.
+
+
 \section{Introduction}
-
-The following manual sections describe how users can plug user defined
-geometric classes in existing \cgal\ kernels.
-
-\section{The Anatomy of a Kernel}
-
-\subsection{Introduction}
 
 \cgal\ defines the concept of a geometry kernel. Such a kernel provides types,
 construction objects and generalized predicates. Most implementations
@@ -20,7 +19,8 @@ kernel concept (but there are some exceptions).
 
 
 
-\subsection{An Example}
+
+\section{An Extensive Example}
 
 Assume you have the following point class, where the coordinates are
 stored in an array of \ccc{doubles}, where we have another data member
@@ -191,6 +191,11 @@ the functors. All the other types are inherited.
 
 
 Finally, we give an example how this new kernel can be used.
+Predicates and constructions work with the new point, they
+can be a used to construct segments and triangles with, and
+data structures from the Basic Library, as the Delaunay
+triangulation work with them.  The kernel itself can be
+made robust by plugging it in the \ccc{Filtered_kernel}.
 
 
 \ccHtmlLinksOff
@@ -210,3 +215,7 @@ use the functor \ccc{MyKernel<double>::Orientation_2}.
 
 Rewriting the code is however pretty easy, as you can give
 the functor object the same name as the global function.
+
+We did not go through the entire kernel, to also make
+it possible to plug in user defined lines, rays or triangles.
+
