@@ -16,10 +16,12 @@
 include .env
 
 # make the lib and all demos, and test
-all:
-	make -C src/CGALQt -f makefile_Qt
+all: lib
 	make -C demo/Qt_widget
 	make -C test/Qt_widget
+
+lib:
+	make -C src/CGALQt -f makefile_Qt
 
 # compile the doc_tex in a .dvi file.
 doc:
