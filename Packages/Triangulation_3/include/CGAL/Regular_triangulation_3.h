@@ -95,9 +95,7 @@ public:
     return number_of_vertices() - n;
   }
 
-  Vertex_handle insert( const Weighted_point & p,
-	                Cell_handle start = NULL,
-			Vertex_handle v = NULL);
+  Vertex_handle insert( const Weighted_point & p, Cell_handle start = NULL);
 
   Vertex_handle push_back(const Weighted_point &p)
   {
@@ -354,7 +352,7 @@ side_of_power_segment( Cell_handle c, const Weighted_point &p) const
 template < class Gt, class Tds >
 typename Regular_triangulation_3<Gt,Tds>::Vertex_handle
 Regular_triangulation_3<Gt,Tds>::
-insert(const Weighted_point & p, Cell_handle start, Vertex_handle v) 
+insert(const Weighted_point & p, Cell_handle start) 
 {
   switch (dimension()) {
   case 3: 
@@ -371,7 +369,7 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
 	  return NULL;
       // Should I mark c's vertices too ?
       Conflict_tester_3 tester(p, this);
-      v = insert_conflict(c, tester, v);
+      Vertex_handle v = insert_conflict(c, tester);
       v->set_point(p);
       for( typename std::vector<Vertex_handle>::iterator
 		it = tester.conflict_vector().begin();
@@ -402,7 +400,7 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
 	  if (! in_conflict_2(p, c, 3))
 	      return NULL;
 	  Conflict_tester_2 tester(p, this);
-	  v = insert_conflict(c, tester, v);
+	  Vertex_handle v = insert_conflict(c, tester);
 	  v->set_point(p);
           for( typename std::vector<Vertex_handle>::iterator
 		it = tester.conflict_vector().begin();
@@ -422,7 +420,7 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
 	{
 	  // if the 2d triangulation is Delaunay, the 3d
 	  // triangulation will be Delaunay
-	  return Tr_Base::insert_outside_affine_hull(p,v); 
+	  return Tr_Base::insert_outside_affine_hull(p);
 	}
       }
     }//dim 2
@@ -437,10 +435,7 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
 	{
 	  if (! in_conflict_1(p, c) )
 	      return NULL;
-	  Vertex_handle v = _tds.create_vertex();
-	  v->set_point(p);
-	  Cell_handle bound[2];
-	  Cell_handle n;
+	  Cell_handle n, bound[2];
 	  std::set<Cell_handle> conflicts;
 
 	  for (int j =0; j<2; j++ ) {
@@ -456,6 +451,9 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
 	    }
 	    bound[j] = n;
 	  }
+
+	  Vertex_handle v = _tds.create_vertex();
+	  v->set_point(p);
 	  if ( bound[0] != bound[1] ) {
 	    if ( (c != bound[0]) && (c != bound[1]) )
 	      (void) conflicts.insert(c);
@@ -476,7 +474,7 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
       case VERTEX:
 	return c->vertex(li);
       case OUTSIDE_AFFINE_HULL:
-	return Tr_Base::insert_outside_affine_hull(p,v); 
+	return Tr_Base::insert_outside_affine_hull(p);
       case FACET:
       case CELL:
 	// impossible in dimension 1
@@ -487,7 +485,7 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
     {
       // temporary : will only work for non degenerated dimensions
       // (only for the first 4 points if they form a true tetrahedron)
-      return Tr_Base::insert(p,start,v);
+      return Tr_Base::insert(p,start);
     }
   }
 }

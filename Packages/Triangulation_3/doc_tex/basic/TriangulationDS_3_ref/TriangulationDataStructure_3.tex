@@ -55,7 +55,7 @@ The second template parameter of the basic triangulation class
 \ccc{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>} is a triangulation 
 data structure class. (See Chapter~\ref{chapter-TDS3}.)  
 
-To ensure all the \textbf{flexibility} of class \ccc{Triangulation_3}
+To ensure all the \textbf{flexibility} of the class \ccc{Triangulation_3}
 described in 
 \lcTex{ \ccRefPage{CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>}
 and in } Chapter~\ref{chapter-Triangulation3}, a model of a
@@ -127,7 +127,7 @@ incident to a given edge. They are bidirectional and non-mutable.
 
 The previous two methods are equivalent.
 
-\ccThree{Verte____}{tds.insert_in_facet()}{}
+\ccThree{Vertex_handle_}{tds.insert_in_facet()}{}
 
 \ccMethod{void swap(TriangulationDataStructure_3 & tds1);} 
 {Swaps \ccVar\ and \ccc{tds1}. There is no copy of cells and vertices,
@@ -222,7 +222,7 @@ methods for facets are defined here.
 \ccMethod{bool has_vertex(const Facet & f, Vertex_handle v, int & j) const;}
 {If \ccc{v} is a vertex of \ccc{f}, then \ccc{j} is the index of
 \ccc{v} in the cell \ccc{f.first}, and the method returns \ccc{true}.
-\ccPrecond{\ccVar.dimension()==3}}
+\ccPrecond{\ccVar.dimension()=3}}
 \ccGlue
 \ccMethod{bool has_vertex(Cell_handle c, int i, Vertex_handle v, int & j) const;}
 {Same for facet \ccc{(c,i)}. Computes the index \ccc{j} of \ccc{v} in
@@ -245,7 +245,7 @@ vertices.
 {}
 \ccGlue
 \ccMethod{bool are_equal(const Facet & f, Cell_handle n, int j) const;}
-{For these three methods: \ccPrecond{\ccVar.dimension()==3}.}
+{For these three methods: \ccPrecond{\ccVar.dimension()=3}.}
 
 \ccHeading{Flips}
 
@@ -314,70 +314,58 @@ known to be flippable.
 The following modifier member functions guarantee
 the combinatorial validity of the resulting triangulation.
 
-\ccMethod{Vertex_handle insert_in_cell(Vertex_handle v, Cell_handle c);} 
-{Inserts vertex \ccc{v} in cell \ccc{c}. Cell \ccc{c} is split into four
-new cells, each of these cells being formed with \ccc{v} and a facet
-of \ccc{c}.
-The returned vertex is either \ccc{v} if \ccc{v} was non \ccc{NULL} or a new 
-vertex if \ccc{v} was \ccc{NULL}.
-\ccPrecond{\ccVar.dimension() $=3$ and \ccc{c} is a cell of \ccVar.}}
+\ccMethod{Vertex_handle insert_in_cell(Cell_handle c);} 
+{Creates a new vertex, inserts it in cell \ccc{c} and returns its handle.
+The cell \ccc{c} is split into four new cells, each of these cells being
+formed by the new vertex and a facet of \ccc{c}.
+\ccPrecond{\ccVar.\ccc{dimension()} $= 3$ and \ccc{c} is a cell of \ccVar.}}
 
-\ccMethod{Vertex_handle insert_in_facet(Vertex_handle v, const Facet & f);} 
-{Inserts vertex \ccc{v} in facet \ccc{f}. In dimension 3, the two
-incident cells are split into 3 new cells; in dimension 2, the facet is
-split into 3 facets.
-The returned vertex is either \ccc{v} if \ccc{v} was non \ccc{NULL} or a new 
-vertex if \ccc{v} was \ccc{NULL}.
+\ccMethod{Vertex_handle insert_in_facet(const Facet & f);} 
+{Creates a new vertex, inserts it in facet \ccc{f} and returns its handle.
+In dimension 3, the two incident cells are split into 3 new cells;
+in dimension 2, the facet is split into 3 facets.
 \ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$ and \ccc{f} is a
 facet of \ccVar.}} 
 
-\ccMethod{Vertex_handle insert_in_facet(Vertex_handle v, Cell_handle c, int i);} 
-{Inserts \ccc{v} in facet \ccc{i} of \ccc{c}.
-The returned vertex is either \ccc{v} if \ccc{v} was non \ccc{NULL} or a new 
-vertex if \ccc{v} was \ccc{NULL}.
+\ccMethod{Vertex_handle insert_in_facet(Cell_handle c, int i);} 
+{Creates a new vertex, inserts it in facet \ccc{i} of \ccc{c} and returns its
+handle.
 \ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$, $i \in \{0,1,2,3\}$ 
 in dimension~3, $i=3$ in dimension~2 and \ccc{(c,i)} is a facet of
 \ccVar.}} 
 
-\ccMethod{Vertex_handle insert_in_edge(Vertex_handle v, Edge e);} 
-{Inserts vertex \ccc{v} in edge \ccc{e}. In dimension 3, all the
+\ccMethod{Vertex_handle insert_in_edge(Edge e);} 
+{Creates a new vertex, inserts it in edge \ccc{e} and returns its handle.
+In dimension 3, all the
 incident cells are split into 2 new cells; in dimension 2, the 2
 incident facets are split into 2 new facets; in dimension 1, the edge is 
 split into 2 new edges.
-The returned vertex is either \ccc{v} if \ccc{v} was non \ccc{NULL} or a new 
-vertex if \ccc{v} was \ccc{NULL}.
 \ccPrecond{\ccVar.\ccc{dimension()} $\geq 1$ and \ccc{e} is an edge of
 \ccVar.}} 
 
-\ccMethod{Vertex_handle insert_in_edge(Vertex_handle v, Cell_handle c, int i, int j);} 
-{Inserts \ccc{v} in edge $(i,j)$ of \ccc{c}.
-The returned vertex is either \ccc{v} if \ccc{v} was non \ccc{NULL} or a new 
-vertex if \ccc{v} was \ccc{NULL}.
+\ccMethod{Vertex_handle insert_in_edge(Cell_handle c, int i, int j);} 
+{Creates a new vertex, inserts it in edge $(i,j)$ of \ccc{c} and returns its
+handle.
 \ccPrecond{\ccVar.\ccc{dimension()} $\geq 1$. $i\neq j$, $i,j \in
 \{0,1,2,3\}$ in dimension~3, $i,j \in \{0,1,2\}$ in dimension~2, $i,j
 \in \{0,1\}$ in dimension~1 and \ccc{(c,i,j)} is an edge of \ccVar.}}
 
-\ccMethod{Vertex_handle insert_increase_dimension(
-			Vertex_handle v, 
-			Vertex_handle star = NULL, 
-			bool reorient = false);}
+\ccMethod{Vertex_handle insert_increase_dimension(Vertex_handle star = NULL);}
 {Transforms a triangulation of the sphere $S^d$ of $\R^{d+1}$ into the
-triangulation of the sphere $S^{d+1}$ of $\R^{d+2}$ by adding vertex \ccc{v}:  
+triangulation of the sphere $S^{d+1}$ of $\R^{d+2}$ by adding a new vertex
+\ccc{v}:  
 \ccc{v} is linked to all the vertices to triangulate one of the two
 halfspheres of dimension $(d+1)$. Vertex \ccc{star} is used to
 triangulate the second halfsphere (when there is an associated
-geometric triangulation, star is in fact the vertex associated with
-its infinite vertex). See
-Figure~\ref{TDS3-fig-topo-insert_outside_affine_hull}.\\  
+geometric triangulation, \ccc{star} is in fact the vertex associated with
+its infinite vertex).
+See Figure~\ref{TDS3-fig-topo-insert_outside_affine_hull}.\\  
 The numbering of the cells is such that, if \ccc{f} was a face of
 maximal dimension in the initial triangulation, then \ccc{(f,v)} (in
-this order) is the corresponding face in the new triangulation. If the
-boolean \ccc{reorient} is set to true, all the faces of maximal
-dimension are given the opposite orientation.\\
+this order) is the corresponding face in the new triangulation.
 This method can be used to insert the first two vertices in an empty
 triangulation.\\
-The returned vertex is either \ccc{v} if \ccc{v} was non \ccc{NULL} or a new 
-vertex if \ccc{v} was \ccc{NULL}.
+A handle to \ccc{v} is returned.
 \ccPrecond{\ccVar.\ccc{dimension()} $= d < 3$. When
 \ccVar.\ccc{number_of_vertices()} $>0$, $star \neq NULL$ and \ccc{star}
 is a vertex of \ccVar.}} 
@@ -398,12 +386,25 @@ alt="insert_increase_dimension} (1-dimensional case)">
 \end{ccHtmlOnly}
 \end{figure} 
 
-\ccMethod{void remove_degree_dplus1(Vertex_handle v, Cell_handle f = NULL);}
+\ccMethod{void remove_decrease_dimension(Vertex_handle v);}
+{This operation is the reciprocal of \ccc{insert_increase_dimension()}.
+It transforms a triangulation of the sphere $S^d$ of $\R^{d+1}$ into the
+triangulation of the sphere $S^{d-1}$ of $\R^{d}$ by removing the vertex
+\ccc{v}.
+\ccPrecond{\ccVar.\ccc{dimension()} $= d \geq -1$.
+\ccVar.\ccc{degree(v)} $=$ \ccVar.\ccc{number_of_vertices()} $-1$.}
+}
+
+\ccMethod{Cell_handle remove_from_simplex(Vertex_handle v);}
 {Removes \ccc{v}. The incident faces of maximal dimension incident to
 \ccc{v} are replaced by a single face of the same dimension. This
-operation is exactly reciprocal to \ccVar.\ccc{insert_in_cell(v)}.
-\ccPrecond{\ccc{v} is a vertex of degree \ccVar\ccc{.dimension()+1}.}\\
-\textit{not yet implemented}}
+operation is exactly the reciprocal to \ccVar.\ccc{insert_in_cell(v)}.
+\ccPrecond{\ccVar.\ccc{degree(v)} $=$ \ccVar.\ccc{dimension()+1}.}
+}
+
+\ccMethod{void reorient();}
+{Changes the orientation of all cells of the triangulation data structure.
+\ccPrecond{\ccVar.\ccc{dimension()} $\geq 1$.}}
 
 \ccMethod{void clear();}
 {Deletes all cells and vertices. \ccVar\ is reset as a triangulation

@@ -71,36 +71,32 @@ _test_cls_tds_3( const Tds &)
   assert(tdsfromfile.number_of_vertices() == 0);
 
   std::cout << "    copy" << std::endl;
-  tds2.insert_increase_dimension(NULL);
+  tds2.insert_increase_dimension();
   assert( tds2.number_of_vertices() == 1 );
   Tds tds3(tds2);
 
   Vertex_iterator vit;
   vit=tds3.vertices_begin();
-  Vertex_handle v2 = tds3.create_vertex();
-  tds3.insert_increase_dimension(v2, vit->handle());
+  tds3.insert_increase_dimension(vit->handle());
   std::cout << "ok" << std::endl;
   assert(tds3.is_valid());
   Tds tds4 = tds3;
   vit=tds4.vertices_begin();
-  Vertex_handle v3 = tds4.create_vertex();
-  tds4.insert_increase_dimension(v3, vit->handle());
+  tds4.insert_increase_dimension(vit->handle());
   std::cout << "ok" << std::endl;
   assert(tds4.is_valid());
   Tds tds5;
   tds5.swap(tds4);
   tds4=tds5;
   vit=tds5.vertices_begin();
-  Vertex_handle v4 = tds5.create_vertex();
-  tds5.insert_increase_dimension(v4, vit->handle());
+  tds5.insert_increase_dimension(vit->handle());
   std::cout << "ok" << std::endl;
   assert(tds5.is_valid());
   Tds tds6;
   tds6.swap(tds5);
   tds5=tds6;
   vit=tds6.vertices_begin();
-  Vertex_handle v5 = tds6.create_vertex();
-  tds6.insert_increase_dimension(v5, vit->handle());
+  tds6.insert_increase_dimension(vit->handle());
   std::cout << "ok" << std::endl;
   assert(tds6.is_valid());
 
@@ -129,15 +125,12 @@ _test_cls_tds_3( const Tds &)
   Cell_iterator cit, cdone;
   int nbflips=0;
   int i;
-  Vertex_handle v6 = tds6.create_vertex();
   cit = tds6.cells_begin();
-  tds6.insert_in_cell(v6, cit->handle());
-  Vertex_handle v7 = tds6.create_vertex();
+  tds6.insert_in_cell(cit->handle());
   cit = tds6.cells_begin();
-  tds6.insert_in_cell(v7, cit->handle());
-  Vertex_handle v8 = tds6.create_vertex();
+  tds6.insert_in_cell(cit->handle());
   cit = tds6.cells_begin();
-  tds6.insert_in_cell(v8, cit->handle());
+  tds6.insert_in_cell(cit->handle());
   assert(tds6.number_of_vertices()==8);
 //   std::cout << tds6.number_of_cells()<< " cells" << std::endl;
 

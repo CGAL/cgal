@@ -199,9 +199,7 @@ public:
     return number_of_vertices() - n;
   }
 
-  Vertex_handle insert(const Point & p, 
-		       Cell_handle start = NULL, 
-		       Vertex_handle v = NULL);
+  Vertex_handle insert(const Point & p, Cell_handle start = NULL);
 
   Vertex_handle push_back(const Point & p)
   {
@@ -372,7 +370,7 @@ private:
 template < class Gt, class Tds >
 typename Delaunay_triangulation_3<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_3<Gt,Tds>::
-insert(const Point & p, Cell_handle start, Vertex_handle v)
+insert(const Point & p, Cell_handle start)
 {
   switch (dimension()) {
   case 3:
@@ -384,7 +382,7 @@ insert(const Point & p, Cell_handle start, Vertex_handle v)
 	  return c->vertex(li);
 
       Conflict_tester_3 tester(p, this);
-      v = insert_conflict(c, tester, v);
+      Vertex_handle v = insert_conflict(c, tester);
       v->set_point(p);
       return v;
     }// dim 3
@@ -400,7 +398,7 @@ insert(const Point & p, Cell_handle start, Vertex_handle v)
       case EDGE:
 	{
           Conflict_tester_2 tester(p, this);
-	  v = insert_conflict(c, tester, v);
+	  Vertex_handle v = insert_conflict(c, tester);
 	  v->set_point(p);
 	  return v;
 	}
@@ -409,12 +407,12 @@ insert(const Point & p, Cell_handle start, Vertex_handle v)
       case OUTSIDE_AFFINE_HULL:
 	  // if the 2d triangulation is Delaunay, the 3d
 	  // triangulation will be Delaunay
-	return Tr_Base::insert_outside_affine_hull(p,v); 
+	return Tr_Base::insert_outside_affine_hull(p); 
       }
     }//dim 2
   default :
     // dimension <= 1
-    return Tr_Base::insert(p,start,v);
+    return Tr_Base::insert(p,start);
   }
 }// insert(p)
 

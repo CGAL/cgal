@@ -44,13 +44,13 @@
 
 #include <CGAL/Pointer.h>
 
+#include <CGAL/DS_Container.h>
+
 #include <CGAL/Triangulation_ds_cell_3.h>
 #include <CGAL/Triangulation_ds_vertex_3.h>
 
 #include <CGAL/Triangulation_ds_iterators_3.h>
 #include <CGAL/Triangulation_ds_circulators_3.h>
-
-#include <CGAL/DS_Container.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -117,7 +117,7 @@ public:
   }  
 
   int number_of_vertices() const {return _number_of_vertices;}
-  
+
   int dimension() const {return _dimension;}
 
   int number_of_cells() const 
@@ -349,8 +349,7 @@ public:
 
   // Internal function : assumes the conflict cells are marked.
   template <class CellIt>
-  Vertex_handle _star_hole(Vertex_handle newv,
-	                   CellIt cell_begin, CellIt cell_end,
+  Vertex_handle _star_hole(CellIt cell_begin, CellIt cell_end,
 	                   Cell_handle begin = NULL, int i = 0)
   {
       CGAL_triangulation_precondition(begin != NULL);
@@ -358,8 +357,7 @@ public:
       // At the moment, the functionality is not available, you have
       // to specify a starting facet.
 
-      if ( newv == NULL )
-          newv = create_vertex();
+      Vertex_handle newv = create_vertex();
 
       Cell_handle cnew;
       if (dimension() == 3)
@@ -374,33 +372,30 @@ public:
 
   // Mark the cells in conflict, then calls the internal function.
   template <class CellIt>
-  Vertex_handle star_hole(Vertex_handle newv,
-	                  CellIt cell_begin, CellIt cell_end,
+  Vertex_handle star_hole(CellIt cell_begin, CellIt cell_end,
 	                  Cell_handle begin = NULL, int i = 0)
   {
       for (CellIt cit = cell_begin; cit != cell_end; ++cit)
 	  (*cit)->set_in_conflict_flag(1);
 
-      return _star_hole(newv, cell_begin, cell_end, begin, i);
+      return _star_hole(cell_begin, cell_end, begin, i);
   }
 
   //INSERTION
 
-  Vertex_handle insert_in_cell(Vertex_handle v, Cell_handle c);
+  Vertex_handle insert_in_cell(Cell_handle c);
 
-  Vertex_handle insert_in_facet(Vertex_handle v, const Facet & f)
-    { return insert_in_facet(w,f.first,f.second); }
+  Vertex_handle insert_in_facet(const Facet & f)
+    { return insert_in_facet(f.first, f.second); }
   
-  Vertex_handle insert_in_facet(Vertex_handle v, Cell_handle c, int i);
+  Vertex_handle insert_in_facet(Cell_handle c, int i);
   
-  Vertex_handle insert_in_edge(Vertex_handle v, const Edge & e)   
-    { return insert_in_edge(w, e.first, e.second, e.third); }
+  Vertex_handle insert_in_edge(const Edge & e)   
+    { return insert_in_edge(e.first, e.second, e.third); }
   
-  Vertex_handle insert_in_edge(Vertex_handle v, Cell_handle c, int i, int j);
+  Vertex_handle insert_in_edge(Cell_handle c, int i, int j);
 
-  Vertex_handle insert_increase_dimension(Vertex_handle v, // new vertex
-				     Vertex_handle star = NULL,
-				     bool reorientt = false);
+  Vertex_handle insert_increase_dimension(Vertex_handle star = NULL);
 
   // REMOVAL
 
@@ -1580,14 +1575,13 @@ print_cells(std::ostream& os, std::map<Vertex_handle, int> &V ) const
 template <class Vb, class Cb >
 typename Triangulation_data_structure_3<Vb,Cb>::Vertex_handle
 Triangulation_data_structure_3<Vb,Cb>::
-insert_in_cell( Vertex_handle v, Cell_handle c )
+insert_in_cell(Cell_handle c)
 {
   CGAL_triangulation_precondition( dimension() == 3 );
-  CGAL_triangulation_precondition( (c != NULL) );
+  CGAL_triangulation_precondition( c != NULL );
   CGAL_triangulation_expensive_precondition( is_cell(c) );
 
-  if ( v == NULL )
-    v = create_vertex();
+  Vertex_handle v = create_vertex();
 
   Vertex_handle v0 = c->vertex(0);
   Vertex_handle v1 = c->vertex(1);
@@ -1626,14 +1620,13 @@ insert_in_cell( Vertex_handle v, Cell_handle c )
 template <class Vb, class Cb >
 typename Triangulation_data_structure_3<Vb,Cb>::Vertex_handle
 Triangulation_data_structure_3<Vb,Cb>::
-insert_in_facet(Vertex_handle v, Cell_handle c, int i)
+insert_in_facet(Cell_handle c, int i)
 { // inserts v in the facet opposite to vertex i of cell c
 
-  CGAL_triangulation_precondition( (c != NULL)); 
+  CGAL_triangulation_precondition( c != NULL );
   CGAL_triangulation_precondition( dimension() >= 2 );
 
-  if ( v == NULL )
-    v = create_vertex();
+  Vertex_handle v = create_vertex();
 
   switch ( dimension() ) {
 
@@ -1732,20 +1725,16 @@ insert_in_facet(Vertex_handle v, Cell_handle c, int i)
 
   return v;
 }
-// end insert_in_facet
 
 template <class Vb, class Cb >
 typename Triangulation_data_structure_3<Vb,Cb>::Vertex_handle
 Triangulation_data_structure_3<Vb,Cb>::
-insert_in_edge(Vertex_handle v, Cell_handle c, int i, int j)   
-  // inserts v in the edge of cell c with vertices i and j
+insert_in_edge(Cell_handle c, int i, int j)   
+  // inserts a vertex in the edge of cell c with vertices i and j
 { 
   CGAL_triangulation_precondition( c != NULL ); 
   CGAL_triangulation_precondition( i != j );
   CGAL_triangulation_precondition( dimension() >= 1 );
-
-  if ( v == NULL )
-    v = create_vertex();
 
   switch ( dimension() ) {
   case 3:
@@ -1763,12 +1752,13 @@ insert_in_edge(Vertex_handle v, Cell_handle c, int i, int j)
 	  ++ccir;
       } while (ccir->handle() != c);
 
-      _star_hole(v, cells.begin(), cells.end(), c, i);
-      break;
+      return _star_hole(cells.begin(), cells.end(), c, i);
     }
   case 2:
     {
       CGAL_triangulation_expensive_precondition( is_edge(c,i,j) );
+
+      Vertex_handle v = create_vertex();
       int k=3-i-j; // index of the third vertex of the facet
       Cell_handle d = c->neighbor(k);
       int kd = d->index(c);
@@ -1800,11 +1790,11 @@ insert_in_edge(Vertex_handle v, Cell_handle c, int i, int j)
       set_adjacency(cnew, k, dnew, kd);
 
       v->set_cell(cnew);
-      break;
+      return v;
     }
-
-  case 1:
+  default: // case 1:
     {
+      Vertex_handle v = create_vertex();
       CGAL_triangulation_expensive_precondition( is_edge(c,i,j) );
       Cell_handle cnew = create_face(v,c->vertex(1),NULL);
       c->vertex(1)->set_cell(cnew);
@@ -1813,30 +1803,24 @@ insert_in_edge(Vertex_handle v, Cell_handle c, int i, int j)
       set_adjacency(cnew, 1, c, 0);
 
       v->set_cell(cnew); 
-      break;
+      return v;
     }
   }
-
-  return v;
-}// end insert_in_edge
+}
 
 template <class Vb, class Cb >
 typename Triangulation_data_structure_3<Vb,Cb>::Vertex_handle
 Triangulation_data_structure_3<Vb,Cb>::
-insert_increase_dimension(Vertex_handle v, // new vertex
-			  Vertex_handle star,
-			  bool reorientt) 
+insert_increase_dimension(Vertex_handle star) 
   // star = vertex from which we triangulate the facet of the
   // incremented dimension  
   // ( geometrically : star = infinite vertex )
   // = NULL only used to insert the 1st vertex (dimension -2 to dimension -1)
   // changes the dimension
-  // if (reorientt) the orientation of the cells is modified
 {
   CGAL_triangulation_precondition( dimension() < 3);
 
-  if ( v == NULL ) 
-    v = create_vertex();
+  Vertex_handle v = create_vertex();
 
   int dim = dimension();
   if (dim != -2) {
@@ -1991,9 +1975,6 @@ insert_increase_dimension(Vertex_handle v, // new vertex
     }
   }// end switch
 
-  if (dim >= 0 && reorientt)
-    reorient();
-    
   return v;
 }
 
