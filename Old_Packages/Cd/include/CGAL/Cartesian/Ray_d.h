@@ -2,18 +2,11 @@
 // revision_date : $Date$
 // author(s)     : Herve.Bronnimann@sophia.inria.fr
 
-
-
 #ifndef CGAL_CARTESIAN_RAY_D_H
 #define CGAL_CARTESIAN_RAY_D_H
 
-#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_D_H
 #include <CGAL/Cartesian/redefine_names_d.h>
-#endif
-
-#ifndef CGAL_CARTESIAN_TWOTUPLE_H
 #include <CGAL/Twotuple.h>
-#endif // CGAL_CARTESIAN_TWOTUPLE_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -34,16 +27,16 @@ public:
   typedef typename R::Point_d                   Point_d;
   typedef typename R::Direction_d               Direction_d;
   typedef typename R::Line_d                    Line_d;
-  typedef typename R::Aff_transformation_d      Aff_transformation_d;
+  // typedef typename R::Aff_transformation_d      Aff_transformation_d;
 #else
   typedef RayCd<R>                              Self;
   typedef typename R::Point_d_base              Point_d;
   typedef typename R::Direction_d_base          Direction_d;
   typedef typename R::Line_d_base               Line_d;
-  typedef typename R::Aff_transformation_d_base Aff_transformation_d;
+  // typedef typename R::Aff_transformation_d_base Aff_transformation_d;
 #endif
 
-  RayCd(int d = 0);
+  RayCd();
   RayCd(const Self &r);
   RayCd(const Point_d &sp, const Point_d &secondp);
   RayCd(const Point_d &sp, const Direction_d &d);
@@ -64,7 +57,7 @@ public:
   Line_d      supporting_line() const;
   Self        opposite() const;
 
-  Self        transform(const Aff_transformation_d &t) const;
+  // Self        transform(const Aff_transformation_d &t) const;
 
   bool        is_degenerate() const;
   bool        has_on(const Point_d &p) const;
@@ -77,9 +70,7 @@ private:
 CGAL_END_NAMESPACE
 
 #ifndef CGAL_CARTESIAN_CLASS_DEFINED
-#ifndef CGAL_CARTESIAN_RAY_D_C
 #include <CGAL/Cartesian/Ray_d.C>
-#endif // CGAL_CARTESIAN_RAY_D_C
 #endif 
 
-#endif
+#endif // CGAL_CARTESIAN_RAY_D_H

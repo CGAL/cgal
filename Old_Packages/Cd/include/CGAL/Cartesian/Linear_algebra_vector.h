@@ -9,12 +9,23 @@
 #include <CGAL/d_tuple.h>
 #include <algorithm>
 #include <functional>
+#include <iostream>
 
 CGAL_BEGIN_NAMESPACE
 
 template < class _LA >
+class LA_vectorCd;
+
+template < class LA >
+std::ostream &
+operator<<(std::ostream &, const LA_vectorCd<LA> &);
+
+template < class _LA >
 class LA_vectorCd : public Handle
 {
+  // The last thing the world needs is a Vector class. Nevertheless,
+  // we have to provide one because no *generic* linear algebra toolkit
+  // is available -- *sigh*
 public:
   typedef _LA                              LA;
   typedef typename LA::FT                  FT;
@@ -29,36 +40,45 @@ public:
   LA_vectorCd(const FT &a, const FT &b, const FT &c);
   LA_vectorCd(const FT &a, const FT &b, const FT &c, const FT &d);
   LA_vectorCd(const Self &v);
-  ~LA_vectorCd();
-
   template < class InputIterator >
   LA_vectorCd(InputIterator first, InputIterator last)
   {
-    PTR = new _d_tuple<FT>(last-first);
+    new_rep(last-first);
     std::copy(first,last,begin());
   }
+  ~LA_vectorCd();
 
   Self&          operator=(const Self &v);
 
   bool           operator==(const Self &p) const;
   bool           operator!=(const Self &p) const;
 
-  FT             operator[](int i) const;
-
+  // Unary operators
+  Self           operator+() const { return *this; }
+  Self           operator-() const;
+  // Binary operators
   Self           operator+(const Self &w) const;
   Self           operator-(const Self &w) const;
-  Self           operator-() const;
   FT             operator*(const Self &w) const;
   Self           operator*(const FT &c) const;
   Self           operator/(const FT &c) const;
 
-  int            dimension() const { return ptr()->d; }
-  const_iterator begin()     const { return ptr()->e; }
-  const_iterator end()       const { return ptr()->e + dimension(); }
-  iterator       begin()           { return ptr()->e; }
-  iterator       end()             { return ptr()->e + dimension(); }
+  // Component access
+  int            dimension()       const { return ptr()->d; }
+  const_iterator begin()           const { return ptr()->e; }
+  const_iterator end()             const { return ptr()->e + dimension(); }
+  const FT      &operator[](int i) const { return *(begin()+i); }
+
+// protected:
+  iterator       begin()                 { return ptr()->e; }
+  iterator       end()                   { return ptr()->e + dimension(); }
+  FT            &operator[](int i)       { return *(begin()+i); }
+
+// debug:
+  void  print() const { std::cout << *this; }
 
 private:
+  void new_rep(int d)              { PTR = new _d_tuple<FT>(d); }
   const _d_tuple<FT>* ptr()  const { return (const _d_tuple<FT>*)PTR; }
   _d_tuple<FT>*       ptr()        { return (_d_tuple<FT>*)PTR; }
 };

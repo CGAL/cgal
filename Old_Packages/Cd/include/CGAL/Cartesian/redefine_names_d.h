@@ -15,8 +15,8 @@
 #define PointCd Point_d
 #define VectorCd Vector_d
 #define DirectionCd Direction_d
-#define LineCd Line_d
 #define PlaneCd Plane_d
+#define LineCd Line_d
 #define RayCd Ray_d
 #define SegmentCd Segment_d
 #define TriangleCd Triangle_d

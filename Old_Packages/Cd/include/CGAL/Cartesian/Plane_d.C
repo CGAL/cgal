@@ -141,9 +141,9 @@ PlaneCd<R CGAL_CTAG>::operator[](int i) const
 template < class R >
 inline
 typename PlaneCd<R CGAL_CTAG>::Point_d
-PlaneCd<R CGAL_CTAG>::point() const
+PlaneCd<R CGAL_CTAG>::point(int i) const
 {
-  return point_on_plane(*this);
+  return point_on_plane(*this,i);
 }
 
 template < class R >
@@ -175,7 +175,7 @@ template < class R >
 typename PlaneCd<R CGAL_CTAG>::Vector_d
 PlaneCd<R CGAL_CTAG>::base(int i) const
 {
-  return Vector_d(); // TODO
+  return point(i+1)-point(0);
 }
 
 /*
@@ -267,16 +267,16 @@ is_degenerate() const
 
 #ifndef CGAL_NO_OSTREAM_INSERT_PLANECD
 template < class R >
-std::ostream &operator<<(std::ostream &os, const PlaneCd<R CGAL_CTAG> &p)
+std::ostream &operator<<(std::ostream &os, const PlaneCd<R CGAL_CTAG> &h)
 {
-    switch(os.iword(IO::mode)) {
-    case IO::ASCII :
-    case IO::BINARY :
-        return os;
-    default:
-        os << "PlaneCd(" <<   ")";
-        return os;
-    }
+  typedef typename R::FT FT;
+  print_d<FT> prt(&os);
+  if (os.iword(IO::mode)==IO::PRETTY) os << "PlaneCd(";
+  prt(h.dimension());
+  if (os.iword(IO::mode)==IO::PRETTY) os << ", ("; prt.reset();
+  std::for_each(h.begin(),h.end(),prt);
+  if (os.iword(IO::mode)==IO::PRETTY) os << "))";
+  return os;
 }
 #endif // CGAL_NO_OSTREAM_INSERT_PLANECD
 

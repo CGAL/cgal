@@ -20,7 +20,7 @@ template < class R >
 LA_vectorCd<R CGAL_CTAG>::
 LA_vectorCd(int d)
 {
-  PTR = new _d_tuple<FT>(d);
+  new_rep(d);
 }
 
 template < class R >
@@ -56,15 +56,6 @@ bool
 LA_vectorCd<R CGAL_CTAG>::operator!=(const LA_vectorCd<R CGAL_CTAG> &v) const
 {
   return !(*this == v);
-}
-
-template < class R >
-inline
-typename LA_vectorCd<R CGAL_CTAG>::FT
-LA_vectorCd<R CGAL_CTAG>::operator[](int i) const
-{
-  CGAL_kernel_precondition( (i>=0) && (i<dimension()) );
-  return *(begin()+i);
 }
 
 template < class R >
@@ -136,16 +127,12 @@ std::ostream &
 operator<<(std::ostream &os, const LA_vectorCd<R CGAL_CTAG> &v)
 {
   typedef typename LA_vectorCd<R CGAL_CTAG>::FT FT;
-  switch(os.iword(IO::mode)) {
-    case IO::ASCII :
-    case IO::BINARY :
-      os << v.dimension();
-      std::for_each(v.begin(),v.end(),print_d<FT>(os));
-      break;
-    default:
-      os << v.dimension() << ", ";
-      std::for_each(v.begin(),v.end(),print_d<FT>(os));
-  }
+  print_d<FT> prt(&os);
+  if (os.iword(IO::mode)==IO::PRETTY) os << "LA_Vector(";
+  prt(v.dimension());
+  if (os.iword(IO::mode)==IO::PRETTY) os << ", ("; prt.reset();
+  std::for_each(v.begin(),v.end(),print_d<FT>(os));
+  if (os.iword(IO::mode)==IO::PRETTY) os << "))";
   return os;
 }
 #endif // CGAL_CARTESIAN_NO_OSTREAM_INSERT_LA_VECTORCD
@@ -162,15 +149,14 @@ operator>>(std::istream &is, LA_vectorCd<R CGAL_CTAG> &v)
     case IO::ASCII :
     case IO::BINARY :
       is >> dim;
-      w = new FT[dim];
-      std::copy_n(std::istream_iterator<FT>(is),dim, w);
+      v = LA_vectorCd<R CGAL_CTAG>(dim);
+      std::copy_n(std::istream_iterator<FT>(is),dim, v.begin());
       break;
     default:
       std::cerr << "" << std::endl;
       std::cerr << "Stream must be in ascii or binary mode" << std::endl;
       break;
   }
-  v = LA_vectorCd<R CGAL_CTAG>(dim,w,w+dim);
   return is;
 }
 #endif // CGAL_CARTESIAN_NO_ISTREAM_EXTRACT_LA_VECTORCD

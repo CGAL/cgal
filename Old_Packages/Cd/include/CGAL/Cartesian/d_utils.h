@@ -15,20 +15,30 @@ template < class NT >
 struct print_d
 {
   char *       _separator;
-  std::ostream _os;
+  std::ostream*_os;
   bool         _print_sep;
 
-  print_d(std::iostream &os) : _os(os), _print_sep(false)
+  print_d(std::ostream *os) : _os(os), _print_sep(false)
   {
-    if (os.iword(IO::mode)==IO::ASCII) _separator = " ";
-    else if (os.iword(IO::mode)==IO::BINARY) _separator = "";
+    if (_os->iword(IO::mode)==IO::ASCII) _separator = " ";
+    else if (_os->iword(IO::mode)==IO::BINARY) _separator = "";
     else _separator = ", ";
+  }
+  void reset()
+  {
+    _print_sep = false;
   }
 
   void operator()(const NT &x) {
-    os << x;
-    if (_print_sep && os.sword(IO::mode) != IO::BINARY)
-      os << _separator;
+    if (_print_sep && _os->iword(IO::mode) != IO::BINARY)
+      (*_os) << _separator;
+    (*_os) << x;
+    _print_sep = true;
+  }
+  void operator()(const int &x) {
+    if (_print_sep && _os->iword(IO::mode) != IO::BINARY)
+      (*_os) << _separator;
+    (*_os) << x;
     _print_sep = true;
   }
 };

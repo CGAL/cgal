@@ -25,18 +25,25 @@ public:
   typedef const FT*                        const_iterator;
   typedef FT*                              iterator;
   
+  Linear_algebraCd() {}
+
+  // Major routine for Linear_algebra_d
+  void   Gaussian_elimination(const Matrix &M,
+            Matrix &L, Matrix &U, FT &det, int &rank,
+            std::vector<int> &q, Vector &c) const;
+
   Matrix transpose(const Matrix &M) const;
 
   bool   inverse(const Matrix &M, Matrix &I, FT &D, Vector &c) const;
-  Matrix inverse(const Matrix M, RT &D) const;
+  Matrix inverse(const Matrix &M, RT &D) const;
   
   FT     determinant(const Matrix &M, Matrix &L, Matrix &U,
 	     std::vector<int> &q, Vector &c) const;
+  FT     determinant(const Matrix &M) const;
+  Sign   sign_of_determinant(const Matrix &M) const;
   bool   verify_determinant(const Matrix &M,
              const Matrix &L, const Matrix &U, const RT &D,
              const std::vector<int> &q, const Vector &c) const;
-  FT     determinant(const Matrix &M) const;
-  Sign   sign_of_determinant(const Matrix &M) const;
  
   bool   linear_solver(const Matrix &M, const Vector &b,
              Vector &x, RT &D, Matrix &spanning_vectors, Vector &c) const;

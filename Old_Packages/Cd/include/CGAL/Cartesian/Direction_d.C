@@ -85,6 +85,14 @@ DirectionCd<R CGAL_CTAG>::to_vector() const
   return Vector_d(*this);
 }
 
+template < class R >
+inline
+bool
+DirectionCd<R CGAL_CTAG>::is_degenerate() const
+{
+  return to_vector() == Vector_d(dimension(), NULL_VECTOR);
+}
+
 /*
 template < class R >
 inline

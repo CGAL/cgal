@@ -56,9 +56,10 @@ public:
 
   long           id() const;
   
+  bool           is_degenerate() const;
   Vector_d       to_vector() const;
-  // Self           transform(const Aff_transformation_d &t) const;
   Self           operator-() const;
+  // Self           transform(const Aff_transformation_d &t) const;
 
   RT             delta(int i) const;
 

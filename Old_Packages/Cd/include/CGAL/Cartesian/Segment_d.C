@@ -2,7 +2,7 @@
 // revision_date : $Date$
 // author(s)     : Andreas.Fabri@sophia.inria.fr
 
-#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_3_H
+#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_D_H
 #define CGAL_CTAG
 #endif
 
@@ -10,49 +10,50 @@
 #define typename
 #endif
 
-#include <CGAL/Cartesian/distance_computations_3.h>
+#include <CGAL/Cartesian/distance_computations_d.h>
 
-#ifndef CGAL_CARTESIAN_SEGMENT_3_C
-#define CGAL_CARTESIAN_SEGMENT_3_C
+#ifndef CGAL_CARTESIAN_SEGMENT_D_C
+#define CGAL_CARTESIAN_SEGMENT_D_C
 
 CGAL_BEGIN_NAMESPACE
 
 template < class R >
 inline
-_Twotuple< typename SegmentC3<R CGAL_CTAG>::Point_3 > *
-SegmentC3<R CGAL_CTAG>::ptr() const
+_Twotuple< typename SegmentCd<R CGAL_CTAG>::Point_d > *
+SegmentCd<R CGAL_CTAG>::ptr() const
 {
-  return (_Twotuple< Point_3 >*)PTR;
+  return (_Twotuple< Point_d >*)PTR;
 }
 
 template < class R >
-SegmentC3<R CGAL_CTAG>::
-SegmentC3()
+SegmentCd<R CGAL_CTAG>::
+SegmentCd()
 {
-  PTR = new _Twotuple< Point_3 >;
+  PTR = new _Twotuple< Point_d >;
 }
 
 template < class R >
-SegmentC3<R CGAL_CTAG>::
-SegmentC3(const SegmentC3<R CGAL_CTAG>  &s) :
+SegmentCd<R CGAL_CTAG>::
+SegmentCd(const SegmentCd<R CGAL_CTAG>  &s) :
   Handle((Handle&)s)
 {}
 
 template < class R >
-SegmentC3<R CGAL_CTAG>::
-SegmentC3(const typename SegmentC3<R CGAL_CTAG>::Point_3 &sp,
-          const typename SegmentC3<R CGAL_CTAG>::Point_3 &ep)
+SegmentCd<R CGAL_CTAG>::
+SegmentCd(const typename SegmentCd<R CGAL_CTAG>::Point_d &sp,
+          const typename SegmentCd<R CGAL_CTAG>::Point_d &ep)
 {
-  PTR = new _Twotuple< Point_3 >(sp, ep);
+  CGAL_kernel_precondition( sp.dimension() == ep.dimension() );
+  PTR = new _Twotuple< Point_d >(sp, ep);
 }
 
 template < class R >
-inline SegmentC3<R CGAL_CTAG>::~SegmentC3()
+inline SegmentCd<R CGAL_CTAG>::~SegmentCd()
 {}
 
 template < class R >
-SegmentC3<R CGAL_CTAG> &
-SegmentC3<R CGAL_CTAG>::operator=(const SegmentC3<R CGAL_CTAG> &s)
+SegmentCd<R CGAL_CTAG> &
+SegmentCd<R CGAL_CTAG>::operator=(const SegmentCd<R CGAL_CTAG> &s)
 {
   Handle::operator=(s);
   return *this;
@@ -61,7 +62,7 @@ SegmentC3<R CGAL_CTAG>::operator=(const SegmentC3<R CGAL_CTAG> &s)
 template < class R >
 inline
 bool
-SegmentC3<R CGAL_CTAG>::operator==(const SegmentC3<R CGAL_CTAG> &s) const
+SegmentCd<R CGAL_CTAG>::operator==(const SegmentCd<R CGAL_CTAG> &s) const
 {
   if (ptr() == s.ptr()) return true; // identical
   return (source() == s.source())  && (target() == s.target());
@@ -70,175 +71,151 @@ SegmentC3<R CGAL_CTAG>::operator==(const SegmentC3<R CGAL_CTAG> &s) const
 template < class R >
 inline
 bool
-SegmentC3<R CGAL_CTAG>::operator!=(const SegmentC3<R CGAL_CTAG> &s) const
+SegmentCd<R CGAL_CTAG>::operator!=(const SegmentCd<R CGAL_CTAG> &s) const
 {
   return !(*this == s);
 }
 
 template < class R >
-long  SegmentC3<R CGAL_CTAG>::id() const
+long  SegmentCd<R CGAL_CTAG>::id() const
 {
   return (long) PTR;
 }
 
 template < class R >
-typename SegmentC3<R CGAL_CTAG>::Point_3
-SegmentC3<R CGAL_CTAG>::start() const
+typename SegmentCd<R CGAL_CTAG>::Point_d
+SegmentCd<R CGAL_CTAG>::start() const
 {
   return ptr()->e0;
 }
 
 template < class R >
-typename SegmentC3<R CGAL_CTAG>::Point_3
-SegmentC3<R CGAL_CTAG>::end() const
+typename SegmentCd<R CGAL_CTAG>::Point_d
+SegmentCd<R CGAL_CTAG>::end() const
 {
   return ptr()->e1;
 }
 
 template < class R >
-typename SegmentC3<R CGAL_CTAG>::Point_3
-SegmentC3<R CGAL_CTAG>::source() const
+typename SegmentCd<R CGAL_CTAG>::Point_d
+SegmentCd<R CGAL_CTAG>::source() const
 {
   return ptr()->e0;
 }
 
 template < class R >
-typename SegmentC3<R CGAL_CTAG>::Point_3
-SegmentC3<R CGAL_CTAG>::target() const
+typename SegmentCd<R CGAL_CTAG>::Point_d
+SegmentCd<R CGAL_CTAG>::target() const
 {
   return ptr()->e1;
 }
 
 template < class R >
 inline
-typename SegmentC3<R CGAL_CTAG>::Point_3
-SegmentC3<R CGAL_CTAG>::min() const
+typename SegmentCd<R CGAL_CTAG>::Point_d
+SegmentCd<R CGAL_CTAG>::min() const
 {
-  return (lexicographically_xyz_smaller(source(),target())) ? source()
-                                                            : target();
+  return (lexicographically_d_smaller(source(),target())) ? source()
+                                                          : target();
 }
 
 template < class R >
 inline
-typename SegmentC3<R CGAL_CTAG>::Point_3
-SegmentC3<R CGAL_CTAG>::max() const
+typename SegmentCd<R CGAL_CTAG>::Point_d
+SegmentCd<R CGAL_CTAG>::max() const
 {
-  return (lexicographically_xyz_smaller(source(),target())) ? target()
-                                                            : source();
+  return (lexicographically_d_smaller(source(),target())) ? target()
+                                                          : source();
 }
 
 template < class R >
 inline
-typename SegmentC3<R CGAL_CTAG>::Point_3
-SegmentC3<R CGAL_CTAG>::vertex(int i) const
+typename SegmentCd<R CGAL_CTAG>::Point_d
+SegmentCd<R CGAL_CTAG>::vertex(int i) const
 {
   return (i%2 == 0) ? source() : target();
 }
 
 template < class R >
 inline
-typename SegmentC3<R CGAL_CTAG>::Point_3
-SegmentC3<R CGAL_CTAG>::point(int i) const
+typename SegmentCd<R CGAL_CTAG>::Point_d
+SegmentCd<R CGAL_CTAG>::point(int i) const
 {
   return (i%2 == 0) ? source() : target();
 }
 
 template < class R >
 inline
-typename SegmentC3<R CGAL_CTAG>::Point_3
-SegmentC3<R CGAL_CTAG>::operator[](int i) const
+typename SegmentCd<R CGAL_CTAG>::Point_d
+SegmentCd<R CGAL_CTAG>::operator[](int i) const
 {
   return vertex(i);
 }
 
 template < class R >
 inline
-typename SegmentC3<R CGAL_CTAG>::FT
-SegmentC3<R CGAL_CTAG>::squared_length() const
+typename SegmentCd<R CGAL_CTAG>::FT
+SegmentCd<R CGAL_CTAG>::squared_length() const
 {
   return squared_distance(target(), source());
 }
 
 template < class R >
 inline
-typename SegmentC3<R CGAL_CTAG>::Direction_3
-SegmentC3<R CGAL_CTAG>::direction() const
+typename SegmentCd<R CGAL_CTAG>::Direction_d
+SegmentCd<R CGAL_CTAG>::direction() const
 {
-  return Direction_3( target() - source() );
+  return Direction_d( target() - source() );
 }
 
 template < class R >
 inline
-typename SegmentC3<R CGAL_CTAG>::Line_3
-SegmentC3<R CGAL_CTAG>::supporting_line() const
+typename SegmentCd<R CGAL_CTAG>::Line_d
+SegmentCd<R CGAL_CTAG>::supporting_line() const
 {
-  return Line_3(*this);
+  return Line_d(*this);
 }
 
 template < class R >
 inline
-SegmentC3<R CGAL_CTAG>
-SegmentC3<R CGAL_CTAG>::opposite() const
+SegmentCd<R CGAL_CTAG>
+SegmentCd<R CGAL_CTAG>::opposite() const
 {
-  return SegmentC3<R CGAL_CTAG>(target(), source());
+  return SegmentCd<R CGAL_CTAG>(target(), source());
 }
 
+/*
 template < class R >
 inline
-SegmentC3<R CGAL_CTAG>
-SegmentC3<R CGAL_CTAG>::
-transform(const typename SegmentC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
+SegmentCd<R CGAL_CTAG>
+SegmentCd<R CGAL_CTAG>::
+transform(const typename SegmentCd<R CGAL_CTAG>::Aff_transformation_d &t) const
 {
-  return SegmentC3<R CGAL_CTAG>(t.transform(source()), t.transform(target()));
+  return SegmentCd<R CGAL_CTAG>(t.transform(source()), t.transform(target()));
 }
+*/
 
 template < class R >
 inline
 bool
-SegmentC3<R CGAL_CTAG>::is_degenerate() const
+SegmentCd<R CGAL_CTAG>::is_degenerate() const
 {
   return source() == target();
 }
 
+/*
 template < class R >
 inline
-Bbox_3
-SegmentC3<R CGAL_CTAG>::bbox() const
+Bbox_d
+SegmentCd<R CGAL_CTAG>::bbox() const
 {
   return source().bbox() + target().bbox();
 }
-
-#ifndef CGAL_NO_OSTREAM_INSERT_SEGMENTC3
-template < class R >
-std::ostream &operator<<(std::ostream &os, const SegmentC3<R CGAL_CTAG> &s)
-{
-    switch(os.iword(IO::mode)) {
-    case IO::ASCII :
-        return os << s.source() << ' ' << s.target();
-    case IO::BINARY :
-        return os << s.source() << s.target();
-    default:
-        return os << "SegmentC3(" << s.source() <<  ", " << s.target() << ")";
-    }
-}
-#endif // CGAL_NO_OSTREAM_INSERT_SEGMENTC3
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_SEGMENTC3
-template < class R >
-std::istream &operator>>(std::istream &is, SegmentC3<R CGAL_CTAG> &s)
-{
-    typename SegmentC3<R CGAL_CTAG>::Point_3 p, q;
-
-    is >> p >> q;
-
-    s = SegmentC3<R CGAL_CTAG>(p, q);
-    return is;
-}
-#endif // CGAL_NO_ISTREAM_EXTRACT_SEGMENTC3
+*/
 
 template < class R >
-bool SegmentC3<R CGAL_CTAG>::
-has_on(const typename SegmentC3<R CGAL_CTAG>::Point_3 &p) const
+bool SegmentCd<R CGAL_CTAG>::
+has_on(const typename SegmentCd<R CGAL_CTAG>::Point_d &p) const
 {
   return are_ordered_along_line(source(), p, target());
 }
@@ -246,12 +223,39 @@ has_on(const typename SegmentC3<R CGAL_CTAG>::Point_3 &p) const
 template < class R >
 inline
 bool
-SegmentC3<R CGAL_CTAG>::
-collinear_has_on(const typename SegmentC3<R CGAL_CTAG>::Point_3 &p) const
+SegmentCd<R CGAL_CTAG>::
+collinear_has_on(const typename SegmentCd<R CGAL_CTAG>::Point_d &p) const
 {
   return collinear_are_ordered_along_line(source(), p, target());
 }
 
+#ifndef CGAL_NO_OSTREAM_INSERT_SEGMENTCd
+template < class R >
+std::ostream &operator<<(std::ostream &os, const SegmentCd<R CGAL_CTAG> &s)
+{
+    switch(os.iword(IO::mode)) {
+    case IO::ASCII :
+        return os << s.source() << ' ' << s.target();
+    case IO::BINARY :
+        return os << s.source() << s.target();
+    default:
+        return os << "SegmentCd(" << s.source() <<  ", " << s.target() << ")";
+    }
+}
+#endif // CGAL_NO_OSTREAM_INSERT_SEGMENTCd
+
+#ifndef CGAL_NO_ISTREAM_EXTRACT_SEGMENTCd
+template < class R >
+std::istream &operator>>(std::istream &is, SegmentCd<R CGAL_CTAG> &s)
+{
+    typename SegmentCd<R CGAL_CTAG>::Point_d p, q;
+
+    is >> p >> q;
+
+    s = SegmentCd<R CGAL_CTAG>(p, q);
+    return is;
+}
+#endif // CGAL_NO_ISTREAM_EXTRACT_SEGMENTCd
 
 CGAL_END_NAMESPACE
 
@@ -259,4 +263,4 @@ CGAL_END_NAMESPACE
 #undef typename
 #endif
 
-#endif // CGAL_CARTESIAN_SEGMENT_3_C
+#endif // CGAL_CARTESIAN_SEGMENT_D_C

@@ -2,8 +2,8 @@
 // revision_date : $Date$
 // author        : Herve Brönnimann
 
-#ifndef CGAL_CARTESIAN_LINEAR_ALGEBRA_VECTOR_D_C
-#define CGAL_CARTESIAN_LINEAR_ALGEBRA_VECTOR_D_C
+#ifndef CGAL_CARTESIAN_LINEAR_ALGEBRA_MATRIX_D_C
+#define CGAL_CARTESIAN_LINEAR_ALGEBRA_MATRIX_D_C
 
 #include <CGAL/Cartesian/d_utils.h>
 #include <CGAL/Cartesian/Linear_algebra_matrix.h>
@@ -19,54 +19,35 @@ CGAL_BEGIN_NAMESPACE
 
 template < class LA >
 inline
-void
-LA_matrixCd<LA>::
-new_rep(int n, int m)
-{
-  _rdim = n;
-  _cdim = m;
-  PTR = new _d_tuple<Vector *>(n*m);
-};
-
-template < class LA >
-inline
-LA_matrixCd<LA>::
-LA_matrixCd(int n)
+LA_matrixCd<LA>::LA_matrixCd(int n)
 {
   new_rep(n,n);
 }
 
 template < class LA >
 inline
-LA_matrixCd<LA>::
-LA_matrixCd(const std::pair<int,int> &d)
-{
-  new_rep(d.first,d.second);
-}
-
-template < class LA >
-inline
-LA_matrixCd<LA>::
-LA_matrixCd(int n, int m)
+LA_matrixCd<LA>::LA_matrixCd(int n, int m)
 {
   new_rep(n,m);
 }
 
 template < class LA >
 inline
-LA_matrixCd<LA>::
-LA_matrixCd(const LA_matrixCd<LA> &v)
+LA_matrixCd<LA>::LA_matrixCd(const std::pair<int,int> &d)
+{
+  new_rep(d.first,d.second);
+}
+
+template < class LA >
+inline
+LA_matrixCd<LA>::LA_matrixCd(const LA_matrixCd<LA> &v)
   : Handle(v)
 {}
 
 template < class LA >
 inline
 LA_matrixCd<LA>::~LA_matrixCd()
-{
-  iterator i;
-  for (i=begin(); i!= end(); ++i)
-    delete *i;
-}
+{}
 
 template < class LA >
 inline
@@ -97,52 +78,60 @@ LA_matrixCd<LA>::operator!=(const LA_matrixCd<LA> &v) const
 
 template < class LA >
 inline
-const typename LA_matrixCd<LA>::Vector &
-LA_matrixCd<LA>::row(int i) const
-{
-  return *(*(begin()+i));
-}
-
-template < class LA >
-inline
 std::pair<int,int>
-LA_matrixCd<LA>::operator[](int i) const
+LA_matrixCd<LA>::dimension() const
 {
   return std::make_pair(row_dimension(),column_dimension());
 }
 
 template < class LA >
 inline
-const typename LA_matrixCd<LA>::Vector &
-LA_matrixCd<LA>::operator[](int i) const
+typename LA_matrixCd<LA>::Vector
+LA_matrixCd<LA>::row(int i) const
 {
-  return row(i);
+  CGAL_kernel_precondition( i>=0 && i<row_dimension());
+  return Vector(row_begin(i), row_end(i));
 }
 
 template < class LA >
 inline
+typename LA_matrixCd<LA>::Vector
+LA_matrixCd<LA>::column(int j) const
+{
+  CGAL_kernel_precondition( j>=0 && j<column_dimension());
+  Vector v(row_dimension()); // beware: row_dimension == *number* of raws
+  // We could avoid all this if we had an adapter for iterator with step
+  // Then we would just use std::copy_n()... what a shame!
+  const_iterator i;
+  typename Vector::iterator k;
+  for (i=column_begin(j), k=v.begin();
+       i!=column_end(j);
+       ++k, i+=column_dimension())
+    *k = *i;
+  return v;
+}
+
+template < class LA >
 LA_matrixCd<LA>
 LA_matrixCd<LA>::operator+(const LA_matrixCd<LA> &M) const
 {
   CGAL_kernel_precondition( dimension() == M.dimension() );
   Self w(dimension());
-  std::transform(begin(),end(),v.begin(),w.begin(),std::plus<FT>());
+  std::transform(begin(),end(),M.begin(),w.begin(),std::plus<FT>());
   return w;
 }
 
 template < class LA >
-inline
 LA_matrixCd<LA>
-LA_matrixCd<LA>::operator-(const LA_matrixCd<LA> &v) const
+LA_matrixCd<LA>::operator-(const LA_matrixCd<LA> &M) const
 {
-  CGAL_kernel_precondition( dimension() == v.dimension() );
+  CGAL_kernel_precondition( dimension() == M.dimension() );
   Self w(dimension());
-  std::transform(begin(),end(),v.begin(),w.begin(),std::minus<FT>());
+  std::transform(begin(),end(),M.begin(),w.begin(),std::minus<FT>());
   return w;
 }
 
 template < class LA >
-inline
 LA_matrixCd<LA>
 LA_matrixCd<LA>::operator-() const
 {
@@ -153,58 +142,67 @@ LA_matrixCd<LA>::operator-() const
 
 template < class LA >
 inline
-typename LA_matrixCd<LA>::FT
-LA_matrixCd<LA>::operator*(const LA_matrixCd<LA> &v) const
-{
-  CGAL_kernel_precondition( column_dimension() == v.row_dimension() );
-  return ;
-}
-
-typename LA_matrixCd<LA>::FT
-LA_matrixCd<LA>::operator*(const Vector &v) const
-{
-  CGAL_kernel_precondition( row_dimension() == v.dimension() );
-  return ;
-}
-
-template < class LA >
-inline
 LA_matrixCd<LA>
-LA_matrixCd<LA>::
-operator*(const typename LA_matrixCd<LA>::FT &c) const
+LA_matrixCd<LA>::operator*(const typename LA_matrixCd<LA>::FT &c) const
 {
   Self v(dimension());
-  std::transform(begin(),end(),v.begin(),std::bind2nd(multiplies<FT>(),c));
+  std::transform(begin(),end(),v.begin(),std::bind2nd(std::multiplies<FT>(),c));
   return v;
 }
 
 template < class LA >
 inline
 LA_matrixCd<LA>
-LA_matrixCd<LA>::
-operator/(const typename LA_matrixCd<LA>::FT &c) const
+LA_matrixCd<LA>::operator/(const typename LA_matrixCd<LA>::FT &c) const
 {
   Self v(dimension());
   std::transform(begin(),end(),v.begin(),std::bind2nd(std::divides<FT>(),c));
   return v;
 }
 
+template < class LA >
+LA_matrixCd<LA>
+LA_matrixCd<LA>::operator*(const LA_matrixCd<LA> &M) const
+{
+  CGAL_kernel_precondition( column_dimension() == M.row_dimension() );
+  Self w( row_dimension(), M.column_dimension() );
+  // TODO: Iterator-based matrix-multiplication
+  int i, j, k;
+  for (i=0; i<row_dimension(); ++i)
+    for (j=0; j<M.column_dimension(); ++j) {
+      w[i][k] = FT(0);
+      for (k=0; k<M.row_dimension(); ++k)
+        w[i][k] += (operator[](i))[k] * M[k][j];
+    }
+  return w;
+}
+
+template < class LA >
+typename LA_matrixCd<LA>::Vector
+LA_matrixCd<LA>::operator*(const Vector &v) const
+{
+  CGAL_kernel_precondition( column_dimension() == v.dimension() );
+  Vector w( row_dimension() ); 
+  const_iterator i;
+  typename Vector::iterator j;
+  for (j=w.begin(), i=begin(); j!=w.end(); ++j,i+=column_dimension())
+    *j = std::inner_product(row_begin(i), row_end(i), v.begin());
+  return v;
+}
+
 #ifndef CGAL_CARTESIAN_NO_OSTREAM_INSERT_LA_VECTORCD
 template < class LA >
 std::ostream &
-operator<<(std::ostream &os, const LA_matrixCd<LA> &v)
+operator<<(std::ostream &os, const LA_matrixCd<LA> &M)
 {
-  typedef typename LA_matrixCd<LA>::FT FT;
-  switch(os.iword(IO::mode)) {
-    case IO::ASCII :
-    case IO::BINARY :
-      os << v.dimension();
-      std::for_each(v.begin(),v.end(),print_d<FT>(os));
-      break;
-    default:
-      os << v.dimension() << ", ";
-      std::for_each(v.begin(),v.end(),print_d<FT>(os));
-  }
+  typedef typename LA::FT FT;
+  print_d<FT> prt(&os);
+  if (os.iword(IO::mode)==IO::PRETTY) os << "LA_Matrix(";
+  prt(M.row_dimension());
+  prt(M.column_dimension());
+  if (os.iword(IO::mode)==IO::PRETTY) os << ", ("; prt.reset();
+  std::for_each(M.begin(),M.end(),prt);
+  if (os.iword(IO::mode)==IO::PRETTY) os << "))";
   return os;
 }
 #endif // CGAL_CARTESIAN_NO_OSTREAM_INSERT_LA_VECTORCD
@@ -212,7 +210,7 @@ operator<<(std::ostream &os, const LA_matrixCd<LA> &v)
 #ifndef CGAL_CARTESIAN_NO_ISTREAM_EXTRACT_LA_VECTORCD
 template < class LA >
 std::istream &
-operator>>(std::istream &is, LA_matrixCd<LA> &v)
+operator>>(std::istream &is, LA_matrixCd<LA> &M)
 {
   typedef typename LA_matrixCd<LA>::FT FT;
   int cdim, rdim, dim;
@@ -222,15 +220,14 @@ operator>>(std::istream &is, LA_matrixCd<LA> &v)
     case IO::BINARY :
       is >> rdim >> cdim;
       dim = cdrim*rdim;
-      w = new FT[dim];
-      std::copy_n(std::istream_iterator<FT>(is),dim, w);
+      M = LA_matrixCd<LA>(rdim,cdim);
+      std::copy_n(std::istream_iterator<FT>(is),dim, M.begin());
       break;
     default:
       std::cerr << "" << std::endl;
       std::cerr << "Stream must be in ascii or binary mode" << std::endl;
       break;
   }
-  v = LA_matrixCd<LA>(rdim,cdim,w,w+dim);
   return is;
 }
 #endif // CGAL_CARTESIAN_NO_ISTREAM_EXTRACT_LA_VECTORCD
@@ -241,4 +238,4 @@ CGAL_END_NAMESPACE
 #undef typename
 #endif
 
-#endif // CGAL_CARTESIAN_VECTOR_D_C
+#endif // CGAL_CARTESIAN_MATRIX_D_C

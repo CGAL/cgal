@@ -76,12 +76,11 @@ public:
   FT             cartesian (int i) const;
   FT             operator[] (int i) const;
 
-public:
   const int      dimension() const { return ptr()->d; }
   const_iterator begin()     const { return ptr()->e; }
   const_iterator end()       const { return ptr()->e + dimension(); }
 
-protected:
+// protected:
   iterator       begin()           { return ptr()->e; }
   iterator       end()             { return ptr()->e + dimension(); }
 

@@ -2,7 +2,6 @@
 // revision_date : $Date$
 // author(s)     : Herve.Bronnimann@sophia.inria.fr
 
-
 #ifndef CGAL_CARTESIAN_LINE_D_H
 #define CGAL_CARTESIAN_LINE_D_H
 
@@ -10,9 +9,7 @@
 #include <CGAL/Cartesian/redefine_names_d.h>
 #endif
 
-#ifndef CGAL_CARTESIAN_TWOTUPLE_H
 #include <CGAL/Twotuple.h>
-#endif // CGAL_CARTESIAN_TWOTUPLE_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -36,7 +33,7 @@ public:
   typedef typename R::Plane_d              Plane_d;
   typedef typename R::Ray_d                Ray_d;
   typedef typename R::Segment_d            Segment_d;
-  typedef typename R::Aff_transformation_d Aff_transformation_d;
+  // typedef typename R::Aff_transformation_d Aff_transformation_d;
 #else
   typedef LineCd<R>                             Self;
   typedef typename R::Point_d_base              Point_d;
@@ -45,10 +42,10 @@ public:
   typedef typename R::Plane_d_base              Plane_d;
   typedef typename R::Ray_d_base                Ray_d;
   typedef typename R::Segment_d_base            Segment_d;
-  typedef typename R::Aff_transformation_d_base Aff_transformation_d;
+  // typedef typename R::Aff_transformation_d_base Aff_transformation_d;
 #endif
 
-  LineCd(int d = 0);
+  LineCd();
   LineCd(const Self  &l);
   LineCd(const Point_d &p, const Point_d &q);
   LineCd(const Segment_d &s);
@@ -61,6 +58,7 @@ public:
   bool        operator==(const Self &l) const;
   bool        operator!=(const Self &l) const;
   long        id() const;
+  int         dimension() const;
 
   Plane_d     perpendicular_plane(const Point_d &p) const;
   Self        opposite() const;
@@ -75,7 +73,7 @@ public:
   bool        has_on(const Point_d &p) const;
   bool        is_degenerate() const;
 
-  Self        transform(const Aff_transformation_d &t) const;
+  // Self        transform(const Aff_transformation_d &t) const;
 
 private:
   _Twotuple< Point_d >* ptr() const;

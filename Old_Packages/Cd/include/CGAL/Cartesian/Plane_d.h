@@ -73,10 +73,10 @@ public:
       new_rep(h.begin(),h.end());
     }
   template < class InputIterator >
-  PlaneCd(const InputIterator &begin, const InputIterator &end,
-          const Self &o, Oriented_side side = POSITIVE)
+  PlaneCd(const InputIterator &first, const InputIterator &last,
+          const Point_d &o, Oriented_side side = POSITIVE)
     {
-      Self h = plane_from_points(first->dimension(),first,last,o,side);
+      Self h = plane_from_points(first->dimension(),first,last,o,side,R());
       new_rep(h.begin(),h.end());
     }
   ~PlaneCd();
@@ -88,7 +88,7 @@ public:
   long           id() const;
 
   RT             operator[](int i) const;
-  Point_d        point() const;
+  Point_d        point(int i = 0) const;
   Point_d        projection(const Point_d &p) const;
   Vector_d       orthogonal_vector() const;
   Direction_d    orthogonal_direction() const;
@@ -108,13 +108,14 @@ public:
 
   bool           is_degenerate() const;
 
-  int            dimension() const { return ptr()->d; }
+  // coordinate access
+  int            dimension() const { return ptr()->d-1; }
   const_iterator begin()     const { return ptr()->e; }
-  const_iterator end()       const { return ptr()->e+dimension(); }
+  const_iterator end()       const { return ptr()->e+ptr()->d; }
 
-protected:
+// protected:
   iterator       begin()           { return ptr()->e; }
-  iterator       end()             { return ptr()->e+dimension(); }
+  iterator       end()             { return ptr()->e+ptr()->d; }
 
 private:
   const _d_tuple<RT>* ptr()  const { return (const _d_tuple<RT>*)PTR; }

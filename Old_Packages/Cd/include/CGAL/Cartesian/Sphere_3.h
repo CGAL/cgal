@@ -29,11 +29,11 @@ public:
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef SphereC3<R CGAL_CTAG>                 Self;
   typedef typename R::Point_d                   Point_d;
-  typedef typename R::Aff_transformation_d      Aff_transformation_d;
+  // typedef typename R::Aff_transformation_d      Aff_transformation_d;
 #else
   typedef SphereC3<R>                           Self;
   typedef typename R::Point_D_base              Point_d;
-  typedef typename R::Aff_transformation_D_base Aff_transformation_d;
+  // typedef typename R::Aff_transformation_D_base Aff_transformation_d;
 #endif
 
   Sphere_d(const Point_d &p, const FT &s,

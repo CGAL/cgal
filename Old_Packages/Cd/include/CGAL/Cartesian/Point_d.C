@@ -137,27 +137,14 @@ template < class R >
 std::ostream& 
 operator<<(std::ostream& os, const PointCd<R CGAL_CTAG> &p)
 {
-    int d = p.dimension(), i;
-    switch(os.iword(IO::mode)) 
-    {
-      case IO::ASCII : 
-	os << d << ' ';
-        for (i=0; i<d-1; ++i)
-          os << p.cartesian(i) << ' ';
-        os << p.cartesian(d-1); 
-        return os;
-      case IO::BINARY :
-        write(os, d);
-        for (i=0; i<d; ++i)
-           write(os, p.cartesian(i));
-        return os;
-      default:
-        os << "PointCd(";
-        os << d << ", (";
-        for (int i=0; i<d-1; ++i)
-            os << p.cartesian(i) << ", ";
-        return os << p.cartesian(d-1) << "))";
-    }
+  typedef typename R::FT FT;
+  print_d<FT> prt(&os);
+  if (os.iword(IO::mode)==IO::PRETTY) os << "PointCd(";
+  prt(p.dimension());
+  if (os.iword(IO::mode)==IO::PRETTY) { os << ", ("; prt.reset(); }
+  std::for_each(p.begin(),p.end(),prt);
+  if (os.iword(IO::mode)==IO::PRETTY) os << "))";
+  return os;
 }
 #endif // NO_OSTREAM_INSERT_POINTCD
 
@@ -187,7 +174,7 @@ operator>>(std::istream& is, PointCd<R CGAL_CTAG> &p)
       // throw ios_base::failure("Stream must be in ascii or binary mode");
       return is;
     }
-    p = PointCd<R CGAL_CTAG>( d, e, e+d);
+    p = PointCd<R CGAL_CTAG>(d, e, e+d);
     delete[] e;
     return is;
 }
