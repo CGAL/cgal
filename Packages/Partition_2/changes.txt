@@ -1,3 +1,6 @@
+1.33 (25 Apr 2002)
+  - added missing traits class to call to is_degenerate_polygon_2
+
 1.32 (24 Apr 2002)
   - removed more .x() and .y() accesses and global function calls and updated
     the traits requirements accordingly

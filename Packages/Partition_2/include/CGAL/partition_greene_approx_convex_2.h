@@ -193,7 +193,7 @@ void visible(Polygon& polygon,
                             update_required);
           }
           if (!is_degenerate_polygon_2(new_polygon.vertices_begin(),
-                                       new_polygon.vertices_end()))
+                                       new_polygon.vertices_end(), traits))
           {
              *result = new_polygon; 
              result++;
@@ -375,7 +375,7 @@ void change_top_chain(Polygon& polygon,
             top_chain.push_front(stack.front());
          }
          if (!is_degenerate_polygon_2(new_polygon.vertices_begin(),
-                                      new_polygon.vertices_end()))
+                                      new_polygon.vertices_end(), traits))
          {
             *result = new_polygon; 
             result++;
@@ -495,7 +495,7 @@ void change_bottom_chain(Polygon& polygon,
                            update_required);
          }
          if (!is_degenerate_polygon_2(new_polygon.vertices_begin(),
-                                      new_polygon.vertices_end()))
+                                      new_polygon.vertices_end(), traits))
          {
             *result = new_polygon;  
             result++;
@@ -557,7 +557,7 @@ void make_polygons_from_stack(Polygon& polygon,
                             const BidirectionalCirculator& high_point_ref, 
                             Circ_pair< BidirectionalCirculator >& stack,
                             Circ_pair< BidirectionalCirculator >& bottom_chain,
-                            OutputIterator& result, const Traits& )
+                            OutputIterator& result, const Traits& traits)
 {
    bool update_required;
    // make polygons by connecting the high point to every point on the stack
@@ -598,7 +598,7 @@ void make_polygons_from_stack(Polygon& polygon,
          bottom_chain.push_back(stack.back());
        }
        if (!is_degenerate_polygon_2(new_polygon.vertices_begin(),
-                                    new_polygon.vertices_end()))
+                                    new_polygon.vertices_end(), traits))
        {
           *result = new_polygon; 
           result++;
@@ -608,7 +608,7 @@ void make_polygons_from_stack(Polygon& polygon,
    // add remaining points from the top chain if there is more than one
    std::copy(polygon.begin(), polygon.end(), std::back_inserter(new_polygon));
    if (!is_degenerate_polygon_2(new_polygon.vertices_begin(),
-                                new_polygon.vertices_end()))
+                                new_polygon.vertices_end(), traits))
    {
       *result = new_polygon;
       result++;
