@@ -308,6 +308,9 @@ sub make_testscripts()
 	if ( -d $DIR ) {
 	    print "checking makefile and cgal_test in $DIR\n";
 	    chdir $DIR;
+	    if ( -f 'Makefile') {
+		rename 'Makefile', 'makefile';
+	    }
 	    if ( ! -f 'makefile' ) {
 		print "creating makefile ...\n";
 		system("$SCRIPTDIR/create_makefile", '-t');
