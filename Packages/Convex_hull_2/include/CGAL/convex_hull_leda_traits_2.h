@@ -37,7 +37,8 @@ public:
   typedef   CGAL::p_Less_xy<Point_2>                        Less_xy_2;
   typedef   CGAL::p_Less_yx<Point_2>                        Less_yx_2;
   typedef   CGAL::p_Left_of_line_2p<Point_2>                Left_of_line_2;
-  typedef   CGAL::p_Less_dist_to_line_2p<Point_2>           Less_signed_distance_to_line_2;
+  typedef   CGAL::p_Less_dist_to_line_2p<Point_2>           
+                                               Less_signed_distance_to_line_2;
   typedef   CGAL::p_Less_rotate_ccw<Point_2>                Less_rotate_ccw_2;
   typedef   CGAL::p_Leftturn<Point_2>                       Leftturn_2;
   typedef   leda_segment                                    Segment_2; 
@@ -55,7 +56,8 @@ public:
   { return Left_of_line_2( p, q); } 
 
   Less_signed_distance_to_line_2
-  less_signed_distance_to_line_2_object( const Point_2& p, const Point_2& q) const
+  less_signed_distance_to_line_2_object( const Point_2& p, 
+                                         const Point_2& q) const
   { return Less_signed_distance_to_line_2( p, q); } 
 
   Less_rotate_ccw_2
