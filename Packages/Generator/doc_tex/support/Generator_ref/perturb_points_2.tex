@@ -7,11 +7,11 @@ a random amount.
 
 \ccInclude{CGAL/point_generators_2.h}
 
-
+\def\ccLongParamLayout{\ccTrue}
 \ccFunction{template <class ForwardIterator>
     void perturb_points_2( ForwardIterator first, ForwardIterator last, 
         double xeps, double yeps = xeps, Random& rnd = default_random,
-        Creator creator = Creator_uniform_2<double,P>);}
+        Creator creator = Creator_uniform_2<Kernel_traits<P>::Kernel::RT,P>);}
 { perturbs the points in the range $[\ccc{first},\ccc{last})$ by
   replacing each point with a random point from the 
   \ccc{xeps} $\times$ \ccc{yeps} rectangle centered at the original point.

@@ -12,7 +12,7 @@ grid whose size is determined by the number of points to be generated.
     OutputIterator
     points_on_square_grid_2( double a, std::size_t n, OutputIterator o,
                              Creator creator = 
-                             Creator_uniform_2<double,P>);}
+               Creator_uniform_2<Kernel_traits<P>::Kernel::RT,P>);}
 { creates the first $n$ points on the regular $\lceil\sqrt{n}\,\rceil
     \times \lceil  \sqrt{n}\,\rceil$ grid within the square
     $[-a,a]\times [-a,a]$. Returns the value of $o$ after inserting

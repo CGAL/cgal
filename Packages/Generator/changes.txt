@@ -1,5 +1,9 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
+2.64 (22 Aug 2002)
+   - default Creator now uses number type from given point types 
+     instead of double; default creator is now documented
+
 2.63 (12 Aug 2002)
    - replaced LEFTTURN and relatives with LEFT_TURN and relatives
 

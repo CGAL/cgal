@@ -9,7 +9,7 @@
     OutputIterator random_collinear_points_2( RandomAccessIterator first,
         RandomAccessIterator last, 
         std::size_t n, OutputIterator first2, Random& rnd = default_random,
-        Creator creator = Creator_uniform_2<double,P>);}
+        Creator creator = Creator_uniform_2<Kernel_traits<P>::Kernel::RT,P>);}
 { randomly chooses two points from the range $[\ccc{first},\ccc{last})$,
     creates a random third point on the segment connecting these two
     points, writes it to \ccc{first2}, and repeats this $n$ times, thus

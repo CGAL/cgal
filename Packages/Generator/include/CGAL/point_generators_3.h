@@ -31,7 +31,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class P, class Creator = Creator_uniform_3<double,P> >
+template < class P, class Creator = 
+                   Creator_uniform_3<typename Kernel_traits<P>::Kernel::RT,P> >
 class Random_points_in_sphere_3 : public Random_generator_base<P> {
     void generate_point();
 public:
@@ -68,7 +69,8 @@ generate_point() {
 }
 
 
-template < class P, class Creator = Creator_uniform_3<double,P> >
+template < class P, class Creator = 
+                   Creator_uniform_3<typename Kernel_traits<P>::Kernel::RT,P> >
 class Random_points_on_sphere_3 : public Random_generator_base<P> {
     void generate_point();
 public:
@@ -104,7 +106,8 @@ generate_point() {
 }
 
 
-template < class P, class Creator = Creator_uniform_3<double,P> >
+template < class P, class Creator = 
+                   Creator_uniform_3<typename Kernel_traits<P>::Kernel::RT,P> >
 class Random_points_in_cube_3 : public Random_generator_base<P>{
     void generate_point();
 public:
@@ -184,7 +187,8 @@ points_on_cube_grid_3( double a, std::size_t n, OutputIterator o)
 {
     typedef std::iterator_traits<OutputIterator> ITraits;
     typedef typename ITraits::value_type         P;
-    return points_on_square_grid_3(a, n, o, Creator_uniform_3<double,P>());
+    return points_on_square_grid_3(a, n, o, 
+                 Creator_uniform_3<typename Kernel_traits<P>::Kernel::RT,P>());
 }
 
 

@@ -31,7 +31,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class P, class Creator = Creator_uniform_2<double,P> >
+template < class P, class Creator = 
+                  Creator_uniform_2<typename Kernel_traits<P>::Kernel::RT,P> >
 class Random_points_in_disc_2 : public Random_generator_base<P>{
     void generate_point();
 public:
@@ -65,7 +66,8 @@ generate_point() {
 }
 
 
-template < class P, class Creator = Creator_uniform_2<double,P> >
+template < class P, class Creator = 
+                  Creator_uniform_2<typename Kernel_traits<P>::Kernel::RT, P> >
 class Random_points_on_circle_2 : public Random_generator_base<P> {
     void generate_point();
 public:
@@ -98,7 +100,8 @@ generate_point() {
 }
 
 
-template < class P, class Creator = Creator_uniform_2<double,P> >
+template < class P, class Creator = 
+                   Creator_uniform_2<typename Kernel_traits<P>::Kernel::RT,P> >
 class Random_points_in_square_2 : public Random_generator_base<P> {
     void generate_point();
 public:
@@ -132,7 +135,8 @@ generate_point() {
 }
 
 
-template < class P, class Creator = Creator_uniform_2<double,P> >
+template < class P, class Creator = 
+                   Creator_uniform_2<typename Kernel_traits<P>::Kernel::RT,P> >
 class Random_points_on_square_2 : public Random_generator_base<P> {
     void generate_point();
 public:
@@ -183,7 +187,8 @@ generate_point() {
 }
 
 
-template < class P, class Creator = Creator_uniform_2<double,P> >
+template < class P, class Creator = 
+                   Creator_uniform_2<typename Kernel_traits<P>::Kernel::RT,P> >
 class Random_points_on_segment_2 : public Random_generator_base<P> {
     P _p;
     P _q;
@@ -302,7 +307,8 @@ points_on_square_grid_2( double a, std::size_t n, OutputIterator o)
 {
     typedef std::iterator_traits<OutputIterator> ITraits;
     typedef typename ITraits::value_type         P;
-    return points_on_square_grid_2(a, n, o, Creator_uniform_2<double,P>());
+    return points_on_square_grid_2(a, n, o, 
+                Creator_uniform_2<typename Kernel_traits<P>::Kernel::RT,P>());
 }
 
 template <class P, class OutputIterator>
@@ -355,7 +361,7 @@ void perturb_points_2( ForwardIterator first,
     typedef std::iterator_traits<ForwardIterator> ITraits;
     typedef typename ITraits::value_type          P;
     perturb_points_2( first, last, xeps, yeps, rnd,
-                      Creator_uniform_2<double,P>());
+                 Creator_uniform_2<typename Kernel_traits<P>::Kernel::RT,P>());
 }
 
 template <class ForwardIterator>
@@ -429,7 +435,7 @@ OutputIterator random_collinear_points_2(
     typedef std::iterator_traits<RandomAccessIterator> ITraits;
     typedef typename ITraits::value_type               P;
     return random_collinear_points_2( first, last, n, first2, rnd,
-                                      Creator_uniform_2<double,P>());
+                 Creator_uniform_2<typename Kernel_traits<P>::Kernel::RT,P>());
 }
 
 template <class RandomAccessIterator, class OutputIterator>
