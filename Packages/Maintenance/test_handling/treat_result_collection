@@ -6,6 +6,7 @@ $ENV{PATH}=
 '/sw/bin:/sbin:/usr/sbin:/usr/bsd:/bin:/usr/bin';
 
 my $scriptsdir = "/projects/CGAL/admin_scripts";
+my $mail_prog="$scriptsdir/send_cgal_mail";
 my $unpack_dir= "/users/geert/CGAL/testresults";
 my $testresult_dir = "/users/www/CGAL/Members/Develop/testsuite";
 #my $testresult_dir = "/users/geert/tmp/tr";
@@ -37,13 +38,10 @@ if  (system("w3mir", $result_url) != 0) {
 die "Could not get URL $result_url\n";
 }
 system("gunzip", "${tarname}.gz")== 0 or die "Could not gunzip ${tarname}.gz\n";
-print STDERR "Tarname is $tarname\n";
 my @results;
 @results=grep /gz$/, `tar tf ${tarname}`;
 chomp @results;
 system("tar", "xf", ${tarname}, @results);
-print STDERR "results is @results\n";
-print STDERR "results is", @results, "\n";
 system("$scriptsdir/to_zipped_format", @results);
 chdir $testresult_dir;
 chdir $cgal_version;
@@ -60,5 +58,21 @@ system("./create_testresult_page", $cgal_version);
 
 chdir $unpack_dir;
 unlink $tarname;
+
+open NOTICE,
+    "|$mail_prog \"New test results ($cgal_version)\" 'cgal-develop\@cs.uu.nl'";
+print NOTICE <<"TOTHIER";
+Results for the following platforms have been installed on
+http://www.cs.uu.nl/CGAL/Members/Develop/testsuite/results.html 
+
+TOTHIER
+
+for $resultfile (@results) {
+    $resultfile =~ s/\.tar//;
+    $resultfile =~ s/^results_//;
+    print NOTICE $resultfile, "\n";
+}
+ 
+close NOTICE
 
 
