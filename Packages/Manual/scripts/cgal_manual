@@ -28,13 +28,13 @@
 # 
 # It is called in a ./doc_tex/ directory of a CGAL Package or internal release.
 # 
-# This script is the driver program for creating CGAL manuals.
-# It makes use of LaTeX, BiBTeX, makeindex, latex_to_html, and other
-# tools to create the PostScript, PDF (later), and HTML manuals for
-# individual CVS Packages as well as custom Modules. It encodes the 
-# conventions of how CGAL manuals are organized and how the general 
-# purpose tools need to be called to create the manuals. We specify these
-# conventions here briefly. See the developers manual for more details.
+# This script is the driver program for creating CGAL manuals. It makes
+# use of LaTeX, PDFLaTeX, BiBTeX, makeindex, latex_to_html, and other
+# tools to create the PostScript, PDF, and HTML manuals for individual 
+# CVS Packages as well as custom Modules. It encodes the conventions of
+# how CGAL manuals are organized and how the general purpose tools need
+# to be called to create the manuals. We specify these conventions here
+# briefly. See the developers manual for more details.
 # Both documentations need to be kept synchronized!
 #
 # - CVS Package: 
@@ -111,7 +111,7 @@
 # number $TestSuiteFullHistory of test suites the full results including
 # the manuals are kept. Older test suites will have their manuals deleted
 # to save space. In total only $TestSuiteHistory many test suites are kept.
-#    The history of test suites is managed in a shift register like fashion
+#    The history of test suites is managed in a shift-register like fashion
 # using files in $TestSuiteResultPath of defined names History.<i> that 
 # contain the name of the i-th test suite subdirectory. The 1st is the 
 # most recent test suite and corresponds to the 'last' directory.
@@ -127,6 +127,7 @@ shopt -s nullglob
 
 Latex="latex"
 # idea, not finished: if $Latex --help | grep file-line-error-style
+PdfLatex="pdflatex"
 Bibtex="bibtex -terse"
 MakeIndex="makeindex -q"
 DvipsA4="dvips -q -D 600 -t a4 -P pdf -G0"
@@ -142,7 +143,7 @@ ResourceFile="$HOME/.cgalmanualrc"
 
 # Selects the different output formats supported
 MakePS=1
-MakePDF=0
+MakePDF=1
 MakeHTML=1
 
 # Selects that only the LaTeX wrapper files for packages are created
@@ -281,16 +282,16 @@ ${BoldColor}Usage: ${ProgName} [<options>] [<module-files...>] [<package-dirs...
     deleted at the end. Use -wrapper to create a wrapper file permanently.
        ${BoldColor}CGAL modules${ResetColor} are given as an explict LaTeX file, e.g., generated with 
     -wrapper.
-       The result are the specified manuals in the corresponding ../doc_ps,
+       The results are the specified manuals in the corresponding ../doc_ps,
     ../doc_pdf, and ../doc_html directories. A logfile .cgallog is created
-    with a logfile summary from the individual logfiles .log, .blg, .ilg,
+    with a logfile summary from the individual logfiles .log, .blg, .ilg, .plg,
     and .hlg. The logfiles are kept in case of warnings and error messages.
        The screen output reports the progress and result status of each
     module (abbrev. as Mod) and package (abbrev. as Pck) and each manual type.
 ${BoldColor}Options:${ResetColor}
-    ${BoldColor}-ps${ResetColor}                 PostScript manuals only.
-    ${BoldColor}-pdf${ResetColor}                PDF manuals only (not yet supported).
-    ${BoldColor}-html${ResetColor}               HTML manuals only (incl. a LaTeX run).
+    ${BoldColor}-ps${ResetColor}                 PostScript manuals.
+    ${BoldColor}-pdf${ResetColor}                PDF manuals.
+    ${BoldColor}-html${ResetColor}               HTML manuals (incl. a LaTeX run).
     ${BoldColor}-wrapper${ResetColor}            creates the LaTeX wrapper files only.
     ${BoldColor}-testsuite${ResetColor}          runs testsuite, installs results and sends email. Use
                         only after reading the config section of this script.
@@ -652,6 +653,8 @@ testsuite_entry() {
     echo "  <td align=\"center\" class=\"error\"><a href=\"$2\">${SP}n${SP}</a></td>"
   elif [ $1 -eq 2 ]; then
     echo "  <td align=\"center\" class=\"warning\"><a href=\"$2\">${SP}w${SP}</a></td>"
+  elif [ $1 -eq 5 ]; then
+    echo "  <td align=\"center\" class=\"ok\"><a href=\"$2\">${SP}h${SP}</a></td>"
   else
     echo "  <td align=\"center\" class=\"void\">-</td>"
   fi
@@ -660,9 +663,9 @@ testsuite_entry() {
 
 #---------------------------------------------------------------------#
 # run_latex <wrapper-rootname>
-#     - Runs LaTeX, either brief for HTML, or full for stable PS/PDF
+#     - Runs LaTeX, either brief for HTML, or full for stable PS
 #     - Includes BiBTeX and makeindex if needed.
-#     - Returns in $RetCode: 1 = error, 2 = warning
+#     - Returns in $RetCode: 1 = error, 2 = warning, 5 = expected warning
 #     - Prints logfile summary result in stdout
 #---------------------------------------------------------------------#
 
@@ -728,16 +731,20 @@ run_latex() {
     if [ $LatexExit  -eq 0 ]; then
         if check_latex_warn  $1 ; then LatexExit=2;  fi
     fi
-    if [ $BibtexExit -eq 0 ]; then
-        if check_bibtex_warn $1 ; then BibtexExit=2; fi
-    fi
     if [ $IndexExit  -eq 0 ]; then
         if check_index_warn  $1 ; then IndexExit=2;  fi
+    fi
+    if [ $BibtexExit -eq 0 ]; then
+        if check_bibtex_warn $1 ; then BibtexExit=2; fi
     fi
     if [ $MakeTestSuiteResult -eq 1 ]; then 
         testsuite_entry $LatexExit  $1.log.txt >  testsuite/index_row
         testsuite_entry $BibtexExit $1.blg.txt >> testsuite/index_row
         testsuite_entry $IndexExit  $1.ilg.txt >> testsuite/index_row
+        if [ ${MakePDF} -eq 0 ] ; then
+            # one empty entry for PdfLaTeX run
+            testsuite_entry 4  $1.pdflg.txt >> testsuite/index_row
+        fi
     fi
     if [ $RetCode -eq 0 ] ; then
       if [[ $LatexExit -eq 1 || $BibtexExit -eq 1 || $IndexExit -eq 1 ]]; then
@@ -749,7 +756,178 @@ run_latex() {
           RetCode=2
       fi
     fi
+    # Special handling if LaTeX is only needed as preparation for the 
+    # HTML manual, since we see 'undefined...' messages that we can ignore.
+    if [[ ${MakePS} -eq 0 && $LatexExit -eq 2 ]]; then
+        LatexExit=5
+        if [ $RetCode -eq 2 ] ; then
+            RetCode=5
+        fi 
+    fi
     report_latex $1
+    if [ ${MakePDF} -eq 0 ] ; then cleanup_latex $1; fi
+    return $RetCode
+}
+
+#---------------------------------------------------------------------#
+# report_pdflatex <wrapper-rootname>
+#     - Reports summary of error messages and warnings from LaTeX
+#       and makeindex log files.
+#---------------------------------------------------------------------#
+
+report_pdflatex() {
+    echo ""
+    echo "Summary PdfLaTeX"
+    echo "----------------"
+    echo "For the full logfile see $1.pdflg"
+    if [ $MakePackage -eq 1 ]; then
+        echo "Since this is a CGAL Package manual, one can probably ignore "
+        echo "warnings about undefined references."
+    fi
+    egrep -i '((error)|(^[!]))' $1.log | grep -v "operatorerror"
+    grep -i warn $1.log 
+    if [ $MakeTestSuiteResult -eq 1 ]; then mv $1.log testsuite/$1.pdflg.txt ; fi
+    if [[ ${MakePS} -eq 0 && -r $1.blg ]]; then 
+        echo ""
+        echo "Summary BibTeX"
+        echo "--------------"
+        echo "For the full logfile see $1.blg"
+        grep -i error $1.blg
+        grep 'I found no \\citation commands' $1.blg
+        grep -i warn $1.blg | grep -v 'warning[$]'
+        if [ $MakeTestSuiteResult -eq 1 ]; then 
+            mv $1.blg testsuite/$1.blg.txt
+        fi
+    fi
+    if [ -r $1.ilg ]; then 
+        echo ""
+        echo "Summary makeindex"
+        echo "-----------------"
+        if [ ${MakePS} -eq 0 ]; then 
+            echo "For the full logfile see $1.ilg"
+            egrep -i '((error)|(reject))' $1.ilg 
+            grep -i warn $1.ilg
+            if [ $MakeTestSuiteResult -eq 1 ]; then
+                mv $1.ilg testsuite/$1.ilg.txt
+            fi
+        else
+            echo "For the full logfile see $1.ilg from the regular LaTeX run"
+            egrep -i '((error)|(reject))' $1.ilg 
+            grep -i warn $1.ilg
+        fi
+    fi
+    echo ""
+    return
+}
+
+#---------------------------------------------------------------------#
+# run_pdflatex <wrapper-rootname>
+#     - Runs PdfLaTeX for stable PDF
+#     - Includes makeindex if needed.
+#     - BiBTeX was already done (if necessary) in run_latex
+#     - Returns in $RetCode: 1 = error, 2 = warning
+#     - Prints logfile summary result in stdout
+#     - The LaTeX logfile *.log from the previous run_latex run
+#       has been saved temporarily by the calling function
+#---------------------------------------------------------------------#
+
+run_pdflatex() {
+    # codes memorized for the different passes:
+    # 0 = ok, 1 = error, 2 = warning, 3 = n.a.
+    LatexExit=0
+    BibtexExit=4
+    IndexExit=4
+    RetCode=0 # total return code
+    # first run
+    $PdfLatex --interaction batchmode $1
+    if [ $? -ne 0 ]; then LatexExit=1 ; fi
+    # see if we need BiBTeX and run it
+    if [ ${MakePS} -eq 0 ] ; then
+        if grep '[\\]bibdata'  $1.aux > /dev/null ; then
+            if $Bibtex $1 ; then BibtexExit=0 ; else BibtexExit=1 ; fi
+            # Check for documents that have a bibliography entry, 
+            # but no citations. Don't create an empty bibliography then.
+            if check_bibtex_empty $1 ; then
+                rm -f $1.bbl
+                BibtexExit=0
+            else
+                # Run LaTeX to get citations into the auxfile.
+                $PdfLatex --interaction batchmode $1
+                if [ $? -ne 0 ]; then LatexExit=1 ; fi
+            fi
+        fi
+    fi
+    # Make sure that there is at least one rerun if makeindex is requested
+    if [ -r $1.idx ]; then
+        if ${MakeIndex} $1.idx; then IndexExit=0 ; else IndexExit=1 ; fi
+        $PdfLatex --interaction batchmode $1
+        if [ $? -ne 0 ]; then LatexExit=1 ; fi
+    fi
+    # Run LaTeX until their is no rerun necessary anymore
+    while grep "Rerun to get cross-references right" $1.log > /dev/null; do
+        # Run makeindex as well if requested
+        if [ -r $1.idx ]; then
+          if ${MakeIndex} $1.idx; then IndexExit=0 ; else IndexExit=1 ; fi
+        fi
+        $PdfLatex --interaction batchmode $1
+        if [ $? -ne 0 ]; then LatexExit=1 ; fi
+    done
+    if [ $MakeTestSuiteResult -eq 1 ]; then 
+        mv $1.pdf testsuite
+    else
+        if [ ! -d ../doc_pdf ]; then mkdir ../doc_pdf; fi
+        if [ ! -d ../doc_pdf ]; then
+            echo "ERROR: Something is wrong, I cannot create directory '../doc_pdf' ."
+            RetCode=1
+        else
+            mv $1.pdf ../doc_pdf
+        fi
+    fi
+    if [ $LatexExit  -eq 0 ]; then
+        if check_latex_warn  $1 ; then LatexExit=2;  fi
+    fi
+    if [ $BibtexExit -eq 0 ]; then
+        if check_bibtex_warn $1 ; then BibtexExit=2; fi
+    fi
+    if [ $IndexExit  -eq 0 ]; then
+        if check_index_warn  $1 ; then IndexExit=2;  fi
+    fi
+    if [ $MakeTestSuiteResult -eq 1 ]; then 
+        # Report bibtex and index errors here only if regular LaTeX was not run
+        if [ ${MakePS} -eq 0 ] ; then
+            # one empty entry for LaTeX run
+            testsuite_entry 4           $1.log.txt > testsuite/index_row
+            testsuite_entry $BibtexExit $1.blg.txt >> testsuite/index_row
+            testsuite_entry $IndexExit  $1.ilg.txt >> testsuite/index_row
+        fi
+        testsuite_entry $LatexExit  $1.pdflg.txt >> testsuite/index_row
+    fi
+    if [ ${MakePS} -eq 1 ] ; then
+        # do error and warn reporting restricted to PdfLaTeX    
+        if [ $RetCode -eq 0 ] ; then
+          if [[ $LatexExit -eq 1 ]]; then
+              RetCode=1
+          fi
+        fi
+        if [ $RetCode -eq 0 ] ; then
+          if [[ $LatexExit -eq 2 ]]; then
+              RetCode=2
+          fi
+        fi
+    else
+        # do full error and warn reporting for PdfLaTeX, BibTeX, make_index
+      if [ $RetCode -eq 0 ] ; then
+       if [[ $LatexExit -eq 1 || $BibtexExit -eq 1 || $IndexExit -eq 1 ]]; then
+           RetCode=1
+       fi
+      fi
+      if [ $RetCode -eq 0 ] ; then
+       if [[ $LatexExit -eq 2 || $BibtexExit -eq 2 || $IndexExit -eq 2 ]]; then
+           RetCode=2
+       fi
+      fi
+    fi
+    report_pdflatex $1
     cleanup_latex $1
     return $RetCode
 }
@@ -822,7 +1000,7 @@ run_html() {
 #     - includes execution timing in output
 #     - if $Verbose is set, it also echos the output to stdout
 #     - Return codes of <command ...> are also returned and $ExitCode set
-#         1 = error, 2 = warning
+#         1 = error, 2 = warning, 5 = expected warning in HTML preparation
 #---------------------------------------------------------------------#
 
 try_command() {
@@ -857,6 +1035,8 @@ try_command() {
     error "`pad_nbuffer 54`[${ErrorColor}ERROR${ResetColor}]  time = `print_time $StartTime $EndTime`"
   elif [ $ExitCode -eq 2 ] ; then
     error "`pad_nbuffer 54`[${WarnColor}WARNG${ResetColor}]  time = `print_time $StartTime $EndTime`"
+  elif [ $ExitCode -eq 5 ] ; then
+    error "`pad_nbuffer 54` [${OkColor}html${ResetColor}]  time = `print_time $StartTime $EndTime`"
   else
     summary "`pad_nbuffer 54`.  [${OkColor}ok${ResetColor}]  time = `print_time $StartTime $EndTime`"
   fi
@@ -894,7 +1074,7 @@ make_manual() {
             return 1
         fi
         # test for the case that a wrapper for Mod was created and now
-        # a wrapper for Mpd and Mod_ref is requested. Avoid creating
+        # a wrapper for Mod and Mod_ref is requested. Avoid creating
         # a wrapper Mod_ref.tex.
         if [ "$1" == "${LastFailedWrapper}_ref" ]; then
             return 1
@@ -954,10 +1134,33 @@ make_manual() {
     touch $LogFile
 
     #---------------------------------------------------------------------#
-    # run LaTeX, needed always, either brief or full
-    try_command "${MakeName} ${WrapperRootName} LaTeX" run_latex ${WrapperRootName}
-    if [ $ExitCode -ne 0 ] ; then ReturnStatus=$ExitCode; fi
+    # run LaTeX, either brief or full, 
+    # skip only if no PS output but PDF output is selected
+    if [[ ${MakePS} -eq 1 ||  ${MakePDF} -eq 0 ]]; then
+      try_command "${MakeName} ${WrapperRootName} LaTeX" run_latex ${WrapperRootName}
+      if [ $ExitCode -ne 0 ] ; then ReturnStatus=$ExitCode; fi
+    fi
 
+
+    #---------------------------------------------------------------------#
+    # run PDFLaTeX
+    PdfExit=3
+    if [ ${MakePDF} -eq 1 ]; then
+      if [[ -r ${WrapperRootName}.log ]] ; then 
+        mv ${WrapperRootName}.log ${WrapperRootName}.texlg
+      fi
+      try_command "${MakeName} ${WrapperRootName} PDF  " run_pdflatex ${WrapperRootName}
+      PdfExit=$ExitCode
+      if [[ -r ${WrapperRootName}.log ]] ; then 
+        mv ${WrapperRootName}.log ${WrapperRootName}.pdflg
+      fi
+      if [[ -r ${WrapperRootName}.texlg ]] ; then 
+        mv ${WrapperRootName}.texlg ${WrapperRootName}.log
+      fi
+      if [[ $ExitCode -ne 0 && ${ReturnStatus} -ne 1 ]]; then
+          ReturnStatus=$ExitCode ; 
+      fi
+    fi
 
     #---------------------------------------------------------------------#
     # run LaTeX_to_HTML
@@ -1026,6 +1229,7 @@ make_manual() {
         cat testsuite/index_row >> testsuite/index.html
         rm testsuite/index_row
         echo "  <td align=\"center\" class=\"manual\"><a href=\"${WrapperRootName}.ps.gz\">PS</a></td>" >> testsuite/index.html
+        echo "  <td align=\"center\" class=\"manual\"><a href=\"${WrapperRootName}.pdf\">PDF</a></td>" >> testsuite/index.html
         echo "  <td align=\"center\" class=\"manual\"><a href=\"${WrapperRootName}/contents.html\">HTML</a></td>" >> testsuite/index.html
         echo "</tr>" >> testsuite/index.html
     fi
@@ -1123,14 +1327,14 @@ EOF
 
 <p>This page shows the results of creating the manuals for
 CGAL-${CgalVersion}.  Each Module and each CGAL Package is tested for
-problems with LaTeX, BibTeX, makeindex, and latex_to_html
+problems with LaTeX, BibTeX, makeindex, PdfLaTeX, and latex_to_html
 conversions. The success of the conversions and the logfiles are
 accessible in the tables below. A 'y' means no blatant errors
 occurred, which may be loosely interpreted as 'success', a 'w' means
 there was a warning, a 'n' means 'failure', and a '-' means that this part 
 was not applicable to this manual. A click on the letter
-gives the corresponding logfiles. The first column contains a summary
-logfile for a quick overview. </p>
+gives the corresponding logfiles. The first column contains a 
+<b>summary logfile</b> for a quick overview. </p>
 
 <p><b>The tools are currently under development, please report all
 problems to Lutz Kettner and Peter Hachenberger.</b></p>
@@ -1143,7 +1347,7 @@ problems to Lutz Kettner and Peter Hachenberger.</b></p>
         undefined references in packages yourself. For Modules, undefined 
         references are reported as 'w'.</b><p>
    </li><li> <b>The detection of errors is not (yet) exact.  Please check the
-        log files even when a 'y' appears suggesting that everything is 
+        log files even when a 'y' appears and suggests that everything is 
         OK.</b><p>
    </li><li> Suggestions for improving the summary are also welcome.<p>
 </li></ul>
@@ -1154,16 +1358,18 @@ problems to Lutz Kettner and Peter Hachenberger.</b></p>
 <table cellpadding="5" cellspacing="2" border="1">
 <tr align="center">
   <td rowspan="2" align="left"><b>Module</b></td>
-  <td colspan="5" align="center"><b>Click to see Logfile</b></td>
-  <td colspan="2" align="center"><b>Manuals</b></td>
+  <td colspan="6" align="center"><b>Click to see Logfile</b></td>
+  <td colspan="3" align="center"><b>Manuals</b></td>
 </tr>
 <tr align="center">
   <td><b>Summary</b></td>
   <td><b>LaTeX</b></td>
   <td><b>BibTeX</b></td>
   <td><b>make_index</b></td>
+  <td><b>PdfLaTeX</b></td>
   <td><b>latex_to_html</b></td>
   <td><b>PostScript</b></td>
+  <td><b>PDF</b></td>
   <td><b>HTML</b></td>
 </tr>
 EOF
@@ -1185,16 +1391,18 @@ testsuite_middle () {
 <table cellpadding="5" cellspacing="2" border="1">
 <tr align="center">
   <td rowspan="2" align="left"><b>Package</b></td>
-  <td colspan="5" align="center"><b>Click to see Logfile</b></td>
-  <td colspan="2" align="center"><b>Manuals</b></td>
+  <td colspan="6" align="center"><b>Click to see Logfile</b></td>
+  <td colspan="3" align="center"><b>Manuals</b></td>
 </tr>
 <tr align="center">
   <td><b>Summary</b></td>
   <td><b>LaTeX</b></td>
   <td><b>BibTeX</b></td>
   <td><b>make_index</b></td>
+  <td><b>PdfLaTeX</b></td>
   <td><b>latex_to_html</b></td>
   <td><b>PostScript</b></td>
+  <td><b>PDF</b></td>
   <td><b>HTML</b></td>
 </tr>
 EOF

@@ -916,7 +916,15 @@ Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/compare_x_at_y.gif -text svneol=uns
 Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/transvecthree.gif -text svneol=unset#unset
 Packages/Kernel_23/doc_tex/Kernel_23_ref/fig/transvectwo.gif -text svneol=unset#unset
 Packages/Largest_empty_rect_2/demo/Largest_empty_rect_2/largest_empty_rect_2.vcproj -text
+Packages/Manual/doc_tex/Manual/fig/a-simp.eps -text
+Packages/Manual/doc_tex/Manual/fig/a-simp.pdf -text svneol=unset#unset
+Packages/Manual/doc_tex/Manual/fig/c-simp.eps -text
+Packages/Manual/doc_tex/Manual/fig/c-simp.pdf -text svneol=unset#unset
 Packages/Manual/doc_tex/Manual/fig/cgal_small_FAF8E8.gif -text svneol=unset#unset
+Packages/Manual/doc_tex/Manual/fig/g-simp.eps -text
+Packages/Manual/doc_tex/Manual/fig/g-simp.pdf -text svneol=unset#unset
+Packages/Manual/doc_tex/Manual/fig/l-simp.eps -text
+Packages/Manual/doc_tex/Manual/fig/l-simp.pdf -text svneol=unset#unset
 Packages/Manual/doc_tex/Miscellany/modifier.gif -text svneol=unset#unset
 Packages/Manual/doc_tex/Miscellany/modifier_small.gif -text svneol=unset#unset
 Packages/Manual/doc_tex_skel/Fig/a-full.ipe -text
@@ -933,14 +941,23 @@ Packages/Manual_tools/doc/horizontal_struct.ips -text
 Packages/Manual_tools/doc/tools_overview.ips -text
 Packages/Manual_tools/doc/vertical_struct.ips -text
 Packages/Manual_tools/format/eps_tabs/cc_Class.eps -text
+Packages/Manual_tools/format/eps_tabs/cc_Class.pdf -text svneol=unset#unset
 Packages/Manual_tools/format/eps_tabs/cc_Concept.eps -text
+Packages/Manual_tools/format/eps_tabs/cc_Concept.pdf -text
 Packages/Manual_tools/format/eps_tabs/cc_Constant.eps -text
+Packages/Manual_tools/format/eps_tabs/cc_Constant.pdf -text
 Packages/Manual_tools/format/eps_tabs/cc_Enum.eps -text
+Packages/Manual_tools/format/eps_tabs/cc_Enum.pdf -text svneol=unset#unset
 Packages/Manual_tools/format/eps_tabs/cc_Function.eps -text
+Packages/Manual_tools/format/eps_tabs/cc_Function.pdf -text
 Packages/Manual_tools/format/eps_tabs/cc_FunctionObjectClass.eps -text
+Packages/Manual_tools/format/eps_tabs/cc_FunctionObjectClass.pdf -text
 Packages/Manual_tools/format/eps_tabs/cc_FunctionObjectConcept.eps -text
+Packages/Manual_tools/format/eps_tabs/cc_FunctionObjectConcept.pdf -text
 Packages/Manual_tools/format/eps_tabs/cc_Macro.eps -text
+Packages/Manual_tools/format/eps_tabs/cc_Macro.pdf -text
 Packages/Manual_tools/format/eps_tabs/cc_Variable.eps -text
+Packages/Manual_tools/format/eps_tabs/cc_Variable.pdf -text
 Packages/Manual_tools/format/eps_tabs_grey/cc_Class.eps -text
 Packages/Manual_tools/format/eps_tabs_grey/cc_Concept.eps -text
 Packages/Manual_tools/format/eps_tabs_grey/cc_Constant.eps -text

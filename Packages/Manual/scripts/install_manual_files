@@ -113,22 +113,6 @@ echo "***copying common_intro.tex to kernel and support ***"
 \cp $TARGET_DIR/basic/Introduction/common_intro.tex $TARGET_DIR/support/Introduction
 \cp $TARGET_DIR/basic/Introduction/common_intro.tex $TARGET_DIR/kernel/
 
-echo "***copying Handle to Handles_and_Circs***"
-\cp $TARGET_DIR/support/Handle/*.tex $TARGET_DIR/support/Handles_and_Circs
-echo "***copying Circulator to Handles_and_Circs***"
-\cp $TARGET_DIR/support/Circulator/*.tex $TARGET_DIR/support/Handles_and_Circs
-echo "***recopying Handles_and_Circs/main.tex***"
-\cp doc_tex_skel/support/Handles_and_Circs/main.tex $TARGET_DIR/support/Handles_and_Circs
-
-echo "***creating Handles_and_Circs_ref***"
-mkdir $TARGET_DIR/support/Handles_and_Circs_ref
-echo "***copying Handle_ref to Handles_and_Circs_ref***"
-\cp $TARGET_DIR/support/Handle_ref/*.tex $TARGET_DIR/support/Handles_and_Circs_ref
-echo "***copying Circulator_ref to Handles_and_Circs_ref***"
-\cp $TARGET_DIR/support/Circulator_ref/*.tex $TARGET_DIR/support/Handles_and_Circs_ref
-echo "***editing Handles_and_Circs_ref/intro.tex to include Handle and pointer***"
-sed 's/\\chapter{Circulators}/\\chapter{Handles and Circulators}/; s/\\ccc{Random_access_circulator}/&\\\\ \\ccRefConceptPage{Handle}/; s/\\section\*{Summary}/& \\input{handle_intro}/' $TARGET_DIR/support/Circulator_ref/intro.tex > $TARGET_DIR/support/Handles_and_Circs_ref/intro.tex 
-
 echo "***copying Timer to Miscellany***"
 \cp $TARGET_DIR/support/Timer/* $TARGET_DIR/support/Miscellany
 \cp $TARGET_DIR/support/Timer_ref/* $TARGET_DIR/support/Miscellany_ref
@@ -147,8 +131,6 @@ echo "***recopying Miscellany_ref intro.tex***"
 \cp doc_tex_skel/support/Miscellany_ref/intro.tex $TARGET_DIR/support/Miscellany_ref
 
 cd $TARGET_DIR/support
-echo "***creating Handles_and_Circs_ref main.tex***"
-cc_make_ref_pages Handles_and_Circs_ref
 echo "***creating Miscellany_ref main.tex***"
 cc_make_ref_pages Miscellany_ref
 
