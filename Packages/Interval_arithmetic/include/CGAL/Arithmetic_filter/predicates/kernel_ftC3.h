@@ -86,12 +86,12 @@ struct Static_Filtered_strict_dominanceC3_6
   {
     typedef Static_filter_error FT;
   
-    return ( CGAL::Static_Filtered_compare_2::update_epsilon(px, qx,
+    return CGAL_NTS Static_Filtered_compare_2::update_epsilon(px, qx,
   		epsilon_0) == LARGER &&
-  	   CGAL::Static_Filtered_compare_2::update_epsilon(py, qy,
+  	 CGAL_NTS Static_Filtered_compare_2::update_epsilon(py, qy,
   		epsilon_1) == LARGER &&
-  	   CGAL::Static_Filtered_compare_2::update_epsilon(pz, qz,
-  		epsilon_2) == LARGER );
+  	 CGAL_NTS Static_Filtered_compare_2::update_epsilon(pz, qz,
+  		epsilon_2) == LARGER;
   }
 
   // Call this function from the outside to update the context.
@@ -118,12 +118,12 @@ struct Static_Filtered_strict_dominanceC3_6
   {
     typedef Restricted_double FT;
   
-    return ( CGAL::Static_Filtered_compare_2::epsilon_variant(px, qx,
+    return CGAL_NTS Static_Filtered_compare_2::epsilon_variant(px, qx,
   		epsilon_0) == LARGER &&
-  	   CGAL::Static_Filtered_compare_2::epsilon_variant(py, qy,
+  	 CGAL_NTS Static_Filtered_compare_2::epsilon_variant(py, qy,
   		epsilon_1) == LARGER &&
-  	   CGAL::Static_Filtered_compare_2::epsilon_variant(pz, qz,
-  		epsilon_2) == LARGER );
+  	 CGAL_NTS Static_Filtered_compare_2::epsilon_variant(pz, qz,
+  		epsilon_2) == LARGER;
   }
 };
 
@@ -306,12 +306,12 @@ struct Static_Filtered_dominanceC3_6
   {
     typedef Static_filter_error FT;
   
-    return ( CGAL::Static_Filtered_compare_2::update_epsilon(px, qx,
+    return CGAL_NTS Static_Filtered_compare_2::update_epsilon(px, qx,
   		epsilon_0) != SMALLER && 
-  	   CGAL::Static_Filtered_compare_2::update_epsilon(py, qy,
+  	 CGAL_NTS Static_Filtered_compare_2::update_epsilon(py, qy,
   		epsilon_1) != SMALLER &&
-  	   CGAL::Static_Filtered_compare_2::update_epsilon(pz, qz,
-  		epsilon_2) != SMALLER );
+  	 CGAL_NTS Static_Filtered_compare_2::update_epsilon(pz, qz,
+  		epsilon_2) != SMALLER;
   }
 
   // Call this function from the outside to update the context.
@@ -338,12 +338,12 @@ struct Static_Filtered_dominanceC3_6
   {
     typedef Restricted_double FT;
   
-    return ( CGAL::Static_Filtered_compare_2::epsilon_variant(px, qx,
+    return CGAL_NTS Static_Filtered_compare_2::epsilon_variant(px, qx,
   		epsilon_0) != SMALLER && 
-  	   CGAL::Static_Filtered_compare_2::epsilon_variant(py, qy,
+  	 CGAL_NTS Static_Filtered_compare_2::epsilon_variant(py, qy,
   		epsilon_1) != SMALLER &&
-  	   CGAL::Static_Filtered_compare_2::epsilon_variant(pz, qz,
-  		epsilon_2) != SMALLER );
+  	 CGAL_NTS Static_Filtered_compare_2::epsilon_variant(pz, qz,
+  		epsilon_2) != SMALLER;
   }
 };
 
@@ -1106,14 +1106,14 @@ struct Static_Filtered_equal_directionC3_6
   		epsilon_1) == ZERO
         && Static_Filtered_sign_of_determinant2x2_4::update_epsilon(dy1, dz1, dy2, dz2,
   		epsilon_2) == ZERO
-        && CGAL::Static_Filtered_sign_1::update_epsilon(dx1,
-  		epsilon_3) == CGAL::Static_Filtered_sign_1::update_epsilon(dx2,
+        && CGAL_NTS Static_Filtered_sign_1::update_epsilon(dx1,
+  		epsilon_3) == CGAL_NTS Static_Filtered_sign_1::update_epsilon(dx2,
   		epsilon_4)
-        && CGAL::Static_Filtered_sign_1::update_epsilon(dy1,
-  		epsilon_5) == CGAL::Static_Filtered_sign_1::update_epsilon(dy2,
+        && CGAL_NTS Static_Filtered_sign_1::update_epsilon(dy1,
+  		epsilon_5) == CGAL_NTS Static_Filtered_sign_1::update_epsilon(dy2,
   		epsilon_6)
-        && CGAL::Static_Filtered_sign_1::update_epsilon(dz1,
-  		epsilon_7) == CGAL::Static_Filtered_sign_1::update_epsilon(dz2,
+        && CGAL_NTS Static_Filtered_sign_1::update_epsilon(dz1,
+  		epsilon_7) == CGAL_NTS Static_Filtered_sign_1::update_epsilon(dz2,
   		epsilon_8);
   }
 
@@ -1153,14 +1153,14 @@ struct Static_Filtered_equal_directionC3_6
   		epsilon_1) == ZERO
         && Static_Filtered_sign_of_determinant2x2_4::epsilon_variant(dy1, dz1, dy2, dz2,
   		epsilon_2) == ZERO
-        && CGAL::Static_Filtered_sign_1::epsilon_variant(dx1,
-  		epsilon_3) == CGAL::Static_Filtered_sign_1::epsilon_variant(dx2,
+        && CGAL_NTS Static_Filtered_sign_1::epsilon_variant(dx1,
+  		epsilon_3) == CGAL_NTS Static_Filtered_sign_1::epsilon_variant(dx2,
   		epsilon_4)
-        && CGAL::Static_Filtered_sign_1::epsilon_variant(dy1,
-  		epsilon_5) == CGAL::Static_Filtered_sign_1::epsilon_variant(dy2,
+        && CGAL_NTS Static_Filtered_sign_1::epsilon_variant(dy1,
+  		epsilon_5) == CGAL_NTS Static_Filtered_sign_1::epsilon_variant(dy2,
   		epsilon_6)
-        && CGAL::Static_Filtered_sign_1::epsilon_variant(dz1,
-  		epsilon_7) == CGAL::Static_Filtered_sign_1::epsilon_variant(dz2,
+        && CGAL_NTS Static_Filtered_sign_1::epsilon_variant(dz1,
+  		epsilon_7) == CGAL_NTS Static_Filtered_sign_1::epsilon_variant(dz2,
   		epsilon_8);
   }
 };
@@ -1358,7 +1358,7 @@ struct Static_Filtered_side_of_oriented_planeC3_7
   {
     typedef Static_filter_error FT;
   
-    return Oriented_side(CGAL::Static_Filtered_sign_1::update_epsilon(a*px + b*py + c*pz +d,
+    return Oriented_side(CGAL_NTS Static_Filtered_sign_1::update_epsilon(a*px + b*py + c*pz +d,
   		epsilon_0));
   }
 
@@ -1385,7 +1385,7 @@ struct Static_Filtered_side_of_oriented_planeC3_7
   {
     typedef Restricted_double FT;
   
-    return Oriented_side(CGAL::Static_Filtered_sign_1::epsilon_variant(a*px + b*py + c*pz +d,
+    return Oriented_side(CGAL_NTS Static_Filtered_sign_1::epsilon_variant(a*px + b*py + c*pz +d,
   		epsilon_0));
   }
 };
@@ -1611,19 +1611,19 @@ struct Static_Filtered_side_of_oriented_sphereC3_15
     FT ptx = px - tx;
     FT pty = py - ty;
     FT ptz = pz - tz;
-    FT pt2 = square(ptx) + square(pty) + square(ptz);
+    FT pt2 = CGAL_NTS square(ptx) + CGAL_NTS square(pty) + CGAL_NTS square(ptz);
     FT qtx = qx - tx;
     FT qty = qy - ty;
     FT qtz = qz - tz;
-    FT qt2 = square(qtx) + square(qty) + square(qtz);
+    FT qt2 = CGAL_NTS square(qtx) + CGAL_NTS square(qty) + CGAL_NTS square(qtz);
     FT rtx = rx - tx;
     FT rty = ry - ty;
     FT rtz = rz - tz;
-    FT rt2 = square(rtx) + square(rty) + square(rtz);
+    FT rt2 = CGAL_NTS square(rtx) + CGAL_NTS square(rty) + CGAL_NTS square(rtz);
     FT stx = sx - tx;
     FT sty = sy - ty;
     FT stz = sz - tz;
-    FT st2 = square(stx) + square(sty) + square(stz);
+    FT st2 = CGAL_NTS square(stx) + CGAL_NTS square(sty) + CGAL_NTS square(stz);
     return Oriented_side(Static_Filtered_sign_of_determinant4x4_16::update_epsilon(ptx,pty,ptz,pt2,
                                                 rtx,rty,rtz,rt2,
                                                 qtx,qty,qtz,qt2,
@@ -1665,19 +1665,19 @@ struct Static_Filtered_side_of_oriented_sphereC3_15
     FT ptx = px - tx;
     FT pty = py - ty;
     FT ptz = pz - tz;
-    FT pt2 = square(ptx) + square(pty) + square(ptz);
+    FT pt2 = CGAL_NTS square(ptx) + CGAL_NTS square(pty) + CGAL_NTS square(ptz);
     FT qtx = qx - tx;
     FT qty = qy - ty;
     FT qtz = qz - tz;
-    FT qt2 = square(qtx) + square(qty) + square(qtz);
+    FT qt2 = CGAL_NTS square(qtx) + CGAL_NTS square(qty) + CGAL_NTS square(qtz);
     FT rtx = rx - tx;
     FT rty = ry - ty;
     FT rtz = rz - tz;
-    FT rt2 = square(rtx) + square(rty) + square(rtz);
+    FT rt2 = CGAL_NTS square(rtx) + CGAL_NTS square(rty) + CGAL_NTS square(rtz);
     FT stx = sx - tx;
     FT sty = sy - ty;
     FT stz = sz - tz;
-    FT st2 = square(stx) + square(sty) + square(stz);
+    FT st2 = CGAL_NTS square(stx) + CGAL_NTS square(sty) + CGAL_NTS square(stz);
     return Oriented_side(Static_Filtered_sign_of_determinant4x4_16::epsilon_variant(ptx,pty,ptz,pt2,
                                                 rtx,rty,rtz,rt2,
                                                 qtx,qty,qtz,qt2,
@@ -2306,8 +2306,8 @@ struct Static_Filtered_cmp_dist_to_pointC3_9
   {
     typedef Static_filter_error FT;
   
-    return CGAL::Static_Filtered_compare_2::update_epsilon(squared_distanceC3(px,py,pz,qx,qy,qz),
-                         squared_distanceC3(px,py,pz,rx,ry,rz),
+    return CGAL_NTS Static_Filtered_compare_2::update_epsilon(squared_distanceC3(px,py,pz,qx,qy,qz),
+                            squared_distanceC3(px,py,pz,rx,ry,rz),
   		epsilon_0);
   }
 
@@ -2336,8 +2336,8 @@ struct Static_Filtered_cmp_dist_to_pointC3_9
   {
     typedef Restricted_double FT;
   
-    return CGAL::Static_Filtered_compare_2::epsilon_variant(squared_distanceC3(px,py,pz,qx,qy,qz),
-                         squared_distanceC3(px,py,pz,rx,ry,rz),
+    return CGAL_NTS Static_Filtered_compare_2::epsilon_variant(squared_distanceC3(px,py,pz,qx,qy,qz),
+                            squared_distanceC3(px,py,pz,rx,ry,rz),
   		epsilon_0);
   }
 };
@@ -2554,8 +2554,8 @@ struct Static_Filtered_cmp_signed_dist_to_directionC3_9
   {
     typedef Static_filter_error FT;
   
-    return CGAL::Static_Filtered_compare_2::update_epsilon(scaled_distance_to_directionC3(pa,pb,pc,px,py,pz),
-                         scaled_distance_to_directionC3(pa,pb,pc,qx,qy,qz),
+    return CGAL_NTS Static_Filtered_compare_2::update_epsilon(scaled_distance_to_directionC3(pa,pb,pc,px,py,pz),
+                            scaled_distance_to_directionC3(pa,pb,pc,qx,qy,qz),
   		epsilon_0);
   }
 
@@ -2584,8 +2584,8 @@ struct Static_Filtered_cmp_signed_dist_to_directionC3_9
   {
     typedef Restricted_double FT;
   
-    return CGAL::Static_Filtered_compare_2::epsilon_variant(scaled_distance_to_directionC3(pa,pb,pc,px,py,pz),
-                         scaled_distance_to_directionC3(pa,pb,pc,qx,qy,qz),
+    return CGAL_NTS Static_Filtered_compare_2::epsilon_variant(scaled_distance_to_directionC3(pa,pb,pc,px,py,pz),
+                            scaled_distance_to_directionC3(pa,pb,pc,qx,qy,qz),
   		epsilon_0);
   }
 };

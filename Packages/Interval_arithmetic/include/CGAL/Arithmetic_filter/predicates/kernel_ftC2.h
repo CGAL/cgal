@@ -93,15 +93,15 @@ struct Static_Filtered_equal_lineC2_6
       if (Static_Filtered_sign_of_determinant2x2_4::update_epsilon(l1a, l1b, l2a, l2b,
   		epsilon_0) != ZERO)
           return false; 
-      CGAL::Sign s1a = CGAL::Static_Filtered_sign_1::update_epsilon(l1a,
+      CGAL::Sign s1a = CGAL_NTS Static_Filtered_sign_1::update_epsilon(l1a,
   		epsilon_1);
       if (s1a != ZERO)
-          return s1a == CGAL::Static_Filtered_sign_1::update_epsilon(l2a,
+          return s1a == CGAL_NTS Static_Filtered_sign_1::update_epsilon(l2a,
   		epsilon_2)
   	    && Static_Filtered_sign_of_determinant2x2_4::update_epsilon(l1a, l1c, l2a, l2c,
   		epsilon_3) == ZERO;
-      return CGAL::Static_Filtered_sign_1::update_epsilon(l1b,
-  		epsilon_4) == CGAL::Static_Filtered_sign_1::update_epsilon(l2b,
+      return CGAL_NTS Static_Filtered_sign_1::update_epsilon(l1b,
+  		epsilon_4) == CGAL_NTS Static_Filtered_sign_1::update_epsilon(l2b,
   		epsilon_5)
   	&& Static_Filtered_sign_of_determinant2x2_4::update_epsilon(l1b, l1c, l2b, l2c,
   		epsilon_6) == ZERO;
@@ -138,15 +138,15 @@ struct Static_Filtered_equal_lineC2_6
       if (Static_Filtered_sign_of_determinant2x2_4::epsilon_variant(l1a, l1b, l2a, l2b,
   		epsilon_0) != ZERO)
           return false; 
-      CGAL::Sign s1a = CGAL::Static_Filtered_sign_1::epsilon_variant(l1a,
+      CGAL::Sign s1a = CGAL_NTS Static_Filtered_sign_1::epsilon_variant(l1a,
   		epsilon_1);
       if (s1a != ZERO)
-          return s1a == CGAL::Static_Filtered_sign_1::epsilon_variant(l2a,
+          return s1a == CGAL_NTS Static_Filtered_sign_1::epsilon_variant(l2a,
   		epsilon_2)
   	    && Static_Filtered_sign_of_determinant2x2_4::epsilon_variant(l1a, l1c, l2a, l2c,
   		epsilon_3) == ZERO;
-      return CGAL::Static_Filtered_sign_1::epsilon_variant(l1b,
-  		epsilon_4) == CGAL::Static_Filtered_sign_1::epsilon_variant(l2b,
+      return CGAL_NTS Static_Filtered_sign_1::epsilon_variant(l1b,
+  		epsilon_4) == CGAL_NTS Static_Filtered_sign_1::epsilon_variant(l2b,
   		epsilon_5)
   	&& Static_Filtered_sign_of_determinant2x2_4::epsilon_variant(l1b, l1c, l2b, l2c,
   		epsilon_6) == ZERO;
@@ -346,10 +346,10 @@ struct Static_Filtered_compare_xC2_7
     
     FT num = det2x2_by_formula( lb, lc, hb, hc);
     FT den = det2x2_by_formula( la, lb, ha, hb);
-    Sign s = CGAL::Static_Filtered_sign_1::update_epsilon(den,
+    Sign s = CGAL_NTS Static_Filtered_sign_1::update_epsilon(den,
   		epsilon_0);
     CGAL_kernel_assertion( s != ZERO );
-    return Comparison_result( s * CGAL::Static_Filtered_compare_2::update_epsilon( px * den, num,
+    return Comparison_result( s * CGAL_NTS Static_Filtered_compare_2::update_epsilon( px * den, num,
   		epsilon_1) );
   }
 
@@ -380,10 +380,10 @@ struct Static_Filtered_compare_xC2_7
     
     FT num = det2x2_by_formula( lb, lc, hb, hc);
     FT den = det2x2_by_formula( la, lb, ha, hb);
-    Sign s = CGAL::Static_Filtered_sign_1::epsilon_variant(den,
+    Sign s = CGAL_NTS Static_Filtered_sign_1::epsilon_variant(den,
   		epsilon_0);
     CGAL_kernel_assertion( s != ZERO );
-    return Comparison_result( s * CGAL::Static_Filtered_compare_2::epsilon_variant( px * den, num,
+    return Comparison_result( s * CGAL_NTS Static_Filtered_compare_2::epsilon_variant( px * den, num,
   		epsilon_1) );
   }
 };
@@ -594,11 +594,11 @@ struct Static_Filtered_compare_xC2_9
               + det2x2_by_formula(num1,num2,h1b,h2b);
     FT den1 = det2x2_by_formula( la, lb, h1a, h1b);
     FT den2 = det2x2_by_formula( la, lb, h2a, h2b);
-    return Comparison_result( CGAL::Static_Filtered_sign_1::update_epsilon(lb,
-  		epsilon_0) * CGAL::Static_Filtered_sign_1::update_epsilon(num,
+    return Comparison_result( CGAL_NTS Static_Filtered_sign_1::update_epsilon(lb,
+  		epsilon_0) * CGAL_NTS Static_Filtered_sign_1::update_epsilon(num,
   		epsilon_1) *
-                              CGAL::Static_Filtered_sign_1::update_epsilon(den1,
-  		epsilon_2) * CGAL::Static_Filtered_sign_1::update_epsilon(den2,
+                              CGAL_NTS Static_Filtered_sign_1::update_epsilon(den1,
+  		epsilon_2) * CGAL_NTS Static_Filtered_sign_1::update_epsilon(den2,
   		epsilon_3));
   }
 
@@ -637,11 +637,11 @@ struct Static_Filtered_compare_xC2_9
               + det2x2_by_formula(num1,num2,h1b,h2b);
     FT den1 = det2x2_by_formula( la, lb, h1a, h1b);
     FT den2 = det2x2_by_formula( la, lb, h2a, h2b);
-    return Comparison_result( CGAL::Static_Filtered_sign_1::epsilon_variant(lb,
-  		epsilon_0) * CGAL::Static_Filtered_sign_1::epsilon_variant(num,
+    return Comparison_result( CGAL_NTS Static_Filtered_sign_1::epsilon_variant(lb,
+  		epsilon_0) * CGAL_NTS Static_Filtered_sign_1::epsilon_variant(num,
   		epsilon_1) *
-                              CGAL::Static_Filtered_sign_1::epsilon_variant(den1,
-  		epsilon_2) * CGAL::Static_Filtered_sign_1::epsilon_variant(den2,
+                              CGAL_NTS Static_Filtered_sign_1::epsilon_variant(den1,
+  		epsilon_2) * CGAL_NTS Static_Filtered_sign_1::epsilon_variant(den2,
   		epsilon_3));
   }
 };
@@ -882,12 +882,12 @@ struct Static_Filtered_compare_xC2_12
     FT den1 = det2x2_by_formula( l1a, l1b, h1a, h1b);
     FT num2 = det2x2_by_formula( l2b, l2c, h2b, h2c);
     FT den2 = det2x2_by_formula( l2a, l2b, h2a, h2b);
-    Sign s = Sign (CGAL::Static_Filtered_sign_1::update_epsilon(den1,
-  		epsilon_0) * CGAL::Static_Filtered_sign_1::update_epsilon(den2,
+    Sign s = Sign (CGAL_NTS Static_Filtered_sign_1::update_epsilon(den1,
+  		epsilon_0) * CGAL_NTS Static_Filtered_sign_1::update_epsilon(den2,
   		epsilon_1));
     CGAL_kernel_assertion( s != ZERO );
-    return Comparison_result( s * Static_Filtered_sign_of_determinant2x2_4::update_epsilon(num1, 
-  						       num2, den1, den2,
+    return Comparison_result( s * Static_Filtered_sign_of_determinant2x2_4::update_epsilon(num1, num2,
+  			                               den1, den2,
   		epsilon_2));
   }
 
@@ -925,12 +925,12 @@ struct Static_Filtered_compare_xC2_12
     FT den1 = det2x2_by_formula( l1a, l1b, h1a, h1b);
     FT num2 = det2x2_by_formula( l2b, l2c, h2b, h2c);
     FT den2 = det2x2_by_formula( l2a, l2b, h2a, h2b);
-    Sign s = Sign (CGAL::Static_Filtered_sign_1::epsilon_variant(den1,
-  		epsilon_0) * CGAL::Static_Filtered_sign_1::epsilon_variant(den2,
+    Sign s = Sign (CGAL_NTS Static_Filtered_sign_1::epsilon_variant(den1,
+  		epsilon_0) * CGAL_NTS Static_Filtered_sign_1::epsilon_variant(den2,
   		epsilon_1));
     CGAL_kernel_assertion( s != ZERO );
-    return Comparison_result( s * Static_Filtered_sign_of_determinant2x2_4::epsilon_variant(num1, 
-  						       num2, den1, den2,
+    return Comparison_result( s * Static_Filtered_sign_of_determinant2x2_4::epsilon_variant(num1, num2,
+  			                               den1, den2,
   		epsilon_2));
   }
 };
@@ -1163,10 +1163,10 @@ struct Static_Filtered_compare_y_at_xC2_5
   {
     typedef Static_filter_error FT;
   
-    Sign s = CGAL::Static_Filtered_sign_1::update_epsilon(lb,
+    Sign s = CGAL_NTS Static_Filtered_sign_1::update_epsilon(lb,
   		epsilon_0);
     CGAL_kernel_assertion( s != ZERO );
-    return Comparison_result (s * CGAL::Static_Filtered_sign_1::update_epsilon(la*px + lb*py + lc,
+    return Comparison_result (s * CGAL_NTS Static_Filtered_sign_1::update_epsilon(la*px + lb*py + lc,
   		epsilon_1));
   }
 
@@ -1192,10 +1192,10 @@ struct Static_Filtered_compare_y_at_xC2_5
   {
     typedef Restricted_double FT;
   
-    Sign s = CGAL::Static_Filtered_sign_1::epsilon_variant(lb,
+    Sign s = CGAL_NTS Static_Filtered_sign_1::epsilon_variant(lb,
   		epsilon_0);
     CGAL_kernel_assertion( s != ZERO );
-    return Comparison_result (s * CGAL::Static_Filtered_sign_1::epsilon_variant(la*px + lb*py + lc,
+    return Comparison_result (s * CGAL_NTS Static_Filtered_sign_1::epsilon_variant(la*px + lb*py + lc,
   		epsilon_1));
   }
 };
@@ -1372,8 +1372,8 @@ struct Static_Filtered_compare_y_at_xC2_7
   {
     typedef Static_filter_error FT;
   
-    Sign s = Sign (CGAL::Static_Filtered_sign_1::update_epsilon(l1b,
-  		epsilon_0) * CGAL::Static_Filtered_sign_1::update_epsilon(l2b,
+    Sign s = Sign (CGAL_NTS Static_Filtered_sign_1::update_epsilon(l1b,
+  		epsilon_0) * CGAL_NTS Static_Filtered_sign_1::update_epsilon(l2b,
   		epsilon_1));
     CGAL_kernel_assertion( s != ZERO );
     return Comparison_result ( s * Static_Filtered_sign_of_determinant2x2_4::update_epsilon(l2a*px+l2c, l2b,
@@ -1406,8 +1406,8 @@ struct Static_Filtered_compare_y_at_xC2_7
   {
     typedef Restricted_double FT;
   
-    Sign s = Sign (CGAL::Static_Filtered_sign_1::epsilon_variant(l1b,
-  		epsilon_0) * CGAL::Static_Filtered_sign_1::epsilon_variant(l2b,
+    Sign s = Sign (CGAL_NTS Static_Filtered_sign_1::epsilon_variant(l1b,
+  		epsilon_0) * CGAL_NTS Static_Filtered_sign_1::epsilon_variant(l2b,
   		epsilon_1));
     CGAL_kernel_assertion( s != ZERO );
     return Comparison_result ( s * Static_Filtered_sign_of_determinant2x2_4::epsilon_variant(l2a*px+l2c, l2b,
@@ -1617,7 +1617,8 @@ struct Static_Filtered_compare_y_at_xC2_9
     typedef Static_filter_error FT;
   
     Sign s = Sign (Static_Filtered_sign_of_determinant2x2_4::update_epsilon(l1a, l1b, l2a, l2b,
-  		epsilon_0) * CGAL::Static_Filtered_sign_1::update_epsilon(hb,
+  		epsilon_0) *
+  		 CGAL_NTS Static_Filtered_sign_1::update_epsilon(hb,
   		epsilon_1));
     CGAL_kernel_assertion( s != ZERO );
     return Comparison_result( s * Static_Filtered_sign_of_determinant3x3_9::update_epsilon(l1a, l1b, l1c,
@@ -1654,7 +1655,8 @@ struct Static_Filtered_compare_y_at_xC2_9
     typedef Restricted_double FT;
   
     Sign s = Sign (Static_Filtered_sign_of_determinant2x2_4::epsilon_variant(l1a, l1b, l2a, l2b,
-  		epsilon_0) * CGAL::Static_Filtered_sign_1::epsilon_variant(hb,
+  		epsilon_0) *
+  		 CGAL_NTS Static_Filtered_sign_1::epsilon_variant(hb,
   		epsilon_1));
     CGAL_kernel_assertion( s != ZERO );
     return Comparison_result( s * Static_Filtered_sign_of_determinant3x3_9::epsilon_variant(l1a, l1b, l1c,
@@ -1898,9 +1900,9 @@ struct Static_Filtered_compare_y_at_xC2_12
     
     FT num = det2x2_by_formula( l1b, l1c, l2b, l2c);
     FT den = det2x2_by_formula( l1a, l1b, l2a, l2b);
-    Sign s = Sign (CGAL::Static_Filtered_sign_1::update_epsilon(h1b,
-  		epsilon_0) * CGAL::Static_Filtered_sign_1::update_epsilon(h2b,
-  		epsilon_1) * CGAL::Static_Filtered_sign_1::update_epsilon(den,
+    Sign s = Sign (CGAL_NTS Static_Filtered_sign_1::update_epsilon(h1b,
+  		epsilon_0) * CGAL_NTS Static_Filtered_sign_1::update_epsilon(h2b,
+  		epsilon_1) * CGAL_NTS Static_Filtered_sign_1::update_epsilon(den,
   		epsilon_2));
     CGAL_kernel_assertion( s != ZERO );
     return Comparison_result ( s * Static_Filtered_sign_of_determinant2x2_4::update_epsilon(h2a*num+h2c*den, h2b,
@@ -1942,9 +1944,9 @@ struct Static_Filtered_compare_y_at_xC2_12
     
     FT num = det2x2_by_formula( l1b, l1c, l2b, l2c);
     FT den = det2x2_by_formula( l1a, l1b, l2a, l2b);
-    Sign s = Sign (CGAL::Static_Filtered_sign_1::epsilon_variant(h1b,
-  		epsilon_0) * CGAL::Static_Filtered_sign_1::epsilon_variant(h2b,
-  		epsilon_1) * CGAL::Static_Filtered_sign_1::epsilon_variant(den,
+    Sign s = Sign (CGAL_NTS Static_Filtered_sign_1::epsilon_variant(h1b,
+  		epsilon_0) * CGAL_NTS Static_Filtered_sign_1::epsilon_variant(h2b,
+  		epsilon_1) * CGAL_NTS Static_Filtered_sign_1::epsilon_variant(den,
   		epsilon_2));
     CGAL_kernel_assertion( s != ZERO );
     return Comparison_result ( s * Static_Filtered_sign_of_determinant2x2_4::epsilon_variant(h2a*num+h2c*den, h2b,
@@ -2182,11 +2184,11 @@ struct Static_Filtered_equal_directionC2_4
   {
     typedef Static_filter_error FT;
   
-    return CGAL::Static_Filtered_sign_1::update_epsilon(dx1,
-  		epsilon_0) == CGAL::Static_Filtered_sign_1::update_epsilon(dx2,
+    return CGAL_NTS Static_Filtered_sign_1::update_epsilon(dx1,
+  		epsilon_0) == CGAL_NTS Static_Filtered_sign_1::update_epsilon(dx2,
   		epsilon_1)
-        && CGAL::Static_Filtered_sign_1::update_epsilon(dy1,
-  		epsilon_2) == CGAL::Static_Filtered_sign_1::update_epsilon(dy2,
+        && CGAL_NTS Static_Filtered_sign_1::update_epsilon(dy1,
+  		epsilon_2) == CGAL_NTS Static_Filtered_sign_1::update_epsilon(dy2,
   		epsilon_3)
         && Static_Filtered_sign_of_determinant2x2_4::update_epsilon(dx1, dy1, dx2, dy2,
   		epsilon_4) == ZERO;
@@ -2216,11 +2218,11 @@ struct Static_Filtered_equal_directionC2_4
   {
     typedef Restricted_double FT;
   
-    return CGAL::Static_Filtered_sign_1::epsilon_variant(dx1,
-  		epsilon_0) == CGAL::Static_Filtered_sign_1::epsilon_variant(dx2,
+    return CGAL_NTS Static_Filtered_sign_1::epsilon_variant(dx1,
+  		epsilon_0) == CGAL_NTS Static_Filtered_sign_1::epsilon_variant(dx2,
   		epsilon_1)
-        && CGAL::Static_Filtered_sign_1::epsilon_variant(dy1,
-  		epsilon_2) == CGAL::Static_Filtered_sign_1::epsilon_variant(dy2,
+        && CGAL_NTS Static_Filtered_sign_1::epsilon_variant(dy1,
+  		epsilon_2) == CGAL_NTS Static_Filtered_sign_1::epsilon_variant(dy2,
   		epsilon_3)
         && Static_Filtered_sign_of_determinant2x2_4::epsilon_variant(dx1, dy1, dx2, dy2,
   		epsilon_4) == ZERO;
@@ -2382,7 +2384,7 @@ struct Static_Filtered_compare_deltax_deltayC2_4
   {
     typedef Static_filter_error FT;
   
-    return CGAL::Static_Filtered_compare_2::update_epsilon(abs(px-qx), abs(ry-sy),
+    return CGAL_NTS Static_Filtered_compare_2::update_epsilon(CGAL_NTS abs(px-qx), CGAL_NTS abs(ry-sy),
   		epsilon_0);
   }
 
@@ -2406,7 +2408,7 @@ struct Static_Filtered_compare_deltax_deltayC2_4
   {
     typedef Restricted_double FT;
   
-    return CGAL::Static_Filtered_compare_2::epsilon_variant(abs(px-qx), abs(ry-sy),
+    return CGAL_NTS Static_Filtered_compare_2::epsilon_variant(CGAL_NTS abs(px-qx), CGAL_NTS abs(ry-sy),
   		epsilon_0);
   }
 };
@@ -3284,8 +3286,8 @@ struct Static_Filtered_cmp_dist_to_pointC2_6
   {
     typedef Static_filter_error FT;
   
-    return CGAL::Static_Filtered_compare_2::update_epsilon(squared_distanceC2(px,py,qx,qy),
-                         squared_distanceC2(px,py,rx,ry),
+    return CGAL_NTS Static_Filtered_compare_2::update_epsilon(squared_distanceC2(px,py,qx,qy),
+                            squared_distanceC2(px,py,rx,ry),
   		epsilon_0);
   }
 
@@ -3311,8 +3313,8 @@ struct Static_Filtered_cmp_dist_to_pointC2_6
   {
     typedef Restricted_double FT;
   
-    return CGAL::Static_Filtered_compare_2::epsilon_variant(squared_distanceC2(px,py,qx,qy),
-                         squared_distanceC2(px,py,rx,ry),
+    return CGAL_NTS Static_Filtered_compare_2::epsilon_variant(squared_distanceC2(px,py,qx,qy),
+                            squared_distanceC2(px,py,rx,ry),
   		epsilon_0);
   }
 };
@@ -3490,8 +3492,8 @@ struct Static_Filtered_cmp_signed_dist_to_directionC2_6
   {
     typedef Static_filter_error FT;
   
-    return CGAL::Static_Filtered_compare_2::update_epsilon(scaled_distance_to_directionC2(la,lb,px,py),
-                         scaled_distance_to_directionC2(la,lb,qx,qy),
+    return CGAL_NTS Static_Filtered_compare_2::update_epsilon(scaled_distance_to_directionC2(la,lb,px,py),
+                            scaled_distance_to_directionC2(la,lb,qx,qy),
   		epsilon_0);
   }
 
@@ -3517,8 +3519,8 @@ struct Static_Filtered_cmp_signed_dist_to_directionC2_6
   {
     typedef Restricted_double FT;
   
-    return CGAL::Static_Filtered_compare_2::epsilon_variant(scaled_distance_to_directionC2(la,lb,px,py),
-                         scaled_distance_to_directionC2(la,lb,qx,qy),
+    return CGAL_NTS Static_Filtered_compare_2::epsilon_variant(scaled_distance_to_directionC2(la,lb,px,py),
+                            scaled_distance_to_directionC2(la,lb,qx,qy),
   		epsilon_0);
   }
 };
@@ -3704,8 +3706,8 @@ struct Static_Filtered_cmp_signed_dist_to_lineC2_8
   {
     typedef Static_filter_error FT;
   
-    return CGAL::Static_Filtered_compare_2::update_epsilon(scaled_distance_to_lineC2(px,py,qx,qy,rx,ry),
-                         scaled_distance_to_lineC2(px,py,qx,qy,sx,sy),
+    return CGAL_NTS Static_Filtered_compare_2::update_epsilon(scaled_distance_to_lineC2(px,py,qx,qy,rx,ry),
+                            scaled_distance_to_lineC2(px,py,qx,qy,sx,sy),
   		epsilon_0);
   }
 
@@ -3733,8 +3735,8 @@ struct Static_Filtered_cmp_signed_dist_to_lineC2_8
   {
     typedef Restricted_double FT;
   
-    return CGAL::Static_Filtered_compare_2::epsilon_variant(scaled_distance_to_lineC2(px,py,qx,qy,rx,ry),
-                         scaled_distance_to_lineC2(px,py,qx,qy,sx,sy),
+    return CGAL_NTS Static_Filtered_compare_2::epsilon_variant(scaled_distance_to_lineC2(px,py,qx,qy,rx,ry),
+                            scaled_distance_to_lineC2(px,py,qx,qy,sx,sy),
   		epsilon_0);
   }
 };

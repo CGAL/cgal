@@ -113,13 +113,13 @@ struct Static_Filtered_power_testC2_12
       
       FT dpx = px - tx;
       FT dpy = py - ty;
-      FT dpz = square(dpx) + square(dpy) - pwt + twt;
+      FT dpz = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) - pwt + twt;
       FT dqx = qx - tx;
       FT dqy = qy - ty;
-      FT dqz = square(dqx) + square(dqy) - qwt + twt;
+      FT dqz = CGAL_NTS square(dqx) + CGAL_NTS square(dqy) - qwt + twt;
       FT drx = rx - tx;
       FT dry = ry - ty;
-      FT drz = square(drx) + square(dry) - rwt + twt;
+      FT drz = CGAL_NTS square(drx) + CGAL_NTS square(dry) - rwt + twt;
   
       return Oriented_side(Static_Filtered_sign_of_determinant3x3_9::update_epsilon(dpx, dpy, dpz,
                                                   dqx, dqy, dqz,
@@ -160,13 +160,13 @@ struct Static_Filtered_power_testC2_12
       
       FT dpx = px - tx;
       FT dpy = py - ty;
-      FT dpz = square(dpx) + square(dpy) - pwt + twt;
+      FT dpz = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) - pwt + twt;
       FT dqx = qx - tx;
       FT dqy = qy - ty;
-      FT dqz = square(dqx) + square(dqy) - qwt + twt;
+      FT dqz = CGAL_NTS square(dqx) + CGAL_NTS square(dqy) - qwt + twt;
       FT drx = rx - tx;
       FT dry = ry - ty;
-      FT drz = square(drx) + square(dry) - rwt + twt;
+      FT drz = CGAL_NTS square(drx) + CGAL_NTS square(dry) - rwt + twt;
   
       return Oriented_side(Static_Filtered_sign_of_determinant3x3_9::epsilon_variant(dpx, dpy, dpz,
                                                   dqx, dqy, dqz,
@@ -420,20 +420,20 @@ struct Static_Filtered_power_testC2_9
       
       FT dpx = px - tx;
       FT dpy = py - ty;
-      FT dpz = square(dpx) + square(dpy) - pwt + twt;
+      FT dpz = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) - pwt + twt;
       FT dqx = qx - tx;
       FT dqy = qy - ty;
-      FT dqz = square(dqx) + square(dqy) - qwt + twt;
+      FT dqz = CGAL_NTS square(dqx) + CGAL_NTS square(dqy) - qwt + twt;
   
       
-      Comparison_result cmpx = CGAL::Static_Filtered_compare_2::update_epsilon(px, qx,
+      Comparison_result cmpx = CGAL_NTS Static_Filtered_compare_2::update_epsilon(px, qx,
   		epsilon_0);
       if (cmpx != EQUAL)
   	return Oriented_side(cmpx * Static_Filtered_sign_of_determinant2x2_4::update_epsilon(dpx, dpz, dqx, dqz,
   		epsilon_1));
   
       
-      Comparison_result cmpy = CGAL::Static_Filtered_compare_2::update_epsilon(py, qy,
+      Comparison_result cmpy = CGAL_NTS Static_Filtered_compare_2::update_epsilon(py, qy,
   		epsilon_2);
       return Oriented_side(cmpy * Static_Filtered_sign_of_determinant2x2_4::update_epsilon(dpy, dpz, dqy, dqz,
   		epsilon_3));
@@ -470,20 +470,20 @@ struct Static_Filtered_power_testC2_9
       
       FT dpx = px - tx;
       FT dpy = py - ty;
-      FT dpz = square(dpx) + square(dpy) - pwt + twt;
+      FT dpz = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) - pwt + twt;
       FT dqx = qx - tx;
       FT dqy = qy - ty;
-      FT dqz = square(dqx) + square(dqy) - qwt + twt;
+      FT dqz = CGAL_NTS square(dqx) + CGAL_NTS square(dqy) - qwt + twt;
   
       
-      Comparison_result cmpx = CGAL::Static_Filtered_compare_2::epsilon_variant(px, qx,
+      Comparison_result cmpx = CGAL_NTS Static_Filtered_compare_2::epsilon_variant(px, qx,
   		epsilon_0);
       if (cmpx != EQUAL)
   	return Oriented_side(cmpx * Static_Filtered_sign_of_determinant2x2_4::epsilon_variant(dpx, dpz, dqx, dqz,
   		epsilon_1));
   
       
-      Comparison_result cmpy = CGAL::Static_Filtered_compare_2::epsilon_variant(py, qy,
+      Comparison_result cmpy = CGAL_NTS Static_Filtered_compare_2::epsilon_variant(py, qy,
   		epsilon_2);
       return Oriented_side(cmpy * Static_Filtered_sign_of_determinant2x2_4::epsilon_variant(dpy, dpz, dqy, dqz,
   		epsilon_3));

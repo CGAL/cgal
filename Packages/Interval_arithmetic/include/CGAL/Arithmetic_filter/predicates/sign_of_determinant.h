@@ -274,9 +274,9 @@ struct Static_Filtered_sign_of_determinant3x3_9
   {
     typedef Static_filter_error FT;
   
-    return CGAL::Static_Filtered_sign_1::update_epsilon(det3x3_by_formula(a00, a01, a02,
-                                        a10, a11, a12,
-                                        a20, a21, a22),
+    return CGAL_NTS Static_Filtered_sign_1::update_epsilon(det3x3_by_formula(a00, a01, a02,
+                                           a10, a11, a12,
+                                           a20, a21, a22),
   		epsilon_0);
   }
 
@@ -305,9 +305,9 @@ struct Static_Filtered_sign_of_determinant3x3_9
   {
     typedef Restricted_double FT;
   
-    return CGAL::Static_Filtered_sign_1::epsilon_variant(det3x3_by_formula(a00, a01, a02,
-                                        a10, a11, a12,
-                                        a20, a21, a22),
+    return CGAL_NTS Static_Filtered_sign_1::epsilon_variant(det3x3_by_formula(a00, a01, a02,
+                                           a10, a11, a12,
+                                           a20, a21, a22),
   		epsilon_0);
   }
 };
@@ -552,10 +552,10 @@ struct Static_Filtered_sign_of_determinant4x4_16
   {
     typedef Static_filter_error FT;
   
-    return CGAL::Static_Filtered_sign_1::update_epsilon(det4x4_by_formula(a00, a01, a02, a03,
-                                        a10, a11, a12, a13,
-                                        a20, a21, a22, a23,
-                                        a30, a31, a32, a33),
+    return CGAL_NTS Static_Filtered_sign_1::update_epsilon(det4x4_by_formula(a00, a01, a02, a03,
+                                           a10, a11, a12, a13,
+                                           a20, a21, a22, a23,
+                                           a30, a31, a32, a33),
   		epsilon_0);
   }
 
@@ -591,10 +591,10 @@ struct Static_Filtered_sign_of_determinant4x4_16
   {
     typedef Restricted_double FT;
   
-    return CGAL::Static_Filtered_sign_1::epsilon_variant(det4x4_by_formula(a00, a01, a02, a03,
-                                        a10, a11, a12, a13,
-                                        a20, a21, a22, a23,
-                                        a30, a31, a32, a33),
+    return CGAL_NTS Static_Filtered_sign_1::epsilon_variant(det4x4_by_formula(a00, a01, a02, a03,
+                                           a10, a11, a12, a13,
+                                           a20, a21, a22, a23,
+                                           a30, a31, a32, a33),
   		epsilon_0);
   }
 };
@@ -938,11 +938,11 @@ struct Static_Filtered_sign_of_determinant5x5_25
   {
     typedef Static_filter_error FT;
   
-    return CGAL::Static_Filtered_sign_1::update_epsilon(det5x5_by_formula(a00, a01, a02, a03, a04,
-                                        a10, a11, a12, a13, a14,
-                                        a20, a21, a22, a23, a24,
-                                        a30, a31, a32, a33, a34,
-                                        a40, a41, a42, a43, a44),
+    return CGAL_NTS Static_Filtered_sign_1::update_epsilon(det5x5_by_formula(a00, a01, a02, a03, a04,
+                                           a10, a11, a12, a13, a14,
+                                           a20, a21, a22, a23, a24,
+                                           a30, a31, a32, a33, a34,
+                                           a40, a41, a42, a43, a44),
   		epsilon_0);
   }
 
@@ -987,11 +987,11 @@ struct Static_Filtered_sign_of_determinant5x5_25
   {
     typedef Restricted_double FT;
   
-    return CGAL::Static_Filtered_sign_1::epsilon_variant(det5x5_by_formula(a00, a01, a02, a03, a04,
-                                        a10, a11, a12, a13, a14,
-                                        a20, a21, a22, a23, a24,
-                                        a30, a31, a32, a33, a34,
-                                        a40, a41, a42, a43, a44),
+    return CGAL_NTS Static_Filtered_sign_1::epsilon_variant(det5x5_by_formula(a00, a01, a02, a03, a04,
+                                           a10, a11, a12, a13, a14,
+                                           a20, a21, a22, a23, a24,
+                                           a30, a31, a32, a33, a34,
+                                           a40, a41, a42, a43, a44),
   		epsilon_0);
   }
 };
@@ -1460,12 +1460,12 @@ struct Static_Filtered_sign_of_determinant6x6_36
   {
     typedef Static_filter_error FT;
   
-    return CGAL::Static_Filtered_sign_1::update_epsilon(det6x6_by_formula(a00, a01, a02, a03, a04, a05,
-                                        a10, a11, a12, a13, a14, a15,
-                                        a20, a21, a22, a23, a24, a25,
-                                        a30, a31, a32, a33, a34, a35,
-                                        a40, a41, a42, a43, a44, a45,
-                                        a50, a51, a52, a53, a54, a55),
+    return CGAL_NTS Static_Filtered_sign_1::update_epsilon(det6x6_by_formula(a00, a01, a02, a03, a04, a05,
+                                           a10, a11, a12, a13, a14, a15,
+                                           a20, a21, a22, a23, a24, a25,
+                                           a30, a31, a32, a33, a34, a35,
+                                           a40, a41, a42, a43, a44, a45,
+                                           a50, a51, a52, a53, a54, a55),
   		epsilon_0);
   }
 
@@ -1521,12 +1521,12 @@ struct Static_Filtered_sign_of_determinant6x6_36
   {
     typedef Restricted_double FT;
   
-    return CGAL::Static_Filtered_sign_1::epsilon_variant(det6x6_by_formula(a00, a01, a02, a03, a04, a05,
-                                        a10, a11, a12, a13, a14, a15,
-                                        a20, a21, a22, a23, a24, a25,
-                                        a30, a31, a32, a33, a34, a35,
-                                        a40, a41, a42, a43, a44, a45,
-                                        a50, a51, a52, a53, a54, a55),
+    return CGAL_NTS Static_Filtered_sign_1::epsilon_variant(det6x6_by_formula(a00, a01, a02, a03, a04, a05,
+                                           a10, a11, a12, a13, a14, a15,
+                                           a20, a21, a22, a23, a24, a25,
+                                           a30, a31, a32, a33, a34, a35,
+                                           a40, a41, a42, a43, a44, a45,
+                                           a50, a51, a52, a53, a54, a55),
   		epsilon_0);
   }
 };
