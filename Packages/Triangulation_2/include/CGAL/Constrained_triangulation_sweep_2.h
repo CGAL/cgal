@@ -69,6 +69,9 @@ public:
   // should be  
   //typedef std::map<Constraint, Chain *, Status_comp> Sweep_status;
   typedef std::pair<Face_handle, int> Neighbor;
+  // added to please MIPS Pro
+  typedef Event_queue::iterator  Event_queue_iterator;
+  typedef Sweep_status::iterator Sweep_status_iterator;
     
   class Event_less : public CGAL_STD::binary_function<Point, Point, bool>
   {
@@ -308,10 +311,10 @@ public:
 public:
     void make_event_queue();
     void build_triangulation();
-    Vertex_handle treat_in_edges(const Event_queue::iterator & event,
-                                 Sweep_status::iterator & loc);
-    void treat_out_edges(const Event_queue::iterator & event,
-                         Sweep_status::iterator & loc);
+    Vertex_handle treat_in_edges(const Event_queue_iterator & event,
+                                 Sweep_status_iterator & loc);
+    void treat_out_edges(const Event_queue_iterator & event,
+                         Sweep_status_iterator & loc);
     //Vertex_handle set_infinite_faces();
     void set_infinite_faces();
     bool do_intersect(const Constraint& c1, const Constraint& c2 );
@@ -329,7 +332,7 @@ make_event_queue()
   std::list<Constraint>::iterator sdone=_lc->end();
   Constraint s;
   Point p,q;
-  Event_queue::iterator look_up;
+  Event_queue_iterator look_up;
     while (sit != sdone) {
       s=*sit++;
       if (event_less(s.first,s.second)) { p=s.first; q = s.second;}
@@ -373,14 +376,14 @@ build_triangulation()
   Point p;
   Vertex_handle v;
   Out_edges* out;
-  Event_queue::iterator event;
+  Event_queue_iterator event;
    while (! queue.empty()) {
         event = queue.begin();
 
     // locate (p,p) dans status
     p = (*event).first;
     out = (*event).second;
-    Sweep_status::iterator loc=status.lower_bound(Constraint(p,p));
+    Sweep_status_iterator loc=status.lower_bound(Constraint(p,p));
     // deal with the contraints finishing at p
     v = treat_in_edges(event,loc);
     _tr->set_number_of_vertices( _tr->number_of_vertices() +1);
@@ -406,14 +409,14 @@ build_triangulation()
 template<class Gt, class Tds>
 Constrained_triangulation_sweep_2<Gt,Tds>::Vertex_handle
 Constrained_triangulation_sweep_2<Gt,Tds>::
-treat_in_edges(const Event_queue::iterator & event,
-               Sweep_status::iterator & loc)
+treat_in_edges(const Event_queue_iterator & event,
+               Sweep_status_iterator & loc)
 {
   // loc is assumed to point to the first constraint in status
   // not less than [p,p];
   Vertex_handle  v = (new Vertex((*event).first))->handle();
   Chain* pch;
-  Sweep_status::iterator loc_start=loc;
+  Sweep_status_iterator loc_start=loc;
 
   if (loc == status.end()) { pch = &upper_chain;}
   else { pch = (Chain*)((*loc).second);}
@@ -499,8 +502,8 @@ treat_in_edges(const Event_queue::iterator & event,
 template<class Gt, class Tds>
 void
 Constrained_triangulation_sweep_2<Gt,Tds>::
-treat_out_edges(const Event_queue::iterator & event,
-                Sweep_status::iterator & loc)
+treat_out_edges(const Event_queue_iterator & event,
+                Sweep_status_iterator & loc)
 {
   Point p = (*event).first;
   Out_edges* out = (*event).second;
@@ -525,7 +528,7 @@ treat_out_edges(const Event_queue::iterator & event,
   Vertex_handle v = pc_up->right_most();
   //assert (v->point() == p);
   //c= Constraint(p,p);
-  //Sweep_status::iterator loc_bis = status.lower_bound(Constraint(p,p));
+  //Sweep_status_iterator loc_bis = status.lower_bound(Constraint(p,p));
   //assert( loc == loc_bis);
 
   while( outit != (*out).end()){

@@ -50,7 +50,7 @@ public:
   typedef R                                     Rep;
   typedef W                                     Weight;
   typedef Triangulation_euclidean_traits_2 <R>  Traits;
-  typedef Traits::Point                         Bare_point;
+  typedef typename Traits::Point                Bare_point;
   typedef Weighted_point <Bare_point, W>        Weighted_point;
   typedef Weighted_point                        Point;
 

@@ -73,10 +73,10 @@ class Triangulation_finite_faces_iterator_2
  : public Triangulation_all_faces_iterator_2<Gt,Tds>
 {
 public:
-  typedef Triangulation_2<Gt,Tds>  Triangulation;
   typedef Triangulation_all_faces_iterator_2<Gt,Tds>     All;
   typedef Triangulation_finite_faces_iterator_2<Gt,Tds>  Finite_faces_iterator;
-  
+  typedef typename All::Triangulation  Triangulation;
+
 private:
    const Triangulation*  _tr;
  
@@ -144,6 +144,8 @@ public:
   typedef Triangulation_all_vertices_iterator_2<Gt,Tds> All;
   typedef Triangulation_finite_vertices_iterator_2<Gt,Tds> 
                                             Finite_vertices_iterator;
+  typedef typename All::Triangulation Triangulation;
+
 private:
   const Triangulation* _tr; 
 
@@ -207,6 +209,7 @@ public:
   typedef Triangulation_all_edges_iterator_2<Gt,Tds> All;
   typedef Triangulation_finite_edges_iterator_2<Gt,Tds> Finite_edges_iterator;
   typedef Triangulation_finite_edges_iterator_2<Gt,Tds> Finite;
+  typedef typename All::Triangulation  Triangulation;
 
 private:
   const Triangulation* _tr;
