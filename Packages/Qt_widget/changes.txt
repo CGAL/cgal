@@ -1,3 +1,11 @@
+1.2.15
+------------------------
+The layers are used in a more restrictive way
+They get the mouse events only if no other modifier was pressed (Ctrl, Alt, Shift) in the same time
+
+
+
+
 1.2.11
 ------------------------
 This version is very stable.
