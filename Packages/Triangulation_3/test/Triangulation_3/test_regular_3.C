@@ -72,10 +72,13 @@ int main()
   std::cout << " test dimension 1 " << std::endl;
   Cls T1;
   std::cout << " number of inserted points : " ;
+  Weighted_point p[5];
   for ( m=0; m<5; m++) {
     if ( (m%2)== 0 ) 
-      T1.insert( Weighted_point( Point( 2*m,0,0 ), 2 ) );
-    else T1.insert( Weighted_point( Point( -2*m+1,0,0 ), 2 ) );
+      p[m] = Weighted_point( Point( 2*m,0,0 ), 2 );
+    else 
+      p[m] = Weighted_point( Point( -2*m+1,0,0 ), 2 );
+    T1.insert( p[m] );
     count++;
     if (count <10)
       std::cout << count << '\b' ;
@@ -91,10 +94,13 @@ int main()
 	    << T1.number_of_vertices() << std::endl;
 
   std::cout << " number of inserted points : " ;
+  Weighted_point q[5];
   for ( m=0; m<5; m++) {
-    if ( (m%2)== 0 ) 
-      T1.insert( Weighted_point( Point( 2*m+1,0,0 ), 5 ) );
-    else T1.insert( Weighted_point( Point( -2*m+1,0,0 ), 5 ) );
+    if ( (m%2)== 0 )
+      q[m] = Weighted_point( Point( 2*m+1,0,0 ), 5 );
+    else 
+      q[m] = Weighted_point( Point( -2*m+1,0,0 ), 5 );
+    T1.insert( q[m] );
     count++;
     if (count <10)
       std::cout << count << '\b' ;
@@ -110,10 +116,13 @@ int main()
 	    << T1.number_of_vertices() << std::endl;
 
   std::cout << " number of inserted points : " ;
+  Weighted_point r[10];
   for ( m=0; m<10; m++) {
     if ( (m%2)== 0 ) 
-      T1.insert( Weighted_point( Point( m,0,0 ), 1 ) );
-    else T1.insert( Weighted_point( Point( -m,0,0 ), 1 ) );
+      r[m] = Weighted_point( Point( m,0,0 ), 1 );
+    else 
+      r[m] = Weighted_point( Point( -m,0,0 ), 1 );
+    T1.insert( r[m] );
     count++;
     if (count <10)
       std::cout << count << '\b' ;

@@ -150,7 +150,8 @@ _test_cls_triangulation_3(const Triangulation &)
     }
 
   std::cout << "    Constructor1 " << std::endl;
-  Vertex_handle v0=T0.insert(Point(0,0,0));
+  Point p10(0,0,0);
+  Vertex_handle v0=T0.insert(p10);
   assert(T0.dimension() == 0);
   assert(T0.number_of_vertices() == 1);
   assert(T0.is_valid());
