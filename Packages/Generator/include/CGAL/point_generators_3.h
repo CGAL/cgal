@@ -151,7 +151,8 @@ points_on_square_grid_3( double a, std::size_t n,
     if  (n == 0)
         return o;
 
-    int m = int(CGAL_CLIB_STD::ceil(std::sqrt(std::sqrt(n))));
+    int m = int(CGAL_CLIB_STD::ceil(
+                  std::sqrt(std::sqrt(static_cast<double>(n)))));
 
     while (m*m*m < n) m++;
 
