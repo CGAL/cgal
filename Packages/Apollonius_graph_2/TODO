@@ -16,6 +16,3 @@
 - "number_of_hidden_weighted_points()" in vertex base should return size_t;
   also add this in the spec.
 - see email to cgal-editor with answers to Sylvain's questions
-- ask Mariette to add access functions to the TDS of Triangulation_2.
-- add a short names files and include it in all header files (to
-  please the VC7 compiler)
