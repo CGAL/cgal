@@ -39,11 +39,11 @@ all: example1 example_tds
 	./example1
 	./example_tds
 
-example1: example1.o
-	$(CGAL_CXX) -o example1 example1.o $(LDFLAGS)
+example1: ../../src/Triangulation_3.o example1.o
+	$(CGAL_CXX) -o example1 Triangulation_3.o example1.o $(LDFLAGS)
 
-example_tds: example_tds.o
-	$(CGAL_CXX) -o example_tds example_tds.o $(LDFLAGS)
+example_tds: ../../src/Triangulation_3.o example_tds.o
+	$(CGAL_CXX) -o example_tds Triangulation_3.o example_tds.o $(LDFLAGS)
 
 clean:
 	rm -rf *~ *.o core example1 example_tds output output_tds

@@ -56,7 +56,7 @@ $(Package).tar.gz:
 	--exclude=.pure --exclude=*.pv \
 	--exclude=.nfs*\
 	version description.txt changes.txt \
-	demo include doc_tex doc_ps test examples
+	demo include doc_tex doc_ps src test examples
 
 doc: doc_ps/$(Package).ps
 	$(MAKE) -C doc_tex/basic/$(Package)

@@ -1,3 +1,9 @@
+Version 1.21 (2 nov 99)
+- another vertex base in Triangulation_vertex_base_3.h, that does not 
+copy points
+- first submission of src/Triangulation3.C : contains the definition of
+the static table used by Triangulation_utils_3.h
+
 Version 1.20 (28 oct 99)
 cleaning and purify-ing
 
