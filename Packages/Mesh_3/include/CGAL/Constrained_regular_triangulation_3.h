@@ -41,7 +41,7 @@ struct Special_mesh_traits_2 : public Traits_2_3
 		    const Point_2& pc,
 		    Quality& q) const 
     {
-      q = 0; // constante, do not sort faces
+      q = 0; // constant, do not sort faces
       
       const Vertex_handle_3& va = t.insert(Weighted_point(pa));
       const Vertex_handle_3& vb = t.insert(Weighted_point(pb));
@@ -875,9 +875,21 @@ public:
 
   // --- CONSTRAINTS HANDLING ---
 
-  bool is_constrained(const Facet& f)
+  bool is_constrained(const Facet& f) const
   {
     return f.first->is_constrained(f.second);
+  }
+
+  bool is_constrained(Edge e) const 
+  {
+    const Cell_handle& c = e.first;
+    return is_constrained(c->vertex(e.second), c->vertex(e.third));
+  }
+
+  bool is_constrained(const Vertex_handle& va,
+                      const Vertex_handle& vb) const
+  {
+    return va->is_adjacent_by_constraint(vb);
   }
 
   // --- INSERTIONS ---
@@ -961,12 +973,6 @@ public:
 						       false);
     c->vertex(e.third)->set_is_adjacent_by_constraint(c->vertex(e.second),
 						      false);
-  }
-
-  bool is_constrained(Edge e)
-  {
-    const Cell_handle& c = e.first;
-    return c->vertex(e.second)->is_adjacent_by_constraint(c->vertex(e.third));
   }
 
   bool insert_constrained_facet(const Vertex_handle& va,
@@ -1321,179 +1327,54 @@ private:
     return vh;
   }
 
-  // --- FONCTIONS A MOI
-
-  bool is_encroached(Edge e) const
-  {
-    const Vertex_handle& va = e.first->vertex(e.second);
-    const Vertex_handle& vb = e.first->vertex(e.third);
-    
-    Facet_circulator f_circ = incident_facets(e), end(f_circ);
-
-    do {
-      /** \todo{ TODO: comment trouver le troisième point d'une facet ?} */
-
-      Vertex_handle v;
-      for(int i = 0; i < 4; ++i)
-	{
-	  if( i == (*f_circ).second ) continue; 
-	  v = (*f_circ).first->vertex(i);
-	  if( v != va && v != vb) break;
-	}
-      // here v is the third point of the facet
-
-      typename Geom_traits::Angle_3 angle = 
-	geom_traits().angle_3_object();
-      
-      if( angle(va->point().point(), v->point().point(),
-		vb->point().point()) == OBTUSE )
-	return true;
-
-      ++f_circ;
-    }
-    while( f_circ != end );
-    return false;
-  }
-
-  bool is_encroached(Edge e, const Bare_point& p) const 
-  {
-    const Vertex_handle& va = e.first->vertex(e.second);
-    const Vertex_handle& vb = e.first->vertex(e.third);
-    return is_encroached(va, vb, p);
-  }
-  
-  bool is_encroached(const Vertex_handle& va, const Vertex_handle& vb, 
-		     const Bare_point& p) const 
-  {
-    typename Geom_traits::Angle_3 angle = 
-      geom_traits().angle_3_object();
-    
-    return( angle(va->point().point(), p,
-		  vb->point().point()) == OBTUSE );
-  }
-
-  bool test_if_encroached(const Vertex_handle va, const Vertex_handle vb)
-    const
-  {
-    Cell_handle c;
-    int i, j;
-
-    CGAL_assertion_code(bool b =) is_edge(va, vb, c, i, j);
-    CGAL_assertion(b);
-
-    if( is_encroached(Edge(c, i, j)) )
-      {
-	edges_to_be_conformed.push(std::make_pair(va, vb));
-	return true;
-      }
-    else
-      return false;
-  }
-
 public:
-  void fill_edges_to_be_conformed()
+  template <class OutputIteratorBoundaryFacets,
+            class OutputIteratorCells,
+            class OutputIteratorInternalFacets>
+  Triple<OutputIteratorBoundaryFacets,
+         OutputIteratorCells,
+         OutputIteratorInternalFacets>
+  find_conflicts(const Point_3 &p, Cell_handle c,
+	         OutputIteratorBoundaryFacets bfit,
+                 OutputIteratorCells cit,
+		 OutputIteratorInternalFacets ifit) const
   {
-    for(Finite_edges_iterator it = finite_edges_begin();
-	it != finite_edges_end();
-	++it)
-      if(is_constrained(*it) && is_encroached(*it))
-	edges_to_be_conformed.push(std::make_pair(it->first->
-						  vertex(it->second),
-						  it->first->
-						  vertex(it->third)));
-  }
+      CGAL_triangulation_precondition(dimension() >= 2);
 
-  void conform_edges()
-  {
-    while(!edges_to_be_conformed.empty())
-      {
-	std::pair<Vertex_handle, Vertex_handle> p = 
-	  edges_to_be_conformed.front();
-	edges_to_be_conformed.pop();
-	split_edge(p.first, p.second);
+      std::vector<Cell_handle> cells;
+      cells.reserve(32);
+      std::vector<Facet> facets;
+      facets.reserve(64);
+
+      if (dimension() == 2) {
+          Conflict_tester_2 tester(p, this);
+	  ifit = find_conflicts_2(c, tester,
+                                  make_triple(std::back_inserter(facets),
+		                              std::back_inserter(cells),
+                                              ifit)).third;
       }
-  }
-
-private:
-  void split_edge(Vertex_handle va, Vertex_handle vb)
-  {
-    Cell_handle c;
-    int i, j;
-
-    CGAL_assertion_code(bool b = ) is_edge(va, vb, c, i, j);
-    CGAL_assertion(b);
-
-    // WARNING, TODO: bad 
-    insert(Weighted_point(midpoint(va->point().point(),
-				    vb->point().point())),
-	   Triangulation::EDGE, c, i, j);
-  }
-
-  bool is_not_locally_Delaunay(Facet f)
-  {
-    const Cell_handle& c = f.first;
-    const int i = f.second;
-    const Cell_handle& n = c->neighbor(i);
-    const Vertex_handle& va = c->vertex( (i+1) % 4 );
-    const Vertex_handle& vb = c->vertex( (i+2) % 4 );
-    const Vertex_handle& vc = c->vertex( (i+3) % 4 );
-
-    const Vertex_handle& v1 = c->vertex(i);
-    const Vertex_handle& v2 = n->vertex( n->index(c) );
-
-    return( power_test(va->point(),
-		       vb->point(),
-		       vc->point(),
-		       v1->point(),
-		       v2->point()) != ON_NEGATIVE_SIDE
-	    ||
-	    power_test(va->point(),
-		       vb->point(),
-		       vc->point(),
-		       v2->point(),
-		       v1->point()) != ON_NEGATIVE_SIDE );
-  }
-
-public:
-  void fill_facets_to_be_conformed()
-  {
-    for(Finite_facets_iterator it = finite_facets_begin();
-	it != finite_facets_end();
-	++it)
-      if(is_constrained(*it) && is_not_locally_Delaunay(*it))
-	facets_to_be_conformed.push(make_triple(it->first->
-						vertex((it->second+1) % 4),
-						it->first->
-						vertex((it->second+2) % 4),
-						it->first->
-						vertex((it->second+3) % 4)));
-  }
-
-  void conform_facets()
-  {
-    while(!facets_to_be_conformed.empty())
-      {
-	Triple<Vertex_handle, Vertex_handle, Vertex_handle> t = 
-	  facets_to_be_conformed.front();
-	facets_to_be_conformed.pop();
-	split_facet(t.first, t.second, t.third);
+      else {
+          Conflict_tester_3 tester(p, this);
+	  ifit = find_conflicts_3(c, tester,
+                                  make_triple(std::back_inserter(facets),
+		                              std::back_inserter(cells),
+                                              ifit)).third;
       }
-  }
 
-private:
-  void split_facet(Vertex_handle va, Vertex_handle vb, Vertex_handle vc)
-  {
-    Cell_handle c;
-    int i, j, k;
+      // Reset the conflict flag on the boundary.
+      for(typename std::vector<Facet>::iterator fit=facets.begin();
+          fit != facets.end(); ++fit) {
+        fit->first->neighbor(fit->second)->set_in_conflict_flag(0);
+	*bfit++ = *fit;
+      }
 
-    CGAL_assertion_code(bool b = ) is_facet(va, vb, vc, c, i, j, k);
-    CGAL_assertion(b);
-
-    // WARNING, TODO: bad 
-    insert(Weighted_point(circumcenter(va->point().point(),
-				       vb->point().point(),
-				       vc->point().point())),
-	   Triangulation::FACET, c, 6-i-j-k, 0);
+      // Reset the conflict flag in the conflict cells.
+      for(typename std::vector<Cell_handle>::iterator ccit=cells.begin();
+        ccit != cells.end(); ++ccit) {
+        (*ccit)->set_in_conflict_flag(0);
+	*cit++ = *ccit;
+      }
+      return make_triple(bfit, cit, ifit);
   }
 };
 
@@ -1573,8 +1454,8 @@ insert(const Weighted_point & p, Locate_type lt,
 	  CGAL_assertion_code(bool b2 =) insert_constrained_edge(v2, v, false);
 	  CGAL_assertion( b1 && b2);
 
-	  test_if_encroached(v1, v);
-	  test_if_encroached(v2, v);
+          //	  test_if_encroached(v1, v);
+          //	  test_if_encroached(v2, v);
 	}
 
       // TODO : manage the hidden points.

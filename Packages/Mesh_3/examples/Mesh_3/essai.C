@@ -32,6 +32,12 @@ int main(int argc, char** argv)
 {
   Crt T;
 
+  typedef CGAL::Mesh_3::Refine_edges<Crt> Edges_level;
+  Edges_level edges_level(T);
+
+  typedef CGAL::Mesh_3::Refine_facets<Crt> Facets_level;
+  Facets_level facets_level(T, &edges_level);
+
   // insertion of points on a 3D grid
 //   std::vector<Vertex_handle> V;
 
@@ -69,10 +75,20 @@ int main(int argc, char** argv)
 	CGAL::PLC_loader<Crt, CDT_2>(T).load_triangulation(f);
     }
 
-  T.fill_edges_to_be_conformed();
-  T.conform_edges();
-  T.fill_facets_to_be_conformed();
-  T.conform_facets();
+  typedef CGAL::Mesh_3::facets::Refine_facets_visitor<Crt, Facets_level>
+    Facets_level_visitor;
+  Facets_level_visitor facets_visitor(&facets_level);
+
+  edges_level.scan_triangulation();
+  edges_level.refine(CGAL::Null_mesh_visitor());
+
+  facets_level.scan_triangulation();
+  facets_level.refine(CGAL::Null_mesh_visitor());//facets_visitor);
+
+  //  T.fill_edges_to_be_conformed();
+  //  T.conform_edges();
+  //  T.fill_facets_to_be_conformed();
+  //  T.conform_facets();
 
   T.off_file_output(std::cout);
 }

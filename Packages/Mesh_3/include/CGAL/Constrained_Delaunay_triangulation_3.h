@@ -25,7 +25,8 @@ public:
 
   typedef typename Geom_traits::Point_3 Point;
 
-  typedef CGAL::Constraint_hierarchy_2<Vertex_handle, bool> Constraint_2_hierarchy;
+  typedef CGAL::Constraint_hierarchy_2<Vertex_handle, bool>
+    Constraint_2_hierarchy;
 
   typedef std::pair<Vertex_handle, Vertex_handle> Constrained_edge;
 
