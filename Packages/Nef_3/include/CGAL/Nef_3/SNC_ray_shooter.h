@@ -156,7 +156,7 @@ public:
     Halfedge_handle e;
     Halffacet_handle f, f_below;
     if( CGAL::assign(v, o)) {
-      TRACEN("facet below from from vertex...");
+      CGAL_NEF_TRACEN("facet below from from vertex...");
       f_below = get_visible_facet(v, ray);
       if(f_below != Halffacet_handle())
 	return volume(f_below);
@@ -165,7 +165,7 @@ public:
       return volume(SD.sfaces_begin());
     }
     else if( CGAL::assign(e, o)) {
-      TRACEN("facet below from from edge...");
+      CGAL_NEF_TRACEN("facet below from from edge...");
       f_below = get_visible_facet(e, ray);
       if(f_below != Halffacet_handle())
 	return volume(f_below);
@@ -174,7 +174,7 @@ public:
       return volume(sface(e));
     }
     else if( CGAL::assign(f, o)) {
-      TRACEN("facet below from from facet...");
+      CGAL_NEF_TRACEN("facet below from from facet...");
       f_below = get_visible_facet(f, ray);
       CGAL_assertion( f_below != Halffacet_handle());
       return volume(f_below);
@@ -191,14 +191,14 @@ public:
     Point_3 end_of_seg;
     SNC_intersection is(*this->sncp());
 
-    TRACEN( "Shooting ray " << ray);
+    CGAL_NEF_TRACEN( "Shooting ray " << ray);
     Object_handle o;
     Vertex_handle v;
     CGAL_forall_vertices( v, *this->sncp()) {
       if ( ray.source() != point(v) && ray.has_on(point(v))) {
         if(hit && !Segment_3(ray.source(), end_of_seg).has_on(point(v)))
           continue;
-        TRACEN("ray hit vertex case "<<point(v));
+        CGAL_NEF_TRACEN("ray hit vertex case "<<point(v));
         end_of_seg = point(v);
         hit = true;
         o = Object_handle(v);
@@ -211,7 +211,7 @@ public:
       if( is.does_intersect_internally( ray, segment(e), q)) {
         if (!hit || 
 	    has_smaller_distance_to_point(ray.source(),q, end_of_seg)) {
-          TRACEN("ray hit edge case " << segment(e) << " in " << q);
+          CGAL_NEF_TRACEN("ray hit edge case " << segment(e) << " in " << q);
           end_of_seg = q;
           hit = true;
           o = Object_handle(e);
@@ -225,7 +225,7 @@ public:
       if( is.does_intersect_internally( ray, f, q) ) {
         if(!hit || 
 	   has_smaller_distance_to_point(ray.source(), q, end_of_seg)) {
-        TRACEN("ray hit facet "<<plane(f)<<" on "<<q);
+        CGAL_NEF_TRACEN("ray hit facet "<<plane(f)<<" on "<<q);
         end_of_seg = q;
         hit = true;
         o = Object_handle(f);
@@ -241,12 +241,12 @@ public:
 
     SNC_intersection is(*this->sncp());
 
-    TRACEN( "Point locator for " << p);
+    CGAL_NEF_TRACEN( "Point locator for " << p);
     Vertex_handle v;
     CGAL_forall_vertices( v, *this->sncp()) {
-      TRACEN("test vertex " << point(v));
+      CGAL_NEF_TRACEN("test vertex " << point(v));
       if ( p == point(v)) {
-	TRACEN("on vertex.");
+	CGAL_NEF_TRACEN("on vertex.");
 	return Object_handle(v);
       }
     }
@@ -254,14 +254,14 @@ public:
     Halfedge_handle e;
     CGAL_forall_edges( e, *this->sncp()) {
       if ( is.does_contain_internally( segment(e), p) ) {
-	TRACEN("on edge.");
+	CGAL_NEF_TRACEN("on edge.");
 	return Object_handle(e);
       }
     }
     Halffacet_handle f;
     CGAL_forall_halffacets( f, *this->sncp()) {
       if ( is.does_contain_internally( f, p) ) {
-	TRACEN("on facet.");
+	CGAL_NEF_TRACEN("on facet.");
 	return Object_handle(f);
       }
     }

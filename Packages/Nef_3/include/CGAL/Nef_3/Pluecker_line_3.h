@@ -135,7 +135,7 @@ void normalize()
 //representation. This is done by dividing all Pluecker 
 //coefficients by their common gcd.}
 { 
-  TRACEN("normalize");
+  CGAL_NEF_TRACEN("normalize");
   int i=0;
   while(i<6 && c_[i]==0)
     i++;
@@ -149,7 +149,7 @@ void normalize()
   for(++i; i<6; ++i) 
     D = (c_[i]==0 ? D : CGAL_NTS gcd(D, c_[i]));
   if (D==0) return;
-  TRACEN("gcd" << D);
+  CGAL_NEF_TRACEN("gcd" << D);
   for(int i=0; i<6; ++i) c_[i]/=D;
 }
 
@@ -274,7 +274,7 @@ void normalize()
 //representation. This is done by dividing all Pluecker 
 //coefficients by their common gcd.}
 {
-  TRACEN("normalize");
+  CGAL_NEF_TRACEN("normalize");
   int i=0;
   while(i<6 && c_[i]==FT(0))
     i++;

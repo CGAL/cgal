@@ -232,8 +232,8 @@ namespace OGL {
 			     GLvoid* user)
   { GLdouble* pc(static_cast<GLdouble*>(vertex));
     GLdouble* pu(static_cast<GLdouble*>(user));
-    TRACEN("vertexCallback coord  "<<pc[0]<<","<<pc[1]<<","<<pc[2]);
-    TRACEN("vertexCallback normal "<<pu[0]<<","<<pu[1]<<","<<pu[2]);
+    CGAL_NEF_TRACEN("vertexCallback coord  "<<pc[0]<<","<<pc[1]<<","<<pc[2]);
+    CGAL_NEF_TRACEN("vertexCallback normal "<<pu[0]<<","<<pu[1]<<","<<pu[2]);
     glNormal3dv(pu);
     glVertex3dv(pc); 
   }
@@ -284,7 +284,7 @@ namespace OGL {
     Bbox_3& bbox()       { return bbox_; }
 
     void draw(Vertex_iterator v) const
-    { TRACEN("drawing vertex "<<*v);
+    { CGAL_NEF_TRACEN("drawing vertex "<<*v);
       CGAL::Color cf(CGAL_NEF3_MARKED_VERTEX_COLOR), 
 	ct(CGAL_NEF3_UNMARKED_VERTEX_COLOR); // more blue-ish
       CGAL::Color c = v->mark() ? ct : cf;
@@ -296,7 +296,7 @@ namespace OGL {
     }
 
     void draw(Edge_iterator e) const
-    { TRACEN("drawing edge "<<*e);
+    { CGAL_NEF_TRACEN("drawing edge "<<*e);
       Double_point p = e->source(), q = e->target();
       CGAL::Color cf(CGAL_NEF3_MARKED_EDGE_COLOR), 
 	ct(CGAL_NEF3_UNMARKED_EDGE_COLOR); // more blue-ish
@@ -310,7 +310,7 @@ namespace OGL {
     }
 
     void draw(Halffacet_iterator f) const
-    { TRACEN("drawing facet "<<(f->debug(),""));
+    { CGAL_NEF_TRACEN("drawing facet "<<(f->debug(),""));
       GLUtesselator* tess_ = gluNewTess();
       gluTessCallback(tess_, GLenum(GLU_TESS_VERTEX_DATA),
 		      (GLvoid (*)()) &vertexCallback);
@@ -329,24 +329,24 @@ namespace OGL {
       CGAL::Color c = (f->mark() ? ct : cf);
       glColor3ub(c.red(),c.green(),c.blue());
       gluTessBeginPolygon(tess_,f->normal());
-      TRACEN(" ");
-      TRACEN("Begin Polygon");
+      CGAL_NEF_TRACEN(" ");
+      CGAL_NEF_TRACEN("Begin Polygon");
       gluTessNormal(tess_,f->dx(),f->dy(),f->dz());
       // forall facet cycles of f:
       for(unsigned i = 0; i < f->number_of_facet_cycles(); ++i) {
         gluTessBeginContour(tess_);
-	TRACEN("  Begin Contour");
+	CGAL_NEF_TRACEN("  Begin Contour");
 	// put all vertices in facet cycle into contour:
 	for(cit = f->facet_cycle_begin(i); 
 	    cit != f->facet_cycle_end(i); ++cit) {
 	  gluTessVertex(tess_, *cit, *cit);
-	  TRACEN("    add Vertex");
+	  CGAL_NEF_TRACEN("    add Vertex");
 	}
         gluTessEndContour(tess_);
-	TRACEN("  End Contour");
+	CGAL_NEF_TRACEN("  End Contour");
       }
       gluTessEndPolygon(tess_);
-      TRACEN("End Polygon");
+      CGAL_NEF_TRACEN("End Polygon");
       gluDeleteTess(tess_);
     }
 
@@ -845,7 +845,7 @@ public:
   void draw(Vertex_const_handle v) const
   { 
     Point_3 bp = N.point(v);
-    TRACEN("vertex " << bp);
+    CGAL_NEF_TRACEN("vertex " << bp);
     ppoly_->push_back(double_point(bp), N.mark(v)); 
   }
 
@@ -854,7 +854,7 @@ public:
     Vertex_const_handle s = N.source(e);
     Vertex_const_handle t = N.source(N.twin(e));
     Segment_3 seg(N.point(s),N.point(t));
-    TRACEN("edge " << seg);
+    CGAL_NEF_TRACEN("edge " << seg);
     ppoly_->push_back(double_segment(seg), N.mark(e)); 
   }
 
@@ -868,7 +868,7 @@ public:
 	SHalfedge_around_facet_const_circulator hc(h), he(hc);
 	CGAL_For_all(hc,he){ // all vertex coordinates in facet cycle
 	  Point_3 sp = N.point(N.source(hc));
-	      TRACEN(" ");TRACEN("facet" << sp);
+	      CGAL_NEF_TRACEN(" ");CGAL_NEF_TRACEN("facet" << sp);
 	  g.push_back_vertex(double_point(sp));
 	}
       }
@@ -915,7 +915,7 @@ public:
     if(size < bbox.zmin()) size = bbox.zmin();
     if(size < bbox.zmax()) size = bbox.zmax();
     N.set_size_of_infimaximal_box(size*10);
-    TRACEN("set infi box size to " << size);
+    CGAL_NEF_TRACEN("set infi box size to " << size);
   }
 
   void draw() const { 

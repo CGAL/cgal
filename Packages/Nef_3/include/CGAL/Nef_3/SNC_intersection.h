@@ -104,7 +104,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
       Circulator c(hfc), cp(c), cend(c);
       do {
 	c++;
-	TRACEN("contained on edge "<<Segment_3( *c, *cp)<<"? "<<
+	CGAL_NEF_TRACEN("contained on edge "<<Segment_3( *c, *cp)<<"? "<<
 	       Segment_3( *c, *cp).has_on(p));
 	if( Segment_3( *c, *cp).has_on(p))
 	  return true;
@@ -117,7 +117,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
     CGAL_For_all(fc, fe) {
       if (fc.is_shalfloop() ) { 
 	SHalfloop_const_handle l(fc);
-	TRACEN("isolated point on "<<l->incident_sface()->center_vertex()->point()<<"? ");
+	CGAL_NEF_TRACEN("isolated point on "<<l->incident_sface()->center_vertex()->point()<<"? ");
 	if( l->incident_sface()->center_vertex()->point() == p)
 	  return true;
       } 
@@ -127,7 +127,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
 	Circulator c(hfc), cp(c), cend(c);
 	do {
 	  c++;
-	  TRACEN("contained on edge "<<Segment_3( *c, *cp)<<"? "<<
+	  CGAL_NEF_TRACEN("contained on edge "<<Segment_3( *c, *cp)<<"? "<<
 		 Segment_3( *c, *cp).has_on(p));
 	  if( Segment_3( *c, *cp).has_on(p))
 	    return true;
@@ -146,7 +146,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
   bool does_intersect_internally( const Segment_3& s1, 
 				  const Segment_3& s2, 
 				  Point_3& p) const  {
-    TRACEN("does intersect internally with  LINE3_LINE3_INTERSECTION");
+    CGAL_NEF_TRACEN("does intersect internally with  LINE3_LINE3_INTERSECTION");
     if ( s1.is_degenerate() || s2.is_degenerate())
       /* the segment is degenerate so there is not internal intersection */
       return false;
@@ -175,7 +175,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
   bool does_intersect_internally( const Ray_3& s1, 
 				  const Segment_3& s2, 
 				  Point_3& p) const {
-    TRACEN("does intersect internally without  LINE3_LINE3_INTERSECTION");
+    CGAL_NEF_TRACEN("does intersect internally without  LINE3_LINE3_INTERSECTION");
     if ( s1.is_degenerate() || s2.is_degenerate())
       // the segment is degenerate so there is not internal intersection 
       return false;
@@ -210,9 +210,9 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
 		       Point_3& ip) const {
     // Intersection between an open ray and
     // a closed 2d-triangular region in the space
-    TRACEN("-> Intersection triangle - ray");
-    TRACEN(" -> Ray: "<<r);
-    TRACEN(" -> Triangle: "<<tr);
+    CGAL_NEF_TRACEN("-> Intersection triangle - ray");
+    CGAL_NEF_TRACEN(" -> Ray: "<<r);
+    CGAL_NEF_TRACEN(" -> Triangle: "<<tr);
     CGAL_assertion( !r.is_degenerate());
     Plane_3 h( tr.supporting_plane());
     CGAL_assertion( !h.is_degenerate());
@@ -221,7 +221,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
     Object o = intersection( h, r);
     if( !CGAL::assign( ip, o))
       return false;
-    TRACEN(" -> intersection point: "<<ip);
+    CGAL_NEF_TRACEN(" -> intersection point: "<<ip);
     return tr.has_on(ip);
   }
 
@@ -229,9 +229,9 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
 		       Point_3& ip) const {
     // Intersection between a open segment and
     // a closed 2d-triangular region in the space
-    TRACEN("-> Intersection triangle - segment");
-    TRACEN(" -> Segment: "<<s);
-    TRACEN(" -> Triangle: "<<tr);
+    CGAL_NEF_TRACEN("-> Intersection triangle - segment");
+    CGAL_NEF_TRACEN(" -> Segment: "<<s);
+    CGAL_NEF_TRACEN(" -> Triangle: "<<tr);
     CGAL_assertion( !s.is_degenerate());
     Plane_3 h( tr.supporting_plane());
     CGAL_assertion( !h.is_degenerate());
@@ -240,18 +240,18 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
     Object o = intersection( h, s);
     if( !CGAL::assign( ip, o))
       return false;
-    TRACEN(" -> intersection point: "<<ip);
+    CGAL_NEF_TRACEN(" -> intersection point: "<<ip);
     return tr.has_on(ip);
   }
 
   bool does_intersect_internally( const Ray_3& ray,
 				  Halffacet_const_handle f,
 				  Point_3& p) const { 
-    TRACEN("-> Intersection facet - ray");
+    CGAL_NEF_TRACEN("-> Intersection facet - ray");
     Plane_3 h( f->plane());
-    TRACEN("-> facet's plane: " << h);
-    TRACEN("-> a point on the plane: " << h.point());
-    TRACEN("-> ray: " << ray);
+    CGAL_NEF_TRACEN("-> facet's plane: " << h);
+    CGAL_NEF_TRACEN("-> a point on the plane: " << h.point());
+    CGAL_NEF_TRACEN("-> ray: " << ray);
     if( ray.is_degenerate())
       /* no possible internal intersection */
       return false;
@@ -261,19 +261,19 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
     Object o = intersection( h, ray);
     if( !CGAL::assign( p, o))
       return false;
-    TRACEN( "-> intersection point: " << p );
-    TRACEN( "-> point in facet interior? "<<does_contain_internally( f, p));
+    CGAL_NEF_TRACEN( "-> intersection point: " << p );
+    CGAL_NEF_TRACEN( "-> point in facet interior? "<<does_contain_internally( f, p));
     return does_contain_internally( f, p);
   }
 
   bool does_intersect_internally( const Segment_3& seg,
 				  Halffacet_const_handle f,
 				  Point_3& p) const { 
-    TRACEN("-> Intersection facet - segment");
+    CGAL_NEF_TRACEN("-> Intersection facet - segment");
     Plane_3 h( plane(f));
-    TRACEN("-> facet's plane: " << h);
-    TRACEN("-> a point on the plane: " << h.point());
-    TRACEN("-> segment: " << seg);
+    CGAL_NEF_TRACEN("-> facet's plane: " << h);
+    CGAL_NEF_TRACEN("-> a point on the plane: " << h.point());
+    CGAL_NEF_TRACEN("-> segment: " << seg);
     if( seg.is_degenerate())
       /* no possible internal intersection */
       return false;
@@ -283,8 +283,8 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
     Object o = intersection( h, seg);
     if( !CGAL::assign( p, o))
       return false;
-    TRACEN( "-> intersection point: " << p );
-    TRACEN( "-> point in facet interior? "<<does_contain_internally( f, p));
+    CGAL_NEF_TRACEN( "-> intersection point: " << p );
+    CGAL_NEF_TRACEN( "-> point in facet interior? "<<does_contain_internally( f, p));
     return( does_contain_internally( f, p));
   }
 

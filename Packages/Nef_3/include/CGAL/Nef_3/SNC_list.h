@@ -524,14 +524,14 @@ class SNC_list : public SM_list<CGAL::Sphere_geometry<Kernel_>,Items_> {
   }
 
   void delete_vertex(Vertex_handle v)
-    TRACEN("~ deleting vertex "<<&*v<<" from "<<&*this);
+    CGAL_NEF_TRACEN("~ deleting vertex "<<&*v<<" from "<<&*this);
     v->clear(true); 
     delete_vertex_only(v);
-    TRACEN("~~ vertex deleted"<<&*v);
+    CGAL_NEF_TRACEN("~~ vertex deleted"<<&*v);
   }
 
   void delete_halfedge_pair(Halfedge_handle e)
-    TRACEN("~ deleting halfedges pair "<<&*e<<", "<<&*(e->twin())<<
+    CGAL_NEF_TRACEN("~ deleting halfedges pair "<<&*e<<", "<<&*(e->twin())<<
 	   " from "<<&*this);
     Halfedge_handle et = e->twin();
     SM_decorator D1(&*e->center_vertex()), D2(&*et->center_vertex());
@@ -540,7 +540,7 @@ class SNC_list : public SM_list<CGAL::Sphere_geometry<Kernel_>,Items_> {
   }
 
   void delete_halffacet_pair(Halffacet_handle f)
-    TRACEN("~ deleting halffacets pair "<<&*f<<", "<<&*(f->twin())<<
+    CGAL_NEF_TRACEN("~ deleting halffacets pair "<<&*f<<", "<<&*(f->twin())<<
 	   " from "<<&*this);
     reset_object_list(f->boundary_entry_objects());
     reset_object_list(f->twin()->boundary_entry_objects());
@@ -549,87 +549,87 @@ class SNC_list : public SM_list<CGAL::Sphere_geometry<Kernel_>,Items_> {
   }
 
   void delete_volume(Volume_handle c)
-    TRACEN("~ deleting volume "<<&*c<<" from "<<&*this);
+    CGAL_NEF_TRACEN("~ deleting volume "<<&*c<<" from "<<&*this);
     reset_object_list(c->shell_entry_objects());
     delete_volume_only(c);
   }
 
   Vertex_handle new_vertex_only() { 
     vertices_.push_back(* get_vertex_node(Vertex()));
-    TRACEN("  new vertex only "<<&*(--vertices_end()));
+    CGAL_NEF_TRACEN("  new vertex only "<<&*(--vertices_end()));
     return --vertices_end(); 
   }
   Halfedge_handle new_halfedge_only(Halfedge_handle e)  { 
     Halfedge_handle ne = halfedges_.insert(e, * get_halfedge_node(Halfedge()));
-    TRACEN("  after "<<&*e<<" new halfedge only "<<&*ne);
+    CGAL_NEF_TRACEN("  after "<<&*e<<" new halfedge only "<<&*ne);
     return ne;
   }
   Halfedge_handle new_halfedge_only()  { 
-    TRACEN("  new halfedge only "<<&*(--halfedges_end()));
+    CGAL_NEF_TRACEN("  new halfedge only "<<&*(--halfedges_end()));
     halfedges_.push_back( * get_halfedge_node(Halfedge()));
     return --halfedges_end();
   }
   Halffacet_handle new_halffacet_only()  { 
     halffacets_.push_back( * get_halffacet_node(Halffacet()));
-    TRACEN("  new halffacet only "<<&*(--halffacets_end()));
+    CGAL_NEF_TRACEN("  new halffacet only "<<&*(--halffacets_end()));
     return --halffacets_end(); 
   } 
   Volume_handle new_volume_only()  { 
     volumes_.push_back( * get_volume_node(Volume()));
-    TRACEN("  new volume only "<<&*(--volumes_end()));
+    CGAL_NEF_TRACEN("  new volume only "<<&*(--volumes_end()));
     return --volumes_end(); 
   }
   SHalfedge_handle new_shalfedge_only()  {
     shalfedges_.push_back( * get_shalfedge_node(SHalfedge()));
-    TRACEN("  new shalfedge only "<<&*(--shalfedges_end()));
+    CGAL_NEF_TRACEN("  new shalfedge only "<<&*(--shalfedges_end()));
     return --shalfedges_end();
   }
   SHalfloop_handle new_shalfloop_only()  {
     shalfloops_.push_back( * get_shalfloop_node(SHalfloop()));
-    TRACEN("  new shalfloop only "<<&*(--shalfloops_end()));
+    CGAL_NEF_TRACEN("  new shalfloop only "<<&*(--shalfloops_end()));
     return --shalfloops_end(); 
   }
   SFace_handle new_sface_only() {
     sfaces_.push_back( * get_sface_node(SFace()));
-    TRACEN("  new sface only "<<&*(--sfaces_end()));
+    CGAL_NEF_TRACEN("  new sface only "<<&*(--sfaces_end()));
     return --sfaces_end(); 
   }
 
   void delete_vertex_only(Vertex_handle h) {
-    TRACEN("~ deleting vertex only "<<&*h<<" from "<<&*this);
+    CGAL_NEF_TRACEN("~ deleting vertex only "<<&*h<<" from "<<&*this);
     vertices_.erase(h);
     put_vertex_node(&*h);
   }
   void delete_halfedge_only(Halfedge_handle h) { 
-    TRACEN("~ deleting halfedge only "<<&*h<<" from "<<&*this);
+    CGAL_NEF_TRACEN("~ deleting halfedge only "<<&*h<<" from "<<&*this);
     CGAL_assertion(!is_sm_boundary_object(h));
     halfedges_.erase(h);
     put_halfedge_node(&*h);
   }
   void delete_halffacet_only(Halffacet_handle h) { 
-    TRACEN("~ deleting halffacet only "<<&*h<<" from "<<&*this);
+    CGAL_NEF_TRACEN("~ deleting halffacet only "<<&*h<<" from "<<&*this);
     halffacets_.erase(h);         
     put_halffacet_node(&*h);
   }
   void delete_volume_only(Volume_handle h) {
-    TRACEN("~ deleting volume only "<<&*h<<" from "<<&*this);
+    CGAL_NEF_TRACEN("~ deleting volume only "<<&*h<<" from "<<&*this);
     volumes_.erase(h); 
     put_volume_node(&*h);
   }
   void delete_shalfedge_only(SHalfedge_handle h)  { 
-    TRACEN("~ deleting shalfedge only "<<&*h<<" from "<<&*this);
+    CGAL_NEF_TRACEN("~ deleting shalfedge only "<<&*h<<" from "<<&*this);
     CGAL_assertion(!is_sm_boundary_object(h));
     shalfedges_.erase(h);
     put_shalfedge_node(&*h);
   }
   void delete_shalfloop_only(SHalfloop_handle h)  { 
-    TRACEN("~ deleting shalfloop only "<<&*h<<" from "<<&*this);
+    CGAL_NEF_TRACEN("~ deleting shalfloop only "<<&*h<<" from "<<&*this);
     CGAL_assertion(!is_sm_boundary_object(h));
     shalfloops_.erase(h); 
     put_shalfloop_node(&*h);
   }
   void delete_sface_only(SFace_handle h)  { 
-    TRACEN("~ deleting sface only "<<&*h<<" from "<<&*this);
+    CGAL_NEF_TRACEN("~ deleting sface only "<<&*h<<" from "<<&*this);
     CGAL_assertion(!is_boundary_object(h));
     sfaces_.erase(h);
     put_sface_node(&*h);

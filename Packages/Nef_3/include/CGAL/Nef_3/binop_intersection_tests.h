@@ -211,7 +211,7 @@ struct binop_intersection_test_segment_tree {
     std::vector<Nef_box> a, b;
     SNC_intersection is( sncp );
 
-    TRACEN("start edge0 edge1");
+    CGAL_NEF_TRACEN("start edge0 edge1");
     Bop_edge0_edge1_callback<Callback> callback_edge0_edge1( is, cb0 );
     CGAL_forall_edges( e0, sncp)  a.push_back( Nef_box( e0 ) );
     CGAL_forall_edges( e1, snc1i) b.push_back( Nef_box( e1 ) );
@@ -226,7 +226,7 @@ struct binop_intersection_test_segment_tree {
     a.clear();
     b.clear();
 
-    TRACEN("start edge0 face1");
+    CGAL_NEF_TRACEN("start edge0 face1");
     Bop_edge0_face1_callback<Callback> callback_edge0_face1( is, cb0 );
     CGAL_forall_edges( e0, sncp ) a.push_back( Nef_box( e0 ) );
     CGAL_forall_facets( f1, snc1i)    b.push_back( Nef_box( f1 ) );
@@ -241,7 +241,7 @@ struct binop_intersection_test_segment_tree {
     a.clear();
     b.clear();
 
-    TRACEN("start edge1 face0");
+    CGAL_NEF_TRACEN("start edge1 face0");
     Bop_edge1_face0_callback<Callback> callback_edge1_face0( is, cb1 );
     CGAL_forall_edges( e1, snc1i)  a.push_back( Nef_box( e1 ) );
     CGAL_forall_facets( f0, sncp ) b.push_back( Nef_box( f0 ) );

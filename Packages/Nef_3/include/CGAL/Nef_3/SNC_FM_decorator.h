@@ -100,14 +100,14 @@ Vertex_handle new_vertex(const Point& p) const
   return p.vertex(); }
 
 Halfedge_handle new_halfedge_pair_at_source(Vertex_handle v) 
-{ TRACEN("new_edge "<<&*v<<" "<<edge_number+1);
+{ CGAL_NEF_TRACEN("new_edge "<<&*v<<" "<<edge_number+1);
   return ++edge_number; }
 
 void supporting_segment(Halfedge_handle e, I it)
 { if ( From[it] != E() ) Support[e] = From[it]; }
 
 void halfedge_below(Vertex_handle v, Halfedge_handle e)
-{ TRACEN("halfedge_below point "<< v->point() <<": " << e); 
+{ CGAL_NEF_TRACEN("halfedge_below point "<< v->point() <<": " << e); 
   geninfo<unsigned>::access(v->info()) = e; }
 
 // all empty, no update necessary
@@ -276,18 +276,18 @@ protected:
     const std::vector<SHalfedge_handle>& MinimalEdge,
     const CGAL::Unique_hash_map<SHalfedge_handle,int>& FacetCycle,
     const std::vector<SHalfedge_handle>& Edge_of) const
-  { TRACEN("  determine_facet "<<debug(e));
+  { CGAL_NEF_TRACEN("  determine_facet "<<debug(e));
     int fc = FacetCycle[e];
     SHalfedge_handle e_min = MinimalEdge[fc];
     SHalfedge_handle e_below = 
       Edge_of[geninfo<unsigned>::access(info(target(e_min)))];
     CGAL_assertion( e_below != SHalfedge_handle() );
-    TRACEN("  edge below " << debug(e_below));    
+    CGAL_NEF_TRACEN("  edge below " << debug(e_below));    
     Halffacet_handle f = facet(e_below);
     if ( f != Halffacet_handle() ) return f; // has already a facet 
     // e_below also has no facet
     f = determine_facet(e_below, MinimalEdge, FacetCycle, Edge_of);
-    TRACEN("  edge below " << debug(e_below));
+    CGAL_NEF_TRACEN("  edge below " << debug(e_below));
     link_as_facet_cycle(e_below,f); 
     link_as_facet_cycle(twin(e_below),twin(f)); 
     return f;
@@ -330,7 +330,7 @@ template <typename SNC_>
 void SNC_FM_decorator<SNC_>::
 create_facet_objects(const Plane_3& plane_supporting_facet,
   Object_list_iterator start, Object_list_iterator end) const
-{ TRACEN(">>>>>create_facet_objects");
+{ CGAL_NEF_TRACEN(">>>>>create_facet_objects");
   CGAL::Unique_hash_map<SHalfedge_handle,int> FacetCycle(-1);
   std::vector<SHalfedge_handle> MinimalEdge;
   std::list<SHalfedge_handle> SHalfedges; 
@@ -378,15 +378,15 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
     if ( FacetCycle[e] >= 0 ) continue; // already assigned
     SHalfedge_around_facet_circulator hfc(e),hend(hfc);
     SHalfedge_handle e_min = e;
-    TRACEN("\n  facet cycle numbering "<<i);
+    CGAL_NEF_TRACEN("\n  facet cycle numbering "<<i);
     CGAL_For_all(hfc,hend) {
       FacetCycle[hfc]=i; // assign face cycle number
       if ( CGAL::lexicographically_xyz_smaller(point(target(hfc)), 
 					       point(target(e_min))))
 	e_min = hfc;
-      TRACEN(debug(hfc) << "=?" << point(source(hfc)) << " " << point(target(hfc)) 
+      CGAL_NEF_TRACEN(debug(hfc) << "=?" << point(source(hfc)) << " " << point(target(hfc)) 
 	     << "cmpxy: " << compare_xy(point(source(hfc)),point(target(hfc))));
-    } TRACEN("");
+    } CGAL_NEF_TRACEN("");
     MinimalEdge.push_back(e_min);
     ++i;
   }
@@ -401,7 +401,7 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
 
   for (int j=0; j<i; ++j) {
     SHalfedge_handle e = MinimalEdge[j];
-    TRACEN("  facet cycle "<<j<<" minimal halfedge "<<debug(e));
+    CGAL_NEF_TRACEN("  facet cycle "<<j<<" minimal halfedge "<<debug(e));
     Point_3 p1 = point(source(e)), 
             p2 = point(target(e)), 
             p3 = point(target(next(e)));
@@ -409,7 +409,7 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
       Halffacet_handle f = this->sncp()->new_halffacet_pair(plane_supporting_facet);
       link_as_facet_cycle(e,f); link_as_facet_cycle(twin(e),twin(f)); 
       mark(f) = mark(twin(f)) = mark(e);
-      TRACEN("  creating new facet object "<<&*f<<" bd "<<&*e);
+      CGAL_NEF_TRACEN("  creating new facet object "<<&*f<<" bd "<<&*e);
     }
   }
 
@@ -452,13 +452,13 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
 
   SHalfedges.sort(Sort_sedges<Point_3,SHalfedge_handle>());
   for(eit = SHalfedges.begin();eit != SHalfedges.end();) {
-    TRACEN("  appending edge "<< debug(*eit));
+    CGAL_NEF_TRACEN("  appending edge "<< debug(*eit));
     Segments.push_front(segment(*eit)); 
     From[Segments.begin()] = *eit;
     epred=eit;
     ++eit;
     if(eit != SHalfedges.end()) 
-      TRACEN("test " << std::endl << "  " << debug(*epred) 
+      CGAL_NEF_TRACEN("test " << std::endl << "  " << debug(*epred) 
 	     << std::endl << "  " << debug(*eit));
     if(eit != SHalfedges.end() && 
        point(source(*epred))== point(target(*eit)) &&  
@@ -467,7 +467,7 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
   }
 
   CGAL_forall_iterators(lit,SHalfloops) {
-    TRACEN("  appending loop " << point(vertex(*lit))); 
+    CGAL_NEF_TRACEN("  appending loop " << point(vertex(*lit))); 
     Segments.push_back(segment(*lit));
   }
     
@@ -482,7 +482,7 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
 
   CGAL_forall_iterators(eit,SHalfedges) { e=*eit;
   if ( facet(e) != Halffacet_handle() ) continue;
-    TRACEN("  linking hole "<<debug(e));
+    CGAL_NEF_TRACEN("  linking hole "<<debug(e));
     Halffacet_handle f = determine_facet(e,MinimalEdge,FacetCycle,Edge_of);
     link_as_facet_cycle(e,f); link_as_facet_cycle(twin(e),twin(f));
   }
@@ -492,17 +492,17 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
       Edge_of[geninfo<unsigned>::access(info(vertex(l)))];
     
     CGAL_assertion( e_below != SHalfedge_handle() );
-    TRACEN("link sloop at vertex "<< point(vertex(l)));
-    TRACEN("e_below "  << debug(e_below));
-    TRACEN("next    "  << debug(next(e_below)));
-    TRACEN("next    "  << debug(next(next(e_below))));
-    TRACEN("next    "  << debug(next(next(next(e_below)))));
-    TRACEN("next    "  << debug(next(next(next(next(e_below))))));
+    CGAL_NEF_TRACEN("link sloop at vertex "<< point(vertex(l)));
+    CGAL_NEF_TRACEN("e_below "  << debug(e_below));
+    CGAL_NEF_TRACEN("next    "  << debug(next(e_below)));
+    CGAL_NEF_TRACEN("next    "  << debug(next(next(e_below))));
+    CGAL_NEF_TRACEN("next    "  << debug(next(next(next(e_below)))));
+    CGAL_NEF_TRACEN("next    "  << debug(next(next(next(next(e_below))))));
     link_as_interior_loop(l,facet(e_below));
     link_as_interior_loop(twin(l),twin(facet(e_below)));
   }
   
-  TRACEN("exit FM");
+  CGAL_NEF_TRACEN("exit FM");
 }
 
 CGAL_END_NAMESPACE

@@ -86,7 +86,7 @@ void normal_vector_newell_3( IC first, IC last, Vector& n )
         ++first;
     }
     newell_single_step_3( prev, start_point, n);
-    TRACEN("newell normal vector "<<n);
+    CGAL_NEF_TRACEN("newell normal vector "<<n);
 }
 
 CGAL_END_NAMESPACE

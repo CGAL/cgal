@@ -176,7 +176,7 @@ void draw_map() const
   CGAL_forall_shalfedges(h,T_) {
     if ( Done[h] ) continue;
     SM_Halfedge_const_iterator hn(T_.next(h)),hnn(T_.next(hn));
-    TRACEV(T_.incident_triangle(h));
+    CGAL_NEF_TRACEV(T_.incident_triangle(h));
     CGAL_assertion(
       T_.incident_mark(h) == T_.incident_mark(hn) &&
       T_.incident_mark(hn) == T_.incident_mark(hnn));
