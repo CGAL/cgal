@@ -26,7 +26,8 @@ public:
   typedef typename R::Point_3              Point_3;
   typedef typename R::Aff_transformation_3 Aff_transformation_3;
 #else
-  typedef PointC3<R>                       Self;
+  //typedef PointC3<R>                       Self;
+  typedef Iso_cuboidC3<R>                  Self;
   typedef typename R::Point_3_base         Point_3;
   typedef typename R::Aff_transformation_3_base Aff_transformation_3;
 #endif
@@ -44,10 +45,14 @@ public:
   bool         identical(const Self& s) const;
   int          id() const;
 
-  Self         min() const;
-  Self         max() const;
-  Self         vertex(int i) const;
-  Self         operator[](int i) const;
+//   Self         min() const;
+//   Self         max() const;
+//   Self         vertex(int i) const;
+//   Self         operator[](int i) const;
+  Point_3         min() const;
+  Point_3         max() const;
+  Point_3         vertex(int i) const;
+  Point_3         operator[](int i) const;
 
   Self         transform(const Aff_transformation_3& t) const;
   Bounded_side bounded_side(const Point_3& p) const;
@@ -56,7 +61,7 @@ public:
   bool         has_on_bounded_side(const Point_3& p) const;
   bool         has_on_unbounded_side(const Point_3& p) const;
   bool         is_degenerate() const;
-  Bbox_2       bbox() const;
+  Bbox_3       bbox() const;
   FT           xmin() const;
   FT           ymin() const;
   FT           zmin() const;

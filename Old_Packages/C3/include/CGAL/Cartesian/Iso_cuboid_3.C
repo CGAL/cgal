@@ -58,7 +58,8 @@ Iso_cuboidC3(const Iso_cuboidC3<R CGAL_CTAG>::Point_3& p,
 
 template < class R >
 inline
-Iso_cuboidC3<R CGAL_CTAG>::~Iso_cuboidH3()
+//Iso_cuboidC3<R CGAL_CTAG>::~Iso_cuboidH3()
+Iso_cuboidC3<R CGAL_CTAG>::~Iso_cuboidC3()
 {}
 
 template < class R >
