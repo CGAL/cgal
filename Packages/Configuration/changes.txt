@@ -1,3 +1,6 @@
+2.79 26/8/2003
+- Fix CGAL_CFG_EXPLICIT_SPECIALIZATION_MEMBER_DECLARATION_BUG.C for g++ 3.4.
+
 2.78 22/8/2003
 - Activate Matching_bug_wrapper for Sunpro, regardless of the outcome
   of the test for MATCHING_BUG_4. This is supposed to be a temporary

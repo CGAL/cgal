@@ -36,6 +36,8 @@
 //| The solution for VC7(cl1300) is to remove the declaration and to make the
 //| member inline to avoid linker errors (more definitions in multiple units).
 
+#include <iostream>
+
 template <class T>
 struct A {
  A(T t)
@@ -46,8 +48,6 @@ struct A {
 
 template<>
 A<double>::A(double d);
-
-#include <iostream>
 
 template<>
 A<double>::A(double d)
