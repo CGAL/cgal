@@ -23,7 +23,7 @@
 
 #include "cgal_types.h"
 #include <CGAL/IO/Qt_widget.h>
-#include "Qt_widget_move_point.h"
+#include "triangulation_2_edit_vertex.h"
 #include <CGAL/IO/Qt_widget_get_line.h>
 #include <CGAL/IO/Qt_widget_get_point.h>
 
@@ -47,13 +47,11 @@ private:
   QButtonGroup       *button_group;
   int                activebutton;
   bool               is_active;
-  void               setActiveButton(int i);
-  void               addToolButton(QToolButton *b);
   int                nr_of_buttons;
 	
-  CGAL::Qt_widget_get_line<Rep>       linebut;
-  CGAL::Qt_widget_get_point<Rep>      pointbut;
-  Qt_widget_movepoint<Delaunay>       movepointbut;
+  CGAL::Qt_widget_get_line<Rep>         input_line_layer;
+  CGAL::Qt_widget_get_point<Rep>        input_point_layer;
+  triangulation_2_edit_vertex<Delaunay> edit_vertex_layer;
 };//end class
 
 

@@ -37,13 +37,13 @@
     nr_of_buttons = 0;
     //set the widget
     widget = w;
-    widget->attach(&linebut);
-    widget->attach(&pointbut);
-    widget->attach(&movepointbut);
-    movepointbut.set_Delaunay(t);
-    pointbut.deactivate();
-    linebut.deactivate();
-    movepointbut.deactivate();
+    widget->attach(&input_line_layer);
+    widget->attach(&input_point_layer);
+    widget->attach(&edit_vertex_layer);
+    input_point_layer.deactivate();
+    input_line_layer.deactivate();
+    edit_vertex_layer.set_Delaunay(t);
+    edit_vertex_layer.deactivate();
 
 #if QT_VERSION < 300
 		// for Qt 2.3 and before
@@ -84,11 +84,11 @@
   }
   button_group->setExclusive(true);
   connect(but[1], SIGNAL(stateChanged(int)),
-        &pointbut, SLOT(stateChanged(int)));
+        &input_point_layer, SLOT(stateChanged(int)));
   connect(but[2], SIGNAL(stateChanged(int)),
-        &linebut, SLOT(stateChanged(int)));
+        &input_line_layer, SLOT(stateChanged(int)));
   connect(but[3], SIGNAL(stateChanged(int)),
-        &movepointbut, SLOT(stateChanged(int)));
+        &edit_vertex_layer, SLOT(stateChanged(int)));
   
 };
 

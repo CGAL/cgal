@@ -41,9 +41,8 @@ int main(int, char*)
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 #include <CGAL/IO/Qt_widget_helpwindow.h>
-//#include <CGAL/IO/Qt_widget_triangulation_2.h>
-#include <CGAL/IO/Qt_widget_Regular_triangulation_2.h>
 #include "regular_triangulation_2_toolbar.h"
+#include "regular_triangulation_2_toolbar_layers.h"
 
 //Qt headers
 #include <qplatinumstyle.h>
@@ -66,28 +65,6 @@ const QString title_string("Regular_triangulation_2");
 Regular_triangulation rt;
 int		 current_state;
 double xmin, ymin, xmax, ymax;
-
-class regular_layer : public CGAL::Qt_widget_layer{
-public:
-  void draw(){
-    *widget << CGAL::WHITE;
-    *widget << CGAL::LineWidth(2);
-    *widget << rt;
-    *widget << CGAL::RED;
-    rt.draw_dual(*widget);
-
-    Vertex_iterator it = rt.vertices_begin(), 
-                    beyond = rt.vertices_end();
-    *widget << CGAL::GREEN << CGAL::PointSize (3) 
-		<< CGAL::PointStyle (CGAL::DISC);    
-    while(it != beyond) {      
-      *widget << (*it).point();
-      *widget << Circle((*it).point().point(), (*it).point().weight());
-      ++it;
-    }
-
-  }
-};
 
 class Window : public QMainWindow
 {
@@ -127,11 +104,15 @@ public:
     resize(w, h);
     widget->set_window(-1, 1, -1, 1);
     widget->setMouseTracking(TRUE);
-    widget->attach(&rl);
     //the standard toolbar
     stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this);
     //the input layers toolbar
-    newtoolbar = new Tools_toolbar(widget, this, &rt);	
+    newtoolbar = new Tools_toolbar(widget, this, &rt);
+    //the other layers toolbar
+    ltoolbar = new Layers_toolbar(widget, this, &rt);
+    this->addToolBar(newtoolbar->toolbar(), Top, FALSE);
+    this->addToolBar(ltoolbar->toolbar(), Top, FALSE);
+
 
     //connect the widget to the main function that receives the objects
     connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), 
@@ -251,7 +232,7 @@ private:
   CGAL::Qt_widget *widget;
   CGAL::Qt_widget_standard_toolbar  *stoolbar;
   Tools_toolbar                     *newtoolbar;
-  regular_layer                     rl;
+  Layers_toolbar                    *ltoolbar;
   int                               old_state;
 
 };

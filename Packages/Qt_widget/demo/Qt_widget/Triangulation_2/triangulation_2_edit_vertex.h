@@ -8,7 +8,7 @@
 //	
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_widget_MovePoint.h
+// file          : triangulation_2_edit_vertex.h
 // package       : QT_widget
 // author(s)     : Radu Ursu
 // release       : 
@@ -17,11 +17,8 @@
 // coordinator   : Laurent Rineau <rineau@clipper.ens.fr>
 //
 // ============================================================================
-
-
-#ifndef CGAL_QT_WIDGET_MOVEPOINT_H
-#define CGAL_QT_WIDGET_MOVEPOINT_H
-
+#ifndef TRIANGULATION_2_EDIT_VERTEX_HELPER
+#define TRIANGULATION_2_EDIT_VERTEX_HELPER
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_layer.h>
@@ -33,7 +30,7 @@
 
 
 
-class Qt_widget_movepoint_helper : public CGAL::Qt_widget_layer
+class triangulation_2_edit_vertex_helper : public CGAL::Qt_widget_layer
 {
   Q_OBJECT
   public:
@@ -50,7 +47,7 @@ public slots:
 };
 
 template <class T>
-class Qt_widget_movepoint : public Qt_widget_movepoint_helper
+class triangulation_2_edit_vertex : public triangulation_2_edit_vertex_helper
 {
 public:
 
@@ -70,7 +67,7 @@ protected:
   T                                                 *dt;
   QPopupMenu                                        *popup;
 public:
-  Qt_widget_movepoint() : wasrepainted(true), on_first(FALSE)
+  triangulation_2_edit_vertex() : wasrepainted(true), on_first(FALSE)
   {};
   void set_Delaunay (T *t) {dt = t;}
 private:
@@ -148,13 +145,15 @@ private:
     widget->redraw();	//redraw the scenes
   };
   void move_vertexi(){
-    on_first = TRUE;
+    on_first = true;
+    widget->cursor().setPos(widget->mapToGlobal(
+                            QPoint(widget->x_pixel(old_point.x()), widget->y_pixel(old_point.y()))));
   };
 };//end class 
 
 
 template <class T>
-class Qt_widget_move_weightedpoint : public Qt_widget_movepoint_helper
+class triangulation_2_edit_weightedpoint : public triangulation_2_edit_vertex_helper
 {
 public:
 
@@ -185,7 +184,7 @@ protected:
   QPopupMenu                                          *popup;
           //the popup being displayed when right mouse button is pressed
 public:
-  Qt_widget_move_weightedpoint() : wasrepainted(true), on_first(false)
+  triangulation_2_edit_weightedpoint() : wasrepainted(true), on_first(false)
             , move_button_pressed(false), change_weight_pressed(false) {};
   void set_triangulation (T *tr) {t = tr;}
   
@@ -281,11 +280,14 @@ private:
         FT x, y;
         widget->x_real(e->x(), x);
         widget->y_real(e->y(), y);
+
         double wght = current_v->point().weight();
+        Point lastp = current_v->point().point();
+
         t->remove(current_v);
-        current_v = t->insert(GT::Weighted_point(Point(x, y), wght));
+        current_v = t->insert(GT::Weighted_point(lastp, CGAL::squared_distance(lastp, Point(x, y))));
         widget->redraw();	//redraw the scenes
-        old_point = Point(x, y);
+        old_point = lastp;
       }
     }
   }
@@ -317,19 +319,20 @@ private:
   void 
   move_vertexi(){
     on_first = true;
+    change_weight_pressed = false;
     move_button_pressed = true;
     widget->cursor().setPos(widget->mapToGlobal(
-                            QPoint(old_point.x(), old_point.y())));
+                            QPoint(widget->x_pixel(old_point.x()), widget->y_pixel(old_point.y()))));
   }
   
   void 
   change_weighti(){
     on_first = true;
+    move_button_pressed = false;
     change_weight_pressed = true;
+    widget->cursor().setPos(widget->mapToGlobal(
+                            QPoint(widget->x_pixel(old_point.x()), widget->y_pixel(old_point.y()))));
   }
 };//end class 
 
-
-
-#endif // CGAL_QT_WIDGET_GET_SEGMENT_H
-
+#endif

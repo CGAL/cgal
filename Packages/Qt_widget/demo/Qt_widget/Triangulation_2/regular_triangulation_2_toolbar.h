@@ -23,7 +23,7 @@
 
 #include "regular_cgal_types.h"
 #include <CGAL/IO/Qt_widget.h>
-#include "Qt_widget_move_point.h"
+#include "triangulation_2_edit_vertex.h"
 #include <CGAL/IO/Qt_widget_get_circle.h>
 #include <CGAL/IO/Qt_widget_get_point.h>
 
@@ -48,15 +48,13 @@ private:
   CGAL::Qt_widget    *widget;
   QButtonGroup       *button_group;
   int                activebutton;
-  bool               is_active;
-  void               setActiveButton(int i);
-  void               addToolButton(QToolButton *b);
+  bool               is_active;  
   int                nr_of_buttons;
 	
-  CGAL::Qt_widget_get_circle<Rp>       circlebut;
-  CGAL::Qt_widget_get_point<Rp>        pointbut;
-  Qt_widget_move_weightedpoint<Regular_triangulation>
-                                       movepointbut;
+  CGAL::Qt_widget_get_circle<Rp>       input_circle_layer;
+  CGAL::Qt_widget_get_point<Rp>        input_point_layer;
+  triangulation_2_edit_weightedpoint<Regular_triangulation>
+                                       edit_vertex_layer;
 };//end class
 
 

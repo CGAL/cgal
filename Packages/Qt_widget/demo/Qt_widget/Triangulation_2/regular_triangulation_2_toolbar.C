@@ -37,13 +37,13 @@
     nr_of_buttons = 0;
     //set the widget
     widget = w;
-    widget->attach(&circlebut);
-    widget->attach(&pointbut);
-    widget->attach(&movepointbut);
-    movepointbut.set_triangulation(t);
-    pointbut.deactivate();
-    circlebut.deactivate();
-    movepointbut.deactivate();
+    widget->attach(&input_circle_layer);
+    widget->attach(&input_point_layer);
+    widget->attach(&edit_vertex_layer);
+    input_point_layer.deactivate();
+    input_circle_layer.deactivate();
+    edit_vertex_layer.set_triangulation(t);
+    edit_vertex_layer.deactivate();
 
 #if QT_VERSION < 300
 		// for Qt 2.3 and before
@@ -70,10 +70,10 @@
     but[1]->setTextLabel("Input Point");    
     but[2] = new QToolButton(maintoolbar, "circleinput layer");
     but[2]->setIconSet(set2);
-    but[2]->setTextLabel("Input Circle");    
+    but[2]->setTextLabel("Input WeightedPoint");    
     but[3] = new QToolButton(maintoolbar, "movedelete layer");
     but[3]->setIconSet(set3);
-    but[3]->setTextLabel("Move/Delete Vertex");
+    but[3]->setTextLabel("Edit Vertex");
   	
   nr_of_buttons = 4;
 
@@ -84,11 +84,11 @@
   }
   button_group->setExclusive(true);
   connect(but[1], SIGNAL(stateChanged(int)),
-        &pointbut, SLOT(stateChanged(int)));  
+        &input_point_layer, SLOT(stateChanged(int)));  
   connect(but[2], SIGNAL(stateChanged(int)),
-        &circlebut, SLOT(stateChanged(int)));
+        &input_circle_layer, SLOT(stateChanged(int)));
   connect(but[3], SIGNAL(stateChanged(int)),
-        &movepointbut, SLOT(stateChanged(int)));
+        &edit_vertex_layer, SLOT(stateChanged(int)));
 };
 
 

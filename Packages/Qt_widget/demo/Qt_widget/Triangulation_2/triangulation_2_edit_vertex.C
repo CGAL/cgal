@@ -8,7 +8,7 @@
 //	
 // ----------------------------------------------------------------------------
 //
-// file          : src/Qt_widget_MovePoint.C
+// file          : triangulation_2_edit_vertex.C
 // package       : Qt_widget
 // author(s)     : Laurent Rineau
 // release       : 
@@ -20,18 +20,18 @@
 
 #ifdef CGAL_USE_QT
 
-#include "Qt_widget_move_point.h"
+#include "triangulation_2_edit_vertex.h"
 
-void Qt_widget_movepoint_helper::delete_vertex() { delete_vertexi(); };
-void Qt_widget_movepoint_helper::move_vertex() { move_vertexi(); };
-void Qt_widget_movepoint_helper::change_weight() { change_weighti(); };
-void Qt_widget_movepoint_helper::stateChanged(int i){
+void triangulation_2_edit_vertex_helper::delete_vertex() { delete_vertexi(); };
+void triangulation_2_edit_vertex_helper::move_vertex() { move_vertexi(); };
+void triangulation_2_edit_vertex_helper::change_weight() { change_weighti(); };
+void triangulation_2_edit_vertex_helper::stateChanged(int i){
   if(i==2)
     activate();
   else if(i == 0)
     deactivate();
 }
 
-#include "Qt_widget_move_point.moc"
+#include "triangulation_2_edit_vertex.moc"
 
 #endif
