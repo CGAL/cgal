@@ -841,12 +841,14 @@ public:
 		p=v->point();
 		q=dir;
 
-		//cerr << " p " << p << " q " << q << endl;
+		cerr << " p " << p << " q " << q << endl;
 		
 		Face_circulator fc = v->incident_faces();
 		Face_circulator done = fc;
 
-		//cerr << _tr->triangle(& (*fc));
+		cerr  << "(" << fc->vertex(0)->point() << ", "
+		      <<fc->vertex(1)->point() << ", "
+		      << fc->vertex(2)->point() << ")" << endl ;
 
 		int ic = fc->index(v);
 		Vertex_handle  vt= fc->vertex(ccw(ic));
@@ -860,23 +862,26 @@ public:
 		  if (fc == done) {
 		    // no edge on the left of pq , pq is a supporting line
 		    // set ptr() to the right infinite face
-		    while (! _tr->is_infinite(&(*fc)) ||
-			_tr->geom_traits().orientation(
-			       fc->vertex(ccw(fc->index(_tr->infinite_vertex())))->point(),
-			       fc->vertex( cw(fc->index(_tr->infinite_vertex())))->point(),
+		    while ( ! _tr->is_infinite(fc)) 
+		      {  ++fc;}
+		    ic = fc->index(_tr->infinite_vertex());
+		    if( _tr->geom_traits().orientation(
+			       fc->vertex( cw(i))->point(),
+			       fc->vertex( ccw(i))->point(),
 							q) != CGAL_LEFTTURN) {  ++fc;}
 		    ptr() = &(*fc);
 		    i = fc->index(_tr->infinite_vertex());
 		    s = vertex_vertex;
 		    return;
 		  }
+
 		  ic = fc->index(v);
 		  vt= fc->vertex(ccw(ic));
 		  if (! _tr->is_infinite(vt)) 
 		    ptq = _tr->geom_traits().orientation(p,  vt->point(), q);
 		}
 		
-		//cerr << "t " << vt->point() << endl;
+		cerr << "t " << vt->point() << endl;
 
 
 		// now vt is a finite vertex and ptq is COLLINEAR or LEFTTURN
@@ -885,7 +890,7 @@ public:
 		if (! _tr->is_infinite(vr))
 		  prq = _tr->geom_traits().orientation(p, vr->point(), q);
 
-		while ( !_tr->is_infinite(vr) && !(prq == CGAL_RIGHTTURN )){
+		while ( (!_tr->is_infinite(vr)) && (!(prq == CGAL_RIGHTTURN ))){
 		  ++fc;
 		  ic = fc->index(v);
 		  vr = fc-> vertex(cw(ic));
@@ -900,8 +905,11 @@ public:
 		vt= fc->vertex(ccw(ic));
 		ptq = _tr->geom_traits().orientation(p,  vt->point(), q);
 
-		//cerr << "t " << vt->point() << endl;
-		//cerr << "r " << vr->point() << endl;
+		cerr << "t " << vt->point() << endl;
+		cerr << "r " << vr->point() << endl;
+		cerr << "face" << "(" << fc->vertex(0)->point() << ", "
+		      <<fc->vertex(1)->point() << ", "
+		      << fc->vertex(2)->point() << ")" << endl ;
 
 		if (_tr->is_infinite(vr)) {		  
 		  s = vertex_vertex;
@@ -1512,7 +1520,7 @@ public:
 	
         if(lfc.collinear_outside()){
             // point t lies outside or on the convex hull
-            // we walk clockwise on the hull
+            // we walk clockwise on the hull to decide
             int i = lfc->index(infinite_vertex());
             p = lfc->vertex(ccw(i))->point();
             if(geom_traits().compare_x(t,p) == CGAL_EQUAL &&  
@@ -1522,6 +1530,7 @@ public:
                 return lfc;
             }
          Point q(lfc->vertex(cw(i))->point());
+	 CGAL_Orientation pqt;
          Face_handle f(lfc);
          while(1){
            if(geom_traits().compare_x(t,q) == CGAL_EQUAL &&  
@@ -1530,23 +1539,25 @@ public:
              li = cw(i);
              return f;
            }
-           if(collinear_between(p, t, q)){
-             // t != p and t != q
-             lt = EDGE;
-             li = i;
-             return f;
-           }
+	   pqt = geom_traits().orientation(p,q,t);
+	   if (pqt == CGAL_COLLINEAR && collinear_between(p, t, q)){
+	     lt = EDGE;
+	     li = i;
+	     return f;
+	   }
+	   if (pqt == CGAL_LEFTTURN){
+	     lt = OUTSIDE;
+	     return f ;
+	   }
+	   	       
            // go to the next face
            f = f->neighbor(ccw(i));
            i = f->index(infinite_vertex());
            p = q;
            q = f->vertex(cw(i))->point();
-           if(geom_traits().orientation(p,q,t) == CGAL_LEFTTURN){
-             lt = OUTSIDE;
-             return f ;
-           }
-         }
+     	 }
         }
+
         while(! lfc.locate(t, lt, li) ){
 	  lfc.increment();
         }
