@@ -13,7 +13,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #----------------------------------------------------------------------#
 # rajouter CGAL_LOCAL_CXXFLAGS si on veut les packages de Local
-MY_OPT_FLAGS =  -DNOLAZY -DBLIND -DDEBUG 
+MY_OPT_FLAGS =  -DNOLAZY -DBLIND  
 
 #MY_OPT_FLAGS = -O3 -funroll-loops -DNOLAZY -DBLIND -mcpu=pentiumpro -march=pentiumpro
 #pour desactiver le dump dans geomview -DBLIND
@@ -46,6 +46,13 @@ all: extract$(EXE_EXT)
 
 extract$(EXE_EXT): extract$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)extract  extract$(OBJ_EXT) $(LDFLAGS)
+
+
+wr$(EXE_EXT): wr$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)wr  wr$(OBJ_EXT) $(LDFLAGS)
+
+b2a$(EXE_EXT): b2a$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)b2a  b2a$(OBJ_EXT) $(LDFLAGS)
 
 
 

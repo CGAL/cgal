@@ -98,10 +98,18 @@ file_output(char* foutput, std::vector<Point>& L)
 //---------------------------------------------------------------------
 
 bool
-file_input(char* finput, const int& number_of_points, std::vector<Point>& L, bool xyz)
+file_input(const Options& opt, std::vector<Point>& L)
 {
-  std::ifstream is(finput, std::ios::in);
+  const char* finput = opt.finname;
+  int number_of_points =  opt.number_of_points;
+  bool xyz = opt.xyz;
+  
+  int mode = (opt.binary) ? std::ios::binary : std::ios::in;
+  std::ifstream is(finput, mode);
 
+  if(opt.binary){
+    CGAL::set_binary_mode(is);
+  }
   if(is.fail())
     {
       std::cerr << "+++unable to open file for input" << std::endl;
@@ -116,7 +124,7 @@ file_input(char* finput, const int& number_of_points, std::vector<Point>& L, boo
 //   is.setf(std::ifstream::showpos);
 //   is.setf(std::ifstream::uppercase);
 
-  CGAL::set_ascii_mode(is);
+
 
   int n;
   if(! xyz){
@@ -134,8 +142,11 @@ file_input(char* finput, const int& number_of_points, std::vector<Point>& L, boo
     n = L.size();
   }
 
-  std::cout << "   random shuffling" << std::endl;
-  std::random_shuffle(L.begin(), L.end());
+  if(opt.shuffle) {
+    std::cout << "   random shuffling" << std::endl;
+    std::random_shuffle(L.begin(), L.end());
+  }
+
 
   if ( (number_of_points > 0 ) && (number_of_points < n ))
     {
@@ -271,7 +282,7 @@ int main(int argc,  char* argv[])
   std::vector<Point> L;
 
   if (!opt.Section_file)
-    file_input(opt.finname, opt.number_of_points, L, opt.xyz);
+    file_input(opt, L);
   else
     section_file_input(opt.finname, opt.number_of_points, L);
 

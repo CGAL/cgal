@@ -13,6 +13,8 @@ void usage(char* program)
   std::cerr << std::endl << "OPTIONS" << std::endl
 	    << "     -Delaunay      : display the underlying Delaunay triangulation" << std::endl
 	    << "     -contours      : display contours" << std::endl
+	    << "     -shuffle       : random shuffle" << std::endl
+	    << "     -binary        : binary I/O" << std::endl
 	    << "     -xyz           : input data in xyz format" << std::endl
 	    << "     -no_border -nb : set K = infinity" << std::endl
 	    << "     -delta x       : set the delta constant" << std::endl
@@ -54,6 +56,18 @@ parse(int argc, char* argv[], Options &opt)
       argv++;
       argc--;
       std::cout << "-c ";
+    }
+    else if ((!AF_CGAL_CLIB_STD::strcmp(argv[0], "-s")) || (!AF_CGAL_CLIB_STD::strcmp(argv[0], "-shuffle"))) {
+      opt.shuffle = true;
+      argv++;
+      argc--;
+      std::cout << "-s ";
+    }
+    else if ((!AF_CGAL_CLIB_STD::strcmp(argv[0], "-b")) || (!AF_CGAL_CLIB_STD::strcmp(argv[0], "-binary"))) {
+      opt.binary = true;
+      argv++;
+      argc--;
+      std::cout << "-b ";
     }
     else if ((!AF_CGAL_CLIB_STD::strcmp(argv[0], "-x")) || (!AF_CGAL_CLIB_STD::strcmp(argv[0], "-xyz"))) {
       opt.xyz = true;

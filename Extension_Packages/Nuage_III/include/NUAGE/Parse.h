@@ -9,8 +9,8 @@ class Options {
 public:
     Options()
         :  file_input(true), file_output(false),
-	   Delaunay(false), contour(false), xyz(false), Section_file(false),
-           number_of_points(-1), max_connected_comp(-1),
+	   Delaunay(false), contour(false), shuffle(false), binary(false), xyz(false), 
+           Section_file(false), number_of_points(-1), max_connected_comp(-1),
 	   DELTA(.86), K_init(1.1), K_step(.1), K(5), out_format(0),
 	   NB_BORDER_MAX(15)
   { 
@@ -28,6 +28,8 @@ public:
     bool file_output;
     bool Delaunay;
     bool contour;
+    bool shuffle;
+    bool binary;
     bool xyz;
     bool Section_file;
     int  number_of_points;
