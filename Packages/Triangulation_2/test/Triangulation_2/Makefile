@@ -59,6 +59,17 @@ test_triangulation_2: test_triangulation_2.o
 test_triangulation_2_bis: test_triangulation_2_bis.o
 	$(CGAL_CXX) -o test_triangulation_2_bis test_triangulation_2_bis.o $(LDFLAGS)
 
+test_delaunay_triangulation_2: test_delaunay_triangulation_2.o
+	$(CGAL_CXX) -o test_delaunay_triangulation_2 test_delaunay_triangulation_2.o $(LDFLAGS)
+
+test_regular_triangulation_2: test_regular_triangulation_2.o
+	$(CGAL_CXX) -o test_regular_triangulation_2 test_regular_triangulation_2.o $(LDFLAGS)
+
+test_constrained_triangulation_2: test_constrained_triangulation_2.o	
+	$(CGAL_CXX) -o test_constrained_triangulation_2 test_constrained_triangulation_2.o $(LDFLAGS)
+
+test_const_del_triangulation_2: test_const_del_triangulation_2.o
+	$(CGAL_CXX) -o test_const_del_triangulation_2 test_const_del_triangulation_2.o $(LDFLAGS)
 
 clean:
 	- rm -f *.o  *.obj *.exe \
@@ -66,6 +77,10 @@ clean:
 	test_triangulation_2 test_triangulation_2_bis\
 	test_triangulation_tds test_triangulation_tdsul \
 	test_triangulation_2_bis \
+	test_delaunay_triangulation_2 \
+	test_constrained_triangulation_2 \
+	test_regular_triangulation_2 \
+	test_const_del_triangulation_2 \
 	 core \
 	T??.triangulation  file_tds? 
 
