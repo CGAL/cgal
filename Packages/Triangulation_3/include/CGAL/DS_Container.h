@@ -122,8 +122,8 @@ public:
 const unsigned Free_elt::magic0 = 0xc9a1c9a1;
 const unsigned Free_elt::magic1 = 0xdeadbeef;
 
-// const int DS_Container_allocation_size = 1024;
-const int DS_Container_allocation_size = 8192;
+const int DS_Container_allocation_size = 1024;
+// const int DS_Container_allocation_size = 8192;
 
 template < class DSC > class DS_Container_iterator;
 

@@ -40,7 +40,6 @@
 #include <CGAL/Triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
 
-#include <CGAL/Triangulation_iterators_3.h>
 #include <CGAL/iterator.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/Iterator_project.h>
@@ -94,13 +93,13 @@ public:
   typedef Edge_iterator                        All_edges_iterator;
   typedef Vertex_iterator                      All_vertices_iterator;
 
-  typedef Triangulation_finite_iterator_3<Cell_iterator, Infinite_tester>
+  typedef Filter_iterator<Cell_iterator, Infinite_tester>
                                                Finite_cells_iterator;
-  typedef Triangulation_finite_iterator_3<Vertex_iterator, Infinite_tester>
+  typedef Filter_iterator<Vertex_iterator, Infinite_tester>
                                                Finite_vertices_iterator;
-  typedef Triangulation_finite_iterator_3<Edge_iterator, Infinite_tester>
+  typedef Filter_iterator<Edge_iterator, Infinite_tester>
                                                Finite_edges_iterator;
-  typedef Triangulation_finite_iterator_3<Facet_iterator, Infinite_tester>
+  typedef Filter_iterator<Facet_iterator, Infinite_tester>
                                                Finite_facets_iterator;
 
 private:
@@ -714,14 +713,13 @@ public:
   {
       if ( dimension() < 3 )
 	  return finite_cells_end();
-      return Finite_cells_iterator(cells_begin(), cells_end(),
-	                           Infinite_tester(this));
+      return filter_iterator(cells_begin(), cells_end(),
+	                     Infinite_tester(this));
   }
   Finite_cells_iterator finite_cells_end() const
   {
-      return Finite_cells_iterator(cells_end(), cells_end(),
-	                           Infinite_tester(this));
-	      			   
+      return filter_iterator(cells_begin(), cells_end(),
+	                     Infinite_tester(this), cells_end());
   }
 
   Cell_iterator cells_begin() const
@@ -746,13 +744,13 @@ public:
   {
       if ( number_of_vertices() <= 0 )
 	  return finite_vertices_end();
-      return Finite_vertices_iterator(vertices_begin(), vertices_end(),
-	                              Infinite_tester(this));
+      return filter_iterator(vertices_begin(), vertices_end(),
+	                     Infinite_tester(this));
   }
   Finite_vertices_iterator finite_vertices_end() const
   {
-      return Finite_vertices_iterator(vertices_end(), vertices_end(),
-	                              Infinite_tester(this));
+      return filter_iterator(vertices_begin(), vertices_end(),
+	                     Infinite_tester(this), vertices_end());
   }
 
   Vertex_iterator vertices_begin() const
@@ -777,13 +775,13 @@ public:
   {
       if ( dimension() < 1 )
 	  return finite_edges_end();
-      return Finite_edges_iterator(edges_begin(), edges_end(),
-	                           Infinite_tester(this));
+      return filter_iterator(edges_begin(), edges_end(),
+	                     Infinite_tester(this));
   }
   Finite_edges_iterator finite_edges_end() const
   {
-      return Finite_edges_iterator(edges_end(), edges_end(),
-	                           Infinite_tester(this));
+      return filter_iterator(edges_begin(), edges_end(),
+	                     Infinite_tester(this), edges_end());
   }
 
   Edge_iterator edges_begin() const
@@ -808,13 +806,13 @@ public:
   {
       if ( dimension() < 2 )
 	  return finite_facets_end();
-      return Finite_facets_iterator(facets_begin(), facets_end(),
-	                            Infinite_tester(this));
+      return filter_iterator(facets_begin(), facets_end(),
+	                     Infinite_tester(this));
   }
   Finite_facets_iterator finite_facets_end() const
   {
-      return Finite_facets_iterator(facets_end(), facets_end(),
-	                            Infinite_tester(this));
+      return filter_iterator(facets_begin(), facets_end(),
+	                     Infinite_tester(this), facets_end());
   }
 
   Facet_iterator facets_begin() const

@@ -2,6 +2,8 @@ Version 1.101 (?? January 02)
 - Documentation updates.
 - remove_from_simplex() renamed to remove_from_maximal_dimension_simplex().
 - star_hole() renamed to insert_in_hole().
+- Use STL_extensions' Filter_iterator<> instead of
+  Triangulation_finite_iterators_3<>.
 
 Version 1.100 (17 December 01)
 - Missing typenames for GCC 3.1.
