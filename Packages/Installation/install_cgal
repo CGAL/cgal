@@ -794,7 +794,7 @@ set_compiler_flags()
 	*CL.*|*cl.*)
 	    #### settings Microsoft Visual C++ compiler 
 	    WINDOWS_COMPILER="y"
-	    ADDITIONAL_CXXFLAGS="-TP -GR -GX -Zm900 -nologo `include_dir_option ${CGAL_DIR}/stlport`"
+	    ADDITIONAL_CXXFLAGS="-TP -GR -GX -Zm900 -nologo"
 	    ADDITIONAL_LDFLAGS="-nologo"
 #	    CGAL_LIB_CXXFLAGS="-TP"
 	    CGAL_LIB_CREATE="LIB /OUT:"
@@ -911,6 +911,7 @@ set_compiler_flags()
 	    CGAL_SHARED_LIB_CREATE="`compiler_bin` -G"
 	    ;;
     esac
+    # version specific adjustments for gcc
     case `compiler_description` in
 	*GNU*) 
 	    case `compiler_version` in
@@ -918,6 +919,11 @@ set_compiler_flags()
 		2.*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} -ftemplate-depth-25";;
 	    esac
 	    ;;
+    esac
+    # version specific adjustments for msvc
+    case ${CGAL_OS_COMPILER} in
+	*CL.*-13.*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} `include_dir_option ${CGAL_DIR}/vc7`";;
+	*CL.*|*cl.*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} `include_dir_option ${CGAL_DIR}/stlport`";;
     esac
 }
 
