@@ -1,3 +1,8 @@
+3.20 (15 August 2001)
+- Remove CGAL_SCOPE to please SunPro.  Hopefully we don't break anything else.
+
+======================== CGAL 2.3 ======================
+
 3.19 (23 July 2001)
 - renamed cmp_* to compare_* and *_dist_* to *_distance_* and
   leftturn, Leftturn, LEFTTURN to left_turn, Left_turn, LEFT_TURN and

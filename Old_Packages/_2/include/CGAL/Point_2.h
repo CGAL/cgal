@@ -42,7 +42,7 @@ public:
 
 friend  CGAL_FRIEND_INLINE
         CGAL::Point_2<R>
-        CGAL_SCOPE vector_to_point_conversion CGAL_NULL_TMPL_ARGS
+        vector_to_point_conversion CGAL_NULL_TMPL_ARGS
                                          (const CGAL::Vector_2<R>& v);
 
   Point_2()

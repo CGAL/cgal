@@ -46,7 +46,7 @@ public:
 
 friend CGAL_FRIEND_INLINE
        CGAL::Vector_2<R>
-       CGAL_SCOPE point_to_vector_conversion CGAL_NULL_TMPL_ARGS
+       point_to_vector_conversion CGAL_NULL_TMPL_ARGS
                                         (const CGAL::Point_2<R> &p);
 
   Vector_2() {}
