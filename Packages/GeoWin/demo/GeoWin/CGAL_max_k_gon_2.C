@@ -80,7 +80,7 @@ public:
   CGAL::convex_hull_points_2(L.begin(),L.end(), std::back_inserter(p));   
 
   Polygonvec kg;
-  if (p.size()>2) {
+  if (p.size()>4) {
       CGAL::maximum_area_inscribed_k_gon(p.vertices_begin(),p.vertices_end(),5, std::back_inserter(kg));
 
      leda_list<leda_point> HLP;
