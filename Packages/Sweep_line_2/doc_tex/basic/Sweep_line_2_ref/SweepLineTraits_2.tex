@@ -110,6 +110,9 @@ primitive operations used by the sweep line functions.
    of \ccc{p}.} %}
 
 
+\ccMethod{bool is_x_monotone(const Curve& c);}{returns true if $c$ is
+an $x$-monotone curve.}
+
 
 \ccMethod{void make_x_monotone(const Curve& cv, list<X_curve>& l);}{
    cuts \ccc{cv} into $x$-monotone subcurves and stores them in $l$.
@@ -156,7 +159,8 @@ then \ccc{p1} will hold the source point of the intersection and
 identical. In the case of an overlap we regard the intersection
 to the right as the open curve between \ccc{p1} and \ccc{p2}. This means that
 if the overlapping subcurve contains \ccc{pt} either \ccc{p1} or \ccc{p2} will
-be equal to \ccc{pt}, this is the only case in which this can happen.
+be equal to \ccc{pt}, this is the only case in which \ccc{p1} or \ccc{p2} are
+ equal to \ccc{pt}.
 If \ccc{c1} and \ccc{c2} do not intersect to the right of \ccc{pt}
 the function returns \ccc{false}, otherwise it returns true.
 %\ccPrecond{\ccc{do_intersect_to_right(c1,c2,pt) == true}}
