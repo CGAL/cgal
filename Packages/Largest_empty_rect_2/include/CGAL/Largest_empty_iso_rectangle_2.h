@@ -321,10 +321,10 @@ void Largest_empty_iso_rectangle_2<T>::
   copy_memory(const Largest_empty_iso_rectangle_2<T>& ler)
 {
     // copy points
-    for(Largest_empty_iso_rectangle_2<T>::const_iterator iter = ler.begin();
-        iter != ler.end();
+  for(Point_data_set_of_x::const_iterator iter = ler.x_sorted.begin();
+        iter != ler.x_sorted.end();
 	++iter) {
-      if(iter->type == REG)
+      if((*iter)->type == REG)
 	insert((*iter)->p);
       else
 	insert((*iter)->p,(*iter)->type);
@@ -1266,3 +1266,4 @@ CGAL_END_NAMESPACE
     
 
 #endif // CGAL_LARGEST_EMPTY_ISO_RECTANGLE_2_H
+
