@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Euclidean_distance_sphere_point<PointTraits,Sphere>}  %% add template arg's if necessary
+\begin{ccRefClass}{Euclidean_distance_sphere_point<Traits,Sphere>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -28,11 +28,9 @@ $d$-dimensional iso-rectangle defined as a $k$-$d$ tree rectangle.
 \ccInclude{CGAL/Euclidean_distance_sphere_point.h}
 
 \ccParameters
-Expects for the first template argument
-an implementation for
-$d$-dimensional points of
-the concept \ccc{PointTraits}, 
-for example \ccc{CGAL::Kd_tree_traits_point_d< Cartesian_d<double> >}.
+Expects for the first template argument an implementation for
+$d$-dimensional points of the concept \ccc{Traits}, for example
+\ccc{CGAL::Cartesian_d<double> }.
 
 Expects for the second template argument an implementation 
 for $d$-dimensional spheres of the concept \ccc{Sphere},
@@ -45,8 +43,8 @@ GeneralDistance
 
 \ccTypes
 
-\ccTypedef{PointTraits::NT NT;}{Number type.}
-\ccTypedef{PointTraits::Point Point;}{Point type.}
+\ccTypedef{Traits::FT FT;}{Number type.}
+\ccTypedef{Traits::Point_d Point_d;}{Point type.}
 \ccTypedef{Sphere Query_item;}{Query item type.}
 
 
@@ -59,13 +57,13 @@ GeneralDistance
 
 \ccOperations
 
-\ccMethod{NT distance(Sphere s, Point p);}{Returns the distance between \ccc{s} and \ccc{p}.}
+\ccMethod{NT distance(Sphere s, Point_d p);}{Returns the distance between \ccc{s} and \ccc{p}.}
 
-\ccMethod{NT min_distance_to_rectangle(Sphere s, Kd_tree_rectangle<PointTraits> r);}
+\ccMethod{NT min_distance_to_rectangle(Sphere s, Kd_tree_rectangle<Traits> r);}
 {Returns the minimal distance between a point from the sphere \ccc{s} and a point from
 \ccc{r}.}
 
-\ccMethod{NT max_distance_to_rectangle(Sphere s, Kd_tree_rectangle<PointTraits> r);}
+\ccMethod{NT max_distance_to_rectangle(Sphere s, Kd_tree_rectangle<Traits> r);}
 {Returns the maximal distance between the sphere \ccc{s} and
 a point from \ccc{r} furthest to \ccc{s}. }
 
@@ -76,7 +74,7 @@ a point from \ccc{r} furthest to \ccc{s}. }
 
 \ccSeeAlso
 
-GeneralDistance.
+\ccc{GeneralDistance}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries

@@ -26,7 +26,7 @@ a point container.
 
 \ccTypes
 
-\ccNestedType{Point} { A $d$-dimensional point.}
+\ccNestedType{Point_d} { A $d$-dimensional point.}
 \ccCreation
 \ccCreationVariable{c}  %% choose variable name
 
@@ -39,7 +39,7 @@ Construct an empty container for storing \ccc{d}-dimensional points.
 template <class InputIterator>
 PointContainer(int d, InputIterator begin, InputIterator end);}
 {
-Construct the container of $d$-dimensional points of type \ccc{Point}
+Construct the container of $d$-dimensional points of type \ccc{Point_d}
 given by the iterator sequence \ccc{[begin,end)}.
 }
 
@@ -57,9 +57,9 @@ each container contains at least one point. Container \ccVar\ should contain at 
 
 \ccSeeAlso
 
-\ccc{PointTraits}\\
+\ccc{SearchTraits}\\
 \ccc{SpatialSeparator}\\
-\ccc{CGAL::Point_container<PointTraits>}
+\ccc{CGAL::Point_container<SearchTraits>}
 
 \end{ccAdvanced}
 \end{ccRefConcept}

@@ -27,7 +27,7 @@ said to be on the positive side of the separator.
 
 \ccTypes
 
-\ccNestedType{NT;}{Number type.}
+\ccNestedType{FT;}{Number type.}
 
 \ccCreation
 \ccCreationVariable{s}  %% choose variable name
@@ -41,27 +41,25 @@ void set_cutting_dimension(int d);}
 {Sets the cutting dimension to \ccc{d}. }
 
 \ccMethod{
-void set_cutting_value(NT v);}
+void set_cutting_value(FT v);}
 {Sets the cutting value to \ccc{v}. }
 
 \ccMethod{int cutting_dimension();}{Returns the number of the cutting dimension.}
 
-\ccMethod{NT cutting_value();}{Returns the cutting value.}
+\ccMethod{FT cutting_value();}{Returns the cutting value.}
 
 
 
-\ccMethod{template <class Point>
-bool has_on_negative_side(Point p);}
+\ccMethod{template <class Point_d>
+bool has_on_negative_side(Point_d p);}
 {Returns true if and only if the point \ccc{p} is on the negative side of the separator.}
 
 
 \ccHasModels
 
-\ccc{CGAL::Plane_separator<NT>}.
+\ccc{CGAL::Plane_separator<FT>}.
 
-\ccSeeAlso
 
-\ccc{CGAL::Plane_separator<NT>}.
 
 \end{ccAdvanced}
 

@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefConcept}{PointTraits}
+\begin{ccRefConcept}{SearchTraits}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
@@ -25,23 +25,26 @@ For a user defined $d$-dimensional point type a nested representation class
 specialized for the point type. 
 
 \ccTypes
+\ccNestedType{Point_d}{Point type.}
 
-\ccNestedType{Point}{Point type.}
-\ccNestedType{NT}{The number type of the \ccHtmlNoLinksFrom{Cartesian} coordinates of type \ccc{Point}.}
+\ccNestedType{FT}{The number type of the \ccHtmlNoLinksFrom{Cartesian} coordinates of type \ccc{Point_d}.}
+
+
 \ccNestedType{Cartesian_const_iterator}{An random access iterator type to enumerate the 
 \ccHtmlNoLinksFrom{Cartesian} coordinates of a point.}
+
 \ccNestedType{Construct_cartesian_const_iterator}{Functor with operators to construct iterators on the
-first and the past-the-end iterator for the\ccHtmlNoLinksFrom{Cartesian} coordinates of a point.}
+first and the past-the-end iterator for the \ccHtmlNoLinksFrom{Cartesian} coordinates of a point.}
+
 \ccCreationVariable{p}  %% choose variable name
 
 
 
 \ccHasModels
 
-\ccc{CGAL::Kd_tree_traits_point_2<Kernel>}\\
-\ccc{CGAL::Kd_tree_traits_3<Kernel>}, \\
-\ccc{CGAL::Kd_tree_traits_d<Kernel>},\\
-\ccc{CGAL::Kd_tree_traits_point<NT,Point,CartesianCoordinateIterator,ConstructCartesianCoordinateIterator>}.
+\ccc{CGAL::Search_traits_2<Kernel>}\\
+\ccc{CGAL::Search_traits_3<Kernel>}, \\
+\ccc{CGAL::Search_traits<NT,Point,CartesianCoordinateIterator,ConstructCartesianCoordinateIterator>}.
 
 
 \end{ccRefConcept}

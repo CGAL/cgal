@@ -22,8 +22,8 @@ The concept \ccRefName\ describes the requirements for fuzzy $d$-dimensional spa
 
 \ccTypes
 
-\ccNestedType{Point}{ represents a $d$-dimensional point.}
-\ccNestedType{NT}{Number type.} 
+\ccNestedType{Point_d}{ represents a $d$-dimensional point.}
+\ccNestedType{FT}{Number type.} 
 
 \ccCreationVariable{q}  %% choose variable name
 
@@ -31,26 +31,23 @@ The concept \ccRefName\ describes the requirements for fuzzy $d$-dimensional spa
 
 \ccOperations
 
-\ccMethod{bool contains(Point p); const}{test whether $q$ contains $p$.}
+\ccMethod{bool contains(Point_d p); const}{test whether $q$ contains $p$.}
 
-\ccMethod{bool inner_range_intersects(const Kd_tree_rectangle<PointTraits>& rectangle); const}
+\ccMethod{bool inner_range_intersects(const Kd_tree_rectangle<Traits>& rectangle); const}
 {test whether the inner approximation of the spatial object intersects a rectangle
 associated with a node of a tree. }
 
-\ccMethod{bool outer_range_is_contained_by(const Kd_tree_rectangle<PointTraits>& rectangle); const}
-{test whether the outer approximation of the spatial object encloses a rectangle
+\ccMethod{bool outer_range_is_contained_by(const Kd_tree_rectangle<Traits>& rectangle); const}
+{test whether the outer approximation of the spatial object is enclosed by a rectangle
 associated with a node of a tree.}
 
 
 \ccHasModels
 
-\ccc{CGAL::Fuzzy_sphere<PointTraits>},
-\ccc{CGAL::Fuzzy_iso_box<PointTraits, IsoBox>}.
+\ccc{CGAL::Fuzzy_sphere<Traits>},\\
+\ccc{CGAL::Fuzzy_iso_box<Traits, IsoBox>}
 
-\ccSeeAlso
 
-\ccc{CGAL::Fuzzy_sphere<PointTraits>},
-\ccc{CGAL::Fuzzy_iso_box<PointTraits, IsoBox>}.
 
 
 \end{ccRefConcept}

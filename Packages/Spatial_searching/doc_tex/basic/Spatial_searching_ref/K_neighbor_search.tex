@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{K_neighbor_search<PointTraits, GeneralDistance, Splitter, SpatialTree>} 
+\begin{ccRefClass}{K_neighbor_search<Traits, GeneralDistance, Splitter, SpatialTree>} 
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -26,23 +26,23 @@ extended or unextended nodes.
 
 \ccParameters
 
-Expects for the first template argument an implementation of the concept \ccc{PointTraits},
-for example \ccc{CGAL::Kd_tree_traits_point_2<Kernel>}.
+Expects for the first template argument an implementation of the concept \ccc{SearchTraits},
+for example \ccc{CGAL::Search_traits_2<Kernel>}.
 
 Expects for the second template argument a model of the
 concept \ccc{GeneralDistance}. The default type is 
-\ccc{CGAL::Euclidean_distance<PointTraits>}.
+\ccc{CGAL::Euclidean_distance<Traits>}.
 
 
 Expects for fourth template argument an implementation of the concept \ccc{SpatialTree}.
-The default type is \ccc{CGAL::Kd_tree<PointTraits, Splitter, CGAL::Tag_false>}. The 
+The default type is \ccc{CGAL::Kd_tree<Traits, Splitter, CGAL::Tag_false>}. The 
 template argument \ccc{CGAL::Tag_false} makes that the tree is built with unextended nodes.
 
 \ccTypes
 
-\ccTypedef{PointTraits::Point Point;}{Point type.}
-\ccTypedef{PointTraits::NT NT;}{Number type.}
-\ccTypedef{std::pair<Point,NT> Point_with_distance;}{Pair of point and distance.} 
+\ccTypedef{Traits::Point_d Point_d;}{Point type.}
+\ccTypedef{Traits::FT FT;}{Number type.}
+\ccTypedef{std::pair<Point_d,FT> Point_with_distance;}{Pair of point and distance.} 
 
 \ccNestedType{iterator}{Bidirectional iterator with value type \ccc{Point_with_distance}
                         for enumerating approximate neighbors.}
@@ -57,7 +57,7 @@ template argument \ccc{CGAL::Tag_false} makes that the tree is built with unexte
 
 
 \def\ccLongParamLayout{\ccTrue}
-\ccConstructor{K_neighbor_search(Tree& tree, Query_item q, int k=1, NT eps=NT(0.0),
+\ccConstructor{K_neighbor_search(Tree& tree, Query_item q, int k=1, FT eps=FT(0.0),
 	                         bool search_nearest=true, GeneralDistance d=GeneralDistance());}
 {Constructor for searching approximately $k$ neighbors of the query item \ccc{q} 
 in the points stored in \ccc{tree} using 
@@ -83,7 +83,7 @@ Inserts statistics of the search process into the output stream \ccc{s}.
 
 \ccSeeAlso
 
-\ccc{CGAL::Orthogonal_k_neighbor_search<PointTraits, OrthogonalDistance, Splitter, SpatialTree>}.
+\ccc{CGAL::Orthogonal_k_neighbor_search<Traits, OrthogonalDistance, Splitter, SpatialTree>}.
 
 \end{ccRefClass}
 

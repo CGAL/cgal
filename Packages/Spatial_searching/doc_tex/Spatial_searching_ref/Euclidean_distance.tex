@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Euclidean_distance<PointTraits>}  %% add template arg's if necessary
+\begin{ccRefClass}{Euclidean_distance<Traits>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -28,7 +28,7 @@ To optimize distance computations squared distances are used.
 \ccParameters
 
 Expects for the template argument a model of the concept
-\ccc{PointTraits}, for example \ccc{CGAL::Kd_tree_point_traits_2<Kernel>}.
+\ccc{SearchTraits}, for example \ccc{CGAL::Search_traits_2<Kernel>}.
 
 \ccIsModel
 
@@ -36,9 +36,9 @@ OrthogonalDistance
 
 \ccTypes
 
-\ccTypedef{PointTraits::NT NT;}{Number type.}
-\ccTypedef{PointTraits::Point Point;}{Point type.}
-\ccTypedef{PointTraits::Point Query_item;}{Query item type.}
+\ccTypedef{Traits::FT FT;}{Number type.}
+\ccTypedef{Traits::Point_d Point_d;}{Point type.}
+\ccTypedef{Traits::Point_d Query_item;}{Query item type.}
 
 \ccCreation
 \ccCreationVariable{d}  %% choose variable name
@@ -47,27 +47,27 @@ OrthogonalDistance
 
 \ccOperations
  
-\ccMethod{NT distance(Point q, Point p);}{Returns the squared Euclidean distance between \ccc{q} and \ccc{p}.}
+\ccMethod{FT distance(Point_d q, Point_d p);}{Returns the squared Euclidean distance between \ccc{q} and \ccc{p}.}
 
-\ccMethod{NT min_distance_to_rectangle(Point q, Kd_tree_rectangle<NT> r);}
+\ccMethod{FT min_distance_to_rectangle(Point_d q, Kd_tree_rectangle<FT> r);}
 {Returns the squared Euclidean distance between \ccc{q} and
 the point on the boundary of \ccc{r} closest to \ccc{q}.}
 
-\ccMethod{NT max_distance_to_rectangle(Point q, Kd_tree_rectangle<NT> r;);}
+\ccMethod{FT max_distance_to_rectangle(Point_d q, Kd_tree_rectangle<FT> r;);}
 {Returns the squared Euclidean distance, where $d$ denotes the distance between \ccc{q} and
 the point on the boundary of \ccc{r} farthest to \ccc{q}.}
 
-\ccMethod{NT new_distance(NT dist, NT old_off, NT new_off, int cutting_dimension);} {Updates the squared \ccc{dist} incrementally
+\ccMethod{FT new_distance(FT dist, FT old_off, FT new_off, int cutting_dimension);} {Updates the squared \ccc{dist} incrementally
 and returns the updated squared distance.}
 
-\ccMethod{NT transformed_distance(NT d);} {Returns $d^2$.}
+\ccMethod{FT transformed_distance(FT d);} {Returns $d^2$.}
 
-\ccMethod{NT inverse_of_transformed_distance(NT d);} {Returns $d^{1/2}$.}
+\ccMethod{FT inverse_of_transformed_distance(FT d);} {Returns $d^{1/2}$.}
 
 \ccSeeAlso
 
-OrthogonalDistance.
-\ccc{CGAL::Weighted_Minkowski_distance<PointTraits>}.
+\ccc{OrthogonalDistance}\\
+\ccc{CGAL::Weighted_Minkowski_distance<Traits>}.
 
 \end{ccRefClass}
 

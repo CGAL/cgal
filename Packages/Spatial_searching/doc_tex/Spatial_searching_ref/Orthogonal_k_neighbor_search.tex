@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Orthogonal_k_neighbor_search<PointTraits, OrthogonalDistance, Splitter, SpatialTree>}
+\begin{ccRefClass}{Orthogonal_k_neighbor_search<Traits, OrthogonalDistance, Splitter, SpatialTree>}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -26,26 +26,26 @@ using an orthogonal distance class.
 
 \ccParameters
 
-Expects for the first template argument an implementation of the concept \ccc{PointTraits},
+Expects for the first template argument an implementation of the concept \ccc{SearchTraits},
 for example \ccc{CGAL::Kd_tree_traits_2<Kernel>}.
 
 Expects for the second template argument a model of the
 concept \ccc{GeneralDistance}. The default type is 
-\ccc{CGAL::Euclidean_distance<PointTraits>}.
+\ccc{CGAL::Euclidean_distance<Traits>}.
 
 Expects for third template argument a model of the concept \ccc{Splitter}.
-The default type is \ccc{CGAL::Sliding_midpoint<PointTraits>}.
+The default type is \ccc{CGAL::Sliding_midpoint<Traits>}.
 
 Expects for fourth template argument an implementation of the concept \ccc{SpatialTree}.
-The default type is \ccc{CGAL::Kd_tree<PointTraits, Splitter, CGAL::Tag_true>}.  The 
+The default type is \ccc{CGAL::Kd_tree<Traits, Splitter, CGAL::Tag_true>}.  The 
 template argument must be \ccc{CGAL::Tag_true} because orthogonal search needs extended 
 kd tree nodes.
 
 \ccTypes
 
-\ccTypedef{PointTraits::Point Point;}{Point type.}
-\ccTypedef{PointTraits::NT NT;}{Number type.}
-\ccTypedef{std::pair<Point,NT> Point_with_distance;}{Pair of point and distance.}
+\ccTypedef{Traits::Point_d Point_d;}{Point type.}
+\ccTypedef{Traits::FT FT;}{Number type.}
+\ccTypedef{std::pair<Point_d,FT> Point_with_distance;}{Pair of point and distance.}
 
 \ccNestedType{iterator}{Bidirectional iterator with value type \ccc{Point_with_distance}
                         for enumerating approximate neighbors.}
@@ -56,7 +56,7 @@ kd tree nodes.
 \ccOperations
 
 \def\ccLongParamLayout{\ccTrue}
-\ccConstructor{Orthogonal_k_neighbor_search(SpatialTree tree, Point query, int k=1, NT eps=NT(0.0),
+\ccConstructor{Orthogonal_k_neighbor_search(SpatialTree tree, Point_d query, int k=1, FT eps=FT(0.0),
                                           bool search_nearest=true, 
                                           OrthogonalDistance d=OrthogonalDistance());}
 {Constructor for searching approximately $k$ neighbors of the query item \ccc{query} 
@@ -81,7 +81,7 @@ Inserts statistics of the search process into the output stream \ccc{s}.
 
 \ccSeeAlso
 
-\ccc{CGAL::K_neighbor_search<PointTraits, GeneralDistance, Splitter, SpatialTree>}.
+\ccc{CGAL::K_neighbor_search<Traits, GeneralDistance, Splitter, SpatialTree>}.
 
 \end{ccRefClass}
 

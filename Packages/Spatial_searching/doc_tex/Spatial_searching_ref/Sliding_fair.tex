@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefFunctionObjectClass}{Sliding_fair<PointTraits, PointContainer, SpatialSeparator>}
+\begin{ccRefFunctionObjectClass}{Sliding_fair<Traits, PointContainer, SpatialSeparator>}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -23,30 +23,30 @@ Implements the {\em sliding fair} splitting rule.
 \ccParameters
 
 Expects for the first template argument a model of
-the concept \ccc{SpatialPoint}, 
-for example \ccc{CGAL::Kd_tree_traits_point_d< Cartesian_d<double> >}. 
+the concept \ccc{SearchTraits}, 
+for example \ccc{CGAL::Cartesian_d<double>}. 
 
 Expects for the second argument a model of the concept \ccc{PointContainer}. It has as default value
-the type \ccc{CGAL::Point_container<PointTraits::Point>}.
+the type \ccc{CGAL::Point_container<Traits>}.
 
 Expects for the third template argument a model of the concept \ccc{Separator}. It has as default value
-the type, \ccc{CGAL::Plane_separator<PointTraits::NT>}
+the type, \ccc{CGAL::Plane_separator<Traits::FT>}
 
 \ccInclude{CGAL/Splitters.h}
 
 \ccIsModel
 
-Splitter
+\ccc{Splitter}
 
 \ccTypes
 
-\ccTypedef{PointTraits::NT NT;}{Number type.} 
+\ccTypedef{Traits::FT FT;}{Number type.} 
 \ccTypedef{PointContainer Container;}{Point container.}
 \ccTypedef{SpatialSeparator Separator;}{Separator.}
 
 \ccCreationVariable{s}
 \ccConstructor{ Sliding_fair(unsigned int bucket_size, 
-                             NT aspect_ratio=NT(3))}{Constructor.}
+                             FT aspect_ratio=FT(3))}{Constructor.}
 
 \ccOperations
 
@@ -60,7 +60,9 @@ using the splitting dimension and the splitting value of the modified separator.
 
 \ccSeeAlso
 
-Splitter, PointContainer, SpatialSeparator.
+\ccc{Splitter},\\
+\ccc{PointContainer},\\
+\ccc{SpatialSeparator}
 
 \end{ccRefFunctionObjectClass}
 

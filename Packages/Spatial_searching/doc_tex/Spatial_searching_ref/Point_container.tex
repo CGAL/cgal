@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Point_container<PointTraits>}
+\begin{ccRefClass}{Point_container<Traits>}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -31,17 +31,16 @@ to support the implementation of splitting rules.
 \ccInclude{CGAL/Point_container.h}
 
 \ccParameters
-xpects for the  template argument
-an implementation for
-$d$-dimensional points of
-the concept \ccc{PointTraits}, 
-for example \ccc{CGAL::Kd_tree_traits_point_d< Cartesian_d<double> >}.
+
+Expects for the template argument an implementation for
+$d$-dimensional points of the concept \ccc{SearchTraits}, for example
+\ccc{CGAL::Cartesian_d<double>}.
 
 \ccTypes
 
-\ccTypedef{PointTraits::NT NT;}{Number type.}
-\ccTypedef{PointTraits::Point Point;}{Point type.}
-\ccNestedType{iterator;}{An iterator with value type \ccc{Point*}.}
+\ccTypedef{Traits::FT FT;}{Number type.}
+\ccTypedef{Traits::Point_d Point_d;}{Point type.}
+\ccNestedType{iterator;}{An iterator with value type \ccc{Point_d*}.}
 
 %----------------------------------------
 \ccCreation
@@ -56,7 +55,7 @@ Construct an empty container for storing \ccc{d}-dimensional points.
 template <class InputIterator>
 Point_container(int d, InputIterator begin, InputIterator end);}
 {
-Construct the container of $d$-dimensional points of type \ccc{Point}
+Construct the container of $d$-dimensional points of type \ccc{Point_d}
 given by the iterator sequence \ccc{[begin, end)}.}
 
 
@@ -64,13 +63,13 @@ given by the iterator sequence \ccc{[begin, end)}.}
 \ccOperations
 
 \ccMethod{template <class SpatialSeparator>
-void split(Point_container<PointTraits> &c2, SpatialSeparator sep, bool sliding=false);}
+void split(Point_container<Traits> &c2, SpatialSeparator sep, bool sliding=false);}
 {Given an empty container \ccc{c2} with the same dimension as \ccVar, splits \ccVar\ into
 \ccVar and \ccc{c2} using the separator \ccc{sep}. If sliding is \ccc{true} after splitting 
 each container contains at least one point. Container \ccVar\ should contain at least two points.}
 
 
-\ccMethod{void swap(Point_container<SpatialPoint> &c2);}
+\ccMethod{void swap(Point_container<Traits> &c2);}
 {Swap the contents of \ccVar\ and \ccc{c2}}
 
 
@@ -108,14 +107,14 @@ Return coordinate where the associated rectangle has maximal span.
 Return coordinate where the point coordinates have maximal span.
 }
 
-\ccMethod{NT max_span_lower();}
+\ccMethod{FT max_span_lower();}
 {
 Return lower value of the interval corresponding to
 \ccc{max_span_coord()}.
 }
 
 
-\ccMethod{NT max_tight_span_lower();}
+\ccMethod{FT max_tight_span_lower();}
 {
 Return lower value of the interval corresponding to
 \ccc{max_tight_span_coord()}. That is, the smallest
@@ -124,56 +123,56 @@ Return lower value of the interval corresponding to
 }
 
 
-\ccMethod{NT max_span_upper();}
+\ccMethod{FT max_span_upper();}
 {
 Return upper value of the interval corresponding to
 \ccc{max_span_coord()}.
 }
 
-\ccMethod{NT max_span_upper_without_dim(int d);}
+\ccMethod{FT max_span_upper_without_dim(int d);}
 {
 Return upper value of the interval over all dimensions
 without taking dimension \ccc{d} into account.
 }
 
-\ccMethod{NT max_tight_span_upper();}
+\ccMethod{FT max_tight_span_upper();}
 {
 Return upper value of the interval corresponding to
 \ccc{max_tight_span_coord()}.
 }
 
-\ccMethod{NT  max_spread();}
+\ccMethod{FT  max_spread();}
 {
 Return the size of the interval corresponding to \ccc{max_span_coord()}.
 }
 
-\ccMethod{NT max_tight_spread();}
+\ccMethod{FT max_tight_spread();}
 {
 Return the size of the interval corresponding to \ccc{max_tight_span_coord()}.
 }
 
-\ccMethod{NT median(int split_coord);}
+\ccMethod{FT median(int split_coord);}
 {
 Return the median value of the points stored in the container for
 dimension \ccc{split_coord}.
 }
 
-\ccMethod{const Kd_tree_rectangle<PointTraits> & bounding_box();}
+\ccMethod{const Kd_tree_rectangle<Traits> & bounding_box();}
 {Return the associated rectangle.}
 
-\ccMethod{const Kd_tree_rectangle<PointTraits> & tight_bounding_box();}
+\ccMethod{const Kd_tree_rectangle<Traits> & tight_bounding_box();}
 {Return the bounding box of the items in associated rectangle.}
 
-\ccMethod{int max_tight_span_coord_balanced(NT aspect_ratio);}
+\ccMethod{int max_tight_span_coord_balanced(FT aspect_ratio);}
 {Return the dimension with the maximal point spread, for which after fair splitting
 the ratio of the length of the longest side and the smallest side of the bounding box of
 the items in associated rectangle,
 does not exceed \ccc{aspect_ratio}.}
 
-\ccMethod{NT balanced_fair(int d, NT aspect_ratio);}
+\ccMethod{FT balanced_fair(int d, FT aspect_ratio);}
 {Return the splitting value for fair splitting.}
 
-\ccMethod{NT balanced_sliding_fair(int d, NT aspect_ratio);}
+\ccMethod{FT balanced_sliding_fair(int d, FT aspect_ratio);}
 {Return the splitting value for sliding fair splitting.}
 
 \ccMethod{int size();}
@@ -191,14 +190,14 @@ Return true if no points are present, false otherwise.
 
 \ccHeading{Output Routines}
 
-\ccFunction{ template<class PointTraits>
-std::ostream& operator<<(std::ostream& s, Point_container<PointTraits> c);}
+\ccFunction{ template<class Traits>
+std::ostream& operator<<(std::ostream& s, Point_container<Traits> c);}
 {Prints the point container \ccVar\ to the output stream \ccc{s} and returns \ccc{s}.}
 
 
 \ccSeeAlso
 
-\ccc{PointTraits},\\
+\ccc{SearchTraits},\\
 \ccc{SpatialSeparator},\\
 \ccc{PointContainer}.
 

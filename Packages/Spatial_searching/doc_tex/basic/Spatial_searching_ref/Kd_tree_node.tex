@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Kd_tree_node<PointTraits,Splitter,UseExtendedNode>}  %% add template arg's if necessary
+\begin{ccRefClass}{Kd_tree_node<Traits,Splitter,UseExtendedNode>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -32,19 +32,18 @@ along the node's cutting dimension.
 
 \ccHeading{Parameters}
 
-Expects for the template argument an implementation for a tree traits class
-of the concept \ccc{PointTraits},
-for example \ccc{CGAL::Kd_tree_traits_point_2<Kernel>}.
+Expects for the template argument a model of the concept \ccc{SearchTraits},
+for example \ccc{CGAL::Search_traits_2<Kernel>}, or \ccc{CGAL::Cartesian_d<double>}.
 
 \ccTypes
 
 \ccEnum{ enum Node_type { LEAF, INTERNAL, EXTENDED_INTERNAL};}{Denotes type of node.}
 
-\ccTypedef{PointTraits::NT NT;}{Number type.}
-\ccTypedef{PointTraits::Point Point;}{Point type.}
+\ccTypedef{Traits::FT FT;}{Number type.}
+\ccTypedef{Traits::Point_d Point_d;}{Point type.}
 \ccTypedef{Splitter::Separator Separator;}{Separator type.}
-\ccTypedef{Kd_tree<PointTraits,Splitter,UseExtendedNode>::Point_iterator Point_iterator;}{Iterator over points.} 
-\ccTypedef{Kd_tree<PointTraits,Splitter,UseExtendedNode>::Node_handle Node_handle;}{Node handle.}
+\ccTypedef{Kd_tree<Traits,Splitter,UseExtendedNode>::Point_d_iterator Point_d_iterator;}{Iterator over points.} 
+\ccTypedef{Kd_tree<Traits,Splitter,UseExtendedNode>::Node_handle Node_handle;}{Node handle.}
 
 
 \ccCreation
@@ -66,14 +65,14 @@ OutputIterator tree_points(OutputIterator it);}
 
 \ccMethod{bool is_leaf();}{Indicates whether a node is a leaf node.}
 \ccMethod{int  size();}{Returns the number of items stored in a leaf node.}
-\ccMethod{Point_iterator begin();}{Returns the iterator to the first item in a leaf node.}
-\ccMethod{Point_iterator end();}{Returns the past-the-end iterator in a leaf node.}
+\ccMethod{Point_d_iterator begin();}{Returns the iterator to the first item in a leaf node.}
+\ccMethod{Point_d_iterator end();}{Returns the past-the-end iterator in a leaf node.}
 \ccMethod{Node_handle lower();}{Returns a handle to the lower child of an internal node.}
 \ccMethod{Node_handle upper();}{Returns a handle to the upper child of an internal node.}
 \ccMethod{Separator& separator();}{Returns a reference to the separator.}
-\ccMethod{NT low_val();}{Returns the lower limit of an exteneded node's rectangle
+\ccMethod{FT low_val();}{Returns the lower limit of an exteneded node's rectangle
 along the node's cutting dimension.}
-\ccMethod{NT high_val();}{Returns the upper limit of an extended node's rectangle
+\ccMethod{FT high_val();}{Returns the upper limit of an extended node's rectangle
 along the node's cutting dimension.}
 
 

@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Fuzzy_iso_box<PointTraits, IsoBox>}  %% add template arg's if necessary
+\begin{ccRefClass}{Fuzzy_iso_box<Traits, IsoBox>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -27,41 +27,41 @@ by a $d$-dim square with side length $\epsilon$.
 
 \ccParameters
 Expects for the template argument a model of the concept
-\ccc{PointTraits}, for example \ccc{CGAL::Kd_tree_traits_point_2<Kernel>}.
+\ccc{SearchTraits}, for example \ccc{CGAL::Search_traits_2<Kernel>}.
 
 Expects for the second template argument  a model 
 of the concept \ccc{IsoBox}, for example \ccc{CGAL::Iso_rectangle_2<Kernel>}.
  
 \ccIsModel
 
-FuzzyQueryItem
+\ccc{FuzzyQueryItem}
 
 \ccTypes
 
-\ccTypedef{PointTraits::Point Point;}{Point type.}
-\ccTypedef{PointTraits::NT NT;}{Number type.}
+\ccTypedef{Traits::Point_d Point_d;}{Point type.}
+\ccTypedef{Traits::FT FT;}{Number type.}
 
 \ccCreation
 \ccCreationVariable{b}  %% choose variable name
 
-\ccConstructor{Fuzzy_iso_box(Point p, Point q, NT epsilon=NT(0));}{Constructs a fuzzy iso box
+\ccConstructor{Fuzzy_iso_box(Point_d p, Point_d q, FT epsilon=FT(0));}{Constructs a fuzzy iso box
 specified by the minimal iso box containing $p$ and $q$ and fuzziness value \ccc{epsilon}.}
 
 \ccOperations
 
-\ccMethod{bool contains(Point p);}{test whether $b$ contains $p$.}
+\ccMethod{bool contains(Point_d p);}{test whether $b$ contains $p$.}
 
-\ccMethod{bool inner_range_intersects(const Kd_tree_rectangle<NT>& rectangle);}
-{test whether the inner box intersects a rectangle
+\ccMethod{bool inner_range_intersects(const Kd_tree_rectangle<FT>& rectangle);}
+{test whether the inner box intersects the rectangle
 associated with a node of a tree.}
 
-\ccMethod{bool outer_range_is_contained_by(const Kd_tree_rectangle<NT>& rectangle);}
-{test whether the outer box encloses a rectangle
+\ccMethod{bool outer_range_is_contained_by(const Kd_tree_rectangle<FT>& rectangle);}
+{test whether the outer box is enclosed by a rectangle
 associated with a node of a tree.}
 
 \ccSeeAlso
 
-FuzzyQueryItem.
+\ccc{FuzzyQueryItem}
 
 \end{ccRefClass}
 

@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Manhattan_distance_iso_box_point<PointTraits, IsoBox>}  %% add template arg's if necessary
+\begin{ccRefClass}{Manhattan_distance_iso_box_point<Traits, IsoBox>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -29,7 +29,7 @@ and a $d$-dimensional iso-box defined as a $k$-$d$ tree rectangle.
 
 \ccParameters
 Expects for the first template argument
-a model for the concept \ccc{PointTraits}, for example \ccc{CGAL::Kd_tree_traits_3<Kernel>}.
+a model for the concept \ccc{Traits}, for example \ccc{CGAL::Kd_tree_traits_3<Kernel>}.
 
 Expects for the second template argument a model
 of the concept \ccc{IsoBox},
@@ -38,12 +38,12 @@ for example \ccc{CGAL::Cartesian<double>::Iso_cuboid_3}.
 
 \ccIsModel
 
-GeneralDistance
+\ccc{GeneralDistance}
 
 \ccTypes
 
-\ccTypedef{PointTraits::NT NT;}{Number type.}
-\ccTypedef{PointTraits::Point Point;}{Point type.}
+\ccTypedef{Traits::FT FT;}{Number type.}
+\ccTypedef{Traits::Point_d Point_d;}{Point type.}
 \ccTypedef{IsoBox Query_item;}{Query item type.}
 
 \ccCreation
@@ -53,24 +53,24 @@ GeneralDistance
 
 \ccOperations
 
-\ccMethod{NT transformed_distance(NT d);} {Returns $d$.}
+\ccMethod{FT transformed_distance(FT d);} {Returns $d$.}
 
-\ccMethod{NT inverse_of_transformed_distance(NT d);} {Returns $d$.}
+\ccMethod{FT inverse_of_transformed_distance(FT d);} {Returns $d$.}
 
-\ccMethod{NT distance(IsoBox b, Point p);}{Returns the distance between \ccc{b} and \ccc{p}.}
+\ccMethod{FT distance(IsoBox b, Point_d p);}{Returns the distance between \ccc{b} and \ccc{p}.}
 
-\ccMethod{NT min_distance_to_rectangle(IsoBox b, Kd_tree_rectangle<PointTraits> r);}
+\ccMethod{FT min_distance_to_rectangle(IsoBox b, Kd_tree_rectangle<Traits> r);}
 {Returns the minimal distance between a point from \ccc{b} and a point from
 \ccc{r}.}
 
-\ccMethod{NT max_distance_to_rectangle(IsoBox b, Kd_tree_rectangle<PointTraits> r);}
+\ccMethod{FT max_distance_to_rectangle(IsoBox b, Kd_tree_rectangle<Traits> r);}
 {Returns the maximal distance between the iso-box \ccc{b} and
 a point from \ccc{r} furthest to \ccc{b}.}
 
 
 \ccSeeAlso
 
-GeneralDistance.
+\ccc{GeneralDistance}.
 
 
 

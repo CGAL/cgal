@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Kd_tree<PointTraits, Splitter, UseExtendedNode>}  %% add template arg's if necessary
+\begin{ccRefClass}{Kd_tree<Traits,Splitter,UseExtendedNode>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -24,27 +24,27 @@ The class \ccRefName\ defines a $k$-$d$ tree.
 \ccParameters
 
 Expects for the first template argument a model of the concept
-\ccc{PointTraits}, for example \ccc{CGAL::Kd_tree_traits_point_2<Kernel>}.
+\ccc{SearchTraits}, for example \ccc{CGAL::Kd_tree_traits_point_2<Kernel>}.
 
 Excepts for the second template argument a model for the concept \ccc{Splitter}.
-It defaults  to \ccc{Sliding_midpoint<PointTraits>}
+It defaults  to \ccc{Sliding_midpoint<Traits>}
 
 Expects for the third template argument \ccc{CGAL::Tag_true}, if the 
 tree shall be built with extended nodes, and \ccc{CGAL::Tag_false} else.
 
 \ccTypes
 
-\ccTypedef{PointTraits::Point Point;} {Point class.}
-\ccTypedef{PointTraits::NT NT;}{Number type.}
+\ccTypedef{Traits::Point_d Point_d;} {Point class.}
+\ccTypedef{Traits::FT FT;}{Number type.}
 \ccNestedType{Splitter;}{Splitter type.}
 
-\ccNestedType{iterator;}{Bidirectional iterator with value type \ccc{Point} that allows
+\ccNestedType{iterator;}{Bidirectional iterator with value type \ccc{Point_d} that allows
 	to enumerate all points in the tree.}
 
 \begin{ccAdvanced}
-\ccNestedType{Node_handle;}{A handle with value type \ccc{Kd_tree_node<PointTraits,Splitter>}.}
-\ccNestedType{Point_iterator;} {Random access iterator 
-with value type \ccc{Point*}.}
+\ccNestedType{Node_handle;}{A handle with value type \ccc{Kd_tree_node<Traits,Splitter>}.}
+\ccNestedType{Point_d_iterator;} {Random access iterator 
+with value type \ccc{Point_d*}.}
 \end{ccAdvanced}
 
 \ccCreation
@@ -54,8 +54,8 @@ with value type \ccc{Point*}.}
 {template <class InputIterator> Kd_tree(InputIterator first, InputIterator beyond, Splitter s=Splitter());}
 {
 Constructs a $k$-$d$ tree on the elements from the sequence 
-\ccc{first, beyond} using the splitting rule implemented by \ccc{s}. 
-The value type of the \ccc{InputIterator} must be \ccc{Point}.
+\ccc{[first, beyond)} using the splitting rule implemented by \ccc{s}. 
+The value type of the \ccc{InputIterator} must be \ccc{Point_d}.
 }
 
 % -----------------------------------
@@ -65,7 +65,7 @@ The value type of the \ccc{InputIterator} must be \ccc{Point}.
 template <class OutputIterator, class FuzzyQueryItem>
 OutputIterator search(OutputIterator it, FuzzyQueryItem q);}
 {Reports the points that are approximately contained by~\ccc{q}.
-The types \ccc{FuzzyQueryItem::Point} and \ccc{Point} must be equivalent.} 
+The types \ccc{FuzzyQueryItem::Point_d} and \ccc{Point_d} must be equivalent.} 
 
 \ccMethod{iterator begin();}{Returns an iterator to the first point in the tree.}
 \ccMethod{iterator end();}{Returns the corresponding past-the-end iterator.}
@@ -74,7 +74,7 @@ The types \ccc{FuzzyQueryItem::Point} and \ccc{Point} must be equivalent.}
 
 
 
-\ccMethod{int size();}
+\ccMethod{unsigned int size();}
 {Returns the number of points that are stored in the tree.}
 
 \begin{ccAdvanced}
@@ -82,7 +82,7 @@ The types \ccc{FuzzyQueryItem::Point} and \ccc{Point} must be equivalent.}
 \ccMethod{Node_handle root();}
 {Returns a handle to the root node of the tree.}
 
-\ccMethod{const Kd_tree_rectangle<PointTraits>& bounding_box();}{returns a const reference
+\ccMethod{const Kd_tree_rectangle<Traits>& bounding_box();}{returns a const reference
 to the bounding box of the root node of the tree.}
 
 \ccMethod{std::ostream& statistics(std::ostream& s);}
@@ -96,9 +96,9 @@ Inserts statistics of the tree into the output stream \ccc{s}.
 
 \ccSeeAlso
 Tree.
-\ccc{CGAL::Kd_tree_node<PointTraits>},\\
-\ccc{CGAL::Kd_tree_traits_point_2<Kernel>},\\
-\ccc{CGAL::Kd_tree_traits_point_2<Kernel>}.
+\ccc{CGAL::Kd_tree_node<Traits>},\\
+\ccc{CGAL::Search_traits_2<Kernel>},\\
+\ccc{CGAL::Search_traits_2<Kernel>}.
 
 \end{ccRefClass}
 

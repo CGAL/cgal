@@ -24,7 +24,7 @@ E.g., for an Euclidean distance the transformed distance is the squared Euclidea
 
 \ccRefines
 
-GeneralDistance
+\ccc{GeneralDistance}
 
 \ccParameters
 
@@ -35,8 +35,8 @@ $d$-dimensional query items.
 
 \ccTypes
 
-\ccNestedType{NT}{Number type.}
-\ccNestedType{Point}{Point type.}
+\ccNestedType{FT}{Number type.}
+\ccNestedType{Point_d}{Point type.}
 \ccNestedType{Query_item}{Query item type.}
 
 \ccCreation
@@ -46,33 +46,29 @@ $d$-dimensional query items.
 
 \ccOperations
 
-\ccMethod{NT distance(Point q, Point r);}{Returns the transformed distance between \ccc{q} and \ccc{r}.}
+\ccMethod{FT distance(Point_d q, Point_d r);}{Returns the transformed distance between \ccc{q} and \ccc{r}.}
 
-\ccMethod{NT min_distance_to_rectangle(Point q, Kd_tree_rectangle<PointTraits> r);}
+\ccMethod{FT min_distance_to_rectangle(Point_d q, Kd_tree_rectangle<Traits> r);}
 {Returns the transformed distance between \ccc{q} and
 the point on the boundary of \ccc{r} closest to \ccc{q}.}
 
-\ccMethod{NT max_distance_to_rectangle(Point q, Kd_tree_rectangle<PointTraits> r);}
+\ccMethod{FT max_distance_to_rectangle(Point_d q, Kd_tree_rectangle<Traits> r);}
 {Returns the transformed distance between \ccc{q} and
 the point on the boundary of \ccc{r} farthest to \ccc{q}.}
 
-\ccMethod{NT transformed_distance(NT d);} {Returns the transformed distance.}
+\ccMethod{FT transformed_distance(FT d);} {Returns the transformed distance.}
 
-\ccMethod{NT inverse_of_transformed_distance(NT d);} {Returns the inverse of the transformed distance.}
+\ccMethod{FT inverse_of_transformed_distance(FT d);} {Returns the inverse of the transformed distance.}
 
-\ccMethod{NT new_distance(NT dist, NT old_off, NT new_off, int cutting_dimension);} {Updates 
+\ccMethod{FT new_distance(FT dist, FT old_off, FT new_off, int cutting_dimension);} {Updates 
 \ccc{dist} incrementally and returns the updated distance.}
 
 \ccHasModels
 
-\ccc{CGAL::Euclidean_distance<PointTraits>},
-\ccc{CGAL::Weighted_Minkowski_distance<PointTraits>}.
+\ccc{CGAL::Euclidean_distance<Traits>},\\
+\ccc{CGAL::Weighted_Minkowski_distance<Traits>}
 
-\ccSeeAlso
 
-\ccc{GeneralDistance}\\
-\ccc{CGAL::Euclidean_distance<PointTraits>}\\
-\ccc{CGAL::Weighted_Minkowski_distance<PointTraits>}
 
 \end{ccRefConcept}
 

@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Plane_separator<NT>}  %% add template arg's if necessary
+\begin{ccRefClass}{Plane_separator<FT>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -35,11 +35,11 @@ SpatialSeparator
 
 
 
-\ccConstructor{Plane_separator(int d, NT v);}
+\ccConstructor{Plane_separator(int d, FT v);}
 {Constructs a separator that separates two half spaces by a hyperplane
 defined by $x_d=v$, where $v$ denotes the $d^{th}$ coordinate value.}
 
-\ccConstructor{Plane_separator(Plane_separator<NT> p);}
+\ccConstructor{Plane_separator(Plane_separator<FT> p);}
 {Copy constructor.}
 
 \ccOperations
@@ -49,25 +49,25 @@ void set_cutting_dimension(int d);}
 {Sets the cutting dimension to \ccc{d}. }
 
 \ccMethod{
-void set_cutting_value(NT v);}
+void set_cutting_value(FT v);}
 {Sets the cutting value to \ccc{v}. }
 
 \ccMethod{int cutting_dimension();}{Returns the number of the cutting dimension.}
 
-\ccMethod{NT cutting_value();}{Returns the cutting value.}
+\ccMethod{FT cutting_value();}{Returns the cutting value.}
 
 \ccMethod{template <class SpatialPoint>
 bool has_on_negative_side(SpatialPoint p);}
 {Returns true if and only if the coordinate of \ccc{p} in the cutting dimension is smaller than the cutting value.}
 
 \ccMethod{ 
-Plane_separator<NT> operator=(Plane_separator<NT> s2);}
+Plane_separator<FT> operator=(Plane_separator<FT> s2);}
 {Assignment operator.}
 
 \ccHeading{Output Operators}
 
-\ccFunction{ template<class NT>
-std::ostream& operator<<(std::ostream& s, Plane_separator<NT> p);}
+\ccFunction{ template<class FT>
+std::ostream& operator<<(std::ostream& s, Plane_separator<FT> p);}
 {Inserts the plane separator \ccc{p} in the output stream \ccc{s} and returns \ccc{s}.}
 
 \end{ccAdvanced}
