@@ -92,7 +92,7 @@ class Polygon_2_const_edge_circulator {
       return !(first_vertex == x.first_vertex);
     }
 
-    Segment_2 operator*()
+    Segment_2 operator*() const
     {
       Vertex_const_circulator second_vertex = first_vertex;
       ++second_vertex;
