@@ -645,11 +645,6 @@ operator* (const double d, const Interval_nt & t)
 
 inline
 Interval_nt
-operator/ (const double d, const Interval_nt & t)
-{ return Interval_nt(d)/t; }
-
-inline
-Interval_nt
 Interval_nt::operator/ (const Interval_nt & d) const
 {
   FPU_CW_t backup = FPU_get_cw();
@@ -658,6 +653,11 @@ Interval_nt::operator/ (const Interval_nt & d) const
   FPU_set_cw(backup);
   return tmp;
 }
+
+inline
+Interval_nt
+operator/ (const double d, const Interval_nt & t)
+{ return Interval_nt(d)/t; }
 
 inline
 Interval_nt
