@@ -805,7 +805,8 @@ public:
             if ( assign( tmp_p1, i_obj ))
               p1=tmp_p1;
             else if ( assign(i_vertical, i_obj))
-              p1=i_vertical.source();  // the intersection vertical segment starts at pt.
+              // the intersection vertical segment starts at pt.
+              p1=i_vertical.source();  
 
 	  }    
 	  found = true;

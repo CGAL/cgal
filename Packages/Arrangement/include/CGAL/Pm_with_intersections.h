@@ -220,9 +220,10 @@ public:
 					bool &is_overlap,
 					Change_notification *en)
   {
-    CGAL_PM_START_OP(1)
+    CGAL_PM_START_OP(1);
      
-      typename Planar_map::Halfedge_around_vertex_circulator next, prev, start, last_next_checked;
+    typename Planar_map::Halfedge_around_vertex_circulator next, prev, start, 
+                                                           last_next_checked;
     X_curve_2 xcv;
     Point_2 xp1, xp2;
     Point_2 start_point;
@@ -238,7 +239,8 @@ public:
     next = prev;
     ++next;
     do {
-      if ((last_next_checked != prev) && (traits->curves_overlap( cv, prev->curve()))) {
+      if ((last_next_checked != prev) && 
+          (traits->curves_overlap( cv, prev->curve()))) {
 	// cv overlapps prev->curve()
 	b = directed_nearest_intersection_with_halfedge
 	  (cv, orig_cv, prev, start_point, direction_right, xp1, xp2, en);

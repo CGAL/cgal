@@ -1370,7 +1370,8 @@ class Conic_arc_2
 
         // Case 1 - *this:     +----------->     
         //            arc:       +=====>
-        ovlp_arcs[0] = Conic_arc_2<NT>(*this, *arc_sourceP,*arc_targetP, false);
+        ovlp_arcs[0] = 
+          Conic_arc_2<NT>(*this, *arc_sourceP,*arc_targetP, false);
         //ovlp_arcs[0] = Conic_arc_2<NT>(_conic, *arc_sourceP,*arc_targetP);
         return (1);
       }
