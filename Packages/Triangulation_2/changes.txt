@@ -1,6 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+8 November Andreas Fabri
+- In Triangulation_hierarchy_2: Treat special case that the triangulation in 
+  higher levels is 1D and the point to insert collinear
+
 8 noovembre
 - made nearest_vertex(p,f) function in Delaunay triangulation conforms
   to the documentation that is f is assumed to be just a hint for point 
