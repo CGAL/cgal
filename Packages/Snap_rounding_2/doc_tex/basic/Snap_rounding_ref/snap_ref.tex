@@ -105,49 +105,6 @@ Returns a constant iterator to the output of the first input segment.
 Returns a constant iterator to the after-the-last of the output of the input segments.
 }
 
-\ccHeading{Insertion}
-
-\ccMethod{void 
-  insert(const Segment_2& s);}
-{Inserts segment \ccc{s} in the segment set.}
-
-\ccMethod{void 
-  push_back(const Segment_2& s);}
-{The STL standard member function for insertion.}
-
-\ccMethod{template < class InputIterator >
-          int
-          insert(InputIterator first, InputIterator last);}
-{Inserts the segments in the range $\left[\right.$\ccc{first},
-\ccc{last}$\left.\right)$.  Returns the number of inserted segments. \\ \\
-\ccRequirements The \ccc{value_type} of \ccc{first} and \ccc{last} is \ccc{Segment}.}
-
-\ccHeading{Removal}
-
-\ccMethod{bool remove(const Segment_2& p);}{Removes segment \ccc{s}.
-Returns false iff \ccc{s} is not in the segment set. }
-
-\ccMethod{void clear();}
-{Removes all segments.}
-
-\ccHeading{Parameter Updates}
-
-\ccMethod{void do_isr(bool b);}
-{Determine whether to apply Iterated Snap Rounding (when \ccc{b} is true),
-or Snap Rounding (when \ccc{b} is false).}
-
-\ccMethod{bool set_pixel_size(NT pixel_size);}
-{set the pixel size.
-Return false if the size is not valid (e.g. negative). }
-
-\ccMethod{bool use_integer_mode(bool b);}
-{Determine which mode of output representation to use (see the explanation of
-the first constructor for details).}
-
-\ccMethod{bool set_number_of_kd_trees(unsigned int number_of_kd_trees);}
-{Set the number of kd-trees used for segment-hot pixel queries.
-Return false if the number is not valid (e.g. negative). }
-
 %\end{ccRefClass}
 
 % +--------------------------------------------------------+
