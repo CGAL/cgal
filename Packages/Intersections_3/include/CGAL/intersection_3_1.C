@@ -496,7 +496,7 @@ inline
 Object
 intersection(const typename CGAL_WRAP(K)::Iso_cuboid_3 &box, 
 	     const typename CGAL_WRAP(K)::Line_3 &line, 
-	     const K&)
+	     const K& k)
 {
   return intersection(line, box, k);
 }

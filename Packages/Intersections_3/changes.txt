@@ -1,3 +1,6 @@
+02 Feb 2004 [rursu]
+- fixes for gcc 3.4
+
 1 Feb 2004 Sylvain Pion
 - Remove "extern".
 
