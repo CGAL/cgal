@@ -66,7 +66,7 @@
 @section{Introduction}
 @! ============================================================================
 
-We define a class template @prg{CGAL_Conic_2<R>} to store, access and
+We define a class template @prg{Conic_2<R>} to store, access and
 manipulate @em{conics} in the plane, a.k.a. @em{second order curves}.
 
 @! ---------------------------------------------------------------------------
@@ -288,29 +288,32 @@ For this note that $\det(M)>0$ implies $\det(A)>0$.
 @section{Class Template {\tt CGAL\_Conic\_2<R>}}
 @! ---------------------------------------------------------------------------
 
-An object of the class @prg{CGAL_Conic_2<R>} stores an oriented
+An object of the class @prg{Conic_2<R>} stores an oriented
 conic $\C_{\r} = (\C(\r),\r)$ by its representation $\r$. The template 
 parameter @prg{R} is the representation type (homogeneous or Cartesian). In
 the sequel, a conic always means an oriented conic.
 
-@macro <CGAL_Conic_2 declaration> = @begin
+@macro <Conic_2 declaration> = @begin
     template < class R>
-    class CGAL_Conic_2;
+    class Conic_2;
 
 @end
 
-The class @prg{CGAL_Conic_2<R>} has several member functions, some of which 
+The class @prg{Conic_2<R>} has several member functions, some of which 
 can be considered general purpose (and are declared public), others are 
 more specialized and needed only by the class template 
-@prg{CGAL_Optimisation_ellipse_2<R>} -- they appear as private methods.
+@prg{Optimisation_ellipse_2<R>} -- they appear as private methods.
 
-@macro <CGAL_Optimisation_ellipse_2 declaration> = @begin
+@macro <Optimisation_ellipse_2 declaration> = @begin
     template < class _R >
-    class CGAL_Optimisation_ellipse_2;
+    class Optimisation_ellipse_2;
+@end
 
+@macro <Optimisation_ellipse_2 I/O operator declaration> = @begin
     template < class _R >
-    CGAL_Window_stream&
-    operator << ( CGAL_Window_stream&, const CGAL_Optimisation_ellipse_2<_R>&);
+    CGAL::Window_stream&
+    operator << ( CGAL::Window_stream&,
+                  const CGAL::Optimisation_ellipse_2<_R>&);
 @end
  
 As a general rule, a method only qualifies for the public domain if 
@@ -325,14 +328,11 @@ All calls to member functions are
 directly mapped to calls of corresponding methods declared by 
 the conic class @prg{R::Conic_2} of the representation type @prg{R}. 
 
-@macro <CGAL_Conic_2 interface and implementation> = @begin
+@macro <Conic_2 interface and implementation> = @begin
     template < class _R>
-    class CGAL_Conic_2 : public _R::Conic_2 {
+    class Conic_2 : public _R::Conic_2 {
 
-        friend  class CGAL_Optimisation_ellipse_2<_R>;
-        
-        friend  CGAL_Window_stream&  operator << CGAL_NULL_TMPL_ARGS (
-            CGAL_Window_stream&, const CGAL_Optimisation_ellipse_2<_R>&);
+        friend  class Optimisation_ellipse_2<_R>;
 
       public:
 
@@ -340,28 +340,28 @@ the conic class @prg{R::Conic_2} of the representation type @prg{R}.
         typedef  _R                    R;
         typedef  typename _R::RT       RT;
         typedef  typename _R::FT       FT;
-        typedef  typename _R::Conic_2  Conic_2;
+        typedef  typename _R::Conic_2  _Conic_2;
 
         // construction
-        @<CGAL_Conic_2 constructors> 
+        @<Conic_2 constructors> 
 
         // general access
-        @<CGAL_Conic_2 general access methods>
+        @<Conic_2 general access methods>
 
         // type related access
-        @<CGAL_Conic_2 type access methods>
+        @<Conic_2 type access methods>
 
         // orientation related access 
-        @<CGAL_Conic_2 orientation access methods>
+        @<Conic_2 orientation access methods>
 
         // comparisons
-        @<CGAL_Conic_2 comparison methods>
+        @<Conic_2 comparison methods>
 
         // set methods
-        @<CGAL_Conic_2 set methods>
+        @<Conic_2 set methods>
 
       private:
-        @<CGAL_Conic_2 private methods>
+        @<Conic_2 private methods>
     };
 
 @end
@@ -376,11 +376,11 @@ at coordinate level, providing the components of a representation $\r$.
 The orientation of the conic is determined by $\r$, as described in 
 subsection \ref{orientation_sec}.  
 
-@macro <CGAL_Conic_2 constructors> = @begin
-    CGAL_Conic_2 ()     
+@macro <Conic_2 constructors> = @begin
+    Conic_2 ()     
     {}
 
-    CGAL_Conic_2 (RT r, RT s, RT t, RT u, RT v, RT w)
+    Conic_2 (RT r, RT s, RT t, RT u, RT v, RT w)
         : R::Conic_2 (r, s, t, u, v, w)
     {}
 
@@ -398,35 +398,35 @@ if the coordinates are from some integer domain, the implementation might
 decide to divide all of them by their gcd to get smaller numbers. (In this
 implementation, this does not happen.)
 
-@macro <CGAL_Conic_2 general access methods> += @begin
+@macro <Conic_2 general access methods> += @begin
     RT r () const 
     {
-        return Conic_2::r();
+        return _Conic_2::r();
     }
 
     RT s () const 
     {
-        return Conic_2::s();
+        return _Conic_2::s();
     }
 
     RT t () const 
     {
-        return Conic_2::t();
+        return _Conic_2::t();
     }
 
     RT u () const 
     {
-        return Conic_2::u();
+        return _Conic_2::u();
     }
 
     RT v () const 
     {
-        return Conic_2::v();
+        return _Conic_2::v();
     }
 
     RT w () const 
     {
-        return Conic_2::w();
+        return _Conic_2::w();
     }
 
 @end
@@ -434,10 +434,10 @@ implementation, this does not happen.)
 We can obtain the center of symmetry of $\C_{\r}$. Precondition is that
 $\C$ is not a parabola. 
 
-@macro <CGAL_Conic_2 general access methods> += @begin
-    CGAL_Point_2<R> center () const
+@macro <Conic_2 general access methods> += @begin
+    CGAL::Point_2<R> center () const
     {
-        return Conic_2::center();
+        return _Conic_2::center();
     }
 
 @end
@@ -457,35 +457,35 @@ We can either directly retrieve the type or ask whether $\C_{\r}$ is of
 some specific type. To realize the former, we provide a suitable 
 enumeration type.
 
-@macro <CGAL_Conic_type declaration> = @begin
-    enum CGAL_Conic_type 
+@macro <Conic_type declaration> = @begin
+    enum Conic_type 
     {
-        CGAL_HYPERBOLA = -1,
-        CGAL_PARABOLA,
-        CGAL_ELLIPSE
+        HYPERBOLA = -1,
+        PARABOLA,
+        ELLIPSE
     };
 
 @end
 
-@macro <CGAL_Conic_2 type access methods> += @begin
-    CGAL_Conic_type conic_type () const
+@macro <Conic_2 type access methods> += @begin
+    Conic_type conic_type () const
     {
-        return Conic_2::conic_type();
+        return _Conic_2::conic_type();
     }
 
     bool is_hyperbola () const
     {
-        return Conic_2::is_hyperbola();
+        return _Conic_2::is_hyperbola();
     }
 
     bool is_parabola () const
     {
-        return Conic_2::is_parabola();
+        return _Conic_2::is_parabola();
     }
 
     bool is_ellipse () const
     {
-        return Conic_2::is_ellipse();
+        return _Conic_2::is_ellipse();
     }
 
 @end
@@ -495,20 +495,20 @@ yield a finer access to the type, namely a test for emptiness, triviality
 and degeneracy, where both the empty and the trivial conic are also
 degenerate. 
 
-@macro <CGAL_Conic_2 type access methods> += @begin
+@macro <Conic_2 type access methods> += @begin
     bool is_empty () const
     {
-        return Conic_2::is_empty();
+        return _Conic_2::is_empty();
     }
 
     bool is_trivial () const
     {
-        return Conic_2::is_trivial();
+        return _Conic_2::is_trivial();
     }
 
     bool is_degenerate () const
     {
-        return Conic_2::is_degenerate();
+        return _Conic_2::is_degenerate();
     }
 
 @end
@@ -519,12 +519,12 @@ degenerate.
 
 We can retrieve the orientation of a conic as defined in subsection
 \ref{orientation_sec}. A notable difference to the class 
-@prg{CGAL_Circle_2<R>} is that the orientation can be zero. 
+@prg{Circle_2<R>} is that the orientation can be zero. 
 
-@macro <CGAL_Conic_2 orientation access methods> += @begin
-    CGAL_Orientation orientation () const
+@macro <Conic_2 orientation access methods> += @begin
+    CGAL::Orientation orientation () const
     {
-        return Conic_2::orientation ();
+        return _Conic_2::orientation ();
     }
 
 @end
@@ -533,59 +533,59 @@ The following methods classify points according to the positive
 and negative side of $\C_{\r}$.  We can either retrieve the oriented 
 side directly or ask whether the point lies on some specific side. 
 
-@macro <CGAL_Conic_2 orientation access methods> += @begin   
-    CGAL_Oriented_side oriented_side (const CGAL_Point_2<R> &p) const
+@macro <Conic_2 orientation access methods> += @begin   
+    CGAL::Oriented_side oriented_side (const CGAL::Point_2<R> &p) const
     {
-        return Conic_2::oriented_side (p);
+        return _Conic_2::oriented_side (p);
     }
 
-    bool has_on_positive_side (const CGAL_Point_2<R> &p) const
+    bool has_on_positive_side (const CGAL::Point_2<R> &p) const
     {
-        return Conic_2::has_on_positive_side (p);
+        return _Conic_2::has_on_positive_side (p);
     }
 
-    bool has_on_negative_side (const CGAL_Point_2<R> &p) const
+    bool has_on_negative_side (const CGAL::Point_2<R> &p) const
     {
-        return Conic_2::has_on_negative_side (p);
+        return _Conic_2::has_on_negative_side (p);
     }
 
-    bool has_on_boundary (const CGAL_Point_2<R> &p) const
+    bool has_on_boundary (const CGAL::Point_2<R> &p) const
     {
-        return Conic_2::has_on_boundary (p);
+        return _Conic_2::has_on_boundary (p);
     }
         
-    bool has_on (const CGAL_Point_2<R> &p) const
+    bool has_on (const CGAL::Point_2<R> &p) const
     {
-        return Conic_2::has_on (p);
+        return _Conic_2::has_on (p);
     }
 
 @end
 
 Then we have the classification according to convex and non-convex side. 
 Because this is a natural generalization of the classification according
-to bounded and unbounded side, we `extend' the type @prg{CGAL_Bounded_side}.
+to bounded and unbounded side, we `extend' the type @prg{Bounded_side}.
 
-@macro <CGAL_Convex_side declaration> = @begin
-    typedef CGAL_Bounded_side CGAL_Convex_side;
-    const CGAL_Convex_side CGAL_ON_CONVEX_SIDE = CGAL_ON_BOUNDED_SIDE;
-    const CGAL_Convex_side CGAL_ON_NONCONVEX_SIDE = CGAL_ON_UNBOUNDED_SIDE; 
+@macro <Convex_side declaration> = @begin
+    typedef CGAL::Bounded_side Convex_side;
+    const Convex_side ON_CONVEX_SIDE    = CGAL::ON_BOUNDED_SIDE;
+    const Convex_side ON_NONCONVEX_SIDE = CGAL::ON_UNBOUNDED_SIDE; 
 
 @end 
 
-@macro <CGAL_Conic_2 orientation access methods> += @begin   
-    CGAL_Convex_side convex_side (const CGAL_Point_2<R> &p) const
+@macro <Conic_2 orientation access methods> += @begin   
+    Convex_side convex_side (const CGAL::Point_2<R> &p) const
     {
-        return Conic_2::convex_side (p);
+        return _Conic_2::convex_side (p);
     }
 
-    bool has_on_convex_side (const CGAL_Point_2<R> &p) const
+    bool has_on_convex_side (const CGAL::Point_2<R> &p) const
     {
-        return Conic_2::has_on_convex_side (p);
+        return _Conic_2::has_on_convex_side (p);
     }
 
-    bool has_on_nonconvex_side (const CGAL_Point_2<R> &p) const
+    bool has_on_nonconvex_side (const CGAL::Point_2<R> &p) const
     {
-        return Conic_2::has_on_nonconvex_side (p);
+        return _Conic_2::has_on_nonconvex_side (p);
     }
 
 @end
@@ -596,13 +596,13 @@ to bounded and unbounded side, we `extend' the type @prg{CGAL_Bounded_side}.
 
 We provide tests for equality and inequality of two conics.
 
-@macro <CGAL_Conic_2 comparison methods> = @begin
-    bool operator == ( const CGAL_Conic_2<_R>& c) const
+@macro <Conic_2 comparison methods> = @begin
+    bool operator == ( const Conic_2<_R>& c) const
     {
-        return Conic_2::operator == ( (Conic_2)c);
+        return _Conic_2::operator == ( (Conic_2)c);
     }
 
-    bool operator != ( const CGAL_Conic_2<_R>& c) const
+    bool operator != ( const Conic_2<_R>& c) const
     {
         return( ! operator == ( c));
     }
@@ -620,11 +620,11 @@ as constructors, but as `set' functions that modify an already existing
 conic. But of course, there is also a set function that works on the
 coordinate level.
 
-@macro <CGAL_Conic_2 set methods> += @begin
+@macro <Conic_2 set methods> += @begin
     void set (RT r, RT s, RT t,
               RT u, RT v, RT w)
     {
-        Conic_2::set (r, s, t, u, v, w);
+        _Conic_2::set (r, s, t, u, v, w);
     }
 
 @end
@@ -638,10 +638,10 @@ We can obtain the conic $\C_{-\r}$ of opposite orientation, having positive
 and negative sides interchanged (convex and non-convex side stay the same,
 of course). Note that if $\C_{\r}$ has zero orientation, so has $\C_{-\r}$. 
 
-@macro <CGAL_Conic_2 set methods> += @begin
+@macro <Conic_2 set methods> += @begin
     void set_opposite ()
     {
-        Conic_2::set_opposite();
+        _Conic_2::set_opposite();
     }
 
 @end
@@ -657,11 +657,11 @@ degenerate parabola.  The precondition is that $p_1\neq p_2$ and
 $p_3\neq p_4$. The positive side is the region to the left resp. to
 the right of both oriented lines $\overline{p_1p_2}, \overline{p_3p_4}$.
 
-@macro <CGAL_Conic_2 set methods> += @begin    
-    void set_linepair (const CGAL_Point_2<R> &p1, const CGAL_Point_2<R> &p2,
-                       const CGAL_Point_2<R> &p3, const CGAL_Point_2<R> &p4)
+@macro <Conic_2 set methods> += @begin    
+    void set_linepair (const CGAL::Point_2<R> &p1, const CGAL::Point_2<R> &p2,
+                       const CGAL::Point_2<R> &p3, const CGAL::Point_2<R> &p4)
     {
-        Conic_2::set_linepair (p1, p2, p3, p4);
+        _Conic_2::set_linepair (p1, p2, p3, p4);
     }
 
 @end
@@ -677,11 +677,11 @@ whose center is equal to the center of gravity of the points.
 Precondition is that $p_1,p_2,p_3$ are not collinear. The orientation of
 the ellipse is the orientation of the point triple. 
 
-@macro <CGAL_Conic_2 set methods> += @begin
-    void set_ellipse (const CGAL_Point_2<R> &p1, const CGAL_Point_2<R> &p2,
-                      const CGAL_Point_2<R> &p3)
+@macro <Conic_2 set methods> += @begin
+    void set_ellipse (const CGAL::Point_2<R> &p1, const CGAL::Point_2<R> &p2,
+                      const CGAL::Point_2<R> &p3)
     {
-        Conic_2::set_ellipse (p1, p2, p3);
+        _Conic_2::set_ellipse (p1, p2, p3);
     }
 
 @end
@@ -697,12 +697,12 @@ The result will be just some ellipse through the points; in particular, it
 will usually @em{not} be the smallest one passing through the points. The
 orientation of the ellipse can be specified and defaults to positive. 
 
-@macro <CGAL_Conic_2 set methods> += @begin
-    void set_ellipse (const CGAL_Point_2<R> &p1, const CGAL_Point_2<R> &p2,
-                      const CGAL_Point_2<R> &p3, const CGAL_Point_2<R> &p4,
-                      CGAL_Orientation o = CGAL_POSITIVE)
+@macro <Conic_2 set methods> += @begin
+    void set_ellipse (const CGAL::Point_2<R> &p1, const CGAL::Point_2<R> &p2,
+                      const CGAL::Point_2<R> &p3, const CGAL::Point_2<R> &p4,
+                      CGAL::Orientation o = POSITIVE)
     {
-        Conic_2::set_ellipse (p1, p2, p3, p4, o);
+        _Conic_2::set_ellipse (p1, p2, p3, p4, o);
     }
 
 @end
@@ -716,13 +716,13 @@ the points $p_1,p_2,p_3,p_4,p_5$. Precondition is that all points are
 distinct. The orientation can be specified but is automatically set to
 zero if the resulting conic has zero orientation.  
 
-@macro <CGAL_Conic_2 set methods> += @begin         
-    void set (const CGAL_Point_2<R> &p1, const CGAL_Point_2<R> &p2,
-              const CGAL_Point_2<R> &p3, const CGAL_Point_2<R> &p4,
-              const CGAL_Point_2<R> &p5, 
-              CGAL_Orientation o = CGAL_POSITIVE)
+@macro <Conic_2 set methods> += @begin         
+    void set (const CGAL::Point_2<R> &p1, const CGAL::Point_2<R> &p2,
+              const CGAL::Point_2<R> &p3, const CGAL::Point_2<R> &p4,
+              const CGAL::Point_2<R> &p5, 
+              CGAL::Orientation o = POSITIVE)
     {
-        Conic_2::set (p1, p2, p3, p4, p5, o);
+        _Conic_2::set (p1, p2, p3, p4, p5, o);
     }
 
 @end
@@ -742,12 +742,12 @@ $\r := a_1\r_1+a_2\r_2$. This is not a geometric operation,
 because the result depends on $\r_1,\r_2$ and not only on 
 $\C_{\r_1}$ and $\C_{\r_2}$.  
 
-@macro <CGAL_Conic_2 private methods> += @begin
+@macro <Conic_2 private methods> += @begin
     void set_linear_combination (
-        const RT &a1, const CGAL_Conic_2<R> &c1,
-        const RT &a2, const CGAL_Conic_2<R> &c2)
+        const RT &a1, const Conic_2<R> &c1,
+        const RT &a2, const Conic_2<R> &c2)
     {
-        Conic_2::set_linear_combination (a1, c1, a2, c2);
+        _Conic_2::set_linear_combination (a1, c1, a2, c2);
     }
 
 @end
@@ -768,15 +768,15 @@ If $p_1,p_2,p_3,p_4$ are not in convex position, the method still
 computes two line-pairs through the points, but it is not specified
 which ones. This is a static method.
 
-@macro <CGAL_Conic_2 private methods> += @begin
-    static void set_two_linepairs (const CGAL_Point_2<R> &p1, 
-                                   const CGAL_Point_2<R> &p2,
-                                   const CGAL_Point_2<R> &p3,
-                                   const CGAL_Point_2<R> &p4,
-                                   CGAL_Conic_2<R> &pair1, 
-                                   CGAL_Conic_2<R> &pair2)
+@macro <Conic_2 private methods> += @begin
+    static void set_two_linepairs (const CGAL::Point_2<R> &p1, 
+                                   const CGAL::Point_2<R> &p2,
+                                   const CGAL::Point_2<R> &p3,
+                                   const CGAL::Point_2<R> &p4,
+                                   Conic_2<R> &pair1, 
+                                   Conic_2<R> &pair2)
     {
-        Conic_2::set_two_linepairs (p1, p2, p3, p4, pair1, pair2);
+        _Conic_2::set_two_linepairs (p1, p2, p3, p4, pair1, pair2);
     }
 
 @end 
@@ -793,11 +793,11 @@ the argument conics have not been constructed by the method
 @prg{set_two_linepairs} in the described way, the resulting 
 conic is unspecified.   
 
-@macro <CGAL_Conic_2 private methods> += @begin
-    void set_ellipse (const CGAL_Conic_2<R> &pair1, 
-                      const CGAL_Conic_2<R> &pair2)
+@macro <Conic_2 private methods> += @begin
+    void set_ellipse (const Conic_2<R> &pair1, 
+                      const Conic_2<R> &pair2)
     {
-        Conic_2::set_ellipse (pair1, pair2);
+        _Conic_2::set_ellipse (pair1, pair2);
     }
 
 @end
@@ -817,11 +817,11 @@ already trivial, $\C(\r_1)=\C(\r_2)$ holds, or if
 $p\in \C_{\r_1}\cap \C_{\r_2}$. In case of nonzero orientation, the 
 actual orientation of $\C_{\r}$ is unspecified. 
 
-@macro <CGAL_Conic_2 private methods> += @begin
-    void set (const CGAL_Conic_2<R> &c1, const CGAL_Conic_2<R> &c2,
-              const CGAL_Point_2<R> &p)
+@macro <Conic_2 private methods> += @begin
+    void set (const Conic_2<R> &c1, const Conic_2<R> &c2,
+              const CGAL::Point_2<R> &p)
     {
-        Conic_2::set( c1, c2, p);  analyse();
+        _Conic_2::set( c1, c2, p);  analyse();
     }
 
 @end
@@ -844,12 +844,12 @@ For small values of $\tau$, $\E(\tau)$ is still an ellipse. The method
 i.e. decides how the volume develops when going from $\E(0)$ `in direction'
 $\d\r$. If $\E$ is not an ellipse, the result is meaningless. 
 
-@macro <CGAL_Conic_2 private methods> += @begin
-    CGAL_Sign vol_derivative (RT dr, RT ds,
-                              RT dt, RT du,
-                              RT dv, RT dw) const
+@macro <Conic_2 private methods> += @begin
+    CGAL::Sign vol_derivative (RT dr, RT ds,
+                               RT dt, RT du,
+                               RT dv, RT dw) const
     {
-        return Conic_2::vol_derivative (dr, ds, dt, du, dv, dw);
+        return _Conic_2::vol_derivative (dr, ds, dt, du, dv, dw);
     }
 
 @end
@@ -863,12 +863,12 @@ irrational, but because the value is only used for drawing the ellipse
 $\E(\tau^*)$, a @prg{double}-approximation suffices.
 As before, if $\E$ is not an ellipse, the result is meaningless.
 
-@macro <CGAL_Conic_2 private methods> += @begin
+@macro <Conic_2 private methods> += @begin
     double vol_minimum (RT dr, RT ds,
                         RT dt, RT du,
                         RT dv, RT dw) const
     {
-        return Conic_2::vol_minimum (dr, ds, dt, du, dv, dw);
+        return _Conic_2::vol_minimum (dr, ds, dt, du, dv, dw);
     }
 
 @end
@@ -878,9 +878,9 @@ As before, if $\E$ is not an ellipse, the result is meaningless.
 @subsection{IO routines}
 @! ---------------------------------------------------------------------------
 
-@macro <CGAL_Conic_2 I/O routines> = @begin
+@macro <Conic_2 I/O routines> = @begin
     template< class _R>
-    ostream& operator << ( ostream& os, const CGAL_Conic_2<_R>& c)
+    ostream& operator << ( ostream& os, const Conic_2<_R>& c)
     {
         return( os << c.r() << ' ' << c.s() << ' ' << c.t() << ' '
                    << c.u() << ' ' << c.v() << ' ' << c.w());
@@ -892,7 +892,7 @@ As before, if $\E$ is not an ellipse, the result is meaningless.
 @! ---------------------------------------------------------------------------
 
 We provide an operator to write a conic to a
-@prg{CGAL_Window_stream}.  The function is not extraordinarily
+@prg{Window_stream}.  The function is not extraordinarily
 efficient but simple (and works without `understanding' the conic;
 other methods -- like the one by Maxwell \& Baker -- need to
 determine the conic type first, compute start values etc.). The
@@ -915,8 +915,8 @@ the drawn curve(s).
     #define CGAL_IO_WINDOW_STREAM_CONIC_2
 
     template< class R >
-    CGAL_Window_stream&
-    operator << ( CGAL_Window_stream &ws, const CGAL_Conic_2<R>& c)
+    CGAL::Window_stream&
+    operator << ( CGAL::Window_stream &ws, const CGAL::Conic_2<R>& c)
     {
         // length of a pixel in window-coordinates
         double pixel = 1/ws.scale(); 
@@ -924,7 +924,7 @@ the drawn curve(s).
         // pixel dimensions of window
         int width  = (int)((ws.xmax() - ws.xmin()) * ws.scale()) + 1,
             height = (int)((ws.ymax() - ws.ymin()) * ws.scale()) + 1,
-            dim    = CGAL_max( width, height);
+            dim    = CGAL::max( width, height);
 
         // pixel coordinates, stored for faster output 
         double *X = new double [2*dim];
@@ -934,12 +934,12 @@ the drawn curve(s).
         int pixels;
 
         // conic coordinates
-        double r = CGAL_to_double (c.r()),
-               s = CGAL_to_double (c.s()),
-               t = CGAL_to_double (c.t()),
-               u = CGAL_to_double (c.u()),
-               v = CGAL_to_double (c.v()),
-               w = CGAL_to_double (c.w());
+        double r = to_double (c.r()),
+               s = to_double (c.s()),
+               t = to_double (c.t()),
+               u = to_double (c.u()),
+               v = to_double (c.v()),
+               w = to_double (c.w());
 
         // Phase I (drawing in x-direction)
         pixels = 0;
@@ -1004,32 +1004,32 @@ homogeneous representation. Unlike it is practice in the kernel, the
 template parameters are not field and/or ring type but point and data
 accessor type. The reason is that the classes described here are also
 used to build traits class adapters for the 
-class @prg{CGAL_Min_ellipse_2<Traits>},
+class @prg{Min_ellipse_2<Traits>},
 where the adapters themselves are templatized with a 
 point and data accessor type. 
 
 To realize this scheme, the representation type @prg{R} of the 
 class @prg{Conic_2<R>} is enhanced with a data accessor class -- it will 
 be the canonical one, realizing access to the coordinates of a 
-@prg{CGAL_Point_2<R>} (see files @prg{homogeneous_rep.h} and 
+@prg{Point_2<R>} (see files @prg{homogeneous_rep.h} and 
 @prg{cartesian_rep.h}). 
 
-@macro <CGAL_ConicHPA2 declaration> = @begin
+@macro <ConicHPA2 declaration> = @begin
     template < class PT, class DA>
-    class CGAL_ConicHPA2;
+    class ConicHPA2;
 
     template < class PT, class DA>
-    class CGAL__Min_ellipse_2_adapterH2__Ellipse;
+    class _Min_ellipse_2_adapterH2__Ellipse;
 
 @end
 
 
-@macro <CGAL_ConicCPA2 declaration> = @begin
+@macro <ConicCPA2 declaration> = @begin
     template < class PT, class DA>
-    class CGAL_ConicCPA2;
+    class ConicCPA2;
 
     template < class PT, class DA>
-    class CGAL__Min_ellipse_2_adapterC2__Ellipse;
+    class _Min_ellipse_2_adapterC2__Ellipse;
 
 @end
 
@@ -1037,7 +1037,7 @@ be the canonical one, realizing access to the coordinates of a
 @subsection{Requirements for template parameters {\tt PT} and {\tt DA}}
 @! ---------------------------------------------------------------------------
 
-For @prg{CGAL_ConicHPA2}, 
+For @prg{ConicHPA2}, 
 the data accessor type @prg{DA} must define a
 ring type @prg{RT} and a function @prg{get} to access $x$-, $y$- and 
 $h$-coordinate of a point $p=(x,y,h)$ of type @prg{PT}. The type @prg{RT} is
@@ -1046,7 +1046,7 @@ with three arguments $x,y,h$ of type @prg{RT}. In addition, we need an
 assignment constructor (for the @prg{center} method). A minimal interface 
 of a type @prg{DA} for the homogeneous representation would look as follows.
 
-@macro <CGAL_ConicHPA2 DA requirements> zero = @begin
+@macro <ConicHPA2 DA requirements> zero = @begin
     class DA 
     {
         public: 
@@ -1065,7 +1065,7 @@ arguments of type @prg{FT}. In addition, we need an assignment constructor.
 A minimal interface of a type @prg{DA} in the Cartesian case would
 look as follows.
 
-@macro <CGAL_ConicCPA2 DA requirements> zero = @begin
+@macro <ConicCPA2 DA requirements> zero = @begin
     class DA 
     {
         public: 
@@ -1084,8 +1084,8 @@ In both cases, class @prg{DA} needs to provide a default constructor.
 @! ---------------------------------------------------------------------------
 
 The interfaces look similar to the interface of the class
-@prg{CGAL_Conic_2<R>} in the sense that for any public (private)
-member function of @prg{CGAL_Conic_2<R>}, we have a corresponding
+@prg{Conic_2<R>} in the sense that for any public (private)
+member function of @prg{Conic_2<R>}, we have a corresponding
 public (private) member function here. These are the @em{high-level}
 member functions. 
 
@@ -1093,17 +1093,17 @@ In addition, there are
 private data members to store the conic representation and a 
 couple of additional @em{low-level} protected member functions. The 
 reason for making them protected is that we do not want them to show
-up explicitly in the interface of the class @prg{CGAL_Conic_2<R>}, but
-on the other hand, friends of @prg{CGAL_Conic_2<R>} should be able to
+up explicitly in the interface of the class @prg{Conic_2<R>}, but
+on the other hand, friends of @prg{Conic_2<R>} should be able to
 use them.
 
 @! ---------------------------------------------------------------------------
 @subsubsection{{\tt CGAL\_ConicHPA2<PT,DA>}}
 @! ---------------------------------------------------------------------------
 
-@macro <CGAL_ConicHPA2 interface and implementation> = @begin
+@macro <ConicHPA2 interface and implementation> = @begin
     template < class _PT, class _DA>
-    class CGAL_ConicHPA2
+    class ConicHPA2
     {
       public:   
         // types
@@ -1112,17 +1112,17 @@ use them.
         typedef  typename _DA::RT  RT;
 
       private:
-        friend class CGAL_Conic_2< CGAL_Homogeneous<RT> >;
-        friend class CGAL__Min_ellipse_2_adapterH2__Ellipse<PT,DA>;
+        friend class Conic_2< CGAL::Homogeneous<RT> >;
+        friend class _Min_ellipse_2_adapterH2__Ellipse<PT,DA>;
 
-        @<CGAL_ConicHPA2 private data members>
-        @<CGAL_ConicHPA2 private member functions>
+        @<ConicHPA2 private data members>
+        @<ConicHPA2 private member functions>
 
       protected:
-        @<CGAL_ConicHPA2 protected member functions>
+        @<ConicHPA2 protected member functions>
 
       public:
-        @<CGAL_ConicHPA2 public member functions>
+        @<ConicHPA2 public member functions>
     };
 @end
 
@@ -1131,9 +1131,9 @@ use them.
 @subsubsection{{\tt CGAL\_ConicCPA2<PT,DA>}}
 @! ---------------------------------------------------------------------------
 
-@macro <CGAL_ConicCPA2 interface and implementation> = @begin
+@macro <ConicCPA2 interface and implementation> = @begin
     template < class _PT, class _DA>
-    class CGAL_ConicCPA2
+    class ConicCPA2
     {
       public:   
         // types
@@ -1142,17 +1142,17 @@ use them.
         typedef  typename _DA::FT  FT;
 
       private:
-        friend class CGAL_Conic_2< CGAL_Cartesian<FT> >;
-        friend class CGAL__Min_ellipse_2_adapterC2__Ellipse<PT,DA>;
+        friend class Conic_2< CGAL::Cartesian<FT> >;
+        friend class _Min_ellipse_2_adapterC2__Ellipse<PT,DA>;
 
-        @<CGAL_ConicCPA2 private data members>
-        @<CGAL_ConicCPA2 private member functions>
+        @<ConicCPA2 private data members>
+        @<ConicCPA2 private member functions>
 
       protected:
-        @<CGAL_ConicCPA2 protected member functions>
+        @<ConicCPA2 protected member functions>
 
       public:
-        @<CGAL_ConicCPA2 public member functions>
+        @<ConicCPA2 public member functions>
 
      };
 @end
@@ -1184,20 +1184,20 @@ $\r$, it is more efficient to store them, because for example, repeated convex
 side tests on the same conic but with different points access these data
 over and over again.  
 
-@macro <CGAL_ConicHPA2 private data members> = @begin
+@macro <ConicHPA2 private data members> = @begin
     DA                  dao;
     RT                  _r, _s, _t, _u, _v, _w;
-    CGAL_Conic_type     type;
-    CGAL_Orientation    o;
+    Conic_type          type;
+    CGAL::Orientation   o;
     bool                empty, trivial, degenerate;
 
 @end
 
-@macro <CGAL_ConicCPA2 private data members> = @begin
+@macro <ConicCPA2 private data members> = @begin
     DA                  dao;
     FT                  _r, _s, _t, _u, _v, _w;
-    CGAL_Conic_type     type;
-    CGAL_Orientation    o;
+    Conic_type          type;
+    CGAL::Orientation   o;
     bool                empty, trivial, degenerate;
 
 @end
@@ -1208,7 +1208,7 @@ over and over again.
 @! ---------------------------------------------------------------------------
 \label{private_methods}
 Let's start with the low-level members that do not have a counterpart 
-in the interface of the class @prg{CGAL_Conic_2<R>}. 
+in the interface of the class @prg{Conic_2<R>}. 
 
 @! ---------------------------------------------------------------------------
 @subsubsection{Determinant}
@@ -1218,7 +1218,7 @@ The function @prg{det} just
 computes $\det(\r)=4rs-t^2$, and as mentioned in subsection 
 \ref{types_sec}, this value determines the type of the conic.
 
-@macro <CGAL_ConicHPA2 protected member functions> += @begin
+@macro <ConicHPA2 protected member functions> += @begin
     RT det () const
     {
         return RT(4)*s()*r() - t()*t();
@@ -1226,7 +1226,7 @@ computes $\det(\r)=4rs-t^2$, and as mentioned in subsection
 
 @end
 
-@macro <CGAL_ConicCPA2 protected member functions> += @begin 
+@macro <ConicCPA2 protected member functions> += @begin 
     FT det () const
     {
         return FT(4)*s()*r() - t()*t();
@@ -1244,23 +1244,23 @@ initializes the derived data from the representation $\r$, by first
 determining the conic's type and then handling the three possible types in
 a @prg{case} statement. 
 
-@macro <CGAL_ConicHPA2 protected member functions> += @begin
+@macro <ConicHPA2 protected member functions> += @begin
     void analyse( ) 
     {
         RT d = det();
-        type = (CGAL_Conic_type)(CGAL_sign(d));
+        type = (Conic_type)(sign(d));
         switch (type) {
-        case CGAL_HYPERBOLA: 
+        case HYPERBOLA: 
             {
                 @<analyse hyperbola, homogeneous case>
             }
             break;
-        case CGAL_PARABOLA: 
+        case PARABOLA: 
             {
                 @<analyse parabola, homogeneous case>
             }
             break;
-        case CGAL_ELLIPSE: 
+        case ELLIPSE: 
             {
                 @<analyse ellipse, homogeneous case>
             }
@@ -1271,23 +1271,23 @@ a @prg{case} statement.
 @end
 
 
-@macro <CGAL_ConicCPA2 protected member functions> += @begin
+@macro <ConicCPA2 protected member functions> += @begin
     void analyse( ) 
     {
         FT d = det();
-        type = (CGAL_Conic_type)(CGAL_sign(d));
+        type = (Conic_type)(sign(d));
         switch (type) {
-        case CGAL_HYPERBOLA: 
+        case HYPERBOLA: 
             { 
                 @<analyse hyperbola, Cartesian case>
             }
             break;
-        case CGAL_PARABOLA:
+        case PARABOLA:
             {
                 @<analyse parabola, Cartesian case>
             }
             break;
-        case CGAL_ELLIPSE:
+        case ELLIPSE:
             {
                 @<analyse ellipse, Cartesian case>
             }
@@ -1360,8 +1360,8 @@ this, we get the equivalent condition $r>0$.
 @macro <analyse hyperbola, homogeneous case> = @begin
     trivial = empty = false;
     RT z_prime = d*w() - u()*u()*s() - v()*v()*r() + u()*v()*t();
-    o = (CGAL_Orientation)(CGAL_sign (z_prime));
-    degenerate = (o == CGAL_ZERO);
+    o = (CGAL::Orientation)(CGAL::sign (z_prime));
+    degenerate = (o == CGAL::ZERO);
 
 @end
 
@@ -1369,8 +1369,8 @@ this, we get the equivalent condition $r>0$.
 @macro <analyse hyperbola, Cartesian case> = @begin
     trivial = empty = false;
     FT z_prime = d*w() - u()*u()*s() - v()*v()*r() + u()*v()*t();
-    o = (CGAL_Orientation)(CGAL_sign (z_prime));
-    degenerate = (o == CGAL_ZERO);
+    o = (CGAL::Orientation)(CGAL::sign (z_prime));
+    degenerate = (o == CGAL::ZERO);
 
 @end
 
@@ -1378,28 +1378,28 @@ this, we get the equivalent condition $r>0$.
 @macro <analyse ellipse, homogeneous case> = @begin
     trivial = false;
     RT z_prime = d*w() - u()*u()*s() - v()*v()*r() + u()*v()*t();  
-    if (CGAL_is_positive (r())) {
-        empty = CGAL_is_positive(CGAL_sign (z_prime));
-        empty ? o = CGAL_POSITIVE : o = CGAL_NEGATIVE;
+    if (CGAL::is_positive (r())) {
+        empty = CGAL::is_positive(CGAL::sign (z_prime));
+        empty ? o = CGAL::POSITIVE : o = CGAL::NEGATIVE;
     } else {
-        empty = CGAL_is_negative(CGAL_sign (z_prime));
-        empty ? o = CGAL_NEGATIVE : o = CGAL_POSITIVE;
+        empty = CGAL::is_negative(CGAL::sign (z_prime));
+        empty ? o = CGAL::NEGATIVE : o = CGAL::POSITIVE;
     }
-    degenerate = empty || CGAL_is_zero (z_prime);
+    degenerate = empty || CGAL::is_zero (z_prime);
 
 @end
 
 @macro <analyse ellipse, Cartesian case> = @begin
     trivial = false;
     FT z_prime = d*w() - u()*u()*s() - v()*v()*r() + u()*v()*t();
-    if (CGAL_is_positive (r())) {
-        empty = CGAL_is_positive(CGAL_sign (z_prime));
-        empty ? o = CGAL_POSITIVE : o = CGAL_NEGATIVE;
+    if (CGAL::is_positive (r())) {
+        empty = CGAL::is_positive(CGAL::sign (z_prime));
+        empty ? o = CGAL::POSITIVE : o = CGAL::NEGATIVE;
     } else {
-        empty = CGAL_is_negative(CGAL_sign (z_prime));
-        empty ? o = CGAL_NEGATIVE : o = CGAL_POSITIVE;
+        empty = CGAL::is_negative(CGAL::sign (z_prime));
+        empty ? o = CGAL::NEGATIVE : o = CGAL::POSITIVE;
     }
-    degenerate = empty || CGAL_is_zero (z_prime);
+    degenerate = empty || CGAL::is_zero (z_prime);
 
 @end
 
@@ -1452,129 +1452,129 @@ then also $\r(p)>0$, $p$ a convex combination of $p_1,p_2$. This means
 that the positive side is a convex set, thus equal to the convex side.
                
 @macro <analyse parabola, homogeneous case> = @begin
-    if (!CGAL_is_zero (r())) {
+    if (!CGAL::is_zero (r())) {
         trivial         = false;
         degenerate      = (t()*u() == RT(2)*r()*v());
         if (degenerate) {
-            CGAL_Sign discr = (CGAL_Sign)
-                                CGAL_sign(u()*u()-RT(4)*r()*w());
+            CGAL::Sign discr = (CGAL::Sign)
+                                CGAL::sign(u()*u()-RT(4)*r()*w());
             switch (discr) {
-                case CGAL_NEGATIVE:
+                case CGAL::NEGATIVE:
                     empty = true;
-                    o = (CGAL_Orientation)(CGAL_sign (w()));
+                    o = (CGAL::Orientation)(CGAL::sign (w()));
                     break;
-                case CGAL_ZERO:
+                case CGAL::ZERO:
                     empty = false;
-                    o = (CGAL_Orientation)(CGAL_sign (r()));
+                    o = (CGAL::Orientation)(CGAL::sign (r()));
                     break;
-                case CGAL_POSITIVE:
+                case CGAL::POSITIVE:
                     empty = false;
-                    o = CGAL_ZERO;
+                    o = CGAL::ZERO;
                     break;
             }
         } else {
             empty = false;
-            o = (CGAL_Orientation)(-CGAL_sign (r()));
+            o = (CGAL::Orientation)(-CGAL::sign (r()));
         }
-    } else if (!CGAL_is_zero (s())) {
+    } else if (!CGAL::is_zero (s())) {
         trivial         = false;
         degenerate      = (t()*v() == RT(2)*s()*u());
         if (degenerate) {
-            CGAL_Sign discr = (CGAL_Sign)
-                                CGAL_sign(v()*v()-RT(4)*s()*w());
+            CGAL::Sign discr = (CGAL::Sign)
+                                CGAL::sign(v()*v()-RT(4)*s()*w());
             switch (discr) {
-                case CGAL_NEGATIVE:
+                case CGAL::NEGATIVE:
                     empty = true;
-                    o = (CGAL_Orientation)(CGAL_sign (w()));
+                    o = (CGAL::Orientation)(CGAL::sign (w()));
                     break;
-                case CGAL_ZERO:
+                case CGAL::ZERO:
                     empty = false;
-                    o = (CGAL_Orientation)(CGAL_sign (s()));
+                    o = (CGAL::Orientation)(CGAL::sign (s()));
                     break;
-                case CGAL_POSITIVE:
+                case CGAL::POSITIVE:
                     empty = false;
-                    o = CGAL_ZERO;
+                    o = CGAL::ZERO;
                     break;
             }
         } else {
             empty = false;
-            o = (CGAL_Orientation)(-CGAL_sign (s()));
+            o = (CGAL::Orientation)(-CGAL::sign (s()));
         }
     } else { // r=0, s=0 
         degenerate      = true;
-        bool uv_zero    = CGAL_is_zero (u()) && CGAL_is_zero (v());
-        trivial         = uv_zero && CGAL_is_zero (w());
+        bool uv_zero  = CGAL::is_zero (u()) && CGAL::is_zero (v());
+        trivial         = uv_zero && CGAL::is_zero (w());
         empty           = uv_zero && !trivial;
         if (empty)
-            o = (CGAL_Orientation)(CGAL_sign (w()));
+            o = (CGAL::Orientation)(CGAL::sign (w()));
         else if (trivial)
-            o = CGAL_POSITIVE;
+            o = CGAL::POSITIVE;
         else
-            o = CGAL_ZERO;
+            o = CGAL::ZERO;
     }
 
 @end
 
 @macro <analyse parabola, Cartesian case> = @begin
-    if (!CGAL_is_zero (r())) {
+    if (!CGAL::is_zero (r())) {
         trivial         = false;
         degenerate      = (t()*u() == FT(2)*r()*v());
         if (degenerate) {
-            CGAL_Sign discr = (CGAL_Sign)
-                                CGAL_sign(u()*u()-FT(4)*r()*w());
+            CGAL::Sign discr = (CGAL::Sign)
+                                CGAL::sign(u()*u()-FT(4)*r()*w());
             switch (discr) {
-                case CGAL_NEGATIVE:
+                case CGAL::NEGATIVE:
                     empty = true;
-                    o = (CGAL_Orientation)(CGAL_sign (w()));
+                    o = (CGAL::Orientation)(CGAL::sign (w()));
                     break;
-                case CGAL_ZERO:
+                case CGAL::ZERO:
                     empty = false;
-                    o = (CGAL_Orientation)(CGAL_sign (r()));
+                    o = (CGAL::Orientation)(CGAL::sign (r()));
                     break;
-                case CGAL_POSITIVE:
+                case CGAL::POSITIVE:
                     empty = false;
-                    o = CGAL_ZERO;
+                    o = CGAL::ZERO;
                     break;
             }
         } else {
             empty = false;
-            o = (CGAL_Orientation)(-CGAL_sign (r()));
+            o = (CGAL::Orientation)(-CGAL::sign (r()));
         }
-    } else if (!CGAL_is_zero (s())) {
+    } else if (!CGAL::is_zero (s())) {
         trivial         = false;
         degenerate      = (t()*v() == FT(2)*s()*u());
         if (degenerate) {
-            CGAL_Sign discr = (CGAL_Sign)
-                                CGAL_sign(v()*v()-FT(4)*s()*w());
+            CGAL::Sign discr = (CGAL::Sign)
+                                CGAL::sign(v()*v()-FT(4)*s()*w());
             switch (discr) {
-                case CGAL_NEGATIVE:
+                case CGAL::NEGATIVE:
                     empty = true;
-                    o = (CGAL_Orientation)(CGAL_sign (w()));
+                    o = (CGAL::Orientation)(CGAL::sign (w()));
                     break;
-                case CGAL_ZERO:
+                case CGAL::ZERO:
                     empty = false;
-                    o = (CGAL_Orientation)(CGAL_sign (s()));
+                    o = (CGAL::Orientation)(CGAL::sign (s()));
                     break;
-                case CGAL_POSITIVE:
+                case CGAL::POSITIVE:
                     empty = false;
-                    o = CGAL_ZERO;
+                    o = CGAL::ZERO;
                     break;
             }
         } else {
             empty = false;
-            o = (CGAL_Orientation)(-CGAL_sign (s()));
+            o = (CGAL::Orientation)(-CGAL::sign (s()));
         }
     } else { // r=0, s=0 
         degenerate      = true;
-        bool uv_zero    = CGAL_is_zero (u()) && CGAL_is_zero (v());
-        trivial         = uv_zero && CGAL_is_zero (w());
+        bool uv_zero  = CGAL::is_zero (u()) && CGAL::is_zero (v());
+        trivial         = uv_zero && CGAL::is_zero (w());
         empty           = uv_zero && !trivial;
         if (empty)
-            o = (CGAL_Orientation)(CGAL_sign (w()));
+            o = (CGAL::Orientation)(CGAL::sign (w()));
         else if (trivial)
-            o = CGAL_POSITIVE;
+            o = CGAL::POSITIVE;
         else
-            o = CGAL_ZERO;
+            o = CGAL::ZERO;
     }
 
 @end
@@ -1587,7 +1587,7 @@ For $\C_{\r}$ given by $R=(r,s,t,u,v,w)$ and a point $p=(x,y,h)$, the
 homogeneous evaluation returns the value 
 $\r(p) = rx^2+sy^2+txy+uxh+vyh+wh^2$.
 
-@macro <CGAL_ConicHPA2 protected member functions> += @begin
+@macro <ConicHPA2 protected member functions> += @begin
     RT evaluate (const PT &p) const
     {
         RT x, y, h;
@@ -1600,7 +1600,7 @@ $\r(p) = rx^2+sy^2+txy+uxh+vyh+wh^2$.
 The Cartesian version is obtained for $h=1$, i.e. it computes the value
 $\r(p) = rx^2+sy^2+txy+ux+vy+w$.
 
-@macro <CGAL_ConicCPA2 protected member functions> += @begin
+@macro <ConicCPA2 protected member functions> += @begin
     FT evaluate (const PT &p) const
     {
         FT x, y;
@@ -1624,10 +1624,10 @@ The construction from the representation proceeds by first setting
 the vector components and then analysing the conic to obtain the derived
 data.
 
-@macro <CGAL_ConicHPA2 public member functions> += @begin
-    CGAL_ConicHPA2 ( const DA& da = DA()) : dao( da) { }
+@macro <ConicHPA2 public member functions> += @begin
+    ConicHPA2 ( const DA& da = DA()) : dao( da) { }
 
-    CGAL_ConicHPA2 (RT r, RT s, RT t, RT u, RT v, RT w, const DA& da = DA())
+    ConicHPA2 (RT r, RT s, RT t, RT u, RT v, RT w, const DA& da = DA())
         : dao( da), _r(r), _s(s), _t(t), _u(u), _v(v), _w(w)
     {
         analyse(); 
@@ -1635,10 +1635,10 @@ data.
 
 @end
 
-@macro <CGAL_ConicCPA2 public member functions> += @begin
-    CGAL_ConicCPA2 ( const DA& da = DA()) : dao( da) { }
+@macro <ConicCPA2 public member functions> += @begin
+    ConicCPA2 ( const DA& da = DA()) : dao( da) { }
 
-    CGAL_ConicCPA2 (FT r, FT s, FT t, FT u, FT v, FT w, const DA& da = DA())
+    ConicCPA2 (FT r, FT s, FT t, FT u, FT v, FT w, const DA& da = DA())
         : dao( da), _r(r), _s(s), _t(t), _u(u), _v(v), _w(w)
     {
         analyse();
@@ -1650,7 +1650,7 @@ data.
 @subsubsection{Data Accessor}
 @! ---------------------------------------------------------------------------
 
-@macro <CGAL_ConicHPA2 public member functions> += @begin
+@macro <ConicHPA2 public member functions> += @begin
     const DA&  da() const
     {
         return dao;
@@ -1658,7 +1658,7 @@ data.
 
 @end
 
-@macro <CGAL_ConicCPA2 public member functions> += @begin 
+@macro <ConicCPA2 public member functions> += @begin 
     const DA&  da() const
     {
         return dao;
@@ -1672,7 +1672,7 @@ data.
 
 The coordinate access is straightforward.
 
-@macro <CGAL_ConicHPA2 public member functions> += @begin
+@macro <ConicHPA2 public member functions> += @begin
     RT r() const { return _r;}
     RT s() const { return _s;}
     RT t() const { return _t;}
@@ -1683,7 +1683,7 @@ The coordinate access is straightforward.
 @end
 
 
-@macro <CGAL_ConicCPA2 public member functions> += @begin
+@macro <ConicCPA2 public member functions> += @begin
     FT r() const { return _r;}
     FT s() const { return _s;}
     FT t() const { return _t;}
@@ -1708,10 +1708,10 @@ In the homogeneous representation, the value $-\det(M)$ serves as the
 $h$-component of the center, in the Cartesian representation, we divide
 by it.
 
-@macro <CGAL_ConicHPA2 public member functions> += @begin
+@macro <ConicHPA2 public member functions> += @begin
     PT center () const
     {
-        CGAL_kernel_precondition (type != CGAL_PARABOLA);
+        CGAL_optimisation_precondition (type != PARABOLA);
         PT p;
         RT two = RT(2);
         dao.set( p, two*s()*u() - t()*v(), two*r()*v() - t()*u(), -det());
@@ -1720,10 +1720,10 @@ by it.
 
 @end
 
-@macro <CGAL_ConicCPA2 public member functions> += @begin
+@macro <ConicCPA2 public member functions> += @begin
     PT center () const
     {
-        CGAL_kernel_precondition (type != CGAL_PARABOLA);
+        CGAL_optimisation_precondition (type != PARABOLA);
         PT p;
         FT two = FT(2);
         FT div = -det();
@@ -1742,25 +1742,25 @@ by it.
 Because the conic stores its type and degeneracy information, this is
 straightforward.
 
-@macro <CGAL_ConicHPA2 public member functions> += @begin
-    CGAL_Conic_type conic_type () const
+@macro <ConicHPA2 public member functions> += @begin
+    Conic_type conic_type () const
     {
         return type;
     }
             
     bool is_hyperbola () const
     {
-        return (type == CGAL_HYPERBOLA);
+        return (type == HYPERBOLA);
     }
 
     bool is_parabola () const
     {
-        return (type == CGAL_PARABOLA);
+        return (type == PARABOLA);
     }
 
     bool is_ellipse () const
     {
-        return (type == CGAL_ELLIPSE);
+        return (type == ELLIPSE);
     }
 
     bool is_empty () const
@@ -1781,25 +1781,25 @@ straightforward.
 @end
 
 
-@macro <CGAL_ConicCPA2 public member functions> += @begin
-    CGAL_Conic_type conic_type () const
+@macro <ConicCPA2 public member functions> += @begin
+    Conic_type conic_type () const
     {
         return type;
     }
             
     bool is_hyperbola () const
     {
-        return (type == CGAL_HYPERBOLA);
+        return (type == HYPERBOLA);
     }
 
     bool is_parabola () const
     {
-        return (type == CGAL_PARABOLA);
+        return (type == PARABOLA);
     }
 
     bool is_ellipse () const
     {
-        return (type == CGAL_ELLIPSE);
+        return (type == ELLIPSE);
     }
 
     bool is_empty () const
@@ -1823,16 +1823,16 @@ straightforward.
 @subsubsection{Orientation Related Access}
 @! ---------------------------------------------------------------------------
 
-@macro <CGAL_ConicHPA2 public member functions> += @begin
-    CGAL_Orientation orientation () const
+@macro <ConicHPA2 public member functions> += @begin
+    CGAL::Orientation orientation () const
     {
         return o;
     }
 
 @end
 
-@macro <CGAL_ConicCPA2 public member functions> += @begin
-    CGAL_Orientation orientation () const
+@macro <ConicCPA2 public member functions> += @begin
+    CGAL::Orientation orientation () const
     {
         return o;
     }
@@ -1844,58 +1844,58 @@ The orientation queries just evaluate the conic at the given point,
 using the private method @prg{evaluate}. Recall that $p$ is in the
 positive resp. negative side iff $\r(p)>0$ resp. $\r(p)<0$.  
 
-@macro <CGAL_ConicHPA2 public member functions> += @begin
-    CGAL_Oriented_side oriented_side (const PT& p) const
+@macro <ConicHPA2 public member functions> += @begin
+    CGAL::Oriented_side oriented_side (const PT& p) const
     {
-        return (CGAL_Oriented_side)(CGAL_sign (evaluate (p)));
+        return (CGAL::Oriented_side)(CGAL::sign (evaluate (p)));
     }
 
     bool has_on_positive_side (const PT& p) const
     {    
-        return (CGAL_is_positive (evaluate(p)));
+        return (CGAL::is_positive (evaluate(p)));
     }
 
     bool has_on_negative_side (const PT& p) const
     {
-        return (CGAL_is_negative (evaluate(p)));
+        return (CGAL::is_negative (evaluate(p)));
     }
 
     bool has_on_boundary (const PT& p) const
     {
-       return (CGAL_is_zero (evaluate(p)));
+       return (CGAL::is_zero (evaluate(p)));
     }
 
     bool has_on (const PT& p) const
     {
-       return (CGAL_is_zero (evaluate(p)));
+       return (CGAL::is_zero (evaluate(p)));
     }
 
 @end
 
-@macro <CGAL_ConicCPA2 public member functions> += @begin
-    CGAL_Oriented_side oriented_side (const PT& p) const
+@macro <ConicCPA2 public member functions> += @begin
+    CGAL::Oriented_side oriented_side (const PT& p) const
     {
-        return (CGAL_Oriented_side)(CGAL_sign (evaluate (p)));
+        return (CGAL::Oriented_side)(CGAL::sign (evaluate (p)));
     }
 
     bool has_on_positive_side (const PT& p) const
     {    
-        return (CGAL_is_positive (evaluate(p)));
+        return (CGAL::is_positive (evaluate(p)));
     }
 
     bool has_on_negative_side (const PT& p) const
     {
-        return (CGAL_is_negative (evaluate(p)));
+        return (CGAL::is_negative (evaluate(p)));
     }
 
     bool has_on_boundary (const PT& p) const
     {
-       return (CGAL_is_zero (evaluate(p)));
+       return (CGAL::is_zero (evaluate(p)));
     }
 
     bool has_on (const PT& p) const
     {
-       return (CGAL_is_zero (evaluate(p)));
+       return (CGAL::is_zero (evaluate(p)));
     }
 
 
@@ -1906,56 +1906,56 @@ the side is determined by a conic evaluation. If the orientation is
 zero, we know that the non-convex side is empty, see subsection
 \ref{orientation_sec}.
 
-@macro <CGAL_ConicHPA2 public member functions> += @begin
-    CGAL_Convex_side convex_side (const PT &p) const 
+@macro <ConicHPA2 public member functions> += @begin
+    Convex_side convex_side (const PT &p) const 
     {
         switch (o) {
-        case CGAL_POSITIVE:
-            return (CGAL_Convex_side)( CGAL_sign (evaluate (p)));
-        case CGAL_NEGATIVE:
-            return (CGAL_Convex_side)(-CGAL_sign (evaluate (p)));
-        case CGAL_ZERO:
-            return (CGAL_Convex_side)( CGAL_sign (CGAL_abs (evaluate(p))));
+        case CGAL::POSITIVE:
+            return (Convex_side)( CGAL::sign (evaluate (p)));
+        case CGAL::NEGATIVE:
+            return (Convex_side)(-CGAL::sign (evaluate (p)));
+        case CGAL::ZERO:
+            return (Convex_side)( CGAL::sign (CGAL::abs (evaluate(p))));
         }
         // keeps g++ happy
-        return( CGAL_Convex_side( 0));
+        return( Convex_side( 0));
     }
 
     bool has_on_convex_side (const PT &p) const
     {
-        return (convex_side (p) == CGAL_ON_CONVEX_SIDE);
+        return (convex_side (p) == ON_CONVEX_SIDE);
     } 
 
     bool has_on_nonconvex_side (const PT &p) const
     {
-        return (convex_side (p) == CGAL_ON_NONCONVEX_SIDE);
+        return (convex_side (p) == ON_NONCONVEX_SIDE);
     }
 
 @end
 
-@macro <CGAL_ConicCPA2 public member functions> += @begin
-    CGAL_Convex_side convex_side (const PT &p) const 
+@macro <ConicCPA2 public member functions> += @begin
+    Convex_side convex_side (const PT &p) const 
     {
         switch (o) {
-        case CGAL_POSITIVE:
-            return (CGAL_Convex_side)( CGAL_sign (evaluate (p)));
-        case CGAL_NEGATIVE:
-            return (CGAL_Convex_side)(-CGAL_sign (evaluate (p)));
-        case CGAL_ZERO:
-            return (CGAL_Convex_side)( CGAL_sign (CGAL_abs (evaluate(p))));
+        case CGAL::POSITIVE:
+            return (Convex_side)( CGAL::sign (evaluate (p)));
+        case CGAL::NEGATIVE:
+            return (Convex_side)(-CGAL::sign (evaluate (p)));
+        case CGAL::ZERO:
+            return (Convex_side)( CGAL::sign (CGAL::abs (evaluate(p))));
         }
         // keeps g++ happy
-        return( CGAL_Convex_side( 0));
+        return( Convex_side( 0));
     }
 
     bool has_on_convex_side (const PT &p) const
     {
-        return (convex_side (p) == CGAL_ON_CONVEX_SIDE);
+        return (convex_side (p) == ON_CONVEX_SIDE);
     } 
 
     bool has_on_nonconvex_side (const PT &p) const
     {
-        return (convex_side (p) == CGAL_ON_NONCONVEX_SIDE);
+        return (convex_side (p) == ON_NONCONVEX_SIDE);
     }
 
 @end
@@ -1966,27 +1966,27 @@ zero, we know that the non-convex side is empty, see subsection
 
 We provide tests for equality and inequality of two conics.
 
-@macro <CGAL_ConicHPA2 public member functions> += @begin
-    bool operator == ( const CGAL_ConicHPA2<_PT,_DA>& c) const
+@macro <ConicHPA2 public member functions> += @begin
+    bool operator == ( const ConicHPA2<_PT,_DA>& c) const
     {
         // find coefficient != 0
         RT  factor1;
-        if ( ! CGAL_is_zero( r())) factor1 = r(); else
-        if ( ! CGAL_is_zero( s())) factor1 = s(); else
-        if ( ! CGAL_is_zero( t())) factor1 = t(); else
-        if ( ! CGAL_is_zero( u())) factor1 = u(); else
-        if ( ! CGAL_is_zero( v())) factor1 = v(); else
-        if ( ! CGAL_is_zero( w())) factor1 = w(); else
+        if ( ! CGAL::is_zero( r())) factor1 = r(); else
+        if ( ! CGAL::is_zero( s())) factor1 = s(); else
+        if ( ! CGAL::is_zero( t())) factor1 = t(); else
+        if ( ! CGAL::is_zero( u())) factor1 = u(); else
+        if ( ! CGAL::is_zero( v())) factor1 = v(); else
+        if ( ! CGAL::is_zero( w())) factor1 = w(); else
         CGAL_optimisation_assertion_msg( false, "all coefficients zero");
 
         // find coefficient != 0
         RT  factor2;
-        if ( ! CGAL_is_zero( c.r())) factor2 = c.r(); else
-        if ( ! CGAL_is_zero( c.s())) factor2 = c.s(); else
-        if ( ! CGAL_is_zero( c.t())) factor2 = c.t(); else
-        if ( ! CGAL_is_zero( c.u())) factor2 = c.u(); else
-        if ( ! CGAL_is_zero( c.v())) factor2 = c.v(); else
-        if ( ! CGAL_is_zero( c.w())) factor2 = c.w(); else
+        if ( ! CGAL::is_zero( c.r())) factor2 = c.r(); else
+        if ( ! CGAL::is_zero( c.s())) factor2 = c.s(); else
+        if ( ! CGAL::is_zero( c.t())) factor2 = c.t(); else
+        if ( ! CGAL::is_zero( c.u())) factor2 = c.u(); else
+        if ( ! CGAL::is_zero( c.v())) factor2 = c.v(); else
+        if ( ! CGAL::is_zero( c.w())) factor2 = c.w(); else
         CGAL_optimisation_assertion_msg( false, "all coefficients zero");
 
         return(    ( r()*factor2 == c.r()*factor1)
@@ -1999,27 +1999,27 @@ We provide tests for equality and inequality of two conics.
 
 @end
 
-@macro <CGAL_ConicCPA2 public member functions> += @begin
-    bool operator == ( const CGAL_ConicCPA2<_PT,_DA>& c) const
+@macro <ConicCPA2 public member functions> += @begin
+    bool operator == ( const ConicCPA2<_PT,_DA>& c) const
     {
         // find coefficient != 0
         FT  factor1;
-        if ( ! CGAL_is_zero( r())) factor1 = r(); else
-        if ( ! CGAL_is_zero( s())) factor1 = s(); else
-        if ( ! CGAL_is_zero( t())) factor1 = t(); else
-        if ( ! CGAL_is_zero( u())) factor1 = u(); else
-        if ( ! CGAL_is_zero( v())) factor1 = v(); else
-        if ( ! CGAL_is_zero( w())) factor1 = w(); else
+        if ( ! CGAL::is_zero( r())) factor1 = r(); else
+        if ( ! CGAL::is_zero( s())) factor1 = s(); else
+        if ( ! CGAL::is_zero( t())) factor1 = t(); else
+        if ( ! CGAL::is_zero( u())) factor1 = u(); else
+        if ( ! CGAL::is_zero( v())) factor1 = v(); else
+        if ( ! CGAL::is_zero( w())) factor1 = w(); else
         CGAL_optimisation_assertion_msg( false, "all coefficients zero");
 
         // find coefficient != 0
         FT  factor2;
-        if ( ! CGAL_is_zero( c.r())) factor2 = c.r(); else
-        if ( ! CGAL_is_zero( c.s())) factor2 = c.s(); else
-        if ( ! CGAL_is_zero( c.t())) factor2 = c.t(); else
-        if ( ! CGAL_is_zero( c.u())) factor2 = c.u(); else
-        if ( ! CGAL_is_zero( c.v())) factor2 = c.v(); else
-        if ( ! CGAL_is_zero( c.w())) factor2 = c.w(); else
+        if ( ! CGAL::is_zero( c.r())) factor2 = c.r(); else
+        if ( ! CGAL::is_zero( c.s())) factor2 = c.s(); else
+        if ( ! CGAL::is_zero( c.t())) factor2 = c.t(); else
+        if ( ! CGAL::is_zero( c.u())) factor2 = c.u(); else
+        if ( ! CGAL::is_zero( c.v())) factor2 = c.v(); else
+        if ( ! CGAL::is_zero( c.w())) factor2 = c.w(); else
         CGAL_optimisation_assertion_msg( false, "all coefficients zero");
 
         return(    ( r()*factor2 == c.r()*factor1)
@@ -2052,10 +2052,10 @@ whenever they call a private set method.
 \paragraph{Linear combination of conics} ~
 @! ---------------------------------------------------------------------------
 
-@macro<CGAL_ConicHPA2 private member functions> += @begin
+@macro<ConicHPA2 private member functions> += @begin
     void 
-    set_linear_combination (const RT &a1, const CGAL_ConicHPA2<PT,DA> &c1,
-                            const RT &a2, const CGAL_ConicHPA2<PT,DA> &c2)
+    set_linear_combination (const RT &a1, const ConicHPA2<PT,DA> &c1,
+                            const RT &a2, const ConicHPA2<PT,DA> &c2)
     {
         _r = a1 * c1.r() + a2 * c2.r();
         _s = a1 * c1.s() + a2 * c2.s();
@@ -2067,10 +2067,10 @@ whenever they call a private set method.
 
 @end
 
-@macro<CGAL_ConicCPA2 private member functions> += @begin
+@macro<ConicCPA2 private member functions> += @begin
     void 
-    set_linear_combination (const FT &a1, const CGAL_ConicCPA2<PT,DA> &c1,
-                            const FT &a2, const CGAL_ConicCPA2<PT,DA> &c2)
+    set_linear_combination (const FT &a1, const ConicCPA2<PT,DA> &c1,
+                            const FT &a2, const ConicCPA2<PT,DA> &c2)
     {
         _r = a1 * c1.r() + a2 * c2.r();
         _s = a1 * c1.s() + a2 * c2.s();
@@ -2103,26 +2103,26 @@ The following macros define this determinant (the Cartesian version is
 obtained by setting $h_i=1,i=1\ldots 3$). 
 
 @macro <h_orientation>(3) many = @begin
-    (CGAL_Orientation)(CGAL_sign
+    (CGAL::Orientation)(CGAL::sign
       (-h@1*x@3*y@2+h@3*x@1*y@2
        +h@1*x@2*y@3-h@2*x@1*y@3
        +h@2*x@3*y@1-h@3*x@2*y@1))
 @end
 
 @macro <c_orientation>(3) many = @begin
-    (CGAL_Orientation)(CGAL_sign
+    (CGAL::Orientation)(CGAL::sign
       (-x@3*y@2+x@1*y@2
        +x@2*y@3-x@1*y@3
        +x@3*y@1-x@2*y@1))
 @end
 
-@macro<CGAL_ConicHPA2 private member functions> += @begin   
+@macro<ConicHPA2 private member functions> += @begin   
     static void set_two_linepairs (const PT &p1, 
                                    const PT &p2,
                                    const PT &p3,
                                    const PT &p4,
-                                   CGAL_ConicHPA2<PT,DA> &pair1, 
-                                   CGAL_ConicHPA2<PT,DA> &pair2)
+                                   ConicHPA2<PT,DA> &pair1, 
+                                   ConicHPA2<PT,DA> &pair2)
     {
         RT x1, y1, h1, x2, y2, h2, x3, y3, h3, x4, y4, h4;
         const DA& da = pair1.da();
@@ -2131,14 +2131,14 @@ obtained by setting $h_i=1,i=1\ldots 3$).
         da.get (p3, x3, y3, h3);
         da.get (p4, x4, y4, h4);
 
-        CGAL_Orientation side1_24 = @<h_orientation>("2", "4", "1"),
+        CGAL::Orientation side1_24 = @<h_orientation>("2", "4", "1"),
                          side3_24 = @<h_orientation>("2", "4", "3");
         if (side1_24 != side3_24) {
             // (counter)clockwise order
             pair1.set_linepair (p1, p2, p3, p4);
             pair2.set_linepair (p2, p3, p4, p1);
         } else {
-            CGAL_Orientation side1_32 = @<h_orientation>("3", "2", "1");
+            CGAL::Orientation side1_32 = @<h_orientation>("3", "2", "1");
             if (side1_32 != side3_24) { 
                 // p1, p2 need to be swapped
                 pair1.set_linepair (p2, p1, p3, p4);
@@ -2154,13 +2154,13 @@ obtained by setting $h_i=1,i=1\ldots 3$).
 @end
 
 
-@macro<CGAL_ConicCPA2 private member functions> += @begin
+@macro<ConicCPA2 private member functions> += @begin
     static void set_two_linepairs (const PT &p1, 
                                    const PT &p2,
                                    const PT &p3,
                                    const PT &p4,
-                                   CGAL_ConicCPA2<PT,DA> &pair1, 
-                                   CGAL_ConicCPA2<PT,DA> &pair2)
+                                   ConicCPA2<PT,DA> &pair1, 
+                                   ConicCPA2<PT,DA> &pair2)
     {
         FT x1, y1, x2, y2, x3, y3, x4, y4;      
         const DA& da = pair1.da();
@@ -2169,14 +2169,14 @@ obtained by setting $h_i=1,i=1\ldots 3$).
         da.get (p3, x3, y3);
         da.get (p4, x4, y4);
 
-        CGAL_Orientation side1_24 = @<c_orientation>("2", "4", "1"),
+        CGAL::Orientation side1_24 = @<c_orientation>("2", "4", "1"),
                          side3_24 = @<c_orientation>("2", "4", "3");
         if (side1_24 != side3_24) {
             // (counter)clockwise order
             pair1.set_linepair (p1, p2, p3, p4);
             pair2.set_linepair (p2, p3, p4, p1);
         } else {
-            CGAL_Orientation side1_32 = @<c_orientation>("3", "2", "1");
+            CGAL::Orientation side1_32 = @<c_orientation>("3", "2", "1");
             if (side1_32 != side3_24) { 
                 // p1, p2 need to be swapped
                 pair1.set_linepair (p2, p1, p3, p4);
@@ -2205,9 +2205,9 @@ linear combination $\C_{\r}$, $\r = \lambda \r_1 + \mu \r_2$, where
 \end{eqnarray*} 
 $r_i,\ldots,w_i$ the components of $\r_i,i=1\ldots 2$.
 
-@macro<CGAL_ConicHPA2 private member functions> += @begin
-    void set_ellipse (const CGAL_ConicHPA2<PT,DA> &pair1, 
-                      const CGAL_ConicHPA2<PT,DA> &pair2)
+@macro<ConicHPA2 private member functions> += @begin
+    void set_ellipse (const ConicHPA2<PT,DA> &pair1, 
+                      const ConicHPA2<PT,DA> &pair2)
     {
         RT b = RT(2) * (pair1.r() * pair2.s() + pair1.s() * pair2.r()) -
                pair1.t() * pair2.t();
@@ -2217,9 +2217,9 @@ $r_i,\ldots,w_i$ the components of $\r_i,i=1\ldots 2$.
 
 @end
 
-@macro<CGAL_ConicCPA2 private member functions> += @begin
-    void set_ellipse (const CGAL_ConicCPA2<PT,DA> &pair1, 
-                      const CGAL_ConicCPA2<PT,DA> &pair2)
+@macro<ConicCPA2 private member functions> += @begin
+    void set_ellipse (const ConicCPA2<PT,DA> &pair1, 
+                      const ConicCPA2<PT,DA> &pair2)
     {
         FT b = FT(2) * (pair1.r() * pair2.s() + pair1.s() * pair2.r()) -
                pair1.t() * pair2.t();
@@ -2238,9 +2238,9 @@ that the conic $\C_{\r}$ with $$\r = \r_2(p) \r_1 - \r_1(p) \r_2$$ is
 a conic containing the set $(\C_{\r_1} \cap \C_{\r_2}) \cup \{p\}.$ Exactly
 this conic is constructed here. 
 
-@macro<CGAL_ConicHPA2 private member functions> += @begin
-    void set (const CGAL_ConicHPA2<PT,DA> &c1,
-              const CGAL_ConicHPA2<PT,DA> &c2,
+@macro<ConicHPA2 private member functions> += @begin
+    void set (const ConicHPA2<PT,DA> &c1,
+              const ConicHPA2<PT,DA> &c2,
               const PT &p)
     {
         set_linear_combination (c2.evaluate(p), c1, -c1.evaluate(p), c2);
@@ -2248,9 +2248,9 @@ this conic is constructed here.
 
 @end
 
-@macro<CGAL_ConicCPA2 private member functions> += @begin
-    void set (const CGAL_ConicCPA2<PT,DA> &c1,
-              const CGAL_ConicCPA2<PT,DA> &c2,
+@macro<ConicCPA2 private member functions> += @begin
+    void set (const ConicCPA2<PT,DA> &c1,
+              const ConicCPA2<PT,DA> &c2,
               const PT &p)
     {
         set_linear_combination (c2.evaluate(p), c1, -c1.evaluate(p), c2);
@@ -2340,8 +2340,8 @@ the sign of $-\sgn(3d'q-2dq')\sgn(q)$ equals the sign of $-c_0$, otherwise,
 we return the sign of $c_0$. To compute $c_0$, we only need the values 
 $a_1,a_0,b_1,b_0$ from above.
 
-@macro<CGAL_ConicHPA2 private member functions> += @begin
-    CGAL_Sign vol_derivative (RT dr, RT ds, RT dt,
+@macro<ConicHPA2 private member functions> += @begin
+    CGAL::Sign vol_derivative (RT dr, RT ds, RT dt,
                               RT du, RT dv, RT dw) const
     {
         RT a1 = RT(4)*r()*ds+RT(4)*dr*s()-RT(2)*t()*dt,
@@ -2354,13 +2354,13 @@ $a_1,a_0,b_1,b_0$ from above.
                 -u()*u()*s()-v()*v()*r()+u()*v()*t(),
            c0 = -RT(2)*a0*b1 + RT(3)*a1*b0;
 
-        return CGAL_Sign (-CGAL_sign (c0)*o);
+        return CGAL::Sign (-CGAL::sign (c0)*o);
     }
 
 @end
 
-@macro<CGAL_ConicCPA2 private member functions> += @begin
-    CGAL_Sign vol_derivative (FT dr, FT ds, FT dt,
+@macro<ConicCPA2 private member functions> += @begin
+    CGAL::Sign vol_derivative (FT dr, FT ds, FT dt,
                               FT du, FT dv, FT dw) const
     {
         FT a1 = FT(4)*r()*ds+FT(4)*dr*s()-FT(2)*t()*dt,
@@ -2373,7 +2373,7 @@ $a_1,a_0,b_1,b_0$ from above.
           -u()*u()*s()-v()*v()*r()+u()*v()*t(),
            c0 = -FT(2)*a0*b1 + FT(3)*a1*b0;
 
-        return CGAL_Sign (-CGAL_sign (c0)*o);
+        return CGAL::Sign (-CGAL::sign (c0)*o);
     }
 
 @end
@@ -2381,7 +2381,7 @@ $a_1,a_0,b_1,b_0$ from above.
 To find the value $\tau^*$ such that $E(\tau^*)$ is the ellipse of smallest
 volume, we apply the Cardano formula to find the roots of the polynomial 
 $p(\tau)=c_3\tau^3 + c_2\tau^2 + c_1\tau + c_0 = 0$. This is done 
-by the function @prg{CGAL_solve_cubic} which returns all (at most three) 
+by the function @prg{solve_cubic} which returns all (at most three) 
 real roots. We then select the one which leads to largest (positive)
 volume.
 
@@ -2453,20 +2453,20 @@ the roots of $p(x)$. In any case, we originally wanted to have the roots
 of $p(\tau)$. Using the substitution formula $\tau=x-\gamma_2/3$, these 
 roots are given by $\tau_i = x_i -\gamma_2/3, i=1,\ldots,3$.
 
-The function @prg{CGAL_solve_cubic} returns the number of distinct 
+The function @prg{solve_cubic} returns the number of distinct 
 real roots of $p(\tau) = c_3\tau^3+c_2\tau^2+c_1\tau+c_0=0$ and stores 
 them consecutively in @prg{r1}, @prg{r2} and @prg{r3}. Precondition is that
 $p(\tau)$ is not a constant function.
 
-@macro <function CGAL_solve_cubic> zero = @begin
-    int CGAL_solve_cubic (double c3, double c2, double c1, double c0, 
+@macro <function solve_cubic> zero = @begin
+    int solve_cubic (double c3, double c2, double c1, double c0, 
                           double &r1, double &r2, double &r3) 
     {
         if (c3 == 0.0) {
             // quadratic equation
             if (c2 == 0) {
                 // linear equation
-                CGAL_kernel_precondition (c1 != 0);
+                CGAL_optimisation_precondition (c1 != 0);
                 r1 = -c0/c1;
                 return 1;
             }
@@ -2541,7 +2541,7 @@ to find the roots, so we can directly evaluate the determinant, using
 @prg{double} approximations of the coefficients.
 
 
-@macro<CGAL_ConicHPA2 private member functions> += @begin
+@macro<ConicHPA2 private member functions> += @begin
     double vol_minimum (RT dr, RT ds, RT dt, RT du, RT dv, RT dw) const
     {
         RT a2 = RT(4)*dr*ds-dt*dt,
@@ -2565,22 +2565,22 @@ to find the roots, so we can directly evaluate the determinant, using
            if (c0 == 0) return 0;  // E(0) is the smallest ellipse
 
            double roots[3];
-           int nr_roots = CGAL_solve_cubic 
-                                (CGAL_to_double(c3), CGAL_to_double(c2), 
-                                 CGAL_to_double(c1), CGAL_to_double(c0), 
+           int nr_roots = solve_cubic 
+                                (to_double(c3), to_double(c2), 
+                                 to_double(c1), to_double(c0), 
                                  roots[0], roots[1], roots[2]);
-           CGAL_kernel_precondition (nr_roots > 0); // minimum exists
-           return CGAL_best_value (roots, nr_roots,
-                                 CGAL_to_double(a2), CGAL_to_double(a1),
-                                 CGAL_to_double(a0), CGAL_to_double(b3),
-                                 CGAL_to_double(b2), CGAL_to_double(b1),
-                                 CGAL_to_double(b0));  
+           CGAL_optimisation_precondition (nr_roots > 0); // minimum exists
+           return best_value (roots, nr_roots,
+                                 to_double(a2), to_double(a1),
+                                 to_double(a0), to_double(b3),
+                                 to_double(b2), to_double(b1),
+                                 to_double(b0));  
     }
 
 @end
 
 
-@macro<CGAL_ConicCPA2 private member functions> += @begin
+@macro<ConicCPA2 private member functions> += @begin
     double vol_minimum (FT dr, FT ds, FT dt, FT du, FT dv, FT dw) const
     {
         FT a2 = FT(4)*dr*ds-dt*dt,
@@ -2601,30 +2601,30 @@ to find the roots, so we can directly evaluate the determinant, using
            c1 = -FT(4)*a0*b2 + a1*b1 + FT(6)*a2*b0,
            c0 = -FT(2)*a0*b1 + FT(3)*a1*b0;
 
-           if ( CGAL_is_zero( c0)) return 0;  // E(0) is the smallest ellipse
+           if ( CGAL::is_zero( c0)) return 0;  // E(0) is the smallest ellipse
 
            double roots[3];
-           int nr_roots = CGAL_solve_cubic
-                                (CGAL_to_double(c3), CGAL_to_double(c2), 
-                                 CGAL_to_double(c1), CGAL_to_double(c0), 
+           int nr_roots = solve_cubic
+                                (to_double(c3), to_double(c2), 
+                                 to_double(c1), to_double(c0), 
                                  roots[0], roots[1], roots[2]);
-           CGAL_kernel_precondition (nr_roots > 0); // minimum exists
-           return CGAL_best_value (roots, nr_roots,
-                                 CGAL_to_double(a2), CGAL_to_double(a1),
-                                 CGAL_to_double(a0), CGAL_to_double(b3),
-                                 CGAL_to_double(b2), CGAL_to_double(b1),
-                                 CGAL_to_double(b0));           
+           CGAL_optimisation_precondition (nr_roots > 0); // minimum exists
+           return best_value (roots, nr_roots,
+                                 to_double(a2), to_double(a1),
+                                 to_double(a0), to_double(b3),
+                                 to_double(b2), to_double(b1),
+                                 to_double(b0));           
     }
 
 @end
 
-The function @prg{CGAL_best_root} returns the value in its argument array
+The function @prg{best_root} returns the value in its argument array
 which leads to the largest determinant $d^3/q^2$. A precondition was that
 an ellipse of smallest volume exists, so the largest determinant must 
 be positive. 
 
-@macro <function CGAL_best_value> = @begin
-    double CGAL_best_value (double *values, int nr_values, 
+@macro <function best_value> = @begin
+    double best_value (double *values, int nr_values, 
                             double a2, double a1, double a0,
                             double b3, double b2, double b1, double b0)
     {
@@ -2642,7 +2642,7 @@ be positive.
                     det_positive = true;
                 }
         }
-        CGAL_kernel_precondition (det_positive);
+        CGAL_optimisation_precondition (det_positive);
         return best;
     }
    
@@ -2655,7 +2655,7 @@ be positive.
 
 Here is the set method at coordinate level.
 
-@macro <CGAL_ConicHPA2 public member functions> += @begin
+@macro <ConicHPA2 public member functions> += @begin
     void set (RT r_, RT s_, RT t_, RT u_, RT v_, RT w_)
     {
         _r = r_; _s = s_; _t = t_; _u = u_; _v = v_; _w = w_;
@@ -2664,7 +2664,7 @@ Here is the set method at coordinate level.
 
 @end
 
-@macro <CGAL_ConicCPA2 public member functions> += @begin
+@macro <ConicCPA2 public member functions> += @begin
     void set (FT r_, FT s_, FT t_, FT u_, FT v_, FT w_)
     {
         _r = r_; _s = s_; _t = t_; _u = u_; _v = v_; _w = w_;
@@ -2681,20 +2681,20 @@ Here is the set method at coordinate level.
 The method @prg{set_opposite} just flips the representation $\r$ and the
 orientation, all other derived data are taken over.  
 
-@macro <CGAL_ConicHPA2 public member functions> += @begin
+@macro <ConicHPA2 public member functions> += @begin
     void set_opposite ()
     {
         _r = -r(); _s = -s(); _t = -t(); _u = -u(); _v = -v(); _w = -w();
-        o = CGAL_opposite(orientation());
+        o = CGAL::opposite(orientation());
     }
 
 @end
 
-@macro <CGAL_ConicCPA2 public member functions> += @begin
+@macro <ConicCPA2 public member functions> += @begin
     void set_opposite ()
     {
         _r = -r(); _s = -s(); _t = -t(); _u = -u(); _v = -v(); _w = -w();
-        o = CGAL_opposite(orientation());
+        o = CGAL::opposite(orientation());
     }
 
 @end
@@ -2752,7 +2752,7 @@ v &=& (-y_1x_2+x_1y_2)(h_3x_4-x_3h_4)+(h_1x_2-x_1h_2)(-y_3x_4+x_3y_4), \\
 w &=& (-y_1x_2+x_1y_2)(-y_3x_4+x_3y_4).
 \end{eqnarray*}
 
-@macro <CGAL_ConicHPA2 public member functions> += @begin
+@macro <ConicHPA2 public member functions> += @begin
     void set_linepair (const PT &p1, const PT &p2, const PT &p3,
                        const PT &p4, const DA &da = DA()) 
     {
@@ -2763,7 +2763,7 @@ w &=& (-y_1x_2+x_1y_2)(-y_3x_4+x_3y_4).
         da.get (p4, x4, y4, h4);
         
         // precondition: p1 != p2, p3 != p4
-        CGAL_kernel_precondition 
+        CGAL_optimisation_precondition 
             ( ((x1*h2 != x2*h1) || (y1*h2 != y2*h1)) &&
               ((x3*h4 != x4*h3) || (y3*h4 != y4*h3)) );
 
@@ -2789,7 +2789,7 @@ w &=& (-y_1x_2+x_1y_2)(-y_3x_4+x_3y_4).
 For the Cartesian representation we proceed completely similar,
 replacing values $h_1,\ldots,h_4$ by 1.
 
-@macro <CGAL_ConicCPA2 public member functions> += @begin
+@macro <ConicCPA2 public member functions> += @begin
     void set_linepair (const PT &p1, const PT &p2, const PT &p3, const PT &p4)
     {
         FT x1, y1, x2, y2, x3, y3, x4, y4;
@@ -2799,7 +2799,7 @@ replacing values $h_1,\ldots,h_4$ by 1.
         dao.get (p4, x4, y4);
 
         // precondition: p1 != p2, p3 != p4
-        CGAL_kernel_precondition 
+        CGAL_optimisation_precondition 
             ( ((x1 != x2) || (y1 != y2)) &&
               ((x3 != x4) || (y3 != y4)) );
 
@@ -2903,7 +2903,7 @@ the formulas above determine an ellipse of negative orientation, regardless
 of the point triple orientation. This means, if the orientation
 was positive, we still need to flip the representation.  
 
-@macro<CGAL_ConicHPA2 public member functions> += @begin
+@macro<ConicHPA2 public member functions> += @begin
     void set_ellipse (const PT &p1, const PT &p2, const PT &p3)
     {
         RT x1, y1, h1, x2, y2, h2, x3, y3, h3;
@@ -2913,7 +2913,7 @@ was positive, we still need to flip the representation.
 
         // precondition: p1, p2, p3 not collinear
         RT det = -h1*x3*y2+h3*x1*y2+h1*x2*y3-h2*x1*y3+h2*x3*y1-h3*x2*y1;
-        CGAL_kernel_precondition (!CGAL_is_zero (det));
+        CGAL_optimisation_precondition (!CGAL::is_zero (det));
 
         RT x1x1 = x1*x1, y1y1 = y1*y1,
            x2x2 = x2*x2, y2y2 = y2*y2,
@@ -2951,10 +2951,10 @@ was positive, we still need to flip the representation.
              y1h1*x2h2*x3*y3 + x1h1*y2y2*x3h3 + x1x1*y2h2*y3h3 -
              x1h1*x2*y2*y3h3 - x1h1*y2h2*x3*y3 + x1h1*x2h2*y3y3;
 
-        type = CGAL_ELLIPSE;
+        type = ELLIPSE;
         degenerate = trivial = empty = false;
-        o = CGAL_NEGATIVE;
-        if (CGAL_is_positive (det)) set_opposite (); 
+        o = CGAL::NEGATIVE;
+        if (CGAL::is_positive (det)) set_opposite (); 
         
     }
 
@@ -2963,7 +2963,7 @@ was positive, we still need to flip the representation.
 As before, the Cartesian version is obtained by setting 
 $h_1,h_2,h_3$ to 1.
 
-@macro<CGAL_ConicCPA2 public member functions> += @begin
+@macro<ConicCPA2 public member functions> += @begin
     void set_ellipse (const PT &p1, const PT &p2, const PT &p3)
     {
         FT x1, y1, x2, y2, x3, y3;
@@ -2973,7 +2973,7 @@ $h_1,h_2,h_3$ to 1.
 
         // precondition: p1, p2, p3 not collinear
         FT det = -x3*y2+x1*y2+x2*y3-x1*y3+x3*y1-x2*y1;
-        CGAL_kernel_precondition (!CGAL_is_zero (det));
+        CGAL_optimisation_precondition (!CGAL::is_zero (det));
 
         FT x1x1 = x1*x1, y1y1 = y1*y1,
            x2x2 = x2*x2, y2y2 = y2*y2,
@@ -3005,10 +3005,10 @@ $h_1,h_2,h_3$ to 1.
              y1*x2*x3*y3 + x1*y2y2*x3 + x1x1*y2*y3 -
              x1*x2*y2*y3 - x1*y2*x3*y3 + x1*x2*y3y3;
 
-        type = CGAL_ELLIPSE;
+        type = ELLIPSE;
         degenerate = trivial = empty = false;
-        o = CGAL_NEGATIVE;
-        if (CGAL_is_positive (det)) set_opposite();
+        o = CGAL::NEGATIVE;
+        if (CGAL::is_positive (det)) set_opposite();
     }
 
 @end
@@ -3022,12 +3022,12 @@ This method builds on the private method to obtain an ellipse from two
 pairs of lines through the four points. For constructing this pair, we
 also have a method available.  
 
-@macro<CGAL_ConicHPA2 public member functions> += @begin
+@macro<ConicHPA2 public member functions> += @begin
     void set_ellipse (const PT &p1, const PT &p2,
                       const PT &p3, const PT &p4,
-                      CGAL_Orientation _o = CGAL_POSITIVE) 
+                      CGAL::Orientation _o = POSITIVE) 
     {
-        CGAL_ConicHPA2<PT,DA> pair1, pair2;
+        ConicHPA2<PT,DA> pair1, pair2;
         set_two_linepairs (p1, p2, p3, p4, pair1, pair2);
         set_ellipse (pair1, pair2);
         analyse();
@@ -3037,12 +3037,12 @@ also have a method available.
 @end
 
 
-@macro<CGAL_ConicCPA2 public member functions> += @begin
+@macro<ConicCPA2 public member functions> += @begin
     void set_ellipse (const PT &p1, const PT &p2,
                       const PT &p3, const PT &p4,
-                      CGAL_Orientation _o = CGAL_POSITIVE) 
+                      CGAL::Orientation _o = POSITIVE) 
     {
-        CGAL_ConicCPA2<PT,DA> pair1, pair2;
+        ConicCPA2<PT,DA> pair1, pair2;
         set_two_linepairs (p1, p2, p3, p4, pair1, pair2);
         set_ellipse (pair1, pair2);
         analyse();
@@ -3073,33 +3073,33 @@ and it has the property that $\C(p_5)=0$, i.e. $\C$ goes through
 $p_1,\ldots,p_5$. In case all points are distinct, this is the unique
 nontrivial conic through the points. 
 
-@macro<CGAL_ConicHPA2 public member functions> += @begin
+@macro<ConicHPA2 public member functions> += @begin
     void set (const PT &p1, const PT &p2, const PT &p3, const PT &p4,
-              const PT &p5, CGAL_Orientation _o = CGAL_POSITIVE)
+              const PT &p5, CGAL::Orientation _o = POSITIVE)
     {
-        CGAL_ConicHPA2<PT,DA> c1; c1.set_linepair (p1, p2, p3, p4);
-        CGAL_ConicHPA2<PT,DA> c2; c2.set_linepair (p1, p4, p2, p3);
+        ConicHPA2<PT,DA> c1; c1.set_linepair (p1, p2, p3, p4);
+        ConicHPA2<PT,DA> c2; c2.set_linepair (p1, p4, p2, p3);
         set_linear_combination (c2.evaluate (p5), c1, 
                                -c1.evaluate (p5), c2);
         analyse();
         // precondition: all points distinct <=> conic nontrivial
-        CGAL_kernel_precondition (!is_trivial());
+        CGAL_optimisation_precondition (!is_trivial());
         if (o != _o) set_opposite();
     }
 
 @end
 
-@macro<CGAL_ConicCPA2 public member functions> += @begin
+@macro<ConicCPA2 public member functions> += @begin
     void set (const PT &p1, const PT &p2, const PT &p3, const PT &p4,
-              const PT &p5, CGAL_Orientation _o = CGAL_POSITIVE)
+              const PT &p5, CGAL::Orientation _o = POSITIVE)
     {
-        CGAL_ConicCPA2<PT,DA> c1; c1.set_linepair (p1, p2, p3, p4);
-        CGAL_ConicCPA2<PT,DA> c2; c2.set_linepair (p1, p4, p2, p3);
+        ConicCPA2<PT,DA> c1; c1.set_linepair (p1, p2, p3, p4);
+        ConicCPA2<PT,DA> c2; c2.set_linepair (p1, p4, p2, p3);
         set_linear_combination (c2.evaluate (p5), c1, 
                                -c1.evaluate (p5), c2);
         analyse();
         // precondition: all points distinct <=> conic nontrivial
-        CGAL_kernel_precondition (!is_trivial());
+        CGAL_optimisation_precondition (!is_trivial());
         if (o != _o) set_opposite();
     }
 
@@ -3110,18 +3110,18 @@ nontrivial conic through the points.
 @subsection{IO routines}
 @! ---------------------------------------------------------------------------
 
-@macro <CGAL_ConicHPA2 I/O routines> = @begin
+@macro <ConicHPA2 I/O routines> = @begin
     template< class _PT, class _DA>
-    ostream& operator << ( ostream& os, const CGAL_ConicHPA2<_PT,_DA>& c)
+    ostream& operator << ( ostream& os, const ConicHPA2<_PT,_DA>& c)
     {
         return( os << c.r() << ' ' << c.s() << ' ' << c.t() << ' '
                    << c.u() << ' ' << c.v() << ' ' << c.w());
     }
 
     template< class _PT, class _DA>
-    istream& operator >> ( istream& is, CGAL_ConicHPA2<_PT,_DA>& c)
+    istream& operator >> ( istream& is, ConicHPA2<_PT,_DA>& c)
     {
-        typedef           CGAL_ConicHPA2<_PT,_DA>  Conic;
+        typedef           ConicHPA2<_PT,_DA>  Conic;
         typedef  typename _DA::RT                  RT;
 
         RT  r, s, t, u, v, w;
@@ -3132,18 +3132,18 @@ nontrivial conic through the points.
     }
 @end
 
-@macro <CGAL_ConicCPA2 I/O routines> = @begin
+@macro <ConicCPA2 I/O routines> = @begin
     template< class _PT, class _DA>
-    ostream& operator << ( ostream& os, const CGAL_ConicCPA2<_PT,_DA>& c)
+    ostream& operator << ( ostream& os, const ConicCPA2<_PT,_DA>& c)
     {
         return( os << c.r() << ' ' << c.s() << ' ' << c.t() << ' '
                    << c.u() << ' ' << c.v() << ' ' << c.w());
     }
 
     template< class _PT, class _DA>
-    istream& operator >> ( istream& is, CGAL_ConicCPA2<_PT,_DA>& c)
+    istream& operator >> ( istream& is, ConicCPA2<_PT,_DA>& c)
     {
-        typedef           CGAL_ConicCPA2<_PT,_DA>  Conic;
+        typedef           ConicCPA2<_PT,_DA>  Conic;
         typedef  typename _DA::FT                  FT;
 
         FT  r, s, t, u, v, w;
@@ -3158,6 +3158,7 @@ nontrivial conic through the points.
 @section{Files}
 @!----------------------------------------------------------------------------
 
+@i ../namespace.awi
 
 @!----------------------------------------------------------------------------
 @subsection{{\tt Conic\_misc.h}}
@@ -3165,140 +3166,161 @@ nontrivial conic through the points.
 
 Here we collect all types and functions that are independent of the
 representation type @prg{R}. These are the declarations of the enumeration
-types @prg{CGAL_Conic_type} and @prg{CGAL_Convex_side}, the conic output
+types @prg{Conic_type} and @prg{Convex_side}, the conic output
 function and the functions in connection with the solution of cubic equations.
 
 @file <include/CGAL/Conic_misc.h> = @begin
-@<file header>("include/CGAL/Conic_misc.h","2D Conic")
+    @<file header>("include/CGAL/Conic_misc.h","2D Conic")
 
-#ifndef CONIC_MISC_H
-#define CONIC_MISC_H
+    #ifndef CONIC_MISC_H
+    #define CONIC_MISC_H
 
-@<CGAL_Conic_2 declaration>
-@<CGAL_Conic_type declaration>
-@<CGAL_Convex_side declaration>
+    @<namespace begin>("CGAL")
+    
+    @<Conic_2 declaration>
+    @<Conic_type declaration>
+    @<Convex_side declaration>
 
-@!<CGAL_Conic_2 Window_stream output>
+    @!<Conic_2 Window_stream output>
 
-@<function CGAL_best_value>
-@<function CGAL_solve_cubic>
+    @<function best_value>
+    @<function solve_cubic>
 
-#endif // CONIC_MISC_H
+    @<namespace end>("CGAL")
+    
+    #endif // CONIC_MISC_H
 
-@<end of file line>
+    @<end of file line>
 @end
 
 @!----------------------------------------------------------------------------
 @subsection{{\tt Conic\_2.h}}
 @!----------------------------------------------------------------------------
 
-This file contains the implementation of the class @prg{CGAL_Conic_2<R>}.
+This file contains the implementation of the class @prg{Conic_2<R>}.
 Depending on the loaded representation classes, the representation specific
-classes @prg{CGAL_ConicHPA2<PT,DA>} and/or  @prg{CGAL_ConicCPA2<PT,DA>} are
+classes @prg{ConicHPA2<PT,DA>} and/or  @prg{ConicCPA2<PT,DA>} are
 included before that. 
 
 @file <include/CGAL/Conic_2.h> = @begin
-@<file header>("include/CGAL/Conic_2.h","2D Conic")
+    @<file header>("include/CGAL/Conic_2.h","2D Conic")
 
-#ifndef CGAL_CONIC_2_H
-#define CGAL_CONIC_2_H
+    #ifndef CGAL_CONIC_2_H
+    #define CGAL_CONIC_2_H
  
-#ifndef CGAL_REP_CLASS_DEFINED
-#  error  no representation class defined
-#endif // CGAL_REP_CLASS_DEFINED
+    #ifndef CGAL_REP_CLASS_DEFINED
+    #  error  no representation class defined
+    #endif // CGAL_REP_CLASS_DEFINED
  
-#ifdef CGAL_HOMOGENEOUS_H
-#  include <CGAL/ConicHPA2.h>
-#endif
+    #ifdef CGAL_HOMOGENEOUS_H
+    #  include <CGAL/ConicHPA2.h>
+    #endif
  
-#ifdef CGAL_CARTESIAN_H
-#  include <CGAL/ConicCPA2.h>
-#endif
+    #ifdef CGAL_CARTESIAN_H
+    #  include <CGAL/ConicCPA2.h>
+    #endif
 
-#ifndef CGAL_POINT_2_H
-#  include <CGAL/Point_2.h>
-#endif
+    #ifndef CGAL_POINT_2_H
+    #  include <CGAL/Point_2.h>
+    #endif
 
-#ifndef CGAL_IO_FORWARD_DECL_WINDOW_STREAM_H
-#include <CGAL/IO/forward_decl_window_stream.h>
-#endif
+    #ifndef CGAL_IO_FORWARD_DECL_WINDOW_STREAM_H
+    #include <CGAL/IO/forward_decl_window_stream.h>
+    #endif
 
-@<CGAL_Optimisation_ellipse_2 declaration>
+    @<namespace begin>("CGAL")
+    
+    @<Optimisation_ellipse_2 declaration>
 
-@<CGAL_Conic_2 interface and implementation>
+    @<namespace end>("CGAL")
+    
+    @<Optimisation_ellipse_2 I/O operator declaration>
 
-#ifndef CGAL_NO_OSTREAM_INSERT_CONIC_2
-@<CGAL_Conic_2 I/O routines>
-#endif // CGAL_NO_OSTREAM_INSERT_CONIC_2
+    @<namespace begin>("CGAL")
 
-#endif // CGAL_CONIC_2_H
+    @<Conic_2 interface and implementation>
 
-@<end of file line>
+    #ifndef CGAL_NO_OSTREAM_INSERT_CONIC_2
+    @<Conic_2 I/O routines>
+    #endif // CGAL_NO_OSTREAM_INSERT_CONIC_2
+
+    @<namespace end>("CGAL")
+
+    #endif // CGAL_CONIC_2_H
+
+    @<end of file line>
 @end
 
 @!----------------------------------------------------------------------------
 @subsection{{\tt ConicHPA2.h}}
 @!----------------------------------------------------------------------------
 
-Here is the class @prg{CGAL_ConicHPA2<PT,DA>}\ldots
+Here is the class @prg{ConicHPA2<PT,DA>}\ldots
 
 @file <include/CGAL/ConicHPA2.h> = @begin
-@<file header>("include/CGAL/ConicHPA2.h","2D Conic")
+    @<file header>("include/CGAL/ConicHPA2.h","2D Conic")
 
-#ifndef CGAL_CONICHPA2_H
-#define CGAL_CONICHPA2_H
+    #ifndef CGAL_CONICHPA2_H
+    #define CGAL_CONICHPA2_H
 
-#ifndef CGAL_CONIC_MISC_H
-#  include <CGAL/Conic_misc.h>
-#endif
+    // includes
+    #ifndef CGAL_CONIC_MISC_H
+    #  include <CGAL/Conic_misc.h>
+    #endif
+    #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
+    #  include <CGAL/optimisation_assertions.h>
+    #endif
 
-#ifndef CGAL_OPTIMISATION_ASSERTIONS_H
-#  include <CGAL/optimisation_assertions.h>
-#endif
+    @<namespace begin>("CGAL")
 
-@<CGAL_ConicHPA2 declaration>
-@<CGAL_ConicHPA2 interface and implementation>
+    @<ConicHPA2 declaration>
+    @<ConicHPA2 interface and implementation>
 
-#ifndef CGAL_NO_OSTREAM_INSERT_CONICHPA2
-@<CGAL_ConicHPA2 I/O routines>
-#endif // CGAL_NO_OSTREAM_INSERT_CONICHPA2
+    #ifndef CGAL_NO_OSTREAM_INSERT_CONICHPA2
+    @<ConicHPA2 I/O routines>
+    #endif // CGAL_NO_OSTREAM_INSERT_CONICHPA2
 
-#endif // CGAL_CONICHPA2_H
+    @<namespace end>("CGAL")
 
-@<end of file line>
+    #endif // CGAL_CONICHPA2_H
+
+    @<end of file line>
 @end
 
 @!----------------------------------------------------------------------------
 @subsection{{\tt ConicCPA2.h}}
 @!----------------------------------------------------------------------------
 
-\ldots and the class @prg{CGAL_ConicCPA2<PT,DA>}.
+\ldots and the class @prg{ConicCPA2<PT,DA>}.
 
 @file <include/CGAL/ConicCPA2.h> = @begin
-@<file header>("include/CGAL/ConicCPA2.h","2D Conic")
+    @<file header>("include/CGAL/ConicCPA2.h","2D Conic")
 
-// includes
-#ifndef CGAL_CONICCPA2_H
-#define CGAL_CONICCPA2_H
+    #ifndef CGAL_CONICCPA2_H
+    #define CGAL_CONICCPA2_H
 
-#ifndef CGAL_CONIC_MISC_H
-#  include <CGAL/Conic_misc.h>
-#endif
+    // includes
+    #ifndef CGAL_CONIC_MISC_H
+    #  include <CGAL/Conic_misc.h>
+    #endif
+    #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
+    #  include <CGAL/optimisation_assertions.h>
+    #endif
 
-#ifndef CGAL_OPTIMISATION_ASSERTIONS_H
-#  include <CGAL/optimisation_assertions.h>
-#endif
+    @<namespace begin>("CGAL")
+    
+    @<ConicCPA2 declaration>
+    @<ConicCPA2 interface and implementation>
 
-@<CGAL_ConicCPA2 declaration>
-@<CGAL_ConicCPA2 interface and implementation>
+    #ifndef CGAL_NO_OSTREAM_INSERT_CONICCPA2
+    @<ConicCPA2 I/O routines>
+    #endif // CGAL_NO_OSTREAM_INSERT_CONICCPA2
 
-#ifndef CGAL_NO_OSTREAM_INSERT_CONICCPA2
-@<CGAL_ConicCPA2 I/O routines>
-#endif // CGAL_NO_OSTREAM_INSERT_CONICCPA2
+    @<namespace end>("CGAL")
 
-#endif // CGAL_CONICCPA2_H
+    #endif // CGAL_CONICCPA2_H
 
-@<end of file line>
+    @<end of file line>
 @end
 
 @! ----------------------------------------------------------------------------
