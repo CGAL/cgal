@@ -109,17 +109,6 @@ public:
   */
   void addCurveToLeft(SubCurve *curve, const Point_2 &ref) 
   {
-    if ( ! m_isInitialized ) 
-    {
-      if ( curve->isSourceLeftToTarget())
-	m_rightmostPointToLeft = curve->getSource();
-      else
-	m_rightmostPointToLeft = curve->getTarget();
-
-      m_isInitialized = true;
-    }
-
-    UpdateRightmostPoint(curve);
     if (m_leftCurves->empty())
       m_leftCurves->push_back(curve);
     else 
