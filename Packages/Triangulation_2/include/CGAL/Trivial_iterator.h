@@ -45,7 +45,8 @@ class Trivial_iterator
 {
 public:
   typedef I                                                 Iterator;
-#if defined  CGAL_CFG_NO_ITERATOR_TRAITS || defined _MSC_VER
+#if defined CGAL_CFG_NO_ITERATOR_TRAITS && \
+   !defined CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
   typedef Trivial_iterator<I,Ref,Ptr,Val,Dist>              Self;
   typedef Val                                               value_type;
   typedef Dist                                              difference_type;
@@ -97,7 +98,8 @@ class Trivial_comparable_iterator
 {
 public:
   typedef I                                            Iterator;
-#if defined  CGAL_CFG_NO_ITERATOR_TRAITS || defined _MSC_VER
+#if defined CGAL_CFG_NO_ITERATOR_TRAITS && \
+   !defined CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
   typedef Trivial_comparable_iterator<I,Ref,Ptr,Val,Dist>  Self;
   typedef Val                                          value_type;
   typedef Dist                                         difference_type;
@@ -159,9 +161,10 @@ private:
 #  define CGAL_TRIVIAL_COMPARABLE_ITERATOR_CHECKER(X) X
 #endif
 
-// This macro added to workaround the fact that MSC does not support
-// default template parameter
-#if defined _MSC_VER && !defined CGAL_NO_CONCEPT_CHECKING
+// This macro added to workaround yet another VC++ deficiency.
+#if defined CGAL_CFG_NO_ITERATOR_TRAITS && \
+   !defined CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT && \
+   !defined CGAL_NO_CONCEPT_CHECKING
 #  define CGAL_TRIVIAL_ITERATOR_CHECKER_POINTER(X) \
           CGAL::Trivial_iterator<X*, X&, X*, X, std::ptrdiff_t>
 #  define CGAL_TRIVIAL_COMPARABLE_ITERATOR_CHECKER_POINTER(X) \
