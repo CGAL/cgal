@@ -17,7 +17,9 @@ CXXFLAGS = \
         -I../../include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS) \
-	-Op 
+	# /Oi /Fatst2.s
+	# /Fatst1.s
+	# /Op /Oi /Od /Za /O2 /Ox
 	# -g -Wall -W
 	# -O2 -Wall -W
 	# -fpermissive
@@ -73,8 +75,8 @@ OBJECTS  := $(SOURCES:.C=$(OBJ_EXT))
 PROGRAMS := $(SOURCES:.C=$(EXE_EXT))
 TEST_RUN := $(SOURCES:.C=.test)
 
-# all: ../../src/Interval_arithmetic$(OBJ_EXT) $(PROGRAMS)
-all: $(PROGRAMS)
+all: ../../src/Interval_arithmetic$(OBJ_EXT) $(PROGRAMS)
+# all: $(PROGRAMS)
 
 test: $(TEST_RUN)
 
