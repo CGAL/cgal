@@ -18,8 +18,8 @@
 //
 // Author(s)     : Tran Kai Frank DA <Frank.Da@sophia.inria.fr>
 
-#ifndef CGAL_IN_SMALLEST_ORTHOGONAL_SPHERE_FTC3_H 
-#define CGAL_IN_SMALLEST_ORTHOGONAL_SPHERE_FTC3_H
+#ifndef CGAL_PREDICATES_ON_WEIGHTED_POINTS_CARTESIAN_3 
+#define CGAL_PREDICATES_ON_WEIGHTED_POINTS_CARTESIAN_3
 
 #include <CGAL/determinant.h>
 #include <CGAL/enum.h>
@@ -46,43 +46,65 @@ compare_power_distanceC3(
     - (drx*drx + dry*dry + drz*drz - rw ) ));
 }
 
+
+//return the sign of the power test of weighted point (sx,sy,sz,sw)
+//with respect to the smallest sphere orthogonal to
+//p,q,r
 template< class FT >
 CGAL_MEDIUM_INLINE
-Bounded_side
+Sign
 in_smallest_orthogonal_sphereC3(
   const FT &px, const FT &py, const FT &pz, const FT  &pw,
   const FT &qx, const FT &qy, const FT &qz, const FT  &qw,
   const FT &rx, const FT &ry, const FT &rz, const FT  &rw,
-  const FT &tx, const FT &ty, const FT &tz, const FT  &tw)
+  const FT &sx, const FT &sy, const FT &sz, const FT  &sw)
 {
-  FT dpx = px-rx;
-  FT dpy = py-ry;
-  FT dpz = pz-rz;
-  FT dp = CGAL_NTS square(dpx)+CGAL_NTS square(dpy)+CGAL_NTS square(dpz);
-  FT dpp = dp-pw+rw;
-  FT dqx = qx-rx;
-  FT dqy = qy-ry;
-  FT dqz = qz-rz;
-  FT dq = CGAL_NTS square(dqx)+CGAL_NTS square(dqy)+CGAL_NTS square(dqz);
-  FT dqq = dq-qw+rw;
-  FT dpdq = dpx*dqx+dpy*dqy+dpz*dqz;
-  FT denom = dp*dq-CGAL_NTS square(dpdq);
-  FT Lambda = (dpp*dq-dqq*dpdq)/denom;
-  FT Mu = (dqq*dp-dpp*dpdq)/denom;
+ // Translate p to origin and compute determinants 
+  FT qpx = qx-px;
+  FT qpy = qy-py;
+  FT qpz = qz-pz;
   
-  FT dtx = tx-rx;
-  FT dty = ty-ry;
-  FT dtz = tz-rz;
+  FT rpx = rx-px;
+  FT rpy = ry-py;
+  FT rpz = rz-pz;
   
-  return Bounded_side 
-    (CGAL_NTS sign(
-	-(CGAL_NTS square(dtx)+CGAL_NTS square(dty)+CGAL_NTS square(dtz)-tw+rw)
-        +Lambda*(dpx*dtx+dpy*dty+dpz*dtz)+Mu*(dqx*dtx+dqy*dty+dqz*dtz)));
+  FT qq = CGAL_NTS square(qpx) + CGAL_NTS square(qpy) + CGAL_NTS square(qpz);
+  FT rr = CGAL_NTS square(rpx) + CGAL_NTS square(rpy) + CGAL_NTS square(rpz);
+  FT qr = qpx*rpx + qpy*rpy + qpz*rpz;
+
+  FT qpw = qq - qw + pw ;
+  FT rpw = rr - rw + pw ;
+  
+  FT den = det2x2_by_formula(qq,qr,
+			     qr,rr);
+  FT detq = det2x2_by_formula(qpw,qr,
+			      rpw,rr);
+  FT detr = det2x2_by_formula(qq,qpw,
+			      qr,rpw);
+
+  // Smallest  smallest orthogonal sphere center
+  // c =  detq/2*den  q + detr/2*den  r (origin at p)
+  // square radius  c^2 - pw
+
+  FT spx = sx-px;
+  FT spy = sy-py;
+  FT spz = sz-pz;
+  FT ss = CGAL_NTS square(spx) + CGAL_NTS square(spy) + CGAL_NTS  square(spz);
+  FT sq = spx*qpx + spy*qpy + spz*qpz;
+  FT sr = spx*rpx + spy*rpy + spz*rpz;
+
+  CGAL_kernel_assertion( ! CGAL_NTS is_zero(den) );
+  // return  sign of (c- s)^2 - (c^2 - pw) - sw    note that den >= 0 - 
+  return CGAL_NTS sign( den*(ss - sw + pw)- detq*sq - detr*sr);
 }
 
 
+
+// return the sign of the power test of weighted point (rx,ry,rz,rw)
+ // with respect to the smallest sphere orthogoanal to
+// p,q 
 template< class FT >
-Bounded_side
+Sign
 in_smallest_orthogonal_sphereC3(
  const FT &px, const FT &py, const FT &pz, const FT  &pw,
  const FT &qx, const FT &qy, const FT &qz, const FT  &qw,
@@ -101,19 +123,23 @@ in_smallest_orthogonal_sphereC3(
   FT drw = rw - (pw + qw)/FT2;
   FT dr2 = CGAL_NTS square(drx) + CGAL_NTS square(dry) + CGAL_NTS square(drz); 
   FT dpr = dpx*drx + dpy*dry +dpz*drz;
-  return Bounded_side(CGAL_NTS sign (dr2 - dp2/FT4 + dpr*dpw/dp2 + drw ));
+  return CGAL_NTS sign (dr2 - dp2/FT4 + dpr*dpw/dp2 - drw );
 }
 
+
+
+
+// return ON_UNBOUNDED_SIDE, ON_BOUNDARY or ON_BOUNDED_SIDE according 
+// to the position of the weighted circumcenter of pqrs
+// with respect with the tertraedron formed by bare points in p, q,r,s
 template <class FT>
-bool
-does_affine_dual_intersectC3(
+Bounded_side
+does_simplex_intersect_dual_supportC3(
 		const FT &px, const FT &py, const FT &pz, const FT &pw,
                 const FT &qx, const FT &qy, const FT &qz, const FT &qw,
                 const FT &rx, const FT &ry, const FT &rz, const FT &rw,
                 const FT &sx, const FT &sy, const FT &sz, const FT &sw)
 {
-  // returns true if weighted circumcenter of pqrs is in
-  // tetrahedron pqrs or on boundary
   FT qpx = qx-px;
   FT qpy = qy-py;
   FT qpz = qz-pz;
@@ -150,17 +176,34 @@ does_affine_dual_intersectC3(
 			      qs,rs,spw);
   CGAL_kernel_assertion( ! CGAL_NTS is_zero(den) );
 
- CGAL::Sign  sign = sign(FT(2)*den - detq -detr -dets);
-  return  
+  
+  // The barycentrique coordinate of the smallest orthogonal sphere center
+  // are  detq/2*den detr/2*den dets/2*den
+  // and  1-(detq+ detr+dets)/2*den
+
+  CGAL::Sign  sign1 = CGAL_NTS sign(FT(2)*den - detq -detr -dets);
+  if (
    (CGAL_NTS sign(detq) == CGAL_NTS sign(den) || CGAL_NTS sign(detq)== ZERO) &&
    (CGAL_NTS sign(detr) == CGAL_NTS sign(den) || CGAL_NTS sign(detr)== ZERO) &&
    (CGAL_NTS sign(dets) == CGAL_NTS sign(den) || CGAL_NTS sign(dets)== ZERO) &&
-   ( sign == POSITIVE || sign == ZERO );
+   ( sign1 == POSITIVE || sign1 == ZERO )) { // inside or on boundary
+    if (CGAL_NTS sign(detq) != ZERO &&
+	CGAL_NTS sign(detr) != ZERO &&
+	CGAL_NTS sign(dets) != ZERO &&
+	sign1 != ZERO)  
+      return ON_BOUNDED_SIDE;
+    else return ON_BOUNDARY ;
+  }
+  return ON_UNBOUNDED_SIDE;
 }
 
+// return ON_UNBOUNDED_SIDE, ON_BOUNDARY or ON_BOUNDED_SIDE according 
+// to the position of the  intersection if the radialaxis
+// of weighted circumcenter of pqr with affine hull of bare p,q,r
+// with respect with the triangle  formed by bare points in p, q,r.
 template <class FT>
-bool
-does_affine_dual_intersectC3(
+Bounded_side
+does_simplex_intersect_dual_supportC3(
 		const FT &px, const FT &py, const FT &pz, const FT &pw,
                 const FT &qx, const FT &qy, const FT &qz, const FT &qw,
                 const FT &rx, const FT &ry, const FT &rz, const FT &rw)
@@ -184,24 +227,35 @@ does_affine_dual_intersectC3(
   
   FT den = det2x2_by_formula(qq,qr,
 			     qr,rr);
-  FT detq = det3x3_by_formula(qpw,qr,
+  FT detq = det2x2_by_formula(qpw,qr,
 			      rpw,rr);
-  FT detr = det3x3_by_formula(qq,qpw,
+  FT detr = det2x2_by_formula(qq,qpw,
 			      qr,rpw);
 
   CGAL_kernel_assertion( ! CGAL_NTS is_zero(den) );
 
- CGAL::Sign  sign = CGAL_NTS sign(FT(2)*den - detq - detr);
-  return  
+   // The barycentrique coordinate of the smallest orthogonal sphere center
+  // are  detq/2*den detr/2*den 
+  // and  1-(detq+ detr)/2*den
+
+ CGAL::Sign  sign1 = CGAL_NTS sign(FT(2)*den - detq - detr);
+ if (
    (CGAL_NTS sign(detq) == CGAL_NTS sign(den) || CGAL_NTS sign(detq)== ZERO) &&
    (CGAL_NTS sign(detr) == CGAL_NTS sign(den) || CGAL_NTS sign(detr)== ZERO) &&
-   ( sign == POSITIVE || sign == ZERO );
+   ( sign1 == POSITIVE || sign1 == ZERO )) { // inside or on boundary
+   if ( CGAL_NTS sign(detq) != ZERO &&
+	CGAL_NTS sign(detr) != ZERO &&
+	sign1 != ZERO) 
+     return ON_BOUNDED_SIDE;
+   else return ON_BOUNDARY;
+ }
+ return ON_UNBOUNDED_SIDE;
 }
 
 
 template <class FT>
-bool
-does_affine_dual_intersectC3(
+Bounded_side
+does_simplex_intersect_dual_supportC3(
 		const FT &px, const FT &py, const FT &pz, const FT &pw,
                 const FT &qx, const FT &qy, const FT &qz, const FT &qw)
 {
@@ -214,16 +268,19 @@ does_affine_dual_intersectC3(
   FT qq = CGAL_NTS square(qpx) + CGAL_NTS square(qpy) + CGAL_NTS square(qpz);
   FT dw = pw - qw;
   
-  CGAL::Sign  sign1 = CGAL_NTS sign( qq - dw);
+  CGAL::Sign  sign1 = CGAL_NTS sign( qq + dw);
   CGAL::Sign  sign2 = CGAL_NTS sign( qq - dw);
    
-  return 
-    ( sign1 == POSITIVE || sign == ZERO ) &&
-    ( sign2 == POSITIVE || sign == ZERO );
+  if( ( sign1 == POSITIVE || sign1 == ZERO ) &&
+      ( sign2 == POSITIVE || sign2 == ZERO )) { // inside or on boundary
+    if (sign1 != ZERO && sign2 != ZERO) return ON_BOUNDED_SIDE;
+    else return ON_BOUNDARY;
+  }
+  return  ON_UNBOUNDED_SIDE;    
 }
 
 //------------------------------------------------------------------- 
 CGAL_END_NAMESPACE
 //-------------------------------------------------------------------
 
-#endif //CGAL_IN_SMALLEST_ORTHOGONAL_SPHEREC3_H
+#endif //CGAL_PREDICATES_ON_WEIGHTED_POINTS_CARTESIAN_3

@@ -145,7 +145,7 @@ public:
   nearest_power_vertex(const Bare_point& p, Cell_handle c =
 		       Cell_handle()) const;
 
-  Weighted_point dual(Cell_handle c) const;
+  Bare_point dual(Cell_handle c) const;
 
 //   Object dual(const Facet & f) const
 //     { return dual( f.first, f.second ); }
@@ -181,7 +181,7 @@ private:
       geom_traits().compare_power_distance_3_object()(p, q, r) == SMALLER;
   }
 
-  Weighted_point
+  Bare_point
   construct_weighted_circumcenter(const Weighted_point &p, 
 				  const Weighted_point &q, 
 				  const Weighted_point &r, 
@@ -369,7 +369,9 @@ nearest_power_vertex(const Bare_point& p, Cell_handle start) const
 
     Locate_type lt;
     int li, lj;
-    Cell_handle c = locate(p, lt, li, lj, start);
+    // I put the cast here temporarily 
+    // until we solve the traits class pb of regular triangulation
+    Cell_handle c = locate(static_cast<Weighted_point>(p), lt, li, lj, start);
   
     // - start with the closest vertex from the located cell.
     // - repeatedly take the nearest of its incident vertices if any
@@ -392,7 +394,7 @@ nearest_power_vertex(const Bare_point& p, Cell_handle start) const
 }
 
 template < class Gt, class Tds >
-typename Regular_triangulation_3<Gt,Tds>::Weighted_point
+typename Regular_triangulation_3<Gt,Tds>::Bare_point
 Regular_triangulation_3<Gt,Tds>::
 dual(Cell_handle c) const
 {

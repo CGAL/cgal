@@ -10,7 +10,7 @@ determinants_for_weighted_circumcenterC3(
                 const FT &qx, const FT &qy, const FT &qz, const FT &qw,
                 const FT &rx, const FT &ry, const FT &rz, const FT &rw,
                 const FT &sx, const FT &sy, const FT &sz, const FT &sw,
-                FT &num_x,  FT &num_y, FT &num_z, FT& inv)
+                FT &num_x,  FT &num_y, FT &num_z, FT& den)
 {
   // translate origin to p
   // and compute determinants for weighted_circumcenter and
@@ -40,11 +40,9 @@ determinants_for_weighted_circumcenterC3(
   num_z = det3x3_by_formula(qpx,qpy,qp2,
 			    rpx,rpy,rp2,
 			    spx,spy,sp2);
-  FT den   = det3x3_by_formula(qpx,qpy,qpz,
-			       rpx,rpy,rpz,
-			       spx,spy,spz);
-  CGAL_kernel_assertion( ! CGAL_NTS is_zero(den) );
-  inv = FT(1)/(FT(2) * den);
+  den   = det3x3_by_formula(qpx,qpy,qpz,
+			    rpx,rpy,rpz,
+			    spx,spy,spz);
 }
 
 
@@ -60,12 +58,15 @@ weighted_circumcenterC3(
   // this function  compute the weighted circumcenter point only
 
   // Translate p to origin and compute determinants
-  FT num_x, num_y, num_z, inv;
+  FT num_x, num_y, num_z, den;
   determinants_for_weighted_circumcenterC3(px, py, pz, pw,
 					   qx, qy, qz, qw,
 					   rx, ry, rz, rw,
 					   sx, sy, sz, sw,
-					   num_x,  num_y, num_z,inv);
+					   num_x,  num_y, num_z,den);
+
+  CGAL_kernel_assertion( ! CGAL_NTS is_zero(den) );
+   FT inv = FT(1)/(FT(2) * den);
 
   x = px + num_x*inv;
   y = py - num_y*inv;
@@ -85,12 +86,15 @@ weighted_circumcenterC3(
   // and the squared weighted circumradius
   
   // Translate p to origin and compute determinants
-  FT num_x, num_y, num_z, inv;
+  FT num_x, num_y, num_z, den;
   determinants_for_weighted_circumcenterC3(px, py, pz, pw,
 					   qx, qy, qz, qw,
 					   rx, ry, rz, rw,
 					   sx, sy, sz, sw,
-					   num_x,  num_y, num_z,inv);
+					   num_x,  num_y, num_z, den);
+
+  CGAL_kernel_assertion( ! CGAL_NTS is_zero(den) );
+   FT inv = FT(1)/(FT(2) * den);
 
   x = px + num_x*inv;
   y = py - num_y*inv;
@@ -113,12 +117,16 @@ squared_radius_orthogonal_sphereC3(
   // this function  compute the squared weighted circumradius only
   
   // Translate p to origin and compute determinants
-  FT num_x, num_y, num_z, inv;
+  FT num_x, num_y, num_z, den;
   determinants_for_weighted_circumcenterC3(px, py, pz, pw,
 					   qx, qy, qz, qw,
 					   rx, ry, rz, rw,
 					   sx, sy, sz, sw,
-					   num_x, num_y, num_z,inv);
+					   num_x, num_y, num_z,den);
+
+  CGAL_kernel_assertion( ! CGAL_NTS is_zero(den) );
+   FT inv = FT(1)/(FT(2) * den);
+
    return
     (CGAL_NTS square(num_x)+CGAL_NTS square(num_y)+CGAL_NTS square(num_z))
     *CGAL_NTS square(inv) - pw;
@@ -131,7 +139,7 @@ determinants_for_weighted_circumcenterC3(
 	        const FT &px, const FT &py, const FT &pz, const FT &pw,
                 const FT &qx, const FT &qy, const FT &qz, const FT &qw,
                 const FT &rx, const FT &ry, const FT &rz, const FT &rw,
-		FT &num_x,  FT &num_y, FT &num_z, FT &inv)
+		FT &num_x,  FT &num_y, FT &num_z, FT &den)
 {
   // translate origin to p
   // and compute determinants for weighted_circumcenter and
@@ -174,12 +182,9 @@ determinants_for_weighted_circumcenterC3(
   num_z = qp2 * det2x2_by_formula(rpx,rpy,sx,sy)
 	- rp2 * det2x2_by_formula(qpx,qpy,sx,sy);
 
-  FT den   = det3x3_by_formula(qpx,qpy,qpz,
-                               rpx,rpy,rpz,
-                               sx,sy,sz);
-
-  CGAL_kernel_assertion( den != FT(0) );
-  inv = FT(1)/(FT(2) * den);
+  den   = det3x3_by_formula(qpx,qpy,qpz,
+			    rpx,rpy,rpz,
+			    sx,sy,sz);
 }
 
 template < class FT >
@@ -193,11 +198,14 @@ weighted_circumcenterC3(
   // this function  compute the weighted circumcenter point only
 
 // Translate p to origin and compute determinants
-  FT num_x, num_y, num_z, inv;
+  FT num_x, num_y, num_z, den;
   determinants_for_weighted_circumcenterC3(px, py, pz, pw,
 					   qx, qy, qz, qw,
 					   rx, ry, rz, rw,
-					   num_x,  num_y, num_z, inv);
+					   num_x,  num_y, num_z, den);
+
+  CGAL_kernel_assertion( den != FT(0) );
+  FT inv = FT(1)/(FT(2) * den);
 
   x = px + num_x*inv;
   y = py - num_y*inv;
@@ -217,12 +225,15 @@ weighted_circumcenterC3(
   // the weighted squared circumradius
 
 // Translate p to origin and compute determinants
-  FT num_x, num_y, num_z, inv;
+  FT num_x, num_y, num_z, den;
   determinants_for_weighted_circumcenterC3(px, py, pz, pw,
 					   qx, qy, qz, qw,
 					   rx, ry, rz, rw,
-					   num_x,  num_y, num_z, inv);
-  
+					   num_x,  num_y, num_z, den);
+
+  CGAL_kernel_assertion( den != FT(0) );
+  FT inv = FT(1)/(FT(2) * den);
+
   x = px + num_x*inv;
   y = py - num_y*inv;
   z = pz + num_z*inv;
@@ -243,12 +254,16 @@ squared_radius_smallest_orthogonal_sphereC3(
   // this function  compute the weighted squared circumradius only
 
 // Translate p to origin and compute determinants
-  FT num_x, num_y, num_z, inv;
+  FT num_x, num_y, num_z, den;
   determinants_for_weighted_circumcenterC3(px, py, pz, pw,
 					   qx, qy, qz, qw,
 					   rx, ry, rz, rw,
-					   num_x,  num_y, num_z, inv);
-  return
+					   num_x,  num_y, num_z, den);
+
+  CGAL_kernel_assertion( den != FT(0) );
+  FT inv = FT(1)/(FT(2) * den);
+
+ return
     (CGAL_NTS square(num_x)+CGAL_NTS square(num_y)+CGAL_NTS square(num_z))
      *CGAL_NTS square(inv)  - pw;
 }
@@ -323,6 +338,21 @@ squared_radius_smallest_orthogonal_sphereC3(
 }
 
 
+template< class FT >
+FT
+power_productC3( 
+  const FT &px, const FT &py, const FT &pz, const FT  &pw,
+  const FT &qx, const FT &qy, const FT &qz, const FT  &qw)
+{ 
+  // computes the power product of two weighted points
+  FT qpx = qx-px;
+  FT qpy = qy-py;
+  FT qpz = qz-pz;
+  FT qp2 = CGAL_NTS square(qpx) + CGAL_NTS square(qpy) + 
+           CGAL_NTS square(qpz);
+  return qp2 - pw - qw ;
+}
+
 template < class RT , class We>
 void
 radical_axisC3(const RT &px, const RT &py, const RT &pz, const We &pw,
@@ -338,6 +368,9 @@ radical_axisC3(const RT &px, const RT &py, const RT &pz, const We &pw,
   b= - RT(1)*det2x2_by_formula(dqx, dqz, drx, drz);
   c= RT(1)*det2x2_by_formula(dqx, dqy, drx, dry);
 }
+
+
+
 
 
  // I will use this to test if the radial axis of three spheres
