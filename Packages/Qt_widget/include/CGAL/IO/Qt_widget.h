@@ -91,7 +91,7 @@ public:
   void setColor(const QColor c);
   // backGroundColor
   QColor backgroundColor() const;
-  void setBackgroundColor(const QColor c);
+  void setBackgroundColor(const QColor& c);
   // fillColor
   QColor fillColor() const;
   void setFillColor(const QColor c);
@@ -374,7 +374,7 @@ QColor Qt_widget::backgroundColor() const
 }
 
 inline
-void Qt_widget::setBackgroundColor(const QColor c)
+void Qt_widget::setBackgroundColor(const QColor& c)
 {
   QWidget::setBackgroundColor(c);
   get_painter().setBackgroundColor(c);
