@@ -86,7 +86,8 @@ public:
 private:
     void header() {
         os() << "#Inventor V2.0 ascii" << std::endl;
-        os() << "# File written with the help of the CGAL Library" << std::endl;
+        os() << "# File written with the help of the CGAL Library" 
+	     << std::endl;
     }
 };
 
