@@ -1,3 +1,6 @@
+Ver 1.10 (20 April 2001)
+- Remove references to CGAL_STRICT_09.
+
 Ver 1.9 (27 April 2001)
 - Rename construct_tetrahedron_object to construct_tetrahedron_3_object.
 

@@ -73,7 +73,6 @@ _test_cls_plane_d(const gnuR& )
  // assert( neg_xy_pl_eq.opposite() == xy_pl );
  // assert( plr != plr.opposite() );
 
-#ifndef CGAL_STRICT_09
  CGAL::Point_d<gnuR> pp0(3, RT(4), RT(6), RT( 0), RT(2) );
  CGAL::Point_d<gnuR> pp1(3, RT(4), RT(6), RT(-8), RT(2) );
  assert( xy_pl_eq.projection( pp0 ) == pp0 );
@@ -81,7 +80,6 @@ _test_cls_plane_d(const gnuR& )
  assert( xy_pl_eq.has_on( xy_pl_eq.projection( pp1 ) )  );
  assert( pl1.has_on( pl1.projection( pp0 ) )  );
  assert( pl1.has_on( pl1.projection( pp1 ) )  );
-#endif // CGAL_STRICT_09
 
  std::cout <<'.';
 

@@ -293,7 +293,6 @@ _test_cls_aff_transformation_d(const R& )
  assert( dir.transform( gat6 ) == dir.transform( gat3 ) );
  assert( pla.transform( gat6 ) == pla.transform( gat3 ) );
 
-#ifndef CGAL_STRICT_09
  // access
  FT   FTone(RT(1));
  FT   FTzero(RT(0));
@@ -525,8 +524,6 @@ _test_cls_aff_transformation_d(const R& )
  assert( gat4.homogeneous(2,3) == gat4.hm(2,3) );
  assert( scale11.homogeneous(0,0) == scale11.hm(0,0) );
  assert( translate.homogeneous(1,2) == translate.hm(1,2) );
-
-#endif // CGAL_STRICT_09
 
  std::cout << "done" << std::endl;
  return true;
