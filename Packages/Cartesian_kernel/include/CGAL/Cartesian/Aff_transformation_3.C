@@ -25,10 +25,6 @@
 #include <CGAL/Cartesian/Aff_transformation_rep_3.C>
 #include <CGAL/determinant.h>
 
-#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_3_H
-#define CGAL_CTAG
-#endif
-
 #ifdef CGAL_CFG_TYPENAME_BUG
 #define typename
 #endif
