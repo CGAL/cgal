@@ -19,6 +19,26 @@
 // There they can be taylored to the specific application, i.e.
 // extraction or checker.
 
+/* Customization tags for the style */
+/* ================================ */
+extern bool tag_chapter_author;
+extern bool tag_replace_prefix;
+extern bool tag_replace_include;
+extern bool tag_long_param_layout;
+
+extern bool tag_rm_const_ref_pair;
+extern bool tag_rm_eigen_class_name;
+extern bool tag_operator_layout;
+extern bool tag_rm_trailing_const;
+
+void tag_defaults();
+void tag_full_declarations();
+
+
+/* read a file into a buffer */
+/* The name has a trailing '}' */
+Buffer* readFileInBuffer(const char* name);
+
 /* An empty List as empty comment for global declarations */
 /* ====================================================== */
 extern Text empty_comment;
@@ -60,8 +80,16 @@ void handleFunctionTemplateDeclaration( const char* templ,
 					const Text& T = empty_comment);
 void handleVariableDeclaration( const char* decl,
 				const Text& T = empty_comment);
+void handleTypedefDeclaration( const char* decl,
+			       const Text& T = empty_comment);
+void handleNestedTypeDeclaration( const char* decl,
+			          const Text& T = empty_comment);
 void handleEnumDeclaration( const char* decl,
 			    const Text& T = empty_comment);
+void handleStructDeclaration( const char* decl,
+			      const Text& T = empty_comment);
+
+void handleNewCommand( char* idfier, char* body);
 
 
 // Error messages and Numbers

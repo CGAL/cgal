@@ -94,7 +94,8 @@ ostream* p_out_errmessage;
 char char_tmp[2]         = " ";
 char char_tricky_tmp[16] = "\"{ws}*\" \"{ws}*\"";
 
-const char* patternText( char c, char d = 'X') {
+// const char* patternText( char c, char d = 'X') {
+const char* patternText( char c, char) {
     switch ( c) {
     case IDFIER_TAG:
         return "\"{idfier}\"";

@@ -2,7 +2,7 @@
  
   html_lex.yy
   =============================================================
-  Project   : CGAL merger tool for the specification task
+  Project   : Tools for the CC manual writing task around cc_manual.sty.
   Function  : lexical scanner for TeX and C++ code mixed files.
               Taylored for HTML manual generation.
   System    : flex, bison, C++ (g++)
@@ -22,6 +22,13 @@ extern "C" int yylex( void );
 #include <html_config.h>
 #include <html_syntax.tab.h>
 
+// This flag indicates whether we are in a tabbing or tabular environment.
+bool tab_tag = false;
+
+// This flag is true if we are inside a definition. here, \input and 
+// \include should not open a file.
+bool ignore_input_tag = false;
+
 /* Set this flag to 1 to switch immediately to CCMode. */
 int set_CCMode      = 0;
 /* Set this flag to 1 to switch immediately to NestingMode. */
@@ -31,7 +38,7 @@ int set_INITIAL     = 0;
 int set_HTMLMODE    = 0;
 int set_MMODE       = 0;
 
-/* Tag to mark the unchecked keyword */
+/* Tag to mark whenever the unchecked keyword occurs. */
 int   unchecked_tag = 0;
 
 /* Count the linenumber for better errormessages. */
@@ -101,6 +108,7 @@ noletter        [^a-zA-Z]
 digit           [0-9]
 CCletter        [a-zA-Z_]
 idfier          {letter}+
+texmacro        [\\]{idfier}
 CCidfier        ({CCletter}({CCletter}|{digit})*)
 filename        [^ \t\n/\\\{\}\[\]()]+
 space           [\t ]
@@ -115,6 +123,7 @@ floatNumber     ({signNumber}\.|{signNumber}\.{number})
 expNumber       ({floatNumber}|{signNumber}){exp}{signNumber}
 No              ({signNumber}|{floatNumber}|{expNumber})
 operator        [^a-zA-Z_0-9\n\r\t \\]
+measure         {signNumber}{letter}{letter}
 ttblockintro    [\{][\\](tt)
 emblockintro    [\{][\\](em)
 itblockintro    [\{][\\]((it)|(sl))
@@ -165,7 +174,17 @@ bfblockintro    [\{][\\](bf)
  /* Handle include files      */
  /* ------------------------- */
 
-[\\]((include)|(input))[\{]{w}   {  BEGIN ( INCLUDEMODE); }
+[\\]((include)|(input))[\{]{w}   {  
+	if (ignore_input_tag) {
+	    int c = yyinput();
+	    while( c && c != '}')
+	        c = yyinput();
+            yylval.string.text = " ";
+            yylval.string.len  = 0;
+            return SPACE;
+        }
+        BEGIN ( INCLUDEMODE); 
+}
 <INCLUDEMODE>{filename}          {
         /* remove trailing characters from the input/include statement */
         int c = yyinput();
@@ -294,21 +313,21 @@ bfblockintro    [\{][\\](bf)
 
  /* Different keywords from the manual style triggering C++ formatting */
  /* ------------------------------------------------------------------ */
-[\\]begin{w}[\{]class[\}]{w}   {
+[\\]begin{w}[\{]ccClass[\}]{w}   {
 		    BEGIN( CCMode);
 		    return BEGINCLASS;
 		}
-[\\]end{w}[\{]class[\}]   {
+[\\]end{w}[\{]ccClass[\}]   {
 		    return ENDCLASS;
 		}
-[\\]begin{w}[\{]classtemplate[\}]{w}   {
+[\\]begin{w}[\{]ccClassTemplate[\}]{w}   {
 		    BEGIN( CCMode);
 		    return BEGINCLASSTEMPLATE;
 		}
-[\\]end{w}[\{]classtemplate[\}]   {
+[\\]end{w}[\{]ccClassTemplate[\}]   {
 		    return ENDCLASSTEMPLATE;
 		}
-[\\]creationvariable{w}[\{]{w}[^\}]*{w}[\}]   {
+[\\]ccCreationVariable{w}[\{]{w}[^\}]*{w}[\}]   {
 		    char *s = yytext + yyleng - 2;
 		    while (( *s == ' ') || ( *s == '\t'))
 		        s--;
@@ -319,7 +338,8 @@ bfblockintro    [\{][\\](bf)
 		    while (( *r == ' ') || ( *r == '\t'))
 		        r++;
 		    s[1]  = 0;
-		    delete[] creationvariable;
+		    if ( creationvariable)
+	                delete[] creationvariable;
 		    if ( formatted_creationvariable)
 		        delete[] formatted_creationvariable;
 		    creationvariable = newstr( r);
@@ -332,78 +352,98 @@ bfblockintro    [\{][\\](bf)
 		    yylval.string.len  = s - r + 1;
 		    return CREATIONVARIABLE;
 		}		    
-[\\]constructor/{noletter} {   /* constructor declaration: change to CCMode */
+[\\]ccConstructor/{noletter} { /* constructor declaration: change to CCMode */
 		    skipspaces();
 		    BEGIN( CCMode);
 		    return CONSTRUCTOR;
 		}
-[\\]method/{noletter}   {   /* method declaration: change to CCMode */
+[\\]ccMemberFunction/{noletter}  { /* method declaration: change to CCMode */
 		    skipspaces();
 		    BEGIN( CCMode);
 		    return METHOD;
 		}
-[\\]function/{noletter} {   /* function declaration: change to CCMode */
+[\\]ccMethod/{noletter}   {   /* method declaration: change to CCMode */
+		    skipspaces();
+		    BEGIN( CCMode);
+		    return METHOD;
+		}
+[\\]ccFunction/{noletter} {   /* function declaration: change to CCMode */
 		    skipspaces();
 		    BEGIN( CCMode);
 		    return FUNCTION;
 		}
-[\\]functiontemplate/{noletter} {   /* function template declaration: 
-			       change to CCMode */
+[\\]ccFunctionTemplate/{noletter} {   /* function template declaration: 
+			                 change to CCMode */
 		    skipspaces();
 		    BEGIN( CCMode);
 		    return FUNCTIONTEMPLATE;
 		}
-[\\]variable/{noletter} {   /* variable declaration: change to CCMode */
+[\\]ccVariable/{noletter} {   /* variable declaration: change to CCMode */
 		    skipspaces();
 		    BEGIN( CCMode);
 		    return VARIABLE;
 		}
-[\\]typedef/{noletter} {   /* typedef declaration: change to CCMode */
+[\\]ccTypedef/{noletter} {   /* typedef declaration: change to CCMode */
 		    skipspaces();
 		    BEGIN( CCMode);
 		    return TYPEDEF;
 		}
-[\\]enum/{noletter} {   /* enum declaration: change to CCMode */
+[\\]ccNestedType/{noletter} {   /* nested type declaration: change to CCMode */
+		    skipspaces();
+		    BEGIN( CCMode);
+		    return NESTEDTYPE;
+		}
+[\\]ccEnum/{noletter} {   /* enum declaration: change to CCMode */
 		    skipspaces();
 		    BEGIN( CCMode);
 		    return ENUM;
 		}
-[\\]globalfunction/{noletter} {   /* function declaration: change to CCMode */
+[\\]ccStruct/{noletter} {   /* struct declaration: change to CCMode */
+		    skipspaces();
+		    BEGIN( CCMode);
+		    return STRUCT;
+		}
+[\\]ccGlobalFunction/{noletter} {  /* function declaration: change to CCMode */
 		    skipspaces();
 		    BEGIN( CCMode);
 		    return GLOBALFUNCTION;
 		}
-[\\]globalfunctiontemplate/{noletter} {   /* function template declaration: 
+[\\]ccGlobalFunctionTemplate/{noletter} {   /* function template declaration: 
 			       change to CCMode */
 		    skipspaces();
 		    BEGIN( CCMode);
 		    return GLOBALFUNCTIONTEMPLATE;
 		}
-[\\]globalvariable/{noletter} {   /* variable declaration: change to CCMode */
+[\\]ccGlobalVariable/{noletter} {  /* variable declaration: change to CCMode */
 		    skipspaces();
 		    BEGIN( CCMode);
 		    return GLOBALVARIABLE;
 		}
-[\\]globaltypedef/{noletter} {   /* typedef declaration: change to CCMode */
+[\\]ccGlobalTypedef/{noletter} {   /* typedef declaration: change to CCMode */
 		    skipspaces();
 		    BEGIN( CCMode);
 		    return GLOBALTYPEDEF;
 		}
-[\\]globalenum/{noletter} {   /* enum declaration: change to CCMode */
+[\\]ccGlobalEnum/{noletter} {   /* enum declaration: change to CCMode */
 		    skipspaces();
 		    BEGIN( CCMode);
 		    return GLOBALENUM;
 		}
-[\\]declaration/{noletter} {   /* general declaration: change to CCMode */
+[\\]ccGlobalStruct/{noletter} {   /* struct declaration: change to CCMode */
+		    skipspaces();
+		    BEGIN( CCMode);
+		    return GLOBALSTRUCT;
+		}
+[\\]ccDeclaration/{noletter} {   /* general declaration: change to CCMode */
 		    skipspaces();
 		    BEGIN( CCMode);
 		    return DECLARATION;
 		}
-[\\]hidden/{noletter}   {
+[\\]ccHidden/{noletter}   {
 		    skipspaces();
 	  	    return HIDDEN;
 		}
-[\\]unchecked/{noletter}  { 
+[\\]ccUnchecked/{noletter}  { 
 	            /* trigger a global boolean and treat it like a space */
 		    skipspaces();
 		    unchecked_tag = 1;
@@ -422,21 +462,26 @@ bfblockintro    [\{][\\](bf)
 		    BEGIN( INITIAL);
 		    return CPROGEND;
                 }
+[\\]"cprogfile{"[^\}]*"}"    {
+	            yylval.string.text = yytext + 11;
+		    yylval.string.len  = yyleng - 12;
+	  	    return CPROGFILE;
+                 }
 
-[\\]"begin{HtmlOnly}" {
+[\\]"begin{ccHtmlOnly}" {
 		    BEGIN( HTMLGROUPMode);
 		    return HTMLBEGIN;
                 }
-<HTMLGROUPMode>[\\]"end{HtmlOnly}"  {
+<HTMLGROUPMode>[\\]"end{ccHtmlOnly}"  {
 		    BEGIN( INITIAL);
 		    return HTMLEND;
                 }
 
-[\\]"begin{TexOnly}" {
+[\\]"begin{ccTexOnly}" {
 		    BEGIN( TEXONLYMODE);
 		    return TEXONLYBEGIN;
                 }
-<TEXONLYMODE>[\\]"end{TexOnly}"  {
+<TEXONLYMODE>[\\]"end{ccTexOnly}"  {
 		    BEGIN( INITIAL);
 		    return TEXONLYEND;
                 }
@@ -444,10 +489,10 @@ bfblockintro    [\{][\\](bf)
 		    yylval.character   = yytext[0];
 		    return CHAR;
 		}
-[\\]LatexHtml{w}[\{]  {
+[\\]ccTexHtml{w}[\{]  {
 		    return LATEXHTML;
                 }
-[\\]Anchor{w}[\{]  {
+[\\]ccAnchor{w}[\{]  {
 		    /* The first parameter is the URL, the second is the */
                     /* message that will be highlighted */
 		    BEGIN( HTMLMODE);
@@ -464,12 +509,12 @@ bfblockintro    [\{][\\](bf)
 
  /* Specialized keywords from the manual style */
  /* -------------------------------------------------------------- */
-[\\]CCstyle/{noletter}  {   /* CCstyle formatting: change to NestingMode */
+[\\]ccStyle/{noletter}  {   /* CCstyle formatting: change to NestingMode */
 		    skipspaces();
 		    BEGIN( NestingMode);
 		    return CCSTYLE;
 		}
-<INITIAL,MMODE,NestingMode>[\\]var/{noletter}      {
+<INITIAL,MMODE,NestingMode>[\\]ccVar/{noletter}      {
 		    skipspaces();
 		    if ( creationvariable) {
 	                yylval.string.text = formatted_creationvariable;
@@ -481,7 +526,7 @@ bfblockintro    [\{][\\](bf)
 		    }
 		    return STRING;
                  }
-<INITIAL,MMODE,NestingMode>[\\]purevar/{noletter}      {
+<INITIAL,MMODE,NestingMode>[\\]ccPureVar/{noletter}      {
 		    skipspaces();
 		    if ( creationvariable) {
 	                yylval.string.text = creationvariable;
@@ -493,7 +538,7 @@ bfblockintro    [\{][\\](bf)
 		    }
 		    return STRING;
                  }
-<INITIAL,MMODE,NestingMode>[\\]classname/{noletter} {
+<INITIAL,MMODE,NestingMode>[\\]ccClassName/{noletter} {
 		    skipspaces();
 		    if ( formatted_class_name) {
 	                yylval.string.text = formatted_class_name;
@@ -505,7 +550,7 @@ bfblockintro    [\{][\\](bf)
 		    }
 		    return STRING;
                  }
-<INITIAL,MMODE,NestingMode>[\\]pureclassname/{noletter} {
+<INITIAL,MMODE,NestingMode>[\\]ccPureClassName/{noletter} {
 		    skipspaces();
 		    if ( class_name) {
 	                yylval.string.text = class_name;
@@ -517,7 +562,7 @@ bfblockintro    [\{][\\](bf)
 		    }
 		    return STRING;
                  }
-<INITIAL,MMODE,NestingMode>[\\]classtemplatename/{noletter} {
+<INITIAL,MMODE,NestingMode>[\\]ccClassTemplateName/{noletter} {
 		    skipspaces();
 		    if ( formatted_template_class_name) {
 	                yylval.string.text = formatted_template_class_name;
@@ -529,7 +574,7 @@ bfblockintro    [\{][\\](bf)
 		    }
 		    return STRING;
                  }
-<INITIAL,MMODE,NestingMode>[\\]puretemplatename/{noletter} {
+<INITIAL,MMODE,NestingMode>[\\]ccPureClassTemplateName/{noletter} {
 		    skipspaces();
 		    if ( template_class_name) {
 	                yylval.string.text = template_class_name;
@@ -541,9 +586,13 @@ bfblockintro    [\{][\\](bf)
 		    }
 		    return STRING;
                  }
-[\\]CCsection/{noletter} {  
+[\\]ccSection/{noletter} {  
 		    skipspaces();
 		    return CCSECTION; 
+                 }
+[\\]ccSubsection/{noletter} {  
+		    skipspaces();
+		    return CCSUBSECTION; 
                  }
 [\\]CC/{noletter}        {
 		    skipspaces();
@@ -551,7 +600,7 @@ bfblockintro    [\{][\\](bf)
 		    yylval.string.len  = 3;
 		    return STRING;
                  }
-[\\]gg/{noletter}        {
+[\\]gcc/{noletter}        {
 		    skipspaces();
 	            yylval.string.text = "g++";
 		    yylval.string.len  = 3;
@@ -578,6 +627,12 @@ bfblockintro    [\{][\\](bf)
 <INITIAL,MMODE>[\\]R/{noletter}         {
 		    skipspaces();
 	            yylval.string.text = "<B>R</B>";
+		    yylval.string.len  = -1;
+		    return STRING;
+                 }
+<INITIAL,MMODE>[\\]Q/{noletter}         {
+		    skipspaces();
+	            yylval.string.text = "<B>Q</B>";
 		    yylval.string.len  = -1;
 		    return STRING;
                  }
@@ -621,50 +676,145 @@ bfblockintro    [\{][\\](bf)
 		    yylval.string.len  = -1;
 		    return STRING;
                  }
-[\\]definition/{noletter} {
+[\\]ccDefinition/{noletter} {
 		    skipspaces();
 	            yylval.string.text = "<H3>Definition</H3>";
 		    yylval.string.len  = -1;
 		    return STRING;
                  }
-[\\]creation/{noletter}  {
+[\\]ccParameters/{noletter} {
+		    skipspaces();
+	            yylval.string.text = "<H3>Parameters</H3>";
+		    yylval.string.len  = -1;
+		    return STRING;
+                 }
+[\\]ccConstants/{noletter} {
+		    skipspaces();
+	            yylval.string.text = "<H3>Constants</H3>";
+		    yylval.string.len  = -1;
+		    return STRING;
+                 }
+[\\]ccTypes/{noletter} {
+		    skipspaces();
+	            yylval.string.text = "<H3>Types</H3>";
+		    yylval.string.len  = -1;
+		    return STRING;
+                 }
+[\\]ccCreation/{noletter}  {
 		    skipspaces();
 	            yylval.string.text = "<H3>Creation</H3>";
 		    yylval.string.len  = -1;
 		    return STRING;
                  }
-[\\]operations/{noletter} {
+[\\]ccOperations/{noletter} {
 		    skipspaces();
 	            yylval.string.text = "<H3>Operations</H3>";
 		    yylval.string.len  = -1;
 		    return STRING;
                  }
-[\\]implementation/{noletter} {
+[\\]ccImplementation/{noletter} {
 		    skipspaces();
 	            yylval.string.text = "<H3>Implementation</H3>";
 		    yylval.string.len  = -1;
 		    return STRING;
                  }
-[\\]example/{noletter}   {
+[\\]ccExample/{noletter}   {
 		    skipspaces();
 	            yylval.string.text = "<H3>Example</H3>";
 		    yylval.string.len  = -1;
 		    return STRING;
                  }
-[\\]precond/{noletter}      {
+[\\]ccHeading/{noletter}   {
+                    return HEADING;
+                 }
+[\\]ccPrecond/{noletter}      {
 		    skipspaces();
 	            yylval.string.text = "<BR><STRONG>Precondition: </STRONG>";
 		    yylval.string.len  = -1;
 		    return STRING;
                  }
-[\\]threecolumns/{noletter} {
+[\\]ccPostcond/{noletter}      {
+		    skipspaces();
+	            yylval.string.text ="<BR><STRONG>Postcondition: </STRONG>";
+		    yylval.string.len  = -1;
+		    return STRING;
+                 }
+[\\]ccCommentHeading/{noletter}   {
+                    return COMMENTHEADING;
+                 }
+[\\]ccSetTwoOfThreeColumns/{noletter} {
 		    skipspaces();
 		    return GOBBLETWOPARAMS;
                  }
-[\\]constructorcolumn/{noletter} {
+[\\]ccSetThreeColumns/{noletter} {
+		    skipspaces();
+		    return GOBBLETHREEPARAMS;
+                 }
+[\\]ccSetOneOfTwoColumns/{noletter} {
 		    skipspaces();
 		    return GOBBLEONEPARAM;
                  }
+[\\]ccSetTwoColumns/{noletter} {
+		    skipspaces();
+		    return GOBBLETWOPARAMS;
+                 }
+[\\]ccPropagateThreeToTwoColumns/{noletter}  {
+                    yylval.string.text = " ";
+                    yylval.string.len  = 0;
+                    return SPACE;
+}
+[\\]g?def{w}[\\]{idfier}[^\{]*    {
+                    ignore_input_tag = true;
+                    BEGIN( NestingMode);
+                    return GOBBLEONEPARAM;
+}
+[\\](re)?newcommand{w}    {
+                    ignore_input_tag = true;
+                    BEGIN( NestingMode);
+                    return NEWCOMMAND;
+}
+[\\]ccTagDefaults{w}  {
+                    tag_defaults();
+                    yylval.string.text = " ";
+                    yylval.string.len  = 0;
+                    return SPACE;
+}
+[\\]ccTagFullDeclarations{w}  {
+                    tag_full_declarations();
+                    yylval.string.text = " ";
+                    yylval.string.len  = 0;
+                    return SPACE;
+}
+[\\]ccChapterAuthor{w}   {
+                    return CHAPTERAUTHOR;
+}
+
+
+
+ /* Try tabular and tabbing environments                           */
+ /* -------------------------------------------------------------- */
+
+<INITIAL,MMODE,NestingMode>[\\]begin[\{]((tabbing)|(eqnarray"*"?))[\}]     |
+<INITIAL,MMODE,NestingMode>[\\]begin[\{]((tabular)|(array))[\}][\{][^\}]*[\}] {
+	            tab_tag = true;
+	            yylval.string.text = 
+                        "<TABLE><TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP>";
+		    yylval.string.len  = -1;
+		    return STRING;
+                 }
+<INITIAL,MMODE,NestingMode>[\\]end[\{]((tabbing)|(tabular)|(eqnarray"*"?)|(array))[\}]   {
+	            tab_tag = false;
+	            yylval.string.text = "</TD></TR></TABLE>";
+		    yylval.string.len  = -1;
+		    return STRING;		    
+                 }
+<INITIAL,MMODE,NestingMode>[\\][=>]         {
+	            yylval.string.text = 
+                        "</TD><TD ALIGN=LEFT VALIGN=TOP NOWRAP>";
+		    yylval.string.len  = -1;
+		    return STRING;		    
+                 }
+	
 
  /* keywords from TeX/LaTeX that have an easy HTML counterpart     */
  /* -------------------------------------------------------------- */
@@ -770,7 +920,7 @@ bfblockintro    [\{][\\](bf)
 		     yylval.string.len  = 5;
 		     return STRING;
 		 }
-<INITIAL,MMODE,NestingMode>[\\][_^#$]  {
+<INITIAL,MMODE,NestingMode>[\\][_^#$~%]  {
 		    yylval.character = yytext[1];
 		    return CHAR;
                  }
@@ -782,6 +932,12 @@ bfblockintro    [\{][\\](bf)
 		 }
 <INITIAL,MMODE,NestingMode>[\\][\\]         {
 		    skipoptionalparam();
+		    if ( tab_tag) {
+	                yylval.string.text = 
+                            "</TD></TR><TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP>";
+		        yylval.string.len  = -1;
+		        return STRING;
+                    }
 	            yylval.string.text = " ";
 		    yylval.string.len  = 1;
 	  	    return SPACE;
@@ -895,12 +1051,13 @@ bfblockintro    [\{][\\](bf)
 [\\]((smallskip)|(protect)|(sloppy))/{noletter}           {}
 [\\]((maketitle)|(tableofcontents))/{noletter}            {}
 [\\]((begin)|(end))[\{]document[\}]                       {}
+[\\]((tiny)|(scriptsize)|(footnotesize)|(small)|(normalsize)|(large)|(Large))/{noletter}
+
 
 [\\]newsavebox{w}[\{]          |
 [\\]usebox{w}[\{]              |
 [\\][*]?hspace{w}[\{]          |
-[\\][*]?vspace{w}[\{]          |
-[\\]g?def{w}[\\]{letter}+[^\{]*[\{]  {
+[\\][*]?vspace{w}[\{]          {
 	            /* CCstyle formatting: change to NestingMode */
 		    BEGIN( NestingMode);
 		    return IGNOREBLOCK;
@@ -911,13 +1068,8 @@ bfblockintro    [\{][\\](bf)
 		    BEGIN( NestingMode);
 		    return IGNOREBLOCK;
 		}
-[\\]((textwidth)|(textheight)|(topmargin)|(evensidemargin)|(oddsidemargin)|(headsep)|(parindent)|(parskip)){w}[-+0-9.]+{w}..  {}
+[\\]((textwidth)|(textheight)|(topmargin)|(evensidemargin)|(oddsidemargin)|(headsep)|(parindent)|(parskip)|(beforecprogskip)|(aftercprogskip)){w}(({texmacro})|({measure}))  {}
 
-[\\]newcommand{w}[\{][^\}]*[\}]([\[][^\]]*[\]])[\{]   {
-	            /* CCstyle formatting: change to NestingMode */
-		    BEGIN( NestingMode);
-		    return IGNOREBLOCK;
-		}
 [\\]((savebox)|(setlength)|(setcounter)){w}[\{]     {
 	            /* CCstyle formatting: change to NestingMode */
 		    BEGIN( NestingMode);
@@ -961,19 +1113,19 @@ bfblockintro    [\{][\\](bf)
 
  /* Grouping symbols */
  /* ---------------- */
-[\\][\{]        {
+<INITIAL,MMODE,NestingMode>[\\][\{]        {
 	            yylval.character = '{';
 	  	    return CHAR;
 		}
-[\\][\}]        {
+<INITIAL,MMODE,NestingMode>[\\][\}]        {
 	            yylval.character = '}';
 	  	    return CHAR;
 		}
-[\\]left.       {
+<INITIAL,MMODE,NestingMode>[\\]left.       {
 	            yylval.character = yytext[5];
 	  	    return CHAR;
 		}
-[\\]right.      {
+<INITIAL,MMODE,NestingMode>[\\]right.      {
 	            yylval.character = yytext[6];
 	  	    return CHAR;
 		}
@@ -1027,6 +1179,19 @@ bfblockintro    [\{][\\](bf)
 	            yylval.character = yytext[0];
 	  	    return CHAR;
 		}
+<INITIAL,NestingMode>[\\][/]  {}
+<INITIAL,MMODE,NestingMode>[&]  {
+                    if ( tab_tag) {
+	                yylval.string.text = 
+                            "</TD><TD ALIGN=LEFT VALIGN=TOP NOWRAP>";
+		        yylval.string.len  = -1;
+		        return STRING;		    
+                    }
+		    yylval.string.text = html_multi_character(yytext[0]);
+		    yylval.string.len  = strlen( yylval.string.text);
+		    return STRING;
+                }
+
 <INITIAL,NestingMode,MMODE,CPROGMode>.	{
 	            yylval.character = yytext[0];
 		    if ( is_html_multi_character( yylval.character)) {

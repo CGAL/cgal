@@ -281,6 +281,7 @@ main( int argc, char **argv) {
         (nParameters > MaxParameters) || (help_switch != NO_SWITCH)) {
         if (help_switch == NO_SWITCH)
             cerr << "Error: in parameter list" << endl;
+	cerr << "cc_extract $Revision$ (c) Lutz Kettner" << endl;
         cerr << "Usage: cc_extract [<options>] [<infile> ...]" << endl;
         cerr << "       -nomc        no main comments"  << endl;
         cerr << "       -nosc        no sub comments"  << endl;

@@ -1,22 +1,37 @@
+#!/bin/csh -f
+# **************************************************************************
+# 
+#  cc_check
+#  ===================
+#  A script to check the consistency between a specification written
+#  in a TeX file with the cc_manual.sty and the implementation in 
+#  a C++ header file.
 #
-# cgal_check
-# ==========
+#  The following programs are necessary to run this script
 #
-# csh script to check consistency between specification and
-# implementation of the CGAL library kernel.
-#
-# The following programs are necessary to run this script
-#
-#    o  cgal_build_checker
+#    o  cc_build_checker
 #    o  flex
 #    o  cc / gcc
 #
-# 1.1   30.10.95   Lutz Kettner, FU Berlin, Germany
+#  Author    : (c) 1997 Lutz Kettner
+#  Revision  : $Revision$
+#  Date      : $Date$
+# 
+# **************************************************************************
 
-if ( $?DEBUG) echo "# DEBUG defined; all commands will be echoed."
-# optionally the gcc compiler can set here
+# =============================================
+# Installation: chose the appropriate compiler:
+# =============================================
+# A C compiler can be specified here. Normally cc or gcc should work.
+# Note: cc does not work on SunOS 4.1.3 (BSD), but on SunOS 5...
+#set CC = gcc
 set CC = cc
 
+# =============================================
+# Installation: Nothing else below this line.
+# =============================================
+
+if ( $?DEBUG) echo "# DEBUG defined; all commands will be echoed."
 
 if ( $#argv < 1) goto usage
 set spec = ""
@@ -27,40 +42,48 @@ while ($#argv > 0)
 	if ( $#argv < 1) goto usage
 	break
     endif
+    if ( "$1" == "-a") then
+        shift
+	if ( $#argv < 1) goto usage
+	break
+    endif
     set spec = "$spec $1"
     shift
 end
 
-if ( $?DEBUG) echo "cgal_build_checker cgal_checker.yy cgal_checker.h $spec"
-cgal_build_checker cgal_checker.yy cgal_checker.h $spec
-if ( $?DEBUG) echo "flex -t -8 cgal_checker.yy > cgal_checker.c"
-flex -t -8 cgal_checker.yy > cgal_checker.c
-if ( $?DEBUG) echo "$CC -o cgal_checker cgal_checker.c"
-$CC -o cgal_checker cgal_checker.c
+if ( $?DEBUG) echo "cc_build_checker cc_checker.yy cc_checker.h $spec"
+cc_build_checker cc_checker.yy cc_checker.h $spec
+if ( $?DEBUG) echo "flex -t -8 cc_checker.yy > cc_checker.c"
+flex -t -8 cc_checker.yy > cc_checker.c
+if ( $?DEBUG) echo "$CC -o cc_checker cc_checker.c"
+$CC -o cc_checker cc_checker.c
 if ( $?DEBUG) then 
-    echo "# rm cgal_checker.yy cgal_checker.c cgal_checker.h cgal_checker.o"
+    echo "# rm cc_checker.yy cc_checker.c cc_checker.h cc_checker.o"
 else
-    rm cgal_checker.yy cgal_checker.c cgal_checker.h cgal_checker.o
+    rm cc_checker.yy cc_checker.c cc_checker.h
+    if ( -w cc_checker.o) rm cc_checker.o
 endif
-if ( $?DEBUG) echo "cgal_checker $argv"
-cgal_checker $argv
+if ( $?DEBUG) echo "cc_checker $argv"
+cc_checker $argv
 set returnvalue = $status
 if ( $returnvalue) then
-    echo '==>  NOTE: The program call `cgal_checker '"$argv""' can be used to"
-    echo '==>        check the sources again. Otherwise, remove it.'
-    if ( $returnvalue == 3) set returnvalue = 0
+   echo '==>  NOTE: The program call `cc_checker '"$argv""' can be used to"
+   echo '==>        check the sources again. Otherwise, remove `cc_checker'"'."
+   if ( $returnvalue == 3) set returnvalue = 0
 else
-    if ( $?DEBUG) then 
-        echo "# rm cgal_checker"
-    else
-        rm cgal_checker
-    endif
+   if ( $?DEBUG) then 
+       echo "# rm cc_checker"
+   else
+       rm cc_checker
+   endif
 endif
 exit $returnvalue
 
 usage:
+echo "$0 "'$Revision$'" (c) Lutz Kettner"
 echo "Usage: $0 <spec-files...> [-against [<options>] <impl-files...>]"
 echo "   or: $0 -against [<options>] <impl-files...>"
+echo "           -a          short form for -against"
 echo "           -fw         recognize FunnelWeb or AnyWeb keywords"
 echo "           -match      print all matched text"
 echo "           -unmatch    print all unmatched text"

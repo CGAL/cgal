@@ -2,7 +2,7 @@
  
   html_syntax.y
   =============================================================
-  Project   : CGAL merger tool for the specification task
+  Project   : Tools for the CC manual writing task around cc_manual.sty.
   Function  : grammatical parser for TeX and C++ code mixed files.
               Taylored for HTML manual generation.
   System    : bison, flex, C++ (g++)
@@ -20,6 +20,7 @@
 
 /* Declarations from lex.yy */
 /* ======================== */
+
 extern int set_CCMode;
 extern int set_NestingMode;
 extern int set_INITIAL;
@@ -56,6 +57,10 @@ char* text_block_to_string( const Text& T);
 /* for the bibliography */
 /* ==================== */
 extern bool first_bibitem;
+
+// This flag is true if we are inside a definition. here, \input and 
+// \include should not open a file.
+extern bool ignore_input_tag;
 
 /* Own prototypes */
 /* ============== */
@@ -104,18 +109,22 @@ Text* blockintroProcessing( const char* text, int len, Text* t);
 %token             FUNCTIONTEMPLATE
 %token             VARIABLE
 %token             TYPEDEF
+%token             NESTEDTYPE
 %token             ENUM
+%token             STRUCT
 %token             GLOBALFUNCTION
 %token             GLOBALFUNCTIONTEMPLATE
 %token             GLOBALVARIABLE
 %token             GLOBALTYPEDEF
 %token             GLOBALENUM
+%token             GLOBALSTRUCT
 %token             DECLARATION
 
 /* Special action keywords */
 /* ----------------------- */
 %token             CPROGBEGIN
 %token             CPROGEND
+%token <string>    CPROGFILE
 %token             HIDDEN
 
 %token             TEXONLYBEGIN
@@ -127,10 +136,16 @@ Text* blockintroProcessing( const char* text, int len, Text* t);
 
 %token             CCSTYLE
 %token             CCSECTION
+%token             CCSUBSECTION
+%token             HEADING
+%token             COMMENTHEADING
+%token             CHAPTERAUTHOR
 %token             GOBBLEONEPARAM
 %token             GOBBLETWOPARAMS
+%token             GOBBLETHREEPARAMS
 %token             IGNOREBLOCK
 %token             IGNORETWOBLOCKS
+%token             NEWCOMMAND
 %token             TTBLOCKINTRO
 %token             EMBLOCKINTRO
 %token             ITBLOCKINTRO
@@ -176,17 +191,24 @@ input:            /* empty */
                 | input stmt
 ;
 
-stmt:             string              {   handleBuffer( * $1); delete $1;}
+stmt:             string              {   handleBuffer( * $1); 
+                                          delete $1;
+                                      }
                 | whitespaces         {   handleText(   * $1, true); 
 		                          delete $1;
 		                      }
-		| verbatim_style         {   handleBuffer( * $1); delete $1;}
+		| verbatim_style      {   handleBuffer( * $1); 
+                                          delete $1;
+                                      }
                 | CHAPTER
 		  comment_sequence
-                  '}'                 {   handleChapter( * $2); delete $2;}
+                  '}'                 {   handleChapter( * $2); 
+                                          delete $2;
+                                      }
 		| BEGINCLASS
 		  classname           {   handleClass( $2->string());
-		                          delete $2;}
+		                          delete $2;
+                                      }
 		    decl_sequence 
 		  ENDCLASS
                                       {
@@ -196,7 +218,8 @@ stmt:             string              {   handleBuffer( * $1); delete $1;}
 				      }
 		| BEGINCLASSTEMPLATE
 		  classname           {   handleClassTemplate( $2->string());
-		                          delete $2;}
+		                          delete $2;
+		                      }
 		  decl_sequence
 		  ENDCLASSTEMPLATE
                                       {
@@ -212,6 +235,26 @@ stmt:             string              {   handleBuffer( * $1); delete $1;}
 					  handleString( "</VAR>");
 					  delete $3;
 		                      }
+		| HEADING  '{' comment_sequence '}'  {
+					  handleString( "<H3>");
+					  handleText( * $3);
+					  handleString( "</H3>");
+					  delete $3;
+		                      }
+		| COMMENTHEADING  '{' comment_sequence '}'  {
+					  handleString( "<BR><STRONG>");
+					  handleText( * $3);
+					  handleString( "</STRONG>");
+					  delete $3;
+		                      }
+                | CHAPTERAUTHOR  '{' comment_sequence '}' {
+                                if ( tag_chapter_author) {
+				  handleString( "<P><EM>");
+				  handleText( * $3);
+				  handleString( "</EM><P>");
+			        }
+			        delete $3;
+			      }
                 | global_tagged_declarator
 		| group
 ;
@@ -329,14 +372,47 @@ whitespaces:        whitespace  { $$ = new Text( * $1, managed); }
 
 whitespace:         SPACE       { $$ = new TextToken( $1.text, $1.len, true); }
                   | NEWLINE     { $$ = new TextToken( "\n", 1, true); }
+		  | GOBBLETHREEPARAMS comment_group comment_group comment_group
+                                { $$ = new TextToken( " ", 1, true);
+				  delete $2; 
+				  delete $3; 
+				  delete $4; 
+				}
 		  | GOBBLETWOPARAMS comment_group comment_group
                                 { $$ = new TextToken( " ", 1, true);
 				  delete $2; 
 				  delete $3; 
 				}
 		  | GOBBLEONEPARAM  comment_group
-                                { $$ = new TextToken( " ", 1, true); 
+                                { $$ = new TextToken( " ", 1, true);
 				  delete $2;
+				  if ( ignore_input_tag) {
+                                    ignore_input_tag = false;
+				    set_INITIAL = 1;
+				  }
+				}
+		  | NEWCOMMAND  comment_group comment_group
+                                { $$ = new TextToken( " ", 1, true);
+			          handleNewCommand( text_block_to_string(*$2),
+						    text_block_to_string(*$3));
+				  delete $2;
+				  delete $3;
+				  if ( ignore_input_tag) {
+                                    ignore_input_tag = false;
+				    set_INITIAL = 1;
+				  }
+				}
+		  | NEWCOMMAND  comment_group 
+                                '[' comment_sequence ']' 
+                                comment_group
+                                { $$ = new TextToken( " ", 1, true);
+				  delete $2;
+				  delete $4;
+				  delete $6;
+				  if ( ignore_input_tag) {
+                                    ignore_input_tag = false;
+				    set_INITIAL = 1;
+				  }
 				}
                   | IGNOREBLOCK comment_sequence '}'  { 
                                   $$ = new TextToken( " ", 1, true);
@@ -389,7 +465,9 @@ tagged_declarator:
 global_tagged_declarator:
                   SECTION
 		  comment_sequence
-                  '}'                 {   handleSection( * $2); delete $2;}
+                  '}'                 {   handleSection( * $2); 
+                                       ; //delete $2;
+                                      }
                 | SUBSECTION
 		  comment_sequence
                   '}'                 {   
@@ -408,7 +486,9 @@ global_tagged_declarator:
 		                      }
                 | BEGINBIBLIO
 		  comment_sequence
-                  ENDBIBLIO           {   handleBiblio( * $2); delete $2;}
+                  ENDBIBLIO           {   handleBiblio( * $2); 
+                                          delete $2;
+		                      }
 		| FUNCTION      declaration   comment_group {
 		                  handleFunctionDeclaration( $2->string(),
 							     * $3);
@@ -436,12 +516,24 @@ global_tagged_declarator:
 				  delete $3;
 		                }
  		| TYPEDEF       declaration   comment_group {
-		                  handleVariableDeclaration( $2->string(), * $3);
+		                  handleTypedefDeclaration( 
+                                      $2->string(), * $3);
+				  delete $2;
+				  delete $3;
+		                }
+ 		| NESTEDTYPE    declaration   comment_group {
+		                  handleNestedTypeDeclaration(  
+                                      $2->string(), * $3);
 				  delete $2;
 				  delete $3;
 		                }
  		| ENUM          declaration   comment_group {
 		                  handleEnumDeclaration( $2->string(), * $3);
+				  delete $2;
+				  delete $3;
+		                }
+ 		| STRUCT        declaration   comment_group {
+		                  handleStructDeclaration( $2->string(), * $3);
 				  delete $2;
 				  delete $3;
 		                }
@@ -472,6 +564,10 @@ global_tagged_declarator:
 		                  handleEnumDeclaration( $2->string());
 				  delete $2;
 		                }
+ 		| GLOBALSTRUCT        declaration   {
+		                  handleEnumDeclaration( $2->string());
+				  delete $2;
+		                }
  		| DECLARATION   declaration {
 		                  handleDeclaration( $2->string());
 				  delete $2;
@@ -492,7 +588,9 @@ hidden_keys:      CONSTRUCTOR
                 | FUNCTION
                 | VARIABLE
                 | TYPEDEF
+                | NESTEDTYPE
                 | ENUM
+                | STRUCT
 ;
 
 /* A sequence of words forming a comment */
@@ -604,6 +702,41 @@ compound_comment:   '{' full_comment_sequence '}' {
 		                  $$->append( *new TextToken( ")</H1>"));
 		                  $$->append( *new TextToken( "\n", 1, true));
 		                }
+                  | CCSUBSECTION '{' comment_sequence '}'  {
+				  $$ = $3;
+		                  $$->cons(   *new TextToken( " ", 1, true));
+		                  $$->cons(   *new TextToken( "<H2>"));
+		                  $$->cons(   *new TextToken( "\n", 1, true));
+		                  $$->append( *new TextToken( " ("));
+		                  $$->append( *new TextToken( 
+						       formatted_class_name));
+		                  $$->append( *new TextToken( ")</H2>"));
+		                  $$->append( *new TextToken( "\n", 1, true));
+		                }
+                  | HEADING '{' comment_sequence '}'  {
+                                  $$ = $3;
+		                  $$->cons(   *new TextToken( " ", 1, true));
+		                  $$->cons(   *new TextToken( "<H3>"));
+		                  $$->append( *new TextToken( "</H3>"));
+		                  $$->append( *new TextToken( "\n", 1, true));
+                                }
+                  | COMMENTHEADING '{' comment_sequence '}'  {
+                                  $$ = $3;
+		                  $$->cons(   *new TextToken( " ", 1, true));
+		                  $$->cons(   *new TextToken( "<BR><STRONG>"));
+		                  $$->append( *new TextToken( "</STRONG>"));
+		                  $$->append( *new TextToken( "\n", 1, true));
+                                }
+                  | CHAPTERAUTHOR  comment_group {
+                                  if ( tag_chapter_author) {
+                                    $$ = $2;
+				    $$->cons(   *new TextToken( "<P><EM>"));
+				    $$->append( *new TextToken( "</EM><P> "));
+				  } else {
+                                    $$ = new Text( managed);
+				    delete $2;
+				  }
+				}
                   | CREATIONVARIABLE   { $$ = new Text( managed);}
 ;
 
@@ -750,6 +883,11 @@ verbatim_style:   CPROGBEGIN string_with_nl_or_mt CPROGEND {
 				  $$->prepend( "<PRE>" , 5);
 				  $$->add(     "</PRE>", 6);
                                 }
+                | CPROGFILE     {
+                                  $$ = readFileInBuffer($1.text);
+				  $$->prepend( "<PRE>" , 5);
+				  $$->add(     "</PRE>", 6);
+                                }
                 | HTMLBEGIN string_with_nl_or_mt HTMLEND {
                                   $$ = $2;
                                 }
@@ -774,8 +912,8 @@ verbatim_style:   CPROGBEGIN string_with_nl_or_mt CPROGEND {
 			char* s = text_block_to_string( * $4);
 			$$->add( s);
 			$$->add(     "</A>");
-			delete s;
-			delete $4;
+		        delete[] s;
+		        delete $4;
 		    }
 ;
 texonly_style:    TEXONLYBEGIN string_with_nl TEXONLYEND {
@@ -918,3 +1056,4 @@ Text* blockintroProcessing( const char* text, int len, Text* t) {
     }
     return t;
 }
+

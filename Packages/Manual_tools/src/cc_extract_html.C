@@ -2,7 +2,7 @@
  
   cc_extract_html.C
   =============================================================
-  Project   : CGAL merger tool for the specification task
+  Project   : Tools for the CC manual writing task around cc_manual.sty.
   Function  : main program, command line parameter parsing
   System    : bison, flex, C++ (g++)
   Author    : (c) 1995 Lutz Kettner
@@ -17,9 +17,18 @@
 #include <stream.h>
 #include <fstream.h>
 #include <ctype.h>
+#include <assert.h>
 #include <database.h>
 #include <html_config.h>
 
+
+/* Constants:                        */
+/* ================================= */
+const char* prog_name    = "cc_extract_html";
+const char* prog_release = "$Revision$";
+
+/* Configurable command line options */
+/* ================================= */
 typedef char Switch;
  
 #define NO_SWITCH    0
@@ -29,23 +38,145 @@ typedef char Switch;
 Switch  trace_switch  = NO_SWITCH;
 Switch  line_switch   = NO_SWITCH;
 
+Switch  config_switch = NO_SWITCH;
 
-/* A couple of strings for tayloring */
-/* ================================= */
-// no newlines in here (because it is used in the index file) !!
-const char* general_comment = 
-    "<!-- Manual page automatically extracted from the TeX source. -->";
+// This factor is multiplied to the actual width of an C++ declaration
+// right before the test for multiple lines formatting occurs.
+// A greater value forces declarations to be printed in multiple lines.
+double stretch_factor = 1.6;  // The command line option -strech multiplies
+                              // a factor to this builtin default.
 
-const char* general_navigation = 
-    "<A HREF=\"contents.html\">Table of Contents</A>,\n"
-    "<A HREF=\"biblio.html\">Bibliography</A>,\n"
-    "<A HREF=\"manual_index.html\">Index</A>,\n"
-    "<A HREF=\"title.html\">Title Page</A>";
+// Path for the HTML conversion tools for the default configuration files.
+// This path will be compiled into the cc_extract_html program. It is set 
+// in the Makefile. The same variable has to be configured in the 
+// cc_manual_to_html script.
+#ifndef HTML_DEFAULT_PATH
+#define HTML_DEFAULT_PATH   NULL
+#endif
+const char* config_path    = HTML_DEFAULT_PATH;
 
-// no newlines in here (because it is used in the index file) !!
-const char* html_address_trailer = 
-    "<HR><address> The <A HREF=\"http://www.cs.ruu.nl/CGAL/\">"
-    "<TT>CGAL</TT> Project</A>.</address>";
+// Manual date, release, title, and author used in filtering the config files.
+const char* manual_date    = NULL;
+const char* manual_release = NULL;
+const char* manual_title   = NULL;
+const char* manual_author  = NULL;
+
+// Directory for the temporary files. A default is given.
+// This directory is the output directory for this program. Usually, 
+// the script cc_manual_to_html makes a own tmp directory and removes 
+// it afterwards. The path must terminate with a slash.
+const char* tmp_path       = "/usr/tmp/";
+
+
+/* Customization tags for the style */
+/* ================================ */
+bool tag_chapter_author;
+bool tag_replace_prefix;     // not supported yet
+bool tag_replace_include;    // not supported yet
+bool tag_long_param_layout;  // not supported yet
+
+bool tag_rm_const_ref_pair;
+bool tag_rm_eigen_class_name;
+bool tag_operator_layout;
+bool tag_rm_trailing_const;
+
+void tag_defaults() {
+    tag_chapter_author         = true;
+    tag_replace_prefix         = false;
+    tag_replace_include        = false;
+    tag_long_param_layout      = false;
+
+    tag_rm_const_ref_pair      = true;
+    tag_rm_eigen_class_name    = true;
+    tag_operator_layout        = true;
+    tag_rm_trailing_const      = true;
+}
+
+void tag_full_declarations() {
+    tag_rm_const_ref_pair      = false;
+    tag_rm_eigen_class_name    = false;
+    tag_operator_layout        = false;
+    tag_rm_trailing_const      = false;
+}
+
+void handleNewCommand( char* idfier, char* body){
+    // check the body for true or false
+    const char* p = body;
+    while ( *p && isspace( *p))
+        p++;
+    bool tag = ( 0 == strncmp( p, "\\ccTrue", 7));
+
+    // check the different idfiers
+    p = idfier;
+    while ( *p && isspace( *p))
+        p++;
+    if ( 0 == strncmp( p, "\\ccTagChapterAuthor", 
+                   strlen("\\ccTagChapterAuthor")))
+        tag_chapter_author = tag;
+    if ( 0 == strncmp( p, "\\ccTagReplacePrefix", 
+                   strlen("\\ccTagReplacePrefix")))
+        tag_replace_prefix = tag;
+    if ( 0 == strncmp( p, "\\ccTagReplaceInclude", 
+                   strlen("\\ccTagReplaceInclude")))
+        tag_replace_include = tag;
+    if ( 0 == strncmp( p, "\\ccAlternateThreeColumn",  // compatibility
+                   strlen("\\ccAlternateThreeColumn")))
+        tag_long_param_layout = !tag;
+    if ( 0 == strncmp( p, "\\ccLongParamLayout", 
+                   strlen("\\ccLongParamLayout")))
+        tag_long_param_layout = tag;
+    if ( 0 == strncmp( p, "\\ccTagRmTrailingConst", 
+                   strlen("\\ccTagRmTrailingConst")))
+        tag_rm_trailing_const = tag;
+    if ( 0 == strncmp( p, "\\ccTagRmEigenClassName", 
+                   strlen("\\ccTagRmEigenClassName")))
+        tag_rm_eigen_class_name = tag;
+    if ( 0 == strncmp( p, "\\ccTagRmConstRefPair", 
+                   strlen("\\ccTagRmConstRefPair")))
+        tag_rm_const_ref_pair = tag;
+    if ( 0 == strncmp( p, "\\ccTagOperatorLayout", 
+                   strlen("\\ccTagOperatorLayout")))
+        tag_operator_layout = tag;
+    delete[] idfier;
+    delete[] body;
+}
+
+/* Sort keys for the index            */
+/* ================================== */
+// The index is organized in a set of fixed topics. 
+
+// scramble is used to write index entries with scope in front.
+// The scope is a class but it should not get hyperlinked for its own.
+// Has to be same as in the cc_anchor_header.
+const char* index_scramble = "<!scramble>";
+
+// sort_keys are used to sort the index according to different sections.
+// A sort_key is followed by a 0 to indicate the section title.
+// A sort_key is followed by a 1 to indicate a normal entry.
+
+const char* sort_key_class            = "<!sort B";
+const char* sort_key_nested_type      = "<!sort C";
+const char* sort_key_struct           = "<!sort D";
+const char* sort_key_enum             = "<!sort E";
+const char* sort_key_enum_tags        = "<!sort F";
+const char* sort_key_typedef          = "<!sort G";
+const char* sort_key_variable         = "<!sort H";
+const char* sort_key_function         = "<!sort I";
+const char* sort_key_member_function  = "<!sort J";
+
+void write_headers_to_index( ostream& out){
+    out << sort_key_class       << "0 !><P><LI><B>Classes</B><P>" << endl;
+    out << sort_key_nested_type << "0 !><P><LI><B>Nested Types</B><P>" << endl;
+    out << sort_key_struct      << "0 !><P><LI><B>Structs</B><P>" << endl;
+    out << sort_key_enum        << "0 !><P><LI><B>Enums</B><P>" << endl;
+    out << sort_key_enum_tags   << "0 !><P><LI><B>Enum Tags</B><P>" << endl;
+    out << sort_key_typedef     << "0 !><P><LI><B>Typedefs</B><P>" << endl;
+    out << sort_key_variable    << "0 !><P><LI><B>Global Variables and "
+                                   "Consts</B><P>" << endl;
+    out << sort_key_function    << "0 !><P><LI><B>Functions</B><P>" << endl;
+    //    out << sort_key_member_function  << "0 !><P><LI><B>Member Functions</B><P>"
+    //	                             << endl;
+}
 
 /* table size and font size constants */
 /* ================================== */
@@ -57,11 +188,6 @@ const int table_2c_first_col  = 30;  // in percent
 const int table_2c_second_col = 70;  // in percent
 
 const double width_per_character  = 5.5;
-
-// This factor is multiplied to the actual width of an C++ declaration
-// right before the test for multiple lines formatting occurs.
-// A greater value forces declarations to be printed in multiple lines.
-double stretch_factor = 1.6;
 
 /* An empty List as empty comment for global declarations */
 /* ====================================================== */
@@ -94,13 +220,25 @@ char* class_name = 0;
 char* template_class_name = 0;
 char* formatted_class_name = 0;
 char* formatted_template_class_name = 0;
+char* scrambled_template_class_name = 0;
 
-char* html_suffix       = ".html";
-char* chapter_prefix    = "Chapter_";
-char* anchor_filename   = "anchor_rules";
-char* contents_filename = "contents.html";
-char* bib_filename      = "biblio.html";
-char* index_filename    = "manual_index.html";
+const char* html_suffix       = ".html";
+const char* chapter_prefix    = "Chapter_";
+const char* anchor_filename   = "cc_anchor_rules";
+const char* contents_filename = "contents.html";
+const char* bib_filename      = "biblio.html";
+const char* index_filename    = "cc_index_body";
+
+const char* cc_anchor_header  = "cc_anchor_header";
+const char* cc_anchor_footer  = "cc_anchor_footer";
+const char* cc_manual_header  = "cc_manual_header";
+const char* cc_manual_footer  = "cc_manual_footer";
+const char* cc_toc_header     = "cc_toc_header";
+const char* cc_toc_footer     = "cc_toc_footer";
+const char* cc_biblio_header  = "cc_biblio_header";
+const char* cc_biblio_footer  = "cc_biblio_footer";
+const char* cc_index_header   = "cc_index_header";
+const char* cc_index_footer   = "cc_index_footer";
 
 ostream* main_stream     = 0;
 ostream* class_stream    = 0;
@@ -145,19 +283,302 @@ char* addPrefix( const char* prefix, const char* name) {
     return fullname;
 }
 
+/* Auxiliary functions for stream handling */
+/* ======================================= */
+
+bool exist_file( const char* name){
+    istream* in = new ifstream( name);
+    if ( ! *in)
+        return false;
+    return true;
+}
+
+void assert_file_write( ostream& out, const char* name){
+    if ( ! out) {
+        cerr << ' ' << endl 
+	     << prog_name << ": error: cannot write to file `" 
+	     << name << "'." << endl;
+	exit(1);
+    }
+}
+
+bool exist_file_with_path( const char* path, const char* name){
+    char* full_name = addPrefix( path, name);
+    istream* in = new ifstream( full_name);
+    delete[] full_name;
+    if ( ! *in)
+        return false;
+    return true;
+}
+
+istream* open_file_for_read( const char* name){
+    istream* in = new ifstream( name);
+    if ( ! *in) {
+        cerr << ' ' << endl 
+	     << prog_name << ": error: cannot open file `" << name
+	     << "' for reading." << endl;
+	exit(1);
+    }
+    return in;
+}
+
+istream* open_file_with_path_for_read( const char* path, const char* name){
+    char* full_name = addPrefix( path, name);
+    istream* in = new ifstream( full_name);
+    if ( ! *in) {
+        cerr << ' ' << endl 
+	     << prog_name << ": error: cannot open file `" << full_name
+	     << "' for reading." << endl;
+	exit(1);
+    }
+    delete[] full_name;
+    return in;
+}
+
+ostream* open_file_with_path_for_write( const char* path, const char* name){
+    char* full_name = addPrefix( path, name);
+    ostream* out = new ofstream( full_name);
+    if ( ! *out) {
+        cerr << ' ' << endl 
+	     << prog_name << ": error: cannot open file `" << full_name
+	     << "' for writing." << endl;
+	exit(1);
+    }
+    delete[] full_name;
+    return out;
+}
+
+
+/* read a file into a buffer   */
+/* The name has a trailing '}' */
+/* =========================== */
+Buffer* readFileInBuffer(const char* name) {
+    int len = strlen( name);
+    const char* p = name + len - 1;
+    while( p != name && ( *p == ' ' || *p == '}'))
+        p--;
+    char* filename = new char[p-name+2];
+    strncpy( filename, name, p-name+1);
+    filename[p-name+1] = '\0';
+    istream* in = open_file_for_read(filename);
+    delete[] filename;
+    char c;
+    Buffer* b = new Buffer;
+    while( in->get(c))
+        b->add(c);
+    return b;
+}
+
+
+/* Filter a config file                    */
+/* ======================================= */
+/* Filtering means substituting of the variable names and */
+/* skipping of braces if the variable is undefined.       */
+
+void filter_config_file( istream& in, ostream& out) {
+    char c;
+    while( in.get(c)) {
+        if ( c == '}')
+	    continue;
+        if ( c == '%' && in.get(c)) {
+	    char d;
+	    in.get(d);
+	    if ( d == '{') {
+	        bool is_empty = false;
+		switch( c) {
+		case 'c':
+		    is_empty = class_name == NULL;
+		    break;
+		case 'u':
+		    is_empty = main_stream == &cout;
+		    break;
+		case 'd':
+		    is_empty = manual_date == NULL;
+		    if ( !is_empty)
+		        is_empty = (strlen(manual_date) == 0);
+		    break;
+		case 'r':
+		    is_empty = manual_release == NULL;
+		    if ( !is_empty)
+		        is_empty = (strlen(manual_release) == 0);
+		    break;
+		case 't':
+		    is_empty = manual_title == NULL;
+		    if ( !is_empty)
+		        is_empty = (strlen(manual_title) == 0);
+		    break;
+		case 'a':
+		    is_empty = manual_author == NULL;
+		    if ( !is_empty)
+		        is_empty = (strlen(manual_author) == 0);
+		    break;
+		default:
+		    cerr << prog_name << ": warning: unknown variable scope %"
+			 << c << "{...} in a config file found." << endl;
+		    out.put('%');
+		    out.put(c);
+		    out.put(d);
+		}
+		if ( is_empty) {
+		    // remove proper nested parantheses. Check for the
+		    // escape sequence %{ or %}.
+		    int nesting = 1; // count paranthesis nesting.
+		    c = d;
+		    while( in.get(d) && nesting > 0) {
+		        if ( c != '%') {
+			    if ( d == '{')
+			        nesting ++;
+			    if ( d == '}')
+			        nesting --;
+			}
+		        c = d;
+		    }
+		}
+	    } else {
+		switch( c) {
+		case '0':
+		    out << prog_name;
+		    break;
+		case 'p':
+		    out << prog_release;
+		    break;
+		case 'f':
+		    out << current_filename;
+		    break;
+		case 'c':
+		    if ( class_name)
+		        out << template_class_name;
+		    break;
+		case 'u':
+		    if ( main_stream != &cout)
+		        out <<  main_filename;
+		    break;
+		case 'd':
+		    if ( manual_date ) 
+		        out << manual_date;
+		    break;
+		case 'r':
+		    if ( manual_release ) 
+		        out << manual_release;
+		    break;
+		case 't':
+		    if ( manual_title ) 
+		        out << manual_title;
+		    break;
+		case 'a':
+		    if ( manual_author ) 
+		        out << manual_author;
+		    break;
+		case '%':
+		case '{':
+		case '}':
+		    out.put(c);
+		    break;
+		default:
+		    cerr << prog_name << ": warning: unknown variable %" << c 
+			 << " in a config file found." << endl;
+		    out.put('%');
+		    out.put(c);
+		}
+		out.put(d);
+	    }
+	} else {
+	    if ( in)
+	        out.put(c);
+	    else
+		out.put('%');
+	}
+    }
+}
+
+
+/* Auxiliary functions to handle config files */
+/* ========================================== */
+
+istream* open_config_file( const char* name){
+    if ( config_switch == NO_SWITCH) {
+        // check if the file exists in the current directory
+        if ( exist_file( name))
+	    return (open_file_for_read( name));
+    }
+    return( open_file_with_path_for_read( config_path, name));
+}
+
+void copy_and_filter_config_file( const char* name, ostream& out){
+    istream* in  = open_config_file( name);
+    filter_config_file( *in, out);
+    delete in;
+}
+
+void copy_config_file( const char* name){
+    istream* in  = open_config_file( name);
+    ostream* out = open_file_with_path_for_write( tmp_path, name);
+    filter_config_file( *in, *out);
+    delete in;
+    assert_file_write( *out, name);
+    delete out;
+}
+
+
+/* Filter decl. before writing to the index comment */
+/* ================================================ */
+
+void filter_for_index_comment( ostream& out, const char* text) {
+    while( *text) {
+        switch (*text) {
+	case '<':
+	    out << '(';	  
+	    break;
+	case '>':
+	    out << ')';	  
+	    break;
+	case '&':
+	    out << '_';	  
+	    break;
+	default:
+	    out << *text;
+	}
+        text++;
+    }
+}
+
+// Filter characters that might not be allowed in hyperlink anchors.
+void filter_for_index_anchor( ostream& out, const char* text) {
+    while( *text) {
+        switch ( *text) {
+	case '<':
+	    out << '(';
+	    break;
+	case '>':
+	    out << '(';
+	    break;
+	case '"':
+	case '&':
+	case ' ':
+	    out << '_';
+	    break;
+	default:
+	    out << *text;
+	}
+        text++;
+    }
+}
+
+
 
 /* HTML generating functions */
 /* ========================= */
 
-void open_html( ostream& out, const char* classname) {
-    out << "<HEAD>\n<TITLE>The CGAL Kernel Manual: "
-	<< classname << "</TITLE>\n"
-	<< general_comment
-	<< "\n</HEAD>\n\n<BODY BGCOLOR=\"FAF8E8\" TEXT=\"#000000\">";
+void open_html( ostream& out) {
+    istream* in = open_config_file( cc_manual_header);
+    filter_config_file( *in, out);
+    delete in;
 }
 
 void close_html( ostream& out) {
-    out << "\n\n" << html_address_trailer << "\n</BODY>\n</HTML>" << endl;
+    istream* in = open_config_file( cc_manual_footer);
+    filter_config_file( *in, out);
+    delete in;
 }
 
 bool is_html_multi_character( char c) {
@@ -186,13 +607,24 @@ void print_ascii_to_html( ostream& out, const char* txt) {
     }
 }
 
+void print_ascii_len_to_html( ostream& out, const char* txt, int n) {
+    while( n) {
+        if ( is_html_multi_character( *txt))
+	    out << html_multi_character( *txt);
+	else
+	    out << *txt;
+	++txt;
+	n--;
+    }
+}
+
 // This version eliminates multiple spaces.
 void print_ascii_to_html_spc( ostream& out, const char* txt) {
     while( *txt) {
         if ( is_html_multi_character( *txt))
 	    out << html_multi_character( *txt);
 	else
-	    if ( *txt > ' ' || txt[1] > ' ')
+	    if ( *txt > ' ' || (*txt > '\0' && txt[1] > ' '))
 	        out << *txt;
 	++txt;
     }
@@ -211,6 +643,11 @@ int strlen_ascii_to_html( const char* txt) {
 }
 
 char* convert_ascii_to_html( const char* txt) {
+    if ( txt == NULL) {
+        char *q = new char[1];
+	q[0] = '\0';
+	return q;
+    }
     char* s = new char[ strlen_ascii_to_html( txt) + 1];
     char* p = s;
     while( *txt) {
@@ -226,10 +663,37 @@ char* convert_ascii_to_html( const char* txt) {
     return s;
 }
 
+// A scope operator is also appended
+char* convert_ascii_to_scrambled_html( const char* txt) {
+    char* s = new char[  strlen_ascii_to_html( txt) + 3 
+                       + strlen( index_scramble)];
+    char* p = s;
+    bool tag = true;
+    while( *txt) {
+        if ( is_html_multi_character( *txt)) {
+	    const char* q = html_multi_character( *txt);
+	    while ( *q)
+	        *p++ = *q++;
+	} else
+	    *p++ = *txt;
+	++txt;
+	if ( tag) {
+	    const char* q = index_scramble;
+	    while ( *q)
+	        *p++ = *q++;
+	    tag = false;
+	}
+    }
+    *p++ = ':';
+    *p++ = ':';
+    *p = '\0';
+    return s;
+}
+
 double estimate_html_size( const char* s) {
     int n = 0;
     while ( *s) {
-        if ( *s > ' ' || s[1] > ' ')
+        if ( *s > ' ' || (*s > '\0' && s[1] > ' '))
 	    n++;
         ++s;
     }
@@ -244,6 +708,12 @@ void three_cols_html_begin( ostream& out, bool big_col1) {
 	<< "<TR><TD ALIGN=LEFT VALIGN=TOP WIDTH="
 	<< table_first_col << "% NOWRAP" << ( big_col1 ? " COLSPAN=3>" : ">")
 	<< indNewline << "<VAR>" << outdent << indNewline;
+}
+
+void three_cols_html_premature_end( ostream& out) {
+    out << indent << indNewline	<<"</VAR>" << indNewline << "</TD>";
+    out << "</TR>" << indNewline 
+	<< "</TABLE><!3>" << outdent << outdent << indNewline;
 }
 
 void three_cols_html_second( ostream& out, bool big_col1, bool big_col2) {
@@ -279,6 +749,12 @@ void two_cols_html_begin( ostream& out) {
 	<< "<TR><TD ALIGN=LEFT VALIGN=TOP WIDTH="
 	<< table_2c_first_col << "% NOWRAP COLSPAN=2>"
 	<< indNewline << "<VAR>" << outdent << indNewline;
+}
+
+void two_cols_html_premature_end( ostream& out) {
+    out << indent << indNewline	<<"</VAR>" << indNewline << "</TD>";
+    out << "</TR>" << indNewline 
+	<< "</TABLE><!2>" << outdent << outdent << indNewline;
 }
 
 void two_cols_html_second( ostream& out, bool empty_col2) {
@@ -422,11 +898,56 @@ int print_html_text_block( ostream &out, const Text& T,
 }
 
 
-/* Formatting functions that work like the cgal_manual.sty */
-/* ======================================================= */
+/* template declarations for functions and others */
+/* ============================================== */
+/* It depends on the layout (2 or 3 columns)      */
+
+const char* handle_template_layout( ostream &out, 
+				    const char* decl, 
+				    bool three_col) {
+    const char* new_pos = decl;
+    const char* p = decl;
+    while ( *p && isspace( *p))
+        p++;
+    if ( strncmp( "template", p, 8) == 0) {
+        p += 8;
+	while ( *p && isspace( *p))
+	    p++;
+	if ( *p == '<') {
+	    p++;
+	    // Here we know that it is a template declaration. Now we
+            // look for the end of the template params using a nesting counter.
+	    int nesting = 1;
+	    while ( *p && nesting > 0) {
+	        if ( *p == '<') 
+		    nesting++;
+		else if ( *p == '>')
+		    nesting --;
+		p++;
+	    }
+	    new_pos = p;
+	    // Print the template declaration.
+	    if ( three_col)
+	        three_cols_html_begin( out, true);
+	    else
+	        two_cols_html_begin( out);
+
+	    print_ascii_len_to_html( out, decl, p - decl);
+
+	    if ( three_col)
+	        three_cols_html_premature_end( out);
+	    else
+	        two_cols_html_premature_end( out);
+	}
+    }
+    return new_pos;
+}
+
+/* Formatting functions that work like the cc_manual.sty */
+/* ===================================================== */
 
 // This function separates the return value from the scope, the function name,
-// the parameter list (without paranthesis) and the rest of the signature..
+// the parameter list (without paranthesis) and the rest of the signature.
 // Therefore, the string in signature will be parsed from the end
 // looking for the first ')' and then for the matching '(', using
 // a nesting count for '(', ')', '{', '}', '<', '>'. Then, the next token is 
@@ -563,7 +1084,7 @@ void split_function_declaration( const char* signature,
         return_value = 0;
 }
 
-// This function separates a varible declaration around the variable name.
+// This function separates a variable declaration around the variable name.
 // The rest might contain `)', array subscripts or an assignment. 
 // The scope might be empty, the return_value should not be empty. 
 // No fancy tricks like operators.
@@ -668,6 +1189,8 @@ void split_variable_declaration( const char* signature,
 }
 
 void remove_const_ref_pair( char* s) {
+    if ( ! tag_rm_const_ref_pair)
+        return;
     int state = 0; // 0 = no const, 1 = c, 2 = co, 3 = con, 4 = cons, 5 = const
     int nesting = 0;
     char* q;       // position of recently found const
@@ -736,40 +1259,25 @@ void remove_const_ref_pair( char* s) {
 }
 
 void remove_own_classname( char* s, const char* classname) {
+    if ( ! tag_rm_eigen_class_name)
+        return;
     if ( ! classname)
         return;
-    int nesting = 0;  // prepare to remove template params if necessary
-    int l = strlen( classname);
-    if ( ! l)
-        return;
-    while( *s) {
-        if ( strncmp( s, classname, l) == 0) {
-	    while( l--)
-	        *s++ = ' ';
-	    while( *s && *s <= ' ')
-	        ++s;
-	    if ( *s == '<') {
-	        // Classname with template params detected. Remove them.
-	        while ( *s) {
-		    if ( *s == '(' || *s == '<' || *s == '[' || *s == '{')
-		        ++nesting;
-		    if ( *s == ')' || *s == '>' || *s == ']' || *s == '}')
-		        --nesting;
-		    if  (*s == '>' && nesting == 0)
-		        break;
-		    *s++ = ' ';
-		}
-		if ( nesting || *s != '>') {
-		    printErrorMessage( MalformedTemplateParamError);
-		    exit( 1);
-		}
-		*s = ' ';
-	    }
+    // An easy algorithm (quadratic runtime worst case).
+    // The classname has to match exactly (and is removed at most once).
+    int l = strlen( s) - strlen( classname);
+    int l2 = strlen( classname);
+    int i;
+    for ( i = 0; i <= l; i++) {
+        if ( strncmp( s, classname, l2) == 0)
 	    break;
-        }
-	++s;
+	s++;
     }
-    return;
+    if ( i <= l) {
+        // Classname found. Remove it.
+	for( ; l2 > 0; l2--)
+	    *s++ = ' ';
+    }
 }
 
 // This function separates each parameter in a parameter list.
@@ -827,8 +1335,10 @@ bool format_operators( int n, int& modifiable_n,
 		       double& exp_size, 
 		       bool& ignore_params) {
     // Assume that the syntax is not malformed (error messages are
-    // provided elsewhere, namely compiler or cgal_manual.sty).
+    // provided elsewhere, namely compiler or cc_manual.sty).
     // Non matching operators are printed in functional notation.
+    if ( ! tag_operator_layout)
+        return false;
     if ( *op <= ' ')
         return false;
     if ( op[1] <= ' ') {  // one character operators
@@ -974,6 +1484,19 @@ bool format_operators( int n, int& modifiable_n,
     return true;
 }
 
+
+void print_rest( ostream& out, const char* txt){
+    out << ' ';
+    while( *txt && *txt != ';') {
+        if ( is_html_multi_character( *txt))
+	    out << html_multi_character( *txt);
+	else
+	    if ( *txt > ' ' || (*txt > '\0' && txt[1] > ' '))
+	        out << *txt;
+	++txt;
+    }
+}
+
 void format_function( bool method, const char* signature, const Text& T) {
     char* return_value;
     char* scope;
@@ -985,6 +1508,9 @@ void format_function( bool method, const char* signature, const Text& T) {
     bool  conversion_operator = false;  // ... or conversion operator 
                                         // or (normal) function
     char* op_symbols;
+
+    while( *signature && *signature == ' ')
+        signature++;
 
     split_function_declaration( signature, 
 				return_value,
@@ -1015,6 +1541,38 @@ void format_function( bool method, const char* signature, const Text& T) {
  
     three_cols_html_begin( *current_stream, 
 			   exp_size_ret > table_width*table_first_col/100.0);
+    // ---------
+    // index
+    if ( !method) {
+	char* formatted_return   = convert_ascii_to_html( return_value);
+	char* formatted_scope    = convert_ascii_to_html( scope);
+	char* formatted_function = convert_ascii_to_html( function_name);
+	char* formatted_params   = convert_ascii_to_html( parameter_list);
+	char* formatted_rest     = convert_ascii_to_html( rest);
+	// Make only the function name a hyperlink. Types could be substituted
+	// according the rules.
+	*index_stream << sort_key_function << '1';
+	filter_for_index_comment( *index_stream, function_name);
+	*index_stream << ' ';
+	filter_for_index_comment( *index_stream, signature);
+	*index_stream << "!><UL><LI><VAR>" 
+		      << formatted_return << ' ' << formatted_scope
+		      << "<A HREF=\"" << current_filename << "#Function_";
+	filter_for_index_anchor( *index_stream, signature);
+	*index_stream << "\">" << formatted_function << "</A>"
+		      << "( " << formatted_params << ")" << formatted_rest
+		      << "</VAR></UL>" << endl;
+	*current_stream << "<A NAME=\"Function_";
+	filter_for_index_anchor( *current_stream, signature);
+	*current_stream << "\"></A>" << endl;
+	delete[] formatted_return;
+	delete[] formatted_scope;
+	delete[] formatted_function;
+	delete[] formatted_params;
+	delete[] formatted_rest;
+    }
+    // end index
+    // ----------
    
     if ( return_value)
         print_ascii_to_html_spc( *current_stream, return_value);
@@ -1034,11 +1592,14 @@ void format_function( bool method, const char* signature, const Text& T) {
 	int m = n;
 	while ( m--) {
 	    remove_const_ref_pair( p);
-	    remove_own_classname( p, class_name);
+	    remove_own_classname( p, template_class_name);
 	    exp_size += estimate_html_size( p) + width_per_character;
 	    p += strlen( p) + 1;  // skip to next parameter
 	}
     }
+    if (!tag_rm_trailing_const)
+        exp_size += estimate_html_size( rest);
+
     bool failed = false;
     if ( normal_operator) {
 	exp_size += estimate_html_size( op_symbols);
@@ -1136,6 +1697,8 @@ void format_function( bool method, const char* signature, const Text& T) {
 		*current_stream << " ()";
 	}
     }
+    if (!tag_rm_trailing_const)
+        print_rest( *current_stream, rest);
     bool is_empty_comment = is_text_block_empty( T);
     three_cols_html_third( *current_stream, 
 			   exp_size > table_width * table_second_col / 100.0,
@@ -1150,7 +1713,9 @@ void format_function( bool method, const char* signature, const Text& T) {
 			 is_empty_comment);
 }
 
-void format_variable( const char* signature, const Text& T) {
+void format_variable( const char* signature, 
+		      const Text& T, 
+		      bool is_typedef = false) {
     char* return_value;
     char* scope;
     char* variable_name; 
@@ -1163,27 +1728,6 @@ void format_variable( const char* signature, const Text& T) {
 				rest);
     char* formatted_var = convert_ascii_to_html( variable_name);
 
-    if ( &T == &empty_comment) {
-	// generate a substitution rule for hyperlinking
-	*anchor_stream << "[a-zA-Z0-9_]\"" << formatted_var
-		       << "\"    { ECHO; }" << endl;
-	*anchor_stream << "\"" << formatted_var
-		       << "\"[a-zA-Z0-9_]    { ECHO; }" << endl;
-	*anchor_stream << '"' << formatted_var
-		       << "\"    { fputs( \"<A HREF=\\\""
-		       << current_filename << "#Var_" << variable_name 
-		       << "\\\">" << formatted_var << "</A>\", stdout); }" 
-		       << endl;
-
-	*current_stream << "<A NAME=\"Var_" << variable_name 
-			<< "\"></A>" << endl;
-
-	// index
-	*index_stream << "<!sort D " << variable_name
-		      << "!><UL><LI><VAR>" << formatted_var
-		      << "</VAR></UL>" << endl;
-    }
-
     double exp_size_ret = 0.0;
     double exp_size     = 0.0;
     if ( return_value) {
@@ -1194,6 +1738,47 @@ void format_variable( const char* signature, const Text& T) {
     three_cols_html_begin( *current_stream, 
 			   exp_size_ret > table_width*table_first_col/100.0);
    
+    if ( class_name == NULL) {
+	// generate a substitution rule for hyperlinking
+	*anchor_stream << "[a-zA-Z0-9_]\"" << formatted_var
+		       << "\"    { ECHO; }" << endl;
+	*anchor_stream << "\"" << formatted_var
+		       << "\"[a-zA-Z0-9_]    { ECHO; }" << endl;
+	*anchor_stream << '"' << formatted_var
+		       << "\"    { fputs( \"<A HREF=\\\""
+		       << current_filename 
+		       << (is_typedef ? "#Typedef_" :  "#Var_" )
+		       << variable_name 
+		       << "\\\">" << formatted_var << "</A>\", stdout); }" 
+		       << endl;
+
+	// index
+	*index_stream << (is_typedef ? sort_key_typedef :
+			  sort_key_variable) << '1'; 
+	filter_for_index_comment( *index_stream, variable_name);
+	*index_stream << "!><UL><LI><VAR>" << formatted_var
+		      << "</VAR></UL>" << endl;
+    } else {
+	// index
+	char* scrambled_var = convert_ascii_to_scrambled_html( variable_name);
+	*index_stream << (is_typedef ? sort_key_typedef :
+			  sort_key_variable) << '1'; 
+	filter_for_index_comment( *index_stream, template_class_name);
+	*index_stream << "::";
+	filter_for_index_comment( *index_stream, variable_name);
+	*index_stream << "!><UL><LI><A HREF=\""
+		      << current_filename 
+		      << (is_typedef ? "#Typedef_" :  "#Var_" )
+		      << variable_name
+		      << "\"><VAR>" << scrambled_template_class_name
+		      << scrambled_var << "</VAR></A></UL>" << endl;
+	delete[] scrambled_var;
+    }
+    *current_stream << "<A NAME=\""
+		    << (is_typedef ? "Typedef_" :  "Var_" )
+		    << variable_name << "\"></A>" << endl;
+    // end index
+
     if ( return_value)
         print_ascii_to_html_spc( *current_stream, return_value);
 
@@ -1265,7 +1850,7 @@ void format_constructor( const char* signature, const Text& T) {
 	int m = n;
 	while ( m--) {
 	    remove_const_ref_pair( p);
-	    remove_own_classname( p, class_name);
+	    remove_own_classname( p, template_class_name);
 	    exp_size += estimate_html_size( p) + width_per_character;
 	    p += strlen( p) + 1;  // skip to next parameter
 	}
@@ -1314,6 +1899,43 @@ void format_constructor( const char* signature, const Text& T) {
     two_cols_html_end( *current_stream, is_empty_comment);
 }
 
+void format_nested_type( const char* nested_type_name, const Text& T) {
+    char* formatted_type = convert_ascii_to_html( nested_type_name);
+    char* scrambled_type = convert_ascii_to_scrambled_html( nested_type_name);
+    two_cols_html_begin( *current_stream);
+
+    // index
+    *index_stream << sort_key_nested_type << '1';
+    filter_for_index_comment( *index_stream, template_class_name);
+    *index_stream << "::";
+    filter_for_index_comment( *index_stream, nested_type_name);
+    *index_stream << "!><UL><LI><A HREF=\""
+		  << current_filename << "#Nested_type_" << nested_type_name
+                  << "\"><VAR>" << scrambled_template_class_name
+		  << scrambled_type << "</VAR></A></UL>" << endl;
+    *current_stream << "<A NAME=\"Nested_type_" << nested_type_name 
+		    << "\"></A>" << endl;
+    // end index
+
+    // first, estimate size
+    double exp_size =   estimate_html_size( template_class_name)
+                      + estimate_html_size( nested_type_name) 
+                      + 2 * width_per_character;
+    exp_size *= stretch_factor;
+
+    print_ascii_to_html_spc( *current_stream, template_class_name);
+    *current_stream << "::";
+    print_ascii_to_html_spc( *current_stream, nested_type_name);
+
+    bool is_empty_comment = is_text_block_empty( T);
+    two_cols_html_second( *current_stream, is_empty_comment);
+    print_html_text_block( *current_stream, T);
+    *current_stream << indNewline << "<P>";
+    two_cols_html_end( *current_stream, is_empty_comment);
+    delete[] formatted_type;
+    delete[] scrambled_type;
+}
+
 void format_enum( const char* signature, const Text& T) {
     char* return_value;
     char* scope;
@@ -1331,7 +1953,9 @@ void format_enum( const char* signature, const Text& T) {
 
     char* formatted_enum = convert_ascii_to_html( enum_name);
 
-    if ( &T == &empty_comment) {
+    two_cols_html_begin( *current_stream);
+
+    if ( class_name == NULL) {
 	// generate a substitution rule for hyperlinking
 	*anchor_stream << "[a-zA-Z0-9_]\"" << formatted_enum
 		       << "\"    { ECHO; }" << endl;
@@ -1343,15 +1967,27 @@ void format_enum( const char* signature, const Text& T) {
 		       << formatted_enum << "</A>\", stdout); }" 
 		       << endl;
 
-	*current_stream << "<A NAME=\"Enum_" << enum_name << "\"></A>" << endl;
-
 	// index
-	*index_stream << "<!sort E " << enum_name
-		      << "!><UL><LI><VAR>" << formatted_enum
+	*index_stream << sort_key_enum << '1';
+	filter_for_index_comment( *index_stream, enum_name);
+	*index_stream << "!><UL><LI><VAR>" << formatted_enum
 		      << "</VAR></UL>" << endl;
+    } else {
+	// index
+	char* scrambled_enum = convert_ascii_to_scrambled_html( enum_name);
+	*index_stream << sort_key_enum << '1';
+	filter_for_index_comment( *index_stream, template_class_name);
+	*index_stream << "::";
+	filter_for_index_comment( *index_stream, enum_name);
+	*index_stream << "!><UL><LI><A HREF=\""
+		      << current_filename << "#Enum_" << enum_name
+		      << "\"><VAR>" << scrambled_template_class_name
+		      << scrambled_enum << "</VAR></A></UL>" << endl;
+	delete[] scrambled_enum;
     }
+    *current_stream << "<A NAME=\"Enum_" << enum_name << "\"></A>" << endl;
+    // end index
 
-    two_cols_html_begin( *current_stream);
     // first, estimate size
     double exp_size = 0.0;
     if ( scope)
@@ -1397,14 +2033,15 @@ void format_enum( const char* signature, const Text& T) {
 	        ++p;
 	    print_ascii_to_html_spc( *current_stream, p);
 
-	    if ( &T == &empty_comment) {
+	    if ( class_name == NULL) {
 		// index: print enum tags with their (possible) initializers
-		*index_stream << "<!sort ET " << p << "!><UL><LI><VAR>";
+		*index_stream << sort_key_enum_tags  << '1' << p 
+			      << "!><UL><LI><VAR>";
 		print_ascii_to_html_spc( *index_stream, p);
 		*index_stream << "</VAR></UL>" << endl;
 
 		// generate a substitution rule for hyperlinking
-		// Here, the initializer has to suppressed
+		// Here, the initializer has to be suppressed
 		char* q = p;
 		while( *q && *q != '=')
 		    ++q;
@@ -1425,6 +2062,23 @@ void format_enum( const char* signature, const Text& T) {
 			       << endl;
 		delete[] tmp_param;
 		*q = c_tmp; // restore initializer
+	    } else {
+		// index: print enum tags with their (possible) initializers
+	        char* scrambled_tag = convert_ascii_to_scrambled_html( p);
+		*index_stream << sort_key_enum_tags  << '1' << p 
+			      << "!><UL><LI><VAR>";
+		print_ascii_to_html_spc( *index_stream, p);
+		*index_stream << "</VAR></UL>" << endl;
+
+		*index_stream << sort_key_enum_tags << '1';
+		filter_for_index_comment( *index_stream, template_class_name);
+		*index_stream << "::";
+		filter_for_index_comment( *index_stream, p);
+		*index_stream << "!><UL><LI><A HREF=\""
+			      << current_filename << "#Enum_" << enum_name
+			      << "\"><VAR>" << scrambled_template_class_name
+			      << scrambled_tag << "</VAR></A></UL>" << endl;
+		delete[] scrambled_tag;
 	    }
 
 	    p += strlen( p) + 1;  // skip to next parameter
@@ -1446,6 +2100,127 @@ void format_enum( const char* signature, const Text& T) {
     delete[] scope;
     delete[] formatted_enum;
     delete[] enum_name;
+    delete[] parameter_list; 
+    print_html_text_block( *current_stream, T);
+    *current_stream << indNewline << "<P>";
+    two_cols_html_end( *current_stream, is_empty_comment);
+}
+
+
+void format_struct( const char* signature, const Text& T) {
+    char* return_value;
+    char* scope;
+    char* struct_name; 
+    char* parameter_list; 
+    const char* rest;
+
+    split_function_declaration( signature, 
+				return_value,
+				scope,
+				struct_name,
+				parameter_list,
+				rest,
+				true);
+
+    char* formatted_struct = convert_ascii_to_html( struct_name);
+    two_cols_html_begin( *current_stream);
+
+    if ( class_name == NULL) {
+	// generate a substitution rule for hyperlinking
+	*anchor_stream << "[a-zA-Z0-9_]\"" << formatted_struct
+		       << "\"    { ECHO; }" << endl;
+	*anchor_stream << "\"" << formatted_struct
+		       << "\"[a-zA-Z0-9_]    { ECHO; }" << endl;
+	*anchor_stream << '"' << formatted_struct
+		       << "\"    { fputs( \"<A HREF=\\\""
+		       << current_filename << "#Struct_" << struct_name 
+		       << "\\\">" << formatted_struct << "</A>\", stdout); }" 
+		       << endl;
+	// index
+	*index_stream << sort_key_struct << '1';
+	filter_for_index_comment( *index_stream, struct_name);
+	*index_stream << "!><UL><LI><VAR>" << formatted_struct
+		      << "</VAR></UL>" << endl;
+    } else {
+	// index
+	char* scrambled_struct = convert_ascii_to_scrambled_html( struct_name);
+	*index_stream << sort_key_struct << '1';
+	filter_for_index_comment( *index_stream, template_class_name);
+	*index_stream << "::";
+	filter_for_index_comment( *index_stream, struct_name);
+	*index_stream << "!><UL><LI><A HREF=\""
+		      << current_filename << "#Struct_" << struct_name
+		      << "\"><VAR>" << scrambled_template_class_name
+		      << scrambled_struct << "</VAR></A></UL>" << endl;
+	delete[] scrambled_struct;
+    }
+    *current_stream << "<A NAME=\"Struct_" << struct_name << "\"></A>" << endl;
+    // end index
+
+    // first, estimate size
+    double exp_size = 0.0;
+    if ( scope)
+	exp_size += estimate_html_size( scope);
+    if ( return_value)
+	exp_size += estimate_html_size( return_value);
+
+
+    exp_size += estimate_html_size( formatted_struct) 
+              + 3.0 * width_per_character;
+    int n = 0;
+    if ( parameter_list) {
+        exp_size += 2 * width_per_character;
+        n = separate_parameter_list( parameter_list);
+	char* p = parameter_list;
+	int m = n;
+	while ( m--) {
+	    exp_size += estimate_html_size( p) + width_per_character;
+	    p += strlen( p) + 1;  // skip to next parameter
+	}
+    }
+    exp_size *= stretch_factor;
+    if ( exp_size > table_width && parameter_list)
+        *current_stream << "<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0>"
+	                   "<TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP>" 
+	                << indNewline;
+
+    if ( return_value) {
+        print_ascii_to_html_spc( *current_stream, return_value);
+	*current_stream << ' ';
+    }
+    if ( scope)
+        print_ascii_to_html_spc( *current_stream, scope);
+    *current_stream << formatted_struct;
+    if ( parameter_list) {
+        *current_stream << " { ";
+	if ( exp_size > table_width)
+	    *current_stream << "</TD><TD ALIGN=LEFT VALIGN=TOP NOWRAP>" 
+			    << indNewline;
+	char* p = parameter_list;
+	while ( n--) {
+	    while ( *p && *p <= ' ')
+	        ++p;
+	    print_ascii_to_html_spc( *current_stream, p);
+
+	    p += strlen( p) + 1;  // skip to next parameter
+	    if ( n) {
+	        *current_stream << ", ";
+		if ( exp_size > table_width)
+		    *current_stream << "<BR>" << indNewline;
+	    }
+	}
+        *current_stream << "};";
+	if ( exp_size > table_width)
+	    *current_stream << "</TD></TR></TABLE>" << indNewline;
+    } else
+        *current_stream << ';';
+
+    bool is_empty_comment = is_text_block_empty( T);
+    two_cols_html_second( *current_stream, is_empty_comment);
+    delete[] return_value;
+    delete[] scope;
+    delete[] formatted_struct;
+    delete[] struct_name;
     delete[] parameter_list; 
     print_html_text_block( *current_stream, T);
     *current_stream << indNewline << "<P>";
@@ -1489,12 +2264,7 @@ void handleChapter(  const Text& T) {
 			  << main_filename 
 			  << "\">" << chapter_title << "</A>" << endl;
         close_html( *class_stream);
-	if ( ! *class_stream) {
-	    cerr << ' ' << endl 
-		 << "cgal_extract_html: error: cannot write to file `" 
-		 <<  class_filename << "'." << endl;
-	    exit(1);
-	}
+	assert_file_write( *class_stream, class_filename);
 	delete   class_stream;
 	delete[] class_filename;
 	class_stream = 0;
@@ -1508,65 +2278,41 @@ void handleChapter(  const Text& T) {
 		     << new_main_filename 
 		     << "\">" << chapter_title << "</A>" << endl;
         close_html( *main_stream);
-	if ( ! *main_stream) {
-	    cerr << ' ' << endl 
-		 << "cgal_extract_html: error: cannot write to file `" 
-		 <<  main_filename << "'." << endl;
-	    exit(1);
-	}
+	assert_file_write( *main_stream, main_filename);
 	delete   main_stream;
 	delete[] main_filename;
 	main_stream = 0;
 	main_filename = 0;
     }
     main_filename = new_main_filename;
-    main_stream = new ofstream( main_filename);
-    if ( ! main_stream) {
-        cerr << ' ' << endl 
-	     << "cgal_extract_html: error: cannot open main chapter file `" 
-	     << main_filename << "'." << endl;
-	exit(1);
-    }
+    main_stream = open_file_with_path_for_write( tmp_path, main_filename);
     current_stream   = main_stream;
     current_filename = main_filename;
-    open_html( *main_stream, chapter_title);
-    // print navigation header
-    *main_stream << general_navigation << "\n<HR>\n" << endl;
+    open_html( *main_stream);
 
     *main_stream << "<H1>" << chapter_title << "</H1>" << endl;
 
     // table of contents
     *contents_stream << "    <LI> <A HREF=\"" << main_filename 
 		     << "\">" << chapter_title << "</A>" << endl;
-
 }
 
 void handleBiblio(  const Text& T) {
     first_bibitem = true;
-    ofstream out( bib_filename);
-    if ( ! out) {
-        cerr << ' ' << endl 
-	     << "cgal_extract_html: error: cannot open bibliography file `" 
-	     << bib_filename << "'." << endl;
-	exit(1);
-    }
-    open_html( out, "Bibliography");
+    ostream* out = open_file_with_path_for_write( tmp_path, bib_filename);
+    istream* in  = open_config_file( cc_biblio_header);
+    filter_config_file( *in, *out);
 
-    // print navigation header
-    out << general_navigation << "\n<HR>\n" << endl;
-    out  << "<H1>Bibliography</H1>" << endl;
+    print_html_text_block( *out, T);
+    *out << "</TD></TR>" << endl;
 
-    out << "<TABLE>" << endl;
-    print_html_text_block( out, T);
+    delete in;
+    in = open_config_file( cc_biblio_footer);
+    filter_config_file( *in, *out);
 
-    out << "</TD></TR></TABLE>" << endl;
-    close_html( out);
-    if ( ! out) {
-        cerr << ' ' << endl 
-	     << "cgal_extract_html: error: cannot write to file `" 
-	     <<  bib_filename << "'." << endl;
-	exit(1);
-    }
+    assert_file_write( *out, bib_filename);
+    delete in;
+    delete out;
 }
 
 Buffer* handleCite( const char* l) {
@@ -1659,7 +2405,7 @@ void handleSection(  const Text& T) {
 }
 
 void handleLabel( const char* l) {
-    /* The lexical processing has removed the prantheses around */
+    /* The lexical processing has removed the parantheses around */
     /* \ref{...} macros from TeX, so here is the correct pattern match */
     /* to find them in the pre-HTML text */
     *anchor_stream << "[\\\\](page)?ref[ \\t]*\"" << l
@@ -1677,10 +2423,6 @@ void handleLabel( const char* l) {
 		   << current_filename 
 		   << "#" << l << "\\\">This Section</A>\", stdout); }" 
 		   << endl;    
-    // index
-    /* ...
-    *index_stream << "<!sort R " << l << "!><UL><LI>" << l << "</UL>" << endl;
-    ... */
 }
 
 void handleText( const Text& T, bool check_nlnl) {
@@ -1725,11 +2467,18 @@ void handleClasses( const char* classname, const char* template_cls) {
         template_class_name  = newstr( template_cls);
     else
         template_class_name  = newstr( classname);
+    assert( template_class_name);
     char* t_tmp_name = convert_ascii_to_html( template_class_name);
     formatted_template_class_name = new char[ strlen( t_tmp_name) + 12];
     strcpy( formatted_template_class_name, "<VAR>");
     strcat( formatted_template_class_name, t_tmp_name);
     strcat( formatted_template_class_name, "</VAR>");
+    delete[] t_tmp_name;
+    t_tmp_name = convert_ascii_to_scrambled_html( template_class_name);
+    scrambled_template_class_name = new char[ strlen( t_tmp_name) + 12];
+    strcpy( scrambled_template_class_name, "<VAR>");
+    strcat( scrambled_template_class_name, t_tmp_name);
+    strcat( scrambled_template_class_name, "</VAR>");
     delete[] t_tmp_name;
 
     if ( class_stream != 0) {
@@ -1737,12 +2486,7 @@ void handleClasses( const char* classname, const char* template_cls) {
         *class_stream << "<HR> Next class declaration: "
 		      << formatted_template_class_name << endl;
         close_html( *class_stream);
-	if ( ! *class_stream) {
-	    cerr << ' ' << endl 
-		 << "cgal_extract_html: error: cannot write to file `" 
-		 <<  class_filename << "'." << endl;
-	    exit(1);
-	}
+	assert_file_write( *class_stream, class_filename);
 	delete   class_stream;
 	delete[] class_filename;
 	class_stream = 0;
@@ -1756,30 +2500,23 @@ void handleClasses( const char* classname, const char* template_cls) {
     strcat( formatted_class_name, "</VAR>");
 
     class_filename = addSuffix( classname, html_suffix);
-    class_stream = new ofstream( class_filename);
-    if ( ! class_stream) {
-        cerr << ' ' << endl 
-	     << "cgal_extract_html: error: cannot open class file `" 
-	     << class_filename << "'." << endl;
-	exit(1);
-    }
-    open_html( *class_stream, classname);
-    // print navigation header
+    class_stream = open_file_with_path_for_write( tmp_path, class_filename);
+    open_html( *class_stream);
+    // Make a hyperlink in the chapter to the class file.
     if ( main_stream != &cout) {
         *main_stream  << "<UL><LI>\nClass declaration for "
 		      << formatted_template_class_name
 		      << ".</UL>\n" << endl;
-        *class_stream << "<A HREF=\"" << main_filename << "\">Chapter</A>,\n";
     }
-    *class_stream << general_navigation << "\n<HR>\n" << endl;
 
     // table of contents
     *contents_stream << "        <UL><LI> Class declaration of " 
 		     << formatted_template_class_name << "</UL>" << endl;
 
     // index
-    *index_stream << "<!sort C " << template_class_name 
-		  << "!><UL><LI>" << formatted_template_class_name 
+    *index_stream << sort_key_class << '1';
+    filter_for_index_comment( *index_stream, template_class_name);
+    *index_stream << "!><UL><LI>" << formatted_template_class_name 
 		  << "</UL>" << endl;
 
     current_stream   = class_stream;
@@ -1821,15 +2558,17 @@ void handleClassEnd( void) {
     delete[] template_class_name;
     delete[] formatted_class_name;
     delete[] formatted_template_class_name;
+    delete[] scrambled_template_class_name;
     class_name = 0;
     formatted_class_name = 0;
     template_class_name = 0;
     formatted_template_class_name = 0;
+    scrambled_template_class_name = 0;
     /* ...  Hack to implement the link from one class to the next class
     close_html( *class_stream);
     if ( ! *class_stream) {
         cerr << ' ' << endl 
-	     << "cgal_extract_html: error: cannot write to file `" 
+	     << prog_name << ": error: cannot write to file `" 
 	     <<  class_filename << "'." << endl;
 	exit(1);
     }
@@ -1863,14 +2602,17 @@ void handleClassTemplateEnd( void) {
 void handleDeclaration( const char* ) {}
 
 void handleMethodDeclaration( const char* decl, const Text& T) {
+    decl = handle_template_layout( *current_stream, decl, true);
     format_function( true, decl, T);
 }
 
 void handleFunctionDeclaration( const char* decl, const Text& T) {
+    decl = handle_template_layout( *current_stream, decl, true);
     format_function( false, decl, T);
 }
 
 void handleConstructorDeclaration( const char* decl, const Text& T) {
+    decl = handle_template_layout( *current_stream, decl, false);
     format_constructor( decl, T);
 }
 
@@ -1884,8 +2626,21 @@ void handleVariableDeclaration( const char* decl, const Text& T) {
     format_variable( decl, T);
 }
 
+void handleTypedefDeclaration( const char* decl, const Text& T) {
+    format_variable( decl, T, true);
+}
+
+void handleNestedTypeDeclaration( const char* decl, const Text& T) {
+    format_nested_type( decl, T);
+}
+
 void handleEnumDeclaration( const char* decl, const Text& T) {
     format_enum( decl, T);
+}
+
+void handleStructDeclaration( const char* decl, const Text& T) {
+    decl = handle_template_layout( *current_stream, decl, false);
+    format_struct( decl, T);
 }
 
 
@@ -1923,8 +2678,8 @@ main( int argc, char **argv) {
     int nParameters = 0;
     char *parameters[ MaxParameters + 1];
  
-    Switch help_switch = NO_SWITCH;
- 
+    Switch help_switch  = NO_SWITCH;
+    Switch dummy_switch;
     for (i = 1; i < argc; i++) {
 
         /* check switches */
@@ -1932,6 +2687,77 @@ main( int argc, char **argv) {
 	    yydebug = 1;
         endDetect();
         detectSwitch( line_switch, "line");
+        endDetect();
+
+        detectSwitch( dummy_switch, "date");
+            i++;
+            if ( i < argc)
+	        manual_date = argv[i];
+	    else {
+	        cerr << "error: option -date needs an additional parameter"
+		     << endl;
+	        nParameters = ErrParameters;
+	    }
+        endDetect();
+        detectSwitch( dummy_switch, "release");
+            i++;
+            if ( i < argc)
+	        manual_release = argv[i];
+	    else {
+	        cerr << "error: option -release needs an additional parameter"
+		     << endl;
+	        nParameters = ErrParameters;
+	    }
+        endDetect();
+        detectSwitch( dummy_switch, "title");
+            i++;
+            if ( i < argc)
+	        manual_title = argv[i];
+	    else {
+	        cerr << "error: option -title needs an additional parameter"
+		     << endl;
+	        nParameters = ErrParameters;
+	    }
+        endDetect();
+        detectSwitch( dummy_switch, "author");
+            i++;
+            if ( i < argc)
+	        manual_author = argv[i];
+	    else {
+	        cerr << "error: option -author needs an additional parameter"
+		     << endl;
+	        nParameters = ErrParameters;
+	    }
+        endDetect();
+        detectSwitch( config_switch, "config");
+            i++;
+            if ( i < argc) {
+	        config_path = argv[i];
+		if ( config_path[ strlen( config_path) - 1] != '/') {
+		    cerr << "error: option -config: a path must terminate "
+		            "with a /" << endl;
+		    nParameters = ErrParameters;
+		}
+	    } else {
+	        cerr << "error: option -config needs an additional parameter"
+		     << endl;
+	        nParameters = ErrParameters;
+	    }
+        endDetect();
+        detectSwitch( dummy_switch, "tmp");
+            i++;
+            if ( i < argc) {
+	        tmp_path = argv[i];
+		if ( tmp_path[ strlen( tmp_path) - 1] != '/') {
+		    cerr << "error: option -tmp: a path must terminate "
+		            "with a /" << endl;
+		    nParameters = ErrParameters;
+		}
+	    } else {
+	        cerr << "error: option -tmp needs an additional parameter"
+		     << endl;
+	        nParameters = ErrParameters;
+	    }
         endDetect();
 
         detectSwitch( help_switch, "h");
@@ -1955,58 +2781,54 @@ main( int argc, char **argv) {
         (nParameters > MaxParameters) || (help_switch != NO_SWITCH)) {
         if (help_switch == NO_SWITCH)
             cerr << "Error: in parameter list" << endl;
-        cerr << "Usage: cgal_extract_html [<options>] <infile> [...]" << endl;
-        cerr << "       -trace       sets the `yydebug' variable of bison"
+	cerr << prog_name << " " << prog_release << " (c) Lutz Kettner" 
+	     << endl;
+        cerr << "Usage: " << prog_name << " [<options>] <TeX-files...>" 
+	     << endl;
+        cerr << "       -date    <text>    set a date for the manual." << endl;
+        cerr << "       -release <text>    set a release number for the "
+                                          "manual." << endl;
+        cerr << "       -title   <text>    set a title text for the manual." 
+	     << endl;
+        cerr << "       -author  <text>    set an author address (email) for "
+	                                  "the manual." << endl;
+        cerr << "       -config  <dir/>    set the path where to find the "
+                                          "config files." << endl;
+        cerr << "       -tmp     <dir/>    set the path where to put the "
+                                          "output files." << endl;
+        cerr << "       -trace             set `yydebug' for bison to true"
              << endl;
-        cerr << "       -line        prints parsed line numbers to cerr"
-             << endl;
-        cerr << "       Infiles including suffixes."  
+        cerr << "       -line              echo currently parsed line "
+                                          "numbers to cerr" << endl;
+        cerr << "(TeX-files with suffix:  .tex  or  .bbl  possible.)"  
 	     << endl;
         exit(1);
     }
 
+
+    // Initialization
+    tag_defaults();
+    main_stream   = &cout;
+
+    // Filter config files for the index.
+    copy_config_file( cc_index_header);
+    copy_config_file( cc_index_footer);
+
+    // Prepare several streams:
     // anchor_stream = new ofstream( anchor_filename, ios::out | ios::app);
-    anchor_stream = new ofstream( anchor_filename);
-    if ( ! *anchor_stream) {
-        cerr << ' ' << endl 
-	     << "cgal_extract_html: error: cannot open anchor file `" 
-	     <<  anchor_filename << "'." << endl;
-	exit(1);
-    }
-    contents_stream = new ofstream( contents_filename);
-    if ( ! *contents_stream) {
-        cerr << ' ' << endl 
-	     << "cgal_extract_html: error: cannot open contents file `" 
-	     <<  contents_filename << "'." << endl;
-	exit(1);
-    }
-    open_html( *contents_stream, "Table of Contents");
-    *contents_stream << "<H1>The CGAL Kernel User Manual<BR>\n"
-                        "    Table of Contents</H1><HR>\n" << endl;
-    *contents_stream << "<OL>" << endl;
-    *contents_stream << "    <LI> <A HREF=\"title.html\">Title Page</A>" 
-		     << endl;
-    *contents_stream << "    <LI> <A HREF=\"" << contents_filename 
-		     << "\">Table of Contents</A>" << endl;
-
-    index_stream = new ofstream( index_filename);
-    if ( ! *index_stream) {
-        cerr << ' ' << endl 
-	     << "cgal_extract_html: error: cannot open index file `" 
-	     <<  index_filename << "'." << endl;
-	exit(1);
-    }
-    *index_stream << "<!sort A1!><HEAD><TITLE>The CGAL Kernel Manual: Index"
-                     "</TITLE>"	<< general_comment << "</HEAD><BODY>" << endl;
-    *index_stream << "<!sort A2!><H1>Index</H1><HR>" << endl;
-    *index_stream << "<!sort A3!>" << endl;
-    *index_stream << "<!sort A4!><UL>" << endl;
-
+    anchor_stream   = open_file_with_path_for_write( tmp_path, 
+						     anchor_filename);
+    contents_stream = open_file_with_path_for_write( tmp_path, 
+						     contents_filename);
+    copy_and_filter_config_file( cc_toc_header, *contents_stream);
+    index_stream    = open_file_with_path_for_write( tmp_path, index_filename);
+    write_headers_to_index( *index_stream);
+    
     for ( i = 0; i < nParameters; i++) {
 	FILE* in;
 	if ( (in = fopen( parameters[i], "r")) == NULL) {
 	    cerr << ' ' << endl 
-		 << "cgal_extract_html: error: cannot open infile `" 
+		 << prog_name << ": error: cannot open infile `" 
 		 << parameters[i] << "'." << endl;
 	    exit(1);
 	}
@@ -2022,31 +2844,16 @@ main( int argc, char **argv) {
 
 	if ( class_stream != 0) {
 	    close_html( *class_stream);
-	    if ( ! *class_stream) {
-	        cerr << ' ' << endl 
-		     << "cgal_extract_html: error: cannot write to file `" 
-		     <<  class_filename << "'." << endl;
-		exit(1);
-	    }
+	    assert_file_write( *class_stream, class_filename);
 	    delete   class_stream;
 	    delete[] class_filename;
 	    class_stream = 0;
 	    class_filename = 0;
 	}
-	if ( ! *main_stream) {
-	    cerr << ' ' << endl 
-		 << "cgal_extract_html: error: cannot write to file `" 
-		 <<  main_filename << "'." << endl;
-	    exit(1);
-	}
+	assert_file_write( *main_stream, main_filename);
 	if ( main_stream != &cout) {
 	    close_html( *main_stream);
-	    if ( ! *main_stream) {
-	        cerr << ' ' << endl 
-		     << "cgal_extract_html: error: cannot write to file `" 
-		     <<  main_filename << "'." << endl;
-		exit(1);
-	    }
+	    assert_file_write( *main_stream, main_filename);
 	    delete   main_stream;
 	    delete[] main_filename;
 	    main_stream = &cout;
@@ -2054,53 +2861,16 @@ main( int argc, char **argv) {
 	}
     }
 
-    // The index is organized in a set of fixed topics. 
-    *index_stream << "<!sort C  !><LI><B>Classes</B><P>" << endl;
-    *index_stream << "<!sort D  !><P><LI><B>Variables and Consts</B><P>" 
-		  << endl;
-    *index_stream << "<!sort E  !><P><LI><B>Enums</B><P>" << endl;
-    *index_stream << "<!sort ET  !><P><LI><B>Enum Tags</B><P>" << endl;
-    /* ...
-    *index_stream << "<!sort R  !><P><LI><B>References</B><P>" << endl;
-    ... */
-    *index_stream << "<!sort Z1!><P><LI><B><A HREF=\"contents.html\">"
-                     "Table of Contents</A></B><P>" << endl;
-    *index_stream << "<!sort Z2!><P><LI><B><A HREF=\"biblio.html\">"
-                     "Bibliography</A></B>" << endl;
-    *index_stream << "<!sort Z3!></UL>" << endl;
-    *index_stream << "<!sort Z4!>" << endl;
-    *index_stream << "<!sort Z5!>" << html_address_trailer << endl;
-    *index_stream << "<!sort Z6!></BODY></HTML>" << endl;
-
-    if ( ! *index_stream) {
-        cerr << ' ' << endl 
-	     << "cgal_extract_html: error: cannot write to index file `" 
-	     <<  index_filename << "'." << endl;
-	exit(1);
-    }
+    assert_file_write( *index_stream, index_filename);
     delete index_stream;
 
-    *contents_stream << "    <LI> <A HREF=\"" << bib_filename 
-		     << "\">Bibliography</A>" << endl;
-    *contents_stream << "    <LI> <A HREF=\"" << index_filename 
-		     << "\">Index</A>" << endl;
-    *contents_stream << "</OL>" << endl;
-    close_html( *contents_stream);
-    if ( ! *contents_stream) {
-        cerr << ' ' << endl 
-	     << "cgal_extract_html: error: cannot write to contents file `" 
-	     <<  contents_filename << "'." << endl;
-	exit(1);
-    }
+    copy_and_filter_config_file( cc_toc_footer, *contents_stream);
+    assert_file_write( *contents_stream, contents_filename);
     delete contents_stream;
-    if ( ! *anchor_stream) {
-        cerr << ' ' << endl 
-	     << "cgal_extract_html: error: cannot write to anchor file `" 
-	     <<  anchor_filename << "'." << endl;
-	exit(1);
-    }
+
+    assert_file_write( *anchor_stream, anchor_filename);
     delete anchor_stream;
-    delete chapter_title;
+    delete[] chapter_title;
 
     cout << endl;
     return 0;
