@@ -1,4 +1,4 @@
-Ver 1.6 (?? ?????? 2000)
+Ver 1.6 (12 February 2001)
 - Removed long_description.txt. [syl]
 - Changed a few CGAL_assertion() to CGAL_kernel_assertion(). [syl]
 - Added "if (is)" tests in operator>>().
