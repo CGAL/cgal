@@ -1,51 +1,48 @@
 #!/usr/local/bin/perl5
 #
 # Copyright (c) 1998-1999 The CGAL Consortium
-#
 # Author: Sylvain Pion <Sylvain.Pion@sophia.inria.fr>.
 #
+# This script takes as input a source code file containing template predicates.
+# It outputs the filtered specializations.
 #
-# This script takes as STDIN "predicates_on_ftC2.h" or equivalent.
-# It produces as STDOUT "Arithmetic_filter/predicates_on_ftC2.h" or equivalent.
-#
-# It is not supposed to be universal, it doesn't understand full C++.
+# It is not supposed to be universal: it doesn't understand full C++.
 # But it appears to work for CGAL's predicates, so you might want
-# to use it for your predicates too (but the job can be done by hand if you
-# don't have many to do).
+# to use it for your predicates too.
 #
-# See the CGAL documentation:
-# Support Library, Number Types, Filtered_exact.
+# See the CGAL documentation: Support Library, Number Types, Filtered_exact.
 
-# Parse command line options.
 require 'getopt.pl';
-Getopt('io');
-$CGAL='';
-$pedantic=$opt_p;
-if ($opt_h) {
-  print STDERR "Usage: filtered_predicate_converter [options]
+
+# Global variables
+$old_protect_name="";	# contains the protect macro name, e.g. CGAL_BASIC_H:
+$new_protect_name="";	# equivalent to CGAL_ARITHMETIC_FILTER_BASIC_H.
+$line=0;		# current line number.
+$CGAL="CGAL::";		# By default, we are outside namespace CGAL.
+@CGAL_enum_types=("Sign", "Comparison_result", "Orientation", "Oriented_side",
+                  "Bounded_side"); # List of CGAL's enum types.
+
+# Parse the command line options.
+sub parse_command_line {
+  Getopt('io');
+  $pedantic=$opt_p;
+  if ($opt_h) {
+    print STDERR "Usage: filtered_predicate_converter [options]
     -i file : specify the input source file [default is stdin]
     -o file : specify the output file       [default is stdout]
     -p      : be pedantic (changes warnings into errors)
     -h      : print this help\n";
-  exit;
+    exit;
+  }
+  $opt_i = "-" unless $opt_i;
+  $opt_o = "-" unless $opt_o;
 }
-if (not $opt_i) { $opt_i = "-"; }
-if (not $opt_o) { $opt_o = "-"; }
 
-open(FI, "<$opt_i") || die "Couldn't open input file \"$opt_i\"\n";
-open(FO, ">$opt_o") || die "Couldn't open output file \"$opt_o\"\n";
-
-
-$old_protect_name="";	# contains the protect macro name, e.g. CGAL_BASIC_H:
-			# It is set by $treat_CGAL_header().
-$new_protect_name="";	# equivalent to CGAL_ARITHMETIC_FILTER_BASIC_H.
-$line=0;		# current line number.
-
-# Auxiliary routine to emit a warning.
+# Auxiliary routine to emit a warning and die if pedantic.
 sub warning {
   local ($_) = @_;
   print STDERR "// Warning [line $line]: $_\n";
-  exit if $pedantic;
+  die if $pedantic;
 }
 
 # Treats the CGAL header.
@@ -55,17 +52,13 @@ sub treat_CGAL_header {
   {
     $line++;
     # get $file_name from the "file:" field in the headers.
-    if (/\/\/ file[\s]*: include\/CGAL\/(.*)/) {
-      $file_name = $1;
-    }
+    $file_name = $1 if /\/\/ file[\s]*: include\/CGAL\/(.*)/;
 
     # get $old_protect_name and exit.
     if (/ifndef[\s]*([\S]*_H)/) {
       $old_protect_name = $1;
       $_ = $old_protect_name;
-      if (not /CGAL_/) {
-        $_ = "CGAL_$_";
-      }
+      $_ = "CGAL_$_" unless /CGAL_/;
       s/CGAL_/CGAL_ARITHMETIC_FILTER_/;
       $new_protect_name = $_;
       last;
@@ -128,8 +121,7 @@ sub put_new_body {
   {
     $result_type result = $function_name(\n";
   foreach (@args) {
-    print FO "\t\t$_.interval()";
-    if ($_ eq $args[$#args]) { print FO ");\n"; } else { print FO ",\n"; }
+    print FO "\t\t$_.interval()", ($_ eq $args[$#args] ? ");\n" : ",\n");
   }
   print FO "    ${CGAL}FPU_set_cw(backup);
     return result;
@@ -139,10 +131,8 @@ sub put_new_body {
     ${CGAL}FPU_set_cw(backup);
     return $function_name(\n";
   foreach (@args) {
-    print FO "\t\t$_.exact()";
-    if ($_ eq $args[$#args]) { print FO ");\n"; } else { print FO ",\n"; }
+    print FO "\t\t$_.exact()", ($_ eq $args[$#args] ? ");\n  }\n}\n" : ",\n");
   }
-  print FO "  }\n}\n";
 }
 
 # Treat the declaration of a function.
@@ -151,9 +141,7 @@ sub parse_function_declaration {
   while (<FI>) {
     $line++;
     # get the eventual inline declaration.
-    if (/(CGAL_.*INLINE|inline)/) {
-      $inline_decl=$1;
-    }
+    $inline_decl=$1 if /(CGAL_.*INLINE|inline)/;
 
     # get the function name.
     if ( /\(/ ) {
@@ -203,55 +191,60 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
   foreach (@args) {
     print FO "    const ${CGAL}Filtered_exact ";
     print FO "<CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &$_";
-    if ($_ eq $args[$#args]) { print FO ")\n"; } else { print FO ",\n"; }
+    print FO ($_ eq $args[$#args] ? ")\n" : ",\n");
   }
 }
 
-# Main program:
+sub main_loop {
+  while (<FI>)
+  {
+    $line++;
+    # Treat the CGAL_NO_FILTER_BEGIN/CGAL_NO_FILTER_END section.
+    if (/\/\/CGAL_NO_FILTER_BEGIN/) {
+      skip_no_filter_section();
+      next;
+    }
+  
+    # Treat next template function.
+    if (/^template/) {
+      ($inline_decl, $result_type, $function_name, @arguments)
+                                  = parse_function_declaration();
+      put_new_function_declaration($inline_decl, $result_type,
+                                   $function_name, @arguments);
+      next;
+    }
+  
+    # Treat the body of a function.
+    if (/^{/) {
+      skip_old_body();
+      put_new_body($result_type, $function_name, @arguments);
+      next;
+    }
+  
+    # Detect if we are in namespace CGAL:
+    $CGAL="" if /CGAL_BEGIN_NAMESPACE/;
+    $CGAL="CGAL::" if /CGAL_END_NAMESPACE/;
+  
+    # Update the protect macro name.
+    s/$old_protect_name/$new_protect_name/g;
 
-# List of CGAL's enum types.
-@CGAL_enum_types=("Sign", "Comparison_result", "Orientation", "Oriented_side",
-                  "Bounded_side");
-%known_return_types=("bool", 1);
-
-foreach (@CGAL_enum_types) {
-  $known_return_types{$_}=1;
-  $known_return_types{"CGAL::$_"}=1;
+    # We just copy what we didn't recognize.
+    print FO;
+  }
 }
 
-treat_CGAL_header();
-
-while (<FI>)
-{
-  $line++;
-  # Treat the CGAL_NO_FILTER_BEGIN/CGAL_NO_FILTER_END section.
-  if (/\/\/CGAL_NO_FILTER_BEGIN/) {
-    skip_no_filter_section();
-    next;
+# Main program
+sub main {
+  %known_return_types=("bool", 1);
+  foreach (@CGAL_enum_types) {
+    $known_return_types{$_}=1;
+    $known_return_types{"CGAL::$_"}=1;
   }
-
-  # Treat next template function.
-  if (/^template/) {
-    ($inline_decl, $result_type, $function_name, @arguments)
-                                = parse_function_declaration();
-    put_new_function_declaration($inline_decl, $result_type,
-                                 $function_name, @arguments);
-    next;
-  }
-
-  # Treat the body of a function.
-  if (/^{/) {
-    skip_old_body();
-    put_new_body($result_type, $function_name, @arguments);
-    next;
-  }
-
-  # Detect if we are in namespace CGAL:
-  $CGAL="" if /CGAL_BEGIN_NAMESPACE/;
-  $CGAL="CGAL::" if /CGAL_END_NAMESPACE/;
-
-  # Basically for the rest, we copy everything,
-  # just update the protect macro name.
-  s/$old_protect_name/$new_protect_name/g;
-  print FO $_;
+  parse_command_line();
+  open(FI, "<$opt_i") || die "Couldn't open input file \"$opt_i\"\n";
+  open(FO, ">$opt_o") || die "Couldn't open output file \"$opt_o\"\n";
+  treat_CGAL_header();
+  main_loop();
 }
+
+main();
