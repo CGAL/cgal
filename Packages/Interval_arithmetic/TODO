@@ -15,6 +15,9 @@ Concerning the code itself:
 - Les opérateurs (double, Interval_nt (pas advanced)) ne sont pas protégés par
   le rounding mode +inf...
 - Filter_Cache: Faire des benchs, et une test-suite qui soit raisonnable.
+  Hum, rajouter un booléen pour calculer le cache seulement sur demande ?
+  (ça évite de le faire inutilement pour les variables intermédiaires,
+  mais ça prend un chouia plus de place... mais en comparaison du reste...)
 - sign_det_2x2() optimisé pour l'IA (+ bench de triangulation).
   (et régler le sort de include/CGAL/Interval_arithmetic/determinant.h.)
 	include/CGAL/Interval_arithmetic/determinant.h has no header.
