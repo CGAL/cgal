@@ -16,13 +16,15 @@
 
 \section{Introduction}
 
-This chapter presents the \cgal\ interface to Geomview, which is a
-viewer for three-dimensional objects, developed at the Geometry Center
-in Minneapolis\footnote{\tt http://www.geom.umn.edu/}.
+This chapter presents the \cgal\ interface to Geomview\footnote{\tt
+http://www.geomview.org/}, which is a
+viewer for three-dimensional objects, originally developed at the Geometry
+Center in Minneapolis\footnote{\tt http://www.geom.umn.edu/}.
 
 \noindent {\bf Important:} The last line in the startup file \ccc{.geomview}
-must be \ccc{(echo "started")}. The two commands \ccc{rsh} and \ccc{Geomview}
-must be in the user's path, otherwise the program will not be able to execute.
+must be \ccc{(echo "started")}. The commands \ccc{geomview} and \ccc{rsh}
+(when running on a remote machine) must be in the user's \ccc{PATH}, otherwise
+the program will not be able to execute.
 
 \begin{ccClass}{Geomview_stream}
 \ccDefinition
@@ -105,6 +107,12 @@ operators. 2D objects are embedded in the \ccc{xy}-plane.
             operator<<(Geomview_stream& G,
                        const Tetrahedron_3<R>& t);}
 {Inserts the tetrahedron \ccc{t} into the stream \ccVar.}
+
+\ccFunction{template <class R>
+            Geomview_stream&
+            operator<<(Geomview_stream& G,
+                       const Sphere_3<R>& s);}
+{Inserts the sphere \ccc{s} into the stream \ccVar.}
 
 
 \ccFunction{Geomview_stream&
