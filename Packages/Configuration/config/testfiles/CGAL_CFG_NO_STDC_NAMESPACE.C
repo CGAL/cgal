@@ -129,7 +129,7 @@ using std::towupper;
 using std::wctrans;
 using std::wctype;
 
-include <cstring>
+#include <cstring>
 using std::size_t;
 using std::memchr;
 using std::memcmp;
