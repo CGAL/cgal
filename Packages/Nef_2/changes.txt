@@ -1,6 +1,12 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
 
+1.2 (19 Mar 2002)
+     - added some CGAL_LEDA_SCOPEs to make conversion to LEDA version
+       with namespaces
+     - added missing CGAL:: in demo program
+     - minor changes to please SunPro CC
+
 1.1 (18 Mar 2002)
 
      - include/CGAL/HalfedgeDS_default_MSC.h: Fixed bug in copy
