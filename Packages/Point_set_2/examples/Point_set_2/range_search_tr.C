@@ -98,7 +98,7 @@ int main()
   
   // init 
   ar1[0]=p1; ar1[1]=p6; ar1[2]=p3; ar1[3]=p4; ar1[4]=p5; ar1[5]=pnew; 
-  ar2[0]=p2; ar2[1]=p3; ar2[2]=p1;
+  ar2[0]=p1; ar2[1]=p3; ar2[2]=p2;
   ar3[0]=p7; ar3[1]=p10; ar3[2]=p3;
   
   Lr.push_back(p1); Lr.push_back(p2); Lr.push_back(p3);

@@ -1,2 +1,6 @@
+2.0.1 range search example program changed
+      some 'typenames' and a typedef added to Point_set_2.h  
+      to please g++ with -pedantic compilation
+
 2.0  The Point_set_2 class is now based on the CGAL Delaunay triangulation
      and needs no longer LEDA
