@@ -1,9 +1,15 @@
 Halfedge_DS Package: Release changes:
 ---------------------------------------------------------------------
+2.10 (15 Jun 2001)
 
      - Halfedge_data_structure_using_vector.h: Fixed bug in updating
        face pointers in the border case. Bug reported by Steve M. Robbins.
      - Fixed warnings in the test suite about unused variables.
+     - Removed *.C files from the doc_tex directory. Changed inclusion
+       such that they are now found the in the examples directory.
+     - Added hds_prog_edge_iterator.C to the examples directory.
+     - Added README in examples and remark in the manuals that this
+       package is depricated.
 
 2.9 (01 Jun 2001)
 
