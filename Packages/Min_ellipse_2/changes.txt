@@ -1,5 +1,8 @@
 Changes done to the `Min_ellipse_2' package.
 
+Version 3.10.6 on 04-Apr-2001
+- no changes (renamed 'examples/Min_ellipse' to 'examples/Min_ellipse_2')
+
 Version 3.10.5 on 21-Mar-2001
 - removed 'maintainer' line from file header in example and demo program
 
