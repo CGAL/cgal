@@ -24,7 +24,6 @@
 #define Arr_2_face_base                 AFB
 #define In_place_list_iterator          IPLI
 #define In_place_list_const_iterator    IPLCI
-#define allocator                       All
 #define Pm_traits_wrap_2                PmTW
 #define Td_X_trapezoid                  TXT
 #define PL_X_curve_plus                 PXCP
@@ -32,8 +31,6 @@
 #define Sweep_curves_to_subcurves_utils SCSU
 #define Sweep_curves_base_2             SCB
 #define Intersection_point_node         IPN
-
-// #define bidirectional_iterator_tag      BIT
 
 #if defined(_MSC_VER)
 // Has no effect, probably bug in MSVC
