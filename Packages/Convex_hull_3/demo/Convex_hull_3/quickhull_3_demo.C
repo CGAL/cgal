@@ -89,7 +89,7 @@ void draw_points_and_hull(const std::vector<Point_3>& points,
       geomview << segment;
    else if ( CGAL::assign(triangle, object) )
       geomview << triangle;
-   else if (CGAL::assign(polyhedron, object));
+   else if ( CGAL::assign(polyhedron, object) )
       geomview << polyhedron;
 
 
