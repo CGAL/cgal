@@ -1,3 +1,7 @@
+13 October 2004 Andreas Fabri
+- install_cgal: When using mpfr for Gmpq::to_interval() with MS or Intel compiler on Windows 
+  we have to link against libgcc.a (or gcc.lib) from mingw
+
 6 October 2004 Andreas Fabri
 - install_cgal: Added -Zx:wchar_t to the compiler flags for the Intel compiler. This is needed for boost
 
