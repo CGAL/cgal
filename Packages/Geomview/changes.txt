@@ -1,5 +1,8 @@
 CHANGES to the Geomview package.
 
+Ver 3.28 (10 April 2002)
+- Split the maunal into user and reference manual
+
 Ver 3.27 (17 October 2001)
 - Don't compile src/Geomview_stream.C on __MWERKS__ (CodeWarrior).
 
