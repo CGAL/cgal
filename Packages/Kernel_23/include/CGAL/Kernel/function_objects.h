@@ -871,6 +871,17 @@ class Compare_distance_to_point
     T  p;
 };
 
+template <class T>
+class Compare_distance
+{
+  public:
+    typedef Comparison_result           result_type;
+
+    Comparison_result
+    operator()(const T& p, const T& q, const T& r) const
+    { return cmp_dist_to_point(p,q,r); }
+};
+
 template <class Plane, class Point>
 class Less_signed_distance_to_plane
 {
@@ -878,7 +889,6 @@ class Less_signed_distance_to_plane
     bool operator()( const Plane & p, const Point& q, const Point& r)
     { return has_smaller_signed_dist_to_plane(p,q,r); }
 };
-
 
 class Are_ordered_along_line
 {

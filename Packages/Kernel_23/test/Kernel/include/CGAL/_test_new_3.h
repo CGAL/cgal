@@ -400,6 +400,10 @@ test_new_3(const R& rep)
         = rep.compare_distance_to_point_3_object(p2);
   Comparison_result tmp34ab = compare_dist_to_point(p3,p4);
 
+  typename R::Compare_distance_3 compare_dist
+        = rep.compare_distance_3_object();
+  Comparison_result tmp34abc = compare_dist(p2,p3,p4);
+
   typename R::Collinear_3 collinear
         = rep.collinear_3_object();
   bool tmp29 = collinear(p2,p3,p4);
@@ -512,8 +516,7 @@ test_new_3(const R& rep)
   use(tmp29); use(tmp27); use(tmp25); use(tmp24); use(tmp23); use(tmp22);
   use(tmp15); use(tmp14); use(tmp13); use(tmp12b); use(tmp12a);
   use(tmp16); use(tmp17); use(tmp18); use(tmp19); use(tmp20); use(tmp21);
-  use(tmp26); use(tmp28); use(tmp30a); use(tmp30b); use(tmp34ab); 
-  
+  use(tmp26); use(tmp28); use(tmp30a); use(tmp30b); use(tmp34ab); use(tmp34abc);
 
   return true;
 }

@@ -1,3 +1,6 @@
+3.22   (29 May 2001)
+- Add Compare_distance_[23].
+
 3.21   (16 May 2001)
 - Commonize the definition of Precise_[integer|rational].
 - Use MP_Float when neither LEDA or GMP are supported.

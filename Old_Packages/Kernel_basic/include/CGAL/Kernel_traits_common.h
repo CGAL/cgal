@@ -138,6 +138,7 @@ typedef CGALi::Compare_y                           Compare_y_2;
 typedef CGALi::Compare_xy                          Compare_xy_2;
 typedef CGALi::Compare_y_at_x                      Compare_y_at_x_2;
 typedef CGALi::Compare_x_at_y                      Compare_x_at_y_2;
+typedef CGALi::Compare_distance<Point_2>           Compare_distance_2;
 
 CGAL_Kernel_obj(Compute_y_at_x_2, compute_y_at_x_2_object)
 CGAL_Kernel_obj(Compute_squared_distance_2, compute_squared_distance_2_object)
@@ -157,6 +158,7 @@ CGAL_Kernel_obj(Compare_y_2, compare_y_2_object)
 CGAL_Kernel_obj(Compare_xy_2, compare_xy_2_object)
 CGAL_Kernel_obj(Compare_y_at_x_2, compare_y_at_x_2_object)
 CGAL_Kernel_obj(Compare_x_at_y_2, compare_x_at_y_2_object)
+CGAL_Kernel_obj(Compare_distance_2, compare_distance_2_object)
 
 typedef CGALi::Compare_distance_to_point<Point_2>  Compare_distance_to_point_2;
 Compare_distance_to_point_2
@@ -354,6 +356,7 @@ typedef CGALi::Compare_y                              Compare_y_3;
 typedef CGALi::Compare_z                              Compare_z_3;
 typedef CGALi::Compare_xy                             Compare_xy_3;
 typedef CGALi::Compare_xyz                            Compare_xyz_3;
+typedef CGALi::Compare_distance<Point_3>              Compare_distance_3;
 
 CGAL_Kernel_obj(Compute_squared_distance_3, compute_squared_distance_3_object)
 CGAL_Kernel_obj(Compute_squared_length_3, compute_squared_length_3_object)
@@ -376,6 +379,7 @@ CGAL_Kernel_obj(Compare_y_3, compare_y_3_object)
 CGAL_Kernel_obj(Compare_z_3, compare_z_3_object)
 CGAL_Kernel_obj(Compare_xy_3, compare_xy_3_object)
 CGAL_Kernel_obj(Compare_xyz_3, compare_xyz_3_object)
+CGAL_Kernel_obj(Compare_distance_3, compare_distance_3_object)
 
 typedef CGAL ::p_Less_dist_to_point<Point_3>    Less_distance_to_point_3;
 Less_distance_to_point_3

@@ -1,3 +1,6 @@
+3.38   (29 May 2001)
+- Add Compare_distance_[23].
+
 3.37   (1 May 2001)
 - angle().
 - compare_x_at_y()
