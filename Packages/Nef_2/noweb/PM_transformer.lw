@@ -86,14 +86,14 @@ void transform(const Aff_transformation& t) const;
 
 
 <<handles, iterators, and circulators from PMDEC>>=
-#define USING(t) typedef typename PMDEC::t t
-USING(Halfedge_handle);
-USING(Vertex_handle);
-USING(Face_handle);
-USING(Vertex_iterator);
-USING(Halfedge_iterator);
-USING(Face_iterator);
-#undef USING
+#define CGAL_USING(t) typedef typename PMDEC::t t
+CGAL_USING(Halfedge_handle);
+CGAL_USING(Vertex_handle);
+CGAL_USING(Face_handle);
+CGAL_USING(Vertex_iterator);
+CGAL_USING(Halfedge_iterator);
+CGAL_USING(Face_iterator);
+#undef CGAL_USING
 
 <<PM_transformer.h>>=
 <<CGAL Header>>

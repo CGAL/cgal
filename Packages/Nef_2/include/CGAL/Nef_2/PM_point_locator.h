@@ -30,7 +30,7 @@
 #ifdef CGAL_USE_LEDA
 #include <LEDA/basic.h>
 #if __LEDA__ > 410
-#define USING_PPL
+#define CGAL_USING_PPL
 #include <CGAL/Nef_2/PM_persistent_PL.h>
 #endif
 #endif
@@ -365,7 +365,7 @@ protected:
   typedef PM_naive_point_locator<PM_decorator_,Geometry_> Base;
   typedef PM_point_locator<PM_decorator_,Geometry_> Self;
   Base CT;
-  #ifdef USING_PPL
+  #ifdef CGAL_USING_PPL
   typedef PM_persistent_PL_traits<Base>  PMPPLT; 
   typedef PointLocator<PMPPLT>           PMPP_locator;
   PMPP_locator* pPPL;
@@ -567,7 +567,7 @@ public:
   /*{\Mcreation 3}*/
 
   PM_point_locator() { 
-    #ifdef USING_PPL
+    #ifdef CGAL_USING_PPL
     pPPL = 0;
     #endif
  
@@ -751,7 +751,7 @@ public:
 }; // PM_point_locator<PM_decorator_,Geometry_>
 
 
-#ifdef USING_PPL
+#ifdef CGAL_USING_PPL
 static const char* const pointlocationversion ="point location via pers dicts";
 #else
 static const char* const pointlocationversion ="point location via seg walks";
@@ -766,7 +766,7 @@ PM_point_locator(const Plane_map& P, const Geometry& k) :
   CT.clone_skeleton(P,CT_link_to_original(CT,*this));
   triangulate_CT();
   minimize_weight_CT();
-  #ifdef USING_PPL
+  #ifdef CGAL_USING_PPL
   pPPL = new PMPP_locator(CT,PMPPLT(K));
   #endif
 
@@ -786,7 +786,7 @@ PM_point_locator<PMD,GEO>::
   }
   CT.clear();
   delete &(CT.plane_map());
-  #ifdef USING_PPL
+  #ifdef CGAL_USING_PPL
   delete pPPL; pPPL=0; 
   #endif
 }

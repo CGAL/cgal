@@ -1,6 +1,9 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
 
+1.55 (18 Jan 2004)
+- Rename USING in CGAL_USING.
+
 1.54 (18 Jan 2004)
 - Remove CGAL_CFG_MATCHING_BUG_2.
 

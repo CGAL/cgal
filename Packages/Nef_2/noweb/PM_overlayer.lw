@@ -291,25 +291,25 @@ PM_overlayer(Plane_map& P, const Geometry& g = Geometry()) :
 
 @ \begin{ignoreindiss}
 <<handles, iterators, and circulators from Decorator>>=
-#define USING(t) typedef typename Decorator::t t
+#define CGAL_USING(t) typedef typename Decorator::t t
 typedef typename Decorator::Base Const_decorator;
-USING(Halfedge_handle);
-USING(Vertex_handle);
-USING(Face_handle);
-USING(Vertex_iterator);
-USING(Halfedge_iterator);
-USING(Face_iterator);
-USING(Halfedge_const_handle);
-USING(Vertex_const_handle);
-USING(Face_const_handle);
-USING(Halfedge_const_iterator);
-USING(Vertex_const_iterator);
-USING(Face_const_iterator);
-USING(Halfedge_around_vertex_circulator);
-USING(Halfedge_around_face_circulator);
-USING(Hole_iterator);
-USING(Isolated_vertex_iterator);
-#undef USING
+CGAL_USING(Halfedge_handle);
+CGAL_USING(Vertex_handle);
+CGAL_USING(Face_handle);
+CGAL_USING(Vertex_iterator);
+CGAL_USING(Halfedge_iterator);
+CGAL_USING(Face_iterator);
+CGAL_USING(Halfedge_const_handle);
+CGAL_USING(Vertex_const_handle);
+CGAL_USING(Face_const_handle);
+CGAL_USING(Halfedge_const_iterator);
+CGAL_USING(Vertex_const_iterator);
+CGAL_USING(Face_const_iterator);
+CGAL_USING(Halfedge_around_vertex_circulator);
+CGAL_USING(Halfedge_around_face_circulator);
+CGAL_USING(Hole_iterator);
+CGAL_USING(Isolated_vertex_iterator);
+#undef CGAL_USING
 
 // C++ is really friendly:
 #define USECMARK(t) const Mark& mark(t h) const { return Base::mark(h); }

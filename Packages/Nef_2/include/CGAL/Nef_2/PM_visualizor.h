@@ -301,7 +301,7 @@ void draw_ending_bundle(Vertex_const_handle v,
 
 
 CGAL_END_NAMESPACE
-#undef USING
+#undef CGAL_USING
 #undef LGREY
 #undef DGREY
 #endif // PM_VISUALIZOR_H

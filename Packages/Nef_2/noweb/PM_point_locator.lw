@@ -129,24 +129,24 @@ function returns |true| iff the assignment of |o| to |h| was valid.}*/
 
 @ \begin{ignoreindiss}
 <<PL naive local types>>=
-#define USING(t) typedef typename PM_decorator_::t t
-USING(Vertex_handle);   
-USING(Halfedge_handle);   
-USING(Face_handle);     
-USING(Vertex_const_handle); 
-USING(Halfedge_const_handle); 
-USING(Face_const_handle); 
-USING(Vertex_iterator);
-USING(Halfedge_iterator);
-USING(Face_iterator);
-USING(Vertex_const_iterator);
-USING(Halfedge_const_iterator);
-USING(Face_const_iterator);
-USING(Halfedge_around_vertex_circulator);
-USING(Halfedge_around_vertex_const_circulator);
-USING(Halfedge_around_face_circulator);
-USING(Halfedge_around_face_const_circulator);
-#undef USING
+#define CGAL_USING(t) typedef typename PM_decorator_::t t
+CGAL_USING(Vertex_handle);   
+CGAL_USING(Halfedge_handle);   
+CGAL_USING(Face_handle);     
+CGAL_USING(Vertex_const_handle); 
+CGAL_USING(Halfedge_const_handle); 
+CGAL_USING(Face_const_handle); 
+CGAL_USING(Vertex_iterator);
+CGAL_USING(Halfedge_iterator);
+CGAL_USING(Face_iterator);
+CGAL_USING(Vertex_const_iterator);
+CGAL_USING(Halfedge_const_iterator);
+CGAL_USING(Face_const_iterator);
+CGAL_USING(Halfedge_around_vertex_circulator);
+CGAL_USING(Halfedge_around_vertex_const_circulator);
+CGAL_USING(Halfedge_around_face_circulator);
+CGAL_USING(Halfedge_around_face_const_circulator);
+#undef CGAL_USING
 
 @ 
 \end{ignoreindiss}%
@@ -576,32 +576,32 @@ public:
 
 @ \begin{ignoreindiss}
 <<TPL local types>>=
-#define USING(t) typedef typename Base::t t
-USING(Decorator);
-USING(Plane_map);
-USING(Mark);
-USING(Geometry);
-USING(Point);
-USING(Segment);
-USING(Direction);
-USING(Object_handle);
-USING(Vertex_handle);   
-USING(Halfedge_handle);   
-USING(Face_handle);     
-USING(Vertex_const_handle); 
-USING(Halfedge_const_handle); 
-USING(Face_const_handle); 
-USING(Vertex_iterator);
-USING(Halfedge_iterator);
-USING(Face_iterator);
-USING(Vertex_const_iterator);
-USING(Halfedge_const_iterator);
-USING(Face_const_iterator);
-USING(Halfedge_around_vertex_circulator);
-USING(Halfedge_around_vertex_const_circulator);
-USING(Halfedge_around_face_circulator);
-USING(Halfedge_around_face_const_circulator);
-#undef USING
+#define CGAL_USING(t) typedef typename Base::t t
+CGAL_USING(Decorator);
+CGAL_USING(Plane_map);
+CGAL_USING(Mark);
+CGAL_USING(Geometry);
+CGAL_USING(Point);
+CGAL_USING(Segment);
+CGAL_USING(Direction);
+CGAL_USING(Object_handle);
+CGAL_USING(Vertex_handle);   
+CGAL_USING(Halfedge_handle);   
+CGAL_USING(Face_handle);     
+CGAL_USING(Vertex_const_handle); 
+CGAL_USING(Halfedge_const_handle); 
+CGAL_USING(Face_const_handle); 
+CGAL_USING(Vertex_iterator);
+CGAL_USING(Halfedge_iterator);
+CGAL_USING(Face_iterator);
+CGAL_USING(Vertex_const_iterator);
+CGAL_USING(Halfedge_const_iterator);
+CGAL_USING(Face_const_iterator);
+CGAL_USING(Halfedge_around_vertex_circulator);
+CGAL_USING(Halfedge_around_vertex_const_circulator);
+CGAL_USING(Halfedge_around_face_circulator);
+CGAL_USING(Halfedge_around_face_const_circulator);
+#undef CGAL_USING
 
 @ \end{ignoreindiss} 
 Our constrained triangulation |CT| decorates the $1$-skeleton of a
@@ -1423,7 +1423,7 @@ of LEDA starting version 4.2.
 #ifdef CGAL_USE_LEDA
 #include <LEDA/basic.h>
 #if __LEDA__ > 410
-#define USING_PPL
+#define CGAL_USING_PPL
 #include <CGAL/Nef_2/PM_persistent_PL.h>
 #endif
 #endif
@@ -1434,7 +1434,7 @@ if the necessary modules are present. The traits class
 framework |PointLocator| is described in Sven Thiel's masters thesis
 \cite{thiel-mt}. 
 <<TPL persistent module members>>=
-#ifdef USING_PPL
+#ifdef CGAL_USING_PPL
 typedef PM_persistent_PL_traits<Base>  PMPPLT; 
 typedef PointLocator<PMPPLT>           PMPP_locator;
 PMPP_locator* pPPL;
@@ -1448,22 +1448,22 @@ on, the second is a traits class object. We forward a reference to the
 geometric kernel |K| that we already obtained for the |*this| object
 of type |PM_point_locator|.
 <<TPL persistent module pm init>>=
-#ifdef USING_PPL
+#ifdef CGAL_USING_PPL
 pPPL = new PMPP_locator(CT,PMPPLT(K));
 #endif
 
 <<TPL persistent module default init>>=
-#ifdef USING_PPL
+#ifdef CGAL_USING_PPL
 pPPL = 0;
 #endif
 
 <<TPL persistent module destruction>>=
-#ifdef USING_PPL
+#ifdef CGAL_USING_PPL
 delete pPPL; pPPL=0; 
 #endif
 @ \begin{ignoreindiss}
 <<Triangulation point locator>>=
-#ifdef USING_PPL
+#ifdef CGAL_USING_PPL
 static const char* pointlocationversion = "point location via pers dicts";
 #else
 static const char* pointlocationversion = "point location via seg walks";
