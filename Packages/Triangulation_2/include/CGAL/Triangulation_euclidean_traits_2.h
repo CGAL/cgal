@@ -28,7 +28,6 @@
 #include <CGAL/Segment_2.h>
 #include <CGAL/Triangle_2.h>
 #include <CGAL/Line_2.h>
-#include <CGAL/Direction_2.h>
 #include <CGAL/Ray_2.h>
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/basic_constructions_2.h>
@@ -48,7 +47,6 @@ public:
   typedef typename R::Segment_2   Segment_2;
   typedef typename R::Triangle_2  Triangle_2;
   typedef typename R::Line_2      Line_2;
-  typedef typename R::Direction_2 Direction_2;
   typedef typename R::Ray_2       Ray_2;
 
   typedef typename R::Compare_x_2                Compare_x_2;
@@ -69,7 +67,6 @@ public:
   typedef Triangle_2   Triangle;
   typedef Ray_2        Ray;
   typedef Line_2       Line;
-  typedef Direction_2  Direction;
 
   Triangulation_euclidean_traits_2() {}
   Triangulation_euclidean_traits_2(const Triangulation_euclidean_traits_2 &) {}

@@ -1,6 +1,13 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 7.80 ()
+- remove DS_Container.h
+- make Infinite_tester public (for Sun)
+- fixes  (for intel )in nested Vertex_handle and Face_handle ;
+  add const & in constructors from circulators and iterators
+
+
 ver 7.79 (05/06/03)
 - Triangulation data structure uses Compact_container
 - Vertex_handle and Face_handle are now nested class of TDS

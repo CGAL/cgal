@@ -80,7 +80,15 @@ triangulation data structure.
 \ccMethod{Face_handle face() const;}
 {returns a face of the triangulation having  \ccVar\ as vertex.}
 
-\ccHeading{Traversal of the Adjacent Vertices, Incident Edges and Faces.}
+\ccHeading{Traversal of the Adjacent Vertices, Incident Edges and
+Faces.}
+The access to the circulators describing faces, edges and vertices
+incident or adjacent to a given vertices from the Vertex class is
+deprecated.
+Use the corresponding functions  of the Triangulation_data_structure_2
+class (see \ccc{TriangulationDataStructure_2} ) instead.
+
+
 Three circulator classes allow to traverse the edges, and faces
 incident to a given vertex and the adjacent vertices.
 Note that infinite as well as finite incident edges and faces are visited.

@@ -26,9 +26,9 @@ has to  provide a predicate type  \ccc{Side_of_oriented_circle_2}
 to implement the \ccc{side_of_oriented_circle} test.
 This test test is the basic test used to maintain the
 empty circle property and actually defines the triangulation.
-The additional types \ccc{Line_2}, \ccc{Direction_2} and
-and \ccc{Ray_2} and the constructor objects
-\ccc{Construct_direction_2}, \ccc{Construct_ray_2}
+The additional types \ccc{Line_2},
+\ccc{Ray_2} and the constructor objects
+\ccc{Construct_ray_2}
 \ccc{Construct_circumcenter_2}, \ccc{Construct_bisector_2},
 \ccc{Construct_midpoint}
 are used to build the dual Voronoi diagram
@@ -42,8 +42,6 @@ required if calls to
 \ccThree{Oriented_side}{xxxxxx}{}
 \ccThreeToTwo
 \ccNestedType{Line_2}{The line type.}
-\ccGlue
-\ccNestedType{Direction_2}{The direction of a line.}
 \ccGlue
 \ccNestedType{Ray_2}{The type for ray.}
 
@@ -81,13 +79,9 @@ bisector line of points \ccc{p} and \ccc{q}.
 This type is required only if  functions
 relative to the dual Voronoi diagram are called.}
 \ccGlue
-\ccNestedType{Construct_direction_2}{Constructor object  to build
-the direction of a line. Must provide 
-\ccc{Direction_2 operator()(Line_2 l);}.}
-\ccGlue
 \ccNestedType{Construct_ray_2}{A constructor object  to build
-a ray from a point and a direction. Must provide
-\ccc{Ray_2 operator() ( Point_2 p, Direction_2 d);}}
+a ray from a point and a line. Must provide
+\ccc{Ray_2 operator() ( Point_2 p, Line_2 l);}}
    
 
 \ccCreation

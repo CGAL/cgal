@@ -688,7 +688,6 @@ dual(const Edge &e) const
 {
   typedef typename Geom_traits::Line_2        Line;
   typedef typename Geom_traits::Ray_2         Ray;
-  typedef typename Geom_traits::Direction_2   Direction;
   typedef typename Geom_traits::Segment       Segment;
   
   CGAL_triangulation_precondition (! is_infinite(e));
@@ -718,9 +717,7 @@ dual(const Edge &e) const
   const Weighted_point& p = f->vertex( cw(i))->point();
   const Weighted_point& q = f->vertex( ccw(i))->point();
   Line l  = geom_traits().construct_radical_axis_2_object()(p,q);
-  Direction d =
-    geom_traits().construct_direction_2_object()(l);
-  Ray r = geom_traits().construct_ray_2_object()(dual(f), d);
+  Ray r = geom_traits().construct_ray_2_object()(dual(f), l);
   return make_object(r);
 }
   

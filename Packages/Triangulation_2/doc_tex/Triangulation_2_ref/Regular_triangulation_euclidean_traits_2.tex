@@ -49,8 +49,6 @@ The following types are required if member functions  relative to the
 dual power diagram are called 
 \ccNestedType{Line_2}{The line type.}
 \ccGlue
-\ccNestedType{Direction_2}{The direction of a line.}
-\ccGlue
 \ccNestedType{Ray_2}{The type for ray.}
 \ccGlue
 \ccNestedType{Construct_weighted_circumcenter_2}{Constructor object. Provides
@@ -64,13 +62,9 @@ the operator
 construct the radical axis of the two weighted points  \ccc{p} and
 \ccc{q}}
 \ccGlue
-\ccNestedType{Construct_direction_2}{Constructor object  to build
-the direction of a line. Must provide 
-\ccc{Direction_2 operator()(Line_2 l);}.}
-\ccGlue
 \ccNestedType{Construct_ray_2}{A constructor object  to build
-a ray from a point and a direction. Must provide
-\ccc{Ray_2 operator() ( Point_2 p, Direction_2 d);}}
+a ray from a point and a line. Must provide
+\ccc{Ray_2 operator() ( Point_2 p, Line_2 d);}}
 
 \ccHeading{Access to predicate objects}
 \ccMethod{Power_test_2 power_test_2_object();}{}

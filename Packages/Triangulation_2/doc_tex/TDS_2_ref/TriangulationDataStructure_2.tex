@@ -75,7 +75,7 @@ bidirectional, non-mutable iterators.
 
 The following circulators allow to visit all the edges or faces
 incident to a given vertex and all the vertices
-adjacent to a givan vertex.  They are all bidirectional and non mutable.
+adjacent to a given vertex.  They are all bidirectional and non mutable.
 \ccNestedType{Face_circulator}{}
 \ccGlue
 \ccNestedType{Edge_circulator}{}
@@ -129,8 +129,6 @@ number of faces stored in the triangulation data structure.}
 
 \begin{ccAdvanced}
 \ccHeading{Setting}
-\ccMethod{void set_number_of_vertices(int n);}{}
-\ccGlue
 \ccMethod{void set_dimension (int n);}{}
 \end{ccAdvanced}
 
@@ -155,6 +153,65 @@ as vertices.}
       Face_handle &fr) const;}{as above. In addition, if \ccc{true} is returned, fr is a pointer
 to the face with  \ccc{v1}, \ccc{v2} and \ccc{v3} 
 as vertices.}
+
+\ccHeading{Traversing the triangulation}
+\ccThree{Vertex_iterator}{tds.number_of_faces()x}{}
+\ccMethod{Face_iterator faces_begin() const;}{visits all faces}
+\ccGlue
+\ccMethod{Face_iterator faces_end() const;}{}
+\ccGlue
+\ccMethod{Vertex_iterator vertices_begin() const;}{visits all vertices}
+\ccGlue
+\ccMethod{Vertex_iterator vertices_end() const;}{}
+\ccGlue
+\ccMethod{Edge_iterator edges_begin() const;}{visits all edges}
+\ccGlue
+\ccMethod{ Edge_iterator edges_end() const;}{}
+
+
+Three circulator classes allow to traverse the edges, and faces
+incident to a given vertex and the adjacent vertices.
+Note that infinite as well as finite incident edges and faces are visited.
+ These circulators are bidirectional
+and their value types are respectively \ccc{Vertex}, \ccc{Edge}
+and \ccc{Face}.
+The  \ccc{operator++} moves the circulator
+counterclockwise around the vertex 
+and  the \ccc{operator--} moves the circulator
+clockwise. 
+
+A face circulator is invalidated by any modification of the face it
+points to. An edge circulator is invalidated
+by any modification of anyone of the two faces incident to the edge
+pointed to.  A vertex circulator that turns around vertex \ccc{v}
+and that has as value a pointer to vertex \ccc{w}, is invalidated
+by any modification of anyone of the two faces incident to \ccc{v}
+and \ccc{w}.
+
+\ccMethod{Vertex_circulator
+          incident_vertices(Vertex_handle v, Face_handle f=NULL)
+const;}
+{\ccPrecond If the
+face \ccc{f} is given, it has to be incident to \ccVar\ 
+and the circulators begins with a vertex of \ccc{f} :
+the vertex \ccc{f->vertex(ccw(i))} 
+if \ccc{i} is the index of \ccVar\  in \ccc{f}.} 
+\ccGlue
+\ccMethod{Edge_circulator
+          incident_edges(Vertex_handle v, Face_handle f=NULL) const;}
+{\ccPrecond If the
+face \ccc{f} is given, it has to be incident to \ccVar\ 
+and the circulators begins with an edge of \ccc{f} :
+the edge \ccc{(f,cw(i))}
+where \ccc{i} is the index of \ccVar\  in \ccc{f}.}
+\ccGlue
+\ccMethod{Face_circulator
+          incident_faces(Vertex_handle v, Face_handle f=NULL) const;}
+{\ccPrecond If the
+face \ccc{f} is given, it has to be incident to \ccVar\
+and the crculators begins with the face
+\ccc{f}.}
+
 
 \ccHeading{Modifiers}
 The following modifier member functions  guarantee
@@ -322,19 +379,6 @@ and neighbors \ccc{f1}, \ccc{f2}, \ccc{f3}.}
 \ccMethod{void  delete_vertex(Vertex_handle );}{deletes a vertex.}
 \end{ccAdvanced}
 
-\ccHeading{Traversing the triangulation}
-\ccThree{Vertex_iterator}{tds.number_of_faces()x}{}
-\ccMethod{Face_iterator faces_begin() const;}{visits all faces}
-\ccGlue
-\ccMethod{Face_iterator faces_end() const;}{}
-\ccGlue
-\ccMethod{Vertex_iterator vertices_begin() const;}{visits all vertices}
-\ccGlue
-\ccMethod{Vertex_iterator vertices_end() const;}{}
-\ccGlue
-\ccMethod{Edge_iterator edges_begin() const;}{visits all edges}
-\ccGlue
-\ccMethod{ Edge_iterator edges_end() const;}{}
 
 \ccHeading{Miscelleanous}
 
@@ -350,8 +394,7 @@ between numbers of vertices, faces and edges.}
 
 
 \ccHasModels
-\ccc{CGAL::Triangulation_data_structure_2<Tds_traits,Vb,Fb>}, \\
-\ccc{CGAL::Triangulation_data_structure_using_list_2<Vb,Fb>}.
+\ccc{CGAL::Triangulation_data_structure_2<Vb,Fb>} \\
 
 \ccSeeAlso
 \ccc{TriangulationDataStructure_2::Face} \\
