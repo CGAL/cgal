@@ -140,7 +140,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     template<typename InputIterator>
     inline Min_sphere_of_spheres_d(InputIterator begin,InputIterator end,
                                    const Traits& traits = Traits()) :
-      t(traits), e(0), ss(t) {
+      t(traits), ss(t), e(0) {
       is_up_to_date = false;
       CGAL_MINIBALL_ASSERT(is_neg(ss.radius(),ss.disc()));
       insert(begin,end);            // todo. better way?
@@ -220,7 +220,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
   template<class Traits>
   Min_sphere_of_spheres_d<Traits>::
     Min_sphere_of_spheres_d(const Traits& traits) :
-    t(traits), e(0), ss(t) {
+    t(traits), ss(t), e(0) {
     is_up_to_date = true;
     CGAL_MINIBALL_ASSERT(is_neg(ss.radius(),ss.disc())); // makes sure
                // that initially no ball is enclosed (cf. contains()).

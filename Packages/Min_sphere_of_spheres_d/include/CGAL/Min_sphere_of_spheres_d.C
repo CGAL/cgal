@@ -258,7 +258,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     using std::endl;
   
     // check size of support set:
-    if (e > l.size() || e > (D+1)) {
+    if (e > static_cast<int>(l.size()) || e > (D+1)) {
       cerr << "Min_sphere_of_spheres_d: support set too large." << endl
            << "Please contact the author <kf@iaeth.ch>." << endl;
       return false;
@@ -276,7 +276,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     }
   
     // check that the miniball is enclosing:
-    for (int i=0; i<l.size(); ++i)
+    for (unsigned int i=0; i<l.size(); ++i)
       if (!ss.contains(t.center_cartesian_begin(l[i]),
                        t.radius(l[i]),Tol,Is_exact())) {
         cerr << "Min_sphere_of_spheres_d: miniball not enclosing." << endl
@@ -314,9 +314,9 @@ namespace CGAL_MINIBALL_NAMESPACE {
     
     // set up initial system's coefficient matrix:
     FT (*m)[D+1] = new FT[e][D+1];
-    for (int j=0; j<e; ++j)
+    for (unsigned int j=0; j<e; ++j)
       copy_n<D>(t.center_cartesian_begin(l[j]),m[j]);
-    for (int j=0; j<e; ++j)
+    for (unsigned int j=0; j<e; ++j)
       m[j][D] = FT(1);
     
     // set up initial system's right-hand-side:
@@ -325,7 +325,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     rhs[D] = FT(1);
     
     // perform Gaussian elimination:
-    for (int j=0; j<e; ++j) {
+    for (unsigned int j=0; j<e; ++j) {
       // check rank:
       if (m[j][j] == FT(0)) {
         // find row with non-zero entry in column j:
@@ -339,7 +339,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
         }
     
         // exchange rows:
-        for (int k=0; k<e; ++k)
+        for (unsigned int k=0; k<e; ++k)
           std::swap(m[k][j],m[k][i]);
         std::swap(rhs[j],rhs[i]);
       }
@@ -347,24 +347,24 @@ namespace CGAL_MINIBALL_NAMESPACE {
     
       // eliminate m[j][j+1..D] by subtracting a
       // multiple of row j from row i:
-      for (int i=j+1; i<D+1; ++i) {
+      for (unsigned int i=j+1; i<D+1; ++i) {
         // determine factor:
         const FT l = m[j][i]/m[j][j];
     
         // subtract row j times l from row i:
-        for (int k=0; k<e; ++k)
+        for (unsigned int k=0; k<e; ++k)
           m[k][i] -= m[k][j]*l;
         rhs[i] -= rhs[j]*l;
       }
     }
     
     // check that we now have an upper triangular matrix:
-    for (int j=0; j<e; ++j)
-      for(int i=j+1; i<D+1; ++i)
+    for (unsigned int j=0; j<e; ++j)
+      for(unsigned int i=j+1; i<D+1; ++i)
         CGAL_MINIBALL_ASSERT(m[j][i] == FT(0));
     
     // check solvability:
-    for (int i=e; i<D+1; ++i)
+    for (unsigned int i=e; i<D+1; ++i)
       if (!is_zero(rhs[i],ss.disc())) {
         cerr << "Min_sphere_of_spheres_d: center of the miniball" << endl
              << "not in the span of the support centers." << endl
@@ -374,15 +374,15 @@ namespace CGAL_MINIBALL_NAMESPACE {
     
     // compute coefficients by backsubstitution:
     Pair<FT> lambda[D+1];
-    for (int i=e-1; i>=0; --i) {
+    for (unsigned int i=e-1; i>=0; --i) {
       lambda[i] = rhs[i];
-      for (int j=i+1; j<e; ++j)
+      for (unsigned int j=i+1; j<e; ++j)
         lambda[i] -= lambda[j]*m[j][i];
       lambda[i] = lambda[i]/m[i][i];
     }
     
     // check coefficients:
-    for (int i=0; i<e; ++i)
+    for (unsigned int i=0; i<e; ++i)
       if (is_neg_or_zero(lambda[i],ss.disc())) {
         cerr << "Min_sphere_of_spheres_d: center of miniball not in" << endl
              << "interior of convex hull of support centers." << endl
