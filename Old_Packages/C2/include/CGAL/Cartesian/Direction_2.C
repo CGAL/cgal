@@ -130,8 +130,18 @@ bool
 DirectionC2<R CGAL_CTAG>::
 counterclockwise_in_between(const DirectionC2<R CGAL_CTAG> &d1,
                             const DirectionC2<R CGAL_CTAG> &d2) const
+// returns true, iff \ccVar\ is not equal to \ccc{d1}, and 
+// while rotating counterclockwise starting at \ccc{d1}, 
+// \ccVar\ is reached strictly before \ccc{d2} is reached.
+// Note that true is returned if \ccc{d1} == \ccc{d2}, unless
+//  also \ccVar\ == \ccc{d1}.
 {
-  return (d1 < *this) && (*this < d2) ;
+  if ( d1 < *this)  {
+    return ( *this < d2 )||( d2 <= d1 );
+  }
+  else    {
+    return ( *this < d2 )&&( d2 <= d1 );
+  }
 }
 
 template < class R >

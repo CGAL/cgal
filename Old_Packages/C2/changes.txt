@@ -1,3 +1,5 @@
+- fixed lines over 80 characters. Some remain in Cartesian/Line_2.C
+
 Version 3.3.12 (8 february 2000)
 - fixed a multiplication by a scalar on the wrong side in Ray_2.C
 
