@@ -1,3 +1,10 @@
+1.3.4 - 17-01-2003
+-------------------
+	The Nef_2 demo compiles even if you don't use GMP.
+	Qt_widget_helpwindow have been added in the lib. Provides functionality for demos to display help HowTo.
+	Alpha_shape demo has less bugs. Now it works as it was expected.
+	Alpha_shape demo contains now a HowTo button in Help menu.
+
 1.3.3 - 06-01-2003
 	Fixed Nef2 demo. Both layers could be seen.
 
