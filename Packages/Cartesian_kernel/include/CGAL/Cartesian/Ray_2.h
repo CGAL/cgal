@@ -70,7 +70,7 @@ public:
 
   RayC2        transform(const Aff_transformation_2 &t) const
   {
-    return RayC2(t.transform(source()), t.transform(second_point()));
+    return RayC2<R>(t.transform(source()), t.transform(second_point()));
   }
 
   bool        is_horizontal() const;

@@ -85,7 +85,7 @@ public:
 
   LineC3        transform(const Aff_transformation_3 &t) const
   {
-    return LineC3(t.transform(point()), t.transform(direction()));
+    return LineC3<R>(t.transform(point()), t.transform(direction()));
   }
 };
 

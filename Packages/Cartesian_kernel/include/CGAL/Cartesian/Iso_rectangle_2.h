@@ -89,7 +89,7 @@ public:
   {
     // FIXME : We need a precondition like this!!!
     // CGAL_kernel_precondition(t.is_axis_preserving());
-    return Iso_rectangleC2(t.transform(vertex(0)), t.transform(vertex(2)));
+    return Iso_rectangleC2<R>(t.transform(vertex(0)), t.transform(vertex(2)));
   }
 
   Bounded_side    bounded_side(const Point_2 &p) const;

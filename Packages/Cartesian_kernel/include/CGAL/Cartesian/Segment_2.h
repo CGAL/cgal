@@ -83,7 +83,7 @@ public:
   SegmentC2        opposite() const;
   SegmentC2        transform(const Aff_transformation_2 &t) const
   {
-    return SegmentC2(t.transform(source()), t.transform(target()));
+    return SegmentC2<R>(t.transform(source()), t.transform(target()));
   }
 
   bool        is_degenerate() const;

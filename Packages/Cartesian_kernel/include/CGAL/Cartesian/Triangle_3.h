@@ -54,7 +54,7 @@ public:
 
   TriangleC3       transform(const Aff_transformation_3 &t) const
   {
-    return TriangleC3(t.transform(vertex(0)),
+    return TriangleC3<R>(t.transform(vertex(0)),
                 t.transform(vertex(1)),
                 t.transform(vertex(2)));
   }

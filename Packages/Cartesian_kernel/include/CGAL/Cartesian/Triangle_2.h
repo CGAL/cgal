@@ -57,7 +57,7 @@ public:
   TriangleC2           opposite() const;
   TriangleC2           transform(const Aff_transformation_2 &t) const
   {
-    return TriangleC2(t.transform(vertex(0)),
+    return TriangleC2<R>(t.transform(vertex(0)),
                 t.transform(vertex(1)),
                 t.transform(vertex(2)));
   }
