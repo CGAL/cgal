@@ -27,7 +27,7 @@
 #define CGAL_CONSTRAINT_HIERARCHY_2_H
 
 #include <CGAL/basic.h>
-#include <pair>
+#include <utility>
 #include <map> 
 #include <list> 
 #include <CGAL/Iterator_project.h>
@@ -272,7 +272,7 @@ contexts_end(T va, T vb)
 } 
 
 template <class T, class Data>
-Constraint_hierarchy_2<T,Data>::H_vertex_it
+typename Constraint_hierarchy_2<T,Data>::H_vertex_it
 Constraint_hierarchy_2<T,Data>::
 vertices_in_constraint_begin(T va, T vb)
 {
@@ -305,13 +305,13 @@ insert_constraint(T va, T vb){
 
   children->push_front(he.first);
   children->push_back(he.second);
-  bool insert_ok = (c_to_sc_map.insert(make_pair(he,children))).second;
+  bool insert_ok = (c_to_sc_map.insert(std::make_pair(he,children))).second;
   if (insert_ok) {
     H_context ctxt;
     ctxt.enclosing = children;
     ctxt.pos     = children->begin();
     fathers->push_front(ctxt);
-    sc_to_c_map.insert(make_pair(he,fathers));
+    sc_to_c_map.insert(std::make_pair(he,fathers));
     return true;
   }
   return false; //duplicate constraint - no insertion
@@ -321,7 +321,7 @@ insert_constraint(T va, T vb){
 template <class T, class Data>
 void Constraint_hierarchy_2<T,Data>::
 constrain_vertex(T v, Data data){
-  vertex_map.insert(make_pair(v,data));
+  vertex_map.insert(std::make_pair(v,data));
 }
 
 
@@ -344,7 +344,7 @@ template <class T, class Data>
 void Constraint_hierarchy_2<T,Data>::
 set_data(T v, Data data){
   vertex_map.erase(v);
-  vertex_map.insert(make_pair(v,data));
+  vertex_map.insert(std::make_pair(v,data));
 }
 
 
@@ -422,7 +422,7 @@ remove_Steiner(T v, T va, T vb)
   sc_to_c_map.erase(make_edge(va,v));
   sc_to_c_map.erase(make_edge(v,vb));
   delete hcl2;
-  sc_to_c_map.insert(make_pair(make_edge(va,vb),hcl1));
+  sc_to_c_map.insert(std::make_pair(make_edge(va,vb),hcl1));
 }
 
 
@@ -476,13 +476,13 @@ add_Steiner(T va, T vb, T vc){
     hcl3->splice(hcl3->end(), *hcl);
     delete hcl;
   }
-  else   sc_to_c_map.insert(make_pair(make_edge(va,vc), hcl));
+  else   sc_to_c_map.insert(std::make_pair(make_edge(va,vc), hcl));
 
   if (get_contexts(vc,vb,hcl3)) {// (vc,vb) is already a subconstraint
     hcl3->splice(hcl3->end(),*hcl2);
     delete hcl2;
   }
-  else  sc_to_c_map.insert(make_pair(make_edge(vc,vb), hcl2));
+  else  sc_to_c_map.insert(std::make_pair(make_edge(vc,vb), hcl2));
     
   
   sc_to_c_map.erase(make_edge(va,vb));
@@ -569,7 +569,7 @@ print() const
     H_vertex_it vit = (*hcit).second->begin();
     for (; vit != (*hcit).second->end(); vit++){
       //num ++;
-      vertex_num.insert(make_pair((*vit), num));
+      vertex_num.insert(std::make_pair((*vit), num));
     }
   }
   std::map<T,int>::iterator vnit = vertex_num.begin();

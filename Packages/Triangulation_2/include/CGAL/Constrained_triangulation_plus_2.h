@@ -414,7 +414,8 @@ find_intersected_faces(Vertex_handle vaa,
 }
 
 template <class Tr, class I_tag >
-Constrained_triangulation_plus_2<Tr,I_tag>::Vertex_handle 
+typename Constrained_triangulation_plus_2<Tr,I_tag>::Vertex_handle 
+
 Constrained_triangulation_plus_2<Tr,I_tag>::
 intersect(Face_handle f, int i, 
 	  Vertex_handle vaa,
@@ -439,7 +440,7 @@ intersect(Face_handle f, int i,
 }
 
 template <class Tr, class I_tag >
-Constrained_triangulation_plus_2<Tr,I_tag>:: Vertex_handle 
+typename Constrained_triangulation_plus_2<Tr,I_tag>:: Vertex_handle 
 Constrained_triangulation_plus_2<Tr,I_tag>::
 intersect(Face_handle f, int i, 
 	  Vertex_handle vaa,
