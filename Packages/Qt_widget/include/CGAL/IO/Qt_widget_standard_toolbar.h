@@ -31,6 +31,7 @@
 #include <CGAL/IO/Qt_widget_focus.h>
 #include <CGAL/IO/Qt_widget_zoomrect.h>
 #include <CGAL/IO/Qt_widget_handtool.h>
+#include <CGAL/IO/Qt_widget_show_mouse_coordinates.h>
 
 
 #include <qobject.h>
@@ -56,15 +57,17 @@ private slots:
   void forward();
   
 private:
-  QToolBar		  *maintoolbar;
-  QToolButton	  *but[10];
-  Qt_widget		  *widget;
-  QButtonGroup  *button_group;
-  int			      nr_of_buttons;
+  QToolBar        *maintoolbar;
+  QToolButton     *but[10];
+  Qt_widget	  *widget;
+  QButtonGroup    *button_group;
+  int             nr_of_buttons;
 	
-  CGAL::Qt_widget_focus         zoombut;
+  CGAL::Qt_widget_focus             zoombut;
   CGAL::Qt_widget_zoomrect	    zoomrectbut;
   CGAL::Qt_widget_handtool	    handtoolbut;
+  CGAL::Qt_widget_show_mouse_coordinates *show_coord;
+
 };//end class
 
 };//end namespace
