@@ -69,13 +69,13 @@ public:
   typedef CGAL::Hyperplane_d<Self>         Hyperplane_d;
   typedef CGAL::Aff_transformation_d<Self> Aff_transformation_d;
 
-  typedef Point_d_base::Cartesian_const_iterator Cartesian_const_iterator_d;
+  typedef typename Point_d_base::Cartesian_const_iterator Cartesian_const_iterator_d;
 
   template <typename K>
   class Construct_Cartesian_const_iterator
   {    
     typedef typename K::Point_d Point_d;
-    typedef typename K::Cartesian_const_iterator  Cartesian_const_iterator_d;
+    typedef typename K::Cartesian_const_iterator_d  Cartesian_const_iterator_d;
 
   public:
     typedef Cartesian_const_iterator_d result_type;

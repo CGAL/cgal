@@ -1,3 +1,6 @@
+2.17 (26 September 2003) [af]
+- Added maintainer
+
 2.15 (18 September 2003) [af]
 - Some testsuite files included the wrong header file
 

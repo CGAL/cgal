@@ -1,5 +1,9 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
+
+0.100 (26 September 2003)
+- Added maintainer
+
 0.99 (26 September 2003)
 - New file headers.
 
