@@ -21,10 +21,6 @@
 // ============================================================================
 
 
-//#include <CGAL/_test_cls_vertex_iterator.C>
-//#include <CGAL/_test_cls_edge_iterator.C>
-//#include <CGAL/_test_cls_face_iterator.C>
-
 template < class Triangulation >
 void
 _test_iterators( const Triangulation &T )
