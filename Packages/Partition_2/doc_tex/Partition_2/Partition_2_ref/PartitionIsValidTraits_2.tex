@@ -58,21 +58,13 @@ lies to the right of $l$, and returns \ccStyle{CGAL::COLLINEAR} if $r$ lies
 on $l$.}
 
 
-The following three types are required by the functions \ccc{is_simple_2} and
-\ccc{orientation_2}, which are used to test the simplicity and CCW order
-of the partition polygons.
-
-\ccNestedType{Less_xy}{ Same as \ccc{Less_xy_2}. }
-\ccNestedType{Vector_2}{The vector type that can be constructed from the
-                        difference of two objects of type \ccc{Point_2}.}
-\ccNestedType{FT}{The coordinate type of the points ({\em i.e.} a field type)}
-
-
 
 \ccCreation
 \ccCreationVariable{traits}  %% choose variable name
 
-A default constructor and copy constructor are required.
+Only a copy constructor is required.
+
+\ccConstructor{PartitionIsValidTraits_2(PartitionIsValidTraits_2& tr)}{}
 
 \ccOperations
 
@@ -86,108 +78,6 @@ types must exist.
 \ccMethod{Leftturn_2 leftturn_2_object();}{}
 
 \ccMethod{Orientation_2 orientation_2_object();}{}
-
-
-The following functions are required by the functions \ccc{is_simple_2} and
-\ccc{orientation_2}, which are used to test the simplicity and CCW order
-of the partition polygons. 
-
-\ccMemberFunction{
-    Comparison_result compare_x(const Point_2 &p, const Point_2 &q) const;
-}
-{
-\lcTex{
-Returns
-$
-  \left\{
-  \begin{array}{lll}
-     \ccStyle{SMALLER} & \mbox{if} & p_x < q_x \\
-     \ccStyle{EQUAL}   & \mbox{if} & p_x = q_x \\
-     \ccStyle{LARGER}  & \mbox{if} & p_x > q_x
-  \end{array}
-  \right.%}
-$
-}
-\lcHtml{
-Returns SMALLER if p_x < q_x, EQUAL if p_x = q_x and LARGER if p_x > q_x
-}
-}
-
-
-\ccMemberFunction{
-    Comparison_result compare_y(const Point_2 &p, const Point_2 &q) const;
-}
-{
-\lcTex{
-Returns
-$
-  \left\{
-  \begin{array}{lll}
-     \ccStyle{SMALLER} & \mbox{if} & p_y < q_y \\
-     \ccStyle{EQUAL}   & \mbox{if} & p_y = q_y \\
-     \ccStyle{LARGER}  & \mbox{if} & p_y > q_y
-  \end{array}
-  \right.%}
-$
-}
-\lcHtml{
-Returns SMALLER if p_y < q_y, EQUAL if p_y = q_y and LARGER if p_y > q_y
-}
-}
-
-\ccMemberFunction{
-    FT cross_product_2(const Vector_2& p, const Vector_2& q) const;
-}
-{
-Returns $p_x q_y - p_y q_x$.
-}
-
-\ccMemberFunction{
-    bool do_intersect(const Point_2& p1,
-                      const Point_2& q1,
-                      const Point_2& p2,
-                      const Point_2& q2) const;
-}
-{
-Returns \ccc{true} iff the segments \ccStyle{[p1,q1]} and \ccStyle{[p2,q2]}
-intersect.
-}
-
-\ccMemberFunction{
-    bool have_equal_direction(const Vector_2& v1,
-                              const Vector_2& v2 ) const;
-}
-{
-Returns \ccc{true} iff the vectors \ccStyle{v1} and \ccStyle{v2} have the
-same direction.
-}
-
-\ccMemberFunction{
-    bool is_negative(const FT& x) const;
-}
-{
-Returns \ccStyle{true} iff \ccStyle{x<0}.
-}
-
-\ccMemberFunction{
-    bool lexicographically_yx_smaller_or_equal(const Point_2& p,
-                                               const Point_2& q) const;
-}
-{
-Returns \ccc{true} iff $p_y \leq q_y$ or $p_y = q_y$ and $p_x \leq q_x$.
-}
-
-\ccMethod{
-    Orientation
-    orientation(const Point_2& p, const Point_2& q, const Point_2& r) const;
-}
-{
-Returns \ccStyle{LEFTTURN}, if $r$ lies to the left of the oriented
-line $l$ defined by $p$ and $q$, returns \ccStyle{RIGHTTURN} if $r$
-lies to the right of $l$, and returns \ccStyle{COLLINEAR} if $r$ lies
-on $l$.
-}
-
 
 
 \ccHasModels
