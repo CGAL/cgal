@@ -48,7 +48,7 @@ void treat_intersection(const segment_t &seg1, const segment_t &seg2)
     point_t pt1;
     segment_t iseg;
     bool is;
-    is = do_intersect(seg1,seg2);
+    is = CGAL::do_intersect(seg1,seg2);
     CGAL::Object result = CGAL::intersection(seg1, seg2);
     if (!CGAL::assign(iseg, result) && !CGAL::assign(pt1, result)) {
 	std::cout << "No intersection.\n";
