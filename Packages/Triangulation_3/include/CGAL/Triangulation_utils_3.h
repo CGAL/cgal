@@ -58,7 +58,7 @@ struct Triangulation_utils_3
 
   // rand_4() outputs pseudo random unsigned ints < 4.
   // We compute random 16 bit values, that we slice/shift to make it faster.
-  unsigned int rand_4() const
+  static unsigned int rand_4()
   {
       if (count==0)
       {
@@ -72,7 +72,7 @@ struct Triangulation_utils_3
       return ret;
   }
 
-  unsigned int rand_3() const
+  static unsigned int rand_3()
   {
       unsigned int i = rand_4();
       return i==3 ? 0 : i;

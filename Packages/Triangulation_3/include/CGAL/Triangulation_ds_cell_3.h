@@ -43,9 +43,18 @@ template < class Tds> class Triangulation_ds_vertex_iterator_3;
 
 template < class Vb, class Cb >
 class Triangulation_ds_cell_3
-  : public Cb,
-    public Triangulation_utils_3
+  : public Cb
 {
+    static int ccw(int i)
+    {
+      return Triangulation_utils_3::ccw(i);
+    } 
+
+    static int cw(int i)
+    {
+      return Triangulation_utils_3::cw(i);
+    } 
+
 public:
 
   typedef Triangulation_data_structure_3<Vb,Cb> Tds;
