@@ -25,8 +25,7 @@ version:
 	echo "$(VERSION) (" `date +"%e %b %Y"` ")" > version
 
 rtag:
-	RTAG_VERSION=`echo $(VERSION) | sed -e "s/\./_/"`
-	cvs rtag v$(RTAG_VERSION) $(CVS_MODULE_NAME)
+	cvs rtag v`echo $(VERSION) | sed -e "s/\./_/"` $(CVS_MODULE_NAME)
 
 submit: package
 	cp $(Package).tar.gz doc_ps/$(Package).ps version description $(WWW_dir)
