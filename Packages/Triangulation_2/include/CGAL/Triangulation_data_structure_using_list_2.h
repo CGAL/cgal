@@ -80,15 +80,18 @@ class Triangulation_data_structure_using_list_2
                    Triangulation_data_structure_using_list_2<Vb,Fb> >;
 
 public:
-  typedef Triangulation_dsul_vertex_2<Vb,Fb> Vertex;
-  typedef Triangulation_dsul_face_2<Vb,Fb> Face;
-  typedef std::pair<Face*, int>  Edge;
+  typedef Vb  Vertex_base;
+  typedef Fb  Face_base;
+  typedef typename Vertex_base::Point                        Point;
+  typedef Triangulation_dsul_vertex_2<Vertex_base,Face_base> Vertex;
+  typedef Triangulation_dsul_face_2<Vertex_base,Face_base>   Face;
+  typedef std::pair<Face*, int>                              Edge;
 
-  typedef Triangulation_data_structure_using_list_2<Vb,Fb> Tds;
-  typedef Triangulation_dsul_iterator_base_2<Tds> Iterator_base;
-  typedef Triangulation_dsul_face_iterator_2<Tds> Face_iterator;
-  typedef Triangulation_dsul_vertex_iterator_2<Tds> Vertex_iterator;
-  typedef Triangulation_dsul_edge_iterator_2<Tds> Edge_iterator;
+  typedef Triangulation_data_structure_using_list_2<Vertex_base,Face_base> Tds;
+  typedef Triangulation_dsul_iterator_base_2<Tds>        Iterator_base;
+  typedef Triangulation_dsul_face_iterator_2<Tds>        Face_iterator;
+  typedef Triangulation_dsul_vertex_iterator_2<Tds>      Vertex_iterator;
+  typedef Triangulation_dsul_edge_iterator_2<Tds>        Edge_iterator;
 
   typedef Triangulation_ds_face_circulator_2<Vertex,Face> 
 							Face_circulator;
@@ -1239,7 +1242,7 @@ file_input( std::istream& is, bool skip_first)
     ++i;
   }
   for( ; i < n; ++i) {
-    typename Vb::Point p;
+    Point p;
     is >> p;
     V[i] = new Vertex(p);
   }

@@ -33,10 +33,11 @@ template < class Vbb>
 class Triangulation_hierarchy_vertex_base_2
  : public Vbb
 {
+ public:
   typedef Vbb V_Base;
   typedef typename V_Base::Point   Point;
 
- public:
+
   Triangulation_hierarchy_vertex_base_2()
     : V_Base(), _up(0), _down(0)
     {}

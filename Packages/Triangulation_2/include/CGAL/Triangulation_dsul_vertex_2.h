@@ -43,8 +43,8 @@ public:
   typedef Vb  Vertex_base;
   typedef Fb  Face_base;
   typedef typename Vertex_base::Point Point;
-  typedef Triangulation_dsul_vertex_2<Vertex_base,Fb> Vertex;
-  typedef Triangulation_dsul_face_2<Vertex_base,Fb> Face;
+  typedef Triangulation_dsul_vertex_2<Vertex_base,Face_base> Vertex;
+  typedef Triangulation_dsul_face_2<Vertex_base,Face_base> Face;
   typedef std::pair< Face*,int> Edge;
   typedef Triangulation_ds_face_circulator_2<Vertex,Face> Face_circulator;
   typedef Triangulation_ds_vertex_circulator_2<Vertex,Face> 

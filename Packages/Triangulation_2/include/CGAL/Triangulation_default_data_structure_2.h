@@ -81,12 +81,14 @@ class Triangulation_default_data_structure_2
 
 public:
   typedef Gt Geom_traits;
+  typedef Vb  Vertex_base;
+  typedef Fb  Face_base;
 
-  typedef Triangulation_ds_vertex_2<Vb,Fb> Vertex;
-  typedef Triangulation_ds_face_2<Vb,Fb> Face;
+  typedef Triangulation_ds_vertex_2<Vertex_base,Face_base> Vertex;
+  typedef Triangulation_ds_face_2<Vertex_base,Face_base> Face;
   typedef std::pair<Face*, int>  Edge;
 
-  typedef Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
+  typedef Triangulation_default_data_structure_2<Gt,Vertex_base,Face_base> Tds;
   typedef Triangulation_ds_iterator_base_2<Tds> Iterator_base;
   typedef Triangulation_ds_face_iterator_2<Tds> Face_iterator;
   typedef Triangulation_ds_vertex_iterator_2<Tds> Vertex_iterator;
@@ -1149,7 +1151,7 @@ file_input( std::istream& is, bool skip_first)
     ++i;
   }
   for( ; i < n; ++i) {
-    typename Vb::Point p;
+    typename Vertex_base::Point p;
     is >> p;
     V[i] = new Vertex(p);
   }
