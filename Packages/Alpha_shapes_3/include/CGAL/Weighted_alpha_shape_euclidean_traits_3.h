@@ -25,14 +25,6 @@
 #ifndef CGAL_WEIGHTED_ALPHA_SHAPE_EUCLIDEAN_TRAITS_3_H
 #define CGAL_WEIGHTED_ALPHA_SHAPE_EUCLIDEAN_TRAITS_3_H 
 
-//#include <CGAL/basic.h>
-//#include <CGAL/Cartesian.h>
-//#include <CGAL/Homogeneous.h>
-//#include <CGAL/Integer.h>
-//#include <CGAL/Rational.h>
-//#include <CGAL/Fixed.h>
-//#include <CGAL/Real.h>
-
 #include <CGAL/squared_distance_3.h>   // to avoid a g++ problem
 #include <CGAL/Point_3.h>
 #include <CGAL/predicates_on_points_3.h>
@@ -58,19 +50,19 @@ public:
 
   result_type operator()(const T& p, const T& q, const T& r, const T& s)
     { 
-      return std::max
+      return max
 	(return_type(0), CGAL::squared_radius_orthogonalsphere(p, q, r, s));
     }
 
   result_type operator()(const T& p, const T& q, const T& r)
     { 
-      return std::max
+      return max
 	(return_type(0), CGAL::squared_radius_smallest_orthogonalsphere(p, q, r));
     }
 
   result_type operator()(const T& p, const T& q)
     { 
-      return std::max
+      return max
 	(return_type(0), CGAL::squared_radius_smallest_orthogonalsphere(p, q));
     }
 };
