@@ -108,9 +108,9 @@ public:
   
   #ifdef ITERATOR_H
   Constrained_triangulation_2(
-			   std::istream_iterator<Constraint,ptrdiff_t> first,
-			   std::istream_iterator<Constraint,ptrdiff_t> last,
-			   const Gt& gt=Gt() )
+			std::istream_iterator<Constraint,std::ptrdiff_t> first,
+			std::istream_iterator<Constraint,std::ptrdiff_t> last,
+			const Gt& gt=Gt() )
      : Triangulation_2<Gt,Tds>(gt)
   {
       std::list<Constraint> lc;

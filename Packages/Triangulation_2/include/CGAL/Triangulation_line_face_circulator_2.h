@@ -25,15 +25,14 @@
 #ifndef CGAL_TRIANGULATION_LINE_FACE_CIRCULATOR_2_H
 #define CGAL_TRIANGULATION_LINE_FACE_CIRCULATOR_2_H
 
-#include <CGAL/circulator.h>
-#include <CGAL/triangulation_assertions.h>
-#include <CGAL/Triangulation_face_2.h>
-#include <CGAL/Triangulation_vertex_2.h>
-#include <CGAL/Triangulation_handles_2.h>
-
+// #include <CGAL/circulator.h>
+// #include <CGAL/Triangulation_utils_2.h>
+// #include <CGAL/triangulation_assertions.h>
+// #include <CGAL/Triangulation_face_2.h>
+// #include <CGAL/Triangulation_vertex_2.h>
+// #include <CGAL/Triangulation_handles_2.h>
 
 CGAL_BEGIN_NAMESPACE
-
 
 template < class Gt, class Tds >
 class Triangulation_2;
@@ -41,7 +40,7 @@ class Triangulation_2;
 template < class Gt, class Tds >
 class Triangulation_line_face_circulator_2
   :   public Bidirectional_circulator_base<Triangulation_face_2<Gt,Tds>,
-	                                      ptrdiff_t,size_t>,
+	                                      std::ptrdiff_t,std::size_t>,
       public Triangulation_cw_ccw_2,
       public  Triangulation_face_handle_2<Gt,Tds>
 {
@@ -59,18 +58,11 @@ public:
   typedef typename Triangulation::Locate_type Locate_type;
 
    enum State {undefined = -1,
-	      vertex_vertex,
-	      vertex_edge,
-	      edge_vertex,
-	      edge_edge};
+	       vertex_vertex,
+	       vertex_edge,
+	       edge_vertex,
+	       edge_edge};
             
-//   typedef Face           value_type;
-//   typedef Face   &       reference;
-//   typedef const Face   & const_reference;
-//   typedef unsigned int   size_type;
-//   typedef int            distance_type;
-            
-
 public:
   const Triangulation_2<Gt, Tds>* _tr;
   State s;

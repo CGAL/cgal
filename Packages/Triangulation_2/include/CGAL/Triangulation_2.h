@@ -224,8 +224,8 @@ public:
     }
 #endif // VECTOR_H
   //#ifdef ITERATOR_H
-    int insert(std::istream_iterator<Point, ptrdiff_t> first,
-               std::istream_iterator<Point, ptrdiff_t> last)
+    int insert(std::istream_iterator<Point, std::ptrdiff_t> first,
+               std::istream_iterator<Point, std::ptrdiff_t> last)
     {
         int n = number_of_vertices();
         while(first != last){

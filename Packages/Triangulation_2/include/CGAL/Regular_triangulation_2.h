@@ -108,8 +108,8 @@ public:
   #endif // VECTOR_H
   #ifdef ITERATOR_H
   int
-  insert(std::istream_iterator<Weighted_point, ptrdiff_t> first,
-         std::istream_iterator<Weighted_point, ptrdiff_t> last)
+  insert(std::istream_iterator<Weighted_point, std::ptrdiff_t> first,
+         std::istream_iterator<Weighted_point, std::ptrdiff_t> last)
   {	int n = number_of_vertices();
   	while(first != last)
   	{	insert(*first);

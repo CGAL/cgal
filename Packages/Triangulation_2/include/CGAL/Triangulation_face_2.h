@@ -57,7 +57,6 @@ public:
 
   typedef Triangulation_vertex_handle_2<Gt,Tds> Vertex_handle;
   typedef Triangulation_face_handle_2<Gt,Tds> Face_handle;
-  //  typedef std::pair<Face_handle, int>     Edge;
 
 
   Triangulation_face_2()
@@ -78,113 +77,196 @@ public:
 		       const Face_handle& n2)
     : Fa(&(*v0), &(*v1), &(*v2),&(*n0), &(*n1), &(*n2)) 
   {}
-        
-    
-
+ 
   // Vertex access functions
-  inline Vertex_handle vertex(int i) const
-  {
-    return  ((Vertex *)(Fa::vertex(i)));
-  }
-    
-  inline Vertex_handle opposite_vertex(int i) const
-    {
-      return ((Vertex *)(Fa::opposite_vertex(i)));
-    }
+  Vertex_handle vertex(int i) const;
+  Vertex_handle opposite_vertex(int i) const;
+  bool has_vertex(const Vertex_handle& v) const;
+  bool has_vertex(const Vertex_handle& v, int& i) const;
+  int index(const Vertex_handle& v) const;
  
-  inline bool has_vertex(const Vertex_handle& v) const
-  {
-        return (Fa::has_vertex( & (*v)) );
-  }
-    
-    
-  inline bool has_vertex(const Vertex_handle& v, int& i) const
-  {
-    return Fa::has_vertex( &(*v), i);
-  }
-
-  inline int index(const Vertex_handle& v) const
-  {
-    return Fa::index( &(*v));
-  }
-  
-  
- 
-
   //ACCESS FUNCTIONS
-  inline
-  Face_handle neighbor(int i) const
-  {
-    return (Face *)(Fa::neighbor(i));
-  }
-
-   inline int index(const Face_handle& f) const
-  {
-    return Fa::index( &(*f));
-  }
+  Face_handle neighbor(int i) const;
+  int index(const Face_handle& f) const;
+  bool has_neighbor(const Face_handle& f) const;
+  bool has_neighbor(const Face_handle& f, int &i) const;
+  int opposite_index(int i) const;
+  Face_handle handle() const;
   
-  inline bool has_neighbor(const Face_handle& f) const
-  {
-    return Fa::has_neighbor( &(*f));
-  }
-
-  inline bool has_neighbor(const Face_handle& f, int &i) const
-  {
-    return Fa::has_neighbor( &(*f), i);
-  }
-
-  inline int opposite_index(int i) const
-    {
-      return Fa::opposite_index(i);
-    }
-
-  inline Face_handle handle() const
-  {
-    return Face_handle(this);
-  }
-
- //Setting
-  inline
+  //Setting
   void set_vertices(const Vertex_handle& v0,
 		    const Vertex_handle& v1,
-		    const Vertex_handle& v2)
-    {
-        Fa::set_vertices(&(*v0), &(*v1), &(*v2));
-    }
+		    const Vertex_handle& v2);
+  void set_neighbors(const Face_handle& n0,
+		     const Face_handle& n1,
+		     const Face_handle& n2);
+  void set_vertices();
+  void set_neighbors(); 
+  void set_vertex(int i, const Vertex_handle& v);
+  void set_neighbor(int i, const Face_handle& n);
+};
+
+// Vertex access functions
+template < class Gt, class Tds >
+inline
+Triangulation_vertex_handle_2<Gt,Tds>
+Triangulation_face_2<Gt,Tds>::
+vertex(int i) const
+{
+  return  ((Vertex *)(Fa::vertex(i)));
+}
     
-  inline
-    void set_neighbors(const Face_handle& n0,
+template < class Gt, class Tds >
+inline
+Triangulation_vertex_handle_2<Gt,Tds>
+Triangulation_face_2<Gt,Tds>::
+opposite_vertex(int i) const
+{
+  return ((Vertex *)(Fa::opposite_vertex(i)));
+}
+ 
+template < class Gt, class Tds >
+inline
+bool
+Triangulation_face_2<Gt,Tds>::  
+has_vertex(const Vertex_handle& v) const
+{
+  return (Fa::has_vertex( & (*v)) );
+}
+    
+template < class Gt, class Tds >
+inline
+bool
+Triangulation_face_2<Gt,Tds>::     
+has_vertex(const Vertex_handle& v, int& i) const
+{
+  return Fa::has_vertex( &(*v), i);
+}
+
+template < class Gt, class Tds >
+inline
+int
+Triangulation_face_2<Gt,Tds>::
+index(const Vertex_handle& v) const
+{
+  return Fa::index( &(*v));
+}
+  
+//ACCESS FUNCTIONS
+template < class Gt, class Tds >
+inline
+Triangulation_face_handle_2<Gt,Tds>
+Triangulation_face_2<Gt,Tds>::
+neighbor(int i) const
+{
+  return (Face *)(Fa::neighbor(i));
+}
+
+template < class Gt, class Tds >
+inline
+int
+Triangulation_face_2<Gt,Tds>::
+index(const Face_handle& f) const
+{
+  return Fa::index( &(*f));
+}
+  
+template < class Gt, class Tds >
+inline
+bool
+Triangulation_face_2<Gt,Tds>::
+has_neighbor(const Face_handle& f) const
+{
+  return Fa::has_neighbor( &(*f));
+}
+
+template < class Gt, class Tds >
+inline
+bool
+Triangulation_face_2<Gt,Tds>::
+has_neighbor(const Face_handle& f, int &i) const
+{
+  return Fa::has_neighbor( &(*f), i);
+}
+
+template < class Gt, class Tds >
+inline
+int
+Triangulation_face_2<Gt,Tds>::
+opposite_index(int i) const
+{
+  return Fa::opposite_index(i);
+}
+
+template < class Gt, class Tds >
+inline
+Triangulation_face_handle_2<Gt,Tds>
+Triangulation_face_2<Gt,Tds>::
+handle() const
+{
+  return Face_handle(this);
+}
+
+ //Setting
+template < class Gt, class Tds >
+inline
+void
+Triangulation_face_2<Gt,Tds>::
+set_vertices(const Vertex_handle& v0,
+		    const Vertex_handle& v1,
+		    const Vertex_handle& v2)
+{
+  Fa::set_vertices(&(*v0), &(*v1), &(*v2));
+}
+    
+template < class Gt, class Tds >
+inline
+void
+Triangulation_face_2<Gt,Tds>:: 
+set_neighbors(const Face_handle& n0,
                        const Face_handle& n1,
                        const Face_handle& n2)
-    {
-        Fa::set_neighbors(&(*n0), &(*n1), &(*n2));
-    }
+{
+  Fa::set_neighbors(&(*n0), &(*n1), &(*n2));
+}
 
-  inline  
-  void set_vertices() 
-  {
-    Fa::set_vertices();
-  }
+template < class Gt, class Tds >
+inline
+void
+Triangulation_face_2<Gt,Tds>::
+set_vertices() 
+{
+  Fa::set_vertices();
+}
    
- inline
-  void set_neighbors() 
-  {
-    Fa::set_neighbors();
-  }
+template < class Gt, class Tds >
+inline
+void
+Triangulation_face_2<Gt,Tds>::
+set_neighbors() 
+{
+  Fa::set_neighbors();
+}
     
-  inline
-    void set_vertex(int i, const Vertex_handle& v)
-    {
-        Fa::set_vertex(i, &(*v));
-    }
+template < class Gt, class Tds >
+inline
+void
+Triangulation_face_2<Gt,Tds>::
+set_vertex(int i, const Vertex_handle& v)
+{
+  Fa::set_vertex(i, &(*v));
+}
 
-    inline
-    void set_neighbor(int i, const Face_handle& n)
-    {
-        Fa::set_neighbor(i, &(*n));
-    }
+template < class Gt, class Tds >
+inline
+void
+Triangulation_face_2<Gt,Tds>::
+set_neighbor(int i, const Face_handle& n)
+{
+  Fa::set_neighbor(i, &(*n));
+} 
 
-};
+
 
 CGAL_END_NAMESPACE
 
