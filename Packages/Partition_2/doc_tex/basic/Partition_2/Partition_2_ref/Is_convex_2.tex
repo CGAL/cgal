@@ -32,16 +32,20 @@ requriements of the function \ccc{is_convex_2}}
 
 \ccMethod{
 template<class InputIterator>
-bool operator()(InputIterator first, InputIterator last);}
+bool operator()(InputIterator first, InputIterator beyond);}
 {
   returns \ccc{true} iff the points of type \ccc{Triats::Point_2}
-  in the range [\ccc{first},\ccc{last}) define a convex polygon. 
+  in the range [\ccc{first},\ccc{beyond}) define a convex polygon. 
 }
 
 \ccSeeAlso
 
 \ccRefIdfierPage{CGAL::convex_partition_is_valid_2} \\
 \ccRefIdfierPage{CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>}
+
+\ccImplementation
+
+This test requires $O(n)$ time for a polygon with $n$ vertices.
 
 \end{ccRefFunctionObjectClass}
 
