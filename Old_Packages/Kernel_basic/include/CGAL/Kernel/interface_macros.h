@@ -526,7 +526,7 @@ CGAL_Kernel_pred(CGALi::Less_y,
 CGAL_Kernel_pred(CGALi::Less_z,
 	         Less_z_3,
 		 less_z_3_object)
-CGAL_Kernel_pred(CGAL::p_Less_xy<Point_3>,
+CGAL_Kernel_pred(CGALi::p_Less_xy<Point_3>,
 	         Less_xy_3,
 		 less_xy_3_object)
 CGAL_Kernel_pred(CGALi::Less_xyz,
