@@ -239,8 +239,7 @@ Note the double occurrence of the factor@{wq@} in the latter definition.
 
 template <class R>
 typename R::RT
-wdot(const Vector_2<R> &u,
-    const Vector_2<R> &v)
+wdot(const Vector_2<R> &u, const Vector_2<R> &v)
 {
     return  (u.hx()*v.hx() + u.hy()*v.hy());
 }
@@ -252,10 +251,11 @@ typename R::RT wdot(const Point_2< R > &p,
     const Point_2< R > &q,
     const Point_2< R > &r)
 {
-    return  (wmult(p.hx(),q.hw()) - wmult(q.hx(),p.hw()))
-          * (wmult(r.hx(),q.hw()) - wmult(q.hx(),r.hw()))
-          + (wmult(p.hy(),q.hw()) - wmult(q.hy(),p.hw()))
-          * (wmult(r.hy(),q.hw()) - wmult(q.hy(),r.hw()));
+    R* pR = 0;
+    return  (wmult(pR, p.hx(),q.hw()) - wmult(pR, q.hx(),p.hw()))
+          * (wmult(pR, r.hx(),q.hw()) - wmult(pR, q.hx(),r.hw()))
+          + (wmult(pR, p.hy(),q.hw()) - wmult(pR, q.hy(),p.hw()))
+          * (wmult(pR, r.hy(),q.hw()) - wmult(pR, q.hy(),r.hw()));
 }
 @}
 
@@ -2065,6 +2065,7 @@ Saarbruecken@)
 #define CGAL_SQUARED_DISTANCE_UTILS_H
 
 #include <CGAL/determinant.h>
+#include <CGAL/wmult.h>
 
 CGAL_BEGIN_NAMESPACE
 
