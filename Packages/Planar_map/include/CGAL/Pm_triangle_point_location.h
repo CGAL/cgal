@@ -67,8 +67,9 @@ public:
   //----------------------------------------------------------
 
   typedef typename Planar_map::Traits               Traits;
-  typedef typename Traits::FT                       FT;
-  typedef Cartesian<FT>                             Kernel;
+  //typedef typename Traits::FT                       FT;
+  //typedef Cartesian<FT>                             Kernel;
+  typedef typename Traits::Kernel                     Kernel;
   //typedef Quotient<CGAL::MP_Float>                  Coord_type;
   //typedef Cartesian<Coord_type>                     Kernel;
   //  typedef Arr_segment_cached_traits_2<Kernel>       Traits;

@@ -341,6 +341,15 @@ void Pm_triangle_point_location<Planar_map>::insert_to_cdt
   CDT_Point cdt_p1 = static_cast <CDT_Point> (pm_p1);
   CDT_Point cdt_p2 = static_cast <CDT_Point> (pm_p2);
 
+  //check if source point is equal to destination point
+  if (traits->point_equal(pm_p1, pm_p2))
+  {
+    std::cerr << "WARNING: source point is equal to destination point!!! " << std::endl ;
+    CDT_Vertex_handle cdt_vh1 = cdt.insert(cdt_p1);
+    cdt_vh1->info() = pm_vh1;
+    return;
+  }
+
   //insert vertices to the CDT
   CDT_Vertex_handle cdt_vh1 = cdt.insert(cdt_p1);
   CDT_Vertex_handle cdt_vh2 = cdt.insert(cdt_p2);
@@ -409,6 +418,16 @@ void Pm_triangle_point_location<Planar_map>::triangulate_pm()
     CDT_Point cdt_p1 = static_cast <CDT_Point> (pm_p1);
     CDT_Point cdt_p2 = static_cast <CDT_Point> (pm_p2);
 
+    //check if source point is equal to destination point
+    if (traits->point_equal(pm_p1, pm_p2))
+    {
+      std::cerr << "WARNING: source point is equal to destination point!!! " 
+		<< pm_p1 << std::endl ;
+      CDT_Vertex_handle cdt_vh1 = cdt.insert(cdt_p1);
+      cdt_vh1->info() = pm_vh1;
+      continue;
+    }
+    
     //    std::cout << "4" << std::endl;
     //insert vertices to the CDT
     CDT_Vertex_handle cdt_vh1 = cdt.insert(cdt_p1);
@@ -469,6 +488,7 @@ void Pm_triangle_point_location<Planar_map>::triangulate_pm()
     std::cout << "fc number "<<count<<" ,color = " << fc->info() << std::endl;
   }
 
+  std::cout <<  "finish triangulate pm" << std::endl;
 #endif  //CGAL_PM_DEBUG
 
 }
