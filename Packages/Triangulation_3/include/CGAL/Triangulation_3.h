@@ -128,6 +128,9 @@ public:
   typedef Triangulation_edge_iterator_3<GT,Tds>   Edge_iterator;
   typedef Triangulation_vertex_iterator_3<GT,Tds> Vertex_iterator;
 
+  typedef Point value_type; // to have a back_inserter
+  typedef const value_type&    const_reference;
+
   enum Locate_type {
     VERTEX=0, 
     EDGE, //1
