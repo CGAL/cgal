@@ -1,17 +1,17 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: Manhattan_distance_rectangle_point.tex
+% | Reference manual page: Manhattan_distance_iso_box_point.tex
 % +------------------------------------------------------------------------+
 % | 1.07.2001   Johan W.H. Tangelder
 % | Package: ASPAS
 % | 
-\RCSdef{\RCSManhattandistancerectanglepointRev}{$Revision$}
-\RCSdefDate{\RCSManhattandistancerectanglepointDate}{$Date$}
+\RCSdef{\RCSManhattandistanceisoboxpointRev}{$Revision$}
+\RCSdefDate{\RCSManhattandistanceisoboxpointDate}{$Date$}
 % |
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Manhattan_distance_rectangle_point<PointTraits, IsoBox>}  %% add template arg's if necessary
+\begin{ccRefClass}{Manhattan_distance_iso_box_point<PointTraits, IsoBox>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -21,11 +21,11 @@
 The class \ccRefName\ provides an implementation of
 the \ccc{GeneralDistance} concept
 for the Manhattan distance ($l_1$ metric)
-between a $d$-dimensional iso-rectangle and a $d$-dimensional point 
-and the Manhattan distance between a $d$-dimensional iso-rectangle
-and a $d$-dimensional iso-rectangle defined as a $k$-$d$ tree rectangle.
+between a $d$-dimensional iso-box and a $d$-dimensional point 
+and the Manhattan distance between a $d$-dimensional iso-box
+and a $d$-dimensional iso-box defined as a $k$-$d$ tree rectangle.
 
-\ccInclude{CGAL/Manhattan_distance_rectangle_point.h}
+\ccInclude{CGAL/Manhattan_distance_iso_box_point.h}
 
 \ccParameters
 Expects for the first template argument
@@ -49,12 +49,8 @@ GeneralDistance
 \ccCreation
 \ccCreationVariable{d}  %% choose variable name
 
-\ccConstructor{Manhattan_distance_rectangle_point();}{Default constructor implementing Manhattan distance for
-two-dimensional iso-rectangles.}
-
-\ccConstructor{Manhattan_distance_rectangle_point(int d);}
-{Constructor implementing Manhattan distance for
-$d$-dimensional iso-rectangles.}
+\ccConstructor{Manhattan_distance_iso_box_point();}{Default constructor implementing Manhattan distance for
+two-dimensional iso-boxs.}
 
 \ccOperations
 
@@ -69,7 +65,7 @@ $d$-dimensional iso-rectangles.}
 \ccc{r}.}
 
 \ccMethod{NT max_distance_to_queryitem(IsoBox b q, Kd_tree_rectangle<PointTraits> r;);}
-{Returns the maximal distance between the iso-rectangle \ccc{b} and
+{Returns the maximal distance between the iso-box \ccc{b} and
 a point from \ccc{r} furthest to \ccc{q}.}
 
 
