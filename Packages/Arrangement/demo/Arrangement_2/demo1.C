@@ -498,7 +498,7 @@ void MyWindow::updateTraitsType( QAction *action )
 {
   Qt_widget_base_tab *old_widget = 
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
-  Qt_widget_base_tab *widget;
+  Qt_widget_base_tab * widget = 0;
   
   if (action == setSegmentTraits)
   {
@@ -909,26 +909,25 @@ void MyWindow::fileOpenPolyline()
   }
   else
   {
-    FileOpenOptionsForm
-         *form = new FileOpenOptionsForm(flag);
+    FileOpenOptionsForm *form = new FileOpenOptionsForm(flag);
     if ( form->exec() ) 
     {
-        int id = form->buttonGroup->id(form->buttonGroup->selected());
-		switch ( id ) 
-		{
-          case 0: // open file in a new tab
-            add_polyline_tab();
-            fileOpen();      
-            break;
-          case 1: // open file in current tab (delete current Pm)
-            updateTraitsType( setPolylineTraits );
-            fileOpen(true);
-          break;
-          case 2: // merge file into current tab
-            fileOpen();
-          break;
-		}// switch
-	}// if
+      int id = form->buttonGroup->id(form->buttonGroup->selected());
+      switch ( id ) 
+      {
+       case 0: // open file in a new tab
+        add_polyline_tab();
+        fileOpen();      
+        break;
+       case 1: // open file in current tab (delete current Pm)
+        updateTraitsType( setPolylineTraits );
+        fileOpen(true);
+        break;
+       case 2: // merge file into current tab
+        fileOpen();
+        break;
+      }// switch
+    }// if
   } 
 }// fileOpenPolyline
 
@@ -944,23 +943,22 @@ void MyWindow::fileOpenPolylinePm()
   }
   else
   {
-    FileOpenOptionsForm
-         *form = new FileOpenOptionsForm(false);
+    FileOpenOptionsForm * form = new FileOpenOptionsForm(false);
     if ( form->exec() ) 
     {
-        int id = form->buttonGroup->id(form->buttonGroup->selected());
-		switch ( id ) 
-		{
-          case 0: // open file in a new tab
-            add_polyline_tab();
-            fileOpenPm();      
-            break;
-          case 1: // open file in current tab (delete current Pm)
-            updateTraitsType( setPolylineTraits );
-            fileOpenPm();
-          break;          
-		}// switch
-	}// if
+      int id = form->buttonGroup->id(form->buttonGroup->selected());
+      switch ( id ) 
+      {
+       case 0: // open file in a new tab
+        add_polyline_tab();
+        fileOpenPm();      
+        break;
+       case 1: // open file in current tab (delete current Pm)
+        updateTraitsType( setPolylineTraits );
+        fileOpenPm();
+        break;          
+      }// switch
+    }// if
   }
 }// fileOpenPolylinePm
 
@@ -977,26 +975,25 @@ void MyWindow::fileOpenConic()
   }
   else
   {
-    FileOpenOptionsForm
-         *form = new FileOpenOptionsForm(flag);
+    FileOpenOptionsForm * form = new FileOpenOptionsForm(flag);
     if ( form->exec() ) 
     {
-        int id = form->buttonGroup->id(form->buttonGroup->selected());
-		switch ( id ) 
-		{
-          case 0: // open file in a new tab
-            add_conic_tab();
-            fileOpen();      
-            break;
-          case 1: // open file in current tab (delete current Pm)
-            updateTraitsType( setConicTraits );
-            fileOpen(true);
-          break;
-          case 2: // merge file into current tab
-            fileOpen();
-          break;
-		}// switch
-	}// if
+      int id = form->buttonGroup->id(form->buttonGroup->selected());
+      switch ( id ) 
+      {
+       case 0: // open file in a new tab
+        add_conic_tab();
+        fileOpen();      
+        break;
+       case 1: // open file in current tab (delete current Pm)
+        updateTraitsType( setConicTraits );
+        fileOpen(true);
+        break;
+       case 2: // merge file into current tab
+        fileOpen();
+        break;
+      }// switch
+    }// if
   }// else  
 }// fileOpenConic
 
@@ -1148,7 +1145,7 @@ void MyWindow::load( const QString& filename , bool clear_flag )
       static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *> 
       (myBar->currentPage());
     if (clear_flag)
-        w_demo_p->m_curves_arr.clear();
+      w_demo_p->m_curves_arr.clear();
     
     int num_polylines, num_segments;
     int ix, iy;
@@ -1880,7 +1877,7 @@ void MyWindow::rayShootingDirection()
   // We peform downcasting from QWigdet* to Qt_widget_base_tab*, 
   // as we know that only
   // Qt_widget_base_tab objects are stored in the tab pages.
-  Qt_widget_base_tab     *w_demo_p = 
+  Qt_widget_base_tab * w_demo_p = 
     dynamic_cast<Qt_widget_base_tab  *> (myBar->currentPage());
   RayShootingOptionsForm *form = new RayShootingOptionsForm();
   if ( form->exec() ) 

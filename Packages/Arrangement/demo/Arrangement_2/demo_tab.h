@@ -25,7 +25,7 @@ public:
     snap_mode(NONE),
     mode(INSERT),
     m_line_width(2),
-	m_vertex_width(3),
+    m_vertex_width(3),
     close_point(false),
     first_time(true),
     active(false),
@@ -37,10 +37,10 @@ public:
     grid(false),
     conic_type(SEGMENT),
     cube_size(1),
-	ray_shooting_direction(true),
-	remove_org_curve(true),
-	empty(true),
-	first_time_merge(true)
+    ray_shooting_direction(true),
+    remove_org_curve(true),
+    empty(true),
+    first_time_merge(true)
   {
     *this << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::WHITE);
     set_window(-10, 10, -10, 10);
@@ -1134,7 +1134,7 @@ public:
 	{	  
 	  Pm_point_2 s1 = seconed_curve->source()->point();
 	  Pm_point_2 t1 = seconed_curve->target()->point();
-	  Base_curve *base;
+	  Base_curve * base = 0;
 	  
 	  if ( t == s1 )
 	    base = new Base_curve(s, t1);
@@ -1143,7 +1143,7 @@ public:
 	  else if ( s == s1 )
 	    base = new Base_curve(t, t1);
 	  else if ( s == t1 )
-	  	base = new Base_curve(t, s1);
+            base = new Base_curve(t, s1);
 
       Curve_data cd;
       cd.m_type = Curve_data::LEAF;
@@ -1784,116 +1784,121 @@ public:
       y = m_p1.y();
       x1 = p.x();
       y1 = p.y();
-      Pm_base_conic_2 *cv;
-	  Coord_type dist;
-	  switch (w->conic_type)
-	  {
-	  case CIRCLE:
-	    dist = pow(m_p1.x() - p.x(), 2) + pow(m_p1.y() - p.y(), 2);
-	    cv = new Pm_base_conic_2(Pm_conic_circle_2 
-                             (Pm_conic_point_2(x,y ), dist, CGAL::CLOCKWISE));
-		break;
-	  case SEGMENT:
-	    cv = new Pm_base_conic_2(Pm_conic_segment_2(Pm_conic_point_2(x,y),
+      Pm_base_conic_2 * cv = 0;
+      Coord_type dist;
+      switch (w->conic_type)
+      {
+       case CIRCLE:
+        dist = pow(m_p1.x() - p.x(), 2) + pow(m_p1.y() - p.y(), 2);
+        cv = new Pm_base_conic_2(Pm_conic_circle_2 
+                                 (Pm_conic_point_2(x,y ), dist,
+                                  CGAL::CLOCKWISE));
+        break;
+       case SEGMENT:
+        cv = new Pm_base_conic_2(Pm_conic_segment_2(Pm_conic_point_2(x,y),
                                                     Pm_conic_point_2(x1,y1)));
-		break;
-	  case ELLIPSE:
-		a = abs(x1 - x)/2;
-		b = abs(y1 - y)/2;
+        break;
+       case ELLIPSE:
+        a = abs(x1 - x)/2;
+        b = abs(y1 - y)/2;
         a_sq = a*a;
-		b_sq = b*b;
-		x0 = (x + x1)/2;
-		y0 = (y + y1)/2;
-
-		r = b_sq;
+        b_sq = b*b;
+        x0 = (x + x1)/2;
+        y0 = (y + y1)/2;
+        
+        r = b_sq;
         s = a_sq;
         t = 0;
         u = -2*x0*b_sq;
         v = -2*y0*a_sq;
         ww = x0*x0*b_sq + y0*y0*a_sq - a_sq*b_sq;
 
-		cv = new Pm_base_conic_2(r, s, t, u, v, ww);
-	    break;
-	  case PARABOLA:
-	    if (x > x1)
-		{
-		  temp = x1;
-		  x1 = x;
-		  x = temp;
-		}		  
-	    x0 = (x + x1)/2;
-		y0 = y;
-		a = (y1 - y0)/((x1 - x0)*(x1 - x0));
-		b = -2*x0*a;
-		c = y0 + x0*x0*a;
+        cv = new Pm_base_conic_2(r, s, t, u, v, ww);
+        break;
+       case PARABOLA:
+        if (x > x1)
+        {
+          temp = x1;
+          x1 = x;
+          x = temp;
+        }		  
+        x0 = (x + x1)/2;
+        y0 = y;
+        a = (y1 - y0)/((x1 - x0)*(x1 - x0));
+        b = -2*x0*a;
+        c = y0 + x0*x0*a;
         
-		r = a;
+        r = a;
         s = 0;
         t = 0;
         u = b;
         v = -1;
         ww = c;
 
-		cv = new Pm_base_conic_2(r, s, t, u, v, ww, Pm_conic_point_2(x1,y1), 
-			Pm_conic_point_2(x,y1));
-	    break;
-	  case HYPERBOLA:
-	    if (first_time_hyperbula)
-		{
-		  *w << CGAL::RED;
-		  *w << Coord_segment( Coord_point(m_p1.x(),(m_p1.y() + p.y())/2) ,
-			                   Coord_point(p.x()   ,(m_p1.y() + p.y())/2) );   
-		  first_time_hyperbula = false;
-		  m_p3 = m_p2;
+        cv = new Pm_base_conic_2(r, s, t, u, v, ww, Pm_conic_point_2(x1,y1), 
+                                 Pm_conic_point_2(x,y1));
+        break;
+       case HYPERBOLA:
+        if (first_time_hyperbula)
+        {
+          *w << CGAL::RED;
+          *w << Coord_segment( Coord_point(m_p1.x(),(m_p1.y() + p.y())/2) ,
+                               Coord_point(p.x()   ,(m_p1.y() + p.y())/2) );   
+          first_time_hyperbula = false;
+          m_p3 = m_p2;
 
-		  *w << CGAL::DISC;
-		  *w << m_p1;
-		  *w << m_p2;
-		  return;
-		}
-		else
-		{                        /*  x,y             */
-		  x1 = m_p3.x();         /*     \    /       */
-		  y1 = m_p3.y();         /*      \  /        */
-		                         /*  x0,y0\/         */
-		  x0 = (x + x1)/2;       /*       /\         */
-		  y0 = (y + y1)/2;       /*      /  \        */
+          *w << CGAL::DISC;
+          *w << m_p1;
+          *w << m_p2;
+          return;
+        }
+        else
+        {                        /*  x,y             */
+          x1 = m_p3.x();         /*     \    /       */
+          y1 = m_p3.y();         /*      \  /        */
+          /*  x0,y0\/         */
+          x0 = (x + x1)/2;       /*       /\         */
+          y0 = (y + y1)/2;       /*      /  \        */
                                  /*     /    \       */
-		  a = abs(x0 - p.x());   /*           x1,y1  */
-		  b = ((y - y1)/(x - x1))*a;
-		 
-		  if (p.x() == x0 || (p.x() < x && x < x1 ) || (p.x() > x && x > x1 )
-			           || (p.x() < x1 && x1 < x ) || (p.x() > x1 && x1 > x ))
-		    return; // p is out of rectangle bounds
-		  r = b*b;
-		  s = -1*a*a;
-		  t = 0;
-		  u = -2*b*b*x0;
-		  v = 2*a*a*y0;
-		  ww = b*b*x0*x0 - a*a*y0*y0 - a*a*b*b;
+          a = abs(x0 - p.x());   /*           x1,y1  */
+          b = ((y - y1)/(x - x1))*a;
+          
+          if (p.x() == x0 || (p.x() < x && x < x1 ) || (p.x() > x && x > x1 )
+              || (p.x() < x1 && x1 < x ) || (p.x() > x1 && x1 > x ))
+            return; // p is out of rectangle bounds
+          r = b*b;
+          s = -1*a*a;
+          t = 0;
+          u = -2*b*b*x0;
+          v = 2*a*a*y0;
+          ww = b*b*x0*x0 - a*a*y0*y0 - a*a*b*b;
 
-		  CONIC_NT y2, y3 ,root;
+          CONIC_NT y2, y3 ,root;
 
-		  root = CGAL::sqrt(v*v - 4*s*(ww + u*x1 + r*x1*x1));
-		  y2 = (-1*v + root)/(2*s);
-		  y3 = (-1*v - root)/(2*s);
+          root = CGAL::sqrt(v*v - 4*s*(ww + u*x1 + r*x1*x1));
+          y2 = (-1*v + root)/(2*s);
+          y3 = (-1*v - root)/(2*s);
 
-		  if (x1 > x && p.x() > x0)
-		    cv = new Pm_base_conic_2(r, s, t, u, v, ww, 
-			         Pm_conic_point_2(x1,y3), Pm_conic_point_2(x1,y2));	
-		  else if (x1 < x && p.x() < x0)
-		    cv = new Pm_base_conic_2(r, s, t, u, v, ww, 
-			         Pm_conic_point_2(x1,y2), Pm_conic_point_2(x1,y3));	
-		  else if (x1 < x && p.x() > x0)
-		    cv = new Pm_base_conic_2(r, s, t, u, v, ww, 
-			         Pm_conic_point_2(x,y3), Pm_conic_point_2(x,y2));	
-		  else if (x1 > x && p.x() < x0)
-		    cv = new Pm_base_conic_2(r, s, t, u, v, ww, 
-			         Pm_conic_point_2(x,y2), Pm_conic_point_2(x,y3));	
-		
-		}		
-		break;	
-	  }
+          if (x1 > x && p.x() > x0)
+            cv = new Pm_base_conic_2(r, s, t, u, v, ww, 
+                                     Pm_conic_point_2(x1,y3),
+                                     Pm_conic_point_2(x1,y2));	
+          else if (x1 < x && p.x() < x0)
+            cv = new Pm_base_conic_2(r, s, t, u, v, ww, 
+                                     Pm_conic_point_2(x1,y2),
+                                     Pm_conic_point_2(x1,y3));	
+          else if (x1 < x && p.x() > x0)
+            cv = new Pm_base_conic_2(r, s, t, u, v, ww, 
+                                     Pm_conic_point_2(x,y3),
+                                     Pm_conic_point_2(x,y2));	
+          else if (x1 > x && p.x() < x0)
+            cv = new Pm_base_conic_2(r, s, t, u, v, ww, 
+                                     Pm_conic_point_2(x,y2),
+                                     Pm_conic_point_2(x,y3));	
+          
+        }		
+        break;	
+      }
 
       Curve_conic_data cd;
       cd.m_type = Curve_conic_data::LEAF;

@@ -1106,103 +1106,105 @@ split_edge (Halfedge_handle e)
   return TR_HI(e1); 
 }
 
+/*! Merge 2 given halfedges into one
+ * \param e1 the first input halfedge
+ * \param e2 second input halfedge
+ * \return the merged halfedge
+ */
 template<class Dcel>
 typename Topological_map<Dcel>::Halfedge_handle
-Topological_map<Dcel>::
-merge_edge (Halfedge_handle e1, Halfedge_handle e2) 
+Topological_map<Dcel>::merge_edge(Halfedge_handle e1, Halfedge_handle e2) 
 {
-    //check e1->e2 and that degree(e1.target)==2 (i.e no other edge connected)
-	//CGAL_assertion(e1->target()==e2->source());
-    CGAL_assertion((e1->target()==e2->source()&& e1->target()->degree()==2 )|| 
-				   (e2->target()==e1->source()&& e2->target()->degree()==2 )||
-		           (e1->target()==e2->target()&& e1->target()->degree()==2 )|| 
-				   (e2->source()==e1->source()&& e1->source()->degree()==2 ));
+  //check e1->e2 and that degree(e1.target)==2 (i.e no other edge connected)
+  //CGAL_assertion(e1->target()==e2->source());
+  CGAL_assertion((e1->target()==e2->source() && e1->target()->degree()==2 ) || 
+                 (e2->target()==e1->source() && e2->target()->degree()==2 ) ||
+                 (e1->target()==e2->target() && e1->target()->degree()==2 ) || 
+                 (e2->source()==e1->source() && e1->source()->degree()==2 ));
 
-    //CGAL_assertion(e1->target()->degree()==2);
+  //CGAL_assertion(e1->target()->degree()==2);
 
-    typename Dcel::Halfedge* de1;
-    typename Dcel::Halfedge* de1t;
+  typename Dcel::Halfedge * de1 = 0;
+  typename Dcel::Halfedge * de1t = 0;
 
-	typename Dcel::Halfedge* de2;
-    typename Dcel::Halfedge* de2t;
+  typename Dcel::Halfedge * de2 = 0;
+  typename Dcel::Halfedge * de2t = 0;
 
-	if (e1->target() == e2->source())
-	{
-		de1=&(*e1);
-        de1t=de1->opposite();
-        de2=&(*e2);
-        de2t=de2->opposite();
-	}
-	if (e1->source() == e2->source())
-	{
-		de1t=&(*e1);
-        de1=de1t->opposite();
-        de2=&(*e2);
-        de2t=de2->opposite();
-	}
-	if (e1->target() == e2->target())
-	{
-		de1=&(*e1);
-        de1t=de1->opposite();
-        de2t=&(*e2);
-        de2=de2t->opposite();
-	}
-	if (e1->source() == e2->target())
-	{
-		de1t=&(*e1);
-        de1=de1t->opposite();
-        de2t=&(*e2);
-        de2=de2t->opposite();
-	}
+  if (e1->target() == e2->source())
+  {
+    de1 = &(*e1);
+    de1t = de1->opposite();
+    de2 = &(*e2);
+    de2t = de2->opposite();
+  }
+  if (e1->source() == e2->source())
+  {
+    de1t = &(*e1);
+    de1 = de1t->opposite();
+    de2 = &(*e2);
+    de2t = de2->opposite();
+  }
+  if (e1->target() == e2->target())
+  {
+    de1 = &(*e1);
+    de1t = de1->opposite();
+    de2t = &(*e2);
+    de2 = de2t->opposite();
+  }
+  if (e1->source() == e2->target())
+  {
+    de1t = &(*e1);
+    de1 = de1t->opposite();
+    de2t = &(*e2);
+    de2 = de2t->opposite();
+  }
 
-    typename Dcel::Vertex* v=de1->vertex();
+  typename Dcel::Vertex * v = de1->vertex();
+  typename Dcel::Face * f = de2->face();
+  typename Dcel::Face * ft = de1t->face();
+
+  //typename Dcel::Face* ft=de2t->face();
+
+  //at the end de1 and de1t will remain and de2t,de2 will be deleted
+  //check if they are a "represantative" of a hole or outer ccb of face
+  if (f->halfedge()==de2) 
+    f->set_halfedge(de1);
+  else {
+    if (find_and_erase_hole(de2,f))
+      f->add_hole(de1);
+  }
+
+  if (ft->halfedge()==de2t) 
+    ft->set_halfedge(de1t);
+  else {
+    if (find_and_erase_hole(de2t,f))  
+      f->add_hole(de1t);
+  }
     
-    typename Dcel::Face* f=de2->face();
-    typename Dcel::Face* ft=de1t->face();
-	//typename Dcel::Face* ft=de2t->face();
-   
-    //at the end de1 and de1t will remain and de2t,de2 will be deleted
-    //check if they are a "represantative" of a hole or outer ccb of face
-    if (f->halfedge()==de2) 
-      f->set_halfedge(de1);
-    else {
-      if (find_and_erase_hole(de2,f))
-        f->add_hole(de1);
-    }
+  //in case de2 is representative halfedge of the target vertex  
+  de2->vertex()->set_halfedge(de1); 
 
-    if (ft->halfedge()==de2t) 
-      ft->set_halfedge(de1t);
-    else {
-      if (find_and_erase_hole(de2t,f))  
-        f->add_hole(de1t);
-    }
-    
-    //in case de2 is representative halfedge of the target vertex  
-    de2->vertex()->set_halfedge(de1); 
+  if (de2->next() != de2t) {  //de2 is not a tip of antenna
+    //find previous halfedge of de2t
+    typename Dcel::Halfedge* prev2=get_prev(de2t);
+    de1->set_next(de2->next());
+    prev2->set_next(de1t);      
+  }
+  else {
+    de1->set_next(de1t);
+  } 
 
-    if (de2->next() != de2t) {  //de2 is not a tip of antenna
-      //find previous halfedge of de2t
-      typename Dcel::Halfedge* prev2=get_prev(de2t);
-      de1->set_next(de2->next());
-      prev2->set_next(de1t);      
-    }
-    else {
-      de1->set_next(de1t);
-    } 
+  de1->set_vertex(de2->vertex());  
 
-    de1->set_vertex(de2->vertex());  
+  d.delete_edge(de2);
+  d.delete_vertex(v);
 
-    d.delete_edge(de2);
-    d.delete_vertex(v);
-
-    return TR_HI(de1); 
+  return TR_HI(de1); 
 }
-
 
 template<class Dcel>
 typename Topological_map<Dcel>::Face_handle
-Topological_map<Dcel>::
-remove_edge(Halfedge_handle e)
+Topological_map<Dcel>::remove_edge(Halfedge_handle e)
 {
   typename Dcel::Halfedge* de1=&(*e);
   typename Dcel::Halfedge* de2=de1->opposite();
@@ -1305,10 +1307,7 @@ remove_edge(Halfedge_handle e)
 
     else { //antenna is a hole - split it into two holes
       is_halfedge_on_inner_ccb<Dcel>(prev1,df1,ccb1);
-#ifndef CGAL_NO_ASSERTIONS // in order to avoid warnings
-      bool hole_found = 
-#endif
-	find_and_erase_hole(ccb1,df1); 
+      find_and_erase_hole(ccb1,df1); 
       CGAL_assertion(hole_found) ;//ccb1 must be a hole in df1
       df1->add_hole(prev1);
       df1->add_hole(prev2);
