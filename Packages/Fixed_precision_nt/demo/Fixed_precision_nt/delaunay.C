@@ -1,10 +1,6 @@
 #include <CGAL/Cartesian.h>
 
-#include <cstdio>
-#include <cstring>
 #include <iostream>
-#include <fstream>
-#include <strstream>
 
 #include <CGAL/Fixed_precision_nt.h>
 #include <CGAL/Delaunay_triangulation_2.h>

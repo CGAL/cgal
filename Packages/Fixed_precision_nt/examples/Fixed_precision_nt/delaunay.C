@@ -1,9 +1,7 @@
 #include <CGAL/Cartesian.h>
+
 #include <cstdio>
-#include <cstring>
 #include <iostream>
-#include <fstream>
-#include <strstream>
 
 #include <CGAL/Triangulation_short_names_2.h>
 

@@ -1,9 +1,9 @@
 #include <CGAL/basic.h>
+
 #include <cstdio>
 #include <cstring>
 #include <iostream>
 #include <fstream>
-#include <strstream>
 
 #include <CGAL/Fixed_precision_nt.h>
 #ifdef CGAL_USE_GMP
