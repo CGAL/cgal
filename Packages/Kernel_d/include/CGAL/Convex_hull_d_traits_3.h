@@ -39,7 +39,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#if defined(_MSC_VER) || defined(__BORLANDC__) 
+#if (defined(_MSC_VER) && ! defined(__INTEL_COMPILER) ) || defined(__BORLANDC__) 
 #define CGAL_SIMPLE_INTERFACE
 #endif
 

@@ -211,7 +211,7 @@ HyperplaneHd(const PointHd<RT,LA>* first, const PointHd<RT,LA>*  last,
   Base( Tuple(o.dimension()+1) ) 
 { construct_from_points(first,last,o,side); }
 
-#ifdef _MSC_VER
+#ifdef _MSC_VER && ! defined(__INTEL_COMPILER)
 // necessary as for MSC we have the vector iterators implemented
 // as class types and not as pointers 
 typedef typename std::vector<PointHd<RT,LA> >::iterator vecpntit;

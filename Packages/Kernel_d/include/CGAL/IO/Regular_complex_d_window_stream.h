@@ -1,3 +1,4 @@
+
 // ======================================================================
 //
 // Copyright (c) 2002 The CGAL Consortium
@@ -23,7 +24,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>
-#ifndef _MSC_VER
+#if ! defined(_MSC_VER) || defined(__INTEL_COMPILER)
 #include <CGAL/Regular_complex_d.h>
 #else
 #include <CGAL/Regular_complex_d_MSC.h>
