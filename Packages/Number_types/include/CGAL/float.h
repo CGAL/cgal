@@ -97,7 +97,8 @@ bool is_valid(float d)
 }
 
 #else
-#if defined(_MSC_VER) || defined(CGAL_MASK_FINITE_VALID) || defined(__BORLANDC__)
+#if defined(_MSC_VER) || defined(CGAL_MASK_FINITE_VALID) || \
+    defined(__BORLANDC__)
 
 #define CGAL_EXPONENT_FLOAT_MASK   0x7f800000
 #define CGAL_MANTISSA_FLOAT_MASK   0x007fffff

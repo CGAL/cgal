@@ -108,7 +108,8 @@ bool is_valid(double d)
 }
 
 #else
-#if defined(_MSC_VER) || defined(CGAL_MASK_FINITE_VALID) || defined(__BORLANDC__)
+#if defined(_MSC_VER) || defined(CGAL_MASK_FINITE_VALID) || \
+    defined(__BORLANDC__)
 
 #define CGAL_EXPONENT_DOUBLE_MASK   0x7ff00000
 #define CGAL_MANTISSA_DOUBLE_MASK   0x000fffff
@@ -125,8 +126,9 @@ inline
 bool
 is_nan_by_mask_double(unsigned int h, unsigned int l)
 {
-  if ( is_finite_by_mask_double(h) ) return false;
-  return ( (( h & CGAL_MANTISSA_DOUBLE_MASK ) != 0) || (( l & 0xffffffff ) != 0));
+  if ( is_finite_by_mask_double(h) )
+      return false;
+  return (( h & CGAL_MANTISSA_DOUBLE_MASK ) != 0) || (( l & 0xffffffff ) != 0);
 }
 
 inline
