@@ -142,6 +142,7 @@ private:
   bool      get_contexts(T va, T vb, 
 			 H_context_iterator& ctxt, 
 			 H_context_iterator& past) const;
+
   bool      get_contexts(T va, T vb, H_context_list*&) const;
 
   //to_debug
@@ -151,7 +152,7 @@ public:
 
 template <class T, class Data> 
 Constraint_hierarchy_2<T,Data>::
-Constraint_hierarchy_2<T,Data>(const Constraint_hierarchy_2& ch)
+Constraint_hierarchy_2(const Constraint_hierarchy_2& ch)
 {
   copy(ch);
 }
