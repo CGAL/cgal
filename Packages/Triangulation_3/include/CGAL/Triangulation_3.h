@@ -2738,7 +2738,6 @@ operator==(const Triangulation_3<GT, Tds> &t1,
     typedef typename Triangulation_3<GT, Tds>::Vertex_handle Vertex_handle;
     typedef typename Triangulation_3<GT, Tds>::Cell_handle   Cell_handle;
     typedef typename Triangulation_3<GT, Tds>::Point         Point;
-    typedef typename GT::Compare_xyz_3                       Cmp;
 
     // Some quick checks.
     if (t1.dimension() != t2.dimension()
