@@ -571,19 +571,19 @@ functionalities like you can use a toolbar, a status bar ... in other
 words you can create a complex MDI application. To use an instance of
 \ccStyle{Qt\_widget} you have to say in the constructor:\\
 setCentralWidget(widget);\\
-where widget is an instance of \ccStyle{Qt\_widget}. As you see it is also declared
-in My\_Window.
+where widget is an instance of \ccStyle{Qt\_widget}. As you see it is
+also declared in My\_Window.
 
 There is one more thing, at the constructor you see:\\
 widget = new My\_Widget(this);\\
 Also the constructor of My\_Widget is adapted:\\
 My\_Widget(QMainWindow* c) : CGAL::Qt\_widget(c) {};\\
-This lines tells the application that My_window is a parent for
+This lines tells the application that My\_Window is a parent for
 My\_Widget. Try to comment this lines to see what happens. Two
 windows will appear, one for My\_Window and one for My\_Widget.
 
 In the constructor it is widget$->$attach(\&v); This way, the layer is
-attached by My\_Widget. The rest of the code does the same thing as the
+attached by My\_Widget. The other part of the code does the same thing as the
 previous tutorials: insert a new point in a Delaunay triangulation and
 draw the triangulation every time you click on the window.
 
