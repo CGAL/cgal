@@ -163,14 +163,13 @@ Geomview_stream::clear()
 }
 
 void
-Geomview_stream::look_recenter() const
+Geomview_stream::look_recenter()
 {
-    Geomview_stream* ncthis = (Geomview_stream*)this;
-    (*ncthis) << "(look-recenter World)";
+    (*this) << "(look-recenter World)";
 }
 
 Geomview_stream&
-Geomview_stream::operator<<(const std::string s)
+Geomview_stream::operator<<(std::string s)
 {
     if ((int)s.length() != ::write(out, s.data(), s.length())) {
         std::cerr << "write problem in the pipe while sending data to geomview"

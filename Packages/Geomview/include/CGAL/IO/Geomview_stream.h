@@ -44,7 +44,7 @@ public:
     ~Geomview_stream();
 
     void clear();
-    void look_recenter() const;
+    void look_recenter();
 
     void set_bg_color(const Color &c);
 
@@ -91,7 +91,7 @@ public:
     }
 
     Geomview_stream &operator<<(const Color &c);
-    Geomview_stream &operator<<(const std::string s);
+    Geomview_stream &operator<<(std::string s);
     Geomview_stream &operator<<(int i);
     Geomview_stream &operator<<(double d);
 
@@ -144,12 +144,12 @@ private:
     void pickplane(const Bbox_3 &bbox);
 
     Color vertex_color, edge_color, face_color;
-    int in, out;  // file descriptors for input and output pipes
-    int pid;      // the geomview process identification
-    bool trace_flag;  // bool that makes operator<<() write a trace on stdout.
+    bool trace_flag;  // bool that makes operator<<() write a trace on cerr.
     bool binary_flag; // bool that makes operator<< write binary format
-    double radius_;
-    int line_width_;
+    double radius_;   // radius of vertices
+    int line_width_;  // width of edges
+    int in, out;      // file descriptors for input and output pipes
+    int pid;          // the geomview process identification
 };
 
 inline
