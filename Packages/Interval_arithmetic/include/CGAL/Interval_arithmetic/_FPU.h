@@ -33,25 +33,26 @@
 #define CGAL_IA_MAX_DOUBLE (1.7976931348623157081e+308)
 
 #ifdef __i386__
-// This is compulsory to have this to force the Intel processor to output a
-// real double, and not Intel's doubles, because even when precision is
-// explicitely set to "double", the exponent still has 15 bits, and it bugs
-// when some values are in this range.
+// The x87 keeps a too wide exponent in the register, even when in double
+// precision mode.  This causes problems when the intervals overflow or
+// underflow.  To work around that, at every critical moment, we flush the
+// register to memory, using the macro below.
 // The other possible workaround is to use intervals of "long doubles"
 // directly, but I think it would be much slower.
-#define CGAL_IA_FORCE_TO_DOUBLE(x) ({ volatile double y = (x); y; })
+// #define CGAL_IA_FORCE_TO_DOUBLE(x) ({ volatile double y=(x); y; })
+#define CGAL_IA_FORCE_TO_DOUBLE(x) ({ volatile double y=(x); double z=y; z; })
 #else
 #define CGAL_IA_FORCE_TO_DOUBLE(x) (x)
-#endif __i386__
+#endif // __i386__
 
-#if (	!defined(__i386__)     && \
-	!defined(__mips__)     && \
-	!defined(__sparc__)    && \
-	!defined(__alpha__)    && \
-	!defined(__powerpc__)  && \
-	!defined(__SUNPRO_CC)  && \
-	!defined(__sgi)        && \
-	!defined(_MSC_VER) )
+#if ! ( defined(__i386__)     || \
+	defined(__mips__)     || \
+	defined(__sparc__)    || \
+	defined(__alpha__)    || \
+	defined(__powerpc__)  || \
+	defined(__SUNPRO_CC)  || \
+	defined(__sgi)        || \
+	defined(_MSC_VER) )
 #error "Architecture not supported."
 #endif
 
@@ -192,7 +193,7 @@ enum {  //               rounding | def. mask
     FPU_cw_up   = _FPU_RC_UP      | 0x127f,
     FPU_cw_down = _FPU_RC_DOWN    | 0x127f
 };
-#endif //_MSC_VER
+#endif // _MSC_VER
 
 
 // User interface:
