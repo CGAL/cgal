@@ -12,7 +12,7 @@
 #if !defined(USE_LEDA_SEGMENT_TRAITS)
 #error Must define USE_LEDA_SEGMENT_TRAITS!
 #endif
-#elif defined(USE_SIMPLE_CARTESIAN)
+#elif defined(USE_SIMPLE_CARTESIAN_KERNEL)
 #include <CGAL/Simple_cartesian.h>
 #else
 #include <CGAL/Cartesian.h>
@@ -433,6 +433,8 @@ int main(int argc, char * argv[])
   int nameLength = parseArgs.get_name_length();
   const char * filename = parseArgs.get_file_name();
   const char * fullname = parseArgs.get_full_name();
+
+  if (!filename || !fullname) return -1;
       
   CGAL::Bench_base::set_name_length(nameLength);
   if (printHeader) CGAL::Bench_base::print_header();
