@@ -46,6 +46,7 @@ DEMO_SUBDIRS= \
 ./Partition_2 \
 ./Triangulation_2 \
 ./Min_ellipse_2 \
+./Min_quadrilateral_2 \
 ./Convex_Hull_2
 
 all:            \
