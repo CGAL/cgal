@@ -1,3 +1,6 @@
+3.50   (12 July 2001)
+- Added Arity to Call_perpendicular_to_get.
+
 3.49   (10 July 2001)
 - further traits update 
 - New predicate : coplanar_orientation(3 points).
