@@ -75,6 +75,9 @@ struct Default_Bbox_d_Adapter {
 // unsigned int get_num( Box )
 // Box may be of type immediate, reference, or pointer
 
+template <bool b>
+struct Type_from_bool {};
+
 template< class BoxAdapter, bool closed >
 struct Default_Box_Traits : public BoxAdapter {
     typedef typename BoxAdapter::Box         Box;
@@ -83,8 +86,16 @@ struct Default_Box_Traits : public BoxAdapter {
 
     static unsigned int cutoff;
 
+    static bool hi_greater ( NumberType hi, NumberType val, 
+                             Type_from_bool<true> )
+    { return hi >= val; }
+
+    static bool hi_greater ( NumberType hi, NumberType val, 
+                             Type_from_bool<false> )
+    { return hi > val; }
+
     static bool hi_greater ( NumberType hi, NumberType val )
-    { return closed ? hi >= val : hi > val; }
+    { return hi_greater( hi, val, Type_from_bool<closed>()); }
 
     // cmp dim = \a b -> islolesslo a b dim
     class Compare : public std::binary_function< Box, Box, bool > {

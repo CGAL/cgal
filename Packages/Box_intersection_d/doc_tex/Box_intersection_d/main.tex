@@ -5,25 +5,58 @@
 This chapter describes the functions provided in \cgal{} 
 to test large numbers of bounding boxes for intersection.
 
-Computing information about complex geometric primitives is often expensive. While researchers in computational geometry have discovered many asymptotically efficient algorithms for such problems, the algorithms are often of theoretical interest only, as they are hard to implement or slow if implemented. One general approach is to reduce the problem size enough so that a brute force method is feasible and fast. By putting axis-aligned bounding boxes around complicated primitives, we can compute, in a short amount of time, an approximate answer in the form of a small set of pairs with potential interaction.  We then refine our answer by looking inside the boxes, computing the exact answer for the original data.
+Computing information about complex geometric primitives is often
+expensive. While researchers in computational geometry have discovered
+many asymptotically efficient algorithms for such problems, the
+algorithms are often of theoretical interest only, as they are hard to
+implement or slow if implemented. One general approach is to reduce
+the problem size enough so that a brute force method is feasible and
+fast. By putting axis-aligned bounding boxes around complicated
+primitives, we can compute, in a short amount of time, an approximate
+answer in the form of a small set of pairs with potential interaction.
+We then refine our answer by looking inside the boxes, computing the
+exact answer for the original data.
 
-Many geometric problems can be restated in terms of box intersections since if the bounding boxes of two primitives intersect, we know that the primitives may intersect or have close proximity. Some practical problems we may solve with this approach include detecting surface self-intersection, intersection of two different objects and performing proximity queries.
+Many geometric problems can be restated in terms of box intersections
+since if the bounding boxes of two primitives intersect, we know that
+the primitives may intersect or have close proximity. Some practical
+problems we may solve with this approach include detecting surface
+self-intersection, intersection of two different objects and
+performing proximity queries.
 
 
 \section*{Bounding Box Intersection}
 \subsection*{Bounding Box}
-Bounding boxes can have any dimension. In each dimension, an interval defines the size of the box in that dimension. For the starting point and end point of the interval, any number type can be used.
 
-Depending on your problem, the box can be half open or closed. A bounding box is half open, if in each dimension the interval $[lo,hi)$ is also half open. Similarly, a closed bounding box contains only closed intervals $[lo,hi]$ in each dimension. Closed intervals allow for zero-width boxes and for intersections at the boundary of objects. The distinction between closed or half open intervals does not require a different representation of boxes, but instead a different interpretation when comparing boxes. This is handled inside the traits class.
+Bounding boxes can have any dimension. In each dimension, an interval
+defines the size of the box in that dimension. For the starting point
+and end point of the interval, any number type can be used.
 
-There has to be an arbitrary fixed order between boxes, for example by assigning unique numbers to each box. If boxes are allocated on the heap, also the memory location could define such an order. (explain why?) 
+Depending on your problem, the box can be half open or closed. A
+bounding box is half open, if in each dimension the interval $[lo,hi)$
+is also half open. Similarly, a closed bounding box contains only
+closed intervals $[lo,hi]$ in each dimension. Closed intervals allow
+for zero-width boxes and for intersections at the boundary of objects.
+The distinction between closed or half open intervals does not require
+a different representation of boxes, but instead a different
+interpretation when comparing boxes. This is handled inside the traits
+class.
 
-The default bounding box provides
+There has to be an arbitrary fixed order between boxes, for example by
+assigning unique numbers to each box. If boxes are allocated on the
+heap, also the memory location could define such an order. (explain
+why?)
+
+The default bounding box
 \begin{itemize} 
-  \item standard bounding box implementation with number type and dimension template parameter
-  \item \texttt{template< class T, unsigned int DIM > struct Default\_Bbox\_d}
-  \item unique numbering
-  \item base class for deriving a user defined box carrying exact geometric primitive
+  \item  provides a standard bounding box implementation with number type and
+  dimension template parameter
+
+  \texttt{template< class T, unsigned int DIM > struct Default\_Bbox\_d;}
+  \item provides a unique numbering
+  \item can be used as a base class to derive a user defined box with
+  additional information, for example, an exact geometric primitive
+  that was approximated with the bounding box.
 \end{itemize}
 
 
@@ -40,8 +73,11 @@ Bounding box access is exclusively done using a box adapter. This adapter hides 
 
 \begin{itemize}
  \item the type of \texttt{Box} can be either a pointer or a plain structure
- \item \texttt{NumberType} must be the same type as for the \texttt{BoundingBox}
- \item \texttt{get\_lo} and \texttt{get\_hi} return the vector components of dimension \texttt{dim}, where the first  dimension has the index zero
+ \item \texttt{NumberType} must be the same type as for the
+ \texttt{BoundingBox} 
+ \item \texttt{get\_lo} and \texttt{get\_hi} return the vector
+ components of dimension \texttt{dim}, where the first  dimension has
+ the index zero 
  \item \texttt{get\_num} returns the unique number of that box
 %\item NumberType specifies the underlying number type. \texttt{std::numeric_limits< NumberType >} must be defined (for basic types like int, double there exist defaults)
 \end{itemize}
@@ -51,7 +87,12 @@ A default box adapter is given that builds up on the default bounding box:
 \texttt{template< class BOX > struct Default\_Bbox\_d\_Adapter}
 
 \subsection*{Box Traits}
-A traits class is required to specify predicates between boxes. It also propagates number type, box type, dimension and some other parameters from the box adapter. (eigentlich muss der user nur box adapter anpassen. traits -> verstecken als predicates, adapter -> aufteilen in adapter und traits?)
+
+A traits class is required to specify predicates between boxes. It
+also propagates number type, box type, dimension and some other
+parameters from the box adapter. (eigentlich muss der user nur box
+adapter anpassen. traits -> verstecken als predicates, adapter ->
+aufteilen in adapter und traits?)
 
 \begin{itemize}
  \item defines predicates on boxes, eg.

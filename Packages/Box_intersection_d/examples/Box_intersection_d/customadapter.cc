@@ -60,6 +60,6 @@ int main() {
     fill_boxes( 100, boxes1 );
     fill_boxes( 100, boxes2 );
     segment_tree( boxes1.begin(), boxes1.end(),
-                  boxes2.begin(), boxes2.end(), callback, Traits(), 2 );
+                  boxes2.begin(), boxes2.end(), callback, Traits() );
 }
 
