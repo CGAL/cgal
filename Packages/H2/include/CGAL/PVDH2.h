@@ -534,7 +534,7 @@ CGAL_KERNEL_INLINE
 VectorH2<R>
 operator*(const RT& f, const VectorH2<R>& v)
 #else
-template <class RT, class R>
+template <class R>
 CGAL_KERNEL_INLINE
 VectorH2<R>
 operator*(const typename R::RT& f, const VectorH2<R>& v)
