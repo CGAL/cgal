@@ -767,6 +767,7 @@ Packages/Auxiliary/auxiliary/wingmp/gmp-4.0.1/bcc/gmp.lib svneol=native#unset
 Packages/Auxiliary/auxiliary/wingmp/gmp-4.0.1/gcc/libgmp.a -text svneol=unset#unset
 Packages/Auxiliary/auxiliary/wingmp/gmp-4.0.1/gmp.dll svneol=native#unset
 Packages/Auxiliary/auxiliary/wingmp/gmp-4.0.1/msvc/gmp.lib svneol=native#unset
+Packages/Auxiliary/auxiliary/wingmp/gmp-4.1.2/gcc/libgmp.a -text svneol=unset#unset
 Packages/Auxiliary/auxiliary/wingmp/gmp-4.1.2/gmp.dll -text svneol=unset#unset
 Packages/Auxiliary/auxiliary/wingmp/gmp-4.1.2/msvc/gmp.lib -text svneol=unset#unset
 Packages/Coin/demo/Coin/Polyhedron_3/data/venus.off -text
