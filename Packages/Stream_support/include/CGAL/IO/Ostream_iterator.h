@@ -9,12 +9,10 @@
 // ----------------------------------------------------------------------
 //
 // release       : 
-// release_date  : 1999, July 28
+// release_date  :
 //
 // file          : IO/Ostream_iterator.h
 // package       : Stream_support (2.4)
-// chapter       : $CGAL_Chapter: Stream Support $
-// source        : support.fw
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
@@ -25,10 +23,9 @@
 // ======================================================================
 
 #ifndef CGAL_IO_OSTREAM_ITERATOR_H
-#define CGAL_IO_OSTREAM_ITERATOR_H 1
-#ifndef CGAL_CIRCULATOR_H
+#define CGAL_IO_OSTREAM_ITERATOR_H
+
 #include <CGAL/circulator.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -84,5 +81,5 @@ query_circulator_or_iterator(
 #endif
 
 CGAL_END_NAMESPACE
-#endif // CGAL_IO_OSTREAM_ITERATOR_H //
-// EOF //
+
+#endif // CGAL_IO_OSTREAM_ITERATOR_H
