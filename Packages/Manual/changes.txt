@@ -1,0 +1,3 @@
+(16 October 2003) [af]
+- Removed 'GeoWin' from file doc_tex_skel/support/docdirs
+  as  this will become an extension package
