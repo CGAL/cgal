@@ -1,7 +1,7 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-Ver 7.04
+Ver 7.04(7/03/02)
 - fixed details in Triangulation_ds_face_2.h
 - changed number types used in testsuite (get rid of LEDA and Gmp)
 - add test for handle conversion operator of circulators and iterators 
