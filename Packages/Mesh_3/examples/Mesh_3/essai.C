@@ -1,17 +1,5 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-//#include <CGAL/Simple_cartesian.h>
-#include <CGAL/MP_Float.h>
+#include "cgal_types.h"
 
-#include <CGAL/Regular_triangulation_3.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
-#include <CGAL/Constrained_regular_triangulation_3.h>
-#include <CGAL/Constrained_triangulation_vertex_base_3.h>
-#include <CGAL/Constrained_triangulation_cell_base_3.h>
-
-#include <CGAL/Triangulation_2_traits_3.h>
-#include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Constrained_triangulation_plus_2.h>
-//#include <CGAL/Conforming_Delaunay_triangulation_2.h>
 #include <CGAL/Conforming_Delaunay_triangulation_2_traits_3.h>
 #include <CGAL/Delaunay_mesh_face_base_2.h>
 
@@ -19,16 +7,6 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
-
-//typedef CGAL::Quotient<CGAL::MP_Float> FT;
-struct K : public CGAL::Exact_predicates_inexact_constructions_kernel {};
-//struct K : public CGAL::Simple_cartesian<FT> {};
-
-typedef CGAL::Regular_triangulation_euclidean_traits_3<K> Traits_3;
-typedef CGAL::Constrained_triangulation_cell_base_3<Traits_3> Cb_3;
-typedef CGAL::Constrained_triangulation_vertex_base_3<Traits_3> Vb_3;
-typedef CGAL::Triangulation_data_structure_3<Vb_3, Cb_3> Tds_3;
-typedef CGAL::Regular_triangulation_3<Traits_3, Tds_3>          Rt_3;
 
 typedef CGAL::Conforming_Delaunay_triangulation_2_traits_3<K> Traits_2_3;
 typedef CGAL::Special_mesh_traits_2<Rt_3, Traits_2_3> Traits_2;
@@ -79,23 +57,22 @@ int main(int argc, char** argv)
     {
       typedef CGAL::PLC_loader<Crt, CDT_2> Loader;
 
-      std::ifstream f(argv[1]);
+      std::string arg = argv[1];
+
+      std::ifstream f(arg.data());
 
       T.clear();
 
-      Loader(T).load_triangulation(f);
+      if( arg.find(".off") != 0 )
+	CGAL::Off_loader<Crt, CDT_2>(T).load_triangulation(f);
+      else
+	CGAL::PLC_loader<Crt, CDT_2>(T).load_triangulation(f);
     }
 
-//   T.insert(Point_3(1,1,0));
-//   T.insert(Point_3(-1,1,0));
-//   T.insert(Point_3(-1,-1,0));
-//   T.insert(Point_3(1,-1,0));
-//   Vertex_handle va = T.insert(Point_3(0,0,-0.1));
-//   Vertex_handle vb = T.insert(Point_3(0,0,0.1));
-  
-  //  int i1, i2;
-  //  Cell_handle c;
+  T.fill_edges_to_be_conformed();
+  T.conform_edges();
+  T.fill_facets_to_be_conformed();
+  T.conform_facets();
 
-  //  CGAL_assertion( T.is_edge(va, vb, c, i1, i2) );
   T.off_file_output(std::cout);
 }

@@ -16,17 +16,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-/** Create a CT from an OFF file, in an std::istream */
-template <typename CT>
-struct Off_loader
-{
-  static void create_triangulation(CT& t, std::istream& is) 
-  {
-    t.clear();
-    t.off_file_input(is);
-  }
-};
-
 template <class CT_3, class Traits_2_3>
 struct Special_mesh_traits_2 : public Traits_2_3
 {
@@ -95,6 +84,7 @@ struct PLC_loader
 
   typedef typename CT_3::Sharp_vertices Sharp_vertices;
   typedef typename CT_3::Sharp_vertices_iterator Sharp_vertices_iterator;
+  typedef typename CT_3::Finite_facets_iterator Finite_facets_iterator;
   
   struct Conform_extras {
     CT_3& t;
@@ -114,34 +104,74 @@ struct PLC_loader
       return not t.is_edge(va, vb, c, i, j);
     }
 
-    void signal_inserted_vertex_in_edge(const CT_2& tr2,
-					const Face_handle_2& fh, 
-					const int edge_index,
-					const Vertex_handle_2& v) const
+    // for signal_inserted_before_vertex_in_edge
+    Vertex_handle_2 va, vb;
+
+    void signal_before_inserted_vertex_in_edge(const CT_2 &,
+					       const Face_handle_2& fh, 
+					       const int edge_index,
+					       const Point_3&)
+    {
+      va = fh->vertex(CT_2::cw(edge_index) );
+      vb = fh->vertex(CT_2::ccw(edge_index));
+    }
+
+    void signal_after_inserted_vertex_in_edge(const CT_2&,
+					      const Vertex_handle_2& v) const
     {
       const Point_3& p = v->point();
 
-      const Point_3& a = fh->vertex(tr2.cw(edge_index) )->point();
-      const Point_3& b = fh->vertex(tr2.ccw(edge_index))->point();
+      const Point_3& a = va->point();
+      const Point_3& b = vb->point();
 
-      const Vertex_handle_3 va = t.insert(Weighted_point(a));
-      const Vertex_handle_3 vb = t.insert(Weighted_point(b));
+      const Vertex_handle_3 v3a = t.insert(Weighted_point(a));
+      const Vertex_handle_3 v3b = t.insert(Weighted_point(b));
 
       Cell_handle_3 c;
       int i, j;
-      if( t.is_edge(va, vb, c, i, j) )
+      if( t.is_edge(v3a, v3b, c, i, j) )
 	t.insert(Weighted_point(p), CT_3::EDGE, c, i, j);
       else
-	t.insert(Weighted_point(p), va->cell());
+	t.insert(Weighted_point(p), v3a->cell());
+      // MY_DEBUG
+      std::cerr << "inserted in edge: " << p << std::endl
+		<< "(edge " << a << ", " << b << ")" << std::endl
+		<< "t.number_of_vertices()=" << t.number_of_vertices()
+		<< std::endl;
+    }
+
+    template<class EdgeIt, class FaceIt>
+    void signal_before_inserted_vertex_in_face(const CT_2&,
+					       const Face_handle_2& fh,
+					       EdgeIt,
+					       EdgeIt,
+					       FaceIt,
+					       FaceIt,
+					       const Point_3& p)
+    {
+      // MY_DEBUG
+      std::cerr << "inserted in faces: " << p << std::endl
+		<< "(face "
+		<< fh->vertex(0)->point() << ", "
+		<< fh->vertex(1)->point() << ", "
+		<< fh->vertex(2)->point() << ")" << std::endl;
+      
+    }
+
+    void signal_after_inserted_vertex_in_face(const CT_2&,
+					      const Vertex_handle_2& v) const
+    {
+      t.insert(Weighted_point(v->point()));
       // MY_DEBUG
       std::cerr << "t.number_of_vertices()=" << t.number_of_vertices()
 		<< std::endl;
-      
     }
-  }; //end of class Conform_extras
 
+  }; //end of class Conform_extras
+  
   typedef std::pair<Point_3, Point_3> Constraint_2;
 
+  /** \todo{ TODO: faire un peu mieux qu'hard-coder la std::list...} */
   typedef std::list<Constraint_2> Constraints_2;
   typedef typename Constraints_2::const_iterator Constraints_2_iterator;
 
@@ -508,47 +538,13 @@ struct PLC_loader
 
       }
 
-    // MY_DEBUG
-    std::cerr << "Coucou1\n";
-
-// 	for(Points_of_face_iterator p_it = points_of_face.begin();
-// 	    p_it != points_of_face.end();
-// 	    ++p_it)
-// 	  {
-// 	    Locate_type_3 l;
-// 	    int i, j;
-// 	    Cell_handle_3 c_h = t.locate(*p_it, l, i, j);
-
-// 	    CGAL_assertion( l != CT_3::EDGE && l != CT_3::FACET );
-
-// 	    if (l == CT_3::VERTEX) // point already in t
-// 	      {
-// 		const Vertex_handle_3 & vh = c->vertex(i);
-
-// 		Vertex_context& context = vertices_context[vh];
-
-// 		if( context.is_empty() )
-// 		  context.push_back(vertices_origin[vh]);
-// 		context.push_back(cf_it); // add the current constrained
-// 					  // face
-// 	      }
-// 	    else
-// 	      {
-// 		Vertex_handle_3 vh = t.insert(*p_it, l, c, i, j);
-// 		CGAL_assertion(vertices_origin.find(vh) == 
-// 			       vertices_origin.end());
-// 		vertices_origin[vh] = cf_it;
-// 	      }
-// 	  }
-//       }
-    
     for(CF_it cf_it = constrained_faces_begin;
 	cf_it != constrained_faces_end; ++cf_it)
       {
 	typedef Delaunay_mesh_2<CT_2, Conform_extras> Mesh_2;
 
 	// MY_DEBUG
-	std::cerr << "Coucou2\n";
+	std::cerr << "face: ";
 
 	Conform_extras extra = Conform_extras(t);
 
@@ -563,7 +559,7 @@ struct PLC_loader
 	Facet_queue queue;
 
 	// MY_DEBUG
-	std::cerr << "Coucou3\n";
+	std::cerr << cf_it->edges.size() << " edges." << std::endl;
 
 	for(Constraints_2_iterator c_it = cf_it->edges.begin();
 	    c_it != cf_it->edges.end();
@@ -571,13 +567,9 @@ struct PLC_loader
 	  tr2->insert(c_it->first, c_it->second); // insert the
 						 // constrained edge in tr2
 
-	// MY_DEBUG
-	std::cerr << "Coucou4\n";
-
-
 	tr2->set_seeds(cf_it->seeds.begin(),
-			 cf_it->seeds.end(),
-			 cf_it->seeds_in_face);
+		       cf_it->seeds.end(),
+		       cf_it->seeds_in_face);
 
 	tr2->refine_mesh();
 
@@ -594,7 +586,8 @@ struct PLC_loader
 	    const Vertex_handle_3& va = t.insert(Weighted_point(a));
 	    const Vertex_handle_3& vb = t.insert(Weighted_point(b));
 
-	    std::cerr << t.insert_constrained_edge(va, vb) << std::endl;
+	    std::cerr << "e: " << t.insert_constrained_edge(va, vb)
+		      << std::endl;
 	  }
 
 	// MY_DEBUG
@@ -607,16 +600,24 @@ struct PLC_loader
 	    ++f_it_2)
 	  {
 	    if( ! f_it_2->is_marked() ) continue;
-	    
-	    Cell_handle_3 c;
-	    int i, j, k;
-	    
+
 	    Vertex_handle_3 v0 = t.insert(f_it_2->vertex(0)->point());
 	    Vertex_handle_3 v1 = t.insert(f_it_2->vertex(1)->point());
 	    Vertex_handle_3 v2 = t.insert(f_it_2->vertex(2)->point());
 
 	    std::cerr << "f: " << t.insert_constrained_facet(v0, v1, v2)
-		      << std::endl;
+		      << std::endl
+		      << "(" << v0->point()
+		      << ", " << v1->point() 
+		      << ", " << v2->point()
+		      << ")" << std::endl;
+	    int n = 0;
+	    for(Finite_facets_iterator it = t.finite_facets_begin();
+		it != t.finite_facets_end();
+		++it)
+	      if(t.is_constrained(*it))
+		++n;
+	    std::cerr << n << "facets" << std::endl;
 	  }
 	delete tr2;
       }
@@ -686,6 +687,114 @@ struct Conformer_2D
     }
 };	  
 	    
+/** Create a CT from an OFF file, in an std::istream */
+template <typename CT_3, typename CT_2>
+struct Off_loader
+{
+  typedef typename CT_2::Point Point_3;
+  typedef typename CT_2::Vertex_handle Vertex_handle_2;
+  typedef typename CT_2::Face_handle Face_handle_2;
+  typedef typename CT_2::Geom_traits Geom_traits_2;
+  typedef typename CT_3::Weighted_point Weighted_point;
+  typedef typename CT_3::Vertex_handle Vertex_handle_3;
+  typedef typename CT_3::Cell_handle Cell_handle_3;
+  typedef typename CT_3::Locate_type Locate_type_3;
+  typedef typename CT_3::Geom_traits Traits_3;
+  typedef typename Traits_3::Vector_3 Vector_3;
+  typedef typename Traits_3::FT FT;
+
+  typedef typename CT_3::Sharp_vertices Sharp_vertices;
+  typedef typename CT_3::Sharp_vertices_iterator Sharp_vertices_iterator;
+
+  typedef PLC_loader<CT_3, CT_2> PLC_load;
+  typedef typename PLC_load::Constrained_face Constrained_face;
+
+  // datas
+  CT_3& t;
+  std::list<Constrained_face> faces;
+
+  Off_loader(CT_3& tr)
+    : t(tr), faces()
+  {};
+
+  void load_triangulation(std::istream& is, bool verbose = false )
+  {
+    t.clear();
+    off_file_input(is, verbose);
+    PLC_load(t).create_triangulation(faces.begin(), faces.end());
+  }
+
+  bool
+  off_file_input(std::istream& is, bool verbose)
+  {
+    faces.clear();
+
+    File_scanner_OFF scanner(is, verbose);
+    if (! is) {
+      if (scanner.verbose()) {
+	std::cerr 
+	  << " " << std::endl
+	  << "Constrained_regular_triangulation_3::off_file_input"
+	  << std::endl
+	  << " input error: file format is not OFF." << std::endl;
+      }
+      return false;
+    }
+    
+    std::vector<Point_3> vp(scanner.size_of_vertices());
+    
+    // insert points
+    int i;
+    for ( i = 0; i < scanner.size_of_vertices(); i++) {
+      Point_3 p;
+      file_scan_vertex( scanner, p);
+      vp[i] = p;
+      scanner.skip_to_next_vertex( i);
+    }
+    
+    if ( ! is ) {
+      is.clear( std::ios::badbit);
+      return false;
+    }
+    
+    // inserts constrained edges and facets
+    for ( i = 0; i < scanner.size_of_facets(); i++) {
+      Constrained_face face;
+
+      Integer32 no;
+      scanner.scan_facet( no, i);
+      if( ! is ) {
+	is.clear( std::ios::badbit);
+	return false;
+      }
+
+      std::vector<Point_3> points(no);
+      Integer32 index0;
+      Integer32 before;
+      for(Integer32 k = 0; k < no; ++k)
+	{
+	  Integer32 index;
+	  scanner.scan_facet_vertex_index( index, i);
+
+	  if( k == 0 )
+	    index0 = index;
+	  else
+	    {
+	      face.edges.push_back(std::make_pair(vp[before], vp[index]));
+	      if( k == (no - 1) )
+		face.edges.push_back(std::make_pair(vp[index], vp[index0]));
+	    }
+	  before = index;
+	}
+      /** \todo{ Use kernel } */
+      face.normal = CGAL::cross_product( points[1] - points[0],
+					 points[no - 1] - points[0] );
+      faces.push_back(face);
+    }
+    return true;
+  }
+
+};
   
 
 /** TODO
@@ -706,11 +815,16 @@ public:
   typedef typename Triangulation::Locate_type Locate_type;
 
   typedef typename Triangulation::Facet Facet;
+  typedef typename Triangulation::Edge Edge;
 
   typedef typename Triangulation::Finite_vertices_iterator
                                                  Finite_vertices_iterator;
+  typedef typename Triangulation::Finite_edges_iterator
+                                                 Finite_edges_iterator;
   typedef typename Triangulation::Finite_facets_iterator
                                                  Finite_facets_iterator;
+
+  typedef typename Triangulation::Facet_circulator Facet_circulator;
 
   typedef typename Geom_traits::FT FT;
 
@@ -736,6 +850,18 @@ public:
   Sharp_vertices sharp_vertices;
   Constraints_2_hierarchy hierarchy_2;
 
+  // --- PRIVATE DATA MEMBERS
+
+private:
+  typedef std::queue<std::pair<Vertex_handle,
+			       Vertex_handle> > Edges_to_be_conformed;
+  typedef std::queue<Triple<Vertex_handle,
+			    Vertex_handle,
+			    Vertex_handle> > Facets_to_be_conformed;
+  
+  Facets_to_be_conformed facets_to_be_conformed;
+  Edges_to_be_conformed edges_to_be_conformed;
+public:
 
   // --- IO FUNCTIONS ---
 
@@ -803,7 +929,6 @@ public:
     Vertex_handle vh = insert(Bare_point(-xmin,  ymin,  zmin));
   }
 
-
   // -- points insertions --
   Vertex_handle insert(const Bare_point & p, Cell_handle start = NULL);
   Vertex_handle insert(const Weighted_point & p, Cell_handle start = NULL);
@@ -812,7 +937,8 @@ public:
 	               Cell_handle c, int li, int);
 
   bool insert_constrained_edge(const Vertex_handle& va,
-			       const Vertex_handle& vb)
+			       const Vertex_handle& vb,
+			       bool update_hierachy = true)
   {
     Cell_handle ch;
     int i, j;
@@ -823,9 +949,24 @@ public:
       {
 	va->set_is_adjacent_by_constraint(vb, true);
 	vb->set_is_adjacent_by_constraint(va, true);
-	hierarchy_2.insert_constraint(va, vb);
+	if( update_hierachy ) hierarchy_2.insert_constraint(va, vb);
       }
     return true;
+  }
+
+  void remove_constrained_edge(Edge e)
+  {
+    const Cell_handle& c = e.first;
+    c->vertex(e.second)->set_is_adjacent_by_constraint(c->vertex(e.third),
+						       false);
+    c->vertex(e.third)->set_is_adjacent_by_constraint(c->vertex(e.second),
+						      false);
+  }
+
+  bool is_constrained(Edge e)
+  {
+    const Cell_handle& c = e.first;
+    return c->vertex(e.second)->is_adjacent_by_constraint(c->vertex(e.third));
   }
 
   bool insert_constrained_facet(const Vertex_handle& va,
@@ -1074,8 +1215,25 @@ private:
 				            Emptyset_iterator()));
 
     // Create the new cells and delete the old.
-    return _tds._insert_in_hole(cells.begin(), cells.end(),
-	                        facet.first, facet.second);
+    Vertex_handle vh = this->_tds._insert_in_hole(cells.begin(), cells.end(),
+						  facet.first, facet.second);
+    // Restore contraint status.
+    /** \todo{WARNING, TODO Est-ce nécessaire en dimension 2 ?} */
+    cells.clear();
+    incident_cells(vh, std::back_inserter(cells));
+    for(typename std::vector<Cell_handle>::iterator cit = cells.begin();
+	cit != cells.end();
+	++cit)
+      {
+	const int index = (*cit)->index(vh);
+	for(int i = 0; i<4; ++i)
+	  if( i != index)
+	    (*cit)->set_constrained(i, false);
+	Cell_handle ch = (*cit)->neighbor(index);
+	const int mirror = (*cit)->mirror_index(index);
+	(*cit)->set_constrained(index, ch->is_constrained(mirror));
+      }
+    return vh;
   }
 
   // This one takes a function object to recursively determine the cells in
@@ -1088,22 +1246,258 @@ private:
     CGAL_triangulation_precondition( c != NULL );
     CGAL_triangulation_precondition( tester(c) );
 
-    std::vector<Cell_handle> cells;
-    cells.reserve(32);
+    std::set<Cell_handle> cells;
+    typedef typename std::set<Cell_handle>::iterator Cells_iterator;
+
+    std::set<Edge> edges;
+    typedef typename std::set<Edge>::iterator Edges_iterator;
 
     Facet facet;
 
     // Find the cells in conflict
     find_conflicts_3(c, tester, make_triple(Oneset_iterator<Facet>(facet),
-		                            std::back_inserter(cells),
+		                            std::inserter(cells, 
+							  cells.begin()),
 				            Emptyset_iterator()));
 
+    //    bool go_on = true; // If go_on is false, the point is not inserted.
+
+    /** \todo{ TODO: optimiser ca, si possible} */
+    for(Cells_iterator c_it = cells.begin();
+	c_it != cells.end();
+	++c_it)
+      for( int k = 0; k < 4; k++)
+	if( cells.find((*c_it)->neighbor(k)) == cells.end() )
+	  // (c_it, k) is a sub-facet of the zone's boundary 
+	  for( int i = 0; i < 4; ++i)
+	    for( int j = 0; j < i ; ++j)
+	      if( k != i && k != j )
+		{
+		  const int facet = 6-i-j-k; //sub-facet (i, j, k)
+		  // if 'facet' is in the interior of the zone and
+		  // contrained, the edge (i, j) is on the boundary of the
+		  // zone (because k is on the boundary) and incident to
+		  // 'facet' that is _in_ the zone and constrained.
+		  if( (*c_it)->is_constrained(facet) &&
+		      cells.find((*c_it)->neighbor(facet)) != cells.end() )
+		    {
+// 		      go_on = go_on && ! is_encroached(Edge(*c_it, i, j), 
+// 						       tester.p.point());
+		      edges.insert(Edge(*c_it, i, j));
+		    }
+		}
+
     // Create the new cells and delete the old.
-    return _tds._insert_in_hole(cells.begin(), cells.end(),
-	                        facet.first, facet.second);
+    Vertex_handle vh = this->_tds._insert_in_hole(cells.begin(), cells.end(),
+						  facet.first, facet.second);
+    // Restore contraint status.
+    cells.clear();
+    incident_cells(vh, std::inserter(cells, cells.begin()));
+    for(Cells_iterator cit = cells.begin();
+	cit != cells.end();
+	++cit)
+      {
+	const int index = (*cit)->index(vh);
+	for(int i = 0; i<4; ++i)
+	  if( i != index)
+	    (*cit)->set_constrained(i, false);
+	Cell_handle ch = (*cit)->neighbor(index);
+	const int mirror = (*cit)->mirror_index(index);
+	(*cit)->set_constrained(index, ch->is_constrained(mirror));
+      }
+    for(Edges_iterator e_it = edges.begin();
+	e_it != edges.end();
+	++e_it)
+      {
+	const Vertex_handle& va = e_it->first->vertex(e_it->second);
+	const Vertex_handle& vb = e_it->first->vertex(e_it->third);
+
+	/** \todo{ TODO: Optimiser, car insert_constrained_facet fait un
+	    is_facet} */
+	CGAL_assertion_code(bool b = ) insert_constrained_facet(va, vb, vh);
+	CGAL_assertion(b);
+      }
+
+    return vh;
   }
 
+  // --- FONCTIONS A MOI
+
+  bool is_encroached(Edge e) const
+  {
+    const Vertex_handle& va = e.first->vertex(e.second);
+    const Vertex_handle& vb = e.first->vertex(e.third);
+    
+    Facet_circulator f_circ = incident_facets(e), end(f_circ);
+
+    do {
+      /** \todo{ TODO: comment trouver le troisième point d'une facet ?} */
+
+      Vertex_handle v;
+      for(int i = 0; i < 4; ++i)
+	{
+	  if( i == (*f_circ).second ) continue; 
+	  v = (*f_circ).first->vertex(i);
+	  if( v != va && v != vb) break;
+	}
+      // here v is the third point of the facet
+
+      typename Geom_traits::Angle_3 angle = 
+	geom_traits().angle_3_object();
+      
+      if( angle(va->point().point(), v->point().point(),
+		vb->point().point()) == OBTUSE )
+	return true;
+
+      ++f_circ;
+    }
+    while( f_circ != end );
+    return false;
+  }
+
+  bool is_encroached(Edge e, const Bare_point& p) const 
+  {
+    const Vertex_handle& va = e.first->vertex(e.second);
+    const Vertex_handle& vb = e.first->vertex(e.third);
+    return is_encroached(va, vb, p);
+  }
+  
+  bool is_encroached(const Vertex_handle& va, const Vertex_handle& vb, 
+		     const Bare_point& p) const 
+  {
+    typename Geom_traits::Angle_3 angle = 
+      geom_traits().angle_3_object();
+    
+    return( angle(va->point().point(), p,
+		  vb->point().point()) == OBTUSE );
+  }
+
+  bool test_if_encroached(const Vertex_handle va, const Vertex_handle vb)
+    const
+  {
+    Cell_handle c;
+    int i, j;
+
+    CGAL_assertion_code(bool b =) is_edge(va, vb, c, i, j);
+    CGAL_assertion(b);
+
+    if( is_encroached(Edge(c, i, j)) )
+      {
+	edges_to_be_conformed.push(std::make_pair(va, vb));
+	return true;
+      }
+    else
+      return false;
+  }
+
+public:
+  void fill_edges_to_be_conformed()
+  {
+    for(Finite_edges_iterator it = finite_edges_begin();
+	it != finite_edges_end();
+	++it)
+      if(is_constrained(*it) && is_encroached(*it))
+	edges_to_be_conformed.push(std::make_pair(it->first->
+						  vertex(it->second),
+						  it->first->
+						  vertex(it->third)));
+  }
+
+  void conform_edges()
+  {
+    while(!edges_to_be_conformed.empty())
+      {
+	std::pair<Vertex_handle, Vertex_handle> p = 
+	  edges_to_be_conformed.front();
+	edges_to_be_conformed.pop();
+	split_edge(p.first, p.second);
+      }
+  }
+
+private:
+  void split_edge(Vertex_handle va, Vertex_handle vb)
+  {
+    Cell_handle c;
+    int i, j;
+
+    CGAL_assertion_code(bool b = ) is_edge(va, vb, c, i, j);
+    CGAL_assertion(b);
+
+    // WARNING, TODO: bad 
+    insert(Weighted_point(midpoint(va->point().point(),
+				    vb->point().point())),
+	   Triangulation::EDGE, c, i, j);
+  }
+
+  bool is_not_locally_Delaunay(Facet f)
+  {
+    const Cell_handle& c = f.first;
+    const int i = f.second;
+    const Cell_handle& n = c->neighbor(i);
+    const Vertex_handle& va = c->vertex( (i+1) % 4 );
+    const Vertex_handle& vb = c->vertex( (i+2) % 4 );
+    const Vertex_handle& vc = c->vertex( (i+3) % 4 );
+
+    const Vertex_handle& v1 = c->vertex(i);
+    const Vertex_handle& v2 = n->vertex( n->index(c) );
+
+    return( power_test(va->point(),
+		       vb->point(),
+		       vc->point(),
+		       v1->point(),
+		       v2->point()) != ON_NEGATIVE_SIDE
+	    ||
+	    power_test(va->point(),
+		       vb->point(),
+		       vc->point(),
+		       v2->point(),
+		       v1->point()) != ON_NEGATIVE_SIDE );
+  }
+
+public:
+  void fill_facets_to_be_conformed()
+  {
+    for(Finite_facets_iterator it = finite_facets_begin();
+	it != finite_facets_end();
+	++it)
+      if(is_constrained(*it) && is_not_locally_Delaunay(*it))
+	facets_to_be_conformed.push(make_triple(it->first->
+						vertex((it->second+1) % 4),
+						it->first->
+						vertex((it->second+2) % 4),
+						it->first->
+						vertex((it->second+3) % 4)));
+  }
+
+  void conform_facets()
+  {
+    while(!facets_to_be_conformed.empty())
+      {
+	Triple<Vertex_handle, Vertex_handle, Vertex_handle> t = 
+	  facets_to_be_conformed.front();
+	facets_to_be_conformed.pop();
+	split_facet(t.first, t.second, t.third);
+      }
+  }
+
+private:
+  void split_facet(Vertex_handle va, Vertex_handle vb, Vertex_handle vc)
+  {
+    Cell_handle c;
+    int i, j, k;
+
+    CGAL_assertion_code(bool b = ) is_facet(va, vb, vc, c, i, j, k);
+    CGAL_assertion(b);
+
+    // WARNING, TODO: bad 
+    insert(Weighted_point(circumcenter(va->point().point(),
+				       vb->point().point(),
+				       vc->point().point())),
+	   Triangulation::FACET, c, 6-i-j-k, 0);
+  }
 };
+
+
 
 template <class Tr, class CT_2>
 inline 
@@ -1128,16 +1522,20 @@ insert(const Weighted_point & p, Cell_handle start)
 template <class Tr, class CT_2>
 typename Constrained_regular_triangulation_3<Tr, CT_2>::Vertex_handle
 Constrained_regular_triangulation_3<Tr, CT_2>::
-insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
+insert(const Weighted_point & p, Locate_type lt,
+       Cell_handle c, int li, int lj)
 {
   Vertex_handle v1, v2;
   bool insert_in_constrained_edge = false;
 
-  if ( lt == Triangulation::EDGE && c->is_constrained(li) ){
-    insert_in_constrained_edge = true;
-    v1=c->vertex(ccw(li)); //endpoint of the constraint
-    v2=c->vertex(cw(li)); // endpoint of the constraint
-  }
+  if ( lt == Triangulation::EDGE &&
+       c->vertex(li)->is_adjacent_by_constraint(c->vertex(lj)) )
+    {
+      remove_constrained_edge(Edge(c, li, lj));
+      insert_in_constrained_edge = true;
+      v1=c->vertex(li); //endpoint of the constraint
+      v2=c->vertex(lj); // endpoint of the constraint
+    }
 
   switch (dimension()) {
   case 3:
@@ -1168,7 +1566,16 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
       }
 
       if (insert_in_constrained_edge)
-	hierarchy_2.split_constraint(v1,v2,v);
+	{
+	  // hierarchy_2.split_constraint(v1,v2,v);
+
+	  CGAL_assertion_code(bool b1 =) insert_constrained_edge(v1, v, false);
+	  CGAL_assertion_code(bool b2 =) insert_constrained_edge(v2, v, false);
+	  CGAL_assertion( b1 && b2);
+
+	  test_if_encroached(v1, v);
+	  test_if_encroached(v2, v);
+	}
 
       // TODO : manage the hidden points.
       return v;
@@ -1380,7 +1787,6 @@ off_file_output(std::ostream& os)
       ++it)
     if(is_constrained(*it))
       constrained_facets.insert(*it);
-  
 
   os << "OFF" << std::endl
      << this->number_of_vertices() << " "
