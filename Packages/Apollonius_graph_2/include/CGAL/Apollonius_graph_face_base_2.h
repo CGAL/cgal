@@ -92,15 +92,15 @@ public:
   //-----------
   inline bool is_in_list(int i) const
   {
-    CGAL_triangulation_assertion( i >= 0 && i <= 2 );
+    CGAL_precondition( i >= 0 && i <= 2 );
     return (next_edge_in_list[i].first != NULL ||
 	    prev_edge_in_list[i].first != NULL);
   }
 
   inline void set_next(int i, const Edge& next)
   {
-    CGAL_triangulation_precondition( i >= 0 && i <= 2 );
-    CGAL_triangulation_precondition( next.first == NULL ||
+    CGAL_precondition( i >= 0 && i <= 2 );
+    CGAL_precondition( next.first == NULL ||
 				     (next.second >= 0 &&
 				      next.second <= 2) );
     next_edge_in_list[i] = next;
@@ -108,22 +108,21 @@ public:
 
   inline void set_previous(int i, const Edge&  prev)
   {
-    CGAL_triangulation_precondition( i >= 0 && i <= 2 );
-    CGAL_triangulation_precondition( prev.first == NULL ||
-				     (prev.second >= 0 &&
-				      prev.second <= 2) );
+    CGAL_precondition( i >= 0 && i <= 2 );
+    CGAL_precondition( prev.first == NULL ||
+		       (prev.second >= 0 && prev.second <= 2) );
     prev_edge_in_list[i] = prev;
   }
 
   inline Edge next(int i) const
   {
-    CGAL_triangulation_precondition( i >= 0 && i <= 2 );
+    CGAL_precondition( i >= 0 && i <= 2 );
     return next_edge_in_list[i];
   }
 
   inline Edge previous(int i) const
   {
-    CGAL_triangulation_precondition( i >= 0 && i <= 2 );
+    CGAL_precondition( i >= 0 && i <= 2 );
     return prev_edge_in_list[i];
   }
 
