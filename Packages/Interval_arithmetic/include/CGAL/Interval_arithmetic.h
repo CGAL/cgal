@@ -332,7 +332,8 @@ public:
 inline CGAL_Interval_nt_advanced sqrt(const CGAL_Interval_nt_advanced& d)
 {
   CGAL_FPU_set_rounding_to_minus_infinity();
-  CGAL_Interval_nt_advanced tmp ( sqrt(-d.inf), 0);
+  CGAL_Interval_nt_advanced tmp;
+  tmp.inf = - sqrt(-d.inf);
   CGAL_FPU_set_rounding_to_infinity();
   tmp.sup = sqrt(d.sup);
   return tmp;
