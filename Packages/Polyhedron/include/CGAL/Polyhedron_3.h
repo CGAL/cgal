@@ -715,6 +715,8 @@ public:
     size_type size_of_facets() const { return hds.size_of_faces();}
         // number of facets.
 
+    bool empty() const { size_of_halfedges() == 0; }
+
     size_type capacity_of_vertices() const {
         // space reserved for vertices.
         return hds.capacity_of_vertices();

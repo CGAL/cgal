@@ -1,6 +1,10 @@
 Polyhedron Package: Release changes:
 ---------------------------------------------------------------------
 
+3.23 (20 Mar 2002)
+
+     - added empty() member function to Polyhedron_3.
+
 3.22 (20 Dec 2001)
 
      - Changed M_PI to CGAL_PI.
