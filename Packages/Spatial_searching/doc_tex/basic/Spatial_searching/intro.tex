@@ -136,7 +136,7 @@ This example program illustrates incremental searching for the closest
 point with a positive first coordinate. We can use the orthogonal
 incremental neighbor search class, as the query is also a point and as
 the distance is the Euclidean distance in 4-dimensional space. We
-do not need a search traits class, as the higher dimensional \Cgal\
+do not need a search traits class, as the higher dimensional \cgal\
 kernel fulfills the requirements of the search traits concept.
 
 As for the $k$ neighbor search, we first initialize the search tree with
@@ -153,7 +153,7 @@ iterator category, that is one can make only one pass over the data.
 
 This example program illustrates approximate nearest and furthest
 neighbor searching using 4-dimensional Cartesian coordinates.  Five
-approximate nearest and furthest neighbors of the query rectangle
+approximate nearest neighbors of the query rectangle
 $[0.1,0.2]^4$ are computed. Because the query object is a rectangle
 we cannot use the Orthogonal neighbor search. As in the previous 
 examples we first initialize a search tree, create the search object
@@ -183,17 +183,22 @@ points class.
 
 \ccIncludeExampleCode{../../../examples/Spatial_searching/Point.h}
 
-e have put the glue layer in this file as well, that is a class that allows to 
+We have put the glue layer in this file as well, that is a class that allows to 
 iterate over the Cartesian coordinates of the point, and a class to construct
-such an iterator for a point. 
+such an iterator for a point. We next need a distance class
+\newpage
+\ccIncludeExampleCode{../../../examples/Spatial_searching/Distance.h}
 
+\newpage
+
+We are ready to put the pices together.
 The class \ccc{Search_traits<..>} which you see in the next file is then a mere 
-wrapper for all these types.  The searching itself works exactly as for \Cgal\ kernels.
+wrapper for all these types.  The searching itself works exactly as for \cgal\ kernels.
 
 \ccIncludeExampleCode{../../../examples/Spatial_searching/User_defined_point_and_distance.C}
 
 \newpage
-\subsection{Example of Selecting a Splitting Rule and Setting the Bucket Size.}
+\subsection{Example of Selecting a Splitting Rule and Setting the Bucket Size}
 
 This example program illustrates selecting a splitting rule and
 setting the maximal allowed bucket size.  The only differences with

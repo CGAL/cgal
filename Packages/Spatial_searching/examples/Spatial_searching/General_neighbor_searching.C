@@ -1,5 +1,4 @@
 //file: examples/Spatial_searching/General_neighbor_searching.C
-
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Manhattan_distance_iso_box_point.h>
@@ -34,24 +33,13 @@ int  main() {
   Iso_box_d query(pp,qq);
 
   Distance tr_dist;
-
   Neighbor_search N1(tree, query, K, 10.0, false); // eps=10.0, nearest=false
   
-  std::cout << "report" << std::endl;
   std::cout << "query = [0.1,0.2]^4 " << std::endl 
 	    <<  K << " approximate furthest neighbors are: " << std::endl; 
   for (Neighbor_search::iterator it = N1.begin();it != N1.end();it++) { 
      std::cout << " d(q,fn)= " << tr_dist.inverse_of_transformed_distance(it->second) 
 	       << " fn= " << it->first << std::endl; 
-  }
-
-  Neighbor_search N2(tree, query, K, 0.0, false); // eps=0.0, nearest=false
- 
-  std::cout << "query = [0.1,0.2]^4 " << std::endl 
-	    <<  K << " exact furthest neighbors are: " << std::endl; 
-  for (Neighbor_search::iterator it = N2.begin(); it != N2.end(); it++) { 
-     std::cout << " d(q,fn)= " << tr_dist.inverse_of_transformed_distance(it->second) 
-	       << " fn= " << it->first << std::endl; 
-  }  
+  } 
   return 0;
 }

@@ -1,11 +1,10 @@
 //file: examples/Spatial_searching/User_defined_point_and_distance.C
-
 #include <CGAL/basic.h>
 #include <CGAL/Search_traits.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
-
-#include "Point.h"  // defines types Point, Construct_coord_iterator, Distance
+#include "Point.h"  // defines types Point, Construct_coord_iterator
+#include "Distance.h"
 
 typedef CGAL::Random_points_in_cube_3<Point> Random_points_iterator;
 typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator;
@@ -32,7 +31,6 @@ int main() {
     std::cout << " d(q, nearest neighbor)=  " 
 	      << tr_dist.inverse_of_transformed_distance(it->second) << std::endl; 
   }
-
   // search K furthest neighbour searching, with eps=0, search_nearest=false 
   K_neighbor_search search2(tree, query, K, 0.0, false);
   

@@ -1,12 +1,10 @@
 // file: examples/Spatial_searching/Fuzzy_range_query.C
-
 #include <CGAL/Homogeneous_d.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Fuzzy_sphere.h>
 #include <CGAL/Fuzzy_iso_box.h>
-#include <iostream>
 
 typedef CGAL::MP_Float NT;
 typedef CGAL::Homogeneous_d<NT> K;
@@ -21,7 +19,6 @@ typedef CGAL::Fuzzy_iso_box<K, Iso_box> Fuzzy_iso_box;
 int main() {
   const int D = 4;
   const int N = 1000;
-  
   // generator for random data points in the square ( (-1000,-1000), (1000,1000) ) 
   Random_points_iterator rpit(4, 1000.0);
   
@@ -29,31 +26,22 @@ int main() {
   Tree tree(N_Random_points_iterator(rpit,0),
 	    N_Random_points_iterator(N));
 
-  // define spherical range query object
-  NT c[D] = { 300, 300, 300, 300 };
-  Point_d center(D,c,c+D);
-  Fuzzy_sphere fs(center, 700.0, 100.0);
+  // define range query objects
+  NT  pcoord[D] = { 300, 300, 300, 300 };
+  NT  qcoord[D] = { 900.0, 900.0, 900.0, 900.0 };
+  Point_d p(D, pcoord, pcoord+D);
+  Point_d q(D, qcoord, qcoord+D);
+  Fuzzy_sphere fs(p, 700.0, 100.0);
+  Fuzzy_iso_box fib(p, q, 100.0);
 
   std::cout << "points approximately in fuzzy range query" << std::endl; 
   std::cout << "with center (300.0, 300.0, 300.0, 300.0)" << std::endl;
   std::cout << "and fuzzy radius <200.0,400.0> are:" << std::endl;
   tree.search(std::ostream_iterator<Point_d>(std::cout, "\n"), fs);
-  
-  // define rectangular range query object
-  NT pa[D] = { -100.0, -100.0, -100.0, -100.0 };
-  NT qa[D] = { 900.0, 900.0, 900.0, 900.0 };
-  Point_d p(D, pa, pa+D);
-  Point_d q(D, qa, qa+D);
-  Fuzzy_iso_box fib(p, q, 100.0);
 
   std::cout << "points approximately in fuzzy range query ";
-  std::cout << "[<-200,0>,<800,1000>]]^4 are:" << std::endl;
+  std::cout << "[<200,4000>,<800,1000>]]^4 are:" << std::endl;
 
   tree.search(std::ostream_iterator<Point_d>(std::cout, "\n"), fib);
- 
   return 0;
 }
-
-  
-
-
