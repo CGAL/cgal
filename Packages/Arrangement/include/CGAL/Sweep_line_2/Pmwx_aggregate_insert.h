@@ -1080,12 +1080,12 @@ insert_to_pm_v(const X_monotone_curve_2 &cv, SubCurve *origCurve,
 	                 << bottomII->get_halfedge_handle()->target()->point()
 	                 << "\n";)
       Halfedge_handle h1 = bottomII->get_halfedge_handle();
-      if ( h1->target()->point() != m_traits->curve_source(cv) &&
-	   h1->target()->point() != m_traits->curve_target(cv) )
+      if ((m_traits->compare_xy(h1->target()->point(),
+                                m_traits->curve_source(cv)) != EQUAL) &&
+          (m_traits->compare_xy(h1->target()->point(),
+                                m_traits->curve_target(cv)) != EQUAL))
 	h1 = h1->twin();
-      res = pm.non_intersecting_insert_from_vertex(cv, 
-						   h1,
-						   m_change_not);
+      res = pm.non_intersecting_insert_from_vertex(cv, h1, m_change_not);
     }
   } else 
   {
@@ -1096,12 +1096,12 @@ insert_to_pm_v(const X_monotone_curve_2 &cv, SubCurve *origCurve,
 	                 << topII->get_halfedge_handle()->target()->point() 
                          << "\n";)
       Halfedge_handle h1 = topII->get_halfedge_handle();
-      if ( h1->target()->point() != m_traits->curve_source(cv) &&
-	   h1->target()->point() != m_traits->curve_target(cv) )
+      if ((m_traits->compare_xy(h1->target()->point(),
+                                m_traits->curve_source(cv)) != EQUAL) &&
+          (m_traits->compare_xy(h1->target()->point(),
+                                m_traits->curve_target(cv)) != EQUAL))
 	h1 = h1->twin();
-      res = pm.non_intersecting_insert_from_vertex(cv, 
-						   h1,
-						   m_change_not);
+      res = pm.non_intersecting_insert_from_vertex(cv, h1, m_change_not);
       res = res->twin();
     } else 
     {
@@ -1113,16 +1113,17 @@ insert_to_pm_v(const X_monotone_curve_2 &cv, SubCurve *origCurve,
                          << "\n";)
       Halfedge_handle h1 = bottomII->get_halfedge_handle();
       Halfedge_handle h2 = topII->get_halfedge_handle();
-      if ( h1->target()->point() != m_traits->curve_source(cv) &&
-	   h1->target()->point() != m_traits->curve_target(cv) )
+      if ((m_traits->compare_xy(h1->target()->point(),
+                                m_traits->curve_source(cv)) != EQUAL) &&
+          (m_traits->compare_xy(h1->target()->point(),
+                                m_traits->curve_target(cv)) != EQUAL))
 	h1 = h1->twin();
-      if ( h2->target()->point() != m_traits->curve_source(cv) &&
-	   h2->target()->point() != m_traits->curve_target(cv) )
+      if ((m_traits->compare_xy(h2->target()->point(),
+                                m_traits->curve_source(cv)) != EQUAL) &&
+          (m_traits->compare_xy(h2->target()->point(),
+                                m_traits->curve_target(cv)) != EQUAL))
 	h2 = h2->twin();
-      res = pm.non_intersecting_insert_at_vertices(cv,
-					     h1, 
-					     h2,
-					     m_change_not);
+      res = pm.non_intersecting_insert_at_vertices(cv, h1, h2, m_change_not);
     }
   }
 
