@@ -72,8 +72,6 @@ public:
 				typedef typename MeshAdaptor_3::Vertex_around_vertex_const_circulator	Vertex_around_vertex_const_circulator;
 				typedef BorderParametizer_3												Border_parametizer_3;
 				typedef SparseLinearAlgebraTraits_d										Sparse_linear_algebra_traits_d;
-				typedef typename SparseLinearAlgebraTraits_d::Vector					Vector;
-				typedef typename SparseLinearAlgebraTraits_d::Matrix					Matrix;
 
 // Public operations
 public:
@@ -97,17 +95,30 @@ public:
 				// * the mesh border must be mapped onto a convex polygon
 				virtual ErrorCode  parameterize (MeshAdaptor_3* mesh);
 								
-// Protected stuff
+// Protected types
 protected:
-				// compute wij = (i,j) coefficient of matrix A for j neighbor vertex of i
-				// Implementation note: usually, subclasses of Fixed_border_parametizer_3 need only to implement compute_wij()
-				virtual	NT  compute_wij(const MeshAdaptor_3& mesh, const Vertex& main_vertex_Vi, Vertex_around_vertex_const_circulator neighbor_vertex_Vj) = 0;
-
+				typedef typename OpenNL::LinearSolver<SparseLinearAlgebraTraits_d>		Solver ;
+								
+// Protected operations
+protected:
 				// Check parameterize() preconditions:
 				// * 'mesh' must be a surface with 1 connected component and no hole
 				// * 'mesh' must be a triangular mesh
 				// * the mesh border must be mapped onto a convex polygon
-				virtual ErrorCode  check_parameterize_preconditions (MeshAdaptor_3* mesh);
+				virtual ErrorCode  check_parameterize_preconditions (const MeshAdaptor_3& mesh);
+
+				// Initialize A, Bu and Bv after boundary parameterization
+				// Fill the border vertices' lines in both linear systems: "u = constant" and "v = constant"
+				//
+				// Preconditions:
+				// * vertices must be indexed
+				// * A, Bu and Bv must be allocated
+				// * border vertices must be parameterized
+				void initialize_system_from_mesh_border(Solver* solver_u, Solver* solver_v, const MeshAdaptor_3& mesh) ;
+
+				// compute wij = (i,j) coefficient of matrix A for j neighbor vertex of i
+				// Implementation note: usually, subclasses of Fixed_border_parametizer_3 need only to implement compute_wij()
+				virtual	NT  compute_wij(const MeshAdaptor_3& mesh, const Vertex& main_vertex_Vi, Vertex_around_vertex_const_circulator neighbor_vertex_Vj) = 0;
 
 				// Compute the line i of matrix A for i inner vertex
 				// * call compute_wij() to compute the A coefficient Wij for each neighbor Vj
@@ -117,13 +128,15 @@ protected:
 				// * vertices must be indexed
 				// * vertex i musn't be already parameterized
 				// * line i of A must contain only zeros
-				virtual ErrorCode  parameterize_inner_vertex (const MeshAdaptor_3& mesh, const Vertex& vertex, 
-															  Matrix* A, Vector* Bu, Vector* Bv);
+				virtual ErrorCode  setup_inner_vertex_relations (Solver* solver_u, Solver* solver_v, const MeshAdaptor_3& mesh, const Vertex& vertex);
+
+				// Copy Xu and Xv coordinates into the (u,v) pair of each surface vertex
+				void set_mesh_uv_from_system(MeshAdaptor_3* mesh, const Solver& solver_u, const Solver& solver_v) ;
 
 				// Check parameterize() postconditions:
 				// * "A*Xu = Bu" and "A*Xv = Bv" systems are solvable with a good conditioning
 				// * 3D -> 2D mapping is 1 to 1
-				virtual ErrorCode check_parameterize_postconditions(const Matrix& A, const Vector& Bu, const Vector& Bv);
+				virtual ErrorCode check_parameterize_postconditions(const MeshAdaptor_3& mesh, const Solver& solver_u, const Solver& solver_v);
 
 				// Check if 3D -> 2D mapping is 1 to 1
 				//
@@ -131,27 +144,15 @@ protected:
 				//          and if the surface boundary is mapped onto a 2D convex polygon
 				//
 				// The default implementation checks each coefficient of A
-				virtual bool  is_one_to_one_mapping (const Matrix& A);
+				virtual bool  is_one_to_one_mapping (const Solver& solver);
 
+// Protected accessors
+protected:
 				// Get the object that maps the surface's border onto a 2D space
 				BorderParametizer_3&			get_border_parametizer()	{ return m_borderParametizer; }
 
 				// Get the sparse linear algebra traits (Traits object to access the "A*X = B" sparse linear system)
 				SparseLinearAlgebraTraits_d&	get_linear_algebra_traits()	{ return m_linearAlgebra; }
-
-// Private stuff
-private:
-				// Initialize A, Bu and Bv after boundary parameterization
-				// Fill the border vertices' lines in both linear systems: "u = constant" and "v = constant"
-				//
-				// Preconditions:
-				// * vertices must be indexed
-				// * A, Bu and Bv must be allocated
-				// * border vertices must be parameterized
-				void  initialize_system_from_mesh_border (Matrix* A, Vector* Bu, Vector* Bv, const MeshAdaptor_3& mesh);
-
-				// Copy Xu and Xv coordinates into the (u,v) pair of each surface vertex
-				void  set_mesh_uv_from_system (MeshAdaptor_3* mesh, const Vector& Xu, const Vector& Xv);
 
 // Fields
 private:
@@ -179,8 +180,10 @@ inline
 typename Parametizer_3<MeshAdaptor_3>::ErrorCode  
 Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits_d>::parameterize (MeshAdaptor_3* mesh)
 {
+	CGAL_parameterization_assertion(mesh != NULL);
+
 	// Check preconditions
-	ErrorCode status = check_parameterize_preconditions(mesh);
+	ErrorCode status = check_parameterize_preconditions(*mesh);
 	if (status != OK)
 		return status;
 
@@ -192,9 +195,9 @@ Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgeb
 	mesh->index_mesh_vertices();
 	std::cerr << "ok (" << nbVertices << ")" << std::endl;
 
-	// Create 2 sparse linear systems "A*Xu = Bu" and "A*Xv = Bv" (1 line/column per vertex)
-	Matrix A(nbVertices, nbVertices);
-	Vector Xu(nbVertices), Xv(nbVertices), Bu(nbVertices), Bv(nbVertices);
+	// Create 2 sparse linear systems solver_u = "A*Xu = Bu" and solver_v = "A*Xv = Bv" (1 line/column per vertex)
+	Solver solver_u(nbVertices);
+	Solver solver_v(nbVertices);
 	
 	// Mark all vertices as NOT "parameterized"
 	Vertex_iterator vertexIt;
@@ -208,11 +211,13 @@ Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgeb
 	// Initialize A, Xu, Xv, Bu and Bv after boundary parameterization
 	// Fill the border vertices' lines in both linear systems: "u = constant" and "v = constant"
 	//
-	// Implementation note: the current implementation does not remove border vertices from the linear systems => A cannot be symmetric
-	initialize_system_from_mesh_border (&A, &Bu, &Bv, *mesh);
+	// Implementation note: the current implementation removes border vertices from the linear systems and pass them in the right hand side
+	initialize_system_from_mesh_border (&solver_u, &solver_v, *mesh);
 
-	// Parameterize the inner vertices Vi: compute A's coefficient Wij for each neighbor j; then Wii = - sum of Wij
+	// Fill the matrix for the inner vertices Vi: compute A's coefficient Wij for each neighbor j; then Wii = - sum of Wij
 	fprintf(stderr,"  fill matrix (%d x %d)...",nbVertices,nbVertices);
+	solver_u.begin_system() ;
+	solver_v.begin_system() ;
 	for (vertexIt = mesh->mesh_vertices_begin(); vertexIt != mesh->mesh_vertices_end(); vertexIt++)
 	{
 	 	CGAL_parameterization_assertion(mesh->is_vertex_on_border(*vertexIt) == mesh->is_vertex_parameterized(*vertexIt));
@@ -221,33 +226,30 @@ Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgeb
 		if( ! mesh->is_vertex_on_border(*vertexIt) )
 		{
 			// Compute the line i of matrix A for i inner vertex
-			status = parameterize_inner_vertex (*mesh, *vertexIt, &A, &Bu, &Bv);
+			status = setup_inner_vertex_relations (&solver_u, &solver_v, *mesh, *vertexIt);
 			if (status != OK)
 				return status;
 		}
 	}
+	solver_u.end_system() ;
+	solver_v.end_system() ;
 	fprintf(stderr,"ok\n");
 
-	// Solve "A*Xu = Bu". On success, solution is (1/Du) * Xu.
-	// Solve "A*Xv = Bv". On success, solution is (1/Dv) * Xv.
+	// Solve linear systems solver_u = "A*Xu = Bu" and solver_v = "A*Xv = Bv" 
 	std::cerr << "  solver...";
-	NT Du, Dv;
-	if ( !get_linear_algebra_traits().linear_solver(A, Bu, Xu, Du) || !get_linear_algebra_traits().linear_solver(A, Bv, Xv, Dv) )
+	if ( !solver_u.solve() || !solver_v.solve() )
 	{
 		std::cerr << "error" << std::endl;
 		CGAL_parameterization_postcondition_msg(false, "Parameterization error: cannot solve sparse linear system");
 		return ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;	
 	}
-	// WARNING: this package does not support homogeneous coordinates!
-	CGAL_parameterization_assertion(Du == 1.0);
-	CGAL_parameterization_assertion(Dv == 1.0);
 	std::cerr << "ok" << std::endl;
 
 	// Copy Xu and Xv coordinates into the (u,v) pair of each vertex
-	set_mesh_uv_from_system (mesh, Xu, Xv); 
+	set_mesh_uv_from_system (mesh, solver_u, solver_v); 
 
 	// Check postconditions
-	status = check_parameterize_postconditions(A, Bu, Bv);
+	status = check_parameterize_postconditions(*mesh, solver_u, solver_v);
 	if (status != OK)
 		return status;
 
@@ -262,29 +264,27 @@ Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgeb
 template <class MeshAdaptor_3, class BorderParametizer_3, class SparseLinearAlgebraTraits_d>
 inline 
 typename Parametizer_3<MeshAdaptor_3>::ErrorCode  
-Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits_d>::check_parameterize_preconditions (MeshAdaptor_3* mesh)
+Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits_d>::check_parameterize_preconditions (const MeshAdaptor_3& mesh)
 {
 	ErrorCode status = OK;									// returned value
 
-	CGAL_parameterization_assertion(mesh != NULL);
-
 	// Allways check that mesh is not empty
-	if (mesh->mesh_vertices_begin() == mesh->mesh_vertices_end())
+	if (mesh.mesh_vertices_begin() == mesh.mesh_vertices_end())
 		status = ERROR_EMPTY_MESH;
 	CGAL_parameterization_precondition(status == OK);
 	if (status != OK)
 		return status;
 
 	// The whole surface parameterization package is restricted to triangular meshes
-	CGAL_parameterization_expensive_precondition((status = mesh->is_mesh_triangular() ? OK : ERROR_NON_TRIANGULAR_MESH) == OK);
+	CGAL_parameterization_expensive_precondition((status = mesh.is_mesh_triangular() ? OK : ERROR_NON_TRIANGULAR_MESH) == OK);
 	if (status != OK)
 		return status;
 
 	// The whole package is restricted to surfaces
-	CGAL_parameterization_expensive_precondition((status = (mesh->get_mesh_genus()==0) ? OK : ERROR_NO_SURFACE_MESH) == OK);
+	CGAL_parameterization_expensive_precondition((status = (mesh.get_mesh_genus()==0) ? OK : ERROR_NO_SURFACE_MESH) == OK);
 	if (status != OK)
 		return status;
-	CGAL_parameterization_expensive_precondition((status = (mesh->count_mesh_boundaries() == 1) ? OK : ERROR_NO_SURFACE_MESH) == OK);
+	CGAL_parameterization_expensive_precondition((status = (mesh.count_mesh_boundaries() == 1) ? OK : ERROR_NO_SURFACE_MESH) == OK);
 	if (status != OK)
 		return status;
 
@@ -306,12 +306,11 @@ Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgeb
 // * border vertices must be parameterized
 template <class MeshAdaptor_3, class BorderParametizer_3, class SparseLinearAlgebraTraits_d>
 inline 
-void Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits_d>::initialize_system_from_mesh_border(Matrix* A, Vector* Bu, Vector* Bv, 
+void Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits_d>::initialize_system_from_mesh_border(Solver* solver_u, Solver* solver_v, 
 																																	 const MeshAdaptor_3& mesh) 
 {
-	CGAL_parameterization_assertion(A != NULL);
-	CGAL_parameterization_assertion(Bu != NULL);
-	CGAL_parameterization_assertion(Bv != NULL);
+	CGAL_parameterization_assertion(solver_u != NULL);
+	CGAL_parameterization_assertion(solver_v != NULL);
 
 	for (Border_vertex_const_iterator it = mesh.mesh_border_vertices_begin(); it != mesh.mesh_border_vertices_end(); it++)
 	{
@@ -320,13 +319,16 @@ void Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinear
 		// Get vertex index in sparse linear system
 		int index = mesh.get_vertex_index(*it);
 
-		// Write 1 as diagonal coefficient of A
-		A->set_coef(index, index, 1);
-
-		// Write constant in Bu and Bv
+		// Get vertex (u,v)
 		Point_2 uv = mesh.get_vertex_uv(*it);
-		(*Bu)[index] = uv.x();
-		(*Bv)[index] = uv.y();
+
+		// Write (u,v) in Xu and Xv
+		solver_u->variable(index).set_value(uv.x()) ;
+		solver_v->variable(index).set_value(uv.y()) ;
+
+		// Copy (u,v) in Bu and Bv
+        solver_u->variable(index).lock() ;
+        solver_v->variable(index).lock() ;
 	}
 }
 
@@ -341,13 +343,19 @@ void Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinear
 template <class MeshAdaptor_3, class BorderParametizer_3, class SparseLinearAlgebraTraits_d>
 inline 
 typename Parametizer_3<MeshAdaptor_3>::ErrorCode 
-Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits_d>::parameterize_inner_vertex(const MeshAdaptor_3& mesh, const Vertex& vertex, 
-																													   Matrix* A, Vector* Bu, Vector* Bv) 
+Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits_d>::setup_inner_vertex_relations(Solver* solver_u, Solver* solver_v, 
+																														  const MeshAdaptor_3& mesh, const Vertex& vertex) 
 {
+	CGAL_parameterization_assertion(solver_u != NULL);
+	CGAL_parameterization_assertion(solver_v != NULL);
 	CGAL_parameterization_assertion( ! mesh.is_vertex_on_border(vertex) );
 	CGAL_parameterization_assertion( ! mesh.is_vertex_parameterized(vertex) );
 
 	int i = mesh.get_vertex_index(vertex);
+
+	// Start row i
+    solver_u->begin_row() ;
+    solver_v->begin_row() ;
 
 	// circulate over vertices around vertex to compute Wii and Wijs
 	NT Wii = 0;
@@ -365,11 +373,17 @@ Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgeb
 		int j = mesh.get_vertex_index(*neighborIt);
 
 		// Set Wij in matrix
-     	A->set_coef(i,j, Wij);
+	    solver_u->add_coefficient(j, Wij);
+	    solver_v->add_coefficient(j, Wij);
 	}
 
 	// Set Wii in matrix
-    A->set_coef(i,i, Wii);
+    solver_u->add_coefficient(i, Wii);
+    solver_v->add_coefficient(i, Wii);
+
+	// End row i
+    solver_u->end_row() ;
+    solver_v->end_row() ;
 
 	return OK;
 }
@@ -378,15 +392,15 @@ Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgeb
 template <class MeshAdaptor_3, class BorderParametizer_3, class SparseLinearAlgebraTraits_d>
 inline 
 void Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits_d>::set_mesh_uv_from_system(MeshAdaptor_3* mesh, 
-																														  const Vector& Xu, const Vector& Xv) 
+																														  const Solver& solver_u, const Solver& solver_v) 
 {
 	Vertex_iterator vertexIt;
 	for (vertexIt = mesh->mesh_vertices_begin(); vertexIt != mesh->mesh_vertices_end(); vertexIt++)
 	{
 		int index = mesh->get_vertex_index(*vertexIt);
 
-		NT u = Xu[index];
-		NT v = Xv[index];
+		NT u = solver_u.variable(index).value() ;
+		NT v = solver_v.variable(index).value() ;
 
 		// Fill vertex (u,v) and mark it as "parameterized"
 		mesh->set_vertex_uv(&*vertexIt, Point_2(u,v));
@@ -400,17 +414,19 @@ void Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinear
 template <class MeshAdaptor_3, class BorderParametizer_3, class SparseLinearAlgebraTraits_d>
 inline 
 typename Parametizer_3<MeshAdaptor_3>::ErrorCode 
-Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits_d>::check_parameterize_postconditions(const Matrix& A, const Vector& Bu, const Vector& Bv)
+Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits_d>::check_parameterize_postconditions(const MeshAdaptor_3& mesh, 
+																															   const Solver& solver_u, const Solver& solver_v)
 {
 	ErrorCode status = OK;
 
-	// Check if "A*Xu = Bu" and "A*Xv = Bv" systems are solvable with a good conditioning
-	CGAL_parameterization_expensive_postcondition((status = get_linear_algebra_traits().is_solvable(A, Bu) ? OK : ERROR_BAD_MATRIX_CONDITIONING) == OK);
-	if (status != OK)
-		return status;
-	CGAL_parameterization_expensive_postcondition((status = get_linear_algebra_traits().is_solvable(A, Bv) ? OK : ERROR_BAD_MATRIX_CONDITIONING) == OK);
-	if (status != OK)
-		return status;
+	// LS 03/17/2005: comment out this section because OpenNL::LinearSolver does not provide a is_solvable() method
+	//// Check if "A*Xu = Bu" and "A*Xv = Bv" systems are solvable with a good conditioning
+	//CGAL_parameterization_expensive_postcondition((status = get_linear_algebra_traits().is_solvable(A, Bu) ? OK : ERROR_BAD_MATRIX_CONDITIONING) == OK);
+	//if (status != OK)
+	//	return status;
+	//CGAL_parameterization_expensive_postcondition((status = get_linear_algebra_traits().is_solvable(A, Bv) ? OK : ERROR_BAD_MATRIX_CONDITIONING) == OK);
+	//if (status != OK)
+	//	return status;
 
 // LS 02/04/2005: commented out because this check fails with conformal parameterization/square boundary even though the result seems correct
 //	// Check if 3D -> 2D mapping is 1 to 1
@@ -429,14 +445,16 @@ Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgeb
 // The default implementation checks each coefficient of A
 template <class MeshAdaptor_3, class BorderParametizer_3, class SparseLinearAlgebraTraits_d>
 inline 
-bool Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits_d>::is_one_to_one_mapping (const Matrix& A) 
+bool Fixed_border_parametizer_3<MeshAdaptor_3, BorderParametizer_3, SparseLinearAlgebraTraits_d>::is_one_to_one_mapping (const Solver& solver) 
 {
-	// Check if all Wij coefficients are > 0 (for j vertex neighbor of i)
-	for (int i=0; i < (int)A.row_dimension(); i++)
-		for (int j=0; j < (int)A.column_dimension(); j++)
-			if (i != j)
-				if (A.get_coef(i,j) < 0)
-					return false;
+	// LS 03/17/2005: comment out this section because - OpenNL::LinearSolver does not provide access to a matrix coefficient
+	//                                                 - this method is never called
+	//// Check if all Wij coefficients are > 0 (for j vertex neighbor of i)
+	//for (int i=0; i < (int)A.row_dimension(); i++)
+	//	for (int j=0; j < (int)A.column_dimension(); j++)
+	//		if (i != j)
+	//			if (A.get_coef(i,j) < 0)
+	//				return false;
 	
 	// Check if the surface boundary is mapped onto a 2D convex polygon
 	return get_border_parametizer().is_border_convex ();
