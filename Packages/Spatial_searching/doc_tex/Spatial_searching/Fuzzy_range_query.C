@@ -13,11 +13,11 @@ typedef R::Point_d Point;
 
 typedef Point::R::FT NT;
 
-typedef CGAL::Iso_rectangle_d<R> Rectangle;
-typedef CGAL::Kd_tree_traits_point<Point> TreeTraits;
+typedef CGAL::Iso_rectangle_d<R> Iso_rectangle;
+typedef CGAL::Kd_tree_traits_point<Point> Traits;
 
 typedef CGAL::Fuzzy_sphere_d<Point> Sphere;
-typedef CGAL::Fuzzy_iso_box_d<Point,Rectangle> Box;
+typedef CGAL::Fuzzy_iso_box_d<Point,Iso_rectangle> Box;
 
 int main() {
 
@@ -40,9 +40,9 @@ int main() {
         data_points.push_front(random_point);
   }
   
-  TreeTraits tr(bucket_size, NT(3), false);
+  Traits tr(bucket_size, NT(3), false);
 
-  typedef CGAL::Kd_tree<TreeTraits> Tree;
+  typedef CGAL::Kd_tree<Traits> Tree;
   Tree d(data_points.begin(), data_points.end(), tr);
 
   Point_vector points_in_rectangular_range_query;
@@ -59,11 +59,10 @@ int main() {
   d.search(std::back_inserter(points_in_spherical_range_query),s);
 
   std::cout << "points approximately in fuzzy range query" << std::endl; 
-  std::cout << "with center (300.0, 300.0, 300.0, 300.0)" << std::endl;
-  std::cout << "and fuzzy radius <200.0,400.0> are:" << std::endl;
+  std::cout << "with center (300.0, 300.0, 300.0, 300.0) and fuzzy radius <200.0,400.0> are:" << std::endl;
   
-  int point_size_sphere=points_in_spherical_range_query.size();
-  for (int j2=0; j2 < point_size_sphere; ++j2) { 
+  unsigned int points_in_spherical_range_query_size=points_in_spherical_range_query.size();
+  for (unsigned int j2=0; j2 < points_in_spherical_range_query_size; ++j2) { 
      std::cout << points_in_spherical_range_query[j2] << std::endl; 
   }
  
@@ -82,11 +81,10 @@ int main() {
 
   d.search(std::back_inserter(points_in_rectangular_range_query),query);
 
-  std::cout << "points approximately in fuzzy range query" << std::endl;
-  std::cout << " [<-200,0>,<800,1000>]]^4 are:" << std::endl;
+  std::cout << "points approximately in fuzzy range query [<-200,0>,<800,1000>]]^4 are:" << std::endl;
 
-  int point_size_range=points_in_rectangular_range_query.size();
-  for (int j3=0; j3 < point_size_range; ++j3) { 
+  unsigned int points_in_rectangular_range_query_size=points_in_rectangular_range_query.size();
+  for (unsigned int j3=0; j3 < points_in_rectangular_range_query_size; ++j3) { 
      std::cout << points_in_rectangular_range_query[j3] << std::endl; 
   }
   

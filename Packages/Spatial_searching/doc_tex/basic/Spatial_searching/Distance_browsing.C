@@ -10,10 +10,10 @@ typedef CGAL::Cartesian_d<double> R;
 typedef R::Point_d Point;
 typedef Point::R::FT NT;
 
-typedef CGAL::Kd_tree_traits_point<Point> TreeTraits;
+typedef CGAL::Kd_tree_traits_point<Point> Traits;
 typedef CGAL::Euclidean_distance<Point> Distance;
 
-typedef CGAL::Orthogonal_priority_search<TreeTraits> 
+typedef CGAL::Orthogonal_priority_search<Traits> 
 NN_priority_search;
 typedef NN_priority_search::iterator NN_iterator;
 
@@ -51,15 +51,15 @@ int main() {
   CGAL::Random Rnd;
   
   for (int i1=0; i1<data_point_number; i1++) {
-        NT v[dim];
-        for (int i2=0; i2<dim; i2++) v[i2]=Rnd.get_double(-1.0,1.0);
+	NT v[dim];
+	for (int i2=0; i2<dim; i2++) v[i2]=Rnd.get_double(-1.0,1.0);
         Point Random_point(dim,v,v+dim);
         data_points.push_front(Random_point);
   }
   
-  TreeTraits tr;
+  Traits tr;
  
-  typedef CGAL::Kd_tree<TreeTraits> Tree;
+  typedef CGAL::Kd_tree<Traits> Tree;
   Tree d(data_points.begin(), data_points.end(), tr);
 
   // define query item

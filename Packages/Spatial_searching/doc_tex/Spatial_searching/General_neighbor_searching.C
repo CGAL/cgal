@@ -4,7 +4,7 @@
 #include <CGAL/Manhattan_distance_rectangle_point.h>
 #include <CGAL/General_standard_search.h>
 
-#include <vector>
+#include <vector> 
 #include <iostream>
 
 typedef CGAL::Cartesian_d<double> R;
