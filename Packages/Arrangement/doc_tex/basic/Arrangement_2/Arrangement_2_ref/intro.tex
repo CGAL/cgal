@@ -94,7 +94,8 @@ The different traits classes are described at the end of this chapter.
 
 \begin{ccAdvanced}
 \subsection*{I/O functions}
-The \ccc{Arrangement} package supports I/O functions, which include reading an arrangement representation from 
+The \ccc{Arrangement} package supports I/O functions, which include reading 
+an arrangement representation from 
 the standard input or writing it to the standard output, 
 and also sending an arrangement to a graphic stream.
 
@@ -102,11 +103,31 @@ As already mentioned at chapter \ccRefPage{Pm_Ref_intro}, the motivation for usi
 I/O functions is not only to be able to draw the arrangement 
 to a window for instance, but also to be capable to save an arrangement 
 in a text file by writing it and reloading it from a text file by reading it. 
+ 
+Reading an arrangement from the standard input or printing it to the
+standard output may be done simply with the \ccc{Extractor} (\ccc{ >>
+}) and \ccc{Insertor} (\ccc{ << }) operators defined for
+\ccc{Arrangement_2}, respectively. 
+
+\ccInclude{CGAL/IO/Arr_iostream.h}
+
+The ability of sending the \ccc{Arrangement} 
+into a graphic stream as \ccStyle{leda_window}, Postscript file or
+Geomview is also provided, users simply have to apply the Insertor
+operator on the graphic stream and their arrangement instance.
+
+Users of I/O functions for the arrangement package are required to define I/O 
+operators for the curves defined in their \ccc{Traits} classes. 
+When using \ccc{Traits} classes in which this operators are already defined 
+(as \ccc{Segment Traits} or \ccc{Circle Traits} ) the operator definition is not obligated, 
+however using \ccc{Traits} classes as the \ccc{Polyline Traits} will force the user to define 
+I/O operators on his polyline curve.
+
 
 The \ccc{Arrangement} class data consists of the induced planar map and the 
 obtained hierarchy tree. Hence, the data sent to the output stream or 
 read from an input stream should contain both parts. 
- 
+
 The format of the planar map part is as specified in the Planar Map 
 refernce pages (\ccRefPage{Pm_Ref_intro}). 
 The format of the hierarchy tree is specified below.
