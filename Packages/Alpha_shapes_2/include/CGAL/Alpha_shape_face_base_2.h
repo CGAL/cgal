@@ -73,12 +73,12 @@ public:
       A = AA;
     }
 
-  inline Interval_3 get_ranges(int i)
+  inline Interval_3 get_ranges(const int& i)
     {
       return vec_edge[i];
     }
 
-  inline void set_ranges(int i, Interval_3 Inter)
+  inline void set_ranges(const int& i, const Interval_3& Inter)
     {
       vec_edge[i]=Inter;
     }

@@ -86,14 +86,14 @@ void* n0, void* n1, void* n2, void* n3);}
 \end{ccAdvanced}
 
 \ccHeading{Access Functions}
-\ccMethod{Interval_3[3] get_ranges();}
-{returns a vector \ccc{V}, in which, for each facet $i$, \ccc{V[i]} contains
+\ccMethod{Interval_3 get_ranges(const int& i);}
+{returns the interval associated with the facet indexed with $i$, which contains
 three alpha values
  $\alpha_1 \leq \alpha_2 \leq \alpha_3$, such as for
 $\alpha$  between $\alpha_1$ and $\alpha_2$, the facet indexed with $i$ is
 attached but singular, 
 for $\alpha$ between $\alpha_2$ and $\alpha_3$, the facet is regular, and for $\alpha$
-upper $\alpha_3$, the facet is interior.}
+greater than $\alpha_3$, the facet is interior.}
 \ccMethod{Coord_type get_alpha();}
 {return the alpha value, under which the alpha shape contains the
 cell.}
@@ -102,14 +102,14 @@ cell.}
 
 \begin{ccAdvanced}
 
-\ccMethod{void set_ranges(Interval_3[3] V);}
-{sets the vector \ccc{V}, in which, for each facet $i$, \ccc{V[i]} contains three
+\ccMethod{void set_ranges(const int& i, const Interval_3& V);}
+{sets the interval associated with the facet indexed with $i$, which contains three
 alpha values
  $\alpha_1 \leq \alpha_2 \leq \alpha_3$, such as for
 $\alpha$  between $\alpha_1$ and $\alpha_2$, the facet indexed with $i$ is
 attached but singular, 
 for $\alpha$ between $\alpha_2$ and $\alpha_3$, the facet is regular, and for $\alpha$
-upper $\alpha_3$, the facet is interior.}
+greater than $\alpha_3$, the facet is interior.}
 \ccMethod{void set_alpha(Coord_type A);}
 {sets the alpha value, under which the alpha shape contains the
 cell.}

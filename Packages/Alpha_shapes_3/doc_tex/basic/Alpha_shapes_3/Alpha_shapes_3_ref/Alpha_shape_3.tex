@@ -58,6 +58,9 @@ an interval that specifies for which values of $\alpha$ the face
 belongs to the $\alpha$-shape. There are links between the intervals
 and the $k$-dimensional faces of the triangulation.
 
+Note that this class is at the same time used for {\em basic} and
+for {\em weighted} Alpha Shapes\ccIndexMainItem[C]{Weighted_alpha_shapes_2}.
+
 \ccInheritsFrom
 
 \ccc{Dt}
@@ -72,25 +75,22 @@ the inherited functions. At the moment, only the static version is implemented.
 \ccThreeToTwo
 
 \ccNestedType{Gt}{the alpha shape traits type.}
-it contains a Delaunay triangulation traits class.  
+it has to derive from a triangulation traits class.  
 For example \ccc{Dt::Point} is a Point class. 
 
 \ccTypedef{typedef Gt::Coord_type Coord_type;}{the number type for computation.}
 
-\ccNestedType{Alpha_iterator}{An iterator that allow to traverse 
-the increasing sequence of different $\alpha$-values. The iterator is
-bidirectional and non-mutable. Its \ccc{value_type}
-is \ccc{Coord_type}}
+\ccNestedType{Alpha_iterator}{A bidirectional and non-mutable iterator that allow to traverse 
+the increasing sequence of different $\alpha$-values.
+\ccPrecond Its \ccc{value_type} is \ccc{Coord_type}}
 
-\ccNestedType{Alpha_shape_vertices_iterator}{An iterator that allow to traverse 
-the vertices which belongs to the $\alpha$-shape for a fixed $\alpha$. The
-iterator is bidirectional and non-mutable. Its \ccc{value_type}
-is \ccc{Dt::Vertex_handle}}
+\ccNestedType{Alpha_shape_vertices_iterator}{A bidirectional and non-mutable iterator that allow to traverse 
+the vertices which belongs to the $\alpha$-shape for a fixed $\alpha$. 
+\ccPrecond Its \ccc{value_type} is \ccc{Dt::Vertex_handle}}
 
-\ccNestedType{Alpha_shape_facets_iterator}{An iterator that allow to traverse 
-the facets which belongs to the $\alpha$-shape for a fixed $\alpha$. The iterator
-is bidirectional and non-mutable. Its \ccc{value_type}
-is \ccc{Dt::Facet}}
+\ccNestedType{Alpha_shape_facets_iterator}{A bidirectional and non-mutable iterator that allow to traverse 
+the facets which belongs to the $\alpha$-shape for a fixed $\alpha$. 
+\ccPrecond Its \ccc{value_type} is \ccc{Dt::Facet}}
 
 \ccEnum{enum Classification_type {EXTERIOR, SINGULAR, REGULAR, INTERIOR};}
 {Distinguishes the different cases for classifying a $k$-dimensional face
@@ -236,7 +236,7 @@ associated k-face with respect to \ccVar.}
 {Classifies the cell \ccc{f} of the underlying triangulation with respect to \ccVar.}
 
 \ccMethod{Classification_type
-           classify(pair<Cell_handle, int> f, const Coord_type& alpha = get_alpha()) const;}
+           classify(Facet f, const Coord_type& alpha = get_alpha()) const;}
 {Classifies the facet \ccc{e} of the underlying triangulation with respect to \ccVar.}
 
 \ccMethod{Classification_type
@@ -251,12 +251,6 @@ of the underlying triangulation with respect to \ccVar.}
 
 
 \ccHeading{Traversal of the $\alpha$-Values}
-
-\smallskip
-The alpha shape class defines an iterator that allows to visit the
-sorted sequence of $\alpha$-values. This iterator is
-non-mutable and bidirectional. Its value type is
-\ccc{Coord_type}.
 
 \ccMethod{Alpha_iterator alpha_begin() const;}
 {Returns an iterator that allows to traverse the
@@ -280,7 +274,7 @@ greater than \ccc{alpha}.}
 
 \ccHeading{Operations}
 
-\ccMethod{int number_solid_components(const Coord_type& alpha = get_alpha()) const;}
+\ccMethod{int number_of_solid_components(const Coord_type& alpha = get_alpha()) const;}
 {Returns the number of solid components of \ccVar, that is, the number of
 components of its 
 regularized version.}
@@ -317,26 +311,25 @@ is an internal format.
 
 \ccImplementation
 
-Note that this implementation don't provide functions to deal with edges, first
-because of single edges aren't in any reconstruction, secondly because dealing
-with edges would slow the wall initialization process.
+Note that this implementation do not provide functions to deal with edges, first
+because of single edges are not in any reconstruction, second because dealing
+with edges would slow down the wall initialization process.
 
-In this version, the set of intervals associated with the
+The set of intervals associated with the
 $k$-dimensional faces of the underlying triangulation are
-stored only as \ccc{multimaps}. 
+stored in \ccc{multimaps}. 
 
 The cross links between the intervals and the $k$-dimensional faces of the
 triangulation are actually realized using methods in the $k$-dimensional faces
-themselves. By this way, you can decide if you want to store or re-compute any
-of these informations.
+themselves.
 
 
 \ccc{A.alpha find} uses linear search, while 
 \ccc{A.alpha lower bound} and \ccc{A.alpha upper bound} 
 use binary search.
-\ccc{A.number solid components} performs a graph traversal and takes time
+\ccc{A.number of solid components} performs a graph traversal and takes time
 linear in the number of cells of the underlying triangulation.
-\ccc{A.find optimal alpha} uses binary search and takes time
+\ccc{A.find of optimal alpha} uses binary search and takes time
 $O(\mbox{ \em n } \log{\mbox{ \em n } })$, where  $n$ is the number of points.
 
 \end{ccRefClass}

@@ -77,22 +77,23 @@ public:
       A = AA;
     }
 
-  inline Interval3 get_facet_ranges(int i)
+  inline Interval3 get_facet_ranges(const int& i)
     {
       return vec_facet[i];
     }
 
-  inline void set_facet_ranges(int i, Interval3 Inter)
+  inline void set_facet_ranges(const int& i, const Interval3& Inter)
     {
       vec_facet[i]=Inter;
     }
   
-  inline Interval3 get_edge_ranges(int i, int j)
+  inline Interval3 get_edge_ranges(const int& i, const int& j)
     {
       return vec_edge[i][j];
     }
 
-  inline void set_edge_ranges(int i, int j, Interval3 Inter)
+  inline void set_edge_ranges(const int& i, const int& j, 
+			      const Interval3& Inter)
     {
       vec_edge[i][j]=Inter;
     }

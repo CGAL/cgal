@@ -623,14 +623,26 @@ public:
 				const Coord_type& alpha) const;
 
   //--------------------- NB COMPONENTS ---------------------------------
-
-
-  int number_solid_components() const 
+  int
+  number_solid_components() const
     {
-      return number_solid_components(get_alpha());
+      return number_of_solid_components(get_alpha());
     }
 
-  int number_solid_components(const Coord_type& alpha) const ;
+  int
+  number_of_solid_components() const
+    {
+      return number_of_solid_components(get_alpha());
+    }
+
+  int 
+  number_solid_components(const Coord_type& alpha) const
+    {
+      return number_of_solid_components(get_alpha());
+    }
+
+  int
+  number_of_solid_components(const Coord_type& alpha) const;
 
 private:
 
@@ -1248,7 +1260,7 @@ Alpha_shape_2<Dt>::classify(const Vertex_handle& v,
 
 template < class Dt >
 int
-Alpha_shape_2<Dt>::number_solid_components(const Coord_type& alpha) const
+Alpha_shape_2<Dt>::number_of_solid_components(const Coord_type& alpha) const
 {
   // Determine the number of connected solid components 
   // takes time O(#alpha_shape) amortized if STL_STD::HASH_TABLES
@@ -1313,7 +1325,7 @@ Alpha_shape_2<Dt>::find_optimal_alpha(const int& nb_components)
   
   Alpha_iterator first = alpha_lower_bound(alpha);
 
-  if (number_solid_components(alpha) == nb_components) 
+  if (number_of_solid_components(alpha) == nb_components) 
     {
       if ((first+1) < alpha_end())
 	return (first+1);
@@ -1322,7 +1334,7 @@ Alpha_shape_2<Dt>::find_optimal_alpha(const int& nb_components)
     }
 
   // do binary search on the alpha values
-  // number_solid_components() is a monotone function 
+  // number_of_solid_components() is a monotone function 
   // if we start with find_alpha_solid
   
   Alpha_iterator last = alpha_end();
@@ -1339,17 +1351,17 @@ Alpha_shape_2<Dt>::find_optimal_alpha(const int& nb_components)
 #ifdef DEBUG
       std::cout << "first : " << *first << " last : " << *(first+len)
 		<< " mid : " << *middle 
-		<< " nb comps : " << number_solid_components(*middle) 
+		<< " nb comps : " << number_of_solid_components(*middle) 
 		<< std::endl;
 #endif // DEBUG
 
-      if (number_solid_components(*middle) > nb_components) 
+      if (number_of_solid_components(*middle) > nb_components) 
 	{
 	  first = middle + 1;
 	  len = len - half - 1; 
 	} 
       else 
-	{ // number_solid_components(*middle) <= nb_components
+	{ // number_of_solid_components(*middle) <= nb_components
 	  len = half;
 	}
     }
