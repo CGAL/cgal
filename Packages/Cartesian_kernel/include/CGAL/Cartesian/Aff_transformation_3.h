@@ -137,10 +137,6 @@ private:
 };
 
 
-#ifdef CGAL_CFG_TYPENAME_BUG
-#define typename
-#endif
-
 template < class R >
 Aff_transformationC3<R CGAL_CTAG>::Aff_transformationC3()
 {
@@ -239,10 +235,6 @@ std::ostream &operator<<(std::ostream &os,
 
 #ifndef CGAL_NO_ISTREAM_EXTRACT_AFF_TRANSFORMATIONC3
 #endif // CGAL_NO_ISTREAM_EXTRACT_AFF_TRANSFORMATIONC3
-
-#ifdef CGAL_CFG_TYPENAME_BUG
-#undef typename
-#endif
 
 CGAL_END_NAMESPACE
 

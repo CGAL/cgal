@@ -150,10 +150,6 @@ private:
 };
 
 
-#ifdef CGAL_CFG_TYPENAME_BUG
-#define typename
-#endif
-
 template < class R >
 Aff_transformationC2<R CGAL_CTAG>::
 Aff_transformationC2()
@@ -266,10 +262,6 @@ operator<<(std::ostream& os, const Aff_transformationC2<R CGAL_CTAG>& t)
 
 #ifndef CGAL_NO_ISTREAM_EXTRACT_AFF_TRANSFORMATIONC2
 #endif // CGAL_NO_ISTREAM_EXTRACT_AFF_TRANSFORMATIONC2
-
-#ifdef CGAL_CFG_TYPENAME_BUG
-#undef typename
-#endif
 
 CGAL_END_NAMESPACE
 
