@@ -52,9 +52,11 @@ public:
   Regular_triangulation_vertex_base_2 ()
     : Base(), _hidden(false)     {}
     
-  Regular_triangulation_vertex_base_2(const Point & p, Face_handle f = NULL)
-    :  Base(p, f), _hidden(false)
-    {}
+  Regular_triangulation_vertex_base_2(const Point & p) 
+    : Base(p), _hidden(false)   {}
+
+  Regular_triangulation_vertex_base_2(const Point & p, Face_handle)
+    : Base(p, f), _hidden(false) {}
 
   void set_hidden(bool b) { _hidden = b; }
   bool is_hidden() { return _hidden ;}
