@@ -124,6 +124,7 @@ class Call_point_to_get
     operator()( const Cls& c, int i) const
     { return c.point(i); }
 };
+
 template <class ReturnType>
 class Call_second_point_to_get
 {
@@ -135,6 +136,7 @@ class Call_second_point_to_get
     operator()( const Cls& c) const
     { return c.second_point(); }
 };
+
 template <class ReturnType>
 class Call_perpendicular_to_get
 {
@@ -164,6 +166,18 @@ class Call_perpendicular_plane_to_get
     { return c.perpendicular_plane(a1); }
 };
 
+template <class ReturnType>
+class Call_perpendicular_line_to_get
+{
+  public:
+    typedef ReturnType     result_type;
+
+    template <class Cls, class A1>
+    ReturnType
+    operator()( const Cls& c, const A1& a1) const
+    { return c.perpendicular_line(a1); }
+};
+
 template <class Point>
 class p_Midpoint
 {
@@ -173,6 +187,7 @@ class p_Midpoint
     Point
     operator()(const Point& p, const Point& q) const { return midpoint(p,q); }
 };
+
 template <class Point>
 class p_Circumcenter
 {
@@ -188,6 +203,7 @@ class p_Circumcenter
                const Point& r, const Point& s) const
     { return circumcenter(p,q,r,s); }
 };
+
 template <class Point, class Line>
 class pl_Bisector
 {
@@ -197,6 +213,7 @@ class pl_Bisector
     Line
     operator()(const Point& p, const Point& q) const { return bisector(p,q); }
 };
+
 class Intersect
 {
   public:
@@ -207,6 +224,7 @@ class Intersect
     operator()(const T1& t1, const T2& t2) const
     { return intersection( t1, t2); }
 };
+
 class Assign
 {
   public:
@@ -217,6 +235,7 @@ class Assign
     operator()(T1& t1, const CGAL::Object& o) const
     { return assign( t1, o); }
 };
+
 template <class ReturnType>
 class Call_y_at_x_to_get
 {
@@ -228,6 +247,7 @@ class Call_y_at_x_to_get
     operator()( const Cls& c, const ReturnType& x) const
     { return c.y_at_x(x); }
 };
+
 template <class ReturnType>
 class Call_x_at_y_to_get
 {
@@ -239,6 +259,7 @@ class Call_x_at_y_to_get
     operator()( const Cls& c, const ReturnType& x) const
     { return c.x_at_y(x); }
 };
+
 template <class ReturnType>
 class Call_squared_length_to_get
 {
@@ -250,6 +271,7 @@ class Call_squared_length_to_get
     operator()( const Cls& c) const
     { return c.squared_length(); }
 };
+
 class Counterclockwise_in_between
 {
   public:
@@ -260,7 +282,6 @@ class Counterclockwise_in_between
     operator()(const T& p, const T& q, const T& r) const
     { return p.counterclockwise_in_between(q,r); }
 };
-
 
 class Collinear
 {
@@ -364,6 +385,7 @@ class Call_is_vertical
     operator()( const Cls& c) const
     { return c.is_vertical(); }
 };
+
 class Call_is_degenerate
 {
   public:
@@ -374,6 +396,7 @@ class Call_is_degenerate
     operator()( const Cls& c) const
     { return c.is_degenerate(); }
 };
+
 class Call_has_on_bounded_side
 {
   public:
