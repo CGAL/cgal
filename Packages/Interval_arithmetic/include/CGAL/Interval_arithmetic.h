@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1997 The CGAL Consortium
+// Copyright (c) 1998 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -12,8 +12,8 @@
 // release_date  :
 //
 // file          : include/CGAL/Interval_arithmetic.h
-// revision      : 1.4
-// revision_date : 6 February 1998
+// revision      : 1.5
+// revision_date : 26 February 1998
 // author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //
 // coordinator   : INRIA Sophia-Antipolis (<Herve.Bronnimann@sophia.inria.fr>)
@@ -28,6 +28,7 @@
 #define CGAL_INTERVAL_ARITHMETIC_H
 
 #include <iostream.h>
+#include <assert.h>
 #include <CGAL/double.h>        // For CGAL_is_valid() and CGAL_is_finite().
 #include <CGAL/_FPU.h>          // FPU rounding mode functions.
 
