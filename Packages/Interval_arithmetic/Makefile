@@ -44,7 +44,7 @@ test:
 	$(MAKE) -C test/$(Package)
 
 clean:
-	$(MAKE) -C doc_tex/support/$(Package) clean
+	$(MAKE) -C doc_tex/support/NumberTypeSupport clean
 	$(MAKE) -C test/$(Package) clean
 	rm -f $(Package).tar.gz
 
@@ -60,9 +60,9 @@ $(Package).tar.gz:
 
 doc: doc_ps/$(Package).ps
 
-doc_ps/$(Package).ps: doc_tex/support/$(Package)/main.tex
-	$(MAKE) -C doc_tex/support/$(Package)
-	cp doc_tex/support/$(Package)/$(Package).ps doc_ps/
+doc_ps/$(Package).ps: doc_tex/support/NumberTypeSupport/Interval.tex
+	$(MAKE) -C doc_tex/support/NumberTypeSupport
+	cp doc_tex/support/NumberTypeSupport/$(Package).ps doc_ps/
 
 # The following is specific to the IA package.
 
