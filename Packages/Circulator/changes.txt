@@ -1,5 +1,8 @@
 Circulator Package: Release changes:
 ---------------------------------------------------------------------
+3.20 (1 December 01)
+- Remove warning.
+
 3.19 (24 September 01)
 - test suite fix.
 

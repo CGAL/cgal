@@ -201,12 +201,12 @@ inline void Assert_compile_time_tag( const Tag&, const Derived& b) {
 #endif
 
 template <class C> inline
-void Assert_circulator( const C &c) {
+void Assert_circulator( const C &) {
     typedef typename Circulator_traits<C>::category category;
     Assert_compile_time_tag( Circulator_tag(), category());
 }
 template <class I> inline
-void Assert_iterator( const I &i) {
+void Assert_iterator( const I &) {
     typedef typename Circulator_traits<I>::category category;
     Assert_compile_time_tag( Iterator_tag(), category());
 }
