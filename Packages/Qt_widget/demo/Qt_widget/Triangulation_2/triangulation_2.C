@@ -97,7 +97,7 @@ public:
     setCentralWidget(widget);
     
     connect(widget, SIGNAL(s_mouseReleaseEvent(QMouseEvent*)), this,
-          SLOT(insert_after_show_conflicts(QMouseEvent*)));
+          SLOT(insert_after_show_conflicts(QMouseEvent*)));    
 	
     //create a timer for checking if somthing changed
     QTimer *timer = new QTimer( this );
