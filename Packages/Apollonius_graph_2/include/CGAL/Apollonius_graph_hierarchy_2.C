@@ -184,7 +184,7 @@ insert(const Site_2 &p)
     }
 
     // if it hidden just return it right away
-    if ( &(*vertex) == NULL ) {
+    if ( vertex == NULL ) {
       return vertex;
     }
 
@@ -293,7 +293,6 @@ insert(const Site_2 &p)
       typename Apollonius_graph_base::Vertex_map::iterator it;
       for (it = v_hidden.begin(); it != v_hidden.end(); it++) {
 	Vertex_handle v = (*it).first;
-	//	Vertex* v = static_cast<Vertex*>( &(*vh) );
 	Vertex_handle u = v->up();
 	if ( u != NULL ) {
 	  v = u;
