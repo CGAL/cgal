@@ -1,3 +1,7 @@
+1.2.22
+-------
+The doc after the 2nd revision
+
 1.2.21
 ----------------------
 redefined qt macro in reference manual chapter so chapter can be processed
