@@ -193,6 +193,11 @@ public:
   typedef Point                         value_type; // to have a back_inserter
   typedef const value_type&             const_reference;
 
+  //Tag to distinguish triangulations with weighted_points
+  typedef Tag_false  Weighted_tag;
+
+
+
   enum Locate_type {
     VERTEX=0, 
     EDGE, //1

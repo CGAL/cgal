@@ -90,8 +90,7 @@ public:
 
   typedef Triple<Vertex_handle,Vertex_handle,Vertex_handle> Vertex_triple;
 
-  //Tag to distinguish Delaunay from Regular triangulations
-  typedef Tag_false  Weighted_tag;
+
 
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2

@@ -1,3 +1,7 @@
+25 Augusts 2004 Mariette
+- move the Weighted_tag definition from Delaunay_triangulation_3
+  to Triangulation_3 so that any triangulation has a Weighted_tag
+
 25 Auguts 2004 Monique Teillaud
 - new pdf figures, fixing the bounding boxes
 
