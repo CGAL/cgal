@@ -1,3 +1,7 @@
+Version 3.3.8 (22 February 2000)
+- add _object to the less_rotate_ccw_2 function in Cartesian.h [my]
+- add a Less_yx_2 type
+
 Version 3.3.7 (November 22 1999)
 - Added missing headers [syl].
 - Remove protect macros [syl].
