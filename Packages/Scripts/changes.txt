@@ -1,6 +1,7 @@
 7 March 2005 Sylvain Pion
 - create_new_release : last minute catch : replace "==" by "=".
 - create_new_release : fix typo.
+- create_new_release : fix thinko to remove .0 in 3.2.0-I...
 
 5 March 2005 Sylvain Pion
 - create_new_release : implement new numbering scheme of CGAL_VERSION_NR.
