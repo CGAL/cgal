@@ -42,7 +42,7 @@ tutorial2$(EXE_EXT): tutorial2.moc tutorial2$(OBJ_EXT)
 	$(CGAL_CXX)  $(EXE_OPT)tutorial2 tutorial2$(OBJ_EXT) $(LDFLAGS)
 
 clean:
-	rm -f tutorial2.o tutorial2.moc
+	rm -f tutorial2$(OBJ_EXT) tutorial2.moc tutorial2$(EXE_EXT)
 
 #---------------------------------------------------------------------#
 #                    suffix rules
