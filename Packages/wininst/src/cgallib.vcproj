@@ -24,7 +24,7 @@
 				PreprocessorDefinitions="WIN32;_LIB"
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="5"
 				UsePrecompiledHeader="0"
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="FALSE"
@@ -334,21 +334,6 @@
 			</File>
 			<File
 				RelativePath="Timer.C">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						CompileAs="2"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						CompileAs="2"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="Triangulation_3.C">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
