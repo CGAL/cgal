@@ -1,3 +1,6 @@
+2.12
++ Added iterator_traits fake for sunpro 5.3.
+
 2.11
 + Removed workaround_stl.h workaround_return_type.h and workaround_casts.h.
 + removed obsolete config testfiles:
