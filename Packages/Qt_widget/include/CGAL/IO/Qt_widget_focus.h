@@ -53,7 +53,7 @@ private:
   int		cycle;
 
 public:
-  Qt_widget_zoom() : cycle(0) {
+  Qt_widget_focus() : cycle(0) {
 	mouse_ico1 = new QPixmap( (const char**)focus1_xpm);
 	mouse_ico2 = new QPixmap( (const char**)focus2_xpm);
 	mouse_ico3 = new QPixmap( (const char**)focus3_xpm);
