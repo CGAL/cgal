@@ -23,33 +23,6 @@ Interval_nt_advanced triv (Interval_nt_advanced x)
 void print_res (bool res)
 { std::cout << (res ? "ok" : "ERROR") << std::endl; }
 
-// Rounding mode empiric testing.
-
-// The results of 1-epsilon and -1+epsilon are enough
-// to detect exactly the rounding mode.
-// (epsilon = MIN_DOUBLE, ulp = 2^-52 or 2^-53).
-// ----------------------------------------------------
-// rounding mode:        +inf    -inf    0       nearest
-// ----------------------------------------------------
-//  1-epsilon            1       1-ulp   1-ulp   1
-// -1+epsilon           -1+ulp  -1      -1+ulp  -1
-// ----------------------------------------------------
-
-FPU_CW_t FPU_empiric_test ()
-{
-    // If not marked "volatile", the result is false when optimizing
-    // because the constants are pre-computed at compile time !!!
-    volatile const double m = CGAL_IA_MIN_DOUBLE;
-    const double y = 1.0, z = -1.0;
-    double ye, ze;
-    ye = y - m;
-    ze = z + m;
-    if (y == ye && z == ze) return FPU_cw_near;
-    if (y == ye) return FPU_cw_up;
-    if (z == ze) return FPU_cw_down;
-    return FPU_cw_zero;
-}
-
 FPU_CW_t FPU_empiric_test_mul ()
 {
     // If not marked "volatile", the result is false when optimizing

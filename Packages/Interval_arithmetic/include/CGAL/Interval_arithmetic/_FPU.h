@@ -222,6 +222,8 @@ FPU_get_and_set_cw (FPU_CW_t cw)
     return old;
 }
 
+FPU_CW_t FPU_empiric_test(); // Only used for debug.
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_FPU_H

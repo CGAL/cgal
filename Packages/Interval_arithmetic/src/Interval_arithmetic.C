@@ -49,4 +49,28 @@ void force_ieee_double_precision()
 #endif // __i386__
 }
 
+// The results of 1-epsilon and -1+epsilon are enough
+// to detect exactly the rounding mode.
+// ----------------------------------------------------
+// rounding mode:        +inf    -inf    0       nearest
+// ----------------------------------------------------
+//  1-MIN_DOUBLE         1       1-ulp   1-ulp   1
+// -1+MIN_DOUBLE        -1+ulp  -1      -1+ulp  -1
+// ----------------------------------------------------
+
+FPU_CW_t FPU_empiric_test()
+{
+    // If not marked "volatile", the result is false when optimizing
+    // because the constants are pre-computed at compile time !!!
+    volatile const double m = CGAL_IA_MIN_DOUBLE;
+    const double y = 1.0, z = -1.0;
+    double ye, ze;
+    ye = y - m;
+    ze = z + m;
+    if (y == ye && z == ze) return FPU_cw_near;
+    if (y == ye) return FPU_cw_up;
+    if (z == ze) return FPU_cw_down;
+    return FPU_cw_zero;
+}
+
 CGAL_END_NAMESPACE
