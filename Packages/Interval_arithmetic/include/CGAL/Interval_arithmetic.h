@@ -104,7 +104,7 @@ public:
   IA  operator+(const IA & d) const
   {
       CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
-      return IA (-CGAL_IA_FORCE_TO_DOUBLE(-_inf - d._inf),
+      return IA (-CGAL_IA_FORCE_TO_DOUBLE((-_inf) - d._inf),
 	          CGAL_IA_FORCE_TO_DOUBLE( _sup + d._sup));
   }
 
@@ -205,7 +205,7 @@ Interval_nt_advanced::operator* (const Interval_nt_advanced & d) const
 	    b=_inf;
     }
 
-    return IA (-CGAL_IA_FORCE_TO_DOUBLE(a*-d._inf),
+    return IA (-CGAL_IA_FORCE_TO_DOUBLE(a*(-d._inf)),
 	        CGAL_IA_FORCE_TO_DOUBLE(b*d._sup));
   }
   else if (_sup<=0.0)				// this<=0
@@ -220,7 +220,7 @@ Interval_nt_advanced::operator* (const Interval_nt_advanced & d) const
 	if (d._sup < 0.0)
 	    b=_sup;
     }
-    return IA (-CGAL_IA_FORCE_TO_DOUBLE(b*-d._sup),
+    return IA (-CGAL_IA_FORCE_TO_DOUBLE(b*(-d._sup)),
 	        CGAL_IA_FORCE_TO_DOUBLE(a*d._inf));
   }
   else						// 0 \in [_inf;_sup]
@@ -229,11 +229,11 @@ Interval_nt_advanced::operator* (const Interval_nt_advanced & d) const
       return IA (-CGAL_IA_FORCE_TO_DOUBLE((-_inf)*d._sup),
 	          CGAL_IA_FORCE_TO_DOUBLE(_sup*d._sup));
     if (d._sup<=0.0)				// d<=0
-      return IA (-CGAL_IA_FORCE_TO_DOUBLE(_sup*-d._inf),
+      return IA (-CGAL_IA_FORCE_TO_DOUBLE(_sup*(-d._inf)),
 	          CGAL_IA_FORCE_TO_DOUBLE(_inf*d._inf));
         					// 0 \in d
     bound_t tmp1 = CGAL_IA_FORCE_TO_DOUBLE((-_inf)*d._sup);
-    bound_t tmp2 = CGAL_IA_FORCE_TO_DOUBLE(_sup*-d._inf);
+    bound_t tmp2 = CGAL_IA_FORCE_TO_DOUBLE(_sup*(-d._inf));
     bound_t tmp3 = CGAL_IA_FORCE_TO_DOUBLE(_inf*d._inf);
     bound_t tmp4 = CGAL_IA_FORCE_TO_DOUBLE(_sup*d._sup);
     return IA (-std::max(tmp1,tmp2), std::max(tmp3,tmp4));
@@ -371,10 +371,10 @@ square (const Interval_nt_advanced & d)
 {
   CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
   if (d._inf>=0.0)
-      return Interval_nt_advanced(-CGAL_IA_FORCE_TO_DOUBLE(d._inf*-d._inf),
+      return Interval_nt_advanced(-CGAL_IA_FORCE_TO_DOUBLE(d._inf*(-d._inf)),
 	     			   CGAL_IA_FORCE_TO_DOUBLE(d._sup*d._sup));
   if (d._sup<=0.0)
-      return Interval_nt_advanced(-CGAL_IA_FORCE_TO_DOUBLE(d._sup*-d._sup),
+      return Interval_nt_advanced(-CGAL_IA_FORCE_TO_DOUBLE(d._sup*(-d._sup)),
 	     			   CGAL_IA_FORCE_TO_DOUBLE(d._inf*d._inf));
   return Interval_nt_advanced(0.0,
 	  CGAL_IA_FORCE_TO_DOUBLE(square(std::max(-d._inf, d._sup))));
@@ -509,7 +509,7 @@ Interval_nt
 Interval_nt::operator+ (const Interval_nt & d) const
 {
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
-  Interval_nt tmp (-CGAL_IA_FORCE_TO_DOUBLE(-_inf - d._inf),
+  Interval_nt tmp (-CGAL_IA_FORCE_TO_DOUBLE((-_inf) - d._inf),
 	            CGAL_IA_FORCE_TO_DOUBLE(_sup + d._sup));
   FPU_set_cw(backup);
   return tmp;
