@@ -1,5 +1,5 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: surface_neighbor_coordinates_3.tex
+% | Reference manual page: surface_neighbors_3.tex
 % +------------------------------------------------------------------------+
 % | 
 % | August 2003  Julia Floetotto
@@ -10,8 +10,8 @@
 
 %\renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
 %\renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
-\begin{ccRefFunction}{surface_neighbor_coordinates_3}  %% add template arg's if necessary
-\ccIndexSubitemBegin{interpolation}{surface_neighbor_coordinates_3}
+\begin{ccRefFunction}{surface_neighbors_3}  %% add template arg's if necessary
+\ccIndexSubitemBegin{interpolation}{surface_neighbors_3}
 
 \ccDefinition
 
@@ -25,35 +25,30 @@ and in \cite{bf-lcss-02},\cite{prisme-these-flototto}.  The query
 point \ccc{p} needs to lie inside the convex hull of the projection of
 the sample points onto the tangent plane at \ccc{p}.
 
-\ccInclude{CGAL/surface_neighbor_coordinates_3.h}
+\ccInclude{CGAL/surface_neighbors_3.h}
 
 \ccFunction{template <class OutputIterator, class InputIterator, class
-  Kernel> std::pair< OutputIterator, typename Kernel::FT >
-  surface_neighbor_coordinates_3(InputIterator first, InputIterator
-  beyond, const typename Kernel::Point_3& p, const typename
-  Kernel::Vector_3& normal, OutputIterator out, const Kernel& K);}{
-  The sample points $\mathcal{P}$ are provided in the range
+  Kernel> OutputIterator surface_neighbors_3(InputIterator first,
+  InputIterator beyond, const typename Kernel::Point_3& p, const
+  typename Kernel::Vector_3& normal, OutputIterator out, const Kernel&
+  K);}{ The sample points $\mathcal{P}$ are provided in the range
   $\left[\right.$\ccc{first}, \ccc{beyond}$\left.\right)$.
   \ccc{InputIterator::value_type} is the point type
   \ccc{Kernel::Point_3}. The tangent plane is defined by the point
   \ccc{p} and the vector \ccc{normal}.  The
   parameter \ccc{K} determines the kernel type. \\
-  The natural neighbor coordinates for \ccc{p} are computed in the
-  power diagram that results from the intersection of the $3D$ Voronoi
-  diagram of $\mathcal{P}$ with the tangent plane. The sequence of
-  point-coordinate pairs that is computed by the function is placed
-  starting at \ccc{out}. The function returns a pair with an iterator
-  that is placed past-the-end of the resulting sequence of
-  point-coordinate pairs and the normalization factor of the
-  coordinates.
-  \ccPrecond %
-  \ccc{p} lies in the convex hull of the projection of the points
-  $\mathcal{P}$ onto the tangent plane.}
+  The surface neighbors of \ccc{p} are computed which are the
+  neighbors of p in the regular triangulation that is dual to the
+  intersection of the $3D$ Voronoi diagram of $\mathcal{P}$ with the
+  tangent plane. The sequence of point that is computed by the
+  function is placed starting at \ccc{out}. The function returns an
+  iterator that is placed past-the-end of the resulting sequence of
+  points.}
 
 
 \ccFunction{template <class OutputIterator, class InputIterator, class
-  ITraits> std::pair< OutputIterator, typename ITraits::FT >
-  surface_neighbor_coordinates_3(InputIterator first, InputIterator beyond,
+  ITraits> OutputIterator
+  surface_neighbors_3(InputIterator first, InputIterator beyond,
   const typename ITraits::Point_2& p,OutputIterator out, 
   const ITraits& traits);}{ the same as above only that the traits
   class must be instantiated by the user. \ccc{ITraits} must be a
@@ -70,8 +65,8 @@ query, this permits to verify that a large enough neighborhood has
 been considered. 
 
 \ccFunction{template <class OutputIterator, class InputIterator, class
-  Kernel> Triple< OutputIterator, typename Kernel::FT, bool >
-  surface_neighbor_coordinates_certified_3(InputIterator first,
+  Kernel> std::pair< OutputIterator, bool >
+  surface_neighbors_certified_3(InputIterator first,
   InputIterator beyond, const typename Kernel::Point_3& p, const
   typename Kernel::Vector_3& normal, OutputIterator out, const Kernel&
   K);}{The similar to the first function. The additional third return
@@ -82,8 +77,8 @@ been considered.
   with the tangent plane defined be \ccc{(p,normal)}. It is
   \ccc{false} otherwise.}
 \ccFunction{template <class OutputIterator, class InputIterator, class
-  Kernel> Triple< OutputIterator, typename Kernel::FT, bool >
-  surface_neighbor_coordinates_certified_3(InputIterator first,
+  Kernel> std::pair< OutputIterator, bool >
+  surface_neighbors_certified_3(InputIterator first,
   InputIterator beyond, const typename Kernel::Point_2& p, const
   typename Kernel::FT& max_distance, OutputIterator out, const
   Kernel& kernel);} { The same as above except that this function
@@ -92,8 +87,8 @@ been considered.
   parameter.}
 
 \ccFunction{template <class OutputIterator, class InputIterator, class
-  ITraits> Triple< OutputIterator, typename ITraits::FT, bool >
-  surface_neighbor_coordinates_certified_3(InputIterator first,
+  ITraits> std::pair< OutputIterator, bool >
+  surface_neighbors_certified_3(InputIterator first,
   InputIterator beyond, const typename ITraits::Point_2& p,
   OutputIterator out, const ITraits& traits);}{The same as above only
   that the traits class must be instantiated by the user.
@@ -101,8 +96,8 @@ been considered.
   but without the parameter \ccc{max_distance}.}
 
 \ccFunction{template <class OutputIterator, class InputIterator, class
-  ITraits> Triple< OutputIterator, typename ITraits::FT, bool >
-  surface_neighbor_coordinates_certified_3(InputIterator first,
+  ITraits> std::pair< OutputIterator, bool >
+  surface_neighbors_certified_3(InputIterator first,
   InputIterator beyond, const typename ITraits::Point_2& p, const
   typename ITraits::FT& max_distance, OutputIterator out, const
   ITraits& traits);} { The same as above with the parameter
@@ -115,8 +110,8 @@ necessarily neighbors in the Delaunay triangulation of $\mathcal{P}
 \cup \{p\}$.  
 
 \ccFunction{template < class Dt, class OutputIterator >
-  std::pair< OutputIterator, typename Dt::Geom_traits::FT >
-  surface_neighbor_coordinates_3(const Dt& dt, const typename
+  OutputIterator
+  surface_neighbors_3(const Dt& dt, const typename
   Dt::Geom_traits::Point_2& p, const typename
   Dt::Geom_traits::Vector_3& normal, OutputIterator out, typename
   Dt::Face_handle start = typename Dt::Face_handle(NULL));} {computes
@@ -131,8 +126,8 @@ necessarily neighbors in the Delaunay triangulation of $\mathcal{P}
 
 
 \ccFunction{template < class Dt, class OutputIterator,
-  class ITraits> std::pair< OutputIterator, typename
-  Dt::Geom_traits::FT > surface_neighbor_coordinates_3(const Dt& dt,
+  class ITraits> 
+  OutputIterator surface_neighbors_3(const Dt& dt,
   const typename Dt::Geom_traits::Point_2& p, OutputIterator out,
   const ITraits& traits, typename Dt::Face_handle start = typename
   Dt::Face_handle(NULL));}
@@ -154,18 +149,15 @@ necessarily neighbors in the Delaunay triangulation of $\mathcal{P}
 \end{enumerate}
 
 \ccSeeAlso
-\ccRefIdfierPage{CGAL::linear_interpolation} \\
-\ccRefIdfierPage{CGAL::sibson_c1_interpolation}\\ 
-\ccRefIdfierPage{CGAL::farin_c1_interpolation}\\  
-\ccRefIdfierPage{CGAL::Voronoi_intersection_2_traits_3<K>}\\
-\ccRefIdfierPage{CGAL::surface_neighbors_3} 
+\ccRefIdfierPage{CGAL::Voronoi_intersection_2_traits_3<K>}
+\ccRefIdfierPage{CGAL::surface_neighbor_coordinates_2} 
 
 \ccImplementation This function computes the areas stolen from the
 Voronoi cells of points in \ccc{dt} by the insertion of \ccc{p}. The
 total area of the Voronoi cell of \ccc{p} is also computed and
 returned by the function.
 
-\ccIndexSubitemEnd{Interpolation}{surface_neighbor_coordinates_3}
+\ccIndexSubitemEnd{Interpolation}{surface_neighbors_3}
 \end{ccRefFunction}
 %\renewcommand{\ccRefPageBegin}{}
 %\renewcommand{\ccRefPageEnd}{}

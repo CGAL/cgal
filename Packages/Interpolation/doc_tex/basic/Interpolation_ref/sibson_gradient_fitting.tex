@@ -16,7 +16,7 @@
 \ccDefinition
   
 The function \ccRefName\ approximates the gradient of a function at a
-point \ccc{p} given natural neighbor coordinates of \ccc{p} and its
+point \ccc{p} given natural neighbor coordinates for \ccc{p} and its
 neighbors' function values. The approximation method is described in
 \cite{s-bdnni-81}. Further functions are provided to fit the gradient
 for all data points that lie inside the convex hull of the data
@@ -26,7 +26,7 @@ coordinates.
 \ccInclude{CGAL/sibson_gradient_fitting.h}
 
 \ccFunction{template < class ForwardIterator, class Functor, class
-  Traits> typename Traits::Vector
+  Traits> typename Traits::Vector_d
   sibson_gradient_fitting(ForwardIterator first, ForwardIterator
   beyond, const typename
   std::iterator_traits<ForwardIterator>::value_type::second_type&
@@ -72,7 +72,7 @@ coordinates.
 \end{enumerate}
 
 \begin{ccAdvanced}
-  The function 
+%  The function 
 \end{ccAdvanced}
 
 \ccSeeAlso
