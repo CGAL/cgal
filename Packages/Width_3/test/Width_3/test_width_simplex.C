@@ -74,6 +74,7 @@ int main(int argc, char* argv[]) {
     std::cout << "Direction: " << simplex.get_build_direction() << std::endl;
 
     Plane_3  e1, e2;
+    simplex.get_width_planes(e1,e2);
     std::cout << "Planes: E1: " << e1 << ".  E2: " << e2 <<std::endl;
 
     std::cout << "Number of optimal solutions: "
