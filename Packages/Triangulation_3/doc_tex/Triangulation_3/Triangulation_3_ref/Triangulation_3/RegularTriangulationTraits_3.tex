@@ -29,9 +29,12 @@ Section~\ref{Triangulation3-sec-class-Regulartriangulation}.
 To simplify notation, $p$ will often denote in the sequel either the
 point $p\in\R^3$ or the weighted point ${p}^{(w)}=(p,w_p)$.
 
+\ccTwo{RegularTriangulationTraits}{}
 \ccNestedType{Power_test_3}{Predicate object.
 Must provide the following operators:
 %
+\\
+\\
 \ccc{Oriented_side operator()( Weighted_point p,
 			    Weighted_point q,
 			    Weighted_point r,
@@ -53,6 +56,8 @@ to 0, then
 \ccc{power_test(p,q,r,s,t)} = \ccc{side_of_oriented_sphere(p,q,r,s,t)}.
 %
 %
+\\
+\\
 \ccc{Oriented_side operator()( Weighted_point p,
 			    Weighted_point q,
 			    Weighted_point r,
@@ -66,6 +71,8 @@ coplanar.}
 If all the points have a weight equal to 0, then
 \ccc{power_test(p,q,r,s,t)} = \ccc{side_of_oriented_circle(p,q,r,s,t)}.
 %
+\\
+\\
 \ccc{Oriented_side operator()( Weighted_point p,
 			    Weighted_point q,
 			    Weighted_point t)}
@@ -80,41 +87,13 @@ If all the points have a weight equal to 0, then
 segment with endpoints \ccc{p} and \ccc{q}.
 }
 
-\ccCreation
-\ccCreationVariable{traits}  %% choose variable name
-\ccThree{Comparison_result}{compare_x()toto}{}
-
-\ccConstructor{Triangulation_traits_3();}{Default constructor.}
-Only a default constructor is required.
-
 \ccOperations
 
-The following functions give access to the predicate and construction objects.
-
+The following function gives access to the predicate object:
 \ccThree{coplanar_side_of_bounded_circle_3xxx}{gt.compare_x(Point p0, Point p1)x}{}
+\ccCreationVariable{traits}  %% choose variable name
 
-\ccMethod{Construct_segment_3 construct_segment_3_object();}{}
-\ccGlue
-\ccMethod{Construct_triangle_3 construct_triangle_3_object();}{}
-\ccGlue
-\ccMethod{Construct_tetrahedron_3 construct_tetrahedron_3_object();}{}
-\ccGlue
-\ccMethod{Compare_x_3 compare_x_3_object();}{}
-\ccGlue
-\ccMethod{Compare_y_3 compare_y_3_object();}{}
-\ccGlue
-\ccMethod{Compare_z_3 compare_z_3_object();}{}
-\ccGlue
-\ccMethod{Orientation_3 orientation_3_object();}{}
-\ccGlue
-\ccMethod{Coplanar_orientation_3 coplanar_orientation_3_object();}{}
-\ccGlue
-\ccMethod{Side_of_oriented_sphere_3 side_of_oriented_sphere_3_object();}{}
-\ccGlue
-\ccMethod{Coplanar_side_of_bounded_circle_3 coplanar_side_of_bounded_circle_3_object();}{}
-\ccGlue
 \ccMethod{Power_test_3 power_test_3_object();}{}
-\ccGlue
 
 
 \ccHasModels
