@@ -6,6 +6,7 @@
 #include <CGAL/Nef_S2/Sphere_geometry.h>
 #include <CGAL/Nef_S2/SM_triangulator.h>
 #include <CGAL/IO/Color.h>
+#include <qgl.h>
 #include <cmath>
 #include <cstdlib>
 #include <cstdio>
