@@ -1,6 +1,32 @@
 Stuff to look at, as time permits:
 ----------------------------------
 
+- New NT requirement about greatest common divisor.
+
+- Have unique global functions calling the kernel traits function objects,
+  instead of the contrary.
+
+- Mariette would like Circle intersection.
+
+- det3x3_by_formula speeds up T3D a lot when it's inline.
+  CGAL_KERNEL_MEDIUM_INLINE should be settable to inline from the outside...
+
+- Stefan voudrait un tag :
+  > > > As for the tag, I would like to distinguish the tag used to trigger
+  > > > the
+  > > > so-called advanced kernel and the tag used to distinguish coordinate
+  > > > rep.
+
+  > > > I asekd for this long time ago, and that time, I got no reply ... :)
+
+  > > I see... :)  When was it ?  As you know, I'm back to work since october,
+  > > so.
+  ..
+  > > I am not aware of that question.
+  > > Do you have some actual code to propose for that ?
+  >
+  > It was long time ago, end of spring, beginning of summer.
+
 - Remove all global function usage, and replace by common code for all kernels.
   The backward compatible layer could look like :
 
