@@ -41,7 +41,7 @@ public:
   void operator()(typename Triangulation_2<Gt, Tds>::Face_handle fh)
   {
     for (int i=0; i<3; i++)
-      if ((*fh).neighbor(i) > fh || t.is_infinite((*fh).neighbor(i)))
+      if (fh < fh->neighbor(i) || t.is_infinite(fh->neighbor(i)))
         w << t.segment(fh,i);
   }
 };
