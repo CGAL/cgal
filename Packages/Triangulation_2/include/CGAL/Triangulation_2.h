@@ -82,7 +82,7 @@ public:
 
 // CONSTRUCTORS
   CGAL_Triangulation_2()
-    :_tds(), _gt()
+    :_tds()
   {}
 
   CGAL_Triangulation_2(const Geom_traits& geom_traits) 
