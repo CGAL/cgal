@@ -91,7 +91,7 @@ public:
   typedef typename Base::Input_sites_iterator      Input_sites_iterator;
   typedef typename Base::Output_sites_iterator     Output_sites_iterator;
 
-private:
+protected:
   typedef std::list<Point_2>                       PC;
 
 public:
@@ -110,6 +110,8 @@ protected:
   typedef typename Base::List                      List;
   typedef typename Base::Face_map                  Face_map;
   typedef typename Base::Vertex_triple             Vertex_triple;
+
+  typedef typename Base::Arrangement_type          Arrangement_type;
 
 protected:
   // LOCAL VARIABLES
@@ -261,6 +263,16 @@ protected:
 				      const Vertex_handle* vertices,
 				      int level, Tag_false) {}
 
+  Vertex_handle insert_segment_on_point(const Storage_site_2& ss,
+					const Vertex_handle& v,
+					int level, Tag_false stag) {
+    return Vertex_handle();
+  }
+
+  Vertex_handle insert_segment_on_point(const Storage_site_2& ss,
+					const Vertex_handle& v,
+					int level, Tag_true stag);
+
   template<class Tag>
   Vertex_handle
   insert_intersecting_segment_with_tag(const Storage_site_2& ss,
@@ -329,7 +341,7 @@ protected:
       ++l;
     }
     if (l >= svd_hierarchy_2__maxlevel)
-      l = svd_hierarchy_2__maxlevel -1;
+      l = svd_hierarchy_2__maxlevel - 1;
     return l;
   }
 
@@ -344,6 +356,22 @@ protected:
 
     return level;
   }
+
+#if 0
+  Vertex_handle
+  vertex_at_level(const Vertex_handle& v, size_type k) const
+  {
+    CGAL_precondition( k <= svd_hierarchy_2__maxlevel );
+
+    size_type level = 0;
+    Vertex_handle v_at_level = v;
+    while ( level < k ) {
+      v_at_level = v_at_level->up();
+      level++;
+    }
+    return v_at_level;
+  }
+#endif
 
   void print_error_message() const;
 };

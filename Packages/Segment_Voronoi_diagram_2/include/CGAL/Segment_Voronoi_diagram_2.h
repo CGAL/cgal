@@ -169,7 +169,7 @@ public:
   typedef typename DG::All_edges_iterator        All_edges_iterator;
   typedef typename DG::Finite_edges_iterator     Finite_edges_iterator;
 
-private:
+protected:
   typedef typename Geom_traits::Arrangement_type_2  AT2;
   typedef typename AT2::Arrangement_type            Arrangement_type;
 
@@ -197,7 +197,7 @@ public:
 
   typedef typename DG::size_type                 size_type;
 
-private:
+protected:
   typedef CGALi::Svd_project_site_2<Vertex>      Proj_site;
 
 public:
@@ -556,6 +556,8 @@ protected:
   Vertex_handle insert_point(const Point_2& p, Vertex_handle vnear);
   Vertex_handle insert_point(const Storage_site_2& ss,
 			     const Site_2& t, Vertex_handle vnear);
+  Vertex_handle insert_point2(const Storage_site_2& ss,
+			      const Site_2& t, Vertex_handle vnear);
 
   Triple<Vertex_handle,Vertex_handle,Vertex_handle>
   insert_point_on_segment(const Storage_site_2& ss, const Site_2& t,
