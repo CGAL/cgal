@@ -41,8 +41,13 @@ int main()
 #include <CGAL/Arr_2_default_dcel.h>
 #include <CGAL/Arrangement_2.h>
 
+#include <LEDA/rat_window.h>
 #include <CGAL/Draw_preferences.h>
 #include <vector>
+
+#if defined(LEDA_NAMESPACE)
+using namespace leda;
+#endif
 
 typedef CGAL::Arr_leda_segment_exact_traits         Traits;
 
@@ -55,12 +60,15 @@ typedef CGAL::Arr_2_default_dcel<Traits> Dcel;
 typedef CGAL::Arrangement_2<Dcel,Traits,Base_node > Arr_2;
 
 //I had to add these in global namespace for the program to compile
+
+/*
 CGAL::Window_stream& operator<<(CGAL::Window_stream& os,
                           const Point& p)
 {
   //return os << leda_point(p.xcoordD(),p.ycoordD());
   return os << p.to_point();
 }
+*/
 
 CGAL::Window_stream& operator<<(CGAL::Window_stream& os,
                           const X_curve &c)
