@@ -57,8 +57,8 @@ void print_out(std::list<std::list<Point_2> >::iterator begin_iter,
     for(std::list<Point_2>::iterator i2 = i->begin();
         i2 != i->end();
         ++i2)
-      std::cout << "    (" << to_double(i2->x()) << ":"
-                << to_double(i2->y()) << ")\n";
+      std::cout << "    (" << CGAL::to_double(i2->x()) << ":"
+                << CGAL::to_double(i2->y()) << ")\n";
 
     std::cout << std::endl;
   }
