@@ -303,12 +303,12 @@ namespace CGALi {
     typedef typename K::Line_2   Line_2;
     int i, ind_tr1, ind_tr2, ind_ray = 0, ind1;
     FT mindist, dist;
-    distance_index<K>(ind_tr1, ind_tr2, ray.source(), triangle);
+    distance_index<K>(ind_tr1, ind_tr2, ray.source(), triangle, k);
     mindist =
       squared_distance_indexed(ray.source(), triangle, ind_tr1, ind_tr2, k);
     for (i=0; i<3; i++) {
       const Point_2& pt = triangle.vertex(i);
-      distance_index<K>(ind1, pt, ray);
+      distance_index<K>(ind1, pt, ray, k);
       dist = squared_distance_indexed(pt, ray, ind1, k);
       if (dist < mindist) {
 	ind_ray = ind1;
@@ -325,7 +325,7 @@ namespace CGALi {
       // the triangle segment.
       const Point_2 &vt1 = triangle.vertex(ind_tr1);
       const Point_2 &vt2 = triangle.vertex(ind_tr2);
-      if (clockwise(ray.direction().vector(), vt2-vt1)) {
+      if (clockwise(ray.direction().vector(), vt2-vt1, k)) {
 	mindist = FT(0);
       }
     } else {
@@ -362,12 +362,13 @@ namespace CGALi {
   {
     typedef typename K::FT       FT;
     typedef typename K::Point_2  Point_2;
+    typename K::Orientation_2 orientation;
     int i, ind_tr1 = 0, ind_tr2 = -1, ind_seg = 0, ind1, ind2;
     FT mindist, dist;
     mindist = CGALi::squared_distance(seg.source(), triangle.vertex(0), k);
     for (i=0; i<2; i++) {
       const Point_2 &pt = seg.vertex(i);
-      distance_index<K>(ind1, ind2, pt, triangle);
+      distance_index<K>(ind1, ind2, pt, triangle, k);
       dist = CGALi::squared_distance_indexed(pt, triangle, ind1, ind2, k);
       if (dist < mindist) {
 	ind_seg = i;
@@ -377,7 +378,7 @@ namespace CGALi {
     }
     for (i=0; i<3; i++) {
       const Point_2& pt = triangle.vertex(i);
-      distance_index<K>(ind1, pt, seg);
+      distance_index<K>(ind1, pt, seg, k);
       dist = CGALi::squared_distance_indexed(pt, seg, ind1, k);
       if (dist < mindist) {
 	ind_seg = ind1;
@@ -435,13 +436,14 @@ namespace CGALi {
   {
     typedef typename K::FT       FT;
     typedef typename K::Point_2  Point_2;
+    typename K::Orientation_2 orientation;
     int i, ind1_1 = 0,ind1_2 = -1, ind2_1 = 0, ind2_2 = -1, ind1, ind2;
     FT mindist, dist;
     mindist =
       CGALi::squared_distance(triangle1.vertex(0), triangle2.vertex(0), k);
     for (i=0; i<3; i++) {
       const Point_2& pt = triangle1.vertex(i);
-      distance_index<K>(ind1, ind2, pt, triangle2);
+      distance_index<K>(ind1, ind2, pt, triangle2, k);
       dist = squared_distance_indexed(pt, triangle2, ind1, ind2, k);
       if (dist < mindist) {
 	ind1_1 = i; ind1_2 = -1;
@@ -451,7 +453,7 @@ namespace CGALi {
     }
     for (i=0; i<3; i++) {
       const Point_2& pt = triangle2.vertex(i);
-      distance_index<K>(ind1, ind2, pt, triangle1);
+      distance_index<K>(ind1, ind2, pt, triangle1, k);
       dist = squared_distance_indexed(pt, triangle1, ind1, ind2, k);
       if (dist < mindist) {
 	ind1_1 = ind1; ind1_2 = ind2;

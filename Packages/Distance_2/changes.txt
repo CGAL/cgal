@@ -1,3 +1,6 @@
+2.8 (7 August 2003)
+Bug fixes after the first step ==:>-
+
 2.7 (7 August 2003)
 A first step towards the extendible Kernel:
 

@@ -77,11 +77,12 @@ wcross(const typename CGAL_WRAP(K)::Vector_2 &u,
 
 template <class K>
 inline
-typename K::FT 
-wcross(const typename CGAL_WRAP(K)::Point_2 &p,
-       const typename CGAL_WRAP(K)::Point_2 &q,
-       const typename CGAL_WRAP(K)::Point_2 &r,
-       const Homogeneous_tag&)
+typename K::RT 
+wcross_tag(const typename CGAL_WRAP(K)::Point_2 &p,
+	   const typename CGAL_WRAP(K)::Point_2 &q,
+	   const typename CGAL_WRAP(K)::Point_2 &r,
+	   const K&,
+	   const Homogeneous_tag&)
 {
     return det3x3_by_formula(
         p.hx(), q.hx(), r.hx(),
@@ -94,10 +95,11 @@ wcross(const typename CGAL_WRAP(K)::Point_2 &p,
 template <class K>
 inline
 typename K::FT 
-wcross(const typename CGAL_WRAP(K)::Point_2 &p,
-       const typename CGAL_WRAP(K)::Point_2 &q,
-       const typename CGAL_WRAP(K)::Point_2 &r,
-       const Cartesian_tag&)
+wcross_tag(const typename CGAL_WRAP(K)::Point_2 &p,
+	   const typename CGAL_WRAP(K)::Point_2 &q,
+	   const typename CGAL_WRAP(K)::Point_2 &r,
+	   const K&,
+	   const Cartesian_tag&)
 {
   return (q.x()-p.x())*(r.y()-q.y()) - (q.y()-p.y())*(r.x()-q.x());
 }
@@ -107,10 +109,12 @@ template <class K>
 typename K::RT wcross(const typename CGAL_WRAP(K)::Point_2 &p,
 		      const typename CGAL_WRAP(K)::Point_2 &q,
 		      const typename CGAL_WRAP(K)::Point_2 &r,
-		      const K&)
+		      const K& k)
 {
   typedef typename K::Kernel_tag Tag;
-  return wcross(p, q, r, Tag());
+  Tag tag;
+  return wcross_tag(p, q, r, k, tag);
+
 }
 
 

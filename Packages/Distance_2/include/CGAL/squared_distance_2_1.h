@@ -14,6 +14,8 @@
 // file          : include/CGAL/squared_distance_2_1.h
 // source        : sqdistance_2.fw
 // author(s)     : Geert-Jan Giezeman
+//                 Michel Hoffmann <hoffmann@inf.ethz.ch>
+//                 Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //
 // coordinator   : Saarbruecken
 //
@@ -82,7 +84,7 @@ namespace CGALi {
     typedef typename K::Vector_2 Vector_2;
     Vector_2 diff = pt-ray.source();
     const Vector_2 &dir = ray.direction().vector();
-    if (!is_acute_angle(dir,diff) )
+    if (!is_acute_angle(dir,diff, k) )
       return (typename K::FT)(diff*diff);
     return CGALi::squared_distance(pt, ray.supporting_line(), k);
   }
@@ -107,10 +109,10 @@ namespace CGALi {
     // assert that the segment is valid (non zero length).
     Vector_2 diff = pt-seg.source();
     Vector_2 segvec = seg.target()-seg.source();
-    RT d = wdot(diff,segvec);
+    RT d = wdot(diff,segvec, k);
     if (d <= (RT)0)
       return (typename K::FT)(diff*diff);
-    RT e = wdot(segvec,segvec);
+    RT e = wdot(segvec,segvec, k);
     if (wmult((K*)0 ,d, segvec.hw()) > wmult((K*)0, e, diff.hw()))
       return CGALi::squared_distance(pt, seg.target(), k);
     return CGALi::squared_distance(pt, seg.supporting_line(), k);
@@ -141,14 +143,14 @@ namespace CGALi {
       same_direction = (CGAL_NTS sign(dir1.hy()) == CGAL_NTS sign(dir2.hy()));
     }
     if (same_direction) {
-      if (!is_acute_angle(seg1.source(), seg1.target(), seg2.source()))
+      if (!is_acute_angle(seg1.source(), seg1.target(), seg2.source(), k))
 	return CGALi::squared_distance(seg1.target(), seg2.source(), k);
-      if (!is_acute_angle(seg1.target(), seg1.source(), seg2.target()))
+      if (!is_acute_angle(seg1.target(), seg1.source(), seg2.target(), k))
 	return CGALi::squared_distance(seg1.source(), seg2.target(), k);
     } else {
-      if (!is_acute_angle(seg1.source(), seg1.target(), seg2.target()))
+      if (!is_acute_angle(seg1.source(), seg1.target(), seg2.target(), k))
 	return CGALi::squared_distance(seg1.target(), seg2.target(), k);
-      if (!is_acute_angle(seg1.target(), seg1.source(), seg2.source()))
+      if (!is_acute_angle(seg1.target(), seg1.source(), seg2.source(), k))
 	return CGALi::squared_distance(seg1.source(), seg2.source(), k);
     }
     return CGALi::squared_distance(seg2.source(), seg1.supporting_line(), k);
@@ -179,10 +181,10 @@ namespace CGALi {
       return CGALi::squared_distance(seg1.source(), seg2, k);
     if (seg2.source() == seg2.target())
       return CGALi::squared_distance(seg2.source(), seg1, k);
-    c1s = wcross(seg2.source(), seg2.target(), seg1.source());
-    c1e = wcross(seg2.source(), seg2.target(), seg1.target());
-    c2s = wcross(seg1.source(), seg1.target(), seg2.source());
-    c2e = wcross(seg1.source(), seg1.target(), seg2.target());
+    c1s = wcross(seg2.source(), seg2.target(), seg1.source(), k);
+    c1e = wcross(seg2.source(), seg2.target(), seg1.target(), k);
+    c2s = wcross(seg1.source(), seg1.target(), seg2.source(), k);
+    c2e = wcross(seg1.source(), seg1.target(), seg2.target(), k);
     if (c1s < RT(0)) {
       crossing1 = (c1e >= RT(0));
     } else {
@@ -285,10 +287,10 @@ namespace CGALi {
       same_direction = (CGAL_NTS sign(dir1.hy()) == CGAL_NTS sign(dir2.hy()));
     }
     if (same_direction) {
-      if (!is_acute_angle(seg.source(), seg.target(), ray.source()))
+      if (!is_acute_angle(seg.source(), seg.target(), ray.source(), k))
 	return CGALi::squared_distance(seg.target(), ray.source(), k);
     } else {
-      if (!is_acute_angle(seg.target(), seg.source(), ray.source()))
+      if (!is_acute_angle(seg.target(), seg.source(), ray.source(), k))
 	return CGALi::squared_distance(seg.source(), ray.source(), k);
     }
     return CGALi::squared_distance(ray.source(), seg.supporting_line(), k);
@@ -306,15 +308,15 @@ namespace CGALi {
     const Vector_2 &raydir = ray.direction().vector();
     Vector_2 startvec(seg.source()-ray.source());
     Vector_2 endvec(seg.target()-ray.source());
-
+    typename K::Orientation_2 orientation;
 
     bool crossing1, crossing2;
     RT c1s, c1e;
     Orientation ray_s_side;
     if (seg.source() == seg.target())
       return CGALi::squared_distance(seg.source(), ray, k);
-    c1s = wcross(raydir, startvec);
-    c1e = wcross(raydir, endvec);
+    c1s = wcross(raydir, startvec, k);
+    c1e = wcross(raydir, endvec, k);
     if (c1s < RT(0)) {
       crossing1 = (c1e >= RT(0));
     } else {
@@ -329,10 +331,10 @@ namespace CGALi {
     ray_s_side = orientation(seg.source(), seg.target(), ray.source());
     switch (ray_s_side) {
     case LEFT_TURN:
-      crossing2 = right_turn(seg.target()-seg.source(), raydir);
+      crossing2 = right_turn(seg.target()-seg.source(), raydir, k);
       break;
     case RIGHT_TURN:
-      crossing2 = left_turn(seg.target()-seg.source(), raydir);
+      crossing2 = left_turn(seg.target()-seg.source(), raydir, k);
       break;
     case COLLINEAR:
       crossing2 = true;
@@ -391,7 +393,7 @@ namespace CGALi {
     typedef typename K::RT RT;
     typedef typename K::FT FT;
     RT numerator = wcross*wcross;
-    RT denominator = wmult((K*)0, RT(wdot(dir,dir)),
+    RT denominator = wmult((K*)0, RT(wdot(dir,dir, K())),
 			   diff.hw(), diff.hw());
     FT result = K::make_FT(numerator, denominator);
     return result;
@@ -416,8 +418,8 @@ namespace CGALi {
     RT c1s, c1e;
     if (seg.source() == seg.target())
       return CGALi::squared_distance(seg.source(), line, k);
-    c1s = wcross(linedir, startvec);
-    c1e = wcross(linedir, endvec);
+    c1s = wcross(linedir, startvec, k);
+    c1e = wcross(linedir, endvec, k);
     if (c1s < RT(0)) {
       crossing1 = (c1e >= RT(0));
     } else {
@@ -456,11 +458,11 @@ namespace CGALi {
     const typename CGAL_WRAP(K)::Vector_2 &ray1dir,
     const typename CGAL_WRAP(K)::Vector_2 &ray2dir,
     const typename CGAL_WRAP(K)::Vector_2 &from1to2,
-    const K&)
+    const K& k)
   {
     typedef typename K::RT RT;
     typedef typename K::FT FT;
-    if (!is_acute_angle(ray1dir, from1to2)) {
+    if (!is_acute_angle(ray1dir, from1to2, k)) {
       bool same_direction;
       if (CGAL_NTS abs(ray1dir.hx()) > CGAL_NTS abs(ray1dir.hy())) {
 	same_direction =
@@ -473,10 +475,10 @@ namespace CGALi {
 	return (typename K::FT)(from1to2*from1to2);
     }
     RT wcr, w;
-    wcr = wcross(ray1dir, from1to2);
+    wcr = wcross(ray1dir, from1to2, k);
     w = from1to2.hw();
     return (typename K::FT)(FT(wcr*wcr)
-			    / FT(wmult((K*)0, RT(wdot(ray1dir, ray1dir)), w, w)));
+			    / FT(wmult((K*)0, RT(wdot(ray1dir, ray1dir, k)), w, w)));
   }
 
   template <class K>
@@ -492,15 +494,15 @@ namespace CGALi {
 
     bool crossing1, crossing2;
     Orientation dirorder;
-    dirorder = orientation(ray1dir, ray2dir);
+    dirorder = orientation(ray1dir, ray2dir, k);
     switch (dirorder) {
     case COUNTERCLOCKWISE:
-      crossing1 = !clockwise(diffvec, ray2dir);
-      crossing2 = !counterclockwise(ray1dir, diffvec);
+      crossing1 = !clockwise(diffvec, ray2dir, k);
+      crossing2 = !counterclockwise(ray1dir, diffvec, k);
       break;
     case CLOCKWISE:
-      crossing1 = !counterclockwise(diffvec, ray2dir);
-      crossing2 = !clockwise(ray1dir, diffvec);
+      crossing1 = !counterclockwise(diffvec, ray2dir, k);
+      crossing2 = !clockwise(ray1dir, diffvec, k);
       break;
     case COLLINEAR:
       return ray_ray_squared_distance_parallel(ray1dir,ray2dir,diffvec,k);
@@ -527,7 +529,7 @@ namespace CGALi {
   extern typename K::FT
   squared_distance(const typename CGAL_WRAP(K)::Line_2 &line,
 		   const typename CGAL_WRAP(K)::Ray_2 &ray,
-		   const K&)
+		   const K& k)
   {
     typedef typename K::FT FT;
     typedef typename K::Vector_2 Vector_2;
@@ -535,10 +537,10 @@ namespace CGALi {
     Vector_2 diff = ray.source()-line.point();
     FT sign_dist = diff*normalvec;
     if (sign_dist < FT(0)) {
-      if (is_acute_angle(normalvec, ray.direction().vector()) )
+      if (is_acute_angle(normalvec, ray.direction().vector(), k) )
 	return (FT)0;
     } else {
-      if (is_obtuse_angle(normalvec, ray.direction().vector()) )
+      if (is_obtuse_angle(normalvec, ray.direction().vector(), k) )
 	return (FT)0;
     }
     return (typename K::FT)((sign_dist*sign_dist)/(normalvec*normalvec));
@@ -578,9 +580,10 @@ namespace CGALi {
   extern void
   distance_index(int &ind,
 		 const typename CGAL_WRAP(K)::Point_2 &pt,
-		 const typename CGAL_WRAP(K)::Ray_2 &ray)
+		 const typename CGAL_WRAP(K)::Ray_2 &ray,
+		 const K& k)
   {
-    if (!is_acute_angle(ray.direction().vector(),pt-ray.source())) {
+    if (!is_acute_angle(ray.direction().vector(),pt-ray.source(), k)) {
       ind = 0;
       return;
     }
@@ -591,13 +594,14 @@ namespace CGALi {
   extern void
   distance_index(int &ind,
 		 const typename CGAL_WRAP(K)::Point_2 &pt,
-		 const typename CGAL_WRAP(K)::Segment_2 &seg)
+		 const typename CGAL_WRAP(K)::Segment_2 &seg,
+		 const K& k)
   {
-    if (!is_acute_angle(seg.target(),seg.source(),pt)) {
+    if (!is_acute_angle(seg.target(),seg.source(),pt, k)) {
       ind = 0;
       return;
     }
-    if (!is_acute_angle(seg.source(),seg.target(),pt)) {
+    if (!is_acute_angle(seg.source(),seg.target(),pt, k)) {
       ind = 1;
       return;
     }
@@ -692,8 +696,8 @@ class Squared_distance_to_ray {
     { }
     typename K::FT operator()(typename K::Point_2 const &pt) const
     {
-        Vector_2<K> diff = pt-ray_source;
-        if (!is_acute_angle(ray_dir,diff) )
+        K::Vector_2 diff = pt-ray_source;
+        if (! CGALi::is_acute_angle(ray_dir,diff, K()) )
             return (typename K::FT)(diff*diff);
         return supline_dist(pt);
     }
@@ -735,18 +739,18 @@ class Squared_distance_to_segment {
       supline_dist(seg.supporting_line())
     {
         segvec = seg_target-seg_source;
-        e = wdot(segvec,segvec);
+        e = CGALi::wdot(segvec,segvec, K());
     }
     typename K::FT operator()(typename K::Point_2 const &pt) const
     {
         typedef typename K::RT RT;
         // assert that the segment is valid (non zero length).
-        Vector_2<K> diff = pt-seg_source;
-        RT d = wdot(diff,segvec);
+        K::Vector_2 diff = pt-seg_source;
+        RT d = CGALi::wdot(diff,segvec, K());
         if (d <= (RT)0)
             return (typename K::FT)(diff*diff);
         if (wmult((K*)0 ,d, segvec.hw()) > wmult((K*)0, e, diff.hw()))
-            return squared_distance(pt, seg_target);
+            return CGALi::squared_distance(pt, seg_target, K());
         return supline_dist(pt);
     }
 };
