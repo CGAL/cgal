@@ -173,6 +173,9 @@ template < class R >
 class Identity_repH2 : public Aff_transformation_rep_baseH2<R>
 {
   public:
+    typedef typename R::RT         RT;
+    typedef typename R::FT         FT;
+
              Identity_repH2()
              {}
 
@@ -206,8 +209,8 @@ class Identity_repH2 : public Aff_transformation_rep_baseH2<R>
                const RT RT0(0);
                const RT RT1(1);
                return Aff_transformation_repH2<R>(  RT1, RT0, RT0,
-                                                        RT0, RT1, RT0,
-                                                                  RT1 );
+                                                    RT0, RT1, RT0,
+                                                    RT1 );
              }
 
     virtual  RT
@@ -608,9 +611,9 @@ Aff_transformationH2<R>::
 Aff_transformationH2( const Scaling, const RT& xa, const RT& xb,
                                      const RT& ya, const RT& yb)
 {
-  ptr = new Aff_transformation_repH2<R>(xa*yb,  RT(0),  RT(0)  ,
-                                            RT(0),  ya*xb,  RT(0)  ,
-                                                            xb*yb  );
+  ptr = new Aff_transformation_repH2<R>(xa*yb,  RT(0),  RT(0),
+                                        RT(0),  ya*xb,  RT(0),
+                                        xb*yb  );
 }
 
 template < class R >
@@ -624,8 +627,8 @@ Aff_transformationH2(const Rotation,
                      const RT& sine,
                      const RT& cosine,
                      const RT& denominator)
-{ ptr = new Rotation_repH2<R>(sine, cosine,
-                                                        denominator); }
+{ ptr = new Rotation_repH2<R>(sine, cosine, denominator); }
+
 template < class R >
 Aff_transformationH2<R>::Aff_transformationH2(const Rotation,
                                                   const DirectionH2<R>& dir,
@@ -651,7 +654,8 @@ Aff_transformationH2<R>::Aff_transformationH2(const VectorH2<R>& v,
                                     const typename R::RT& scaling_numerator,
                                     const typename R::RT& scaling_denominator )
 {
-  Aff_transformationH2<R> scaling(SCALING,scaling_numerator,scaling_denominator);
+  Aff_transformationH2<R>
+      scaling(SCALING,scaling_numerator,scaling_denominator);
   Aff_transformationH2<R> combination =
         Aff_transformationH2<R>(TRANSLATION, scaling.inverse().transform(-v) )
       * scaling
@@ -659,7 +663,6 @@ Aff_transformationH2<R>::Aff_transformationH2(const VectorH2<R>& v,
       * Aff_transformationH2<R>(TRANSLATION, v ) ;
 
   *this = combination;
-
 }
 
 template < class R >
@@ -669,19 +672,19 @@ Aff_transformationH2( const RT& a, const RT& b, const RT& c,
                                                 const RT& g)
 {
   ptr = new Aff_transformation_repH2<R>( a,   b,   c,
-                                             d,   e,   f,
-                                                       g  );
+                                         d,   e,   f,
+                                         g  );
 }
 
 template < class R >
 Aff_transformationH2<R>::
 Aff_transformationH2( const RT& a, const RT& b,
                       const RT& d, const RT& e,
-                                                 const RT& g)
+                      const RT& g)
 {
   ptr = new Aff_transformation_repH2<R>( a,   b,   RT(0),
-                                             d,   e,   RT(0),
-                                                       g  );
+                                         d,   e,   RT(0),
+                                         g  );
 }
 
 template < class R >
@@ -756,6 +759,7 @@ Aff_transformation_repH2<R>
 Aff_transformationH2<R>::
 general_form() const
 { return ptr->general_form(); }
+
 template <class R>
 Aff_transformationH2<R>
 //operator*(const Aff_transformationH2<R>& left_argument,
@@ -994,6 +998,7 @@ cartesian(int i, int j) const
   }
   return FT(0);
 }
+
 template < class R >
 typename R::RT
 Reflection_repH2<R>::
@@ -1057,6 +1062,5 @@ cartesian(int i, int j) const
 }
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_AFF_TRANSFORMATIONH2_H
