@@ -949,8 +949,8 @@ the drawn curve(s).
                 double discr = (t*t-4.0*r*s)*(x*x) + (2.0*t*v-4.0*s*u)*x + 
                                  v*v - 4.0*s*w;
                 if (discr >= 0.0) {
-                    double y1 = (-t*x - v - sqrt(discr))/(2.0*s);
-                    double y2 = (-t*x - v + sqrt(discr))/(2.0*s);
+                    double y1 = (-t*x - v - CGAL::sqrt(discr))/(2.0*s);
+                    double y2 = (-t*x - v + CGAL::sqrt(discr))/(2.0*s);
                     X[pixels] = x; Y[pixels++] = y1;
                     X[pixels] = x; Y[pixels++] = y2; } }
         else
@@ -969,8 +969,8 @@ the drawn curve(s).
                 double discr = (t*t-4.0*r*s)*(y*y) + (2.0*t*u-4.0*r*v)*y + 
                                  u*u - 4.0*r*w;
                 if (discr >= 0.0) {
-                    double x1 = (-t*y - u - sqrt(discr))/(2.0*r);
-                    double x2 = (-t*y - u + sqrt(discr))/(2.0*r);
+                    double x1 = (-t*y - u - CGAL::sqrt(discr))/(2.0*r);
+                    double x2 = (-t*y - u + CGAL::sqrt(discr))/(2.0*r);
                     X[pixels] = x1; Y[pixels++] = y;
                     X[pixels] = x2; Y[pixels++] = y; } }
         else
@@ -2631,7 +2631,7 @@ be positive.
                    NT b3, NT b2, NT b1, NT b0)
     {
         bool det_positive = false;
-        NT d, q, max_det = 0, det, best;
+        NT d, q, max_det = 0, det, best = -1;
         for (int i=0; i<nr_values; ++i) {
             NT x = values[i];
             d = (a2*x+a1)*x+a0;
@@ -3178,7 +3178,7 @@ function and the functions in connection with the solution of cubic equations.
     #define CGAL_CONIC_MISC_H
 
     #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
-    #  include <CGAL/optimisation_assertions.h>
+    #  include <CGAL/Optimisation/assertions.h>
     #endif
 
     @<namespace begin>("CGAL")
@@ -3274,7 +3274,7 @@ Here is the class @prg{ConicHPA2<PT,DA>}\ldots
     #  include <CGAL/Conic_misc.h>
     #endif
     #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
-    #  include <CGAL/optimisation_assertions.h>
+    #  include <CGAL/Optimisation/assertions.h>
     #endif
 
     @<namespace begin>("CGAL")
@@ -3310,7 +3310,7 @@ Here is the class @prg{ConicHPA2<PT,DA>}\ldots
     #  include <CGAL/Conic_misc.h>
     #endif
     #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
-    #  include <CGAL/optimisation_assertions.h>
+    #  include <CGAL/Optimisation/assertions.h>
     #endif
 
     @<namespace begin>("CGAL")

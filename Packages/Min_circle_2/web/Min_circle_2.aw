@@ -1507,7 +1507,7 @@ emptiness and degeneracy, resp.
         double  sr( CGAL::to_double( oc.squared_radius()));
 
         if ( ! CGAL::is_negative( sr))
-            ws.draw_circle( cx, cy, sqrt( sr));
+            ws.draw_circle( cx, cy, CGAL::sqrt( sr));
         return( ws);
     }
 
@@ -2804,7 +2804,7 @@ end of each file.
 
     // includes
     #ifndef CGAL_OPTIMISATION_BASIC_H
-    #  include <CGAL/optimisation_basic.h>
+    #  include <CGAL/Optimisation/basic.h>
     #endif
     #ifndef CGAL_RANDOM_H
     #  include <CGAL/Random.h>
@@ -2942,7 +2942,7 @@ end of each file.
 
     // includes
     #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
-    #  include <CGAL/optimisation_assertions.h>
+    #  include <CGAL/Optimisation/assertions.h>
     #endif
 
     @<namespace begin>("CGAL")
@@ -3017,7 +3017,7 @@ end of each file.
 
     // includes
     #ifndef CGAL_OPTIMISATION_BASIC_H
-    #  include <CGAL/optimisation_basic.h>
+    #  include <CGAL/Optimisation/basic.h>
     #endif
 
     @<namespace begin>("CGAL")
@@ -3056,7 +3056,7 @@ end of each file.
 
     // includes
     #ifndef CGAL_OPTIMISATION_BASIC_H
-    #  include <CGAL/optimisation_basic.h>
+    #  include <CGAL/Optimisation/basic.h>
     #endif
 
     @<namespace begin>("CGAL")

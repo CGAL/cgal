@@ -3016,7 +3016,7 @@ end of each file.
 
     // includes
     #ifndef CGAL_OPTIMISATION_BASIC_H
-    #  include <CGAL/optimisation_basic.h>
+    #  include <CGAL/Optimisation/basic.h>
     #endif
     #ifndef CGAL_RANDOM_H
     #  include <CGAL/Random.h>
@@ -3116,7 +3116,7 @@ end of each file.
     #  include <CGAL/Conic_2.h>
     #endif
     #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
-    #  include <CGAL/optimisation_assertions.h>
+    #  include <CGAL/Optimisation/assertions.h>
     #endif
     #ifndef CGAL_IO_FORWARD_DECL_WINDOW_STREAM_H
     #  include <CGAL/IO/forward_decl_window_stream.h>
@@ -3232,7 +3232,7 @@ end of each file.
     #  include <CGAL/ConicCPA2.h>
     #endif
     #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
-    #  include <CGAL/optimisation_assertions.h>
+    #  include <CGAL/Optimisation/assertions.h>
     #endif
 
     @<namespace begin>("CGAL")
@@ -3305,7 +3305,7 @@ end of each file.
     #  include <CGAL/ConicHPA2.h>
     #endif
     #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
-    #  include <CGAL/optimisation_assertions.h>
+    #  include <CGAL/Optimisation/assertions.h>
     #endif
 
     @<namespace begin>("CGAL")
