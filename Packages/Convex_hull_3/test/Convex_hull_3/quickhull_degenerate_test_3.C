@@ -7,6 +7,7 @@
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Object.h>
 #include <CGAL/point_generators_3.h>
+#include <cassert>
 
 #ifdef CGAL_USE_LEDA
 #  include <CGAL/leda_rational.h>
@@ -47,9 +48,9 @@ void test_coplanar_xy()
    points.push_back(Point_3(-4,3,0));
 
    CGAL::Object ch_object;
-   convex_hull_3(points.begin(), points.end(), ch_object, Traits());
+   CGAL::convex_hull_3(points.begin(), points.end(), ch_object, Traits());
    Polyhedron_3 P;
-   assert ( assign(P, ch_object) );
+   assert ( CGAL::assign(P, ch_object) );
 }
 
 void test_coplanar_xz()
@@ -64,9 +65,9 @@ void test_coplanar_xz()
    points.push_back(Point_3(-4,1,7));
 
    CGAL::Object ch_object;
-   convex_hull_3(points.begin(), points.end(), ch_object, Traits());
+   CGAL::convex_hull_3(points.begin(), points.end(), ch_object, Traits());
    Polyhedron_3 P;
-   assert ( assign(P, ch_object) );
+   assert ( CGAL::assign(P, ch_object) );
 }
 
 void test_coplanar_yz()
@@ -81,9 +82,9 @@ void test_coplanar_yz()
    points.push_back(Point_3(2,-4,7));
 
    CGAL::Object ch_object;
-   convex_hull_3(points.begin(), points.end(), ch_object, Traits());
+   CGAL::convex_hull_3(points.begin(), points.end(), ch_object, Traits());
    Polyhedron_3 P;
-   assert ( assign(P, ch_object) );
+   assert ( CGAL::assign(P, ch_object) );
 }
 
 void test_coplanar_arbitrary()
@@ -114,10 +115,10 @@ void test_coplanar_arbitrary()
    }
 
    CGAL::Object ch_object;
-   convex_hull_3(points.begin(), points.end(), ch_object, Traits());
+   CGAL::convex_hull_3(points.begin(), points.end(), ch_object, Traits());
    Polyhedron_3 P;
    Segment_3 seg;
-   assert ( assign(P, ch_object) || assign(seg, ch_object));
+   assert ( CGAL::assign(P, ch_object) || CGAL::assign(seg, ch_object));
 }
 
 void test_collinear()
@@ -138,10 +139,10 @@ void test_collinear()
      point_3_list.push_back(Point_3((*point_it).x(), (*point_it).y(), 0));
   } 
   CGAL::Object ch_object;
-  convex_hull_3(point_3_list.begin(), point_3_list.end(), ch_object,
-                 Traits());
+  CGAL::convex_hull_3(point_3_list.begin(), point_3_list.end(), ch_object,
+                      Traits());
   Segment_3 ch_seg;
-  assert (assign(ch_seg, ch_object));
+  assert (CGAL::assign(ch_seg, ch_object));
   Segment_3 orig_seg(Point_3(0,0,0), Point_3(1,0,0));
   assert (ch_seg == orig_seg || ch_seg == orig_seg.opposite() );
 
@@ -159,21 +160,21 @@ int main()
   Point_3 p1(0, 0, 0);
   points.push_back(p1);
 
-  convex_hull_3(points.begin(), points.end(), ch_object, ch_traits);
+  CGAL::convex_hull_3(points.begin(), points.end(), ch_object, ch_traits);
   Point_3 ch_point;
-  assert (assign(ch_point, ch_object));
+  assert (CGAL::assign(ch_point, ch_object));
 
   Point_3 p2(1, 0, 0);
   points.push_back(p2);
-  convex_hull_3(points.begin(), points.end(), ch_object, ch_traits);
+  CGAL::convex_hull_3(points.begin(), points.end(), ch_object, ch_traits);
   Segment_3 ch_segment;
-  assert (assign(ch_segment, ch_object));
+  assert (CGAL::assign(ch_segment, ch_object));
 
   Point_3 p3(1, 1, 0);
   points.push_back(p3);
-  convex_hull_3(points.begin(), points.end(), ch_object, ch_traits);
+  CGAL::convex_hull_3(points.begin(), points.end(), ch_object, ch_traits);
   Triangle_3 ch_triangle;
-  assert (assign(ch_triangle, ch_object));
+  assert (CGAL::assign(ch_triangle, ch_object));
 
   test_collinear();
 
