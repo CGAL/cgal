@@ -76,8 +76,18 @@ public:
   CGAL_Triangulation_ds_cell_circulator_3(const Cell_circulator & ccir)
     : _tds(ccir._tds), _e(ccir._e), pos(ccir.pos), prev(ccir.prev)
   {}
-        
-  Cell_circulator & operator++()
+   
+  Cell_circulator & 
+  operator=(const Cell_circulator & ccir)
+    {
+      _tds = ccir._tds;
+      _e = ccir._e;
+      pos = ccir.pos;
+      prev = ccir.prev;
+    }
+
+  Cell_circulator & 
+  operator++()
   {
     CGAL_triangulation_precondition( (pos != NULL) );
     //then dimension() cannot be < 3

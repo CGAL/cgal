@@ -62,7 +62,7 @@ public:
     {}
   
   CGAL_Triangulation_cell_circulator_3(const Cell_circulator & ccir)
-    : _cb(ccir._cb), _tr(cit._tr)
+    : _cb(ccir._cb), _tr(ccir._tr)
     {}
 
   Cell_circulator&
@@ -76,7 +76,7 @@ public:
   bool
   operator==(const Cell_circulator & ccir) const
   {
-    return ( _cb == cit._cb);
+    return ( _cb == ccir._cb);
   }
 
   bool
