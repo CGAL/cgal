@@ -948,7 +948,7 @@ set_compiler_flags()
 	    ADDITIONAL_CXXFLAGS="-Wall"
 	    RUNTIME_LINKER_FLAG='-Wl,-R'
 	    ;;
-	*Linux*icc*)
+	*Linux*icc*|*Linux*icpc*)
 	    #### settings for icc on linux
 	    # -mp is required for correct enough floating point operations
 	    # necessary for interval arithmetic.
