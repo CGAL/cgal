@@ -14,8 +14,56 @@
 % |                                                                         |
 % | Table of Contents:                                                      |
 % |                                                                         |
-% |   o   (La)TeX Macros                                                    |
-% |   o   (La)TeX Environments                                              |
+% |   o   Plain TeX Macros                                                  |
+% |   o   Single Letter Translations and Single Letter Macros               |
+% |                                                                         |
+% |     * Single hot characters implemented as macros:                      |
+% |     * Single character macro abbreviations:                             |
+% |                                                                         |
+% |   o   C.1   Commands and Environments                                   |
+% |   o   C.2   The Structure of the Document                               |
+% |   o   C.3   Sentences and Paragraphs                                    |
+% |                                                                         |
+% |     * Sentences                                                         |
+% |     * Paragraphs                                                        |
+% |     * Footnotes                                                         |
+% |     * Accents and Special Symbols                                       |
+% |     * Greek alphabet: following Table 3.3 page 41 in Lamport.           |
+% |     * Calligraphic letters                                              |
+% |     * Mathbb letters                                                    |
+% |     * The \not command on some symbols (not all defined)                |
+% |     * Binary operation symbols following Table 3.4 page 42 in Lamport.  |
+% |     * Relation symbols following Table 3.5 page 43 in Lamport.          |
+% |     * Arrow symbols following Table 3.6 page 43 in Lamport.             |
+% |     * Miscellaneous symbols following Table 3.7 page 43 in Lamport.     |
+% |     * Variable sized symbols following Table 3.8 page 44 in Lamport.    |
+% |     * Log-like functions following Table 3.9 page 44 in Lamport.        |
+% |     * Delimiters following Table 3.10 page 47 in Lamport.               |
+% |     * Math mode accents following Table 3.11 page 50 in Lamport.        |
+% |                                                                         |
+% |   o   C.4   Sectioning and Table of Contents                            |
+% |   o   C.5   Classes, Packages, and Page Styles                          |
+% |   o   C.6   Displayed Paragraphs                                        |
+% |   o   C.7   Mathematical Formulas                                       |
+% |   o   C.8   Definitions, Numbering, and Programming                     |
+% |   o   C.9   Figures and Other Floating Bodies                           |
+% |   o   C.10  Lining It Up in Columns                                     |
+% |                                                                         |
+% |     * Tabbing Environment                                               |
+% |     * Tabular Environment                                               |
+% |                                                                         |
+% |   o   C.11  Moving Information Around                                   |
+% |                                                                         |
+% |     * Cross-References                                                  |
+% |     * Bibliography and Citation                                         |
+% |     * Splitting the Input                                               |
+% |     * Index and Glossary                                                |
+% |     * Terminal Input and Output                                         |
+% |                                                                         |
+% |   o   C.12  Line and Page Breaking                                      |
+% |   o   C.13  Lengths, Spaces, and Boxes                                  |
+% |   o   C.14  Pictures and Color                                          |
+% |   o   C.15  Font Selection                                              |
 % |                                                                         |
 % |#########################################################################|
 
@@ -32,38 +80,28 @@
 \RCSdefDate{\lcDate}{$Date$}\RCSdefArg{\lcDate}{\lcDate}
 \lciPrintVersion{\lcRevision}{\lcDate}
 
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   Plain TeX Macros
+% |
+% ###########################################################################
 
+\newcommand{\centerline}[1]{\lcRawHtml{<CENTER>}#1\lcRawHtml{</CENTER>}}
 
+\newcommand{\hfil}{}
+\newcommand{\vfil}{}
+\newcommand{\vskip}{\lciSkipNonWhiteSpace}
+\newcommand{\hskip}{\lciSkipNonWhiteSpace}
 
-\newcommand{\newtheorem}[2]{%
-    \gdef\begin@#C1{{\bf #2}~~\lcRawHtml{<EM>}}%
-    \lciOptionalParameterAtEnd{\begin@#C1}{1}%
-    \gdef\begin@#C1@o{{\bf #2 (##1)}~~\lcRawHtml{<EM>}}%
-    \gdef\end#C1{\lcRawHtml{</EM>}}%
-}
-
-\newenvironment{document}{}{\lciEndOfConversion\gdef{\lciEndOfConversion}{}}
+\newcommand{\vbox}[1]{#1}
+\newcommand{\hbox}[1]{#1}
 
 
 % ___________________________________________________________________________
 % ###########################################################################
 % |
-% |   o   Verbatim Macro and Environment
-% |
-% ###########################################################################
-
-\newcommand{\lciLocalVerb}[1]{{\tt\lciAsciiOutputN{#L1}#1}}
-\newcommand{\verb}{\lciParseUntilDelimiter{\lciLocalVerb}}
-
-\newcommand{\lciLocalVerbatim}[1]{%
-    \lcRawHtml{<PRE>}\lciAsciiOutputN{#L1}#1\lcRawHtml{</PRE>}}
-\newenvironment{verbatim}{%
-    \lciParseUntilEndToken{\lciLocalVerbatim}{verbatim}}{}
-
-% ___________________________________________________________________________
-% ###########################################################################
-% |
-% |   o   (La)TeX Macros
+% |   o   Single Letter Translations and Single Letter Macros
 % |
 % ###########################################################################
 
@@ -86,138 +124,97 @@
 \newcommand{\#}{\lcAsciiToHtml{#}}
 \newcommand{\$}{\lcAsciiToHtml{$}}
 \newcommand{\&}{\lcAsciiToHtml{&}}
-\newcommand{\\}{\lcRawHtml{<BR>}}   % except for tables
-\newcommand{\\*}{\lcRawHtml{<BR>}}
 \newcommand{\/}{}
 \newcommand{\,}{}
 \newcommand{\;}{}
 \newcommand{\:}{}
 \newcommand{\!}{}
 \newcommand{\@}{\lcRawHtml{&nbsp;}}
+\newcommand{\-}{}  % hyphenation
+
+%% newlines, except for tabbing and tabular environments.
+\newcommand{\\}{\lcRawHtml{<BR>}}
+\newcommand{\\*}{\lcRawHtml{<BR>}}
+\lciOptionalParameterAtEnd{\\}{1}
+\lciOptionalParameterAtEnd{\\*}{1}
+\newcommand{\\@o}{\lcRawHtml{<BR>}}
+\newcommand{\\*@o}{\lcRawHtml{<BR>}}
 
 %% not valid, used for accents. \newcommand{\~}{\lcAsciiToHtml{~}}
 
-% +--------------------------------------------------------------------------
-% |     * Sections and others
-% +--------------------------------------------------------------------------
 
-\newenvironment{titlepage}{}{}
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   C.1   Commands and Environments
+% |
+% ###########################################################################
+% --> see latex_converter.sty
 
-\newenvironment{abstract}{%
-    \lcRawHtml{<CENTER><B>Abstract</B></CENTER><P><BLOCKQUOTE><SUB>}}{
-    \lcRawHtml{</SUB></BLOCKQUOTE>}}
+\newcommand{\protect}{}
 
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   C.2   The Structure of the Document
+% |
+% ###########################################################################
 
-%% chapter and section are defined in html_lex. The lead to special actions.
-\newcommand{\chapter}[1]{\lciPrintFootnotes\lciResetFootnotes
-    \gdef{\lciIfHtmlLinks}{\lcTrue}%
-    \gdef{\lciIfHtmlIndex}{\lcTrue}%
-    \lciChapter{#1}}
-\newcommand{\section}[1]{\lciSection{#1}}
+\newenvironment{document}{}{\lciEndOfConversion\gdef{\lciEndOfConversion}{}}
 
-\newcommand{\subsection}[1]{\lcRawHtml{<H3>}#1\lcRawHtml{</H3>}
-}
-\newcommand{\subsubsection}[1]{\lcRawHtml{<H4>}#1\lcRawHtml{</H4>}
-}
-\newcommand{\paragraph}[1]{{\bf #1}~~\lciSkipWhiteSpace}
-\newcommand{\subparagraph}[1]{{\bf #1}~~\lciSkipWhiteSpace}
+%% print remaining footnotes at the end of the conversion
+\lciPrependToGlobalDef{\lciEndOfConversion}{\lciPrintFootnotes}
 
-\newcommand{\subsection*}[1]{\lcRawHtml{<H3>}#1\lcRawHtml{</H3>}
-}
-\newcommand{\subsubsection*}[1]{\lcRawHtml{<H4>}#1\lcRawHtml{</H4>}
-}
-\newcommand{\paragraph*}[1]{{\bf #1}~~\lciSkipWhiteSpace}
-\newcommand{\subparagraph*}[1]{{\bf #1}~~\lciSkipWhiteSpace}
-
-\newcommand{\subsection@om}[1]{\lcRawHtml{<H3>}#2\lcRawHtml{</H3>}
-}
-\newcommand{\subsubsection@om}[1]{\lcRawHtml{<H4>}#2\lcRawHtml{</H4>}
-}
-\newcommand{\paragraph@om}[1]{{\bf #2}~~\lciSkipWhiteSpace}
-\newcommand{\subparagraph@om}[1]{{\bf #2}~~\lciSkipWhiteSpace}
-
-
-\newcommand{\ref}[1]{\lcAsciiToHtml{[ref:#1]}}
-\newcommand{\pageref}[1]{\lcAsciiToHtml{[ref:#1]}}
-
-\newenvironment{verse}{\lcRawHtml{<BLOCKQUOTE>}}{\lcRawHtml{</BLOCKQUOTE>}}
-\newenvironment{quote}{\lcRawHtml{<BLOCKQUOTE>}}{\lcRawHtml{</BLOCKQUOTE>}}
-\newenvironment{quotation}{\lcRawHtml{<BLOCKQUOTE>}}{\lcRawHtml{</BLOCKQUOTE>}}
-\newenvironment{center}{\lcRawHtml{<CENTER>}}{\lcRawHtml{</CENTER>}}
-\newcommand{\centerline}[1]{\lcRawHtml{<CENTER>}#1\lcRawHtml{</CENTER>}}
-
-\newenvironment{itemize}{\lcRawHtml{<UL>}}{\lcRawHtml{</UL>}}
-\newenvironment{enumerate}{\lcRawHtml{<OL>}}{\lcRawHtml{</OL>}}
-\newenvironment{description}{\lcRawHtml{<DL>}}{\lcRawHtml{</DL>}}
-\newcommand{\item}{\lcRawHtml{<LI>}}
-\lciOptionalParameterAtEnd{\item}{1}
-\newcommand{\item@o}{\lcRawHtml{<DT><B>}#1\lcRawHtml{</B><DD>}}
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   C.3   Sentences and Paragraphs
+% |
+% ###########################################################################
 
 % +--------------------------------------------------------------------------
-% |     * tabular and tabbing environments
+% |     * Sentences
 % +--------------------------------------------------------------------------
-\newcommand{\lciTabBegin}{\lcRawHtml{
-<TABLE><TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP>
-}%
-    \newcommand{\=}{\lciTabSkip}%
-    \newcommand{\>}{\lciTabSkip}%
-    \newcommand{&}{\lciTabSkip}%
-    \renewcommand{\\}{\lciTabNL}%   % restore old definition
-}
-\newcommand{\lciTabEnd}{\lcRawHtml{
-</TD></TR></TABLE>
-}%
-    \lciUndef{\=}%
-    \lciUndef{\>}%
-    \lciUndef{&}%
-    \renewcommand{\\}{\lcRawHtml{<BR>}}%   % restore old definition
-}
-\newcommand{\lciTabNL}{\lcRawHtml{
-    </TD></TR><TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP>
-}\lciSkipWhiteSpace
-}
-\newcommand{\lciTabSkip}{\lcRawHtml{
-        </TD><TD ALIGN=LEFT VALIGN=TOP NOWRAP>
-}\lciSkipWhiteSpace
-}
+\newcommand{\frenchspacing}{}
+\newcommand{\nonfrenchspacing}{}
 
-\newenvironment{tabbing}{\lciTabBegin}{\lciTabEnd}
-\newenvironment{eqnarray}{\[\lciTabBegin}{\lciTabEnd\]}
-\newenvironment{eqnarray*}{\[\lciTabBegin}{\lciTabEnd\]}
-\newcommand{lefteqn}[1]{#1}
-\newenvironment{tabular}[1]{\lciTabBegin}{\lciTabEnd}
-\newenvironment{array}[1]{\lciTabBegin}{\lciTabEnd}
+%\newcommand{\TeX}{\lcRawHtml{TeX}}   %% candidates for images
+%\newcommand{\LaTeX}{\lcRawHtml{LaTeX}}
+%\newcommand{\LaTeXe}{\lcRawHtml{LaTeX2e}}
+\newcommand{\TeX}{%
+    \lcRawHtml{<IMG WIDTH=32 HEIGHT=18 ALIGN=TOP SRC="cc_TeX.gif">}}
+\newcommand{\LaTeX}{%
+    \lcRawHtml{<IMG WIDTH=47 HEIGHT=18 ALIGN=TOP SRC="cc_LaTeX.gif">}}
+\newcommand{\LaTeXe}{%
+    \lcRawHtml{<IMG WIDTH=68 HEIGHT=18 ALIGN=TOP SRC="cc_LaTeXe.gif">}}
 
-\newcommand{\vline}{}
-
+\newcommand{\today}{\lciManualDate}
 
 % +--------------------------------------------------------------------------
-% |     * Counter
+% |     * Paragraphs
 % +--------------------------------------------------------------------------
-\newcommand{\newcounter}[1]{%
-    \gdef{\the#C1}{0}%
-    \gdef{\lciDependantCounter#C1}{}}
-\lciOptionalParameterAtEnd{\newcounter}{1}
-\newcommand{\newcounter@mo}{
-    \gdef{\the#C1}{0}%
-    \gdef{\lciDependantCounter#C1}{}%
-    \lciAddToDependantList{\lciDependantCounter#C2}{\gdef{\the#C1}{0}}}
-%% Args: #1 = dependant list, #2 command to be added to the list
-\newcommand{\lciAddToDependantList}[2]{%
-    \gdef{#1}{#X1#2}}
+\newcommand{\noindent}{}
+\newcommand{\indent}{}
+\newcommand{\par}{\lcRawHtml{<P>}}
 
-\newcommand{\setcounter}[2]{\gdef{\the#C1}{#XC2}}
-\newcommand{\addtocounter}[2]{\lciGlobalAddTo{\the#C1}{#XC2}}
-\newcommand{\value}[1]{\the#C1}
+\newcommand{\textwidth}{\lciSkipNonWhiteSpace}
+\newcommand{\linewidth}{\lciSkipNonWhiteSpace}
+\newcommand{\parindent}{\lciSkipNonWhiteSpace}
+\newcommand{\baselineskip}{\lciSkipNonWhiteSpace}
+\newcommand{\baselinestretch}{\lciSkipNonWhiteSpace}
+\newcommand{\parskip}{\lciSkipNonWhiteSpace}
 
-\newcommand{\stepcounter}[1]{\lciAddTo{\the#C1}{1}\lciDependantCounter#C1}
-\newcommand{\refstepcounter}{\stepcounter}
+\newcommand{\textheight}{\lciSkipNonWhiteSpace}
+\newcommand{\topmargin}{\lciSkipNonWhiteSpace}
+\newcommand{\evensidemargin}{\lciSkipNonWhiteSpace}
+\newcommand{\oddsidemargin}{\lciSkipNonWhiteSpace}
+\newcommand{\headsep}{\lciSkipNonWhiteSpace}
 
 % +--------------------------------------------------------------------------
 % |     * Footnotes
 % +--------------------------------------------------------------------------
 
-\newcounter{footnote}          %% counter
+\gdef\thefootnote{0}           %% counter
 \gdef{\lciFootnotes}{}         %% collected footnotes
 
 \gdef{\lciFootnoteStack}{}     %% stack for counter and collected footnotes
@@ -274,83 +271,22 @@
     \setcounter{footnote}{0}%
     \gdef{\lciFootnotes}{}}
 
-%% print remaining footnotes at the end of the conversion
-\lciAddToGlobalDef{\lciEndOfConversion}{\lciPrintFootnotes}
-
-
-% +--------------------------------------------------------------------------
-% |     * Figure, tables, captions and others
-% +--------------------------------------------------------------------------
+\newcommand{\footnotesep}{\lciSkipNonWhiteSpace}
+\newcommand{\footnoterule}{\hrule}
 
 % +--------------------------------------------------------------------------
-% |     * Labels and references
+% |     * Accents and Special Symbols
 % +--------------------------------------------------------------------------
+\newcommand{\dag}{%
+  \lcRawHtml{<IMG BORDER=0 WIDTH=5 HEIGHT=17 ALIGN=BOTTOM SRC="cc_dag.gif">}}
+\newcommand{\ddag}{%
+  \lcRawHtml{<IMG BORDER=0 WIDTH=5 HEIGHT=17 ALIGN=BOTTOM SRC="cc_ddag.gif">}}
 
-% +--------------------------------------------------------------------------
-% |     * Bibliography and citations
-% +--------------------------------------------------------------------------
-\newcommand{\newblock}{}
-\newcommand{\bibliographystyle}[1]{}
-\newcommand{\bibliography}[1]{}
+\newcommand{\S}{\lcRawHtml{&sect;}}
+\newcommand{\P}{\lcRawHtml{&para;}}
+\newcommand{\copyright}{\lcRawHtml{&copy;}}
+\newcommand{\pounds}{\lcRawHtml{&pound;}}
 
-\newenvironment{thebibliography}[1]{%
-    \newcommand{\lciFirstBibItem}{}\lciOpenBibliography
-}{%
-    \lciCloseBibliography
-}
-
-\newcommand{\cite}[1]{[\lciCite {#1}]}
-\newcommand{\cite@om}{[\lciCite {#2}, #1]}
-\newcommand{\lciCite}[1]{\lciIfEmpty{#C1}{\lciError{
-Empty argument to a cite command}}{%
-    \newcommand{\lciCiteDelim}{}%
-    \lciParseUntilDelimiter{\lciLocalCite},#1,,}}
-\newcommand{\lciLocalCite}[1]{\lciIfEmpty{#C1}{}{%
-    \lciCiteDelim\lcRawHtml{<A HREF="}\lciBibFilename
-    \lcRawHtml{##Biblio_}#C1\lcRawHtml{">}#C1\lcRawHtml{</A>}%
-    \newcommand{\lciCiteDelim}{, }%
-    \lciParseUntilDelimiter{\lciLocalCite},}}
-
-\newcommand{\bibcite}[2]{\lciBibCite{#C1}{#C2}}
-
-
-
-\newcommand{\bibitem}[1]{\lciFirstBibItem
-    \newcommand{\lciFirstBibItem}{\lcRawHtml{</TD></TR>}}%
-    \lcRawHtml{<TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP>
-        <A NAME="Biblio_#C1"></A><B>[#C1]</B></TD>
-    <TD ALIGN=LEFT VALIGN=TOP>}%
-}
-\newcommand{\bibitem@om}{\bibcite{#2}{#1}\bibitem{#2}}
-
-
-
-% +--------------------------------------------------------------------------
-% |     * Abbreviations (no parameters)
-% +--------------------------------------------------------------------------
-\newcommand{\par}{\lcRawHtml{<P>}}
-
-%\newcommand{\TeX}{\lcRawHtml{TeX}}   %% candidates for images
-%\newcommand{\LaTeX}{\lcRawHtml{LaTeX}}
-%\newcommand{\LaTeXe}{\lcRawHtml{LaTeX2e}}
-\newcommand{\TeX}{\lcRawHtml
-    {<IMG WIDTH=32 HEIGHT=18 ALIGN=TOP SRC="cc_TeX.gif">}}
-\newcommand{\LaTeX}{\lcRawHtml
-    {<IMG WIDTH=47 HEIGHT=18 ALIGN=TOP SRC="cc_LaTeX.gif">}}
-\newcommand{\LaTeXe}{\lcRawHtml
-    {<IMG WIDTH=68 HEIGHT=18 ALIGN=TOP SRC="cc_LaTeXe.gif">}}
-
-\newcommand{\medskip}{\lcRawHtml{<BR>}}
-\newcommand{\bigskip}{\lcRawHtml{<P>}}
-
-\newcommand{\pagebreak}{\lcRawHtml{<P>}}
-\newcommand{\newpage}{\lcRawHtml{<P>}}
-\newcommand{\clearpage}{\lcRawHtml{<P>}}
-\newcommand{\cleardoublepage}{\lcRawHtml{<P>}}
-
-% +--------------------------------------------------------------------------
-% |     * Accents and Umlaute:
-% +--------------------------------------------------------------------------
 % not all possible TeX accents translate properly
 \newcommand{\"}[1]{\lcRawHtml{&#C1uml;}}
 \newcommand{\'}[1]{\lcRawHtml{&#C1acute;}}
@@ -366,273 +302,222 @@ Empty argument to a cite command}}{%
 \newcommand{\AA}{\lcRawHtml{&Aring;}}
 \newcommand{\o}{\lcRawHtml{&oslash;}}
 \newcommand{\O}{\lcRawHtml{&Oslash;}}
-\newcommand{\S}{\lcRawHtml{&sect;}}
-\newcommand{\P}{\lcRawHtml{&para;}}
-\newcommand{\copyright}{\lcRawHtml{&copy;}}
-\newcommand{\pounds}{\lcRawHtml{&pound;}}
 
-\newcommand{\dag}{\lcRawHtml
-    {<IMG BORDER=0 WIDTH=5 HEIGHT=17 ALIGN=BOTTOM SRC="cc_dag.gif">}}
-\newcommand{\ddag}{\lcRawHtml
-    {<IMG BORDER=0 WIDTH=5 HEIGHT=17 ALIGN=BOTTOM SRC="cc_ddag.gif">}}
-\newcommand{\l}{\lcRawHtml
-    {<IMG BORDER=0 WIDTH=4 HEIGHT=13 ALIGN=BOTTOM SRC="cc_l.gif">}}
-\newcommand{\L}{\lcRawHtml
-    {<IMG BORDER=0 WIDTH=9 HEIGHT=12 ALIGN=BOTTOM SRC="cc_L.gif">}}
-\newcommand{\oe}{\lcRawHtml
-    {<IMG BORDER=0 WIDTH=12 HEIGHT=8 ALIGN=BOTTOM SRC="cc_oe.gif">}}
-\newcommand{\OE}{\lcRawHtml
-    {<IMG BORDER=0 WIDTH=16 HEIGHT=12 ALIGN=BOTTOM SRC="cc_OE.gif">}}
-
-% +--------------------------------------------------------------------------
-% |     * Math-mode control
-% +--------------------------------------------------------------------------
-\newcommand{\lciMathMode}{\lcFalse}        % for all math environments
-\newcommand{\lciMathModeDisplay}{\lcFalse} % in addition for display math env.
-
-\newcommand{\(}{\newcommand{\lciMathMode}{\lcTrue}\lcRawHtml{<MATH><I>}}
-\newcommand{\)}{\newcommand{\lciMathMode}{\lcFalse}\lcRawHtml{</I></MATH>}}
-\newenvironment{math}{\(}{\)}
-\newcommand{\lciToggleMathMode}{\lciIf{\lciMathMode}{\)}{\(}}
-
-\newcommand{\[}{\lcRawHtml{<P ALIGN=CENTER>
-}\(\newcommand{\lciMathModeDisplay}{\lcTrue}}
-\newcommand{\]}{\)\newcommand{\lciMathModeDisplay}{\lcFalse}\lcRawHtml{<P>}}
-\newenvironment{displaymath}{\[}{\]}
-\newenvironment{equation}{\[}{\]}
-
-\newcommand{\ensuremath}[1]{\lciIf{\lciMathMode}{#1}{$#1$}}
-\newcommand{\mbox}[1]{\lciIf{\lciMathMode}{$#1$}{#1}}
-
-
-% +--------------------------------------------------------------------------
-% |     * Miscelleaneous math-mode macros
-% +--------------------------------------------------------------------------
-\newcommand{\sqrt}[1]{sqrt(#1)}
-\newcommand{\sqrt@om}{\lcRawHtml{root<SUB>}#1\lcRawHtml{</SUB>}(#2)}
-\newcommand{\frac}[2]{(#1)/(#2)}
-%\newcommand{\frac}[2]{\lcRawHtml{<TABLE><TR><TD ALIGN=CENTER>}#1\lcRawHtml
-%    {</TD></TR><TR><TD ALIGN=CENTER><hr></TD></TR><TR><TD ALIGN=CENTER>}%
-%    #2\lcRawHtml{</TD></TR></TABLE>}}
-%% correct in HTML 3.2 ?: 
-% \newcommand{\frac}[2]{\lcRawHtml{<BOX>}#1\lcRawHtml{<OVER>}#2\lcRawHtml{</BOX>}}
-\newcommand{\over}{/}  %% TeX style fraction
-
-\newcommand{\dots}{...}
-\newcommand{\ldots}{...}
-\newcommand{\cdot}{\lcRawHtml{ &middot; }}
-\newcommand{\cdots}{\lcRawHtml{ &middot;&middot;&middot; }}
-\newcommand{\vdots}{\lcRawHtml
-    {<IMG BORDER=0 WIDTH=2 HEIGHT=14 ALIGN=BOTTOM SRC="cc_vdots.gif"> }}
-\newcommand{\ddots}{\lcRawHtml
-    {<IMG BORDER=0 WIDTH=16 HEIGHT=10 ALIGN=BOTTOM SRC="cc_ddots.gif"> }}
-
+\newcommand{\l}{%
+  \lcRawHtml{<IMG BORDER=0 WIDTH=4 HEIGHT=13 ALIGN=BOTTOM SRC="cc_l.gif">}}
+\newcommand{\L}{%
+  \lcRawHtml{<IMG BORDER=0 WIDTH=9 HEIGHT=12 ALIGN=BOTTOM SRC="cc_L.gif">}}
+\newcommand{\oe}{%
+  \lcRawHtml{<IMG BORDER=0 WIDTH=12 HEIGHT=8 ALIGN=BOTTOM SRC="cc_oe.gif">}}
+\newcommand{\OE}{%
+  \lcRawHtml{<IMG BORDER=0 WIDTH=16 HEIGHT=12 ALIGN=BOTTOM SRC="cc_OE.gif">}}
 
 % +--------------------------------------------------------------------------
 % |     * Greek alphabet: following Table 3.3 page 41 in Lamport.
 % +--------------------------------------------------------------------------
-\newcommand{\alpha}{\lcRawHtml
+\newcommand{\alpha}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=9 HEIGHT=8 ALIGN=BOTTOM SRC="cc_alpha.gif">}}
-\newcommand{\beta}{\lcRawHtml
+\newcommand{\beta}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=10 HEIGHT=27 ALIGN=MIDDLE SRC="cc_beta.gif">}}
-\newcommand{\gamma}{\lcRawHtml
+\newcommand{\gamma}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=9 HEIGHT=17 ALIGN=MIDDLE SRC="cc_gamma.gif">}}
-\newcommand{\delta}{\lcRawHtml
+\newcommand{\delta}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=6 HEIGHT=13 ALIGN=BOTTOM SRC="cc_delta.gif">}}
-\newcommand{\epsilon}{\lcRawHtml
+\newcommand{\epsilon}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=5 HEIGHT=8 ALIGN=BOTTOM SRC="cc_epsilon.gif">}}
-\newcommand{\varepsilon}{\lcRawHtml
+\newcommand{\varepsilon}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=5 HEIGHT=8 ALIGN=BOTTOM SRC="cc_varepsilon.gif">}}
-\newcommand{\zeta}{\lcRawHtml
+\newcommand{\zeta}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=7 HEIGHT=27 ALIGN=MIDDLE SRC="cc_zeta.gif">}}
-\newcommand{\eta}{\lcRawHtml
+\newcommand{\eta}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=7 HEIGHT=17 ALIGN=MIDDLE SRC="cc_eta.gif">}}
-\newcommand{\theta}{\lcRawHtml
+\newcommand{\theta}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=6 HEIGHT=13 ALIGN=BOTTOM SRC="cc_theta.gif">}}
-\newcommand{\vartheta}{\lcRawHtml
+\newcommand{\vartheta}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=8 HEIGHT=13 ALIGN=BOTTOM SRC="cc_vartheta.gif">}}
-\newcommand{\iota}{\lcRawHtml
+\newcommand{\iota}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=4 HEIGHT=8 ALIGN=BOTTOM SRC="cc_iota.gif">}}
-\newcommand{\kappa}{\lcRawHtml
+\newcommand{\kappa}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=8 HEIGHT=8 ALIGN=BOTTOM SRC="cc_kappa.gif">}}
-\newcommand{\lambda}{\lcRawHtml
+\newcommand{\lambda}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=7 HEIGHT=13 ALIGN=BOTTOM SRC="cc_lambda.gif">}}
-\newcommand{\mu}{\lcRawHtml{ &micro; }\lcRawHtml
-    {<IMG BORDER=0 WIDTH=9 HEIGHT=17 ALIGN=MIDDLE SRC="cc_mu.gif">}}
-\newcommand{\nu}{\lcRawHtml
+\newcommand{\mu}{\lcRawHtml{&micro;}}
+%%\newcommand{\mu}{\lcRawHtml%
+%%    {<IMG BORDER=0 WIDTH=9 HEIGHT=17 ALIGN=MIDDLE SRC="cc_mu.gif">}}
+\newcommand{\nu}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=7 HEIGHT=8 ALIGN=BOTTOM SRC="cc_nu.gif">}}
-\newcommand{\xi}{\lcRawHtml
+\newcommand{\xi}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=7 HEIGHT=27 ALIGN=MIDDLE SRC="cc_xi.gif">}}
-\newcommand{\pi}{\lcRawHtml
+\newcommand{\pi}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=9 HEIGHT=8 ALIGN=BOTTOM SRC="cc_pi.gif">}}
-\newcommand{\varpi}{\lcRawHtml
+\newcommand{\varpi}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=13 HEIGHT=8 ALIGN=BOTTOM SRC="cc_varpi.gif">}}
-\newcommand{\rho}{\lcRawHtml
+\newcommand{\rho}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=7 HEIGHT=17 ALIGN=MIDDLE SRC="cc_rho.gif">}}
-\newcommand{\varrho}{\lcRawHtml
+\newcommand{\varrho}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=6 HEIGHT=17 ALIGN=MIDDLE SRC="cc_varrho.gif">}}
-\newcommand{\sigma}{\lcRawHtml
+\newcommand{\sigma}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=8 HEIGHT=8 ALIGN=BOTTOM SRC="cc_sigma.gif">}}
-\newcommand{\varsigma}{\lcRawHtml
+\newcommand{\varsigma}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=5 HEIGHT=17 ALIGN=MIDDLE SRC="cc_varsigma.gif">}}
-\newcommand{\tau}{\lcRawHtml
+\newcommand{\tau}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=8 HEIGHT=8 ALIGN=BOTTOM SRC="cc_tau.gif">}}
-\newcommand{\upsilon}{\lcRawHtml
+\newcommand{\upsilon}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=8 HEIGHT=8 ALIGN=BOTTOM SRC="cc_upsilon.gif">}}
-\newcommand{\phi}{\lcRawHtml
+\newcommand{\phi}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=8 HEIGHT=27 ALIGN=MIDDLE SRC="cc_phi.gif">}}
-\newcommand{\varphi}{\lcRawHtml
+\newcommand{\varphi}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=10 HEIGHT=17 ALIGN=MIDDLE SRC="cc_varphi.gif">}}
-\newcommand{\chi}{\lcRawHtml
+\newcommand{\chi}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=11 HEIGHT=17 ALIGN=MIDDLE SRC="cc_chi.gif">}}
-\newcommand{\psi}{\lcRawHtml
+\newcommand{\psi}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=10 HEIGHT=27 ALIGN=MIDDLE SRC="cc_psi.gif">}}
-\newcommand{\omega}{\lcRawHtml
+\newcommand{\omega}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=10 HEIGHT=8 ALIGN=BOTTOM SRC="cc_omega.gif">}}
 
-\newcommand{\Gamma}{\lcRawHtml
+\newcommand{\Gamma}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=9 HEIGHT=12 ALIGN=BOTTOM SRC="cc_Gamma.gif">}}
-\newcommand{\Delta}{\lcRawHtml
+\newcommand{\Delta}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=12 HEIGHT=12 ALIGN=BOTTOM SRC="cc_Delta.gif">}}
-\newcommand{\Theta}{\lcRawHtml
+\newcommand{\Theta}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=11 HEIGHT=12 ALIGN=BOTTOM SRC="cc_Theta.gif">}}
-\newcommand{\Lambda}{\lcRawHtml
+\newcommand{\Lambda}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=11 HEIGHT=12 ALIGN=BOTTOM SRC="cc_Lambda.gif">}}
-\newcommand{\Xi}{\lcRawHtml
+\newcommand{\Xi}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=9 HEIGHT=12 ALIGN=BOTTOM SRC="cc_Xi.gif">}}
-\newcommand{\Pi}{\lcRawHtml
+\newcommand{\Pi}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=12 HEIGHT=12 ALIGN=BOTTOM SRC="cc_Pi.gif">}}
-\newcommand{\Sigma}{\lcRawHtml
+\newcommand{\Sigma}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=10 HEIGHT=12 ALIGN=BOTTOM SRC="cc_Sigma.gif">}}
-\newcommand{\Upsilon}{\lcRawHtml
+\newcommand{\Upsilon}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=11 HEIGHT=12 ALIGN=BOTTOM SRC="cc_Upsilon.gif">}}
-\newcommand{\Phi}{\lcRawHtml
+\newcommand{\Phi}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=10 HEIGHT=12 ALIGN=BOTTOM SRC="cc_Phi.gif">}}
-\newcommand{\Psi}{\lcRawHtml
+\newcommand{\Psi}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=11 HEIGHT=12 ALIGN=BOTTOM SRC="cc_Psi.gif">}}
-\newcommand{\Omega}{\lcRawHtml
+\newcommand{\Omega}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=10 HEIGHT=12 ALIGN=BOTTOM SRC="cc_Omega.gif">}}
 
 % +--------------------------------------------------------------------------
-% |     *  Calligraphic letters
+% |     * Calligraphic letters
 % +--------------------------------------------------------------------------
 \newcommand{\mathcal}[1]{\lciScanMathcal #C1@}
 \newcommand{\lciScanMathcal}[1]{%
-    \lciIfEqual{#1}{@}{}{\lciMathcal#1\lciScanMathcal}}
+  \lciIfEqual{#1}{@}{}{\lciGlueFirstToSecond{\lciMathcal}{#1}\lciScanMathcal}}
 \newcommand{\lciMathcal}{}  % dummy, supporting other chars/macros as argument
 
-\newcommand{\lciMathcalA}{\lcRawHtml
+\newcommand{\lciMathcalA}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=14 HEIGHT=14 ALIGN=BOTTOM SRC="cc_mathcal_A.gif">}}
-\newcommand{\lciMathcalB}{\lcRawHtml
+\newcommand{\lciMathcalB}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=11 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathcal_B.gif">}}
-\newcommand{\lciMathcalC}{\lcRawHtml
+\newcommand{\lciMathcalC}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=8 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathcal_C.gif">}}
-\newcommand{\lciMathcalD}{\lcRawHtml
+\newcommand{\lciMathcalD}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=13 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathcal_D.gif">}}
-\newcommand{\lciMathcalE}{\lcRawHtml
+\newcommand{\lciMathcalE}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=9 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathcal_E.gif">}}
-\newcommand{\lciMathcalF}{\lcRawHtml
+\newcommand{\lciMathcalF}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=13 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathcal_F.gif">}}
-\newcommand{\lciMathcalG}{\lcRawHtml
+\newcommand{\lciMathcalG}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=9 HEIGHT=25 ALIGN=MIDDLE SRC="cc_mathcal_G.gif">}}
-\newcommand{\lciMathcalH}{\lcRawHtml
+\newcommand{\lciMathcalH}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=13 HEIGHT=13 ALIGN=BOTTOM SRC="cc_mathcal_H.gif">}}
-\newcommand{\lciMathcalI}{\lcRawHtml
+\newcommand{\lciMathcalI}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=12 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathcal_I.gif">}}
-\newcommand{\lciMathcalJ}{\lcRawHtml
+\newcommand{\lciMathcalJ}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=14 HEIGHT=25 ALIGN=MIDDLE SRC="cc_mathcal_J.gif">}}
-\newcommand{\lciMathcalK}{\lcRawHtml
+\newcommand{\lciMathcalK}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=11 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathcal_K.gif">}}
-\newcommand{\lciMathcalL}{\lcRawHtml
+\newcommand{\lciMathcalL}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=11 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathcal_L.gif">}}
-\newcommand{\lciMathcalM}{\lcRawHtml
+\newcommand{\lciMathcalM}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=19 HEIGHT=13 ALIGN=BOTTOM SRC="cc_mathcal_M.gif">}}
-\newcommand{\lciMathcalN}{\lcRawHtml
+\newcommand{\lciMathcalN}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=16 HEIGHT=15 ALIGN=BOTTOM SRC="cc_mathcal_N.gif">}}
-\newcommand{\lciMathcalO}{\lcRawHtml
+\newcommand{\lciMathcalO}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=13 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathcal_O.gif">}}
-\newcommand{\lciMathcalP}{\lcRawHtml
+\newcommand{\lciMathcalP}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=12 HEIGHT=13 ALIGN=BOTTOM SRC="cc_mathcal_P.gif">}}
-\newcommand{\lciMathcalQ}{\lcRawHtml
+\newcommand{\lciMathcalQ}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=12 HEIGHT=25 ALIGN=MIDDLE SRC="cc_mathcal_Q.gif">}}
-\newcommand{\lciMathcalR}{\lcRawHtml
+\newcommand{\lciMathcalR}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=14 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathcal_R.gif">}}
-\newcommand{\lciMathcalS}{\lcRawHtml
+\newcommand{\lciMathcalS}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=10 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathcal_S.gif">}}
-\newcommand{\lciMathcalT}{\lcRawHtml
+\newcommand{\lciMathcalT}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=15 HEIGHT=14 ALIGN=BOTTOM SRC="cc_mathcal_T.gif">}}
-\newcommand{\lciMathcalU}{\lcRawHtml
+\newcommand{\lciMathcalU}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=12 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathcal_U.gif">}}
-\newcommand{\lciMathcalV}{\lcRawHtml
+\newcommand{\lciMathcalV}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=10 HEIGHT=13 ALIGN=BOTTOM SRC="cc_mathcal_V.gif">}}
-\newcommand{\lciMathcalW}{\lcRawHtml
+\newcommand{\lciMathcalW}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=17 HEIGHT=13 ALIGN=BOTTOM SRC="cc_mathcal_W.gif">}}
-\newcommand{\lciMathcalX}{\lcRawHtml
+\newcommand{\lciMathcalX}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=13 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathcal_X.gif">}}
-\newcommand{\lciMathcalY}{\lcRawHtml
+\newcommand{\lciMathcalY}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=11 HEIGHT=25 ALIGN=MIDDLE SRC="cc_mathcal_Y.gif">}}
-\newcommand{\lciMathcalZ}{\lcRawHtml
+\newcommand{\lciMathcalZ}{\lcRawHtml%
     {<IMG BORDER=0 WIDTH=12 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathcal_Z.gif">}}
 
 % +--------------------------------------------------------------------------
-% |     *  Mathbb letters
+% |     * Mathbb letters
 % +--------------------------------------------------------------------------
 \newcommand{\mathbb}[1]{\lciScanMathbb #C1@}
 \newcommand{\lciScanMathbb}[1]{%
-    \lciIfEqual{#1}{@}{}{\lciMathbb#1\lciScanMathbb}}
+    \lciIfEqual{#1}{@}{}{\lciGlueFirstToSecond{\lciMathbb}{#1}\lciScanMathbb}}
 \newcommand{\lciMathbb}{}  % dummy, supporting other chars/macros as argument
 
-\newcommand{\lciMathbbA}{\lcRawHtml
+\newcommand{\lciMathbbA}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=13 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_A.gif"> }}
-\newcommand{\lciMathbbB}{\lcRawHtml
+\newcommand{\lciMathbbB}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_B.gif"> }}
-\newcommand{\lciMathbbC}{\lcRawHtml
+\newcommand{\lciMathbbC}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_C.gif"> }}
-\newcommand{\lciMathbbD}{\lcRawHtml
+\newcommand{\lciMathbbD}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=13 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_D.gif"> }}
-\newcommand{\lciMathbbE}{\lcRawHtml
+\newcommand{\lciMathbbE}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=12 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_E.gif"> }}
-\newcommand{\lciMathbbF}{\lcRawHtml
+\newcommand{\lciMathbbF}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_F.gif"> }}
-\newcommand{\lciMathbbG}{\lcRawHtml
+\newcommand{\lciMathbbG}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=13 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_G.gif"> }}
-\newcommand{\lciMathbbH}{\lcRawHtml
+\newcommand{\lciMathbbH}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=14 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_H.gif"> }}
-\newcommand{\lciMathbbI}{\lcRawHtml
+\newcommand{\lciMathbbI}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=7 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_I.gif"> }}
-\newcommand{\lciMathbbJ}{\lcRawHtml
+\newcommand{\lciMathbbJ}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=9 HEIGHT=21 ALIGN=MIDDLE SRC="cc_mathbb_J.gif"> }}
-\newcommand{\lciMathbbK}{\lcRawHtml
+\newcommand{\lciMathbbK}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=14 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_K.gif"> }}
-\newcommand{\lciMathbbL}{\lcRawHtml
+\newcommand{\lciMathbbL}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=12 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_L.gif"> }}
-\newcommand{\lciMathbbM}{\lcRawHtml
+\newcommand{\lciMathbbM}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=18 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_M.gif"> }}
-\newcommand{\lciMathbbN}{\lcRawHtml
+\newcommand{\lciMathbbN}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=12 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_N.gif"> }}
-\newcommand{\lciMathbbO}{\lcRawHtml
+\newcommand{\lciMathbbO}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=12 HEIGHT=20 ALIGN=MIDDLE SRC="cc_mathbb_O.gif"> }}
-\newcommand{\lciMathbbP}{\lcRawHtml
+\newcommand{\lciMathbbP}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_P.gif"> }}
-\newcommand{\lciMathbbQ}{\lcRawHtml
+\newcommand{\lciMathbbQ}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=12 HEIGHT=25 ALIGN=MIDDLE SRC="cc_mathbb_Q.gif"> }}
-\newcommand{\lciMathbbR}{\lcRawHtml
+\newcommand{\lciMathbbR}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=13 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_R.gif"> }}
-\newcommand{\lciMathbbS}{\lcRawHtml
+\newcommand{\lciMathbbS}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=8 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_S.gif"> }}
-\newcommand{\lciMathbbT}{\lcRawHtml
+\newcommand{\lciMathbbT}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_T.gif"> }}
-\newcommand{\lciMathbbU}{\lcRawHtml
+\newcommand{\lciMathbbU}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=13 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_U.gif"> }}
-\newcommand{\lciMathbbV}{\lcRawHtml
+\newcommand{\lciMathbbV}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=13 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_V.gif"> }}
-\newcommand{\lciMathbbW}{\lcRawHtml
+\newcommand{\lciMathbbW}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=18 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_W.gif"> }}
-\newcommand{\lciMathbbX}{\lcRawHtml
+\newcommand{\lciMathbbX}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=14 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_X.gif"> }}
-\newcommand{\lciMathbbY}{\lcRawHtml
+\newcommand{\lciMathbbY}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=13 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_Y.gif"> }}
-\newcommand{\lciMathbbZ}{\lcRawHtml
+\newcommand{\lciMathbbZ}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=10 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_Z.gif"> }}
 
 % +--------------------------------------------------------------------------
@@ -642,7 +527,7 @@ Empty argument to a cite command}}{%
   \lciIfEqual{#1}{<}{\lciNotLess}{%
   \lciIfEqual{#1}{>}{\lciNotGreater}{%
   \lciIfEqual{#1}{=}{\neq}{%
-    \lciNot#S1
+    \lciGlueTwoParam{\lciNot}{#S1}
   }}}%
 }
 \newcommand{\lciNotin}{\notin}
@@ -653,69 +538,69 @@ Empty argument to a cite command}}{%
 \newcommand{\pm}{\lcRawHtml{ &plusmn; }}
 \newcommand{\times}{\lcRawHtml{ &times; }}
 \newcommand{\div}{\lcRawHtml{ &divide; }}
-\newcommand{\mp}{\lcRawHtml
+\newcommand{\mp}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=23 ALIGN=MIDDLE SRC="cc_mp.gif"> }}
-\newcommand{\ast}{\lcRawHtml
+\newcommand{\ast}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=6 HEIGHT=8 ALIGN=BOTTOM SRC="cc_ast.gif"> }}
-\newcommand{\star}{\lcRawHtml
+\newcommand{\star}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=4 HEIGHT=2 ALIGN=BOTTOM SRC="cc_star.gif"> }}
-\newcommand{\circ}{\lcRawHtml
+\newcommand{\circ}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=6 HEIGHT=7 ALIGN=BOTTOM SRC="cc_circ.gif"> }}
-\newcommand{\bullet}{\lcRawHtml
+\newcommand{\bullet}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=6 HEIGHT=7 ALIGN=BOTTOM SRC="cc_bullet.gif"> }}
-\newcommand{\cap}{\lcRawHtml
+\newcommand{\cap}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=9 HEIGHT=11 ALIGN=BOTTOM SRC="cc_cap.gif"> }}
-\newcommand{\cup}{\lcRawHtml
+\newcommand{\cup}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=9 HEIGHT=11 ALIGN=BOTTOM SRC="cc_cup.gif"> }}
-\newcommand{\uplus}{\lcRawHtml
+\newcommand{\uplus}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=9 HEIGHT=11 ALIGN=BOTTOM SRC="cc_uplus.gif"> }}
-\newcommand{\sqcap}{\lcRawHtml
+\newcommand{\sqcap}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=9 HEIGHT=11 ALIGN=BOTTOM SRC="cc_sqcap.gif"> }}
-\newcommand{\sqcup}{\lcRawHtml
+\newcommand{\sqcup}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=9 HEIGHT=11 ALIGN=BOTTOM SRC="cc_sqcup.gif"> }}
-\newcommand{\vee}{\lcRawHtml
+\newcommand{\vee}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=9 HEIGHT=11 ALIGN=BOTTOM SRC="cc_vee.gif"> }}
-\newcommand{\wedge}{\lcRawHtml
+\newcommand{\wedge}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=9 HEIGHT=11 ALIGN=BOTTOM SRC="cc_wedge.gif"> }}
-\newcommand{\setminus}{\lcRawHtml
+\newcommand{\setminus}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=6 HEIGHT=29 ALIGN=MIDDLE SRC="cc_setminus.gif"> }}
-\newcommand{\wr}{\lcRawHtml
+\newcommand{\wr}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=2 HEIGHT=21 ALIGN=MIDDLE SRC="cc_wr.gif"> }}
-\newcommand{\diamond}{\lcRawHtml
+\newcommand{\diamond}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=7 HEIGHT=7 ALIGN=BOTTOM SRC="cc_diamond.gif"> }}
-\newcommand{\bigtriangleup}{\lcRawHtml
+\newcommand{\bigtriangleup}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=13 HEIGHT=21 ALIGN=MIDDLE SRC="cc_bigtriangleup.gif"> }}
-\newcommand{\bigtriangledown}{\lcRawHtml
+\newcommand{\bigtriangledown}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=13 HEIGHT=21 ALIGN=MIDDLE SRC="cc_bigtriangledown.gif"> }}
-\newcommand{\triangleleft}{\lcRawHtml
+\newcommand{\triangleleft}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=6 HEIGHT=7 ALIGN=BOTTOM SRC="cc_triangleleft.gif"> }}
-\newcommand{\triangleright}{\lcRawHtml
+\newcommand{\triangleright}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=6 HEIGHT=7 ALIGN=BOTTOM SRC="cc_triangleright.gif"> }}
-\newcommand{\lhd}{\lcRawHtml
+\newcommand{\lhd}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=21 ALIGN=MIDDLE SRC="cc_lhd.gif"> }}
-\newcommand{\rhd}{\lcRawHtml
+\newcommand{\rhd}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=21 ALIGN=MIDDLE SRC="cc_rhd.gif"> }}
-\newcommand{\unlhd}{\lcRawHtml
+\newcommand{\unlhd}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=25 ALIGN=MIDDLE SRC="cc_unlhd.gif"> }}
-\newcommand{\unrhd}{\lcRawHtml
+\newcommand{\unrhd}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=25 ALIGN=MIDDLE SRC="cc_unrhd.gif"> }}
-\newcommand{\oplus}{\lcRawHtml
+\newcommand{\oplus}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=23 ALIGN=MIDDLE SRC="cc_oplus.gif"> }}
-\newcommand{\ominus}{\lcRawHtml
+\newcommand{\ominus}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=23 ALIGN=MIDDLE SRC="cc_ominus.gif"> }}
-\newcommand{\otimes}{\lcRawHtml
+\newcommand{\otimes}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=23 ALIGN=MIDDLE SRC="cc_otimes.gif"> }}
-\newcommand{\oslash}{\lcRawHtml
+\newcommand{\oslash}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=23 ALIGN=MIDDLE SRC="cc_oslash.gif"> }}
-\newcommand{\odot}{\lcRawHtml
+\newcommand{\odot}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=23 ALIGN=MIDDLE SRC="cc_odot.gif"> }}
-\newcommand{\bigcirc}{\lcRawHtml
+\newcommand{\bigcirc}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=15 HEIGHT=27 ALIGN=MIDDLE SRC="cc_bigcirc.gif"> }}
-\newcommand{\dagger}{\lcRawHtml
+\newcommand{\dagger}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=5 HEIGHT=27 ALIGN=MIDDLE SRC="cc_dagger.gif"> }}
-\newcommand{\ddagger}{\lcRawHtml
+\newcommand{\ddagger}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=5 HEIGHT=27 ALIGN=MIDDLE SRC="cc_ddagger.gif"> }}
-\newcommand{\amalg}{\lcRawHtml
+\newcommand{\amalg}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=13 HEIGHT=12 ALIGN=BOTTOM SRC="cc_amalg.gif"> }}
 
 % +--------------------------------------------------------------------------
@@ -724,149 +609,149 @@ Empty argument to a cite command}}{%
 \newcommand{\le}{\leq}
 \newcommand{\ge}{\geq}
 
-\newcommand{\leq}{\lcRawHtml
+\newcommand{\leq}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=25 ALIGN=MIDDLE SRC="cc_leq.gif"> }}
-\newcommand{\prec}{\lcRawHtml
+\newcommand{\prec}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=21 ALIGN=MIDDLE SRC="cc_prec.gif"> }}
-\newcommand{\preceq}{\lcRawHtml
+\newcommand{\preceq}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=25 ALIGN=MIDDLE SRC="cc_preceq.gif"> }}
-\newcommand{\ll}{\lcRawHtml
+\newcommand{\ll}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=15 HEIGHT=25 ALIGN=MIDDLE SRC="cc_ll.gif"> }}
-\newcommand{\subset}{\lcRawHtml
+\newcommand{\subset}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=21 ALIGN=MIDDLE SRC="cc_subset.gif"> }}
-\newcommand{\subseteq}{\lcRawHtml
+\newcommand{\subseteq}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=25 ALIGN=MIDDLE SRC="cc_subseteq.gif"> }}
-\newcommand{\sqsubset}{\lcRawHtml
+\newcommand{\sqsubset}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=12 HEIGHT=21 ALIGN=MIDDLE SRC="cc_sqsubset.gif"> }}
-\newcommand{\sqsubseteq}{\lcRawHtml
+\newcommand{\sqsubseteq}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=12 HEIGHT=25 ALIGN=MIDDLE SRC="cc_sqsubseteq.gif"> }}
-\newcommand{\in}{\lcRawHtml
+\newcommand{\in}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=9 HEIGHT=21 ALIGN=MIDDLE SRC="cc_in.gif"> }}
-\newcommand{\vdash}{\lcRawHtml
+\newcommand{\vdash}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=8 HEIGHT=13 ALIGN=BOTTOM SRC="cc_vdash.gif"> }}
-\newcommand{\geq}{\lcRawHtml
+\newcommand{\geq}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=25 ALIGN=MIDDLE SRC="cc_geq.gif"> }}
-\newcommand{\succ}{\lcRawHtml
+\newcommand{\succ}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=21 ALIGN=MIDDLE SRC="cc_succ.gif"> }}
-\newcommand{\succeq}{\lcRawHtml
+\newcommand{\succeq}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=25 ALIGN=MIDDLE SRC="cc_succeq.gif"> }}
-\newcommand{\gg}{\lcRawHtml
+\newcommand{\gg}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=15 HEIGHT=25 ALIGN=MIDDLE SRC="cc_gg.gif"> }}
-\newcommand{\supset}{\lcRawHtml
+\newcommand{\supset}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=21 ALIGN=MIDDLE SRC="cc_supset.gif"> }}
-\newcommand{\supseteq}{\lcRawHtml
+\newcommand{\supseteq}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=25 ALIGN=MIDDLE SRC="cc_supseteq.gif"> }}
-\newcommand{\sqsupset}{\lcRawHtml
+\newcommand{\sqsupset}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=12 HEIGHT=21 ALIGN=MIDDLE SRC="cc_sqsupset.gif"> }}
-\newcommand{\sqsupseteq}{\lcRawHtml
+\newcommand{\sqsupseteq}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=12 HEIGHT=25 ALIGN=MIDDLE SRC="cc_sqsupseteq.gif"> }}
-\newcommand{\ni}{\lcRawHtml
+\newcommand{\ni}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=9 HEIGHT=21 ALIGN=MIDDLE SRC="cc_ni.gif"> }}
-\newcommand{\dashv}{\lcRawHtml
+\newcommand{\dashv}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=8 HEIGHT=13 ALIGN=BOTTOM SRC="cc_dashv.gif"> }}
-\newcommand{\equiv}{\lcRawHtml
+\newcommand{\equiv}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=9 ALIGN=BOTTOM SRC="cc_equiv.gif"> }}
-\newcommand{\sim}{\lcRawHtml
+\newcommand{\sim}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=5 ALIGN=BOTTOM SRC="cc_sim.gif"> }}
-\newcommand{\simeq}{\lcRawHtml
+\newcommand{\simeq}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=8 ALIGN=BOTTOM SRC="cc_simeq.gif"> }}
-\newcommand{\asymp}{\lcRawHtml
+\newcommand{\asymp}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=9 ALIGN=BOTTOM SRC="cc_asymp.gif"> }}
-\newcommand{\approx}{\lcRawHtml
+\newcommand{\approx}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=10 ALIGN=BOTTOM SRC="cc_approx.gif"> }}
-\newcommand{\cong}{\lcRawHtml
+\newcommand{\cong}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=21 ALIGN=MIDDLE SRC="cc_cong.gif"> }}
-\newcommand{\neq}{\lcRawHtml
+\newcommand{\neq}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=27 ALIGN=MIDDLE SRC="cc_neq.gif"> }}
-\newcommand{\doteq}{\lcRawHtml
+\newcommand{\doteq}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=9 ALIGN=BOTTOM SRC="cc_doteq.gif"> }}
-\newcommand{\notin}{\lcRawHtml
+\newcommand{\notin}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=9 HEIGHT=37 ALIGN=MIDDLE SRC="cc_notin.gif"> }}
-\newcommand{\models}{\lcRawHtml
+\newcommand{\models}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=12 HEIGHT=29 ALIGN=MIDDLE SRC="cc_models.gif"> }}
-\newcommand{\perp}{\lcRawHtml
+\newcommand{\perp}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=11 ALIGN=BOTTOM SRC="cc_perp.gif"> }}
-\newcommand{\mid}{\lcRawHtml
+\newcommand{\mid}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=2 HEIGHT=29 ALIGN=MIDDLE SRC="cc_mid.gif"> }}
-\newcommand{\parallel}{\lcRawHtml
+\newcommand{\parallel}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=6 HEIGHT=29 ALIGN=MIDDLE SRC="cc_parallel.gif"> }}
-\newcommand{\bowtie}{\lcRawHtml
+\newcommand{\bowtie}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=12 HEIGHT=7 ALIGN=BOTTOM SRC="cc_bowtie.gif"> }}
-\newcommand{\Join}{\lcRawHtml
+\newcommand{\Join}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=10 HEIGHT=11 ALIGN=BOTTOM SRC="cc_Join.gif"> }}
-\newcommand{\smile}{\lcRawHtml
+\newcommand{\smile}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=15 HEIGHT=4 ALIGN=BOTTOM SRC="cc_smile.gif"> }}
-\newcommand{\frown}{\lcRawHtml
+\newcommand{\frown}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=15 HEIGHT=4 ALIGN=BOTTOM SRC="cc_frown.gif"> }}
-\newcommand{\propto}{\lcRawHtml
+\newcommand{\propto}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=12 HEIGHT=8 ALIGN=BOTTOM SRC="cc_propto.gif"> }}
 
 % +--------------------------------------------------------------------------
 % |     * Arrow symbols following Table 3.6 page 43 in Lamport.
 % +--------------------------------------------------------------------------
-\newcommand{\leftarrow}{\lcRawHtml
+\newcommand{\leftarrow}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=15 HEIGHT=9 ALIGN=BOTTOM SRC="cc_leftarrow.gif"> }}
-\newcommand{\Leftarrow}{\lcRawHtml
+\newcommand{\Leftarrow}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=14 HEIGHT=11 ALIGN=BOTTOM SRC="cc_Leftarrow.gif"> }}
-\newcommand{\rightarrow}{\lcRawHtml
+\newcommand{\rightarrow}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=15 HEIGHT=9 ALIGN=BOTTOM SRC="cc_rightarrow.gif"> }}
-\newcommand{\Rightarrow}{\lcRawHtml
+\newcommand{\Rightarrow}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=14 HEIGHT=11 ALIGN=BOTTOM SRC="cc_Rightarrow.gif"> }}
-\newcommand{\leftrightarrow}{\lcRawHtml
+\newcommand{\leftrightarrow}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=15 HEIGHT=9 ALIGN=BOTTOM SRC="cc_leftrightarrow.gif"> }}
-\newcommand{\Leftrightarrow}{\lcRawHtml
+\newcommand{\Leftrightarrow}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=13 HEIGHT=11 ALIGN=BOTTOM SRC="cc_Leftrightarrow.gif"> }}
-\newcommand{\mapsto}{\lcRawHtml
+\newcommand{\mapsto}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=15 HEIGHT=9 ALIGN=BOTTOM SRC="cc_mapsto.gif"> }}
-\newcommand{\hookleftarrow}{\lcRawHtml
+\newcommand{\hookleftarrow}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=17 HEIGHT=9 ALIGN=BOTTOM SRC="cc_hookleftarrow.gif"> }}
-\newcommand{\leftharpoonup}{\lcRawHtml
+\newcommand{\leftharpoonup}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=15 HEIGHT=5 ALIGN=BOTTOM SRC="cc_leftharpoonup.gif"> }}
-\newcommand{\leftharpoondown}{\lcRawHtml
+\newcommand{\leftharpoondown}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=15 HEIGHT=5 ALIGN=BOTTOM SRC="cc_leftharpoondown.gif"> }}
-\newcommand{\rightleftharpoons}{\lcRawHtml
+\newcommand{\rightleftharpoons}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=15 HEIGHT=24 ALIGN=MIDDLE SRC="cc_rightleftharpoons.gif"> }}
-\newcommand{\longleftarrow}{\lcRawHtml
+\newcommand{\longleftarrow}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=26 HEIGHT=9 ALIGN=BOTTOM SRC="cc_longleftarrow.gif"> }}
-\newcommand{\Longleftarrow}{\lcRawHtml
+\newcommand{\Longleftarrow}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=25 HEIGHT=11 ALIGN=BOTTOM SRC="cc_Longleftarrow.gif"> }}
-\newcommand{\longrightarrow}{\lcRawHtml
+\newcommand{\longrightarrow}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=26 HEIGHT=9 ALIGN=BOTTOM SRC="cc_longrightarrow.gif"> }}
-\newcommand{\Longrightarrow}{\lcRawHtml
+\newcommand{\Longrightarrow}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=25 HEIGHT=11 ALIGN=BOTTOM SRC="cc_Longrightarrow.gif"> }}
-\newcommand{\longleftrightarrow}{\lcRawHtml
+\newcommand{\longleftrightarrow}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=30 HEIGHT=9 ALIGN=BOTTOM SRC="cc_longleftrightarrow.gif"> }}
-\newcommand{\Longleftrightarrow}{\lcRawHtml
+\newcommand{\Longleftrightarrow}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=28 HEIGHT=11 ALIGN=BOTTOM SRC="cc_Longleftrightarrow.gif"> }}
-\newcommand{\longmapsto}{\lcRawHtml
+\newcommand{\longmapsto}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=26 HEIGHT=9 ALIGN=BOTTOM SRC="cc_longmapsto.gif"> }}
-\newcommand{\hookrightarrow}{\lcRawHtml
+\newcommand{\hookrightarrow}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=17 HEIGHT=9 ALIGN=BOTTOM SRC="cc_hookrightarrow.gif"> }}
-\newcommand{\rightharpoonup}{\lcRawHtml
+\newcommand{\rightharpoonup}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=15 HEIGHT=5 ALIGN=BOTTOM SRC="cc_rightharpoonup.gif"> }}
-\newcommand{\rightharpoondown}{\lcRawHtml
+\newcommand{\rightharpoondown}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=15 HEIGHT=5 ALIGN=BOTTOM SRC="cc_rightharpoondown.gif"> }}
-\newcommand{\leadsto}{\lcRawHtml
+\newcommand{\leadsto}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=16 HEIGHT=7 ALIGN=BOTTOM SRC="cc_leadsto.gif"> }}
-\newcommand{\uparrow}{\lcRawHtml
+\newcommand{\uparrow}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=7 HEIGHT=27 ALIGN=MIDDLE SRC="cc_uparrow.gif"> }}
-\newcommand{\Uparrow}{\lcRawHtml
+\newcommand{\Uparrow}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=10 HEIGHT=25 ALIGN=MIDDLE SRC="cc_Uparrow.gif"> }}
-\newcommand{\downarrow}{\lcRawHtml
+\newcommand{\downarrow}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=7 HEIGHT=27 ALIGN=MIDDLE SRC="cc_downarrow.gif"> }}
-\newcommand{\Downarrow}{\lcRawHtml
+\newcommand{\Downarrow}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=10 HEIGHT=25 ALIGN=MIDDLE SRC="cc_Downarrow.gif"> }}
-\newcommand{\updownarrow}{\lcRawHtml
+\newcommand{\updownarrow}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=7 HEIGHT=29 ALIGN=MIDDLE SRC="cc_updownarrow.gif"> }}
-\newcommand{\Updownarrow}{\lcRawHtml
+\newcommand{\Updownarrow}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=10 HEIGHT=26 ALIGN=MIDDLE SRC="cc_Updownarrow.gif"> }}
-\newcommand{\nearrow}{\lcRawHtml
+\newcommand{\nearrow}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=16 HEIGHT=29 ALIGN=MIDDLE SRC="cc_nearrow.gif"> }}
-\newcommand{\searrow}{\lcRawHtml
+\newcommand{\searrow}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=16 HEIGHT=29 ALIGN=MIDDLE SRC="cc_searrow.gif"> }}
-\newcommand{\swarrow}{\lcRawHtml
+\newcommand{\swarrow}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=16 HEIGHT=29 ALIGN=MIDDLE SRC="cc_swarrow.gif"> }}
-\newcommand{\nwarrow}{\lcRawHtml
+\newcommand{\nwarrow}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=16 HEIGHT=29 ALIGN=MIDDLE SRC="cc_nwarrow.gif"> }}
 
 % +--------------------------------------------------------------------------
@@ -877,112 +762,111 @@ Empty argument to a cite command}}{%
 \newcommand{\neg}{\lcRawHtml{ &not; }}
 \newcommand{\backslash}{\verb+\+}
 
-\newcommand{\aleph}{\lcRawHtml
+\newcommand{\aleph}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=8 HEIGHT=13 ALIGN=BOTTOM SRC="cc_aleph.gif"> }}
-\newcommand{\hbar}{\lcRawHtml
+\newcommand{\hbar}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=8 HEIGHT=13 ALIGN=BOTTOM SRC="cc_hbar.gif"> }}
-\newcommand{\imath}{\lcRawHtml
+\newcommand{\imath}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=4 HEIGHT=8 ALIGN=BOTTOM SRC="cc_imath.gif"> }}
-\newcommand{\jmath}{\lcRawHtml
+\newcommand{\jmath}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=6 HEIGHT=17 ALIGN=MIDDLE SRC="cc_jmath.gif"> }}
-\newcommand{\ell}{\lcRawHtml
+\newcommand{\ell}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=7 HEIGHT=13 ALIGN=BOTTOM SRC="cc_ell.gif"> }}
-\newcommand{\wp}{\lcRawHtml
+\newcommand{\wp}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=9 HEIGHT=17 ALIGN=MIDDLE SRC="cc_wp.gif"> }}
-\newcommand{\Re}{\lcRawHtml
+\newcommand{\Re}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=13 ALIGN=BOTTOM SRC="cc_Re.gif"> }}
-\newcommand{\Im}{\lcRawHtml
+\newcommand{\Im}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=13 ALIGN=BOTTOM SRC="cc_Im.gif"> }}
-\newcommand{\mho}{\lcRawHtml
+\newcommand{\mho}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=10 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mho.gif"> }}
-\newcommand{\emptyset}{\lcRawHtml
+\newcommand{\emptyset}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=6 HEIGHT=28 ALIGN=MIDDLE SRC="cc_emptyset.gif"> }}
-\newcommand{\nabla}{\lcRawHtml
+\newcommand{\nabla}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=12 HEIGHT=12 ALIGN=BOTTOM SRC="cc_nabla.gif"> }}
-\newcommand{\surd}{\lcRawHtml
+\newcommand{\surd}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=13 HEIGHT=27 ALIGN=MIDDLE SRC="cc_surd.gif"> }}
-\newcommand{\top}{\lcRawHtml
+\newcommand{\top}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=11 ALIGN=BOTTOM SRC="cc_top.gif"> }}
-\newcommand{\bot}{\lcRawHtml
+\newcommand{\bot}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=11 ALIGN=BOTTOM SRC="cc_bot.gif"> }}
-\newcommand{\angle}{\lcRawHtml
+\newcommand{\angle}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=7 HEIGHT=11 ALIGN=BOTTOM SRC="cc_angle.gif"> }}
-\newcommand{\forall}{\lcRawHtml
+\newcommand{\forall}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=9 HEIGHT=13 ALIGN=BOTTOM SRC="cc_forall.gif"> }}
-\newcommand{\exists}{\lcRawHtml
+\newcommand{\exists}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=7 HEIGHT=13 ALIGN=BOTTOM SRC="cc_exists.gif"> }}
-\newcommand{\flat}{\lcRawHtml
+\newcommand{\flat}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=4 HEIGHT=14 ALIGN=BOTTOM SRC="cc_flat.gif"> }}
-\newcommand{\natural}{\lcRawHtml
+\newcommand{\natural}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=4 HEIGHT=27 ALIGN=MIDDLE SRC="cc_natural.gif"> }}
-\newcommand{\sharp}{\lcRawHtml
+\newcommand{\sharp}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=4 HEIGHT=27 ALIGN=MIDDLE SRC="cc_sharp.gif"> }}
-\newcommand{\partial}{\lcRawHtml
+\newcommand{\partial}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=8 HEIGHT=13 ALIGN=BOTTOM SRC="cc_partial.gif"> }}
-\newcommand{\infty}{\lcRawHtml
+\newcommand{\infty}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=15 HEIGHT=8 ALIGN=BOTTOM SRC="cc_infty.gif"> }}
-\newcommand{\Box}{\lcRawHtml
+\newcommand{\Box}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=10 HEIGHT=10 ALIGN=BOTTOM SRC="cc_Box.gif"> }}
-\newcommand{\Diamond}{\lcRawHtml
+\newcommand{\Diamond}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=13 HEIGHT=12 ALIGN=BOTTOM SRC="cc_Diamond.gif"> }}
-\newcommand{\triangle}{\lcRawHtml
+\newcommand{\triangle}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=13 HEIGHT=21 ALIGN=MIDDLE SRC="cc_triangle.gif"> }}
-\newcommand{\clubsuit}{\lcRawHtml
+\newcommand{\clubsuit}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=13 HEIGHT=26 ALIGN=MIDDLE SRC="cc_clubsuit.gif"> }}
-\newcommand{\diamondsuit}{\lcRawHtml
+\newcommand{\diamondsuit}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=26 ALIGN=MIDDLE SRC="cc_diamondsuit.gif"> }}
-\newcommand{\heartsuit}{\lcRawHtml
+\newcommand{\heartsuit}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=22 ALIGN=MIDDLE SRC="cc_heartsuit.gif"> }}
-\newcommand{\spadesuit}{\lcRawHtml
+\newcommand{\spadesuit}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=11 HEIGHT=26 ALIGN=MIDDLE SRC="cc_spadesuit.gif"> }}
 
 
 % +--------------------------------------------------------------------------
 % |     * Variable sized symbols following Table 3.8 page 44 in Lamport.
 % +--------------------------------------------------------------------------
-\newcommand{\sum}{\lciIf{\lciMathModeDisplay}{\lcRawHtml
-  { <IMG BORDER=0 WIDTH=19 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_sum.gif"> }}
+\newcommand{\sum}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
+  { <IMG BORDER=0 WIDTH=19 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_sum.gif"> }}%
   {\lcRawHtml{ <IMG BORDER=0 WIDTH=13 HEIGHT=24 ALIGN=MIDDLE SRC="cc_sum.gif"> }}}
-\newcommand{\prod}{\lciIf{\lciMathModeDisplay}{\lcRawHtml
-  { <IMG BORDER=0 WIDTH=16 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_prod.gif"> }}
+\newcommand{\prod}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
+  { <IMG BORDER=0 WIDTH=16 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_prod.gif"> }}%
   {\lcRawHtml{ <IMG BORDER=0 WIDTH=11 HEIGHT=24 ALIGN=MIDDLE SRC="cc_prod.gif"> }}}
-\newcommand{\coprod}{\lciIf{\lciMathModeDisplay}{\lcRawHtml
-  { <IMG BORDER=0 WIDTH=16 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_coprod.gif"> }}
+\newcommand{\coprod}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
+  { <IMG BORDER=0 WIDTH=16 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_coprod.gif"> }}%
   {\lcRawHtml{ <IMG BORDER=0 WIDTH=11 HEIGHT=24 ALIGN=MIDDLE SRC="cc_coprod.gif"> }}}
-\newcommand{\int}{\lciIf{\lciMathModeDisplay}{\lcRawHtml
-  { <IMG BORDER=0 WIDTH=12 HEIGHT=44 ALIGN=MIDDLE SRC="cc_big_int.gif"> }}
+\newcommand{\int}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
+  { <IMG BORDER=0 WIDTH=12 HEIGHT=44 ALIGN=MIDDLE SRC="cc_big_int.gif"> }}%
   {\lcRawHtml{ <IMG BORDER=0 WIDTH=7 HEIGHT=27 ALIGN=MIDDLE SRC="cc_int.gif"> }}}
-\newcommand{\oint}{\lciIf{\lciMathModeDisplay}{\lcRawHtml
-  { <IMG BORDER=0 WIDTH=12 HEIGHT=44 ALIGN=MIDDLE SRC="cc_big_oint.gif"> }}
+\newcommand{\oint}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
+  { <IMG BORDER=0 WIDTH=12 HEIGHT=44 ALIGN=MIDDLE SRC="cc_big_oint.gif"> }}%
   {\lcRawHtml{ <IMG BORDER=0 WIDTH=7 HEIGHT=27 ALIGN=MIDDLE SRC="cc_oint.gif"> }}}
-\newcommand{\bigcap}{\lciIf{\lciMathModeDisplay}{\lcRawHtml
-  { <IMG BORDER=0 WIDTH=14 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_bigcap.gif"> }}
+\newcommand{\bigcap}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
+  { <IMG BORDER=0 WIDTH=14 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_bigcap.gif"> }}%
   {\lcRawHtml{ <IMG BORDER=0 WIDTH=10 HEIGHT=24 ALIGN=MIDDLE SRC="cc_bigcap.gif"> }}}
-\newcommand{\bigcup}{\lciIf{\lciMathModeDisplay}{\lcRawHtml
-  { <IMG BORDER=0 WIDTH=14 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_bigcup.gif"> }}
+\newcommand{\bigcup}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
+  { <IMG BORDER=0 WIDTH=14 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_bigcup.gif"> }}%
   {\lcRawHtml{ <IMG BORDER=0 WIDTH=10 HEIGHT=24 ALIGN=MIDDLE SRC="cc_bigcup.gif"> }}}
-\newcommand{\bigsqcup}{\lciIf{\lciMathModeDisplay}{\lcRawHtml
-  { <IMG BORDER=0 WIDTH=14 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_bigsqcup.gif"> }}
+\newcommand{\bigsqcup}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
+  { <IMG BORDER=0 WIDTH=14 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_bigsqcup.gif"> }}%
   {\lcRawHtml{ <IMG BORDER=0 WIDTH=10 HEIGHT=24 ALIGN=MIDDLE SRC="cc_bigsqcup.gif"> }}}
-\newcommand{\bigvee}{\lciIf{\lciMathModeDisplay}{\lcRawHtml
-  { <IMG BORDER=0 WIDTH=14 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_bigvee.gif"> }}
+\newcommand{\bigvee}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
+  { <IMG BORDER=0 WIDTH=14 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_bigvee.gif"> }}%
   {\lcRawHtml{ <IMG BORDER=0 WIDTH=10 HEIGHT=24 ALIGN=MIDDLE SRC="cc_bigvee.gif"> }}}
-\newcommand{\bigwedge}{\lciIf{\lciMathModeDisplay}{\lcRawHtml
-  { <IMG BORDER=0 WIDTH=14 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_bigwedge.gif"> }}
+\newcommand{\bigwedge}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
+  { <IMG BORDER=0 WIDTH=14 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_bigwedge.gif"> }}%
   {\lcRawHtml{ <IMG BORDER=0 WIDTH=10 HEIGHT=24 ALIGN=MIDDLE SRC="cc_bigwedge.gif"> }}}
-\newcommand{\bigodot}{\lciIf{\lciMathModeDisplay}{\lcRawHtml
-  { <IMG BORDER=0 WIDTH=20 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_bigodot.gif"> }}
+\newcommand{\bigodot}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
+  { <IMG BORDER=0 WIDTH=20 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_bigodot.gif"> }}%
   {\lcRawHtml{ <IMG BORDER=0 WIDTH=14 HEIGHT=24 ALIGN=MIDDLE SRC="cc_bigodot.gif"> }}}
-\newcommand{\bigotimes}{\lciIf{\lciMathModeDisplay}{\lcRawHtml
-  { <IMG BORDER=0 WIDTH=20 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_bigotimes.gif"> }}
+\newcommand{\bigotimes}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
+  { <IMG BORDER=0 WIDTH=20 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_bigotimes.gif"> }}%
   {\lcRawHtml{ <IMG BORDER=0 WIDTH=14 HEIGHT=24 ALIGN=MIDDLE SRC="cc_bigotimes.gif"> }}}
-\newcommand{\bigoplus}{\lciIf{\lciMathModeDisplay}{\lcRawHtml
-  { <IMG BORDER=0 WIDTH=20 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_bigoplus.gif"> }}
+\newcommand{\bigoplus}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
+  { <IMG BORDER=0 WIDTH=20 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_bigoplus.gif"> }}%
   {\lcRawHtml{ <IMG BORDER=0 WIDTH=14 HEIGHT=24 ALIGN=MIDDLE SRC="cc_bigoplus.gif"> }}}
-\newcommand{\biguplus}{\lciIf{\lciMathModeDisplay}{\lcRawHtml
-  { <IMG BORDER=0 WIDTH=14 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_biguplus.gif"> }}
+\newcommand{\biguplus}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
+  { <IMG BORDER=0 WIDTH=14 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_biguplus.gif"> }}%
   {\lcRawHtml{ <IMG BORDER=0 WIDTH=10 HEIGHT=24 ALIGN=MIDDLE SRC="cc_biguplus.gif"> }}}
-
 
 
 % +--------------------------------------------------------------------------
@@ -1028,17 +912,17 @@ Empty argument to a cite command}}{%
 % +--------------------------------------------------------------------------
 % |     * Delimiters following Table 3.10 page 47 in Lamport.
 % +--------------------------------------------------------------------------
-\newcommand{\lfloor}{\lcRawHtml
+\newcommand{\lfloor}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=4 HEIGHT=29 ALIGN=MIDDLE SRC="cc_lfloor.gif"> }}
-\newcommand{\lceil}{\lcRawHtml
+\newcommand{\lceil}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=4 HEIGHT=29 ALIGN=MIDDLE SRC="cc_lceil.gif"> }}
-\newcommand{\langle}{\lcRawHtml
+\newcommand{\langle}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=4 HEIGHT=29 ALIGN=MIDDLE SRC="cc_langle.gif"> }}
-\newcommand{\rfloor}{\lcRawHtml
+\newcommand{\rfloor}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=4 HEIGHT=29 ALIGN=MIDDLE SRC="cc_rfloor.gif"> }}
-\newcommand{\rceil}{\lcRawHtml
+\newcommand{\rceil}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=4 HEIGHT=29 ALIGN=MIDDLE SRC="cc_rceil.gif"> }}
-\newcommand{\rangle}{\lcRawHtml
+\newcommand{\rangle}{\lcRawHtml%
     { <IMG BORDER=0 WIDTH=4 HEIGHT=29 ALIGN=MIDDLE SRC="cc_rangle.gif"> }}
 
 % +--------------------------------------------------------------------------
@@ -1051,74 +935,75 @@ Empty argument to a cite command}}{%
 \newcommand{\tilde}{\~}
 \newcommand{\ddot}{\"}
 
-% +--------------------------------------------------------------------------
-% |     * Ignored macros without parameters:
-% +--------------------------------------------------------------------------
-\newcommand{\left}{}
-\newcommand{\right}{}
-\newcommand{\hfill}{}
-\newcommand{\vfill}{}
-\newcommand{\nopagebreak}{}
-\newcommand{\nolinebreak}{}
-\newcommand{\linebreak}{}
-\newcommand{\samepage}{}
-\newcommand{\smallskip}{}
-\newcommand{\protect}{}
-\newcommand{\sloppy}{}
-\newcommand{\maketitle}{}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   C.4   Sectioning and Table of Contents
+% |
+% ###########################################################################
+
+\newcommand{\chapter}[1]{\lciPrintFootnotes\lciResetFootnotes%
+    \gdef{\lciIfHtmlLinks}{\lcTrue}%
+    \gdef{\lciIfHtmlIndex}{\lcTrue}%
+    \lciChapter{#1}}
+
+
+\gdef\lciSectionAnchorCounter{0}
+
+\newcommand{\section}[1]{\section[#1]{#1}}
+\newcommand{\section@om}{%
+    \lciGlobalAddTo{\lciSectionAnchorCounter}{1}%
+    \lcRawHtml{<A NAME="Section_}\lciSectionAnchorCounter\lcRawHtml{"></A>
+<H2>}#C2\lcRawHtml{</H2>
+}%
+    \edef\lciOut{\lciOutputFilename}%
+    \lciPushOutput{toc}%
+    \lcRawHtml{        <UL><LI><A HREF="}\lcRawHtmlExpanded{\lciOut}%
+    \lcRawHtml{##Section_}%
+    \lciSectionAnchorCounter\lcRawHtml{">}#C1\lcRawHtml{</A></UL>
+}%
+    \lciPopOutput}
+\newcommand{\section*}[1]{\lcRawHtml{<H2>}#C1\lcRawHtml{</H2>
+}}
+
+
+\newcommand{\subsection}[1]{\lcRawHtml{<H3>}#1\lcRawHtml{</H3>}
+}
+\newcommand{\subsubsection}[1]{\lcRawHtml{<H4>}#1\lcRawHtml{</H4>}
+}
+\newcommand{\paragraph}[1]{{\bf #1}~~\lciSkipWhiteSpace}
+\newcommand{\subparagraph}[1]{{\bf #1}~~\lciSkipWhiteSpace}
+
+\newcommand{\subsection*}[1]{\lcRawHtml{<H3>}#1\lcRawHtml{</H3>}
+}
+\newcommand{\subsubsection*}[1]{\lcRawHtml{<H4>}#1\lcRawHtml{</H4>}
+}
+\newcommand{\paragraph*}[1]{{\bf #1}~~\lciSkipWhiteSpace}
+\newcommand{\subparagraph*}[1]{{\bf #1}~~\lciSkipWhiteSpace}
+
+\newcommand{\subsection@om}[1]{\lcRawHtml{<H3>}#2\lcRawHtml{</H3>}
+}
+\newcommand{\subsubsection@om}[1]{\lcRawHtml{<H4>}#2\lcRawHtml{</H4>}
+}
+\newcommand{\paragraph@om}[1]{{\bf #2}~~\lciSkipWhiteSpace}
+\newcommand{\subparagraph@om}[1]{{\bf #2}~~\lciSkipWhiteSpace}
+
+\newcommand{\appendix}{}
+
 \newcommand{\tableofcontents}{}
-\newcommand{\noindent}{}
+\newcommand{\listoffigures}{}
+\newcommand{\listoftables}{}
 
-\newcommand{\tiny}{}    %% Font sizes are to be changed
-\newcommand{\scriptsize}{}
-\newcommand{\footnotesize}{}
-\newcommand{\small}{}
-\newcommand{\normalsize}{}
-\newcommand{\large}{}
-\newcommand{\Large}{}
-\newcommand{\LARGE}{}
-\newcommand{\huge}{}
-\newcommand{\Huge}{}
+\gdef\thesecnumdepth{2}  %% yet not supported
+\gdef\thetocdepth{2}     %% yet not supported
 
-% +--------------------------------------------------------------------------
-% |     * Ignored macros skipping some tokens:
-% +--------------------------------------------------------------------------
-\newcommand{\textwidth}{\lciSkipNonWhiteSpace}
-\newcommand{\textheight}{\lciSkipNonWhiteSpace}
-\newcommand{\topmargin}{\lciSkipNonWhiteSpace}
-\newcommand{\evensidemargin}{\lciSkipNonWhiteSpace}
-\newcommand{\oddsidemargin}{\lciSkipNonWhiteSpace}
-\newcommand{\headsep}{\lciSkipNonWhiteSpace}
-\newcommand{\parindent}{\lciSkipNonWhiteSpace}
-\newcommand{\parskip}{\lciSkipNonWhiteSpace}
-\newcommand{\beforecprogskip}{\lciSkipNonWhiteSpace}
-\newcommand{\aftercprogskip}{\lciSkipNonWhiteSpace}
-
-% +--------------------------------------------------------------------------
-% |     * Ignored macros skipping some parameters:
-% +--------------------------------------------------------------------------
-\newcommand{\savebox}[2]{}
-\newcommand{\setlength}[2]{}
-
-\newcommand{\newsavebox}[1]{}
-\newcommand{\usebox}[1]{}
-\newcommand{\hspace}[1]{}
-\newcommand{\hspace*}[1]{}
-\newcommand{\vspace}[1]{}
-\newcommand{\vskip}{}
-\newcommand{\hskip}{}
-\newcommand{\vspace*}[1]{}
-\newcommand{\title}[1]{}
-\newcommand{\author}[1]{}
-\newcommand{\date}[1]{}
-
-\newcommand{\hline}{\lcRawHtml{<HR>}}
-
-\newcommand{\parbox}[2]{#2}
-\newcommand{\parbox@omm}{#2}
-
-\newenvironment{minipage}[1]{}{}
-\newcommand{\begin@minipage@om}{}
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   C.5   Classes, Packages, and Page Styles
+% |
+% ###########################################################################
 
 \newcommand{\documentstyle}[1]{}
 \newcommand{\documentstyle@om}[1]{}
@@ -1127,12 +1012,718 @@ Empty argument to a cite command}}{%
 \newcommand{\usepackage}[1]{}
 \newcommand{\usepackage@om}[1]{}
 \newcommand{\pagestyle}[1]{}
+\newcommand{\thispagestyle}[1]{}
+\newcommand{\markright}[1]{}
+\newcommand{\markboth}[2]{}
 \newcommand{\pagenumbering}[1]{}
 
-\newcommand{\vbox}[1]{#1}
-\newcommand{\hbox}[1]{#1}
-\newcommand{\fbox}[1]{#1}
+\newcommand{\twocolumn}{}
+\lciOptionalParameterAtEnd{\twocolumn}{1}
+\newcommand{\twocolumn@o}{#1}
+\newcommand{\onecolumn}{}
 
+\newcommand{\maketitle}{}
+\newcommand{\title}[1]{}
+\newcommand{\author}[1]{}
+\newcommand{\date}[1]{}
+\newcommand{\thanks}[1]{}
+
+\newenvironment{abstract}{%
+    \lcRawHtml{<CENTER><B>Abstract</B></CENTER><P><BLOCKQUOTE><SUB>}}{
+    \lcRawHtml{</SUB></BLOCKQUOTE>}}
+
+\newenvironment{titlepage}{}{}
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   C.6   Displayed Paragraphs
+% |
+% ###########################################################################
+
+\newenvironment{center}{\lcRawHtml{<CENTER>}}{\lcRawHtml{</CENTER>}}
+\newenvironment{flushleft}{}{}
+\newenvironment{flushright}{\lcRawHtml{<P ALIGN=RIGHT>}}{}
+
+
+\newenvironment{quote}{\lcRawHtml{<BLOCKQUOTE>}}{\lcRawHtml{</BLOCKQUOTE>}}
+\newenvironment{quotation}{\lcRawHtml{<BLOCKQUOTE>}}{\lcRawHtml{</BLOCKQUOTE>}}
+\newenvironment{verse}{\lcRawHtml{<BLOCKQUOTE>}}{\lcRawHtml{</BLOCKQUOTE>}}
+
+\newenvironment{itemize}{\lcRawHtml{<UL>}}{\lcRawHtml{</UL>}}
+\newenvironment{enumerate}{\lcRawHtml{<OL>}}{\lcRawHtml{</OL>}}
+\newenvironment{description}{\lcRawHtml{<DL>}}{\lcRawHtml{</DL>}}
+\newcommand{\item}{\lcRawHtml{<LI>}}
+\lciOptionalParameterAtEnd{\item}{1}
+\newcommand{\item@o}{\lcRawHtml{<DT><B>}#1\lcRawHtml{</B><DD>}}
+
+\newcommand{\lciLocalVerbatim}[1]{%
+    \lcRawHtml{<PRE>}\lciAsciiOutputN{#L1}#1\lcRawHtml{</PRE>}}
+\newenvironment{verbatim}{%
+    \lciParseUntilEndToken{\lciLocalVerbatim}{verbatim}}{}
+\newenvironment{verbatim*}{%
+    \lciParseUntilEndToken{\lciLocalVerbatim}{verbatim*}}{}
+
+\newcommand{\lciLocalVerb}[1]{{\tt\lciAsciiOutputN{#L1}#1}}
+\newcommand{\verb}{\lciParseUntilDelimiter{\lciLocalVerb}}
+\newcommand{\verb*}{\lciParseUntilDelimiter{\lciLocalVerb}}
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   C.7   Mathematical Formulas
+% |
+% ###########################################################################
+
+\newcommand{\lciMathMode}{\lcFalse}        % for all math environments
+\newcommand{\lciMathModeDisplay}{\lcFalse} % in addition for display math env.
+
+\newcommand{\(}{\newcommand{\lciMathMode}{\lcTrue}\lcRawHtml{<MATH><I>}}
+\newcommand{\)}{\newcommand{\lciMathMode}{\lcFalse}\lcRawHtml{</I></MATH>}}
+\newenvironment{math}{\(}{\)}
+\newcommand{\lciToggleMathMode}{\lciIf{\lciMathMode}{\)}{\(}}
+
+\newcommand{\[}{\lcRawHtml{<P ALIGN=CENTER>
+}\(\newcommand{\lciMathModeDisplay}{\lcTrue}}
+\newcommand{\]}{\)\newcommand{\lciMathModeDisplay}{\lcFalse}\lcRawHtml{<P>}}
+\newenvironment{displaymath}{\[}{\]}
+\newenvironment{equation}{\[}{\]}
+
+\newcommand{\ensuremath}[1]{\lciIf{\lciMathMode}{#1}{$#1$}}
+
+%% --> see C.10 for array and eqnarray.
+
+\newcommand{\sqrt}[1]{sqrt(#1)}
+\newcommand{\sqrt@om}{\lcRawHtml{root<SUB>}#1\lcRawHtml{</SUB>}(#2)}
+\newcommand{\frac}[2]{(#1)/(#2)}
+%\newcommand{\frac}[2]{\lcRawHtml{<TABLE><TR><TD ALIGN=CENTER>}#1\lcRawHtml
+%    {</TD></TR><TR><TD ALIGN=CENTER><hr></TD></TR><TR><TD ALIGN=CENTER>}%
+%    #2\lcRawHtml{</TD></TR></TABLE>}}
+%% correct in HTML 3.2 ?: 
+% \newcommand{\frac}[2]{\lcRawHtml{<BOX>}#1\lcRawHtml{<OVER>}#2\lcRawHtml{</BOX>}}
+\newcommand{\over}{/}  %% TeX style fraction
+
+\newcommand{\dots}{...}
+\newcommand{\ldots}{...}
+\newcommand{\cdot}{\lcRawHtml{ &middot; }}
+\newcommand{\cdots}{\lcRawHtml{ &middot;&middot;&middot; }}
+\newcommand{\vdots}{\lcRawHtml%
+    {<IMG BORDER=0 WIDTH=2 HEIGHT=14 ALIGN=BOTTOM SRC="cc_vdots.gif"> }}
+\newcommand{\ddots}{\lcRawHtml%
+    {<IMG BORDER=0 WIDTH=16 HEIGHT=10 ALIGN=BOTTOM SRC="cc_ddots.gif"> }}
+
+\newcommand{\left}{}
+\newcommand{\right}{}
+
+\newcommand{\mathrm}{\textrm}
+\newcommand{\mathit}{\textit}
+\newcommand{\mathbf}{\textbf}
+\newcommand{\mathsf}{\textsf}
+\newcommand{\mathtt}{\texttt}
+
+\newcommand{\boldmath}{\bfseries}
+\newcommand{\unboldmath}{\mdseries}
+
+\newcommand{\displaystyle}{}
+\newcommand{\textstyle}{}
+\newcommand{\scriptstyle}{}
+\newcommand{\scriptscriptstyle}{}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   C.8   Definitions, Numbering, and Programming
+% |
+% ###########################################################################
+% --> see latex_converter.sty
+
+\newcommand{\newtheorem}[2]{%
+    \gdef{\begin@#C1}{{\bf #2}~~\lcRawHtml{<EM>}}%
+    \lciOptionalParameterAtEnd{\begin@#C1}{1}%
+    \gdef{\begin@#C1@o}{{\bf #2 (##1)}~~\lcRawHtml{<EM>}}%
+    \gdef{\end#C1}{\lcRawHtml{</EM>}}%
+}
+\newcommand{\newcounter}[1]{%
+    \gdef{\the#C1}{0}%
+    \gdef{\lciDependantCounter#C1}{}}
+\lciOptionalParameterAtEnd{\newcounter}{1}
+\newcommand{\newcounter@mo}{
+    \gdef{\the#C1}{0}%
+    \gdef{\lciDependantCounter#C1}{}%
+    \lciAddToDependantList{\lciDependantCounter#C2}{\gdef{\the#C1}{0}}}
+%% Args: #1 = dependant list, #2 command to be added to the list
+\newcommand{\lciAddToDependantList}[2]{%
+    \gdef{#1}{#X1#2}}
+
+\newcommand{\setcounter}[2]{\gdef{\the#C1}{#XC2}}
+\newcommand{\addtocounter}[2]{\lciGlobalAddTo{\the#C1}{#XC2}}
+\newcommand{\value}[1]{\lciGlueTwoParam{\the}{#C1}}
+
+\newcommand{\stepcounter}[1]{%
+    \lciGlobalAddTo{\the#C1}{1}\lciDependantCounter#C1}
+\newcommand{\refstepcounter}{\stepcounter}
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   C.9   Figures and Other Floating Bodies
+% |
+% ###########################################################################
+
+\newenvironment{figure}{\newcommand{\lciLabelTitle}{{\bf Figure:~~}}}{}
+\newenvironment{figure*}{\begin{figure}}{\end{figure}}
+\lciOptionalParameterAtEnd{\begin@figure}{1}
+\lciOptionalParameterAtEnd{\begin@figure*}{1}
+\newenvironment{figure@o}{\begin{figure}}{\end{figure}}
+\newenvironment{figure*@o}{\begin{figure}}{\end{figure}}
+
+\newenvironment{table}{\newcommand{\lciLabelTitle}{{\bf Table:~~}}}{}
+\newenvironment{table*}{\begin{table}}{\end{table}}
+\lciOptionalParameterAtEnd{\begin@table}{1}
+\lciOptionalParameterAtEnd{\begin@table*}{1}
+\newenvironment{table@o}{\begin{table}}{\end{table}}
+\newenvironment{table*@o}{\begin{table}}{\end{table}}
+
+\newcommand{\caption}[1]{\lciLabelTitle #1}
+\newcommand{\caption@om}{\lciLabelTitle #1}
+
+\newcommand{\suppressfloats}{}
+\lciOptionalParameterAtEnd{\suppressfloats}{1}
+\newcommand{\suppressfloats@o}{}
+
+\newcommand{\marginpar}[1]{%
+    \lcRawHtml{<TABLE ALIGN=RIGHT WIDTH=100 BORDER=2><TR><TD>}%
+    #1\lcRawHtml{</TD></TR></TABLE>}}
+\newcommand{\marginpar@om}{\marginpar{#2}}
+
+\newcommand{\reversemarginpar}{}
+\newcommand{\normalmarginpar}{}
+
+\newcommand{\marginparwidth}{\lciSkipNonWhiteSpace}
+\newcommand{\marginparsep}{\lciSkipNonWhiteSpace}
+\newcommand{\marginparpush}{\lciSkipNonWhiteSpace}
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   C.10  Lining It Up in Columns
+% |
+% ###########################################################################
+
+% +--------------------------------------------------------------------------
+% |     * Tabbing Environment
+% +--------------------------------------------------------------------------
+
+\newenvironment{tabbing}{\lciTabbingBegin}{\lciTabbingEnd}
+
+\newcommand{\lciTabbingBegin}{\lcRawHtml{
+<TABLE><TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP>
+}%
+    \newcommand{\=}{\lciTabbingSkip}%
+    \newcommand{\>}{\lciTabbingSkip}%
+    \renewcommand{\\}{\lciTabbingNL}%
+    \renewcommand{\\*}{\lciTabbingNL}%
+    \lciOptionalParameterAtEnd{\\}{1}%
+    \lciOptionalParameterAtEnd{\\*}{1}%
+    \renewcommand{\\@o}{\lciTabbingNL}%
+    \renewcommand{\\*@o}{\lciTabbingNL}%
+}
+\newcommand{\lciTabbingEnd}{\lcRawHtml{
+</TD></TR></TABLE>
+}%% We rely on the scoping rules of definitions in environments to
+  % restore the old definitions of \=, \> and \\.
+}
+\newcommand{\lciTabbingNL}{\lcRawHtml{
+    </TD></TR><TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP>
+}\lciSkipWhiteSpace
+}
+\newcommand{\lciTabbingSkip}{\lcRawHtml{
+        </TD><TD ALIGN=LEFT VALIGN=TOP NOWRAP>
+}}
+
+
+% +--------------------------------------------------------------------------
+% |     * Tabular Environment
+% +--------------------------------------------------------------------------
+
+\newenvironment{tabular}{\lciTabularBegin}{\lciTabularEnd}
+\newenvironment{tabular*}[1]{\lciTabularBegin}{\lciTabularEnd}
+\newenvironment{array}{\lciTabularBegin}{\lciTabularEnd}
+\newenvironment{eqnarray}{\[\lciTabularBegin{lll}}{\lciTabularEnd\]}
+\newenvironment{eqnarray*}{\[\lciTabularBegin{lll}}{\lciTabularEnd\]}
+\newcommand{lefteqn}[1]{#1}
+
+\gdef\lcTabularBorder{0} %% Set this to [1..] to get a table with border [1..]
+
+%% Args: column format string
+\newcommand{\lciTabularBegin}[1]{\lciIfEqualExpanded{\lcTabularBorder}{0}{%
+    \lcRawHtml{
+<TABLE>}}{\lcRawHtml{
+<TABLE BORDER=}\lcTabularBorder\lcRawHtml{>}}%
+    \newcommand{\lciTabularColumns}{0}%
+    \newcommand{&}{\lciTabularSkip}%
+    \renewcommand{\\}{\lciTabularNL}%
+    \renewcommand{\\*}{\lciTabularNL}%
+    \lciOptionalParameterAtEnd{\\}{1}%
+    \lciOptionalParameterAtEnd{\\*}{1}%
+    \renewcommand{\\@o}{\lciTabularNL}%
+    \renewcommand{\\*@o}{\lciTabularNL}%
+    \lciTabularCountColumns #1\*%
+}
+\newcommand{\lciTabularBegin@om}{\lciTabularBegin{#2}}
+
+%% Args: a character of the column format string. Parses until \* detected.
+\newcommand{\lciTabularCountColumns}[1]{\lciIfEqual{#C1}{\*}{%
+        \lciTabularContNL}{%
+    \lciIfEqual{#C1}{l}{\lciAddTo{\lciTabularColumns}{1}}{%
+    \lciIfEqual{#C1}{c}{\lciAddTo{\lciTabularColumns}{1}}{%
+    \lciIfEqual{#C1}{r}{\lciAddTo{\lciTabularColumns}{1}}{%
+}}}\lciTabularCountColumns}}
+
+%% Args: either \hline, \end, or next character in table entry
+\newcommand{\lciTabularContNL}[1]{\lciIfEqual{#C1}{\hline}{% \hline
+        \lciTabularHline{\lciTabularColumns}%
+    }{\lciIfEqual{#C1}{\end}{% \end{envir}
+        \newcommand{\lciNoTabularClosing}{}#1%
+    }{% else next character in table entry
+        \lcRawHtml{<TR>}\lciTabularCont #1}}}
+
+%% Args: either \multicolumn, or next character in table entry
+\newcommand{\lciTabularCont}[1]{\lciIfEqual{#C1}{\multicolumn}{% \multicolumn
+        \lciTabularMulticolumn%
+    }{% else next character in table entry
+        \lcRawHtml{<TD ALIGN=LEFT VALIGN=TOP NOWRAP>
+}#1}}
+
+%% Args: total number of cols, another \hline, an \end or next char in table
+\newcommand{\lciTabularHline}[2]{%
+    \lciIfEqualExpanded{\lcTabularBorder}{0}{%
+        \lcRawHtml{<TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP COLSPAN=#XC1><HR>}%
+        %\lcRawHtml{<HR>}%  don't show second <HR>, it looks ugly.
+        \lcRawHtml{</TD></TR>}}{}%
+    \lciIfEqual{#C2}{\hline}{% \hline omit second \hline, if any.
+        \lciTabularContNL}{\lciTabularContNL #2}%
+}
+
+%% Args: number of cols, column format string, table entry
+\newcommand{\lciTabularMulticolumn}[3]{%
+    \lcRawHtml{<TD ALIGN=LEFT VALIGN=TOP NOWRAP COLSPAN=#XC1>
+}#3}
+
+\newcommand{\lciTabularEnd}{\lciIfDefined{\lciNoTabularClosing}{}{\lcRawHtml{
+</TD></TR>}}\lcRawHtml{</TABLE>
+}%% We rely on the scoping rules of definitions in environments to
+  % restore the old definitions of & and \\.
+  \gdef\lcTabularBorder{0}%
+}
+
+\newcommand{\lciTabularNL}{\lcRawHtml{
+    </TD></TR>}\lciTabularContNL}
+
+\newcommand{\lciTabularSkip}{\lcRawHtml{
+        </TD>}\lciTabularCont}
+
+\newcommand{\hline}{\lcRawHtml{<HR>}}
+\newcommand{\vline}{}
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   C.11  Moving Information Around
+% |
+% ###########################################################################
+
+% +--------------------------------------------------------------------------
+% |     * Cross-References
+% +--------------------------------------------------------------------------
+\newcommand{\ref}[1]{\lcAsciiToHtml{[ref:#1]}}
+\newcommand{\pageref}[1]{\lcAsciiToHtml{[ref:#1]}}
+
+\newcommand{\label}[1]{\lcRawHtml{<A NAME="#C1"></A>}%
+    \edef\lciOut{\lciOutputFilename}%
+    \lciPushOutput{anchor}%
+    \lciLabel{#1}{\lciOut}{\lciReferenceIcon}\lciPopOutput}
+
+%% Args: labelsymbol, output filename, reference icon in HTML formatted
+\newcommand{\lciLabel}[3]{\lciRawOutput{[\[]ref[:]"#C1"[\]]    { fputs( "<A HREF=\"#XC2###C1\">#X3</A>", stdout);}
+}}
+
+% +--------------------------------------------------------------------------
+% |     * Bibliography and Citation
+% +--------------------------------------------------------------------------
+\newcommand{\newblock}{}
+\newcommand{\bibliographystyle}[1]{}
+\newcommand{\bibliography}[1]{}
+
+\newenvironment{thebibliography}[1]{%
+    \newcommand{\lciFirstBibItem}{}\lciOpenBibliography
+}{%
+    \lciCloseBibliography
+}
+
+\newcommand{\cite}[1]{[\lciCite {#1}]}
+\newcommand{\cite@om}{[\lciCite {#2}, #1]}
+\newcommand{\lciCite}[1]{\lciIfEmpty{#C1}{%
+    \lciError{Empty argument to a cite command}}{%
+    \newcommand{\lciCiteDelim}{}%
+    \lciParseUntilDelimiter{\lciLocalCite},#1,,}}
+\newcommand{\lciLocalCite}[1]{\lciIfEmpty{#C1}{}{%
+    \lciCiteDelim\lcRawHtml{<A HREF="}\lciBibFilename
+    \lcRawHtml{##Biblio_}#C1\lcRawHtml{">}#C1\lcRawHtml{</A>}%
+    \newcommand{\lciCiteDelim}{, }%
+    \lciParseUntilDelimiter{\lciLocalCite},}}
+
+\newcommand{\bibcite}[2]{%
+    \lciPushOutput{anchor}%
+    \lciLocalBibCite{#1}{#2}{\lciBibFilename}\lciPopOutput}
+
+%% Args: key, replacement text, bibliography filename
+\newcommand{\lciLocalBibCite}[3]{%
+    \lciRawOutput{"<A NAME="["]"Biblio_#C1"["]"></A><B>[#C1]</B>"    }%
+    \{\lciRawOutput{ fputs( "<A NAME=\"Biblio_#C1\"></A><B>[}#2%
+    \lciRawOutput{]</B>", stdout); }\}\lciRawOutput{
+}%
+    \lciRawOutput{"<A HREF="["]"#XC3##Biblio_#C1"["]">#C1"    }%
+    \{\lciRawOutput{ fputs( "<A HREF=\"#XC3##Biblio_#C1\">}#2%
+    \lciRawOutput{", stdout); }\}\lciRawOutput{
+}}
+
+\newcommand{\bibitem}[1]{\lciFirstBibItem
+    \newcommand{\lciFirstBibItem}{\lcRawHtml{</TD></TR>}}%
+    \lcRawHtml{<TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP>
+        <A NAME="Biblio_#C1"></A><B>[#C1]</B></TD>
+    <TD ALIGN=LEFT VALIGN=TOP>}%
+}
+\newcommand{\bibitem@om}{\bibcite{#2}{#1}\bibitem{#2}}
+
+\newcommand{\nocite}[1]{}
+
+% +--------------------------------------------------------------------------
+% |     * Splitting the Input
+% +--------------------------------------------------------------------------
+% --> see html_lex.yy
+
+\newcommand{\includeonly}[1]{}
+
+% +--------------------------------------------------------------------------
+% |     * Index and Glossary
+% +--------------------------------------------------------------------------
+%% Not supported, but the creation commands are ignored.
+
+\newcommand{\makeindex}{}
+\newcommand{\makeglossary}{}
+\newcommand{\index}[1]{}
+\newcommand{\glossary}[1]{}
+
+% +--------------------------------------------------------------------------
+% |     * Terminal Input and Output
+% +--------------------------------------------------------------------------
+
+\newcommand{\typeout}[1]{\lciMessage{
+#X1
+}}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   C.12  Line and Page Breaking
+% |
+% ###########################################################################
+
+\newcommand{\linebreak}{}
+\lciOptionalParameterAtEnd{\linebreak}{1}
+\newcommand{\linebreak@o}{}
+\newcommand{\nolinebreak}{}
+\lciOptionalParameterAtEnd{\nolinebreak}{1}
+\newcommand{\nolinebreak@o}{}
+
+\newcommand{\newline}{\\}
+
+\newcommand{\hyphenation}[1]{}
+
+\newcommand{\sloppy}{}
+\newcommand{\fussy}{}
+\newenvironment{sloppypar}{}{}
+
+\newcommand{\pagebreak}{}
+\lciOptionalParameterAtEnd{\pagebreak}{1}
+\newcommand{\pagebreak@o}{}
+\newcommand{\nopagebreak}{}
+\lciOptionalParameterAtEnd{\nopagebreak}{1}
+\newcommand{\nopagebreak@o}{}
+
+\newcommand{\samepage}{}
+
+\newcommand{\enlargethispage}[1]{}
+\newcommand{\enlargethispage*}[1]{}
+
+\newcommand{\newpage}{\lcRawHtml{<P>}}
+\newcommand{\clearpage}{\lcRawHtml{<P>}}
+\newcommand{\cleardoublepage}{\lcRawHtml{<P>}}
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   C.13  Lengths, Spaces, and Boxes
+% |
+% ###########################################################################
+
+\newcommand{\fill}{}
+\newcommand{\stretch}[1]{}
+
+\newcommand{\hspace}[1]{}
+\newcommand{\hspace*}[1]{}
+\newcommand{\vspace}[1]{}
+\newcommand{\vspace*}[1]{}
+
+\newcommand{\smallskip}{\lcRawHtml{<BR>}}
+\newcommand{\medskip}{\lcRawHtml{<BR><BR>}}
+\newcommand{\bigskip}{\lcRawHtml{<BR><BR><BR>}}
+
+\newcommand{\addvspace}[1]{}
+
+\newcommand{\hfill}{}
+\newcommand{\vfill}{}
+
+
+\newcommand{\setlength}[2]{}
+
+\newcommand{\mbox}[1]{\lciIf{\lciMathMode}{${#1}$}{{#1}}}
+\newcommand{\makebox}[1]{\mbox{#1}}
+\newcommand{\makebox@om}{\mbox{#2}}
+\newcommand{\makebox@oom}{\mbox{#3}}
+
+\newcommand{\fbox}[1]{\lcRawHtml{<TABLE BORDER=2><TR><TD>
+}#1\lcRawHtml{</TD></TR></TABLE>}}
+\newcommand{\framebox}[1]{\fbox{#1}}
+\newcommand{\framebox@om}{\fbox{#2}}
+\newcommand{\framebox@oom}{\fbox{#3}}
+
+\newcommand{\newsavebox}[1]{\gdef{#C1}{}}
+\newcommand{\sbox}[2]{\gdef{#C1}{#X2}}
+\newcommand{\savebox}[2]{\sbox{#1}{#2}}
+\newcommand{\savebox@mom}{\sbox{#1}{#3}}
+\newcommand{\savebox@moom}{\sbox{#1}{#4}}
+
+\newenvironment{lrbox}[1]{%
+    \lciUndef{#C1}%
+    \gdef\lciLrboxTmp{#C1}%
+    \lciParseUntilEndToken{\lciLrbox}{lrbox}}{}
+\newcommand{\lciLrbox}[1]{\lciLrboxX{\lciLrboxTmp}{#C1}}
+\newcommand{\lciLrboxX}[2]{\sbox{#XC1}{#C2}}
+
+\newcommand{\usebox}[1]{#1}
+
+\newcommand{\parbox}[2]{#2}
+\newcommand{\parbox@omm}{#2}
+
+\newenvironment{minipage}[1]{}{}
+\newcommand{\begin@minipage@om}{}
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   C.14  Pictures and Color
+% |
+% ###########################################################################
+%% Not supported yet.
+
+\newcommand{\thinlines}{}
+\newcommand{\thicklines}{}
+\newcommand{\linethickness}[1]{}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   C.15  Font Selection
+% |
+% ###########################################################################
+
+%% A font is a size and style of type. A type style is specified by three
+%% separate components: shape, series and family.
+%% Note: Small Caps is the only exception that needs special treatment
+%%       in the scanner (to make the lower case letters small uppercases).
+
+\newcommand{\lciFontSize}{0}  %% possible values range from \tiny to \Huge.
+
+\newcommand{\tiny}{\lciSetFontSize{-4}}
+\newcommand{\scriptsize}{\lciSetFontSize{-3}}
+\newcommand{\footnotesize}{\lciSetFontSize{-2}}
+\newcommand{\small}{\lciSetFontSize{-1}}
+\newcommand{\normalsize}{\lciSetFontSize{0}}
+\newcommand{\large}{\lciSetFontSize{1}}
+\newcommand{\Large}{\lciSetFontSize{2}}
+\newcommand{\LARGE}{\lciSetFontSize{3}}
+\newcommand{\huge}{\lciSetFontSize{4}}
+\newcommand{\Huge}{\lciSetFontSize{5}}
+
+
+\newcommand{\lciFontFamily}{}  %% possible values: none = roman, 
+                               %%     TT = sans serife or typewriter
+\newcommand{\lciFontSeries}{}  %% possible values: none = medium, B = bold
+\newcommand{\lciFontShape}{}   %% possible values: none = upright,
+                               %%     I = italics or slanted, SC = small caps
+
+\newcommand{\textrm}[1]{\lciFontToDecl{\rmfamily}{#1}}
+\newcommand{\textsf}[1]{\lciFontToDecl{\sffamily}{#1}}
+\newcommand{\texttt}[1]{\lciFontToDecl{\ttfamily}{#1}}
+\newcommand{\textmd}[1]{\lciFontToDecl{\mdseries}{#1}}
+\newcommand{\textbf}[1]{\lciFontToDecl{\bfseries}{#1}}
+\newcommand{\textup}[1]{\lciFontToDecl{\upshape}{#1}}
+\newcommand{\textit}[1]{\lciFontToDecl{\itshape}{#1}}
+\newcommand{\textsl}[1]{\lciFontToDecl{\slshape}{#1}}
+\newcommand{\textsc}[1]{\lciFontToDecl{\scshape}{#1}}
+\newcommand{\textnormal}[1]{\lciFontToDecl{\normalfont}{#1}}
+
+%% Hack to get a seperator behind font declaration, so that we can
+%% omit the space, which is the usual TeX seperator. This is for alltt.
+\newcommand{\lciFontToDecl}[2]{{#1#2}}
+
+\newcommand{\rmfamily}{\lciSetFontFamily{}}
+\newcommand{\sffamily}{\lciSetFontFamily{TT}}
+\newcommand{\ttfamily}{\lciSetFontFamily{TT}}
+\newcommand{\mdseries}{\lciSetFontSeries{}}
+\newcommand{\bfseries}{\lciSetFontSeries{B}}
+\newcommand{\upshape}{\lciSetFontShape{}}
+\newcommand{\itshape}{\lciSetFontShape{I}}
+\newcommand{\slshape}{\lciSetFontShape{I}}
+\newcommand{\scshape}{\lciSetFontShape{SC}}
+
+\newcommand{\normalfont}{\lciSetNewFont{\lciFontSize}{}{}{}}
+
+
+%% The order of font type changes is size, family, series, and shape.
+%% For each font type change and scope change we always close all
+%% open font scopes in HTML and reopen them according to the new 
+%% font type. Matching closing and opening tags will be be discarded.
+
+%% Args: old-size, old-family, old-series, old-shape,  
+%%       new-size, new-family, new-series, new-shape
+\newcommand{\lciSetFont}[8]{%
+    \lciIfEqual{#X1}{#X5}{%
+        \lciIfEqual{#X2}{#X6}{%
+            \lciIfEqual{#X3}{#X7}{%
+                \lciIfEqual{#X4}{#X8}{}{%
+                    \lciFontCloseShape{#X4}%
+                    \lciFontOpenShape{#X8}%
+                }%
+            }{%
+                \lciFontCloseShape{#X4}%
+                \lciIfEmpty{#3}{}{\lcRawHtml{</#XC3>}}%
+                \lciIfEmpty{#7}{}{\lcRawHtml{<#XC7>}}%
+                \lciFontOpenShape{#X8}%
+            }%
+        }{%
+            \lciFontCloseShape{#X4}%
+            \lciIfEmpty{#3}{}{\lcRawHtml{</#XC3>}}%
+            \lciIfEmpty{#2}{}{\lcRawHtml{</#XC2>}}%
+            \lciIfEmpty{#6}{}{\lcRawHtml{<#XC6>}}%
+            \lciIfEmpty{#7}{}{\lcRawHtml{<#XC7>}}%
+            \lciFontOpenShape{#X8}%
+        }%
+    }{%
+        \lciFontCloseShape{#X4}%
+        \lciIfEmpty{#3}{}{\lcRawHtml{</#XC3>}}%
+        \lciIfEmpty{#2}{}{\lcRawHtml{</#XC2>}}%
+        %% does nothing if #1 is not positive
+        \lciFor{\lciFontSizeCount}{1}{#1}{\lcRawHtml{</BIG>}}%
+        %% does nothing if #1 is not negative
+        \lciFor{\lciFontSizeCount}{#1}{-1}{\lcRawHtml{</SMALL>}}%
+        %% does nothing if #1 is not positive
+        \lciFor{\lciFontSizeCount}{1}{#5}{\lcRawHtml{<BIG>}}%
+        %% does nothing if #1 is not negative
+        \lciFor{\lciFontSizeCount}{#5}{-1}{\lcRawHtml{<SMALL>}}%
+        \lciIfEmpty{#6}{}{\lcRawHtml{<#XC6>}}%
+        \lciIfEmpty{#7}{}{\lcRawHtml{<#XC7>}}%
+        \lciFontOpenShape{#X8}%
+    }%
+    %% Set the state variables to the new font type
+    \renewcommand{\lciFontSize}{#XC5}%
+    \renewcommand{\lciFontFamily}{#XC6}%
+    \renewcommand{\lciFontSeries}{#XC7}%
+    \renewcommand{\lciFontShape}{#XC8}%
+}
+
+\newcommand{\lciFontCloseShape}[1]{%
+    \lciIfEqual{}{#1}{}{\lciIfEqual{SC}{#1}{%
+        \lciEndSmallCaps
+    }{%
+        \lcRawHtml{</#C1>}%
+    }}}%
+
+\newcommand{\lciFontOpenShape}[1]{%
+    \lciIfEqual{}{#1}{}{\lciIfEqual{SC}{#1}{%
+        \lciBeginSmallCaps
+    }{%
+        \lcRawHtml{<#C1>}%
+    }}}%
+
+%% Args: closing tags stack, opening tags stack
+\newcommand{\lciFontOptimizeChange}[2]{%
+    \lciIfEmpty{#1}{}{\lciIfEmpty{#2}{}{%
+        \lciTopStack{#1}{\lciFontTmpX}\lciTopStack{#2}{\lciFontTmpY}%
+        \lciIfEqualExpanded{\lciFontTmpX}{\lciFontTmpY}{%
+            \lciPopStack{#1}\lciPopStack{#2}\lciFontOptimizeChange{#1}{#2}%
+        }{}%
+}}}
+
+%% Args: prefix, stack, postfix. Destructive.
+\newcommand{\lciFontWriteStack}[3]{\lciIfEmpty{#2}{}{%
+    \lciTopStack{#2}{\lciFontTmpX}%
+    #1\lciFontTmpX#3\lciPopStack{#2}\lciFontWriteStack{#1}{#2}{#3}}}
+
+
+%% Args: new-size, new-family, new-series, new-shape
+\newcommand{\lciSetNewFont}[4]{%
+    \lciSetFont{\lciFontSize}{\lciFontFamily}{\lciFontSeries}{\lciFontShape}%
+    {#1}{#2}{#3}{#4}}
+
+%% Args: size, family, series, shape
+%% Store font type in global variables that survive a closing scope.
+\newcommand{\lciSetGlobalFontState}[4]{%
+    \gdef\lciGlobalFontSize{#XC1}%
+    \gdef\lciGlobalFontFamily{#XC2}%
+    \gdef\lciGlobalFontSeries{#XC3}%
+    \gdef\lciGlobalFontShape{#XC4}%
+}
+
+%% Restore current front, based on the global font state.
+%% Used to recover from a closing scope.
+\newcommand{\lciRestoreFont}{%
+    \lciSetFont{\lciGlobalFontSize}{\lciGlobalFontFamily}%
+    {\lciGlobalFontSeries}{\lciGlobalFontShape}%
+    {\lciFontSize}{\lciFontFamily}{\lciFontSeries}{\lciFontShape}}
+
+\newcommand{\lciSetFontSize}[1]{%
+    \lciSetNewFont{#1}{\lciFontFamily}{\lciFontSeries}{\lciFontShape}}
+\newcommand{\lciSetFontFamily}[1]{%
+    \lciSetNewFont{\lciFontSize}{#1}{\lciFontSeries}{\lciFontShape}}
+\newcommand{\lciSetFontSeries}[1]{%
+    \lciSetNewFont{\lciFontSize}{\lciFontFamily}{#1}{\lciFontShape}}
+\newcommand{\lciSetFontShape}[1]{%
+    \lciSetNewFont{\lciFontSize}{\lciFontFamily}{\lciFontSeries}{#1}}
+
+
+%% Old style declarations:
+\newcommand{\rm}{\rmfamily}
+\newcommand{\tt}{\ttfamily}
+\newcommand{\sf}{\sffamily}
+\newcommand{\bf}{\bfseries}
+\newcommand{\it}{\itshape}
+\newcommand{\sl}{\slshape}
+\newcommand{\sc}{\scshape}
+
+\newcommand{\em}{\lciIfEqualExpanded{\lciFontShape}{I}{\upshape}{\itshape}}
+\newcommand{\emph}[1]{{\em #1}}
+
+%% --> see C.7 for amth fonts.
 
 % ___________________________________________________________________________
 % ###########################################################################

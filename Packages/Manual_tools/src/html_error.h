@@ -46,6 +46,8 @@ enum ErrorNumber {
     MacroInCModeError,
     ParsingStateError,
     MacroStackUnderflowError,
+    IncludeStackUnderflowError,
+    FileReadOpenError,
     UserDefinedError
 };
 

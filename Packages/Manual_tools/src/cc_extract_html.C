@@ -42,10 +42,10 @@ const string prog_release = "$Revision$";
 // This path will be compiled into the cc_extract_html program. It is set 
 // in the Makefile. The same variable has to be configured in the 
 // cc_manual_to_html script.
-#ifndef HTML_DEFAULT_PATH
-#define HTML_DEFAULT_PATH   ""
+#ifndef LATEX_CONVERTER_CONFIG
+#define LATEX_CONVERTER_CONFIG   ""
 #endif
-string config_path    = HTML_DEFAULT_PATH;
+string config_path    = LATEX_CONVERTER_CONFIG;
 
 
 // Directory for the temporary files. A default is given.
@@ -59,7 +59,7 @@ string tmp_path       = "/usr/tmp/";
 /* This constant must be doubly quoted since it is subject of another */
 /* C compiler pass during generation of the link generator.           */
 const string reference_icon = "<IMG SRC=\\\"cc_ref_up_arrow.gif\\\" "
-            "ALT=\\\"reference arrow\\\" WIDTH=\\\"10\\\" HEIGHT=\\\"10\\\">";
+            "ALT=\\\"reference\\\" WIDTH=\\\"10\\\" HEIGHT=\\\"10\\\">";
 
 /* Configurable command line options */
 /* ================================= */
@@ -75,7 +75,7 @@ Switch  macro_exp_switch   = NO_SWITCH;
 Switch  macro_def2_switch  = NO_SWITCH;
 Switch  macro_exp2_switch  = NO_SWITCH;
 Switch  sty_macro_switch   = NO_SWITCH;
-Switch  stack_trace_switch = MINUS_SWITCH;
+Switch  stack_trace_switch = NO_SWITCH;
 
 Switch  noheader_switch    = NO_SWITCH;
 Switch  onlyheader_switch  = NO_SWITCH;
@@ -99,6 +99,7 @@ string manual_author;
 void init_commandline_args() {
     insertInternalGlobalMacro( "\\lciConfigPath",     config_path);
     insertInternalGlobalMacro( "\\lciTmpPath",        tmp_path);
+    insertInternalGlobalMacro( "\\lciReferenceIcon",  reference_icon);
     insertInternalGlobalMacro( "\\lciManualDate",     manual_date);
     insertInternalGlobalMacro( "\\lciManualRelease",  manual_release);
     insertInternalGlobalMacro( "\\lciManualTitle",    manual_title);
@@ -156,8 +157,14 @@ bool is_text_block_empty( const Text& T) {
 
 void print_html_text_block( ostream &out, const Text& T) {
     InListFIter< TextToken> words( (Text&)T);
-    ForAll( words)
-	out << words->string;
+    ForAll( words) {
+	const char* s = words->string;
+	while ( *s) {
+	    if ( *s != SEPARATOR)
+		out << *s;
+	    ++s;
+	}
+    }
 }
 
 
@@ -171,17 +178,17 @@ void handleText( const Text& T) {
     print_html_text_block( *current_ostream, T);
 }
 
-void handleBuffer( const Buffer& B) {
-    if ( current_ostream)
-	*current_ostream << B.string();
-}
-
 void handleTextToken( const TextToken& TT) {
     if ( current_ostream)
 	*current_ostream << TT.string;
 }
 
 void handleString( const char* s) {
+    if ( current_ostream)
+	*current_ostream << s;
+}
+
+void handleString( const string& s) {
     if ( current_ostream)
 	*current_ostream << s;
 }
@@ -222,11 +229,16 @@ void handleChar( char c) {
 /* ------------------------------------------------------- */
  
 main( int argc, char **argv) {
+    // Check environment:
+    char* s = getenv("LATEX_CONV_CONFIG");
+    if ( s)
+	config_path = s;
+
     int i;
     int nParameters = 0;
     typedef const char* ParamType;
     ParamType parameters[ MaxParameters + 1];
- 
+
     Switch help_switch  = NO_SWITCH;
     Switch dummy_switch;
     for (i = 1; i < argc; i++) {
@@ -237,7 +249,7 @@ main( int argc, char **argv) {
             if ( i < argc)
 	        manual_date = argv[i];
 	    else {
-	        cerr << "error: option -date needs an additional parameter"
+	        cerr << "*** Error: option -date needs an additional parameter"
 		     << endl;
 	        nParameters = ErrParameters;
 	    }
@@ -247,8 +259,8 @@ main( int argc, char **argv) {
             if ( i < argc)
 	        manual_release = argv[i];
 	    else {
-	        cerr << "error: option -release needs an additional parameter"
-		     << endl;
+	        cerr << "*** Error: option -release needs an additional "
+		        "parameter" << endl;
 	        nParameters = ErrParameters;
 	    }
         endDetect();
@@ -257,8 +269,8 @@ main( int argc, char **argv) {
             if ( i < argc)
 	        manual_title = argv[i];
 	    else {
-	        cerr << "error: option -title needs an additional parameter"
-		     << endl;
+	        cerr << "*** Error: option -title needs an additional "
+		        "parameter" << endl;
 	        nParameters = ErrParameters;
 	    }
         endDetect();
@@ -267,8 +279,8 @@ main( int argc, char **argv) {
             if ( i < argc)
 	        manual_author = argv[i];
 	    else {
-	        cerr << "error: option -author needs an additional parameter"
-		     << endl;
+	        cerr << "*** Error: option -author needs an additional "
+		        "parameter" << endl;
 	        nParameters = ErrParameters;
 	    }
         endDetect();
@@ -276,14 +288,9 @@ main( int argc, char **argv) {
             i++;
             if ( i < argc) {
 	        config_path = argv[i];
-		if ( config_path[ config_path.size() - 1] != '/') {
-		    cerr << "error: option -config: a path must terminate "
-		            "with a /" << endl;
-		    nParameters = ErrParameters;
-		}
 	    } else {
-	        cerr << "error: option -config needs an additional parameter"
-		     << endl;
+	        cerr << "*** Error: option -config needs an additional "
+		        "parameter" << endl;
 	        nParameters = ErrParameters;
 	    }
         endDetect();
@@ -292,7 +299,7 @@ main( int argc, char **argv) {
             if ( i < argc) {
 	        sty_filename = argv[i];
 	    } else {
-	        cerr << "error: option -sty needs an additional parameter"
+	        cerr << "*** Error: option -sty needs an additional parameter"
 		     << endl;
 	        nParameters = ErrParameters;
 	    }
@@ -301,13 +308,8 @@ main( int argc, char **argv) {
             i++;
             if ( i < argc) {
 	        tmp_path = argv[i];
-		if ( tmp_path[ tmp_path.size() - 1] != '/') {
-		    cerr << "error: option -tmp: a path must terminate "
-		            "with a /" << endl;
-		    nParameters = ErrParameters;
-		}
 	    } else {
-	        cerr << "error: option -tmp needs an additional parameter"
+	        cerr << "*** Error: option -tmp needs an additional parameter"
 		     << endl;
 	        nParameters = ErrParameters;
 	    }
@@ -315,17 +317,13 @@ main( int argc, char **argv) {
         detectSwitch( dummy_switch, "header");
             i++;
             if ( i < argc) {
-		if ( argv[i][ strlen( argv[i]) - 1] != '/') {
-		    cerr << "error: option -header: a path must terminate "
-		            "with a /" << endl;
-		    nParameters = ErrParameters;
-		} else {
-		    insertGlobalMacro( "\\lciHeaderPath",
-				 "<command line option>", 0, argv[i]);
-		}
+		string s = argv[i];
+		assert_trailing_slash_in_path( s);
+		insertGlobalMacro( "\\lciHeaderPath", 
+				   "<command line option>", 0, s);
 	    } else {
-	        cerr << "error: option -header needs an additional parameter"
-		     << endl;
+	        cerr << "*** Error: option -header needs an additional "
+		        "parameter" << endl;
 	        nParameters = ErrParameters;
 	    }
         endDetect();
@@ -333,17 +331,13 @@ main( int argc, char **argv) {
         detectSwitch( dummy_switch, "cgal_dir");
             i++;
             if ( i < argc) {
-		if ( argv[i][ strlen( argv[i]) - 1] != '/') {
-		    cerr << "error: option -cgal_dir: a path must terminate "
-		            "with a /" << endl;
-		    nParameters = ErrParameters;
-		} else {
-		    insertGlobalMacro( "\\lciHeaderDirectoryName",
-				 "<command line option>", 0, argv[i]);
-		}
+		string s = argv[i];
+		assert_trailing_slash_in_path( s);
+		insertGlobalMacro( "\\lciHeaderPath", 
+				   "<command line option>", 0, s);
 	    } else {
-	        cerr << "error: option -cgal_dir needs an additional parameter"
-		     << endl;
+	        cerr << "*** Error: option -cgal_dir needs an additional "
+		        "parameter" << endl;
 	        nParameters = ErrParameters;
 	    }
         endDetect();
@@ -352,7 +346,7 @@ main( int argc, char **argv) {
             if ( i < argc) {
 	        pre_main_filename = argv[i];
 	    } else {
-	        cerr << "error: option -main needs an additional parameter"
+	        cerr << "*** Error: option -main needs an additional parameter"
 		     << endl;
 	        nParameters = ErrParameters;
 	    }
@@ -387,8 +381,15 @@ main( int argc, char **argv) {
         endDetect();
         detectSwitch( help_switch, "help");
         endDetect();
- 
-        /* else get standard or optional paramters */
+
+	// check for unknown command line option
+	if ( argv[i][0] == '-' ) {
+	    cerr << "*** Error: unknown command line option `" << argv[i] 
+		 << "'." << endl;
+	    nParameters = ErrParameters;
+	}
+
+        /* else get standard or optional parameters */
         if ( nParameters < MaxParameters ) {
             parameters[nParameters ++] = argv[i];
             continue;
@@ -403,7 +404,7 @@ main( int argc, char **argv) {
         ((nParameters < MaxParameters - MaxOptionalParameters) ||
          (nParameters > MaxParameters) || (help_switch != NO_SWITCH))) {
         if (help_switch == NO_SWITCH)
-            cerr << "Error: in parameter list" << endl;
+            cerr << "*** Error: in parameter list" << endl;
 	cerr << prog_name << " " << prog_release << " (c) Lutz Kettner" 
 	     << endl;
         cerr << "Usage: " << prog_name << " [<options>] <TeX-files...>" 
@@ -416,11 +417,11 @@ main( int argc, char **argv) {
 	     << endl;
         cerr << "       -author   <text>    set an author address (email) for "
 	                                   "the manual." << endl;
-        cerr << "       -config   <dir/>    set the path where to find the "
+        cerr << "       -config   <dir>     set the path where to find the "
                                            "config files." << endl;
-        cerr << "       -tmp      <dir/>    set the path where to put the "
+        cerr << "       -tmp      <dir>     set the path where to put the "
                                            "output files." << endl;
-        cerr << "       -header   <dir/>    set the path to the C "
+        cerr << "       -header   <dir>     set the path to the C "
                                            "header files." << endl;
         cerr << "       -main     <file>    main filename for the part before"
                                            " any chapter." << endl;
@@ -444,6 +445,10 @@ main( int argc, char **argv) {
         exit(1);
     }
 
+    // Prepare proper format of path arguments.
+    assert_trailing_slash_in_path( tmp_path);
+    assert_trailing_slash_in_path( config_path);
+    config_path += "html/";
  
     // Initialization
     if ( ! quiet_switch && ! V_switch)
@@ -457,7 +462,9 @@ main( int argc, char **argv) {
     init_commandline_args();
     init_internal_macros();
     current_ostream  = 0;
-    include_stack.push_tex_file( config_path + sty_filename);
+    if ( ! include_stack.push_tex_file( config_path + sty_filename))
+	exit(1);
+
     yyparse();
     if (V_switch) {
 	cerr << endl;
@@ -525,16 +532,9 @@ main( int argc, char **argv) {
 	    current_filename = main_filename;
 	    insertInternalGlobalMacro( "\\lciOutputFilename",current_filename);
 	}
-	include_stack.push_tex_file( parameters[i]);
-	yyparse();
+	if ( include_stack.push_tex_file( parameters[i]))
+	    yyparse();
 
-	if ( class_stream != 0) {
-	    close_html( *class_stream);
-	    assert_file_write( *class_stream, class_filename);
-	    delete   class_stream;
-	    class_stream = 0;
-	    class_filename = string();
-	}
 	assert_file_write( *main_stream, main_filename);
 	if ( main_stream != &cout && main_stream != pre_stream) {
 	    close_html( *main_stream);
@@ -544,6 +544,9 @@ main( int argc, char **argv) {
 	    main_filename = "<cout>";
 	}
     }
+    include_stack.push_string( "<end of conversion>", 
+			       "\\lciCheckNestingScopes", 
+			       0);
     include_stack.push_string( "<end of conversion>", 
 			       "\\lciEndOfConversion", 
 			       0);

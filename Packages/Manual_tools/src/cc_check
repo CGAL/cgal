@@ -19,17 +19,21 @@
 # 
 # **************************************************************************
 
-# =============================================
-# Installation: chose the appropriate compiler:
-# =============================================
-# A C compiler can be specified here. Normally cc or gcc should work.
-# Note: cc does not work on SunOS 4.1.3 (BSD), but on SunOS 5...
-#set CC = gcc
-set CC = cc
+# =====================================================================
+# Begin of Installation Section: ...
+# =====================================================================
+# Choose appropriate values in the environment or uncomment and
+# set the values here. See the INSTALLATION file for more details.
 
-# =============================================
-# Installation: Nothing else below this line.
-# =============================================
+# C Compiler: Gnu gcc 2.6.3 (or above) or the usual system cc:
+# CC = gcc
+
+# Gnu C as default if none is chosen so far.
+if ( ! $?CC) setenv CC gcc
+
+# =====================================================================
+# ... End of Installation Section.
+# =====================================================================
 
 if ( $?DEBUG) echo "# DEBUG defined; all commands will be echoed."
 

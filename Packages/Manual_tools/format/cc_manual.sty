@@ -1,7 +1,7 @@
 % ___________________________________________________________________________
 % |#########################################################################|
 % |                                                                         |
-% | The Cgal Kernel Reference Manual Style   cc_manual.sty                  |
+% | The C++ Reference Manual Style   cc_manual.sty                          |
 % | --------------------------------------------------------                |
 % |                                                                         |
 % | 03.06.1995   Lutz Kettner   kettner@acm.org                             |
@@ -531,7 +531,6 @@
 % +--------------------------------------------------------------------------
 %   #1  the macro name for the RCS entry
 %   #2  the RCS entry
-\newcommand{\RCSdef}{}
 \def\RCSdef{\begingroup\catcode`\$=12 \RCSdefSet}
 { \catcode`\$=12
     \gdef\RCSdefSetSpace #1$#2 ${\gdef#1{#2}}%
@@ -548,7 +547,6 @@
 
 %   #1  the macro name for the RCS entry
 %   #2  the RCS date entry
-\newcommand{\RCSdefDate}{}
 \def\RCSdefDate{\begingroup\catcode`\$=12 \RCSdefSetDate}
 { \catcode`\$=12
     % Define the date if it is set.
@@ -787,7 +785,7 @@
                    \def\ccRefCategory{#1}%
                    \begingroup\ccCatcode
                    \ccRefDeclarationX%
-               }{
+               }{%
                    \def\ccRefCategory{}%
                    \def\ccPureRefName{}%
                    \renewcommand{\ccRefName}{}%
@@ -1143,12 +1141,6 @@
                   }
 
 \newcommand{\ccTexHtml}[2]{#1}
-\newcommand{\ccTex}[1]{#1}
-\newcommand{\ccHtml}[1]{}
-\newcommand{\ccAscii}[1]{}
-\newcommand{\ccRawHtml}[1]{}
-\newcommand{\ccRawAscii}[1]{}
-\newcommand{\ccAsciiToHtml}[1]{}
 \newcommand{\ccAnchor}[2]{#2}
 \newenvironment{ccTexOnly}{}{}
 \newenvironment{ccHtmlOnly}{\begingroup\ccHtmlCatcode \ccParseHtmlOnlyBody}{
@@ -1164,18 +1156,6 @@
 ]
 |endgroup
 
-\newenvironment{ccHtmlBlock}{\begingroup\ccHtmlCatcode \ccParseHtmlBlockBody}{
-                            \endgroup}
-
-%  Take care: catcodes changes a lot here!!
-\begingroup
-\ccHtmlDefCatcode
-|long|gdef|ccParseHtmlBlockBody #1\end{ccHtmlBlock}[%
-  |csname endccHtmlOnly|endcsname|@checkend[ccHtmlBlock]%
-  |expandafter|endgroup|if@endpe|@doendpe|fi
-  |if@ignore|global|@ignorefalse|ignorespaces|fi
-]
-|endgroup
 
 % Flexibility for HTML class files.
 % ---------------------------------
@@ -2558,8 +2538,6 @@
 
 % ___________________________________________________________________________
 % ###########################################################################
-% |
 % | EOF
-% |
 % ###########################################################################
 

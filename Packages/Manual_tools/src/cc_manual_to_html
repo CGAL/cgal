@@ -1,4 +1,4 @@
-#!/bin/csh -f
+#!/bin/csh
 # **************************************************************************
 # 
 #  cc_manual_to_html
@@ -11,12 +11,12 @@
 #  collected as set of flex-rules. In the second step are the hyperlinks
 #  generated for all HTML files.
 #  
-# The following programs are necessary to run this script
+#  Besides programs and scripts distributed with the LaTeX converter,
+#  the following programs are necessary to run this script
 #
-#    o  cc_extract_html
 #    o  flex
-#    o  cc / gcc
-#    o  cc_index_sort
+#    o  C Compiler: cc / gcc
+#    o  Perl 5 (for subsequent scripts)
 #
 #  Author    : (c) 1997 Lutz Kettner
 #  Revision  : $Revision$
@@ -24,44 +24,50 @@
 # 
 # **************************************************************************
 
-# ========================================================
-# Installation: choose the appropriate compiler and paths:
-# ========================================================
-# A C compiler can be specified here. Normally cc or gcc should work.
-# Note: cc does not work on SunOS 4.1.3 (BSD), but on SunOS 5...
-#set CC = gcc
-set CC = cc
+# =====================================================================
+# Begin of Installation Section: ...
+# =====================================================================
+# Choose appropriate values in the environment or uncomment and
+# set the values here. See the INSTALLATION file for more details.
 
-# Path for the HTML conversion tools for the default configuration files.
-# This path will be compiled into the cc_extract_html program.
-# The same variable has to be configured here. (No slash / at the end!)
-#set HTML_DEFAULT_PATH = 
-set HTML_DEFAULT_PATH = /home/kettner/topics/cgal/Tools/src/html_config_files
+# Path to the configuration files of the latex_converter:
+# Used during installation to copy config files and compiled
+# into the cc_extract_html program as default config path.
+# The same variable is used in the cc_manual_to_html script.
+# LATEX_CONV_CONFIG = ${PUBLIC}/CGAL/Tools/latex_converter_config
 
-# A couple of default settings that will be used to configure
-# the cc_extract_html program.
-set DEFAULT_DATE = `date +"%a, %B %e, %Y"`
-set DEFAULT_AUTHOR = "The <A HREF="http://www.cs.ruu.nl/CGAL/">CGAL Project</A>"
-set DEFAULT_TITLE  = "Reference Manual"
+# C Compiler: Gnu gcc 2.6.3 (or above) or the usual system cc:
+# CC = gcc
 
 # The header files within the \ccInclude macro can be linked to the original
 # header files if the -header option is given to the cc_extract_html program.
-# The environment variable HEADER_DIR is used as default. If it is not
-# set, the default setting is empty and include files are not linked.
+# The environment variable LATEX_CONV_HEADER is used as default. 
+# If it is not set, the default setting is empty and include files are not
+# linked.
 set header = ""
-if ($?HEADER_DIR) then
-    set header = "-header ${HEADER_DIR}/"
+if ($?LATEX_CONV_HEADER) then
+    set header = "-header ${LATEX_CONV_HEADER}"
 endif
 
+# Default parameters used in calling the cc_extract_html program:
+# They are not necessarily supposed to be set in the environment.
+if ( ! $?LATEX_CONV_DATE)    set LATEX_CONV_DATE   = `date +"%a, %B %e, %Y"`
+if ( ! $?LATEX_CONV_AUTHOR)  set LATEX_CONV_AUTHOR = \
+            'The <A HREF="http://www.cs.uu.nl/CGAL/">CGAL Project</A>'
+if ( ! $?LATEX_CONV_TITLE)   set LATEX_CONV_TITLE  = "Reference Manual"
+if ( ! $?LATEX_CONV_RELEASE) set LATEX_CONV_RELEASE = 
 
-# =======================================================
-# Installation: Nothing else below this line.
-# =======================================================
+# =====================================================================
+# ... End of Installation Section.
+# =====================================================================
 
 # Prepare local variables
 # -----------------------
+set prog_name = $0
+set prog_name = $prog_name:t
+
 set tmp_path = "/usr/tmp"
-if ( ! -d ${tmp_path}) set = tmp_path = "."
+if ( ! -d ${tmp_path}) set tmp_path = "."
 if ($?TEMP) then
   if (-d ${TEMP}) set tmp_path = $TEMP
 endif
@@ -73,13 +79,13 @@ set aux_file    = ""
 set bbl_file    = ""
 
 set out_path    = "."
-set config_path = ${HTML_DEFAULT_PATH}
-
-set DEFAULT_RELEASE = 
+set config_path = ${LATEX_CONV_CONFIG}
 
 set default_switch   = 0
 set show_main_switch = 0
 set extended_switch  = 0
+set extract_opt      = ""
+set quiet_switch     = 0;
 
 set FLEX = "flex -t -8 -w"
 
@@ -96,6 +102,13 @@ while ($#argv > 0)
     if ( "$1" == "-defaults") then
 	set default_switch = 1
         break
+    endif
+
+    if ( "$1" == "-V") then
+        echo "$prog_name "'$Revision$'" (c) Lutz Kettner"
+	echo -n "Using: "
+	cc_extract_html -V
+        exit(0)
     endif
 
     if ( "$1" == "-extended") then
@@ -157,7 +170,7 @@ while ($#argv > 0)
 	    echo "error: switch -header needs an additional parameter."
             goto usage
 	endif
-	set header = "-header $1/"
+	set header = "-header $1"
 	shift
         continue
     endif
@@ -168,7 +181,7 @@ while ($#argv > 0)
 	    echo "error: switch -cgal_dir needs an additional parameter."
             goto usage
 	endif
-	set header = "-header $1/"
+	set header = "-header $1"
 	shift
         continue
     endif
@@ -178,7 +191,7 @@ while ($#argv > 0)
 	    echo "error: switch -date needs an additional parameter."
             goto usage
 	endif
-	set DEFAULT_DATE = "$1"
+	set LATEX_CONV_DATE = "$1"
 	shift
         continue
     endif
@@ -188,7 +201,7 @@ while ($#argv > 0)
 	    echo "error: switch -release needs an additional parameter."
             goto usage
 	endif
-	set DEFAULT_RELEASE = "$1"
+	set LATEX_CONV_RELEASE = "$1"
 	shift
         continue
     endif
@@ -198,7 +211,7 @@ while ($#argv > 0)
 	    echo "error: switch -title needs an additional parameter."
             goto usage
 	endif
-	set DEFAULT_TITLE = "$1"
+	set LATEX_CONV_TITLE = "$1"
 	shift
         continue
     endif
@@ -208,7 +221,7 @@ while ($#argv > 0)
 	    echo "error: switch -author needs an additional parameter."
             goto usage
 	endif
-	set DEFAULT_AUTHOR = "$1"
+	set LATEX_CONV_AUTHOR = "$1"
 	shift
         continue
     endif
@@ -233,7 +246,43 @@ while ($#argv > 0)
 	shift
         continue
     endif
-    if ( "$1" == "-w") then
+    if ( "$1" == "-quiet") then
+        set quiet_switch = 1;
+        set extract_opt = "$extract_opt $1"
+        shift
+        continue
+    endif
+    if ( "$1" == "-macrodef") then
+        set extract_opt = "$extract_opt $1"
+        shift
+        continue
+    endif
+    if ( "$1" == "-macroexp") then
+        set extract_opt = "$extract_opt $1"
+        shift
+        continue
+    endif
+    if ( "$1" == "-stymacro") then
+        set extract_opt = "$extract_opt $1"
+        shift
+        continue
+    endif
+    if ( "$1" == "-stacktrace") then
+        set extract_opt = "$extract_opt $1"
+        shift
+        continue
+    endif
+    if ( "$1" == "-sty") then
+        shift
+        if ( $#argv < 1) then
+	    echo "error: switch -sty needs an additional parameter."
+            goto usage
+	endif
+        set extract_opt = "$extract_opt -sty $1"
+        shift
+        continue
+    endif
+    if ( "$1" == "-flexwarn") then
         set FLEX = "flex -t -8"
         shift
         continue
@@ -247,23 +296,27 @@ if ( $?DEBUG) echo "# DEBUG defined; all actions will be echoed."
 
 if ( $?DEBUG || $default_switch == 1) then
     echo "The variable settings (including commmandline options) are:"
-    echo "  HTML_DEFAULT_PATH = ${HTML_DEFAULT_PATH}"
-    echo "  DEFAULT_DATE      = ${DEFAULT_DATE}"
-    echo "  DEFAULT_AUTHOR    = ${DEFAULT_AUTHOR}"
-    echo "  DEFAULT_TITLE     = ${DEFAULT_TITLE}"
-    echo "  DEFAULT_RELEASE   = ${DEFAULT_RELEASE}"
-    echo "  tmp_path          = ${tmp_path}"
-    echo "  out_path          = ${out_path}"
-    echo "  header            = ${header}"
-    echo "  config_path       = ${config_path}"
-    echo "  input_files       = ${in_files}"
-    echo "  aux_file          = ${aux_file}"
-    echo "  bbl_file          = ${bbl_file}"
+    echo "  LATEX_CONV_CONFIG  = ${LATEX_CONV_CONFIG}"
+    echo "  LATEX_CONV_DATE    = ${LATEX_CONV_DATE}"
+    echo "  LATEX_CONV_AUTHOR  = ${LATEX_CONV_AUTHOR}"
+    echo "  LATEX_CONV_TITLE   = ${LATEX_CONV_TITLE}"
+    echo "  LATEX_CONV_RELEASE = ${LATEX_CONV_RELEASE}"
+    echo "  tmp_path           = ${tmp_path}"
+    echo "  out_path           = ${out_path}"
+    echo "  header             = ${header}"
+    echo "  config_path        = ${config_path}"
+    echo "  input_files        = ${in_files}"
+    echo "  aux_file           = ${aux_file}"
+    echo "  bbl_file           = ${bbl_file}"
+    echo "  extract_opt        = ${extract_opt}"
     echo ""
 endif
 if ( $default_switch) goto end_of_script
 
 if ( "$in_files" == "") goto usage
+
+set config_html = "${config_path}/html"
+set config_gif  = "${config_path}/gif"
 
 if ( $?DEBUG) set verbose = 1
 
@@ -274,31 +327,33 @@ set tmp_name = "extract_html_tmp_$USER"
 
 set new_tmp_path =  ${tmp_path}/${tmp_name}
 if ( -d ${new_tmp_path}) then
-    echo "error: the subdirectory $tmp_name for the tmp_path exists already."
-    echo "       type 'rm -r ${new_tmp_path}' to remove it."
-    goto usage
+    echo "warning: the tmp_path $tmp_name exists already."
+    echo "         It will be removed."
+    rm -r ${new_tmp_path}
 endif
 mkdir ${new_tmp_path}
 
+if ( ! $quiet_switch) echo "[$prog_name "'$Revision$'
 
 if ( $extended_switch) goto extended_conversion
 
 # Step 1: convert each LaTeX file into an HTML file.
 # --------------------------------------------------
-set options = "${header} -config ${config_path}/ -tmp ${new_tmp_path}/ ${aux_file} ${bbl_file}"
+set options = "${header} -config ${config_path} -tmp ${new_tmp_path} ${aux_file} ${bbl_file}"
 
 if ( $?DEBUG) echo "# Step 1: convert each LaTeX file into an HTML file."
 if ($show_main_switch) then
-    cc_extract_html -date "${DEFAULT_DATE}" -release "${DEFAULT_RELEASE}" -title "${DEFAULT_TITLE}" -author "${DEFAULT_AUTHOR}" ${options} -main main.html ${in_files}
+    cc_extract_html ${extract_opt} -date "${LATEX_CONV_DATE}" -release "${LATEX_CONV_RELEASE}" -title "${LATEX_CONV_TITLE}" -author "${LATEX_CONV_AUTHOR}" ${options} -main main.html ${in_files}
 else
-    cc_extract_html -date "${DEFAULT_DATE}" -release "${DEFAULT_RELEASE}" -title "${DEFAULT_TITLE}" -author "${DEFAULT_AUTHOR}" ${options} ${in_files} >/dev/null
+    cc_extract_html ${extract_opt} -date "${LATEX_CONV_DATE}" -release "${LATEX_CONV_RELEASE}" -title "${LATEX_CONV_TITLE}" -author "${LATEX_CONV_AUTHOR}" ${options} ${in_files} >/dev/null
 endif
 
 # Step 2: generate the hyperlinks. The anchor filter.
 # ---------------------------------------------------
+if ( ! $quiet_switch) echo -n "creating anchor filter"
 if ( $?DEBUG) echo "# Step 2: generate the hyperlinks. The anchor filter"
 
-cat ${config_path}/cc_anchor_header ${new_tmp_path}/cc_anchor_rules ${config_path}/cc_anchor_footer > ${new_tmp_path}/cc_anchor_filter.yy
+cat ${config_html}/cc_anchor_header ${new_tmp_path}/cc_anchor_rules ${config_html}/cc_anchor_footer > ${new_tmp_path}/cc_anchor_filter.yy
 
 ${FLEX} ${new_tmp_path}/cc_anchor_filter.yy > ${new_tmp_path}/cc_anchor_filter.c
 
@@ -307,8 +362,10 @@ if (-r cc_anchor_filter.o) rm cc_anchor_filter.o
 
 # Filtering all HTML files.
 # -------------------------
+if ( ! $quiet_switch) echo -n ", applying anchor filter"
 if ( $?DEBUG) echo "# Filtering all HTML files."
 foreach f (${new_tmp_path}/*.html)
+  if ( $?DEBUG) echo $f
   ${new_tmp_path}/cc_anchor_filter < $f > ${out_path}/$f:t
 end
 
@@ -323,14 +380,20 @@ cat ${new_tmp_path}/cc_index_header ${new_tmp_path}/cc_index_sorted ${new_tmp_pa
 ${new_tmp_path}/cc_anchor_filter < ${new_tmp_path}/cc_index > ${out_path}/manual_index.html
 
 
-conversion_done:
-# Copy the images for the advanced section to the manual.
+# Copy the necessary images to the manual.
 # -------------------------------------------------------
-foreach f (${HTML_DEFAULT_PATH}/*.gif)
-  if ( -r $f ) then
-    cp $f ${out_path}
-  endif
+if ( ! $quiet_switch) echo -n ", copying image files"
+
+set image_files = `cat ${out_path}/*.html | cc_extract_images | sort | unique`
+foreach f ($image_files)
+    if ( -r ${config_gif}/$f) then
+        cp ${config_gif}/$f ${out_path}
+    else
+        echo "Error: HTML converter: image file '${config_gif}/$f' not found."
+    endif
 end
+
+conversion_done:
 
 # Cleanup
 # -------
@@ -340,6 +403,7 @@ if ( $?DEBUG) then
 else
     rm -r ${new_tmp_path}
 endif
+if ( ! $quiet_switch) echo "]"
 
 end_of_script:
 exit
@@ -362,18 +426,19 @@ end
 # --------------------------------------------------
 if ( $?DEBUG) echo "# Step 1: convert each LaTeX file into an HTML file."
 foreach f ($in_files)
-    set options = "${header} -config ${config_path}/ -tmp ${new_tmp_path}/$f:h/ -noheader"
+    set options = "${header} -config ${config_path} -tmp ${new_tmp_path}/$f:h -noheader"
     cd $f:h
-    cc_extract_html -date "${DEFAULT_DATE}" -release "${DEFAULT_RELEASE}" -title "${DEFAULT_TITLE}" -author "${DEFAULT_AUTHOR}" ${options} $f:t >/dev/null
+    cc_extract_html ${extract_opt} -date "${LATEX_CONV_DATE}" -release "${LATEX_CONV_RELEASE}" -title "${LATEX_CONV_TITLE}" -author "${LATEX_CONV_AUTHOR}" ${options} $f:t >/dev/null
     cd ..
 end
 
 
 # Step 2: generate the local hyperlinks. The anchor filter.
 # ---------------------------------------------------------
+if ( ! $quiet_switch) echo -n "creating local anchor filter"
 if ( $?DEBUG) echo "# Step 2: generate the hyperlinks. The anchor filter"
 foreach f ($in_files)
-    cat ${config_path}/cc_anchor_header ${new_tmp_path}/$f:h/cc_anchor_rules ${config_path}/cc_anchor_footer > ${new_tmp_path}/cc_anchor_filter.yy
+    cat ${config_html}/cc_anchor_header ${new_tmp_path}/$f:h/cc_anchor_rules ${config_html}/cc_anchor_footer > ${new_tmp_path}/cc_anchor_filter.yy
 
     ${FLEX} ${new_tmp_path}/cc_anchor_filter.yy > ${new_tmp_path}/cc_anchor_filter.c
 
@@ -382,6 +447,7 @@ foreach f ($in_files)
 
     # Filtering all HTML files locally.
     # ---------------------------------
+    if ( ! $quiet_switch) echo -n ", applying local anchor filter"
     if ( $?DEBUG) echo "# Filtering all HTML files locally."
     mv ${new_tmp_path}/$f:h/cc_index_body ${new_tmp_path}/$f:h/cc_index_body.bak
     ${new_tmp_path}/cc_anchor_filter < ${new_tmp_path}/$f:h/cc_index_body.bak > ${new_tmp_path}/$f:h/cc_index_body
@@ -400,24 +466,28 @@ end
 
 # Step 3: convert bibliography (if any) and .aux file.
 # -----------------------------------------------------------
+    if ( ! $quiet_switch) echo -n ", converting bibliography"
 if ( $?DEBUG) echo "# Step 3: convert bibliography (if any) and .aux file."
-set options = "${header} -config ${config_path}/ -tmp ${new_tmp_path}/ -noheader ${aux_file} ${bbl_file}"
+set options = "${header} -config ${config_path} -tmp ${new_tmp_path} -noheader ${aux_file} ${bbl_file}"
 touch ${new_tmp_path}/cc_index_body
 if ( "${aux_file}" == ""  && "${bbl_file}" == "") then
     touch ${new_tmp_path}/cc_anchor_rules
 else
-    cc_extract_html -date "${DEFAULT_DATE}" -release "${DEFAULT_RELEASE}" -title "${DEFAULT_TITLE}" -author "${DEFAULT_AUTHOR}" ${options} >/dev/null
+    cc_extract_html ${extract_opt} -date "${LATEX_CONV_DATE}" -release "${LATEX_CONV_RELEASE}" -title "${LATEX_CONV_TITLE}" -author "${LATEX_CONV_AUTHOR}" ${options} >/dev/null
 endif
 
 
 # Step 4: generate the global hyperlinks. The anchor filter.
 # -----------------------------------------------------------
+    if ( ! $quiet_switch) echo -n ", creating global anchor filter"
 if ( $?DEBUG) echo "# Step 4: generate the global hyperlinks. The anchor filter"
-cat ${config_path}/cc_anchor_header ${new_tmp_path}/cc_anchor_rules > ${new_tmp_path}/cc_anchor_filter.yy
+cat ${config_html}/cc_anchor_header ${new_tmp_path}/cc_anchor_rules > ${new_tmp_path}/cc_anchor_filter.yy
+# make uplink for images provided by the converter point into common gif dir
+# echo '"SRC=\"../cc_"[^"]*".gif\""    { fputs( "SRC=\"../gif", stdout); fputs( yytext+7, stdout);}' >> ${new_tmp_path}/cc_anchor_filter.yy
 foreach f ($in_files)
     cat ${new_tmp_path}/$f:h/cc_anchor_rules >> ${new_tmp_path}/cc_anchor_filter.yy
 end
-cat ${config_path}/cc_anchor_footer >> ${new_tmp_path}/cc_anchor_filter.yy
+cat ${config_html}/cc_anchor_footer >> ${new_tmp_path}/cc_anchor_filter.yy
 
 ${FLEX} ${new_tmp_path}/cc_anchor_filter.yy > ${new_tmp_path}/cc_anchor_filter.c
 
@@ -425,6 +495,7 @@ ${CC} -o ${new_tmp_path}/cc_anchor_filter ${new_tmp_path}/cc_anchor_filter.c
 
 if (-r cc_anchor_filter.o) rm cc_anchor_filter.o
 
+if ( ! $quiet_switch) echo -n ", applying global anchor filter"
 foreach f ($in_files)
     # Filtering all HTML files globally.
     # ----------------------------------
@@ -439,12 +510,14 @@ end
 # Converting the index, table of contents, and the bibliography.
 # --------------------------------------------------------------
 
+if ( ! $quiet_switch) echo -n ", index, toc, bibliography"
+
 ${new_tmp_path}/cc_anchor_filter < ${new_tmp_path}/biblio.html > ${out_path}/biblio.html
 
 if ( $?DEBUG) echo "# Converting the index."
 mv ${new_tmp_path}/cc_index_body ${new_tmp_path}/cc_index_body.bak
-set options = "${header} -config ${config_path}/ -tmp ${new_tmp_path}/ -onlyheader cc_toc_footer cc_toc_header cc_index_footer cc_index_header"
-cc_extract_html -date "${DEFAULT_DATE}" -release "${DEFAULT_RELEASE}" -title "${DEFAULT_TITLE}" -author "${DEFAULT_AUTHOR}" ${options} >/dev/null
+set options = "${header} -config ${config_path} -tmp ${new_tmp_path} -onlyheader cc_toc_footer cc_toc_header cc_index_footer cc_index_header"
+cc_extract_html ${extract_opt} -date "${LATEX_CONV_DATE}" -release "${LATEX_CONV_RELEASE}" -title "${LATEX_CONV_TITLE}" -author "${LATEX_CONV_AUTHOR}" ${options} >/dev/null
 cat ${new_tmp_path}/cc_toc_header > ${new_tmp_path}/contents.html
 cat ${new_tmp_path}/cc_index_body.bak >> ${new_tmp_path}/cc_index_body
 
@@ -461,12 +534,27 @@ cat ${new_tmp_path}/cc_index_header ${new_tmp_path}/cc_index_sorted ${new_tmp_pa
 ${new_tmp_path}/cc_anchor_filter < ${new_tmp_path}/cc_index > ${out_path}/manual_index.html
 ${new_tmp_path}/cc_anchor_filter < ${new_tmp_path}/contents.html > ${out_path}/contents.html
 
+
+# Copy the necessary images to the manual.
+# -------------------------------------------------------
+if ( ! $quiet_switch) echo -n ", copying image files"
+
+if ( ! -d ${out_path}/gif) mkdir ${out_path}/gif
+set image_files = `cat ${out_path}/*.html ${out_path}/*/*.html | cc_extract_images | sort | unique`
+foreach f ($image_files)
+    if ( -r ${config_gif}/$f) then
+        cp ${config_gif}/$f ${out_path}/gif
+    else
+        echo "Error: HTML converter: image file '${config_gif}/$f' not found."
+    endif
+end
+
 goto conversion_done
 
 
 usage:
-echo "$0 "'$Revision$'" (c) Lutz Kettner"
-echo "Usage: $0 [<options>] <tex-files...>"
+echo "$prog_name "'$Revision$'" (c) Lutz Kettner"
+echo "Usage: $prog_name [<options>] <tex-files...>"
 echo "           -defaults           show the settings of the internal variables."
 echo "           -extended           extended organization among multiple dir's."
 echo "           -show_main          put the result for the main file in main.html."
@@ -480,6 +568,12 @@ echo "           -header   <dir>     set the path where the C headers are."
 echo "           -o        <dir>     output directory for the generated HTML manual"
 echo "           -aux      <file>    auxiliary file where the \\bibcite's are in."
 echo "           -bbl      <file>    bibliography file produced by bibtex."
-echo "           -w                  show warnings produced by flex."
+echo "           -sty      <style>   use style file.";
+echo "           -quiet              no output, no warnings for unknown macros."
+echo "           -macrodef           trace macro definitions."
+echo "           -macroexp           trace macro expansions."
+echo "           -stymacro           trace style macros as well."
+echo "           -stacktrace         stack trace for each error."
+echo "           -flexwarn           show warnings produced by flex."
 exit (1)
 

@@ -31,6 +31,12 @@
 
 int    old_state = 0;    // Old parser state before param. parsing.
 
+// Used to communicate with the parser for DEFWITHARGS's tokens.
+int number_of_args = 0;
+
+string yy_string;             // Used like yytext, if we need a temp. string.
+bool small_caps_mode = false; // Special treatment of small caps conversion.
+
 // Used to parse {} nested expressions as (La)TeX macro parameters
 // using ParameterMode.
 string current_macro;         // Current macro to be expanded
@@ -78,6 +84,8 @@ bool   skipseparator_eof();
 #define skiplimitedspaces() if ( skiplimitedspaces_eof()) yyterminate()
 bool   skiplimitedspaces_eof();
 
+int    skiplimitedspaces_param();
+
 #define skiplimitedsepspaces() if ( skiplimitedsepspaces_eof()) yyterminate()
 bool   skiplimitedsepspaces_eof();
 
@@ -102,6 +110,17 @@ void   inc_line();
 	}                                                                    \
 	if ( is_parameter_parsing_done( (option), more_param))
 
+#define BeginParameterStart()        \
+    if ( YY_START == AllttMode)      \
+        BEGIN( AllttParameterStart); \
+    else                             \
+        BEGIN( ParameterStart)
+
+#define BeginParameterMode()         \
+    if ( YY_START == AllttMode)      \
+        BEGIN( AllttParameterMode);  \
+    else                             \
+        BEGIN( ParameterMode)
 
 // Some inline function to process yytext.
 
@@ -128,6 +147,10 @@ inline char* next_digit( char* s) {
         ++s;
     return s;
 }
+
+#define CC_Special(x) count_newlines(yytext); cc_string+=x; break
+
+#define YY_BREAK  /* a do nothing */
 
 /* --------------------------------------------------------------------
     Parsing Modes:
@@ -161,6 +184,10 @@ inline char* next_digit( char* s) {
                           PARAMETER, the surrounding {} stripped off.
 			  In case of [] a PARAMETER_OPTION is returned.
 
+    --  AllttParameterStart: same as ParameterStart, but in AllttMode
+
+    --  AllttParameterMode:  same as ParameterMode, but in AllttMode
+
     --  CCParameterMode:  Parses C++ parameters, similar to ParameterMode.
                           Counts only parantheses. Does not treat escaped
                           parantheses or TeX comments (%). Expands the
@@ -174,6 +201,8 @@ inline char* next_digit( char* s) {
 %x IncludeMode
 %x ParameterStart
 %x ParameterMode
+%x AllttParameterStart
+%x AllttParameterMode
 %x CCParameterMode
 %x DelimiterMode
 %x EndTokenMode
@@ -190,18 +219,12 @@ envir           [a-zA-Z0-9*]+
 envirmacro      (("\\begin@")|("\\end")){envir}
 texmacro        ([\\]((.)|([\\]"*")|({idfier}"*"?)))|{envirmacro}
 deftexmacro     {texmacro}(("@"[mo]+)?)
+texmacroskip    [\\]{idfier}"*"?
 filename        [^ \t\n\\\{\}\[\]()\001]+
 space           [\t ]
 w               {space}*
 ws              {space}+
 number          {digit}+
-rmblockintro    ([\{][\\](rm))|([\\]((text)|(math))rm[\{])
-ttblockintro    ([\{][\\](tt))|([\\]((text)|(math))tt[\{])
-emblockintro    ([\{][\\](em))|([\\]emph[\{])
-itblockintro    ([\{][\\]((it)|(sl)))|([\\]((text)|(math))((it)|(sl))[\{])
-scblockintro    ([\{][\\](sc))|([\\]textsc[\{])
-sfblockintro    ([\{][\\](sf))|([\\]((text)|(math))sf[\{])
-bfblockintro    ([\{][\\]((bf)|(mathbold)))|([\\]((text)|(math))bf[\{])
 
 %%
  /* Mode switching can be triggered from the parser */
@@ -214,13 +237,12 @@ bfblockintro    ([\{][\\]((bf)|(mathbold)))|([\\]((text)|(math))bf[\{])
  /* Separator, Newlines, paragraphs, comments, and EOF        */
  /* --------------------------------------------------------- */
 
-<INITIAL,AllttMode>{sep}  { /* ignore separator */ }
+<INITIAL,AllttMode>{sep}  { break; /* ignore separator */ }
 
  /* Count line numbers in all modes for better error messages */
 {w}"\n"{w}("\n"{w})+   {  /* create a TeX paragraph */
                     count_newlines( yytext);
-		    yylval.string.text = "\n<P>\n\n";
-		    yylval.string.len  = -1;
+		    yylval.text = "\n<P>\n\n";
 		    return STRING;
 }
 <INITIAL,AllttMode>[\n]	{
@@ -235,11 +257,11 @@ bfblockintro    ([\{][\\]((bf)|(mathbold)))|([\\]((text)|(math))bf[\{])
 }
 "%".*[\n]{w}  { /* Match one line TeX comments remove spaces in next line */
 		    inc_line();
+		    break;
 	        }
 "%".*[\n]{w}("\n"{w})+  { /* Match comments with an empty line -> par */
                     count_newlines( yytext);
-		    yylval.string.text = "\n<P>\n\n";
-		    yylval.string.len  = -1;
+		    yylval.text = "\n<P>\n\n";
 		    return STRING;
 	        }
 "%".*  { /* Match one line TeX comments at the last line in a file (EOF) */ }
@@ -254,7 +276,8 @@ bfblockintro    ([\{][\\]((bf)|(mathbold)))|([\\]((text)|(math))bf[\{])
 
 <INITIAL,AllttMode>[\\]((include)|(input)){seps}[\{]{seps}   {  
 		    old_state = YY_START;
-		    BEGIN ( IncludeMode); 
+		    BEGIN ( IncludeMode);
+		    break;
 }
 <IncludeMode>{filename}          {
                     /* remove remaining characters before the '}' */
@@ -270,6 +293,7 @@ bfblockintro    ([\{][\\]((bf)|(mathbold)))|([\\]((text)|(math))bf[\{])
 		    }
 		    BEGIN( old_state);
 		    include_stack.push_tex_file( yytext);
+		    break;
 }
 
  /* TeX Macro Definitions                         */
@@ -280,41 +304,38 @@ bfblockintro    ([\{][\\]((bf)|(mathbold)))|([\\]((text)|(math))bf[\{])
 <INITIAL,AllttMode>[\\]lciEndGroup      { return '}'; }
 
 <INITIAL,AllttMode>[\\]def{seps}{deftexmacro}{seps}([#][0-9])+ {
+                    number_of_args = atoi( yytext + yyleng - 1);
 		    old_state = YY_START;
-                    BEGIN( ParameterStart);
-		    int i = 1;
-		    while ( yytext[i] != '\\')
-			++i;
-	            yylval.string.text = newstr( yytext+i);
-		    yylval.string.len  = yyleng-i;
-		    i = 1;
-		    while ( isalpha( yylval.string.text[i]))
-			++i;
-		    ((char *)(yylval.string.text))[i] = '\0';
+                    BeginParameterStart();
+                    char* s = yytext + 1;
+		    s = next_char(s, '\\');
+		    char* p = s;
+		    ++s;
+		    s = next_non_alpha( s);
+		    *s = '\0';
+	            yylval.text = newstr( p);
                     return DEFWITHARGS;
 }
 <INITIAL,AllttMode>[\\]gdef{seps}{deftexmacro}{seps}([#][0-9])+ {
+                    number_of_args = atoi( yytext + yyleng - 1);
 		    old_state = YY_START;
-                    BEGIN( ParameterStart);
-		    int i = 1;
-		    while ( yytext[i] != '\\')
-			++i;
-	            yylval.string.text = newstr( yytext+i);
-		    yylval.string.len  = yyleng-i;
-		    i = 1;
-		    while ( isalpha( yylval.string.text[i]))
-			++i;
-		    ((char *)(yylval.string.text))[i] = '\0';
+                    BeginParameterStart();
+                    char* s = yytext + 1;
+		    s = next_char(s, '\\');
+		    char* p = s;
+		    ++s;
+		    s = next_non_alpha( s);
+		    *s = '\0';
+	            yylval.text = newstr( p);
                     return GDEFWITHARGS;
 }
 <INITIAL,AllttMode>[\\]g?def{seps}{deftexmacro}{seps}[#][^\{]* {
 		    old_state = YY_START;
-                    BEGIN( ParameterStart);
+                    BeginParameterStart();
 		    int i = 1;
 		    while ( yytext[i] != '\\')
 			++i;
-	            yylval.string.text = newstr( yytext+i);
-		    yylval.string.len  = yyleng-i;
+	            yylval.text = newstr( yytext+i);
                     return DEFWITHUNKNOWNARGS;
 }
 
@@ -326,58 +347,78 @@ bfblockintro    ([\{][\\]((bf)|(mathbold)))|([\\]((text)|(math))bf[\{])
 		    current_parameter = yytext;
 		    IfParameterParsing( false)
 		        return PARAMETER;
+		    break;
 }
 <ParameterStart>"\n"     |
 <ParameterStart>"%".*[\n]{w}  { /* Match one line TeX comments */
 		    /* remove spaces in next line  */
 		    inc_line();
+		    break;
 }
-<ParameterStart>{sepsp}+ | /* ignore separator and spaces before parameters */
-<ParameterStart>"%".*    { /* Match one line TeX comments */
-                           /* at the last line in file */
-}
+<ParameterStart>{sepsp}+ { break;} /* ignore seps + sp before parameters */
+<ParameterStart>"%".*    { break;} /* Match one line TeX comments */
+                                   /* at the last line in file */
+
 <ParameterStart>"\{"     {
 		    current_parameter = string();
                     ++parameter_nesting;
-                    BEGIN( ParameterMode);
+                    BeginParameterMode();
+		    break;
 }
 <ParameterStart>"\["     {
 		    current_parameter = string();
                     ++parameter_nesting;
 		    parameter_option = true;
-                    BEGIN( ParameterMode);
+                    BeginParameterMode();
+		    break;
+}
+<ParameterStart>{texmacroskip}  {
+		    current_parameter = yytext;
+		    int c = skiplimitedspaces_param();
+		    if ( c == EOF)
+			yyterminate();
+		    if ( isalpha(c) || c == '*' || c == '#')
+			current_parameter += SEPARATOR;
+		    IfParameterParsing( false)
+		        return PARAMETER;
+		    break;
 }
 <ParameterStart>{deftexmacro}  |
 <ParameterStart>.              {
 		    current_parameter = yytext;
 		    IfParameterParsing( false)
 		        return PARAMETER;
+		    break;
 }
 
 
-<ParameterMode>[\\]"\n" { 
+<ParameterMode>[\\]"\n" |
+<ParameterMode>"\n"     { /* keep newlines */
 		    current_parameter += yytext;
                     inc_line();
+		    break;
 }
 <ParameterMode>"%".*[\n]{w}("\n"{w})+  { 
                     /* Match comments with an empty line -> par */
 		    current_parameter += "\n\n";
                     count_newlines( yytext);
+		    break;
 }
 <ParameterMode>"%".*[\n]{w}  { /* Match one line TeX comments */
 		    /* remove spaces in next line  */
+		    current_parameter += SEPARATOR;
                     inc_line();
+		    break;
 }
 <ParameterMode>"%".*    { /* Match one line TeX comments */
                           /* at the last line in file */
-}
-<ParameterMode>"\n"     { /* keep newlines */
-		    current_parameter += yytext;
-                    inc_line();
+		    current_parameter += SEPARATOR;
+		    break;
 }
 <ParameterMode>"\{"     {
 		    current_parameter += yytext;
                     ++parameter_nesting;
+		    break;
 }
 <ParameterMode>"\}"     {
                     if ( --parameter_nesting == 0) {
@@ -391,6 +432,7 @@ bfblockintro    ([\{][\\]((bf)|(mathbold)))|([\\]((text)|(math))bf[\{])
 			}
 		    } else
 			current_parameter += yytext;
+		    break;
 }
 <ParameterMode>"]"      {
                     if ( parameter_nesting == 1 && parameter_option) {
@@ -400,11 +442,98 @@ bfblockintro    ([\{][\\]((bf)|(mathbold)))|([\\]((text)|(math))bf[\{])
 			    return PARAMETER_OPTION;
 		    } else
 			current_parameter += yytext;
+		    break;
+}
+<ParameterMode>{texmacroskip}  {
+		    current_parameter += yytext;
+		    int c = skiplimitedspaces_param();
+		    if ( c == EOF)
+			yyterminate();
+		    if ( isalpha(c) || c == '*' || c == '#')
+			current_parameter += SEPARATOR;
+		    break;
 }
 <ParameterMode>{deftexmacro}   |
 <ParameterMode>[^\\\{\}%\]\n]+ |
 <ParameterMode>.               {
 		    current_parameter += yytext;
+		    break;
+}
+
+ /* Macro Parameter Parsing in AllttMode  */
+ /* ------------------------------------- */
+
+<AllttParameterStart>[\\]"\n" | 
+<AllttParameterStart>"\n"     {
+		    inc_line();
+		    current_parameter = yytext;
+		    IfParameterParsing( false)
+		        return PARAMETER;
+		    break;
+}
+<AllttParameterStart>{sep}+   { break;} /* ignore seps before parameters */
+<AllttParameterStart>"\{"     {
+		    current_parameter = string();
+                    ++parameter_nesting;
+                    BEGIN( AllttParameterMode);
+		    break;
+}
+<AllttParameterStart>"\["     {
+		    current_parameter = string();
+                    ++parameter_nesting;
+		    parameter_option = true;
+                    BEGIN( AllttParameterMode);
+		    break;
+}
+<AllttParameterStart>{deftexmacro}  |
+<AllttParameterStart>.              {
+		    current_parameter = yytext;
+		    IfParameterParsing( false)
+		        return PARAMETER;
+		    break;
+}
+
+
+<AllttParameterMode>[\\]"\n" |
+<AllttParameterMode>"\n"     { /* keep newlines */
+		    current_parameter += yytext;
+                    inc_line();
+		    break;
+}
+<AllttParameterMode>"\{"     {
+		    current_parameter += yytext;
+                    ++parameter_nesting;
+		    break;
+}
+<AllttParameterMode>"\}"     {
+                    if ( --parameter_nesting == 0) {
+			IfParameterParsing( false) {
+			    if ( parameter_option) {
+				printErrorMessage( ParameterOptionError);
+				parameter_option = false;
+				return PARAMETER_OPTION;
+			    }
+			    return PARAMETER;
+			}
+		    } else
+			current_parameter += yytext;
+		    break;
+}
+<AllttParameterMode>"]"      {
+                    if ( parameter_nesting == 1 && parameter_option) {
+			parameter_nesting--;
+			parameter_option = false;
+			IfParameterParsing( true)
+			    return PARAMETER_OPTION;
+		    } else
+			current_parameter += yytext;
+		    break;
+}
+<AllttParameterMode>{deftexmacro}   |
+<AllttParameterMode>[^\\\{\}%\]\n]+ |
+<AllttParameterMode>.               {
+		    current_parameter += yytext;
+		    break;
 }
 
  /* C++ Parameter Parsing     */
@@ -412,11 +541,13 @@ bfblockintro    ([\{][\\]((bf)|(mathbold)))|([\\]((text)|(math))bf[\{])
 <CCParameterMode>[\\]"\n" |
 <CCParameterMode>"\n"     {
                     inc_line();
-		    cc_string += '\n';
+		    cc_string += ' ';
+		    break;
 }
 <CCParameterMode>"\{"     {
                     if ( parameter_nesting++ > 0)
                         cc_string += yytext;
+		    break;
 }
 <CCParameterMode>"\}"     {
                     if ( --parameter_nesting == 0) {
@@ -427,38 +558,42 @@ bfblockintro    ([\{][\\]((bf)|(mathbold)))|([\\]((text)|(math))bf[\{])
 			current_macro = string();
 		    } else
 			cc_string += yytext;
+		    break;
 }
 
  /* Special treatment of several macros in C++ text */
 <CCParameterMode>[\\][^a-zA-Z] { /* capture all quoted special symbols */
                     cc_string += yytext[1];
+		    break;
 }
-<CCParameterMode>[\\]"tt"{sepnls} { count_newlines(yytext); cc_string+="|T|";}
-<CCParameterMode>[\\]"bf"{sepnls} { count_newlines(yytext); cc_string+="|B|";}
-<CCParameterMode>[\\]"em"{sepnls} { count_newlines(yytext); cc_string+="|I|";}
-<CCParameterMode>[\\]"it"{sepnls} { count_newlines(yytext); cc_string+="|I|";}
-<CCParameterMode>[\\]"sl"{sepnls} { count_newlines(yytext); cc_string+="|I|";}
-<CCParameterMode>[\\]"ccFont"{sepnls}       { count_newlines(yytext); 
-                                              cc_string += "|I|"; }
-<CCParameterMode>[\\]"l"?"dots"{sepnls}     { count_newlines(yytext);
-                                              cc_string += "..."; }
+<CCParameterMode>[\\]"tt"{sepnls} { CC_Special("|T|");}
+<CCParameterMode>[\\]"bf"{sepnls} { CC_Special("|B|");}
+<CCParameterMode>[\\]"em"{sepnls} { CC_Special("|I|");}
+<CCParameterMode>[\\]"it"{sepnls} { CC_Special("|I|");}
+<CCParameterMode>[\\]"sl"{sepnls} { CC_Special("|I|");}
+<CCParameterMode>[\\]"ccFont"{sepnls}       { CC_Special("|I|"); }
+<CCParameterMode>[\\]"l"?"dots"{sepnls}     { CC_Special("..."); }
 
 <CCParameterMode>{deftexmacro}    { 
                     printErrorMessage( MacroInCModeError);
                     cc_string += yytext; 
+		    break;
 }
 
-<CCParameterMode>{sep}              { /* ignore separator */ }
+<CCParameterMode>{sep}              { break; /* ignore separator */ }
 <CCParameterMode>[^\n\{\}\\\001]+   |
 <CCParameterMode>.                  {
                     cc_string += yytext;
+		    break;
 }
 
 
-<INITIAL,AllttMode>[\\]lciParseCC[\{][^\}]*[\}]   {
+<INITIAL,AllttMode>[\\]lciParseCC{seps}[\{][^\}]*[\}]   {
                     count_newlines(yytext);
 		    yytext[ yyleng - 1] = '\0';
-		    current_macro  = yytext + 12;
+		    char* s = yytext + 1;
+		    s = next_char(s, '{');
+		    current_macro  = s + 1;
                     skiplimitedsepspaces();
 		    int c = yyinput();
 		    if ( c != '{') {
@@ -470,6 +605,7 @@ bfblockintro    ([\{][\\]((bf)|(mathbold)))|([\\]((text)|(math))bf[\{])
 			parameter_nesting = 1;
 			cc_string = string();
 		    }
+		    break;
 }
 
  /* Special Parser Modes      */
@@ -477,10 +613,12 @@ bfblockintro    ([\{][\\]((bf)|(mathbold)))|([\\]((text)|(math))bf[\{])
 [\\]lciBeginAlltt { 
                     skiplimitedspaces();
                     BEGIN( AllttMode); 
+		    break;
                 }
 <AllttMode>[\\]lciEndAlltt { 
-                    skiplimitedspaces();
                     BEGIN( INITIAL);
+                    skiplimitedspaces();
+		    break;
                 }
 
 
@@ -497,10 +635,12 @@ bfblockintro    ([\{][\\]((bf)|(mathbold)))|([\\]((text)|(math))bf[\{])
 		    skipseparator();
 		    while ( (stop_character = yyinput()) == '\n')
 			inc_line();
+		    break;
                 }
 <DelimiterMode>"\n"	{
                     inc_line();
 		    yymore();
+		    break;
 		}
 <DelimiterMode>.	{
 		    if ( yytext[yyleng-1] == stop_character) {
@@ -520,6 +660,7 @@ bfblockintro    ([\{][\\]((bf)|(mathbold)))|([\\]((text)|(math))bf[\{])
                     } else {
 		        yymore();
 		    }
+		    break;
 		}
 
 <INITIAL,AllttMode>[\\]lciParseFile{seps}[\{]{seps}{texmacro}{seps}[\}]{seps}[\{][^\}]+[\}]   {
@@ -546,6 +687,7 @@ bfblockintro    ([\{][\\]((bf)|(mathbold)))|([\\]((text)|(math))bf[\{])
 							   1, 0),
 					       item.line);
 		    parameters[0] = string();
+		    break;
                 }
 
 <INITIAL,AllttMode>[\\]lciParseUntilEndToken{seps}[\{]{seps}{texmacro}{seps}[\}]{seps}[\{]{seps}{envir}{seps}[\}]   {
@@ -563,15 +705,17 @@ bfblockintro    ([\{][\\]((bf)|(mathbold)))|([\\]((text)|(math))bf[\{])
 		    s = next_non_alpha(s);
 		    *s = '\0';
 		    stop_envir = p;
+		    break;
                 }
 <EndTokenMode>"\n"	{
                     parameters[0] += yytext[0];
 		    inc_line();
+		    break;
 		}
-<EndTokenMode>{sep}     { /* ignore separator */ }
-<EndTokenMode>.	{   parameters[0] += yytext[0];	}
+<EndTokenMode>{sep}     { break; /* ignore separator */ }
+<EndTokenMode>.	{   parameters[0] += yytext[0];	break; }
 
-<EndTokenMode>[\\]end[\{]{seps}{envir}{seps}[\}]	{
+<EndTokenMode>[\\]end{seps}[\{]{seps}{envir}{seps}[\}]	{
                     parameters[1] = yytext;
 		    char* s = yytext + 5;
 		    s = next_alpha(s);
@@ -598,18 +742,18 @@ bfblockintro    ([\{][\\]((bf)|(mathbold)))|([\\]((text)|(math))bf[\{])
 			parameters[0] += parameters[1];
 		    }
 		    parameters[1] = string();
+		    break;
 		}
-
 
 <INITIAL,AllttMode>[\\]lcAsciiToHtml  {
 		    old_state = YY_START;
-                    BEGIN( ParameterStart);
+                    BeginParameterStart();
 		    return ASCIITOHTML;
                 }
 
 <INITIAL,AllttMode>[\\]lciRawOutput  {
 		    old_state = YY_START;
-                    BEGIN( ParameterStart);
+                    BeginParameterStart();
 		    return RAWOUTPUT;
                 }
 <INITIAL,AllttMode>[\\]lciRawOutputN{seps}[\{]{seps}{number}{seps}[\}]  {
@@ -619,14 +763,14 @@ bfblockintro    ([\{][\\]((bf)|(mathbold)))|([\\]((text)|(math))bf[\{])
 	            int n = atoi( s);
                     if ( n > 0) {
 			s = new char[n+1];
-			yylval.string.text = s;
-			yylval.string.len  = n;
+			yylval.text = s;
 			while (n--)
 			    if ( (*(s++) = yyinput()) == '\n')
 				inc_line();
 			*s = '\0';
 		        return RAWOUTPUTN;
                     }
+		    break;
                 }
 <INITIAL,AllttMode>[\\]lciAsciiOutputN{seps}[\{]{seps}{number}{seps}[\}]  {
                     char* s = yytext + 1;
@@ -640,10 +784,11 @@ bfblockintro    ([\{][\\]((bf)|(mathbold)))|([\\]((text)|(math))bf[\{])
 			    if ( (*(s++) = yyinput()) == '\n')
 				inc_line();
 			*s = '\0';
-			yylval.string.text = convert_ascii_to_html( p);
+			yylval.text = convert_ascii_to_html( p);
 			delete[] p;
 		        return RAWOUTPUTN;
                     }
+		    break;
                 }
 <INITIAL,AllttMode>[\\]lciRawSkipN{seps}[\{]{seps}{number}{seps}[\}]  {
                     char* s = yytext + 1;
@@ -655,35 +800,15 @@ bfblockintro    ([\{][\\]((bf)|(mathbold)))|([\\]((text)|(math))bf[\{])
 			    if ( yyinput() == '\n')
 				inc_line();
                     }
+		    break;
                 }
 
 
- /* Chapter and labels triggering new file and linking */
- /* -------------------------------------------------- */
-<INITIAL,AllttMode>[\\]lciChapter[*]?{seps}[\{]{seps}  {
+ /* Chapter      */
+ /* ------------ */
+<INITIAL,AllttMode>[\\]lciChapter[*]?{seps}  {
 		    return CHAPTER;
 }
-<INITIAL,AllttMode>[\\]lciSection[*]?{seps}("["[^\]]*"]")?[\{]{seps}  {
-                    count_newlines(yytext);
-		    return SECTION;
-}
-<INITIAL,AllttMode>[\\]label{seps}[\{][^\}]+[\}]  {
-                    count_newlines(yytext);
-	            char* s = yytext + 6;
-	            while ( *s++ != '{')
-                        ;
-	            while ( isspace(*s) || *s == SEPARATOR)
-			++s;
-		    yylval.string.text = s;
-		    s = yytext + yyleng - 2;
-	            while( isspace( *s) || *s == SEPARATOR)
-                        --s;
-		    *s = '\0';
-		    yylval.string.len  = strlen( yylval.string.text);
-                    if ( yylval.string.len > 0)
-		        return LABEL;
-}
-
 
  /* Different keywords from the manual style triggering C++ formatting */
  /* ------------------------------------------------------------------ */
@@ -698,59 +823,64 @@ bfblockintro    ([\{][\\]((bf)|(mathbold)))|([\\]((text)|(math))bf[\{])
  /* -------------------------------------------------------------- */
 <INITIAL,AllttMode>[\\]lciStoreHtmlFileName   {
                     cc_filename = cc_string;
+		    break;
 }
 <INITIAL,AllttMode>[\\]lciHtmlFileNameBegin   {
+                    skiplimitedsepspaces();
 		    return HTMLBEGINCLASSFILE;
 }
 
- /* Grouping symbols */
- /* ---------------- */
-
-<INITIAL,AllttMode>{ttblockintro}  {  /* TeX styles like {\tt ... */
-                    skiplimitedspaces();
-		    return TTBLOCKINTRO;
-		}
-<INITIAL,AllttMode>{emblockintro}  { skiplimitedspaces();return EMBLOCKINTRO;}
-<INITIAL,AllttMode>{itblockintro}  { skiplimitedspaces();return ITBLOCKINTRO;}
-<INITIAL,AllttMode>{scblockintro}  { skiplimitedspaces();return SCBLOCKINTRO;}
-<INITIAL,AllttMode>{bfblockintro}  { skiplimitedspaces();return BFBLOCKINTRO;}
-<INITIAL,AllttMode>{rmblockintro}  { skiplimitedspaces();return RMBLOCKINTRO;}
-<INITIAL,AllttMode>{sfblockintro}  { skiplimitedspaces();return SFBLOCKINTRO;}
+ /* Special multicharacter sequences */
+ /* -------------------------------- */
 
 
-"---" {
-		        yylval.string.text = " - ";
-		        yylval.string.len  = 3;
-			return STRING;
+"---"           {
+		    yylval.text = " - ";
+		    return STRING;
                 }
 
-"--" {
-		        yylval.string.text = "-";
-		        yylval.string.len  = 1;
-			return STRING;
+"--"            {
+		    yylval.text = "-";
+		    return STRING;
                 }
 
 
  /* Skip unwished tokens */
  /* -------------------- */
 <INITIAL,AllttMode>[\\]lciSkipWhiteSpace {
-	                skipspaces();
+	            skipspaces();
+		    break;
                 }
 <INITIAL,AllttMode>[\\]lciSkipNonWhiteSpace {
-	                skipspaces();
-	                skipnonspaces();
+	            skipspaces();
+		    skipnonspaces();
+		    break;
                 }
 
  /* Single letter quotes that cannot be put in the style file */
  /* --------------------------------------------------------- */
 <INITIAL,AllttMode>[\\][\{\}%]   {
-			yylval.character = yytext[1];
-			return CHAR;
+		    yylval.character = yytext[1];
+		    return CHAR;
                 }
 <INITIAL,AllttMode>[\\]{space}   {
-		        yylval.character = ' ';
-		        return CHAR;
+		    yylval.character = ' ';
+		    return CHAR;
 		}
+
+ /* Small Caps Treatment                   */
+ /* -------------------------------------- */
+
+<INITIAL,AllttMode>[\\]lciBeginSmallCaps {
+	            skiplimitedspaces();
+		    small_caps_mode = true;
+		    break;
+}
+<INITIAL,AllttMode>[\\]lciEndSmallCaps {
+	            skiplimitedspaces();
+		    small_caps_mode = false;
+		    break;
+}
 
  /* TeX macro expansion                    */
  /* -------------------------------------- */
@@ -758,26 +888,35 @@ bfblockintro    ([\{][\\]((bf)|(mathbold)))|([\\]((text)|(math))bf[\{])
                     yyleng = removespaces( yytext);
 		    if ( ! expand_macro())
 			return STRING;
+		    break;
                 }
 
 
  /* The rest: spaces and single characters */
  /* -------------------------------------- */
 [\\]?{ws}	{
-		    if ( *yytext == '\\') {
-		        yylval.string.text = yytext + 1;
-		        yylval.string.len  = yyleng - 1;
-		    } else {
-		        yylval.string.text = yytext;
-		        yylval.string.len  = yyleng;
-		    }
+		    if ( *yytext == '\\')
+		        yylval.text = yytext + 1;
+		    else
+		        yylval.text = yytext;
 	  	    return STRING;
 		}
 <AllttMode>{ws}	{
-	            yylval.string.text = yytext;
-		    yylval.string.len  = yyleng;
+	            yylval.text = yytext;
 	  	    return STRING;
 		}
+
+  /* Speed up for the usual case of plain text, numbers and spaces */
+
+<INITIAL,AllttMode>[a-zA-Z0-9 \t]+ {
+		    if ( small_caps_mode) {
+			yy_string = convert_to_small_caps( yytext);
+			yylval.text = yy_string.c_str();
+			return STRING;
+		    }
+	            yylval.text = yytext;
+	  	    return STRING;
+}
 
 <INITIAL,AllttMode>[\{\}]    |
 .	                     {
@@ -788,18 +927,22 @@ bfblockintro    ([\{][\\]((bf)|(mathbold)))|([\\]((text)|(math))bf[\{])
 		    else {
 			yylval.character = yytext[0];
 			if ( is_html_multi_character( yylval.character)) {
-			    yylval.string.text = html_multi_character(
-						     yylval.character);
-			    yylval.string.len  = strlen( yylval.string.text);
+			    yylval.text = html_multi_character(
+				yylval.character);
 			    return STRING;
 			}
 			return CHAR;
 		    }
+		    break;
 		}
 
 <AllttMode>.	{
-	            yylval.character = yytext[0];
-	  	    return CHAR;
+		    yylval.character = yytext[0];
+		    if ( is_html_multi_character( yylval.character)) {
+			yylval.text = html_multi_character( yylval.character);
+			return STRING;
+		    }
+		    return CHAR;
 		}
 
 %%
@@ -834,8 +977,10 @@ bool skipseparator_eof() {
     return false;
 }
 
-// returns true if fine, false if a paragraph has been encountered.
+/* returns true if EOF has been detected */
 bool skiplimitedspaces_eof() {
+    if ( YY_START == AllttMode)
+	return false;
     int nl_count = 0;
     int c = yyinput();
     while( c != EOF && isspace(c) && c != SEPARATOR) {
@@ -859,8 +1004,36 @@ bool skiplimitedspaces_eof() {
     return false;
 }
 
-// returns true if fine, false if a paragraph has been encountered.
+/* returns last character read. If its EOF, terminate, */
+/* else the char has been put back to the input stream. */
+int skiplimitedspaces_param() {
+    int nl_count = 0;
+    int c = yyinput();
+    while( c != EOF && isspace(c) && c != SEPARATOR) {
+	if ( c == '\n') {
+	    if ( nl_count > 0) {
+		unput( c);
+		unput( c);
+		return '\n';
+	    } else
+		nl_count++;
+	}
+        c = yyinput();
+    }
+    if ( nl_count > 0)
+	inc_line();
+    if (c == EOF) {
+	printErrorMessage( EOFInMacroExpansionError);
+	return c;
+    } 
+    unput( c);
+    return c;
+}
+
+/* returns true if EOF has been detected */
 bool skiplimitedsepspaces_eof() {
+    if ( YY_START == AllttMode)
+	return skipseparator_eof();
     int nl_count = 0;
     int c = yyinput();
     while( c != EOF && (isspace(c) || c == SEPARATOR)) {
@@ -927,12 +1100,12 @@ void count_newlines( const char* s) {
 }
 
 bool is_parameter_parsing_done( bool option, bool more_param) {
+    BEGIN( old_state);
     if ( parameter_count == 0 && parameter_endopt == 0) { 
 	// Evaluation strategy for scanner defined commands
-	yylval.string.text = newstr( current_parameter.c_str());
-	yylval.string.len  = current_parameter.size();
+	yylval.text = newstr( current_parameter.c_str());
 	current_parameter = string();
-	BEGIN( ParameterStart);
+	BeginParameterStart();
 	return true;
     }
     // Evaluation strategy for user defined commands
@@ -951,13 +1124,12 @@ bool is_parameter_parsing_done( bool option, bool more_param) {
 	if ( more_param) {
 	    parameter_nesting = 1;
 	    parameter_option = true;
-	    BEGIN( ParameterMode);
+	    BeginParameterMode();
 	    return false;
 	}
 	parameter_endopt = 0;
     }
     if ( parameter_count == 0 && parameter_endopt == 0) {
-	BEGIN( old_state);
 	string macro = current_macro;
 	if ( parameter_options > 0) {
 	    macro += '@';
@@ -977,7 +1149,7 @@ bool is_parameter_parsing_done( bool option, bool more_param) {
 	parameter_options = 0;
 	parameter_format  = string();
     } else
-	BEGIN( ParameterStart);
+	BeginParameterStart();
     return false;
 }
 
@@ -991,8 +1163,7 @@ bool expand_macro() {
 	    if ( stack_trace_switch)
 		printErrorMessage( MacroUndefinedError);
 	}
-	yylval.string.text = yytext;
-	yylval.string.len  = -1;
+	yylval.text = yytext;
 	return false;    
     }
     Macro_item item = fetchMacro( yytext);
@@ -1012,7 +1183,7 @@ bool expand_macro() {
 		parameter_option  = true;
 		parameter_endopt  = item.n_opt_at_end;
 		current_macro     = s;
-		BEGIN( ParameterMode);
+		BeginParameterMode();
 	    } else {
 		if (c != EOF)
 		    unput( c);
@@ -1022,7 +1193,7 @@ bool expand_macro() {
 	} else {
 	    parameter_endopt    = item.n_opt_at_end;
 	    current_macro       = yytext;
-	    BEGIN( ParameterStart);
+	    BeginParameterStart();
 	}
     } else {
 	string s( yytext);

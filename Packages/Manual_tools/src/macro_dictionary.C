@@ -172,7 +172,7 @@ void insertInternalGlobalMacro( const string&  macro,
     localEraseMacro( macro);
     if ( macro[0] != '\0' && macro[1] == '\0')
 	set_all_active_char( macro[0], true);
-    macro_dictionary.front()[ macro] = 
+    macro_dictionary.back()[ macro] = 
 	Macro_item( "<internal macro>", 0, body, n_param, n_opt);
 }
 
@@ -282,15 +282,22 @@ string expandMacro( const string& macro,
 		    string parameters[],
 		    size_t n_parameters,
 		    size_t n_options) {
+
+    const  size_t cache_size = 9;
+    static string expand_cache[cache_size];
+    static bool   cache_valid[cache_size];
+
+    memset( cache_valid, 0, sizeof( bool) * cache_size);
+
     bool  macro_exp_switch2 =  macro_exp_switch
 			    && macro != "\\newcommand"
 			    && macro != "\\newcommand@mom";
     if ( macro_exp_switch2) {
 	cerr << '`' << macro << "' Expanded using parameters:" << endl;
-	for ( int i = 0; i < n_parameters + n_options; ++i)
+	for ( size_t i = 0; i < n_parameters + n_options; ++i)
 	    cerr << "    #" << i + 1 << ": `" << parameters[i] << "'" << endl;
 	if ( ! item.fct)
-	    cerr << "    with body `" << item.body << endl;
+	    cerr << "    with body `" << item.body << "'" << endl;
     }
     if ( item.fct ) {
 	if ( macro_exp_switch2) {
@@ -302,75 +309,84 @@ string expandMacro( const string& macro,
     }
     string s = item.body;
     string::size_type i = 0;
-    if ( s.empty())
-	return s;
-    while ( i + 1 < s.size()) {  // Expansion loop. At least two characters
-                                 // remain to be inspected.
-	if ( s.at(i) == '#') {
-	    if ( s.at(i+1) == '#')
-		s.replace( i, 1, "");
-	    else {
-		int hash_len = 2;
-		int j = i;
-		bool expand_tag = false;
-		if ( s.at(i+1) == 'X' && i + 2 < s.size()) {
-		    expand_tag = true;
-		    ++i;
-		    ++hash_len;
-		}
-		bool skip_tag = false;
-		if ( s.at(i+1) == 'S' && i + 2 < s.size()) {
-		    skip_tag = true;
-		    ++i;
-		    ++hash_len;
-		}
-		bool length_tag = false;
-		if ( s.at(i+1) == 'L' && i + 2 < s.size()) {
-		    length_tag = true;
-		    ++i;
-		    ++hash_len;
-		}
-		bool crop_tag = false;
-		if ( s.at(i+1) == 'C' && i + 2 < s.size()) {
-		    crop_tag = true;
-		    ++i;
-		    ++hash_len;
-		}
-		if (( s.at(i+1) >= '1' && s.at(i+1) <= '9') ||
-		    ( s.at(i+1) >= 'a' && s.at(i+1) <= 'z')) {
-		    int index = int( s.at(i+1)) - int('1');
-		    if ( s.at(i+1) >= 'a' && s.at(i+1) <= 'z')
-			index = int( s.at(i+1)) - int('a') + 9; // 'a' == 9
-		    if ( index >= n_parameters + n_options) {
-			printErrorMessage( ParamIndexError);
+    if ( ! s.empty()) {
+	while ( i + 1 < s.size()) {  // Expansion loop. At least two characters
+				     // remain to be inspected.
+	    if ( s[i] == '#') {
+		if ( s[i+1] == '#')
+		    s.replace( i, 1, "");
+		else {
+		    int hash_len = 2;
+		    int j = i;
+		    bool expand_tag = false;
+		    if ( s[i+1] == 'X' && i + 2 < s.size()) {
+			expand_tag = true;
 			++i;
-		    } else {
-			string repl = parameters[index];
-			if ( expand_tag) {
-			    repl = expandFirstMacro( parameters[index]);
-			}
-			if ( skip_tag) {
-			    repl.replace( 0, 1, "");
-			}
-			if ( crop_tag) {
-			    crop_string( repl);
-			}
-			if ( length_tag) {
-			    repl = int_to_string( repl.size());
-			}
-			if ( expand_tag || skip_tag || crop_tag || length_tag){
-			    s.replace(j, hash_len, repl);
-			    i = j - 1 + repl.size();
-			} else {
-			    s.replace(j, hash_len, repl + SEPARATOR);
-			    i = j - 1 + repl.size() + 1;
-			}
+			++hash_len;
 		    }
-		} else
-		    printErrorMessage( ParamIndexError);
+		    bool skip_tag = false;
+		    if ( s[i+1] == 'S' && i + 2 < s.size()) {
+			skip_tag = true;
+			++i;
+			++hash_len;
+		    }
+		    bool length_tag = false;
+		    if ( s[i+1] == 'L' && i + 2 < s.size()) {
+			length_tag = true;
+			++i;
+			++hash_len;
+		    }
+		    bool crop_tag = false;
+		    if ( s[i+1] == 'C' && i + 2 < s.size()) {
+			crop_tag = true;
+			++i;
+			++hash_len;
+		    }
+		    if (( s[i+1] >= '1' && s[i+1] <= '9') ||
+			( s[i+1] >= 'a' && s[i+1] <= 'z')) {
+			size_t index = size_t( s[i+1]) - size_t('1');
+			if ( s[i+1] >= 'a' && s[i+1] <= 'z')
+			    index = size_t( s[i+1]) - size_t('a') + 9; //'a'==9
+			if ( index >= n_parameters + n_options) {
+			    printErrorMessage( ParamIndexError);
+			    ++i;
+			} else {
+			    string repl;
+			    if ( expand_tag) {
+				if ( index < cache_size && cache_valid[index])
+				    repl = expand_cache[index];
+				else {
+				    repl = expandFirstMacro(parameters[index]);
+				    expand_cache[index] = repl;
+				    cache_valid[index]  = true;
+				}
+			    } else {
+				repl = parameters[index];
+			    }
+			    if ( skip_tag) {
+				repl.replace( 0, 1, "");
+			    }
+			    if ( crop_tag) {
+				crop_string( repl);
+			    }
+			    if ( length_tag) {
+				repl = int_to_string( repl.size());
+			    }
+			    if ( expand_tag || skip_tag || crop_tag 
+				 || length_tag) {
+				s.replace(j, hash_len, repl);
+				i = j - 1 + repl.size();
+			    } else {
+				s.replace(j, hash_len, repl + SEPARATOR);
+				i = j - 1 + repl.size() + 1;
+			    }
+			}
+		    } else
+			printErrorMessage( ParamIndexError);
+		}
 	    }
+	    ++i;
 	}
-	++i;
     }
     if ( macro_exp_switch2)
 	cerr << "    expanded to: `" << s << "'." << endl;

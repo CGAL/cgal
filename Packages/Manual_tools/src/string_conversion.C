@@ -29,8 +29,8 @@ string int_to_string( int i) {
 }
 
 void remove_leading_spaces( string& s) {
-    int i = 0;
-    while ( i < s.size() && ( isspace( s.at(i)) || s.at(i) == SEPARATOR))
+    size_t i = 0;
+    while ( i < s.size() && ( isspace( s[i]) || s[i] == SEPARATOR))
 	++i;
     if ( i > 0)
 	s.replace( 0, i, "");
@@ -40,9 +40,9 @@ void remove_trailing_spaces( string& s) {
     if ( s.empty())
 	return;
     int i = s.size() - 1;
-    while ( i > 0 && ( isspace( s.at(i)) || s.at(i) == SEPARATOR))
+    while ( i > 0 && ( isspace( s[i]) || s[i] == SEPARATOR))
 	--i;
-    if ( i < s.size() - 1)
+    if ( i < int(s.size()) - 1)
 	s.replace( i+1, s.size() - i - 1, "");
 }
 
@@ -52,10 +52,10 @@ void crop_string( string& s) {
 }
 
 void compress_spaces_in_string( string& s) {
-    for ( int i = 0; i < s.size(); ++i) {
-	if ( isspace( s.at(i))) {
-	    int k = 1;
-	    while ( i + k < s.size() && isspace( s.at( i + k)))
+    for ( size_t i = 0; i < s.size(); ++i) {
+	if ( isspace( s[i])) {
+	    size_t k = 1;
+	    while ( i + k < s.size() && isspace( s[ i + k]))
 		++k;
 	    s.replace( i, k, " ");
 	}
@@ -63,10 +63,10 @@ void compress_spaces_in_string( string& s) {
 }
 
 void remove_separator( string& s) {
-    for ( int i = 0; i < s.size();) {
-	if ( s.at(i) == SEPARATOR) {
-	    int k = 1;
-	    while ( i + k < s.size() && s.at( i + k) == SEPARATOR)
+    for ( size_t i = 0; i < s.size();) {
+	if ( s[i] == SEPARATOR) {
+	    size_t k = 1;
+	    while ( i + k < s.size() && s[ i + k] == SEPARATOR)
 		++k;
 	    s.replace( i, k, "");
 	} else
@@ -77,8 +77,8 @@ void remove_separator( string& s) {
 
 // Removes the quoted font changing commands used in CCMode: |I|, |B| ...
 string remove_font_commands( string name) {
-    for ( int i = 0; i + 2 < name.size(); ++i) {
-	if ( name.at(i)=='|' && isupper(name.at(i+1)) && name.at(i+2)=='|') {
+    for ( size_t i = 0; i + 2 < name.size(); ++i) {
+	if ( name[i]=='|' && isupper(name[i+1]) && name[i+2]=='|') {
 	    name.replace(i,3,"");
 	    --i;
 	}
@@ -97,7 +97,7 @@ string basename_string( string name) {
     name = remove_suffix(name);
     string::size_type i = name.rfind( '/');
     if ( i != string::npos)
-	name.replace( 0, i, "");
+	name.replace( 0, i+1, "");
     return name;
 }
 
@@ -108,6 +108,110 @@ string path_string( string name) {
     name.replace( i+1, name.size() - i - 1, "");
     return name;
 }
+
+string suffix_string( string name) {
+    string::size_type i = name.rfind( '.');
+    if ( i != string::npos)
+	return name.substr( i+1);
+    return string();
+}
+
+void assert_trailing_slash_in_path( string& s) {
+    if ( s.size() > 0 && s.at( s.size() - 1) != '/') {
+	s += '/';
+    }
+}
+
+// Quoted strings use C string notation with \ as escape symbol.
+// Replaced sequences are: \\, \n, \t, \{, \}.
+string convert_quoted_string( string s) {
+    size_t i = 0;
+    while (  i < s.size()) {
+	if ( s[i] == SEPARATOR)
+	    s.replace( i, 1, "");
+	else {
+	    if ( s[i] == '\\' && i + 1 < s.size()) {
+		switch (s[i+1]) {
+		case '\\':
+		case '{':
+		case '}':
+		    s.replace( i, 1, "");
+		    break;
+		case 'n':
+		    s.replace( i, 2, "\n");
+		    break;
+		case 't':
+		    s.replace( i, 2, "\t");
+		    break;
+		default:
+		    break;
+		}
+	    }
+	    ++i;
+	}
+    }
+    return s;
+}
+
+// Expands '"' and \ symbols with quotes. Replaces \n with \\n, \t with \\t.
+string convert_to_C_printable( string s) {
+    size_t i = 0;
+    while (  i < s.size()) {
+	switch (s[i]) {
+	case SEPARATOR:
+	    s.replace( i, 1, "");
+	    break;
+	case '\\':
+	case '"':
+	    s.insert( i, '\\');
+	    i += 2;
+	    break;
+	case '\n':
+	    s.replace( i, 1, "\\n");
+	    i += 2;
+	    break;
+	case '\t':
+	    s.replace( i, 1, "\\t");
+	    i += 2;
+	    break;
+	default:
+	    ++i;
+	    break;
+	}
+    }
+    return s;
+}
+
+
+// Small Caps Conversion
+// ===========================
+string convert_to_small_caps( string s) {
+    bool small = false;
+    size_t i = 0;
+    while (  i < s.size()) {
+	char c = s[i];
+	if ( islower(c)) {
+	    s[i] = _toupper(c);
+	    if (! small) {
+		small = true;
+		s.insert( i, "<SMALL>"); 
+		i += 7;
+	    }
+	} else if ( c != SEPARATOR) {
+	    if (small) {
+		small = false;
+		s.insert( i, "</SMALL>"); 
+		i += 8;
+	    }
+	}
+	++i;
+    }
+    if ( small)
+	s.append( "</SMALL>");
+    return s;
+}
+
+
 
 
 // read a file into a string
@@ -305,6 +409,11 @@ void filter_for_index_comment( ostream& out, const char* text) {
 	case '&':
 	    out << '_';	  
 	    break;
+	case ' ':
+	case '\n':
+	case '\t':
+	case '\r':
+	    break;
 	default:
 	    out << *text;
 	}
@@ -313,10 +422,10 @@ void filter_for_index_comment( ostream& out, const char* text) {
 }
 
 string filter_for_index_comment( string s) {
-    for ( int i = 0; i < s.size(); ++i) {
-        switch ( s.at(i)) {
+    for ( size_t i = 0; i < s.size(); ++i) {
+        switch ( s[i]) {
 	case '|':
-	    if ((i < s.size() + 2) && isupper(s.at(i+1)) && s.at(i+2) == '|')
+	    if ((i < s.size() + 2) && isupper(s[i+1]) && s[i+2] == '|')
 		s.replace( i--, 3, "");
 	    break;
 	case '<':
@@ -327,6 +436,13 @@ string filter_for_index_comment( string s) {
 	    break;
 	case '&':
 	    s.replace( i, 1, "_");
+	    break;
+	case ' ':
+	case '\n':
+	case '\t':
+	case '\r':
+	    s.replace( i, 1, "");
+	    --i;
 	    break;
 	}
     }
@@ -348,7 +464,7 @@ void filter_for_index_anchor( ostream& out, const char* text) {
 	case '<':
 	case '(':
 	case '[':
-case '{':
+	case '{':
 	    out << '6';
 	    break;
 	case '>':
@@ -360,6 +476,9 @@ case '{':
 	case '"':
 	case '&':
 	case ' ':
+	case '\n':
+	case '\t':
+	case '\r':
 	    out << '_';
 	    break;
 	case ',':

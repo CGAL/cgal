@@ -21,9 +21,7 @@
 void init_internal_macros();
 
 void handleChapter(  const Text& T);
-void handleSection(  const Text& T);
 void handleBiblio(  const Text& T);
-void handleLabel( const char* l, size_t len); // trust only len!
 
 void handleClassEnvironment();
 void handleClassEnd();
@@ -77,7 +75,7 @@ extern const string sort_key_variable;
 extern const string sort_key_function;
 extern const string sort_key_member_function;
 
-const string& find_sort_key( const string& txt);
+const string& find_sort_key( string txt);
 
 void write_headers_to_index( ostream& out);
 

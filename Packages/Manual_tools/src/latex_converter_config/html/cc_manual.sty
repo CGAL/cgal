@@ -14,8 +14,15 @@
 % |                                                                         |
 % | Table of Contents:                                                      |
 % |                                                                         |
-% |   o   (La)TeX Macros                                                    |
-% |   o   (La)TeX Environments                                              |
+% |   o   Page Layout and Page Dimensions                                   |
+% |   o   Advanced Customization of the Layout                              |
+% |   o   Common Abbreviations                                              |
+% |   o   Structuring Macros                                                |
+% |   o   C++ Declarations                                                  |
+% |   o   Reference Page Declarations                                       |
+% |   o   Class and Class Member Declarations                               |
+% |   o   Global C++ Declarations                                           |
+% |   o   HTML Language Support in the Style File                           |
 % |                                                                         |
 % |#########################################################################|
 
@@ -23,17 +30,6 @@
 \newcommand{\ccFalse}{\lcFalse}
 \newcommand{\ccTrue}{\lcTrue}
 \newcommand{\ccAuto}{\lcAuto}
-
-
-
-% ___________________________________________________________________________
-% ###########################################################################
-% |
-% |   o   Verbatim File Macro
-% |
-% ###########################################################################
-
-\newcommand{\ccIncludeVerbatim}[1]{\lciParseFile{\lciLocalVerbatim}{#1}}
 
 % ___________________________________________________________________________
 % ###########################################################################
@@ -160,10 +156,6 @@
 \newcommand{\ccHash      }{{\rm \#}}
 \newcommand{\ccDollar    }{\$}
 
-\newcommand{\ccc}{\lciParseCC{\lciStyle 1}}  %% the 1 is a dummy to keep it
-                                             %% from parsing spaces
-\newcommand{\ccStyle}{\ccc}
-
 % +--------------------------------------------------------------------------
 % | Replacement of Prefixes, not supported in HTML
 % | 
@@ -185,6 +177,16 @@
 % ###########################################################################
 
 % +--------------------------------------------------------------------------
+% | A handy macro to include files in verbatim mode.
+% +--------------------------------------------------------------------------
+\newcommand{\ccIncludeVerbatim}[1]{\lciParseFile{\lciLocalVerbatim}{#1}}
+
+% +--------------------------------------------------------------------------
+% | A handy macro to define macros for RCS entries in a TeX file
+% +--------------------------------------------------------------------------
+% --> see latex_converter.sty
+
+% +--------------------------------------------------------------------------
 % | Original LEDA Manual macros (shortcuts):
 % | Several new shortcuts for CGAL
 % |
@@ -202,11 +204,17 @@
 \newcommand{\Q}{{\mathbb Q}}  %% zusammen mit usepackage{amssymb}
 \newcommand{\E}{{\mathbb E}}  %% zusammen mit usepackage{amssymb}
 
-\newcommand{\stl}{STL}
-\newcommand{\leda}{LEDA}
-\newcommand{\cgal}{CGAL}
-\newcommand{\protocgal}{C++GAL}
-\newcommand{\plageo}{PLAGEO}
+%\newcommand{\stl}{STL}
+%\newcommand{\leda}{LEDA}
+%\newcommand{\cgal}{CGAL}
+%\newcommand{\protocgal}{C++GAL}
+%\newcommand{\plageo}{PLAGEO}
+
+\newcommand{\stl}{{\sc STL}}
+\newcommand{\leda}{{\sc Leda}}
+\newcommand{\cgal}{{\sc Cgal}}
+\newcommand{\protocgal}{{\sc C++gal}}
+\newcommand{\plageo}{{\sc Plageo}}
 
 % ___________________________________________________________________________
 % ###########################################################################
@@ -222,19 +230,19 @@
 % | \ccChapterAuthor, \ccChapterRelease, \ccChapterSubTitle
 % +--------------------------------------------------------------------------
 
-\newcommand{\ccSection}[1]{\lcRawHtml{
-<H1>}#1 (\ccClassName)\lcRawHtml{</H1>
-}}
-
-\newcommand{\ccSubsection}[1]{\lcRawHtml{
-<H2>}#1 (\ccClassName)\lcRawHtml{</H2>
-}}
-
 \newcommand{\ccChapterSubTitle}[1]{\lcRawHtml{<EM>}#1\lcRawHtml{</EM>}}
 \newcommand{\ccChapterAuthor}[1]{\lciIf{\ccTagChapterAuthor}
     {\ccChapterSubTitle{#1}}{}}
 \newcommand{\ccChapterRelease}[1]{\lciIf{\ccTagChapterRelease}
     {\ccChapterSubTitle{#1}}{}}
+
+\newcommand{\ccSection}[1]{\lcRawHtml{
+<H2>}#1 (\ccClassName)\lcRawHtml{</H2>
+}}
+
+\newcommand{\ccSubsection}[1]{\lcRawHtml{
+<H3>}#1 (\ccClassName)\lcRawHtml{</H3>
+}}
 
 
 \newcommand{\ccHeading}[1]{\lcRawHtml{<H3>}#1\lcRawHtml{</H3>}}
@@ -254,6 +262,16 @@
 \newcommand{\ccImplementation }{\ccHeading{Implementation}}
 \newcommand{\ccExample        }{\ccHeading{Example}}
 
+\newcommand{\ccInclude}[1]{\lcRawHtml{<I>##include &lt;}%
+    \lciIfDefined{\lciHeaderPath}%
+    {\lcRawHtml{<A HREF="}\newcommand{\lciDefLocalHtmlName}[1]{%
+        \newcommand{\lciLocalHtmlName}{\lcAsciiToHtml{##X1}}}%
+      \lciDefLocalHtmlName\lciHeaderPath\lciLocalHtmlName%
+      \lcAsciiToHtml{#C1}\lcRawHtml{">}\lcAsciiToHtml{#C1}\lcRawHtml{</A>}}%
+    {\lcAsciiToHtml{#C1}}%
+    \lcRawHtml{&gt;</I>}%
+}
+
 \newcommand{\ccPrecond  }{\ccCommentHeading{Precondition}}
 \newcommand{\ccPostcond }{\ccCommentHeading{Postcondition}}
 
@@ -270,9 +288,15 @@
 % |   o   C++ Declarations
 % |
 % ###########################################################################
+% +--------------------------------------------------------------------------
+% | \ccStyle
+% +--------------------------------------------------------------------------
+\newcommand{\ccc}{\lciParseCC{\lciStyle 1}}  %% the 1 is a dummy to keep it
+                                             %% from parsing spaces
+\newcommand{\ccStyle}{\ccc}
 
 % +--------------------------------------------------------------------------
-% | \ccDeclaration, \lciidden, \ccUnchecked
+% | \ccDeclaration, \ccHidden, \ccUnchecked
 % +--------------------------------------------------------------------------
 % A \declaration accepts one parameter. The style will ignore it, while
 % the checker tests if it exists one to one in the C++ code.
@@ -289,6 +313,111 @@
 % where it denotes that the following declarations is not subject of any
 % check.
 \newcommand{\ccUnchecked}{}
+
+% +--------------------------------------------------------------------------
+% | \lciIfGlobal for global declarations
+% +--------------------------------------------------------------------------
+\newcommand{\lciIfGlobal}{\lcFalse}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   Reference Page Declarations
+% |
+% ###########################################################################
+% +--------------------------------------------------------------------------
+% | \begin{ccRefDeclaration} ...ccRefConcept, ...ccRefClass, ...ccRefEnum
+% | ...ccRefFunction, ...ccRefVariable, ...ccRefMacro, 
+% | \ccRefName
+% +--------------------------------------------------------------------------
+% predeclare variable names
+\newcommand{\ccRefCategory}{}
+\newcommand{\ccRefName}{}
+\newcommand{\ccPureRefName}{}
+% needed for compliance with ccClass, e.g. used for removal of eigen-name.
+\newcommand{\ccClassTemplateName}{}
+\newcommand{\ccPureClassTemplateName}{}
+
+% #1 == token describing the category (Concept, Class ...)
+\newenvironment{ccRefDeclaration}[1]{%
+                   \def\ccRefCategory{#C1}%
+                   \lciParseCC{\lciRefDeclCont}%
+               }{
+                   \end{ccHtmlClassFile}%
+                   \def\ccRefCategory{}%
+                   \def\ccPureRefName{}%
+                   \renewcommand{\ccRefName}{}%
+                   % needed for compliance with ccClass
+                   \def\ccPureClassTemplateName{}%
+                   \renewcommand{\ccClassTemplateName}{}%
+                   \def\ccPureVar{}%
+                   \renewcommand{\ccVar}{}%
+                   \gdef{\lciIfHtmlClassToc}{\lcTrue}%
+                   \gdef{\lciIfHtmlClassLinks}{\lcTrue}%
+                   \gdef{\lciIfHtmlClassIndex}{\lcTrue}%
+                   \gdef{\lciIfHtmlRefLinks}{\lcTrue}%
+                   \gdef{\lciIfHtmlRefIndex}{\lcTrue}%
+               }
+
+\newcommand{\lciRefDeclCont}{\lciRefDeclContX\lciCCParameter}
+\newcommand{\lciRefDeclContX}[1]{%
+                   \def\ccPureRefName{#XC1}%
+                   \renewcommand{\ccRefName}{\ccc{#XC1}}%
+                   \lciParseUntilDelimiter{\lciRefDeclDefFilename}<#XC1<@%
+                   \ccRefSection{\ccRefCategory}{\ccPureRefName}%
+                   % needed for compliance with ccClass
+                   \def\ccPureClassTemplateName{#XC1}%
+                   \renewcommand{\ccClassTemplateName}{\ccc{#XC1}}%
+               }
+
+\newcommand{\lciRefDeclDefFilename}[1]{%
+    \newcommand{\ccPureClassName}{#C1}%
+    \newcommand{\ccClassName}{\ccc{#C1}}%
+    \newcommand{\ccRefFilename}{#C1}%
+    \gdef{\lciIfHtmlClassToc}{\lcFalse}%
+    \begin{ccHtmlClassFile}{#C1.html}{\ccRefName~~(\ccRefCategory)}%
+    \ccHtmlCrossLink{#C1}%
+    \ccHtmlIndexC[\ccRefCategory]{#C1}%
+    \gdef{\lciIfHtmlClassLinks}{\lcFalse}%
+    \gdef{\lciIfHtmlClassIndex}{\lcFalse}%
+    \gdef{\lciIfHtmlRefLinks}{\lcFalse}%
+    \gdef{\lciIfHtmlRefIndex}{\lcFalse}%
+    \lciParseUntilDelimiter{\lciSkipOneParameter}@}% skip remaining part
+
+%% Args: ccCategory, ccRefName
+\newcommand{\ccRefSection}[2]{%
+    \lcRawHtml{<TABLE ALIGN=RIGHT><TR><TD><IMG ALIGN=TOP SRC="cc_#XC1.gif">}%
+    \lcRawHtml{</TD></TR></TABLE>
+}\section*{\lcRawHtml{<I><B>#XC2</B></I>}}}
+
+\newenvironment{ccRefConcept}{%
+                   \begin{ccRefDeclaration}{Concept}}{\end{ccRefDeclaration}}
+
+\newenvironment{ccRefClass}{%
+                   \begin{ccRefDeclaration}{Class}}{\end{ccRefDeclaration}}
+
+\newenvironment{ccRefEnum}{%
+                   \begin{ccRefDeclaration}{Enum}}{\end{ccRefDeclaration}}
+
+\newenvironment{ccRefFunction}{%
+                   \begin{ccRefDeclaration}{Function}}{\end{ccRefDeclaration}}
+
+\newenvironment{ccRefVariable}{%
+                   \begin{ccRefDeclaration}{Variable}}{\end{ccRefDeclaration}}
+
+\newenvironment{ccRefMacro}{%
+                   \begin{ccRefDeclaration}{Macro}}{\end{ccRefDeclaration}}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   Class and Class Member Declarations
+% |
+% ###########################################################################
+% +--------------------------------------------------------------------------
+% | \ccClassName, \ccClassTemplateName, \ccVar, \ccPur...
+% | \begin{ccClass}, \begin{ccClassTemplate}, \end...
+% +--------------------------------------------------------------------------
 
 % class environments
 \newenvironment{ccClass}{\lciParseCC{\lciClassCont}}{\end{lciClassEnvironment}}
@@ -320,8 +449,8 @@
     \newcommand{\ccVar}{\ccc{*this}}%
     \newcommand{\ccPureClassTemplateName}{#XC1}%
     \newcommand{\ccClassTemplateName}{\ccc{#XC1}}%
-    \lciIfEmpty{#XC1}{\lciError{
-The class environments need a non-empty classname parameter}}{}%
+    \lciIfEmpty{#XC1}{%
+     \lciError{The class environments need a non-empty classname parameter}}{}%
     \lciIfHtmlClassNotInline{\lciIfHtmlClassFile{%
         \lciPushFootnotes
     }{}}{}%
@@ -336,8 +465,8 @@ The class environments need a non-empty classname parameter}}{}%
     \end{lciClass}%
     \gdef{\lciIfHtmlClassToc}{\lcTrue}%
     \gdef{\lciIfHtmlClassFile}{\lcTrue}%
-    \gdef{\lciIfHtmlClassLinks}{\lcTrue}%
-    \gdef{\lciIfHtmlClassIndex}{\lcTrue}%
+    \lciIfHtmlRefLinks{\gdef{\lciIfHtmlClassLinks}{\lcTrue}}{}%
+    \lciIfHtmlRefIndex{\gdef{\lciIfHtmlClassIndex}{\lcTrue}}{}%
     \lciUndef{\ccPureVar}%
     \lciUndef{\ccPureClassName}%
     \lciUndef{\ccPureClassTemplateName}%
@@ -346,22 +475,19 @@ The class environments need a non-empty classname parameter}}{}%
     \lciUndef{\ccClassTemplateName}%
 }
 
+% +--------------------------------------------------------------------------
+% | \ccCreationVariable, \ccConstructor
+% +--------------------------------------------------------------------------
+
 \newcommand{\ccCreationVariable}[1]{%
     \newcommand{\ccPureVar}{#C1}%
     \newcommand{\ccVar}{\ccc{#C1}}%
 }
+% +--------------------------------------------------------------------------
+% | \ccMemberFunction, \ccMethod, \ccFunction, \ccFunctionTemplate
+% | \ccTypedef, \ccNestedType, \ccVariable, \ccEnum, \ccStruct
+% +--------------------------------------------------------------------------
 
-
-\newcommand{\lciIfGlobal}{\lcFalse}
-
-
-\newcommand{\ccGlobalFunction}{\newcommand{\lciIfGlobal}{\lcTrue}\ccFunction}
-\newcommand{\ccGlobalFunctionTemplate}{%
-    \newcommand{\lciIfGlobal}{\lcTrue}\ccFunctionTemplate}
-\newcommand{\ccGlobalVariable}{\newcommand{\lciIfGlobal}{\lcTrue}\ccVariable}
-\newcommand{\ccGlobalTypedef}{\newcommand{\lciIfGlobal}{\lcTrue}\ccTypedef}
-\newcommand{\ccGlobalEnum}{\newcommand{\lciIfGlobal}{\lcTrue}\ccEnum}
-\newcommand{\ccGlobalStruct}{\newcommand{\lciIfGlobal}{\lcTrue}\ccStruct}
 
 
 
@@ -378,7 +504,7 @@ The class environments need a non-empty classname parameter}}{}%
     {\lciTwoColumnX{#1}}}
 \newcommand{\lciTwoColumnX}[2]{\lciGluePostProcessing
     \lciTwoColumnLayout{#1}\lciIfEmpty{#C2}
-    {\lciTwoColsEndEmpty}{\lciTwoColsSecond #2\lciTwoColsEnd}%
+    {\lciTwoColsEndEmpty}{\lciTwoColsSecond #C2\lciTwoColsEnd}%
     \gdef{\lciIfHtmlLinks}{\lcTrue}%
     \gdef{\lciIfHtmlIndex}{\lcTrue}%
 }
@@ -430,19 +556,37 @@ The class environments need a non-empty classname parameter}}{}%
 % ___________________________________________________________________________
 % ###########################################################################
 % |
-% |   o   HTML Related Support
+% |   o   Global C++ Declarations
 % |
 % ###########################################################################
 
-\newcommand{\ccInclude}[1]{\lcRawHtml{<I>##include &lt;}%
-    \lciIfDefined{\lciHeaderPath}%
-    {\lcRawHtml{<A HREF="}\newcommand{\lciDefLocalHtmlName}[1]{%
-        \newcommand{\lciLocalHtmlName}{\lcAsciiToHtml{##X1}}}%
-      \lciDefLocalHtmlName\lciHeaderPath\lciLocalHtmlName%
-      \lcAsciiToHtml{#C1}\lcRawHtml{">}\lcAsciiToHtml{#C1}\lcRawHtml{</A>}}%
-    {\lcAsciiToHtml{#C1}}%
-    \lcRawHtml{&gt;</I>}%
-}
+\newcommand{\ccGlobalFunction}{\newcommand{\lciIfGlobal}{\lcTrue}\ccFunction}
+\newcommand{\ccGlobalFunctionTemplate}{%
+    \newcommand{\lciIfGlobal}{\lcTrue}\ccFunctionTemplate}
+\newcommand{\ccGlobalVariable}{\newcommand{\lciIfGlobal}{\lcTrue}\ccVariable}
+\newcommand{\ccGlobalTypedef}{\newcommand{\lciIfGlobal}{\lcTrue}\ccTypedef}
+\newcommand{\ccGlobalEnum}{\newcommand{\lciIfGlobal}{\lcTrue}\ccEnum}
+\newcommand{\ccGlobalStruct}{\newcommand{\lciIfGlobal}{\lcTrue}\ccStruct}
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   HTML Related Support
+% |
+% ###########################################################################
+% --> see also latex_converter.sty
+
+% old names for compatibility
+\newcommand{\ccTexHtml}[1]{\lcRawHtml}
+\newenvironment{ccTexOnly}{%
+    \lciParseUntilEndToken{\lciSkipOneParameter}{ccTexOnly}}{}
+\newenvironment{ccHtmlOnly}{%
+    \lciParseUntilEndToken{\lciLocalHtmlOnly}{ccHtmlOnly}}{}
+
+% old names for compatibility
+\newcommand{\ccAnchor}{\lcAnchor}
+
 
 \newcommand{\ccHtmlIndex}[1]{\lciHtmlIndex{class}{#C1}}
 \newcommand{\ccHtmlIndex@om}{\lciHtmlIndex{#C1}{#C2}}

@@ -1,0 +1,24 @@
+README for the Specification and Manual Writing Tools
+       for C++ Reference Manuals
+=====================================================
+03.08.1998   Zurich   Lutz Kettner   kettner@acm.org
+
+This is the directory containing the tools for extracting the
+C++ declarations from a specification, to check the specification
+against an implementation, and the converter to HTML.
+The directory structure is:
+
+    README                    this file.
+    INSTALLATION              installation instructions.
+
+    RCS/                      revision controlled files.
+    ADT/                      a list and a stack implementation.
+    latex_converter_config/   configuration files for the LaTeX converter.
+    test/                     test suit.
+    test_html/                conversion example using multiple directories.
+
+See also the file INSTALLATION in the parent directory for how to
+install the complete distribution.
+
+EOF
+

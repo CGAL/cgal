@@ -77,6 +77,10 @@ const char* errorMessage( ErrorNumber n) {
 	return "Parsing teminates in wrong state (should be INITIAL)";
     case MacroStackUnderflowError:
 	return "Nesting error: Underflow of the macro scope stack";
+    case IncludeStackUnderflowError:
+	return "Internal error: Underflow of the include file and macro stack";
+    case FileReadOpenError:
+	return "Open file for read failed";
     case UserDefinedError:
 	return "User defined error message";
     }
@@ -86,10 +90,10 @@ const char* errorMessage( ErrorNumber n) {
 void  printErrorMessage( ErrorNumber n){
     cerr << endl;
     if ( in_file)
-	cerr << "error " << n << " in line " << in_file->line() << " in `" 
+	cerr << "*** Error " << n << " in line " << in_file->line() << " in `" 
 	     << in_file->name() << "': " << errorMessage( n) << '.' << endl;
     else
-	cerr << "error " << n << " at top level (no file): " 
+	cerr << "*** Error " << n << " at top level (no file): " 
 	     << errorMessage( n) << '.' << endl;
     if ( in_file != in_string)
 	cerr << "    while expanding macro `" << in_string->name() 

@@ -856,7 +856,8 @@ void format_function( bool method, const char* signature,
                            table_width*table_first_col/100.0);
     // ---------
     // index
-    if ( !method && macroIsTrue( "\\lciIfHtmlIndex")) {
+    if ( !method && macroIsTrue( "\\lciIfHtmlIndex") 
+	 && macroIsTrue( "\\lciIfHtmlRefIndex")) {
 	char* formatted_return   = convert_fontified_ascii_to_html( 
 	    return_value);
 	char* formatted_scope    = convert_fontified_ascii_to_html( scope);
@@ -1087,7 +1088,9 @@ void format_variable( const char* signature,
 			       table_width*table_first_col/100.0);
    
     if ( class_name.empty()) {
-	if ( macroIsTrue( "\\lciIfHtmlLinks") && strlen(variable_name) > 1) {
+	if ( macroIsTrue( "\\lciIfHtmlLinks") && 
+	     macroIsTrue( "\\lciIfHtmlRefLinks") && 
+	     strlen(variable_name) > 1) {
 	    // generate a substitution rule for hyperlinking
 	    *anchor_stream << "[a-zA-Z0-9_]\"" << formatted_var
 			   << "\"    { ECHO; }" << endl;
@@ -1098,7 +1101,8 @@ void format_variable( const char* signature,
 	    filter_for_index_anchor( *anchor_stream, variable_name);
 	    *anchor_stream << "\", yytext); }" << endl;
 	}
-	if ( macroIsTrue( "\\lciIfHtmlIndex")) {
+	if ( macroIsTrue( "\\lciIfHtmlIndex") && 
+	     macroIsTrue( "\\lciIfHtmlRefIndex")) {
 	    // index
 	    *index_stream << (is_typedef ? sort_key_typedef :
 			      sort_key_variable) << '1'; 

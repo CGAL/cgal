@@ -26,7 +26,7 @@ Include_stack_item* in_string     = 0;
 
 
 // Push current state. Init with new file and new_line_number.
-void 
+bool
 Include_stack::push_file( FILE* in, 
 			  const string& name, 
 			  size_t new_line_number) {
@@ -51,49 +51,52 @@ Include_stack::push_file( FILE* in,
     insertInternalGlobalMacro( "\\lciInputFilename",    name);
     insertInternalGlobalMacro( "\\lciInputFilenameBase",basename_string(name));
     insertInternalGlobalMacro( "\\lciInputPath",        path_string( name));
+    return true;
 }
 
 // Push current state. Open and init with new file and new_line_number.
-void 
+bool
 Include_stack::push_file( const string& name, 
 			  size_t new_line_number) {
     FILE* fin;
     if ( (fin = fopen( name.c_str(), "r")) == NULL) {
-	cerr << ' ' << endl
-	     << "Error: in `" << in_file->name() << "' line " 
-	     << in_file->line() << ": cannot open include file `" 
-	     << name << "' for reading." << endl;
-    } else {
-	push_file( fin, name, new_line_number);
+	cerr << ' ' << endl 
+	     << "*** Error: cannot open file `" << name << "' for reading.";
+	printErrorMessage( FileReadOpenError);
+	return false;
     }
+    return push_file( fin, name, new_line_number);
 }
 
 // Push current state. Open and init with new file plus optional
 // extension string (suffix) and new_line_number.
-void 
+bool
 Include_stack::push_tex_file( const string& name, 
 			      size_t new_line_number) {
     FILE* fin;
+    string suffix = suffix_string( name);
+    if ( (suffix == "tex" || suffix == "sty") &&
+	 ( (fin = fopen( name.c_str(), "r")) != NULL))
+	return push_file( fin, name, new_line_number);
+    if ( (fin = fopen( (name + ".tex").c_str(), "r")) != NULL)
+	return push_file( fin, name + ".tex", new_line_number);
+    if ( (fin = fopen( (name + ".sty").c_str(), "r")) != NULL)
+	return push_file( fin, name + ".sty", new_line_number);
     if ( (fin = fopen( name.c_str(), "r")) != NULL)
-	push_file( fin, name, new_line_number);
-    else if ( (fin = fopen( (name + ".tex").c_str(), "r")) != NULL)
-	push_file( fin, name, new_line_number);
-    else if ( (fin = fopen( (name + ".sty").c_str(), "r")) != NULL)
-	push_file( fin, name, new_line_number);
-    else 
-	cerr << ' ' << endl
-	     << "Error: in `" << in_file->name() << "' line " 
-	     << in_file->line() << ": cannot open file `" 
-	     << name << "' for reading." << endl;
+	return push_file( fin, name, new_line_number);
+    cerr << ' ' << endl 
+	 << "*** Error: cannot open file `" << name << "' for reading.";
+    printErrorMessage( FileReadOpenError);
+    return false;
 }
 
 // Push current state. Init with new string and new_line_number.
-void 
+bool
 Include_stack::push_string( const string& name,
 			    const string& s,
 			    size_t new_line_number) {
     if ( s.empty()) {
-	return;
+	return true;
     }
     if( ! empty()) {
 	m_stack.front().m_state = YY_START;
@@ -102,11 +105,15 @@ Include_stack::push_string( const string& name,
     m_stack.push_front( Include_stack_item( name, s, new_line_number));
     in_string = &(m_stack.front());
     yy_switch_to_buffer( yy_scan_string( (s + SEPARATOR).c_str()));
+    return true;
 }
 
 void 
 Include_stack::pop() {
-    assert( ! empty());
+    if ( empty()) {
+	printErrorMessage( IncludeStackUnderflowError);
+	return;
+    }
     if ( type() == Include_file) {
 	if ( ! quiet_switch)
 	    cerr << ']' << flush;

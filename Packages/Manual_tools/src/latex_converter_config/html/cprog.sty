@@ -12,6 +12,9 @@
 % |_________________________________________________________________________|
 % |#########################################################################|
 
+\newcommand{\beforecprogskip}{\lciSkipNonWhiteSpace}
+\newcommand{\aftercprogskip}{\lciSkipNonWhiteSpace}
+
 \newcommand{\lciLocalCProg}[1]{%
     \lcRawHtml{<PRE>}\lciAsciiOutputN{#L1}#1\lcRawHtml{</PRE>}}
 \newenvironment{cprog}{%

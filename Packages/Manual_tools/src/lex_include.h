@@ -71,7 +71,7 @@ class Include_stack {
     Stack   m_stack;
 
     // Push current state. Init with new file and new_line_number.
-    void                 push_file( FILE* in, 
+    bool                 push_file( FILE* in, 
 				    const string& name,
 				    size_t new_line_number = 1);
 
@@ -87,16 +87,16 @@ public:
     inline size_t&       line()        { return m_stack.front().line(); }
 
     // Push current state. Open and init with new file and new_line_number.
-    void                 push_file( const string& name,
+    bool                 push_file( const string& name,
 				    size_t new_line_number = 1);
 
     // Push current state. Open and init with new file plus optional
     // extension string (suffix) and new_line_number.
-    void                 push_tex_file( const string& name, 
+    bool                 push_tex_file( const string& name, 
 					size_t new_line_number = 1);
     
     // Push current state. Init with new string and new_line_number.
-    void                 push_string( const string& name,
+    bool                 push_string( const string& name,
 				      const string& s,
 				      size_t new_line_number);
 

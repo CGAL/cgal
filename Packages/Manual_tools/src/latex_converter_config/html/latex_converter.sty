@@ -14,15 +14,15 @@
 % |                                                                         |
 % | Table of Contents:                                                      |
 % |                                                                         |
-% |   o   Configuration
-% |   o   End of Conversion Activities
-% |   o   Inclusion of Converter Style Files
-% |   o   (La)TeX Macro Expansion, Environments and Scopes
-% |   o   Boolean Values and Control Structures
-% |   o   Stack of Macro Bodies
-% |   o   HTML Output and Conversion Macros
-% |   o   Separation of TeX, HTML and ASCII Parts
-% |   o   RCSdef, RCSdefDate, and RCSdefArg
+% |   o   Configuration                                                     |
+% |   o   End of Conversion Activities                                      |
+% |   o   Inclusion of Converter Style Files                                |
+% |   o   (La)TeX Macro Expansion, Environments and Scopes                  |
+% |   o   Boolean Values and Control Structures                             |
+% |   o   Stack of Macro Bodies                                             |
+% |   o   HTML Output and Conversion Macros                                 |
+% |   o   Separation of TeX, HTML and ASCII Parts                           |
+% |   o   RCSdef, RCSdefDate, and RCSdefArg                                 |
 % |                                                                         |
 % |#########################################################################|
 
@@ -56,6 +56,8 @@
 \gdef{\lciIfHtmlClassNotInline}{\lcTrue} %% used by ccHtmlClassFile
 \gdef{\lciIfHtmlClassLinks}{\lcTrue}
 \gdef{\lciIfHtmlClassIndex}{\lcTrue}
+\gdef{\lciIfHtmlRefLinks}{\lcTrue}
+\gdef{\lciIfHtmlRefIndex}{\lcTrue}
 \gdef{\lciIfHtmlLinks}{\lcTrue}
 \gdef{\lciIfHtmlIndex}{\lcTrue}
 
@@ -77,6 +79,7 @@
 %% Will be called automatically at the end of the conversion process
 \gdef\lciEndOfConversion{}
 \newcommand{\lciAddToGlobalDef}[2]{\gdef#C1{#X1#2}}
+\newcommand{\lciPrependToGlobalDef}[2]{\gdef#C1{#2#X1}}
 
 
 % ___________________________________________________________________________
@@ -126,6 +129,9 @@
 \newcommand{\lciSkipTwoParameter@omm}{}
 \newcommand{\lciSkipTwoParameter@oomm}{}
 
+\newcommand{\lciGlueTwoParam}[2]{#C1#C2}
+\newcommand{\lciGlueFirstToSecond}[2]{#C1#2}
+
 \newcommand{\renewcommand}{\newcommand}
 \newcommand{\providecommand}[1]{\lciIfDefined{#C1}{\lciSkipOneParameter}%
     {\newcommand{#C1}}}
@@ -142,14 +148,79 @@
 %% Note! Only partial functionality of original TeX \edef !
 \newcommand{\edef}[2]{\newcommand{#1}{#X2}}
 
-\newcommand{\begin}[1]{\lciBegin\begin@#C1}
-\newcommand{\end}[1]{\end#C1\lciEnd}
+%% LaTeX environments and scoping braces, a stack to check proper nesting
+\gdef{\lciNestingScopesStack}{}
+\gdef{\lciNestingScopesFileStack}{}
+\gdef{\lciNestingScopesLineStack}{}
 
-\newcommand{\begingroup}{\lciBegin}
-\newcommand{\endgroup}{\lciEnd}
+\newcommand{\begin}[1]{\lciBegin{#C1}\lciGlueTwoParam{\begin}{@#C1}}
+\newcommand{\end}[1]{\lciGlueTwoParam{\end}{#C1}\lciEnd{#C1}}
 
-\newcommand{\lciBegin}{\lciBeginGroup\lciBeginScope}
-\newcommand{\lciEnd}{\lciEndScope\lciEndGroup}
+\newcommand{\begingroup}{\lciBegin{@group}}
+\newcommand{\endgroup}{\lciEnd{@group}}
+
+%% Args: the environment that gets opened, '@group' for scoping braces.
+\newcommand{\lciBegin}[1]{%
+    \lciPushGlobalStack{\lciNestingScopesStack}{#1}%
+    \lciPushGlobalStack{\lciNestingScopesFileStack}{\lciInputFilename}%
+    \lciPushGlobalStack{\lciNestingScopesLineStack}{\lciLineNumber}%
+    \lciBeginGroup%
+    \lciBeginScope}
+
+%% Args: the environment that gets closed, '@group' for scoping braces.
+\newcommand{\lciEnd}[1]{%
+    \lciTopGlobalStack{\lciNestingScopesStack}{\lciEndTmpEnv}%
+    \lciTopGlobalStack{\lciNestingScopesFileStack}{\lciEndTmpFile}%
+    \lciTopGlobalStack{\lciNestingScopesLineStack}{\lciEndTmpLine}%
+    \lciPopGlobalStack{\lciNestingScopesStack}%
+    \lciPopGlobalStack{\lciNestingScopesFileStack}%
+    \lciPopGlobalStack{\lciNestingScopesLineStack}%
+    \lciIfEqualExpanded{#1}{\lciEndTmpEnv}{}{%
+        \lciIfEqual{#1}{@group}{%
+            \lciEndMatchError{Closing brace `\}'}{environment}{\lciEndTmpEnv}%
+                {\lciEndTmpFile}{\lciEndTmpLine}%
+        }{\lciIfEqualExpanded{\lciEndTmpEnv}{@group}{%
+            \lciEndMatchError{Environment `#C1'}{opening brace}{\{}%
+                {\lciEndTmpFile}{\lciEndTmpLine}%
+        }{%
+            \lciEndMatchError{Environment `#C1'}{environment}{\lciEndTmpEnv}%
+                {\lciEndTmpFile}{\lciEndTmpLine}%
+        }}%
+    }%
+    \lciSetGlobalFontState%
+        {\lciFontSize}{\lciFontFamily}{\lciFontSeries}{\lciFontShape}%
+    \lciEndScope%
+    \lciRestoreFont%
+    \lciEndGroup}
+
+\newcommand{\lciEndMatchError}[5]{%
+  \lciError{#1 does not match with #2 `#XC3' in file `#XC4' line #XC5}}
+
+\newcommand{\lciCheckNestingScopes}{%
+    \lciIfEmpty{\lciNestingScopesStack}{}{%
+    \lciTopGlobalStack{\lciNestingScopesStack}{\lciEndTmpEnv}%
+    \lciTopGlobalStack{\lciNestingScopesFileStack}{\lciEndTmpFile}%
+    \lciTopGlobalStack{\lciNestingScopesLineStack}{\lciEndTmpLine}%
+    \lciPopGlobalStack{\lciNestingScopesStack}%
+    \lciPopGlobalStack{\lciNestingScopesFileStack}%
+    \lciPopGlobalStack{\lciNestingScopesLineStack}%
+    \lciIfEqualExpanded{\lciEndTmpEnv}{@group}{%
+        \lciCheckNestingScopesError{Opening brace}{\{}%
+                {\lciEndTmpFile}{\lciEndTmpLine}%
+    }{%
+        \lciCheckNestingScopesError{Environment}{\lciEndTmpEnv}%
+                {\lciEndTmpFile}{\lciEndTmpLine}%
+    }%
+    \lciCheckNestingScopes%
+}}
+
+\newcommand{\lciCheckNestingScopesError}[4]{%
+  \lciError{Parsing error: #1 `#XC2' in file `#XC3' line #XC4 not closed.}}
+
+
+%% Both commands will be redefined in latex.sty.
+\newcommand{\lciSetGlobalFontState}[4]{}
+\newcommand{\lciRestoreFont}{}
 
 
 % ___________________________________________________________________________
@@ -181,7 +252,7 @@
 
 %% Args: countername, end, body
 \newcommand{\lciWhileLessOrEqual}[3]{%
-    \lciIfLessOrEqual{#X1}{#2}
+    \lciIfLessOrEqual{#X1}{#2}%
         {#3\lciAddTo{#1}{1}\lciWhileLessOrEqual{#1}{#2}{#3}}{}%
 }
 
@@ -204,17 +275,17 @@
 \newcommand{\lciPushGlobalStack}[2]{\gdef#C1{{#X2}{#X1}}}
 
 %% Args: stack, macro which gets assigned the body from top of stack
-\newcommand{\lciTopStack}[2]{\lciLocalTopStack {#2}#X1}
+\newcommand{\lciTopStack}[2]{\lciLocalTopStack{#2}#X1}
 \newcommand{\lciLocalTopStack}[3]{\newcommand{#1}{#2}}
 
-\newcommand{\lciTopGlobalStack}[2]{\lciLocalTopGlobalStack {#2}#X1}
+\newcommand{\lciTopGlobalStack}[2]{\lciLocalTopGlobalStack{#2}#X1}
 \newcommand{\lciLocalTopGlobalStack}[3]{\gdef#C1{#2}}
 
 %% Args: stack
-\newcommand{\lciPopStack}[1]{\lciLocalPopStack {#1}#X1}
+\newcommand{\lciPopStack}[1]{\lciLocalPopStack{#1}#X1}
 \newcommand{\lciLocalPopStack}[3]{\newcommand{#1}{#3}}
 
-\newcommand{\lciPopGlobalStack}[1]{\lciLocalPopGlobalStack {#1}#X1}
+\newcommand{\lciPopGlobalStack}[1]{\lciLocalPopGlobalStack{#1}#X1}
 \newcommand{\lciLocalPopGlobalStack}[3]{\gdef#C1{#3}}
 
 %% Args: a macro name
@@ -222,8 +293,17 @@
 
 %% Args: stack
 \newcommand{\lciPrintStack}[1]{\{\lciIfEmpty{#1}{}{\lciLocalPrintStack #X1}\}}
-\newcommand{\lciLocalPrintStack}[2]{\{#1\}\{\lciIfEmpty{#2}{}
+\newcommand{\lciLocalPrintStack}[2]{\{#1\}\{\lciIfEmpty{#2}{}%
     {\lciLocalPrintStack #2}\}}
+
+%% Args: old-stack, new-stack (reversed). Stacks should differ. 
+%%       new-stack may not be empty. old-stack will be empty afterwards.
+\newcommand{\lciReverseStack}[2]{%
+    \lciIfEmpty{#1}{}{%
+        \lciTopStack{#1}{\lciStackTopTmp}\lciPopStack{#1}%
+        \lciPushStack{#2}{\lciStackTopTmp}%
+        \lciReverseStack{#1}{#2}%
+    }}
 
 % ___________________________________________________________________________
 % ###########################################################################
@@ -232,12 +312,11 @@
 % |
 % ###########################################################################
 
-\newcommand{\lcAnchor}[2]{\lcRawHtml{<A HREF="#C1">}#2\lcRawHtml{</A>}}
-\newcommand{\lcRawAscii}[1]{}
 \newcommand{\lcRawHtml}{\lciRawOutput}
+\newcommand{\lcRawHtmlExpanded}[1]{\lciRawOutput{#X1}}
+\newcommand{\lcRawAscii}[1]{}
 
-% old names for compatibility
-\newcommand{\ccAnchor}{\lcAnchor}
+\newcommand{\lcAnchor}[2]{\lcRawHtml{<A HREF="#C1">}#2\lcRawHtml{</A>}}
 
 
 % ___________________________________________________________________________
@@ -247,26 +326,18 @@
 % |
 % ###########################################################################
 
-\newcommand{\lcTexHtml}[1]{\lcRawHtml}
 \newcommand{\lcTex}[1]{}
 \newcommand{\lcHtml}[1]{#1}
 \newcommand{\lcAscii}[1]{}
 
-\newenvironment{lcTexOnly}{%
-    \lciParseUntilEndToken{\lciSkipOneParameter}{lcTexOnly}}{}
+\newenvironment{lcTexBlock}{%
+    \lciParseUntilEndToken{\lciSkipOneParameter}{lcTexBlock}}{}
 
-\newcommand{\lciLocalHtmlOnly}[1]{\lciRawOutputN{#L1}#1}
-\newenvironment{lcHtmlOnly}{%
-    \lciParseUntilEndToken{\lciLocalHtmlOnly}{lcHtmlOnly}}{}
+\newcommand{\lciLocalRawHtmlBlock}[1]{\lciRawOutputN{#L1}#1}
+\newenvironment{lcRawHtmlBlock}{%
+    \lciParseUntilEndToken{\lciLocalRawHtmlBlock}{lcRawHtmlBlock}}{}
 
 \newenvironment{lcHtmlBlock}{}{}
-
-% old names for compatibility
-\newcommand{\ccTexHtml}{\lcTexHtml}
-\newenvironment{ccTexOnly}{%
-    \lciParseUntilEndToken{\lciSkipOneParameter}{ccTexOnly}}{}
-\newenvironment{ccHtmlOnly}{%
-    \lciParseUntilEndToken{\lciLocalHtmlOnly}{ccHtmlOnly}}{}
 
 
 % ___________________________________________________________________________
@@ -286,7 +357,7 @@
         \lciRCSnewcommand{\lciRCSdefName}{<unknown RCS entry>}%
     }{%
         \lciRCSnewcommand{\lciRCSdefName}{#C1}%
-        \lciSkipTwoParameter %% skip the two remaining $'s
+        \lciSkipTwoParameter%% skip the two remaining $'s
     }}
 \newcommand{\lciRCSnewcommand}[2]{\newcommand{#X1}{#2}}
 
@@ -310,7 +381,7 @@
         \lciRCSnewcommand{\lciRCSdefdateName}{Date: #1}%
         \lciParseUntilDelimiter{\lciRCSdefdateZ} }}
 \newcommand{\lciRCSdefdateZ}[1]{%
-        \lciSkipTwoParameter %% skip spaces and the two remaining $'s
+        \lciSkipTwoParameter%% skip spaces and the two remaining $'s
 }
 
 
@@ -321,8 +392,7 @@
 \newcommand{\lciRCSdefArgX}[1]{\lciParseUntilDelimiter{\lciRCSdefArgXX}$}
 \newcommand{\lciRCSdefArgXX}[1]{%
     \lciIfEmpty{#1}{%
-        \lciMessage{
-Warning: Empty RCS argument}%
+        \lciMessage{\nWarning: Empty RCS argument}%
         \lciRCSnewcommand{\lciRCSdefArgName}{}%
     }{%
         \lciRCSnewcommand{\lciRCSdefArgName}{#C1}}}
@@ -337,9 +407,7 @@ Warning: Empty RCS argument}%
 \RCSdefArg{\lcRevisionArg}{\lcRevision}
 \RCSdefArg{\lcDateArg}{\lcDate}
 
-\newcommand{\lciPrintVersion}[2]{\lciMessage
-    { R#X1 #X2}%
-}
+\newcommand{\lciPrintVersion}[2]{\lciMessage{ R#X1 #X2}}
 \lciPrintVersion{\lcRevisionArg}{\lcDateArg}
 
 

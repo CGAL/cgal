@@ -28,6 +28,9 @@ void crop_string( string& s);
 void compress_spaces_in_string( string& s);
 void remove_separator( string& s);
 
+// Small Caps Conversion
+string convert_to_small_caps( string s);
+
 void append_file_to_string( const string& name, string& s);
 
 // Removes the quoted font changing commands used in CCMode: \I\, \B\ ...
@@ -36,7 +39,16 @@ string remove_font_commands( string name);
 string basename_string( string name);  // basename without path and suffix
 string path_string( string name);      // path with trailing / (maybe empty)
 string remove_suffix( string name);    // remove '.' separated suffix
+string suffix_string( string name);    // returns suffix behind '.'.
+                                       // returns "" if no '.'.
+void assert_trailing_slash_in_path( string& s);
 
+// Quoted strings use C string notation with \ as escape symbol.
+// Replaced sequences are: \\, \n, \t, \{, \}.
+string convert_quoted_string( string s);
+
+// Expands " and \ symbols with quotes.
+string convert_to_C_printable( string s);
 
 // Old style conversion routines
 // =======================================

@@ -48,6 +48,8 @@ char* global_template_params = 0;
 
 void skipspaces( void);
 
+#define YY_BREAK  /* a do nothing */
+
 %}
 
 /* The normal scanning mode parses TeX conventions.      */
@@ -113,8 +115,10 @@ blockintro      [\{][\\]((tt)|(em)|(it)|(sc)|(sl))
 "%".*[\n]{w}    {   /* Match one line TeX comments */
 		    /* remove spaces in next line  */
 		    unput( '\n');
+                    break;
 		}
 "%".*           {   /* Match one line TeX comments at the last line in file */
+                    break;
 		}
 [\\]path[^a-zA-Z]   |   /* path */
 [\\]verb[^a-zA-Z]   {   /* match LaTeX \verb"..." constructs */
@@ -526,55 +530,69 @@ blockintro      [\{][\\]((tt)|(em)|(it)|(sc)|(sl))
 [\\]ccTexHtml{w}  {
 		    return GOBBLEAFTERONEPARAM;
 }
-[\\]begin{w}[\{]ccTexOnly[\}]{w}   {}
-[\\]end{w}[\{]ccTexOnly[\}]        {}
+[\\]begin{w}[\{]ccTexOnly[\}]{w}   { break;}
+[\\]end{w}[\{]ccTexOnly[\}]        { break;}
 
 [\\]begin{w}[\{]verbatim[\}]{w}     |
 [\\]begin{w}[\{]cprog[\}]{w}        |
 [\\]begin{w}[\{]alltt[\}]{w}        |
 [\\]begin{w}[\{]ccHtmlOnly[\}]{w}   {
 		    BEGIN( VerbatimMode);
+		    break;
 		}
 <VerbatimMode>[\n]	{
 		    line_number++;
+		    break;
 }
-<VerbatimMode>.  	{ /* ignore */ }
+<VerbatimMode>.  	{ /* ignore */ 
+		    break;
+}
 
 <VerbatimMode>[\\]end{w}[\{]verbatim[\}]{w}     |
 <VerbatimMode>[\\]end{w}[\{]cprog[\}]{w}        |
 <VerbatimMode>[\\]end{w}[\{]alltt[\}]{w}        |
 <VerbatimMode>[\\]end{w}[\{]ccHtmlOnly[\}]      {
 	            BEGIN(INITIAL);
+		    break;
 		}
 
 [\\]begin{w}[\{]ccHtmlBlock[\}]{w}   {
 		    BEGIN( HtmlBlockMode);
+		    break;
 		}
 <HtmlBlockMode>[\n]	{
 		    line_number++;
+		    break;
 }
-<HtmlBlockMode>.  	{ /* ignore */ }
+<HtmlBlockMode>.  	{ /* ignore */ 
+		    break;
+}
 
 <HtmlBlockMode>[\\]end{w}[\{]ccHtmlBlock[\}]      {
 	            BEGIN(INITIAL);
+		    break;
 		}
 
  /* Flexibility for HTML class files. */
  /* -------------------------------------------------------------- */
 <INITIAL,NestingMode>[\\]ccHtmlNoClassFile/{noletter}    {
 		    skipspaces();
+		    break;
 }
 <INITIAL,NestingMode>[\\]ccHtmlNo((Class)?)Links/{noletter}   {
 		    skipspaces();
+		    break;
 }
 <INITIAL,NestingMode>[\\]ccHtmlNo((Class)?)Index/{noletter}   {
 		    skipspaces();
+		    break;
 }
 [\\]begin{w}[\{]ccHtmlClassFile[\}]{w}   {
 		    return GOBBLETWOPARAMS;
 }
 [\\]end{w}[\{]ccHtmlClassFile[\}]   {
 		    skipspaces();
+		    break;
 }
 [\\]ccHtmlIndex/{noletter}                                     {
 		    skipspaces();
@@ -599,7 +617,9 @@ blockintro      [\{][\\]((tt)|(em)|(it)|(sc)|(sl))
 
  /* make the $ delimiters for math mode disappear: */
  /* -------------------------------------------------------------- */
-[$]              {}
+[$]              {
+		    break;
+}
 [\\]"&"          {
 		     yylval.character   = '&';
 		     return CHAR;

@@ -55,10 +55,10 @@ bool  is_text_block_empty( const Text& T);
 void  print_html_text_block( ostream &out, const Text& T);
 
 
-void handleText(       const Text&      T);
-void handleBuffer(     const Buffer&    B);
-void handleTextToken(  const TextToken& TT);
-void handleString(     const char*      s);
-void handleChar(       char             c);
+void handleText(      const Text&      T);
+void handleTextToken( const TextToken& TT);
+void handleString(    const char*      s);
+void handleString(    const string&    s);
+void handleChar(      char             c);
 
 #endif // MODULE_CONFIG //

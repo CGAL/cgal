@@ -24,6 +24,8 @@ extern int set_old_state;
 extern string cc_string;
 extern string cc_filename;
 
+extern int number_of_args;
+
 extern char *yytext;
 
 extern "C" {

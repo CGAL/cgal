@@ -43,29 +43,37 @@
 // A sort_key is followed by a 0 to indicate the section title.
 // A sort_key is followed by a 1 to indicate a normal entry.
 
-const string sort_key_class            = "<!sort B";
-const string  sort_key_nested_type      = "<!sort C";
-const string  sort_key_struct           = "<!sort B";  // structs like classes
+const string  sort_key_concept          = "<!sort B";
+const string  sort_key_class            = "<!sort C";
+const string  sort_key_struct           = "<!sort C";  // structs like classes
+const string  sort_key_nested_type      = "<!sort D";
 const string  sort_key_enum             = "<!sort E";
 const string  sort_key_enum_tags        = "<!sort F";
 const string  sort_key_typedef          = "<!sort G";
-const string  sort_key_variable         = "<!sort H";
-const string  sort_key_function         = "<!sort I";
-const string  sort_key_member_function  = "<!sort J";
+const string  sort_key_macro            = "<!sort H";
+const string  sort_key_variable         = "<!sort I";
+const string  sort_key_function         = "<!sort J";
+const string  sort_key_member_function  = "<!sort K";
 
-const string& find_sort_key( const string& txt) {
+const string& find_sort_key( string txt) {
+    if ( txt.size() > 0)
+	txt[0] = tolower( txt[0]);
+    if ( txt == "concept")
+	return sort_key_concept;
     if ( txt == "class")
 	return sort_key_class;
-    if ( txt == "nested_type")
-	return sort_key_nested_type;
     if ( txt == "struct")
 	return sort_key_struct;
+    if ( txt == "nested_type")
+	return sort_key_nested_type;
     if ( txt == "enum")
 	return sort_key_enum;
     if ( txt == "enum_tags")
 	return sort_key_enum_tags;
     if ( txt == "typedef")
 	return sort_key_typedef;
+    if ( txt == "macro")
+	return sort_key_macro;
     if ( txt == "variable")
 	return sort_key_variable;
     if ( txt == "function")
@@ -77,12 +85,14 @@ const string& find_sort_key( const string& txt) {
 }
 
 void write_headers_to_index( ostream& out){
+    out << sort_key_concept     << "0 !><P><LI><B>Concepts</B><P>" << endl;
     out << sort_key_class       << "0 !><P><LI><B>Classes</B><P>" << endl;
-    out << sort_key_nested_type << "0 !><P><LI><B>Nested Types</B><P>" << endl;
     //out << sort_key_struct      << "0 !><P><LI><B>Structs</B><P>" << endl;
+    out << sort_key_nested_type << "0 !><P><LI><B>Nested Types</B><P>" << endl;
     out << sort_key_enum        << "0 !><P><LI><B>Enums</B><P>" << endl;
     out << sort_key_enum_tags   << "0 !><P><LI><B>Enum Tags</B><P>" << endl;
     out << sort_key_typedef     << "0 !><P><LI><B>Typedefs</B><P>" << endl;
+    out << sort_key_macro       << "0 !><P><LI><B>Macros</B><P>" << endl;
     out << sort_key_variable    << "0 !><P><LI><B>Global Variables and "
                                    "Consts</B><P>" << endl;
     out << sort_key_function    << "0 !><P><LI><B>Functions</B><P>" << endl;
@@ -161,31 +171,26 @@ string handleHtmlCrossLink( string key, bool tmpl_class) {
 }
 
 
-// Chapter and section
+// Chapter and Class Files
 // =================================================
+
+static int next_class_link_counter = 0;
+static int next_class_link_last    = 0;
 
 string chapter_title;
 
 void handleChapter(  const Text& T) {
-    string new_main_filename = macroX( "\\lciInputPath")
-                             + macroX( "\\lciChapterPrefix")
+    next_class_link_last = 0;
+    //string new_main_filename = macroX( "\\lciInputPath")
+    //                         + macroX( "\\lciChapterPrefix")
+    //                         + macroX( "\\lciInputFilenameBase")
+    //                         + macroX( "\\lciHtmlSuffix");
+    string new_main_filename = macroX( "\\lciChapterPrefix")
                              + macroX( "\\lciInputFilenameBase")
 	                     + macroX( "\\lciHtmlSuffix");
     if ( new_main_filename == main_filename) {
         printErrorMessage( ChapterStructureError);
 	return;
-    }
-    if ( class_stream != 0) {
-        if ( ! chapter_title.empty())
-	    // navigation footer
-	    *class_stream << "<HR><B> Return to chapter:</B> <A HREF=\"" 
-			  << main_filename 
-			  << "\">" << chapter_title << "</A>" << endl;
-        close_html( *class_stream);
-	assert_file_write( *class_stream, class_filename);
-	delete   class_stream;
-	class_filename = string();
-	class_stream = 0;
     }
     chapter_title = string( text_block_to_string( T));
     if ( main_stream != &cout && main_stream != pre_stream) {
@@ -230,61 +235,16 @@ void handleBiblio(  const Text& T) {
     delete out;
 }
 
-void handleSection(  const Text& T) {
-    static int section_counter = 1;
-    char* section = text_block_to_string( T);
-    *current_ostream << "<A NAME=\"Section_" << section_counter << "\"></A>"
-		    << endl;
-    *current_ostream << "<H2>" << section << "</H2>" << endl;
-
-    // table of contents
-    *contents_stream << "        <UL><LI><A HREF=\"" << current_filename
-		     << "#Section_" << section_counter << "\">"
-		     << section << "</A></UL>" << endl;
-
-    ++ section_counter;
-    delete[] section;
-}
-
-void handleLabel( const char* l, size_t len) { // trust only len!
-    /* The lexical processing has removed the parantheses around */
-    /* \ref{...} macros from TeX, so here is the correct pattern match */
-    /* to find them in the pre-HTML text */
-    char* s = new char[len+1];
-    strncpy( s, l, len);
-    s[len] = '\0';
-    *anchor_stream << "[\\[]ref[:]\"" << s
-		   << "\"[\\]]    { fputs( \"<A HREF=\\\""
-		   << current_filename 
-		   << "#" << s << "\\\">" << reference_icon 
-		   << "</A>\", stdout); }" << endl;    
-    // There are two special ref commands defined within the manual
-    *anchor_stream << "[\\\\]Chapter[ \\t\\n]*\"" << s
-		   << "\"    { fputs( \"Chapter <A HREF=\\\""
-		   << current_filename 
-		   << "#" << s << "\\\">" << reference_icon 
-		   << "</A>\", stdout); }" << endl;    
-    *anchor_stream << "[\\\\]Section[ \\t\\n]*\"" << s
-		   << "\"    { fputs( \" Section <A HREF=\\\""
-		   << current_filename 
-		   << "#" << s << "\\\">"  << reference_icon 
-		   << "</A>\", stdout); }" << endl;    
-    delete[] s;
-}
-
 // Opens a new classfile. Only a filename and a HTML formatted reference
 // text are given.
 void handleClassFile( const string& filename, 
 		      const string& formatted_reference) {
-    if ( class_stream != 0) {
-        // navigation footer
-        *class_stream << "<HR> <B>Next:</B> " << formatted_reference << endl;
-        close_html( *class_stream);
-	assert_file_write( *class_stream, class_filename);
-	delete   class_stream;
-	class_stream = 0;
+    if ( next_class_link_last != 0) {
+        *anchor_stream << "\"<!Next_class_link_" << next_class_link_last
+		       << "!>\"    { fputs( \"<HR> <B>Next:</B> "
+		       << convert_to_C_printable( formatted_reference) 
+		       << "\\n\", stdout);}" << endl;
     }
-
     class_filename = filename;
     class_stream = open_file_for_write( tmp_path + class_filename);
     open_html( *class_stream);
@@ -305,13 +265,18 @@ void handleClassFile( const string& filename,
 }
 
 void handleClassFileEnd( void) {
-    /* ...  Hack to implement the link from one class to the next class
-	close_html( *class_stream);
+    if ( class_stream != 0) {
+	// implements the link from one class to the next class
+	++next_class_link_counter;
+	next_class_link_last = next_class_link_counter;
+	*class_stream << "<!Next_class_link_" << next_class_link_counter 
+		      << "!>";
+        close_html( *class_stream);
+	assert_file_write( *class_stream, class_filename);
 	delete   class_stream;
-	delete[] class_filename;
+	class_filename = string();
 	class_stream = 0;
-	class_filename = 0;
-    ... */
+    }
     current_ostream  = main_stream;
     current_filename = main_filename;
     insertInternalGlobalMacro( "\\lciOutputFilename", current_filename);
@@ -512,6 +477,7 @@ add_to( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 2, 0);
     string macroname( param[0]);
     crop_string( macroname);
+    remove_separator( macroname);
     int sum = atoi( expandFirstMacro( macroname).c_str()) 
             + atoi(param[1].c_str());
     insertMacro( macroname, in_string->name(), in_string->line(), 
@@ -524,6 +490,7 @@ mult_to( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 2, 0);
     string macroname( param[0]);
     crop_string( macroname);
+    remove_separator( macroname);
     int prod = atoi( expandFirstMacro( macroname).c_str()) 
              * atoi(param[1].c_str());
     insertMacro( macroname, in_string->name(), in_string->line(),
@@ -536,6 +503,7 @@ global_add_to( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 2, 0);
     string macroname( param[0]);
     crop_string( macroname);
+    remove_separator( macroname);
     int sum = atoi( expandFirstMacro( macroname).c_str()) 
             + atoi(param[1].c_str());
     insertGlobalMacro( macroname, in_string->name(), in_string->line(), 
@@ -548,6 +516,7 @@ global_mult_to( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 2, 0);
     string macroname( param[0]);
     crop_string( macroname);
+    remove_separator( macroname);
     int prod = atoi( expandFirstMacro( macroname).c_str()) 
              * atoi(param[1].c_str());
     insertGlobalMacro( macroname, in_string->name(), in_string->line(),
@@ -561,7 +530,7 @@ string
 string_to_upper( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 1, 0);
     string s( param[0]);
-    for ( int i = 0; i < s.size(); i++)
+    for ( size_t i = 0; i < s.size(); i++)
 	s[i] = toupper( s[i]);
     return s;
 }
@@ -573,11 +542,8 @@ html_error( const string&, string param[], size_t n, size_t opt) {
     cerr << endl;
     if ( n != 1 && opt != 0)
 	printErrorMessage( MacroParamNumberError);
-    else {
-	string s( param[0]);
-	remove_separator( s);
-	cerr << "Error: " << s << '.';
-    }
+    else
+	cerr << endl << "*** Error: " << convert_quoted_string(param[0]) <<'.';
     printErrorMessage( UserDefinedError);
     return string();
 }
@@ -586,42 +552,11 @@ string
 html_message( const string&, string param[], size_t n, size_t opt) {
     if ( n != 1 && opt != 0)
 	printErrorMessage( MacroParamNumberError);
-    else if ( ! quiet_switch) {
-	string s( param[0]);
-	remove_separator( s);
-	cerr << s;
-    }
+    else if ( ! quiet_switch)
+	cerr << convert_quoted_string( param[0]);
     return string();
 }
 
-// LaTeX commands
-// ======================================================================
-string
-bib_cite( const string&, string param[], size_t n, size_t opt) {
-    NParamCheck( 2, 0);
-    string s0( param[0]);
-    string s1( param[1]);
-    remove_separator( s0);
-    remove_separator( s1);
-    // A rule to substitute key by item in the bibliography.
-    // param[0] == key, s1 == replacement text
-    *anchor_stream << "\"<A NAME=\"[\"]\"Biblio_" << s0
-		   << "\"[\"]\"></A><B>["  << s0
-		   << "]</B>\"        { fputs( \"<A NAME=\\\"Biblio_"
-		   << s0 << "\\\"></A><B>[" << s1 
-		   << "]</B>\", stdout); }" 
-		   << endl;
-    // A rule to substitute key by item for cite's in the main text.
-    *anchor_stream << "\"<A HREF=\"[\"]\"" 
-		   << fetchMacroBody( "\\lciBibFilename") << "#Biblio_" 
-		   << s0 << "\"[\"]\">"  << s0
-		   << "\"        { fputs( \"<A HREF=\\\"" 
-		   << fetchMacroBody( "\\lciBibFilename")
-		   << "#Biblio_" << s0 << "\\\">" << s1 
-		   << "\", stdout); }" 
-		   << endl;
-    return string();
-}
 
 // C++ Formatting
 // ======================================================================
@@ -670,6 +605,7 @@ three_column_layout( const string&, string param[], size_t n, size_t opt) {
 string
 html_index( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 2, 0);  // param[0] is index category, param[1] is text
+    crop_string( param[0]);
     string key = find_sort_key( param[0]);
     string s = string( "\n\\lcRawHtml{<A NAME=\"Index_anchor_") 
 	 + int_to_string( index_anchor_counter) + "\"></A>}\n"
@@ -686,6 +622,7 @@ string
 html_index_C( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 1, 0);  // uses cc_string as index item, param[0] is
                          // index category
+    crop_string( param[0]);
     return string( "\\lcRawHtml{")
 	+ handleHtmlIndexC( find_sort_key( param[0]), cc_string)
 	+ '}';
@@ -744,6 +681,14 @@ html_class_file_end( const string&, string param[], size_t n, size_t opt) {
     return string();
 }
 
+string
+line_number( const string&, string param[], size_t n, size_t opt) {
+    NParamCheck( 0, 0);
+    if ( in_file)
+	return int_to_string( in_file->line());
+    return "0";
+}
+
 // Initialize
 // ======================================================================
 void init_internal_macros() {
@@ -771,8 +716,6 @@ void init_internal_macros() {
     insertInternalGlobalMacro( "\\lciError", html_error, 1);
     insertInternalGlobalMacro( "\\lciMessage", html_message, 1);
 
-    insertInternalGlobalMacro( "\\lciBibCite", bib_cite, 2);
-
     insertInternalGlobalMacro( "\\lciStyle", cc_style, 1);
     insertInternalGlobalMacro( "\\lciCCParameter", cc_parameter, 0);
 
@@ -790,6 +733,8 @@ void init_internal_macros() {
     insertInternalGlobalMacro( "\\lciPushOutput", push_output, 1);
     insertInternalGlobalMacro( "\\lciOpenBibliography",  open_biblio, 0);
     insertInternalGlobalMacro( "\\lciCloseBibliography", close_biblio, 0);
+
+    insertInternalGlobalMacro( "\\lciLineNumber",  line_number,  0);
 }
 
 // EOF //
