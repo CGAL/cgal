@@ -3,40 +3,46 @@
 CVS_MODULE_NAME=Cd
 Package=Cd
 
-.PHONY: Package Test Submit Version Rtag
+.PHONY: package test submit version rtag
 
 WWW_base=/u/www/0/www/htdocs/files/equipes/prisme/CGAL/DR:/Members
 WWW_dir=$(WWW_base)/$(Package)
 TMP_file=/tmp/submit-mail
 
-Package: clean $(Package).tar.gz
+package: clean $(Package).tar.gz
 	@echo "----------------------------------"
 	@echo "------------ Penser à: -----------"
 	@echo "----------------------------------"
 	@echo "---- changes.txt              ----"
-	@echo "---- make Test                ----"
-	@echo "---- make VERSION=3.1 Version ----"
-	@echo "---- make Commit               ----"
-	@echo "---- make VERSION=3.1 Rtag    ----"
-	@echo "---- make Package             ----"
+	@echo "---- make test                ----"
+	@echo "---- make VERSION=X.X version ----"
+	@echo "---- make commit              ----"
+	@echo "---- make VERSION=X.X rtag    ----"
+	@echo "---- make package             ----"
 	@echo "---- make Submit              ----"
+
 	@echo "----------------------------------"
 
-Test:
-	cd test/Kernel; ./cgal_test
+symlinks:
+	cd include/CGAL/Cartesian ; sh ./create_symlinks_3
 
-Version:
+test:
+	cd test/KernelCd ; ./cgal_test
+
+version:
 	echo "$(VERSION) (" `date +"%e %b %Y"` ")" > version
+	cvs update
 
-Commit:
+commit:
+	vim changes.txt
 	cvs commit
 
-Rtag:
+rtag:
 	cvs rtag v`echo $(VERSION) | sed -e "s/\./_/g"` $(CVS_MODULE_NAME)
 
-Submit: Package
-	cp $(Package).tar.gz version description.txt long_description changes.txt \
-	   $(WWW_dir)
+submit: package
+	cp $(Package).tar.gz version description.txt long_description.txt \
+	   changes.txt $(WWW_dir)
 	echo > $(TMP_file)
 	echo "submission::" >> $(TMP_file)
 	echo "http://www-sop.inria.fr/prisme/CGAL/DR:/Members" >> $(TMP_file)
@@ -46,11 +52,14 @@ Submit: Package
 
 clean:
 	rm -f $(Package).tar.gz
-#	cd test/Kernel ; make distclean
+	cd include/CGAL/Cartesian ; sh ./remove_symlinks_3
+	cd test/Kernel ; make distclean
 
 $(Package).tar.gz:
+	./check_headers.pl -u include/CGAL/*/*.[Ch]
 	tar -zcvf $(Package).tar.gz \
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
 	--exclude=TODO \
 	version long_description.txt description.txt changes.txt \
 	include
+	./check_headers.pl -u include/CGAL/*/*.[Ch]
