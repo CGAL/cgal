@@ -24,18 +24,10 @@
 // Sorted matrix search: Example Program
 // ============================================================================
 
-#ifndef CGAL_RANDOM_H
 #include <CGAL/Random.h>
-#endif // CGAL_RANDOM_H
-#ifndef CGAL_FUNCTION_OBJECTS_H
 #include <CGAL/function_objects.h>
-#endif // CGAL_FUNCTION_OBJECTS_H
-#ifndef CGAL_CARTESIAN_MATRIX_H
 #include <CGAL/Cartesian_matrix.h>
-#endif // CGAL_CARTESIAN_MATRIX_H
-#ifndef CGAL_SORTED_MATRIX_SEARCH_H
 #include <CGAL/sorted_matrix_search.h>
-#endif // CGAL_SORTED_MATRIX_SEARCH_H
 #include <vector>
 
 using namespace std;

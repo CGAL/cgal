@@ -27,17 +27,11 @@
 #if ! (CGAL_ALL_FURTHEST_NEIGHBORS_TRAITS_2_H)
 #define CGAL_ALL_FURTHEST_NEIGHBORS_TRAITS_2_H 1
 
-#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
-#endif // CGAL_BASIC_H
-#ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
-#endif // CGAL_OPTIMISATION_ASSERTIONS_H
 //!!! this should go into function_objects.h
 #include <functional>
-#ifndef CGAL_SQUARED_DISTANCE_2_H
 #include <CGAL/squared_distance_2.h>
-#endif // CGAL_SQUARED_DISTANCE_2_H
 
 CGAL_BEGIN_NAMESPACE
 

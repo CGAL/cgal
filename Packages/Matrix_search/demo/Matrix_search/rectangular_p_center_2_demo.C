@@ -24,42 +24,18 @@
 // Demo: 2-4-Centering Axis-Parallel 2D-Rectangles
 // ============================================================================
 
-#ifndef CGAL_CARTESIAN_H
 #include <CGAL/Cartesian.h>
-#endif // CGAL_CARTESIAN_H
-#ifndef CGAL_ISO_RECTANGLE_2_H
 #include <CGAL/Iso_rectangle_2.h>
-#endif // CGAL_ISO_RECTANGLE_2_H
-#ifndef CGAL_POINT_2_H
 #include <CGAL/Point_2.h>
-#endif // CGAL_POINT_2_H
-#ifndef CGAL_IO_LEDA_WINDOW_H
 #include <CGAL/IO/leda_window.h>
-#endif // CGAL_IO_LEDA_WINDOW_H
-#ifndef CGAL_IO_OSTREAM_ITERATOR_H
 #include <CGAL/IO/Ostream_iterator.h>
-#endif // CGAL_IO_OSTREAM_ITERATOR_H
-#ifndef CGAL_IO_ISTREAM_ITERATOR_H
 #include <CGAL/IO/Istream_iterator.h>
-#endif // CGAL_IO_ISTREAM_ITERATOR_H
-#ifndef CGAL_RECTANGULAR_P_CENTER_2_H
 #include <CGAL/rectangular_p_center_2.h>
-#endif // CGAL_RECTANGULAR_P_CENTER_2_H
-#ifndef CGAL_POINT_GENERATORS_2_H
 #include <CGAL/point_generators_2.h>
-#endif // CGAL_POINT_GENERATORS_2_H
-#ifndef CGAL_ARITHMETIC_FILTER_H
 #include <CGAL/Arithmetic_filter.h>
-#endif // CGAL_ARITHMETIC_FILTER_H
-#ifndef CGAL_LEDA_REAL_H
 #include <CGAL/leda_real.h>
-#endif // CGAL_LEDA_REAL_H
-#ifndef CGAL_ALGORITHM_H
 #include <CGAL/algorithm.h>
-#endif // CGAL_ALGORITHM_H
-#ifndef CGAL_TIMER_H
 #include <CGAL/Timer.h>
-#endif // CGAL_TIMER_H
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -108,9 +84,9 @@ class Random_p_clusters_2 : public CGAL_STD::_Random_generator_base< P > {
 #else
 template < class P,
            class Creator =
-           CGAL::Creator_uniform_2< typename P::FT, P > >
+           CGAL::Creator_uniform_2< CGAL_TYPENAME_MSVC_NULL P::FT, P > >
 class Random_p_clusters_2 : public CGAL::_Random_generator_base< P > {
-#endif
+#endif // CGAL_CFG_NO_NAMESPACE
   void generate_point() {
     typedef typename P::FT FT;
     double p = _rnd.get_double();
@@ -177,6 +153,7 @@ private:
 // typedefs
 typedef Filtered_exact< double, leda_real > FT;
 //typedef double FT;
+//typedef leda_real FT;
 typedef Cartesian< FT >                     R;
 typedef CGAL::Point_2< R >                  Point;
 typedef CGAL::Iso_rectangle_2< R >          Square_2;
@@ -214,7 +191,7 @@ int
 main(int argc, char* argv[])
 {
   int number_of_points = 50;
-  int number_of_clusters = 3;
+  int number_of_clusters = 4;
   // for the cluster generators:
   double c_size = .5;     // cluster size
   Point_cont input_points;
@@ -250,8 +227,8 @@ main(int argc, char* argv[])
 #endif // CGAL_PCENTER_NO_SHOW
   set_pretty_mode(cout);
   set_pretty_mode(cerr);
-  cout.precision(50);
-  cerr.precision(50);
+  cout.precision(20);
+  cerr.precision(20);
   Ostream_iterator_point        cout_p(cerr, "\n");
   Ostream_iterator_square       cout_s(cerr, "\n");
 

@@ -24,42 +24,18 @@
 // Demo program: Compute extremal polygons of a convex polygon
 // ============================================================================
 
-#ifndef CGAL_CARTESIAN_H
 #include <CGAL/Cartesian.h>
-#endif // CGAL_CARTESIAN_H
-#ifndef CGAL_POINT_2_H
 #include <CGAL/Point_2.h>
-#endif // CGAL_POINT_2_H
-#ifndef CGAL_SEGMENT_2_H
 #include <CGAL/Segment_2.h>
-#endif // CGAL_SEGMENT_2_H
-#ifndef CGAL_SQUARED_DISTANCE_2_H
 #include <CGAL/squared_distance_2.h>
-#endif // CGAL_SQUARED_DISTANCE_2_H
-#ifndef CGAL_DISTANCE_PREDICATES_2_H
 #include <CGAL/distance_predicates_2.h>
-#endif // CGAL_DISTANCE_PREDICATES_2_H
-#ifndef CGAL_CONVEX_HULL_2_H
 #include <CGAL/convex_hull_2.h>
-#endif // CGAL_CONVEX_HULL_2_H
-#ifndef CGAL_CIRCULATOR_H
 #include <CGAL/circulator.h>
-#endif // CGAL_CIRCULATOR_H
-#ifndef CGAL_EXTREMAL_POLYGON_2_H
 #include <CGAL/extremal_polygon_2.h>
-#endif // CGAL_EXTREMAL_POLYGON_2_H
-#ifndef CGAL_POINT_GENERATORS_2_H
 #include <CGAL/point_generators_2.h>
-#endif // CGAL_POINT_GENERATORS_2_H
-#ifndef CGAL_RANDOM_CONVEX_SET_2_H
 #include <CGAL/random_convex_set_2.h>
-#endif // CGAL_RANDOM_CONVEX_SET_2_H
-#ifndef CGAL_TIMER_H
 #include <CGAL/Timer.h>
-#endif // CGAL_TIMER_H
-#ifndef CGAL_IO_LEDA_WINDOW_H
 #include <CGAL/IO/leda_window.h>
-#endif // CGAL_IO_LEDA_WINDOW_H
 #include <iostream>
 #include <cstdlib>
 #include <cstdio>
