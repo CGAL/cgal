@@ -1,0 +1,114 @@
+% dessin effectue par JpDraw (un programme de JP. MERLET)
+% INRIA Sophia-Antipolis,France le: Tue Dec 22 10:46:31 1998
+% Directory de creation:/u/alcor/0/prisme_util/CGAL/Local/Triangulation/doc
+% Createur:yvinec
+\ifx\cs\tempdima \newdimen \tempdima\fi
+\ifx\cs\tempdimb \newdimen \tempdimb\fi
+\ifx\cs\jpdrawx \newcount \jpdrawx\fi
+\ifx\cs\jpspace \def\jpspace{ } \fi
+\jpdrawx=100 \tempdima=   1.00cm \tempdimb= 1.0cm
+\ifdim \unitlength = 1pt
+\unitlength=  1.00cm
+\fi
+\ifdim \unitlength < 0cm
+\multiply \unitlength by -10 \divide \unitlength by 86 \fi
+\ifdim \unitlength > \tempdima \tempdima=\unitlength \fi
+\ifdim \unitlength < \tempdima \tempdima=\unitlength \fi
+\multiply \jpdrawx by \tempdima \divide \jpdrawx by \tempdimb
+\setlength{\unitlength}{\tempdima}
+\begin{picture}(   8.6,   4.3)( 1.841, 8.280)
+\thinlines
+\large
+\put( 1.841, 8.280){\special{"
+\the\jpdrawx \space 100 div
+\the\jpdrawx \space 100 div scale
+%%BoundingBox: 0 0 245 122
+% initial value of unitlength : 1.000000
+/Ellipse { gsave moveto setgray /savematrix matrix
+currentmatrix def currentpoint translate rotate newpath
+scale arc closepath savematrix setmatrix stroke grestore 0 setgray} def
+/EllipseColor { gsave moveto setgray /savematrix matrix
+currentmatrix def currentpoint translate rotate newpath
+scale arc closepath savematrix setmatrix fill grestore 0 setgray} def
+/EllipseRVB { gsave moveto setrgbcolor /savematrix matrix
+currentmatrix def currentpoint translate rotate newpath
+scale arc closepath savematrix setmatrix fill grestore 0 setgray} def
+/EllipseBRVB { gsave moveto setrgbcolor /savematrix matrix
+currentmatrix def currentpoint translate rotate newpath
+scale arc closepath savematrix setmatrix stroke grestore 0 setgray} def
+/Ligne { gsave moveto currentpoint translate 0 0 moveto
+lineto currentpoint stroke moveto closepath grestore} def
+/LigneRVB { gsave setrgbcolor moveto currentpoint translate 0 0 moveto
+lineto currentpoint stroke moveto closepath grestore 0 setgray} def
+/ArrowNoire {gsave 0 setgray moveto currentpoint
+translate 0 0 moveto lineto lineto lineto lineto 
+currentpoint fill moveto closepath grestore 0 setgray} def
+/ArrowRVB {gsave setrgbcolor moveto currentpoint
+translate 0 0 moveto lineto lineto lineto lineto 
+currentpoint fill moveto closepath grestore 0 setgray} def
+/RectangleNoir {gsave setgray moveto currentpoint
+translate 0 0 moveto lineto lineto lineto lineto 
+currentpoint fill moveto closepath grestore 0 setgray} def
+/RectangleRVB {gsave setrgbcolor moveto currentpoint
+translate 0 0 moveto lineto lineto lineto lineto 
+currentpoint fill moveto closepath grestore 0 setgray} def
+/Rectangle {gsave moveto currentpoint
+translate 0 0 moveto lineto lineto lineto lineto 
+currentpoint stroke moveto closepath grestore} def
+/OpenPoly {gsave moveto currentpoint translate 0 0 moveto} def
+/Li {lineto} def
+/ClosePnoir {currentpoint fill moveto closepath grestore 0 setgray} def
+/ClosePoly {currentpoint stroke moveto closepath grestore 0 setgray} def
+gsave
+ /ulx where{pop ulx uly scale} if
+ %currentpoint translate
+0.3 setlinewidth
+[] 0  setdash
+  0.85 setlinewidth
+188.249 122.074 OpenPoly
+  0.800 setgray
+-42.746 -60.832 Li
+  7.398 -117.553 Li
+ 53.022 -73.984 Li
+ 53.433 -74.806 Li
+  0.000   0.000 Li
+ClosePnoir
+188.249 122.074 OpenPoly
+-42.746 -60.832 Li
+  7.398 -117.553 Li
+ 53.022 -73.984 Li
+ 53.433 -74.806 Li
+  0.000   0.000 Li
+ClosePoly
+ 42.746 117.553 OpenPoly
+  0.800 setgray
+-42.746 -60.831 Li
+  7.398 -117.553 Li
+ 53.022 -73.984 Li
+ 53.433 -74.806 Li
+  0.000   0.000 Li
+ClosePnoir
+ 42.746 117.553 OpenPoly
+-42.746 -60.831 Li
+  7.398 -117.553 Li
+ 53.022 -73.984 Li
+ 53.433 -74.806 Li
+  0.000   0.000 Li
+ClosePoly
+ 95.357 -13.153   0.411  56.310 Ligne
+ -7.398 117.142 196.058   4.110 Ligne
+  0.000   0.000  -8.134   2.480  -5.669   0.058  -8.184  -2.312 135.638  82.205 ArrowNoire
+ 38.421  -0.396  95.769  82.616 Ligne
+grestore
+}}
+\scriptsize
+\put(3.26,10.82){$f$}
+\put(7.87,11.03){$f$}
+\put(8.80,10.01){$f.neighbor(i)$}
+\put(8.19,11.95){$i$}
+\put(7.15,10.35){$ccw(i)$}
+\put(2.04,10.35){$ccw(i)$}
+\put(3.32,12.03){$i$}
+\put(2.80,9.43){$f.neighbor(i)$}
+\end{picture}
+\setlength{\unitlength}{1cm}
