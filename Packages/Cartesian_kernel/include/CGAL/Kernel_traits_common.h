@@ -623,10 +623,10 @@ Coplanar_3
 coplanar_3_object() const 
 { return Coplanar_3(); }
 
-// typedef CGALi::Coplanar_orientation                 Coplanar_orientation_3;
-// Coplanar_orientation_3
-// coplanar_orientation_3_object() const 
-// { return Coplanar_orientation_3(); }
+typedef CGALi::Coplanar_orientation                    Coplanar_orientation_3;
+Coplanar_orientation_3
+coplanar_orientation_3_object() const 
+{ return Coplanar_orientation_3(); }
 
 typedef CGAL ::p_Orientation<Point_3>                  Orientation_3;
 Orientation_3
