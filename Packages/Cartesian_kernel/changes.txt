@@ -1,4 +1,4 @@
-16 Feb 2003 Andreas Fabri
+16 Feb 2004 Andreas Fabri
 - Added operstor()(Point, Point, Point, Point, Point) to Less_signed_distance_to_plane_3
 
 16 Feb 2004 Sylvain Pion
