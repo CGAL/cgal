@@ -483,11 +483,11 @@ sub printEnv
 
     # Initialize the fields
     $numCpus = 0;
-    $cpuSpeed = 0;
-    $cpuType = 0;
-    $primDataCache = 0;
-    $secDataCache = 0;
-    $instCache = 0;
+    $cpuSpeed = 'unknown';
+    $cpuType = 'unknown';
+    $primDataCache = 'unknown';
+    $secDataCache = 'unknown';
+    $instCache = 'unknown';
 
     # Parse:
     for $record (@infoLines) {
@@ -531,11 +531,11 @@ sub printEnv
 	$cpus[$i]{'primDataCache'} = 0;
 	$cpus[$i]{'secDataCache'} = 0;
 	$cpus[$i]{'instCache'} = 0;
-      } elsif ($record =~ /cpu MHz[\s]*:[\s]+([^\s]+)/) {
-	$cpus[$i]{'cpuSpeed'} = $1;
-      } elsif ($record =~ /model name[\s]*:[\s]+([^\s]+)/) {
+      } elsif ($record =~ /cpu MHz[\s]*:[\s]+([^\s].*)/) {
+	$cpus[$i]{'cpuSpeed'} = $1 . ' MHz';
+      } elsif ($record =~ /model name[\s]*:[\s]+([^\s].*)/) {
 	$cpus[$i]{'cpuType'} = $1;
-      } elsif ($record =~ /cache size[\s]*:[\s]+([^\s]+)/) {
+      } elsif ($record =~ /cache size[\s]*:[\s]+([^\s].*)/) {
 	$cpus[$i]{'primDataCache'} = $1;
       }
     }
@@ -546,7 +546,7 @@ sub printEnv
     for $record (@infoLines) {
       chop $record;
       if ($record =~ /Mem:[\s]+([^\s]+)/) {
-        $memSize = $1;
+        $memSize = int($1 / 1048576) . ' MBytes';
       }
     }
   } elsif ($OSNAME =~ /Solaris/i) {
@@ -575,7 +575,7 @@ sub printEnv
   # CGAL version
   # ------------
   $cgalVersion = 'unknown';
-  $cgalFile = "$ENV{CGAL_DIR}/include/CGAL/config.h";
+  $cgalFile = "$ENV{CGALROOT}/include/CGAL/config.h";
   if (open CGALFILE, $cgalFile) {
     undef $/;			# input record separator
     $_ = <CGALFILE>;		# whole file
@@ -588,7 +588,7 @@ sub printEnv
   # LEDA version
   # ------------
   $ledaVersion = 'unknown';
-  $ledaFile = "$ENV{LEDA_DIR}/CHANGES";
+  $ledaFile = "$ENV{LEDAROOT}/CHANGES";
 
   $cgalMakeFile = "$ENV{CGAL_MAKEFILE}";
   if (open CGALMAKEFILE, $cgalMakeFile) {
@@ -609,7 +609,7 @@ sub printEnv
   # Qt version
   # ----------
   $qtVersion = 'unknown';
-  $qtFile = "$ENV{QTDIR}/README";
+  $qtFile = "$ENV{QTROOT}/README";
   if (open QTFILE, $qtFile) { 
     undef $/;			# input record separator
     $_ = <QTFILE>;		# whole file
