@@ -54,9 +54,11 @@
 //----------------------------------------------------------------------//
 
 
-// Used to depend on config macros.
+// The following are now obsolete, they used to depend on config macros.
 #define CGAL_TYPENAME_MSVC_NULL typename
 #define CGAL_TEMPLATE_NULL      template <>
+#define CGAL_NULL_TMPL_ARGS <>
+
 
 #ifdef CGAL_CFG_NO_NAMESPACE
 #  define CGAL_USING_NAMESPACE_STD
@@ -77,8 +79,6 @@
 #  define CGAL_BEGIN_NAMESPACE
 #  define CGAL_END_NAMESPACE
 #endif
-
-#define CGAL_NULL_TMPL_ARGS <>
 
 #ifdef CGAL_CFG_NO_STDC_NAMESPACE
 #  define CGAL_CLIB_STD
@@ -138,19 +138,6 @@ namespace CGAL {
 #if defined NOMINMAX && !defined CGAL_NOMINMAX
 using std::min;
 using std::max;
-#endif
-
-
-
-//-----------------------------------------------------------------------//
-// the MSVC 6.0 and 7.0 compilers cannot deal with function overloading
-// very well, so we have to use specific templating here with the CGAL
-// Polyhedron_3 type in its two different forms (one that is swallowed by
-// MSVC6 and the other by MSVC 7.0). 
-//----------------------------------------------------------------------//
-
-#if defined(_MSC_VER) && ! defined(__INTEL_COMPILER) && (_MSC_VER < 1310)
-#  define CGAL_CFG_FUNCTION_OVERLOAD_BUG
 #endif
 
 #endif // CGAL_CONFIG_H
