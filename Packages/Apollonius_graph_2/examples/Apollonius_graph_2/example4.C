@@ -35,7 +35,7 @@ typedef CGAL::Apollonius_graph_traits_2<Kernel> Traits;
 
 // now we use the Apollonius graph hierarchy.
 // the hierarchy is faster for inputs consisting of about more than
-// 100,000 weighted points
+// 1,000 sites
 typedef CGAL::Apollonius_graph_hierarchy_2<Traits> Apollonius_graph;
 
 
@@ -48,7 +48,7 @@ int main()
   Apollonius_graph ag;
   Apollonius_graph::Site_2 site;
 
-  // read the weighted points and insert them in the Apollonius graph
+  // read the sites and insert them in the Apollonius graph
   while ( ifs >> site ) {
     ag.insert(site);
   }

@@ -430,7 +430,7 @@ public:
   // INSERTION
   //----------
   template< class Input_iterator >
-  void insert(Input_iterator first, Input_iterator beyond) {
+  unsigned int insert(Input_iterator first, Input_iterator beyond) {
     // copy to a local container
     Site_list wp_list;
     for (Input_iterator it = first; it != beyond; ++it) {
@@ -447,8 +447,14 @@ public:
       insert(*lit);
     }
 
+    // store how many sites where in the range
+    unsigned int num = wp_list.size();
+
     // clear the local container
     wp_list.clear();
+
+    // return the number of sites in range
+    return num;
   }
 
   Vertex_handle  insert(const Site_2& p) {

@@ -45,7 +45,7 @@ int main()
   Apollonius_graph ag;
   Apollonius_graph::Site_2 site;
 
-  // read the weighted points and insert them in the Apollonius graph
+  // read the sites and insert them in the Apollonius graph
   while ( ifs >> site ) {
     ag.insert(site);
   }

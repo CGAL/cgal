@@ -37,8 +37,8 @@ typedef CGAL::Filtered_kernel<CK>  Kernel;
 typedef CGAL::Apollonius_graph_traits_2<Kernel> Traits;
 
 // with the second template argument in the vertex base class being
-// false, we indicate that there is no need to store that hidden
-// weighted points;
+// false, we indicate that there is no need to store the hidden
+// sites;
 // one case where this is indeed not needed is when we only do
 // insertions, like in the main program below.
 typedef CGAL::Apollonius_graph_vertex_base_2<Traits,false>   Vb;
@@ -56,7 +56,7 @@ int main()
   Apollonius_graph ag;
   Apollonius_graph::Site_2 site;
 
-  // read the weighted points and insert them in the Apollonius graph
+  // read the sites and insert them in the Apollonius graph
   while ( ifs >> site ) {
     ag.insert(site);
   }

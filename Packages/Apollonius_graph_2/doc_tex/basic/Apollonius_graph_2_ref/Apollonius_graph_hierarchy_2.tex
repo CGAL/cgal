@@ -102,9 +102,10 @@ to two different Apollonius graph hierarchies~: if
 \ccThree{Vertex_handle }{agh.insert(Site_2 s)+}{}
 %
 \ccMethod{template< class Input_iterator >
-void insert(Input_iterator first, Input_iterator beyond);}
+unsigned int insert(Input_iterator first, Input_iterator beyond);}
 {Inserts the sites in the range
-[\ccc{first},\ccc{beyond}).
+[\ccc{first},\ccc{beyond}). The number of sites in the range
+  [\ccc{first}, \ccc{beyond}) is returned.
 % MK:: Implement this method with copying and sorting
 \ccPrecond{\ccc{Input_iterator} must be a model of \ccc{InputIterator}
   and its value type must be \ccc{Site_2}.}}

@@ -81,7 +81,7 @@ the apollonius graph, the graph}
 %\ccThreeToTwo
 %
 % MK:: change the edge definition as follows?
-\ccTypedef{typedef pair<Face_handle, int> Edge;} {the edge type.
+\ccTypedef{typedef std::pair<Face_handle, int> Edge;} {the edge type.
 The \ccc{Edge(f,i)} is the edge common to faces \ccc{f} and 
 \ccc{f.neighbor(i)}. It is also the edge joining the vertices
 \ccc{vertex(cw(i))} and \ccc{vertex(ccw(i))} of \ccc{f}.}
@@ -137,7 +137,7 @@ geometric traits and inserts all sites in the range
 [\ccc{first}, \ccc{beyond}).
 \ccPrecond{\ccc{Input_iterator} must be a model of
 \ccc{InputIterator}. The value type of
-\ccc{Input_iterator} must be \ccc{Gt::Site_2}.}}
+\ccc{Input_iterator} must be \ccc{Site_2}.}}
 %
 \ccConstructor{Apollonius_graph_2(const Apollonius_graph_2<Gt,Agds>& other)}
 {Copy constructor. All faces and vertices are duplicated. After the
@@ -285,7 +285,7 @@ These circulators are non-mutable and bidirectional.
 counterclockwise around the vertex while
 the \ccc{operator--} moves clockwise.
 A face circulator is invalidated by any modification of the face pointed to.
-Edge and a vertex circulators are invalidated by any modification
+Edge and a vertex circulators is invalidated by any modification
 of one of the two faces incident to the edge pointed to.
 
 \ccMethod{Face_circulator incident_faces(Vertex_handle v) const;}
@@ -373,9 +373,10 @@ the finite or infinite character of any feature.
 %
 
 \ccMethod{template< class Input_iterator >
-void insert(Input_iterator first, Input_iterator beyond);}
+unsigned int insert(Input_iterator first, Input_iterator beyond);}
 {Inserts the sites in the range
-[\ccc{first},\ccc{beyond}).
+[\ccc{first},\ccc{beyond}). The number of sites in the range
+  [\ccc{first}, \ccc{beyond}) is returned.
 % MK:: Implement this method with copying and sorting
 \ccPrecond{\ccc{Input_iterator} must be a model of
   \ccc{InputIterator} and its value type must be

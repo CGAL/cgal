@@ -426,15 +426,14 @@ the additional edges that we use to triangulate non-triangular faces.
 \section{The Apollonius graph hierarchy}
 \label{sec:apollonius2-hierarchy}
 
-The \ccc{ApolloniusGraphHierarchy_2} concept is nothing but the
-equivalent of the concept behind the \ccc{Triangulation_hierarchy_2}
-class, applied to the
-Apollonius graph. It consists of a series of Apollonius graphs
-constructed in a manner analogous to the Delaunay hierarchy by
-Devillers \cite{d-iirdt-98}. The class
+The
 \ccc{Apollonius_graph_hierarchy_2<ApolloniusGraphTraits_2,ApolloniusGraphDataStructure_2>}
-is a model of the \ccc{ApolloniusGraphHierarchy_2} concept and has
-exactly the same interface and functionality as the
+class is nothing but the equivalent of the \ccc{Triangulation_hierarchy_2}
+class, applied to the Apollonius graph. It consists of a series of
+Apollonius graphs constructed in a manner analogous to the Delaunay
+hierarchy by Devillers \cite{d-iirdt-98}. The class
+\ccc{Apollonius_graph_hierarchy_2<ApolloniusGraphTraits_2,ApolloniusGraphDataStructure_2>}
+has exactly the same interface and functionality as the
 \ccc{Apollonius_graph_2<ApolloniusGraphTraits_2,ApolloniusGraphDataStructure_2>}
 class. Using the Apollonius graph hierarchy involves an additional
 cost in space and time for maintaining the hierarchy. Our experiments

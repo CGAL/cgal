@@ -1,18 +1,8 @@
 * check TODO file in include/CGAL
 - restore the changes in the examples directory (example3.C and example4.C)
 - update doc for vertex base and face base when the new design arrives
-- check the typedefs.h file in the demo directory to make sure that
-  definitions make sense
-- add in user manual geometric interpretation in terms of cones in 3D; see
-  corresponding emails
-- add section about dimension of Apollonius_graph_2 in user manual
-- in the reference manual:
-     "Gt" => "ApolloniusGraphTraits_2"
-     "Agds" and "ApolloniusGraphDataStructure_2" => "ApolloniusGraphDS_2"
-- "CGAL::Apollonius_graph_data_structure_2<Vb, Fb>" : replace
-  Vb/Fb by the concept names ApolloniusGraphVertexBase_2/...
-  Similarly in references to it, where you could also don't put anything,
-  i.e. just "CGAL::Apollonius_graph_data_structure_2" (?).
 - "number_of_hidden_weighted_points()" in vertex base should return size_t;
   also add this in the spec.
-- see email to cgal-editor with answers to Sylvain's questions
+- the insert method in Apollonius_graph_2 and
+  Apollonius_graph_hierarchy_2 should return an int which is the number
+  of site in the range.
