@@ -58,8 +58,9 @@ void test_polygon(const R&, const Point&, const char* FileName)
     CGAL::Bbox_2 bbox =
 	CGAL::bbox_2(polygon.begin(), polygon.end());
 #endif
-    typename R::FT area = 0;
-    CGAL::area_2(polygon.begin(), polygon.end(), area);
+    typename R::FT area = 0, area2;
+    CGAL::area_2(polygon.begin(), polygon.end(), area, R());
+    area2 = CGAL::area_2(polygon.begin(), polygon.end(), R());
     CGAL::Bounded_side bside =
 	 CGAL::bounded_side_2(polygon.begin(), polygon.end(), point);
     CGAL::Oriented_side oside =

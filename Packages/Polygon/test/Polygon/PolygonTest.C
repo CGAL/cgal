@@ -260,6 +260,7 @@ void test_update_operations(const ListPolygon& p,
 {
   // test update functions
   ListPolygon q = p;
+  VectorPolygon pgn(p.vertices_begin(), p.vertices_end());
   q.reverse_orientation();
   cout << "p after reversing orientation: " << q << endl;
 
@@ -267,19 +268,25 @@ void test_update_operations(const ListPolygon& p,
   assert(!(p==q));
 
   typedef ListPolygon::Vertex_iterator VI;
+  typedef ListPolygon::Vertex_circulator VC;
   q=p;
-  VI first  = q.vertices_begin();
   VI middle = q.vertices_begin();
-  VI last   = q.vertices_end();
   ++middle;
-  std::rotate(first, middle, last);
-  assert(p==q);
+  q.set(middle, *middle);
 
   // test update operations
   q.push_back(Point(2,3));
+  q.push_back(Point(middle->x(), middle->y()));
+//  VC c = q.vertices_circulator();
+//  q.set(c, *middle);
+//  q.insert(c, Point(2,3)); 
+//  q.erase(q.vertices_circulator());
+  pgn.push_back(Point(pgn.vertices_begin()->x(), 3));
+  pgn.set(pgn.vertices_begin(), Point(pgn.vertices_begin()->x(), 3));
 
 #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
   q.insert(q.vertices_begin(), pvec.begin() + 3, pvec.begin() + 7);
+//  q.insert(q.vertices_circulator(), pvec.begin() + 3, pvec.begin() + 7);
 #endif // CGAL_CFG_NO_MEMBER_TEMPLATES
 }
 

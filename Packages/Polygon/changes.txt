@@ -1,3 +1,11 @@
+4.0 (2 July 2001)
++ Made Polygon_2 cache several operations.
++ Made iterators of Polygon_2 const. -not backwards compatible change
+  Effected by flag CGAL_POLYGON_2_CONST_ITER
++ Added an area_2 algorithm that returns the area (in contrast to taking
+  result as ref parameter)
++ Added and modified test programs.
+
 3.3.1 (27 June 2001)
 + Fixed small problems in examples/Polygon/polygon_algorithms.C
 + Fixed wrong path in documentation.
