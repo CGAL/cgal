@@ -955,11 +955,10 @@ public:
       Sign sign_r = CGAL_NTS sign(r);
       Sign sign_R = CGAL_NTS sign(R);
 
-      Sign sign_E1 = opposite(static_cast<Sign>(sign_R * sign_sigma));
-      Sign sign_E2 = static_cast<Sign>(sign_r * sign_sigma);
+      Sign sign_E1 = opposite(Sign(sign_R * sign_sigma));
+      Sign sign_E2 = Sign(sign_r * sign_sigma);
       Sign sign_E3 = sign_delta;
-      Sign sign_E4 = 
-	static_cast<Sign>(static_cast<Sign>(sign_r * sign_R) * sign_delta);
+      Sign sign_E4 = Sign(sign_r * sign_R * sign_delta);
 
       Sign sign_E1_plus_E3_P, sign_E4_plus_E2_P;
 
@@ -974,7 +973,7 @@ public:
 	  sign_E1_plus_E3_P = sign_E3;
 	} else {
 	  FT F1 = delta2 - G;
-	  sign_E1_plus_E3_P = sign_E3 * CGAL_NTS sign(F1);
+	  sign_E1_plus_E3_P = Sign(sign_E3 * CGAL_NTS sign(F1));
 	}
       }
 
@@ -988,7 +987,7 @@ public:
 	  if ( sign_r == ZERO ) {
 	    sign_E4_plus_E2_P = ZERO;
 	  } else {
-	    sign_E4_plus_E2_P = sign_E2 * CGAL_NTS sign(F2);
+	    sign_E4_plus_E2_P = Sign(sign_E2 * CGAL_NTS sign(F2));
 	  }
 	}
       }
@@ -998,7 +997,7 @@ public:
 	return sign_E1_plus_E3_P;
       }
 
-      Sign sign_E5 = opposite(sign_R * sign_sigma * sign_delta);
+      Sign sign_E5 = opposite(Sign(sign_R * sign_sigma * sign_delta));
 
       //      FT D = CGAL_NTS square(A) + CGAL_NTS square(B);
       //      FT P = D - CGAL_NTS square(R);
@@ -1010,7 +1009,7 @@ public:
 
       if ( sign_E5 == ZERO ) { return sign_E1_plus_E3_P * sign_E6; }
       if ( sign_E5 == sign_E6 ) {
-	return sign_E1_plus_E3_P * sign_E5;
+	return Sign(sign_E1_plus_E3_P * sign_E5);
       }
 
       //      FT p = d - CGAL_NTS square(r);
@@ -1020,9 +1019,10 @@ public:
       FT F4 = CGAL_NTS square(sigma - rR) - pP;
       FT F5 = CGAL_NTS square(sigma + rR) - pP;
 
-      Sign sign_E7 = opposite(CGAL_NTS sign(F4) * CGAL_NTS sign(F5));
+      Sign sign_E7 =
+	opposite(Sign(CGAL_NTS sign(F4) * CGAL_NTS sign(F5)));
 
-      return sign_E1_plus_E3_P * sign_E5 * sign_E7;
+      return Sign(sign_E1_plus_E3_P * sign_E5 * sign_E7);
     }
 
 };
