@@ -105,7 +105,7 @@ class vector_iterator {
   public:
     vector_iterator():the_it(0) {}
 
-    operator vector_const_iterator<T,_Alloc>()
+    operator vector_const_iterator<T,_Alloc>() const
 		{ return vector_const_iterator<T,_Alloc>(the_it); }
     reference operator*() const {return *the_it;}
     pointer operator->() const {return the_it;}
