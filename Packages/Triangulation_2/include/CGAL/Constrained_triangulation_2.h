@@ -501,7 +501,8 @@ find_intersected_faces(Vertex_handle va,
   // c becomes the new vertex vbb and 
   // only triangles intersected by ac are reported.
   // 
-  // Returns also the boundary B of the union of intersected triangles oriented cw
+  // Returns also the boundary B of the union 
+  // of intersected triangles oriented cw
   // B is represented by two lists of edges list_ab and list_ba 
   // list_ab consists of the edges from a to b (i.e. on the left of a->b)
   // list_ba    "         "        from b to a (i.e. on the right of a->b)

@@ -66,7 +66,8 @@ public:
   typedef std::list<Vertex_handle>           List_vertices;
 
 
-  Constrained_triangulation_wi_2(const Gt& gt=Gt()) : Constrained_triangulation() { }
+  Constrained_triangulation_wi_2(const Gt& gt=Gt()) 
+    : Constrained_triangulation() { }
 
   Constrained_triangulation_wi_2(const Constrained_triangulation_wi_2& ct)
     : Constrained_triangulation(ct) {}

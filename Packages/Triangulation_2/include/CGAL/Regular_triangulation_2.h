@@ -21,8 +21,8 @@
 //
 // ============================================================================
 
-#ifndef CGAL_REGULAR_TRIANGULATION_2_H
-#define CGAL_REGULAR_TRIANGULATION_2_H
+#ifndef CGALR_EGULAR_TRIANGULATION_2_H
+#define CGALR_EGULAR_TRIANGULATION_2_H
 
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Regular_triangulation_face_base_2.h>
@@ -997,4 +997,4 @@ stack_flip_dim1(Face_handle f, int i)
 }
 CGAL_END_NAMESPACE 
 
-#endif // CGAL_REGULAR_TRIANGULATION_2_H
+#endif // CGALR_EGULAR_TRIANGULATION_2_H

@@ -22,15 +22,15 @@
 //
 // ============================================================================
 
-#ifndef CGAL_REGULAR_TRIANGULATION_EUCLIDEAN_TRAITS_2_H
-#define CGAL_REGULAR_TRIANGULATION_EUCLIDEAN_TRAITS_2_H
+#ifndef CGALR_EGULAR_TRIANGULATION_EUCLIDEAN_TRAITS_2_H
+#define CGALR_EGULAR_TRIANGULATION_EUCLIDEAN_TRAITS_2_H
 
 #include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/Weighted_point.h>
 
-#ifndef CGAL_REP_CLASS_DEFINED
+#ifndef CGALR_EP_CLASS_DEFINED
 #error  no representation class defined
-#endif  // CGAL_REP_CLASS_DEFINED
+#endif  // CGALR_EP_CLASS_DEFINED
 
 #ifdef CGAL_CARTESIAN_H
 #include <CGAL/predicates/Regular_triangulation_ftC2.h>
@@ -189,4 +189,4 @@ public:
  
 CGAL_END_NAMESPACE
 
-#endif // CGAL_REGULAR_TRIANGULATION_EUCLIDEAN_TRAITS_2_H
+#endif // CGALR_EGULAR_TRIANGULATION_EUCLIDEAN_TRAITS_2_H
