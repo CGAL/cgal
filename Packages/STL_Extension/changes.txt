@@ -7,8 +7,7 @@
 //	actual revision
 //---------------------------------------------------------------------
 
-GLOB: rename start to start_ in vector.h (avoid Partition_2/SunPro warnings)
-GLOB: test_Compact_c.h : Sun doesn't have operator!= for std::reverse_iterator
+GLOB: - Sun doesn't have operator!= for std::reverse_iterator
 GLOB: removed stlport/cgal_functional_base.h
 GLOB: Fix typo in iterator.h
 GLOB: SRC : Excluded vector from MSC VC6.
@@ -22,6 +21,7 @@ ALL : TEST: Added vector test program in test/STL_Extension/test_vector.C
 GLOB: remove Susan as maintainer
 ALL : moved reference page directory up one level to effect split of support
 ALL :  manual
+ALL : Include docs for Compact_container.
 ALL : Some fixes for Compact_container by Sylvain.
 ALL : Added template constructors to Triple/Quadruple (<- Sylvain).
 ALL : Optimized operator< for Triple/Quadruple (<- Sylvain).
