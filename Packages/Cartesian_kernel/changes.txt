@@ -1,3 +1,6 @@
+Version 6.58 (20 March 2002)
+- removed d-dim points
+
 Version 6.57 (6 February 2002)
 - VC7 workarounds.
 

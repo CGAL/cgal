@@ -1,3 +1,6 @@
+3.46  (20 March 2002)
+- removed Point_d
+
 3.45   (20 March 2002)
 - moved LedaKernel test to LEDA package.
 

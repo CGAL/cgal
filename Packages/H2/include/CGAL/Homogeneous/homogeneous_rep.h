@@ -74,9 +74,6 @@ class Homogeneous_base
     typedef Iso_cuboidH3< R_ >                       Iso_cuboid_3;
     typedef SphereH3< R_ >                           Sphere_3;
     typedef Aff_transformationH3< R_ >               Aff_transformation_3;
-
-    typedef PointHd< FT, RT>                         Point_d;
-
 };
 
 template <class RT_, class FT_ = Quotient<RT_> >
@@ -90,8 +87,6 @@ class Homogeneous
 
     typedef Homogeneous_tag                         Rep_tag;
     typedef Homogeneous_base< R, RT_, FT_ >         Kernel_base;
-
-    typedef typename Kernel_base::Point_d               Point_d_base;
 
     typedef typename Kernel_base::Object_2              Object_2;
     typedef typename Kernel_base::Object_3              Object_3;
@@ -120,8 +115,6 @@ class Homogeneous
     typedef CGAL::Iso_cuboid_3< R >                Iso_cuboid_3;
     typedef CGAL::Sphere_3< R >                    Sphere_3;
     typedef CGAL::Aff_transformation_3< R >        Aff_transformation_3;
-
-    typedef CGAL::Point_d< R >                     Point_d;
 
     typedef Data_accessorH2<R>                     Data_accessor_2;
 

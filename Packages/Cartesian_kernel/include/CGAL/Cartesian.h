@@ -29,7 +29,6 @@
 #include <CGAL/Handle_for_virtual.h>
 #include <CGAL/basic_classes.h>
 #include <CGAL/user_classes.h>
-#include <CGAL/Cartesian_dynamic_d.h>
 
 #include <CGAL/Twotuple.h>
 #include <CGAL/Threetuple.h>
@@ -79,19 +78,17 @@
 
 #include <CGAL/Cartesian/basic_constructions_3.h>
 
+#include <CGAL/representation_tags.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template< class R, class FT_ >
 struct Cartesian_base
-  : public Cartesian_base_dynamic_d<R,FT_>
 {
     typedef FT_                                         RT;
     typedef FT_                                         FT;
     typedef Cartesian_tag                               Rep_tag;
     typedef Cartesian_tag                               Kernel_tag;
-
-    // Maybe Cd should be merged like C2 and C3 ?
-    typedef Cartesian_base_dynamic_d<R,FT_>             Kernel_base_d;
 
     typedef CGAL::Object                                Object_2;
     typedef CGAL::Object                                Object_3;
@@ -122,7 +119,6 @@ struct Cartesian_base
     typedef SphereC3<R>                                 Sphere_3;
     typedef Aff_transformationC3<R>                     Aff_transformation_3;
   
-    typedef typename Kernel_base_d::Point_d             Point_d;
 };
 
 
@@ -143,7 +139,6 @@ struct Cartesian
     // It is necessary to redefine here the classes to ensure that
     // Cartesian<FT>::Point_2 is exactly CGAL::Point_2< Cartesian<FT> >
 
-    typedef typename Kernel_base::Point_d                 Point_d_base;
     typedef typename Kernel_base::Object_2                Object_2;
     typedef typename Kernel_base::Object_3                Object_3;          
 
@@ -177,8 +172,6 @@ struct Cartesian
     typedef CGAL::Sphere_3<Self>                          Sphere_3;
     typedef CGAL::Iso_cuboid_3<Self>                      Iso_cuboid_3;
     typedef CGAL::Aff_transformation_3<Self>              Aff_transformation_3;
-
-    typedef CGAL::Point_d<Self>                           Point_d;
 
     // The typedefs that allow to specify the handle of each type.
 

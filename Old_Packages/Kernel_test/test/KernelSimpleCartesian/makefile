@@ -14,10 +14,8 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-           -I../../../_d/include \
            -I../../../_2/include \
            -I../../../_3/include \
-           -I../../../Cd/include \
            -I../../../H3/include \
            -I../../../H2/include \
            -I../../../Cartesian_kernel/include \
@@ -50,7 +48,6 @@ all:            \
                 test_io$(EXE_EXT) \
                 test_kernelS2$(EXE_EXT) \
                 test_kernelS3$(EXE_EXT) \
-                test_kernelSd$(EXE_EXT) \
                 test_new_kernelS2$(EXE_EXT) \
                 test_new_kernelS3$(EXE_EXT) \
                 test_new_partsS_$(EXE_EXT) \
@@ -64,9 +61,6 @@ test_kernelS2$(EXE_EXT): test_kernelS2$(OBJ_EXT)
 
 test_kernelS3$(EXE_EXT): test_kernelS3$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_kernelS3 test_kernelS3$(OBJ_EXT) $(LDFLAGS)
-
-test_kernelSd$(EXE_EXT): test_kernelSd$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_kernelSd test_kernelSd$(OBJ_EXT) $(LDFLAGS)
 
 test_new_kernelS2$(EXE_EXT): test_new_kernelS2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_new_kernelS2 test_new_kernelS2$(OBJ_EXT) $(LDFLAGS)
