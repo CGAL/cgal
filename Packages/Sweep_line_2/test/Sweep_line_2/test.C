@@ -1,23 +1,6 @@
 #define  CGAL_SWEEP_LINE_DEBUG  
 
-#include <CGAL/config.h> // needed for the LONGNAME flag
-
-#ifdef CGAL_CFG_NO_LONGNAME_PROBLEM
-// Define shorter names to please linker (g++/egcs)
-#define Arrangement_2 Ar
-#define Cartesian Cr
-#define Arr_polyline_traits APT
-#define Quotient Qt
-#define Planar_ma2p_traits_wrap PMTW
-#define _List_iterator Lit
-#define bidirectional_iterator_tag Bitt
-#define Planar_map_2 Pm2
-#define Arr_2_default_dcel A2dd
-#define Point_2 Pt2
-#define allocator Altr
-#define Td_X_trapezoid TdXt
-#define Td_traits Tdt
-#endif
+#include "short_names.h"
 
 #include <iostream>
 #include <fstream>
@@ -64,10 +47,11 @@ int main()
 // Choose traits
 
 #if CGAL_ARR_TEST_TRAITS==CGAL_SEGMENT_TRAITS 
-#include <CGAL/Arr_segment_exact_traits.h>
+#include <CGAL/Arr_segment_traits_2.h>
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
 #include <CGAL/leda_rational.h>
-#include <CGAL/Arr_leda_segment_exact_traits.h>
+#include <CEP/Leda_rat_kernel/leda_rat_kernel_traits.h>
+#include <CGAL/Arr_segment_traits_2.h>
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
 #include <CGAL/Arr_polyline_traits.h>
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
@@ -131,8 +115,9 @@ int main()
   typedef CGAL::Arr_segment_exact_traits<R>    Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
-  typedef leda_rational                        NT;
-  typedef CGAL::Arr_leda_segment_exact_traits<NT>  Traits;
+  typedef leda_rational                                 NT;
+  typedef CGAL::leda_rat_kernel_traits                  Kernel;
+  typedef CGAL::Arr_segment_exact_traits<Kernel>        Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
   typedef CGAL::Quotient<int>                  NT;
