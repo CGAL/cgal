@@ -1,8 +1,6 @@
-2.80 2/9/2003
-- Add CGAL_CFG_NESTED_CLASS_TEMPLATE_BUG.C.
-
-2.79 26/8/2003
+2.79 2/9/2003
 - Fix CGAL_CFG_EXPLICIT_SPECIALIZATION_MEMBER_DECLARATION_BUG.C for g++ 3.4.
+- Add CGAL_CFG_NESTED_CLASS_TEMPLATE_BUG.C.
 
 2.78 22/8/2003
 - Activate Matching_bug_wrapper for Sunpro, regardless of the outcome
