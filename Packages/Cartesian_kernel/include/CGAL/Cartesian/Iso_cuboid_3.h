@@ -300,7 +300,8 @@ template < class R >
 CGAL_KERNEL_INLINE
 bool
 Iso_cuboidC3<R CGAL_CTAG>::
-has_on_unbounded_side(const typename Iso_cuboidC3<R CGAL_CTAG>::Point_3& p) const
+has_on_unbounded_side(const typename Iso_cuboidC3<R CGAL_CTAG>::Point_3& p)
+    const
 {
   return bounded_side(p) == ON_UNBOUNDED_SIDE;
 }
