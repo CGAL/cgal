@@ -1,5 +1,11 @@
 Changes done to the CLN package.
 
+Version 1.3 on 19 August 1999.
+- Added src/CLN.C that initializes the printing base to "10".
+  It's done by default, but a bug somewhere prevents this on Solaris...
+- Added specialization of operator>>(Quotient<cl_I>).
+- Test directory, with a simple test_io.C program.
+
 Version 1.2 on 7 July 1999.
 - include files moved to the subdirectory include/CGAL/CLN/.
 - removed "#include <cl_io.h>" in each of them.

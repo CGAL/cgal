@@ -1,19 +1,7 @@
-General remarks to forward to Bruno Haible:
--------------------------------------------
-- cl_I should probably have a constructor for doubles (at least when they
-  effectively store an integer value), like GMP'mpz do (?).  The rationals
-  at least should have this exact conversion (they have it, don't they ?).
-- Conversions from CLN types to doubles (cl_double_approx) should have a
-  guarantee on the precision => separate error bound, or interval.
-- Having an interval type would be great...
-- Macro names should be prefixed by CLN_.
-- Use a namespace CLN ?
-- WANT_OBFUSCATING_OPERATORS should be enabled by default, imho, but eh...
-- Problems at beginning of CLN compile time on mips.
-
 TODO:
 ----
 - Make sure the documentation will make it into the main tree...
+- operator/(cl_I, cl_I) is not provided.
 - Factorize the common code of these files in a separate file ?
   (is_valid, etc... ?)
 - Things that are supported by Gmpz, and should (?) be ported to cl_I:
@@ -21,9 +9,7 @@ TODO:
   - approximate_decimal_length
   - convert_to<IA>
 - Make benchmarks.
-- Add the converters to IA.
 - Test-suite: un fichier générique, testé successivement pour tous les NTs ?
 - Aller voir les snapshots sur le site FTP...  Attendre la prochaine version
   et s'adapter (il y a min/max/abs, les include *io.h, etc...).
-- Attendre gcc-2.95, et réinstaller.
 - Il y a un portage sous CygWin.
