@@ -18,6 +18,7 @@ CXXFLAGS = \
 	-I../include \
 	-I../../include \
 	-I./include \
+	-Wall\
 	 $(CGAL_CXXFLAGS)\
 	 $(TESTSUITE_CXXFLAGS) \
 	-g
@@ -51,7 +52,7 @@ clean:
 
 
 realclean: clean
-	- rm -f Program* Error* Compiler* error* Test_triangulation_IO_3
+	- rm -f Program* Error* Compiler* error* Test*_triangulation_IO_3
 
 #---------------------------------------------------------------------#
 #                    suffix rules
