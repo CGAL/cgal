@@ -51,112 +51,50 @@ namespace CGAL {
     widget->attach(showNV);
     widget->attach(showP);
     widget->attach(showMC);
-    widget->deactivate(showNV);
+    showNV->deactivate();
     
 
     maintoolbar = new QToolBar("tools", mw, QMainWindow::Top, TRUE, "Tools");
 		
-
-    but[0] = new QToolButton(QPixmap( (const char**)triangulation_xpm ),
-			     "Show triangulation", 
-			     0, 
-			     this, 
-			     SLOT(draw_triangulation()), 
-			     maintoolbar, 
-			     "Show triangulation");
-		
-    but[1] = new QToolButton(QPixmap( (const char**)voronoi_xpm ),
-			     "Show Voronoi Diagram", 
-			     0, 
-			     this, 
-			     SLOT(draw_voronoi()), 
-			     maintoolbar, 
-			     "Show Voronoi Diagram");
-		
-    but[2] = new QToolButton(QPixmap( (const char**)nearest_vertex_xpm ),
-			     "Show Nearest Vertex", 
-			     0, 
-			     this, 
-			     SLOT(draw_nearest_vertex()), 
-			     maintoolbar, 
-			     "Show Nearest Vertex");
-
-    but[3] = new QToolButton(QPixmap( (const char**)points_xpm ),
-				"Show Triangulation Points", 
-				0, 
-				this, 
-				SLOT(draw_points()), 
-				maintoolbar, 
-				"Show Triangulation Points");
-		
-    but[4] = new QToolButton(QPixmap( (const char**)mouse_coord_xpm ),
-				"Show Mouse Coordinates", 
-				0, 
-				this, 
-				SLOT(show_coordinates()), 
-				maintoolbar, 
-				"Show Mouse Coordinates");
+    but[0] = new QToolButton(maintoolbar, "triangulation");
+    but[0]->setPixmap(QPixmap( (const char**)triangulation_xpm ));
+    but[1] = new QToolButton(maintoolbar, "voronoi");
+    but[1]->setPixmap(QPixmap( (const char**)voronoi_xpm ));
+    but[2] = new QToolButton(maintoolbar, "nearest_vertex");
+    but[2]->setPixmap(QPixmap( (const char**)nearest_vertex_xpm ));
+    but[3] = new QToolButton(maintoolbar, "vertices");
+    but[3]->setPixmap(QPixmap( (const char**)points_xpm ));
+    but[4] = new QToolButton(maintoolbar, "mouse_coord");
+    but[4]->setPixmap(QPixmap( (const char**)mouse_coord_xpm ));
 		
     nr_of_buttons = 5;
-	
+	  button_group = new QButtonGroup(0, "nonexclusive");
     for(int i =0; i<nr_of_buttons; i++)
     {
-	but[i]->setToggleButton(TRUE);
-	but[i]->toggle();
+      but[i]->setToggleButton(TRUE);
+      but[i]->toggle();
+      button_group->insert(but[i]);
     }
     but[2]->toggle();
-  }
-  void Layers_toolbar::draw_triangulation()
-  {
-    if (but[0]->isOn())
-    {
-      widget->activate(showT);
-    } else {
-      widget->deactivate(showT);
-    }
-    widget->redraw();
-  }
+    connect(button_group, SIGNAL(clicked(int)),
+          this, SLOT(redraw_win(int)));
+    
+    connect(but[0], SIGNAL(stateChanged(int)),
+        showT, SLOT(stateChanged(int)));
+    connect(but[1], SIGNAL(stateChanged(int)),
+        showV, SLOT(stateChanged(int)));
+    connect(but[2], SIGNAL(stateChanged(int)),
+        showNV, SLOT(stateChanged(int)));
+    connect(but[3], SIGNAL(stateChanged(int)),
+        showP, SLOT(stateChanged(int)));
+    connect(but[4], SIGNAL(stateChanged(int)),
+        showMC, SLOT(stateChanged(int)));
 
-  void Layers_toolbar::draw_voronoi()
-  {
-    if (but[1]->isOn())
-    {
-      widget->activate(showV);
-    } else {
-      widget->deactivate(showV);
-    }
+
+
+  }
+  void Layers_toolbar::redraw_win(int i){
     widget->redraw();
-  }
-  void Layers_toolbar::draw_nearest_vertex()
-  {
-    if (but[2]->isOn())
-    {
-      widget->activate(showNV);
-    } else {
-      widget->deactivate(showNV);
-    }
-  }
-  void Layers_toolbar::draw_points()
-  {
-    if (but[3]->isOn())
-    {
-      widget->activate(showP);
-    } else {
-      widget->deactivate(showP);
-    }
-    widget->redraw();
-  }
-	
-  void Layers_toolbar::show_coordinates()
-  {
-    if (but[4]->isOn())
-    {
-      widget->activate(showMC);
-      window->statusBar();
-    } else {
-      widget->deactivate(showMC);
-      window->statusBar()->clear();
-    }
   }
 
   

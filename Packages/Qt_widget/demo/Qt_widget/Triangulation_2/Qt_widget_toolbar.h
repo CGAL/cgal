@@ -37,6 +37,7 @@
 #include <qtoolbutton.h>
 #include <qtoolbar.h>
 #include <qmainwindow.h>
+#include <qbuttongroup.h>
 
 typedef double Coord_type;
 typedef CGAL::Cartesian<Coord_type>  Rp;
@@ -60,22 +61,16 @@ signals:
 private slots:
   void get_new_object(CGAL::Object obj) { emit(new_object(obj)); }
 
-  void pointtool();
-  void linetool();
-  void notool();
-  void movepoint();
-
-  void toggle_button();
-
 private:
-  QToolBar		*maintoolbar;
+  QToolBar		  *maintoolbar;
   QToolButton		*but[10];
-  Qt_widget		*widget;
-  int			activebutton;
-  bool			is_active;
-  void			setActiveButton(int i);
-  void			addToolButton(QToolButton *b);
-  int			nr_of_buttons;
+  Qt_widget		  *widget;
+  QButtonGroup  *button_group;
+  int			      activebutton;
+  bool			    is_active;
+  void			    setActiveButton(int i);
+  void			    addToolButton(QToolButton *b);
+  int			      nr_of_buttons;
 	
   Delaunay			    *dt;
   CGAL::Qt_widget_get_line<Rp>	    linebut;

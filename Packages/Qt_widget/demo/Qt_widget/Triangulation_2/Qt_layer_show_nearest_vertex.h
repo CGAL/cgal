@@ -39,47 +39,47 @@ public:
 
   Qt_layer_nearest_vertex(T &t) : tr(t), first_time(TRUE) {};
 	
-  void draw(Qt_widget &widget){first_time = TRUE;};
-  void mouseMoveEvent(QMouseEvent *e, Qt_widget &widget)
+  void draw(){first_time = TRUE;};
+  void mouseMoveEvent(QMouseEvent *e)
   {
     if (tr.dimension()<1) return;
     FT
-      x=static_cast<FT>(widget.x_real(e->x())),
-      y=static_cast<FT>(widget.y_real(e->y()));
+      x=static_cast<FT>(widget->x_real(e->x())),
+      y=static_cast<FT>(widget->y_real(e->y()));
     Point p(x, y);
-    RasterOp old = widget.rasterOp();	//save the initial raster mode
-    widget.setRasterOp(XorROP);
-    widget.lock();
-    widget << Point(10, 10);
+    RasterOp old = widget->rasterOp();	//save the initial raster mode
+    widget->setRasterOp(XorROP);
+    widget->lock();
+    *widget << Point(10, 10);
     Vertex_handle v = tr.nearest_vertex(p);
-    widget << CGAL::GREEN << CGAL::PointSize (10)
+    *widget << CGAL::GREEN << CGAL::PointSize (10)
 		<< CGAL::PointStyle (CGAL::CIRCLE);
     if(!first_time)
-      widget << oldPoint;	
-    widget << v->point();
-    widget.unlock();
-    widget.setRasterOp(old);
+      *widget << oldPoint;	
+    *widget << v->point();
+    widget->unlock();
+    widget->setRasterOp(old);
     oldPoint = v->point();
     first_time = FALSE;
   };
-  void leaveEvent(QEvent *e, Qt_widget &widget)
+  void leaveEvent(QEvent *e)
   {
-    widget.lock();
-    RasterOp old = widget.rasterOp();	//save the initial raster mode
-    widget.setRasterOp(XorROP);
-    widget << CGAL::GREEN << CGAL::PointSize (10) 
+    widget->lock();
+    RasterOp old = widget->rasterOp();	//save the initial raster mode
+    widget->setRasterOp(XorROP);
+    *widget << CGAL::GREEN << CGAL::PointSize (10) 
 		<< CGAL::PointStyle (CGAL::CIRCLE);
-    widget << oldPoint;	
-    widget.unlock();
-    widget.setRasterOp(old);
+    *widget << oldPoint;	
+    widget->unlock();
+    widget->setRasterOp(old);
     first_time = TRUE;
     //remove_leftovers(widget);
   }
 
 private:
-	T		&tr;
+	T       &tr;
 	Point		oldPoint,
-			newPoint;											;
+          newPoint;											;
 	bool		first_time;
 	
 };//end class 

@@ -39,6 +39,7 @@
 #include <qtoolbutton.h>
 #include <qtoolbar.h>
 #include <qstatusbar.h>
+#include <qbuttongroup.h>
 
 typedef double Coord_type;
 typedef CGAL::Cartesian<Coord_type>  Rp;
@@ -64,21 +65,17 @@ public:
 signals:
 	void new_object(CGAL::Object);
 	
-	
 private slots:
-	void draw_voronoi();
-	void draw_triangulation();
-	void draw_nearest_vertex();
-	void show_coordinates();
-	void draw_points();
-
+  void redraw_win(int);
 
 private:
-	QToolBar		*maintoolbar;
+	QToolBar		  *maintoolbar;
 	QToolButton		*but[10];
-	Qt_widget		*widget;
+	Qt_widget		  *widget;
 	QMainWindow		*window;
-	Delaunay		*dt;
+	Delaunay		  *dt;
+  QButtonGroup  *button_group;
+
 	
 	int			nr_of_buttons;
 	

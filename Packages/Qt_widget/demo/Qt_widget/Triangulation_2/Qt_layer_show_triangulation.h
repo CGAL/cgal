@@ -33,10 +33,10 @@ public:
   Qt_layer_show_triangulation(T &t) : tr(t){};
 
 
-  void draw(Qt_widget &widget)
+  void draw()
   {
-    widget << CGAL::BLUE; 
-    widget << tr;
+    *widget << CGAL::BLUE; 
+    *widget << tr;
   };
 	
 private:

@@ -107,10 +107,6 @@ SOURCE=..\..\..\src\CGALQt\Qt_widget_standard_toolbar.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\src\CGALQt\Qt_widget_tool.C
-# End Source File
-# Begin Source File
-
 SOURCE=.\Qt_widget_toolbar.C
 # End Source File
 # Begin Source File
@@ -125,6 +121,22 @@ SOURCE=.\triangulation_2.C
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=.\Qt_layer_show_nearest_vertex.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Qt_layer_show_points.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Qt_layer_show_triangulation.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Qt_layer_show_voronoy.h
+# End Source File
 # Begin Source File
 
 SOURCE=..\..\..\include\CGAL\IO\Qt_widget.h
@@ -195,25 +207,6 @@ InputPath=..\..\..\include\CGAL\IO\Qt_widget_standard_toolbar.h
 
 "../../../src/CGALQt/Qt_widget_standard_toolbar.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	$(QTDIR)\bin\moc.exe -o "../../../src/CGALQt/Qt_widget_standard_toolbar.moc" "../../../Include/CGAL/IO/Qt_widget_standard_toolbar.h"
-
-# End Custom Build
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\include\CGAL\IO\Qt_widget_tool.h
-
-!IF  "$(CFG)" == "demo - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "demo - Win32 Debug"
-
-# Begin Custom Build
-InputPath=..\..\..\include\CGAL\IO\Qt_widget_tool.h
-
-"../../../src/CGALQt/Qt_widget_tool.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	$(QTDIR)\bin\moc.exe -o "../../../src/CGALQt/Qt_widget_tool.moc" "../../../Include/CGAL/IO/Qt_widget_tool.h"
 
 # End Custom Build
 

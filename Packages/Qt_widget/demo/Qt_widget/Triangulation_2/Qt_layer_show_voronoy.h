@@ -33,10 +33,10 @@ class Qt_layer_show_voronoi : public Qt_widget_layer
 public:
   Qt_layer_show_voronoi(T &t1) : tr(t1){};
 
-  void draw(Qt_widget &widget)
+  void draw()
   {
-    widget << CGAL::RED ;
-    tr.draw_dual(widget);
+    *widget << CGAL::RED ;
+    tr.draw_dual(*widget);
   };
 	
 private:

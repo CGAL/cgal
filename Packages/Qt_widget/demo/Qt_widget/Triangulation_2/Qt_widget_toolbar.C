@@ -37,7 +37,12 @@ namespace CGAL {
     nr_of_buttons = 0;
     //set the widget
     widget = w;
-    is_active = FALSE;
+    widget->attach(&linebut);
+    widget->attach(&pointbut);
+    widget->attach(&movepointbut);
+    pointbut.deactivate();
+    linebut.deactivate();
+    movepointbut.deactivate();
 
 #if QT_VERSION < 300
 		// for Qt 2.3 and before
@@ -48,111 +53,31 @@ namespace CGAL {
     mw->addDockWindow (maintoolbar, "tools", DockTop, TRUE );
 #endif
 		
-
-  but[0] = new QToolButton(QPixmap( (const char**)arrow_xpm ),
-			     "Detach current tool", 
-			     0, 
-			     this, 
-			     SLOT(notool()), 
-			     maintoolbar, 
-			     "Detach current tool");
-
-  but[1] = new QToolButton(QPixmap( (const char**)point_xpm ),
-			     "Point Tool", 
-			     0, 
-			     this, 
-			     SLOT(pointtool()), 
-			     maintoolbar, 
-			     "Point Tool");
-
-  but[2] = new QToolButton(QPixmap( (const char**)line_xpm ),
-			     "Line Tool", 
-			     0, 
-			     this, 
-			     SLOT(linetool()), 
-			     maintoolbar, 
-			     "Line Tool");
-		
-  but[3] = new QToolButton(QPixmap( (const char**)movepoint_xpm ),
-			     "Move selected point", 
-			     0, 
-			     this, 
-			     SLOT(movepoint()), 
-			     maintoolbar, 
-			     "Move point");
-		
-		
-  
-  but[1]->setToggleButton(TRUE);
-  but[2]->setToggleButton(TRUE);
-  but[3]->setToggleButton(TRUE);
-  
+  but[0] = new QToolButton(maintoolbar, "notool");
+  but[0]->setPixmap(QPixmap( (const char**)arrow_xpm ));
+  but[1] = new QToolButton(maintoolbar, "notool");
+  but[1]->setPixmap(QPixmap( (const char**)point_xpm ));
+  but[2] = new QToolButton(maintoolbar, "notool");
+  but[2]->setPixmap(QPixmap( (const char**)line_xpm ));
+  but[3] = new QToolButton(maintoolbar, "notool");
+  but[3]->setPixmap(QPixmap( (const char**)movepoint_xpm ));
+  		
   nr_of_buttons = 4;
 
-  connect(w, SIGNAL(detached_tool()), this, SLOT(toggle_button()));
+  button_group = new QButtonGroup(0, "exclusive");
+  for (int i=0; i<nr_of_buttons; i++) {
+    button_group->insert(but[i]);
+    but[i]->setToggleButton(true);
+  }
+  button_group->setExclusive(true);
+  connect(but[1], SIGNAL(stateChanged(int)),
+        &pointbut, SLOT(stateChanged(int)));
+  connect(but[2], SIGNAL(stateChanged(int)),
+        &linebut, SLOT(stateChanged(int)));
+  connect(but[3], SIGNAL(stateChanged(int)),
+        &movepointbut, SLOT(stateChanged(int)));
+  
 };
-
-      
-	
-  //the definition of the slots
-  void Tools_toolbar::toggle_button ()
-  {
-    if(is_active) {
-      but[activebutton]->toggle();
-      is_active = false;
-    }
-  }	
-  void Tools_toolbar::linetool()
-  {
-    if (but[2]->isOn())
-    {
-	widget->attach(&linebut);
-	activebutton = 2;
-	is_active = true;
-    }
-    else
-    {
-      is_active = false;
-      widget->detach_current_tool();	
-    }
-  }
-  void Tools_toolbar::pointtool()
-  {
-    if (but[1]->isOn())
-    {
-      widget->attach(&pointbut);
-      activebutton = 1;
-      is_active = true;
-    }
-    else
-    {
-      is_active = false;
-      widget->detach_current_tool();
-    }
-  }
-  void Tools_toolbar::notool()
-  {
-    if(is_active) {
-      widget->detach_current_tool();
-      is_active = false;
-    }
-  }
-  void Tools_toolbar::movepoint()
-  {
-    if (but[3]->isOn())
-    {
-      widget->detach_current_tool();
-      movepointbut.set_Delaunay(dt);
-      widget->attach(&movepointbut);
-      activebutton = 3;
-      is_active = true;
-    }
-    else
-    {
-      is_active = false;
-      widget->detach_current_tool();
-    }
-  }
 
 
 }//end namespace

@@ -37,17 +37,17 @@ public:
 
   Qt_layer_show_points(T &t) : tr(t){};
 
-  void draw(Qt_widget &widget)
+  void draw()
   {
     Vertex v;
     Vertex_iterator it = tr.vertices_begin(), 
 		beyond = tr.vertices_end();
-    widget << CGAL::GREEN << CGAL::PointSize (3) 
+    *widget << CGAL::GREEN << CGAL::PointSize (3) 
 		<< CGAL::PointStyle (CGAL::DISC);
     while(it != beyond)
     {
       v = *it;
-      widget << v.point();
+      //*widget << v.point();
       ++it;
     }
   };

@@ -381,9 +381,8 @@ void Qt_widget::setPointStyle(PointStyle ps)
 template <class R>
 Qt_widget& operator<<(Qt_widget& w, const Point_2<R>& p)
 {
-  int
-    x=w.x_pixel(to_double(p.x())),
-    y=w.y_pixel(to_double(p.y()));
+  int x = w.x_pixel(to_double(p.x()));
+  int y = w.y_pixel(to_double(p.y()));
 
   uint size=w.pointSize();
   PointStyle ps=w.pointStyle();

@@ -135,7 +135,6 @@ public:
     help->insertItem("About &Qt", this, SLOT(aboutQt()) );
 
     //the new tools toolbar
-    setUsesBigPixmaps(TRUE);
     newtoolbar = new CGAL::Tools_toolbar(widget, this, &tr1);	
     //the new scenes toolbar
     vtoolbar = new CGAL::Layers_toolbar(widget, this, &tr1);
@@ -145,7 +144,7 @@ public:
     this->addToolBar(newtoolbar->toolbar(), Top, FALSE);
     this->addToolBar(vtoolbar->toolbar(), Top, FALSE);
   
-    *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::BLACK);
+    *widget << CGAL::BackgroundColor (CGAL::BLACK);
 
     resize(w,h);
     widget->show();
@@ -170,7 +169,6 @@ public:
 private slots:
   void new_instance()
   {
-    widget->detach_current_tool();
     widget->lock();
     widget->clear();
     tr1.clear();
@@ -316,9 +314,9 @@ private:
   inline  void something_changed(){current_state++;};
 
 
-  CGAL::Qt_widget	  *widget;		
-  CGAL::Tools_toolbar	  *newtoolbar;
-  CGAL::Layers_toolbar	  *vtoolbar;
+  CGAL::Qt_widget	                  *widget;		
+  CGAL::Tools_toolbar	              *newtoolbar;
+  CGAL::Layers_toolbar	            *vtoolbar;
   CGAL::Qt_widget_standard_toolbar  *stoolbar;
   bool			  got_point;	
 	  //if a CGAL::Point is received should be true
@@ -334,7 +332,7 @@ main(int argc, char **argv)
     app.setStyle( new QPlatinumStyle );
     QPalette p( QColor( 250, 215, 100 ) );
     app.setPalette( p, TRUE );
-  Window W(800,800); // physical widgetdow size
+  Window W(500,500); // physical widgetdow size
   app.setMainWidget(&W);
   W.setCaption(my_title_string);
   W.setMouseTracking(TRUE);
