@@ -1,3 +1,6 @@
+1.22 (26 Oct 2001)
+  - fixed bug in Indirect_edge_compare for comparing edge with itself
+
 1.21 (26 Oct 2001)
   - added missing std:: in debug statement
  
