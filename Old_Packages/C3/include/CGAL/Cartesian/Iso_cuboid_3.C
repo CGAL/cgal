@@ -231,8 +231,7 @@ bool
 Iso_cuboidC3<R CGAL_CTAG>::
 has_on_unbounded_side(const Iso_cuboidC3<R CGAL_CTAG>::Point_3& p) const
 {
-  return lexicographically_xyz_smaller(p,min())
-      || lexicographically_xyz_smaller(max(),p);
+  return  bounded_side(p) == ON_UNBOUNDED_SIDE;
 }
 
 template < class R >
