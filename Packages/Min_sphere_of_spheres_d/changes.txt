@@ -1,0 +1,5 @@
+Changes from version 1.0 to 1.1:
+- We no longer support "dynamic" dimension: That is, from now on the
+  dimension is a template argument and must thus be known in advance.
+- Support for float has been added.  (Formerly, double was the only
+  supported floating-point type.)

@@ -1,0 +1,23 @@
+\begin{picture}(0,0)%
+\epsfig{file=mbex.xfig.pstex}%
+\end{picture}%
+\setlength{\unitlength}{4144sp}%
+%
+\begingroup\makeatletter\ifx\SetFigFont\undefined%
+\gdef\SetFigFont#1#2#3#4#5{%
+  \reset@font\fontsize{#1}{#2pt}%
+  \fontfamily{#3}\fontseries{#4}\fontshape{#5}%
+  \selectfont}%
+\fi\endgroup%
+\begin{picture}(4749,1897)(1384,-2396)
+\put(2611,-2311){\makebox(0,0)[lb]{\smash{\SetFigFont{9}{10.8}{\sfdefault}{\mddefault}{\updefault}${\textsc{mb}}(\{B_1,\ldots,B_4\})$}}}
+\put(5266,-916){\makebox(0,0)[lb]{\smash{\SetFigFont{9}{10.8}{\sfdefault}{\mddefault}{\updefault}$B_1$}}}
+\put(5581,-1456){\makebox(0,0)[lb]{\smash{\SetFigFont{9}{10.8}{\sfdefault}{\mddefault}{\updefault}$B_4$}}}
+\put(2701,-1816){\makebox(0,0)[lb]{\smash{\SetFigFont{9}{10.8}{\sfdefault}{\mddefault}{\updefault}$B_2$}}}
+\put(3241,-1006){\makebox(0,0)[rb]{\smash{\SetFigFont{9}{10.8}{\sfdefault}{\mddefault}{\updefault}$B_4$}}}
+\put(2161,-1006){\makebox(0,0)[lb]{\smash{\SetFigFont{9}{10.8}{\sfdefault}{\mddefault}{\updefault}$B_1$}}}
+\put(4726,-781){\makebox(0,0)[rb]{\smash{\SetFigFont{9}{10.8}{\sfdefault}{\mddefault}{\updefault}${\textsc{mb}}(\{B_1,\ldots,B_4\})$}}}
+\put(4681,-1816){\makebox(0,0)[lb]{\smash{\SetFigFont{9}{10.8}{\sfdefault}{\mddefault}{\updefault}$B_3$}}}
+\put(4591,-1321){\makebox(0,0)[lb]{\smash{\SetFigFont{9}{10.8}{\sfdefault}{\mddefault}{\updefault}$B_2$}}}
+\put(1666,-1591){\makebox(0,0)[lb]{\smash{\SetFigFont{9}{10.8}{\sfdefault}{\mddefault}{\updefault}$B_3$}}}
+\end{picture}

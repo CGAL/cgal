@@ -1,0 +1,63 @@
+%!PS-Adobe-2.0 EPSF-1.2
+%%Title: ex3.ps
+%%Creator: Ghostscript ps2epsi from ex3.ps
+%%CreationDate: Mar 1 13:12
+%%For:janosch janosch
+%%Pages: 1
+%%DocumentFonts:
+%%BoundingBox: -10 -10 108 108
+save
+countdictstack
+mark
+newpath
+/showpage {} def
+/setpagedevice {pop} def
+%%EndProlog
+%%Page 1 1
+/zoom 48.000000 def
+zoom zoom scale
+.892200 .519235 translate
+0.06299 7.500 mul zoom div setlinewidth
+/dashlen 4.5 zoom div def
+/ptlen 3.5 zoom div def
+/bp {	% creates a path representing a circle
+	% usage: center-x center-y radius bp
+	/radius exch def /cy exch def /cx exch def
+	radius 0 eq
+	{  newpath cx ptlen sub cy moveto ptlen ptlen add 0 rlineto
+	   cx cy ptlen sub moveto 0 ptlen ptlen add rlineto }
+	{ newpath cx radius add cy moveto cx cy radius 0 360 arc
+	closepath }
+	ifelse
+} def
+/ball {	% draws a circle, unfilled, no dash
+	% usage: center-x center-y radius ball
+	bp stroke
+} def
+/bball {
+	% draws a circle, filled, no dash
+	% usage: center-x center-y radius bball
+	/radius exch def /cy exch def /cx exch def
+	cx cy radius
+	radius 0 eq
+	{ gsave bp 0.6 setgray stroke
+	  newpath cx cy moveto closepath 1 setlinecap
+	  0.0 setgray stroke grestore }
+	{ bp gsave 0.6 setgray fill grestore stroke }
+	ifelse
+} def
+/dball {
+	% draws a circle, unfilled, dashed
+	% usage: center-x center-y radius dball
+	gsave bp [dashlen] 0 setdash stroke grestore
+} def
+0.000000 0.000000 .500000 ball
+.400000 .100000 .125000 ball
+1.000000 1.000000 0.000000 ball
+-.250000 1.300000 .125000 ball
+.123207 .496172 1.011241 dball
+%%Trailer
+cleartomark
+countdictstack exch sub { end } repeat
+restore
+%%EOF

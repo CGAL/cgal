@@ -6,18 +6,18 @@
 // Geometry Algorithms Library (CGAL).
 // This software and documentation are provided "as-is" and without warranty
 // of any kind. In no event shall the CGAL Consortium be liable for any
-// damage of any kind. 
+// damage of any kind.
 //
-// Every use of CGAL requires a license. 
+// Every use of CGAL requires a license.
 //
 // Academic research and teaching license
 // - For academic research and teaching purposes, permission to use and copy
 //   the software and its documentation is hereby granted free of charge,
 //   provided that it is not a component of a commercial product, and this
-//   notice appears in all copies of the software and related documentation. 
+//   notice appears in all copies of the software and related documentation.
 //
 // Commercial licenses
-// - Please check the CGAL web site http://www.cgal.org/index2.html for 
+// - Please check the CGAL web site http://www.cgal.org/index2.html for
 //   availability.
 //
 // The CGAL Consortium consists of Utrecht University (The Netherlands),
@@ -28,16 +28,17 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : CGAL-2.4
-// release_date  : 2002, May 16
+// release       : $CGAL_Revision$
+// release_date  : $CGAL_Date$
 //
 // chapter       : $CGAL_Chapter: Optimisation $
-// file          : include/CGAL/Min_sphere_of_spheres.h
-// package       : Min_sphere_of_spheres_d (1.00)
+// file          : include/CGAL/Min_sphere_of_spheres_d.h
+// package       : Min_sphere_of_spheres_d (1.10)
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Kaspar Fischer
 //
+// author(s)     : Kaspar Fischer
+// maintainer    : Kaspar Fischer <fischerk@inf.ethz.ch>
 // coordinator   : ETH Zurich (Kaspar Fischer)
 //
 // implementation: dD Smallest Enclosing Sphere of Spheres
@@ -46,295 +47,266 @@
 //
 // ======================================================================
 
-#ifndef CGAL_MIN_SPHERE_OF_SPHERES_D_H
-#define CGAL_MIN_SPHERE_OF_SPHERES_D_H
 
+#ifndef CGAL_MINIBALL_MINIBALL
+#define CGAL_MINIBALL_MINIBALL
+
+#include <CGAL/Min_sphere_of_spheres_d_configure.h>
 #include <cassert>
+
 #include <vector>
-#include <list>
+#include <iostream>
+#include <CGAL/Min_sphere_of_spheres_d_support_set.h>
 
-#include <CGAL/basic.h>
-#include <CGAL/Min_sphere_of_spheres_support_set.h>
-
-namespace CGAL {
-
-  // The following types select which algorithm is run, i.e. whether
-  // the LP-algorithm or the "farthest-first" heuristic is used to
-  // find the miniball.
+namespace CGAL_MINIBALL_NAMESPACE {
 
   struct LP_algorithm {};
   struct Farthest_first_heuristic {};
   typedef Farthest_first_heuristic Default_algorithm;
+
+  template<typename FT>
+  inline bool compare(const FT& a,const FT& b,
+                      const FT& ap,const FT& bp) {
+    const FT u = a-ap, uu = u*u;
+    if (u >= FT(0)) {
+      if (bp <= uu)
+        return false;
   
-  // another namespace to "hide" implementation details:
-  namespace Min_sphere_of_spheres_impl {
-
-    // The following routines are used to normalize rational numbers
-    // during exact computation.  The assume that FT comes with a
-    // Number_type_traits traits-class, check whether gcd() is
-    // available, and if so, normalize the number:
-
-    template<typename FT>
-    void normalize(FT& a) {
-      // a.normalize();
+      // here (1) holds
+      const FT v = uu-b+bp;
+      if (v <= 0)
+        return false;
+  
+      // here (2) holds
+      return 4 * uu * bp < sqr(v);
+    } else {
+      // here (1) holds
+      const FT v = uu-b+bp;
+      if (v >= FT(0))
+        return true;
+  
+      // here (3) holds
+      return 4 * uu *bp > sqr(v);
     }
+  }
 
-    template<typename FT>
-    void normalize(Pair<FT>& p) {
-      normalize(p.first);
-      normalize(p.second);
-    }
-
-    void normalize(double) {
-    }
-
-    void normalize(Pair<double>&) {
-    }
-    
-    template<typename FT>
-    inline bool compare(const FT& a,const FT& b,
-			const FT& ap,const FT& bp) {
-      const FT u = a-ap, uu = u*u;
-      if (u >= 0) {
-	if (bp <= uu)
-	  return false;
-	
-	// here (1) holds
-	const FT v = b-bp;
-	if (uu - v <= 0)
-	  return false;
-	
-	// here (2) holds
-	return 4 * uu * bp < CGAL_NTS square(uu-v);
-      } else {
-	// here (1) holds
-	const FT v = b-bp;
-	if (uu-v >= 0)
-	  return true;
-	
-	// here (3) holds
-	return 4 * uu *bp > CGAL_NTS square(uu-v);
-      }
-    }
-
-  } // namespace Min_sphere_of_spheres_impl
-    
   template<class Traits>
   class Min_sphere_of_spheres_d {
-  public: // public types:
+  public: // some short hands:
     typedef typename Traits::Sphere Sphere;
     typedef typename Traits::FT FT;
-    typedef typename Min_sphere_of_spheres_impl::Selector<FT>::Result Result;
+    typedef typename Selector<FT>::Coordinate Coordinate;
+    typedef typename Selector<FT>::Is_exact Is_exact;
+    typedef typename Traits::Use_square_roots Use_sqrt;
     typedef typename Traits::Algorithm Algorithm;
-    typedef typename std::vector<Sphere>::const_iterator
-                     Support_sphere_iterator;
-    typedef const Result *Center_coordinate_iterator;
-
-  private: // internally used types:
-    typedef typename Min_sphere_of_spheres_impl::Selector<FT>::Is_exact
-                     Is_exact;
-    typedef typename Traits::Coordinate_iterator C_it;
-    typedef typename Traits::Use_square_roots Use_square_roots;
-      
+    static const int D = Traits::D;
+    typedef typename Traits::Coordinate_iterator CIt;
+  
   private: // traits class:
     Traits t; // To allow the traits to not only vary at compile- but
               // also at runtime, we instantiate it here.
+  
+  private: // for internal consisteny checks:
+    #ifdef CGAL_MINIBALL_DEBUG
+    // The following variable is true if and only if no ball has been
+    // insert()'ed so far, or update() has been called.  (This variable
+    // is used in is_valid() to make sure that the user has actually
+    // called update()...)
+    bool is_up_to_date;
+    #endif
+  
+  public: // iterators:
+    typedef const Coordinate *Coordinate_iterator; // coordinate iterator
+  
+    class Support_iterator {
+      typedef typename std::vector<const Sphere*>::const_iterator It;
+      It it;
+  
+    private:
+      friend class Min_sphere_of_spheres_d<Traits>;
+      Support_iterator(It it) : it(it) {}
+  
+    public:
+      const Sphere& operator*() { return *(*it); }
+      Support_iterator& operator++() { ++it; return *this; }
+      Support_iterator operator++(int) {
+        Support_iterator old(*this);
+        ++(*this);
+        return old;
+      }
+      bool operator!=(const Support_iterator& i) { return it != i.it; }
+    };
   
   public: // construction and destruction:
     inline Min_sphere_of_spheres_d(const Traits& traits = Traits());
   
     template<typename InputIterator>
     inline Min_sphere_of_spheres_d(InputIterator begin,InputIterator end,
-                    const Traits& traits = Traits()) :
+                                   const Traits& traits = Traits()) :
       t(traits), e(0), ss(t) {
-      CGAL_assertion(ss.dim < 0);
-      set(begin,end);
+      CGAL_MINIBALL_DO_DEBUG(is_up_to_date = true);
+      CGAL_MINIBALL_ASSERT(is_neg(ss.radius(),ss.disc()));
+      insert(begin,end);            // todo. better way?
     }
-
-  private: // internal helpers:
-    inline void add(const Sphere& b);
+  
+    inline void prepare(int size);
+  
+    inline void insert(const Sphere& b);
   
     template<typename InputIterator>
-    inline void add(InputIterator begin,InputIterator end) {
+    inline void insert(InputIterator begin,InputIterator end) {
+      prepare(l.size()+(end-begin)); // todo. istream?
       while (begin != end) {
-        add(*begin);
+        insert(*begin);
         ++begin;
       }
     }
-
-  private: // forbid copy constructing and assignment (because our
-           // pointers would be wrong then):
-    Min_sphere_of_spheres_d(const Min_sphere_of_spheres_d&);
-    Min_sphere_of_spheres_d& operator=(const Min_sphere_of_spheres_d&);
   
-  public: // accessors:
-    inline Support_sphere_iterator support_spheres_begin() const;
-    inline Support_sphere_iterator support_spheres_end() const;
-    inline int ambient_dimension() const;
-    inline int dimension() const;
-    inline const FT& discriminant() const;
-    inline const Result& radius() const;
-    inline Center_coordinate_iterator center_begin() const;
-    inline Center_coordinate_iterator center_end() const;
-    const Traits& traits() const;
-
-  public: // predicates:
-    inline bool is_empty() const;
-
-  public: // modifiers:
-    inline void clear() {
-      ss.clear();
-      ls.clear();
-      l.clear();
-      e = 0;
-    }
-
+    inline void clear();
+  
     template<typename InputIterator>
     inline void set(InputIterator begin,InputIterator end) {
       clear();
       insert(begin,end);
-    }
-
-    template<typename InputIterator>
-    inline void insert(InputIterator begin,InputIterator end) {
-      add(begin,end);
       update();
     }
-
-    inline void insert(const Sphere& s) {
-      add(s);
-      update();
-    }
+  
+    void update();
+  
+  public: // predicates and accessors:
+    inline bool is_empty() const;
+  
+    inline const Coordinate& radius() const;
+  
+    inline Coordinate_iterator center_begin() const;
+  
+    inline const FT& disc() const;
+  
+    inline Support_iterator support_begin() const;
+  
+    inline Support_iterator support_end() const;
   
   public: // validity check:
-    bool is_valid(bool verbose=false,int level=0) const;
+    bool is_valid() const;
+    bool is_valid(const Tag_true is_exact) const;
+    bool is_valid(const Tag_false is_exact) const;
   
   private:
-    bool is_valid(bool verbose,const Tag_false is_exact) const;
-    bool is_valid(bool verbose,const Tag_true is_exact) const;
-
     bool pivot(int B);
-
-    void update();
     void update(LP_algorithm);
     void update(Farthest_first_heuristic);
   
-    bool findFarthest(int from,int to,int& i,
-		      const Tag_true use_sqrt,
-		      const Tag_false is_exact);
-    bool findFarthest(int from,int to,int& i,
-		      const Tag_true use_sqrt,
-		      const Tag_true is_exact);
-    bool findFarthest(int from,int to,int& i,
-		      const Tag_false use_sqrt,
-		      const Tag_false is_exact);
-    bool findFarthest(int from,int to,int& i,
-		      const Tag_false use_sqrt,
-		      const Tag_true is_exact);
-
+    bool find_farthest(int from,int to,int& i,
+                       Tag_true use_sqrt,Tag_false is_exact);
+    bool find_farthest(int from,int to,int& i,
+                       Tag_true use_sqrt,Tag_true is_exact);
+    bool find_farthest(int from,int to,int& i,
+                       Tag_false use_sqrt,Tag_false is_exact);
+    bool find_farthest(int from,int to,int& i,
+                       Tag_false use_sqrt,Tag_true is_exact);
+  
   private:
-    std::list<Sphere> ls;       // list of add()'ed balls
-    std::vector<const Sphere*> l; // list of pointers to the balls in ls
-    Min_sphere_of_spheres_impl::Support_set<Traits> ss; // current basis
-    int e;                        // l[0..(e-1)] is basis
+    std::vector<const Sphere*> l; // list of pointers to the added bals
+    Support_set<Traits> ss;       // current support set
+    int e;                        // l[0..(e-1)] is a basis
+  
+  private: // forbid copy constructing and assignment (because our
+           // pointers would be wrong then):
+    Min_sphere_of_spheres_d(const Min_sphere_of_spheres_d&);
+    Min_sphere_of_spheres_d& operator=(const Min_sphere_of_spheres_d&);
   };
 
   template<class Traits>
   Min_sphere_of_spheres_d<Traits>::
-    Min_sphere_of_spheres_d(const Traits& traits) : t(traits), e(0), ss(t) {
+    Min_sphere_of_spheres_d(const Traits& traits) :
+    t(traits), e(0), ss(t) {
+    CGAL_MINIBALL_DO_DEBUG(is_up_to_date = true);
+    CGAL_MINIBALL_ASSERT(is_neg(ss.radius(),ss.disc())); // makes sure
+               // that initially no ball is enclosed (cf. contains()).
   }
 
   template<class Traits>
-  void Min_sphere_of_spheres_d<Traits>::add(const Sphere& b) {
-    // allocate memory in case this is the first ball to add:
-    if (ss.dim < 0) {
-      CGAL_assertion_msg(l.size() == 0,"dimension not set but balls added");
-      ss.reset(t.dimension(b));
-    }
-
-    // add ball:
-    CGAL_precondition_msg(t.radius(b) >= 0,"sphere has negative radius");
-    CGAL_precondition_msg(t.dimension(b)==ss.dim,"dimensions don't match");
-    ls.push_back(b);
-    l.push_back(&ls.back());
+  void Min_sphere_of_spheres_d<Traits>::prepare(int size) {
+    l.reserve(size);
   }
 
   template<class Traits>
-  const Traits& Min_sphere_of_spheres_d<Traits>::traits() const {
-    return t;
+  void Min_sphere_of_spheres_d<Traits>::insert(const Sphere& b) {
+    CGAL_MINIBALL_ASSERT(t.radius(b) >= FT(0));
+    CGAL_MINIBALL_DO_DEBUG(is_up_to_date = false);
+    l.push_back(&b);
+  }
+
+  template<class Traits>
+  void Min_sphere_of_spheres_d<Traits>::clear() {
+    CGAL_MINIBALL_DO_DEBUG(is_up_to_date = true);
+    l.clear();
+    ss.reset();
+    e = 0;
   }
 
   template<class Traits>
   bool Min_sphere_of_spheres_d<Traits>::is_empty() const {
-    return Min_sphere_of_spheres_impl::isNeg(ss.radius(),ss.disc());
+    return is_neg(ss.radius(),ss.disc());
   }
 
   template<class Traits>
-  int Min_sphere_of_spheres_d<Traits>::ambient_dimension() const {
-    CGAL_assertion(ss.dim==-1 || !is_empty());
-    return ss.dim;
-  }
-
-  template<class Traits>
-  int Min_sphere_of_spheres_d<Traits>::dimension() const {
-    CGAL_assertion(ss.dim==-1 || !is_empty());
-    return is_empty()? ss.dim-1 : -1;
-  }
-
-  template<class Traits>
-  const typename Min_sphere_of_spheres_d<Traits>::Result&
+  const typename Min_sphere_of_spheres_d<Traits>::Coordinate&
     Min_sphere_of_spheres_d<Traits>::radius() const {
-    CGAL_assertion(!is_empty());
+    CGAL_MINIBALL_ASSERT(!is_empty());
     return ss.radius();
   }
 
   template<class Traits>
-  typename Min_sphere_of_spheres_d<Traits>::Center_coordinate_iterator
+  typename Min_sphere_of_spheres_d<Traits>::Coordinate_iterator
     Min_sphere_of_spheres_d<Traits>::center_begin() const {
-    CGAL_assertion(!is_empty());
     return ss.begin();
   }
 
   template<class Traits>
-  typename Min_sphere_of_spheres_d<Traits>::Center_coordinate_iterator
-    Min_sphere_of_spheres_d<Traits>::center_end() const {
-    CGAL_assertion(!is_empty());
-    return ss.begin()+ss.dim;
-  }
-
-  template<class Traits>
   const typename Min_sphere_of_spheres_d<Traits>::FT&
-    Min_sphere_of_spheres_d<Traits>::discriminant() const {
-    CGAL_assertion(!is_empty());
+    Min_sphere_of_spheres_d<Traits>::disc() const {
     return ss.disc();
   }
 
   template<class Traits>
   inline void Min_sphere_of_spheres_d<Traits>::update() {
-    // compute miniball:
     update(Algorithm());
   }
 
   template<class Traits>
-  inline typename Min_sphere_of_spheres_d<Traits>::Support_sphere_iterator
-    Min_sphere_of_spheres_d<Traits>::support_spheres_begin() const {
-    return Support_sphere_iterator(l.begin());
+  inline bool Min_sphere_of_spheres_d<Traits>::is_valid() const {
+    #ifdef CGAL_MINIBALL_DEBUG
+    CGAL_MINIBALL_ASSERT(!is_up_to_date);
+    #endif
+    return is_valid(Is_exact());
   }
 
   template<class Traits>
-  inline typename Min_sphere_of_spheres_d<Traits>::Support_sphere_iterator
-    Min_sphere_of_spheres_d<Traits>::support_spheres_end() const {
-    return Support_sphere_iterator(l.begin()+e);
+  inline typename Min_sphere_of_spheres_d<Traits>::Support_iterator
+    Min_sphere_of_spheres_d<Traits>::support_begin() const {
+    return Support_iterator(l.begin());
   }
 
-} // namespace CGAL
+  template<class Traits>
+  inline typename Min_sphere_of_spheres_d<Traits>::Support_iterator
+    Min_sphere_of_spheres_d<Traits>::support_end() const {
+    return Support_iterator(l.begin()+e);
+  }
 
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#  include <CGAL/Min_sphere_of_spheres_support_set.C>
-#  include <CGAL/Min_sphere_of_spheres_pivot.C>
-#  include <CGAL/Min_sphere_of_spheres_d.C>
+} // namespace CGAL_MINIBALL_NAMESPACE
+
+// If the package is used with CGAL, we include some default
+// traits classes:
+#ifdef CGAL_VERSION
+#include <CGAL/Min_sphere_of_spheres_d_traits_d.h>
+#include <CGAL/Min_sphere_of_spheres_d_traits_2.h>
+#include <CGAL/Min_sphere_of_spheres_d_traits_3.h>
 #endif
 
-#include <CGAL/Min_sphere_of_spheres_d_traits_d.h>
+#ifdef CGAL_MINIBALL_NO_TEMPLATE_EXPORT
+#include <CGAL/Min_sphere_of_spheres_d.C>
+#include <CGAL/Min_sphere_of_spheres_d_pivot.C>
+#endif
 
-#endif // CGAL_MIN_SPHERE_OF_SPHERES_D_H
+#endif // CGAL_MINIBALL_MINIBALL

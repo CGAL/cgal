@@ -6,18 +6,18 @@
 // Geometry Algorithms Library (CGAL).
 // This software and documentation are provided "as-is" and without warranty
 // of any kind. In no event shall the CGAL Consortium be liable for any
-// damage of any kind. 
+// damage of any kind.
 //
-// Every use of CGAL requires a license. 
+// Every use of CGAL requires a license.
 //
 // Academic research and teaching license
 // - For academic research and teaching purposes, permission to use and copy
 //   the software and its documentation is hereby granted free of charge,
 //   provided that it is not a component of a commercial product, and this
-//   notice appears in all copies of the software and related documentation. 
+//   notice appears in all copies of the software and related documentation.
 //
 // Commercial licenses
-// - Please check the CGAL web site http://www.cgal.org/index2.html for 
+// - Please check the CGAL web site http://www.cgal.org/index2.html for
 //   availability.
 //
 // The CGAL Consortium consists of Utrecht University (The Netherlands),
@@ -28,16 +28,17 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : CGAL-2.4
-// release_date  : 2002, May 16
+// release       : $CGAL_Revision$
+// release_date  : $CGAL_Date$
 //
 // chapter       : $CGAL_Chapter: Optimisation $
 // file          : include/CGAL/Min_sphere_of_spheres_d_traits_d.h
-// package       : Min_sphere_of_spheres_d (1.00)
+// package       : Min_sphere_of_spheres_d (1.10)
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Kaspar Fischer
 //
+// author(s)     : Kaspar Fischer
+// maintainer    : Kaspar Fischer <fischerk@inf.ethz.ch>
 // coordinator   : ETH Zurich (Kaspar Fischer)
 //
 // implementation: dD Smallest Enclosing Sphere of Spheres
@@ -54,9 +55,10 @@
 
 namespace CGAL {
 
-  template<typename K_,                     // kernel
-    typename FT_,                           // number type
-    typename UseSqrt_ = Tag_false,          // whether to use square-roots
+  template<typename K_,                      // kernel
+    typename FT_,                            // number type
+    int Dim_,                                // dimension
+    typename UseSqrt_ = Tag_false,           // whether to use square-roots
     typename Algorithm_ = Default_algorithm> // algorithm to use
   class Min_sphere_of_spheres_d_traits_d {
   public: // types:
@@ -68,23 +70,16 @@ namespace CGAL {
     typedef UseSqrt_ Use_square_roots;
     typedef Algorithm_ Algorithm;
 
+  public: // constants:
+    static const int D = Dim_;               // dimension
+
   public: // accessors:
     static inline const FT radius(const Sphere& s) {
       return s.weight();
     }
 
-    static inline Coordinate_iterator
-    center_coordinates_begin(const Sphere& s) {
+    static inline Coordinate_iterator begin(const Sphere& s) {
       return s.point().cartesian_begin();
-    }
-      
-    static inline Coordinate_iterator
-    center_coordinates_end(const Sphere& s) {
-      return s.point().cartesian_end();
-    }
-
-    static inline int dimension(const Sphere& s) {
-      return s.dimension();
     }
   };
 

@@ -1,0 +1,267 @@
+%!PS-Adobe-2.0 EPSF-2.0
+%%Title: mbex.xfig.pstex
+%%Creator: fig2dev Version 3.2 Patchlevel 1
+%%CreationDate: Fri Mar  2 13:23:25 2001
+%%For: janosch@localhost.localdomain ()
+%%Orientation: Portrait
+%%BoundingBox: 0 0 300 120
+%%Pages: 0
+%%BeginSetup
+%%EndSetup
+%%Magnification: 1.0000
+%%EndComments
+/$F2psDict 200 dict def
+$F2psDict begin
+$F2psDict /mtrx matrix put
+/col-1 {0 setgray} bind def
+/col0 {0.000 0.000 0.000 srgb} bind def
+/col1 {0.000 0.000 1.000 srgb} bind def
+/col2 {0.000 1.000 0.000 srgb} bind def
+/col3 {0.000 1.000 1.000 srgb} bind def
+/col4 {1.000 0.000 0.000 srgb} bind def
+/col5 {1.000 0.000 1.000 srgb} bind def
+/col6 {1.000 1.000 0.000 srgb} bind def
+/col7 {1.000 1.000 1.000 srgb} bind def
+/col8 {0.000 0.000 0.560 srgb} bind def
+/col9 {0.000 0.000 0.690 srgb} bind def
+/col10 {0.000 0.000 0.820 srgb} bind def
+/col11 {0.530 0.810 1.000 srgb} bind def
+/col12 {0.000 0.560 0.000 srgb} bind def
+/col13 {0.000 0.690 0.000 srgb} bind def
+/col14 {0.000 0.820 0.000 srgb} bind def
+/col15 {0.000 0.560 0.560 srgb} bind def
+/col16 {0.000 0.690 0.690 srgb} bind def
+/col17 {0.000 0.820 0.820 srgb} bind def
+/col18 {0.560 0.000 0.000 srgb} bind def
+/col19 {0.690 0.000 0.000 srgb} bind def
+/col20 {0.820 0.000 0.000 srgb} bind def
+/col21 {0.560 0.000 0.560 srgb} bind def
+/col22 {0.690 0.000 0.690 srgb} bind def
+/col23 {0.820 0.000 0.820 srgb} bind def
+/col24 {0.500 0.190 0.000 srgb} bind def
+/col25 {0.630 0.250 0.000 srgb} bind def
+/col26 {0.750 0.380 0.000 srgb} bind def
+/col27 {1.000 0.500 0.500 srgb} bind def
+/col28 {1.000 0.630 0.630 srgb} bind def
+/col29 {1.000 0.750 0.750 srgb} bind def
+/col30 {1.000 0.880 0.880 srgb} bind def
+/col31 {1.000 0.840 0.000 srgb} bind def
+
+end
+save
+-87.0 204.0 translate
+1 -1 scale
+
+/cp {closepath} bind def
+/ef {eofill} bind def
+/gr {grestore} bind def
+/gs {gsave} bind def
+/sa {save} bind def
+/rs {restore} bind def
+/l {lineto} bind def
+/m {moveto} bind def
+/rm {rmoveto} bind def
+/n {newpath} bind def
+/s {stroke} bind def
+/sh {show} bind def
+/slc {setlinecap} bind def
+/slj {setlinejoin} bind def
+/slw {setlinewidth} bind def
+/srgb {setrgbcolor} bind def
+/rot {rotate} bind def
+/sc {scale} bind def
+/sd {setdash} bind def
+/ff {findfont} bind def
+/sf {setfont} bind def
+/scf {scalefont} bind def
+/sw {stringwidth} bind def
+/tr {translate} bind def
+/tnt {dup dup currentrgbcolor
+  4 -2 roll dup 1 exch sub 3 -1 roll mul add
+  4 -2 roll dup 1 exch sub 3 -1 roll mul add
+  4 -2 roll dup 1 exch sub 3 -1 roll mul add srgb}
+  bind def
+/shd {dup dup currentrgbcolor 4 -2 roll mul 4 -2 roll mul
+  4 -2 roll mul srgb} bind def
+/$F2psBegin {$F2psDict begin /$F2psEnteredState save def} def
+/$F2psEnd {$F2psEnteredState restore end} def
+%%EndProlog
+
+$F2psBegin
+10 setmiterlimit
+n -1000 4235 m -1000 -1000 l 7132 -1000 l 7132 4235 l cp clip
+ 0.06299 0.06299 sc
+% Polyline
+%
+% Begin Imported EPS File: ex3.eps
+%%BeginDocument: ex3.eps
+%
+n gs
+1395 1350 tr
+15.872881 -15.872881 sc
+0 -118 tr
+10 10 tr
+sa
+n -10 -10 m 108 -10 l 108 108 l -10 108 l cp clip n
+countdictstack
+mark
+/showpage {} def
+% EPS file follows:
+%!PS-Adobe-2.0 EPSF-1.2
+%%Title: ex3.ps
+%%Creator: Ghostscript ps2epsi from ex3.ps
+%%CreationDate: Mar 1 13:12
+%%For:janosch janosch
+%%Pages: 1
+%%DocumentFonts:
+%%BoundingBox: -10 -10 108 108
+save
+countdictstack
+mark
+newpath
+/showpage {} def
+/setpagedevice {pop} def
+%%EndProlog
+%%Page 1 1
+/zoom 48.000000 def
+zoom zoom scale
+.892200 .519235 translate
+0.06299 7.500 mul zoom div setlinewidth
+/dashlen 4.5 zoom div def
+/ptlen 3.5 zoom div def
+/bp {	% creates a path representing a circle
+	% usage: center-x center-y radius bp
+	/radius exch def /cy exch def /cx exch def
+	radius 0 eq
+	{  newpath cx ptlen sub cy moveto ptlen ptlen add 0 rlineto
+	   cx cy ptlen sub moveto 0 ptlen ptlen add rlineto }
+	{ newpath cx radius add cy moveto cx cy radius 0 360 arc
+	closepath }
+	ifelse
+} def
+/ball {	% draws a circle, unfilled, no dash
+	% usage: center-x center-y radius ball
+	bp stroke
+} def
+/bball {
+	% draws a circle, filled, no dash
+	% usage: center-x center-y radius bball
+	/radius exch def /cy exch def /cx exch def
+	cx cy radius
+	radius 0 eq
+	{ gsave bp 0.6 setgray stroke
+	  newpath cx cy moveto closepath 1 setlinecap
+	  0.0 setgray stroke grestore }
+	{ bp gsave 0.6 setgray fill grestore stroke }
+	ifelse
+} def
+/dball {
+	% draws a circle, unfilled, dashed
+	% usage: center-x center-y radius dball
+	gsave bp [dashlen] 0 setdash stroke grestore
+} def
+0.000000 0.000000 .500000 ball
+.400000 .100000 .125000 ball
+1.000000 1.000000 0.000000 ball
+-.250000 1.300000 .125000 ball
+.123207 .496172 1.011241 dball
+%%Trailer
+cleartomark
+countdictstack exch sub { end } repeat
+restore
+%%EOF
+cleartomark
+countdictstack exch sub { end } repeat
+restore grestore
+%
+% End Imported PIC File: ex3.eps
+%%EndDocument
+%
+% Polyline
+%
+% Begin Imported EPS File: ex2.eps
+%%BeginDocument: ex2.eps
+%
+n gs
+4247 1350 tr
+15.872881 -15.872881 sc
+0 -118 tr
+10 10 tr
+sa
+n -10 -10 m 108 -10 l 108 108 l -10 108 l cp clip n
+countdictstack
+mark
+/showpage {} def
+% EPS file follows:
+%!PS-Adobe-2.0 EPSF-1.2
+%%Title: ex2.ps
+%%Creator: Ghostscript ps2epsi from ex2.ps
+%%CreationDate: Mar 1 13:22
+%%For:janosch janosch
+%%Pages: 1
+%%DocumentFonts:
+%%BoundingBox: -10 -10 108 108
+save
+countdictstack
+mark
+newpath
+/showpage {} def
+/setpagedevice {pop} def
+%%EndProlog
+%%Page 1 1
+/zoom 37.200000 def
+zoom zoom scale
+1.317876 .505376 translate
+0.06299 7.500 mul zoom div setlinewidth
+/dashlen 4.5 zoom div def
+/ptlen 3.5 zoom div def
+/bp {	% creates a path representing a circle
+	% usage: center-x center-y radius bp
+	/radius exch def /cy exch def /cx exch def
+	radius 0 eq
+	{  newpath cx ptlen sub cy moveto ptlen ptlen add 0 rlineto
+	   cx cy ptlen sub moveto 0 ptlen ptlen add rlineto }
+	{ newpath cx radius add cy moveto cx cy radius 0 360 arc
+	closepath }
+	ifelse
+} def
+/ball {	% draws a circle, unfilled, no dash
+	% usage: center-x center-y radius ball
+	bp stroke
+} def
+/bball {
+	% draws a circle, filled, no dash
+	% usage: center-x center-y radius bball
+	/radius exch def /cy exch def /cx exch def
+	cx cy radius
+	radius 0 eq
+	{ gsave bp 0.6 setgray stroke
+	  newpath cx cy moveto closepath 1 setlinecap
+	  0.0 setgray stroke grestore }
+	{ bp gsave 0.6 setgray fill grestore stroke }
+	ifelse
+} def
+/dball {
+	% draws a circle, unfilled, dashed
+	% usage: center-x center-y radius dball
+	gsave bp [dashlen] 0 setdash stroke grestore
+} def
+0.000000 0.000000 .500000 ball
+0.000000 2.000000 .125000 ball
+-.500000 1.000000 .125000 ball
+1.000000 .700000 0.000000 ball
+0.000000 .812500 1.312500 dball
+%%Trailer
+cleartomark
+countdictstack exch sub { end } repeat
+restore
+%%EOF
+cleartomark
+countdictstack exch sub { end } repeat
+restore grestore
+%
+% End Imported PIC File: ex2.eps
+%%EndDocument
+%
+$F2psEnd
+rs

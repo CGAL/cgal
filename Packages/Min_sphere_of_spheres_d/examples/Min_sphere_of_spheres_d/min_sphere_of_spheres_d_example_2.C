@@ -1,0 +1,36 @@
+// Computes the minsphere of some random spheres.
+// This example illustrates how to use CGAL::Point_2 and CGAL::
+// Weighted_point with the Min_sphere_of_spheres_d package.
+
+#include <vector>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Random.h>
+#include <CGAL/Gmpq.h>
+#include <CGAL/Min_sphere_of_spheres_d.h>
+
+const int n = 1000;                       // number of spheres
+const int Low = 0, High = 10000;          // range of coordinates and radii
+
+typedef CGAL::Gmpq                        FT;
+//typedef double                          FT;
+typedef CGAL::Cartesian<FT>               K;
+typedef CGAL::Min_sphere_of_spheres_d_traits_2<K,FT> Traits;
+typedef CGAL::Min_sphere_of_spheres_d<Traits> Min_sphere;
+typedef K::Point_2                        Point;
+typedef Traits::Sphere                    Sphere;
+
+int main () {
+  std::vector<Sphere> S;                  // n spheres
+  CGAL::Random r;                         // random number generator
+  
+  for (int i=0; i<n; ++i) {
+    const FT x = r.get_int(Low,High),
+             y = r.get_int(Low,High);
+    Point p(x,y);                         // random center...
+    S.push_back(Sphere(p,r.get_int(Low,High))); // ...and random radius
+  }
+  
+  Min_sphere ms(S.begin(),S.end());       // check in the spheres...
+  ms.update();                            // ...and compute the minsphere
+  CGAL_assertion(ms.is_valid());
+}

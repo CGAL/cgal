@@ -1231,6 +1231,26 @@ Packages/Mesh_2/bench/data/square.poly -text
 Packages/Mesh_2/demo/Mesh_2/contraints.xpm -text
 Packages/Mesh_2/demo/Mesh_2/marked.xpm -text
 Packages/Mesh_2/demo/Mesh_2/seeds.xpm -text
+Packages/Min_sphere_of_spheres_d/test/Min_sphere_of_spheres_d/lp-alg-exact svneol=native#unset
+Packages/Min_sphere_of_spheres_d/test_extensive/stability/maple/balls-on-boundary-2.mws -text
+Packages/Min_sphere_of_spheres_d/test_extensive/stability/maple/balls-on-boundary-3.mws -text
+Packages/Min_sphere_of_spheres_d/web/figs/heuristic/excess.eps -text
+Packages/Min_sphere_of_spheres_d/web/figs/heuristic/excess.xfig -text
+Packages/Min_sphere_of_spheres_d/web/figs/heuristic/excess.xfig.pstex -text
+Packages/Min_sphere_of_spheres_d/web/figs/heuristic/excess.xfig.pstex_t -text
+Packages/Min_sphere_of_spheres_d/web/figs/heuristic/excess_.eps -text
+Packages/Min_sphere_of_spheres_d/web/figs/mbex/ex2.eps -text
+Packages/Min_sphere_of_spheres_d/web/figs/mbex/ex3.eps -text
+Packages/Min_sphere_of_spheres_d/web/figs/mbex/mbex.eps -text
+Packages/Min_sphere_of_spheres_d/web/figs/mbex/mbex.xfig -text
+Packages/Min_sphere_of_spheres_d/web/figs/mbex/mbex.xfig.pstex -text
+Packages/Min_sphere_of_spheres_d/web/figs/mbex/mbex.xfig.pstex_t -text
+Packages/Min_sphere_of_spheres_d/web/figs/pivot/cex.xfig -text
+Packages/Min_sphere_of_spheres_d/web/figs/pivot/cex.xfig.eps -text
+Packages/Min_sphere_of_spheres_d/web/figs/pivot/cex1.eps -text
+Packages/Min_sphere_of_spheres_d/web/figs/ss/basis.eps -text
+Packages/Min_sphere_of_spheres_d/web/figs/ss/notbasis.eps -text
+Packages/Min_sphere_of_spheres_d/web/figs/ss/ss_basis.eps -text
 Packages/Modifier/doc_tex/Modifier/idraw/modifier.ips -text
 Packages/Modifier/doc_tex/Modifier/modifier.gif -text svneol=unset#unset
 Packages/Modifier/doc_tex/Modifier/modifier_small.gif -text svneol=unset#unset
