@@ -115,6 +115,14 @@ SOURCE=.\alpha_shapes_2.h
 
 !IF  "$(CFG)" == "demo - Win32 Release"
 
+# Begin Custom Build
+InputPath=.\alpha_shapes_2.h
+
+"alpha_shapes_2.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)/bin/moc.exe -o alpha_shapes_2.moc alpha_shapes_2.C
+
+# End Custom Build
+
 !ELSEIF  "$(CFG)" == "demo - Win32 Debug"
 
 # Begin Custom Build
@@ -133,6 +141,14 @@ InputPath=.\alpha_shapes_2.h
 SOURCE=.\Qt_widget_move_point.h
 
 !IF  "$(CFG)" == "demo - Win32 Release"
+
+# Begin Custom Build
+InputPath=.\Qt_widget_move_point.h
+
+"Qt_widget_move_point.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)/bin/moc.exe -o Qt_widget_move_point.moc Qt_widget_move_point.h
+
+# End Custom Build
 
 !ELSEIF  "$(CFG)" == "demo - Win32 Debug"
 
@@ -153,6 +169,14 @@ SOURCE=.\Qt_widget_toolbar.h
 
 !IF  "$(CFG)" == "demo - Win32 Release"
 
+# Begin Custom Build
+InputPath=.\Qt_widget_toolbar.h
+
+"Qt_widget_toolbar.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)\bin\moc.exe -o "Qt_widget_toolbar.moc" "Qt_widget_toolbar.h"
+
+# End Custom Build
+
 !ELSEIF  "$(CFG)" == "demo - Win32 Debug"
 
 # Begin Custom Build
@@ -171,6 +195,14 @@ InputPath=.\Qt_widget_toolbar.h
 SOURCE=.\Qt_widget_toolbar_layers.h
 
 !IF  "$(CFG)" == "demo - Win32 Release"
+
+# Begin Custom Build
+InputPath=.\Qt_widget_toolbar_layers.h
+
+"Qt_widget_toolbar_layers.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)\bin\moc.exe -o "Qt_widget_toolbar_layers.moc" "Qt_widget_toolbar_layers.h"
+
+# End Custom Build
 
 !ELSEIF  "$(CFG)" == "demo - Win32 Debug"
 

@@ -112,7 +112,7 @@ SOURCE=".\max_k-gon.h"
 !IF  "$(CFG)" == "demo - Win32 Release"
 
 # Begin Custom Build
-InputPath=.\max_k-gon.h
+InputPath=".\max_k-gon.h"
 
 "max_k-gon.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	$(QTDIR)/bin/moc.exe -o max_k-gon.moc max_k-gon.C
@@ -120,6 +120,14 @@ InputPath=.\max_k-gon.h
 # End Custom Build
 
 !ELSEIF  "$(CFG)" == "demo - Win32 Debug"
+
+# Begin Custom Build
+InputPath=".\max_k-gon.h"
+
+"max_k-gon.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)/bin/moc.exe -o max_k-gon.moc max_k-gon.C
+
+# End Custom Build
 
 !ENDIF 
 
@@ -170,16 +178,9 @@ InputPath=.\Qt_widget_toolbar.h
 # Begin Custom Build
 InputPath=.\Qt_widget_toolbar.h
 
-BuildCmds= \
-	$(QTDIR)\bin\moc.exe -o "Qt_widget_toolbar.moc" "Qt_widget_toolbar.h" \
-	$(QTDIR)\bin\moc.exe -o max_k-gon.moc max_k-gon.C \
-	
-
 "Qt_widget_toolbar.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-   $(BuildCmds)
+	$(QTDIR)\bin\moc.exe -o "Qt_widget_toolbar.moc" "Qt_widget_toolbar.h"
 
-"max_k-gon.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-   $(BuildCmds)
 # End Custom Build
 
 !ENDIF 

@@ -121,20 +121,16 @@ InputPath=.\convex_hull_2.h
 
 !ELSEIF  "$(CFG)" == "demo - Win32 Debug"
 
+# Begin Custom Build
+InputPath=.\convex_hull_2.h
+
+"convex_hull_2.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)/bin/moc.exe -o convex_hull_2.moc convex_hull_2.C
+
+# End Custom Build
+
 !ENDIF 
 
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\include\CGAL\IO\Qt_widget_focus.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\include\CGAL\IO\Qt_widget_get_point.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\include\CGAL\IO\Qt_widget_handtool.h
 # End Source File
 # Begin Source File
 
@@ -182,24 +178,13 @@ InputPath=.\Qt_widget_toolbar.h
 # Begin Custom Build
 InputPath=.\Qt_widget_toolbar.h
 
-BuildCmds= \
-	$(QTDIR)\bin\moc.exe -o "Qt_widget_toolbar.moc" "Qt_widget_toolbar.h" \
-	$(QTDIR)\bin\moc.exe -o convex_hull_2.moc convex_hull_2.C \
-	
-
 "Qt_widget_toolbar.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-   $(BuildCmds)
+	$(QTDIR)\bin\moc.exe -o "Qt_widget_toolbar.moc" "Qt_widget_toolbar.h"
 
-"convex_hull_2.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-   $(BuildCmds)
 # End Custom Build
 
 !ENDIF 
 
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_Zoomrect.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"

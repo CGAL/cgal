@@ -121,16 +121,16 @@ InputPath=.\min_ellipse_2.h
 
 !ELSEIF  "$(CFG)" == "demo - Win32 Debug"
 
+# Begin Custom Build
+InputPath=.\min_ellipse_2.h
+
+"min_ellipse_2.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	$(QTDIR)\bin\moc.exe -o min_ellipse_2.moc min_ellipse_2.C
+
+# End Custom Build
+
 !ENDIF 
 
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_Get_point.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_Handtool.h
 # End Source File
 # Begin Source File
 
@@ -178,24 +178,13 @@ InputPath=.\Qt_widget_toolbar.h
 # Begin Custom Build
 InputPath=.\Qt_widget_toolbar.h
 
-BuildCmds= \
-	$(QTDIR)\bin\moc.exe -o "Qt_widget_toolbar.moc" "Qt_widget_toolbar.h" \
-	$(QTDIR)\bin\moc.exe -o min_ellipse_2.moc min_ellipse_2.C \
-	
-
 "Qt_widget_toolbar.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-   $(BuildCmds)
+	$(QTDIR)\bin\moc.exe -o "Qt_widget_toolbar.moc" "Qt_widget_toolbar.h"
 
-"min_ellipse_2.moc" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-   $(BuildCmds)
 # End Custom Build
 
 !ENDIF 
 
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\include\CGAL\IO\Qt_Widget_Zoomrect.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"
