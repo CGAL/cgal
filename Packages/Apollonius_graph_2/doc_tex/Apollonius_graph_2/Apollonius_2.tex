@@ -44,10 +44,10 @@ described.
 \begin{ccTexOnly}
 \begin{center}
 \includegraphics[width=0.4\textwidth]%
-{Apollonius_graph_2/apollonius_diagram.eps}
+{Apollonius_graph_2/apollonius_diagram_bw.eps}
 \hfil
 \includegraphics[width=0.4\textwidth]%
-{Apollonius_graph_2/apollonius_graph.eps} 
+{Apollonius_graph_2/apollonius_graph_bw.eps} 
 \end{center}
 \end{ccTexOnly}
 \caption{The Apollonius diagram (left) and its dual the Apollonius
@@ -188,7 +188,11 @@ definition allows us to guarantee that all visible circles have
 cells that are two-dimensional regions.
 Geometrically the fact that a circle is hidden means that it is
 contained in the closure of the disk of another circle (see again
-Fig. \ref{fig-apollonius}). Hidden circles pose an additional
+Fig. \ref{fig-apollonius}). Note that a circle contained in the union
+of several disks, but not in the closure of any one of them, is not
+hidden. 
+
+Hidden circles pose an additional
 difficulty to our algorithm and software design. Since we allow
 circles to be inserted and deleted at wish, it is possible that a
 circle that was hidden at some point in time, may become visible at
@@ -252,7 +256,7 @@ contain a hidden circle then the hidden circle can be assigned to any of
 the visible circles arbitrarily.
 
 To store hidden circles we assign to every visible circle a list. This
-list is comprised of the hidden circles that are contained in the
+list comprises the hidden circles that are contained in the
 visible circle. The user can access the hidden circles associated with
 a visible circle through an iterator called
 \ccc{Hidden_sites_iterator}. This iterator is defined in the
@@ -324,18 +328,29 @@ not.
 \begin{ccTexOnly}
 \begin{center}
 \includegraphics[width=0.4\textwidth]%
-{Apollonius_graph_2/apollonius-vertex_conflict-false.eps}
+{Apollonius_graph_2/apollonius-vertex_conflict-false_bw.eps}
 \hfil
 \includegraphics[width=0.4\textwidth]%
-{Apollonius_graph_2/apollonius-vertex_conflict-true.eps} 
+{Apollonius_graph_2/apollonius-vertex_conflict-true_bw.eps} 
 \end{center}
 \end{ccTexOnly}
+\begin{ccTexOnly}
+\caption{The {\em Vertex\_conflict\_2} predicate. The (unshaded) black
+  circles define the tritangent gray circle. We want to determine if
+  the sign of the distance of the shaded black circle from the gray
+  one. The gray curve is the bisector of the top-most and bottom-most
+  (unshaded) black circles. Left: the predicate returns {\em
+  NEGATIVE}. Right: the predicate returns {\em
+  POSITIVE}.\label{fig-ag2vertexconflict}}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
 \caption{The {\em Vertex\_conflict\_2} predicate. The red circles define
   the tritangent yellow circle. We want to determine if the sign of
   the distance of the green circle from the yellow one. The blue curve
   is the bisector of the top-most and bottom-most red circles.
   Left: the predicate returns {\em NEGATIVE}. Right: the predicate
   returns {\em POSITIVE}.\label{fig-ag2vertexconflict}}
+\end{ccHtmlOnly}
 \begin{ccHtmlOnly}
 <center>
 <img border=0 src="./apollonius-vertex_conflict-false.gif" align=center
@@ -362,7 +377,7 @@ predicate is different for the two endpoints. If the two values are
 the same then we need an additional test which determines if the interior
 of the Apollonius diagram edge is destroyed by the new circle. This is
 what the \ccc{Finite_edge_interior_conflict_2} and
-\ccc{Infinite_edge_interior_concflict_2} predicates do. In essense, it
+\ccc{Infinite_edge_interior_conflict_2} predicates do. In essense, it
 is the same predicate (same idea) applied to two different types of
 edges in the Apollonius diagram: a finite or an infinite edge. An edge
 is infinite if its dual edge in the Apollonius graph connects the
@@ -373,22 +388,41 @@ otherwise it is a finite edge.
 \begin{ccTexOnly}
 \begin{center}
 \includegraphics[width=0.35\textwidth]%
-{Apollonius_graph_2/apollonius-left_vertex.eps}
+{Apollonius_graph_2/apollonius-left_vertex_bw.eps}
 \hfil
 \includegraphics[width=0.35\textwidth]%
-{Apollonius_graph_2/apollonius-right_vertex.eps}\\
+{Apollonius_graph_2/apollonius-right_vertex_bw.eps}\\
 \includegraphics[width=0.35\textwidth]%
-{Apollonius_graph_2/apollonius-no_conflict.eps}
+{Apollonius_graph_2/apollonius-no_conflict_bw.eps}
 \hfil
 \includegraphics[width=0.35\textwidth]%
-{Apollonius_graph_2/apollonius-entire_edge.eps}\\
+{Apollonius_graph_2/apollonius-entire_edge_bw.eps}\\
 \includegraphics[width=0.35\textwidth]%
-{Apollonius_graph_2/apollonius-interior.eps}
+{Apollonius_graph_2/apollonius-interior_bw.eps}
 \hfil
 \includegraphics[width=0.35\textwidth]%
-{Apollonius_graph_2/apollonius-both_vertices.eps}\\
+{Apollonius_graph_2/apollonius-both_vertices_bw.eps}\\
 \end{center}
 \end{ccTexOnly}
+\begin{ccTexOnly}
+\caption{The {\em Finite\_edge\_interior\_conflict\_2} predicate. The
+  (unshaded) black circles define two tritangent gray circles, whose
+  centers are the endpoints of the edge in the Apollonius diagram.
+  The gray curve is the bisecting curve of the top-most and
+  bottom-most (unshaded) black circles, and it is also the supporting 
+  curve of the edge of the Apollonius diagram. The shaded black circle
+  is the circle to be inserted. Top left: only a neighborhood around
+  the left-most endpoint of the edge will be destroyed. Top right:
+  only a neighborhood around the right-most endpoint of the edge will
+  be destroyed. Middle left: the shaded black circle does not destroy
+  any portion of the edge. Middle right: the entire edge will be
+  destroyed. Bottom left: a neighborhood in the interior of the edge
+  will be destroyed; the regions near the endpoints remain
+  unaffected. Bottom right: The neighborhood around the two endpoints
+  will be destroyed, but an interval in the interior of the edge will
+  remain in the new diagram.\label{fig-ag2edgeconflict}}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
 \caption{The {\em Finite\_edge\_interior\_conflict\_2} predicate. The red
   circles define two tritangent yellow circles, whose centers are
   the endpoints of the edge in the Apollonius diagram (dark blue curve
@@ -405,6 +439,7 @@ otherwise it is a finite edge.
   unaffected. Bottom right: The neighborhood around the two endpoints
   will be destroyed, but an interval in the interior of the edge will
   remain in the new diagram.\label{fig-ag2edgeconflict}}
+\end{ccHtmlOnly}
 \begin{ccHtmlOnly}
 <center>
 <img border=0 src="./apollonius-left_vertex.gif" align=center alt="">
@@ -426,6 +461,10 @@ Apollonius diagram is degenerate, that is if its two endpoints
 coincide. In the Apollonius graph such an edge corresponds to one of
 the additional edges that we use to triangulate the non-triangular
 faces.
+
+% TALK ABOUT THE METHOD TAG AND THE FILTERED AND NON-FILTERED TRAITS
+
+
 
 
 

@@ -31,7 +31,7 @@ the site stored. \ccPrecond{The type \ccc{Geom_traits} must
 define the type \ccc{Site_2}.}}
 %
 \ccGlue
-\ccNestedType{Store_hidden}{An enumeration type that indicates if
+\ccNestedType{Store_hidden}{A boolean that indicates if
   hidden sites are actually stored or not. Its value is \ccc{true} if
   hidden sites are stored, \ccc{false} otherwise.}
 %
@@ -85,7 +85,7 @@ embedded at the center of \ccc{s}.}
 \ccMethod{Site_2 site();}
 {Returns  the Apollonius site.}
 \ccGlue
-\ccMethod{Face_handle face();}{Returns a handle to the incident face.}
+\ccMethod{Face_handle face();}{Returns a handle to an incident face.}
 \ccGlue
 \ccMethod{unsigned int number_of_hidden_sites();}
 {Returns the number of hidden sites in the hidden

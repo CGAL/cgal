@@ -77,23 +77,28 @@ We only cite the additional operations with respect to those of the
 \ccMethod{bool is_in_list(int i);}
 {Checks if the edge corresponding to the pair (\ccc{fb}, \ccc{i})
 is currently in the in-place edge list. Returns \ccc{true} if
-(\ccc{fb}, \ccc{i}) is in the list, \ccc{false} otherwise.}
+(\ccc{fb}, \ccc{i}) is in the list, \ccc{false} otherwise.
+\ccPrecond{\ccc{i} must be either \ccc{0}, \ccc{1} or \ccc{2}.}}
 \ccGlue
 \ccMethod{void set_next(int i, Edge next);}
 {Sets the edge \ccc{next} as the successor of
 (\ccc{fb}, \ccc{i}) in the list.
-\ccPrecond \ccc{next} must correspond to a valid edge.}
+\ccPrecond \ccc{next} must correspond to a valid edge, and \ccc{i}
+must be either \ccc{0}, \ccc{1} or \ccc{2}.}
 \ccGlue
 \ccMethod{void set_previous(int i, Edge prev);}
 {Sets the edge \ccc{prev} as the predecessor of
 (\ccc{fb}, \ccc{i}) in the list.
-\ccPrecond \ccc{prev} must correspond to a valid edge.}
+\ccPrecond{\ccc{prev} must correspond to a valid edge, and \ccc{i}
+must be either \ccc{0}, \ccc{1} or \ccc{2}.}}
 \ccGlue
 \ccMethod{Edge next(int i);}
-{Returns the successor of (\ccc{fb}, \ccc{i}) in the list.}
+{Returns the successor of (\ccc{fb}, \ccc{i}) in the list.
+\ccPrecond{\ccc{i} must be either \ccc{0}, \ccc{1} or \ccc{2}.}}
 \ccGlue
 \ccMethod{Edge previous(int i);}
-{Returns the predecessor of (\ccc{fb}, \ccc{i}) in the list.}
+{Returns the predecessor of (\ccc{fb}, \ccc{i}) in the list.
+\ccPrecond{\ccc{i} must be either \ccc{0}, \ccc{1} or \ccc{2}.}}
 
 
 \ccHasModels

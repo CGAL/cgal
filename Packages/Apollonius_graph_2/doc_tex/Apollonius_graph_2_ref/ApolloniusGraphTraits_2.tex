@@ -22,9 +22,7 @@ requirements for the \ccc{Apollonius_graph_2} class. In particular,
 it provides a type \ccc{Site_2}, which must be a model of the concept
 \ccc{ApolloniusSite_2}. It also provides
 constructions for sites and several function object
-types for the predicates. The way the predicates are evaluated is
-discussed in \cite{ke-ppawv-02,ke-rctac-03}.
-
+types for the predicates.
 
 \ccTypes
 \ccTwo{ApolloniusGraphTraits_2::Segment_2+}{}
@@ -47,7 +45,8 @@ discussed in \cite{ke-ppawv-02,ke-rctac-03}.
   or dual diagram are inserted in a stream.}
 \ccGlue
 \ccNestedType{Object_2}{A type representing different types of objects
-  in two dimensions.}
+  in two dimensions, namely: \ccc{Point_2}, \ccc{Site_2},
+  \ccc{Line_2}, \ccc{Ray_2} and \ccc{Segment_2}.}
 \ccGlue
 \ccNestedType{FT}{A type for the field number type of sites.}
 \ccGlue
@@ -60,16 +59,16 @@ discussed in \cite{ke-ppawv-02,ke-rctac-03}.
   \ccc{true}, if the assignment was possible.}
 \ccGlue
 \ccNestedType{Construct_object_2}{Must provide \ccc{template <class T>
-    Object_2 operator()( T t)} that constructs an object that contains \ccc{t}
-  and returns it.}
+    Object_2 operator()( T t)} that constructs an object of type
+  \ccc{Object_2} that contains \ccc{t} and returns it.}
 \ccGlue
-\ccNestedType{Construct_Apollonius_vertex_2}
-{A constructor for an
-Apollonius vertex (a vertex of the Apollonius diagram, i.e., a point
-equidistant from three sites). Must provide
-\ccc{Point_2 operator()(Site_2 s1,
-Site_2 s2, Site_2 s3)}, which constructs a
-point equidistant from the sites \ccc{s1}, \ccc{s2} and \ccc{s3}.}
+\ccNestedType{Construct_Apollonius_vertex_2}{
+  A constructor for a point of the Apollonius diagram equidistant
+  from three sites. Must provide
+  \ccc{Point_2 operator()(Site_2 s1, Site_2 s2, Site_2 s3)}, which
+  constructs a point equidistant from the sites \ccc{s1}, \ccc{s2} and
+  \ccc{s3}.
+}
 %
 \ccGlue
 \ccNestedType{Construct_Apollonius_site_2}
@@ -120,8 +119,8 @@ usual orientation test for the centers of the three sites
 \ccNestedType{Is_hidden_2}{A predicate object type. Must
 provide \ccc{bool operator()(Site_2 s1,
 Site_2 s2)}, which returns \ccc{true} if the circle
-corresponding to \ccc{s2} is contained inside the circle corresponding
-to \ccc{s1}, \ccc{false} otherwise.}
+corresponding to \ccc{s2} is contained in the closure of the disk
+corresponding to \ccc{s1}, \ccc{false} otherwise.}
 %
 \ccGlue
 \ccNestedType{Oriented_side_of_bisector_2}{A predicate object type.

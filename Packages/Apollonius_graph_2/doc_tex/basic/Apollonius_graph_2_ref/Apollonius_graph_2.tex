@@ -62,7 +62,7 @@ The edges of the Apollonius graph can also be visited through iterators
 and circulators,
 the edge circulators and iterators
 are also bidirectional and non-mutable.
-In the following, we called {\it infinite} any face or edge 
+In the following, we call {\it infinite} any face or edge 
 incident  to the infinite vertex and the infinite vertex itself.
 Any other feature (face, edge or vertex) of the Apollonius graph is said 
 to be {\it finite}.
@@ -78,7 +78,9 @@ the apollonius graph, the graph}
 \ccTypedef{typedef std::pair<Face_handle, int> Edge;} {the edge type.
 The \ccc{Edge(f,i)} is the edge common to faces \ccc{f} and 
 \ccc{f.neighbor(i)}. It is also the edge joining the vertices
-\ccc{vertex(cw(i))} and \ccc{vertex(ccw(i))} of \ccc{f}.}
+\ccc{vertex(cw(i))} and \ccc{vertex(ccw(i))} of \ccc{f}.
+\ccPrecond{\ccc{i} must be \ccc{0}, \ccc{1} or \ccc{2}.}
+}
 %
 \ccTwo{Apollonius_graph_2<Gt,Agds>::Finite_vertices_iterator+}
 {}
@@ -275,7 +277,7 @@ Apollonius graph.
 
 
 \ccMethod{Sites_iterator sites_begin();}
-{Starts at an abritrary site.}
+{Starts at an arbitrary site.}
 \ccGlue
 \ccMethod{Sites_iterator sites_end();}
 {Past-the-end iterator.}
@@ -307,9 +309,12 @@ These circulators are non-mutable and bidirectional.
  The operator \ccc{operator++} moves the circulator
 counterclockwise around the vertex while
 the \ccc{operator--} moves clockwise.
-A face circulator is invalidated by any modification of the face pointed to.
-Edge and vertex circulators is invalidated by any modification
+A face circulator is invalidated by any modification of the face
+pointed to.
+An edge circulator is invalidated by any modification
 in one of the two faces incident to the edge pointed to.
+A vertex circulator is invalidated by any modification
+in any of the faces adjacent to the vertex pointed to.
 
 \ccMethod{Face_circulator incident_faces(Vertex_handle v);}
 {Starts at an arbitrary face incident
@@ -347,6 +352,11 @@ the infinite edges and faces. Note that a counterclockwise
 traversal of the vertices adjacent to the \ccc{infinite_vertex} is
 a clockwise traversal of the convex hull.
 
+\ccMethod{Vertex_circulator incident_vertices(ag.infinite_vertex());}{}
+\ccGlue
+\ccMethod{Vertex_circulator incident_vertices(ag.infinite_vertex(),
+  Face_handle f);}{}
+\ccGlue
 \ccMethod{Face_circulator incident_faces(ag.infinite_vertex());}{}
 \ccGlue
 \ccMethod{Face_circulator incident_faces(ag.infinite_vertex(),
@@ -356,13 +366,6 @@ a clockwise traversal of the convex hull.
 \ccGlue
 \ccMethod{Edge_circulator incident_edges(ag.infinite_vertex(),
   Face_handle f);}{}
-\ccGlue
-\ccMethod{Vertex_circulator incident_vertices(ag.infinite_vertex());}{}
-\ccGlue
-\ccMethod{Vertex_circulator incident_vertices(ag.infinite_vertex(),
-  Face_handle f);}{}
-
-
 
 
 
@@ -453,6 +456,18 @@ returned. If there are no visible sites in the Apollonius diagram
 
 
 \ccHeading{Access to the dual}
+
+The \ccc{Apollonius_graph_2} class provides access to the duals of
+the faces of the graph. The dual of a face of the Apollonius graph is
+a site. If the originating face is infinite, its dual is a site with
+center at infinity (or equivalently with infinite weight), which means
+that it can be represented geometrically as a line. If the
+originating face is finite, its dual is a site with finite center and
+weight. In the following three methods the returned object is
+assignable to either \ccc{Site_2} or \ccc{Gt::Line_2}, depending on
+whether the corresponding face of the Apollonius graph is finite or
+infinite, respectively.
+
 \ccThree{Gt::Object_2}{ag.dual(Finite_edges_iterator ei)+}{}
 %
 \ccMethod{Gt::Object_2  dual(Face_handle f) const;}{Returns the
