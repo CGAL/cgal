@@ -91,7 +91,8 @@ public:
     // drawing menu
     QPopupMenu * draw = new QPopupMenu( this );
     menuBar()->insertItem( "&Draw", draw );
-    draw->insertItem("&Generate points", this, SLOT(gen_points()), CTRL+Key_G );
+    draw->insertItem("&Generate points", this,
+		SLOT(gen_points()), CTRL+Key_G );
 
     // help menu
     QPopupMenu * help = new QPopupMenu( this );
@@ -137,7 +138,8 @@ public slots:
   {
     widget->lock();
     list_of_points.clear();
-    widget->set_window(-1.1, 1.1, -1.1, 1.1); // set the Visible Area to the Interval
+    widget->set_window(-1.1, 1.1, -1.1, 1.1); 
+	// set the Visible Area to the Interval
     widget->unlock();
     something_changed();
   }
