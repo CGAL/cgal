@@ -1,3 +1,6 @@
+7 September 2004:  Menelaos Karavelas
+- Documentation & code: replaced Agds_2 by Tds_2
+
 6 September 2004:  Menelaos Karavelas
 - moved {insert,remove}_degree_2 from Agds_2 to Tds_2; kept Agds_2
   for backward compatibility

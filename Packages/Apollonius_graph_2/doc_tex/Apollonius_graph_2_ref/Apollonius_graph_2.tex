@@ -25,7 +25,7 @@ It is templated by two template arguments \ccc{Gt}, which
 must be a model of \ccc{ApolloniusGraphTraits_2}, and \ccc{Agds},
 which must be a model of \ccc{ApolloniusGraphDataStructure_2}.
 The second template argument defaults to
-\ccc{CGAL::Apollonius_graph_data_structure_2< 
+\ccc{CGAL::Triangulation_data_structure_2< 
 CGAL::Apollonius_graph_vertex_base_2<Gt,true>,
 CGAL::Triangulation_face_base_2<Gt> >}.
 
@@ -198,8 +198,8 @@ operator=(const Apollonius_graph_2<Gt,Agds>& other);}
 {Returns the number of hidden sites.}
 \ccGlue
 \ccMethod{size_type number_of_faces();}
-	 {Returns the number of faces (both finite and infinite) of the
-	   Apollonius graph.}
+         {Returns the number of faces (both finite and infinite) of the
+           Apollonius graph.}
 \ccGlue
 \ccMethod{Face_handle infinite_face();}
 {Returns a  face incident to the \ccc{infinite_vertex}.}
@@ -575,7 +575,7 @@ be preferred to \ccVar\ccc{ = other} or to \ccVar\ccc{(other)} if
 \ccc{TriangulationFaceBase_2}\\
 \ccc{CGAL::Apollonius_graph_traits_2<K,Method_tag>}\\
 \ccc{CGAL::Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>}\\
-\ccc{CGAL::Apollonius_graph_data_structure_2<Vb,Fb>}\\
+\ccc{CGAL::Triangulation_data_structure_2<Vb,Fb>}\\
 \ccc{CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden>}\\
 \ccc{CGAL::Triangulation_face_base_2<Gt>}
 

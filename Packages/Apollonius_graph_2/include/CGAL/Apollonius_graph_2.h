@@ -28,7 +28,7 @@
 #include <CGAL/Apollonius_graph_short_names_2.h>
 
 #include <CGAL/Triangulation_2.h>
-#include <CGAL/Apollonius_graph_data_structure_2.h>
+#include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Triangulation_face_base_2.h>
 #include <CGAL/Apollonius_graph_vertex_base_2.h>
 
@@ -83,7 +83,7 @@ namespace CGALi {
 
 
 template < class Gt,
-	   class Agds = Apollonius_graph_data_structure_2 < 
+	   class Agds = Triangulation_data_structure_2 < 
                Apollonius_graph_vertex_base_2<Gt,true>,
                Triangulation_face_base_2<Gt> >,
 	   class LTag = Tag_false>

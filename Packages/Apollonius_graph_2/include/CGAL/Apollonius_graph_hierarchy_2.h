@@ -29,7 +29,7 @@
 #include <CGAL/Random.h>
 
 #include <CGAL/Apollonius_graph_2.h>
-#include <CGAL/Apollonius_graph_data_structure_2.h>
+#include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Apollonius_graph_vertex_base_2.h>
 #include <CGAL/Triangulation_face_base_2.h>
 #include <CGAL/Apollonius_graph_hierarchy_vertex_base_2.h>
@@ -46,7 +46,7 @@ const unsigned int ag_hierarchy_2__maxlevel = 5;
 // maximal number of points is 30^5 = 24 millions !
 
 template < class Gt,
-	   class Agds = Apollonius_graph_data_structure_2<
+	   class Agds = Triangulation_data_structure_2<
              Apollonius_graph_hierarchy_vertex_base_2<
                Apollonius_graph_vertex_base_2<Gt,true> >,
                Triangulation_face_base_2<Gt> >,

@@ -17,7 +17,7 @@
 typedef CGAL::Simple_cartesian<double> Rep;
 
 #include <CGAL/Apollonius_graph_2.h>
-#include <CGAL/Apollonius_graph_data_structure_2.h>
+#include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Apollonius_graph_vertex_base_2.h>
 #include <CGAL/Triangulation_face_base_2.h>
 #include <CGAL/Apollonius_graph_filtered_traits_2.h>
@@ -33,7 +33,7 @@ typedef CGAL::Apollonius_graph_filtered_traits_2<Rep> Traits;
 // insertions, like in the main program below.
 typedef CGAL::Apollonius_graph_vertex_base_2<Traits,false>   Vb;
 typedef CGAL::Triangulation_face_base_2<Traits>              Fb;
-typedef CGAL::Apollonius_graph_data_structure_2<Vb,Fb>       Agds;
+typedef CGAL::Triangulation_data_structure_2<Vb,Fb>       Agds;
 typedef CGAL::Apollonius_graph_2<Traits,Agds>    Apollonius_graph;
 
 

@@ -839,7 +839,7 @@ bool test_algo(InputStream& is)
   // template paramaters so as to give them shorter names
   typedef Apollonius_graph_vertex_base_2<Traits,true>   Vb;
   typedef Triangulation_face_base_2<Traits>             Fb;
-  typedef Apollonius_graph_data_structure_2<Vb,Fb>      Agds;
+  typedef Triangulation_data_structure_2<Vb,Fb>      Agds;
   typedef Apollonius_graph_2<Traits,Agds>               Apollonius_graph;
 #else
   typedef Apollonius_graph_2<Traits>  Apollonius_graph;
@@ -865,7 +865,7 @@ bool test_hierarchy_algo(InputStream& is)
   typedef Apollonius_graph_vertex_base_2<Traits,true>   Vb;
   typedef Apollonius_graph_hierarchy_vertex_base_2<Vb>  HVb;
   typedef Triangulation_face_base_2<Traits>             Fb;
-  typedef Apollonius_graph_data_structure_2<HVb,Fb>     Agds;
+  typedef Triangulation_data_structure_2<HVb,Fb>     Agds;
   typedef Apollonius_graph_hierarchy_2<Traits,Agds>
     Apollonius_graph_hierarchy;
 #else
@@ -894,7 +894,7 @@ bool test_filtered_traits_algo(InputStream& is)
   // template paramaters so as to give them shorter names
   typedef Apollonius_graph_vertex_base_2<Traits,true>   Vb;
   typedef Triangulation_face_base_2<Traits>             Fb;
-  typedef Apollonius_graph_data_structure_2<Vb,Fb>      Agds;
+  typedef Traingulation_data_structure_2<Vb,Fb>      Agds;
   typedef Apollonius_graph_2<Traits,Agds>               Apollonius_graph;
 #else
   typedef Apollonius_graph_2<Traits>  Apollonius_graph;
@@ -922,7 +922,7 @@ bool test_filtered_traits_hierarchy_algo(InputStream& is)
   typedef Apollonius_graph_vertex_base_2<Traits,true>   Vb;
   typedef Apollonius_graph_hierarchy_vertex_base_2<Vb>  HVb;
   typedef Triangulation_face_base_2<Traits>             Fb;
-  typedef Apollonius_graph_data_structure_2<HVb,Fb>     Agds;
+  typedef Triangulation_data_structure_2<HVb,Fb>     Agds;
   typedef Apollonius_graph_hierarchy_2<Traits,Agds>
     Apollonius_graph_hierarchy;
 #else
