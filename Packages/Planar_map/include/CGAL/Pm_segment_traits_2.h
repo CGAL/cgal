@@ -103,17 +103,12 @@ public:
    * \param cv the curve
    * \param q the point
    * \return true if q is in the x range of cv
-   *
-   * \todo Intorduce Is_in_x_range_2() or perhaps Is_in_x_closed_range_2()
-   * in kernel. Currently, this is implemented using existing traits (kernel)
-   * functions (curve_source(), curve_target()) that return the source and
-   * target points by value, which is not as efficient as possible.
    */
   bool point_in_x_range(const X_monotone_curve_2 & cv, const Point_2 & q) const
   {
 #if 1
-    Construct_vertex_2 construct_vertex = construct_vertex_2_object();
     Compare_x_2 compare_x = compare_x_2_object();
+    Construct_vertex_2 construct_vertex = construct_vertex_2_object();
     Comparison_result res1 = compare_x(construct_vertex(cv, 0), q);
     Comparison_result res2 = compare_x(construct_vertex(cv, 1), q);
 
