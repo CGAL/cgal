@@ -41,9 +41,9 @@ intersection points.
    will eventually point to all the reported intersection points. 
    \ccc{sweep_to_produce_points_2} supports
    curves which are interior intersect, overlap or non x-monotone, and
-   hence the user may provide his curves as input without any
+   hence users may provide their input curves without any
    restriction of the kind mentioned above. 
-   The user may obtain the input points in addition to the intersection 
+   Users may obtain the input points in addition to the intersection 
    by setting the flag \ccStyle{endpoints} to true. 
    The default choice provides this first possibility. 
    Notice that if the input curves are not $x$-monotone, their splitting points 
@@ -61,7 +61,9 @@ intersection points.
 
 \ccSeeAlso
 \ccc{CGAL::sweep_to_construct_planar_map_2} \\
-\ccc{CGAL::sweep_to_produce_subcurves_2}
+\ccc{CGAL::sweep_to_produce_subcurves_2} \\
+\ccc{CGAL::sweep_do_curves_intersect_2} \\
+\ccc{CGAL::sweep_to_report_intersecting_curves_2}
 
 % \ccImplementation
 % The implementation uses the container $map$ defined in STL for

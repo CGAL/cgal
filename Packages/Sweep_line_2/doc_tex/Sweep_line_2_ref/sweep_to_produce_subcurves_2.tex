@@ -41,10 +41,10 @@ as many times as it is covered by input curves.
    subcurves. \ccc{sweep_to_produce_subcurve_2} supports
    curves which may intersect in their interior, 
    have overlap portions, or not necessarily $x$-monotone. 
-   Hence the user may provide his curves as input without any
+   Hence users may provide their input curves without any
    restriction of the kind mentioned above. When providing overlapping
    curves as input users can make a choice by the boolean parameter
-   \ccStyle{overlapping} whether the output they will get will contain
+   \ccStyle{overlapping} whether the output they will get may contain
    each overlapping subcurve only once or that the reported subcurves
    will have each overlapping subcurve per each original curve it
    created of. The default choice provides the first possibility.}
@@ -59,7 +59,9 @@ as many times as it is covered by input curves.
 \ccSeeAlso
 
 \ccc{CGAL::sweep_to_construct_planar_map_2} \\
-\ccc{CGAL::sweep_to_produce_points_2}
+\ccc{CGAL::sweep_to_produce_points_2} \\
+\ccc{CGAL::sweep_do_curves_intersect_2} \\
+\ccc{CGAL::sweep_to_report_intersecting_curves_2}
 
 % \ccImplementation 
 

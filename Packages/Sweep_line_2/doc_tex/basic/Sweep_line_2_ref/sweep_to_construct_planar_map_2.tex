@@ -33,8 +33,7 @@ interior disjoint subcurves induced by the given input curves.
    InputIterator curves_begin, 
    InputIterator curves_end, 
    SweepLineTraits_2& traits,
-   Planar_map &result);
-}
+   Planar_map &result);}
 
 constructs a \ccc{Planar map} from the curves given in the range
 \ccStyle{[curves_begin, curves_end)}. The parameter \ccStyle{result}
@@ -66,7 +65,9 @@ between those curves and only iteratively inserting them to a
 \ccSeeAlso
 
 \ccc{CGAL::sweep_to_procuce_subcurves_2} \\
-\ccc{CGAL::sweep_to_produce_points_2}
+\ccc{CGAL::sweep_to_produce_points_2} \\
+\ccc{CGAL::sweep_do_curves_intersect_2} \\
+\ccc{CGAL::sweep_to_report_intersecting_curves_2}
 
 % \ccImplementation 
 % The implementation uses the container $map$ defined in STL for
