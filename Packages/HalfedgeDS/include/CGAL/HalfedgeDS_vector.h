@@ -176,18 +176,24 @@ public:
     typedef typename Types::Vertex_const_handle        Vertex_const_handle;
     typedef typename Types::Vertex_iterator            Vertex_iterator;
     typedef typename Types::Vertex_const_iterator      Vertex_const_iterator;
+    typedef typename Types::Vertex_I                   Vertex_I;
+    typedef typename Types::Vertex_CI                  Vertex_CI;
 
     typedef typename Types::Halfedge_vector            Halfedge_vector;
     typedef typename Types::Halfedge_handle            Halfedge_handle;
     typedef typename Types::Halfedge_const_handle      Halfedge_const_handle;
     typedef typename Types::Halfedge_iterator          Halfedge_iterator;
     typedef typename Types::Halfedge_const_iterator    Halfedge_const_iterator;
+    typedef typename Types::Halfedge_I                 Halfedge_I;
+    typedef typename Types::Halfedge_CI                Halfedge_CI;
 
     typedef typename Types::Face_vector                Face_vector;
     typedef typename Types::Face_handle                Face_handle;
     typedef typename Types::Face_const_handle          Face_const_handle;
     typedef typename Types::Face_iterator              Face_iterator;
     typedef typename Types::Face_const_iterator        Face_const_iterator;
+    typedef typename Types::Face_I                     Face_I;
+    typedef typename Types::Face_CI                    Face_CI;
 
     typedef typename Types::size_type                  size_type;
     typedef typename Types::difference_type            difference_type;
