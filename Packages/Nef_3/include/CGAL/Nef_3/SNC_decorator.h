@@ -1068,7 +1068,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 #ifdef CGAL_NEF3_TIMER_POINT_LOCATION
       timer_point_location.stop();
 #endif 
-
+    
 #if defined(CGAL_NEF3_TIMER_OVERLAY)
       timer_overlay.start();
 #endif
@@ -1389,7 +1389,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 		<< timer_binary_operation.time() << std::endl;
     }
 #endif 
-  }
+    }
   
 
   bool is_valid( bool verb = false, int level = 0) {

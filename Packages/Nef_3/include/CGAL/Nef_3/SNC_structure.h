@@ -1161,7 +1161,6 @@ pointer_update(const SNC_structure<Kernel,Items,Mark>& D)
     SFace_cycle_iterator sfc;
     for(sfc = sf->sface_cycles_begin(); 
         sfc != sf->sface_cycles_end(); ++sfc) {
-      SVertex_handle sv;
       if (sfc.is_svertex()) { 
 	SVertex_handle sv(sfc);
 	*sfc = Object_handle(EM[sv]);

@@ -1114,6 +1114,11 @@ public:
     //  Progress_indicator_clog progress2 
     //    ( M.size(), "SNC_constructor: creating facets...");
     
+#ifdef CGAL_NEF3_TIMER_PLANE_SWEEPS
+  number_of_plane_sweeps=0;
+  timer_plane_sweeps.reset();
+#endif
+
     typename Map_planes::iterator it;
     CGAL_forall_iterators(it,M) { 
       //    progress2++;
@@ -1128,6 +1133,10 @@ public:
   /*{\Mop collects all shells incident to a volume and creates the
   volumes.  \precond |categorize_facet_cycles_and_creating_facets()| was
   called before.}*/
+
+#ifdef CGAL_NEF3_TIMER_POINT_LOCATION
+    timer_ray_shooting.reset();
+#endif 
 
     //    SETDTHREAD(37*43*19*47);
     TRACEN(">>>>>create_volumes");
