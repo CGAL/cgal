@@ -33,13 +33,13 @@ namespace CGAL {
   Tools_toolbar::Tools_toolbar(Qt_widget *w, 
 			  QMainWindow *mw, std::list<Point> *l1)
   {
-
-    move_deletebut = new CGAL::Qt_widget_move_list_point<Rp>(l1);
-    //when it is created, the toolbar has 0 buttons
-    nr_of_buttons = 0;
+    w->attach(&move_deletebut);
+    w->attach(&pointbut);
+    move_deletebut.deactivate();
+    pointbut.deactivate();
+    move_deletebut.pass_the_structure(l1);
     //set the widget
     widget = w;
-    is_active = FALSE;
 
 #if QT_VERSION < 300
   // for Qt 2.3 and before
@@ -51,90 +51,28 @@ namespace CGAL {
   mw->addDockWindow (maintoolbar, "tools", DockTop, TRUE );
 #endif
 		
-
-  but[0] = new QToolButton(QPixmap( (const char**)arrow_xpm ),
-			     "Detach current tool", 
-			     0, 
-			     this, 
-			     SLOT(notool()), 
-			     maintoolbar, 
-			     "Detach current tool");
-
-  but[1] = new QToolButton(QPixmap( (const char**)point_xpm ),
-			     "Point Tool", 
-			     0, 
-			     this, 
-			     SLOT(pointtool()), 
-			     maintoolbar, 
-			     "Point Tool");
-
-  but[2] = new QToolButton(QPixmap( (const char**)movepoint_xpm ),
-			     "Move/Delete Point Tool", 
-			     0, 
-			     this, 
-			     SLOT(move_deletetool()), 
-			     maintoolbar, 
-			     "Move/Delete Point Tool");
-
-
-  but[1]->setToggleButton(TRUE);
-  but[2]->setToggleButton(TRUE);
-
+  but[0] = new QToolButton(maintoolbar, "notool");
+  but[0]->setPixmap(QPixmap( (const char**)arrow_xpm ));
+  but[1] = new QToolButton(maintoolbar, "pointtool");
+  but[1]->setPixmap(QPixmap( (const char**)point_xpm ));
+  but[2] = new QToolButton(maintoolbar, "move/delete tool");
+  but[2]->setPixmap(QPixmap( (const char**)movepoint_xpm ));
+  
   nr_of_buttons = 3;
-
-  connect(w, SIGNAL(detached_tool()), this, SLOT(toggle_button()));
+  button_group = new QButtonGroup(0, "My_group");
+  for(int i = 0; i<nr_of_buttons; i++) {
+    button_group->insert(but[i]);
+    but[i]->setToggleButton(true);
+  }
+  button_group->setExclusive(true);
+  
+  connect(but[1], SIGNAL(stateChanged(int)),
+        &pointbut, SLOT(stateChanged(int)));
+  connect(but[2], SIGNAL(stateChanged(int)),
+        &move_deletebut, SLOT(stateChanged(int)));
 };
-
-      
-  //the definition of the slots
-  void Tools_toolbar::toggle_button ()
-  {
-    if(is_active) {
-      but[activebutton]->toggle();
-      is_active = false;
-    }
-  }	
-  
-  void Tools_toolbar::pointtool()
-  {
-    if (but[1]->isOn())
-    {
-      widget->attach(&pointbut);
-      activebutton = 1;
-      is_active = true;
-    }
-    else
-    {
-      is_active = false;
-      widget->detach_current_tool();
-    }
-  }
-  
-  void Tools_toolbar::move_deletetool()
-  {
-    if (but[2]->isOn())
-    {
-      widget->attach(move_deletebut);
-      activebutton = 2;
-      is_active = true;
-    }
-    else
-    {
-      is_active = false;
-      widget->detach_current_tool();
-    }
-  }
-
-  void Tools_toolbar::notool()
-  {
-    if(is_active) {
-      widget->detach_current_tool();
-      is_active = false;
-    }
-  }
-  
-
-}//end namespace
+        
+}//end namespace CGAL
 
 #include "Qt_widget_toolbar.moc"
 

@@ -61,19 +61,15 @@ std::list<Point>	  list_of_points;
 class Qt_layer_show_ch : public CGAL::Qt_widget_layer
 {
 public:
-	
-  Qt_layer_show_ch(){};
-
-
-  void draw(CGAL::Qt_widget &widget)
+  void draw()
   {
-     widget.lock();
-    widget << CGAL::PointSize(7) << CGAL::PointStyle(CGAL::CROSS);
-    widget << CGAL::GREEN;
+     widget->lock();
+    *widget << CGAL::PointSize(7) << CGAL::PointStyle(CGAL::CROSS);
+    *widget << CGAL::GREEN;
     std::list<Point>::iterator itp = list_of_points.begin();
     while(itp!=list_of_points.end())
     {
-      widget << (*itp++);
+      *widget << (*itp++);
     }
 
     std::list<Point>	out;
@@ -89,20 +85,20 @@ public:
       it++;
 
       for(; it != out.end(); ++it) {
-	pakt= *it;
-	Sl.push_back(Segment(prev,pakt));
-	prev=pakt;
+      	pakt= *it;
+	      Sl.push_back(Segment(prev,pakt));
+	      prev=pakt;
       }
       Sl.push_back(Segment(pakt,pstart));
 
-      widget << CGAL::RED;
+      *widget << CGAL::RED;
       std::list<Segment>::iterator its = Sl.begin();
       while(its!=Sl.end())
       {
-	widget << (*its++);
+        *widget << (*its++);
       }
     }
-    widget.unlock();
+    widget->unlock();
   };	
   
 };//end class 
@@ -142,14 +138,13 @@ public:
     help->insertItem("About &Qt", this, SLOT(aboutQt()) );
 
     //the new tools toolbar
-    setUsesBigPixmaps(TRUE);
     newtoolbar = new CGAL::Tools_toolbar(widget, this, &list_of_points);	
     //the standard toolbar
     stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this);
     this->addToolBar(stoolbar->toolbar(), Top, FALSE);
     this->addToolBar(newtoolbar->toolbar(), Top, FALSE);
   
-    *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::BLACK);
+    *widget << CGAL::LineWidth(1) << CGAL::BackgroundColor (CGAL::BLACK);
   
     resize(w,h);
 
@@ -176,7 +171,6 @@ public slots:
   }
   void new_instance()
   {
-    widget->detach_current_tool();
     widget->lock();
     list_of_points.clear();
     widget->set_window(-1.1, 1.1, -1.1, 1.1); // set the Visible Area to the Interval
@@ -237,11 +231,11 @@ private slots:
 	
 
 private:
-  CGAL::Qt_widget	  *widget;
-  CGAL::Tools_toolbar	  *newtoolbar;
+  CGAL::Qt_widget					*widget;
+  CGAL::Tools_toolbar				*newtoolbar;
   CGAL::Qt_widget_standard_toolbar  *stoolbar;
-  int			  old_state;  	
-  Qt_layer_show_ch	  testlayer;
+  int								old_state;
+  Qt_layer_show_ch					testlayer;
 };
 
 #include "convex_hull_2.moc"
@@ -254,7 +248,7 @@ main(int argc, char **argv)
     app.setStyle( new QPlatinumStyle );
     QPalette p( QColor( 250, 215, 100 ) );
     app.setPalette( p, TRUE );
-  MyWindow widget(800,800); // physical window size
+  MyWindow widget(500,500); // physical window size
   app.setMainWidget(&widget);
   widget.setCaption(my_title_string);
   widget.setMouseTracking(TRUE);

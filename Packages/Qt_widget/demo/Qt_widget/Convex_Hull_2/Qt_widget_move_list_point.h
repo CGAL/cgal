@@ -22,7 +22,7 @@
 #define CGAL_QT_WIDGET_MOVE_LIST_POINT_H
 
 #include <CGAL/IO/Qt_widget.h>
-#include <CGAL/IO/Qt_widget_tool.h>
+#include <CGAL/IO/Qt_widget_layer.h>
 
 #include <qobject.h>
 #include <qpopupmenu.h>
@@ -31,7 +31,7 @@
 #include <CGAL/squared_distance_2.h> 
 
 namespace CGAL {
-  class Qt_widget_movepoint_helper : public Qt_widget_tool
+  class Qt_widget_movepoint_helper : public Qt_widget_layer
   {
 	Q_OBJECT
   public:
@@ -50,24 +50,23 @@ class Qt_widget_move_list_point : public Qt_widget_movepoint_helper
 {
 public:
   typedef typename R::Point_2		Point;
-  typedef typename R::FT		FT;
-  bool					on_first,   //if the user choosed something from the popup
-					wasrepainted;//true when the widget was repainted
-  Point					old_point,  //the last point stored in the list
-					current_v;  //the current point
-  QPopupMenu				*popup1;
-  QCursor				cursor;
-  std::list<Point>*			l_of_p;
+  typedef typename R::FT        FT;
+  bool					                on_first,   //if the user choosed something from the popup
+					                      wasrepainted;//true when the widget was repainted
+  Point					                old_point,  //the last point stored in the list
+					                      current_v;  //the current point
+  QPopupMenu				            *popup1;
+  QCursor				                cursor;
+  std::list<Point>*			        l_of_p;
+  bool                          first_time;
 
   //constructor
-  Qt_widget_move_list_point(std::list<Point>* l, const QCursor c=QCursor(Qt::crossCursor)) :
-      on_first(FALSE), cursor(c), l_of_p(l)
-  {
-    popup1 = new QPopupMenu( widget, 0);
-    popup1->insertItem("Delete Point", this, SLOT(delete_point()));
-    popup1->insertItem("Move Point", this,  SLOT(move_point()));
-  };
+  Qt_widget_move_list_point(const QCursor c=QCursor(Qt::crossCursor)) :
+      on_first(FALSE), cursor(c), first_time(true) {};
   
+  void pass_the_structure(std::list<Point>* l) {
+    l_of_p = l;
+  }
 private:
   void widget_repainted(){
       wasrepainted = TRUE;
@@ -82,7 +81,8 @@ private:
     if(e->button() == Qt::RightButton)
     {
       if(l_of_p->empty())
-	QMessageBox::warning( widget, "There are no points in the list!", "Generate some points first or add it with the input tool before using this tool!");
+	      QMessageBox::warning( widget, "There are no points in the list!",
+        "Generate some points first or add it with the input tool before using this tool!");
       else{
 	FT
 	  x=static_cast<FT>(widget->x_real(e->x())),
@@ -124,8 +124,8 @@ private:
     if(on_first)
     {
       FT
-	x=static_cast<FT>(widget->x_real(e->x())),
-	y=static_cast<FT>(widget->y_real(e->y()));
+	      x=static_cast<FT>(widget->x_real(e->x())),
+	      y=static_cast<FT>(widget->y_real(e->y()));
 			
       *widget << CGAL::GREEN << CGAL::PointSize (5) << CGAL::PointStyle (CGAL::DISC);
       if(!wasrepainted)
@@ -137,14 +137,21 @@ private:
       old_point = Point(x, y);
     }
   };
-
-  void attaching()
+  
+  void activating()
   {
     oldcursor = widget->cursor();
     widget->setCursor(cursor);
+    if (first_time)
+    {
+      popup1 = new QPopupMenu( widget, 0);
+      popup1->insertItem("Delete Point", this, SLOT(delete_point()));
+      popup1->insertItem("Move Point", this,  SLOT(move_point()));
+      first_time = false;
+    }
   };
   
-  void detaching()
+  void deactivating()
   {
     widget->setCursor(oldcursor);
   };
