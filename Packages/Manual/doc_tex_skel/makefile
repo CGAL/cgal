@@ -305,11 +305,29 @@ unzip_ps:
 	gunzip use_of_stl/use_of_stl*.ps.gz
 #	gunzip general/general*.ps.gz
 
+dest_unzip_ps:
+	gunzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4/kernel.ps.gz
+	gunzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter/kernel.ps.gz
+	gunzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4/basic_lib.ps.gz
+	gunzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter/basic_lib.ps.gz
+	gunzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4/deprecated_basic_lib.ps.gz
+	gunzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter/deprecated_basic_lib.ps.gz
+	gunzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4/support_lib.ps.gz
+	gunzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter/support_lib.ps.gz
+	gunzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4/installation*.ps.gz
+	gunzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter/installation*.ps.gz
+	gunzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4/use_of_stl*.ps.gz
+	gunzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter/use_of_stl*.ps.gz
+#	gunzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4/general_intro.ps.gz
+#	gunzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter/general_intro.ps.gz
+
 dest_zip_ps:
 	gzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4/kernel.ps
 	gzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter/kernel.ps
 	gzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4/basic_lib.ps
 	gzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter/basic_lib.ps
+	gzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4/deprecated_basic_lib.ps
+	gzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter/deprecated_basic_lib.ps
 	gzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4/support_lib.ps
 	gzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_letter/support_lib.ps
 	gzip -f $(DOC_PS_DESTINATION)/doc_ps/doc_ps_a4/installation*.ps
