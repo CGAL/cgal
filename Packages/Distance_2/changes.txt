@@ -1,8 +1,11 @@
+2.10 (4 September 2003)
+* More bug fixes
+
 2.9 (12 August 2003)
-Even more bugfixes.
+* Even more bugfixes.
 
 2.8 (7 August 2003)
-Bug fixes after the first step ==:>-
+* Bug fixes after the first step ==:>-
 
 2.7 (7 August 2003)
 A first step towards the extendible Kernel:
