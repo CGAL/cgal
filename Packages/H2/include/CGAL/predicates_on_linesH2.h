@@ -21,7 +21,6 @@
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
  
-
 #ifndef CGAL_PREDICATES_ON_LINESH2_H
 #define CGAL_PREDICATES_ON_LINESH2_H
 
@@ -31,7 +30,6 @@
 #include <CGAL/basic_constructionsH2.h>
 
 CGAL_BEGIN_NAMESPACE
-
 
 template <class R>
 CGAL_KERNEL_INLINE
@@ -43,7 +41,6 @@ compare_x(const PointH2<R>& p,
   PointH2<R> ip = gp_linear_intersection( l1, l2 );
   return compare_x( p, ip );
 }
-
 
 template <class R>
 CGAL_KERNEL_INLINE
@@ -57,6 +54,17 @@ compare_x(const LineH2<R>& l1,
   PointH2<R> hip = gp_linear_intersection( h1, h2 );
   return compare_x( lip, hip );
 }
+
+template < class R >
+inline
+Comparison_result
+compare_x(const Line_2<R> &l,
+	  const Line_2<R> &h1,
+	  const Line_2<R> &h2)
+{
+    return compare_x(l, h1, l, h2);
+}
+
 template <class R>
 CGAL_KERNEL_INLINE
 Comparison_result
@@ -67,7 +75,6 @@ compare_y(const PointH2<R>& p,
   PointH2<R> ip = gp_linear_intersection( l1, l2 );
   return compare_y( p, ip );
 }
-
 
 template <class R>
 CGAL_KERNEL_INLINE
@@ -80,6 +87,16 @@ compare_y(const LineH2<R>& l1,
   PointH2<R> lip = gp_linear_intersection( l1, l2 );
   PointH2<R> hip = gp_linear_intersection( h1, h2 );
   return compare_y( lip, hip );
+}
+
+template < class R >
+inline
+Comparison_result
+compare_y(const Line_2<R> &l,
+	  const Line_2<R> &h1,
+	  const Line_2<R> &h2)
+{
+    return compare_y(l, h1, l, h2);
 }
 
 template <class R>
@@ -110,7 +127,6 @@ compare_y_at_x(const PointH2<R>& p,
                const LineH2<R>& h2)
 { return CGAL_NTS compare(h1.y_at_x( p.x() ), h2.y_at_x( p.x() )); }
 
-
 template <class R>
 CGAL_KERNEL_INLINE
 Comparison_result
@@ -118,7 +134,6 @@ compare_y_at_x(const LineH2<R>& l1,
                const LineH2<R>& l2,
                const LineH2<R>& h)
 { return compare_y_at_x( gp_linear_intersection( l1, l2 ), h); }
-
 
 template <class R>
 CGAL_KERNEL_INLINE
@@ -166,7 +181,6 @@ compare_x_at_y(const LineH2<R>& l1,
                const LineH2<R>& h)
 { return compare_x_at_y( gp_linear_intersection( l1, l2 ), h); }
 
-
 template <class R>
 CGAL_KERNEL_INLINE
 Comparison_result
@@ -177,6 +191,5 @@ compare_x_at_y(const LineH2<R>& l1,
 { return compare_x_at_y( gp_linear_intersection( l1, l2 ), h1, h2 ); }
 
 CGAL_END_NAMESPACE
-
 
 #endif  // CGAL_PREDICATES_ON_LINESH2_H

@@ -1,9 +1,10 @@
-2.31   (?? June 2001)
+2.31   (20 June 2001)
 - fixed bug in centroid
 - change #include order.
 - Add lexicographically_yx_larger_or_equal() and
   lexicographically_xy_larger_or_equal().
 - Don't #include <CGAL/misc.h>.
+- Add missing compare_x and compare_y.
 
 2.30   (19 June 2001)
 - added centroid
