@@ -17,10 +17,10 @@ CXXFLAGS = -I../../include \
            $(CGAL_CXXFLAGS) \
 	   -g -Wall
            # -O2 -xtarget=ultra2
-	   #-Winline
-	   #-mcpu=pentiumpro
-	   #-mcpu=ultrasparc -mtune=ultrasparc
-	   #-fomit-frame-pointer
+	   # -Winline
+	   # -mcpu=pentiumpro
+	   # -mcpu=ultrasparc -mtune=ultrasparc
+	   # -fomit-frame-pointer
 	   # -fprofile-arcs -ftest-coverage
 
 #---------------------------------------------------------------------#
