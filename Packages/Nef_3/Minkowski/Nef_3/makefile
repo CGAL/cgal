@@ -13,7 +13,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-MY_DIR = /home/hachenb/CGAL
+MY_DIR = /KM/usr/hachenb/CGAL2
 HOME = /KM/guests/granados
 POLY = $(MY_DIR)/Polynomial/include
 LOCAL = $(MY_DIR)/local/include

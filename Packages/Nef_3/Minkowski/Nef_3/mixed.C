@@ -12,6 +12,7 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/convex_hull_3.h> 
 #include <CGAL/Nef_polyhedron_3.h>
+#include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 
 using namespace std;
 typedef leda_integer                                          NT;
@@ -90,6 +91,6 @@ int main( int argc, char **argv) {
       nef.push_back(Temp.join(nef.front()));
       nef.pop_front();
     }
-    nef.front().dump(false, std::cout);
+    std::cout << nef.front();
     return 0;
 }
