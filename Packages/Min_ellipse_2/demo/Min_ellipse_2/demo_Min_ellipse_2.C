@@ -32,6 +32,9 @@
 // contain all points nor be the smallest one.
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+// needs LEDA
+#ifdef CGAL_USE_LEDA
+
 // includes
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
@@ -94,5 +97,21 @@ main( int, char**)
 
     return( 0);
 }
+
+#else
+// no LEDA available
+
+#include <iostream>
+
+int
+main( int, char**)
+{
+    using namespace std;
+
+    cerr << "This demo program needs LEDA!" << endl;
+
+    return( 0);
+}
+#endif // CGAL_USE_LEDA
 
 // ===== EOF ==================================================================
