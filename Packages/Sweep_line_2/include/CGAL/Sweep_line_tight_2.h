@@ -810,7 +810,8 @@ protected:
   /*! An iterator of the  status line that is used as a hint for inserts. */
   StatusLineIter m_status_line_insert_hint;
 
-  /*! A an indication wether the hint can be used to erase from the status line */
+  /*! A an indication wether the hint can be used to erase from the status
+    line */
   bool m_use_hint_for_erase;
 
   /*! a counter the is used to assign unique ids to the curves. */
@@ -885,7 +886,8 @@ Init(CurveInputIterator begin, CurveInputIterator end)
                 << xcurves.size() << " curves." << std::endl;
       )
 
-      for (typename std::list<X_monotone_curve_2>::iterator i = xcurves.begin();
+      for (typename std::list<X_monotone_curve_2>::iterator i =
+             xcurves.begin();
 	   i != xcurves.end() ; ++i )
       {
 	m_xcurves.push_back(*i);
@@ -983,8 +985,8 @@ FirstPass()
       continue;
     }
 
-    // if this is the first curve, we look for its place in the status line, otherwise
-    // we use the previoussearch as a hint
+    // if this is the first curve, we look for its place in the status line,
+    // otherwise we use the previoussearch as a hint
     StatusLineIter slIter;
     if ( first_time ) {
       slIter = m_statusLine->lower_bound(*rightIter);
@@ -1275,8 +1277,9 @@ HandleRightCurves()
       PRINT_INSERT(tmp1);
     )
 
-    StatusLineIter slIter = m_statusLine->insert(
-                            m_status_line_insert_hint, *(m_currentEvent->rightCurvesBegin()));
+    StatusLineIter slIter =
+      m_statusLine->insert(m_status_line_insert_hint,
+                           *(m_currentEvent->rightCurvesBegin()));
     m_status_line_insert_hint = slIter; ++m_status_line_insert_hint;
 
     SL_DEBUG(PrintStatusLine();)
@@ -1338,7 +1341,8 @@ HandleRightCurves()
 
     PRINT_INSERT(*firstOne);
 
-    StatusLineIter slIter = m_statusLine->insert(m_status_line_insert_hint, *firstOne);
+    StatusLineIter slIter =
+      m_statusLine->insert(m_status_line_insert_hint, *firstOne);
 
     SL_DEBUG(PrintStatusLine();)
     if ( slIter != m_statusLine->begin() )

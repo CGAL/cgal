@@ -262,7 +262,7 @@ protected:
     typedef  SweepLineTraits_2                          Traits;
     typedef  Point_plus_                                Point_plus;
     typedef  X_curve_plus_                              X_curve_plus;
-    typedef  typename Traits::X_monotone_curve_2                 X_monotone_curve_2; 
+    typedef  typename Traits::X_monotone_curve_2        X_monotone_curve_2; 
     typedef  typename Traits::Point_2                   Point_2;
     typedef  Intersection_point_node                    Self;
     typedef  std::vector<Curve_node_>                   Curve_node_container;

@@ -395,11 +395,10 @@ public:
         }
     }
 
-    l.push_back(X_monotone_curve_2(last_cut,p2)); //push the residue (last cut to end)
+    //push the residue (last cut to end)
+    l.push_back(X_monotone_curve_2(last_cut,p2));
 
-
-    CGAL_assertion(p2==cv.end());
-    
+    CGAL_assertion(p2==cv.end()); 
   }
 
   void curve_split(const X_monotone_curve_2& cv,
