@@ -130,7 +130,7 @@ public:
       l2 = l2.reversal();
       
     //leda function :
-    return (Comparison_result)CGAL_LEDA_SCOPE::cmp_segments_at_xcoord(l1,l2,p); 
+    return (Comparison_result)CGAL_LEDA_SCOPE::cmp_segments_at_xcoord(l1,l2,p);
 
   }
   
@@ -171,7 +171,8 @@ public:
     Segment l2(*pit,*after);
     
     //leda func :
-    Comparison_result r = (Comparison_result)CGAL_LEDA_SCOPE::cmp_segments_at_xcoord(l1,l2,p);
+    Comparison_result r = 
+      (Comparison_result)CGAL_LEDA_SCOPE::cmp_segments_at_xcoord(l1,l2,p);
     
     if ( r != EQUAL)
       return r;
@@ -226,7 +227,8 @@ public:
       
     Segment l2(*pit,*after);
       
-    Comparison_result r = (Comparison_result)CGAL_LEDA_SCOPE::cmp_segments_at_xcoord(l1,l2,p);
+    Comparison_result r = 
+      (Comparison_result)CGAL_LEDA_SCOPE::cmp_segments_at_xcoord(l1,l2,p);
       
     if ( r != EQUAL) {
       return r;
@@ -553,7 +555,8 @@ public:
     typename X_curve::const_iterator i2s = c2.begin();
     typename X_curve::const_iterator i2t = i2s; ++i2t;
 
-    int number_to_left = 0; //increment this variable if curve starts left of pt
+    //increment this variable if curve starts left of pt
+    int number_to_left = 0; 
 
     if (CGAL_LEDA_SCOPE::compare(*i1s, pt) <= 0) {
       //increment to nearest from the left of pt
@@ -977,16 +980,7 @@ protected:
 
 };
 
-
-
 CGAL_END_NAMESPACE
 
-
-
-
-#endif
-
-
-
-
-
+#endif // CGAL_ARR_LEDA_POLYLINE_TRAITS_H
+// EOF
