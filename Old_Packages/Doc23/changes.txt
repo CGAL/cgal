@@ -1,3 +1,7 @@
+2.22    (29 May 2001)
+- Fix typo "Cricle".
+- Add Compare_distance_[23].
+
 2.21    (22 May 2001)
 - fixed typo in Kernel_Object_3
 - removed Construct_point_xy_2, Construct_point_xz_2 and Construct_point_yz_2

@@ -188,6 +188,7 @@ public:
     CGAL_Filter_pred(Compare_y_2, compare_y_2_object)
     CGAL_Filter_pred(Compare_xy_2, compare_xy_2_object)
     CGAL_Filter_pred(Compare_y_at_x_2, compare_y_at_x_2_object)
+    CGAL_Filter_pred(Compare_distance_2, compare_distance_2_object)
     CGAL_Filter_pred(Counterclockwise_in_between_2,
 	counterclockwise_in_between_2_object)
     CGAL_Filter_pred(Leftturn_2, leftturn_2_object)
@@ -285,6 +286,7 @@ public:
     CGAL_Filter_pred(Compare_z_3, compare_z_3_object)
     CGAL_Filter_pred(Compare_xy_3, compare_xy_3_object)
     CGAL_Filter_pred(Compare_xyz_3, compare_xyz_3_object)
+    CGAL_Filter_pred(Compare_distance_3, compare_distance_3_object)
     CGAL_Filter_pred(Collinear_3, collinear_3_object)
     CGAL_Filter_pred(Coplanar_3, coplanar_3_object)
     CGAL_Filter_pred(Coplanar_orientation_3, coplanar_orientation_3_object)
