@@ -348,11 +348,12 @@
 
 \newcommand{\ccInclude}[1]{\lcRawHtml{<I>##include &lt;}%
     \lciIfDefined{\lciHeaderPath}%
-    {\lcRawHtml{<A HREF="}\newcommand{\lciDefLocalHtmlName}[1]{%
+    {\lcRawHtml{<A HREF="}\lciIfRelativeHeaderPath{\lciOutputUppath}{}%
+      \newcommand{\lciDefLocalHtmlName}[1]{%
         \newcommand{\lciLocalHtmlName}{\lcAsciiToHtml{##X1}}}%
       \lciDefLocalHtmlName\lciHeaderPath\lciLocalHtmlName%
       \lcAsciiToHtml{#C1}\lcRawHtml{">}\lcAsciiToHtml{#C1}\lcRawHtml{</A>}}%
-    {\ccHtmlNoLinks\lcAsciiToHtml{#C1}\gdef{\lciIfHtmlLinks}{\lcTrue}}%
+    {\lcRawHtml{<!NoLinkBegin>}\lcAsciiToHtml{#C1}\lcRawHtml{<!NoLinkEnd>}}%
     \lcRawHtml{&gt;</I>}%
 
 }
@@ -509,6 +510,7 @@
 
 % #1 == token describing the category (Concept, Class ...)
 \newenvironment{ccRefDeclaration}[1]{%
+                   \lcNoLinkSync
                    \def\ccRefCategory{#C1}%
                    \def\ccPureRefScope{}%
                    \def\ccRefScope{}%
