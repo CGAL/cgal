@@ -72,6 +72,10 @@ private:
                 "Group {\n"
                 "    children [\n"
                 "        Shape {\n"
+                "          appearance DEF A1 Appearance {\n"
+                "            material Material {\n"
+                "              diffuseColor .6 .5 .9\n"
+                "            }\n         }\n"
                 "            appearance\n"
                 "                Appearance {\n"
                 "                    material DEF Material Material {}\n"
@@ -121,7 +125,7 @@ operator<<(VRML_2_ostream& os,
            const Tetrahedron_3<R > &t)
 {
   const char *Indent = "                                    ";
-  os.os() << "        Group {\n"
+  os <<      "        Group {\n"
              "            children [\n"
              "                Shape {\n"
              "                    appearance\n"
@@ -157,7 +161,7 @@ operator<<(VRML_2_ostream& os,
              "                        } #IndexedFaceSet\n"
              "                } #Shape\n"
              "            ] #children\n"
-             "        } #Group" << std::endl;
+             "        } #Group\n";
   return os;
 }
 
@@ -178,7 +182,7 @@ operator<<(VRML_2_ostream& os,
            const Point_3<R > &p)
 {
   const char *Indent = "                                    ";
-  os.os() << "        Group {\n"
+  os <<      "        Group {\n"
              "            children [\n"
              "                Shape {\n"
              "                    geometry\n"
@@ -214,7 +218,7 @@ operator<<(VRML_2_ostream& os,
            const Triangle_3<R > &t)
 {
   const char *Indent = "                                    ";
-  os.os() << "        Group {\n"
+  os <<      "        Group {\n"
              "            children [\n"
              "                Shape {\n"
              "                    geometry\n"
@@ -256,7 +260,7 @@ operator<<(VRML_2_ostream& os,
            const Segment_3<R > &s)
 {
   const char *Indent = "                                    ";
-  os.os() << "        Group {\n"
+  os <<      "        Group {\n"
              "            children [\n"
              "                Shape {\n"
              "                    geometry\n"
@@ -274,6 +278,44 @@ operator<<(VRML_2_ostream& os,
   os << "                } #Shape\n"
         "            ] #children\n"
         "        } #Group\n";
+
+  return os;
+}
+
+CGAL_END_NAMESPACE
+
+#endif // CGAL_IO_VRML_2_SEGMENT_3
+#endif // CGAL_SEGMENT_3_H
+
+#ifdef CGAL_SPHERE_3_H
+#ifndef CGAL_IO_VRML_2_SPHERE_3
+#define CGAL_IO_VRML_2_SPHERE_3
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R >
+VRML_2_ostream&
+operator<<(VRML_2_ostream& os,
+           const Sphere_3<R > &s)
+{
+  const char *Indent = "                                    ";
+  os <<      "        Group {\n"
+             "            children [\n"
+             "              Transform {\n"
+             "                translation ";
+  os <<      CGAL::to_double(s.center().x()) << " " 
+     <<      CGAL::to_double(s.center().y()) << " "
+     <<      CGAL::to_double(s.center().z()) << "\n";
+  os <<      "                children Shape {\n"
+             "                    appearance USE A1\n"
+             "                    geometry\n"
+             "                        Sphere { "
+             "radius ";
+  os <<      sqrt(CGAL::to_double(s.squared_radius())) <<" }\n";
+  os <<      "                } #children Shape\n"
+             "              } # Transform\n"
+             "            ] #children\n"
+             "        } #Group\n";
 
   return os;
 }
