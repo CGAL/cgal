@@ -70,9 +70,9 @@ int main(int argc, char* argv[])
   std::ifstream iFile("data/points",std::ios::in);
 
   if (! iFile) {
-    std::cout <<"A file named points in directory data 
-            containing points should be provided," << std::endl
-	 <<"see README"<<std::endl;
+    std::cout <<"A file named points in directory data"
+	      <<" containing points should be provided," << std::endl
+	      <<"see README"<<std::endl;
     return 1;
   }
 
@@ -103,7 +103,8 @@ int main(int argc, char* argv[])
     std::cout <<"                     OUTSIDE_AFFINE_HULL" << std::endl;
 
   std::ofstream oFileT("data/output",std::ios::out);
-  std::cout <<"                writing file data/output" << std::endl << std::flush;
+  std::cout <<"                writing file data/output" << std::endl 
+	    << std::flush;
   oFileT << T;
 
   return 1;

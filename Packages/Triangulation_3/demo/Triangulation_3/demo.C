@@ -170,8 +170,8 @@ int main(int argc, char* argv[])
   std::ifstream iFile("data/points",std::ios::in);
 
   if (! iFile) {
-    std::cout <<"A file named points in directory data 
-                 containing points should be provided," << std::endl 
+    std::cout <<"A file named points in directory data" 
+              <<" containing points should be provided," << std::endl 
 	      <<"see README"<<std::endl;
     return 1;
   }
