@@ -4,6 +4,8 @@ Version 3.6.1 (October 7 1999)
 - Changed name of Direction::vector to Direction::to_vector
 - Changed targets in the makefile (using .PHONY)
 - Cosmetic changes (notably some typename R::FT)
+BUG: Assertion fails in _test_cls_line:102, but I have to submit it
+TODO: Correct it (emergency!)
 
 Version 3.6 (September 28 1999)
 - Changed printing of Aff_transformations to look like C2
