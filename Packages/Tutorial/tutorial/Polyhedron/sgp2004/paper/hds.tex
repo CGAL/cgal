@@ -38,13 +38,13 @@ several reasons:
 
 %% In the \poly, the \hds\ is interfaced and indirectly manipulated
 %% by the \poly. Since \hds\ is the internal representation of the
-%% connectivity structure, primitives travesal of the \poly\ is
+%% connectivity structure, primitives traversal of the \poly\ is
 %% supported by the \hds . As a container, the \hds\ provides 
 %% iterators of the primitives, i.e. vertices, halfedges and faces.
 %% This primitive iterators visit the primitives on the storage
 %% order of the internal list or vector. As a connected graph,
 %% the \hds\ provides circulators around vertices or faces.
-%% The circulator visits the halfedges ajacent to the vertex
+%% The circulator visits the halfedges adjacent to the vertex
 %% in CW order and the face in CCW order. Details of using iterators
 %% and circulators can be found at \ref{sec:??}.
 
@@ -55,7 +55,7 @@ several reasons:
 %% halfedge respectively. The vertex() returns the handle of the 
 %% incidence vertex and the face() returns the handle of the 
 %% incidence face. The next() and opposite() are mandatory and others
-%% are optionally support. Though in this tutorial, a compelete
+%% are optionally support. Though in this tutorial, a complete
 %% support is assumed. For how to define a partially support \hds ,
 %% readers should refer to \cite{cgalmanul}.   
 

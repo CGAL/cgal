@@ -65,7 +65,7 @@ Point operator()( const Vertex& v) const {
 }};
 \end{lstlisting}
 
-We are ready to assemble the subdivision program. We are exloiting
+We are ready to assemble the subdivision program. We are exploiting
 that newly created items are appended at the end of the item
 sequences, so that we can keep valid iterators that tell us where the
 old items end and where the new items start. We use this to be as
@@ -114,7 +114,7 @@ We selected an instance of \cgalpoly\ that was closely matching the
 implementation used in \openmesh, which entails the array-storage
 version of halfedge data structure, no plane equation in facets, and
 \CodeFmt{float} coordinates in points. \openmesh\ uses the specialized
-traingle-mesh data structure where our structure remains the general
+triangle-mesh data structure where our structure remains the general
 polygonal mesh. We only exploited the triangle nature of our mesh in
 the centroid computation, and as it turned out, this was not crucial.
 What is crucial is the size of the structure. For the sake of testing
@@ -135,7 +135,7 @@ currently limited example program. Here are the numbers.
 \end{tabular}
 
 The result is clearly encouraging for the \cgal\ implementation, but
-as alrady said, it should be interpreted cautiously. For example, the
+as already said, it should be interpreted cautiously. For example, the
 \openmesh\ implementation was obviously running into swap problems in
 the second refinement step, which is not expected when studying the
 example program and reading the manual about the default space

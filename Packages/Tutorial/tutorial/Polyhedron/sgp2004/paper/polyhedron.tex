@@ -8,7 +8,7 @@ The design of \cgalpoly\ consists of four components:
 data structures that describes the types for geometric primitives,
 predicates and constructions. Relevant for us is the point type
 defined here. A \cgal\ geometric kernel is a valid model for this
-geomtric traits concept.
+geometric traits concept.
 
 \paragraph*{Items}  are collectively the  vertices, halfedges, and
 facets. They contain the pointers referring to incident items (see
@@ -51,7 +51,7 @@ the circular sequence of halfedges around a vertex and for halfedges
 around a facet. Circulators are a new concept in \cgal\ that
 corresponds closely to iterators, but is tailored for circular
 sequences.  The main difference to iterators is the lack of a
-past-the-end position that leads to the typical ideom of a
+past-the-end position that leads to the typical idiom of a
 do-while-loop instead of the usual while-loop for iterators.  Let us
 write a small function rendering a polyhedral surface with convex
 facets in OpenGL with double coordinates in non-reference counted

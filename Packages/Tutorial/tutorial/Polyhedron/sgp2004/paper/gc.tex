@@ -64,20 +64,20 @@ specializations for the number types \CodeFmt{double} and
 here~\cite{cgal:g-gmpal-96}. The runtimes are slow, but still feasible
 for huge meshes. In contrast, when we run the algorithm with the
 \CodeFmt{double} number type, it becomes fast enough to be considered
-for interactive purposes, for example, selecting a good view frustrum
+for interactive purposes, for example, selecting a good view frustum
 in a viewer. We compared the resulting spheres of the algorithm
 running with the exact and with the floating-point number type. In all
 cases the sphere center coordinates and the radius where exactly the
 same up to the seven digits after the decimal. We want to point out
 the running time anomaly in above table---the smaller lion vase needs
-longer than the larger david sculpture---which is o.k. for this data
+longer than the larger David sculpture---which is o.k. for this data
 sensitive algorithm. It is worst-case linear time, but depends on a
 heuristic to be really fast.
 
 
 % \begin{tabular}{l|ll}
 %   \textbf{smallest enclosing sphere} & \texttt{double} & exact
-%     \texttt{qmpq} (non opt.)\\\hline
+%     \texttt{gmpq} (non opt.)\\\hline
 %   Bunny     & 0.02 &  14 \\
 %   Lion vase & 0.19 & 396 \\
 %   David     & 0.12 & 215 \\
@@ -95,7 +95,7 @@ exact smallest enclosing sphere, however, also far slower than the
 
 In fact we are more interested in the convex hull as a preprocessing
 to another optimization algorithm, the width of a point set. The
-minimum width is obtained by two parallel planes of smalles possible
+minimum width is obtained by two parallel planes of smallest possible
 distance that enclose all point between them. The printing time for
 three-dimensional stereo-lithographic printer is proportional to the
 height of the object printed. Minimizing this height can be done by
