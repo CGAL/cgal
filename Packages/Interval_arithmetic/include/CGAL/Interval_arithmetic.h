@@ -41,7 +41,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Interval_arithmetic/_FPU.h>	// FPU rounding mode functions.
 
-#ifdef _MSC_VER
+#if defined _MSC_VER || defined __CYGWIN__
 extern "C" { double CGAL_ms_sqrt(double); }
 #endif
 
@@ -271,7 +271,7 @@ sqrt (const Interval_nt_advanced & d)
   // sqrt([-a,+b]) => [0;sqrt(+b)] => assumes roundoff error.
   // sqrt([-a,-b]) => [0;sqrt(-b)] => assumes user bug (unspecified result).
   FPU_set_cw(FPU_cw_down);
-#ifdef _MSC_VER
+#if defined _MSC_VER || defined __CYGWIN__
   // sqrt(double) on M$ is buggy.
   double i = (d._inf>0.0) ? CGAL_IA_FORCE_TO_DOUBLE(CGAL_ms_sqrt(d._inf)) : 0.0;
   FPU_set_cw(FPU_cw_up);
@@ -578,12 +578,12 @@ max (const Interval_nt & d, const Interval_nt & e)
 
 inline
 Interval_nt
-operator||(const Interval_nt & d, const Interval_nt & e)
+operator|| (const Interval_nt & d, const Interval_nt & e)
 { return ((Interval_nt_advanced) d) || (Interval_nt_advanced) e; }
 
 inline
 Interval_nt
-operator&&(const Interval_nt & d, const Interval_nt & e)
+operator&& (const Interval_nt & d, const Interval_nt & e)
 { return ((Interval_nt_advanced) d) && (Interval_nt_advanced) e; }
 
 
