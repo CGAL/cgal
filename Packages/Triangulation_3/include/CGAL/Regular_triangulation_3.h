@@ -43,36 +43,42 @@ class Regular_triangulation_3
   friend std::istream& operator >> CGAL_NULL_TMPL_ARGS
   (std::istream& is, Triangulation_3<Gt,Tds> &tr);
 
+  typedef Regular_triangulation_3<Gt, Tds>      Self;
+  typedef Triangulation_3<Gt,Tds>               Tr_Base;
 public:
   typedef Tds                                   Triangulation_data_structure;
   typedef Gt                                    Geom_traits;
-  typedef Regular_triangulation_3<Gt, Tds>      Self;
 
-  typedef typename Triangulation_3<Gt,Tds>::Vertex_handle       Vertex_handle;
-  typedef typename Triangulation_3<Gt,Tds>::Cell_handle         Cell_handle;
-  typedef typename Triangulation_3<Gt,Tds>::Vertex              Vertex;
-  typedef typename Triangulation_3<Gt,Tds>::Cell                Cell;
-  typedef typename Triangulation_3<Gt,Tds>::Facet               Facet;
-  typedef typename Triangulation_3<Gt,Tds>::Edge                Edge;
+  typedef typename Tr_Base::Vertex_handle       Vertex_handle;
+  typedef typename Tr_Base::Cell_handle         Cell_handle;
+  typedef typename Tr_Base::Vertex              Vertex;
+  typedef typename Tr_Base::Cell                Cell;
+  typedef typename Tr_Base::Facet               Facet;
+  typedef typename Tr_Base::Edge                Edge;
 
-  typedef typename Triangulation_3<Gt,Tds>::Locate_type         Locate_type;
-  typedef typename Triangulation_3<Gt,Tds>::Cell_iterator       Cell_iterator;
-  typedef typename Triangulation_3<Gt,Tds>::Facet_iterator      Facet_iterator;
-  typedef typename Triangulation_3<Gt,Tds>::Edge_iterator       Edge_iterator;
+  typedef typename Tr_Base::Locate_type         Locate_type;
+  typedef typename Tr_Base::Cell_iterator       Cell_iterator;
+  typedef typename Tr_Base::Facet_iterator      Facet_iterator;
+  typedef typename Tr_Base::Edge_iterator       Edge_iterator;
 
-  typedef typename Gt::Weighted_point                           Weighted_point;
+  typedef typename Tr_Base::Finite_vertex_iterator Finite_vertex_iterator;
+  typedef typename Tr_Base::Finite_cell_iterator   Finite_cell_iterator;
+  typedef typename Tr_Base::Finite_facet_iterator  Finite_facet_iterator;
+  typedef typename Tr_Base::Finite_edge_iterator   Finite_edge_iterator;
+
+  typedef typename Gt::Weighted_point              Weighted_point;
 
   Regular_triangulation_3()
-    : Triangulation_3<Gt,Tds>()
+    : Tr_Base()
   {}
   
   Regular_triangulation_3(const Gt & gt)
-    : Triangulation_3<Gt,Tds>(gt)
+    : Tr_Base(gt)
   {}
   
   // copy constructor duplicates vertices and cells
   Regular_triangulation_3(const Regular_triangulation_3 & rt)
-      : Triangulation_3<Gt,Tds>(rt)
+      : Tr_Base(rt)
   { 
       CGAL_triangulation_postcondition( is_valid() );  
   }
@@ -419,7 +425,7 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
 	{
 	  // if the 2d triangulation is Delaunay, the 3d
 	  // triangulation will be Delaunay
-	  return Triangulation_3<Gt,Tds>::insert_outside_affine_hull(p,v); 
+	  return Tr_Base::insert_outside_affine_hull(p,v); 
 	}
       }
     }//dim 2
@@ -480,7 +486,7 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
       case VERTEX:
 	return c->vertex(li);
       case OUTSIDE_AFFINE_HULL:
-	return Triangulation_3<Gt,Tds>::insert_outside_affine_hull(p,v); 
+	return Tr_Base::insert_outside_affine_hull(p,v); 
       case FACET:
       case CELL:
 	// impossible in dimension 1
@@ -491,7 +497,7 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
     {
       // temporary : will only work for non degenerated dimensions
       // (only for the first 4 points if they form a true tetrahedron)
-      return Triangulation_3<Gt,Tds>::insert(p,start,v);
+      return Tr_Base::insert(p,start,v);
     }
   }
 }

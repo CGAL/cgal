@@ -49,6 +49,7 @@ class Delaunay_triangulation_3 : public Triangulation_3<Gt,Tds>
   (std::istream& is, Triangulation_3<Gt,Tds> &tr);
 
   typedef Delaunay_triangulation_3<Gt, Tds> Self;
+  typedef Triangulation_3<Gt,Tds>           Tr_Base;
 public:
   typedef Tds Triangulation_data_structure;
   typedef Gt  Geom_traits;
@@ -65,21 +66,26 @@ public:
   typedef typename Gt::Direction_3   Direction;
   typedef typename Gt::Object_3      Object;
 
-  typedef typename Triangulation_3<Gt,Tds>::Cell_handle   Cell_handle;
-  typedef typename Triangulation_3<Gt,Tds>::Vertex_handle Vertex_handle;
+  typedef typename Tr_Base::Cell_handle   Cell_handle;
+  typedef typename Tr_Base::Vertex_handle Vertex_handle;
 
-  typedef typename Triangulation_3<Gt,Tds>::Cell   Cell;
-  typedef typename Triangulation_3<Gt,Tds>::Vertex Vertex;
-  typedef typename Triangulation_3<Gt,Tds>::Facet  Facet;
-  typedef typename Triangulation_3<Gt,Tds>::Edge   Edge;
+  typedef typename Tr_Base::Cell   Cell;
+  typedef typename Tr_Base::Vertex Vertex;
+  typedef typename Tr_Base::Facet  Facet;
+  typedef typename Tr_Base::Edge   Edge;
 
-  typedef typename Triangulation_3<Gt,Tds>::Cell_circulator Cell_circulator;
-  typedef typename Triangulation_3<Gt,Tds>::Cell_iterator   Cell_iterator;
-  typedef typename Triangulation_3<Gt,Tds>::Facet_iterator  Facet_iterator;
-  typedef typename Triangulation_3<Gt,Tds>::Edge_iterator   Edge_iterator;
-  typedef typename Triangulation_3<Gt,Tds>::Vertex_iterator Vertex_iterator;
+  typedef typename Tr_Base::Cell_circulator Cell_circulator;
+  typedef typename Tr_Base::Cell_iterator   Cell_iterator;
+  typedef typename Tr_Base::Facet_iterator  Facet_iterator;
+  typedef typename Tr_Base::Edge_iterator   Edge_iterator;
+  typedef typename Tr_Base::Vertex_iterator Vertex_iterator;
 
-  typedef typename Triangulation_3<Gt,Tds>::Locate_type Locate_type;
+  typedef typename Tr_Base::Finite_vertex_iterator Finite_vertex_iterator;
+  typedef typename Tr_Base::Finite_cell_iterator   Finite_cell_iterator;
+  typedef typename Tr_Base::Finite_facet_iterator  Finite_facet_iterator;
+  typedef typename Tr_Base::Finite_edge_iterator   Finite_edge_iterator;
+
+  typedef typename Tr_Base::Locate_type Locate_type;
 
 protected:
 
@@ -156,16 +162,16 @@ protected:
 public:
 
   Delaunay_triangulation_3()
-    : Triangulation_3<Gt,Tds>()
+    : Tr_Base()
   {}
   
   Delaunay_triangulation_3(const Gt & gt)
-    : Triangulation_3<Gt,Tds>(gt)
+    : Tr_Base(gt)
   {}
   
   // copy constructor duplicates vertices and cells
   Delaunay_triangulation_3(const Delaunay_triangulation_3 & tr)
-    : Triangulation_3<Gt,Tds>(tr)
+    : Tr_Base(tr)
   { 
     CGAL_triangulation_postcondition( is_valid() );  
   }
@@ -329,12 +335,12 @@ insert(const Point & p, Cell_handle start, Vertex_handle v)
       case OUTSIDE_AFFINE_HULL:
 	  // if the 2d triangulation is Delaunay, the 3d
 	  // triangulation will be Delaunay
-	return Triangulation_3<Gt,Tds>::insert_outside_affine_hull(p,v); 
+	return Tr_Base::insert_outside_affine_hull(p,v); 
       }
     }//dim 2
   default :
     // dimension <= 1
-    return Triangulation_3<Gt,Tds>::insert(p,start,v);
+    return Tr_Base::insert(p,start,v);
   }
 }// insert(p)
 

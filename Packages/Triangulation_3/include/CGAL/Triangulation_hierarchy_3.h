@@ -53,6 +53,9 @@ public:
   typedef typename Tr_Base::Vertex             Vertex;
   typedef typename Tr_Base::Locate_type        Locate_type;
   typedef typename Tr_Base::Finite_vertex_iterator    Finite_vertex_iterator;
+  typedef typename Tr_Base::Finite_cell_iterator      Finite_cell_iterator;
+  typedef typename Tr_Base::Finite_facet_iterator     Finite_facet_iterator;
+  typedef typename Tr_Base::Finite_edge_iterator      Finite_edge_iterator;
 
 private:
   // here is the stack of triangulations which form the hierarchy
