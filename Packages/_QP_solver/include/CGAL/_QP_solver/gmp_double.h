@@ -225,6 +225,19 @@ operator < ( const Double& d) const
     return ( m < d.m);
 }
 
+inline bool
+operator < (int i, const Double& d)
+{
+  Double ld(i);
+  return ld < d;
+}
+inline bool
+operator < (const Double& d, int i)
+{
+  Double rd(i);
+  return d < rd;
+}
+
 // greater
 inline
 bool
@@ -232,6 +245,20 @@ Double::
 operator > ( const Double& d) const
 {
     return ( d < *this);
+}
+
+inline bool
+operator > (int i, const Double& d)
+{
+  Double ld(i);
+  return ld > d;
+}
+
+inline bool
+operator > (const Double& d, int i)
+{
+  Double rd(i);
+  return d > rd;
 }
 
 // less equal
