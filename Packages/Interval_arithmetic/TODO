@@ -35,9 +35,6 @@ Concerning the new stuff:
 
 Concerning the code itself:
 ---------------------------
-- Move the script to ~IA/scripts/, and remove ~IA/examples/.
-  Maybe it's the occasion to change the name of the script.
-  filtered_predicates_generator.pl ?
 - Look at "mutable" stuff, Stroustrup, page 232.
 - Optimize is_valid():
   - do proper testing of all configurations.

@@ -1,6 +1,6 @@
 # Makefile for a CGAL package.
 
-.PHONY: doc package filters test example submit version tag
+.PHONY: doc package filters test submit version tag
 
 Package:=$(shell basename `cat CVS/Repository`)
 TAG_VERSION:=v$(shell echo $(VERSION) | sed -e "s/\./_/g")
@@ -9,7 +9,7 @@ WWW_base=/u/www/0/www/htdocs/files/equipes/prisme/CGAL/DR:/Members
 WWW_dir=$(WWW_base)/$(Package)
 TMP_file=/tmp/submit-mail
 
-package: doc filters example clean $(Package).tar.gz
+package: doc filters clean $(Package).tar.gz
 	@echo "-----------------------------------"
 	@echo "------------ Penser à: ------------"
 	@echo "-----------------------------------"
@@ -60,7 +60,7 @@ $(Package).tar.gz:
 	--exclude=TODO --exclude=tstlink1.C --exclude=tstlink2.C \
 	--exclude=tst6.C \
 	version description.txt changes.txt \
-	src include doc_tex doc_ps test examples
+	src include doc_tex doc_ps test scripts
 
 doc: doc_ps/$(Package).ps
 
@@ -69,9 +69,6 @@ doc_ps/$(Package).ps: doc_tex/support/NumberTypeSupport/Interval.tex
 	cp doc_tex/support/NumberTypeSupport/$(Package).ps doc_ps/
 
 # The following is specific to the IA package.
-
-example:
-	$(MAKE) -C examples/$(Package)/include/CGAL/Arithmetic_filter
 
 filters:
 	$(MAKE) -C include/CGAL/Arithmetic_filter
