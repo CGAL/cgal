@@ -35,6 +35,8 @@ class New_delete_allocator
   typedef T&          reference;
   typedef const T&    const_reference;
 
+  template <class U> struct rebind { typedef New_delete_allocator<U> other; };
+
   New_delete_allocator() {}
 
   pointer
