@@ -63,8 +63,8 @@ public:
   typedef X_curve_2                X_curve;
   typedef Curve_2                  Curve;
 
-protected:
-  typedef typename Base::Curve_status           Curve_status;
+  //protected:
+  //typedef typename Base::Curve_status    Curve_status;
   
 public:
   
