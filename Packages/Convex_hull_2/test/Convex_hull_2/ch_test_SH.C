@@ -20,7 +20,6 @@
 
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/convex_hull_cartesian_double_traits_2.h>
 #include <CGAL/convex_hull_traits_2.h>
 #include <CGAL/convex_hull_constructive_traits_2.h>
 
