@@ -31,72 +31,72 @@ void usage(char* program)
 bool
 parse(int argc, char* argv[], Options &opt)
 {
-  std::strcpy(opt.program, argv[0]);
+  CGAL_CLIB_STD::strcpy(opt.program, argv[0]);
   --argc;
   argv++;
 
   while ((argc > 0) && (argv[0][0] == '-')){
-    if ((!std::strcmp(argv[0], "-D")) || (!std::strcmp(argv[0], "-Delaunay"))) {
+    if ((!CGAL_CLIB_STD::strcmp(argv[0], "-D")) || (!CGAL_CLIB_STD::strcmp(argv[0], "-Delaunay"))) {
       opt.Delaunay = true;
       argv++;
       argc--;
     }
-    else if ((!std::strcmp(argv[0], "-c")) || (!std::strcmp(argv[0], "-contour"))) {
+    else if ((!CGAL_CLIB_STD::strcmp(argv[0], "-c")) || (!CGAL_CLIB_STD::strcmp(argv[0], "-contour"))) {
       opt.contour = true;
       argv++;
       argc--;
     }
-    else if ((!std::strcmp(argv[0], "-r")) || (!std::strcmp(argv[0], "-regularized"))) {
+    else if ((!CGAL_CLIB_STD::strcmp(argv[0], "-r")) || (!CGAL_CLIB_STD::strcmp(argv[0], "-regularized"))) {
       opt.regularized = true;
       argv++;
       argc--;
     }
-    else if (! std::strcmp(argv[0], "-min")) {
-      if (std::sscanf(argv[1], "%lf", &opt.min) != 1) {
+    else if (!CGAL_CLIB_STD::strcmp(argv[0], "-min")) {
+      if (CGAL_CLIB_STD::sscanf(argv[1], "%lf", &opt.min) != 1) {
 	std::cerr << "Argument for min must be a number"
 		  << std::endl;
       }
       argv += 2;
       argc -= 2;
 
-    }else if (! std::strcmp(argv[0], "-max")) {
-      if (std::sscanf(argv[1], "%lf", &opt.max) != 1) {
+    }else if (!CGAL_CLIB_STD::strcmp(argv[0], "-max")) {
+      if (CGAL_CLIB_STD::sscanf(argv[1], "%lf", &opt.max) != 1) {
 	std::cerr << "Argument for max must be a number"
 		  << std::endl;
       }
       argv += 2;
       argc -= 2;
 
-    }else if (! std::strcmp(argv[0], "-winx")) {
-      if (std::sscanf(argv[1], "%d", &opt.winx) != 1) {
+    }else if (!CGAL_CLIB_STD::strcmp(argv[0], "-winx")) {
+      if (CGAL_CLIB_STD::sscanf(argv[1], "%d", &opt.winx) != 1) {
 	std::cerr << "Argument for winx must be a number"
 		  << std::endl;
       }
       argv += 2;
       argc -= 2;
 
-    }else if (! std::strcmp(argv[0], "-winy")) {
-      if (std::sscanf(argv[1], "%d", &opt.winy) != 1) {
+    }else if (!CGAL_CLIB_STD::strcmp(argv[0], "-winy")) {
+      if (CGAL_CLIB_STD::sscanf(argv[1], "%d", &opt.winy) != 1) {
 	std::cerr << "Argument for winy must be a number"
 		  << std::endl;
       }
       argv += 2;
       argc -= 2;
 
-    }else if ((!std::strcmp(argv[0], "-i")) || (!std::strcmp(argv[0], "-in"))) {
-      std::strcpy(opt.finname, argv[1]);
+    }else if ((!CGAL_CLIB_STD::strcmp(argv[0], "-i")) || (!CGAL_CLIB_STD::strcmp(argv[0], "-in"))) {
+      CGAL_CLIB_STD::strcpy(opt.finname, argv[1]);
       opt.file_input = true;
       argv += 2;
       argc -= 2;
-    }else if ((!std::strcmp(argv[0], "-o")) || (!std::strcmp(argv[0], "-out"))) {
-      std::strcpy(opt.foutname, argv[1]);
+    }else if ((!CGAL_CLIB_STD::strcmp(argv[0], "-o")) || (!CGAL_CLIB_STD::strcmp(argv[0], "-out"))) {
+      CGAL_CLIB_STD::strcpy(opt.foutname, argv[1]);
       opt.file_output = true;
       argv += 2;
       argc -= 2;
     }
-    else if ((!std::strcmp(argv[0], "-?")) ||
-	     (!std::strcmp(argv[0], "-h")) ||
-	     (!std::strcmp(argv[0], "-help"))) {
+    else if ((!CGAL_CLIB_STD::strcmp(argv[0], "-?")) ||
+	     (!CGAL_CLIB_STD::strcmp(argv[0], "-h")) ||
+	     (!CGAL_CLIB_STD::strcmp(argv[0], "-help"))) {
       usage(opt.program);
       return false;
     }

@@ -11,8 +11,8 @@ public:
            regularized(false), init(false), number_of_points(5000),
            min(0.0), max(612.0), winx(512), winy(512)
   { 
-    strcpy(finname,"./Data/fin");
-    strcpy(foutname,"./Data/fout");
+    CGAL_CLIB_STD::strcpy(finname,"./Data/fin");
+    CGAL_CLIB_STD::strcpy(foutname,"./Data/fout");
   }
 
     char program[100];

@@ -206,7 +206,7 @@ public:
  
   // Introduces an empty alpha-shape `A' for a positive
   // alpha-value `alpha'. Precondition: `alpha' >= 0.
-  Alpha_shape_2(Coord_type alpha = 0, 
+  Alpha_shape_2(Coord_type alpha = Coord_type(0), 
 		Mode m = GENERAL)
     : _alpha(alpha), _mode(m), INFINITY(-1), UNDEFINED(-2) 
     {}
@@ -218,7 +218,7 @@ public:
   template <class InputIterator>
   Alpha_shape_2( InputIterator first,  
 		 InputIterator last,  
-		 const Coord_type& alpha = 0,
+		 const Coord_type& alpha = Coord_type(0),
 		 Mode = GENERAL) 
     {
       if (Dt::insert(first, last) >= 4)
@@ -326,7 +326,7 @@ void clear()
   // _vertex_inter	val_map.erase(_vertex_interval_map.begin(),
   // 	                              _vertex_interval_map.end());
 
-  set_alpha(0); 
+  set_alpha(Coord_type(0)); 
   set_mode(GENERAL);
 
 }
@@ -856,10 +856,10 @@ Alpha_shape_2<Dt>::initialize_interval_vertex_map(void)
       Vertex_handle v = vertex_it;
       Face_handle f;
 
-      alpha_max_v = 0;    
+      alpha_max_v = Coord_type(0);    
       alpha_mid_v = (!_interval_face_map.empty() ?
 		     _interval_face_map.back().first :
-		     0);
+		     Coord_type(0));
 
       //----------------- examine incident edges --------------------------
       /*
@@ -987,7 +987,7 @@ Alpha_shape_2<Dt>::initialize_alpha_spectrum(void)
 	{
 	  if (((_alpha_spectrum.empty() || 
 		_alpha_spectrum.back() < (*face_it).first)) && 
-	      ((*face_it).first > 0))
+	      ((*face_it).first > Coord_type(0)))
 	    _alpha_spectrum.push_back((*face_it).first);
 	  face_it++;
 	}
@@ -995,7 +995,7 @@ Alpha_shape_2<Dt>::initialize_alpha_spectrum(void)
 	{
 	  if (((_alpha_spectrum.empty() || 
 		_alpha_spectrum.back() < (*edge_it).first.first)) &&
-	      (((*edge_it).first.first) > 0))
+	      (((*edge_it).first.first) > Coord_type(0)))
 	    _alpha_spectrum.push_back((*edge_it).first.first);
 	  edge_it++;
 	}
@@ -1005,7 +1005,7 @@ Alpha_shape_2<Dt>::initialize_alpha_spectrum(void)
     {
       if (((_alpha_spectrum.empty() || 
 	    _alpha_spectrum.back() < (*edge_it).first.first))&&
-	  (((*edge_it).first.first) > 0))
+	  (((*edge_it).first.first) > Coord_type(0)))
 	_alpha_spectrum.push_back((*edge_it).first.first);
       edge_it++;
     }
@@ -1014,7 +1014,7 @@ Alpha_shape_2<Dt>::initialize_alpha_spectrum(void)
     { 
       if (((_alpha_spectrum.empty() || 
 	    _alpha_spectrum.back() < (*face_it).first))&&
-	  ((*face_it).first > 0))
+	  ((*face_it).first > Coord_type(0)))
 	_alpha_spectrum.push_back((*face_it).first);
       face_it++;
     }

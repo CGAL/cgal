@@ -676,4 +676,5 @@ int main(int argc,  char* argv[])
       std::cout << "nb components :" << A.number_solid_components() << std::endl;
 #endif // DEBUG
     }
+  return 0;
 }

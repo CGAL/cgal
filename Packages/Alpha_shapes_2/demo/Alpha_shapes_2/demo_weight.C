@@ -176,7 +176,7 @@ draw_vertices(const Alpha_shape_2& A,
       if (option)
 	{ 
 	  W.draw_filled_node(p.x(), p.y());
-	  W << CGAL::Circle_2<CRep>(p.point(),max(p.weight(),DBL_MIN)); 
+	  W << CGAL::Circle_2<CRep>(p.point(),std::max(p.weight(),DBL_MIN)); 
 	}
       else
 	W.draw_filled_node(p.x(), p.y());
@@ -691,7 +691,9 @@ int main(int argc,  char* argv[])
       if (opt.weight) 
 	{ 
 	  W << REGULARIZED_COLOR;
-	  W << CGAL::Circle_2<CRep> (Point_base ((xmax-(xmax-xmin)/15), (ymin+(xmax-xmin)/15)),max(A.get_alpha(),DBL_MIN)); 
+	  W << CGAL::Circle_2<CRep> (Point_base ((xmax-(xmax-xmin)/15),
+						 (ymin+(xmax-xmin)/15)), 
+				     std::max(A.get_alpha(),DBL_MIN)); 
 	}
       
       if(opt.Delaunay)
@@ -731,4 +733,5 @@ int main(int argc,  char* argv[])
       std::cout << "nb components :" << A.number_solid_components() << std::endl;
 #endif // DEBUG
     }
+  return 0;
 }

@@ -141,7 +141,7 @@ int main(int argc,  char* argv[])
   std::list<Point> L;
   file_input(L);
   std::vector<Gt::Segment> V =
-    Construct_Alpha_shape(L,10000.0,Alpha_shape_2::GENERAL);
+    Construct_Alpha_shape(L,Coord_type(10000),Alpha_shape_2::GENERAL);
   std::cout << "Alpha Shape computed" << std::endl;
   return 0;
 }
