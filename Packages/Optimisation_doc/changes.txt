@@ -1,6 +1,6 @@
 Changes done to the `Optimisation_doc' package
 
-Version 1.0.15 on 16-Oct-2003
+Version 1.0.16 on 16-Oct-2003
 - Added Largest_empty_iso_rectangle_2 to user manual (text, gif and eps)
 
 Version 1.0.15 on 15-Sep-2003
