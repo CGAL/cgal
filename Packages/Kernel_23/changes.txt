@@ -1,4 +1,4 @@
-1.23
+1.23 (29 January 2003)
 - Added #include<cstddef> otherwise SGI CC doesn't know ptrdiff_t
 
 1.22 (29 January 2003)
