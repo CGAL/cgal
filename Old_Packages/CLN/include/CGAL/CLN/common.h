@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1999 The CGAL Consortium
+// Copyright (c) 1999,2000 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -31,7 +31,9 @@
 #include <CGAL/number_type_tags.h>
 #include <CGAL/IO/io_tags.h>
 
+// So that CLN defines the operators += -= *= /=
 #define WANT_OBFUSCATING_OPERATORS
+
 #include <cl_number.h>
 #include <cl_io.h>
 

@@ -26,9 +26,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/CLN/cl_integer.h>
+#include <CGAL/CLN/cl_rational.h>
 #include <cl_output.h> // for cl_default_print_flags
-#include <cl_rational.h>
-#include <cl_rational_io.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -49,13 +48,13 @@ static workaround_4_CLN workaroung_4_CLN_object;
 
 
 // Another "workaround" to be able to read "a/b" as a Quotient<cl_I>.
-// CLN beleives (it's a "design issue") that "a/b" is a valid number,
-// so it reads it, but then it decides it's not a valid cl_I.
+// CLN believes (the author says it's a "design issue") that "a/b" is a valid
+// number, so it reads it, but then decides it's not a valid cl_I.
 // And there's no easy way to stop him parsing before "/" like for
 // the generic Quotient<>.
 
 // So we read it as cl_RA, and convert to Quotient<cl_I>.
-// Note that this requires CLN >= 1.0.2.
+// Note that this requires CLN >= 1.0.2 (for numerator() and denominator() ).
 
 std::istream&
 operator>> (std::istream& in, Quotient<cl_I>& z)
