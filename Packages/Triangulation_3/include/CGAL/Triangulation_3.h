@@ -932,11 +932,15 @@ public:
 	    { 
 	      lt = EDGE;
 	      li = ( o[0] != CGAL_COPLANAR ) ? i :
-		( o[1] != CGAL_COPLANAR ) ? (i+1)&3 :
-		(i+2)&3;
-	      lj = ( o[ (li+1)&3 ] != CGAL_COPLANAR ) ? (li+1)&3 :
-		( o[ (li+2)&3 ] != CGAL_COPLANAR ) ? (li+2)&3 :
-		(li+3)&3;
+		( o[1] != CGAL_COPLANAR ) ? ((i+1)&3) :
+		((i+2)&3);
+	      lj = ( o[ (li+1-i)&3 ] != CGAL_COPLANAR ) ? ((li+1)&3) :
+		( o[ (li+2-i)&3 ] != CGAL_COPLANAR ) ? ((li+2)&3) :
+		((li+3)&3);
+	      CGAL_triangulation_assertion
+		( geom_traits().collinear( p,
+					   c->vertex( li )->point(),
+					   c->vertex( lj )->point() ) );
 	      break;
 	    }
 	  case 3:
