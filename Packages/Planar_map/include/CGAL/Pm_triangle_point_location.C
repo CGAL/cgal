@@ -62,7 +62,6 @@ locate(const typename Planar_map::Traits::Point_2 & p,
     std::cout << "ERROR: CDT is not updated !" << std::endl;
     return e;
   }
-  //assert(cdt.is_valid());
 
   //locate in the CDT
   CDT_Point p1 = static_cast <CDT_Point> (p);
@@ -272,7 +271,6 @@ locate(const typename Planar_map::Traits::Point_2 & p,
 
   //  if (! updated_cdt)
   //    triangulate_pm();
-  //  assert(cdt.is_valid());
 
   Halfedge_handle h = Halfedge_handle_unconst(((cPLp)this)->locate(p,lt));
   return h;
@@ -293,7 +291,7 @@ vertical_ray_shoot(const typename Planar_map::Traits::Point_2 & p,
 	    << std::endl;
   CGAL_precondition_msg(false, 
 			"Vertical ray shoot NOT suppored in CDT point location");
-  assert(false);
+  CGAL_assertion(false);
   Halfedge_handle e = pm->halfedges_end(); // closest halfedge so far  
   lt = Planar_map::UNBOUNDED_FACE;
   return e;
@@ -462,7 +460,7 @@ void Pm_triangle_point_location<Planar_map>::triangulate_pm()
 
   // --- printing and debugging of CDT
   //  std::cout << "cdt is now updated" << std::endl;
-  assert(cdt.is_valid());
+  CGAL_assertion(cdt.is_valid());
 
 #ifdef CGAL_PM_DEBUG
   int count = 0;
