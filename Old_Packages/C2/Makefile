@@ -5,7 +5,7 @@ Package=C2
 
 .PHONY: package test submit version rtag
 
-WWW_base=/u/www/0/www/htdocs/files/equipes/prisme/CGAL/DR:/Members
+WWW_base=$(WWW)/CGAL/DR:/Members
 WWW_dir=$(WWW_base)/$(Package)
 TMP_file=/tmp/submit-mail
 
@@ -15,9 +15,9 @@ package: clean $(Package).tar.gz
 	@echo "----------------------------------"
 	@echo "---- changes.txt              ----"
 	@echo "---- make test                ----"
-	@echo "---- make VERSION=3.9 version ----"
+	@echo "---- make VERSION=4.0 version ----"
 	@echo "---- make commit               ----"
-	@echo "---- make VERSION=3.9  rtag    ----"
+	@echo "---- make VERSION=4.0  rtag    ----"
 	@echo "---- make submit              ----"
 	@echo "----------------------------------"
 
