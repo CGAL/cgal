@@ -9,6 +9,9 @@
 #include <CEP/Leda_rat_kernel/leda_rat_kernel_traits.h>
 #elif defined(USE_MY_KERNEL)
 #include <CGAL/Pm_segment_traits_leda_kernel_2.h>
+#if !defined(USE_LEDA_SEGMENT_TRAITS)
+#error Must define USE_LEDA_SEGMENT_TRAITS!
+#endif
 #else
 #include <CGAL/Cartesian.h>
 #endif
