@@ -13,7 +13,9 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = -I../include \
+CXXFLAGS = -I../../include \
+           $(TESTSUITE_CXXFLAGS) \
+           $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
@@ -23,9 +25,11 @@ CXXFLAGS = -I../include \
 #---------------------------------------------------------------------#
 
 LIBPATH = \
+          $(TESTSUITE_LIBPATH) \
           $(CGAL_LIBPATH)
 
 LDFLAGS = \
+          $(TESTSUITE_LDFLAGS) \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
@@ -33,10 +37,15 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all:            \
+FILES= 		\
                 shortest_path$(EXE_EXT) \
                 visibility_complex_polygon$(EXE_EXT) \
                 visibility_complex_segment$(EXE_EXT) 
+
+all: $(FILES)
+
+run: all
+	for f in $(FILES); do ./$$f || exit 1; done
 
 shortest_path$(EXE_EXT): shortest_path$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)shortest_path shortest_path$(OBJ_EXT) $(LDFLAGS)
@@ -46,10 +55,6 @@ visibility_complex_polygon$(EXE_EXT): visibility_complex_polygon$(OBJ_EXT)
 
 visibility_complex_segment$(EXE_EXT): visibility_complex_segment$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)visibility_complex_segment visibility_complex_segment$(OBJ_EXT) $(LDFLAGS)
-
-run: shortest_path$(EXE_EXT) visibility_complex_polygon$(EXE_EXT) \
-     visibility_complex_segment$(EXE_EXT)
-	./shortest_path$(EXE_EXT); ./visibility_complex_polygon$(EXE_EXT); ./visibility_complex_segment$(EXE_EXT)
 
 clean: \
                    shortest_path.clean \
