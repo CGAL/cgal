@@ -1,14 +1,14 @@
 -------------------------------------------------------------------------------
 
 NAME     
-./super_test     - surface extension -
+./nuage     - surface extension -
 
 
 OPTIONS
      -in fname      : reads points from file ./fname
      -out fname     : writes points to file ./fname
      -out_format -of: choose file format for output (wrl, oogl, medit,
-                                                     ply, all, none)
+                                                     iv, ply, all, none)
      -xyz           : input is (x y z)* without leading nimber_of_points
      -contours      : display contours
      -no_border -nb : set K = infinity

@@ -914,7 +914,7 @@ dump_in_file_vrml2_selected_facets(char* foutput, const Triangulation_3& A,
   char foutput_tmp[100];
   AF_CGAL_CLIB_STD::strcpy(foutput_tmp, foutput);
 
-  CGAL_CLIB_STD::strcat(foutput_tmp, ".vrml");
+  CGAL_CLIB_STD::strcat(foutput_tmp, ".wrl");
   std::ofstream os(foutput_tmp, std::ios::out);
 
   if(os.fail())
