@@ -1,4 +1,4 @@
-Version 3.33 (30 July 2003)
+Version 3.36 (30 July 2003)
 rursu:
  - fixed Kdtree_example3.C for cl_1300 by providing the full spec of Kernel_traits
 
