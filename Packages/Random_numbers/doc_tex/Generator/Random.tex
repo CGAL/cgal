@@ -25,9 +25,9 @@ streams are \emph{independent} of each other, i.e.\ the sequence of
 numbers from one stream does \emph{not} depend upon how many numbers
 were extracted from the other streams.
 
-It can be very usefull, e.g.\ for debugging, to reproduce a sequence
-of random numbers.  This can be done using the seed functions
-described below.
+It can be very useful, e.g.\ for debugging, to reproduce a sequence of
+random numbers.  This can be done by either initialising
+deterministically or using the seed functions as described below.
 
 \ccInclude{CGAL/Random.h}
 
@@ -51,9 +51,15 @@ described below.
 \ccConstructor{ CGAL_Random( );}{
         introduces a variable \ccVar\ of type \ccClassTemplateName.}
 
-\ccConstructor{ CGAL_Random( Seed seed );}{
+\ccConstructor{ CGAL_Random( Seed seed);}{
         introduces a variable \ccVar\ of type \ccClassTemplateName\
         and initializes it's internal seed with \ccc{seed}.}
+
+\ccConstructor{ CGAL_Random( long init);}{
+        introduces a variable \ccVar\ of type \ccClassTemplateName\
+        and initializes it's internal seed using \ccc{init}. Equal
+        values for \ccc{init} result in equal sequences of random
+        numbers.}
 
 
 % -----------------------------------------------------------------------------

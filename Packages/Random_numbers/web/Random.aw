@@ -18,7 +18,6 @@
 @usepackage{cc_manual}
 @article
 
-\addtolength{\textheight}{1ex}
 \setlength{\parskip}{1ex}
 
 @! ============================================================================
@@ -119,6 +118,7 @@ section, so we do not comment on it here.
     // creation
     CGAL_Random( );
     CGAL_Random( Seed seed);
+    CGAL_Random( long init);
 
     // operations
     bool    get_bool  ( );
@@ -132,7 +132,7 @@ section, so we do not comment on it here.
 @end
 
 
-\pagebreak
+%\pagebreak
 
 \subsection{Global Variable}
 
@@ -188,6 +188,15 @@ time.
 	_seed[ 1] = seed[ 1];
 	_seed[ 2] = seed[ 2];
     }
+
+    CGAL_Random::
+    CGAL_Random( long init)
+    {
+	// initialize random numbers generator
+	_seed[ 0] = _seed[ 2] = CGAL_static_cast( unsigned short,init >> 16);
+	_seed[ 1] =             CGAL_static_cast( unsigned short,init & 65535);
+    }
+
 @end
 
 
@@ -307,10 +316,15 @@ numbers.
     {
 	CGAL_random.restore_seed( seed);	// `CGAL_Random' and `rnd'
 	CGAL_Random rnd( seed);			// have the same seed now
-
 	assert( CGAL_random.get_bool()         == rnd.get_bool());
 	assert( CGAL_random.get_int( -100,100) == rnd.get_int( -100,100));
 	assert( CGAL_random.get_double()       == rnd.get_double());
+
+	long init = CGAL_random( 9999);
+	CGAL_Random rnd1( init), rnd2( init);
+	assert( rnd1.get_bool()         == rnd2.get_bool());
+	assert( rnd1.get_int( -100,100) == rnd2.get_int( -100,100));
+	assert( rnd1.get_double()       == rnd2.get_double());
     }
 @end
 
