@@ -36,7 +36,7 @@ struct CK : public CGAL::Simple_cartesian<double> {};
 struct EK : public CGAL::Simple_cartesian<CGAL::MP_Float> {};
 
 
-int main()
+int main(int argc, char* argv[])
 {
   {
     std::ifstream ifs_traits("./data/traits.dat");
