@@ -43,7 +43,7 @@
 % TITLE
 % ------------------------------------------------------------------------
 \date{}
-\title{{\LARGE {\sffamily\bfseries Getting started with CGAL Polyhedron}}}
+\title{{\LARGE {\sffamily\bfseries A Tutorial on the Application of the CGAL Polyhedron in Meshing}}}
 % pierre: other suggestions for the title?
 %  Mesh Processing with CGAL Polyhedron
 %  Algorithms on Meshes with CGAL Polyhedron
@@ -65,7 +65,7 @@
 % ABSTRACT
 % ------------------------------------------------------------------------
 \abstract{
-This document is a tutorial on how to get
+We will represent a tutorial on how to get
 started with the polyhedron data structure
 provided by the Computational Geometry 
 Algorithm Library (CGAL). Assuming the reader to be
@@ -94,26 +94,13 @@ subdivisions are illustrated using the latter approach.
 }
 %%\vskip 3mm
 
-%% \noindent {\bf Keywords:}
-%%                  CGAL library,
-%%                  tutorial,
-%%                  halfedge data structure, 
-%%                  polygon surface mesh,
-%%                  subdivision surfaces,
-%%                  quad-triangle,
-%%                  $\sqrt{3}$,
-%%                  Loop,
-%%                  Doo-Sabin,
-%%                  Catmull-Clark,
-%%                  OpenGL.
-
 \begin{center} 
   \includegraphics[width=12.0cm]{figs/teaser}\\
 {\scriptsize Demo application running on Windows. A polygon mesh is 
    subdivided using the quad-triangle subdivision scheme.}
-
 \end{center}
 
+\subsection*{Generic Mesh Data Structure}
 Polyhedron data structures based on the concept of
 \emph{halfedges} have been very successful for the design
 of general algorithms on meshes. 
@@ -147,6 +134,7 @@ data structure.\\
 is provided within CGAL.\\
 \indent $\bullet$ CGAL is standardized following the C++ STL.\\
 
+\subsection*{Demo Application for Meshing}
 We have designed and implemented a meshing application
 based on the \cgalpoly . This program provides a
 mesh viewer supporting file I/O, mesh rendering 
@@ -161,6 +149,8 @@ the connectivity and geometry operations of the
 subdivision algorithms. The source codes are 
 published with the tutorial and can be accessed at ??.
 
+\subsection*{Tutorial Outlines}
+\subsubsection*{Polyhedron Viewer}
 The tutorial starts with demonstrating
 how to implement a simple viewer based on the default
 configuration of the \cgalpoly . This simple viewer 
@@ -178,6 +168,7 @@ flags are employed to support the superimposition of the
 input mesh on the subdivided surfaces. A trackball function
 of the enriched polyhedron is also dmonstrated in the tutorial.
 
+\subsubsection*{Subdivision Algorithms}
 The second part of the tutorial focuses on the design and 
 the implementation of the subdivision algorithms.
 In addition to the importance in surface modeling,
@@ -206,6 +197,7 @@ create their own combinatorial operators
 using the polyhedron incremental builder.
 The Quad-Triangle subdivision is used to demonstrate this scheme.
 
+\subsubsection*{Generic Subdivisions}
 Subdivisions can be represented
 as a combination of a refinement and a set of smoothing
 rules. Based on this observation, our third approach 
@@ -219,6 +211,7 @@ with the \emph{template smoothing rules}.
 Catmull-Clark, Loop and Doo-Sabin
 subdivisions are illustrated using the latter approach. 
 
+\subsection*{Intended Audience}
 The intended audience of this tutorial are researchers, 
 developers or students in the graphics community developing 
 algorithms around meshes. Experiences on the advance C++
