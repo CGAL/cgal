@@ -233,10 +233,16 @@ public:
          Face_handle f = Face_handle() )
   {
       Vertex_handle v = CGAL_Triangulation_2<Gt,Tds>::insert(p,lt,f);
+      restore_Delaunay(v);
+      return(v);
+  }
 
-      if(dimension() <= 1) return v;
+private:
+  void restore_Delaunay(Vertex_handle v)
+  {
+      if(dimension() <= 1) return;
 
-      f=v->face();
+      Face_handle f=v->face();
       Face_handle next;
       int i;
       Face_handle start(f);
@@ -246,11 +252,40 @@ public:
           propagating_flip(f,i);
           f=next;
       } while(next != start);
-      return v;
+      return;
   }
 
+  public :
+//   void insert_in_face(Vertex_handle v, Face_handle f)
+//   {
+//     CGAL_triangulation_warning_msg( true, "call to insert_in_face is strange 
+//                    for a Delaunay triangulation. \n
+//                       The Delaunay property will be enforced.\n ");
+//     CGAL_Triangulation_2<Gt,Tds>::insert_in_face(v,f);
+//     restore_Delaunay(v);
+//     return;
+//   }
+// 
+//  void insert_in_edge(Vertex_handle v, Face_handle f,int i)
+//   {
+//     CGAL_triangulation_warning_msg( true, "call to insert_in_face is strange 
+//                    for a Delaunay triangulation. \n
+//                       The Delaunay property will be enforced.\n ");
+//     CGAL_Triangulation_2<Gt,Tds>::insert_in_edge(v,f);
+//     restore_Delaunay(v);
+//     return;
+//   }
+// 
+//    void insert_outside(Vertex_handle v, Face_handle f)
+//   {
+//    
+//     CGAL_Triangulation_2<Gt,Tds>::insert_outside(v,f);
+//     restore_Delaunay(v);
+//     return;
+//   }
 
-  void  remove(Vertex_handle& v )
+
+  void  remove(Vertex_handle v )
   {
      CGAL_triangulation_precondition(v != NULL);
      CGAL_triangulation_precondition( !is_infinite(v));
@@ -292,54 +327,29 @@ public:
 
     bool result = CGAL_Triangulation_2<Gt,Tds>::is_valid();
 
-    Face_iterator it = faces_begin(),
-                        done = faces_end();
-          while(it != done){
-               if ( ! is_infinite( it->neighbor(0)) ){
-                  result = result &&
-                      (CGAL_ON_POSITIVE_SIDE !=
-                       side_of_oriented_circle(it->neighbor(0), it->vertex(0)->point()) );
-	       }
-	       if (!result)
-		{
-		  	cerr << "face : "<<(void*)&(*it)<<" => "<<endl;
-			cerr <<"point :"<<(it->vertex(0)->point())<<" / voisin "<<&(*(it->neighbor(0)))
-				<<"["<<(it->neighbor(0))->vertex(0)->point()
-				<<"/"<<(it->neighbor(0))->vertex(1)->point()
-				<<"/"<<(it->neighbor(0))->vertex(2)->point()<<"]"
-					<<endl;
-		}
-              if ( ! is_infinite(it->neighbor(1)) ) {
-                  result = result && (CGAL_ON_POSITIVE_SIDE !=
-                    side_of_oriented_circle( it->neighbor(1), it->vertex(1)->point()) );
-	      } 
-	      if (!result)
-		{
-		  	cerr << "face : "<<(void*)&(*it)<<" => "<<endl;
-			cerr <<"point :"<<(it->vertex(1)->point())<<" / voisin "<<&(*(it->neighbor(1)))
-				<<"["<<(it->neighbor(1))->vertex(0)->point()
-				<<"/"<<(it->neighbor(1))->vertex(1)->point()
-				<<"/"<<(it->neighbor(1))->vertex(2)->point()<<"]"
-				<<endl;
-		}
-              if ( ! is_infinite(it->neighbor(2)) ){
-                  result = result && (CGAL_ON_POSITIVE_SIDE !=
-                      side_of_oriented_circle( it->neighbor(2), it->vertex(2)->point()));
-              }
-	      if (!result)
-		{
-		  cerr << "face : "<<(void*)&(*it)<<" => "<<endl;
-		  cerr <<"point :"<<(it->vertex(2)->point())<<" / voisin "<<&(*(it->neighbor(2)))
-				<<"["<<(it->neighbor(2))->vertex(0)->point()
-				<<"/"<<(it->neighbor(2))->vertex(1)->point()
-				<<"/"<<(it->neighbor(2))->vertex(2)->point()<<"]"
-				<<endl;
-		}
-	      CGAL_triangulation_assertion( result );
-	      ++it;
-          }
-      return result;
+    for( Face_iterator it = faces_begin(); it != faces_end() ; it++) {
+
+      for(int i=0; i<3; i++) {
+	if ( ! is_infinite( it->vertex(i))) {
+	  result = result &&
+	    CGAL_ON_POSITIVE_SIDE != 
+	    side_of_oriented_circle( it->neighbor(i), it->vertex(i)->point());
+	}
+	if ( !result) {
+	  cerr << "face : " << (void*)&(*it)<< "  " 
+	       <<"["<< it->vertex(0)->point()
+	       <<"/"<< it->vertex(1)->point()
+	       <<"/"<< it->vertex(2)->point()<<"]"	<<endl;
+	  cerr << "voisin : " << (void*)&(*(it->neighbor(i)))<< "  "
+	       <<"["<<(it->neighbor(i))->vertex(0)->point()
+	       <<"/"<<(it->neighbor(i))->vertex(1)->point()
+	       <<"/"<<(it->neighbor(i))->vertex(2)->point()<<"]" <<endl;
+	}
+	CGAL_triangulation_assertion( result );
+      }
+    }
   }
+
   
 private:
   void
@@ -384,7 +394,7 @@ private:
   }
 
 
-  void remove_2D(Vertex_handle& v )
+  void remove_2D(Vertex_handle v )
   {
     // General case
   
