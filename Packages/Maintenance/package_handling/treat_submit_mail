@@ -176,6 +176,7 @@ sub message_processed($)
 sub main()
 {
     my ($from);
+    my $command_found = 0;
     $_ = <>;
     chomp;
     ($from, $::Sender) = split;
@@ -201,18 +202,33 @@ close NOTICE;
     }
 
     while(<>) {
-	if (/^\s*Message-ID\s*:\s*(.*?)\s*$/) {
+	if (/^\s*message-id\s*:\s*(.*?)\s*$/i) {
 	    last if message_processed($1);
 	}
 	elsif (/^\s*submission\s*:\s*([^:]*?)\s*:\s*$/) {
+	    $command_found = 1;
 	    treat_submission($1);
 	}
 	elsif (/^\s*testresult\s*:\s*([^:]*?)\s*:\s*$/){
+	    $command_found = 1;
 	    treat_testresult($1);
 	}
     }
     if ($::no_of_succesful_submissions > 0) {
 	system($::update_submissions_www_page_program);
+    }
+    if (!$command_found) {
+	    open NOTICE, "|Mail -s \"CGAL autohandle warning\" $::Sender";
+	    print NOTICE <<"TOTHIER";
+Your submission did not contain any command.
+A command is e.g.
+
+submission::
+
+Note the two colons (and note that it is on a separate line).
+
+TOTHIER
+close NOTICE;
     }
 }
 
