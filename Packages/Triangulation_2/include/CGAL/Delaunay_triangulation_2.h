@@ -111,7 +111,10 @@ public:
 
   void  remove(Vertex_handle v );
   
-  
+private:
+  using Tds::cw;
+  using Tds::ccw;
+
 private:
   void restore_Delaunay(Vertex_handle v);
   void propagating_flip(Face_handle& f,int i);
@@ -129,8 +132,8 @@ public:
   template < class Stream>
   Stream& draw_dual(Stream & ps)
     {
-      Finite_edges_iterator eit= finite_edges_begin();
-      for (; eit != finite_edges_end(); ++eit) {
+      Finite_edges_iterator eit= this->finite_edges_begin();
+      for (; eit != this->finite_edges_end(); ++eit) {
 	Object o = dual(eit);
 	typename Geom_traits::Line_2  l;
 	typename Geom_traits::Ray_2   r;
@@ -146,12 +149,12 @@ public:
   int
   insert(InputIterator first, InputIterator last)
     {
-      int n = number_of_vertices();
+      int n = this->number_of_vertices();
         while(first != last){
 	insert(*first);
 	++first;
       }
-      return number_of_vertices() - n;
+      return this->number_of_vertices() - n;
     }
 
 
@@ -161,7 +164,7 @@ public:
 			     OutputItFaces fit, 
 			     OutputItBoundaryEdges eit,
 			     Face_handle start = Face_handle()) const {
-    CGAL_triangulation_precondition( dimension() == 2);
+    CGAL_triangulation_precondition( this->dimension() == 2);
     int li;
     Locate_type lt;
     Face_handle fh = locate(p,lt,li, start);
@@ -261,8 +264,8 @@ is_valid(bool verbose, int level) const
 {
   bool result = Triangulation_2<Gt,Tds>::is_valid(verbose, level);
 
-  for( Finite_faces_iterator it = finite_faces_begin(); 
-       it != finite_faces_end() ; it++) {
+  for( Finite_faces_iterator it = this->finite_faces_begin(); 
+       it != this->finite_faces_end() ; it++) {
     for(int i=0; i<3; i++) {
       if ( ! is_infinite( it->mirror_vertex(i))) {
 	result = result &&  ON_POSITIVE_SIDE != 
@@ -279,10 +282,10 @@ typename Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_2<Gt,Tds>:: 
 nearest_vertex(const Point  &p, Face_handle f) const
 {
-  switch (dimension()) {
+  switch (this->dimension()) {
   case 0:
-    if (number_of_vertices() == 0) return Vertex_handle();
-    if (number_of_vertices() == 1) return finite_vertex();
+    if (this->number_of_vertices() == 0) return Vertex_handle();
+    if (this->number_of_vertices() == 1) return this->finite_vertex();
     //break;
   case 1:
     return nearest_vertex_1D(p);
@@ -299,13 +302,13 @@ typename Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_2<Gt,Tds>:: 
 nearest_vertex_2D(const Point& p, Face_handle f) const
 {
-  CGAL_triangulation_precondition(dimension() == 2);
+  CGAL_triangulation_precondition(this->dimension() == 2);
   if (f == Face_handle()) f = locate(p);
   else
     CGAL_triangulation_precondition(oriented_side(f,p)!=ON_NEGATIVE_SIDE);
 
   typename Geom_traits::Compare_distance_2 
-    compare_distance =  geom_traits().compare_distance_2_object();
+    compare_distance =  this->geom_traits().compare_distance_2_object();
   Vertex_handle nn =  !is_infinite(f->vertex(0)) ? f->vertex(0):f->vertex(1);
   if ( !is_infinite(f->vertex(1)) && compare_distance(p,
 					    f->vertex(1)->point(),
@@ -328,12 +331,12 @@ Delaunay_triangulation_2<Gt,Tds>::
 nearest_vertex_1D(const Point& p) const
 {
   typename Geom_traits::Compare_distance_2 
-    compare_distance =  geom_traits().compare_distance_2_object();
+    compare_distance =  this->geom_traits().compare_distance_2_object();
   Vertex_handle nn;
   
-  Finite_vertices_iterator vit=finite_vertices_begin();
+  Finite_vertices_iterator vit=this->finite_vertices_begin();
   nn = vit;
-  for ( ; vit != finite_vertices_end(); ++vit){
+  for ( ; vit != this->finite_vertices_end(); ++vit){
     if (compare_distance(p, vit->point(), nn->point()) == SMALLER) 
       nn = vit;
   } 
@@ -352,7 +355,7 @@ look_nearest_neighbor(const Point& p,
   if ( ON_POSITIVE_SIDE != side_of_oriented_circle(ni,p) ) return;
 
   typename Geom_traits::Compare_distance_2 
-    compare_distance =  geom_traits().compare_distance_2_object();
+    compare_distance =  this->geom_traits().compare_distance_2_object();
   i = ni->index(f);
   if ( !is_infinite(ni->vertex(i)) &&
        compare_distance(p, 
@@ -371,7 +374,7 @@ typename Delaunay_triangulation_2<Gt,Tds>::Point
 Delaunay_triangulation_2<Gt,Tds>::
 dual (Face_handle f) const
 {
-  CGAL_triangulation_precondition (dimension()==2);
+  CGAL_triangulation_precondition (this->dimension()==2);
   return circumcenter(f);
 }
 
@@ -385,17 +388,17 @@ dual(const Edge &e) const
   typedef typename Geom_traits::Ray_2         Ray;
 
   CGAL_triangulation_precondition (!is_infinite(e));
-  if( dimension()== 1 ){
+  if( this->dimension()== 1 ){
     const Point& p = (e.first)->vertex(cw(e.second))->point();
     const Point& q = (e.first)->vertex(ccw(e.second))->point();
-    Line l  = geom_traits().construct_bisector_2_object()(p,q);
+    Line l  = this->geom_traits().construct_bisector_2_object()(p,q);
     return make_object(l);
   }
 		    
   // dimension==2
   if( (!is_infinite(e.first)) &&
       (!is_infinite(e.first->neighbor(e.second))) ) {
-    Segment s = geom_traits().construct_segment_2_object()
+    Segment s = this->geom_traits().construct_segment_2_object()
                           (dual(e.first),dual(e.first->neighbor(e.second)));
     return make_object(s);
   } 
@@ -409,8 +412,8 @@ dual(const Edge &e) const
   }
   const Point& p = f->vertex(cw(i))->point();
   const Point& q = f->vertex(ccw(i))->point();
-  Line l = geom_traits().construct_bisector_2_object()(p,q);
-  Ray r = geom_traits().construct_ray_2_object()(dual(f), l);
+  Line l = this->geom_traits().construct_bisector_2_object()(p,q);
+  Ray r = this->geom_traits().construct_ray_2_object()(dual(f), l);
   return make_object(r);
 }
   
@@ -468,7 +471,7 @@ void
 Delaunay_triangulation_2<Gt,Tds>::
 restore_Delaunay(Vertex_handle v)
 {
-  if(dimension() <= 1) return;
+  if(this->dimension() <= 1) return;
 
   Face_handle f=v->face();
   Face_handle next;
@@ -491,7 +494,7 @@ remove(Vertex_handle v )
   CGAL_triangulation_precondition( v != Vertex_handle());
   CGAL_triangulation_precondition( !is_infinite(v));
         
-  if ( dimension() <= 1) Triangulation::remove(v);
+  if ( this->dimension() <= 1) Triangulation::remove(v);
   else  remove_2D(v);
         
   return;

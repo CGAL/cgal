@@ -82,12 +82,12 @@ public:
   template < class InputIterator >
   int insert(InputIterator first, InputIterator last)
     {
-      int n = number_of_vertices();
+      int n = this->number_of_vertices();
       while(first != last){
 	insert(*first);
 	++first;
       }
-      return number_of_vertices() - n;
+      return this->number_of_vertices() - n;
     }
 
   void remove_degree_3(Vertex_handle  v);
@@ -397,7 +397,7 @@ locate_in_all(const Point& p,
   Vertex_handle nearest;
   int level  = Triangulation_hierarchy_2__maxlevel;
   typename Geom_traits::Compare_distance_2 
-    closer = geom_traits().compare_distance_2_object();
+    closer = this->geom_traits().compare_distance_2_object();
 
   // find the highest level with enough vertices
   while (hierarchy[--level]->number_of_vertices() 
