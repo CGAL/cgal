@@ -76,7 +76,7 @@ the form \ccc{se = se->next()} cycles counterclockwise around the facet (or a
 hole of the facet).
 
 A const circulators is provided for each of the three circular orders.
-The circulators are bidirectional and assignable to \ccc{Halfedge_const_handle}.
+The circulators are bidirectional and assignable to \ccc{SHalfedge_const_handle}.
 
 \ccInclude{CGAL/Nef_polyhedron_3.h}
 
@@ -138,7 +138,7 @@ class \ccc{Nef_polyhedron_3<Traits>} manages the needed shalfedges internally.
 
 \ccMethod{Halffacet_const_handle incident_facet() const;}{the incident facet of \ccVar\ .}
 
-\ccMethod{Halffacet_const_handle incident_sface() const;}{the incident sface of \ccVar\ .}
+\ccMethod{SFace_const_handle incident_sface() const;}{the incident sface of \ccVar\ .}
 
 \ccSeeAlso
 
