@@ -26,4 +26,4 @@ private:
 
 CGAL_END_NAMESPACE
 
-#endif
+#endif  // CGAL_PMWX_SWEEP_LINE_FUNCTORS_H

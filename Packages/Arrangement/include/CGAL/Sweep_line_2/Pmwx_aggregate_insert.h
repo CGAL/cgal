@@ -171,12 +171,13 @@ protected:
   {
     EventQueueIter eventIter = m_queue->begin();
     m_prevPos = *((*eventIter).first);
-    Point_2 referencePoint;
+   // Point_2 referencePoint;
 
     while ( eventIter != m_queue->end() )
     {
       const Point_2 *p = (*eventIter).first;
-      if ( m_traits->compare_x(m_sweepLinePos, *p) == SMALLER ) {
+      if ( m_traits->compare_x(m_sweepLinePos, *p) == SMALLER ) 
+      {
         m_prevPos = m_sweepLinePos;
         m_verticals.clear();
         m_verticalSubCurves.clear();
@@ -184,7 +185,7 @@ protected:
       m_sweepLinePos = *p;
       m_currentPos = *p;
 
-      p = (*eventIter).first;
+     // p = (*eventIter).first;
       m_currentEvent = eventIter->second;
       SL_DEBUG(std::cout << "------------- " << *p << " --------------"
                          << std::endl;
@@ -231,12 +232,22 @@ protected:
 
     Halfedge_handle h(NULL);
     m_use_hint_for_erase = false;
+    SubCurve *leftCurvePrev = 0;
+    bool are_overlap = false; 
     while ( leftCurveIter != m_currentEvent->left_curves_end() )  
-    // ** fix here
     {
       SubCurve *leftCurve = *leftCurveIter; 
       const X_monotone_curve_2 &cv = leftCurve->get_curve();
       const Point_2 &lastPoint = leftCurve->get_last_point();
+
+
+      
+      if(leftCurvePrev && do_curves_overlap(leftCurvePrev,leftCurve) )
+          are_overlap = true;
+      
+
+
+
 
       if ( leftCurve->is_source(eventPoint))
       {
@@ -244,11 +255,13 @@ protected:
         {
           X_monotone_curve_2 a,b;
           m_traits->curve_split(cv, a, b, lastPoint);
-          h = insert_to_pm(a, leftCurve, h, pm);
+          if(!are_overlap)
+            h = insert_to_pm(a, leftCurve, h, pm);
         }
         else 
         {
-          h = insert_to_pm(cv, leftCurve, h, pm);
+          if(!are_overlap)
+            h = insert_to_pm(cv, leftCurve, h, pm);
         }
       }
       else 
@@ -258,26 +271,30 @@ protected:
           {
             X_monotone_curve_2 a,b;
             m_traits->curve_split(cv, a, b, lastPoint);
-            h = insert_to_pm(b, leftCurve, h, pm);
+            if(!are_overlap)
+              h = insert_to_pm(b, leftCurve, h, pm);
           }
           else 
           {
-            h = insert_to_pm(cv, leftCurve, h, pm);
+            if(!are_overlap)
+              h = insert_to_pm(cv, leftCurve, h, pm);
           }
         }
-        else
+        else  // the event point passes through the interior of 'cv'
         { 
           X_monotone_curve_2 a,b;
           if ( leftCurve->is_source(lastPoint))
           {
             m_traits->curve_split(cv, a, b, eventPoint);
-            h = insert_to_pm(a, leftCurve, h, pm);
+            if(!are_overlap)
+              h = insert_to_pm(a, leftCurve, h, pm);
           }  
           else
             if ( leftCurve->is_target(lastPoint))
             {
               m_traits->curve_split(cv, b, a, eventPoint);
-              h = insert_to_pm(a, leftCurve, h, pm);
+              if(!are_overlap)
+                h = insert_to_pm(a, leftCurve, h, pm);
             }
             else 
             {
@@ -285,12 +302,14 @@ protected:
               if ( leftCurve->is_source_left_to_target() )
               {
                 m_traits->curve_split(lastCurve, a, b, eventPoint);
-                h = insert_to_pm(a, leftCurve, h, pm);
+                if(!are_overlap)
+                  h = insert_to_pm(a, leftCurve, h, pm);
               }
               else 
               {
                 m_traits->curve_split(lastCurve, b, a, eventPoint);
-                h = insert_to_pm(a, leftCurve, h, pm);
+                if(!are_overlap)
+                  h = insert_to_pm(a, leftCurve, h, pm);
               }
             }
             leftCurve->set_last_point(eventPoint);
@@ -303,7 +322,10 @@ protected:
         m_use_hint_for_erase = true;
       
         m_currentPos = m_prevPos;
+        leftCurvePrev = *leftCurveIter; 
         ++leftCurveIter;
+        are_overlap = false;
+        
     }  
     
     // when done handling the left curves, we prepare for the right curves
@@ -700,12 +722,21 @@ protected:
     SL_DEBUG(std::cout << "Intersecting with " << mylist.size()
                        << " curves\n";);
     SubCurveListIter i = mylist.begin();
+    SubCurve *prevSubCurve = 0; //the last SubCurve that was handled; 
+    bool are_overlap = false; // are current SubCurve and previous SubCurve overlap
+
     while ( i != mylist.end())
     {
+      //check overlaping of curren and previous SubCurve
+      if(prevSubCurve && do_curves_overlap(prevSubCurve,*i) )
+          are_overlap = true;
+
       bool flag;
-      if ( reverse ) {
+      if ( reverse )
+      {
         flag = CurveStartsAtCurve(*i, c1);
-        if ( flag && (c1->get_last_point() != m_currentEvent->get_point()) ) {
+        if ( flag && (c1->get_last_point() != m_currentEvent->get_point()) ) 
+        {
           SL_DEBUG(std::cout << "CurveStartsAtCurve 3 \n";);
           m_currentEvent->add_curve_to_right(c1);
           m_currentEvent->add_curve_to_left(c1, m_prevPos);
@@ -720,8 +751,11 @@ protected:
             m_traits->curve_split((c1)->get_last_curve(), b, a, 
                                   m_currentEvent->get_point());
 
-          Halfedge_handle h(NULL);
-          h = insert_to_pm(a, c1, h, pm);
+          if(!are_overlap)
+          {
+            Halfedge_handle h(NULL);
+            h = insert_to_pm(a, c1, h, pm);
+          }
 
           (c1)->set_last_point(m_currentEvent->get_point());
           (c1)->set_last_curve(b); 
@@ -749,8 +783,11 @@ protected:
             m_traits->curve_split((*i)->get_last_curve(), b, a, 
                                   m_currentEvent->get_point());
 
-          Halfedge_handle h(NULL);
-          h = insert_to_pm(a, *i, h, pm);
+          if(!are_overlap)
+          {
+            Halfedge_handle h(NULL);
+            h = insert_to_pm(a, *i, h, pm);
+          }
 
           (*i)->set_last_point(m_currentEvent->get_point());
           (*i)->set_last_curve(b); 
@@ -762,7 +799,9 @@ protected:
       }
       
       intersect(c1, *i);
+      prevSubCurve= *i; //update current SubCurve to be the previous
       ++i;
+       are_overlap = false; 
     }    
   }
 
@@ -780,7 +819,7 @@ private:
     SL_DEBUG(std::cout << "Handling right curves (" ;);
     SL_DEBUG(std::cout << m_currentEvent->get_point() << ")\n";);
     int numRightCurves = m_currentEvent->get_num_right_curves();
-    if ( numRightCurves == 0 )
+    if ( numRightCurves == 0 ) //no right cures, return
       return;
     
     m_currentPos = m_sweepLinePos;
@@ -806,16 +845,20 @@ private:
       if ( m_statusLine->size() == 1 )
         return;
       
-      StatusLineIter prev = slIter;
-      StatusLineIter next = slIter;
+      StatusLineIter prev = slIter; // the previous neighbour of the curve at the status line
+      StatusLineIter next = slIter; // the next neighbour of the curve at the status line
       ++next;
       
+      // 'mylist' will hold the two neighbours of the curve ,
+      //  and all of their overlapped curves
       SubCurveList mylist;
       if ( slIter != m_statusLine->begin() )
       {
         --prev;
         StatusLineIter tmp = prev;
         mylist.push_back(*prev);
+
+        //find all of the curves that overlap with *prev and push them to 'mylist'
         while ( tmp != m_statusLine->begin() ) 
         {
           --tmp;
@@ -831,6 +874,8 @@ private:
         StatusLineIter tmp = next;
         mylist.push_back(*next);
         ++tmp;
+
+        //find all of the curves that overlap with *next and push them to 'mylist'
         while ( tmp != m_statusLine->end() ) 
         {
           if ( do_curves_overlap(*next, *tmp) )
@@ -844,7 +889,8 @@ private:
       }
       intersect_curve_group(*(m_currentEvent->right_curves_begin()), mylist, pm);
       
-    } else
+    } 
+    else  // if we've reached here , numRightCurves > 1 
     {
       /* this block takes care of 
       //
@@ -855,24 +901,34 @@ private:
       //           \
       */
       int numLeftCurves = m_currentEvent->get_num_left_curves();
-      if ( numLeftCurves == 0 ) {
+      if ( numLeftCurves == 0 ) 
+      {
 
         SL_DEBUG(std::cout << " - handling special case " << std::endl;);
 
         StatusLineIter slIter;
         EventCurveIter currentOne = m_currentEvent->right_curves_begin();
-        while ( currentOne != m_currentEvent->right_curves_end() ) {
+        while ( currentOne != m_currentEvent->right_curves_end() ) 
+        {
+          //find an iterator to the first Subcurve in the statusLine
+          // that is equal to or greater than currentOne
+
           slIter = m_statusLine->lower_bound(*currentOne);
-          if ( slIter != m_statusLine->end() ) {
+          if ( slIter != m_statusLine->end() )
+          {
             Subcurve *c = *slIter;
-            if ( CurveStartsAtCurve(*currentOne, c)) {
+            if ( CurveStartsAtCurve(*currentOne, c)) 
+            {
               m_currentEvent->add_curve_to_left(c, m_sweepLinePos);
               m_currentEvent->add_curve_to_right(c);
               X_monotone_curve_2 a,b;
-              if ( c->is_source_left_to_target() ) {
+              if ( c->is_source_left_to_target() ) 
+              {
                 m_traits->curve_split(c->get_last_curve(), a, b, 
                                       m_currentEvent->get_point());
-              } else {
+              } 
+              else
+              {
                 m_traits->curve_split(c->get_last_curve(), b, a, 
                                       m_currentEvent->get_point());
               }
@@ -889,7 +945,7 @@ private:
           currentOne++;
         }
       }
-      // end block ...
+      // end block ... ( numLeftCurves == 0 )
       
       SubCurveList mylist;
       SubCurveList prevlist;
@@ -1044,6 +1100,7 @@ private:
                  std::cout << hhandle->source()->point() << " " 
                  << hhandle->target()->point() << "\n";);
         
+                 std::cout << "  from vertex (1)";
        res = pm.non_intersecting_insert_from_vertex(cv, hhandle, m_change_not);
 			
 
@@ -1081,30 +1138,31 @@ private:
         if ( !m_traits->point_equal( hhandle->target()->point(), p2 ))
           hhandle = hhandle->twin();
 
-        // before calling 'insert_at_vertices' we need to make sure
-        // that prev->face() == hhandle->face() (and if this is not the  case
-        // we need to change one of the halfedges 
-        if(prev->face() != hhandle->face())
-        {
-          Halfedge_handle  temp_prev , temp_hhandle;
-          temp_prev = prev->next_halfedge()->twin();  
-          temp_hhandle = hhandle->next_halfedge()->twin();  
-          
-          if(temp_prev->face() == hhandle->face())
-            prev = temp_prev;
-          else
-            if(prev->face() == temp_hhandle->face())
-              hhandle = temp_hhandle;
-            else
-              if(temp_prev->face() == temp_hhandle->face())
-              {
-                prev = temp_prev;
-                hhandle = temp_hhandle;
-              }
-              else
-                CGAL_assertion(prev->face() == hhandle->face());
-        }
+        //// before calling 'insert_at_vertices' we need to make sure
+        //// that prev->face() == hhandle->face() (and if this is not the  case
+        //// we need to change one of the halfedges 
+        //if(prev->face() != hhandle->face())
+        //{
+        //  Halfedge_handle  temp_prev , temp_hhandle;
+        //  temp_prev = prev->next_halfedge()->twin();  
+        //  temp_hhandle = hhandle->next_halfedge()->twin();  
+        //  
+        //  if(temp_prev->face() == hhandle->face())
+        //    prev = temp_prev;
+        //  else
+        //    if(prev->face() == temp_hhandle->face())
+        //      hhandle = temp_hhandle;
+        //    else
+        //      if(temp_prev->face() == temp_hhandle->face())
+        //      {
+        //        prev = temp_prev;
+        //        hhandle = temp_hhandle;
+        //      }
+        //      else
+        //        CGAL_assertion(prev->face() == hhandle->face());
+        //}
               
+        CGAL_assertion(prev->face() == hhandle->face());
         SL_DEBUG(std::cout << "  at vertices";
                  std::cout << prev->source()->point() << " " 
                            << prev->target()->point() << " --- ";
@@ -1252,29 +1310,30 @@ insert_to_pm_v(const X_monotone_curve_2 &cv, SubCurve *origCurve,
            h2->target()->point() != m_traits->curve_target(cv) )
         h2 = h2->twin();
       
-      // before calling 'insert_at_vertices' we need to make sure
-      // that prev->face() == hhandle->face() (and if this is not the  case
-      // we need to change one of the halfedges 
-      if(h1->face() != h2->face())
-      {
-        Halfedge_handle  temp_h1 , temp_h2;
-        temp_h1 = h1->next_halfedge()->twin();  
-        temp_h2 = h2->next_halfedge()->twin();  
-           
-        if(temp_h1->face() == h2->face())
-          h1 = temp_h1;
-        else
-          if(h1->face() == temp_h2->face())
-            h2 = temp_h2;
-          else
-            if(temp_h1->face() == temp_h2->face())
-            {
-              h1 = temp_h1;
-              h2 = temp_h2;
-            }
-            else 
-              CGAL_assertion(h1->face() == h2->face());
-      }
+      //// before calling 'insert_at_vertices' we need to make sure
+      //// that prev->face() == hhandle->face() (and if this is not the  case
+      //// we need to change one of the halfedges 
+      //if(h1->face() != h2->face())
+      //{
+      //  Halfedge_handle  temp_h1 , temp_h2;
+      //  temp_h1 = h1->next_halfedge()->twin();  
+      //  temp_h2 = h2->next_halfedge()->twin();  
+      //     
+      //  if(temp_h1->face() == h2->face())
+      //    h1 = temp_h1;
+      //  else
+      //    if(h1->face() == temp_h2->face())
+      //      h2 = temp_h2;
+      //    else
+      //      if(temp_h1->face() == temp_h2->face())
+      //      {
+      //        h1 = temp_h1;
+      //        h2 = temp_h2;
+      //      }
+      //      else 
+      //        CGAL_assertion(h1->face() == h2->face());
+      //}
+      CGAL_assertion(h1->face() == h2->face());
       res = pm.non_intersecting_insert_at_vertices(cv, h1, h2, m_change_not);
 			
     }
