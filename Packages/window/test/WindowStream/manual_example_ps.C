@@ -31,8 +31,10 @@ int main() { return 0; }
 typedef CGAL::Point_2< CGAL::Cartesian<double> >     Point;
 typedef CGAL::Segment_2< CGAL::Cartesian<double> >   Segment;
 
-int main()
+int main(int argc, char *argv[])
 {
+    if (argc >= 2) { return 0; }
+
     Point p(0,1), q(2,2);
     Segment s(p,q);
 
