@@ -52,9 +52,11 @@ public:
   typedef Arr_polyline_traits<Kernel>   Self;
 
   typedef typename Kernel::Point_2      Point_2;
-  typedef typename Kernel::Vector_2     Vector_2;
   typedef Container                     Curve_2;
   typedef Container                     X_curve_2;
+
+  typedef typename Kernel::Vector_2     Vector_2;
+  typedef typename Kernel::Line_2       Line_2;
 
   // Obsolete, for backward compatibility
   typedef Point_2                       Point;
@@ -190,13 +192,13 @@ public:
     
     for( ; (compare_x(*pit,p) * compare_x(*after,p)) > 0 ; ++pit,++after) {}
     
-    Line_2<Kernel> l1(*pit,*after);
+    Line_2 l1(*pit,*after);
     
     pit=cv2.begin();
     after=pit; ++after;
     for( ; (compare_x(*pit,p) * compare_x(*after,p)) > 0 ; ++pit,++after) {}
     
-    Line_2<Kernel> l2(*pit,*after);
+    Line_2 l2(*pit,*after);
     
     Comparison_result r = CGAL::compare_y_at_x(p,l1,l2); 
     
@@ -245,13 +247,13 @@ public:
     
     for( ; (compare_x(*pit,p) * compare_x(*after,p)) > 0 ; ++pit,++after) {}
     
-    Line_2<Kernel> l1(*pit,*after);
+    Line_2 l1(*pit,*after);
     
     pit=cv2.begin();
     after=pit; ++after;
     for( ; (compare_x(*pit,p) * compare_x(*after,p)) > 0 ; ++pit,++after) {}
 
-    Line_2<Kernel> l2(*pit,*after);
+    Line_2 l2(*pit,*after);
     
     Comparison_result r=CGAL::compare_y_at_x(p,l1,l2); 
     
@@ -288,12 +290,12 @@ public:
 	return ABOVE_CURVE;
     }
 
-	typename X_curve_2::const_iterator pit=cv.begin(),after=pit; ++after;
+    typename X_curve_2::const_iterator pit = cv.begin(),after=pit; ++after;
     while ( (compare_x(*pit,p) * compare_x(*after,p)) > 0 ) {
       ++pit; ++after;
     }
  
-    Line_2<Kernel> l(*pit,*after);
+    Line_2 l(*pit,*after);
 
     Comparison_result res = CGAL::compare_y_at_x(p, l);
 
@@ -308,8 +310,8 @@ public:
   
 
   //precondition - same as in pm
-  bool curve_is_between_cw(const X_curve_2& cv,const X_curve_2& first,
-                           const X_curve_2& second, const Point_2& p) const
+  bool curve_is_between_cw(const X_curve_2 & cv,const X_curve_2 & first,
+                           const X_curve_2 & second, const Point_2 & p) const
   {
     CGAL_assertion(is_x_monotone(cv));
     CGAL_assertion(is_x_monotone(first));
@@ -326,9 +328,9 @@ public:
     X_curve_2 cv1 = second;
     X_curve_2 cvx = cv;
 
-    if ( !point_is_same(curve_source(cv0),p) ) cv0 = curve_flip(cv0);
-    if ( !point_is_same(curve_source(cv1),p) ) cv1 = curve_flip(cv1);
-    if ( !point_is_same(curve_source(cvx),p) ) cvx = curve_flip(cvx);
+    if (!point_is_same(curve_source(cv0),p) ) cv0 = curve_flip(cv0);
+    if (!point_is_same(curve_source(cv1),p) ) cv1 = curve_flip(cv1);
+    if (!point_is_same(curve_source(cvx),p) ) cvx = curve_flip(cvx);
     
     typename X_curve_2::iterator xcit=cv0.begin();++xcit;
     Point_2 p0(*xcit);
@@ -398,7 +400,10 @@ public:
   /*! 
    */
   Point_2 curve_target(const X_curve_2 & cv) const
-  { return *(--(cv.end())); }
+  {
+    typename X_curve_2::const_iterator it = cv.end();
+    return *--it;
+  }
 
   ///////////////////////////////////////////////////////
   //         ARRANGEMENT FUNCS
@@ -954,7 +959,7 @@ public:
   Point_2 point_reflect_in_x_and_y(const Point_2 & pt) const
   {
     Point_2 org = construct_point_2_object()(ORIGIN);      
-    typename Kernel::Vector_2 v = construct_vector_2_object()(pt, org);
+    Vector_2 v = construct_vector_2_object()(pt, org);
     Point_2 reflected_pt(v);
     return reflected_pt;
   }
