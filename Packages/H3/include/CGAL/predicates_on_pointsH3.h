@@ -408,8 +408,6 @@ collinear_are_strictly_ordered_along_line(const PointH3<R> &p,
   return (dir_pq == -dir_rq);
 }
 
-
-
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
 Oriented_side
@@ -471,10 +469,49 @@ template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
 Bounded_side
 side_of_bounded_sphere(const PointH3<R> &p,
-                            const PointH3<R> &q,
-                            const PointH3<R> &r,
-                            const PointH3<R> &s,
-                            const PointH3<R> &test)
+                       const PointH3<R> &q,
+                       const PointH3<R> &t)
+{
+  typedef typename R::RT RT;
+
+  const RT& phx = p.hx_ref();
+  const RT& phy = p.hy_ref();
+  const RT& phz = p.hz_ref();
+  const RT& phw = p.hw_ref();
+  const RT& qhx = q.hx_ref();
+  const RT& qhy = q.hy_ref();
+  const RT& qhz = q.hz_ref();
+  const RT& qhw = q.hw_ref();
+  const RT& thx = t.hx_ref();
+  const RT& thy = t.hy_ref();
+  const RT& thz = t.hz_ref();
+  const RT& thw = t.hw_ref();
+
+  return Bounded_side( CGAL_NTS sign((thx*phw-phx*thw)*(qhx*thw-thx*qhw)
+	                           + (thy*phw-phy*thw)*(qhy*thw-thy*qhw)
+	                           + (thz*phw-phz*thw)*(qhz*thw-thz*qhw)) );
+}
+
+template < class R >
+CGAL_KERNEL_MEDIUM_INLINE
+Bounded_side
+side_of_bounded_sphere(const PointH3<R> &p,
+                       const PointH3<R> &q,
+                       const PointH3<R> &r,
+                       const PointH3<R> &t)
+{
+    PointH3<R> center = circumcenter(p, q, r);
+    return Bounded_side( cmp_dist_to_point(center, p, t) );
+}
+
+template < class R >
+CGAL_KERNEL_MEDIUM_INLINE
+Bounded_side
+side_of_bounded_sphere(const PointH3<R> &p,
+                       const PointH3<R> &q,
+                       const PointH3<R> &r,
+                       const PointH3<R> &s,
+                       const PointH3<R> &test)
 {
   Oriented_side  oside = side_of_oriented_sphere(p,q,r,s,test);
   if ( are_positive_oriented( p,q,r,s) )
