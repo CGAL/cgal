@@ -1680,7 +1680,6 @@ Packages/Triangulation_3/doc_tex/Triangulation_3_ref/insert_outside_convex_hull.
 Packages/Triangulation_3/doc_tex/Triangulation_3_ref/insert_outside_convex_hull.gif -text svneol=unset#unset
 Packages/Triangulation_3/doc_tex/Triangulation_3_ref/sidedim2.eps -text
 Packages/Triangulation_3/doc_tex/Triangulation_3_ref/sidedim2.gif -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/.xvpics/rock.bmp -text svneol=unset#unset
 Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/antialiasing.ico -text svneol=unset#unset
 Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/antialiasing.xpm -text
 Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/cgal.ico -text svneol=unset#unset
@@ -1707,8 +1706,6 @@ Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/superimposed_edg
 Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/superimposed_edges.xpm -text
 Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/wireframe.ico -text svneol=unset#unset
 Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/wireframe.xpm -text
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/lo16-app-tool.png -text svneol=unset#unset
-Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/lo32-app-tool.png -text svneol=unset#unset
 Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/subdivision.sln -text
 Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/subdivision.vcproj -text
 Packages/Tutorial/tutorial/Polyhedron/data/aircraft.off -text

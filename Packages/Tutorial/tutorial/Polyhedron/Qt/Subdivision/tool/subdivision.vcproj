@@ -114,25 +114,7 @@ wsock32.lib winmm.lib imm32.lib opengl32.lib glu32.lib"
 			Name="Source Files"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm">
 			<File
-				RelativePath="Arcball.cpp">
-			</File>
-			<File
-				RelativePath="Camera.cpp">
-			</File>
-			<File
-				RelativePath="Matrix44.cpp">
-			</File>
-			<File
-				RelativePath="Quaternion.cpp">
-			</File>
-			<File
 				RelativePath="Vector2d.cpp">
-			</File>
-			<File
-				RelativePath="Vector3d.cpp">
-			</File>
-			<File
-				RelativePath="Viewport.cpp">
 			</File>
 			<File
 				RelativePath="glview.cpp">
@@ -149,22 +131,32 @@ wsock32.lib winmm.lib imm32.lib opengl32.lib glu32.lib"
 			<File
 				RelativePath="toolview.cpp">
 			</File>
+			<Filter
+				Name="lib"
+				Filter="">
+				<File
+					RelativePath="Arcball.cpp">
+				</File>
+				<File
+					RelativePath="Camera.cpp">
+				</File>
+				<File
+					RelativePath="Matrix44.cpp">
+				</File>
+				<File
+					RelativePath="Quaternion.cpp">
+				</File>
+				<File
+					RelativePath="Vector3d.cpp">
+				</File>
+				<File
+					RelativePath="Viewport.cpp">
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc">
-			<File
-				RelativePath="Arcball.h">
-			</File>
-			<File
-				RelativePath="Camera.h">
-			</File>
-			<File
-				RelativePath="Matrix44.h">
-			</File>
-			<File
-				RelativePath="Quaternion.h">
-			</File>
 			<File
 				RelativePath="ScalarMap.h">
 			</File>
@@ -172,16 +164,16 @@ wsock32.lib winmm.lib imm32.lib opengl32.lib glu32.lib"
 				RelativePath="Vector2d.h">
 			</File>
 			<File
-				RelativePath="Vector3d.h">
-			</File>
-			<File
-				RelativePath="Viewport.h">
-			</File>
-			<File
 				RelativePath="builder.h">
 			</File>
 			<File
 				RelativePath="cgal_types.h">
+			</File>
+			<File
+				RelativePath="dump_eps.h">
+			</File>
+			<File
+				RelativePath="enriched_polyhedron.h">
 			</File>
 			<File
 				RelativePath="glview.h">
@@ -201,6 +193,9 @@ wsock32.lib winmm.lib imm32.lib opengl32.lib glu32.lib"
 "
 						Outputs="glview.moc"/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="parser_obj.h">
 			</File>
 			<File
 				RelativePath="quad-triangle.h">
@@ -262,6 +257,28 @@ wsock32.lib winmm.lib imm32.lib opengl32.lib glu32.lib"
 						Outputs="toolview.moc"/>
 				</FileConfiguration>
 			</File>
+			<Filter
+				Name="lib"
+				Filter="">
+				<File
+					RelativePath="Arcball.h">
+				</File>
+				<File
+					RelativePath="Camera.h">
+				</File>
+				<File
+					RelativePath="Matrix44.h">
+				</File>
+				<File
+					RelativePath="Quaternion.h">
+				</File>
+				<File
+					RelativePath="Vector3d.h">
+				</File>
+				<File
+					RelativePath="Viewport.h">
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"

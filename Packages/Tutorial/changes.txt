@@ -1,0 +1,5 @@
+28 June 2004 Radu Ursu
+
+- removed tones of files needed by KDevelop and replaced them with a project for VC++.NET 2003 and 
+  a makefile for Linux/Cygwin
+
