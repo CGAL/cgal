@@ -86,17 +86,17 @@ template <typename ET> class Lazy_exact_nt;
 template <typename ET>
 struct Lazy_exact_rep : public Rep
 {
-  Interval_base in; // could be const, except for rafinement ? or mutable ?
+  Interval_nt<true> in; // could be const, except for rafinement ? or mutable ?
   ET *et; // mutable as well ?
 
-  Lazy_exact_rep (const Interval_base & i)
+  Lazy_exact_rep (const Interval_nt<true> & i)
       : in(i), et(NULL) {}
 
 private:
   Lazy_exact_rep (const Lazy_exact_rep&) { abort(); } // cannot be copied.
 public:
 
-  Interval_nt<true> approx() const  // TODO : return a const ref instead !
+  const Interval_nt<true>& approx() const
   {
       return in;
   }
@@ -172,7 +172,7 @@ struct Lazy_exact_unary : public Lazy_exact_rep<ET>
 {
   const Lazy_exact_nt<ET> op1;
 
-  Lazy_exact_unary (const Interval_base &i, const Lazy_exact_nt<ET> &a)
+  Lazy_exact_unary (const Interval_nt<true> &i, const Lazy_exact_nt<ET> &a)
       : Lazy_exact_rep<ET>(i), op1(a) {}
 };
 
@@ -182,7 +182,7 @@ struct Lazy_exact_binary : public Lazy_exact_unary<ET>
 {
   const Lazy_exact_nt<ET> op2;
 
-  Lazy_exact_binary (const Interval_base &i,
+  Lazy_exact_binary (const Interval_nt<true> &i,
 		     const Lazy_exact_nt<ET> &a, const Lazy_exact_nt<ET> &b)
       : Lazy_exact_unary<ET>(i, a), op2(b) {}
 };
@@ -312,11 +312,14 @@ public :
   Self operator/ (const Self & a) const
   { return new Lazy_exact_Div<ET>(*this, a); }
 
-  Interval_nt<true> approx() const
+  const Interval_nt<true>& approx() const
   { return ptr()->approx(); }
 
   Interval_nt<false> interval() const
-  { return ptr()->approx(); }
+  { 
+    const Interval_nt<true>& i = ptr()->approx();
+    return Interval_nt<false>(i.inf(), i.sup());
+  }
 
   Interval_nt_advanced approx_adv() const
   { return ptr()->approx(); }
@@ -330,7 +333,7 @@ public :
     {
       return approx() < a.approx();
     }
-    catch (Interval_base::unsafe_comparison)
+    catch (Interval_nt<false>::unsafe_comparison)
     {
       // std::cerr << "Interval filter failure (<)" << std::endl;
       return exact() < a.exact();
@@ -358,7 +361,7 @@ public :
     {
       return approx() == a.approx();
     }
-    catch (Interval_base::unsafe_comparison)
+    catch (Interval_nt<false>::unsafe_comparison)
     {
       // std::cerr << "Interval filter failure (==)" << std::endl;
       return exact() == a.exact();
@@ -384,10 +387,10 @@ to_double(const Lazy_exact_nt<ET> & a)
 
 template <typename ET>
 inline
-Interval_base
+std::pair<double,double>
 to_interval(const Lazy_exact_nt<ET> & a)
 {
-    return a.approx();
+    return a.approx().pair();
 }
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
@@ -402,7 +405,7 @@ sign(const Lazy_exact_nt<ET> & a)
   {
     return CGAL_NTS sign(a.approx());
   }
-  catch (Interval_base::unsafe_comparison)
+  catch (Interval_nt<false>::unsafe_comparison)
   {
     // std::cerr << "Interval filter failure (sign)" << std::endl;
     return CGAL_NTS sign(a.exact());
@@ -418,7 +421,7 @@ compare(const Lazy_exact_nt<ET> & a, const Lazy_exact_nt<ET> & b)
   {
     return CGAL_NTS compare(a.approx(), b.approx());
   }
-  catch (Interval_base::unsafe_comparison)
+  catch (Interval_nt<false>::unsafe_comparison)
   {
     // std::cerr << "Interval filter failure (compare)" << std::endl;
     return CGAL_NTS compare(a.exact(), b.exact());

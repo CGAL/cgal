@@ -58,7 +58,7 @@ int main()
   }
 
   std::cerr << "Number of IA failures = "
-            << CGAL::Interval_base::number_of_failures << std::endl;
+            << CGAL::Interval_nt<false>::number_of_failures << std::endl;
 
   return 0;
 }

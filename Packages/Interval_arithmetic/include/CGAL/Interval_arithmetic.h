@@ -36,29 +36,49 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/FPU.h>
-#include <CGAL/Interval_base.h>
 
 CGAL_BEGIN_NAMESPACE
 
+namespace CGALi {
+
+  struct Unsafe_comparison {};    // Exception class.
+
+}
+
 template <bool Protected = true>
-struct Interval_nt : public Interval_base
+struct Interval_nt
 {
   typedef Tag_false   Has_gcd;
   typedef Tag_true    Has_division;
   typedef Tag_true    Has_sqrt;
 
+  typedef CGALi::Unsafe_comparison unsafe_comparison;
+
   typedef Interval_nt<Protected> IA;
+  static unsigned number_of_failures;	// Number of filter failures.
 
   Interval_nt() {}
 
   Interval_nt(const double d)
-	  : Interval_base(d) {}
+	 : inf_sup(d,d)  {}
 
   Interval_nt(const double i, const double s)
-	  : Interval_base(i,s) {}
+	  : inf_sup(i,s)
+  {
+      // VC++ should use instead : (i<=s) || !is_valid(i) || !is_valid(s)
+      // Or should I use is_valid() ? or is_valid_or_nan() ?
+    CGAL_assertion_msg(!(i>s),
+	      " Variable used before being initialized (or CGAL bug)");
+  }
 
-  Interval_nt(const Interval_base & d)
-	  : Interval_base(d) {}
+  // This copy ctor, normally equivalent to the one created by the compiler,
+  // appears to fix a code generation problem with GCC 3.0.4...
+  // (see test/IA/gcc_3.0.bug.C).
+  Interval_nt(const Interval_nt & i)
+	  : inf_sup(i.pair()) {}
+
+   Interval_nt(const std::pair<double,double> & p)
+	  : inf_sup(p) {}
 
   // The advantage of non-member operators is that (double * IA) just works...
   // But is it really useful and wishable in CGAL ?
@@ -66,19 +86,19 @@ struct Interval_nt : public Interval_base
   IA operator+ (const IA &d) const
   {
     Protect_FPU_rounding<Protected> P;
-    return IA(-CGAL_IA_SUB(-inf_, d.inf_), CGAL_IA_ADD(sup_, d.sup_));
+    return IA(-CGAL_IA_SUB(-inf(), d.inf()), CGAL_IA_ADD(sup(), d.sup()));
   }
 
   IA operator- (const IA &d) const
   {
     Protect_FPU_rounding<Protected> P;
-    return IA(-CGAL_IA_SUB(d.sup_, inf_), CGAL_IA_SUB(sup_, d.inf_));
+    return IA(-CGAL_IA_SUB(d.sup(), inf()), CGAL_IA_SUB(sup(), d.inf()));
   }
 
   IA operator* (const IA &) const;
   IA operator/ (const IA &) const;
 
-  IA operator-() const { return IA (-sup_, -inf_); }
+  IA operator-() const { return IA (-sup(), -inf()); }
 
   IA & operator+= (const IA &d) { return *this = *this + d; }
   IA & operator-= (const IA &d) { return *this = *this - d; }
@@ -93,8 +113,8 @@ struct Interval_nt : public Interval_base
 
   bool operator<  (const IA &d) const
   {
-    if (sup_  < d.inf_) return true;
-    if (inf_ >= d.sup_) return false;
+    if (sup()  < d.inf()) return true;
+    if (inf() >= d.sup()) return false;
     overlap_action();
     return false;
   }
@@ -106,8 +126,8 @@ struct Interval_nt : public Interval_base
 
   bool operator<= (const IA &d) const
   {
-    if (sup_ <= d.inf_) return true;
-    if (inf_ >  d.sup_) return false;
+    if (sup() <= d.inf()) return true;
+    if (inf() >  d.sup()) return false;
     overlap_action();
     return false;
   }
@@ -119,8 +139,8 @@ struct Interval_nt : public Interval_base
 
   bool operator== (const IA &d) const
   {
-    if (d.inf_ >  sup_ || d.sup_  < inf_) return false;
-    if (d.inf_ == sup_ && d.sup_ == inf_) return true;
+    if (d.inf() >  sup() || d.sup() < inf()) return false;
+    if (d.inf() == sup() && d.sup() == inf()) return true;
     overlap_action();
     return false;
   }
@@ -135,15 +155,121 @@ struct Interval_nt : public Interval_base
   // The (join, union, ||) operator.
   IA operator|| (const IA & d) const
   {
-    return IA(std::min(inf_, d.inf_), std::max(sup_, d.sup_));
+    return IA(std::min(inf(), d.inf()), std::max(sup(), d.sup()));
   }
 
   // The (meet, intersection, &&) operator.  Valid if intervals overlap.
   IA operator&& (const IA & d) const
   {
-    return IA(std::max(inf_, d.inf_), std::min(sup_, d.sup_));
+    return IA(std::max(inf(), d.inf()), std::min(sup(), d.sup()));
   }
+
+  bool is_point() const
+  {
+    return sup() == inf();
+  }
+
+  bool is_same (const IA & d) const
+  {
+    return inf() == d.inf() && sup() == d.sup();
+  }
+
+  bool do_overlap (const IA & d) const
+  {
+    return !(d.inf() > sup() || d.sup() < inf());
+  }
+
+  double inf() const { return inf_sup.first; }
+  double sup() const { return inf_sup.second; }
+
+  const std::pair<double,double>& pair() const
+  {
+    return inf_sup;
+  }
+
+  // "inf_" stores the lower bound, "sup_" the upper.
+  std::pair<double,double> inf_sup;
+
+  static Interval_nt<Protected> smallest()
+  {
+    return Interval_nt<Protected>(-CGAL_IA_MIN_DOUBLE,
+				  CGAL_IA_MIN_DOUBLE);
+  }
+
+  static Interval_nt<Protected> largest()
+  {
+    return Interval_nt<Protected>(-HUGE_VAL, HUGE_VAL);
+  } 
 };
+
+template <bool Protected>
+unsigned Interval_nt<Protected>::number_of_failures;
+
+
+template <bool Protected>
+inline
+double
+to_double (const Interval_nt<Protected> & d)
+{
+  return (d.sup() + d.inf()) * 0.5;
+  // This may overflow...
+}
+
+template <bool Protected>
+inline
+const std::pair<double,double> &
+to_interval (const Interval_nt<Protected> & d)
+{
+  return d.pair();
+}
+
+
+template <bool Protected>
+inline
+bool
+is_valid (const Interval_nt<Protected> & d)
+{
+#if defined _MSC_VER || defined __sgi || defined __BORLANDC__
+  return CGAL::is_valid(d.inf()) && 
+    CGAL::is_valid(d.sup()) && 
+    d.inf() <= d.sup();
+#else
+  // The 2 first is_valid() are implicitely done by the 3rd test ;-)
+  return d.inf() <= d.sup();
+#endif
+}
+
+template <bool Protected>
+inline
+bool
+is_finite (const Interval_nt<Protected> & d)
+{
+  return CGAL::is_finite(d.inf()) && CGAL::is_finite(d.sup());
+}
+
+template <bool Protected>
+inline
+io_Operator
+io_tag (const Interval_nt<Protected> &)
+{
+  return io_Operator();
+}
+
+template <bool Protected>
+std::ostream & operator<< (std::ostream &os, const Interval_nt<Protected> & I )
+{
+  return os << "[" << I.inf() << ";" << I.sup() << "]";
+}
+
+template <bool Protected>
+std::istream & operator>> (std::istream &is, Interval_nt<Protected> & I)
+{
+    double d;
+    is >> d;
+    I = d;
+    return is;
+}
+
 
 typedef Interval_nt<false> Interval_nt_advanced;  // for back-compatibility
 
@@ -155,45 +281,45 @@ Interval_nt<Protected>
 Interval_nt<Protected>::operator* (const Interval_nt<Protected> & d) const
 {
   Protect_FPU_rounding<Protected> P;
-  if (inf_>=0.0)					// e>=0
+  if (inf()>=0.0)					// e>=0
   {
-    // d>=0     [inf_*d.inf_; sup_*d.sup_]
-    // d<=0     [sup_*d.inf_; inf_*d.sup_]
-    // d~=0     [sup_*d.inf_; sup_*d.sup_]
-    double a = inf_, b = sup_;
-    if (d.inf_ < 0.0)
+    // d>=0     [inf()*d.inf(); sup()*d.sup()]
+    // d<=0     [sup()*d.inf(); inf()*d.sup()]
+    // d~=0     [sup()*d.inf(); sup()*d.sup()]
+    double a = inf(), b = sup();
+    if (d.inf() < 0.0)
     {
 	a=b;
-	if (d.sup_ < 0.0)
-	    b=inf_;
+	if (d.sup() < 0.0)
+	    b=inf();
     }
-    return IA(-CGAL_IA_MUL(a, -d.inf_), CGAL_IA_MUL(b, d.sup_));
+    return IA(-CGAL_IA_MUL(a, -d.inf()), CGAL_IA_MUL(b, d.sup()));
   }
-  else if (sup_<=0.0)				// e<=0
+  else if (sup()<=0.0)				// e<=0
   {
-    // d>=0     [inf_*d.sup_; sup_*d.inf_]
-    // d<=0     [sup_*d.sup_; inf_*d.inf_]
-    // d~=0     [inf_*d.sup_; inf_*d.inf_]
-    double a = sup_, b = inf_;
-    if (d.inf_ < 0.0)
+    // d>=0     [inf()*d.sup(); sup()*d.inf()]
+    // d<=0     [sup()*d.sup(); inf()*d.inf()]
+    // d~=0     [inf()*d.sup(); inf()*d.inf()]
+    double a = sup(), b = inf();
+    if (d.inf() < 0.0)
     {
 	a=b;
-	if (d.sup_ < 0.0)
-	    b=sup_;
+	if (d.sup() < 0.0)
+	    b=sup();
     }
-    return IA(-CGAL_IA_MUL(b, -d.sup_), CGAL_IA_MUL(a, d.inf_));
+    return IA(-CGAL_IA_MUL(b, -d.sup()), CGAL_IA_MUL(a, d.inf()));
   }
-  else						// 0 \in [inf_;sup_]
+  else						// 0 \in [inf();sup()]
   {
-    if (d.inf_>=0.0)				// d>=0
-      return IA(-CGAL_IA_MUL(-inf_, d.sup_), CGAL_IA_MUL(sup_, d.sup_));
-    if (d.sup_<=0.0)				// d<=0
-      return IA(-CGAL_IA_MUL(sup_, -d.inf_), CGAL_IA_MUL(inf_, d.inf_));
+    if (d.inf()>=0.0)				// d>=0
+      return IA(-CGAL_IA_MUL(-inf(), d.sup()), CGAL_IA_MUL(sup(), d.sup()));
+    if (d.sup()<=0.0)				// d<=0
+      return IA(-CGAL_IA_MUL(sup(), -d.inf()), CGAL_IA_MUL(inf(), d.inf()));
         					// 0 \in d
-    double tmp1 = CGAL_IA_MUL(-inf_, d.sup_);
-    double tmp2 = CGAL_IA_MUL(sup_, -d.inf_);
-    double tmp3 = CGAL_IA_MUL(inf_, d.inf_);
-    double tmp4 = CGAL_IA_MUL(sup_, d.sup_);
+    double tmp1 = CGAL_IA_MUL(-inf(), d.sup());
+    double tmp2 = CGAL_IA_MUL(sup(), -d.inf());
+    double tmp3 = CGAL_IA_MUL(inf(), d.inf());
+    double tmp4 = CGAL_IA_MUL(sup(), d.sup());
     return IA(-std::max(tmp1,tmp2), std::max(tmp3,tmp4));
   };
 }
@@ -206,45 +332,45 @@ Interval_nt<Protected>
 Interval_nt<Protected>::operator/ (const Interval_nt<Protected> & d) const
 {
   Protect_FPU_rounding<Protected> P;
-  if (d.inf_>0.0)				// d>0
+  if (d.inf()>0.0)				// d>0
   {
-    // e>=0	[inf_/d.sup_; sup_/d.inf_]
-    // e<=0	[inf_/d.inf_; sup_/d.sup_]
-    // e~=0	[inf_/d.inf_; sup_/d.inf_]
-    double a = d.sup_, b = d.inf_;
-    if (inf_<0.0)
+    // e>=0	[inf()/d.sup(); sup()/d.inf()]
+    // e<=0	[inf()/d.inf(); sup()/d.sup()]
+    // e~=0	[inf()/d.inf(); sup()/d.inf()]
+    double a = d.sup(), b = d.inf();
+    if (inf()<0.0)
     {
 	a=b;
-	if (sup_<0.0)
-	    b=d.sup_;
+	if (sup()<0.0)
+	    b=d.sup();
     };
-    return IA(-CGAL_IA_DIV(-inf_, a), CGAL_IA_DIV(sup_, b));
+    return IA(-CGAL_IA_DIV(-inf(), a), CGAL_IA_DIV(sup(), b));
   }
-  else if (d.sup_<0.0)			// d<0
+  else if (d.sup()<0.0)			// d<0
   {
-    // e>=0	[sup_/d.sup_; inf_/d.inf_]
-    // e<=0	[sup_/d.inf_; inf_/d.sup_]
-    // e~=0	[sup_/d.sup_; inf_/d.sup_]
-    double a = d.sup_, b = d.inf_;
-    if (inf_<0.0)
+    // e>=0	[sup()/d.sup(); inf()/d.inf()]
+    // e<=0	[sup()/d.inf(); inf()/d.sup()]
+    // e~=0	[sup()/d.sup(); inf()/d.sup()]
+    double a = d.sup(), b = d.inf();
+    if (inf()<0.0)
     {
 	b=a;
-	if (sup_<0.0)
-	    a=d.inf_;
+	if (sup()<0.0)
+	    a=d.inf();
     };
-    return IA(-CGAL_IA_DIV(-sup_, a), CGAL_IA_DIV(inf_, b));
+    return IA(-CGAL_IA_DIV(-sup(), a), CGAL_IA_DIV(inf(), b));
   }
   else					// d~0
-    return IA::Largest;
-	   // We could do slightly better -> [0;HUGE_VAL] when d.sup_==0,
+    return IA::largest();
+	   // We could do slightly better -> [0;HUGE_VAL] when d.sup()==0,
 	   // but is this worth ?
 }
 
 #if 0 // TODO : Do this for the next release, same for is_one()
 bool is_zero(const NT &n)
 {
-  if (0 >  n.sup_ || 0  < n.inf_) return false;
-  if (0 == n.sup_ && 0 == n.inf_) return true;
+  if (0 >  n.sup() || 0  < n.inf()) return false;
+  if (0 == n.sup() && 0 == n.inf()) return true;
   n.overlap_action();
 }
 #endif
@@ -259,9 +385,9 @@ sqrt (const Interval_nt<Protected> & d)
   // sqrt([-a,+b]) => [0;sqrt(+b)] => assumes roundoff error.
   // sqrt([-a,-b]) => [0;sqrt(-b)] => assumes user bug (unspecified result).
   FPU_set_cw(CGAL_FE_DOWNWARD);
-  double i = (d.inf_ > 0.0) ? CGAL_IA_SQRT(d.inf_) : 0.0;
+  double i = (d.inf() > 0.0) ? CGAL_IA_SQRT(d.inf()) : 0.0;
   FPU_set_cw(CGAL_FE_UPWARD);
-  return Interval_nt<Protected>(i, CGAL_IA_SQRT(d.sup_));
+  return Interval_nt<Protected>(i, CGAL_IA_SQRT(d.sup()));
 }
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
@@ -270,8 +396,8 @@ inline
 Interval_nt<Protected>
 min (const Interval_nt<Protected> & d, const Interval_nt<Protected> & e)
 {
-  return Interval_nt<Protected>(std::min(d.inf_, e.inf_),
-		                std::min(d.sup_, e.sup_));
+  return Interval_nt<Protected>(std::min(d.inf(), e.inf()),
+		                std::min(d.sup(), e.sup()));
 }
 
 template <bool Protected>
@@ -279,8 +405,8 @@ inline
 Interval_nt<Protected>
 max (const Interval_nt<Protected> & d, const Interval_nt<Protected> & e)
 {
-  return Interval_nt<Protected>(std::max(d.inf_, e.inf_),
-		                std::max(d.sup_, e.sup_));
+  return Interval_nt<Protected>(std::max(d.inf(), e.inf()),
+		                std::max(d.sup(), e.sup()));
 }
 
 #else
@@ -289,28 +415,28 @@ inline
 Interval_nt<false>
 min (const Interval_nt<false> & d, const Interval_nt<false> & e)
 {
-  return Interval_nt<false>(min(d.inf_, e.inf_),min(d.sup_, e.sup_));
+  return Interval_nt<false>(min(d.inf(), e.inf()),min(d.sup(), e.sup()));
 }
 
 inline
 Interval_nt<false>
 max (const Interval_nt<false> & d, const Interval_nt<false> & e)
 {
-  return Interval_nt<false>(max(d.inf_, e.inf_),max(d.sup_, e.sup_));
+  return Interval_nt<false>(max(d.inf(), e.inf()),max(d.sup(), e.sup()));
 }
 
 inline
 Interval_nt<true>
 min (const Interval_nt<true> & d, const Interval_nt<true> & e)
 {
-  return Interval_nt<true>(min(d.inf_, e.inf_),min(d.sup_, e.sup_));
+  return Interval_nt<true>(min(d.inf(), e.inf()),min(d.sup(), e.sup()));
 }
 
 inline
 Interval_nt<true>
 max (const Interval_nt<true> & d, const Interval_nt<true> & e)
 {
-  return Interval_nt<true>(max(d.inf_, e.inf_),max(d.sup_, e.sup_));
+  return Interval_nt<true>(max(d.inf(), e.inf()),max(d.sup(), e.sup()));
 }
 
 #endif // CGAL_CFG_MATCHING_BUG_2
@@ -324,13 +450,14 @@ Interval_nt<Protected>
 square (const Interval_nt<Protected> & d)
 {
   Protect_FPU_rounding<Protected> P;
-  if (d.inf_>=0.0)
-      return Interval_nt<Protected>(-CGAL_IA_MUL(d.inf_, -d.inf_),
-	                             CGAL_IA_MUL(d.sup_, d.sup_));
-  if (d.sup_<=0.0)
-      return Interval_nt<Protected>(-CGAL_IA_MUL(d.sup_, -d.sup_),
-	     	                     CGAL_IA_MUL(d.inf_, d.inf_));
-  return Interval_nt<Protected>(0.0, CGAL_IA_SQUARE(std::max(-d.inf_,d.sup_)));
+  if (d.inf()>=0.0)
+      return Interval_nt<Protected>(-CGAL_IA_MUL(d.inf(), -d.inf()),
+	                             CGAL_IA_MUL(d.sup(), d.sup()));
+  if (d.sup()<=0.0)
+      return Interval_nt<Protected>(-CGAL_IA_MUL(d.sup(), -d.sup()),
+	     	                     CGAL_IA_MUL(d.inf(), d.inf()));
+  return Interval_nt<Protected>(0.0, CGAL_IA_SQUARE(std::max(-d.inf(),
+							     d.sup())));
 }
 
 template <bool Protected>
@@ -338,9 +465,9 @@ inline
 Interval_nt<Protected>
 abs (const Interval_nt<Protected> & d)
 {
-  if (d.inf_ >= 0.0) return d;
-  if (d.sup_ <= 0.0) return -d;
-  return Interval_nt<Protected>(0.0, std::max(-d.inf_, d.sup_));
+  if (d.inf() >= 0.0) return d;
+  if (d.sup() <= 0.0) return -d;
+  return Interval_nt<Protected>(0.0, std::max(-d.inf(), d.sup()));
 }
 
 template <bool Protected>
@@ -348,9 +475,9 @@ inline
 Sign
 sign (const Interval_nt<Protected> & d)
 {
-  if (d.inf_ > 0.0) return POSITIVE;
-  if (d.sup_ < 0.0) return NEGATIVE;
-  if (d.inf_ == d.sup_) return ZERO;
+  if (d.inf() > 0.0) return POSITIVE;
+  if (d.sup() < 0.0) return NEGATIVE;
+  if (d.inf() == d.sup()) return ZERO;
   Interval_nt<Protected>::overlap_action();
   return ZERO;
 }
@@ -360,9 +487,9 @@ inline
 Comparison_result
 compare (const Interval_nt<Protected> & d, const Interval_nt<Protected> & e)
 {
-  if (d.inf_ > e.sup_) return LARGER;
-  if (e.inf_ > d.sup_) return SMALLER;
-  if (e.inf_ == d.sup_ && d.inf_ == e.sup_) return EQUAL;
+  if (d.inf() > e.sup()) return LARGER;
+  if (e.inf() > d.sup()) return SMALLER;
+  if (e.inf() == d.sup() && d.inf() == e.sup()) return EQUAL;
   Interval_nt<Protected>::overlap_action();
   return EQUAL;
 }
@@ -374,31 +501,31 @@ Interval_nt<true>
 square (const Interval_nt<true> & d)
 {
   Protect_FPU_rounding<true> P;
-  if (d.inf_>=0.0)
-      return Interval_nt<true>(-CGAL_IA_MUL(d.inf_, -d.inf_),
-	                        CGAL_IA_MUL(d.sup_, d.sup_));
-  if (d.sup_<=0.0)
-      return Interval_nt<true>(-CGAL_IA_MUL(d.sup_, -d.sup_),
-	                        CGAL_IA_MUL(d.inf_, d.inf_));
-  return Interval_nt<true>(0.0, CGAL_IA_SQUARE(std::max(-d.inf_, d.sup_)));
+  if (d.inf()>=0.0)
+      return Interval_nt<true>(-CGAL_IA_MUL(d.inf(), -d.inf()),
+	                        CGAL_IA_MUL(d.sup(), d.sup()));
+  if (d.sup()<=0.0)
+      return Interval_nt<true>(-CGAL_IA_MUL(d.sup(), -d.sup()),
+	                        CGAL_IA_MUL(d.inf(), d.inf()));
+  return Interval_nt<true>(0.0, CGAL_IA_SQUARE(std::max(-d.inf(), d.sup())));
 }
 
 inline
 Interval_nt<true>
 abs (const Interval_nt<true> & d)
 {
-  if (d.inf_ >= 0.0) return d;
-  if (d.sup_ <= 0.0) return -d;
-  return Interval_nt<true>(0.0, std::max(-d.inf_, d.sup_));
+  if (d.inf() >= 0.0) return d;
+  if (d.sup() <= 0.0) return -d;
+  return Interval_nt<true>(0.0, std::max(-d.inf(), d.sup()));
 }
 
 inline
 Sign
 sign (const Interval_nt<true> & d)
 {
-  if (d.inf_ > 0.0) return POSITIVE;
-  if (d.sup_ < 0.0) return NEGATIVE;
-  if (d.inf_ == d.sup_) return ZERO;
+  if (d.inf() > 0.0) return POSITIVE;
+  if (d.sup() < 0.0) return NEGATIVE;
+  if (d.inf() == d.sup()) return ZERO;
   Interval_nt<true>::overlap_action();
   return ZERO;
 }
@@ -407,9 +534,9 @@ inline
 Comparison_result
 compare (const Interval_nt<true> & d, const Interval_nt<true> & e)
 {
-  if (d.inf_ > e.sup_) return LARGER;
-  if (e.inf_ > d.sup_) return SMALLER;
-  if (e.inf_ == d.sup_ && d.inf_ == e.sup_) return EQUAL;
+  if (d.inf() > e.sup()) return LARGER;
+  if (e.inf() > d.sup()) return SMALLER;
+  if (e.inf() == d.sup() && d.inf() == e.sup()) return EQUAL;
   Interval_nt<true>::overlap_action();
   return EQUAL;
 }
@@ -420,31 +547,31 @@ Interval_nt<false>
 square (const Interval_nt<false> & d)
 {
   Protect_FPU_rounding<false> P;
-  if (d.inf_>=0.0)
-      return Interval_nt<false>(-CGAL_IA_MUL(d.inf_, -d.inf_),
-	                         CGAL_IA_MUL(d.sup_, d.sup_));
-  if (d.sup_<=0.0)
-      return Interval_nt<false>(-CGAL_IA_MUL(d.sup_, -d.sup_),
-	                         CGAL_IA_MUL(d.inf_, d.inf_));
-  return Interval_nt<false>(0.0, CGAL_IA_SQUARE(std::max(-d.inf_, d.sup_)));
+  if (d.inf()>=0.0)
+      return Interval_nt<false>(-CGAL_IA_MUL(d.inf(), -d.inf()),
+	                         CGAL_IA_MUL(d.sup(), d.sup()));
+  if (d.sup()<=0.0)
+      return Interval_nt<false>(-CGAL_IA_MUL(d.sup(), -d.sup()),
+	                         CGAL_IA_MUL(d.inf(), d.inf()));
+  return Interval_nt<false>(0.0, CGAL_IA_SQUARE(std::max(-d.inf(), d.sup())));
 }
 
 inline
 Interval_nt<false>
 abs (const Interval_nt<false> & d)
 {
-  if (d.inf_ >= 0.0) return d;
-  if (d.sup_ <= 0.0) return -d;
-  return Interval_nt<false>(0.0, std::max(-d.inf_, d.sup_));
+  if (d.inf() >= 0.0) return d;
+  if (d.sup() <= 0.0) return -d;
+  return Interval_nt<false>(0.0, std::max(-d.inf(), d.sup()));
 }
 
 inline
 Sign
 sign (const Interval_nt<false> & d)
 {
-  if (d.inf_ > 0.0) return POSITIVE;
-  if (d.sup_ < 0.0) return NEGATIVE;
-  if (d.inf_ == d.sup_) return ZERO;
+  if (d.inf() > 0.0) return POSITIVE;
+  if (d.sup() < 0.0) return NEGATIVE;
+  if (d.inf() == d.sup()) return ZERO;
   Interval_nt<false>::overlap_action();
   return ZERO;
 }
@@ -453,9 +580,9 @@ inline
 Comparison_result
 compare (const Interval_nt<false> & d, const Interval_nt<false> & e)
 {
-  if (d.inf_ > e.sup_) return LARGER;
-  if (e.inf_ > d.sup_) return SMALLER;
-  if (e.inf_ == d.sup_ && d.inf_ == e.sup_) return EQUAL;
+  if (d.inf() > e.sup()) return LARGER;
+  if (e.inf() > d.sup()) return SMALLER;
+  if (e.inf() == d.sup() && d.inf() == e.sup()) return EQUAL;
   Interval_nt<false>::overlap_action();
   return EQUAL;
 }
@@ -464,7 +591,7 @@ compare (const Interval_nt<false> & d, const Interval_nt<false> & e)
 } // namespace NTS
 
 inline
-Interval_base
+std::pair<double,double>
 to_interval (const long & l)
 {
 #ifndef __BORLANDC__ // The stupid Borland compiler generates warnings...
@@ -472,13 +599,14 @@ to_interval (const long & l)
     // On 64bit platforms, a long doesn't fit exactly in a double.
     // Well, a perfect fix would be to use std::numeric_limits<>, but...
     Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
-    Interval_nt_advanced approx ((double) l);
+    Interval_nt<false> approx ((double) l);
     FPU_set_cw(CGAL_FE_UPWARD);
-    return approx + Interval_nt_advanced(Interval_base::Smallest);
+    approx += Interval_nt<false>::smallest();
+    return approx.pair();
   }
   else
 #endif
-    return Interval_base(double(l));
+    return std::pair<double,double>(l,l);
 }
 
 

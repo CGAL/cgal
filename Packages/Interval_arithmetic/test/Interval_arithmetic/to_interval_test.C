@@ -33,15 +33,16 @@ test(const NT &)
   NT one (1);
   NT one_third = one / NT(3);
 
-  CGAL::Interval_base zero_i      = CGAL::to_interval(zero);
-  CGAL::Interval_base one_i       = CGAL::to_interval(one);
-  CGAL::Interval_base one_third_i = CGAL::to_interval(one_third);
+  std::pair<double,double> zero_i      = CGAL::to_interval(zero);
+  std::pair<double,double> one_i       = CGAL::to_interval(one);
+  std::pair<double,double> one_third_i = CGAL::to_interval(one_third);
 
-  if (zero_i.inf()>0 || zero_i.sup()<0)
-      std::cout << "  BUG zero ! : " << zero_i << std::endl;
-  if (one_i.inf()>1 || one_i.sup()<1)
-      std::cout << "  BUG one ! : " << one_i << std::endl;
-  std::cout << one_third_i << " (not correct for integer types)" << std::endl;
+  if (zero_i.first > 0 || zero_i.second < 0)
+    std::cout << "  BUG zero ! : " << zero_i.first << " " << zero_i.second << std::endl;
+  if (one_i.first > 1 || one_i.second < 1)
+    std::cout << "  BUG one ! : " << one_i.first << " " << one_i.second << std::endl;
+  std::cout << one_third_i.first << " " << one_third_i.second 
+	    << " (not correct for integer types)" << std::endl;
 }
 
 int main()

@@ -155,8 +155,9 @@ bool overflow_test()
 
   DEBUG( std::cout << "+infinity = " << HUGE_VAL << std::endl; )
   DEBUG( std::cout << "maxdouble = " << CGAL_IA_MAX_DOUBLE << std::endl; )
-  DEBUG( std::cout << "largest   = " << CGAL::Interval_nt_advanced::Largest << std::endl; )
-  DEBUG( std::cout << "smallest  = " << CGAL::Interval_nt_advanced::Smallest << std::endl; )
+  DEBUG( std::cout << "largest   = " << CGAL::Interval_nt_advanced::largest() << std::endl; )
+  DEBUG( std::cout << "smallest  = " << CGAL::Interval_nt_advanced::smallest() << std::endl; )
+
   for (i=0; i<20; i++)
   {
     a *= a;
@@ -177,9 +178,9 @@ bool overflow_test()
 
   return a.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, HUGE_VAL)) &&
          b.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, HUGE_VAL)) &&
-         c.is_same(IA_nt::Largest) &&
-         d.is_same(IA_nt::Largest) &&
-	 e.is_same(IA_nt::Largest) &&
+         c.is_same(IA_nt::largest()) &&
+         d.is_same(IA_nt::largest()) &&
+	 e.is_same(IA_nt::largest()) &&
 	 f.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, HUGE_VAL)) &&
 	 g.is_same(-f);
 }
@@ -200,7 +201,7 @@ bool underflow_test()
   for (i=0; i<20; i++) c = CGAL_NTS square(c);
 
   return a.is_same(IA_nt(0, CGAL_IA_MIN_DOUBLE))
-      && b.is_same(IA_nt::Smallest)
+      && b.is_same(IA_nt::smallest())
       && c.is_same(IA_nt(0, CGAL_IA_MIN_DOUBLE));
 }
 
@@ -229,7 +230,7 @@ bool division_test()
   DEBUG( std::cout << d << e << i << std::endl; )
   DEBUG( std::cout << d-1 << e+1 << std::endl; )
 
-  return c.is_same(IA_nt::Largest) && i == 54;
+  return c.is_same(IA_nt::largest()) && i == 54;
 }
 
 
