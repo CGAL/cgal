@@ -25,17 +25,17 @@
 //#include <CGAL/_test_cls_edge_circulator.C>
 //#include <CGAL/_test_cls_face_circulator.C>
 
-template < class Triangulation >
+template < class Tr>
 void
-_test_circulators( const Triangulation &T )
+_test_circulators( const Tr &T )
 {
   // test the circulators provided by the Triangulation class 
-  typedef typename Triangulation::All_vertices_iterator All_vertices_iterator;
-  typedef typename Triangulation::All_faces_iterator    All_faces_iterator;
-  typedef typename Triangulation::All_edges_iterator    All_edges_iterator;
-  typedef typename Triangulation::Face_circulator   Face_circulator;
-  typedef typename Triangulation::Vertex_circulator Vertex_circulator;
-  typedef typename Triangulation::Edge_circulator   Edge_circulator;
+  typedef typename Tr::All_vertices_iterator All_vertices_iterator;
+  typedef typename Tr::All_faces_iterator    All_faces_iterator;
+  typedef typename Tr::All_edges_iterator    All_edges_iterator;
+  typedef typename Tr::Face_circulator   Face_circulator;
+  typedef typename Tr::Vertex_circulator Vertex_circulator;
+  typedef typename Tr::Edge_circulator   Edge_circulator;
 
   int nvi = 0;
   int nvi_r = 0;
