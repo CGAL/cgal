@@ -26,25 +26,13 @@
 
 #ifndef CGAL_IO_POLYHEDRON_VRML_2_OSTREAM_H
 #define CGAL_IO_POLYHEDRON_VRML_2_OSTREAM_H 1
-#ifndef CGAL_BASIC_H
+
 #include <CGAL/basic.h>
-#endif
-#ifndef CGAL_PROTECT_IOSTREAM
-#include <iostream>
-#define CGAL_PROTECT_IOSTREAM
-#endif
-#ifndef CGAL_IO_VRML_2_OSTREAM_H
 #include <CGAL/IO/VRML_2_ostream.h>
-#endif // CGAL_IO_VRML_2_OSTREAM_H
-#ifndef CGAL_IO_FILE_WRITER_VRML_2_H
 #include <CGAL/IO/File_writer_VRML_2.h>
-#endif // CGAL_IO_FILE_WRITER_VRML_2_H
-#ifndef CGAL_IO_GENERIC_PRINT_POLYHEDRON_H
 #include <CGAL/IO/generic_print_polyhedron.h>
-#endif // CGAL_IO_GENERIC_PRINT_POLYHEDRON_H
-#ifndef CGAL_POLYHEDRON_3_H
 #include <CGAL/Polyhedron_3.h>
-#endif
+#include <iostream>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -56,11 +44,12 @@ operator<<( VRML_2_ostream& out, const Polyhedron_3<Traits,HDS>& P) {
 template < class Traits,
            class Items,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-           template < class T, class I>
+           template < class T, class I, class A>
 #endif
-           class HDS>
+           class HDS, class Alloc>
 VRML_2_ostream&
-operator<<( VRML_2_ostream& out, const Polyhedron_3<Traits,Items,HDS>& P) {
+operator<<( VRML_2_ostream& out,
+            const Polyhedron_3<Traits,Items,HDS,Alloc>& P) {
 #endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
     File_writer_VRML_2  writer;
     generic_print_polyhedron( out.os(), P, writer);

@@ -26,18 +26,11 @@
 
 #ifndef CGAL_IO_POLYHEDRON_INVENTOR_OSTREAM_H
 #define CGAL_IO_POLYHEDRON_INVENTOR_OSTREAM_H 1
-#ifndef CGAL_IO_INVENTOR_OSTREAM_H
+
 #include <CGAL/IO/Inventor_ostream.h>
-#endif // CGAL_IO_INVENTOR_OSTREAM_H
-#ifndef CGAL_IO_FILE_WRITER_INVENTOR_H
 #include <CGAL/IO/File_writer_inventor.h>
-#endif // CGAL_IO_FILE_WRITER_INVENTOR_H
-#ifndef CGAL_IO_GENERIC_PRINT_POLYHEDRON_H
 #include <CGAL/IO/generic_print_polyhedron.h>
-#endif // CGAL_IO_GENERIC_PRINT_POLYHEDRON_H
-#ifndef CGAL_POLYHEDRON_3_H
 #include <CGAL/Polyhedron_3.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -49,12 +42,12 @@ operator<<( Inventor_ostream_base& out, const Polyhedron_3<Traits,HDS>& P) {
 template < class Traits,
            class Items,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-           template < class T, class I>
+           template < class T, class I, class A>
 #endif
-           class HDS>
+           class HDS, class Alloc>
 Inventor_ostream_base&
 operator<<( Inventor_ostream_base& out, 
-            const Polyhedron_3<Traits,Items,HDS>& P) {
+            const Polyhedron_3<Traits,Items,HDS,Alloc>& P) {
 #endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
     File_writer_inventor  writer;
     generic_print_polyhedron( out.os(), P, writer);

@@ -26,19 +26,11 @@
 
 #ifndef CGAL_IO_PRINT_WAVEFRONT_H
 #define CGAL_IO_PRINT_WAVEFRONT_H 1
-#ifndef CGAL_IO_FILE_WRITER_WAVEFRONT_H
+
 #include <CGAL/IO/File_writer_wavefront.h>
-#endif // CGAL_IO_FILE_WRITER_WAVEFRONT_H
-#ifndef CGAL_IO_GENERIC_PRINT_POLYHEDRON_H
 #include <CGAL/IO/generic_print_polyhedron.h>
-#endif // CGAL_IO_GENERIC_PRINT_POLYHEDRON_H
-#ifndef CGAL_POLYHEDRON_3_H
 #include <CGAL/Polyhedron_3.h>
-#endif
-#ifndef CGAL_PROTECT_IOSTREAM
 #include <iostream>
-#define CGAL_PROTECT_IOSTREAM
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -50,11 +42,12 @@ print_wavefront( std::ostream& out, const Polyhedron_3<Traits,HDS>& P) {
 template < class Traits,
            class Items,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-           template < class T, class I>
+           template < class T, class I, class A>
 #endif
-           class HDS>
+           class HDS, class Alloc>
 void
-print_wavefront( std::ostream& out, const Polyhedron_3<Traits,Items,HDS>& P) {
+print_wavefront( std::ostream& out, 
+                 const Polyhedron_3<Traits,Items,HDS,Alloc>& P) {
 #endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
     File_writer_wavefront  writer;
     generic_print_polyhedron( out, P, writer);

@@ -26,13 +26,10 @@
 
 #ifndef CGAL_IO_SCAN_OFF_H
 #define CGAL_IO_SCAN_OFF_H 1
-#ifndef CGAL_IO_POLYHEDRON_SCAN_OFF_H
+
 #include <CGAL/IO/Polyhedron_scan_OFF.h>
-#endif // CGAL_IO_POLYHEDRON_SCAN_OFF_H
-//  Polyhedron
-#ifndef CGAL_POLYHEDRON_3_H
 #include <CGAL/Polyhedron_3.h>
-#endif
+#include <iostream>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -64,13 +61,13 @@ void scan_OFF( std::istream& in,
 template < class Traits,
            class Items,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-           template < class T, class I>
+           template < class T, class I, class A>
 #endif
-           class HDS>
-void scan_OFF( std::istream& in, Polyhedron_3<Traits,Items,HDS>& P,
+           class HDS, class Alloc>
+void scan_OFF( std::istream& in, Polyhedron_3<Traits,Items,HDS,Alloc>& P,
                bool verbose = false) {
     // reads a polyhedron from `in' and appends it to P.
-    typedef Polyhedron_3<Traits,Items,HDS> Polyhedron;
+    typedef Polyhedron_3<Traits,Items,HDS,Alloc> Polyhedron;
     typedef typename Polyhedron::HalfedgeDS HalfedgeDS;
     typedef Polyhedron_scan_OFF<HalfedgeDS> Scanner;
     Scanner scanner( in, verbose);
@@ -80,15 +77,15 @@ void scan_OFF( std::istream& in, Polyhedron_3<Traits,Items,HDS>& P,
 template < class Traits,
            class Items,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-           template < class T, class I>
+           template < class T, class I, class A>
 #endif
-           class HDS>
+           class HDS, class Alloc>
 void scan_OFF( std::istream& in,
-               Polyhedron_3<Traits,Items,HDS>& P,
+               Polyhedron_3<Traits,Items,HDS,Alloc>& P,
                File_header_OFF& header) {
     // reads a polyhedron from `in' and appends it to P.
     // Returns also the File_header_OFF structure of the object.
-    typedef Polyhedron_3<Traits,Items,HDS> Polyhedron;
+    typedef Polyhedron_3<Traits,Items,HDS,Alloc> Polyhedron;
     typedef typename Polyhedron::HalfedgeDS HalfedgeDS;
     typedef Polyhedron_scan_OFF<HalfedgeDS> Scanner;
     Scanner scanner( in, header.verbose());

@@ -26,16 +26,10 @@
 
 #ifndef CGAL_IO_GENERIC_PRINT_POLYHEDRON_H
 #define CGAL_IO_GENERIC_PRINT_POLYHEDRON_H 1
-#ifndef CGAL_BASIC_H
+
 #include <CGAL/basic.h>
-#endif
-#ifndef CGAL_INVERSE_INDEX_H
 #include <CGAL/Inverse_index.h>
-#endif
-#ifndef CGAL_PROTECT_IOSTREAM
 #include <iostream>
-#define CGAL_PROTECT_IOSTREAM
-#endif
 
 CGAL_BEGIN_NAMESPACE
 

@@ -26,14 +26,11 @@
 
 
 #include <CGAL/Cartesian.h>
-#include <cstddef>
-#include <iostream>
-#include <fstream>
-#include <strstream>
-#include <cstring>
-
-
 #include <CGAL/Polyhedron_3.h>
+
+// This is the test file for the new design. Skip new design test for 
+// disabled compilers.
+#ifndef CGAL_USE_POLYHEDRON_DESIGN_ONE
 
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/IO/print_OFF.h>
@@ -41,6 +38,12 @@
 #include <CGAL/IO/print_inventor.h>
 #include <CGAL/IO/print_VRML_1.h>
 #include <CGAL/IO/print_VRML_2.h>
+
+#include <cstddef>
+#include <iostream>
+#include <fstream>
+#include <strstream>
+#include <cstring>
 
 using namespace CGAL;
 
@@ -127,11 +130,17 @@ void test_file_IO_wavefront() {}
 void test_file_IO_inventor() {}
 void test_file_IO_VRML_2() {}
 
+#endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
+
 int main(){
+// This is the test file for the new design. Skip new design test for 
+// disabled compilers.
+#ifndef CGAL_USE_POLYHEDRON_DESIGN_ONE
     test_file_IO_OFF();
     test_file_IO_wavefront();
     test_file_IO_inventor();
     test_file_IO_VRML_2();
+#endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
     return 0;
 }
 // EOF //

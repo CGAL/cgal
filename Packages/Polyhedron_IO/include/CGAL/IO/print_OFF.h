@@ -26,22 +26,12 @@
 
 #ifndef CGAL_IO_PRINT_OFF_H
 #define CGAL_IO_PRINT_OFF_H 1
-#ifndef CGAL_BASIC_H
+
 #include <CGAL/basic.h>
-#endif
-#ifndef CGAL_IO_FILE_WRITER_OFF_H
 #include <CGAL/IO/File_writer_OFF.h>
-#endif // CGAL_IO_FILE_WRITER_OFF_H
-#ifndef CGAL_IO_GENERIC_PRINT_POLYHEDRON_H
 #include <CGAL/IO/generic_print_polyhedron.h>
-#endif // CGAL_IO_GENERIC_PRINT_POLYHEDRON_H
-#ifndef CGAL_POLYHEDRON_3_H
 #include <CGAL/Polyhedron_3.h>
-#endif
-#ifndef CGAL_PROTECT_IOSTREAM
 #include <iostream>
-#define CGAL_PROTECT_IOSTREAM
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -55,12 +45,12 @@ print_OFF( std::ostream& out,
 template < class Traits,
            class Items,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-           template < class T, class I>
+           template < class T, class I, class A>
 #endif
-           class HDS>
+           class HDS, class Alloc>
 void
 print_OFF( std::ostream& out,
-           const Polyhedron_3<Traits,Items,HDS>& P,
+           const Polyhedron_3<Traits,Items,HDS,Alloc>& P,
            bool verbose = false) {
 #endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
     File_writer_OFF  writer( verbose);
@@ -81,12 +71,12 @@ print_OFF( std::ostream& out,
 template < class Traits,
            class Items,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-           template < class T, class I>
+           template < class T, class I, class A>
 #endif
-           class HDS>
+           class HDS, class Alloc>
 void
 print_OFF( std::ostream& out,
-           const Polyhedron_3<Traits,Items,HDS>& P,
+           const Polyhedron_3<Traits,Items,HDS,Alloc>& P,
            const File_header_OFF& header) {
 #endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
     File_writer_OFF  writer( header);

@@ -25,15 +25,9 @@
 #ifndef CGAL_IO_POLYHEDRON_GEOMVIEW_OSTREAM_H
 #define CGAL_IO_POLYHEDRON_GEOMVIEW_OSTREAM_H 1
 
-#ifndef CGAL_IO_GEOMVIEW_STREAM_H
 #include <CGAL/IO/Geomview_stream.h>
-#endif // CGAL_IO_GEOMVIEW_STREAM_H
-#ifndef CGAL_IO_GENERIC_PRINT_POLYHEDRON_H
 #include <CGAL/IO/generic_print_polyhedron.h>
-#endif // CGAL_IO_GENERIC_PRINT_POLYHEDRON_H
-#ifndef CGAL_POLYHEDRON_3_H
 #include <CGAL/Polyhedron_3.h>
-#endif // CGAL_POLYHEDRON_3
 
 CGAL_BEGIN_NAMESPACE
 
@@ -80,11 +74,12 @@ operator<<( Geomview_stream &gv, const Polyhedron_3<Traits,HDS> &P) {
 template < class Traits,
            class Items,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-           template < class T, class I>
+           template < class T, class I, class A>
 #endif
-           class HDS>
+           class HDS, class Alloc>
 Geomview_stream&
-operator<<( Geomview_stream &gv, const Polyhedron_3<Traits,Items,HDS> &P) {
+operator<<( Geomview_stream &gv,
+            const Polyhedron_3<Traits,Items,HDS,Alloc> &P) {
 #endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
     Polyhedron_writer_geomview  writer(gv);
     generic_print_polyhedron( std::cerr, P, writer); // note: cerr not used.

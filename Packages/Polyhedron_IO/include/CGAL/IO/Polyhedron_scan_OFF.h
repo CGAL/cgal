@@ -26,32 +26,15 @@
 
 #ifndef CGAL_IO_POLYHEDRON_SCAN_OFF_H
 #define CGAL_IO_POLYHEDRON_SCAN_OFF_H 1
-#ifndef CGAL_BASIC_H
+
 #include <CGAL/basic.h>
-#endif
-#ifndef CGAL_PROTECT_CSTDDEF
-#include <cstddef>
-#define CGAL_PROTECT_CSTDDEF
-#endif
-#ifndef CGAL_IO_FILE_HEADER_OFF_H
 #include <CGAL/IO/File_header_OFF.h>
-#endif // CGAL_IO_FILE_HEADER_OFF_H
-#ifndef CGAL_IO_FILE_SCANNER_OFF_H
 #include <CGAL/IO/File_scanner_OFF.h>
-#endif // CGAL_IO_FILE_SCANNER_OFF_H
-#ifndef CGAL_MODIFIER_BASE_H
 #include <CGAL/Modifier_base.h>
-#endif
-#ifndef CGAL_POLYHEDRON_INCREMENTAL_BUILDER_3_H
 #include <CGAL/Polyhedron_incremental_builder_3.h>
-#endif // CGAL_POLYHEDRON_INCREMENTAL_BUILDER_3_H
-#ifndef CGAL_POLYHEDRON_3_H
 #include <CGAL/Polyhedron_3.h>
-#endif
-#ifndef CGAL_PROTECT_IOSTREAM
 #include <iostream>
-#define CGAL_PROTECT_IOSTREAM
-#endif
+#include <cstddef>
 
 CGAL_BEGIN_NAMESPACE
 

@@ -26,27 +26,22 @@
 
 #define CGAL_USE_POLYHEDRON_DESIGN_ONE 1
 
-#include <CGAL/basic.h>
-#include <cstddef>
-#include <iostream>
-#include <fstream>
-#include <strstream>
-#include <cstring>
-
 #include <CGAL/Cartesian.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/Plane_3.h>
-
 #include <CGAL/Polyhedron_default_traits_3.h>
 #include <CGAL/Halfedge_data_structure_polyhedron_default_3.h>
 #include <CGAL/Polyhedron_3.h>
-
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/IO/print_OFF.h>
 #include <CGAL/IO/print_wavefront.h>
 #include <CGAL/IO/print_inventor.h>
 #include <CGAL/IO/print_VRML_1.h>
 #include <CGAL/IO/print_VRML_2.h>
+
+#include <cstddef>
+#include <iostream>
+#include <fstream>
+#include <strstream>
+#include <cstring>
 
 using namespace CGAL;
 

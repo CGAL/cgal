@@ -1,6 +1,11 @@
 Polyhedron_IO Package: Release changes:
 ---------------------------------------------------------------------
 
+3.7 (02 Jul 2001)
+
+     - Added allocators to HalfedgeDS and Polyhedron.
+     - Stop testing new design with disabled compilers (MSVC6).
+
 3.6 (29 Jun 2001)
 
      - Added pathname to example program header line.
