@@ -25,17 +25,17 @@ public:
   My_window(int x, int y)
   {
     resize(x,y);
-    attach(&v);
+    attach(&layer);
   };
 private:
-  //this event is called only when the user presses the mouse
+  //this method is called when the user presses the mouse
   void mousePressEvent(QMouseEvent *e)
   {
     Qt_widget::mousePressEvent(e);
     dt.insert(Point(x_real(e->x()), y_real(e->y())));
     redraw();
   }
-  My_layer v;
+  My_layer layer;
 };
 
 int main( int argc, char **argv )
