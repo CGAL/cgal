@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998,1999 The CGAL Consortium
+// Copyright (c) 1998,1999,2000 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -16,8 +16,6 @@
 // revision_date : $Date$
 // package       : Interval Arithmetic
 // author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
-//
-// coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
 //
 // ============================================================================
 
@@ -40,13 +38,19 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Interval_arithmetic/_FPU.h>	// FPU rounding mode functions.
+#include <utility>				// Relational operators.
 
+// sqrt(double) on M$ is buggy.
 #if defined _MSC_VER || defined __CYGWIN__
 extern "C" { double CGAL_ms_sqrt(double); }
+#define CGAL_IA_SQRT(d) CGAL_ms_sqrt(d)
+#else
+#define CGAL_IA_SQRT(d) std::sqrt(d)
 #endif
 
 CGAL_BEGIN_NAMESPACE
 
+// For experimenting with inlining * and /.
 #ifdef CGAL_IA_NO_INLINE
 struct Interval_nt_advanced;
 static Interval_nt_advanced operator*(const Interval_nt_advanced&,
@@ -74,11 +78,9 @@ struct Interval_nt_advanced
   friend inline IA operator||    (const IA &, const IA &);
   friend inline IA operator&&    (const IA &, const IA &);
   friend inline bool operator<   (const IA &, const IA &);
-  friend inline bool operator>   (const IA &, const IA &);
   friend inline bool operator<=  (const IA &, const IA &);
   friend inline bool operator>=  (const IA &, const IA &);
   friend inline bool operator==  (const IA &, const IA &);
-  friend inline bool operator!=  (const IA &, const IA &);
   friend inline IA min           (const IA &, const IA &);
   friend inline IA max           (const IA &, const IA &);
   friend inline IA sqrt          (const IA &);
@@ -115,7 +117,7 @@ public:
   {
 #ifndef CGAL_LAZY_EXACT_NT_H
       CGAL_assertion_msg(i<=s,
-	      " CGAL bug or variable used before being initialized");
+	      " Variable used before being initialized (or CGAL bug)");
 #endif
       _inf = CGAL_IA_STOP_CPROP(i);
       _sup = CGAL_IA_STOP_CPROP(s);
@@ -281,16 +283,9 @@ sqrt (const Interval_nt_advanced & d)
   // sqrt([-a,+b]) => [0;sqrt(+b)] => assumes roundoff error.
   // sqrt([-a,-b]) => [0;sqrt(-b)] => assumes user bug (unspecified result).
   FPU_set_cw(CGAL_FE_DOWNWARD);
-#if defined _MSC_VER || defined __CYGWIN__
-  // sqrt(double) on M$ is buggy.
-  double i = (d._inf>0.0) ? CGAL_IA_FORCE_TO_DOUBLE(CGAL_ms_sqrt(d._inf)) : 0.0;
+  double i = (d._inf>0.0) ? CGAL_IA_FORCE_TO_DOUBLE(CGAL_IA_SQRT(d._inf)) : 0.0;
   FPU_set_cw(CGAL_FE_UPWARD);
-  return Interval_nt_advanced(i, CGAL_IA_FORCE_TO_DOUBLE(CGAL_ms_sqrt(d._sup)));
-#else
-  double i = (d._inf>0.0) ? CGAL_IA_FORCE_TO_DOUBLE(std::sqrt(d._inf)) : 0.0;
-  FPU_set_cw(CGAL_FE_UPWARD);
-  return Interval_nt_advanced(i, CGAL_IA_FORCE_TO_DOUBLE(std::sqrt(d._sup)));
-#endif
+  return Interval_nt_advanced(i, CGAL_IA_FORCE_TO_DOUBLE(CGAL_IA_SQRT(d._sup)));
 }
 
 inline
@@ -340,18 +335,8 @@ operator== (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
 
 inline
 bool
-operator> (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
-{ return d < e; }
-
-inline
-bool
 operator>= (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
 { return d <= e; }
-
-inline
-bool
-operator!= (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
-{ return !(d == e); }
 
 inline
 Interval_nt_advanced &
