@@ -1,7 +1,10 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
 
-1.23 (?? ???? 2002)
+1.24 (12 Aug 2002)
+     - replaced LEFTTURN and friends by LEFT_TURN and friends
+
+1.23 (8 Aug 2002)
      - replaced deprecated Construct_direction_of_line_2, 
        Construct_source_point_2, Construct_target_point_2, with non-deprepcated
        counterparts.
