@@ -6,7 +6,7 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-CGAL_MAKEFILE = /0/prisme/yvinec/CGAL/CGAL-2.5-I-92/make/makefile_i686_Linux-2.4.17_g++-2.95
+CGAL_MAKEFILE = d:/cgal/CGAL-2.5-I-102/make/makefile_i686_CYGWINNT-5.0-1.3.12_ICL.EXE-7
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#

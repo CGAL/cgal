@@ -1067,8 +1067,7 @@ Alpha_shape_2<Dt>::initialize_alpha_spectrum()
 //-------------------------------------------------------------------------
 
 template < class Dt >
-std::back_insert_iterator< std::list< CGAL_TYPENAME_MSVC_NULL 
-                                          Alpha_shape_2<Dt>::Edge > >
+std::back_insert_iterator< std::list< typename Alpha_shape_2<Dt>::Edge > >
 Alpha_shape_2<Dt>::get_alpha_shape_edges
 (std::back_insert_iterator< std::list< Edge > > result) const 
 {
@@ -1774,7 +1773,7 @@ operator<<(typename Alpha_shape_2<Dt>::Vect_seg& V, const Alpha_shape_2<Dt>& A)
 //-------------------------------------------------------------------
 
 template < class Dt >
-std::list<CGAL_TYPENAME_MSVC_NULL Alpha_shape_2<Dt>::Point> 
+std::list<typename Alpha_shape_2<Dt>::Point> 
 Alpha_shape_2<Dt>::Output () 
 {
   typename Interval_edge_map::const_iterator edge_alpha_it;
