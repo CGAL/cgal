@@ -114,7 +114,11 @@ int test()
 #ifdef CGAL_USE_LEDA
   Filtered_exact< Quotient<int>, leda_rational> ii (3,2);
   Filtered_exact< Quotient<leda_integer>, Quotient<leda_integer> > jj (4,5);
+
+  FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   Interval_nt nt = jj.interval();
+  FPU_set_cw(backup);
+
   std::cout << nt << std::endl;
 #endif // CGAL_USE_LEDA
 #endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
