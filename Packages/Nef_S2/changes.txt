@@ -1,6 +1,11 @@
 Nef_S2 Package: Release changes
 ----------------------------------------------------------------------
 
+1.1 (19 Mar 2002)
+
+     - include/CGAL/Nef_S2/SM_overlayer.h and SM_triangulator.h: 
+       changed use of Partition to Union_find.
+
 0.9 (20 Nov 2001)
 
      initial release

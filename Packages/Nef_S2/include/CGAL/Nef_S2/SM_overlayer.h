@@ -30,7 +30,7 @@
 #define CGAL_SM_OVERLAYER_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Partition.h>
+#include <CGAL/Union_find.h>
 #include <CGAL/Nef_2/Segment_overlay_traits.h>
 #include <CGAL/Nef_2/geninfo.h>
 #include <CGAL/Nef_S2/Sphere_geometry.h>
@@ -1126,12 +1126,12 @@ template <typename Decorator_>
 void SM_overlayer<Decorator_>::simplify() const
 {
   TRACEN("simplifying"); 
-  typedef typename CGAL::Partition<Face_handle>::item partition_item;
-  CGAL::Unique_hash_map<Face_handle,partition_item> Pitem;
-  CGAL::Partition<Face_handle> FP;
+  typedef typename CGAL::Union_find<Face_handle>::handle Union_find_handle;
+  CGAL::Unique_hash_map< Face_handle, Union_find_handle> Pitem;
+  CGAL::Union_find<Face_handle> union_faces;
   Face_iterator f;
   for (f = faces_begin(); f != faces_end(); ++f) {
-     Pitem[f] = FP.make_block(f);
+     Pitem[f] = union_faces.make_set(f);
      clear_face_cycle_entries(f);
   }
 
@@ -1141,10 +1141,10 @@ void SM_overlayer<Decorator_>::simplify() const
     if ( mark(e) == mark(face(e)) &&
          mark(e) == mark(face(twin(e))) ) {
       TRACEN("deleting "<<PH(e));
-      if ( !FP.same_block(Pitem[face(e)],
-                          Pitem[face(twin(e))]) ) {
-        FP.union_blocks( Pitem[face(e)],
-                         Pitem[face(twin(e))] );
+      if ( ! union_faces.same_set( Pitem[face(e)],
+                                   Pitem[face(twin(e))]) ) {
+        union_faces.unify_sets( Pitem[face(e)],
+                                Pitem[face(twin(e))] );
         TRACEN("unioning disjoint faces");
       }
       if ( is_closed_at_source(e) ) 
@@ -1159,18 +1159,17 @@ void SM_overlayer<Decorator_>::simplify() const
   for (e = halfedges_begin(); e != halfedges_end(); ++e) {
     if ( linked[e] ) continue;
     Halfedge_around_face_circulator hfc(e),hend(hfc);
-    Face_handle f = FP.inf(FP.find(Pitem[face(e)]));
+    Face_handle f = *(union_faces.find( Pitem[face(e)]));
     CGAL_For_all(hfc,hend) {  set_face(hfc,f); linked[hfc]=true; }
     store_boundary_object(e,f);
   }
   if ( has_loop() ) {
     Halfloop_handle l = halfloop();
-    Face_handle f = FP.inf(FP.find(Pitem[face(l)]));
+    Face_handle f = *(union_faces.find( Pitem[face(l)]));
     link_as_loop(l,f);
-    f = FP.inf(FP.find(Pitem[face(twin(l))]));
+    f = *(union_faces.find( Pitem[face(twin(l))]));
     link_as_loop(twin(l),f);
   }
-
 
   Vertex_iterator v,vn;
   for(v = vertices_begin(); v != vertices_end(); v=vn) {
@@ -1196,8 +1195,8 @@ void SM_overlayer<Decorator_>::simplify() const
   Face_iterator fn;
   for (f = fn = faces_begin(); f != faces_end(); f=fn) { 
     ++fn;
-    partition_item pit = Pitem[f];
-    if ( FP.find(pit) != pit ) 
+    Union_find_handle pit = Pitem[f];
+    if ( union_faces.find(pit) != pit ) 
       delete_face_only(f);
   }
 

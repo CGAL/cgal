@@ -29,7 +29,6 @@
 #define CGAL_SM_TRIANGULATOR_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Partition.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Nef_2/Segment_overlay_traits.h>
 #include <CGAL/Nef_2/geninfo.h>
