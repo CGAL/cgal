@@ -2,10 +2,9 @@
 #include <CGAL/Point_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 
-
-#include <qapplication.h>
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_layer.h>
+#include <qapplication.h>
 
 typedef CGAL::Cartesian<double>		    Rep;
 typedef CGAL::Point_2<Rep>		    Point;
