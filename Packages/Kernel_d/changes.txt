@@ -1,6 +1,12 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
 
+0.102 (26 September 2003)
+- resubmission
+
+0.101 (26 September 2003)
+- resubmission
+
 0.100 (26 September 2003)
 - Added maintainer
 
