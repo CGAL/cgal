@@ -1,844 +1,845 @@
-// ============================================================================
-//
-// Copyright (c) 1999 The CGAL Consortium
-//
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
-//
-// ----------------------------------------------------------------------------
-//
-// release       :
-// release_date  :
-//
-// file          : include/CGAL/Triangulation_3.h
-// revision      : $Revision$
-//
-// author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
-//
-// coordinator   : INRIA Sophia Antipolis 
-//                 (Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>)
-//
-// ============================================================================
+//  // ============================================================================
+//  //
+//  // Copyright (c) 1999 The CGAL Consortium
+//  //
+//  // This software and related documentation is part of an INTERNAL release
+//  // of the Computational Geometry Algorithms Library (CGAL). It is not
+//  // intended for general use.
+//  //
+//  // ----------------------------------------------------------------------------
+//  //
+//  // release       :
+//  // release_date  :
+//  //
+//  // file          : include/CGAL/Triangulation_3.h
+//  // revision      : $Revision$
+//  //
+//  // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
+//  //
+//  // coordinator   : INRIA Sophia Antipolis 
+//  //                 (Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>)
+//  //
+//  // ============================================================================
 
 
-#ifndef CGAL_TRIANGULATION_3_H
-#define CGAL_TRIANGULATION_3_H
+//  #ifndef CGAL_TRIANGULATION_3_H
+//  #define CGAL_TRIANGULATION_3_H
 
-#include <CGAL/basic.h>
+//  #include <CGAL/basic.h>
 
-#include <iostream>
-#include <list>
-#include <map> 
+//  #include <iostream>
+//  #include <list>
+//  #include <map> 
 
-#include <utility>
+//  #include <utility>
 
-#include <CGAL/Triangulation_utils_3.h>
-// #include <CGAL/Random.h>
-#include <CGAL/triple.h>
+//  #include <CGAL/Triangulation_utils_3.h>
+//  // #include <CGAL/Random.h>
+//  #include <CGAL/triple.h>
 
-#include <CGAL/Pointer.h>
-#include <CGAL/circulator.h>
+//  #include <CGAL/Pointer.h>
+//  #include <CGAL/circulator.h>
 
-//#include <CGAL/predicates_on_points_3.h>
+//  //#include <CGAL/predicates_on_points_3.h>
 
-#include <CGAL/triangulation_assertions.h>
+//  #include <CGAL/triangulation_assertions.h>
 
-#include <CGAL/Triangulation_data_structure_3.h>
+//  #include <CGAL/Triangulation_data_structure_3.h>
 
-#include <CGAL/Triangulation_cell_3.h>
-#include <CGAL/Triangulation_vertex_3.h>
-#include <CGAL/Triangulation_handles_3.h>
-#include <CGAL/Triangulation_iterators_3.h>
-#include <CGAL/Triangulation_circulators_3.h>
+//  #include <CGAL/Triangulation_cell_3.h>
+//  #include <CGAL/Triangulation_vertex_3.h>
+//  #include <CGAL/Triangulation_handles_3.h>
+//  #include <CGAL/Triangulation_iterators_3.h>
+//  #include <CGAL/Triangulation_circulators_3.h>
 
-#include <CGAL/Triangulation_short_names_3.h>
+//  #include <CGAL/Triangulation_short_names_3.h>
 
-CGAL_BEGIN_NAMESPACE
+//  CGAL_BEGIN_NAMESPACE
 
-template < class GT, class Tds>
-class Triangulation_cell_iterator_3;
-template < class GT, class Tds>
-class Triangulation_vertex_iterator_3;
-template < class GT, class Tds>
-class Triangulation_edge_iterator_3;
-template < class GT, class Tds>
-class Triangulation_facet_iterator_3;
+//  template < class GT, class Tds>
+//  class Triangulation_cell_iterator_3;
+//  template < class GT, class Tds>
+//  class Triangulation_vertex_iterator_3;
+//  template < class GT, class Tds>
+//  class Triangulation_edge_iterator_3;
+//  template < class GT, class Tds>
+//  class Triangulation_facet_iterator_3;
 
-template < class GT, class Tds>
-class Triangulation_cell_circulator_3;
-template < class GT, class Tds>
-class Triangulation_facet_circulator_3;
+//  template < class GT, class Tds>
+//  class Triangulation_cell_circulator_3;
+//  template < class GT, class Tds>
+//  class Triangulation_facet_circulator_3;
 
-template < class GT, class Tds>
-class Triangulation_cell_3;
+//  template < class GT, class Tds>
+//  class Triangulation_cell_3;
 
-template < class GT, class Tds > std::istream& operator>> 
-(std::istream& is, Triangulation_3<GT,Tds> &tr);
+//  template < class GT, class Tds > std::istream& operator>> 
+//  (std::istream& is, Triangulation_3<GT,Tds> &tr);
  
-template < class GT, class Tds >
-class Triangulation_3
-  :public Triangulation_utils_3
-{
-  friend std::istream& operator>> CGAL_NULL_TMPL_ARGS
-  (std::istream& is, Triangulation_3<GT,Tds> &tr);
+//  template < class GT, class Tds >
+//  class Triangulation_3
+//    :public Triangulation_utils_3
+//  {
+//    friend std::istream& operator>> CGAL_NULL_TMPL_ARGS
+//    (std::istream& is, Triangulation_3<GT,Tds> &tr);
 
-  friend class Triangulation_cell_3<GT,Tds>;
-  friend class Triangulation_vertex_3<GT,Tds>;
+//    friend class Triangulation_cell_3<GT,Tds>;
+//    friend class Triangulation_vertex_3<GT,Tds>;
 
-  friend class Triangulation_cell_iterator_3<GT,Tds>;
-  friend class Triangulation_facet_iterator_3<GT,Tds>;
-  friend class Triangulation_edge_iterator_3<GT,Tds>;
-  friend class Triangulation_vertex_iterator_3<GT,Tds>;
+//    friend class Triangulation_cell_iterator_3<GT,Tds>;
+//    friend class Triangulation_facet_iterator_3<GT,Tds>;
+//    friend class Triangulation_edge_iterator_3<GT,Tds>;
+//    friend class Triangulation_vertex_iterator_3<GT,Tds>;
 
-  friend class Triangulation_cell_circulator_3<GT,Tds>;
-  friend class Triangulation_facet_circulator_3<GT,Tds>;
+//    friend class Triangulation_cell_circulator_3<GT,Tds>;
+//    friend class Triangulation_facet_circulator_3<GT,Tds>;
 
-public:
-  typedef Tds Triangulation_data_structure;
-  typedef GT  Geom_traits;
+//  public:
+//    typedef Tds Triangulation_data_structure;
+//    typedef GT  Geom_traits;
 
-  typedef typename GT::Point_3 Point;
-  typedef typename GT::Vector_3 Vector;
-  typedef typename GT::Segment_3 Segment;
-  typedef typename GT::Triangle_3 Triangle;
-  typedef typename GT::Tetrahedron_3 Tetrahedron;
+//    typedef typename GT::Point_3 Point;
+//    typedef typename GT::Vector_3 Vector;
+//    typedef typename GT::Segment_3 Segment;
+//    typedef typename GT::Triangle_3 Triangle;
+//    typedef typename GT::Tetrahedron_3 Tetrahedron;
 
-  typedef Triangulation_cell_handle_3<GT,Tds> Cell_handle;
-  typedef Triangulation_vertex_handle_3<GT,Tds> Vertex_handle;
+//    typedef Triangulation_cell_handle_3<GT,Tds> Cell_handle;
+//    typedef Triangulation_vertex_handle_3<GT,Tds> Vertex_handle;
 
-  typedef Triangulation_cell_3<GT,Tds> Cell;
-  typedef Triangulation_vertex_3<GT,Tds> Vertex;
-  typedef std::pair<Cell_handle, int> Facet;
-  typedef triple<Cell_handle, int, int> Edge;
+//    typedef Triangulation_cell_3<GT,Tds> Cell;
+//    typedef Triangulation_vertex_3<GT,Tds> Vertex;
+//    typedef std::pair<Cell_handle, int> Facet;
+//    typedef triple<Cell_handle, int, int> Edge;
 
-  typedef Triangulation_cell_circulator_3<GT,Tds>      Cell_circulator;
-  typedef Triangulation_facet_circulator_3<GT,Tds>     Facet_circulator;
+//    typedef Triangulation_cell_circulator_3<GT,Tds>      Cell_circulator;
+//    typedef Triangulation_facet_circulator_3<GT,Tds>     Facet_circulator;
 
-  typedef Triangulation_cell_iterator_3<GT,Tds>   Cell_iterator;
-  typedef Triangulation_facet_iterator_3<GT,Tds>   Facet_iterator;
-  typedef Triangulation_edge_iterator_3<GT,Tds>   Edge_iterator;
-  typedef Triangulation_vertex_iterator_3<GT,Tds> Vertex_iterator;
+//    typedef Triangulation_cell_iterator_3<GT,Tds>   Cell_iterator;
+//    typedef Triangulation_facet_iterator_3<GT,Tds>   Facet_iterator;
+//    typedef Triangulation_edge_iterator_3<GT,Tds>   Edge_iterator;
+//    typedef Triangulation_vertex_iterator_3<GT,Tds> Vertex_iterator;
 
-  enum Locate_type {
-    VERTEX=0, 
-    EDGE, //1
-    FACET, //2
-    CELL, //3
-    OUTSIDE_CONVEX_HULL, //4
-    OUTSIDE_AFFINE_HULL };//5
+//    enum Locate_type {
+//      VERTEX=0, 
+//      EDGE, //1
+//      FACET, //2
+//      CELL, //3
+//      OUTSIDE_CONVEX_HULL, //4
+//      OUTSIDE_AFFINE_HULL };//5
 
-protected:
-  Tds _tds;
-  GT  _gt;
-  Vertex_handle infinite; //infinite vertex
+//  protected:
+//    Tds _tds;
+//    GT  _gt;
+//    Vertex_handle infinite; //infinite vertex
   
-  void init_tds()
-    {
-      infinite = (Vertex*) 
- 	_tds.insert_increase_dimension(Vertex());
-      // this causes a problem of accessing non initialized data 
-      // (seen by purify) in _tds.insert_increase_dimension
-      // when doing Vertex* w = new Vertex(v)
-      // to be solved...
-      // but the following solution does not work for regular triangulation :
+//    void init_tds()
+//      {
+//        infinite = (Vertex*) 
+//   	_tds.insert_increase_dimension(Vertex());
+//        // this causes a problem of accessing non initialized data 
+//        // (seen by purify) in _tds.insert_increase_dimension
+//        // when doing Vertex* w = new Vertex(v)
+//        // to be solved...
+//        // but the following solution does not work for regular triangulation :
 
-// 	_tds.insert_increase_dimension(Vertex(Point(0,0,0)));
-//       // coordinates are given to this vertex but they will and must
-//       // NEVER be accessed !! done to avoid a problem of accessing
-//       // non initialized data
+//  // 	_tds.insert_increase_dimension(Vertex(Point(0,0,0)));
+//  //       // coordinates are given to this vertex but they will and must
+//  //       // NEVER be accessed !! done to avoid a problem of accessing
+//  //       // non initialized data
 
-      handle2pointer( infinite ); 
-      handle2pointer( Cell_handle() );
-      // ( forces the compiler to instanciate handle2pointer )
-    }
+//        handle2pointer( infinite ); 
+//        handle2pointer( Cell_handle() );
+//        // ( forces the compiler to instanciate handle2pointer )
+//      }
   
-  // debug
-  Triangulation_3(const Point & p0,
-		  const Point & p1, 
-		  const Point & p2,
-		  const Point & p3)
-    : _tds(), _gt()
-    {
-      init_tds();
-      insert_increase_dimension(p0);
-      insert_increase_dimension(p1);
-      insert_increase_dimension(p2);
-      insert_increase_dimension(p3);
-    } 
+//    // debug
+//    Triangulation_3(const Point & p0,
+//  		  const Point & p1, 
+//  		  const Point & p2,
+//  		  const Point & p3)
+//      : _tds(), _gt()
+//      {
+//        init_tds();
+//        insert_increase_dimension(p0);
+//        insert_increase_dimension(p1);
+//        insert_increase_dimension(p2);
+//        insert_increase_dimension(p3);
+//      } 
 
-  bool test_dim_down(Vertex_handle v);
+//    bool test_dim_down(Vertex_handle v);
 
-public:
+//  public:
 
-  // CONSTRUCTORS
-  Triangulation_3()
-    : _tds(), _gt()
-    {
-      init_tds();
-    }
+//    // CONSTRUCTORS
+//    Triangulation_3()
+//      : _tds(), _gt()
+//      {
+//        init_tds();
+//      }
 
-  Triangulation_3(const GT & gt) 
-    : _tds(), _gt(gt)
-    {
-      init_tds();
-    }
+//    Triangulation_3(const GT & gt) 
+//      : _tds(), _gt(gt)
+//      {
+//        init_tds();
+//      }
 
-  // copy constructor duplicates vertices and cells
-  Triangulation_3(const Triangulation_3<GT,Tds> & tr)
-    : _gt(tr._gt)
-    {
-      infinite = (Vertex *) _tds.copy_tds(tr._tds, &(*(tr.infinite)) );
-    }
+//    // copy constructor duplicates vertices and cells
+//    Triangulation_3(const Triangulation_3<GT,Tds> & tr)
+//      : _gt(tr._gt)
+//      {
+//        infinite = (Vertex *) _tds.copy_tds(tr._tds, &(*(tr.infinite)) );
+//      }
 
-  // DESTRUCTOR
+//    // DESTRUCTOR
 
-  ~Triangulation_3()
-    {
-      clear();
-      //    infinite.Delete();    BUG !!! already deleted by _tds.clear()
-    }
+//    ~Triangulation_3()
+//      {
+//        clear();
+//        //    infinite.Delete();    BUG !!! already deleted by _tds.clear()
+//      }
 
-  void clear()
-    {
-      _tds.clear();
-      init_tds();
-    }
+//    void clear()
+//      {
+//        _tds.clear();
+//        init_tds();
+//      }
 
-  Triangulation_3 & operator=(const Triangulation_3 & tr)
-    {
-      //     clear();               BUG !!
-      //     infinite.Delete();
-      infinite = (Vertex *) _tds.copy_tds( tr._tds, &*tr.infinite );
-      _gt = tr._gt;
-      return *this;
-    }
+//    Triangulation_3 & operator=(const Triangulation_3 & tr)
+//      {
+//        //     clear();               BUG !!
+//        //     infinite.Delete();
+//        infinite = (Vertex *) _tds.copy_tds( tr._tds, &*tr.infinite );
+//        _gt = tr._gt;
+//        return *this;
+//      }
 
-  // HELPING FUNCTIONS
+//    // HELPING FUNCTIONS
    
-  void copy_triangulation(const Triangulation_3<GT,Tds> & tr)
-    {
-      //     clear();               BUG !!
-      //     infinite.Delete();
-      _gt = tr._gt;
-      infinite = (Vertex *) _tds.copy_tds( tr._tds, &*tr.infinite );
-    }
+//    void copy_triangulation(const Triangulation_3<GT,Tds> & tr)
+//      {
+//        //     clear();               BUG !!
+//        //     infinite.Delete();
+//        _gt = tr._gt;
+//        infinite = (Vertex *) _tds.copy_tds( tr._tds, &*tr.infinite );
+//      }
 
-  void swap(Triangulation_3 &tr)
-    {
-      GT t(geom_traits());
-      _gt = tr.geom_traits();
-      tr._gt = t; 
+//    void swap(Triangulation_3 &tr)
+//      {
+//        GT t(geom_traits());
+//        _gt = tr.geom_traits();
+//        tr._gt = t; 
 
-      Vertex_handle inf = infinite_vertex();
-      infinite = tr.infinite_vertex();
-      tr.infinite = inf;
+//        Vertex_handle inf = infinite_vertex();
+//        infinite = tr.infinite_vertex();
+//        tr.infinite = inf;
 
-      _tds.swap(tr._tds);
-    }
+//        _tds.swap(tr._tds);
+//      }
 
-  //ACCESS FUNCTIONS
-  inline 
-  const GT & geom_traits() const 
-    { return _gt;}
+//    //ACCESS FUNCTIONS
+//    inline 
+//    const GT & geom_traits() const 
+//      { return _gt;}
   
-  inline
-  const Tds & tds() const 
-    { return _tds;}
+//    inline
+//    const Tds & tds() const 
+//      { return _tds;}
   
-  //  inline
-  int dimension() const 
-    { return _tds.dimension();}
+//    //  inline
+//    int dimension() const 
+//      { return _tds.dimension();}
 
-  int number_of_finite_cells() const;
+//    int number_of_finite_cells() const;
 
-  int number_of_cells() const;
+//    int number_of_cells() const;
  
-  int number_of_finite_facets() const;
+//    int number_of_finite_facets() const;
 
-  int number_of_facets() const;
+//    int number_of_facets() const;
 
-  int number_of_finite_edges() const;
+//    int number_of_finite_edges() const;
  
-  int number_of_edges() const;
+//    int number_of_edges() const;
   
-  inline
-  int number_of_vertices() const // number of finite vertices
-    {return _tds.number_of_vertices()-1;}
+//    inline
+//    int number_of_vertices() const // number of finite vertices
+//      {return _tds.number_of_vertices()-1;}
 
-  inline
-  Vertex_handle infinite_vertex() const
-    {
-      return infinite;
-    }
+//    inline
+//    Vertex_handle infinite_vertex() const
+//      {
+//        return infinite;
+//      }
    
-  inline
-  Cell_handle infinite_cell() const
-    {
-      //    CGAL_triangulation_precondition(infinite_vertex()->cell()->
-      //				    has_vertex(infinite_vertex()));
-      return infinite_vertex()->cell();
-    }
+//    inline
+//    Cell_handle infinite_cell() const
+//      {
+//        //    CGAL_triangulation_precondition(infinite_vertex()->cell()->
+//        //				    has_vertex(infinite_vertex()));
+//        return infinite_vertex()->cell();
+//      }
 
-  // ASSIGNMENT
-  void set_number_of_vertices(int n) 
-    { _tds.set_number_of_vertices(n+1); }
+//    // ASSIGNMENT
+//    void set_number_of_vertices(int n) 
+//      { _tds.set_number_of_vertices(n+1); }
    
-  inline
-  void add_cell( Cell_handle c ) { _tds.add_cell( &(*c) ); }
+//    inline
+//    void add_cell( Cell_handle c ) { _tds.add_cell( &(*c) ); }
 
-  // GEOMETRIC ACCESS FUNCTIONS
+//    // GEOMETRIC ACCESS FUNCTIONS
   
-  Tetrahedron tetrahedron(const Cell_handle c) const
-    {
-      CGAL_triangulation_precondition( dimension() == 3 );
-      CGAL_triangulation_precondition( ! is_infinite(c) );
-      return Tetrahedron(c->vertex(0)->point(),
-			 c->vertex(1)->point(),
-			 c->vertex(2)->point(),
-			 c->vertex(3)->point());
-    }
+//    Tetrahedron tetrahedron(const Cell_handle c) const
+//      {
+//        CGAL_triangulation_precondition( dimension() == 3 );
+//        CGAL_triangulation_precondition( ! is_infinite(c) );
+//        return Tetrahedron(c->vertex(0)->point(),
+//  			 c->vertex(1)->point(),
+//  			 c->vertex(2)->point(),
+//  			 c->vertex(3)->point());
+//      }
 
-  Triangle triangle(const Cell_handle c, int i) const;
+//    Triangle triangle(const Cell_handle c, int i) const;
 
-  Triangle triangle(const Facet & f) const
-    { return triangle(f.first, f.second); }
+//    Triangle triangle(const Facet & f) const
+//      { return triangle(f.first, f.second); }
 
-  Segment segment(const Cell_handle c, int i, int j) const;
+//    Segment segment(const Cell_handle c, int i, int j) const;
 
 
-  Segment segment(const Edge & e) const
-    { return segment(e.first,e.second,e.third); }
+//    Segment segment(const Edge & e) const
+//      { return segment(e.first,e.second,e.third); }
 
-  //   Segment segment(const Edge_circulator& ec) const
-  //   {
-  //     return segment(*ec);
-  //   }
+//    //   Segment segment(const Edge_circulator& ec) const
+//    //   {
+//    //     return segment(*ec);
+//    //   }
     
-  //   Segment segment(const Edge_iterator& ei) const
-  //   {
-  //     return segment(*ei);
-  //   }
+//    //   Segment segment(const Edge_iterator& ei) const
+//    //   {
+//    //     return segment(*ei);
+//    //   }
 
-  // TEST IF INFINITE FEATURES
-  bool is_infinite(const Vertex_handle v) const 
-    { return v == infinite_vertex(); }
+//    // TEST IF INFINITE FEATURES
+//    bool is_infinite(const Vertex_handle v) const 
+//      { return v == infinite_vertex(); }
 
-  bool is_infinite(const Cell_handle c) const 
-    {
-      CGAL_triangulation_precondition( dimension() == 3 );
-      return c->has_vertex(infinite_vertex());
-    }
+//    bool is_infinite(const Cell_handle c) const 
+//      {
+//        CGAL_triangulation_precondition( dimension() == 3 );
+//        return c->has_vertex(infinite_vertex());
+//      }
   
-  bool is_infinite(const Cell_handle c, int i) const;
+//    bool is_infinite(const Cell_handle c, int i) const;
 
-  bool is_infinite(const Facet & f) const 
-    { return is_infinite(f.first,f.second); }
+//    bool is_infinite(const Facet & f) const 
+//      { return is_infinite(f.first,f.second); }
 
-  bool is_infinite(const Cell_handle c, int i, int j) const; 
+//    bool is_infinite(const Cell_handle c, int i, int j) const; 
 
-  bool is_infinite(const Edge & e) const
-    { return is_infinite(e.first,e.second,e.third); }
+//    bool is_infinite(const Edge & e) const
+//      { return is_infinite(e.first,e.second,e.third); }
 
-  //   bool is_infinite(const Edge_circulator& ec) const 
-  //     {
-  //       return is_infinite(*ec);
-  //     }
+//    //   bool is_infinite(const Edge_circulator& ec) const 
+//    //     {
+//    //       return is_infinite(*ec);
+//    //     }
 
-  //   bool is_infinite(const Edge_iterator& ei) const 
-  //     {
-  //       return is_infinite(*ei);
-  //     }
+//    //   bool is_infinite(const Edge_iterator& ei) const 
+//    //     {
+//    //       return is_infinite(*ei);
+//    //     }
 
-  //QUERIES
+//    //QUERIES
 
-  bool is_vertex(const Point & p, Vertex_handle & v) const;
+//    bool is_vertex(const Point & p, Vertex_handle & v) const;
 
-  bool is_vertex(Vertex_handle v) const;
-  bool is_edge(Vertex_handle u, Vertex_handle v,
-	       Cell_handle & c, int & i, int & j) const;
-  // returns false when dimension <1
-  bool is_facet(Vertex_handle u, Vertex_handle v, Vertex_handle w,
-		Cell_handle & c, int & i, int & j, int & k) const;
-  // returns false when dimension <2
-  bool is_cell(Cell_handle c) const;
-  // returns false when dimension <3
-  bool is_cell(Vertex_handle u, Vertex_handle v, 
-	       Vertex_handle w, Vertex_handle t,
-	       Cell_handle & c, int & i, int & j, int & k, int & l) const;
-  // returns false when dimension <3
-  bool is_cell(Vertex_handle u, Vertex_handle v, 
-	       Vertex_handle w, Vertex_handle t,
-	       Cell_handle & c) const;
+//    bool is_vertex(Vertex_handle v) const;
+//    bool is_edge(Vertex_handle u, Vertex_handle v,
+//  	       Cell_handle & c, int & i, int & j) const;
+//    // returns false when dimension <1
+//    bool is_facet(Vertex_handle u, Vertex_handle v, Vertex_handle w,
+//  		Cell_handle & c, int & i, int & j, int & k) const;
+//    // returns false when dimension <2
+//    bool is_cell(Cell_handle c) const;
+//    // returns false when dimension <3
+//    bool is_cell(Vertex_handle u, Vertex_handle v, 
+//  	       Vertex_handle w, Vertex_handle t,
+//  	       Cell_handle & c, int & i, int & j, int & k, int & l) const;
+//    // returns false when dimension <3
+//    bool is_cell(Vertex_handle u, Vertex_handle v, 
+//  	       Vertex_handle w, Vertex_handle t,
+//  	       Cell_handle & c) const;
 
-  bool has_vertex(const Facet & f, Vertex_handle v, int & j) const;
-  bool has_vertex(Cell_handle c, int i, Vertex_handle v, int & j) const;
-  bool has_vertex(const Facet & f, Vertex_handle v) const;
-  bool has_vertex(Cell_handle c, int i, Vertex_handle v) const;
+//    bool has_vertex(const Facet & f, Vertex_handle v, int & j) const;
+//    bool has_vertex(Cell_handle c, int i, Vertex_handle v, int & j) const;
+//    bool has_vertex(const Facet & f, Vertex_handle v) const;
+//    bool has_vertex(Cell_handle c, int i, Vertex_handle v) const;
 
-  bool are_equal(Cell_handle c, int i, Cell_handle n, int j) const;
-  bool are_equal(const Facet & f, const Facet & g) const;
-  bool are_equal(const Facet & f, Cell_handle n, int j) const;
+//    bool are_equal(Cell_handle c, int i, Cell_handle n, int j) const;
+//    bool are_equal(const Facet & f, const Facet & g) const;
+//    bool are_equal(const Facet & f, Cell_handle n, int j) const;
 
-  Cell_handle locate(const Point & p) const;
+//    Cell_handle locate(const Point & p) const;
 
-  inline Cell_handle
-  locate(const Point & p, Cell_handle start) const
-    {
-      Locate_type lt;
-      int li, lj;
-      return locate( p, start, lt, li, lj);
-    }
+//    inline Cell_handle
+//    locate(const Point & p, Cell_handle start) const
+//      {
+//        Locate_type lt;
+//        int li, lj;
+//        return locate( p, start, lt, li, lj);
+//      }
 
-  inline Cell_handle
-  locate(const Point & p,
-	 Locate_type & lt, int & li, int & lj) const;
+//    inline Cell_handle
+//    locate(const Point & p,
+//  	 Locate_type & lt, int & li, int & lj) const;
 
-  Cell_handle
-  locate(const Point & p,
-	 Cell_handle start,
-	 Locate_type & lt, int & li, int & lj) const;
-  // returns the (finite or infinite) cell p lies in
-  // starts at cell "start"
-  // start must be non NULL and finite
-  // if lt == OUTSIDE_CONVEX_HULL, li is the
-  // index of a facet separating p from the rest of the triangulation
-  // in dimension 2 :
-  // returns a facet (Cell_handle,li) if lt == FACET
-  // returns an edge (Cell_handle,li,lj) if lt == EDGE
-  // returns a vertex (Cell_handle,li) if lt == VERTEX
-  // if lt == OUTSIDE_CONVEX_HULL, li, lj give the edge of c
-  // separating p from the rest of the triangulation
-  // lt = OUTSIDE_AFFINE_HULL if p is not coplanar with the triangulation
+//    Cell_handle
+//    locate(const Point & p,
+//  	 Cell_handle start,
+//  	 Locate_type & lt, int & li, int & lj) const;
+//    // returns the (finite or infinite) cell p lies in
+//    // starts at cell "start"
+//    // start must be non NULL and finite
+//    // if lt == OUTSIDE_CONVEX_HULL, li is the
+//    // index of a facet separating p from the rest of the triangulation
+//    // in dimension 2 :
+//    // returns a facet (Cell_handle,li) if lt == FACET
+//    // returns an edge (Cell_handle,li,lj) if lt == EDGE
+//    // returns a vertex (Cell_handle,li) if lt == VERTEX
+//    // if lt == OUTSIDE_CONVEX_HULL, li, lj give the edge of c
+//    // separating p from the rest of the triangulation
+//    // lt = OUTSIDE_AFFINE_HULL if p is not coplanar with the triangulation
 
 
-  // PREDICATES ON POINTS ``TEMPLATED'' by the geom traits
+//    // PREDICATES ON POINTS ``TEMPLATED'' by the geom traits
   
-  Bounded_side
-  side_of_tetrahedron(const Point & p,
-		      const Point & p0, 
-		      const Point & p1,
-		      const Point & p2, 
-		      const Point & p3,
-		      Locate_type & lt, int & i, int & j ) const;
-  // p0,p1,p2,p3 supposed to be non coplanar
-  // tetrahedron p0,p1,p2,p3 is supposed to be well oriented
-  // returns :
-  // ON_BOUNDED_SIDE if p lies strictly inside the tetrahedron
-  // ON_BOUNDARY if p lies on one of the facets
-  // ON_UNBOUNDED_SIDE if p lies strictly outside the tetrahedron
-  // ?? locate type...
+//    Bounded_side
+//    side_of_tetrahedron(const Point & p,
+//  		      const Point & p0, 
+//  		      const Point & p1,
+//  		      const Point & p2, 
+//  		      const Point & p3,
+//  		      Locate_type & lt, int & i, int & j ) const;
+//    // p0,p1,p2,p3 supposed to be non coplanar
+//    // tetrahedron p0,p1,p2,p3 is supposed to be well oriented
+//    // returns :
+//    // ON_BOUNDED_SIDE if p lies strictly inside the tetrahedron
+//    // ON_BOUNDARY if p lies on one of the facets
+//    // ON_UNBOUNDED_SIDE if p lies strictly outside the tetrahedron
+//    // ?? locate type...
 
-  Bounded_side
-  side_of_cell(const Point & p, 
-	       Cell_handle c,
-	       Locate_type & lt, int & i, int & j) const;
-  // returns
-  // ON_BOUNDED_SIDE if p inside the cell
-  // (for an infinite cell this means that p lies strictly in the half space
-  // limited by its finite facet)
-  // ON_BOUNDARY if p on the boundary of the cell
-  // (for an infinite cell this means that p lies on the *finite* facet)
-  // ON_UNBOUNDED_SIDE if p lies outside the cell
-  // (for an infinite cell this means that p is not in the preceding
-  // two cases)  
-  // lt has a meaning only when ON_BOUNDED_SIDE or ON_BOUNDARY
+//    Bounded_side
+//    side_of_cell(const Point & p, 
+//  	       Cell_handle c,
+//  	       Locate_type & lt, int & i, int & j) const;
+//    // returns
+//    // ON_BOUNDED_SIDE if p inside the cell
+//    // (for an infinite cell this means that p lies strictly in the half space
+//    // limited by its finite facet)
+//    // ON_BOUNDARY if p on the boundary of the cell
+//    // (for an infinite cell this means that p lies on the *finite* facet)
+//    // ON_UNBOUNDED_SIDE if p lies outside the cell
+//    // (for an infinite cell this means that p is not in the preceding
+//    // two cases)  
+//    // lt has a meaning only when ON_BOUNDED_SIDE or ON_BOUNDARY
 
-  Bounded_side
-  side_of_triangle(const Point & p,
-		   const Point & p0, 
-		   const Point & p1,
-		   const Point & p2,
-		   Locate_type & lt, int & i, int & j ) const;
-  // p0,p1,p2 supposed to define a plane
-  // p supposed to lie on plane p0,p1,p2
-  // triangle p0,p1,p2 defines the orientation of the plane
-  // returns
-  // ON_BOUNDED_SIDE if p lies strictly inside the triangle
-  // ON_BOUNDARY if p lies on one of the edges
-  // ON_UNBOUNDED_SIDE if p lies strictly outside the triangle
+//    Bounded_side
+//    side_of_triangle(const Point & p,
+//  		   const Point & p0, 
+//  		   const Point & p1,
+//  		   const Point & p2,
+//  		   Locate_type & lt, int & i, int & j ) const;
+//    // p0,p1,p2 supposed to define a plane
+//    // p supposed to lie on plane p0,p1,p2
+//    // triangle p0,p1,p2 defines the orientation of the plane
+//    // returns
+//    // ON_BOUNDED_SIDE if p lies strictly inside the triangle
+//    // ON_BOUNDARY if p lies on one of the edges
+//    // ON_UNBOUNDED_SIDE if p lies strictly outside the triangle
 
 
-  Bounded_side
-  side_of_facet(const Point & p,
-		Cell_handle c,
-		//		int i,
-		Locate_type & lt, int & li, int & lj) const;
-  // supposes dimension 2 otherwise does not work for infinite facets
-  // returns :
-  // ON_BOUNDED_SIDE if p inside the facet
-  // (for an infinite facet this means that p lies strictly in the half plane
-  // limited by its finite edge)
-  // ON_BOUNDARY if p on the boundary of the facet
-  // (for an infinite facet this means that p lies on the *finite* edge)
-  // ON_UNBOUNDED_SIDE if p lies outside the facet
-  // (for an infinite facet this means that p is not in the
-  // preceding two cases) 
-  // lt has a meaning only when ON_BOUNDED_SIDE or ON_BOUNDARY
-  // when they mean anything, li and lj refer to indices in the cell c 
-  // giving the facet (c,i)
+//    Bounded_side
+//    side_of_facet(const Point & p,
+//  		Cell_handle c,
+//  		//		int i,
+//  		Locate_type & lt, int & li, int & lj) const;
+//    // supposes dimension 2 otherwise does not work for infinite facets
+//    // returns :
+//    // ON_BOUNDED_SIDE if p inside the facet
+//    // (for an infinite facet this means that p lies strictly in the half plane
+//    // limited by its finite edge)
+//    // ON_BOUNDARY if p on the boundary of the facet
+//    // (for an infinite facet this means that p lies on the *finite* edge)
+//    // ON_UNBOUNDED_SIDE if p lies outside the facet
+//    // (for an infinite facet this means that p is not in the
+//    // preceding two cases) 
+//    // lt has a meaning only when ON_BOUNDED_SIDE or ON_BOUNDARY
+//    // when they mean anything, li and lj refer to indices in the cell c 
+//    // giving the facet (c,i)
 
-  Bounded_side
-  side_of_facet(const Point & p,
-		const Facet & f,
-		Locate_type & lt, int & li, int & lj) const
-    {
-      CGAL_triangulation_precondition( f.second == 3 );
-      return side_of_facet(p, f.first, lt, li, lj);
-    }
+//    Bounded_side
+//    side_of_facet(const Point & p,
+//  		const Facet & f,
+//  		Locate_type & lt, int & li, int & lj) const
+//      {
+//        CGAL_triangulation_precondition( f.second == 3 );
+//        return side_of_facet(p, f.first, lt, li, lj);
+//      }
 
-  Bounded_side
-  side_of_segment(const Point & p,
-		  const Point & p0, 
-		  const Point & p1,
-		  Locate_type & lt, int & i ) const;
-  // p0, p1 supposed to be different
-  // p supposed to be collinear to p0, p1
-  // returns :
-  // ON_BOUNDED_SIDE if p lies strictly inside the edge
-  // ON_BOUNDARY if p equals p0 or p1
-  // ON_UNBOUNDED_SIDE if p lies strictly outside the edge
+//    Bounded_side
+//    side_of_segment(const Point & p,
+//  		  const Point & p0, 
+//  		  const Point & p1,
+//  		  Locate_type & lt, int & i ) const;
+//    // p0, p1 supposed to be different
+//    // p supposed to be collinear to p0, p1
+//    // returns :
+//    // ON_BOUNDED_SIDE if p lies strictly inside the edge
+//    // ON_BOUNDARY if p equals p0 or p1
+//    // ON_UNBOUNDED_SIDE if p lies strictly outside the edge
 
-  Bounded_side
-  side_of_edge(const Point & p,
-	       Cell_handle c,
-	       Locate_type & lt, int & li) const;
-  // supposes dimension 1 otherwise does not work for infinite edges
-  // returns :
-  // ON_BOUNDED_SIDE if p inside the edge 
-  // (for an infinite edge this means that p lies in the half line
-  // defined by the vertex)
-  // ON_BOUNDARY if p equals one of the vertices
-  // ON_UNBOUNDED_SIDE if p lies outside the edge
-  // (for an infinite edge this means that p lies on the other half line)
-  // lt has a meaning when ON_BOUNDED_SIDE and ON_BOUNDARY
-  // li refer to indices in the cell c 
+//    Bounded_side
+//    side_of_edge(const Point & p,
+//  	       Cell_handle c,
+//  	       Locate_type & lt, int & li) const;
+//    // supposes dimension 1 otherwise does not work for infinite edges
+//    // returns :
+//    // ON_BOUNDED_SIDE if p inside the edge 
+//    // (for an infinite edge this means that p lies in the half line
+//    // defined by the vertex)
+//    // ON_BOUNDARY if p equals one of the vertices
+//    // ON_UNBOUNDED_SIDE if p lies outside the edge
+//    // (for an infinite edge this means that p lies on the other half line)
+//    // lt has a meaning when ON_BOUNDED_SIDE and ON_BOUNDARY
+//    // li refer to indices in the cell c 
 
-  Bounded_side
-  side_of_edge(const Point & p,
-	       const Edge & e,
-	       Locate_type & lt, int & li) const
-    {
-      CGAL_triangulation_precondition( e.second == 0 );
-      CGAL_triangulation_precondition( e.third == 1 );
-      return side_of_edge(p, e.first, lt, li);
-    }
+//    Bounded_side
+//    side_of_edge(const Point & p,
+//  	       const Edge & e,
+//  	       Locate_type & lt, int & li) const
+//      {
+//        CGAL_triangulation_precondition( e.second == 0 );
+//        CGAL_triangulation_precondition( e.third == 1 );
+//        return side_of_edge(p, e.first, lt, li);
+//      }
 
-  // MODIFIERS
-  bool flip(Facet f);
-  bool flip(Cell_handle c, int i);
-  // returns false if the facet is not flippable
-  // true other wise and
-  // flips facet i of cell c
-  // c will be replaced by one of the new cells
-  void flip_flippable(Facet f);
-  void flip_flippable(Cell_handle c, int i);
-  // flips facet i of cell c
-  // c will be replaced by one of the new cells
+//    // MODIFIERS
+//    bool flip(Facet f);
+//    bool flip(Cell_handle c, int i);
+//    // returns false if the facet is not flippable
+//    // true other wise and
+//    // flips facet i of cell c
+//    // c will be replaced by one of the new cells
+//    void flip_flippable(Facet f);
+//    void flip_flippable(Cell_handle c, int i);
+//    // flips facet i of cell c
+//    // c will be replaced by one of the new cells
 
-  bool flip(Edge e);
-  bool flip(Cell_handle c, int i, int j);
-  // returns false if the edge is not flippable
-  // true otherwise and
-  // flips edge i,j of cell c
-  // c will be deleted
-  void flip_flippable(Edge e);
-  void flip_flippable(Cell_handle c, int i, int j);
-  // flips edge i,j of cell c
-  // c will be deleted
+//    bool flip(Edge e);
+//    bool flip(Cell_handle c, int i, int j);
+//    // returns false if the edge is not flippable
+//    // true otherwise and
+//    // flips edge i,j of cell c
+//    // c will be deleted
+//    void flip_flippable(Edge e);
+//    void flip_flippable(Cell_handle c, int i, int j);
+//    // flips edge i,j of cell c
+//    // c will be deleted
 
-  //INSERTION 
+//    //INSERTION 
 
-  Vertex_handle insert(const Point & p );
+//    Vertex_handle insert(const Point & p );
 
-  Vertex_handle insert(const Point & p, Cell_handle start);
+//    Vertex_handle insert(const Point & p, Cell_handle start);
 
-  template < class InputIterator >
-  int insert(InputIterator first, InputIterator last)
-    {
-      int n = number_of_vertices();
-      while(first != last){
-	insert(*first);
-	++first;
-      }
-      return number_of_vertices() - n;
-    }
+//    template < class InputIterator >
+//    int insert(InputIterator first, InputIterator last)
+//      {
+//        int n = number_of_vertices();
+//        while(first != last){
+//  	insert(*first);
+//  	++first;
+//        }
+//        return number_of_vertices() - n;
+//      }
 
-  Vertex_handle
-  insert_in_cell(const Point & p, Cell_handle c);
+//    Vertex_handle
+//    insert_in_cell(const Point & p, Cell_handle c);
 
-  Vertex_handle
-  insert_in_facet(const Point & p, Cell_handle c, int i);
+//    Vertex_handle
+//    insert_in_facet(const Point & p, Cell_handle c, int i);
 
-  Vertex_handle
-  insert_in_facet(const Point & p, const Facet & f)
-    {
-      return insert_in_facet(p, f.first,f.second);
-    }
+//    Vertex_handle
+//    insert_in_facet(const Point & p, const Facet & f)
+//      {
+//        return insert_in_facet(p, f.first,f.second);
+//      }
 
-  Vertex_handle
-  insert_in_edge(const Point & p, Cell_handle c, int i, int j);
+//    Vertex_handle
+//    insert_in_edge(const Point & p, Cell_handle c, int i, int j);
 
-  Vertex_handle
-  insert_in_edge(const Point & p, const Edge & e)
-    {
-      return insert_in_edge(p, e.first,e.second,e.third);
-    }
+//    Vertex_handle
+//    insert_in_edge(const Point & p, const Edge & e)
+//      {
+//        return insert_in_edge(p, e.first,e.second,e.third);
+//      }
   
-  Vertex_handle
-  insert_outside_convex_hull(const Point & p, Cell_handle c);
-  //			     int li, int lj=0)
-  // c is an infinite cell containing p
-  // whose facet li lies on the convex hull boundary
-  // and separates p from the triangulation (in dimension 3)
-  // p is strictly outside the convex hull
-  // in dimension 2, edge li,lj separates p from the triangulation
-  // in dimension 1, vertex li separates p from the triangulation
-  // dimension 0 not allowed, use outside-affine-hull
+//    Vertex_handle
+//    insert_outside_convex_hull(const Point & p, Cell_handle c);
+//    //			     int li, int lj=0)
+//    // c is an infinite cell containing p
+//    // whose facet li lies on the convex hull boundary
+//    // and separates p from the triangulation (in dimension 3)
+//    // p is strictly outside the convex hull
+//    // in dimension 2, edge li,lj separates p from the triangulation
+//    // in dimension 1, vertex li separates p from the triangulation
+//    // dimension 0 not allowed, use outside-affine-hull
 
-private:
-  Cell_handle
-  hat(Vertex_handle v, Cell_handle c);
-  // recursive traversal of the set of facets of the convex hull
-  // that are visible from v
-  // v replaces infinite_vertex in these cells
-  // on the boundary, new cells with vertices v, infinite_vertex
-  // and the two vertices of an edge of the boumdary are created
-  // returns a cell inside the "hat", having a facet on its boundary
+//  private:
+//    Cell_handle
+//    hat(Vertex_handle v, Cell_handle c);
+//    // recursive traversal of the set of facets of the convex hull
+//    // that are visible from v
+//    // v replaces infinite_vertex in these cells
+//    // on the boundary, new cells with vertices v, infinite_vertex
+//    // and the two vertices of an edge of the boumdary are created
+//    // returns a cell inside the "hat", having a facet on its boundary
   
-  void
-  link(Vertex_handle v, Cell_handle c);
-  // c belongs to the hat of v and has a facet on its boundary
-  // traverses the boundary of the hat and finds adjacencies
-  // traversal is done counterclockwise as seen from v
+//    void
+//    link(Vertex_handle v, Cell_handle c);
+//    // c belongs to the hat of v and has a facet on its boundary
+//    // traverses the boundary of the hat and finds adjacencies
+//    // traversal is done counterclockwise as seen from v
 
- protected:
+//   protected:
 
-  Comparison_result compare_x(const Point& p, const Point& q) const;
-  Comparison_result compare_y(const Point& p, const Point& q) const;  
-  Comparison_result compare_z(const Point& p, const Point& q) const;
-  Orientation orientation(const Point& p, const Point& q, const Point& r, const Point& s) const;
-  Orientation orientation_in_plane(const Point& p, 
-				   const Point& q, 
-				   const Point& r,
-				   const Point& s) const;
-  bool collinear(const Point& p, const Point& q, const Point& r) const;
-  bool equal(const Point& p, const Point& q) const;
+//    Comparison_result compare_x(const Point& p, const Point& q) const;
+//    Comparison_result compare_y(const Point& p, const Point& q) const;  
+//    Comparison_result compare_z(const Point& p, const Point& q) const;
+//    Orientation orientation(const Point& p, const Point& q, const Point& r, const Point& s) const;
+//    Orientation orientation_in_plane(const Point& p, 
+//  				   const Point& q, 
+//  				   const Point& r,
+//  				   const Point& s) const;
+//    bool collinear(const Point& p, const Point& q, const Point& r) const;
+//    bool equal(const Point& p, const Point& q) const;
 
-public:
+//  public:
 
-  Vertex_handle
-  insert_outside_affine_hull(const Point & p);
+//    Vertex_handle
+//    insert_outside_affine_hull(const Point & p);
 
-  //TRAVERSING : ITERATORS AND CIRCULATORS
-  Cell_iterator finite_cells_begin() const
-    {
-      if ( dimension() < 3 ) return cells_end();
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds> *)this;
-      return Cell_iterator(ncthis, false); // false means "without
-      // infinite cells" 
-    }
-  Cell_iterator all_cells_begin() const
-    {
-      if ( dimension() < 3 ) return cells_end();
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds> *)this;
-      return Cell_iterator(ncthis, true); // true means "with infinite cells"
-    }
-  Cell_iterator cells_end() const
-    {
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds> *)this;
-      return Cell_iterator(ncthis); // not second argument -> past-end
-    }
+//    //TRAVERSING : ITERATORS AND CIRCULATORS
+//    Cell_iterator finite_cells_begin() const
+//      {
+//        if ( dimension() < 3 ) return cells_end();
+//        Triangulation_3<GT, Tds>* ncthis 
+//  	= (Triangulation_3<GT, Tds> *)this;
+//        return Cell_iterator(ncthis, false); // false means "without
+//        // infinite cells" 
+//      }
+//    Cell_iterator all_cells_begin() const
+//      {
+//        if ( dimension() < 3 ) return cells_end();
+//        Triangulation_3<GT, Tds>* ncthis 
+//  	= (Triangulation_3<GT, Tds> *)this;
+//        return Cell_iterator(ncthis, true); // true means "with infinite cells"
+//      }
+//    Cell_iterator cells_end() const
+//      {
+//        Triangulation_3<GT, Tds>* ncthis 
+//  	= (Triangulation_3<GT, Tds> *)this;
+//        return Cell_iterator(ncthis); // not second argument -> past-end
+//      }
 
-  Vertex_iterator finite_vertices_begin() const
-    {
-      if ( number_of_vertices() <= 0 ) return vertices_end();
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Vertex_iterator(ncthis, false);
-    }
-  Vertex_iterator all_vertices_begin() const
-    {
-      if ( number_of_vertices() <= 0 ) return vertices_end();
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Vertex_iterator(ncthis, true);
-    }
-  Vertex_iterator vertices_end() const
-    {
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Vertex_iterator(ncthis);
-    }
+//    Vertex_iterator finite_vertices_begin() const
+//      {
+//        if ( number_of_vertices() <= 0 ) return vertices_end();
+//        Triangulation_3<GT, Tds>* ncthis 
+//  	= (Triangulation_3<GT, Tds>*)this;
+//        return Vertex_iterator(ncthis, false);
+//      }
+//    Vertex_iterator all_vertices_begin() const
+//      {
+//        if ( number_of_vertices() <= 0 ) return vertices_end();
+//        Triangulation_3<GT, Tds>* ncthis 
+//  	= (Triangulation_3<GT, Tds>*)this;
+//        return Vertex_iterator(ncthis, true);
+//      }
+//    Vertex_iterator vertices_end() const
+//      {
+//        Triangulation_3<GT, Tds>* ncthis 
+//  	= (Triangulation_3<GT, Tds>*)this;
+//        return Vertex_iterator(ncthis);
+//      }
 
-  Edge_iterator finite_edges_begin() const
-    {
-      if ( dimension() < 1 ) return edges_end();
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Edge_iterator(ncthis, false);
-    }
-  Edge_iterator all_edges_begin() const
-    {
-      if ( dimension() < 1 ) return edges_end();
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Edge_iterator(ncthis, true);
-    }
-  Edge_iterator edges_end() const
-    {
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Edge_iterator(ncthis);
-    }
+//    Edge_iterator finite_edges_begin() const
+//      {
+//        if ( dimension() < 1 ) return edges_end();
+//        Triangulation_3<GT, Tds>* ncthis 
+//  	= (Triangulation_3<GT, Tds>*)this;
+//        return Edge_iterator(ncthis, false);
+//      }
+//    Edge_iterator all_edges_begin() const
+//      {
+//        if ( dimension() < 1 ) return edges_end();
+//        Triangulation_3<GT, Tds>* ncthis 
+//  	= (Triangulation_3<GT, Tds>*)this;
+//        return Edge_iterator(ncthis, true);
+//      }
+//    Edge_iterator edges_end() const
+//      {
+//        Triangulation_3<GT, Tds>* ncthis 
+//  	= (Triangulation_3<GT, Tds>*)this;
+//        return Edge_iterator(ncthis);
+//      }
 
-  Facet_iterator finite_facets_begin() const
-    {
-      if ( dimension() < 2 ) return facets_end();
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Facet_iterator(ncthis, false);
-    }
-  Facet_iterator all_facets_begin() const
-    {
-      if ( dimension() < 2 ) return facets_end();
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Facet_iterator(ncthis, true);
-    }
-  Facet_iterator facets_end() const
-    {
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Facet_iterator(ncthis);
-    }
+//    Facet_iterator finite_facets_begin() const
+//      {
+//        if ( dimension() < 2 ) return facets_end();
+//        Triangulation_3<GT, Tds>* ncthis 
+//  	= (Triangulation_3<GT, Tds>*)this;
+//        return Facet_iterator(ncthis, false);
+//      }
+//    Facet_iterator all_facets_begin() const
+//      {
+//        if ( dimension() < 2 ) return facets_end();
+//        Triangulation_3<GT, Tds>* ncthis 
+//  	= (Triangulation_3<GT, Tds>*)this;
+//        return Facet_iterator(ncthis, true);
+//      }
+//    Facet_iterator facets_end() const
+//      {
+//        Triangulation_3<GT, Tds>* ncthis 
+//  	= (Triangulation_3<GT, Tds>*)this;
+//        return Facet_iterator(ncthis);
+//      }
 
-  // cells around an edge
-  Cell_circulator incident_cells(const Edge & e) const
-    {
-      CGAL_triangulation_precondition( dimension() == 3 );
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Cell_circulator(ncthis,e);
-    }
-  Cell_circulator incident_cells(Cell_handle c, int i, int j) const
-    {
-      CGAL_triangulation_precondition( dimension() == 3 );
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Cell_circulator(ncthis,c,i,j);
-    }
-  Cell_circulator incident_cells(const Edge & e, Cell_handle start) const
-    {
-      CGAL_triangulation_precondition( dimension() == 3 );
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Cell_circulator(ncthis,e,start);
-    }
-  Cell_circulator incident_cells(Cell_handle c, int i, int j, 
-				 Cell_handle start) const  
-    {
-      CGAL_triangulation_precondition( dimension() == 3 );
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Cell_circulator(ncthis,c,i,j,start);
-    }
+//    // cells around an edge
+//    Cell_circulator incident_cells(const Edge & e) const
+//      {
+//        CGAL_triangulation_precondition( dimension() == 3 );
+//        Triangulation_3<GT, Tds>* ncthis 
+//  	= (Triangulation_3<GT, Tds>*)this;
+//        return Cell_circulator(ncthis,e);
+//      }
+//    Cell_circulator incident_cells(Cell_handle c, int i, int j) const
+//      {
+//        CGAL_triangulation_precondition( dimension() == 3 );
+//        Triangulation_3<GT, Tds>* ncthis 
+//  	= (Triangulation_3<GT, Tds>*)this;
+//        return Cell_circulator(ncthis,c,i,j);
+//      }
+//    Cell_circulator incident_cells(const Edge & e, Cell_handle start) const
+//      {
+//        CGAL_triangulation_precondition( dimension() == 3 );
+//        Triangulation_3<GT, Tds>* ncthis 
+//  	= (Triangulation_3<GT, Tds>*)this;
+//        return Cell_circulator(ncthis,e,start);
+//      }
+//    Cell_circulator incident_cells(Cell_handle c, int i, int j, 
+//  				 Cell_handle start) const  
+//      {
+//        CGAL_triangulation_precondition( dimension() == 3 );
+//        Triangulation_3<GT, Tds>* ncthis 
+//  	= (Triangulation_3<GT, Tds>*)this;
+//        return Cell_circulator(ncthis,c,i,j,start);
+//      }
 
-  // facets around an edge
-  Facet_circulator incident_facets(const Edge & e) const
-    {
-      CGAL_triangulation_precondition( dimension() == 3 );
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Facet_circulator(ncthis,e);
-    }
-  Facet_circulator incident_facets(Cell_handle c, int i, int j) const
-    {
-      CGAL_triangulation_precondition( dimension() == 3 );
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Facet_circulator(ncthis,c,i,j);
-    }
-  Facet_circulator incident_facets(const Edge & e, 
-				   const Facet & start) const
-    {
-      CGAL_triangulation_precondition( dimension() == 3 );
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Facet_circulator(ncthis,e,start);
-    }
-  Facet_circulator incident_facets(Cell_handle c, int i, int j, 
-				   const Facet & start) const  
-    {
-      CGAL_triangulation_precondition( dimension() == 3 );
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Facet_circulator(ncthis,c,i,j,start);
-    }
-  Facet_circulator incident_facets(const Edge & e, 
-				   Cell_handle start, int f) const
-    {
-      CGAL_triangulation_precondition( dimension() == 3 );
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Facet_circulator(ncthis,e,start,f);
-    }
-  Facet_circulator incident_facets(Cell_handle c, int i, int j, 
-				   Cell_handle start, int f) const  
-    {
-      CGAL_triangulation_precondition( dimension() == 3 );
-      Triangulation_3<GT, Tds>* ncthis 
-	= (Triangulation_3<GT, Tds>*)this;
-      return Facet_circulator(ncthis,c,i,j,start,f);
-    }
+//    // facets around an edge
+//    Facet_circulator incident_facets(const Edge & e) const
+//      {
+//        CGAL_triangulation_precondition( dimension() == 3 );
+//        Triangulation_3<GT, Tds>* ncthis 
+//  	= (Triangulation_3<GT, Tds>*)this;
+//        return Facet_circulator(ncthis,e);
+//      }
+//    Facet_circulator incident_facets(Cell_handle c, int i, int j) const
+//      {
+//        CGAL_triangulation_precondition( dimension() == 3 );
+//        Triangulation_3<GT, Tds>* ncthis 
+//  	= (Triangulation_3<GT, Tds>*)this;
+//        return Facet_circulator(ncthis,c,i,j);
+//      }
+//    Facet_circulator incident_facets(const Edge & e, 
+//  				   const Facet & start) const
+//      {
+//        CGAL_triangulation_precondition( dimension() == 3 );
+//        Triangulation_3<GT, Tds>* ncthis 
+//  	= (Triangulation_3<GT, Tds>*)this;
+//        return Facet_circulator(ncthis,e,start);
+//      }
+//    Facet_circulator incident_facets(Cell_handle c, int i, int j, 
+//  				   const Facet & start) const  
+//      {
+//        CGAL_triangulation_precondition( dimension() == 3 );
+//        Triangulation_3<GT, Tds>* ncthis 
+//  	= (Triangulation_3<GT, Tds>*)this;
+//        return Facet_circulator(ncthis,c,i,j,start);
+//      }
+//    Facet_circulator incident_facets(const Edge & e, 
+//  				   Cell_handle start, int f) const
+//      {
+//        CGAL_triangulation_precondition( dimension() == 3 );
+//        Triangulation_3<GT, Tds>* ncthis 
+//  	= (Triangulation_3<GT, Tds>*)this;
+//        return Facet_circulator(ncthis,e,start,f);
+//      }
+//    Facet_circulator incident_facets(Cell_handle c, int i, int j, 
+//  				   Cell_handle start, int f) const  
+//      {
+//        CGAL_triangulation_precondition( dimension() == 3 );
+//        Triangulation_3<GT, Tds>* ncthis 
+//  	= (Triangulation_3<GT, Tds>*)this;
+//        return Facet_circulator(ncthis,c,i,j,start,f);
+//      }
 
-  // around a vertex
-  void
-  incident_cells(Vertex_handle v, 
-		 std::set<Cell_handle, std::less<Cell_handle> > & cells,
-		 Cell_handle c = (Cell*) NULL ) const;
-
-
-  void
-  incident_vertices(Vertex_handle v, 
-		    std::set<Vertex_handle, std::less<Vertex_handle> > 
-		    & vertices,
-		    Cell_handle c = (Cell*) NULL ) const;
-
-  // old methods, kept for compatibility with previous versions
-  void
-  incident_cells(Vertex_handle v, 
-		 std::set<Cell*, std::less<Cell*> > & cells,
-		 Cell_handle c = (Cell*) NULL,
-		 int dummy_for_windows = 0) const;
+//    // around a vertex
+//    void
+//    incident_cells(Vertex_handle v, 
+//  		 std::set<Cell_handle, std::less<Cell_handle> > & cells,
+//  		 Cell_handle c = (Cell*) NULL ) const;
 
 
-  void
-  incident_vertices(Vertex_handle v, 
-		    std::set<Vertex*, std::less<Vertex*> > 
-		    & vertices,
-		    Cell_handle c = (Cell*) NULL,
-		    int dummy_for_windows = 0) const;
+//    void
+//    incident_vertices(Vertex_handle v, 
+//  		    std::set<Vertex_handle, std::less<Vertex_handle> > 
+//  		    & vertices,
+//  		    Cell_handle c = (Cell*) NULL ) const;
 
-private:
-  void 
-  util_incident_vertices(Vertex_handle v, 
-			 std::set<Vertex_handle, std::less<Vertex_handle> > 
-			 & vertices,
-			 std::set<Cell_handle, std::less<Cell_handle> > 
-			 & cells,
-			 Cell_handle c ) const;
-  void 
-  util_incident_vertices(Vertex_handle v, 
-			 std::set<Vertex*, std::less<Vertex*> > 
-			 & vertices,
+//    // old methods, kept for compatibility with previous versions
+//    void
+//    incident_cells(Vertex_handle v, 
+//  		 std::set<Cell*, std::less<Cell*> > & cells,
+//  		 Cell_handle c = (Cell*) NULL,
+//  		 int dummy_for_windows = 0) const;
+
+
+//    void
+//    incident_vertices(Vertex_handle v, 
+//  		    std::set<Vertex*, std::less<Vertex*> > 
+//  		    & vertices,
+//  		    Cell_handle c = (Cell*) NULL,
+//  		    int dummy_for_windows = 0) const;
+
+//  private:
+//    void 
+//    util_incident_vertices(Vertex_handle v, 
+//  			 std::set<Vertex_handle, std::less<Vertex_handle> > 
+//  			 & vertices,
+//  			 std::set<Cell_handle, std::less<Cell_handle> > 
+//  			 & cells,
+//  			 Cell_handle c ) const;
+//    void 
+//    util_incident_vertices(Vertex_handle v, 
+//  			 std::set<Vertex*, std::less<Vertex*> > 
+//  			 & vertices,
 			 std::set<Cell*, std::less<Cell*> > 
 			 & cells,
 			 Cell_handle c,
 			 int dummy_for_windows = 0) const;
+protected:
   inline
   Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1,
 			  Vertex_handle v2, Vertex_handle v3,
