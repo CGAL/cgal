@@ -40,9 +40,6 @@ public:
    typedef typename Traits::Less_xy_2       Less_xy_2;
    typedef typename Traits::Leftturn_2      Leftturn_2;
    typedef typename Traits::Orientation_2   Orientation_2;
-   typedef typename Traits::Less_xy         Less_xy;
-   typedef typename Traits::Vector_2        Vector_2;
-   typedef typename Traits::FT              FT;
 
    typedef PolygonIsValid                   Is_valid;
    
