@@ -46,7 +46,7 @@ partition of $\R^3$. Its cells ($3$-faces) are such that two cells
 either do not intersect or share a common facet ($2$-face), edge
 ($1$-face) or vertex ($0$-face).
 
-\section{Basic Triangulation}
+\section{Representation}
 \label{Triangulation3-sec-intro}
 
 In order to deal
@@ -192,7 +192,7 @@ defined as
 \[\Pi({p}^{(w)},{z}^{(w)}) = {\|{p-z}\|^2-w_p-w_z}\]
 where $\|{p-z}\|$ is the Euclidean distance between $p$ and $z$. 
  ${p}^{(w)}$ and ${z}^{(w)}$
-are said to be \textit{orthogonal} if $\Pi{({p}^{(w)}-{z}^{(w)})}
+are said to be \textit{orthogonal} iff $\Pi{({p}^{(w)},{z}^{(w)})}
 = 0$ (see Figure~\ref{Triangulation3-fig-ortho}).
 
 \begin{figure}[htbp]
@@ -220,7 +220,7 @@ two weighted points on the line defined by these two points.
 
 A sphere ${z}^{(w)}$ is said to be
 \textit{regular} if $\forall {p}^{(w)}\in{S}^{(w)},
-\Pi{({p}^{(w)}-{z}^{(w)})}\geq 0$.
+\Pi{({p}^{(w)},{z}^{(w)})}\geq 0$.
 
 A triangulation of ${S}^{(w)}$ is \textit{regular} if the power spheres
 of all simplices are regular. 
@@ -302,7 +302,7 @@ The class \ccc{Triangulation_hierarchy_3} is parameterized by a class, which at
 the moment can only be \ccc{Delaunay_triangulation_3}.  It fetches its
 geometric traits from this parameter directly.
 
-\subsection{The Geometric Traits}
+\subsection{The Geometric Traits Parameter}
 \label{Triangulation3-sec-Traits}
 
 The first template parameter of the triangulation class
@@ -324,7 +324,7 @@ The kernels provided by CGAL: \ccc{Cartesian}, \ccc{Homogeneous},
 parameter.
 They supply the user with all the functionalities described for the concepts
 \ccc{TriangulationTraits_3}\lcTex{
-(\ccRefPage{TriangulationTraits_3})},
+(\ccRefPage{TriangulationTraits_3})} and
 \ccc{DelaunayTriangulationTraits_3}\lcTex{
 (\ccRefPage{DelaunayTriangulationTraits_3})}.
 
@@ -344,7 +344,7 @@ It can be used as a traits class for
 \ccc{Regular_triangulation_3<RegularTriangulationTraits_3,
 TriangulationDataStructure_3>}.
 
-\subsection{The Triangulation Data Structure}
+\subsection{The Triangulation Data Structure Parameter}
 \label{Triangulation3-sec-tds}
 
 The second template parameter of the main classes (\ccc{Triangulation_3},
@@ -353,7 +353,9 @@ triangulation data structure class.  This class can be seen as a container for
 the cells and vertices maintaining incidence and adjacency relations (see
 Chapter~\ref{chapter-TDS3}).  A model of this triangulation data structure is
 \ccc{Triangulation_data_structure_3}\lcTex{
-(\ccRefPage{CGAL::Triangulation_data_structure_3<TriangulationDSVertexBase_3,TriangulationDSCellBase_3>})}.
+(\ccRefPage{CGAL::Triangulation_data_structure_3<TriangulationDSVertexBase_3,TriangulationDSCellBase_3>})},
+and it is described by the \ccc{TriangulationDataStructure_3} concept in
+\ccRefPage{TriangulationDataStructure_3}.
 
 A default value for this template parameter is provided in all the
 triangulation classes, so it need not be specified by the user unless he wants
@@ -390,6 +392,8 @@ vertex and/or cell base classes.
 \end{ccHtmlOnly}
 \end{figure}
 
+\subsection{Cyclic Dependency}
+
 Since adjacency relations are stored in the vertices and cells, it means that
 the vertex and cell base classes have to be able to store handles (an entity
 akeen to pointers) to their neighbors in the TDS.  This in turns means that the
@@ -398,68 +402,10 @@ provided by the TDS.  So in a sense, the base classes are parameterized by the
 TDS, and the TDS is parameterized by the vertex and cell base classes !
 This is a cycle which cannot be resolved easily.
 
-The solution that we have chosen is similar to the mecanism used by the
-standard class \ccc{std::allocator}: the vertex and cell base classes are
-initially given a fake TDS parameter, which is then \textit{rebound} to the real
-TDS type by and inside the TDS itself.  Rebinding is performed by a nested
-template class of the vertex or cell base classes, which provides a type
-which is the rebound vertex or cell base class (it is logically equivalent
-to a mecanism which does not exist yet in the C++ language: \textit{template
-typedef} or \textit{template aliasing}).  Figure~\ref{TDS3-fig-layers} in
-Chapter~\ref{chapter-TDS3} explains this part in more detail.
+The solution that we have chosen is detailed in Section~\ref{tds3-cyclic} in
+Chapter~\ref{chapter-TDS3}.
 
-Here is how it works, schematically:
-
-\begin{ccExampleCode}
-template < class Vb, class Cb >
-class TDS
-{
-  typedef TDS<Vb, Cb>    Self;
-
-  // Rebind the vertex and cell base to the actual TDS (Self).
-  typedef typename Vb::template Rebind_TDS<Self>::Other  VertexBase;
-  typedef typename Cb::template Rebind_TDS<Self>::Other  CellBase;
-
-  // ... further internal machinery leads to the final public types:
-public:
-  typedef ...  Vertex;
-  typedef ...  Cell;
-  typedef ...  Vertex_handle;
-  typedef ...  Cell_handle;
-};
-
-template < class TDS = some internal type faking a TDS >
-class Triangulation_ds_vertex_base_3
-{
-public:
-  template < class TDS2 >
-  struct Rebind_TDS {
-    typedef Triangulation_ds_vertex_base_3<TDS2>    Other;
-  };
-...
-};
-\end{ccExampleCode}
-
-When derivation is used for the vertex or cell base classes, which is the
-case at the geometric level with \ccc{Triangulation_vertex_base_3}, then
-it gets slightly more involved because the base class has to be rebound as
-well:
-
-\begin{ccExampleCode}
-template < class GT, class Vb = Triangulation_ds_vertex_base_3<> >
-class Triangulation_vertex_base_3 : public Vb
-{
-public:
-  template < class TDS2 >
-  struct Rebind_TDS {
-    typedef typename Vb::template Rebind_TDS<TDS2>::Other  Vb2;
-    typedef Triangulation_vertex_base_3<GT, Vb2>           Other;
-  };
-...
-};
-\end{ccExampleCode}
-
-\subsubsection{Backward compatility}
+\subsection{Backward compatility}
 
 Starting with \cgal\ release 3.0, the design has been changed in order to
 give the possibility to store handles directly in the vertex and cell base

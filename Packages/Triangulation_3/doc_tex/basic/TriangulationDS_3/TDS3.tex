@@ -237,11 +237,18 @@ given triangulation data structure.
 \section{Software Design}
 \label{TDS3-sec-design}
 
-The 3D-triangulation data structure class of CGAL is designed to be
-used as a combinatorial layer upon which a geometric layer can be
-built \cite{k-ddsps-98}. This upper class can be the 3D-triangulation
-class of \cgal. Figure~\ref{TDS3-fig-layers} shows the organization of
-the software design in this case.
+The 3D-triangulation data structure class of CGAL,
+\ccc{Triangulation_data_structure_3}, is designed to be used as a combinatorial
+layer upon which a geometric layer can be built \cite{k-ddsps-98}. This
+geometric layer is typically one of the 3D-triangulation classes of \cgal:
+\ccc{Triangulation_3}, \ccc{Delaunay_triangulation_3} and
+\ccc{Regular_triangulation_3}. This relation is described in more details in
+Chapter~\ref{chapter-Triangulation3}, where the
+Section~\ref{Triangulation3-sec-design} explains other important parts of the
+design related to the geometry.
+
+We focus here on the design of the triangulation data structure (TDS)
+itself, which the Figure~\ref{TDS3-fig-layers} illustrates.
 
 \begin{figure}[htbp]
 \begin{ccTexOnly}
@@ -259,37 +266,114 @@ the software design in this case.
 \end{ccHtmlOnly}
 \end{figure} 
 
-In the bottom layer, the base classes store elementary
-geometric information.  These classes are parameterized by a geometric
-traits class providing all the geometric types. A vertex stores a cell handle,
-and a cell stores four vertex handles and four cell handles.
+\subsection{Flexibility of the Design}
 
-The middle layer class stores the triangulation data structure, which
-is purely combinatorial.  The triangulation data structure provides
-operations such as insertion of a new vertex in a given cell, on a
-$1$ or $2$-face. It also allows one, if the dimension of the triangulation
-is smaller than $3$, to insert a vertex so that the dimension of the
-triangulation is increased by one. The triangulation data
-structure is responsible for the combinatorial integrity of the
-triangulation. 
+In order for the user to be able to add his own data in the vertices and cells,
+the design of the TDS is split into two layers:
 
-It is up to the user to derive his own base classes from the \cgal\
-base classes to add any other information he may need for his given
-application, or to write his own base classes from scratch. In this
-case, the base classes must be models for the \ccc{TriangulationVertexBase_3}
-and \ccc{TriangulationCellBase_3} concepts described in
-\ccRefPage{TriangulationVertexBase_3} and \ccRefPage{TriangulationCellBase_3}.
+\begin{itemize}
+\item{} In the bottom layer, the (vertex and cell) base classes store
+elementary incidence and adjacency (and eventually geometric or other)
+information.  These classes are parameterized by the TDS which provides the
+handle types.  (They can also be parameterized by a geometric traits class or
+anything else.) A vertex stores a \ccc{Cell_handle}, and a cell stores four
+\ccc{Vertex_handle}s and four \ccc{Cell_handle}s.
 
-The upper layer, described in Chapter~\ref{chapter-Triangulation3}, is
-the geometric triangulation class, providing operations such as
-location of a point in the triangulation, insertion of a point, and is
-responsible for the geometric validity.  The triangulation
-data structure class is one of the template parameters of the
-geometric triangulation class. The user may choose to replace the
-triangulation data structure class provided by \cgal\ by his own triangulation
-data structure. In this case, his class has to be a model of the
-\ccc{TriangulationDataStructure_3} concept described in
-\ccRefPage{TriangulationDataStructure_3}.
+\item{} The middle layer is the TDS, which is purely combinatorial.  It
+provides operations such as insertion of a new vertex in a given cell, on a $1$
+or $2$-face. It also allows one, if the dimension of the triangulation is
+smaller than $3$, to insert a vertex so that the dimension of the triangulation
+is increased by one. The TDS is responsible for the combinatorial integrity of
+the eventual geometric triangulation built on top of it (the upper layer, not
+described here).
+\end{itemize}
+
+The user has several ways to add his own data in the vertex and cell base classes used by the TDS.  He can either:
+\begin{itemize}
+\item{} use the classes \ccc{Triangulation_vertex_base_with_info}
+and \ccc{Triangulation_cell_base_with_info}, which allow to add one field of
+a user defined type, and give access to it.
+\item{} derive his own classes from the default base classes
+\ccc{Triangulation_ds_vertex_base}, and \ccc{Triangulation_ds_cell_base} (or
+the geometric versions typically used by the geometric layer,
+\ccc{Triangulation_vertex_base}, and \ccc{Triangulation_cell_base}).
+\item{} write his own base classes following the requirements given by the
+concepts \ccc{TriangulationVertexBase_3} and \ccc{TriangulationCellBase_3}
+concepts described in \ccRefPage{TriangulationVertexBase_3} and
+\ccRefPage{TriangulationCellBase_3}.
+\end{itemize}
+
+\subsection{Cyclic Dependency}
+\label{tds3-cyclic}
+
+Since adjacency relations are stored in the vertices and cells, it means that
+the vertex and cell base classes have to be able to store handles (an entity
+akeen to pointers) to their neighbors in the TDS.  This in turns means that the
+vertex and cell base classes have to know the types of these handles, which are
+provided by the TDS.  So in a sense, the base classes are parameterized by the
+TDS, and the TDS is parameterized by the vertex and cell base classes !
+This is a cycle which cannot be resolved easily.
+
+The solution that we have chosen is similar to the mecanism used by the
+standard class \ccc{std::allocator}: the vertex and cell base classes are
+initially given a fake TDS parameter, which is then \textit{rebound} to the real
+TDS type by and inside the TDS itself.  Rebinding is performed by a nested
+template class of the vertex or cell base classes, which provides a type
+which is the rebound vertex or cell base class\footnote{It is logically
+equivalent to a mecanism which does not exist yet in the C++ language:
+\textit{template typedef} or \textit{template aliasing}}.
+
+Here is how it works, schematically:
+
+\begin{ccExampleCode}
+template < class Vb, class Cb >
+class TDS
+{
+  typedef TDS<Vb, Cb>    Self;
+
+  // Rebind the vertex and cell base to the actual TDS (Self).
+  typedef typename Vb::template Rebind_TDS<Self>::Other  VertexBase;
+  typedef typename Cb::template Rebind_TDS<Self>::Other  CellBase;
+
+  // ... further internal machinery leads to the final public types:
+public:
+  typedef ...  Vertex;
+  typedef ...  Cell;
+  typedef ...  Vertex_handle;
+  typedef ...  Cell_handle;
+};
+
+template < class TDS = some internal type faking a TDS >
+class Triangulation_ds_vertex_base_3
+{
+public:
+  template < class TDS2 >
+  struct Rebind_TDS {
+    typedef Triangulation_ds_vertex_base_3<TDS2>    Other;
+  };
+...
+};
+\end{ccExampleCode}
+
+When derivation is used for the vertex or cell base classes, which is the
+case at the geometric level with \ccc{Triangulation_vertex_base_3}, then
+it gets slightly more involved because the base class has to be rebound as
+well:
+
+\begin{ccExampleCode}
+template < class GT, class Vb = Triangulation_ds_vertex_base_3<> >
+class Triangulation_vertex_base_3 : public Vb
+{
+public:
+  template < class TDS2 >
+  struct Rebind_TDS {
+    typedef typename Vb::template Rebind_TDS<TDS2>::Other  Vb2;
+    typedef Triangulation_vertex_base_3<GT, Vb2>           Other;
+  };
+...
+};
+\end{ccExampleCode}
+
 
 \section{Example of incremental construction}
 \label{TDS3-sec-examples}
