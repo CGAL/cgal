@@ -1811,29 +1811,12 @@ Alpha_shape_3<Dt>::find_alpha_solid() const
 	  // consider only finite vertices
 	  Coord_type alpha_min_v = (--_interval_cell_map.end())->first;
 
-	  //------------------------------------------
-// 	    Cell_circulator cell_circ =
-// 	    (*vertex_it)->incident_simplices(),
-// 	    done(cell_circ);
-// 	    do
-// 	    {
-// 	    Cell_handle s = (*cell_circ);
-// 	    if (! is_infinite(s))
-// 	    alpha_min_v = min(find_interval(s),
-// 	    alpha_min_v);
-// 	    }
-// 	    while (++cell_circ != done);
-	  //--------------------------------------------
-
-	  // TBC if cell_circulator become available
-	  // at the moment takes v*s time
-	    
-	  Cell_iterator cell_it, done = cells_end();
-	  for( cell_it = cells_begin(); cell_it != done; ++cell_it)
+	  std::list<Cell_handle> cells;
+	  incident_cells(vertex_it, std::back_inserter(cells));
+	  for(typename std::list<Cell_handle>::iterator cell_it = cells.begin(); cell_it != cells.end(); ++cell_it)
 	    {
-	      Cell_handle s = cell_it;
-	      if (s->has_vertex(vertex_it) && ! is_infinite(s))
-	        alpha_min_v = min(find_interval(s), alpha_min_v);
+	      if (! is_infinite(*cell_it))
+	        alpha_min_v = min(find_interval(*cell_it), alpha_min_v);
 	    }
 	    
 	  alpha_solid = max(alpha_min_v, alpha_solid);

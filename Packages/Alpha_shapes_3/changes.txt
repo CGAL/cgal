@@ -1,5 +1,6 @@
 25 February 2004 af
 - Replaced the set/map in the traversal and the I/O with a Unique_hash_map
+- Made find_alpha_solid faster 
 
 25 fevrier 2004 MY
 - added a testsuite
