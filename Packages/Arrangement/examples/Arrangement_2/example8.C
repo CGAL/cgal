@@ -6,7 +6,6 @@
 #define Homogeneous Ho
 #define Arr_segment_exact_traits ASET
 
-#include <CGAL/basic.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Arr_2_default_dcel.h>
 #include <CGAL/Arrangement_2.h>
