@@ -1,3 +1,6 @@
+Version 102.16 (15 January 2004)
+- SunPro CGAL_WRAP workaround.
+
 Version 102.15 (13 January 2004)
 - Add volume(4 points).
 

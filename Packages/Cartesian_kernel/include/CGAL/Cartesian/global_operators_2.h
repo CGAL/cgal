@@ -87,7 +87,7 @@ operator-(const Origin &, const PointC2<K> &p)
 template < class K >
 inline
 typename K::Vector_2
-operator*(const typename K::FT &c, const VectorC2<K> &w)
+operator*(const typename CGAL_WRAP(K)::FT &c, const VectorC2<K> &w)
 {
   //return K().construct_scaled_vector_2_object()(w, c);
   return typename K::Vector_2(w.x() * c, w.y() * c);
