@@ -35,9 +35,11 @@ struct Pointer
 {
   typedef T value_type;
 
-  Pointer(const T* p = NULL) : _pointer((T*)p) {}
+  //Pointer(const T* p = NULL) : _pointer((T*)p) {}
+  Pointer( T* p = NULL) : _pointer((T*)p) {}
 
-  Pointer& operator=(const T* p)
+  //Pointer& operator=(const T* p)
+  Pointer& operator=( T* p)
     {
       ptr() = p;
       return *this;

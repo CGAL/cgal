@@ -75,11 +75,11 @@ public:
     : Pointer_(NULL)
     {}
 
-  Triangulation_face_handle_2(const Face* p)
+  Triangulation_face_handle_2( Face* p)
     : Pointer_(p)
     {}
 
-  Triangulation_face_handle_2(const Face_handle& p)
+  Triangulation_face_handle_2( const Face_handle& p)
     : Pointer_(p.ptr())
     {}
 
@@ -131,7 +131,7 @@ public:
     : Pointer_(NULL)
     {}
 
-  Triangulation_vertex_handle_2(const Vertex* p)
+  Triangulation_vertex_handle_2( Vertex* p)
     : Pointer_(p)
     {}
 

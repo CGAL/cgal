@@ -24,6 +24,7 @@
 #ifndef CGAL_REGULAR_TRIANGULATION_FACE_BASE_2_H
 #define CGAL_REGULAR_TRIANGULATION_FACE_BASE_2_H
 
+#include <list>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_2.h>
 

@@ -68,7 +68,7 @@ public:
   typedef typename Tds::Face Fa;
 
   typedef Triangulation_face_2<Gt,Tds> Face;
-  //typedef Triangulation_vertex_2<Gt,Tds> Vertex;
+  typedef Triangulation_vertex_2<Gt,Tds> Tr_vertex;
   
   typedef Triangulation_vertex_handle_2<Gt,Tds> Vertex_handle;
   typedef Triangulation_face_handle_2<Gt,Tds> Face_handle;
@@ -125,7 +125,8 @@ Triangulation_vertex_handle_2<Gt,Tds>
 Triangulation_vertex_2<Gt,Tds>::
 handle() const
 {
-  return Vertex_handle(this);
+  Tr_vertex * ncthis = (Tr_vertex *) this;
+  return Vertex_handle(ncthis);
 }
       
 template<class Gt, class Tds>

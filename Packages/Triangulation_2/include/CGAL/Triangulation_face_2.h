@@ -204,7 +204,8 @@ Triangulation_face_handle_2<Gt,Tds>
 Triangulation_face_2<Gt,Tds>::
 handle() const
 {
-  return Face_handle(this);
+  Tr_face * ncthis = (Tr_face *) this;
+  return Face_handle(ncthis);
 }
 
  //Setting
