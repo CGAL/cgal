@@ -917,8 +917,8 @@ void handle_right_curves(PM &pm, SweepLinePlanarmap &tag)
    *  @param pm a reference to the planar map
    */
   Halfedge_handle insert_to_pm(const X_monotone_curve_2 &cv, 
-			     SubCurve *leftCurve,
-			     Halfedge_handle hhandle, PM &pm)
+                               SubCurve *leftCurve,
+                               Halfedge_handle hhandle, PM &pm)
   {
 
     SL_DEBUG(std::cout << "*X inserting " << cv << "(" 
@@ -948,44 +948,48 @@ void handle_right_curves(PM &pm, SweepLinePlanarmap &tag)
     
     Halfedge_handle res; 
     int jump = lastEvent->get_halfedge_jump_count(leftCurve);
-    
+
+    Point_2 p1, p2;
+    if (m_traits->compare_xy(m_traits->curve_source(cv), m_traits->curve_target(cv)) == SMALLER) {
+      p1 = m_traits->curve_source(cv);
+      p2 = m_traits->curve_target(cv);
+    } else {
+      p2 = m_traits->curve_source(cv);
+      p1 = m_traits->curve_target(cv);
+    }
+      
     // if the previous event on the curve is not in the planar map yet
     if ( insertInfo->get_halfedge_handle() == Halfedge_handle(NULL) ) 
     {
       // we have a handle from the previous insert
       if ( hhandle != Halfedge_handle(NULL) ) {
-	if ( hhandle->target()->point() != m_traits->curve_source(cv) &&
-	     hhandle->target()->point() != m_traits->curve_target(cv) )
+	if ( !m_traits->point_equal( hhandle->target()->point(), p2 ))
 	  hhandle = hhandle->twin();
 	SL_DEBUG(std::cout << "  from vertex (1)";
 		 std::cout << hhandle->source()->point() << " " 
 		 << hhandle->target()->point() << "\n";)
-        res = pm.non_intersecting_insert_from_vertex(cv, hhandle, 
-						     m_change_not);
+        res = pm.non_intersecting_insert_from_vertex(cv, hhandle, m_change_not);
       } else { 
 	// if this is the first left curve being inserted
 	SL_DEBUG(std::cout << "  in face interior\n";)
-	res = pm.insert_in_face_interior(cv, pm.unbounded_face(), 
-					 m_change_not);
+	res = pm.insert_in_face_interior(cv, pm.unbounded_face(), m_change_not);
       }
     } else 
       // the previous event on the curve is already in the planar map. 
       // Let's use it.
     {
+      Halfedge_handle prev = insertInfo->get_halfedge_handle();
+      if ( !m_traits->point_equal( prev->target()->point(), p1 ))
+        prev = prev->twin();
       // skip to the right halfedge
       SL_DEBUG(std::cout << "Skipping " << jump << " steps\n";)
-      Halfedge_handle prev = insertInfo->get_halfedge_handle();
-      if ( prev->target()->point() != m_traits->curve_source(cv) &&
-	   prev->target()->point() != m_traits->curve_target(cv) )
-	prev = prev->twin();
       for ( int i = 0 ; i < jump ; i++ )
-	prev = (prev->next_halfedge())->twin();
+        prev = (prev->next_halfedge())->twin();
       
       // we have a handle from the previous insert
       if ( hhandle != Halfedge_handle(NULL) ) 
       {
-	if ( hhandle->target()->point() != m_traits->curve_source(cv) &&
-	     hhandle->target()->point() != m_traits->curve_target(cv) )
+	if ( !m_traits->point_equal( hhandle->target()->point(), p2 ))
 	  hhandle = hhandle->twin();
 
 	SL_DEBUG(std::cout << "  at vertices";
@@ -993,8 +997,7 @@ void handle_right_curves(PM &pm, SweepLinePlanarmap &tag)
 		           << prev->target()->point() << " --- ";
 		 std::cout << hhandle->source()->point() << " " 
                            << hhandle->target()->point() << "\n";)
-	res = pm.non_intersecting_insert_at_vertices(cv, prev, hhandle, 
-							 m_change_not);
+	res = pm.non_intersecting_insert_at_vertices(cv, prev, hhandle, m_change_not);
       } else {
 
 	SL_DEBUG(std::cout << "  from vertex (2)";
