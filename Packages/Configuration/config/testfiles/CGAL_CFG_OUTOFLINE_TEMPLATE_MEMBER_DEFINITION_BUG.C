@@ -37,13 +37,16 @@
 
 template<class A>
 class B{
+public:
+  typedef A Res;
+
   template<class C>
-    void fct(C *i);
+    Res fct(C *i);
 };
 
 template<class A>
 template<class C>  //syntax error
-void
+typename B<A>::Res
 B<A>::fct(C *i){
 }
 
