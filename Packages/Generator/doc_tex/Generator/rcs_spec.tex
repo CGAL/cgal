@@ -16,7 +16,8 @@
 
 \section{Building Random Convex Sets}
 \label{section_BuildingRandomConvexSets}
-\lcTex{\ccIndexMainItem[c]{random convex set}}
+\ccIndexMainItemBegin[c]{random convex set}
+\ccIndexSubitemBegin[c]{generator}{convex set}
 
 This section describes a function to compute a random convex planar
 point set of given size where the points are drawn from a specific
@@ -26,17 +27,19 @@ domain.
 
 \def\ccLongParamLayout{\ccTrue} 
 
-\ccGlobalFunction{template < class OutputIterator, class Point_generator,
+\ccFunction{template < class OutputIterator, class Point_generator,
   class Traits > OutputIterator random_convex_set_2( int n,
   OutputIterator o, const Point_generator& pg, Traits t =
   Default_traits);}
-
+{
 computes a random convex \ccc{n}-gon by writing its vertices (oriented
 counterclockwise) to \ccc{o}. The resulting polygon is scaled such
 that it fits into the bounding box as specified by \ccc{pg}. Therefore
 we cannot easily describe the resulting distribution.
+}
 
 \ccHeading{Precondition}
+\ccIndexSubitem[C]{random_convex_set}{preconditions}
 \begin{enumerate}
 \item \ccc{Point_generator} satisfies the requirements stated in
   section \ref{point_generator_req},
@@ -52,6 +55,10 @@ we cannot easily describe the resulting distribution.
 \item $n \ge 3$.
 \end{enumerate}
 
+%The default traits class \ccc{Default_traits} is 
+%\ccc{Random_convex_set_traits}.
+%\ccIndexTraitsClassDefault{random_convex_set}.
+
 \ccSeeAlso \ccc{Random_points_in_square_2} and
 \ccc{Random_points_in_disc_2}.
 
@@ -59,6 +66,8 @@ we cannot easily describe the resulting distribution.
 described in \cite{s-zkm-96} and has a worst case running time of $O(r
 \cdot n + n \cdot \log n)$, where $r$ is the time needed by \ccc{pg}
 to generate a random point.
+\ccIndexMainItemEnd[c]{random convex set}
+\ccIndexSubitemEnd[c]{generator}{convex set}
 
 \ccExample
 
@@ -75,7 +84,9 @@ origin.
     
     \ccSubsection{Requirements for Point Generator
       Classes}\label{point_generator_req}
-    \lcTex{\ccIndexMainItem{generator classes, requirements}}
+    \ccModifierCrossRefOff
+    \ccIndexMainItem{generator classes, requirements}
+    \ccModifierCrossRefOn
     
     \ccDefinition A class \ccClassName\ satisfying input iterator
     requirements has to provide the following additional types and
@@ -83,7 +94,7 @@ origin.
     point generators described in section \ref{sectionPointGenerators}
     fulfill these requirements.
 
-    \ccTypes\lcTex{\ccIndexClassTypes}
+    \ccTypes\ccIndexClassTypes
     
     \ccNestedType{value_type}{point class.}  
     
@@ -91,23 +102,24 @@ origin.
       coordinates (has to fulfill field type requirements).}
 
     \ccOperations
-    \lcTex{\begin{ccIndexMemberFunctions}}
+    \begin{ccIndexMemberFunctions}
     
     \ccMemberFunction{FT range() const;}{return an absolute bound for
       the coordinates of all generated points.}
-    \lcTex{\end{ccIndexMemberFunctions}}
+    \end{ccIndexMemberFunctions}
     
 \end{ccClass}
 
+\newpage
 \begin{ccAdvanced}
-  \lcTex{\ccAutoIndexingOff}
+  \ccAutoIndexingOff
   \ccHtmlNoIndex\ccHtmlNoClassLinks\begin{ccClass}{Traits}
     \ccCreationVariable{t}
     \ccTagFullDeclarations
     
     \subsection{Requirements for Random Convex Sets Traits
       Classes}\label{req_random_convex_sets_traits}%
-      \lcTex{\ccIndexSubitem[c]{random convex set}{traits requirements}}
+      \ccIndexSubitem[C]{random_convex_set}{traits requirements}
     
     \ccDefinition A class \ccClassName\ has to provide the following
     types and operations in order to qualify as a traits class for
@@ -147,7 +159,7 @@ origin.
       element for the \ccc{Sum} operation).}
       
   \end{ccClass}
-  \lcTex{\ccAutoIndexingOn}
+  \ccAutoIndexingOn
 \end{ccAdvanced}
 
 %% EOF %%
