@@ -16,7 +16,7 @@
 // $Name$
 //
 // Author(s)     : Monique Teillaud (Monique.Teillaud@sophia.inria.fr)
-//               : Mariette Yvinec (Mariette.Yvinec@sophia.inria.fr
+//               : Mariette Yvinec (Mariette.Yvinec@sophia.inria.fr)
 
 #include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
@@ -28,9 +28,14 @@
 #include <CGAL/_test_types.h>
 #include <CGAL/_test_cls_regular_3.C>
 
+#include <CGAL/Regular_triangulation_filtered_traits_3.h>
+#include <CGAL/Filtered_kernel.h>
+
 bool del=true;
 
-typedef CGAL::Regular_triangulation_euclidean_traits_3<K> traits;
+// typedef CGAL::Regular_triangulation_euclidean_traits_3<K> traits;
+typedef CGAL::Filtered_kernel<CGAL::Simple_cartesian<double> > FK;
+typedef CGAL::Regular_triangulation_filtered_traits_3<FK> traits;
 
 // Explicit instantiation of the whole class :
 template class CGAL::Regular_triangulation_3<traits>;
@@ -55,8 +60,8 @@ int main()
 
   // temporary version
 
-  int n,m;
-  int count = 0 ;
+  int n, m;
+  int count = 0;
 
   // For dimension 0, we need to check that the point of highest weight is the
   // one that finally ends up in the vertex.
