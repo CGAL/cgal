@@ -325,8 +325,8 @@ Largest_empty_iso_rectangle_2<T>::insert(const Point& _p,
 					 Point_type i_type)
 {
   // check that the point is inside the bounding box 
-  if(_p.x() < bl_p.x() || _p.x() > tr_p.x() ||
-     _p.y() < bl_p.y() || _p.y() > tr_p.y())
+  if((i_type == REG) &_(p.x() <= bl_p.x() || _p.x() >= tr_p.x() ||
+     _p.y() <= bl_p.y() || _p.y() >= tr_p.y()))
     return(false);
 
   cache_valid = false;
@@ -1076,10 +1076,10 @@ Largest_empty_iso_rectangle_2<T>::init(const Point& bl, const Point& tr)
   tr_p = tr;
 
   // add extreme points
-  insert(Point(bl.x() - NT(0.000001) * (tr.x() - bl.x()), bl.y() - NT(0.000001) * (tr.y() - bl.y())), BOT_LEFT);
-  insert(Point(tr.x() + NT(0.000001) * (tr.x() - bl.x()), bl.y() - NT(0.000001) * (tr.y() - bl.y())), BOT_RIGHT);
-  insert(Point(bl.x() - NT(0.000001) * (tr.x() - bl.x()), tr.y() + NT(0.000001) * (tr.y() - bl.y())), TOP_LEFT);
-  insert(Point(tr.x() + NT(0.000001) * (tr.x() - bl.x()), tr.y() + NT(0.000001) * (tr.y() - bl.y())), TOP_RIGHT);
+  insert(Point(bl.x(),bl.y()), BOT_LEFT);
+  insert(Point(tr.x(),bl.y()), BOT_RIGHT);
+  insert(Point(bl.x(),tr.y()), TOP_LEFT);
+  insert(Point(tr.x(),tr.y()), TOP_RIGHT);
 }
 
 template<class T>
@@ -1130,10 +1130,10 @@ Largest_empty_iso_rectangle_2<T>::clear()
   x_sorted.clear();
   y_sorted.clear();
 
-  insert(Point(bl_p.x() - 0.000001, bl_p.y() - 0.000001),BOT_LEFT);
-  insert(Point(tr_p.x() + 0.000001, bl_p.y() - 0.000001),BOT_RIGHT);
-  insert(Point(bl_p.x() - 0.000001, tr_p.y() + 0.000001),TOP_LEFT);
-  insert(Point(tr_p.x() + 0.000001, tr_p.y() + 0.000001),TOP_RIGHT);
+  insert(Point(bl_p.x(),bl_p.y()),BOT_LEFT);
+  insert(Point(tr_p.x(),bl_p.y()),BOT_RIGHT);
+  insert(Point(bl_p.x(),tr_p.y()),TOP_LEFT);
+  insert(Point(tr_p.x(),tr_p.y()),TOP_RIGHT);
 }
 
 
