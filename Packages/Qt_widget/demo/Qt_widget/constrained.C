@@ -129,7 +129,7 @@ public:
     setCentralWidget(&win);
     connect(&win, SIGNAL(mousePressed(QMouseEvent*)), this,
 	    SLOT(mousePressedOnWin(QMouseEvent*)));
-    connect(&win, SIGNAL(redraw()), this, SLOT(redrawWin()));
+    connect(&win, SIGNAL(resized()), this, SLOT(redrawWin()));
     statusBar();
     
     // file menu

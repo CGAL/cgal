@@ -27,7 +27,7 @@ namespace CGAL {
 
 Qt_widget::Qt_widget(QWidget *parent, const char *name) :
   QWidget(parent, name), initialized(false), Locked(), _pointSize(4),
-  _pointStyle(CGAL::DISC)
+  _pointStyle(DISC)
 {
   setCaption("CGAL::Qt_widget");
   initialize();
@@ -87,7 +87,7 @@ void Qt_widget::resizeEvent(QResizeEvent *e)
 
   clear();
   setScales();
-  emit(redraw());
+  emit(resized());
 }
 
 void Qt_widget::paintEvent(QPaintEvent *e)
@@ -186,13 +186,13 @@ int Qt_widget::y_pixel_dist(double d) const
     return( static_cast<int>(d*yscal-0.5) );
 }
 
-Qt_widget& Qt_widget::operator<<(const CGAL::Color& c)
+Qt_widget& Qt_widget::operator<<(const Color& c)
 {
   setColor(CGAL2Qt_Color(c));
   return *this;
 }
 
-Qt_widget& Qt_widget::operator<<(const CGAL::PointStyle& ps)
+Qt_widget& Qt_widget::operator<<(const PointStyle& ps)
 {
   setPointStyle(ps);
   return *this;

@@ -43,9 +43,9 @@ class Qt_widget : public QWidget {
     Q_PROPERTY( bool isFilled READ isFilled WRITE setFilled )
     Q_PROPERTY( uint lineWidth READ lineWidth WRITE setLineWidth )
     Q_PROPERTY( uint pointSize READ pointSize WRITE setPointSize )
-    Q_PROPERTY( PointStyle pointStyle READ pointStyle WRITE
-		setPointStyle )
-    Q_ENUMS( PointStyle )
+    //    Q_PROPERTY( PointStyle pointStyle READ pointStyle WRITE
+    //		setPointStyle )
+    //    Q_ENUMS( PointStyle )
 public:
   // constructor
   Qt_widget(QWidget *parent = 0, const char *name = 0);
@@ -56,10 +56,6 @@ public:
   void init(double x_min, double x_max, double y_min, double y_max);
   void init(double x_min, double x_max, double y_min);
   bool isInitialized() const; // tell if init has been called
-
-  // color types convertors
-  static QColor CGAL2Qt_Color(CGAL::Color c);
-  static CGAL::Color Qt2CGAL_color(QColor c);
 
   // painting system
   inline QPainter& painter() { return paint; };
@@ -88,16 +84,18 @@ public:
   uint pointSize() const;
   void setPointSize(uint i);
   // pointStyle
+  typedef CGAL::PointStyle PointStyle;
   PointStyle pointStyle() const;
   void setPointStyle(PointStyle s);
 
   // CGAL version of setFooColor
   // used by the manipulators system
-  inline void setColor(CGAL::Color c)
+  // DO NOT USE THESE THREE UNDOCUMENTED FUNCTIONS !!
+  inline void setColor(Color c)
     { setColor(CGAL2Qt_Color(c)); };
-  inline void setBackgroundColor(CGAL::Color c)
+  inline void setBackgroundColor(Color c)
     { setBackgroundColor(CGAL2Qt_Color(c)); };
-  inline void setFillColor(CGAL::Color c)
+  inline void setFillColor(Color c)
     { setFillColor(CGAL2Qt_Color(c)); };
 
   // set pen() color to c, cf. manipulators below for setting
@@ -130,7 +128,7 @@ signals:
   void mousePressed(QMouseEvent *e);
   void mouseReleased(QMouseEvent *e);
   void mouseMoved(QMouseEvent *e);
-  void redraw();
+  void resized();
 
 protected:
   void paintEvent(QPaintEvent *e);
@@ -143,6 +141,10 @@ private:
   void initialize(); // initialize initiale dimensions
   bool initialized;
   void setScales(); // set xscal and yscal
+
+  // color types convertors
+  static QColor CGAL2Qt_Color(Color c);
+  static Color Qt2CGAL_color(QColor c);
 
   unsigned int Locked;
   // point style and size
@@ -222,15 +224,15 @@ CGAL_QTWIDGET_MANIP( uint, PointSize )
 // color types convertors
 // ~~~~~~~~~~~~~~~~~~~~~~
 inline
-QColor Qt_widget::CGAL2Qt_Color(CGAL::Color c)
+QColor Qt_widget::CGAL2Qt_Color(Color c)
 {
   return QColor(c.red(), c.green(), c.blue());
 }
 
 inline
-CGAL::Color Qt_widget::Qt2CGAL_color(QColor c)
+Color Qt_widget::Qt2CGAL_color(QColor c)
 {
-  return CGAL::Color(c.red(),c.green(),c.blue());
+  return Color(c.red(),c.green(),c.blue());
 }
 
 // properties

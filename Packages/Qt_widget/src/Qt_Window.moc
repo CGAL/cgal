@@ -1,7 +1,7 @@
 /****************************************************************************
 ** CGAL::Qt_widget meta object code from reading C++ file 'Qt_Window.h'
 **
-** Created: Tue May 22 13:52:38 2001
+** Created: Wed May 30 13:58:15 2001
 **      by: The Qt MOC ($Id$)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -79,10 +79,6 @@ QMetaObject* CGAL::Qt_widget::staticMetaObject()
     typedef uint (QObject::*om3_t15)()const;
     typedef void (Qt_widget::*m3_t16)(uint);
     typedef void (QObject::*om3_t16)(uint);
-    typedef PointStyle (Qt_widget::*m3_t18)()const;
-    typedef PointStyle (QObject::*om3_t18)()const;
-    typedef void (Qt_widget::*m3_t19)(PointStyle);
-    typedef void (QObject::*om3_t19)(PointStyle);
     m3_t0 v3_0 = &Qt_widget::color;
     om3_t0 ov3_0 = (om3_t0)v3_0;
     m3_t1 v3_1 = &Qt_widget::setColor;
@@ -107,11 +103,7 @@ QMetaObject* CGAL::Qt_widget::staticMetaObject()
     om3_t15 ov3_15 = (om3_t15)v3_15;
     m3_t16 v3_16 = &Qt_widget::setPointSize;
     om3_t16 ov3_16 = (om3_t16)v3_16;
-    m3_t18 v3_18 = &Qt_widget::pointStyle;
-    om3_t18 ov3_18 = (om3_t18)v3_18;
-    m3_t19 v3_19 = &Qt_widget::setPointStyle;
-    om3_t19 ov3_19 = (om3_t19)v3_19;
-    QMetaProperty *props_tbl = QMetaObject::new_metaproperty( 7 );
+    QMetaProperty *props_tbl = QMetaObject::new_metaproperty( 6 );
     props_tbl[0].t = "QColor";
     props_tbl[0].n = "color";
     props_tbl[0].get = (QMember)ov3_0;
@@ -158,14 +150,6 @@ QMetaObject* CGAL::Qt_widget::staticMetaObject()
     props_tbl[5].gspec = QMetaProperty::Class;
     props_tbl[5].sspec = QMetaProperty::Class;
     props_tbl[5].setFlags(QMetaProperty::StdSet);
-    props_tbl[6].t = "PointStyle";
-    props_tbl[6].n = "pointStyle";
-    props_tbl[6].get = (QMember)ov3_18;
-    props_tbl[6].set = (QMember)ov3_19;
-    props_tbl[6].reset = 0;
-    props_tbl[6].gspec = QMetaProperty::Class;
-    props_tbl[6].sspec = QMetaProperty::Class;
-    props_tbl[6].setFlags(QMetaProperty::UnresolvedEnum|QMetaProperty::StdSet);
 #endif // QT_NO_PROPERTIES
     QMetaData::Access *slot_tbl_access = 0;
     typedef void (CGAL::Qt_widget::*m2_t0)(QMouseEvent*);
@@ -182,7 +166,7 @@ QMetaObject* CGAL::Qt_widget::staticMetaObject()
     om2_t1 ov2_1 = (om2_t1)v2_1;
     m2_t2 v2_2 = &CGAL::Qt_widget::mouseMoved;
     om2_t2 ov2_2 = (om2_t2)v2_2;
-    m2_t3 v2_3 = &CGAL::Qt_widget::redraw;
+    m2_t3 v2_3 = &CGAL::Qt_widget::resized;
     om2_t3 ov2_3 = (om2_t3)v2_3;
     QMetaData *signal_tbl = QMetaObject::new_metadata(4);
     signal_tbl[0].name = "mousePressed(QMouseEvent*)";
@@ -191,20 +175,19 @@ QMetaObject* CGAL::Qt_widget::staticMetaObject()
     signal_tbl[1].ptr = (QMember)ov2_1;
     signal_tbl[2].name = "mouseMoved(QMouseEvent*)";
     signal_tbl[2].ptr = (QMember)ov2_2;
-    signal_tbl[3].name = "redraw()";
+    signal_tbl[3].name = "resized()";
     signal_tbl[3].ptr = (QMember)ov2_3;
     metaObj = QMetaObject::new_metaobject(
 	"CGAL::Qt_widget", "QWidget",
 	0, 0,
 	signal_tbl, 4,
 #ifndef QT_NO_PROPERTIES
-	props_tbl, 7,
+	props_tbl, 6,
 	0, 0,
 #endif // QT_NO_PROPERTIES
 	0, 0 );
     metaObj->set_slot_access( slot_tbl_access );
 #ifndef QT_NO_PROPERTIES
-    metaObj->resolveProperty( &props_tbl[6] );
 #endif // QT_NO_PROPERTIES
     return metaObj;
 }
@@ -305,8 +288,8 @@ void CGAL::Qt_widget::mouseMoved( QMouseEvent* t0 )
     }
 }
 
-// SIGNAL redraw
-void CGAL::Qt_widget::redraw()
+// SIGNAL resized
+void CGAL::Qt_widget::resized()
 {
-    activate_signal( "redraw()" );
+    activate_signal( "resized()" );
 }
