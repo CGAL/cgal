@@ -1,3 +1,11 @@
+3.9    (25 Jun 2001)
+- renamed convex_hull_points_2 to convex_hull_2 (keeping convex_hull_points_2
+  for backward compatability, but it's undocumented)
+- in traits classes switched from use of CGAL::Point_2<R> to K::Point_2, etc.
+- introduced traits classes with capitalized names and made the uncapitalized
+  ones simply typedefs for the new ones
+- added example to doc
+
 3.8    (21 Jun 2001)
 - some cleanups of header files in examples and demos
 
