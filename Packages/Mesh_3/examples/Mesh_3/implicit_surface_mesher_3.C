@@ -6,6 +6,8 @@
 #include <CGAL/Chew_4_surfaces/Criteria/Standard_criteria.h>
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 
+#include <CGAL/IO/File_medit.h>
+
 #include <CGAL/Chew_4_surfaces/Oracles/Implicit_oracle.h>
 
 #include <CGAL/Mesh_criteria_3.h>
@@ -40,25 +42,31 @@ int main(int argc, char **argv) {
   Func F;
 
   // Oracle (NB: parity oracle is toggled)
-  Oracle O (F, K::Point_3 (0,0,0), 4, 1e-3, true);  
+  Oracle O (F, K::Point_3 (0,0,0), 6, 1e-3, true);  
 
   // 2D-complex in 3D-Delaunay triangulation
   Del T;
 
   // Initial point sample
-  Oracle::Points initial_point_sample = O.random_points (20);
+  Oracle::Points initial_point_sample = 
+    O.random_points (number_of_initial_points);
   T.insert (initial_point_sample.begin(), initial_point_sample.end());
   
   // Meshing criteria
-  //CGAL::Chew_4_surfaces::Curvature_size_criterion<Del> c_s_crit (0.1);
-  CGAL::Chew_4_surfaces::Uniform_size_criterion<Del> u_s_crit (0.3);
-  CGAL::Chew_4_surfaces::Aspect_ratio_criterion<Del> a_r_crit (30);
-  std::vector<Criterion*> crit_vect(2);
-  crit_vect[0] = &u_s_crit;
-  crit_vect[1] = &a_r_crit;
+  CGAL::Chew_4_surfaces::Curvature_size_criterion<Del> 
+    c_s_crit (curvature_bound);
+  CGAL::Chew_4_surfaces::Uniform_size_criterion<Del>
+    u_s_crit (size_bound);
+  CGAL::Chew_4_surfaces::Aspect_ratio_criterion<Del>
+    a_r_crit (aspect_ratio_bound);
+
+  std::vector<Criterion*> crit_vect;
+  crit_vect.push_back (&c_s_crit);
+  crit_vect.push_back (&u_s_crit);
+  crit_vect.push_back(&a_r_crit);
   Criteria C (crit_vect);
 
-  Tets_criteria tets_criteria(0.1);
+  Tets_criteria tets_criteria(tets_size_bound);
 
   std::cout << "Initial number of points: " << T.number_of_vertices() 
             << std::endl;
@@ -77,6 +85,19 @@ int main(int argc, char **argv) {
     std::ofstream os(argv[1]);
     output_surface_facets_to_off (os, T);
     os.close();
+
+    if (argc >= 3) {
+    std::ofstream os2(argv[2]);
+    output_interior_facets_to_off (os2, T);
+    os2.close();
+    }
+
+    if (argc >= 4) {
+    std::ofstream os3(argv[3]);
+    output_pslg_to_medit(os3, T);
+    os3.close();
+    }
+
     std::cout << " done\n";
   }
 }

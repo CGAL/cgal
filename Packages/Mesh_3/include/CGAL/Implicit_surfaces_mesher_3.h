@@ -53,6 +53,10 @@ public:
                                                                 Oracle>,
                                        Facets_level> Tets_level;
 
+  typedef typename Mesh_3::tets::Refine_tets_visitor<Tr,
+						     Tets_level> Tets_visitor;
+            
+
   typedef Complex_2_in_triangulation_3_surface_mesh<Tr> C2t3;
 
 private:
@@ -64,6 +68,8 @@ private:
   Facets_level facets;
   Tets_level tets;
 
+  Tets_visitor tets_visitor;
+
   bool initialized;
 
 public:
@@ -72,6 +78,7 @@ public:
                              Tets_criteria tets_crit)
     : c2t3(t), oracle(o), 
       facets(t, c2t3, oracle, c), tets(t, tets_crit, oracle, facets),
+      tets_visitor(&tets),
       initialized(false)
   {}
 
@@ -104,7 +111,14 @@ public:
   {
     if(!initialized)
       init();
-    tets.refine(null_visitor);
+    facets.refine(tets_visitor);
+    {
+      std::cerr << "surface finie\n";
+      std::ofstream os("dump.off");
+      Tr& tr = tets.get_triangulation_ref();
+      output_surface_facets_to_off (os, tr);
+    }
+    tets.refine(tets_visitor);
   }
 }; // end Implicit_surfaces_mesher_3
 

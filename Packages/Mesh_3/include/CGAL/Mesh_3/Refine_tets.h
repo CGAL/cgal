@@ -23,6 +23,7 @@ template <class Tr,
 >
 class Refine_tets_base
 {
+protected:
   typedef typename Tr::Point Point;
   typedef typename Tr::Point Point;
   typedef typename Tr::Edge Edge;
@@ -115,7 +116,8 @@ public:
 
   Cell_handle do_get_next_element()
   {
-    return tets_to_refine.get_next_element();
+    Cell_handle ch = tets_to_refine.get_next_element();
+    return ch;
   }
 
   void do_pop_next_element()
@@ -199,61 +201,50 @@ public:
   namespace tets {
 
     template <typename Tr, typename Refine_tets>
-    class Refine_edges_visitor {
+    class Refine_facets_visitor {
       Refine_tets* refine_tets;
+      Null_mesh_visitor null_visitor;
 
     public:
       typedef typename Tr::Vertex_handle Vertex_handle;
       typedef typename Tr::Cell_handle Cell_handle;
       typedef typename Tr::Facet Facet;
-      typedef typename Tr::Cell_iterator Cell_iterator;
-      typedef ::CGAL::Mesh_3::details::Refine_edges_base_types<Tr> Types;
-      typedef typename Types::Constrained_edge Constrained_edge;
       typedef ::CGAL::Triangulation_mesher_level_traits_3<Tr> Traits;
       typedef typename Traits::Zone Zone;
       typedef typename Traits::Point Point;
 
-      Refine_edges_visitor(Refine_tets* refine_tets_)
+      Refine_facets_visitor(Refine_tets* refine_tets_)
         : refine_tets(refine_tets_) {}
 
-      void before_insertion(const Constrained_edge&,
-                            const Point&,
-                            Zone& zone) const 
+      template <typename E, typename P>
+      void before_conflicts(E, P) const {}
+
+      void before_insertion(const Facet&,
+                            const Point& p,
+                            Zone& zone) 
       {
-        for(typename Zone::Facets_iterator fit = zone.internal_facets.begin();
-            fit != zone.internal_facets.end();
-            ++fit)
-          refine_tets->try_to_removed_element(*fit);
+        refine_tets->do_before_insertion(Cell_handle(), p, zone);
       }
 
-      void after_insertion(const Vertex_handle& v) const
+      void after_insertion(const Vertex_handle& v)
       {
-        // scan edges 
-        typedef std::list<Cell_handle> Cells;
-        typedef typename Cells::iterator Cell_iterator;
-        Cells incident_cells;
-        
-        refine_tets->triangulation().
-          incident_cells(v, std::back_inserter(incident_cells));
-
-        for(Cell_iterator it = incident_cells.begin();
-            it != incident_cells.end();
-            ++it)
-          refine_tets->test_for_facet(Facet(*it, (*it)->index(v)));
+	refine_tets->do_after_insertion(v);
       }
 
-      Null_mesh_visitor previous_level() const 
+      template <typename E, typename P, typename Z>
+      void after_no_insertion(E, P, Z) const {}
+
+      Null_mesh_visitor& previous_level()
       {
-        return Null_mesh_visitor();
+        return null_visitor;
       }
       
-    }; // end Refine_edges_visitor
+    }; // end Refine_facets_visitor
 
     template <class Tr, typename Refine_tets>
     class Refine_tets_visitor {
-      Refine_tets* refine_tets;
-
     public:
+      typedef typename Tr::Cell_handle Cell_handle;
       typedef typename Tr::Vertex_handle Vertex_handle;
       typedef typename Tr::Facet Facet;
       typedef typename Tr::Cell_iterator Cell_iterator;
@@ -261,24 +252,31 @@ public:
       typedef typename Traits::Zone Zone;
       typedef typename Traits::Point Point;
 
-      typedef Refine_edges_visitor<Tr, Refine_tets> Previous_visitor;
+      typedef Refine_facets_visitor<Tr, Refine_tets> Previous_visitor;
 
+
+    private:
+      Previous_visitor previous;
+
+    public:
       Refine_tets_visitor(Refine_tets* refine_tets_)
-        : refine_tets(refine_tets_) {}
+        : previous(refine_tets_) {}
 
-      void before_insertion(const Facet&,
-                            const Point&,
-                            Zone&) const 
-      {
-      }
+      template <typename E, typename P>
+      void before_conflicts(E, P) const {}
 
-      void after_insertion(const Vertex_handle&) const
-      {
-      }
+      template <typename E, typename P, typename Z>
+      void before_insertion(E, P, Z) const {}
 
-      Previous_visitor previous_level() const 
+      template <typename V>
+      void after_insertion(V) const {}
+
+     template <typename E, typename P, typename Z>
+      void after_no_insertion(E, P, Z) const {}
+
+      Previous_visitor& previous_level()
       {
-        return Previous_visitor(refine_tets);
+        return previous;
       }
     }; // end Refine_tets_visitor
 
@@ -299,6 +297,7 @@ class Refine_tets :
     Facets_level
   >
 {
+  Facets_level& f_level;
 public:
   typedef Refine_tets<Tr, Criteria, Oracle, Base, Facets_level> Self;
   typedef Mesher_level <
@@ -308,8 +307,27 @@ public:
     Facets_level
   > Mesher;
   Refine_tets(Tr& t, Criteria crit, Oracle& oracle, Facets_level& facets_level)
-    : Base(t, crit, oracle), Mesher(facets_level) {}
-};
+    : Base(t, crit, oracle), Mesher(facets_level), f_level(facets_level)
+  {}
+
+
+void do_before_insertion(const typename Base::Cell_handle& c,
+			 const typename Base::Point& p,
+			 typename Base::Zone& zone)
+{
+  f_level.do_before_insertion(typename Tr::Facet (),
+			      p,
+			      zone);
+  Base::do_before_insertion(c, p, zone);
+}
+
+void do_after_insertion(const typename Base::Vertex_handle& v)
+{
+  f_level.do_after_insertion(v);
+  Base::do_after_insertion(v);
+}
+
+}; // end class Refine_tets
 
 }; // end namespace Mesh_3
 }; // end namespace CGAL

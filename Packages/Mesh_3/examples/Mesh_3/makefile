@@ -13,7 +13,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-OTHER_CXXFLAGS?=
+OTHER_CXXFLAGS?= 
 
 CXXFLAGS = -I ../../../Mesh_2/include \
            -I ../../../Chew_4_surfaces/include \
@@ -39,8 +39,7 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                essai$(EXE_EXT) \
-		implicit_surfaces_mesher_3$(EXE_EXT)
+		implicit_surface_mesher_3$(EXE_EXT)
 
 essai$(OBJ_EXT): essai.C
 

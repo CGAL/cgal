@@ -10,6 +10,7 @@
 //
 // Author(s)     : Steve OUDOT
 
+#include "implicit_function.h"
 
 ///////////////// Definitions of several famous surfaces /////////////////
 int sphere_function (double, double, double);  // (c=(0,0,0), r=1)
@@ -34,8 +35,15 @@ int implicit_function (double x, double y, double z) {
   return tanglecube_function(x,y,z);
 }
 
+const int number_of_initial_points = 100;
 
+const double curvature_bound = 1;//0.1;
 
+const double size_bound =  0.3;
+
+const int aspect_ratio_bound = 30;
+
+const double tets_size_bound = 0.02;
 
 ///////////////// Code for functions of famous surfaces /////////////////
 
