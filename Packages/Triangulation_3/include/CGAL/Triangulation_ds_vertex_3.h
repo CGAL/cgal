@@ -2,7 +2,7 @@
 //
 // $Id$
 //
-// base vertex of a triangulation of any dimension 
+// vertex of a combinatotial triangulation of any dimension <=3
 //
 // ============================================================================
 

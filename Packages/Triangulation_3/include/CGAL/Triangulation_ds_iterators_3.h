@@ -19,7 +19,7 @@ template < class Vb, class Cb >
 class CGAL_Triangulation_ds_cell;
 
 template < class Vb, class Cb >
-class CGAL_Triangulation_default_data_structure;
+class CGAL_Triangulation_data_structure;
 
 
 template<class Tds>
