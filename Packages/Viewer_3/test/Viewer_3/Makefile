@@ -21,7 +21,7 @@ CXXFLAGS = -g  \
 	   -I/usr/X11R6/include/ \
 	   -B$(UTIL)/Binutils/SunOS/bin/ \
 	   -B$(GCC_EXEC_PREFIX) $(LONG_NAME_PROBLEM_CXXFLAGS) \
-	   $(CGAL_CXXFLAGS) $(CHECKS_OFF) 
+	   $(CGAL_CXXFLAGS) $(CHECKS_OFF) -DCGAL_USE_FLTK -DCGAL_USE_OPENGL
 
 #-I${GL_DIR}/include \
 
