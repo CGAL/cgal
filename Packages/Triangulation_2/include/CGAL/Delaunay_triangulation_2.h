@@ -184,7 +184,7 @@ public:
       min = 1;
       nn = f->vertex(i);
       if ( ! is_infinite(f->vertex(ccw(i)))){
-          closer.set_point( 3-min, f->vertex(ccw(i))->point() );
+         closer.set_point( 3-min, f->vertex(ccw(i))->point() );
           if (  ( (min==1)? CGAL_LARGER : CGAL_SMALLER )
                 == closer.compare() ) {
               min = 3-min;
@@ -212,7 +212,7 @@ public:
       return nearest_vertex(p, f);
   }
 
-  Vertex_handle
+   Vertex_handle
   insert(const Point  &p,
          Face_handle f = Face_handle() )
   {
@@ -232,70 +232,6 @@ public:
          CGAL_Triangulation_2<Gt,Tds>::Locate_type& lt,
          Face_handle f = Face_handle() )
   {
-//       Vertex_handle v;
-//       if(dimension() <= 1) {
-//           return CGAL_Triangulation_2<Tds>::insert(p,lt,f);
-//       }
-//       int li;
-//       Face_handle loc = locate(p, lt, li, f);
-//   
-//       switch(lt){
-//       case OUTSIDE:
-//           {
-//               Face_circulator circ=infinite_vertex()->incident_faces(loc),
-//                   done(circ);
-//               do{
-//                 if(side_of_oriented_circle( circ->handle() ,p)
-//                                          ==CGAL_ON_POSITIVE_SIDE){
-//                       break;
-//                 }
-//               }while(++circ != done);
-//               loc= circ ;
-//           }
-//       case FACE:
-//           {
-//               v = new Vertex(p);
-//               loc->insert_in_face(v);
-//               set_number_of_vertices(number_of_vertices()+1);
-//               break;
-//           }
-//       case EDGE:
-//           {
-//               v = new Vertex(p);
-//               Face_handle n = loc->neighbor(li);
-//               Vertex_handle w = loc->vertex(ccw(li));
-//               int ni = ccw(n->index(w));
-//               loc->insert_in_face(v);
-//               set_number_of_vertices(number_of_vertices()+1);
-//               flip(n, ni);
-//               break;
-//           }
-//       case COLLINEAR_OUTSIDE:
-//           {
-//               v = new Vertex(p);
-//               Vertex_handle w = loc->vertex(li); // the extremal vertex
-//               Face_handle n = loc->neighbor(ccw(li));
-//               int ni = n->index(w);
-//               Face_handle f1 = new Face(infinite_vertex(), w, v,
-//                                   NULL, NULL, n);
-//               n->set_neighbor(cw(ni), f1);
-//               Face_handle f2 = new Face(infinite_vertex(), v, w,
-//                                   f1, loc, f1);
-//               f1->set_neighbor(0, f2);
-//               f1->set_neighbor(1, f2);
-//               loc->set_neighbor(ccw(li), f2);
-//               v->set_face(f1);
-//               infinite_vertex()->set_face(f1);
-//               set_number_of_vertices(number_of_vertices()+1);
-//               return v;
-//           }
-//       case VERTEX:
-//           return loc->vertex(li);
-//       default:
-//           CGAL_triangulation_assertion(false);  // locate step failed
-//       }
-//   
-    
       Vertex_handle v = CGAL_Triangulation_2<Gt,Tds>::insert(p,lt,f);
 
       if(dimension() <= 1) return v;
@@ -350,102 +286,9 @@ public:
 
   bool is_valid(bool verbose = false, int level = 0) const
   {
-//       if(number_of_vertices() <= 1){
-//           return true;
-//       }
-//   
-//       bool result = true;
-//   
-//       int vertex_count = 0;
-//       {
-//           Vertex_iterator it = vertices_begin(),
-//                           done = vertices_end();
-//   
-//           while(it != done){
-//               ++vertex_count;
-//               ++it;
-//           }
-//       }
-//       result = result && (number_of_vertices() == vertex_count);
-//       CGAL_triangulation_assertion( result );
-//   
-//       int edge_count = 0;
-//       {
-//           Edge_iterator it = edges_begin(),
-//                         done = edges_end();
-//   
-//           while(it != done){
-//               ++edge_count;
-//               ++it;
-//           }
-//       }
-//   
-//       int face_count = 0;
-//       {
-//           Face_iterator it = faces_begin(),
-//                         done = faces_end();
-//   
-//           while(it != done){
-//               ++face_count;
-//               result = result && it->is_valid(verbose, level);
-//               CGAL_triangulation_assertion( result );
-//               result = result && (! is_infinite( it->handle() ));
-//               CGAL_triangulation_assertion( result );
-//               if ( ! is_infinite( it->neighbor(0)) ){
-//                   result = result &&
-//                       (CGAL_ON_POSITIVE_SIDE !=
-//                        side_of_oriented_circle( it->handle(), it->neighbor(0)->
-//                         vertex(it->neighbor(0)->index( it->handle() ))->point()));
-//               }
-//               if ( ! is_infinite(it->neighbor(1)) ){
-//                   result = result && (CGAL_ON_POSITIVE_SIDE !=
-//                     side_of_oriented_circle( it->handle(), it->neighbor(1)->
-//                         vertex(it->neighbor(1)->index( it->handle() ))->point()));
-//               }
-//               if ( ! is_infinite(it->neighbor(2)) ){
-//                   result = result && (CGAL_ON_POSITIVE_SIDE !=
-//                       side_of_oriented_circle( it->handle(), it->neighbor(2)->
-//                          vertex(it->neighbor(2)->index( it->handle()))->point()));
-//               }
-//               CGAL_triangulation_assertion( result );
-//               ++it;
-//           }
-//       }
-//   
-//       Face_circulator fc = infinite_vertex()->incident_faces(),
-//                       fcdone(fc);
-//       do{
-//           if(dimension() == 2){
-//               result = result && fc->is_valid(verbose, level);
-//               CGAL_triangulation_assertion( result );
-//           }
-//           ++face_count;
-//           ++edge_count;
-//       }while(++fc != fcdone);
-//   
-//   
-//   
-//       Vertex_circulator start = infinite_vertex()->incident_vertices(),
-//                         pc(start),
-//                         qc(start),
-//                         rc(start);
-//       ++qc;
-//       ++rc;
-//       ++rc;
-//       do{
-//           bool extremal = ( geom_traits().orientation(pc->point(),
-//                                               qc->point(),
-//                                               rc->point()) != CGAL_POSITIVE);
-//           result = result && extremal;
-//           CGAL_triangulation_assertion( result );
-//           pc = qc;
-//           qc = rc;
-//           ++rc;
-//       }while(pc != start);
-//       result = result && ( edge_count == 3* (vertex_count -1) );
-//       CGAL_triangulation_assertion( result );
-//       result = result && ( face_count == 2* (vertex_count -1) );
-//       CGAL_triangulation_assertion( result );
+       if(number_of_vertices() <= 1){
+            return true;
+       }
 
     bool result = CGAL_Triangulation_2<Gt,Tds>::is_valid();
 
@@ -455,21 +298,45 @@ public:
                if ( ! is_infinite( it->neighbor(0)) ){
                   result = result &&
                       (CGAL_ON_POSITIVE_SIDE !=
-                       side_of_oriented_circle( it->handle(), it->neighbor(0)->
-                        vertex(it->neighbor(0)->index( it->handle() ))->point()));
-              }
-              if ( ! is_infinite(it->neighbor(1)) ){
+                       side_of_oriented_circle(it->neighbor(0), it->vertex(0)->point()) );
+	       }
+	       if (!result)
+		{
+		  	cerr << "face : "<<(void*)&(*it)<<" => "<<endl;
+			cerr <<"point :"<<(it->vertex(0)->point())<<" / voisin "<<&(*(it->neighbor(0)))
+				<<"["<<(it->neighbor(0))->vertex(0)->point()
+				<<"/"<<(it->neighbor(0))->vertex(1)->point()
+				<<"/"<<(it->neighbor(0))->vertex(2)->point()<<"]"
+					<<endl;
+		}
+              if ( ! is_infinite(it->neighbor(1)) ) {
                   result = result && (CGAL_ON_POSITIVE_SIDE !=
-                    side_of_oriented_circle( it->handle(), it->neighbor(1)->
-                        vertex(it->neighbor(1)->index( it->handle() ))->point()));
-              }
+                    side_of_oriented_circle( it->neighbor(1), it->vertex(1)->point()) );
+	      } 
+	      if (!result)
+		{
+		  	cerr << "face : "<<(void*)&(*it)<<" => "<<endl;
+			cerr <<"point :"<<(it->vertex(1)->point())<<" / voisin "<<&(*(it->neighbor(1)))
+				<<"["<<(it->neighbor(1))->vertex(0)->point()
+				<<"/"<<(it->neighbor(1))->vertex(1)->point()
+				<<"/"<<(it->neighbor(1))->vertex(2)->point()<<"]"
+				<<endl;
+		}
               if ( ! is_infinite(it->neighbor(2)) ){
                   result = result && (CGAL_ON_POSITIVE_SIDE !=
-                      side_of_oriented_circle( it->handle(), it->neighbor(2)->
-                         vertex(it->neighbor(2)->index( it->handle()))->point()));
+                      side_of_oriented_circle( it->neighbor(2), it->vertex(2)->point()));
               }
-              CGAL_triangulation_assertion( result );
-              ++it;
+	      if (!result)
+		{
+		  cerr << "face : "<<(void*)&(*it)<<" => "<<endl;
+		  cerr <<"point :"<<(it->vertex(2)->point())<<" / voisin "<<&(*(it->neighbor(2)))
+				<<"["<<(it->neighbor(2))->vertex(0)->point()
+				<<"/"<<(it->neighbor(2))->vertex(1)->point()
+				<<"/"<<(it->neighbor(2))->vertex(2)->point()<<"]"
+				<<endl;
+		}
+	      CGAL_triangulation_assertion( result );
+	      ++it;
           }
       return result;
   }
@@ -504,15 +371,16 @@ private:
   void
   propagating_flip(Face_handle& f,int i)
   {
-      Face_handle ni = f->neighbor(i);
-      if ( CGAL_ON_POSITIVE_SIDE != side_of_oriented_circle(ni,
-                                                      f->vertex(i)->point()) ) {
-          return;
+      Face_handle n = f->neighbor(i);
+      
+      if ( CGAL_ON_POSITIVE_SIDE != 
+	   side_of_oriented_circle(n,  f->vertex(i)->point()) ) {          
+	return;
       }
       flip(f, i);
       propagating_flip(f,i);
-      i = ni->index(f->vertex(i));
-      propagating_flip(ni,i);
+      i = n->index(f->vertex(i));
+      propagating_flip(n,i);
   }
 
 
