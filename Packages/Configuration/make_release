@@ -1,0 +1,5 @@
+#!/bin/sh
+
+mkdir test
+mkdir test/Configuration
+cp config/testfiles/* test/Configuration
