@@ -16,6 +16,8 @@
 \subsection{Requirements of Traits Classes for 2D Smallest Enclosing Ellipses}
 \label{sec:min_ellipse_2_traits_req}
 
+\cgalSetOptTraitsReqLayout
+
 The class template \ccc{CGAL_Min_ellipse_2} is parameterized with a
 \ccc{Traits} class which defines the abstract interface between the
 optimisation algorithm and the primitives it uses. The following
@@ -73,7 +75,7 @@ constructors can be provided.
 
 \ccConstructor{ Traits( );}{A default constructor.}
 
-\ccConstructor{ Traits( Traits const&);}{A copy constructor.}
+\ccConstructor{ Traits( const Traits&);}{A copy constructor.}
 
 \end{ccClass}
 
@@ -106,36 +108,36 @@ whole plane $\E_2$.
 \ccMemberFunction{ void  set( );}{
         sets \ccVar\ to the empty ellipse.}
 
-\ccMemberFunction{ void  set( Point const& p);}{
+\ccMemberFunction{ void  set( const Point& p);}{
         sets \ccVar\ to the ellipse containing exactly $\{\mbox{\ccc{p}}\}$.}
 
-\ccMemberFunction{ void  set( Point const& p,
-                              Point const& q);}{
+\ccMemberFunction{ void  set( const Point& p,
+                              const Point& q);}{
         sets \ccVar\ to the ellipse containing exactly the segment
         \ccTexHtml{$\overline{\mbox{\ccc{p}\ccc{q}}}$}{<i>pq</i>}.
         The algorithm guarantees that \ccc{set} is never called
         with two equal points.}
 
-\ccMemberFunction{ void  set( Point const& p,
-                              Point const& q,
-                              Point const& r);}{
+\ccMemberFunction{ void  set( const Point& p,
+                              const Point& q,
+                              const Point& r);}{
         sets \ccVar\ to the smallest ellipse through \ccc{p},\ccc{q},\ccc{r}.
         The algorithm guarantees that \ccc{set} is never called with
         three collinear points.}
 
-\ccMemberFunction{ void  set( Point const& p,
-                              Point const& q,
-                              Point const& r,
-                              Point const& s);}{
+\ccMemberFunction{ void  set( const Point& p,
+                              const Point& q,
+                              const Point& r,
+                              const Point& s);}{
         sets \ccVar\ to the smallest ellipse through
         \ccc{p},\ccc{q},\ccc{r},\ccc{s}. The algorithm guarantees that
         this ellipse exists.}
 
-\ccMemberFunction{ void  set( Point const& p,
-                              Point const& q,
-                              Point const& r,
-                              Point const& s,
-                              Point const& t);}{
+\ccMemberFunction{ void  set( const Point& p,
+                              const Point& q,
+                              const Point& r,
+                              const Point& s,
+                              const Point& t);}{
         sets \ccVar\ to the unique conic through
         \ccc{p},\ccc{q},\ccc{r},\ccc{s},\ccc{t}. The algorithm
         guarantees that this conic is an ellipse.}
@@ -143,26 +145,22 @@ whole plane $\E_2$.
 % -----------------------------------------------------------------------------
 \ccPredicates
 
-\ccMemberFunction{ bool  has_on_unbounded_side( Point const& p) const;}{
+\ccMemberFunction{ bool  has_on_unbounded_side( const Point& p) const;}{
         returns \ccc{true}, iff \ccc{p} lies properly outside of \ccVar.}
 
 Each of the following predicates is only needed, if the corresponding
 predicate of \ccc{CGAL_Min_ellipse_2} is used.
 
 \ccMemberFunction{ CGAL_Bounded_side
-                   bounded_side( Point const& p) const;}{
-        returns \ccc{CGAL_ON_BOUNDED_SIDE},%
-\SaveSpaceByHand\ccTexHtml{}{ }%
-                                            \ccc{CGAL_ON_BOUNDARY}%
-\SaveSpaceByHand\ccTexHtml{$\!$}{},
-                                                                    or
+                   bounded_side( const Point& p) const;}{
+        returns \ccc{CGAL_ON_BOUNDED_SIDE}, \ccc{CGAL_ON_BOUNDARY} or
         \ccc{CGAL_ON_UNBOUNDED_SIDE} iff \ccc{p} lies properly inside,
         on the boundary, or properly outside of \ccVar, resp.}
 
-\ccMemberFunction{ bool  has_on_bounded_side( Point const& p) const;}{
+\ccMemberFunction{ bool  has_on_bounded_side( const Point& p) const;}{
         returns \ccc{true}, iff \ccc{p} lies properly inside \ccVar.}
 
-\ccMemberFunction{ bool  has_on_boundary( Point const& p) const;}{
+\ccMemberFunction{ bool  has_on_boundary( const Point& p) const;}{
         returns \ccc{true}, iff \ccc{p} lies on the boundary
         of \ccVar.}
 
@@ -177,16 +175,23 @@ predicate of \ccc{CGAL_Min_ellipse_2} is used.
 % -----------------------------------------------------------------------------
 \ccHeading{I/O}
 
-The following I/O operators are only needed, if the corresponding I/O
+The following I/O operators are only needed,%
+\SaveSpaceByHand{\ccTexHtml{$\!$}{}}
+                                             if the corresponding I/O
 operators of \ccc{CGAL_Min_ellipse_2} are used.
 
 \ccHtmlNoIndex
-\ccFunction{ ostream& operator << ( ostream& os, Ellipse const& ellipse);}{
+\ccFunction{ ostream& operator << ( ostream& os, const Ellipse& ellipse);}{
         writes \ccVar\ to output stream \ccc{os}.}
 
 \ccHtmlNoIndex
-\ccFunction{ istream& operator >> ( istream& is, Ellipse &ellipse);}{
+\ccFunction{ istream& operator >> ( istream& is, Ellipse& ellipse);}{
         reads \ccVar\ from input stream \ccc{is}.}
+
+\ccHtmlNoIndex
+\ccFunction{ CGAL_Window_stream&
+             operator << ( CGAL_Window_stream& ws, const Ellipse& ellipse);}{
+        writes \ccVar\ to window stream \ccc{ws}.}
 
 % -----------------------------------------------------------------------------
 
