@@ -46,7 +46,8 @@
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCPreBuildEventTool"
+				CommandLine="$(QTDIR)/bin/moc.exe -o terrain.moc terrain.cpp"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -95,7 +96,8 @@
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCPreBuildEventTool"
+				CommandLine="$(QTDIR)/bin/moc.exe -o terrain.moc terrain.cpp"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -131,17 +133,6 @@
 			</File>
 			<File
 				RelativePath="fbm.h">
-			</File>
-			<File
-				RelativePath="terrain.h">
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o terrain.moc terrain.cpp
-"
-						Outputs="terrain.moc"/>
-				</FileConfiguration>
 			</File>
 		</Filter>
 		<Filter
