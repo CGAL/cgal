@@ -29,18 +29,25 @@ int main()
   gv.clear(); // remove the pickplane.
 
   gv << K::Point_2 (200, 100);
+  gv << CGAL::BLUE;
   gv << K::Point_3 (200, 100, 100);
+  gv << CGAL::RED;
   gv << K::Segment_2 (K::Point_2(200, 100),
                       K::Point_2(300, 100));
+  gv << CGAL::GREEN;
   gv << K::Segment_3 (K::Point_3(200, 100, 100),
                       K::Point_3(300, 100, 200));
+  gv << CGAL::DEEPBLUE;
   gv << K::Sphere_3 (K::Point_3(100, 100, 100), 1000);
+  gv << CGAL::VIOLET;
   gv << K::Triangle_2 (K::Point_2(200, 200),
                        K::Point_2(220, 220),
                        K::Point_2(180, 220));
+  gv << CGAL::ORANGE;
   gv << K::Triangle_3 (K::Point_3(200, 200, 50),
                        K::Point_3(220, 220, 80),
                        K::Point_3(180, 220, 100));
+  gv << CGAL::PURPLE;
   gv << K::Tetrahedron_3 (K::Point_3(100, 100, 180),
                           K::Point_3(120,  70, 220),
                           K::Point_3(100, 100, 220),
