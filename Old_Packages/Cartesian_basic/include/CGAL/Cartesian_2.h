@@ -57,17 +57,17 @@ struct Cartesian_base_2
     typedef _FT                                    FT;
     typedef Cartesian_tag                          Rep_tag;
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-    typedef CGAL::Point_2<R,Rep_tag>             Point_2;
-    typedef CGAL::Vector_2<R,Rep_tag>            Vector_2;
-    typedef CGAL::Direction_2<R,Rep_tag>         Direction_2;
-    typedef CGAL::Segment_2<R,Rep_tag>           Segment_2;
-    typedef CGAL::Line_2<R,Rep_tag>              Line_2;
-    typedef CGAL::Ray_2<R,Rep_tag>               Ray_2;
-    typedef CGAL::Triangle_2<R,Rep_tag>          Triangle_2;
-    typedef CGAL::Circle_2<R,Rep_tag>            Circle_2;
-    typedef CGAL::Iso_rectangle_2<R,Rep_tag>     Iso_rectangle_2;
-    typedef CGAL::Aff_transformation_2<R,Rep_tag> Aff_transformation_2;
-    typedef CGAL::Data_accessor_2<R,Rep_tag>     Data_accessor_2;
+    typedef CGAL::Point_2<R,Rep_tag>               Point_2;
+    typedef CGAL::Vector_2<R,Rep_tag>              Vector_2;
+    typedef CGAL::Direction_2<R,Rep_tag>           Direction_2;
+    typedef CGAL::Segment_2<R,Rep_tag>             Segment_2;
+    typedef CGAL::Line_2<R,Rep_tag>                Line_2;
+    typedef CGAL::Ray_2<R,Rep_tag>                 Ray_2;
+    typedef CGAL::Triangle_2<R,Rep_tag>            Triangle_2;
+    typedef CGAL::Circle_2<R,Rep_tag>              Circle_2;
+    typedef CGAL::Iso_rectangle_2<R,Rep_tag>       Iso_rectangle_2;
+    typedef CGAL::Aff_transformation_2<R,Rep_tag>  Aff_transformation_2;
+    typedef CGAL::Data_accessor_2<R,Rep_tag>       Data_accessor_2;
     typedef CGAL::ConicCPA2<Point_2,Data_accessor_2> Conic_2;
 #else
     typedef PointC2<R>                             Point_2;
@@ -141,23 +141,23 @@ struct Cartesian_2 :
     typedef Cartesian_tag                       Rep_tag;
 
     typedef Cartesian_2<_FT>                    Self;
-    typedef Cartesian_base_2<Self,_FT>          Base;
+    typedef Cartesian_base_2<Self,_FT>          Kernel_base;
     
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
     // The classes are inherited and because of partial specialization,
     // Cartesian_2<FT>::Point_2 is exactly CGAL::Point_2< Cartesian_2<FT> >
     // We still need to inherit explicitly, see Cartesian.h for explanation
 
-    typedef typename Base::Point_2                       Point_2;
-    typedef typename Base::Vector_2                      Vector_2;
-    typedef typename Base::Direction_2                   Direction_2;
-    typedef typename Base::Segment_2                     Segment_2;
-    typedef typename Base::Line_2                        Line_2;
-    typedef typename Base::Ray_2                         Ray_2;
-    typedef typename Base::Triangle_2                    Triangle_2;
-    typedef typename Base::Circle_2                      Circle_2;
-    typedef typename Base::Iso_rectangle_2               Iso_rectangle_2;
-    typedef typename Base::Aff_transformation_2          Aff_transformation_2;
+    typedef typename Kernel_base::Point_2                 Point_2;
+    typedef typename Kernel_base::Vector_2                Vector_2;
+    typedef typename Kernel_base::Direction_2             Direction_2;
+    typedef typename Kernel_base::Segment_2               Segment_2;
+    typedef typename Kernel_base::Line_2                  Line_2;
+    typedef typename Kernel_base::Ray_2                   Ray_2;
+    typedef typename Kernel_base::Triangle_2              Triangle_2;
+    typedef typename Kernel_base::Circle_2                Circle_2;
+    typedef typename Kernel_base::Iso_rectangle_2         Iso_rectangle_2;
+    typedef typename Kernel_base::Aff_transformation_2    Aff_transformation_2;
 
 #else
     // Now CGAL::Point_2<R> is only a wrapper around CGAL::PointC2<R>
@@ -167,34 +167,34 @@ struct Cartesian_2 :
     // Cartesian_2<FT>::Base is needed so that CGAL::Point_2< Cartesian_2<FT> >
     // can inherit from Cartesian_2<FT>::Point_2_base
 
-    typedef typename Base::Point_2                       Point_2_base;
-    typedef typename Base::Vector_2                      Vector_2_base;
-    typedef typename Base::Direction_2                   Direction_2_base;
-    typedef typename Base::Segment_2                     Segment_2_base;
-    typedef typename Base::Line_2                        Line_2_base;
-    typedef typename Base::Ray_2                         Ray_2_base;
-    typedef typename Base::Triangle_2                    Triangle_2_base;
-    typedef typename Base::Circle_2                      Circle_2_base;
-    typedef typename Base::Iso_rectangle_2               Iso_rectangle_2_base;
-    typedef typename Base::Aff_transformation_2          Aff_transformation_2_base;
+    typedef typename Kernel_base::Point_2                 Point_2_base;
+    typedef typename Kernel_base::Vector_2                Vector_2_base;
+    typedef typename Kernel_base::Direction_2             Direction_2_base;
+    typedef typename Kernel_base::Segment_2               Segment_2_base;
+    typedef typename Kernel_base::Line_2                  Line_2_base;
+    typedef typename Kernel_base::Ray_2                   Ray_2_base;
+    typedef typename Kernel_base::Triangle_2              Triangle_2_base;
+    typedef typename Kernel_base::Circle_2                Circle_2_base;
+    typedef typename Kernel_base::Iso_rectangle_2         Iso_rectangle_2_base;
+    typedef typename Kernel_base::Aff_transformation_2    Aff_transformation_2_base;
 
     // Note: necessary to qualify Point_2 by CGAL:: to disambiguate between
     // Point_2 in the current namespace (nested within CGAL)
     // CGAL::Point_2< Cartesian_2<FT> > (which is in the CGAL namespace)
 
-    typedef CGAL::Point_2<Self>                 Point_2;
-    typedef CGAL::Vector_2<Self>                Vector_2;
-    typedef CGAL::Direction_2<Self>             Direction_2;
-    typedef CGAL::Segment_2<Self>               Segment_2;
-    typedef CGAL::Line_2<Self>                  Line_2;
-    typedef CGAL::Ray_2<Self>                   Ray_2;
-    typedef CGAL::Triangle_2<Self>              Triangle_2;
-    typedef CGAL::Circle_2<Self>                Circle_2;
-    typedef CGAL::Iso_rectangle_2<Self>         Iso_rectangle_2;
-    typedef CGAL::Aff_transformation_2<Self>    Aff_transformation_2;
+    typedef CGAL::Point_2<Self>                           Point_2;
+    typedef CGAL::Vector_2<Self>                          Vector_2;
+    typedef CGAL::Direction_2<Self>                       Direction_2;
+    typedef CGAL::Segment_2<Self>                         Segment_2;
+    typedef CGAL::Line_2<Self>                            Line_2;
+    typedef CGAL::Ray_2<Self>                             Ray_2;
+    typedef CGAL::Triangle_2<Self>                        Triangle_2;
+    typedef CGAL::Circle_2<Self>                          Circle_2;
+    typedef CGAL::Iso_rectangle_2<Self>                   Iso_rectangle_2;
+    typedef CGAL::Aff_transformation_2<Self>              Aff_transformation_2;
 
-    typedef Data_accessorC2<Self>               Data_accessor_2;
-    typedef ConicCPA2<Point_2,Data_accessor_2>  Conic_2;
+    typedef Data_accessorC2<Self>                         Data_accessor_2;
+    typedef ConicCPA2<Point_2,Data_accessor_2>            Conic_2;
 
 #endif // CGAL_CFG_NO_ADVANCED_KERNEL
 
@@ -204,9 +204,8 @@ struct Cartesian_2 :
     static  RT FT_numerator(const FT &r)                { return r;}
     static  RT FT_denominator(const FT &)               { return RT(1);}
 
-    typedef Kernel_construction_objects_2<Self> Construction_objects;
-    typedef Kernel_predicate_objects_2<Self>    Predicate_objects;
-
+    typedef Kernel_construction_objects_2<Self>           Construction_objects;
+    typedef Kernel_predicate_objects_2<Self>              Predicate_objects;
     // These macros are defined in <CGAL/Kernel/Predicate_objects_2.h>
     // and <CGAL/Kernel/Construction_objects_2.h>
     CGAL_UNPACK_KERNEL_CONSTRUCTION_OBJECTS_2(typename Construction_objects)

@@ -67,17 +67,17 @@ struct Cartesian_base_3
     typedef CGAL::Tetrahedron_3<R,Rep_tag>        Tetrahedron_3;
     typedef CGAL::Aff_transformation_3<R,Rep_tag> Aff_transformation_3;
 #else
-    typedef PointC2<R>                          Point_2;
-    typedef PointC3<R>                          Point_3;
-    typedef VectorC3<R>                         Vector_3;
-    typedef DirectionC3<R>                      Direction_3;
-    typedef LineC3<R>                           Line_3;
-    typedef PlaneC3<R>                          Plane_3;
-    typedef RayC3<R>                            Ray_3;
-    typedef SegmentC3<R>                        Segment_3;
-    typedef TriangleC3<R>                       Triangle_3;
-    typedef TetrahedronC3<R>                    Tetrahedron_3;
-    typedef Aff_transformationC3<R>             Aff_transformation_3;
+    typedef PointC2<R>                            Point_2;
+    typedef PointC3<R>                            Point_3;
+    typedef VectorC3<R>                           Vector_3;
+    typedef DirectionC3<R>                        Direction_3;
+    typedef LineC3<R>                             Line_3;
+    typedef PlaneC3<R>                            Plane_3;
+    typedef RayC3<R>                              Ray_3;
+    typedef SegmentC3<R>                          Segment_3;
+    typedef TriangleC3<R>                         Triangle_3;
+    typedef TetrahedronC3<R>                      Tetrahedron_3;
+    typedef Aff_transformationC3<R>               Aff_transformation_3;
 #endif // CGAL_CFG_NO_ADVANCED_KERNEL
 };
 
@@ -131,29 +131,29 @@ struct Cartesian_3 :
   public Cartesian_base_3< Cartesian_3<_FT>, _FT >
 {
     // Number types and representation tag
-    typedef _FT                                 RT;
-    typedef _FT                                 FT;
-    typedef Cartesian_tag                       Rep_tag;
+    typedef _FT                                           RT;
+    typedef _FT                                           FT;
+    typedef Cartesian_tag                                 Rep_tag;
 
-    typedef Cartesian_3<_FT>                    Self;
-    typedef Cartesian_base_3<Self,_FT>          Base;
+    typedef Cartesian_3<_FT>                              Self;
+    typedef Cartesian_base_3<Self,_FT>                    Kernel_base;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
     // The other classes are inherited and because of partial specialization,
     // Cartesian_3<FT>::Point_3 is exactly CGAL::Point_3< Cartesian_3<FT> >
     // We still need to inherit explicitly, see Cartesian.h for explanation
 
-    typedef typename Base::Point_2                       Point_2;
-    typedef typename Base::Point_3                       Point_3;
-    typedef typename Base::Vector_3                      Vector_3;
-    typedef typename Base::Direction_3                   Direction_3;
-    typedef typename Base::Line_3                        Line_3;
-    typedef typename Base::Plane_3                       Plane_3;
-    typedef typename Base::Ray_3                         Ray_3;
-    typedef typename Base::Segment_3                     Segment_3;
-    typedef typename Base::Triangle_3                    Triangle_3;
-    typedef typename Base::Tetrahedron_3                 Tetrahedron_3;
-    typedef typename Base::Aff_transformation_3          Aff_transformation_3;
+    typedef typename Kernel_base::Point_2                 Point_2;
+    typedef typename Kernel_base::Point_3                 Point_3;
+    typedef typename Kernel_base::Vector_3                Vector_3;
+    typedef typename Kernel_base::Direction_3             Direction_3;
+    typedef typename Kernel_base::Line_3                  Line_3;
+    typedef typename Kernel_base::Plane_3                 Plane_3;
+    typedef typename Kernel_base::Ray_3                   Ray_3;
+    typedef typename Kernel_base::Segment_3               Segment_3;
+    typedef typename Kernel_base::Triangle_3              Triangle_3;
+    typedef typename Kernel_base::Tetrahedron_3           Tetrahedron_3;
+    typedef typename Kernel_base::Aff_transformation_3    Aff_transformation_3;
 
  #else
     // Now CGAL::Point_3<R> is only a wrapper around CGAL::PointC3<R>
@@ -161,35 +161,35 @@ struct Cartesian_3 :
     // Cartesian_3<FT>::Point_3 is exactly CGAL::Point_3< Cartesian_3<FT> >
 
     // Cartesian_3<FT>::Base is needed so that CGAL::Point_3< Cartesian_3<FT> >
-    // can inherit from Cartesian_3<FT>::typename Base::Point_3
+    // can inherit from Cartesian_3<FT>::typename Kernel_base::Point_3
 
-    typedef typename Base::Point_2                       Point_2_base;
-    typedef typename Base::Point_3                       Point_3_base;
-    typedef typename Base::Vector_3                      Vector_3_base;
-    typedef typename Base::Direction_3                   Direction_3_base;
-    typedef typename Base::Line_3                        Line_3_base;
-    typedef typename Base::Plane_3                       Plane_3_base;
-    typedef typename Base::Ray_3                         Ray_3_base;
-    typedef typename Base::Segment_3                     Segment_3_base;
-    typedef typename Base::Triangle_3                    Triangle_3_base;
-    typedef typename Base::Tetrahedron_3                 Tetrahedron_3_base;
-    typedef typename Base::Aff_transformation_3          Aff_transformation_3_base;
+    typedef typename Kernel_base::Point_2                 Point_2_base;
+    typedef typename Kernel_base::Point_3                 Point_3_base;
+    typedef typename Kernel_base::Vector_3                Vector_3_base;
+    typedef typename Kernel_base::Direction_3             Direction_3_base;
+    typedef typename Kernel_base::Line_3                  Line_3_base;
+    typedef typename Kernel_base::Plane_3                 Plane_3_base;
+    typedef typename Kernel_base::Ray_3                   Ray_3_base;
+    typedef typename Kernel_base::Segment_3               Segment_3_base;
+    typedef typename Kernel_base::Triangle_3              Triangle_3_base;
+    typedef typename Kernel_base::Tetrahedron_3           Tetrahedron_3_base;
+    typedef typename Kernel_base::Aff_transformation_3    Aff_transformation_3_base;
 
     // Note: necessary to qualify Point_3 by CGAL:: to disambiguate between
     // Point_3 in the current namespace (nested within CGAL) and
     // CGAL::Point_3< Cartesian_3<FT> > (which is in the CGAL namespace)
 
-    typedef CGAL::Point_2<Self>                 Point_2;
-    typedef CGAL::Point_3<Self>                 Point_3;
-    typedef CGAL::Vector_3<Self>                Vector_3;
-    typedef CGAL::Direction_3<Self>             Direction_3;
-    typedef CGAL::Line_3<Self>                  Line_3;
-    typedef CGAL::Plane_3<Self>                 Plane_3;
-    typedef CGAL::Ray_3<Self>                   Ray_3;
-    typedef CGAL::Segment_3<Self>               Segment_3;
-    typedef CGAL::Triangle_3<Self>              Triangle_3;
-    typedef CGAL::Tetrahedron_3<Self>           Tetrahedron_3;
-    typedef CGAL::Aff_transformation_3<Self>    Aff_transformation_3;
+    typedef CGAL::Point_2<Self>                           Point_2;
+    typedef CGAL::Point_3<Self>                           Point_3;
+    typedef CGAL::Vector_3<Self>                          Vector_3;
+    typedef CGAL::Direction_3<Self>                       Direction_3;
+    typedef CGAL::Line_3<Self>                            Line_3;
+    typedef CGAL::Plane_3<Self>                           Plane_3;
+    typedef CGAL::Ray_3<Self>                             Ray_3;
+    typedef CGAL::Segment_3<Self>                         Segment_3;
+    typedef CGAL::Triangle_3<Self>                        Triangle_3;
+    typedef CGAL::Tetrahedron_3<Self>                     Tetrahedron_3;
+    typedef CGAL::Aff_transformation_3<Self>              Aff_transformation_3;
 
 #endif // CGAL_CFG_NO_ADVANCED_KERNEL
 
@@ -199,9 +199,8 @@ struct Cartesian_3 :
     static   RT FT_numerator(const FT &r)                { return r;}
     static   RT FT_denominator(const FT &)               { return RT(1);}
 
-    typedef Kernel_construction_objects_3<Self> Construction_objects;
-    typedef Kernel_predicate_objects_3<Self>    Predicate_objects;
-
+    typedef Kernel_construction_objects_3<Self>           Construction_objects;
+    typedef Kernel_predicate_objects_3<Self>              Predicate_objects;
     // These macros are defined in Kernel_function_objects
     CGAL_UNPACK_KERNEL_CONSTRUCTION_OBJECTS_3(typename Construction_objects)
     CGAL_UNPACK_KERNEL_PREDICATE_OBJECTS_3(typename Predicate_objects)

@@ -74,14 +74,14 @@ struct Cartesian_dynamic_d
   : public Cartesian_base_dynamic_d< Cartesian_dynamic_d<_FT>, _FT >
 {
     typedef Cartesian_dynamic_d<_FT>            Self;
-    typedef Cartesian_base_dynamic_d<Self,_FT>  Base;
+    typedef Cartesian_base_dynamic_d<Self,_FT>  Kernel_base;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
     // The lasses are inherited and because of partial specialization,
     // Cartesian_d<FT>::Point_d is exactly CGAL::Point_d< Cartesian_d<FT> >
     // We still need to inherit explicitly, see Cartesian.h for explanation
 
-    typedef Base::Point_d                       Point_d;
+    typedef Kernel_base::Point_d                Point_d;
 
 #else
     // Now CGAL::Point_d<R> is only a wrapper around CGAL::PointCd<R>
@@ -89,9 +89,9 @@ struct Cartesian_dynamic_d
     // Cartesian_d<FT>::Point_d is exactly CGAL::Point_d< Cartesian_d<FT> >
 
     // Cartesian_d<FT>::Base is needed so that CGAL::Point_d< Cartesian_d<FT> >
-    // can inherit from Cartesian_d<FT>::Base::Point_d
+    // can inherit from Cartesian_d<FT>::Kernel_base::Point_d
 
-    typedef Base::Point_d                       Point_d_base;
+    typedef Kernel_base::Point_d                Point_d_base;
 
     // Note: necessary to qualify Point_d by ::CGAL:: to disambiguate between
     // Point_d in the current namespace (nested within CGAL) and
