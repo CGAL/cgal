@@ -125,6 +125,10 @@ test_new_2(const R& rep)
   Triangle_2 t1 = construct_triangle();
   Triangle_2 t2 = construct_triangle(p2,p3,p4);
 
+  typename R::Construct_iso_rectangle_2 construct_iso_rectangle
+        = rep.construct_iso_rectangle_2_object();
+  Iso_rectangle_2 rec2 = construct_iso_rectangle(p4,p5);
+
   typename R::Construct_aff_transformation_2 construct_aff_transformation
         = rep.construct_aff_transformation_2_object();
   Aff_transformation_2 a1 = construct_aff_transformation(Translation(),v2);
@@ -163,12 +167,12 @@ test_new_2(const R& rep)
   typename R::Construct_min_point_2 construct_min_point
         = rep.construct_min_point_2_object();
   Point_2 tmp5a = construct_min_point(s2);
-  // Point_2 tmp5b = construct_min_point(t2);
+  Point_2 tmp5b = construct_min_point(rec2);
 
   typename R::Construct_max_point_2 construct_max_point
         = rep.construct_max_point_2_object();
   Point_2 tmp6a = construct_max_point(s2);
-  // Point_2 tmp6b = construct_max_point(t2);
+  Point_2 tmp6b = construct_max_point(rec2);
 
 
   typename R::Construct_direction_of_line_2 construct_direction_from
@@ -197,11 +201,13 @@ test_new_2(const R& rep)
         = rep.construct_perpendicular_line_2_object();
   Line_2 tmp11 = construct_perpendicular_line(l2,p2);
 
+  typename R::Construct_midpoint_2 construct_midpoint_2
+        = rep.construct_midpoint_2_object();
+  Point_2 tmp12 = construct_midpoint_2(p2,p3);
 
-  typename R::Construct_midpoint construct_midpoint
-        = rep.construct_midpoint_object();
-  Point_2 tmp12 = construct_midpoint(p2,p3);
-
+//  typename R::Construct_midpoint construct_midpoint
+//        = rep.construct_midpoint_object();
+//  Point_2 tmp12 = construct_midpoint(p2,p3);
 
   typename R::Construct_circumcenter_2 construct_circumcenter
         = rep.construct_circumcenter_2_object();
@@ -237,6 +243,7 @@ test_new_2(const R& rep)
         = rep.construct_opposite_circle_2_object();
   Circle_2 tmp19 = construct_opposite_circle(c2);
 
+
   typename R::Transform_2 transform
         = rep.transform_2_object();
   Point_2 tmp20a = transform(p2,a3);
@@ -254,7 +261,6 @@ test_new_2(const R& rep)
         = rep.assign_2_object();
        tmp_bool = assign(p1,tmp21a);
        tmp_bool = assign(p1,tmp21b);
-
 
   typename R::Compute_y_at_x_2 compute_y_at_x
         = rep.compute_y_at_x_2_object();
@@ -328,15 +334,37 @@ test_new_2(const R& rep)
   Comparison_result tmp34c = compare_y_at_x(l2,l3,l4);
   Comparison_result tmp34d = compare_y_at_x(l2,l3,l4,l5);
 
+//
+//  the compare_x_at_y function is not yet available in the Cartesian kernel
+//
+//  typename R::Compare_x_at_y_2 compare_x_at_y
+//        = rep.compare_x_at_y_2_object();
+//  Comparison_result tmp34aa = compare_x_at_y(p2,l2);
+//  Comparison_result tmp34bb = compare_x_at_y(p2,l2,l3);
+//  Comparison_result tmp34cc = compare_x_at_y(l2,l3,l4);
+//  Comparison_result tmp34dd = compare_x_at_y(l2,l3,l4,l5);
 
   typename R::Less_distance_to_point_2 less_distance_to_point
         = rep.less_distance_to_point_2_object(p2);
   bool tmp35 = less_distance_to_point(p3,p4);
 
+  typename R::Compare_distance_to_point_2 compare_dist_to_point
+        = rep.compare_distance_to_point_2_object(p2);
+  Comparison_result tmp34ab = compare_dist_to_point(p2,p3);
 
   typename R::Less_signed_distance_to_line_2 less_signed_distance_to_line
         = rep.less_signed_distance_to_line_2_object(p4,p5);
   bool tmp36 = less_signed_distance_to_line(p2,p3);
+
+  typename R::Less_rotate_ccw_2 less_rotate_ccw 
+        = rep.less_rotate_ccw_2_object(p4);
+  bool tmp36a = less_rotate_ccw(p2,p3);
+
+  bool tmp39;
+
+  typename R::Counterclockwise_in_between_2 ccwib
+        = rep.counterclockwise_in_between_2_object();
+       tmp39 = ccwib(d1,d2,d3);
 
   typename R::Leftturn_2 leftturn
         = rep.leftturn_2_object();
@@ -348,15 +376,9 @@ test_new_2(const R& rep)
   bool tmp38 = left_of_line(p4);
 
 
-  bool tmp39;
-
-  typename R::Counterclockwise_in_between_2 ccwib
-        = rep.counterclockwise_in_between_2_object();
-       tmp39 = ccwib(d1,d2,d3);
-
   typename R::Collinear_2 collinear
         = rep.collinear_2_object();
-       tmp39 = collinear(p2,p3,p4);
+  bool tmp39a = collinear(p2,p3,p4);
 
 
   typename R::Orientation_2 orientation
@@ -462,7 +484,9 @@ test_new_2(const R& rep)
   use(tmp34c); use(tmp34b); use(tmp34a); use(tmp32d); use(tmp32c); use(tmp32b);
   use(tmp32a); use(tmp31d); use(tmp31c); use(tmp31b); use(tmp31a); use(tmp30);
   use(tmp26); use(tmp25); use(tmp24);
-  use(tmp29); use(tmp28); use(tmp27); use(tmp33a);
+  use(tmp29); use(tmp28); use(tmp27); use(tmp33a); use(tmp34ab); 
+// use(tmp34dd); use(tmp34cc); use(tmp34bb); use(tmp34aa); 
+  use(tmp39a); use(tmp36a);
   use(tmp_bool);
   
 

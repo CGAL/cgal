@@ -32,8 +32,10 @@
 #include <CGAL/Ray_3.h>
 #include <CGAL/Line_3.h>
 #include <CGAL/Plane_3.h>
+#include <CGAL/Sphere_3.h>
 #include <CGAL/Triangle_3.h>
 #include <CGAL/Tetrahedron_3.h>
+#include <CGAL/Iso_cuboid_3.h>
 #include <CGAL/Aff_transformation_3.h>
 #include <CGAL/intersections.h>
 #include <CGAL/predicates_on_points_3.h>
@@ -64,8 +66,10 @@ test_new_3(const R& rep)
   typedef typename R::Line_3                      Line_3;
   typedef typename R::Ray_3                       Ray_3;
   typedef typename R::Plane_3                     Plane_3;
+  typedef typename R::Sphere_3                    Sphere_3;
   typedef typename R::Triangle_3                  Triangle_3;
   typedef typename R::Tetrahedron_3               Tetrahedron_3;
+  typedef typename R::Iso_cuboid_3                Iso_cuboid_3;
   typedef typename R::Aff_transformation_3        Aff_transformation_3;
   typedef typename R::Object_3                    Object3;
 
@@ -122,6 +126,19 @@ test_new_3(const R& rep)
   Plane_3 h6 = construct_plane(r2,p4);
   Plane_3 h7 = construct_plane(s2,p4);
 
+  typename R::Construct_sphere_3 construct_sphere
+        = rep.construct_sphere_3_object();
+  Sphere_3 sp1 = construct_sphere(p2,1);
+  Sphere_3 sp2 = construct_sphere(p2,1,COUNTERCLOCKWISE);
+  Sphere_3 sp3 = construct_sphere(p2,p3,p4,p5);
+  Sphere_3 sp4 = construct_sphere(p2,p3,p4);
+  Sphere_3 sp5 = construct_sphere(p2,p3,p4,CLOCKWISE);
+  Sphere_3 sp6 = construct_sphere(p2,p3);
+  Sphere_3 sp7 = construct_sphere(p2,p3,CLOCKWISE);
+  Sphere_3 sp8 = construct_sphere(p3);
+  Sphere_3 sp9 = construct_sphere(p3,CLOCKWISE);
+
+
   typename R::Construct_triangle_3 construct_triangle
         = rep.construct_triangle_3_object();
   Triangle_3 t1 = construct_triangle();
@@ -131,6 +148,10 @@ test_new_3(const R& rep)
         = rep.construct_tetrahedron_object();
   Tetrahedron_3 th1 = construct_tetrahedron();
   Tetrahedron_3 th2 = construct_tetrahedron(p2,p3,p4,p5);
+
+  typename R::Construct_iso_cuboid_3 construct_iso_cuboid
+        = rep.construct_iso_cuboid_3_object();
+  Iso_cuboid_3 iso1 = construct_iso_cuboid(p3,p6);
 
   typename R::Construct_aff_transformation_3 construct_aff_transformation
         = rep.construct_aff_transformation_3_object();
@@ -157,21 +178,52 @@ test_new_3(const R& rep)
         = rep.construct_second_point_on_3_object();
   Point_3 tmp2 = construct_second_point_on(r2);
 
+  typename R::Construct_source_point_3 construct_source_point
+        = rep.construct_source_point_3_object();
+  Point_3 tmp2b = construct_source_point(s2);
+
+  typename R::Construct_target_point_3 construct_target_point
+        = rep.construct_target_point_3_object();
+  Point_3 tmp2c = construct_target_point(s2);
+
+  typename R::Construct_min_point_3 construct_min_point
+        = rep.construct_min_point_3_object();
+  Point_3 tmp2d = construct_min_point(s2);
+  Point_3 tmp2e = construct_min_point(iso1);
+
+  typename R::Construct_max_point_3 construct_max_point
+        = rep.construct_max_point_3_object();
+          tmp2d = construct_max_point(s2);
+          tmp2e = construct_max_point(iso1);
+
+  typename R::Construct_direction_of_line_3 construct_direction_from
+        = rep.construct_direction_of_line_3_object();
+  Direction_3 tmp7a = construct_direction_from(l2);
+
+  typename R::Construct_direction_of_ray_3 construct_direction_from_ray
+        = rep.construct_direction_of_ray_3_object();
+  Direction_3 tmp7b = construct_direction_from_ray(r2);
+
+  typename R::Construct_supporting_line_3 construct_supporting_line
+        = rep.construct_supporting_line_3_object();
+  Line_3 tmp8a = construct_supporting_line(r2);
+  Line_3 tmp8b = construct_supporting_line(s2);
 
   typename R::Construct_perpendicular_plane_3 construct_perpendicular_plane
-        = rep.construct_perpendicular_plane_3();
+        = rep.construct_perpendicular_plane_3_object();
   Plane_3 tmp3 = construct_perpendicular_plane(l2,p2);
 
+  typename R::Construct_perpendicular_line_3 construct_perpendicular_line
+        = rep.construct_perpendicular_line_3_object();
+  Line_3 tmp3a = construct_perpendicular_line(h2,p5);
 
   typename R::Construct_midpoint_3 construct_midpoint
         = rep.construct_midpoint_3_object();
   Point_3 tmp4 = construct_midpoint(p2,p3);
 
-
   typename R::Construct_circumcenter_3 construct_circumcenter
         = rep.construct_circumcenter_3_object();
           tmp4 = construct_circumcenter(p2,p3,p4,p5);
-
 
   typename R::Construct_opposite_segment_3 construct_opposite_segment
         = rep.construct_opposite_segment_3_object();
@@ -187,6 +239,9 @@ test_new_3(const R& rep)
         = rep.construct_opposite_line_3_object();
   Line_3 tmp7 = construct_opposite_line(l2);
 
+  typename R::Construct_opposite_plane_3 construct_opposite_plane
+        = rep.construct_opposite_plane_3_object();
+  Plane_3 tmp71 = construct_opposite_plane(h2);
 
   typename R::Construct_supporting_plane_3 construct_supporting_plane
         = rep.construct_supporting_plane_3_object();
@@ -211,7 +266,6 @@ test_new_3(const R& rep)
         = rep.assign_3_object();
        tmp12a = assign(p1,tmp10a);
        tmp12b = assign(p1,tmp10b);
-
 
   typename R::Compute_squared_length_3 compute_squared_length
         = rep.compute_squared_length_3_object();
@@ -302,16 +356,25 @@ test_new_3(const R& rep)
         = rep.less_distance_to_point_3_object(p4);
   bool tmp28 = less_distance_to_point(p2,p3);
 
+  typename R::Compare_distance_to_point_3 compare_dist_to_point
+        = rep.compare_distance_to_point_3_object(p2);
+  Comparison_result tmp34ab = compare_dist_to_point(p3,p4);
 
   typename R::Collinear_3 collinear
         = rep.collinear_3_object();
   bool tmp29 = collinear(p2,p3,p4);
 
-
   typename R::Coplanar_3 coplanar
         = rep.coplanar_3_object();
   bool tmp30 = coplanar(p2,p3,p4,p5);
 
+  Point_3 p7(0,0,0);
+  Point_3 p8(1,0,0);
+  Point_3 p9(1,1,0);
+  Point_3 p10(0,1,0);
+  typename R::Coplanar_orientation_3 coplanar_orientation
+        = rep.coplanar_orientation_3_object();
+  Orientation tmp30a = coplanar_orientation(p7,p8,p9,p10);
 
   typename R::Orientation_3 orientation
         = rep.orientation_3_object();
@@ -395,7 +458,7 @@ test_new_3(const R& rep)
   use(tmp29); use(tmp27); use(tmp25); use(tmp24); use(tmp23); use(tmp22);
   use(tmp15); use(tmp14); use(tmp13); use(tmp12b); use(tmp12a);
   use(tmp16); use(tmp17); use(tmp18); use(tmp19); use(tmp20); use(tmp21);
-  use(tmp26); use(tmp28);
+  use(tmp26); use(tmp28); use(tmp30a); use(tmp34ab); 
   
 
   return true;
