@@ -8,7 +8,7 @@
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 #include <iostream>
 
-typedef CGAL::Simple_homogeneous<CGAL::Gmpz>  Kernel;
+typedef CGAL::Homogeneous<CGAL::Gmpz>  Kernel;
 typedef CGAL::Polyhedron_3<Kernel>  Polyhedron;
 typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron;
 typedef Nef_polyhedron::Vector_3  Vector_3;

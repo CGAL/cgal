@@ -7,7 +7,7 @@
 #include <iostream>
 
 typedef CGAL::Gmpz  NT;
-typedef CGAL::Simple_homogeneous<NT>  Kernel;
+typedef CGAL::Homogeneous<NT>  Kernel;
 typedef CGAL::Polyhedron_3<Kernel>  Polyhedron;
 typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron;
 typedef Nef_polyhedron::Vector_3  Vector_3;

@@ -8,7 +8,7 @@
 #include <fstream>
 
 typedef CGAL::Gmpz  NT;
-typedef CGAL::Simple_homogeneous<NT>  SK;
+typedef CGAL::Homogeneous<NT>  SK;
 typedef CGAL::Extended_homogeneous<NT>  EK;
 typedef CGAL::Nef_polyhedron_3<SK>  Nef_polyhedron_S;
 typedef CGAL::Nef_polyhedron_3<EK>  Nef_polyhedron_E;
