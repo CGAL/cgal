@@ -2,6 +2,10 @@
 #define CGAL_CTAG
 #endif
 
+#ifdef _MSC_VER
+#define typename
+#endif
+
 #ifndef CGAL_CARTESIAN_SEGMENT_2_C
 #define CGAL_CARTESIAN_SEGMENT_2_C
 
@@ -281,5 +285,9 @@ std::istream &operator>>(std::istream &is, SegmentC2<R CGAL_CTAG> &s)
 #endif // CGAL_NO_ISTREAM_EXTRACT_SEGMENTC2
 
 CGAL_END_NAMESPACE
+
+#ifdef _MSC_VER
+#undef typename
+#endif
 
 #endif

@@ -2,6 +2,10 @@
 #define CGAL_CTAG
 #endif
 
+#ifdef _MSC_VER
+#define typename
+#endif
+
 #include <CGAL/Cartesian/constructions_on_points_2.h>
 #include <CGAL/Cartesian/constructions_on_circles_2.h>
 #include <CGAL/Cartesian/distance_computations_2.h>
@@ -324,5 +328,8 @@ std::istream& operator>>(std::istream &is, CircleC2<R CGAL_CTAG> &c)
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_CARTESIAN_CIRCLE_2_H
+#ifdef _MSC_VER
+#undef typename
+#endif
 
+#endif // CGAL_CARTESIAN_CIRCLE_2_H

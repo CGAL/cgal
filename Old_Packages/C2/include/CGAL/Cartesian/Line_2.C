@@ -2,6 +2,10 @@
 #define CGAL_CTAG
 #endif
 
+#ifdef _MSC_VER
+#define typename
+#endif
+
 #ifndef CGAL_CARTESIAN_CONSTRUCTIONS_ON_LINES_2_H
 #include <CGAL/Cartesian/constructions_on_lines_2.h>
 #endif // CGAL_CARTESIAN_CONSTRUCTIONS_ON_LINES_2_H
@@ -339,5 +343,9 @@ std::istream &operator>>(std::istream &is, LineC2<R CGAL_CTAG> &p)
 #endif // CGAL_NO_ISTREAM_EXTRACT_LINEC2
 
 CGAL_END_NAMESPACE
+
+#ifdef _MSC_VER
+#undef typename
+#endif
 
 #endif

@@ -1,6 +1,10 @@
 #ifndef CGAL_CARTESIAN_AFF_TRANSFORMATION_REP_2_C
 #define CGAL_CARTESIAN_AFF_TRANSFORMATION_REP_2_C
 
+#ifdef _MSC_VER
+#define typename
+#endif
+
 CGAL_BEGIN_NAMESPACE
 
 template < class R >
@@ -82,5 +86,9 @@ compose(const Aff_transformation_repC2<R> &t) const
   }
 
 CGAL_END_NAMESPACE
+
+#ifdef _MSC_VER
+#undef typename
+#endif
 
 #endif // CGAL_CARTESIAN_AFF_TRANSFORMATION_REP_2_C

@@ -39,7 +39,7 @@ template < class R >
 inline
 LineC2<R CGAL_CTAG>
 line_from_points( PointC2<R CGAL_CTAG> const& p,
-                    PointC2<R CGAL_CTAG> const& q)
+                  PointC2<R CGAL_CTAG> const& q)
 {
   typename R::FT a,b,c;
   line_from_pointsC2(p.x(),p.y(),q.x(),q.y(),a,b,c);

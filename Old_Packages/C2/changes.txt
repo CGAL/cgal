@@ -1,3 +1,8 @@
+Version 3.3 (September 3 1999)
+- The typename added in 3.2.3 crashes VC++, hence the #define typename for VC++
+- Minor bug for line_2.point(int i) (int not converted to FT) works with
+  builtin types but not Gmpz for instance...
+
 Version 3.2.7 (September 2 1999)
 - removed #warning which is not standard-compliant and crashes on M$VC++
 

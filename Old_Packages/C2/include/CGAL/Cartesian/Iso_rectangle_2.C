@@ -2,6 +2,10 @@
 #define CGAL_CTAG
 #endif
 
+#ifdef _MSC_VER
+#define typename
+#endif
+
 #ifndef CGAL_CARTESIAN_ISO_RECTANGLE_2_C
 #define CGAL_CARTESIAN_ISO_RECTANGLE_2_C
 
@@ -286,5 +290,9 @@ operator>>(std::istream &is, Iso_rectangleC2<R CGAL_CTAG> &r)
 #endif // CGAL_NO_ISTREAM_EXTRACT_ISO_RECTANGLEC2
 
 CGAL_END_NAMESPACE
+
+#ifdef _MSC_VER
+#undef typename
+#endif
 
 #endif

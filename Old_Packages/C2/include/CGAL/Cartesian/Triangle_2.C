@@ -2,6 +2,10 @@
 #define CGAL_CTAG
 #endif
 
+#ifdef _MSC_VER
+#define typename
+#endif
+
 #ifndef CGAL_CARTESIAN_PREDICATES_ON_POINTS_2_H
 #include <CGAL/Cartesian/predicates_on_points_2.h>
 #endif // CGAL_CARTESIAN_PREDICATES_ON_POINTS_2_H
@@ -268,5 +272,9 @@ std::istream &operator>>(std::istream &is, TriangleC2<R CGAL_CTAG> &t)
 #endif // CGAL_NO_ISTREAM_EXTRACT_TRIANGLEC2
 
 CGAL_END_NAMESPACE
+
+#ifdef _MSC_VER
+#undef typename
+#endif
 
 #endif

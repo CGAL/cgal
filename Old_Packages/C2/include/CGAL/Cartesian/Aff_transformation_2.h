@@ -140,22 +140,23 @@ public:
 
   Self &operator=(const Self &t);
 
-  Point_2     transform(const Point_2 &p) const;
-  Point_2     operator()(const Point_2 &p) const;
+  Point_2     transform(const Point_2 &p) const { return ptr()->transform(p); } 
+  Point_2     operator()(const Point_2 &p) const { return transform(p); }
 
-  Vector_2    transform(const Vector_2 &p) const;
-  Vector_2    operator()(const Vector_2 &p) const;
+  Vector_2    transform(const Vector_2 &v) const { return ptr()->transform(v); }
+  Vector_2    operator()(const Vector_2 &v) const { return transform(p); }
 
-  Direction_2 transform(const Direction_2 &d) const;
-  Direction_2 operator()(const Direction_2 &d) const;
+  Direction_2 transform(const Direction_2 &d) const { return ptr()->transform(d); }
+  Direction_2 operator()(const Direction_2 &d) const { return transform(d); }
 
-  Line_2      transform(const Line_2 &l) const;
-  Line_2      operator()(const Line_2 &l) const;
+  Line_2      transform(const Line_2 &l) const { return l.transform(*this); }
+  Line_2      operator()(const Line_2 &l) const {return transform(l); }
 
-  Self        inverse() const;
+  Self        inverse() const { return ptr()->inverse(); }
+
 
   bool        is_even() const { return ptr()->is_even(); }
-  bool        is_odd() const;
+  bool        is_odd() const { return ! (ptr()->is_even()); }
 
   FT          cartesian(int i, int j) const { return ptr()->cartesian(i,j); }
   FT          homogeneous(int i, int j) const { return cartesian(i,j); }

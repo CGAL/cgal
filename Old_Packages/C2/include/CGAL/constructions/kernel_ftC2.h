@@ -122,15 +122,15 @@ void
 line_get_pointC2(const FT &a, const FT &b, const FT &c, int i,
                  FT &x, FT &y)
 {
-  if (b==0)
+  if (b==FT(0))
     {
-      x = (-b-c)/a + i*b;
-      y = FT(1) - i*a;
+      x = (-b-c)/a + FT(i)*b;
+      y = FT(1) - FT(i)*a;
     }
   else
     {
-      x = FT(1) + i*b;
-      y = -(a+c)/b - i*a;
+      x = FT(1) + FT(i)*b;
+      y = -(a+c)/b - FT(i)*a;
     }
 }
 

@@ -2,6 +2,10 @@
 #define CGAL_CTAG
 #endif
 
+#ifdef _MSC_VER
+#define typename
+#endif
+
 #ifndef CGAL_CARTESIAN_RAY_2_C
 #define CGAL_CARTESIAN_RAY_2_C
 
@@ -231,5 +235,9 @@ std::istream &operator>>(std::istream &is, RayC2<R CGAL_CTAG> &r)
 #endif // CGAL_NO_ISTREAM_EXTRACT_RAYC2
 
 CGAL_END_NAMESPACE
+
+#ifdef _MSC_VER
+#undef typename
+#endif
 
 #endif
