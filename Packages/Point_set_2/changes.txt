@@ -1,3 +1,5 @@
+2.3.1  docs changed (range_search variants added)
+
 2.3    Unique_hash_map used
        new range_search variants added (not yet documented)
        some demos added
