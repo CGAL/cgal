@@ -1413,7 +1413,6 @@ Add extra entries and arrange them in the following order.
    $(CGAL_ROOT)\stlport
    $(CGAL_ROOT)\include\CGAL\config\msvc
    $(CGAL_ROOT)\include
-   $(CGAL_ROOT)\include
    $(CGAL_ROOT)\auxiliary\wingmp\gmp-2.0.2
 \end{verbatim}
 It is very important that {\tt stlport} appears first
@@ -1426,13 +1425,12 @@ If \leda\ is used, don't forget to add
 \end{verbatim}
 
 
-{\bf Customizing compilation within a workspace.}
+{\bf Customizing compilation within a project.}
 Select {\em Project/Settings...}, the {\em C/C++}
 section, {\em Preprocessor} category. Add (in the following order)
 \begin{verbatim}
    $(CGAL_ROOT)\stlport
    $(CGAL_ROOT)\include\CGAL\config\msvc
-   $(CGAL_ROOT)\include
    $(CGAL_ROOT)\include
    $(CGAL_ROOT)\auxiliary\wingmp\gmp-2.0.2
 \end{verbatim}
