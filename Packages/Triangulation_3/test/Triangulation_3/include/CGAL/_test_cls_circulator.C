@@ -1,25 +1,22 @@
-// ============================================================================
+// Copyright (c) 1998  INRIA Sophia-Antipolis (France).
+// All rights reserved.
 //
-// Copyright (c) 1998 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------------
-// 
-// release       :
-// release_date  :
-// 
-// source        : 
-// file          : include/CGAL/_test_cls_circulator.C
-// revision      : 
-// revision_date : 
-// author(s)     : Francois Rebufat (Francois.Rebufat@sophia.inria.fr)
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$ $Date$
+// $Name$
+//
+// Author(s)     : Francois Rebufat (Francois.Rebufat@sophia.inria.fr)
 //                 Monique Teillaud
-//
-// coordinator   : INRIA Sophia-Antipolis
-// ============================================================================
 
 #ifndef CGAL_TEST_CLS_CIRCULATOR_C
 #define CGAL_TEST_CLS_CIRCULATOR_C

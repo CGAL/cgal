@@ -1,23 +1,21 @@
-// ============================================================================
+// Copyright (c) 1998  INRIA Sophia-Antipolis (France).
+// All rights reserved.
 //
-// Copyright (c) 1998 The CGAL Consortium
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// ----------------------------------------------------------------------------
-// 
-// release       :
-// release_date  : 
-// 
-// file          : include/CGAL/_test_types.h
-// revision      : $Revision$
-// revision_date : $Date$
-// author(s)     : Francois Rebufat
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// coordinator   : INRIA Sophia-Antipolis
-// ============================================================================
+// $Source$
+// $Revision$ $Date$
+// $Name$
+//
+// Author(s)     : Francois Rebufat
 
 #ifndef CGAL_TEST_TYPES_H
 #define CGAL_TEST_TYPES_H

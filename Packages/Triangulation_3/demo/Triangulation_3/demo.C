@@ -1,23 +1,5 @@
-// ============================================================================
-//
-// Copyright (c) 1998-1999 The CGAL Consortium
-//
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
-//
-// ----------------------------------------------------------------------------
-//
-// release       :
-// release_date  :
-//
 // file          : demo/Triangulation3/demo.C
-// revision      : $Revision$
 // author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
-//
-// coordinator   : INRIA Sophia Antipolis (Mariette Yvinec)
-//
-// ============================================================================
 
 // Geomview doesn't work on M$ at the moment, so we don't compile this file.
 #if defined(__BORLANDC__) || defined(_MSC_VER)
