@@ -1,3 +1,6 @@
+Version 5.3 (?? ?????? 2000)
+- Use Vector::squared_length(). [syl]
+
 Version 5.2 (31 August 2000)
 - fixed circumcenterC3 for 3 3D points in kernel_ftC3.h (once more)
 
