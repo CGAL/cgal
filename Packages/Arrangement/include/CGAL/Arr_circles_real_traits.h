@@ -129,21 +129,29 @@ public:
 
   typedef Vector_2<R>            Vector;
 
-#ifndef __GNUC__
-  enum Curve_point_status {
+  // The workaround below seems obsolete and produces an error on gcc-3.
+  typedef enum {
     UNDER_CURVE = -1,
-    ABOVE_CURVE = 1,
-    ON_CURVE = 2,
-    CURVE_NOT_IN_RANGE = 0,
-  };
-#else
-  //workaround for egcs, otherwise we get an ICE
-  typedef int Curve_point_status;
-  static const int UNDER_CURVE = -1;
-  static const int ABOVE_CURVE = 1;
-  static const int ON_CURVE = 2;
-  static const int CURVE_NOT_IN_RANGE = 0;
-#endif
+    CURVE_NOT_IN_RANGE,
+    ABOVE_CURVE,
+    ON_CURVE
+  } Curve_point_status;
+
+// #ifndef __GNUC__
+//   enum Curve_point_status {
+//     UNDER_CURVE = -1,
+//     ABOVE_CURVE = 1,
+//     ON_CURVE = 2,
+//     CURVE_NOT_IN_RANGE = 0
+//   };
+// #else
+//   //workaround for egcs, otherwise we get an ICE
+//   typedef int Curve_point_status;
+//   static const int UNDER_CURVE = -1;
+//   static const int ABOVE_CURVE = 1;
+//   static const int ON_CURVE = 2;
+//   static const int CURVE_NOT_IN_RANGE = 0;
+// #endif
 
   Arr_circles_real_traits() {}
 
