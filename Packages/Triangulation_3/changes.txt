@@ -1,3 +1,6 @@
+Version 1.20 (28 oct 99)
+cleaning and purify-ing
+
 Version 1.19 (22 oct 99)
 Remove reference to Quotient, replaced by Homogeneous::FT.
 Triangulation_utils_3 cleaned

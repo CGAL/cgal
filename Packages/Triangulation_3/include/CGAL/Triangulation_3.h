@@ -130,10 +130,18 @@ protected:
   void init_tds()
     {
       infinite = (Vertex*) 
-	_tds.insert_increase_dimension(Vertex(Point(0,0,0)));
-      // coordinates are given to this vertex but they will and must
-      // NEVER be accessed !! done to avoid a problem of accessing
-      // non initialized data
+ 	_tds.insert_increase_dimension(Vertex());
+      // this causes a problem of accessing non initialized data 
+      // (seen by purify) in _tds.insert_increase_dimension
+      // when doing Vertex* w = new Vertex(v)
+      // to be solved...
+      // but the following solution does not work for regular triangulation :
+
+// 	_tds.insert_increase_dimension(Vertex(Point(0,0,0)));
+//       // coordinates are given to this vertex but they will and must
+//       // NEVER be accessed !! done to avoid a problem of accessing
+//       // non initialized data
+
       handle2pointer( infinite ); 
       handle2pointer( Cell_handle() );
       // ( forces the compiler to instanciate handle2pointer )

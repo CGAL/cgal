@@ -5,8 +5,7 @@
 # Choose the right include file from the <cgalroot>/make directory.
 
 # pour purify, virer LEDA
-
-CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-2.1-I-31/make/makefile_sparc_SunOS-5.6_g++-2.95.1
+CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-2.1-I-31/make/makefile_sparc_SunOS-5.6_g++-2.95.1_LEDA
 #CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.7_g++-2.95.1_LEDA
 include $(CGAL_MAKEFILE)
 
@@ -15,7 +14,7 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 # pour purify :
-CGAL_CXX=purify /usr/local/egcs/bin/g++
+#CGAL_CXX=purify /usr/local/egcs/bin/g++
 
 CXXFLAGS = \
 	-I../../include \
@@ -37,8 +36,8 @@ CXXFLAGS = \
 #---------------------------------------------------------------------#
 
 # pour purify :
-CGAL_LDFLAGS= $(CGAL_LIB_DIR)/$(CGAL_OS_COMPILER)/libCGAL.a \
-              -L$(GMP_LIB_DIR) -lgmp -lm 
+#CGAL_LDFLAGS= $(CGAL_LIB_DIR)/$(CGAL_OS_COMPILER)/libCGAL.a \
+#              -L$(GMP_LIB_DIR) -lgmp -lm 
 
 LDFLAGS = $(TESTSUITE_LDFLAGS) \
           $(CGAL_LDFLAGS)
