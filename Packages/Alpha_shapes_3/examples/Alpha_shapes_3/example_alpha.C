@@ -1,25 +1,19 @@
 /***********************************************************************
 
-Prend une liste de points et renvoie une liste de segments
-correspondant a l'Alpha Shape.
+Takes a list of points and returns a list of segments corresponding to
+the Alpha Shape.
 
 ************************************************************************/
 
-
-
 #include <CGAL/Cartesian.h>
+
 #include <cstdio>
 #include <cstring>
 #include <iostream>
 #include <fstream>
-#include <strstream>
-// en fait le std dit sstream
-
 #include <vector>
 #include <list>
 
-#include <CGAL/Triangulation_iterators_3.h>
-#include <CGAL/Triangulation_circulators_3.h>
 #include <CGAL/Alpha_shape_vertex_base_3.h>
 #include <CGAL/Triangulation_cell_base_3.h>
 #include <CGAL/Alpha_shape_cell_base_3.h>

@@ -25,20 +25,17 @@
 #ifndef CGAL_ALPHA_SHAPE_3_H
 #define CGAL_ALPHA_SHAPE_3_H
 
-#include <assert.h>
 #include <CGAL/basic.h>
 
+#include <cassert>
 #include <set>
 #include <map>
-
-
-#include <CGAL/triple.h>
 #include <vector>
-
 #include <algorithm>
 #include <utility>
 #include <iostream>
 
+#include <CGAL/triple.h>
 #include <CGAL/IO/Geomview_stream.h>  // TBC
 
 //-------------------------------------------------------------------
@@ -66,8 +63,7 @@ public:
   typedef typename Dt::Geom_traits Gt;
   typedef typename Dt::Triangulation_data_structure Tds;
 
-  typedef typename Gt::Rep Rp;
-  typedef typename Rp::FT Coord_type;
+  typedef typename Gt::FT Coord_type;
 
   typedef typename Gt::Point_3 Point;
   typedef typename Gt::Segment_3 Segment;
@@ -81,13 +77,18 @@ public:
   typedef typename Dt::Facet Facet;
   typedef typename Dt::Edge Edge;
 
-  typedef typename Dt::Cell_circulator Cell_circulator;
+  typedef typename Dt::Cell_circulator  Cell_circulator;
   typedef typename Dt::Facet_circulator Facet_circulator;
 
-  typedef typename Dt::Cell_iterator Cell_iterator;
-  typedef typename Dt::Facet_iterator Facet_iterator;
-  typedef typename Dt::Edge_iterator Edge_iterator;
+  typedef typename Dt::Cell_iterator   Cell_iterator;
+  typedef typename Dt::Facet_iterator  Facet_iterator;
+  typedef typename Dt::Edge_iterator   Edge_iterator;
   typedef typename Dt::Vertex_iterator Vertex_iterator;
+
+  typedef typename Dt::Finite_cells_iterator    Finite_cells_iterator;
+  typedef typename Dt::Finite_facets_iterator   Finite_facets_iterator;
+  typedef typename Dt::Finite_edges_iterator    Finite_edges_iterator;
+  typedef typename Dt::Finite_vertices_iterator Finite_vertices_iterator;
 
   typedef typename Dt::Locate_type Locate_type;
 
@@ -796,12 +797,12 @@ template <class Dt>
 void 
 Alpha_shape_3<Dt>::initialize_interval_cell_map()
 {  
-  Cell_iterator cell_it;
+  Finite_cells_iterator cell_it;
   Cell_handle pCell;
   Coord_type alpha_f;
 
   for( cell_it = finite_cells_begin(); 
-       cell_it != cells_end(); 
+       cell_it != finite_cells_end(); 
        ++cell_it)
     {
       pCell = cell_it->handle();
@@ -822,12 +823,12 @@ template <class Dt>
 void 
 Alpha_shape_3<Dt>::initialize_interval_facet_map()
 {
-  Facet_iterator face_it;  // TBC
+  Finite_facets_iterator face_it;  // TBC
   Facet f;
   Cell_handle pCell, pNeighbor ;
  
   for( face_it = finite_facets_begin(); 
-       face_it != facets_end(); 
+       face_it != finite_facets_end(); 
        ++face_it)
     {
       f = *face_it;
@@ -1038,10 +1039,10 @@ Alpha_shape_3<Dt>::initialize_interval_vertex_map()
   Coord_type alpha_max_v;
   Coord_type alpha_s;
 
-  Vertex_iterator vertex_it;
+  Finite_vertices_iterator vertex_it;
   // only finite vertexs
   for( vertex_it = finite_vertices_begin(); 
-       vertex_it != vertices_end(); 
+       vertex_it != finite_vertices_end(); 
        ++vertex_it)
     {
       Vertex_handle v = vertex_it->handle();
@@ -1094,7 +1095,7 @@ Alpha_shape_3<Dt>::initialize_interval_vertex_map()
 	  // at the moment takes v*s time
 
 	  Cell_iterator cell_it;
-	    for( cell_it = all_cells_begin(); 
+	    for( cell_it = cells_begin(); 
 		 cell_it != cells_end(); 
 		 ++cell_it)
 	      {
@@ -1731,12 +1732,12 @@ Alpha_shape_3<Dt>::number_of_solid_components(const Coord_type& alpha) const
     //            O(#alpha_shape log n) otherwise
 {
   Marked_cell_set marked_cell_set;
-  Cell_iterator cell_it;
+  Finite_cells_iterator cell_it;
   int nb_solid_components = 0;
 
   // only finite simplices
   for( cell_it = finite_cells_begin(); 
-       cell_it != cells_end(); 
+       cell_it != finite_cells_end(); 
        ++cell_it)
     {
       Cell_handle pCell = cell_it->handle();
@@ -1845,7 +1846,7 @@ Alpha_shape_3<Dt>::find_alpha_solid() const
   Vertex_iterator vertex_it;
   
   // at the moment all finite + infinite vertices
-  for( vertex_it = all_vertices_begin(); 
+  for( vertex_it = vertices_begin(); 
        vertex_it != vertices_end();
        ++vertex_it)
     {
@@ -1872,7 +1873,7 @@ Alpha_shape_3<Dt>::find_alpha_solid() const
 	  // at the moment takes v*s time
 	    
 	  Cell_iterator cell_it;
-	  for( cell_it = all_cells_begin(); 
+	  for( cell_it = cells_begin(); 
 	       cell_it != cells_end(); 
 	       ++cell_it)
 	    {

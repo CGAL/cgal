@@ -25,19 +25,11 @@
 #ifndef CGAL_WEIGHTED_ALPHA_SHAPE_EUCLIDEAN_TRAITS_3_H
 #define CGAL_WEIGHTED_ALPHA_SHAPE_EUCLIDEAN_TRAITS_3_H 
 
-#include <CGAL/squared_distance_3.h>   // to avoid a g++ problem
-#include <CGAL/Point_3.h>
-#include <CGAL/predicates_on_points_3.h>
-
-#include <CGAL/Triangulation_geom_traits_3.h>
-
 #include <CGAL/squared_radius_smallest_orthogonalsphereC3.h>
 #include <CGAL/in_smallest_orthogonalsphereC3.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 
-//-------------------------------------------------------------------
 CGAL_BEGIN_NAMESPACE
-//-------------------------------------------------------------------
 
 //------------------ Function Objects----------------------------------
 
@@ -48,22 +40,22 @@ public:
 
   typedef return_type result_type;
 
-  result_type operator()(const T& p, const T& q, const T& r, const T& s)
+  result_type operator()(const T& p, const T& q, const T& r, const T& s) const
     { 
-      return max
-	(return_type(0), CGAL::squared_radius_orthogonalsphere(p, q, r, s));
+      return max (return_type(0),
+	          CGAL::squared_radius_orthogonalsphere(p, q, r, s));
     }
 
-  result_type operator()(const T& p, const T& q, const T& r)
+  result_type operator()(const T& p, const T& q, const T& r) const
     { 
-      return max
-	(return_type(0), CGAL::squared_radius_smallest_orthogonalsphere(p, q, r));
+      return max (return_type(0),
+	          CGAL::squared_radius_smallest_orthogonalsphere(p, q, r));
     }
 
-  result_type operator()(const T& p, const T& q)
+  result_type operator()(const T& p, const T& q) const
     { 
-      return max
-	(return_type(0), CGAL::squared_radius_smallest_orthogonalsphere(p, q));
+      return max (return_type(0),
+	          CGAL::squared_radius_smallest_orthogonalsphere(p, q));
     }
 };
 
@@ -76,7 +68,8 @@ public:
 
   typedef Bounded_side result_type;
 
-  result_type operator()(const T& p, const T& q, const T& r, const T& test)
+  result_type
+  operator()(const T& p, const T& q, const T& r, const T& test) const
     {
       return CGAL::in_smallest_orthogonalsphere(p, q, r, test);
     }
@@ -113,7 +106,6 @@ public:
       return Compute_squared_radius_orthogonalsphere_3();
     }
   //---------------------------------------------------------------------
-  
 
   Side_of_bounded_orthogonalsphere_3 
   side_of_bounded_sphere_3_object() const
@@ -122,8 +114,6 @@ public:
     }
 };
 
-//-------------------------------------------------------------------
 CGAL_END_NAMESPACE
-//-------------------------------------------------------------------
 
 #endif //CGAL_WEIGHTED_ALPHA_SHAPE_EUCLIDEAN_TRAITS_3_H 

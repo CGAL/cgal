@@ -28,17 +28,14 @@
 #include <vector>
 #include <CGAL/triple.h>
 
-//-------------------------------------------------------------------
 CGAL_BEGIN_NAMESPACE
-//-------------------------------------------------------------------
 
 template < class Gt, class Df >
 class Alpha_shape_cell_base_3 : public Df
 {
 public:
 
-  typedef typename Gt::Rep Rp;               // A corriger avec Monique
-  typedef typename Rp::FT Coord_type;        // A corriger avec Monique
+  typedef typename Gt::FT Coord_type;        // A corriger avec Monique
   typedef triple<Coord_type, Coord_type , Coord_type> Interval3;
 
   //-------------------------------------------------------------------
@@ -67,41 +64,37 @@ public:
 
   //-------------------------------------------------------------------
 
-  inline Coord_type get_alpha()
+  Coord_type get_alpha()
     {
       return A;
     }
   
-  inline void set_alpha(Coord_type AA)
+  void set_alpha(Coord_type AA)
     {
       A = AA;
     }
 
-  inline Interval3 get_facet_ranges(const int& i)
+  Interval3 get_facet_ranges(const int& i)
     {
       return vec_facet[i];
     }
 
-  inline void set_facet_ranges(const int& i, const Interval3& Inter)
+  void set_facet_ranges(const int& i, const Interval3& Inter)
     {
       vec_facet[i]=Inter;
     }
   
-  inline Interval3 get_edge_ranges(const int& i, const int& j)
+  Interval3 get_edge_ranges(const int& i, const int& j)
     {
       return vec_edge[i][j];
     }
 
-  inline void set_edge_ranges(const int& i, const int& j, 
-			      const Interval3& Inter)
+  void set_edge_ranges(const int& i, const int& j, const Interval3& Inter)
     {
       vec_edge[i][j]=Inter;
     }
-  
 };
 
-//-------------------------------------------------------------------
 CGAL_END_NAMESPACE
-//-------------------------------------------------------------------
 
 #endif //ALPHA_SHAPE_CELL_BASE_3_H
