@@ -1,3 +1,6 @@
+1.12    (4 December 2001)
+- Remove #include to decrease package dependencies (lutz).
+
 1.11    (27 September 2001)
 - Changed CartesianLedaReal to ExactCartesian.
 
