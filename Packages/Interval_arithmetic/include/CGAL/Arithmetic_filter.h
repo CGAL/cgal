@@ -151,6 +151,8 @@ public:
     { _value *= fil._value; update_cache(); return *this; }
   Fil& operator/=(const Fil& fil)
     { _value /= fil._value; update_cache(); return *this; }
+  Fil& operator%=(const Fil& fil)
+    { _value %= fil._value; update_cache(); return *this; }
 #endif // CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
 };
 
