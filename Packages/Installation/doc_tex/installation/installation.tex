@@ -42,7 +42,7 @@
 \newcommand{\mswin}{\textsc{MS}~Windows}
 
 %% macro for CGAL release number
-%% \newcommand{\cgalrelease}{2.1}
+%% \newcommand{\cgalrelease}{2.2}
 
 %% macro for CGAL directory
 \newcommand{\cgaldir}{\texttt{CGAL-\cgalrelease}}
@@ -301,7 +301,7 @@ A menu similar to the following will appear on your screen.
 {\ccTexHtml{\scriptsize}{} \label{pic:main-menu}
 \begin{alltt}
   ****************************************************************
-  **              CGAL 2.1 Installation Main Menu               **
+  **              CGAL 2.2 Installation Main Menu               **
   **              -------------------------------               **
   **                                                            **
   **   OS:                  sparc_SunOS-5.6                     **
@@ -363,7 +363,7 @@ from compiler or linker).
 \begin{verbatim}
   ****************************************************************
   **                                                            **
-  **                     Compiling CGAL 2.1                     **
+  **                     Compiling CGAL 2.2                     **
   **                     ------------------                     **
   **                                                            **
   ****************************************************************
@@ -734,16 +734,17 @@ passed.
 
 \section{Upgrading a previous \cgal\ installation}\label{sec:upgrade}
 
-In case you have \cgal\ 1.*/2.0 installed on your system, you might
-like to reuse your configuration files and GMP installations. Simply
-use the following command to copy them into the right place:
+In case you already have a previous release of \cgal\ installed on
+your system, you might like to reuse your configuration files and GMP
+installations. Simply use the following command to copy them into the
+right place:
 \begin{verbatim}
 ./install_cgal --upgrade <OLD_CGAL_DIR>
 \end{verbatim}
 where \texttt{<OLD\_CGAL\_DIR>} is the root directory of your existing
-\cgal\ installation\\ (e.g. \texttt{/pub/local/CGAL-2.0}).
-You can then build all libraries for the actual operating system that
-existed in your \cgal\ 1.*/2.0 installation with 
+\cgal\ installation\\ (e.g. \texttt{/pub/local/CGAL-2.1}).  You can
+then build all libraries for the actual operating system that existed
+in your previous \cgal\ installation with
 \begin{verbatim}
 ./install_cgal --rebuild-all
 \end{verbatim}
@@ -824,7 +825,7 @@ compiler.  To achieve this, the first section of each makefile
 contains an include statement that looks as follows:
 
 \begin{verbatim}
-      CGAL_MAKEFILE = /users/jannes/CGAL-2.1/make/makefile_<CGAL-OS description>
+      CGAL_MAKEFILE = /users/jannes/CGAL-2.2/make/makefile_<CGAL-OS description>
       include $(CGAL_MAKEFILE)
 \end{verbatim}
 %$
