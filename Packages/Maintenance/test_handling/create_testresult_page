@@ -487,8 +487,8 @@ Look at the output to be sure!</B>
 <OL>
 <LI><A HREF="https://www-sop.inria.fr/geometrica/CGAL/Members/Releases/">
 Downloading internal releases</A></LI>
-<LI><A HREF="http://www.cgal.org/Members/Manual_test/${release_name}/">
-<blink>The documentation of this release</blink></A></LI>
+<LI><A HREF="http://www.cgal.org/Members/Manual_test/${release_name}/" style="color: red">
+The documentation of this release</A></LI>
 EOF
     if (defined($opt_p)) {
 	my $prev_page = result_filename($opt_p);

@@ -1,3 +1,6 @@
+29 August 2004 Sylvain Pion
+- create_testresult_page : change <blink> to red.
+
 27 August 2004 Sylvain Pion
 - Add Developers_manual in the internal releases.
 
