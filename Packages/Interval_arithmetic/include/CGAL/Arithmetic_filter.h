@@ -205,14 +205,14 @@ number_type_tag (const Filtered_exact<CT,ET> &fil)
 
 template <class CT, class ET>
 inline
-ostream &
-operator<< (ostream& os, const Filtered_exact<CT,ET>& d)
+std::ostream &
+operator<< (std::ostream& os, const Filtered_exact<CT,ET>& d)
 { return os << d.value; }
 
 template <class CT, class ET>
 inline
-istream &
-operator>> (istream &is, Filtered_exact<CT,ET>& d)
+std::istream &
+operator>> (std::istream &is, Filtered_exact<CT,ET>& d)
 { return is >> d.value; }
 
 CGAL_END_NAMESPACE
