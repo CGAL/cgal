@@ -15,6 +15,7 @@
 @usepackage[latin1]{inputenc}
 @usepackage{a4wide2}
 @usepackage{amssymb}
+@usepackage{path}
 @usepackage{cc_manual}
 @article
 
@@ -1096,6 +1097,31 @@ traits class object.
 @end
 
 @! ----------------------------------------------------------------------------
+\subsubsection{Graphical Output}
+
+@macro<Min_ellipse_2 graphical output operator> = @begin
+    #ifdef CGAL_MIN_ELLIPSE_2_H
+    #ifndef CGAL_IO_WINDOW_STREAM_MIN_ELLIPSE_2
+    #define CGAL_IO_WINDOW_STREAM_MIN_ELLIPSE_2
+
+    template< class R >
+    CGAL_Window_stream&
+    operator << ( CGAL_Window_stream &ws,
+                  const CGAL_Min_ellipse_2<R>& min_ellipse)
+    {
+        typedef  typename CGAL_Min_ellipse_2<R>::Point_iterator  Point_iterator;
+
+        Point_iterator  first( min_ellipse.points_begin());
+        Point_iterator  last ( min_ellipse.points_end());
+        for ( ; first != last; ++first)
+            ws << *first;
+        return( ws << min_ellipse.ellipse());
+    }
+    #endif // CGAL_IO_WINDOW_STREAM_MIN_ELLIPSE_2
+    #endif // CGAL_MIN_ELLIPSE_2_H
+@end
+
+@! ----------------------------------------------------------------------------
 \subsubsection{Private Member Function {\ccFont compute\_ellipse}}
 
 This is the method for computing the basic case $\me(\emptyset,B)$,
@@ -1195,7 +1221,6 @@ First, we declare the class template \ccc{CGAL_Optimisation_ellipse_2},
 
     class ostream;
     class istream;
-    class CGAL_Window_stream;
 @end
 
 \emph{Workaround:} The GNU compiler (g++ 2.7.2[.?]) does not accept types
@@ -1671,6 +1696,49 @@ one.
         return( is);
     }
 @end
+
+@! ----------------------------------------------------------------------------
+\subsubsection{Graphical Output}
+
+@macro<Optimisation_ellipse_2 graphical output operator> = @begin
+    #ifdef CGAL_OPTIMISATION_ELLIPSE_2_H
+    #ifndef CGAL_IO_WINDOW_STREAM_OPTIMISATION_ELLIPSE_2
+    #define CGAL_IO_WINDOW_STREAM_OPTIMISATION_ELLIPSE_2
+
+    template< class R >
+    CGAL_Window_stream&
+    operator << ( CGAL_Window_stream &ws,
+                  const CGAL_Optimisation_ellipse_2<R>& oe)
+    {
+        switch ( oe.n_boundary_points) {
+          case 0:
+            break;
+          case 1:
+            ws << oe.boundary_point1;
+            break;
+          case 2: {
+            double  px1( CGAL_to_double( oe.boundary_point1.x()));
+            double  py1( CGAL_to_double( oe.boundary_point1.y()));
+            double  px2( CGAL_to_double( oe.boundary_point2.x()));
+            double  py2( CGAL_to_double( oe.boundary_point2.y()));
+            ws.draw_segment( px1, py1, px2, py2); }
+            break;
+          case 3:
+          case 4:
+          case 5:
+            ws << oe.to_double();
+            break;
+          default:
+            CGAL_optimisation_assertion( ( oe.n_boundary_points >= 0) &&
+                                         ( oe.n_boundary_points <= 5) ); }
+
+        return( ws);
+    }
+
+    #endif // CGAL_IO_WINDOW_STREAM_OPTIMISATION_ELLIPSE_2
+    #endif // CGAL_OPTIMISATION_ELLIPSE_2_H
+@end
+
 
 @! ----------------------------------------------------------------------------
 @! Class template CGAL_Min_ellipse_2_traits_2<R>
@@ -3076,6 +3144,9 @@ end of each file.
     #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
     #  include <CGAL/optimisation_assertions.h>
     #endif
+    #ifndef CGAL_IO_FORWARD_DECL_WINDOW_STREAM_H
+    #include <CGAL/IO/forward_decl_window_stream.h>
+    #endif
 
     @<Optimisation_ellipse_2 interface>
 
@@ -3297,6 +3368,38 @@ end of each file.
 @end
 
 @! ----------------------------------------------------------------------------
+@! Min_ellipse_2_Window_stream.h
+@! ----------------------------------------------------------------------------
+
+\subsection{Min\_ellipse\_2\_Window\_stream.h}
+
+@file <include/CGAL/IO/Min_ellipse_2_Window_stream.h> = @begin
+    @<file header>(
+        "include/CGAL/IO/Min_ellipse_2_Window_stream.h",
+        "graphical output to `leda_window' for Min_ellipse_2 algo.")
+
+    // Each of the following operators is individually 
+    // protected against multiple inclusion.
+
+    // Window_stream I/O operators
+    // ===========================
+    // includes
+    #ifndef CGAL_CONIC_2_WINDOW_STREAM_H
+    #  include <CGAL/IO/Conic_2_Window_stream.h>
+    #endif
+
+    // Optimisation_ellipse_2
+    // ----------------------
+    @<Optimisation_ellipse_2 graphical output operator>
+
+    // Min_ellipse_2
+    // -------------
+    @<Min_ellipse_2 graphical output operator>
+
+    @<end of file line>
+@end
+
+@! ----------------------------------------------------------------------------
 @! test_Min_ellipse_2.C
 @! ----------------------------------------------------------------------------
 
@@ -3375,6 +3478,6 @@ web file.
 
 \clearpage
 \bibliographystyle{plain}
-\bibliography{geom,cgal}
+\bibliography{geom,../../doc_tex/basic/Optimisation/cgal}
 
 @! ===== EOF ==================================================================
