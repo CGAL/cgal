@@ -43,7 +43,7 @@ file_input(char* finput, const int& number_of_points, std::vector<Point>& L)
   if(is.fail())
     {
       std::cerr << "+++unable to open file for input" << std::endl;
-      std::exit(0);
+      CGAL_CLIB_STD::exit(0);
       return false;
     }
   else
@@ -89,7 +89,7 @@ section_file_input(char* finput, const int& number_of_points, std::vector<Point>
   if(is.fail())
     {
       std::cerr << "+++unable to open file for input" << std::endl;
-      std::exit(0);
+      CGAL_CLIB_STD::exit(0);
       return false;
     }
   else
@@ -174,8 +174,8 @@ dump_in_file_medit_selected_facets(char* foutput, const Triangulation_3& A)
   char foutput_faces[100];
   AF_CGAL_CLIB_STD::strcpy(foutput_points, foutput);
   AF_CGAL_CLIB_STD::strcpy(foutput_faces, foutput);
-  std::strcat(foutput_points, ".points");
-  std::strcat(foutput_faces, ".faces");
+  CGAL_CLIB_STD::strcat(foutput_points, ".points");
+  CGAL_CLIB_STD::strcat(foutput_faces, ".faces");
   std::ofstream os_points(foutput_points, std::ios::out);
   std::ofstream os_faces(foutput_faces, std::ios::out);
   if((os_points.fail())||(os_faces.fail()))
@@ -196,13 +196,13 @@ dump_in_file_medit_selected_facets(char* foutput, const Triangulation_3& A)
 
   os_points << _vh_number << std::endl;
 
-  CGAL::Unique_hash_map<Vertex*, int> vertex_index_map(-1, A.number_of_vertices());
+  CGAL::Unique_hash_map<Vertex_handle, int> vertex_index_map(-1, A.number_of_vertices());
 
   int count(0);
   for (Finite_vertices_iterator v_it = A.finite_vertices_begin();
        v_it != A.finite_vertices_end();
        v_it++){
-    CGAL::Unique_hash_map<Vertex*, int>::Data& d = vertex_index_map[&(*v_it)];
+    CGAL::Unique_hash_map<Vertex_handle, int>::Data& d = vertex_index_map[&(*v_it)];
     if ((!v_it->is_exterior()) && d == -1){
       d = count;
       count++;
@@ -267,7 +267,7 @@ dump_in_file_gv_selected_facets(char* foutput, const Triangulation_3& A)
   char foutput_tmp[100];
   AF_CGAL_CLIB_STD::strcpy(foutput_tmp, foutput);
 
-  std::strcat(foutput_tmp, ".oogl");
+  CGAL_CLIB_STD::strcat(foutput_tmp, ".oogl");
   std::ofstream os(foutput_tmp, std::ios::out);
 
   if(os.fail())
@@ -286,13 +286,13 @@ dump_in_file_gv_selected_facets(char* foutput, const Triangulation_3& A)
   os << "OFF" << std::endl
      << _vh_number << " " << _facet_number << " " << 0 << std::endl;
 
-  CGAL::Unique_hash_map<Vertex*, int> vertex_index_map(-1, A.number_of_vertices());
+  CGAL::Unique_hash_map<Vertex_handle, int> vertex_index_map(-1, A.number_of_vertices());
 
   int count(0);
   for (Finite_vertices_iterator v_it = A.finite_vertices_begin();
        v_it != A.finite_vertices_end();
        v_it++){
-    CGAL::Unique_hash_map<Vertex*, int>::Data& d = vertex_index_map[&(*v_it)];
+    CGAL::Unique_hash_map<Vertex_handle, int>::Data& d = vertex_index_map[&(*v_it)];
     if ((!v_it->is_exterior()) && d == -1){
       d = count;
       count++;
@@ -362,7 +362,7 @@ dump_in_file_ply_selected_facets(char* foutput, const Triangulation_3& A)
   char foutput_tmp[100];
   AF_CGAL_CLIB_STD::strcpy(foutput_tmp, foutput);
 
-  std::strcat(foutput_tmp, ".ply");
+  CGAL_CLIB_STD::strcat(foutput_tmp, ".ply");
   std::ofstream os(foutput_tmp, std::ios::out);
 
   if(os.fail())
@@ -389,13 +389,13 @@ dump_in_file_ply_selected_facets(char* foutput, const Triangulation_3& A)
      << "property list uchar int vertex_indices" << std::endl
      << "end_header" << std::endl;
 
-  CGAL::Unique_hash_map<Vertex*, int> vertex_index_map(-1, A.number_of_vertices());
+  CGAL::Unique_hash_map<Vertex_handle, int> vertex_index_map(-1, A.number_of_vertices());
 
   int count(0);
   for (Finite_vertices_iterator v_it = A.finite_vertices_begin();
        v_it != A.finite_vertices_end();
        v_it++){
-    CGAL::Unique_hash_map<Vertex*, int>::Data& d = vertex_index_map[&(*v_it)];
+    CGAL::Unique_hash_map<Vertex_handle, int>::Data& d = vertex_index_map[&(*v_it)];
     if ((!v_it->is_exterior()) && d == -1){
       d = count;
       count++;
@@ -708,7 +708,7 @@ dump_in_file_iv_selected_facets(char* foutput, const Triangulation_3& A,
   char foutput_tmp[100];
   AF_CGAL_CLIB_STD::strcpy(foutput_tmp, foutput);
 
-  std::strcat(foutput_tmp, ".iv");
+  CGAL_CLIB_STD::strcat(foutput_tmp, ".iv");
   std::ofstream os(foutput_tmp, std::ios::out);
 
   if(os.fail())
@@ -754,13 +754,13 @@ dump_in_file_iv_selected_facets(char* foutput, const Triangulation_3& A,
 "	    Coordinate3 {" << std::endl <<
 "	       point [ ";
 
-  CGAL::Unique_hash_map<Vertex*, int> vertex_index_map(-1, A.number_of_vertices());
+  CGAL::Unique_hash_map<Vertex_handle, int> vertex_index_map(-1, A.number_of_vertices());
 
   int count(0);
   for (Finite_vertices_iterator v_it = A.finite_vertices_begin();
        v_it != A.finite_vertices_end();
        v_it++){
-    CGAL::Unique_hash_map<Vertex*, int>::Data& d = vertex_index_map[&(*v_it)];
+    CGAL::Unique_hash_map<Vertex_handle, int>::Data& d = vertex_index_map[&(*v_it)];
     if ((!v_it->is_exterior()) && d == -1){
       d = count;
       count++;
@@ -860,7 +860,7 @@ fill_holes(std::ostream& os, const Triangulation_3& T)
 	L_v_tmp.push_back(vh_it);
 	vh_it->set_post_mark(_postprocessing_cont);
 	vprev_it = vh_it;
-	v_count++;
+	//v_count++;
       } while((vprev_it != done)&&(v_count < 20));
       // we stopped either because we did a complete tour, or because
       // the border was so long that we consider it as too big to close
@@ -888,7 +888,7 @@ fill_holes(std::ostream& os, const Triangulation_3& T)
 	for(unsigned int i = 0; i < L_v_tmp.size(); i++){
 	  os << i << ", ";
 	}
-	os << " -1\n";
+	os << "0, -1\n";
       os << "]\n" 
 	"}#IndexedLineSet\n"
 	"}# Shape\n"; 
@@ -905,7 +905,7 @@ dump_in_file_vrml2_selected_facets(char* foutput, const Triangulation_3& A,
   char foutput_tmp[100];
   AF_CGAL_CLIB_STD::strcpy(foutput_tmp, foutput);
 
-  std::strcat(foutput_tmp, ".vrml");
+  CGAL_CLIB_STD::strcat(foutput_tmp, ".vrml");
   std::ofstream os(foutput_tmp, std::ios::out);
 
   if(os.fail())
@@ -931,20 +931,20 @@ dump_in_file_vrml2_selected_facets(char* foutput, const Triangulation_3& A,
     "coord DEF def_coords Coordinate {\n"
     "point [ " << std::endl;
   
-  CGAL::Unique_hash_map<Vertex*, int> vertex_index_map(-1, A.number_of_vertices());
+  CGAL::Unique_hash_map<Vertex_handle, int> vertex_index_map(-1, A.number_of_vertices());
 
   int count(0);
   for (Finite_vertices_iterator v_it = A.finite_vertices_begin();
        v_it != A.finite_vertices_end();
        v_it++){
-    CGAL::Unique_hash_map<Vertex*, int>::Data& d = vertex_index_map[&(*v_it)];
+    CGAL::Unique_hash_map<Vertex_handle, int>::Data& d = vertex_index_map[&(*v_it)];
     if ((!v_it->is_exterior()) && d == -1){
       d = count;
       count++;
       os << convert()(v_it->point())  << " ,\n";
     }
   }
-
+  _vh_number = count; // needed for the statistics
   os << " ]\n"
     "}\n"\
     "solid FALSE\n"
@@ -1063,15 +1063,20 @@ dump_in_file_selected_facets(char* foutput, const Triangulation_3& A,
       //dump_in_file_ply_selected_facets(foutput, A);
       return;
     case 0:
-      return dump_in_file_vrml2_selected_facets(foutput, A, contour);
+      dump_in_file_vrml2_selected_facets(foutput, A, contour);
+      return;
     case 1:
-      return dump_in_file_gv_selected_facets(foutput, A);
+      dump_in_file_gv_selected_facets(foutput, A);
+      return;
     case 2:
-      return dump_in_file_medit_selected_facets(foutput, A);
+      dump_in_file_medit_selected_facets(foutput, A);
+      return;
     case 3:
-      return dump_in_file_ply_selected_facets(foutput, A);
+      dump_in_file_ply_selected_facets(foutput, A);
+      return;
     case 4:
-      return dump_in_file_iv_selected_facets(foutput, A, contour);
+      dump_in_file_iv_selected_facets(foutput, A, contour);
+      return;
     }
 }
 

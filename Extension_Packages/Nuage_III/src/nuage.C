@@ -16,8 +16,13 @@
 // Kernel
 //#include <CGAL/Kernel_checker.h>
 #include <CGAL/Simple_cartesian.h>
+
+#if defined( _MSC_VER)
 #include <CGAL/Filtered_kernel.h>
+#else
 #include <CGAL/Static_filters.h>
+#endif
+
 #include <CGAL/Cartesian_converter.h>
 
 #include <CGAL/Triangulation_data_structure_3.h>
@@ -43,8 +48,11 @@
 typedef double coord_type;
 typedef double NT;
 
-//struct Rep : public CGAL::Filtered_kernel<CGAL::Simple_cartesian<NT> > {};
+#if defined( _MSC_VER)
+struct Rep : public CGAL::Filtered_kernel<CGAL::Simple_cartesian<NT> > {};
+#else
 struct Rep : public CGAL::Static_filters<CGAL::Simple_cartesian<NT> > {};
+#endif
 
 //---
 // struct leda_real_NT_converter
@@ -1284,7 +1292,7 @@ loop(const Triangulation_3& A,
   std::cin >> nnn;
 #endif //BLIND
   t1.start();
-  if (nnn == 0) std::exit(0);
+  if (nnn == 0) CGAL_CLIB_STD::exit(0);
   if (_ordered_border->empty()) return;
   do
     {
@@ -1409,8 +1417,12 @@ loop(const Triangulation_3& A,
     }
   while((!_ordered_border->empty())&&(K <= K_max)&&(min_K != HUGE_VAL));
   t1.stop();
-  if ((min_K < HUGE_VAL)&&(!_ordered_border->empty()))
+
+#ifdef VERBOSE
+  if ((min_K < HUGE_VAL)&&(!_ordered_border->empty())) {
     std::cout << "   [ next K required = " << min_K << " ]" << std::endl;
+  }
+#endif // VERBOSE
 }
 
 
@@ -1428,11 +1440,14 @@ loop(const Triangulation_3& A,
 
 int main(int argc,  char* argv[])
 {
+  CGAL::Timer t2;
+
+  t2.start();
   //parse command line
   Options opt;
   std::cout << ">> option line for this execution is :" << std::endl;
   if (!parse(argc, argv, opt))
-    std::exit(0);
+    CGAL_CLIB_STD::exit(0);
   std::cout << std::endl << std::endl;
   DELTA = opt.DELTA;
   
@@ -1458,6 +1473,7 @@ int main(int argc,  char* argv[])
   else
     section_file_input(opt.finname, opt.number_of_points, L);
 
+  std::cout << "Time for reading"  << t2.time() << " sec" << std::endl;
   construct_delaunay(L, A);
   //assert(A.is_valid());
   
@@ -1481,17 +1497,17 @@ int main(int argc,  char* argv[])
 	  //_last_component_facet_number = _facet_number;
 // modif
 	  sum_time = t1.time();
-	  std::cout << std::endl << ">> initialisation finished after " << t1.time() << " seconds." <<
-	    std::endl << std::endl;
+	  //std::cout << "\n>> initialisation finished after " << t1.time() << " sec." 
+	  //    << std::endl << std::endl;
 	  t1.reset();
-	  std::cout << ">> selection loop : " << std::endl;
+	  //std::cout << ">> selection loop : " << std::endl;
 #ifndef BLIND
 	  loop(A, opt.K_init, opt.K_step, opt.K, gv_main);
 #else
 	  loop(A, opt.K_init, opt.K_step, opt.K);
 #endif //BLIND
-	  std::cout << "-- selection loop finished after  " << t1.time() 
-		    << " seconds." << std::endl;
+	  //std::cout << "-- selection loop finished after  " << t1.time() 
+	  //    << " sec." << std::endl;
 
 	  sum_time += t1.time();
 	  t1.reset();
@@ -1508,26 +1524,27 @@ int main(int argc,  char* argv[])
 		  t1.reset();
 		  post_trait = postprocessing(A, opt.NB_BORDER_MAX);
 
-		  std::cout << "-- postprocessing finished after " << t1.time() 
-			    << " seconds." << std::endl;
+		  //std::cout << "-- postprocessing finished after " << t1.time() 
+		  //    << " seconds." << std::endl;
 		  sum_time += t1.time();
 		  t1.reset();
 		  if (post_trait)
 		    {
-		      std::cout << std::endl << ">> selection loop : " << std::endl;
+		      //std::cout << std::endl << ">> selection loop : " << std::endl;
 #ifndef BLIND
 		      loop(A, opt.K_init, opt.K_step, opt.K, gv_main);
 #else
 		      loop(A, opt.K_init, opt.K_step, opt.K);
 #endif //BLIND
-		      std::cout  << "-- selection loop finished after  " 
-				 << t1.time() << " seconds." << std::endl;
+		      //std::cout  << "-- selection loop finished after  " 
+		      //	 << t1.time() << " seconds." << std::endl;
 	      
 		      sum_time += t1.time();
 		    }
-		  else
-		    std::cout << "   postprocessing finished." 
-			      << std::endl << std::endl;
+		  else {
+		    //std::cout << "   postprocessing finished." 
+		    //      << std::endl << std::endl;
+		  }
 		}
 	      while(post_trait);
 	    }
@@ -1537,8 +1554,8 @@ int main(int argc,  char* argv[])
 #endif //BLIND
 
 	    //   gv_main << A;
-	    std::cout << "-- reconstruction (init+loop+post) finished after  " <<
-	      sum_time << " seconds." << std::endl;
+	    //std::cout << "-- reconstruction (init+loop+post) finished after  " <<
+	    //  sum_time << " seconds." << std::endl;
 	    total_time += sum_time;
 
 #ifndef BLIND
@@ -1579,12 +1596,13 @@ int main(int argc,  char* argv[])
 	   ((number_of_connected_comp < opt.max_connected_comp)||
 	    (opt.max_connected_comp < 0)));
 
-  fill_holes(A);
+  //fill_holes(A);
 
-  std::cout << "-- totalite de la selection terminee en  " <<
-    total_time << " secondes." << std::endl;
+  //std::cout << "-- totalite de la selection terminee en  " <<
+  //  total_time << " secondes." << std::endl;
 
  
+  std::cout << "Total time: " << t2.time() << "sec" << std::endl; 
   dump_in_file_selected_facets(opt.foutname, A, opt.contour, opt.out_format);
 
 

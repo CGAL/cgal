@@ -28,7 +28,7 @@ construct_delaunay(const std::vector<Point> &V_p,
     {
       std::cout << "-- 2D sample of points ???" 
 		<< std::endl;
-      std::exit(0);
+      CGAL_CLIB_STD::exit(0);
     }
   t1.reset();
 }
@@ -294,7 +294,7 @@ visu_facet(const Cell_handle& c, const int& i)
 
 //=====================================================================
 //=====================================================================
-
+#ifndef BLIND
 void
 show_selected_facets(CGAL::Geomview_stream &gv, const Triangulation_3& T)
 { 
@@ -374,7 +374,7 @@ show_selected_facets(CGAL::Geomview_stream &gv, const Triangulation_3& T)
   gv.set_raw(raw_bak);
   gv.set_ascii_mode(ascii_bak);
 }
-
+#endif
 //=====================================================================
 //=====================================================================
 

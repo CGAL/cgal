@@ -222,7 +222,7 @@ inline bool create_singularity(const Triangulation_3& T,
 
   // Reperer le cas d'aretes interieures...
   std::list<Vertex_handle> vh_list;
-  T.incident_vertices(vh, back_inserter(vh_list));
+  T.incident_vertices(vh, std::back_inserter(vh_list));
 
   for (std::list<Vertex_handle>::iterator v_it = vh_list.begin();
        v_it != vh_list.end(); v_it++)
@@ -349,7 +349,11 @@ bool postprocessing(Triangulation_3& T, const int& NB_BORDER_MAX)
 	  }
 	while (!L_v.empty() && (L_v.size() < itmp));
       }
-      std::cout << "   " << L_v.size() << " points non reguliers." << std::endl;
+#ifdef VERBOSE
+      if(L_v.size() > 0){
+	std::cout << "   " << L_v.size() << " non regular points." << std::endl;
+      }
+#endif // VERBOSE
       re_compute_values(T);
     }
   else{

@@ -310,7 +310,9 @@ public:
       } else {
 	std::list<void*>::iterator e(ie_last);
 	e++;
+#ifdef DEBUG
 	std::list<void*>::iterator r = std::find(ie_first, e, v);
+#endif
 	assert(r == e);
 	ie_last = interior_edges.insert(e, v);
       }
