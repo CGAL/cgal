@@ -1,3 +1,6 @@
+8 September 2004 Sylvain Pion
+- Document the "All" CVS module.
+
 31 August 2004 Lutz Kettner
 - Moved all sources to doc_tex/Developers_manual/* such that the manual
   can be tested and build with the automatic manual test suite. All

@@ -127,16 +127,6 @@ Here are the access rules:
     and enter the password corresponding to your \texttt{login\_name} \\
     (\texttt{member1} if you don't have any).
 \item
-    To get the list of existing modules:
-    \texttt{cvs -d :pserver:login\_name@cgal.inria.fr:/CVSROOT co -c}
-\item
-    To check out a module, say \ccc{Convex\_hull\_2}: \\
-    \texttt{cvs -d :pserver:login\_name@cgal.inria.fr:/CVSROOT co
-    Convex\_hull\_2}
-\item
-    Once you have checked out a module, you don't need to specify
-    \texttt{-d ...} anymore for the usual commands like \texttt{cvs commit}...
-\item
     To obtain write access to a package, you first need a personal login
     name and password.  Send your login name to 
     \ccAnchor{mailto:Sylvain.Pion@sophia.inria.fr}
@@ -159,11 +149,24 @@ print "${crypttext}\n";
 \end{verbatim}
 
     and indicate for which packages you need write permission.
+\item
+    To get the list of existing modules:
+    \texttt{cvs -d :pserver:login\_name@cgal.inria.fr:/CVSROOT co -c}
+\item
+    To check out a module, say \ccc{Convex\_hull\_2}: \\
+    \texttt{cvs -d :pserver:login\_name@cgal.inria.fr:/CVSROOT co
+    Convex\_hull\_2}
+\item
+    Once you have checked out a module, you don't need to specify
+    \texttt{-d ...} anymore for the usual commands like \texttt{cvs commit}...
+\item
+    Note that there is a meta module called \ccc{All} which contains all CGAL
+    packages.
 \end{itemize}
 
 After each commit, an automatic mail is sent to the
 \texttt{cgal-cvs-l@postino.mpi-sb.mpg.de} mailing-list which records
-the log message as well as URL to the corresponding diffs within
+the log message as well as the URLs to the corresponding diffs within
 the ViewCVS interface.  Maintainers and developpers can subscribe
 to it in order to check what gets commited to their packages.
 
