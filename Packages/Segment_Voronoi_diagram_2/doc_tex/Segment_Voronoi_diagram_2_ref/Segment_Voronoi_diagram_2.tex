@@ -597,7 +597,27 @@ The following operators must be defined:\\
 \ccc{Stream& operator<<(Stream&, Gt::Ray_2)}\\
 \ccc{Stream& operator<<(Stream&, Gt::Line_2)}
 \ccPrecond{\ccc{*ec} must be a finite edge.}}
-
+%
+\ccGlue
+\ccMethod{template< class Stream >
+Stream& draw_dual_edge(All_edges_iterator eit, Stream& str);}
+{Draws the edge \ccc{*eit} of
+  the segment Voronoi diagram to the stream \ccc{str}.
+The following operators must be defined:\\
+\ccc{Stream& operator<<(Stream&, Gt::Segment_2)}\\
+\ccc{Stream& operator<<(Stream&, Gt::Ray_2)}\\
+\ccc{Stream& operator<<(Stream&, Gt::Line_2)}
+\ccPrecond{\ccc{*eit} must be a finite edge.}}
+%
+\ccGlue
+\ccMethod{template< class Stream >
+Stream& draw_dual_edge(Finite_edges_iterator eit, Stream& str);}
+{Draws the edge \ccc{*eit} of
+  the segment Voronoi diagram to the stream \ccc{str}.
+The following operators must be defined:\\
+\ccc{Stream& operator<<(Stream&, Gt::Segment_2)}\\
+\ccc{Stream& operator<<(Stream&, Gt::Ray_2)}\\
+\ccc{Stream& operator<<(Stream&, Gt::Line_2)}}
 
 
 \ccHeading{Validity check}
@@ -633,8 +653,7 @@ be preferred to \ccVar\ccc{ = other} or to \ccVar\ccc{(other)} if
 \ccc{SegmentVoronoiDiagramTraits_2}\\
 \ccc{SegmentVoronoiDiagramDataStructure_2}\\
 \ccc{SegmentVoronoiDiagramVertexBase_2}\\
-\ccc{SegmentVoronoiDiagramFaceBase_2}\\
-\ccc{SimpleContainer}\\
+\ccc{TriangulationFaceBase_2}\\
 \ccc{CGAL::Segment_Voronoi_diagram_hierarchy_2<Gt,STag,DS>}\\
 \ccc{CGAL::Segment_Voronoi_diagram_traits_2<K,MTag>}\\
 \ccc{CGAL::Segment_Voronoi_diagram_traits_without_intersections_2<K,MTag>}\\
