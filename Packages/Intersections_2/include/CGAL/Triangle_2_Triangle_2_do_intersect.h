@@ -105,12 +105,10 @@ bool intersection_test_edge(const typename K::Point_2 *  P1,
   
 }
 
-} // namespace CGALi
-
 
 template <class K>
-bool do_intersect(const Triangle_2<K> &t1, 
-		  const Triangle_2<K> &t2,
+bool do_intersect(const typename CGAL_WRAP(K)::Triangle_2<K> &t1, 
+		  const typename CGAL_WRAP(K)::Triangle_2<K> &t2,
 		  const K & k ){
   
   CGAL_kernel_precondition( ! k.is_degenerate_2_object() (t1) );
@@ -170,6 +168,8 @@ bool do_intersect(const Triangle_2<K> &t1,
   
 }
 
+} // namespace CGALi
+
 
 
 
@@ -177,7 +177,7 @@ template <class K>
 inline bool do_intersect(const Triangle_2<K> &t1, 
 			 const Triangle_2<K> &t2){
 
-  return do_intersect(t1,t2,K());
+  return CGALi::do_intersect(t1,t2,K());
 }
 
 CGAL_END_NAMESPACE
