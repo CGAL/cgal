@@ -1,7 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-ver 7.80 ()
+ver 7.80 (10/06/03)
+- remove demos using leda_window or cgal_window
+  added Qt demo for Delaunay an regular (thois one does not yet compiles)
 - remove DS_Container.h
 - make Infinite_tester public (for Sun)
 - fixes  (for intel )in nested Vertex_handle and Face_handle ;
