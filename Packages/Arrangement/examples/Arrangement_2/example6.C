@@ -16,7 +16,8 @@ typedef CGAL::Homogeneous<NT>                        Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>           Traits;
 typedef Traits::Point_2                              Point;
 typedef Traits::Curve_2                              Curve;
-typedef CGAL::Arr_base_node<Curve>                   Base_node;
+typedef Traits::X_monotone_curve_2                   X_monotone_curve_2;
+typedef CGAL::Arr_base_node<Curve, X_monotone_curve_2> Base_node;
 typedef CGAL::Arr_2_default_dcel<Traits>             Dcel;
 typedef CGAL::Arrangement_2<Dcel,Traits,Base_node>   Arr_2;
 
@@ -43,7 +44,7 @@ int main()
     std::cout << "Edge level:" << std::endl;
     for (eit = cit->edges_begin(); eit != cit->edges_end(); ++eit) 
     {
-      std::cout << eit->curve() << std::endl ;
+      std::cout << eit->x_curve() << std::endl ;
     }
   }
 

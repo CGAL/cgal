@@ -16,7 +16,8 @@ typedef CGAL::Cartesian<NT>                             Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>              Traits;
 typedef Traits::Point_2                                 Point_2;
 typedef Traits::Curve_2                                 Curve_2;
-typedef CGAL::Arr_base_node<Curve_2>                    Base_node;
+typedef Traits::X_monotone_curve_2                      X_monotone_curve_2;
+typedef CGAL::Arr_base_node<Curve_2, X_monotone_curve_2> Base_node;
 typedef CGAL::Arr_2_default_dcel<Traits>                Dcel;
 typedef CGAL::Arrangement_2<Dcel,Traits,Base_node>      Arr_2;
 
@@ -40,10 +41,10 @@ int main()
     CGAL_For_all(occ, occ_end) { ++count; }
 
     if (count == 1) 
-      std::cout << "Edge " << occ->curve() << " is covered by a single edge."
+      std::cout << "Edge " << occ->x_curve() << " is covered by a single edge."
                 << std::endl;
     else
-      std::cout << "Edge " << occ->curve() << " is covered by " << count
+      std::cout << "Edge " << occ->x_curve() << " is covered by " << count
                 << " edges." << std::endl;
   }
 

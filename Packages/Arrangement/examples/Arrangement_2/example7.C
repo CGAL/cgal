@@ -16,6 +16,7 @@ typedef CGAL::Cartesian<NT>                           Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>            Traits;
 typedef Traits::Point_2                               Point;
 typedef Traits::Curve_2                               Curve;
+typedef Traits::X_monotone_curve_2                      X_monotone_curve_2;
 
 // A global variable to keep track of when we inserted the edges.
 int global_int = 0;
@@ -29,9 +30,9 @@ struct Info
   int d;
 };
 
-struct My_base_node : public CGAL::Arr_base_node<Curve> 
+struct My_base_node : public CGAL::Arr_base_node<Curve, X_monotone_curve_2> 
 {
-  typedef CGAL::Arr_base_node<Curve> Base;
+  typedef CGAL::Arr_base_node<Curve, X_monotone_curve_2> Base;
   My_base_node() : Base(), info() {}
 
   Info info; // Will be initialized with the default ctr.

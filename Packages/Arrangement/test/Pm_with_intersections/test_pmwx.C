@@ -99,14 +99,14 @@ int main()
 
 #endif
 
-typedef Traits::Point_2                                   Point_2;
-typedef Traits::X_monotone_curve_2                        X_monotone_curve_2;
-typedef Traits::Curve_2                                   Curve_2;
-typedef CGAL::Arr_base_node<X_monotone_curve_2>           Base_node;
-typedef CGAL::Pm_default_dcel<Traits>                     Dcel;
+typedef Traits::Point_2                                         Point_2;
+typedef Traits::X_monotone_curve_2                              X_curve_2;
+typedef Traits::Curve_2                                         Curve_2;
+typedef CGAL::Arr_base_node<Curve_2, X_curve_2>                 Base_node;
+typedef CGAL::Pm_default_dcel<Traits>                           Dcel;
 
-typedef CGAL::Planar_map_2<Dcel,Traits>                   Planar_map;
-typedef CGAL::Planar_map_with_intersections_2<Planar_map> Pmwx;
+typedef CGAL::Planar_map_2<Dcel,Traits>                         Planar_map;
+typedef CGAL::Planar_map_with_intersections_2<Planar_map>       Pmwx;
  
 
 // we use the namespace std for compatability with MSVC

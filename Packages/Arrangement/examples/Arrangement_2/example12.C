@@ -22,9 +22,10 @@ typedef CGAL::Arr_polyline_traits_2<Seg_traits>       Traits;
 
 typedef Traits::Point_2                               Point_2;
 typedef Traits::Curve_2                               Curve_2;
+typedef Traits::X_monotone_curve_2                    X_monotone_curve_2;
 
 typedef CGAL::Arr_2_default_dcel<Traits>              Dcel;
-typedef CGAL::Arr_base_node<Curve_2>                  Base_node;
+typedef CGAL::Arr_base_node<Curve_2, X_monotone_curve_2> Base_node;
 typedef CGAL::Arrangement_2<Dcel,Traits,Base_node>    Arr_2;
 typedef CGAL::Arr_file_writer<Arr_2>                  Arr_writer;
 
