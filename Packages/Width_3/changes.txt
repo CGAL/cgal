@@ -1,3 +1,6 @@
+1.15 (3 May 2002)
+- fix traits templating for Borland
+
 1.14 (18 Mar 2002)
 - Const correctness in Data_access of Width_polyhedron.
 

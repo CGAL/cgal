@@ -32,7 +32,12 @@
 
 CGAL_BEGIN_NAMESPACE
 
+// without this we get an internal compiler error on bcc
+#if defined(__BORLANDC__)
+template <class Kernel_, class CHT = Convex_hull_traits_3<Kernel_> >
+#else
 template <class Kernel_>
+#endif
 class Width_default_traits_3 {
 public:
     typedef Kernel_                      Kernel;
@@ -40,7 +45,12 @@ public:
     typedef typename Kernel::Point_3     Point_3;
     typedef typename Kernel::Plane_3     Plane_3;
     typedef typename Kernel::Vector_3    Vector_3;
+#if defined(__BORLANDC__)
+    typedef CHT ChullTraits;
+#else
     typedef Convex_hull_traits_3<Kernel> ChullTraits;
+#endif
+
 
     RT get_hx( const Point_3& p) const { return p.hx(); }
     RT get_hy( const Point_3& p) const { return p.hy(); }
