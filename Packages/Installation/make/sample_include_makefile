@@ -3,7 +3,6 @@
 # COMPILER:	GNU 2.95.2
 # LEDA:		not supported
 # GMP:		supported
-# CLN:		not supported
 
 #---------------------------------------------------------------------#
 #                    include/lib directory settings

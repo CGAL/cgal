@@ -142,30 +142,6 @@ CORE_LIB_DIR=''
 CORE_TEST_PASSED=''
 
 # ---------------------------------------------
-# CLN specific:
-#
-
-# version of CLN shipped with CGAL:
-CLN_VERSION='cln-1.0.1'
-
-# toggles use of CLN ('' - no, '_CLN' - use it)
-CLN_SUPPORT=''
-
-# indicate whether CLN is installed 
-# ('' - didn't try, 
-# 's' - in sysdirs, no flags necessary, 
-# 'e' - we need compiler/linker flags and CLN_INCL_DIR/CLN_LIB_DIR for this,
-# 'x' - in sysdirs, but specify CLN_INCL_DIR/CLN_LIB_DIR anyway
-# 'c' - in the cgal tree,
-# 'z' - in the cgal tree, but specify CLN_INCL_DIR/CLN_LIB_DIR anyway)
-CLN_INSTALLATION=''
-CLN_INCL_DIR=''
-CLN_LIB_DIR=''
-
-# did CLN tests succeed ('' - no, 'y' - yep)
-CLN_TEST_PASSED=''
-
-# ---------------------------------------------
 # QT specific:
 #
 
@@ -266,7 +242,6 @@ CUSTOM_CXXFLAGS=''
 CUSTOM_LDFLAGS=''
 
 # LGPL License header to be used in some generated files.
-# Note that the quotes at the end are needed to prevent expansion by CVS.
 LGPL_LICENSE_HEADER=\
 "// Copyright (c) 1996-2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
@@ -280,11 +255,7 @@ LGPL_LICENSE_HEADER=\
 // See the file LICENSE.LGPL distributed with CGAL.
 //
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $""Source: $
-// $""Revision: $ $""Date: $
-// $""Name: $"
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE."
 
 
 # ---------------------------------------------------------------------
@@ -1685,59 +1656,6 @@ core_test_ldflags()
 }
 
 #---------------------------------------------------------
-# flags for CLN
-
-cln_cxxflags()
-{
-    if [ -n "${CLN_SUPPORT}" -a \
-	"${CLN_INSTALLATION}" != 'c' -a \
-	"${CLN_INSTALLATION}" != 's' ]; then
-	include_dir_option "`_where_is 'CLN_INCL_DIR'`"
-    fi
-}
-
-cln_libpathflags()
-{
-    if [ -n "${SEPARATE_LIBPATH}" -a -n "${CLN_SUPPORT}" ]; then
-	if [ "${CLN_INSTALLATION}" != 'c' -a \
-             "${CLN_INSTALLATION}" != 's' ]; then
-	    libpath_option "`_where_is 'CLN_LIB_DIR'`"
-	    ${_printf} "%s" "`rpath_directive 'CLN_LIB_DIR'` "
-	fi
-    fi
-}
-
-cln_ldflags()
-{
-    if [ -n "${CLN_SUPPORT}" ]; then
-	if [ -z "${SEPARATE_LIBPATH}" -a "${CLN_INSTALLATION}" != 'c' -a \
-             "${CLN_INSTALLATION}" != 's' ]; then
-	    libpath_option "`_where_is 'CLN_LIB_DIR'`"
-	    ${_printf} "%s" "`rpath_directive 'CLN_LIB_DIR'` "
-	fi
-	lib_option "cln"
-    fi
-}
-
-cln_test_cxxflags()
-{
-    ${_printf} "%s" "${CUSTOM_CXXFLAGS} "
-    if [ -n "${CLN_SUPPORT}" -a "${CLN_INSTALLATION}" = 'c' ]; then
-	cgal_cxxflags
-    fi
-    cln_cxxflags
-}
-
-cln_test_ldflags()
-{
-    ${_printf} "%s" "${CUSTOM_LDFLAGS} "
-    if [ -n "${CLN_SUPPORT}" -a "${CLN_INSTALLATION}" = 'c' ]; then
-	cgal_ldflags
-    fi
-    cln_ldflags
-}
-
-#---------------------------------------------------------
 # flags for QT
 
 qt_cxxflags()
@@ -1880,7 +1798,7 @@ compiler_flags()
 {
     # core must be first, otherwise it would be impossible to use a core
     # installation different from the CGAL one (CORE is in CGAL_INCL_DIR)
-    ${_printf} "%s" "${CUSTOM_CXXFLAGS} `core_cxxflags``cgal_cxxflags``leda_cxxflags``gmp_cxxflags``cln_cxxflags``qt_cxxflags`"
+    ${_printf} "%s" "${CUSTOM_CXXFLAGS} `core_cxxflags``cgal_cxxflags``leda_cxxflags``gmp_cxxflags``qt_cxxflags`"
 }
 
 # print ldflags for current setting (do not link with cgal lib,
@@ -1888,7 +1806,7 @@ compiler_flags()
 # NOTE : the order matters, if A depends on B, then B must come after A.
 linker_flags_no_cgal_lib()
 {
-    ${_printf} "%s" "${CUSTOM_LDFLAGS} `cgal_ldflags``leda_ldflags``qt_ldflags``cln_ldflags``core_ldflags``gmp_ldflags``math_ldflags`"
+    ${_printf} "%s" "${CUSTOM_LDFLAGS} `cgal_ldflags``leda_ldflags``qt_ldflags``core_ldflags``gmp_ldflags``math_ldflags`"
 }
 
 # print compiler description/version of compiler $1 (executable)
@@ -2743,57 +2661,6 @@ check_CORE_LIB_DIR()
     return 0
 }
 
-check_CLN_SUPPORT()
-{
-    if [ "${CLN_SUPPORT}" != "" -a "${CLN_SUPPORT}" != "_CLN" ]; then
-	$1 "WARNING: CLN_SUPPORT is not set correctly." 
-	return 0
-    fi
-    return 1
-}
-
-check_CLN_INSTALLATION()
-{
-    if [ -n "${CLN_INSTALLATION}" -a \
-	"${CLN_INSTALLATION}" != 'x' -a \
-	"${CLN_INSTALLATION}" != 'c' -a \
-	"${CLN_INSTALLATION}" != 'z' -a \
-	"${CLN_INSTALLATION}" != 'e' -a \
-	"${CLN_INSTALLATION}" != 's' ]; then
-	$1 "WARNING: CLN_INSTALLATION should be \"e\", \"z\","
-	$1 "   \"c\", \"x\", \"s\" or empty."
-	return 0
-    fi
-    return 1
-}
-
-check_CLN_INCL_DIR()
-{
-    if [ -n "${CLN_INCL_DIR}" ]; then
-	if [ ! -r ${CLN_INCL_DIR}/cln.h ]; then 
-	    $1 "WARNING: CLN_INCL_DIR should contain"
-	    $1 "         cln.h." 
-	else
-	    return 1
-	fi
-    fi
-    return 0
-}
-
-check_CLN_LIB_DIR()
-{
-    if [ -n "${CLN_LIB_DIR}" ]; then
-	if [ ! -r ${CLN_LIB_DIR}/libcln.a -a \
-	     ! -r ${CLN_LIB_DIR}/libcln${SHARED_LIB_EXT} ]; then 
-	    $1 "WARNING: CLN_LIB_DIR should contain"
-	    $1 "         libcln.a or libcln${SHARED_LIB_EXT}." 
-	else
-	    return 1
-	fi
-    fi
-    return 0
-}
-
 check_QT_SUPPORT()
 {
     if [ "${QT_SUPPORT}" != "" -a "${QT_SUPPORT}" != "_QT" ]; then
@@ -3467,45 +3334,6 @@ test_gmpxx()
 }
 
 # ---------------------------------------------------------------------
-# CLN TEST:
-
-# cln test based on the GMP test.
-# (return 0, iff it works)
-# ($1 is either 'CLN' or 'CLN syslib')
-# ($2 nonzero indicates verbosity)
-test_cln()
-{
-    if [ -n "${CLN_SUPPORT}" ]; then
-	${_printf} "%s\n" '
-	#include <iostream>
-	#include "cl_integer.h"
-	#include "cl_io.h"
-	#include "cl_integer_io.h"
-	int
-	main ()
-	{
-	    cl_I b ("31");
-	    cl_I p = b * 75;
-	    std::cout << p << std::endl;
-	    return 0;
-	}' > ${TMP_CXX_FILE}.C
-
-	if _compile_test "$1" "`cln_test_cxxflags`" "$2" && \
-	    _link_run_test "$1" \
-		"`cln_libpathflags`" "`cln_test_ldflags`" "$2"
-	then
-	    CLN_TEST_PASSED='y'
-	    return 0
-	else
-	    CLN_TEST_PASSED=''
-	    return 1
-	fi
-    else
-	return 0
-    fi
-}
-
-# ---------------------------------------------------------------------
 # CORE TEST:
 
 # core test program (return 0, iff it works)
@@ -3882,31 +3710,6 @@ search_gmp()
     return 0
 }
 
-# set CLN_INSTALLATION
-# first check for sysdir installation, then in CGAL tree,
-# finally an external installation
-# return 0, iff one of these test succeeded
-# ($1 non-empty indicates verbosity)
-search_cln()
-{
-    CLN_INSTALLATION='s'
-    if test_cln 'CLN syslib' "$1"; then
-	log_print "remark: CLN is installed in sysdirs."
-    else
-	make_lib_dir
-	CLN_INSTALLATION='c'
-	if test_cln 'CLN CGAL' "$1"; then
-	    log_print "remark: CLN is installed in CGAL tree."
-	else
-	    CLN_INSTALLATION='e'
-	    log_print "remark: CLN is not installed."
-	    return 1
-	fi
-    fi
-    return 0
-}
-
-
 # ---------------------------------------------------------------------
 # compiler related functions
 #
@@ -4028,32 +3831,6 @@ retrieve_compiler_settings()
 	if [ -n "${CORE_SUPPORT}" ]; then
 	    if [ "${CORE_INSTALLATION}" = 'z' -o \
 		 "${CORE_INSTALLATION}" = 'e' ]; then
-		SETUP_COMPLETE=''
-	    fi
-	fi
-    fi
-
-    # CLN specific stuff:
-    if try_to_get_var_from_file CLN_SUPPORT "${_file}" ||\
-	try_to_get_var_from_file CLN_INSTALLATION "${_file}"; then
-	CLN_INSTALLATION=''
-	CLN_SUPPORT=''
-	SETUP_COMPLETE=''
-    fi
-    if try_to_get_var_from_file CLN_INCL_DIR "${_file}"; then
-	if [ -n "${CLN_SUPPORT}" ]; then
-	    if [ "${CLN_INSTALLATION}" = 'x' -o \
-		 "${CLN_INSTALLATION}" = 'z' -o \
-		 "${CLN_INSTALLATION}" = 'e' ]; then
-		SETUP_COMPLETE=''
-	    fi
-	fi
-    fi
-    if try_to_get_var_from_file CLN_LIB_DIR "${_file}"; then
-	if [ -n "${CLN_SUPPORT}" ]; then
-	    if [ "${CLN_INSTALLATION}" = 'x' -o \
-		 "${CLN_INSTALLATION}" = 'z' -o \
-		 "${CLN_INSTALLATION}" = 'e' ]; then
 		SETUP_COMPLETE=''
 	    fi
 	fi
@@ -4185,10 +3962,6 @@ store_compiler_settings()
     _store_install_config_variable CORE_INSTALLATION >>${_file}
     _store_install_config_variable CORE_INCL_DIR >>${_file}
     _store_install_config_variable CORE_LIB_DIR >>${_file}
-    _store_install_config_variable CLN_SUPPORT >>${_file}
-    _store_install_config_variable CLN_INSTALLATION >>${_file}
-    _store_install_config_variable CLN_INCL_DIR >>${_file}
-    _store_install_config_variable CLN_LIB_DIR >>${_file}
     _store_install_config_variable QT_SUPPORT >>${_file}
     _store_install_config_variable QT_SECOND_LIB >>${_file}
     _store_install_config_variable QT_T_SUPPORT >>${_file}
@@ -4283,16 +4056,6 @@ test_setup()
 	_passed_message 'CORE'
     fi
 
-    # CLN
-    if [ -z "${CLN_TEST_PASSED}" ]; then
-	test_cln 'CLN' 'v'
-	if [ $? = 1 ]; then
-	    return 1
-	fi
-    else
-	_passed_message 'CLN'
-    fi
-
     # QT MOC
     if [ -z "${QT_MOC_TEST_PASSED}" ]; then
 	test_qt_moc 'v'
@@ -4328,7 +4091,6 @@ reset_all_test_variables()
     LEDA_TEST_PASSED=''
     GMP_TEST_PASSED=''
     CORE_TEST_PASSED=''
-    CLN_TEST_PASSED=''
     QT_TEST_PASSED=''
     QT_MOC_TEST_PASSED=''
 }
@@ -4362,11 +4124,6 @@ _choose_compiler()
 	    CORE_TEST_PASSED='y'
 	else
 	    CORE_TEST_PASSED=''
-	fi
-	if [ -n "${CLN_SUPPORT}" ]; then
-	    CLN_TEST_PASSED='y'
-	else
-	    CLN_TEST_PASSED=''
 	fi
 	if [ -n "${QT_SUPPORT}" ]; then
 	    QT_TEST_PASSED='y'
@@ -5669,23 +5426,6 @@ write_compiler_flags()
   fi
 
   #
-  # CLN_INCL_DIR
-  #
-  if [ -n "${CLN_SUPPORT}" ]; then
-    if [ "${CLN_INSTALLATION}" = 'x' -o \
-	 "${CLN_INSTALLATION}" = 'z' -o \
-	 "${CLN_INSTALLATION}" = 'e' ]; then
-	print_as_shell_comment \
-	  "*** Fill in your CLN include directory ***" \
-	  >> ${FILE}
-	${_printf} "%s\\\\\n" "CLN_INCL_DIR = " >> ${FILE}
-	${_printf} "\t%s\n\n" \
-	  "`_where_is 'CLN_INCL_DIR'`" \
-	  >> ${FILE}
-    fi
-  fi
-
-  #
   # QT_MOC
   #
   if [ -n "${QT_SUPPORT}" ]; then
@@ -5748,10 +5488,6 @@ write_compiler_flags()
     makefile_print_line "-DCGAL_USE_CORE" >> ${FILE}
   fi
 
-  if [ -n "${CLN_SUPPORT}" ]; then
-    makefile_print_line "-DCGAL_USE_CLN" >> ${FILE}
-  fi
-
   if [ -n "${QT_SUPPORT}" ]; then
     makefile_print_line "-DCGAL_USE_QT ${CGAL_QT_CXXFLAGS}" >> ${FILE}
   fi
@@ -5773,14 +5509,6 @@ write_compiler_flags()
 
   if [ -n "${CORE_SUPPORT}" -a "${CORE_INSTALLATION}" != 'c' ]; then
       ${_printf} "\t%s" "'-I\$(CORE_INCL_DIR)'" >> ${FILE}
-  fi
-
-  if [ -n "${CLN_SUPPORT}" ]; then
-    if [ "${CLN_INSTALLATION}" = 'x' -o \
-	 "${CLN_INSTALLATION}" = 'z' -o \
-	 "${CLN_INSTALLATION}" = 'e' ]; then
-	 ${_printf} "\t%s" "'-I\$(CLN_INCL_DIR)'" >> ${FILE}
-    fi
   fi
 
   if [ -n "${LEDA_SUPPORT}" ]; then
@@ -5869,26 +5597,6 @@ write_linker_flags()
   fi
 
   #
-  # CLN_LIB_DIR
-  #
-  if [ -n "${CLN_SUPPORT}" ]; then
-    if [ "${CLN_INSTALLATION}" = 'x' -o \
-	 "${CLN_INSTALLATION}" = 'z' -o \
-	 "${CLN_INSTALLATION}" = 'e' ]; then
-	print_as_shell_comment \
-	  "*** Fill in your CLN lib directory ***" \
-	  >> ${FILE}
-	print_as_shell_comment \
-	  "(e.g. /usr/local/lib)" \
-	  >> ${FILE}
-	${_printf} "%s\\\\\n" "CLN_LIB_DIR = " >> ${FILE}
-	${_printf} "\t%s\n\n" \
-	  "`_where_is 'CLN_LIB_DIR'`" \
-	  >> ${FILE}
-    fi
-  fi
-
-  #
   # QT_LIB_DIR
   #
   if [ -n "${QT_SUPPORT}" -a -n "${NEED_EXTRA_QT_LDIR}" ]; then
@@ -5942,18 +5650,6 @@ write_linker_flags()
   else
     # no LEDA --> Xlibs only
     WLIBS="${WLIBS} ${XLIBS}"
-  fi
-
-  if [ -n "${CLN_SUPPORT}" ]; then
-    if [ "${CLN_INSTALLATION}" = 'x' -o \
-	 "${CLN_INSTALLATION}" = 'z' -o \
-	 "${CLN_INSTALLATION}" = 'e' ]; then
-	LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}\$(CLN_LIB_DIR)"
-	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:\$(CLN_LIB_DIR)"
-    fi
-    LIBS="${LIBS} `lib_option cln`"
-    GEOWLIBS="${GEOWLIBS} `lib_option cln`"
-    WLIBS="${WLIBS} `lib_option cln`"
   fi
 
   if [ -n "${QT_SUPPORT}" ] ; then
@@ -6709,7 +6405,6 @@ support_menu()
 	case $KEY in
 	    g|G) gmp_menu;;
 	    c|C) core_menu;;
-	    m|M) cln_menu;;
 	    l|L) leda_menu;;
 	    k|K) qt_menu;;
 	    t|T) go_down_lines 3
@@ -6780,9 +6475,6 @@ main_menu()
 		fi
 		if [ -n "${GMP_SUPPORT}" ]; then
 		    search_gmp "${INSTALL_VERBOSE}"
-		fi
-		if [ -n "${CLN_SUPPORT}" ]; then
-		    search_cln "${INSTALL_VERBOSE}"
 		fi
 		if [ -n "${QT_SUPPORT}" ]; then
 		    test_for_qt_dir "${INSTALL_VERBOSE}"
@@ -6993,20 +6685,6 @@ while [ ${#} -gt 0 ]; do
 	    fi
 	    CORE_INSTALLATION='e'
 	    ;;
-	--cln_incl_dir*|--CLN_INCL_DIR*|-CLN_INCL_DIR*|-cln_incl_dir*)
-	    _ANY_OPT='y'
-	    if set_variable_from_command_line 'CLN_INCL_DIR' "$1" "$2"; then
-		shift
-	    fi
-	    CLN_INSTALLATION='e'
-	    ;;
-	--cln_lib_dir*|--CLN_LIB_DIR*|-CLN_LIB_DIR*|-cln_lib_dir*)
-	    _ANY_OPT='y'
-	    if set_variable_from_command_line 'CLN_LIB_DIR' "$1" "$2"; then
-		shift
-	    fi
-	    CLN_INSTALLATION='e'
-	    ;;
 	--qt_incl_dir*|--QT_INCL_DIR*|-qt_incl_dir*|-QT_INCL_DIR*)
 	    _ANY_OPT='y'
 	    if set_variable_from_command_line 'QT_INCL_DIR' "$1" "$2"; then
@@ -7081,11 +6759,6 @@ while [ ${#} -gt 0 ]; do
 		CORE_INSTALLATION='c'
 	    fi
 	    write_buffer "${_LEFTSPACE}Enable CORE support.\n"
-	    ;;
-	-cln*|-CLN*|--cln*|--CLN*)
-	    _ANY_OPT='y'
-	    CLN_SUPPORT='_CLN'
-	    write_buffer "${_LEFTSPACE}Enable CLN support.\n"
 	    ;;
 	-os*|-OS*)
 	    if [ -n "${_WHAT_TO_DO}" ]; then
