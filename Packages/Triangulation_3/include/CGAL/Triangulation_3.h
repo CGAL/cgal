@@ -186,12 +186,13 @@ public:
   ~CGAL_Triangulation_3()
   {
     clear();
+    infinite.Delete();
   }
 
   void clear()
   {
     _tds.clear();
-    infinite.Delete();
+    infinite->set_cell( (Cell *) NULL);
   }
 
  //ACCESS FUNCTIONS
@@ -233,6 +234,7 @@ public:
   CGAL_Triangulation_3 & operator=(const CGAL_Triangulation_3 & tr)
   {
     clear();
+    infinite.Delete();
     infinite = (Vertex *) _tds.copy_tds( tr._tds, &*tr.infinite );
     _gt = tr._gt;
     return *this;
@@ -243,9 +245,9 @@ public:
   void copy_triangulation(const CGAL_Triangulation_3 & tr)
   {
     clear();
+    infinite.Delete();
     _gt = tr._gt;
-    _tds.copy_tds(tr._tds);
-    infinite = tr.infinite;
+    infinite = (Vertex *) _tds.copy_tds( tr._tds, &*tr.infinite );
   }
 
   void swap(CGAL_Triangulation_3 &tr)
@@ -266,6 +268,11 @@ public:
   {
     if ( ! _tds.is_valid(verbose,level) ) {
       if (verbose) { cerr << "invalid data structure" << endl; }
+      CGAL_triangulation_assertion(false); return false;
+    }
+    
+    if ( infinite_vertex == NULL ) {
+      if (verbose) { cerr << "no infinite vertex" << endl; }
       CGAL_triangulation_assertion(false); return false;
     }
 
