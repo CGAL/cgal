@@ -1,6 +1,6 @@
 //-----------------------------------------------------------------------//
 // This is just a simple example that demonstrates how to use the
-// class CGAL_Polygon_2.
+// class CGAL::Polygon_2.
 //-----------------------------------------------------------------------//
 
 #include <CGAL/Cartesian.h>
@@ -8,12 +8,12 @@
 
 #include <list.h>
 
-typedef CGAL_Cartesian<double> R;
-typedef CGAL_Polygon_traits_2<R> Traits;
-typedef CGAL_Point_2<R> Point;
-typedef CGAL_Polygon_2<Traits, list<Point> > Polygon;
-typedef CGAL_Polygon_2<Traits, list<Point> >::Vertex_iterator VertexIterator;
-typedef CGAL_Polygon_2<Traits, list<Point> >::Edge_const_iterator EdgeIterator;
+typedef CGAL::Cartesian<double> R;
+typedef CGAL::Polygon_traits_2<R> Traits;
+typedef CGAL::Point_2<R> Point;
+typedef CGAL::Polygon_2<Traits, list<Point> > Polygon;
+typedef CGAL::Polygon_2<Traits, list<Point> >::Vertex_iterator VertexIterator;
+typedef CGAL::Polygon_2<Traits, list<Point> >::Edge_const_iterator EdgeIterator;
 
 //-----------------------------------------------------------------------//
 //                          main
@@ -29,7 +29,7 @@ int main()
   p.push_back(Point(2,2));
   p.push_back(Point(0,4));
 
-  CGAL_set_pretty_mode(cout);
+  CGAL::set_pretty_mode(cout);
   cout << "created the polygon p:" << endl;
   cout << p << endl;
   cout << endl;
@@ -37,7 +37,7 @@ int main()
   // determine some properties of the polygon
   bool IsSimple    = p.is_simple();
   bool IsConvex    = p.is_convex();
-  bool IsClockwise = (p.orientation() == CGAL_CLOCKWISE);
+  bool IsClockwise = (p.orientation() == CGAL::CLOCKWISE);
   double Area      = p.area();
 
   cout << "polygon p is";
@@ -60,7 +60,7 @@ int main()
   cout << "created point q = " << q << endl;
   cout << endl;
 
-  bool IsInside = (p.bounded_side(q) == CGAL_ON_BOUNDED_SIDE);
+  bool IsInside = (p.bounded_side(q) == CGAL::ON_BOUNDED_SIDE);
   cout << "point q is";
   if (!IsInside) cout << " not";
   cout << " inside polygon p." << endl;

@@ -14,9 +14,9 @@
 #include <CGAL/basic.h>
 #include <CGAL/Polygon_2.h>
 
-#ifdef CGAL_CFG_NO_LAZY_INSTANTIATION
-#include <CGAL/Bbox_2.h>
-#endif // CGAL_CFG_NO_LAZY_INSTANTIATION
+//#ifdef CGAL_CFG_NO_LAZY_INSTANTIATION
+//#include <CGAL/Bbox_2.h>
+//#endif // CGAL_CFG_NO_LAZY_INSTANTIATION
 
 //-----------------------------------------------------------------------//
 //                          MyPoint
@@ -33,10 +33,10 @@ class MyPoint
     double x() const { return d_x; }
     double y() const { return d_y; }
 
-#ifdef CGAL_CFG_NO_LAZY_INSTANTIATION
-    CGAL_Bbox_2 bbox() const
-      { return CGAL_Bbox_2(d_x, d_y, d_x, d_y); }
-#endif // CGAL_CFG_NO_LAZY_INSTANTIATION
+//#ifdef CGAL_CFG_NO_LAZY_INSTANTIATION
+//    CGAL::Bbox_2 bbox() const
+//      { return CGAL::Bbox_2(d_x, d_y, d_x, d_y); }
+//#endif // CGAL_CFG_NO_LAZY_INSTANTIATION
 };
 
 ostream& operator<<(ostream& to, const MyPoint& p)
@@ -122,32 +122,32 @@ class MyTraits
       return (x < FT(0)) ? -1: (FT(0) < x) ? 1 : 0;
     }
 
-    CGAL_Orientation orientation(const Point_2& p,
+    CGAL::Orientation orientation(const Point_2& p,
                                  const Point_2& q,
                                  const Point_2& r) const
     {
        int i = sign(determinant_2(p,q,r));
        switch (i) {
-       case -1: return CGAL_COUNTERCLOCKWISE;
-       case  0: return CGAL_COLLINEAR;
-       case  1: return CGAL_CLOCKWISE;
+       case -1: return CGAL::COUNTERCLOCKWISE;
+       case  0: return CGAL::COLLINEAR;
+       case  1: return CGAL::CLOCKWISE;
        }
 
-       return CGAL_COLLINEAR; // to prevent compiler warnings
+       return CGAL::COLLINEAR; // to prevent compiler warnings
     }
 
-    CGAL_Comparison_result compare_x(const Point_2 &p, const Point_2 &q) const
+    CGAL::Comparison_result compare_x(const Point_2 &p, const Point_2 &q) const
     {
        if (p.x() == q.x())
-          return CGAL_EQUAL;
-       return (p.x() < q.x()) ? CGAL_SMALLER : CGAL_LARGER;
+          return CGAL::EQUAL;
+       return (p.x() < q.x()) ? CGAL::SMALLER : CGAL::LARGER;
     }
 
-    CGAL_Comparison_result compare_y(const Point_2 &p, const Point_2 &q) const
+    CGAL::Comparison_result compare_y(const Point_2 &p, const Point_2 &q) const
     {
        if (p.y() == q.y())
-          return CGAL_EQUAL;
-       return (p.y() < q.y()) ? CGAL_SMALLER : CGAL_LARGER;
+          return CGAL::EQUAL;
+       return (p.y() < q.y()) ? CGAL::SMALLER : CGAL::LARGER;
     }
 
     bool have_equal_direction(const Vector_2&,
@@ -176,7 +176,7 @@ class MyTraits
 
 #include <list.h>
 
-typedef CGAL_Polygon_2<MyTraits, list<MyPoint> > Polygon;
+typedef CGAL::Polygon_2<MyTraits, list<MyPoint> > Polygon;
 typedef Polygon::Vertex_iterator     VI;
 typedef Polygon::Edge_const_iterator EI;
 
@@ -197,7 +197,7 @@ int main()
   // determine some properties of the polygon
   bool IsSimple    = p.is_simple();
   bool IsConvex    = p.is_convex();
-  bool IsClockwise = (p.orientation() == CGAL_CLOCKWISE);
+  bool IsClockwise = (p.orientation() == CGAL::CLOCKWISE);
   double Area      = p.area();
 
   cout << "polygon p is";
@@ -219,7 +219,7 @@ int main()
   MyPoint q(1,1);
   cout << endl;
 
-  bool IsInside = (p.bounded_side(q) == CGAL_ON_BOUNDED_SIDE);
+  bool IsInside = (p.bounded_side(q) == CGAL::ON_BOUNDED_SIDE);
   cout << "point q is";
   if (!IsInside) cout << " not";
   cout << " inside polygon p." << endl;

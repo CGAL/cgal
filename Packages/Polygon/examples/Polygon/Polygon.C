@@ -7,11 +7,11 @@
 #include <CGAL/Polygon_2.h>
 #include <list.h>
 
-typedef CGAL_Cartesian<double> R;
-typedef CGAL_Polygon_traits_2<R> Traits;
+typedef CGAL::Cartesian<double> R;
+typedef CGAL::Polygon_traits_2<R> Traits;
 typedef Traits::Point_2 Point;
 typedef list<Point> Container;
-typedef CGAL_Polygon_2<Traits,Container> Polygon;
+typedef CGAL::Polygon_2<Traits,Container> Polygon;
 
 #include <iostream.h>
 
