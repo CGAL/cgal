@@ -1,5 +1,8 @@
 Changes done to the `Min_ellipse_2' package.
 
+Version 3.8 on 20-Jul-2000
+- obsolete usage of `number utils' fixed (CGAL:: --> CGAL_NTS)
+
 Version 3.7.1 on 06-Jul-2000
 - added default constructor to `Optimisation_ellipse_2' (fix for Borland)
 
