@@ -424,7 +424,7 @@ _check_for_sysutil()
 	_check_for_util ${*}
 	return $?
     fi
-   _tmp="echo $\_`echo ${3:-$1}`"
+    _tmp="echo $\_`echo ${3:-$1}`"
     _tmp=`eval "${_tmp}"`
     _tmp=`eval "echo ${_tmp}"`
     log_print "$1 is ${_tmp}." 
@@ -1416,7 +1416,7 @@ gmp_libpathflags()
 {
     if [ -n "${SEPARATE_LIBPATH}" -a -n "${GMP_SUPPORT}" ]; then
 	if [ "${GMP_INSTALLATION}" != 'c' -a \
-             "${GMP_INSTALLATION}" != 's' ]; then
+	     "${GMP_INSTALLATION}" != 's' ]; then
 	    libpath_option "`_where_is 'GMP_LIB_DIR'`"
 	    ${_printf} "%s" "`rpath_directive 'GMP_LIB_DIR'` "
 	fi
@@ -1444,12 +1444,18 @@ gmp_test_cxxflags()
     gmp_cxxflags
 }
 
-gmp_test_ldflags()
+gmp_test_libpathflags()
 {
-    compiler_test_ldflags
+    compiler_test_libpathflags
+    gmp_libpathflags
     if [ -n "${GMP_SUPPORT}" -a "${GMP_INSTALLATION}" = 'c' ]; then
 	cgal_ldflags
     fi
+}
+
+gmp_test_ldflags()
+{
+    compiler_test_ldflags
     gmp_ldflags
 }
 
@@ -2726,7 +2732,7 @@ test_gmp()
 
 	if _compile_test "$1" "`gmp_test_cxxflags`" "$2" && \
 	    _link_run_test "$1" \
-		"`gmp_libpathflags`" "`gmp_test_ldflags`" "$2"
+		"`gmp_test_libpathflags`" "`gmp_test_ldflags`" "$2"
 	then
 	    GMP_TEST_PASSED='y'
 	    return 0
@@ -3508,7 +3514,7 @@ gmp_menu()
 	    print_line "     ${_tmp:-<undefined>}" 
 	    if [ "${GMP_INSTALLATION}" = 'z' ]; then
 		print_line \
-		    "${_bold_on}<C>${_bold_off}  Use GMP installation in CGAL tree" 
+		    "${_bold_on}<Z>${_bold_off}  Use GMP installation in CGAL tree" 
 	    fi
 	    if [ "${GMP_INSTALLATION}" = 'x' ]; then
 		print_line \
@@ -3559,7 +3565,7 @@ gmp_menu()
 		    fi
 		fi
 		;;
-	    c|C)
+	   z|Z)
 		if [ -n "${GMP_SUPPORT}" -a \
 		     "${GMP_INSTALLATION}" = 'z' ]; then
 		    GMP_TEST_PASSED='y'
@@ -3594,8 +3600,7 @@ cln_menu()
 {
     while [ 0 ]; do
 	menu_header 'CLN'
-#	print_line "${_bold_on}<C>${_bold_off}  Install CLN in CGAL tree" 
-	print_line "${_bold_on}<G>${_bold_off}  Toggle CLN support" 
+	print_line "${_bold_on}<C>${_bold_off}  Toggle CLN support" 
 	if [ -n "${CLN_SUPPORT}" ]; then
 	    print_line "${_bold_on}<I>${_bold_off}  CLN  include directory" 
 	    case ${CLN_INSTALLATION} in
@@ -3611,10 +3616,6 @@ cln_menu()
 		*) _tmp="${CLN_LIB_DIR}";;
 	    esac
 	    print_line "     ${_tmp:-<undefined>}" 
-	    if [ "${CLN_INSTALLATION}" = 'z' ]; then
-		print_line \
-		    "${_bold_on}<C>${_bold_off}  Use CLN installation in CGAL tree" 
-	    fi
 	    if [ "${CLN_INSTALLATION}" = 'x' ]; then
 		print_line \
 		    "${_bold_on}<S>${_bold_off}  Use CLN installation in system dirs" 
@@ -3625,9 +3626,6 @@ cln_menu()
 
 	case $KEY in
 	    c|C)
-		install_cln
-		;;
-	    g|G)
 		if [ -z "${CLN_SUPPORT}" ]; then 
 		    SETUP_COMPLETE=''
 		    CLN_SUPPORT='_CLN'
@@ -3664,13 +3662,6 @@ cln_menu()
 			    *) CLN_INSTALLATION='e';;
 			esac
 		    fi
-		fi
-		;;
-	    c|C)
-		if [ -n "${CLN_SUPPORT}" -a \
-		     "${CLN_INSTALLATION}" = 'z' ]; then
-		    CLN_TEST_PASSED='y'
-		    CLN_INSTALLATION='c'
 		fi
 		;;
 	    t|T)
@@ -3814,7 +3805,8 @@ install_gmp()
 {
     make_lib_dir
     if [ -r ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libgmp.a -o \
-	 -r ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libgmp.so ]; then
+	 -r ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libgmp.so -o \
+	 -r ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/gmp.lib ]; then
 	if [ "${GMP_INSTALLATION}" != "c" ]; then
 	    GMP_INSTALLATION='c'
 	    GMP_TEST_PASSED=''
@@ -3853,22 +3845,15 @@ install_gmp()
 	*CYGWIN*) 
 	    gmpdir="${CGAL_AUX_DIR}/wingmp/gmp-2.0.2"
 	    case `compiler_description` in
-		*VC++*) 
-		    _check_write ${CGAL_INCL_DIR}
-		    ${_cp} "${gmpdir}/gmp.h" "${CGAL_INCL_DIR}"
-		    GMP_INSTALLATION='c'
-		    ${_cp} "${gmpdir}/msvc/gmp.lib" \
-			"${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}"
-		    ;;
-		*Borland*) 
-		    _check_write ${CGAL_INCL_DIR}
-		    ${_cp} "${gmpdir}/gmp.h" "${CGAL_INCL_DIR}"
-		    GMP_INSTALLATION='c'
-		    ${_cp} "${gmpdir}/bcc/gmp.lib" \
-			"${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}"
-		    ;;
-		*) install_gmp_sub;;
+		*VC++*)    _tmp_name=msvc/gmp.lib;;
+		*Borland*) _tmp_name=bcc/gmp.lib;;
+		*)         _tmp_name=gcc/libgmp.a;;
 	    esac
+	    _check_write ${CGAL_INCL_DIR}
+	    ${_cp} "${gmpdir}/gmp.h" "${CGAL_INCL_DIR}"
+	    ${_cp} "${gmpdir}/${_tmp_name}" \
+		"${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}"
+	    GMP_INSTALLATION='c'
 	    ;;
 	*) install_gmp_sub;;
     esac
