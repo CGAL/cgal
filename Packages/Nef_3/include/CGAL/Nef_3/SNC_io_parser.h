@@ -90,8 +90,8 @@ public:
   typedef void* GenPtr;
 
 public:
-  SNC_io_parser(istream& is, SNC_structure& W);
-  SNC_io_parser(ostream& os, SNC_structure& W);
+  SNC_io_parser(std::istream& is, SNC_structure& W);
+  SNC_io_parser(std::ostream& os, SNC_structure& W);
 
   std::string index(Vertex_iterator v) const 
   { return VI(v,verbose); }
@@ -135,13 +135,13 @@ public:
 };
 
 template <typename EW>
-SNC_io_parser<EW>::SNC_io_parser(istream& is, SNC_structure& W) : 
+SNC_io_parser<EW>::SNC_io_parser(std::istream& is, SNC_structure& W) : 
   Base(W), in(is), out(std::cout) 
 { CGAL_assertion(W.empty());
   verbose = false; }
 
 template <typename EW>
-SNC_io_parser<EW>::SNC_io_parser(ostream& os, SNC_structure& W) : 
+SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W) : 
   Base(W), in(std::cin), out(os),
   VI(W.vertices_begin(),W.vertices_end(),'V'),
   EI(W.halfedges_begin(),W.halfedges_end(),'E'),
@@ -189,7 +189,7 @@ bool SNC_io_parser<EW>::check_sep(char* sep) const
 template <typename EW>
 void SNC_io_parser<EW>::print() const
 { 
-  out << "Selective Nef Complex" << endl;
+  out << "Selective Nef Complex" << std::endl;
   out << "vertices   " << sncp()->number_of_vertices() << std::endl;
   out << "halfedges  " << sncp()->number_of_halfedges() << std::endl;
   out << "facets     " << sncp()->number_of_halffacets() << std::endl;
@@ -222,11 +222,11 @@ void SNC_io_parser<EW>::print() const
   SHalfedge_iterator se;
   CGAL_forall_shalfedges(se,*sncp()) print_sedge(se);
   if (verbose) 
-  out << "/* SLoop: index { twin, sface, facet } */" << endl;
+  out << "/* SLoop: index { twin, sface, facet } */" << std::endl;
   SHalfloop_iterator sl;
   CGAL_forall_shalfloops(sl,*sncp()) print_sloop(sl);
   if (verbose) 
-  out << "/* SFace: index { fclist, ivlist, sloop, volume } */" << endl;
+  out << "/* SFace: index { fclist, ivlist, sloop, volume } */" << std::endl;
   SFace_iterator sf;
   CGAL_forall_sfaces(sf,*sncp()) print_sface(sf);
 }
@@ -597,11 +597,11 @@ void SNC_io_parser<EW>::print_local_graph(Vertex_handle v) const
   SHalfedge_iterator eit;
   CGAL_forall_shalfedges_of(eit,v) print_sedge(eit);
   if (verbose) 
-    out << "/* index { twin, sface, facet } */" << endl;
+    out << "/* index { twin, sface, facet } */" << std::endl;
   if ( D.has_loop() ) 
   { print_sloop(D.loop()); print_sloop(D.twin(D.loop())); }
   if (verbose) 
-    out << "/* index { fclist, ivlist, sloop, volume } */" << endl;
+    out << "/* index { fclist, ivlist, sloop, volume } */" << std::endl;
   SFace_iterator fit;
   CGAL_forall_sfaces_of(fit,v) print_sface(fit);
   out.flush();

@@ -33,6 +33,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Polygon_2_algorithms.h>
+#include <CGAL/Iterator_project.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -53,68 +54,143 @@ Point_2 point_3_get_y_z_point_2(Point_3 p) {
 
 template <class ForwardIterator, class R>
 Bounded_side bounded_side_3(ForwardIterator first,
-			    ForwardIterator last,
-			    const Point_3<R>& point,
-			    Plane_3<R> plane = Plane_3<R>()) {
-  if(plane == Plane_3<R>()) {
-    CGAL_assertion(last-first > 3);
-    /* we need at least 3 points do discover the original plane */
+                            ForwardIterator last,
+                            const Point_3<R>& point,
+                            Plane_3<R> plane = Plane_3<R>()) {
+  typedef typename R::Point_2 Point_2;
+  typedef typename R::Point_3 Point_3;
+  typedef typename R::Vector_3 Vector_3;
+  typedef typename R::Direction_3 Direction_3;
+  typedef typename R::Plane_3 Plane_3;
+
+  if(plane == Plane_3()) {
     ForwardIterator p(first);
-    Point_3<R> p0(*(p++)), p1(*(p++)), p2(*(p++));
-    plane = Plane_3<R>(p0, p1, p2);
-    /* since we just need to project points to a non-perpendicular plane
+    Point_3 p0(*(p++));
+    CGAL_assertion(p != last);
+    Point_3 p1(*(p++));
+    CGAL_assertion(p != last);
+    Point_3 p2(*(p++));
+    plane = Plane_3(p0, p1, p2);
+    /* since we just need to project the points to a non-perpendicular plane
        we don't need to care about the plane orientation */
-  }
-  Point_2<R> (*t)(Point_3<R>);
-  Direction_3<R> pd(plane.orthogonal_vector()), pyz(1,0,0), pxz(0,1,0);
-  if(pd == pyz || pd == -pyz)
-    /* the plane is parallel to the YZ plane */
-    t = &point_3_get_y_z_point_2<Point_2<R>, Point_3<R> >;
-  else if(pd == pxz || pd ==- pxz)
-    /* the plane is parallel to the XZ plane */
-    t = &point_3_get_x_z_point_2<Point_2<R>, Point_3<R> >;
+   }
+  CGAL_assertion(!plane.is_degenerate());
+  Point_2 (*t)(Point_3);
+  Vector_3 pv(plane.orthogonal_vector()), 
+    pxy(0,0,1), pyz(1,0,0), pxz(0,1,0);
+  if( !is_zero(pv*pxz) )
+    /* the plane is not perpendicular to the XZ plane */
+    t = &point_3_get_y_z_point_2< Point_2, Point_3>;
+  else if( !is_zero(pv*pyz) )
+    /* the plane is not perpendicular to the XZ plane */
+    t = &point_3_get_x_z_point_2< Point_2, Point_3>;
   else {
-    CGAL_assertion(cross_product(pd.vector(),Vector_3<R>(0,0,1))==NULL_VECTOR);
+    CGAL_assertion( !is_zero(pv*pxy) );
     /* the plane is not perpendicular to the XY plane */
-    t = &point_3_get_x_y_point_2<Point_2<R>, Point_3<R> >;
+    t = &point_3_get_x_y_point_2< Point_2, Point_3>;
   }
 
-  // TODO: implement an interator projector instead of make a copy
-  std::vector<Point_2<R> > points;
-  points.reserve(last-first);
-  CGAL_For_all(first, last)
-    points.push_back(t(*first));
-  return bounded_side_2(points.begin(), points.end(), t(point));
-
-  /*
-  CGAL_For_all(first, last) {
-    if(pd == pyz || pd == -pyz)
-      points.push_back
-	(point_3_get_y_z_point_2<Point_2<R>, Point_3<R> >(*first));
-    else if(pd == pxz || pd ==- pxz)
-      points.push_back
-	(point_3_get_x_z_point_2<Point_2<R>, Point_3<R> >(*first));
-     else {
-       CGAL_assertion
-	(cross_product(Vector_3<R>(0,0,1), pd.vector()) == NULL_VECTOR);
-       points.push_back
-	 (point_3_get_x_y_point_2<Point_2<R>, Point_3<R> >(*first));
-     }
-  }
-  Point_2<R> p;
-  if(pd == pyz || pd == -pyz)
-    p = point_3_get_y_z_point_2<Point_2<R>, Point_3<R> >(point);
-  else if(pd == pxz || pd ==- pxz)
-    p = point_3_get_x_z_point_2<Point_2<R>, Point_3<R> >(point);
-  else {
-    CGAL_assertion
-      (cross_product(Vector_3<R>(0,0,1), pd.vector()) == NULL_VECTOR);
-    p = point_3_get_x_y_point_2<Point_2<R>, Point_3<R> >(point);
-  }
-  return bounded_side_2(points.begin(), points.end(), p);
-  */
+  std::vector< Point_2> points;
+  CGAL_For_all( first, last)
+    points.push_back( t(*first));
+  Bounded_side side = bounded_side_2( points.begin(), points.end(), t(point));
+  points.clear();
+  return side;
 }
 
 CGAL_END_NAMESPACE
+
+#ifdef WRONG_IMPLEMENTATION
+/* The following code is wrong since Proyector_.. structures must not return
+   references to temporal objects */
+template < class Point_2, class Point_3> 
+struct Project_XY {
+  typedef Point_3                  argument_type;
+  typedef Point_2                  result_type;
+  Point_2 operator()( Point_3& p) const { 
+    return Point_2(p.hx(), p.hy(), p.hw());
+  }
+  const Point_2 operator()( const Point_3& p) const { 
+    return Point_2(p.hx(), p.hy(), p.hw());
+  }
+};
+
+template < class Point_2, class Point_3> 
+struct Project_YZ {
+  typedef Point_3                  argument_type;
+  typedef Point_2                  result_type;
+  Point_2 operator()( Point_3& p) const { 
+    return Point_2(p.hy(), p.hz(), p.hw());
+  }
+  const Point_2 operator()( const Point_3& p) const { 
+    return Point_2(p.hy(), p.hz(), p.hw());
+  }
+};
+
+template < class Point_2, class Point_3> 
+struct Project_XZ {
+  typedef Point_3                  argument_type;
+  typedef Point_2                  result_type;
+  Point_2 operator()( Point_3& p) const { 
+    return Point_2(p.hx(), p.hz(), p.hw());
+  }
+  const Point_2 operator()( const Point_3& p) const { 
+    return Point_2(p.hx(), p.hz(), p.hw());
+  }
+};
+
+template <class ForwardIterator, class R>
+Bounded_side bounded_side_3(ForwardIterator first,
+			    ForwardIterator last,
+			    const Point_3<R>& point,
+			    Plane_3<R> plane = Plane_3<R>()) {
+
+  typedef typename R::Point_2 Point_2;
+  typedef typename R::Point_3 Point_3;
+  typedef typename R::Vector_3 Vector_3;
+  typedef typename R::Direction_3 Direction_3;
+  typedef typename R::Plane_3 Plane_3;
+
+  if(plane == Plane_3()) {
+    // CGAL_assertion(last-first >= 3);
+    /* we need at least 3 points to discover the original plane */
+    ForwardIterator p(first);
+    Point_3 p0(*(p++)), p1(*(p++)), p2(*(p++));
+    plane = Plane_3(p0, p1, p2);
+    /* since we just need to project the points to a non-perpendicular plane
+       we don't need to care about the plane orientation */
+  }
+  CGAL_assertion(!plane.is_degenerate());
+  Direction_3 pd(plane.orthogonal_vector()), pyz(1,0,0), pxz(0,1,0);
+  if(pd == pyz || pd == -pyz) {
+    /* the plane is parallel to the YZ plane */
+    typedef Project_YZ< Point_2, Point_3>                  Project_YZ;
+    typedef Iterator_project< ForwardIterator, Project_YZ> Iterator_YZ;
+    Project_YZ project;
+    Point_2 p = project(point);
+    Iterator_YZ pfirst(first), plast(last);
+    return bounded_side_2(pfirst, plast, p);
+  }
+  else if(pd == pxz || pd ==- pxz) {
+    /* the plane is parallel to the XZ plane */
+    typedef Project_XZ< Point_2, Point_3>                  Project_XZ;
+    typedef Iterator_project< ForwardIterator, Project_XZ> Iterator_XZ;
+    Project_XZ project;
+    Point_2 p = project(point);
+    Iterator_XZ pfirst(first), plast(last);
+    return bounded_side_2(pfirst, plast, p);
+  }
+  else {
+    CGAL_assertion(cross_product(pd.vector(), Vector_3(0,0,1)) == NULL_VECTOR);
+    /* the plane is not perpendicular to the XY plane */
+    typedef Project_XY< Point_2, Point_3>                  Project_XY;
+    typedef Iterator_project< ForwardIterator, Project_XY> Iterator_XY;
+    Project_XY project;
+    Point_2 p = project(point);
+    Iterator_XY pfirst(first), plast(last);
+    return bounded_side_2(pfirst, plast, p);
+  }
+}
+#endif // WRONG_IMPLEMENTATION
 
 #endif // CGAL_BOUNDED_SIDE_3_H

@@ -20,7 +20,7 @@
 //
 // author(s)     : Michael Seel    <seel@mpi-sb.mpg.de>
 //                 Miguel Granados <granados@mpi-sb.mpg.de>
-//                 Susan Hert      <hert@mpi-sb.mpg.de>
+//                 Susan ert      <hert@mpi-sb.mpg.de>
 //                 Lutz Kettner    <kettner@mpi-sb.mpg.de>
 // maintainer    : Susan Hert      <hert@mpi-sb.mpg.de>
 //                 Lutz Kettner    <kettner@mpi-sb.mpg.de>
@@ -46,14 +46,31 @@ class SNC_decorator
   SNC_structure* sncp_;
 public:
 #define USING(t) typedef typename SNC_structure_::t t
-  USING(Vertex_iterator);   USING(Vertex_handle);
-  USING(Halfedge_iterator); USING(Halfedge_handle);
-  USING(Halffacet_iterator);    USING(Halffacet_handle);
-  USING(Volume_iterator);   USING(Volume_handle);
-  USING(SVertex_iterator);   USING(SVertex_handle);
-  USING(SHalfedge_iterator); USING(SHalfedge_handle);
-  USING(SHalfloop_iterator); USING(SHalfloop_handle);
-  USING(SFace_iterator);     USING(SFace_handle);
+  USING(Vertex_iterator);
+  USING(Vertex_handle);
+  USING(Vertex_const_handle);
+  USING(Halfedge_iterator);
+  USING(Halfedge_handle);
+  USING(Halfedge_const_handle);
+  USING(Halffacet_iterator); 
+  USING(Halffacet_handle);
+  USING(Halffacet_const_handle);
+  USING(Volume_iterator);
+  USING(Volume_handle);
+  USING(Volume_const_handle);
+  USING(SVertex_iterator);  
+  USING(SVertex_handle);
+  USING(SVertex_const_handle);
+  USING(SHalfedge);
+  USING(SHalfedge_iterator);
+  USING(SHalfedge_handle);
+  USING(SHalfedge_const_handle);
+  USING(SHalfloop_iterator);
+  USING(SHalfloop_handle);
+  USING(SHalfloop_const_handle);
+  USING(SFace_iterator);  
+  USING(SFace_handle);
+  USING(SFace_const_handle);
   USING(SHalfedge_const_iterator); 
   USING(Object_handle);
   USING(SObject_handle);
@@ -75,27 +92,32 @@ public:
 #undef USING
   typedef void* GenPtr;
 
+  SNC_decorator() : sncp_() {}
   SNC_decorator(SNC_structure& W) : sncp_(&W) {}
   SNC_structure* sncp() const { return sncp_; }
 
-  Vertex_handle vertex(Halfedge_handle e) const
+  Vertex_handle vertex(const Halfedge_handle e) const
   { return e->center_vertex_; }
-  Halfedge_handle twin(Halfedge_handle e) const
+  Halfedge_handle twin(const Halfedge_handle e) const
   { return e->twin_; }
-  Vertex_handle source(Halfedge_handle e) const
+  Vertex_handle source(const Halfedge_handle e) const
   { return e->center_vertex_; }
-  Vertex_handle target(Halfedge_handle e) const
+  Vertex_handle target(const Halfedge_handle e) const
   { return source(twin(e)); }
-  SFace_handle sface(Halfedge_handle e) const
+  SFace_handle sface(const Halfedge_handle e) const
   { return e->incident_sface_; }
+  SFace_const_handle sface(const Halfedge_const_handle e) const
+  { return e->incident_sface_; }
+  /* SVertex queries*/
 
   Vertex_handle vertex(SHalfedge_handle e) const
   { return vertex(e->source_); }
-
   SHalfedge_handle twin(SHalfedge_handle e) const
   { return e->twin_; }
   Vertex_handle source(SHalfedge_handle e) const
   { return e->source_->center_vertex_; }
+  Vertex_handle source(SHalfedge e) const
+  { return e.source_->center_vertex_; }
   Vertex_handle target(SHalfedge_handle e) const
   { return e->twin_->source_->twin_->center_vertex_; }
   SHalfedge_handle previous(SHalfedge_handle e) const
@@ -110,6 +132,7 @@ public:
   { return e->source_; }
   Halfedge_handle starget(SHalfedge_handle e) const
   { return e->twin_->source_; }
+  /* SHalfedge queries */
 
   const Mark& mark(SHalfedge_handle e) const
   /*{\Mop returns the mark associated to |e| as
@@ -127,24 +150,29 @@ public:
     std::string res(os.str()); os.freeze(0); return res; 
   }
 
-  SHalfloop_handle twin(SHalfloop_handle l) const
+  SHalfloop_handle twin(const SHalfloop_handle l) const
   { return l->twin_; }
-  Halffacet_handle facet(SHalfloop_handle l) const
+  Halffacet_handle facet(const SHalfloop_handle l) const
   { return l->incident_facet_; }
-  Vertex_handle vertex(SHalfloop_handle l) const
+  Vertex_handle vertex(const SHalfloop_handle l) const
   { return l->incident_sface_->center_vertex_; }
-  SFace_handle sface(SHalfloop_handle l) const
+  SFace_handle sface(const SHalfloop_handle l) const
   { return l->incident_sface_; }
+  SFace_const_handle sface(const SHalfloop_const_handle l) const
+  { return l->incident_sface_; }
+  /* SHalfloop queries */
 
   Vertex_handle vertex(SFace_handle f) const
   { return f->center_vertex_; }
   Volume_handle volume(SFace_handle f) const
   { return f->incident_volume_; }
+  /* SHalffacet queries */
+
   Halffacet_handle twin(Halffacet_handle f) const
   { return f->twin_; }
   Volume_handle volume(Halffacet_handle f) const
   { return f->volume_; }
-  SFace_handle sface_custom(const Halffacet_handle& f) const {
+  SFace_handle sface(Halffacet_handle f) const {
     Halffacet_cycle_iterator fc(f->facet_cycles_begin());
     CGAL_assertion( fc != f->facet_cycles_end() );
     SHalfedge_handle e;
@@ -158,6 +186,7 @@ public:
     } else CGAL_assertion_msg(0, "Damn wrong handle.");
     return SFace_handle(); // never reached
   }
+  /* Halffacet queries */
 
 
   // attributes::

@@ -35,6 +35,7 @@
 #include <CGAL/In_place_list.h>
 #include <CGAL/Nef_2/Object_handle.h>
 #include <string>
+#include <strstream>
 
 CGAL_BEGIN_NAMESPACE
 

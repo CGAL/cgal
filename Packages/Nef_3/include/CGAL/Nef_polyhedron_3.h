@@ -33,7 +33,7 @@
 #define CGAL_NEF_POLYHEDRON_3_H
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
-
+//#define SNC_VISUALIZOR
 #include <CGAL/Nef_3/SNC_structure.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
 #include <CGAL/Nef_3/SNC_constructor.h>

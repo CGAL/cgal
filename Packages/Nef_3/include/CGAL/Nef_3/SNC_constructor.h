@@ -32,6 +32,9 @@
 #define CGAL_SNC_CONSTRUCTOR_H
 
 #include <CGAL/basic.h>
+#include <CGAL/functional.h> 
+#include <CGAL/function_objects.h> 
+#include <CGAL/Circulator_project.h>
 #include <CGAL/Nef_3/bounded_side_3.h>
 #include <CGAL/Nef_3/Pluecker_line_3.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
@@ -46,6 +49,20 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template < class Node, class Object, class DClass>
+struct Project_halfedge_point {
+  typedef Node         argument_type;
+  typedef Object       result_type;
+  Object& operator()( Node& x) const   { 
+    DClass D;
+    return D.point(D.source(x));
+  }
+  const Object& operator()( const Node& x) const   { 
+    DClass D;
+    return D.point(D.source(x)); 
+  }
+};
+  
 template <typename Point, typename Edge>
 struct Halfedge_key {
   typedef Halfedge_key<Point,Edge> Self;
@@ -114,18 +131,23 @@ class SNC_constructor : public SNC_decorator<SNC_structure_>
 { 
 public:
   typedef SNC_structure_ SNC_structure;
-  typedef typename SNC_structure_::Sphere_kernel Sphere_kernel;
-  typedef typename SNC_structure_::Kernel        Kernel;
-  typedef SNC_constructor<SNC_structure_>        Self;
-  typedef SNC_decorator<SNC_structure_>        Base;
-  typedef SNC_decorator<SNC_structure_>        SNC_decorator;
-  typedef SNC_FM_decorator<SNC_structure_>     FM_decorator;
-  typedef SNC_SM_decorator<SNC_structure_>     SM_decorator;
-  typedef SNC_SM_overlayer<SNC_structure_>     SM_overlayer;
-  typedef SNC_SM_point_locator<SNC_structure_> SM_point_locator;
-  typedef SNC_SM_const_decorator<SNC_structure_> SM_const_decorator;
+  typedef typename SNC_structure_::Sphere_kernel  Sphere_kernel;
+  typedef typename SNC_structure_::Kernel         Kernel;
+  typedef SNC_constructor<SNC_structure>          Self;
+  typedef SNC_decorator<SNC_structure>            Base;
+  typedef SNC_decorator<SNC_structure>            SNC_decorator;
+  typedef SNC_FM_decorator<SNC_structure>         FM_decorator;
+  typedef SNC_SM_decorator<SNC_structure>         SM_decorator;
+  typedef SNC_SM_overlayer<SNC_structure>         SM_overlayer;
+  typedef SNC_SM_point_locator<SNC_structure>     SM_point_locator;
+  typedef SNC_SM_const_decorator<SNC_structure>   SM_const_decorator;
 
-  #define USING(t) typedef typename SNC_structure_::t t
+  #define USING(t) typedef typename SNC_structure::t t
+  USING(Vertex);
+  USING(Halfedge);
+  USING(Halffacet);
+  USING(Volume);
+  
   USING(Vertex_iterator);
   USING(Halfedge_iterator);
   USING(Halffacet_iterator);
@@ -145,6 +167,11 @@ public:
   USING(SHalfedge_iterator);
   USING(SFace_iterator);
   USING(SHalfloop_iterator);
+
+  USING(SVertex);
+  USING(SHalfedge);
+  USING(SFace);
+  USING(SHalfloop);
 
   USING(SVertex_handle);
   USING(SHalfedge_handle);
@@ -187,9 +214,9 @@ public:
 
   typedef void* GenPtr;
 
-  typedef CGAL::Unique_hash_map<SFace_handle,int>  Shell_number_hash;
-  typedef CGAL::Unique_hash_map<SFace_handle,bool> SFace_visited_hash;
-  typedef CGAL::Unique_hash_map<SFace_handle,bool> Shell_closed_hash;
+  typedef CGAL::Unique_hash_map<SFace_const_handle,int>  Shell_number_hash;
+  typedef CGAL::Unique_hash_map<SFace_const_handle,bool> SFace_visited_hash;
+  typedef CGAL::Unique_hash_map<SFace_const_handle,bool> Shell_closed_hash;
 
   struct Shell_explorer {
     const SNC_decorator& D;
@@ -198,9 +225,11 @@ public:
     Shell_closed_hash& Closed;
     Vertex_handle v_min;
     int n;
+
     Shell_explorer(const SNC_decorator& Di, Shell_number_hash& Si, 
                    Shell_closed_hash& Sc, SFace_visited_hash& Vi) 
       : D(Di), Shell(Si), Closed(Sc), Done(Vi), n(0) {}
+
     void visit(SFace_handle h) { 
       TRACEN("visit sf "<<D.point(D.vertex(h)));
       Shell[h]=n;
@@ -223,9 +252,8 @@ public:
     }
     void visit(Halffacet_handle h) { /* do nothing */ }
 
-    Vertex_handle& minimal_vertex() { 
-      return v_min; 
-    }
+    Vertex_handle& minimal_vertex() { return v_min; }
+
     void increment_shell_number() { 
       TRACEN("leaving shell "<<n);
       ++n; 
@@ -268,25 +296,25 @@ public:
   volumes.  \precond |categorize_facet_cycles_and_creating_facets()| was
   called before.}*/
 
-  Volume_handle determine_volume( SFace_handle& f, 
+  Volume_handle determine_volume( const SFace_handle f, 
     const std::vector<Vertex_handle>& MinimalVertex, 
     const Shell_number_hash&  Shell ) const {
     Vertex_handle v_min = MinimalVertex[Shell[f]];
     Halffacet_handle f_below = get_facet_below(v_min);
-    if( f_below == Halffacet_handle() )
-      // return volumes_begin(); // is volumes_begin() a const iterator?
-      return SNC_decorator(*this).volumes_begin();
+    if ( f_below == Halffacet_handle())
+      // return volumes_begin();  //qualifiers discarded?
+      return Base(*this).volumes_begin();
     Volume_handle c = volume(f_below);
     if(c != Volume_handle())
       return c;
-    SFace_handle sf = sface_custom(f_below);
+    SFace_handle sf = sface(f_below);
     c = determine_volume(sf, MinimalVertex, Shell);
     link_as_inner_shell(sf, c);
     return c;
   }
 
-  Halffacet_handle get_facet_below(const Vertex_handle& vi) const {
-    //Segment_3 s(point(v), point(vertices_begin())), // vertices_begin()?
+  Halffacet_handle get_facet_below(const Vertex_handle vi) const {
+    // Segment_3 s(point(v), point(vertices_begin())), // qualifiers discarded?
     Segment_3 s(point(vi), point(Base(*this).vertices_begin())),
       so(s.opposite());
     Object_handle closest;
@@ -312,7 +340,7 @@ public:
     }
     CGAL_forall_halffacets(f,*sncp()) {
       Point_3 q;
-      SFace_handle sf = sface_custom(f);
+      SFace_handle sf = sface(f);
       if (sf != SFace_handle() && volume(sf) != Volume_handle()
 	  && do_intersect(s,f,q) ) { 
 	shorten(s,q); 
@@ -355,8 +383,7 @@ public:
   bool do_intersect(const Segment_3& s,
 		    Halfedge_handle e,
 		    Point_3& p) const {
-    bool intersect; //= do_intersect(s,segment(e),p);
-    return intersect;
+    return do_intersect(s,segment(e),p);
   }
 
 #ifdef LINE3_LINE3_INTERSECTION
@@ -426,8 +453,8 @@ public:
 
   bool do_intersect(const Segment_3& s,
 		    Halffacet_handle f,
-		    Point_3& p) const
-  { Plane_3 h(plane(f));
+		    Point_3& p) const { 
+    Plane_3 h(plane(f));
     Object o = intersection(h, Line_3(s));
     if ( !CGAL::assign(p,o) ) 
       return false;
@@ -437,28 +464,28 @@ public:
       return false;
     return (locate_point_in_halffacet(p, f) == CGAL::ON_BOUNDED_SIDE);
   }
-  
+
   Bounded_side locate_point_in_halffacet( const Point_3& p, 
 					  const Halffacet_handle& f) const {
+    typedef Project_halfedge_point< SHalfedge, const Point_3, SNC_decorator> 
+      Project;
+    typedef Iterator_project< SHalfedge_handle, Project,
+      const Point_3, const Point_3*> Circulator;
     Plane_3 h(plane(f));
     CGAL_assertion(h.has_on(p));
     Halffacet_cycle_iterator fc = f->facet_cycles_begin();
     SHalfedge_handle e;
     Bounded_side outer_bound_pos;
     if ( assign(e,fc) ) {
-      // TODO: implement a projector for the iterator instead to make a copy
-      std::vector<Point_3> verts;
-      SHalfedge_handle e0(e);
-      CGAL_For_all(e,e0)
-	verts.push_back(point(vertex(e)));
-      outer_bound_pos = bounded_side_3(verts.begin(), verts.end(), p, h);
-      verts.clear();
-    } else CGAL_assertion_msg(0, "facet's first cycle is a SHalfloop?");
+      Circulator first(e), beyond(e);
+      outer_bound_pos = bounded_side_3(first, beyond, p, h);
+    } else 
+      CGAL_assertion_msg(0, "facet's first cycle is a SHalfloop?");
     if( outer_bound_pos != CGAL::ON_BOUNDED_SIDE )
-    /* if point p is not in the relative interior of the outer face cycle
-       is not necesary to know the possition of p with respect of the 
-       inner face cycles */
       return outer_bound_pos;
+    /* The point p is not in the relative interior of the outer face cycle
+       so it is not necesary to know the possition of p with respect to the 
+       inner face cycles */
     Halffacet_cycle_iterator fe = f->facet_cycles_end();
     ++fc;
     if( fc == fe )
@@ -472,20 +499,14 @@ public:
 	else
 	  inner_bound_pos = CGAL::ON_UNBOUNDED_SIDE;
       } else if ( assign(e,fc) ) {
-	// TODO: implement a projector for the iterator instead to make a copy
-	std::vector<Point_3> verts;
-	SHalfedge_handle e0(e);
-	CGAL_For_all(e,e0)
-	  verts.push_back(point(vertex(e)));
-	inner_bound_pos = bounded_side_3(verts.begin(), verts.end(), p, 
-					 h.opposite());
-	verts.clear();
+	Circulator first(e), beyond(e);
+	inner_bound_pos = bounded_side_3(first, beyond, p, h.opposite());
       } else CGAL_assertion_msg(0, "Damn wrong handle.");
       if( inner_bound_pos != CGAL::ON_UNBOUNDED_SIDE )
-	/* the relative position of the point p in the relative interior
-	   of the outer cycle of a face f is known when p belongs to the
-	   clousure of any inner face cycle */
 	return opposite(inner_bound_pos);
+      /* At this point the point p belongs to relative interior of the facet's
+	 outer cycle, and its possition is completely known when it belongs
+	 to the clousure of any inner cycle */
     }
     return CGAL::ON_BOUNDED_SIDE;
   }
@@ -771,6 +792,7 @@ create_volumes() const
   Shell_explorer V(*this,Shell,Closed,Done);
   std::vector<Vertex_handle> MinimalVertex;
   std::vector<SFace_handle> EntrySFace;
+
   SFace_iterator f;
   CGAL_forall_sfaces(f,*sncp()) { 
     if ( Done[f] ) 
@@ -781,37 +803,37 @@ create_volumes() const
     EntrySFace.push_back(f);
     V.increment_shell_number();
   }
+
   Volume_handle outer_volume = sncp()->new_volume();
   for (unsigned i = 0; i < MinimalVertex.size(); ++i) {
     TRACEN("minimal vertex "<<i<<" "<<point(MinimalVertex[i]));
     Vertex_handle v = MinimalVertex[i];
+
     if(true) { // v is not a bounding box vertex, TODO
+      bool create_shell = false;
       SM_point_locator D(v);
-      SObject_handle o = D.locate_no_const(Sphere_point(-1,0,0));
-      SFace_handle sf;
-      if ( !assign(sf,o) || Shell[sf] != i ) {
-	TRACEN("outer shell "<<i);
-	SVertex_handle   sv;
-	SHalfedge_handle se;
-	SHalfloop_handle sl;
-	if( !assign(sf,o) ) {
-	  if( assign(sv,o) )
-	    f = sface(sv);
-	  else if( assign(se,o) )
-	    f = sface(se);
-	  else if( assign(sl,o) )
-	    f = sface(sl);
-	  else CGAL_assertion_msg(0,"Damn wrong handle");
-	}
-	TRACEN("closed shell? "<<Closed[sf]);
-	if( true ) { // Closed[f] ) {
+      SObject_handle o = D.locate(Sphere_point(-1,0,0));
+      SFace_const_handle sfc;
+      if( !assign(sfc, o)) {
+	TRACEN( "outer shell (no sface case)? #" << i);
+	create_shell = true;
+      }
+      else {
+	TRACEN( "outer shell (sface case)? #" << i);
+	if( Shell[sfc] != i)
+	  create_shell = true;
+      }
+      if ( create_shell ) {
+	SFace_handle f = EntrySFace[i];
+	TRACEN( "closed shell? " << Closed[f]);
+	if( Closed[f] ) {
 	  Volume_handle c = sncp()->new_volume();
-	  link_as_outer_shell(sf, c );
+	  link_as_outer_shell(f, c );
 	}
       }
     }
   }
-  
+
   CGAL_forall_sfaces(f,*sncp()) {
     if ( volume(f) != Volume_handle() ) 
       continue;

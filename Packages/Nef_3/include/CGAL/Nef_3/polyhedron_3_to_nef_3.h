@@ -1,4 +1,4 @@
-//#define CGAL_P2NEF3_USE_SM_OVERLAY
+#define CGAL_P2NEF3_USE_SM_OVERLAY
 // ============================================================================
 //
 // Copyright (c) 1997-2002 The CGAL Consortium
@@ -42,7 +42,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class Node, class Object>
-struct Proj_halfedge {
+struct Project_vertex_point {
   typedef Node                  argument_type;
   typedef Object                result_type;
   Object&       operator()( Node& x)       const { return x.vertex()->point();}
@@ -63,8 +63,8 @@ struct Facet_plane_3 {
     typedef typename Facet::Halfedge            Halfedge;
     typedef typename Halfedge::Vertex           Vertex;
     typedef typename Vertex::Point_3            Point;
-    typedef Proj_halfedge< Halfedge, const Point> Proj_halfedge_item;
-    typedef Circulator_project< Halfedge_circulator, Proj_halfedge_item,
+    typedef Project_vertex_point< Halfedge, const Point> Proj_vertex_point;
+    typedef Circulator_project< Halfedge_circulator, Proj_vertex_point,
       const Point, const Point*> Circulator;
     /* TODO: to implement a better approach
        typedef Project_vertex< Halfedge> Project_vertex;

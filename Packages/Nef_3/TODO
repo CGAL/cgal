@@ -1,12 +1,8 @@
 Nef_3 Package: TODO
 ---------------------------------------------------------------------
 
-- Expr: cross_product(pd.vector(),Vector_3<R>(0,0,1))==NULL_VECTOR
-  File: ../Nef_3/include/CGAL/Nef_3/bounded_side_3.h
-  Line: 77
-* Fix compilation problem: missing <locale> header (v2.95.3)
-* Change Partition to Union_find (compiled but not tested)
-- Synthesizing volumes from SM representation
+* Create testing models for volume synthesizing.
+* Synthesizing volumes from SM representation (finish tests)
 - Simplification of the SNC structure
 - Simplify during the construction from polyhedral surfaces
   (based on the simplification of SM)
@@ -15,3 +11,4 @@ Nef_3 Package: TODO
 - Find all intersections between two SNC's.
 - Binary operations
 - Extended kernel with infimaximal box
+

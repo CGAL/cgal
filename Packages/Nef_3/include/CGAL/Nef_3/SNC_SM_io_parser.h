@@ -96,11 +96,11 @@ class SNC_SM_io_parser : public SNC_SM_decorator<Refs_>
 
 public:
 /*{\Mcreation 3}*/
-SNC_SM_io_parser(istream& is, Vertex_handle v);
+SNC_SM_io_parser(std::istream& is, Vertex_handle v);
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname|
 to input the local graph |M| of |v| from |is|.}*/
 
-SNC_SM_io_parser(ostream& os, Vertex_handle v);
+SNC_SM_io_parser(std::ostream& os, Vertex_handle v);
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname|
 to output the local graph |M| of |v| to |os|.}*/
 
@@ -128,7 +128,7 @@ static void dump(Vertex_handle v, std::ostream& os = cerr);
 
 
 template <typename Refs_>
-SNC_SM_io_parser<Refs_>::SNC_SM_io_parser(istream& iin, Vertex_handle v) :
+SNC_SM_io_parser<Refs_>::SNC_SM_io_parser(std::istream& iin, Vertex_handle v) :
   Base(v), in(iin), out(std::cout), verbose(0), 
   vn(0), en(0), ln(0), fn(0) 
 { clear(); }
