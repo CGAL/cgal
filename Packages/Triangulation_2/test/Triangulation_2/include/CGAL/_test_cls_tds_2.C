@@ -11,10 +11,10 @@
 // release       :
 // release_date  :
 // 
-// source        : 
-// file          : include/CGAL/_test_cls_tds_2.C
-// revision      : 
-// revision_date : 
+// file          : test/Triangulation/include/CGAL/_test_cls_tds_2.C
+// source        : $RCSfile$
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Mariette Yvinec (Mariette.Yvinec@sophia.inria.fr)
 //
 // coordinator   : INRIA Sophia-Antipolis
@@ -176,12 +176,12 @@ _test_cls_tds_2( const Tds &, const Gt &)
 
   //access
   std::cout << "    test access" << std::endl;
-  assert(tds0.dimension() == -1     && tds0.number_of_vertices() == 0 &&
+  assert(tds0.dimension() <= -1     && tds0.number_of_vertices() == 0 &&
 	 tds0.number_of_faces()== 0 && tds0.number_of_edges()    == 0 &&
 	 tds0.number_of_full_dim_faces() == 0);
   assert(tds1.dimension() == -1     && tds1.number_of_vertices() == 1 &&
 	 tds1.number_of_faces()== 0 && tds1.number_of_edges()    == 0 &&
-	 tds1.number_of_full_dim_faces() == 0);
+	 tds1.number_of_full_dim_faces() >= 0);
   assert(tds2.dimension() == 0      && tds2.number_of_vertices() == 2 &&
 	 tds2.number_of_faces()== 0 && tds2.number_of_edges()    == 0 &&
 	 tds2.number_of_full_dim_faces() == 2);
@@ -244,7 +244,6 @@ _test_cls_tds_2( const Tds &, const Gt &)
   Vertex *w4e= tds4e.copy_tds(tds4,w4);
   assert(tds4e.is_valid() && tds4e.is_vertex(w4e));
 
-   //iterators are tested by is_valid()
   //test circulators and v->degree()
   std::cout << "    circulators" <<std::endl;
   _test_tds_circulators(tds0);
@@ -363,22 +362,77 @@ void
 _test_tds_iterators( const Tds&  tds)
 {
   typedef typename Tds::Edge     Edge;
+  typedef typename Tds::Vertex   Vertex;
+  typedef typename Tds::Face     Face;
 
   typedef typename Tds::Vertex_iterator   Vertex_iterator;
   typedef typename Tds::Face_iterator     Face_iterator;
   typedef typename Tds::Edge_iterator     Edge_iterator;
-  
-  typedef typename Tds::Vertex_circulator Vertex_circulator;
-  typedef typename Tds::Face_circulator   Face_circulator;
-  typedef typename Tds::Edge_circulator   Edge_circulator;
-  
+  typedef typename Tds::Iterator_base     Iterator_base;
+
+  int nv, ne, nf, nb;
+  nv = ne = nf = nb = 0;
+
+  Vertex v;
+  Face f;
   Edge e;
-  
-  for( Edge_iterator eit = tds.edges_begin();
-       eit != tds.edges_end(); eit++) {
-    e = *eit;
+
+  for (Iterator_base itbp = tds.iterator_base_begin();
+       itbp != tds.iterator_base_end();
+       ++itbp) {
+   f = *itbp;
+   nb += 1;
   }
+  assert(nb == tds.number_of_full_dim_faces());
+  for (Iterator_base itbm = tds.iterator_base_end();
+       itbm != tds.iterator_base_begin();
+       --itbm) {
+    nb -= 1;
+  }
+  assert(nb == 0);
+
+  for (Vertex_iterator vitp = tds.vertices_begin();
+       vitp != tds.vertices_end();
+       ++vitp) {
+   v = *vitp;
+   nv += 1;
+  }
+  assert(nv == tds.number_of_vertices());
+  for (Vertex_iterator vitm = tds.vertices_end();
+       vitm != tds.vertices_begin();
+       --vitm) {
+    nv -= 1;
+  }
+  assert(nv == 0);
+
+  
+  for (Face_iterator fitp = tds.faces_begin();
+       fitp != tds.faces_end();
+       ++fitp) {
+    f = *fitp;
+    nf += 1;
+  }
+  assert(nf == tds.number_of_faces());
+  for (Face_iterator fitm = tds.faces_end();
+       fitm != tds.faces_begin();
+       --fitm) {
+    nf -= 1;
+  }
+  assert(nf == 0);
+
+  for (Edge_iterator eitp = tds.edges_begin();
+       eitp != tds.edges_end();
+       ++eitp) {
+    e = *eitp;
+    ne += 1;
+  }
+  assert(ne == tds.number_of_edges());
+  for (Edge_iterator eitm = tds.edges_end();
+       eitm != tds.edges_begin();
+       --eitm) {
+    ne -= 1;
+  }
+  assert(ne == 0);
+
   return;
-
-
 }

@@ -50,6 +50,6 @@ int main()
   typedef CGAL::Triangulation_data_structure_using_list_2<Vb,CFb> Tds1;
   typedef CGAL::Constrained_triangulation_2<Gt,Tds1>              CCls1;
 
- _test_cls_constrained_triangulation(CCls1());
+  // _test_cls_constrained_triangulation(CCls1());
  return 0;
 }

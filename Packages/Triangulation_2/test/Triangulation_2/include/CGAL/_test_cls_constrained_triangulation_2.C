@@ -29,11 +29,6 @@ template <class Triangulation>
 void 
 _test_cls_constrained_triangulation(const Triangulation &)
 {
-  //using std::cout;
-  //using std::ofstream;
-  //using std::ifstream;
-  //using std::endl;
-
   typedef Triangulation                       Cls;
 
   // We assume the traits class has been tested already
@@ -78,21 +73,23 @@ _test_cls_constrained_triangulation(const Triangulation &)
   // Build dummy triangulations, 1-dimensional
 
      std::cout << "    1-Dim "<<std::endl;
-    int m;
-  for (m=0; m<20; m++)
+     int m;
+  for (m=0; m<4; m++)
       l.push_back(Constraint(Point(3*m, 2*m),Point(3*m,2*m) ));
     Cls T1_1(l);
   assert( T1_1.dimension() == 1 );
-  assert( T1_1.number_of_vertices() == 20 );
+  assert( T1_1.number_of_vertices() == 4 );
+     //cerr << T1_1;
   assert( T1_1.is_valid() );
   
   //l.clear();
   l.erase(l.begin(),l.end());
-  for (m=0; m<19; m++)
+  for (m=0; m<4; m++)
       l.push_back(Constraint(Point(3*m, 2*m),Point(3*(m+1),2*(m+1)) ));
     Cls T1_2(l);
   assert( T1_2.dimension() == 1 );
-  assert( T1_2.number_of_vertices() == 20);
+  assert( T1_2.number_of_vertices() == 5);
+  //cerr << T1_2;
   assert( T1_2.is_valid() );
   //l.clear();
   l.erase(l.begin(),l.end());
@@ -182,8 +179,8 @@ _test_cls_constrained_triangulation(const Triangulation &)
    /*************************/
   /******* Iterators *******/
    std::cout << "    iterators" << std::endl;
-    _test_iterators(T1_1);
-   _test_iterators(T1_2);
+   _test_iterators(T1_1);
+    _test_iterators(T1_2);
    _test_iterators(T2_1);
    _test_iterators(T2_2);
 
