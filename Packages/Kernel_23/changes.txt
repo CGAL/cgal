@@ -1,3 +1,6 @@
+1.42 (17 June 2003)
+- Include Origin.h in function_objects.h.
+
 1.41 (12 June 2003)
 - Un-hide Circle_2::operator== (similarly for Sphere_3 and !=).
 
