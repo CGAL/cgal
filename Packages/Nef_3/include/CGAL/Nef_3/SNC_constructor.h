@@ -1094,7 +1094,7 @@ create_SM_on_infibox(const Point_3& center, Sphere_point* SP, int size,
   TRACEN("create_SM_on_infibox: center = " << center);
 
   TRACEN("create svertices");
-  SVertex_handle sv[size];
+  std::vector<SVertex_handle> sv(size);
   TRACEN("create_SM_on_infibox: size = " << size);
   for(int i=0; i<size; ++i) {
     TRACEN("                      SP["<< i << "]=" << SP[i]);
@@ -1103,7 +1103,7 @@ create_SM_on_infibox(const Point_3& center, Sphere_point* SP, int size,
   }
   
   TRACEN("create sedges");
-  SHalfedge_handle she[size+1];
+  std::vector<SHalfedge_handle> she(size+1);
   for(int si=0; si<size-1;++si) {
     she[si]=SD.new_shalfedge_pair(sv[si], sv[(si+1)%(size-1)]);
     SD.circle(she[si])= 
