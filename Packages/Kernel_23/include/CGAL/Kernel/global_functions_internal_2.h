@@ -78,8 +78,8 @@ bisector(const typename CGAL_WRAP(K)::Point_2 &p,
 template <typename K>
 inline
 typename K::Line_2
-bisector(const typename K::Line_2 &l1,
-         const typename K::Line_2 &l2, const K &k)
+bisector(const typename CGAL_WRAP(K)::Line_2 &l1,
+         const typename CGAL_WRAP(K)::Line_2 &l2, const K &k)
 {
   return k.construct_bisector_2_object()(l1, l2);
 }
