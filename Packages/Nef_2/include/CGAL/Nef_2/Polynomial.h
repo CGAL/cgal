@@ -57,8 +57,6 @@ CGAL_TEMPLATE_NULL class Polynomial<double> ;
 // SPECIALIZE_CLASS(NT,int double) END
 
 
-// Polynomial<int> operator - (const Polynomial<int>& p);
-// Polynomial<double> operator - (const Polynomial<double>& p);
 
 /*{\Mtext \headerline{Range template}}*/
 
@@ -411,6 +409,7 @@ template <class pNT> class Polynomial :
   friend 
   Polynomial<NT>  operator / CGAL_NULL_TMPL_ARGS 
   (const Polynomial<NT>& p1, const Polynomial<NT>& p2);
+  
   /*{\Mbinopfunc implements polynomial division of |p1| and |p2|. if
   |p1 = p2 * p3| then |p2| is returned. The result is undefined if |p3|
   does not exist in |NT[x]|.  The correct division algorithm is chosen
@@ -609,7 +608,7 @@ CGAL_TEMPLATE_NULL class Polynomial<int> :
   /*{\Xtypemember a random access iterator for read-only access to the
   coefficient vector.}*/
 
-  //  protected:
+  //protected:
   void reduce() { ptr()->reduce(); }
   Vector& coeffs() { return ptr()->coeff; }
   const Vector& coeffs() const { return ptr()->coeff; }
@@ -922,7 +921,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   /*{\Xtypemember a random access iterator for read-only access to the
   coefficient vector.}*/
 
-  //af: protected:
+  //protected:
   void reduce() { ptr()->reduce(); }
   Vector& coeffs() { return ptr()->coeff; }
   const Vector& coeffs() const { return ptr()->coeff; }
@@ -1288,7 +1287,7 @@ Polynomial<NT> operator / (const Polynomial<NT>& p1,
                            const Polynomial<NT>& p2)
 { 
   typedef Number_type_traits<NT> Traits;
-  return divop(p1,p2, Traits::Has_gcd());
+  return divop(p1,p2, typename Traits::Has_gcd());
 }
 
 
@@ -1297,7 +1296,7 @@ Polynomial<NT> operator % (const Polynomial<NT>& p1,
 			   const Polynomial<NT>& p2)
 { 
   typedef Number_type_traits<NT> Traits;
-  return modop(p1,p2, Traits::Has_gcd()); }
+  return modop(p1,p2, typename Traits::Has_gcd()); }
 
 
 template <class NT> 
