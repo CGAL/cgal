@@ -41,8 +41,7 @@ void bench()
   IA_nt c(1), d(-5.0/3), e(-6.0/7), f(7.0/9);
 
    c = a + b;
-   std::cout << a << std::endl;
-   std::cout << b << std::endl;
+   std::cout << a << std::endl << b << std::endl;
    if (b.is_point())
      std::cout << "error due to constant propagation" << std::endl;
    std::cout << c << std::endl;
@@ -84,7 +83,8 @@ void bench()
   BENCH_MACRO_generic(EMPTY, c = c / dd, "ia/d");
 
 #if 1
-  std::cout << a<<b<<c<<d<<std::endl;
+  std::cout << a << std::endl << b << std::endl;
+  std::cout << c << std::endl << d << std::endl;
   CGAL::Orientation o;
   dt = t.time(); t.start();
   for (i=0; i<loops; i++)
@@ -114,12 +114,6 @@ int main()
   IA_nt a=1, b=2;
   (int) sign(a);
   (int) compare(a,b);
-#if 0
-  // It would be nice if it emitted a warning, because c is not initialized.
-  IA_nt c;
-  a = c+c;
-  std::cout << c << a << std::endl;
-#endif
 
 #ifdef ADVANCED
   CGAL::FPU_set_cw(backup);
