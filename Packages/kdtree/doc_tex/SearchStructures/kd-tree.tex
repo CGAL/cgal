@@ -54,18 +54,20 @@
 %segment-trees in the same data structure, see \Chapter{Range:Trees} for the 
 %details.
 
-The implementation of the {\kdt}  is independent of the implementation of
-the rest of {\cgal}  and can be used separately from \cgal. 
+%The implementation of the {\kdt}  is independent of the implementation of
+%the rest of {\cgal}  and can be used separately from \cgal. 
 
 %In \Section{KDT_sec:intro}, we present the {\kdt}  structure and its
 %performance. \Section{KDT_sec:class:main} presents the class
 %\ccStyle{Kdtree_d<I>}.
 
-The kd-tree class is parameterized with a traits class, that defines
+Kd-trees are implemented by
+the class \ccc{Kdtree_d}, that is parameterized with a traits class defining
 the interface between the class and the geometric primitives used.
-For the description of the traits classes provided by {\cgal}
-and the description of the formal requirements for a class to be 
-a kd-tree traits class please refer to the reference pages.
+For the description of the traits classes \ccc{Kd_Interface}, \ccc{Kd_Interface_2d} 
+and \ccc{Kd_Interface_3d} provided by {\cgal} please refer to the reference pages.
+Also refer to the reference pages, for the description of the formal requirements for a class to be 
+a kd-tree traits class by the concept \ccc{Kdtree_d_traits}.
 % {\cgal}  provides ready-made interface classes that are presented in
 % Section~\ref{KDT_sec:def:interface}.
 % The formal requirements for a class to be a {\kdt} traits class is
@@ -126,6 +128,80 @@ where $k$ is the size of the query output. See \cite{bkos-cgaa-97}.
 \end{figure}
 
 \end{ccTexOnly}
+
+\subsection{Example illustrating orthogonal range-searching}
+
+\ccExample
+
+This example illustrates orthogonal range-searching. 
+The {\kdt} is built using 2D points from the CGAL kernel. 
+
+\begin{verbatim}
+
+#include <CGAL/Cartesian.h>
+
+#include <iostream>
+#include <ctime>
+#include <cassert>
+#include <list>
+
+#include <CGAL/kdtree_d.h>
+
+typedef CGAL::Cartesian<double>           K;
+typedef K::Point_2                        point;
+typedef CGAL::Kdtree_interface_2d<point>  kd_interface;
+typedef CGAL::Kdtree_d<kd_interface>      kd_tree;
+typedef kd_tree::Box                      box;
+typedef std::list<point>                  points_list;
+
+int main()
+{
+    CGAL::Kdtree_d<kd_interface> tree(2);
+    points_list l, res;
+
+    std::cout << "Insering evenly 81 points  in the square (0,0)-(10,10) ...\n\n";
+    for (int i=1; i<10; i++)
+      for (int j=1; j<10; j++)
+        {
+          point p(i,j);
+          l.push_front(p);
+        }
+
+    // building the tree 
+    tree.build( l );
+       
+    // checking validity
+    if  ( ! tree.is_valid() )
+        tree.dump();
+    assert( tree.is_valid() );
+
+    // Defining and searching the box r
+    double lx,ly,rx,ry;
+    std::cout << "Define your query square.\nEnter left x coordinate: " ;
+    std::cin >> lx ;
+    std::cout << "Enter left y coordinate: ";
+    std::cin >> ly;
+    std::cout << "Enter right x coordinate: " ;
+    std::cin >> rx ;
+    std::cout << "Enter right y coordinate: ";
+    std::cin >> ry;
+    std::cout << std::endl; 
+
+    box r(point(lx,ly), point(rx,ry) ,2);
+
+    tree.search( std::back_inserter( res ), r );
+    
+    std::cout << "Listing of the points in the square: \n" ;
+    std::copy (res.begin(),res.end(),std::ostream_iterator<point>(std::cout," \n") );
+    std::cout << std::endl;
+
+    tree.delete_all();
+
+    return  0;
+}
+
+\end{verbatim}
+
 
 %for html
 \lcHtml{\label{KDT_fig:kdtree}}

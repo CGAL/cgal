@@ -1,3 +1,5 @@
+2.2.18 Added example and name of classes and concepts in section Kd-Trees.
+
 2.2.17 Example code cleanups.
 
 2.2.15 Small corrections in documentation

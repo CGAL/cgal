@@ -37,7 +37,7 @@ int main()
           l.push_front(p);
         }
 
-    // building the tree for the random points
+    // building the tree 
     tree.build( l );
        
     // checking validity
