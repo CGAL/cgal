@@ -1158,7 +1158,7 @@ limit_intersection(Gt gt,
   typename Gt::FT dd = distance(l1,pd);
   if ( db < dx  ) { dx = db; i = 1;}
   if ( dc < dx  ) { dx = dc; i = 2;}
-  if ( dd < dx  ) { dx = dd; i = 3;}
+  if ( dd < dx  ) { i = 3;}
   return i;
 }
 

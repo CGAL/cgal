@@ -1,6 +1,12 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 7.52 (12/11/02)
+- fixes is_valid() de Triangulation_ds_face_2.h
+  to deal with data structure when two faces can share 3 vertices 
+- fixes by Sylvain in print_hierarchy() de Constrained_triangulation_2.h
+- fixed unusefull affectation in limit_intersection()
+  in Constrained_triangulation_2.h
 
 Ver 7.51 (30/10.02)
 - fixes by Radu on Trivial_iterator.h + VC7
