@@ -40,10 +40,10 @@ container given in \cite{ms-strg-96}.
 The value type of the container should be the same as the point type of the 
 traits class.
 
-{\em Note}: Currently, a polygon declaration looks like
-\ccStyle{Polygon_2<Traits, list<Traits::Point_2> >}.
-When nested templates become available this might be simplified to
-\ccStyle{Polygon_2<Traits, list>}.
+%{\em Note}: Currently, a polygon declaration looks like
+%\ccStyle{Polygon_2<Traits, list<Traits::Point_2> >}.
+%When nested templates become available this might be simplified to
+%\ccStyle{Polygon_2<Traits, list>}.
 
 \subsubsection*{Assertions}
 The polygon code uses infix \ccc{POLYGON} in the assertions,
@@ -51,29 +51,6 @@ for example defining the compiler flag
 \ccc{CGAL_POLYGON_NO_PRECONDITIONS} switches precondition
 checking off, cf.~Section~2 of the Reference Manual Part 0, General 
 Introduction.
-
-%\subsubsection*{Changes}
-%The most important changes with respect to the previous release are:
-
-%\begin{itemize}
-%\item There is now a proper traits parameter. It is no longer possible to use
-%the representation class \ccc{R} parameter for the template parameter \ccc{Traits}.
-%Instead the default traits class \ccc{Polygon_traits_2<R>} should be used,
-%or when appropriate a user defined one.
-
-%\item The method \ccc{append} is now called \ccc{push_back}. This was done to
-%support back insert iterators.
-
-%\item The \ccc{transform} method has been removed. It is replaced by
-%a global \ccc{transform} function.
-
-%\item Random access methods have been added. These methods are only available
-%for random access containers.
-
-%\item The window stream output operator has been added.
-
-%\item A few bugs have been fixed (in the area computation and the simplicity test).
-%\end{itemize}
 
 \ccHeading{Types}
 \ccThree{Polygon_2<Traits,Container>}{}{\hspace*{7cm}}
@@ -655,11 +632,11 @@ the lexicographical comparison functions can be expressed in the functions
 \ccStyle{compare_x} and \ccStyle{compare_y}). These predicates will probably
 be removed from the traits class.
 
-\begin{ccClass} {Traits}
+\begin{ccClass} {Polygon_traits}
 \ccCreationVariable{traits}
-%\ccThree{Polygon_2<Traits,Container>}{}{\hspace*{7cm}}
+%\ccThree{Polygon_2<Polygon_traits,Container>}{}{\hspace*{7cm}}
 %\ccThreeToTwo
-\ccTwo{Traits:: Segment_2}{}
+\ccTwo{Polygon_traits:: Segment_2}{}
 
 \ccTypes
 \ccNestedType{FT}
@@ -693,10 +670,10 @@ be removed from the traits class.
 \ccCreation
 \ccCreationVariable{traits}
 
-\ccConstructor{ Traits( );}{Default constructor.}
+\ccConstructor{ Polygon_traits( );}{Default constructor.}
 
 \ccGlue
-\ccConstructor{ Traits( Traits const& t);}{Copy constructor.}
+\ccConstructor{ Polygon_traits( Polygon_traits const& t);}{Copy constructor.}
 
 \ccOperations
 \ccThree{bool}{}{\hspace*{10cm}}
