@@ -157,9 +157,9 @@ svd_do_intersect_parallel_C2(const RT& x1, const RT& y1,
   if ( it3 < 2 && it4 < 2 ) { // segments are identical
     return std::pair<int,int>(4,4);
   } else if ( it3 < 2 && it4 == 3 ) { // segments intersect at p1 or p2
-    return std::pair<int,int>(it3,it3);
+    return std::pair<int,int>(it3,0);
   } else if ( it3 == 3 && it4 < 2 ) { // segments intersect at p1 or p2
-    return std::pair<int,int>(it4,it4);
+    return std::pair<int,int>(it4,1);
   } else {
     // MK: this case has to be further investigating to produce finer
     //     answers wrt the exact configuration

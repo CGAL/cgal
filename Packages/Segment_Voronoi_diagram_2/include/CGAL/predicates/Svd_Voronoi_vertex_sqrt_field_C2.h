@@ -862,7 +862,7 @@ private:
   //  the reference point (valid if v_type != SSS)
   //--------------------------------------------------------------------------
 
-  const Point_2& p_ref() const
+  Point_2 p_ref() const
   {
     CGAL_precondition ( v_type != SSS );
 

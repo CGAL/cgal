@@ -28,9 +28,8 @@
 #ifndef CGAL_SEGMENT_VORONOI_DIAGRAM_PREDICATES_FTC2_H
 #define CGAL_SEGMENT_VORONOI_DIAGRAM_PREDICATES_FTC2_H
 
-
+#include <CGAL/determinant.h>
 #include <CGAL/predicates/Segment_Voronoi_diagram_predicates_C2.h>
-#include <CGAL/predicates/Svd_do_intersect_C2.h>
 #include <CGAL/predicates/check_filter.h>
 #include <CGAL/Segment_Voronoi_diagram_kernel_wrapper_2.h>
 
@@ -639,8 +638,7 @@ svd_is_degenerate_edge_ftC2(const std::vector<FT>& v,
   typedef typename Kernel::Point_2             Point_2;
   typedef typename Kernel::Segment_2           Segment_2;
   typedef typename Kernel::Site_2              Site_2;
-  typedef
-    Svd_is_degenerate_edge_test_2<Kernel,Method_tag> Is_degenerate_edge;
+  typedef Svd_is_degen_edge_2<Kernel,Method_tag> Is_degenerate_edge;
 
 
   Site_2* t = new Site_2[4];
@@ -671,10 +669,17 @@ svd_is_degenerate_edge_ftC2(const std::vector<FT>& v,
 template<class K, class Method_tag>
 inline
 std::pair<int,int>
-svd_do_intersect_ftC2(const typename K::Segment_2& s1,
-		      const typename K::Segment_2& s2,
-		      Method_tag mtag)
+svd_do_intersect_C2(const typename K::Site_2& p,
+		    const typename K::Site_2& q,
+		    Method_tag mtag)
 {
+  typedef typename K::Segment_2  Segment_2;
+
+  CGAL_precondition( p.is_segment() && q.is_segment() );
+
+  Segment_2 s1 = p.segment();
+  Segment_2 s2 = q.segment();
+
   return svd_do_intersect_ftC2(s1.source().x(),	s1.source().y(),
 			       s1.target().x(),	s1.target().y(),
 			       s2.source().x(),	s2.source().y(),
@@ -705,6 +710,135 @@ svd_do_intersect_ftC2(const FT& x1, const FT& y1,
 
   return Do_intersect()(s1, s2);
 }
+
+//--------------------------------------------------------------------------
+
+template<class K>
+inline
+bool
+svd_are_parallel_C2(const typename K::Site_2& p,
+		    const typename K::Site_2& q)
+{
+  typedef typename K::Segment_2  Segment_2;
+
+  CGAL_precondition( p.is_segment() && q.is_segment() );
+
+  Segment_2 s1 = p.segment();
+  Segment_2 s2 = q.segment();
+
+  return svd_are_parallel_ftC2(s1.source().x(),	s1.source().y(),
+			       s1.target().x(),	s1.target().y(),
+			       s2.source().x(),	s2.source().y(),
+			       s2.target().x(),	s2.target().y());
+}
+
+
+template<class FT>
+inline
+bool
+svd_are_parallel_ftC2(const FT& x1, const FT& y1,
+		      const FT& x2, const FT& y2,
+		      const FT& x3, const FT& y3,
+		      const FT& x4, const FT& y4)
+{
+  must_be_filtered(FT());
+
+  FT det = det2x2_by_formula(x2 - x1, x4 - x3,
+			     y2 - y1, y4 - y3);
+
+  return ( CGAL::sign(det) == CGAL::ZERO );
+}
+
+//--------------------------------------------------------------------------
+
+template<class K, class Method_tag>
+inline
+Oriented_side
+svd_oriented_side_ftC2(const typename K::Site_2 t[],
+		       unsigned int num_sites, Method_tag mtag)
+{
+  typedef typename K::FT   FT;
+  char site_types[5];
+
+  std::vector<FT> v;
+
+  for (unsigned int i = 0; i < num_sites; i++) {
+    if ( t[i].is_point() ) {
+      v.push_back( t[i].point().x() );
+      v.push_back( t[i].point().y() );
+      site_types[i] = 'p';
+    } else {
+      v.push_back( t[i].source().x() );
+      v.push_back( t[i].source().y() );
+      v.push_back( t[i].target().x() );
+      v.push_back( t[i].target().y() );
+      site_types[i] = 's';
+    }
+  }
+
+  return svd_oriented_side_ftC2(v, site_types, num_sites, mtag);
+}
+	
+
+template<class K, class Method_tag>
+inline
+Oriented_side
+svd_oriented_side_ftC2(const typename K::Site_2& s1,
+		       const typename K::Site_2& s2,
+		       const typename K::Site_2& s3,
+		       const typename K::Site_2& s,
+		       const typename K::Site_2& p,
+		       Method_tag mtag)
+{
+  typename K::Site_2 site_vec[] = {s1, s2, s3, s, p};
+  return
+    svd_oriented_side_ftC2<K,Method_tag>(site_vec, 5, mtag);
+}
+
+
+template<class FT, class Method_tag>
+inline
+Oriented_side
+svd_oriented_side_ftC2(const std::vector<FT>& v,
+		       char site_types[], unsigned int num_sites,
+		       Method_tag)
+{
+  CGAL_precondition( num_sites == 5 );
+
+  must_be_filtered(FT());
+  
+  typedef Simple_cartesian<FT>                 Rep;
+  typedef CGAL::Segment_Voronoi_diagram_kernel_wrapper_2<Rep>  Kernel;
+
+  typedef typename Kernel::Point_2                 Point_2;
+  typedef typename Kernel::Segment_2               Segment_2;
+  typedef typename Kernel::Site_2                  Site_2;
+  typedef Svd_oriented_side_C2<Kernel,Method_tag>  Oriented_side_2;
+
+
+  Site_2* t = new Site_2[5];
+
+  for (unsigned int i = 0, k = 0; i < num_sites; i++) {
+    if ( site_types[i] == 'p' ) {
+      Point_2 p(v[k], v[k+1]);
+      t[i].set_point( p );
+    } else if ( site_types[i] == 's' ) {
+      Point_2 p1(v[k], v[k+1]), p2(v[k+2], v[k+3]);
+      Segment_2 s(p1, p2);
+      t[i].set_segment( s );
+    } else {
+      CGAL_assertion( site_types[i] == 'p' ||
+		      site_types[i] == 's' );
+    }
+    k += ( (site_types[i] == 'p') ? 2 : 4 );
+  }
+
+  Oriented_side os = Oriented_side_2()(t[0], t[1], t[2], t[3], t[4]);
+
+  delete[] t;
+  return os;
+}
+
 
 //--------------------------------------------------------------------------
 
