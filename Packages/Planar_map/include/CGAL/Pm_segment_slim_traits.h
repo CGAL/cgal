@@ -178,7 +178,8 @@ public:
                           const Point_2 &q) const 
   {
     // If one of the curves is vertical then return EQUAL.
-    if ( is_vertical_2_object()(cv1) || (is_vertical_2_object()(cv2)) ) return EQUAL;
+    if ( is_vertical_2_object()(cv1) || (is_vertical_2_object()(cv2)) ) 
+      return EQUAL;
     // If one of the curves is not defined at q then return EQUAL.
     if ( ! is_left(leftmost(cv1.source(), cv1.target()), q) ) return EQUAL;
     if ( ! is_left(leftmost(cv2.source(), cv2.target()), q) ) return EQUAL;
@@ -201,7 +202,8 @@ public:
 			   const Point_2 & q) const 
   {
     // If one of the curves is vertical then return EQUAL.
-    if ( is_vertical_2_object()(cv1) || (is_vertical_2_object()(cv2))  ) return EQUAL;
+    if ( is_vertical_2_object()(cv1) || (is_vertical_2_object()(cv2))  ) 
+      return EQUAL;
     // If one of the curves is not defined at q then return EQUAL.
     if ( ! is_right(rightmost(cv1.source(), cv1.target()), q) ) return EQUAL;
     if ( ! is_right(rightmost(cv2.source(), cv2.target()), q) ) return EQUAL;
