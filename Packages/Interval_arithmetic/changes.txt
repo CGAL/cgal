@@ -1,4 +1,8 @@
 20 September 2004 Sylvain Pion
+- Add Exact_type_selecter<> to select the exact number type to be used in
+  Filtered_kernel.
+
+20 September 2004 Sylvain Pion
 - Add fit_in_double() for Lazy_exact_nt.
 
 14 September 2004 Sylvain Pion
