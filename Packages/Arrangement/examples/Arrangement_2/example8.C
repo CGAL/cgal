@@ -7,18 +7,14 @@
 #define Arr_segment_exact_traits ASET
 
 #include <CGAL/Homogeneous.h>
+#include <CGAL/MP_Float.h>
 #include <CGAL/Arr_2_default_dcel.h>
 #include <CGAL/Arrangement_2.h>
-//#include <CGAL/leda_integer.h>
-
 #include <CGAL/Arr_segment_exact_traits.h>
 
-//typedef leda_integer                                NT;
-typedef long                                        NT;
-
-typedef CGAL::Homogeneous<NT>                       R;
-
-typedef CGAL::Arr_segment_exact_traits<R>           Traits;
+typedef CGAL::MP_Float                              NT;
+typedef CGAL::Homogeneous<NT>                       Kernel;
+typedef CGAL::Arr_segment_exact_traits<Kernel>      Traits;
 
 typedef Traits::Point                               Point;
 typedef Traits::X_curve                             X_curve;
@@ -31,11 +27,14 @@ int main(int argc, char* argv[])
 {
   Arr_2 arr; 
 
+  // Read the segments
+
   int num_curves;
   int x,y;
   std::cout << "Enter number of segments: " ;
   std::cin >> num_curves;
-  while (num_curves--) {
+  while (num_curves--) 
+  {
     std::cout << "Enter source coordinates (2 integers): " ;
     std::cin >> x >> y;
     Point s(x,y);
@@ -48,6 +47,8 @@ int main(int argc, char* argv[])
     arr.insert(seg);
   }
 
+  // Do the ray shooting
+
   std::cout << "Enter point for ray shooting (2 integers): " ;
   std::cin >> x >> y;
   Point p(x,y);
@@ -56,12 +57,15 @@ int main(int argc, char* argv[])
   Arr_2::Locate_type lt;
   e = arr.vertical_ray_shoot(p,lt,true);
   
-  if (lt==Arr_2::UNBOUNDED_FACE) {
+  // Check the location type
+  if (lt == Arr_2::UNBOUNDED_FACE) 
+  {
     std::cout << "UNBOUNDED_FACE" << std::endl;
   }
-  else {
-    std::cout << "The halfedge shot is :" << std::endl;
-    std::cout << "(Using homogeneous coordinates <hx, hy, hw>, ";
+  else 
+  {
+    std::cout << "The half-edge shot is :" << std::endl;
+    std::cout << "(Using homogeneous coordinates <hx, hy, hw> ";
     std::cout << "where <x, y>=<hx/hw, hy/hw>)" << std::endl;
     std::cout << e->source()->point() << " -> " << e->target()->point();
     std::cout << std::endl;

@@ -12,7 +12,6 @@ typedef CGAL::Cartesian<NT>                           Kernel;
 typedef CGAL::Arr_segment_exact_traits<Kernel>        Traits;
 
 typedef Traits::Point                                 Point;
-typedef Traits::X_curve                               X_curve;
 typedef Traits::Curve                                 Curve;
 
 // A global variable to keep track of when we inserted the edges.

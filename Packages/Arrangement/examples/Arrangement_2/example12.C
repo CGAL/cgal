@@ -1,23 +1,21 @@
 //examples/Arrangement_2/example12
 
 #include <CGAL/Cartesian.h>
+#include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h> 
-
 #include <CGAL/Arr_2_bases.h>
 #include <CGAL/Arr_2_default_dcel.h>
 #include <CGAL/Arrangement_2.h>
-
 #include <iostream>
 #include <CGAL/Arr_polyline_traits.h>
 #include <CGAL/IO/Arr_iostream.h>
 
 
-typedef CGAL::Quotient<int>                            NT;
-typedef CGAL::Cartesian<NT>                            R;
-typedef CGAL::Arr_polyline_traits<R>                   Traits;
+typedef CGAL::Quotient<CGAL::MP_Float>                 NT;
+typedef CGAL::Cartesian<NT>                            Kernel;
+typedef CGAL::Arr_polyline_traits<Kernel>              Traits;
 
 typedef Traits::Point                                  Point;
-typedef Traits::X_curve                                X_curve;
 typedef Traits::Curve                                  Curve;
 
 typedef CGAL::Arr_2_default_dcel<Traits>               Dcel;
