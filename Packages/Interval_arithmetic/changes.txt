@@ -1,6 +1,6 @@
 Changes done to the Interval Arithmetic package.
 
-Version 4.101 on ?? June 2001
+Version 4.101 on 22 June 2001
 - Remove warnings in the test-suite.
 - Regenerate filters for the new equal_planeC3.
 - Use the new macros in include/CGAL/Kernel/interface_macros.h for
