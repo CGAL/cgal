@@ -60,7 +60,7 @@ int main()
   Delaunay D;
   Delaunay3d D3d;
   Terrain T;
-  std::ifstream iFile("points3", std::ios::in);
+  std::ifstream iFile("data/points3", std::ios::in);
   Point3 p;
 
   while ( iFile >> p ) 
@@ -71,18 +71,31 @@ int main()
   }
 
   // use different colors, and put a few sleeps/clear.
-  gv.set_wired(false);
-  gv << D3d;
-  gv.set_wired(true);
-  gv << D3d;
 
+  gv << CGAL::BLUE;
+  std::cout << "Drawing 2D Delaunay triangulation in wired mode.\n";
   gv.set_wired(true);
   gv << D;
+  sleep(5);
+  std::cout << "Drawing 2D Delaunay triangulation in non-wired mode.\n";
   gv.set_wired(false);
   gv << D;
+  sleep(5);
 
+  std::cout << "Drawing 3D Delaunay triangulation in wired mode.\n";
+  gv.set_wired(true);
+  gv << D3d;
+  sleep(5);
+  std::cout << "Drawing 3D Delaunay triangulation in non-wired mode.\n";
+  gv.set_wired(false);
+  gv << D3d;
+  sleep(5);
+
+  std::cout << "Drawing Terrain in wired mode.\n";
   gv.set_wired(true);
   gv << T;
+  sleep(5);
+  std::cout << "Drawing Terrain in non-wired mode.\n";
   gv.set_wired(false);
   gv << T;
 
