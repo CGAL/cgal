@@ -122,7 +122,7 @@ public:
    // return vertex handles ...
    {    
     Vertex_iterator vit = finite_vertices_begin();
-    for (; vit != finite_vertices_end(); vit++) { *res= (*vit).handle(); res++; }  
+    for (; vit != finite_vertices_end(); vit++) { *res= vit; res++; }  
     return res;   
    }   
    
@@ -159,17 +159,17 @@ public:
      Vertex_circulator vc = incident_vertices(v);
      Vertex_circulator start =vc;
      
-     Vertex_handle min_v = (*vc).handle();
+     Vertex_handle min_v = vc;
      if (is_infinite(min_v)){
        vc++;
-       min_v = (*vc).handle();
+       min_v = vc;
      }
      
      Vertex_handle act;
      
      // go through the vertices ...
      do {
-       act = vc->handle();
+       act = vc;
  
        if (! is_infinite(act)) {
         if ( tr_comparedist(p,act->point(), min_v->point()) == SMALLER ) min_v = act;
@@ -276,7 +276,7 @@ public:
        Vertex_handle act;
      
        do {
-         act = vc->handle();
+         act = vc;
 	 
          if ( (!is_marked(act)) && (! is_infinite(act)) )
          { 
@@ -336,7 +336,7 @@ public:
      
     // go through the vertices ...
     do {
-       act = vc->handle();
+      act = vc;
  
        if (! is_infinite(act)) {
         if (!is_marked(act) && ! (tr_circleptori(C,act->point())==ON_UNBOUNDED_SIDE) ) 
@@ -355,11 +355,10 @@ public:
      { 
        // get the one vertex ...
        Vertex_iterator vit = finite_vertices_begin();
-       Vertex v = (*vit);
-       Point p = v.point();
+       Point p = vit->point();
        
        if (! (tr_circleptori(C, p) == ON_UNBOUNDED_SIDE)){
-        *res= v.handle(); res++;
+        *res= vit; res++;
        }
        return res;
      }  

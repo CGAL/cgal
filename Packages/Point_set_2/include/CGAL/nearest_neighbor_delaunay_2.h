@@ -69,17 +69,17 @@ typename Dt::Vertex_handle  nearest_neighbor(const Dt& delau, typename Dt::Verte
   Vertex_circulator vc = delau.incident_vertices(v);  
   Vertex_circulator start =vc;
      
-  Vertex_handle min_v = (*vc).handle();
+  Vertex_handle min_v = vc;
   if (delau.is_infinite(min_v)){
      vc++;
-     min_v = (*vc).handle();
+     min_v = vc;
   }
      
   Vertex_handle act;
      
   // go through the vertices ...
   do {
-       act = vc->handle();
+       act = vc;
  
        if (! delau.is_infinite(act)) {
         if ( Compare_dist_2()(p,act->point(), min_v->point()) == SMALLER ) min_v = act;
@@ -127,7 +127,7 @@ OutputIterator   nearest_neighbors(Dt& delau, const typename Dt::Point& p, int k
    if ( n <= k ) { // return all finite vertices ...
    
      Vertex_iterator vit = delau.finite_vertices_begin();
-     for (; vit != delau.finite_vertices_end(); vit++) { *res= (*vit).handle(); res++; }    
+     for (; vit != delau.finite_vertices_end(); vit++) { *res= vit; res++; }    
    
      return res;
    }
@@ -174,7 +174,7 @@ OutputIterator  nearest_neighbors(const Dt& delau, typename Dt::Vertex_handle v,
    if ( n <= k ) { // return all (finite) vertices ...
    
      Vertex_iterator vit = delau.finite_vertices_begin();
-     for (; vit != delau.finite_vertices_end(); vit++) { *res= (*vit).handle(); res++; }    
+     for (; vit != delau.finite_vertices_end(); vit++) { *res= vit; res++; }    
    
      return res;
    }
@@ -196,7 +196,7 @@ OutputIterator get_vertices(const Dt& delau, OutputIterator res)
   typedef typename Dt::Vertex_iterator                Vertex_iterator;
 
   Vertex_iterator vit = delau.finite_vertices_begin();
-  for (; vit != delau.finite_vertices_end(); vit++) { *res= (*vit).handle(); res++; }  
+  for (; vit != delau.finite_vertices_end(); vit++) { *res= vit; res++; }  
   return res;   
 }
 
@@ -250,7 +250,7 @@ void nearest_neighbors_list(const Dt& delau, typename Dt::Vertex_handle v, int k
     k--; 
 
     // get the incident vertices of w ...
-    Vertex_circulator vc = delau.incident_vertices(w->handle());
+    Vertex_circulator vc = delau.incident_vertices(w);
     Vertex_circulator start =vc;
     Vertex_handle act;
      

@@ -68,7 +68,7 @@ void dfs(const Dt& delau,
      
     // go through the vertices ...
     do {
-       act = vc->handle();
+       act = v;
  
        if (! delau.is_infinite(act)) {
 	 // test, if act is marked ...
@@ -121,7 +121,7 @@ bool dfs(const Dt& delau,
      
     // go through the vertices ...
     do {
-       act = vc->handle();
+       act = vc;
  
        if (! delau.is_infinite(act)) {
 	 // test, if act is marked ...
@@ -174,11 +174,10 @@ OutputIterator range_search(Dt& delau,
   { 
        // get the one vertex ...
        Vertex_iterator vit = delau.finite_vertices_begin();
-       Vertex v = (*vit);
-       Point p = v.point();
+       Point p = vit->point();
        
        if (! (test(C, p) == ON_UNBOUNDED_SIDE)){
-        *res= v.handle(); res++;
+        *res= vit; res++;
        }
        return res;
    }  
@@ -315,11 +314,10 @@ OutputIterator range_search(Dt& delau,
   { 
        // get the one vertex ...
        Vertex_iterator vit = delau.finite_vertices_begin();
-       Vertex v = (*vit);
-       Point p = v.point();
+       Point p = vit->point();
        
        if (! (test(C, p) == ON_UNBOUNDED_SIDE)){
-        *res= v.handle(); res++;
+        *res= vit; res++;
        }
        
        bool val = pred(p);
