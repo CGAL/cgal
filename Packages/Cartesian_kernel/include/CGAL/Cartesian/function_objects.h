@@ -1854,6 +1854,8 @@ namespace CartesianKernelFunctors {
   class Less_signed_distance_to_line_2
   {
     typedef typename K::Point_2   Point_2;
+    typedef typename K::Line_2   Line_2;
+    typedef typename K::Equal_2 Equal_2;
   public:
     typedef bool             result_type;
     typedef Arity_tag< 4 >   Arity;
@@ -1862,18 +1864,24 @@ namespace CartesianKernelFunctors {
     operator()(const Point_2& a, const Point_2& b,
                const Point_2& c, const Point_2& d) const
     {
-      typename K::Less_xy_2 less_xy;
+      Equal_2 equal;
+      CGAL_kernel_precondition(! equal(a,b));
       Comparison_result res = cmp_signed_dist_to_lineC2(a.x(), a.y(), 
 							b.x(), b.y(),
 							c.x(), c.y(),
 							d.x(), d.y());
 
-      if ( res == LARGER )
-	return false;
-      else if ( res == SMALLER )
-	return true;
-      else
-	return less_xy( c, d );
+      if ( res == SMALLER ) return true;
+
+      return false;
+    }
+
+    bool
+    operator()(const Line_2& l, const Point_2& p, const Point_2& q) const
+    {
+      return has_smaller_signed_dist_to_directionC2(l.a(), l.b(), 
+						    p.x(), p.y(),
+						    q.x(), q.y());
     }
   };
 
@@ -1882,6 +1890,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_3 Point_3;
     typedef typename K::Plane_3 Plane_3;
+    typedef typename K::Collinear_3 Collinear_3;
   public:
     typedef bool             result_type;
     typedef Arity_tag< 3 >   Arity;
@@ -1898,6 +1907,8 @@ namespace CartesianKernelFunctors {
     operator()( const Point_3& hp, const Point_3& hq,  const Point_3& hr,
 		const Point_3& p, const Point_3& q) const
     { 
+      Collinear_3 collinear_3;
+      CGAL_kernel_precondition(! collinear_3(hp, hq, hr));
       return has_smaller_signed_dist_to_planeC3(hp.x(), hp.y(), hp.z(),
 						hq.x(), hq.y(), hq.z(),
 						hr.x(), hr.y(), hr.z(),

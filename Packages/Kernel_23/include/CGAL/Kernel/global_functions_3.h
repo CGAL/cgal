@@ -157,6 +157,38 @@ collinear(const Point_3<K> &p, const Point_3<K> &q, const Point_3<K> &r)
 
 template < class K >
 inline
+Comparison_result
+compare_distance_to_point(const Point_3<K> &p,
+                          const Point_3<K> &q,
+                          const Point_3<K> &r)
+{
+  return CGALi::compare_distance_to_point(p, q, r, K());
+}
+
+template < class K >
+inline
+Comparison_result
+compare_signed_distance_to_plane(const Plane_3<K> &h,
+				 const Point_3<K> &p,
+				 const Point_3<K> &q)
+{ 
+  return CGALi::compare_signed_distance_to_plane(h, p, q, K());
+}
+
+template < class K >
+inline
+Comparison_result
+compare_signed_distance_to_plane(const Point_3<K> &hp,
+				 const Point_3<K> &hq,
+				 const Point_3<K> &hr,
+				 const Point_3<K> &p,
+				 const Point_3<K> &q)
+{ 
+  return CGALi::compare_signed_distance_to_plane(hp, hq, hr, p, q, K());
+}
+
+template < class K >
+inline
 bool
 collinear_are_strictly_ordered_along_line(const Point_3<K> &p,
                                           const Point_3<K> &q,
@@ -173,6 +205,71 @@ coplanar(const Point_3<K> &p, const Point_3<K> &q,
 {
   return CGALi::coplanar(p, q, r, s, K());
 }
+
+template < class K >
+inline
+bool
+has_larger_distance_to_point(const Point_3<K> &p,
+			     const Point_3<K> &q,
+			     const Point_3<K> &r)
+{
+  return CGALi::has_larger_distance_to_point(p, q, r, K());
+}
+
+template < class K >
+inline
+bool
+has_larger_signed_distance_to_plane(const Point_3<K> &hp,
+				    const Point_3<K> &hq,
+				    const Point_3<K> &hr,
+				    const Point_3<K> &p,
+				    const Point_3<K> &q)
+{ 
+  return CGALi::has_larger_signed_distance_to_plane(hp, hq, hr, p, q, K());
+}
+
+template < class K >
+inline
+bool
+has_larger_signed_distance_to_plane(const Plane_3<K> &h,
+				    const Point_3<K> &p,
+				    const Point_3<K> &q)
+{ 
+  return CGALi::has_larger_signed_distance_to_plane(h, p, q, K());
+}
+
+template < class K >
+inline
+bool
+has_smaller_distance_to_point(const Point_3<K> &p,
+                              const Point_3<K> &q,
+                              const Point_3<K> &r)
+{
+  return CGALi::has_smaller_distance_to_point(p, q, r, K());
+}
+
+template < class K >
+inline
+bool
+has_smaller_signed_distance_to_plane(const Point_3<K> &hp,
+                                     const Point_3<K> &hq,
+                                     const Point_3<K> &hr,
+                                     const Point_3<K> &p,
+                                     const Point_3<K> &q)
+{ 
+  return CGALi::has_smaller_signed_distance_to_plane(hp, hq, hr, p, q, K());
+}
+
+template < class K >
+inline
+bool
+has_smaller_signed_distance_to_plane(const Plane_3<K> &h,
+                                     const Point_3<K> &p,
+                                     const Point_3<K> &q)
+{ 
+  return CGALi::has_smaller_signed_distance_to_plane(h, p, q, K());
+}
+
 
 template < class K >
 inline

@@ -2570,6 +2570,7 @@ namespace HomogeneousKernelFunctors {
   class Less_signed_distance_to_line_2
   {
     typedef typename K::Point_2   Point_2;
+    typedef typename K::Line_2   Line_2;
   public:
     typedef bool             result_type;
     typedef Arity_tag< 4 >   Arity;
@@ -2599,6 +2600,30 @@ namespace HomogeneousKernelFunctors {
 	- ( rhy*shw - shy*rhw ) * (phx*qhw - qhx*phw);
 
       return ( scaled_dist_r_minus_scaled_dist_s < RT0 );
+    }
+
+    bool
+    operator()(const Line_2& l, const Point_2& p,
+               const Point_2& q) const
+    {  
+      typedef typename K::RT RT;
+
+      const RT la = l.a();
+      const RT lb = l.b();
+      const RT phx= p.hx();
+      const RT phy= p.hy();
+      const RT phw= p.hw();
+      const RT qhx= q.hx();
+      const RT qhy= q.hy();
+      const RT qhw= q.hw();
+      const RT RT0 = RT(0);
+      
+      RT scaled_dist_p_minus_scaled_dist_q =
+	la*( phx*qhw - qhx*phw )
+	+ lb*( phy*qhw - qhy*phw );
+      
+      return ( scaled_dist_p_minus_scaled_dist_q < RT0 );
+
     }
   };
 
@@ -2642,7 +2667,7 @@ namespace HomogeneousKernelFunctors {
 	       const Point_3& p, const Point_3& q) const
     { 
       Construct_plane_3 construct_plane_3;
-      return operator()(construct_plane_3(plq, plq, plr), p, q);
+      return operator()(construct_plane_3(plp, plq, plr), p, q);
     }
   };
 

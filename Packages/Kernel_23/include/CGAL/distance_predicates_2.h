@@ -26,4 +26,5 @@
 
 // Kept for backward compatibility only.
 
+
 #endif // CGAL_DISTANCE_PREDICATES_2_H

@@ -162,6 +162,17 @@ circumcenter(const typename CGAL_WRAP(K)::Triangle_3 &t, const K& k)
 
 template < class K >
 inline
+Comparison_result
+compare_distance_to_point(const typename CGAL_WRAP(K)::Point_3 &p,
+                          const typename CGAL_WRAP(K)::Point_3 &q,
+                          const typename CGAL_WRAP(K)::Point_3 &r,
+			  const K& k)
+{
+  return k.compare_distance_3_object()(p, q, r);
+}
+
+template < class K >
+inline
 bool
 collinear(const typename CGAL_WRAP(K)::Point_3 &p,
           const typename CGAL_WRAP(K)::Point_3 &q,
@@ -234,6 +245,104 @@ cross_product(const typename CGAL_WRAP(K)::Vector_3 &v,
               const typename CGAL_WRAP(K)::Vector_3 &w, const K& k)
 {
   return k.construct_cross_product_vector_3_object()(v, w);
+}
+
+template < class K >
+inline
+bool
+has_smaller_distance_to_point(const typename CGAL_WRAP(K)::Point_3 &p,
+                              const typename CGAL_WRAP(K)::Point_3 &q,
+                              const typename CGAL_WRAP(K)::Point_3 &r,
+			      const K &k)
+{
+  return k.less_distance_to_point_3_object()(p, q, r);
+}
+
+template < class K >
+inline
+bool
+has_larger_distance_to_point(const typename CGAL_WRAP(K)::Point_3 &p,
+			     const typename CGAL_WRAP(K)::Point_3 &q,
+			     const typename CGAL_WRAP(K)::Point_3 &r,
+			     const K &k)
+{
+  return k.compare_distance_3_object()(p, q, r) == LARGER;
+}
+
+template < class K >
+inline
+Comparison_result
+compare_signed_distance_to_plane(const typename CGAL_WRAP(K)::Plane_3 &h,
+				 const typename CGAL_WRAP(K)::Point_3 &p,
+				 const typename CGAL_WRAP(K)::Point_3 &q,
+				 const K &k)
+{ 
+  if(k.less_signed_distance_to_plane_3_object()(h, p, q)) return SMALLER;
+  if(k.less_signed_distance_to_plane_3_object()(h, q, p)) return LARGER;
+  return EQUAL;
+}
+
+template < class K >
+inline
+Comparison_result
+compare_signed_distance_to_plane(const typename CGAL_WRAP(K)::Point_3 &hp,
+				 const typename CGAL_WRAP(K)::Point_3 &hq,
+				 const typename CGAL_WRAP(K)::Point_3 &hr,
+				 const typename CGAL_WRAP(K)::Point_3 &p,
+				 const typename CGAL_WRAP(K)::Point_3 &q,
+				 const K &k)
+{ 
+  if(k.less_signed_distance_to_plane_3_object()(hp, hq, hr, p, q)) return SMALLER;
+  if(k.less_signed_distance_to_plane_3_object()(hp, hq, hr, q, p)) return LARGER;
+  return EQUAL;
+}
+
+template < class K >
+inline
+bool
+has_larger_signed_distance_to_plane(const typename CGAL_WRAP(K)::Plane_3 &h,
+				    const typename CGAL_WRAP(K)::Point_3 &p,
+				    const typename CGAL_WRAP(K)::Point_3 &q,
+				    const K &k)
+{ 
+  return k.less_signed_distance_to_plane_3_object()(h, q, p);
+}
+
+template < class K >
+inline
+bool
+has_larger_signed_distance_to_plane(const typename CGAL_WRAP(K)::Point_3 &hp,
+				    const typename CGAL_WRAP(K)::Point_3 &hq,
+				    const typename CGAL_WRAP(K)::Point_3 &hr,
+				    const typename CGAL_WRAP(K)::Point_3 &p,
+				    const typename CGAL_WRAP(K)::Point_3 &q,
+				    const K &k)
+{ 
+  return k.less_signed_distance_to_plane_3_object()(hp, hq, hr, q, p);
+}
+
+template < class K >
+inline
+bool
+has_smaller_signed_distance_to_plane(const typename CGAL_WRAP(K)::Plane_3 &h,
+                                     const typename CGAL_WRAP(K)::Point_3 &p,
+                                     const typename CGAL_WRAP(K)::Point_3 &q,
+				     const K &k)
+{ 
+  return k.less_signed_distance_to_plane_3_object()(h, p, q);
+}
+
+template < class K >
+inline
+bool
+has_smaller_signed_distance_to_plane(const typename CGAL_WRAP(K)::Point_3 &hp,
+                                     const typename CGAL_WRAP(K)::Point_3 &hq,
+                                     const typename CGAL_WRAP(K)::Point_3 &hr,
+                                     const typename CGAL_WRAP(K)::Point_3 &p,
+                                     const typename CGAL_WRAP(K)::Point_3 &q,
+				     const K &k)
+{ 
+  return k.less_signed_distance_to_plane_3_object()(hp, hq, hr, p, q);
 }
 
 template < class K >

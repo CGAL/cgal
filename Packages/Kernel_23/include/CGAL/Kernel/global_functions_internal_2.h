@@ -186,6 +186,33 @@ compare_distance_to_point(const typename CGAL_WRAP(K)::Point_2 &p,
   return k.compare_distance_2_object()(p, q, r);
 }
 
+template <class K>
+inline
+Comparison_result
+compare_signed_distance_to_line(const typename CGAL_WRAP(K)::Point_2& p,
+				const typename CGAL_WRAP(K)::Point_2& q,
+				const typename CGAL_WRAP(K)::Point_2& r,
+				const typename CGAL_WRAP(K)::Point_2& s,
+				const K& k)
+{
+  if (k.less_signed_distance_to_line_2_object()(p, q, r, s)) return SMALLER;
+  if (k.less_signed_distance_to_line_2_object()(p, q, s, r)) return LARGER;
+  return EQUAL;
+}
+
+template <class K>
+inline
+Comparison_result
+compare_signed_distance_to_line(const typename CGAL_WRAP(K)::Line_2& l,
+				const typename CGAL_WRAP(K)::Point_2& p,
+				const typename CGAL_WRAP(K)::Point_2& q,
+				const K& k)
+{
+  if (k.less_signed_distance_to_line_2_object()(l, p, q)) return SMALLER;
+  if (k.less_signed_distance_to_line_2_object()(l, q, p)) return LARGER;
+  return EQUAL;
+}
+
 template < class K >
 inline
 Comparison_result
@@ -406,12 +433,69 @@ compare_y_at_x(const typename CGAL_WRAP(K)::Line_2 &l1,
 template <class K>
 inline
 bool
+has_larger_distance_to_point(const typename CGAL_WRAP(K)::Point_2 &p,
+			     const typename CGAL_WRAP(K)::Point_2 &q,
+			     const typename CGAL_WRAP(K)::Point_2 &r,
+			     const K& k)
+{
+  return k.less_distance_to_point_2_object()(p, r, q);
+}
+
+template <class K>
+inline
+bool
 has_smaller_distance_to_point(const typename CGAL_WRAP(K)::Point_2 &p,
                               const typename CGAL_WRAP(K)::Point_2 &q,
                               const typename CGAL_WRAP(K)::Point_2 &r,
                               const K& k)
 {
   return k.less_distance_to_point_2_object()(p, q, r);
+}
+
+template <class K>
+inline
+bool
+has_smaller_signed_distance_to_line(const typename CGAL_WRAP(K)::Line_2& l,
+				    const typename CGAL_WRAP(K)::Point_2& p,
+				    const typename CGAL_WRAP(K)::Point_2& q,
+				    const K& k)
+{
+  return k.less_signed_distance_to_line_2_object()(l, p, q);
+}
+
+template <class K>
+inline
+bool
+has_larger_signed_distance_to_line(const typename CGAL_WRAP(K)::Line_2& l,
+				   const typename CGAL_WRAP(K)::Point_2& p,
+				   const typename CGAL_WRAP(K)::Point_2& q,
+				   const K& k)
+{
+  return k.less_signed_distance_to_line_2_object()(l, q, p);
+}
+
+template <class K>
+inline
+bool
+has_larger_signed_distance_to_line(const typename CGAL_WRAP(K)::Point_2& p,
+				   const typename CGAL_WRAP(K)::Point_2& q,
+				   const typename CGAL_WRAP(K)::Point_2& r,
+				   const typename CGAL_WRAP(K)::Point_2& s,
+				   const K& k)
+{
+  return k.less_signed_distance_to_line_2_object()(p, q, s, r);
+}
+
+template <class K>
+inline
+bool
+has_smaller_signed_distance_to_line(const typename CGAL_WRAP(K)::Point_2& p,
+                                    const typename CGAL_WRAP(K)::Point_2& q,
+                                    const typename CGAL_WRAP(K)::Point_2& r,
+                                    const typename CGAL_WRAP(K)::Point_2& s,
+				    const K& k)
+{
+  return k.less_signed_distance_to_line_2_object()(p, q, r, s);
 }
 
 template < class K >

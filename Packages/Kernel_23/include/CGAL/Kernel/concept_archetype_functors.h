@@ -3017,12 +3017,18 @@ template <typename K>
 class Less_signed_distance_to_line_2
 {
     typedef typename K::Point_2   Point_2;
+    typedef typename K::Line_2    Line_2;
 public:
     typedef bool             result_type;
     typedef Arity_tag< 4 >   Arity;
 
     bool
     operator()(const Point_2&, const Point_2&,
+               const Point_2&, const Point_2&) const
+    { return true; }
+
+    bool
+    operator()(const Line_2&,
                const Point_2&, const Point_2&) const
     { return true; }
 };
@@ -3038,6 +3044,10 @@ public:
 
     bool
     operator()( const Plane_3&, const Point_3&, const Point_3&) const
+    { return true; }
+
+    bool
+    operator()( const Point_3&, const Point_3&, const Point_3&, const Point_3&, const Point_3&) const
     { return true; }
 };
 

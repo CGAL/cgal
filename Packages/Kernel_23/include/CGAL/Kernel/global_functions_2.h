@@ -175,6 +175,27 @@ compare_distance_to_point(const Point_2<K>& p,
   return CGALi::compare_distance_to_point(p, q, r, K());
 }
 
+template <class K>
+inline
+Comparison_result
+compare_signed_distance_to_line(const Point_2<K>& p,
+				const Point_2<K>& q,
+				const Point_2<K>& r,
+				const Point_2<K>& s)
+{
+  return CGALi::compare_signed_distance_to_line(p, q, r, s, K());
+}
+
+template <class K>
+inline
+Comparison_result
+compare_signed_distance_to_line(const Line_2<K>& l,
+				const Point_2<K>& p,
+				const Point_2<K>& q)
+{
+  return CGALi::compare_signed_distance_to_line(l, p, q, K());
+}
+
 /* FIXME : Undocumented, obsolete...
 template < class K >
 inline
@@ -397,11 +418,63 @@ compare_y_at_x(const Line_2<K> &l1,
 template <class K>
 inline
 bool
+has_larger_distance_to_point(const Point_2<K>& p,
+			     const Point_2<K>& q,
+			     const Point_2<K>& r)
+{
+  return CGALi::has_larger_distance_to_point(p, q, r, K());
+}
+
+template <class K>
+inline
+bool
 has_smaller_distance_to_point(const Point_2<K>& p,
                               const Point_2<K>& q,
                               const Point_2<K>& r)
 {
   return CGALi::has_smaller_distance_to_point(p, q, r, K());
+}
+
+template <class K>
+inline
+bool
+has_smaller_signed_distance_to_line(const Line_2<K>& l,
+                                    const Point_2<K>& p,
+                                    const Point_2<K>& q)
+{
+  return CGALi::has_smaller_signed_distance_to_line(l, p, q, K());
+}
+
+template <class K>
+inline
+bool
+has_larger_signed_distance_to_line(const Line_2<K>& l,
+				   const Point_2<K>& p,
+				   const Point_2<K>& q)
+{
+  return CGALi::has_larger_signed_distance_to_line(l, p, q, K());
+}
+
+template <class K>
+inline
+bool
+has_larger_signed_distance_to_line(const Point_2<K>& p,
+				   const Point_2<K>& q,
+				   const Point_2<K>& r,
+				   const Point_2<K>& s)
+{
+  return CGALi::has_larger_signed_distance_to_line(p, q, r, s, K());
+}
+
+template <class K>
+inline
+bool
+has_smaller_signed_distance_to_line(const Point_2<K>& p,
+                                    const Point_2<K>& q,
+                                    const Point_2<K>& r,
+                                    const Point_2<K>& s)
+{
+  return CGALi::has_smaller_signed_distance_to_line(p, q, r, s, K());
 }
 
 template < class K >

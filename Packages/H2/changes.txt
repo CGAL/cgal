@@ -1,3 +1,8 @@
+
+16 March 2004 Andreas Fabri
+- Move the following to the new scheme :
+  signed_distance_to_{point,line_plane}
+
 13 Mar 2004 Sylvain Pion
 - Move centroid() to the new scheme.
 

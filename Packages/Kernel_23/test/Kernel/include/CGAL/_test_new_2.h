@@ -444,6 +444,7 @@ test_new_2(const R& rep)
   typename R::Less_signed_distance_to_line_2 less_signed_distance_to_line
         = rep.less_signed_distance_to_line_2_object();
   bool tmp36 = less_signed_distance_to_line(p4,p5,p2,p3);
+  tmp36 = less_signed_distance_to_line(l1,p2,p3);
 
   typename R::Less_rotate_ccw_2 less_rotate_ccw 
         = rep.less_rotate_ccw_2_object();

@@ -3,15 +3,22 @@ A model for this must provide:
 
 \ccCreationVariable{fo}
 
+\ccMemberFunction{bool operator()(const Kernel::Line_2& l,
+                                  const Kernel::Point_2& p,
+                                  const Kernel::Point_2& q);}
+{
+returns \ccc{true} if the signed distance from $p$ and the oriented line $l$ 
+is smaller than the signed distance of $q$ and $l$.
+}
+
 \ccMemberFunction{bool operator()(const Kernel::Point_2& p,
                                   const Kernel::Point_2& q,
                                   const Kernel::Point_2&r,
                                   const Kernel::Point_2&s);}
 {
 returns \ccc{true} if the signed distance from $r$ and the oriented line $l$ 
-defined by $p$ and $q$ is smaller than the signed distance of $s$ and $l$.  If
-$r$ and $s$ are the same distance from $l$, returns \ccc{true} if $r$ is 
-lexicographically smaller than $s$.
+defined by $p$ and $q$ is smaller than the signed distance of $s$ and $l$.
+\ccPrecond $p != q$.
 }
 
 \ccRefines
