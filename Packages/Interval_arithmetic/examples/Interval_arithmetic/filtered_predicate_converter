@@ -17,11 +17,10 @@ require 'getopt.pl';
 # Global variables
 $new_protect_name="";	# equivalent to CGAL_ARITHMETIC_FILTER_BASIC_H.
 $line=0;		# current line number.
-$CGAL="CGAL::";		# by default, we are outside namespace CGAL.
 @CGAL_enum_types=("Sign", "Comparison_result", "Orientation", "Oriented_side",
                   "Bounded_side"); # List of CGAL's enum types.
 @predicates=(		# list of predicates.
-# fct_name, template_type, result_type, inline, CGAL::, body, arguments
+# fct_name, template_type, ret_type, inline, CGAL::, body, args
     [ "compare", "NT", "Comparison_result", "inline", "",
       "return (a < b) ? SMALLER : (b < a) ? LARGER : EQUAL;", "a", "b" ],
     [ "sign", "NT", "Sign", "inline", "",
@@ -60,7 +59,7 @@ sub treat_CGAL_header {
     $file_name = $1 if /\/\/ file[\s]*: include\/CGAL\/(.*)/;
 
     # set $new_protect_name and exit.
-    if (/ifndef[\s]*([\S]*_H)/) {
+    if (/^#ifndef[\s]*([\S]*_H)\s*/) {
       $_ = $1;
       $_ = "CGAL_$_" unless /CGAL_/;
       s/CGAL_/CGAL_ARITHMETIC_FILTER_/;
@@ -102,7 +101,7 @@ sub skip_no_filter_section {
 
 # Returns the old body of the function.
 sub get_old_body {
-  my ($b);
+  local $b="";
   while (<FI>) { $line++; last if /^}\s*$/; $b = "$b$_"; }
   return $b;
 }
@@ -111,19 +110,19 @@ sub get_old_body {
 # (to detect functions returning void or FT)
 sub check_known_type {
   my ($type) = @_;
-  if (not $known_return_types{$type}) {
+  if (not $known_ret_types{$type}) {
     warning ("\"$type\" is an unknown enumerative type");
   }
 }
 
 # Puts the new body 
 sub put_new_body {
-  local ($result_type, $function_name, @args) = @_;
+  local ($ret_type, $fct_name, $CGAL, @args) = @_;
   print FO "{
   ${CGAL}FPU_CW_t backup = ${CGAL}FPU_get_and_set_cw(${CGAL}FPU_cw_up);
   try
   {
-    $result_type result = $function_name(\n";
+    $ret_type result = $fct_name(\n";
   foreach (@args) {
     print FO "\t\t$_.interval()", ($_ eq $args[$#args] ? ");\n" : ",\n");
   }
@@ -133,7 +132,7 @@ sub put_new_body {
   catch (${CGAL}Interval_nt_advanced::unsafe_comparison)
   {
     ${CGAL}FPU_set_cw(backup);
-    return $function_name(\n";
+    return $fct_name(\n";
   foreach (@args) {
     print FO "\t\t$_.exact()", ($_ eq $args[$#args] ? ");\n  }\n}\n" : ",\n");
   }
@@ -141,35 +140,35 @@ sub put_new_body {
 
 # Treat the declaration of a function.
 sub parse_function_declaration {
-  local ($inline_decl, $return_type, $function_name, @args, $in_decl);
+  local ($inline, $ret_type, $fct_name, @args, $in_decl);
   while (<FI>) {
     $line++;
     # get the eventual inline declaration.
-    $inline_decl=$1 if /(CGAL_.*INLINE|inline)/;
+    $inline=$1 if /(CGAL_.*INLINE|inline)/;
 
     # get the function name.
     if ( /\(/ ) {
       $in_decl=1;
       /([a-zA-Z_]\w*)\s*\(/;
-      $function_name=$1;
+      $fct_name=$1;
     }
 
     if (! $in_decl) {
       # get the return type.
       if (! (/inline/i)) {
-        $return_type = $_;
-        chop($return_type);
-        check_known_type($return_type);
+        $ret_type = $_;
+        chop($ret_type);
+        check_known_type($ret_type);
       }
     }
     else
     {
-      # get the arguments.
+      # get the args.
       s/^.*\(//;
       foreach (split /[,\)]/) {
         next if /^\s*$/;
 	if (not /const/) {
-	  warning("Using non const argument \"$_\" in \"$function_name\".");
+	  warning("Using non const argument \"$_\" in \"$fct_name\".");
 	}
         /(\w+)\s*$/;
         push @args, $1;
@@ -177,21 +176,21 @@ sub parse_function_declaration {
     }
     last if /\)/;
   }
-  return ($inline_decl, $return_type, $function_name, @args);
+  return ($inline, $ret_type, $fct_name, @args);
 }
 
 # Print the new function declaration.
 sub put_new_function_declaration {
-  local ($inline_decl, $return_type, $function_name, @args) = @_;
+  local ($inline, $ret_type, $fct_name, $CGAL, @args) = @_;
   # The template line would be more pretty without the MipsPro hack...
   print FO
 "#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
 #endif\n";
   # By default, we do not inline the filtered version.
-  print FO "/* $inline_decl */\n" if $inline_decl;
-  print FO "$return_type\n";
-  print FO "$function_name(\n";
+  print FO "/* $inline */\n" if $inline;
+  print FO "$ret_type\n";
+  print FO "$fct_name(\n";
   foreach (@args) {
     print FO "    const ${CGAL}Filtered_exact ";
     print FO "<CGAL_IA_CT, CGAL_IA_ET, CGAL_IA_CACHE> &$_";
@@ -199,71 +198,65 @@ template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
   }
 }
 
-sub main_loop {
+sub parse_input_code {
+  local $CGAL = "CGAL::";
   while (<FI>)
   {
     $line++;
-    # Detect if we are in namespace CGAL:
-    $CGAL="" if /CGAL_BEGIN_NAMESPACE/;
-    $CGAL="CGAL::" if /CGAL_END_NAMESPACE/;
-  
     # Treat the CGAL_NO_FILTER_BEGIN/CGAL_NO_FILTER_END section.
     if (/\/\/CGAL_NO_FILTER_BEGIN/) {
       skip_no_filter_section();
       next;
     }
   
+    # Detect if we are in namespace CGAL:
+    $CGAL="" if /CGAL_BEGIN_NAMESPACE/;
+    $CGAL="CGAL::" if /CGAL_END_NAMESPACE/;
+  
     # Treat next template function declaration.
     if (/^\s*template\s*\<\s*(\S*)\s*(\S*)\s*\>/) {
       $template_type = $2;
-      ($inline_decl, $result_type, $function_name, @arguments)
-                                  = parse_function_declaration();
+      ($inline, $ret_type, $fct_name, @args) = parse_function_declaration();
       next;
     }
   
     # Treat the body of a function.
     if (/^{\s*/) {
-      push @predicates, [$function_name, $template_type, $result_type,
-                         $inline_decl, $CGAL, get_old_body(), @arguments];
+      push @predicates, [$fct_name, $template_type, $ret_type,
+                         $inline, $CGAL, get_old_body(), @args];
     }
   }
 }
 
 # Prints the code of the overloaded predicates.
 sub print_predicates {
-  my $is_in_CGAL=0;
+  local $was_in_CGAL = 0;
   # We skip the 2 built-in predicates sign() and compare().
   for $i ( 2 .. $#predicates ) {
-    local ($function_name, $template_type, $result_type, 
-           $inline_decl, $CGAL, $body, @args) = @{$predicates[$i]};
-    if ($CGAL eq "" && not $is_in_CGAL) {
-      print "CGAL_BEGIN_NAMESPACE\n\n";
-      $is_in_CGAL = 1;
-    }
-    if ($CGAL ne "" && $is_in_CGAL) {
-      print "CGAL_END_NAMESPACE\n\n";
-      $is_in_CGAL = 0;
-    }
-    put_new_function_declaration($inline_decl, $result_type,
-                                 $function_name, @args);
-    put_new_body($result_type, $function_name, @args);
+    local ($fct_name, $template_type, $ret_type, 
+           $inline, $CGAL, $body, @args) = @{$predicates[$i]};
+    print "CGAL_BEGIN_NAMESPACE\n\n" if $CGAL eq "" && not $was_in_CGAL;
+    print "CGAL_END_NAMESPACE\n\n"   if $CGAL ne "" && $was_in_CGAL;
+    put_new_function_declaration($inline, $ret_type, $fct_name, $CGAL, @args);
+    put_new_body($ret_type, $fct_name, $CGAL, @args);
     print FO "\n";
+    $was_in_CGAL = $CGAL eq "";
   }
-  print "CGAL_END_NAMESPACE\n\n" if $is_in_CGAL;
+  print "CGAL_END_NAMESPACE\n\n" if $was_in_CGAL;
 }
 
 # Main program
 sub main {
-  %known_return_types=("bool", 1);
+  %known_ret_types=("bool", 1);
   foreach (@CGAL_enum_types) {
-    $known_return_types{$_}=1;
-    $known_return_types{"CGAL::$_"}=1;
+    $known_ret_types{$_}=1;
+    $known_ret_types{"CGAL::$_"}=1;
   }
   parse_command_line();
   open(FI, "<$opt_i") || die "Couldn't open input file \"$opt_i\"\n";
   open(FO, ">$opt_o") || die "Couldn't open output file \"$opt_o\"\n";
   treat_CGAL_header();
-  main_loop();
+  parse_input_code();
   print FO "#ifndef $new_protect_name\n";
   print FO "#define $new_protect_name\n\n";
   print_predicates();
