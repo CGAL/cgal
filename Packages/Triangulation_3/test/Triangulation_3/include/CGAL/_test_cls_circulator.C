@@ -28,6 +28,7 @@ _test_circulator( const Triangulation &T )
 {
   typedef typename Triangulation::Edge_iterator    Edge_iterator;
   typedef typename Triangulation::Vertex_iterator  Vertex_iterator;
+  typedef typename Triangulation::Facet_circulator Facet_circulator;
   typedef typename Triangulation::Cell_circulator  Cell_circulator;
   typedef typename Triangulation::Cell             Cell;
   typedef typename Triangulation::Vertex           Vertex;
@@ -96,67 +97,82 @@ _test_circulator( const Triangulation &T )
   std::set<Vertex*, std::less<Vertex*> > vertices ;
 
   Vertex_iterator vit;
-  for (vit=T.all_vertices_begin(); vit!=T.vertices_end() ; vit++) {
+  //  for (vit=T.all_vertices_begin(); vit!=T.vertices_end() ; vit++)
+  {
+    vit=T.all_vertices_begin();
     T.incident_cells(vit,cells);
     T.incident_cells(vit,cells,vit->cell());
     T.incident_vertices(vit, vertices);
     T.incident_vertices(vit, vertices,vit->cell());
-    
   }
 
-//    Facet_circulator fc, fc0;
-//    for (eit=T.all_edges_begin(); eit!=T.edges_end(); eit++)
-//     {
-//      fc0=fc=T.incident_facets(*eit);
-//       do {
-// 	fc++; n++;
-//       } while (fc != fc0);
-//     }
-//    for (eit=T.all_edges_begin(); eit!=T.edges_end(); eit++)
-//     {
-//      fc0=fc=T.incident_facets(*eit,eit-->facet());
-//       do {
-// 	fc++; n++;
-//       } while (fc != fc0);
-//     }
-//    int fi;
-//    for (eit=T.all_edges_begin(); eit!=T.edges_end(); eit++)
-//     {
+  if (T.dimension()==3) {
+   Facet_circulator fc, fc0;
+   //   for (eit=T.all_edges_begin(); eit!=T.edges_end(); eit++)
+   eit=T.all_edges_begin(); // test (edge)
+   {
+     fc0=fc=T.incident_facets(*eit);
+      do {
+	fc++; n++;
+      } while (fc != fc0);
+    }
+   //   for (eit=T.all_edges_begin(); eit!=T.edges_end(); eit++)
+   eit=T.finite_edges_begin(); // test (cell*,int,int)
+    {
+     fc0=fc=T.incident_facets((*eit).first,(*eit).second,(*eit).third);
+      do {
+	fc--; n++;
+      } while (fc != fc0);
+    }
+//   int fi;
+   //   for (eit=T.all_edges_begin(); eit!=T.edges_end(); eit++)
+    eit=T.all_edges_begin(); // test (edge, Cell*,int)
+    {
 //      for (fi=0; fi!=4 ; fi++) 
 //        {
 // 	if (t.dimension()==2) {fi=3;}
-//         fc0=fc=T.incident_facets(*eit,eit->cell(),fi);
-//         do {
-//    	  fc++; n++;
-//         } while (fc != fc0);
-//        }
-//     }
+        fc0=fc=T.incident_facets(*eit,(*eit).first,
+				 T.nextposaround((*eit).second,(*eit).third));
+        do {
+   	  fc++; n++;
+        } while (fc != fc0);
+//       }
+    }
+   //   for (eit=T.all_edges_begin(); eit!=T.edges_end(); eit++)
+   eit=T.finite_edges_begin(); // test (Cell*,int,int,cell*,int)
+    {
+     fc0=fc=T.incident_facets((*eit).first,(*eit).second,(*eit).third,
+			      (*eit).first,
+			      T.nextposaround((*eit).second,(*eit).third));
+      do {
+	fc--; n++;
+      } while (fc != fc0);
+    }
 
-//    for (eit=T.finite_edges_begin(); eit!=T.edges_end(); eit++)
-//     {
-//      fc0=fc=T.incident_facets(*eit);
-//       do {
-// 	fc++; n++;
-//       } while (fc != fc0);
-//     }
-//    for (eit=T.finite_edges_begin(); eit!=T.edges_end(); eit++)
-//     {
-//      fc0=fc=T.incident_facets(*eit,eit-->facet());
-//       do {
-// 	fc++; n++;
-//       } while (fc != fc0);
-//     }
-//    int fi;
-//    for (eit=T.finite_edges_begin(); eit!=T.edges_end(); eit++)
-//     {
+    eit=T.all_edges_begin(); // test (edge, Facet)
+    {
 //      for (fi=0; fi!=4 ; fi++) 
 //        {
 // 	if (t.dimension()==2) {fi=3;}
-//         fc0=fc=T.incident_facets(*eit,eit->cell(),fi);
-//         do {
-//    	  fc++; n++;
-//         } while (fc != fc0);
-//        }
-//     }
+        fc0=fc=T.incident_facets(*eit,std::make_pair( (*eit).first,
+				 T.nextposaround((*eit).second,(*eit).third)) );
+        do {
+   	  fc++; n++;
+        } while (fc != fc0);
+//       }
+    }
+   //   for (eit=T.all_edges_begin(); eit!=T.edges_end(); eit++)
+   eit=T.finite_edges_begin(); // test (Cell*,int,int,Facet)
+    {
+     fc0=fc=T.incident_facets((*eit).first,(*eit).second,(*eit).third,
+			      std::make_pair( (*eit).first,
+			      T.nextposaround((*eit).second,(*eit).third)) );
+      do {
+	fc--; n++;
+      } while (fc != fc0);
+    }
+
+    
+  }
   return n;
 }
