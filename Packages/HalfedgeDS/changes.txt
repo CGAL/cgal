@@ -1,5 +1,8 @@
 HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
+25 August 2004 Andreas Fabri
+- changes in doc_tex for pdflatex
+
 18 Feb 2004 Sylvain Pion
 - Remove CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION workarounds.
 

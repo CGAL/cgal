@@ -905,22 +905,29 @@ Packages/Generator/doc_tex/Generator/generators_prog2.gif -text svneol=unset#uns
 Packages/Generator/doc_tex/Generator/generators_prog2.pdf -text svneol=unset#unset
 Packages/Generator/doc_tex/Generator/generators_prog2.ps -text
 Packages/Generator/doc_tex/Generator/generators_prog2_small.gif -text svneol=unset#unset
+Packages/HalfedgeDS/doc_tex/HalfedgeDS/fig/halfedge.eps -text
 Packages/HalfedgeDS/doc_tex/HalfedgeDS/fig/halfedge.gif -text svneol=unset#unset
-Packages/HalfedgeDS/doc_tex/HalfedgeDS/fig/halfedge.ips -text
+Packages/HalfedgeDS/doc_tex/HalfedgeDS/fig/halfedge.pdf -text svneol=unset#unset
 Packages/HalfedgeDS/doc_tex/HalfedgeDS/fig/halfedge_small.gif -text svneol=unset#unset
-Packages/HalfedgeDS/doc_tex/HalfedgeDS/fig/hds_design.ips -text
+Packages/HalfedgeDS/doc_tex/HalfedgeDS/fig/hds_design.eps -text
+Packages/HalfedgeDS/doc_tex/HalfedgeDS/fig/hds_design.pdf -text svneol=unset#unset
 Packages/HalfedgeDS/doc_tex/HalfedgeDS/fig/hds_design_col.gif -text svneol=unset#unset
+Packages/HalfedgeDS/doc_tex/HalfedgeDS/fig/loop.eps -text
 Packages/HalfedgeDS/doc_tex/HalfedgeDS/fig/loop.gif -text svneol=unset#unset
-Packages/HalfedgeDS/doc_tex/HalfedgeDS/fig/loop.ips -text
+Packages/HalfedgeDS/doc_tex/HalfedgeDS/fig/loop.pdf -text svneol=unset#unset
+Packages/HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/euler_center.eps -text
 Packages/HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/euler_center.gif -text svneol=unset#unset
-Packages/HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/euler_center.ips -text
+Packages/HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/euler_center.pdf -text svneol=unset#unset
 Packages/HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/euler_face.gif -text svneol=unset#unset
-Packages/HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/euler_hds.ips -text
+Packages/HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/euler_hds.eps -text
+Packages/HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/euler_hds.pdf -text svneol=unset#unset
+Packages/HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/euler_loop.eps -text
 Packages/HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/euler_loop.gif -text svneol=unset#unset
-Packages/HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/euler_loop.ips -text
+Packages/HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/euler_loop.pdf -text svneol=unset#unset
 Packages/HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/euler_vertex.gif -text svneol=unset#unset
+Packages/HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.eps -text
 Packages/HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.gif -text svneol=unset#unset
-Packages/HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.ips -text
+Packages/HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.pdf -text svneol=unset#unset
 Packages/HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional_small.gif -text svneol=unset#unset
 Packages/Installation/doc_tex/installation/Fig/a-simp.ipe -text
 Packages/Installation/doc_tex/installation/Fig/c-simp.ipe -text
