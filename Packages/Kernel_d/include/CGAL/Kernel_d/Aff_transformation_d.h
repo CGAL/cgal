@@ -57,21 +57,9 @@ class Aff_transformation_d : public pR::Aff_transformation_d_base
   Aff_transformation_d(const Base& a) : Base(a) {}
   Aff_transformation_d(const Self& a) : Base(a) {}
 
-#ifndef CGAL_SIMPLE_INTERFACE
-
   template <typename Forward_iterator>
   Aff_transformation_d(Scaling tag,
     Forward_iterator start, Forward_iterator end) : Base(tag,start,end) {}
-
-#else 
-#define FIXATD(I) \
-Aff_transformation_d(Scaling tag, I start, I end) : Base(tag,start,end) {}
-FIXATD(int*)
-FIXATD(const int*)
-FIXATD(RT*)
-FIXATD(const RT*)
-#undef FIXATD
-#endif // CGAL_SIMPLE_INTERFACE
 
   Self operator*(const Self& a)
   { return Base::operator*(a); }

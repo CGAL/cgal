@@ -67,8 +67,6 @@ friend class HyperplaneCd<FT,LA>;
 VectorCd(int d = 0) : Base( Tuple(d) ) {}
 VectorCd(int d, Null_vector) : Base( Tuple(d) ) {}
 
-#ifndef CGAL_SIMPLE_INTERFACE
-
 template <class InputIterator>
 VectorCd(int d, InputIterator first, InputIterator last) 
   : Base( Tuple(d,first,last) ) 
@@ -85,26 +83,6 @@ VectorCd(int d, InputIterator first, InputIterator last,
 { CGAL_assertion_msg(D!=FT(0), "VectorCd::constructor: D must be nonzero.");
   for (register int i=0; i<d; ++i) entry(i)/=D;
 }
-
-#else
-#define FIXVECCD(I) \
-VectorCd(int d, I first, I last) : Base( Tuple(d,first,last) ) \
-{ if ( first == last ) return; \
-  CGAL_assertion_msg(*first!=FT(0), \
-    "VectorCd::constructor: denominator must be nonzero."); \
-  for (register int i=0; i<d; ++i) entry(i)/=*first; \
-} \
-VectorCd(int d, I first, I last, const FT& D):Base( Tuple(d,first,last) )\
-{ CGAL_assertion_msg(D!=FT(0), "VectorCd::constructor: D must be nonzero.");\
-  for (register int i=0; i<d; ++i) entry(i)/=D;\
-}
-
-FIXVECCD(int*)
-FIXVECCD(const int*)
-FIXVECCD(RT*)
-FIXVECCD(const RT*)
-#undef FIXVECCD
-#endif
 
 VectorCd(int d, Base_vector, int i) : Base( Tuple(d) )
 { if ( d == 0 ) return;

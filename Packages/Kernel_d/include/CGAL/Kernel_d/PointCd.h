@@ -67,8 +67,6 @@ friend class HyperplaneCd<FT,LA>;
 PointCd(int d = 0) : Base( Tuple(d) ) {}
 PointCd(int d, const Origin&) : Base( Tuple(d) ) {}
 
-#ifndef CGAL_SIMPLE_INTERFACE
-
 template <class InputIterator>
 PointCd(int d, InputIterator first, InputIterator last) 
   : Base( Tuple(d,first,last) ) 
@@ -85,26 +83,6 @@ PointCd (int d, InputIterator first, InputIterator last,
 { CGAL_assertion_msg(D!=FT(0),"PointCd::constructor: D must be nonzero.");
   for (register int i=0; i<d; ++i) entry(i)/=D;
 }
-
-#else
-#define FIXPNTCD(I) \
-PointCd(int d, I first, I last) : Base( Tuple(d,first,last) ) \
-{ if ( first == last ) return; \
-  CGAL_assertion_msg(FT(*first)!=FT(0), \
-    "PointCd::constructor: denominator must be nonzero."); \
-  for (register int i=0; i<d; ++i) entry(i)/=FT(*first); \
-} \
-PointCd (int d, I first, I last, const FT& D) : Base( Tuple(d,first,last) ) \
-{ CGAL_assertion_msg(D!=FT(0),"PointCd::constructor: D must be nonzero."); \
-  for (register int i=0; i<d; ++i) entry(i)/=D; \
-}
-
-FIXPNTCD(int*)
-FIXPNTCD(const int*)
-FIXPNTCD(RT*)
-FIXPNTCD(const RT*)
-#undef FIXPNTCD
-#endif 
 
 PointCd(int x, int y, int w = 1) : Base( Tuple((FT)x,(FT)y) )
 { CGAL_assertion_msg(w!=0,"PointCd::construction: w == 0."); 

@@ -1,5 +1,16 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
+
+0.9.81 (9 May 2003)
+  - Fixed <strstream> to <sstream>.
+  - Fixed a bug in stream input of Vector__.h. The copy_n solution
+    together with the istream_iterator was reading one coordinate too much.
+  - Cleaned up SIMPLE_INTERFACE stuff.
+  - Cleaned up ostream output in Vector__.h and Matrix__.h.
+  - Removed include/CGAL/Kernel_d/d_utils.h
+  - Cleaned up old MSC specific code.
+  - Removed DESIGN_ONE versions of the polyhedral surface design.
+
 0.9.80 (8 May 2003)
   - no simple interface anymore in vector__
 

@@ -108,8 +108,6 @@ $d$-dimensional space. There is a constant |CGAL::NULL_VECTOR| that
 can be used for the second argument.}*/
 { if ( d > 0 ) entry(d) = 1; }
 
-#ifndef CGAL_SIMPLE_INTERFACE
-
 template <class InputIterator>
 VectorHd(int d, InputIterator first, InputIterator last) :
   Base( Tuple(d+1,first,last) )
@@ -139,26 +137,6 @@ a $d$-tuple of |RT|, and the value type of |InputIterator| is |RT|. }*/
 { CGAL_assertion_msg(D!=RT(0), "VectorHd::constructor: D must be nonzero.");
   if (D < RT(0)) invert_rep();
 }
-
-#else
-#define FIXVECHD(I) \
-VectorHd(int d, I first, I last) : Base( Tuple(d+1,first,last) ) \
-{ RT D = entry(d); \
-  CGAL_assertion_msg(first!=last || D!=RT(0),\
-    "VectorHd::constructor: denominator must be nonzero.");\
-  if ( D == RT(0) ) entry(d) = 1; if ( D < RT(0) ) invert_rep();\
-} \
-VectorHd(int d, I first, I last, const RT& D):Base(Tuple(d+1,first,last,D))\
-{ CGAL_assertion_msg(D!=RT(0), "VectorHd::constructor: D must be nonzero.");\
-  if (D < RT(0)) invert_rep();\
-}
-
-FIXVECHD(int*)
-FIXVECHD(const int*)
-FIXVECHD(RT*)
-FIXVECHD(const RT*)
-#undef FIXVECHD
-#endif
 
 VectorHd(int d, Base_vector, int i) : Base( Tuple(d+1) )
 /*{\Mcreate returns a variable |\Mvar| of type |\Mname| initialized  

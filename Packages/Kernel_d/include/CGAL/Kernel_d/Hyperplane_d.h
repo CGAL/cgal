@@ -49,8 +49,6 @@ class Hyperplane_d : public pR::Hyperplane_d_base
   Hyperplane_d(const Hyperplane_d<R> &h) : Base(h) {}
   Hyperplane_d(const Base& p) : Base(p) {}
 
-#ifndef CGAL_SIMPLE_INTERFACE
-
   template <class InputIterator>
   Hyperplane_d(int d, InputIterator first, InputIterator last)
     : Base (d, first, last) {}
@@ -64,33 +62,6 @@ class Hyperplane_d : public pR::Hyperplane_d_base
   Hyperplane_d(ForwardIterator first, ForwardIterator last, 
                const Point_d<R>& o, Oriented_side side = Oriented_side(0)) :
     Base(first,last,o,side) {}
-
-#else
-#define FIXHYPD(I) \
-Hyperplane_d(int d, I first, I last) : Base (d,first,last) {} \
-Hyperplane_d(int d, I first, I last, const RT& D) : Base (d,first,last,D) {}
-#define FIXHYPDD(I) \
-Hyperplane_d(I first, I last, const Point_d<R>& o, Oriented_side side = \
-Oriented_side(0)) : Base(o.dimension()) \
-{ construct_from_points(first,last,o,side); }
-
-	     //Oriented_side(0)) : Base(first,last,o,side) {}
-
-FIXHYPD(int*)
-FIXHYPD(const int*)
-FIXHYPD(RT*)
-FIXHYPD(const RT*)
-#undef FIXHYPD
-
-#if defined(_MSC_VER)  && ! defined(__INTEL_COMPILER)
-FIXHYPDD(typename std::vector< Point_d<R> >::iterator)
-FIXHYPDD(typename std::vector< Point_d<R> >::const_iterator)
-#endif // MSC
-
-FIXHYPDD(Point_d<R>*)
-FIXHYPDD(const Point_d<R>*)
-#undef FIXHYPDD
-#endif
 
   Vector_d<R> orthogonal_vector() const 
   { return Base::orthogonal_vector(); }

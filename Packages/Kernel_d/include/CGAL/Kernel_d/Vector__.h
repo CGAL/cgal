@@ -30,7 +30,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/memory.h>
-#include <CGAL/Kernel_d/d_utils.h>
 
 #undef _DEBUG
 #define _DEBUG 51
@@ -47,15 +46,6 @@ namespace CGALLA {
 
 template <class NT_, class AL_> class Vector_;
 template <class NT_, class AL_> class Matrix_;
-
-#define FIXIT(T) \
-Vector_(T f, T l) \
-{ int dist(0); T ff = f; while(ff++ != l) ++dist;\
-  d_ = dist;\
-  allocate_vec_space(v_,d_);\
-  iterator it = begin();\
-  while (f != l) { *it = NT(*f); ++it; ++f; }\
-}     
 
 /*{\Msubst
 <NT_,AL_>#
@@ -108,8 +98,6 @@ protected:
   NT* v_; int d_;
   static allocator_type MM;
 
-#if ! defined( CGAL_SIMPLE_INTERFACE ) //&& ! defined(__BORLANDC__)
-
   inline void allocate_vec_space(NT*& vi, int di)
   {
   /* We use this procedure to allocate memory. We first get an appropriate 
@@ -133,23 +121,6 @@ protected:
     MM.deallocate(vi, di);
     vi = (NT*)0;
   }
-
-#else
-
-  inline void allocate_vec_space(NT*& vi, int di)
-  {
-    vi = new NT[di];
-    NT* p = vi + di - 1;
-    while (p >= vi) { *p = NT(0);  p--; }
-  }
-
-  inline void deallocate_vec_space(NT*& vi, int)
-  {
-    delete [] vi;
-    vi = (NT*)0;
-  }
-
-#endif // CGAL_SIMPLE_INTERFACE
 
 inline void 
 check_dimensions(const Vector_<NT_,AL_>& vec) const
@@ -191,19 +162,6 @@ Vector_(int d, const NT& x)
   }
 }
 
-#ifdef CGAL_SIMPLE_INTERFACE
-
-FIXIT(NT*)
-FIXIT(const NT*)
-FIXIT(int*)
-FIXIT(const int*)
-//FIXIT(std::vector<NT>::interator)
-//FIXIT(std::vector<NT>::const_interator)
-//FIXIT(typename std::list<NT>::interator)
-//FIXIT(std::list<NT>::const_interator)
-
-#else     
-
 template <class Forward_iterator>
 Vector_(Forward_iterator first, Forward_iterator last)
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname|; 
@@ -214,8 +172,6 @@ Vector_(Forward_iterator first, Forward_iterator last)
   iterator it = begin();
   while (first != last) { *it = *first; ++it; ++first; }
 }
-
-#endif
 
 Vector_(const Vector_<NT_,AL_>& p)
 { d_ = p.d_;
@@ -448,13 +404,29 @@ template <class NT_, class AL_>
 std::ostream& operator<<(std::ostream& os, const Vector_<NT_,AL_>& v)
 /*{\Xbinopfunc  writes |\Mvar| componentwise to the output stream $O$.}*/
 { /* syntax: d x_0 x_1 ... x_d-1 */
-  CGAL::print_d<NT_> prt(&os);
-  if (os.iword(CGAL::IO::mode)==CGAL::IO::PRETTY) os << "LA::Vector(";
-  prt(v.dimension());
-  if (os.iword(CGAL::IO::mode)==CGAL::IO::PRETTY) { os << " ["; prt.reset(); }
-  std::for_each(v.begin(),v.end(),prt);
-  if (os.iword(CGAL::IO::mode)==CGAL::IO::PRETTY) os << "])";
-  return os;
+    int d = v.dimension();
+    switch (os.iword(CGAL::IO::mode)) {
+    case CGAL::IO::BINARY:
+        CGAL::write( os, d);
+        for ( int i = 0; i < d; ++i)
+            CGAL::write( os, v[i]);
+        break;
+    case CGAL::IO::ASCII:
+        os << d;
+        for ( int i = 0; i < d; ++i)
+            os << ' ' << v[i];
+        break;
+    case CGAL::IO::PRETTY:
+        os << "LA::Vector(" << d << " [";
+        for ( int i = 0; i < d; ++i) {
+            if ( i > 0)
+                os << ',' << ' ';
+            os << v[i];
+        }
+        os << "])";
+        break;
+    }
+    return os;
 }
 
 template <class NT_, class AL_> 
@@ -465,8 +437,11 @@ std::istream& operator>>(std::istream& is, Vector_<NT_,AL_>& v)
   switch (is.iword(CGAL::IO::mode)) {
     case CGAL::IO::ASCII :
     case CGAL::IO::BINARY :
-      is >> d; v = Vector_<NT_,AL_>(d);
-      CGAL::copy_n(std::istream_iterator<NT_>(is),d,v.begin());
+      is >> d; 
+      v = Vector_<NT_,AL_>(d);
+      for ( int i = 0; i < d; ++i) {
+          is >> v[i];
+      }
       break;
     default:
       std::cerr<<"\nStream must be in ascii or binary mode"<<std::endl;

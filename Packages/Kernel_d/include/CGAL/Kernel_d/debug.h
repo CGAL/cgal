@@ -29,7 +29,7 @@
 
 #include <iostream>
 #include <string>
-#include <strstream>
+#include <sstream>
 
 #undef TRACE
 #undef TRACEN
@@ -39,6 +39,10 @@
 #undef ASSERT
 
 static int debugthread=3141592;
+namespace {
+    struct Avoid_warning_for_unused_debugthread { static int x; };
+    int Avoid_warning_for_unused_debugthread::x = debugthread;
+}
 
 #if _DEBUG>0
 #define SETDTHREAD(l) debugthread=l
@@ -110,9 +114,11 @@ void print(I s, I e, std::ostream& os = std::cerr)
 
 template <class T>
 std::string make_std_string(const T& t)
-{ std::ostrstream os;
+{ std::ostringstream os;
   os << t;
-  std::string res(os.str()); os.freeze(0); return res; }
+  std::string res(os.str()); 
+  return res; 
+}
 } // MSDEBUG
 
 

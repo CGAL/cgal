@@ -64,7 +64,8 @@ int main()
     v5 = DT.insert(p5);
     Simplex_handle ds2 = DT.simplex(v5);
     int di2 = DT.index(v5);
-    CGAL_TEST(DT.is_simplex_of_nearest(ds2) && !DT.is_simplex_of_furthest(ds2));
+    CGAL_TEST(DT.is_simplex_of_nearest(ds2)
+              && ! DT.is_simplex_of_furthest(ds2));
     CGAL_TEST(DT.point_of_simplex(ds2,di2) == DT.associated_point(v5));
     CGAL_TEST(DT.opposite_simplex(ds2,1)!=Simplex_handle());
     CGAL_TEST(DT.opposite_simplex(DT.opposite_simplex(ds2,1),
@@ -151,7 +152,8 @@ int main()
     v5 = DT.insert(p5);
     Simplex_handle ds2 = DT.simplex(v5);
     int di2 = DT.index(v5);
-    CGAL_TEST(DT.is_simplex_of_nearest(ds2) && !DT.is_simplex_of_furthest(ds2));
+    CGAL_TEST(DT.is_simplex_of_nearest(ds2)
+              && ! DT.is_simplex_of_furthest(ds2));
     CGAL_TEST(DT.point_of_simplex(ds2,di2) == DT.associated_point(v5));
     CGAL_TEST(DT.opposite_simplex(ds2,1)!=Simplex_handle());
     CGAL_TEST(DT.opposite_simplex(DT.opposite_simplex(ds2,1),

@@ -75,8 +75,6 @@ Aff_transformationCd(const Matrix& M) : Base( Rep(M) )
   CGAL_assertion(M(d-1,d-1)==FT(1));
 }
 
-#ifndef CGAL_SIMPLE_INTERFACE
-
 template <typename Forward_iterator>
 Aff_transformationCd(Scaling, Forward_iterator start, Forward_iterator end) :
   Base( Rep(std::distance(start,end)-1) )
@@ -86,18 +84,6 @@ diagonal matrix with entries |set [start,end)| on the diagonal
 dimension $d+1$.}*/
 { int i=0; while (start != end) { ptr()->M_(i,i) = *start++;++i; } }
 
-#else
-#define FIXATCD(I) \
-Aff_transformationCd(Scaling, I start, I end) : \
-  Base( Rep(end-start-1) ) \
-{ int i=0; while (start != end) { ptr()->M_(i,i) = *start++;++i; } }
-
-FIXATCD(int*)
-FIXATCD(const int*)
-FIXATCD(RT*)
-FIXATCD(const RT*)
-#undef FIXATCD
-#endif
 
 Aff_transformationCd(Translation, const VectorCd<RT,LA>& v) :
   Base( Rep(v.dimension()) )

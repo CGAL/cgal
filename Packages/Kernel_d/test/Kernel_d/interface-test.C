@@ -76,7 +76,7 @@ int main()
     CGAL_TEST(p0 != p1 && p0 != p2); // op!=
     CGAL_TEST(p0 == CGAL::ORIGIN);
 
-    if (DOIO) CGAL_IO_TEST(p1,p4); p4 = p1;
+    if (DOIO) CGAL_IO_TEST(p1,p4,CGAL::IO::ASCII); p4 = p1;
 
     CGAL_TEST(p4.dimension()==p1.dimension()); // dimension()
     CGAL_TEST(p4.dimension()!=Point(3).dimension()); // dimension()
@@ -256,7 +256,7 @@ int main()
     CGAL_TEST((a1==a6 && a3==a2));
     CGAL_TEST((a0!=a1 && a0!=a4));
 
-    if (DOIO) CGAL_IO_TEST(a1,a6); a6 = a1;
+    if (DOIO) CGAL_IO_TEST(a1,a6,CGAL::IO::ASCII); a6 = a1;
 
     CGAL_TEST(a2.dimension()==a3.dimension());
     CGAL_TEST(a3.dimension()!=a4.dimension());
@@ -345,7 +345,7 @@ int main()
     CGAL_TEST(d2==Direction(2,2,0));
     CGAL_TEST(d31!=d32 && d2!=d1)
 
-    if (DOIO) CGAL_IO_TEST(d1,d5); d5=d1;
+    if (DOIO) CGAL_IO_TEST(d1,d5,CGAL::IO::ASCII); d5=d1;
     CGAL_TEST(d2.dimension()==d1.dimension());
     CGAL_TEST(d31.dimension()!=d32.dimension());
     CGAL_TEST(d1.dx()==d1.delta(0));
@@ -411,7 +411,7 @@ int main()
     CGAL_TEST(!h5.has_on(p1));
     CGAL_TEST(h3.has_on_positive_side(o));
     
-    if (DOIO) CGAL_IO_TEST(h0,h8); h8=h0;
+    if (DOIO) CGAL_IO_TEST(h0,h8,CGAL::IO::ASCII); h8=h0;
 
     Hyperplane::Coefficient_const_iterator it; int i;
     for (i=0,it=h5.coefficients_begin(); 
@@ -469,7 +469,7 @@ int main()
     std::vector< Point > B = make_vector(p+v,q+v,r+v,s+v);
     CGAL_TEST( (S1+v) == Sphere(3,B.begin(),B.end()) ); 
     CGAL_TEST( CGAL::weak_equality(S1.opposite(),S1) );
-    if (DOIO) CGAL_IO_TEST(S1,S3); S3 = S1;
+    if (DOIO) CGAL_IO_TEST(S1,S3,CGAL::IO::ASCII); S3 = S1;
   }
 
   {
@@ -502,7 +502,7 @@ int main()
     CGAL_TEST(CGAL::weak_equality(s1,s1.opposite()));
     CGAL_TEST(CGAL::parallel(s6,s6+v));
     CGAL_TEST(CGAL::common_endpoint(s1,s2,p3)&&p3==p1);
-    if (DOIO) CGAL_IO_TEST(s1,s6); s6 = s1;
+    if (DOIO) CGAL_IO_TEST(s1,s6,CGAL::IO::ASCII); s6 = s1;
   }
 
   { 
@@ -525,7 +525,7 @@ int main()
     CGAL_TEST(r1+Vector(1,-1) == r7);
     CGAL_TEST(r1.has_on(Point(10,0))&&!r1.has_on(Point(-10,0)));
     CGAL_TEST(CGAL::parallel(r1,(r2+Vector(0,1)).opposite()));
-    if (DOIO) CGAL_IO_TEST(r1,r4); r4 = r1;
+    if (DOIO) CGAL_IO_TEST(r1,r4,CGAL::IO::ASCII); r4 = r1;
   }
 
   {
@@ -546,7 +546,7 @@ int main()
     CGAL_TEST(l1.has_on(Point(3,0))&&!l1.has_on(p2));
     CGAL_TEST(CGAL::weak_equality(l1,l1.opposite())&&l1!=l1.opposite());
     CGAL_TEST(CGAL::parallel(l2,Line(p2,dir)));
-    if (DOIO) CGAL_IO_TEST(l1,l5); l5 = l1;
+    if (DOIO) CGAL_IO_TEST(l1,l5,CGAL::IO::ASCII); l5 = l1;
   }
 
 
@@ -581,7 +581,7 @@ int main()
     CGAL_TEST(p0 != p1 && p0 != p2); // op!=
     CGAL_TEST(p0 == CGAL::ORIGIN);
 
-    if (DOIO) CGAL_IO_TEST(p1,p4); p4 = p1;
+    if (DOIO) CGAL_IO_TEST(p1,p4,CGAL::IO::ASCII); p4 = p1;
 
     CGAL_TEST(p4.dimension()==p1.dimension()); // dimension()
     CGAL_TEST(p4.dimension()!=Point(3).dimension()); // dimension()
@@ -761,7 +761,7 @@ int main()
     CGAL_TEST((a1==a6 && a3==a2));
     CGAL_TEST((a0!=a1 && a0!=a4));
 
-    if (DOIO) CGAL_IO_TEST(a1,a6); a6 = a1;
+    if (DOIO) CGAL_IO_TEST(a1,a6,CGAL::IO::ASCII); a6 = a1;
 
     CGAL_TEST(a2.dimension()==a3.dimension());
     CGAL_TEST(a3.dimension()!=a4.dimension());
@@ -850,7 +850,7 @@ int main()
     CGAL_TEST(d2==Direction(2,2,0));
     CGAL_TEST(d31!=d32 && d2!=d1)
 
-    if (DOIO) CGAL_IO_TEST(d1,d5); d5=d1;
+    if (DOIO) CGAL_IO_TEST(d1,d5,CGAL::IO::ASCII); d5=d1;
     CGAL_TEST(d2.dimension()==d1.dimension());
     CGAL_TEST(d31.dimension()!=d32.dimension());
     CGAL_TEST(d1.dx()==d1.delta(0));
@@ -916,7 +916,7 @@ int main()
     CGAL_TEST(!h5.has_on(p1));
     CGAL_TEST(h3.has_on_positive_side(o));
     
-    if (DOIO) CGAL_IO_TEST(h0,h8); h8=h0;
+    if (DOIO) CGAL_IO_TEST(h0,h8,CGAL::IO::ASCII); h8=h0;
 
     Hyperplane::Coefficient_const_iterator it; int i;
     for (i=0,it=h5.coefficients_begin(); 
@@ -974,7 +974,7 @@ int main()
     std::vector< Point > B = make_vector(p+v,q+v,r+v,s+v);
     CGAL_TEST( (S1+v) == Sphere(3,B.begin(),B.end()) ); 
     CGAL_TEST( CGAL::weak_equality(S1.opposite(),S1) );
-    if (DOIO) CGAL_IO_TEST(S1,S3); S3 = S1;
+    if (DOIO) CGAL_IO_TEST(S1,S3,CGAL::IO::ASCII); S3 = S1;
   }
 
   {
@@ -1007,7 +1007,7 @@ int main()
     CGAL_TEST(CGAL::weak_equality(s1,s1.opposite()));
     CGAL_TEST(CGAL::parallel(s6,s6+v));
     CGAL_TEST(CGAL::common_endpoint(s1,s2,p3)&&p3==p1);
-    if (DOIO) CGAL_IO_TEST(s1,s6); s6 = s1;
+    if (DOIO) CGAL_IO_TEST(s1,s6,CGAL::IO::ASCII); s6 = s1;
   }
 
   { 
@@ -1030,7 +1030,7 @@ int main()
     CGAL_TEST(r1+Vector(1,-1) == r7);
     CGAL_TEST(r1.has_on(Point(10,0))&&!r1.has_on(Point(-10,0)));
     CGAL_TEST(CGAL::parallel(r1,(r2+Vector(0,1)).opposite()));
-    if (DOIO) CGAL_IO_TEST(r1,r4); r4 = r1;
+    if (DOIO) CGAL_IO_TEST(r1,r4,CGAL::IO::ASCII); r4 = r1;
   }
 
   {
@@ -1051,7 +1051,7 @@ int main()
     CGAL_TEST(l1.has_on(Point(3,0))&&!l1.has_on(p2));
     CGAL_TEST(CGAL::weak_equality(l1,l1.opposite())&&l1!=l1.opposite());
     CGAL_TEST(CGAL::parallel(l2,Line(p2,dir)));
-    if (DOIO) CGAL_IO_TEST(l1,l5); l5 = l1;
+    if (DOIO) CGAL_IO_TEST(l1,l5,CGAL::IO::ASCII); l5 = l1;
   }
 
 

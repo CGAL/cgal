@@ -98,8 +98,6 @@ DirectionHd(const VectorHd<RT,LA>& v);
 /*{\Mcreate introduces a variable |\Mvar| of type |DirectionHd<RT,LA>| 
 initialized to the direction of |v|.}*/
 
-#ifndef CGAL_SIMPLE_INTERFACE
-
 template <class InputIterator>
 DirectionHd(int d, InputIterator first, InputIterator last) : 
   Base( Tuple(d+1,first,last,1) ) {}
@@ -107,16 +105,6 @@ DirectionHd(int d, InputIterator first, InputIterator last) :
 with representation tuple |set [first,last)|. \precond |d| is
 nonnegative, |[first,last)| has |d| elements and the value type of 
 |InputIterator| is |RT|.}*/
-
-#else
-#define FIXDIRHD(I) \
-DirectionHd(int d, I first, I last) : Base( Tuple(d+1,first,last,1) ) {}
-FIXDIRHD(int*)
-FIXDIRHD(const int*)
-FIXDIRHD(RT*)
-FIXDIRHD(const RT*)
-#undef FIXDIRHD
-#endif
 
 DirectionHd(int d, Base_direction, int i) : Base( Tuple(d+1) )
 /*{\Mcreate returns a variable |\Mvar| of type |\Mname| initialized  

@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
       v21 /= 13;
       CGAL_TEST(v21 == v22);
 
-      if (IOTEST) CGAL_IO_TEST(v1,v2);
+      if (IOTEST) CGAL_IO_TEST(v1,v2,CGAL::IO::ASCII);
     }
 
     { 
@@ -169,7 +169,7 @@ int main(int argc, char* argv[])
       CGAL_TEST(LA::verify_determinant(C, det, L, U, q, c));
       CGAL_TEST(det == LA::determinant(C));
       CGAL_TEST(CGAL_NTS sign(det) == LA::sign_of_determinant(C));
-      if (IOTEST) CGAL_IO_TEST(A,C);
+      if (IOTEST) CGAL_IO_TEST(A,C,CGAL::IO::ASCII);
       /* a random linear solver task: */
       Vector b(mat_dim),x(mat_dim),e; 
       NT denom; 
@@ -278,7 +278,7 @@ int main(int argc, char* argv[])
       v21 /= 13;
       CGAL_TEST(v21 == v22);
 
-      if (IOTEST) CGAL_IO_TEST(v1,v2);
+      if (IOTEST) CGAL_IO_TEST(v1,v2,CGAL::IO::ASCII);
     }
 
     { 
@@ -366,7 +366,8 @@ int main(int argc, char* argv[])
       CGAL_TEST(LA::verify_determinant(C, det, L, U, q, c));
       CGAL_TEST(det == LA::determinant(C));
       CGAL_TEST(CGAL_NTS sign(det) == LA::sign_of_determinant(C));
-      if (IOTEST) CGAL_IO_TEST(A,C);
+      if (IOTEST) CGAL_IO_TEST(A,C,CGAL::IO::ASCII);
+      // add binary test later: if (IOTEST) CGAL_IO_TEST(A,C,CGAL::IO::BINARY);
       /* a random linear solver task: */
       Vector b(mat_dim),x(mat_dim),e; 
       NT denom; 

@@ -104,8 +104,6 @@ $d$-dimensional space, initialized to the origin.}*/
   : Base( Tuple(d+1) )
 { entry(d) = 1; }
 
-#ifndef CGAL_SIMPLE_INTERFACE
-
 template <class InputIterator>
 PointHd(int d, InputIterator first, InputIterator last) 
 /*{\Mcreate introduces a variable |\Mvar| of type |\Mname| in
@@ -137,27 +135,6 @@ of |RT|, and the value type of |InputIterator| is |RT|. }*/
 { CGAL_assertion_msg(D!=RT(0),"PointHd::constructor: D must be nonzero.");
   if (D < RT(0)) invert_rep();
 }
-
-#else
-#define FIXPNTHD(I) \
-PointHd(int d, I first, I last) : Base( Tuple(d+1,first,last) )\
-{ RT D = entry(d);\
-  CGAL_assertion_msg(first!=last || D!=RT(0),\
-    "PointHd::constructor: denominator must be nonzero.");\
-  if ( D == RT(0) ) entry(d) = 1; if ( D < RT(0) ) invert_rep(); \
-} \
-PointHd (int d, I first, I last, const RT& D) : Base(Tuple(d+1,first,last,D))\
-{ CGAL_assertion_msg(D!=RT(0),"PointHd::constructor: D must be nonzero.");\
-  if (D < RT(0)) invert_rep();\
-}
-
-FIXPNTHD(int*)
-FIXPNTHD(const int*)
-FIXPNTHD(RT*)
-FIXPNTHD(const RT*)
-#undef FIXPNTHD
-
-#endif
 
 PointHd(int x, int y, int w = 1) : Base( Tuple((RT)x,(RT)y,(RT)w) )
 { CGAL_assertion_msg((w != 0),"PointHd::construction: w == 0.");

@@ -47,26 +47,12 @@ class Vector_d : public pR::Vector_d_base
   Vector_d(int d, Base_vector, int i) :
     Base(d,Base_vector(),i) {}
 
-#ifndef CGAL_SIMPLE_INTERFACE
-
   template <class InputIterator>
   Vector_d (int d, InputIterator first, InputIterator last)
     : Base (d, first, last) {}
   template <class InputIterator>
   Vector_d (int d, InputIterator first, InputIterator last, const RT& D)
     : Base (d, first, last, D) {}
-
-#else
-#define FIXVECD(I) \
-Vector_d (int d, I first, I last) : Base (d, first, last) {} \
-Vector_d(int d, I first, I last, const RT& D)  : Base (d, first, last, D) {}
-
-FIXVECD(int*)
-FIXVECD(const int*)
-FIXVECD(RT*)
-FIXVECD(const RT*)
-#undef FIXVECD
-#endif
 
   Vector_d(const Self& v) : Base(v) {}
   Vector_d(const Base& v) : Base(v) {}

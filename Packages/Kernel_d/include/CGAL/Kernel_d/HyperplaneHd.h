@@ -97,8 +97,6 @@ HyperplaneHd(int d = 0) : Base( Tuple(d+1) ) {}
 /*{\Mcreate introduces a variable |\Mvar| of type |\Mname|
 initialized to some hyperplane in $d$ - dimensional space. }*/
 
-#ifndef CGAL_SIMPLE_INTERFACE
-
 template <class InputIterator>
 HyperplaneHd(int d, InputIterator first, InputIterator last) 
   : Base( Tuple(d+1,first,last) ) {}
@@ -114,18 +112,6 @@ HyperplaneHd(int d, InputIterator first, InputIterator last, const RT& D)
 initialized to the hyperplane with coefficients |set [first,last)| and
 |D|. \precond |size [first,last) == d| and the value type of
 InputIterator is |RT|.}*/
-
-#else
-#define FIXHYPHD(I)\
-HyperplaneHd(int d, I first, I last) : Base( Tuple(d+1,first,last) ) {}\
-HyperplaneHd(int d, I first, I last, const RT& D) \
-  : Base(Tuple(d+1,first,last,D)) {}
-FIXHYPHD(int*)
-FIXHYPHD(const int*)
-FIXHYPHD(RT*)
-FIXHYPHD(const RT*)
-#undef FIXHYPHD
-#endif
 
 /* We want to construct a hyperplane that passes through a set |P =
 set [first,last)| of points in $d$-dimensional space and has a
@@ -189,8 +175,6 @@ construct_from_points(ForwardIterator first, ForwardIterator last,
 }
 
 
-#ifndef CGAL_SIMPLE_INTERFACE
-
 template <class ForwardIterator>
 HyperplaneHd(ForwardIterator first, ForwardIterator last, 
              const PointHd<RT,LA>& o, 
@@ -202,36 +186,6 @@ hyperplane.  \precond A hyperplane with the stated properties must
 exist.  The value type of |ForwardIterator| is |PointHd<RT,LA>|. }*/
   : Base( Tuple(o.dimension()+1) )
 { construct_from_points(first,last,o,side); }
-
-#else
-
-HyperplaneHd(const PointHd<RT,LA>* first, const PointHd<RT,LA>*  last, 
-	     const PointHd<RT,LA>& o, 
-	     Oriented_side side = Oriented_side(0)) : 
-  Base( Tuple(o.dimension()+1) ) 
-{ construct_from_points(first,last,o,side); }
-
-#if defined(_MSC_VER) && ! defined(__INTEL_COMPILER)
-// necessary as for MSC we have the vector iterators implemented
-// as class types and not as pointers 
-typedef typename std::vector<PointHd<RT,LA> >::iterator vecpntit;
-typedef typename std::vector<PointHd<RT,LA> >::const_iterator vecpntcit;
-
-HyperplaneHd(vecpntit first, vecpntit last, 
-	     const PointHd<RT,LA>& o, 
-	     Oriented_side side = Oriented_side(0)) : 
-  Base( Tuple(o.dimension()+1) ) 
-{ construct_from_points(first,last,o,side); }
-
-HyperplaneHd(vecpntcit first, vecpntcit last, 
-	     const PointHd<RT,LA>& o, 
-	     Oriented_side side = Oriented_side(0)) : 
-  Base( Tuple(o.dimension()+1) ) 
-{ construct_from_points(first,last,o,side); }
-
-#endif // MSC
-#endif // CGAL_SIMPLE_INTERFACE
-
 
 HyperplaneHd(const PointHd<RT,LA>& p, const DirectionHd<RT,LA>& dir) 
 /*{\Mcreate constructs the hyperplane with normal direction |dir|

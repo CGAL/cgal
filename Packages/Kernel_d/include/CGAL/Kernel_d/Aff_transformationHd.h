@@ -104,8 +104,6 @@ matrix $M$. \precond |M| is a square matrix of dimension $d + 1$. }*/
      construction: initialization matrix is not quadratic.");
 }
 
-#ifndef CGAL_SIMPLE_INTERFACE
-
 template <typename Forward_iterator>
 Aff_transformationHd(Scaling, Forward_iterator start, Forward_iterator end) :
   Base( Rep(std::distance(start,end)-1) )
@@ -114,19 +112,6 @@ diagonal matrix with entries |set [start,end)| on the diagonal
 (a scaling of the space). \precond |set [start,end)| is a vector of 
 dimension $d+1$.}*/
 { int i=0; while (start != end) { ptr()->M_(i,i) = *start++;++i; } }
-
-#else
-#define FIXATHD(I) \
-Aff_transformationHd(Scaling, I start, I end) : \
-  Base( Rep(end-start-1) ) \
-{ int i=0; while (start != end) { ptr()->M_(i,i) = *start++;++i; } }
-
-FIXATHD(int*)
-FIXATHD(const int*)
-FIXATHD(RT*)
-FIXATHD(const RT*)
-#undef FIXATHD
-#endif
 
 Aff_transformationHd(Translation, const VectorHd<RT,LA>& v) :
   Base( Rep(v.dimension()) )

@@ -54,8 +54,6 @@ typedef typename Tuple::const_iterator Coefficient_const_iterator;
 
 HyperplaneCd(int d = 0) : Base( Tuple(d+1) ) {}
 
-#ifndef CGAL_SIMPLE_INTERFACE
-
 template <class InputIterator>
 HyperplaneCd(int d, InputIterator first, InputIterator last, const FT& D)
   : Base( Tuple(d+1,first,last,D) ) {}
@@ -63,18 +61,6 @@ HyperplaneCd(int d, InputIterator first, InputIterator last, const FT& D)
 template <class InputIterator>
 HyperplaneCd(int d, InputIterator first, InputIterator last)
   : Base( Tuple(d+1,first,last) ) {}
-
-#else
-#define FIXHYPCD(I)\
-HyperplaneCd(int d, I first, I last) : Base( Tuple(d+1,first,last) ) {}\
-HyperplaneCd(int d, I first, I last, const FT& D) \
-  : Base(Tuple(d+1,first,last,D)) {}
-FIXHYPCD(int*)
-FIXHYPCD(const int*)
-FIXHYPCD(RT*)
-FIXHYPCD(const RT*)
-#undef FIXHYPCD
-#endif
 
 template <class ForwardIterator> 
 void
@@ -122,43 +108,12 @@ construct_from_points(ForwardIterator first, ForwardIterator last,
     invert_rep();
 }
 
-#ifndef CGAL_SIMPLE_INTERFACE
-
 template <class ForwardIterator>
 HyperplaneCd(ForwardIterator first, ForwardIterator last, 
              const PointCd<FT,LA>& o,
              Oriented_side side = Oriented_side(0))
   : Base( Tuple(o.dimension()+1) ) 
 { construct_from_points(first,last,o,side); }
-
-#else
-
-HyperplaneCd(const PointCd<FT,LA>* first, const PointCd<FT,LA>* last, 
-             const PointCd<FT,LA>& o,
-             Oriented_side side = Oriented_side(0))
-  : Base( Tuple(o.dimension()+1) ) 
-{ construct_from_points(first,last,o,side); }
-
-#if defined(_MSC_VER) && ! defined(__INTEL_COMPILER)
-// necessary as for MSC we have the vector iterators implemented
-// as class types and not as pointers 
-typedef typename std::vector<PointCd<FT,LA> >::iterator vecpntit;
-typedef typename std::vector<PointCd<FT,LA> >::const_iterator vecpntcit;
-
-HyperplaneCd(vecpntit first, vecpntit last, 
-             const PointCd<FT,LA>& o,
-             Oriented_side side = Oriented_side(0))
-  : Base( Tuple(o.dimension()+1) ) 
-{ construct_from_points(first,last,o,side); }
-
-HyperplaneCd(vecpntcit first, vecpntcit last, 
-             const PointCd<FT,LA>& o,
-             Oriented_side side = Oriented_side(0))
-  : Base( Tuple(o.dimension()+1) ) 
-{ construct_from_points(first,last,o,side); }
-
-#endif // MSC
-#endif // CGAL_SIMPLE_INTERFACE
 
 HyperplaneCd(const PointCd<FT,LA>& p, const DirectionCd<FT,LA>& dir) 
   : Base( Tuple(p.dimension()+1) ) 

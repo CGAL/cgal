@@ -39,10 +39,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#if (defined(_MSC_VER) && ! defined(__INTEL_COMPILER) ) || defined(__BORLANDC__) 
-#define CGAL_SIMPLE_INTERFACE
-#endif
-
 template <class R_> struct Convex_hull_d_traits_3
 {
     typedef R_                    R;
@@ -64,11 +60,7 @@ template <class R_> struct Convex_hull_d_traits_3
   struct Orientation_d {
     template <class I>
     Orientation operator()(I s, I e) {
-#ifndef CGAL_SIMPLE_INTERFACE
       std::vector<Point_d> A(s,e);
-#else
-      std::vector<Point_d> A; while (s!=e) A.push_back(*s++);
-#endif
       CGAL_assertion(A.size()==4);
       return orientation(A[0],A[1],A[2],A[3]);
     }
@@ -80,11 +72,7 @@ template <class R_> struct Convex_hull_d_traits_3
     template <class I>
     bool operator()(I s, I e)
     { 
-#ifndef CGAL_SIMPLE_INTERFACE
       std::vector<Point_d> A(s,e);
-#else
-      std::vector<Point_d> A; while (s!=e) A.push_back(*s++);
-#endif
       int a = A.size();
       if (a > 4)
         return false;
@@ -104,11 +92,7 @@ template <class R_> struct Convex_hull_d_traits_3
     template <class I>
     bool operator()(I s, I e, const Point_d& p)
     { 
-#ifndef CGAL_SIMPLE_INTERFACE
       std::vector<Point_d> A(s,e);
-#else
-      std::vector<Point_d> A; while (s!=e) A.push_back(*s++);
-#endif
       int a = A.size();
       CGAL_assertion( a <= 4 );
       if (a == 4) {
@@ -133,11 +117,7 @@ template <class R_> struct Convex_hull_d_traits_3
     template <class I>
     bool operator()(I s, I e, const Point_d& p)
     { 
-#ifndef CGAL_SIMPLE_INTERFACE
       std::vector<Point_d> A(s,e);
-#else
-      std::vector<Point_d> A; while (s!=e) A.push_back(*s++);
-#endif
       int a = A.size();
       Affinely_independent_d affinely_independent;
       CGAL_assertion( affinely_independent(s,e) );
@@ -197,11 +177,7 @@ template <class R_> struct Convex_hull_d_traits_3
     Hyperplane_d operator()(I s, I e, const Point_d& p, 
                             Oriented_side side)
     { 
-#ifndef CGAL_SIMPLE_INTERFACE
       std::vector<Point_d> A(s,e);
-#else
-      std::vector<Point_d> A; while (s!=e) A.push_back(*s++);
-#endif
       int a = A.size(); CGAL_assertion( a <= 3 );
       Hyperplane_d pl;
       if (a == 3) {

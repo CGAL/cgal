@@ -116,7 +116,7 @@ int main()
     CGAL_TEST(at1.dimension()==2);
     CGAL_TEST(at1.matrix() == M1);
 
-    CGAL_IO_TEST(at4,at0);
+    CGAL_IO_TEST(at4,at0,CGAL::IO::ASCII);
 
     Afftrafo at12 = at2 * at2.inverse();
     Point p(1,1); 
@@ -284,7 +284,7 @@ int main()
     CGAL_TEST(at1.dimension()==2);
     CGAL_TEST(at1.matrix() == M1);
 
-    CGAL_IO_TEST(at4,at0);
+    CGAL_IO_TEST(at4,at0,CGAL::IO::ASCII);
 
     Afftrafo at12 = at2 * at2.inverse();
     Point p(1,1); 

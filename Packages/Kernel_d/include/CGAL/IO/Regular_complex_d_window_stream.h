@@ -24,11 +24,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>
-#if ! defined(_MSC_VER) || defined(__INTEL_COMPILER)
 #include <CGAL/Regular_complex_d.h>
-#else
-#include <CGAL/Regular_complex_d_MSC.h>
-#endif
 
 #include <CGAL/LEDA_basic.h>
 #include <CGAL/IO/Window_stream.h>

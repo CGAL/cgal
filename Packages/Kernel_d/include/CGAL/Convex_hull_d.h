@@ -79,11 +79,7 @@ Let |j = C.index_of_vertex_in_opposite_facet(f,i)|. Then
 
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>
-#if ! defined(_MSC_VER) || defined(__INTEL_COMPILER)
 #include <CGAL/Regular_complex_d.h>
-#else
-#include <CGAL/Regular_complex_d_MSC.h>
-#endif
 
 #include <list>
 #include <vector>
@@ -1052,21 +1048,11 @@ template <class R>
 void Convex_hull_d<R>::
 compute_equation_of_base_facet(Simplex_handle S)
 { 
-  #ifndef CGAL_SIMPLE_INTERFACE
   typename R::Construct_hyperplane_d hyperplane_through_points =
     kernel().construct_hyperplane_d_object();
   S->set_hyperplane_of_base_facet( hyperplane_through_points(
     S->points_begin()+1, S->points_begin()+1+current_dimension(),
     center(), ON_NEGATIVE_SIDE)); // skip the first point !
-  #else
-  typename R::Construct_hyperplane_d hyperplane_through_points =
-    kernel().construct_hyperplane_d_object();
-  std::vector<Point_d> V(current_dimension());
-  for (int i=0; i<current_dimension(); ++i) 
-    V[i] = point_of_simplex(S,i+1); // skip the first point !
-  S->set_hyperplane_of_base_facet( 
-   hyperplane_through_points(V.begin(),V.end(),center(),ON_NEGATIVE_SIDE)); 
-  #endif
 
   #ifdef CGAL_CHECK_EXPENSIVE
   { /* Let us check */

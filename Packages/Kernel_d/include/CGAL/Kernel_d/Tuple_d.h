@@ -24,10 +24,10 @@
 #define CGAL_TUPLE_D_H
 
 #ifndef NOCGALINCL
-#include <strstream>
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
 #include <CGAL/Quotient.h>
+#include <sstream>
 #endif
 
 CGAL_BEGIN_NAMESPACE
@@ -137,8 +137,6 @@ public:
   Tuple_d(const NT& a, const NT& b, const NT& c, const NT& d) : v(4)
   { v[0]=a; v[1]=b; v[2]=c; v[3]=d; }
 
-#ifndef CGAL_SIMPLE_INTERFACE
-
   template <typename I>
   Tuple_d(int d, I& start, I end) : v(d) 
   { int i(0); 
@@ -154,21 +152,6 @@ public:
     while ( i < d && start != end ) v[i++] = *start++; 
     v[d-1] = D; 
   }
-
-#else // provide instantiated constructors:
-#define FIXTUPLE(I) \
-Tuple_d(int d, I& start, I end) : v(d) \
-{ int i(0); while ( i < d && start != end ) v[i++] = *start++; } \
-Tuple_d(int d, I start, I end, NT D) : v(d) \
-{ int i(0); while ( i < d && start != end ) v[i++] = *start++; v[d-1] = D; }
-
-//FIXTUPLE(int*)
-FIXTUPLE(const int*)
-//FIXTUPLE(NT*)
-FIXTUPLE(const NT*)
-
-#undef FIXTUPLE
-#endif
 
   int size() const { return v.dimension(); }
   const_iterator begin() const { return v.begin(); }
@@ -310,11 +293,10 @@ void tuple_dim_check(ForwardIterator first, ForwardIterator last,
   int d = first->dimension(); ++first;
   for (; first!=last; ++first) 
     if (first->dimension() != d) {
-      std::ostrstream os;
+      std::ostringstream os;
       os << "Tuple Dimension Error " << 
             "File " << file << "Line " << line << "Operation " << op << '\0';
-      CGAL_assertion_msg(0,os.str()); 
-      os.freeze(0);
+      CGAL_assertion_msg(0,os.str().c_str()); 
     }
 }
 
