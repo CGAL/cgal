@@ -12,7 +12,7 @@ test cctor      (1.94289,0.426392),(9.38538,9.782)
 test list insertion:
   number of successfully inserted points is 7
   LER is  (1.94289,0.426392),(9.38538,9.782)
-test default ctor    (0,0),(0.5,1)
+test default ctor    (0,0),(1,0.5)
 test after removal   (1.94289,0.426392),(9.38538,9.782)
 test successful insertion 1
 test after clear (0,0),(9.89865,10)
