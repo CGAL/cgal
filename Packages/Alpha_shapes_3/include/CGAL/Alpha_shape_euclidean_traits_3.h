@@ -20,60 +20,12 @@
 #ifndef CGAL_ALPHA_SHAPE_EUCLIDEAN_TRAITS_3_H
 #define CGAL_ALPHA_SHAPE_EUCLIDEAN_TRAITS_3_H 
 
-#include <CGAL/basic.h>
-#include <CGAL/predicates_on_points_3.h>
-#include <CGAL/smallest_radius_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
-//------------------ Function Objects ---------------------------------
-
-template < class return_type, class T >
-class Compute_squared_radius_circumsphere_3
-{
-public:
-
-  typedef return_type result_type;
-
-  result_type operator()(const T& p, const T& q, const T& r, const T& s) const
-    { 
-      return CGAL::squared_radius(p, q, r, s);
-    }
-
-  result_type operator()(const T& p, const T& q, const T& r) const
-    { 
-      return CGAL::squared_radius(p, q, r);
-    }
-
-  result_type operator()(const T& p, const T& q) const
-    { 
-      return CGAL::squared_radius_smallest_circumsphere(p, q);
-    }
-};
-
-//------------------ Traits class -------------------------------------
-
 template <class R>
 class Alpha_shape_euclidean_traits_3 : public R
-{
-public:
- 
-  typedef R Rep;
-  typedef typename R::FT Coord_type;
-  typedef typename R::Point_3 Point_3;
-  typedef Point_3  Point;
-  typedef typename R::Segment_3 Segment_3;
-
-  typedef CGAL::Compute_squared_radius_circumsphere_3<Coord_type, Point_3> 
-  Compute_squared_radius_circumsphere_3;
-  typedef typename R::Side_of_bounded_sphere_3 Side_of_bounded_sphere_3;
-
-
-  Compute_squared_radius_circumsphere_3 compute_squared_radius_3_object() const
-    {
-      return Compute_squared_radius_circumsphere_3();
-    }
-};
+{};
 
 CGAL_END_NAMESPACE
 

@@ -23,19 +23,13 @@ the Alpha Shape.
 
 
 typedef double coord_type;
-
-
 typedef CGAL::Simple_cartesian<coord_type>  SC;
 typedef CGAL::Filtered_kernel<SC> K;
 
 typedef K::Point_3  Point;
 typedef K::Segment_3  Segment;
-typedef K::Ray_3  Ray;
-typedef K::Line_3  Line;
-typedef K::Triangle_3  Triangle;
 
-typedef CGAL::Alpha_shape_euclidean_traits_3<K> Gt;
-
+typedef K Gt;
 typedef CGAL::Alpha_shape_vertex_base_3<Gt> Vb;
 typedef CGAL::Alpha_shape_cell_base_3<Gt>   Fb;
 

@@ -5,10 +5,8 @@ the Alpha Shape.
 
 ************************************************************************/
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 
-#include <cstdio>
-#include <cstring>
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -18,43 +16,27 @@ the Alpha Shape.
 #include <CGAL/Triangulation_cell_base_3.h>
 #include <CGAL/Alpha_shape_cell_base_3.h>
 #include <CGAL/Triangulation_data_structure_3.h>
-#include <CGAL/Alpha_shape_euclidean_traits_3.h>
+
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Alpha_shape_3.h>
 
-//#include <CGAL/IO/Triangulation_geomview_ostream_3.h>
 
-//Choose the better number type as possible
-// #ifdef CGAL_USE_LEDA
-// #include <CGAL/leda_integer.h>
-// typedef leda_integer coord_type;
-// #else//CGAL_USE_LEDA
-// #ifdef CGAL_USE_GMP
-// #include <CGAL/Gmpz.h>
-// typedef CGAL::Gmpz coord_type;
-// #else//CGAL_USE_GMP
-// #include <CGAL/double.h>
 typedef double coord_type;
-// #endif//CGAL_USE_GMP
-// #endif//CGAL_USE_LEDA
 
-typedef CGAL::Cartesian<coord_type>  K;
+
+typedef CGAL::Simple_cartesian<coord_type>  K;
 
 typedef K::Point_3    Point;
 typedef K::Segment_3  Segment;
-typedef K::Ray_3      Ray;
-typedef K::Line_3     Line;
-typedef K::Triangle_3 Triangle;
 
-typedef CGAL::Alpha_shape_euclidean_traits_3<K> Gt;
 
-typedef CGAL::Alpha_shape_vertex_base_3<Gt> Vb;
+typedef CGAL::Alpha_shape_vertex_base_3<K> Vb;
 
-typedef CGAL::Triangulation_cell_base_3<Gt> Df;
-typedef CGAL::Alpha_shape_cell_base_3<Gt, Df>  Fb;
+typedef CGAL::Triangulation_cell_base_3<K> Df;
+typedef CGAL::Alpha_shape_cell_base_3<K, Df>  Fb;
 
 typedef CGAL::Triangulation_data_structure_3<Vb,Fb> Tds;
-typedef CGAL::Delaunay_triangulation_3<Gt,Tds> Triangulation_3;
+typedef CGAL::Delaunay_triangulation_3<K,Tds> Triangulation_3;
 
 typedef CGAL::Alpha_shape_3<Triangulation_3>  Alpha_shape_3;
 
@@ -84,7 +66,7 @@ construct_alpha_shape(const std::list<Point> &V_p,
 		      Alpha_shape_3& A)
   // Generate Alpha Shape
 { 
-  std::vector<Gt::Segment_3> V_seg;
+  std::vector<Segment> V_seg;
   
   int  n = A.make_alpha_shape(V_p.begin(), V_p.end());
   std::cout << "Inserted " << n  << " points" << std::endl;

@@ -150,8 +150,9 @@ the class \ccc{CGAL::Regular_triangulation_3}.
 The triangulation needs a geometric traits class as argument.
 The requirements of this class are described in the 
 concept \ccc{CGAL::AlphaShapeTraits_3} for which
-the classes \ccc{CGAL::Alpha_shape_euclidean_traits_3}
-and \ccc{CGAL::Weighted_alpha_shape_euclidean_traits_3} are models.
+the \cgal\ kernels are models in the non-weighted case, and for which
+the class \ccc{CGAL::Weighted_alpha_shape_euclidean_traits_3} is model
+in the weighted case.
 
 There are no requirements on the triangulation data structure.
 However it must be parameterized with 
@@ -188,15 +189,14 @@ alpha shape type.
 
 \begin{cprog}
 typedef CGAL::Cartesian<double> K;
-typedef CGAL::Alpha_shape_euclidean_traits_3<K> Gt;
 
-typedef CGAL::Alpha_shape_vertex_base_3<Gt> Av;
+typedef CGAL::Alpha_shape_vertex_base_3<K> Av;
 
-typedef CGAL::Triangulation_cell_base_3<Gt> Tc;
-typedef CGAL::Alpha_shape_cell_base_3<Gt,Tc> Ac;
+typedef CGAL::Triangulation_cell_base_3<K> Tc;
+typedef CGAL::Alpha_shape_cell_base_3<K,Tc> Ac;
 
-typedef CGAL::Triangulation_data_structure_3<Gt,Av,Ac> Tds;
-typedef CGAL::Delaunay_triangulation_3<Gt,Tds> Dt;
+typedef CGAL::Triangulation_data_structure_3<K,Av,Ac> Tds;
+typedef CGAL::Delaunay_triangulation_3<K,Tds> Dt;
 typedef CGAL::Alpha_shape_3<Dt> Alpha_shape_3;
 \end{cprog}
 
@@ -211,16 +211,15 @@ and cells.Therefore, the only part that changes are the typedefs in the beginnin
 
 \begin{cprog}
 typedef CGAL::Cartesian<double> K;
-typedef CGAL::Alpha_shape_euclidean_traits_3<K> Gt;
 
-typedef CGAL::Alpha_shape_vertex_base_3<Gt> Avb;
+typedef CGAL::Alpha_shape_vertex_base_3<K> Avb;
 typedef CGAL::Triangulation_hierarchy_vertex_base_3<Avb> Av 
 
-typedef CGAL::Triangulation_cell_base_3<Gt> Tc;
-typedef CGAL::Alpha_shape_cell_base_3<Gt,Tc> Ac;
+typedef CGAL::Triangulation_cell_base_3<K> Tc;
+typedef CGAL::Alpha_shape_cell_base_3<K,Tc> Ac;
 
-typedef CGAL::Triangulation_data_structure_3<Gt,Av,Ac> Tds;
-typedef CGAL::Delaunay_triangulation_3<Gt,Tds> Dt;
+typedef CGAL::Triangulation_data_structure_3<K,Av,Ac> Tds;
+typedef CGAL::Delaunay_triangulation_3<K,Tds> Dt;
 typedef CGAL::Triangulation_hierarchy_3<Dt> Ht;
 typedef CGAL::Alpha_shape_3<Ht> Alpha_shape_3;
 \end{cprog}

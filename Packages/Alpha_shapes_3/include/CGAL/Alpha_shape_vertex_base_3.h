@@ -39,8 +39,8 @@ public:
     typedef Alpha_shape_vertex_base_3<Gt, Vb2>              Other;
   };
 
-  typedef typename Gt::Point                   Point;
-  typedef typename Gt::Coord_type              Coord_type;
+  typedef typename Gt::Point_3 Point;
+  typedef typename Gt::FT      Coord_type;
   typedef std::pair< Coord_type, Coord_type >  Interval2;  
 
 private:
