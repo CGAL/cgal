@@ -35,12 +35,12 @@ SoSeparator *root;
 Polyhedron P, P2;
 Point_3 pp1, pp2, pp3;
 SbVec3f normal3f;
-SoPrimitiveVertex v1p, v2p, v3p;
+//SoPrimitiveVertex v1p, v2p, v3p;
 bool should_pick = false; //true only once when the key was pressed
 bool right_button_found_polygon = false;
 Node_polyhedron_3<Polyhedron> *poly;
 SoComplexity * complexity_node;
-
+/*
 void render_custom(void *, SoAction *){
   if(!should_pick)
     return;
@@ -64,7 +64,7 @@ void render_custom(void *, SoAction *){
   glColor4fv(&params[0]);
   glPopMatrix();
 }
-
+*/
 
 void
 mouse_moved(void * ud, SoEventCallback *n)
@@ -120,11 +120,11 @@ mouse_button_pressed(void * ud, SoEventCallback * n)
     const SoDetail* pickDetail = point->getDetail();
     if(pickDetail != NULL && pickDetail->getTypeId() == SoPolyhedronDetail<Polyhedron>::getClassTypeId()){
       SoPolyhedronDetail<Polyhedron> *poly_detail = (SoPolyhedronDetail<Polyhedron> *) pickDetail;
-      v1p.setPoint(poly_detail->get_vertex(0)->getPoint());
+      //v1p.setPoint(poly_detail->get_vertex(0)->getPoint());
       //v1p.setNormal(poly_detail->get_vertex(0)->getNormal());
-      v2p.setPoint(poly_detail->get_vertex(1)->getPoint());
+      //v2p.setPoint(poly_detail->get_vertex(1)->getPoint());
       //v2p.setNormal(poly_detail->get_vertex(1)->getNormal());
-      v3p.setPoint(poly_detail->get_vertex(2)->getPoint());
+      //v3p.setPoint(poly_detail->get_vertex(2)->getPoint());
       //v3p.setNormal(poly_detail->get_vertex(2)->getNormal());
 
       Facet_handle fh = poly_detail->find_face();
@@ -161,14 +161,6 @@ SoSeparator* get_main_scene(){
   (*p_in) >> P;
   in.close();
 
-/*
-  Point_3 p1 = Point_3(0, 0, 0);
-  Point_3 p2 = Point_3(10, 0, 0);
-  Point_3 p3 = Point_3(0, 0, 10);
-  Point_3 p4 = Point_3(5, 10, 5);
-
-  P.make_tetrahedron(p1, p2, p3, p4);
-*/
   SoSeparator * sep1 = new SoSeparator;  
   complexity_node = new SoComplexity;
   SoMaterial * material = new SoMaterial;
