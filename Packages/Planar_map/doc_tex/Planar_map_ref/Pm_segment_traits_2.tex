@@ -1,5 +1,5 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: Pm_segment_exact_traits.tex (Planar_map)
+% | Reference manual page: Pm_segment_traits_2.tex (Planar_map)
 % +------------------------------------------------------------------------+
 % | 
 % | Package: pm (Planar_map_2)
@@ -11,34 +11,24 @@
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
-\begin{ccRefClass}{Pm_segment_traits_2<R>}
-%%    \ccSubsection{Exact (Rationals) Traits}
+\begin{ccRefClass}{Pm_segment_traits_2<Kernel>}
     
 \ccDefinition 
-    The class \ccStyle{Pm_segment_traits_2<R>}
-    is used as the recommended class. To avoid robustness problems, 
-    the representation type \ccStyle{R} must be an exact type such as
-    \ccStyle{Cartesian<leda_rational>},
-    \ccStyle{Homogeneous<leda_integer>} or any other exact type,
-    although other representation types could be used at the user's own risk.
+  The interface class \ccStyle{Pm_segment_traits_2<Kernel>} is a model of the
+  \ccc{PlanarMapTraits_2} concept. It is provided as part of the package and
+  can be used as reference for resolving ambiguities.
+  It must be templated with a CGAL Kernel model that is templated in turn
+  by an exact number type, in order to avoid robustness problems, 
+  although other number types could be used at the user's own risk.
+  For example, \ccStyle{Cartesian<leda_rational>},
+  \ccStyle{Homogeneous<leda_integer>},
+  \ccStyle{leda_rat_kernel_traits}.
 
 \ccInclude{CGAL/Pm_segment_traits_2.h}
  
 \ccIsModel
     \ccc{PlanarMapTraits_2}
 
-%    \ccTypes
-    
-%    \ccNestedType{Point_2}{of type \ccStyle{R::Point_2}}
-
-%    \ccNestedType{X_curve_2}{of type \ccStyle{R::Segment_2}}
-
-%    \ccCreation
-%    \ccCreationVariable{T_exact}
-     
-%    \ccConstructor{Pm_segment_traits_2();} 
-%    {}
- 
 \end{ccRefClass} % Pm_segment_traits_2
 
 % +------------------------------------------------------------------------+

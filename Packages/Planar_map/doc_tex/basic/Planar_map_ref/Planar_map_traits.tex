@@ -158,10 +158,6 @@
              {returns the target of \ccc{cv}.}
 
 %additions needed for the default point location strategy
-\ccMethod{Point_2 point_to_left(const Point_2& p);}{returns a point to 
-   the left of \ccc{p}.}
-\ccMethod{Point_2 point_to_right(const Point_2& p);}
-         {returns a point to the right of \ccc{p}.} %}
 
 %      \smallskip {\noindent \bf \large Requirements for
 %         \ccStyle{Info_face}, \ccStyle{Info_edge}, \ccStyle{Info_vertex}}
@@ -170,8 +166,7 @@
 %      constructor.
 
 \ccHasModels
-  \ccc{Pm_segment_traits_2<R>}\\
-  \ccc{Pm_leda_segment_traits_2}
+  \ccc{Pm_segment_traits_2<Kernel>}
 
   The \ccc{PlanarMapWithIntersectionsTraits_2} and
   \ccc{ArrangementTraits_2} concepts are refinements of the

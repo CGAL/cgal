@@ -204,15 +204,15 @@ its operations, etc.) read the \ccc{Planar_map Reference Pages}\lcTex{
 \end{ccHtmlOnly}
 \end{figure}
 
-The following program creates a planar map from five curves (see
-figure ~\ref{PM_sec:example_pic}). It uses the floating-point
-arithmetic interface class
-(\ccStyle{Pm_segment_epsilon_traits<R>}). The first part of the
-code initializes five segments. The next part inserts them into the map
-and checks the validity of the map. In the last part, vertical ray
+The following program creates a planar map from five curves (see figure
+~\ref{PM_sec:example_pic}). It uses the interface class
+(\ccStyle{Pm_segment_traits_2<Kernel>}), where the injected kernel is the
+CAGL Cartesian Kernel templated with the field of quotions of longs as the
+number type.
+The first part of the code initializes five segments. The next part inserts them
+into the map and checks the validity of the map. In the last part, vertical ray
 shooting is performed from the point $p$.
 
-% TODO (shai): Change filename to its relative position (3 May 2000)
 \ccIncludeExampleCode{Planar_map/example1.C}
 
 The output of the program is
