@@ -10,6 +10,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Kernel_checker.h>
+#include <CGAL/Cartesian_converter.h>
 
 #include <CGAL/Random.h>
 
