@@ -622,9 +622,28 @@ to_interval (const Gmpz & z)
     return std::pair<double, double>(i, s);
 }
 
-template < typename > class Quotient;
+CGAL_END_NAMESPACE
 
-double to_double(const Quotient<Gmpz>& quot);
+#include <CGAL/Quotient.h>
+
+CGAL_BEGIN_NAMESPACE
+
+inline
+double to_double(const Quotient<Gmpz>& quot)
+{
+  mpq_t  mpQ;
+  mpq_init(mpQ);
+  const Gmpz& n = quot.numerator();
+  const Gmpz& d = quot.denominator();
+  mpz_set(mpq_numref(mpQ), n.mpz());
+  mpz_set(mpq_denref(mpQ), d.mpz());
+
+  mpq_canonicalize(mpQ);
+
+  double ret = mpq_get_d(mpQ);
+  mpq_clear(mpQ);
+  return ret;
+}
 
 CGAL_END_NAMESPACE
 
