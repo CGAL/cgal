@@ -1,57 +1,24 @@
 % =============================================================================
 % The CGAL Reference Manual
 % Chapter: Geometric Optimisation
-% Section: Smallest Enclosing Ellipses
-% Subsec.: Requirements of Traits Classes for 2D Smallest Enclosing Ellipse
+% Concept: Min_ellipse_2_traits
 % -----------------------------------------------------------------------------
-% file  : doc_tex/basic/Optimisation/requirements_Min_ellipse_2.tex
-% author: Sven Schönherr <sven@inf.fu-berlin.de>
+% file  : doc_tex/basic/Optimisation/Optimisation_ref/Min_ellipse_2_traits.tex
+% author: Sven Schönherr <sven@inf.ethz.ch>
 % -----------------------------------------------------------------------------
+% $CGAL_Chapter: Geometric Optimisation $
 % $CGAL_Package: Min_ellipse_2 WIP $
 % $Revision$
 % $Date$
 % =============================================================================
 
-\ccHtmlNoClassToc
-\begin{ccHtmlClassFile}{requirements_Min_ellipse_2.html}{%
-    Requirements of Traits Classes for 2D Smallest Enclosing Ellipse}
-\begin{ccTexOnly}
-  \subsection{Requirements of Traits Classes for 2D Smallest Enclosing Ellipse}
-  \label{sec:min_ellipse_2_traits_req}
-\end{ccTexOnly}
-\begin{ccHtmlOnly}
-  <H2>Requirements of Traits Classes for 2D Smallest Enclosing Ellipse</H2><P>
-\end{ccHtmlOnly}
-
-\cgalSetMinEllipseLayout
-
-The class template \ccc{Min_ellipse_2} is parameterized with a
-\ccc{Traits} class which defines the abstract interface between the
-optimisation algorithm and the primitives it uses. The following
-requirements catalog lists the primitives, i.e.\ types, member
-functions etc., that must be defined for a class that can be used to
-parameterize \ccc{Min_ellipse_2}.  A traits class implementation
-using the 2D \cgal-kernel is available and described in
-Section~\ref{sec:min_ellipse_2_traits_impl_2D_kernel}. In addition, we
-provide traits class adapters to user supplied point classes, see
-Sections~\ref{sec:min_ellipse_2_traits_adapterC2}
-and~\ref{sec:min_ellipse_2_traits_adapterH2}. Both, the implementation
-and the adapters, can be used as a starting point for customizing own
-traits classes, e.g.\ through derivation and specialization.
-
-% =============================================================================
-
-\ccHtmlNoClassToc
-\ccHtmlNoClassLinks
-\ccHtmlNoClassIndex
-\begin{ccClass}{Traits}
-\subsection*{Traits Class (\ccClassTemplateName)}
+\begin{ccRefConcept}{Min_ellipse_2_traits}
 
 % -----------------------------------------------------------------------------
 \ccDefinition
 
-A class that satisfies the requirements of a traits class for
-\ccc{Min_ellipse_2} must provide the following primitives.
+This concept defines the requirements for traits classes of
+\ccGlobalScope\ccc{Min_ellipse_2<Traits>}.
 
 % -----------------------------------------------------------------------------
 \ccTypes
@@ -64,29 +31,35 @@ A class that satisfies the requirements of a traits class for
         The ellipse type must fulfill the requirements listed below
         in the next section.}
 
-In addition, if I/O is used, the corresponding I/O operators for
-\ccc{Point} and \ccc{Ellipse} have to be provided, see topic
-\textbf{I/O} in Section~\ref{sec:min_ellipse_2_spec}.
-
 % -----------------------------------------------------------------------------
 \ccHeading{Variables}
 
 \ccVariable{ Ellipse  ellipse;}{
-        The actual ellipse. This variable is maintained by the algorithm,
+        The current ellipse. This variable is maintained by the algorithm,
         the user should neither access nor modify it directly.}
 
 % -----------------------------------------------------------------------------
 \ccCreation
 \ccCreationVariable{traits}
 
-Only default and copy constructor are required. Note that further
-constructors can be provided.
+Only default and copy constructor are required.
 
-\ccConstructor{ Traits( );}{A default constructor.}
+\ccConstructor{ Traits( );}{}
+\ccConstructor{ Traits( const Traits&);}{}
 
-\ccConstructor{ Traits( const Traits&);}{A copy constructor.}
+% -----------------------------------------------------------------------------
+\ccHasModels
 
-\end{ccClass}
+\ccRefIdfierPage{\ccPureGlobalScope Min_ellipse_2_traits_2<R>}
+
+% -----------------------------------------------------------------------------
+\ccSeeAlso
+
+\ccRefIdfierPage{\ccPureGlobalScope Min_ellipse_2<Traits>}
+
+% -----------------------------------------------------------------------------
+
+\end{ccRefConcept}
 
 % =============================================================================
 
@@ -159,13 +132,12 @@ whole plane $\E_2$.
 Each of the following predicates is only needed, if the corresponding
 predicate of \ccc{Min_ellipse_2} is used.
 
-\ccMemberFunction{ Bounded_side
+\ccMemberFunction{ \ccPureGlobalScope Bounded_side
                    bounded_side( const Point& p) const;}{
-        returns \ccc{ON_BOUNDED_SIDE}, \ccc{ON_BOUNDARY},
-\newlineByHand
-        or \ccc{ON_UNBOUNDED_SIDE} iff \ccc{p} lies properly inside,
-\newlineByHand
-        on the boundary, or properly outside of \ccVar, resp.}
+        returns \ccGlobalScope\ccc{ON_BOUNDED_SIDE},
+        \ccGlobalScope\ccc{ON_BOUNDARY}, or
+        \ccGlobalScope\ccc{ON_UNBOUNDED_SIDE} iff \ccc{p} lies properly
+        inside, on the boundary, or properly outside of \ccVar, resp.}
 
 \ccMemberFunction{ bool  has_on_bounded_side( const Point& p) const;}{
         returns \ccc{true}, iff \ccc{p} lies properly inside \ccVar.}
@@ -200,9 +172,5 @@ operators of \ccc{Min_ellipse_2} are used.
 % -----------------------------------------------------------------------------
 
 \end{ccClass}
-
-% =============================================================================
-
-\end{ccHtmlClassFile}
 
 % ===== EOF ===================================================================

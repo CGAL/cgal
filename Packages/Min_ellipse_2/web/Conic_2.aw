@@ -3164,7 +3164,7 @@ nontrivial conic through the points.
 @section{Files}
 @!----------------------------------------------------------------------------
 
-@i ../namespace.awi
+@i share/namespace.awi
 
 @!----------------------------------------------------------------------------
 @subsection{{\tt Conic\_misc.h}}
@@ -3362,7 +3362,7 @@ Here is the class @prg{ConicHPA2<PT,DA>}\ldots
 
 \subsection*{File Header}
 
-@i ../file_header.awi
+@i share/file_header.awi
  
 And here comes the specific file header for the product files of this
 web file.
