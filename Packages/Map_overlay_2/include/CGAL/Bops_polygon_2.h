@@ -38,11 +38,11 @@ bool do_intersect(const Polygon& A,
                   const Polygon& B, 
                   ArrangementTraits_2& traits)
 {
-  typedef ArrangementTraits_2             Traits;
-  typedef Bop_default_dcel<Traits>        Dcel;
-  typedef Planar_map_2<Dcel,Traits>       Planar_map;
-  typedef Map_overlay<Planar_map>         MapOverlay;
-  typedef Boolean_operations<MapOverlay>  Bops;
+  typedef ArrangementTraits_2               Traits;
+  typedef Bop_default_dcel<Traits>          Dcel;
+  typedef Planar_map_2<Dcel,Traits>         Planar_map;
+  typedef Map_overlay_2<Planar_map>         MapOverlay;
+  typedef Boolean_operations_2<MapOverlay>  Bops;
   typedef CGAL::Pm_walk_along_line_point_location<Planar_map>   PmWalkPL;
   
   typedef Bops::Faces_container           Faces_container;
@@ -97,7 +97,7 @@ void intersection(const Polygon& A,
   typedef Holes_split_dcel<Traits>         Dcel;
   typedef Planar_map_2<Dcel,Traits>        Planar_map;
   typedef Map_overlay<Planar_map>          MapOverlay;
-  typedef Boolean_operations<MapOverlay>   Bops;
+  typedef Boolean_operations_2<MapOverlay>   Bops;
   typedef Pm_walk_along_line_point_location<Planar_map>   PmWalkPL;
   typedef Holes_split_notifier<Planar_map>         Notifier;
   
@@ -655,7 +655,7 @@ void Union(const Polygon& A,
   typedef Holes_split_dcel<Traits>         Dcel;
   typedef Planar_map_2<Dcel,Traits>        Planar_map;
   typedef Map_overlay<Planar_map>          MapOverlay;
-  typedef Boolean_operations<MapOverlay>   Bops;
+  typedef Boolean_operations_2<MapOverlay>   Bops;
   typedef Pm_walk_along_line_point_location<Planar_map>   PmWalkPL;
   typedef Holes_split_notifier<Planar_map>         Notifier;
   
@@ -763,7 +763,7 @@ void symmetric_difference(const Polygon& A,
   typedef Holes_split_dcel<Traits>         Dcel;
   typedef Planar_map_2<Dcel,Traits>        Planar_map;
   typedef Map_overlay<Planar_map>          MapOverlay;
-  typedef Boolean_operations<MapOverlay>   Bops;
+  typedef Boolean_operations_2<MapOverlay>   Bops;
   typedef Pm_walk_along_line_point_location<Planar_map>   PmWalkPL;
   typedef Holes_split_notifier<Planar_map>         Notifier;
   
@@ -871,7 +871,7 @@ void difference(const Polygon& A,
   typedef Holes_split_dcel<Traits>         Dcel;
   typedef Planar_map_2<Dcel,Traits>        Planar_map;
   typedef Map_overlay<Planar_map>          MapOverlay;
-  typedef Boolean_operations<MapOverlay>   Bops;
+  typedef Boolean_operations_2<MapOverlay>   Bops;
   typedef Pm_walk_along_line_point_location<Planar_map>   PmWalkPL;
   typedef Holes_split_notifier<Planar_map>         Notifier;
   
