@@ -1,4 +1,4 @@
-% +------------------------------------------------------------------------+
+q% +------------------------------------------------------------------------+
 % | Reference manual page: Planar_map.tex (Planar_map)
 % +------------------------------------------------------------------------+
 % | 
@@ -19,11 +19,11 @@
 \label{PM_sec:pm}
     
 \ccDefinition
- An object $pm$ of the class \ccClassTemplateName\ is the planar
- subdivision induced by a set of $x$-monotone curves, such that no
- curve intersects the interior of any other curve. The available
- traits and dcel classes are described bellow. \ccc{Self} is an
- abbreviation of the \ccRefName\ type hereafter.
+    An object $pm$ of the class \ccClassTemplateName\ is the
+    subdivision of the planar induced by a set of $x$-monotone curves,
+    such that no curve intersects the interior of any other curve. The
+    available traits and dcel classes are described bellow. \ccc{Self}
+    is an abbreviation of the \ccRefName\ type hereafter.
 
 \ccInclude{CGAL/Planar_map_2.h}
 
@@ -209,10 +209,10 @@ constructors.
 
 \ccMethod{template <class Scanner>
           bool read (istream & in, Scanner & scanner);}
-{reads \ccRefName\ from the given input stream \ccc{in} when taking the scanner
-class as a parameter.
-The input stream should support the extractor operator (\ccc{>>})
-for the \ccStyle{Point_2} and \ccStyle{X_curve_2} types of \ccc{Planar_map} }
+{reads \ccRefName\ from the given input stream \ccc{in} using 
+\ccc{scanner}. The input stream should support the
+extractor operator (\ccc{>>}) for the \ccStyle{Point_2} and
+\ccStyle{X_curve_2} types of \ccc{Planar_map} }
 
 \end{ccAdvanced}
 
