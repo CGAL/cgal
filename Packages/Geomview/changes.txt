@@ -1,6 +1,6 @@
 CHANGES to the Geomview package.
 
-Ver 3.5 (?? ???????? 2000)
+Ver 3.5 (1 December 2000)
 - New echo_flag boolean, that decides when a point Geomview gives us needs to
   be echoed to Geomview.
 - Proper save and restore of the ascii/binary mode.
