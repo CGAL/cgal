@@ -1029,7 +1029,7 @@ public:
 
     for(int k=0; k<3; k++) { 
       int i = vertex_triple_index(facet_index, k ); 
-      int j = vertex_triple_index(facet_index, ccw(k)); 
+      int j = vertex_triple_index(facet_index, this->ccw(k)); 
       Alpha_status as; 
       Vertex_handle_pair 
  	 vhp = make_vertex_handle_pair(c->vertex(i),c->vertex(j));

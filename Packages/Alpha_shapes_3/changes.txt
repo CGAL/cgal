@@ -1,3 +1,7 @@
+15 January 2005 Sylvain Pion
+- Missing this-> for g++ 4.0
+
+======================================== CGAL 3.1 ======================
 
 30 decembre 2004 Mariette
 - filtration  added (const correctness of the function to be done)
