@@ -1,4 +1,4 @@
-#include <cstdio>
+#include <iostream>
 #include <cstring>
 #include <CGAL/basic.h>
 #include "parse.h"
