@@ -31,9 +31,9 @@
 CGAL_BEGIN_NAMESPACE
 
 
-//
+// ------------------------------------------------------------------------------------
 // Declaration
-//
+// ------------------------------------------------------------------------------------
 
 // Class Fixed_border_parametizer_3 
 // Model of the Parametizer_3 concept.
@@ -158,9 +158,9 @@ private:
 };
 
 
-//
+// ------------------------------------------------------------------------------------
 // Implementation 
-//
+// ------------------------------------------------------------------------------------
 
 // Compute a 1 to 1 mapping from a triangular 3D surface 'mesh' to a piece of the 2D space. 
 // The mapping is linear by pieces (linear in each triangle).

@@ -1447,9 +1447,9 @@ class Polyhedron_ex : public Polyhedron
 
     // dump the param to an eps file
     //********************************
-    bool dump_param(char *pFilename)
+    bool dump_param(const char *pFilename)
     {
-      std::cerr << "dump parameterization to " << pFilename << "..." << std::endl;
+      std::cerr << "  dump parameterization to " << pFilename << "..." << std::endl;
       FILE *pFile = fopen(pFilename,"wt");
       if(pFile == NULL)
       {
@@ -1530,7 +1530,7 @@ class Polyhedron_ex : public Polyhedron
     //********************************
     bool write_file_obj(const char *pFilename)
     {
-      std::cerr << "dump mesh to " << pFilename << "..." << std::endl;
+      std::cerr << "  dump mesh to " << pFilename << "..." << std::endl;
       FILE *pFile = fopen(pFilename,"wt");
       if(pFile == NULL)
       {
