@@ -65,8 +65,23 @@ public:
  
 private:
   typedef std::list<Face_handle>      Faces_around_stack; 
-  class Hidden_tester;
-  class Unhidden_tester;
+
+  class Hidden_tester {
+  public:
+    bool operator()(const typename Base::All_vertices_iterator&  it){
+      return it->is_hidden();
+     }
+    bool operator()(const typename Base::Finite_vertices_iterator&  it){
+      return it->is_hidden();
+    }
+  };
+
+  class Unhidden_tester {
+  public:
+    bool operator()(const typename Base::Finite_vertices_iterator&  it){
+      return ! it->is_hidden();
+    }
+  };
 
   typedef typename Base::All_vertices_iterator     All_vib;
   typedef typename Base::Finite_vertices_iterator  Finite_vib;
@@ -266,24 +281,6 @@ public:
       }
       return ps;
     }
-
-private: 
-  class Hidden_tester {
-  public:
-    bool operator()(const typename Base::All_vertices_iterator&  it){
-      return it->is_hidden();
-     }
-    bool operator()(const typename Base::Finite_vertices_iterator&  it){
-      return it->is_hidden();
-    }
-  };
-
-  class Unhidden_tester {
-  public:
-    bool operator()(const typename Base::Finite_vertices_iterator&  it){
-      return ! it->is_hidden();
-    }
-  };
    
 };
 
