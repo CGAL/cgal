@@ -68,7 +68,8 @@ void force_ieee_double_precision()
 }
 
 #ifdef __BORLANDC__
-// Borland doesn't initialize the FPU exception mask correctly => FP exceptions.
+// Borland doesn't initialize the FPU exception mask correctly
+// => FP exceptions.
 struct Borland_workaround
 {
     Borland_workaround() { FPU_set_cw(FPU_cw_near); }
