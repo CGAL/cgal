@@ -217,7 +217,8 @@ TetrahedronH3<R>::orientation() const
 template < class R >
 CGAL_KERNEL_INLINE
 Oriented_side
-TetrahedronH3<R>::oriented_side(const typename TetrahedronH3<R>::Point_3 &p) const
+TetrahedronH3<R>::
+oriented_side(const typename TetrahedronH3<R>::Point_3 &p) const
 {
   if ( orientation() == POSITIVE)
   {

@@ -263,7 +263,8 @@ TriangleH2<R>::bounded_side(const typename TriangleH2<R>::Point_2& p) const
 template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 bool
-TriangleH2<R>::has_on_bounded_side(const typename TriangleH2<R>::Point_2& p) const
+TriangleH2<R>::
+has_on_bounded_side(const typename TriangleH2<R>::Point_2& p) const
 {
   CGAL_kernel_precondition( ! is_degenerate() );
 
@@ -278,7 +279,8 @@ TriangleH2<R>::has_on_bounded_side(const typename TriangleH2<R>::Point_2& p) con
 template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 bool
-TriangleH2<R>::has_on_unbounded_side(const typename TriangleH2<R>::Point_2& p) const
+TriangleH2<R>::
+has_on_unbounded_side(const typename TriangleH2<R>::Point_2& p) const
 {
   CGAL_kernel_precondition( ! is_degenerate() );
 

@@ -209,7 +209,7 @@ CircleH2<R>::oriented_side( const typename CircleH2<R>::Point_2& p) const
 template <class R>
 CGAL_KERNEL_INLINE
 bool
-CircleH2<R>::has_on_positive_side( const typename CircleH2<R>::Point_2& p) const
+CircleH2<R>::has_on_positive_side(const typename CircleH2<R>::Point_2& p) const
 {
   if ( orientation() == POSITIVE )
   { return (has_on_bounded_side(p) ); }

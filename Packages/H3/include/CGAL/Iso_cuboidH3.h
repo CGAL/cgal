@@ -89,7 +89,8 @@ public:
 template < class R >
 CGAL_KERNEL_CTOR_LARGE_INLINE
 Iso_cuboidH3<R>::
-Iso_cuboidH3(const typename Iso_cuboidH3<R>::Point_3& p, const typename Iso_cuboidH3<R>::Point_3& q)
+Iso_cuboidH3(const typename Iso_cuboidH3<R>::Point_3& p,
+	     const typename Iso_cuboidH3<R>::Point_3& q)
 {
   bool px_k_qx = ( p.hx()*q.hw() < q.hx()*p.hw() );
   bool py_k_qy = ( p.hy()*q.hw() < q.hy()*p.hw() );
@@ -310,7 +311,8 @@ bounded_side(const typename Iso_cuboidH3<R>::Point_3& p) const
 template < class R >
 inline
 bool
-Iso_cuboidH3<R>::has_on_boundary(const typename Iso_cuboidH3<R>::Point_3& p) const
+Iso_cuboidH3<R>::
+has_on_boundary(const typename Iso_cuboidH3<R>::Point_3& p) const
 { return ( bounded_side(p) == ON_BOUNDARY ); }
 
 template < class R >
