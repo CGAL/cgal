@@ -6,6 +6,7 @@ Version 1.50 (?? Apr 01)
 - Merge the two insert() functions in one, using a default argument for the
   starting cell.
 - Finally update the traits to the last kernel, and documentation.
+- Regular triangulation speed up.
 
 Version 1.49 (13 Apr 01)
 - locate() interface changes to match the 2D case wrt the default start.

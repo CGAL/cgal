@@ -154,6 +154,41 @@ private:
     // by linking v to the boundary of region
     // deleted weighted points that are not in the triangulation
     // anymore, pts will be the list of deleted points
+
+private:
+
+  class Conflict_tester_3
+  {
+      const Weighted_point &p;
+      Self *t;
+
+  public:
+
+      Conflict_tester_3(const Weighted_point &pt, Self *tr)
+	  : p(pt), t(tr) {}
+
+      bool operator()(const typename Tds::Cell *c) const
+      {
+      // We'll need to mark the vertices so that we can find the deleted ones easily.
+	  return t->in_conflict_3(p, (Cell_handle)(Cell*)c);
+      }
+  };
+
+  class Conflict_tester_2
+  {
+      const Weighted_point &p;
+      Self *t;
+
+  public:
+
+      Conflict_tester_2(const Weighted_point &pt, Self *tr)
+	  : p(pt), t(tr) {}
+
+      bool operator()(const typename Tds::Cell *c) const
+      {
+	  return t->in_conflict_2(p, (Cell_handle)(Cell*)c, 3);
+      }
+  };
 };
 
 
@@ -171,7 +206,14 @@ find_conflicts_3(Conflict_set &conflicts, const Weighted_point & p,
     if (conflicts.find((Conflict_set::key_type) &(*test)) != conflicts.end())
       continue; // test was already found
     if ( in_conflict_3(p, test) )
+    {
+      // We mark the vertices so that we can find the deleted ones easily.
+      test->vertex(0)->set_cell(NULL);
+      test->vertex(1)->set_cell(NULL);
+      test->vertex(2)->set_cell(NULL);
+      test->vertex(3)->set_cell(NULL);
       find_conflicts_3(conflicts, p, test, ac, i);
+    }
     else {
       ac = c;
       i = j;
@@ -192,8 +234,14 @@ find_conflicts_2(Conflict_set & conflicts,
     Cell_handle test = c->neighbor(j);
     if (conflicts.find((Conflict_set::key_type) &(*test)) != conflicts.end())
       continue;   // test was already found
-    if ( in_conflict_2( p, test, 3 ) == ON_BOUNDED_SIDE )
+    if ( in_conflict_2( p, test, 3 ) )
+    {
+      // We mark the vertices so that we can find the deleted ones easily.
+      test->vertex(0)->set_cell(NULL);
+      test->vertex(1)->set_cell(NULL);
+      test->vertex(2)->set_cell(NULL);
       find_conflicts_2(conflicts, p, test, ac, i);
+    }
     else {
       ac = c;
       i = j;
@@ -487,11 +535,9 @@ insert(const Weighted_point & p, Cell_handle start )
 }
 
 template < class Gt, class Tds >
-// ...::Conflict_set
 void
 Regular_triangulation_3<Gt,Tds>::
-star_region_delete_points(Conflict_set & region,
-                          Vertex* v, Cell* c, int li) 
+star_region_delete_points(Conflict_set & region, Vertex* v, Cell* c, int li) 
   // region is a set of connected cells
   // c belongs to region and has facet i on the boundary of region 
   // replaces the cells in region  
@@ -499,45 +545,33 @@ star_region_delete_points(Conflict_set & region,
   // deleted weighted points that are not in the triangulation
   // anymore, pts will be the list of deleted points
 {
-  std::set<void*> vert;
-  Cell *c_tmp;
-  Vertex *v_tmp;
-  Vertex_handle vh;
-// std::set<void*> pts;
-//  Weighted_point *p;
+  Conflict_set vert;
 
   // for each cell to be deleted, keep vertices
   typename Conflict_set::const_iterator it;
   for( it = region.begin(); it != region.end(); ++it) {
-    c_tmp = (Cell *) *it;
+    Cell * c_tmp = (Cell *) *it;
     // store vertices
     for (int i=0; i<=dimension() ; i++){
-      vh = c_tmp->vertex(i);
-      if ( (vert.find((void*) &(*(vh))) == vert.end()) &&
-	   (! is_infinite(vh)) ) {
+      Vertex_handle vh = c_tmp->vertex(i);
+      if ( ! is_infinite(vh) && vert.find((void*) &(*(vh))) == vert.end() )
 	vert.insert( (void*) &(*(vh) ) );
-      }
     }
   }
 
   // Create the new faces and delete old ones
   _tds.star_region( region, v, c, li );
 
-  // get the vertices incident to v
-  std::set<Vertex_handle> inc_vert;
-  incident_vertices(v, inc_vert);
-
-  // for each vertex, check if it is a vertex incident to v
-  // if not, delete it
-  typename std::set<void *>::const_iterator it2;
-  for( it2 = vert.begin(); it2 != vert.end(); ++it2) {
-    v_tmp = (Vertex *) *it2;
-    if ( inc_vert.find(v_tmp) == inc_vert.end() ) {
+  // For each vertex, check if it has been reassigned a cell().
+  // If not, delete it.
+  for( it = vert.begin(); it != vert.end(); ++it) {
+    Vertex * v_tmp = (Vertex *) *it;
+    if (v_tmp->cell() == NULL) {
       // vertex has to be deleted and point to be stored
 //       p = new Weighted_point( v_tmp->point() );
 //       pts.insert( p );
       set_number_of_vertices(number_of_vertices()-1);
-      delete (Vertex *) *it2;
+      delete (Vertex *) *it;
     }
   }
     
