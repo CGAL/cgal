@@ -38,23 +38,23 @@ power_testH2( const RT &phx, const RT &phy, const RT &phw, const RT &pwt,
 {
     RT dphx = phx*phw;
     RT dphy = phy*phw;
-    RT dphw = square(phw);
-    RT dpz = square(phx) + square(phy) - pwt*dphw;
+    RT dphw = CGAL_NTS square(phw);
+    RT dpz = CGAL_NTS square(phx) + CGAL_NTS square(phy) - pwt*dphw;
 
     RT dqhx = qhx*qhw;
     RT dqhy = qhy*qhw;
-    RT dqhw = square(qhw);
-    RT dqz = square(qhx) + square(qhy) - qwt*dqhw;
+    RT dqhw = CGAL_NTS square(qhw);
+    RT dqz = CGAL_NTS square(qhx) + CGAL_NTS square(qhy) - qwt*dqhw;
 
     RT drhx = rhx*rhw;
     RT drhy = rhy*rhw;
-    RT drhw = square(rhw);
-    RT drz = square(rhx) + square(rhy) - rwt*drhw;
+    RT drhw = CGAL_NTS square(rhw);
+    RT drz = CGAL_NTS square(rhx) + CGAL_NTS square(rhy) - rwt*drhw;
 
     RT dthx = thx*thw;
     RT dthy = thy*thw;
-    RT dthw = square(thw);
-    RT dtz = square(thx) + square(thy) - twt*dthw;
+    RT dthw = CGAL_NTS square(thw);
+    RT dtz = CGAL_NTS square(thx) + CGAL_NTS square(thy) - twt*dthw;
 
     return Oriented_side(sign_of_determinant4x4(dphx, dphy, dpz, dphw,
 	                                        dqhx, dqhy, dqz, dqhw,
@@ -86,16 +86,16 @@ power_testH2( const RT &phx, const RT &phy, const RT &phw, const RT &pwt,
 	ta = thy*thw;
     }
 
-    RT dphw = square(phw);
-    RT dpz = square(phx) + square(phy) - pwt*dphw;
+    RT dphw = CGAL_NTS square(phw);
+    RT dpz = CGAL_NTS square(phx) + CGAL_NTS square(phy) - pwt*dphw;
 
-    RT dqhw = square(qhw);
-    RT dqz = square(qhx) + square(qhy) - qwt*dqhw;
+    RT dqhw = CGAL_NTS square(qhw);
+    RT dqz = CGAL_NTS square(qhx) + CGAL_NTS square(qhy) - qwt*dqhw;
 
-    RT dthw = square(thw);
-    RT dtz = square(thx) + square(thy) - twt*dthw;
+    RT dthw = CGAL_NTS square(thw);
+    RT dtz = CGAL_NTS square(thx) + CGAL_NTS square(thy) - twt*dthw;
 
-    return Oriented_side(CGAL::compare(pa, qa) *
+    return Oriented_side(CGAL_NTS compare(pa, qa) *
 	                 sign_of_determinant3x3(pa, dpz, dphw,
 				                qa, dqz, dqhw,
 				                ta, dtz, dthw));
