@@ -1,6 +1,7 @@
 #define CGAL_POLYGON_DEBUG 1
 
 #include <CGAL/basic.h>
+#include <CGAL/Quotient.h>
 #include <CGAL/Gmpz.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>

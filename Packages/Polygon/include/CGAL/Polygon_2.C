@@ -43,7 +43,7 @@ bool operator==( const Polygon_2<_Traits,_Container1> &x,
     x.vertices_begin();
 
   typename Polygon_2<_Traits,_Container2>::Vertex_const_iterator y_iter =
-    find(y.vertices_begin(), y.vertices_end(), *x.vertices_begin());
+    std::find(y.vertices_begin(), y.vertices_end(), *x.vertices_begin());
 
   // if y doesn't contain the first point of x ...
   if (y_iter == y.vertices_end()) return false;

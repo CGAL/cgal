@@ -598,7 +598,7 @@ ForwardIterator left_vertex_2(ForwardIterator first,
   CGAL_polygon_precondition(first != last);
 
   typedef typename Traits::Less_xy Less_xy;
-  return min_element(first, last, Less_xy());
+  return std::min_element(first, last, Less_xy());
 }
 
 //-----------------------------------------------------------------------//
@@ -614,7 +614,7 @@ ForwardIterator right_vertex_2(ForwardIterator first,
   CGAL_polygon_precondition(first != last);
 
   typedef typename Traits::Less_xy Less_xy;
-  return max_element(first, last, Less_xy());
+  return std::max_element(first, last, Less_xy());
 }
 
 //-----------------------------------------------------------------------//
@@ -630,7 +630,7 @@ ForwardIterator top_vertex_2(ForwardIterator first,
   CGAL_polygon_precondition(first != last);
 
   typedef typename Traits::Less_yx Less_yx;
-  return max_element(first, last, Less_yx());
+  return std::max_element(first, last, Less_yx());
 }
 
 //-----------------------------------------------------------------------//
@@ -646,7 +646,7 @@ ForwardIterator bottom_vertex_2(ForwardIterator first,
   CGAL_polygon_precondition(first != last);
 
   typedef typename Traits::Less_yx Less_yx;
-  return min_element(first, last, Less_yx());
+  return std::min_element(first, last, Less_yx());
 }
 
 //-----------------------------------------------------------------------//
@@ -848,10 +848,10 @@ Bounded_side bounded_side_2(ForwardIterator first,
             }
             break;
           case LARGER:
-            if (point.x() < min((*current).x(), (*next).x())) {
+            if (point.x() < std::min((*current).x(), (*next).x())) {
               IsInside = !IsInside;
             }
-            else if (point.x() <= max((*current).x(),(*next).x())) {
+            else if (point.x() <= std::max((*current).x(),(*next).x())) {
               switch (traits.sign(traits.determinant_2(point,
                                                        *current,
                                                        *next)))
@@ -873,8 +873,8 @@ Bounded_side bounded_side_2(ForwardIterator first,
             }
             break;
           case EQUAL:
-            if ( (min((*current).x(), (*next).x()) <= point.x()) &&
-                 (point.x() <= max((*current).x(), (*next).x()))    ) {
+            if ( (std::min((*current).x(), (*next).x()) <= point.x()) &&
+                 (point.x() <= std::max((*current).x(), (*next).x()))    ) {
               return ON_BOUNDARY;
             }
             break;
@@ -888,10 +888,10 @@ Bounded_side bounded_side_2(ForwardIterator first,
       case LARGER:
         switch (CompareNext) {
           case SMALLER:
-            if (point.x() < min((*current).x(), (*next).x())) {
+            if (point.x() < std::min((*current).x(), (*next).x())) {
               IsInside = !IsInside;
             }
-            else if (point.x() <= max((*current).x(),(*next).x())) {
+            else if (point.x() <= std::max((*current).x(),(*next).x())) {
               switch (traits.sign(traits.determinant_2(point,
                                                        *current,
                                                        *next)))
