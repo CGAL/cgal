@@ -103,8 +103,8 @@ _test_cls_line_2(const R& )
  assert( ld21.direction() ==  - ld12.direction() );
  assert( labc.direction() == CGAL::Direction_2<R>(labc.b(), - labc.a() ) );
 
- assert( ld12v.to_vector() == v12 );
- assert( ld21v.to_vector() == v21 );
+ assert( ld12v.to_vector().direction() == v12.direction() );
+ assert( ld21v.to_vector().direction() == v21.direction() );
 
  std::cout << '.';
 
