@@ -1,3 +1,10 @@
+27 May 2004:  Menelaos
+- added support for overlapping segments (one-level algorithm)
+- fixed bug in finite edge interior (wrong answer when a Voronoi edge
+  was degenerate and a point was touching the single Voronoi circle)
+- added macros in Svd_Voronoi_vertex_*_C2.h to indicate a change on
+  how the incircle test is computed in a limiting case
+
 25 May 2004:  Menelaos Karavelas
 - added support for point that lies on a segment and segments that
   go through a point in the hierarchy code
