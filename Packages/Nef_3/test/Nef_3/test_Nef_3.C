@@ -25,6 +25,7 @@
 // Demo program maintaining a stack of Nef polyhedra in the space and
 // a manipulation language for stack ops, file loading and saving, etc.
 // ============================================================================
+#include <CGAL/Nef_2/Nef_polynomial.h>
 #include <CGAL/basic.h>
 #include <CGAL/Simple_homogeneous.h>
 #include <CGAL/Polyhedron_3.h>
@@ -36,7 +37,6 @@
 #include <CGAL/Nef_3/SNC_items.h>
 #include <CGAL/Timer.h>
 #include <fstream>
-
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
