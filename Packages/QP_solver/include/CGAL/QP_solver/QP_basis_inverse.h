@@ -350,7 +350,8 @@ class QPE_basis_inverse {
 
 	    // get row of '(Q^T * 2 D_B)' (stored in 'P' and 'R')
 	    std::copy(m_it1->begin()  ,m_it1->begin()+row,    x_l.begin());
-	    std::copy(m_it2->begin()+l,m_it2->begin()+l+b-row,x_l.begin()+row);
+	    std::copy(m_it2->begin()+l,m_it2->begin()+(l+b-row),
+	    	x_l.begin()+row);
 
 	    // compute '(Q^T * 2 D_B)_i * Q'
 	    multiply__l( x_l.begin(), x_x.begin());
@@ -705,8 +706,8 @@ class QPE_basis_inverse {
     }
     
     // append row in Q if no allocated row available
-    void ensure_physical_row (int row) {
-    	int rows = M.size();
+    void ensure_physical_row (unsigned int row) {
+    	unsigned int rows = M.size();
 	CGAL_qpe_precondition(rows >= row);
 	if (rows == row) {
             M.push_back(Row(row+1, et0));
