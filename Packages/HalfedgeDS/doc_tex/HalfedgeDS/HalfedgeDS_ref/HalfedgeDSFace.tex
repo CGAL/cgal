@@ -1,11 +1,11 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: HalfedgeDS_Vertex.tex
+% | Reference manual page: HalfedgeDSFace.tex
 % +------------------------------------------------------------------------+
 % | 22.03.1999   Lutz Kettner
 % | Package: HalfedgeDS
 % | 
-\RCSdef{\RCSVertexRev}{$Revision$}
-\RCSdefDate{\RCSVertexDate}{$Date$}
+\RCSdef{\RCSFaceRev}{$Revision$}
+\RCSdefDate{\RCSFaceDate}{$Date$}
 % +------------------------------------------------------------------------+
 
 \ccRefPageBegin
@@ -14,34 +14,35 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefConcept}{HalfedgeDS_Vertex}
-\label{pageHalfedgeDSItemsVertexRef}
+\begin{ccRefConcept}{HalfedgeDSFace}
+\label{pageHalfedgeDSItemsFaceRef}
 
 \ccDefinition
   
-The concept \ccRefName\ defines the requirements for the local \ccc{Vertex} 
+The concept \ccRefName\ defines the requirements for the local \ccc{Face} 
 type in the \ccc{HalfedgeDS} concept. It is also required in 
-the \ccc{Vertex_wrapper<Refs,Traits>} member class template of an
-items class, see the \ccc{HalfedgeDS_Items} concept.
+the \ccc{Face_wrapper<Refs,Traits>} member class template of an
+items class, see the \ccc{HalfedgeDSItems} concept.
 
-A vertex optionally stores a reference to an incident halfedge that
-points to the vertex. A type tag indicates whether the related member
+A face optionally stores a reference to an incident halfedge that
+points to the face.  A type tag indicates whether the related member
 functions are supported. Figure~\ccTexHtml{\ref{figurePolyOptionalMethods} 
 on page \pageref{figureHalfedgeDSOptionalMethods}}{}\begin{ccHtmlOnly}
   <A HREF="Halfedge.html#figureHalfedgeDSOptionalMethods"><IMG 
   SRC="cc_ref_up_arrow.gif" ALT="reference arrow" WIDTH="10" HEIGHT="10"></A>
 \end{ccHtmlOnly}
 depicts the relationship between a halfedge and its incident
-halfedges, vertices, and facets.
+halfedges, vertices, and faces.
 
 For the protection of the integrity of the data structure classes such as
 \ccc{CGAL::Polyhedron_3} are allowed to redefine the modifying member 
 functions to be private. In order to make them accessible for the 
 halfedge data structure they must be derived from a base class \ccc{Base}
-where the modifying member functions are still public. (The protection 
-could be bypassed by an user, but not by accident).
+where the modifying member functions are still public. (The protection
+can be bypassed by the user, but not by accident.)
 
 \ccTypes
+
 \ccThree{Halfedge_const_handle}{v.set_halfedge( Halfedge_handle h);}{}
 \ccThreeToTwo
 
@@ -50,9 +51,9 @@ could be bypassed by an user, but not by accident).
 \ccGlue
 \ccNestedType{Base}{base class that allows modifications.}
 \ccGlue
-\ccNestedType{Halfedge}{model of \ccc{HalfedgeDS_Halfedge}.}
+\ccNestedType{Vertex}{model of \ccc{HalfedgeDSVertex}.}
 \ccGlue
-\ccNestedType{Face}{model of \ccc{HalfedgeDS_Face}.}
+\ccNestedType{Halfedge}{model of \ccc{HalfedgeDSHalfedge}.}
 \ccGlue
 \ccNestedType{Vertex_handle}{handle to vertex.}
 \ccGlue
@@ -66,17 +67,17 @@ could be bypassed by an user, but not by accident).
 \ccGlue
 \ccNestedType{Face_const_handle}{}
 \ccGlue
-\ccNestedType{Supports_vertex_halfedge}{either \ccc{CGAL::Tag_true} or 
+\ccNestedType{Supports_face_halfedge}{either \ccc{CGAL::Tag_true} or 
   \ccc{CGAL::Tag_false}.}
 
 \ccCreation
-\ccCreationVariable{v}
+\ccCreationVariable{f}
 
-\ccConstructor{Vertex();}{default constructor.}
+\ccConstructor{Face();}{default constructor.}
 
 \ccTagFullDeclarations
 
-\ccHeading{Operations available if \ccc{Supports_vertex_halfedge} $\equiv$ 
+\ccHeading{Operations available if \ccc{Supports_face_halfedge} $\equiv$ 
            \ccc{CGAL::Tag_true}}
 
 \ccMethod{Halfedge_handle       halfedge();}{}
@@ -88,18 +89,17 @@ could be bypassed by an user, but not by accident).
     sets incident halfedge to $h$.}
 
 
-
 \ccHasModels
 
-\ccc{CGAL::HalfedgeDS_vertex_base<Refs>},
-\ccc{CGAL::HalfedgeDS_vertex_min_base<Refs>}.
+\ccRefIdfierPage{CGAL::HalfedgeDS_face_base<Refs>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_face_min_base<Refs>}
 
 \ccSeeAlso
 
-\ccc{HalfedgeDS},
-\ccc{HalfedgeDS_Items},
-\ccc{HalfedgeDS_Halfedge},
-\ccc{HalfedgeDS_Face}.
+\ccRefIdfierPage{HalfedgeDS}\\
+\ccRefIdfierPage{HalfedgeDSItems}\\
+\ccRefIdfierPage{HalfedgeDSVertex}\\
+\ccRefIdfierPage{HalfedgeDSHalfedge}
 
 \ccTagDefaults
 \end{ccRefConcept}

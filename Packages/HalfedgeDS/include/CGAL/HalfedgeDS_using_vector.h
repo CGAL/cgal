@@ -49,19 +49,19 @@
 CGAL_BEGIN_NAMESPACE
 
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-template < class p_Traits, class p_Items>
+template < class Traits_, class HalfedgeDSItems>
 class HalfedgeDS_using_vector {
 public:
-    typedef HalfedgeDS_using_vector<p_Traits,p_Items> Self;
+    typedef HalfedgeDS_using_vector<Traits_,HalfedgeDSItems> Self;
 #else
 struct HalfedgeDS_using_vector {
-template < class p_Traits, class p_Items>
+template < class Traits_, class HalfedgeDSItems>
 class HDS {
 public:
-    typedef HDS<p_Traits,p_Items> Self;
+    typedef HDS<Traits_,HalfedgeDSItems> Self;
 #endif
-    typedef p_Traits                                   Traits;
-    typedef p_Items                                    Items;
+    typedef Traits_                                       Traits;
+    typedef HalfedgeDSItems                               Items;
 
 #ifdef __GNUC__
     typedef typename Items::Vertex_wrapper<Self,Traits>   Vertex_wrapper;
@@ -324,13 +324,18 @@ public:
     }
     void faces_pop_back()    { faces.pop_back(); }
 
-    void clear() {
-        vertices.erase( vertices.begin(), vertices.end());
+    void vertices_clear() { vertices.erase( vertices.begin(), vertices.end());}
+    void edges_clear() {
         halfedges.erase( halfedges.begin(), halfedges.end());
-        faces.erase( faces.begin(), faces.end());
         nb_border_halfedges = 0;
         nb_border_edges = 0;
         border_halfedges = Halfedge_handle();
+    }
+    void faces_clear() { faces.erase( faces.begin(), faces.end()); }
+    void clear() {
+        vertices_clear();
+        edges_clear();
+        faces_clear();
     }
 
 // Special Operations on Polyhedral Surfaces
@@ -397,9 +402,9 @@ public:
 #define CGAL__H_UPDATE(h) (h_new + ( Halfedge_CI (h.iterator()) - h_old))
 #define CGAL__F_UPDATE(f) (f_new + ( Face_CI     (f.iterator()) - f_old))
 
-template < class p_Traits, class p_Items>
+template < class Traits_, class HalfedgeDSItems>
 void
-CGAL__HalfedgeDS_using_vector<p_Traits,p_Items>::
+CGAL__HalfedgeDS_using_vector<Traits_,HalfedgeDSItems>::
 pointer_update(  Vertex_CI v_old, Halfedge_CI h_old, Face_CI f_old) {
     // Update own pointers assuming that they lived previously
     // in a halfedge data structure with vector starting addresses
@@ -432,9 +437,9 @@ pointer_update(  Vertex_CI v_old, Halfedge_CI h_old, Face_CI f_old) {
 #undef CGAL__H_UPDATE
 #undef CGAL__F_UPDATE
 
-template < class p_Traits, class p_Items>
+template < class Traits_, class HalfedgeDSItems>
 void
-CGAL__HalfedgeDS_using_vector<p_Traits,p_Items>::
+CGAL__HalfedgeDS_using_vector<Traits_,HalfedgeDSItems>::
 normalize_border() {
     nb_border_halfedges = 0;
     nb_border_edges = 0;

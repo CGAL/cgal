@@ -35,14 +35,16 @@ CGAL_BEGIN_NAMESPACE
 
 #ifndef CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION
 
-template < class Refs, class T = Tag_true, class Trts = void>
+// We use Tag_false to indicate that no plane type is provided.
+
+template < class Refs, class T = Tag_true, class Pln = Tag_false>
 class HalfedgeDS_face_base;
 
 template < class Refs >
-class HalfedgeDS_face_base< Refs, Tag_false, void> {
+class HalfedgeDS_face_base< Refs, Tag_false, Tag_false> {
 public:
     typedef Refs                                 HalfedgeDS;
-    typedef HalfedgeDS_face_base< Refs, Tag_false, void>  Base;
+    typedef HalfedgeDS_face_base< Refs, Tag_false, Tag_false>  Base;
     typedef Tag_false                            Supports_face_halfedge;
     typedef typename Refs::Vertex_handle         Vertex_handle;
     typedef typename Refs::Vertex_const_handle   Vertex_const_handle;
@@ -54,14 +56,15 @@ public:
     typedef typename Refs::Halfedge              Halfedge;
     // Additional tags required by Polyhedron.
     typedef Tag_false                            Supports_face_plane;
-    typedef Tag_false                            Supports_face_normal;
+    // No longer required.
+    // typedef Tag_false                            Supports_face_normal;
 };
 
 template < class Refs >
-class HalfedgeDS_face_base< Refs, Tag_true, void> {
+class HalfedgeDS_face_base< Refs, Tag_true, Tag_false> {
 public:
     typedef Refs                                 HalfedgeDS;
-    typedef HalfedgeDS_face_base< Refs, Tag_true, void>   Base;
+    typedef HalfedgeDS_face_base< Refs, Tag_true, Tag_false>   Base;
     typedef Tag_true                             Supports_face_halfedge;
     typedef typename Refs::Vertex_handle         Vertex_handle;
     typedef typename Refs::Vertex_const_handle   Vertex_const_handle;
@@ -73,7 +76,8 @@ public:
     typedef typename Refs::Halfedge              Halfedge;
     // Additional tags required by Polyhedron.
     typedef Tag_false                            Supports_face_plane;
-    typedef Tag_false                            Supports_face_normal;
+    // No longer required.
+    //typedef Tag_false                            Supports_face_normal;
 private:
     Halfedge_handle hdg;
 public:
@@ -82,11 +86,11 @@ public:
     void                  set_halfedge( Halfedge_handle h)  { hdg = h; }
 };
 
-template < class Refs, class Trts >
-class HalfedgeDS_face_base< Refs, Tag_false, Trts> {
+template < class Refs, class Pln >
+class HalfedgeDS_face_base< Refs, Tag_false, Pln> {
 public:
     typedef Refs                                 HalfedgeDS;
-    typedef HalfedgeDS_face_base< Refs, Tag_false, Trts>     Base;
+    typedef HalfedgeDS_face_base< Refs, Tag_false, Pln>     Base;
     typedef Tag_false                            Supports_face_halfedge;
     typedef typename Refs::Vertex_handle         Vertex_handle;
     typedef typename Refs::Vertex_const_handle   Vertex_const_handle;
@@ -98,25 +102,28 @@ public:
     typedef typename Refs::Halfedge              Halfedge;
     // Additional tags and types required by Polyhedron.
     typedef Tag_true                             Supports_face_plane;
-    typedef Tag_true                             Supports_face_normal;
-    typedef Trts                                 Traits;
-    typedef typename Traits::Normal              Normal;
-    typedef typename Traits::Plane               Plane;
+    typedef Pln                                  Plane;
+    // No longer required.
+    //typedef Tag_true                             Supports_face_normal;
+    //typedef Trts                                 Traits;
+    //typedef typename Traits::Normal              Normal;
+    //typedef typename Traits::Plane               Plane;
 private:
-    Plane   pln;
+    Plane  pln;
 public:
     HalfedgeDS_face_base() {}
     HalfedgeDS_face_base( const Plane& g) : pln(g) {}
     Plane&                plane()                           { return pln; }
     const Plane&          plane() const                     { return pln; }
-    Normal                normal() const { return pln.orthogonal_vector();}
+    // No longer required.
+    // Normal              normal() const { return pln.orthogonal_vector();}
 };
 
-template < class Refs, class Trts >
-class HalfedgeDS_face_base< Refs, Tag_true, Trts> {
+template < class Refs, class Pln >
+class HalfedgeDS_face_base< Refs, Tag_true, Pln> {
 public:
     typedef Refs                                 HalfedgeDS;
-    typedef HalfedgeDS_face_base< Refs, Tag_true, Trts>      Base;
+    typedef HalfedgeDS_face_base< Refs, Tag_true, Pln>      Base;
     typedef Tag_true                             Supports_face_halfedge;
     typedef typename Refs::Vertex_handle         Vertex_handle;
     typedef typename Refs::Vertex_const_handle   Vertex_const_handle;
@@ -128,10 +135,12 @@ public:
     typedef typename Refs::Halfedge              Halfedge;
     // Additional tags and types required by Polyhedron.
     typedef Tag_true                             Supports_face_plane;
-    typedef Tag_true                             Supports_face_normal;
-    typedef Trts                                 Traits;
-    typedef typename Traits::Normal              Normal;
-    typedef typename Traits::Plane               Plane;
+    typedef Pln                                  Plane;
+    // No longer required.
+    //typedef Tag_true                             Supports_face_normal;
+    //typedef Trts                                 Traits;
+    //typedef typename Traits::Normal              Normal;
+    //typedef typename Traits::Plane               Plane;
 private:
     Halfedge_handle hdg;
     Plane           pln;
@@ -143,44 +152,51 @@ public:
     void                  set_halfedge( Halfedge_handle h)  { hdg = h; }
     Plane&                plane()                           { return pln; }
     const Plane&          plane() const                     { return pln; }
-    Normal                normal() const { return pln.orthogonal_vector();}
+    // No longer required.
+    //Normal                normal() const { return pln.orthogonal_vector();}
 };
 
 #else // CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION //
 
 // Partial specialization doesn't work. We can factor out the
 // Plane parameter in a base class with full specialization
-// on 'void', but we cannot get rid of the halfedge reference.
+// on 'Tag_false', but we cannot get rid of the halfedge reference.
 // So, we just waste the space and have it always.
 //   Furthermore, is is likely to have a non-optimal memory
 // price-tag for the base class as well if it is the empty base
-// class for traits type 'void', since empty structs probably
+// class for the plane type 'Tag_false', since empty structs probably
 // consume at least a byte, probably a word.
+//   See HalfedgeDS_face_min_base.h for an alternative.
 
-template < class Trts>
+// We use Tag_false to indicate that no plane type is provided.
+
+emplate < class Pln>
 struct I_HalfedgeDS_face_base_plane {
-    typedef Trts                                 Traits;
-    typedef typename Traits::Plane               Plane;
-    typedef typename Traits::Normal              Normal;
+    typedef Pln  Plane;
+    // No longer required.
+    //typedef Trts                                 Traits;
+    //typedef typename Traits::Plane               Plane;
+    //typedef typename Traits::Normal              Normal;
     Plane plane;
     I_HalfedgeDS_face_base_plane() {}
     I_HalfedgeDS_face_base_plane( const Plane& pl) : plane(pl) {}
     typedef Tag_true Supports_plane;
 };
 template <>
-struct I_HalfedgeDS_face_base_plane<void> {
+struct I_HalfedgeDS_face_base_plane<Tag_false> {
     typedef Tag_false Supports_plane;
-    struct Normal_not_supported {};
-    typedef Normal_not_supported Normal;
+    // No longer required.
+    //struct Normal_not_supported {};
+    //typedef Normal_not_supported Normal;
     struct Plane_not_supported {};
     typedef Plane_not_supported Plane;
 };
 
-template < class Refs, class T = Tag_true, class Trts = void>
-class HalfedgeDS_face_base : public I_HalfedgeDS_face_base_plane<Trts> {
+template < class Refs, class T = Tag_true, class Pln = Tag_false>
+class HalfedgeDS_face_base : public I_HalfedgeDS_face_base_plane<Pln> {
 public:
     typedef Refs                                 HalfedgeDS;
-    typedef HalfedgeDS_face_base< Refs, T, Trts> Base;
+    typedef HalfedgeDS_face_base< Refs, T, Pln>  Base;
     typedef Tag_true                             Supports_face_halfedge;
     typedef typename Refs::Vertex_handle         Vertex_handle;
     typedef typename Refs::Vertex_const_handle   Vertex_const_handle;
@@ -191,26 +207,28 @@ public:
     typedef typename Refs::Vertex                Vertex;
     typedef typename Refs::Halfedge              Halfedge;
     // Additional tags and types required by Polyhedron.
-    typedef I_HalfedgeDS_face_base_plane<Trts>   Plane_base;
+    typedef I_HalfedgeDS_face_base_plane<Pln>    Plane_base;
     typedef typename Plane_base::Supports_plane  Supports_face_plane;
-    typedef typename Plane_base::Supports_plane  Supports_face_normal;
-    typedef Trts                                 Traits;
-    typedef typename Plane_base::Normal          Normal;
     typedef typename Plane_base::Plane           Plane;
+    // No longer required.
+    //typedef typename Plane_base::Supports_plane  Supports_face_normal;
+    //typedef Trts                                 Traits;
+    //typedef typename Plane_base::Normal          Normal;
 private:
     Halfedge_handle hdg;
 public:
     HalfedgeDS_face_base() {}
     HalfedgeDS_face_base( const Plane& g)
-        : I_HalfedgeDS_face_base_plane<Trts>(g) {}
+        : I_HalfedgeDS_face_base_plane<Pln>(g) {}
     Halfedge_handle       halfedge()                      { return hdg; }
     Halfedge_const_handle halfedge() const                { return hdg; }
     void                  set_halfedge( Halfedge_handle h){ hdg = h; }
     Plane&                plane()        { return Plane_base::plane; }
     const Plane&          plane()  const { return Plane_base::plane; }
-    Normal                normal() const {
-                              return Plane_base::plane.orthogonal_vector();
-    }
+    // No longer required.
+    //Normal                normal() const {
+    //                          return Plane_base::plane.orthogonal_vector();
+    //}
 };
 
 #endif // CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION //

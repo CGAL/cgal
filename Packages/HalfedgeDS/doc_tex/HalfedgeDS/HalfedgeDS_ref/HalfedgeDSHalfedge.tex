@@ -1,5 +1,5 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: HalfedgeDS_Halfedge.tex
+% | Reference manual page: HalfedgeDSHalfedge.tex
 % +------------------------------------------------------------------------+
 % | 22.03.1999   Lutz Kettner
 % | Package: HalfedgeDS
@@ -14,7 +14,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefConcept}{HalfedgeDS_Halfedge}
+\begin{ccRefConcept}{HalfedgeDSHalfedge}
 \label{pageHalfedgeDSItemsHalfedgeRef}
 
 \ccDefinition
@@ -22,7 +22,7 @@
 The concept \ccRefName\ defines the requirements for the local \ccc{Halfedge} 
 type in the \ccc{HalfedgeDS} concept. It is also required in 
 the \ccc{Halfedge_wrapper<Refs,Traits>} member class template of an
-items class, see the \ccc{HalfedgeDS_Items} concept.
+items class, see the \ccc{HalfedgeDSItems} concept.
 
 A halfedge is an oriented edge between two vertices. It is always
 paired with a halfedge pointing in the opposite direction. The
@@ -39,7 +39,7 @@ on page \pageref{figureHalfedgeDSOptionalMethods}}{}\begin{ccHtmlOnly}
   SRC="cc_ref_up_arrow.gif" ALT="reference arrow" WIDTH="10" HEIGHT="10"></A>
 \end{ccHtmlOnly}
 depicts the relationship between a halfedge and its incident
-halfedges, vertices, and facets.
+halfedges, vertices, and faces.
 
 \begin{ccTexOnly}
     \begin{figure}[bht]
@@ -78,7 +78,7 @@ halfedge data structure they must be derived from a base class
 \ccc{Base} where the modifying member functions are still public. Even
 more protection is provided for the \ccc{set_opposite()} member
 function. The base class \ccc{Base_base} provides access to it.  (The
-protection could be bypassed also by an user, but not by accident).
+protection could be bypassed also by an user, but not by accident.)
 
 \ccTypes
 
@@ -92,9 +92,9 @@ protection could be bypassed also by an user, but not by accident).
 \ccGlue
 \ccNestedType{Base_base}{base class to access \ccc{set_opposite()}.}
 \ccGlue
-\ccNestedType{Vertex}{model of \ccc{HalfedgeDS_Vertex}.}
+\ccNestedType{Vertex}{model of \ccc{HalfedgeDSVertex}.}
 \ccGlue
-\ccNestedType{Face}{model of \ccc{HalfedgeDS_Face}.}
+\ccNestedType{Face}{model of \ccc{HalfedgeDSFace}.}
 
 \ccNestedType{Vertex_handle}{handle to vertex.}
 \ccGlue
@@ -133,7 +133,7 @@ protection could be bypassed also by an user, but not by accident).
 \ccMethod{Halfedge_handle next();}{}
 \ccGlue
 \ccMethod{Halfedge_const_handle next() const;}
-    {the next halfedge around the facet.}
+    {the next halfedge around the face.}
 \ccGlue
 \ccMethod{void set_next( Halfedge_handle h);}{
     sets next halfedge to $h$.}
@@ -147,7 +147,7 @@ protection could be bypassed also by an user, but not by accident).
 \ccMethod{Halfedge_handle prev();}{}
 \ccGlue
 \ccMethod{Halfedge_const_handle prev() const;}
-    {the previous halfedge around the facet.}
+    {the previous halfedge around the face.}
 \ccGlue
 \ccMethod{void set_prev( Halfedge_handle h);}{
     sets prev halfedge to $h$.}
@@ -165,10 +165,10 @@ protection could be bypassed also by an user, but not by accident).
 \ccHeading{Operations available if \ccc{Supports_halfedge_face} $\equiv$ 
            \ccc{CGAL::Tag_true}}
 
-\ccMethod{Facet_handle       facet();}{}
+\ccMethod{Face_handle       face();}{}
 \ccGlue
-\ccMethod{Facet_const_handle facet() const;}
-    {the incident facet of \ccVar.  If \ccVar\ is a border halfedge 
+\ccMethod{Face_const_handle face() const;}
+    {the incident face of \ccVar.  If \ccVar\ is a border halfedge 
       the result is default construction of the handle.}
 \ccGlue
 \ccMethod{void set_face( Face_handle f);}{
@@ -176,15 +176,15 @@ protection could be bypassed also by an user, but not by accident).
 
 \ccHasModels
 
-\ccc{CGAL::HalfedgeDS_halfedge_base<Refs>},
-\ccc{CGAL::HalfedgeDS_halfedge_min_base<Refs>}.
+\ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_base<Refs>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_min_base<Refs>}
 
 \ccSeeAlso
 
-\ccc{HalfedgeDS},
-\ccc{HalfedgeDS_Items},
-\ccc{HalfedgeDS_Vertex},
-\ccc{HalfedgeDS_Face}.
+\ccRefIdfierPage{HalfedgeDS}\\
+\ccRefIdfierPage{HalfedgeDSItems}\\
+\ccRefIdfierPage{HalfedgeDSVertex}\\
+\ccRefIdfierPage{HalfedgeDSFace}
 
 \end{ccRefConcept}
 

@@ -26,8 +26,8 @@
 
 #ifndef CGAL_HALFEDGEDS_DEFAULT_H
 #define CGAL_HALFEDGEDS_DEFAULT_H 1
-#ifndef CGAL_HALFEDGEDS_ITEMS_H
-#include <CGAL/HalfedgeDS_items.h>
+#ifndef CGAL_HALFEDGEDS_ITEMS_2_H
+#include <CGAL/HalfedgeDS_items_2.h>
 #endif
 #ifndef CGAL_HALFEDGEDS_USING_IN_PLACE_LIST_H
 #include <CGAL/HalfedgeDS_using_in_place_list.h>
@@ -36,7 +36,7 @@
 CGAL_BEGIN_NAMESPACE
 
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-    template <class p_Traits, class p_Items = HalfedgeDS_items>
+    template <class p_Traits, class p_Items = HalfedgeDS_items_2>
     class HalfedgeDS_default
         : public HalfedgeDS_using_in_place_list< p_Traits, p_Items> {
     public:
@@ -50,7 +50,7 @@ CGAL_BEGIN_NAMESPACE
     #define CGAL_HALFEDGEDS_DEFAULT  ::CGAL::HalfedgeDS_default
 #else
     struct HalfedgeDS_default {
-      template <class p_Traits, class p_Items = HalfedgeDS_items>
+      template <class p_Traits, class p_Items = HalfedgeDS_items_2>
       class HDS
           : public HalfedgeDS_using_in_place_list::HDS<p_Traits, p_Items> {
       public:

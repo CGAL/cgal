@@ -100,19 +100,19 @@ public:
 
 
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-template < class p_Traits, class p_Items>
+template < class Traits_, class HalfedgeDSItems>
 class HalfedgeDS_using_in_place_list {
 public:
-    typedef HalfedgeDS_using_in_place_list<p_Traits,p_Items> Self;
+    typedef HalfedgeDS_using_in_place_list<Traits_,HalfedgeDSItems> Self;
 #else
 struct HalfedgeDS_using_in_place_list {
-template < class p_Traits, class p_Items>
+template < class Traits_, class HalfedgeDSItems>
 class HDS {
 public:
-    typedef HDS<p_Traits,p_Items> Self;
+    typedef HDS<Traits_,HalfedgeDSItems> Self;
 #endif
-    typedef p_Traits                                   Traits;
-    typedef p_Items                                    Items;
+    typedef Traits_                                       Traits;
+    typedef HalfedgeDSItems                               Items;
 
 #ifdef __GNUC__
     typedef typename Items::Vertex_wrapper<Self,Traits>   Vertex_wrapper;
@@ -432,13 +432,18 @@ public:
             faces_erase(first++);
     }
 
-    void clear() {
-        vertices.destroy();
+    void vertices_clear() { vertices.destroy(); }
+    void edges_clear() {
         edges_erase( halfedges.begin(), halfedges.end());
-        faces.destroy();
         nb_border_halfedges = 0;
         nb_border_edges = 0;
         border_halfedges = Halfedge_handle();
+    }
+    void faces_clear() { faces.destroy(); }
+    void clear() {
+        vertices_clear();
+        edges_clear();
+        faces_clear();
     }
 
 // Operations with Border Halfedges
@@ -498,10 +503,10 @@ struct CGAL__HDS_Cmp_handle {
     bool operator()( Handle a, Handle b) const { return &*a < &*b; }
 };
 
-template < class p_Traits, class p_Items>
+template < class Traits_, class HalfedgeDSItems>
 void
-CGAL__HDS_IP_List<p_Traits,p_Items>::
-pointer_update( const CGAL__HDS_IP_List<p_Traits,p_Items>& hds) {
+CGAL__HDS_IP_List<Traits_,HalfedgeDSItems>::
+pointer_update( const CGAL__HDS_IP_List<Traits_,HalfedgeDSItems>& hds) {
     // Update own pointers assuming that they lived previously
     // in a halfedge data structure `hds' with lists.
     typedef std::map< Vertex_const_handle,
@@ -564,9 +569,9 @@ pointer_update( const CGAL__HDS_IP_List<p_Traits,p_Items>& hds) {
     border_halfedges = h_map[ border_halfedges];
 }
 
-template < class p_Traits, class p_Items>
+template < class Traits_, class HalfedgeDSItems>
 void
-CGAL__HDS_IP_List<p_Traits,p_Items>::
+CGAL__HDS_IP_List<Traits_,HalfedgeDSItems>::
 normalize_border() {
     CGAL_assertion_code( size_type count = halfedges.size();)
     nb_border_halfedges = 0;

@@ -1,15 +1,17 @@
 // hds_prog_compact.C
 // -------------------------------------
-#include <CGAL/HalfedgeDS_items.h>
+#include <CGAL/HalfedgeDS_items_2.h>
 #include <CGAL/HalfedgeDS_using_vector.h>
 #include <CGAL/HalfedgeDS_decorator.h>
 #include <cstddef>
 
-// Define a new halfedge class. We assume that the Halfedge_handle is
-// compatible to a pointer (e.g. the HalfedgeDS is based on a vector 
-// internally) and that halfedges are allocated in pairs. We encode 
-// the opposite pointer in a single bit, which is stored in the lower
-// bit of the next-pointer.
+// Define a new halfedge class. We assume that the Halfedge_handle can
+// be created from a pointer (e.g. the HalfedgeDS is based here on the
+// In_place_list or a std::vector with such property) and that halfedges
+// are allocated in pairs. We encode the opposite pointer in a single bit,
+// which is stored in the lower bit of the next-pointer. We use the 
+// static member function HDS::halfedge_handle to translate pointer to 
+// handles.
 template <class Refs>
 class My_halfedge {
 public:
@@ -33,25 +35,31 @@ public:
     My_halfedge() : nxt(0), f( Face_handle()) {}
 
     Halfedge_handle opposite() {
+        // Halfedge could be different from My_halfedge (e.g. pointer for 
+        // linked list). Get proper handle from 'this' pointer first, do 
+        // pointer arithmetic, then convert pointer back to handle again.
+        Halfedge_handle h = HDS::halfedge_handle(this); // proper handle
         if ( nxt & 1)
-            return Halfedge_handle( this + 1);
-        return Halfedge_handle( this - 1);
+            return HDS::halfedge_handle( &* h + 1);
+        return HDS::halfedge_handle( &* h - 1);
     }
-    Halfedge_const_handle opposite() const {
+    Halfedge_const_handle opposite() const { // same as above
+        Halfedge_const_handle h = HDS::halfedge_handle(this); // proper handle
         if ( nxt & 1)
-            return Halfedge_const_handle( this + 1);
-        return Halfedge_const_handle( this - 1);
+            return HDS::halfedge_handle( &* h + 1);
+        return HDS::halfedge_handle( &* h - 1);
     }
     Halfedge_handle next() {
-	return Halfedge_handle((Halfedge*)(nxt & (~ std::ptrdiff_t(1))));
+	return HDS::halfedge_handle((Halfedge*)(nxt & (~ std::ptrdiff_t(1))));
     }
     Halfedge_const_handle next() const {
 	return Halfedge_const_handle((const Halfedge*)(nxt & 
 						 (~ std::ptrdiff_t(1))));
     }
     void  set_opposite( Halfedge_handle h) {
-        CGAL_precondition( &*h == (this+1) || &*h == (this-1));
-        if ( &*h == this+1)
+        CGAL_precondition(( &* h - 1 == &* HDS::halfedge_handle(this)) || 
+			  ( &* h + 1 == &* HDS::halfedge_handle(this)));
+        if ( &* h - 1 == &* HDS::halfedge_handle(this))
             nxt |= 1;
         else
             nxt &= (~ std::ptrdiff_t(1));
@@ -66,7 +74,7 @@ public:
     // the incident vertex.
     Vertex_handle         vertex()                     { return v; }
     Vertex_const_handle   vertex() const               { return v; }
-    void                  set_vertex( Vertex_handle w) { v = w; } 
+    void                  set_vertex( Vertex_handle w) { v = w; }
 
 private:
     Face_handle      f;
@@ -78,14 +86,14 @@ public:
 };
 
 // Replace halfedge in the default items type.
-struct My_items : public CGAL::HalfedgeDS_items {
+struct My_items : public CGAL::HalfedgeDS_items_2 {
     template <class Refs, class Traits>
     struct Halfedge_wrapper {
         typedef My_halfedge<Refs> Halfedge;
     };
 };
 
-struct Traits { typedef int Point; };
+struct Traits { typedef int Point_2; };
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
   typedef CGAL::HalfedgeDS_using_vector     <Traits, My_items> HDS;
 #else

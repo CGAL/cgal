@@ -42,7 +42,7 @@ class HalfedgeDS_min_items {
 public:
     template < class Refs, class Traits>
     struct Vertex_wrapper {
-        typedef HalfedgeDS_vertex_min_base< Refs> Vertex;
+        typedef HalfedgeDS_vertex_min_base< Refs>   Vertex;
     };
     template < class Refs, class Traits>
     struct Halfedge_wrapper {
@@ -50,7 +50,7 @@ public:
     };
     template < class Refs, class Traits>
     struct Face_wrapper {
-        typedef HalfedgeDS_face_min_base< Refs> Face;
+        typedef HalfedgeDS_face_min_base< Refs>     Face;
     };
 };
 

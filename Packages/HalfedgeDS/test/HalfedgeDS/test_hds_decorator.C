@@ -25,19 +25,14 @@
 // ============================================================================
 
 
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/Plane_3.h>
-
 #include <CGAL/HalfedgeDS_default.h>
 #include <CGAL/Polyhedron_items_3.h>
 #include <CGAL/HalfedgeDS_decorator.h>
 
-typedef CGAL::Cartesian<double> Rep;
+typedef CGAL::Cartesian<double> Kernel;
 struct Dummy_traits_2 {
-    typedef CGAL::Point_2<Rep> Point;
+    typedef Kernel::Point_2 Point_2;
 };
 
 void test_HalfedgeDS_decorator() {
@@ -150,10 +145,10 @@ void test_HalfedgeDS_decorator2() {
     // Simple instantiation of the default halfedge data structure.
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
     typedef CGAL::HalfedgeDS_using_list< Dummy_traits_2,
-                                         CGAL::HalfedgeDS_items> HDS;
+                                         CGAL::HalfedgeDS_items_2> HDS;
 #else
     typedef CGAL::HalfedgeDS_using_list::HDS< Dummy_traits_2,
-                                         CGAL::HalfedgeDS_items> HDS;
+                                         CGAL::HalfedgeDS_items_2> HDS;
 #endif
     typedef CGAL::HalfedgeDS_decorator<HDS>  Decorator;
     typedef HDS::Halfedge_handle             Halfedge_handle;
@@ -258,11 +253,9 @@ void test_HalfedgeDS_decorator2() {
 
 #include <CGAL/HalfedgeDS_using_vector.h>
 
-typedef CGAL::Cartesian<double>  Rep;
 struct Dummy_traits_3 {
-    typedef CGAL::Point_3<Rep>  Point;
-    typedef CGAL::Vector_3<Rep> Normal;
-    typedef CGAL::Plane_3<Rep>  Plane;
+    typedef Kernel::Point_3    Point_3;
+    typedef Kernel::Plane_3    Plane_3;
 };
 
 void test_HalfedgeDS_decorator3() {

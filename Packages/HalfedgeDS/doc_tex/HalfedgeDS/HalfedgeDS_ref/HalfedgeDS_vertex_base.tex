@@ -18,11 +18,17 @@
 
 \ccDefinition
   
-The class \ccRefName\ is a model of the \ccc{HalfedgeDS_Vertex}
-concept. \ccc{Refs} is an instantiation of a \ccc{HalfedgeDS}. 
-The full declaration states three parameters:
+The class \ccRefName\ is a model of the \ccc{HalfedgeDSVertex}
+concept. \ccc{Refs} is an instantiation of a \ccc{HalfedgeDS}.  The
+template declaration of \ccRefName\ has three parameters with some
+defaults that allow to select various flavors of vertices. The
+declaration is best explained with the two following declarations,
+essentially hiding an implementation dependent default setting:
 
-~~~~~~\ccc{template <class Refs, class T = CGAL::Tag_true, class Point = void>}\\
+~~~~~~\ccc{template <class Refs, class T = CGAL::Tag_true>}\\
+\mbox{}~~~~~~\ccc{class HalfedgeDS_vertex_base;}
+
+~~~~~~\ccc{template <class Refs, class T, class Point>}\\
 \mbox{}~~~~~~\ccc{class HalfedgeDS_vertex_base;}
 
 \ccRefName\ defines a vertex including a reference to an incident halfedge.
@@ -30,23 +36,23 @@ The full declaration states three parameters:
 \ccc{CGAL::HalfedgeDS_vertex_base<Refs,CGAL::Tag_false>} is a vertex
 without a reference to an incident halfedge. It is empty besides the
 required type definitions. It can be used for deriving own vertex
-implementations.
+implementations. See also \ccc{CGAL::HalfedgeDS_vertex_min_base<Refs>}.
 
 \ccc{CGAL::HalfedgeDS_vertex_base<Refs,CGAL::Tag_true,Point>} is a vertex
 with a reference to an incident halfedge and it stores a point of type
 \ccc{Point}.  It can be used as a vertex for a model of the
-\ccc{Polyhedron_items} concept.
+\ccc{PolyhedronItems_3} concept.
 
 \ccc{CGAL::HalfedgeDS_vertex_base<Refs,CGAL::Tag_false,Point>} is a vertex
 without a reference to an incident halfedge and it stores a point of
 type \ccc{Point}.  It can be used as a vertex for a model of the
-\ccc{Polyhedron_items} concept.
+\ccc{PolyhedronItems_3} concept.
 
 \ccInclude{CGAL/HalfedgeDS_vertex_base.h}
 
 \ccIsModel
 
-\ccc{HalfedgeDS_Vertex}
+\ccRefIdfierPage{HalfedgeDSVertex}
 
 \ccTypes
 \ccThree{const Point&;;}{point() const;MMMMMMMMMMMM}{}
@@ -72,12 +78,13 @@ type \ccc{Point}.  It can be used as a vertex for a model of the
 
 \ccSeeAlso
 
-\ccc{HalfedgeDS},
-\ccc{HalfedgeDS_Items},
-\ccc{Polyhedron_items},
-\ccc{CGAL::HalfedgeDS_halfedge_base<Refs>},\\
-\ccc{CGAL::HalfedgeDS_face_base<Refs>},
-\ccc{CGAL::HalfedgeDS_vetex_min_base<Refs>}.
+\ccRefIdfierPage{HalfedgeDS}\\
+\ccRefIdfierPage{HalfedgeDSItems}\\
+\ccRefIdfierPage{PolyhedronItems_3}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_items_2}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_base<Refs>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_face_base<Refs>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_vertex_min_base<Refs>}
 
 \end{ccRefClass}
 

@@ -9,8 +9,8 @@ HalfedgeDS_2 Package
      Generic halfedge data structures based on an internal representation
      with a list or a vector respectively.
 
--  CGAL/HalfedgeDS_items.h
 -  CGAL/HalfedgeDS_min_items.h
+-  CGAL/HalfedgeDS_items_2.h
 -  CGAL/Polyhedron_items_3.h
 
      Implementations of the Items class concept.

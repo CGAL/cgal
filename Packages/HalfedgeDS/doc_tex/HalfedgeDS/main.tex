@@ -65,14 +65,21 @@ halfedges~\cite{m-ism-88,bfh-mgedm-95} or as the doubly connected edge
 list (DCEL)~\cite{bkos-cgaa-97}, although the original reference for
 the DCEL~\cite{mp-fitcp-78} describes a different data structure. The
 halfedge data structure can also be seen as one of the variants of the
-quad-edge data structure~\cite{gs-pmgsc-85} that supports only
-orientable 2-manifolds. In general, the quad-edge data structure can
-represent also non-orientable 2-manifolds.  An overview and comparison
+quad-edge data structure~\cite{gs-pmgsc-85}. In general, the quad-edge
+data can represent non-orientable 2-manifolds, but the variant here is
+restricted to orientable 2-manifolds only. An overview and comparison
 of these different data structures together with a thorough
 description of the design implemented here can be found
-in~\cite{k-ugpdd-99}.  The design presented here is a revised and
-incompatible version of the previous design~\cite{k-ddsps-98} as used
-in \cgal\ R2.1 and earlier releases.
+in~\cite{k-ugpdd-99}.  
+
+The design presented here is a revised and incompatible version of the
+previous design~\cite{k-ddsps-98} as used in \cgal\ R2.2 and earlier
+releases. Files and identifier names are disjoint with the old design
+which allows for both versions to co-exists. However, classes using a
+halfedge data structure can only use one design. For example the
+polyhedral surface \ccc{Polyhedron_3} uses by default the new
+design. See Chapter~\ref{chapterPolyhedron} for how to still select
+the old implementation.
 
 % +------------------------------------------------------------------------+
 \section{Software Design}
@@ -122,7 +129,7 @@ references if they are present. Furthermore, the item classes can be
 extended with arbitrary attributes and member functions, which will be
 promoted by inheritance to the actual classes used for the polyhedron.
 
-Vertices, halfedges and faces are passed as local types of the
+Vertices, halfedges, and faces are passed as local types of the
 \ccc{Items} class to the halfedge data structure and polyhedron.
 Implementations for vertices, halfedges and faces are provided that
 fulfill the mandatory part of the requirements. They can be used as
@@ -131,9 +138,10 @@ also provided to serve as defaults; for polyhedra they provide all
 optional incidences, a three-dimensional point in the vertex type and
 a plane equation in the face type.
 
-The \ccc{Halfedge_data_structure} is responsible of the storage
-organization of the items. Currently, implementations using internally
-a bidirectional list or an \stl\ vector are provided. The
+The \ccc{Halfedge_data_structure}, concept \ccc{HalfedgeDS}, is
+responsible of the storage organization of the items. Currently,
+implementations using internally a bidirectional list or an \stl\
+vector are provided. The
 \ccc{Halfedge_data_structure} defines the handles and iterators
 belonging to the items. These types are promoted to the declaration of
 the items themselves and are used there to provide the references to
@@ -143,11 +151,11 @@ provides member functions to insert and delete items, to traverse all
 items, and it gives access to the items in order to manipulate the
 items.
 
-There are already three different models for the
-\ccc{Halfedge_data_structure} available. Therefore we have kept their
-interface small. Functionality common to all these models is separated
-into a helper class \ccc{Halfedge_data_structure_decorator}, which is
-not shown in 
+There are already three different models for the \ccc{HalfedgeDS} concept 
+available. Therefore we have kept their interface small. Functionality 
+common to all these models is separated into a helper classes, 
+\ccc{HalfedgeDS_decorator}, \ccc{HalfedgeDS_const_decorator}, and 
+\ccc{HalfedgeDS_items_decorator}, which are not shown in 
 Figure~\ccTexHtml{\ref{figureHalfedgeDSDesign}}{}\begin{ccHtmlOnly}
   <A HREF="Chapter_main.html#figureHalfedgeDSDesign"><IMG 
   SRC="cc_ref_up_arrow.gif" ALT="reference arrow" WIDTH="10" HEIGHT="10"></A>
@@ -155,11 +163,11 @@ Figure~\ccTexHtml{\ref{figureHalfedgeDSDesign}}{}\begin{ccHtmlOnly}
 side of the \ccc{Halfedge_data_structure} since it broadens that
 interface but does not hide it.  This helper class contains operations
 that are useful to implement the operations in the next layer, for
-example the polyhedron. It adds for example the Euler operations and
+example, the polyhedron. It adds, for example, the Euler operations and
 partial operations from which further Euler operations can be built
 from, such as inserting an edge into the ring of edges at a vertex.
 Furthermore, the helper class contains adaptive functionality.  For
-example if the \ccc{prev()} member function is not provided for
+example, if the \ccc{prev()} member function is not provided for
 halfedges, the \ccc{find_prev()} member function of the helper class
 searches in the positive direction along the face for the previous
 halfedge. But if the \ccc{prev()} member function is provided, the
@@ -167,7 +175,7 @@ halfedge. But if the \ccc{prev()} member function is provided, the
 is resolved at compile time with a technique called {\em
   compile-time tags}, similar to iterator tags in~\cite{sl-stl-95}.
 
-The \ccc{Polyhedron} as an example for the third layer adds the
+The \ccc{Polyhedron_3} as an example for the third layer adds the
 geometric interpretation, provides an easy-to-use interface of
 high-level functions, and unifies the access to the flexibility
 provided underneath.  It renames face to facet, which is more common
@@ -177,9 +185,9 @@ the items can no longer directly be written by the user.  The
 polyhedron adds the convenient and efficient circulators, see
 Chapter~\ref{chapterCirculators}, for accessing the circular sequence
 of edges around a vertex or around a facet. To achieve this, the
-\ccc{Polyhedron} derives new vertices, halfedges and facets from those
+\ccc{Polyhedron_3} derives new vertices, halfedges and facets from those
 provided in \ccc{Items}.  These new items are those actually used in
-the \ccc{Halfedge_data_structure}, which gives us the coherent type
+the \ccc{HalfedgeDS}, which gives us the coherent type
 structure in this design, especially if compared to our previous
 design.
 
@@ -285,17 +293,18 @@ one with respect to C pointer arithmetic. We can replace the opposite
 pointer by a single bit encoding the sign of this difference.  We will
 store this bit as the least significant bit in the next halfedge
 handle.  This example omits the previous pointer. What remains are
-three pointers per halfedge. The same solution can be applied to the
-list-based halfedge data structure
-\ccc{CGAL::HalfedgeDS_using_in_place_list} with the difference that the
-{\tt SIZE} constant must reflect the size increase due to the
-additional pointers needed for the list management. See 
-\texttt{examples/HalfedgeDS/hds\_prog\_compact2.C} for this modified example
-program. The list-based halfedge data structure
-\ccc{CGAL::HalfedgeDS_using_list} cannot be used since the pairwise
-allocation of halfedges is here not guaranteed to happen in
-consecutive memory locations. Here is the example for the vector based
-data structure.
+three pointers per halfedge. 
+
+We use the static member function \ccc{halfedge_handle()} to convert 
+from pointers to halfedge handles.
+
+The same solution can be applied to the
+list-based halfedge data structure \ccc{CGAL::HalfedgeDS_using_in_place_list},
+see \texttt{examples/HalfedgeDS/hds\_prog\_compact2.C}. The list-based
+halfedge data structure \ccc{CGAL::HalfedgeDS_using_list} cannot be
+used since the pairwise allocation of halfedges is here not guaranteed 
+to happen in consecutive memory locations. Here is the example for the 
+vector based data structure.
 
 \ccIncludeExampleCode{HalfedgeDS/hds_prog_compact.C}
 
@@ -313,8 +322,8 @@ The halfedge iterator is used to count the halfedges.
 \subsection{Example for an Adapter to Build an Edge Iterator}
 
 Three edges are created in the default halfedge data structure.
-The adapter {\tt N\_step\_adaptor} is used to declare an edge
-iterator, which is used to count the edges.
+The adapter \ccc{N_step_adaptor} is used to declare the edge
+iterator used in counting the edges.
 
 \ccIncludeExampleCode{HalfedgeDS/hds_prog_edge_iterator.C}
 

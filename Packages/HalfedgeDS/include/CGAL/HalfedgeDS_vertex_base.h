@@ -33,16 +33,19 @@
 
 CGAL_BEGIN_NAMESPACE
 
+
 #ifndef CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION
 
-template < class Refs, class T = Tag_true, class P = void>
+// We use Tag_false to indicate that no point type is provided.
+
+template < class Refs, class T = Tag_true, class P = Tag_false>
 class HalfedgeDS_vertex_base;
 
 template < class Refs >
-class HalfedgeDS_vertex_base< Refs, Tag_false, void> {
+class HalfedgeDS_vertex_base< Refs, Tag_false, Tag_false> {
 public:
     typedef Refs                                 HalfedgeDS;
-    typedef HalfedgeDS_vertex_base< Refs, Tag_false, void>  Base;
+    typedef HalfedgeDS_vertex_base< Refs, Tag_false, Tag_false>  Base;
     typedef Tag_false                            Supports_vertex_halfedge;
     typedef Tag_false                            Supports_vertex_point;
     typedef typename Refs::Vertex_handle         Vertex_handle;
@@ -55,11 +58,11 @@ public:
     typedef typename Refs::Face                  Face;
 };
 
-template < class Refs >
-class HalfedgeDS_vertex_base< Refs, Tag_true, void> {
+template < class Refs>
+class HalfedgeDS_vertex_base< Refs, Tag_true, Tag_false> {
 public:
     typedef Refs                                 HalfedgeDS;
-    typedef HalfedgeDS_vertex_base< Refs, Tag_true, void>   Base;
+    typedef HalfedgeDS_vertex_base< Refs, Tag_true, Tag_false>   Base;
     typedef Tag_true                             Supports_vertex_halfedge;
     typedef Tag_false                            Supports_vertex_point;
     typedef typename Refs::Vertex_handle         Vertex_handle;
@@ -78,7 +81,7 @@ public:
     void                  set_halfedge( Halfedge_handle h)  { hdg = h; }
 };
 
-template < class Refs, class P >
+template < class Refs, class P>
 class HalfedgeDS_vertex_base< Refs, Tag_false, P> {
 public:
     typedef Refs                                 HalfedgeDS;
@@ -103,7 +106,7 @@ public:
     const Point&          point() const                     { return p; }
 };
 
-template < class Refs, class P >
+template < class Refs, class P>
 class HalfedgeDS_vertex_base< Refs, Tag_true, P> {
 public:
     typedef Refs                                 HalfedgeDS;
@@ -136,15 +139,15 @@ public:
 
 // Partial specialization doesn't work. We can factor out the
 // Point parameter in a base class with full specialization
-// on 'void', but we cannot get rid of the halfedge reference.
+// on 'Tag_false', but we cannot get rid of the halfedge reference.
 // So, we just waste the space and have it always.
 //   Furthermore, it is likely to have a non-optimal memory
 // price-tag for the base class as well if it is the empty base
-// class for point type 'void', since empty structs probably
+// class for point type 'Tag_false', since empty structs probably
 // consume at least a byte, probably a word.
+//   See HalfedgeDS_face_min_base.h for an alternative.
 
-// O.K. And we are stuck with a compiler not accepting void as specialization.
-// Lets use bool for that compiler.
+// We use Tag_false to indicate that no point type is provided.
 
 template <class Pt>
 struct I_HalfedgeDS_vertex_base_point {
@@ -155,13 +158,13 @@ struct I_HalfedgeDS_vertex_base_point {
     typedef Pt Point;
 };
 template <>
-struct I_HalfedgeDS_vertex_base_point<bool> {
+struct I_HalfedgeDS_vertex_base_point<Tag_false> {
     typedef Tag_false Supports_point;
     struct Point_not_supported {};
     typedef Point_not_supported Point;
 };
 
-template < class Refs, class T = Tag_true, class P = bool>
+template < class Refs, class T = Tag_true, class P = Tag_false>
 class HalfedgeDS_vertex_base : public I_HalfedgeDS_vertex_base_point<P> {
 public:
     typedef Refs                                 HalfedgeDS;

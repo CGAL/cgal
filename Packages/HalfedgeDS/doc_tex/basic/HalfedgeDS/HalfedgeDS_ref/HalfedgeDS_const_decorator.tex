@@ -23,13 +23,13 @@ The classes \ccc{CGAL::HalfedgeDS_items_decorator<HDS>},
 \ccc{CGAL::HalfedgeDS_decorator<HDS>}, and
 \ccc{CGAL::HalfedgeDS_const_decorator<HDS>} provide additional functions
 to examine and to modify a halfedge data structure \ccc{HDS}. The class
-\ccc{CGAL::HalfedgeDS_items_decorator<HDS>} provide additional functions
+\ccc{CGAL::HalfedgeDS_items_decorator<HDS>} provides additional functions
 for vertices, halfedges, and faces of a halfedge data structure
 without knowing the containing halfedge data structure. The class
-\ccc{CGAL::HalfedgeDS_decorator<HDS>} knows a reference to the halfedge
-data structure and provides functions that modifies the halfedge data
+\ccc{CGAL::HalfedgeDS_decorator<HDS>} stores a reference to the halfedge
+data structure and provides functions that modify the halfedge data
 structure, for example Euler-operators. The class
-\ccc{CGAL::HalfedgeDS_const_decorator<HDS>} knows a const reference to
+\ccc{CGAL::HalfedgeDS_const_decorator<HDS>} stores a const reference to
 the halfedge data structure. It contains non-modifying functions, for
 example the test for validness of the data structure.
 
@@ -44,7 +44,7 @@ all halfedge data structures and will not appear here again.
 
 \ccInheritsFrom
 
-\ccc{CGAL::HalfedgeDS_items_decorator<HDS>}
+\ccRefIdfierPage{CGAL::HalfedgeDS_items_decorator<HDS>}
 
 \ccCreation
 \ccCreationVariable{D}
@@ -81,7 +81,7 @@ but a useful set of tests is defined with the following levels:
   All tests of level 0. For all halfedges $h$: The
   incident vertex of $h$ exists and is equal to the incident vertex of
   the opposite of the next halfedge. The incident face (or hole) of
-  $h$ is equal to the incident face (or hore) of the next halfedge.
+  $h$ is equal to the incident face (or hole) of the next halfedge.
 \item[Level 2]
   All tests of level 1. The sum of all halfedges that can
   be reached through the vertices must be equal to the number of all
@@ -115,8 +115,8 @@ but a useful set of tests is defined with the following levels:
 
 \ccSeeAlso
 
-\ccc{CGAL::HalfedgeDS_items_decorator<HDS>},
-\ccc{CGAL::HalfedgeDS_decorator<HDS>}.
+\ccRefIdfierPage{CGAL::HalfedgeDS_items_decorator<HDS>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_decorator<HDS>}
 
 \ccExample
 
@@ -126,8 +126,8 @@ We assume here that the level three check is the appropriate default
 for polyhedral surfaces.
 
 \begin{ccExampleCode}
-template <class Traits>
 namespace CGAL {
+    template <class Traits>
     class Polyhedron {
 	typedef HalfedgeDS_default<Traits> HDS;
 	HDS hds;
@@ -137,8 +137,8 @@ namespace CGAL {
 	    Verbose_ostream verr(verb);
 	    verr << "begin Polyhedron::is_valid( verb=true, level = " << level 
 		 << "):" << std::endl;
-	    HalfedgeDS_const_decorator<HDS> D(hds);
-	    bool valid = D.is_valid( verb, level + 3);
+	    HalfedgeDS_const_decorator<HDS> decorator(hds);
+	    bool valid = decorator.is_valid( verb, level + 3);
 	    // further checks ...
 	}
     };

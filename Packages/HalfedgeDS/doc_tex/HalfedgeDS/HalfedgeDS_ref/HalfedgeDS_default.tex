@@ -14,26 +14,27 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{HalfedgeDS_default<Traits,Items>}
+\begin{ccRefClass}{HalfedgeDS_default<Traits,HalfedgeDSItems>}
 
 \ccHtmlCrossLink{CGAL_HALFEDGEDS_DEFAULT}
 \ccHtmlIndexC[macro]{CGAL_HALFEDGEDS_DEFAULT}
 
 \ccDefinition
 
-~~~~~~\ccc{template <class Traits, class Items = CGAL::HalfedgeDS_items>}\\
+~~~~~~\ccc{template <class Traits, class HalfedgeDSItems
+             = CGAL::HalfedgeDS_items_2>}\\
 \mbox{}~~~~~~\ccc{class HalfedgeDS_default;}
 
 The class \ccRefName\ is a model for the \ccc{HalfedgeDS} concept. The
-second template parameter \ccc{Items} has a default argument
-\ccc{CGAL::HalfedgeDS_items}. \ccRefName\ is a list-based representation
+second template parameter \ccc{HalfedgeDSItems} has a default argument
+\ccc{CGAL::HalfedgeDS_items_2}. \ccRefName\ is a list-based representation
 with bidirectional iterators that supports removal.
 
 \ccInclude{CGAL/HalfedgeDS_default.h}
 
 \ccIsModel
 
-\ccc{HalfedgeDS}
+\ccRefIdfierPage{HalfedgeDS}
 
 \ccTypes
 \ccThree{typedef bidirectional_iterator_tag;}{Supports_removal;;}{}
@@ -44,14 +45,15 @@ with bidirectional iterators that supports removal.
 
 \ccSeeAlso
 
-\ccc{CGAL::HalfedgeDS_using_in_place_list}, 
-\ccc{CGAL::HalfedgeDS_using_list}, \\
-\ccc{CGAL::HalfedgeDS_using_vector},
-\ccc{HalfedgeDS_Items},
-\ccc{CGAL::Polyhedron_3},\\
-\ccc{CGAL::HalfedgeDS_items_decorator<HDS>},
-\ccc{CGAL::HalfedgeDS_decorator<HDS>},\\
-\ccc{CGAL::HalfedgeDS_const_decorator<HDS>}.
+\ccRefIdfierPage{CGAL::HalfedgeDS_using_in_place_list}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_using_list}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_using_vector}\\
+\ccRefIdfierPage{HalfedgeDSItems}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_items_2}\\
+\ccRefIdfierPage{CGAL::Polyhedron_3}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_items_decorator<HDS>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_decorator<HDS>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_const_decorator<HDS>}
 
 
 \ccImplementation
@@ -66,7 +68,7 @@ Due to a workaround for the flag \ccc{CGAL_CFG_NO_TMPL_IN_TMPL_PARAM},
 a halfedge data structure cannot be instantiated directly. For the
 \ccRefName\ a macro simplifies its direct use. However, when using a
 halfedge data structure as an argument for another class template,
-the class \ccRefName\ must be used, not the macro.
+the class template name \ccRefName\ must be used, not the macro.
 
 \begin{ccExampleCode}
 // The macro definition.

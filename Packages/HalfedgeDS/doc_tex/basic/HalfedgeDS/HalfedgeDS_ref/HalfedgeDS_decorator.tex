@@ -22,13 +22,13 @@ The classes \ccc{CGAL::HalfedgeDS_items_decorator<HDS>},
 \ccc{CGAL::HalfedgeDS_decorator<HDS>}, and
 \ccc{CGAL::HalfedgeDS_const_decorator<HDS>} provide additional functions
 to examine and to modify a halfedge data structure \ccc{HDS}. The class
-\ccc{CGAL::HalfedgeDS_items_decorator<HDS>} provide additional functions
+\ccc{CGAL::HalfedgeDS_items_decorator<HDS>} provides additional functions
 for vertices, halfedges, and faces of a halfedge data structure
 without knowing the containing halfedge data structure. The class
-\ccc{CGAL::HalfedgeDS_decorator<HDS>} knows a reference to the halfedge
-data structure and provides functions that modifies the halfedge data
+\ccc{CGAL::HalfedgeDS_decorator<HDS>} stores a reference to the halfedge
+data structure and provides functions that modify the halfedge data
 structure, for example Euler-operators. The class
-\ccc{CGAL::HalfedgeDS_const_decorator<HDS>} knows a const reference to
+\ccc{CGAL::HalfedgeDS_const_decorator<HDS>} stores a const reference to
 the halfedge data structure. It contains non-modifying functions, for
 example the test for validness of the data structure.
 
@@ -43,7 +43,7 @@ all halfedge data structures and will not appear here again.
 
 \ccInheritsFrom
 
-\ccc{CGAL::HalfedgeDS_items_decorator<HDS>}
+\ccRefIdfierPage{CGAL::HalfedgeDS_items_decorator<HDS>}
 
 \ccCreation
 \ccCreationVariable{D}
@@ -129,7 +129,7 @@ incidence relations except if mentioned otherwise.
    \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
 
 \ccMethod{void erase_connected_component( Halfedge_handle h);}
-    {removes the  vertices, halfedges, and facets that belong to the 
+    {removes the  vertices, halfedges, and faces that belong to the 
      connected component of $h$. \ccPrecond \ccc{Supports_removal} $\equiv$
      \ccc{CGAL::Tag_true}. For all halfedges $g$ in the 
      connected component \ccc{g.next() != Halfedge_handle()}.}
@@ -343,7 +343,8 @@ the halfedge \ccc{h->next} with a new face in-between.
 \ccHeading{Validness Checks}
 \ccThree{Halfe}{dge_handlehds.split_f}{}
 
-These operations are the same as for \ccc{CGAL::HalfedgeDS_const_decorator<HDS>}.
+These operations are the same as for 
+\ccc{CGAL::HalfedgeDS_const_decorator<HDS>}.
 \begin{ccTexOnly}
     See their documentation on page~\pageref{pageHalfedgeDSconstDecoratorRef}.
 \end{ccTexOnly}

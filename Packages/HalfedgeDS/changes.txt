@@ -1,5 +1,13 @@
 HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
+3.9 (21 Jun 2001)
+
+     - Attempt to fix bug in hds_prog_compact.C. 
+     - New naming scheme for concepts.
+     - New kernel traits introduced.
+     - Changed name of HalfedgeDS_items.h to HalfedgeDS_items_2.h.
+     - Revised example files and doc.
+
 3.8 (19 Jun 2001)
 
      - Changes in the doc.

@@ -32,31 +32,33 @@ The data structure provided here is known as the
 FE-structure~\cite{w-ebdss-85}, as
 halfedges~\cite{m-ism-88,bfh-mgedm-95} or as the doubly connected edge
 list (DCEL)~\cite{bkos-cgaa-97}, although the original reference for
-the DCEL~\cite{mp-fitcp-78} describes a different data structure. The
-halfedge data structure can also be seen as one of the variants of the
-quad-edge data structure~\cite{gs-pmgsc-85} that supports only
-orientable 2-manifolds. In general, the quad-edge data can represent
-non-orientable 2-manifolds.  An overview and comparison of these
-different data structures together with a thorough description of the
-design implemented here can be found in~\cite{k-ugpdd-99}.
+the DCEL~\cite{mp-fitcp-78} describes a related but different data
+structure. The halfedge data structure can also be seen as one of the
+variants of the quad-edge data structure~\cite{gs-pmgsc-85}. In
+general, the quad-edge data can represent non-orientable 2-manifolds,
+but the variant here is restricted to orientable 2-manifolds only. An
+overview and comparison of these different data structures together
+with a thorough description of the design implemented here can be
+found in~\cite{k-ugpdd-99}.
 
 \subsection*{Concepts}
 
 \ccRefIdfierPage{HalfedgeDS<Traits,Items>}\\ 
-\ccRefIdfierPage{HalfedgeDS_Items}\\ 
-\ccRefIdfierPage{HalfedgeDS_Vertex}\\ 
-\ccRefIdfierPage{HalfedgeDS_Halfedge}\\ 
-\ccRefIdfierPage{HalfedgeDS_Face}
+\ccRefIdfierPage{HalfedgeDSItems}\\ 
+\ccRefIdfierPage{HalfedgeDSVertex}\\ 
+\ccRefIdfierPage{HalfedgeDSHalfedge}\\ 
+\ccRefIdfierPage{HalfedgeDSFace}
 
 \subsection*{Classes}
 
-\ccRefIdfierPage{CGAL::HalfedgeDS_default<Traits,Items>}\\ 
-\ccRefIdfierPage{CGAL::HalfedgeDS_using_in_place_list<Traits,Items>}\\ 
-\ccRefIdfierPage{CGAL::HalfedgeDS_using_list<Traits,Items>}\\ 
-\ccRefIdfierPage{CGAL::HalfedgeDS_using_vector<Traits,Items>}
+\ccRefIdfierPage{CGAL::HalfedgeDS_default<Traits,HalfedgeDSItems>}\\ 
+\ccRefIdfierPage{CGAL::HalfedgeDS_using_in_place_list<Traits,HalfedgeDSItems>}
+\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_using_list<Traits,HalfedgeDSItems>}\\ 
+\ccRefIdfierPage{CGAL::HalfedgeDS_using_vector<Traits,HalfedgeDSItems>}
 
-\ccRefIdfierPage{CGAL::HalfedgeDS_items}\\ 
-\ccRefIdfierPage{CGAL::HalfedgeDS_min_items}
+\ccRefIdfierPage{CGAL::HalfedgeDS_min_items}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_items_2}
 
 \ccRefIdfierPage{CGAL::HalfedgeDS_vertex_base<Refs>}\\ 
 \ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_base<Refs>}\\ 

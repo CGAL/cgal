@@ -42,16 +42,17 @@ class Polyhedron_items_3 {
 public:
     template < class Refs, class Traits>
     struct Vertex_wrapper {
-        typedef typename Traits::Point Point;
+        typedef typename Traits::Point_3 Point;
         typedef HalfedgeDS_vertex_base< Refs, Tag_true, Point> Vertex;
     };
     template < class Refs, class Traits>
     struct Halfedge_wrapper {
-        typedef HalfedgeDS_halfedge_base< Refs> Halfedge;
+        typedef HalfedgeDS_halfedge_base< Refs>                Halfedge;
     };
     template < class Refs, class Traits>
     struct Face_wrapper {
-        typedef HalfedgeDS_face_base< Refs, Tag_true, Traits> Face;
+        typedef typename Traits::Plane_3 Plane;
+        typedef HalfedgeDS_face_base< Refs, Tag_true, Plane>   Face;
     };
 };
 

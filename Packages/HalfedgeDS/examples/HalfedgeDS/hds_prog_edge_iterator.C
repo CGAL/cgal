@@ -4,7 +4,7 @@
 #include <CGAL/HalfedgeDS_decorator.h>
 #include <CGAL/N_step_adaptor.h>
 
-struct Traits { typedef int Point; };
+struct Traits { typedef int Point_2; };
 typedef CGAL_HALFEDGEDS_DEFAULT<Traits>             HDS;
 typedef CGAL::HalfedgeDS_decorator<HDS>             Decorator;
 typedef HDS::Halfedge_iterator                      Halfedge_iterator;

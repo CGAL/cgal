@@ -25,26 +25,20 @@
 // ============================================================================
 
 
-#include <CGAL/basic.h>
-#include <cstddef>
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/HalfedgeDS_default.h>
 #include <CGAL/HalfedgeDS_min_items.h>
 #include <CGAL/Polyhedron_items_3.h>
 #include <CGAL/HalfedgeDS_decorator.h>
-#include <CGAL/Point_2.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/Plane_3.h>
+#include <cstddef>
 
-typedef CGAL::Cartesian<double>   Rep;
+typedef CGAL::Cartesian<double>   Kernel;
 struct Dummy_traits_3 {
-    typedef CGAL::Point_3<Rep>    Point;
-    typedef CGAL::Vector_3<Rep>   Normal;
-    typedef CGAL::Plane_3<Rep>    Plane;
+    typedef Kernel::Point_3    Point_3;
+    typedef Kernel::Plane_3    Plane_3;
 };
 struct Dummy_traits_2 {
-    typedef CGAL::Point_2<Rep>    Point;
+    typedef Kernel::Point_2    Point_2;
 };
 
 struct Empty_traits {};

@@ -16,9 +16,9 @@ struct My_items : public CGAL::HalfedgeDS_min_items {
     };
 };
 
-// no traits needed, argument can be void.
-typedef CGAL_HALFEDGEDS_DEFAULT<void, My_items> HDS;
-typedef CGAL::HalfedgeDS_decorator<HDS>         Decorator;
+// no traits needed, argument can be arbitrary dummy.
+typedef CGAL_HALFEDGEDS_DEFAULT<int, My_items> HDS;
+typedef CGAL::HalfedgeDS_decorator<HDS>        Decorator;
 
 int main() {
     HDS hds;

@@ -22,13 +22,13 @@ The classes \ccc{CGAL::HalfedgeDS_items_decorator<HDS>},
 \ccc{CGAL::HalfedgeDS_decorator<HDS>}, and
 \ccc{CGAL::HalfedgeDS_const_decorator<HDS>} provide additional functions
 to examine and to modify a halfedge data structure \ccc{HDS}. The class
-\ccc{CGAL::HalfedgeDS_items_decorator<HDS>} provide additional functions
+\ccc{CGAL::HalfedgeDS_items_decorator<HDS>} provides additional functions
 for vertices, halfedges, and faces of a halfedge data structure
 without knowing the containing halfedge data structure. The class
-\ccc{CGAL::HalfedgeDS_decorator<HDS>} knows a reference to the halfedge
-data structure and provides functions that modifies the halfedge data
+\ccc{CGAL::HalfedgeDS_decorator<HDS>} stores a reference to the halfedge
+data structure and provides functions that modify the halfedge data
 structure, for example Euler-operators. The class
-\ccc{CGAL::HalfedgeDS_const_decorator<HDS>} knows a const reference to
+\ccc{CGAL::HalfedgeDS_const_decorator<HDS>} stores a const reference to
 the halfedge data structure. It contains non-modifying functions, for
 example the test for validness of the data structure.
 
@@ -204,8 +204,8 @@ Corresponding member functions for \ccc{const_handle}'s are also available.
 
 \ccSeeAlso
 
-\ccc{CGAL::HalfedgeDS_decorator<HDS>},
-\ccc{CGAL::HalfedgeDS_const_decorator<HDS>}.
+\ccRefIdfierPage{CGAL::HalfedgeDS_decorator<HDS>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_const_decorator<HDS>}
 
 \ccExample
 
@@ -217,6 +217,12 @@ regardless of whether the halfedge data structure \ccc{HDS} provides a
 the implementation given here runs in time proportional to the size of the 
 incident face. For const-correctness a second implementation with signature
 \ccc{Halfedge_const_handle  prev() const;} is needed.
+
+Note also the use of the static member function \ccc{halfedge_handle()}
+of the halfedge data structure. It converts a pointer to the halfedge
+into a halfedge handle. This conversion encapsulates possible
+adjustments for hidden data members in the true halfedge type, such as
+linked-list pointers.
 
 \begin{ccExampleCode}
 struct Polyhedron_halfedge {
