@@ -52,8 +52,8 @@ public:
      P(first,last), cp(0)
   { TUPLE_DIM_CHECK(P.begin(),P.end(),Sphere_d);
     CGAL_assertion(d+1==int(P.size()));
-    typename R::Orientation_d or;
-    orient = or(P.begin(),P.end()); }
+    typename R::Orientation_d orientation_;
+    orient = orientation_(P.begin(),P.end()); }
 
   ~Sphere_d_rep() { if (cp) delete cp; }
 

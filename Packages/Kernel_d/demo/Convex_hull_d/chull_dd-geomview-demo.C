@@ -10,6 +10,7 @@
 #include <CGAL/Convex_hull_d_to_polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_geomview_ostream.h>
 #include <iostream>
+#include <string>
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
@@ -56,7 +57,7 @@ typedef  CGAL::Polyhedron_3<Traits,HDS> Polyhedron;
 int main(int argc, char* argv[]) {
   int dimension = 3;  
   int n = 100; 
-  if (argc > 1 && leda_string(argv[1])=="-h") {
+  if (argc > 1 && std::string(argv[1])=="-h") {
     std::cout << "usage: chddemo [#points]\n";
     exit(1);
   }
@@ -76,7 +77,7 @@ int main(int argc, char* argv[]) {
     T.insert(*it); i++;
     if (i%10==0) std::cout << i << " points inserted" << std::endl;
   }
-  T.is_valid(); 
+  T.is_valid(true); 
 
   Polyhedron P;
   CGAL::convex_hull_d_to_polyhedron_3(T,P);

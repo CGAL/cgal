@@ -86,8 +86,8 @@ include |<CGAL/Convex_hull_d_to_polyhedron_3.h>|
 template <class R, class T, class HDS>
 void convex_hull_d_to_polyhedron_3(
   const Convex_hull_d<R>& C, Polyhedron_3<T,HDS>& P)
-/*{\Mfunc converts the convex hull |C| to polyedral surface stored in |P|.\\
-\precond |dim == 3| and |dcur == 3|. }*/
+/*{\Mfunc converts the convex hull |C| to polyedral surface stored in 
+   |P|.\\ \precond |dim == 3| and |dcur == 3|. }*/
 { typedef Convex_hull_d<R> ChullType;
   CGAL_assertion_msg(C.dimension()==3&&C.current_dimension()==3,
   "convex_hull_d_to_polyhedron_3: only full manifold can be transformed.");

@@ -90,25 +90,27 @@ representation classes (e.g., \ccc{Homogeneous_d}).
 The data type \ccc{Convex_hull_d} offers neither copy constructor nor
 assignment operator. 
 
+\ccHeading{Requirements}
 
+\ccc{R} is a model of the concept \ccc{ConvexHullTraits_d}
+  \ccIndexMainItem[c]{ConvexHullTraits_d}.                    
 
 \ccSetOneOfTwoColumns{3cm}
 
 \ccOperations
 
-All operations below that take a point \ccc{x} as argument have
-the common precondition that \ccc{x} is a point of ambient space. 
+All operations below that take a point \ccc{x} as argument have the
+common precondition that \ccc{x} is a point of ambient space.
 
 
 
-\ccMethod{int dimension() ;}{returns the dimension of ambient space 
-}
+\ccMethod{int dimension() ;}{returns the dimension of ambient space }
 
-\ccMethod{int current_dimension() ;}{returns the affine dimension \ccc{dcur} of $S$. 
-}
+\ccMethod{int current_dimension() ;}{%
+returns the affine dimension \ccc{dcur} of $S$. }
 
-\ccMethod{Point_d  associated_point(Vertex_handle v) ;}{returns the point associated with vertex $v$. 
-}
+\ccMethod{Point_d  associated_point(Vertex_handle v) ;}{%
+returns the point associated with vertex $v$.}
 
 \ccMethod{Vertex_handle  vertex_of_simplex(Simplex_handle s, int i) ;}{returns the vertex corresponding to the $i$-th vertex of $s$.\\
 \ccPrecond $0 \leq i \leq \ccc{dcur}$.  

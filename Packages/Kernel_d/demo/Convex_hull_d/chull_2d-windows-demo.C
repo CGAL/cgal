@@ -1,3 +1,4 @@
+#ifdef CGAL_USE_LEDA
 #include <CGAL/basic.h>
 #include <CGAL/Homogeneous_d.h>
 #include <CGAL/leda_integer.h>
@@ -39,7 +40,7 @@ int main() {
     Point x(ia,ib); 
 
     T.insert(x); 
-    T.is_valid();
+    T.is_valid(true);
     W.clear(); 
     CGAL::d2_show(T,W); 
     
@@ -48,4 +49,16 @@ int main() {
   }
   return 0;
 }
+
+#else
+#include <iostream>
+
+int main()
+{ 
+  std::cout << "this program requires LEDA" << std::endl;
+  return 0;
+}
+
+#endif // CGAL_USE_LEDA
+
 

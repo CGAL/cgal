@@ -1,3 +1,4 @@
+#ifdef CGAL_USE_LEDA
 #include <CGAL/basic.h>
 #include <CGAL/leda_integer.h>
 #include <CGAL/Convex_hull_d.h>
@@ -24,7 +25,7 @@ typedef CGAL::Convex_hull_d<Kernel_d_3> Convex_hull_d;
 typedef Convex_hull_d::Point_d Point;
 typedef Convex_hull_d::Simplex_handle Simplex_handle;
 
-leda_vector to_vector(const Point& p)
+leda_vector leda_vec(const Point& p)
 { return leda_vector(CGAL::to_double(p.x()),
                      CGAL::to_double(p.y()),
                      CGAL::to_double(p.z()));
@@ -33,7 +34,7 @@ leda_vector to_vector(const Point& p)
 
 int main(int argc, char* argv[]) {
   CGAL::set_pretty_mode ( std::cerr );
-  SETDTHREAD(191);
+  SETDTHREAD(93);
   int numpoints = 20;
   leda_string ifile("");
   if (argc > 1) numpoints = atoi(argv[1]);
@@ -56,7 +57,7 @@ int main(int argc, char* argv[]) {
   if (from) from >> L;
   else {
     int r = numpoints;
-    rand_int.set_range(0,r);
+    rand_int.set_range(-r,r);
     int x,y,z;
     while (r--) { 
       rand_int >> x >> y >> z; 
@@ -66,9 +67,9 @@ int main(int argc, char* argv[]) {
 
   std::ofstream To("ch3-demo.log");
   Point p;
-  forall(p,L) {
-    To << p; T.insert(p); T.is_valid();
-  }
+  // forall(p,L) { To << p; T.insert(p); T.is_valid(true); }
+  T.initialize(L.begin(),L.end());
+  T.print_statistics();
   To.flush(); 
   GRAPH<Point,int> G;
   leda_node_array<leda_vector> pos(G);
@@ -92,7 +93,7 @@ int main(int argc, char* argv[]) {
       break;
     }
     pos.init(G);
-    forall_nodes(v,G) pos[v] = to_vector(G[v]);
+    forall_nodes(v,G) pos[v] = leda_vec(G[v]);
     W3.init(pos);
     W3.draw();
     while (but != MOUSE_BUTTON(3))
@@ -101,4 +102,14 @@ int main(int argc, char* argv[]) {
   }
 }
 
+#else
+#include <iostream>
+
+int main()
+{ 
+  std::cout << "this program requires LEDA" << std::endl;
+  return 0;
+}
+
+#endif // CGAL_USE_LEDA
 

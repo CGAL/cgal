@@ -85,6 +85,8 @@ int main()
     CGAL_TEST(T1.number_of_vertices()==0);
     CGAL_TEST(T1.number_of_facets()==0);
     CGAL_TEST(T1.number_of_simplices()==0);
+    std::vector<Point> V = make_vector(p1,p2,p3,p4);
+    T1.initialize(V.begin(),V.end());
   }
 
 

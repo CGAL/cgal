@@ -1,3 +1,24 @@
+// ======================================================================
+//
+// Copyright (c) 2001 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : $CGAL_Revision: CGAL-2.3-I-67 $
+// release_date  : $CGAL_Date: 2001/05/29 $
+//
+// file          : include/CGAL/Kernel_d/VectorCd.C
+// package       : Kernel_d (0.9.19)
+// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
+// author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
+// coordinator   : Susan Hert <hert@mpi-sb.mpg.de>
+//
+// ======================================================================
+
 #ifndef CGAL_VECTORCD_C
 #define CGAL_VECTORCD_C
 CGAL_BEGIN_NAMESPACE
@@ -9,7 +30,7 @@ PointCd<FT,LA> VectorCd<FT,LA>::to_point() const
 
 template <class FT,class LA>
 PointCd<FT,LA> 
-operator+ (const Origin& o, const VectorCd<FT,LA>& v)
+operator+ (const Origin&, const VectorCd<FT,LA>& v)
 { return v.to_point(); }
 
 template <class FT, class LA>

@@ -197,7 +197,7 @@ void d3_surface_map(const Convex_hull_d<R>& C,
           std::swap(vk,vj); std::swap(k,j); 
         }
 
-        leda_edge efirst = G.new_edge(vi,vk);  // first edge incident to vi
+        G.new_edge(vi,vk);  // first edge incident to vi
         Facet_handle fcur = f; 
         int jcur = j; int kcur = k; int icur = i;
 

@@ -540,7 +540,8 @@ public:
   point set $S$ and the convex hull of |lift(S)|: The nearest site
   Delaunay triangulation is the projection of the lower hull and the
   furthest site Delaunay triangulation is the upper hull.  For
-  implementation details we refer the reader to \cite{MS98}.
+  implementation details we refer the reader to the implementation
+  report available from the CGAL server.
 
   The space requirement is the same as for convex hulls. The time
   requirement for an insert is the time to insert the lifted point

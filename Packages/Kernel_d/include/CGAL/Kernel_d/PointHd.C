@@ -1,3 +1,24 @@
+// ======================================================================
+//
+// Copyright (c) 2001 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : $CGAL_Revision: CGAL-2.3-I-67 $
+// release_date  : $CGAL_Date: 2001/05/29 $
+//
+// file          : include/CGAL/Kernel_d/PointHd.C
+// package       : Kernel_d (0.9.19)
+// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
+// author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
+// coordinator   : Susan Hert <hert@mpi-sb.mpg.de>
+//
+// ======================================================================
+
 #ifndef CGAL_POINTHD_C
 #define CGAL_POINTHD_C
 CGAL_BEGIN_NAMESPACE
@@ -9,7 +30,7 @@ transform(const Aff_transformationHd<RT,LA>& t) const
   return PointHd<RT,LA>(dimension(),res.begin(),res.end()); }
 
 template <class RT, class LA>
-VectorHd<RT,LA> PointHd<RT,LA>::operator-(const Origin& o) const 
+VectorHd<RT,LA> PointHd<RT,LA>::operator-(const Origin&) const 
 { return VectorHd<RT,LA>(Base(*this)); }
 
 template <class RT, class LA>

@@ -4,8 +4,6 @@
 
 \ccDefinition
 
-
-
 An instance \ccc{DT} of type \ccc{Delaunay_d< R, Lifted_R >} is the
 nearest and furthest site Delaunay triangulation of a set \ccc{S} of
 points in some $d$-dimensional space. We call \ccc{S} the underlying
@@ -93,6 +91,7 @@ of \ccc{Delaunay_d< R, Lifted_R >::Vertex_handle} from now on. Similarly we use
 \ccNestedType{Simplex_iterator}{the iterator for simplices. 
 }
 
+
 \ccSetOneOfTwoColumns{3cm}
 
 \ccCreation
@@ -107,15 +106,15 @@ the base class of \ccc{Delaunay_d< R, Lifted_R >}. The second template parameter
 the first: \ccc{Delaunay_d<R> = Delaunay_d<R, Lifted_R = R >}. 
 }
 
-Both template arguments have to be models that fit a
-subset of requirements of the d-dimensional kernel. We list them at
-the end of this manual page. 
-
-
-
 The data type \ccc{Delaunay_d} offers neither copy constructor nor
 assignment operator. 
 
+\ccHeading{Requirements}
+
+\ccc{R} is a model of the concept \ccc{DelaunayTraits_d}
+  \ccIndexMainItem[c]{DelaunayTraits_d}.                    
+\ccc{Lifted_R} is a model of the concept \ccc{DelaunayLiftedTraits_d}
+  \ccIndexMainItem[c]{DelaunayLiftedTraits_d}.
 
 
 \ccSetTwoOfThreeColumns{3cm}{3cm}

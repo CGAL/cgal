@@ -1,3 +1,26 @@
+// ======================================================================
+//
+// Copyright (c) 2000,2001 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : $CGAL_Revision$
+// release_date  : $CGAL_Date$
+//
+// file          : include/CGAL/predicates_d.h
+// package       : Kernel_d
+// maintainer    : Michael Seel <Michael.Seel@mpi-sb.mpg.de>
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Michael Seel
+// coordinator   : MPI Saarbruecken (Susan.Hert@mpi-sb.mpg.de)
+//
+// ======================================================================
+
 #ifndef CGAL_PREDICATES_D_H
 #define CGAL_PREDICATES_D_H
 
@@ -56,7 +79,7 @@ This is the sign of the determinant
   and the value type of |ForwardIterator| is |Point_d<R>|.}*/
 { typedef typename std::iterator_traits<ForwardIterator>::value_type Point_d;
   typedef typename Point_d::R R;
-  typename R::Orientation_d or; return or(first,last); }
+  typename R::Orientation_d or_; return or_(first,last); }
 
 template <class R, class ForwardIterator>
 Oriented_side side_of_oriented_sphere(

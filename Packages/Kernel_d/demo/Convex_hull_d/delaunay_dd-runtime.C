@@ -1,3 +1,4 @@
+#ifdef CGAL_USE_LEDA
 #include <CGAL/basic.h>
 #include <CGAL/Homogeneous_d.h>
 #include <CGAL/Delaunay_d.h>
@@ -83,5 +84,16 @@ int main(int argc, char* argv[])
   print_statistics(); 
   return 0;
 }
+
+#else
+#include <iostream>
+
+int main()
+{ 
+  std::cout << "this program requires LEDA" << std::endl;
+  return 0;
+}
+
+#endif // CGAL_USE_LEDA
 
 
