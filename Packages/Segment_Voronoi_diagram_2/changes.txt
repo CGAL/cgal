@@ -1,3 +1,10 @@
+4 June 2004:  Menelaos Karavelas
+- fixed bug in find_faces_to_split in Segment_Voronoi_diagram_2.C: the
+  method was not working when the faces to be split were infinite
+- added one more operator() in Svd_oriented_side_C2 (needed for the
+  fix above) and propagated the change so that all traits and all
+  filtering mechanisms can use it.
+
 31 May 2004:  Menelaos Karavelas
 - fix bug in insert_segment in Segment_Voronoi_diagram_2.C
 
