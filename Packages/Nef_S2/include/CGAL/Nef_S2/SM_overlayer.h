@@ -528,7 +528,7 @@ public:
 
   template <typename Forward_iterator>
   void create_from_segments(
-    Forward_iterator start, Forward_iterator end) const; 
+    Forward_iterator start, Forward_iterator end); 
   /*{\Mop produces the sphere map which is the overlay of the
   segments from the iterator range |[start,end)|.  \precond
   |Forward_iterator| has value type |Sphere_segment|.}*/
@@ -539,7 +539,7 @@ public:
   circles from the iterator range |[start,end)|.  \precond
   |Forward_iterator| has value type |Sphere_circle|.}*/
 
-  void create(const Sphere_circle& c) const;
+  void create(const Sphere_circle& c);
   /*{\Mop produces the sphere map which consists of one loop
   and the two halfspheres incident to it.}*/
 
@@ -609,7 +609,7 @@ public:
 template <typename Map>
 template <typename Forward_iterator>
 void SM_overlayer<Map>::
-create_from_segments(Forward_iterator start, Forward_iterator end) const
+create_from_segments(Forward_iterator start, Forward_iterator end)
 {
   TRACEN("creating from segment iterator range");
   Seg_list L(start,end);
@@ -877,7 +877,7 @@ check_sphere(const Seg_list& L, bool compute_halfsphere[3][2]) const {
 
 template <typename Map>
 void SM_overlayer<Map>::
-create(const Sphere_circle& c) const
+create(const Sphere_circle& c)
 { SHalfloop_handle l1 = new_shalfloop_pair();
   SHalfloop_handle l2 = twin(l1);
   circle(l1) = c; circle(l2) = c.opposite();
