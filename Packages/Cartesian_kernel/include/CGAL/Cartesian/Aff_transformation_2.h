@@ -105,22 +105,28 @@ public:
                        const FT &w = FT(1));
 
   Point_2     transform(const Point_2 &p) const 
-    { return ptr()->transform(p); } 
+  { return ptr()->transform(p); } 
 
-  Point_2     operator()(const Point_2 &p) const { return transform(p); }
+  Point_2     operator()(const Point_2 &p) const
+  { return transform(p); }
 
   Vector_2    transform(const Vector_2 &v) const 
-    { return ptr()->transform(v); }
+  { return ptr()->transform(v); }
 
-  Vector_2    operator()(const Vector_2 &v) const { return transform(p); }
+  Vector_2    operator()(const Vector_2 &v) const
+  { return transform(p); } // FIXME : p ???
 
   Direction_2 transform(const Direction_2 &d) const
-    { return ptr()->transform(d); }
+  { return ptr()->transform(d); }
 
-  Direction_2 operator()(const Direction_2 &d) const { return transform(d); }
+  Direction_2 operator()(const Direction_2 &d) const
+  { return transform(d); }
 
-  Line_2      transform(const Line_2 &l) const { return l.transform(*this); }
-  Line_2      operator()(const Line_2 &l) const {return transform(l); }
+  Line_2      transform(const Line_2 &l) const
+  { return l.transform(*this); }
+
+  Line_2      operator()(const Line_2 &l) const
+  { return transform(l); }
 
   Self        inverse() const { return ptr()->inverse(); }
 
