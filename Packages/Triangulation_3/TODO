@@ -31,22 +31,10 @@ Exemples - demo
 TDS
 - comprendre bug dans ancienne version de is_edge de tds, dim 2 
 	(pb edge_iterator...? etonnant)
-- set_number_of_vertices(number_of_vertices()+1);  devrait etre dans la TDS ?
-- insert_conflicts :
-  y'a des utilisateurs (David, mesh...) qui ont besoin de connaitre l'ensemble
-  des cellules en conflit avant de decider s'il veulent inserer un point...
-  Solution :
-  - documenter le flag dans la cell_base
-  - avoir dans la TDS un insert_conflict qui ne prend qui des cellules
-    marquees.
-  - avoir un autre qui prend un iterateur en argument.  Celui-la marque
-    simplement les cellules, puis appelle l'autre.
-    (et remplacer le std::vector<Cell*> temp_cells par ca.
-  - remettre le find_conflicts dans la Triangulation, et en avoir une version
-    qui rend un iterateur et reset le flag avant de renvoyer a
-    l'utilisateur...
 
 T3
+- .triangle(Facet) devrait retourner un triangle oriente 
+  (cf mail sur cgal-discuss-l).
 - nettoyer flips/is_flippable (code duplique)
 - incident_facets, incident_cells (vieille demande de Frank a
   rediscuter) 
