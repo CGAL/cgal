@@ -47,10 +47,12 @@ template < class HDS>
 class Polyhedron_incremental_builder_3 {
 public:
     typedef HDS                      Halfedge_data_structure;
+    typedef HDS                      HalfedgeDS;
     typedef typename HDS::Vertex     Vertex;
     typedef typename HDS::Halfedge   Halfedge;
     typedef typename HDS::Facet      Facet;
     typedef typename HDS::Point      Point;
+    typedef typename HDS::Point      Point_3;
     typedef typename HDS::Size       Size;
 
 protected:

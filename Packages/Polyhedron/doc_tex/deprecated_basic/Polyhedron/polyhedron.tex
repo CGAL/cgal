@@ -27,7 +27,7 @@ design.  The old files are still available for backwards compatibility
 and to support older compiler, such as MSVC++6.0. However their use is
 deprecated and the manual page are not converted into the new
 reference manual format. Instead they are collected in the manual
-here. See the regular user and reference manual for the new design.
+here. See the regular user and reference manual for the new.%
 
 For the polyhedral surface, old and new design cannot be used
 simultaneously (they have identical include file names and class
@@ -42,21 +42,14 @@ is selected with the
 % +------------------------------------------------------------------------+
 \section{Introduction}
 
-This chapter presents polyhedral surfaces in three dimensions. They
-are a collection of vertices, edges and facets with an incidence
-relationship on them. The organization beneath is a halfedge data
-structure which restricts the class of representable surfaces to
-orientable 2-manifolds -- with and without boundary. In the case of a
-closed surface we call it a {\em polyhedron}.
-
 \begin{ccTexOnly}
-    %\vspace{-4mm}
+    \vspace*{-12mm}
     \begin{center}~\hspace{5cm}
       \parbox{0.55\textwidth}{%
           \includegraphics[width=0.55\textwidth]{fig/shark.ps}%
       }
     \end{center}
-    \vspace*{-16mm}
+    \vspace*{-6mm}
 \end{ccTexOnly}
 
 \begin{ccHtmlOnly}
@@ -64,6 +57,13 @@ closed surface we call it a {\em polyhedron}.
         <img src="./shark.gif" alt="Shaded Rendering of a Shark Model"><P>
     </CENTER>
 \end{ccHtmlOnly}
+
+This chapter presents polyhedral surfaces in three dimensions. They
+are a collection of vertices, edges and facets with an incidence
+relationship on them. The organization beneath is a halfedge data
+structure which restricts the class of representable surfaces to
+orientable 2-manifolds -- with and without boundary. In the case of a
+closed surface we call it a {\em polyhedron}.
 
 \subsection*{Design Rationale}
 
@@ -227,7 +227,7 @@ template argument.
 
 \ccNestedType{Traits}{traits class.}
 \ccGlue
-\ccNestedType{Halfedge_data_structure}{halfedge data structure \ccc{HDS}.}
+\ccNestedType{HalfedgeDS}{halfedge data structure \ccc{HDS}.}
 \ccGlue
 \ccNestedType{Vertex}{vertex type\lcHtml{, \ccc{Polyhedron_Vertex}}.}
 \ccGlue
@@ -242,11 +242,11 @@ template argument.
 Types for the (optionally) associated geometry. If
 the specific item is not supported the type is \ccc{void*}.
 
-\ccNestedType{Point}{point stored in vertices.}
+\ccNestedType{Point_3}{point stored in vertices.}
 \ccGlue
-\ccNestedType{Plane}{plane equation stored in facets.}
+\ccNestedType{Plane_3}{plane equation stored in facets.}
 \ccGlue
-\ccNestedType{Normal}{normal vector stored in facets.}
+\ccNestedType{Vector_3}{normal vector stored in facets.}
 
 The following handles, iterators and circulators have appropriate
 non-mutable counterparts. The mutable types are assignable to their
@@ -309,10 +309,10 @@ in the polyhedron traits class provides a member function
     adds a new tetrahedron to the polyhedral surface. 
     Returns an arbitrary halfedge of the tetrahedron.}
 
-\ccMethod{Halfedge_handle make_tetrahedron(const Point& p1, 
-                                           const Point& p2,
-                                           const Point& p3, 
-                                           const Point& p4);}{
+\ccMethod{Halfedge_handle make_tetrahedron(const Point_3& p1, 
+                                           const Point_3& p2,
+                                           const Point_3& p3, 
+                                           const Point_3& p4);}{
     adds a new tetrahedron to the polyhedral surface with its
     vertices initialized with $p_1, p_2, p_3$ and $p_4$. Returns that
     halfedge of the tetrahedron which incident vertex is initialized
@@ -326,9 +326,9 @@ in the polyhedron traits class provides a member function
     Returns an arbitrary, non-border halfedge of the triangle.}
 \vspace{-3mm}
 
-\ccMethod{Halfedge_handle make_triangle(const Point& p1, 
-                                        const Point& p2,
-                                        const Point& p3);}{
+\ccMethod{Halfedge_handle make_triangle(const Point_3& p1, 
+                                        const Point_3& p2,
+                                        const Point_3& p3);}{
     adds a new triangle with border edges to the polyhedral surface with its
     vertices initialized with $p_1, p_2$ and $p_3$. Returns that
     non-border halfedge of the triangle which incident vertex is initialized
@@ -337,6 +337,7 @@ in the polyhedron traits class provides a member function
 \vspace{-3mm}
 
 % +-----------------------------------+
+\vspace*{-2mm}
 \ccHeading{Access Member Functions}
 \ccThree{Halfedge_iterator}{P.size_of_border_halfedges();}{}
 
@@ -469,7 +470,6 @@ unchanged.
     size of both facets incident to $h$ is at least four (no multi-edges).}
 
 % +-----------------------------------+
-\newpage
 \ccHeading{Euler Operators Modifying Genus}
 
 \begin{ccTexOnly}
@@ -564,6 +564,8 @@ unchanged.
     </CENTER>
 \end{ccHtmlOnly}
 
+\ccThree{Halfedge_handle}{P.erase_all();}{}
+
 \ccMethod{Halfedge_handle add_facet_to_border( Halfedge_handle h,
                                                Halfedge_handle g);}
    {creates a new facet within the hole incident to $h$
@@ -622,7 +624,7 @@ edges start at within the data structure.  Halfedge insertion or
 removal and changing the border status of a halfedge may invalidate
 these values, which are not automatically updated.
 
-\ccThree{Halfe}{dge_handleP.split_f}{}
+\ccThree{Halfe}{dge_handleP.erase_all();M;;;}{}
 
 \ccMethod{void   normalize_border();}
     {sorts halfedges such that the non-border edges precedes the
@@ -726,23 +728,6 @@ supported or not.
 \end{ccClassTemplate} 
 
 % +========================================================================+
-
-\begin{ccTexOnly}
-    \begin{figure}
-        \begin{center}
-          \parbox{\textwidth}{%
-              \includegraphics[width=\textwidth]{fig/poly_optional.ips}%
-          }
-        \end{center}
-        \caption{The three classes \protect\ccc{Vertex}, 
-          \protect\ccc{Halfedge}, and 
-          \protect\ccc{Facet} of the polyhedral surface. Member
-          functions with shaded background are mandatory. The others
-          are optionally supported.}
-        \label{figurePolyOptionalMethods}
-    \end{figure}
-\end{ccTexOnly}
-
 \begin{ccHtmlOnly}
     <CENTER>
     <A NAME="figurePolyOptionalMethods">
@@ -792,7 +777,7 @@ the traits class.
 \ccMethod{Halfedge_handle halfedge();}{
     an incident halfedge pointing to \ccVar.}
 \ccGlue
-\ccMethod{Point&    point();}{the point.}
+\ccMethod{Point_3&    point();}{the point.}
 
 \ccMethod{Halfedge_around_vertex_circulator vertex_begin();}
     {circulator of halfedges around the vertex (clockwise).}
@@ -804,6 +789,22 @@ the traits class.
 % +-------------------------------------------------------------+
 \begin{ccClass}{Polyhedron_Halfedge}
 \subsection{Halfedge of a Polyhedral Surface}
+
+\begin{ccTexOnly}
+    \begin{figure}
+        \begin{center}
+          \parbox{\textwidth}{%
+              \includegraphics[width=\textwidth]{fig/poly_optional.ips}%
+          }
+        \end{center}
+        \caption{The three classes \protect\ccc{Vertex}, 
+          \protect\ccc{Halfedge}, and 
+          \protect\ccc{Facet} of the polyhedral surface. Member
+          functions with shaded background are mandatory. The others
+          are optionally supported.}
+        \label{figurePolyOptionalMethods}
+    \end{figure}
+\end{ccTexOnly}
 
 % +-----------------------------------+
 \ccDefinition
@@ -924,11 +925,11 @@ the traits class.
 \ccMethod{Halfedge_handle halfedge() const;}{
     an incident halfedge pointing to \ccVar.}
 \ccGlue
-\ccMethod{Normal&   normal();}{the normal vector. If a plane equation
+\ccMethod{Vector_3&   normal();}{the normal vector. If a plane equation
     is supported, only a value of the normal vector is returned 
     (no reference).}
 \ccGlue
-\ccMethod{Plane&    plane();}{the supporting plane of the facet.}
+\ccMethod{Plane_3&    plane();}{the supporting plane of the facet.}
 
 \ccMethod{Halfedge_around_facet_circulator facet_begin();}
     {circulator of halfedges around the facet (counterclockwise).}
@@ -937,7 +938,6 @@ the traits class.
 
 
 % +========================================================================+
-\newpage
 \ccHtmlNoClassToc
 \begin{ccClass}{Polyhedron_traits}
 \section{Requirements for a \protect\ccc{Polyhedron_traits}}
@@ -948,34 +948,53 @@ the traits class.
 \ccDefinition  
 
 A model for the \ccClassName\ concept must provide the following
-types, operations and restrictions with respect to the halfedge data
-structure \ccc{HDS} used in the polyhedral surface.
+types and operations. Valid models are, for example, 
+\ccc{Polyhedron_default_traits_3} and each \cgal\ Kernel.
 
 \ccTypes
+\ccThree{Polyhedron_traits&}{h.next_on_vertex();;}{}
+\ccThreeToTwo
 
-\ccNestedType{Point}{point type equal to
+\ccNestedType{Point_3}{point type equal to
   \ccc{HDS::Point}, if points are supported.}
 \ccGlue
-\ccNestedType{Normal}{normal vector equal to
-  \ccc{HDS::Facet::Normal}, if normals are supported.}
+\ccNestedType{Vector_3}{normal vector equal to
+  \ccc{HDS::Facet::Vector_3}, if normals are supported.}
 \ccGlue
-\ccNestedType{Plane}{plane equation equal to
-  \ccc{HDS::Facet::Plane}, if plane equations are
+\ccNestedType{Plane_3}{plane equation equal to
+  \ccc{HDS::Facet::Plane_3}, if plane equations are
   supported.}
 
+\ccNestedType{Construct_opposite_plane_3}{is an unary function object type
+    that reverses the plane orientation. Must provide \ccc{Plane_3
+    operator()(Plane_3 plane)} that returns the reversed plane. Required
+    only if plane equations are supported and the \ccc{inside_out()} 
+    method is used to reverse the polyhedral surface orientation.}
+
+\ccNestedType{Construct_opposite_vector_3}{is an unary function object type
+    that reverses the vector orientation. Must provide \ccc{Vector_3
+    operator()(Vector_3 vector)} that returns the reversed vector. Required
+    only if normal vectors are supported, plane equations are not supported,
+    and the \ccc{inside_out()} method is used to reverse the polyhedral  
+    surface orientation.}
+
+\ccCreation
+\ccCreationVariable{traits}
+
+\ccConstructor{Polyhedron_traits( const Polyhedron_traits& traits2);}{
+    copy constructor.}
+
+\ccMethod{Polyhedron_traits& operator= ( const Polyhedron_traits& traits2);}{
+    assignment.}
+
 \ccOperations
+\ccThree{Construct_opposite_vector_3}{traits.const}{}
 
-\ccTagFullDeclarations
+\ccMethod{Construct_opposite_plane_3 construct_opposite_plane_3_object();}{
+    returns an instance of this function object.}
 
-\ccMethod{void reverse_normal( Normal& n) const;}{
-    reverses the orientation of the normal vector \ccc{n}. Only needed
-    if normal vectors are supported.}
-
-\ccMethod{void reverse_plane( Plane& p) const;}{
-    reverses the orientation of the plane equation \ccc{p}. Only
-    needed if plane equations are supported.}
-
-\ccTagDefaults
+\ccMethod{Construct_opposite_vector_3 construct_opposite_vector_3_object();}{
+    returns an instance of this functions object.}
 
 \ccSeeAlso
 
@@ -985,7 +1004,7 @@ structure \ccc{HDS} used in the polyhedral surface.
 
 % +========================================================================+
 \ccHtmlNoClassToc
-\begin{ccClassTemplate}{Polyhedron_default_traits_3<R>}
+\begin{ccClassTemplate}{Polyhedron_default_traits_3<K>}
 \section{Models of \protect\ccc{Polyhedron_traits}}
 % +========================================================================+
 \label{sectionPolyTraitsModels}
@@ -994,15 +1013,13 @@ structure \ccc{HDS} used in the polyhedral surface.
 \ccDefinition
 
 \ccClassTemplateName\ is a model of the \ccc{Polyhedron_traits} concept
-from Section~\ref{sectionPolyTraits} based on the \cgal-kernel. It
-defines \ccc{Point_3<R>} as points, \ccc{Vector_3<R>} as
-surface normal vectors, and \ccc{Plane_3<R>} as plane equations.
+from Section~\ref{sectionPolyTraits} based on the \cgal-kernel \ccc{K}. It
+defines \ccc{K::Point_3} as points, \ccc{K::Vector_3} as
+surface normal vectors, and \ccc{K::Plane_3} as plane equations.
 
 \ccInclude{CGAL/Polyhedron_default_traits_3.h}
 
 \end{ccClassTemplate}
-
-
 
 
 % +========================================================================+
@@ -1022,7 +1039,7 @@ plane equation in a facet is optional.
 % +-------------------------------------------------------------+
 \subsection{Additional Requirements}
 
-\ccThree{Halfedge_iterator}{hds.capacity_of_halfedges() const;;}{}
+\ccThree{Halfedge_iterator}{hds.capacity_of_halfedges}{}
 \ccThreeToTwo
 
 \ccDefinition
@@ -1045,9 +1062,9 @@ surface normals or plane equations for facets.
 Types for (optionally) associated geometry in facets. If they
 are not supported the respective types are \ccc{void*}.
 
-\ccNestedType{Normal}{surface normal vector stored in facets.}
+\ccNestedType{Vector_3}{surface normal vector stored in facets.}
 \ccGlue
-\ccNestedType{Plane}{plane equation stored in facets.}
+\ccNestedType{Plane_3}{plane equation stored in facets.}
 
 % +-----------------------------------+
 \ccOperations
@@ -1060,13 +1077,13 @@ return value).
 
 \ccTagFullDeclarations
 
-\ccMethod{Normal&       normal();}{the surface normal vector.}
+\ccMethod{Vector_3&       normal();}{the surface normal vector.}
 \ccGlue
-\ccMethod{const Normal& normal() const;}{}
+\ccMethod{const Vector_3& normal() const;}{}
 
-\ccMethod{Plane&       plane();}{the plane equation.}
+\ccMethod{Plane_3&       plane();}{the plane equation.}
 \ccGlue
-\ccMethod{const Plane& plane() const;}{}
+\ccMethod{const Plane_3& plane() const;}{}
 
 \ccTagDefaults
 
@@ -1095,7 +1112,7 @@ The following dependencies among these options and those of the
 \end{ccClass}
 
 % +-------------------------------------------------------------+
-\begin{ccClassTemplate}{Halfedge_data_structure_polyhedron_default_3<R>}
+\begin{ccClassTemplate}{Halfedge_data_structure_polyhedron_default_3<K>}
 \subsection{The Default Halfedge Data Structure for Polyhedra}
 \label{sectionPolyHdsDefault}
 
@@ -1105,9 +1122,9 @@ The following dependencies among these options and those of the
 
 The default \ccClassTemplateName\ implements all incidences supported
 by the \ccc{Halfedge_data_structure} concept. It chooses geometry
-types from the \cgal-kernel as determined with the representation
-class \ccc{R}. It stores a point of type \ccc{Point_3<R>} in each
-vertex and a plane equation of type \ccc{Plane_3<R>} in each facet.
+types from the \cgal-kernel \ccc{K}. It stores a point of type
+\ccc{K::Point_3} in each vertex and a plane equation of type
+\ccc{K::Plane_3} in each facet.
 
 \ccInclude{CGAL/Halfedge_data_structure_polyhedron_default_3.h}
 
@@ -1115,7 +1132,7 @@ vertex and a plane equation of type \ccc{Plane_3<R>} in each facet.
 
 The default halfedge data structure provided for polyhedra is a wrapper for
 the class \ccc{Halfedge_data_structure_using_list} using the
-\ccc{Vertex_max_base<Point_3<R>>},
+\ccc{Vertex_max_base<K::Point_3>},
 \ccc{Halfedge_max_base} and \ccc{Polyhedron_facet_base_3}
 models, see Section~\ref{sectionHdsUsingList} to
 \ref{sectionHdsBasesModels} and \ref{sectionPolyHdsBases}.
@@ -1132,19 +1149,17 @@ in Section~\ref{sectionHdsBasesModels}.
 
 \ccTwo{class Polyhedron_facet_base_3 ();;}{}
 
-\ccStruct{template <class R> class Polyhedron_facet_base_3 {};}
+\ccStruct{template <class K> class Polyhedron_facet_base_3 {};}
     {defines the maximal facet functionality for polyhedra including
-     halfedge pointer and a plane equation of type \ccc{Plane_3<R>}.}
+     halfedge pointer and a plane equation of type \ccc{K::Plane_3}.}
 
 \ccSeeAlso
 
-\ccc{Vertex_min_base}, \ldots, \ccc{Facet_max_base}, and\\
+\ccc{Vertex_min_base}, \ldots, \ccc{Facet_max_base}, and
 \ccc{Halfedge_data_structure_polyhedron_default_3}.
 
-
-
-% +========================================================================+
 \newpage
+% +========================================================================+
 \ccHtmlNoClassToc
 \begin{ccClassTemplate}{Polyhedron_incremental_builder_3<HDS>}
 \section{An Incremental Builder for Polyhedral Surfaces}
@@ -1191,11 +1206,11 @@ already known.
 }
 
 \ccTypes
-\ccTwo{Polyhedron_incremental_builder_3<HDS>:: Point}{}
+\ccTwo{Polyhedron_incremental_builder_3<HDS>:: HalfedgeDS}{}
 
-\ccNestedType{Halfedge_data_structure}{halfedge data structure \ccc{HDS}.}
+\ccNestedType{HalfedgeDS}{halfedge data structure \ccc{HDS}.}
 \ccGlue
-\ccNestedType{Point}{its point type.}
+\ccNestedType{Point_3}{its point type.}
 \ccGlue
 \ccNestedType{Size}{its size type.}
 
@@ -1226,7 +1241,7 @@ already known.
     polyhedra. If the representation does not support insertion the
     object must fit into the reserved sizes.}  
 
-\ccMethod{void add_vertex( const Point& p);}{
+\ccMethod{void add_vertex( const Point_3& p);}{
     adds $p$ to the vertex list.}  
 \ccGlue
 \ccMethod{void begin_facet();}{starts a facet.}
@@ -1257,8 +1272,8 @@ already known.
 \end{ccClassTemplate}
 
 
-% +========================================================================+
 \newpage
+% +========================================================================+
 \section{Examples Using Polyhedral Surfaces}
 % +========================================================================+
 \label{sectionPolyExamples}
@@ -1309,11 +1324,10 @@ computation. The following declaration gives us such a point iterator.
 #include <CGAL/Iterator_project.h>
 #include <CGAL/function_objects.h>
 
-typedef Polyhedron::Vertex                                   Vertex;
-typedef Polyhedron::Vertex_iterator                          Vertex_iterator;
-typedef Polyhedron::Point                                    Point;
-typedef Project_point<Vertex>                                Project_point;
-typedef Iterator_project<Vertex_iterator, Project_point>     Point_iterator;
+typedef Polyhedron::Vertex                                Vertex;
+typedef Polyhedron::Vertex_iterator                       Vertex_iterator;
+typedef Project_point<Vertex>                             Project_point;
+typedef Iterator_project<Vertex_iterator, Project_point>  Point_iterator;
 \end{verbatim}
 
 The {\tt for}-loop of the previous example could now be replaced with

@@ -1,6 +1,10 @@
 Polyhedron Package: Release changes:
 ---------------------------------------------------------------------
 
+3.15 (06 Jul 2001)
+
+     - Formatted the deprecated manual part.
+
 3.14 (05 Jul 2001)
 
      - Fixed bug with 'typename A::template B<..>' syntax.
