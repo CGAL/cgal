@@ -26,6 +26,8 @@ CXXFLAGS = \
 	-W -Wall \
 	-DCGAL_CHECK_EXPENSIVE \
 	-g
+
+	# -I../../../Triangulation_2/include \
 	# -fprofile-arcs -ftest-coverage # pour Gcov
 	# -Wold-style-cast
 	# -pedantic

@@ -1,5 +1,5 @@
 
-Version 1.117 (??)
+Version 1.117 (27 Aug 02))
 - Changed typedef for Cell_handle and Vertex_handle in TDS_3
   following a workaround in Trivial_iterator.h for MSC
 
