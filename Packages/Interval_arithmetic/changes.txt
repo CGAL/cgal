@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.51 on 5 July 2000
+- Test-suite fixes for M$.
+
 Version 4.50 on 28 June 2000
 - Replaced template by complete overloaded functions for true/false for sign,
   compare, abs and square, for M$ VC++.

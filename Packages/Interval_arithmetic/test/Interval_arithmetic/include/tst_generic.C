@@ -1,5 +1,5 @@
 // Generic test file for the IA package.
-// Sylvain Pion, 1997-1999.
+// Sylvain Pion, 1997-2000.
 
 // This file is included from tst[12].C, that do just a #define:
 // #define TESTED_TYPE Interval_nt_advanced // For tst1.C
@@ -265,11 +265,11 @@ bool utility_test()
   DEBUG( std::cout << "is_finite test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
-  tmpflag = max(a,d).is_same(IA_nt(0,1));
+  tmpflag = (max(a,d)).is_same(IA_nt(0,1));
   DEBUG( std::cout << "max test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
-  tmpflag = min(a,b).is_same(IA_nt(-1,0));
+  tmpflag = (min(a,b)).is_same(IA_nt(-1,0));
   DEBUG( std::cout << "max test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
