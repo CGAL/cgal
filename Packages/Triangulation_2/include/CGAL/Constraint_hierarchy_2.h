@@ -400,7 +400,7 @@ void
 Constraint_hierarchy_2<T,Data>::
 remove_constraint(T va, T vb){
   H_edge   he = make_edge(va, vb);
-  H_c_to_sc_map::iterator c_to_sc_it = c_to_sc_map.find(he);
+  typename H_c_to_sc_map::iterator c_to_sc_it = c_to_sc_map.find(he);
   CGAL_triangulation_assertion(c_to_sc_it != c_to_sc_map.end());
 
   H_vertex_list *hvl = c_to_sc_it->second; 
@@ -409,7 +409,7 @@ remove_constraint(T va, T vb){
   for(H_vertex_it it = hvl->begin(), succ = it; 
       ++succ != hvl->end(); 
       ++it){
-    H_sc_to_c_map::iterator scit = sc_to_c_map.find(make_edge(*it,*succ));
+    typename H_sc_to_c_map::iterator scit = sc_to_c_map.find(make_edge(*it,*succ));
     CGAL_triangulation_assertion(scit != sc_to_c_map.end());
     H_context_list* hcl = scit->second;
 
