@@ -54,6 +54,8 @@ struct Interval_nt_advanced
   friend inline IA operator-     (const IA &, const IA &);
   friend inline IA operator*     (const IA &, const IA &);
   friend inline IA operator/     (const IA &, const IA &);
+  friend inline IA operator||    (const IA &, const IA &);
+  friend inline IA operator&&    (const IA &, const IA &);
   friend inline bool operator<   (const IA &, const IA &);
   friend inline bool operator>   (const IA &, const IA &);
   friend inline bool operator<=  (const IA &, const IA &);
@@ -68,8 +70,8 @@ struct Interval_nt_advanced
   friend inline double to_double (const IA &);
   friend inline bool is_valid    (const IA &);
   friend inline bool is_finite   (const IA &);
-  friend inline Comparison_result compare (const IA &, const IA &);
   friend inline Sign sign        (const IA &);
+  friend inline Comparison_result compare (const IA &, const IA &);
 
 private:
   static void overlap_action() // throw (unsafe_comparison)
@@ -112,10 +114,10 @@ public:
 
   IA  operator-() const { return IA (-_sup, -_inf); }
 
-  IA & operator+= (const IA & d);
-  IA & operator-= (const IA & d);
-  IA & operator*= (const IA & d);
-  IA & operator/= (const IA & d);
+  IA & operator+= (const IA &);
+  IA & operator-= (const IA &);
+  IA & operator*= (const IA &);
+  IA & operator/= (const IA &);
 
   bool is_same (const IA & d) const
   { return _inf == d._inf && _sup == d._sup; }
@@ -127,13 +129,6 @@ public:
 
   double inf() const { return _inf; }
   double sup() const { return _sup; }
-
-  // The (join, union, ||) operator.
-  IA operator|| (const IA & d) const
-  { return IA(std::min(_inf, d._inf), std::max(_sup, d._sup)); }
-  // The (meet, intersection, &&) operator.  Valid if intervals overlap.
-  IA operator&& (const IA & d) const
-  { return IA(std::max(_inf, d._inf), std::min(_sup, d._sup)); }
 
 protected:
   bound_t _inf, _sup;	// "_inf" stores the lower bound, "_sup" the upper.
@@ -434,6 +429,24 @@ max (const Interval_nt_advanced & d, const Interval_nt_advanced & e)
 			      std::max(d._sup, e._sup));
 }
 
+// The (join, union, ||) operator.
+inline
+Interval_nt_advanced
+operator|| (const Interval_nt_advanced & d, const Interval_nt_advanced & e)
+{
+    return Interval_nt_advanced(std::min(e._inf, d._inf),
+	                        std::max(e._sup, d._sup));
+}
+
+// The (meet, intersection, &&) operator.  Valid if intervals overlap.
+inline
+Interval_nt_advanced
+operator&& (const Interval_nt_advanced & d, const Interval_nt_advanced & e)
+{
+    return Interval_nt_advanced(std::max(e._inf, d._inf),
+	                        std::min(e._sup, d._sup));
+}
+
 std::ostream & operator<< (std::ostream &, const Interval_nt_advanced &);
 std::istream & operator>> (std::istream &, Interval_nt_advanced &);
 
@@ -459,10 +472,10 @@ struct Interval_nt : public Interval_nt_advanced
   IA operator-() const 
     { return IA(-_sup, -_inf); }
 
-  IA & operator+=(const IA & d);
-  IA & operator-=(const IA & d);
-  IA & operator*=(const IA & d);
-  IA & operator/=(const IA & d);
+  IA & operator+=(const IA &);
+  IA & operator-=(const IA &);
+  IA & operator*=(const IA &);
+  IA & operator/=(const IA &);
 };
 
 
@@ -560,6 +573,16 @@ inline
 Interval_nt
 max (const Interval_nt & d, const Interval_nt & e)
 { return max( (Interval_nt_advanced) d, (Interval_nt_advanced) e); }
+
+inline
+Interval_nt
+operator||(const Interval_nt & d, const Interval_nt & e)
+{ return ((Interval_nt_advanced) d) || (Interval_nt_advanced) e; }
+
+inline
+Interval_nt
+operator&&(const Interval_nt & d, const Interval_nt & e)
+{ return ((Interval_nt_advanced) d) && (Interval_nt_advanced) e; }
 
 
 // The undocumented tags.
