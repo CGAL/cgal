@@ -301,12 +301,11 @@ class Interval_for_container : public Interval_
     void printOrdered(std::ostream& os) const;
 
 #ifdef ISL_LIST
-
     typedef typename std::list<Interval>::const_iterator const_iterator;
 #else
     typedef typename 
-    Compact_container<Interval_for_container<Interval> >::iterator iterator;
-    typedef const iterator const_iterator;
+    Compact_container<Interval_for_container<Interval> >::const_iterator
+                                                             const_iterator;
 #endif
     const_iterator begin() const
     {
