@@ -209,6 +209,7 @@ public:
   inline
   Vertex* mirror_vertex(int i) const
     {
+      CGAL_triangulation_precondition ( (i>=0) && (i<4) );
       CGAL_triangulation_precondition ( is_valid() && 
 					neighbor(i).is_valid() );
       return neighbor(i)->vertex(neighbor(i)->index(this));

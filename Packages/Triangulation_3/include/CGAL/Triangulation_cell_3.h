@@ -116,6 +116,17 @@ public:
   {
     return Ctds::index( &(*c));
   }
+
+  inline Vertex_handle mirror_vertex(int i) const
+    {
+      return Ctds::mirror_vertex(i);
+    }
+
+  inline 
+  int mirror_index(int i) const
+    {
+      return Ctds::mirror_index(i);
+    }
   
   inline bool has_neighbor(Cell_handle c) const
   {
