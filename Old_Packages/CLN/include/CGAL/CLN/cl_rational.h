@@ -35,12 +35,10 @@ CGAL_BEGIN_NAMESPACE
 inline double	to_double	(const cl_RA &I) { return cl_double_approx(I); }
 
 // We hope the artificially added error is enough...
-static
-Interval_base
-to_interval (const cl_RA & z)
+inline Interval_base to_interval (const cl_RA & z)
 {
   Protect_FPU_rounding<true> P (CGAL_FE_TONEAREST);
-  Interval_nt_advanced cl_double_approx(z);
+  Interval_nt_advanced approx(cl_double_approx(z));
   FPU_set_cw(CGAL_FE_UPWARD);
 
   return ( (approx + Interval_base::Smallest) + Interval_base::Smallest)

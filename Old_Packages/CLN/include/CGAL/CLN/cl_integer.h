@@ -65,7 +65,7 @@ inline double	to_double	(const cl_I &I) { return cl_double_approx(I); }
 inline Interval_base to_interval (const cl_I &I)
 {
   Protect_FPU_rounding<true> P (CGAL_FE_TONEAREST);
-  Interval_nt_advanced cl_double_approx(I);
+  Interval_nt_advanced approx(cl_double_approx(I));
   FPU_set_cw(CGAL_FE_UPWARD);
   return approx + Interval_base::Smallest;
 }
