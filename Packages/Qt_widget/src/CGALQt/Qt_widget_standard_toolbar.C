@@ -72,13 +72,12 @@ namespace CGAL {
   void Qt_widget_standard_toolbar::fill_toolbar(QMainWindow *mw)
   {
     Qt_widget_focus* focuslayer = 
-      new Qt_widget_focus();
+      new Qt_widget_focus(this, "focuslayer");
     Qt_widget_zoomrect* zoomrectlayer = 
-      new Qt_widget_zoomrect();
+      new Qt_widget_zoomrect(this, "zoomrectlayer");
     Qt_widget_handtool* handtoollayer = 
-      new Qt_widget_handtool();
+      new Qt_widget_handtool(this, "handtoollayer");
     Qt_widget_show_mouse_coordinates* showcoordlayer = 0; // created below
-    // FIXME: thse objects should be destroyed in a destructor
 
     widget->attach_standard(focuslayer);
     widget->attach_standard(zoomrectlayer);
@@ -90,8 +89,9 @@ namespace CGAL {
     if (mw)
       {
 	mw->statusBar();
-	showcoordlayer = new Qt_widget_show_mouse_coordinates(*mw);
-	// FIXME: this object should be destroyed in a destructor
+	showcoordlayer = 
+	  new Qt_widget_show_mouse_coordinates(*mw, this,
+					       "showcoordlayer");
 	widget->attach_standard(showcoordlayer);
 	showcoordlayer->does_eat_events = false;
       }
@@ -160,7 +160,10 @@ namespace CGAL {
     showcoordBt->setTextLabel("Mouse Coordinates");
 
     QButtonGroup* button_group = new QButtonGroup(0, "My_group");
-    // FIXME: this QButtonGroup has no parent and should be destroyed 
+    // this button has no parent and is destroyed manually in the
+    // destructor
+
+    // below is the list of buttons in the group
     QToolButton* button_group_list[] = { nolayerBt,
 					zoomrectBt,
 					focusBt,

@@ -39,8 +39,8 @@ public:
                                         VI;
   typedef typename Polygon::FT          FT;
   
-  Qt_widget_get_polygon()
-    : active(false), first_time(true) {}
+  Qt_widget_get_polygon(QObject* parent = 0, const char* name = 0)
+    : Qt_widget_layer(parent, name), active(false), first_time(true) {}
 
   void draw()
   {

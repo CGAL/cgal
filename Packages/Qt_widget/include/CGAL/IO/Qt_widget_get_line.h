@@ -40,8 +40,9 @@ public:
   typedef typename R::Line_2	  Line;
   typedef typename	R::FT FT;
 
-  Qt_widget_get_line() : firstpoint(false), 
-			 firsttime(true){};
+  Qt_widget_get_line(QObject* parent = 0, const char* name = 0)
+    : Qt_widget_layer(parent, name), firstpoint(false),
+      firsttime(true){};
   void draw(){
     firsttime = true;
   }

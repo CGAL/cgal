@@ -38,8 +38,9 @@ public:
   typedef typename R::Point_2	Point;
   typedef typename R::FT	FT;
   
-  Qt_widget_get_point(const QCursor c=QCursor(Qt::crossCursor)) :
-    cursor(c) {};
+  Qt_widget_get_point(const QCursor c=QCursor(Qt::crossCursor),
+		      QObject* parent = 0, const char* name = 0) :
+    Qt_widget_layer(parent, name), cursor(c) {};
   
 private:
   bool is_pure(Qt::ButtonState s){

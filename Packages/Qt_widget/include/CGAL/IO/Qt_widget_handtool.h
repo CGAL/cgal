@@ -40,7 +40,8 @@ namespace CGAL {
 class Qt_widget_handtool : public Qt_widget_layer
 {
 public:
-  Qt_widget_handtool() : wasrepainted(TRUE), on_first(FALSE){};
+  Qt_widget_handtool(QObject* parent = 0, const char* name = 0)
+    : Qt_widget_layer(parent, name), wasrepainted(TRUE), on_first(FALSE){};
 
 private:
   QCursor oldcursor;

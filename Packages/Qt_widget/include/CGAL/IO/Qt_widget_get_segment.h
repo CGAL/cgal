@@ -39,8 +39,8 @@ public:
   typedef typename R::Segment_2		Segment;
   typedef typename R::FT	FT;
 
-  Qt_widget_get_segment() : firstpoint(false), 
-			    firsttime(true){};
+  Qt_widget_get_segment(QObject* parent = 0, const char* name = 0)
+    : Qt_widget_layer(parent, name), firstpoint(false), firsttime(true){};
 
 private:
   QCursor oldcursor;

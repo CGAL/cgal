@@ -25,6 +25,7 @@
 #include <CGAL/basic.h>
 
 #include <qtoolbar.h>
+#include <qbuttongroup.h>
 
 namespace CGAL {
 
@@ -44,6 +45,8 @@ public:
 			     bool newLine = true,
 			     const char* name = 0);
 
+  ~Qt_widget_standard_toolbar() { delete button_group; }
+
   // CGAL-2.4 compatibility
   QToolBar*	toolbar(){return this;}
 
@@ -57,6 +60,10 @@ private:
   
 private:
   Qt_widget	  *widget;
+  QButtonGroup* button_group; 
+    // this button has no parent and is destroyed manually in the
+    // destructor
+
 };//end class
 
 };//end namespace

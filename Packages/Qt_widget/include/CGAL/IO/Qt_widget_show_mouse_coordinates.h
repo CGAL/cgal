@@ -33,7 +33,12 @@ class Qt_widget_show_mouse_coordinates : public Qt_widget_layer
 {
 public:
 	
-  Qt_widget_show_mouse_coordinates(QMainWindow &mw) : qmw(mw){};
+  Qt_widget_show_mouse_coordinates(QMainWindow &mw, 
+				   QObject* parent = 0,
+				   const char* name = 0) 
+    : Qt_widget_layer(parent, name), qmw(mw)
+    {};
+
   void draw(){};
   void mouseMoveEvent(QMouseEvent *e)
   {

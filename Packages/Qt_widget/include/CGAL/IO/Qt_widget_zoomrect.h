@@ -41,7 +41,9 @@ public:
   bool  widgetrepainted;
   bool  on_first;
 
-  Qt_widget_zoomrect() : widgetrepainted(TRUE), on_first(FALSE) {};
+  Qt_widget_zoomrect(QObject* parent = 0, const char* name = 0)
+    : Qt_widget_layer(parent, name), widgetrepainted(TRUE),
+      on_first(FALSE) {};
 
 private:
   QCursor oldcursor;

@@ -40,8 +40,11 @@ public:
   typedef typename R::Circle_2		Circle;
   typedef typename R::FT	FT;
 
-  Qt_widget_get_circle(const QCursor c=QCursor(Qt::crossCursor)) 
-     : cursor(c), firstpoint(false), firsttime(true){};
+  Qt_widget_get_circle(const QCursor c=QCursor(Qt::crossCursor),
+		       QObject* parent = 0, const char* name = 0)
+     : Qt_widget_layer(parent, name), cursor(c), firstpoint(false),
+       firsttime(true){};
+
   void draw(){
     firsttime = true;
   }

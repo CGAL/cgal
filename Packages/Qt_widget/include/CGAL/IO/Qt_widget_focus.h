@@ -55,7 +55,9 @@ private:
   QCursor oldcursor;
 
 public:
-  Qt_widget_focus() : cycle(0) {
+  Qt_widget_focus(QObject* parent = 0, const char* name = 0) 
+    : Qt_widget_layer(parent, name), cycle(0)
+  {
 	mouse_ico1 = new QPixmap( (const char**)focus1_xpm);
 	mouse_ico2 = new QPixmap( (const char**)focus2_xpm);
 	mouse_ico3 = new QPixmap( (const char**)focus3_xpm);
