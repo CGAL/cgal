@@ -132,10 +132,12 @@ template <class NT> double to_double(const ::CGAL::Nef_polynomial<NT>& p) {
   return (CGAL::to_double(p.eval_at(CGAL::Nef_polynomial<NT>::R_))); 
 }
 
+inline
 double to_double(const Nef_polynomial<int>& p) { 
   return (CGAL::to_double(p.eval_at(Nef_polynomial<int>::R_))); 
 }
 
+inline
 double to_double(const Nef_polynomial<double>& p) { 
   return (CGAL::to_double(p.eval_at(Nef_polynomial<double>::R_))); 
 }
