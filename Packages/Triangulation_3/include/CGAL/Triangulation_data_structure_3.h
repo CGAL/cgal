@@ -271,10 +271,16 @@ public:
 
   bool is_vertex(Vertex* v) const;
 
+  bool is_edge(Cell* c, int i, int j) const;
+  // returns false when dimension <1 or when indices wrong
+
   bool is_edge(Vertex* u, Vertex* v, 
 	       Cell* & c, int & i, int & j) const;
   // returns false when dimension <1
-  
+
+  bool is_facet(Cell* c, int i) const;
+  // returns false when dimension <2 or when indices wrong
+
   bool is_facet(Vertex* u, Vertex* v, Vertex* w, 
 		Cell* & c, int & i, int & j, int & k) const;
   // returns false when dimension <2
@@ -744,6 +750,26 @@ is_edge(Vertex* u, Vertex* v,
 template < class Vb, class Cb>
 bool
 Triangulation_data_structure_3<Vb,Cb>::
+is_edge(Cell* c, int i, int j) const
+  // returns false when dimension <1
+{
+  if ( i==j ) return false;
+  if ( (i<0) || (j<0) ) return false;
+  if ( (dimension() == 1) && ((i>1) || (j>1)) ) return false;
+  if ( (dimension() == 2) && ((i>2) || (j>2)) ) return false;
+  if ((i>3) || (j>3)) return false;
+
+  Edge_iterator it = edges_begin();
+  while ( it != edges_end() ) {
+    if ( &((*it).first) == c ) return true;
+    ++it;
+  }
+  return false;
+}
+
+template < class Vb, class Cb>
+bool
+Triangulation_data_structure_3<Vb,Cb>::
 is_facet(Vertex* u, Vertex* v, Vertex* w, 
 	 Cell* & c, int & i, int & j, int & k) const
   // returns false when dimension <2
@@ -760,6 +786,23 @@ is_facet(Vertex* u, Vertex* v, Vertex* w,
       }
       return false;
     }
+
+template < class Vb, class Cb>
+bool
+Triangulation_data_structure_3<Vb,Cb>::
+is_facet(Cell* c, int i) const
+  // returns false when dimension <2
+{
+  if (i<0) return false;
+  if ( (dimension() == 2) && (i!=3) ) return false;
+  if (i>3) return false;
+  Facet_iterator it = facets_begin();
+  while ( it != facets_end() ) {
+    if ( &((*it).first) == c ) return true;
+    ++it;
+  }
+  return false;
+}
 
 template < class Vb, class Cb>
 bool
@@ -1504,7 +1547,7 @@ insert_in_facet(const Vertex & w, Cell* c, int i)
     }
   case 2:
     {
-      CGAL_triangulation_precondition( i == 3 );
+      CGAL_triangulation_expensive_precondition( is_facet(c,i) );
       Cell* n = c->neighbor(2);
       Cell* cnew = create_cell(c->vertex(0),c->vertex(1),v,NULL,
 			       c, NULL,n,NULL);
@@ -1613,7 +1656,7 @@ insert_in_edge(const Vertex & w, Cell* c, int i, int j)
 
   case 2:
     {
-      CGAL_triangulation_precondition( i>=0 && i<=2 && j>=0 && j<=2 );
+      CGAL_triangulation_expensive_precondition( is_edge(c,i,j) );
       int k=3-i-j; // index of the third vertex of the facet
       Cell* d = c->neighbor(k);
       int kd = d->index(c);
@@ -1654,7 +1697,7 @@ insert_in_edge(const Vertex & w, Cell* c, int i, int j)
 
   case 1:
     {
-      CGAL_triangulation_precondition( (i==0 || i==1) && (j==0 || j==1) );
+      CGAL_triangulation_expensive_precondition( is_edge(c,i,j) );
       cnew = create_cell(v,c->vertex(1),NULL,NULL,
 			 c->neighbor(0),c,NULL,NULL);
       c->vertex(1)->set_cell(cnew);
