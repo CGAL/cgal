@@ -1,4 +1,8 @@
 28 April 2004 Radu Ursu
+- modified tex files in doc_tex/Visibility_complex_ref to \ccInclude the right header files in include/CGAL instead of CEP/Visibility_complex.
+- added two more examples from the doc 
+
+28 April 2004 Radu Ursu
 - moved testsuite to test/Visibility_complex
 
 28 April 2004 Radu Ursu
