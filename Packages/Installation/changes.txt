@@ -6,9 +6,7 @@
 //---------------------------------------------------------------------
 //	actual revision
 //---------------------------------------------------------------------
-ALL : Replaced CORE with Core
-ALL : Added support for Core
-ALL : upgrade to GMP-4.1.2 for Windows
+
 GLOB: added licensing information about Qt widget stuff
 GLOB: removed stlport from README
 GLOB: updated for release 2.4
@@ -59,6 +57,10 @@ GLOB: - Document --build-all
 GLOB: Fixes for QT.
 GLOB: src/Interval_arithmetic/workaround_4_ms.obj is no longer necessary.
 GLOB: Add -D_RWSTD__ALLOCATOR for SunPro.
+GLOB: Fixed gmp installation for Irix.
+GLOB: Replaced CORE with Core
+GLOB: Added support for Core
+GLOB: upgrade to GMP-4.1.2
 ALL : Updated compiler support.
 GLOB: Undid the changes:
 GLOB: removed warning -link for microsoft compilers
@@ -128,6 +130,9 @@ GLOB: Make blank after EXE_OPT, except for msvc and borland.
 GLOB: Fixed test_gmp for sunpro 5.3.
 GLOB: Updated sunpro_version detection for 5.3.
 GLOB: Update CGAL version to 2.4.
+DOCS: Remove CGALWin.
+DOCS: Document standard header replacements.
+DOCS: - Remove \clnpage obsolete command.
 DOCS: Changed CGAL_VERSION to 3.0.
 DOCS: Update supported compiler list.
 DOCS: - Fix typo cgal_install -> install_cgal.
