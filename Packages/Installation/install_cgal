@@ -38,8 +38,9 @@ STL_DIR=''
 # type of STL: (see test_stl_version below)
 CGAL_STL_VERSION='CGAL_STL_UNKNOWN'
 
-# toggles use of gcc rtti patch ('' - no, '_rtti' - use it)
+# toggles use of gcc rtti patch ('' - no, '-rtti' - use it)
 GCC_RTTI_PATCH_EXT=''
+GCC_RTTI_PATCH_DIR=''
 
 # logfile for testsuite:
 TEST_LOGFILE=${CGAL_TEST_DIR}/error.txt
@@ -439,6 +440,7 @@ _search_compiler()
 	COMPILER="$2"
 	compute_compiler_version `compiler_bin ${COMPILER}`
 	eval "_COMPILER_$_COMPILER_NUMBER=\"${COMPILER}\""
+	COMPILER=''
 	eval "$_EXPR $_COMPILER_NUMBER + 1"
 	_COMPILER_NUMBER=$_result
     fi
@@ -876,7 +878,7 @@ check_GCC_RTTI_PATCH_DIR()
 check_GCC_RTTI_PATCH_EXT()
 {
     if [ "${GCC_RTTI_PATCH_EXT}" != "" -a \
-	 "${GCC_RTTI_PATCH_EXT}" != "_rtti" ]; then
+	 "${GCC_RTTI_PATCH_EXT}" != "-rtti" ]; then
 	$1 "WARNING: GCC_RTTI_PATCH_EXT"
 	$1 "         is not set correctly." 
 	return 0
@@ -1694,7 +1696,7 @@ dir_menu()
 	    r|R)
 		_CHANGED='y'
 		if [ -z "${GCC_RTTI_PATCH_EXT}" ]; then 
-		    GCC_RTTI_PATCH_EXT='_rtti'
+		    GCC_RTTI_PATCH_EXT='-rtti'
 		else
 		    GCC_RTTI_PATCH_EXT=''
 		fi
@@ -2392,12 +2394,12 @@ case $* in
 		make_lib_dir
 
 		# create the makefiles
-		CGAL_MAKEFILE=${CGAL_MAKE_DIR}/makefile_${_libname}
+		CGAL_MAKEFILE=${CGAL_MAKE_DIR}/makefile_`full_ostype`
 		generatemakefiles echo
 
 		LEDA_EXT='_LEDA'
 		make_lib_dir
-		GCC_RTTI_PATCH_EXT='_rtti'
+		GCC_RTTI_PATCH_EXT='-rtti'
 		make_lib_dir
 		LEDA_EXT=''
 		make_lib_dir
