@@ -1,4 +1,4 @@
-Version 2.78 (18 October 2003) [af]
+Version 2.79 (21 October 2003) [af]
 - Removed interval skip list again
 
 Version 2.78 (18 October 2003) [af]
