@@ -107,5 +107,5 @@ int main(int argc, char* argv[])
   // writing file data/output; 
   oFileT << T; 
 
-  return 1;
+  return 0;
 }
