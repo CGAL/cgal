@@ -10,7 +10,7 @@ enum MaxFilesNumber {
 };
 
 // PostScript support:
-#if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
+#if BENCH_TRAITS != LEDA_CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
     BENCH_TRAITS != EXACUS_CONIC_TRAITS && BENCH_TRAITS != CK_CIRCLE_TRAITS && \
     BENCH_TRAITS != CK_CONIC_TRAITS
 #define POSTSCRIPT_SUPPORTED 1
@@ -60,7 +60,7 @@ enum MaxFilesNumber {
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_segment_cached_traits_2.h>
 
-#elif BENCH_TRAITS == CONIC_TRAITS
+#elif BENCH_TRAITS == LEDA_CONIC_TRAITS
 #include <CGAL/Arr_conic_traits_2.h>
 #if defined(USE_CGAL_WINDOW)
 #include <CGAL/IO/Conic_arc_2_Window_stream.h>
@@ -164,10 +164,10 @@ enum MaxFilesNumber {
 #include <CGAL/Pm_dummy_point_location.h>
 #include <CGAL/Pm_simple_point_location.h>
 #include <CGAL/Pm_nearest_neighbor.h>
-#include <CGAL/Pm_landmarks_point_location.h>
 
-#if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
+#if BENCH_TRAITS != LEDA_CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
     BENCH_TRAITS != POLYLINE_TRAITS && BENCH_TRAITS != POLYLINE_CACHED_TRAITS
+#include <CGAL/Pm_landmarks_point_location.h>
 #include <CGAL/Pm_triangle_point_location.h>
 #endif
 
@@ -194,7 +194,7 @@ enum MaxFilesNumber {
 #if BENCH_TRAITS == SEGMENT_TRAITS || BENCH_TRAITS == SEGMENT_CACHED_TRAITS
 #include "Segment_reader.h"
 
-#elif BENCH_TRAITS == CONIC_TRAITS || BENCH_TRAITS == CORE_CONIC_TRAITS || \
+#elif BENCH_TRAITS == LEDA_CONIC_TRAITS || BENCH_TRAITS == CORE_CONIC_TRAITS ||\
       BENCH_TRAITS == CK_CIRCLE_TRAITS || BENCH_TRAITS == CK_CONIC_TRAITS || \
       BENCH_TRAITS == EXACUS_CONIC_TRAITS
 #include "Conic_reader.h"
@@ -257,7 +257,7 @@ typedef CGAL::Arr_segment_cached_traits_2<Kernel>       Segment_traits;
 typedef CGAL::Arr_polyline_traits_2<Segment_traits>     Traits;
 #define TRAITS_TYPE "Cached Polylines"
 
-#elif BENCH_TRAITS == CONIC_TRAITS
+#elif BENCH_TRAITS == LEDA_CONIC_TRAITS
 typedef CGAL::Arr_conic_traits_2<Kernel>                Traits;
 #define TRAITS_TYPE "Conics"
 
@@ -320,14 +320,16 @@ typedef Planar_map::Halfedge_iterator                   Pm_Halfedge_iterator;
 typedef CGAL::Pm_trapezoid_ric_point_location<Pm>       Trap_point_location;
 typedef CGAL::Pm_naive_point_location<Pm>               Naive_point_location;
 typedef CGAL::Pm_walk_along_line_point_location<Pm>     Walk_point_location;
-typedef CGAL::Pm_nearest_neighbor<Pm>               Nearest_neighbor;
-typedef CGAL::Pm_landmarks_point_location<Pm,Nearest_neighbor>  Landmarks_point_location;
+typedef CGAL::Pm_nearest_neighbor<Pm>                   Nearest_neighbor;
 typedef CGAL::Pm_dummy_point_location<Pm>               Dummy_point_location;
-#if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
+typedef CGAL::Pm_simple_point_location<Pm>              Simple_point_location;
+#if BENCH_TRAITS != LEDA_CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
     BENCH_TRAITS != POLYLINE_TRAITS && BENCH_TRAITS != POLYLINE_CACHED_TRAITS
+typedef CGAL::Pm_landmarks_point_location<Pm,Nearest_neighbor>
+  Landmarks_point_location;
 typedef CGAL::Pm_triangle_point_location<Pm>            Triangle_point_location;
 #endif
-typedef CGAL::Pm_simple_point_location<Pm>              Simple_point_location;
+
 typedef CGAL::Bench_parse_args::TypeId                  Type_id;
 typedef CGAL::Bench_parse_args::StrategyId              Strategy_id;
 typedef CGAL::Bench_parse_args::FormatId                Format_id;
@@ -390,7 +392,7 @@ public:
 #elif BENCH_TRAITS == POLYLINE_TRAITS || BENCH_TRAITS == POLYLINE_CACHED_TRAITS
     Polyline_reader<Traits> reader;
 
-#elif BENCH_TRAITS == CONIC_TRAITS || BENCH_TRAITS == CORE_CONIC_TRAITS || \
+#elif BENCH_TRAITS == LEDA_CONIC_TRAITS || BENCH_TRAITS == CORE_CONIC_TRAITS ||\
       BENCH_TRAITS == CK_CIRCLE_TRAITS || BENCH_TRAITS == CK_CONIC_TRAITS || \
       BENCH_TRAITS == EXACUS_CONIC_TRAITS
     Conic_reader<Traits> reader;
@@ -480,11 +482,11 @@ typedef CGAL::Bench<Naive_inc_pm>               Naive_inc_pm_bench;
 typedef Increment_pm<Walk_point_location>       Walk_inc_pm;
 typedef CGAL::Bench<Walk_inc_pm>                Walk_inc_pm_bench;
 
-typedef Increment_pm<Landmarks_point_location>       Landmarks_inc_pm;
-typedef CGAL::Bench<Landmarks_inc_pm>                Landmarks_inc_pm_bench;
-
-#if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
+#if BENCH_TRAITS != LEDA_CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
     BENCH_TRAITS != POLYLINE_TRAITS && BENCH_TRAITS != POLYLINE_CACHED_TRAITS
+typedef Increment_pm<Landmarks_point_location>  Landmarks_inc_pm;
+typedef CGAL::Bench<Landmarks_inc_pm>           Landmarks_inc_pm_bench;
+
 typedef Increment_pm<Triangle_point_location>   Triangle_inc_pm;
 typedef CGAL::Bench<Triangle_inc_pm>            Triangle_inc_pm_bench;
 #endif
@@ -538,21 +540,20 @@ typedef CGAL::Bench<Naive_agg_pm>               Naive_agg_pm_bench;
 typedef Aggregate_pm<Simple_point_location>     Simple_agg_pm;
 typedef CGAL::Bench<Simple_agg_pm>              Simple_agg_pm_bench;
 
-#if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
-    BENCH_TRAITS != POLYLINE_TRAITS && BENCH_TRAITS != POLYLINE_CACHED_TRAITS
-typedef Aggregate_pm<Triangle_point_location>   Triangle_agg_pm;
-typedef CGAL::Bench<Triangle_agg_pm>            Triangle_agg_pm_bench;
-#endif
-
 typedef Aggregate_pm<Trap_point_location>       Trap_agg_pm;
 typedef CGAL::Bench<Trap_agg_pm>                Trap_agg_pm_bench;
 
 typedef Aggregate_pm<Walk_point_location>       Walk_agg_pm;
 typedef CGAL::Bench<Walk_agg_pm>                Walk_agg_pm_bench;
 
-typedef Aggregate_pm<Landmarks_point_location>       Landmarks_agg_pm;
-typedef CGAL::Bench<Landmarks_agg_pm>                Landmarks_agg_pm_bench;
+#if BENCH_TRAITS != LEDA_CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
+    BENCH_TRAITS != POLYLINE_TRAITS && BENCH_TRAITS != POLYLINE_CACHED_TRAITS
+typedef Aggregate_pm<Triangle_point_location>   Triangle_agg_pm;
+typedef CGAL::Bench<Triangle_agg_pm>            Triangle_agg_pm_bench;
 
+typedef Aggregate_pm<Landmarks_point_location>  Landmarks_agg_pm;
+typedef CGAL::Bench<Landmarks_agg_pm>           Landmarks_agg_pm_bench;
+#endif
 
 /*! */
 template <class Strategy>
@@ -693,20 +694,20 @@ typedef CGAL::Bench<Naive_dis_pm>               Naive_dis_pm_bench;
 typedef Display_pm<Walk_point_location>         Walk_dis_pm;
 typedef CGAL::Bench<Walk_dis_pm>                Walk_dis_pm_bench;
 
-typedef Display_pm<Landmarks_point_location>         Landmarks_dis_pm;
-typedef CGAL::Bench<Landmarks_dis_pm>                Landmarks_dis_pm_bench;
-
 typedef Display_pm<Dummy_point_location>        Dummy_dis_pm;
 typedef CGAL::Bench<Dummy_dis_pm>               Dummy_dis_pm_bench;
 
+typedef Display_pm<Simple_point_location>       Simple_dis_pm;
+typedef CGAL::Bench<Simple_dis_pm>              Simple_dis_pm_bench;
+
 #if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
     BENCH_TRAITS != POLYLINE_TRAITS && BENCH_TRAITS != POLYLINE_CACHED_TRAITS
+typedef Display_pm<Landmarks_point_location>    Landmarks_dis_pm;
+typedef CGAL::Bench<Landmarks_dis_pm>           Landmarks_dis_pm_bench;
+
 typedef Display_pm<Triangle_point_location>     Triangle_dis_pm;
 typedef CGAL::Bench<Triangle_dis_pm>            Triangle_dis_pm_bench;
 #endif
-
-typedef Display_pm<Simple_point_location>       Simple_dis_pm;
-typedef CGAL::Bench<Simple_dis_pm>              Simple_dis_pm_bench;
 
 /*************** ixx ********************/
 /*! */
@@ -882,26 +883,26 @@ protected:
   //  int m_width, m_height;
 };
 
-typedef Locate_Pm<Trap_point_location>     Trap_loc_pm;
-typedef CGAL::Bench<Trap_loc_pm>           Trap_loc_pm_bench;
+typedef Locate_Pm<Trap_point_location>          Trap_loc_pm;
+typedef CGAL::Bench<Trap_loc_pm>                Trap_loc_pm_bench;
 
-typedef Locate_Pm<Naive_point_location>    Naive_loc_pm;
-typedef CGAL::Bench<Naive_loc_pm>          Naive_loc_pm_bench;
+typedef Locate_Pm<Naive_point_location>         Naive_loc_pm;
+typedef CGAL::Bench<Naive_loc_pm>               Naive_loc_pm_bench;
 
-typedef Locate_Pm<Walk_point_location>     Walk_loc_pm;
-typedef CGAL::Bench<Walk_loc_pm>           Walk_loc_pm_bench;
+typedef Locate_Pm<Walk_point_location>          Walk_loc_pm;
+typedef CGAL::Bench<Walk_loc_pm>                Walk_loc_pm_bench;
 
-typedef Locate_Pm<Landmarks_point_location>     Landmarks_loc_pm;
-typedef CGAL::Bench<Landmarks_loc_pm>           Landmarks_loc_pm_bench;
+typedef Locate_Pm<Simple_point_location>        Simple_loc_pm;
+typedef CGAL::Bench<Simple_loc_pm>              Simple_loc_pm_bench;
 
 #if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
     BENCH_TRAITS != POLYLINE_TRAITS && BENCH_TRAITS != POLYLINE_CACHED_TRAITS
-typedef Locate_Pm<Triangle_point_location> Triangle_loc_pm;
-typedef CGAL::Bench<Triangle_loc_pm>       Triangle_loc_pm_bench;
-#endif
+typedef Locate_Pm<Landmarks_point_location>     Landmarks_loc_pm;
+typedef CGAL::Bench<Landmarks_loc_pm>           Landmarks_loc_pm_bench;
 
-typedef Locate_Pm<Simple_point_location>   Simple_loc_pm;
-typedef CGAL::Bench<Simple_loc_pm>         Simple_loc_pm_bench;
+typedef Locate_Pm<Triangle_point_location>      Triangle_loc_pm;
+typedef CGAL::Bench<Triangle_loc_pm>            Triangle_loc_pm_bench;
+#endif
 
 /***************************************/
 
@@ -1056,6 +1057,9 @@ int main(int argc, char * argv[])
                                                verbose, postscript);
     }
 
+#if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
+    BENCH_TRAITS != POLYLINE_TRAITS && BENCH_TRAITS != POLYLINE_CACHED_TRAITS
+
     // Landmarks point location:
     strategy_id = CGAL::Bench_parse_args::STRATEGY_LANDMARKS;
     if (strategy_mask & (0x1 << strategy_id)) {
@@ -1073,9 +1077,6 @@ int main(int argc, char * argv[])
                                                verbose, postscript);
     }
 
-     
-#if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
-    BENCH_TRAITS != POLYLINE_TRAITS && BENCH_TRAITS != POLYLINE_CACHED_TRAITS
     // Triangle point location:
     strategy_id = CGAL::Bench_parse_args::STRATEGY_TRIANGLE;
     if (strategy_mask & (0x1 << strategy_id)) {
@@ -1192,7 +1193,10 @@ int main(int argc, char * argv[])
                                                verbose, postscript);
     }
 
-	    // Lenamrks point location:
+#if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
+    BENCH_TRAITS != POLYLINE_TRAITS && BENCH_TRAITS != POLYLINE_CACHED_TRAITS
+
+    // Lenamrks point location:
     strategy_id = CGAL::Bench_parse_args::STRATEGY_LANDMARKS;
     if (strategy_mask & (0x1 << strategy_id)) {
       std::string name =
@@ -1209,8 +1213,6 @@ int main(int argc, char * argv[])
                                                verbose, postscript);
     }
 
-#if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
-    BENCH_TRAITS != POLYLINE_TRAITS && BENCH_TRAITS != POLYLINE_CACHED_TRAITS
     // Triangle point location:
     strategy_id = CGAL::Bench_parse_args::STRATEGY_TRIANGLE;
     if (strategy_mask & (0x1 << strategy_id)) {
@@ -1306,6 +1308,9 @@ int main(int argc, char * argv[])
                                                    verbose, postscript);
     }
 
+#if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
+    BENCH_TRAITS != POLYLINE_TRAITS && BENCH_TRAITS != POLYLINE_CACHED_TRAITS
+
     // Landmarks point location:
     strategy_id = CGAL::Bench_parse_args::STRATEGY_LANDMARKS;
     if (strategy_mask & (0x1 << strategy_id)) {
@@ -1323,8 +1328,6 @@ int main(int argc, char * argv[])
                                                    verbose, postscript);
     }
 
-#if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
-    BENCH_TRAITS != POLYLINE_TRAITS && BENCH_TRAITS != POLYLINE_CACHED_TRAITS
     // Triangle point location:
     strategy_id = CGAL::Bench_parse_args::STRATEGY_TRIANGLE;
     if (strategy_mask & (0x1 << strategy_id)) {
@@ -1452,7 +1455,10 @@ int main(int argc, char * argv[])
 					       fullname[1]);
     }
 
-	 // Landmarks point location:
+#if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
+    BENCH_TRAITS != POLYLINE_TRAITS && BENCH_TRAITS != POLYLINE_CACHED_TRAITS
+
+    // Landmarks point location:
     strategy_id = CGAL::Bench_parse_args::STRATEGY_LANDMARKS;
     if (strategy_mask & (0x1 << strategy_id)) {
       std::string name =
@@ -1471,8 +1477,6 @@ int main(int argc, char * argv[])
 					       fullname[1]);
     }
 
-#if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
-    BENCH_TRAITS != POLYLINE_TRAITS && BENCH_TRAITS != POLYLINE_CACHED_TRAITS
     // Triangle point location:
     strategy_id = CGAL::Bench_parse_args::STRATEGY_TRIANGLE;
     if (strategy_mask & (0x1 << strategy_id)) {

@@ -22,7 +22,7 @@ SEGMENT_CACHED_TRAITS =         1
 LEDA_SEGMENT_TRAITS =           2
 POLYLINE_TRAITS =               3
 POLYLINE_CACHED_TRAITS =        4
-CONIC_TRAITS =                  5
+LEDA_CONIC_TRAITS =             5
 EXACUS_CONIC_TRAITS =           6
 CK_CONIC_TRAITS =               7
 CORE_CONIC_TRAITS =             8
@@ -61,7 +61,7 @@ BENCH_NT ?= $(LEDA_RAT_NT)
 KERNEL ?= $(LEDA_KERNEL)
 endif
 
-ifeq ($(BENCH_TRAITS), $(CONIC_TRAITS))
+ifeq ($(BENCH_TRAITS), $(LEDA_CONIC_TRAITS))
 BENCH_NT ?= $(LEDA_REAL_NT)
 endif
 
@@ -91,7 +91,7 @@ error "My kernel implies leda segment traits!"
 endif
 endif
 
-ifeq ($(BENCH_TRAITS), $(CONIC_TRAITS))
+ifeq ($(BENCH_TRAITS), $(LEDA_CONIC_TRAITS))
 ifneq ($(BENCH_NT), $(LEDA_REAL_NT))
 error "Conic traits implies real number type!"
 endif
@@ -304,7 +304,7 @@ ifeq ($(BENCH_TRAITS), $(POLYLINE_CACHED_TRAITS))
 TARGET0 := $(TARGET0)PolylineCached
 LOBJDIR :=$(LOBJDIR)_polyline_cached
 else 
-ifeq ($(BENCH_TRAITS), $(CONIC_TRAITS))
+ifeq ($(BENCH_TRAITS), $(LEDA_CONIC_TRAITS))
 TARGET0 := $(TARGET0)Conic
 LOBJDIR :=$(LOBJDIR)_conic
 else

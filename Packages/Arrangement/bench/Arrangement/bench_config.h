@@ -15,7 +15,7 @@
 #define LEDA_SEGMENT_TRAITS             2
 #define POLYLINE_TRAITS                 3
 #define POLYLINE_CACHED_TRAITS          4
-#define CONIC_TRAITS                    5
+#define LEDA_CONIC_TRAITS               5
 #define EXACUS_CONIC_TRAITS             6
 #define CK_CONIC_TRAITS                 7
 #define CORE_CONIC_TRAITS               8
@@ -66,7 +66,7 @@
 #endif
 #endif
 
-#if BENCH_TRAITS == CONIC_TRAITS
+#if BENCH_TRAITS == LEDA_CONIC_TRAITS
 #if !defined(BENCH_KERNEL)
 #define BENCH_KERNEL = CARTSIAN_KERNEL
 #endif
@@ -113,15 +113,15 @@
 #error My kernel implies leda segment traits!
 #endif
 
-#if BENCH_TRAITS == CONIC_TRAITS && BENCH_NT != LEDA_REAL_NT
+#if BENCH_TRAITS == LEDA_CONIC_TRAITS && BENCH_NT != LEDA_REAL_NT
 #error "Conic traits implies real number type!"
 #endif
 
-#if BENCH_TRAITS == CONIC_TRAITS && BENCH_KERNEL == LEDA_KERNEL
+#if BENCH_TRAITS == LEDA_CONIC_TRAITS && BENCH_KERNEL == LEDA_KERNEL
 #error "Conic traits implies non leda kernel!"
 #endif
 
-#if BENCH_TRAITS == CONIC_TRAITS && BENCH_KERNEL == MY_KERNEL
+#if BENCH_TRAITS == LEDA_CONIC_TRAITS && BENCH_KERNEL == MY_KERNEL
 #error "Conic traits implies non my kernel!"
 #endif
 
