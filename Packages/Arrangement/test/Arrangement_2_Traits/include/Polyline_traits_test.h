@@ -1,5 +1,5 @@
 #include <list>
-#include <Base_traits_test.h>
+#include "Base_traits_test.h"
 
 template< class Traits_class, class Number_type >
 class Polyline_traits_test : public Base_traits_test< Traits_class, Number_type >{
