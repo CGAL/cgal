@@ -111,7 +111,7 @@ void show_results(Snap_rounding_2 &s,
 void display_bounding_box(CGAL::Window_stream &W,
                           const Iso_rectangle_2 &b)
 {
-  //  W << CGAL::BLACK << b;
+  W << CGAL::BLACK << b;
 }
 
 void window_output(Snap_rounding_2 &s,Window_stream &w,

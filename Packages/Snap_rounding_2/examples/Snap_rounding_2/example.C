@@ -1,6 +1,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/Snap_rounding_2.h>
+#include "../../include/CGAL/Snap_rounding_2.h"
 
 #include <CGAL/leda_real.h>
 

@@ -35,37 +35,19 @@
 
 #endif
 
-/*#ifndef SWEEP_TO_PRODUCE_PLANAR_MAP_SUBCURVES_H
-#include <CGAL/sweep_to_produce_planar_map_subcurves.h>
-#endif*/
+//#include <CGAL/sweep_to_produce_planar_map_subcurves.h>
 
 //#include <CGAL/Sweep_line_tight_2.h>
 #include <CGAL/Sweep_line_2.h>
 
-//#ifndef CGAL_ARR_SEGMENT_TRAITS_2_H
 #include <CGAL/Arr_segment_traits_2.h>
-//#endif
-
-#ifndef CGAL_ARR_POLYLINE_TRAITS_H
 #include <CGAL/Arr_polyline_traits.h>
-#endif
-
-#ifdef ISR_DEBUG
-#include <CGAL/IO/leda_window.h>
-#endif
-
 #include <list>
 #include <set>
-
 #include <CGAL/leda_real.h>
-
 #include "../../include/CGAL/Snap_rounding_kd_2.h"
 
 CGAL_BEGIN_NAMESPACE
-
-#if defined(ISR_DEBUG)
-typedef CGAL::Window_stream Window_stream;
-#endif
 
 template<class Rep_>
 class Segment_data {
@@ -195,21 +177,23 @@ public:
   //! An operator =
   Snap_rounding_2& operator =(const Snap_rounding_2& other);
 
-
-#ifdef ISR_DEBUG
-  template<class Out>
-  void output_distances(Out &o);
-#endif
-  // !!!! change names to output and input
-  const Polyline_const_iterator polylines_begin();
-  const Polyline_const_iterator polylines_end();
-
+  //! Returns a constant iterator to the first input segment.
   inline Segment_const_iterator segments_begin() const {
              return(seg_2_list.begin());}
+  //! Returns a constant iterator to the after-the-last of the input segments.
   inline Segment_const_iterator segments_end() const {
     return(seg_2_list.end());}
+  //! Returns an iterator to the first input segment.
   inline Segment_iterator segments_begin() {return(seg_2_list.begin());}
+  //! Returns an iterator to the after-the-last of the input segments.
   inline Segment_iterator segments_end() {return(seg_2_list.end());}
+
+  //! Returns a constant iterator to the output of the first input segment.
+  const Polyline_const_iterator polylines_begin();
+  /*! Returns a constant iterator to the after-the-last of the output of
+   *  the input segments.
+   */
+  const Polyline_const_iterator polylines_end();
 
   bool insert(Segment_2 seg);
   bool push_back(Segment_2 seg);
@@ -223,10 +207,6 @@ public:
 
   template<class Out>
   void output(Out &o);
-
-  /*#ifdef ISR_DEBUG
-  void window_output(Window_stream &w,bool wait_for_click);
-  #endif*/
 
 private:
   // the next variable is for lazy evaluation:
@@ -261,17 +241,6 @@ private:
   void iterate();
   void copy(const Snap_rounding_2<Rep_>& other);
 };
-
-#if defined(ISR_DEBUG) || defined(TEST)
-#include <CGAL/squared_distance_2.h>
-
-#endif
-
-#ifdef ISR_DEBUG
-int max_rec = 1,cur_rec = -1,cur_max,needed_hp = 0,unneeded_hp = 0;
-#elif defined XXXX
-int needed_hp = 0,unneeded_hp = 0;
-#endif
 
 // ctor
 template<class Rep_>
@@ -681,17 +650,8 @@ void Snap_rounding_2<Rep_>::find_intersected_hot_pixels(Segment_data<Rep_>
            Point_2(seg.get_x2(),seg.get_y2())),pixel_size);
 
     for(iter = hot_pixels_list.begin();iter != hot_pixels_list.end();++iter) {
-      if((*iter)->intersect(seg)) {
-
-#if defined ISR_DEBUG
-        ++needed_hp;
-#endif
+      if((*iter)->intersect(seg))
         hot_pixels_intersected_set.insert(*iter);
-      }
-#if defined ISR_DEBUG
-        else
-          ++unneeded_hp;
-#endif
     }
 
     number_of_intersections = hot_pixels_intersected_set.size();
@@ -1026,100 +986,6 @@ template<class Out> void Snap_rounding_2<Rep_>::output(Out &o)
       o << std::endl;
     }
   }
-
-/*#ifdef ISR_DEBUG
-template<class Rep_>
-template<class Out> void Snap_rounding_2<Rep_>::output_distances(Out &o)
-  {
-    double max = 0,max_seg_dis,evarage_dis,cur_dis;
-    typename std::list<Segment_data<Rep_> >::iterator
-            orig_iter = seg_list.begin();
-
-    for(typename std::list<std::list<std::pair<NT,NT> > >::iterator iter1 =
-        segments_output_list.begin();iter1 != segments_output_list.end();
-        ++iter1) {
-      max_seg_dis = 0;
-      for(typename std::list<std::pair<NT,NT> >::iterator
-            iter2 = iter1->begin();
-          iter2 != iter1->end();++iter2) {
-        cur_dis = sqrt(CGAL::squared_distance(Point_2(iter2->first,
-          iter2->second),Segment_2(Point_2(orig_iter->get_x1(),
-          orig_iter->get_y1()),Point_2(orig_iter->get_x2(),
-          orig_iter->get_y2()))).to_double());
-        if(cur_dis > max_seg_dis)
-          max_seg_dis = cur_dis;
-      }
-
-      evarage_dis += max_seg_dis;
-      if(max_seg_dis > max)
-        max = max_seg_dis;
-
-      ++orig_iter;
-    }
-    evarage_dis /= seg_list.size();
-
-    std::cerr << "max distance between output and original is " << max << endl;
-    std::cerr << "evarage distance between output and original is " <<
-                 evarage_dis << endl;
-  }
-
-
-template<class Rep_>
-void Snap_rounding_2<Rep_>::window_output(Window_stream &w,bool wait_for_click)
-  {
-    double x,y;
-    bool seg_painted;
-
-    w << CGAL::BLACK;
-
-    for(typename std::set<Hot_Pixel<Rep_> *,hot_pixel_auclidian_cmp<Rep_> >::
-        iterator iter = hp_set.begin();
-        iter != hp_set.end();++iter)
-      (*iter)->draw(w);
-
-    // draw original segments
-    w << CGAL::BLACK;
-    for(typename std::list<Segment_data<Rep_> >::iterator iter =
-        seg_list.begin();iter != seg_list.end();++iter) {
-      if(iter->get_x1() == iter->get_x2() && iter->get_y1() == iter->get_y2())
-        w << Point_2(iter->get_x1(),iter->get_y1());
-      else
-        w << Segment_2(Point_2(iter->get_x1(),iter->get_y1()),
-                       Point_2(iter->get_x2(),iter->get_y2()));
-    }
-
-    // draw isr polylines
-    w << CGAL::RED;
-    typename std::list<Point_2>::iterator iter2,iter3;
-
-    for(typename std::list<std::list<Point_2> >::iterator iter1 =
-        segments_output_list.begin();iter1 != segments_output_list.end();
-        ++iter1) {
-      if(wait_for_click)
-        w.read_mouse(x,y);
-      iter2 = iter3 = iter1->begin();
-      seg_painted = false;
-      for(++iter2;iter2 != iter1->end();++iter2) {
-        seg_painted = true;
-        w << Segment_2(*iter2,*iter3);
-        ++iter3;
-      }
-
-      if(!seg_painted) { // segment entirely inside hot pixel
-        --iter2;
-        w << *iter2;
-      }
-    }
-
-    int mouse_input;
-    while(true) {
-      mouse_input = w.read_mouse(x,y);
-      if(mouse_input == 1)
-        return;
-    }
-  }
-#endif
-*/
 
 template<class Rep>
 typename Snap_rounding_2<Rep>::Direction Snap_rounding_2<Rep>::seg_dir;

@@ -21,19 +21,11 @@
 #ifndef CGAL_SR_KD_2_H
 #define CGAL_SR_KD_2_H
 
-#ifndef CGAL_CONFIG_H
-#include <CGAL/config.h>
-#endif
-
 #include <list>
 
-#ifndef  CGAL_KDTREE_D_H
+#include <CGAL/config.h>
 #include <CGAL/kdtree_d.h>
-#endif
-
-#ifndef CGAL_VECTOR_2_H
 #include <CGAL/Vector_2.h>
-#endif
 
 template<class NT,class SAVED_OBJECT>
 class my_point : public CGAL::Point_2<CGAL::Cartesian<NT> > {
@@ -153,10 +145,6 @@ public:
     number_of_trees(inp_number_of_trees),input_points_list(inp_points_list)
   {
     init_angle_appr();
-#ifdef TIMER
-    CGAL::Timer t;
-    t.start();
-#endif
 
     std::pair<kd_tree *,NT> kd;
 
@@ -171,16 +159,8 @@ public:
     int *kd_counter = new int[number_of_trees];
     int number_of_segments = seg_list.size();
     check_kd(kd_counter,number_of_trees,seg_list);
-
-#ifdef DEBUG
-    int x = 0;
-#endif
     int ind = 0;
     for(NT angle = 0;angle < half_pi;angle += half_pi / number_of_trees) {
-
-#ifdef DEBUG
-      std::cerr << "creating kd tree:  nu. " << ++x << endl;
-#endif
       if(kd_counter[ind] >= (double)number_of_segments /
 	                    (double) number_of_trees / 2.0) {
         kd = create_kd_tree(angle);
@@ -189,13 +169,6 @@ public:
 
       ++ind;
     }
-
-#ifdef TIMER
-    t.stop();
-
-    std::cerr << endl << "Kd trees creation took " <<
-                 t.time() << " seconds\n\n";
-#endif
   }
 
   static void init_angle_appr()
