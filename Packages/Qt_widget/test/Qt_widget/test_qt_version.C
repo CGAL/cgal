@@ -4,4 +4,5 @@
 int main(char*, char**)
 {
   std::cout << QT_VERSION << std::endl;
+  return 0;
 }
