@@ -22,8 +22,8 @@
 #ifndef CGAL_LARGEST_EMPTY_ISO_RECTANGLE_2_H
 #define CGAL_LARGEST_EMPTY_ISO_RECTANGLE_2_H
 
-#include <set.h>
-#include <list.h>
+#include <set>
+#include <list>
 
 #include <CGAL/utility.h>
 #include <CGAL/Iterator_project.h>
