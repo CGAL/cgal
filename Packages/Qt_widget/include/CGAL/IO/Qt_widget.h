@@ -787,10 +787,10 @@ void Qt_widget::y_real(int y, FT& return_t) const
 #ifdef CGAL_USE_GMP
     CGAL_Rational r = simplest_rational_in_interval<CGAL_Rational>( 
                             ymax - y/yscal-(y/yscal-(y-1)/yscal)/2, 
-                            ymax - y/xscal+((y+1)/yscal-y/yscal)/2);
+                            ymax - y/yscal+((y+1)/yscal-y/yscal)/2);
     return_t = static_cast<FT>(CGAL::to_double(r));
 #else
-    return_t = static_cast<FT>(ymax-y/xscal);
+    return_t = static_cast<FT>(ymax-y/yscal);
 #endif
   }  
 }

@@ -404,7 +404,7 @@ void Qt_widget::y_real(int y, Gmpq& return_t) const
 {
   return_t = simplest_rational_in_interval<Gmpq>( 
                   ymax - y/yscal-(1/yscal)/2,
-                  ymax - y/xscal+(1/yscal)/2);
+                  ymax - y/yscal+(1/yscal)/2);
 }
 #endif
 
@@ -421,7 +421,7 @@ double Qt_widget::y_real(int y) const
     if(yscal<1)
       return(ymax-(int)(y/yscal));
     else
-      return (ymax-y/xscal);
+      return (ymax-y/yscal);
 }
 
 double Qt_widget::x_real_dist(double d) const
