@@ -438,9 +438,9 @@ protected:
     }
 
     void update_prev( Halfedge_iterator, Halfedge_iterator,
-                      std::vector<Halfedge_iterator>,Tag_false){}
+                      std::vector<Halfedge_iterator> &,Tag_false){}
     void update_prev( Halfedge_iterator h, Halfedge_iterator base,
-                      std::vector<Halfedge_iterator> inv, Tag_true){
+                      std::vector<Halfedge_iterator> & inv, Tag_true){
         h->set_prev( &*(inv[ Halfedge_iterator(h->prev()) - base]));
     }
     void update_vertex( Halfedge_iterator  , Tag_false, Tag_false){}
