@@ -245,9 +245,9 @@ private:
 //     this->_previous_cell = tds.past_end_cell();
 //   }
 
-  void error_orient( Cell * , int ) const
+  void error_orient( Cell * , int i ) const
   {
-    std::cerr << " pb orientation with neighbor " << std::endl;
+    std::cerr << " pb orientation with neighbor " << i << std::endl;
   }
 
   void error_neighbor( Cell* , int , int ) const
