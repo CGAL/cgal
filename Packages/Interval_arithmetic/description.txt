@@ -1,2 +1,2 @@
-Interval arithmetic as a number type.
-Filtered_exact<CT,ET> as a generic filtering scheme for robust predicates.
+Filtered_exact<> as a generic filtering scheme for fast and robust predicates.
+Other low level "helper" number types.
