@@ -2,14 +2,10 @@
 //
 // Copyright (c) 1998 The CGAL Consortium
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
-//
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: V $
-// release_date  : $CGAL_Date: 1998, July 17 $
+// release       : 
+// release_date  : 
 // date          : 21 Apr 1998
 //
 // file          : config/testfiles/CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION.C

@@ -2,14 +2,10 @@
 //
 // Copyright (c) 1998 The CGAL Consortium
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
-//
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-1.2-I-3 $
-// release_date  : $CGAL_Date: 1998/09/25 $
+// release       : 
+// release_date  : 
 //
 // file          : config/testfiles/CGAL_CFG_NO_STANDARD_HEADERS.C
 // package       : Configuration (1.16)

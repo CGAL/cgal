@@ -2,14 +2,10 @@
 //
 // Copyright (c) 1997 The CGAL Consortium
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
-//
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: V $
-// release_date  : $CGAL_Date: 1998, July 17 $
+// release       : 
+// release_date  : 
 //
 // file          : config/testfiles/CGAL_CFG_NO_LAZY_INSTANTIATION.C
 // source        :
@@ -30,7 +26,7 @@
 
 //| Implicit instantiation of a class template does only instantiate member
 //| functions when needed (Dec. 1996 C++ Standard draft, 14.7.1). 
-//| This implies that member functions that are not instanciated in a 
+//| This implies that member functions that are not instantiated in a 
 //| certain context are allowed to use functionality from the template 
 //| arguments that are not provided by the actual argument. For example
 //| the Gnu g++ 2.7.2 does not comply to this. The following definition
