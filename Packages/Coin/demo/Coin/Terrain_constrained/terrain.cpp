@@ -47,9 +47,6 @@ Node_terrain<Delaunay> *terrain;
 SoComplexity * complexity_node;
 SoPerspectiveCamera *cam1;
 
-void pp(){
-  std::cout << "print\n";
-}
 
 SoSeparator* get_main_scene(){
 
@@ -87,8 +84,7 @@ private:
   void draw(){    
     
     Finite_edges_iterator it = dt.finite_edges_begin();
-    while(it!=dt.finite_edges_end()){
-      //*widget << Segment_2(Point_2(0, 0), Point_2(1, 1));
+    while(it!=dt.finite_edges_end()){      
       TPoint_3 p1 =  (*(*((*it).first)).vertex(((*it).second + 1)%3)).point();
       TPoint_3 p2 =  (*(*((*it).first)).vertex(((*it).second + 2)%3)).point();
       Segment_2 s = Segment_2(Point_2(p1.x(), p1.y()), Point_2(p2.x(), p2.y()));
@@ -112,6 +108,7 @@ public:
     
     QSizePolicy p(QSizePolicy::Expanding, QSizePolicy::Expanding, true);
     widget = new CGAL::Qt_widget(this);
+    *widget << CGAL::BackgroundColor(CGAL::BLACK);
     widget->setMouseTracking(TRUE);
     widget->resize(300, 300);
     widget->setSizePolicy(p);
@@ -120,8 +117,7 @@ public:
     viewer = new SoQtExaminerViewer(this);
     SoSeparator *root = get_main_scene();
     viewer->setSceneGraph(root);
-    viewer->setDrawStyle(SoQtViewer::STILL, SoQtViewer::VIEW_WIREFRAME_OVERLAY);
-    viewer->show();
+    viewer->setDrawStyle(SoQtViewer::STILL, SoQtViewer::VIEW_WIREFRAME_OVERLAY);    
     viewer->getBaseWidget()->resize(300, 300);
 
     topLayout1->addWidget(viewer->getBaseWidget());
@@ -140,14 +136,12 @@ class MyWindow : public QMainWindow{
   Q_OBJECT
 public:
   MyWindow(){
-    Layout_widget *cwidget = new Layout_widget(this, "Main_layout");
+    cwidget = new Layout_widget(this, "Main_layout");
     widget = cwidget->get_qt_widget();
-    viewer = cwidget->get_viewer();
+    viewer = cwidget->get_viewer();    
     setCentralWidget(cwidget);
-    widget->attach(&ls);
+    widget->attach(&ls);    
     widget->set_window(0, 50, 0, 50);
-    *widget << CGAL::BackgroundColor(CGAL::BLACK);
-
 
     // file menu
     QPopupMenu * file = new QPopupMenu( this );
@@ -159,6 +153,9 @@ public:
       SLOT(load_terrain_constrained()), CTRL+Key_T);
     file->insertItem("&Load Terrain", this, SLOT(load_terrain()), CTRL+Key_L);
     file->insertItem("&Save Terrain", this, SLOT(save_terrain()), CTRL+Key_S);
+    file->insertSeparator();
+    file->insertItem("&Load Points", this, SLOT(load_masspts()), CTRL+Key_I);
+    file->insertItem("&Load Constraints", this, SLOT(load_breaklines()), CTRL+Key_B);
     file->insertSeparator();
     file->insertItem("&Print to ps", this, SLOT(print_to_ps()), CTRL+Key_P);
     file->insertSeparator();
@@ -179,21 +176,129 @@ public:
 		      SLOT(generate_terrain()), CTRL+Key_G );
 
     //the standard toolbar
-    stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this);
-    //this->addToolBar(stoolbar->toolbar(), RIGHT, FALSE);
-    this->addDockWindow(stoolbar->toolbar(), DockTop, FALSE);
-
-
+    stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this);    
+    this->addDockWindow(stoolbar->toolbar(), DockRight, FALSE);
+    this->show();
   }
 public slots:
+
+void load_masspts()
+{
+  terrain->lock();
+  dt.clear();
+  int i, j;
+  int first = 0;
+  char c;
+
+  QString s( QFileDialog::getOpenFileName( QString::null,
+                       "Mass Points(*.dat)", this ) );
+  if ( s.isEmpty() ){
+    return;
+  }
+  Bbox b;
+
+
+  std::ifstream ins(s);
+  do {
+    ins.get(c);
+    if(c == '#') {
+      ins.ignore(200,'\n');
+    }
+  }while(c == '#');
+  ins.unget();
+
+  bool done = false;
+  while(! done) {
+    TPoint_3 p;
+    ins >> i >> j >> p;
+    if(ins.fail()){
+      done = true;
+      continue;
+    }
+    assert(j == 0);
+
+    dt.insert(p);
+    if(first == 0){
+      b = p.bbox();
+      first++;
+    } else {
+      b = b + p.bbox();
+    }
+  }  
+
+    terrain->compute_normals_for_faces();
+    terrain->compute_normals_for_vertices();
+    cam1->position.setValue(SbVec3f(b.xmin(), b.ymin(), 2*b.zmax()));    
+    cam1->pointAt(SbVec3f(b.xmin() + (b.xmax()-b.xmin())/100, b.ymin() + (b.ymax()-b.ymin())/100, b.zmax()), SbVec3f(0, 0, 1));
+    widget->clear_history();
+    widget->set_window(b.xmin(), b.xmax(), b.ymin(), b.ymax());
+    terrain->unlock();
+    terrain->touch();
+    //viewer->viewAll();
+    viewer->render();
+    widget->redraw();
+}
+
+void load_breaklines()
+{
+  QString s( QFileDialog::getOpenFileName( QString::null,
+                       "Break Lines(*.dat)", this ) );
+  if ( s.isEmpty() ){
+    return;
+  }
+  bool first = true;
+  std::ifstream ins(s);
+  char c;
+  do {
+    ins.get(c);
+    if(c == '#') {
+      ins.ignore(200,'\n');
+    }
+  }while(c == '#');
+  ins.unget();
+
+  bool done = false;
+  while(! done) {
+    TPoint_3 p, q;
+    Vertex_handle vp, vq;
+    int iq, j;
+    ins >> iq >> j >> q;
+    if(ins.fail()){
+      done = true;
+      continue;
+    }
+    if(first) { // we start a new polyline
+      p = q;
+      vp = dt.insert(p);
+      first = false;
+    } else {
+      vq = dt.insert(q);
+      dt.insert_constraint(vp,vq);
+      p = q;
+      vp = vq;
+    }
+  }
+
+    terrain->compute_normals_for_faces();
+    terrain->compute_normals_for_vertices();
+    widget->clear_history();    
+    terrain->touch();
+    //viewer->viewAll();
+    viewer->render();
+    widget->redraw();
+
+}
+
+
   void generate_terrain(){
     dt.clear();
+    terrain->lock();
     Vector p;
     double value;
     double roughness = 0.5;
     int frequency    = 70;
-    int gridSize = 20;
-    double landscape[100][100];
+    int gridSize = 200;
+    double landscape[300][300];
     bool initFractals = true;
 
     QProgressDialog progress( "Generating terrain...", "Cancel generate", gridSize,
@@ -249,10 +354,11 @@ public slots:
         zmax = (*it).point().z();
       it++;
     }    
-    cam1->position.setValue(SbVec3f(xmin - (xmax-xmin)/2, ymin - (ymax-ymin)/2, 4*zmax));
-    cam1->pointAt(SbVec3f(xmin + (xmax-xmin)/2, ymin + (ymax-ymin)/2, zmin), SbVec3f(0, 0, 1));
+    cam1->position.setValue(SbVec3f(xmin, ymin, 2*zmax));
+    cam1->pointAt(SbVec3f(xmin + (xmax-xmin)/5, ymin + (ymax-ymin)/5, zmax), SbVec3f(0, 0, 1));
     widget->clear_history();
     widget->set_window(xmin, xmax, ymin, ymax);
+    terrain->unlock();
     terrain->touch();
     //viewer->viewAll();
     viewer->render();
@@ -274,6 +380,9 @@ public slots:
     terrain->touch();
   }
 
+  // read number of points then the points and insert them in the triangulation
+  // read the number of polylines and for each polyline read number of points and
+  // insert them as long as the segment formed by each 2 points as a constraint
   void load_terrain_constrained(){
     dt.clear();
     int i, j;
@@ -332,6 +441,9 @@ public slots:
     
   }
 
+  //load terrain using:
+  // - the input operator if .cgal extension
+  // - input operator of points and inserting points with insert method if no extension
   void load_terrain(){
     QString s( QFileDialog::getOpenFileName( QString::null,
 			    "CGAL files (*.cgal);;All files (*.*)", this ) );
@@ -382,15 +494,12 @@ public slots:
     viewer->render();
     widget->redraw();
   }
-  void save_terrain(){
-    QFileDialog qfd(this, "Save Terrain", true);
-    qfd.setViewMode(QFileDialog::Detail);    
-    qfd.addFilter("CGAL files (*.cgal)");
-    qfd.setMode(QFileDialog::AnyFile);
 
-    QString fileName;
-    if ( qfd.exec() == QDialog::Accepted )
-      fileName = qfd.selectedFile();
+  //save terrain using the output operator of Delaunay Triangulation
+  void save_terrain(){
+    QString fileName = 
+      QFileDialog::getSaveFileName( "triangulation.cgal", 
+				  "Cgal files (*.cgal);;All files (*.*)", this ); 
 
     if ( !fileName.isNull() ) {
       // got a file name
@@ -451,6 +560,7 @@ private:
   CGAL::Qt_widget_standard_toolbar *stoolbar;
   Qt_layer_show_triangulation ls;
   SoQtExaminerViewer *viewer;
+  Layout_widget *cwidget;
 };
 
 #include "terrain.moc"
@@ -462,8 +572,7 @@ main (int argc, char ** argv)
    MyWindow *mainwin = new MyWindow();
    app.setMainWidget(mainwin);   
    mainwin->resize(600, 300);
-   mainwin->setCaption("Terrain");
-   mainwin->show();
+   mainwin->setCaption("Terrain");      
    
    app.exec();
 }

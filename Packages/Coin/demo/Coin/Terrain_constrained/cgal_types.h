@@ -6,14 +6,10 @@
 #include <CGAL/point_generators_3.h> 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Bbox_3.h> 
-
-
-
-#include <CGAL/Gmpz.h>
-#include <CGAL/Homogeneous.h>
-#include <CGAL/Triangulation_euclidean_traits_xy_3.h>
+#include <CGAL/Filtered_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-//#include <CGAL/Triangulation_2.h>
+#include <CGAL/Triangulation_euclidean_traits_xy_3.h>
+
 
 typedef CGAL::Simple_cartesian<double>  Rp;
 typedef CGAL::Point_2<Rp>               Point_2;
@@ -26,7 +22,6 @@ typedef Delaunay::Finite_vertices_iterator Finite_vertices_iterator;
 typedef Delaunay::Vertex_handle         Vertex_handle;
 typedef Rp::Point_3   TPoint_3;
 typedef CGAL::Bbox_3  Bbox;
-
 
 
 #include <list>
