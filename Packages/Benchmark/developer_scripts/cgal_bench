@@ -45,7 +45,8 @@ my $isGenerate = 0;
 
 $Getopt::Long::ignorecase = 0;
 die
-    unless GetOptions("databaseFile=s" => \$databaseFile,
+    unless GetOptions("args=s" => \$extraArgs,
+		      "databaseFile=s" => \$databaseFile,
 		      "generate!" => \$isGenerate,
 		      "help" => \$help,
 		      "indent=i" => \$indentInc,
@@ -253,10 +254,11 @@ sub showtab
 #
 sub usage {
   printf "Usage: MakeHtmlPage [options]\n";
-printf "\t-help\t\t\tprint this help message
-\t-verbose <level>\tset verbose level to <level> on
-\t-databaseFile <file>\tset database xml file to <file>
-\t-filterName <name>\tselect <name> bench (and sub benches).\n";
+printf "  -args <args>\tset additional arguments to bench program
+  -help\t\t\tprint this help message
+  -verbose <level>\tset verbose level to <level> on
+  -databaseFile <file>\tset database xml file to <file>
+  -filterName <name>\tselect <name> bench (and sub benches).\n";
     
   exit(0);
 }
@@ -372,6 +374,7 @@ sub processStartCmd
   push @args, '-bnl=' . $nameLength if defined($nameLength);
   push @args, '-btype_mask=' . $type_mask if defined($type_mask);
   push @args, '-bstrategy_mask=' . $strategy_mask if defined($strategy_mask);
+  push @args, $extraArgs if defined($extraArgs);
   push @args, $filename;
 
   # print command
