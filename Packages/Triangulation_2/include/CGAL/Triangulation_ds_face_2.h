@@ -353,7 +353,7 @@ public:
 
    bool is_valid(bool verbose = false, int level = 0) const
   {
-    bool result = true;
+    bool result = Fb::is_valid();
     for(int i = 0; i < 3; i++) {
       Face* n = neighbor(i);
             
