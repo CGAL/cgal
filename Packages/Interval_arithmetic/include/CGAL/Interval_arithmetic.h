@@ -41,6 +41,10 @@
 #include <CGAL/basic.h>
 #include <CGAL/Interval_arithmetic/_FPU.h>	// FPU rounding mode functions.
 
+#ifdef _MSC_VER
+extern "C" { double CGAL_ms_sqrt(double); }
+#endif
+
 CGAL_BEGIN_NAMESPACE
 
 struct Interval_nt_advanced
@@ -95,8 +99,10 @@ public:
 
   Interval_nt_advanced(const double i, const double s)
   {
+#ifndef CGAL_LAZY_EXACT_NT_H
       CGAL_assertion_msg(i<=s,
 	      " CGAL bug or variable used before being initialized");
+#endif
       _inf = CGAL_IA_STOP_CPROP(i);
       _sup = CGAL_IA_STOP_CPROP(s);
   }
@@ -265,9 +271,16 @@ sqrt (const Interval_nt_advanced & d)
   // sqrt([-a,+b]) => [0;sqrt(+b)] => assumes roundoff error.
   // sqrt([-a,-b]) => [0;sqrt(-b)] => assumes user bug (unspecified result).
   FPU_set_cw(FPU_cw_down);
+#ifdef _MSC_VER
+  // sqrt(double) on M$ is buggy.
+  double i = (d._inf>0.0) ? CGAL_IA_FORCE_TO_DOUBLE(CGAL_ms_sqrt(d._inf)) : 0.0;
+  FPU_set_cw(FPU_cw_up);
+  return Interval_nt_advanced(i, CGAL_IA_FORCE_TO_DOUBLE(CGAL_ms_sqrt(d._sup)));
+#else
   double i = (d._inf>0.0) ? CGAL_IA_FORCE_TO_DOUBLE(std::sqrt(d._inf)) : 0.0;
   FPU_set_cw(FPU_cw_up);
   return Interval_nt_advanced(i, CGAL_IA_FORCE_TO_DOUBLE(std::sqrt(d._sup)));
+#endif
 }
 
 inline
