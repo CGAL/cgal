@@ -100,9 +100,12 @@ typedef CGAL::Segment_2<Rep> Segment_2;
 typedef CGAL::Point_2<Rep> Point_2;
 
 private:
-  // (x,y) is the center of the hot pixel
-  NT x;
-  NT y;
+  // p is the center of the hot pixel
+  Point_2 p;
+  Point_2 p_left;
+  Point_2 p_right;
+  Point_2 p_down;
+  Point_2 p_up;
   NT pixel_size;
   Segment_2 *right_seg;
   Segment_2 *left_seg;
@@ -115,6 +118,7 @@ public:
   void draw(Out &o) const;
   Hot_Pixel(Point_2 inp_point,NT inp_pixel_size);
   ~Hot_Pixel();
+  inline Point_2 get_center() const;
   inline NT get_x() const;
   inline NT get_y() const;
   bool intersect_left(Segment_2 &seg) const;
@@ -128,6 +132,8 @@ public:
 template<class Rep_>
 struct hot_pixel_auclidian_cmp
 {
+  Rep_   _gt;
+
   bool operator()(const Hot_Pixel<Rep_> *h1,const Hot_Pixel<Rep_> *h2) const;
 };
 
@@ -136,6 +142,8 @@ struct hot_pixel_auclidian_cmp
 template<class Rep_>
 struct hot_pixel_dir_cmp
 {
+  Rep_   _gt;
+
   bool operator ()(const Hot_Pixel<Rep_> *h1,const Hot_Pixel<Rep_> *h2);
 };
 
@@ -379,11 +387,17 @@ Hot_Pixel<Rep_>::Hot_Pixel(Point_2 inp_point,NT inp_pixel_size) :
                            pixel_size(inp_pixel_size)
   {
     // $$$$ the next two functions are not generic !!!
-    x = NT(floor((inp_point.x() / pixel_size).to_double())) * pixel_size +
+    NT x = NT(floor((inp_point.x() / pixel_size).to_double())) * pixel_size +
         pixel_size / 2.0;
 
-    y = NT(floor((inp_point.y() / pixel_size).to_double())) * pixel_size +
+    NT y = NT(floor((inp_point.y() / pixel_size).to_double())) * pixel_size +
         pixel_size / 2.0;
+
+    p = Point_2(x,y);
+    p_left = Point_2(x - pixel_size / 2.0,y);
+    p_right = Point_2(x + pixel_size / 2.0,y);
+    p_down = Point_2(x,y - pixel_size / 2.0);
+    p_up = Point_2(x,y + pixel_size / 2.0);
 
     right_seg = new Segment_2(Point_2(x + pixel_size / 2.0,y -
                               pixel_size / 2.0),
@@ -415,10 +429,13 @@ Hot_Pixel<Rep_>::~Hot_Pixel()
   }
 
 template<class Rep_>
-inline typename Rep_::FT Hot_Pixel<Rep_>::get_x() const {return(x);}
+inline Hot_Pixel<Rep_>::Point_2 Hot_Pixel<Rep_>::get_center() const {return(p);}
 
 template<class Rep_>
-inline typename Rep_::FT Hot_Pixel<Rep_>::get_y() const {return(y);}
+inline typename Rep_::FT Hot_Pixel<Rep_>::get_x() const {return(p.x());}
+
+template<class Rep_>
+inline typename Rep_::FT Hot_Pixel<Rep_>::get_y() const {return(p.y());}
 
 template<class Rep_>
 bool Hot_Pixel<Rep_>::intersect_left(Segment_2 &seg) const
@@ -430,10 +447,9 @@ bool Hot_Pixel<Rep_>::intersect_left(Segment_2 &seg) const
     result = CGAL::intersection(seg,*left_seg);//!!!! change: create instance and call its intersection
 
     if(CGAL::assign(p,result)) {
-      Point_2 tmp(0,y + pixel_size / 2.0);
-      Comparison_result c_p = _gt.compare_y_2_object()(p,tmp);
-      Comparison_result c_target = _gt.compare_y_2_object()(seg.target(),tmp);
-      Comparison_result c_source = _gt.compare_y_2_object()(seg.source(),tmp);
+      Comparison_result c_p = _gt.compare_y_2_object()(p,p_up);
+      Comparison_result c_target = _gt.compare_y_2_object()(seg.target(),p_up);
+      Comparison_result c_source = _gt.compare_y_2_object()(seg.source(),p_up);
 
       return(c_p != EQUAL || Snap_rounding_2<Rep_>::get_direction() ==
              Snap_rounding_2<Rep_>::UP_LEFT && c_source != EQUAL ||
@@ -457,14 +473,10 @@ bool Hot_Pixel<Rep_>::intersect_right(Segment_2 &seg) const
 
     if(CGAL::assign(p,result)) {
       // bottom right point was checked in intersect_bot
-
-      //*** NT tmp = y + pixel_size / 2.0;
-      Point_2 tmp1(0,y + pixel_size / 2.0);
-      Point_2 tmp2(0,y - pixel_size / 2.0);
-      Comparison_result c1 = _gt.compare_y_2_object()(p,tmp1);
-      Comparison_result c2 = _gt.compare_y_2_object()(p,tmp2);
-      Comparison_result c3 = _gt.compare_y_2_object()(seg.source(),tmp1);
-      Comparison_result c4 = _gt.compare_y_2_object()(seg.target(),tmp1);
+      Comparison_result c1 = _gt.compare_y_2_object()(p,p_up);
+      Comparison_result c2 = _gt.compare_y_2_object()(p,p_down);
+      Comparison_result c3 = _gt.compare_y_2_object()(seg.source(),p_up);
+      Comparison_result c4 = _gt.compare_y_2_object()(seg.target(),p_up);
 
       if(c1 == EQUAL)
         return(Snap_rounding_2<Rep_>::get_direction() ==
@@ -474,11 +486,10 @@ bool Hot_Pixel<Rep_>::intersect_right(Segment_2 &seg) const
       else if(c2 == EQUAL)
         return(false);// was checked
       else {
-        Point_2 p_check(x + pixel_size / 2.0,0);
         Comparison_result c_target =
-             _gt.compare_x_2_object()(p_check,seg.target());
+             _gt.compare_x_2_object()(p_right,seg.target());
         Comparison_result c_source =
-             _gt.compare_x_2_object()(p_check,seg.source());
+             _gt.compare_x_2_object()(p_right,seg.source());
 
         return((Snap_rounding_2<Rep_>::get_direction() ==
                 Snap_rounding_2<Rep_>::LEFT ||
@@ -509,10 +520,9 @@ bool Hot_Pixel<Rep_>::intersect_bot(Segment_2 &seg) const
     result = CGAL::intersection(seg,*bot_seg);
 
     if(CGAL::assign(p,result)) {
-      Point_2 tmp(x + pixel_size / 2.0,0);
-      Comparison_result c_p = _gt.compare_x_2_object()(p,tmp);
-      Comparison_result c_target = _gt.compare_x_2_object()(seg.target(),tmp);
-      Comparison_result c_source = _gt.compare_x_2_object()(seg.source(),tmp);
+      Comparison_result c_p = _gt.compare_x_2_object()(p,p_right);
+      Comparison_result c_target = _gt.compare_x_2_object()(seg.target(),p_right);
+      Comparison_result c_source = _gt.compare_x_2_object()(seg.source(),p_right);
 
       return(c_p != EQUAL || Snap_rounding_2<Rep_>::get_direction() ==
              Snap_rounding_2<Rep_>::UP_LEFT && c_target != EQUAL ||
@@ -535,13 +545,10 @@ bool Hot_Pixel<Rep_>::intersect_top(Segment_2 &seg) const
 
     if(CGAL::assign(p,result)) {
       // corner points was checked in intersect_bot
-      Point_2 tmp1(x - pixel_size / 2.0,0);
-      Point_2 tmp2(x + pixel_size / 2.0,0);
-      Point_2 tmp3(0,y + pixel_size / 2.0);
-      Comparison_result c1 = _gt.compare_x_2_object()(p,tmp1);
-      Comparison_result c2 = _gt.compare_x_2_object()(p,tmp2);
-      Comparison_result c3 = _gt.compare_y_2_object()(seg.target(),tmp3);
-      Comparison_result c4 = _gt.compare_y_2_object()(seg.source(),tmp3);
+      Comparison_result c1 = _gt.compare_x_2_object()(p,p_left);
+      Comparison_result c2 = _gt.compare_x_2_object()(p,p_right);
+      Comparison_result c3 = _gt.compare_y_2_object()(seg.target(),p_up);
+      Comparison_result c4 = _gt.compare_y_2_object()(seg.source(),p_up);
 
       if(c1 == EQUAL || c2 == EQUAL)
         return(false);// were checked
@@ -576,43 +583,49 @@ template<class Rep_>
 bool hot_pixel_auclidian_cmp<Rep_>::operator()(const Hot_Pixel<Rep_> *h1,
      const Hot_Pixel<Rep_> *h2) const
   {
-    return(h1->get_x() < h2->get_x() ||
-         h1->get_x() == h2->get_x() && h1->get_y() < h2->get_y());
+    Comparison_result cx = _gt.compare_x_2_object()(h1.get_center(),h2.get_center());
+    Comparison_result cy = _gt.compare_y_2_object()(h1.get_center(),h2.get_center());
+
+    return(cx == SMALLER ||
+         cx == EQUAL && cy == SMALLER);
   }
 
 // a function for compare two hot pixels for the set of hot pixels a certain
 // segment intersect
 template<class Rep_>
-bool hot_pixel_dir_cmp<Rep_>::operator ()(const Hot_Pixel<Rep_> *h1,\
+bool hot_pixel_dir_cmp<Rep_>::operator ()(const Hot_Pixel<Rep_> *h1,
      const Hot_Pixel<Rep_> *h2) 
 {
+  Comparison_result cx = _gt.compare_x_2_object()(h1->get_center(),h2->get_center());
+  Comparison_result cy = _gt.compare_y_2_object()(h1->get_center(),h2->get_center());
+
   return(
      // Point segment intersects only one pixel, thus ignored
     Snap_rounding_2<Rep_>::get_direction() ==
     Snap_rounding_2<Rep_>::UP_RIGHT &&
-    (h1->get_x() < h2->get_x() || 
-     h1->get_x() == h2->get_x() && h1->get_y() < h2->get_y()) ||
+    (cx == SMALLER || 
+    cx == EQUAL && cy == SMALLER) ||
     Snap_rounding_2<Rep_>::get_direction() ==
     Snap_rounding_2<Rep_>::UP_LEFT &&
-    (h1->get_x() > h2->get_x() || 
-     h1->get_x() == h2->get_x() && h1->get_y() < h2->get_y()) ||
+    (cx == LARGER || 
+    cx == EQUAL && cy == SMALLER) ||
     Snap_rounding_2<Rep_>::get_direction() ==
     Snap_rounding_2<Rep_>::DOWN_RIGHT &&
-    (h1->get_x() < h2->get_x() || 
-     h1->get_x() == h2->get_x() && h1->get_y() > h2->get_y()) ||
+    (cx == SMALLER || 
+    cx == EQUAL && cy == LARGER) ||
     Snap_rounding_2<Rep_>::get_direction() ==
     Snap_rounding_2<Rep_>::DOWN_LEFT &&
-    (h1->get_x() > h2->get_x() || 
-     h1->get_x() == h2->get_x() && h1->get_y() > h2->get_y()) ||
+    (cx == LARGER || 
+    cx == EQUAL && cy == LARGER) ||
     Snap_rounding_2<Rep_>::get_direction() == Snap_rounding_2<Rep_>::UP &&
-    h1->get_y() < h2->get_y() ||
+    cy == SMALLER ||
     Snap_rounding_2<Rep_>::get_direction() == Snap_rounding_2<Rep_>::DOWN &&
-    h1->get_y() > h2->get_y() ||
+    cy == LARGER ||
     Snap_rounding_2<Rep_>::get_direction() == Snap_rounding_2<Rep_>::LEFT &&
-    h1->get_x() > h2->get_x() ||
+    cx == LARGER ||
     Snap_rounding_2<Rep_>::get_direction() ==
     Snap_rounding_2<Rep_>::RIGHT &&
-    h1->get_x() < h2->get_x());
+    cx == SMALLER);
 }
 
 template<class Rep_>
