@@ -744,41 +744,42 @@ the SIGNAL with your SLOT.
 \subsection*{Tutorial 8}
 
 In this tutorial you learn how to use a button to attach and
-detach a Qt_widget_tool. As in the previous tutorial we use the
-generic tool Qt_widget_get_point and a toolbar button that will
+detach a \ccStyle{Qt\_widget\_tool}. As in the previous tutorial we use the
+generic tool \ccStyle{Qt\_widget\_get\_point} and a toolbar button that will
 control the process of attaching and detaching.
 
-To use a toolbar, here is what you have to do in the constructor of My_Window:
-
-    QToolBar  *tools_toolbar;
-    tools_toolbar = new QToolBar("Tools", this, QMainWindow::Top, TRUE, "Tools");
-    addToolBar(tools_toolbar, Top, FALSE);
-
+To use a toolbar, here is what you have to do in the constructor of M\_Window:
+\begin{ccExampleCode}
+QToolBar  *tools_toolbar;
+tools_toolbar = new QToolBar("Tools", this, QMainWindow::Top, TRUE, "Tools");
+addToolBar(tools_toolbar, Top, FALSE);
+\end{ccExampleCode}
 To add a button in the toolbar you have to:
--declare the button in My_Window:
-
-	QToolButton *get_point_but;	//the toolbar button
-
+-declare the button in My\_Window:
+\begin{ccExampleCode}
+QToolButton *get_point_but;	//the toolbar button
+\end{ccExampleCode}
 -add the button in the toolbar:
-
-    get_point_but =  new QToolButton(QPixmap( (const char**)point_xpm ),
-				  "Point Tool", 
-				  0, 
-				  this, 
-				  SLOT(pointtool()), 
-				  tools_toolbar, 
-				  "Point Tool");
-
+\begin{ccExampleCode}
+get_point_but =  new QToolButton(QPixmap( (const char**)point_xpm ),
+                                         "Point Tool", 
+                                         0, 
+                                         this, 
+                                         SLOT(pointtool()), 
+                                         tools_toolbar, 
+                                         "Point Tool");
+\end{ccExampleCode}
 The constructor of QToolButton needs a pointer to QMainWindow, that is
-"this", and a pointer to a toolbar, that is "tools_toolbar".
+"this", and a pointer to a toolbar, that is "tools\_toolbar".
 
 To make the button a toggle button:
-
-    get_point_but->setToggleButton(TRUE);
-
+\begin{ccExampleCode}
+get_point_but->setToggleButton(TRUE);
+\end{ccExampleCode}
 Also in the constructor of QToolButton is needed to declare a function
 that will be called every time the button is pressed. That is
-pointtool(). The first parameter is the icon found in <CGAL/IO/pixmaps/point.xpm>.
+pointtool(). The first parameter is the icon found in\\
+ \ccc{<CGAL/IO/pixmaps/point.xpm>}.
 % +-----------------------------------------------------+
 % EOF
 
