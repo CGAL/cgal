@@ -1,2 +1,1 @@
-Some demo programs illustrating robustness in CGAL:
-- intersection_points_on_segment_2 ?
+Some demo programs illustrating robustness in CGAL.
