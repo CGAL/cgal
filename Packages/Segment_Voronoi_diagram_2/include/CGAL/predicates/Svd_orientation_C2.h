@@ -85,6 +85,7 @@ private:
     return false;
   }
 
+#if 0 // not used
   bool have_common_support(const Site_2& p, const Site_2& q,
 			   const Site_2& r) const
   {
@@ -107,6 +108,7 @@ private:
 	same_segments(p.supporting_site(1),r.supporting_site(1));
     }
   }
+#endif
 
   bool is_endpoint(const Site_2& p, const Site_2& s) const
   {
@@ -137,7 +139,7 @@ public:
       }
     }
 #endif
-
+#if 0
     // do geometric filtering
     bool pe = p.is_exact();
     bool qe = q.is_exact();
@@ -185,7 +187,7 @@ public:
 	return COLLINEAR;
       }
     }
-
+#endif
     return Orientation_2()(p.point(), q.point(), r.point());
   }
 };
