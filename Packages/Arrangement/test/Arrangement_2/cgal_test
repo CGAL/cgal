@@ -17,27 +17,44 @@ ERRORFILE=error.txt
 #                    compile_and_run <target>
 #---------------------------------------------------------------------#
 
-compile_and_run()
+compile()
 {
   EXTRA_FLAGS="-DCGAL_ARR_TEST_POINT_LOCATION=$2 -DCGAL_ARR_TEST_TRAITS=$3 \
     $EXTRA_FLAGS "
   export EXTRA_FLAGS
 
   echo "Compiling $1 with point location $2 and traits $3... "
-  if eval 'make CGAL_MAKEFILE=$CGAL_MAKEFILE \
-           TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS" \
-           TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS" $1' ; then
-    echo "   compilation of $1 succeeded" >> $ERRORFILE
+  eval 'make CGAL_MAKEFILE=$CGAL_MAKEFILE \
+        TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS" \
+        TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS" $1'
+}
+
+compile_and_run()
+{
+    
+  echo "---$1---"
+
+  # running general test
+  if compile $1 $2 $3 ; then
+    echo "   compilation of $1 succeeded" >> $ERRORFILE  
     REVERSE=""
     run $1 $2 $3
     REVERSE="reverse"
     run $1 $2 $3
-
   else
     echo "   ERROR: compilation of $1 failed" >> $ERRORFILE
   fi
+   
+  # running io test
+  if compile $1_io $2 $3 ; then
+    echo "   compilation of $1_io succeeded" >> $ERRORFILE  
+    run_io $1_io $2 $3
+  else
+    echo "   ERROR: compilation of $1_io failed" >> $ERRORFILE
+  fi 
 
   eval "2>&1 make CGAL_MAKEFILE=$CGAL_MAKEFILE clean > /dev/null "
+
 }
 
 run()
@@ -50,6 +67,11 @@ run()
 
   for DATAFILE in ${datafiles}
   do
+    if [ -d $DATAFILE ]; then
+        echo  "$DATEFILE is a directory" 
+        continue
+    fi
+
     if [ -f $1 ] ; then
         DATANAME=`basename $DATAFILE`
 	if [ $REVERSE="reverse" ] ; then
@@ -68,6 +90,62 @@ run()
 	fi
     else
 	echo "   ERROR: could not execute $1 $DATAFILE $REVERSE" >> $ERRORFILE
+    fi
+  done
+
+}
+
+run_io()
+{
+  if [ $3 -eq $CGAL_SEGMENT_TRAITS -o $3 -eq $CGAL_SEGMENT_LEDA_TRAITS ] ; then
+    datafiles="DATA/IO/segments/*"
+  elif [ $3 -eq $CGAL_POLYLINE_TRAITS -o $3 -eq $CGAL_POLYLINE_LEDA_TRAITS ]; then
+    datafiles="DATA/IO/polylines/*"   
+  fi
+
+  if [ $3 -eq $CGAL_SEGMENT_TRAITS ] ; then
+    iofiles="DATA/IO/segments/exact_io/"
+    SUFFIO="exact_io"
+  elif [ $3 -eq $CGAL_SEGMENT_LEDA_TRAITS ] ; then
+    iofiles="DATA/IO/segments/leda_io/"
+    SUFFIO="leda_io"
+  elif [ $3 -eq $CGAL_POLYLINE_TRAITS ]; then
+    iofiles="DATA/IO/polylines/exact_io/"
+    SUFFIO="exact_io"
+  elif [ $3 -eq $CGAL_POLYLINE_LEDA_TRAITS ]; then
+    iofiles="DATA/IO/polylines/leda_io/" 
+    SUFFIO="leda_io"
+  fi
+
+  for DATAFILE in ${datafiles}
+  do
+    
+    if [ -d $DATAFILE ]; then
+        echo  "$DATEFILE is a directory" 
+        continue
+    fi
+    
+    IOFILE="${iofiles}`basename ${DATAFILE}`_${SUFFIO}"
+    echo $IOFILE
+    
+    if [ -f $1 ] ; then
+        rm -f arr.txt
+        
+        DATANAME=`basename $DATAFILE`
+        IONAME=`basename $IOFILE`	
+        OUTPUTFILE=ProgramOutput.$3.$1.$DATANAME.$PLATFORM.$2
+
+	rm -f $OUTPUTFILE
+	COMMAND="./$1 $IOFILE $DATAFILE"
+	echo "Executing $1 $IONAME $DATANAME  ... "
+	echo
+	if eval $COMMAND > $OUTPUTFILE 2>&1 ; then
+	echo "   execution of $1 $DATAFILE succeeded" >> $ERRORFILE
+	else
+	echo "   ERROR: execution of $1 $DATAFILE  failed" >> $ERRORFILE
+	fi
+    else
+	echo "   ERROR: could not execute $1 $DATAFILE " >> $ERRORFILE
     fi
   done
 
@@ -95,23 +173,37 @@ else
   CGAL_POLYLINE_TRAITS=11
   CGAL_POLYLINE_LEDA_TRAITS=12
 
-  CGAL_ARR_TEST_TRAITS=$CGAL_SEGMENT_TRAITS
-    (compile_and_run test 1 $CGAL_ARR_TEST_TRAITS)
-    (compile_and_run test 2 $CGAL_ARR_TEST_TRAITS)
-    (compile_and_run test 3 $CGAL_ARR_TEST_TRAITS)
-  CGAL_ARR_TEST_TRAITS=$CGAL_SEGMENT_LEDA_TRAITS
-    (compile_and_run test 1 $CGAL_ARR_TEST_TRAITS)
-    (compile_and_run test 2 $CGAL_ARR_TEST_TRAITS)
-    (compile_and_run test 3 $CGAL_ARR_TEST_TRAITS)
-  CGAL_ARR_TEST_TRAITS=$CGAL_POLYLINE_TRAITS
-    (compile_and_run test 1 $CGAL_ARR_TEST_TRAITS)
-    (compile_and_run test 2 $CGAL_ARR_TEST_TRAITS)
-    (compile_and_run test 3 $CGAL_ARR_TEST_TRAITS)
+  TRAP=1  # Trapezoidal decomposition
+  NAIVE=2
+  WALK=3
+
+  # run test with generic segment traits
+    (compile_and_run test $TRAP  $CGAL_SEGMENT_TRAITS)
+    (compile_and_run test $NAIVE $CGAL_SEGMENT_TRAITS)
+    (compile_and_run test $WALK  $CGAL_SEGMENT_TRAITS)
+  # run test with leda segment traits
+    (compile_and_run test $TRAP  $CGAL_SEGMENT_LEDA_TRAITS)
+    (compile_and_run test $NAIVE $CGAL_SEGMENT_LEDA_TRAITS)
+    (compile_and_run test $WALK  $CGAL_SEGMENT_LEDA_TRAITS)
+  # run test with generic polyline traits
+    (compile_and_run test $TRAP  $CGAL_POLYLINE_TRAITS)
+    (compile_and_run test $NAIVE $CGAL_POLYLINE_TRAITS)
+    (compile_and_run test $WALK  $CGAL_POLYLINE_TRAITS)
 
   # Uncomment when leda polyline traits is fully debugged
-  #CGAL_ARR_TEST_TRAITS=$CGAL_POLYLINE_LEDA_TRAITS
-  #  compile_and_run test 1 $CGAL_ARR_TEST_TRAITS
-  #  compile_and_run test 2 $CGAL_ARR_TEST_TRAITS
-  #  compile_and_run test 3 $CGAL_ARR_TEST_TRAITS
+  # run test with leda polyline traits
+  #  (compile_and_run test $TRAP  $CGAL_POLYLINE_LEDA_TRAITS)
+  #  (compile_and_run test $NAIVE $CGAL_POLYLINE_LEDA_TRAITS)
+  #  (compile_and_run test $WALK  $CGAL_POLYLINE_LEDA_TRAITS)
 fi
+
+
+
+
+
+
+
+
+
+
 
