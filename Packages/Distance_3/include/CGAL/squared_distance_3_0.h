@@ -87,7 +87,7 @@ typename K::RT
 wdot(const typename CGAL_WRAP(K)::Point_3 &p,
      const typename CGAL_WRAP(K)::Point_3 &q,
      const typename CGAL_WRAP(K)::Point_3 &r, 
-     const K&)
+     const K& k)
 { 
   typedef typename K::Kernel_tag Tag;
   Tag tag;
