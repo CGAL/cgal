@@ -64,8 +64,9 @@ Aff_transformationC3(const Identity_transformation &)
 
 template < class R >
 Aff_transformationC3<R CGAL_CTAG>::
-Aff_transformationC3(const Translation,
-                     const typename Aff_transformationC3<R CGAL_CTAG>::Vector_3 &v)
+Aff_transformationC3(
+	const Translation,
+        const typename Aff_transformationC3<R CGAL_CTAG>::Vector_3 &v)
 {
   PTR = new Translation_repC3<R>(v);
 }
