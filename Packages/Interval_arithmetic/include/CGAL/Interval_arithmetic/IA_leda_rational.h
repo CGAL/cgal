@@ -27,10 +27,10 @@
 // For this one, I prefer not relying on the to_double() member function, as
 // it doesn't give any warranty on the precision.
 
-inline CGAL_Interval_nt CGAL_to_interval_nt(const leda_rational &z)
+inline CGAL_Interval_nt_advanced CGAL_to_interval_nt(const leda_rational &z)
 {
-    const CGAL_Interval_nt num = CGAL_to_interval_nt(z.numerator());
-    const CGAL_Interval_nt den = CGAL_to_interval_nt(z.denominator());
+    const CGAL_Interval_nt_advanced num = CGAL_to_interval_nt(z.numerator());
+    const CGAL_Interval_nt_advanced den = CGAL_to_interval_nt(z.denominator());
     CGAL_FPU_set_rounding_to_infinity();
     CGAL_Interval_nt_advanced res_ia = num / den;
     CGAL_FPU_set_rounding_to_nearest();

@@ -28,7 +28,7 @@
 // approximation, which is guaranted 1 bit error max, and return an interval
 // around this value.
 
-inline CGAL_Interval_nt CGAL_to_interval_nt(const CGAL_Gmpz &z)
+inline CGAL_Interval_nt_advanced CGAL_to_interval_nt(const CGAL_Gmpz &z)
 {
     const double two_52 = 1.0/(1024.0*1024.0*1024.0*1024.0*1024.0*4.0); //2^-52
     const double approx = CGAL_to_double(z);

@@ -30,7 +30,7 @@
 // LEDA integer's internal representation, which is not possible without
 // modifying LEDA.
 
-inline CGAL_Interval_nt CGAL_to_interval_nt(const leda_integer &z)
+inline CGAL_Interval_nt_advanced CGAL_to_interval_nt(const leda_integer &z)
 {
     const double two_52 = 1.0/(1024.0*1024.0*1024.0*1024.0*1024.0*4.0); //2^-52
     const double approx = CGAL_to_double(z);
