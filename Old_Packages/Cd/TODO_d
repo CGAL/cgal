@@ -10,3 +10,4 @@ TODO list for the d-dimension kernel:
 - homogeneous_solver() in Linear_algebra_d.h
 - verify_determinant() in Linear_algebra_d.h
 - coplanar_orientation() in predicates_on_points_d.h
+- Rename _* to *_ to be std compliant.
