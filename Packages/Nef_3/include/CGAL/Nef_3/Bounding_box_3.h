@@ -3,14 +3,14 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Sixtuple.h>
-#include <CGAL/Simple_Handle_for.h>
+#include <CGAL/Handle_for.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template <typename NT>
-class Bounding_box_3 : public Simple_Handle_for< Sixtuple<NT> >
+class Bounding_box_3 : public Handle_for< Sixtuple<NT> >
 {
-  typedef Simple_Handle_for< Sixtuple<NT> > BBox_handle_3;
+  typedef Handle_for< Sixtuple<NT> > BBox_handle_3;
   typedef typename BBox_handle_3::element_type BBox_ref_3;
 
 public:
