@@ -8,7 +8,7 @@ lib:
 
 # compile the doc_tex in a .dvi file.
 doc:
-	TEXINPUTS="`pwd`/demo:`pwd`/doc_tex/support/Qt_widget:`pwd`/doc_tex/support/Qt_widget_ref:$$TEXINPUTS"; \
+	TEXINPUTS="`pwd`/demo:..:$$TEXINPUTS"; \
 	cd doc_tex/support/Qt_widget; \
 	latex wrapper.tex; \
 	cd ../Qt_widget_ref; \
