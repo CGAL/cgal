@@ -92,6 +92,11 @@ struct Filtered_kernel_adaptor
 {};
 
 template <class CK>
+struct Filtered_kernel_without_type_equality
+  : public Filtered_kernel_base< CK, Filtered_kernel_without_type_equality<CK> >
+{};
+
+template <class CK>
 struct Filtered_kernel
   : public Type_equality_wrapper< 
              Filtered_kernel_base< CK, Filtered_kernel<CK> >,
