@@ -54,6 +54,17 @@ int main()
   int n,m;
   int count = 0 ;
 
+  // For dimension 0, we need to check that the point of highest weight is the
+  // one that finally ends up in the vertex.
+  std::cout << " test dimension 0 " << std::endl;
+  Cls T0;
+  T0.insert(Weighted_point( Point (0,0,0), 0) );
+  T0.insert(Weighted_point( Point (0,0,0), 1) );
+  T0.insert(Weighted_point( Point (0,0,0), -1) );
+  assert(T0.dimension() == 0);
+  assert(T0.number_of_vertices() == 1);
+  assert(T0.finite_vertices_begin()->point().weight() == 1);
+
   std::cout << " test dimension 1 " << std::endl;
   Cls T1;
   std::cout << " number of inserted points : " ;
@@ -122,6 +133,29 @@ int main()
   std::cout << std::endl << " number of vertices : " 
 	    << T1.number_of_vertices() << std::endl;
   assert( T1.dimension()==1 );
+
+  // The following is distilled from a bug report by Wulue Zhao
+  // (zhao.88@osu.edu), a student of Tamal Dey.
+  Point pt0(0,0,0);
+  Point pt1( 1,0,0), pt2(2,0,0),  pt3(3,0,0);
+  Point pt4(-1,0,0), pt5(-2,0,0), pt6(-3,0,0);
+
+  Weighted_point wp0(pt0,10.0);
+  Weighted_point wp1(pt1,0.0),  wp2(pt2,0.0),  wp3(pt3,0.0);
+  Weighted_point wp4(pt4,0.0),  wp5(pt5,0.0),  wp6(pt6,0.0);
+
+  Cls T11;
+
+  T11.insert(wp0);
+  T11.insert(wp1);
+  T11.insert(wp2);
+  T11.insert(wp3);
+  T11.insert(wp4);
+  T11.insert(wp5);
+  T11.insert(wp6);
+
+  assert(T11.is_valid());
+
 
   std::cout << " test dimension 2 " << std::endl;
   std::cout << " number of inserted points : " ;
