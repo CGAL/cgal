@@ -1,5 +1,8 @@
+25 July 2004 Sylvain Pion
+- Fixes for when LEDA is supported.
+
 26 March 2004 Radu Ursu
--made doc work with the current implementation of the Manual tools
+- made doc work with the current implementation of the Manual tools
 
 20 Feb 2004 Andreas Fabri
 - Removed #include <CGAL/IO/optimisation_Window_stream.h>

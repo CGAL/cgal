@@ -29,6 +29,7 @@ CGAL_BEGIN_NAMESPACE
 class window;
 CGAL_END_NAMESPACE
 #else
+#include <LEDA/window.h>
 class leda_window;
 #endif
 
