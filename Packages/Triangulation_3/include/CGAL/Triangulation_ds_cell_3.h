@@ -130,16 +130,6 @@ public:
     Cb::set_neighbors(n0,n1,n2,n3);
   }
 
-  void set_flags(int f)
-  {
-    flags = f;
-  }
-
-  int get_flags() const
-  {
-    return flags;
-  }
-
   // VERTEX ACCESS
 
   Vertex* vertex(int i) const
@@ -208,6 +198,16 @@ private:
   Cell* _next_cell;
   int flags;
   
+  void set_flags(int f)
+  {
+    flags = f;
+  }
+
+  int get_flags() const
+  {
+    return flags;
+  }
+
 //   void add_list(Tds & tds)
 //   {
 //     this->_next_cell = tds.list_of_cells()._next_cell;
