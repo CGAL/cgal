@@ -45,6 +45,7 @@ public:
   typedef typename Base::Point_2                Point_2;
   typedef typename Base::X_monotone_curve_2     X_monotone_curve_2;
   typedef X_monotone_curve_2                    Curve_2;
+  typedef typename Kernel::Assign_2             Assign_2;
 
   // Obsolete, for backward compatibility
   typedef Point_2                               Point;
@@ -61,7 +62,8 @@ protected:
   typedef typename Kernel::Is_vertical_2        Is_vertical_2;
   typedef typename Kernel::Equal_2              Equal_2;
   typedef typename Kernel::Orientation_2        Orientation_2;
-  
+  typedef typename Kernel::Construct_object_2   Construct_object_2;
+
 public:
   Arr_segment_traits_2() : Base() { }
 
@@ -145,80 +147,67 @@ public:
    * \return true if c1 and c2 do intersect to the right of pt. Otherwise,
    * false
    */
-  bool nearest_intersection_to_right(const X_monotone_curve_2 & c1,
-                                     const X_monotone_curve_2 & c2,
-                                     const Point_2 & pt,
-                                     Point_2 & p1, Point_2 & p2) const
+  Object nearest_intersection_to_right(const X_monotone_curve_2 & c1,
+                                       const X_monotone_curve_2 & c2,
+                                       const Point_2 & pt) const
   {
     Object res = intersect_2_object()(c1, c2);
-
-    // Empty object is returned - no intersection.
+    
+    // There is no intersection:
     if (res.is_empty())
-      return (false);
+      return (res);
 
-    // Intersection is a point
-    if (assign(p1,res))
+    // Chack if the intersection is a point:
+    Assign_2 assign_f = assign_2_object();
+    Point_2  p;
+    
+    if (assign_f(p, res))
     {
-      // the intersection is a point:
-      if (compare_xy_2_object()(p1, pt) == LARGER)
-      {
-        p2 = p1;
-        return true;
-      }
-      return false;
+      // If the intersection is a point, return it if its to the right.
+      if (compare_xy_2_object()(p, pt) == LARGER)
+        return (res);
+
+      // Otherwise, return the empty object
+      return Object();
     }
     
-    // Intersection is a segment
-    X_monotone_curve_2 seg;
-    if (assign(seg, res))
+    // The intersection is a segment:
+    X_monotone_curve_2  seg;
+    if (assign_f(seg, res))
     {
-      // the intersection is a curve:
-      Construct_vertex_2 construct_vertex = construct_vertex_2_object();
-      const Point_2 & src = construct_vertex(seg, 0);
-      const Point_2 & trg = construct_vertex(seg, 1);
-      Compare_xy_2 compare_xy = compare_xy_2_object();
-      Comparison_result src_pt = compare_xy(src, pt);
-      Comparison_result trg_pt = compare_xy(trg, pt);
+      Construct_vertex_2 construct_vertex_f = construct_vertex_2_object();
+      const Point_2 & src = construct_vertex_f (seg, 0);
+      const Point_2 & trg = construct_vertex_f (seg, 1);
+      Compare_xy_2 compare_xy_f = compare_xy_2_object();
+      Comparison_result src_pt = compare_xy_f(src, pt);
+      Comparison_result trg_pt = compare_xy_f(trg, pt);
 
-      if (src_pt == LARGER && trg_pt == LARGER) 
+      // If the subcurve is completely to the right, return it:
+      if (src_pt != SMALLER && trg_pt != SMALLER)
+        return (res);
+
+      // The target is to the left and the source is to the right. Trim the trg:
+      if (trg_pt == SMALLER && src_pt != SMALLER)
       {
-        // the subcurve is completely to the right. Return the entire
-	// segment, but make sure that p1 < p2.
-	if (compare_xy (src, trg) == SMALLER)
-	{
-	  p1 = src;
-	  p2 = trg;
-	}
-	else
-	{
-	  p1 = trg;
-	  p2 = src;
-	}
-        return true;
-      }
-      
-      if (trg_pt != LARGER && src_pt == LARGER) 
-      {
-        // target is to the left, source is to the right:
-	p1 = _vertical_ray_shoot (pt, c1, true);
-        p2 = src;
-        return true;
+	Point_2  p1 = _vertical_ray_shoot (pt, c1);
+        Construct_object_2 construct_object_f = construct_object_2_object();
+        return (construct_object_f(X_monotone_curve_2(p1, src)));
       }
 
-      if (src_pt != LARGER && trg_pt == LARGER)
+      // The source is to the left and the target is to the right. Trim the src:
+      if (src_pt == SMALLER && trg_pt != SMALLER)
       {
-        // source is to the left, target is to the right:
- 	p1 = _vertical_ray_shoot (pt, c1, true);
-        p2 = trg;
-        return true;
+ 	Point_2  p1 = _vertical_ray_shoot (pt, c1);
+        Construct_object_2 construct_object_f = construct_object_2_object();
+        return (construct_object_f(X_monotone_curve_2(p1, trg)));
       }
 
-      // the subcurve is completely to the left:
-      return false;
+      // The subcurve is completely to the left:
+      return Object();
     }
 
-    // the curves do not intersect:
-    return false;
+    // The curves do not intersect:
+    return Object();
   }
 
   /*! nearest_intersection_to_left() finds the nearest intersection point of
@@ -242,79 +231,69 @@ public:
    * \return true if c1 and c2 do intersect to the left of pt. Otherwise,
    * false
    */
-  bool nearest_intersection_to_left(const X_monotone_curve_2 & c1,
-                                    const X_monotone_curve_2 & c2,
-                                    const Point_2 & pt,
-                                    Point_2 & p1, Point_2 & p2) const
+  Object nearest_intersection_to_left(const X_monotone_curve_2 & c1,
+                                      const X_monotone_curve_2 & c2,
+                                      const Point_2 & pt) const
   {
     Object res = intersect_2_object()(c1, c2);
 
-    // Empty object is returned - no intersection.
+    // There is no intersection:
     if (res.is_empty())
-      return (false);
+      return (res);
 
-    // Intersection is a point
-    if (assign(p1,res)) 
-    {
-      // the intersection is a point:
-      if (compare_xy_2_object()(p1, pt) == SMALLER)
-      {
-        p2 = p1;
-        return true;
-      }
-      return false;
-    }
-    
-    // Intersection is a segment
-    X_monotone_curve_2 seg;
-    if (assign(seg, res))
-    {
-      // the intersection is a curve:
-      Construct_vertex_2 construct_vertex = construct_vertex_2_object();
-      const Point_2 & src = construct_vertex(seg, 0);
-      const Point_2 & trg = construct_vertex(seg, 1);
-      Compare_xy_2 compare_xy = compare_xy_2_object();
-      Comparison_result src_pt = compare_xy(src, pt);
-      Comparison_result trg_pt = compare_xy(trg, pt);
+    // Intersection is a point:
+    Assign_2 assign_f = assign_2_object();
+    Point_2  p;
 
-      if (src_pt == SMALLER && trg_pt == SMALLER)
-      {
-        // the subcurve is completely to the left. Return the entire
-	// segment, but make sure that p1 > p2.
-	if (compare_xy (src, trg) == LARGER)
-	{
-	  p1 = src;
-	  p2 = trg;
-	}
-	else
-	{
-	  p1 = trg;
-	  p2 = src;
-	}
-        return true;
-      }
+    if (assign_f(p, res))
+    {
+      // If the intersection is a point, return it if its to the right.
+      if (compare_xy_2_object()(p, pt) == SMALLER)
+        return (res);
       
-      if (trg_pt != SMALLER && src_pt == SMALLER)
-      {
-        // target is to the right, source is to the left:
-        p1 = _vertical_ray_shoot (pt, c1, false);
-        p2 = src;
-        return true;
-      }
-
-      if (src_pt != SMALLER && trg_pt == SMALLER) {
-        // source is to the right, target is to the left:
-        p1 = _vertical_ray_shoot (pt, c1, false);
-        p2 = trg;
-        return true;
-      }
-
-      // the subcurve is completely to the right:
-      return false;
+      // Otherwise, return the empty object
+      return Object();
     }
     
-    // the curves do not intersect:
-    return false;
+    // Check if the intersection is a segment:
+    X_monotone_curve_2 seg;
+    
+    if (assign_f(seg, res))
+    {
+      // the intersection is a segment:
+      Construct_vertex_2 construct_vertex_f = construct_vertex_2_object();
+      const Point_2 & src = construct_vertex_f (seg, 0);
+      const Point_2 & trg = construct_vertex_f (seg, 1);
+      Compare_xy_2 compare_xy_f = compare_xy_2_object();
+      Comparison_result src_pt = compare_xy_f (src, pt);
+      Comparison_result trg_pt = compare_xy_f (trg, pt);
+
+      // If the subcurve is completely to the right, return it:
+      if (src_pt != LARGER && trg_pt != LARGER)
+        return (res);
+      
+      // The target is to the right and the source is to the left, trim the trg:
+      if (trg_pt == LARGER && src_pt != LARGER)
+      {
+        Point_2 p1 = _vertical_ray_shoot (pt, c1);
+        Construct_object_2 construct_object_f = construct_object_2_object();
+        return (construct_object_f(X_monotone_curve_2(src, p1)));
+      }
+
+      // The source is to the right and the target is to the left, trim the src:
+      if (src_pt == LARGER && trg_pt != LARGER)
+      {
+        Point_2 p1 = _vertical_ray_shoot (pt, c1);
+        Construct_object_2 construct_object_f = construct_object_2_object();
+        return (construct_object_f(X_monotone_curve_2(trg, p1)));
+      }
+
+      // The subcurve is completely to the right:
+      return Object();
+    }
+    
+    // The curves do not intersect:
+    return Object();
   }
 
   /*! curves_overlap() test overlapping between two given curves
@@ -391,19 +370,21 @@ private:
    * Perform vertical ray-shooting from a given point towards a given curve.
    * \param pt The source point of the ray.
    * \param cv The target curve.
-   * \param shoot_up Should we should upwards or downwards.
    * \return The resulting point.
    */
   Point_2 _vertical_ray_shoot (const Point_2& pt, 
-			       const X_monotone_curve_2& cv, 
-			       const bool& shoot_up) const
+			       const X_monotone_curve_2& cv) const
   {
-    // Construct a vertical ray emanating from pt.
-    typename Kernel::Direction_2  dir (0, (shoot_up ? 1 : -1));
-    typename Kernel::Ray_2        ray = construct_ray_2_object() (pt, dir);
+    // If the curve contains pt, return it.
+    if (has_on_2_object() (cv, pt))
+      return (pt);
+    
+    // Construct a vertical line passing through pt.
+    typename Kernel::Direction_2  dir (0, 1);
+    typename Kernel::Line_2       vl = construct_line_2_object() (pt, dir);
 
-    // Compute the intersetion between the vertical ray and the given curve.
-    Object    res = intersect_2_object()(cv, ray);
+    // Compute the intersetion between the vertical line and the given curve.
+    Object    res = intersect_2_object()(cv, vl);
     Point_2   ip;
     bool      ray_shoot_successful = assign(ip, res);
 

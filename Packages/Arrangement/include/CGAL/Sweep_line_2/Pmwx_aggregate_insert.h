@@ -354,11 +354,11 @@ protected:
 	// handle a curve that goes through the interior of the vertical curve
 	const X_monotone_curve_2 &cv1 = vcurve->get_curve();
 	const X_monotone_curve_2 &cv2 = (*slIter)->get_curve();
+	Object res = m_traits->nearest_intersection_to_right(cv1, cv2,
+                                                             currentPoint);
 	Point_2 p;
-	bool res = m_traits->nearest_intersection_to_right(cv1, cv2,
-                                                           currentPoint, p, p);
-	SL_DEBUG(CGAL_assertion(res==true);)
-	  res = 0;
+        if (!CGAL::assign(p, res))
+          CGAL_assertion(0);
       
 	EventQueueIter eqi = m_queue->find(&p);
 	Event *e = 0;

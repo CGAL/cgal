@@ -54,7 +54,9 @@ public:
   typedef typename Traits::X_monotone_curve_2               X_monotone_curve_2;
   typedef typename Traits::Curve_2                          Curve_2;
   typedef typename Traits::Point_2                          Point_2;
-  typedef typename Planar_map::Change_notification      Change_notification;
+
+  typedef typename Planar_map::Change_notification
+    Change_notification;
 
   typedef typename Planar_map::Halfedge_iterator            Halfedge_iterator;
     
@@ -143,19 +145,16 @@ public:
    Point_2 & xp2,
    Change_notification * en)
   {
-    bool intersection_exists;
-
-    intersection_exists = (direction_right) ?
+    Object res = (direction_right) ?
       pmwx_traits->nearest_intersection_to_right(orig_cv, curve(he, en),
-                                                 ref_point, xp1, xp2) :
+                                                 ref_point) :
       pmwx_traits->nearest_intersection_to_left(orig_cv, curve(he, en),
-                                                ref_point, xp1, xp2);
+                                                ref_point);
 
-    if (!intersection_exists)
-      return false;
+    if (res.is_empty())
+      return (false);
                 
     // check for an intersection on the real curves. assume there is none.
-    intersection_exists = false;
 
     // since we are checking on the parent, we should make sure that the 
     // intersection point is on the halfedge_cv and not only on the parent.
@@ -166,20 +165,29 @@ public:
     // in the arrangement yet so there is no possibility for an 
     // intersection point not on cv.
 
-    // the intersection is only one point
-    const X_monotone_curve_2 &he_cv = he->curve();
-    if (point_equal(xp1, xp2)) {
+    const X_monotone_curve_2 & he_cv = he->curve();
+    
+    if (CGAL::assign(xp1, res))
+    {
+      // The intersection is a point:
+      xp2 = xp1;        //! \todo is this really needed?
       if (traits->point_in_x_range(he_cv, xp1) &&
  	  traits->curve_compare_y_at_x(xp1, he_cv) == EQUAL) {
-        intersection_exists = true;
+        return true;
       }
+      return false;
     }
-    else { // there is an overlap
-      bool swap_done(false);
-      if (!is_left_low(xp1, xp2)) {
+
+    X_monotone_curve_2 cv;
+    if (CGAL::assign(cv, res))
+    {
+      // There is an overlap
+
+      xp1 = pmwx_traits->curve_source(cv);
+      xp2 = pmwx_traits->curve_target(cv);
+
+      if (!is_left_low(xp1, xp2))
         pmwx_traits->points_swap(xp1, xp2);
-        swap_done = true;
-      }
 
       Point_2 left_point =
         traits->point_leftlow_most(pmwx_traits->curve_source(he_cv),
@@ -188,20 +196,19 @@ public:
         traits->point_righttop_most(pmwx_traits->curve_source(he_cv),
                                     pmwx_traits->curve_target(he_cv));
   
-      if (is_left_low(xp1, left_point)) {
+      if (is_left_low(xp1, left_point))
         xp1 = left_point;
-      }
-      if (is_left_low(right_point, xp2)) {
+
+      if (is_left_low(right_point, xp2))
         xp2 = right_point;
-      }
-      if (is_left_low(xp1, xp2)) {
-        intersection_exists = true;
-      }
-      if (swap_done)
-        pmwx_traits->points_swap(xp1, xp2);
+
+      if (is_left_low(xp1, xp2))
+        return (true);
+
+      return (false);
     }
 
-    return intersection_exists;
+    return (false);
   }
 
 

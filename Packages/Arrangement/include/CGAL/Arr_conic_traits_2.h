@@ -768,11 +768,9 @@ public:
    * \return (true) if curve1 and curve2 do intersect to the right of p, 
    *         or (false) if no such intersection exists.
    */
-  bool nearest_intersection_to_right (const X_monotone_curve_2& curve1,
-				      const X_monotone_curve_2& curve2,
-				      const Point_2& p,
-                                      Point_2& p1,
-                                      Point_2& p2) const
+  Object nearest_intersection_to_right (const X_monotone_curve_2& curve1,
+					const X_monotone_curve_2& curve2,
+					const Point_2& p) const
   {
     CGAL_precondition(is_x_monotone(curve1));
     CGAL_precondition(is_x_monotone(curve2));
@@ -784,6 +782,8 @@ public:
 
     if (n_ovlps == 1)
     {
+      Point_2    p1, p2;
+
       // An overlapping sub-arc was found. Trim it so it would be entirely
       // to the right of p.
       Point_2  ovlp_source = ovlp_arcs[0].source();
@@ -795,29 +795,39 @@ public:
 	// The entire overlapping arc is to the right of p:
 	p1 = ovlp_source;
 	p2 = ovlp_target;
-	return (true);
       }
       else if (ovlp_source.compare_lex_xy(p) != LARGER &&
 	       ovlp_target.compare_lex_xy(p) == LARGER)
       {
 	// The source is to the left of p, and the traget is to its right.
-	p1 = p;
+	Point_2        vps[2];
+	int            n_ps = curve1.get_points_at_x (p, vps);
+
+	CGAL_assertion (n_ps == 1);
+
+	p1 = vps[0];
 	p2 = ovlp_target;
-	return (true);
       }
       else if (ovlp_source.compare_lex_xy(p) == LARGER &&
 	       ovlp_target.compare_lex_xy(p) != LARGER)
       {
 	// The source is to the right of p, and the traget is to its left.
+	Point_2        vps[2];
+	int            n_ps = curve1.get_points_at_x (p, vps);
+
+	CGAL_assertion (n_ps == 1);
+
 	p1 = ovlp_source;
-	p2 = p;
-	return (true);
+	p2 = vps[0];
       }
       else
       {
 	// The entire overlapping arc is to the left of p:
-	return (false);
+	return Object();
       }
+
+      // Return the overlapping conic arc.
+      return (CGAL::make_object (X_monotone_curve_2 (curve1, p1, p2)));
     }
 
     // In case there are no overlaps and the base conics are the same,
@@ -848,13 +858,12 @@ public:
       if (nearest_end_P != NULL)
       {
 	// A common end point was found:
-	p1 = p2 = *nearest_end_P;
-	return (true);
+	return (CGAL::make_object (*nearest_end_P));
       }
       else
       {
 	// No intersection:
-	return (false);
+	return Object();
       }
     }
 
@@ -887,12 +896,11 @@ public:
     if (nearest_inter_P != NULL)
     {
       // Return the nearest intersection point.
-      p1 = p2 = *nearest_inter_P;
-      return (true);
+      return (CGAL::make_object (*nearest_inter_P));
     }
     
     // No intersection found to the right of p:
-    return (false);
+    return Object();
   }
 
   /*!
@@ -912,11 +920,9 @@ public:
    * \return (true) if curve1 and curve2 do intersect to the left of p, 
    *         or (false) if no such intersection exists.
    */
-  bool nearest_intersection_to_left (const X_monotone_curve_2& curve1,
-				     const X_monotone_curve_2& curve2,
-				     const Point_2& p,
-				     Point_2& p1,
-				     Point_2& p2) const
+  Object nearest_intersection_to_left (const X_monotone_curve_2& curve1,
+				       const X_monotone_curve_2& curve2,
+				       const Point_2& p) const
   {
     CGAL_precondition(is_x_monotone(curve1));
     CGAL_precondition(is_x_monotone(curve2));
@@ -928,6 +934,8 @@ public:
 
     if (n_ovlps == 1)
     {
+      Point_2    p1, p2;
+
       // An overlapping sub-arc was found. Trim it so it would be entirely
       // to the left of p.
       Point_2  ovlp_source = ovlp_arcs[0].source();
@@ -939,29 +947,39 @@ public:
 	// The entire overlapping arc is to the left of p:
 	p1 = ovlp_source;
 	p2 = ovlp_target;
-	return (true);
       }
       else if (ovlp_source.compare_lex_xy(p) != SMALLER &&
 	       ovlp_target.compare_lex_xy(p) == SMALLER)
       {
 	// The source is to the right of p, and the traget is to its left.
-	p1 = p;
+	Point_2        vps[2];
+	int            n_ps = curve1.get_points_at_x (p, vps);
+
+	CGAL_assertion (n_ps == 1);
+
+	p1 = vps[0];
 	p2 = ovlp_target;
-	return (true);
       }
       else if (ovlp_source.compare_lex_xy(p) == SMALLER &&
 	       ovlp_target.compare_lex_xy(p) != SMALLER)
       {
 	// The source is to the left of p, and the traget is to its right.
+	Point_2        vps[2];
+	int            n_ps = curve1.get_points_at_x (p, vps);
+
+	CGAL_assertion (n_ps == 1);
+
 	p1 = ovlp_source;
-	p2 = p;
-	return (true);
+	p2 = vps[0];
       }
       else
       {
 	// The entire overlapping arc is to the right of p:
-	return (false);
+	return Object();
       }
+
+      // Return the overlapping conic arc.
+      return (CGAL::make_object (X_monotone_curve_2 (curve1, p1, p2)));
     }
 
     // In case there are no overlaps and the base conics are the same,
@@ -992,13 +1010,12 @@ public:
       if (nearest_end_P != NULL)
       {
 	// A common end point was found:
-	p1 = p2 = *nearest_end_P;
-	return (true);
+	return (CGAL::make_object (*nearest_end_P));
       }
       else
       {
 	// No intersection:
-	return (false);
+	return Object();
       }
     }
 
@@ -1031,12 +1048,11 @@ public:
     if (nearest_inter_P != NULL)
     {
       // Return the nearest intersection point.
-      p1 = p2 = *nearest_inter_P;
-      return (true);
+      return (CGAL::make_object (*nearest_inter_P));
     }
     
     // No intersection found to the left of p:
-    return (false);
+    return Object();
   }
 
   /*!

@@ -573,53 +573,54 @@ public:
    * \return (true) if c1 and c2 do intersect to the right of p, or (false)
    * if no such intersection exists.
    */
-  bool nearest_intersection_to_right(const X_monotone_curve_2 & cv1,
-                                     const X_monotone_curve_2 & cv2,
-                                     const Point_2 & p,
-                                     Point_2 & p1, Point_2 & p2) const
+  Object nearest_intersection_to_right (const X_monotone_curve_2 & cv1,
+				        const X_monotone_curve_2 & cv2,
+					const Point_2 & p) const
   {
+    Point_2  p1, p2;
     bool     is_overlap;
 
+    // Return an empty object if there is no intersection.
     if (! _find_intersection (cv1, cv2, is_overlap, p1, p2))
-      return (false);
+      return Object();
 
+    // Check if there is a single intersection point.
     if (! is_overlap) 
     {
+      // Return the point if it is lexicographically to the right of p.
       if (compare_xy_2_object()(p1, p) == LARGER)
-      {
-	p2 = p1;
-	return (true);
-      }
-      return (false);
+	return (CGAL::make_object (p1));
+      
+      return Object();
     }
-    else
+    
+    // In case the intersection is an overlapping segment [p1, p2]
+    // (notice that p1 < p2):
+    if (compare_xy_2_object()(p1, p) == LARGER)
     {
-      // Notice that p1 < p2.
-      if (compare_xy_2_object()(p1, p) == LARGER)
-      {
-	// The entire segment p1 -> p2 is to the right of p:
-	return (true);
-      }
-      else if (compare_xy_2_object()(p2, p) == LARGER)
-      {
-	if (has_on_2_object() (cv1.line, p))
-	{
-	  // p is one the overlapping segment, return it as the first point.
-	  p1 = p;
-	}
-	else
-	{
-	  // Perform an upward ray-shooting from p to the overlapping segment
-	  // and make p1 the resulting point.
-	  _vertical_ray_shoot (p, cv1,
-			       true,          // Shoot upward.
-			       p1);
-	}
-
-	return (true);
-      }
-      return (false);
+      // The entire segment p1 -> p2 is to the right of p:
+      return (CGAL::make_object (X_monotone_curve_2 (p1, p2)));
     }
+    else if (compare_xy_2_object()(p2, p) == LARGER)
+    {
+      if (has_on_2_object() (cv1.line, p))
+      {
+	// p is one the overlapping segment, return it as the first point.
+	p1 = p;
+      }
+      else
+      {
+	// Perform vertical ray-shooting from p to the overlapping segment
+	// and make p1 the resulting point.
+	_vertical_ray_shoot (p, cv1,
+			     p1);
+      }
+
+      return (CGAL::make_object (X_monotone_curve_2 (p1, p2)));
+    }
+
+    // The overlap is entirely to the left of p:
+    return Object();
   }
 
   /*!
@@ -643,53 +644,54 @@ public:
    * \return (true) if c1 and c2 do intersect to the left of p, or (false)
    * if no such intersection exists.
    */
-  bool nearest_intersection_to_left(const X_monotone_curve_2 & cv1,
-                                    const X_monotone_curve_2 & cv2,
-                                    const Point_2 & p,
-                                    Point_2 & p1, Point_2 & p2) const
+  Object nearest_intersection_to_left (const X_monotone_curve_2 & cv1,
+				       const X_monotone_curve_2 & cv2,
+				       const Point_2 & p) const
   {
+    Point_2  p1, p2;
     bool     is_overlap;
 
+    // Return an empty object if there is no intersection.
     if (! _find_intersection (cv1, cv2, is_overlap, p1, p2))
-      return (false);
+      return Object();
 
+    // Check if there is a single intersection point.
     if (! is_overlap) 
     {
+      // Return the point if it is lexicographically to the left of p.
       if (compare_xy_2_object()(p1, p) == SMALLER)
-      {
-	p2 = p1;
-	return (true);
-      }
-      return (false);
-    }
-    else
-    {
-      // Notice that p1 < p2.
-      if (compare_xy_2_object()(p2, p) == SMALLER)
-      {
-	// The entire segment p1 -> p2 is to the left of p:
-	return (true);
-      }
-      else if (compare_xy_2_object()(p1, p) == SMALLER)
-      {
-	if (has_on_2_object() (cv1.line, p))
-	{
-	  // p is one the overlapping segment, return it as the first point.
-	  p2 = p;
-	}
-	else
-	{
-	  // Perform a downward ray-shooting from p to the overlapping segment
-	  // and make p2 the resulting point.
-	  _vertical_ray_shoot (p, cv1,
-			       false,         // Shoot downward.
-			       p2);
-	}
+	return (CGAL::make_object (p1));
 
-	return (true);
-      }
-      return (false);
+      return Object();
     }
+
+    // In case the intersection is an overlapping segment [p1, p2]
+    // (notice that p1 < p2):
+    if (compare_xy_2_object()(p2, p) == SMALLER)
+    {
+      // The entire segment p1 -> p2 is to the left of p:
+      return (CGAL::make_object (X_monotone_curve_2 (p1, p2)));
+    }
+    else if (compare_xy_2_object()(p1, p) == SMALLER)
+    {
+      if (has_on_2_object() (cv1.line, p))
+      {
+	// p is one the overlapping segment, return it as the first point.
+	p2 = p;
+      }
+      else
+      {
+	// Perform vertical ray-shooting from p to the overlapping segment
+	// and make p2 the resulting point.
+	_vertical_ray_shoot (p, cv1,
+			     p2);
+      }
+
+    // The overlap is entirely to the right of p:
+      return (CGAL::make_object (X_monotone_curve_2 (p1, p2)));
+    }
+     
+    return Object();
   }
 
   /*!
@@ -906,20 +908,19 @@ private:
    * Perform vertical ray-shooting from a given point towards a given curve.
    * \param q The source point of the ray.
    * \param cv The target curve.
-   * \param shoot_up Should we should upwards or downwards.
    * \param p The resulting point.
+   * \return Whether we have successfully computed a point p.
    */
   bool _vertical_ray_shoot (const Point_2& q, const X_monotone_curve_2& cv,
-			    const bool& shoot_up,
 			    Point_2& p) const
   {
-    // Construct a vertical ray emanating from q.
-    typename Kernel::Direction_2  dir (0, (shoot_up ? 1 : -1));
-    typename Kernel::Ray_2        ray = construct_ray_2_object() (q, dir);
+    // Construct a vertical line passing through q.
+    typename Kernel::Direction_2  dir (0, 1);
+    typename Kernel::Line_2       vl = construct_line_2_object() (q, dir);
 
-    // Compute the intersetion between the vertical ray and the line
+    // Compute the intersetion between the vertical line and the line
     // supporting the curve cv.
-    Object    res = intersect_2_object()(cv.line, ray);
+    Object    res = intersect_2_object()(cv.line, vl);
     bool      ray_shoot_successful = assign(p, res);
 
     CGAL_assertion (ray_shoot_successful);

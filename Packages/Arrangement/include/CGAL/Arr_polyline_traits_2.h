@@ -509,15 +509,28 @@ public:
    * \return (true) if c1 and c2 do intersect to the right of p, or (false)
    * if no such intersection exists.
    */
-  bool nearest_intersection_to_right (const X_monotone_curve_2& cv1,
-				      const X_monotone_curve_2& cv2,
-				      const Point_2& p,
-				      Point_2& p1, Point_2& p2) const
+  Object nearest_intersection_to_right (const X_monotone_curve_2& cv1,
+					const X_monotone_curve_2& cv2,
+					const Point_2& p) const
   {
-    return (_nearest_intersection_to_side (cv1, cv2,
-					   p,
-					   true,     // To the right of p.
-					   p1, p2));
+    Point_2   ps [2];
+    int       res;
+
+    res = _nearest_intersection_to_side (cv1, cv2,
+					 p,
+					 true,     // To the right of p.
+					 ps[0], ps[1]);
+
+    // Check if there is no intersection.
+    if (res == 0)
+      return Object();
+    
+    // Check if the intersection is a single point.
+    if (res == 1)
+      return (CGAL::make_object (ps[0]));
+
+    // Return a polyline (which is actaully a single segment).
+    return (CGAL::make_object (X_monotone_curve_2 (ps + 0, ps + 2)));
   }
 
   /*!
@@ -540,15 +553,28 @@ public:
    * \return (true) if c1 and c2 do intersect to the right of p, or (false)
    * if no such intersection exists.
    */
-  bool nearest_intersection_to_left (const X_monotone_curve_2& cv1,
-				     const X_monotone_curve_2& cv2,
-				     const Point_2& p,
-				     Point_2& p1, Point_2& p2) const
+  Object nearest_intersection_to_left (const X_monotone_curve_2& cv1,
+				       const X_monotone_curve_2& cv2,
+				       const Point_2& p) const
   {
-    return (_nearest_intersection_to_side (cv1, cv2,
-					   p,
-					   false,     // To the left of p.
-					   p1, p2));
+    Point_2   ps [2];
+    int       res;
+
+    res = _nearest_intersection_to_side (cv1, cv2,
+					 p,
+					 false,     // To the left of p.
+					 ps[0], ps[1]);
+
+    // Check if there is no intersection.
+    if (res == 0)
+      return Object();
+    
+    // Check if the intersection is a single point.
+    if (res == 1)
+      return (CGAL::make_object (ps[0]));
+
+    // Return a polyline (which is actaully a single segment).
+    return (CGAL::make_object (X_monotone_curve_2 (ps + 0, ps + 2)));
   }
 
   /*!
@@ -573,14 +599,15 @@ public:
 
     // Try to find an intersection to the right of p.
     Point_2 p1, p2;
+    int     res;
 
-    while (_nearest_intersection_to_side (cv1, cv2,
-					  p,
-					  true,     // To the right of p.
-					  p1, p2))
+    while ((res = _nearest_intersection_to_side (cv1, cv2,
+                                                 p,
+                                                 true,     // To the right of p.
+                                                 p1, p2)) != 0)
     {
       // Check if an overlap has been detected:
-      if (! seg_traits.point_equal (p1, p2))
+      if (res == 2)
 	return (true);
 
       // Otherwise, p1==p2 is the next intersection point to the right.
@@ -771,19 +798,20 @@ private:
    *                 the left of p.
    * \param p1 The first output point.
    * \param p2 The second output point.
-   * \return (true) if c1 and c2 do intersect to the right of p, or (false)
-   * if no such intersection exists.
+   * \return 0 if cv1 and cv2 does not intersect to the right (or to the left,
+   *           if to_right == false) of p;
+   *         1 if they have a single intersection point, returned as p1;
+   *         2 if they overlap, where p1, p2 are the endpoints of the overlap.
    */
-  bool _nearest_intersection_to_side (const X_monotone_curve_2& cv1,
-				      const X_monotone_curve_2& cv2,
-				      const Point_2& p,
-				      const bool& to_right,
-				      Point_2& p1, Point_2& p2) const
+  int _nearest_intersection_to_side (const X_monotone_curve_2& cv1,
+                                     const X_monotone_curve_2& cv2,
+                                     const Point_2& p,
+                                     const bool& to_right,
+                                     Point_2& p1, Point_2& p2) const
   {
     // Get the indices of the segments in cv1 and cv2 containing p.
     int    i1 = _locate_point (cv1, p);
     int    i2 = _locate_point (cv2, p);
-
 
     // Check if cv1 and cv2 are defined from left to right, and also
     // determine the desired comparison result (and its inverse).
@@ -821,7 +849,7 @@ private:
 				 seg_traits.curve_source(cv1[0])) == d_res)
 	  i1 = 0;
 	else
-	  return (false);
+	  return (0);
       }
       else // if (inc1 == -1)
       {
@@ -832,7 +860,7 @@ private:
 				 seg_traits.curve_target(cv1[n1-1])) == d_res)
 	  i1 = n1-1;
 	else
-	  return (false);
+	  return (0);
       }
     }    
 
@@ -848,7 +876,7 @@ private:
 				 seg_traits.curve_source(cv2[0])) == d_res)
 	  i2 = 0;
 	else
-	  return (false);
+	  return (0);
       }
       else // if (inc2 == -1)
       {
@@ -859,31 +887,38 @@ private:
 				 seg_traits.curve_target(cv2[n2-1])) == d_res)
 	  i2 = n2-1;
 	else
-	  return (false);
+	  return (0);
       }
     }
 
     // Try to locate the intersection point.
-    bool               found;
+    Object             obj;
+    Segment_2          seg;
     Comparison_result  res;
-
+    
     while (i1 >= 0 && i1 < n1 && i2 >= 0 && i2 < n2)
-    {
+    {      
       // Check if the two current segment intersect to the right (left) of p.
       if (to_right)
-	found = seg_traits.nearest_intersection_to_right (cv1[i1], cv2[i2],
-							  p,
-							  p1, p2);
+	obj = seg_traits.nearest_intersection_to_right (cv1[i1], cv2[i2],
+							p);
       else
-	found = seg_traits.nearest_intersection_to_left (cv1[i1], cv2[i2],
-							  p,
-							  p1, p2);
+	obj = seg_traits.nearest_intersection_to_left (cv1[i1], cv2[i2],
+						       p);
 
-      if (found)
+      if (! obj.is_empty())
       {
 	// In case an overlap was detected, stop here:
-	if (! seg_traits.point_equal (p1, p2))
-	  return (true);
+	if (CGAL::assign (seg, obj))
+	{
+	  p1 = seg_traits.curve_source (seg);
+	  p2 = seg_traits.curve_target (seg);
+
+	  return (2);
+	}
+
+        // The intersection is a single point:
+        CGAL::assign (p1, obj);
 
 	// In case we found a single intersection point, check whether it
 	// is the next end-point of cv1[i1] or of cv2[i2].
@@ -898,10 +933,25 @@ private:
 				      (inc2 == 1) ? 
 				      seg_traits.curve_target(cv2[i2]) :
 				      seg_traits.curve_source(cv2[i2]));
-
+        
 	if (!eq1 && !eq2)
-	  return (true);
-
+	{
+	  return (1);
+	}
+        
+        // In case p1 equals one of the endpoints, simply assign this
+        // endpoint to be p1.
+        if (eq1)
+        {
+          p1 = (inc1 == 1) ? seg_traits.curve_target(cv1[i1]) :
+                             seg_traits.curve_source(cv1[i1]);
+        }
+        else // if (eq2)
+        {
+          p1 = (inc2 == 1) ? seg_traits.curve_target(cv2[i2]) :
+                             seg_traits.curve_source(cv2[i2]);
+        }
+        
 	// Proceed to the next curves.
 	if (eq1)
 	  i1 += inc1;
@@ -909,35 +959,46 @@ private:
 	  i2 += inc2;
 
 	if (i1 < 0 || i1 >= n1 || i2 < 0 || i2 >= n2)
-	  return (true);
+	  return (1);
 
 	// Check if the next curves overlap, and the nearest overlap endpoint
 	// equals p1.
-	Point_2  q1, q2;
+	Object   _obj;
 
 	if (to_right)
-	  found = seg_traits.nearest_intersection_to_right (cv1[i1], cv2[i2],
-							    p,
-							    q1, q2);
+	  _obj = seg_traits.nearest_intersection_to_right (cv1[i1], cv2[i2],
+							   p);
 	else
-	  found = seg_traits.nearest_intersection_to_left (cv1[i1], cv2[i2],
-							   p,
-							   q1, q2);
+	  _obj = seg_traits.nearest_intersection_to_left (cv1[i1], cv2[i2],
+							  p);
+
+	if (CGAL::assign (seg, _obj))
+	{	
+	  Point_2  q1 = seg_traits.curve_source (seg);
+	  Point_2  q2 = seg_traits.curve_target (seg);
 
 
-	if (found &&
-	    ! seg_traits.point_equal (q1, q2) &&
-	    seg_traits.point_equal (p1, q1))
-	{
-	  // Now p1 (== q1) --> q2 is an overlapping segment.
-	  p2 = q2;
+	  if (seg_traits.point_equal (p1, q1))
+	  {
+	    // Now p1 (== q1) --> q2 is an overlapping segment.
+	    p2 = q2;
+	    return (2);
+	  }
+          else if (seg_traits.point_equal (p1, q2))
+	  {
+	    // Now p1 (== q2) --> q1 is an overlapping segment.
+	    p2 = q1;
+	    return (2);
+	  }
+
 	}
 
-	return (true);
+	// In this case we have a single intersection point.
+	return (1);
       }
 
       // Find the segment whose end-point is the leftmost (rightmost) and move
-      //  forward (or backward) on its polyline.
+      // forward (or backward) on its polyline.
       res = seg_traits.compare_x ((inc1 == 1) ? 
 				  seg_traits.curve_target(cv1[i1]) :
 				  seg_traits.curve_source(cv1[i1]),
@@ -961,7 +1022,7 @@ private:
     }
 
     // No intersection found:
-    return (false);
+    return (0);
   }
 
 };
@@ -1031,9 +1092,9 @@ public:
    */
   void push_back (const Point_2 & p)
   {
-	  Point_2 pt = p;
-	  Point_2 ps = (--segments.end()).source();
-	  segments.push_back (Segment_2 (ps, pt));
+    Point_2 pt = p;
+    Point_2 ps = (--segments.end()).source();
+    segments.push_back (Segment_2 (ps, pt));
   }
 
   /*!
@@ -1069,10 +1130,10 @@ public:
   private:
 
     const Polyline_2<Segment_traits_> *cvP;        // The polyline curve.
-    int                               n_pts;       // Its number of points.
-    Segment_traits_                   seg_traits;  // Auxiliary variable.
-    int                               i;           // The current point.
-	bool                              is_forward;  // Forward or reverse iterator.
+    int                            n_pts;       // Its number of points.
+    Segment_traits_                seg_traits;  // Auxiliary variable.
+    int                            i;           // The current point.
+    bool                           is_forward;  // Forward or reverse iterator.
 
     /*!
      * Private constructor.
