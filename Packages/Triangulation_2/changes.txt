@@ -1,6 +1,19 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.74
+- make big changes in Constrained_triangulation_2.h
+                      Delaunay_constrained_triangulation_2.h
+- remove Constrained_Delaunay_triangulation_wi_2.h
+  and    Constrained_triangulation_wi_2.h
+ which are no longer pertinent
+- added Constraint_hierarchy_2.h and Constrained_triangulation_plus_2.h
+ to deal with Constrained and Constrained_Delaunay triangulations
+ with a hierarchy of constraints. 
+ The class Constrained_triangulation_plus_2 
+ can deal with intersecting constrained on options.
+- fixed small details to please g++-2.97.
+
 Ver 4.73
 - add a missing typedef for Point_2 in Regular_triangulation_euclidean_traits_2.h
 
