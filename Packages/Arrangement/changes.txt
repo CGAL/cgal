@@ -1,3 +1,6 @@
+1.91 (Susan)
+- made changes in doc necessary to do the manual split
+
 1.90 (Shai)
 ====
 - Introducing handling of non x-monotone curves in Pm_with_intersection.

@@ -1,3 +1,7 @@
+5.47 (Susan)
+===
+- made changes necessary to do the manual split
+
 5.46 (Shai and Eti)
 ===
 - As of this internal release, only big changes will be written
