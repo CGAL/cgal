@@ -20,13 +20,13 @@ int  main() {
   const int K = 5;
 
   // generator for random data points in the square ( (-1,-1), (1,1) ) 
-  Random_points_iterator rpit(4, 1.0);
+  Random_points_iterator rpit(D, 1.0);
   
   // Insert N points in the tree
   Tree tree(N_Random_points_iterator(rpit,0),
 	    N_Random_points_iterator(N));
 
-  std::cout << "define query" << std::endl;
+  // Define the query
   double p[D] = {0.1, 0.1, 0.1, 0.1};
   double q[D] = {0.2, 0.2, 0.2, 0.2};
   Point_d pp(D,p,p+D);
@@ -35,8 +35,7 @@ int  main() {
 
   Distance tr_dist;
 
-  std::cout << "search" << std::endl;
-  Neighbor_search N1(tree, query, K, 10.0, false);
+  Neighbor_search N1(tree, query, K, 10.0, false); // eps=10.0, nearest=false
   
   std::cout << "report" << std::endl;
   std::cout << "query = [0.1,0.2]^4 " << std::endl 
@@ -46,7 +45,7 @@ int  main() {
 	       << " fn= " << it->first << std::endl; 
   }
 
-  Neighbor_search N2(tree, query, K, 0.0, false);
+  Neighbor_search N2(tree, query, K, 0.0, false); // eps=0.0, nearest=false
  
   std::cout << "query = [0.1,0.2]^4 " << std::endl 
 	    <<  K << " exact furthest neighbors are: " << std::endl; 
