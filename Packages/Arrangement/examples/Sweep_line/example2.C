@@ -1,5 +1,5 @@
-//example2
-
+// examples/Sweep_line/example2.C
+// ------------------------------
 #include <CGAL/Cartesian.h>
 #include <CGAL/Quotient.h> 
 

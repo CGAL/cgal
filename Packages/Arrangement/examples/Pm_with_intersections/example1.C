@@ -1,5 +1,5 @@
-//example1
-
+// examples/Pm_with_intersections/example1
+// ---------------------------------------
 #include <CGAL/Cartesian.h>
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Arr_segment_exact_traits.h>
