@@ -47,6 +47,7 @@ clean:
 	$(MAKE) -C doc_tex/support/NumberTypeSupport clean
 	$(MAKE) -C test/$(Package) clean
 	rm -f $(Package).tar.gz
+	rm -f src/.pure src/*.o
 
 # --exclude=tstlink is here because I don't want to provide a makefile for
 # the test-suite.

@@ -131,7 +131,7 @@ tstlink: tstlink1.o tstlink2.o
 	$(CGAL_CXX) -o $@ $+ $(LDFLAGS)
 
 clean:
-	rm -f *.o *.bb *.bbg *.da *.gcov core tst? tstlink *.rpo
+	rm -f *.o *.bb *.bbg *.da *.gcov core tst? tstlink *.rpo .pure
 
 #---------------------------------------------------------------------#
 #                    suffix rules
