@@ -369,32 +369,24 @@ interface to a triangulation.
 
 
 
-\begin{ccTexOnly}
+
 The vertices and faces of the triangulations are accessed through 
-\ccc{handles}
-\footnote{A handle is a type which supports the two
-dereference operators \ccc{*} and \ccc{->}.},
-\ccc{iterators} and \ccc{circulators}
-\footnote{A circulator is a type devoted to visit circular sequences.}.
-\end{ccTexOnly}
- \begin{ccHtmlOnly}
-The vertices and faces of the triangulations are accessed through
-handles,
-iterators, and circulators. 
-(A handle is a type which supports the two
-dereference operators  *  and -> ,
-a circulator is a type devoted to visit circular sequences.)
- \end{ccHtmlOnly}
+\ccc{handles},
+\ccc{iterators} and \ccc{circulators}.
+A handle is a model of the concept \ccc{Handle} which basically
+offers the two dereference operators  \ccc{*}  and \ccc{->} .
+A circulator is a type devoted to visit circular sequences.
 Handles are used whenever the accessed element 
 is not part of a sequence.
 Iterators  and circulators are used
 to visit  all or parts of the triangulation.
 
+
 The iterators and circulators
 are all bidirectional and non mutable.
-The circulators and iterators are assignable to the 
-corresponding handle types. 
-When calling a member function,
+The circulators and iterators are convertible to the 
+handles with the same value type, so that 
+when calling a member function,
 any handle type argument can be replaced
 by an iterator or a circulator
 with the same value type.

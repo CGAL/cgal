@@ -133,7 +133,7 @@ By befault, the triangulation data structure  is instanciated by
 This class provides the functions \ccc{cw(i)} et \ccc{ccw(i)}.
 
 \ccTypes
-\ccThree{typedef Traits::Triangle_2}{Triangulation_data_structure;}{}
+\ccThree{typedef Traits::Triangle_2xxx}{Triangulation_data_structure;}{}
 \ccTypedef{typedef Traits Geom_traits;}{the traits class.}
 \ccGlue
 \ccTypedef{typedef Tds Triangulation_data_structure;}{the triangulation data structure type.}
@@ -150,16 +150,24 @@ This class provides the functions \ccc{cw(i)} et \ccc{ccw(i)}.
 \ccGlue
 \ccTypedef{typedef Tds::Edge  Edge;} {the edge type.}
 
-\ccThree{typedef Traits::Triangle}{}{the triangulation data structure type}
+\ccTypedef{typedef Tds::size_type size_type;}
+{Size type (an unsigned integral type)}
+\ccGlue
+\ccTypedef{typedef Tds::difference_type difference_type;}
+{Difference type (a signed integral type)}
+
+\ccThree{typedef Traits::Triangle_2xxx}{}{the triangulation data structure type}
 \ccThreeToTwo
 The vertices and faces of the triangulations are accessed through 
 \ccc{handles}, 
 \ccc{iterators} and \ccc{circulators}. 
+The  handles are models of the concept \ccc{Handle} which basically
+offers the two dereference operators \ccc{*} and \ccc{->}.
 The iterators and circulators
 are all bidirectional and non mutable.
-The circulators and iterators are assignable to the 
-corresponding handle types. Whenever a handle appear in the parameter 
-list of a function, an appropriate iterator or circulator can be used
+The circulators and iterators are convertible  to handles with the
+same value type, so that whenever a handle appear in the parameter 
+list of a function, an appropriate iterator or circulator can be passed
 as well.
 
 The edges of the triangulation can also be visited through iterators
@@ -176,17 +184,21 @@ infinite feature while others (the \ccc{Finite} iterators) visit only
 finite features. Circulators visit infinite features as well as finite 
 ones.
 
-\ccNestedType{Vertex_handle}{handle to a vertex}
+\ccTypedef{typedef Tds::Vertex_handle Vertex_handle;}
+{handle to a vertex}
 \ccGlue
-\ccNestedType{Face_handle}{handle to a facet}
+\ccTypedef{typedef Tds::Face_handle Face_handle;}
+{handle to a face}
 
 
-\ccNestedType{All_faces_iterator}{iterator over all faces.}
+\ccTypedef{typedef Tds::Face_iterator All_faces_iterator;}
+{iterator over all faces.}
 \ccGlue
-\ccNestedType{All_edges_iterator
-}{iterator over all edges.}
+\ccTypedef{typedef Tds::Edge_iterator All_edges_iterator;}
+{iterator over all edges}
 \ccGlue
-\ccNestedType{All_vertices_iterator}{iterator over all vertices.}
+\ccTypedef{typedef Tds::Vertex_iterator All_vertices_iterator;}
+{iterator over all vertices}
 
 \ccNestedType{Finite_faces_iterator}{iterator over finite faces.}
 \ccGlue

@@ -65,8 +65,12 @@ are examples of combinatorial operations.
 
 
 \ccTypes
-\ccThree{typedef std::pair<Face_handle,int>xx}{Edge; }{}
+\ccThree{typedef std::pair<Face_handle,int>xxxxx}{Edge; }{}
 \ccThreeToTwo
+
+\ccNestedType{size_type}{Size type (unsigned integral type)}
+\ccGlue
+\ccNestedType{difference_type}{Difference type (signed integral type)}
 
 \ccNestedType{Vertex} { The vertex type. Requirements for this type
 are decribed in concept \ccc{TriangulationDataStructure_2::Vertex}
@@ -78,8 +82,8 @@ are decribed in concept \ccc{TriangulationDataStructure_2::Face}
 
 Vertices and facess are accessed  via \ccc{Vertex_handle} and
 \ccc{Face_handle}. These types 
-are trivial pointers supporting
-the two dereference operators \ccc{*} and \ccc{->}.
+are models of the concept \ccc{Handles} which basically
+supports the two dereference operators \ccc{*} and \ccc{->}.
 
 \ccNestedType{Vertex_handle}{Handle to a vertex}
 \ccGlue
