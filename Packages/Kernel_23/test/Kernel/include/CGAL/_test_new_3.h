@@ -476,6 +476,8 @@ test_new_3(const R& rep)
   typename R::Side_of_bounded_sphere_3 side_of_bounded_sphere
         = rep.side_of_bounded_sphere_3_object();
   Bounded_side tmp45 = side_of_bounded_sphere(p2,p3,p4,p5,p6);
+               tmp45 = side_of_bounded_sphere(p2,p3,p4,p6);
+               tmp45 = side_of_bounded_sphere(p2,p3,p6);
 
   use(tmp45); use(tmp44); use(tmp43); use(tmp42); use(tmp41); use(tmp40);
   use(tmp39); use(tmp38); use(tmp37); use(tmp36b); use(tmp36a); use(tmp35);

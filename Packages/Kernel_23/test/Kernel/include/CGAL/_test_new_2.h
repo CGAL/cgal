@@ -409,6 +409,7 @@ test_new_2(const R& rep)
   typename R::Side_of_bounded_circle_2 side_of_bounded_circle
         = rep.side_of_bounded_circle_2_object();
   Bounded_side tmp42 = side_of_bounded_circle(p2,p3,p4,p5);
+               tmp42 = side_of_bounded_circle(p2,p3,p5);
 
 
   typename R::Is_horizontal_2 is_horizontal

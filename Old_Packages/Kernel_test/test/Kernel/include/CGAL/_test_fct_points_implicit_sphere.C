@@ -25,10 +25,7 @@
 #ifndef CGAL__TEST_FCT_POINTS_IMPLICIT_SPHERE_C
 #define CGAL__TEST_FCT_POINTS_IMPLICIT_SPHERE_C
 
-#ifndef CGAL__TEST_FCT_POINTS_IMPLICIT_SPHERE_H
 #include <CGAL/_test_fct_points_implicit_sphere.h>
-#endif // CGAL__TEST_FCT_POINTS_IMPLICIT_SPHERE_H
-
 
 template <class R>
 bool
@@ -173,9 +170,21 @@ _test_fct_points_implicit_sphere(const R&)
   assert( CGAL::circumcenter(pt,qt,rt,st) == c );
   assert( CGAL::circumcenter(pt,rt,qt,st) == c );
   
+  // Now test side_of_bounded_sphere(p, q, t).
+
+  CGAL::Point_3<R> p1 (RT(100),RT(100),RT(100),RT(10));
+  CGAL::Point_3<R> p2 (RT(-100),RT(-100),RT(-100),RT(10));
+  CGAL::Point_3<R> p3 (RT(37),RT(42),RT(56),RT(12));
+  CGAL::Point_3<R> pt1 (CGAL::ORIGIN);
+  CGAL::Point_3<R> pt2 (RT(-100),RT(-100),RT(100),RT(10));
+  CGAL::Point_3<R> pt3 (RT(-100),RT(100),RT(100),RT(10));
+
+  assert( CGAL::side_of_bounded_sphere(p1, p2, pt1) == CGAL::ON_BOUNDED_SIDE);
+  assert( CGAL::side_of_bounded_sphere(p1, p2, pt2) == CGAL::ON_BOUNDARY);
+  assert( CGAL::side_of_bounded_sphere(p1, p2, p3, pt1) == CGAL::ON_BOUNDED_SIDE);
+  assert( CGAL::side_of_bounded_sphere(p1, p2, pt2, pt3) == CGAL::ON_BOUNDARY);
 
   return true;
 }
-
 
 #endif // CGAL__TEST_FCT_POINTS_IMPLICIT_SPHERE_C

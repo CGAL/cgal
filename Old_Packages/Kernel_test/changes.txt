@@ -1,5 +1,6 @@
-3.14   (? Mar 2001)
+3.14   (16 Mar 2001)
 - Added constructor Vector(Point, Point).
+- Add side_of_bounded_circle() and side_of_bounded_sphere().
 
 3.13   (6 Mar 2001)
 - Added Compute_squared_distance_2 and 3.

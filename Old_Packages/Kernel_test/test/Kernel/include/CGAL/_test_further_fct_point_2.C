@@ -23,9 +23,8 @@
 
 #ifndef CGAL__TEST_FURTHER_FCT_POINT_2_C
 #define CGAL__TEST_FURTHER_FCT_POINT_2_C
-#ifndef CGAL__TEST_FURTHER_FCT_POINT_2_H
+
 #include <CGAL/_test_further_fct_point_2.h>
-#endif // CGAL__TEST_FURTHER_FCT_POINT_2_H
 
 template <class R>
 bool
@@ -131,6 +130,16 @@ _test_further_fct_point_2(const R& )
                                       == CGAL::ON_ORIENTED_BOUNDARY );
  assert( CGAL::side_of_oriented_circle(p1+v, p3+v, p4+v, p2+v) \
                                       == CGAL::ON_ORIENTED_BOUNDARY );
+
+ CGAL::Point_2<R> p10( RT(100), RT(100), RT(10) );
+ CGAL::Point_2<R> p11( RT(-100), RT(-100), RT(10) );
+ CGAL::Point_2<R> pt1( RT(-100), RT(100), RT(10) );
+ CGAL::Point_2<R> pt2( CGAL::ORIGIN );
+ CGAL::Point_2<R> pt3( RT(1000), RT(1000), RT(1) );
+
+ assert( CGAL::side_of_bounded_circle(p10, p11, pt1) == CGAL::ON_BOUNDARY);
+ assert( CGAL::side_of_bounded_circle(p10, p11, pt2) == CGAL::ON_BOUNDED_SIDE);
+ assert( CGAL::side_of_bounded_circle(p10, p11, pt3) == CGAL::ON_UNBOUNDED_SIDE);
 
  std::cout << '.';
 
