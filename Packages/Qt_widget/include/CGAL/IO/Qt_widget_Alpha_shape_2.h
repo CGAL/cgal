@@ -113,7 +113,7 @@ operator << ( Qt_widget& ws, const CGAL::Alpha_shape_2<Dt>& As)
           // if alpha is smaller than the upper boundary
           // which might be infinity 
           // visualize the boundary		
-          CGAL_triangulation_assertion(((classify((*edge_alpha_it).second.first,
+         CGAL_triangulation_assertion(((classify((*edge_alpha_it).second.first,
                                        (*edge_alpha_it).second.second) ==
                                        Alpha_shape_2<Dt>::REGULAR) || 
                                        (classify((*edge_alpha_it).second.first,
