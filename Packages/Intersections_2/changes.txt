@@ -1,3 +1,6 @@
+2.11.2 (28 November 2001)
+Fixed typo in ray-ray intersection
+
 2.11 (9 October 2001)
 Replaced explicit constructions of Object by make_object
 

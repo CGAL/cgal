@@ -1973,7 +1973,7 @@ Ray_2_Ray_2_pair<R>::intersection(Segment_2<R> &result) const
 {
     if (!_known)
         intersection_type();
-    if (_result != RAY)
+    if (_result != SEGMENT)
         return false;
     result = Segment_2<R>(_ray1->start(), _ray2->start());
     return true;
