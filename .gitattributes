@@ -1433,6 +1433,7 @@ Packages/Planar_map/doc_tex/Topological_map_ref/dcel.ipe -text
 Packages/Polygon/demo/Polygon/polygon_2.vcproj -text
 Packages/Polygon/doc_tex/Polygon/pgn_algos.gif -text svneol=unset#unset
 Packages/Polygon/doc_tex/Polygon/pgn_algos.ipe -text
+Packages/Polygon/doc_tex/Polygon/pgn_algos.pdf -text
 Packages/Polyhedron/doc_tex/Polyhedron/fig/add_facet.ips -text
 Packages/Polyhedron/doc_tex/Polyhedron/fig/euler.ips -text
 Packages/Polyhedron/doc_tex/Polyhedron/fig/euler_center.ips -text

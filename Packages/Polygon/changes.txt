@@ -1,3 +1,6 @@
+13 August 2004 Andreas Fabri
+- Replaced the \Ipe with an \includegraphics
+
 24 June 2004 Sylvain Pion
 - Remove warning with g++ -O2 (and micro-optimisation).
 
