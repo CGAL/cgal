@@ -49,8 +49,6 @@
 // TODO :
 // - FIXME : underflows (overflows) ?  Add test-suite for them (just try to
 //   scale the current tests) ?
-// - FIXME : Add a macro CGAL_FK_DISABLE_STATIC_FILTERS to disable those risky
-//   beasts.
 // - aim at obsoleting Filtered_exact, so that
 //   Exact_predicates_inexact_constructions_kernel becomes Filtered_kernel.
 // - Is Fixed_precision_nt now obsolete ?  If yes, deprecate it automatically.

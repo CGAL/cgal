@@ -31,7 +31,10 @@
 #include <CGAL/Kernel/Type_equality_wrapper.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
-#include <CGAL/Static_filters.h>
+
+#ifndef CGAL_NO_STATIC_FILTERS
+#  include <CGAL/Static_filters.h>
+#endif
 
 // This file contains the definition of a generic kernel filter.
 //
@@ -85,6 +88,7 @@ public:
 
 };
 
+#ifndef CGAL_NO_STATIC_FILTERS
 template < typename CK, typename Kernel >
 class Static_filters_base
   : public Static_filters<Filtered_kernel_base<CK, Kernel> >
@@ -92,24 +96,34 @@ class Static_filters_base
     template < typename Kernel2 >
     struct Base { typedef Static_filters_base<CK, Kernel2>  Type; };
 };
+#endif
 
 template <class CK>
 struct Filtered_kernel_adaptor
-  //: public Filtered_kernel_base< CK, Filtered_kernel_adaptor<CK> >
+#ifndef CGAL_NO_STATIC_FILTERS
   : public Static_filters_base< CK, Filtered_kernel_adaptor<CK> >
+#else
+  : public Filtered_kernel_base< CK, Filtered_kernel_adaptor<CK> >
+#endif
 {};
 
 template <class CK>
 struct Filtered_kernel_without_type_equality
-  //: public Filtered_kernel_base< CK, Filtered_kernel_without_type_equality<CK> >
+#ifndef CGAL_NO_STATIC_FILTERS
   : public Static_filters_base< CK, Filtered_kernel_without_type_equality<CK> >
+#else
+  : public Filtered_kernel_base< CK, Filtered_kernel_without_type_equality<CK> >
+#endif
 {};
 
 template <class CK>
 struct Filtered_kernel
   : public Type_equality_wrapper< 
-             //Filtered_kernel_base< CK, Filtered_kernel<CK> >,
+#ifndef CGAL_NO_STATIC_FILTERS
              Static_filters_base< CK, Filtered_kernel<CK> >,
+#else
+             Filtered_kernel_base< CK, Filtered_kernel<CK> >,
+#endif
              Filtered_kernel<CK> >
 {};
 

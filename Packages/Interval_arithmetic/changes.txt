@@ -1,3 +1,6 @@
+4 August 2004 Sylvain Pion
+- Add CGAL_NO_STATIC_FILTERS.
+
 23 July 2004 Sylvain Pion
 - IA64 porting.
 

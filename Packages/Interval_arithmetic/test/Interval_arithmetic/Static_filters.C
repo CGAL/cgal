@@ -1,4 +1,5 @@
 #define CGAL_PROFILE
+#undef CGAL_NO_STATIC_FILTERS
 
 #include <CGAL/MP_Float.h>
 #include <CGAL/Simple_cartesian.h>
