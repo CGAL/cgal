@@ -9,37 +9,19 @@
 - factorize the code duplicated in
   Triangulation_default_data_structure_2
   Triangulation_data_structure_using_list_2
-
-- Corriger la doc pour includes_edge in Triangulation_2
-
-- triangulation contrainte avec intersection
-  ne marche pas pour des points!= CGAL::Point_2
- modifier les requirements pour la traits class
- se debrouiller pour qu'on ne soit pas obliger de fournir une intersection
-en cas de contraintes sans intersection..
 - add an example of constrained and delaunay constrained triangulation
 - copy constructor for constrained and Delaunay_constrained triangulation
-  has to be modified, so thet constrained status are duplicated
-- test_geom_traits ne teste pas l'existence du type  Distance dans Geom_traits
-- test removal and meshing functions in constrained and Delaunay constrained triangulation
-- simplify insert in constrained and Delaunay constrained triangulation
-with add_face
-- make a test suite for constrained and Delaunay constrained triangulation	
-- change the test_cls_triangulation_2.C to adapt to new insertion functions
-- change the return type of insert a constrained
-- try to simplify constrained insertion with add_face(...) functions
-- file input for constrained triagulation
-- supprimer les cerr de regular_triangulation dans is_valid()
-  supprimer show* ?
+  has to be modified, so that constrained status are duplicated
 
-- Il manque toujours le dual a triangulation reguliere
-- Refaire les traits class pour les mettre en conformite avec le noyau
-- check and fix so that -- of past-the-end work the iterators
+- test removal and meshing functions in constrained and Delaunay constrained triangulation
+
+- make a test suite for constrained and Delaunay constrained triangulation	
+- change the return type of insert a constrained
+- file input for constrained triagulation
+
 - completer triangulation contrainte
 - mesh
-- triangulation hierarchique
 - add set_weight(Weight w) to weighted point
 - iterator de faces intersectees par un segment
 
 
-- oriented_side ne marche pas quand le point est sur un sommet...

@@ -353,9 +353,11 @@ The triangulations are represented in \cgal\ through the class
 \ccc{Triangulation_2<Traits,Tds>}
 which  expects a model of  {geometric traits} class
 as first template argument and a model of {triangulation data structure}
-as second argument. The requirements  and defaults for these classes 
-are described in the next sections \ref{I1_Sect_Geom_traits}
-and \ref{I1_Sect_Tds}.
+as second argument. The requirements  for these concepts
+are described respectively in the next sections \ref{I1_Sect_Geom_traits}
+and \ref{I1_Sect_Tds}. Cgal provides a default for the
+{triangulation data structure} template parameter.
+
 
 
 The vertices and faces of the triangulations are accessed through 
@@ -478,7 +480,10 @@ flipping of an edge adjacent to two faces the union of which forms
 \ccExample
 
 The following program  creates a  triangulation of 2D points
-for the  usual Euclidean metric. The points are read from {\tt cin},
+using the kernel model class \ccc{CGAL::Cartesian<double>}
+as geometric traits and the default triangulation data structure
+template parameter.
+ The input points are read from a file 
 and inserted in the triangulation.
 Finally points on the convex hull are written to {\tt cout}. 
 \ccIncludeExampleCode{Triangulation_2/triangulation_prog1.C}
