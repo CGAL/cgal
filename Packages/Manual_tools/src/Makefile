@@ -20,7 +20,8 @@
 INSTALL_DIR = $(PUBLIC)/$(SYSTEM)/bin  # local settings on my machine
 
 # Include path (needs probably no adaption)
-INCL    = -I.
+INCL    = -I. -I/pub/local/STL/HP # STL distribution
+#INCL    = -I.
 
 # Path for the HTML conversion tools for the default configuration files.
 # This path will be compiled into the cc_extract_html program and used for 
@@ -40,8 +41,8 @@ CPP = CC
 
 # The C++ compiler options (optimization, debugging, warnings, includes)
 #CPPOPT = -g -Wall $(INCL)   # Gnu
-CPPOPT = -g +w -woff 3666   $(INCL)   # Sgi
-#CPPOPT = -g +w    $(INCL)   # Sun
+CPPOPT = -O -g3 +w -woff 3666   $(INCL)   # Sgi
+#CPPOPT = -O -g +w    $(INCL)   # Sun
 
 # A C compiler: 
 #   Gnu gcc 2.6.3 (or above)
@@ -63,7 +64,7 @@ LINK    = $(CPP) $(CPPOPT)
 # The flex and bison output might produce a lot of warnings with 
 # the C++ compiler (Sgi). Special options switch these messages off.
 #XCOMPILE = $(COMPILE)   # Gnu
-XCOMPILE = $(COMPILE) -woff 3203    # SGI
+XCOMPILE = $(COMPILE) -woff 3203 -woff 3666    # SGI
 #XCOMPILE = $(COMPILE)   # Sun
 
 # Default targets to make:
@@ -77,7 +78,7 @@ ALL = cc_extract  cc_build_checker  cc_extract_html  cc_index_sort
 PROGRAM_FILES = cc_extract  cc_build_checker  cc_extract_html  cc_index_sort
 
 # all the files that have to be moved into a directory in the $PATH
-SCRIPT_FILES  = cc_check  cc_manual_to_html
+SCRIPT_FILES  = cc_check  cc_manual_to_html  cc_extract_include
 
 # all the files for the HTML config directory
 HTML_CONFIG_FILES = html_config_files/*

@@ -143,6 +143,7 @@ extern bool mbox_within_math;
 %token             CCSTYLE
 %token             CCSECTION
 %token             CCSUBSECTION
+%token             INCLUDE
 %token             HEADING
 %token             COMMENTHEADING
 %token             CHAPTERAUTHOR
@@ -248,6 +249,12 @@ stmt:             string              {   handleBuffer( * $1);
 					  handleString( "<VAR>");
 					  handleText( * $3);
 					  handleString( "</VAR>");
+					  delete $3;
+		                      }
+		| INCLUDE  '{' comment_sequence '}'  {
+					  handleString( "<EM>#include &lt;");
+					  handleText( * $3);
+					  handleString( "&gt;</EM>");
 					  delete $3;
 		                      }
 		| HEADING  '{' comment_sequence '}'  {
@@ -789,6 +796,13 @@ compound_comment:   '{' full_comment_sequence '}' {
 		                  $$->append( *new TextToken( ")</H2>"));
 		                  $$->append( *new TextToken( "\n", 1, true));
 		                }
+                  | INCLUDE '{' comment_sequence '}'  {
+                                  $$ = $3;
+		                  $$->cons(   *new TextToken( "&lt;"));
+		                  $$->cons(   *new TextToken( " ", 1, true));
+		                  $$->cons(   *new TextToken( "<EM>#include"));
+		                  $$->append( *new TextToken( "&gt;</EM>"));
+                                }
                   | HEADING '{' comment_sequence '}'  {
                                   $$ = $3;
 		                  $$->cons(   *new TextToken( " ", 1, true));

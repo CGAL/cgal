@@ -254,6 +254,16 @@ cat ${new_tmp_path}/cc_index_header ${new_tmp_path}/cc_index_sorted ${new_tmp_pa
 if ( $?DEBUG) echo "${new_tmp_path}/cc_anchor_filter < ${new_tmp_path}/cc_index > ${out_path}/manual_index.html"
 ${new_tmp_path}/cc_anchor_filter < ${new_tmp_path}/cc_index > ${out_path}/manual_index.html
 
+# Copy the images for the advanced section to the manual.
+# -------------------------------------------------------
+if ( -r ${HTML_DEFAULT_PATH}/cc_advanced_begin.gif) then
+  cp ${HTML_DEFAULT_PATH}/cc_advanced_begin.gif ${out_path}
+ if ( $?DEBUG) echo "cp ${HTML_DEFAULT_PATH}/cc_advanced_begin.gif ${out_path}"
+endif
+if ( -r ${HTML_DEFAULT_PATH}/cc_advanced_end.gif) then
+  cp ${HTML_DEFAULT_PATH}/cc_advanced_end.gif ${out_path}
+  if ( $?DEBUG) echo "cp ${HTML_DEFAULT_PATH}/cc_advanced_end.gif ${out_path}"
+endif
 
 # Cleanup
 # -------

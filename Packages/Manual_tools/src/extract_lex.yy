@@ -260,6 +260,10 @@ blockintro      [\{][\\]((tt)|(em)|(it)|(sc)|(sl))
 		    BEGIN( NestingMode);
 		    return CCSTYLE;
 		}
+[\\]ccc/{noletter}   {   /* CCstyle formatting: change to NestingMode */
+		    BEGIN( NestingMode);
+		    return CCSTYLE;
+		}
 [\\]cc(Pure)?Var{w}      {
 		    if ( creationvariable) {
 	                yylval.string.text = creationvariable;
@@ -373,18 +377,23 @@ blockintro      [\{][\\]((tt)|(em)|(it)|(sc)|(sl))
 		    yylval.string.len  = -1;
 		    return STRING;
                  }
+[\\]ccInheritsFrom{w} {
+	            yylval.string.text = "INHERITS FROM";
+		    yylval.string.len  = -1;
+		    return STRING;
+                 }
 [\\]ccParameters{w} {
 	            yylval.string.text = "PARAMETERS";
 		    yylval.string.len  = -1;
 		    return STRING;
                  }
-[\\]ccConstants{w} {
-	            yylval.string.text = "CONSTANTS";
+[\\]ccTypes{w} {
+	            yylval.string.text = "TYPES";
 		    yylval.string.len  = -1;
 		    return STRING;
                  }
-[\\]ccTypes{w} {
-	            yylval.string.text = "TYPES";
+[\\]ccConstants{w} {
+	            yylval.string.text = "CONSTANTS";
 		    yylval.string.len  = -1;
 		    return STRING;
                  }
@@ -398,6 +407,21 @@ blockintro      [\{][\\]((tt)|(em)|(it)|(sc)|(sl))
 		    yylval.string.len  = -1;
 		    return STRING;
                  }
+[\\]ccAccessFunctions{w} {
+	            yylval.string.text = "ACCESS FUNCTIONS";
+		    yylval.string.len  = -1;
+		    return STRING;
+                 }
+[\\]ccPredicates{w} {
+	            yylval.string.text = "PREDICATES";
+		    yylval.string.len  = -1;
+		    return STRING;
+                 }
+[\\]ccModifiers{w} {
+	            yylval.string.text = "MODIFIERS";
+		    yylval.string.len  = -1;
+		    return STRING;
+                 }
 [\\]ccImplementation{w} {
 	            yylval.string.text = "IMPLEMENTATION";
 		    yylval.string.len  = -1;
@@ -407,6 +431,19 @@ blockintro      [\{][\\]((tt)|(em)|(it)|(sc)|(sl))
 	            yylval.string.text = "EXAMPLE";
 		    yylval.string.len  = -1;
 		    return STRING;
+                 }
+[\\]begin[\{]ccAdvanced[\}]   {
+	            yylval.string.text = "(begin of an advanced section)";
+		    yylval.string.len  = -1;
+		    return STRING;
+                 }
+[\\]end[\{]ccAdvanced[\}]   {
+	            yylval.string.text = "(end of an advanced section)";
+		    yylval.string.len  = -1;
+		    return STRING;
+                 }
+[\\]ccInclude{w}   {
+		    return INCLUDE;
                  }
 [\\]ccHeading{w}   {
 		    return HEADING;
@@ -439,24 +476,18 @@ blockintro      [\{][\\]((tt)|(em)|(it)|(sc)|(sl))
 		    yylval.string.len  = 2;
 		    return STRING;
                  }
-[\\]ccSetTwoOfThreeColumns{w} {
-		    return GOBBLETWOPARAMS;
-                 }
-[\\]ccSetThreeColumns{w} {
-		    return GOBBLETHREEPARAMS;
-                 }
-[\\]ccSetOneOfTwoColumns{w} {
-		    return GOBBLEONEPARAM;
-                 }
-[\\]ccSetTwoColumns{w} {
-		    return GOBBLETWOPARAMS;
-                 }
-[\\]ccPropagateThreeToTwoColumns{w}  {
+[\\]ccSetTwoOfThreeColumns{w} { return GOBBLETWOPARAMS; }
+[\\]ccSetThreeColumns{w}      { return GOBBLETHREEPARAMS; }
+[\\]ccThree/{noletter}        { return GOBBLETHREEPARAMS; }
+[\\]ccSetOneOfTwoColumns{w}   { return GOBBLEONEPARAM; }
+[\\]ccSetTwoColumns{w}        { return GOBBLETWOPARAMS; }
+[\\]ccTwo/{noletter}          { return GOBBLETWOPARAMS; }
+[\\]cc((PropagateThreeToTwoColumns)(ThreeToTwo)){w}  {
 		    yylval.string.text = " ";
 		    yylval.string.len  = 0;
 	  	    return SPACE;
 }
-[\\]cc((GlueDeclarations)|(ParDims)){w}  {
+[\\]cc((Glue((Begin)|(End)|(Declarations))?)|(ParDims)){w}  {
 		    yylval.string.text = " ";
 		    yylval.string.len  = 0;
 	  	    return SPACE;
@@ -517,15 +548,13 @@ blockintro      [\{][\\]((tt)|(em)|(it)|(sc)|(sl))
 		     yylval.character   = '#';
 		     return CHAR;
 		 }
-[~]              {
+[~]|([\\]" ")|([\\][\n])         {
 	            yylval.string.text = " ";
 		    yylval.string.len  = 1;
 	  	    return SPACE;
 		 }
 [\\][\\]         {
-	            yylval.string.text = " ";
-		    yylval.string.len  = 1;
-	  	    return SPACE;
+	  	    return NEWLINE;
 		 }
 
 

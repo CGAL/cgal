@@ -100,6 +100,7 @@ int yyerror( char *s);
 %token             CCSTYLE
 %token             CCSECTION
 %token             CCSUBSECTION
+%token             INCLUDE
 %token             HEADING
 %token             COMMENTHEADING
 %token             GOBBLETHREEPARAMS
@@ -163,6 +164,7 @@ stmt:             string  { delete $1;}
                                                              delete $3;
                                                            }
                 | HEADING '{' comment_sequence '}'         { delete $3; }
+                | INCLUDE '{' comment_sequence '}'         { delete $3; }
                 | COMMENTHEADING '{' comment_sequence '}'  { delete $3; }
 		| BEGINTEXONLY  nested_token_sequence ENDTEXONLY  {
                                                              delete $2;
@@ -206,6 +208,7 @@ reduced_statement:
                                                              delete $3;
                                                            }
                 | HEADING '{' comment_sequence '}'         { delete $3; }
+                | INCLUDE '{' comment_sequence '}'         { delete $3; }
                 | COMMENTHEADING '{' comment_sequence '}'  { delete $3; }
 		| BEGINTEXONLY  nested_token_sequence ENDTEXONLY   {
                                                              delete $2;
@@ -510,6 +513,13 @@ compound_comment:   '{' full_comment_sequence '}' {
 		                }
                   | HEADING '{' comment_sequence '}'  {
 				  $$ = $3;
+		                }
+                  | INCLUDE '{' comment_sequence '}'  {
+				  $$ = $3;
+		                  $$->cons(   *new TextToken( "<"));
+		                  $$->cons(   *new TextToken( " ", 1, true));
+		                  $$->cons(   *new TextToken( "#include"));
+		                  $$->append( *new TextToken(  ">"));
 		                }
                   | COMMENTHEADING '{' comment_sequence '}'  {
 				  $$ = $3;

@@ -740,15 +740,25 @@ void filter_for_index_anchor( ostream& out, const char* text) {
     while( *text) {
         switch ( *text) {
 	case '<':
-	    out << '(';
+	case '(':
+	case '[':
+	case '{':
+	    out << '6';
 	    break;
 	case '>':
-	    out << '(';
+	case ')':
+	case ']':
+	case '}':
+	    out << '9';
 	    break;
 	case '"':
 	case '&':
 	case ' ':
 	    out << '_';
+	    break;
+	case ',':
+	case '.':
+	    out << '+';
 	    break;
 	default:
 	    out << *text;

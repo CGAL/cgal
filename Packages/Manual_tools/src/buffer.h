@@ -41,10 +41,10 @@ class  TextToken;
 // Substitute old style malloc, realloc, strdup ...
 // ================================================
 template < class T, class I>
-T* renew( const T* old, I old_size, I new_size);
+T* renew( T* old, I old_size, I new_size);
 
 template < class T, class I>
-T* renew( const T* old, I old_size, I new_size) {
+T* renew( T* old, I old_size, I new_size) {
     ADT_Assert( old);
     ADT_Assert( strlen( old) == size_t(old_size - 1));
     ADT_Assert( new_size > old_size);

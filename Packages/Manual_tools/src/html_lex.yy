@@ -520,7 +520,8 @@ bfblockintro    [\{][\\](bf)
 
  /* Specialized keywords from the manual style */
  /* -------------------------------------------------------------- */
-[\\]ccStyle/{noletter}  {   /* CCstyle formatting: change to NestingMode */
+[\\]cc((Style)|(c))/{noletter}  {
+                    /* CCstyle formatting: change to NestingMode */
 		    skipspaces();
 		    BEGIN( NestingMode);
 		    return CCSTYLE;
@@ -703,21 +704,27 @@ bfblockintro    [\{][\\](bf)
 		    yylval.string.len  = -1;
 		    return STRING;
                  }
+[\\]ccInheritsFrom/{noletter} {
+		    skipspaces();
+	            yylval.string.text = "<H3>Inherits From</H3>";
+		    yylval.string.len  = -1;
+		    return STRING;
+                 }
 [\\]ccParameters/{noletter} {
 		    skipspaces();
 	            yylval.string.text = "<H3>Parameters</H3>";
 		    yylval.string.len  = -1;
 		    return STRING;
                  }
-[\\]ccConstants/{noletter} {
-		    skipspaces();
-	            yylval.string.text = "<H3>Constants</H3>";
-		    yylval.string.len  = -1;
-		    return STRING;
-                 }
 [\\]ccTypes/{noletter} {
 		    skipspaces();
 	            yylval.string.text = "<H3>Types</H3>";
+		    yylval.string.len  = -1;
+		    return STRING;
+                 }
+[\\]ccConstants/{noletter} {
+		    skipspaces();
+	            yylval.string.text = "<H3>Constants</H3>";
 		    yylval.string.len  = -1;
 		    return STRING;
                  }
@@ -733,6 +740,24 @@ bfblockintro    [\{][\\](bf)
 		    yylval.string.len  = -1;
 		    return STRING;
                  }
+[\\]ccAccessFunctions/{noletter} {
+		    skipspaces();
+	            yylval.string.text = "<H3>Access Functions</H3>";
+		    yylval.string.len  = -1;
+		    return STRING;
+                 }
+[\\]ccPredicates/{noletter} {
+		    skipspaces();
+	            yylval.string.text = "<H3>Predicates</H3>";
+		    yylval.string.len  = -1;
+		    return STRING;
+                 }
+[\\]ccModfiers/{noletter} {
+		    skipspaces();
+	            yylval.string.text = "<H3>Modifiers</H3>";
+		    yylval.string.len  = -1;
+		    return STRING;
+                 }
 [\\]ccImplementation/{noletter} {
 		    skipspaces();
 	            yylval.string.text = "<H3>Implementation</H3>";
@@ -744,6 +769,25 @@ bfblockintro    [\{][\\](bf)
 	            yylval.string.text = "<H3>Example</H3>";
 		    yylval.string.len  = -1;
 		    return STRING;
+                 }
+[\\]begin[\{]ccAdvanced[\}]   {
+		    skipspaces();
+	            yylval.string.text = "<br><img border=0 src=\""
+                        "./cc_advanced_begin.gif\" alt=\"begin of advanced "
+                        "section\"><br>";
+		    yylval.string.len  = -1;
+		    return STRING;
+                 }
+[\\]end[\{]ccAdvanced[\}]   {
+		    skipspaces();
+	            yylval.string.text = "<br><img border=0 src=\""
+                        "./cc_advanced_end.gif\" alt=\"end of advanced "
+			"section\"><br>";
+		    yylval.string.len  = -1;
+		    return STRING;
+                 }
+[\\]ccInclude/{noletter}   {
+                    return INCLUDE;
                  }
 [\\]ccHeading/{noletter}   {
                     return HEADING;
@@ -767,7 +811,7 @@ bfblockintro    [\{][\\](bf)
 		    skipspaces();
 		    return GOBBLETWOPARAMS;
                  }
-[\\]ccSetThreeColumns/{noletter} {
+[\\]cc((SetThreeColumns)|(Three))/{noletter} {
 		    skipspaces();
 		    return GOBBLETHREEPARAMS;
                  }
@@ -775,11 +819,11 @@ bfblockintro    [\{][\\](bf)
 		    skipspaces();
 		    return GOBBLEONEPARAM;
                  }
-[\\]ccSetTwoColumns/{noletter} {
+[\\]cc((SetTwoColumns)|(Two))/{noletter} {
 		    skipspaces();
 		    return GOBBLETWOPARAMS;
                  }
-[\\]ccPropagateThreeToTwoColumns/{noletter}  {
+[\\]cc((PropagateThreeToTwoColumns)|(ThreeToTwo))/{noletter}  {
                     yylval.string.text = " ";
                     yylval.string.len  = 0;
                     return SPACE;
@@ -815,7 +859,7 @@ bfblockintro    [\{][\\](bf)
 [\\]ccChapterSubTitle{w}/{noletter}   {
                     return CHAPTERSUBTITLE;
 }
-[\\]cc((GlueDeclarations)|(ParDims))/{noletter}  {
+[\\]cc((Glue((Begin)|(End)|(Declarations))?)|(ParDims))/{noletter}  {
                     yylval.string.text = " ";
                     yylval.string.len  = 0;
                     return SPACE;
