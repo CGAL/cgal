@@ -34,7 +34,7 @@ sub reformat_results($)
     }
     open (PLATFORM_INFO,">${platform}.info") or return;
     open (PLATFORM_NEW_RESULTS,">${platform}.new_results") or return;
-    my ($CGAL_VERSION,$LEDA_VERSION,$TESTER,$GMP,$CLN,$QT) = ("-","-","-","-","-","-");
+    my ($CGAL_VERSION,$LEDA_VERSION,$TESTER,$TESTER_NAME,$TESTER_ADDRESS,$GMP,$CLN,$QT) = ("-","-","-","-","-","-","-","-");
     while (! /^------/) {
 	if (/^CGAL_VERSION\s+([\w\.-]+)/) {
 	    $CGAL_VERSION = $1;
@@ -44,6 +44,12 @@ sub reformat_results($)
 	}
 	if (/^TESTER\s+([\w\.-]+)/) {
 	    $TESTER = $1;
+	}
+	if (/^TESTER_NAME\s+(.*)$/) {
+	    $TESTER_NAME = $1;
+	}
+	if (/^TESTER_ADDRESS\s+(.*)$/) {
+	    $TESTER_ADDRESS = $1;
 	}
 	if (/GMP_SUPPORT\s*=\s*\'_GMP\'/) {
 	    $GMP="+";
@@ -66,6 +72,8 @@ sub reformat_results($)
     print PLATFORM_INFO <<"EOF";
 $CGAL_VERSION
 $TESTER
+$TESTER_NAME
+$TESTER_ADDRESS
 $LEDA_VERSION
 $GMP
 $CLN

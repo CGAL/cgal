@@ -1,3 +1,7 @@
+3 August 2004 Sylvain Pion
+- create_testresult_page, to_zipped_format : make use of the new TESTER_NAME
+  and TESTER_ADDRESS.
+
 24 July 2004 Sylvain Pion
 - create_testresult_page : recognize "pion".
 
