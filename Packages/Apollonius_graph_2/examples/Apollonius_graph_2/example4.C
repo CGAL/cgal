@@ -3,7 +3,7 @@
 #include <fstream>
 #include <cassert>
 
-// example that uses the Filtered_filtered kernel
+// example that uses the Filtered_kernel
 
 #include <CGAL/MP_Float.h>
 #include <CGAL/Filtered_kernel.h>
@@ -17,7 +17,9 @@ typedef CGAL::Simple_cartesian<double> CK;
 // exact kernel
 typedef CGAL::Simple_cartesian<CGAL::MP_Float> EK;
 
-typedef CGAL::Filtered_kernel<CK,EK>  Kernel;
+// SAME COMMENT HERE; I WILL RESTORE IT WHEN FILTERED KERNEL WORKS
+//typedef CGAL::Filtered_kernel<CK,EK>  Kernel;
+typedef CGAL::Filtered_kernel<CK>  Kernel;
 
 
 

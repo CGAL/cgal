@@ -8,13 +8,15 @@
 #include <CGAL/MP_Float.h>
 #include <CGAL/Filtered_exact.h>
 
-typedef CGAL::Filtered_exact<double,CGAL::MP_Float> NT;
+// I SHOULD BE ABLE TO DO THE FOLLOWING INSTEAD OF JUST PUTTING ONLY
+//ONE ARGUMENT
+//typedef CGAL::Filtered_exact<double,CGAL::MP_Float> NT;
+typedef CGAL::Filtered_exact<double> NT;
 
 // choose the kernel
 #include <CGAL/Simple_cartesian.h>
 
 typedef CGAL::Simple_cartesian<NT>  Kernel;
-
 
 // typedefs for the traits and the algorithm
 

@@ -17,8 +17,9 @@ typedef CGAL::Simple_cartesian<double> CK;
 // exact kernel
 typedef CGAL::Simple_cartesian<CGAL::MP_Float> EK;
 
-typedef CGAL::Filtered_kernel<CK,EK>  Kernel;
-
+// AGAIN, THIS WILL BE RESTORED ONCE FILTERED KERNEL WORKS CORRECTLY
+//typedef CGAL::Filtered_kernel<CK,EK>  Kernel;
+typedef CGAL::Filtered_kernel<CK>  Kernel;
 
 
 // typedefs for the traits and the algorithm
