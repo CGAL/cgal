@@ -96,4 +96,12 @@ _test_cls_const_Del_triangulation(const Triangulation &)
   assert(T2.get_conflicts(Point(-1,-1,1),std::back_inserter(conflicts)));
   conflicts.clear();
    
+  T2.get_conflicts_and_boundary(Point(0,1,2), 
+				std::back_inserter(conflicts),
+				std::back_inserter(hole_bd));
+  T2.star_hole(Point(0,1,2), 
+	       hole_bd.begin(),
+	       hole_bd.end(),
+	       conflicts.begin(),
+	       conflicts.end());
 }

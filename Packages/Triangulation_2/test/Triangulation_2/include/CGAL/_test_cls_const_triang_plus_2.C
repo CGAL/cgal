@@ -49,9 +49,7 @@ _test_cls_const_triang_plus_2( const TriangPlus & )
   assert(trp.number_of_enclosing_constraints(va,vb) == 2);
   Context_iterator cit1 = trp.contexts_begin(va,vb);
   Context_iterator cit2 = cit1++;
-  std::cerr << cit1->number_of_vertices() << " " 
-            << cit2->number_of_vertices() <<  std::endl;
-  trp.print_hierarchy();
+  //trp.print_hierarchy();
   assert( cit1->number_of_vertices() == 4  || cit1->number_of_vertices() == 7);
   Vertices_in_constraint firstin1 = cit1->first();
   Vertices_in_constraint lastin1 = --(cit1->past());
