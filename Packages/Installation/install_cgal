@@ -753,7 +753,7 @@ set_compiler_flags()
     case ${CGAL_OS_COMPILER} in
 	*bcc32.exe*|*BCC32*)
 	    #### settings Borland C++ compiler 
-	    ADDITIONAL_CXXFLAGS="-P -w-inl"
+	    ADDITIONAL_CXXFLAGS="-P -vi- -w-inl"
 	    CGAL_LIB_CXXFLAGS="-P"
 	    CGAL_LIB_CREATE="tlib /C /P512 ''"
 	    CGAL_OBJ_PREFIX="+"
@@ -4200,21 +4200,25 @@ write_linker_flags()
   #
   # CGAL_WINDOW_LDFLAGS
   #
+  ${_printf} "%s\\\\\n" "CGAL_WINDOW_LDFLAGS = " >> ${FILE}
   if [ -n "${LEDA_SUPPORT}" ]; then
-    ${_printf} "%s\\\\\n" "CGAL_WINDOW_LDFLAGS = " >> ${FILE}
     makefile_print_line "${START_LD_OPT}\$(CGAL_WINDOW_LIBPATH) ${ADDITIONAL_LDFLAGS}" >> ${FILE}
     makefile_print_line "\$(CUSTOM_LDFLAGS)" >> ${FILE}
     ${_printf} "\t%s\n\n" "${WLIBS}" >> ${FILE}
+  else
+    ${_printf} "\t%s\n\n" "\$(CGAL_LDFLAGS)" >> ${FILE}
   fi
 
   #
   # CGAL_GEOWIN_LDFLAGS
   #
+  ${_printf} "%s\\\\\n" "CGAL_GEOWIN_LDFLAGS = " >> ${FILE}
   if [ -n "${LEDA_SUPPORT}" ]; then
-    ${_printf} "%s\\\\\n" "CGAL_GEOWIN_LDFLAGS = " >> ${FILE}
     makefile_print_line "${START_LD_OPT}\$(CGAL_WINDOW_LIBPATH) ${ADDITIONAL_LDFLAGS}" >> ${FILE}
     makefile_print_line "\$(CUSTOM_LDFLAGS)" >> ${FILE}
     ${_printf} "\t%s\n\n" "${GEOWLIBS}" >> ${FILE}
+  else
+    ${_printf} "\t%s\n\n" "\$(CGAL_LDFLAGS)" >> ${FILE}
   fi
 }
 
