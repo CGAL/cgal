@@ -1,3 +1,6 @@
+3.88   (27 March 2002)
+- Added Arity_traits for VC7.
+
 3.87   (25 March 2002)
 - removed more iterator traits pointer spec macro calls for Point_d
 
