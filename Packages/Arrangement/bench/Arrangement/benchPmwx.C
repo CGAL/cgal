@@ -46,7 +46,7 @@ typedef CGAL::Arr_segment_exact_traits<Kernel>          Traits;
 #define PM_TYPE "Leda Kernel"
 #else
 #if defined(USE_MY_KERNEL)
-typedef CGAL::Arr_leda_segment_exact_traits<NT>         Traits;
+typedef CGAL::Arr_leda_segment_exact_traits             Traits;
 #define PM_TYPE "My Leda Kernel"
 #else
 typedef CGAL::Cartesian<NT>                             Kernel;
