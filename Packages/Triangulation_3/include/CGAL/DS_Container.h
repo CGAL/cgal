@@ -122,7 +122,7 @@ public:
 	key.i1 = 0;
     }
 
-    bool is_free() const {
+    bool seems_free() const {
 	return key.i0 == magic0 &&
 	       key.i1 == magic1;
     }
@@ -234,9 +234,21 @@ private:
 	free_list.set_next(x);
     }
 
-    static bool is_free(const Elt *x)
+    bool is_in_free_list(const Free_elt *x) const
     {
-	return ((Free_elt *) x)->is_free();
+	for (Free_elt *p=free_list.next(); p!=NULL; p=p->next())
+	    if (p == x)
+		return true;
+	return false;
+    }
+
+    bool is_free(const Elt *x) const
+    {
+	// seems_free() may answer true when it's not, for unlucky people.
+	// Therefore we can add this _really_ expensive assertion.
+	// CGAL_expensive_assertion(!((const Free_elt *) x)->seems_free()
+		                 // || is_in_free_list((const Free_elt *) x));
+	return ((const Free_elt *) x)->seems_free();
     }
 
     bool is_free_list_empty() const
@@ -252,10 +264,14 @@ private:
 
     typedef std::vector<Elt *> Array_vect;
 
+    const Array_vect & array() const
+    {
+	return array_vect;
+    }
+
     Alloc alloc;
     Array_vect array_vect;
     Free_elt free_list;
-    // actually, would it be possible to use a union{Free_elt; Elt;} ?
 };
 
 template < class DSC >
@@ -276,19 +292,19 @@ public:
     {}
 
     DS_Container_iterator(const DSC &d)
-	: v(&(const_cast<DSC&>(d).array_vect)), vect(0), index(0)
+	: cont(&d), vect(0), index(0)
     {
-	if (v->size()>0 && DSC::is_free(&((*v)[vect][index])))
+	if (cont->array().size()>0 && is_free())
 	    operator++();
     }
 
     DS_Container_iterator(const DSC &d, int)
-	: v(&(const_cast<DSC&>(d).array_vect)), vect(v->size()), index(0)
+	: cont(&d), vect(cont->array().size()), index(0)
     {}
 
     bool operator==(const Self & it) const
     {
-	return (it.vect == vect) && (index == it.index) && (it.v == v);
+	return (it.vect == vect) && (index == it.index) && (it.cont == cont);
     }
 
     bool operator!=(const Self & it) const
@@ -298,9 +314,9 @@ public:
 
     Self & operator++()
     {
-	CGAL_assertion(vect <= v->size());
+	CGAL_assertion(vect <= cont->array().size());
 
-	if (vect == v->size()) {
+	if (vect == cont->array().size()) {
 	    CGAL_assertion(index == 0);
 	    return *this;
 	}
@@ -311,10 +327,10 @@ public:
 	    else {
 	        index = 0;
 	        ++vect;
-		if (vect == v->size())
+		if (vect == cont->array().size())
 		    break;
 	    }
-	} while (DSC::is_free(&((*v)[vect][index]))); // Skip the free Elts.
+	} while (is_free()); // Skip the free Elts.
 	return *this;
     }
 
@@ -329,7 +345,7 @@ public:
 	        index = DS_Container_allocation_size-1;
 	        --vect;
 	    }
-	} while (DSC::is_free(&((*v)[vect][index]))); // Skip the free Elts.
+	} while (is_free()); // Skip the free Elts.
 	return *this;
     }
 
@@ -349,18 +365,24 @@ public:
 
     Elt & operator*() const
     {
-	CGAL_assertion(!DSC::is_free(&((*v)[vect][index])));
-        return (*v)[vect][index];
+	CGAL_assertion(!is_free());
+        return cont->array()[vect][index];
     }
 
     Elt * operator->() const
     {
-	CGAL_assertion(!DSC::is_free(&((*v)[vect][index])));
-        return &((*v)[vect][index]);
+	CGAL_assertion(!is_free());
+        return &(cont->array()[vect][index]);
     }
 
 private:
-    typename DSC::Array_vect * v;             // vector of arrays
+
+    bool is_free() const
+    {
+	return cont->is_free(&(cont->array()[vect][index]));
+    }
+
+    const DSC * cont;                         // The container
     typename DSC::Array_vect::size_type vect; // index of the current array.
     unsigned int index;                       // index in the current array.
 };
