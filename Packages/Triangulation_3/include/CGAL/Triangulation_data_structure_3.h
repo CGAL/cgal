@@ -424,9 +424,9 @@ private:
     }
   }
 
-  Cell * create_star2_3(Vertex* v, Cell* c, int li,
-	                Cell * prev_c = NULL, Vertex * prev_v = NULL);
-  Cell * create_star2_2(Vertex* v, Cell* c, int li );
+  Cell * create_star_3(Vertex* v, Cell* c, int li,
+	               Cell * prev_c = NULL, Vertex * prev_v = NULL);
+  Cell * create_star_2(Vertex* v, Cell* c, int li );
 
 public:
 
@@ -449,7 +449,7 @@ public:
       find_conflicts_3(c, ccc, i, tester);
 
       // Create the new cells, and returns one of them.
-      Cell * nouv = create_star2_3( w, ccc, i );
+      Cell * nouv = create_star_3( w, ccc, i );
       w->set_cell( nouv );
 
       move_temporary_free_cells_to_free_list();
@@ -462,7 +462,7 @@ public:
       find_conflicts_2(c, ccc, i, tester);
 
       // Create the new cells, and returns one of them.
-      Cell * nouv = create_star2_2( w, ccc, i );
+      Cell * nouv = create_star_2( w, ccc, i );
       w->set_cell( nouv );
 
       move_temporary_free_cells_to_free_list();
@@ -650,7 +650,7 @@ private:
 
 template < class Vb, class Cb>
 std::istream&
-operator>> (std::istream& is, Triangulation_data_structure_3<Vb,Cb>& tds)
+operator>>(std::istream& is, Triangulation_data_structure_3<Vb,Cb>& tds)
   // reads :
   // the dimension
   // the number of vertices
@@ -659,7 +659,6 @@ operator>> (std::istream& is, Triangulation_data_structure_3<Vb,Cb>& tds)
   // the neighbors of each cell by their index in the preceding list of cells
   // when dimension < 3 : the same with faces of maximal dimension
 {
-
   typedef Triangulation_data_structure_3<Vb,Cb> Tds;
   typedef typename Tds::Vertex  Vertex;
   typedef typename Tds::Cell Cell;
@@ -674,9 +673,8 @@ operator>> (std::istream& is, Triangulation_data_structure_3<Vb,Cb>& tds)
   tds.set_dimension(d);
   tds.set_number_of_vertices(n);
 
-  if(n == 0){
+  if(n == 0)
     return is;
-  }
 
   //  Point p;
   std::map< int, Vertex* > V;
@@ -699,10 +697,9 @@ operator>> (std::istream& is, Triangulation_data_structure_3<Vb,Cb>& tds)
   return is;
 }
 
-
 template < class Vb, class Cb>
-std::ostream& operator<<
-(std::ostream& os, const Triangulation_data_structure_3<Vb,Cb>  &tds)
+std::ostream&
+operator<<(std::ostream& os, const Triangulation_data_structure_3<Vb,Cb> &tds)
   // writes :
   // the dimension
   // the number of vertices
@@ -725,56 +722,14 @@ std::ostream& operator<<
 
   // outputs dimension and number of vertices
   int n = tds.number_of_vertices();
-  switch ( tds.dimension() ) {
-  case 3:
-    {
-      if(is_ascii(os)){
-        os << tds.dimension() << std::endl << n << std::endl;
-      } else {
-        os << tds.dimension() << n;
-      }
-      break;
-    }
-  case 2:
-    {
-      if(is_ascii(os)){
-        os << tds.dimension() << std::endl << n << std::endl;
-      } else {
-        os << tds.dimension() << n;
-      }
-      break;
-    }
-  case 1:
-    {
-      if(is_ascii(os)){
-        os << tds.dimension() << std::endl << n << std::endl;
-      } else {
-        os << tds.dimension() << n ;
-      }
-      break;
-    }
-  case 0:
-    {
-      if(is_ascii(os)){
-	os << tds.dimension() << std::endl << n << std::endl;
-      } else {
-	os << tds.dimension() << n;
-      }
-      break;
-    }
-  default:
-    {
-      if(is_ascii(os)){
-	os << tds.dimension() << std::endl << n << std::endl;
-      } else {
-	os << tds.dimension() << n;
-      }
-    }
-  }
 
-  if (n == 0){
+  if (is_ascii(os))
+      os << tds.dimension() << std::endl << n << std::endl;
+  else
+      os << tds.dimension() << n;
+
+  if (n == 0)
     return os;
-  }
   
   // index the vertices
   int i = 0;
@@ -803,7 +758,8 @@ is_vertex(Vertex* v) const
 {
       Vertex_iterator it = vertices_begin();
       while (it != vertices_end()) {
-	if ( v == &(*it) ) return true;
+	if ( v == &(*it) )
+	    return true;
 	++it;
       }
       return false;
@@ -812,11 +768,11 @@ is_vertex(Vertex* v) const
 template < class Vb, class Cb>
 bool
 Triangulation_data_structure_3<Vb,Cb>::
-is_edge(Vertex* u, Vertex* v, 
-	Cell* & c, int & i, int & j) const
+is_edge(Vertex* u, Vertex* v, Cell* & c, int & i, int & j) const
   // returns false when dimension <1
 {
-  if (u==v) return false;
+  if (u==v)
+      return false;
   
   Cell* tmp = _list_of_cells._next_cell;
   while ( tmp != past_end_cell() ) {
@@ -1098,7 +1054,8 @@ flip_flippable( Cell* c, int i )
 }
 
 template < class Vb, class Cb>
-inline void
+inline
+void
 Triangulation_data_structure_3<Vb,Cb>::
 flip_really( Cell* c, int i, Cell* n, int in )
   // private - used by flip and flip_flippable
@@ -1299,7 +1256,6 @@ flip_really( Cell* c, int i, int j,// int next,
   v3->set_cell( c2 );
 
   delete_cell( c );
-
 }
 
 // not documented
@@ -1578,15 +1534,13 @@ template <class Vb, class Cb >
 Triangulation_data_structure_3<Vb,Cb>::Vertex*
 Triangulation_data_structure_3<Vb,Cb>::
 insert_in_cell( Vertex * v, Cell* c )
-{ //insert in cell
+{
   CGAL_triangulation_precondition( dimension() == 3 );
   CGAL_triangulation_precondition( (c != NULL) );
   CGAL_triangulation_expensive_precondition( is_cell(c) );
 
   if ( v == NULL )
     v = new Vertex();
-
-  //     c->insert_in_cell(v);
 
   Vertex* v0 = c->vertex(0);
   Vertex* v1 = c->vertex(1);
@@ -1621,7 +1575,6 @@ insert_in_cell( Vertex * v, Cell* c )
 
   return v;
 }
-// end insert_in_cell
 
 template <class Vb, class Cb >
 Triangulation_data_structure_3<Vb,Cb>::Vertex*
@@ -2018,7 +1971,6 @@ insert_increase_dimension(Vertex * v, // new vertex
 	  
 	e->set_vertex(2,v);
 	e->set_neighbor(2,enew);
-	  
 
 	e = e->neighbor(i);
 	cnew = enew;
@@ -2143,19 +2095,13 @@ insert_increase_dimension(Vertex * v, // new vertex
 template <class Vb, class Cb >
 Triangulation_data_structure_3<Vb,Cb>::Cell*
 Triangulation_data_structure_3<Vb,Cb>::
-create_star2_3(Vertex* v, Cell* c, int li, Cell * prev_c, Vertex * prev_v)
+create_star_3(Vertex* v, Cell* c, int li, Cell * prev_c, Vertex * prev_v)
 {
-  CGAL_triangulation_assertion( dimension() == 3);
-#if 1
-    // He oui, c'est la meme chose, mais en plus rapide...
-    // voir si ca vaut vraiment le coup...
-    int jkjk = (li+2-(li&1))&3; int kjkj = (li-1)&3;
-    unsigned char i[3] = {jkjk, 6-jkjk-kjkj-li, kjkj};
-#else
+    CGAL_triangulation_assertion( dimension() == 3);
+
     unsigned char i[3] = {(li+1)&3, (li+2)&3, (li+3)&3};
     if ( (li&1) == 0 )
       std::swap(i[0], i[1]);
-#endif
 
     Vertex *v0 = c->vertex(i[0]);
     Vertex *v1 = c->vertex(i[1]);
@@ -2168,13 +2114,13 @@ create_star2_3(Vertex* v, Cell* c, int li, Cell * prev_c, Vertex * prev_v)
     cnew->set_neighbor(3, c_li);
     c_li->set_neighbor(c_li->index(c), cnew);
 
-    // look for the other three neighbors of cnew
+    // Look for the other three neighbors of cnew.
     for (int ii=0; ii<3; ii++) {
       if ( prev_v == c->vertex(i[ii]) ) {
         cnew->set_neighbor(ii, prev_c);
         continue;
       }
-      // indices of the vertices of cnew such that i[ii],j1,j2,li positive
+      // Indices of the vertices of cnew such that i[ii],j1,j2,li positive.
       int j1 = next_around_edge(i[ii],li);
       int j2 = 6-li-i[ii]-j1;
       const Vertex *vj1 = c->vertex(j1);
@@ -2183,10 +2129,8 @@ create_star2_3(Vertex* v, Cell* c, int li, Cell * prev_c, Vertex * prev_v)
       Cell *n = c->neighbor(i[ii]);
       // turn around the oriented edge j1 j2
       while ( n->get_in_conflict_flag() > 0) {
-// La boucle principale est degagee des problemes d'orientation.
-// Reste encore avant et apres...
-// Pour apres, c'est faisable (mais bof), et ca doit permettre 
-// de nettoyer le debut.
+	// The main loop is free from orientation problems.
+	// It remains only before and after...  It could probably be done.
 	CGAL_triangulation_assertion( n != c );
         if (n->neighbor(0) != cur &&
             n->vertex(0) != vj1 && n->vertex(0) != vj2)
@@ -2202,13 +2146,13 @@ create_star2_3(Vertex* v, Cell* c, int li, Cell * prev_c, Vertex * prev_v)
         else
 	  cur = n, n = n->neighbor(3);
       }
-      // now n is outside region, cur is inside
+      // Now n is outside region, cur is inside.
       n->set_in_conflict_flag(0);
       Cell *nnn;
       int kkk;
       if (n->has_neighbor(cur, kkk)) {
-	// neighbor relation is reciprocical, ie
-	// the cell we are looking for is not yet created
+	// Neighbor relation is reciprocal, ie
+	// the cell we are looking for is not yet created.
         Vertex * next_prev;
         if (kkk != 0 && n->vertex(0) != vj1 && n->vertex(0) != vj2)
            next_prev = n->vertex(0);
@@ -2219,7 +2163,7 @@ create_star2_3(Vertex* v, Cell* c, int li, Cell * prev_c, Vertex * prev_v)
         else
            next_prev = n->vertex(3);
 
-	nnn = create_star2_3(v, cur, cur->index(n), cnew, next_prev);
+	nnn = create_star_3(v, cur, cur->index(n), cnew, next_prev);
       }
       else
       {
@@ -2237,7 +2181,7 @@ create_star2_3(Vertex* v, Cell* c, int li, Cell * prev_c, Vertex * prev_v)
 template <class Vb, class Cb >
 Triangulation_data_structure_3<Vb,Cb>::Cell*
 Triangulation_data_structure_3<Vb,Cb>::
-create_star2_2(Vertex* v, Cell* c, int li )
+create_star_2(Vertex* v, Cell* c, int li )
 {
   CGAL_triangulation_assertion( dimension() == 2 );
   Cell* cnew;
@@ -2292,24 +2236,22 @@ incident_cells(Vertex* v, std::set<Cell*> & cells, Cell* c) const
   CGAL_triangulation_precondition( v != NULL );
   CGAL_triangulation_precondition( is_vertex(v) );
 
-  if ( dimension() < 3 ) { return; }
+  if ( dimension() < 3 )
+      return;
 
-  if ( c == NULL ) {
+  if ( c == NULL )
     c = v->cell();
-  }
-  else {
+  else
     CGAL_triangulation_precondition( c->has_vertex(v) );
-  }
-  if ( cells.find( c ) != cells.end() ) {
+
+  if ( cells.find( c ) != cells.end() )
     return; // c was already found
-  }
+
   cells.insert( c );
       
-  for ( int j=0; j<4; j++ ) {
-    if ( j != c->index(v) ) {
+  for ( int j=0; j<4; j++ )
+    if ( j != c->index(v) )
       incident_cells( v, cells, c->neighbor(j) );
-    }
-  }
 }
   
 template <class Vb, class Cb >
@@ -2320,65 +2262,67 @@ incident_vertices(Vertex* v, std::set<Vertex*> & vertices, Cell* c) const
   CGAL_triangulation_precondition( v != NULL );
   CGAL_triangulation_precondition( is_vertex(v) );
       
-  if ( number_of_vertices() < 2 ) { return; }
+  if ( number_of_vertices() < 2 )
+      return;
 
-  if ( c == NULL ) {
+  if ( c == NULL )
     c = v->cell();
-  }
-  else {
+  else
     CGAL_triangulation_precondition( c->has_vertex(v) );
-  }
 
   int d = dimension();
   int j;
   int found = 0;
   for ( j=0; j <= d; j++ ) {
     if ( j != c->index(v) ) {
-      if ( vertices.find( c->vertex(j) ) == vertices.end() ) {
+      if ( vertices.find( c->vertex(j) ) == vertices.end() )
 	vertices.insert( c->vertex(j) );
-      }
-      else {
+      else
 	found++; // c->vertex(j) was already found 
-      }
     }
   }
-  if ( found == 3 ) return; // c was already visited
+  if ( found == 3 )
+      return; // c was already visited
       
-  for ( j=0; j <= d; j++ ) {
-    if ( j != c->index(v) ) {
+  for ( j=0; j <= d; j++ )
+    if ( j != c->index(v) )
       incident_vertices( v, vertices, c->neighbor(j) );
-    }
-  }
 }
 
 template <class Vb, class Cb >
 bool
 Triangulation_data_structure_3<Vb,Cb>::
 is_valid(bool verbose, int level ) const
-{ // is_valid()
+{
   switch ( dimension() ) {
   case 3:
     {
       int vertex_count;
-      if ( ! count_vertices(vertex_count,verbose,level) ) {return false;}
+      if ( ! count_vertices(vertex_count,verbose,level) )
+	  return false;
       if ( number_of_vertices() != vertex_count ) {
-	if (verbose) { std::cerr << "false number of vertices" 
-				 << std::endl; }
-	CGAL_triangulation_assertion(false); return false;
+	if (verbose)
+	    std::cerr << "false number of vertices" << std::endl;
+	CGAL_triangulation_assertion(false);
+	return false;
       }
 
       int cell_count;
-      if ( ! count_cells(cell_count,verbose,level) ) {return false;}
+      if ( ! count_cells(cell_count,verbose,level) )
+	  return false;
       int edge_count;
-      if ( ! count_edges(edge_count,verbose,level) ) {return false;}
+      if ( ! count_edges(edge_count,verbose,level) )
+	  return false;
       int facet_count;
-      if ( ! count_facets(facet_count,verbose,level) ) {return false;}
+      if ( ! count_facets(facet_count,verbose,level) )
+	  return false;
 
       // Euler relation 
       if ( cell_count - facet_count + edge_count - vertex_count != 0 ) {
-	if (verbose) { std::cerr << "Euler relation unsatisfied"
-				 << std::endl; }
-	CGAL_triangulation_assertion(false); return false;
+	if (verbose)
+	    std::cerr << "Euler relation unsatisfied" << std::endl;
+	CGAL_triangulation_assertion(false);
+	return false;
       }
 
       break;
@@ -2386,56 +2330,70 @@ is_valid(bool verbose, int level ) const
   case 2:
     {
       int vertex_count;
-      if ( ! count_vertices(vertex_count,verbose,level) ) {return false;}
+      if ( ! count_vertices(vertex_count,verbose,level) )
+	  return false;
       if ( number_of_vertices() != vertex_count ) {
-	if (verbose) { std::cerr << "false number of vertices" 
-				 << std::endl; }
-	CGAL_triangulation_assertion(false); return false;
+	if (verbose)
+	    std::cerr << "false number of vertices" << std::endl;
+	CGAL_triangulation_assertion(false);
+	return false;
       }
 
       int edge_count;
-      if ( ! count_edges(edge_count,verbose,level) ) {return false;}
+      if ( ! count_edges(edge_count,verbose,level) )
+	  return false;
       // Euler for edges
       if ( edge_count != 3 * vertex_count - 6 ) {
-	if (verbose) { std::cerr 
-	  << "Euler relation unsatisfied - edges/vertices" << std::endl;}
-	CGAL_triangulation_assertion(false); return false;
+	if (verbose)
+	    std::cerr << "Euler relation unsatisfied - edges/vertices"
+		      << std::endl;
+	CGAL_triangulation_assertion(false);
+	return false;
       }
 
       int facet_count;
-      if ( ! count_facets(facet_count,verbose,level) ) {return false;}
+      if ( ! count_facets(facet_count,verbose,level) )
+	  return false;
       // Euler for facets
       if ( facet_count != 2 * vertex_count - 4 ) {
-	if (verbose) { std::cerr 
-	  << "Euler relation unsatisfied - facets/vertices" << std::endl;}
-	CGAL_triangulation_assertion(false); return false;
+	if (verbose)
+	    std::cerr << "Euler relation unsatisfied - facets/vertices"
+		      << std::endl;
+	CGAL_triangulation_assertion(false);
+	return false;
       }
       break;
     }
   case 1:
     {
       int vertex_count;
-      if ( ! count_vertices(vertex_count,verbose,level) ) {return false;}
+      if ( ! count_vertices(vertex_count,verbose,level) )
+	  return false;
       if ( number_of_vertices() != vertex_count ) {
-	if (verbose) { std::cerr << "false number of vertices" 
-				 << std::endl; }
-	CGAL_triangulation_assertion(false); return false;
+	if (verbose)
+	    std::cerr << "false number of vertices" << std::endl;
+	CGAL_triangulation_assertion(false);
+	return false;
       }
       int edge_count;
-      if ( ! count_edges(edge_count,verbose,level) ) {return false;}
+      if ( ! count_edges(edge_count,verbose,level) )
+	  return false;
       // Euler for edges
       if ( edge_count != vertex_count ) {
-	if (verbose) { std::cerr << "false number of edges" << std::endl; }
-	CGAL_triangulation_assertion(false); return false;
+	if (verbose)
+	    std::cerr << "false number of edges" << std::endl;
+	CGAL_triangulation_assertion(false);
+	return false;
       }
       break;
     }
   case 0:
     {
       if ( number_of_vertices() < 2 ) {
-	if (verbose) { std::cerr << "less than 2 vertices but dimension 0" 
-				 << std::endl; }
-	CGAL_triangulation_assertion(false); return false;
+	if (verbose)
+	    std::cerr << "less than 2 vertices but dimension 0" << std::endl;
+	CGAL_triangulation_assertion(false);
+	return false;
       }
       // no break; continue
     }
@@ -2459,9 +2417,10 @@ is_valid(bool verbose, int level ) const
       }
     } 
   } // end switch
-  if (verbose) { std::cerr << "valid data structure" << std::endl; }
+  if (verbose)
+      std::cerr << "valid data structure" << std::endl;
   return true;
-} // end is_valid
+}
 
 template <class Vb, class Cb >
 Triangulation_data_structure_3<Vb,Cb>::Vertex*
@@ -2482,20 +2441,17 @@ copy_tds(const Tds & tds, Vertex* vert )
   set_number_of_vertices(n);
   set_dimension(tds.dimension());
 
-  if(n == 0){ return vert; }
+  if (n == 0)
+      return vert;
 
-  { // create the vertices
+  // Create the vertices.
+  for (Vertex_iterator vit = tds.vertices_begin();
+       vit != tds.vertices_end(); ++vit)
+      V[&(*vit)] = new Vertex( *vit );
 
-    Vertex_iterator it=tds.vertices_begin();
-    while (it != tds.vertices_end()) {
-      V[&(*it)] = new Vertex( *it );
-      ++it;
-    }
-  }
-
-  { // create the cells
-    Cell* it = tds._list_of_cells._next_cell;
-    while ( it != tds.past_end_cell() ){
+  // Create the cells.
+  for (Cell* cit = tds._list_of_cells._next_cell;
+       cit != tds.past_end_cell(); cit = cit->_next_cell) {
       // 	F[&(*it)]=  new Cell( *this,
       // 			      (Vertex*) V[it->vertex(0)],
       // 			      (Vertex*) V[it->vertex(1)],
@@ -2503,13 +2459,11 @@ copy_tds(const Tds & tds, Vertex* vert )
       // 			      (Vertex*) V[it->vertex(3)]);
       // modified to keep the possible additional non combinatorial
       // information 
-      F[&(*it)]=  create_cell( (Vertex*) V[it->vertex(0)],
-			       (Vertex*) V[it->vertex(1)],
-			       (Vertex*) V[it->vertex(2)],
-			       (Vertex*) V[it->vertex(3)],
-			       *it);
-      it = it->_next_cell;
-    }
+      F[&(*cit)] = create_cell((Vertex*) V[cit->vertex(0)],
+			       (Vertex*) V[cit->vertex(1)],
+			       (Vertex*) V[cit->vertex(2)],
+			       (Vertex*) V[cit->vertex(3)],
+			       *cit);
   }
 
   //    only works in dimension 3
@@ -2525,23 +2479,19 @@ copy_tds(const Tds & tds, Vertex* vert )
   //       }
   //     }
 
-  { // link the vertices to a cell
-    Vertex_iterator it = tds.vertices_begin();
-    while(it != tds.vertices_end()) {
-      v = (Vertex*) V[&(*it)];
-      v->set_cell( (Cell*) F[it->cell()] );
-      ++it;
-    }
+  // Link the vertices to a cell.
+  for (Vertex_iterator vit2 = tds.vertices_begin();
+       vit2 != tds.vertices_end(); ++vit2) {
+    v = (Vertex*) V[&(*vit2)];
+    v->set_cell( (Cell*) F[vit2->cell()] );
   }
 
-  { // hook neighbor pointers of the cells
-    Cell* it = tds._list_of_cells._next_cell;
-    while ( it != tds.past_end_cell() ){
-      for(int j = 0; j < 4; j++){
-	f = ((Cell*) F[&(*it)]);
-	f->set_neighbor(j, (Cell*) F[it->neighbor(j)] );
-      }
-      it = it->_next_cell;
+  // Hook neighbor pointers of the cells.
+  for (Cell* cit2 = tds._list_of_cells._next_cell;
+       cit2 != tds.past_end_cell(); cit2 = cit2->_next_cell) {
+    for (int j = 0; j < 4; j++) {
+      f = ((Cell*) F[&(*cit2)]);
+      f->set_neighbor(j, (Cell*) F[cit2->neighbor(j)] );
     }
   }
 
@@ -2669,7 +2619,6 @@ clear()
 
   set_number_of_vertices(0);
   set_dimension(-2);
-
 }
 
 template <class Vb, class Cb >
@@ -2679,15 +2628,15 @@ count_vertices(int & i, bool verbose, int level) const
   // counts AND checks the validity
 {
   i = 0;
-  Vertex_iterator it = vertices_begin();
-    
-  while(it != vertices_end()) {
+
+  for (Vertex_iterator it = vertices_begin(); it != vertices_end(); ++it) {
     if ( ! it->is_valid(verbose,level) ) {
-      if (verbose) { std::cerr << "invalid vertex" << std::endl; }
-      CGAL_triangulation_assertion(false); return false;
+      if (verbose)
+	  std::cerr << "invalid vertex" << std::endl;
+      CGAL_triangulation_assertion(false);
+      return false;
     }
     ++i;
-    ++it;
   }
   return true;
 } 
@@ -2699,15 +2648,15 @@ count_facets(int & i, bool verbose, int level) const
   // counts but does not check
 {
   i = 0;
-  Facet_iterator it = facets_begin();
-    
-  while(it != facets_end()) {
+
+  for (Facet_iterator it = facets_begin(); it != facets_end(); ++it) {
     if ( ! (*it).first->is_valid(dimension(),verbose, level) ) {
-      if (verbose) { std::cerr << "invalid facet" << std::endl;}
-      CGAL_triangulation_assertion(false); return false;
+      if (verbose)
+	  std::cerr << "invalid facet" << std::endl;
+      CGAL_triangulation_assertion(false);
+      return false;
     }
     ++i;
-    ++it;
   }
   return true;
 }
@@ -2719,15 +2668,15 @@ count_edges(int & i, bool verbose, int level) const
   // counts but does not check
 {
   i = 0;
-  Edge_iterator it = edges_begin();
-    
-  while(it != edges_end()) {
+
+  for (Edge_iterator it = edges_begin(); it != edges_end(); ++it) {
     if ( ! (*it).first->is_valid(dimension(),verbose, level) ) {
-      if (verbose) { std::cerr << "invalid edge" << std::endl;}
-      CGAL_triangulation_assertion(false); return false;
+      if (verbose)
+	  std::cerr << "invalid edge" << std::endl;
+      CGAL_triangulation_assertion(false);
+      return false;
     }
     ++i;
-    ++it;
   }
   return true;
 }
@@ -2739,15 +2688,15 @@ count_cells(int & i, bool verbose, int level) const
   // counts AND checks the validity
 {
   i = 0;
-  Cell_iterator it = cells_begin();
-    
-  while(it != cells_end()) {
+
+  for (Cell_iterator it = cells_begin(); it != cells_end(); ++it) {
     if ( ! it->is_valid(dimension(),verbose, level) ) {
-      if (verbose) { std::cerr << "invalid cell" << std::endl;}
-      CGAL_triangulation_assertion(false); return false;
+      if (verbose)
+	  std::cerr << "invalid cell" << std::endl;
+      CGAL_triangulation_assertion(false);
+      return false;
     }
     ++i;
-    ++it;
   }
   return true;
 }
