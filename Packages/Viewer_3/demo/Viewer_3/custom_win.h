@@ -20,7 +20,7 @@ void tri_cb(Fl_Widget* w, void* v)
 {
   CGAL::Viewer_3* win = (CGAL::Viewer_3*) v;
   typedef Triangulation_2::Point Point;
-  Triangulation_2* tr;  
+  Triangulation_2* tr = new Triangulation_2();  
   CGAL::Vector_2<rep_t> disp( 425.0, 425.0 );
   CGAL::Random_points_in_square_2<Point,CGAL::Creator_uniform_2<double,Point> >
     g ( 500.0 );
@@ -36,7 +36,7 @@ void del_cb(Fl_Widget* w, void* v)
 {
   CGAL::Viewer_3* win = (CGAL::Viewer_3*) v;
   typedef Delaunay_2::Point Point;
-  Delaunay_2* tr;  
+  Delaunay_2* tr = new Delaunay_2();  
   CGAL::Vector_2<rep_t> disp( 425.0, 425.0 );
   CGAL::Random_points_in_square_2<Point,CGAL::Creator_uniform_2<double,Point> >
     g ( 500.0 );
@@ -52,7 +52,7 @@ void vor_cb(Fl_Widget* w, void* v)
 {
   CGAL::Viewer_3* win = (CGAL::Viewer_3*) v;
   typedef Delaunay_2::Point Point;
-  Delaunay_2* tr;  
+  Delaunay_2* tr = new Delaunay_2();  
   CGAL::Vector_2<rep_t> disp( 425.0, 425.0 );
   CGAL::Random_points_in_square_2<Point,CGAL::Creator_uniform_2<double,Point> >
     g ( 500.0 );
@@ -68,7 +68,7 @@ void vord_cb(Fl_Widget* w, void* v)
 {
   CGAL::Viewer_3* win = (CGAL::Viewer_3*) v;
   typedef Delaunay_2::Point Point;
-  Delaunay_2* tr;  
+  Delaunay_2* tr = new Delaunay_2();  
   CGAL::Vector_2<rep_t> disp( 425.0, 425.0 );
   CGAL::Random_points_in_square_2<Point,CGAL::Creator_uniform_2<double,Point> >
     g ( 500.0 );
