@@ -1,3 +1,9 @@
+#ifndef CGAL_USE_LEDA
+int main(){
+  return 0;
+}
+#else
+
 #include <CGAL/Cartesian.h>
 //#include <CGAL/Simple_cartesian.h>
 #include <list>
@@ -120,7 +126,7 @@ int main()
   return 1;
 }
 
-
+#endif
 
 
 

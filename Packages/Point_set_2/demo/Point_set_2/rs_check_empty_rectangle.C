@@ -1,3 +1,9 @@
+#ifndef CGAL_USE_LEDA
+int main(){
+  return 0;
+}
+#else
+
 //#include <CGAL/Cartesian.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/IO/Window_stream.h>
@@ -106,3 +112,4 @@ int main()
   return 0;
 }
 
+#endif
