@@ -30,7 +30,7 @@ class Point_plus_handle;
 // point location query. This class holds the representation, and the next 
 // will hold the Handle to Point_plus.
 template <class PM_>
-class Point_plus_rep : public Ref_counted {
+class Point_plus_rep /*: public Ref_counted*/ {
 public:
   typedef PM_                          PM;
   typedef typename PM::Traits          Traits;
@@ -87,20 +87,21 @@ public:
   }
   
   bool operator==(const Point_plus_handle &p_plus) const
-  { return ptr->p_ == p_plus.point(); }
+  { return Ptr()->p_ == p_plus.point(); }
   
   bool operator!=(const Point_plus_handle &p_plus) const
   { return !(operator==(p_plus)); }
   
-  void set_point(const Point& p) { ptr->p_ = p; }
+  void set_point(const Point& p) { ptr()->p_ = p; }
   
-  void set_vertex (Vertex_handle v) { ptr->v_ = v; }
+  void set_vertex (Vertex_handle v) { ptr()->v_ = v; }
   
-  const Point& point() const { return ptr->p_; }
+  const Point& point() const { return Ptr()->p_; }
   
-  Vertex_handle vertex() const { return ptr->v_; } 
+  Vertex_handle vertex() const { return Ptr()->v_; } 
   
 private:
+  //Point_plus_rep_pm*  Ptr() { return ptr(); }
   //Point_plus_rep_pm* ptr() const { return (Point_plus_rep_pm*) PTR; }
 };
 
@@ -108,4 +109,8 @@ private:
 CGAL_END_NAMESPACE
 
 #endif
+
+
+
+
 
