@@ -38,11 +38,15 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
+                test_Compact_container$(EXE_EXT) \
                 test_In_place_list$(EXE_EXT) \
                 test_composition$(EXE_EXT) \
                 test_new_binders1$(EXE_EXT) \
                 test_stl_extension$(EXE_EXT) \
                 test_vector$(EXE_EXT) 
+
+test_Compact_container$(EXE_EXT): test_Compact_container$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Compact_container test_Compact_container$(OBJ_EXT) $(LDFLAGS)
 
 test_In_place_list$(EXE_EXT): test_In_place_list$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_In_place_list test_In_place_list$(OBJ_EXT) $(LDFLAGS)
@@ -60,6 +64,7 @@ test_vector$(EXE_EXT): test_vector$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_vector test_vector$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
+                   test_Compact_container.clean \
                    test_In_place_list.clean \
                    test_composition.clean \
                    test_new_binders1.clean \

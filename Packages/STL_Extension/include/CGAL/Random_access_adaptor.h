@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1997-2002 The CGAL Consortium
+// Copyright (c) 2003 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -18,7 +18,8 @@
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
-//                 Lutz Kettner <kettner@cs.unc.edu>
+//                 Lutz Kettner <kettner@mpi-sb.mpg.de>
+//                 Sylvain Pion <Sylvain.Pion@mpi-sb.mpg.de>
 //
 // maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
 // coordinator   : ETH

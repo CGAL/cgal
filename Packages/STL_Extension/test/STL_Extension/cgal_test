@@ -70,6 +70,7 @@ if [ $# -ne 0 ] ; then
     compile_and_run $file
   done
 else
+  compile_and_run test_Compact_container
   compile_and_run test_In_place_list
   compile_and_run test_composition
   compile_and_run test_new_binders1
