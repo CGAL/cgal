@@ -43,14 +43,14 @@ void  sweep_to_produce_points_2(Curve_iterator curves_begin,
                                 Curve_iterator curves_end,  
                                 SweepLineTraits_2& traits, 
                                 OutpoutIterator points,
-                                bool edge_points = true,
+                                bool endpoints = true,
                                 bool overlapping = false)
 {
   Sweep_curves_to_subcurves_2<Curve_iterator, SweepLineTraits_2>  
                                                       sweep_line(&traits);
   
   sweep_line.sweep_curves_to_points(curves_begin, curves_end,  
-                                    points, edge_points, overlapping);
+                                    points, endpoints, overlapping);
 }
 
 CGAL_END_NAMESPACE
