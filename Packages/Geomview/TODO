@@ -5,3 +5,4 @@
 - Write operator<<(Triangulation), 2D and 3D.  Use "(progn" ... ")" from GCL
   for that ?
 - Use the OOGL library coming with Geomview to parse stuff ?
+- Fix non-std compliant names beginning with underscore : grep -r '\<_' .
