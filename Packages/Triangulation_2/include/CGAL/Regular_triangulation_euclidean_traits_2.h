@@ -278,7 +278,7 @@ public:
     }
 };
 
-template < class R, class W = typename R::FT>
+template < class R, class W = CGAL_TYPENAME_MSVC_NULL  R::RT>
 class Regular_triangulation_euclidean_traits_2
   : public Triangulation_euclidean_traits_2<R>
 {

@@ -413,7 +413,7 @@ intersect(Face_handle f, int i,
   std::cerr << " sorry, this triangulation does not deal " 
 	    <<    std::endl
 	    << " intersecting constraints" << std::endl;
-  assert(false);
+  CGAL_triangulation_assertion(false);
   return Vertex_handle();
 }
 
@@ -434,8 +434,8 @@ intersect(Face_handle f, int i,
   Vertex_handle  vcc, vdd;
   vcc = f->vertex(cw(i));
   vdd = f->vertex(ccw(i));
-  assert(hierarchy.enclosing_constraint(vcc,vdd,vc,vd));
-  assert(hierarchy.enclosing_constraint(vaa,vbb,va,vb));
+  CGAL_triangulation_assertion(hierarchy.enclosing_constraint(vcc,vdd,vc,vd));
+  CGAL_triangulation_assertion(hierarchy.enclosing_constraint(vaa,vbb,va,vb));
 						  
   Point pi; //creator for point is required here
   Object result;
@@ -443,7 +443,7 @@ intersect(Face_handle f, int i,
     compute_intersection=geom_traits().intersect_2_object();
   result = compute_intersection(Segment(vc->point(),vd->point()),
 				Segment(va->point(),vb->point()));
-  assert(assign(pi, result));
+  CGAL_triangulation_assertion(assign(pi, result));
 
   Vertex_handle vi = insert(pi, EDGE, f, i);
   return vi; 
@@ -470,7 +470,7 @@ intersect(Face_handle f, int i,
 				Segment(vaa->point(),vbb->point()));
   bool intersection = assign(pi, result);
   if (!intersection) {
-    assert(false); // what can I do here? TODO
+    CGAL_triangulation_assertion(false); // what can I do here? TODO
   }
    
   remove_constraint(f, i);

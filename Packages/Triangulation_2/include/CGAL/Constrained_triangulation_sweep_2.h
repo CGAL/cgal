@@ -165,7 +165,7 @@ public:
 
     void remove_flat(Face_handle fh) 
       {
-	assert((*fh).vertex(1) == (*fh).vertex(2));
+	CGAL_triangulation_precondition((*fh).vertex(1) == (*fh).vertex(2));
 	Face_handle f2= (*fh).neighbor(2);
 	Face_handle f1= (*fh).neighbor(1);
 	if ( !f2.is_null()) { (*f2).set_neighbor( (*f2).index(fh), f1);}
@@ -396,7 +396,7 @@ build_triangulation()
 
     // delete event from event_queue
     out= (*event).second;
-    assert( (*out).empty());
+    CGAL_triangulation_assertion( (*out).empty());
     delete out; //delete la liste out
     queue.erase(event);
 
@@ -404,7 +404,7 @@ build_triangulation()
   // make inifinite vertex, infinite faces
   // at this stage status is empty
   // and the lists of upper_chain correspond to the convex hull
-  assert( status.empty());
+  CGAL_triangulation_assertion( status.empty());
   //the_vertex = set_infinite_faces();
   set_infinite_faces();
   return;

@@ -679,7 +679,7 @@ find_intersected_faces(Vertex_handle va,
   Point a=va->point(), b=vb->point();
   Line_face_circulator current_face=line_walk(vaa->point(),b, vaa->face());
   int ind=current_face->index(vaa);
-  assert( !current_face->is_constrained(ind));
+  CGAL_triangulation_assertion( !current_face->is_constrained(ind));
   Face_handle lf= current_face->neighbor(ccw(ind)); 
   Face_handle rf= current_face->neighbor(cw(ind));
   Orientation orient;
@@ -716,7 +716,7 @@ find_intersected_faces(Vertex_handle va,
 	i2 = ccw(ind); //index of non intersected edge of current_face
       }
 
-      assert( !current_face->is_constrained(i1));
+      CGAL_triangulation_assertion( !current_face->is_constrained(i1));
       lf= current_face->neighbor(i2);
       intersected_faces.push_front(current_face);
       if (orient == LEFTTURN) 

@@ -198,7 +198,7 @@ demo_build_triangulation(Window_stream& W)
 	
     // delete event from event_queue
     out= (*event).second;
-    assert( (*out).empty());
+    CGAL_triangulation_assertion( (*out).empty());
     delete out;
     queue.erase(event);
     //delete la liste out
@@ -206,7 +206,7 @@ demo_build_triangulation(Window_stream& W)
   // make inifinite vertex, infinite faces 
   // at this stage status is empty
   // and the lists of upper_chain correspond to the convex hull
-  assert( status.empty());
+  CGAL_triangulation_assertion( status.empty());
   the_vertex = set_infinite_faces();
 
   return;
