@@ -102,8 +102,8 @@ public:
   Cell_circulator& operator--()
   {
     CGAL_triangulation_precondition( (pos != NULL) ); // then prev != NULL too
-    int i = prev->index(_e.first->vertex(e.second));
-    int j = prev->index(_e.first->vertex(e.third));
+    int i = prev->index(_e.first->vertex(_e.second));
+    int j = prev->index(_e.first->vertex(_e.third));
     int k = other(i,j);
     Cell * tmp = prev;
     Cell * n = prev->neighbor(k);
