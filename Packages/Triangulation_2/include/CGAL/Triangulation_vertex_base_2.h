@@ -36,7 +36,7 @@ public:
   typedef typename GT::Point_2 Point;
 
   Triangulation_vertex_base_2 ()
-    : _f(NULL)
+    : _p(Point()), _f(NULL)
     {}
     
   Triangulation_vertex_base_2(const Point & p, void * f = NULL)

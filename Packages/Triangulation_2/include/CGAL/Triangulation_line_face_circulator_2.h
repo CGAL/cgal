@@ -109,13 +109,14 @@ public:
   bool  collinear_outside() const;
   bool locate(const Point& t, Locate_type &lt,  int &li);
 
-private:
+  //private:
   Triangulation_line_face_circulator_2(const Face_handle& face,
 				       int index,
 				       State state,
 				       const Triangulation_2<Gt,Tds> * t,
 				       const Point& pp,
 				       const Point& qq);
+private:
   void increment();
   void decrement();
 };
