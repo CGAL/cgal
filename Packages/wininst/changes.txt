@@ -1,3 +1,7 @@
+2.1.37(02/10/03)  modified the C2vcproj script and the master.vcproj file
+		  the projects are generated now in examples/package/ dir 
+		  and not examples/package/VC7
+
 2.1.36(01/10/03)  updated INSTALL.win32 file
 
 2.1.35(27/09/03)  new headers
