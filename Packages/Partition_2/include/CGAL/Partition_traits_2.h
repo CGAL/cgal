@@ -60,6 +60,7 @@ class Partition_traits_2  : public Partition_traits_2_base<R_>
     typedef typename R::Line_2                          Line_2;
     typedef typename R::Construct_line_2                Construct_line_2;
     typedef typename R::Compare_x_at_y_2                Compare_x_at_y_2;
+    typedef typename R::Is_horizontal_2                 Is_horizontal_2;
 
     // needed by visibility graph and thus by optimal convex
     typedef Ray_2<R_>                                   Ray_2; 
@@ -99,6 +100,10 @@ class Partition_traits_2  : public Partition_traits_2_base<R_>
     Are_strictly_ordered_along_line_2
     are_strictly_ordered_along_line_2_object() const
     { return Are_strictly_ordered_along_line_2(); }
+
+    Is_horizontal_2
+    is_horizontal_2_object() const
+    {  return Is_horizontal_2(); }
 
     Is_convex_2
     is_convex_2_object(const Self& traits) const
