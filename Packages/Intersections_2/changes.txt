@@ -1,3 +1,6 @@
+2.14 (06 May 2003)
+- changed Triangle_2_Triangle_2 intersection test
+
 2.13 (12 April 2003)
 - Fix MipsPro warning.
 
