@@ -82,9 +82,6 @@ public:
   Object dual(const Edge &e) const ;
   Object dual(const Edge_circulator& ec) const;
   Object dual(const Finite_edges_iterator& ei) const;
-  Point circumcenter(const Point& p0, 
-		     const Point& p1, 
-		     const Point&   p2) const;
   
   //INSERTION-REMOVAL
   Vertex_handle  insert(const Point  &p, Face_handle start = Face_handle() );
@@ -309,19 +306,7 @@ Delaunay_triangulation_2<Gt,Tds>::
 dual (Face_handle f) const
 {
   CGAL_triangulation_precondition (dimension()==2);
-  return circumcenter(f->vertex(0)->point(),
-		      f->vertex(1)->point(),
-		      f->vertex(2)->point());
-}
-
-template<class Gt, class Tds>
-inline
-Delaunay_triangulation_2<Gt,Tds>::Point
-Delaunay_triangulation_2<Gt,Tds>::
-circumcenter (const Point& p0, const Point& p1, const Point&  p2) const
-{
-  return 
-    geom_traits().construct_circumcenter_2_object()(p0,p1,p2);
+  return circumcenter(f);
 }
 
   

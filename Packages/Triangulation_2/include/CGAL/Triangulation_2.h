@@ -180,7 +180,10 @@ public:
   Segment segment(const All_edges_iterator& ei) const;
   Segment segment(const Finite_edges_iterator& ei) const;
   Point circumcenter(Face_handle  f) const; 
-
+  Point circumcenter(const Point& p0, 
+		     const Point& p1, 
+		     const Point& p2) const;
+  
 
   //INSERTION - DELETION - Flip
 public:
@@ -1926,13 +1929,25 @@ orientation(const Point& p, const Point& q,const Point& r ) const
   return geom_traits().orientation_2_object()(p,q,r);
 }
 
+template<class Gt, class Tds>
+inline
+Triangulation_2<Gt,Tds>::Point
+Triangulation_2<Gt,Tds>::
+circumcenter (const Point& p0, const Point& p1, const Point&  p2) const
+{
+  return 
+    geom_traits().construct_circumcenter_2_object()(p0,p1,p2);
+}
+
+
 template <class Gt, class Tds >
 Triangulation_2<Gt, Tds>::Point
 Triangulation_2<Gt, Tds>::
 circumcenter(Face_handle  f) const
 {
-  typename Gt::Construct_circumcenter_2
-    circumcenter = geom_traits().construct_circumcenter_2_object();
+  CGAL_triangulation_precondition (dimension()==2);
+  // typename Gt::Construct_circumcenter_2
+//     circumcenter = geom_traits().construct_circumcenter_2_object();
   return circumcenter((f->vertex(0))->point(), 
 		      (f->vertex(1))->point(), 
 		      (f->vertex(2))->point());

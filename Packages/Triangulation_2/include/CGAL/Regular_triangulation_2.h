@@ -15,7 +15,7 @@
 // source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Frederic Fichel, Mariette Yvinec
+// author(s)     : Frederic Fichel, Mariette Yvinec, Julia Floetotto
 //
 // coordinator   : Mariette Yvinec  <Mariette.Yvinec@sophia.inria.fr>
 //
@@ -38,6 +38,9 @@ public:
   typedef typename Gt::Bare_point     Point;
   typedef typename Gt::Weighted_point Weighted_point;
   typedef typename Gt::Weight         Weight;
+  //  typedef typename Gt::Line_2 Line;
+  //  typedef typename Gt::Direction_2 Direction;
+  //  typedef typename Gt::Ray_2 Ray;
 
   typedef typename Triangulation::Face_handle    Face_handle;
   typedef typename Triangulation::Vertex_handle  Vertex_handle;
@@ -50,7 +53,6 @@ public:
                                                      Finite_vertices_iterator;
   // a list to memorise temporary the faces around a point
   typedef std::list<Face_handle>      Faces_around_stack; 
-
   // point list
   typedef std::list<Weighted_point>   Weighted_point_list;
 
@@ -77,6 +79,16 @@ public:
   
   bool is_valid(bool verbose = false, int level = 0) const;
   void affiche_tout();	
+
+  // DUAL
+  Point dual (Face_handle f) const;
+  Object dual(const Edge &e) const ;
+  Object dual(const Edge_circulator& ec) const;
+  Object dual(const Finite_edges_iterator& ei) const;
+  Point weighted_circumcenter(Face_handle f) const; 
+  Point weighted_circumcenter(const Weighted_point& p0, 
+			      const Weighted_point& p1, 
+			      const Weighted_point& p2) const;
 
   // Insertion, Deletion and Flip
   Vertex_handle push_back(const Weighted_point &p);
@@ -127,6 +139,22 @@ public:
       }
       return number_of_vertices() - n;
   }
+
+  template < class Stream>
+  Stream& draw_dual(Stream & ps) const
+    {
+      Finite_edges_iterator eit= finite_edges_begin();
+      for (; eit != finite_edges_end(); ++eit) {
+	Object o = dual(eit);
+	typename Geom_traits::Line_2  l;
+	typename Geom_traits::Ray_2   r;
+	Segment s;
+	if (CGAL::assign(s,o)) ps << s;
+	if (CGAL::assign(r,o)) ps << r;
+	if (CGAL::assign(l,o)) ps << l;
+      }
+      return ps;
+    }
     
 };
 
@@ -332,6 +360,105 @@ affiche_tout()
   }
 }
 
+
+//DUALITY
+template < class Gt, class Tds >
+inline
+Regular_triangulation_2<Gt,Tds>::Point
+Regular_triangulation_2<Gt,Tds>::
+dual (Face_handle f) const
+{
+  CGAL_triangulation_precondition (dimension()==2);
+  return weighted_circumcenter(f);
+}
+
+template < class Gt, class Tds >
+inline
+Regular_triangulation_2<Gt,Tds>::Point
+Regular_triangulation_2<Gt,Tds>::
+weighted_circumcenter(Face_handle f) const
+{
+  CGAL_triangulation_precondition (dimension()==2);
+  return weighted_circumcenter(f->vertex(0)->point(),
+			       f->vertex(1)->point(),
+			       f->vertex(2)->point());
+}
+
+template<class Gt, class Tds>
+inline
+Regular_triangulation_2<Gt,Tds>::Point
+Regular_triangulation_2<Gt,Tds>::
+weighted_circumcenter(const Weighted_point& p0, 
+		      const Weighted_point& p1, 
+		      const Weighted_point& p2) const
+{
+  return 
+    geom_traits().construct_weighted_circumcenter_2_object()(p0,p1,p2);
+}
+
+template < class Gt, class Tds >
+inline
+Object
+Regular_triangulation_2<Gt,Tds>::
+dual(const Edge &e) const
+{
+  typedef typename Geom_traits::Line_2        Line;
+  typedef typename Geom_traits::Ray_2         Ray;
+  typedef typename Geom_traits::Direction_2   Direction;
+  
+  CGAL_triangulation_precondition (! is_infinite(e));
+  if( dimension()== 1 ){
+    Weighted_point p = (e.first)->vertex(cw(e.second))->point();
+    Weighted_point q = (e.first)->vertex(ccw(e.second))->point();
+    Line l  = geom_traits().construct_radical_axis_2_object()(p,q);
+    return Object(new Wrapper< Line >(l));
+  }
+  
+  // dimension==2
+  if( (! is_infinite(e.first)) &&
+      (! is_infinite(e.first->neighbor(e.second))) ) {
+    Segment s = geom_traits().construct_segment_2_object()
+      (dual(e.first),dual(e.first->neighbor(e.second)));
+    return CGAL::Object(new CGAL::Wrapper< Segment >(s));
+  } 
+
+  // one of the adjacent face is infinite
+  Face_handle f; int i;
+  if ( is_infinite(e.first)) {
+    f=e.first->neighbor(e.second); f->has_neighbor(e.first,i);
+  } 
+  else {
+    f=e.first; i=e.second;
+  }
+  Weighted_point p = f->vertex( cw(i))->point();
+  Weighted_point q = f->vertex( ccw(i))->point();
+  Line l  = geom_traits().construct_radical_axis_2_object()(p,q);
+  Direction d =
+    geom_traits().construct_direction_of_line_2_object()(l);
+  Ray r = geom_traits().construct_ray_2_object()(dual(f), d);
+  return CGAL::Object(new CGAL::Wrapper< Ray >(r));
+}
+  
+
+template < class Gt, class Tds >
+inline 
+Object
+Regular_triangulation_2<Gt,Tds>::  
+dual(const Edge_circulator& ec) const
+{
+  return dual(*ec);
+}
+  
+template < class Gt, class Tds >
+inline 
+Object
+Regular_triangulation_2<Gt,Tds>::
+dual(const Finite_edges_iterator& ei) const
+{
+  return dual(*ei);
+}
+
+//INSERTION-REMOVAL
 template < class Gt, class Tds >
 Regular_triangulation_2<Gt,Tds>::Vertex_handle
 Regular_triangulation_2<Gt,Tds>::
