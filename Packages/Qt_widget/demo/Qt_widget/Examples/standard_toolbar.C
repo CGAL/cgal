@@ -16,7 +16,7 @@ int main(int, char*){
 #include <CGAL/point_generators_2.h>
 
 typedef CGAL::Cartesian<double>             Rep;
-typedef CGAL::Point_2<Rep>                  Point;
+typedef CGAL::Point_2<Rep>                  Point_2;
 typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
 
 Delaunay dt;
@@ -32,7 +32,7 @@ public:
     widget->show();
     widget->set_window(0, x, 0, y);
 
-    CGAL::Random_points_in_disc_2<Point> g(500);
+    CGAL::Random_points_in_disc_2<Point_2> g(500);
     for(int count=0; count<100; count++) {
       dt.insert(*g++);
     }

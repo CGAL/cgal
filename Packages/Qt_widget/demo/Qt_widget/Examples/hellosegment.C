@@ -10,7 +10,7 @@ int main(int, char*){
 #include <qapplication.h>
 
 typedef CGAL::Cartesian<int> Rep;
-typedef CGAL::Point_2<Rep> Point;
+typedef CGAL::Point_2<Rep> Point_2;
 typedef CGAL::Segment_2<Rep> Segment;
 
 int main( int argc, char **argv )
@@ -23,7 +23,7 @@ int main( int argc, char **argv )
   w->show();
   w->lock();
   *w << CGAL::BackgroundColor(CGAL::ORANGE) << CGAL::RED;
-  *w << Segment(Point(100,100), Point(400,400));
+  *w << Segment(Point_2(100,100), Point_2(400,400));
   w->unlock();
   return app.exec();
 }

@@ -15,7 +15,7 @@ int main(int, char*){
 #include <qmainwindow.h>
 
 typedef CGAL::Cartesian<double>             Rep;
-typedef CGAL::Point_2<Rep>                  Point;
+typedef CGAL::Point_2<Rep>                  Point_2;
 typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
 
 Delaunay dt;
@@ -46,7 +46,7 @@ private:	//members
 private slots:
   void get_new_object(CGAL::Object obj)
   {
-    Point p;
+    Point_2 p;
     if (CGAL::assign(p, obj)) { 
       dt.insert(p);
     }

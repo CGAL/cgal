@@ -12,7 +12,7 @@ int main(int, char*){
 #include <qmainwindow.h>
 
 typedef CGAL::Cartesian<double>             K;
-typedef K::Point_2                          Point;
+typedef K::Point_2                          Point_2;
 typedef CGAL::Delaunay_triangulation_2<K>   Delaunay;
 
 Delaunay dt;
@@ -42,7 +42,7 @@ private slots:
 
   void mousePressEvent(QMouseEvent *e)
   {
-    dt.insert(Point(widget->x_real(e->x()), widget->y_real(e->y())));
+    dt.insert(Point_2(widget->x_real(e->x()), widget->y_real(e->y())));
     widget->redraw();
   }
 
