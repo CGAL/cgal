@@ -869,7 +869,7 @@ set_compiler_flags()
             ;;
 	*SunOS*5.*CC*)
 	    #### settings for sunpro compiler on solaris
-	    ADDITIONAL_CXXFLAGS="-pto"
+	    ADDITIONAL_CXXFLAGS="-pto -D_RWSTD_ALLOCATOR"
 	    CGAL_LIB_CREATE="\$(CGAL_CXX) -xar -o ''"
 	    CGAL_SHARED_LIB_CXXFLAGS="-pic"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"

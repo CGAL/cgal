@@ -7,6 +7,7 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: Add -D_RWSTD__ALLOCATOR for SunPro.
 GLOB: Make blank after EXE_OPT, except for msvc and borland.
 GLOB: Fixed test_gmp for sunpro 5.3.
 GLOB: Updated sunpro_version detection for 5.3.
