@@ -71,16 +71,22 @@ namespace CGAL {
 
     but[0] = new QToolButton(maintoolbar, "mouse coordinates");
     but[0]->setPixmap(QPixmap( (const char**)mouse_coord_xpm ));
+    but[0]->setTextLabel("Show Mouse Coordinates");
     but[1] = new QToolButton(maintoolbar, "show_polygon");
     but[1]->setPixmap(QPixmap( (const char**)show_polygon_xpm ));
+    but[1]->setTextLabel("Show Simple Polygon");
     but[2] = new QToolButton(maintoolbar, "greene_approx");
+    but[2]->setTextLabel("Show Greene Approximation");
     but[2]->setPixmap(QPixmap( (const char**)greene_approx_xpm ));
     but[3] = new QToolButton(maintoolbar, "ymonotone");
+    but[3]->setTextLabel("Show Y Monotone Partition");
     but[3]->setPixmap(QPixmap( (const char**)ymonotone_xpm ));
     but[4] = new QToolButton(maintoolbar, "optimal_convex");
     but[4]->setPixmap(QPixmap( (const char**)optimal_convex_xpm ));
+    but[4]->setTextLabel("Show Optimal Convex Partition");
     but[5] = new QToolButton(maintoolbar, "show_points");
     but[5]->setPixmap(QPixmap( (const char**)points_xpm ));
+    but[5]->setTextLabel("Show Polygon Vertices");
     
     nr_of_buttons = 6;		
     button_group = new QButtonGroup(0, "nonexclusive");
