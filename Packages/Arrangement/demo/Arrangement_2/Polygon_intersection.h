@@ -6,7 +6,7 @@
 
 #include <CGAL/Arr_2_bases.h>
 #include <CGAL/Pm_default_dcel.h>
-#include <CGAL/Arr_segment_exact_traits.h>
+#include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Pm_naive_point_location.h>
 
@@ -16,13 +16,13 @@
 // Type definitions
 /////////////////////////////////////////////////////////////////////////
 
-typedef leda_rational                       NT;
-typedef CGAL::Cartesian<NT>                 R;
+typedef leda_rational                   NT;
+typedef CGAL::Cartesian<NT>             R;
 
-typedef CGAL::Arr_segment_exact_traits<R>   Traits;
-typedef Traits::X_curve                     X_curve;
-typedef Traits::Point                       Point;
-typedef CGAL::Arr_base_node<X_curve>        Base_node;
+typedef CGAL::Arr_segment_traits_2<R>   Traits;
+typedef Traits::X_curve_2               X_curve;
+typedef Traits::Point_2                 Point;
+typedef CGAL::Arr_base_node<X_curve>    Base_node;
 
 
 typedef CGAL::Polygon_traits_2<R>                           Polygon_traits;

@@ -15,7 +15,7 @@
 #include <CGAL/Arr_segment_traits_2.h>
 #else
 #if defined(USE_MY_KERNEL)
-#include <CGAL/Arr_leda_segment_exact_traits.h>
+#include <CGAL/Arr_leda_segment_traits_2.h>
 #else
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_segment_traits_2.h>
@@ -66,15 +66,15 @@ typedef CGAL::Arr_conic_traits_2<Kernel>                Traits;
 #else
 #if defined(USE_LEDA_KERNEL)
 typedef CGAL::leda_rat_kernel_traits                    Kernel;
-typedef CGAL::Arr_segment_exact_traits<Kernel>          Traits;
+typedef CGAL::Arr_segment_traits_2<Kernel>              Traits;
 #define PM_TYPE "Leda Kernel"
 #else
 #if defined(USE_MY_KERNEL)
-typedef CGAL::Arr_leda_segment_exact_traits             Traits;
+typedef CGAL::Arr_leda_segment_traits_2                 Traits;
 #define PM_TYPE "My Leda Kernel"
 #else
 typedef CGAL::Cartesian<NT>                             Kernel;
-typedef CGAL::Arr_segment_exact_traits<Kernel>          Traits;
+typedef CGAL::Arr_segment_traits_2<Kernel>              Traits;
 #define PM_TYPE "CGAL Kernel"
 #endif
 #endif

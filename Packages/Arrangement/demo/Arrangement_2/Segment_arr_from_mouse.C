@@ -19,7 +19,7 @@ int main()
 
 #else
 
-#include <CGAL/Arr_leda_segment_exact_traits.h>
+#include <CGAL/Arr_leda_segment_traits_2.h>
 #include <CGAL/Arr_2_bases.h>
 #include <CGAL/Arr_2_default_dcel.h>
 #include <CGAL/Arrangement_2.h>
@@ -33,7 +33,7 @@ using namespace leda;
 #endif
 
 typedef leda_rational                                   NT;
-typedef CGAL::Arr_leda_segment_exact_traits             Traits;
+typedef CGAL::Arr_leda_segment_traits_2                 Traits;
 
 typedef Traits::Point_2                                 Point;
 typedef Traits::X_curve_2                               X_curve;

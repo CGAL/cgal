@@ -14,7 +14,7 @@
 #define I_Polyhedron_iterator           IPI
 #define I_Polyhedron_const_iterator     IPCI
 #define Arr_2_default_dcel              ADD
-#define Arr_segment_exact_traits        AST
+#define Arr_segment_traits_2            AST
 #define Arr_circles_real_traits         ACRT
 #define Arr_polyline_traits             APT
 #define Arr_base_node                   ABN

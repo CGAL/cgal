@@ -19,7 +19,7 @@
 #define Planar_map_traits_wrap          PMTW
 
 #define Planar_map_with_intersections_2 PMWI
-#define Arr_segment_exact_traits        AST
+#define Arr_segment_traits_2            AST
 
 #define Interval_converter              IC
 #define NT_converter                    NC

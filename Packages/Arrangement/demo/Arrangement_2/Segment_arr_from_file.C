@@ -39,29 +39,29 @@ int main()
 //#include <CGAL/Double_eps.h>
 
 #include <CGAL/Arr_2_default_dcel.h>
-#include <CGAL/Arr_segment_exact_traits.h>
+#include <CGAL/Arr_segment_traits_2.h>
 
 #include <CGAL/Pm_walk_along_line_point_location.h>
 #include <CGAL/Draw_preferences.h>
 
-typedef leda_integer NT;
-//typedef double           NT;
-//typedef leda_real        NT;
-//typedef leda_rational    NT;
-//typedef CGAL::Double_eps NT;
+typedef leda_integer            NT;
+//typedef double                NT;
+//typedef leda_real             NT;
+//typedef leda_rational         NT;
+//typedef CGAL::Double_eps      NT;
 
-typedef CGAL::Homogeneous<NT>                      Rep;
-//typedef CGAL::Cartesian<NT>                      Rep;
+typedef CGAL::Homogeneous<NT>                           Rep;
+//typedef CGAL::Cartesian<NT>                           Rep;
 
-typedef CGAL::Arr_segment_exact_traits<Rep>          Traits;
+typedef CGAL::Arr_segment_traits_2<Rep>                 Traits;
 
-typedef Traits::Point                                 Point;
-typedef Traits::X_curve                               X_curve;
+typedef Traits::Point_2                                 Point;
+typedef Traits::X_curve_2                               X_curve_2;
 
 
-typedef CGAL::Arr_base_node<X_curve>   Base_node;
-typedef CGAL::Arr_2_default_dcel<Traits> Dcel;
-typedef CGAL::Arrangement_2<Dcel,Traits,Base_node > Arr_2;
+typedef CGAL::Arr_base_node<X_curve_2>                  Base_node;
+typedef CGAL::Arr_2_default_dcel<Traits>                Dcel;
+typedef CGAL::Arrangement_2<Dcel,Traits,Base_node>      Arr_2;
 
 // global variables are used so that the redraw function for the LEDA window
 // can be defined to draw information found in these variables.
@@ -152,7 +152,7 @@ int main(int argc, char* argv[])
     Point t(mx,my);
     
     insrt_t.start();
-    arr.insert(X_curve(s,t));
+    arr.insert(X_curve_2(s,t));
     insrt_t.stop();
   }
   
