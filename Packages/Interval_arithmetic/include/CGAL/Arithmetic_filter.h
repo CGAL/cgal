@@ -32,13 +32,16 @@
 #include <CGAL/IO/io_tags.h>            // For CGAL_io_Operator().
 #include <CGAL/number_type_tags.h>      // For CGAL_number_type_tag()
 
+// Check that the filtering stuff will work...
+#ifdef CGAL_IA_NO_EXCEPTION
+#  warning CGAL_IA_NO_EXCEPTION is defined !
+#endif
 
 // CT = construction type (filtered)
 // ET = exact type, used for exact predicate evaluation
-// (Interval_nt_advanced) = used for filtering.
+// (CGAL_Interval_nt_advanced) = used for filtering.
 //
-// 2 functions must be provided for the whole thing to work for a particular
-// instantiation:
+// 2 exact conversion functions must be provided:
 // - CGAL_convert_to<CGAL_Interval_nt_advanced> (CT)
 //     which gives an interval surely containing the CT value.
 // - CGAL_convert_to<ET> (CT)
@@ -85,9 +88,15 @@ struct CGAL_Filtered_exact
 
 
 // We forward the following functions to the CT value:
-// CGAL_is_valid, CGAL_is_finite, CGAL_to_double, CGAL_sign, CGAL_compare,
-// CGAL_abs, CGAL_min, CGAL_max, sqrt, CGAL_io_tag, CGAL_number_type_tag,
-// operator>>, operator<<.
+// sqrt, CGAL_is_valid, CGAL_is_finite, CGAL_to_double, CGAL_sign,
+// CGAL_compare, CGAL_abs, CGAL_min, CGAL_max, CGAL_io_tag,
+// CGAL_number_type_tag, operator>>, operator<<.
+
+#ifndef CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
+template <class CT, class ET>
+inline CGAL_Filtered_exact<CT,ET> sqrt (const CGAL_Filtered_exact<CT,ET>& fil)
+{ return sqrt(fil.value); }
+#endif // CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
 
 template <class CT, class ET>
 inline bool CGAL_is_valid    (const CGAL_Filtered_exact<CT,ET>& fil)
@@ -136,12 +145,6 @@ template <class CT, class ET>
 inline CGAL_Number_tag CGAL_number_type_tag(CGAL_Filtered_exact<CT,ET> &fil)
 { return CGAL_number_type_tag(fil.value); }
 
-#ifndef CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
-template <class CT, class ET>
-inline CGAL_Filtered_exact<CT,ET> sqrt (const CGAL_Filtered_exact<CT,ET>& fil)
-{ return sqrt(fil.value); }
-#endif // CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
-
 template <class CT, class ET>
 inline ostream& operator<<(ostream& os, const CGAL_Filtered_exact<CT,ET>& d)
 { return os << d.value; }
@@ -151,43 +154,25 @@ inline istream &operator>>(istream &is, const CGAL_Filtered_exact<CT,ET>& d)
 { return is >> d.value; }
 
 
-// template <class ET>
-  // template <class CT>
-    // ET CGAL_convert_to(const CT &);
+//  Now conditionnaly include the overloaded predicates.
 
-// All exact types should reasonnably have a built-in exact conversion
-// from doubles ?  If not, it will fail, and you have to provide it.
-//
-// It's bad to provide such a default, because it can be an inexact cast:
-// ex: CGAL_Gmpz accepts it, but it's false !!!
-
-// template <class ET, class CT>
-// inline ET CGAL_convert_to (const CT & ct)
-// { return ET(ct); }
-
-// template <class ET>
-// inline ET CGAL_convert_to (const double & d)
-// { return ET(d); }
-
-// When CT == ET.
-// template <class ET>
-// inline ET CGAL_convert_to (const ET & e)
-// { return e; }
-
-
-#ifdef CGAL_PREDICATES_ON_FTC2_H
+#if defined( CGAL_PREDICATES_ON_FTC2_H ) && \
+   !defined( CGAL_ARITHMETIC_FILTER_PREDICATES_ON_FTC2_H )
 #include <CGAL/Arithmetic_filter/predicates_on_ftC2.h>
 #endif
 
-#ifdef CGAL_PREDICATES_ON_FTC3_H
+#if defined( CGAL_PREDICATES_ON_FTC3_H ) && \
+   !defined( CGAL_ARITHMETIC_FILTER_PREDICATES_ON_FTC3_H )
 #include <CGAL/Arithmetic_filter/predicates_on_ftC3.h>
 #endif
 
-#ifdef CGAL_PREDICATES_ON_RTH2_H
+#if defined( CGAL_PREDICATES_ON_RTH2_H ) && \
+   !defined( CGAL_ARITHMETIC_FILTER_PREDICATES_ON_RTH2_H )
 #include <CGAL/Arithmetic_filter/predicates_on_rtH2.h>
 #endif
 
-#ifdef CGAL_PREDICATES_ON_RTH3_H
+#if defined( CGAL_PREDICATES_ON_RTH3_H ) && \
+   !defined( CGAL_ARITHMETIC_FILTER_PREDICATES_ON_RTH3_H )
 #include <CGAL/Arithmetic_filter/predicates_on_rtH3.h>
 #endif
 
