@@ -100,6 +100,19 @@ have equal coordinates, then it returns the comparison of the weights
 \ccPrecond{\ccc{p} and \ccc{q} have equal Bare\_points.}
 }
 
+The following predicate is required if  a call to
+\ccc{nearest_power_vertex}
+or \ccc{nearest_power_vertex_in_cell} is issued: 
+
+\ccNestedType{Compare_power_distance_3}
+{A predicate object that must provide the function operator\\
+\ccc{Comparison_result operator()(Point p, Weighted_point q, 
+Weighted_point r)},\\
+which compares the power distance between \ccc{p} and \ccc{q} 
+to the power distance
+between \ccc{p} and \ccc{r}.}
+
+
 \ccOperations
 
 The following function gives access to the predicate object:
