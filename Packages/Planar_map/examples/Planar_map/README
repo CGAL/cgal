@@ -82,3 +82,11 @@ example10:
   In this example a planar map similar to the planar map of example 1 and 2
   is constructed. The Planar_map out-streaming feature is demonstrated as
   well. Note the format of the stream.
+
+example13:
+  This example demonstrates the technique used to extend the segment
+  (geometric) kernel-object
+
+example14:
+  This example demonstrates the technique used to extend the point
+  (geometric) kernel-object
