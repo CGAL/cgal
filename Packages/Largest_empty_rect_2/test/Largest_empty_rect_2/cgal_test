@@ -17,7 +17,7 @@ ERRORFILE=error.txt
 #                    compile <target>
 #---------------------------------------------------------------------#
 
-CMP='diff -w'
+CMP='diff -b'
 
 compile()
 {
