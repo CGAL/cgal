@@ -1,5 +1,12 @@
 // examples/Arrangement_2/example11
 
+// Shorten long names for MSVC:
+#if defined(CGAL_CFG_NO_LONGNAME_PROBLEM) || defined(_MSC_VER)
+#define Quotient                        Qt
+#define Cartesian                       Cn
+#define Arr_segment_exact_traits        AST
+#define Arr_2_default_dcel              ADD
+#endif
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/MP_Float.h>
@@ -15,19 +22,17 @@
 // #include <CGAL/IO/Arr_Postscript_file_stream.h>
 #endif
 
-typedef CGAL::Quotient<CGAL::MP_Float>                NT;
-typedef CGAL::Cartesian<NT>                           Kernel;
-typedef CGAL::Arr_segment_exact_traits<Kernel>        Traits;
-
-typedef Traits::Curve                                 Curve;
-
-typedef CGAL::Arr_2_default_dcel<Traits>              Dcel;
-typedef CGAL::Arr_base_node<Curve>                    Base_node;
-typedef CGAL::Arrangement_2<Dcel,Traits,Base_node >   Arrangement;
+typedef CGAL::Quotient<CGAL::MP_Float>                  NT;
+typedef CGAL::Cartesian<NT>                             Kernel;
+typedef CGAL::Arr_segment_exact_traits<Kernel>          Traits;
+typedef Traits::Curve                                   Curve;
+typedef CGAL::Arr_2_default_dcel<Traits>                Dcel;
+typedef CGAL::Arr_base_node<Curve>                      Base_node;
+typedef CGAL::Arrangement_2<Dcel,Traits,Base_node>      Arr;
 
 int main()
-{ 
-  Arrangement arr;
+{
+  Arr arr;
 
   std::cout << "* * * Demonstrating a trivial use of IO functions";
   std::cout << std::endl << std::endl;
@@ -38,10 +43,9 @@ int main()
 
   std::cout << "* * * Presenting the use of verbose format";
   std::cout << std::endl << std::endl;;
-  CGAL::Arr_file_writer<Arrangement> verbose_writer(std::cout, arr, true);
+  CGAL::Arr_file_writer<Arr> verbose_writer(std::cout, arr, true);
   CGAL::write_arr(arr, verbose_writer, std::cout);
 
-  
   // printing to Postscript file.
 #ifdef CGAL_USE_LEDA
   //  CGAL::Postscript_file_stream  LPF(500, 500 ,"arr.ps");

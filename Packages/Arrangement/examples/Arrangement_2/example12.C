@@ -2,14 +2,15 @@
 
 #if defined(CGAL_CFG_NO_LONGNAME_PROBLEM) || defined(_MSC_VER)
 // Define shorter names to please linker (g++/egcs)
-#define Arrangement_2                           _Ar
-#define Cartesian                               _Cr
-#define Quotient                                _Qt
-#define Planar_map_2                            _PM
-#define allocator                               _All
-#define Pm_default_dcel                         _PDD
-#define Arr_polyline_traits                     _APT
-#define Arr_2_default_dcel                      _ADD
+#define Arrangement_2           Ar
+#define Cartesian               Cr
+#define Quotient                Qt
+#define Planar_map_2            PlM
+#define allocator               All
+#define Pm_default_dcel         PDD
+#define Arr_polyline_traits     APT
+#define Arr_2_default_dcel      ADD
+#define Td_X_trapezoid          TXT
 #endif
 
 #include <CGAL/Cartesian.h>
@@ -25,21 +26,18 @@
 typedef CGAL::Quotient<CGAL::MP_Float>                  NT;
 typedef CGAL::Cartesian<NT>                             Kernel;
 typedef CGAL::Arr_polyline_traits<Kernel>               Traits;
-
-typedef Traits::Point                                   Point;
-typedef Traits::Curve_2                                 Curve_2;
-
+typedef Traits::Point_2                                 Point;
+typedef Traits::Curve_2                                 Curve;
 typedef CGAL::Arr_2_default_dcel<Traits>                Dcel;
-typedef CGAL::Arr_base_node<Curve_2>                    Base_node;
-typedef CGAL::Arrangement_2<Dcel,Traits,Base_node>      Arr_2;
-
-typedef CGAL::Arr_file_writer<Arr_2>                    Arr_writer;
+typedef CGAL::Arr_base_node<Curve>                      Base_node;
+typedef CGAL::Arrangement_2<Dcel,Traits,Base_node>      Arr;
+typedef CGAL::Arr_file_writer<Arr>                      Arr_writer;
 
 CGAL_BEGIN_NAMESPACE
 
-std::ostream & operator<<(std::ostream & os, const Curve_2 & cv)
+std::ostream & operator<<(std::ostream & os, const Curve & cv)
 {
-  typedef Curve_2::const_iterator Points_iterator;
+  typedef Curve::const_iterator Points_iterator;
   
   os << cv.size() << std::endl;
   for (Points_iterator points_iter = cv.begin(); 
@@ -49,7 +47,7 @@ std::ostream & operator<<(std::ostream & os, const Curve_2 & cv)
   return os;
 }
 
-std::istream & operator>>(std::istream & in, Curve_2 & cv)
+std::istream & operator>>(std::istream & in, Curve & cv)
 {
   std::size_t  size;
   unsigned int i;
@@ -69,7 +67,7 @@ CGAL_END_NAMESPACE
 
 int main()
 {
-  Arr_2 arr;
+  Arr arr;
   std::cin >> arr;
   std::cout << " * * * Printing list of all halfedges " 
             << "of the resulting Arrangement" 
