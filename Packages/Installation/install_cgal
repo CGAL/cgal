@@ -219,7 +219,7 @@ INSTALL_LOGFILE_REDIRECTION='>/dev/null'
 
 # compiler to be used 
 # This is a string defined as follows:
-# <BASENAME>@<DESCRIPTION>@<CC_EXECUTABLE>@<CXX_EXECUTABLE>@<VERSION_ID>
+# <BASENAME>@<DESCRIPTION>@<CC_EXECUTABLE>@<CXX_EXECUTABLE>@<VERSION_ID>@<LEDA>
 # The components can be accessed using the functions:
 #   compiler_basename, (extended_)compiler_description,
 #   c_compiler_bin, compiler_bin and compiler_version
@@ -236,6 +236,9 @@ CGAL_OS_COMPILER=''
 
 # can we start building the libs?
 SETUP_COMPLETE=''
+
+# has compiler config test been run ('' - no, 'y' - yep)
+CONFIG_TEST_PASSED=''
 
 # does there exist a CGALlib for this compiler?
 LIB_COMPILED=''
@@ -992,7 +995,7 @@ create_replacement_header()
 	${_printf} "%s\n" "int main() {return 0;}" >> ${tmp_code_file}
 	if eval "`compiler_bin` ${ADDITIONAL_CXXFLAGS} ${tmp_code_file} >/dev/null 2>&1"; then
 	    ${_sed} "s/@CGAL@/${CGAL_VERSION}/;s@FILE@${_final_file};s/@VERSION@/${CGAL_INSTALL_VERSION}/" <<EOF3 >>${replacement_header}
-// Copyright (c) 1999 The CGAL Consortium
+// Copyright (c) 1999,2000 The CGAL Consortium
 //
 // This software and related documentation is part of the
 // Computational Geometry Algorithms Library (CGAL).
@@ -1269,6 +1272,7 @@ test_compiler_specifica()
 	cleanup_after_link_run
     done
     cd ${CGAL_DIR}
+    CONFIG_TEST_PASSED='y'
 }
 
 
@@ -1700,11 +1704,29 @@ compiler_version()
 }
 
 # $1 is a compiler string
+# print leda support
+leda_support()
+{
+    ${_printf} "%s\n" "${*:-${COMPILER}}" | \
+	${_awk} 'BEGIN {FS="@"} {printf "%s",$6}'
+}
+
+# reassemble compiler string, i.e. adjust to LEDA_SUPPORT
+reassemble_compiler()
+{
+    COMPILER="`compiler_basename`@`compiler_description`@`c_compiler_bin`@`compiler_bin`@`compiler_version`@${LEDA_SUPPORT}"
+}
+
+# $1 is a compiler string
 # print extended compiler description
 extended_compiler_description()
 {
     ${_printf} "%s\n" "${*:-${COMPILER}}" | \
-	${_awk} 'BEGIN {FS="@"} {printf "%s %s\n",$2,$5}'
+	${_awk} 'BEGIN {FS="@"} {printf "%s %s",$2,$5}'
+    if [ -n "`leda_support \"${*:-${COMPILER}}\"`" ]; then
+	${_printf} "%s" " + LEDA"
+    fi
+    ${_printf} "\n"
 }
 
 
@@ -1749,7 +1771,7 @@ _search_compiler()
 {
     if _check_for_util "$2" n tmp1; then 
 	_check_for_util "$1" n tmp2
-	COMPILER="$2@`get_compiler_description \"$2\"`@${_tmp2}@${_tmp1}@`get_compiler_version \"${_tmp1}\"`"
+	COMPILER="$2@`get_compiler_description \"$2\"`@${_tmp2}@${_tmp1}@`get_compiler_version \"${_tmp1}\"`@"
 	if [ -z "$3" ]; then
 	    _check_and_register_compiler "${COMPILER}"
 	fi
@@ -1788,6 +1810,13 @@ search_for_compilers()
     do
 	try_to_get_var_from_file COMPILER ${i}
 	if [ ${?} != 0 ]; then
+	    # now we have to check for old config files
+	    # where the leda token was not included in COMPILER
+	    if [ "5" = "`${_printf} \"%s\n\" \"${*:-${COMPILER}}\" | \
+		${_awk} 'BEGIN {FS=\"@\"} {printf \"%d\",NF}'`" ]
+	    then
+		COMPILER="${COMPILER}@OLD"
+	    fi
 	    _register_compiler "${COMPILER}"
 	fi
     done
@@ -1874,6 +1903,7 @@ compiler_absolute()
     fi
     ${_printf} "%s" "@${_args}@"
     get_compiler_version "${_args}"
+    ${_printf} "%s" "@${LEDA_SUPPORT}"
 }
 
 
@@ -2853,8 +2883,8 @@ print_os_setting()
 {
     ${1} "OS:\t\t${SYST}" 
     ${1} "COMPILER:\t`extended_compiler_description`" 
-    _set_tmp_to_not_or_not "${LEDA_SUPPORT}"
-    ${1} "LEDA:\t\t${_tmp}supported" 
+#    _set_tmp_to_not_or_not "${LEDA_SUPPORT}"
+#    ${1} "LEDA:\t\t${_tmp}supported" 
     _set_tmp_to_not_or_not "${GMP_SUPPORT}"
     ${1} "GMP:\t\t${_tmp}supported" 
     _set_tmp_to_not_or_not "${CLN_SUPPORT}"
@@ -2925,10 +2955,20 @@ search_cln()
 #
 
 # try to retrieve the compiler specific settings from
-# file ${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}  
+# file ${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}`leda_support`
 retrieve_compiler_settings()
 {
-    _file="${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}"
+    _file="${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}`leda_support`"
+    # old config file names have been always without _LEDA
+    case `leda_support` in
+	OLD*) 
+	    _file="${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}"
+	    if try_to_get_var_from_file LEDA_SUPPORT "${_file}"; then
+	        LEDA_SUPPORT=''
+	    fi
+	    reassemble_compiler
+	    ;;
+    esac
     _tmp_version=${CGAL_INSTALL_VERSION}
     if try_to_get_var_from_file CGAL_INSTALL_VERSION "${_file}"; then
 	SETUP_COMPLETE=''
@@ -3032,6 +3072,7 @@ retrieve_compiler_settings()
     fi
 
     set_lib_compiled_flag
+    reassemble_compiler
 }
 
 # used by store_compiler_settings to store variable $1
@@ -3042,10 +3083,10 @@ _store_install_config_variable()
 }
 
 # store the actual compiler specific settings to the
-# file ${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}  
+# file ${CGAL_INSTALL_CONF_DIR}/`full_ostype`
 store_compiler_settings()
 {
-    _file="${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}"
+    _file="${CGAL_INSTALL_CONF_DIR}/`full_ostype`"
     ${_printf} "%s\n" \
 	"/*" \
 	>${_file}
@@ -3068,6 +3109,7 @@ store_compiler_settings()
     ${_printf} "%s\n\n" \
 	"*/" \
 	>>${_file}
+    reassemble_compiler
     _store_install_config_variable COMPILER >>${_file}
     _store_install_config_variable CGAL_INSTALL_VERSION >>${_file}
     _store_install_config_variable LEDA_SUPPORT >>${_file}
@@ -3106,7 +3148,11 @@ test_setup()
     SETUP_COMPLETE=''
     make_lib_dir
     link_gmp
-#   link_cln
+
+    # COMPILER
+    if [ -z "${CONFIG_TEST_PASSED}" ]; then
+	test_compiler_specifica "${INSTALL_VERBOSE}"
+    fi
 
     # LEDA
     if [ -z "${LEDA_TEST_PASSED}" ]; then
@@ -3149,6 +3195,7 @@ test_setup()
 # such that all previous test results are invalidated
 reset_all_test_variables()
 {
+    CONFIG_TEST_PASSED=''
     LEDA_TEST_PASSED=''
     GMP_TEST_PASSED=''
     CLN_TEST_PASSED=''
@@ -3166,10 +3213,9 @@ _choose_compiler()
     if [ -z "${SETUP_COMPLETE}" ]; then
 	# reset all TEST_PASSED variables
 	reset_all_test_variables
-	test_compiler_specifica "${INSTALL_VERBOSE}"
-	test_setup
     else
 	# reset all TEST_PASSED variables
+	CONFIG_TEST_PASSED='y'
 	if [ -n "${LEDA_SUPPORT}" ]; then
 	    LEDA_TEST_PASSED='y'
 	else
@@ -3256,8 +3302,8 @@ menu_header()
     print_line     "OS:                  ${SYST}"
     print_line \
 	"Compiler:            `extended_compiler_description`"
-    _set_tmp_to_not_or_not "${LEDA_SUPPORT}"
-    print_line     "LEDA:                ${_tmp}supported." 
+#    _set_tmp_to_not_or_not "${LEDA_SUPPORT}"
+#    print_line     "LEDA:                ${_tmp}supported." 
     _set_tmp_to_not_or_not "${GMP_SUPPORT}"
     print_line     "GMP:                 ${_tmp}supported." 
     _set_tmp_to_not_or_not "${CLN_SUPPORT}"
@@ -3474,6 +3520,7 @@ leda_menu()
 	    e|E)
 		if [ -z "${LEDA_SUPPORT}" ]; then 
 		    LEDA_SUPPORT='_LEDA'
+		    reassemble_compiler
 		    SETUP_COMPLETE=''
 		    make_lib_dir
 		    # check, if libgmp can be linked 
@@ -3489,6 +3536,7 @@ leda_menu()
 		    fi
 		else
 		    LEDA_SUPPORT=''
+		    reassemble_compiler
 		    # check, if libgmp can be linked 
 		    link_gmp
 		fi
@@ -4882,7 +4930,12 @@ main_menu()
 	    l|L) leda_menu;;
 	    g|G) gmp_menu;;
 	    m|M) cln_menu;;
-	    b|B) lib_menu;;
+	    b|B)
+		if [ -z "${SETUP_COMPLETE}" ]; then
+		    test_setup
+		fi
+		lib_menu
+		;;
 	    u|U)
 		if [ -f ${CGAL_DIR}/.upgrade-tag ]; then
 		    upgrade_menu
@@ -4902,7 +4955,6 @@ main_menu()
 		if [ -n "${CLN_SUPPORT}" ]; then
 		    search_cln "${INSTALL_VERBOSE}"
 		fi
-		test_compiler_specifica "${INSTALL_VERBOSE}"
 		test_setup;;
 	    t|T) 
 		go_down_lines 3
