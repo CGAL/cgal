@@ -155,7 +155,7 @@ typedef typename HDS::Halfedge_const_handle   Halfedge_const_handle;
 typedef typename HDS::Halfedge_const_iterator Halfedge_const_iterator;
 typedef typename HDS::Face                    Face;
 typedef typename HDS::Face_base               Face_base;
-typedef typename HDS::Face_handle             Face_handle;;
+typedef typename HDS::Face_handle             Face_handle;
 typedef typename HDS::Face_const_handle       Face_const_handle;
 typedef typename HDS::Face_const_iterator     Face_const_iterator;
 
