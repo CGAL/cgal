@@ -1,4 +1,8 @@
 22 July 2004 Radu Ursu
+- made the possibility for create_modules to generate docs for individual packages.
+- create_new_release was updated in that sense but for the moment it calls create_modules with -c n, which means no doc will be generated for the moment. (Sylvain must prepare the doc tools first)
+
+22 July 2004 Radu Ursu
 - applied previous patch made by Sylvain also to create_internal_module script 
 
 22 July 2004 Sylvain Pion

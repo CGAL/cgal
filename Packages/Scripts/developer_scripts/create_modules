@@ -7,12 +7,13 @@ RELEASE_VERSION="CGAL-3.1-I-XX"
 RELEASE_NUMBER="100060003"
 UPDATING="y"
 INSTALLATION_DIR="/cygdrive/d/CGALCVS/Modules"
+CREATING_DOC="y"
 
 #check the parameters
 while [ ${#} -gt 0 ]; do
   case ${*} in
     -h*|-help*|--help*)
-      printf "usage: create_modules (-h|-help|--help)\n\t-d dir\tSets the CVSDIR directory. The default is /cygdrive/d/CGALCVS.\n\t-m mod\tSets the name of the Modules directory from the Installation package. The default name is Modules.\n\t-r ver\tSets the release version of CGAL which was used to build the modules (eg. CGAL-3.1-I-79).\n\t-n nr\tSets the release number of CGAL (eg. 1003004200).\n\t-u y|n\tSets the updating state. The default is y. If n is specified, the script will no longer update the packages involved.\n\t-i DIR\tSets the installation directory for the modules.\n"
+      printf "usage: create_modules (-h|-help|--help)\n\t-d dir\tSets the CVSDIR directory. The default is /cygdrive/d/CGALCVS.\n\t-m mod\tSets the name of the Modules directory from the Installation package. The default name is Modules.\n\t-r ver\tSets the release version of CGAL which was used to build the modules (eg. CGAL-3.1-I-79).\n\t-n nr\tSets the release number of CGAL (eg. 1003004200).\n\t-u y|n\tSets the updating state. The default is y. If n is specified, the script will no longer update the packages involved.\n\t-i DIR\tSets the installation directory for the modules.\n\t-c y|n\tSets the state of the doc creation process. The default is y. If n is specified, the script will no longer create the doc of the modules.\n"
       exit
     ;;
     -d*)
@@ -37,6 +38,10 @@ while [ ${#} -gt 0 ]; do
     ;;
     -i*)
       INSTALLATION_DIR="$2"
+      shift
+    ;;
+    -c*)
+      CREATING_DOC="$2"
       shift
   esac
   shift
@@ -103,6 +108,75 @@ do
       done
     fi
     ${CVSDIR}/Scripts/developer_scripts/create_internal_module -m ${MAIN_NAME} -r ${RELEASE_VERSION} -n ${RELEASE_NUMBER} -a ${CVSDIR} -p ${i} -s "${CVSDIR}/Scripts/scripts"
+
+
+    if [ "${CREATING_DOC}" = "y" ]; then
+    #creating the doc of the module
+      printf "Creating the cgal_manual.tex wrapper for the doc ...\n"
+
+    #1 creating the cgal_manual.tex wrapper the first part
+      cat <<EOF >${MAIN_NAME}/doc_tex/cgal_manual.tex
+% +------------------------------------------------------------------------+
+% | cgal_manual.tex
+% | CGAL User and Reference Manual for all packages
+% +------------------------------------------------------------------------+
+
+\documentclass{book}
+\usepackage{cgal_manual}
+
+\begin{document}
+
+\cgalchapters{
+    \entryleftright{\part{Basic Library User Manual}}
+                   {\part{Reference Manual}}
+
+    \lcTex{\entryright{\listofrefpages}}
+
+
+EOF
+    #2 creating the second part of the cgal_manual.tex wrapper
+      for k in `ls ${MAIN_NAME}/doc_tex/`
+      do
+        if [ -d ${MAIN_NAME}/doc_tex/${k} ]; then
+          _temp_var=`echo "${k}" | grep "_ref"`
+          if [ -z ${_temp_var} ]; then
+	    printf "\t\\packageleftright{${k}}{${k}_ref}\n" >>${MAIN_NAME}/doc_tex/cgal_manual.tex 
+          fi
+        fi
+      done
+    #3 creating the 3rd part of the cgal_manual.tex wrapper
+      cat <<EOF >>${MAIN_NAME}/doc_tex/cgal_manual.tex
+}
+
+\bibliographystyle{alpha}
+\bibliography{cgal_manual,geom}
+
+\printindex
+
+\end{document}
+
+EOF
+    #end creating the doc of the module
+
+      if [ -r ~/.autotest_manual_config ]; then
+        printf "running latex ...\n"
+        . ~/.autotest_manual_config
+	_temp_dir=`pwd` 
+        cd ${MAIN_NAME}/doc_tex
+	latex cgal_manual.tex
+	bibtex cgal_manual
+	latex cgal_manual.tex
+	latex cgal_manual.tex
+	#xdvi cgal_manual.dvi
+	latex_to_html -o ../doc_html cgal_manual
+	cd ${_temp_dir}
+
+      else
+	  printf "autotest_manual_config WAS NOT found in your HOME directory.\n"
+      fi
+
+    fi
+
     tar -cf "${MAIN_NAME}.tar" ${MAIN_NAME}
     gzip "${MAIN_NAME}.tar"
     mv "${MAIN_NAME}.tar.gz" ${INSTALLATION_DIR}
