@@ -1,5 +1,11 @@
 Version history:
 ----------------
+2.3 (11 Oct 1999)
+  - Put the package on the CVS server [Sylvain], and removed a few useless
+    files in the process (.ps.gz, *ii), as well as the empty src/ directory.
+  - Added a main Makefile to handle submitting, as well as "wrapper.tex" and
+    "Makefile" in doc_tex/basic/Boolean_Operations/.
+  
 2.2
   - New makefile in test/Bopstest
   - in the same directory, in Bops_types.h, removed using declaration of sqrt.
