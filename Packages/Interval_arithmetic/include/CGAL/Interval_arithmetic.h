@@ -148,14 +148,14 @@ struct Interval_nt_advanced
     return false;
   }
 
-  bool operator>  (const IA & d) const { return  (d <  *this); }
-  bool operator>= (const IA & d) const { return  (d <= *this); }
+  bool operator>  (const IA & d) const { return   d <  *this; }
+  bool operator>= (const IA & d) const { return   d <= *this; }
   bool operator!= (const IA & d) const { return !(d == *this); }
 
   bool is_same (const IA & d) const
-  { return (_inf == d._inf) && (_sup == d._sup); }
+  { return _inf == d._inf && _sup == d._sup; }
 
-  bool is_point() const { return (_sup == _inf); }
+  bool is_point() const { return _sup == _inf; }
 
   bool overlap (const IA & d) const
   { return !(d._inf > _sup || d._sup < _inf); }
