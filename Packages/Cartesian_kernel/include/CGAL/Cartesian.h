@@ -54,8 +54,6 @@
 
 #include <CGAL/Cartesian/basic_constructions_2.h>
 
-#include <CGAL/Cartesian/Aff_transformation_2.C>
-
 // #include <CGAL/Kernel/Construction_objects_2.h>
 // #include <CGAL/Kernel/Predicate_objects_2.h>
 #include <CGAL/predicate_objects_on_points_2.h>
@@ -81,8 +79,6 @@
 
 #include <CGAL/Cartesian/basic_constructions_3.h>
 
-#include <CGAL/Cartesian/Aff_transformation_3.C>
- 
 // #include <CGAL/Kernel/Construction_objects_3.h>
 // #include <CGAL/Kernel/Predicate_objects_3.h>
 
