@@ -18,8 +18,9 @@
 
 \ccDefinition
   
-The concept \ccRefName\ describes the vertex class of a
-\ccc{Triangulation_data_structure_2}.
+The concept \ccRefName\ describes the type used by a
+\ccc{TriangulationDataStructure_2} to store the vertices\lcTex{, see 
+\ccRefPage{TriangulationDataStructure_2}}.
 
 Some of the requirements listed below are of geometric nature
 and are \textit{optional}
@@ -33,8 +34,9 @@ The class \ccRefName\ defines the same types as
 the triangulation data structure 
 except the iterators.
 
+\ccTwo{TriangulationDataStructure_2::Vertex:: Point }{}
 \ccNestedType{Point}{\textit{Optional for the triangulation data
-structure alone.}} 
+structure used alone.}} 
 
 \ccCreationVariable{v}  %% choose variable name
 
@@ -61,7 +63,7 @@ triangulation data structure.
 %the pointer to the incident face.}
 
 \ccHeading{Access Functions}
-
+\ccThree{Face_handle}{v.set_face(Face_handle f);}{}
 \ccMethod{Point point() const;}
 {returns  the geometric information of \ccVar.}
 \ccGlue

@@ -28,8 +28,8 @@ requirements depending on the triangulation class.
 At the base level, 
 (see Sections~\ref{Section_2D_Triangulations_Software_Design} 
 and~\ref{2D_TDS_default}),
-a  face stores \ccc{void *} pointers
- to its three vertices  and to the three neighboring faces.
+a  face stores handles
+ on  its three vertices  and on  the three neighboring faces.
 The vertices and neighbors are indexed 0,1 and 2.
 Neighbor $i$ lies opposite to vertex $i$.
 
@@ -41,21 +41,24 @@ data structure.  But since the \ccc{Triangulation_data_structure_2}
 itself is parameterized by the face and vertex
 base classes, there is a cycle in the definition of these classes.  
 In order
-to break the cycle, the base classes for face and vertex  which are given as
-arguments for the  \ccc{Triangulation_data_structure_2}
-use a \ccc{void} as triangulation
-data structure parameter, and the
+to break the cycle, the base classes for faces and vertices
+ which are plugged in to instantiate a
 \ccc{Triangulation_data_structure_2}
- then uses a {\it rebind}  mecanism (similar to the one specified in
+use a \ccc{void} as triangulation
+data structure parameter. Then, 
+the \ccc{Triangulation_data_structure_2}
+ uses a {\it rebind}  mecanism (similar to the one specified in
 \ccc{std::allocator}) in order to plug itself 
-as parameter to the face and vertex  base classes. 
+as parameter in the face and vertex  base classes. 
 This mecanism requires that the base class  provides
-a templated nested class \ccc{Rebind_TDS} which
-itself provides the {\it rebound} version of the base class
-as the subtype \ccc{Rebind_TDS<TDS2>::Other}.
+a templated nested class \ccc{Rebind_TDS} that
+itself provides 
+ the subtype \ccc{Rebind_TDS<TDS2>::Other}
+which is the {\it rebound} version of the base class.
  This {\it rebound} base class is  the class
-which is actually  used as base class for face  class
-of \ccc{Triangulation_data_structure_2}.
+that the   \ccc{Triangulation_data_structure_2}
+ actually  uses  as a base class for the class
+\ccc{Triangulation_data_structure_2::Face}.
 
 
 \ccTypes
@@ -67,10 +70,10 @@ The concept \ccRefName\ has to provide the following types.
   template <typename TDS2>
   struct Rebind_TDS;}
 {This nested template class has to define a type \ccc{Other} which is the
-{\it rebound} face, in which the actual 
-\ccc{Triangulation_data_structure_2} is  plugged.
-This type  \ccc{Other}  will be the real base
-class used for the \ccc{Face}  of \ccc{Triangulation_data_structure_2}.}
+{\it rebound} face base, where  the 
+\ccc{Triangulation_data_structure_2} is actually  plugged in.
+This type  \ccc{Other}  will be the actual  base 
+of the class \ccc{Triangulation_data_structure_2::Face}.}
 
 \ccTypedef{typedef TriangulationDataStructure_2 Triangulation_data_structure;}{}
 \ccGlue
@@ -129,7 +132,7 @@ with \ccc{Face_handle()}.}
 {as above, and sets i to the index of \ccc{n} in \ccVar\ .}
 \ccGlue
 \ccMethod{int face_index(const Face_handle n) const;}
-{returns the index of neighbor \ccc{n} in\ccVar\ .}
+{returns the index of neighbor \ccc{n} in \ccVar\ .}
 
 \ccHeading{Setting}
 \ccMethod{void set_vertex(int i, Vertex_handle v);}
@@ -162,11 +165,11 @@ with \ccc{vertex(1)} and \ccc{neighbor(0)} with \ccc{neighbor(1)}.}
 \ccGlue
 \ccMethod{void ccw_permute();}
 {preforms a counterclockwise permutation of the
- vertices and neighbors of \ccVar\ .}
+ vertices and neighbors of \ccVar.}
 \ccGlue
 \ccMethod{ void cw_permute();}
 {preforms a clockwise permutation of the
- vertices and neighbors of \ccVar\ .}
+ vertices and neighbors of \ccVar.}
 
 \ccHeading{Checking}
 \ccMethod{bool is_valid(bool verbose = false) const;}

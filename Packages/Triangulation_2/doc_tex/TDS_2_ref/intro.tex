@@ -17,7 +17,7 @@
 \subsection*{Definition}
 The triangulation data structure can be seen as a container
 for the faces and vertices of a triangulation. This class also takes care
-of all combinatorial operation of the triangulation.
+of all the combinatorial operations performed on  the triangulation.
 
 The class \ccc{CGAL::Triangulation_data_structure_2<Vb,Fb>}
 is  a model of the concept \ccc{TriangulationDataStructure_2}.
@@ -33,9 +33,9 @@ of
 Chapter~\ref{user_chapter_2D_Triangulations}, the  model 
  \ccc{CGAL::Triangulation_data_structure_2<Vb,Fb>}
 has two templates parameters.
-The 
-\ccRefName derives its \ccc{Vertex} and \ccc{Face} types
-from the two template parameters \ccc{Vb} and \ccc{Fb}. \\
+The class \ccc{CGAL::Triangulation_data_structure_2<Vb,Fb>}
+derives its \ccc{Vertex} and \ccc{Face} types 
+from the two template parameters \ccc{Vb} and \ccc{Fb} respectively. \\
 If the triangulation data structure
 is used alone, these parameters 
 have to be instantiated by models
@@ -49,7 +49,7 @@ is plugged into a triangulation class, the parameters
 have to be instantiated by models of different 
 refining concepts according to the actual type of the triangulation.
 These refining concepts and their models
-are described in Chapter~\ref{user_chapter_2D_Triangulations}
+are described in Chapter~\ref{ref_chapter_2D_Triangulations}
 
 
 \subsection*{Concepts}

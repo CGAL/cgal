@@ -32,27 +32,31 @@ face through a \ccc{Face_handle}.
 
 Since the \ccc{Triangulation_data_structure_2} is the class 
 which defines the handle
-types, the face base class has to be somehow 
+types, the vertex base class has to be somehow 
 parameterized by the triangulation
 data structure.  But since the \ccc{Triangulation_data_structure_2}
 itself is parameterized by the face and vertex
 base classes, there is a cycle in the definition of these classes.  
 In order
-to break the cycle, the base classes for face and vertex  which are given as
-arguments for the  \ccc{Triangulation_data_structure_2}
-use a \ccc{void} as triangulation
-data structure parameter, and the
+to break the cycle, the base classes for faces and vertices
+ which are plugged in to instantiate a
 \ccc{Triangulation_data_structure_2}
- then uses a {\it rebind}  mecanism (similar to the one specified in
+use a \ccc{void} as triangulation
+data structure parameter. Then,
+the \ccc{Triangulation_data_structure_2}
+uses a {\it rebind}  mecanism (similar to the one specified in
 \ccc{std::allocator}) in order to plug itself 
-as parameter to the face and vertex  base classes. 
+as parameter in the face and vertex  base classes. 
 This mecanism requires that the base class  provides
-a templated nested class \ccc{Rebind_TDS} which
-itself provides the {\it rebound} version of the base class
-as the subtype \ccc{Rebind_TDS<TDS2>::Other}.
+a templated nested class \ccc{Rebind_TDS} that
+itself provides 
+the subtype \ccc{Rebind_TDS<TDS2>::Other}
+which is the {\it rebound} version of the base class.
  This {\it rebound} base class is  the class
-which is used as actual base class for the vertex class
-of \ccc{Triangulation_data_structure_2}.
+that the   \ccc{Triangulation_data_structure_2}
+ actually  uses  as a base class for the class
+of \ccc{Triangulation_data_structure_2::Vertex}.
+
 
 
 \ccTypes
@@ -64,10 +68,10 @@ The concept \ccRefName\ has to provide the following types.
   template <typename TDS2>
   struct Rebind_TDS;}
 {This nested template class has to define a type \ccc{Other} which is the
-{\it rebound} vertex, in which the actual 
-\ccc{Triangulation_data_structure_2} is  plugged.
-This type  \ccc{Other}  will be the real base
-class used for the \ccc{Vertex}  of \ccc{Triangulation_data_structure_2}.}
+{\it rebound} vertex base , where the actual 
+\ccc{Triangulation_data_structure_2} is  plugged in.
+This type  \ccc{Other}  will be the actual base
+of the class \ccc{Triangulation_data_structure_2::Vertex}.}
 
 
 \ccTypedef{typedef TriangulationDataStructure_2 Triangulation_data_structure;}{}
@@ -127,14 +131,14 @@ vertex.}
 \ccc{CGAL::Triangulation_ds_vertex_base_2<Tds>}\\
 \ccc{CGAL::Triangulation_vertex_base_2<Traits,Vb>}\\
 \ccc{CGAL::Regular_triangulation_vertex_base_2<Traits,Vb>} \\
-\ccc{CGAL::Triangulation_hierarchy_vertex_base_2<Vb>} 
+\ccc{CGAL::Triangulation_hierarchy_vertex_base_2<Vb>} \\
 \ccc{CGAL::Triangulation_vertex_base_with_info_2<Info,Traits,vb>}
 
 \ccSeeAlso
 \ccc{TriangulationVertexBase_2}\\
 \ccc{TriangulationDSFaceBase_2}\\
-\ccc{TriangulationFaceBase_2}
-\ccc{TriangulationDataStructure::Vertex} \\
+\ccc{TriangulationFaceBase_2} \\
+\ccc{TriangulationDataStructure_2::Vertex} \\
 \ccc{Triangulation_data_structure_2<Vb,Fb>} \\
 
 

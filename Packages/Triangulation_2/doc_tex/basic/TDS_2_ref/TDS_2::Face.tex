@@ -18,9 +18,10 @@
 
 \ccDefinition
   
-The concept \ccRefName\  describes the face class of a 
-\ccc{Triangulation_data_structure_2} 
-\ccRefPage{TriangulationDataStructure_2}.
+The concept \ccRefName\  describes the types used to store the faces
+face class of a 
+\ccc{TriangulationDataStructure_2}\lcTex{, see 
+\ccRefPage{TriangulationDataStructure_2}}.
 A \ccRefName\ stores three pointers to its three vertices
 and three pointers to its three neighbors.
 The vertices are indexed 0,1, and 2 in counterclockwise order.
@@ -28,9 +29,10 @@ The  neighbor indexed $i$ lies
 opposite to vertex i.
 
 In degenerate cases,
-when the \ccc{Triangulation_data_structure_2} stores a
+when the triangulation data structure  stores a
 simplicial complex of dimension $0$ and $1$,
-the faces are used to store the faces of maximal dimension of the complex 
+the type \ccRefName\  is used to store the faces 
+of maximal dimension of the complex 
 : i.e. a vertex in dimension $0$, an edge in dimension $1$.
 Only vertices and neighbors with index $0$ are set in the first case,
 only vertices and neighbors with index $0$ or $1$ are set in the second case.
@@ -48,29 +50,11 @@ except the iterators and the circulators.
 The methods \ccc{create_face} and
 \ccc{delete_face()}
 have to be used to 
-define new faces and delete non longer used ones.
+define new faces and  to delete non longer used faces.
 
-
-%\ccConstructor{TriangulationDataStructure_2::Face();}{default
-%constructor,
-%initializes all vertices and neighbors 
-% with \ccc{NULL}.}
-
-%\ccConstructor{TriangulationDataStructure_2::Face(Vertex_handle v0,
-%                                           Vertex_handle v1,
-%                                           Vertex_handle v2);}
-%{introduces a face \ccVar, and initializes the vertices. The 
-%neighbors are initialized with \ccc{NULL}.}
-
-%\ccConstructor{TriangulationDataStructure_2::Face(Vertex_handle v0,
-%                    Vertex_handle v1,
-%                    Vertex_handle v2,
-%                    Face_handle n0,
-%                    Face_handle n1,
-%                    Face_handle n2);}
-%{introduces a face \ccVar, and initializes the vertices and the neighbors.}
 
 \ccHeading{Vertex Access Functions}
+\ccThree{Vertex_handle}{f.has_neighbors((Face_handle n);}{}
 
 \ccMethod{Vertex_handle vertex(int i) const;}
 {returns  the vertex \ccc{i} of \ccVar.
@@ -165,10 +149,6 @@ in correct reverse order.}
 \ccMethod{int cw(int i) const;}
 {Returns $i+2$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
 
-
-
-\ccHasModels
-\ccc{CGAL::Triangulation_ds_Face_2<Vb,Fb>}
 
 
 \ccSeeAlso

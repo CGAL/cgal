@@ -19,14 +19,14 @@
   
 The concept \ccRefName\ describes the requirements  for
 the second template parameter of the basic triangulation class
-\ccc{Triangulation_2<Traits,Tds>}.
+\ccc{Triangulation_2<Traits,Tds>} and of all other 2D triangulation classes.
 
 The concept can be seen as a container for the 
 faces and vertices of the triangulation.
 The concept \ccRefName\  includes two subconcepts
 \ccc{TriangulationDataStructure_2::Vertex} and
-\ccc{TriangulationDataStructure_2::Face}
-\lcTex{described \ccRefPage{TriangulationDataStructure_2::Vertex}
+\ccc{TriangulationDataStructure_2::Face}\lcTex{, 
+described respectively \ccRefPage{TriangulationDataStructure_2::Vertex}
 and \ccRefPage{TriangulationDataStructure_2::Face}}. 
 
 The \ccRefName\ 
@@ -39,7 +39,7 @@ Each vertex gives access to one of its incident faces
 and through that face to the circular list of its incident faces.
 
 The three vertices of a face are indexed with 0, 1 and 2.
-The neighbor of a face are also 
+The neighbors of a face are also 
 indexed with 0,1,2 in such a way that the neighbor indexed by \ccc{i}
 is opposite to the vertex with the same index.
 
@@ -50,15 +50,18 @@ can be represented as well as an edge of the \ccc{neighbor(i)} of
 
 
 The triangulation data structure
- is responsible for  the combinatorial integrity of the triangulation
-(i. e. proper incidence and adjacency relations among vertices
-and faces) while 
-allowing  to perform combinatorial modifications
-such has 
-insertion of a new vertex in a face, or in an edge,
-suppression of a vertex of degree three,  flip of two edges.
-The term combinatorial means that those operation are purely topological
+ is responsible for  the combinatorial integrity of the triangulation.
+This means that the triangulation data structure
+allows to perform some combinatorial operations
+on the triangulation and guarantees the maintainance on 
+proper incidence and adjacency relations among the vertices
+and faces. The term combinatorial operations
+ means that those operations are purely topological
 and do not depend on the geometric embedding.
+Insertion of a new vertex in a given face, or in a given edge,
+suppression of a vertex of degree three,  flip of two edges
+are examples of combinatorial operations.
+
 
 
 \ccTypes
@@ -151,33 +154,33 @@ when tds1 is deleted after that.}
 \ccMethod{void clear();}{Deletes all faces and all finite vertices.}
 \ccGlue
 \ccModifierCrossRefOff
-\ccFunction{void ~TriangulationDataStructure_2();}
+\ccFunction{void ~tds();}
 {Destructor. All vertices and faces are deleted.}
 \ccModifierCrossRefOff
 
 \ccAccessFunctions
 \ccThree{void}{tds.set_number_of_vertices(int n)}{}
 \ccMethod{int dimension() const;}
-{The dimension of the triangulation.}
+{returns the dimension of the triangulation.}
 \ccGlue
 \ccMethod{int number_of_vertices() const;}
-{The number of vertices in the data structure.}
+{returns the number of vertices in the data structure.}
 \ccGlue
 \ccMethod{int number_of_faces() const ;}
-{The number of two dimensional faces in the data structure.}
+{returns the number of two dimensional faces in the data structure.}
 \ccGlue
 \ccMethod{int number_of_edges() const;}
-{The number of edges  in the triangulation data structure.}
+{returns the number of edges  in the triangulation data structure.}
 \ccGlue
 \ccMethod{int number_of_full_dim_faces() const;}
-{The number of full dimensional faces, 
+{returns the  number of full dimensional faces, 
 i.e. faces of dimension equal to the dimension
 of the triangulation. This is the actual
 number of faces stored in the triangulation data structure.}
 
 \begin{ccAdvanced}
 \ccHeading{Setting}
-\ccMethod{void set_dimension (int n);}{}
+\ccMethod{void set_dimension (int n);}{sets the dimension.}
 \end{ccAdvanced}
 
 \ccHeading{Queries}
@@ -187,7 +190,7 @@ number of faces stored in the triangulation data structure.}
 \ccc{v} is a vertex of \ccVar.}
 \ccGlue
 \ccMethod{bool is_edge(Face_handle fh, int i) const;}
-{Tests whether \ccc{(fh,i)} is an edge of \ccVar. Answers \ccc{false} when
+{tests whether \ccc{(fh,i)} is an edge of \ccVar. Answers \ccc{false} when
 \ccc{dimension()} $<1$ .}
 \ccGlue
 \ccMethod{bool is_edge(Vertex_handle va, Vertex_handle vb) const;}{returns true if
@@ -200,7 +203,7 @@ is the descrition
 of  the ordered edge \ccc{va vb}.}
 \ccGlue
 \ccMethod{bool is_face(Face_handle fh) const;}
-{Tests whether \ccc{fh} is a face of \ccVar. Answers \ccc{false} when
+{tests whether \ccc{fh} is a face of \ccVar. Answers \ccc{false} when
 \ccc{dimension()} $<2$ .}
 \ccGlue
 \ccMethod{bool is_face(Vertex_handle v1, Vertex_handle v2,
@@ -228,8 +231,8 @@ as vertices.}
 \ccMethod{ Edge_iterator edges_end() const;}{}
 
 \ccThree{Vertex_circulator}{tds.number_of_faces()x}{}
-Three circulator classes allow to traverse the edges, and faces
-incident to a given vertex and the adjacent vertices.
+Three circulator classes allow to traverse the edges or faces
+incident to a vertex or the vertices adjacent to this vertex..
 A face circulator is invalidated by any modification of the face it
 points to. An edge circulator is invalidated
 by any modification of anyone of the two faces incident to the edge
@@ -242,24 +245,27 @@ and \ccc{w}.
           incident_vertices(Vertex_handle v, Face_handle f=NULL)
 const;}
 {\ccPrecond If the
-face \ccc{f} is given, it has to be incident to \ccVar\ 
-and the circulators begins with a vertex of \ccc{f} :
+face \ccc{f} is given, it has to be incident to be a face of \ccVar\ 
+incident to \ccc{v} 
+and the circulator begins with 
 the vertex \ccc{f->vertex(ccw(i))} 
-if \ccc{i} is the index of \ccVar\  in \ccc{f}.} 
+if \ccc{i} is the index of \ccc{v}  in \ccc{f}.} 
 \ccGlue
 \ccMethod{Edge_circulator
           incident_edges(Vertex_handle v, Face_handle f=NULL) const;}
 {\ccPrecond If the
-face \ccc{f} is given, it has to be incident to \ccVar\ 
-and the circulators begins with an edge of \ccc{f} :
-the edge \ccc{(f,cw(i))}
-where \ccc{i} is the index of \ccVar\  in \ccc{f}.}
+face \ccc{f} is given, it has to be a face of \ccVar\ 
+incident to \ccc{v} 
+and the circulator begins with 
+the edge \ccc{(f,cw(i))} of \ccc{f}
+if  \ccc{i} is the index of \ccc{v}  in \ccc{f}.}
 \ccGlue
 \ccMethod{Face_circulator
           incident_faces(Vertex_handle v, Face_handle f=NULL) const;}
 {\ccPrecond If the
-face \ccc{f} is given, it has to be incident to \ccVar\
-and the crculators begins with the face
+face \ccc{f} is given, it has to be a face of \ccVar\ 
+incident to \ccc{v} 
+and the circulator begins with the face
 \ccc{f}.}
 
 
@@ -449,18 +455,19 @@ between numbers of vertices, faces and edges.}
 
 The information ouput  in the \ccc{iostream} is: 
 the dimension, the number of vertices, the number of faces,
-the vertices
-the indices of the vertices in  each face, 
-then the indices of the neighbors of each cell, 
-where the index of an item corresponds to its order in the ouput.
-When dimension $<$ 2, the same information is stored
+the vertices, 
+the indices of the vertices in  each face and
+ the indices of the neighbors of each face. 
+The  index of an item  (vertex of face)
+is simply the rank of this item in the ouput order.
+When dimension $<$ 2, the same information is ouput
 for faces of maximal dimension instead of faces.
 
 \ccThree{Vertex_handle}{tds.file_output( ostream& os)}{}
 \ccFunction{void tds.file_output( ostream& os,
 		   Vertex_handle v = Vertex_handle(),
 		   bool skip_first=false);}
-{writes \ccVar into the stream \ccc{os}. 
+{writes \ccVar\ into the stream \ccc{os}. 
 If \ccc{v} is not a null handle, vertex \ccc{v}
 is output first or skipped if \ccc{skip_first} is true.}
 
