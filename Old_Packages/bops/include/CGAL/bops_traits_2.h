@@ -45,16 +45,16 @@
 CGAL_BEGIN_NAMESPACE
 
 /*
-    _R should be a representation class 
+    P_Rep should be a representation class 
    (e.g. something like Cartesian<Rational> )
 */
-template <class _R> 
-struct Bops_default_I : public min_sqr_distance_traits<_R>
+template <class P_Rep> 
+struct Bops_default_I : public min_sqr_distance_traits<P_Rep>
 {
   Bops_default_I() {}
 
   /* representation class */
-  //typedef _R R;
+  //typedef P_Rep R;
   typedef CGAL::Object                          Object;
 
   /*------ constant sized objects ------*/
@@ -77,10 +77,10 @@ struct Bops_default_I : public min_sqr_distance_traits<_R>
   }
 
 
-  typedef CGAL::Point_2<R>                      Point;
+  typedef CGAL::Point_2<P_Rep>                      Point;
   /* required operations:
-    R::NT Point::x() const
-    R::NT Point::y() const
+    P_Rep::NT Point::x() const
+    P_Rep::NT Point::y() const
   */
   bool is_equal(const Point& p1, const Point& p2) const {
     return p1 == p2;
@@ -91,15 +91,15 @@ struct Bops_default_I : public min_sqr_distance_traits<_R>
   }
   
 
-  typedef CGAL::Segment_2<R>                    Segment;
+  typedef CGAL::Segment_2<P_Rep>                    Segment;
   /* required operations:
     Segment(Point,Point);
   */
-  typedef CGAL::Triangle_2<R>                   Triangle;
+  typedef CGAL::Triangle_2<P_Rep>                   Triangle;
   /* required operations:
     constructor with three points of type Point.
   */
-  typedef CGAL::Iso_rectangle_2<R>              Iso_rectangle;
+  typedef CGAL::Iso_rectangle_2<P_Rep>              Iso_rectangle;
   /* required operations:
     constructor with three points of type Point.
   */
@@ -112,7 +112,7 @@ struct Bops_default_I : public min_sqr_distance_traits<_R>
   typedef std::list<Point>                          Container;
   typedef Container                            Input_polygon_container;
   typedef std::list<Point>                          Output_polygon_container;
-  typedef Polygon_2<Polygon_traits_2<R>,Container>          Polygon;
+  typedef Polygon_2<Polygon_traits_2<P_Rep>,Container>          Polygon;
   typedef Polygon                              Input_polygon;
   typedef typename Polygon::Vertex_const_iterator  
                    Polygon_vertex_const_iterator;
@@ -120,7 +120,7 @@ struct Bops_default_I : public min_sqr_distance_traits<_R>
      Polygon_vertex_const_iterator Polygon::vertices_begin();
      Polygon_vertex_const_iterator Polygon::vertices_end();
   */
-  typedef Polygon_2<Polygon_traits_2<R>,Output_polygon_container>
+  typedef Polygon_2<Polygon_traits_2<P_Rep>,Output_polygon_container>
           Output_polygon;
 
   bool is_leftturn(const Point& p0, const Point& p1, const Point& p2) const {
@@ -198,7 +198,7 @@ struct Bops_default_I : public min_sqr_distance_traits<_R>
 
 protected:
 
-  typedef CGAL::Direction_2<R>                  Direction;
+  typedef CGAL::Direction_2<P_Rep>                  Direction;
   /* required operations:
      bool operator<(Direction, Direction);
   */
