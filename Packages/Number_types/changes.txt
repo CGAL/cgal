@@ -1,4 +1,4 @@
-4.8      (?? ??? 01)
+4.8      (13 Feb 01)
 - Remove old style casts.
 
 4.7      (25 Jan 01)
