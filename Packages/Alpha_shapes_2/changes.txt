@@ -1,3 +1,6 @@
+Version 11.28 (05/06/03)
+- Remove the typedef for Direction, Type Direction is unused
+
 Version 11.27 (05/06/03)
 - remove thre private typedef to Base in Alpha_shape_face_base_2.h
   and Alpha_shape_vertex_base_2.h
