@@ -38,9 +38,7 @@ typedef CGAL::MP_Float my_NT;
 #endif
 
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Simple_homogeneous.h>
 
 typedef CGAL::Simple_cartesian<my_NT> Test_rep_cartesian;
-typedef CGAL::Simple_homogeneous<my_NT> Test_rep_homogeneous;
 
 #endif
