@@ -12,7 +12,7 @@ CGAL_RELEASE_ID="${1}"
 CGAL_RELEASE_NUM=`echo ${CGAL_RELEASE_ID} | sed 's/CGAL-//'`
 
 SENDMAIL=mail
-DEVELOPERS=cgal-develop@cs.uu.nl
+DEVELOPERS=cgal-develop-l@postino.mpi-sb.mpg.de
 MANUAL_TEST_URL="http://www.cgal.org/Members/Manual_test/${CGAL_RELEASE_ID}.manual_test.html"
 
 
