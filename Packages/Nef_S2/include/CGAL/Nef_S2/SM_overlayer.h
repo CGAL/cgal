@@ -943,7 +943,13 @@ subdivide(const Map* M0, const Map* M1)
   CGAL_assertion_code(CGAL_forall_iterators(it,L) TRACEN("  "<<*it));
 
   bool compute_halfsphere[3][2];
+#ifdef CGAL_NEF3_SPHERE_SWEEP_OPTIMIZATION_OFF
+  int cs = -1;
+  compute_halfsphere[2][0]=true;
+  compute_halfsphere[2][1]=true;
+#else
   int cs = check_sphere(L, compute_halfsphere);
+#endif
 
   TRACEN("compute_halfsphere\n  cs = " << cs);
   for(int i=0; i<6; ++i)
@@ -992,6 +998,10 @@ subdivide(const Map* M0, const Map* M1)
 
   cs = cs==-1 ? 2 : cs/2;
 
+#ifdef CGAL_NEF3_TIMER_SPHERE_SWEEPS
+  timer_sphere_sweeps.start();
+#endif
+
   typedef SMO_from_sm<Self,Seg_iterator,Seg_info> SM_output;
   typedef typename Sphere_kernel::Positive_halfsphere_geometry PH_geometry;
   typedef typename Sphere_kernel::Negative_halfsphere_geometry NH_geometry;
@@ -1010,23 +1020,15 @@ subdivide(const Map* M0, const Map* M1)
   SHalfedge_handle e;
   SM_output O(*this,PI,From); 
 
-  // DEBUG CODE: to do: have all svertices a halfedge below associated?
-  TRACEN("Vertex info before swep");
-  CGAL_assertion_code(SVertex_iterator svi);
-  //  CGAL_assertion_code(
-  //    for( svi=svertices_begin(); svi!=svertices_end(); svi++) {
-  //      GenPtr i = info(svi);
-  //      TRACEN("vertex "<<point(svi)<<" info "<<i<<
-  //	     " marks "<<mark(svi,0)<<" "<<mark(svi,1));
-  //    }
-  //  )
-  
   if(compute_halfsphere[cs][0]) {
     Positive_halfsphere_sweep SP(
 	Input_range(L_pos.begin(),L_pos.end()),O,
 	PH_geometry(cs));
     SP.sweep();
     v=--this->svertices_end(); e=--this->shalfedges_end();
+#ifdef CGAL_NEF3_TIMER_SPHERE_SWEEPS
+    number_of_sphere_sweeps++;
+#endif
   }
   
   if(compute_halfsphere[cs][1]) {
@@ -1034,7 +1036,14 @@ subdivide(const Map* M0, const Map* M1)
         Input_range(L_neg.begin(),L_neg.end()),O,
         NH_geometry(cs));
     SM.sweep();
+#ifdef CGAL_NEF3_TIMER_SPHERE_SWEEPS
+    number_of_sphere_sweeps++;
+#endif
   }
+
+#ifdef CGAL_NEF3_TIMER_SPHERE_SWEEPS
+  timer_sphere_sweeps.stop();
+#endif
 
   if(compute_halfsphere[cs][0]) {
     ++v; 
@@ -1080,8 +1089,9 @@ subdivide(const Map* M0, const Map* M1)
 
   // DEBUG CODE: to do: have all svertices a halfedge below associated?
   TRACEN("Vertex info after swep");
+  CGAL_assertion_code(SVertex_iterator svi);
   CGAL_assertion_code(
-    for( svi=this->svertices_begin(); svi!=this->svertices_end(); svi++) {
+    for(svi=this->svertices_begin(); svi!=this->svertices_end(); svi++) {
       GenPtr i = info(svi);
       TRACEN("vertex "<<point(svi)<<" info "<<i<<
 	     " marks "<<mark(svi,0)<<" "<<mark(svi,1));
