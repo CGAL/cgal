@@ -39,15 +39,12 @@ public:
 
   void draw()
   {  
-    Vertex *v;
     Vertex_iterator it = tr.vertices_begin(), 
 		beyond = tr.vertices_end();
     *widget << CGAL::GREEN << CGAL::PointSize (3) 
 		<< CGAL::PointStyle (CGAL::DISC);    
-    while(it != beyond)
-    {      
-      v = &(*it);
-      *widget << v->point();
+    while(it != beyond) {      
+      *widget << (*it).point();
       ++it;
     }
   };
