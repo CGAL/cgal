@@ -265,36 +265,38 @@ is_flipable(Face_handle f, int i) const
 template < class Gt, class Tds, class Itag >
 void 
 Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
-flip(Face_handle& f, int i)
+flip (Face_handle& f, int i)
 {
+  Face_handle g = f->neighbor(i);
+  int j = f->mirror_index(i);
+
+  // save wings neighbors to be able to restore contraint status
+  Face_handle f1 = f->neighbor(cw(i));
+  int i1 = f->mirror_index(cw(i));
+  Face_handle f2 = f->neighbor(ccw(i));
+  int i2 = f->mirror_index(ccw(i));
+  Face_handle f3 = g->neighbor(cw(j));
+  int i3 = g->mirror_index(cw(j));
+  Face_handle f4 = g->neighbor(ccw(j));
+  int i4 = g->mirror_index(ccw(j));
+
   // The following precondition prevents the test suit 
   // of triangulation to work on constrained Delaunay triangulation
   //CGAL_triangulation_precondition(is_flipable(f,i));
-  Face_handle g = f->neighbor(i);
   this->_tds.flip( &(*f), i);
-  int ig=g->index(f->vertex(i)); 
-  // set constraints to new triangles
-  Face_handle nfi=f->neighbor(i);
-  Face_handle nfj=f->neighbor(cw(i));
-  Face_handle ngi=g->neighbor(ig);
-  Face_handle ngj=g->neighbor(ccw(ig));
-  f->set_constraint(ccw(i),false);
-  g->set_constraint(cw(ig),false);
-  if (nfi->is_constrained(f->mirror_index(i))) 
-           f->set_constraint(i,true);
-  else     f->set_constraint(i,false);
- 
-  if (nfj->is_constrained(f->mirror_index(cw(i)))) 
-           f->set_constraint(cw(i),true);
-  else     f->set_constraint(cw(i),false);
- 
-  if (ngi->is_constrained(g->mirror_index(ig)))  
-           g->set_constraint(ig,true);
-  else     g->set_constraint(ig,false);
-
-  if (ngj->is_constrained(g->mirror_index(ccw(ig)))) 
-       g->set_constraint(ccw(ig),true);
-  else g->set_constraint(ccw(ig),false);
+   
+  // restore constraint status
+  f->set_constraint(f->index(g), false);
+  g->set_constraint(g->index(f), false);
+  f1->neighbor(i1)->set_constraint(f1->mirror_index(i1),
+				   f1->is_constrained(i1));
+  f2->neighbor(i2)->set_constraint(f2->mirror_index(i2),
+				   f2->is_constrained(i2));
+  f3->neighbor(i3)->set_constraint(f3->mirror_index(i3),
+				   f3->is_constrained(i3));
+  f4->neighbor(i4)->set_constraint(f4->mirror_index(i4),
+				   f4->is_constrained(i4));
+  return;
 }
 
 template < class Gt, class Tds, class Itag >
