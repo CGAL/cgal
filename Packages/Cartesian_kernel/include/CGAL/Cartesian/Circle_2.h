@@ -36,7 +36,6 @@ class CircleC2
                                       typename R_::FT,
                                       Orientation> >::type
 {
-CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;
   typedef typename R_::Circle_2             Circle_2;
   typedef typename R_::Point_2              Point_2;

@@ -35,7 +35,6 @@ template < class R_ >
 class PointC2
   : public R_::template Handle<Twotuple<typename R_::FT> >::type
 {
-CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;
   typedef typename R_::Vector_2             Vector_2;
   typedef typename R_::Point_2              Point_2;

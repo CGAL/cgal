@@ -32,7 +32,6 @@ template <class R_>
 class TriangleC3
   : public R_::template Handle<Threetuple<typename R_::Point_3> >::type
 {
-CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_3              Point_3;
   typedef typename R_::Vector_3             Vector_3;

@@ -35,7 +35,6 @@ class SphereH3
   : public R_::template Handle<Triple<typename R_::Point_3,
                                       typename R_::FT, Orientation> >::type
 {
-CGAL_VC7_BUG_PROTECTED
    typedef typename R_::RT                   RT;
    typedef typename R_::FT                   FT;
    typedef typename R_::Point_3              Point_3;

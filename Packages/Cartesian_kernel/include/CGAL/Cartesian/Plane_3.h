@@ -32,7 +32,6 @@ template <class R_>
 class PlaneC3
   : public R_::template Handle<Fourtuple<typename R_::FT> >::type
 {
-CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_2              Point_2;
   typedef typename R_::Point_3              Point_3;

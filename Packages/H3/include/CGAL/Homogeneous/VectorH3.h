@@ -33,7 +33,6 @@ template < class R_ >
 class VectorH3
   : public R_::template Handle<Fourtuple<typename R_::RT> >::type
 {
-CGAL_VC7_BUG_PROTECTED
   typedef typename R_::RT                   RT;
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_3              Point_3;

@@ -49,7 +49,6 @@ template < class R_ >
 class Aff_transformationC2
   : public Handle_for_virtual< Aff_transformation_rep_baseC2<R_> >
 {
-CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;
   typedef Aff_transformation_rep_baseC2<R_> Aff_t_base;
 

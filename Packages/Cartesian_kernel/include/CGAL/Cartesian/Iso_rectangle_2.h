@@ -32,7 +32,6 @@ template <class R_>
 class Iso_rectangleC2
   : public R_::template Handle<Twotuple<typename R_::Point_2> >::type
 {
-CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_2              Point_2;
   typedef typename R_::Iso_rectangle_2      Iso_rectangle_2;

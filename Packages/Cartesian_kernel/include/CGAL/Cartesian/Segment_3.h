@@ -32,7 +32,6 @@ template < class R_ >
 class SegmentC3
   : public R_::template Handle<Twotuple<typename R_::Point_3> >::type
 {
-CGAL_VC7_BUG_PROTECTED
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_3              Point_3;
   typedef typename R_::Direction_3          Direction_3;

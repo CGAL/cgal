@@ -286,7 +286,6 @@ template < class R_ >
 class Aff_transformationH3
   : public Handle_for_virtual< Aff_transformation_rep_baseH3<R_> >
 {
-CGAL_VC7_BUG_PROTECTED
   typedef typename R_::RT                   RT;
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_3              Point_3;
