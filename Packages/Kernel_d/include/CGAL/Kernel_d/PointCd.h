@@ -166,9 +166,9 @@ bool operator==(const Origin&) const
   return true;
 }
 
-friend std::istream& operator>> CGAL_NULL_TMPL_ARGS
+friend std::istream& operator>> <>
   (std::istream&, PointCd<FT,LA>&);
-friend std::ostream& operator<< CGAL_NULL_TMPL_ARGS
+friend std::ostream& operator<< <>
   (std::ostream&, const PointCd<FT,LA>&);
 
 FT hx() const { return cartesian(0); }

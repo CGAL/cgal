@@ -325,9 +325,9 @@ bool operator==(const HyperplaneHd<RT,LA>& h2) const
 bool operator!=(const HyperplaneHd<RT,LA>& h2) const
 { return !operator==(h2); }
 
-friend std::istream& operator>> CGAL_NULL_TMPL_ARGS 
+friend std::istream& operator>> <> 
   (std::istream&, HyperplaneHd<RT,LA>&);
-friend std::ostream& operator<< CGAL_NULL_TMPL_ARGS 
+friend std::ostream& operator<< <> 
   (std::ostream&, const HyperplaneHd<RT,LA>&);
 
 }; // end of class HyperplaneHd

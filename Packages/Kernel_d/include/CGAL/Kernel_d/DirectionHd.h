@@ -201,9 +201,9 @@ RT dx() const { return delta(0); }
 RT dy() const { return delta(1); }
 RT dz() const { return delta(2); }
 
-friend std::istream& operator>> CGAL_NULL_TMPL_ARGS
+friend std::istream& operator>> <>
   (std::istream& I, DirectionHd<RT,LA>& d);
-friend std::ostream& operator<< CGAL_NULL_TMPL_ARGS
+friend std::ostream& operator<< <>
   (std::ostream& O, const DirectionHd<RT,LA>& d);
 
 }; // end of class DirectionHd

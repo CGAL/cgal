@@ -380,9 +380,9 @@ Quotient<RT> x()  const { return Quotient<RT>(hx(),hw());}
 Quotient<RT> y()  const { return Quotient<RT>(hy(),hw());}
 Quotient<RT> z()  const { return Quotient<RT>(hz(),hw());}
 
-friend std::istream& operator>> CGAL_NULL_TMPL_ARGS 
+friend std::istream& operator>> <> 
   (std::istream& I, VectorHd<RT,LA>& v);
-friend std::ostream& operator<< CGAL_NULL_TMPL_ARGS 
+friend std::ostream& operator<< <> 
   (std::ostream& O, const VectorHd<RT,LA>& v);
 
 }; // end of class VectorHd

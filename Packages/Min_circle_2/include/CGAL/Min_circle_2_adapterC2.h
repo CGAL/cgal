@@ -121,10 +121,10 @@ class _Min_circle_2_adapterC2__Circle {
         return( dx*dx + dy*dy);
     }
 
-    friend  std::ostream&  operator << CGAL_NULL_TMPL_ARGS ( std::ostream&,
+    friend  std::ostream&  operator << <> ( std::ostream&,
         const CGAL::_Min_circle_2_adapterC2__Circle<PT_,DA_>&);
 
-    friend  std::istream&  operator >> CGAL_NULL_TMPL_ARGS ( std::istream&,
+    friend  std::istream&  operator >> <> ( std::istream&,
         CGAL::_Min_circle_2_adapterC2__Circle<PT_,DA_>&);
 
   public:

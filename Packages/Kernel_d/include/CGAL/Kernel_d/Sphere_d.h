@@ -37,7 +37,7 @@ class  Sphere_d_rep  {
   typedef typename R::Point_d Point_d;
 
   friend class Sphere_d<R>;
-  friend bool equal_as_sets CGAL_NULL_TMPL_ARGS
+  friend bool equal_as_sets <>
     (const Sphere_d<R>&, const Sphere_d<R>&);
 
   std::vector< Point_d > P; // d+1 defining points, index range 0-d

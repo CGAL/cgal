@@ -127,9 +127,9 @@ FT dx() const { return delta(0); }
 FT dy() const { return delta(1); }
 FT dz() const { return delta(2); }
 
-friend std::istream& operator>> CGAL_NULL_TMPL_ARGS 
+friend std::istream& operator>> <> 
   (std::istream& I, DirectionCd<FT,LA>& d);
-friend std::ostream& operator<< CGAL_NULL_TMPL_ARGS 
+friend std::ostream& operator<< <> 
   (std::ostream& O, const DirectionCd<FT,LA>& d);
 
 }; // end of class DirectionCd

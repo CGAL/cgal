@@ -227,9 +227,9 @@ FT x()  const { return cartesian(0); }
 FT y()  const { return cartesian(1); }
 FT z()  const { return cartesian(2); }
 
-friend std::istream& operator>> CGAL_NULL_TMPL_ARGS
+friend std::istream& operator>> <>
   (std::istream& I, VectorCd<FT,LA>& v);
-friend std::ostream& operator<< CGAL_NULL_TMPL_ARGS
+friend std::ostream& operator<< <>
   (std::ostream& O, const VectorCd<FT,LA>& v);
 
 }; // end of class VectorCd

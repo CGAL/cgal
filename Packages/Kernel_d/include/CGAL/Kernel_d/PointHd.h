@@ -260,9 +260,9 @@ bool operator==(const Origin&) const
   return true;
 }
 
-friend std::istream& operator>> CGAL_NULL_TMPL_ARGS
+friend std::istream& operator>> <>
   (std::istream&, PointHd<RT,LA>&);
-friend std::ostream& operator<< CGAL_NULL_TMPL_ARGS 
+friend std::ostream& operator<< <> 
   (std::ostream&, const PointHd<RT,LA>&);
 /*{\Mtext \headerline{Downward compatibility}
 We provide operations of the lower dimensional interface |x()|, |y()|,
