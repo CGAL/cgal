@@ -5,14 +5,15 @@
 
 #include <CGAL/Polygon_2.h>
 
-#include <CGAL/IO/Qt_widget_layer.h>
-
-using std::endl;
+#include "Show_lines_base.h"
 
 namespace CGAL {
 
+// Show_antichain is a Qt_widget_styled_layer, because Show_lines_base is
+// one.
+
 template <class Antichain>
-class Show_antichain : public Qt_widget_layer {
+class Show_antichain : public Show_lines_base {
 public:
   typedef typename Antichain::Face_iterator	Face_iterator;
   typedef typename Antichain::Face_handle	Face_handle;
@@ -32,8 +33,10 @@ public:
 
   Show_antichain(Antichain* &antichain,
 		 Color c=CGAL::YELLOW,
-		 int lineWidth = 3)
-    : ant(antichain), color(c), width(lineWidth) {};
+		 int lineWidth = 3,
+		 QObject * parent=0, const char * name=0)
+    : Show_lines_base(c, lineWidth, parent, name),
+      ant(antichain) {};
 
   void draw()
   {
@@ -43,7 +46,10 @@ public:
     QColor old_color = widget->color();
     int old_line_width = widget->lineWidth();
 
-    *widget << FillColor(color) << color << LineWidth(width);
+    QColor c = style()->getColor(color);
+    widget->setColor(c);
+    widget->setFillColor(c);
+    widget->setLineWidth(style()->getInt(width));
 
     for(Face_iterator it = ant->faces_begin();
 	it!=ant->faces_end();
@@ -117,8 +123,6 @@ public:
    };
 private:
   Antichain*	&ant;
-  Color color;
-  int width;
 };//end class 
 
 } // namespace CGAL

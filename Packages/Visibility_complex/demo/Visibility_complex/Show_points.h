@@ -1,18 +1,31 @@
 #ifndef SHOW_POINTS_H
 #define SHOW_POINTS_H
 
-#include <CGAL/IO/Qt_widget_layer.h>
+#include <qmap.h>
+#include <qstring.h>
+#include <qvariant.h>
+#include <qcolor.h>
+
+#include "Qt_widget_styled_layer.h"
 #include <CGAL/function_objects.h>
 
 namespace CGAL {
 
-class Show_points_base: public Qt_widget_layer {
+class Show_points_base: public Qt_widget_styled_layer {
   Q_OBJECT
 public:
-  Show_points_base(Color c = CGAL::GREEN,
-		   int pointsize = 3,
-		   PointStyle pointstyle = CGAL::DISC)
-    : color(c), size(pointsize), style(pointstyle) {}
+  typedef Qt_widget_styled_layer::Style Style;
+
+  Show_points_base(Color c,
+		   int pointsize,
+		   PointStyle pointstyle,
+		   QObject * parent=0, const char * name=0);
+
+  Show_points_base(Style* style,
+		   QString points_color_name,
+		   QString points_size_name,
+		   QString points_style_name,
+		   QObject * parent=0, const char * name=0);
 
 public slots:
   void setColor(QColor);
@@ -20,16 +33,17 @@ public slots:
   void setPointStyle(PointStyle);
 
 protected:
-  Color color;
-  int size;
-  PointStyle style;
-
+  QString color;
+  QString size;
+  QString style_name;
 }; // end Show_points_base  
 
 template <class C, class It,
   class Transform = Identity<typename It::value_type> >
 class Show_points : public Show_points_base {
 public:
+  typedef Qt_widget_styled_layer::Style Style;
+
   typedef It iterator;
   typedef iterator (C::* iterator_function)() const;
 
@@ -38,25 +52,56 @@ public:
 	      iterator_function end,
 	      Color c = CGAL::GREEN,
 	      int pointsize = 3,
-	      PointStyle pointstyle = CGAL::DISC)
-    : Show_points_base(c, pointstyle, pointstyle),
+	      PointStyle pointstyle = CGAL::DISC,
+	      QObject * parent=0, const char * name=0)
+    : Show_points_base(c, pointstyle, pointstyle,
+		       parent, name),
+      cont(container), _begin(begin), _end(end) {};
+
+  Show_points(C *&container,
+	      iterator_function begin,
+	      iterator_function end,
+	      Style* style,
+	      QString points_color_name,
+	      QString points_size_name,
+	      QString points_style_name,
+	      QObject * parent=0, const char * name=0)
+    : Show_points_base(style,
+		       points_color_name,
+		       points_size_name,
+		       points_style_name,
+		       parent, name),
       cont(container), _begin(begin), _end(end) {};
 
   void draw()
   {
-    *widget << color << CGAL::PointSize (size) 
-	    << CGAL::PointStyle (style);
+    widget->lock();
+    {
+      QColor old_color = widget->color();
+      int old_size = widget->pointSize();
+      PointStyle old_point_style = widget->pointStyle();
 
-    for(iterator it = (cont->*_begin)();
-	it!=(cont->*_end)();
-	++it)
-      *widget << Transform()(*it);
+      widget->setColor(style()->getColor(color));
+      widget->setPointSize(style()->getInt(size));
+      widget->setPointStyle(static_cast<CGAL::PointStyle>(style()->
+							  getInt(style_name)));
+      
+      for(iterator it = (cont->*_begin)();
+	  it!=(cont->*_end)();
+	  ++it)
+	*widget << Transform()(*it);
+
+      widget->setColor(old_color);
+      widget->setPointSize(old_size);
+      widget->setPointStyle(old_point_style);
+    }
+    widget->unlock();
   };
+
 private:
   C	*&cont;
   iterator_function _begin;
   iterator_function _end;
-
 };//end class 
 
 } // namespace CGAL

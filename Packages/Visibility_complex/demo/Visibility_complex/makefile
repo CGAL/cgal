@@ -13,7 +13,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = -I../include \
+CXXFLAGS = -I../../include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
@@ -38,28 +38,51 @@ LDFLAGSQT = \
 #---------------------------------------------------------------------#
 
 all:            \
-                arrangments$(EXE_EXT) \
-		shortest_path$(EXE_EXT) \
-                visibility_graph$(EXE_EXT) 
+                arrangments$(EXE_EXT) 
+#		shortest_path$(EXE_EXT) \
+#                visibility_graph$(EXE_EXT) 
 
-arrangments.moc:  arrangments.C
-	$(QT_MOC) -o arrangments.moc arrangments.C
+Qt_widget_styled_layer.moc:  Qt_widget_styled_layer.h
+	$(QT_MOC) -o Qt_widget_styled_layer.moc Qt_widget_styled_layer.h
 
-Show_points.moc: Show_points.h
+Qt_widget_styled_layer$(OBJ_EXT): Qt_widget_styled_layer.moc \
+		Qt_widget_styled_layer.C
+
+Show_points.moc:  Show_points.h
 	$(QT_MOC) -o Show_points.moc Show_points.h
 
-Show_points$(OBJ_EXT): Show_points.moc
+Show_points$(OBJ_EXT): Show_points.moc Show_points.C
+
+Show_lines_base.moc:  Show_lines_base.h
+	$(QT_MOC) -o Show_lines_base.moc Show_lines_base.h
+
+Show_lines_base$(OBJ_EXT): Show_lines_base.moc Show_lines_base.C
+
+Show_pseudo_triangulation.moc:  Show_pseudo_triangulation.h
+	$(QT_MOC) -o Show_pseudo_triangulation.moc Show_pseudo_triangulation.h
+
+Show_pseudo_triangulation$(OBJ_EXT): Show_pseudo_triangulation.moc Show_pseudo_triangulation.C
 
 arrangments$(OBJ_EXT): arrangments.moc \
 	Show_pseudo_triangulation.h \
 	Show_antichain.h \
+	Show_lines_base.h \
 	Show_lines.h \
 	Show_points.h \
 	Show_nearest_vertex.h \
 	Show_pseudo_triangulation.h
 
-arrangments$(EXE_EXT): arrangments$(OBJ_EXT) Show_points$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)arrangments arrangments$(OBJ_EXT) Show_points$(OBJ_EXT) $(LDFLAGSQT)
+arrangments.moc:  arrangments.C
+	$(QT_MOC) -o arrangments.moc arrangments.C
+
+arrangments$(OBJ_EXT): arrangments.moc
+
+arrangments$(EXE_EXT): arrangments$(OBJ_EXT) \
+		Show_points$(OBJ_EXT) \
+		Show_lines_base$(OBJ_EXT) \
+		Qt_widget_styled_layer$(OBJ_EXT) \
+		Show_pseudo_triangulation$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)arrangments arrangments$(OBJ_EXT) Show_points$(OBJ_EXT) Show_lines_base$(OBJ_EXT) Qt_widget_styled_layer$(OBJ_EXT) Show_pseudo_triangulation$(OBJ_EXT) $(LDFLAGSQT)
 
 shortest_path$(EXE_EXT): shortest_path$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)shortest_path shortest_path$(OBJ_EXT) $(LDFLAGS)
@@ -71,6 +94,9 @@ visibility_graph$(EXE_EXT): visibility_graph$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)visibility_graph visibility_graph$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
+                   Qt_widget_styled_layer.clean \
+                   Show_points.clean \
+                   Show_pseudo_triangulation.clean \
                    arrangments.clean \
                    shortest_path.clean \
                    visibility_graph.clean \
