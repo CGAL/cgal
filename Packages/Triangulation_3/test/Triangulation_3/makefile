@@ -47,7 +47,7 @@ test_delaunay_3: test_delaunay_3.o
 	$(CGAL_CXX) -o test_delaunay_3 test_delaunay_3.o $(LDFLAGS)
 
 clean:
-	- rm -f *.o test_triangulation_3 test_triangulation_geom_traits
+	- rm -f *.o test_triangulation_3 test_triangulation_geom_traits test_triangulation_tds test_delaunay_3
 
 
 realclean: clean
