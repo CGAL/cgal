@@ -1,5 +1,14 @@
 
+Corriger la doc pour includes_edge in Triangulation_2
+
+
+
 Nouvelle triangulation
+- triangulation contrainte avec intersection
+  ne marche pas pour des points!= CGAL::Point_2
+ modifier les requirements pour la traits class
+ se debrouiller pour qu'on ne soit pas obliger de fournir une intersection
+en cas de contraintes sans intersection..
 - add an example of constrained and delaunay constrained triangulation
 - copy constructor for constrained and Delaunay_constrained triangulation
   has to be modified, so thet constrained status are duplicated
@@ -23,6 +32,6 @@ with add_face
 - triangulation hierarchique
 - add set_weight(Weight w) to weighted point
 - iterator de faces intersectees par un segment
-- createur de face handle a partir d'un Line_face_circulator
+
 
 - oriented_side ne marche pas quand le point est sur un sommet...

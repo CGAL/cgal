@@ -1,20 +1,36 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-Ver 4.30 (not yet submitted, nor tagged)
-Constrained and Constrained_Delaunay triangulations have been modified
+Ver 4.33 (15 March 00)
+added the test file test/Triangulation/test_triangulation_tdsul.C
+which had been forgotten
+
+Ver 4.32 (28 february 00)
+-added typename in Triangulation_ds_itertors_2.h and
+ Triangulation_dsul_itertors_2.h
+-fixed declaration of default arguments in insert_dim_up
+of Triangulation_ddata_structure_using_list_2.h
+- suppress break statememts after returns in the switch 
+if insert member of Triangulation_2.h
+
+Ver 4.31 (18 fevrier 00)
+-typedef and typename added here and there to compile with -pedantic option
+-There is now an alternative for Triangulation data structure. The
+Triangulation_data_structure using list should allow to deal
+with two-dimensional triangulation which are not embedded in a plane..
+-Constrained and Constrained_Delaunay triangulations have been modified
 to deal with intersecting input constraints
-in Triangulation_2 class, member function includes_edge has been modified
+-in Triangulation_2 class, member function includes_edge has been modified
 added a typedef for Segment and Triangle in Delaunay triangles
 
 
-Ver 4.29 (7 janvier 99)
+Ver 4.29 (7 janvier 00)
 import figures from 2.0 for html doc
 
-Ver 4.29 (6 janvier 99)
+Ver 4.29 (6 janvier 00)
 Try to improve fugures in html doc
 
-Ver 4.28 (4 janvier 99)
+Ver 4.28 (4 janvier 00)
 correction on the doc  : cpied .gif files modified by Susan 
 + deplaced a few \begin{ccAdvanced}
 
