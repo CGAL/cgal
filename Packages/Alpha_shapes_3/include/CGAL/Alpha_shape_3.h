@@ -114,7 +114,8 @@ private:
 
 public:
 
-  //the following eight typedef were private, but operator<<(ostream) needs them
+  //the following eight typedef were private, 
+  // but operator<<(ostream) needs them
   typedef Triple<Coord_type, Coord_type, Coord_type> Interval3;
   typedef std::pair< Interval3, Edge > Interval_edge;
   typedef std::multimap< Interval3, Edge > Interval_edge_map;
