@@ -76,16 +76,24 @@ bool test_svd(InputStream& is, const SVD&)
 
   start_testing("constructors");
   Segment_Voronoi_diagram_2 svd;
+  CGAL_assertion( svd.is_valid() );
+
   Segment_Voronoi_diagram_2 svd2(gt);
+  CGAL_assertion( svd2.is_valid() );
   {
     Segment_Voronoi_diagram_2 svd3(svd);
 
+    CGAL_assertion( svd3.is_valid() );
+
     svd.insert(site_list.begin(), site_list.end());
     Segment_Voronoi_diagram_2 svd4(svd);
+    CGAL_assertion( svd4.is_valid() );
     svd.clear();
 
     Segment_Voronoi_diagram_2 svd5(site_list.begin(), site_list.end());
+    CGAL_assertion( svd5.is_valid() );
     Segment_Voronoi_diagram_2 svd6(site_list.begin(), site_list.end(), gt);
+    CGAL_assertion( svd6.is_valid() );
   }
   end_testing("constructors");
 

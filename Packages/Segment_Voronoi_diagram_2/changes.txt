@@ -1,3 +1,7 @@
+9 June 2004:  Menelaos Karavelas
+- added some more assertion checks in test_types.h (when testing the
+  assignment operator)
+
 5 June 2004:  Menelaos Karavelas
 - in io_aux.h replaced char* by const std::string& to avoid warnings by
   SunPro CC
