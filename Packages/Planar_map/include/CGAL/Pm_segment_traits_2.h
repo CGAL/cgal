@@ -67,7 +67,7 @@ private:
   typedef typename Kernel::Construct_vertex_2   Construct_vertex_2;
   typedef typename Kernel::Less_x_2             Less_x_2;
     
-  typedef CGAL::Counterclockwise_in_between_for_segments_2<Kernel, X_curve>
+  typedef CGAL::Counterclockwise_in_between_for_segments_2<Kernel, X_curve_2>
                                                 Counterclockwise_in_between_2;
 
 protected:
@@ -153,8 +153,8 @@ public:
   /*! curve_compare_at_x_left() compares the y value of two curves in an
    * epsilon environment to the left of the x value of the input point
    */
-  Comparison_result curve_compare_at_x_left(const X_curve & cv1,
-                                            const X_curve & cv2, 
+  Comparison_result curve_compare_at_x_left(const X_curve_2 & cv1,
+                                            const X_curve_2 & cv2, 
                                             const Point_2 & q) const 
   {
     // If one of the curves is vertical then return EQUAL.
@@ -187,8 +187,8 @@ public:
   /*! curve_compare_at_x_right() compares the y value of two curves in an
    * epsilon environment to the right of the x value of the input point
    */
-  Comparison_result curve_compare_at_x_right(const X_curve & cv1,
-                                             const X_curve & cv2, 
+  Comparison_result curve_compare_at_x_right(const X_curve_2 & cv1,
+                                             const X_curve_2 & cv2, 
                                              const Point_2 & q) const 
   {
     // If one of the curves is vertical then return EQUAL.

@@ -61,7 +61,9 @@
 
 #include <CGAL/IO/Pm_file_scanner.h>
 
+#if 0
 #include <CGAL/sweep_to_construct_planar_map_2.h>
+#endif
 
 #include <list>
 
@@ -83,8 +85,8 @@ public:
   typedef Planar_map_2<Dcel,Traits>             Planar_map;   
   typedef Planar_map_2<Dcel,Traits>             Self;
   typedef Planar_map_traits_wrap<Traits>        Traits_wrap;
-  typedef typename Traits::X_curve              X_curve_2;
-  typedef typename Traits::Point                Point_2;
+  typedef typename Traits::X_curve_2            X_curve_2;
+  typedef typename Traits::Point_2              Point_2;
   
   typedef Topological_map<Dcel> TPM;
   typedef typename TPM::Vertex_iterator         Vertex_iterator;
