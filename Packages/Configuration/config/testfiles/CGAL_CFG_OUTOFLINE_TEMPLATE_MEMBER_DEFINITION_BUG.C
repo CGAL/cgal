@@ -31,8 +31,7 @@
 //| The flag CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG is set,
 //| if a compiler does not support the definition of member templates
 //| out of line, i.e. outside class scope. The solution is to put the
-//| definition inside the class. This is a feature of cl1200 and
-//| cl1300.
+//| definition inside the class. This is a feature of SunPro 5.5.
 
 template <class A>
 class B {
