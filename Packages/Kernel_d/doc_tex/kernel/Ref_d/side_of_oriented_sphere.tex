@@ -3,13 +3,13 @@
 
 \ccFunction{template <class ForwardIterator>
 Oriented_side side_of_oriented_sphere(
-  ForwardIterator first, ForwardIterator last, const Point_d<R>& x)}
+  ForwardIterator first, ForwardIterator last, const Point_d<R>& x);}
 { returns the relative position of point \ccStyle{x} to the oriented
   sphere defined by the points in \ccc{A = tuple [first,last)} The
   order of the points in $A$ is important, since it determines the
   orientation of the implicitly constructed sphere.  If the points in
-  $A$ are positive oriented, positive side is the bounded interior of
-  the sphere.  
+  $A$ are positively oriented, the positive side is the bounded 
+  interior of the sphere.  
   \ccPrecond \ccStyle{A} contains $d+1$ points in $d$-space and
   value type of \ccc{ForwardIterator} is \ccc{Point_d<R>}.}
 
