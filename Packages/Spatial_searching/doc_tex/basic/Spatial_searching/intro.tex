@@ -392,17 +392,17 @@ which determine how a separating hyperplane is computed:
 
 \begin{itemize}
 
-\item {\bf Midpoint of rectangle}
+\item \ccc{Midpoint_of_rectangle}
 
 This splitting rule cuts a rectangle through its midpoint orthogonal
 to the longest side.
 
-\item {\bf Midpoint of max spread}
+\item \ccc{Midpoint_of_max_spread}
 
 This splitting rule cuts a rectangle through $(Mind+Maxd)/2$ orthogonal
 to the dimension with the maximum point spread $[Mind,Maxd]$.
 
-\item {\bf Sliding midpoint}
+\item \ccc{Sliding_midpoint}
 
 This is a modification of the midpoint of rectangle splitting rule.
 It first attempts to perform a midpoint of rectangle split as
@@ -412,19 +412,19 @@ the midpoint of rectangle rule. If the data points lie only on one
 side it avoids this by sliding the separator, computed by
 the midpoint of rectangle rule, to the nearest datapoint.
 
-\item {\bf Median of rectangle}
+\item \ccc{Median_of_rectangle}
 
 The splitting dimension is the dimension of the longest side of the rectangle.
 The splitting value is defined by the median of the coordinates of the data points
 along this dimension.
 
-\item {\bf Median of max spread}
+\item \ccc{Median_of_max_spread}
 
 The splitting dimension is the dimension of the longest side of the rectangle.
 The splitting value is defined by the median of the coordinates of the data points
 along this dimension.
 
-\item {\bf Fair}
+\item \ccc{Fair}
 
 This splitting rule is a compromise between the median of rectangle splitting rule
 and the midpoint of rectangle splitting rule. This splitting rule maintains an upper
@@ -435,7 +435,7 @@ the one in which the points have the largest spread.
 It then splits the points in the most even manner possible, subject
 to maintaining the bound on the ratio of the resulting rectangles.
 
-\item {\bf Sliding fair}
+\item \ccc{Sliding_fair}
 
 This splitting rule is a compromise between the fair splitting rule
 and the sliding midpoint rule.

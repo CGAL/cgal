@@ -24,6 +24,7 @@
 #ifndef CGAL_ISO_BOX_D_H
 #define CGAL_ISO_BOX_D_H
 #include <CGAL/enum.h>
+#include <CGAL/representation_tags.h>
 #include <functional>
 #include <algorithm>
 #include <new>
@@ -35,152 +36,137 @@ namespace CGAL {
   public:
     typedef typename Kernel::FT FT;
     typedef typename Kernel::Point_d Point_d;
+    typedef typename Kernel::Rep_tag Rep_tag;
    
   private:
 
     int dim;
-    FT *lower;
-    FT *upper;
-    
+    Point_d* lower;
+    Point_d* upper;
+
+  
+  void construct_box(const Point_d& p, const Point_d& q, Cartesian_tag tag) {
+     FT low[dim];
+     FT upp[dim];
+     for (int i = 0; i < dim; ++i) {
+	  if (p[i] <= q[i]) {
+		low[i]=p[i]; 
+                upp[i]=q[i];
+	  }
+	  else {
+		low[i]=q[i]; 
+                upp[i]=p[i];
+	  }
+     }	  
+     lower = new Point_d(dim,low,low+dim);
+     upper = new Point_d(dim,upp,upp+dim);
+}  
+  
+void construct_box(const Point_d& p, const Point_d& q, Homogeneous_tag tag) {
+ {
+     typedef typename Kernel::RT RT;
+     RT low[dim];
+     RT upp[dim];
+     for (int i = 0; i < dim; ++i) {
+	  if (p[i] <= q[i]) {
+		low[i]=p.homogeneous(i); 
+                upp[i]=q.homogeneous(i);
+	  }
+	  else {
+		low[i]=q.homogeneous(i); 
+                upp[i]=p.homogeneous(i);
+	  }
+     }	  
+     lower = new Point_d(dim,low,low+dim,RT(1));
+     upper = new Point_d(dim,upp,upp+dim,RT(1));
+  }
+}
+
   public:
 
     Iso_box_d(const Point_d& p, const Point_d& q)
     { CGAL_precondition(p.dimension() == q.dimension());
       dim = p.dimension();
-      lower = new FT[dim];
-      upper = new FT[dim];
-      for (int i = 0; i < dim; ++i) {
-	  if (p[i] <= q[i]) {
-		lower[i]=p[i]; 
-                upper[i]=q[i];
-	  }
-	  else {
-		lower[i]=q[i]; 
-                upper[i]=p[i];
-	  }
-     }	  
+      typename Kernel::Rep_tag tag;
+#if defined(__sun) && defined(__SUNPRO_CC)
+     // to avoid a warning "tag has not yet been assigned a value"
+     // typedef typename Kernel::Rep_tag Rep_tag;
+     tag = Rep_tag();
+#endif // SUNPRO
+     construct_box(p,q,tag);  
     }
   
     // copy constructor
     Iso_box_d(const Iso_box_d& b) : dim(b.dim) {
-      lower = new FT[dim];
-      upper = new FT[dim];
-      for (int i = 0; i < dim; ++i) {
-		lower[i]=b.lower[i]; 
-                upper[i]=b.upper[i];
-      }
+      lower = new Point_d(*(b.lower));
+      upper = new Point_d(*(b.upper));
     }
 
 
     // destructor
     ~Iso_box_d() {
-	delete [] lower;
-	delete [] upper;
+	delete lower;
+	delete upper;
     }
 
-    bool has_on_bounded_side(const Point_d& p) const
-    { 
-      CGAL_precondition(p.dimension() == dim);
-      FT h;
-      for (int i = 0; i < dim; ++i) {
-        h=p[i];
-        if ( (h <= lower[i]) || (h >= upper[i]) ) return false;
-      }
-      return true;
-    } 
-
-    bool has_on_unbounded_side(const Point_d& p) const
-    {
-      CGAL_precondition(p.dimension() == dim);
-      FT h;
-      for (int i = 0; i < dim; ++i) {
-        h=p[i];
-        if ( (h >= lower[i]) && (h <= upper[i]) ) return false;
-      }
-      return true;
-    } 
-
-    bool has_on_boundary(const Point_d& p) const
-    {
-      CGAL_precondition(p.dimension() == dim);
-      if (has_on_unbounded_side(p)) return false; 
-      FT h;
-      for (int i = 0; i < dim; ++i) {
-        h=p[i];
-        if ( (h == lower[i]) || (h == upper[i]) ) return true;
-      }
-      return false;
-    } 
 
     Bounded_side bounded_side(const Point_d& p) const
     { 
       CGAL_precondition(p.dimension() == dim);
-      if (has_on_unbounded_side(p)) return ON_UNBOUNDED_SIDE; 
       FT h;
       for (int i = 0; i < dim; ++i) {
         h=p[i];
-        if ( (h == lower[i]) || (h == upper[i]) ) return ON_BOUNDARY;
+        if ( (h < (*lower)[i]) || (h > (*upper)[i]) ) return ON_UNBOUNDED_SIDE;
+      }
+      for (int i = 0; i < dim; ++i) {
+        h=p[i];
+        if ( (h == (*lower)[i]) || (h == (*upper)[i]) ) return ON_BOUNDARY;
       }
       return ON_BOUNDED_SIDE;
     }
+
+    bool has_on_bounded_side(const Point_d& p) const
+    { 
+      return (bounded_side(p)==ON_BOUNDED_SIDE);
+    } 
+
+    bool has_on_unbounded_side(const Point_d& p) const
+    {
+      return (bounded_side(p)==ON_UNBOUNDED_SIDE); 
+    } 
+
+    bool has_on_boundary(const Point_d& p) const
+    {
+      return (bounded_side(p)==ON_BOUNDARY); 
+    } 
+
       
     int dimension() const { return dim;}
     
     FT min_coord(int i) const {
-      return lower[i];
+      return (*lower)[i];
     }
 
     FT max_coord(int i) const {
-      return upper[i];
+      return (*upper)[i];
     }
 
-/* does not work, because assignment to p[i] is not allowed
    Point_d min() const
    {
-     Point_d p(dim,ORIGIN);
-     for (int i = 0; i < dim; ++i) {
-        p[i]=lower[i];
-     }
-     return Point_d(p);
-  }
+     return Point_d(*lower);
+   }
 
-  Point_d max() const
-  {
-     Point_d p(dim,ORIGIN);
-     for (int i = 0; i < dim; ++i) {
-        p[i]=upper[i];
-     }
-     return Point_d(p);
-  }
- */
-  /* use of Base_vector() after Kernel_d\interface-test.C 
-  Point_d min() const
+   Point_d max() const
    {
-     Point_d p(dim,ORIGIN);
-     for (int i = 0; i < dim; ++i) {
-        // v is ith base vector
-        Vector_d v = Vector_d(dim,Vector_d::Base_vector(),i);
-        p=p+lower[i]*v;
-     }
-     return Point_d(p);
-  }
-
-  Point_d max() const
-  {
-     Point_d p(dim,ORIGIN);
-     for (int i = 0; i < dim; ++i) {
-        // v is ith base vector
-        Vector_d v = Vector_d(dim,Vector_d::Base_vector(),i);
-        p=p+upper[i]*v;
-     }
-     return Point_d(p);
-  }*/
-
+     return Point_d(*upper);
+   }
+ 
+   
   FT volume() const
   {
-     FT  vol = upper[0]-lower[0];
+     FT  vol = (*upper)[0]-(*lower)[0];
      for (int i = 1; i < dim; ++i) {
-        vol=vol*(upper[i]-lower[i]);
+        vol=vol*((*upper)[i]-(*lower)[i]);
      }
      return vol;
   }
@@ -188,7 +174,7 @@ namespace CGAL {
 bool is_degenerate() const
   {
      for (int i = 0; i < dim; ++i) {
-        if (lower[i]==upper[i]) return true;
+        if ((*lower)[i]==(*upper)[i]) return true;
      }
      return false;
   }
