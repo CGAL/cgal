@@ -690,20 +690,20 @@ template < class R >
 typename Aff_transformationH2<R>::Point_2
 Aff_transformationH2<R>::
 transform(const typename Aff_transformationH2<R>::Point_2& p) const
-{ return Ptr()->transform(p); }
+{ return this->Ptr()->transform(p); }
 
 
 template < class R >
 typename Aff_transformationH2<R>::Vector_2
 Aff_transformationH2<R>::
 transform( const typename Aff_transformationH2<R>::Vector_2& v) const
-{ return Ptr()->transform(v); }
+{ return this->Ptr()->transform(v); }
 
 template < class R >
 typename Aff_transformationH2<R>::Direction_2
 Aff_transformationH2<R>::
 transform( const typename Aff_transformationH2<R>::Direction_2& d) const
-{ return Ptr()->transform(d); }
+{ return this->Ptr()->transform(d); }
 
 template < class R >
 typename Aff_transformationH2<R>::Line_2
@@ -715,13 +715,13 @@ template < class R >
 Aff_transformationH2<R>
 Aff_transformationH2<R>::
 inverse() const
-{ return Ptr()->inverse(); }
+{ return this->Ptr()->inverse(); }
 
 template < class R >
 bool
 Aff_transformationH2<R>::
 is_even() const
-{ return Ptr()->is_even(); }
+{ return this->Ptr()->is_even(); }
 
 template < class R >
 bool
@@ -734,20 +734,20 @@ inline
 typename Aff_transformationH2<R>::FT
 Aff_transformationH2<R>::
 cartesian(int i, int j) const
-{ return Ptr()->cartesian(i,j); }
+{ return this->Ptr()->cartesian(i,j); }
 
 template < class R >
 inline
 typename Aff_transformationH2<R>::RT
 Aff_transformationH2<R>::
 homogeneous(int i, int j) const
-{ return Ptr()->homogeneous(i,j); }
+{ return this->Ptr()->homogeneous(i,j); }
 
 template < class R >
 Aff_transformation_repH2<R>
 Aff_transformationH2<R>::
 general_form() const
-{ return Ptr()->general_form(); }
+{ return this->Ptr()->general_form(); }
 
 template <class R>
 Aff_transformationH2<R>
@@ -757,7 +757,7 @@ Aff_transformationH2<R>::
 operator*(const Aff_transformationH2<R>& right_argument) const
 {
   return _general_transformation_composition(
-                  Ptr()->general_form(),
+                  this->Ptr()->general_form(),
                   right_argument.Ptr()->general_form() );
 }
 

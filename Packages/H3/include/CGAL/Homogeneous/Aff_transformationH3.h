@@ -345,19 +345,19 @@ public:
 
   FT
   cartesian(int i, int j) const
-  { return Ptr()->cartesian(i,j); }
+  { return this->Ptr()->cartesian(i,j); }
 
   RT
   homogeneous(int i, int j) const
-  { return Ptr()->homogeneous(i,j); }
+  { return this->Ptr()->homogeneous(i,j); }
 
   FT
   m(int i, int j) const
-  { return Ptr()->cartesian(i,j); }
+  { return this->Ptr()->cartesian(i,j); }
 
   RT
   hm(int i, int j) const
-  { return Ptr()->homogeneous(i,j); }
+  { return this->Ptr()->homogeneous(i,j); }
 };
 
 template < class R >
@@ -817,52 +817,52 @@ inline
 typename Aff_transformationH3<R>::Point_3
 Aff_transformationH3<R>::
 transform(const typename Aff_transformationH3<R>::Point_3& p) const
-{ return Ptr()->transform(p); }
+{ return this->Ptr()->transform(p); }
 
 template < class R >
 inline
 typename Aff_transformationH3<R>::Vector_3
 Aff_transformationH3<R>::
 transform(const typename Aff_transformationH3<R>::Vector_3& v) const
-{ return Ptr()->transform(v); }
+{ return this->Ptr()->transform(v); }
 
 template < class R >
 inline
 typename Aff_transformationH3<R>::Direction_3
 Aff_transformationH3<R>::
 transform(const typename Aff_transformationH3<R>::Direction_3& d) const
-{ return Ptr()->transform(d); }
+{ return this->Ptr()->transform(d); }
 
 template < class R >
 inline
 typename Aff_transformationH3<R>::Plane_3
 Aff_transformationH3<R>::
 transform(const typename Aff_transformationH3<R>::Plane_3& pl) const
-{ return Ptr()->transform(pl); }
+{ return this->Ptr()->transform(pl); }
 
 template < class R >
 inline
 typename Aff_transformationH3<R>::Aff_transformation_3
 Aff_transformationH3<R>::inverse() const
-{ return Ptr()->inverse(); }
+{ return this->Ptr()->inverse(); }
 
 template < class R >
 inline
 Aff_transformationH3<R>
 Aff_transformationH3<R>::transpose() const
-{ return Ptr()->transpose(); }
+{ return this->Ptr()->transpose(); }
 
 template < class R >
 inline
 bool
 Aff_transformationH3<R>::is_even() const
-{ return Ptr()->is_even(); }
+{ return this->Ptr()->is_even(); }
 
 template < class R >
 inline
 bool
 Aff_transformationH3<R>::is_odd() const
-{ return ( ! (Ptr()->is_even() )); }
+{ return ( ! (this->Ptr()->is_even() )); }
 
 template < class R >
 CGAL_KERNEL_INLINE

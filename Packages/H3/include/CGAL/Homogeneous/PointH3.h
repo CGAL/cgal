@@ -263,10 +263,10 @@ CGAL_KERNEL_LARGE_INLINE
 Bbox_3
 PointH3<R>::bbox() const
 {
-   Interval_nt<> ihx = CGAL::to_interval(hx());
-   Interval_nt<> ihy = CGAL::to_interval(hy());
-   Interval_nt<> ihz = CGAL::to_interval(hz());
-   Interval_nt<> ihw = CGAL::to_interval(hw());
+   Interval_nt<> ihx = CGAL_NTS to_interval(hx());
+   Interval_nt<> ihy = CGAL_NTS to_interval(hy());
+   Interval_nt<> ihz = CGAL_NTS to_interval(hz());
+   Interval_nt<> ihw = CGAL_NTS to_interval(hw());
 
    Interval_nt<> ix = ihx/ihw;
    Interval_nt<> iy = ihy/ihw;
