@@ -620,6 +620,8 @@ CGAL_Kernel_cons(Construct_sphere_3,
 		 construct_sphere_3_object)
 #endif
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+
 #if !defined(CGAL_CA_LIMITED_INTERFACE) || \
     defined(CGAL_CA_CONSTRUCT_SUPPORTING_LINE_2)
 CGAL_Kernel_cons(Construct_supporting_line_2,
@@ -631,6 +633,8 @@ CGAL_Kernel_cons(Construct_supporting_line_2,
 CGAL_Kernel_cons(Construct_supporting_line_3,
 		 construct_supporting_line_3_object)
 #endif
+
+#endif // CGAL_NO_DEPRECATED_CODE
 
 #if !defined(CGAL_CA_LIMITED_INTERFACE) || \
     defined(CGAL_CA_CONSTRUCT_SUPPORTING_PLANE_3)

@@ -1919,6 +1919,7 @@ public:
     {  return Sphere_3(); }
 };
 
+#ifndef CGAL_NO_DEPRECATED_CODE
 template <typename K>
 class Construct_supporting_line_2
 {
@@ -1956,6 +1957,7 @@ public:
     operator()( const Segment_3&) const
     { return Line_3(); }
 };
+#endif // CGAL_NO_DEPRECATED_CODE
 
 template <typename K>
 class Construct_supporting_plane_3

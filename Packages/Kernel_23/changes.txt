@@ -1,4 +1,7 @@
 20 July 2004 Sylvain Pion
+- Deprecate Construct_supporting_line_[23] (redundant with Construct_line_[23]).
+
+20 July 2004 Sylvain Pion
 - known_bit_size_integers.h : add IA64 support.
 
 24 June 2004 Radu Ursu

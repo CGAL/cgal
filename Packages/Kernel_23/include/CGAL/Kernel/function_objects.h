@@ -1060,6 +1060,7 @@ namespace CommonKernelFunctors {
     {  return Sphere_3(center, orientation); }
   };
 
+#ifndef CGAL_NO_DEPRECATED_CODE
   template <typename K>
   class Construct_supporting_line_2
   {
@@ -1097,6 +1098,7 @@ namespace CommonKernelFunctors {
     operator()( const Segment_3& s) const
     { return s.supporting_line(); }
   };
+#endif // CGAL_NO_DEPRECATED_CODE
 
   template <typename K>
   class Construct_supporting_plane_3

@@ -272,11 +272,14 @@ test_new_3(const R& rep)
 
   cccit = construct_cartesian_const_iterator_3(p1);
   cccit = construct_cartesian_const_iterator_3(p1,0);
-  
+
+#ifndef CGAL_NO_DEPRECATED_CODE
   typename R::Construct_supporting_line_3 construct_supporting_line
         = rep.construct_supporting_line_3_object();
   Line_3 tmp8a = construct_supporting_line(r2);
   Line_3 tmp8b = construct_supporting_line(s2);
+  use(tmp8a); use(tmp8b);
+#endif // CGAL_NO_DEPRECATED_CODE
 
   typename R::Construct_perpendicular_plane_3 construct_perpendicular_plane
         = rep.construct_perpendicular_plane_3_object();
@@ -690,7 +693,7 @@ test_new_3(const R& rep)
   use(h1); use(h4); use(h5); use(h6); 
   use(sp4); use(sp5); use(sp6); use(sp7); use(sp8);
   use(t1); use(th1); use(iso2); 
-  use(tmp8a); use(tmp8b); use(tmp3); use(tmp3a);
+  use(tmp3); use(tmp3a);
   use(tmp9); use(tmp14a); use(tmp5); use(tmp6);
   use(tmp7); use(tmp71); use(sp1a); use(tmp72);
   use(tmp12a); use(tmp12b);
