@@ -1,11 +1,11 @@
 /**************************************************************************
  
-  confightml.h
+  html_config.h
   =============================================================
   Project   : CGAL merger tool for the specification task
   Function  : Configuration constants and variables
   System    : C++ (g++)
-  Author    : (c) 1995 Lutz Kettner
+  Author    : (c) 1997 Lutz Kettner
   Revision  : $Revision$
   Date      : $Date$
  

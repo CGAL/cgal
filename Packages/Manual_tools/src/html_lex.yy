@@ -1,6 +1,6 @@
 /**************************************************************************
  
-  lexhtml.yy
+  html_lex.yy
   =============================================================
   Project   : CGAL merger tool for the specification task
   Function  : lexical scanner for TeX and C++ code mixed files.
@@ -19,8 +19,8 @@ extern "C" int yylex( void );
 #include <stdio.h>
 #include <string.h>
 #include <database.h>
-#include <confightml.h>
-#include <syntaxhtml.tab.h>
+#include <html_config.h>
+#include <html_syntax.tab.h>
 
 /* Set this flag to 1 to switch immediately to CCMode. */
 int set_CCMode      = 0;

@@ -1,6 +1,6 @@
 /**************************************************************************
  
-  cgal_extract_html.cc
+  cc_extract_html.C
   =============================================================
   Project   : CGAL merger tool for the specification task
   Function  : main program, command line parameter parsing
@@ -18,7 +18,7 @@
 #include <fstream.h>
 #include <ctype.h>
 #include <database.h>
-#include <confightml.h>
+#include <html_config.h>
 
 typedef char Switch;
  

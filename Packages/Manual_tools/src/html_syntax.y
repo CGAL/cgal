@@ -1,6 +1,6 @@
 /**************************************************************************
  
-  syntax.y
+  html_syntax.y
   =============================================================
   Project   : CGAL merger tool for the specification task
   Function  : grammatical parser for TeX and C++ code mixed files.
@@ -45,7 +45,7 @@ int CCMode = 0;
 /* Datastructures for the parser */
 /* ============================= */
 #include <database.h>
-#include <confightml.h>
+#include <html_config.h>
 
 /* Declarations from the cgal_extract_html.cc file */
 /* =============================================== */
