@@ -646,7 +646,8 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
 
   // at least 4 points 
   typename Traits::Collinear_3 collinear = traits.collinear_3_object();
-    typename Traits::Equal_3 equal = traits.equal_3_object();
+  typename Traits::Equal_3 equal = traits.equal_3_object();
+
   P3_iterator point1_it = points.begin();
   P3_iterator point2_it = points.begin();
   point2_it++;
