@@ -24,7 +24,7 @@ WALKER = $(HOME)/projects/SNC_walker
 BBOX = $(MY_DIR)/Box_intersection_d/include
 MINKOWSKI = $(MY_DIR)/Nef_3/Minkowski/include
 
-CUSTOM_CXXFLAGS = -I$(POLY) -I$(NEF3) -I$(NEF2) -I$(NEFS2) -I$(MINKOWSKI)
+CUSTOM_CXXFLAGS = -I$(NEF3) -I$(NEF2) -I$(NEFS2) -I$(MINKOWSKI)
 
 CXXFLAGS = \
            $(CGAL_CXXFLAGS) \
@@ -51,7 +51,10 @@ LDFLAGS = \
 all:            \
                 convex$(EXE_EXT) \
                 mixed$(EXE_EXT) \
-                decompostion_test$(EXE_EXT)
+                decompostion_test$(EXE_EXT) \
+                gausian_map_test$(EXE_EXT) \
+                generate_convex$(EXE_EXT) \
+                minkowski_sum$(EXE_EXT)
 
 
 convex$(EXE_EXT): convex$(OBJ_EXT)
@@ -66,11 +69,19 @@ decomposition_test$(EXE_EXT): decomposition_test$(OBJ_EXT)
 gausian_map_test$(EXE_EXT): gausian_map_test$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)gausian_map_test gausian_map_test$(OBJ_EXT) $(LDFLAGS)
 
+generate_convex$(EXE_EXT): generate_convex$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)generate_convex generate_convex$(OBJ_EXT) $(LDFLAGS)
+
+minkowski_sum$(EXE_EXT): minkowski_sum$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)minkowski_sum minkowski_sum$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
                    convex.clean \
                    mixed.clean \
-	           decomposition_test \
-	           gausian_map_test
+	           decomposition_test.clean \
+	           gausian_map_test.clean \
+	           generate_convex.clean \
+	           minkowski_sum.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
