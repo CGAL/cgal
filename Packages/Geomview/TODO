@@ -1,5 +1,3 @@
-- Have an interface to the fast OFF format so that people can easily and
-  quickly display a set of facets.
 - recuperer le dernier objet insere dans geomview
 - pouvoir detruire des objets
 - avoir une option pour que les segments soient des petits cylindres,
