@@ -1294,7 +1294,7 @@ inline int std::stringbuf::sync()
   if(n)
     {
       buf.replace(rpos, std::string::npos, pbase(), n);
-      if(buf.size() - rpos != n)
+      if(static_cast<streamsize>(buf.size() - rpos) != n)
 	return EOF;
       rpos += n;
       pbump(-n);
