@@ -1,0 +1,30 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: BoxPredicateTraits_d.tex
+% +------------------------------------------------------------------------+
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+\begin{ccRefConcept}{BoxPredicateTraits_d}
+The box predicate traits class specifies predicates between boxes. It propagates number type, box type, dimension and all other fields from the box adapter to the actual implementation of bounding box intersection.
+
+\ccTypes
+\ccNestedType{Box} {box handle type. Bounding box objects are passed to functions and predicates using exactly this type.}
+\ccNestedType{NT}  {Number type of the box vector components.}
+
+\ccNestedType{Compare}{Function object that compares two boxes regarding their interval starting point in a certain dimension.}
+\ccNestedType{Lo_less}{Function object }
+\ccNestedType{Hi_greater}{Function object }
+\ccNestedType{Spanning}{Function object }
+
+
+\ccOperations
+
+\ccMethod{static bool is_lo_less_lo(Box a, Box b, unsigned int dim)}{interval starting point of Box a is strictly less than b's ...}
+\ccMethod{static bool is_lo_less_hi(Box a, Box b, unsigned int dim)}{bla}
+\ccMethod{static bool does_intersect (Box a, Box b, unsigned int dim)}{}
+\ccMethod{static bool contains_lo_point(Box a, Box b, unsigned int dim)}{}
+
+\ccHasModels
+\ccRefIdfierPage{Box_predicate_traits_d<BoxTraits_d>}
+
+\end{ccRefConcept}
