@@ -176,7 +176,7 @@ public:
     const X_monotone_curve_2 &he_cv = he->curve();
     if (traits->point_equal(xp1, xp2)) {
       if (traits->point_in_x_range(he_cv, xp1) &&
- 	  traits->curve_compare_y_at_x(he_cv, xp1) == EQUAL) {
+ 	  traits->curve_compare_y_at_x(xp1, he_cv) == EQUAL) {
         intersection_exists = true;
       }
     }

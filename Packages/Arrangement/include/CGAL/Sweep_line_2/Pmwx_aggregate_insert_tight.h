@@ -28,11 +28,10 @@
 #ifndef CGAL_PMWX_AGGREGATE_INSERT_IMPL_H
 #define CGAL_PMWX_AGGREGATE_INSERT_IMPL_H
 
-#include <list>
-
 #include <CGAL/Sweep_line_tight_2.h>
 #include <CGAL/Sweep_line_2/Pmwx_sweep_line_event.h>
 #include <CGAL/Sweep_line_2/Pmwx_sweep_line_curve.h>
+#include <list>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -342,12 +341,12 @@ protected:
       while (slIter != m_statusLine->end() &&
 	     (! m_traits->point_in_x_range((*slIter)->getCurve(), 
 					      topEnd) ||
-	      m_traits->curve_compare_y_at_x((*slIter)->getCurve(), 
-					       topEnd) != LARGER) &&
+	      m_traits->curve_compare_y_at_x(topEnd, (*slIter)->getCurve()) !=
+              SMALLER) &&
 	     (! m_traits->point_in_x_range((*slIter)->getCurve(), 
 					      currentPoint) ||
-	      m_traits->curve_compare_y_at_x((*slIter)->getCurve(), 
-					       currentPoint) != SMALLER))
+	      m_traits->curve_compare_y_at_x(currentPoint,
+                                             (*slIter)->getCurve()) != LARGER))
       {
 	SL_DEBUG(std::cout<<"intersecting with \n";)
 	  SL_DEBUG((*slIter)->Print();) 
@@ -464,12 +463,13 @@ protected:
 	while (slIter != m_statusLine->end() &&
 	       m_traits->point_in_x_range((*slIter)->getCurve(), 
 					     topPoint) &&
-	       m_traits->curve_compare_y_at_x((*slIter)->getCurve(), 
-						topPoint) == SMALLER &&
+	       m_traits->curve_compare_y_at_x(topPoint,
+                                              (*slIter)->getCurve()) ==
+               SMALLER &&
 	       m_traits->point_in_x_range((*slIter)->getCurve(), 
 					     vcurve->getBottomEnd()) &&
-	       m_traits->curve_compare_y_at_x((*slIter)->getCurve(), 
-					     vcurve->getBottomEnd()) == LARGER)
+	       m_traits->curve_compare_y_at_x(vcurve->getBottomEnd(),
+                                              (*slIter)->getCurve()) == LARGER)
 	{
 	  SL_DEBUG(std::cout<<"checking \n";)
 	  SL_DEBUG((*slIter)->Print();) 
@@ -546,8 +546,7 @@ protected:
     const Point_2 &topEnd = vcurve->getTopEnd();
     // handle a curve that goes through the top point of the vertical curve
     if (m_traits->point_in_x_range(curve->getCurve(), topEnd) &&
-	m_traits->curve_compare_y_at_x(curve->getCurve(), 
-					 topEnd) == EQUAL)
+	m_traits->curve_compare_y_at_x(topEnd, curve->getCurve()) == EQUAL)
     {
       if ( !curve->isLeftEnd(topEnd)) {
 	topEndEvent->addCurveToLeft(curve, m_prevPos);
@@ -561,8 +560,8 @@ protected:
     // handle a curve that goes through the bottom point of the vertical curve
     const Point_2 &currentPoint = m_currentEvent->getPoint();
     if (m_traits->point_in_x_range((curve)->getCurve(), currentPoint) &&
-	m_traits->curve_compare_y_at_x((curve)->getCurve(), 
-					 currentPoint) == EQUAL)
+	m_traits->curve_compare_y_at_x(currentPoint, (curve)->getCurve()) ==
+        EQUAL)
     {
       if ( !(curve)->isLeftEnd(currentPoint)) {
 	m_currentEvent->addCurveToLeft(curve, m_prevPos);
@@ -594,7 +593,7 @@ protected:
       Subcurve *curve = *iter;
       
       if (m_traits->point_in_x_range(curve->getCurve(), point) &&
-	  m_traits->curve_compare_y_at_x(curve->getCurve(), point)==SMALLER)
+	  m_traits->curve_compare_y_at_x(point, curve->getCurve()) == LARGER)
       {
 	iter = m_verticals.erase(iter);
 	

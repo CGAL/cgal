@@ -26,15 +26,9 @@
 #ifndef CGAL_PM_STRAIGHT_TRAITS_2_H
 #define CGAL_PM_STRAIGHT_TRAITS_2_H
 
-#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
-#endif
-#ifndef CGAL_POINT_2_H
 #include <CGAL/Point_2.h>
-#endif
-#ifndef CGAL_STRAIGHT_2_H
 #include <CGAL/Straight_2.h>
-#endif
 
 #ifndef CGAL_ISO_RECTANGLE_2_H
 #include <CGAL/Iso_rectangle_2.h>
@@ -461,25 +455,21 @@ public:
     }
   
   
-  Comparison_result curve_compare_y_at_x (const X_curve &cv, 
-					    const Point & p) const
-    {
-      CGAL_precondition (point_in_x_range(cv, p));
+  Comparison_result curve_compare_y_at_x (const Point & p,
+                                          const X_curve & cv) const
+  {
+    CGAL_precondition (point_in_x_range(cv, p));
 
-      if (!curve_is_vertical(cv))
-        {
-          return (compare_y(curve_calc_point(cv, p), p));
-        }
-      else
-        {
-          if (is_lower(p,lowest(curve_source(cv),curve_target(cv))))
-            return LARGER;
-          if (is_higher(p,highest(curve_source(cv),curve_target(cv))))
-            return SMALLER;
-	  else
-	    return EQUAL;
-        }
-    }
+    if (!curve_is_vertical(cv))
+      return (compare_y(p, curve_calc_point(cv, p)));
+
+    if (is_lower(p,lowest(curve_source(cv),curve_target(cv))))
+      return SMALLER;
+    if (is_higher(p,highest(curve_source(cv),curve_target(cv))))
+      return LARGER;
+    else
+      return EQUAL;
+  }
 
   Comparison_result 
   curves_compare_y_at_x(const X_curve &cv1, const X_curve &cv2, const Point &q)

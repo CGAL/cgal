@@ -203,7 +203,7 @@ public:
   bool isPointInRange(const Point_2 &p)
   {
     if (! m_traits->point_in_x_range(m_curve, p) ||
-	m_traits->curve_compare_y_at_x(m_curve, p) != EQUAL)
+	m_traits->curve_compare_y_at_x(p, m_curve) != EQUAL)
       return false;
     if ( isEndPoint(p) )
       return false;

@@ -241,21 +241,15 @@ public:
    * \param cv The curve.
    * \param p The point.
    * \pre p is in the x-range of cv.
-   * \return SMALLER if cv(x(p)) < y(p);
-   *         LARGER if cv(x(p)) > y(p);
+   * \return LARGER if y(p) > cv(x(p));
+   *         SMALLER if y(p) < cv(x(p));
    *         or else (if p is on the curve) EQUAL.
    */
-  Comparison_result curve_compare_y_at_x (const X_monotone_curve_2 & cv, 
-                                          const Point_2 & p) const
+  Comparison_result curve_compare_y_at_x (const Point_2 & p,
+                                          const X_monotone_curve_2 & cv) const
   {
     CGAL_precondition(point_in_x_range(cv, p));
-
-    Comparison_result res = compare_y_at_x_2_object()(p, cv);
-    if (res == SMALLER)
-      return (LARGER);
-    else if (res == LARGER)
-      return (SMALLER);
-    return (EQUAL);
+    return compare_y_at_x_2_object()(p, cv);
   }
 
   /*! Check if the two curves are the same (have the same graph).

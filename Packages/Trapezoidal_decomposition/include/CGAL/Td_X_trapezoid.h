@@ -337,10 +337,12 @@ public:
           return false;
         }
 
-	b=traits->point_in_x_range(bottom(),left());
-	if (b)
-	  t=traits->curve_compare_y_at_x(bottom(),left());
-
+	b = traits->point_in_x_range(bottom(),left());
+	if (b) {
+	  t = traits->curve_compare_y_at_x(left(), bottom());
+          if (t == LARGER) t = SMALLER;
+          if (t == SMALLER) t = LARGER;
+        }
         if (!b || t == LARGER)
         {
           std::cerr << "\nthis=";
@@ -351,9 +353,11 @@ public:
         }
 
 	b=traits->point_in_x_range(bottom(),right());
-	if (b)
-	  t=traits->curve_compare_y_at_x(bottom(),right());
-
+	if (b) {
+	  t = traits->curve_compare_y_at_x(right(), bottom());
+          if (t == LARGER) t = SMALLER;
+          if (t == SMALLER) t = LARGER;
+        }
         if (!b || t == LARGER)
         {
           std::cerr << "\nthis=";
@@ -374,9 +378,11 @@ public:
         }
 
 	b=traits->point_in_x_range(top(),left());
-	if (b)
-	  t=traits->curve_compare_y_at_x(top(),left());
-        
+	if (b) {
+	  t = traits->curve_compare_y_at_x(left(), top());
+          if (t == LARGER) t = SMALLER;
+          if (t == SMALLER) t = LARGER;
+        }
 	if (!b || t == SMALLER)
         {
           std::cerr << "\nthis=";
@@ -387,8 +393,11 @@ public:
         }
 
 	b=traits->point_in_x_range(top(),right());
-	if (b)
-	  t=traits->curve_compare_y_at_x(top(),right());
+	if (b) {
+	  t = traits->curve_compare_y_at_x(right(), top());
+          if (t == LARGER) t = SMALLER;
+          if (t == SMALLER) t = LARGER;
+        }
 
         if (!b || t == SMALLER)
         {
@@ -480,43 +489,41 @@ public:
           return false;
         }
         if (!traits->point_in_x_range(bottom(),left()) ||
-	    traits->curve_compare_y_at_x(bottom(),left()) != EQUAL)
+	    traits->curve_compare_y_at_x(left(), bottom()) != EQUAL)
         {
           std::cerr << "\nbottom()==" << bottom() << std::flush;
           std::cerr << "\nleft()==" << left() << std::flush;
           CGAL_warning(traits->point_in_x_range(bottom(),left()) &&
-		       traits->curve_compare_y_at_x(bottom(),
-						      left()) == EQUAL);
+		       traits->curve_compare_y_at_x(left(), bottom()) ==
+                       EQUAL);
           return false;
         }
         if (!traits->point_in_x_range(bottom(),right()) ||
-	    traits->curve_compare_y_at_x(bottom(),right()) != EQUAL)
+	    traits->curve_compare_y_at_x(right(), bottom()) != EQUAL)
         {
           std::cerr << "\nbottom()==" << bottom() << std::flush;
           std::cerr << "\nright()==" << right() << std::flush;
           CGAL_warning(traits->point_in_x_range(bottom(),right()) &&
-		       traits->curve_compare_y_at_x(bottom(),
-						      right()) == EQUAL);
+		       traits->curve_compare_y_at_x(right(), bottom()) ==
+                       EQUAL);
           return false;
         }
         if (!traits->point_in_x_range(top(),left()) ||
-	    traits->curve_compare_y_at_x(top(),left()) != EQUAL)
+	    traits->curve_compare_y_at_x(left(), top()) != EQUAL)
         {
           std::cerr << "\ntop()==" << top() << std::flush;
           std::cerr << "\nleft()==" << left() << std::flush;
           CGAL_warning(!traits->point_in_x_range(top(),left()) &&
-		       traits->curve_compare_y_at_x(top(),
-						      left()) == EQUAL);
+		       traits->curve_compare_y_at_x(left(), top()) == EQUAL);
           return false;
         }
         if (!traits->point_in_x_range(top(),right()) ||
-	    traits->curve_compare_y_at_x(top(),right()) != EQUAL)
+	    traits->curve_compare_y_at_x(right(), top()) != EQUAL)
         {
           std::cerr << "\ntop()==" << top() << std::flush;
           std::cerr << "\nright()==" << right() << std::flush;
           CGAL_warning(traits->point_in_x_range(top(),right()) &&
-		       traits->curve_compare_y_at_x(top(),
-						      right()) == EQUAL);
+		       traits->curve_compare_y_at_x(right(), top()) == EQUAL);
           return false;
         }
         if (traits->is_degenerate_curve(*this))

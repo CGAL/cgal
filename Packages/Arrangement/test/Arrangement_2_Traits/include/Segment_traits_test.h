@@ -100,8 +100,8 @@ curve_split_wrapper( std::istringstream& strLine ){
   }
   if (! tr.point_in_x_range (all_curves_vec[index1], 
 				all_points_vec[index2]) ||
-      tr.curve_compare_y_at_x( all_curves_vec[index1], 
-                                 all_points_vec[index2]) != CGAL::EQUAL)
+      tr.curve_compare_y_at_x(all_points_vec[index2],
+                              all_curves_vec[index1]) != CGAL::EQUAL)
   {
     std::cout << "Was NOT successful" << std::endl;
     std::cout << "Precondition fault: Split point is not on the curve " 

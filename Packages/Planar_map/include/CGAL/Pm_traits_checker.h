@@ -71,25 +71,26 @@ public:
     CGAL_assertion(P(t.curve_target(cv))==b.curve_target(P(cv)));
     return t.curve_target(cv);
   }
+
   bool curve_is_vertical(const X_curve & cv) const 
   {
     CGAL_assertion(t.curve_is_vertical(cv)==b.curve_is_vertical(P(cv)));
     return t.curve_is_vertical(cv);
   }	
+
   bool point_in_x_range(const X_curve & cv, const Point & q) const
-    {
+  {
     CGAL_assertion(t.point_in_x_range(cv,q) == 
                    b.point_in_x_range(P(cv),P(q)));
     return t.point_in_x_range(cv,q);
-    }
+  }
 
-
-  Comparison_result curve_compare_y_at_x (const X_curve &cv, 
-					    const Point & p) const
+  Comparison_result curve_compare_y_at_x (const Point & p,
+                                          const X_curve & cv) const
   {
-    CGAL_assertion(t.curve_compare_y_at_x(cv,p) == 
-                   b.curve_compare_y_at_x(P(cv),P(p)));
-    return t.curve_compare_y_at_x(cv,p);
+    CGAL_assertion(t.curve_compare_y_at_x(p, cv) == 
+                   b.curve_compare_y_at_x(P(p), P(cv)));
+    return t.curve_compare_y_at_x(p, cv);
   }
   
   Comparison_result 

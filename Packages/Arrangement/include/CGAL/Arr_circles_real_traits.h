@@ -374,13 +374,13 @@ public:
     }
   }
 
-  Comparison_result curve_compare_y_at_x (const X_monotone_curve_2 &cv, 
-                                          const Point_2& p) const
+  Comparison_result curve_compare_y_at_x (const Point_2& p,
+                                          const X_monotone_curve_2 &cv) const
   {
     CGAL_precondition(is_x_monotone(cv));
     CGAL_precondition(point_in_x_range(cv, p));
   
-    return (_compare_value(curve_calc_point(cv, p).y(), p.y()));
+    return (_compare_value(p.y(), curve_calc_point(cv, p).y()));
   }
 
   bool point_equal(const Point_2 & p, const Point_2 & q) const
@@ -593,7 +593,7 @@ public:
     CGAL_precondition(is_x_monotone(cv));
 
     //split curve at split point (x coordinate) into c1 and c2
-    CGAL_precondition(curve_compare_y_at_x(cv,split_pt)==EQUAL);
+    CGAL_precondition(curve_compare_y_at_x(split_pt, cv)==EQUAL);
     CGAL_precondition(compare_x(curve_source(cv),split_pt)!=EQUAL);
     CGAL_precondition(compare_x(curve_target(cv),split_pt)!=EQUAL);
 
@@ -709,9 +709,9 @@ public:
 
     if (compare_x(rgt,pt)==LARGER) {
       if (point_in_x_range(c1, rgt) &&
-	  (curve_compare_y_at_x(c1, rgt) == EQUAL) &&
+	  (curve_compare_y_at_x(rgt, c1) == EQUAL) &&
 	  point_in_x_range(c2, rgt) &&
-          (curve_compare_y_at_x(c2, rgt) == EQUAL) ) 
+          (curve_compare_y_at_x(rgt, c2) == EQUAL) ) 
       {
         p1=p2=rgt;
         return true;
@@ -720,9 +720,9 @@ public:
 
     if (compare_x(lft,pt)==LARGER) {
       if (point_in_x_range(c1, lft) &&
-	  (curve_compare_y_at_x(c1,lft) == EQUAL) &&
+	  (curve_compare_y_at_x(lft, c1) == EQUAL) &&
 	  point_in_x_range(c2, lft) &&
-          (curve_compare_y_at_x(c2,lft) == EQUAL) ) 
+          (curve_compare_y_at_x(lft, c2) == EQUAL) ) 
       {
         p1=p2=lft;
         return true;

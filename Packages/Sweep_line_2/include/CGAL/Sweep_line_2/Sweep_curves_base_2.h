@@ -784,10 +784,9 @@ protected:
 	    return (EQUAL);
 	  
 	  Comparison_result cres = traits->curve_compare_y_at_x
-	    (cv2.get_curve(), 
-	     traits->curve_target(cv1.get_curve()));
+	    (traits->curve_target(cv1.get_curve()), cv2.get_curve());
 
-          if (cres == LARGER || cres == EQUAL)
+          if (cres == SMALLER || cres == EQUAL)
             // if the target is on cv2 its means that it tangent to
             // cv2 from below.
             return  SMALLER;
@@ -816,12 +815,11 @@ protected:
 	    return (EQUAL);
 
           Comparison_result cres = traits->curve_compare_y_at_x
-	    (cv1.get_curve(), 
-	     traits->curve_target(cv2.get_curve()));
+	    (traits->curve_target(cv2.get_curve()), cv1.get_curve());
 
           // if the target is on cv1 its means that it tangent to cv1 
           // from below.
-	  if (cres == LARGER || cres == EQUAL)
+	  if (cres == SMALLER || cres == EQUAL)
             return  LARGER;
           else
             return  SMALLER;
@@ -908,9 +906,9 @@ protected:
         // if first_cv is vertical and its source tangent to second_cv - 
         // it means that first_cv is above second_cv.
 	else if (traits->curve_compare_y_at_x
-		 (update_second_cv ? second_cv : cv2.get_curve(),
-		  traits->curve_source(update_first_cv ? 
-				       first_cv : cv1.get_curve())) == EQUAL)
+		 (traits->curve_source(update_first_cv ? 
+				       first_cv : cv1.get_curve()),
+                  update_second_cv ? second_cv : cv2.get_curve()) == EQUAL)
           result = LARGER;
         else
           result = SMALLER;
@@ -928,9 +926,9 @@ protected:
         // if second_cv is vertical and its source tangent to first_cv - 
         // it means that second_cv is above first_cv.
 	else if (traits->curve_compare_y_at_x
-		 (update_first_cv ? first_cv: cv1.get_curve(), 
-		  traits->curve_source(update_second_cv ? 
-				       second_cv : cv2.get_curve())) == EQUAL)
+		 (traits->curve_source(update_second_cv ? 
+				       second_cv : cv2.get_curve()),
+                  update_first_cv ? first_cv: cv1.get_curve()) == EQUAL)
           result = SMALLER;
         else
           result = LARGER;
@@ -1416,9 +1414,9 @@ protected:
                                 const Point& point)
   { 
     return (traits->point_in_x_range(cv1, point) &&
-	    traits->curve_compare_y_at_x(cv1, point) == EQUAL && 
+	    traits->curve_compare_y_at_x(point, cv1) == EQUAL && 
 	    traits->point_in_x_range(cv2, point) &&
-            traits->curve_compare_y_at_x(cv2, point) == EQUAL && 
+            traits->curve_compare_y_at_x(point, cv2) == EQUAL && 
             (point_is_on_curve_interior(point, cv1) || 
              point_is_on_curve_interior(point, cv2) ) );
     

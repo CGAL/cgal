@@ -1793,7 +1793,7 @@ point_is_in( const Point_2           & p,
     {
       // If point is under current curve in the range (source,target] of it
       if (traits->point_in_x_range(circv,p) &&
-	  (traits->curve_compare_y_at_x(circv,p) == LARGER) && 
+	  (traits->curve_compare_y_at_x(p, circv) == SMALLER) && 
           !(traits->point_equal_x(circ->source()->point(), p))) 
       {  
         // If p is exactly under a vertex of the ccb 

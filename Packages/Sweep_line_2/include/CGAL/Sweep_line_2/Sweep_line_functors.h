@@ -88,9 +88,9 @@ public:
     } 
     return false;
 #else
-    if ( m_compare_param->m_traits->curve_compare_y_at_x(c2->getCurve(),
-                                                          c1->getLeftEnd())
-	 == LARGER)
+    if (m_compare_param->m_traits->curve_compare_y_at_x(c1->getLeftEnd(),
+                                                        c2->getCurve()) ==
+        SMALLER)
       return true;
     return false;
 #endif
@@ -112,7 +112,7 @@ public:
     if ( t->curve_is_vertical(cv1) )
     {
       if (t->point_in_x_range(cv2, c1->getSource()) &&
-	  t->curve_compare_y_at_x(cv2, c1->getTopEnd()) == LARGER )
+	  t->curve_compare_y_at_x(c1->getTopEnd(), cv2) == SMALLER )
       {
 	return true;
       }
@@ -121,7 +121,7 @@ public:
     if ( t->curve_is_vertical(cv2))
     {
       if (t->point_in_x_range(cv1, c2->getSource()) &&
-	  t->curve_compare_y_at_x(cv1, c2->getBottomEnd()) == SMALLER)
+	  t->curve_compare_y_at_x(c2->getBottomEnd(), cv1) == LARGER)
       {
 	return true;
       }

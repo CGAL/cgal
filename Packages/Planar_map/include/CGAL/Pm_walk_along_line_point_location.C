@@ -28,9 +28,7 @@
 #ifndef CGAL_PM_WALK_ALONG_LINE_POINT_LOCATION_C
 #define CGAL_PM_WALK_ALONG_LINE_POINT_LOCATION_C
 
-#ifndef CGAL_PM_WALK_ALONG_LINE_POINT_LOCATION_H
 #include <CGAL/Pm_walk_along_line_point_location.h>
-#endif // CGAL_PM_WALK_ALONG_LINE_POINT_LOCATION_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -339,9 +337,9 @@ bool Pm_walk_along_line_point_location<Planar_map>::find_closest(
       Comparison_result res = EQUAL;
 
       if (in_x_range)
-	res = traits->curve_compare_y_at_x(cv, p);
+	res = traits->curve_compare_y_at_x(p, cv);
 
-      if (res == (up ? LARGER : SMALLER)) 
+      if (res == (up ? SMALLER: LARGER)) 
         /* cv is a non vertical curve intersecting the vertical ray shoot 
                x
              / 

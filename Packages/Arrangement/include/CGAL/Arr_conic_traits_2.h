@@ -426,8 +426,8 @@ class Arr_conic_traits_2
   }  
 
   // Check whether the given point is above, under or on the given curve.
-  Comparison_result curve_compare_y_at_x (const X_monotone_curve_2& curve,
-					    const Point_2& p) const
+  Comparison_result curve_compare_y_at_x(const Point_2& p,
+                                         const X_monotone_curve_2& curve) const
   {
     CGAL_precondition(is_x_monotone(curve));
     CGAL_precondition(point_in_x_range(curve,p));
@@ -437,8 +437,8 @@ class Arr_conic_traits_2
     {
       // In case p has the same x c-ordinate of the vertical segment, compare
       // it to the segment endpoints to determine its position.
-      Comparison_result res1 = _compare_y (curve.source(), p);
-      Comparison_result res2 = _compare_y (curve.target(), p);
+      Comparison_result res1 = _compare_y (p, curve.source());
+      Comparison_result res2 = _compare_y (p, curve.target());
 
       if (res1 == res2)
 	return (res1);

@@ -51,7 +51,7 @@ Pm_naive_point_location<Planar_map>::locate(const Point & p,
   typename Planar_map::Halfedge_iterator hit=pm->halfedges_begin();
   for (; hit != pm->halfedges_end(); ++hit) {
     if (traits->point_in_x_range(hit->curve(),p) &&
-	traits->curve_compare_y_at_x(hit->curve(),p) == EQUAL) {
+	traits->curve_compare_y_at_x(p, hit->curve()) == EQUAL) {
       lt = Planar_map::EDGE; 
       return hit;
     }
@@ -108,10 +108,10 @@ vertical_ray_shoot(const Point & p, Locate_type & lt, bool up) const
   // set the flags for comparison acording to the ray 
   // direction (up/down)
   if (up) {
-    point_above_under = LARGER;
+    point_above_under = SMALLER;
     curve_above_under = LARGER;
   } else {
-    point_above_under = SMALLER;
+    point_above_under = LARGER;
     curve_above_under = SMALLER;
   }
 
@@ -125,7 +125,7 @@ vertical_ray_shoot(const Point & p, Locate_type & lt, bool up) const
     // according to the direction of the shoot.
     in_x_range = traits->point_in_x_range(it->curve(), p);
     if (in_x_range)
-      res = traits->curve_compare_y_at_x(it->curve(), p);
+      res = traits->curve_compare_y_at_x(p, it->curve());
 
     if (in_x_range && res == point_above_under) {
       // If the first curve in the x-range was not found yet
@@ -135,8 +135,8 @@ vertical_ray_shoot(const Point & p, Locate_type & lt, bool up) const
       } else {
         // We found another curve in the x-range and we want to remember
         // the closest
-        if ( traits->curves_compare_y_at_x(closest_edge->curve(),
-                                        it->curve(), p) == curve_above_under) 
+        if (traits->curves_compare_y_at_x(closest_edge->curve(), it->curve(),
+                                          p) == curve_above_under) 
         {
           closest_edge = it;
         }

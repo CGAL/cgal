@@ -27,17 +27,9 @@
 #ifndef CGAL_PM_DEFAULT_POINT_LOCATION_H
 #define CGAL_PM_DEFAULT_POINT_LOCATION_H
 
-#ifndef CGAL_PM_POINT_LOCATION_BASE_H
 #include <CGAL/Pm_point_location_base.h>
-#endif
-
-#ifndef CGAL_TRAPEZOIDAL_DECOMPOSITION_2_H
 #include <CGAL/Trapezoidal_decomposition_2.h>
-#endif
-
-#ifndef CGAL_TD_TRAITS_H
 #include <CGAL/Td_traits.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -302,19 +294,21 @@ private:
                                              const Point& p) const 
   {
     return (traits->point_in_x_range(h->curve(),p) &&
-	    traits->curve_compare_y_at_x(h->curve(),p) == SMALLER) ==
+	    traits->curve_compare_y_at_x(p, h->curve()) == LARGER) ==
       traits->point_is_left(h->source()->point(),h->target()->point());
   }
+
   Halfedge_handle halfedge_representing_unbounded_face() const
   {
     CGAL_assertion(pm);
     if (pm->unbounded_face()->holes_begin()!=pm->unbounded_face()->holes_end())
- {
-   // case PM is not empty
-   //return *(pm->unbounded_face()->holes_begin());
-   typename Planar_map::Holes_iterator hot=pm->unbounded_face()->holes_begin();
-   return (*hot);
- }
+    {
+      // case PM is not empty
+      //return *(pm->unbounded_face()->holes_begin());
+      typename Planar_map::Holes_iterator hot =
+        pm->unbounded_face()->holes_begin();
+      return (*hot);
+    }
     else
       // case PM is empty
       return pm->halfedges_end();
@@ -328,8 +322,8 @@ private:
                       bool up = true) const
   {
     switch(lt)
-      {
-        // h->target() should represent p
+    {
+      // h->target() should represent p
       case TD::POINT:
         if (!halfedge_represents_point(h,p)) h=h->twin();
         return PM::VERTEX;
@@ -357,12 +351,11 @@ private:
       default:
         CGAL_assertion(lt==TD::POINT||lt==TD::CURVE||lt==TD::TRAPEZOID||
                        lt==TD::UNBOUNDED_TRAPEZOID);
-      }
+    }
     return Locate_type();
   }
   const Bounding_box* get_bounding_box() const {return pm->get_bounding_box();}
 };
-
 
 CGAL_END_NAMESPACE
 

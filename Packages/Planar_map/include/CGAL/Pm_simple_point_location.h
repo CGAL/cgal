@@ -113,7 +113,7 @@ public:
     for (hit=relevant_halfedges.begin(); hit!=relevant_halfedges.end(); ++hit) 
       {
 	if (traits->point_in_x_range((*hit)->curve(),p) &&
-	    traits->curve_compare_y_at_x((*hit)->curve(),p) == EQUAL) 
+	    traits->curve_compare_y_at_x(p, (*hit)->curve()) == EQUAL) 
 	  {
 	    lt = Planar_map::EDGE; 
 	    return *hit;
@@ -189,15 +189,15 @@ public:
     // set the flags for comparison acording to the ray 
     // direction (up/down)
     if (up) 
-      {
-	point_above_under = LARGER;
-	curve_above_under = LARGER;
-      } 
+    {
+      point_above_under = SMALLER;
+      curve_above_under = LARGER;
+    } 
     else 
-      {
-	point_above_under = SMALLER;
-	curve_above_under = SMALLER;
-      }
+    {
+      point_above_under = LARGER;
+      curve_above_under = SMALLER;
+    }
 
     typename Halfedges_list::const_iterator rel_it;
     for (rel_it = relevant_halfedges.begin(); 
@@ -207,25 +207,25 @@ public:
 
 	in_x_range = traits->point_in_x_range(it->curve(), p);
 	if (in_x_range)
-	  res = traits->curve_compare_y_at_x(it->curve(), p);
+	  res = traits->curve_compare_y_at_x(p, it->curve());
 
 	if (in_x_range && (res == point_above_under)) 
-	  {
-	    if (!first) 
-	      {
-		closest_edge = it;
-		first = true;
-	      } 
-	    else 
-	      {
-		if (traits->curves_compare_y_at_x(closest_edge->curve(),
-						it->curve(), p) == 
-		    curve_above_under) 
-		  {
-		    closest_edge = it;
-		  }
-	      }
-	  }
+        {
+          if (!first) 
+          {
+            closest_edge = it;
+            first = true;
+          } 
+          else 
+          {
+            if (traits->curves_compare_y_at_x(closest_edge->curve(),
+                                              it->curve(), p) == 
+                curve_above_under) 
+            {
+              closest_edge = it;
+            }
+          }
+        }
 	if (in_x_range && res == EQUAL  && 
 	    traits->curve_is_vertical(it->curve()))
         {

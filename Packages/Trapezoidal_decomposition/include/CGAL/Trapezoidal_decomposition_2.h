@@ -31,9 +31,9 @@
 #ifndef CGAL_TRAPEZOIDAL_DECOMPOSITION_2_H
 #define CGAL_TRAPEZOIDAL_DECOMPOSITION_2_H
 
-#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
-#endif
+#include <CGAL/Trapezoidal_decomposition_2/Trapezoidal_decomposition_2_misc.h>
+#include <CGAL/Trapezoidal_decomposition_2/Td_predicates.h>
 
 #include <cstdlib>
 #include <cstring>
@@ -43,9 +43,6 @@
 #include <list>
 #include <vector>
 #include <map>
-
-#include <CGAL/Trapezoidal_decomposition_2/Trapezoidal_decomposition_2_misc.h>
-#include <CGAL/Trapezoidal_decomposition_2/Td_predicates.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -227,13 +224,13 @@ public:
           curr=0;
         else
         {
-          switch(traits->curve_compare_y_at_x(sep,right))
+          switch(traits->curve_compare_y_at_x(right, sep))
           {
-            case LARGER:
-              curr=curr->right_top_neighbour();
-              break;
             case SMALLER:
-              curr=curr->right_bottom_neighbour();
+              curr = curr->right_top_neighbour();
+              break;
+            case LARGER:
+              curr = curr->right_bottom_neighbour();
               break;
             case EQUAL:
               // end reached
@@ -1435,13 +1432,13 @@ output: trapezoid iterator
       {
         // CURVE SEPRATION
         pc = &curr->top();
-        Comparison_result cres = traits->curve_compare_y_at_x(*pc,p);
-        if (cres == LARGER)
+        Comparison_result cres = traits->curve_compare_y_at_x(p, *pc);
+        if (cres == SMALLER)
         {
           curr = curr.left();
           continue;
         }
-        else if (cres == SMALLER)
+        else if (cres == LARGER)
         {
           curr = curr.right();
           continue;

@@ -395,8 +395,8 @@ curve_compare_y_at_x_wrapper( std::istringstream& strLine )
     std::cout << "The input curve must be X-monotone" << std::endl;
     return false;    
   }
-  real_answer = tr.curve_compare_y_at_x( all_curves_vec[index1], 
-                                           all_points_vec[index2] );
+  real_answer = tr.curve_compare_y_at_x(all_points_vec[index2],
+                                        all_curves_vec[index1]);
   return print_was_successful_or_not( exp_answer, real_answer );
 }
 

@@ -115,15 +115,15 @@
      \ccPrecond{$cv1$ and $cv2$ are defined to the left of $pnt$'s
      $x$-coordinate.}}
     
-    \ccMethod{Curve_point_status curve_compare_y_at_x(const X_monotone_curve_2& cv,
-       const Point_2& pnt);}
+    \ccMethod{Curve_point_status curve_compare_y_at_x(const Point_2& pnt,
+    const X_monotone_curve_2& cv);}
     {compares the y-coordinates of $pnt$ and the vertical projection of $pnt$
-      on $cv$. Returns \ccStyle{SMALLER} if $cv(x(p)) < y(p)$; \ccStyle{LARGER}
-      if $cv(x(p)) > y(p)$; \ccStyle{EQUAL} otherwise (p is on the curve).
+      on $cv$. Returns \ccStyle{LARGER} if y(p) > $cv(x(p))$; \ccStyle{SMALLER}
+      if y(p) < $cv(x(p))$; \ccStyle{EQUAL} otherwise (p is on the curve).
     \ccPrecond{$cv$ is defined at $pnt$'s $x$-coordinate.}}
 
     \ccMethod{bool curve_equal(const X_monotone_curve_2 & cv1,
-                                 const X_monotone_curve_2 & cv2);}
+    const X_monotone_curve_2 & cv2);}
     {returns \ccc{true} if \ccc{cv1} and \ccc{cv2} have the same graph, 
       \ccc{false} otherwise.}
 

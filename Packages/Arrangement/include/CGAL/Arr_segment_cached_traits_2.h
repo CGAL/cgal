@@ -361,28 +361,22 @@ public:
    *         LARGER if cv(x(p)) > y(p);
    *         or else (if p is on the curve) EQUAL.
    */
-  Comparison_result curve_compare_y_at_x(const X_monotone_curve_2 & cv, 
-                                         const Point_2 & p) const
+  Comparison_result curve_compare_y_at_x(const Point_2 & p,
+                                         const X_monotone_curve_2 & cv) const
   {
     CGAL_precondition(point_in_x_range(cv, p));
 
     if (! cv.is_vert)
     {
       // Compare with the supporting line.
-      Comparison_result res = compare_y_at_x_2_object()(p, cv.line);
-
-      if (res == LARGER)
-	return (SMALLER);
-      else if (res == SMALLER)
-	return (LARGER);
-      return (EQUAL);
+      return compare_y_at_x_2_object()(p, cv.line);
     }
     else
     {
       // Compare with the vertical segment's end-points.
       Compare_y_2       compare_y = compare_y_2_object();
-      Comparison_result res1 = compare_y (cv.ps, p);
-      Comparison_result res2 = compare_y (cv.pt, p);
+      Comparison_result res1 = compare_y (p, cv.ps);
+      Comparison_result res2 = compare_y (p, cv.pt);
       
       if (res1 == res2)
 	return (res1);
@@ -490,7 +484,7 @@ public:
                    const Point_2& p) const
   {
     // Check preconditions.
-    CGAL_precondition(curve_compare_y_at_x(cv, p) == EQUAL);
+    CGAL_precondition(curve_compare_y_at_x(p, cv) == EQUAL);
     CGAL_precondition_code(Equal_2 is_equal = equal_2_object());
     CGAL_precondition(!is_equal(cv.ps, p));
     CGAL_precondition(!is_equal(cv.pt, p));

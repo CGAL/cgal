@@ -116,9 +116,9 @@ inline bool trapezoid_top_curve_equal(X_trapezoid_const_ref left,
       (tr.is_right_unbounded()||
        point_is_right_top(tr.right(),p))&&
       (tr.is_bottom_unbounded()||
-       curve_compare_y_at_x(tr.bottom(),p) == SMALLER)&&
+       curve_compare_y_at_x(p, tr.bottom()) == LARGER)&&
       (tr.is_top_unbounded()||
-       curve_compare_y_at_x(tr.top(),p) == LARGER);
+       curve_compare_y_at_x(p, tr.top()) == SMALLER);
   }
 
   bool is_in_closure(const_ref tr,const Point& p) const
@@ -132,13 +132,13 @@ inline bool trapezoid_top_curve_equal(X_trapezoid_const_ref left,
         // test bottom side
         if (!tr.is_bottom_unbounded()) 
           {
-            if (curve_compare_y_at_x(tr.bottom(),p) == LARGER)
+            if (curve_compare_y_at_x(p, tr.bottom()) == SMALLER)
               return false;
           }
         // test top side
         if (!tr.is_top_unbounded())
           {
-            if (curve_compare_y_at_x(tr.top(),p) == SMALLER)
+            if (curve_compare_y_at_x(p, tr.top()) == LARGER)
               return false;
           }
         return true;

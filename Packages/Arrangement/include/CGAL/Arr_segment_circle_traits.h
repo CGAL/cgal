@@ -22,10 +22,9 @@
 #define CGAL_ARR_CONIC_TRAITS_2_H
 
 #include <CGAL/basic.h>
-#include <list>
-
 #include <CGAL/Segment_circle_2.h>
 #include <CGAL/tags.h>
+#include <list>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -625,8 +624,8 @@ class Arr_segment_circle_traits
   }
 
   // Check whether the given point is above, under or on the given curve.
-  Comparison_result curve_compare_y_at_x(const X_monotone_curve_2& curve,
-                                         const Point_2& p) const
+  Comparison_result curve_compare_y_at_x(const Point_2& p,
+                                         const X_monotone_curve_2& curve) const
   {
     CGAL_precondition(is_x_monotone(curve));
     CGAL_precondition(point_in_x_range(curve, p));
@@ -634,8 +633,8 @@ class Arr_segment_circle_traits
     // A special treatment for vertical segments:
     if (curve.is_vertical_segment())
     {
-      Comparison_result res1 = _compare_y (curve.source(), p);
-      Comparison_result res2 = _compare_y (curve.target(), p);
+      Comparison_result res1 = _compare_y (p, curve.source());
+      Comparison_result res2 = _compare_y (p, curve.target());
 
       if (res1 == res2)
 	return (res1);
@@ -653,7 +652,7 @@ class Arr_segment_circle_traits
     CGAL_assertion(n == 1);
 
     // Compare p with the a point of the curve with the same x co-ordinate.
-    return (_compare_y (ps[0], p));
+    return (_compare_y (p, ps[0]));
   }
 
   // Check whether the two curves are identical.

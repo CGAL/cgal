@@ -23,12 +23,6 @@
 
 #include <CGAL/basic.h>
 
-#include <list>
-#include <deque>
-#include <vector>
-
-#include <algorithm>
-
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/predicates_on_lines_2.h>
 #include <CGAL/Segment_2_Segment_2_intersection.h>
@@ -38,6 +32,12 @@
 
 #include <CGAL/Pm_segment_traits_2.h>
 #include <CGAL/tags.h>
+
+#include <list>
+#include <deque>
+#include <vector>
+
+#include <algorithm>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -255,19 +255,19 @@ public:
     return (CGAL::compare_y_at_x(point_to_right(p),l1,l2)); 
   }
 
-  Comparison_result curve_compare_y_at_x (const X_monotone_curve_2 &cv,
-					    const Point_2& p) const
+  Comparison_result curve_compare_y_at_x (const Point_2& p,
+                                          const X_monotone_curve_2 &cv) const
   {
     CGAL_assertion(is_x_monotone(cv));
     CGAL_precondition(point_in_x_range(cv, p));
 
     if (curve_is_vertical(cv))
     {
-      if (CGAL::compare_y(curve_source(cv),p)*
-	  CGAL::compare_y(curve_target(cv),p)<=0)
+      if (CGAL::compare_y(p, curve_source(cv)) *
+	  CGAL::compare_y(p, curve_target(cv)) <= 0)
         return EQUAL;
       else
-	return (CGAL::compare_y(curve_source(cv),p));
+	return (CGAL::compare_y(p, curve_source(cv)));
     }
 
     typename X_monotone_curve_2::const_iterator pit = cv.begin(),
@@ -277,14 +277,7 @@ public:
     }
  
     Line_2 l(*pit,*after);
-
-    Comparison_result res = CGAL::compare_y_at_x(p, l);
-
-    if (res == SMALLER)
-      return LARGER;
-    if (res == LARGER)
-      return SMALLER;
-    return EQUAL;
+    return CGAL::compare_y_at_x(p, l);
   }
     
   /*! \todo replace indirect use point_equal() with equal_2()
@@ -418,7 +411,7 @@ public:
 		   const Point_2 & split_pt)
   {
     //split curve at split point into c1 and c2
-    CGAL_precondition(curve_compare_y_at_x(cv,split_pt)==EQUAL);
+    CGAL_precondition(curve_compare_y_at_x(split_pt, cv) == EQUAL);
     CGAL_precondition(CGAL::compare_lexicographically_xy(curve_source(cv),
 							 split_pt) != EQUAL);
     CGAL_precondition(CGAL::compare_lexicographically_xy(curve_target(cv),

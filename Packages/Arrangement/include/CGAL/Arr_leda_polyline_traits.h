@@ -23,15 +23,13 @@
 
 #include <CGAL/LEDA_basic.h>
 #include <CGAL/basic.h>
-
-#include <list>
-#include <deque>
-#include <vector>
-
-#include <algorithm>
 #include <CGAL/rat_leda_in_CGAL_2.h>
 #include <LEDA/rat_point.h>
 #include <CGAL/tags.h>
+#include <list>
+#include <deque>
+#include <vector>
+#include <algorithm>
 
 //the following is for a type check (creates compiler problems,not implemented)
 //#include <typeinfo>
@@ -255,18 +253,19 @@ public:
     return (Comparison_result)CGAL_LEDA_SCOPE::cmp_slopes(l1,l2);
   }
 
-  Comparison_result curve_compare_y_at_x (const X_monotone_curve_2 &cv, 
-					    const Point_2& p) const
+  Comparison_result curve_compare_y_at_x (const Point_2& p,
+                                          const X_monotone_curve_2 &cv) const
   {
     CGAL_assertion(is_x_monotone(cv));
     CGAL_precondition(point_in_x_range(cv, p));
 
     if (curve_is_vertical(cv))
     {
-      if (_compare_y(curve_source(cv),p)*_compare_y(curve_target(cv),p)<=0)
+      if (_compare_y(p, curve_source(cv)) * _compare_y(p, curve_target(cv))
+          <= 0)
         return EQUAL;
       else
-	return (_compare_y(curve_source(cv),p));
+	return (_compare_y(p, curve_source(cv)));
     }
       
     typename X_monotone_curve_2::const_iterator pit=cv.begin();
@@ -285,9 +284,9 @@ public:
         (Orientation)CGAL_LEDA_SCOPE::orientation(l.target(), l.source(), p);
       
     if (o < 0)
-      return LARGER;
-    if (o > 0)
       return SMALLER;
+    if (o > 0)
+      return LARGER;
     return EQUAL;  // if (o == 0)   
   }
   

@@ -111,7 +111,7 @@ public:
                    const Point_2 & split_pt)
   {
     //split curve at split point (x coordinate) into c1 and c2
-    CGAL_precondition(curve_compare_y_at_x(cv, split_pt) == EQUAL);
+    CGAL_precondition(curve_compare_y_at_x(split_pt, cv) == EQUAL);
     CGAL_precondition_code(Equal_2 is_equal = equal_2_object());
     CGAL_precondition(!is_equal(curve_source(cv), split_pt));
     CGAL_precondition(!is_equal(curve_target(cv), split_pt));
