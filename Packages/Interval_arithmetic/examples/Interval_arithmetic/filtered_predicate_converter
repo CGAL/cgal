@@ -102,7 +102,7 @@ while (<>)
         $last_arg=$1;
       }
       s/,[\s]*/,\n\t/g; # Split to make the lines < 80 characters.
-      s/[RF]T/Filtered_exact<CT,ET>/g;
+      s/[RF]T/Filtered_exact<CGAL_IA_CT,CGAL_IA_ET>/g;
     }
     if (/\(/) {
       /([a-zA-Z_]\w*)\s*\(/;
@@ -111,7 +111,7 @@ while (<>)
     }
   }
   if (/template/) { $after_template = 1; }
-  s/template\s*<\s*class\s*[RF]T\s*>/template < class CT, class ET >/;
+  s/template\s*<\s*class\s*[RF]T\s*>/#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION\ntemplate < class CGAL_IA_CT, class CGAL_IA_ET >\n#endif/;
 
   if ($in_header)
   {

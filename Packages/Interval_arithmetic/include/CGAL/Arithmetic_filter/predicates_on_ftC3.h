@@ -38,15 +38,17 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class CT, class ET >
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET >
+#endif
 // CGAL_KERNEL_MEDIUM_INLINE
 Comparison_result
-compare_lexicographically_xyzC3(const Filtered_exact<CT,ET> &x1,
-	const Filtered_exact<CT,ET> &y1,
-	const Filtered_exact<CT,ET> &z1,
-	                                const Filtered_exact<CT,ET> &x2,
-	const Filtered_exact<CT,ET> &y2,
-	const Filtered_exact<CT,ET> &z2)
+compare_lexicographically_xyzC3(const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &x1,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &y1,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &z1,
+	                                const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &x2,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &y2,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &z2)
 {
   Comparison_result result;
   FPU_CW_t backup = FPU_get_cw();
@@ -76,18 +78,20 @@ compare_lexicographically_xyzC3(const Filtered_exact<CT,ET> &x1,
   return result;
 }
 
-template < class CT, class ET >
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET >
+#endif
 // CGAL_KERNEL_MEDIUM_INLINE
 bool
-collinearC3(const Filtered_exact<CT,ET> &px,
-	const Filtered_exact<CT,ET> &py,
-	const Filtered_exact<CT,ET> &pz,
-	            const Filtered_exact<CT,ET> &qx,
-	const Filtered_exact<CT,ET> &qy,
-	const Filtered_exact<CT,ET> &qz,
-	            const Filtered_exact<CT,ET> &rx,
-	const Filtered_exact<CT,ET> &ry,
-	const Filtered_exact<CT,ET> &rz)
+collinearC3(const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &px,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &py,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pz,
+	            const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qy,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qz,
+	            const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &rx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &ry,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &rz)
 {
   bool result;
   FPU_CW_t backup = FPU_get_cw();
@@ -123,21 +127,23 @@ collinearC3(const Filtered_exact<CT,ET> &px,
   return result;
 }
 
-template < class CT, class ET >
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET >
+#endif
 // CGAL_KERNEL_MEDIUM_INLINE
 Orientation
-orientationC3(const Filtered_exact<CT,ET> &px,
-	const Filtered_exact<CT,ET> &py,
-	const Filtered_exact<CT,ET> &pz,
-	              const Filtered_exact<CT,ET> &qx,
-	const Filtered_exact<CT,ET> &qy,
-	const Filtered_exact<CT,ET> &qz,
-	              const Filtered_exact<CT,ET> &rx,
-	const Filtered_exact<CT,ET> &ry,
-	const Filtered_exact<CT,ET> &rz,
-	              const Filtered_exact<CT,ET> &sx,
-	const Filtered_exact<CT,ET> &sy,
-	const Filtered_exact<CT,ET> &sz)
+orientationC3(const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &px,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &py,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pz,
+	              const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qy,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qz,
+	              const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &rx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &ry,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &rz,
+	              const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &sx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &sy,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &sz)
 {
   Orientation result;
   FPU_CW_t backup = FPU_get_cw();
@@ -179,19 +185,21 @@ orientationC3(const Filtered_exact<CT,ET> &px,
   return result;
 }
 
-template < class CT, class ET >
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET >
+#endif
 // CGAL_KERNEL_MEDIUM_INLINE
 bool
 collinear_are_ordered_along_lineC3(
-     const Filtered_exact<CT,ET> &px,
-	const Filtered_exact<CT,ET> &py,
-	const Filtered_exact<CT,ET> &pz,
-	     const Filtered_exact<CT,ET> &qx,
-	const Filtered_exact<CT,ET> &qy,
-	const Filtered_exact<CT,ET> &qz,
-	     const Filtered_exact<CT,ET> &rx,
-	const Filtered_exact<CT,ET> &ry,
-	const Filtered_exact<CT,ET> &rz)
+     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &px,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &py,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pz,
+	     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qy,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qz,
+	     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &rx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &ry,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &rz)
 {
   bool result;
   FPU_CW_t backup = FPU_get_cw();
@@ -227,19 +235,21 @@ collinear_are_ordered_along_lineC3(
   return result;
 }
 
-template < class CT, class ET >
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET >
+#endif
 // CGAL_KERNEL_MEDIUM_INLINE
 bool
 collinear_are_strictly_ordered_along_lineC3(
-     const Filtered_exact<CT,ET> &px,
-	const Filtered_exact<CT,ET> &py,
-	const Filtered_exact<CT,ET> &pz,
-	     const Filtered_exact<CT,ET> &qx,
-	const Filtered_exact<CT,ET> &qy,
-	const Filtered_exact<CT,ET> &qz,
-	     const Filtered_exact<CT,ET> &rx,
-	const Filtered_exact<CT,ET> &ry,
-	const Filtered_exact<CT,ET> &rz)
+     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &px,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &py,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pz,
+	     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qy,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qz,
+	     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &rx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &ry,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &rz)
 {
   bool result;
   FPU_CW_t backup = FPU_get_cw();
@@ -276,24 +286,26 @@ collinear_are_strictly_ordered_along_lineC3(
 }
 
 
-template < class CT, class ET >
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET >
+#endif
 // CGAL_KERNEL_LARGE_INLINE
 Oriented_side
-side_of_oriented_sphereC3(const Filtered_exact<CT,ET> &px,
-	const Filtered_exact<CT,ET> &py,
-	const Filtered_exact<CT,ET> &pz,
-	                          const Filtered_exact<CT,ET> &qx,
-	const Filtered_exact<CT,ET> &qy,
-	const Filtered_exact<CT,ET> &qz,
-	                          const Filtered_exact<CT,ET> &rx,
-	const Filtered_exact<CT,ET> &ry,
-	const Filtered_exact<CT,ET> &rz,
-	                          const Filtered_exact<CT,ET> &sx,
-	const Filtered_exact<CT,ET> &sy,
-	const Filtered_exact<CT,ET> &sz,
-	                          const Filtered_exact<CT,ET> &tx,
-	const Filtered_exact<CT,ET> &ty,
-	const Filtered_exact<CT,ET> &tz)
+side_of_oriented_sphereC3(const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &px,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &py,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pz,
+	                          const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qy,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qz,
+	                          const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &rx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &ry,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &rz,
+	                          const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &sx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &sy,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &sz,
+	                          const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &tx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &ty,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &tz)
 {
   Oriented_side result;
   FPU_CW_t backup = FPU_get_cw();
@@ -341,24 +353,26 @@ side_of_oriented_sphereC3(const Filtered_exact<CT,ET> &px,
   return result;
 }
 
-template < class CT, class ET >
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET >
+#endif
 // CGAL_KERNEL_MEDIUM_INLINE
 Bounded_side
-side_of_bounded_sphereC3(const Filtered_exact<CT,ET> &px,
-	const Filtered_exact<CT,ET> &py,
-	const Filtered_exact<CT,ET> &pz,
-	                         const Filtered_exact<CT,ET> &qx,
-	const Filtered_exact<CT,ET> &qy,
-	const Filtered_exact<CT,ET> &qz,
-	                         const Filtered_exact<CT,ET> &rx,
-	const Filtered_exact<CT,ET> &ry,
-	const Filtered_exact<CT,ET> &rz,
-	                         const Filtered_exact<CT,ET> &sx,
-	const Filtered_exact<CT,ET> &sy,
-	const Filtered_exact<CT,ET> &sz,
-	                         const Filtered_exact<CT,ET> &tx,
-	const Filtered_exact<CT,ET> &ty,
-	const Filtered_exact<CT,ET> &tz)
+side_of_bounded_sphereC3(const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &px,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &py,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pz,
+	                         const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qy,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qz,
+	                         const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &rx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &ry,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &rz,
+	                         const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &sx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &sy,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &sz,
+	                         const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &tx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &ty,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &tz)
 {
   Bounded_side result;
   FPU_CW_t backup = FPU_get_cw();
@@ -407,18 +421,20 @@ side_of_bounded_sphereC3(const Filtered_exact<CT,ET> &px,
 }
 
 
-template < class CT, class ET >
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET >
+#endif
 // CGAL_KERNEL_INLINE
 Comparison_result
-cmp_dist_to_pointC3(const Filtered_exact<CT,ET> &px,
-	const Filtered_exact<CT,ET> &py,
-	const Filtered_exact<CT,ET> &pz,
-	                    const Filtered_exact<CT,ET> &qx,
-	const Filtered_exact<CT,ET> &qy,
-	const Filtered_exact<CT,ET> &qz,
-	                    const Filtered_exact<CT,ET> &rx,
-	const Filtered_exact<CT,ET> &ry,
-	const Filtered_exact<CT,ET> &rz)
+cmp_dist_to_pointC3(const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &px,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &py,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pz,
+	                    const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qy,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qz,
+	                    const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &rx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &ry,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &rz)
 {
   Comparison_result result;
   FPU_CW_t backup = FPU_get_cw();
@@ -454,18 +470,20 @@ cmp_dist_to_pointC3(const Filtered_exact<CT,ET> &px,
   return result;
 }
 
-template < class CT, class ET >
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET >
+#endif
 // CGAL_KERNEL_MEDIUM_INLINE
 bool
-has_larger_dist_to_pointC3(const Filtered_exact<CT,ET> &px,
-	const Filtered_exact<CT,ET> &py,
-	const Filtered_exact<CT,ET> &pz,
-	                           const Filtered_exact<CT,ET> &qx,
-	const Filtered_exact<CT,ET> &qy,
-	const Filtered_exact<CT,ET> &qz,
-	                           const Filtered_exact<CT,ET> &rx,
-	const Filtered_exact<CT,ET> &ry,
-	const Filtered_exact<CT,ET> &rz)
+has_larger_dist_to_pointC3(const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &px,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &py,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pz,
+	                           const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qy,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qz,
+	                           const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &rx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &ry,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &rz)
 {
   bool result;
   FPU_CW_t backup = FPU_get_cw();
@@ -501,18 +519,20 @@ has_larger_dist_to_pointC3(const Filtered_exact<CT,ET> &px,
   return result;
 }
 
-template < class CT, class ET >
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET >
+#endif
 // CGAL_KERNEL_MEDIUM_INLINE
 bool
-has_smaller_dist_to_pointC3(const Filtered_exact<CT,ET> &px,
-	const Filtered_exact<CT,ET> &py,
-	const Filtered_exact<CT,ET> &pz,
-	                            const Filtered_exact<CT,ET> &qx,
-	const Filtered_exact<CT,ET> &qy,
-	const Filtered_exact<CT,ET> &qz,
-	                            const Filtered_exact<CT,ET> &rx,
-	const Filtered_exact<CT,ET> &ry,
-	const Filtered_exact<CT,ET> &rz)
+has_smaller_dist_to_pointC3(const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &px,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &py,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pz,
+	                            const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qy,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qz,
+	                            const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &rx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &ry,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &rz)
 {
   bool result;
   FPU_CW_t backup = FPU_get_cw();
@@ -548,20 +568,22 @@ has_smaller_dist_to_pointC3(const Filtered_exact<CT,ET> &px,
   return result;
 }
 
-template < class CT, class ET >
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET >
+#endif
 // CGAL_KERNEL_MEDIUM_INLINE
 Comparison_result
 cmp_signed_dist_to_planeC3(
-     const Filtered_exact<CT,ET> &pa,
-	const Filtered_exact<CT,ET> &pb,
-	const Filtered_exact<CT,ET> &pc,
-	const Filtered_exact<CT,ET> &pd,
-	     const Filtered_exact<CT,ET> &px,
-	const Filtered_exact<CT,ET> &py,
-	const Filtered_exact<CT,ET> &pz,
-	     const Filtered_exact<CT,ET> &qx,
-	const Filtered_exact<CT,ET> &qy,
-	const Filtered_exact<CT,ET> &qz)
+     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pa,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pb,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pc,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pd,
+	     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &px,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &py,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pz,
+	     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qy,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qz)
 {
   Comparison_result result;
   FPU_CW_t backup = FPU_get_cw();
@@ -599,20 +621,22 @@ cmp_signed_dist_to_planeC3(
   return result;
 }
 
-template < class CT, class ET >
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET >
+#endif
 // CGAL_KERNEL_MEDIUM_INLINE
 bool
 has_larger_signed_dist_to_planeC3(
-     const Filtered_exact<CT,ET> &pa,
-	const Filtered_exact<CT,ET> &pb,
-	const Filtered_exact<CT,ET> &pc,
-	const Filtered_exact<CT,ET> &pd,
-	     const Filtered_exact<CT,ET> &px,
-	const Filtered_exact<CT,ET> &py,
-	const Filtered_exact<CT,ET> &pz,
-	     const Filtered_exact<CT,ET> &qx,
-	const Filtered_exact<CT,ET> &qy,
-	const Filtered_exact<CT,ET> &qz)
+     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pa,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pb,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pc,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pd,
+	     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &px,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &py,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pz,
+	     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qy,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qz)
 {
   bool result;
   FPU_CW_t backup = FPU_get_cw();
@@ -650,20 +674,22 @@ has_larger_signed_dist_to_planeC3(
   return result;
 }
 
-template < class CT, class ET >
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET >
+#endif
 // CGAL_KERNEL_MEDIUM_INLINE
 bool
 has_smaller_signed_dist_to_planeC3(
-     const Filtered_exact<CT,ET> &pa,
-	const Filtered_exact<CT,ET> &pb,
-	const Filtered_exact<CT,ET> &pc,
-	const Filtered_exact<CT,ET> &pd,
-	     const Filtered_exact<CT,ET> &px,
-	const Filtered_exact<CT,ET> &py,
-	const Filtered_exact<CT,ET> &pz,
-	     const Filtered_exact<CT,ET> &qx,
-	const Filtered_exact<CT,ET> &qy,
-	const Filtered_exact<CT,ET> &qz)
+     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pa,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pb,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pc,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pd,
+	     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &px,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &py,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pz,
+	     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qy,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qz)
 {
   bool result;
   FPU_CW_t backup = FPU_get_cw();
@@ -700,25 +726,27 @@ has_smaller_signed_dist_to_planeC3(
   }
   return result;
 }
-template < class CT, class ET >
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET >
+#endif
 // CGAL_KERNEL_MEDIUM_INLINE
 Comparison_result
 cmp_signed_dist_to_planeC3(
-     const Filtered_exact<CT,ET> &ppx,
-	const Filtered_exact<CT,ET> &ppy,
-	const Filtered_exact<CT,ET> &ppz,
-	     const Filtered_exact<CT,ET> &pqx,
-	const Filtered_exact<CT,ET> &pqy,
-	const Filtered_exact<CT,ET> &pqz,
-	     const Filtered_exact<CT,ET> &prx,
-	const Filtered_exact<CT,ET> &pry,
-	const Filtered_exact<CT,ET> &prz,
-	     const Filtered_exact<CT,ET> &px,
-	const Filtered_exact<CT,ET> &py,
-	const Filtered_exact<CT,ET> &pz,
-	     const Filtered_exact<CT,ET> &qx,
-	const Filtered_exact<CT,ET> &qy,
-	const Filtered_exact<CT,ET> &qz)
+     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &ppx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &ppy,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &ppz,
+	     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pqx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pqy,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pqz,
+	     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &prx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pry,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &prz,
+	     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &px,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &py,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pz,
+	     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qy,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qz)
 {
   Comparison_result result;
   FPU_CW_t backup = FPU_get_cw();
@@ -766,25 +794,27 @@ cmp_signed_dist_to_planeC3(
   return result;
 }
 
-template < class CT, class ET >
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET >
+#endif
 // CGAL_KERNEL_MEDIUM_INLINE
 bool
 has_larger_signed_dist_to_planeC3(
-     const Filtered_exact<CT,ET> &ppx,
-	const Filtered_exact<CT,ET> &ppy,
-	const Filtered_exact<CT,ET> &ppz,
-	     const Filtered_exact<CT,ET> &pqx,
-	const Filtered_exact<CT,ET> &pqy,
-	const Filtered_exact<CT,ET> &pqz,
-	     const Filtered_exact<CT,ET> &prx,
-	const Filtered_exact<CT,ET> &pry,
-	const Filtered_exact<CT,ET> &prz,
-	     const Filtered_exact<CT,ET> &px,
-	const Filtered_exact<CT,ET> &py,
-	const Filtered_exact<CT,ET> &pz,
-	     const Filtered_exact<CT,ET> &qx,
-	const Filtered_exact<CT,ET> &qy,
-	const Filtered_exact<CT,ET> &qz)
+     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &ppx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &ppy,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &ppz,
+	     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pqx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pqy,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pqz,
+	     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &prx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pry,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &prz,
+	     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &px,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &py,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pz,
+	     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qy,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qz)
 {
   bool result;
   FPU_CW_t backup = FPU_get_cw();
@@ -832,25 +862,27 @@ has_larger_signed_dist_to_planeC3(
   return result;
 }
 
-template < class CT, class ET >
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET >
+#endif
 // CGAL_KERNEL_MEDIUM_INLINE
 bool
 has_smaller_signed_dist_to_planeC3(
-     const Filtered_exact<CT,ET> &ppx,
-	const Filtered_exact<CT,ET> &ppy,
-	const Filtered_exact<CT,ET> &ppz,
-	     const Filtered_exact<CT,ET> &pqx,
-	const Filtered_exact<CT,ET> &pqy,
-	const Filtered_exact<CT,ET> &pqz,
-	     const Filtered_exact<CT,ET> &prx,
-	const Filtered_exact<CT,ET> &pry,
-	const Filtered_exact<CT,ET> &prz,
-	     const Filtered_exact<CT,ET> &px,
-	const Filtered_exact<CT,ET> &py,
-	const Filtered_exact<CT,ET> &pz,
-	     const Filtered_exact<CT,ET> &qx,
-	const Filtered_exact<CT,ET> &qy,
-	const Filtered_exact<CT,ET> &qz)
+     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &ppx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &ppy,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &ppz,
+	     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pqx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pqy,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pqz,
+	     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &prx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pry,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &prz,
+	     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &px,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &py,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &pz,
+	     const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qx,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qy,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &qz)
 {
   bool result;
   FPU_CW_t backup = FPU_get_cw();
