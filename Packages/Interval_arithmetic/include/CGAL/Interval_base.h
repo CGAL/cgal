@@ -71,6 +71,11 @@ struct Interval_base
     return false;
   }
 
+  bool operator>  (const IA &d) const
+  {
+    return d < *this;
+  }
+
   bool operator<= (const IA &d) const
   {
     if (sup_ <= d.inf_) return true;
@@ -90,6 +95,11 @@ struct Interval_base
     if (d.inf_ == sup_ && d.sup_ == inf_) return true;
     overlap_action();
     return false;
+  }
+
+  bool operator!= (const IA &d) const
+  {
+    return !(*this == d);
   }
 
   bool is_point() const
