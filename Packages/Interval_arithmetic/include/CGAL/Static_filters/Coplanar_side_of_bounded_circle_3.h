@@ -76,7 +76,7 @@ protected:
  
   SF_Side_of_bounded_circle_3()
   {
-      _static_epsilon = HUGE_VAL;
+      _static_epsilon = CGALi::infinity;
   }
 
 public:

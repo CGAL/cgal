@@ -153,11 +153,7 @@ bool overflow_test()
   IA_nt c (-2,2), d(-2.1,2.1);
   IA_nt e (-2,2), f(2), g(-2);
 
-#ifdef __INTEL_COMPILER
-  DEBUG( std::cout << "+infinity = " << CGAL::CGALi::Huge_val << std::endl; )
-#else
-  DEBUG( std::cout << "+infinity = " << HUGE_VAL << std::endl; )
-#endif
+  DEBUG( std::cout << "+infinity = " << CGAL::CGALi::infinity << std::endl; )
   DEBUG( std::cout << "maxdouble = " << CGAL_IA_MAX_DOUBLE << std::endl; )
   DEBUG( std::cout << "largest   = " << CGAL::Interval_nt_advanced::largest() << std::endl; )
   DEBUG( std::cout << "smallest  = " << CGAL::Interval_nt_advanced::smallest() << std::endl; )
@@ -180,23 +176,13 @@ bool overflow_test()
     DEBUG( std::cout << "f = " << f << std::endl; )
   }
 
-#ifdef __INTEL_COMPILER
-  return a.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, CGAL::CGALi::Huge_val)) &&
-         b.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, CGAL::CGALi::Huge_val)) &&
+  return a.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, CGAL::CGALi::infinity)) &&
+         b.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, CGAL::CGALi::infinity)) &&
          c.is_same(IA_nt::largest()) &&
          d.is_same(IA_nt::largest()) &&
 	 e.is_same(IA_nt::largest()) &&
-	 f.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, CGAL::CGALi::Huge_val)) &&
+	 f.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, CGAL::CGALi::infinity)) &&
 	 g.is_same(-f);
-#else
-  return a.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, HUGE_VAL)) &&
-         b.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, HUGE_VAL)) &&
-         c.is_same(IA_nt::largest()) &&
-         d.is_same(IA_nt::largest()) &&
-	 e.is_same(IA_nt::largest()) &&
-	 f.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, HUGE_VAL)) &&
-	 g.is_same(-f);
-#endif
 }
 
 

@@ -65,7 +65,7 @@ protected:
  
   SF_Side_of_oriented_circle_2()
   {
-      _static_epsilon = HUGE_VAL;
+      _static_epsilon = CGALi::infinity;
   }
 
 public:

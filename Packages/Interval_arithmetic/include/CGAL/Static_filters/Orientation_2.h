@@ -75,7 +75,7 @@ protected:
 
   SF_Orientation_2()
   {
-      _static_epsilon = HUGE_VAL;
+      _static_epsilon = CGALi::infinity;
   }
 
 public:

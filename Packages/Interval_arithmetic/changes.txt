@@ -1,4 +1,7 @@
 18 Apr 2004 Sylvain Pion
+- Rename Huge_val to infinity, and move it to FPU.h.
+
+18 Apr 2004 Sylvain Pion
 - Remove explicit compilers tests :
   - use CGAL_CFG_DENORMALS_COMPILE_BUG instead.
   - is_valid() : no need to optimize unportably.

@@ -79,11 +79,19 @@ extern "C" {
 
 CGAL_BEGIN_NAMESPACE
 
-#ifdef CGAL_CFG_DENORMALS_COMPILE_BUG
 namespace CGALi {
+
+#ifdef CGAL_CFG_DENORMALS_COMPILE_BUG
 extern double minimin;
-}
 #endif
+
+#ifdef __INTEL_COMPILER
+const double infinity = std::numeric_limits<double>::infinity();
+#else
+const double infinity = HUGE_VAL;
+#endif
+
+} // namespace CGALi
 
 
 // Inline function to stop compiler optimization.

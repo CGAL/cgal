@@ -1,4 +1,4 @@
-// Copyright (c) 1998,1999,2000,2001,2002  Utrecht University (The Netherlands),
+// Copyright (c) 1998-2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -42,14 +42,7 @@
 CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
-
   struct Unsafe_comparison {};    // Exception class.
-
-#ifdef __INTEL_COMPILER
-  const double Huge_val = std::numeric_limits<double>::infinity();
-#else
-  const double Huge_val = HUGE_VAL; // Workaround for G++ 2.95 on Linux.
-#endif
 }
 
 template <bool Protected = true>
@@ -144,9 +137,7 @@ public:
 
   static IA largest()
   {
-    // G++ 2.95 on Linux has problems with HUGE_VAL in template context.
-    // (it's a macro defined by "__extension__ ..." and it gets lost.
-    return IA(-CGALi::Huge_val, CGALi::Huge_val);
+    return IA(-CGALi::infinity, CGALi::infinity);
   } 
 
   static IA smallest()
@@ -589,7 +580,7 @@ operator/ (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
   }
   else					// b~0
     return IA::largest();
-	   // We could do slightly better -> [0;HUGE_VAL] when b.sup()==0,
+	   // We could do slightly better -> [0;infinity] when b.sup()==0,
 	   // but is this worth ?
 }
 
