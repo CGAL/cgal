@@ -65,9 +65,9 @@ original polygon)
 \ccIndexSubitemDef{partition}{valid}.
 \end{ccPackage}
 
-\lcTex{
 \subsection*{Concepts}
 
+\lcTex{
 \ccRefConceptPage{ConvexPartitionIsValidTraits_2}\\
 \ccRefConceptPage{IsYMonotoneTraits_2}\\
 \ccRefConceptPage{OptimalConvexPartitionTraits_2}\\
@@ -75,24 +75,52 @@ original polygon)
 \ccRefConceptPage{PartitionIsValidTraits_2}\\
 \ccRefConceptPage{YMonotonePartitionIsValidTraits_2}\\
 \ccRefConceptPage{YMonotonePartitionTraits_2}
+}
+
+\lcHtml{
+\input{Partition_2_ref/ConvexPartitionIsValidTraits_2}
+\input{Partition_2_ref/IsYMonotoneTraits_2}
+\input{Partition_2_ref/OptimalConvexPartitionTraits_2}
+\input{Partition_2_ref/PartitionTraits_2}
+\input{Partition_2_ref/PartitionIsValidTraits_2}
+\input{Partition_2_ref/YMonotonePartitionIsValidTraits_2}
+\input{Partition_2_ref/YMonotonePartitionTraits_2}
+}
 
 \subsection*{Function Object Concepts}
 
-\ccRefConceptPage{PolygonIsValid}
+\lcTex{\ccRefConceptPage{PolygonIsValid}}
+\lcHtml{\input{Partition_2_ref/PolygonIsValid}}
 
 \subsection*{Classes}
 
+\lcTex{
 \ccRefIdfierPage{CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>}\\
 \ccRefIdfierPage{CGAL::Partition_traits_2<R>}
+}
+
+\lcHtml{
+\input{Partition_2_ref/Partition_is_valid_traits_2}
+\input{Partition_2_ref/Partition_traits_2}
+}
 
 \subsection*{Function Object Classes}
 
+\lcTex{
 \ccRefIdfierPage{CGAL::Is_convex_2<Traits>}\\
 \ccRefIdfierPage{CGAL::Is_vacuously_valid<Traits>}\\
 \ccRefIdfierPage{CGAL::Is_y_monotone_2<Traits>}
+}
+
+\lcHtml{
+\input{Partition_2_ref/Is_convex_2}
+\input{Partition_2_ref/Is_vacuously_valid}
+\input{Partition_2_ref/Is_y_monotone_2_FO}
+}
 
 \subsection*{Functions}
 
+\lcTex{
 \ccRefIdfierPage{CGAL::approx_convex_partition_2} \\
 \ccRefIdfierPage{CGAL::convex_partition_is_valid_2} \\
 \ccRefIdfierPage{CGAL::greene_approx_convex_partition_2} \\
@@ -101,7 +129,18 @@ original polygon)
 \ccRefIdfierPage{CGAL::partition_is_valid_2} \\
 \ccRefIdfierPage{CGAL::y_monotone_partition_2} \\
 \ccRefIdfierPage{CGAL::y_monotone_partition_is_valid_2}
+}
+
+\lcHtml{
+\input{Partition_2_ref/approx_convex_partition_2}
+\input{Partition_2_ref/convex_partition_is_valid_2}
+\input{Partition_2_ref/greene_approx_convex_partition_2}
+\input{Partition_2_ref/is_y_monotone_2}
+\input{Partition_2_ref/optimal_convex_partition_2} 
+\input{Partition_2_ref/partition_is_valid_2} 
+\input{Partition_2_ref/y_monotone_partition_2} 
+\input{Partition_2_ref/y_monotone_partition_is_valid_2}
+}
 
 \clearpage
-}
 %% EOF %%
