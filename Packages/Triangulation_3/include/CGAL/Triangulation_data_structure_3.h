@@ -33,7 +33,7 @@
 #include <list.h>
 #include <map.h>
 #include <set.h>
-
+#include <CGAL/Triangulation_utils_3.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_3.h>
 
@@ -483,9 +483,10 @@ public:
 	// the code here duplicates a large part of the code 
 	// of CGAL_Triangulation_ds_cell_circulator_3
 
-	int k=Cell_circulator::other(i,j);
+	//	int k=Cell_circulator::other(i,j);
+	//	Cell* ctmp = c->neighbor(k);
+	Cell* ctmp = c->neighbor( nextposaroundij(i,j) );
 
-	Cell* ctmp = c->neighbor(k);
 	Cell* cprev = c;
 	Cell* cnewprev = cnew;
 
@@ -510,15 +511,17 @@ public:
 	  cnewprev->set_neighbor(cprev->index(ctmp),cnew);
 
 	  cnewprev = cnew;
-	  k=Cell_circulator::other(i,j);
-	  if ( ctmp->neighbor(k) == cprev ) {
-	    cprev = ctmp;
-	    ctmp = ctmp->neighbor(6-i-j-k);
-	  }
-	  else {
-	    cprev = ctmp;
-	    ctmp = ctmp->neighbor(k);
-	  }
+	  //	  k=Cell_circulator::other(i,j);
+	  //	  if ( ctmp->neighbor(k) == cprev ) {
+	  //	    cprev = ctmp;
+	  //	    ctmp = ctmp->neighbor(6-i-j-k);
+	  //	  }
+	  //	  else {
+	  //	    cprev = ctmp;
+	  //	    ctmp = ctmp->neighbor(k);
+	  //	  }
+	  cprev = ctmp;
+	  ctmp = ctmp->neighbor( nextposaroundij(i,j) );
 	}
 	cnew = c->neighbor(c->index(vi));
 	cnew->set_neighbor(c->index(cprev),cnewprev);
