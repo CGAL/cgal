@@ -1,5 +1,8 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
+0.97 (18 September 2003) [af]
+- Changed a typedef in include/CGAL/Cartesian_d.h
+
 0.96 (17 September 2003) [af]
 - Added another missing manual page
 
