@@ -1,3 +1,7 @@
+4.109 (7 August 2003)
+- Add To_double<> and To_interval<>
+- Merge test_to_interval.[Ch] in test/utilities.C.
+
 4.108 (7 August 2003)
 - abs() was failing with g++ 2.95 and mpz_class due to ?:.
 

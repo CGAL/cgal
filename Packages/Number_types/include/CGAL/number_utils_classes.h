@@ -28,6 +28,7 @@
 #include <CGAL/config.h>
 
 #include <algorithm>
+#include <utility>
 #include <CGAL/functional_base.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -141,6 +142,26 @@ struct Gcd : public CGAL_STD::binary_function< NT, NT, NT > {
   NT
   operator()( const NT& x, const NT& y) const
   { return CGAL_NTS gcd( x, y ); }
+};
+
+template < class NT >
+struct To_double : public CGAL_STD::unary_function< NT, double > {
+  typedef Arity_tag< 1 > Arity;
+
+  double
+  operator()( const NT& x) const
+  { return CGAL::to_double( x ); }
+};
+
+template < class NT >
+struct To_interval
+  : public CGAL_STD::unary_function< NT, std::pair<double, double> >
+{
+  typedef Arity_tag< 1 > Arity;
+
+  std::pair<double, double>
+  operator()( const NT& x) const
+  { return CGAL::to_interval( x ); }
 };
 
 CGAL_END_NAMESPACE
