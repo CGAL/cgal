@@ -62,7 +62,7 @@ namespace OpenNL {
 /*
  * Class DefaultLinearSolverTraits
  * Traits class for solving general sparse linear systems (model of the SparseLinearAlgebraTraits_d concept)
- * By default, it uses OpenNL BICGSTAB solver
+ * By default, it uses OpenNL BICGSTAB general purpose solver
  */ 
 
 template <class COEFFTYPE,										// type of matrix and vector coefficients
@@ -76,11 +76,11 @@ public:
     typedef MATRIX							Matrix ;
     typedef VECTOR							Vector ;
 	typedef COEFFTYPE						CoeffType ;		
-	typedef COEFFTYPE						NT;					// for SparseLinearAlgebraTraits_d::Vector concept
+	typedef COEFFTYPE						NT;					// added for SparseLinearAlgebraTraits_d::Vector concept
 	typedef SOLVER							Solver ;		
 
-    typedef Solver_CG<MATRIX, VECTOR>		SymmetricSolver ;	// obsolete
-    typedef Solver_BICGSTAB<MATRIX, VECTOR> NonSymmetricSolver;	// obsolete
+    //typedef Solver_CG<MATRIX, VECTOR>		SymmetricSolver ;	// obsolete
+    //typedef Solver_BICGSTAB<MATRIX, VECTOR> NonSymmetricSolver;	// obsolete
 
 // Public operations
 public:
@@ -88,12 +88,12 @@ public:
 
 	// Solve the sparse linear system "A*X = B"
 	// Return true on success. The solution is then (1/D) * X.
-	// (for SparseLinearAlgebraTraits_d concept)
+	// (modified for SparseLinearAlgebraTraits_d concept)
 	// 
 	// Preconditions:
 	// * A.row_dimension()    == B.dimension()
 	// * A.column_dimension() == X.dimension()
-	bool  linear_solver (const Matrix& A, const Vector& B, Vector& X, NT& D) 
+	static bool linear_solver (const Matrix& A, const Vector& B, Vector& X, NT& D) 
 	{
         Solver solver ;
 		D = 1;													// Solver_BICGSTAB does not support homogeneous coordinates
@@ -102,11 +102,11 @@ public:
 	}
 
 	// Indicate if the linear system can be solved and if the matrix conditioning is good.
-	// (for SparseLinearAlgebraTraits_d concept)
+	// (added for SparseLinearAlgebraTraits_d concept)
 	// 
 	// Preconditions:
 	// * A.row_dimension() == B.dimension()
-	bool  is_solvable (const Matrix& A, const Vector& B) 
+	static bool is_solvable (const Matrix& A, const Vector& B) 
 	{
 		// This feature is not implemented in Solver_BICGSTAB => we do only basic checking
 		if (A.row_dimension() != B.dimension())
@@ -115,15 +115,15 @@ public:
 		return true;
 	}
 
-	// obsolete
-    static void add(Matrix& A, unsigned int i, unsigned int j, CoeffType x) {
-        A.add(i,j,x) ;
-    }
+	//// obsolete
+ //   static void add(Matrix& A, unsigned int i, unsigned int j, CoeffType x) {
+ //       A.add(i,j,x) ;
+ //   }
 
-	// obsolete
-    static CoeffType& component(Vector& V, unsigned int i) {
-        return V[i] ;
-    }
+	//// obsolete
+ //   static CoeffType& component(Vector& V, unsigned int i) {
+ //       return V[i] ;
+ //   }
 } ;
 
 
@@ -143,24 +143,11 @@ class SymmetricLinearSolverTraits : public DefaultLinearSolverTraits<COEFFTYPE, 
 /*
  * Solves a linear system or minimizes a quadratic form.
  *
- * Requirements for its traits class:
- * (will eventually be a subset of SparseLinearSolverTraits_d concept)
- * 
- *   Matrix
- *   Vector
- *   CoeffType
- * 
- *   SymmetricSolver and NonSymmetricSolver: should have a member function
- *        solve(const Matrix&A, const Vector& b, Vector& x)
- * 
- *   add(Matrix& A, unsigned int i, unsigned int j, CoeffType x) 
- *        aij <- aij + x
- * 
- *   component(Vector& V, unsigned int i)
- *        returns a reference to the ith component of V
+ * Requirements for its traits class: must be a model of SparseLinearSolverTraits_d concept
  */
-template <class TRAITS> class LinearSolver {
-
+template <class TRAITS> 
+class LinearSolver 
+{
 protected:
     enum State {
         INITIAL, IN_SYSTEM, IN_ROW, CONSTRUCTED, SOLVED
@@ -171,8 +158,8 @@ public:
     typedef typename Traits::Matrix Matrix ;
     typedef typename Traits::Vector Vector ;
     typedef typename Traits::CoeffType CoeffType ;
-    typedef typename Traits::SymmetricSolver SymmetricSolver ;
-    typedef typename Traits::NonSymmetricSolver NonSymmetricSolver ;
+    //typedef typename Traits::SymmetricSolver SymmetricSolver ;
+    //typedef typename Traits::NonSymmetricSolver NonSymmetricSolver ;
 
     class Variable {
     public:
@@ -316,7 +303,7 @@ public:
             unsigned int nl = al_.size() ;
             for(unsigned int i=0; i<nf; i++) {
                 for(unsigned int j=0; j<nf; j++) {
-                    Traits::add(*A_,if_[i], if_[j], af_[i] * af_[j]) ;
+					A_->add_coef(if_[i], if_[j], af_[i] * af_[j]) ;		// was: Traits::add(*A_,if_[i], if_[j], af_[i] * af_[j]) ;
                 }
             }
             CoeffType S = - bk_ ;
@@ -324,17 +311,17 @@ public:
                 S += al_[j] * xl_[j] ;
             }
             for(unsigned int i=0; i<nf; i++) {
-                Traits::component(*b_, if_[i]) -= af_[i] * S ;
+				(*b_)[if_[i]] -= af_[i] * S ;							// was: Traits::component(*b_, if_[i]) -= af_[i] * S ;
             }
         } else {
             unsigned int nf = af_.size() ;
             unsigned int nl = al_.size() ;
             for(unsigned int i=0; i<nf; i++) {
-                Traits::add(*A_, current_row_, if_[i], af_[i]) ;
+				A_->add_coef(current_row_, if_[i], af_[i]) ;			// was: Traits::add(*A_, current_row_, if_[i], af_[i]) ;
             }
-            Traits::component(*b_,current_row_) = bk_ ;
+            (*b_)[current_row_] = bk_ ;									// was: Traits::component(*b_,current_row_) = bk_ ;
             for(unsigned int i=0; i<nl; i++) {
-                Traits::component(*b_,current_row_) -= al_[i] * xl_[i] ;
+                (*b_)[current_row_] -= al_[i] * xl_[i] ;				// was: Traits::component(*b_,current_row_) -= al_[i] * xl_[i] ;
             }
         }
         current_row_++ ;
@@ -347,20 +334,35 @@ public:
 
     // ----------------------------- Solver -------------------------------
 
-    void solve() {
+	// Solves a linear system or minimizes a quadratic form
+	// Return true on success
+	// (modified for SparseLinearAlgebraTraits_d concept)
+    bool solve() 
+	{
         check_state(CONSTRUCTED) ;
-        if(least_squares_) {
-            SymmetricSolver solver ;
-            solver.solve(*A_, *b_, *x_) ;
-        } else {
-            NonSymmetricSolver solver ;
-            solver.solve(*A_, *b_, *x_) ;
-        }
-        vector_to_variables() ;
+
+        //if(least_squares_) {
+        //    SymmetricSolver solver ;
+        //    solver.solve(*A_, *b_, *x_) ;
+        //} else {
+        //    NonSymmetricSolver solver ;
+        //    solver.solve(*A_, *b_, *x_) ;
+        //}
+
+		// Solve the sparse linear system "A*X = B". On success, the solution is (1/D) * X.
+ 		CoeffType D;
+		bool success = Traits::linear_solver(*A_, *b_, *x_, D) ;
+		assert(D == 1.0);												// WARNING: this library does not support homogeneous coordinates!
+
+		vector_to_variables() ;
+
         transition(CONSTRUCTED, SOLVED) ;
+
         delete A_ ; A_ = NULL ;
         delete b_ ; b_ = NULL ;
         delete x_ ; x_ = NULL ;
+
+		return success;
     }
     
 protected:
@@ -371,7 +373,7 @@ protected:
         for(unsigned int ii=0; ii < nb_variables(); ii++) {
             Variable& v = variable(ii) ;
             if(!v.is_locked()) {
-                v.set_value(Traits::component(*x_,v.index())) ;
+                v.set_value( (*x_)[v.index()] ) ;						// was: v.set_value(Traits::component(*x_,v.index())) ;
             }
         }
     }
@@ -380,7 +382,7 @@ protected:
         for(unsigned int ii=0; ii < nb_variables(); ii++) {
             Variable& v = variable(ii) ;
             if(!v.is_locked()) {
-                Traits::component(*x_,v.index()) = v.value() ;
+                (*x_)[v.index()] = v.value() ;							// was: Traits::component(*x_,v.index()) = v.value() ;
             }
         }
     }

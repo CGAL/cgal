@@ -63,7 +63,7 @@ template <class T> class SparseMatrix
 public:
 
     typedef T CoeffType ;
-	typedef T NT;			// for SparseLinearAlgebraTraits_d::Matrix concept
+	typedef T NT;			// added for SparseLinearAlgebraTraits_d::Matrix concept
 
     struct Coeff {
         Coeff() { }
@@ -83,7 +83,7 @@ public:
         typedef typename std::vector<Coeff> superclass ;
     public:
         /** a_{index} <- a_{index} + val */
-        void add(unsigned int index, T val) 
+        void add_coef(unsigned int index, T val) 
 		{
 			// search for coefficient in superclass vector
             for(typename superclass::iterator it = superclass::begin() ; 
@@ -142,7 +142,7 @@ public:
 		dimension_ = dim ;
         row_ = new Row[dimension_] ;
     }
-	// Create a matrix initialized with zeros (for SparseLinearAlgebraTraits_d::Matrix concept)
+	// Create a matrix initialized with zeros (added for SparseLinearAlgebraTraits_d::Matrix concept)
 	// WARNING: this class supports square matrices only
 	SparseMatrix (unsigned int rows, unsigned int columns ) {
 		assert(rows == columns);
@@ -160,7 +160,7 @@ public:
     
 	// Return the matrix dimension
     unsigned int dimension() const {  return dimension_ ;  }
-	// For SparseLinearAlgebraTraits_d::Matrix concept:
+	// added for SparseLinearAlgebraTraits_d::Matrix concept:
 	unsigned int row_dimension() const    { return dimension(); }
 	unsigned int column_dimension() const { return dimension(); }
 
@@ -175,7 +175,7 @@ public:
     }
 
 	// Read access to 1 matrix coefficient 
-	// (for SparseLinearAlgebraTraits_d::Matrix concept)
+	// (added for SparseLinearAlgebraTraits_d::Matrix concept)
 	// 
 	// Preconditions:
 	// * 0 <= row < row_dimension()
@@ -187,14 +187,18 @@ public:
 	}
             
 	// Write access to 1 matrix coefficient: aij <- aij + val
-    void add(unsigned int i, unsigned int j, T val) {
+	// 
+	// Preconditions:
+	// * 0 <= row < row_dimension()
+	// * 0 <= column < column_dimension()
+    void add_coef(unsigned int i, unsigned int j, T val) {
         assert(i < dimension_) ;
         assert(j < dimension_) ;
-        row(i).add(j, val) ;
+        row(i).add_coef(j, val) ;
     }
 
 	// Write access to 1 matrix coefficient: aij <- val
-	//(for SparseLinearAlgebraTraits_d::Matrix concept)
+	//(added for SparseLinearAlgebraTraits_d::Matrix concept)
 	// 
 	// Preconditions:
 	// * 0 <= row < row_dimension()
