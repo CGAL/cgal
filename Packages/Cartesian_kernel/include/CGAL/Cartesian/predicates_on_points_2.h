@@ -321,6 +321,7 @@ leftturn(const PointC2<R> &p,
          const PointC2<R> &q,
          const PointC2<R> &r)
 {
+    bool THIS_FUNCTION_IS_DEPRECATED; // Use left_turn instead.
     return orientation(p, q, r) == LEFT_TURN;
 }
 
@@ -331,6 +332,7 @@ rightturn(const PointC2<R> &p,
           const PointC2<R> &q,
           const PointC2<R> &r)
 {
+    bool THIS_FUNCTION_IS_DEPRECATED; // Use right_turn instead.
    return orientation(p, q, r) == RIGHT_TURN;
 }
 
@@ -341,7 +343,8 @@ leftturn(const Origin &o,
          const PointC2<R> &q,
          const PointC2<R> &r)
 {
-  return Orientation (sign_of_determinant2x2(qx, qy, rx, ry)) == LEFT_TURN;
+    bool THIS_FUNCTION_IS_DEPRECATED; // Use left_turn instead.
+    return Orientation (sign_of_determinant2x2(qx, qy, rx, ry)) == LEFT_TURN;
 }
 
 template < class R >
@@ -351,7 +354,8 @@ rightturn(const Origin &o,
           const PointC2<R> &q,
           const PointC2<R> &r)
 {
-  return Orientation (sign_of_determinant2x2(qx, qy, rx, ry)) == RIGHT_TURN;
+    bool THIS_FUNCTION_IS_DEPRECATED; // Use right_turn instead.
+    return Orientation (sign_of_determinant2x2(qx, qy, rx, ry)) == RIGHT_TURN;
 }
 #endif
 

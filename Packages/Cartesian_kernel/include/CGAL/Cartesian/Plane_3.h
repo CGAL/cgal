@@ -121,11 +121,13 @@ public:
 #ifndef CGAL_NO_DEPRECATED_CODE
   bool         has_on_boundary(const Point_3 &p) const
   {
-    return has_on(p);
+      bool THIS_FUNCTION_IS_DEPRECATED; // Use has_on instead.
+      return has_on(p);
   }
   bool         has_on_boundary(const Line_3 &l) const
   {
-    return has_on(l);
+      bool THIS_FUNCTION_IS_DEPRECATED; // Use has_on instead.
+      return has_on(l);
   }
 #endif // CGAL_NO_DEPRECATED_CODE
   bool         has_on_positive_side(const Point_3 &l) const;

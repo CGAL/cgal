@@ -252,7 +252,7 @@ TetrahedronC3<R>::is_degenerate() const
 {
   Plane_3 plane(vertex(0), vertex(1), vertex(2));
   return (plane.is_degenerate()) ? true
-                                 : plane.has_on_boundary(vertex(3));
+                                 : plane.has_on(vertex(3));
 }
 
 template < class R >

@@ -1,3 +1,6 @@
+Version 6.61 (8 October 2002)
+- Add deprecation warnings.
+
 Version 6.60 (5 October 2002)
 - Add explicit types to function templates to support expression templates
   (GMP++).

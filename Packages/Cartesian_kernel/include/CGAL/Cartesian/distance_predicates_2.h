@@ -133,6 +133,7 @@ cmp_dist_to_point(const PointC2<R>& p,
                   const PointC2<R>& q,
                   const PointC2<R>& r)
 {
+  bool THIS_FUNCTION_IS_DEPRECATED; // Use compare_distance_to_point instead
   return cmp_dist_to_pointC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
 }
 
@@ -143,6 +144,7 @@ has_larger_dist_to_point(const PointC2<R>& p,
                          const PointC2<R>& q,
                          const PointC2<R>& r)
 {
+  bool THIS_FUNCTION_IS_DEPRECATED; // Use has_larger_distance_to_point instead
   return has_larger_dist_to_pointC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
 }
 
@@ -153,6 +155,7 @@ has_smaller_dist_to_point(const PointC2<R>& p,
                           const PointC2<R>& q,
                           const PointC2<R>& r)
 {
+  bool THIS_FUNCTION_IS_DEPRECATED; // Use has_smaller_distance_to_point
   return has_smaller_dist_to_pointC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
 }
 
@@ -163,6 +166,7 @@ cmp_signed_dist_to_line(const LineC2<R>&  l,
                         const PointC2<R>& p,
                         const PointC2<R>& q)
 {
+  bool THIS_FUNCTION_IS_DEPRECATED; // Use compare_signed_distance_to_line
   return cmp_signed_dist_to_directionC2(l.a(), l.b(), p.x(), p.y(),
                                         q.x(), q.y());
 }
@@ -174,6 +178,7 @@ has_larger_signed_dist_to_line(const LineC2<R>&  l,
                                const PointC2<R>& p,
                                const PointC2<R>& q)
 {
+  bool THIS_FUNCTION_IS_DEPRECATED; // Use has_larger_signed_distance_to_line
   return has_larger_signed_dist_to_directionC2(l.a(), l.b(), p.x(), p.y(),
                                                q.x(), q.y());
 }
@@ -185,6 +190,7 @@ has_smaller_signed_dist_to_line(const LineC2<R>&  l,
                                 const PointC2<R>& p,
                                 const PointC2<R>& q)
 {
+  bool THIS_FUNCTION_IS_DEPRECATED; // Use has_smaller_signed_distance_to_line
   return has_smaller_signed_dist_to_directionC2(l.a(), l.b(), p.x(), p.y(),
                                                 q.x(), q.y());
 }
@@ -197,6 +203,7 @@ cmp_signed_dist_to_line(const PointC2<R>& p,
                         const PointC2<R>& r,
                         const PointC2<R>& s)
 {
+  bool THIS_FUNCTION_IS_DEPRECATED; // Use compare_signed_distance_to_line
   return cmp_signed_dist_to_lineC2(p.x(), p.y(), q.x(), q.y(),
                                    r.x(), r.y(), s.x(), s.y());
 }
@@ -209,6 +216,7 @@ has_smaller_signed_dist_to_line(const PointC2<R>& p,
                                 const PointC2<R>& r,
                                 const PointC2<R>& s)
 {
+  bool THIS_FUNCTION_IS_DEPRECATED; // Use has_smaller_signed_distance_to_line
   return has_smaller_signed_dist_to_lineC2(p.x(), p.y(), q.x(), q.y(),
                                            r.x(), r.y(), s.x(), s.y());
 }
@@ -221,6 +229,7 @@ has_larger_signed_dist_to_line(const PointC2<R>& p,
                                const PointC2<R>& r,
                                const PointC2<R>& s)
 {
+  bool THIS_FUNCTION_IS_DEPRECATED; // Use has_larger_signed_distance_to_line
   return has_larger_signed_dist_to_lineC2(p.x(), p.y(), q.x(), q.y(),
                                           r.x(), r.y(), s.x(), s.y());
 }
