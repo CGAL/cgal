@@ -1,7 +1,11 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-1 october 2004 Mariette
+15 octobre 2004 Mariette
+- fixed makefile pb in test/Triangulation_2_Delaunay
+- made public find_intersected_facets of Constrained_triangulation_2
+
+15 october 2004 Mariette
 - make restore_Delaunay public in Delaunay_triangulation_2
 - remove_constrained_edge of Constraint and Delaunay Constraint triangulation
   + remove_constraint of Constraint_triangulation_plus_2

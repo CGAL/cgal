@@ -11,14 +11,17 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-	-I../../../Kernel_23/include \
-	-I../../include \
 	-I../Triangulation_2/include \
+	-I../../include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(EXTRA_FLAGS) \
 	$(CGAL_CXXFLAGS) \
 	$(LONG_NAME_PROBLEM_CXXFLAGS) \
 	$(DEBUG_OPT)
+
+#	-I../../../Kernel_23/include \
+#	-I../../include \
+#	-I../Triangulation_2/include \
 
 #---------------------------------------------------------------------#
 #                    linker flags
