@@ -15,9 +15,9 @@ package: clean $(Package).tar.gz
 	@echo "----------------------------------"
 	@echo "---- changes.txt              ----"
 	@echo "---- make test                ----"
-	@echo "---- make VERSION=1.4 version ----"
+	@echo "---- make VERSION=1.5 version ----"
 	@echo "---- make commit              ----"
-	@echo "---- make VERSION=1.4 rtag    ----"
+	@echo "---- make VERSION=1.5 rtag    ----"
 	@echo "---- make package             ----"
 	@echo "---- make submit              ----"
 

@@ -1,4 +1,5 @@
-Ver 1.5 (?? ????  2000)
+Ver 1.5 (27 July 2000)
+- one more CGAL_NTS fix in PointCd.h [MY]
 - Minor cleanups. [syl]
 
 Ver 1.4 (27 June  2000)
