@@ -1,5 +1,6 @@
 3 September 2004:  Menelaos Karavelas
 - added chapter author
+- added 2004 as a copyright year in files that were modified in 2004
 
 28 August 2004:  Menelaos Karavelas
 - Parabola_2.h: added hack in order to avoid nasty warning about
