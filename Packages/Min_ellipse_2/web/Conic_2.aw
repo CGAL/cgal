@@ -2498,7 +2498,8 @@ $p(\tau)$ is not a constant function.
 
         if (a == 0) {
             // one real root
-            r1 = cbrt(-b) - g2/3.0;
+            /***** r1 = cbrt(-b) - g2/3.0; *****/
+            r1 = exp(log(-b)/3.0) - g2/3.0;
             return 1;
         }
 
@@ -2506,7 +2507,8 @@ $p(\tau)$ is not a constant function.
         NT D  = a*a*a/27.0 + b*b/4.0;
         if (D >= 0.0) {
             // real case
-            NT u = cbrt(-b/2.0 + CGAL::sqrt(D)),
+            /***** NT u = cbrt(-b/2.0 + CGAL::sqrt(D)), *****/
+            NT u = exp(log(-b/2.0 + CGAL::sqrt(D))),
                    alpha = 1.0 - a/(3.0*u*u);
             if (D == 0) {
                 // two distinct real roots
