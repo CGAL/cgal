@@ -55,7 +55,7 @@ public:
   void set_face(Face* f)  { Vb::set_face(f);  }
 
   //ACCESS
-  Face* face() const {return ( (Face *) (Vb::face()) );}
+  Face* face() const {return ( static_cast<Face *>(Vb::face()) );}
   int degree() const ;
 
   inline Vertex_circulator incident_vertices() const    {

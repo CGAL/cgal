@@ -109,7 +109,7 @@ Triangulation_ds_vertex_2<Vb,Fb> *
 Triangulation_ds_face_2<Vb,Fb>::
 vertex(int i) const
 {
-  return( (Vertex*) (Fb::vertex(i)));
+  return( static_cast<Vertex*>(Fb::vertex(i)) );
 } 
 
 template < class Vb, class Fb >
@@ -162,7 +162,7 @@ Triangulation_ds_face_2<Vb,Fb>*
 Triangulation_ds_face_2<Vb,Fb>::  
 neighbor(int i) const
 {
-  return ((Face*) Fb::neighbor(i));
+  return (static_cast<Face*>(Fb::neighbor(i)) );
 }
     
 template < class Vb, class Fb >
