@@ -1270,7 +1270,7 @@ See \texttt{CGALROOT\bslsh auxiliary\bslsh wingmp\bslsh
   gmp-2.0.2\bslsh msvc\bslsh src} for details.
 
 Subject to time constraints, we might provide a smoother \gmp\ support
-for \msvc\ in the future. A new major release of \msvc\ is expected in
+for \msvc\ in the future. A new major release of \gmp\ is expected in
 March 2000, probably \cgal\ will be upgraded to use it then.
 
 \lcTex{\begin{appendix}}
@@ -1539,16 +1539,21 @@ See \texttt{config/testfiles/CGAL\_CFG\_NO\_TEMPLATE\_FRIEND\_DISTINCTION}.
 option. In \cgal\ makefiles it is set to \texttt{-Zm900}, meaning
 ``using 900\% out of the usual memory limit''. \label{msvc::Zm}
 %
-\item \texttt{[...]/VC98/INCLUDE/xlocnum(268) : 
-error C2587: '\_U' :\\ 
-illegal use of local variable as default
-parameter} can occur\footnote{For instance, in \cgal\
-\texttt{Min\_circle} package}. The only workaround we know is to redefine
-the macro \texttt{\_VIRTUAL} in 
-\texttt{<xlocnum>}\footnote{Yes, in the \msvc\ header !}
-to be empty. Search for\\
- \texttt{\#define~\_VIRTUAL~virtual} there and
-replace it by \texttt{\#define~\_VIRTUAL~}. \label{msvc::VIRTUAL}
+\item \texttt{[...]/VC98/INCLUDE/xlocnum(268) :
+    error C2587: '\_U' :\\
+    illegal use of local variable as default parameter} can
+  occur\footnote{For instance, in \cgal\ \texttt{Min\_circle}
+    package}. The only workaround we know is to redefine the macro
+  \texttt{\_VIRTUAL} in \texttt{<xlocnum>}\footnote{Yes, in the \msvc\ 
+    header! You need not edit the actual file though. Copy it to
+    \cgaldir\texttt{/stlport/} and edit it there. As
+    \cgaldir\texttt{/stlport/} is searched by the compiler ahead of
+    the other directories, your updates will be used.  DISCLAIMER:
+    {\em We do not know if the actions described in this footnote are
+      legal in your country. You are on your own here.}}
+  to be empty. Search for\\
+  \texttt{\#define~\_VIRTUAL~virtual} there and replace it by
+  \texttt{\#define~\_VIRTUAL~}. \label{msvc::VIRTUAL}
 %
 \item Various matching failures for overloaded functions and ctors.
 Use dummy parameters.
