@@ -36,9 +36,9 @@ CGAL_BEGIN_NAMESPACE
 
 namespace CGALMSC {
 
-#ifndef CGAL_USE_LEDA
-#define LEDA_MEMORY(t) 
-#endif
+//#ifndef CGAL_USE_LEDA
+//#define LEDA_MEMORY(t) 
+//#endif
 
 template <typename Refs, typename Traits> class Vertex_;
 template <typename Refs, typename Traits> class Halfedge_;
@@ -99,7 +99,7 @@ void set_ivit(iv_iterator it) { _ivit = it; }
 
 static iv_iterator nil_;
 
-LEDA_MEMORY(Vertex_)
+//LEDA_MEMORY(Vertex_)
 
 }; // Vertex
 
@@ -175,7 +175,7 @@ bool is_hole_entry() const
 
 static fc_iterator nil_;
      
-LEDA_MEMORY(Halfedge)
+//LEDA_MEMORY(Halfedge) // Halfedge_ ???
 
 };
 
@@ -305,7 +305,7 @@ class Face_ { public:
       GenPtr&       info()       { return _i; }
       const GenPtr& info() const { return _i; }
 
-  LEDA_MEMORY(Face_)
+//  LEDA_MEMORY(Face_)
 
 };
 

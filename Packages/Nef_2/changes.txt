@@ -1,6 +1,13 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
 
+1.18 (13 May 2002)
+
+     - Removed LEDA_MEMORY from Vertex, Halfedge, and Face. It won't 
+       be used anyway, since the HDS container are allocator based.
+     - Split HDS_items definition into separate classes for Vertex,
+       Halfedge, Face and Items.
+
 1.17 (08 May 2002)
 
      - Moved external member function definitions into class definitions
