@@ -263,17 +263,7 @@ leftturn(const PointC2<R CGAL_CTAG> &p,
          const PointC2<R CGAL_CTAG> &q,
          const PointC2<R CGAL_CTAG> &r)
 {
-    return orientation(p,q,r) == LEFTTURN;
-}
-
-template < class R >
-inline
-bool
-leftturn(const Origin &o,
-         const PointC2<R CGAL_CTAG> &q,
-         const PointC2<R CGAL_CTAG> &r)
-{
-   return orientationC2(FT(0), FT(0), q.x(), q.y(), r.x(), r.y()) == LEFTTURN;
+    return orientation(p, q, r) == LEFTTURN;
 }
 
 template < class R >
@@ -283,7 +273,17 @@ rightturn(const PointC2<R CGAL_CTAG> &p,
           const PointC2<R CGAL_CTAG> &q,
           const PointC2<R CGAL_CTAG> &r)
 {
-   return orientationC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y()) == RIGHTTURN;
+   return orientation(p, q, r) == RIGHTTURN;
+}
+
+template < class R >
+inline
+bool
+leftturn(const Origin &o,
+         const PointC2<R CGAL_CTAG> &q,
+         const PointC2<R CGAL_CTAG> &r)
+{
+  return Orientation (sign_of_determinant2x2(qx, qy, rx, ry)) == LEFTTURN;
 }
 
 template < class R >
@@ -293,7 +293,7 @@ rightturn(const Origin &o,
           const PointC2<R CGAL_CTAG> &q,
           const PointC2<R CGAL_CTAG> &r)
 {
-   return orientationC2(FT(0), FT(0), q.x(), q.y(), r.x(), r.y()) == RIGHTTURN;
+  return Orientation (sign_of_determinant2x2(qx, qy, rx, ry)) == RIGHTTURN;
 }
 
 template <class R >
