@@ -1,7 +1,5 @@
-To compile and run all these examples type :
-./cgal_test
-To compute and run only some of them type
-./cgal_test name-of_wanted_example
+To compile and run all these examples type : make
+To compile and run only some of them type  : make name-of_wanted_example
  
 nn_coordinates_2: shows how to compute 2D natural coordinates 
 	given a 2D Delaunay triangulation  and a query point.
