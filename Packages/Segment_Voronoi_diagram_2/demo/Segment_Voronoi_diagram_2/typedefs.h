@@ -9,7 +9,7 @@
 
 #include <CGAL/Segment_Voronoi_diagram_2.h>
 #include <CGAL/Segment_Voronoi_diagram_hierarchy_2.h>
-#include <CGAL/Segment_Voronoi_diagram_euclidean_traits_2.h>
+#include <CGAL/Segment_Voronoi_diagram_traits_2.h>
 
 struct Rep : public CGAL::Simple_cartesian<double> {};
 
