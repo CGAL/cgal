@@ -102,14 +102,14 @@ struct circle_lt {
     if(y[0] >= zero) {
       if(y[1] < zero) return false;
       if(x[0] != x[1]) return (x[0]<x[1]);
-      if(x[0] < zero) return (y[0]<y[1]);
-      else return (y[0]>y[1]);
+      if(x[0] > zero) return (y[0]>y[1]);
+      else return (y[0]<y[1]);
     }
     else {
       if(y[1] >= zero) return true;
       if(x[0]!=x[1]) return(x[0]>x[1]);
-      if(x[0] > zero) return (y[0]<y[1]);
-      else return  (y[0]>y[1]);
+      if(x[0] > zero) return (y[0]>y[1]);
+      else return  (y[0]<y[1]);
     }
     CGAL_assertion_msg(false, "control should not reach this line");
     return false;
@@ -1808,7 +1808,7 @@ public:
     NT orth_coords[3];
     int min,max;
     Infi_box::compute_min_max(h,orth_coords,min,max);
-    
+
     typename std::list<Point_3>::const_iterator p,prev,next;
     for(p=points.begin();p!=points.end();++p){
       
@@ -1817,7 +1817,7 @@ public:
       if(p==--points.end()) next=points.begin();
       else {next = p; ++next;}
       CGAL_NEF_TRACEN("points " << *prev << "           " << *p << "      " << *next);
-      
+
       Vector_3 v= *prev - *p;
       Sphere_point sp1(v);
       sp1 = normalized(sp1);
