@@ -24,7 +24,7 @@
 
 \chapter{2D Map Overlays}
 \label{chap:map_overlay_2_ref}
-\ccRefLabel{Ovl_Ref_intro}
+\ccRefLabel{Ovl_map_overlay}
 \section{Introduction}
 
 Given two planar subdivisions $R$ and $B$, 
@@ -112,7 +112,7 @@ representing the overlay and its two creators.
  \ccStyle{Planar_Map_With_Intersections_2}.
 % or an a \ccc{Arrangement}.
 Notice that the choice of a subdivision type determines the choice 
-of a DCEL and a traits class (see Chapter~\ref{I1_ChapterPlanarMap}).
+of a DCEL and a traits class (see Chapter~\ccRefPage{I1_ChapterPlanarMap}).
 (ii) {\it Notifier} is the class used to update the overlay components. 
 {\it Notifier} should be a model of the 
 \ccc{PlanarMapWithIntersectionsChangeNotification_2} concept.
@@ -179,7 +179,7 @@ Handling degenerate cases is gained directly from the usage of the
 The sweep-line algorithm constructs the arrangement induced by $O(R,B)$, 
 by sweeping all curves in $R$ and in $B$ simultaneously. 
 In our implementation we employ the \ccc{Sweep Line} 
-package~\ref{I1_ChapterSweepLine}. 
+package~\ccRefPage{I1_ChapterSweepLine}. 
 The sweep-line algorithm requires $O(N\log{N} + k\log{N})$ time,
 where $N$ and $k$ are defined as before.
 
@@ -203,9 +203,12 @@ a collection of input curves in order to produce their planar map,
 rather using the \ccc{Planar_map_with_intersections_2<Planar_map>} package,
 due to an efficient calculation of intersections and avoiding the usage of
 point-location operations when inserting curves into the subdivision 
-associated with the overlay (when using the sweep-line algorithm this 
-subdivision should be a \ccStyle{Planar_Map}, 
-as recommended in~\ref{I1_ChapterSweepLine}).
+associated with the overlay. When using the sweep-line algorithm this 
+subdivision should be a \ccStyle{Planar_Map}, and the recommended 
+point-location strategy, in this case, is the ``walk along a line'' 
+strategy, since it does not suffer from the overhead of maintaining 
+the trapeziods and their respective data-structure.
+This recommendation is mentioned in~\ccRefPage{I1_ChapterSweepLine}.
 
 In addition, the sweep-line implementation has been optimized in order to
 save the usage of geometric predicates. 
@@ -313,7 +316,7 @@ See Figure~\ref{fig:overlay_example} for an illustration.
 Updating the DCEL additional attributes is performed by the {\em Notifier} class.
 We extend and override the notification functions of the basic {\em Notifier}, 
 defined in the \ccc{Planar_Map_2<Dcel,Traits>} package 
-(see Chapter~\ref{I1_ChapterPlanarMap}), 
+(see Chapter~\ccRefPage{I1_ChapterPlanarMap}), 
 in order to update the corresponding features constructed by the overlay. 
 
 The \ccc{Map_overlay_default_notifier<Subdivision>} class 
@@ -323,7 +326,7 @@ The notifier class overrides only the functions \ccStyle{add_edge}
 and \ccStyle{split_edge} of the basic notifier defined for \ccStyle{Planar_Map}.
 In our implementation these functions update 
 the pointers of the halfedges and the vertices in the DCEL 
-presenting the overlay, see Chapter~\ref{I1_ChapterPlanarMap} for details.
+presenting the overlay, see Chapter~\ccRefPage{I1_ChapterPlanarMap} for details.
 In order to update the pointers of a face, we define a new function in our 
 notifier, which we call \ccStyle{update_all_faces}. 
 This function traverses all components in the overlay in a DFS manner and 
