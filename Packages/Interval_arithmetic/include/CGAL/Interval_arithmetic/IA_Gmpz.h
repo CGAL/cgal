@@ -23,6 +23,7 @@
 #define CGAL_IA_GMPZ_H
 
 #include <CGAL/Quotient.h> // Just for the converter double -> Quotient<Gmpz>.
+#include <CGAL/double.h>   // for is_integral().
 
 CGAL_BEGIN_NAMESPACE
 
@@ -62,16 +63,6 @@ struct converter<Interval_nt_advanced,Gmpz>
 
 // Now we also have an exact converter from double to Quotient<Gmpz>, so that
 // Filtered_exact<double, Quotient<Gmpz> > is useful.
-
-
-// The following is an accessory function,
-// which ideally should be moved to double.h.
-// It tests if a double has an integral value.
-// Result is unspecified for NaNs or Infs.
-inline bool is_integral (const double d)
-{
-  return ceil(d) == d;
-}
 
 inline
 Quotient<Gmpz>

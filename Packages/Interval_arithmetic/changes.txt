@@ -1,8 +1,9 @@
 Changes done to the Interval Arithmetic package.
 
-Version 4.44 on ? ??? 2000
+Version 4.44 on 8 June 2000
 - Removed "coordinator" field.
 - Use the relational operators from <utility> in Interval_nt*.
+- Removed is_integral() since it's now moved to double.h.
 
 Version 4.43 on 4 May 2000
 - Don't forget to submit it...
