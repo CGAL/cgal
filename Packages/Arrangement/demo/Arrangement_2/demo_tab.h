@@ -1188,9 +1188,8 @@ void visit_ccb_faces(Face_handle & fh , Function func)
       return Coord_point(getMid(x, xmin, xmax), 
                          getMid(y, ymin, ymax) );
       break;
-     default: // no snap
-      return Coord_point(x,y);
     }
+      return Coord_point(x,y);
   }
   
   /*! mousePressEvent_drag - change the Cursor on the drag mode
