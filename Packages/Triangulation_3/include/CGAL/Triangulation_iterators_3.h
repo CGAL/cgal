@@ -110,7 +110,14 @@ public:
   bool
   operator==(const Cell_iterator & cit) const
   {
-    return ( _ib == cit._ib);// && ( _inf == cit._inf) );
+    if ( _tr != cit._tr ) 
+      return false;
+
+    if ( ( _ib == _tr->_tds.cells_end() ) 
+	 || ( cit._ib == _tr->_tds.cells_end() ) ) 
+      return ( _ib == cit._ib );
+
+    return ( ( _ib == cit._ib ) && ( _inf == cit._inf ) );
   }
 
   bool
@@ -233,7 +240,14 @@ public:
   bool
   operator==(const Vertex_iterator & vi) const
   {
-    return ( _ib == vi._ib );
+    if ( _tr != vi._tr ) 
+      return false;
+
+    if ( ( _ib == _tr->_tds.vertices_end() ) 
+	 || ( vi._ib == _tr->_tds.vertices_end() ) ) 
+      return ( _ib == vi._ib );
+
+    return ( ( _ib == vi._ib ) && ( _inf == vi._inf ) );
   }
 
   bool
