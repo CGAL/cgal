@@ -32,7 +32,7 @@ int main()
       T.insert(p);
       function_values.insert(std::make_pair(p,a + bx* x+ by*y));
     }
-  //coordiante computation
+  //coordinate computation
   K::Point_2 p(1.3,0.34);
   std::vector< std::pair< Point, Coord_type > > coords;
   Coord_type norm = 
