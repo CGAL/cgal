@@ -108,11 +108,21 @@ public:
 
   // The operators.
   IA  operator+(const IA & d) const
-  { return IA (-(inf + d.inf), sup + d.sup); }
+  {
+#ifndef CGAL_NO_PRECONDITIONS
+      CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
+#endif
+      return IA (-(inf + d.inf), sup + d.sup);
+  }
   // { return IA  (d) += *this; }
 
   IA  operator-(const IA & d) const
-  { return IA (-(inf + d.sup), sup + d.inf); }
+  {
+#ifndef CGAL_NO_PRECONDITIONS
+      CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
+#endif
+      return IA (-(inf + d.sup), sup + d.inf);
+  }
 
   // Those 2 ones could be made not inlined.
   IA  operator*(const IA & d) const;
@@ -190,6 +200,9 @@ const CGAL_Interval_nt_advanced CGAL_Interval_nt_advanced::largest
 inline CGAL_Interval_nt_advanced CGAL_Interval_nt_advanced::operator*
   (const CGAL_Interval_nt_advanced& d) const
 {
+#ifndef CGAL_NO_PRECONDITIONS
+      CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
+#endif
   if (inf<=0)					/* this>=0 */
   {
     if (d.inf<=0)				/* d>=0 */
@@ -229,6 +242,9 @@ inline CGAL_Interval_nt_advanced CGAL_Interval_nt_advanced::operator*
 inline CGAL_Interval_nt_advanced CGAL_Interval_nt_advanced::operator*
   (const double d) const
 {
+#ifndef CGAL_NO_PRECONDITIONS
+      CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
+#endif
   if (d>=0)	return IA (-(inf*d), sup*d);
   else		return IA (-(sup*(-d)), inf*(-d));
 }
@@ -240,6 +256,9 @@ inline CGAL_Interval_nt_advanced operator*
 inline CGAL_Interval_nt_advanced CGAL_Interval_nt_advanced::operator/
   (const CGAL_Interval_nt_advanced& d) const
 {
+#ifndef CGAL_NO_PRECONDITIONS
+      CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
+#endif
   if (d.inf<0.0)				/* d>0 */
   {
     if (inf<=0.0)				/* this>=0 */
@@ -267,6 +286,9 @@ inline CGAL_Interval_nt_advanced CGAL_Interval_nt_advanced::operator/
 inline CGAL_Interval_nt_advanced& CGAL_Interval_nt_advanced::operator+=
   (const CGAL_Interval_nt_advanced& d)
 {
+#ifndef CGAL_NO_PRECONDITIONS
+      CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
+#endif
   // A pity: this compact "one line" notation is not ok for speed.
   // return *this = *this + d;
   inf += d.inf;
@@ -277,6 +299,9 @@ inline CGAL_Interval_nt_advanced& CGAL_Interval_nt_advanced::operator+=
 inline CGAL_Interval_nt_advanced& CGAL_Interval_nt_advanced::operator-=
   (const CGAL_Interval_nt_advanced& d)
 { // return *this = *this - d;
+#ifndef CGAL_NO_PRECONDITIONS
+      CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
+#endif
   inf += d.sup;
   sup += d.inf;
   return *this;
