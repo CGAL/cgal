@@ -24,9 +24,9 @@
 #ifndef CGAL_VECTOR_3_H
 #define CGAL_VECTOR_3_H
 
-CGAL_BEGIN_NAMESPACE
+#include <CGAL/Origin.h>
 
-class Null_vector;
+CGAL_BEGIN_NAMESPACE
 
 template <class R_>
 class Vector_3 : public R_::Kernel_base::Vector_3

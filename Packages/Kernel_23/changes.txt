@@ -1,3 +1,6 @@
+17 September 2004 Sylvain Pion
+- #include <CGAL/Origin.h> instead of declaring types.
+
 14 September 2004 Sylvain Pion
 - Exact_predicates_inexact_constructions_kernel : now uses Filtered_kernel
   instead of Filtered_exact (benefits from static filters).

@@ -24,9 +24,9 @@
 #ifndef CGAL_POINT_2_H
 #define CGAL_POINT_2_H
 
-CGAL_BEGIN_NAMESPACE
+#include <CGAL/Origin.h>
 
-class Origin;
+CGAL_BEGIN_NAMESPACE
 
 template <class R_>
 class Point_2 : public R_::Kernel_base::Point_2
