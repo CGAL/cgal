@@ -39,18 +39,18 @@
 #include <CGAL/Min_circle_2_traits_2.h>
 #include <CGAL/IO/Window_stream.h>
 
-using namespace CGAL;
-
 // typedefs
-typedef  Cartesian< double >         R;
-typedef  Point_2< R >                Point;
-typedef  Min_circle_2_traits_2< R >  Traits;
-typedef  Min_circle_2< Traits >      Min_circle;
+typedef  CGAL::Cartesian< double >         R;
+typedef  CGAL::Point_2< R >                Point;
+typedef  CGAL::Min_circle_2_traits_2< R >  Traits;
+typedef  CGAL::Min_circle_2< Traits >      Min_circle;
 
 // main
 int
 main( int, char**)
 {
+    using namespace std;
+
     cerr << "  left button: insert point" << endl;
     cerr << "middle button: clear points" << endl;
     cerr << " right button: exit"         << endl;
@@ -59,9 +59,9 @@ main( int, char**)
     Min_circle  mc;
 
     // open window
-    Window_stream ws( "CGAL Demo: Smallest Enclosing Circle in 2D");
+    CGAL::Window_stream ws( "CGAL Demo: Smallest Enclosing Circle in 2D");
     ws.set_icon_label("CGAL");
-    ws.set_icon_pixrect( ws.create_pixrect( esprit_logo));
+    ws.set_icon_pixrect( ws.create_pixrect( CGAL::esprit_logo));
     ws.set_node_width( 5);
     ws.init( -100.0, 100.0, -100.0);
     ws.display();
@@ -76,11 +76,11 @@ main( int, char**)
 	switch ( button) {
 
 	  case MOUSE_BUTTON( 1):                        // left button
-	    ws << WHITE << mc.circle();
-	    mc.insert( ::Point( x, y));
-	    ws << BLACK << mc;
-	    ws << BLUE  << mc.circle();
-	    ws << RED;
+	    ws << CGAL::WHITE << mc.circle();
+	    mc.insert( Point( x, y));
+	    ws << CGAL::BLACK << mc;
+	    ws << CGAL::BLUE  << mc.circle();
+	    ws << CGAL::RED;
 	    for ( i = 0; i < mc.number_of_support_points(); ++i)
 		ws << mc.support_point( i);
 	    break;

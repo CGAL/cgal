@@ -934,12 +934,12 @@ the drawn curve(s).
         int pixels;
 
         // conic coordinates
-        double r = to_double (c.r()),
-               s = to_double (c.s()),
-               t = to_double (c.t()),
-               u = to_double (c.u()),
-               v = to_double (c.v()),
-               w = to_double (c.w());
+        double r = CGAL::to_double (c.r()),
+               s = CGAL::to_double (c.s()),
+               t = CGAL::to_double (c.t()),
+               u = CGAL::to_double (c.u()),
+               v = CGAL::to_double (c.v()),
+               w = CGAL::to_double (c.w());
 
         // Phase I (drawing in x-direction)
         pixels = 0;
@@ -2567,15 +2567,15 @@ to find the roots, so we can directly evaluate the determinant, using
 
            double roots[3];
            int nr_roots = solve_cubic 
-                                (to_double(c3), to_double(c2), 
-                                 to_double(c1), to_double(c0), 
+                                (CGAL::to_double(c3), CGAL::to_double(c2), 
+                                 CGAL::to_double(c1), CGAL::to_double(c0), 
                                  roots[0], roots[1], roots[2]);
            CGAL_optimisation_precondition (nr_roots > 0); // minimum exists
            return best_value (roots, nr_roots,
-                                 to_double(a2), to_double(a1),
-                                 to_double(a0), to_double(b3),
-                                 to_double(b2), to_double(b1),
-                                 to_double(b0));  
+                                 CGAL::to_double(a2), CGAL::to_double(a1),
+                                 CGAL::to_double(a0), CGAL::to_double(b3),
+                                 CGAL::to_double(b2), CGAL::to_double(b1),
+                                 CGAL::to_double(b0));  
     }
 
 @end
@@ -2606,15 +2606,15 @@ to find the roots, so we can directly evaluate the determinant, using
 
            double roots[3];
            int nr_roots = solve_cubic
-                                (to_double(c3), to_double(c2), 
-                                 to_double(c1), to_double(c0), 
+                                (CGAL::to_double(c3), CGAL::to_double(c2), 
+                                 CGAL::to_double(c1), CGAL::to_double(c0), 
                                  roots[0], roots[1], roots[2]);
            CGAL_optimisation_precondition (nr_roots > 0); // minimum exists
            return best_value (roots, nr_roots,
-                                 to_double(a2), to_double(a1),
-                                 to_double(a0), to_double(b3),
-                                 to_double(b2), to_double(b1),
-                                 to_double(b0));           
+                                 CGAL::to_double(a2), CGAL::to_double(a1),
+                                 CGAL::to_double(a0), CGAL::to_double(b3),
+                                 CGAL::to_double(b2), CGAL::to_double(b1),
+                                 CGAL::to_double(b0));           
     }
 
 @end
