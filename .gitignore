@@ -128,8 +128,6 @@ Packages/Polytope_distance_d/Makefile
 Packages/Polytope_distance_d/bin
 Packages/Polytope_distance_d/doc_ps
 Packages/Qt_widget/.env
-Packages/Qt_widget/demo/Qt_widget/Alpha_shapes_2/*.moc
-Packages/Qt_widget/demo/Qt_widget/Alpha_shapes_2/alpha_shapes_2
 Packages/Qt_widget/demo/Qt_widget/Constrained_triangulation_2/*.moc
 Packages/Qt_widget/demo/Qt_widget/Constrained_triangulation_2/constrained
 Packages/Qt_widget/demo/Qt_widget/Convex_Hull_2/*.moc
