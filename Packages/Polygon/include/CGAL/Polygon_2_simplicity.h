@@ -306,20 +306,20 @@ insertion_event(Tree *tree, Vertex_index prev_vt,
     std::pair<CGAL_TYPENAME_MSVC_NULL Tree::iterator, bool> result;
     if (left_turn) {
         result = tree->insert(prev_vt);
-	// assert(result.second)
+	// CGAL_polygon_assertion(result.second)
 	td_prev.tree_it = result.first;
         td_prev.is_in_tree = true;
         result = tree->insert(mid_vt);
-	// assert(result.second)
+	// CGAL_polygon_assertion(result.second)
 	td_mid.tree_it = result.first;
         td_mid.is_in_tree = true;
     } else {
         result = tree->insert(mid_vt);
-	// assert(result.second)
+	// CGAL_polygon_assertion(result.second)
 	td_mid.tree_it = result.first;
         td_mid.is_in_tree = true;
         result = tree->insert(prev_vt);
-	// assert(result.second)
+	// CGAL_polygon_assertion(result.second)
 	td_prev.tree_it = result.first;
         td_prev.is_in_tree = true;
     }
@@ -404,15 +404,16 @@ deletion_event(Tree *tree, Vertex_index prev_vt, Vertex_index mid_vt)
         if (prev_seg_copy != prev_seg)
             return false;
     }
+    // remove the segments
     tree->erase(prev_seg);
     td_prev.is_in_tree = false;
     tree->erase(mid_seg);
     td_mid.is_in_tree = false;
+    // Check if the vertex that is removed lies between the two tree edges.
     if (seg_above != tree->end()) {
         if (!on_right_side(cur_vt, *seg_above, false))
 	    return false;
     }
-    // remove the segments
     if (seg_above != tree->begin()) {
         --seg_above; // which turns it in seg_below
         if (!on_right_side(cur_vt, *seg_above, true))

@@ -187,7 +187,7 @@ bool seg_seg_do_intersect_crossing(
     case COLLINEAR:
         return true;
     }
-    assert(false);
+    CGAL_kernel_assertion(false);
     return false;
 }
 
@@ -204,7 +204,7 @@ bool seg_seg_do_intersect_contained(
     case COLLINEAR:
         return true;
     }
-    assert(false);
+    CGAL_kernel_assertion(false);
     return false;
 }
 
@@ -391,7 +391,7 @@ do_intersect(const Segment_2<R> &seg1, const Segment_2<R> &seg2)
             }
         }
     }
-    assert(false);
+    CGAL_kernel_assertion(false);
     return false;
 }
 
