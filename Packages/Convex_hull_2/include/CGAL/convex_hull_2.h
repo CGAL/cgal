@@ -213,6 +213,15 @@ convex_hull_points_2(ForwardIterator first, ForwardIterator last,
   return _convex_hull_points_2(first, last, result,
                                ch_value_type(first) );
 }
+template <class ForwardIterator, class OutputIterator>
+inline
+OutputIterator 
+convex_hull_2(ForwardIterator first, ForwardIterator last, 
+                     OutputIterator  result )
+{ 
+  return _convex_hull_points_2(first, last, result,
+                               ch_value_type(first) );
+}
 /*{\Mfuncl generates the counterclockwise sequence of extreme points
 of the points in the range [|first|,|last|). The resulting sequence
 is placed starting at position |result|, and the past-the-end iterator
