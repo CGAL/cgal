@@ -91,36 +91,36 @@ _test_cls_delaunay_triangulation_2( const Del & )
   vnn = T2.nearest_vertex(Point(-1,-1,2));
   assert(vnn == cible->vertex(i));
 
-  // test find_conflicts
-  std:: cout << "    find conflicts" << std::endl;
+  // test get_conflicts
+  std:: cout << "    get conflicts" << std::endl;
   std::list<Face_handle> conflicts;
   std::list<Edge>  hole_bd;
-  assert(T2.find_conflicts(Point(1,1,2), std::back_inserter(conflicts)));
+  assert(T2.get_conflicts(Point(1,1,2), std::back_inserter(conflicts)));
   conflicts.clear();	 
-  assert(T2.find_conflicts(Point(1,1,2), 
+  assert(T2.get_conflicts(Point(1,1,2), 
 			   std::back_inserter(conflicts),
 			   std::back_inserter(hole_bd)));
   assert(hole_bd.size() == conflicts.size() + 2);
   conflicts.clear();
   hole_bd.clear();
-  assert(T2.find_conflicts(Point(0,1,2), std::back_inserter(conflicts)));
+  assert(T2.get_conflicts(Point(0,1,2), std::back_inserter(conflicts)));
   assert(T2.boundary_of_conflict_zone(Point(0,1,2), 
 				       std::back_inserter(hole_bd)));
   assert(hole_bd.size() == conflicts.size() + 2);
   conflicts.clear();
   hole_bd.clear();
-  assert(!T2.find_conflicts(Point(0,0,1), std::back_inserter(conflicts)));
+  assert(!T2.get_conflicts(Point(0,0,1), std::back_inserter(conflicts)));
   conflicts.clear();
-  assert(T2.find_conflicts(Point(-1,-1,1), std::back_inserter(conflicts)));
+  assert(T2.get_conflicts(Point(-1,-1,1), std::back_inserter(conflicts)));
   unsigned int ns = conflicts.size();
   conflicts.clear();
   assert(T2.find_conflicts(Point(-1,-1,1), conflicts));
   assert(conflicts.size() == ns);
 
-  // test insertion through find_conflicts + star_hole
+  // test insertion through get_conflicts + star_hole
   conflicts.clear();
   hole_bd.clear();
-  T2.find_conflicts(Point(1,1,2), 
+  T2.get_conflicts(Point(1,1,2), 
 		    std::back_inserter(conflicts),
 		    std::back_inserter(hole_bd));
   T2.star_hole (Point(1,1,2), hole_bd.begin(), hole_bd.end(),

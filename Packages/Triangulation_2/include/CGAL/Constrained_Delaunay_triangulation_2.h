@@ -111,12 +111,12 @@ public:
 		      Face_handle hint= Face_handle()) const;
   //  //template member functions, declared and defined at the end 
   // template <class Out_it1, class Out_it2> 
-  //   bool find_conflicts (const Point  &p, 
+  //   bool get_conflicts (const Point  &p, 
   // 		       Out_it1 fit, 
   // 		       Out_it2 eit,
   // 		       Face_handle start) const;
   //   template <class Out_it1> 
-  //   bool find_conflicts (const Point  &p, 
+  //   bool get_conflicts (const Point  &p, 
   // 		       Out_it1 fit, 
   // 		       Face_handle start ) const;
   //   template <class Out_it2> 
@@ -134,7 +134,9 @@ public:
 //   int insert(InputIterator first, InputIterator last);
   Vertex_handle push_back(const Point& a);
 
-  void insert(const Point & a, const Point & b);
+  //VCC and BCC mixe this one with the templated insert !!!
+  //void insert(const Point & a, const Point & b);
+  void insert(const Point a, const Point b);
   void insert(Vertex_handle va, Vertex_handle vb);
   void          push_back(const Constraint& c);
 
@@ -198,7 +200,7 @@ public:
 
   template <class Out_it1, class Out_it2> 
   bool 
-  find_conflicts (const Point  &p, 
+  get_conflicts (const Point  &p, 
 		  Out_it1 fit, 
 		  Out_it2 eit,
 		  Face_handle start = Face_handle()) const
@@ -226,12 +228,12 @@ public:
 
   template <class Out_it1> 
   bool 
-  find_conflicts (const Point  &p, 
+  get_conflicts (const Point  &p, 
 		  Out_it1 fit, 
 		  Face_handle start= Face_handle()) const
     {
       Dummy_output_iterator eit;
-      return find_conflicts(p, fit, eit, start);
+      return get_conflicts(p, fit, eit, start);
     }
 
   template <class Out_it2> 
@@ -241,7 +243,7 @@ public:
 			      Face_handle start= Face_handle()) const
     {
       Dummy_output_iterator fit;
-      return find_conflicts(p, fit, eit, start);
+      return get_conflicts(p, fit, eit, start);
     }
 
 private:
@@ -517,7 +519,7 @@ push_back(const Point &p)
 template < class Gt, class Tds >  
 inline void 
 Constrained_Delaunay_triangulation_2<Gt,Tds>::
-insert(const Point & a, const Point & b)
+insert(const Point a, const Point b)
  // inserts segment ab as a constraint and updates the 
  // constrained Delaunay triangulation
 {
