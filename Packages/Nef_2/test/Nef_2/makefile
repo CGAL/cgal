@@ -39,17 +39,9 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                Hash_map-test \
-                Partition-test \
                 RPolynomial-test \
                 EPoint-test \
                 Nef_polyhedron_2-test 
-
-Hash_map-test$(EXE_EXT): Hash_map-test$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Hash_map-test Hash_map-test$(OBJ_EXT) $(LDFLAGS)
-
-Partition-test$(EXE_EXT): Partition-test$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Partition-test Partition-test$(OBJ_EXT) $(LDFLAGS)
 
 RPolynomial-test$(EXE_EXT): RPolynomial-test$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)RPolynomial-test RPolynomial-test$(OBJ_EXT) $(LDFLAGS)
@@ -61,8 +53,6 @@ Nef_polyhedron_2-test$(EXE_EXT): Nef_polyhedron_2-test$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Nef_polyhedron_2-test Nef_polyhedron_2-test$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                Hash_map-test.clean \
-                Partition-test.clean \
                 RPolynomial-test.clean \
                 EPoint-test.clean \
                 Nef_polyhedron_2-test.clean 

@@ -1,0 +1,20 @@
+
+Nef_polyhedron_2-demo.C
+
+  a full fledged LEDA window based interactive playground
+  for the visual manipulation of Nef polyhedra including
+  binary operations, topological operations, and
+  point location
+
+Simple-demo.C
+
+  a simple LEDA window based demo just intersecting two halfspaces
+
+HowTo build these demos:
+
+  1) Set the environment variable CGAL_MAKEFILE to the makefile 
+     of choice after the configuration of CGAL. Makefiles 
+     (configurations) can be found in ../../make
+
+  2) Engage (type make <return>)
+     

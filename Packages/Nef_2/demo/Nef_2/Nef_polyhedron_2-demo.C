@@ -30,6 +30,10 @@ typedef CGAL::Extended_homogeneous<leda_integer> EKernel;
 typedef CGAL::Filtered_extended_homogeneous<leda_integer> EKernel;
 #endif
 
+#if defined(_MSC_VER) || defined(__BORLANDC__)
+#define WIN32CONFIG
+#endif
+
 typedef  CGAL::Nef_polyhedron_2<EKernel> Nef_polyhedron;
 typedef  Nef_polyhedron::Point     Point;
 typedef  Nef_polyhedron::Line      Line;
@@ -47,8 +51,6 @@ typedef  Const_decorator::Face_const_handle Face_const_handle;
 #include <LEDA/file.h>
 #include <LEDA/stream.h>
 
-static leda_list<leda_string> ML;
-static leda_d_array<leda_string,Nef_polyhedron> MH;
 static leda_panel      main_panel;
 static leda_panel      op_panel;
 static panel_item      nef_menu_item;
@@ -65,15 +67,16 @@ static leda_string  dname = "./filtered_homogeneous_data";
 static leda_string  fname = "none";
 static leda_string  filter = "*.nef";
 
-static CGAL::Window_stream W(600,600);
-static Nef_polyhedron N_display;
+CGAL::Window_stream* pW;
+Nef_polyhedron* pN;
+leda_list<leda_string>* pML;
+leda_d_array<leda_string,Nef_polyhedron>* pMH;
 
 static leda_string stripped(leda_string s)
 { int i = s.pos(" = "); return s.head(i); }
 
-
 void win_redraw_handler(leda_window*) 
-{ W.clear(); W << N_display; }
+{ pW->clear(); (*pW) << (*pN); }
 
 void win_del_handler(leda_window*) 
 { leda_panel P("acknowledge");
@@ -91,20 +94,19 @@ static int open_panel(leda_panel& p)
   return res;
 }
 
-
 static void store_new(const Nef_polyhedron& N, leda_string t)
 { leda_string k = leda_string("N%i",++num) ;
-  MH[k] = N_display = N;
-  ML.push_front(k+" = "+t);
-  win_redraw_handler(&W);
+  (*pMH)[k] = (*pN) = N;
+  pML->push_front(k+" = "+t);
+  win_redraw_handler(pW);
 }
 
 static void update_history()
 {
-  nef1=ML.head();
-  nef2=ML.head();
-  main_panel.add_menu(nef_menu_item,ML);
-  op_panel.add_menu(op_item,ML);
+  nef1=pML->head();
+  nef2=pML->head();
+  main_panel.add_menu(nef_menu_item,(*pML));
+  op_panel.add_menu(op_item,(*pML));
 }
 
 enum { EMPTY=31, FULL, HOPEN, HCLOSED, POPEN, PCLOSED };
@@ -112,41 +114,43 @@ enum { FILE_LOAD=111, FILE_SAVE };
 
 void create(int i) 
 {
-  if (ML.back()=="none") ML.pop_back();
+  if (pML->back()=="none") pML->pop_back();
   Line l; Point p;
   std::list<Point> Lp;
   leda_point pd;
   leda_list<leda_point> Lpd;
   string_ostream sos; CGAL::set_pretty_mode(sos);
-  W.clear();
+  pW->clear();
 
   switch (i) {
     case HOPEN: 
-      W.message("Insert Halfspace by Line");
-      W >> l; sos << '(' << l << ')' << '\0';
+      pW->message("Insert Halfspace by Line");
+      (*pW) >> l; sos << '(' << l << ')' << '\0';
       store_new(Nef_polyhedron(l,Nef_polyhedron::EXCLUDED),sos.str());
       break;
     case HCLOSED: 
-      W.message("Insert Halfspace by Line");
-      W >> l; sos << '[' << l << ']' << '\0';
+      pW->message("Insert Halfspace by Line");
+      (*pW) >> l; sos << '[' << l << ']' << '\0';
       store_new(Nef_polyhedron(l,Nef_polyhedron::INCLUDED),sos.str());
       break;
     case POPEN: 
-      W.message("Insert Polygon by Point Sequence");
-      Lpd = W.read_polygon();
+      pW->message("Insert Polygon by Point Sequence");
+      Lpd = pW->read_polygon();
       forall(pd,Lpd) Lp.push_back(Point(pd.xcoord(),pd.ycoord()));
       sos << '[' << Lp.size() << "-gon"<< ']' << '\0';
-      store_new(Nef_polyhedron(Lp.begin(),Lp.end(),Nef_polyhedron::EXCLUDED),sos.str());
+      store_new(Nef_polyhedron(Lp.begin(),Lp.end(),
+                               Nef_polyhedron::EXCLUDED),sos.str());
       break;
     case PCLOSED: 
-      W.message("Insert Polygon by Point Sequence");
-      Lpd = W.read_polygon();
+      pW->message("Insert Polygon by Point Sequence");
+      Lpd = pW->read_polygon();
       forall(pd,Lpd) Lp.push_back(Point(pd.xcoord(),pd.ycoord()));
       sos << '[' << Lp.size() << "-gon"<< ']' << '\0';
-      store_new(Nef_polyhedron(Lp.begin(),Lp.end(),Nef_polyhedron::INCLUDED),sos.str());
+      store_new(Nef_polyhedron(Lp.begin(),Lp.end(),
+                               Nef_polyhedron::INCLUDED),sos.str());
       break;
     default:
-      W.message("Insert Simple Polygon");
+      pW->message("Insert Simple Polygon");
       cout << "create nothing\n";
   }
   sos.freeze(0);
@@ -156,7 +160,6 @@ void create(int i)
 
 static void read_file(leda_string fn) 
 { 
-  //win_ptr->set_status_string(" Reading " + fname);
   std::ifstream in(fn);
   Nef_polyhedron N; in >> N;
   fn.replace_all(".nef","");
@@ -165,7 +168,7 @@ static void read_file(leda_string fn)
 
 static bool confirm_overwrite(const char* fname)
 {
-#if defined (__win32__)
+#if defined(_MSC_VER) || defined(__BORLANDC__)
   return true;
 #else
   leda_panel P;
@@ -183,9 +186,9 @@ static void write_file(leda_string fname)
   if (is_file(fname) && !confirm_overwrite(fname)) return;
   // win_ptr->set_status_string(" Writing " + fname);
   leda_string nef = stripped(nef1);
-  if (MH.defined(nef)) {
+  if (pMH->defined(nef)) {
     std::ofstream out(fname);
-    out << MH[nef];
+    out << (*pMH)[nef];
   } else error_handler(1,"Nef polyhedron "+nef+" not defined.");
 }
 
@@ -205,8 +208,8 @@ static void file_handler(int what)
 void view(int i)
 {
   leda_string nef = stripped(nef1);
-  if (MH.defined(nef)) {
-    N_display = MH[nef]; win_redraw_handler(&W);
+  if (pMH->defined(nef)) {
+    (*pN) = (*pMH)[nef]; win_redraw_handler(pW);
   } else error_handler(1,"Nef polyhedron "+nef+" not defined.");
 }
 
@@ -224,55 +227,55 @@ void binop(int i)
   open_panel(op_panel);
   op_panel.flush();
   leda_string arg1 = stripped(nef1), arg2 = stripped(nef2);
-  Nef_polyhedron N1 = MH[arg1];
-  Nef_polyhedron N2 = MH[arg2];
+  Nef_polyhedron N1 = (*pMH)[arg1];
+  Nef_polyhedron N2 = (*pMH)[arg2];
   std::ofstream log("nef-demo.log");
   if ( !log ) CGAL_assertion_msg(0,"no output log nef-demo.log");
   log << 2 << std::endl << N1 << N2 << std::endl;
   log.close();
   switch (i) {
-   case 30: N_display = N1*N2; break;
-   case 31: N_display = N1+N2; break;
-   case 32: N_display = N1-N2; break;
-   case 33: N_display = N1^N2; break;
+   case 30: *pN = N1*N2; break;
+   case 31: *pN = N1+N2; break;
+   case 32: *pN = N1-N2; break;
+   case 33: *pN = N1^N2; break;
    default: return;
   }
   leda_string descr = op1+"("+arg1+","+arg2+")";
-  store_new(N_display,descr);update_history();
-  win_redraw_handler(&W);
+  store_new(*pN,descr);update_history();
+  win_redraw_handler(pW);
 }
 
 void unop(int i) 
 {
   leda_string op, arg = stripped(nef1);
-  Nef_polyhedron N = MH[arg];
+  Nef_polyhedron N = (*pMH)[arg];
   std::ofstream log("nef-demo.log");
   if ( !log ) CGAL_assertion_msg(0,"no output log nef-demo.log");
   log << 1 << std::endl << N << std::endl;
   TRACEN("writing nef to log");
   log.close();
   switch (i) {
-   case 40: op="interior";   N_display = N.interior(); break;
-   case 41: op="complement"; N_display = N.complement(); break;
-   case 42: op="closure";    N_display = N.closure(); break;
-   case 43: op="boundary";   N_display = N.boundary(); break;
+   case 40: op="interior";   *pN = N.interior(); break;
+   case 41: op="complement"; *pN = N.complement(); break;
+   case 42: op="closure";    *pN = N.closure(); break;
+   case 43: op="boundary";   *pN = N.boundary(); break;
    default: return;
   }
   leda_string descr = op+"("+arg+")";
-  store_new(N_display,descr);update_history();
-  win_redraw_handler(&W);
+  store_new(*pN,descr);update_history();
+  win_redraw_handler(pW);
 }
 
 void draw(Object_handle h)
 { CGAL::PM_visualizor<Const_decorator,EKernel> 
-    PMV(W,N_display.explorer(),N_display.EPD,
+    PMV(*pW,pN->explorer(),pN->EPD,
         CGAL::PM_DefColor<Const_decorator>(CGAL::RED,CGAL::RED,6,6) );
-  leda_drawing_mode prev = W.set_mode(leda_xor_mode);
+  leda_drawing_mode prev = pW->set_mode(leda_xor_mode);
   Vertex_const_handle vh; Halfedge_const_handle eh; Face_const_handle fh; 
   if ( assign(vh,h) ) PMV.draw(vh); 
   if ( assign(eh,h) ) PMV.draw(eh);   
   if ( assign(fh,h) ) PMV.draw(fh); 
-  W.set_mode(prev);
+  pW->set_mode(prev);
 }
 
 
@@ -288,6 +291,11 @@ int main(int argc, char* argv[])
   CGAL::set_pretty_mode ( std::cerr );
   std::cerr << "using " << CGAL::pointlocationversion << std::endl;
   std::cerr << "using " << PMNS sweepversion << std::endl;
+
+  CGAL::Window_stream W(600,600); pW = &W;
+  Nef_polyhedron N_display; pN = &N_display;
+  leda_list<leda_string> ML; pML = &ML;
+  leda_d_array<leda_string,Nef_polyhedron> MH; pMH = &MH;
 
   W.init(-CGAL::frame_default,CGAL::frame_default,-CGAL::frame_default);
   W.set_show_coordinates(true);
@@ -404,17 +412,23 @@ int main(int argc, char* argv[])
       }
       break;
     case button_release_event: 
-      if (val == MOUSE_BUTTON(1)) {  
-        dm = W.set_mode(leda_xor_mode); 
-        W<<CGAL::GREEN<<p_down; W.set_mode(dm);
-        draw(h); }
-      if (val == MOUSE_BUTTON(2)) { 
-        dm = W.set_mode(leda_xor_mode); 
-        W<<CGAL::GREEN<<p_down; W.set_mode(dm);
-        draw(h); } 
+      if (val == MOUSE_BUTTON(1))  
+#ifndef WIN32CONFIG 
+      { dm = W.set_mode(leda_xor_mode);
+        W<<CGAL::GREEN<<p_down; W.set_mode(dm); draw(h); }
+#else
+      { win_redraw_handler(&W); }
+#endif
+      if (val == MOUSE_BUTTON(2)) 
+#ifndef WIN32CONFIG 
+      { dm = W.set_mode(leda_xor_mode);
+        W<<CGAL::GREEN<<p_down; W.set_mode(dm); draw(h); }
+#else
+      { win_redraw_handler(&W); }
+#endif
       break;
     case key_press_event:
-      if (val ==  KEY_UP) { // ZOOM OUT 
+      if (val ==  KEY_UP) { // ZOOM IN 
         CGAL::frame_default*=2;
         Nef_polyhedron::Extended_kernel::RT::set_R(CGAL::frame_default);
         int r = CGAL::frame_default+10;
