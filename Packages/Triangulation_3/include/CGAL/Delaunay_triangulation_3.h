@@ -57,11 +57,23 @@ public:
   typedef typename Gt::Segment_3     Segment;
   typedef typename Gt::Triangle_3    Triangle;
   typedef typename Gt::Tetrahedron_3 Tetrahedron;
+  typedef typename Gt::Line_3        Line;
+  typedef typename Gt::Ray_3         Ray;
+  typedef typename Gt::Object_3      Object;
 
   // Function objects
   typedef typename Gt::Side_of_oriented_sphere_3 Side_of_oriented_sphere;
   typedef typename Gt::Coplanar_side_of_bounded_circle_3
                                              Coplanar_side_of_bounded_circle;
+  typedef typename Gt::Construct_circumcenter_3
+                                             Construct_circumcenter;
+  typedef typename Gt::Construct_perpendicular_line_3
+                                             Construct_perpendicular_line;
+  typedef typename Gt::Construct_plane_3
+                                             Construct_plane;
+  typedef typename Gt::Construct_direction_of_line_3
+                                             Construct_direction_of_line;
+  typedef typename Gt::Construct_ray_3       Construct_ray;
 
   typedef typename Triangulation_3<Gt,Tds>::Cell_handle   Cell_handle;
   typedef typename Triangulation_3<Gt,Tds>::Vertex_handle Vertex_handle;
@@ -82,6 +94,11 @@ public:
 protected:
   Side_of_oriented_sphere          side_of_oriented_sphere;
   Coplanar_side_of_bounded_circle  coplanar_side_of_bounded_circle;
+  Construct_circumcenter           construct_circumcenter;
+  Construct_perpendicular_line     construct_perpendicular_line;
+  Construct_plane                  construct_plane;
+  Construct_direction_of_line      construct_direction_of_line;
+  Construct_ray                    construct_ray;
 
 public:
 
@@ -120,6 +137,16 @@ public:
 	geom_traits().side_of_oriented_sphere_3_object();
     coplanar_side_of_bounded_circle =
 	geom_traits().coplanar_side_of_bounded_circle_3_object();
+    construct_circumcenter = 
+        geom_traits().construct_circumcenter_3_object();
+    construct_perpendicular_line =
+        geom_traits().construct_perpendicular_line_3_object();
+    construct_plane =
+        geom_traits().construct_plane_3_object();
+    construct_direction_of_line =
+        geom_traits().construct_direction_of_line_3_object();
+    construct_ray =
+        geom_traits().construct_ray_3_object();
   }
 
   template < class InputIterator >
@@ -159,10 +186,32 @@ public:
 
   Bounded_side
   side_of_circle( Cell_handle c, int i, const Point & p) const;
-  
+
+  Point dual(Cell_handle c) const;
+
+  Object dual(const Facet & f) const
+    { return dual( f.first, f.second ); }
+  Object dual(Cell_handle c, int i) const;
+
   bool is_valid(bool verbose = false, int level = 0) const;
 
   bool is_valid(Cell_handle c, bool verbose = false, int level = 0) const;
+
+  template < class Stream> 		
+  Stream& draw_dual(Stream & os)
+    {
+      Facet_iterator fit = finite_facets_begin();
+      for (; fit != facets_end(); ++fit) {
+	Object o = dual(*fit);
+	Point p;
+	Ray r;
+	Segment s;
+	if (CGAL::assign(p,o)) os << p;
+	if (CGAL::assign(s,o)) os << s;
+	if (CGAL::assign(r,o)) os << r; 
+      }
+      return os;
+    }
 
 private:
 
@@ -678,6 +727,66 @@ side_of_circle(Cell_handle c, int i, const Point & p) const
   return side_of_segment( p,
 			  v1->point(), v2->point(),
 			  lt, i_e );
+}
+
+template < class Gt, class Tds >
+Delaunay_triangulation_3<Gt,Tds>::Point
+Delaunay_triangulation_3<Gt,Tds>::
+dual(Cell_handle c) const
+{
+  CGAL_triangulation_precondition(dimension()==3);
+  CGAL_triangulation_precondition( ! is_infinite(c) );
+  return construct_circumcenter(c->vertex(0)->point(),
+				c->vertex(1)->point(),
+				c->vertex(2)->point(),
+				c->vertex(3)->point());
+}
+
+
+template < class Gt, class Tds >
+Delaunay_triangulation_3<Gt,Tds>::Object
+Delaunay_triangulation_3<Gt,Tds>::
+dual(Cell_handle c, int i) const
+{
+  CGAL_triangulation_precondition(dimension()>=2);
+  CGAL_triangulation_precondition( ! is_infinite(c,i) );
+
+  if ( dimension() == 2 ) {
+    const Point& p = c->vertex((i+1)&3)->point();
+    const Point& q = c->vertex((i+2)&3)->point();
+    const Point& r = c->vertex((i+3)&3)->point();
+    return make_object( construct_circumcenter(p,q,r) );
+  }
+
+  // dimension() == 3
+  Cell_handle n = c->neighbor(i);
+  if ( ! is_infinite(c) && ! is_infinite(n) ) {
+    Segment s = construct_segment(dual(c),dual(n));
+    return make_object(s);
+  }
+
+  // either n or c is infinite
+  Cell_handle cfin; // finite cell
+  int ifin; // (cfin,ifin) finite facet
+  if ( is_infinite(c) ) {
+    cfin = n;
+    ifin = n->index(c);
+  }
+  else {
+    cfin = c;
+    ifin = i;
+  }
+  unsigned char ind[3] = {(ifin+1)&3,(ifin+2)&3,(ifin+3)&3};
+  if ( (ifin&1) == 1 )
+      std::swap(ind[0], ind[1]);
+  const Point& p = cfin->vertex(ind[0])->point();
+  const Point& q = cfin->vertex(ind[1])->point();
+  const Point& r = cfin->vertex(ind[2])->point();
+  
+  Line l = construct_perpendicular_line(construct_plane(p,q,r),
+					construct_circumcenter(p,q,r));
+  Ray ray = construct_ray(dual(cfin),construct_direction_of_line(l));
+  return make_object(ray);
 }
 
 template < class Gt, class Tds >
