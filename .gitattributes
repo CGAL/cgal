@@ -1914,4 +1914,5 @@ Packages/cgal_window/src/CGALWin/mswin/leda1_sm.ico -text svneol=unset#unset
 Packages/cgal_window/src/CGALWin/mswin/leda2.ico -text svneol=unset#unset
 Packages/kdtree/doc_tex/SearchStructures/kdtree.gif svneol=native#unset
 Packages/kdtree/doc_tex/basic/SearchStructures/kdtree.gif svneol=native#unset
+Packages/wininst/src/cgallib.dsp -text
 Packages/wininst/src/cgallib.vcproj -text
