@@ -67,10 +67,8 @@ public:
   typedef Triangulation_ds_vertex_3<Tds>           Vertex;
   typedef Triangulation_ds_cell_3<Tds>             Cell;
 
-  typedef Pointer<Cell>        Cell_handle;
-  typedef Pointer<Vertex>      Vertex_handle;
-  // typedef Cell *        Cell_handle;
-  // typedef Vertex *      Vertex_handle;
+  typedef Pointer<Cell>                            Cell_handle;
+  typedef Pointer<Vertex>                          Vertex_handle;
 
   typedef std::pair<Cell_handle, int>              Facet;
   typedef Triple<Cell_handle, int, int>            Edge;
@@ -155,12 +153,14 @@ public:
 
   Cell_handle create_cell() 
     { 
-      return get_new_cell();
+      Cell_handle r = cell_container().get_new_element();
+      r->init();
+      return r;
     }
 
   Cell_handle create_cell(Cell_handle c)
     {
-      Cell_handle cnew = get_new_cell();
+      Cell_handle cnew = create_cell();
       *cnew = *c;
       cnew->init();
       return cnew; 
@@ -169,7 +169,7 @@ public:
   Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1,
 	                  Vertex_handle v2, Vertex_handle v3)
     {
-      Cell_handle c = get_new_cell();
+      Cell_handle c = create_cell();
       c->set_vertex(0, v0);
       c->set_vertex(1, v1);
       c->set_vertex(2, v2);
@@ -182,7 +182,7 @@ public:
 		          Cell_handle n0, Cell_handle n1,
 			  Cell_handle n2, Cell_handle n3)
     {
-      Cell_handle c = get_new_cell();
+      Cell_handle c = create_cell();
       c->set_vertices(v0,v1,v2,v3);
       c->set_neighbors(n0,n1,n2,n3);
       return c; 
@@ -191,14 +191,14 @@ public:
   Cell_handle create_face()
     {
       CGAL_triangulation_precondition(dimension()<3);
-      Cell_handle c = get_new_cell();
+      Cell_handle c = create_cell();
       return c; 
     }
 
   Cell_handle create_face(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2)
     {
       CGAL_triangulation_precondition(dimension()<3);
-      Cell_handle c = get_new_cell();
+      Cell_handle c = create_cell();
       c->set_vertex(0, v0);
       c->set_vertex(1, v1);
       c->set_vertex(2, v2);
@@ -242,16 +242,6 @@ public:
       return newf;
     }
 
-private:
-
-  Cell_handle get_new_cell()
-  {
-      Cell_handle r = cell_container().get_new_element();
-      r->init();
-      return r;
-  }
-
-public:
   // not documented
   void read_cells(std::istream& is, std::map< int, Vertex_handle > &V,
 			   int & m, std::map< int, Cell_handle > &C );
@@ -395,7 +385,8 @@ public:
   
   Vertex_handle insert_in_edge(Cell_handle c, int i, int j);
 
-  Vertex_handle insert_increase_dimension(Vertex_handle star =Vertex_handle());
+  Vertex_handle insert_increase_dimension(Vertex_handle star
+	                                  = Vertex_handle(NULL));
 
   // REMOVAL
 
@@ -671,11 +662,11 @@ public:
   // The following two are obsolete.
   void
   incident_cells(Vertex_handle v, std::set<Cell_handle> & cells,
-	         Cell_handle c = Cell_handle() ) const;
+	         Cell_handle c = Cell_handle(NULL) ) const;
 
   void
   incident_vertices(Vertex_handle v, std::set<Vertex_handle> & vertices,
-		    Cell_handle c = Cell_handle() ) const;
+		    Cell_handle c = Cell_handle(NULL) ) const;
 
   int degree(Vertex_handle v) const;
 
@@ -685,7 +676,7 @@ public:
 
   // Helping functions
   Vertex_handle copy_tds(const Tds & tds,
-	                 Vertex_handle vert = Vertex_handle() );
+	                 Vertex_handle vert = Vertex_handle(NULL) );
     // returns the new vertex corresponding to vert in the new tds 
 
   void swap(Tds & tds);
@@ -1426,7 +1417,9 @@ read_cells(std::istream& is, std::map< int, Vertex_handle > &V,
 
       //      CGAL_triangulation_assertion( n == 2 );
       for (int i=0; i < 2; i++) {
-	Cell_handle c = create_face(V[i], NULL, NULL);
+	Cell_handle c = create_face(V[i],
+		                    Vertex_handle(NULL),
+				    Vertex_handle(NULL));
 	C[i] = c;
 	V[i]->set_cell(c);
       }
@@ -1440,7 +1433,9 @@ read_cells(std::istream& is, std::map< int, Vertex_handle > &V,
     {
       m = 1;
       //      CGAL_triangulation_assertion( n == 1 );
-      Cell_handle c = create_face(V[0], NULL, NULL);
+      Cell_handle c = create_face(V[0],
+		                  Vertex_handle(NULL),
+				  Vertex_handle(NULL));
       C[0] = c;
       V[0]->set_cell(c);
       break;
@@ -1841,7 +1836,9 @@ insert_increase_dimension(Vertex_handle star)
       // insertion of the first vertex
       // ( geometrically : infinite vertex )
     {
-      Cell_handle c = create_face( v, NULL, NULL);
+      Cell_handle c = create_face(v,
+	                          Vertex_handle(NULL),
+	                          Vertex_handle(NULL));
       v->set_cell(c);
       break;
     }
@@ -1850,7 +1847,9 @@ insert_increase_dimension(Vertex_handle star)
     // insertion of the second vertex
     // ( geometrically : first finite vertex )
     {
-      Cell_handle d = create_face( v, NULL, NULL);
+      Cell_handle d = create_face(v,
+	                          Vertex_handle(NULL),
+	                          Vertex_handle(NULL));
       v->set_cell(d);
       set_adjacency(d, 0, star->cell(), 0);
       break;

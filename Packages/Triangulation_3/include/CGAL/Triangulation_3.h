@@ -677,7 +677,9 @@ private:
 
   public:
 
-      Infinite_tester(const Self *tr = NULL)
+      Infinite_tester() {}
+
+      Infinite_tester(const Self *tr)
 	  : t(tr) {}
 
       bool operator()(const Vertex_iterator & v) const
@@ -1395,7 +1397,8 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
   case 3:
     {
       CGAL_triangulation_precondition( start != NULL );
-      Cell_handle c, previous;
+      Cell_handle previous(NULL);
+      Cell_handle c;
       int ind_inf;
       if ( start->has_vertex(infinite, ind_inf) )
 	c = start->neighbor(ind_inf);

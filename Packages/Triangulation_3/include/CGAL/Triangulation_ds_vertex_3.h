@@ -65,7 +65,7 @@ public:
 
   Vertex_handle handle() const
   {
-      return this;
+      return const_cast<Vertex*>(this);
   }
 
 private:
@@ -96,7 +96,7 @@ bool
 Triangulation_ds_vertex_3<Tds>::is_valid
 (bool verbose, int level) const
 {
-  bool result = Vb::is_valid(verbose,level) && cell()->has_vertex(this);
+  bool result = Vb::is_valid(verbose,level) && cell()->has_vertex(handle());
   if ( ! result ) {
     if ( verbose )
       std::cerr << "invalid vertex" << std::endl;

@@ -212,9 +212,8 @@ Triangulation_hierarchy_3<Tr>::
 ~Triangulation_hierarchy_3()
 {
   clear();
-  for(int i= 1; i<Triangulation_hierarchy_3__maxlevel; ++i){ 
+  for(int i=1; i<Triangulation_hierarchy_3__maxlevel; ++i)
     delete hierarchy[i];
-  }
 }
 
 template <class Tr>
@@ -345,7 +344,7 @@ locate(const Point& p, Locate_type& lt, int& li, int& lj,
   for (int i=level+1; i<Triangulation_hierarchy_3__maxlevel; ++i)
       pos[i]=0;
 
-  Cell_handle position;
+  Cell_handle position(NULL);
   while(level > 0) {
     // locate at that level from "position"
     // result is stored in "position" for the next level

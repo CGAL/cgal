@@ -132,7 +132,7 @@ public:
   int mirror_index(int i) const
   {
       CGAL_triangulation_precondition ( i>=0 && i<4 );
-      return neighbor(i)->index(this);
+      return neighbor(i)->index(handle());
   }
 
   Vertex_handle mirror_vertex(int i) const
@@ -152,7 +152,7 @@ public:
 
   Cell_handle handle() const
   {
-      return this;
+      return const_cast<Cell*>(this);
   }
 
   // CHECKING
@@ -258,18 +258,6 @@ Triangulation_ds_cell_3<Tds>::is_valid
       if ( n0 == NULL || n1 == NULL ) {
 	if (verbose)
 	    std::cerr << "neighbor 0 or 1 NULL" << std::endl;
-	CGAL_triangulation_assertion(false);
-	return false;
-      }
-      if ( vertex(2) != NULL) {
-	if (verbose)
-	    std::cerr << "vertex 2 != NULL" << std::endl;
-	CGAL_triangulation_assertion(false);
-	return false;
-      }
-      if ( neighbor(2) != NULL) {
-	if (verbose)
-	    std::cerr << "neighbor 2 != NULL" << std::endl;
 	CGAL_triangulation_assertion(false);
 	return false;
       }
@@ -379,7 +367,7 @@ Triangulation_ds_cell_3<Tds>::is_valid
 	  }
 
 	  int in;
-	  if ( ! n->has_neighbor(this,in) ) {
+	  if ( ! n->has_neighbor(handle(), in) ) {
 	    if (verbose)
               std::cerr << "neighbor of c has not c as neighbor" << std::endl;
 	    CGAL_triangulation_assertion(false);
