@@ -1,0 +1,347 @@
+// ============================================================================
+//
+// Copyright (c) 1999 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// release       : $CGAL_Revision $
+// release_date  : $CGAL_Date $
+//
+// file          : minimum_enclosing_quadrilateral_2_demo.C
+// chapter       : $CGAL_Chapter: Geometric Optimisation $
+// package       : $CGAL_Package: Min_quadrilaterals $
+// source        : oops.aw
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch> and
+//                 Emo Welzl <emo@inf.ethz.ch>
+//
+// coordinator   : ETH Zurich (Bernd Gaertner <gaertner@inf.ethz.ch>)
+//
+// Demo Program: Computing minimum enclosing quadrilaterals
+// ============================================================================
+
+#include <CGAL/Cartesian.h>
+#include <CGAL/Point_2.h>
+#include <CGAL/Polygon_2.h>
+#include <CGAL/point_generators_2.h>
+#include <CGAL/random_convex_set_2.h>
+#include <CGAL/minimum_enclosing_quadrilateral_2.h>
+#include <vector>
+#include <iostream>
+
+
+using CGAL::to_double;
+#include <CGAL/Segment_2.h>
+#include <CGAL/Circle_2.h>
+#include <CGAL/Vector_2.h>
+#include <CGAL/convex_hull_2.h>
+#include <CGAL/squared_distance_2.h>
+#include <CGAL/Polygon_2_algorithms.h>
+#include <CGAL/geowin_support.h>
+#include <CGAL/Timer.h>
+#include <CGAL/leda_real.h>
+#include <list>
+
+
+using CGAL::Polygon_traits_2;
+using CGAL::Creator_uniform_2;
+using CGAL::Random_points_in_square_2;
+using CGAL::random_convex_set_2;
+using CGAL::minimum_enclosing_rectangle_2;
+using CGAL::minimum_enclosing_parallelogram_2;
+using CGAL::minimum_enclosing_strip_2;
+using std::back_inserter;
+using std::vector;
+using std::cout;
+using std::endl;
+using std::cerr;
+using std::flush;
+using std::list;
+using CGAL::Timer;
+using CGAL::convex_hull_points_2;
+using CGAL::squared_distance;
+
+#ifdef CGAL_USE_LEDA
+#include <LEDA/list.h>
+#endif // CGAL_USE_LEDA
+
+#if defined(CGAL_USE_LEDA) && (__LEDA__ >= 400)
+
+//typedef CGAL::Cartesian< double >                      R;
+typedef CGAL::Cartesian< leda_real >                   R;
+typedef R::Point_2                                     Point_2;
+typedef R::Line_2                                      Line_2;
+typedef Polygon_traits_2< R >                          P_traits;
+typedef vector< Point_2 >                              Container;
+typedef CGAL::Polygon_2< P_traits, Container >         Polygon_2;
+typedef Creator_uniform_2< double, Point_2 >           Creator;
+typedef Random_points_in_square_2< Point_2, Creator >  Point_generator;
+
+struct Minimum_rectangle_2 :
+public geowin_update< CGALPointlist, list< leda_polygon > > {
+  void
+  update(const CGALPointlist& ipts, list<leda_polygon>& poly)
+  {
+    poly.clear();
+
+    // (possibly) convert to our number type
+    Polygon_2 pts;
+#ifdef _MSC_VER
+    {
+#endif
+      typedef CGALPointlist::const_iterator Listconstiter;
+      for (Listconstiter i = ipts.begin(); i != ipts.end(); ++i)
+        pts.push_back(Point_2(i->x(), i->y()));
+#ifdef _MSC_VER
+    }
+#endif
+
+    // building convex polygon ...
+    Polygon_2 p;
+    convex_hull_points_2(
+      pts.vertices_begin(), pts.vertices_end(), back_inserter(p));
+
+    Polygon_2 kg;
+    Timer t;
+    t.start();
+    minimum_enclosing_rectangle_2(
+      p.vertices_begin(), p.vertices_end(), back_inserter(kg));
+    t.stop();
+    cout << "min_rectangle area " << to_double(kg.area())
+         << " [time: " << t.time() << " sec.]" << endl;
+    leda_list< leda_point > HLP;
+    for (int i = 0; i < kg.size(); ++i)
+      HLP.append(convert_to_leda(kg.container()[i]));
+    leda_polygon back(HLP);
+    poly.push_back(back);
+  } // update(pts, poly)
+};
+struct Minimum_parallelogram_2 :
+public geowin_update< CGALPointlist, list< leda_polygon > > {
+  void
+  update(const CGALPointlist& ipts, list<leda_polygon>& poly)
+  {
+    poly.clear();
+
+    // (possibly) convert to our number type
+    Polygon_2 pts;
+#ifdef _MSC_VER
+    {
+#endif
+      typedef CGALPointlist::const_iterator Listconstiter;
+      for (Listconstiter i = ipts.begin(); i != ipts.end(); ++i)
+        pts.push_back(Point_2(i->x(), i->y()));
+#ifdef _MSC_VER
+    }
+#endif
+
+    // building convex polygon ...
+    Polygon_2 p;
+    convex_hull_points_2(
+      pts.vertices_begin(), pts.vertices_end(), back_inserter(p));
+
+    Polygon_2 kg;
+    Timer t;
+    t.start();
+    minimum_enclosing_parallelogram_2(
+      p.vertices_begin(), p.vertices_end(), back_inserter(kg));
+    t.stop();
+    cout << "min_parallelogram area " << to_double(kg.area())
+         << " [time: " << t.time() << " sec.]" << endl;
+    leda_list< leda_point > HLP;
+    for (int i = 0; i < kg.size(); ++i)
+      HLP.append(convert_to_leda(kg.container()[i]));
+    leda_polygon back(HLP);
+    poly.push_back(back);
+  } // update(pts, poly)
+};
+struct Minimum_strip_2 :
+public geowin_update< CGALPointlist, list< leda_line > > {
+  void
+  update(const CGALPointlist& ipts, list<leda_line>& lines)
+  {
+    lines.clear();
+
+    // (possibly) convert to our number type
+    Polygon_2 pts;
+#ifdef _MSC_VER
+    {
+#endif
+      typedef CGALPointlist::const_iterator Listconstiter;
+      for (Listconstiter i = ipts.begin(); i != ipts.end(); ++i)
+        pts.push_back(Point_2(i->x(), i->y()));
+#ifdef _MSC_VER
+    }
+#endif
+
+    // building convex polygon ...
+    Polygon_2 p;
+    convex_hull_points_2(
+      pts.vertices_begin(), pts.vertices_end(), back_inserter(p));
+
+    typedef std::vector< Line_2 > Linelist;
+    Linelist ll;
+    Timer t;
+    t.start();
+    minimum_enclosing_strip_2(
+      p.vertices_begin(), p.vertices_end(), back_inserter(ll));
+    t.stop();
+    cout << "min_strip width^2 ";
+    if (ll.size() > 1)
+      cout << to_double(squared_distance(ll[0], ll[1]));
+    else
+      cout << "undef";
+    cout << " [time: " << t.time() << " sec.]" << endl;
+    for (Linelist::iterator i = ll.begin(); i != ll.end(); ++i)
+      lines.push_back(
+        leda_line(
+          leda_point(to_double(i->point(0).x()),
+                     to_double(i->point(0).y())),
+          leda_point(to_double(i->point(1).x()),
+                     to_double(i->point(1).y()))));
+  } // update(pts, lines)
+};
+
+int main()
+{
+  geowin_init_default_type((CGALPointlist*)0, leda_string("CGALPointList"));
+
+  CGALPointlist L;
+
+  GeoWin GW("CGAL - Minimum Enclosing Quadrilaterals");
+
+  // build a new edit scene
+  geo_scene my_scene = GW.new_scene(L);
+  GW.set_point_style(my_scene, leda_disc_point);
+
+  // add min strip
+  Minimum_strip_2 minstrip;
+  geo_scene strip_scene =
+    GW.new_scene(minstrip,
+                 my_scene,
+                 leda_string("Minimum Width Strip"));
+  GW.set_color(strip_scene, leda_green);
+  GW.set_line_width(strip_scene, 3);
+  GW.set_fill_color(strip_scene, leda_green2);
+  GW.set_visible(strip_scene, true);
+
+  // add min rectangle
+  Minimum_rectangle_2 minrect;
+  geo_scene rect_scene =
+    GW.new_scene(minrect,
+                 my_scene,
+                 leda_string("Minimum Area Rectangle"));
+  GW.set_color(rect_scene, leda_red);
+  GW.set_line_width(rect_scene, 3);
+  GW.set_fill_color(rect_scene, leda_orange);
+  GW.set_visible(rect_scene, true);
+
+  // add min parallelogram
+  Minimum_parallelogram_2 minpara;
+  geo_scene para_scene =
+    GW.new_scene(minpara,
+                 my_scene,
+                 leda_string("Minimum Area Parallelogram"));
+  GW.set_line_width(para_scene, 3);
+  GW.set_color(para_scene, leda_blue);
+  GW.set_fill_color(para_scene, leda_cyan);
+  GW.set_visible(para_scene, true);
+
+  GW.edit(my_scene);
+  return 0;
+}
+
+#if 0
+int main( int argc, char* argv[])
+{
+  // take #points from command line:
+  int n;
+  if ( argc < 1 || (n = atoi( argv[1])) < 3) {
+    cerr << "usage: " << argv[0] << " \"#points\" (>= 3)" << endl;
+    return 1;
+  }
+
+  int random_seed( default_random.get_int( 0, (1 << 31)));
+  if ( argc >= 3)
+    // get seed from command line
+    random_seed = atoi(argv[2]);
+
+  cout << "Test minimum_enclosing_rectangle_2:\nwith "
+       << n << " points\nrandom seed is "
+       << random_seed << endl;
+
+  // build random n-gon:
+  cout << "constructing random " << n << "-gon ..." << flush;
+  Random my_rnd( random_seed);
+  Point_generator gen( 1.0, my_rnd);
+  Polygon_2 p;
+  random_convex_set_2( n, back_inserter( p), gen);
+  cout << " done." << endl;
+
+  // output polygon:
+  cout << "\nHere is the result:" << endl;
+
+#ifdef CGAL_USE_LEDA
+  leda_window W;
+  cgalize(W);
+  W.display();
+  W.init(-1.1, 1.1, -1.1);
+  W << p;
+  W << BLUE << p[0];
+#else
+  cout << p << endl;
+#endif
+
+  // check convexity:
+  if ( ! p.is_convex()) {
+    cerr << "ERROR: polygon is not convex." << endl;
+    return 1;
+  }
+
+  cout << "done." << endl;
+
+  Cont v;
+  minimum_enclosing_parallelogram_2(
+    p.vertices_begin(), p.vertices_end(), back_inserter( v));
+
+#ifdef CGAL_USE_LEDA
+  typedef CGAL::Segment_2< R > Segment_2;
+  W << RED
+    << Segment_2(v[0], v[1]) << Segment_2(v[0], v[3])
+    << Segment_2(v[1], v[2]) << Segment_2(v[2], v[3]);
+
+  // wait for mouse-click:
+  Point_2 tmp_p;
+  W >> tmp_p;
+#else
+  cout << Segment_2(v[0], v[1]) << Segment_2(v[0], v[3])
+       << Segment_2(v[1], v[2]) << Segment_2(v[2], v[3])
+       << endl;
+#endif
+
+  return 0;
+} // int main( argc, argv)
+#endif
+
+#else // ! CGAL_USE_LEDA
+
+#include <CGAL/basic.h>
+#include <iostream>
+
+int main()
+{
+  std::cerr << "LEDA >= 4.0 is required to run this demo."
+            << std::endl;
+  return 0;
+}
+
+#endif // CGAL_USE_LEDA
+// ----------------------------------------------------------------------------
+// ** EOF
+// ----------------------------------------------------------------------------
+
