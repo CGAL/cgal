@@ -1,9 +1,7 @@
 #include <CGAL/basic.h>
-#ifndef _MSC_VER
+
 #include <CGAL/Nef_2/Polynomial.h>
-#else
-#include <CGAL/Nef_2/Polynomial_MSC.h>
-#endif
+
 #include <CGAL/test_macros.h>
 
 #ifdef CGAL_USE_LEDA
@@ -20,14 +18,8 @@ typedef int Integer;
 
 using namespace CGAL;
 
-#ifdef _MSC_VER
-#define MSCCAST(n) static_cast<RP>(n)
-#define Polynomial Polynomial_MSC
-CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(Integer)
-typedef std::iterator_traits<int*>::iterator_category iiii;
-#else
-#define MSCCAST(n) n
-#endif
+
+
 
 #define PRT(t1,t2) std::cout<<"testing instances "<<#t1<<" "<<#t2<<std::endl
 
@@ -42,7 +34,7 @@ int main()
          p7(3,0), p8(seq,seq+4);
       RP p10(-1,0,1), p11(-1,1), p12(1,1);
       NT r1(2), r2(-2);
-
+      std::cout << "A" << std::endl;
       CGAL_TEST(p1.degree()==-1);
       CGAL_TEST(p2.degree()==0);
       CGAL_TEST(p4.degree()==1);
@@ -55,31 +47,34 @@ int main()
       RP::NT prod[3] = { -10, 21, 10 };
       CGAL_TEST((p4*p5) == RP(prod,prod+3));
       CGAL_TEST((p2*p3) == p3);
-      MSCCAST(r1)+p3;
-      p3+MSCCAST(r1);
-      CGAL_TEST((MSCCAST(r1)+p3) == RP(3,1));
-      CGAL_TEST((MSCCAST(r1)-p3) == RP(1,-1));
-      CGAL_TEST((MSCCAST(r1)*p3) == RP(2,2));
-      CGAL_TEST((p3+MSCCAST(r1)) == RP(3,1));
-      CGAL_TEST((p3-MSCCAST(r1)) == RP(-1,1));
-      CGAL_TEST((p3*MSCCAST(r1)) == RP(2,2));
+      r1+p3;
+      p3+r1;
+      CGAL_TEST((r1+p3) == RP(3,1));
+      CGAL_TEST((r1-p3) == RP(1,-1));
+      CGAL_TEST((r1*p3) == RP(2,2));
+      CGAL_TEST((p3+r1) == RP(3,1));
+      CGAL_TEST((p3-r1) == RP(-1,1));
+      CGAL_TEST((p3*r1) == RP(2,2));
       CGAL_TEST(p2 != p3);
       CGAL_TEST(p2 < p3);
       CGAL_TEST(p2 <= p3);
       CGAL_TEST(p5 > p4);
       CGAL_TEST(p5 >= p4);
 
-      CGAL_TEST(MSCCAST(r1) != p2);
-      CGAL_TEST(MSCCAST(r2) < p2);
-      CGAL_TEST(MSCCAST(r2) <= p2);
-      CGAL_TEST(MSCCAST(r1) > p2);
-      CGAL_TEST(MSCCAST(r1) >= p2);
-      CGAL_TEST(p2 != MSCCAST(r1));
-      CGAL_TEST(p2 > MSCCAST(r2));
-      CGAL_TEST(p2 >= MSCCAST(r2));
-      CGAL_TEST(p2 < MSCCAST(r1));
-      CGAL_TEST(p2 <= MSCCAST(r1));
+      std::cout << "B" << std::endl;
+
+      CGAL_TEST(r1 != p2);
+      CGAL_TEST(r2 < p2);
+      CGAL_TEST(r2 <= p2);
+      CGAL_TEST(r1 > p2);
+      CGAL_TEST(r1 >= p2);
+      CGAL_TEST(p2 != r1);
+      CGAL_TEST(p2 > r2);
+      CGAL_TEST(p2 >= r2);
+      CGAL_TEST(p2 < r1);
+      CGAL_TEST(p2 <= r1);
       
+      std::cout << "C" << std::endl;
       
       CGAL_TEST(CGAL_NTS sign(p5)==+1);
       CGAL_TEST(CGAL_NTS sign(-p5)==-1);
@@ -88,40 +83,44 @@ int main()
       p3 += p2;
       p3 -= p2;
       p3 *= p5;
-      p3 += MSCCAST(r1);
-      p3 -= MSCCAST(r1);
-      p3 *= MSCCAST(r2);
+      p3 += r1;
+      p3 -= r1;
+      p3 *= r2;
       
       RP::NT D;
       RP q1(17),q2(5),q3,q4; 
       RP::pseudo_div(q1,q2,q3,q4,D); 
-      CGAL_TEST(MSCCAST(D)*q1==q2*q3+q4);
+      CGAL_TEST(D*q1==q2*q3+q4);
       RP::pseudo_div(-q1,q2,q3,q4,D); 
-      CGAL_TEST(MSCCAST(D)*-q1==q2*q3+q4);
+      CGAL_TEST(D*-q1==q2*q3+q4);
       RP::pseudo_div(q1,-q2,q3,q4,D); 
-      CGAL_TEST(MSCCAST(D)*q1==-q2*q3+q4);
+      CGAL_TEST(D*q1==-q2*q3+q4);
       RP::pseudo_div(-q1,-q2,q3,q4,D); 
-      CGAL_TEST(MSCCAST(D)*-q1==-q2*q3+q4);
+      CGAL_TEST(D*-q1==-q2*q3+q4);
       RP qq1(5),qq2(17),qq3,qq4;
       RP::pseudo_div(qq1,qq2,qq3,qq4,D); 
-      CGAL_TEST(MSCCAST(D)*qq1==qq2*qq3+qq4);
+      CGAL_TEST(D*qq1==qq2*qq3+qq4);
       RP::pseudo_div(-qq1,qq2,qq3,qq4,D); 
-      CGAL_TEST(MSCCAST(D)*-qq1==qq2*qq3+qq4);
+      CGAL_TEST(D*-qq1==qq2*qq3+qq4);
       RP::pseudo_div(qq1,-qq2,qq3,qq4,D); 
-      CGAL_TEST(MSCCAST(D)*qq1==-qq2*qq3+qq4);
+      CGAL_TEST(D*qq1==-qq2*qq3+qq4);
       RP::pseudo_div(-qq1,-qq2,qq3,qq4,D); 
-      CGAL_TEST(MSCCAST(D)*-qq1==-qq2*qq3+qq4);
+      CGAL_TEST(D*-qq1==-qq2*qq3+qq4);
       CGAL_TEST(p10/p11 == p12);
 
+      std::cout << "D" << std::endl;
+
       q3 = RP::gcd(q1,q2);
-      CGAL_TEST(q3 == MSCCAST(1));
+      CGAL_TEST(q3 == 1);
       //CGAL_IO_TEST(p4,p1,CGAL::IO::BINARY);
+      std::cout << "E" << std::endl;
       CGAL_IO_TEST(p4,p1,CGAL::IO::ASCII);
       CGAL_IO_TEST(p4,p1,CGAL::IO::PRETTY);
+      std::cout << "F" << std::endl;
       CGAL::to_double(p6);
       CGAL::is_finite(p6);
       CGAL::is_valid(p6);
-
+      std::cout << "G" << std::endl;
   }
   { PRT(int,Integer);
     typedef int NT; typedef Polynomial<Integer> RP;
@@ -143,30 +142,30 @@ int main()
       RP::NT prod[3] = { -10, 21, 10 };
       CGAL_TEST((p4*p5) == RP(prod,prod+3));
       CGAL_TEST((p2*p3) == p3);
-      MSCCAST(r1)+p3;
-      p3+MSCCAST(r1);
-      CGAL_TEST((MSCCAST(r1)+p3) == RP(3,1));
-      CGAL_TEST((MSCCAST(r1)-p3) == RP(1,-1));
-      CGAL_TEST((MSCCAST(r1)*p3) == RP(2,2));
-      CGAL_TEST((p3+MSCCAST(r1)) == RP(3,1));
-      CGAL_TEST((p3-MSCCAST(r1)) == RP(-1,1));
-      CGAL_TEST((p3*MSCCAST(r1)) == RP(2,2));
+      r1+p3;
+      p3+r1;
+      CGAL_TEST((r1+p3) == RP(3,1));
+      CGAL_TEST((r1-p3) == RP(1,-1));
+      CGAL_TEST((r1*p3) == RP(2,2));
+      CGAL_TEST((p3+r1) == RP(3,1));
+      CGAL_TEST((p3-r1) == RP(-1,1));
+      CGAL_TEST((p3*r1) == RP(2,2));
       CGAL_TEST(p2 != p3);
       CGAL_TEST(p2 < p3);
       CGAL_TEST(p2 <= p3);
       CGAL_TEST(p5 > p4);
       CGAL_TEST(p5 >= p4);
 
-      CGAL_TEST(MSCCAST(r1) != p2);
-      CGAL_TEST(MSCCAST(r2) < p2);
-      CGAL_TEST(MSCCAST(r2) <= p2);
-      CGAL_TEST(MSCCAST(r1) > p2);
-      CGAL_TEST(MSCCAST(r1) >= p2);
-      CGAL_TEST(p2 != MSCCAST(r1));
-      CGAL_TEST(p2 > MSCCAST(r2));
-      CGAL_TEST(p2 >= MSCCAST(r2));
-      CGAL_TEST(p2 < MSCCAST(r1));
-      CGAL_TEST(p2 <= MSCCAST(r1));
+      CGAL_TEST(r1 != p2);
+      CGAL_TEST(r2 < p2);
+      CGAL_TEST(r2 <= p2);
+      CGAL_TEST(r1 > p2);
+      CGAL_TEST(r1 >= p2);
+      CGAL_TEST(p2 != r1);
+      CGAL_TEST(p2 > r2);
+      CGAL_TEST(p2 >= r2);
+      CGAL_TEST(p2 < r1);
+      CGAL_TEST(p2 <= r1);
       
       
       CGAL_TEST(CGAL_NTS sign(p5)==+1);
@@ -176,33 +175,33 @@ int main()
       p3 += p2;
       p3 -= p2;
       p3 *= p5;
-      p3 += MSCCAST(r1);
-      p3 -= MSCCAST(r1);
-      p3 *= MSCCAST(r2);
+      p3 += r1;
+      p3 -= r1;
+      p3 *= r2;
       
       RP::NT D;
       RP q1(17),q2(5),q3,q4; 
       RP::pseudo_div(q1,q2,q3,q4,D); 
-      CGAL_TEST(MSCCAST(D)*q1==q2*q3+q4);
+      CGAL_TEST(D*q1==q2*q3+q4);
       RP::pseudo_div(-q1,q2,q3,q4,D); 
-      CGAL_TEST(MSCCAST(D)*-q1==q2*q3+q4);
+      CGAL_TEST(D*-q1==q2*q3+q4);
       RP::pseudo_div(q1,-q2,q3,q4,D); 
-      CGAL_TEST(MSCCAST(D)*q1==-q2*q3+q4);
+      CGAL_TEST(D*q1==-q2*q3+q4);
       RP::pseudo_div(-q1,-q2,q3,q4,D); 
-      CGAL_TEST(MSCCAST(D)*-q1==-q2*q3+q4);
+      CGAL_TEST(D*-q1==-q2*q3+q4);
       RP qq1(5),qq2(17),qq3,qq4;
       RP::pseudo_div(qq1,qq2,qq3,qq4,D); 
-      CGAL_TEST(MSCCAST(D)*qq1==qq2*qq3+qq4);
+      CGAL_TEST(D*qq1==qq2*qq3+qq4);
       RP::pseudo_div(-qq1,qq2,qq3,qq4,D); 
-      CGAL_TEST(MSCCAST(D)*-qq1==qq2*qq3+qq4);
+      CGAL_TEST(D*-qq1==qq2*qq3+qq4);
       RP::pseudo_div(qq1,-qq2,qq3,qq4,D); 
-      CGAL_TEST(MSCCAST(D)*qq1==-qq2*qq3+qq4);
+      CGAL_TEST(D*qq1==-qq2*qq3+qq4);
       RP::pseudo_div(-qq1,-qq2,qq3,qq4,D); 
-      CGAL_TEST(MSCCAST(D)*-qq1==-qq2*qq3+qq4);
+      CGAL_TEST(D*-qq1==-qq2*qq3+qq4);
       CGAL_TEST(p10/p11 == p12);
 
       q3 = RP::gcd(q1,q2);
-      CGAL_TEST(q3 == MSCCAST(1));
+      CGAL_TEST(q3 == 1);
       //CGAL_IO_TEST(p4,p1,CGAL::IO::BINARY);
       CGAL_IO_TEST(p4,p1,CGAL::IO::ASCII);
       CGAL_IO_TEST(p4,p1,CGAL::IO::PRETTY);
@@ -231,30 +230,30 @@ int main()
       RP::NT prod[3] = { -10, 21, 10 };
       CGAL_TEST((p4*p5) == RP(prod,prod+3));
       CGAL_TEST((p2*p3) == p3);
-      MSCCAST(r1)+p3;
-      p3+MSCCAST(r1);
-      CGAL_TEST((MSCCAST(r1)+p3) == RP(3,1));
-      CGAL_TEST((MSCCAST(r1)-p3) == RP(1,-1));
-      CGAL_TEST((MSCCAST(r1)*p3) == RP(2,2));
-      CGAL_TEST((p3+MSCCAST(r1)) == RP(3,1));
-      CGAL_TEST((p3-MSCCAST(r1)) == RP(-1,1));
-      CGAL_TEST((p3*MSCCAST(r1)) == RP(2,2));
+      r1+p3;
+      p3+r1;
+      CGAL_TEST((r1+p3) == RP(3,1));
+      CGAL_TEST((r1-p3) == RP(1,-1));
+      CGAL_TEST((r1*p3) == RP(2,2));
+      CGAL_TEST((p3+r1) == RP(3,1));
+      CGAL_TEST((p3-r1) == RP(-1,1));
+      CGAL_TEST((p3*r1) == RP(2,2));
       CGAL_TEST(p2 != p3);
       CGAL_TEST(p2 < p3);
       CGAL_TEST(p2 <= p3);
       CGAL_TEST(p5 > p4);
       CGAL_TEST(p5 >= p4);
 
-      CGAL_TEST(MSCCAST(r1) != p2);
-      CGAL_TEST(MSCCAST(r2) < p2);
-      CGAL_TEST(MSCCAST(r2) <= p2);
-      CGAL_TEST(MSCCAST(r1) > p2);
-      CGAL_TEST(MSCCAST(r1) >= p2);
-      CGAL_TEST(p2 != MSCCAST(r1));
-      CGAL_TEST(p2 > MSCCAST(r2));
-      CGAL_TEST(p2 >= MSCCAST(r2));
-      CGAL_TEST(p2 < MSCCAST(r1));
-      CGAL_TEST(p2 <= MSCCAST(r1));
+      CGAL_TEST(r1 != p2);
+      CGAL_TEST(r2 < p2);
+      CGAL_TEST(r2 <= p2);
+      CGAL_TEST(r1 > p2);
+      CGAL_TEST(r1 >= p2);
+      CGAL_TEST(p2 != r1);
+      CGAL_TEST(p2 > r2);
+      CGAL_TEST(p2 >= r2);
+      CGAL_TEST(p2 < r1);
+      CGAL_TEST(p2 <= r1);
       
       
       CGAL_TEST(CGAL_NTS sign(p5)==+1);
@@ -264,33 +263,33 @@ int main()
       p3 += p2;
       p3 -= p2;
       p3 *= p5;
-      p3 += MSCCAST(r1);
-      p3 -= MSCCAST(r1);
-      p3 *= MSCCAST(r2);
+      p3 += r1;
+      p3 -= r1;
+      p3 *= r2;
       
       RP::NT D;
       RP q1(17),q2(5),q3,q4; 
       RP::pseudo_div(q1,q2,q3,q4,D); 
-      CGAL_TEST(MSCCAST(D)*q1==q2*q3+q4);
+      CGAL_TEST(D*q1==q2*q3+q4);
       RP::pseudo_div(-q1,q2,q3,q4,D); 
-      CGAL_TEST(MSCCAST(D)*-q1==q2*q3+q4);
+      CGAL_TEST(D*-q1==q2*q3+q4);
       RP::pseudo_div(q1,-q2,q3,q4,D); 
-      CGAL_TEST(MSCCAST(D)*q1==-q2*q3+q4);
+      CGAL_TEST(D*q1==-q2*q3+q4);
       RP::pseudo_div(-q1,-q2,q3,q4,D); 
-      CGAL_TEST(MSCCAST(D)*-q1==-q2*q3+q4);
+      CGAL_TEST(D*-q1==-q2*q3+q4);
       RP qq1(5),qq2(17),qq3,qq4;
       RP::pseudo_div(qq1,qq2,qq3,qq4,D); 
-      CGAL_TEST(MSCCAST(D)*qq1==qq2*qq3+qq4);
+      CGAL_TEST(D*qq1==qq2*qq3+qq4);
       RP::pseudo_div(-qq1,qq2,qq3,qq4,D); 
-      CGAL_TEST(MSCCAST(D)*-qq1==qq2*qq3+qq4);
+      CGAL_TEST(D*-qq1==qq2*qq3+qq4);
       RP::pseudo_div(qq1,-qq2,qq3,qq4,D); 
-      CGAL_TEST(MSCCAST(D)*qq1==-qq2*qq3+qq4);
+      CGAL_TEST(D*qq1==-qq2*qq3+qq4);
       RP::pseudo_div(-qq1,-qq2,qq3,qq4,D); 
-      CGAL_TEST(MSCCAST(D)*-qq1==-qq2*qq3+qq4);
+      CGAL_TEST(D*-qq1==-qq2*qq3+qq4);
       CGAL_TEST(p10/p11 == p12);
 
       q3 = RP::gcd(q1,q2);
-      CGAL_TEST(q3 == MSCCAST(1));
+      CGAL_TEST(q3 == 1);
       //CGAL_IO_TEST(p4,p1,CGAL::IO::BINARY);
       CGAL_IO_TEST(p4,p1,CGAL::IO::ASCII);
       CGAL_IO_TEST(p4,p1,CGAL::IO::PRETTY);
@@ -319,30 +318,30 @@ int main()
       RP::NT prod[3] = { -10, 21, 10 };
       CGAL_TEST((p4*p5) == RP(prod,prod+3));
       CGAL_TEST((p2*p3) == p3);
-      MSCCAST(r1)+p3;
-      p3+MSCCAST(r1);
-      CGAL_TEST((MSCCAST(r1)+p3) == RP(3,1));
-      CGAL_TEST((MSCCAST(r1)-p3) == RP(1,-1));
-      CGAL_TEST((MSCCAST(r1)*p3) == RP(2,2));
-      CGAL_TEST((p3+MSCCAST(r1)) == RP(3,1));
-      CGAL_TEST((p3-MSCCAST(r1)) == RP(-1,1));
-      CGAL_TEST((p3*MSCCAST(r1)) == RP(2,2));
+      r1+p3;
+      p3+r1;
+      CGAL_TEST((r1+p3) == RP(3,1));
+      CGAL_TEST((r1-p3) == RP(1,-1));
+      CGAL_TEST((r1*p3) == RP(2,2));
+      CGAL_TEST((p3+r1) == RP(3,1));
+      CGAL_TEST((p3-r1) == RP(-1,1));
+      CGAL_TEST((p3*r1) == RP(2,2));
       CGAL_TEST(p2 != p3);
       CGAL_TEST(p2 < p3);
       CGAL_TEST(p2 <= p3);
       CGAL_TEST(p5 > p4);
       CGAL_TEST(p5 >= p4);
 
-      CGAL_TEST(MSCCAST(r1) != p2);
-      CGAL_TEST(MSCCAST(r2) < p2);
-      CGAL_TEST(MSCCAST(r2) <= p2);
-      CGAL_TEST(MSCCAST(r1) > p2);
-      CGAL_TEST(MSCCAST(r1) >= p2);
-      CGAL_TEST(p2 != MSCCAST(r1));
-      CGAL_TEST(p2 > MSCCAST(r2));
-      CGAL_TEST(p2 >= MSCCAST(r2));
-      CGAL_TEST(p2 < MSCCAST(r1));
-      CGAL_TEST(p2 <= MSCCAST(r1));
+      CGAL_TEST(r1 != p2);
+      CGAL_TEST(r2 < p2);
+      CGAL_TEST(r2 <= p2);
+      CGAL_TEST(r1 > p2);
+      CGAL_TEST(r1 >= p2);
+      CGAL_TEST(p2 != r1);
+      CGAL_TEST(p2 > r2);
+      CGAL_TEST(p2 >= r2);
+      CGAL_TEST(p2 < r1);
+      CGAL_TEST(p2 <= r1);
       
       
       CGAL_TEST(CGAL_NTS sign(p5)==+1);
@@ -352,33 +351,33 @@ int main()
       p3 += p2;
       p3 -= p2;
       p3 *= p5;
-      p3 += MSCCAST(r1);
-      p3 -= MSCCAST(r1);
-      p3 *= MSCCAST(r2);
+      p3 += r1;
+      p3 -= r1;
+      p3 *= r2;
       
       RP::NT D;
       RP q1(17),q2(5),q3,q4; 
       RP::pseudo_div(q1,q2,q3,q4,D); 
-      CGAL_TEST(MSCCAST(D)*q1==q2*q3+q4);
+      CGAL_TEST(D*q1==q2*q3+q4);
       RP::pseudo_div(-q1,q2,q3,q4,D); 
-      CGAL_TEST(MSCCAST(D)*-q1==q2*q3+q4);
+      CGAL_TEST(D*-q1==q2*q3+q4);
       RP::pseudo_div(q1,-q2,q3,q4,D); 
-      CGAL_TEST(MSCCAST(D)*q1==-q2*q3+q4);
+      CGAL_TEST(D*q1==-q2*q3+q4);
       RP::pseudo_div(-q1,-q2,q3,q4,D); 
-      CGAL_TEST(MSCCAST(D)*-q1==-q2*q3+q4);
+      CGAL_TEST(D*-q1==-q2*q3+q4);
       RP qq1(5),qq2(17),qq3,qq4;
       RP::pseudo_div(qq1,qq2,qq3,qq4,D); 
-      CGAL_TEST(MSCCAST(D)*qq1==qq2*qq3+qq4);
+      CGAL_TEST(D*qq1==qq2*qq3+qq4);
       RP::pseudo_div(-qq1,qq2,qq3,qq4,D); 
-      CGAL_TEST(MSCCAST(D)*-qq1==qq2*qq3+qq4);
+      CGAL_TEST(D*-qq1==qq2*qq3+qq4);
       RP::pseudo_div(qq1,-qq2,qq3,qq4,D); 
-      CGAL_TEST(MSCCAST(D)*qq1==-qq2*qq3+qq4);
+      CGAL_TEST(D*qq1==-qq2*qq3+qq4);
       RP::pseudo_div(-qq1,-qq2,qq3,qq4,D); 
-      CGAL_TEST(MSCCAST(D)*-qq1==-qq2*qq3+qq4);
+      CGAL_TEST(D*-qq1==-qq2*qq3+qq4);
       CGAL_TEST(p10/p11 == p12);
 
       q3 = RP::gcd(q1,q2);
-      CGAL_TEST(q3 == MSCCAST(1));
+      CGAL_TEST(q3 == 1);
       //CGAL_IO_TEST(p4,p1,CGAL::IO::BINARY);
       CGAL_IO_TEST(p4,p1,CGAL::IO::ASCII);
       CGAL_IO_TEST(p4,p1,CGAL::IO::PRETTY);
@@ -407,30 +406,30 @@ int main()
       RP::NT prod[3] = { -10, 21, 10 };
       CGAL_TEST((p4*p5) == RP(prod,prod+3));
       CGAL_TEST((p2*p3) == p3);
-      MSCCAST(r1)+p3;
-      p3+MSCCAST(r1);
-      CGAL_TEST((MSCCAST(r1)+p3) == RP(3,1));
-      CGAL_TEST((MSCCAST(r1)-p3) == RP(1,-1));
-      CGAL_TEST((MSCCAST(r1)*p3) == RP(2,2));
-      CGAL_TEST((p3+MSCCAST(r1)) == RP(3,1));
-      CGAL_TEST((p3-MSCCAST(r1)) == RP(-1,1));
-      CGAL_TEST((p3*MSCCAST(r1)) == RP(2,2));
+      r1+p3;
+      p3+r1;
+      CGAL_TEST((r1+p3) == RP(3,1));
+      CGAL_TEST((r1-p3) == RP(1,-1));
+      CGAL_TEST((r1*p3) == RP(2,2));
+      CGAL_TEST((p3+r1) == RP(3,1));
+      CGAL_TEST((p3-r1) == RP(-1,1));
+      CGAL_TEST((p3*r1) == RP(2,2));
       CGAL_TEST(p2 != p3);
       CGAL_TEST(p2 < p3);
       CGAL_TEST(p2 <= p3);
       CGAL_TEST(p5 > p4);
       CGAL_TEST(p5 >= p4);
 
-      CGAL_TEST(MSCCAST(r1) != p2);
-      CGAL_TEST(MSCCAST(r2) < p2);
-      CGAL_TEST(MSCCAST(r2) <= p2);
-      CGAL_TEST(MSCCAST(r1) > p2);
-      CGAL_TEST(MSCCAST(r1) >= p2);
-      CGAL_TEST(p2 != MSCCAST(r1));
-      CGAL_TEST(p2 > MSCCAST(r2));
-      CGAL_TEST(p2 >= MSCCAST(r2));
-      CGAL_TEST(p2 < MSCCAST(r1));
-      CGAL_TEST(p2 <= MSCCAST(r1));
+      CGAL_TEST(r1 != p2);
+      CGAL_TEST(r2 < p2);
+      CGAL_TEST(r2 <= p2);
+      CGAL_TEST(r1 > p2);
+      CGAL_TEST(r1 >= p2);
+      CGAL_TEST(p2 != r1);
+      CGAL_TEST(p2 > r2);
+      CGAL_TEST(p2 >= r2);
+      CGAL_TEST(p2 < r1);
+      CGAL_TEST(p2 <= r1);
       
       
       CGAL_TEST(CGAL_NTS sign(p5)==+1);
@@ -440,33 +439,33 @@ int main()
       p3 += p2;
       p3 -= p2;
       p3 *= p5;
-      p3 += MSCCAST(r1);
-      p3 -= MSCCAST(r1);
-      p3 *= MSCCAST(r2);
+      p3 += r1;
+      p3 -= r1;
+      p3 *= r2;
       
       RP::NT D;
       RP q1(17),q2(5),q3,q4; 
       RP::pseudo_div(q1,q2,q3,q4,D); 
-      CGAL_TEST(MSCCAST(D)*q1==q2*q3+q4);
+      CGAL_TEST(D*q1==q2*q3+q4);
       RP::pseudo_div(-q1,q2,q3,q4,D); 
-      CGAL_TEST(MSCCAST(D)*-q1==q2*q3+q4);
+      CGAL_TEST(D*-q1==q2*q3+q4);
       RP::pseudo_div(q1,-q2,q3,q4,D); 
-      CGAL_TEST(MSCCAST(D)*q1==-q2*q3+q4);
+      CGAL_TEST(D*q1==-q2*q3+q4);
       RP::pseudo_div(-q1,-q2,q3,q4,D); 
-      CGAL_TEST(MSCCAST(D)*-q1==-q2*q3+q4);
+      CGAL_TEST(D*-q1==-q2*q3+q4);
       RP qq1(5),qq2(17),qq3,qq4;
       RP::pseudo_div(qq1,qq2,qq3,qq4,D); 
-      CGAL_TEST(MSCCAST(D)*qq1==qq2*qq3+qq4);
+      CGAL_TEST(D*qq1==qq2*qq3+qq4);
       RP::pseudo_div(-qq1,qq2,qq3,qq4,D); 
-      CGAL_TEST(MSCCAST(D)*-qq1==qq2*qq3+qq4);
+      CGAL_TEST(D*-qq1==qq2*qq3+qq4);
       RP::pseudo_div(qq1,-qq2,qq3,qq4,D); 
-      CGAL_TEST(MSCCAST(D)*qq1==-qq2*qq3+qq4);
+      CGAL_TEST(D*qq1==-qq2*qq3+qq4);
       RP::pseudo_div(-qq1,-qq2,qq3,qq4,D); 
-      CGAL_TEST(MSCCAST(D)*-qq1==-qq2*qq3+qq4);
+      CGAL_TEST(D*-qq1==-qq2*qq3+qq4);
       CGAL_TEST(p10/p11 == p12);
 
       q3 = RP::gcd(q1,q2);
-      CGAL_TEST(q3 == MSCCAST(1));
+      CGAL_TEST(q3 == 1);
       //CGAL_IO_TEST(p4,p1,CGAL::IO::BINARY);
       CGAL_IO_TEST(p4,p1,CGAL::IO::ASCII);
       CGAL_IO_TEST(p4,p1,CGAL::IO::PRETTY);
