@@ -196,7 +196,8 @@ public:  // should be private ? --> operator should be wrappers
   Alpha_shape_3(const InputIterator& first,  
 		const InputIterator& last,  
 		const Coord_type& alpha = 0,
-		Mode = REGULARIZED)
+		Mode m = REGULARIZED)
+    : _alpha(alpha), _mode(m), Infinity(-1), UNDEFINED(-2)
     {
       Dt::insert(first, last);
       if (dimension() == 3)
@@ -399,7 +400,7 @@ private:
 
 public:
 
-  Mode set_mode(Mode mode = GENERAL )
+  Mode set_mode(Mode mode = REGULARIZED )
     // Sets `A' to its general or regularized version. Returns the
     // previous mode.
     {

@@ -1,3 +1,6 @@
+version 3.9:
+- little bug fix between documentation and source.
+
 version 3.8:
 - update to new Triangulation_3 interface.
 

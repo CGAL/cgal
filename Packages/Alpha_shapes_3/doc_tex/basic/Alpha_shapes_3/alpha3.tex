@@ -245,7 +245,7 @@ typedef CGAL::Alpha_shape_vertex_base_3<Gt> Av;
 typedef CGAL::Triangulation_cell_base_3<Gt> Tc;
 typedef CGAL::Alpha_shape_cell_base_3<Gt,Tc> Ac;
 
-typedef CGAL::Triangulation_default_data_structure_3<Gt,Av,Ac> Tds;
+typedef CGAL::Triangulation_data_structure_3<Gt,Av,Ac> Tds;
 typedef CGAL::Delaunay_triangulation_3<Gt,Tds> Dt;
 typedef CGAL::Alpha_shape_3<Dt> Alpha_shape_3;
 \end{cprog}
@@ -269,7 +269,7 @@ typedef CGAL::Triangulation_hierarchy_vertex_base_3<Avb> Av
 typedef CGAL::Triangulation_cell_base_3<Gt> Tc;
 typedef CGAL::Alpha_shape_cell_base_3<Gt,Tc> Ac;
 
-typedef CGAL::Triangulation_default_data_structure_3<Gt,Av,Ac> Tds;
+typedef CGAL::Triangulation_data_structure_3<Gt,Av,Ac> Tds;
 typedef CGAL::Delaunay_triangulation_3<Gt,Tds> Dt;
 typedef CGAL::Triangulation_hierarchy_3<Dt> Ht;
 typedef CGAL::Alpha_shape_3<Ht> Alpha_shape_3;
@@ -294,7 +294,7 @@ typedef CGAL::Alpha_shape_vertex_base_3<Gt> Av;
 typedef CGAL::Regular_triangulation_cell_base_3<Gt> Rc;
 typedef CGAL::Alpha_shape_cell_base_3<Gt,Rc>  Ac;
 
-typedef CGAL::Triangulation_default_data_structure_3<Gt,Av,Ac> Tds;
+typedef CGAL::Triangulation_data_structure_3<Gt,Av,Ac> Tds;
 typedef CGAL::Regular_triangulation_3<Gt,Tds> Rt;
 typedef CGAL::Alpha_shape_3<Rt> Alpha_shape_3;
 \end{cprog}
