@@ -384,11 +384,11 @@ Triangulation_line_face_circulator_2(const Point& pp,
 	  return;
 	case LEFT_TURN:
 	  s = edge_edge;
-	  i = cw(j);
+	  i = ccw(j);
 	  return;
 	case RIGHT_TURN:
 	  s = edge_edge;
-	  i = ccw(j);
+	  i = cw(j);
 	  return;
 	}
       }
