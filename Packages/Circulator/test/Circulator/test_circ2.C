@@ -25,28 +25,13 @@
 // ============================================================================
 
 
-#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
-#endif // CGAL_BASIC_H
-#ifndef CGAL_PROTECT_CSTDDEF
 #include <cstddef>
-#define CGAL_PROTECT_CSTDDEF
-#endif
-#ifndef CGAL_PROTECT_ITERATOR
 #include <iterator>
-#define CGAL_PROTECT_ITERATOR
-#endif
-#ifndef CGAL_PROTECT_LIST
 #include <list>
-#define CGAL_PROTECT_LIST
-#endif
-#ifndef CGAL_PROTECT_VECTOR
 #include <vector>
-#define CGAL_PROTECT_VECTOR
-#endif
-#ifndef CGAL_CIRCULATOR_IMPL_H
+#include <cassert>
 #include <CGAL/circulator_impl.h>
-#endif // CGAL_CIRCULATOR_IMPL_H
 
 using namespace CGAL;
 
@@ -83,7 +68,7 @@ void append_node( Node* p, int n) {
     p->prev = q;
 }
 Node* generate_nodes( int n) {
-    CGAL_assertion( n > 0);
+    assert( n > 0);
     Node* p = new Node(1);
     for ( int i = 2; i <= n; i++)
         append_node( p, i);
@@ -137,7 +122,7 @@ void append_cnode( CNode* p, int n) {
     p->_prev = q;
 }
 CNode* generate_cnodes( int n) {
-    CGAL_assertion( n > 0);
+    assert( n > 0);
     CNode* p = new CNode(1);
     for ( int i = 2; i <= n; i++)
         append_cnode( p, i);
@@ -202,8 +187,8 @@ void test_struct(){
         typedef std::iterator_traits<Struct_circulator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        CGAL_assertion(1==test_value_type( (I_value_type*)(0)));
-        CGAL_assertion(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)(0)));
+        assert(1==test_difference_type( (I_difference_type*)(0)));
     
         // Default constructor.
         Struct_circulator z = Struct_circulator();
@@ -212,26 +197,26 @@ void test_struct(){
         Struct_circulator i = start;
     
         // Check general support for circulators and iterators.
-        CGAL_assertion( CGAL::is_empty_range( z, z));
-        CGAL_assertion( ! CGAL::is_empty_range( i, start));
+        assert( CGAL::is_empty_range( z, z));
+        assert( ! CGAL::is_empty_range( i, start));
     
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
         if (! CGAL::is_empty_range( i, start)) {   // superfluous
             do {
-                CGAL_assertion( k == (*i).key);
+                assert( k == (*i).key);
                 su += (*i).key;
                 ++k;
                 Struct_circulator j = ++i;
-                CGAL_assertion(  i ==  j);
+                assert(  i ==  j);
                 if ( i != start) {
-                    CGAL_assertion( (*i).key == (*j).key);
+                    assert( (*i).key == (*j).key);
                 }
             } while (i != start);  // Inequality and equality checked.
         }
-        CGAL_assertion( i == start);  // Equality checked.
-        CGAL_assertion( su == 15);
+        assert( i == start);  // Equality checked.
+        assert( su == 15);
     
         // Assignment.
         i = start;
@@ -240,48 +225,48 @@ void test_struct(){
         // Loop with post increment.
         if (! CGAL::is_empty_range( i, start)) {   // superfluous
             do {
-                CGAL_assertion( k == (*i).key);
+                assert( k == (*i).key);
                 su += (*i).key;
                 ++k;
                 Struct_circulator j = i++;
-                CGAL_assertion(  i !=  j);
+                assert(  i !=  j);
                 if ( i != start) {
-                    CGAL_assertion( (*i).key == (*j).key + 1);
+                    assert( (*i).key == (*j).key + 1);
                 }
             } while (i != start);
         }
-        CGAL_assertion( i == start);
-        CGAL_assertion( su == 15);
+        assert( i == start);
+        assert( su == 15);
     }
     { // Open own scope to hide local variables.
         // Change three elements and check post-/pre-increment.
         Struct_circulator i = start;
         (*i++).key = 4;
-        CGAL_assertion( 4 == (*start).key);
-        CGAL_assertion( 2 == (*i).key);
+        assert( 4 == (*start).key);
+        assert( 2 == (*i).key);
         (*i++).key = 3;
-        CGAL_assertion( 3 == (*i).key);
+        assert( 3 == (*i).key);
         (*++i).key = 7;
-        CGAL_assertion( 7 == (*i).key);
+        assert( 7 == (*i).key);
     
         // Check the setting and reset these elements
         // to their original values.
         i = start;
-        CGAL_assertion( 4 == (*i).key);
+        assert( 4 == (*i).key);
         (*i).key = 1;
         i++;
-        CGAL_assertion( 3 == (*i).key);
+        assert( 3 == (*i).key);
         (*i++).key = 2;
-        CGAL_assertion( 3 == (*i).key);
+        assert( 3 == (*i).key);
         i++;
-        CGAL_assertion( 7 == (*i).key);
+        assert( 7 == (*i).key);
         (*i).key = 4;
     
         // Check the resetting.
         i = start;
         int k = 1;
         do {
-            CGAL_assertion( k == (*i).key);
+            assert( k == (*i).key);
             ++i;
             ++k;
         } while (i != start);
@@ -295,42 +280,42 @@ void test_struct(){
         k1.key = 1;
         Struct_circulator::reference       k2 = k1;
         (void)k2;
-        CGAL_assertion( k2.key == 1);
+        assert( k2.key == 1);
         Struct_circulator::pointer         p1 = &k1;
         (void)p1;
-        CGAL_assertion( (*p1).key == 1);
+        assert( (*p1).key == 1);
         k1.key = 3;
-        CGAL_assertion( k1.key == 3);
-        CGAL_assertion( k2.key == 3);
-        CGAL_assertion( (*p1).key == 3);
+        assert( k1.key == 3);
+        assert( k2.key == 3);
+        assert( (*p1).key == 3);
         k1.key = 6;
-        CGAL_assertion( k1.key == 6);
-        CGAL_assertion( k2.key == 6);
-        CGAL_assertion( (*p1).key == 6);
+        assert( k1.key == 6);
+        assert( k2.key == 6);
+        assert( (*p1).key == 6);
         Struct_circulator::size_type s = 5;
-        CGAL_assertion( s == 5);
+        assert( s == 5);
         Struct_circulator::difference_type d = -5;
-        CGAL_assertion( d == -5);
+        assert( d == -5);
     
         // Check tests for empty data structures.
         Struct_circulator z = Struct_circulator();
-        CGAL_assertion(   z == CGAL_CIRC_NULL);
-        CGAL_assertion( ! (z != CGAL_CIRC_NULL));
+        assert(   z == CGAL_CIRC_NULL);
+        assert( ! (z != CGAL_CIRC_NULL));
         Struct_circulator i = start;
-        CGAL_assertion( ! (i == CGAL_CIRC_NULL));
-        CGAL_assertion(   i != CGAL_CIRC_NULL);
-        CGAL_assertion( i == start);
-        CGAL_assertion( i == start);
+        assert( ! (i == CGAL_CIRC_NULL));
+        assert(   i != CGAL_CIRC_NULL);
+        assert( i == start);
+        assert( i == start);
         // Do I reach myself.
         ++i;
         Struct_circulator j = i;
         int k = 0;
         do {
-            CGAL_assertion( k < 5);
+            assert( k < 5);
             ++k;
             ++i;
         } while( i != j);
-        CGAL_assertion( k == 5);
+        assert( k == 5);
     }
   }{
     Struct_const_circulator start(data_struct);
@@ -344,8 +329,8 @@ void test_struct(){
         typedef std::iterator_traits<Struct_const_circulator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        CGAL_assertion(1==test_value_type( (I_value_type*)(0)));
-        CGAL_assertion(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)(0)));
+        assert(1==test_difference_type( (I_difference_type*)(0)));
     
         // Default constructor.
         Struct_const_circulator z = Struct_const_circulator();
@@ -354,26 +339,26 @@ void test_struct(){
         Struct_const_circulator i = start;
     
         // Check general support for circulators and iterators.
-        CGAL_assertion( CGAL::is_empty_range( z, z));
-        CGAL_assertion( ! CGAL::is_empty_range( i, start));
+        assert( CGAL::is_empty_range( z, z));
+        assert( ! CGAL::is_empty_range( i, start));
     
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
         if (! CGAL::is_empty_range( i, start)) {   // superfluous
             do {
-                CGAL_assertion( k == (*i).key);
+                assert( k == (*i).key);
                 su += (*i).key;
                 ++k;
                 Struct_const_circulator j = ++i;
-                CGAL_assertion(  i ==  j);
+                assert(  i ==  j);
                 if ( i != start) {
-                    CGAL_assertion( (*i).key == (*j).key);
+                    assert( (*i).key == (*j).key);
                 }
             } while (i != start);  // Inequality and equality checked.
         }
-        CGAL_assertion( i == start);  // Equality checked.
-        CGAL_assertion( su == 15);
+        assert( i == start);  // Equality checked.
+        assert( su == 15);
     
         // Assignment.
         i = start;
@@ -382,18 +367,18 @@ void test_struct(){
         // Loop with post increment.
         if (! CGAL::is_empty_range( i, start)) {   // superfluous
             do {
-                CGAL_assertion( k == (*i).key);
+                assert( k == (*i).key);
                 su += (*i).key;
                 ++k;
                 Struct_const_circulator j = i++;
-                CGAL_assertion(  i !=  j);
+                assert(  i !=  j);
                 if ( i != start) {
-                    CGAL_assertion( (*i).key == (*j).key + 1);
+                    assert( (*i).key == (*j).key + 1);
                 }
             } while (i != start);
         }
-        CGAL_assertion( i == start);
-        CGAL_assertion( su == 15);
+        assert( i == start);
+        assert( su == 15);
     }
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( start);
@@ -404,42 +389,42 @@ void test_struct(){
         k1.key = 1;
         Struct_const_circulator::reference       k2 = k1;
         (void)k2;
-        CGAL_assertion( k2.key == 1);
+        assert( k2.key == 1);
         Struct_const_circulator::pointer         p1 = &k1;
         (void)p1;
-        CGAL_assertion( (*p1).key == 1);
+        assert( (*p1).key == 1);
         k1.key = 3;
-        CGAL_assertion( k1.key == 3);
-        CGAL_assertion( k2.key == 3);
-        CGAL_assertion( (*p1).key == 3);
+        assert( k1.key == 3);
+        assert( k2.key == 3);
+        assert( (*p1).key == 3);
         k1.key = 6;
-        CGAL_assertion( k1.key == 6);
-        CGAL_assertion( k2.key == 6);
-        CGAL_assertion( (*p1).key == 6);
+        assert( k1.key == 6);
+        assert( k2.key == 6);
+        assert( (*p1).key == 6);
         Struct_const_circulator::size_type s = 5;
-        CGAL_assertion( s == 5);
+        assert( s == 5);
         Struct_const_circulator::difference_type d = -5;
-        CGAL_assertion( d == -5);
+        assert( d == -5);
     
         // Check tests for empty data structures.
         Struct_const_circulator z = Struct_const_circulator();
-        CGAL_assertion(   z == CGAL_CIRC_NULL);
-        CGAL_assertion( ! (z != CGAL_CIRC_NULL));
+        assert(   z == CGAL_CIRC_NULL);
+        assert( ! (z != CGAL_CIRC_NULL));
         Struct_const_circulator i = start;
-        CGAL_assertion( ! (i == CGAL_CIRC_NULL));
-        CGAL_assertion(   i != CGAL_CIRC_NULL);
-        CGAL_assertion( i == start);
-        CGAL_assertion( i == start);
+        assert( ! (i == CGAL_CIRC_NULL));
+        assert(   i != CGAL_CIRC_NULL);
+        assert( i == start);
+        assert( i == start);
         // Do I reach myself.
         ++i;
         Struct_const_circulator j = i;
         int k = 0;
         do {
-            CGAL_assertion( k < 5);
+            assert( k < 5);
             ++k;
             ++i;
         } while( i != j);
-        CGAL_assertion( k == 5);
+        assert( k == 5);
     }
   }{
     Struct_bi_circulator start(data_struct);
@@ -453,8 +438,8 @@ void test_struct(){
         typedef std::iterator_traits<Struct_bi_circulator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        CGAL_assertion(1==test_value_type( (I_value_type*)(0)));
-        CGAL_assertion(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)(0)));
+        assert(1==test_difference_type( (I_difference_type*)(0)));
     
         // Default constructor.
         Struct_bi_circulator z = Struct_bi_circulator();
@@ -463,26 +448,26 @@ void test_struct(){
         Struct_bi_circulator i = start;
     
         // Check general support for circulators and iterators.
-        CGAL_assertion( CGAL::is_empty_range( z, z));
-        CGAL_assertion( ! CGAL::is_empty_range( i, start));
+        assert( CGAL::is_empty_range( z, z));
+        assert( ! CGAL::is_empty_range( i, start));
     
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
         if (! CGAL::is_empty_range( i, start)) {   // superfluous
             do {
-                CGAL_assertion( k == (*i).key);
+                assert( k == (*i).key);
                 su += (*i).key;
                 ++k;
                 Struct_bi_circulator j = ++i;
-                CGAL_assertion(  i ==  j);
+                assert(  i ==  j);
                 if ( i != start) {
-                    CGAL_assertion( (*i).key == (*j).key);
+                    assert( (*i).key == (*j).key);
                 }
             } while (i != start);  // Inequality and equality checked.
         }
-        CGAL_assertion( i == start);  // Equality checked.
-        CGAL_assertion( su == 15);
+        assert( i == start);  // Equality checked.
+        assert( su == 15);
     
         // Assignment.
         i = start;
@@ -491,48 +476,48 @@ void test_struct(){
         // Loop with post increment.
         if (! CGAL::is_empty_range( i, start)) {   // superfluous
             do {
-                CGAL_assertion( k == (*i).key);
+                assert( k == (*i).key);
                 su += (*i).key;
                 ++k;
                 Struct_bi_circulator j = i++;
-                CGAL_assertion(  i !=  j);
+                assert(  i !=  j);
                 if ( i != start) {
-                    CGAL_assertion( (*i).key == (*j).key + 1);
+                    assert( (*i).key == (*j).key + 1);
                 }
             } while (i != start);
         }
-        CGAL_assertion( i == start);
-        CGAL_assertion( su == 15);
+        assert( i == start);
+        assert( su == 15);
     }
     { // Open own scope to hide local variables.
         // Change three elements and check post-/pre-increment.
         Struct_bi_circulator i = start;
         (*i++).key = 4;
-        CGAL_assertion( 4 == (*start).key);
-        CGAL_assertion( 2 == (*i).key);
+        assert( 4 == (*start).key);
+        assert( 2 == (*i).key);
         (*i++).key = 3;
-        CGAL_assertion( 3 == (*i).key);
+        assert( 3 == (*i).key);
         (*++i).key = 7;
-        CGAL_assertion( 7 == (*i).key);
+        assert( 7 == (*i).key);
     
         // Check the setting and reset these elements
         // to their original values.
         i = start;
-        CGAL_assertion( 4 == (*i).key);
+        assert( 4 == (*i).key);
         (*i).key = 1;
         i++;
-        CGAL_assertion( 3 == (*i).key);
+        assert( 3 == (*i).key);
         (*i++).key = 2;
-        CGAL_assertion( 3 == (*i).key);
+        assert( 3 == (*i).key);
         i++;
-        CGAL_assertion( 7 == (*i).key);
+        assert( 7 == (*i).key);
         (*i).key = 4;
     
         // Check the resetting.
         i = start;
         int k = 1;
         do {
-            CGAL_assertion( k == (*i).key);
+            assert( k == (*i).key);
             ++i;
             ++k;
         } while (i != start);
@@ -546,8 +531,8 @@ void test_struct(){
         typedef std::iterator_traits<Struct_bi_circulator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        CGAL_assertion(1==test_value_type( (I_value_type*)(0)));
-        CGAL_assertion(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)(0)));
+        assert(1==test_difference_type( (I_difference_type*)(0)));
     
         // Default constructor.
         Struct_bi_circulator z = Struct_bi_circulator();
@@ -556,26 +541,26 @@ void test_struct(){
         Struct_bi_circulator i = start;
     
         // Check general support for circulators and iterators.
-        CGAL_assertion( CGAL::is_empty_range( z, z));
-        CGAL_assertion( ! CGAL::is_empty_range( i, start));
+        assert( CGAL::is_empty_range( z, z));
+        assert( ! CGAL::is_empty_range( i, start));
     
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
         if (! CGAL::is_empty_range( i, start)) {   // superfluous
             do {
-                CGAL_assertion( k == (*i).key);
+                assert( k == (*i).key);
                 su += (*i).key;
                 ++k;
                 Struct_bi_circulator j = ++i;
-                CGAL_assertion(  i ==  j);
+                assert(  i ==  j);
                 if ( i != start) {
-                    CGAL_assertion( (*i).key == (*j).key);
+                    assert( (*i).key == (*j).key);
                 }
             } while (i != start);  // Inequality and equality checked.
         }
-        CGAL_assertion( i == start);  // Equality checked.
-        CGAL_assertion( su == 15);
+        assert( i == start);  // Equality checked.
+        assert( su == 15);
     
         // Assignment.
         i = start;
@@ -584,18 +569,18 @@ void test_struct(){
         // Loop with post increment.
         if (! CGAL::is_empty_range( i, start)) {   // superfluous
             do {
-                CGAL_assertion( k == (*i).key);
+                assert( k == (*i).key);
                 su += (*i).key;
                 ++k;
                 Struct_bi_circulator j = i++;
-                CGAL_assertion(  i !=  j);
+                assert(  i !=  j);
                 if ( i != start) {
-                    CGAL_assertion( (*i).key == (*j).key + 1);
+                    assert( (*i).key == (*j).key + 1);
                 }
             } while (i != start);
         }
-        CGAL_assertion( i == start);
-        CGAL_assertion( su == 15);
+        assert( i == start);
+        assert( su == 15);
     }
     { // Open own scope to hide local variables.
         CGAL::Assert_is_at_least_bidirectional_category(start);
@@ -606,14 +591,14 @@ void test_struct(){
         int k  = 5;
         do {
             Struct_bi_circulator j = --i;
-            CGAL_assertion(  i ==  j);
-            CGAL_assertion( (*i).key == (*j).key);
-            CGAL_assertion( k == (*i).key);
+            assert(  i ==  j);
+            assert( (*i).key == (*j).key);
+            assert( k == (*i).key);
             su += (*i).key;
             --k;
         } while (i != start);
-        CGAL_assertion( i == start);
-        CGAL_assertion( su == 15);
+        assert( i == start);
+        assert( su == 15);
     
         // Assignment.
         i = start;
@@ -622,16 +607,16 @@ void test_struct(){
         // Loop with post-decrement.
         do {
             Struct_bi_circulator j = i--;
-            CGAL_assertion(  i !=  j);
+            assert(  i !=  j);
             if ( j != start) {
-                CGAL_assertion( (*i).key == (*j).key - 1);
+                assert( (*i).key == (*j).key - 1);
             }
-            CGAL_assertion( k == (*i).key);
+            assert( k == (*i).key);
             su += (*i).key;
             --k;
         } while (i != start);
-        CGAL_assertion( i == start);
-        CGAL_assertion( su == 15);
+        assert( i == start);
+        assert( su == 15);
     }
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( start);
@@ -642,42 +627,42 @@ void test_struct(){
         k1.key = 1;
         Struct_bi_circulator::reference       k2 = k1;
         (void)k2;
-        CGAL_assertion( k2.key == 1);
+        assert( k2.key == 1);
         Struct_bi_circulator::pointer         p1 = &k1;
         (void)p1;
-        CGAL_assertion( (*p1).key == 1);
+        assert( (*p1).key == 1);
         k1.key = 3;
-        CGAL_assertion( k1.key == 3);
-        CGAL_assertion( k2.key == 3);
-        CGAL_assertion( (*p1).key == 3);
+        assert( k1.key == 3);
+        assert( k2.key == 3);
+        assert( (*p1).key == 3);
         k1.key = 6;
-        CGAL_assertion( k1.key == 6);
-        CGAL_assertion( k2.key == 6);
-        CGAL_assertion( (*p1).key == 6);
+        assert( k1.key == 6);
+        assert( k2.key == 6);
+        assert( (*p1).key == 6);
         Struct_bi_circulator::size_type s = 5;
-        CGAL_assertion( s == 5);
+        assert( s == 5);
         Struct_bi_circulator::difference_type d = -5;
-        CGAL_assertion( d == -5);
+        assert( d == -5);
     
         // Check tests for empty data structures.
         Struct_bi_circulator z = Struct_bi_circulator();
-        CGAL_assertion(   z == CGAL_CIRC_NULL);
-        CGAL_assertion( ! (z != CGAL_CIRC_NULL));
+        assert(   z == CGAL_CIRC_NULL);
+        assert( ! (z != CGAL_CIRC_NULL));
         Struct_bi_circulator i = start;
-        CGAL_assertion( ! (i == CGAL_CIRC_NULL));
-        CGAL_assertion(   i != CGAL_CIRC_NULL);
-        CGAL_assertion( i == start);
-        CGAL_assertion( i == start);
+        assert( ! (i == CGAL_CIRC_NULL));
+        assert(   i != CGAL_CIRC_NULL);
+        assert( i == start);
+        assert( i == start);
         // Do I reach myself.
         ++i;
         Struct_bi_circulator j = i;
         int k = 0;
         do {
-            CGAL_assertion( k < 5);
+            assert( k < 5);
             ++k;
             ++i;
         } while( i != j);
-        CGAL_assertion( k == 5);
+        assert( k == 5);
     }
     { // Open own scope to hide local variables.
         // Do I reach myself backwards.
@@ -686,11 +671,11 @@ void test_struct(){
         Struct_bi_circulator j = i;
         int k = 0;
         do {
-            CGAL_assertion( k < 5);
+            assert( k < 5);
             ++k;
             --i;
         } while( i != j);
-        CGAL_assertion( k == 5);
+        assert( k == 5);
     }
   }{
     Struct_bi_const_circulator start(data_struct);
@@ -704,8 +689,8 @@ void test_struct(){
         typedef std::iterator_traits<Struct_bi_const_circulator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        CGAL_assertion(1==test_value_type( (I_value_type*)(0)));
-        CGAL_assertion(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)(0)));
+        assert(1==test_difference_type( (I_difference_type*)(0)));
     
         // Default constructor.
         Struct_bi_const_circulator z = Struct_bi_const_circulator();
@@ -714,26 +699,26 @@ void test_struct(){
         Struct_bi_const_circulator i = start;
     
         // Check general support for circulators and iterators.
-        CGAL_assertion( CGAL::is_empty_range( z, z));
-        CGAL_assertion( ! CGAL::is_empty_range( i, start));
+        assert( CGAL::is_empty_range( z, z));
+        assert( ! CGAL::is_empty_range( i, start));
     
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
         if (! CGAL::is_empty_range( i, start)) {   // superfluous
             do {
-                CGAL_assertion( k == (*i).key);
+                assert( k == (*i).key);
                 su += (*i).key;
                 ++k;
                 Struct_bi_const_circulator j = ++i;
-                CGAL_assertion(  i ==  j);
+                assert(  i ==  j);
                 if ( i != start) {
-                    CGAL_assertion( (*i).key == (*j).key);
+                    assert( (*i).key == (*j).key);
                 }
             } while (i != start);  // Inequality and equality checked.
         }
-        CGAL_assertion( i == start);  // Equality checked.
-        CGAL_assertion( su == 15);
+        assert( i == start);  // Equality checked.
+        assert( su == 15);
     
         // Assignment.
         i = start;
@@ -742,18 +727,18 @@ void test_struct(){
         // Loop with post increment.
         if (! CGAL::is_empty_range( i, start)) {   // superfluous
             do {
-                CGAL_assertion( k == (*i).key);
+                assert( k == (*i).key);
                 su += (*i).key;
                 ++k;
                 Struct_bi_const_circulator j = i++;
-                CGAL_assertion(  i !=  j);
+                assert(  i !=  j);
                 if ( i != start) {
-                    CGAL_assertion( (*i).key == (*j).key + 1);
+                    assert( (*i).key == (*j).key + 1);
                 }
             } while (i != start);
         }
-        CGAL_assertion( i == start);
-        CGAL_assertion( su == 15);
+        assert( i == start);
+        assert( su == 15);
     }
     { // Open own scope to hide local variables.
         CGAL::Assert_is_at_least_bidirectional_category(start);
@@ -764,14 +749,14 @@ void test_struct(){
         int k  = 5;
         do {
             Struct_bi_const_circulator j = --i;
-            CGAL_assertion(  i ==  j);
-            CGAL_assertion( (*i).key == (*j).key);
-            CGAL_assertion( k == (*i).key);
+            assert(  i ==  j);
+            assert( (*i).key == (*j).key);
+            assert( k == (*i).key);
             su += (*i).key;
             --k;
         } while (i != start);
-        CGAL_assertion( i == start);
-        CGAL_assertion( su == 15);
+        assert( i == start);
+        assert( su == 15);
     
         // Assignment.
         i = start;
@@ -780,16 +765,16 @@ void test_struct(){
         // Loop with post-decrement.
         do {
             Struct_bi_const_circulator j = i--;
-            CGAL_assertion(  i !=  j);
+            assert(  i !=  j);
             if ( j != start) {
-                CGAL_assertion( (*i).key == (*j).key - 1);
+                assert( (*i).key == (*j).key - 1);
             }
-            CGAL_assertion( k == (*i).key);
+            assert( k == (*i).key);
             su += (*i).key;
             --k;
         } while (i != start);
-        CGAL_assertion( i == start);
-        CGAL_assertion( su == 15);
+        assert( i == start);
+        assert( su == 15);
     }
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( start);
@@ -800,42 +785,42 @@ void test_struct(){
         k1.key = 1;
         Struct_bi_const_circulator::reference       k2 = k1;
         (void)k2;
-        CGAL_assertion( k2.key == 1);
+        assert( k2.key == 1);
         Struct_bi_const_circulator::pointer         p1 = &k1;
         (void)p1;
-        CGAL_assertion( (*p1).key == 1);
+        assert( (*p1).key == 1);
         k1.key = 3;
-        CGAL_assertion( k1.key == 3);
-        CGAL_assertion( k2.key == 3);
-        CGAL_assertion( (*p1).key == 3);
+        assert( k1.key == 3);
+        assert( k2.key == 3);
+        assert( (*p1).key == 3);
         k1.key = 6;
-        CGAL_assertion( k1.key == 6);
-        CGAL_assertion( k2.key == 6);
-        CGAL_assertion( (*p1).key == 6);
+        assert( k1.key == 6);
+        assert( k2.key == 6);
+        assert( (*p1).key == 6);
         Struct_bi_const_circulator::size_type s = 5;
-        CGAL_assertion( s == 5);
+        assert( s == 5);
         Struct_bi_const_circulator::difference_type d = -5;
-        CGAL_assertion( d == -5);
+        assert( d == -5);
     
         // Check tests for empty data structures.
         Struct_bi_const_circulator z = Struct_bi_const_circulator();
-        CGAL_assertion(   z == CGAL_CIRC_NULL);
-        CGAL_assertion( ! (z != CGAL_CIRC_NULL));
+        assert(   z == CGAL_CIRC_NULL);
+        assert( ! (z != CGAL_CIRC_NULL));
         Struct_bi_const_circulator i = start;
-        CGAL_assertion( ! (i == CGAL_CIRC_NULL));
-        CGAL_assertion(   i != CGAL_CIRC_NULL);
-        CGAL_assertion( i == start);
-        CGAL_assertion( i == start);
+        assert( ! (i == CGAL_CIRC_NULL));
+        assert(   i != CGAL_CIRC_NULL);
+        assert( i == start);
+        assert( i == start);
         // Do I reach myself.
         ++i;
         Struct_bi_const_circulator j = i;
         int k = 0;
         do {
-            CGAL_assertion( k < 5);
+            assert( k < 5);
             ++k;
             ++i;
         } while( i != j);
-        CGAL_assertion( k == 5);
+        assert( k == 5);
     }
     { // Open own scope to hide local variables.
         // Do I reach myself backwards.
@@ -844,11 +829,11 @@ void test_struct(){
         Struct_bi_const_circulator j = i;
         int k = 0;
         do {
-            CGAL_assertion( k < 5);
+            assert( k < 5);
             ++k;
             --i;
         } while( i != j);
-        CGAL_assertion( k == 5);
+        assert( k == 5);
     }
   }
   delete_nodes(data_struct);
@@ -867,8 +852,8 @@ void test_class(){
         typedef std::iterator_traits<Class_circulator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        CGAL_assertion(1==test_value_type( (I_value_type*)(0)));
-        CGAL_assertion(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)(0)));
+        assert(1==test_difference_type( (I_difference_type*)(0)));
     
         // Default constructor.
         Class_circulator z = Class_circulator();
@@ -877,26 +862,26 @@ void test_class(){
         Class_circulator i = start;
     
         // Check general support for circulators and iterators.
-        CGAL_assertion( CGAL::is_empty_range( z, z));
-        CGAL_assertion( ! CGAL::is_empty_range( i, start));
+        assert( CGAL::is_empty_range( z, z));
+        assert( ! CGAL::is_empty_range( i, start));
     
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
         if (! CGAL::is_empty_range( i, start)) {   // superfluous
             do {
-                CGAL_assertion( k == (*i).key);
+                assert( k == (*i).key);
                 su += (*i).key;
                 ++k;
                 Class_circulator j = ++i;
-                CGAL_assertion(  i ==  j);
+                assert(  i ==  j);
                 if ( i != start) {
-                    CGAL_assertion( (*i).key == (*j).key);
+                    assert( (*i).key == (*j).key);
                 }
             } while (i != start);  // Inequality and equality checked.
         }
-        CGAL_assertion( i == start);  // Equality checked.
-        CGAL_assertion( su == 15);
+        assert( i == start);  // Equality checked.
+        assert( su == 15);
     
         // Assignment.
         i = start;
@@ -905,48 +890,48 @@ void test_class(){
         // Loop with post increment.
         if (! CGAL::is_empty_range( i, start)) {   // superfluous
             do {
-                CGAL_assertion( k == (*i).key);
+                assert( k == (*i).key);
                 su += (*i).key;
                 ++k;
                 Class_circulator j = i++;
-                CGAL_assertion(  i !=  j);
+                assert(  i !=  j);
                 if ( i != start) {
-                    CGAL_assertion( (*i).key == (*j).key + 1);
+                    assert( (*i).key == (*j).key + 1);
                 }
             } while (i != start);
         }
-        CGAL_assertion( i == start);
-        CGAL_assertion( su == 15);
+        assert( i == start);
+        assert( su == 15);
     }
     { // Open own scope to hide local variables.
         // Change three elements and check post-/pre-increment.
         Class_circulator i = start;
         (*i++).key = 4;
-        CGAL_assertion( 4 == (*start).key);
-        CGAL_assertion( 2 == (*i).key);
+        assert( 4 == (*start).key);
+        assert( 2 == (*i).key);
         (*i++).key = 3;
-        CGAL_assertion( 3 == (*i).key);
+        assert( 3 == (*i).key);
         (*++i).key = 7;
-        CGAL_assertion( 7 == (*i).key);
+        assert( 7 == (*i).key);
     
         // Check the setting and reset these elements
         // to their original values.
         i = start;
-        CGAL_assertion( 4 == (*i).key);
+        assert( 4 == (*i).key);
         (*i).key = 1;
         i++;
-        CGAL_assertion( 3 == (*i).key);
+        assert( 3 == (*i).key);
         (*i++).key = 2;
-        CGAL_assertion( 3 == (*i).key);
+        assert( 3 == (*i).key);
         i++;
-        CGAL_assertion( 7 == (*i).key);
+        assert( 7 == (*i).key);
         (*i).key = 4;
     
         // Check the resetting.
         i = start;
         int k = 1;
         do {
-            CGAL_assertion( k == (*i).key);
+            assert( k == (*i).key);
             ++i;
             ++k;
         } while (i != start);
@@ -960,42 +945,42 @@ void test_class(){
         k1.key = 1;
         Class_circulator::reference       k2 = k1;
         (void)k2;
-        CGAL_assertion( k2.key == 1);
+        assert( k2.key == 1);
         Class_circulator::pointer         p1 = &k1;
         (void)p1;
-        CGAL_assertion( (*p1).key == 1);
+        assert( (*p1).key == 1);
         k1.key = 3;
-        CGAL_assertion( k1.key == 3);
-        CGAL_assertion( k2.key == 3);
-        CGAL_assertion( (*p1).key == 3);
+        assert( k1.key == 3);
+        assert( k2.key == 3);
+        assert( (*p1).key == 3);
         k1.key = 6;
-        CGAL_assertion( k1.key == 6);
-        CGAL_assertion( k2.key == 6);
-        CGAL_assertion( (*p1).key == 6);
+        assert( k1.key == 6);
+        assert( k2.key == 6);
+        assert( (*p1).key == 6);
         Class_circulator::size_type s = 5;
-        CGAL_assertion( s == 5);
+        assert( s == 5);
         Class_circulator::difference_type d = -5;
-        CGAL_assertion( d == -5);
+        assert( d == -5);
     
         // Check tests for empty data structures.
         Class_circulator z = Class_circulator();
-        CGAL_assertion(   z == CGAL_CIRC_NULL);
-        CGAL_assertion( ! (z != CGAL_CIRC_NULL));
+        assert(   z == CGAL_CIRC_NULL);
+        assert( ! (z != CGAL_CIRC_NULL));
         Class_circulator i = start;
-        CGAL_assertion( ! (i == CGAL_CIRC_NULL));
-        CGAL_assertion(   i != CGAL_CIRC_NULL);
-        CGAL_assertion( i == start);
-        CGAL_assertion( i == start);
+        assert( ! (i == CGAL_CIRC_NULL));
+        assert(   i != CGAL_CIRC_NULL);
+        assert( i == start);
+        assert( i == start);
         // Do I reach myself.
         ++i;
         Class_circulator j = i;
         int k = 0;
         do {
-            CGAL_assertion( k < 5);
+            assert( k < 5);
             ++k;
             ++i;
         } while( i != j);
-        CGAL_assertion( k == 5);
+        assert( k == 5);
     }
   }{
     Class_const_circulator start(data_struct);
@@ -1009,8 +994,8 @@ void test_class(){
         typedef std::iterator_traits<Class_const_circulator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        CGAL_assertion(1==test_value_type( (I_value_type*)(0)));
-        CGAL_assertion(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)(0)));
+        assert(1==test_difference_type( (I_difference_type*)(0)));
     
         // Default constructor.
         Class_const_circulator z = Class_const_circulator();
@@ -1019,26 +1004,26 @@ void test_class(){
         Class_const_circulator i = start;
     
         // Check general support for circulators and iterators.
-        CGAL_assertion( CGAL::is_empty_range( z, z));
-        CGAL_assertion( ! CGAL::is_empty_range( i, start));
+        assert( CGAL::is_empty_range( z, z));
+        assert( ! CGAL::is_empty_range( i, start));
     
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
         if (! CGAL::is_empty_range( i, start)) {   // superfluous
             do {
-                CGAL_assertion( k == (*i).key);
+                assert( k == (*i).key);
                 su += (*i).key;
                 ++k;
                 Class_const_circulator j = ++i;
-                CGAL_assertion(  i ==  j);
+                assert(  i ==  j);
                 if ( i != start) {
-                    CGAL_assertion( (*i).key == (*j).key);
+                    assert( (*i).key == (*j).key);
                 }
             } while (i != start);  // Inequality and equality checked.
         }
-        CGAL_assertion( i == start);  // Equality checked.
-        CGAL_assertion( su == 15);
+        assert( i == start);  // Equality checked.
+        assert( su == 15);
     
         // Assignment.
         i = start;
@@ -1047,18 +1032,18 @@ void test_class(){
         // Loop with post increment.
         if (! CGAL::is_empty_range( i, start)) {   // superfluous
             do {
-                CGAL_assertion( k == (*i).key);
+                assert( k == (*i).key);
                 su += (*i).key;
                 ++k;
                 Class_const_circulator j = i++;
-                CGAL_assertion(  i !=  j);
+                assert(  i !=  j);
                 if ( i != start) {
-                    CGAL_assertion( (*i).key == (*j).key + 1);
+                    assert( (*i).key == (*j).key + 1);
                 }
             } while (i != start);
         }
-        CGAL_assertion( i == start);
-        CGAL_assertion( su == 15);
+        assert( i == start);
+        assert( su == 15);
     }
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( start);
@@ -1069,42 +1054,42 @@ void test_class(){
         k1.key = 1;
         Class_const_circulator::reference       k2 = k1;
         (void)k2;
-        CGAL_assertion( k2.key == 1);
+        assert( k2.key == 1);
         Class_const_circulator::pointer         p1 = &k1;
         (void)p1;
-        CGAL_assertion( (*p1).key == 1);
+        assert( (*p1).key == 1);
         k1.key = 3;
-        CGAL_assertion( k1.key == 3);
-        CGAL_assertion( k2.key == 3);
-        CGAL_assertion( (*p1).key == 3);
+        assert( k1.key == 3);
+        assert( k2.key == 3);
+        assert( (*p1).key == 3);
         k1.key = 6;
-        CGAL_assertion( k1.key == 6);
-        CGAL_assertion( k2.key == 6);
-        CGAL_assertion( (*p1).key == 6);
+        assert( k1.key == 6);
+        assert( k2.key == 6);
+        assert( (*p1).key == 6);
         Class_const_circulator::size_type s = 5;
-        CGAL_assertion( s == 5);
+        assert( s == 5);
         Class_const_circulator::difference_type d = -5;
-        CGAL_assertion( d == -5);
+        assert( d == -5);
     
         // Check tests for empty data structures.
         Class_const_circulator z = Class_const_circulator();
-        CGAL_assertion(   z == CGAL_CIRC_NULL);
-        CGAL_assertion( ! (z != CGAL_CIRC_NULL));
+        assert(   z == CGAL_CIRC_NULL);
+        assert( ! (z != CGAL_CIRC_NULL));
         Class_const_circulator i = start;
-        CGAL_assertion( ! (i == CGAL_CIRC_NULL));
-        CGAL_assertion(   i != CGAL_CIRC_NULL);
-        CGAL_assertion( i == start);
-        CGAL_assertion( i == start);
+        assert( ! (i == CGAL_CIRC_NULL));
+        assert(   i != CGAL_CIRC_NULL);
+        assert( i == start);
+        assert( i == start);
         // Do I reach myself.
         ++i;
         Class_const_circulator j = i;
         int k = 0;
         do {
-            CGAL_assertion( k < 5);
+            assert( k < 5);
             ++k;
             ++i;
         } while( i != j);
-        CGAL_assertion( k == 5);
+        assert( k == 5);
     }
   }{
     Class_bi_circulator start(data_struct);
@@ -1118,8 +1103,8 @@ void test_class(){
         typedef std::iterator_traits<Class_bi_circulator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        CGAL_assertion(1==test_value_type( (I_value_type*)(0)));
-        CGAL_assertion(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)(0)));
+        assert(1==test_difference_type( (I_difference_type*)(0)));
     
         // Default constructor.
         Class_bi_circulator z = Class_bi_circulator();
@@ -1128,26 +1113,26 @@ void test_class(){
         Class_bi_circulator i = start;
     
         // Check general support for circulators and iterators.
-        CGAL_assertion( CGAL::is_empty_range( z, z));
-        CGAL_assertion( ! CGAL::is_empty_range( i, start));
+        assert( CGAL::is_empty_range( z, z));
+        assert( ! CGAL::is_empty_range( i, start));
     
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
         if (! CGAL::is_empty_range( i, start)) {   // superfluous
             do {
-                CGAL_assertion( k == (*i).key);
+                assert( k == (*i).key);
                 su += (*i).key;
                 ++k;
                 Class_bi_circulator j = ++i;
-                CGAL_assertion(  i ==  j);
+                assert(  i ==  j);
                 if ( i != start) {
-                    CGAL_assertion( (*i).key == (*j).key);
+                    assert( (*i).key == (*j).key);
                 }
             } while (i != start);  // Inequality and equality checked.
         }
-        CGAL_assertion( i == start);  // Equality checked.
-        CGAL_assertion( su == 15);
+        assert( i == start);  // Equality checked.
+        assert( su == 15);
     
         // Assignment.
         i = start;
@@ -1156,48 +1141,48 @@ void test_class(){
         // Loop with post increment.
         if (! CGAL::is_empty_range( i, start)) {   // superfluous
             do {
-                CGAL_assertion( k == (*i).key);
+                assert( k == (*i).key);
                 su += (*i).key;
                 ++k;
                 Class_bi_circulator j = i++;
-                CGAL_assertion(  i !=  j);
+                assert(  i !=  j);
                 if ( i != start) {
-                    CGAL_assertion( (*i).key == (*j).key + 1);
+                    assert( (*i).key == (*j).key + 1);
                 }
             } while (i != start);
         }
-        CGAL_assertion( i == start);
-        CGAL_assertion( su == 15);
+        assert( i == start);
+        assert( su == 15);
     }
     { // Open own scope to hide local variables.
         // Change three elements and check post-/pre-increment.
         Class_bi_circulator i = start;
         (*i++).key = 4;
-        CGAL_assertion( 4 == (*start).key);
-        CGAL_assertion( 2 == (*i).key);
+        assert( 4 == (*start).key);
+        assert( 2 == (*i).key);
         (*i++).key = 3;
-        CGAL_assertion( 3 == (*i).key);
+        assert( 3 == (*i).key);
         (*++i).key = 7;
-        CGAL_assertion( 7 == (*i).key);
+        assert( 7 == (*i).key);
     
         // Check the setting and reset these elements
         // to their original values.
         i = start;
-        CGAL_assertion( 4 == (*i).key);
+        assert( 4 == (*i).key);
         (*i).key = 1;
         i++;
-        CGAL_assertion( 3 == (*i).key);
+        assert( 3 == (*i).key);
         (*i++).key = 2;
-        CGAL_assertion( 3 == (*i).key);
+        assert( 3 == (*i).key);
         i++;
-        CGAL_assertion( 7 == (*i).key);
+        assert( 7 == (*i).key);
         (*i).key = 4;
     
         // Check the resetting.
         i = start;
         int k = 1;
         do {
-            CGAL_assertion( k == (*i).key);
+            assert( k == (*i).key);
             ++i;
             ++k;
         } while (i != start);
@@ -1211,8 +1196,8 @@ void test_class(){
         typedef std::iterator_traits<Class_bi_circulator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        CGAL_assertion(1==test_value_type( (I_value_type*)(0)));
-        CGAL_assertion(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)(0)));
+        assert(1==test_difference_type( (I_difference_type*)(0)));
     
         // Default constructor.
         Class_bi_circulator z = Class_bi_circulator();
@@ -1221,26 +1206,26 @@ void test_class(){
         Class_bi_circulator i = start;
     
         // Check general support for circulators and iterators.
-        CGAL_assertion( CGAL::is_empty_range( z, z));
-        CGAL_assertion( ! CGAL::is_empty_range( i, start));
+        assert( CGAL::is_empty_range( z, z));
+        assert( ! CGAL::is_empty_range( i, start));
     
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
         if (! CGAL::is_empty_range( i, start)) {   // superfluous
             do {
-                CGAL_assertion( k == (*i).key);
+                assert( k == (*i).key);
                 su += (*i).key;
                 ++k;
                 Class_bi_circulator j = ++i;
-                CGAL_assertion(  i ==  j);
+                assert(  i ==  j);
                 if ( i != start) {
-                    CGAL_assertion( (*i).key == (*j).key);
+                    assert( (*i).key == (*j).key);
                 }
             } while (i != start);  // Inequality and equality checked.
         }
-        CGAL_assertion( i == start);  // Equality checked.
-        CGAL_assertion( su == 15);
+        assert( i == start);  // Equality checked.
+        assert( su == 15);
     
         // Assignment.
         i = start;
@@ -1249,18 +1234,18 @@ void test_class(){
         // Loop with post increment.
         if (! CGAL::is_empty_range( i, start)) {   // superfluous
             do {
-                CGAL_assertion( k == (*i).key);
+                assert( k == (*i).key);
                 su += (*i).key;
                 ++k;
                 Class_bi_circulator j = i++;
-                CGAL_assertion(  i !=  j);
+                assert(  i !=  j);
                 if ( i != start) {
-                    CGAL_assertion( (*i).key == (*j).key + 1);
+                    assert( (*i).key == (*j).key + 1);
                 }
             } while (i != start);
         }
-        CGAL_assertion( i == start);
-        CGAL_assertion( su == 15);
+        assert( i == start);
+        assert( su == 15);
     }
     { // Open own scope to hide local variables.
         CGAL::Assert_is_at_least_bidirectional_category(start);
@@ -1271,14 +1256,14 @@ void test_class(){
         int k  = 5;
         do {
             Class_bi_circulator j = --i;
-            CGAL_assertion(  i ==  j);
-            CGAL_assertion( (*i).key == (*j).key);
-            CGAL_assertion( k == (*i).key);
+            assert(  i ==  j);
+            assert( (*i).key == (*j).key);
+            assert( k == (*i).key);
             su += (*i).key;
             --k;
         } while (i != start);
-        CGAL_assertion( i == start);
-        CGAL_assertion( su == 15);
+        assert( i == start);
+        assert( su == 15);
     
         // Assignment.
         i = start;
@@ -1287,16 +1272,16 @@ void test_class(){
         // Loop with post-decrement.
         do {
             Class_bi_circulator j = i--;
-            CGAL_assertion(  i !=  j);
+            assert(  i !=  j);
             if ( j != start) {
-                CGAL_assertion( (*i).key == (*j).key - 1);
+                assert( (*i).key == (*j).key - 1);
             }
-            CGAL_assertion( k == (*i).key);
+            assert( k == (*i).key);
             su += (*i).key;
             --k;
         } while (i != start);
-        CGAL_assertion( i == start);
-        CGAL_assertion( su == 15);
+        assert( i == start);
+        assert( su == 15);
     }
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( start);
@@ -1307,42 +1292,42 @@ void test_class(){
         k1.key = 1;
         Class_bi_circulator::reference       k2 = k1;
         (void)k2;
-        CGAL_assertion( k2.key == 1);
+        assert( k2.key == 1);
         Class_bi_circulator::pointer         p1 = &k1;
         (void)p1;
-        CGAL_assertion( (*p1).key == 1);
+        assert( (*p1).key == 1);
         k1.key = 3;
-        CGAL_assertion( k1.key == 3);
-        CGAL_assertion( k2.key == 3);
-        CGAL_assertion( (*p1).key == 3);
+        assert( k1.key == 3);
+        assert( k2.key == 3);
+        assert( (*p1).key == 3);
         k1.key = 6;
-        CGAL_assertion( k1.key == 6);
-        CGAL_assertion( k2.key == 6);
-        CGAL_assertion( (*p1).key == 6);
+        assert( k1.key == 6);
+        assert( k2.key == 6);
+        assert( (*p1).key == 6);
         Class_bi_circulator::size_type s = 5;
-        CGAL_assertion( s == 5);
+        assert( s == 5);
         Class_bi_circulator::difference_type d = -5;
-        CGAL_assertion( d == -5);
+        assert( d == -5);
     
         // Check tests for empty data structures.
         Class_bi_circulator z = Class_bi_circulator();
-        CGAL_assertion(   z == CGAL_CIRC_NULL);
-        CGAL_assertion( ! (z != CGAL_CIRC_NULL));
+        assert(   z == CGAL_CIRC_NULL);
+        assert( ! (z != CGAL_CIRC_NULL));
         Class_bi_circulator i = start;
-        CGAL_assertion( ! (i == CGAL_CIRC_NULL));
-        CGAL_assertion(   i != CGAL_CIRC_NULL);
-        CGAL_assertion( i == start);
-        CGAL_assertion( i == start);
+        assert( ! (i == CGAL_CIRC_NULL));
+        assert(   i != CGAL_CIRC_NULL);
+        assert( i == start);
+        assert( i == start);
         // Do I reach myself.
         ++i;
         Class_bi_circulator j = i;
         int k = 0;
         do {
-            CGAL_assertion( k < 5);
+            assert( k < 5);
             ++k;
             ++i;
         } while( i != j);
-        CGAL_assertion( k == 5);
+        assert( k == 5);
     }
     { // Open own scope to hide local variables.
         // Do I reach myself backwards.
@@ -1351,11 +1336,11 @@ void test_class(){
         Class_bi_circulator j = i;
         int k = 0;
         do {
-            CGAL_assertion( k < 5);
+            assert( k < 5);
             ++k;
             --i;
         } while( i != j);
-        CGAL_assertion( k == 5);
+        assert( k == 5);
     }
   }{
     Class_bi_const_circulator start(data_struct);
@@ -1369,8 +1354,8 @@ void test_class(){
         typedef std::iterator_traits<Class_bi_const_circulator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        CGAL_assertion(1==test_value_type( (I_value_type*)(0)));
-        CGAL_assertion(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)(0)));
+        assert(1==test_difference_type( (I_difference_type*)(0)));
     
         // Default constructor.
         Class_bi_const_circulator z = Class_bi_const_circulator();
@@ -1379,26 +1364,26 @@ void test_class(){
         Class_bi_const_circulator i = start;
     
         // Check general support for circulators and iterators.
-        CGAL_assertion( CGAL::is_empty_range( z, z));
-        CGAL_assertion( ! CGAL::is_empty_range( i, start));
+        assert( CGAL::is_empty_range( z, z));
+        assert( ! CGAL::is_empty_range( i, start));
     
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
         if (! CGAL::is_empty_range( i, start)) {   // superfluous
             do {
-                CGAL_assertion( k == (*i).key);
+                assert( k == (*i).key);
                 su += (*i).key;
                 ++k;
                 Class_bi_const_circulator j = ++i;
-                CGAL_assertion(  i ==  j);
+                assert(  i ==  j);
                 if ( i != start) {
-                    CGAL_assertion( (*i).key == (*j).key);
+                    assert( (*i).key == (*j).key);
                 }
             } while (i != start);  // Inequality and equality checked.
         }
-        CGAL_assertion( i == start);  // Equality checked.
-        CGAL_assertion( su == 15);
+        assert( i == start);  // Equality checked.
+        assert( su == 15);
     
         // Assignment.
         i = start;
@@ -1407,18 +1392,18 @@ void test_class(){
         // Loop with post increment.
         if (! CGAL::is_empty_range( i, start)) {   // superfluous
             do {
-                CGAL_assertion( k == (*i).key);
+                assert( k == (*i).key);
                 su += (*i).key;
                 ++k;
                 Class_bi_const_circulator j = i++;
-                CGAL_assertion(  i !=  j);
+                assert(  i !=  j);
                 if ( i != start) {
-                    CGAL_assertion( (*i).key == (*j).key + 1);
+                    assert( (*i).key == (*j).key + 1);
                 }
             } while (i != start);
         }
-        CGAL_assertion( i == start);
-        CGAL_assertion( su == 15);
+        assert( i == start);
+        assert( su == 15);
     }
     { // Open own scope to hide local variables.
         CGAL::Assert_is_at_least_bidirectional_category(start);
@@ -1429,14 +1414,14 @@ void test_class(){
         int k  = 5;
         do {
             Class_bi_const_circulator j = --i;
-            CGAL_assertion(  i ==  j);
-            CGAL_assertion( (*i).key == (*j).key);
-            CGAL_assertion( k == (*i).key);
+            assert(  i ==  j);
+            assert( (*i).key == (*j).key);
+            assert( k == (*i).key);
             su += (*i).key;
             --k;
         } while (i != start);
-        CGAL_assertion( i == start);
-        CGAL_assertion( su == 15);
+        assert( i == start);
+        assert( su == 15);
     
         // Assignment.
         i = start;
@@ -1445,16 +1430,16 @@ void test_class(){
         // Loop with post-decrement.
         do {
             Class_bi_const_circulator j = i--;
-            CGAL_assertion(  i !=  j);
+            assert(  i !=  j);
             if ( j != start) {
-                CGAL_assertion( (*i).key == (*j).key - 1);
+                assert( (*i).key == (*j).key - 1);
             }
-            CGAL_assertion( k == (*i).key);
+            assert( k == (*i).key);
             su += (*i).key;
             --k;
         } while (i != start);
-        CGAL_assertion( i == start);
-        CGAL_assertion( su == 15);
+        assert( i == start);
+        assert( su == 15);
     }
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( start);
@@ -1465,42 +1450,42 @@ void test_class(){
         k1.key = 1;
         Class_bi_const_circulator::reference       k2 = k1;
         (void)k2;
-        CGAL_assertion( k2.key == 1);
+        assert( k2.key == 1);
         Class_bi_const_circulator::pointer         p1 = &k1;
         (void)p1;
-        CGAL_assertion( (*p1).key == 1);
+        assert( (*p1).key == 1);
         k1.key = 3;
-        CGAL_assertion( k1.key == 3);
-        CGAL_assertion( k2.key == 3);
-        CGAL_assertion( (*p1).key == 3);
+        assert( k1.key == 3);
+        assert( k2.key == 3);
+        assert( (*p1).key == 3);
         k1.key = 6;
-        CGAL_assertion( k1.key == 6);
-        CGAL_assertion( k2.key == 6);
-        CGAL_assertion( (*p1).key == 6);
+        assert( k1.key == 6);
+        assert( k2.key == 6);
+        assert( (*p1).key == 6);
         Class_bi_const_circulator::size_type s = 5;
-        CGAL_assertion( s == 5);
+        assert( s == 5);
         Class_bi_const_circulator::difference_type d = -5;
-        CGAL_assertion( d == -5);
+        assert( d == -5);
     
         // Check tests for empty data structures.
         Class_bi_const_circulator z = Class_bi_const_circulator();
-        CGAL_assertion(   z == CGAL_CIRC_NULL);
-        CGAL_assertion( ! (z != CGAL_CIRC_NULL));
+        assert(   z == CGAL_CIRC_NULL);
+        assert( ! (z != CGAL_CIRC_NULL));
         Class_bi_const_circulator i = start;
-        CGAL_assertion( ! (i == CGAL_CIRC_NULL));
-        CGAL_assertion(   i != CGAL_CIRC_NULL);
-        CGAL_assertion( i == start);
-        CGAL_assertion( i == start);
+        assert( ! (i == CGAL_CIRC_NULL));
+        assert(   i != CGAL_CIRC_NULL);
+        assert( i == start);
+        assert( i == start);
         // Do I reach myself.
         ++i;
         Class_bi_const_circulator j = i;
         int k = 0;
         do {
-            CGAL_assertion( k < 5);
+            assert( k < 5);
             ++k;
             ++i;
         } while( i != j);
-        CGAL_assertion( k == 5);
+        assert( k == 5);
     }
     { // Open own scope to hide local variables.
         // Do I reach myself backwards.
@@ -1509,11 +1494,11 @@ void test_class(){
         Class_bi_const_circulator j = i;
         int k = 0;
         do {
-            CGAL_assertion( k < 5);
+            assert( k < 5);
             ++k;
             --i;
         } while( i != j);
-        CGAL_assertion( k == 5);
+        assert( k == 5);
     }
   }
   delete_cnodes(data_struct);
@@ -1537,8 +1522,8 @@ void test_array() {
         typedef std::iterator_traits<Circulator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        CGAL_assertion(1==test_value_type( (I_value_type*)(0)));
-        CGAL_assertion(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)(0)));
+        assert(1==test_difference_type( (I_difference_type*)(0)));
     
         // Default constructor.
         Circulator z = Circulator();
@@ -1547,26 +1532,26 @@ void test_array() {
         Circulator i = start;
     
         // Check general support for circulators and iterators.
-        CGAL_assertion( CGAL::is_empty_range( z, z));
-        CGAL_assertion( ! CGAL::is_empty_range( i, start));
+        assert( CGAL::is_empty_range( z, z));
+        assert( ! CGAL::is_empty_range( i, start));
     
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
         if (! CGAL::is_empty_range( i, start)) {   // superfluous
             do {
-                CGAL_assertion( k == (*i));
+                assert( k == (*i));
                 su += (*i);
                 ++k;
                 Circulator j = ++i;
-                CGAL_assertion(  i ==  j);
+                assert(  i ==  j);
                 if ( i != start) {
-                    CGAL_assertion( (*i) == (*j));
+                    assert( (*i) == (*j));
                 }
             } while (i != start);  // Inequality and equality checked.
         }
-        CGAL_assertion( i == start);  // Equality checked.
-        CGAL_assertion( su == 15);
+        assert( i == start);  // Equality checked.
+        assert( su == 15);
     
         // Assignment.
         i = start;
@@ -1575,48 +1560,48 @@ void test_array() {
         // Loop with post increment.
         if (! CGAL::is_empty_range( i, start)) {   // superfluous
             do {
-                CGAL_assertion( k == (*i));
+                assert( k == (*i));
                 su += (*i);
                 ++k;
                 Circulator j = i++;
-                CGAL_assertion(  i !=  j);
+                assert(  i !=  j);
                 if ( i != start) {
-                    CGAL_assertion( (*i) == (*j) + 1);
+                    assert( (*i) == (*j) + 1);
                 }
             } while (i != start);
         }
-        CGAL_assertion( i == start);
-        CGAL_assertion( su == 15);
+        assert( i == start);
+        assert( su == 15);
     }
     { // Open own scope to hide local variables.
         // Change three elements and check post-/pre-increment.
         Circulator i = start;
         (*i++) = 4;
-        CGAL_assertion( 4 == (*start));
-        CGAL_assertion( 2 == (*i));
+        assert( 4 == (*start));
+        assert( 2 == (*i));
         (*i++) = 3;
-        CGAL_assertion( 3 == (*i));
+        assert( 3 == (*i));
         (*++i) = 7;
-        CGAL_assertion( 7 == (*i));
+        assert( 7 == (*i));
     
         // Check the setting and reset these elements
         // to their original values.
         i = start;
-        CGAL_assertion( 4 == (*i));
+        assert( 4 == (*i));
         (*i) = 1;
         i++;
-        CGAL_assertion( 3 == (*i));
+        assert( 3 == (*i));
         (*i++) = 2;
-        CGAL_assertion( 3 == (*i));
+        assert( 3 == (*i));
         i++;
-        CGAL_assertion( 7 == (*i));
+        assert( 7 == (*i));
         (*i) = 4;
     
         // Check the resetting.
         i = start;
         int k = 1;
         do {
-            CGAL_assertion( k == (*i));
+            assert( k == (*i));
             ++i;
             ++k;
         } while (i != start);
@@ -1630,8 +1615,8 @@ void test_array() {
         typedef std::iterator_traits<Circulator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        CGAL_assertion(1==test_value_type( (I_value_type*)(0)));
-        CGAL_assertion(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)(0)));
+        assert(1==test_difference_type( (I_difference_type*)(0)));
     
         // Default constructor.
         Circulator z = Circulator();
@@ -1640,26 +1625,26 @@ void test_array() {
         Circulator i = start;
     
         // Check general support for circulators and iterators.
-        CGAL_assertion( CGAL::is_empty_range( z, z));
-        CGAL_assertion( ! CGAL::is_empty_range( i, start));
+        assert( CGAL::is_empty_range( z, z));
+        assert( ! CGAL::is_empty_range( i, start));
     
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
         if (! CGAL::is_empty_range( i, start)) {   // superfluous
             do {
-                CGAL_assertion( k == (*i));
+                assert( k == (*i));
                 su += (*i);
                 ++k;
                 Circulator j = ++i;
-                CGAL_assertion(  i ==  j);
+                assert(  i ==  j);
                 if ( i != start) {
-                    CGAL_assertion( (*i) == (*j));
+                    assert( (*i) == (*j));
                 }
             } while (i != start);  // Inequality and equality checked.
         }
-        CGAL_assertion( i == start);  // Equality checked.
-        CGAL_assertion( su == 15);
+        assert( i == start);  // Equality checked.
+        assert( su == 15);
     
         // Assignment.
         i = start;
@@ -1668,18 +1653,18 @@ void test_array() {
         // Loop with post increment.
         if (! CGAL::is_empty_range( i, start)) {   // superfluous
             do {
-                CGAL_assertion( k == (*i));
+                assert( k == (*i));
                 su += (*i);
                 ++k;
                 Circulator j = i++;
-                CGAL_assertion(  i !=  j);
+                assert(  i !=  j);
                 if ( i != start) {
-                    CGAL_assertion( (*i) == (*j) + 1);
+                    assert( (*i) == (*j) + 1);
                 }
             } while (i != start);
         }
-        CGAL_assertion( i == start);
-        CGAL_assertion( su == 15);
+        assert( i == start);
+        assert( su == 15);
     }
     { // Open own scope to hide local variables.
         CGAL::Assert_is_at_least_bidirectional_category(start);
@@ -1690,14 +1675,14 @@ void test_array() {
         int k  = 5;
         do {
             Circulator j = --i;
-            CGAL_assertion(  i ==  j);
-            CGAL_assertion( (*i) == (*j));
-            CGAL_assertion( k == (*i));
+            assert(  i ==  j);
+            assert( (*i) == (*j));
+            assert( k == (*i));
             su += (*i);
             --k;
         } while (i != start);
-        CGAL_assertion( i == start);
-        CGAL_assertion( su == 15);
+        assert( i == start);
+        assert( su == 15);
     
         // Assignment.
         i = start;
@@ -1706,16 +1691,16 @@ void test_array() {
         // Loop with post-decrement.
         do {
             Circulator j = i--;
-            CGAL_assertion(  i !=  j);
+            assert(  i !=  j);
             if ( j != start) {
-                CGAL_assertion( (*i) == (*j) - 1);
+                assert( (*i) == (*j) - 1);
             }
-            CGAL_assertion( k == (*i));
+            assert( k == (*i));
             su += (*i);
             --k;
         } while (i != start);
-        CGAL_assertion( i == start);
-        CGAL_assertion( su == 15);
+        assert( i == start);
+        assert( su == 15);
     }
     { // Open own scope to hide local variables.
         // Check generally correct parameter properties.
@@ -1726,8 +1711,8 @@ void test_array() {
         typedef std::iterator_traits<Circulator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        CGAL_assertion(1==test_value_type( (I_value_type*)(0)));
-        CGAL_assertion(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)(0)));
+        assert(1==test_difference_type( (I_difference_type*)(0)));
     
         // Default constructor.
         Circulator z = Circulator();
@@ -1736,26 +1721,26 @@ void test_array() {
         Circulator i = start;
     
         // Check general support for circulators and iterators.
-        CGAL_assertion( CGAL::is_empty_range( z, z));
-        CGAL_assertion( ! CGAL::is_empty_range( i, start));
+        assert( CGAL::is_empty_range( z, z));
+        assert( ! CGAL::is_empty_range( i, start));
     
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
         if (! CGAL::is_empty_range( i, start)) {   // superfluous
             do {
-                CGAL_assertion( k == (*i));
+                assert( k == (*i));
                 su += (*i);
                 ++k;
                 Circulator j = ++i;
-                CGAL_assertion(  i ==  j);
+                assert(  i ==  j);
                 if ( i != start) {
-                    CGAL_assertion( (*i) == (*j));
+                    assert( (*i) == (*j));
                 }
             } while (i != start);  // Inequality and equality checked.
         }
-        CGAL_assertion( i == start);  // Equality checked.
-        CGAL_assertion( su == 15);
+        assert( i == start);  // Equality checked.
+        assert( su == 15);
     
         // Assignment.
         i = start;
@@ -1764,18 +1749,18 @@ void test_array() {
         // Loop with post increment.
         if (! CGAL::is_empty_range( i, start)) {   // superfluous
             do {
-                CGAL_assertion( k == (*i));
+                assert( k == (*i));
                 su += (*i);
                 ++k;
                 Circulator j = i++;
-                CGAL_assertion(  i !=  j);
+                assert(  i !=  j);
                 if ( i != start) {
-                    CGAL_assertion( (*i) == (*j) + 1);
+                    assert( (*i) == (*j) + 1);
                 }
             } while (i != start);
         }
-        CGAL_assertion( i == start);
-        CGAL_assertion( su == 15);
+        assert( i == start);
+        assert( su == 15);
     }
     { // Open own scope to hide local variables.
         CGAL::Assert_is_at_least_bidirectional_category(start);
@@ -1786,14 +1771,14 @@ void test_array() {
         int k  = 5;
         do {
             Circulator j = --i;
-            CGAL_assertion(  i ==  j);
-            CGAL_assertion( (*i) == (*j));
-            CGAL_assertion( k == (*i));
+            assert(  i ==  j);
+            assert( (*i) == (*j));
+            assert( k == (*i));
             su += (*i);
             --k;
         } while (i != start);
-        CGAL_assertion( i == start);
-        CGAL_assertion( su == 15);
+        assert( i == start);
+        assert( su == 15);
     
         // Assignment.
         i = start;
@@ -1802,16 +1787,16 @@ void test_array() {
         // Loop with post-decrement.
         do {
             Circulator j = i--;
-            CGAL_assertion(  i !=  j);
+            assert(  i !=  j);
             if ( j != start) {
-                CGAL_assertion( (*i) == (*j) - 1);
+                assert( (*i) == (*j) - 1);
             }
-            CGAL_assertion( k == (*i));
+            assert( k == (*i));
             su += (*i);
             --k;
         } while (i != start);
-        CGAL_assertion( i == start);
-        CGAL_assertion( su == 15);
+        assert( i == start);
+        assert( su == 15);
     }
     { // Open own scope to hide local variables.
         CGAL::Assert_is_at_least_random_access_category(start);
@@ -1819,48 +1804,48 @@ void test_array() {
         // Random access.
         int k;
         for( k = 0; k < 5; k++) {
-            CGAL_assertion( 1+k == start[k]);
+            assert( 1+k == start[k]);
         }
         int su = start[0]
                + start[1]
                + start[2]
                + start[3]
                + start[4];
-        CGAL_assertion( su == 15);
+        assert( su == 15);
     
         // Jump around.
         Circulator i = start;
         i += 3;
-        CGAL_assertion( 4 == (*i));
+        assert( 4 == (*i));
         i -= 2;
-        CGAL_assertion( 2 == (*i));
+        assert( 2 == (*i));
         i += 3;
-        CGAL_assertion( 5 == (*i));
+        assert( 5 == (*i));
         i -= 4;
-        CGAL_assertion( 1 == (*i));
-        CGAL_assertion( i == start);
+        assert( 1 == (*i));
+        assert( i == start);
         Circulator j = i + 3;
-        CGAL_assertion( 4 == (*j));
+        assert( 4 == (*j));
         Circulator jj = j - 2;
-        CGAL_assertion( 2 == (*jj));
+        assert( 2 == (*jj));
         jj = 4 + jj;
-        CGAL_assertion( jj == start);
+        assert( jj == start);
         Circulator ij = jj - 5;
-        CGAL_assertion( ij == start);
+        assert( ij == start);
     
         // Difference test.
-        CGAL_assertion( jj - i == 5  ||  jj - i == 0);
-        CGAL_assertion( i + (j-i) == j);
-        CGAL_assertion( (j-i) + i == j);
+        assert( jj - i == 5  ||  jj - i == 0);
+        assert( i + (j-i) == j);
+        assert( (j-i) + i == j);
     }
     { // Open own scope to hide local variables.
         Circulator i = start;
         i[2] = 18;
         i[4] = 9;
         i[3] = 12;
-        CGAL_assertion( i[2] == 18);
-        CGAL_assertion( i[4] == 9);
-        CGAL_assertion( i[3] == 12);
+        assert( i[2] == 18);
+        assert( i[4] == 9);
+        assert( i[3] == 12);
         i[2] = 3;
         i[3] = 4;
         i[4] = 5;
@@ -1868,7 +1853,7 @@ void test_array() {
         i = start;
         int k = 1;
         do {
-            CGAL_assertion( k == (*i));
+            assert( k == (*i));
             ++i;
             ++k;
         } while (i != start);
@@ -1882,42 +1867,42 @@ void test_array() {
         k1 = 1;
         Circulator::reference       k2 = k1;
         (void)k2;
-        CGAL_assertion( k2 == 1);
+        assert( k2 == 1);
         Circulator::pointer         p1 = &k1;
         (void)p1;
-        CGAL_assertion( (*p1) == 1);
+        assert( (*p1) == 1);
         k1 = 3;
-        CGAL_assertion( k1 == 3);
-        CGAL_assertion( k2 == 3);
-        CGAL_assertion( (*p1) == 3);
+        assert( k1 == 3);
+        assert( k2 == 3);
+        assert( (*p1) == 3);
         k1 = 6;
-        CGAL_assertion( k1 == 6);
-        CGAL_assertion( k2 == 6);
-        CGAL_assertion( (*p1) == 6);
+        assert( k1 == 6);
+        assert( k2 == 6);
+        assert( (*p1) == 6);
         Circulator::size_type s = 5;
-        CGAL_assertion( s == 5);
+        assert( s == 5);
         Circulator::difference_type d = -5;
-        CGAL_assertion( d == -5);
+        assert( d == -5);
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        CGAL_assertion(   z == CGAL_CIRC_NULL);
-        CGAL_assertion( ! (z != CGAL_CIRC_NULL));
+        assert(   z == CGAL_CIRC_NULL);
+        assert( ! (z != CGAL_CIRC_NULL));
         Circulator i = start;
-        CGAL_assertion( ! (i == CGAL_CIRC_NULL));
-        CGAL_assertion(   i != CGAL_CIRC_NULL);
-        CGAL_assertion( i == start);
-        CGAL_assertion( i == start);
+        assert( ! (i == CGAL_CIRC_NULL));
+        assert(   i != CGAL_CIRC_NULL);
+        assert( i == start);
+        assert( i == start);
         // Do I reach myself.
         ++i;
         Circulator j = i;
         int k = 0;
         do {
-            CGAL_assertion( k < 5);
+            assert( k < 5);
             ++k;
             ++i;
         } while( i != j);
-        CGAL_assertion( k == 5);
+        assert( k == 5);
     }
     { // Open own scope to hide local variables.
         // Do I reach myself backwards.
@@ -1926,34 +1911,34 @@ void test_array() {
         Circulator j = i;
         int k = 0;
         do {
-            CGAL_assertion( k < 5);
+            assert( k < 5);
             ++k;
             --i;
         } while( i != j);
-        CGAL_assertion( k == 5);
+        assert( k == 5);
     }
     { // Open own scope to hide local variables.
         Circulator::difference_type d = start - start;
-        CGAL_assertion( d == 0);
+        assert( d == 0);
         d = start - start;
-        CGAL_assertion( d == 0);
+        assert( d == 0);
         Circulator i = start + 1;
-        CGAL_assertion( start - i == 1 ||  start - i == -1);
-        CGAL_assertion( i - start == 1 ||  i - start == -1);
+        assert( start - i == 1 ||  start - i == -1);
+        assert( i - start == 1 ||  i - start == -1);
         // Check minimal circulator properties.
         i = i.min_circulator();
         Circulator j = i;
-        CGAL_assertion( j - i == 0);
+        assert( j - i == 0);
         j++;
-        CGAL_assertion( j - i == 1);
+        assert( j - i == 1);
         j++;
-        CGAL_assertion( j - i == 2);
+        assert( j - i == 2);
         j++;
-        CGAL_assertion( j - i == 3);
+        assert( j - i == 3);
         j++;
-        CGAL_assertion( j - i == 4);
+        assert( j - i == 4);
         j++;
-        CGAL_assertion( j - i == 0);
+        assert( j - i == 0);
     }
   }{
     typedef Const_circulator_over_array<
@@ -1974,8 +1959,8 @@ void test_array() {
         typedef std::iterator_traits<Circulator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        CGAL_assertion(1==test_value_type( (I_value_type*)(0)));
-        CGAL_assertion(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)(0)));
+        assert(1==test_difference_type( (I_difference_type*)(0)));
     
         // Default constructor.
         Circulator z = Circulator();
@@ -1984,26 +1969,26 @@ void test_array() {
         Circulator i = start;
     
         // Check general support for circulators and iterators.
-        CGAL_assertion( CGAL::is_empty_range( z, z));
-        CGAL_assertion( ! CGAL::is_empty_range( i, start));
+        assert( CGAL::is_empty_range( z, z));
+        assert( ! CGAL::is_empty_range( i, start));
     
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
         if (! CGAL::is_empty_range( i, start)) {   // superfluous
             do {
-                CGAL_assertion( k == (*i));
+                assert( k == (*i));
                 su += (*i);
                 ++k;
                 Circulator j = ++i;
-                CGAL_assertion(  i ==  j);
+                assert(  i ==  j);
                 if ( i != start) {
-                    CGAL_assertion( (*i) == (*j));
+                    assert( (*i) == (*j));
                 }
             } while (i != start);  // Inequality and equality checked.
         }
-        CGAL_assertion( i == start);  // Equality checked.
-        CGAL_assertion( su == 15);
+        assert( i == start);  // Equality checked.
+        assert( su == 15);
     
         // Assignment.
         i = start;
@@ -2012,18 +1997,18 @@ void test_array() {
         // Loop with post increment.
         if (! CGAL::is_empty_range( i, start)) {   // superfluous
             do {
-                CGAL_assertion( k == (*i));
+                assert( k == (*i));
                 su += (*i);
                 ++k;
                 Circulator j = i++;
-                CGAL_assertion(  i !=  j);
+                assert(  i !=  j);
                 if ( i != start) {
-                    CGAL_assertion( (*i) == (*j) + 1);
+                    assert( (*i) == (*j) + 1);
                 }
             } while (i != start);
         }
-        CGAL_assertion( i == start);
-        CGAL_assertion( su == 15);
+        assert( i == start);
+        assert( su == 15);
     }
     { // Open own scope to hide local variables.
         CGAL::Assert_is_at_least_bidirectional_category(start);
@@ -2034,14 +2019,14 @@ void test_array() {
         int k  = 5;
         do {
             Circulator j = --i;
-            CGAL_assertion(  i ==  j);
-            CGAL_assertion( (*i) == (*j));
-            CGAL_assertion( k == (*i));
+            assert(  i ==  j);
+            assert( (*i) == (*j));
+            assert( k == (*i));
             su += (*i);
             --k;
         } while (i != start);
-        CGAL_assertion( i == start);
-        CGAL_assertion( su == 15);
+        assert( i == start);
+        assert( su == 15);
     
         // Assignment.
         i = start;
@@ -2050,16 +2035,16 @@ void test_array() {
         // Loop with post-decrement.
         do {
             Circulator j = i--;
-            CGAL_assertion(  i !=  j);
+            assert(  i !=  j);
             if ( j != start) {
-                CGAL_assertion( (*i) == (*j) - 1);
+                assert( (*i) == (*j) - 1);
             }
-            CGAL_assertion( k == (*i));
+            assert( k == (*i));
             su += (*i);
             --k;
         } while (i != start);
-        CGAL_assertion( i == start);
-        CGAL_assertion( su == 15);
+        assert( i == start);
+        assert( su == 15);
     }
     { // Open own scope to hide local variables.
         CGAL::Assert_is_at_least_random_access_category(start);
@@ -2067,39 +2052,39 @@ void test_array() {
         // Random access.
         int k;
         for( k = 0; k < 5; k++) {
-            CGAL_assertion( 1+k == start[k]);
+            assert( 1+k == start[k]);
         }
         int su = start[0]
                + start[1]
                + start[2]
                + start[3]
                + start[4];
-        CGAL_assertion( su == 15);
+        assert( su == 15);
     
         // Jump around.
         Circulator i = start;
         i += 3;
-        CGAL_assertion( 4 == (*i));
+        assert( 4 == (*i));
         i -= 2;
-        CGAL_assertion( 2 == (*i));
+        assert( 2 == (*i));
         i += 3;
-        CGAL_assertion( 5 == (*i));
+        assert( 5 == (*i));
         i -= 4;
-        CGAL_assertion( 1 == (*i));
-        CGAL_assertion( i == start);
+        assert( 1 == (*i));
+        assert( i == start);
         Circulator j = i + 3;
-        CGAL_assertion( 4 == (*j));
+        assert( 4 == (*j));
         Circulator jj = j - 2;
-        CGAL_assertion( 2 == (*jj));
+        assert( 2 == (*jj));
         jj = 4 + jj;
-        CGAL_assertion( jj == start);
+        assert( jj == start);
         Circulator ij = jj - 5;
-        CGAL_assertion( ij == start);
+        assert( ij == start);
     
         // Difference test.
-        CGAL_assertion( jj - i == 5  ||  jj - i == 0);
-        CGAL_assertion( i + (j-i) == j);
-        CGAL_assertion( (j-i) + i == j);
+        assert( jj - i == 5  ||  jj - i == 0);
+        assert( i + (j-i) == j);
+        assert( (j-i) + i == j);
     }
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( start);
@@ -2110,42 +2095,42 @@ void test_array() {
         k1 = 1;
         Circulator::reference       k2 = k1;
         (void)k2;
-        CGAL_assertion( k2 == 1);
+        assert( k2 == 1);
         Circulator::pointer         p1 = &k1;
         (void)p1;
-        CGAL_assertion( (*p1) == 1);
+        assert( (*p1) == 1);
         k1 = 3;
-        CGAL_assertion( k1 == 3);
-        CGAL_assertion( k2 == 3);
-        CGAL_assertion( (*p1) == 3);
+        assert( k1 == 3);
+        assert( k2 == 3);
+        assert( (*p1) == 3);
         k1 = 6;
-        CGAL_assertion( k1 == 6);
-        CGAL_assertion( k2 == 6);
-        CGAL_assertion( (*p1) == 6);
+        assert( k1 == 6);
+        assert( k2 == 6);
+        assert( (*p1) == 6);
         Circulator::size_type s = 5;
-        CGAL_assertion( s == 5);
+        assert( s == 5);
         Circulator::difference_type d = -5;
-        CGAL_assertion( d == -5);
+        assert( d == -5);
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        CGAL_assertion(   z == CGAL_CIRC_NULL);
-        CGAL_assertion( ! (z != CGAL_CIRC_NULL));
+        assert(   z == CGAL_CIRC_NULL);
+        assert( ! (z != CGAL_CIRC_NULL));
         Circulator i = start;
-        CGAL_assertion( ! (i == CGAL_CIRC_NULL));
-        CGAL_assertion(   i != CGAL_CIRC_NULL);
-        CGAL_assertion( i == start);
-        CGAL_assertion( i == start);
+        assert( ! (i == CGAL_CIRC_NULL));
+        assert(   i != CGAL_CIRC_NULL);
+        assert( i == start);
+        assert( i == start);
         // Do I reach myself.
         ++i;
         Circulator j = i;
         int k = 0;
         do {
-            CGAL_assertion( k < 5);
+            assert( k < 5);
             ++k;
             ++i;
         } while( i != j);
-        CGAL_assertion( k == 5);
+        assert( k == 5);
     }
     { // Open own scope to hide local variables.
         // Do I reach myself backwards.
@@ -2154,34 +2139,34 @@ void test_array() {
         Circulator j = i;
         int k = 0;
         do {
-            CGAL_assertion( k < 5);
+            assert( k < 5);
             ++k;
             --i;
         } while( i != j);
-        CGAL_assertion( k == 5);
+        assert( k == 5);
     }
     { // Open own scope to hide local variables.
         Circulator::difference_type d = start - start;
-        CGAL_assertion( d == 0);
+        assert( d == 0);
         d = start - start;
-        CGAL_assertion( d == 0);
+        assert( d == 0);
         Circulator i = start + 1;
-        CGAL_assertion( start - i == 1 ||  start - i == -1);
-        CGAL_assertion( i - start == 1 ||  i - start == -1);
+        assert( start - i == 1 ||  start - i == -1);
+        assert( i - start == 1 ||  i - start == -1);
         // Check minimal circulator properties.
         i = i.min_circulator();
         Circulator j = i;
-        CGAL_assertion( j - i == 0);
+        assert( j - i == 0);
         j++;
-        CGAL_assertion( j - i == 1);
+        assert( j - i == 1);
         j++;
-        CGAL_assertion( j - i == 2);
+        assert( j - i == 2);
         j++;
-        CGAL_assertion( j - i == 3);
+        assert( j - i == 3);
         j++;
-        CGAL_assertion( j - i == 4);
+        assert( j - i == 4);
         j++;
-        CGAL_assertion( j - i == 0);
+        assert( j - i == 0);
     }
   }
 }

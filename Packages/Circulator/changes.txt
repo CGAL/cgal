@@ -1,5 +1,9 @@
 Circulator Package: Release changes:
 ---------------------------------------------------------------------
+4 August 2004 Sylvain Pion
+- test-suite : remove protect macros, and replace CGAL_assertion by assert
+  to prevent warnings in release mode.
+
 25 March 2004 Radu Ursu
 - made the doc work with the current implementation of the manual tools
 
