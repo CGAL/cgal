@@ -96,7 +96,7 @@ io_tag(unsigned int)
 { return io_Operator(); }
 
 namespace NTS {
-  inline unsigned int is_negative(unsigned int i) { return false; }
+  inline unsigned int is_negative(unsigned int) { return false; }
   
   inline Sign sign(unsigned int i) 
     { return is_positive(i) ? POSITIVE : ZERO; }
@@ -174,7 +174,7 @@ io_tag(unsigned long int)
 { return io_Operator(); }
 
 namespace NTS {
-  inline unsigned long int is_negative(unsigned long int i) 
+  inline unsigned long int is_negative(unsigned long int) 
     { return false; }
   
   inline Sign sign(unsigned long int i) 
@@ -253,7 +253,7 @@ io_tag(unsigned short int)
 { return io_Operator(); }
 
 namespace NTS {
-  inline unsigned short int is_negative(unsigned short int i) 
+  inline unsigned short int is_negative(unsigned short int) 
     { return false; }
   
   inline Sign sign(unsigned short int i) 
