@@ -1,3 +1,6 @@
+20 September 2004:  Menelaos Karavelas
+- added missing sites2.cin data file in examples/data directory
+
 9 September 2004:  Menelaos Karavelas
 - added third example (in examples/subdir and in doc) that shows how
   to recover the data for the Voronoi edges.
