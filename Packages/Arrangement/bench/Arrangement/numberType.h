@@ -100,13 +100,13 @@ typedef NT                                              RT;
 #elif BENCH_NT == LEDA_RAT_NT
 typedef leda_rational                                   NT;
 typedef NT                                              WNT;
-typedef leda_int                                        RT;
+typedef leda_integer                                    RT;
 #define NUMBER_TYPE "Leda Rat"
 
 #elif BENCH_NT == LAZY_LEDA_RAT_NT
 typedef leda_rational                                   NT;
 typedef CGAL::Lazy_exact_nt<NT>                         WNT;
-typedef leda_int                                        RT;
+typedef leda_integer                                    RT;
 #define NUMBER_TYPE "Lazy Leda Rat"
 
 #elif BENCH_NT == GMPQ_NT
