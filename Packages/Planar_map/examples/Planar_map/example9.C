@@ -13,9 +13,9 @@
 #include <CGAL/IO/write_pm.h>
 #include <iostream.h>
 
-#ifdef CGAL_USE_LEDA
-#include <CGAL/IO/Pm_Postscript_file_stream.h>
-#endif
+//#ifdef CGAL_USE_LEDA
+//#include <CGAL/IO/Pm_Postscript_file_stream.h>
+// #endif
 
 //typedef leda_rational                    NT;
 typedef CGAL::Quotient<int>                NT;
@@ -49,13 +49,13 @@ int main()
   verbose_writer.write_halfedges(pm.halfedges_begin(), pm.halfedges_end());
    
 
-#ifdef CGAL_USE_LEDA
+  //#ifdef CGAL_USE_LEDA
   // printing to Postscript file.
-  CGAL::Postscript_file_stream  LPF(500, 500 ,"pm.ps");
-  LPF.init(-3,3,-3);
-  LPF.set_line_width( 1);
-  LPF << pm;
-#endif
+  //CGAL::Postscript_file_stream  LPF(500, 500 ,"pm.ps");
+  //LPF.init(-3,3,-3);
+  //LPF.set_line_width( 1);
+  //LPF << pm;
+  //#endif
 
   return 0;
 }
