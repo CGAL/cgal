@@ -980,11 +980,11 @@ subdivide(const Map* M0, const Map* M1)
   typedef typename Sphere_kernel::Negative_halfsphere_geometry NH_geometry;
   
   typedef CGAL::Segment_overlay_traits< 
-    Seg_iterator, SM_output, PH_geometry>  PHS_traits;
+    Seg_list, SM_output, PH_geometry>  PHS_traits;
   typedef CGAL::generic_sweep<PHS_traits> Positive_halfsphere_sweep;
     
   typedef CGAL::Segment_overlay_traits< 
-    Seg_iterator, SM_output, NH_geometry> NHS_traits;
+    Seg_list, SM_output, NH_geometry> NHS_traits;
   typedef CGAL::generic_sweep<NHS_traits> Negative_halfsphere_sweep;
 
   typedef typename PHS_traits::INPUT Input_range;
@@ -1167,7 +1167,8 @@ partition_to_halfsphere(Iterator start, Iterator beyond, Seg_list& L,
 	TRACEN(">1 " << s1.source() << " " << s1.target()); 
       }
       if(added) {
-	itl = it; --it; L.erase(itl); M[itl] = T();
+	itl = it; --it; L.erase(itl); 
+	//	M[itl] = T();
       }
       // at least one item was appended
     }

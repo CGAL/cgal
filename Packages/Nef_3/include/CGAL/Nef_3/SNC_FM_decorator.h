@@ -335,7 +335,7 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
   // the sweep traits class instantiated with the input, output and
   // geometry models
   typedef CGAL::Segment_overlay_traits
-    <Segment_iterator, Halffacet_output, Halffacet_geometry>
+    <Segment_list, Halffacet_output, Halffacet_geometry>
     Halffacet_sweep_traits;
   typedef CGAL::generic_sweep<Halffacet_sweep_traits>   Halffacet_sweep;
   Halffacet_geometry G(plane_supporting_facet);
@@ -432,7 +432,7 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
 
   std::vector<SHalfedge_handle> Edge_of(Segments.size()+1);
   Halffacet_output O(From,Edge_of);
-  Halffacet_sweep FS(Halffacet_sweep::INPUT(
+  Halffacet_sweep FS(typename Halffacet_sweep::INPUT(
     Segments.begin(),Segments.end()), O, G); FS.sweep();
 
   CGAL_forall_iterators(eit,SHalfedges) { e=*eit;

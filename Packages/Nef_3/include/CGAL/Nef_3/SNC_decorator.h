@@ -1281,7 +1281,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 
       Shell_entry_iterator si;
       CGAL_forall_shells_of(si,voli) {
-	valid = valid && (si != NULL && 
+	valid = valid && (si != Shell_entry_iterator() &&
 			  SFace_handle(si) != SFace_handle() && 
 			  SFace_handle(si) != NULL);
 	valid = valid && (++count <= max);

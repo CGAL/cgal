@@ -241,7 +241,7 @@ public:
     Halffacet_cycle_iterator() : Ibase() {}
     Halffacet_cycle_iterator(const Ibase& b) : Ibase(b) {}
     Halffacet_cycle_iterator(const Halffacet_cycle_iterator& i) 
-      : Ibase(i) {}  
+      : Ibase(i) {}
     bool is_shalfedge() const
     { SHalfedge_handle e; return CGAL::assign(e,Ibase::operator*()); }
     bool is_shalfloop() const
@@ -401,13 +401,13 @@ public:
   expensive operation.}*/
 
   SNC_structure() : 
-    boundary_item_(undef_), sm_boundary_item_(undef_),
+    boundary_item_(dummy.end()), sm_boundary_item_(dummy.end()),
     vertices_(), halfedges_(), halffacets_(), volumes_(),
     shalfedges_(), shalfloops_(), sfaces_() {}
   ~SNC_structure() { TRACEN("~SNC_structure: clearing "<<this); clear(); }
 
   SNC_structure(const Self& D) : 
-    boundary_item_(undef_), sm_boundary_item_(undef_),
+    boundary_item_(dummy.end()), sm_boundary_item_(dummy.end()),
     vertices_(D.vertices_), halfedges_(D.halfedges_), 
     halffacets_(D.halffacets_), volumes_(D.volumes_),
     shalfedges_(D.shalfedges_), shalfloops_(D.shalfloops_), 
@@ -418,8 +418,8 @@ public:
     if ( this == &D ) 
       return *this;
     clear();
-    boundary_item_.clear(undef_);
-    sm_boundary_item_.clear(undef_);
+    boundary_item_.clear(dummy.end());
+    sm_boundary_item_.clear(dummy.end());
     vertices_ = D.vertices_;
     halfedges_ = D.halfedges_;
     halffacets_ = D.halffacets_;
@@ -432,13 +432,13 @@ public:
   }
 
   void clear_boundary() {
-    boundary_item_.clear();
-    sm_boundary_item_.clear();
+    boundary_item_.clear(dummy.end());
+    sm_boundary_item_.clear(dummy.end());
   }
 
   void clear() { 
-    boundary_item_.clear();
-    sm_boundary_item_.clear();
+    boundary_item_.clear(dummy.end());
+    sm_boundary_item_.clear(dummy.end());
     vertices_.destroy();
     halfedges_.destroy();
     halffacets_.destroy();
@@ -450,10 +450,10 @@ public:
 
   template <typename H>
   bool is_boundary_object(H h) 
-  { return boundary_item_[h]!=undef_; }
+  { return boundary_item_[h]!=dummy.end(); }
   template <typename H>
   bool is_sm_boundary_object(H h) 
-  { return sm_boundary_item_[h]!=undef_; }
+  { return sm_boundary_item_[h]!=dummy.end(); }
 
   template <typename H>
   Object_iterator& boundary_item(H h)
@@ -471,12 +471,12 @@ public:
 
   template <typename H>
   void undef_boundary_item(H h)
-  { CGAL_assertion(boundary_item_[h]!=undef_);
-    boundary_item_[h] = undef_; }
+  { CGAL_assertion(boundary_item_[h]!=dummy.end());
+    boundary_item_[h] = dummy.end(); }
   template <typename H>
   void undef_sm_boundary_item(H h)
-  { CGAL_assertion(sm_boundary_item_[h]!=undef_);
-    sm_boundary_item_[h] = undef_; }
+  { CGAL_assertion(sm_boundary_item_[h]!=dummy.end());
+    sm_boundary_item_[h] = dummy.end(); }
 
   void reset_iterator_hash(Object_iterator it)
   { SVertex_handle sv;
@@ -1031,7 +1031,7 @@ public:
 
 protected:
   void pointer_update(const Self& D);
-  static Object_iterator              undef_;
+  Object_list dummy;
   Generic_handle_map<Object_iterator> boundary_item_;
   Generic_handle_map<Object_iterator> sm_boundary_item_;
 
@@ -1170,11 +1170,6 @@ pointer_update(const SNC_structure<Kernel,Items,Mark>& D)
     }
   }
 }
-
-template <typename Kernel, typename Items, typename Mark> 
-typename SNC_structure<Kernel, Items, Mark>::Object_iterator
-SNC_structure<Kernel,Items,Mark>::undef_;
-
 
 CGAL_END_NAMESPACE
 #endif // CGAL_SNC_STRUCTURE_H
