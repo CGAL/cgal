@@ -204,7 +204,7 @@ public:
   //  Largest_empty_iso_rectangle_2(Polygon &inp_polygon);
 
   // add a point to data
-  void 
+  bool
   insert(const Point_2& p, Point_type i_type = REG);
 
   // and the STL standard member function for insertion:
