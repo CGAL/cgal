@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefFunctionObjectClass}{Midpoint_of_rectangle<SpatialPoint,Container,Separator>}  %% add template arg's if necessary
+\begin{ccRefFunctionObjectClass}{Midpoint_of_rectangle<SpatialPoint,PointContainer,Separator>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -22,12 +22,12 @@ Implements the {\bf midpoint of rectangle} splitting rule.
 \ccParameters
 
 Expects for the parameter \ccc{SpatialPoint} an implementation of a $d$-dimensional point,
-for example \ccc{CGAL::Point_d<R>}. Expects for the parameter \ccc{Container} an implementation
+for example \ccc{CGAL::Point_d<R>}. Expects for the parameter \ccc{PointContainer} an implementation
 of a point container for example \ccc{CGAL::Point_container<SpatialPoint>}.
 Expects for the parameter \ccc{Separator} an implementation of a $d$-1 dimensional 
 separating plane for example \ccc{CGAL::Plane_separator<NT>}.
 
-\ccc{Container} has default argument \ccc{CGAL::Point_container<SpatialPoint>}.
+\ccc{PointContainer} has default argument \ccc{CGAL::Point_container<SpatialPoint>}.
 \ccc{Separator} has default argument \ccc{CGAL::Plane_separator<Kernel_traits<SpatialPoint>::Kernel::FT>}. 
 
 
@@ -40,7 +40,7 @@ Splitter
 \ccTypes
 
 \ccTypedef{Kernel_traits<SpatialPoint>::Kernel::FT NT;}{Number type.} 
-\ccTypedef{Container Container;}{Point container.}
+\ccTypedef{PoitContainer Container;}{Point container.}
 \ccTypedef{Separator Separator;}{Separator.}
 
 \ccCreationVariable{s}  %% choose variable name
@@ -56,7 +56,7 @@ using the splitting dimension and the splitting value of the modified separator.
 
 \ccSeeAlso
 
-Splitter, Container, Separator.
+Splitter, PointContainer, Separator.
 \end{ccRefFunctionObjectClass}
 
 

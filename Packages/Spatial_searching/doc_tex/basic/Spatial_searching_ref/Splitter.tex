@@ -32,7 +32,7 @@ The concept \ccRefName\ defines the requirements for a function object class imp
 \ccOperations
 
 \ccMethod{
-void operator()(Separator& s, Container& c0, Container& c1, NT Aspect_ratio=NT(3));} 
+void operator()(Separator& s, PointContainer& c0, PointContainer& c1, NT Aspect_ratio=NT(3));} 
 {Modifies the separator $s$, 
 and splits \ccc{c0} into \ccc{c0} and \ccc{c1},
 using the splitting dimension and the splitting value of the modified separator.
@@ -40,17 +40,17 @@ using the splitting dimension and the splitting value of the modified separator.
 }
 \ccHasModels
 
-\ccc{CGAL::Fair<SpatialPoint,Container,Separator>}, \\
-\ccc{CGAL::Median_of_rectangle<SpatialPoint,Container,Separator>}, \\
-\ccc{CGAL::Median_of_max_spread<SpatialPoint,Container,Separator>}, \\
-\ccc{CGAL::Midpoint_of_rectangle<SpatialPoint,Container,Separator>}, \\
-\ccc{CGAL::Midpoint_of_max_spread<SpatialPoint,Container,Separator>}, \\
-\ccc{CGAL::Sliding_fair<SpatialPoint,Container,Separator>}, \\
-\ccc{CGAL::Sliding_midpoint<SpatialPoint,Container,Separator>.}
+\ccc{CGAL::Fair<SpatialPoint,PointContainer,Separator>}, \\
+\ccc{CGAL::Median_of_rectangle<SpatialPoint,PointContainer,Separator>}, \\
+\ccc{CGAL::Median_of_max_spread<SpatialPoint,PointContainer,Separator>}, \\
+\ccc{CGAL::Midpoint_of_rectangle<SpatialPoint,PointContainer,Separator>}, \\
+\ccc{CGAL::Midpoint_of_max_spread<SpatialPoint,PointContainer,Separator>}, \\
+\ccc{CGAL::Sliding_fair<SpatialPoint,PointContainer,Separator>}, \\
+\ccc{CGAL::Sliding_midpoint<SpatialPoint,PointContainer,Separator>.}
 
 \ccSeeAlso
 
-Container, Separator.
+PointContainer, Separator.
 
 
 \end{ccRefConcept}

@@ -239,6 +239,7 @@ implementation of the Euclidean distance.
 \vspace*{6cm}
 \caption{Scheme of concepts and classes implementing neighbor searching algorithms.
 Point is used as shorthand for SpatialPoint, Tree is used as shorthand for SpatialTree,
+Container is used as shorthand for PointContainer,
 and Distance as shorthand for both GeneralDistance and OrthogonalDistance.
 \label{ASPAS:Fig1}}
 \end{figure}
@@ -251,12 +252,11 @@ and Distance as shorthand for both GeneralDistance and OrthogonalDistance.
 <img border=0 src="./Fig1.gif" alt=" "><br> 
 Scheme of concepts and classes implementing neighbor searching algorithms.
 Point is used as shorthand for SpatialPoint, Tree is used as shorthand for SpatialTree,
+Container is used as shorthand for PointContainer,
 and Distance as shorthand for both GeneralDistance and OrthogonalDistance.
 </center>
 
 \end{ccHtmlOnly}
-
-
 
 The spatial searching package consists of a number of concepts, each implemented by
 one or more classes, and four classes implementing neighbor 
@@ -277,7 +277,7 @@ denoting a $d$-dimensional point, as implemented by
 \ccc{CGAL::Point_2<R>}, \ccc{CGAL::Point_3<R>}, and \ccc{CGAL::Point_d<R>}.
 
 \item
-\ccc{Container} denoting a container, that stores points and
+\ccc{PointContainer} denoting a container, that stores points and
 provides method to support the implementation of splitting rules. 
 \ccc{CGAL::Point_container<SpatialPoint>} provides an implementation.
 
@@ -288,17 +288,17 @@ as implemented by \ccc{CGAL::Plane_separator<NT>}.
 
 \item 
 \ccc{Splitter} denoting a splitting rule as implemented by the function object classes 
-\ccc{CGAL::Midpoint_of_rectangle<SpatialPoint, Container, Separator>},
-\ccc{CGAL::Midpoint_of_max_spread<SpatialPoint, Container, Separator>},
-\ccc{CGAL::Sliding_midpoint<SpatialPoint, Container, Separator>},
-\ccc{CGAL::Median_of_rectangle<SpatialPoint, Container, Separator>},
-\ccc{CGAL::Median_of_max_spread<SpatialPoint, Container, Separator>},
-\ccc{CGAL::Fair<SpatialPoint, Container, Separator>}, and
-\ccc{CGAL::Sliding_Fair<SpatialPoint, Container, Separator>}.
+\ccc{CGAL::Midpoint_of_rectangle<SpatialPoint, PointContainer, Separator>},
+\ccc{CGAL::Midpoint_of_max_spread<SpatialPoint, PointContainer, Separator>},
+\ccc{CGAL::Sliding_midpoint<SpatialPoint, PointContainer, Separator>},
+\ccc{CGAL::Median_of_rectangle<SpatialPoint, PointContainer, Separator>},
+\ccc{CGAL::Median_of_max_spread<SpatialPoint, PointContainer, Separator>},
+\ccc{CGAL::Fair<SpatialPoint, PointContainer, Separator>}, and
+\ccc{CGAL::Sliding_Fair<SpatialPoint, PointContainer, Separator>}.
 
 \item
 \ccc{TreeTraits} denoting a traits class for the construction of a tree.
-\ccc{CGAL::Kd_tree_traits_point< Point, Splitter >} provides an implementation. 
+\ccc{CGAL::Kd_tree_traits_point< SpatialPoint, Splitter >} provides an implementation. 
 
 \item
 \ccc{QueryItem} denoting a $d$-dimensional spatial query object. Implementations

@@ -10,7 +10,7 @@
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
-\begin{ccRefFunctionObjectClass}{Median_of_rectangle<SpatialPoint,Container,Separator>}  %% add template arg's if necessary
+\begin{ccRefFunctionObjectClass}{Median_of_rectangle<SpatialPoint,PointContainer,Separator>}  %% add template arg's if necessary
 
 \ccDefinition
 Implements the {\bf median of rectangle} splitting rule.
@@ -18,7 +18,7 @@ Implements the {\bf median of rectangle} splitting rule.
 \ccParameters
 
 Expects for the parameter \ccc{SpatialPoint} an implementation of a $d$-dimensional point,
-for example \ccc{CGAL::Point_d<R>}. Expects for the parameter \ccc{Container} an implementation
+for example \ccc{CGAL::Point_d<R>}. Expects for the parameter \ccc{PointContainer} an implementation
 of a point container for example \ccc{CGAL::Point_container<SpatialPoint>}.
 Expects for the parameter \ccc{Separator} an implementation of a $d$-1 dimensional 
 separating plane for example \ccc{CGAL::Plane_separator<NT>}.
@@ -36,7 +36,7 @@ Splitter
 \ccTypes
 
 \ccTypedef{Kernel_traits<SpatialPoint>::Kernel::FT NT;}{Number type.} 
-\ccTypedef{Container Container;}{Point container.}
+\ccTypedef{PointContainer Container;}{Point container.}
 \ccTypedef{Separator Separator;}{Separator.}
 
 \ccCreationVariable{s}  %% choose variable name
@@ -53,7 +53,7 @@ using the splitting dimension and the splitting value of the modified separator.
 
 \ccSeeAlso
 
-Splitter, Container, Separator.
+Splitter, PointContainer, Separator.
 \end{ccRefFunctionObjectClass}
 
 
