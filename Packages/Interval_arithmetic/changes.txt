@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.113 on 25 July 2001
+- Use Filtered_kernel instead of Filtered_exact in test/Kernel_checker.C .
+
 Version 4.112 on 23 July 2001
 - Remove macro test that prevented libCGAL building on VC++.
 
