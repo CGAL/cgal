@@ -544,7 +544,7 @@ public:
     out << "SweepStatus:\n";
     typename SweepStatus::const_iterator sit3;
     for( sit3 = YS.begin(); sit3 != YS.end(); ++sit3 )
-      out << sit3->first << " " << &*(sit3->second) << std::endl;
+      out << sit3->first << std::endl;
     return out.str();
   }
 
