@@ -37,7 +37,7 @@ CGAL_BEGIN_NAMESPACE
 //if unbounded face - returns NULL or some edge on unbounded face 
 //if its a vertex returns a halfedge pointing _at_ it
 template <class Planar_map>
-Pm_walk_along_line_point_location<Planar_map>::Halfedge_handle
+typename Pm_walk_along_line_point_location<Planar_map>::Halfedge_handle
 Pm_walk_along_line_point_location<Planar_map>::locate(
                                                       const Point& p, 
                                                       Locate_type& lt) const
@@ -113,7 +113,7 @@ Pm_walk_along_line_point_location<Planar_map>::locate(
 }
 
 template <class Planar_map>
-Pm_walk_along_line_point_location<Planar_map>::Halfedge_handle
+typename Pm_walk_along_line_point_location<Planar_map>::Halfedge_handle
 Pm_walk_along_line_point_location<Planar_map>::locate(
 						      const Point& p, 
 						      Locate_type& lt){
@@ -125,7 +125,7 @@ Pm_walk_along_line_point_location<Planar_map>::locate(
 }
 
 template <class Planar_map>
-Pm_walk_along_line_point_location<Planar_map>::Halfedge_handle
+typename Pm_walk_along_line_point_location<Planar_map>::Halfedge_handle
 Pm_walk_along_line_point_location<Planar_map>::vertical_ray_shoot(
                                                  const Point& p, 
                                                  Locate_type& lt, 
@@ -236,7 +236,7 @@ Pm_walk_along_line_point_location<Planar_map>::vertical_ray_shoot(
 
 
 template <class Planar_map>
-Pm_walk_along_line_point_location<Planar_map>::Halfedge_handle
+typename Pm_walk_along_line_point_location<Planar_map>::Halfedge_handle
 Pm_walk_along_line_point_location<Planar_map>::vertical_ray_shoot(
                                                  const Point& p, 
                                                  Locate_type& lt, bool up){

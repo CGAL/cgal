@@ -43,7 +43,7 @@ CGAL_BEGIN_NAMESPACE
 	of this region.
 	*/
 template <class Planar_map>
-Pm_default_point_location<Planar_map>::Halfedge_handle
+typename Pm_default_point_location<Planar_map>::Halfedge_handle
 Pm_default_point_location<Planar_map>::locate(const Point& p, Locate_type& lt)
   const
 {
@@ -66,7 +66,7 @@ Pm_default_point_location<Planar_map>::locate(const Point& p, Locate_type& lt)
     }
 
 template <class Planar_map>
-Pm_default_point_location<Planar_map>::Halfedge_handle
+typename Pm_default_point_location<Planar_map>::Halfedge_handle
 Pm_default_point_location<Planar_map>::locate(const Point& p, Locate_type& lt){
 	((Bounding_box*)get_bounding_box())->insert(p);
 	Halfedge_handle h=((cPLp)this)->locate(p,lt);
@@ -85,7 +85,7 @@ Pm_default_point_location<Planar_map>::locate(const Point& p, Locate_type& lt){
 	of this region.
 	*/
 template <class Planar_map>
-Pm_default_point_location<Planar_map>::Halfedge_handle
+typename Pm_default_point_location<Planar_map>::Halfedge_handle
 Pm_default_point_location<Planar_map>::vertical_ray_shoot(
 	const Point& p, Locate_type& lt, bool up) const{
 
@@ -107,7 +107,7 @@ Pm_default_point_location<Planar_map>::vertical_ray_shoot(
     }
 
 template <class Planar_map>
-Pm_default_point_location<Planar_map>::Halfedge_handle
+typename Pm_default_point_location<Planar_map>::Halfedge_handle
 Pm_default_point_location<Planar_map>::vertical_ray_shoot(
 	const Point& p, Locate_type& lt, bool up){
 /* Make sure the source point is in the bounding box on the output */

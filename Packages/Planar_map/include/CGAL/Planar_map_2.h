@@ -522,7 +522,7 @@ read (std::istream &in, Scanner& scanner){
 }
 //-----------------------------------------------------------------------------
 template < class Dcel, class Traits >
-Planar_map_2< Dcel, Traits >::Halfedge_handle 
+typename Planar_map_2< Dcel, Traits >::Halfedge_handle 
 Planar_map_2< Dcel, Traits >::
 insert_in_face_interior(const Planar_map_2< Dcel, Traits >::X_curve & cv, 
 			Planar_map_2< Dcel, Traits >::Face_handle     f, 
@@ -550,7 +550,7 @@ insert_in_face_interior(const Planar_map_2< Dcel, Traits >::X_curve & cv,
 }
 //-----------------------------------------------------------------------------
 template < class Dcel, class Traits >
-Planar_map_2< Dcel, Traits >::Halfedge_handle 
+typename Planar_map_2< Dcel, Traits >::Halfedge_handle 
 Planar_map_2< Dcel, Traits >::
 insert_from_vertex(
   const Planar_map_2< Dcel, Traits >::X_curve  & cv,
@@ -602,7 +602,7 @@ insert_from_vertex(
 }
 //-----------------------------------------------------------------------------
 template < class Dcel, class Traits >
-Planar_map_2< Dcel, Traits >::Halfedge_handle 
+typename Planar_map_2< Dcel, Traits >::Halfedge_handle 
 Planar_map_2< Dcel, Traits >::
 insert_at_vertices(
   const Planar_map_2< Dcel, Traits >::X_curve & cv, 
@@ -840,7 +840,7 @@ prev1_inside_hole(
 }
 //-----------------------------------------------------------------------------
 template < class Dcel, class Traits >
-Planar_map_2< Dcel, Traits >::Halfedge_handle 
+typename Planar_map_2< Dcel, Traits >::Halfedge_handle 
 Planar_map_2< Dcel, Traits >::
 insert(
        const Planar_map_2< Dcel, Traits >::X_curve & cv, 
@@ -901,7 +901,7 @@ insert(
 //-----------------------------------------------------------------------------
 template < class Dcel, class Traits >
 template <class X_curve_iterator>
-Planar_map_2< Dcel, Traits >::Halfedge_iterator
+typename Planar_map_2< Dcel, Traits >::Halfedge_iterator
 Planar_map_2< Dcel, Traits >::
 insert(const X_curve_iterator & begin,
        const X_curve_iterator & end,
@@ -923,7 +923,7 @@ insert(const X_curve_iterator & begin,
 }
 //-----------------------------------------------------------------------------
 template < class Dcel, class Traits >
-Planar_map_2< Dcel, Traits >::Halfedge_handle 
+typename Planar_map_2< Dcel, Traits >::Halfedge_handle 
 Planar_map_2< Dcel, Traits >::
 split_edge( 
 	   Planar_map_2< Dcel, Traits >::Halfedge_handle   e, 
@@ -983,7 +983,7 @@ split_edge(
 }
 //-----------------------------------------------------------------------------
 template < class Dcel, class Traits >
-Planar_map_2< Dcel, Traits >::Halfedge_handle 
+typename Planar_map_2< Dcel, Traits >::Halfedge_handle 
 Planar_map_2< Dcel, Traits >::
 merge_edge(
 	   Planar_map_2< Dcel, Traits >::Halfedge_handle   e1, 
@@ -1022,7 +1022,7 @@ merge_edge(
 } 
 //-----------------------------------------------------------------------------
 template < class Dcel, class Traits >
-Planar_map_2< Dcel, Traits >::Face_handle
+typename Planar_map_2< Dcel, Traits >::Face_handle
 Planar_map_2< Dcel, Traits >::
 remove_edge(Planar_map_2< Dcel, Traits >::Halfedge_handle e )
 {

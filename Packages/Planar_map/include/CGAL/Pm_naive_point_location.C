@@ -37,7 +37,7 @@ CGAL_BEGIN_NAMESPACE
 //if unbounded face - returns NULL or some edge on unbounded face 
 //if its a vertex returns a halfedge pointing _at_ it
 template <class Planar_map>
-Pm_naive_point_location<Planar_map>::Halfedge_handle
+typename Pm_naive_point_location<Planar_map>::Halfedge_handle
 Pm_naive_point_location<Planar_map>::locate(const Point& p, 
 					    Locate_type& lt) const{
   typename Planar_map::Vertex_iterator vit=pm->vertices_begin();
@@ -88,7 +88,7 @@ Pm_naive_point_location<Planar_map>::locate(const Point& p,
 }
 
 template <class Planar_map>
-Pm_naive_point_location<Planar_map>::Halfedge_handle
+typename Pm_naive_point_location<Planar_map>::Halfedge_handle
 Pm_naive_point_location<Planar_map>::locate(const Point& p, Locate_type& lt){
   ((Bounding_box*)get_bounding_box())->insert(p);
   Halfedge_handle h=((cPLp)this)->locate(p,lt);
@@ -98,7 +98,7 @@ Pm_naive_point_location<Planar_map>::locate(const Point& p, Locate_type& lt){
 }
 
 template <class Planar_map>
-Pm_naive_point_location<Planar_map>::Halfedge_handle
+typename Pm_naive_point_location<Planar_map>::Halfedge_handle
 Pm_naive_point_location<Planar_map>::vertical_ray_shoot(const Point& p, 
 							Locate_type& lt, 
 							bool up) const{
@@ -221,7 +221,7 @@ Pm_naive_point_location<Planar_map>::vertical_ray_shoot(const Point& p,
 }
 
 template <class Planar_map>
-Pm_naive_point_location<Planar_map>::Halfedge_handle
+typename Pm_naive_point_location<Planar_map>::Halfedge_handle
 Pm_naive_point_location<Planar_map>::vertical_ray_shoot(const Point& p, 
 							Locate_type& lt, 
 							bool up){
@@ -241,7 +241,7 @@ Pm_naive_point_location<Planar_map>::vertical_ray_shoot(const Point& p,
 //find the first halfedge pointing at v, when going clockwise
 //if highest==true - start from 12 oclock, else start from 6 oclock
 template <class Planar_map>
-Pm_naive_point_location<Planar_map>::Halfedge_handle 
+typename Pm_naive_point_location<Planar_map>::Halfedge_handle 
 Pm_naive_point_location<Planar_map>::
 find_lowest(
 	    typename Pm_naive_point_location<Planar_map>::Vertex_handle v,
