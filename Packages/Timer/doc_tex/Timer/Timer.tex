@@ -2,15 +2,9 @@
 % | CGAL User Manual:  Timer.tex
 % +------------------------------------------------------------------------+
 
-\ccParDims
-
-\chapter{Benchmark support tools}
-\label{chapterTimer}
-\ccChapterAuthor{Lutz Kettner, Matthias B\"asken, Sylvain Pion}
-
 \section{Timers}
 
-CGAL provides classes for measuring the user process time and the real time.
+\cgal\ provides classes for measuring the user process time and the real time.
 The class \ccc{CGAL::Timer} is the version for the user process time and
 the class \ccc{CGAL::Real\_timer} is the version for the real time.
 
@@ -25,14 +19,11 @@ counts the number of calls of the \ccc{start()} member function since the
 last reset. If the reset occurs while the timer is running it counts as the
 first interval.
 
-\section{Memory size}
+\section{Memory Size}
 
-\cgal\ provides access to the memory size used by the program.  Both the
-virtual memory size and the resident size are available (the resident size
-does not account for swapped out memory nor for the memory which is not yet
-paged-in).
-
-
-\ccParDims
+\cgal\ provides access to the memory size used by the program with the
+\ccc{CGAL::Memory_sizer} class.  Both the virtual memory size and the
+resident size are available (the resident size does not account for
+swapped out memory nor for the memory which is not yet paged-in).
 
 % EOF
