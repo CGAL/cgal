@@ -432,7 +432,7 @@ rectangular_p_center_2(ForwardIterator f,
                        FT& r,
 #endif
                        int p,
-                       const Traits& t)
+                       Traits& t)
 {
   CGAL_optimisation_precondition(p >= 2 && p < 5);
 

@@ -379,7 +379,7 @@ CGAL_maximum_inscribed_rooted_k_gon(
       CGAL_expensive_precondition( left_c_begin[i] >= 0);
       CGAL_expensive_precondition( right_c_begin[i] >= 0);
       CGAL_expensive_precondition( left_c_begin[i] < number_of_points);
-      CGAL_expensive_precondition( rightt_c_begin[i] < number_of_points);
+      CGAL_expensive_precondition( right_c_begin[i] < number_of_points);
       CGAL_expensive_precondition( left_c_begin[i] <= right_c_begin[i]);
     })
 

@@ -58,8 +58,8 @@ public:
   // the elements appear in increasing order
   // time complexity is proportional to the number of elements
   {
-    for ( int i = 0; i < matrix->x_dimension(); ++i)
-      for ( int j = 0; j < matrix->y_dimension(); ++j) {
+    for ( int i = 0; i < matrix->number_of_columns(); ++i)
+      for ( int j = 0; j < matrix->number_of_rows(); ++j) {
         if ( i > 0 && (*matrix)( i - 1, j) > (*matrix)( i, j))
           return false;
         if ( j > 0 && (*matrix)( i, j - 1) > (*matrix)( i, j))
