@@ -113,6 +113,8 @@ void visu_vertex(CGAL::Geomview_stream & os, const TRIANGULATION & T,
     os << c->vertex(i)->point();
 }
 
+////////////////////// 
+
 int main()
 {
   CGAL::Geomview_stream gv(CGAL::Bbox_3(0,0,0, 2, 2, 2));
@@ -130,7 +132,7 @@ int main()
     return 1;
   }
 
-  std::cout <<"                reading file data/points" << std::endl ;
+  std::cout <<"          Reading file data/points" << std::endl ;
   Point nouv;
   while ( iFile >> nouv ) 
     T.insert(nouv);
@@ -184,8 +186,6 @@ int main()
   gv.clear();
   std::cout <<"                - facets" << std::endl;
   gv << T;
-  gv.set_vertex_color(CGAL::RED);
-  visu_vertices(gv,T);
   std::cout <<"                - edges only" << std::endl;
   gv.set_wired(true);
   gv << T;
