@@ -54,8 +54,8 @@ compare_slopes(const SegmentH2<R>& s1, const SegmentH2<R>& s2)
       Comparison_result cmp_x1 = compare_x(s1.source(), s1.target());
 
       if (cmp_x1 == EQUAL) return LARGER;
-      FT s_hw = s2.source().hw();
-      FT t_hw = s2.target().hw();
+      FT s_hw = s1.source().hw();
+      FT t_hw = s1.target().hw();
       return Comparison_result (
              CGAL_NTS sign((s1.source().hy()*t_hw - s1.target().hy()*s_hw) *
                            (s1.source().hx()*t_hw - s1.target().hx()*s_hw)) );
