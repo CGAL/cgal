@@ -404,104 +404,71 @@ int main(int argc,char *argv[])
       W.enable_button(6);
       W.disable_button(5);
       remove_segments = false;
-      redraw(s,W,b,show_input);
-      if(automatic_show)
-        show_results(s,prec,W,show_hp,show_output);
     } else if(mouse_input == 6) {
       W.enable_button(5);
       W.disable_button(6);
       remove_segments = true;
-      redraw(s,W,b,show_input);
-      if(automatic_show)
-        show_results(s,prec,W,show_hp,show_output);
     } else if(mouse_input == 7) {
       W.enable_button(8);
       W.disable_button(7);
       s.do_isr(true);
       do_isr = true;
-      redraw(s,W,b,show_input);
-      if(automatic_show)
-        show_results(s,prec,W,show_hp,show_output);
     } else if(mouse_input == 8) {
       W.enable_button(7);
       W.disable_button(8);
       s.do_isr(false);
       do_isr = false;
-      redraw(s,W,b,show_input);
-      if(automatic_show)
-        show_results(s,prec,W,show_hp,show_output);
     } else if(mouse_input == 9) {
       W.enable_button(10);
       W.disable_button(9);
       show_hp = true;
-      redraw(s,W,b,show_input);
-      if(automatic_show)
-        show_results(s,prec,W,show_hp,show_output);
     } else if(mouse_input == 10) {
       W.enable_button(9);
       W.disable_button(10);
       show_hp = false;
-      redraw(s,W,b,show_input);
-      if(automatic_show)
-        show_results(s,prec,W,show_hp,show_output);
     } else if(mouse_input == 11) {
       W.enable_button(12);
       W.disable_button(11);
       show_input = true;
-      redraw(s,W,b,show_input);
-      if(automatic_show)
-        show_results(s,prec,W,show_hp,show_output);
     } else if(mouse_input == 12) {
       W.enable_button(11);
       W.disable_button(12);
       show_input = false;
-      redraw(s,W,b,show_input);
-      if(automatic_show)
-        show_results(s,prec,W,show_hp,show_output);
     } else if(mouse_input == 13) {
       W.enable_button(14);
       W.disable_button(13);
       show_output = true;
-      redraw(s,W,b,show_input);
-      if(automatic_show)
-        show_results(s,prec,W,show_hp,show_output);
     } else if(mouse_input == 14) {
       W.enable_button(13);
       W.disable_button(14);
       show_output = false;
-      redraw(s,W,b,show_input);
-      if(automatic_show)
-        show_results(s,prec,W,show_hp,show_output);
     } else if(mouse_input == 15) {
       prec = prec * 2;
       s.change_pixel_size(prec);
-      redraw(s,W,b,show_input);
-      if(automatic_show)
-        show_results(s,prec,W,show_hp,show_output);
       if(prec == 2)
         W.disable_button(15);
       W.enable_button(16);
     } else if(mouse_input == 16) {
       prec = prec / 2;
       s.change_pixel_size(prec);
-      redraw(s,W,b,show_input);
-      if(automatic_show)
-        show_results(s,prec,W,show_hp,show_output);
       if(prec < 1.0 / 5)
         W.disable_button(16);
       W.enable_button(15);
     } else if(mouse_input == 17) {
       prec = PRECISION;
       s.change_pixel_size(prec);
-      redraw(s,W,b,show_input);
-      if(automatic_show)
-        show_results(s,prec,W,show_hp,show_output);
+      W.enable_button(15);
+      W.enable_button(16);
     } else if(mouse_input == 18) {
       // finish
       break;
     }
 
-    //    if(mouse_input > 4 && mouse_input < 17) {
+    if(mouse_input > 4 && mouse_input < 18) {
+      redraw(s,W,b,show_input);
+      if(automatic_show)
+        show_results(s,prec,W,show_hp,show_output);
+    }
 
     if(automatic_show)
       W.text_box(-1.5,-1,10,"auto");
