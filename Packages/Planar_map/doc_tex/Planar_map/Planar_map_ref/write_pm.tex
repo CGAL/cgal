@@ -34,14 +34,14 @@ Reading is done using the \ccc{read} method of
 \ccFunction{template <Planar_map, Writer>
             void
             write_pm(Planar_map pm, 
-	             Writer&    writer, 
+                     Writer&    writer, 
                      ostream&   o);}
            {The function sends a planar map object to an output
            stream. The function uses the methods defined within the
-           \ccStyle{Writer} class, and prints {pm} and instance of
+           \ccStyle{Writer} class, and prints \ccStyle{pm} which is instance of
            \ccc{Planar_map} in the format discussed in
-           \ccRefPage{Pm_IO_format}.  The printing is done by sending
-           the output the output stream \ccc{o}.}
+           \ccRefPage{Pm_IO_format}. The printing is done by sending
+           the planar map object to the output stream \ccc{o}.}
 
 \ccHeading{Requirements}
 \begin{enumerate}
@@ -49,6 +49,13 @@ Reading is done using the \ccc{read} method of
             should be of type \ccc{Planar_map_2<Dcel,Traits>}.
    \item    \ccc{Writer}  
             should be of type \ccc{Pm_file_writer<Planar_map>}.
+    
+   \item    The output stream should support the insertor operator (\ccc{<<}) 
+            for the following types
+            \begin{itemize}
+                \item \ccc{Planar_map::Point},
+                \item \ccc{Planar_map::X_curve}, 
+            \end{itemize}
 \end{enumerate}
 
 \ccSeeAlso
