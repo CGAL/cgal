@@ -34,7 +34,6 @@ class Triangulation_ds_cell_circulator_3
  : public Bidirectional_circulator_base<typename Tds_::Cell, ptrdiff_t, size_t>
 {
   // circulates on cells around a given edge
-public:
 
   typedef Tds_                         Tds;
   typedef typename Tds::Cell           Cell;
@@ -43,6 +42,8 @@ public:
   typedef typename Tds::Cell_handle    Cell_handle;
 
   typedef Triangulation_ds_cell_circulator_3<Tds> Cell_circulator;
+
+public:
 
   Triangulation_ds_cell_circulator_3()
     : _s(NULL), _t(NULL), pos(NULL)
@@ -153,7 +154,6 @@ class Triangulation_ds_facet_circulator_3
                                          ptrdiff_t, size_t>
 {
   // circulates on facets around a given edge
-public:
 
   typedef Tds_                         Tds;
   typedef typename Tds::Cell           Cell;
@@ -163,6 +163,8 @@ public:
   typedef typename Tds::Vertex_handle  Vertex_handle;
 
   typedef Triangulation_ds_facet_circulator_3<Tds> Facet_circulator;
+
+public:
 
   Triangulation_ds_facet_circulator_3()
     : _s(NULL), _t(NULL), pos(NULL)
@@ -323,6 +325,96 @@ private:
   static int next_around_edge(const int i, const int j)
   {
       return Triangulation_utils_3::next_around_edge(i,j);
+  } 
+};
+
+template < class Tds_ >
+class Triangulation_ds_face_circulator_3
+ : public Bidirectional_circulator_base<typename Tds_::Cell, ptrdiff_t, size_t>
+{
+  // circulates on faces (Cell) around a given vertex,
+  // valid in dimension 2 only.
+
+  typedef Tds_                         Tds;
+  typedef typename Tds::Cell           Cell;
+  typedef typename Tds::Vertex         Vertex;
+  typedef typename Tds::Vertex_handle  Vertex_handle;
+  typedef typename Tds::Cell_handle    Cell_handle;
+
+  typedef Triangulation_ds_face_circulator_3<Tds> Face_circulator;
+
+public:
+
+  Triangulation_ds_face_circulator_3()
+    : _s(NULL), pos(NULL)
+  {}
+
+  Triangulation_ds_face_circulator_3(Vertex_handle v, Cell_handle c)
+    : _s(v), pos(c)
+  {}
+
+  Face_circulator & operator++()
+  {
+    CGAL_triangulation_precondition( pos != NULL );
+    //then dimension() cannot be < 3
+
+    pos = pos->neighbor(ccw(pos->index(_s)));
+    return *this;
+  }
+
+  Face_circulator operator++(int)
+  {
+    Face_circulator tmp(*this);
+    ++(*this);
+    return tmp;
+  }
+
+  Face_circulator & operator--()
+  {
+    CGAL_triangulation_precondition( pos != NULL );
+
+    pos = pos->neighbor(cw(pos->index(_s)));
+    return *this;
+  }
+
+  Face_circulator operator--(int)
+  {
+    Face_circulator tmp(*this);
+    --(*this);
+    return tmp;
+  }
+
+  Cell& operator*() const
+  {
+    return *pos;
+  }
+
+  Cell* operator->() const
+  {
+    return &*pos;
+  }
+
+  bool operator==(const Face_circulator & ccir) const
+  {
+    return pos == ccir.pos && _s == ccir._s;
+  }
+
+  bool operator!=(const Face_circulator & ccir) const
+  {
+    return ! (*this == ccir);
+  }
+
+private:
+  Vertex_handle _s;    // source vertex
+  Cell_handle pos;     // current cell
+
+  static int cw(int i)
+  {
+      return Triangulation_utils_3::cw(i);
+  } 
+  static int ccw(int i)
+  {
+      return Triangulation_utils_3::ccw(i);
   } 
 };
 
