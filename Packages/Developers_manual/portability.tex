@@ -581,6 +581,15 @@ enclosed by
 
 #endif
 \end{verbatim}
+
+\item[\textbf{{\tt std::stack} iterator traits}]
+The class \texttt{std::stack} is just a wrapper around a container.
+Is has a 2nd template parameter that defaults to \texttt{std::deque},
+which is semi-broken under VC++ 6.0 because it has naked pointers as 
+iterators, just as \texttt{std::vector} usually does.  You can avoid
+problems that arise by explicitly setting the second template parameter
+to something that has proper iterator (\eg, \texttt{std::list}).
+
 \end{description}
 \ccIndexMainItemEnd{configuration}
 
