@@ -122,8 +122,8 @@ operator+=( const File_header_extended_OFF& header) {
     return *this;
 }
 
-#define CGAL_OUT(item) out << "# " #item " " << h.item() << '\n'
-#define CGAL_OUTBOOL(item) out << "# " #item " " << (h.item() ? '1':'0') << '\n'
+#define CGAL_OUT(item)     out << "# " #item " " << h.item() << '\n'
+#define CGAL_OUTBOOL(item) out << "# " #item " " <<(h.item() ? '1':'0') << '\n'
 
 // Write extended header incl. CGAL/ENDCBP keywords.
 std::ostream& operator<<( std::ostream& out,
