@@ -333,8 +333,8 @@ char* extractRCSDate( char* s) {
 // This factor is multiplied to the actual width of an C++ declaration
 // right before the test for multiple lines formatting occurs.
 // A greater value forces declarations to be printed in multiple lines.
-double stretch_factor = 1.6;  // The command line option -strech multiplies
-                              // a factor to this builtin default.
+double stretch_factor = 1.6;
+
 
 // Path for the HTML conversion tools for the default configuration files.
 // This path will be compiled into the cc_extract_html program. It is set 
@@ -516,12 +516,13 @@ void write_headers_to_index( ostream& out){
 
 /* table size and font size constants */
 /* ================================== */
-const int table_width      = 550;
-const int table_first_col  = 25;  // in percent
-const int table_second_col = 25;  // in percent
-const int table_third_col  = 50;  // in percent
-const int table_2c_first_col  = 30;  // in percent
-const int table_2c_second_col = 70;  // in percent
+const int table_width             = 650; // absolute
+const int table_long_param_indent = 50;  // absolute
+const int table_first_col         = 25;  // in percent
+const int table_second_col        = 25;  // in percent
+const int table_third_col         = 50;  // in percent
+const int table_2c_first_col      = 30;  // in percent
+const int table_2c_second_col     = 70;  // in percent
 
 const double width_per_character  = 5.5;
 
@@ -1222,7 +1223,8 @@ void three_cols_html_begin( ostream& out, bool big_col1) {
 	<< "<!3><TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0 WIDTH="
 	<< table_width << ">" << indNewline 
 	<< "<TR><TD ALIGN=LEFT VALIGN=TOP WIDTH="
-	<< table_first_col << "%" << ( big_col1 ? " COLSPAN=3>" : " NOWRAP>")
+	<< table_first_col + (big_col1 ? (table_second_col+table_third_col) :0)
+	<< "%" << ( big_col1 ? " COLSPAN=3>" : " NOWRAP>")
 	<< indNewline << "<I><NOBR>" << outdent << indNewline;
 }
 
@@ -1236,26 +1238,32 @@ void three_cols_html_second( ostream& out, bool big_col1, bool big_col2) {
     out << indent << indNewline	<< store_remember_font() << "</I></NOBR>" 
 	<< indNewline << "</TD>";
     if ( big_col1)
-        out << "</TR><TR><TD WIDTH=" << table_first_col << "%></TD>";
+        out << "</TR><TR><TD WIDTH=" << table_first_col << "% NOWRAP></TD>";
     out << "<TD ALIGN=LEFT VALIGN=TOP WIDTH="
-	<< table_second_col << "% NOWRAP" << ( big_col2 ? " COLSPAN=2>" : ">")
+	<< table_second_col + ( big_col2 ? table_third_col : 0)
+	<< "% NOWRAP" << ( big_col2 ? " COLSPAN=2>" : ">")
 	<< indNewline << "<I><NOBR>" << get_remember_font() << outdent 
 	<< indNewline;
 }
 
 void three_cols_html_third( ostream& out, bool big_col2, bool empty_col3) {
     out << indent << indNewline << store_remember_font() << "</I></NOBR>" 
-	<< indNewline << "</TD>";
-    if ( big_col2 && ! empty_col3)
-        out << "</TR><TR><TD WIDTH=" << table_first_col 
-	    << "%></TD><TD WIDTH=" << table_second_col << "%></TD>";
-    out << "<TD ALIGN=LEFT VALIGN=TOP WIDTH=" << table_third_col << "%>" ;
+	<< indNewline;
+    if ( ! big_col2)
+	out << "</TD>";
+    if ( ! empty_col3) {
+	if ( big_col2)
+	    out << "</TR><TR><TD WIDTH=" << table_first_col 
+	        << "% NOWRAP></TD><TD WIDTH=" << table_second_col 
+		<< "% NOWRAP></TD>";
+	out << "<TD ALIGN=LEFT VALIGN=TOP WIDTH=" << table_third_col << "%>";
+    }
     out << outdent << indNewline;
 }
 
-void three_cols_html_end( ostream& out, bool big_col2, bool empty_col3) {
+void three_cols_html_end( ostream& out, bool /*big_col2*/, bool empty_col3) {
     out << indent << indNewline;
-    if ( ! big_col2 || ! empty_col3)
+    if ( ! empty_col3)
         out << "</TD>";
     out << "</TR>" << indNewline 
 	<< "</TABLE><!3>" << outdent << outdent << indNewline;
@@ -1267,7 +1275,7 @@ void two_cols_html_begin( ostream& out) {
 	<< "<!2><TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0 WIDTH="
 	<< table_width << ">" << indNewline 
 	<< "<TR><TD ALIGN=LEFT VALIGN=TOP WIDTH="
-	<< table_2c_first_col << "% NOWRAP COLSPAN=2>"
+	<< table_2c_first_col + table_2c_second_col << "% NOWRAP COLSPAN=2>"
 	<< indNewline << "<I><NOBR>" << outdent << indNewline;
 }
 
@@ -1282,7 +1290,7 @@ void two_cols_html_second( ostream& out, bool empty_col2) {
 	<< indNewline << "</TD></TR>";
     if ( ! empty_col2)
         out << "<TR><TD WIDTH=" << table_2c_first_col 
-	    << "%></TD><TD ALIGN=LEFT VALIGN=TOP WIDTH="
+	    << "% NOWRAP></TD><TD ALIGN=LEFT VALIGN=TOP WIDTH="
 	    << table_2c_second_col << "%>";
     out << outdent << indNewline;
 }
@@ -2057,6 +2065,8 @@ void format_function( bool method, const char* signature, const Text& T) {
     char* parameter_list; 
     const char* rest;
 
+    bool is_empty_comment = is_text_block_empty( T);
+
     bool  normal_operator     = false;  // either operator ...
     bool  conversion_operator = false;  // ... or conversion operator 
                                         // or (normal) function
@@ -2093,7 +2103,8 @@ void format_function( bool method, const char* signature, const Text& T) {
 	exp_size_ret += estimate_html_size( op_symbols);
  
     three_cols_html_begin( *current_stream, 
-			   exp_size_ret > table_width*table_first_col/100.0);
+			   exp_size_ret * stretch_factor > 
+                           table_width*table_first_col/100.0);
     // ---------
     // index
     if ( !method && !html_no_index) {
@@ -2168,8 +2179,10 @@ void format_function( bool method, const char* signature, const Text& T) {
 	    // print the operator
 	    three_cols_html_second(
 		    *current_stream,
-		    exp_size_ret > table_width * table_first_col / 100.0,
-		    exp_size > table_width * table_second_col / 100.0
+		    exp_size_ret * stretch_factor > 
+		        table_width * table_first_col / 100.0,
+		    is_empty_comment || (exp_size * stretch_factor > 
+                        table_width * table_second_col / 100.0)
 		);
 	    print_ascii_to_html_spc( *current_stream, praefix);
 	    *current_stream << " ";
@@ -2206,8 +2219,10 @@ void format_function( bool method, const char* signature, const Text& T) {
 	// then, do the printing
 	three_cols_html_second(
 		*current_stream,
-		exp_size_ret > table_width * table_first_col / 100.0,
-		exp_size > table_width * table_second_col / 100.0
+		exp_size_ret  * stretch_factor > 
+		    table_width * table_first_col / 100.0,
+		is_empty_comment || (exp_size * stretch_factor > 
+                    table_width * table_second_col / 100.0)
 	    );
 	if ( conversion_operator) {
 	    print_ascii_to_html_spc( *current_stream, op_symbols);
@@ -2246,7 +2261,9 @@ void format_function( bool method, const char* signature, const Text& T) {
 		    *current_stream << store_remember_font();
 		    *current_stream << "</I></TD>";
 		    if ( tag_long_param_layout)
-		      *current_stream << "</TR><TR><TD WIDTH=10%></TD>";
+			*current_stream << "</TR><TR><TD WIDTH=" 
+					<< table_long_param_indent 
+					<< " NOWRAP></TD>";
 		    *current_stream << "<TD ALIGN=LEFT VALIGN=TOP "
 		      "NOWRAP><I>";
 		    *current_stream << get_remember_font() << indNewline;
@@ -2272,9 +2289,9 @@ void format_function( bool method, const char* signature, const Text& T) {
     }
     if (!tag_rm_trailing_const)
         print_rest( *current_stream, rest);
-    bool is_empty_comment = is_text_block_empty( T);
     three_cols_html_third( *current_stream, 
-			   exp_size > table_width * table_second_col / 100.0,
+			   exp_size  * stretch_factor> 
+			        table_width * table_second_col / 100.0,
 			   is_empty_comment);
     delete[] return_value;
     delete[] scope;
@@ -2282,7 +2299,8 @@ void format_function( bool method, const char* signature, const Text& T) {
     delete[] parameter_list; 
     print_html_text_block( *current_stream, T);
     three_cols_html_end( *current_stream, 
-			 exp_size > table_width * table_second_col / 100.0,
+			 exp_size  * stretch_factor > 
+			     table_width * table_second_col / 100.0,
 			 is_empty_comment);
     html_no_links = false;
     html_no_index = false;
@@ -2312,7 +2330,8 @@ void format_variable( const char* signature,
     }
  
     three_cols_html_begin( *current_stream, 
-			   exp_size_ret > table_width*table_first_col/100.0);
+			   exp_size_ret * stretch_factor > 
+			       table_width*table_first_col/100.0);
    
     if ( class_name == NULL) {
 	if ( !html_no_links) {
@@ -2371,10 +2390,12 @@ void format_variable( const char* signature,
         exp_size += estimate_html_size( rest);
 
     // then, do the printing
+    bool is_empty_comment = is_text_block_empty( T);
     three_cols_html_second(
 	    *current_stream,
-	    exp_size_ret > table_width * table_first_col / 100.0,
-	    exp_size > table_width * table_second_col / 100.0
+	    exp_size_ret * stretch_factor> table_width * table_first_col/100.0,
+	    is_empty_comment || (exp_size  * stretch_factor> 
+				 table_width * table_second_col / 100.0)
 	);
     if ( scope)
         print_ascii_to_html_spc( *current_stream, scope);
@@ -2386,9 +2407,9 @@ void format_variable( const char* signature,
     }
     *current_stream << ';';
 
-    bool is_empty_comment = is_text_block_empty( T);
     three_cols_html_third( *current_stream, 
-			   exp_size > table_width * table_second_col / 100.0,
+			   exp_size * stretch_factor >
+			       table_width * table_second_col / 100.0,
 			   is_empty_comment);
     delete[] return_value;
     delete[] scope;
@@ -2397,7 +2418,8 @@ void format_variable( const char* signature,
     delete[] rest; 
     print_html_text_block( *current_stream, T);
     three_cols_html_end( *current_stream, 
-			 exp_size > table_width * table_second_col / 100.0,
+			 exp_size * stretch_factor > 
+			     table_width * table_second_col / 100.0,
 			 is_empty_comment);
     html_no_links = false;
     html_no_index = false;
@@ -2462,7 +2484,9 @@ void format_constructor( const char* signature, const Text& T) {
 	  *current_stream << store_remember_font();
 	  *current_stream << "</I></TD>";
 	  if ( tag_long_param_layout)
-	    *current_stream << "</TR><TR><TD WIDTH=10%></TD>";
+	      *current_stream << "</TR><TR><TD WIDTH=" 
+			      << table_long_param_indent 
+			      << " NOWRAP></TD>";
 	  *current_stream << "<TD ALIGN=LEFT VALIGN=TOP "
 	    "NOWRAP><I>";
 	  *current_stream << get_remember_font() << indNewline;
