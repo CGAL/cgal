@@ -1,0 +1,35 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Box_traits_d.tex
+% +------------------------------------------------------------------------+
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+\begin{ccRefClass}{Box_traits_d<Box>}
+
+\ccDefinition
+There are two template specializations of \ccc{Box_traits_d<>}: one for pointer to boxes, one for immediate box types.
+
+\ccInclude{CGAL/Box_intersection_d/box_traits.h}
+
+\ccIsModel
+\ccRefConceptPage{BoxTraits_d}
+
+
+
+
+%\ccTypes
+%\ccNestedType{Box} {box handle type. Bounding box objects are passed to functions and predicates using exactly this type.}
+%\ccNestedType{NT}  {Number type of the box vector components.}
+
+%\ccOperations
+%For all methods that require a dimension parameter, \ccc{dim < get_dim()} must hold obviously. Otherwise, results are undefined.
+
+%\ccMethod{NT get_lo(unsigned int dim) const;}{returns interval starting point in dimension dim} 
+%\ccMethod{NT get_hi(unsigned int dim) const;}{returns interval end point in dimension dim} 
+%\ccMethod{static T get_id(Box b);} {returns a unique box id. T must be less-than comparable.}
+%\ccMethod{static NT get_dim();}{returns N} 
+
+\end{ccRefClass}
+
+
+\ccRefPageEnd

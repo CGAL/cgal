@@ -8,17 +8,21 @@
 Bounding box access is exclusively done using a box traits class, which serves as an adapter. This adapter hides the specific interface a box may have.
 
 \ccTypes
-\ccNestedType{Box} {box handle type. Bounding box objects are passed to functions and predicates using exactly this type.}
+\ccNestedType{Box} {box handle type. Bounding box objects are passed to functions and predicates using exactly this type. Note: this may be different from the box class. For example, a handle can be \ccc{const Box&} or \ccc{Box*}.}
 \ccNestedType{NT}  {Number type of the box vector components.}
 
-\ccOperations
-\ccMethod{static NT get_lo(Box b, unsigned int dim)} {returns low interval point of box in dimension index dim, starting at zero}
-\ccMethod{static NT get_hi(Box b, unsigned int dim)} {returns low interval point of box in dimension index dim, starting at zero}
-\ccMethod{static T get_id(Box b)} {returns a unique box id. }
-\ccMethod{static unsigned int get_dim()} {returns number of dimensions, starting at one.}
 
-\ccHasModels
-\ccRefIdfierPage{Box_traits_d<Box>}
+
+\ccOperations
+For all methods that require a dimension parameter, \ccc{dim < get_dim()} must hold. Otherwise, results are undefined.
+
+\ccMethod{static NT get_lo(Box b, unsigned int dim);} {returns low interval point of box in dimension index dim, starting at zero.}
+\ccMethod{static NT get_hi(Box b, unsigned int dim);} {returns high interval point of box in dimension index dim, starting at zero.}
+\ccMethod{static T get_id(Box b);} {returns a unique box id. T must be less-than comparable.}
+\ccMethod{static unsigned int get_dim();} {returns number of dimensions, starting at one.}
+
+%\ccHasModels
+%\ccRefIdfierPage{Box_traits_d<Box>}
 
 \end{ccRefConcept}
 

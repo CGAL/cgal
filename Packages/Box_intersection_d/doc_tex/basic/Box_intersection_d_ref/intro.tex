@@ -27,6 +27,8 @@
 
 \subsection*{Functions}
 
+\def\ccLongParamLayout{\ccTrue}
+
 \ccFunction{
 template< class RandomAccessIter, class Callback >
 void box_intersection_d(
@@ -34,9 +36,9 @@ void box_intersection_d(
   RandomAccessIter i_begin, RandomAccessIter i_end,
   Callback& callback,
   unsigned int cutoff = 10,
-  Box_intersection_d::Setting  setting  = Box_intersection_d::BIPARTITE,
-  Box_intersection_d::Topology topology = Box_intersection_d::CLOSED )}
-  {invokation of box intersection with default box traits}
+  Setting  setting  = Box_intersection_d::BIPARTITE,
+  Topology topology = Box_intersection_d::CLOSED );}
+  {Invokation of box intersection with default box traits. The \ccc{value_type} of \ccc{RandomAccessIter} can be a class type, or a pointer to a class type. For both cases, box traits exists and will be chosen automatically.}
 
 \ccFunction{
 template< class RandomAccessIter, class Callback >
@@ -46,9 +48,9 @@ void box_intersection_d(
   Callback& callback,
   BoxTraits traits,
   unsigned int cutoff = 10,
-  Box_intersection_d::Setting  setting  = Box_intersection_d::BIPARTITE,
-  Box_intersection_d::Topology topology = Box_intersection_d::CLOSED )}
-  {invocation with custom box traits}
+  Setting  setting  = Box_intersection_d::BIPARTITE,
+  Topology topology = Box_intersection_d::CLOSED );}
+  {Invocation with custom box traits. \ccc{traits} acts as a box adapter. The predicate traits are instantiated using the provided \ccc{BoxTraits} type. }
 
 \ccFunction{
 template< class RandomAccessIter, class Callback >
@@ -58,9 +60,9 @@ void box_intersection_d_custom(
   Callback& callback,
   BoxPredicateTraits traits,
   unsigned int cutoff = 10,
-  Box_intersection_d::Setting  setting  = Box_intersection_d::BIPARTITE,
-  Box_intersection_d::Topology topology = Box_intersection_d::CLOSED )}
-  {invocation with custom box predicate traits, which include box traits. }
+  Setting  setting  = Box_intersection_d::BIPARTITE,
+  Topology topology = Box_intersection_d::CLOSED );}
+  {Invocation with custom box predicate traits. Predicate traits subsume box traits.  }
 
 
 %% EOF %%
