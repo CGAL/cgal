@@ -18,3 +18,5 @@
   definitions make sense
 - add two methods in Apollonius_graph_2: dimension() and number_of_faces();
   also update the doc on this
+- in the user manual change 10^5 to 10^3 as the critical point where the
+  hierarchy becomes better from the one-layer solution
