@@ -1,3 +1,6 @@
+2.13    (23 Mar 2001)
+- Fix Construct_sphere_3.
+
 2.12    (23 Mar 2001)
 - Fix return type of Construct_circumcenter_[23].
 
