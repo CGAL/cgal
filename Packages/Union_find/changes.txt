@@ -1,4 +1,11 @@
 Union_find Package: Release changes
 ----------------------------------------------------------------------
 
+1.1 (19 Mar 2002)
+
+    - Removed Partition.h and Partition.tex. Its use in Nef_2 and
+      Nef_S2 has been replaced with CGAL::Union_find.
+    - Cleanup of Union_find.h for maintenance (reformatting and
+      removal of redundant comments, see Union_find.tex instead.)
+
 0.9	initial release        
