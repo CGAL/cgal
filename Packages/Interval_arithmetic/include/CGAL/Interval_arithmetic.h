@@ -34,6 +34,10 @@
 // - The first one supposes the rounding mode is set -> +infinity before
 // nearly all operations, and might set it -> +infinity when leaving, whereas
 // the second leaves the rounding -> nearest.
+//
+// Note: When rounding is towards +infinity, to make an operation rounded
+// towards -infinity, it's enough to take the opposite of some of the operand,
+// and the opposite of the result (see operator+, operator*,...).
 
 #include <iostream>
 #include <CGAL/config.h>
@@ -210,7 +214,7 @@ Interval_nt_advanced::operator* (const Interval_nt_advanced & d) const
       // d>=0     [inf*d.inf; sup*d.sup]
       // d<=0     [sup*d.inf; inf*d.sup]
       // d~=0     [sup*d.inf; sup*d.sup]
-    /* register */ double a = inf, b = sup;
+    double a = inf, b = sup;
     if (d.inf < 0)
     {
 	a=b;
@@ -224,7 +228,7 @@ Interval_nt_advanced::operator* (const Interval_nt_advanced & d) const
       // d>=0     [inf*d.sup; sup*d.inf]
       // d<=0     [sup*d.sup; inf*d.inf]
       // d~=0     [inf*d.sup; inf*d.inf]
-    /* register */ double a = sup, b = inf;
+    double a = sup, b = inf;
     if (d.inf < 0)
     {
 	a=b;
