@@ -84,7 +84,8 @@ CGAL::Window_stream&
 operator << ( CGAL::Window_stream &ws,
               const CGAL::Min_ellipse_2<Traits_>& min_ellipse)
 {
-    typedef CGAL::Min_ellipse_2<Traits_>::Point_iterator  Point_iterator;
+    typedef typename CGAL::Min_ellipse_2<Traits_>::Point_iterator
+	    Point_iterator;
 
     Point_iterator  first( min_ellipse.points_begin());
     Point_iterator  last ( min_ellipse.points_end());
