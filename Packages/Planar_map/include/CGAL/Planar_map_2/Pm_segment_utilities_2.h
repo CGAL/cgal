@@ -56,17 +56,19 @@ public Kernel_::Construct_direction_2
     construct_vertex = in_kernel.construct_vertex_2_object();
     construct_opposite_direction =
       in_kernel.construct_opposite_direction_2_object();
+    construct_direction = in_kernel.construct_direction_2_object();
   }
     
   Direction_2 operator()(const Segment_2 & cv, const Point_2 & point) const
   { 
     if (is_equal(construct_vertex(cv, 0), point)) return Base::operator()(cv);
-    return construct_opposite_direction(cv);
+    return construct_opposite_direction(construct_direction(cv));
   }
 
 private:
   typename Kernel::Equal_2 is_equal;
   typename Kernel::Construct_vertex_2 construct_vertex;
+  typename Kernel::Construct_direction_2 construct_direction;
   typename Kernel::Construct_opposite_direction_2 construct_opposite_direction;
 };
 
