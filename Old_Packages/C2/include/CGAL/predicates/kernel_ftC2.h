@@ -59,11 +59,12 @@ compare_xC2(const FT &la, const FT &lb, const FT &lc,
   return Comparison_result( s * sign_of_determinant2x2(num1, 
                                                        num2, den1, den2));
   */
-  FT num1 = det2x2( la, lc, h1a, h1c);
-  FT num2 = det2x2( la, lc, h2a, h2c);
-  FT num  = det2x2(h1a,h1c,h2a,h2c)*lb+det2x2(num1,num2,h1b,h2b);
-  FT den1 = det2x2( la, lb, h1a, h1b);
-  FT den2 = det2x2( la, lb, h2a, h2b);
+  FT num1 = det2x2_by_formula( la, lc, h1a, h1c);
+  FT num2 = det2x2_by_formula( la, lc, h2a, h2c);
+  FT num  = det2x2_by_formula(h1a,h1c,h2a,h2c)*lb
+            + det2x2_by_formula(num1,num2,h1b,h2b);
+  FT den1 = det2x2_by_formula( la, lb, h1a, h1b);
+  FT den2 = det2x2_by_formula( la, lb, h2a, h2b);
   return Comparison_result( CGAL::sign(lb) * CGAL::sign(num) *
                             CGAL::sign(den1) * CGAL::sign(den2));
 }
