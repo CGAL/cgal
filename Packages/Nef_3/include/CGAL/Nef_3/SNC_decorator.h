@@ -1449,12 +1449,12 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
       */
       SFace_cycle_iterator fc;
       CGAL_forall_sface_cycles_of(fc,sf) {
-        SVertex_handle v; SHalfedge_handle e; SHalfloop_handle l;
-        if ( assign(e,fc) ) {
+        if ( fc.is_shalfedge() ) {
+	  SHalfedge_handle e(fc);
 	  SHalfedge_around_sface_circulator ec(e),ee(e);
           CGAL_For_all(ec,ee) {
 	    V.visit(SHalfedge_handle(ec));
-            v = starget(ec);
+            SVertex_handle v = starget(ec);
             if ( !SD.is_isolated(v) && !Done[v] ) {
               V.visit(v); // report edge
               Done[v] = Done[twin(v)] = true;
@@ -1463,7 +1463,8 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
             if ( Done[f] ) continue;
             FacetCandidates.push_back(f); Done[f] = true;
           }
-        } else if ( assign(v,fc) ) {
+        } else if ( fc.is_svertex() ) {
+	  SVertex_handle v(fc);
           if ( Done[v] ) continue; 
           V.visit(v); // report edge
 	  V.visit(twin(v));
@@ -1483,7 +1484,8 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
 	  */
 	  //	  if ( Done[fo] ) continue;
 	  //	  SFaceCandidates.push_back(fo); Done[fo] = true;
-        } else if ( assign(l,fc) ) {
+        } else if (fc.is_shalfloop()) {
+	  SHalfloop_handle l(fc);
 	  V.visit(l);
           Halffacet_handle f = facet(twin(l));
           if ( Done[f] ) continue;
