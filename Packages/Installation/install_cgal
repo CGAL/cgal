@@ -5,33 +5,25 @@
 # $Id$
 # ---------------------------------------------------------------------
 # 
-# Copyright (c) 1997-2003 The CGAL Consortium
-#
-# This software and related documentation are part of the Computational
-# Geometry Algorithms Library (CGAL).
-# This software and documentation are provided "as-is" and without warranty
-# of any kind. In no event shall the CGAL Consortium be liable for any
-# damage of any kind. 
-#
-# Every use of CGAL requires a license. 
-#
-# Academic research and teaching license
-# - For academic research and teaching purposes, permission to use and copy
-#   the software and its documentation is hereby granted free of charge,
-#   provided that it is not a component of a commercial product, and this
-#   notice appears in all copies of the software and related documentation. 
-#
-# Commercial licenses
-# - Please check the CGAL web site http://www.cgal.org/index2.html for 
-#   availability
-#
-# The CGAL Consortium consists of Utrecht University (The Netherlands),
+# Copyright (c) 1997-2003  Utrecht University (The Netherlands),
 # ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 # INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 # (Germany), Max-Planck-Institute Saarbrucken (Germany), RISC Linz (Austria),
-# and Tel-Aviv University (Israel).
+# and Tel-Aviv University (Israel).  All rights reserved.
 #
-# ---------------------------------------------------------------------
+# This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public License as
+# published by the Free Software Foundation; version 2.1 of the License.
+# See the file LICENSE.LGPL distributed with CGAL.
+#
+# This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+# WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+#
+# $Source$
+# $Revision$ $Date$
+# $Name$
+#
+# Author(s): Michael Hoffmann, Sylvain Pion
 
 
 # ---------------------------------------------------------------------
@@ -298,6 +290,12 @@ ANY_LIB_COMPILED=''
 # custom options for compiler/linker:
 CUSTOM_CXXFLAGS=''
 CUSTOM_LDFLAGS=''
+
+# We need these to prevent expansion by CVS as well as by the shell...
+SOURCE='$''Source: ''$'
+REVISION='$''Revision: ''$'
+DATE='$''Date: ''$'
+NAME='$''Name: ''$'
 
 
 # ---------------------------------------------------------------------
@@ -1084,15 +1082,26 @@ create_replacement_header()
 	${_printf} "%s\n" "int main() {return 0;}" >> ${tmp_code_file}
 	if eval "`quote \`compiler_bin\`` ${ADDITIONAL_CXXFLAGS} ${tmp_code_file} >/dev/null 2>&1"; then
 	    ${_sed} "s/@CGAL@/${CGAL_VERSION}/;s@FILE@${_final_file};s/@VERSION@/${CGAL_INSTALL_VERSION}/" <<EOF3 >>${replacement_header}
-// Copyright (c) 1999,2000 The CGAL Consortium
+// Copyright (c) 1996-2003  Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
+// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
+// (Germany), Max-Planck-Institute Saarbrucken (Germany), RISC Linz (Austria),
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This software and related documentation is part of the
-// Computational Geometry Algorithms Library (CGAL).
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
 //
-// release       : @CGAL@
-// file          : @FILE@
-// package       : Installation (@VERSION@)
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $SOURCE
+// $REVISION $DATE
+// $NAME
+//
+// Author(s): install_cgal script
+
 // This file was automatically generated during installation.
 // It wraps a standard header file that did not exist for this compiler
 // and adds its symbols to namespace std.
@@ -1250,31 +1259,64 @@ test_compiler_specifica()
     _check_dir_exists_create ${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}/CGAL
     _file=${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}/CGAL/compiler_config.h
     ${_printf} "%s\n" \
-	"// Copyright (c) 1998, 1999 The CGAL Consortium" \
+	"// Copyright (c) 1996-2003  Utrecht University (The Netherlands)," \
 	> ${_file}
     ${_printf} "%s\n" \
-	"//" \
+        "// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany)," \
 	>> ${_file}
     ${_printf} "%s\n" \
-	"// This software and related documentation is part of the" \
+        "// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg" \
 	>> ${_file}
     ${_printf} "%s\n" \
-	"// Computational Geometry Algorithms Library (CGAL)." \
+        "// (Germany), Max-Planck-Institute Saarbrucken (Germany), RISC Linz (Austria)," \
 	>> ${_file}
     ${_printf} "%s\n" \
-	"//" \
+        "// and Tel-Aviv University (Israel).  All rights reserved." \
 	>> ${_file}
-    ${_printf} "%s\n" \
-        "// release       : CGAL-${CGAL_VERSION}" \
-        >> ${_file}
-    ${_printf} "%s\n" \
-        "// file          : include/CGAL/config/${CGAL_OS_COMPILER}/CGAL/compiler_config.h" \
-        >> ${_file}
-    ${_printf} "%s\n" \
-        "// package       : Installation (${CGAL_INSTALL_VERSION})" \
-        >> ${_file}
     ${_printf} "%s\n" \
         "//" \
+	>> ${_file}
+    ${_printf} "%s\n" \
+        "// This file is part of CGAL (www.cgal.org); you can redistribute it and/or" \
+	>> ${_file}
+    ${_printf} "%s\n" \
+        "// modify it under the terms of the GNU Lesser General Public License as" \
+	>> ${_file}
+    ${_printf} "%s\n" \
+        "// published by the Free Software Foundation; version 2.1 of the License." \
+	>> ${_file}
+    ${_printf} "%s\n" \
+        "// See the file LICENSE.LGPL distributed with CGAL." \
+	>> ${_file}
+    ${_printf} "%s\n" \
+        "//" \
+	>> ${_file}
+    ${_printf} "%s\n" \
+        "// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE" \
+	>> ${_file}
+    ${_printf} "%s\n" \
+        "// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE." \
+	>> ${_file}
+    ${_printf} "%s\n" \
+        "//" \
+	>> ${_file}
+    ${_printf} "%s\n" \
+        "// $SOURCE" \
+	>> ${_file}
+    ${_printf} "%s\n" \
+        "// $REVISION $DATE" \
+	>> ${_file}
+    ${_printf} "%s\n" \
+        "// $NAME" \
+	>> ${_file}
+    ${_printf} "%s\n" \
+        "//" \
+	>> ${_file}
+    ${_printf} "%s\n" \
+        "// Author(s): the install_cgal script" \
+	>> ${_file}
+    ${_printf} "%s\n" \
+        "" \
         >> ${_file}
     ${_printf} "%s\n" \
 	"// Compiler specific configuration file for CGAL ${CGAL_VERSION}" \
