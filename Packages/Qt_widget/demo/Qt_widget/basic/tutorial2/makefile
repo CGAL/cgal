@@ -7,7 +7,6 @@
 # Choose the right include file from the <cgalroot>/make directory.
 
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
-#CGAL_MAKEFILE = ~/CGAL-2.4-I-47/make/makefile_sparc_SunOS-5.6_g++-2.95
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -35,15 +34,9 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-#SOURCES = ../../../../src/CGALQt/Qt_widget.o \
-	../../../../src/CGALQt/Qt_widget_tool.o
+all: tutorial2$(EXE_EXT)
 
-all: tut2$(EXE_EXT)
-
-tut2$(OBJ_EXT): tutorial2.C
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) tutorial2.C
-
-tut2$(EXE_EXT): tut2$(OBJ_EXT) $(SOURCES)
+tutorial2$(EXE_EXT): tutorial2$(OBJ_EXT)
 	$(CGAL_CXX)  $(EXE_OPT)tutorial2 tutorial2$(OBJ_EXT) $(LDFLAGS)
 
 clean:
