@@ -28,6 +28,7 @@
 #include <CGAL/double.h> 
 #include <CGAL/Interval_arithmetic.h>
 
+#include <string>
 #ifndef CGAL_CFG_NO_LOCALE
 #  include <locale>
 #else
@@ -110,11 +111,11 @@ public:
   Gmpz(double d)
     : Base(Gmpz_rep(d)) {}
 
-  Gmpz(const char* const str)
-    : Base(Gmpz_rep(str)) {}
+  Gmpz(const std::string& str)
+    : Base(Gmpz_rep(str.c_str())) {}
 
-  Gmpz(const char* const str, int base)
-    : Base(Gmpz_rep(str, base)) {}
+  Gmpz(const std::string& str, int base)
+    : Base(Gmpz_rep(str.c_str(), base)) {}
 
   Gmpz operator-() const;
 

@@ -1,5 +1,6 @@
 4.118 (23 September 2003) [af]
-Added constructor Gmqp(int,int) and from std::string instead of char*
+- Added constructor Gmqp(int,int) and replaced Gmpq(char*) with Gmpq(std::string)
+- Replaced constructor Gmpz(char*) with Gmpz(std::string)
 
 4.117 (18 September 2003)
 - New headers
