@@ -3,7 +3,6 @@
 
 #include <CGAL/basic.h>
 
-
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polygon_2.h>
 
