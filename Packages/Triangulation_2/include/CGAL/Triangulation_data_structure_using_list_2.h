@@ -1199,13 +1199,20 @@ copy_tds(const Tds &tds, const Vertex* v)
   v_inf = static_cast<Vertex*>(V[v]);
     
   // create the faces
-  for(Iterator_base ib = tds.iterator_base_begin();
-      ib != tds.iterator_base_end(); ++ib) {
-    f2 = create_face(&(*ib));
-    F[&(*ib)]=  f2;
-    f2->set_vertices((Vertex*) V[ib->vertex(0)],
-		     (Vertex*) V[ib->vertex(1)],
-		     (Vertex*) V[ib->vertex(2)] );
+  //because faces are inserted at the head of the list
+  //they have to be created in reverse order
+  // to provide parallel faces and vertices iterators
+//   for(Iterator_base ib = tds.iterator_base_begin();
+//       ib != tds.iterator_base_end(); ++ib) {
+  typedef  std::reverse_iterator<Iterator_base> RIB;
+  for(RIB rib=RIB(tds.iterator_base_end());
+      rib != RIB(tds.iterator_base_begin());
+      ++rib) {
+    f2 = create_face(&(*rib));
+    F[&(*rib)]=  f2;
+    f2->set_vertices((Vertex*) V[rib->vertex(0)],
+		     (Vertex*) V[rib->vertex(1)],
+		     (Vertex*) V[rib->vertex(2)] );
   }
 
   // link each vertex to a face

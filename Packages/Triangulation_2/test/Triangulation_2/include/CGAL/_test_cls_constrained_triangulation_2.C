@@ -179,27 +179,17 @@ _test_cls_constrained_triangulation(const Triangulation &)
   Cls T2_2_copy; if2_2 >> T2_2_copy;
 
   // test copy of constrained Triangulation
-  // seems to work but cannot be tested that way
- //  Cls T2_2_bis(T2_2);
-//   std::ofstream of2_2_bis("T22_bis.triangulation");
-//   CGAL::set_ascii_mode(of2_2_bis);
-//   of2_2_bis << T2_2_bis; of2_2_bis.close();
-//   All_faces_iterator fit2 = T2_2.faces_begin();
-//   All_faces_iterator fit2_bis = T2_2_bis.faces_begin();
-//   for( ; fit2 != T2_2.faces_end(); ++fit2, ++fit2_bis) {
-//     for(int i=0; i<3 ; i++) {
-//       if (fit2->is_constrained(i)) std::cerr << " C " ; 
-//       else std::cerr << " N " ;
-//     }
-//     std::cerr << "       " ;
-//     for(int i=0; i<3 ; i++) {
-//       if (fit2_bis->is_constrained(i)) std::cerr << " C " ; 
-//       else std::cerr << " N " ;
-//     } 
-//     std::cerr << std::endl;
+   Cls T2_2_bis(T2_2);
+  std::ofstream of2_2_bis("T22_bis.triangulation");
+  CGAL::set_ascii_mode(of2_2_bis);
+  of2_2_bis << T2_2_bis; of2_2_bis.close();
+  All_faces_iterator fit2 = T2_2.all_faces_begin();
+  All_faces_iterator fit2_bis = T2_2_bis.all_faces_begin();
+  for( ; fit2 != T2_2.faces_end(); ++fit2, ++fit2_bis) {
+    for(int i=0; i<3 ; i++)  
+    assert( fit2->is_constrained(i) ==  fit2_bis->is_constrained(i) );
+  }
   
-      //assert( fit2->is_constrained(i) ==  fit2_bis->is_constrained(i) );
-  //  }
   
   
   // remove_constraint and remove _1 dim

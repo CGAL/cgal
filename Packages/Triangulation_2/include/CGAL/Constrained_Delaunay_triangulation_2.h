@@ -539,7 +539,8 @@ insert(Vertex_handle  va, Vertex_handle vb)
 }
 
 
-
+// fonction creee pour constrained triangulation plus
+// a supprimer
 template < class Gt, class Tds >
 void
 Constrained_Delaunay_triangulation_2<Gt,Tds>::

@@ -3,11 +3,10 @@
 - ajouter des acces a la hierarchie dans
   Constrained_triangulation_plus
 - documenter Constrained_triangulation_plus_2
+- fix the sweep line construction of 2d constrained triangulation
 - factorize the code duplicated in
   Triangulation_default_data_structure_2
   Triangulation_data_structure_using_list_2
-- copy constructor for constrained and Delaunay_constrained triangulation
-  has to be modified, so that constrained status are duplicated
 - test removal and meshing functions in constrained and Delaunay constrained triangulation
 
 - change the return type of insert a constrained

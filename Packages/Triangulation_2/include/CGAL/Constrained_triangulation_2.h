@@ -658,7 +658,6 @@ find_intersected_faces(Vertex_handle va,
   Line_face_circulator current_face=line_walk(vaa->point(),b, vaa->face());
   int ind=current_face->index(vaa);
   assert( !current_face->is_constrained(ind));
-  Vertex_handle vbb=vb;
   Face_handle lf= current_face->neighbor(ccw(ind)); 
   Face_handle rf= current_face->neighbor(cw(ind));
   Orientation orient;
@@ -676,6 +675,7 @@ find_intersected_faces(Vertex_handle va,
   current_vertex=current_face->vertex(ind);  
 
   // loop over triangles intersected by ab
+  Vertex_handle vbb=vb;
   while (current_vertex != vbb)  { 
     orient = orientation(a,b,current_vertex->point());
     int i1, i2;
