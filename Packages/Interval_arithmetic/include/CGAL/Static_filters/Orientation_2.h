@@ -31,6 +31,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template < class R > class Static_filters;
+
 template <class Point>
 class SF_Orientation_2
 {
@@ -124,7 +126,8 @@ private:
     static Profile_counter fail("Orientation_2 semi-static failures"); ++fail;
 #endif
 
-    typedef Simple_cartesian<Filtered_exact<double, MP_Float> >::Point_2 P;
+    typedef Simple_cartesian<Filtered_exact<double, MP_Float> >::Point_2 K;
+    typedef K::Point_2 P;
 
     Orientation oooo = orientation(P(px,py), P(qx,qy), P(rx,ry));
 #ifdef CGAL_PROFILE

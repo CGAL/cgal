@@ -226,7 +226,8 @@ public:
     static Profile_counter step3("In_sphere_3 step3"); ++step3;
 #endif
 
-    typedef Simple_cartesian<Filtered_exact<double, MP_Float> >::Point_3 P;
+    typedef Simple_cartesian<Filtered_exact<double, MP_Float> > K;
+    typedef K::Point_3 P;
 
     Oriented_side oooo = side_of_oriented_sphere(P(px,py,pz), P(qx,qy,qz),
 	                         P(rx,ry,rz), P(sx,sy,sz), P(tx,ty,tz));

@@ -149,7 +149,8 @@ private:
     // advantage of this, though it's going through an inexact temporary
     // computation (which is zeroed later).
 
-    typedef Simple_cartesian<Filtered_exact<double, MP_Float> >::Point_3 P;
+    typedef Simple_cartesian<Filtered_exact<double, MP_Float> > K;
+    typedef K::Point_3 P;
 
     Orientation oooo = orientation(P(px,py,pz), P(qx,qy,qz),
 	                           P(rx,ry,rz), P(sx,sy,sz));
