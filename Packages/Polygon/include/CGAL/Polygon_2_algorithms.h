@@ -40,23 +40,23 @@ CGAL_BEGIN_NAMESPACE
 
 template <class ForwardIterator, class Traits>
 ForwardIterator left_vertex_2(ForwardIterator first,
-                                   ForwardIterator last,
-                                   const Traits& traits);
+			      ForwardIterator last,
+			      const Traits& traits);
 
 template <class ForwardIterator, class Traits>
 ForwardIterator right_vertex_2(ForwardIterator first,
-                                    ForwardIterator last,
-                                    const Traits& traits);
+			       ForwardIterator last,
+			       const Traits& traits);
 
 template <class ForwardIterator, class Traits>
 ForwardIterator top_vertex_2(ForwardIterator first,
-                                  ForwardIterator last,
-                                  const Traits& traits);
+			     ForwardIterator last,
+			     const Traits& traits);
 
 template <class ForwardIterator, class Traits>
 ForwardIterator bottom_vertex_2(ForwardIterator first,
-                                     ForwardIterator last,
-                                     const Traits& traits);
+				ForwardIterator last,
+				const Traits& traits);
 
 template <class InputIterator>
 Bbox_2 bbox_2(InputIterator first, InputIterator last);
@@ -90,7 +90,7 @@ area_2( ForwardIterator first, ForwardIterator last,
 template <class ForwardIterator, class Traits>
 typename Traits::FT 
 polygon_area_2( ForwardIterator first, ForwardIterator last,
-        const Traits& traits)
+		const Traits& traits)
 {
    typedef typename Traits::FT FT;
    FT result = FT(0);
@@ -114,193 +114,147 @@ polygon_area_2( ForwardIterator first, ForwardIterator last,
 
 template <class ForwardIterator, class Traits>
 bool is_convex_2(ForwardIterator first,
-                      ForwardIterator last,
-                      const Traits& traits);
+		 ForwardIterator last,
+		 const Traits& traits);
 
 template <class ForwardIterator, class Traits>
 bool is_simple_2(ForwardIterator first,
-                      ForwardIterator last,
-                      const Traits& traits);
+		 ForwardIterator last,
+		 const Traits& traits);
 
 // In the following two functions we would like to use Traits::Point_2 instead
 // of Point, but this is not allowed by g++ 2.7.2.
 
 template <class ForwardIterator, class Point, class Traits>
 Oriented_side oriented_side_2(ForwardIterator first,
-                                        ForwardIterator last,
-                                        const Point& point,
-                                        const Traits& traits);
+			      ForwardIterator last,
+			      const Point& point,
+			      const Traits& traits);
 
 template <class ForwardIterator, class Point, class Traits>
 Bounded_side bounded_side_2(ForwardIterator first,
-                                      ForwardIterator last,
-                                      const Point& point,
-                                      const Traits& traits);
+			    ForwardIterator last,
+			    const Point& point,
+			    const Traits& traits);
 
 template <class ForwardIterator, class Traits>
 Orientation orientation_2(ForwardIterator first,
-                                    ForwardIterator last,
-                                    const Traits& traits);
+			  ForwardIterator last,
+			  const Traits& traits);
 
 //-----------------------------------------------------------------------//
 //                         implementation
 //-----------------------------------------------------------------------//
 
 #ifdef CGAL_REP_CLASS_DEFINED
-template <class ForwardIterator, class R>
-inline
-ForwardIterator left_vertex_2_aux(ForwardIterator first,
-                                       ForwardIterator last,
-                                       const Point_2<R>)
-{
-  return left_vertex_2(first, last, R());
-}
 
 template <class ForwardIterator>
 inline
 ForwardIterator left_vertex_2(ForwardIterator first,
-                                   ForwardIterator last)
-{
-  return left_vertex_2_aux(first, last, *first);
+			      ForwardIterator last)
+{  
+  typedef Kernel_traits<std::iterator_traits<ForwardIterator>::value_type>::Kernel K; 
+  return left_vertex_2(first, last, K());
 }
 
-template <class ForwardIterator, class R>
-inline
-ForwardIterator right_vertex_2_aux(ForwardIterator first,
-                                        ForwardIterator last,
-                                        const Point_2<R>&)
-{
-  return right_vertex_2(first, last, R());
-}
+
 
 template <class ForwardIterator>
 inline
 ForwardIterator right_vertex_2(ForwardIterator first,
-                                    ForwardIterator last)
-{
-  return right_vertex_2_aux(first, last, *first);
+			       ForwardIterator last)
+{ 
+  typedef Kernel_traits<std::iterator_traits<ForwardIterator>::value_type>::Kernel K; 
+  return right_vertex_2(first, last, K());
 }
 
-template <class ForwardIterator, class R>
-inline
-ForwardIterator top_vertex_2_aux(ForwardIterator first,
-                                      ForwardIterator last,
-                                      const Point_2<R>&)
-{
-  return top_vertex_2(first, last, R());
-}
+
+
 
 template <class ForwardIterator>
 inline
 ForwardIterator top_vertex_2(ForwardIterator first,
-                                  ForwardIterator last)
+			     ForwardIterator last)
 {
-  return top_vertex_2_aux(first, last, *first);
+  typedef Kernel_traits<std::iterator_traits<ForwardIterator>::value_type>::Kernel K; 
+  return top_vertex_2(first, last, K());
 }
 
-template <class ForwardIterator, class R>
-inline
-ForwardIterator bottom_vertex_2_aux(ForwardIterator first,
-                                         ForwardIterator last,
-                                         const Point_2<R>&)
-{
-  return bottom_vertex_2(first, last, R());
-}
+
 
 template <class ForwardIterator>
 inline
 ForwardIterator bottom_vertex_2(ForwardIterator first,
-                                     ForwardIterator last)
+				ForwardIterator last)
 {
-  return bottom_vertex_2_aux(first, last, *first);
+  typedef Kernel_traits<std::iterator_traits<ForwardIterator>::value_type>::Kernel K; 
+  return bottom_vertex_2(first, last, K());
 }
 
-template <class ForwardIterator, class Numbertype, class R>
-inline
-void area_2_aux(ForwardIterator first,
-                     ForwardIterator last,
-                     Numbertype& result,
-                     const Point_2<R>&)
-{
-  area_2(first, last, result, R());
-}
+
 
 template <class ForwardIterator, class Numbertype>
 inline
 void area_2(ForwardIterator first,
-                 ForwardIterator last,
-                 Numbertype& result)
+	    ForwardIterator last,
+	    Numbertype& result)
 {
-  area_2_aux(first, last, result, *first);
+  typedef Kernel_traits<std::iterator_traits<ForwardIterator>::value_type>::Kernel K; 
+  area_2(first, last, result, K());
 }
 
-template <class ForwardIterator, class R>
-inline
-bool is_convex_2_aux(ForwardIterator first,
-                          ForwardIterator last,
-                          const Point_2<R>&)
-{
-  return is_convex_2(first, last, R());
-}
+
 
 template <class ForwardIterator>
 inline
 bool is_convex_2(ForwardIterator first,
-                      ForwardIterator last)
+		 ForwardIterator last)
 {
-  return is_convex_2_aux(first, last, *first);
+  typedef Kernel_traits<std::iterator_traits<ForwardIterator>::value_type>::Kernel K; 
+  return is_convex_2(first, last, K());
 }
 
-template <class ForwardIterator, class R>
-inline
-bool is_simple_2_aux(ForwardIterator first,
-                          ForwardIterator last,
-                          const Point_2<R>&)
-{
-  return is_simple_2(first, last, R());
-}
+
 
 template <class ForwardIterator>
 inline
 bool is_simple_2(ForwardIterator first,
-                      ForwardIterator last)
+		 ForwardIterator last)
 {
-  return is_simple_2_aux(first, last, *first);
+  typedef Kernel_traits<std::iterator_traits<ForwardIterator>::value_type>::Kernel K; 
+  return is_simple_2(first, last, K());
 }
 
-template <class ForwardIterator, class R>
+template <class ForwardIterator, class Point>
 inline
 Oriented_side oriented_side_2(ForwardIterator first,
-                                        ForwardIterator last,
-                                        const Point_2<R>& point)
+			      ForwardIterator last,
+			      const Point& point)
 {
-  return oriented_side_2(first, last, point, R());
+  typedef Kernel_traits<Point>::Kernel K;
+  return oriented_side_2(first, last, point, K());
 }
 
-template <class ForwardIterator, class R>
+
+template <class ForwardIterator, class Point>
 inline
 Bounded_side bounded_side_2(ForwardIterator first,
-                                      ForwardIterator last,
-                                      const Point_2<R>& point)
+			    ForwardIterator last,
+			    const Point& point)
 {
-  return bounded_side_2(first, last, point, R());
+  typedef Kernel_traits<Point>::Kernel K;
+  return bounded_side_2(first, last, point, K());
 }
 
-template <class ForwardIterator, class R>
-inline
-Orientation orientation_2_aux(ForwardIterator first,
-                                        ForwardIterator last,
-                                        const Point_2<R>&)
-{
-  return orientation_2(first, last, R());
-}
+
 
 template <class ForwardIterator>
 inline
 Orientation orientation_2(ForwardIterator first,
-                                    ForwardIterator last)
+			  ForwardIterator last)
 {
-  return orientation_2_aux(first, last, *first);
+  typedef Kernel_traits<std::iterator_traits<ForwardIterator>::value_type>::Kernel K; 
+  return orientation_2(first, last, K());
 }
 #endif // CGAL_REP_CLASS_DEFINED
 
