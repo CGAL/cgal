@@ -1,5 +1,6 @@
-Version 1.120 (?? Oct 02)
+Version 1.120 (21 Oct 02)
 - Shorten some mangled name to please some platforms.
+- Please valgrind.
 
 Version 1.119 (9 Oct 02)
 - Valgrind noticed that copy_tds() touched pointers of index > dimension().
