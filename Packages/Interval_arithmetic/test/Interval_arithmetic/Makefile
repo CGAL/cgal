@@ -12,10 +12,10 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = \
+CXXFLAGS = -I../../include \
            $(TESTSUITE_CXXFLAGS) \
            $(CGAL_CXXFLAGS) \
-           -g -Wall -O
+           -g -Wall -O -fprofile-arcs -ftest-coverage
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -33,6 +33,10 @@ all: tst1 tst2
 	./tst1
 	./tst2
 
+tst1.o: tst1.C data/tst_generic.il
+
+tst2.o: tst2.C data/tst_generic.il
+
 tst1: tst1.o
 	$(CGAL_CXX) -o tst1 tst1.o $(LDFLAGS)
 
@@ -40,7 +44,7 @@ tst2: tst2.o
 	$(CGAL_CXX) -o tst2 tst2.o $(LDFLAGS)
 
 clean:
-	rm -f *.o core tst1 tst2
+	rm -f *.o *.bb *.bbg *.da *.gcov core tst1 tst2
 
 #---------------------------------------------------------------------#
 #                    suffix rules
