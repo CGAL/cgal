@@ -35,17 +35,17 @@ friend class Rotation_repC2<R>;
 friend class Scaling_repC2<R>;
 
 public:
-  typedef Aff_transformation_rep_baseC2<R> Aff_t_base;
-  typedef typename Aff_t_base::FT                FT;
-  typedef typename Aff_t_base::RT                RT;
+  typedef typename R::FT                         FT;
+  typedef typename R::RT                         RT;
+  typedef Aff_transformation_rep_baseC2<R>       Aff_t_base;
+  typedef Aff_transformation_repC2<R>            Transformation;
+  typedef Translation_repC2<R>                   Translation;
+  typedef Rotation_repC2<R>                      Rotation;
+  typedef Scaling_repC2<R>                       Scaling;
   typedef typename Aff_t_base::Point_2           Point_2;
   typedef typename Aff_t_base::Vector_2          Vector_2;
   typedef typename Aff_t_base::Direction_2       Direction_2;
   typedef typename Aff_t_base::Aff_transformation_2 Aff_transformation_2;
-  typedef Translation_repC2<R>             Translation;
-  typedef Rotation_repC2<R>                Rotation;
-  typedef Scaling_repC2<R>                 Scaling;
-  typedef Aff_transformation_repC2<R>      Transformation;
 
   Translation_repC2()
   {}
@@ -54,11 +54,12 @@ public:
     : _translationvector(tv)
   {}
 
-  Point_2     transform(const Point_2 &p) const { return p + _translationvector; }
+  Point_2     transform(const Point_2 &p) const
+                            { return p + _translationvector; }
   Vector_2    transform(const Vector_2 &v) const { return v; }
   Direction_2 transform(const Direction_2 &d) const { return d; }
 
-  Aff_transformation_2 operator*(const Aff_t_base &t)
+  Aff_transformation_2 operator*(const Aff_t_base &t) const
   {
     return t.compose(*this);
   }
@@ -66,11 +67,10 @@ public:
   Aff_transformation_2 compose(const Translation &t) const
   {
     return Aff_transformation_2(TRANSLATION,
-                                _translationvector +
-                                t._translationvector);
+                                _translationvector + t._translationvector);
   }
 
-  virtual Aff_transformation_2 compose(const Rotation &t) const
+  Aff_transformation_2 compose(const Rotation &t) const
   {
     return Aff_transformation_2(t._cosinus,
                                 -t._sinus,
@@ -83,7 +83,7 @@ public:
                                 t._cosinus*_translationvector.y());
   }
 
-  virtual Aff_transformation_2 compose(const Scaling &t) const
+  Aff_transformation_2 compose(const Scaling &t) const
   {
     return Aff_transformation_2(t._scalefactor,
                                 FT(0),
@@ -94,7 +94,7 @@ public:
                                 t._scalefactor*_translationvector.y());
   }
 
-  virtual Aff_transformation_2 compose(const Transformation &t) const
+  Aff_transformation_2 compose(const Transformation &t) const
   {
     return Aff_transformation_2(t.t11,
                                 t.t12,
@@ -109,21 +109,24 @@ public:
                                 + t.t23);
   }
 
-  Aff_transformation_2     inverse() const
+  Aff_transformation_2 inverse() const
   {
     return Aff_transformation_2(TRANSLATION, - _translationvector);
   }
 
-  virtual bool             is_even() const { return true; }
+  bool         is_even() const
+  {
+    return true;
+  }
 
-  virtual FT cartesian(int i, int j) const
+  FT cartesian(int i, int j) const
   {
     if (j==i) return FT(1);
     if (j==2) return _translationvector[i];
     return FT(0);
   }
 
-  virtual std::ostream &print(std::ostream &os) const
+  std::ostream &print(std::ostream &os) const
   {
     os << "Aff_transformationC2(VectorC2(" << _translationvector.x() << ", "
        << _translationvector.y()  <<  "))";

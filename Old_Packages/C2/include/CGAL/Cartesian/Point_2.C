@@ -22,6 +22,9 @@
 //
 // ============================================================================
 
+#ifndef CGAL_CARTESIAN_POINT_2_C
+#define CGAL_CARTESIAN_POINT_2_C
+
 #ifndef CGAL_CARTESIAN_REDEFINE_NAMES_2_H
 #define CGAL_CTAG
 #endif
@@ -29,9 +32,6 @@
 #ifdef CGAL_CFG_TYPENAME_BUG
 #define typename
 #endif
-
-#ifndef CGAL_CARTESIAN_POINT_2_C
-#define CGAL_CARTESIAN_POINT_2_C
 
 #ifndef CGAL_ORIGIN_H
 #include <CGAL/Origin.h>

@@ -1,3 +1,7 @@
+Version 3.3.6 (September 30 1999)
+- Forgot std:: qualifier for endl in Circle_2.C
+- removed all virtuals in the derived transformation classes
+
 Version 3.3.5 (September 20 1999)
 - Fixed class Identity (clash with Kernel_objects)
 - Fixed type mistake in second argument of line_get_point (Line_2.C)

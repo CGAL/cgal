@@ -122,13 +122,13 @@ Aff_transformationC2(const Scaling,
 // and a 3x2 matrix for the operations combining rotation, scaling, translation
 template < class R >
 Aff_transformationC2<R CGAL_CTAG>::
-Aff_transformationC2( const typename Aff_transformationC2<R CGAL_CTAG>::FT & m11,
-                      const typename Aff_transformationC2<R CGAL_CTAG>::FT & m12, 
-		      const typename Aff_transformationC2<R CGAL_CTAG>::FT & m13,
-                      const typename Aff_transformationC2<R CGAL_CTAG>::FT & m21, 
-		      const typename Aff_transformationC2<R CGAL_CTAG>::FT & m22, 
-		      const typename Aff_transformationC2<R CGAL_CTAG>::FT & m23,
-                      const typename Aff_transformationC2<R CGAL_CTAG>::FT & w)
+Aff_transformationC2(const typename Aff_transformationC2<R CGAL_CTAG>::FT &m11,
+                     const typename Aff_transformationC2<R CGAL_CTAG>::FT &m12, 
+		     const typename Aff_transformationC2<R CGAL_CTAG>::FT &m13,
+                     const typename Aff_transformationC2<R CGAL_CTAG>::FT &m21, 
+		     const typename Aff_transformationC2<R CGAL_CTAG>::FT &m22, 
+		     const typename Aff_transformationC2<R CGAL_CTAG>::FT &m23,
+                     const typename Aff_transformationC2<R CGAL_CTAG>::FT &w)
 {
   if (w != FT(1)) // ...
     PTR = new Aff_transformation_repC2<R>(m11/w, m12/w, m13/w,
@@ -159,14 +159,13 @@ Aff_transformationC2<R CGAL_CTAG>::print(std::ostream &os) const
   return os;
 }
 
-
 #ifndef CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATIONC2
 template < class R >
 std::ostream&
 operator<<(std::ostream& os, const Aff_transformationC2<R CGAL_CTAG>& t)
 {
-    t.print(os);
-    return os;
+  t.print(os);
+  return os;
 }
 #endif // CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATIONC2
 

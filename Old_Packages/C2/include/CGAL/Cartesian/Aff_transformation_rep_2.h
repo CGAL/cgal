@@ -53,7 +53,10 @@ public:
   virtual Direction_2 transform(const Direction_2 &d) const=0;
 
   virtual Aff_transformation_2 operator*(
-                       const Aff_transformation_rep_baseC2 &t)  = 0;
+                       const Aff_transformation_rep_baseC2 &t) const = 0;
+
+  virtual Aff_transformation_2 compose(
+                       const Aff_transformation_repC2<R> &t) const  = 0;
 
   virtual Aff_transformation_2 compose(
                        const Translation_repC2<R> &t) const  = 0;
@@ -64,21 +67,10 @@ public:
   virtual Aff_transformation_2 compose(
                        const Scaling_repC2<R> &t) const  = 0;
 
-  virtual Aff_transformation_2 compose(
-                       const Aff_transformation_repC2<R> &t) const  = 0;
-
   virtual Aff_transformation_2 inverse() const  = 0;
-
   virtual bool                 is_even() const  = 0;
-
   virtual FT                   cartesian(int i, int j) const = 0;
-
-  virtual std::ostream &print(std::ostream &os) const
-    {
-      os << "virtual fct called";
-      return os;
-    }
-
+  virtual std::ostream         &print(std::ostream &os) const = 0;
 };
 
 
@@ -89,6 +81,7 @@ class Aff_transformation_repC2
 public:
   typedef typename R::FT                              FT;
   typedef typename R::RT                              RT;
+  typedef Aff_transformation_repC2<R>                 Self;
   typedef Aff_transformation_rep_baseC2<R>            Aff_t_base;
   typedef typename Aff_t_base::Point_2                Point_2;
   typedef typename Aff_t_base::Vector_2               Vector_2;
@@ -127,7 +120,6 @@ friend class Scaling_repC2<R>;
                     t21 * v.x() + t22 * v.y());
   }
 
-
   // note that a direction is not translated
   Direction_2 transform(const Direction_2& dir) const
   {
@@ -139,18 +131,18 @@ friend class Scaling_repC2<R>;
   // Note that Aff_transformation is not defined yet,
   // so the following 6 functions have to be implemented later...
   Aff_transformation_2 inverse() const;
-  Aff_transformation_2 operator*(const Aff_transformation_rep_baseC2<R> &t);
+  Aff_transformation_2 operator*(const Aff_t_base &t) const;
+  Aff_transformation_2 compose(const Self &t) const;
   Aff_transformation_2 compose(const Translation_repC2<R> &t) const;
-  virtual Aff_transformation_2 compose(const Rotation_repC2<R> &t) const;
-  virtual Aff_transformation_2 compose(const Scaling_repC2<R> &t) const;
-  virtual Aff_transformation_2 compose(const Aff_transformation_repC2 &t) const;
+  Aff_transformation_2 compose(const Rotation_repC2<R> &t) const;
+  Aff_transformation_2 compose(const Scaling_repC2<R> &t) const;
 
-  virtual bool is_even() const
+  bool is_even() const
   {
     return sign_of_determinant2x2(t11, t12, t21, t22) == POSITIVE;
   }
 
- virtual FT cartesian(int i, int j) const
+  FT cartesian(int i, int j) const
   {
     switch (i)
     {
@@ -176,11 +168,10 @@ friend class Scaling_repC2<R>;
     return FT(0);
   }
 
- virtual std::ostream &print(std::ostream &os) const
+  std::ostream &print(std::ostream &os) const
   {
-    os << "Aff_transformationC2(" << t11 << " " << t12 << " " << t13
-       << std::endl;
-    os << "                     " << t21 << " " << t22 << " " << t23 << ")";
+    os <<"Aff_transformationC2(" <<t11<<" "<<t12<<" "<<t13<<std::endl;
+    os <<"                     " <<t21<<" "<<t22<<" "<<t23<<")";
     return os;
   }
 

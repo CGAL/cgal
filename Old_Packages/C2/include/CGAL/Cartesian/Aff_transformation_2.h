@@ -29,17 +29,11 @@
 #include <CGAL/Cartesian/redefine_names_2.h>
 #endif
 
-#ifndef CGAL_PROTECT_CMATH
-#define CGAL_PROTECT_CMATH
-#include <cmath>
-#endif
-
-#ifndef CGAL_CONFIG_H
-#include <CGAL/config.h>
-#endif // CGAL_CONFIG_H
 #ifndef CGAL_HANDLE_H
 #include <CGAL/Handle.h>
 #endif // CGAL_HANDLE_H
+
+#include <cmath>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -146,14 +140,14 @@ public:
   Vector_2    transform(const Vector_2 &v) const { return ptr()->transform(v); }
   Vector_2    operator()(const Vector_2 &v) const { return transform(p); }
 
-  Direction_2 transform(const Direction_2 &d) const { return ptr()->transform(d); }
+  Direction_2 transform(const Direction_2 &d) const
+                                              { return ptr()->transform(d); }
   Direction_2 operator()(const Direction_2 &d) const { return transform(d); }
 
   Line_2      transform(const Line_2 &l) const { return l.transform(*this); }
   Line_2      operator()(const Line_2 &l) const {return transform(l); }
 
   Self        inverse() const { return ptr()->inverse(); }
-
 
   bool        is_even() const { return ptr()->is_even(); }
   bool        is_odd() const { return ! (ptr()->is_even()); }

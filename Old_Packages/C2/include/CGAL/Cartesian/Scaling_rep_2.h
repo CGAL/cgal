@@ -48,7 +48,7 @@ public:
     return d;
   }
 
-  Aff_transformation_2 operator*(const Aff_t_base &t)
+  Aff_transformation_2 operator*(const Aff_t_base &t) const
   {
    return t.compose(*this);
   }
@@ -65,7 +65,7 @@ public:
                                 t._translationvector.y());
   }
 
-  virtual Aff_transformation_2 compose(const Rotation &t) const
+  Aff_transformation_2 compose(const Rotation &t) const
   {
     return Aff_transformation_2(_scalefactor * t._cosinus,
                                 _scalefactor * -t._sinus,
@@ -74,12 +74,12 @@ public:
                                 _scalefactor * t._cosinus);
   }
 
-  virtual Aff_transformation_2 compose(const Scaling &t) const
+  Aff_transformation_2 compose(const Scaling &t) const
   {
     return Aff_transformation_2(SCALING, _scalefactor*t._scalefactor);
   }
 
-  virtual Aff_transformation_2 compose(const Transformation &t) const
+  Aff_transformation_2 compose(const Transformation &t) const
   {
     return Aff_transformation_2(_scalefactor * t.t11,
                                 _scalefactor * t.t12,
@@ -95,18 +95,18 @@ public:
     return Aff_transformation_2(SCALING, FT(1)/_scalefactor);
   }
 
-  virtual bool is_even() const
+  bool is_even() const
   {
     return true;
   }
 
- virtual FT cartesian(int i, int j) const
+  FT cartesian(int i, int j) const
   {
     if (i!=j) return FT(0);
     return (i==2) ? FT(1) : _scalefactor;
   }
 
- virtual std::ostream &print(std::ostream &os) const
+  std::ostream &print(std::ostream &os) const
   {
     os << "Aff_transformationC2(" << _scalefactor <<  ")";
     return os;
