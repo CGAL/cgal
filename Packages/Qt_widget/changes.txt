@@ -1,3 +1,8 @@
+1.2.27
+------
+I have removed Qt_widget_ref from doc_tex/support/Qt_widget
+
+
 1.2.25
 -------
 I have added the pixmaps in the doc.
