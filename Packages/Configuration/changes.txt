@@ -1,4 +1,4 @@
-2.17
+2.18
 + Added CGAL_CFG_RETURN_TYPE_BUG.C for VC++ 6 and VC++ 7b2.
 + Added CGAL_CFG_SUNPRO_PARTIAL_SPEC_BUG.C for SunPro 5.3.
 
