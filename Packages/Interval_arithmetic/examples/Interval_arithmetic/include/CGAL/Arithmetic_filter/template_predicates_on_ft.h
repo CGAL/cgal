@@ -9,17 +9,19 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class CT, class ET >
+#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+template < class CGAL_IA_CT, class CGAL_IA_ET >
+#endif
 // CGAL_KERNEL_LARGE_INLINE
 Comparison_result
-compare_xC2(const Filtered_exact<CT,ET> &px,
-	const Filtered_exact<CT,ET> &py,
-	            const Filtered_exact<CT,ET> &l1a,
-	const Filtered_exact<CT,ET> &l1b,
-	const Filtered_exact<CT,ET> &l1c,
-	            const Filtered_exact<CT,ET> &l2a,
-	const Filtered_exact<CT,ET> &l2b,
-	const Filtered_exact<CT,ET> &l2c)
+compare_xC2(const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &px,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &py,
+	            const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &l1a,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &l1b,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &l1c,
+	            const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &l2a,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &l2b,
+	const Filtered_exact<CGAL_IA_CT,CGAL_IA_ET> &l2c)
 {
   Comparison_result result;
   FPU_CW_t backup = FPU_get_cw();
