@@ -845,8 +845,9 @@ Init(CurveInputIterator begin, CurveInputIterator end)
   m_queue = new EventQueue(pred);
   StatusLineCurveLess slcurveless(m_traits);
   m_statusLine = new StatusLine(slcurveless);
-
-  SL_DEBUG(m_eventId = 0;)
+#ifndef NDEBUG
+  m_eventId = 0;
+#endif
   m_curveId = 0;
 
   int count = 0;
@@ -901,7 +902,9 @@ InitCurve(X_curve_2 &curve)
     e = eventIter->second;
   } else  {
     e = new Event(source, m_traits); 
-    SL_DEBUG(e->id = m_eventId++;)
+#ifndef NDEBUG
+    e->id = m_eventId++;
+#endif
     m_events.push_back(e);
     m_queue->insert(EventQueueValueType(source, e));
   }
@@ -915,7 +918,9 @@ InitCurve(X_curve_2 &curve)
     e = eventIter->second;
   } else  {
     e = new Event(target, m_traits); 
-    SL_DEBUG(e->id = m_eventId++;)
+#ifndef NDEBUG
+    e->id = m_eventId++;
+#endif
     m_events.push_back(e);
     m_queue->insert(EventQueueValueType(target, e));
   }
@@ -1085,7 +1090,9 @@ HandleVerticalCurveBottom(SweepLineGetSubCurves &tag)
       if ( eqi == m_queue->end() )
       {
 	e = new Event(p, m_traits); 
-	SL_DEBUG(e->id = m_eventId++;)
+#ifndef NDEBUG
+	e->id = m_eventId++;
+#endif
 	m_events.push_back(e);
 	
 	e->addCurveToLeft(*slIter, m_sweepLinePos);
@@ -1200,7 +1207,9 @@ HandleVerticalCurveBottom(SweepLineGetPoints &tag)
       if ( eqi == m_queue->end() )
       {
 	e = new Event(xp, m_traits); 
-	SL_DEBUG(e->id = m_eventId++;)
+#ifndef NDEBUG
+	e->id = m_eventId++;
+#endif
 	m_events.push_back(e);
       
 	e->addCurveToLeft(*slIter, m_sweepLinePos);
@@ -1539,7 +1548,9 @@ Intersect(Subcurve *c1, Subcurve *c2)
     if ( eqi == m_queue->end() )
     {
       e = new Event(p, m_traits); 
-      SL_DEBUG(e->id = m_eventId++;)
+#ifndef NDEBUG
+      e->id = m_eventId++;
+#endif
       m_events.push_back(e);
       
       e->addCurveToLeft(c1, m_sweepLinePos);

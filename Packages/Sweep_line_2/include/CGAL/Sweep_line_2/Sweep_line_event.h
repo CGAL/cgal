@@ -367,7 +367,7 @@ public:
   void PrintVerticalXPoints();
 #endif
  
-private:
+protected:
 
   /*! Whenever a new curve is added to the event at the initialization 
     stage, the right most end point to the left of the event point is 
@@ -450,6 +450,7 @@ Sweep_line_event<SweepLineTraits_2, CurveWrap>::
 Print() 
 {
   std::cout << "\tEvent id: " << id << "\n" ;
+  std::cout << "\t" << m_point << "\n" ;
   std::cout << "\tLeft curves: \n" ;
   for ( SubCurveIter iter = m_leftCurves->begin() ;
 	iter != m_leftCurves->end() ; ++iter )
