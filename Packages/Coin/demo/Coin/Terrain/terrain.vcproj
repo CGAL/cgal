@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="c:\qt\3.0.4.NET\lib\qtmain.lib c:\qt\3.0.4.NET\lib\qt.lib d:\coin3d_vc7\lib\coin1.lib d:\coin3d_vc7\lib\soqt2.lib user32.lib ole32.lib imm32.lib comdlg32.lib gdi32.lib  opengl32.lib wsock32.lib $(CGALIROOT)/lib/msvc7/cgal.lib $(CGALIROOT)/lib/msvc7/gmp.lib "
+				AdditionalOptions="c:\qt\3.0.4.NET\lib\qtmain.lib c:\qt\3.0.4.NET\lib\qt.lib d:\coin3d_vc7\lib\coin1.lib d:\coin3d_vc7\lib\soqt2.lib user32.lib ole32.lib imm32.lib comdlg32.lib gdi32.lib  opengl32.lib wsock32.lib $(CGALIROOT)/lib/msvc7/cgal.lib $(CGALIROOT)/lib/msvc7/gmp.lib $(CGALIROOT)/lib/msvc7/CGALQt.lib"
 				OutputFile="$(OutDir)/terrain.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="LIBC"
@@ -81,9 +81,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="c:\qt\3.0.4.NET\lib\qtmain.lib c:\qt\3.0.4.NET\lib\qt.lib d:\coin3d_vc7\lib\coin1.lib d:\coin3d_vc7\lib\soqt2.lib user32.lib ole32.lib imm32.lib comdlg32.lib gdi32.lib  opengl32.lib wsock32.lib $(CGALIROOT)/lib/msvc7/cgal.lib $(CGALIROOT)/lib/msvc7/gmp.lib "
+				AdditionalOptions="c:\qt\3.0.4.NET\lib\qtmain.lib c:\qt\3.0.4.NET\lib\qt.lib d:\coin3d_vc7\lib\coin1.lib d:\coin3d_vc7\lib\soqt2.lib user32.lib ole32.lib imm32.lib comdlg32.lib gdi32.lib  opengl32.lib wsock32.lib $(CGALIROOT)/lib/msvc7/cgal.lib $(CGALIROOT)/lib/msvc7/gmp.lib $(CGALIROOT)/lib/msvc7/CGALQt.lib"
 				OutputFile="$(OutDir)/terrain.exe"
 				LinkIncremental="1"
+				IgnoreDefaultLibraryNames="LIBC"
 				GenerateDebugInformation="TRUE"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -130,6 +131,17 @@
 			</File>
 			<File
 				RelativePath="fbm.h">
+			</File>
+			<File
+				RelativePath="terrain.h">
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o terrain.moc terrain.cpp
+"
+						Outputs="terrain.moc"/>
+				</FileConfiguration>
 			</File>
 		</Filter>
 		<Filter
