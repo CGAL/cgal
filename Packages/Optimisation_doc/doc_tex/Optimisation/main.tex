@@ -25,57 +25,14 @@
 
 \ccTexHtml{\thispagestyle{empty}}{}
 
-% \begin{ccTexOnly}\section*{Introduction}\end{ccTexOnly}
-% \begin{ccHtmlOnly}<H2>Introduction</H2><P>\end{ccHtmlOnly}
-% 
-% This chapter describes routines for solving geometric optimisation
-% problems.
-% 
-% The first four sections contain algorithms for computing and updating the
-% \begin{itemize}
-%   \item smallest enclosing circle (2D)
-%     (Section~\ref{sec:smallest_enclosing_circles}), the
-%   \item smallest enclosing ellipse (2D)
-%     (Section~\ref{sec:smallest_enclosing_ellipses}), the
-%   \item smallest enclosing sphere (dD)
-%     (Section~\ref{sec:smallest_enclosing_spheres}), and the
-%   \item smallest enclosing annulus (dD)
-%     (Section~\ref{sec:smallest_enclosing_annulus}), respectively,
-% \end{itemize}
-% of a finite point set.
-% 
-% Section~\ref{secOOPS} describes several functions to compute the smallest
-% enclosing region $r$ of a planar convex polygon $P$ where $r$ is to be chosen
-% from a set $\mathcal{R}$ of candidate regions.
-% 
-% In Section~\ref{sec:distance_of_polytopes} an algorithm for computing and
-% updating the (squared) distance of two convex polytopes is described.
-% 
-% The remaining sections describe algorithms for searching in matrices with
-% specific properties and some applications.  In particular, there are general
-% implementations of
-% \begin{itemize}
-%   \item monotone matrix search (Section~\ref{secMonotoneMatrixSearch}),
-%     which can be applied to compute
-%     \begin{itemize}
-%       \item extremal polygons of a convex polygon
-%         (Section~\ref{secComputingExtremalPolygons}) \textit{or}
-%       \item all furthest neighbors for the vertices of a convex polygon
-%         (Section~\ref{secAllFurthestNeighbors}),
-%     \end{itemize}
-%   \item and sorted matrix search (Section~\ref{secSortedMatrixSearch}),
-%     which can be used to compute the $p$-centers of a planar point set
-%     (Section~\ref{sec_RectangularPCenters}).
-% \end{itemize}
-% 
-% \subsubsection*{Assertions}
-% The optimisation code uses infix \ccc{OPTIMISATION} in the assertions,
-% e.g.\ defining the compiler flag
-% \ccc{CGAL_OPTIMISATION_NO_PRECONDITIONS} switches precondition
-% checking off, cf.~\cgalReferToAssertions
+% =============================================================================
+% user part
+% =============================================================================
+
+\input{user_part.tex}
 
 % =============================================================================
-% reference pages
+% reference part
 % =============================================================================
 
 \input{Optimisation_ref/main.tex}
