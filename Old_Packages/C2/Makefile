@@ -37,7 +37,8 @@ rtag:
 	cvs rtag v`echo $(VERSION) | sed -e "s/\./_/g"` $(CVS_MODULE_NAME)
 
 submit: package
-	cp $(Package).tar.gz version long_description.txt description.txt \
+	cp $(Package).tar.gz version maintainer \
+	long_description.txt description.txt \
 	changes.txt $(WWW_dir)
 	echo > $(TMP_file)
 	echo "submission::" >> $(TMP_file)

@@ -43,33 +43,13 @@ Iso_rectangleC2<R CGAL_CTAG>::
 Iso_rectangleC2(const typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 &p,
                 const typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 &q)
 {
-  FT vx0 = p.x();
-  FT vy0 = p.y();
-  FT vx1 = q.x();
-  FT vy1 = q.y();
-
-  bool b1 = false,
-       b2 = false;
-  if ( (b1 = (vx0 > vx1)) || (b2 = (vy0 > vy1)) ) {
-    if (b1 && b2) {
-      PTR = new _Twotuple<Point_2>(q,p);
-    } else {
-      if (vx0 > vx1){
-        FT z = vx1;
-        vx1 = vx0;
-        vx0 = z;
-      }
-      if (vy0 > vy1){
-        FT z = vy1;
-        vy1 = vy0;
-        vy0 = z;
-      }
-
-      PTR = new _Twotuple<Point_2>(Point_2(vx0,vy0), Point_2(vx1,vy1));
-    }
-  } else {
-    PTR = new _Twotuple<Point_2>(p,q);
-  }
+  FT minx, maxx, miny, maxy;
+  if (p.x() < q.x()) { minx = p.x(); maxx = q.x(); }
+  else               { minx = q.x(); maxx = p.x(); }
+  if (p.y() < q.y()) { miny = p.y(); maxy = q.y(); }
+  else               { miny = q.y(); maxy = p.y(); }
+  PTR = new _Twotuple<Point_2 >(Point_2(minx, miny),
+                                Point_2(maxx, maxy));
 }
 
 template < class R >
