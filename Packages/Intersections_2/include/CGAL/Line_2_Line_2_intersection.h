@@ -100,13 +100,13 @@ bool construct_if_finite(POINT &pt, RT x, RT y, RT w, R &, const Cartesian_tag &
 {
   typename R::Construct_point_2 construct_point;
     typedef typename R::FT FT;
-    CGAL_kernel_precondition(::CGAL::is_finite(x)
-                             && ::CGAL::is_finite(y)
+    CGAL_kernel_precondition(CGAL_NTS is_finite(x)
+                             && CGAL_NTS is_finite(y)
                              && w != RT(0));
 
     FT xw = FT(x)/FT(w);
     FT yw = FT(y)/FT(w);
-    if (!::CGAL::is_finite(xw) || !::CGAL::is_finite(yw))
+    if (!CGAL_NTS is_finite(xw) || !CGAL_NTS is_finite(yw))
         return false;
     pt = construct_point(xw, yw);
     return true;
@@ -119,13 +119,13 @@ bool construct_if_finite(POINT &pt, RT x, RT y, RT w, R &, const Homogeneous_tag
 {
     typename R::Construct_point_2 construct_point;
     typedef typename R::FT FT;
-    CGAL_kernel_precondition(::CGAL::is_finite(x)
-                             && ::CGAL::is_finite(y)
+    CGAL_kernel_precondition(CGAL_NTS is_finite(x)
+                             && CGAL_NTS is_finite(y)
                              && w != RT(0));
 
     FT xw = FT(x)/FT(w);
     FT yw = FT(y)/FT(w);
-    if (!::CGAL::is_finite(xw) || !::CGAL::is_finite(yw))
+    if (!CGAL_NTS is_finite(xw) || !CGAL_NTS is_finite(yw))
         return false;
     pt = construct_point(x, y, w);
     return true;
@@ -182,12 +182,12 @@ Line_2_Line_2_pair<K>::intersection_type() const
         return _result;
     }
     nom1 = (_line1->b()*_line2->c() - _line2->b()*_line1->c());
-    if (!::CGAL::is_finite(nom1)) {
+    if (!CGAL_NTS is_finite(nom1)) {
         _result = NO;
         return _result;
     }
     nom2 = (_line2->a()*_line1->c() - _line1->a()*_line2->c());
-    if (!::CGAL::is_finite(nom2)) {
+    if (!CGAL_NTS is_finite(nom2)) {
         _result = NO;
         return _result;
     }

@@ -1,4 +1,7 @@
 20 June 2004 Sylvain Pion
+- Change CGAL::is_finite to CGAL_NTS is_finite.
+
+20 June 2004 Sylvain Pion
 - Fix typos in un-instantiated code, spotted by g++ 3.4.
 
 20 May 2004 Andreas Fabri
