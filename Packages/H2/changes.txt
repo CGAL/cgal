@@ -1,3 +1,6 @@
+11 August 2004 Sylvain Pion
+- Qualify min/max calls by CGAL_NTS.
+
 22 June 2004 Sylvain Pion
 - Undeprecate construction functors from NTs.
 

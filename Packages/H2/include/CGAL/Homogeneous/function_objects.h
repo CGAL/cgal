@@ -1068,8 +1068,10 @@ namespace HomogeneousKernelFunctors {
       FT s2tx = s2.target().x();
       FT s2ty = s2.target().y();
 
-      CGAL_kernel_precondition(px >= min(s1sx, s1tx) && px <= max(s1sx, s1tx));
-      CGAL_kernel_precondition(px >= min(s2sx, s2tx) && px <= max(s2sx, s2tx));
+      CGAL_kernel_precondition(px >= CGAL_NTS min(s1sx, s1tx) &&
+	                       px <= CGAL_NTS max(s1sx, s1tx));
+      CGAL_kernel_precondition(px >= CGAL_NTS min(s2sx, s2tx) &&
+	                       px <= CGAL_NTS max(s2sx, s2tx));
 
       if (s1sx != s1tx && s2sx != s2tx) {
 	FT s1stx = s1sx-s1tx;
