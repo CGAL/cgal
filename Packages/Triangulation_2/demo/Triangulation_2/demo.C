@@ -134,7 +134,7 @@ void window_input(TRIANGULATION &T,
                             ( mouse_moved &&
                               ( hv != closest_vertex(T, highlight, p)));
 
-            drawing_mode dm = W.set_mode(leda_xor_mode);
+            leda_drawing_mode dm = W.set_mode(leda_xor_mode);
             if(vertex_change){
                 W << CGAL::RED ;
                 W.draw_node(CGAL::to_double(hv->point().x()),
@@ -179,7 +179,7 @@ void window_input(TRIANGULATION &T,
 	                     (! T.is_infinite(highlight)) &&
 	                        T.dimension()==2){
                 vertex_change = outside && true;
-                drawing_mode dm = W.set_mode(leda_src_mode);
+                leda_drawing_mode dm = W.set_mode(leda_src_mode);
                 W << CGAL::RED << T.triangle(highlight) << CGAL::BLUE;
                 W.set_mode(dm);
             } else {
@@ -190,8 +190,9 @@ void window_input(TRIANGULATION &T,
             hv.clear();
         }
         if(button_pressed || vertex_change){
-            if((highlight != (CGAL_NULL_TYPE) NULL) && (! T.is_infinite(highlight))){
-                drawing_mode dm = W.set_mode(leda_xor_mode);
+            if((highlight != (CGAL_NULL_TYPE) NULL) && 
+	       (! T.is_infinite(highlight))){
+                leda_drawing_mode dm = W.set_mode(leda_xor_mode);
                 W << CGAL::RED;
                 hv = closest_vertex(T, highlight, p);
                 W.draw_node(CGAL::to_double(hv->point().x()),
@@ -212,7 +213,7 @@ void file_input(Triangulation_ &T,
         return;
     }
 
-    ifstream is(opt.fname);
+    std::ifstream is(opt.fname);
     CGAL::set_ascii_mode(is);
 
     int n, count = 0;
@@ -276,7 +277,7 @@ void draw_incident_edges(Triangulation_ &T,
                     Vertex_handle_ v,
                     Window_stream &W)
 {
-    drawing_mode dm = W.set_mode(leda_xor_mode);
+    leda_drawing_mode dm = W.set_mode(leda_xor_mode);
 
     W << CGAL::RED;
     Point_ p = v->point();
@@ -296,7 +297,7 @@ void redraw_incident_edges(Triangulation_ &T,
                     Vertex_handle_ v,
                     Window_stream &W)
 {
-    drawing_mode dm = W.set_mode(leda_xor_mode);
+    leda_drawing_mode dm = W.set_mode(leda_xor_mode);
 
     W << CGAL::RED;
 
@@ -340,13 +341,14 @@ void draw_faces_along_line(Triangulation_ &T,
     if (T.dimension()<2) return;
     Point_ p, q;
     std::cerr << "Enter two points" << std::endl;
-    std::cerr << "The faces intersected by the line joining those points "<< std::endl;
+    std::cerr << "The faces intersected by the line joining those points "
+	      << std::endl;
     std::cerr << " will be highlighted" << std::endl;
     std::cerr << std::endl;
     W << CGAL::RED;
-    drawing_mode dm = W.set_mode(leda_xor_mode);
+    leda_drawing_mode dm = W.set_mode(leda_xor_mode);
     W >> p >> q;
-    while (p==q) W<<q;
+    while (p==q) W << q;
     W << p << q << Line_(p,q);
     W.set_mode(dm);
 
@@ -389,7 +391,7 @@ void draw_convex_hull(Triangulation_ &T,
     if(chc == (CGAL_NULL_TYPE) NULL) {
         std::cerr << "convex hull is empty" << std::endl;
     } else {
-        drawing_mode dm = W.set_mode(leda_src_mode);
+        leda_drawing_mode dm = W.set_mode(leda_src_mode);
         W << CGAL::RED;
         p = chc->point();
         do {
@@ -414,7 +416,8 @@ void draw_convex_hull(Triangulation_ &T,
 void show_faces_iterator(Triangulation_ &T,
                  Window_stream &W)
 {
-  std::cerr << "Highlighting in turn each face traversed by the face iterarot "<<std::endl;
+  std::cerr << "Highlighting in turn each face 
+             traversed by the face iterarot "<<std::endl;
   W << CGAL::GREEN;
   Face_iterator_ fit= T.faces_begin();
   while (fit != T.faces_end()) {
@@ -446,7 +449,7 @@ void show_nearest_vertex(Delaunay_ &T,
     Point_ q(coord_type(W.xmin()-1),
             coord_type(W.ymin()-1));
 
-    drawing_mode dm = W.set_mode(leda_xor_mode);
+    leda_drawing_mode dm = W.set_mode(leda_xor_mode);
     while(1) {
         double x, y;
         int b = W.get_mouse(x,y);
