@@ -261,9 +261,33 @@ usage() {
     version
     cat  1>&2 <<EOF
 ${BoldColor}Usage: ${ProgName} [<options>] [<module-files...>] [<package-dirs...>]${ResetColor}
+    Creates CGAL manuals from CGAL packages or modules. It should be called in
+    the ./doc_tex/ directory of a CGAL internal release or CVS checkout.
+       ${BoldColor}CGAL packages${ResetColor} are given as a subdirectory that contains a main.tex file;
+    a wrapper file that includes main.tex is automatically generated and 
+    deleted at the end. Use -wrapper to create a wrapper file permanently.
+       ${BoldColor}CGAL modules${ResetColor} are given as an explict LaTeX file, e.g., generated with 
+    -wrapper.
+       The result are the specified manuals in the corresponding ../doc_ps,
+    ../doc_pdf, and ../doc_html directories. A logfile .cgallog is created
+    with a logfile summary from the individual logfiles .log, .blg, .ilg,
+    and .hlg. The logfiles are kept in case of warnings and error messages.
+       The screen output reports the progress and result status of each
+    module (abbrev. as Mod) and package (abbrev. as Pck) and each manual type.
 ${BoldColor}Options:${ResetColor}
+    ${BoldColor}-ps${ResetColor}                 PostScript manuals only.
+    ${BoldColor}-pdf${ResetColor}                PDF manuals only (not yet supported).
+    ${BoldColor}-html${ResetColor}               HTML manuals only (incl. a LaTeX run).
+    ${BoldColor}-wrapper${ResetColor}            creates the LaTeX wrapper files only.
+    ${BoldColor}-testsuite${ResetColor}          runs the testsuite and installes the results.
     ${BoldColor}-h${ResetColor}                  help (this text).
-    ${BoldColor}-date${ResetColor}     <text>    set a date for the manual.
+    ${BoldColor}-V${ResetColor}                  version.
+    ${BoldColor}-v${ResetColor}                  verbose: repeats logfiles on stserr.
+    ${BoldColor}-k${ResetColor}                  keep logfiles (default: delete after a clean run).
+    ${BoldColor}-n${ResetColor}                  no logfile: delete logfiles always.
+    ${BoldColor}-s${ResetColor}                  create a summary logfile .sum .
+    ${BoldColor}-quiet${ResetColor}              no progress messages.
+    ${BoldColor}-realquiet${ResetColor}          suppresses also error messages.
 EOF
 }
 
