@@ -1,3 +1,7 @@
+Version 3.3.5 (September 20 1999)
+- Fixed class Identity (clash with Kernel_objects)
+- Fixed type mistake in second argument of line_get_point (Line_2.C)
+
 Version 3.3.4 (September 16 1999)
 - Use the new CGAL_CFG_TYPENAME_BUG
 - Fixed some missing std:: for cerr

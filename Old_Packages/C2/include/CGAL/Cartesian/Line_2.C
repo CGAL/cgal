@@ -232,7 +232,7 @@ CGAL_KERNEL_INLINE
 typename LineC2<R CGAL_CTAG>::Point_2
 LineC2<R CGAL_CTAG>::point() const
 {
-  return line_get_point(*this,FT(0));
+  return line_get_point(*this,0);
 }
 
 template < class R >

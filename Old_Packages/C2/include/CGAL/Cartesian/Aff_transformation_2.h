@@ -43,7 +43,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-class Identity;
+class Identity_transformation;
 template < class R > class Aff_transformation_rep_baseC2;
 template < class R > class Aff_transformation_repC2;
 template < class R > class Translation_repC2;
@@ -101,7 +101,7 @@ public:
   Aff_transformationC2(const Self &t);
 
   // Identity
-  Aff_transformationC2(const Identity);
+  Aff_transformationC2(const Identity_transformation);
 
   // Translation:
   Aff_transformationC2(const Translation,
