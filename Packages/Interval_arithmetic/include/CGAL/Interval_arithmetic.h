@@ -550,6 +550,10 @@ CGAL_number_type_tag(CGAL_Interval_nt_advanced)
 #include <CGAL/Interval_arithmetic/IA_leda_rational.h>
 #endif
 
+#ifdef CGAL_FIXED_H
+#include <CGAL/Interval_arithmetic/IA_Fixed.h>
+#endif
+
 inline CGAL_Interval_nt_advanced CGAL_to_Interval_nt_advanced(const double d)
 { return CGAL_Interval_nt_advanced(d); }
 
