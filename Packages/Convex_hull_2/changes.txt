@@ -1,3 +1,6 @@
+3.47 (2 Sep 2003)
+- Remove useless code in stl_extension.[hC]
+
 3.46 (23 Jul 2003)
 - rursu: modified the doc to point to correct demo file convex_hull_2.C
 

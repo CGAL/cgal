@@ -27,6 +27,7 @@
 #include <utility>
 
 CGAL_BEGIN_NAMESPACE
+
 template <class ForwardIterator>
 inline
 ForwardIterator
@@ -43,27 +44,8 @@ predecessor( BidirectionalIterator it )
  return --it;
 }
 
-template <class InputIterator, class OutputIterator, class UnaryPredicate>
-OutputIterator
-copy_if( InputIterator first, InputIterator last,
-              OutputIterator  result,
-              UnaryPredicate  pred );
-
-template <class InputIterator, class OutputIterator1, 
-          class OutputIterator2, class UnaryPredicate>
-std::pair<OutputIterator1,OutputIterator2>
-copy_if_else( InputIterator first, InputIterator last,
-                   OutputIterator1 result1,
-                   OutputIterator2 result2,
-                   UnaryPredicate  pred );
-
 CGAL_END_NAMESPACE
+
 #include <CGAL/IO/Tee_for_output_iterator.h>
 
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#include <CGAL/stl_extensions.C>
-#endif // CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-
-
 #endif // CGAL_STL_EXTENSIONS_H
-
