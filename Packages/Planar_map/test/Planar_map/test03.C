@@ -2,8 +2,8 @@
 
 #ifndef VOID_TEST
 #include "numrep1.h"
-#include <cassert>
-#endif //VOID_TEST
+#include <CGAL/assertions.h>
+#endif
 
 #include <iostream>
 
@@ -69,7 +69,7 @@ int main()
     std::cout << "Inserted "<< e->curve() << std::endl;
   }
 
-  assert(Pm.is_valid());
+  CGAL_assertion(Pm.is_valid());
 
   Halfedge_iterator eit;
   for (eit=Pm.halfedges_begin(); eit != Pm.halfedges_end(); eit++)

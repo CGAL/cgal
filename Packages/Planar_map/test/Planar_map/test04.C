@@ -2,8 +2,8 @@
 
 #ifndef VOID_TEST
 #include "numrep1.h"
-#include <cassert>
-#endif //VOID_TEST
+#include <CGAL/assertions.h>
+#endif
 
 #include <iostream>
 
@@ -65,7 +65,7 @@ int main()
     std::cout << "Inserted "<< e->curve() << std::endl;
   }
 
-  assert(Pm.is_valid());
+  CGAL_assertion(Pm.is_valid());
 
   // Check remove function of the Planar Map
   Halfedge_iterator eit, end_eit;
@@ -86,7 +86,7 @@ int main()
       mid_point = s+(t-s)/TestR::RT(2);
 
       Pm.remove_edge(eit);
-      assert(Pm.is_valid());
+      CGAL_assertion(Pm.is_valid());
 
       //verify that edge is not in planar map
 

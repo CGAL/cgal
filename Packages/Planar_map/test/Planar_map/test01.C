@@ -2,7 +2,7 @@
 
 #ifndef VOID_TEST
 #include "numrep1.h"
-#include <cassert>
+#include <CGAL/assertions.h>
 #endif
 
 #include <iostream>
@@ -66,7 +66,7 @@ int main()
     Halfedge_handle hh = Pm.insert(X_monotone_curve_2(Point_2(x1,y1),Point_2(x2,y2)));
     std::cout << "Inserted (" << hh->curve() << ")"<< std::endl;
   }
-  assert(Pm.is_valid());
+  CGAL_assertion(Pm.is_valid());
 
   // General test
   // This used to be tst21, (Shai, Aug. 03, 2000)

@@ -2,8 +2,8 @@
 
 #ifndef VOID_TEST
 #include "numrep1.h"
-#include <cassert>
-#endif //VOID_TEST
+#include <CGAL/assertions.h>
+#endif
 
 #include <iostream>
 
@@ -57,7 +57,7 @@ int main()
     std::cout << "Inserted (" << h->curve() << ")" << std::endl;
   }
 
-  assert(Pm.is_valid());
+  CGAL_assertion(Pm.is_valid());
 
   X_monotone_curve_2 seg = (Pm.halfedges_begin())->curve();
 
@@ -75,7 +75,7 @@ int main()
   Halfedge_handle h = Pm.split_edge(Pm.halfedges_begin(),
                                     X_monotone_curve_2(s, mid_point),
                                     X_monotone_curve_2(mid_point, t));
-  assert(Pm.is_valid());
+  CGAL_assertion(Pm.is_valid());
   std::cout << "map valid" << std::endl;
 
 
@@ -84,14 +84,14 @@ int main()
 
   std::cout << "merging... " ; 
   Pm.merge_edge(h,h->next_halfedge(),seg);
-  assert(Pm.is_valid());
+  CGAL_assertion(Pm.is_valid());
   std::cout << "map valid" << std::endl;  
 
   Face_iterator fit;
   Planar_map::Size i=0;
   for (fit=Pm.faces_begin(); fit != Pm.faces_end(); ++fit)
     ++i;
-  assert(Pm.number_of_faces() == i);
+  CGAL_assertion(Pm.number_of_faces() == i);
 #else //VOID_TEST
   usage();
 #endif //VOID_TEST
