@@ -44,7 +44,8 @@ int main()
   std::cout << "Testing Delaunay_hierarchy_2 " << std::endl; 
   std::cout << " with Cartesian<double> points "<<  std::endl;
 
-  typedef double                      Coord_type;
+  //typedef double                      Coord_type;
+  typedef Ftype      Coord_type;
   typedef CGAL::Cartesian<Coord_type> Gt;
   typedef CGAL::Triangulation_vertex_base_2<Gt> Vbb;
   typedef CGAL::Triangulation_hierarchy_vertex_base_2<Vbb> Vb;
