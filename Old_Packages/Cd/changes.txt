@@ -1,3 +1,8 @@
+Ver 1.16 (5 Jan 2002)
+- Incorporate Cartesian_dynamic_d.h from package Cartesian_kernel.
+- Incorporate _Twotuple, _Threetuple, _Fourtuple classes from Kernel_basic,
+  in Cartesian/Rep_tuples.h
+
 Ver 1.15 (23 Oct 2001)
 - replaced KERNEL_CTOR_* macros with KERNEL_* macros
 
