@@ -1,3 +1,6 @@
+1.16 (07 May 2003)
+- Removed DESIGN_ONE of Polyhedron_3.
+
 1.15 (3 May 2002)
 - fix traits templating for Borland
 

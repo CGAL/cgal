@@ -33,7 +33,6 @@
 #  define  Width_polyhedron_default_traits_3   Wpdt3
 #  define  Width_halfedge_default_base         Whdb
 #  define  Width_facet_default_base            Wfdb
-#  define  Halfedge_data_structure_using_list  Hdsul
 #endif
 
 #include <CGAL/Homogeneous.h>

@@ -29,17 +29,9 @@
 #define CGAL_WIDTH_POLYHEDRON_3_H
 
 #include <CGAL/basic.h>
-// include a file from polyhedron to determine old or new design
-#include <CGAL/Polyhedron_default_traits_3.h>
-
-#ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
-#include <CGAL/Halfedge_data_structure_bases.h>
-#else // CGAL_USE_POLYHEDRON_DESIGN_ONE //
 #include <CGAL/HalfedgeDS_vertex_base.h>
 #include <CGAL/HalfedgeDS_halfedge_base.h>
 #include <CGAL/HalfedgeDS_face_base.h>
-#endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
-
 #include <map>
 #include <CGAL/width_assertions.h>
 

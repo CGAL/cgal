@@ -32,14 +32,9 @@
 #include <cstdlib>
 #include <iostream>
 #include <CGAL/convex_hull_3.h>
-// include a file from polyhedron to determine old or new design
-#include <CGAL/Polyhedron_3.h> 
 
-#ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
-#include <CGAL/Halfedge_data_structure_using_list.h>
-#else // CGAL_USE_POLYHEDRON_DESIGN_ONE //
+#include <CGAL/Polyhedron_3.h> 
 #include <CGAL/HalfedgeDS_list.h>
-#endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
 
 #include <CGAL/assertions.h>
 #include <CGAL/Width_polyhedron_3.h>
@@ -180,19 +175,8 @@ class Width_3 {
     INFOMSG(INFO,"Waiting for new HDS to build class Width_Polyhedron!"
 	    <<std::endl<<"Working with extern additional data structures.");
     typedef typename Traits::ChullTraits CHT;
-#ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
-    // We are in namespace CGAL.
-    typedef Width_vertex_default_base<Point_3,Traits>       VertexStructure;
-    typedef Width_halfedge_default_base                     HalfedgeStructure;
-    typedef Width_facet_default_base<Vector_3,Plane_3,Traits> 
-                                                            FacetStructure;
-    typedef Halfedge_data_structure_using_list<
-        VertexStructure, HalfedgeStructure, FacetStructure> HDS;
-    typedef Polyhedron_3< Traits, HDS >                     LocalPolyhedron;
-#else // CGAL_USE_POLYHEDRON_DESIGN_ONE //
     typedef Width_polyhedron_items_3                        Items;
     typedef Polyhedron_3< Traits, Items, HalfedgeDS_list>   LocalPolyhedron;
-#endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
     LocalPolyhedron P;
     convex_hull_3( begin, beyond, P, CHT());
     width_3_convex(P);
@@ -1604,7 +1588,8 @@ class Width_3 {
 //    polyhedron is triangulated;  no postprocessing is done to merge coplanar
 //    neighboring facets.
 //
-//    CGAL_assertion(dao.size_of_antipodal_vertices()==int(P.size_of_facets()));
+//    CGAL_assertion(dao.size_of_antipodal_vertices()
+//                    ==int(P.size_of_facets()));
 #endif
       //Begin with phase 4. As long as the set of impassable edges is not empty
       //rotate one of the planes into the other sharing the impassable edge
