@@ -21,19 +21,18 @@
 #ifndef CGAL_QT_WIDGET_H
 #define CGAL_QT_WIDGET_H
 
+#include <CGAL/Cartesian.h>
+#include <CGAL/IO/Color.h>
+#include <vector>
+#include <list>
+#include <map>
+
 #include <qwidget.h>
 #include <qpainter.h>
 #include <qcolor.h>
 #include <qpixmap.h>
 #include <qmessagebox.h>
 #include <qprinter.h>
-
-
-#include <CGAL/Cartesian.h>
-#include <CGAL/IO/Color.h>
-#include <vector>
-#include <list>
-#include <map>
 
 #ifndef CGAL_QT_WIDGET_HISTORY_H
   #include <CGAL/IO/Qt_widget_history.h>
