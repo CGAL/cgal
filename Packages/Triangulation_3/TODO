@@ -1,6 +1,7 @@
 negocier la doc de Filtered_exact...
 
 General
+- mettre a jour les noms d'auteurs
 - parametres template par defaut
 - virer geom_traits exemples - demos - testsuite
 - void a la place de GT dans cell_base
@@ -15,11 +16,13 @@ TEST SUITE
 
 Doc
 - revoir tous les insert...(...)
-- traits class : Cartesian model of T_traits_3
-- parametres template
 - ameliorer user manual
 - verifier requirements sur la cell_base pour output/input stream 
 - revoir les anciennes corrections de JF Dufourd
+
+Exemples - demo
+- utiliser param template par defaut dans demo
+- ameliorer demo... (cf geomview...)
 
 TDS
 - Unification de Triangulation::Vertex et TDS::Vertex.
@@ -44,7 +47,7 @@ Delaunay
 - optimiser remove
 - For Delaunay, we can use the visibility (non stochastic) walk.  How to
   choose ?  Is it worth the complexity (benchmark first) ?
-- dual -> voronoi
+- dual -> voronoi (voir Raphaelle)
 - nearest neighbor
 
 Gestion memoire

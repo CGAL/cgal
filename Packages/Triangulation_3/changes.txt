@@ -1,6 +1,7 @@
-Version 1.61 (?? June 01)
+Version 1.61 (19 June 01)
+- all concepts renamed in the doc according to the decision made in Dagtuhl
 - default template parameters for all triangulation classes except hierarchy
-  default used in the examples and test-suite
+  default used in the example and test-suite
 - kernel traits used in the example(s) and test-suite
 - example files included directly in the doc
 - Remove one "new Cell" in Triangulation_3.
