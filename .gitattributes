@@ -2002,11 +2002,8 @@ Packages/wininst/demo/Matrix_search/VC6/rectangular_p_center_2_demo.dsp -text
 Packages/wininst/demo/Min_circle_2/VC6/demo_Min_circle_2.dsp -text
 Packages/wininst/demo/Min_ellipse_2/VC6/demo_Min_ellipse_2.dsp -text
 Packages/wininst/demo/Min_quadrilateral_2/VC6/minimum_enclosing_quadrilateral_2_demo.dsp -text
-Packages/wininst/demo/Partition_2/VC6/approx_convex_demo.dsp -text
-Packages/wininst/demo/Partition_2/VC6/greene_approx_convex_demo.dsp -text
-Packages/wininst/demo/Partition_2/VC6/optimal_convex_demo.dsp -text
-Packages/wininst/demo/Partition_2/VC6/partition_2_demo.dsp -text
-Packages/wininst/demo/Partition_2/VC6/y_monotone_demo.dsp -text
+Packages/wininst/demo/Nef_2/VC6/Nef_polyhedron_2-demo.dsp -text
+Packages/wininst/demo/Nef_2/VC6/Simple-demo.dsp -text
 Packages/wininst/demo/Planar_map/VC6/demo.dsp -text
 Packages/wininst/demo/Planar_map/VC6/helputil.dsp -text
 Packages/wininst/demo/Planar_map_Bbox/VC6/demo.dsp -text
