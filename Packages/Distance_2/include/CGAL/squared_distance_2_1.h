@@ -574,21 +574,13 @@ namespace CGALi {
   }
 
   template <class K>
-  inline bool
-  _are_parallel(const typename CGAL_WRAP(K)::Line_2 &line1,
-		const typename CGAL_WRAP(K)::Line_2 &line2)
-  {
-    return line1.a()*line2.b() == line2.a()*line1.b();
-  }
-
-  template <class K>
   inline typename K::FT
   squared_distance(const typename CGAL_WRAP(K)::Line_2 &line1,
 		   const typename CGAL_WRAP(K)::Line_2 &line2,
 		   const K& k)
   {
     typedef typename K::FT FT;
-    if (_are_parallel<K>(line1,line2))
+    if (CGAL::parallel(line1,line2,K()))
       return CGALi::squared_distance(line1.point(), line2, k);
     else
       return (FT)0;
