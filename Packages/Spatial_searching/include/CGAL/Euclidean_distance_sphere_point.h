@@ -60,7 +60,7 @@ namespace CGAL {
 
 	inline FT min_distance_to_rectangle(const Sphere_d& q,
 					     const Kd_tree_rectangle<SearchTraits>& r) const {
-                Point_d c= Construct_center_d(q);
+                Point_d c= Construct_center_d()(q);
 		FT distance = FT(0);
 		Construct_cartesian_const_iterator_d construct_it;
                 Cartesian_const_iterator_d cit = construct_it(c),
@@ -93,7 +93,7 @@ namespace CGAL {
 				else
 					distance += ((*cit)-r.min_coord(i))*((*cit)-r.min_coord(i));
 		};
-		distance += - Compute_squared_radius()(q);
+		distance += - Compute_squared_radius_d()(q);
                 if (distance<0) distance=FT(0);
 		return distance;
 	}
