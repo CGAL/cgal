@@ -263,6 +263,7 @@ private:
 #endif
 	  CGAL_assertion(point_is_in_expected_place(subd, *pit, *lt_it));
 	}
+      std::cout << std::endl;
     }
 
   void show_comparison()
