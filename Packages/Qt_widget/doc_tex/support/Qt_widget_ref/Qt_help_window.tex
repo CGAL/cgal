@@ -9,14 +9,14 @@
 % +------------------------------------------------------------------------+
 
 % +-----------------------------------------------------+
-\begin{ccRefClass}{HelpWindow}
+\begin{ccRefClass}{Qt_help_window}
 
 \ccDefinition
 This class is a specialization of the \ccc{QTextBrowser} class, that
 provides a rich text browser with hypertext navigation. It has couple
 more functionalities as navigation support and printing.
 
-\ccInclude{CGAL/IO/Qt_widget_helpwindow.h}
+\ccInclude{CGAL/IO/Qt_help_window.h}
 \ccGlue
 
 \ccInheritsFrom
@@ -24,8 +24,8 @@ more functionalities as navigation support and printing.
 
 \ccCreation
 \ccCreationVariable{hw}
-\ccSetTwoColumns{HelpWindow}{}
-\ccConstructor{HelpWindow( const QString& home_,  const QString& path, 
+\ccSetTwoColumns{Qt_help_window}{}
+\ccConstructor{Qt_help_window( const QString& home_,  const QString& path, 
                 QWidget* parent = 0, const char *name=0 );}
 {\ccc{home_} is the name of the file considered as home, \ccc{path} is 
 the path to this file, \ccc{parent} is the parent widget, and
@@ -39,11 +39,11 @@ printer device of your choice.}
 
 \ccExample
 \begin{ccExampleCode}
-  #include <CGAL/IO/Qt_widget_helpwindow.h>
+  #include <CGAL/IO/Qt_help_window.h>
   //...
   QString home;
   home = "help/index.html";
-  HelpWindow *help = new HelpWindow(home, ".", 0, "help viewer");
+  Qt_help_window *help = new Qt_help_window(home, ".", 0, "help viewer");
   help->resize(400, 400);
   help->setCaption("Demo HowTo");
   help->show();

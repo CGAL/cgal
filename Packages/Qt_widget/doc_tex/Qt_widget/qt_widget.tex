@@ -535,23 +535,23 @@ This example generates 100 points and inserts them in a Delaunay
 triangulation. Using the standard toolbar you can zoom in, zoom out,
 translate.
 
-\section{The HelpWindow}
-\label{The HelpWindow}
+\section{The Help Window}
+\label{The Help Window}
 
 We provide a class in the \ccc{Qt_widget} library that was taken from
 an example of \ccc{Qt} and adapted to our needs. This class has the
 functionality of a rich text browser with hypertext navigation. You
 can also PRINT, GO BACK, GO FORWARD or GO HOME. This class is called
-\ccStyle{HelpWindow} and you can use it to display hypertext support
+\ccStyle{Qt_help_window} and you can use it to display hypertext support
 in your application. It is used in a lot of demos provided in the
 distribution.
 
 \ccExample
 \begin{ccExampleCode}
-    #include <CGAL/IO/Qt_widget_helpwindow.h>
+    #include <CGAL/IO/Qt_help_window.h>
         ....
     QString home = "help/index.html";
-    HelpWindow *help = new HelpWindow(home, ".", 0, "help viewer");
+    Qt_help_window *help = new Qt_help_window(home, ".", 0, "help viewer");
     help->resize(400, 400);
     help->setCaption("Demo HowTo");
     help->show();

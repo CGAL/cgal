@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : src/Qt_widget_helpwindow.C
+// file          : src/Qt_help_window.C
 // package       : Qt_widget
 // author(s)     : Radu Ursu <rursu@sophia.inria.fr
 // release       : 
@@ -18,7 +18,7 @@
 //
 // ============================================================================
 
-#include <CGAL/IO/Qt_widget_helpwindow.h>
+#include <CGAL/IO/Qt_help_window.h>
 
 /* XPM */
 /* Drawn  by Mark Donohoe for the K Desktop Environment */
@@ -102,7 +102,7 @@ static char*homeb[]={
 "..#####.######..",
 "................"};
 
-HelpWindow::HelpWindow( const QString& home_, const QString& _path,
+Qt_help_window::Qt_help_window( const QString& home_, const QString& _path,
 			QWidget* parent, const char *name )
   : QMainWindow( parent, name, WDestructiveClose ),
             pathCombo( 0 )
@@ -168,21 +168,21 @@ HelpWindow::HelpWindow( const QString& home_, const QString& _path,
   pathCombo->insertItem( home_ );
 }
 
-HelpWindow::~HelpWindow(){}
+Qt_help_window::~Qt_help_window(){}
 
-void HelpWindow::setBackwardAvailable( bool b)
+void Qt_help_window::setBackwardAvailable( bool b)
 {
     menuBar()->setItemEnabled( backwardId, b);
 }
 
-void HelpWindow::setForwardAvailable( bool b)
+void Qt_help_window::setForwardAvailable( bool b)
 {
     menuBar()->setItemEnabled( forwardId, b);
 }
 
 
 
-void HelpWindow::print()
+void Qt_help_window::print()
 {
 #ifndef QT_NO_PRINTER
     QPrinter printer;
@@ -216,19 +216,19 @@ void HelpWindow::print()
     #endif
 }
 
-void HelpWindow::pathSelected( const QString &_path )
+void Qt_help_window::pathSelected( const QString &_path )
 {
     browser->setSource( _path );
     //    if ( mHistory.values().contains(_path) )
     //	mHistory[ hist->insertItem( _path ) ] = _path;
 }
-void HelpWindow::histChosen( int i )
+void Qt_help_window::histChosen( int i )
 {
   if ( mHistory.contains( i ) )
     browser->setSource( mHistory[ i ] );
 }
 
-void HelpWindow::readHistory()
+void Qt_help_window::readHistory()
 {
     if ( QFile::exists( QDir::currentDirPath() + "/.history" ) ) {
 	QFile f( QDir::currentDirPath() + "/.history" );
@@ -242,4 +242,4 @@ void HelpWindow::readHistory()
 }
 
 
-#include "Qt_widget_helpwindow.moc"
+#include "Qt_help_window.moc"

@@ -105,7 +105,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="Qt_widget_helpwindow.C">
+				RelativePath="Qt_help_window.C">
 			</File>
 			<File
 				RelativePath="Qt_widget_history.C">
@@ -167,22 +167,22 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\include\CGAL\IO\Qt_widget_helpwindow.h">
+				RelativePath="..\..\include\CGAL\IO\Qt_help_window.h">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_helpwindow.moc $(CGALROOT)/include/CGAL/IO/Qt_widget_helpwindow.h
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_help_window.moc $(CGALROOT)/include/CGAL/IO/Qt_help_window.h
 "
-						Outputs="Qt_widget_helpwindow.moc"/>
+						Outputs="Qt_help_window.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_helpwindow.moc $(CGALROOT)/include/CGAL/IO/Qt_widget_helpwindow.h
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_help_window.moc $(CGALROOT)/include/CGAL/IO/Qt_help_window.h
 "
-						Outputs="Qt_widget_helpwindow.moc"/>
+						Outputs="Qt_help_window.moc"/>
 				</FileConfiguration>
 			</File>
 			<File

@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_widget_helpwindow.h
+// file          : include/CGAL/IO/Qt_help_window.h
 // package       : Qt_widget (1.2.46)
 // author(s)     : Radu Ursu
 // release       : $CGAL_Revision: CGAL-2.5-I-60 $
@@ -18,8 +18,8 @@
 //
 // ======================================================================
 
-#ifndef CGAL_QT_WIDGET_HELPWINDOW_H
-#define CGAL_QT_WIDGET_HELPWINDOW_H
+#ifndef CGAL_QT_HELP_WINDOW_H
+#define CGAL_QT_HELP_WINDOW_H
 
 #include <qmainwindow.h>
 #include <qtextbrowser.h>
@@ -51,18 +51,16 @@
 #include <qpaintdevicemetrics.h>
 
 
-
-
 class QComboBox;
 class QPopupMenu;
 
-class HelpWindow : public QMainWindow
+class Qt_help_window : public QMainWindow
 {
     Q_OBJECT
 public:
-    HelpWindow( const QString& home_,  const QString& path, 
+    Qt_help_window( const QString& home_,  const QString& path, 
                 QWidget* parent = 0, const char *name=0 );
-    ~HelpWindow();
+    ~Qt_help_window();
 public slots:
     void print();
 
