@@ -1,4 +1,10 @@
+\chapter{Approximate Spatial Searching}
+
 \section{Introduction}
+
+\section{Approximate spatial searching}
+
+To be provided (see paper on distance browsing in spatial databases). 
 
 \section{The $k$-$d$ Tree}
 
@@ -17,8 +23,20 @@ points in the rectangle falls below some given treshold. The rectangles associat
 are called {\it buckets}, and they define a subdivision of the space into rectangles.
 Data points are only stored in the leaf nodes of the tree, not in the internal nodes.
 
-Friedmann, Bentley and Finkel \cite{fbf-afbml-77} ...
+Friedmann, Bentley and Finkel \cite{fbf-afbml-77} described the standard
+search algorithm to find the $k$th nearest neighbour by searching a $k$-$d$ tree recursively.
 
+When encountering a node of the kd-tree the algorithm first visits the child that is closest 
+to the query point. On return, if the box containing  the other child lie within 
+1/ (1+$\epsilon$) times the distance to the $k$th nearest neighbours so far, then 
+the other child is visited recursively.
+Priority search \cite{???} visits the nodes in increasing order of distance from 
+the queue with help of a priority queue. 
+The search stops when the distance of the query point to the nearest nodes 
+exceeds the distance to the nearest point found with a factor 1/ (1+$\epsilon$).
+Priority search supports next neighbour search, standard search does not.
+
+Splitting rules ...
 
 \section{Getting started}
 
@@ -35,3 +53,4 @@ extended internal nodes are used.
 
 \ccIncludeExampleCode{Example03.C}
 
+More examples to be provided.

@@ -26,8 +26,7 @@
 int generate_kd_tree(CGAL::Split_rule_enumeration::Split_rule s) {
 
   int bucket_size=10;
-  int dim=100;
-  
+  const int dim=100;
   const int data_point_number=1000;
   
   typedef std::list<Point> point_list;
