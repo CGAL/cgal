@@ -25,23 +25,12 @@
 #define Simple_cartesian Sc
 
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Filtered_kernel.h>
 
 #include <iostream>
 #include <cassert>
 
-#ifdef CGAL_USE_LEDA
-#include <CGAL/leda_integer.h>
-typedef leda_integer my_NT;
-// #elif defined CGAL_USE_GMP
-// #include <CGAL/Gmpz.h>
-// typedef CGAL::Gmpz my_NT;
-#else
-#include <CGAL/MP_Float.h>
-typedef CGAL::MP_Float my_NT;
-#endif
-
 // Try to shorten symbol names (for VC++)
-// typedef CGAL::Simple_cartesian<my_NT> K;
-struct K : public CGAL::Simple_cartesian<my_NT> {};
+struct K : public CGAL::Filtered_kernel<CGAL::Simple_cartesian<double> > {};
 
 #endif

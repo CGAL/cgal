@@ -19,7 +19,7 @@ The class \ccc{Delaunay_triangulation_3} represents a three-dimensional
 Delaunay triangulation.
 
 The user is advised to use the class \ccc{Triangulation_hierarchy_3} rather
-than this basic Delaunay triangulation class~: it offers the same
+than this basic Delaunay triangulation class: it offers the same
 functionalities but is much more efficient for large data sets.
 
 \ccInclude{CGAL/Delaunay_triangulation_3.h}
@@ -180,12 +180,12 @@ A point \ccc{p} is said to be in conflict with a cell \ccc{c} in dimension 3
 {A point \ccc{p} defines a set of connected cells (resp. facets in dimension
 2) which are in conflict with it, which forms a hole.  The starting cell
 (resp.  facet) \ccc{c} must be in conflict.  Then this function returns
-respectively in the output iterators~:\\
--- \ccc{cit}~: the cells (resp. facets) in conflict.\\
--- \ccc{bfit}~: the facets (resp. edges) on the boundary, that is, the facets
+respectively in the output iterators:\\
+-- \ccc{cit}: the cells (resp. facets) in conflict.\\
+-- \ccc{bfit}: the facets (resp. edges) on the boundary, that is, the facets
 (resp. edges) \ccc{(t, i)} where the cell (resp. facet) \ccc{t} is in
 conflict, but \ccc{t->neighbor(i)} is not.\\
--- \ccc{ifit}~: the facets (resp. edges) inside the hole, that is, delimiting
+-- \ccc{ifit}: the facets (resp. edges) inside the hole, that is, delimiting
 two cells (resp facets) in conflict.\\
 This function can be used in conjunction with \ccc{insert_in_hole()} in order
 to decide the insertion of a point after seeing which elements of the

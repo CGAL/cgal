@@ -1,3 +1,6 @@
+Version 1.146 (2 June 03)
+- Doc : typography rules in English : "~:" replaced by ":".
+
 Version 1.145 (2 June 03)
 - Actively deprecate copy_triangulation() and push_back().
 - Move doc of Triangulation_utils_3 to TDS chapter.
