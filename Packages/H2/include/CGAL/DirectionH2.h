@@ -21,7 +21,4 @@
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
  
-
-#ifndef PVDH2_H
 #include <CGAL/PVDH2.h>
-#endif // PVDH2_H

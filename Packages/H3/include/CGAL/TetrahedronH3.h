@@ -329,7 +329,7 @@ transform(const Aff_transformationH3<FT,RT> &t) const
 }
 
 
-#ifndef NO_OSTREAM_INSERT_TETRAHEDRONH3
+#ifndef CGAL_NO_OSTREAM_INSERT_TETRAHEDRONH3
 template < class FT, class RT >
 std::ostream &operator<<(std::ostream &os, const TetrahedronH3<FT,RT> &t)
 {
@@ -345,9 +345,9 @@ std::ostream &operator<<(std::ostream &os, const TetrahedronH3<FT,RT> &t)
         return os;
   }
 }
-#endif // NO_OSTREAM_INSERT_TETRAHEDRONH3
+#endif // CGAL_NO_OSTREAM_INSERT_TETRAHEDRONH3
 
-#ifndef NO_ISTREAM_EXTRACT_TETRAHEDRONH3
+#ifndef CGAL_NO_ISTREAM_EXTRACT_TETRAHEDRONH3
 template < class FT, class RT >
 std::istream &operator>>(std::istream &is, TetrahedronH3<FT,RT> &t)
 {
@@ -356,9 +356,8 @@ std::istream &operator>>(std::istream &is, TetrahedronH3<FT,RT> &t)
   t = TetrahedronH3<FT,RT>(p, q, r, s);
   return is;
 }
-#endif // NO_ISTREAM_EXTRACT_TETRAHEDRONH3
+#endif // CGAL_NO_ISTREAM_EXTRACT_TETRAHEDRONH3
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_TETRAHEDRONH3_H

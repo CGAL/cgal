@@ -25,12 +25,8 @@
 #ifndef CGAL_PREDICATES_ON_POINTSH2_H
 #define CGAL_PREDICATES_ON_POINTSH2_H
 
-#ifndef PVDH2_H
 #include <CGAL/PVDH2.h>
-#endif // PVDH2_H
-#ifndef CGAL_PREDICATES_ON_POINTSH2_H
 #include <CGAL/predicates_on_pointsH2.h>
-#endif // CGAL_PREDICATES_ON_POINTSH2_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -831,6 +827,5 @@ compare_deltax_deltay(const PointH2<FT,RT>& p,
 }
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_PREDICATES_ON_POINTSH2_H

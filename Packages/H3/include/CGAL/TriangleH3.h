@@ -25,15 +25,9 @@
 #ifndef CGAL_TRIANGLEH3_H
 #define CGAL_TRIANGLEH3_H
 
-#ifndef PREDICATES_ON_POINTSH3_H
 #include <CGAL/predicates_on_pointsH3.h>
-#endif // PREDICATES_ON_POINTSH3_H
-#ifndef CGAL_PLANEH3_H
 #include <CGAL/PlaneH3.h>
-#endif // CGAL_PLANEH3_H
-#ifndef CGAL_TETRAHEDRONH3_H
 #include <CGAL/TetrahedronH3.h>
-#endif // CGAL_TETRAHEDRONH3_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -145,7 +139,7 @@ transform(const Aff_transformationH3<FT,RT> &t) const
 }
 
 
-#ifndef NO_OSTREAM_INSERT_TRIANGLEH3
+#ifndef CGAL_NO_OSTREAM_INSERT_TRIANGLEH3
 template < class FT, class RT >
 std::ostream &operator<<(std::ostream &os, const TriangleH3<FT,RT> &t)
 {
@@ -160,9 +154,9 @@ std::ostream &operator<<(std::ostream &os, const TriangleH3<FT,RT> &t)
           return os;
   }
 }
-#endif // NO_OSTREAM_INSERT_TRIANGLEH3
+#endif // CGAL_NO_OSTREAM_INSERT_TRIANGLEH3
 
-#ifndef NO_ISTREAM_EXTRACT_TRIANGLEH3
+#ifndef CGAL_NO_ISTREAM_EXTRACT_TRIANGLEH3
 template < class FT, class RT >
 std::istream &operator>>(std::istream &is, TriangleH3<FT,RT> &t)
 {
@@ -171,7 +165,8 @@ std::istream &operator>>(std::istream &is, TriangleH3<FT,RT> &t)
   t = TriangleH3<FT,RT>(p, q, r);
   return is;
 }
-#endif // NO_ISTREAM_EXTRACT_TRIANGLEH3
+#endif // CGAL_NO_ISTREAM_EXTRACT_TRIANGLEH3
+
 template < class FT, class RT >
 CGAL_KERNEL_INLINE
 bool
@@ -230,6 +225,5 @@ TriangleH3<FT,RT>::is_degenerate() const
 { return collinear(vertex(0),vertex(1),vertex(2)); }
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_TRIANGLEH3_H

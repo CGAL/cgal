@@ -25,9 +25,7 @@
 #ifndef CGAL_LINEH2_H
 #define CGAL_LINEH2_H
 
-#ifndef CGAL_POINTH2_H
 #include <CGAL/PointH2.h>
-#endif // CGAL_POINTH2_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -246,7 +244,7 @@ LineH2<FT,RT>::transform(const Aff_transformationH2<FT,RT>& t) const
   return LineH2<FT,RT>( t.transform(point() ), t.transform(p) );
 }
 
-#ifndef NO_OSTREAM_INSERT_LINEH2
+#ifndef CGAL_NO_OSTREAM_INSERT_LINEH2
 template < class FT, class RT >
 std::ostream &
 operator<<(std::ostream &os, const LineH2<FT,RT> &l)
@@ -264,9 +262,9 @@ operator<<(std::ostream &os, const LineH2<FT,RT> &l)
         return os << "LineH2(" << l.a() << ", " << l.b() << ", " << l.c() <<')';
   }
 }
-#endif // NO_OSTREAM_INSERT_LINEH2
+#endif // CGAL_NO_OSTREAM_INSERT_LINEH2
 
-#ifndef NO_ISTREAM_EXTRACT_LINEH2
+#ifndef CGAL_NO_ISTREAM_EXTRACT_LINEH2
 template < class FT, class RT >
 std::istream &
 operator>>(std::istream &is, LineH2<FT,RT> &p)
@@ -290,7 +288,8 @@ operator>>(std::istream &is, LineH2<FT,RT> &p)
   p = LineH2<FT,RT>(a, b, c);
   return is;
 }
-#endif // NO_ISTREAM_EXTRACT_LINEH2
+#endif // CGAL_NO_ISTREAM_EXTRACT_LINEH2
+
 template < class FT, class RT >
 CGAL_KERNEL_INLINE
 bool
@@ -398,8 +397,6 @@ bool
 LineH2<FT,RT>::operator!=(const LineH2<FT,RT>& l) const
 { return !(*this == l); }
 
-
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_LINEH2_H

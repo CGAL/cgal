@@ -30,25 +30,14 @@
 #define CGAL_NO_PLANE_TRANSFORM_IN_AT
 #endif // CGAL_CFG_INCOMPLETE_TYPE_BUG_1
 
-#ifndef CGAL_POINTH2_H
 #include <CGAL/PointH2.h>
-#endif // CGAL_POINTH2_H
-#ifndef CGAL_POINTH3_H
 #include <CGAL/PointH3.h>
-#endif // CGAL_POINTH3_H
-#ifndef CGAL_LINEH3_H
 #include <CGAL/LineH3.h>
-#endif // CGAL_LINEH3_H
-#ifndef CGAL_RAYH3_H
 #include <CGAL/RayH3.h>
-#endif // CGAL_RAYH3_H
-#ifndef CGAL_SEGMENTH3_H
 #include <CGAL/SegmentH3.h>
-#endif // CGAL_SEGMENTH3_H
 #include <CGAL/basic_constructionsH3.h>
 
 CGAL_BEGIN_NAMESPACE
-
 
 template < class FT, class RT >
 class PlaneH3 : public Handle_for< Fourtuple<RT> >
@@ -434,7 +423,7 @@ PlaneH3<FT,RT>::transform(const Aff_transformationH3<FT,RT>& t) const
 
 
 
-#ifndef NO_OSTREAM_INSERT_PLANE3
+#ifndef CGAL_NO_OSTREAM_INSERT_PLANE3
 template < class FT, class RT >
 std::ostream &operator<<(std::ostream &os, const PlaneH3<FT,RT> &p)
 {
@@ -453,9 +442,9 @@ std::ostream &operator<<(std::ostream &os, const PlaneH3<FT,RT> &p)
             return os;
     }
 }
-#endif // NO_OSTREAM_INSERT_PLANE3
+#endif // CGAL_NO_OSTREAM_INSERT_PLANE3
 
-#ifndef NO_ISTREAM_EXTRACT_PLANE3
+#ifndef CGAL_NO_ISTREAM_EXTRACT_PLANE3
 template < class FT, class RT  >
 std::istream &operator>>(std::istream &is, PlaneH3<FT,RT> &p)
 {
@@ -478,7 +467,8 @@ std::istream &operator>>(std::istream &is, PlaneH3<FT,RT> &p)
     p = PlaneH3<FT,RT>(a, b, c, d);
     return is;
 }
-#endif // NO_ISTREAM_EXTRACT_PLANE3
+#endif // CGAL_NO_ISTREAM_EXTRACT_PLANE3
+
 template < class FT, class RT >
 bool
 PlaneH3<FT,RT>::is_degenerate() const
@@ -588,10 +578,7 @@ PlaneH3<FT,RT>::operator==(const PlaneH3<FT,RT>& l) const
 
 CGAL_END_NAMESPACE
 
-
-#ifndef CGAL_AFF_TRANSFORMATIONH3_H
 #include <CGAL/Aff_transformationH3.h>
-#endif // CGAL_AFF_TRANSFORMATIONH3_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -671,6 +658,5 @@ PlaneH3<FT,RT>::to_3d(const PointH2<FT,RT>& p)  const
 }
 
 CGAL_END_NAMESPACE
-
 
 #endif  // CGAL_PLANEH3_H

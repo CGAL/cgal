@@ -302,7 +302,7 @@ transform(const Aff_transformationH3<FT,RT>&t) const
                              t.transform(max() ) );
 }
 
-#ifndef NO_OSTREAM_INSERT_ISO_CUBOIDH3
+#ifndef CGAL_NO_OSTREAM_INSERT_ISO_CUBOIDH3
 template < class FT, class RT >
 std::ostream& operator<<(std::ostream& os, const Iso_cuboidH3<FT,RT>& r)
 {
@@ -316,9 +316,9 @@ std::ostream& operator<<(std::ostream& os, const Iso_cuboidH3<FT,RT>& r)
         return os << "Iso_cuboidH3(" << min() << ", " << max() << ")";
   }
 }
-#endif // NO_OSTREAM_INSERT_ISO_CUBOIDH3
+#endif // CGAL_NO_OSTREAM_INSERT_ISO_CUBOIDH3
 
-#ifndef NO_ISTREAM_EXTRACT_ISO_CUBOIDH3
+#ifndef CGAL_NO_ISTREAM_EXTRACT_ISO_CUBOIDH3
 template < class FT, class RT >
 std::istream& operator>>(std::istream& is, Iso_cuboidH3<FT,RT>& r)
 {
@@ -327,9 +327,8 @@ std::istream& operator>>(std::istream& is, Iso_cuboidH3<FT,RT>& r)
   r = Iso_cuboidH3<FT,RT>(p, q);
   return is;
 }
-#endif // NO_ISTREAM_EXTRACT_ISO_CUBOIDH3
+#endif // CGAL_NO_ISTREAM_EXTRACT_ISO_CUBOIDH3
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_ISO_CUBOIDH3_H

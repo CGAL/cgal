@@ -25,21 +25,11 @@
 #ifndef CGAL_CIRCLEH2_H
 #define CGAL_CIRCLEH2_H
 
-#ifndef CGAL_ENUM_H
 #include <CGAL/enum.h>
-#endif // CGAL_ENUM_H
-#ifndef CGAL_POINTH2_H
 #include <CGAL/PointH2.h>
-#endif // CGAL_POINTH2_H
-#ifndef CGAL_PREDICATES_ON_POINTSH2_H
 #include <CGAL/predicates_on_pointsH2.h>
-#endif // CGAL_PREDICATES_ON_POINTSH2_H
-#ifndef CGAL_DISTANCE_PREDICATESH2_H
 #include <CGAL/distance_predicatesH2.h>
-#endif // CGAL_DISTANCE_PREDICATESH2_H
-#ifndef CGAL_BASIC_CONSTRUCTIONSH2_H
 #include <CGAL/basic_constructionsH2.h>
-#endif // CGAL_BASIC_CONSTRUCTIONSH2_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -384,7 +374,7 @@ bool
 CircleH2<FT,RT>::operator!=(const CircleH2<FT,RT>& c) const
 { return !(*this == c); }
 
-#ifndef NO_OSTREAM_INSERT_CIRCLEH2
+#ifndef CGAL_NO_OSTREAM_INSERT_CIRCLEH2
 template < class FT, class RT >
 std::ostream &operator<<(std::ostream &os, const CircleH2<FT,RT> &c)
 {
@@ -412,9 +402,9 @@ std::ostream &operator<<(std::ostream &os, const CircleH2<FT,RT> &c)
   }
   return os;
 }
-#endif // NO_OSTREAM_INSERT_CIRCLEH2
+#endif // CGAL_NO_OSTREAM_INSERT_CIRCLEH2
 
-#ifndef NO_ISTREAM_EXTRACT_CIRCLEH2
+#ifndef CGAL_NO_ISTREAM_EXTRACT_CIRCLEH2
 template < class FT, class RT >
 std::istream& operator>>(std::istream &is, CircleH2<FT,RT> &c)
 {
@@ -439,9 +429,8 @@ std::istream& operator>>(std::istream &is, CircleH2<FT,RT> &c)
   c = CircleH2<FT,RT>(center, squared_radius, (Orientation)o);
   return is;
 }
-#endif // NO_ISTREAM_EXTRACT_CIRCLEH2
+#endif // CGAL_NO_ISTREAM_EXTRACT_CIRCLEH2
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_CIRCLEH2_H

@@ -25,9 +25,7 @@
 #ifndef CGAL_RAYH3_H
 #define CGAL_RAYH3_H
 
-#ifndef CGAL_LINEH3_H
 #include <CGAL/LineH3.h>
-#endif // CGAL_LINEH3_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -151,7 +149,7 @@ RayH3<FT,RT>::transform( const Aff_transformationH3<FT,RT> & t) const
 { return RayH3<FT,RT>(t.transform(start()), t.transform(direction()) ); }
 
 
-#ifndef NO_OSTREAM_INSERT_RAYH3
+#ifndef CGAL_NO_OSTREAM_INSERT_RAYH3
 template < class FT, class RT >
 std::ostream &operator<<(std::ostream &os, const RayH3<FT,RT> &r)
 {
@@ -165,9 +163,9 @@ std::ostream &operator<<(std::ostream &os, const RayH3<FT,RT> &r)
           return os << "RayH3(" << r.start() <<  ", " << r.direction() << ")";
   }
 }
-#endif // NO_OSTREAM_INSERT_RAYH3
+#endif // CGAL_NO_OSTREAM_INSERT_RAYH3
 
-#ifndef NO_ISTREAM_EXTRACT_RAYH3
+#ifndef CGAL_NO_ISTREAM_EXTRACT_RAYH3
 template < class FT, class RT  >
 std::istream &operator>>(std::istream &is, RayH3<FT,RT> &r)
 {
@@ -177,7 +175,8 @@ std::istream &operator>>(std::istream &is, RayH3<FT,RT> &r)
   r = RayH3<FT,RT>(p, d);
   return is;
 }
-#endif // NO_ISTREAM_EXTRACT_RAYH3
+#endif // CGAL_NO_ISTREAM_EXTRACT_RAYH3
+
 template < class FT, class RT >
 CGAL_KERNEL_INLINE
 bool
@@ -211,9 +210,6 @@ bool
 RayH3<FT,RT>::operator!=( const RayH3<FT,RT>& r) const
 { return !operator==(r); }
 
-
-
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_RAYH3_H

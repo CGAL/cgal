@@ -170,7 +170,7 @@ transform(const Aff_transformationH2<FT,RT> & t) const
                            t.transform(ptr->second) );
 }
 
-#ifndef NO_OSTREAM_INSERT_RAYH2
+#ifndef CGAL_NO_OSTREAM_INSERT_RAYH2
 template < class FT, class RT >
 std::ostream &
 operator<<(std::ostream &os, const RayH2<FT,RT> &r)
@@ -185,9 +185,9 @@ operator<<(std::ostream &os, const RayH2<FT,RT> &r)
         return os << "RayC2(" << r.source() <<  ", " << r.second_point() << ")";
   }
 }
-#endif // NO_OSTREAM_INSERT_RAYH2
+#endif // CGAL_NO_OSTREAM_INSERT_RAYH2
 
-#ifndef NO_ISTREAM_EXTRACT_RAYH2
+#ifndef CGAL_NO_ISTREAM_EXTRACT_RAYH2
 template < class FT, class RT >
 std::istream &
 operator>>(std::istream &is, RayH2<FT,RT> &r)
@@ -197,7 +197,8 @@ operator>>(std::istream &is, RayH2<FT,RT> &r)
   r = RayH2<FT,RT>(p, q);
   return is;
 }
-#endif // NO_ISTREAM_EXTRACT_RAYH2
+#endif // CGAL_NO_ISTREAM_EXTRACT_RAYH2
+
 template < class FT, class RT >
 CGAL_KERNEL_INLINE
 bool
@@ -242,8 +243,6 @@ bool
 RayH2<FT,RT>::operator!=( const RayH2<FT,RT>& r) const
 { return !(*this == r); }
 
-
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_RAYH2_H

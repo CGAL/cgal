@@ -25,9 +25,7 @@
 #ifndef CGAL_PREDICATES_ON_POINTSH3_H
 #define CGAL_PREDICATES_ON_POINTSH3_H
 
-#ifndef CGAL_PVDH3_H
 #include <CGAL/PVDH3.h>
-#endif // CGAL_PVDH3_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -280,9 +278,8 @@ less_z(const PointH3<FT,RT> &p, const PointH3<FT,RT> &q)
 
 CGAL_END_NAMESPACE
 
-#ifndef ORIENTATION_PREDICATESH3_H
 #include <CGAL/orientation_predicatesH3.h>
-#endif // ORIENTATION_PREDICATESH3_H
+
 CGAL_BEGIN_NAMESPACE
 
 template < class FT, class RT >
@@ -494,8 +491,6 @@ side_of_bounded_sphere(const PointH3<FT,RT> &p,
   return ON_BOUNDARY;  // Pls, no warnings anylonger
 }
 
-
 CGAL_END_NAMESPACE
 
-
-#endif // PREDICATES_ON_POINTSH3_H
+#endif // CGAL_PREDICATES_ON_POINTSH3_H

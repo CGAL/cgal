@@ -297,7 +297,7 @@ bool
 TriangleH2<FT,RT>::operator!=(const TriangleH2<FT,RT>& t) const
 { return !(*this == t); }
 
-#ifndef NO_OSTREAM_INSERT_TRIANGLEH2
+#ifndef CGAL_NO_OSTREAM_INSERT_TRIANGLEH2
 template < class FT, class RT >
 std::ostream &
 operator<<(std::ostream &os, const TriangleH2<FT,RT> &t)
@@ -312,9 +312,9 @@ operator<<(std::ostream &os, const TriangleH2<FT,RT> &t)
         return os<< "TriangleH2(" << t[0] << ", " << t[1] << ", " << t[2] <<")";
   }
 }
-#endif // NO_OSTREAM_INSERT_TRIANGLEH2
+#endif // CGAL_NO_OSTREAM_INSERT_TRIANGLEH2
 
-#ifndef NO_ISTREAM_EXTRACT_TRIANGLEH2
+#ifndef CGAL_NO_ISTREAM_EXTRACT_TRIANGLEH2
 template < class FT, class RT >
 std::istream &
 operator>>(std::istream &is, TriangleH2<FT,RT> &t)
@@ -324,7 +324,7 @@ operator>>(std::istream &is, TriangleH2<FT,RT> &t)
   t = TriangleH2<FT,RT>(p, q, r);
   return is;
 }
-#endif // NO_ISTREAM_EXTRACT_TRIANGLEH2
+#endif // CGAL_NO_ISTREAM_EXTRACT_TRIANGLEH2
 
 CGAL_END_NAMESPACE
 

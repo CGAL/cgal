@@ -25,10 +25,7 @@
 #ifndef CGAL_ORIENTATION_PREDICATESH3_H
 #define CGAL_ORIENTATION_PREDICATESH3_H
 
-#ifndef CGAL_PVDH3_H
 #include <CGAL/PVDH3.h>
-#endif // CGAL_PVDH3_H
-
 #include <CGAL/predicates_on_rtH2.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -154,5 +151,4 @@ coplanar_orientation(const PointH3<FT,RT>& p,
 
 CGAL_END_NAMESPACE
 
-
-#endif // ORIENTATION_PREDICATESH3_H
+#endif // CGAL_ORIENTATION_PREDICATESH3_H

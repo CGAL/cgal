@@ -25,18 +25,10 @@
 #ifndef CGAL_LINEH3_H
 #define CGAL_LINEH3_H
 
-#ifndef CGAL_PVDH3_H
 #include <CGAL/PVDH3.h>
-#endif // CGAL_PVDH3_H
-#ifndef CGAL_SEGMENTH3_H
 #include <CGAL/SegmentH3.h>
-#endif // CGAL_SEGMENTH3_H
-#ifndef CGAL_RAYH3_H
 #include <CGAL/RayH3.h>
-#endif // CGAL_RAYH3_H
-#ifndef PREDICATES_ON_POINTSH3_H
 #include <CGAL/predicates_on_pointsH3.h>
-#endif // PREDICATES_ON_POINTSH3_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -94,10 +86,7 @@ LineH3<FT,RT>::operator!=(const LineH3<FT,RT>& l) const
 
 CGAL_END_NAMESPACE
 
-
-#ifndef CGAL_PLANEH3_H
 #include <CGAL/PlaneH3.h>
-#endif // CGAL_PLANEH3_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -197,7 +186,7 @@ LineH3<FT,RT>::transform(const Aff_transformationH3<FT,RT>& t) const
 { return LineH3<FT,RT>(t.transform(point() ), t.transform(direction() )); }
 
 
-#ifndef NO_OSTREAM_INSERT_LINEH3
+#ifndef CGAL_NO_OSTREAM_INSERT_LINEH3
 template < class FT, class RT >
 std::ostream &operator<<(std::ostream &os, const LineH3<FT,RT> &l)
 {
@@ -211,9 +200,9 @@ std::ostream &operator<<(std::ostream &os, const LineH3<FT,RT> &l)
         return  os << "LineH3(" << l.point() << ", " << l.direction() << ")";
   }
 }
-#endif // NO_OSTREAM_INSERT_LINEH3
+#endif // CGAL_NO_OSTREAM_INSERT_LINEH3
 
-#ifndef NO_ISTREAM_EXTRACT_LINEH3
+#ifndef CGAL_NO_ISTREAM_EXTRACT_LINEH3
 template < class FT, class RT >
 std::istream &operator>>(std::istream &is, LineH3<FT,RT> &l)
 {
@@ -223,7 +212,8 @@ std::istream &operator>>(std::istream &is, LineH3<FT,RT> &l)
   l = LineH3<FT,RT>(p, d);
   return is;
 }
-#endif // NO_ISTREAM_EXTRACT_LINEH3
+#endif // CGAL_NO_ISTREAM_EXTRACT_LINEH3
+
 template < class FT, class RT >
 CGAL_KERNEL_INLINE
 bool
@@ -246,6 +236,5 @@ LineH3<FT,RT>::operator==(const LineH3<FT,RT>& l) const
 }
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_LINEH3_H

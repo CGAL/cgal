@@ -25,15 +25,10 @@
 #ifndef CGAL_SEGMENTH2_H
 #define CGAL_SEGMENTH2_H
 
-#ifndef CGAL_POINTH2_H
 #include <CGAL/PointH2.h>
-#endif // CGAL_POINTH2_H
-#ifndef CGAL_LINEH2_H
 #include <CGAL/LineH2.h>
-#endif // CGAL_LINEH2_H
 
 CGAL_BEGIN_NAMESPACE
-
 
 template < class FT, class RT >
 class Segment_repH2 : public Ref_counted
@@ -247,7 +242,7 @@ Bbox_2
 SegmentH2<FT,RT>::bbox() const
 { return start().bbox() + end().bbox(); }
 
-#ifndef NO_OSTREAM_INSERT_SEGMENTH2
+#ifndef CGAL_NO_OSTREAM_INSERT_SEGMENTH2
 template < class FT, class RT >
 std::ostream &
 operator<<(std::ostream &os, const SegmentH2<FT,RT> &s)
@@ -262,9 +257,9 @@ operator<<(std::ostream &os, const SegmentH2<FT,RT> &s)
         return os << "SegmentH2(" << s.source() <<  ", " << s.target() << ")";
   }
 }
-#endif // NO_OSTREAM_INSERT_SEGMENTH2
+#endif // CGAL_NO_OSTREAM_INSERT_SEGMENTH2
 
-#ifndef NO_ISTREAM_EXTRACT_SEGMENTH2
+#ifndef CGAL_NO_ISTREAM_EXTRACT_SEGMENTH2
 template < class FT, class RT >
 std::istream &
 operator>>(std::istream &is, SegmentH2<FT,RT> &s)
@@ -274,7 +269,8 @@ operator>>(std::istream &is, SegmentH2<FT,RT> &s)
   s = SegmentH2<FT,RT>(p, q);
   return is;
 }
-#endif // NO_ISTREAM_EXTRACT_SEGMENTH2
+#endif // CGAL_NO_ISTREAM_EXTRACT_SEGMENTH2
+
 template < class FT, class RT >
 CGAL_KERNEL_INLINE
 bool
@@ -337,6 +333,5 @@ SegmentH2<FT,RT>::operator!=(const SegmentH2<FT,RT>& s) const
 { return ( !operator==(s) ); }
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_SEGMENTH2_H

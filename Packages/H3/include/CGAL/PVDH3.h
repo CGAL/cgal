@@ -28,16 +28,9 @@
 #define CGAL_VECTORH3_H
 #define CGAL_DIRECTIONH3_H
 
-#ifndef CGAL_HOMOGENEOUS_CLASSES_H
 #include <CGAL/homogeneous_classes.h>
-#endif // CGAL_HOMOGENEOUS_CLASSES_H
-#ifndef CGAL_ORIGIN_H
 #include <CGAL/Origin.h>
-#endif // CGAL_ORIGIN_H
-
-#ifndef CGAL_REPH3_H
 #include <CGAL/RepH3.h>
-#endif // CGAL_REPH3_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -471,7 +464,7 @@ PointH3<FT,RT>::operator!=( const PointH3<FT,RT> & p) const
 { return !(*this == p); }
 
 
-#ifndef NO_OSTREAM_INSERT_POINTH3
+#ifndef CGAL_NO_OSTREAM_INSERT_POINTH3
 template < class FT, class RT >
 std::ostream &operator<<(std::ostream &os, const PointH3<FT,RT> &p)
 {
@@ -491,9 +484,9 @@ std::ostream &operator<<(std::ostream &os, const PointH3<FT,RT> &p)
                                 << p.hw() << ')';
     }
 }
-#endif // NO_OSTREAM_INSERT_POINTH3
+#endif // CGAL_NO_OSTREAM_INSERT_POINTH3
 
-#ifndef NO_ISTREAM_EXTRACT_POINTH3
+#ifndef CGAL_NO_ISTREAM_EXTRACT_POINTH3
 template < class FT, class RT >
 std::istream &operator>>(std::istream &is, PointH3<FT,RT> &p)
 {
@@ -516,7 +509,7 @@ std::istream &operator>>(std::istream &is, PointH3<FT,RT> &p)
   p = PointH3<FT,RT>(hx, hy, hz, hw);
   return is;
 }
-#endif // NO_ISTREAM_EXTRACT_POINTH3
+#endif // CGAL_NO_ISTREAM_EXTRACT_POINTH3
 
 template < class FT, class RT >
 CGAL_KERNEL_CTOR_INLINE
@@ -948,20 +941,11 @@ cross_product( const DirectionH3<FT,RT>& d1,
 
 CGAL_END_NAMESPACE
 
-
-#ifndef CGAL_AFF_TRANSFORMATIONH3_H
 #include <CGAL/Aff_transformationH3.h>
-#endif // CGAL_AFF_TRANSFORMATIONH3_H
-
-#ifndef CGAL_BBOX_3_H
 #include <CGAL/Bbox_3.h>
-#endif // CGAL_BBOX_3_H
-#ifndef CGAL_MISC_H
 #include <CGAL/misc.h>
-#endif // CGAL_MISC_H
 
 CGAL_BEGIN_NAMESPACE
-
 
 template < class FT, class RT >
 inline
@@ -1016,7 +1000,7 @@ VectorH3<FT,RT>::transform(const Aff_transformationH3<FT,RT>&t ) const
 { return t.transform(*this); }
 
 
-#ifndef NO_OSTREAM_INSERT_VECTORH3
+#ifndef CGAL_NO_OSTREAM_INSERT_VECTORH3
 template < class FT, class RT >
 std::ostream& operator<<(std::ostream& os, const VectorH3<FT,RT>& v)
 {
@@ -1037,9 +1021,9 @@ std::ostream& operator<<(std::ostream& os, const VectorH3<FT,RT>& v)
                                  << v.hw() << ')';
   }
 }
-#endif // NO_OSTREAM_INSERT_VECTORH3
+#endif // CGAL_NO_OSTREAM_INSERT_VECTORH3
 
-#ifndef NO_ISTREAM_EXTRACT_VECTORH3
+#ifndef CGAL_NO_ISTREAM_EXTRACT_VECTORH3
 template < class FT, class RT >
 std::istream& operator>>(std::istream& is, VectorH3<FT,RT>& v)
 {
@@ -1063,7 +1047,7 @@ std::istream& operator>>(std::istream& is, VectorH3<FT,RT>& v)
   v = VectorH3<FT,RT>(hx, hy, hz, hw);
   return is;
 }
-#endif // NO_ISTREAM_EXTRACT_VECTORH3
+#endif // CGAL_NO_ISTREAM_EXTRACT_VECTORH3
 
 template <class FT, class RT >
 inline
@@ -1073,7 +1057,7 @@ transform(const Aff_transformationH3<FT,RT>& t) const
 { return t.transform(*this); }
 
 
-#ifndef NO_OSTREAM_INSERT_DIRECTIONH3
+#ifndef CGAL_NO_OSTREAM_INSERT_DIRECTIONH3
 template < class FT, class RT >
 std::ostream &operator<<(std::ostream &os, const DirectionH3<FT,RT> &p)
 {
@@ -1092,9 +1076,9 @@ std::ostream &operator<<(std::ostream &os, const DirectionH3<FT,RT> &p)
                                     << p.dz() << ')';
   }
 }
-#endif // NO_OSTREAM_INSERT_DIRECTIONH3
+#endif // CGAL_NO_OSTREAM_INSERT_DIRECTIONH3
 
-#ifndef NO_ISTREAM_EXTRACT_DIRECTIONH3
+#ifndef CGAL_NO_ISTREAM_EXTRACT_DIRECTIONH3
 template < class FT, class RT >
 std::istream &operator>>(std::istream &is, DirectionH3<FT,RT> &p)
 {
@@ -1117,15 +1101,14 @@ std::istream &operator>>(std::istream &is, DirectionH3<FT,RT> &p)
   p = DirectionH3<FT,RT>(x, y, z);
   return is;
 }
-#endif // NO_ISTREAM_EXTRACT_DIRECTIONH3
-
+#endif // CGAL_NO_ISTREAM_EXTRACT_DIRECTIONH3
 
 /*
 template <class FT, class RT>
 VectorH3<FT,RT>
 operator/(const VectorH3<FT,RT>& v, const RT& f);
 */
-CGAL_END_NAMESPACE
 
+CGAL_END_NAMESPACE
 
 #endif // CGAL_PVDH3_H

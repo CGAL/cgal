@@ -25,15 +25,9 @@
 #ifndef CGAL_ISO_RECTANGLEH2_H
 #define CGAL_ISO_RECTANGLEH2_H
 
-#ifndef TWOTUPLE_H
 #include <CGAL/Twotuple.h>
-#endif // TWOTUPLE_H
-#ifndef CGAL_POINTH2_H
 #include <CGAL/PointH2.h>
-#endif // CGAL_POINTH2_H
-#ifndef CGAL_PREDICATES_ON_POINTSH2_H
 #include <CGAL/predicates_on_pointsH2.h>
-#endif // CGAL_PREDICATES_ON_POINTSH2_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -265,7 +259,7 @@ transform(const Aff_transformationH2<FT,RT>&t) const
                                 t.transform(max() ) );
 }
 
-#ifndef NO_OSTREAM_INSERT_ISO_RECTANGLEH2
+#ifndef CGAL_NO_OSTREAM_INSERT_ISO_RECTANGLEH2
 template < class FT, class RT >
 std::ostream& operator<<(std::ostream& os, const Iso_rectangleH2<FT,RT>& r)
 {
@@ -279,9 +273,9 @@ std::ostream& operator<<(std::ostream& os, const Iso_rectangleH2<FT,RT>& r)
         return os << "Iso_rectangleH2(" << r[0] << ", " << r[2] << ")";
   }
 }
-#endif // NO_OSTREAM_INSERT_ISO_RECTANGLEH2
+#endif // CGAL_NO_OSTREAM_INSERT_ISO_RECTANGLEH2
 
-#ifndef NO_ISTREAM_EXTRACT_ISO_RECTANGLEH2
+#ifndef CGAL_NO_ISTREAM_EXTRACT_ISO_RECTANGLEH2
 template < class FT, class RT >
 std::istream& operator>>(std::istream& is, Iso_rectangleH2<FT,RT>& r)
 {
@@ -290,9 +284,8 @@ std::istream& operator>>(std::istream& is, Iso_rectangleH2<FT,RT>& r)
   r = Iso_rectangleH2<FT,RT>(p, q);
   return is;
 }
-#endif // NO_ISTREAM_EXTRACT_ISO_RECTANGLEH2
+#endif // CGAL_NO_ISTREAM_EXTRACT_ISO_RECTANGLEH2
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_ISO_RECTANGLEH2_H

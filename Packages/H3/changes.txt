@@ -1,3 +1,6 @@
+2.16   (?? ??? 2001)
+- Macro cleanups.
+
 2.15   (22 Jan 2001)
 - CGAL::compare -> CGAL_NTS compare in SphereH3 to fix a warning.
 

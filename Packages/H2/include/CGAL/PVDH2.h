@@ -22,8 +22,8 @@
 // ======================================================================
  
 
-#ifndef CGAL_PVDH2
-#define CGAL_PVDH2
+#ifndef CGAL_PVDH2_H
+#define CGAL_PVDH2_H
 
 #define CGAL_POINTH2_H
 #define CGAL_VECTORH2_H
@@ -764,10 +764,7 @@ operator-(const PointH2<FT,RT>& p, const PointH2<FT,RT>& q)
 
 CGAL_END_NAMESPACE
 
-
-#ifndef CGAL_PREDICATES_ON_DIRECTIONSH2_H
 #include <CGAL/predicates_on_directionsH2.h>
-#endif // CGAL_PREDICATES_ON_DIRECTIONSH2_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -814,16 +811,9 @@ counterclockwise_in_between( const DirectionH2<FT,RT>& d1,
 
 CGAL_END_NAMESPACE
 
-
-#ifndef CGAL_AFF_TRANSFORMATIONH2_H
 #include <CGAL/Aff_transformationH2.h>
-#endif // CGAL_AFF_TRANSFORMATIONH2_H
-#ifndef CGAL_BBOX_2_H
 #include <CGAL/Bbox_2.h>
-#endif // CGAL_BBOX_2_H
-#ifndef CGAL_MISC_H
 #include <CGAL/misc.h>
-#endif // CGAL_MISC_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -858,8 +848,7 @@ PointH2<FT,RT>
 PointH2<FT,RT>::transform(const Aff_transformationH2<FT,RT>& t) const
 { return t.transform(*this); }
 
-
-#ifndef NO_OSTREAM_INSERT_POINTH2
+#ifndef CGAL_NO_OSTREAM_INSERT_POINTH2
 template < class FT, class RT >
 std::ostream &
 operator<<(std::ostream &os, const PointH2<FT,RT> &p)
@@ -879,9 +868,9 @@ operator<<(std::ostream &os, const PointH2<FT,RT> &p)
                                 << p.hw() << ')';
   }
 }
-#endif // NO_OSTREAM_INSERT_POINTH2
+#endif // CGAL_NO_OSTREAM_INSERT_POINTH2
 
-#ifndef NO_ISTREAM_EXTRACT_POINTH2
+#ifndef CGAL_NO_ISTREAM_EXTRACT_POINTH2
 template < class FT, class RT >
 std::istream &
 operator>>(std::istream &is, PointH2<FT,RT> &p)
@@ -905,7 +894,7 @@ operator>>(std::istream &is, PointH2<FT,RT> &p)
   p = PointH2<FT,RT>(hx, hy, hw);
   return is;
 }
-#endif // NO_ISTREAM_EXTRACT_POINTH2
+#endif // CGAL_NO_ISTREAM_EXTRACT_POINTH2
 
 template < class FT, class RT >
 CGAL_KERNEL_INLINE
@@ -930,7 +919,7 @@ VectorH2<FT,RT>::transform(const Aff_transformationH2<FT,RT>& t) const
 { return t.transform(*this); }
 
 
-#ifndef NO_OSTREAM_INSERT_VECTORH2
+#ifndef CGAL_NO_OSTREAM_INSERT_VECTORH2
 template < class FT, class RT >
 std::ostream &
 operator<<(std::ostream &os, const VectorH2<FT,RT> &p)
@@ -950,9 +939,9 @@ operator<<(std::ostream &os, const VectorH2<FT,RT> &p)
                                  << p.hw() << ')';
   }
 }
-#endif // NO_OSTREAM_INSERT_VECTORH2
+#endif // CGAL_NO_OSTREAM_INSERT_VECTORH2
 
-#ifndef NO_ISTREAM_EXTRACT_VECTORH2
+#ifndef CGAL_NO_ISTREAM_EXTRACT_VECTORH2
 template < class FT, class RT >
 std::istream &
 operator>>(std::istream &is, VectorH2<FT,RT> &p)
@@ -976,7 +965,7 @@ operator>>(std::istream &is, VectorH2<FT,RT> &p)
   p = VectorH2<FT,RT>(hx, hy, hw);
   return is;
 }
-#endif // NO_ISTREAM_EXTRACT_VECTORH2
+#endif // CGAL_NO_ISTREAM_EXTRACT_VECTORH2
 
 template <class FT, class RT >
 CGAL_KERNEL_INLINE
@@ -1008,7 +997,7 @@ DirectionH2<FT,RT>::to_vector() const
 { return VectorH2<FT,RT>( x(), y() ); }
 
 
-#ifndef NO_OSTREAM_INSERT_DIRECTIONH2
+#ifndef CGAL_NO_OSTREAM_INSERT_DIRECTIONH2
 template < class FT, class RT >
 std::ostream &
 operator<<(std::ostream &os, const DirectionH2<FT,RT> &p)
@@ -1026,9 +1015,9 @@ operator<<(std::ostream &os, const DirectionH2<FT,RT> &p)
                                     << p.dy() << ')';
   }
 }
-#endif // NO_OSTREAM_INSERT_DIRECTIONH2
+#endif // CGAL_NO_OSTREAM_INSERT_DIRECTIONH2
 
-#ifndef NO_ISTREAM_EXTRACT_DIRECTIONH2
+#ifndef CGAL_NO_ISTREAM_EXTRACT_DIRECTIONH2
 template < class FT, class RT >
 std::istream &
 operator>>(std::istream &is, DirectionH2<FT,RT> &p)
@@ -1051,10 +1040,8 @@ operator>>(std::istream &is, DirectionH2<FT,RT> &p)
   p = DirectionH2<FT,RT>(x, y);
   return is;
 }
-#endif // NO_ISTREAM_EXTRACT_DIRECTIONH2
+#endif // CGAL_NO_ISTREAM_EXTRACT_DIRECTIONH2
 
 CGAL_END_NAMESPACE
 
-
-
-#endif // CGAL_PVDH2
+#endif // CGAL_PVDH2_H

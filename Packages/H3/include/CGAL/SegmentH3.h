@@ -25,12 +25,9 @@
 #ifndef CGAL_SEGMENTH3_H
 #define CGAL_SEGMENTH3_H
 
-#ifndef CGAL_LINEH3_H
 #include <CGAL/LineH3.h>
-#endif // CGAL_LINEH3_H
 
 CGAL_BEGIN_NAMESPACE
-
 
 template < class FT, class RT >
 class Segment_repH3 : public Ref_counted
@@ -214,7 +211,7 @@ SegmentH3<FT,RT>::bbox() const
 { return source().bbox() + target().bbox(); }
 
 
-#ifndef NO_OSTREAM_INSERT_SEGMENTH3
+#ifndef CGAL_NO_OSTREAM_INSERT_SEGMENTH3
 template < class FT, class RT >
 std::ostream &operator<<(std::ostream &os, const SegmentH3<FT,RT> &s)
 {
@@ -229,9 +226,9 @@ std::ostream &operator<<(std::ostream &os, const SegmentH3<FT,RT> &s)
 	            <<  ", " << s.target() << ")";
   }
 }
-#endif // NO_OSTREAM_INSERT_SEGMENTH3
+#endif // CGAL_NO_OSTREAM_INSERT_SEGMENTH3
 
-#ifndef NO_ISTREAM_EXTRACT_SEGMENTH3
+#ifndef CGAL_NO_ISTREAM_EXTRACT_SEGMENTH3
 template < class FT, class RT >
 std::istream &operator>>(std::istream &is, SegmentH3<FT,RT> &s)
 {
@@ -240,7 +237,8 @@ std::istream &operator>>(std::istream &is, SegmentH3<FT,RT> &s)
   s = SegmentH3<FT,RT>(p, q);
   return is;
 }
-#endif // NO_ISTREAM_EXTRACT_SEGMENTH3
+#endif // CGAL_NO_ISTREAM_EXTRACT_SEGMENTH3
+
 template < class FT, class RT >
 inline
 bool
