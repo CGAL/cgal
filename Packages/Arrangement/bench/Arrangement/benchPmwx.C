@@ -23,14 +23,10 @@
 #if defined(USE_LEDA_SEGMENT_TRAITS)
 #include <CGAL/Arr_leda_segment_traits_2.h>
 #else
-#if defined(USE_TIGHT_TRAITS)
-#include <CGAL/Arr_segment_tight_traits_2.h>
-#else
 #if defined(USE_CACHED_TRAITS)
 #include <CGAL/Arr_segment_cached_traits_2.h>
 #else
 #include <CGAL/Arr_segment_traits_2.h>
-#endif
 #endif
 #endif
 #endif
@@ -98,7 +94,10 @@ typedef CGAL::Arr_leda_segment_traits_2<Kernel>         Traits;
 typedef CGAL::Arr_segment_cached_traits_2<Kernel>       Traits;
 #define TRAITS_TYPE "Cached Segments"
 #else
+#if defined(USE_CACHED_TRAITS)
+typedef CGAL::Arr_segment_cached_traits_2<Kernel>       Traits;
 
+#else
 typedef CGAL::Arr_segment_traits_2<Kernel>              Traits;
 #define TRAITS_TYPE "Segments"
 

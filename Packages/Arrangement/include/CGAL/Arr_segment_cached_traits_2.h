@@ -71,6 +71,7 @@ public:
 
     /*!
      * Constructor from a segment.
+     * \param seg The segment.
      */
     Segment_cached_2 (const Segment_2& seg) :
       is_orig(true),
@@ -88,7 +89,9 @@ public:
     }
 
     /*!
-     * Constructor from two points.
+     * Construct a segment from two end-points.
+     * \param source The source point.
+     * \param target The target point.
      */
     Segment_cached_2 (const Point_2& source, const Point_2& target) :
       is_orig(true),
@@ -111,16 +114,29 @@ public:
     }
 
     /*!
-     *
+     * Create a bounding box for the segment.
      */
     Bbox_2 bbox()
     {
       Segment_2 seg(ps, pt);
-      return seg.bbox();
+      return (seg.bbox());
     }
 
-    Point_2 source() { return ps; }
-    Point_2 target() { return pt; }
+    /*!
+     * Get the segment source.
+     */
+    const Point_2& source() const 
+    { 
+      return ps; 
+    }
+
+    /*!
+     * Get the segment target.
+     */
+    const Point_2& target() const
+    { 
+      return pt;
+    }
 
   private:
 
@@ -149,6 +165,7 @@ public:
   } Curve_point_status;	
 
 protected:
+
   // Functors:
   typedef typename Kernel::Is_vertical_2        Is_vertical_2;
   typedef typename Kernel::Construct_vertex_2   Construct_vertex_2;
@@ -161,49 +178,56 @@ protected:
   typedef typename Kernel::Orientation_2        Orientation_2;
     
 public:
-  // Creation
+
+  /*!
+   * Defalut constructor.
+   */
   Arr_segment_cached_traits_2() {}
 
   // Operations
   // ----------
     
-  /*! compare_x() compares the x-coordinates of two given points
-   * \param p1 the first point
-   * \param p2 the second point
-   * \return LARGER if x(p1) > x(p2), SMALLER if x(p1) < x(p2), or else EQUAL
-   *
-   * \todo replace indirect use compare_x() with compare_x_2()
+  /*!
+   * Compare the x-coordinates of two given points.
+   * \param p1 The first point.
+   * \param p2 The second point.
+   * \return LARGER if x(p1) > x(p2), SMALLER if x(p1) < x(p2), or else EQUAL.
    */
   Comparison_result compare_x(const Point_2 & p1, const Point_2 & p2) const
   {
     return compare_x_2_object()(p1, p2);
   }
 
-  /*! compare_xy() compares lexigoraphically the two points by x, then by y.
-   * \param p1 the first point
-   * \param p2 the second point
+  /*! 
+   * Compares lexigoraphically the two points: by x, then by y.
+   * \param p1 Te first point.
+   * \param p2 The second point.
    * \return LARGER if x(p1) > x(p2), or if x(p1) = x(p2) and y(p1) > y(p2); 
    *         SMALLER if x(p1) < x(p2), or if x(p1) = x(p2) and y(p1) < y(p2);
-   *         or else EQUAL
+   *         or else EQUAL.
    */
   Comparison_result compare_xy(const Point_2 & p1, const Point_2 & p2) const
   {
     return compare_xy_2_object()(p1, p2);
   }
 
-  /*! curve_is_vertical()
-   * \param cv the curve
-   * \return true iff the curve is vertical
+  /*!
+   * Check whether the given curve is a vertical segment.
+   * \param cv The curve.
+   * \return (true) if the curve is vertical.
    */
   bool curve_is_vertical(const X_curve_2 & cv) const 
   {
     return (cv.is_vert);
   } 
 
-  /*! curve_is_in_x_range()
-   * \param cv the curve
-   * \param q the point
-   * \return true if q is in the x range of cv
+  /*!
+   * Check whether the given point is in the x-range of the given curve.
+   * In out case, the curve is a segment [s, t], check whether x(s)<=x(q)<=x(t)
+   * or whether x(t)<=x(q)<=x(s).
+   * \param cv The curve.
+   * \param q The point.
+   * \return (true) if q is in the x-range of cv.
    */
   bool curve_is_in_x_range(const X_curve_2 & cv, const Point_2 & q) const
   {
@@ -218,16 +242,15 @@ public:
 	    (res1 != res2));
   }
 
-  /*! curve_compare_at_x() compares the y-coordinate of two given curves at
-   * the x-coordinate of a given point.
-   * Preconditions: The point q is in the x range of the two curves.
-   * \param cv1 the first curve
-   * \param cv2 the second curve
-   * \param q the point
-   * \return LARGER if cv1(x(q)) > cv2(x(q)), SMALLER if cv1(x(q)) < cv2(x(q),
+  /*!
+   * Get the relative status of two curves at the x-coordinate of a given 
+   * point.
+   * \param cv1 The first curve.
+   * \param cv2 The second curve.
+   * \param q The point.
+   * \pre The point q is in the x-range of the two curves.
+   * \return LARGER if cv1(x(q)) > cv2(x(q)); SMALLER if cv1(x(q)) < cv2(x(q);
    *  or else EQUAL.
-   *
-   * \todo replace indirect use curve_compare_at_x() with compare_y_at_x_2()
    */
   Comparison_result curve_compare_at_x(const X_curve_2 & cv1, 
 				       const X_curve_2 & cv2, 
@@ -240,10 +263,16 @@ public:
     return (compare_y_at_x_2_object()(q, cv1.orig_seg, cv2.orig_seg));
   }
 
-  /*! curve_compare_at_x_left() compares the y value of two curves in an
-   * epsilon environment to the left of the x value of the input point
-   * Preconditions: The point q is in the x range of the two curves, and both
-   * of them must be also be defined to its left.
+  /*!
+   * Compares the y value of two curves in an epsilon environment to the left
+   * of the x-value of the input point.
+   * \param cv1 The first curve.
+   * \param cv2 The second curve.
+   * \param q The point.
+   * \pre The point q is in the x range of the two curves, and both of them 
+   * must be also be defined to its left.
+   * \return The relative position of cv1 with respect to cv2 to the left of
+   * x(q): LARGER, SMALLER or EQUAL.
    */
   Comparison_result curve_compare_at_x_left(const X_curve_2 & cv1,
                                             const X_curve_2 & cv2, 
@@ -277,11 +306,17 @@ public:
     // Notice we use the original segments in order to compare the slopes.
     return (compare_slope_2_object()(cv2.orig_seg, cv1.orig_seg));
   }
-    
-  /*! curve_compare_at_x_right() compares the y value of two curves in an
-   * epsilon environment to the right of the x value of the input point
-   * Preconditions: The point q is in the x range of the two curves, and both
-   * of them must be also be defined to its right.
+
+  /*!
+   * Compares the y value of two curves in an epsilon environment to the right
+   * of the x-value of the input point.
+   * \param cv1 The first curve.
+   * \param cv2 The second curve.
+   * \param q The point.
+   * \pre The point q is in the x range of the two curves, and both of them 
+   * must be also be defined to its right.
+   * \return The relative position of cv1 with respect to cv2 to the right of
+   * x(q): LARGER, SMALLER or EQUAL.
    */
   Comparison_result curve_compare_at_x_right(const X_curve_2 & cv1,
                                              const X_curve_2 & cv2, 
@@ -315,10 +350,16 @@ public:
   }
     
   /*! 
-   * Return the curve-point status of the input objects
+   * Return the location of the given point with respect to the input curve.
+   * \param cv The curve.
+   * \param p The point.
+   * \return CURVE_NOT_IN_RANGE if p is not in the x-range of cv;
+   *         ABOVE_CURVE if cv(x(p)) < y(p);
+   *         UNDER_CURVE if cv(x(p)) > y(p);
+   *         or else ON_CURVE (if p is on the curve).
    */
-  Curve_point_status curve_get_point_status (const X_curve_2 & cv, 
-					     const Point_2 & p) const
+  Curve_point_status curve_get_point_status (const X_curve_2& cv, 
+					     const Point_2& p) const
   {
     if (! curve_is_in_x_range(cv, p))
       return (CURVE_NOT_IN_RANGE);
@@ -347,15 +388,17 @@ public:
   }
 
   /*! 
-   * Check if the given query segment is encountered when rotating the
-   * first segment in a clockwise direction around a given point until reaching
-   * the segment curve.
+   * Check if the given query segment is encountered when rotating the first
+   * segment in a clockwise direction around a given point until reaching the
+   * segment curve.
    * \param cv The query segment.
    * \param cv1 The first segment.
    * \param cv2 The second segment.
    * \param p The point around which we rotate cv1.
-   * \return TRUE or FALSE.
    * \pre p is an end-point of all three segments.
+   * \return (true) if cv is between cv1 and cv2. If cv overlaps cv1 the result
+   * is always (false) and if it overlaps cv2 the reuslt is always (true). If
+   * cv1 and cv2 overlap, the result is (true), unless cv1 also overlaps them.
    */
   bool curve_is_between_cw(const X_curve_2& cv, 
                            const X_curve_2& cv1, 
@@ -488,7 +531,7 @@ public:
       return ((dir == DIR_LEFT &&
 	       _curve_compare_slope_left (cv1, cv) == SMALLER) ||
 	      (dir == DIR_RIGHT &&
-	       _curve_compare_slope_right (cv2, cv) == SMALLER) ||
+	       _curve_compare_slope_right (cv2, cv) != LARGER) ||
 	      dir == DIR_UP);
     }
     else
@@ -497,13 +540,16 @@ public:
       return ((dir == DIR_RIGHT &&
 	       _curve_compare_slope_right (cv1, cv) == LARGER) ||
 	      (dir == DIR_LEFT &&
-	       _curve_compare_slope_left (cv2, cv) == LARGER) ||
+	       _curve_compare_slope_left (cv2, cv) != SMALLER) ||
 	      dir == DIR_DOWN);
     }
   }
 
   /*! 
    * Check if the two curves are the same (have the same graph).
+   * \param cv1 The first curve.
+   * \param cv2 The second curve.
+   * \return (true) if the two curves are the same.
    */
   bool curve_is_same(const X_curve_2 & cv1,const X_curve_2 & cv2) const
   {
@@ -514,6 +560,9 @@ public:
 
   /*!
    * Check if the two points are the same.
+   * \param p1 The first point.
+   * \param p2 The second point.
+   * \return (true) if p1 == p2.
    */
   bool point_is_same(const Point_2 & p1, const Point_2 & p2) const
   {
@@ -522,6 +571,8 @@ public:
   
   /*!
    * Get the curve source.
+   * \param cv The curve.
+   * \return The source point.
    */
   const Point_2& curve_source(const X_curve_2 & cv) const 
   { 
@@ -530,6 +581,8 @@ public:
 
   /*!
    * Get the curve target.
+   * \param cv The curve.
+   * \return The target point.
    */
   const Point_2& curve_target(const X_curve_2 & cv) const 
   { 
@@ -537,21 +590,33 @@ public:
   }
 
   /*!
-   * Return TRUE, since a sgement is always x-monotone.
+   * Check whether the curve is x-monotone.
+   * \param cv The curves.
+   * \return (true) if the curve is x-monotone. In case of segments, the
+   * function always returns (true), since all segments are x-monotone. 
+   * Vertical segments are also considered as 'weakly' x-monotone.
    */
   bool is_x_monotone(const Curve_2 &) const
   {
-    return true;
+    // Return true, since a sgement is always x-monotone.
+    return (true);
   }
   
   /*!
-   * Do nothing, since a sgement is always x-monotone.
+   * Split the given curve, to x-monotone sub-curves.
+   * In case of segments does nothing, since a sgement is always x-monotone.
+   * \param cv The curve.
+   * \param x_curves A list of the output x-monotone sub-curves.
+   * \pre cv is not x-monotone (and not a vertical segment).
    */
   void make_x_monotone(const Curve_2&, std::list<Curve_2>& ) const
   {} 
 
   /*!
    * Flip a given curve.
+   * \param cv The input curve.
+   * \return The flipped curve. In case of segments, if the input is [s,t],
+   * then the flipped curve is simply [t,s].
    */
   X_curve_2 curve_flip(const X_curve_2 & cv) const
   {
@@ -570,7 +635,7 @@ public:
    * \param c2 the output second part of the split curve. Its target is the
    * target of the original curve.
    * \param p the split point.
-   * \pre split_pt is on cv but is not an endpoint.
+   * \pre p lies on cv but is not one of its end-points.
    */
   void curve_split(const X_curve_2& cv, 
 		   X_curve_2& c1, X_curve_2& c2, 
@@ -599,15 +664,15 @@ public:
   }
 
   /*! 
-   * Compares the location of the intersection point of two given curves 
-   * with a given point.
-   * \param cv1 the first curve
-   * \param cv2 the second curve
-   * \param p the point
-   * \return true if cv1 and cv2 intersect at a point that is lexicographically
-   * larger than p, that is above or to the right of p but not on p.    
+   * Check whether the two given curves intersect at a point to the right of
+   * a given reference point.
+   * \param cv1 The first curve.
+   * \param cv2 The second curve.
+   * \param p The reference point.
+   * \return (true) if cv1 and cv2 intersect at a point that is 
+   * lexicographically larger than p, that is above or to the right of p 
+   * (but not on p).    
    */
-  //returns true iff the intersection is strictly right of pt
   bool do_intersect_to_right(const X_curve_2& cv1, const X_curve_2& cv2,
                              const Point_2& p) const 
   {
@@ -624,13 +689,15 @@ public:
     return (compare_xy_2_object()(ip2, p) == LARGER);
   }
 
-  /*! do_intersect_to_left() compares the location of the intersection
-   * point of two given curves with a given point.
-   * \param cv1 the first curve
-   * \param cv2 the second curve
-   * \param p the point
-   * \return true if c1 and c2 intersect at a point that is lexicographically
-   * smaller than pt, that is bellow or to the left of pt but not on pt.    
+  /*! 
+   * Check whether the two given curves intersect at a point to the left of
+   * a given reference point.
+   * \param cv1 The first curve.
+   * \param cv2 The second curve.
+   * \param p The reference point.
+   * \return (true) if cv1 and cv2 intersect at a point that is 
+   * lexicographically smaller than p, that is under or to the left of p 
+   * (but not on p).    
    */
   bool do_intersect_to_left(const X_curve_2 & cv1, const X_curve_2 & cv2,
                             const Point_2 & p) const 
@@ -648,26 +715,26 @@ public:
     return (compare_xy_2_object()(ip1, p) == SMALLER);
   }
 
-  /*! nearest_intersection_to_right() finds the nearest intersection point of
-   * two given curves to the right of a given point. Nearest is defined as the
-   * lexicographically nearest not including the point itself with one
-   * exception explained bellow..
+  /*!
+   * Find the nearest intersection point of two given curves to the right of 
+   * a given point. Nearest is defined as the lexicographically nearest not 
+   * including the point itself (with one exception explained below).
    * If the intersection of the two curves is an X_curve_2, that is,
    * there is an overlapping subcurve, then if the the source and target of the
    * subcurve are strickly to the right, they are returned through two
-   * other point references p1 and p2. If pt is between the source and target
-   * of the overlapping subcurve, or pt is its left endpoint, pt and the target
+   * other point references p1 and p2. If p is between the source and target
+   * of the overlapping subcurve, or p is its left endpoint, p and the target
    * of the right endpoint of the subcurve are returned through p1 and p2 
    * respectively.
-   * If the intersection of the two curves is a point to the right of pt, pt
-   * is returned through the p1 and p2.
-   * \param cv1 the first curve
-   * \param cv2 the second curve
-   * \param p the point to compare against
-   * \param p1 the first point reference
-   * \param p2 the second point reference
-   * \return true if c1 and c2 do intersect to the right of pt. Otherwise,
-   * false
+   * If the intersection of the two curves is a point to the right of p, it is
+   * returned through the p1 and p2.
+   * \param cv1 The first curve.
+   * \param cv2 The second curve.
+   * \param p The refernece point.
+   * \param p1 The first output point.
+   * \param p2 The second output point.
+   * \return (true) if c1 and c2 do intersect to the right of p, or (false)
+   * if no such intersection exists.
    */
   bool nearest_intersection_to_right(const X_curve_2 & cv1,
                                      const X_curve_2 & cv2,
@@ -704,26 +771,26 @@ public:
     }
   }
 
-  /*! nearest_intersection_to_left() finds the nearest intersection point of
-   * two given curves to the left of a given point. Nearest is defined as the
-   * lexicographically nearest not including the point itself with one
-   * exception explained bellow..
+  /*!
+   * Find the nearest intersection point of two given curves to the left of 
+   * a given point. Nearest is defined as the lexicographically nearest not 
+   * including the point itself (with one exception explained below).
    * If the intersection of the two curves is an X_curve_2, that is,
    * there is an overlapping subcurve, then if the the source and target of the
    * subcurve are strickly to the left, they are returned through two
-   * other point references p1 and p2. If pt is between the source and target
-   * of the overlapping subcurve, or pt is its left endpoint, pt and the target
+   * other point references p1 and p2. If p is between the source and target
+   * of the overlapping subcurve, or p is its right endpoint, p and the source
    * of the left endpoint of the subcurve are returned through p1 and p2 
    * respectively.
-   * If the intersection of the two curves is a point to the left of pt, pt
-   * is returned through the p1 and p2.
-   * \param cv1 the first curve
-   * \param cv2 the second curve
-   * \param p the point to compare against
-   * \param p1 the first point reference
-   * \param p2 the second point reference
-   * \return true if c1 and c2 do intersect to the left of pt. Otherwise,
-   * false
+   * If the intersection of the two curves is a point to the left of p, it is
+   * returned through the p1 and p2.
+   * \param cv1 The first curve.
+   * \param cv2 The second curve.
+   * \param p The refernece point.
+   * \param p1 The first output point.
+   * \param p2 The second output point.
+   * \return (true) if c1 and c2 do intersect to the left of p, or (false)
+   * if no such intersection exists.
    */
   bool nearest_intersection_to_left(const X_curve_2 & cv1,
                                     const X_curve_2 & cv2,
@@ -760,12 +827,13 @@ public:
     }
   }
 
-  /*! curves_overlap() test overlapping between two given curves
-   * \patam cv1 the first curve
-   * \patam cv2 the second curve
-   * \return true if c1 and c2 overlap in a one-dimensional subcurve
-   * (i.e., not in a finite number of points). Otherwise, false.
-   * \todo end point coincidence instead of intersection!
+  /*!
+   * Check whether the two given curves overlap.
+   * \patam cv1 The first curve.
+   * \patam cv2 The second curve.
+   * \return (true) if the two curves overlap in a one-dimensional subcurve
+   * (i.e., not in a finite number of points). Otherwise, if they have a finite
+   * number of intersection points, or none at all, return (false).
    */
   bool curves_overlap(const X_curve_2 & cv1, const X_curve_2 & cv2) const
   {
@@ -780,7 +848,7 @@ public:
 
 private:
 
-      /*!
+  /*!
    * Enum used only be the curve_is_between_clockwise() function.
    */
   enum Segment_dir
@@ -796,6 +864,10 @@ private:
    * \param cv The segment.
    * \param p The reference point.
    * \pre p must be an end-point of the segment.
+   * \return DIR_UP if cv is a vertical segment pointing at 12 o'clock;
+   *         DIR_RIGHT if cv is a non-vertical segment going to the right of p;
+   *         DIR_DOWN if cv is a vertical segment pointing at 6 o'clock;
+   *         DIR_LEFT if cv is a non-vertical segment going to the left of p;
    */
   Segment_dir _curve_direction (const X_curve_2& cv,
 				const Point_2& p) const
@@ -860,7 +932,7 @@ private:
    * otherwise the leftmost end-point of the intersection segment.
    * \param p2 If there is an overlap, the rightmost end-point of the 
    * intersection segment.
-   * \return Whether any intersection has been found.
+   * \return (true) if an intersectio has been found.
    */
   bool _find_intersection (const X_curve_2& cv1,
 			   const X_curve_2& cv2,
