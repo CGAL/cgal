@@ -6,6 +6,7 @@
 //---------------------------------------------------------------------
 //	actual revision
 //---------------------------------------------------------------------
+GLOB: QT_MOC is now always added in the master makefile, as it should be.
 GLOB: Removed linkage against Core
 GLOB: added licensing information about Qt widget stuff
 GLOB: removed stlport from README
