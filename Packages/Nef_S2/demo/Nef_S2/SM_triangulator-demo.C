@@ -20,7 +20,7 @@ typedef Nef_polyhedron_S2::Explorer Explorer;
 typedef Nef_polyhedron_S2::Sphere_kernel Sphere_kernel;
 typedef Nef_polyhedron_S2::Sphere_map Sphere_map;
 
-typedef CGAL::SM_visualizor<Sphere_map,Sphere_kernel> SM_visualizor;
+typedef CGAL::SM_visualizor<Explorer> SM_visualizor;
 
 typedef CGAL::Creator_uniform_3<NT,Point_3>  Creator;
 typedef CGAL::Random_points_in_cube_3<Point_3,Creator> Point_source;
@@ -44,14 +44,13 @@ int main(int argc, char **argv)
   }
 
   Nef_polyhedron_S2 N(L.begin(),L.end(),0.5);
-  const Nef_polyhedron_S2* pN = &N;
 
   CGAL::OGL::add_sphere();
-  SM_visualizor V1(pN->sphere_map(),CGAL::OGL::spheres_.back());
+  SM_visualizor V1(&N,CGAL::OGL::spheres_.back());
   V1.draw_map();
 
   CGAL::OGL::add_sphere();
-  SM_visualizor V2(pN->sphere_map(),CGAL::OGL::spheres_.back());
+  SM_visualizor V2(&N,CGAL::OGL::spheres_.back());
   V2.draw_triangulation();
 
   CGAL::OGL::start_viewer();

@@ -4,10 +4,8 @@
 #include <CGAL/random_selection.h>
 #include <CGAL/point_generators_3.h>
 #include <LEDA/param_handler.h>
-#include <CGAL/Nef_S2/Sphere_map.h>
-#include <CGAL/Nef_S2/SM_decorator.h>
+#include <CGAL/Nef_polyhedron_S2.h>
 #include <CGAL/Nef_S2/SM_io_parser.h>
-#include <CGAL/Nef_S2/SM_overlayer.h>
 
 typedef CGAL::Gmpz NT;
 typedef CGAL::Homogeneous<NT> Kernel;
@@ -15,13 +13,8 @@ typedef Kernel::Point_3       Point_3;
 typedef Kernel::Plane_3       Plane_3;
 
 typedef CGAL::Sphere_geometry<Kernel> SKernel;
-typedef CGAL::Sphere_map<SKernel> Sphere_map;
-
-typedef Sphere_map::Vertex_handle   Vertex_handle;
-typedef Sphere_map::Halfedge_handle Halfedge_handle;
-typedef Sphere_map::Face_handle     Face_handle;
-typedef CGAL::SM_decorator<Sphere_map,SKernel> SM_decorator;
-typedef CGAL::SM_overlayer<SM_decorator>  SM_overlayer;
+// typedef CGAL::Sphere_map<SKernel> Sphere_map;
+typedef CGAL::Nef_polyhedron_S2<Kernel> Nef_polyhedron;
 
 typedef CGAL::Creator_uniform_3<NT,Point_3>  Creator;
 typedef CGAL::Random_points_in_cube_3<Point_3,Creator> Point_source;
@@ -42,9 +35,6 @@ int main(int argc, char **argv)
   // Segment_overlay 23
   // SM_overlayer 53
   Point_3 p(0,0,0);
-  Sphere_map E1,E2,E3;
-  SM_decorator D1(E1),D2(E2),D3(E3);
-  SM_overlayer O1(D1),O2(D2),O3(D3);
 
   int n;
   leda_string input_file;
@@ -102,6 +92,11 @@ int main(int argc, char **argv)
     else          L2.push_back(*it);
     b = 1-b;
   }
+
+  Nef_polyhedron N1(L1.begin(), L1.end());
+  Nef_polyhedron N2(L2.begin(), L2.end());
+  Nef_polyhedron N3 = N1.join(N2);
+    /*;
   O1.create_from_segments(L1.begin(),L1.end());
   O1.simplify(); // O1.dump(std::cerr);
   O2.create_from_segments(L2.begin(),L2.end());
@@ -109,6 +104,7 @@ int main(int argc, char **argv)
   O3.subdivide(E1,E2); 
   O3.select(OR());
   O3.simplify(); // O3.dump(std::cerr);
+    */
   return 0;
 }
 

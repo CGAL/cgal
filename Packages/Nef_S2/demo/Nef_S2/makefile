@@ -23,30 +23,29 @@ CXXFLAGS = \
 #                    linker flags
 #---------------------------------------------------------------------#
 
-CUSTOM_LDFLAGS = -lGLU
-
 LIBPATH = \
           $(CGAL_WINDOW_LIBPATH)
 
 LDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_QT_LDFLAGS)
+          $(CGAL_QT_LDFLAGS) \
+	  $(OPENGL_LIBS)
 
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
 all:            \
-                Nef_polyhedron_S2-demo2$(EXE_EXT)
+                visualization$(EXE_EXT)
 
-Nef_polyhedron_S2-demo2$(EXE_EXT): Nef_polyhedron_S2-demo2$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Nef_polyhedron_S2-demo2 Nef_polyhedron_S2-demo2$(OBJ_EXT) $(LDFLAGS)
+visualization$(EXE_EXT): visualization$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)visualization visualization$(OBJ_EXT) $(LDFLAGS)
 
-Nef_polyhedron_S2-demo2.clean:
-	rm -f Nef_polyhedron_S2-demo2 Nef_polyhedron_S2-demo2.o
+visualization.clean:
+	rm -f visualization visualization.o
 
 clean: \
-                   Nef_polyhedron_S2-demo2.clean
+                   visualization.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
