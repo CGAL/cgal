@@ -19,7 +19,7 @@ package: clean $(Package).tar.gz
 	@echo "---- make commit              ----"
 	@echo "---- make VERSION=X.X rtag    ----"
 	@echo "---- make package             ----"
-	@echo "---- make Submit              ----"
+	@echo "---- make submit              ----"
 
 	@echo "----------------------------------"
 
@@ -56,6 +56,7 @@ $(Package).tar.gz:
 	tar -zcvf $(Package).tar.gz \
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
 	--exclude=TODO \
-	version long_description.txt description.txt changes.txt \
+	version maintainer \
+	long_description.txt description.txt changes.txt \
 	include test
 	./check_headers.pl -u include/CGAL/*/*.[Ch]

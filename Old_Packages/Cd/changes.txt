@@ -1,3 +1,7 @@
+Ver 1.2 (22 March 2000)
+- added maintainer files
+- changed Makefile of the package
+
 Ver 1.1.1 (Dec 14 1999)
 - Added test suite to the package
 
