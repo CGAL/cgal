@@ -57,17 +57,22 @@ template <typename T> class Nef_polyhedron_2_rep;
 
 template <typename T>
 std::ostream& operator<<(std::ostream&, const Nef_polyhedron_2<T>&); 
+
 template <typename T>
 std::istream& operator>>(std::istream&, Nef_polyhedron_2<T>&);
+
 template <typename T>
 class Nef_polyhedron_2_rep 
-{ typedef Nef_polyhedron_2_rep<T> Self;
+{ 
+  typedef Nef_polyhedron_2_rep<T> Self;
   friend class Nef_polyhedron_2<T>;
 
   struct HDS_traits {
     typedef typename T::Point_2 Point;
     typedef bool                Mark;
   };
+
+public: // gcc-3.3 otherwise claims that Decorator in Polyhedron_2 is private
   typedef CGAL_HALFEDGEDS_DEFAULT<HDS_traits,HDS_items> Plane_map;
   typedef CGAL::PM_const_decorator<Plane_map>           Const_decorator;
   typedef CGAL::PM_decorator<Plane_map>                 Decorator;
@@ -75,18 +80,39 @@ class Nef_polyhedron_2_rep
   typedef CGAL::PM_point_locator<Decorator,T>           Locator;
   typedef CGAL::PM_overlayer<Decorator,T>               Overlayer;
 
+private:
 
-  //typedef CGAL::PM_transformer<Decorator,T> Transformer;
-  Plane_map pm_; Locator* pl_;
+  Plane_map pm_; 
+  Locator* pl_;
   
   void init_locator() 
-  { if ( !pl_ ) pl_ = new Locator(pm_); }
+  { 
+    if ( !pl_ ) 
+      pl_ = new Locator(pm_); 
+  }
+
   void clear_locator() 
-  { if ( pl_ ) { delete pl_; pl_=0; } }
+  { 
+    if ( pl_ ) { 
+      delete pl_; 
+      pl_=0; 
+    } 
+  }
+
 public:
-  Nef_polyhedron_2_rep() : pm_(), pl_(0) {}
-  Nef_polyhedron_2_rep(const Self& R) : pm_(), pl_(0) {}
-  ~Nef_polyhedron_2_rep() { pm_.clear(); clear_locator(); }
+  Nef_polyhedron_2_rep() 
+    : pm_(), pl_(0) 
+  {}
+
+  Nef_polyhedron_2_rep(const Self& R) 
+    : pm_(), pl_(0) 
+  {}
+
+  ~Nef_polyhedron_2_rep() 
+  { 
+    pm_.clear(); 
+    clear_locator(); 
+  }
 };
 
 /*{\Moptions print_title=yes }*/ 
