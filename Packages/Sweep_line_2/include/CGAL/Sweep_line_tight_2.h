@@ -1635,9 +1635,12 @@ DoCurvesOverlap(Subcurve *c1, Subcurve *c2)
 {
 #if 1
 // improve here...
-  if ( m_traits->curve_compare_at_x_right(c1->getCurve(),
+  if ((m_traits->curve_compare_at_x(c1->getCurve(),
+				    c2->getCurve(),
+				    m_sweepLinePos) != EQUAL) ||
+      (m_traits->curve_compare_at_x_right(c1->getCurve(),
 					  c2->getCurve(),
-					  m_sweepLinePos) != EQUAL )
+					  m_sweepLinePos) != EQUAL))
     return false;
 #endif
 

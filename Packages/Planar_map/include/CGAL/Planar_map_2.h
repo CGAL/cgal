@@ -1382,16 +1382,23 @@ prev1_inside_hole(
     if (traits->point_is_left( curr->source()->point(),left)) 
       b=true;
     else
-      if (traits->point_is_same(curr->source()->point(),left)) {
+      if (traits->point_is_same(curr->source()->point(),left)) 
+      {
         if (traits->curve_is_vertical(curr->curve()) &&
-            traits->point_is_left_low(curr->target()->point(),left) )
+            traits->point_is_left_low(curr->target()->point(),left) ) {
           b=true;
+	}
         else
 	{
+	  Comparison_result cres;
           if (traits->point_is_left(left, curr->target()->point()) &&
-	      traits->curve_compare_at_x_right(curr->curve(),
-                                               left_edge->curve(),
-                                               left)==SMALLER ) 
+	      (((cres = traits->curve_compare_at_x(curr->curve(),
+						   left_edge->curve(),
+						   left)) == SMALLER) ||
+	       (cres == EQUAL &&
+		traits->curve_compare_at_x_right(curr->curve(),
+						 left_edge->curve(),
+						 left) == SMALLER))) 
             b=true;
 	}
       }
@@ -1407,20 +1414,28 @@ prev1_inside_hole(
       b=true;
     if (traits->point_is_same(curr->target()->point(),left)) {
       if (traits->curve_is_vertical(curr->curve()) &&
-          traits->point_is_left_low(curr->source()->point(),left) )
+          traits->point_is_left_low(curr->source()->point(),left) ) {
         b=true;
-      else
+      }
+      else {
+	Comparison_result cres;
         if (traits->point_is_left(left, curr->source()->point()) &&
-	    traits->curve_compare_at_x_right(curr->curve(),
-                                             left_edge->curve(),
-                                             left)==SMALLER ) 
+	    (((cres = traits->curve_compare_at_x(curr->curve(),
+						 left_edge->curve(),
+						 left)) == SMALLER) ||
+	     (cres == EQUAL &&
+	      traits->curve_compare_at_x_right(curr->curve(),
+					       left_edge->curve(),
+					       left) == SMALLER))) {
           b=true;
-
-      //we want in the degenerate case to return the halfedge 
-      //pointing _at_ the left point 
-        else
+	}
+	//we want in the degenerate case to return the halfedge 
+	//pointing _at_ the left point 
+        else {
           if ( (curr)==(left_edge->twin()) )
             b=true;
+	}
+      }
     }
 
     if (b) {
@@ -1438,15 +1453,20 @@ prev1_inside_hole(
       return (traits->point_is_left_low(prev2->target()->point(),
 					prev1->target()->point()));
     }
-    else
+    else {
+      Comparison_result cres;
       if ((traits->point_is_left(left, traits->curve_source(cv)) ||
 	   traits->point_is_left(left, traits->curve_target(cv))) &&
 	  (! traits->curve_is_vertical(left_edge->curve())) &&
-	  traits->curve_compare_at_x_right(cv,left_edge->curve(), 
-                                           left)==SMALLER ) {  
+	  (((cres = traits->curve_compare_at_x(cv,left_edge->curve(), 
+					       left)) == SMALLER) ||
+	   (cres == EQUAL &&
+	    traits->curve_compare_at_x_right(cv,left_edge->curve(), 
+					     left) == SMALLER))) {  
         return (traits->point_is_left(prev1->target()->point(),
                                       prev2->target()->point()));
       }
+    }
   }
 
   //check if left_edge is from left to right

@@ -200,17 +200,13 @@ public:
     
     Line_2 l2(*pit,*after);
     
-    Comparison_result r = CGAL::compare_y_at_x(p,l1,l2); 
+    CGAL_precondition (CGAL::compare_y_at_x(p,l1,l2) == EQUAL);
     
-    if ( r != EQUAL)
-      return r;
-    else {
-      // check if they are right endpoints (and compare to the one from 
-      // the left) otherwise -
-      // 
-      //! \todo This is incorrect! we should probably return EQUAL.
-      return (CGAL::compare_y_at_x(point_to_left(p),l1,l2)); 
-    }
+    // check if they are right endpoints (and compare to the one from 
+    // the left) otherwise -
+    // 
+    //! \todo This is incorrect! we should probably return EQUAL.
+    return (CGAL::compare_y_at_x(point_to_left(p),l1,l2)); 
   } 
 
   Comparison_result curve_compare_at_x_right(const X_curve_2& cv1, 
@@ -251,21 +247,12 @@ public:
 
     Line_2 l2(*pit,*after);
     
-    Comparison_result r=CGAL::compare_y_at_x(p,l1,l2); 
-    
-    if ( r != EQUAL) {
-      return r;
-    }
-    else
-      // check if they are left endpoints (and compare to the one from the 
-      // right) otherwise -
-      
-      //debug
-      { 
-	//! \todo This is incorrect! we should probably return EQUAL.
-	CGAL_assertion(curve_compare_at_x(cv1,cv2,p) == EQUAL);
-	return (CGAL::compare_y_at_x(point_to_right(p),l1,l2)); 
-      }
+    CGAL_precondition (CGAL::compare_y_at_x(p,l1,l2) == EQUAL);
+
+    // check if they are left endpoints (and compare to the one from the 
+    // right) otherwise -
+    //! \todo This is incorrect! we should probably return EQUAL.
+    return (CGAL::compare_y_at_x(point_to_right(p),l1,l2)); 
   }
 
   Comparison_result curve_get_point_status (const X_curve_2 &cv,
@@ -298,53 +285,7 @@ public:
       return SMALLER;
     return EQUAL;
   }
-  
-
-  //precondition - same as in pm
-  bool curve_is_between_cw(const X_curve_2 & cv,const X_curve_2 & first,
-                           const X_curve_2 & second, const Point_2 & p) const
-  {
-    CGAL_assertion(is_x_monotone(cv));
-    CGAL_assertion(is_x_monotone(first));
-    CGAL_assertion(is_x_monotone(second));
-
-    CGAL_precondition(point_is_same(curve_source(cv),p) || 
-		      point_is_same(curve_target(cv),p));
-    CGAL_precondition(point_is_same(curve_source(first),p) || 
-		      point_is_same(curve_target(first),p));
-    CGAL_precondition(point_is_same(curve_source(second),p) || 
-		      point_is_same(curve_target(second),p));
-
-    X_curve_2 cv0 = first;
-    X_curve_2 cv1 = second;
-    X_curve_2 cvx = cv;
-
-    if (!point_is_same(curve_source(cv0),p) ) cv0 = curve_flip(cv0);
-    if (!point_is_same(curve_source(cv1),p) ) cv1 = curve_flip(cv1);
-    if (!point_is_same(curve_source(cvx),p) ) cvx = curve_flip(cvx);
     
-    typename X_curve_2::iterator xcit=cv0.begin();++xcit;
-    Point_2 p0(*xcit);
-    xcit=cv1.begin(); ++xcit;
-    Point_2 p1(*xcit);
-    xcit=cvx.begin(); ++xcit;
-    Point_2 px(*xcit);
-
-    if (point_is_same(p0,p1))
-      return true; 
-    
-    int or0=orientation(p0,p,px);
-    int or1=orientation(p1,p,px);
-    int orient=or0*or1;
-    
-    if (orient < 0) { //one is a left_turn the other right_turn
-      return (or0 == LEFT_TURN); //left_turn
-    }
-    else { //both are either left or right turns (or one is colinear)
-      return (orientation(p0,p,p1)==RIGHT_TURN); //right_turn
-    }
-  }
-  
   /*! \todo replace indirect use point_is_same() with equal_2()
    */
   bool point_is_same(const Point_2 & p1, const Point_2 & p2) const

@@ -120,17 +120,6 @@ public:
     return t.curve_compare_at_x_right(cv1,cv2,q);
   }
 
-
-  bool curve_is_between_cw(const X_curve &cv, 
-                           const X_curve &first, 
-                           const X_curve &second, 
-                           const Point &point)	const
-    {
-    CGAL_assertion(t.curve_is_between_cw(cv,first,second,point) ==
-		   b.curve_is_between_cw(P(cv),P(first),P(second),P(point)));
-    return t.curve_is_between_cw(cv,first,second,point);
-    }
-
   Comparison_result compare_x(const Point &p1, const Point &p2) const
   {
     CGAL_assertion(t.compare_x(p1,p2)==b.compare_x(P(p1),P(p2)));

@@ -623,6 +623,10 @@ protected:
 	return (EQUAL);
 
       // Compare using the traits function:
+      Comparison_result res = traits->curve_compare_at_x (cv1, cv2, p);
+      if (res != EQUAL)
+	return (res);
+
       return (traits->curve_compare_at_x_right (cv1, cv2, p));
     }
 
@@ -656,6 +660,10 @@ protected:
 	return (EQUAL);
 
       // Compare using the traits function:
+      Comparison_result res = traits->curve_compare_at_x (cv1, cv2, p);
+      if (res != EQUAL)
+	return (res);
+
       return (traits->curve_compare_at_x_left (cv1, cv2, p));
     }
 
@@ -962,6 +970,10 @@ protected:
 	return (EQUAL);
 
       // Compare using the traits function:
+      Comparison_result res = traits->curve_compare_at_x (cv1, cv2, p);
+      if (res != EQUAL)
+	return (res);
+
       return (traits->curve_compare_at_x_right (cv1, cv2, p));
     }
       

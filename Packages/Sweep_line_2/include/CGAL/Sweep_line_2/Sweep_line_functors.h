@@ -69,15 +69,16 @@ public:
     if ( !m_traits->curve_is_in_x_range(c2->getCurve(), *p))
       p = &(c2->getLastPoint());
 
-   Comparison_result r = 
-          m_traits->curve_compare_at_x_right(c1->getCurve(), 
-				       c2->getCurve(), 
-				       *p);
-    if ( r == SMALLER) {
-      return true;
-    }
-    return false;
+   Comparison_result r = m_traits->curve_compare_at_x (c1->getCurve(), 
+						       c2->getCurve(), 
+						       *p);
 
+   if (r == EQUAL)
+     r = m_traits->curve_compare_at_x_right(c1->getCurve(), 
+					    c2->getCurve(), 
+					    *p);
+
+    return (r == SMALLER);
   }
 
   void setReference(Point_2 point) {
@@ -160,10 +161,15 @@ public:
     }
 
     // non of the curves is vertical... 
-    Comparison_result r = 
-      m_traits->curve_compare_at_x_right(c1->getCurve(), 
-					 c2->getCurve(), 
-					 *p);
+    Comparison_result r =  m_traits->curve_compare_at_x (c1->getCurve(), 
+							 c2->getCurve(), 
+							 *p);
+
+    if (r == EQUAL)
+      r = m_traits->curve_compare_at_x_right(c1->getCurve(), 
+					     c2->getCurve(), 
+					     *p);
+
     if ( r == SMALLER) {
       return true;
     } 

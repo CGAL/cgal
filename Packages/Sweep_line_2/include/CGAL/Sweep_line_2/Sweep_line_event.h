@@ -191,11 +191,22 @@ public:
     while ( iter != m_leftCurves->end() )
     {
       if ( m_traits->curve_is_in_x_range((*iter)->getCurve(), ref))
-        res = m_traits->curve_compare_at_x_right(cv, (*iter)->getCurve(), 
-						      ref );// == LARGER)
-      else 
-        res = m_traits->curve_compare_at_x_right(cv, (*iter)->getCurve(), 
-						 (*iter)->getLeftEnd());
+      {
+        res = m_traits->curve_compare_at_x (cv, (*iter)->getCurve(), 
+					    ref );
+	if (res == EQUAL)
+	  res = m_traits->curve_compare_at_x_right(cv, (*iter)->getCurve(), 
+						   ref );
+      }
+      else
+      {
+        res = m_traits->curve_compare_at_x (cv, (*iter)->getCurve(), 
+					    (*iter)->getLeftEnd());
+	if (res == EQUAL)
+	  res = m_traits->curve_compare_at_x_right(cv, (*iter)->getCurve(), 
+						   (*iter)->getLeftEnd());
+      }
+
       if ( res != LARGER )
         break;
       ++iter;
@@ -209,7 +220,10 @@ public:
       ++iter;
       if ( iter == m_leftCurves->end())
 	break;
-      res = m_traits->curve_compare_at_x_right(cv, (*iter)->getCurve(), ref);
+
+      res = m_traits->curve_compare_at_x (cv, (*iter)->getCurve(), ref);
+      if (res == EQUAL)
+	res = m_traits->curve_compare_at_x_right(cv, (*iter)->getCurve(), ref);
     }
     
     // insert the curve. If the curve is already in the list, it is not added
@@ -239,9 +253,13 @@ public:
 
     SubCurveIter iter = m_rightCurves->begin();
     Comparison_result res;
-    while ( (res = m_traits->curve_compare_at_x_right(curve->getCurve(),
+    while (((res = m_traits->curve_compare_at_x (curve->getCurve(),
+						(*iter)->getCurve(), 
+						 m_point)) == LARGER) ||
+	   (res == EQUAL &&
+	    (res = m_traits->curve_compare_at_x_right(curve->getCurve(),
 						      (*iter)->getCurve(), 
-						      m_point)) == LARGER)
+						      m_point)) == LARGER))
     {
       ++iter;
       if ( iter == m_rightCurves->end()) {
@@ -258,9 +276,14 @@ public:
 	m_rightCurves->insert(iter, curve);
 	return;
       }
-      res = m_traits->curve_compare_at_x_right(curve->getCurve(),
-					       (*iter)->getCurve(), 
-					       m_point);
+
+      res = m_traits->curve_compare_at_x (curve->getCurve(),
+					  (*iter)->getCurve(), 
+					  m_point);
+      if (res == EQUAL)
+	res = m_traits->curve_compare_at_x_right(curve->getCurve(),
+						 (*iter)->getCurve(), 
+						 m_point);
     }
     
     // insert the curve only if it is not already in...

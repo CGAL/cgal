@@ -181,22 +181,20 @@ public:
     Segment l2(*pit,*after);
     
     //leda func :
-    Comparison_result r = 
+    CGAL_precondition_code(      
+      Comparison_result r = 
       (Comparison_result)CGAL_LEDA_SCOPE::cmp_segments_at_xcoord(l1,l2,p);
+      );
+    CGAL_precondition(r == EQUAL);
     
-    if ( r != EQUAL)
-      return r;
-    else {
-      //check if they are right endpoints 
-      //(and compare to the one from the left) otherwise -
-      if (compare_x(l1.source(),l1.target())==SMALLER)
-        l1=l1.reversal();
-      if (compare_x(l2.source(),l2.target())==SMALLER)
-        l2=l2.reversal();
+    //check if they are right endpoints 
+    //(and compare to the one from the left) otherwise -
+    if (compare_x(l1.source(),l1.target())==SMALLER)
+      l1=l1.reversal();
+    if (compare_x(l2.source(),l2.target())==SMALLER)
+      l2=l2.reversal();
 
-      return (Comparison_result)CGAL_LEDA_SCOPE::cmp_slopes(l2,l1);
-    }
-
+    return (Comparison_result)CGAL_LEDA_SCOPE::cmp_slopes(l2,l1);
   } 
 
 
@@ -238,30 +236,22 @@ public:
       
     Segment l2(*pit,*after);
       
-    Comparison_result r = 
+    CGAL_precondition_code(      
+      Comparison_result r = 
       (Comparison_result)CGAL_LEDA_SCOPE::cmp_segments_at_xcoord(l1,l2,p);
-      
-    if ( r != EQUAL) {
-      return r;
-    }
-    else
-      //check if they are left endpoints (and compare to the one from the 
-      //right) otherwise -
-      { 
-        CGAL_assertion(curve_compare_at_x(cv1,cv2,p) == EQUAL);
+      );
+    CGAL_precondition_code(r == EQUAL); 
+
+    //check if they are left endpoints (and compare to the one from the 
+    //right) otherwise -         
+    if (compare_x(l1.source(),l1.target())==LARGER)
+      l1=l1.reversal();
+    if (compare_x(l2.source(),l2.target())==LARGER)
+      l2=l2.reversal();
         
-        if (compare_x(l1.source(),l1.target())==LARGER)
-          l1=l1.reversal();
-        if (compare_x(l2.source(),l2.target())==LARGER)
-          l2=l2.reversal();
-        
-        return (Comparison_result)CGAL_LEDA_SCOPE::cmp_slopes(l1,l2);
-        
-      }
+    return (Comparison_result)CGAL_LEDA_SCOPE::cmp_slopes(l1,l2);
   }
-  
-  
-  
+
   Comparison_result curve_get_point_status (const X_curve_2 &cv, 
 					    const Point_2& p) const
   {
@@ -298,56 +288,6 @@ public:
     return EQUAL;  // if (o == 0)   
   }
   
-  
-  //precondition - same as in pm
-  bool curve_is_between_cw(const X_curve_2& cv,const X_curve_2& first,
-                           const X_curve_2& second, const Point_2& p) const
-  {
-    CGAL_assertion(is_x_monotone(cv));
-    CGAL_assertion(is_x_monotone(first));
-    CGAL_assertion(is_x_monotone(second));
-      
-    CGAL_precondition(is_same(curve_source(cv),p) || 
-                      is_same(curve_target(cv),p));
-    CGAL_precondition(is_same(curve_source(first),p) || 
-                      is_same(curve_target(first),p));
-    CGAL_precondition(is_same(curve_source(second),p) || 
-                      is_same(curve_target(second),p));
-      
-      
-
-    X_curve_2 cv0 = first;
-    X_curve_2 cv1 = second;
-    X_curve_2 cvx = cv;
-      
-      
-      
-    if ( !is_same(curve_source(cv0),p) ) cv0 = curve_flip(cv0);
-    if ( !is_same(curve_source(cv1),p) ) cv1 = curve_flip(cv1);
-    if ( !is_same(curve_source(cvx),p) ) cvx = curve_flip(cvx);
-      
-    typename X_curve_2::iterator xcit=cv0.begin();++xcit;
-    Point_2 p0(*xcit);
-    xcit=cv1.begin(); ++xcit;
-    Point_2 p1(*xcit);
-    xcit=cvx.begin(); ++xcit;
-    Point_2 px(*xcit);
-      
-    if (is_same(p0,p1))
-      return true; 
-      
-    int orient0=CGAL_LEDA_SCOPE::orientation(p0,p,px);
-    int orient1=CGAL_LEDA_SCOPE::orientation(p1,p,px);
-    int orient=orient0*orient1;
-      
-    if (orient < 0) { //one is a left_turn the other right_turn
-      return (orient0 == LEFT_TURN); //left_turn
-    }
-    else { //both are either left or right turns (or one is colinear)
-      return (CGAL_LEDA_SCOPE::orientation(p0,p,p1)==RIGHT_TURN); //right_turn
-    }
-  }
-
   bool point_is_same(const Point_2 & p, const Point_2 & q) const
   {
     return is_same(p, q);

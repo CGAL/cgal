@@ -171,8 +171,7 @@ public:
     
     // Since the curves are continuous, if they are not equal at q, the same
     // result also applies to q's left.
-    Comparison_result r = compare_y_at_x_2_object()(q, cv1, cv2);
-    if (r != EQUAL) return r;     
+    CGAL_precondition (compare_y_at_x_2_object()(q, cv1, cv2) == EQUAL);     
     
     // <cv2> and <cv1> meet at a point with the same x-coordinate as q
     // compare their derivatives.
@@ -182,7 +181,8 @@ public:
   /*! curve_compare_at_x_right() compares the y value of two curves in an
    * epsilon environment to the right of the x value of the input point
    * Preconditions: The point q is in the x range of the two curves, and both
-   * of them must be also be defined to its right.
+   * of them must be also be defined to its right. The two curves must also
+   * intersect at x(q).
    */
   Comparison_result curve_compare_at_x_right(const X_curve_2 & cv1,
                                              const X_curve_2 & cv2, 
@@ -210,8 +210,7 @@ public:
 
     // Since the curves are continuous, if they are not equal at q, the same
     // result also applies to q's left.
-    Comparison_result r = curve_compare_at_x(cv1, cv2, q);
-    if (r != EQUAL) return r;     
+    CGAL_precondition (curve_compare_at_x(cv1, cv2, q) == EQUAL);     
     
     // <cv1> and <cv2> meet at a point with the same x-coordinate as q
     // compare their derivatives.

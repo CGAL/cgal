@@ -115,7 +115,15 @@ public:
     else
       return point_righttop_most(curve_source(cv), curve_target(cv));
   }
-    
+
+  /*!
+   * The function restuns whether two sub-curves can be merged to create
+   * the input curve.
+   * \param whole The input curve (the merge result).
+   * \param part1 The first sub-curve.
+   * \param part2 The second sub-curve.
+   * \return (true) if whole == part1 + part2.
+   */
   bool curve_merge_condition(const X_curve_2 & whole,
 			     const X_curve_2 & part1,
 			     const X_curve_2 & part2) const
@@ -158,11 +166,179 @@ public:
 	else
 	  return (false);
   }
-    
+  
+  /*!
+   * Check whether the curve is degenerate.
+   * \param cv The input curve.
+   * \return (true) iff the curve source and target are the same.
+   */
   inline bool curve_is_degenerate(const X_curve_2 & cv) const
-  { return point_is_same(curve_source(cv),curve_target(cv)); }
+  { 
+    return point_is_same(curve_source(cv),curve_target(cv));
+  }
     
-public:
+  /*! 
+   * Check if the given query curve is encountered when rotating the first
+   * curve in a clockwise direction around a given point until reaching the
+   * second curve.
+   * \param cv The query curve.
+   * \param cv1 The first curve.
+   * \param cv2 The second curve.
+   * \param p The point around which we rotate cv1.
+   * \pre p is an end-point of all three curves.
+   * \return (true) if cv is between cv1 and cv2. If cv overlaps cv1 or cv2
+   * the result is always (false). If cv1 and cv2 overlap, the result is
+   * (true), unless cv1 also overlaps them.
+   */
+  bool curve_is_between_cw(const X_curve_2& cv, 
+                           const X_curve_2& cv1, 
+                           const X_curve_2& cv2, 
+                           const Point_2& p) const
+  {
+    // Find the direction of each segment.
+    Curve_dir_at_point     dir = _curve_direction_at_point (cv, p);
+    Curve_dir_at_point     dir1 = _curve_direction_at_point (cv1, p);
+    Curve_dir_at_point     dir2 = _curve_direction_at_point (cv2, p);
+
+    // Special treatment for the cases where cv1 or cv2 are vertical segments:
+    if (dir1 == DIR_UP || dir1 == DIR_DOWN)
+    {
+      if (dir2 == DIR_UP || dir2 == DIR_DOWN)
+      {
+	// Both cv1 and cv2 are vertical:
+	if (dir1 == DIR_UP && dir2 == DIR_DOWN)
+	  return (dir == DIR_RIGHT);
+	else if (dir1 == DIR_DOWN && dir2 == DIR_UP)
+	  return (dir == DIR_LEFT);
+	else
+	  return (dir != dir1);
+      }
+
+      // Only cv1 is vertical:
+      if (dir1 == DIR_UP)
+      {
+	if (dir2 == DIR_LEFT)
+	  return (dir == DIR_RIGHT ||
+		  dir == DIR_DOWN ||
+                  (dir == DIR_LEFT &&
+                   curve_compare_at_x_left (cv2, cv, p) == LARGER));
+	else
+	  return (dir == DIR_RIGHT &&
+		  curve_compare_at_x_right (cv2, cv, p) == SMALLER);
+      }
+      else
+      {
+	if (dir2 == DIR_LEFT)
+	  return (dir == DIR_LEFT &&
+		  curve_compare_at_x_left (cv2, cv, p) == LARGER);
+	else
+	  return (dir == DIR_LEFT ||
+		  dir == DIR_UP ||
+                  (dir == DIR_RIGHT &&
+                   curve_compare_at_x_right (cv2, cv, p) == SMALLER));
+      }
+    }
+
+    if (dir2 == DIR_UP || dir2 == DIR_DOWN)
+    {
+      // Only cv2 is vertical:
+      if (dir2 == DIR_UP)
+      {
+	if (dir1 == DIR_LEFT)
+	  return (dir == DIR_LEFT &&
+		  curve_compare_at_x_left (cv1, cv, p) == SMALLER);
+	else
+	  return (dir == DIR_LEFT || 
+		  dir == DIR_DOWN ||
+                  (dir == DIR_RIGHT &&
+                   curve_compare_at_x_right (cv1, cv, p) == LARGER));
+      }
+      else
+      {
+	if (dir1 == DIR_LEFT)
+	  return (dir == DIR_RIGHT ||
+		  dir == DIR_UP ||
+                  (dir == DIR_LEFT &&
+                   curve_compare_at_x_left (cv1, cv, p) == SMALLER));
+	else
+	  return (dir == DIR_RIGHT &&
+		  curve_compare_at_x_right (cv1, cv, p) == LARGER);
+      }
+    }
+
+    // Take care of the general 4 cases:
+    if (dir1 == DIR_LEFT && dir2 == DIR_LEFT)
+    {
+      // Case 1: Both cv1 and cv2 are defined to the left of p.
+      Comparison_result l_res = curve_compare_at_x_left (cv1, cv2, p);
+      
+      if (l_res == LARGER)
+      {
+	// Case 1(a) : cv1 is above cv2.
+	return (dir != DIR_LEFT ||
+		curve_compare_at_x_left (cv1, cv, p) == SMALLER ||
+                curve_compare_at_x_left (cv2, cv, p) == LARGER);
+      }
+      else if (l_res == SMALLER)
+      {
+	// Case 1(b): cv1 is below cv2.
+	return (dir == DIR_LEFT &&
+		curve_compare_at_x_left (cv1, cv, p) == SMALLER &&
+		curve_compare_at_x_left (cv2, cv, p) == LARGER);
+      }
+      else
+      {
+        // Overlapping segments.
+        return (dir != DIR_LEFT ||
+                curve_compare_at_x_left (cv1, cv, p) != EQUAL);
+      }
+    }
+    else if (dir1 == DIR_RIGHT && dir2 == DIR_RIGHT)
+    {
+      // Case 2: Both cv1 and cv2 are defined to the right of p.
+      Comparison_result r_res = curve_compare_at_x_right (cv1, cv2, p);
+
+      if (r_res == LARGER)
+      {
+	// Case 2(a) : cv1 is above cv2.
+	return (dir == DIR_RIGHT &&
+		curve_compare_at_x_right (cv1, cv, p) == LARGER &&
+		curve_compare_at_x_right (cv2, cv, p) == SMALLER);
+      }
+      else if (r_res == SMALLER)
+      {
+	// Case 2(b): cv1 is below cv2.
+	return (dir != DIR_RIGHT ||
+		curve_compare_at_x_right (cv1, cv, p) == LARGER ||
+                curve_compare_at_x_right (cv2, cv, p) == SMALLER);
+      }
+      else
+      {
+        // Overlapping segments.
+        return (dir != DIR_RIGHT ||
+                curve_compare_at_x_right (cv1, cv, p) != EQUAL);
+      }
+    }
+    else if (dir1 == DIR_LEFT && dir2 == DIR_RIGHT)
+    {
+      // Case 3: cv1 is defined to the left of p, and cv2 to its right.
+      return ((dir == DIR_LEFT &&
+	       curve_compare_at_x_left (cv1, cv, p) == SMALLER) ||
+	      (dir == DIR_RIGHT &&
+	       curve_compare_at_x_right (cv2, cv, p) == SMALLER) ||
+	      dir == DIR_UP);
+    }
+    else
+    {
+      // Case 4: cv1 is defined to the right of p, and cv2 to its left.
+      return ((dir == DIR_RIGHT &&
+	       curve_compare_at_x_right (cv1, cv, p) == LARGER) ||
+	      (dir == DIR_LEFT &&
+	       curve_compare_at_x_left (cv2, cv, p) == LARGER) ||
+	      dir == DIR_DOWN);
+    }
+  }
+
   /*! curve_compare_at_x_from_bottom()
    *
    * \precondition  cv1,cv2 are adjacent to q
@@ -292,9 +468,8 @@ public:
    */
   bool curve_is_unbounded(const X_curve_2 & cv) const 
   {
-    return 
-      curve_is_source_unbounded(cv)||
-      curve_is_target_unbounded(cv);
+    return (curve_is_source_unbounded(cv)||
+	    curve_is_target_unbounded(cv));
   }
     
   /*! curve_compare_at_x_left() is implemented based on the Has_left category
@@ -331,6 +506,69 @@ public:
     if (cr == SMALLER) return LARGER;
     if (cr == LARGER) return SMALLER;
     return EQUAL;
+  }
+
+protected:
+
+  /*!
+   * Enum used only be the curve_is_between_cw() function.
+   */
+  enum Curve_dir_at_point
+  {
+    DIR_UP,           // Vertical segment, point at 12 o'clock.
+    DIR_RIGHT,        // Non-vertical segment going towards the right.
+    DIR_DOWN,         // Vertical segment, point at 6 o'clock.
+    DIR_LEFT          // Non-vertical segment going towards the left.
+  };
+
+  /*!
+   * Return the curve direction, with respect to a given refernece point.
+   * \param cv The curve.
+   * \param p The reference point.
+   * \pre p must be an end-point of the segment.
+   * \return DIR_UP if cv is a vertical segment pointing at 12 o'clock;
+   *         DIR_RIGHT if cv is a non-vertical curve going to the right of p;
+   *         DIR_DOWN if cv is a vertical segment pointing at 6 o'clock;
+   *         DIR_LEFT if cv is a non-vertical curve going to the left of p;
+   */
+  Curve_dir_at_point _curve_direction_at_point (const X_curve_2& cv,
+						const Point_2& p) const
+  {
+    // p is one of the end-point. Compare it with the other end-point.
+    Comparison_result res;
+
+    if (curve_is_vertical(cv))
+    {
+      // Special treatment for vertical segments:
+      res = compare_xy(p, curve_source(cv));
+
+      if (res == EQUAL)
+      {
+	res = compare_xy(p, curve_target(cv));
+      }
+      else
+      {
+	// Make sure that p is indeed an end-point.
+	CGAL_precondition(compare_xy(p, curve_target(cv)) == EQUAL);
+      }
+
+      return ((res == SMALLER) ? DIR_UP : DIR_DOWN);
+    }
+
+    // In case cv is not vertical:
+    res = compare_x(p, curve_source(cv));
+
+    if (res == EQUAL)
+    {
+      res = compare_x(p, curve_target(cv));
+    }
+    else
+    {
+      // Make sure that p is indeed an end-point.
+      CGAL_precondition(compare_xy(p, curve_target(cv)) == EQUAL);
+    }
+
+    return ((res == SMALLER) ? DIR_RIGHT : DIR_LEFT);
   }
 };
 

@@ -267,18 +267,12 @@ class Arr_segment_circle_traits
     // Make sure that there is exactly one point.
     CGAL_assertion(n2 == 1);
 
+    // Make sure the two curves intersect at x(p).
+    CGAL_precondition(_compare_y (ps1[0], ps2[0]) == EQUAL);
+
     // If the curves are the same, they are equal to the left of p:
     if (curve_is_same(curve1,curve2))
       return (EQUAL);
-
-    // Compare the y co-ordinates of the two points we have just found.
-    Comparison_result result = _compare_y (ps1[0], ps2[0]);
-
-    // In case the two curves do not intersect at the x co-ordinate of p,
-    // just return the comparison result at p (since both curves are
-    // continuous).    
-    if (result != EQUAL)
-      return (result);
 
     // Otherwise, the two curves do intersect at p_int = ps1[0] = ps2[0]:
     // make a decision based on their partial derivatives.
@@ -376,7 +370,7 @@ class Arr_segment_circle_traits
     }
 
     // Use the x-coordinate of the point next to x.
-    result = compare_x (p_extr1, p_extr2);
+    Comparison_result result = compare_x (p_extr1, p_extr2);
 
     if (result == SMALLER)
     {
@@ -477,18 +471,12 @@ class Arr_segment_circle_traits
     // Make sure we have a single point.
     CGAL_assertion(n2 == 1);
 
+    // Make sure the two curves intersect at x(p).
+    CGAL_precondition(_compare_y (ps1[0], ps2[0]) == EQUAL);
+
     // If the two curves are the same, they are equal to the right of p:
     if (curve_is_same(curve1,curve2))
       return (EQUAL);
-
-    // Compare the y co-ordinates of the two points.
-    Comparison_result result = _compare_y (ps1[0], ps2[0]);
-
-    // In case the two curves do not intersect at the x co-ordinate of p,
-    // just return the comparison result at p (since both curves are
-    // continuous).    
-    if (result != EQUAL)
-      return (result);
 
     // Otherwise, the two curves do intersect at p_int = ps1[0] = ps2[0]:
     // make a decision based on their partial derivatives.
@@ -586,7 +574,7 @@ class Arr_segment_circle_traits
     }
 
     // Use the x-coordinate of the point next to x.
-    result = compare_x (p_extr1, p_extr2);
+    Comparison_result result = compare_x (p_extr1, p_extr2);
 
     if (result == LARGER)
     {
@@ -665,244 +653,10 @@ class Arr_segment_circle_traits
     return (_compare_y (ps[0], p));
   }
 
-  // Check whether the given curve in between c1 and c2, when going in the
-  // clockwise direction from p from c1 to c2.
-  // Notice that all three curves share the same end-point p.
-  bool curve_is_between_cw (const X_curve_2& curve,
-			    const X_curve_2& c1, const X_curve_2& c2,
-			    const Point_2& p) const
-  {
-    CGAL_precondition(is_x_monotone(curve));
-    CGAL_precondition(is_x_monotone(c1));
-    CGAL_precondition(is_x_monotone(c2));
-
-    // Make sure that p is the source of all curves (otherwise flip them).
-    X_curve_2 cv1 = c1;
-    X_curve_2 cv2 = c2;
-    X_curve_2 cvx = curve;
-
-    if (cv1.source() != p)
-      cv1 = c1.flip();
-    if (cv2.source() != p)
-      cv2 = c2.flip();
-    if (cvx.source() != p)
-      cvx = curve.flip();
-
-    CGAL_assertion(cv1.source() == p);
-    CGAL_assertion(cv2.source() == p);
-    CGAL_assertion(cvx.source() == p);
-
-    // Make sure no two curves overlap.
-    // Assumes that all three source points are the same (equal to p).
-    if ((cv1.conic() == cv2.conic() &&
-	 cv1.conic().orientation() == cv2.conic().orientation() &&
-	 (cv1.contains_point(cv2.target()) ||
-	  cv2.contains_point(cv1.target()))))
-      return false;
-
-    if((cv1.conic() == cvx.conic() &&
-	cv1.conic().orientation() == cvx.conic().orientation() &&
-	(cv1.contains_point(cvx.target()) ||
-	 cvx.contains_point(cv1.target()))))
-      return false;
-
-    if((cvx.conic() == cv2.conic() &&
-	cvx.conic().orientation() == cv2.conic().orientation() &&
-	(cvx.contains_point(cv2.target()) ||
-	 cv2.contains_point(cvx.target()))))
-      return false;
-
-    // Decide whether each arc is defined to the left or to the right of p.
-    bool cv1_is_left = (compare_x(cv1.target(), p) == SMALLER);
-    bool cv2_is_left = (compare_x(cv2.target(), p) == SMALLER);
-    bool cvx_is_left = (compare_x(cvx.target(), p) == SMALLER);
-
-    // Special treatment for vertical segments:
-    // For every curve we define an indicator, which is 0 if it is not a
-    // vertical segment, and -1 / 1 if it is a vertical segment going up / down
-    // resp.
-    int cv1_vertical = (cv1.is_vertical_segment()) ?
-      (_compare_y(cv1.target(), p) == LARGER ? 1 : -1) : 0;
-    int cv2_vertical = (cv2.is_vertical_segment()) ?
-      (_compare_y(cv2.target(), p) == LARGER ? 1 : -1) : 0;
-    int cvx_vertical = (cvx.is_vertical_segment()) ?
-      (_compare_y(cvx.target(), p) == LARGER ? 1 : -1) : 0;
-
-    if (cv1_vertical != 0)
-    {
-      // cv1 is a vertical segment:
-      if (cv2_vertical != 0)
-      {
-	// Both cv1 and cv2 are vertical segments:
-	if ((cv1_vertical == 1) && (cv2_vertical == -1))
-	  return (!cvx_is_left);
-	else if ((cv1_vertical == -1) && (cv2_vertical == 1))
-	  return (cvx_is_left);
-	else
-	  return (false);
-      }
-      
-      if (cv1_vertical == 1)
-      {
-	// cv1 is a vertical segment going up:
-	if (cv2_is_left)
-	{
-	  return ((!cvx_is_left) ||
-		  (cvx_is_left &&
-		   curve_compare_at_x_left (cv2, cvx, p) == LARGER));
-	}
-	else
-	{
-	  return (!cvx_is_left &&
-		  curve_compare_at_x_right (cv2, cvx, p) == SMALLER);
-	}
-      }
-      else
-      {
-	// cv1 is a vertical segment going down:
-	if (cv2_is_left)
-	{
-	  return (cvx_is_left &&
-		  curve_compare_at_x_left (cv2, cvx, p) == LARGER);
-	}
-	else
-	{
-	  return ((cvx_is_left) ||
-		  (cvx_vertical == 1) ||
-		  (!cvx_is_left &&
-		   curve_compare_at_x_right (cv2, cvx, p) == SMALLER));
-	}
-      }
-    }
-
-    if (cv2_vertical != 0)
-    {
-      // Only cv2 is a vertical segment:
-      if (cv2_vertical == 1)
-      {
-	// cv2 is a vertical segment going up:
-	if (cv1_is_left)
-	{
-	  return (cvx_is_left &&
-		  curve_compare_at_x_left (cv1, cvx, p) == SMALLER);
-	}
-	else
-	{
-	  return ((cvx_is_left) ||
-		  (cvx_vertical == -1) ||
-		  (!cvx_is_left &&
-		   curve_compare_at_x_right (cv1, cvx, p) == LARGER));
-	}
-      }
-      else
-      {
-	// cv2 is a vertical segment going down:
-	if (cv1_is_left)
-	{
-	  return ((!cvx_is_left) ||
-		  (cvx_vertical == 1) ||
-		  (cvx_is_left &&
-		   curve_compare_at_x_left (cv1, cvx, p) == SMALLER));
-	}
-	else
-	{
-	  return ((!cvx_is_left) &&
-		  curve_compare_at_x_right (cv1, cvx, p) == LARGER);
-	}
-      }
-    }
-
-    if (cvx_vertical != 0)
-    {
-      // Only cvx is a vertical segment:
-      if (cvx_vertical == 1)
-      {
-	// cvx is a vertical segment going up:
-	if (cv1_is_left && !cv2_is_left)
-	  return (true);
-	else if (cv1_is_left && cv2_is_left)
-	  return (curve_compare_at_x_left(cv1, cv2, p) == LARGER);
-	else if (!cv1_is_left && !cv2_is_left)
-	  return (curve_compare_at_x_right(cv1, cv2, p) == SMALLER);
-      }
-      else
-      {
-	// cvx is a vertical segment going down:
-	if (!cv1_is_left && cv2_is_left)
-	  return (true);
-	else if (cv1_is_left && cv2_is_left)
-	  return (curve_compare_at_x_left(cv1, cv2, p) == LARGER);
-	else if (!cv1_is_left && !cv2_is_left)
-	  return (curve_compare_at_x_right(cv1, cv2, p) == SMALLER);
-      }
-
-      return (false);
-    }
-
-    // None of the three curves is a vertical segment:
-    // Check the following 4 cases:
-    if (cv1_is_left && cv2_is_left)
-    {
-      // Case 1: Both c1 and c2 are defined to the left of p.
-      if (curve_compare_at_x_left (cv1, cv2, p) == LARGER)
-      { 
-	// c1 is above c2:
-        return (!cvx_is_left ||
-		!(curve_compare_at_x_left (cv2, cvx, p) == SMALLER &&
-                  curve_compare_at_x_left (cv1, cvx, p) == LARGER));
-      }
-      else
-      { 
-	// c2 is above c1:
-        return (cvx_is_left &&
-		curve_compare_at_x_left (cv1, cvx, p) == SMALLER &&
-                curve_compare_at_x_left (cv2, cvx, p) == LARGER);
-      }
-    }
-    else if (!cv1_is_left && !cv2_is_left) 
-    {
-      // Case 2: Both c1 and c2 are defined to the right of p.
-      if (curve_compare_at_x_right (cv1, cv2, p) == LARGER)
-      {
-	// c1 is above c2:
-        return (!cvx_is_left &&
-		curve_compare_at_x_right (cv2, cvx, p) == SMALLER &&
-                curve_compare_at_x_right (cv1, cvx, p) == LARGER);
-      }
-      else
-      { 
-	// c2 is above c1:
-        return (cvx_is_left ||
-		!(curve_compare_at_x_right (cv1, cvx, p) == SMALLER &&
-                  curve_compare_at_x_right (cv2, cvx, p) == LARGER));
-      }
-    }
-    else if (cv1_is_left && !cv2_is_left)
-    {
-      // Case 3: c1 is defined to the left and c2 is to the right of p.
-      if (cvx_is_left)
-        return (curve_compare_at_x_left(cv1, cvx, p) == SMALLER);
-      else
-        return (curve_compare_at_x_right(cv2, cvx, p) == SMALLER); 
-    }
-    else if (!cv1_is_left && cv2_is_left)
-    {
-      // Case 4: c1 is defined to the right and c2 is to the left of p. 
-      if (cvx_is_left)
-        return (curve_compare_at_x_left (cv2, cvx, p) == LARGER);
-      else
-        return (curve_compare_at_x_right(cv1, cvx, p) == LARGER); 
-    }
-
-    // We should never reach here.
-    CGAL_assertion(false);
-    return false;
-  }
-
   // Check whether the two curves are identical.
   bool curve_is_same (const Point_2 & p, const Point_2 & q) const
   {
-    return p == q;
+    return (p == q);
   }
 
   // Check whether the two curves are identical.

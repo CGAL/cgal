@@ -38,7 +38,6 @@ protected:
   bool curve_compare_at_x_smth_wrapper( std::istringstream& strLine, 
                                         std::string& strCommand  );
   bool curve_get_point_status_wrapper( std::istringstream& strLine );
-  bool curve_is_between_cw_wrapper( std::istringstream& strLine );
   bool curve_is_same_wrapper( std::istringstream& strLine );
   bool curve_src_trg_wrapper( std::istringstream & strLine,
                               std::string & strCommand );
@@ -190,9 +189,6 @@ perform_test( std::ifstream& is )
     }
     else if( strCommand == "curve_get_point_status" ) { 
       test_result &= curve_get_point_status_wrapper( strLine );
-    }
-    else if( strCommand == "curve_is_between_cw" ) {
-      test_result &= curve_is_between_cw_wrapper( strLine );
     }
     else if( strCommand == "curve_is_same" ) {
       test_result &= curve_is_same_wrapper( strLine );
@@ -404,40 +400,6 @@ curve_get_point_status_wrapper( std::istringstream& strLine )
   real_answer = tr.curve_get_point_status( all_curves_vec[index1], 
                                            all_points_vec[index2] );
   return print_was_successful_or_not( exp_answer, real_answer );
-}
-
-/*!
- * input case:
- * curve_is_between_cw n1 n2 n3 n4 BOOL_RESULT, where
- * n1, n2, n3 - curves indeces in all_curves_vec
- * n4 - point index in all_point_vec
- * BOOL_RESULT - expected result, or FALSE or TRUE string  
- */
-template< class Traits_class, class Number_type >
-bool Base_traits_test< Traits_class, Number_type >::
-curve_is_between_cw_wrapper( std::istringstream& strLine )
-{
-  int index1, index2, index3, index4;
-  bool exp_answer, real_answer;
-
-  strLine >> index1 >> index2 >> index3 >> index4;
-  exp_answer = get_expected_boolean( strLine );
-  std::cout << "Test: curve_is_between_cw( Curve" << index1
-            << ", Curve"<< index2 << ", Curve" << index3 
-            << ", " <<  all_points_vec[index4] << " ) ? " << exp_answer
-            << std::endl;
-  if( ! ( tr.is_x_monotone( all_curves_vec[index1] ) &&
-          tr.is_x_monotone( all_curves_vec[index2] ) &&
-          tr.is_x_monotone( all_curves_vec[index3] ) ) ) {
-    std::cout << "Was NOT successful" << std::endl;
-    std::cout << "The input curve must be X-monotone" << std::endl;
-    return false;    
-  }
-  real_answer = tr.curve_is_between_cw( all_curves_vec[index1],
-                                        all_curves_vec[index2],
-                                        all_curves_vec[index3], 
-                                        all_points_vec[index4] );
-  return print_was_successful_or_not( exp_answer, real_answer );  
 }
 
 /*!

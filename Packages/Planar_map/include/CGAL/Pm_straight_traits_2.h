@@ -130,16 +130,7 @@ public:
     CURVE_LEFT = 3,
     CURVE_RIGHT = 1
   } Curve_status;
-  
-  /*
-    typedef enum
-    { 
-    X_BOUNDED=0,
-    X_TARGET_UNBOUNDED=1, 
-    X_SOURCE_UNBOUNDED=2, 
-    X_UNBOUNDED=8
-    } Object_type;
-  */        
+       
   typedef enum
   {
     TOP=0,
@@ -518,10 +509,7 @@ public:
     CGAL_precondition(is_left(leftmost(curve_source(cv2),curve_target(cv2)), 
 			      q));
                                     
-    Comparison_result r = curve_compare_at_x(cv1, cv2, q);
-                  
-    if ( r != EQUAL)
-      return r;     // since the curve is continous 
+    CGAL_precondition(curve_compare_at_x(cv1, cv2, q) == EQUAL);
                   
     // <cv2> and <cv1> meet at a point with the same x-coordinate as q
     // compare their derivatives
@@ -540,10 +528,7 @@ public:
     CGAL_precondition(is_right(rightmost(curve_source(cv2), curve_target(cv2)),
 			       q));
             
-    Comparison_result r = curve_compare_at_x(cv1, cv2, q);
-      
-    if ( r != EQUAL)
-      return r;     // since the curve is continous (?)
+    CGAL_precondition(curve_compare_at_x(cv1, cv2, q) == EQUAL);
       
     // <cv1> and <cv2> meet at a point with the same x-coordinate as q
     // compare their derivatives
@@ -592,27 +577,7 @@ public:
         }
       return X_curve();
     }
-/*
-  const Direction direction(const X_curve &cv) const
-  {
-    switch(cv.current_state())
-      {
-      case X_BOUNDED:
-        return ((X_bounded_curve&)cv).direction();
-      case X_TARGET_UNBOUNDED:
-      case X_SOURCE_UNBOUNDED:
-        return ((X_target_unbounded_curve&)cv).direction();
-      case X_UNBOUNDED:
-        return ((X_unbounded_curve&)cv).direction();
-      default:
-        CGAL_assertion(cv.current_state()==X_BOUNDED||cv.current_state()==
-        X_TARGET_UNBOUNDED||
-        cv.current_state()==X_SOURCE_UNBOUNDED||cv.current_state()==
-        X_UNBOUNDED);
-      }
-    return Direction();
-  }
-*/          
+   
   Curve_status curve_get_status(const X_curve &cv) const
     {
       if (curve_is_vertical(cv)) 
@@ -629,133 +594,6 @@ public:
           else
             return CURVE_LEFT;
         }
-    }
-  
-  bool curve_is_between_cw(const X_curve &cv, 
-                           const X_curve &first, 
-                           const X_curve &second, 
-                           const Point &cp)        const
-
-    // TRUE if cv is between first and second in cw direction
-    // precondition: cv, first and second have a common endpoint
-    // precondition: first, second, cv are pairwise interior disjoint
-    {
-#ifdef CGAL_PMBB_DEBUG
-      std::cerr << "\nbool curve_is_between_cw(" << cv << "," << first << "," 
-                << second << "," << cp << ")" << std::endl;
-#endif
-      // CGAL_assertion(is_intersection_simple(first, second);
-      // CGAL_assertion(is_intersection_simple(first, *this);
-      // CGAL_assertion(is_intersection_simple(*this, second);
-      
-      Curve_status cv0_status, cv1_status, cvx_status;
-      int cv0_cv1, cv0_cvx, cv1_cvx;
-      cv0_cv1 = cv0_cvx = cv1_cvx = -1;
-      
-      X_curve cv0 = first;
-      X_curve cv1 = second;
-      X_curve cvx = cv;
-      
-      if ( !is_same(curve_source(cv0),cp) ) cv0 = curve_flip(cv0);
-      if ( !is_same(curve_source(cv1),cp) ) cv1 = curve_flip(cv1);
-      if ( !is_same(curve_source(cvx),cp) ) cvx = curve_flip(cvx);
-      
-      cv0_status = curve_get_status(cv0);
-      cv1_status = curve_get_status(cv1);
-      cvx_status = curve_get_status(cvx);
-      
-      //        the circle:                                 0
-      //                                                 ** | **
-      //                                                *        *
-      //                                             3 *         * 1
-      //                                                *        *
-      //                                                 ** | **
-      //                                                    2
-      
-      if (cv0_status == cv1_status)
-        {
-          if (cv0_status == CURVE_RIGHT)
-            cv0_cv1 = curve_compare_at_x_right(cv0, cv1, cp);
-          else if (cv0_status == CURVE_LEFT)
-            cv0_cv1 = curve_compare_at_x_left(cv0, cv1, cp);
-        }
-      if (cv0_status == cvx_status)
-        {
-          if (cv0_status == CURVE_RIGHT)
-            cv0_cvx = curve_compare_at_x_right(cv0, cvx, cp);
-          else if (cv0_status == CURVE_LEFT)
-            cv0_cvx = curve_compare_at_x_left(cv0, cvx, cp);
-        }
-      if (cv1_status == cvx_status)
-        {
-          if (cv1_status == CURVE_RIGHT)
-            cv1_cvx = curve_compare_at_x_right(cv1, cvx, cp);
-          if (cv1_status == CURVE_LEFT)
-            cv1_cvx = curve_compare_at_x_left(cv1, cvx, cp);
-        }
-      
-      if (cv0_status == cv1_status)
-        {
-          if (cv0_status == CURVE_LEFT)
-            {
-              if ( ((cv0_cv1==1) && (cvx_status==cv0_status) && 
-                    ((cv0_cvx==-1) || (cv1_cvx==1))) ||
-                   ((cv0_cv1==1) && (cvx_status!=cv0_status)) ||
-                   ((cv0_cv1==-1) && (cvx_status==cv0_status) && 
-                    ((cv0_cvx==-1) && (cv1_cvx==1))) )
-                return true;
-            }
-          if (cv0_status == CURVE_RIGHT)
-            {
-              if ( ((cv0_cv1==1) && (cvx_status==cv0_status) && 
-                    ((cv0_cvx==1) && (cv1_cvx==-1))) ||
-                   ((cv0_cv1==-1) && (cvx_status!=cv0_status)) ||
-                   ((cv0_cv1==-1) && (cvx_status==cv0_status) && 
-                    ((cv0_cvx==1) || (cv1_cvx==-1))) )
-                return true;
-            }
-          return false;
-        }
-      // else do the following
-      
-      if (cv0_status == cvx_status)
-        {
-          if ( ((cv0_status == CURVE_LEFT) && (cv0_cvx==-1)) ||
-               ((cv0_status == CURVE_RIGHT) && (cv0_cvx==1)) )
-            return true;
-          
-          //Addition by iddo for enabeling addition of null segments - testing
-          if ( (cv0_status==CURVE_VERTICAL_DOWN)&&
-               ((curve_source(cv0)==curve_target(cv0))||
-                (curve_source(cvx)==curve_target(cvx))) )
-            return true; //a null segment (=point) 
-          
-          return false;
-        }
-      
-      if (cv1_status == cvx_status)
-        {
-          if ( ((cv1_status == CURVE_LEFT) && (cv1_cvx==1)) ||
-               ((cv1_status == CURVE_RIGHT) && (cv1_cvx==-1)) )
-            return true;
-          
-          //Addition by iddo for enabeling addition of null segments - testing
-          if ( (cv1_status==CURVE_VERTICAL_DOWN)&&
-               ((curve_source(cv1)==curve_target(cv1))
-                ||(curve_source(cvx)==curve_target(cvx))) )
-            return true; //a null segment (=point)  
-          
-          return false;
-        }
-      
-      // cv1 and cv0 are on diffrent part of the circle - it is easy
-      if ( ((cv1_status - cv0_status + 4)%4) < 
-           ((cvx_status - cv0_status + 4)%4) )
-        return false;
-      else
-        // if there is an equality or inequality to the other side
-        // everything is ok
-        return true;
     }
   
   Comparison_result compare_x(const Point &p1, const Point &p2) const

@@ -33,19 +33,18 @@ curve_compare_at_x        0 2 3 EQUAL.      # Intersection point.
 curve_compare_at_x        0 2 4 SMALLER.
 
 curve_compare_at_x_left   0 1 1 LARGER.
-curve_compare_at_x_left   0 1 1 LARGER.
 curve_compare_at_x_left   0 3 1 LARGER.
 curve_compare_at_x_left   0 4 1 LARGER.
 curve_compare_at_x_left   1 3 1 LARGER.
 curve_compare_at_x_left   1 4 1 SMALLER.
 curve_compare_at_x_left   3 4 1 SMALLER.
+curve_compare_at_x_left   0 3 3 SMALLER.
 
-curve_compare_at_x_right  0 1 0 LARGER.      
+curve_compare_at_x_right  0 4 0 LARGER.
 curve_compare_at_x_right  0 1 1 SMALLER.
-curve_compare_at_x_right  0 2 3 SMALLER.
 curve_compare_at_x_right  0 3 1 SMALLER.
 curve_compare_at_x_right  0 4 1 SMALLER.
 curve_compare_at_x_right  1 3 1 LARGER.
 curve_compare_at_x_right  1 4 1 SMALLER.
-curve_compare_at_x_right  3 4 1 SMALLER.
-
+curve_compare_at_x_right  3 4 1 SMALLER.    
+curve_compare_at_x_right  0 2 3 SMALLER.

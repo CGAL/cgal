@@ -194,11 +194,8 @@ public:
 		       (compare_x(curve_target(cvb),p) == SMALLER));
 
     // Compare the two curves at x(p).
-    Comparison_result r = curve_compare_at_x(cva, cvb, p);
+    CGAL_precondition (curve_compare_at_x(cva, cvb, p) == EQUAL);
     
-    if ( r != EQUAL)
-      return r;     // since the curve is continous 
-
     //otherwise
     // <cv1> and <cv2> meet at a point with the same x-coordinate as p
     // compare their derivatives
@@ -280,9 +277,6 @@ public:
 
   }
 
-  
-
-
   Comparison_result curve_compare_at_x_right(const X_curve_2& cva, 
 					     const X_curve_2& cvb,
 					     const Point_2& p) const {
@@ -299,10 +293,8 @@ public:
 		       (compare_x(curve_target(cvb),p) == LARGER));
 
     // Compare the two curves at x(p).
-    Comparison_result r = curve_compare_at_x(cva, cvb, p);
+    CGAL_precondition (curve_compare_at_x(cva, cvb, p) == EQUAL);
     
-    if ( r != EQUAL)
-      return r;     // since the curve is continous 
     // <cv1> and <cv2> meet at a point with the same x-coordinate as p
     // compare their derivatives
 
@@ -389,70 +381,6 @@ public:
     CGAL_precondition(curve_is_in_x_range(cv, p));
   
     return (_compare_value(curve_calc_point(cv, p).y(), p.y()));
-  }
-
-
-  bool curve_is_between_cw(const X_curve_2& cv,const X_curve_2& first,
-                           const X_curve_2& second, const Point_2& p) const
-  {
-    CGAL_precondition(is_x_monotone(cv));
-    CGAL_precondition(is_x_monotone(first));
-    CGAL_precondition(is_x_monotone(second));
-
-    X_curve_2 cv0 = first;
-    X_curve_2 cv1 = second;
-    X_curve_2 cvx = cv;
-
-    if ( !is_same(cv0.s,p) ) cv0 = curve_flip(cv0);
-    if ( !is_same(cv1.s,p) ) cv1 = curve_flip(cv1);
-    if ( !is_same(cvx.s,p) ) cvx = curve_flip(cvx);
-
-    bool cv0_is_left = (compare_x(cv0.t,cv0.s)==SMALLER);
-    bool cv1_is_left = (compare_x(cv1.t,cv1.s)==SMALLER);
-    bool cvx_is_left = (compare_x(cvx.t,cvx.s)==SMALLER);
-    
-    //4 cases - 
-    if (cv0_is_left && cv1_is_left) {
-      if (curve_compare_at_x_left(cv0,cv1,p)==LARGER) //cv0 above cv1
-        return (!cvx_is_left ||
-		!((curve_compare_at_x_left(cv1,cvx,p)==SMALLER)&&
-		  (curve_compare_at_x_left(cv0,cvx,p)==LARGER)) );
-      else { //cv1 above cv0 
-        return (cvx_is_left &&
-		(curve_compare_at_x_left(cv0,cvx,p)==SMALLER)&&
-                (curve_compare_at_x_left(cv1,cvx,p)==LARGER));
-      }
-    }
-
-    if (!cv0_is_left && !cv1_is_left) {
-      if (curve_compare_at_x_right(cv0,cv1,p)==LARGER) //cv0 above cv1
-        return (!cvx_is_left &&
-		(curve_compare_at_x_right(cv1,cvx,p)==SMALLER)&&
-                (curve_compare_at_x_right(cv0,cvx,p)==LARGER));
-      else //cv1 above cv0
-        return (cvx_is_left ||
-		!((curve_compare_at_x_right(cv0,cvx,p)==SMALLER)&&
-		  (curve_compare_at_x_right(cv1,cvx,p)==LARGER)) );
-    }
-
-    if (cv0_is_left && !cv1_is_left) {
-      if (cvx_is_left)
-        return (curve_compare_at_x_left(cv0,cvx,p)==SMALLER);
-      else
-        return (curve_compare_at_x_right(cv1,cvx,p)==SMALLER); 
-    }
-
-    if (!cv0_is_left && cv1_is_left) {
-      if (cvx_is_left)
-        return (curve_compare_at_x_left(cv1,cvx,p)==LARGER);
-      else
-        return (curve_compare_at_x_right(cv0,cvx,p)==LARGER); 
-    }
-
-    //shouldn't get here
-    CGAL_assertion(false);
-    return false;
-
   }
 
   bool point_is_same(const Point_2 & p, const Point_2 & q) const

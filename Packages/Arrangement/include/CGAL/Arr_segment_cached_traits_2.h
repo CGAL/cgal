@@ -274,12 +274,12 @@ public:
 
   /*!
    * Compares the y value of two curves in an epsilon environment to the left
-   * of the x-value of the input point.
+   * of the x-value of their intersection point.
    * \param cv1 The first curve.
    * \param cv2 The second curve.
    * \param q The point.
    * \pre The point q is in the x range of the two curves, and both of them 
-   * must be also be defined to its left.
+   * must be also be defined to its left. Furthermore, cv1(x(q) == cv2(x(q)).
    * \return The relative position of cv1 with respect to cv2 to the left of
    * x(q): LARGER, SMALLER or EQUAL.
    */
@@ -302,28 +302,24 @@ public:
     CGAL_precondition (less_x(cv2.ps, q) || less_x(cv2.pt, q));
     CGAL_precondition (!(less_x(cv2.ps, q) && less_x(cv2.pt, q)));
     
-    // Since the curves are continuous, if they are not equal at q, the same
-    // result also applies to q's left.
-    Comparison_result res = 
-      compare_y_at_x_2_object()(q, cv1.line, cv2.line);
-
-    if (res != EQUAL)
-      return (res);     
+    // Notice q is a placeholder for the x coordinate of the two segments.
+    // That is, if we compare them at x(q) the result should be EQUAL.
+    CGAL_precondition(compare_y_at_x_2_object()(q,cv1.line,cv2.line) == EQUAL);
     
-    // <cv2> and <cv1> meet at a point with the same x-coordinate as q
-    // compare their derivatives.
+    // Compare the slopes of the two segments to determine thir relative
+    // position immediately to the left of q.
     // Notice we use the supporting lines in order to compare the slopes.
     return (compare_slope_2_object()(cv2.line, cv1.line));
   }
 
   /*!
    * Compares the y value of two curves in an epsilon environment to the right
-   * of the x-value of the input point.
+   * of the x-value of their intersection point.
    * \param cv1 The first curve.
    * \param cv2 The second curve.
    * \param q The point.
    * \pre The point q is in the x range of the two curves, and both of them 
-   * must be also be defined to its right.
+   * must be also be defined to its right. Furthermore, cv1(x(q) == cv2(x(q)).
    * \return The relative position of cv1 with respect to cv2 to the right of
    * x(q): LARGER, SMALLER or EQUAL.
    */
@@ -343,17 +339,13 @@ public:
     
     CGAL_precondition (less_x(q, cv2.ps) || less_x(q, cv2.pt));
     CGAL_precondition (!(less_x(q, cv2.ps) && less_x(q, cv2.pt)));
-    
-    // Since the curves are continuous, if they are not equal at q, the same
-    // result also applies to q's right.
-    Comparison_result res =
-      compare_y_at_x_2_object()(q, cv1.line, cv2.line);
 
-    if (res != EQUAL)
-      return (res);     
+    // Notice q is a placeholder for the x coordinate of the two segments.
+    // That is, if we compare them at x(q) the result should be EQUAL.
+    CGAL_precondition(compare_y_at_x_2_object()(q,cv1.line,cv2.line) == EQUAL);
     
-    // <cv1> and <cv2> meet at a point with the same x-coordinate as q
-    // compare their derivatives
+    // Compare the slopes of the two segments to determine thir relative
+    // position immediately to the right of q.
     // Notice we use the supporting lines in order to compare the slopes.
     return (compare_slope_2_object()(cv1.line, cv2.line));
   }
@@ -394,168 +386,6 @@ public:
 	return (res1);
       else
 	return (EQUAL);
-    }
-  }
-
-  /*! 
-   * Check if the given query segment is encountered when rotating the first
-   * segment in a clockwise direction around a given point until reaching the
-   * segment curve.
-   * \param cv The query segment.
-   * \param cv1 The first segment.
-   * \param cv2 The second segment.
-   * \param p The point around which we rotate cv1.
-   * \pre p is an end-point of all three segments.
-   * \return (true) if cv is between cv1 and cv2. If cv overlaps cv1 or cv2
-   * the result is always (false). If cv1 and cv2 overlap, the result is
-   * (true), unless cv1 also overlaps them.
-   */
-  bool curve_is_between_cw(const X_curve_2& cv, 
-                           const X_curve_2& cv1, 
-                           const X_curve_2& cv2, 
-                           const Point_2& p) const
-  {
-    // Find the direction of each segment.
-    Segment_dir     dir = _curve_direction(cv, p);
-    Segment_dir     dir1 = _curve_direction(cv1, p);
-    Segment_dir     dir2 = _curve_direction(cv2, p);
-
-    // Special treatment for the cases where cv1 or cv2 are vertical segments:
-    if (cv1.is_vert)
-    {
-      if (cv2.is_vert)
-      {
-	// Both cv1 and cv2 are vertical:
-	if (dir1 == DIR_UP && dir2 == DIR_DOWN)
-	  return (dir == DIR_RIGHT);
-	else if (dir1 == DIR_DOWN && dir2 == DIR_UP)
-	  return (dir == DIR_LEFT);
-	else
-	  return (dir != dir1);
-      }
-
-      // Only cv1 is vertical:
-      if (dir1 == DIR_UP)
-      {
-	if (dir2 == DIR_LEFT)
-	  return (dir == DIR_RIGHT ||
-		  dir == DIR_DOWN ||
-                  (dir == DIR_LEFT &&
-                   _curve_compare_slope_left (cv2, cv) == LARGER));
-	else
-	  return (dir == DIR_RIGHT &&
-		  _curve_compare_slope_right (cv2, cv) == SMALLER);
-      }
-      else
-      {
-	if (dir2 == DIR_LEFT)
-	  return (dir == DIR_LEFT &&
-		  _curve_compare_slope_left (cv2, cv) == LARGER);
-	else
-	  return (dir == DIR_LEFT ||
-		  dir == DIR_UP ||
-                  (dir == DIR_RIGHT &&
-                   _curve_compare_slope_right (cv2, cv) == SMALLER));
-      }
-    }
-
-    if (cv2.is_vert)
-    {
-      // Only cv2 is vertical:
-      if (dir2 == DIR_UP)
-      {
-	if (dir1 == DIR_LEFT)
-	  return (dir == DIR_LEFT &&
-		  _curve_compare_slope_left (cv1, cv) == SMALLER);
-	else
-	  return (dir == DIR_LEFT || 
-		  dir == DIR_DOWN ||
-                  (dir == DIR_RIGHT &&
-                   _curve_compare_slope_right (cv1, cv) == LARGER));
-      }
-      else
-      {
-	if (dir1 == DIR_LEFT)
-	  return (dir == DIR_RIGHT ||
-		  dir == DIR_UP ||
-                  (dir == DIR_LEFT &&
-                   _curve_compare_slope_left (cv1, cv) == SMALLER));
-	else
-	  return (dir == DIR_RIGHT &&
-		  _curve_compare_slope_right (cv1, cv) == LARGER);
-      }
-    }
-
-    // Take care of the general 4 cases:
-    if (dir1 == DIR_LEFT && dir2 == DIR_LEFT)
-    {
-      // Case 1: Both cv1 and cv2 are defined to the left of p.
-      Comparison_result l_res = _curve_compare_slope_left (cv1, cv2);
-      
-      if (l_res == LARGER)
-      {
-	// Case 1(a) : cv1 is above cv2.
-	return (dir != DIR_LEFT ||
-		_curve_compare_slope_left (cv1, cv) == SMALLER ||
-                _curve_compare_slope_left (cv2, cv) == LARGER);
-      }
-      else if (l_res == SMALLER)
-      {
-	// Case 1(b): cv1 is below cv2.
-	return (dir == DIR_LEFT &&
-		_curve_compare_slope_left (cv1, cv) == SMALLER &&
-		_curve_compare_slope_left (cv2, cv) == LARGER);
-      }
-      else
-      {
-        // Overlapping segments.
-        return (dir != DIR_LEFT ||
-                _curve_compare_slope_left (cv1, cv) != EQUAL);
-      }
-    }
-    else if (dir1 == DIR_RIGHT && dir2 == DIR_RIGHT)
-    {
-      // Case 2: Both cv1 and cv2 are defined to the right of p.
-      Comparison_result r_res = _curve_compare_slope_right (cv1, cv2);
-
-      if (r_res == LARGER)
-      {
-	// Case 2(a) : cv1 is above cv2.
-	return (dir == DIR_RIGHT &&
-		_curve_compare_slope_right (cv1, cv) == LARGER &&
-		_curve_compare_slope_right (cv2, cv) == SMALLER);
-      }
-      else if (r_res == SMALLER)
-      {
-	// Case 2(b): cv1 is below cv2.
-	return (dir != DIR_RIGHT ||
-		_curve_compare_slope_right (cv1, cv) == LARGER ||
-                _curve_compare_slope_right (cv2, cv) == SMALLER);
-      }
-      else
-      {
-        // Overlapping segments.
-        return (dir != DIR_RIGHT ||
-                _curve_compare_slope_right (cv1, cv) != EQUAL);
-      }
-    }
-    else if (dir1 == DIR_LEFT && dir2 == DIR_RIGHT)
-    {
-      // Case 3: cv1 is defined to the left of p, and cv2 to its right.
-      return ((dir == DIR_LEFT &&
-	       _curve_compare_slope_left (cv1, cv) == SMALLER) ||
-	      (dir == DIR_RIGHT &&
-	       _curve_compare_slope_right (cv2, cv) == SMALLER) ||
-	      dir == DIR_UP);
-    }
-    else
-    {
-      // Case 4: cv1 is defined to the right of p, and cv2 to its leftt.
-      return ((dir == DIR_RIGHT &&
-	       _curve_compare_slope_right (cv1, cv) == LARGER) ||
-	      (dir == DIR_LEFT &&
-	       _curve_compare_slope_left (cv2, cv) == LARGER) ||
-	      dir == DIR_DOWN);
     }
   }
 
@@ -807,81 +637,6 @@ public:
   }
 
 private:
-
-  /*!
-   * Enum used only be the curve_is_between_clockwise() function.
-   */
-  enum Segment_dir
-  {
-    DIR_UP,           // Vertical segment, point at 12 o'clock.
-    DIR_RIGHT,        // Non-vertical segment going towards the right.
-    DIR_DOWN,         // Vertical segment, point at 6 o'clock.
-    DIR_LEFT          // Non-vertical segment going towards the left.
-  };
-
-  /*!
-   * Return the segment direction, with respect to a given refernece point.
-   * \param cv The segment.
-   * \param p The reference point.
-   * \pre p must be an end-point of the segment.
-   * \return DIR_UP if cv is a vertical segment pointing at 12 o'clock;
-   *         DIR_RIGHT if cv is a non-vertical segment going to the right of p;
-   *         DIR_DOWN if cv is a vertical segment pointing at 6 o'clock;
-   *         DIR_LEFT if cv is a non-vertical segment going to the left of p;
-   */
-  Segment_dir _curve_direction (const X_curve_2& cv,
-				const Point_2& p) const
-  {
-    // p is one of the end-point. Compare it with the other end-point.
-    Comparison_result res;
-
-    if (cv.is_vert)
-    {
-      // Special treatment for vertical segments:
-      Compare_xy_2      comp_xy = compare_xy_2_object();
-      res = comp_xy(p, cv.ps);
-
-      if (res == EQUAL)
-      {
-	res = comp_xy(p, cv.pt);
-      }
-      else
-      {
-	// Make sure that p is indeed an end-point.
-	CGAL_precondition(comp_xy(p, cv.pt) == EQUAL);
-      }
-
-      return ((res == SMALLER) ? DIR_DOWN : DIR_UP);
-    }
-
-    // In case cv is not vertical:
-    Compare_x_2       comp_x = compare_x_2_object();
-    res = compare_x(p, cv.ps);
-
-    if (res == EQUAL)
-    {
-      res = comp_x(p, cv.pt);
-    }
-    else
-    {
-      // Make sure that p is indeed an end-point.
-      CGAL_precondition(compare_xy_2_object()(p, cv.pt) == EQUAL);
-    }
-
-    return ((res == SMALLER) ? DIR_LEFT : DIR_RIGHT);
-  }
-
-  Comparison_result _curve_compare_slope_left (const X_curve_2& cv1,
-					       const X_curve_2& cv2) const
-  { 
-    return (compare_slope_2_object()(cv2.line, cv1.line));
-  }
-
-  Comparison_result _curve_compare_slope_right (const X_curve_2 & cv1,
-					        const X_curve_2 & cv2) const 
-  {
-    return (compare_slope_2_object()(cv1.line, cv2.line));
-  }
 
   /*!
    * Find the intersection between teo segements.
