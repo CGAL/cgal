@@ -66,7 +66,8 @@ struct move_shalfedge_around_facet {
 
 template <class Object, class Hash_map, class Union_find>
 void merge_sets( Object o1, Object o2, Hash_map& hash, Union_find& uf) {
-  CGAL_nef3_assertion( hash[o1] != 0 && hash[o2] != 0);
+  //CGAL_nef3_assertion( hash[o1] != 0 && hash[o2] != 0);
+  CGAL_nef3_assertion( hash.is_defined(o1) && hash.is_defined(o2));
   if( !uf.same_set( hash[o1], hash[o2]))
     uf.unify_sets( hash[o1], hash[o2]);
 }
@@ -405,14 +406,15 @@ public:
   SNC_structure() : 
     boundary_item_(undef_), sm_boundary_item_(undef_),
     vertices_(), halfedges_(), halffacets_(), volumes_(),
-    shalfedges_(), shalfloops_(), sfaces_() {}
-  ~SNC_structure() { clear(); }
+    shalfedges_(), shalfloops_(), sfaces_(), IO(NULL) {}
+  ~SNC_structure() { TRACEN("~SNC_structure: clearing "<<this); clear(); }
 
   SNC_structure(const Self& D) : 
     boundary_item_(undef_), sm_boundary_item_(undef_),
     vertices_(D.vertices_), halfedges_(D.halfedges_), 
     halffacets_(D.halffacets_), volumes_(D.volumes_),
-    shalfedges_(D.shalfedges_), shalfloops_(D.shalfloops_), sfaces_(D.sfaces_)
+    shalfedges_(D.shalfedges_), shalfloops_(D.shalfloops_), 
+    sfaces_(D.sfaces_), IO(NULL)
   { pointer_update(D); }
 
   Self& operator=(const Self& D) { 
@@ -955,8 +957,6 @@ public:
     return '.';
   }
 
-  SNC_io_parser<SNC_structure> *IO;
-
   typedef typename Union_find< Volume_handle>::handle UFH_volume;
   typedef typename Union_find< Halffacet_handle>::handle UFH_facet;
   typedef typename Union_find< SFace_handle>::handle UFH_sface;
@@ -1066,8 +1066,10 @@ public:
   bool vertex_simplification(bool snc_computed = true) {
     bool simplified = false;
 
-    SNC_io_parser<SNC_structure> IO_parser(std::cerr, *this);
-    IO = &IO_parser;
+#ifdef _DEBUG
+    delete IO;
+    IO = new SNC_io_parser<SNC_structure>(std::cerr, *this);
+#endif
 
     SNC_decorator D(*this);
 
@@ -1121,8 +1123,11 @@ public:
     
     TRACEN(">>> simplifying");
     SNC_decorator D(*this);
-    SNC_io_parser<SNC_structure> IO_parser(std::cerr, *this);
-    IO = &IO_parser;
+
+#ifdef _DEBUG
+    delete IO;
+    IO = new SNC_io_parser<SNC_structure>(std::cerr, *this);
+#endif
     
     Unique_hash_map< Volume_handle, UFH_volume> hash_volume;
     Unique_hash_map< Halffacet_handle, UFH_facet> hash_facet;
@@ -1230,14 +1235,11 @@ public:
     }
 
     update_facets = vertex_simplification() || update_facets;
-
-    SETDTHREAD(1);
-
     purge_no_find_objects(hash_volume, hash_facet, hash_sface, uf_volume, 
 			  uf_facet, uf_sface);
-    if(update_sfaces || true) create_boundary_links_forall_sfaces( hash_sface, uf_sface);
-    if(update_facets || true) create_boundary_links_forall_facets( hash_facet, uf_facet);
-    if(update_volumes|| true) create_boundary_links_forall_volumes( hash_volume, uf_volume);
+    create_boundary_links_forall_sfaces( hash_sface, uf_sface);
+    create_boundary_links_forall_facets( hash_facet, uf_facet);
+    create_boundary_links_forall_volumes( hash_volume, uf_volume);
     
     TRACEN(">>> simplifying done ");
 
@@ -1422,11 +1424,10 @@ public:
 				     f->boundary_entry_objects_.front()));
 	assign( f_sedge, f->boundary_entry_objects_.front());
 	Point_3 p(D.point(D.vertex(f_sedge)));
-	CGAL_nef3_assertion(
-             !lexicographically_xyz_smaller(D.point(D.vertex(u_min)), p));
-	// D.store_as_first_boundary_object( u_min, f);
-	// else  // these lines are needed if the previous assertion is incorrect
-	D.store_boundary_object( u_min, f);
+	if( !lexicographically_xyz_smaller(D.point(D.vertex(u_min)), p))
+	  D.store_as_first_boundary_object( u_min, f);
+	else
+	  D.store_boundary_object( u_min, f);
       }
     }
     SHalfloop_iterator l;
@@ -1444,8 +1445,10 @@ public:
     //   typedef Unique_hash_map< SFace_handle, bool> SFace_map;
     //  SFace_map linked(false);
 
-    SNC_io_parser<SNC_structure> IO_parser(std::cerr, *this);
-    IO = &IO_parser;
+#ifdef _DEBUG
+    delete IO;
+    IO = new SNC_io_parser<SNC_structure>(std::cerr, *this);
+#endif
 
     SNC_decorator D(*this);
     Volume_setter setter(D);
@@ -1909,6 +1912,7 @@ protected:
   SHalfloop_list shalfloops_;
   SFace_list     sfaces_;
 
+  SNC_io_parser<SNC_structure> *IO;
 }; // SNC_structure
 
 
