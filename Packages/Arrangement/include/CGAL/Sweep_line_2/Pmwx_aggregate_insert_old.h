@@ -35,7 +35,7 @@
 #include <CGAL/Handle.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Sweep_line_2_old/Sweep_curves_base_2.h>
-#include <CGAL/Sweep_line_2_old/Point_plus_handle.h>
+#include <CGAL/Planar_map_2/Point_plus_handle.h>
 
 CGAL_BEGIN_NAMESPACE
 
