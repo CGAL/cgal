@@ -29,6 +29,7 @@
 
 
 #include <CGAL/basic.h>
+#include <cassert>
 #include <cstddef>
 #include <list>
 #include <vector>
@@ -42,12 +43,16 @@ struct Node_1
 : public CGAL::Compact_container_base
 {
   bool operator==(const Node_1 &) const { return true; }
+  bool operator!=(const Node_1 &) const { return false; }
   bool operator< (const Node_1 &) const { return false; }
 };
 
 class Node_2
 {
-  Node_2 * p;
+  union {
+    Node_2 * p;
+    void * p_cc;
+  };
   int      rnd;
 
 public:
@@ -56,10 +61,11 @@ public:
   : p(NULL), rnd(CGAL::default_random.get_int(0, 100)) {}
 
   bool operator==(const Node_2 &n) const { return rnd == n.rnd; }
+  bool operator!=(const Node_2 &n) const { return rnd != n.rnd; }
   bool operator< (const Node_2 &n) const { return rnd <  n.rnd; }
 
-  void *   for_compact_container() const { return (void *) p; }
-  void * & for_compact_container()       { return static_cast<void*>(p); }
+  void *   for_compact_container() const { return p_cc; }
+  void * & for_compact_container()       { return p_cc; }
 };
 
 template < class Cont >
