@@ -1,3 +1,7 @@
+Version 102.9 (8 December 2003)
+- Cartesian_converter : add a "using Enum_operator::operator();" otherwise
+  it's ignored.
+
 Version 102.8 (4 December 2003)
 - Get rid of line_from_points(), it was undocumented, Cartesian only, and the
   real thing is the line constructor.

@@ -56,6 +56,8 @@ public:
     typedef K2         Target_kernel;
     typedef Converter  Number_type_converter;
 
+    using Enum_converter::operator();
+
     Cartesian_converter()
 	: c(), k() {}
 
