@@ -1,5 +1,12 @@
 Changes done to the `Random_numbers' package
 
+Version 2.2 on 02-Feb-2000
+- removed `CGAL_..._cast' macros.
+
+
+CGAL-2.1
+--------
+
 Version 2.1.2 on 22-Sep-1999
 - deterministic initialisation fixed (on IRIX 64).
 
@@ -10,6 +17,10 @@ Version 2.1 on 05-Jul-1999
 - replaced `erand48()' by `rand()'.
 - removed state functions.
 - (port to M$-VC++)
+
+
+CGAL-2.0
+--------
 
 Version 2.0.1 on 04-Mar-1999
 - scope `std::' removed from `timeval', `gettimeofday', and `erand48'.
@@ -33,24 +44,21 @@ CGAL-1.2
 CGAL-1.1
 --------
 
-
-CGAL-1.0
---------
-
-Version 1.13 on 26-Jun-1998
-- `(e-mail)' changed to `<e-mail>'.
-
 Version 1.12 on 16-Jun-1998
 - multiple inclusion protection with 'CGAL_PROTECT_..._H' fixed.
+- `(e-mail)' changed to `<e-mail>'.
 
 Version 1.11 on 15-May-1998
-- `$CGAL_Chapter$' added.
 - coordinator `MPI' changed to `INRIA'.
 - line containing more than 80 characters fixed.
 - `return( 0);' in `main()' added.
 
 Version 1.10 on 30-Mar-1998
 - `$CGAL_Package$' added.
+
+
+CGAL-1.0
+--------
 
 Version 1.9 on 15-Dec-1997
 - subdirectory structure in 'include/CGAL' removed.
