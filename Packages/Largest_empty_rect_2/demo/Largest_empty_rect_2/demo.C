@@ -182,13 +182,13 @@ int main(int argc,char *argv[])
       }
 
       if(remove_points) {
-        double min_dist = -1,dist;
+        Number_Type min_dist = -1,dist;
         Largest_empty_rect::const_iterator closest_iter =
                 empty_rectangle.end();
         for(Largest_empty_rect::const_iterator iter = empty_rectangle.begin();
         iter != empty_rectangle.end();
 	    ++iter) {
-          dist = sqrt(CGAL::squared_distance(Point(x,y),*iter));
+          dist = CGAL::squared_distance(Point(x,y),*iter);
 
           if(min_dist == -1 || dist < min_dist) {
             min_dist = dist;
