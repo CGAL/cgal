@@ -34,10 +34,13 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class R>
+template <class R_>
 class Construct_centroid_3
 {
  public:
+  typedef R_           R;
+  typedef typename R::Point_3   Point_3;
+
   Point_3 operator()(const typename R::Point_3& p, 
                      const typename R::Point_3& q, 
                      const typename R::Point_3& r,
