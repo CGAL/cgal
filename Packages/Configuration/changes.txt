@@ -1,3 +1,7 @@
+26 Feb 2004 Radu Ursu
+- removed CGAL_VERSION and CGAL_VERSION_NR from config.h
+- those will be created by the create_internal_release script
+
 22 Feb 2004 Radu Ursu
 - added configuration test for SunPro called:
     CGAL_CFG_MISSING_TEMPLATE_VECTOR_CONSTRUCTORS_BUG.C

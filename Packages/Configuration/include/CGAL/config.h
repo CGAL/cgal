@@ -26,8 +26,7 @@
 #ifndef CGAL_CONFIG_H
 #define CGAL_CONFIG_H
 
-#define CGAL_VERSION 2.4-I-65
-#define CGAL_VERSION_NR 1002004065
+#include <CGAL/version.h>
 
 //----------------------------------------------------------------------//
 //             include platform specific workaround flags (CGAL_CFG_...)
