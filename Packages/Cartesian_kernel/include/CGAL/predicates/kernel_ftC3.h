@@ -120,16 +120,16 @@ coplanar_orientationC3(const FT &px, const FT &py, const FT &pz,
 
 template < class FT >
 CGAL_KERNEL_LARGE_INLINE
-Oriented_side
-coplanar_side_of_oriented_circleC3(const FT &px, const FT &py, const FT &pz,
-                                   const FT &qx, const FT &qy, const FT &qz,
-                                   const FT &rx, const FT &ry, const FT &rz,
-                                   const FT &tx, const FT &ty, const FT &tz)
+Bounded_side
+coplanar_side_of_bounded_circleC3(const FT &px, const FT &py, const FT &pz,
+                                  const FT &qx, const FT &qy, const FT &qz,
+                                  const FT &rx, const FT &ry, const FT &rz,
+                                  const FT &tx, const FT &ty, const FT &tz)
 {
-  // The approach is to compute side_of_oriented_sphere(p,q,r,t+v,t),
+  // The approach is to compute side_of_bounded_sphere(p,q,r,t+v,t),
   // with v = pq ^ pr.
   // Note : since the circle defines the orientation of the plane, it can not
-  // be considered oriented/bounded.
+  // be considered oriented.
   FT ptx = px - tx;
   FT pty = py - ty;
   FT ptz = pz - tz;
@@ -152,10 +152,10 @@ coplanar_side_of_oriented_circleC3(const FT &px, const FT &py, const FT &pz,
   FT vy = pqz*prx - pqx*prz;
   FT vz = pqx*pry - pqy*prx;
   FT v2 = CGAL_NTS square(vx) + CGAL_NTS square(vy) + CGAL_NTS square(vz);
-  return Oriented_side(sign_of_determinant4x4(ptx,pty,ptz,pt2,
-                                              rtx,rty,rtz,rt2,
-                                              qtx,qty,qtz,qt2,
-                                              vx,vy,vz,v2));
+  return Bounded_side(sign_of_determinant4x4(ptx,pty,ptz,pt2,
+                                             rtx,rty,rtz,rt2,
+                                             qtx,qty,qtz,qt2,
+                                             vx,vy,vz,v2));
 }
 
 template < class FT >

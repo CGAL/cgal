@@ -1,3 +1,7 @@
+2.17    (26 Apr 2001)
+- Change coplanar_side_of_oriented_circle
+  to     coplanar_side_of_bounded_circle.
+
 2.16    (18 Apr 2001)
 - removed obsolete command in Ref/Kernel.tex
 

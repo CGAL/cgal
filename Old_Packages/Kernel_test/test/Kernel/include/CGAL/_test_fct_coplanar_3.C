@@ -49,12 +49,12 @@ _test_fct_coplanar_3(const R& )
   assert( CGAL::coplanar_orientation( p,q,r,s) == CGAL::NEGATIVE );
   assert( CGAL::coplanar_orientation( p,q,s,r) == CGAL::NEGATIVE );
   assert( CGAL::coplanar_orientation( p,q,r,r) == CGAL::POSITIVE );
-  assert( CGAL::coplanar_side_of_oriented_circle( p,q,r,s) ==
-          CGAL::ON_NEGATIVE_SIDE );
-  assert( CGAL::coplanar_side_of_oriented_circle( q,p,r,s) ==
-          CGAL::ON_NEGATIVE_SIDE );
-  assert( CGAL::coplanar_side_of_oriented_circle( r,q,p,s) ==
-          CGAL::ON_NEGATIVE_SIDE );
+  assert( CGAL::coplanar_side_of_bounded_circle( p,q,r,s) ==
+          CGAL::ON_UNBOUNDED_SIDE );
+  assert( CGAL::coplanar_side_of_bounded_circle( q,p,r,s) ==
+          CGAL::ON_UNBOUNDED_SIDE );
+  assert( CGAL::coplanar_side_of_bounded_circle( r,q,p,s) ==
+          CGAL::ON_UNBOUNDED_SIDE );
   s = p + RT2*( q - p);
   assert( CGAL::coplanar_orientation( p,q,r,s) == CGAL::COLLINEAR );
   s = p - (q - r);

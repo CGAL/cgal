@@ -1,3 +1,7 @@
+Version 6.15 (26 April 2001)
+- Change coplanar_side_of_oriented_circle
+  to     coplanar_side_of_bounded_circle.
+
 Version 6.14 (13 April 2001)
 - Remove coplanar_orientation(3 points, 1 vector) and
   coplanar_side_of_oriented_circle(3 points, 1 vector).

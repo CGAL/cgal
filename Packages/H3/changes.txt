@@ -1,3 +1,7 @@
+2.27   (26 Apr 2001)
+- Change coplanar_side_of_oriented_circle
+  to     coplanar_side_of_bounded_circle.
+
 2.26   (13 Apr 2001)
 - Added coplanar_side_of_oriented_circle(p,q,r,t).
 

@@ -422,15 +422,15 @@ class Coplanar_orientation
     { return coplanar_orientation(p,q,r,t); }
 };
 
-class Coplanar_side_of_oriented_circle
+class Coplanar_side_of_bounded_circle
 {
   public:
-    typedef Oriented_side  result_type;
+    typedef Bounded_side  result_type;
 
     template <class P>
-    Oriented_side
+    Bounded_side
     operator()(const P& p, const P& q, const P& r, const P& t) const
-    { return coplanar_side_of_oriented_circle(p,q,r,t); }
+    { return coplanar_side_of_bounded_circle(p,q,r,t); }
 };
 
 class Side_of_oriented_circle
