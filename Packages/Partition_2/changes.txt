@@ -1,3 +1,6 @@
+1.40 (30 Oct 2002)
+  - add some documentation for the vertex visibility graph
+
 1.39 (10 Oct 2002)
   - replace use of CGALi::Construct template with own function object
     in Triangulation_indirect_traits (since template was removed in
