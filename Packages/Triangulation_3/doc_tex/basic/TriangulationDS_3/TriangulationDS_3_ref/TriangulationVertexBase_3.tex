@@ -1,0 +1,120 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: TriangulationVertexBase_3.tex
+% +------------------------------------------------------------------------+
+% | 29.3.2000   Monique Teillaud
+% | Package: Triangulation3
+% | 
+\RCSdef{\RCSTriangulationvbRev}{$Revision$}
+\RCSdefDate{\RCSTriangulationvbDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{TriangulationVertexBase_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+At the bottom level of 3D-triangulations 
+(see Sections~\ref{Triangulation3-sec-design} and~\ref{TDS3-sec-design}),
+a vertex provides access to
+one of its incident cells through a \ccc{void*} pointer. 
+It can also \textit{optionally} store a point. The
+information about the point is in fact not used by the triangulation
+data structure class provided by \cgal\ and is therefore only
+\textit{optional} when this triangulation data structure class is used
+alone. It becomes compulsory when the 
+triangulation data structure is used as a layer for the geometric
+triangulation class. 
+
+\ccTypes
+\ccNestedType{Point}
+{Must be the same as the point type \ccc{Traits::Point_3} defined by the
+geometric traits class of the triangulation. {\textit{Optional for the
+triangulation data structure alone.}}} 
+
+\ccCreation
+\ccCreationVariable{v}  %% choose variable name
+
+\ccConstructor{TriangulationVertexBase_3();}
+{Default constructor}
+\ccGlue
+\ccConstructor{TriangulationVertexBase_3(const Point & p);}
+{Constructs a vertex whose geometric embedding is point
+\ccc{p}. {\textit{Optional for the triangulation data structure
+alone.}}} 
+\ccGlue
+\ccConstructor{TriangulationVertexBase_3(const Point & p,
+                     		void* c);}
+{Constructs a vertex embedding the point \ccc{p} and pointing to cell
+\ccc{c}. {\textit{Optional for the triangulation data structure alone.}}}
+\ccGlue
+\ccConstructor{TriangulationVertexBase_3(void* c);}
+{Constructs a vertex pointing to cell \ccc{c}.}
+
+\ccOperations
+
+\ccAccessFunctions
+
+\ccMethod{Point point() const;}
+{Returns the point. {\textit{Optional for the triangulation data
+structure alone.}}} 
+\ccGlue
+\ccMethod{void* cell() const;}
+{Returns the pointer to an incident cell}
+
+\ccHeading{Setting}
+
+\ccMethod{void set_point(Point p);}
+{Sets the point. {\textit{Optional for the triangulation data
+structure alone.}}} 
+\ccGlue
+\ccMethod{void set_cell(void* c);}
+{Sets the incident cell.}
+
+\ccHeading{Checking}
+\ccMethod{bool is_valid(bool verbose=false) const;}
+{Performs any desired geometric test on a vertex. Checks that the
+pointer to an incident cell is not \ccc{NULL}.}
+
+\ccHeading{I/O}
+
+\ccFunction{istream& operator>>
+(istream& is, TriangulationVertexBase_3 & v);}
+{Inputs the non-combinatorial information given by the vertex: 
+the optional point and other possible information.}
+%\ccPrecond{The point and the other information have a corresponding
+%operator \ccc{>>}. \textit{This precondition is optional for the
+%triangulation data structure alone.}}}  
+
+\ccFunction{ostream& operator<< (ostream& os, 
+			const TriangulationVertexBase_3 & v);}
+{Outputs the non combinatorial operation given by the vertex: the
+optional point and other possible information.}
+%\ccPrecond{The point and the other information have a corresponding
+%operator \ccc{<<}. \textit{This precondition is optional for the
+%triangulation data structure alone.}}} 
+
+\ccHasModels
+
+\ccc{CGAL::Triangulation_vertex_base_3<TriangulationTraits_3>},\\
+\ccc{CGAL::Triangulation_vertex_base_pointer_3<TriangulationTraits_3>}.
+
+\ccSeeAlso
+
+\ccc{TriangulationCellBase_3}.
+
+%% \ccExample
+
+%% \ccIncludeExampleCode{examples/Triangulation3/Triangulation_vb_prog.C}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

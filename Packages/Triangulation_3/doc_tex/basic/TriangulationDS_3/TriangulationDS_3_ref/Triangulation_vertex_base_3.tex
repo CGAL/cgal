@@ -1,0 +1,62 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_vertex_base_3.tex
+% +------------------------------------------------------------------------+
+% | 29.3.2000   Monique Teillaud
+% | Package: Triangulation3
+% | 
+\RCSdef{\RCSTriangulationvertexbaseRev}{$Revision$}
+\RCSdefDate{\RCSTriangulationvertexbaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Triangulation_vertex_base_3<TriangulationTraits_3>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+
+The class \ccRefName\ can store the base vertex for a 3D-triangulation and a 3D-triangulation data structure. It is templated by a
+geometric traits class \ccc{TriangulationTraits_3} that provides the geometric
+types. The user who uses the geometric layer
+(Section~\ref{TDS3-sec-design} and
+Chapter~\ref{chapter-Triangulation3}) is strongly advised to use the
+same geometric traits class \ccc{TriangulationTraits_3} as the one used for
+\ccc{Triangulation_3<TriangulationTraits_3,Tds_3>}. In this way, the point type
+defined by the base vertex is the same as the point type defined by
+the geometric traits class. The default geometric traits class
+provided by \cgal\ is presented in
+Section~\ref{Triangulation3-sec-Traits}. 
+
+This base class can be used directly or can serve as a base to derive
+other base classes with some additionnal attributes (a color for
+example) tuned for a specific application.
+
+With this class, a vertex stores a point, which means that the points
+of the user will be duplicated. This allows the user to delete his
+points before the deletion of the triangulation.
+
+\ccInclude{CGAL/Triangulation_vertex_base_3.h}
+
+\ccIsModel
+
+\ccc{TriangulationVertexBase_3}
+
+\ccSeeAlso
+
+\ccc{CGAL::Triangulation_vertex_base_pointer_3<TriangulationTraits_3>},\\
+\ccc{CGAL::Triangulation_cell_base_3<TriangulationTraits_3>}.
+
+%% \ccExample
+
+%% \ccIncludeExampleCode{examples/Triangulation3/Triangulation_vertex_base_3_prog.C}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

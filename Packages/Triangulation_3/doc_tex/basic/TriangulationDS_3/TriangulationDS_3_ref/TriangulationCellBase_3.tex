@@ -1,0 +1,146 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: TriangulationCellBase_3.tex
+% +------------------------------------------------------------------------+
+% | 29.3.2000   Monique Teillaud
+% | Package: Triangulation3
+% | 
+\RCSdef{\RCSTriangulationcbRev}{$Revision$}
+\RCSdefDate{\RCSTriangulationcbDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{TriangulationCellBase_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+At the base level 
+(see Sections~\ref{Triangulation3-sec-design} and~\ref{TDS3-sec-design}),
+a cell stores \ccc{void*} pointers to its four
+vertices and to its four neighbor cells. 
+The vertices and neighbors are indexed 0, 1, 2 and 3. Neighbor $i$
+lies opposite to vertex $i$.
+
+\ccCreation
+\ccCreationVariable{c}  %% choose variable name
+
+\ccConstructor{Cell_base();}
+{Default constructor}
+\ccGlue
+\ccConstructor{Cell_base( void* v0, void* v1, void* v2, void* v3);}
+{Initializes the vertices with \ccc{v0, v1, v2, v3}. Neighbors are
+initialized to \ccc{NULL}.} 
+\ccGlue
+\ccConstructor{Cell_base(void* v0, void* v1, void* v2, void* v3,
+			    void* n0, void* n1, void* n2, void* n3)} 
+{Initializes the vertices with \ccc{v0, v1, v2, v3} and the neighbors with
+\ccc{n0, n1, n2, n3}.}
+                    
+\ccOperations
+
+\ccMethod{void init();}
+{This member function is called by the triangulation data structure before
+using the cell, it can be used by the user to initialize some of the fields he
+defines. }
+
+\ccAccessFunctions
+
+\ccMethod{void* vertex(int i) const;}
+{Returns the vertex \ccc{i} of \ccVar.
+\ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
+\ccGlue
+\ccMethod{int vertex_index(const void* v) const;}
+{Returns the index of \ccc{v}.
+\ccPrecond{\ccc{v} is a vertex of \ccVar}}
+\ccGlue
+\ccMethod{bool has_vertex(const void* v);}
+{True iff \ccc{v} is a vertex of \ccVar.}
+\ccGlue
+\ccMethod{bool has_vertex(const void* v, int & i) const;}
+{Returns \ccc{true} if \ccc{v} is a vertex of \ccVar, and
+computes its index \ccc{i} in \ccVar.}
+
+\ccMethod{void* neighbor(int i) const;}
+{Returns  the neighbor \ccc{i} of \ccVar.
+\ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
+\ccGlue
+\ccMethod{int cell_index(const void* n) const;}
+{Returns the index of cell \ccc{n} in \ccVar.
+\ccPrecond{\ccc{n} is a neighbor of \ccVar.}}
+\ccGlue
+\ccMethod{bool has_neighbor(void* n);}
+{Returns \ccc{true} if \ccc{n} is a neighbor of \ccVar.}
+\ccGlue
+\ccMethod{bool has_neighbor(const void* n, int & i) const;}
+{Returns \ccc{true} if \ccc{n} is a neighbor of \ccVar,  and
+computes its index \ccc{i} in \ccVar.}
+
+\ccHeading{Setting}
+
+\ccMethod{void set_vertex(int i, void* v);}
+{Sets vertex \ccc{i} to \ccc{v}.
+\ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
+\ccGlue
+\ccMethod{ void set_vertices();}
+{Sets the vertices to \ccc{NULL}.}
+\ccGlue
+\ccMethod{void set_vertices(void* v0,
+		    	    void* v1,
+		       	    void* v2,
+		    	    void* v3);}
+{Sets the vertices.}
+
+\ccMethod{void set_neighbor(int i, void* n);}
+{Sets neighbor \ccc{i} to \ccc{n}.
+\ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
+\ccGlue
+\ccMethod{void set_neighbors();} 
+{Sets the neighbors to \ccc{NULL}.}
+\ccGlue
+\ccMethod{void set_neighbors(void* n0,
+		     	void* n1,
+		     	void* n2,
+		     	void* n3);}
+{Sets the neighbors.}
+
+\ccHeading{Checking}
+\ccMethod{bool is_valid(bool verbose = false) const;}
+{Performs any desired geometric test on a cell.\\
+When \ccc{verbose} is set to \ccc{true}, messages are printed to give
+a precise indication of the kind of invalidity encountered.}
+
+\ccHeading{I/O}
+
+\ccFunction{istream& operator>>
+(istream& is, Cell_base & c);}
+{Inputs the possible non combinatorial information given by the cell.
+\ccPrecond{This information has a corresponding operator \ccc{>>}.}}
+
+\ccFunction{ostream& operator<< (ostream& os, 
+			const Cell_base & c);}
+{Outputs the possible non combinatorial information given by the cell.
+\ccPrecond{This information has a corresponding operator \ccc{>>}.}}
+
+\ccHasModels
+
+\ccc{CGAL::Triangulation_cell_base_3<TriangulationTraits_3>}.
+
+\ccSeeAlso
+
+\ccc{TriangulationVertexBase_3}
+
+%% \ccExample
+
+%% \ccIncludeExampleCode{examples/Triangulation3/Triangulation_cb_3_prog.C}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,57 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_data_structure_3.tex
+% +------------------------------------------------------------------------+
+% | 29.3.2000   Monique Teillaud
+% | Package: Triangulation3
+% | 
+\RCSdef{\RCSTriangulationdatastructureRev}{$Revision$}
+\RCSdefDate{\RCSTriangulationdatastructureDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Triangulation_data_structure_3<TriangulationVertexBase_3,TriangulationCellBase_3>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+The class \ccRefName\ stores a 3D-triangulation data structure
+and provides the optional
+geometric functionalities to be used as a parameter for a 
+3D-geometric triangulation (see Chapter~\ref{chapter-Triangulation3}). 
+It is templated by base classes for vertices and cells.
+\lcTex{(See \ccRefPage{TriangulationVertexBase_3} 
+and \ccRefPage{TriangulationCellBase_3}.)}
+
+\ccIsModel
+
+\ccc{TriangulationDataStructure_3}
+
+\ccInheritsFrom{\ccc{Triangulation_utils_3}}
+
+This class \ccc{Triangulation_utils_3} defines basic computations on
+indices of vertices and neighbors of cells. 
+
+\ccInclude{CGAL/Triangulation_data_structure_3.h}
+
+\ccSeeAlso
+
+%\ccc{CGAL::Triangulation_data_structure_3<TriangulationVertexBase_3,TriangulationCellBase_3>::Vertex},\\
+%\ccc{CGAL::Triangulation_data_structure_3<TriangulationVertexBase_3,TriangulationCellBase_3>::Cell},\\
+\ccc{TriangulationVertexBase_3},\\
+\ccc{TriangulationCellBase_3}.
+
+%% \ccExample
+
+
+%% \ccIncludeExampleCode{examples/Triangulation3/Triangulation_data_structure_3_prog.C}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

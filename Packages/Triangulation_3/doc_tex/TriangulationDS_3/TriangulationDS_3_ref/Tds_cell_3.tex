@@ -1,0 +1,155 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Tds_cell_3.tex
+% +------------------------------------------------------------------------+
+% | 29.3.2000   Monique Teillaud
+% | Package: Triangulation3
+% | 
+\RCSdef{\RCSTdscellRev}{$Revision$}
+\RCSdefDate{\RCSTdscellDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}[TriangulationDataStructure_3::]{Cell}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ stores
+four pointers to its four vertices and four pointers to its four
+neighbors The vertices are indexed 0, 1, 2, and 3 in positive order.
+The neighbor indexed $i$ lies opposite to vertex \ccc{i}.
+
+In degenerate dimensions, cells are used to store faces of maximal
+dimension: in dimension~2, each cell represents only one
+facet of index 3, and 3 edges $(0,1)$, $(1,2)$ and $(2,0)$; in
+dimension~1, each cell represents one edge $(0,1)$. (See also
+Section~\ref{TDS3-sec-intro}.) 
+
+\ccTypes
+\ccThree{typedef TriangulationDataStructure_3::Vertex}{Facet }{}
+\ccThreeToTwo
+The class \ccClassName\ defines the following types.
+
+\ccTypedef{typedef TriangulationDataStructure_3::Vertex Vertex;}{}
+\ccGlue
+\ccTypedef{typedef TriangulationDataStructure_3::Cell Cell;}{}
+
+\ccCreation
+\ccCreationVariable{c}  %% choose variable name
+\ccThree{Vertex*}{c.set_vertices());}{}
+
+In order to obtain new cells or destruct unused cells, the user must call the
+\ccc{create_cell()} and \ccc{delete_cell()} methods of the triangulation data
+structure.
+
+%\ccConstructor{Cell();}
+%{Introduces a cell \ccVar\ and initializes all vertices and neighbors 
+% with \ccc{NULL}.}
+
+%\ccConstructor{Cell(Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3);}
+%{Introduces a cell \ccVar, and initializes its vertices. The neighbors
+%are initialized with \ccc{NULL}.} 
+
+%\ccConstructor{Cell(Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3,
+%                Cell* n0, Cell* n1, Cell* n2, Cell* n3);}
+%{Introduces a cell \ccVar, and initializes its vertices and neighbors.}
+
+\ccOperations
+
+\ccAccessFunctions
+
+\ccMethod{Vertex* vertex(int i) const;}
+{Returns the vertex \ccc{i} of \ccVar.
+\ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
+\ccGlue
+\ccMethod{int index(const Vertex* v) const;}
+{Returns the index of vertex \ccc{v} in \ccVar.
+\ccPrecond{\ccc{v} is a vertex of \ccVar}.}
+\ccGlue
+\ccMethod{bool has_vertex(const Vertex* v) const;}
+{Returns \ccc{true} if  \ccc{v} is a vertex of \ccVar.}
+\ccGlue
+\ccMethod{bool has_vertex(const Vertex* v, int & i) const;}
+{Returns \ccc{true} if \ccc{v} is a vertex of \ccVar, and
+computes its index \ccc{i} in \ccVar.}
+
+\ccMethod{Cell* neighbor(int i) const;}
+{Returns  the neighbor \ccc{i} of \ccVar.
+\ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
+\ccGlue
+\ccMethod{int index(const Cell* n) const;}
+{Returns the index corresponding to neighboring cell \ccc{n}.
+\ccPrecond{\ccc{n} is a neighbor of \ccVar.}}
+\ccGlue
+\ccMethod{bool has_neighbor(const Cell* n) const;}
+{Returns \ccc{true} if \ccc{n} is a neighbor of \ccVar.}
+\ccGlue
+\ccMethod{bool has_neighbor(const Cell* n, int & i) const;}
+{Returns \ccc{true} if \ccc{n} is a neighbor of \ccVar,  and
+computes its index \ccc{i} in \ccVar.}
+
+\ccMethod{Vertex* mirror_vertex(int i) const;}
+{Returns the vertex of the neighbor of \ccVar that is opposite to \ccVar.
+\ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
+\ccMethod{int mirror_index(int i) const;}
+{Returns the index of \ccVar\ in its $i^{th}$ neighbor.
+\ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
+
+\ccHeading{Setting}
+
+\ccMethod{void set_vertex(int i, Vertex* v);}
+{Sets vertex \ccc{i} to \ccc{v}.
+\ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
+\ccGlue
+\ccMethod{void set_vertices(Vertex* v0,
+			Vertex* v1,
+		    	Vertex* v2,
+		    	Vertex* v3);}
+{Sets the vertex pointers.}
+
+\ccMethod{void set_neighbor(int i, Cell* n);}
+{Sets neighbor \ccc{i} to \ccc{n}.
+\ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
+\ccGlue
+\ccMethod{void set_neighbors(Cell* n0,
+			     Cell* n1,
+			     Cell* n2,
+			     Cell* n3);}
+{Sets the neighbors pointers.}
+
+\ccHeading{Checking}
+\ccMethod{bool is_valid(int dim=3, bool verbose = false) const;}
+{\ccc{dim} is the dimension of the triangulation, with default
+value~3.\\
+In dimension 3 (resp. 2, 1) this function must check that the cell
+shares three (resp. two, one) vertices with its neighbors, and these
+neighbors have a correct reciprocal neighboring link. Moreover, the
+consistency of the orientations of common faces must be checked.\\ 
+The validity of all the vertices of the cell must be checked.\\
+The validity of the base cell is also checked.\\ 
+When \ccc{verbose} is set to \ccc{true}, messages are printed to give
+a precise indication of the kind of invalidity encountered.}
+
+%\ccHasModels
+
+%\ccc{CGAL::Triangulation_data_structure_3<Triangulation_vb_3,Triangulation_cb_3>::Cell}.
+
+\ccSeeAlso
+
+\ccc{TriangulationDataStructure_3::Vertex}.
+
+%% \ccExample
+
+%% \ccIncludeExampleCode{examples/Triangulation3/Tds_cell_3_prog.C}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
