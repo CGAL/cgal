@@ -13,6 +13,9 @@ src/io.C
 
 
 CHANGES:
+Version 2.4 (2 July 1999)
+added still missing std:: to cerr and endl
+
 Version 2.3 (29 June 1999)
 added still missing std:: pointed out by Geert Jan
 

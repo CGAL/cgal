@@ -49,7 +49,7 @@ public:
              (blue() == c.blue()) );
   }
 
-  bool operator!=(Color &c) const
+  bool operator!=(const Color &c) const
   {
     return !( (*this) == c);
   }
