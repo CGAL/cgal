@@ -22,6 +22,9 @@
 // ============================================================================
 
 
+#ifndef CGAL_INTERVAL_ARITHMETIC_H
+#define CGAL_INTERVAL_ARITHMETIC_H
+
 // This file contains the description of the two classes:
 // - CGAL_Interval_nt_advanced  (do the FPU rounding mode changes yourself)
 // - CGAL_Interval_nt		("plug-in" version, derived from the other one)
@@ -31,9 +34,6 @@
 // - The first one supposes the rounding mode is set -> +infinity before
 // nearly all operations, and might set it -> +infinity when leaving, whereas
 // the second leaves the rounding -> nearest.
-
-#ifndef CGAL_INTERVAL_ARITHMETIC_H
-#define CGAL_INTERVAL_ARITHMETIC_H
 
 #include <iostream.h>
 #include <CGAL/assertions.h>
