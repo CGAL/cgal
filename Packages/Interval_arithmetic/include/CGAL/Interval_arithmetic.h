@@ -237,7 +237,7 @@ square (const Interval_nt<Protected> & d)
   if (d.sup_<=0.0)
       return Interval_nt<Protected>(-CGAL_IA_MUL(d.sup_, -d.sup_),
 	     	                     CGAL_IA_MUL(d.inf_, d.inf_));
-  return Interval_nt<Protected>(0.0, CGAL_IA_SQUARE(std::max(-d.inf_, d.sup_)));
+  return Interval_nt<Protected>(0.0, CGAL_IA_SQUARE(std::max(-d.inf_,d.sup_)));
 }
 
 template <bool Protected>

@@ -120,10 +120,10 @@ inline double IA_bug_sqrt(double d)
 // With __GNUG__, we can do slightly better : test with __builtin_constant_p()
 // that both arguments are constant before stopping one of them.
 // Use inline functions instead ?
-#define CGAL_IA_ADD(a,b) CGAL_IA_FORCE_TO_DOUBLE((a) + CGAL_IA_STOP_CPROP2(b,a))
-#define CGAL_IA_SUB(a,b) CGAL_IA_FORCE_TO_DOUBLE((a) - CGAL_IA_STOP_CPROP2(b,a))
-#define CGAL_IA_MUL(a,b) CGAL_IA_FORCE_TO_DOUBLE((a) * CGAL_IA_STOP_CPROP2(b,a))
-#define CGAL_IA_DIV(a,b) CGAL_IA_FORCE_TO_DOUBLE((a) / CGAL_IA_STOP_CPROP2(b,a))
+#define CGAL_IA_ADD(a,b) CGAL_IA_FORCE_TO_DOUBLE((a)+CGAL_IA_STOP_CPROP2(b,a))
+#define CGAL_IA_SUB(a,b) CGAL_IA_FORCE_TO_DOUBLE((a)-CGAL_IA_STOP_CPROP2(b,a))
+#define CGAL_IA_MUL(a,b) CGAL_IA_FORCE_TO_DOUBLE((a)*CGAL_IA_STOP_CPROP2(b,a))
+#define CGAL_IA_DIV(a,b) CGAL_IA_FORCE_TO_DOUBLE((a)/CGAL_IA_STOP_CPROP2(b,a))
 #define CGAL_IA_SQUARE(a) CGAL_IA_MUL(a,a)
 #define CGAL_IA_SQRT(a) \
         CGAL_IA_FORCE_TO_DOUBLE(CGAL_BUG_SQRT(CGAL_IA_STOP_CPROP(a)))
