@@ -2,13 +2,11 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Segment_2.h>
 #include <CGAL/Iso_rectangle_2.h>
-
+#include <CGAL/squared_distance_2.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/IO/Window_stream.h>
 #include <CGAL/IO/cgal_window_redefine.h>
-
-
-#include "../../include/CGAL/Largest_empty_iso_rectangle_2.h"
+#include <CGAL/Largest_empty_iso_rectangle_2.h>
 
 #define MIN_X 0
 #define MIN_Y 0
@@ -88,7 +86,9 @@ int main(int argc,char *argv[])
     W.button("Clear",2);
     W.button("Automatic",3);
     W.button("Manual",4);
-    W.button("Exit",5);
+    W.button("Add points",5);
+    W.button("Remove points",6);
+    W.button("Exit",7);
     W.display();
   } else {
     std::cerr << "Syntax : EmptyRect [input file name]\n";
@@ -141,6 +141,7 @@ int main(int argc,char *argv[])
   Number_Type x_type,y_type;
   int mouse_input;
   bool biggest_rect_shown;
+  bool remove_points = false;
 
   if(argc == 2) {
     // get points from an input file 
@@ -175,14 +176,34 @@ int main(int argc,char *argv[])
         redraw(empty_rectangle,W);
       }
 
-      x_type = x;
-      y_type = y;
-      // add point
-      W << CGAL::BLACK;
-      W << Point(x,y);
-      Point tmp1(x_type,y_type);
+      if(remove_points) {
+        double min_dist = -1,dist;
+        Largest_empty_rect::const_iterator closest_iter = empty_rectangle.end();
+        for(Largest_empty_rect::const_iterator iter = empty_rectangle.begin();
+        iter != empty_rectangle.end();
+	    ++iter) {
+          dist = sqrt(CGAL::squared_distance(Point(x,y),*iter));
 
-      empty_rectangle.insert(tmp1);
+          if(min_dist == -1 || dist < min_dist) {
+            min_dist = dist;
+            closest_iter = iter;
+	  }
+	}
+        
+        if(closest_iter != empty_rectangle.end())
+          empty_rectangle.remove(*closest_iter);
+
+        redraw(empty_rectangle,W);
+      } else {
+        x_type = x;
+        y_type = y;
+        // add point
+        W << CGAL::BLACK;
+        W << Point(x,y);
+        Point tmp1(x_type,y_type);
+        empty_rectangle.insert(tmp1);
+      }
+
       if(automatic_show) {
         // automatic display of biggest rectangle
         show_biggest_rec(empty_rectangle,W);
@@ -205,7 +226,11 @@ int main(int argc,char *argv[])
       automatic_show = false;
       biggest_rect_shown = false;
       redraw(empty_rectangle,W);
-    } else if(mouse_input == 5)
+    } else if(mouse_input == 5) {
+      remove_points = false;
+    } else if(mouse_input == 6) {
+      remove_points = true;
+    } else if(mouse_input == 7)
       // finish
       break;
   }

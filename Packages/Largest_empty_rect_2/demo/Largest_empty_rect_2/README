@@ -13,6 +13,11 @@ Using demo
       mode, the largest empty rectangle is shown
       automatically after each point is inserted.
     * Manual: Change to manual mode
+    * Add points: change to add points mode. Each
+      mouce click add a point to the set.
+    * Remove points: change to remove points mode.
+      Each mouce click removes the closest point
+      from the set.
     * Exit
 
    Syntax:   demo
