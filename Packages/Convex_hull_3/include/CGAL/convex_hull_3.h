@@ -193,14 +193,14 @@ find_visible_set(const typename Traits::Point_3& point,
    }
 }
 
-template <class Facet_handle, class Traits>
-typename Traits::Point_3
-farthest_outside_point(Facet_handle f_handle, 
-                       std::list<typename Traits::Point_3>& outside_set,
+// using a third template parameter for the point instead of getting it from
+// the traits class as it should be is required by M$VC6
+template <class Facet_handle, class Traits, class Point>
+Point
+farthest_outside_point(Facet_handle f_handle, std::list<Point>& outside_set,
                        const Traits& traits)
 {
-   typedef typename Traits::Point_3               Point_3;
-   typedef typename std::list<Point_3>::iterator     Outside_set_iterator;
+   typedef typename std::list<Point>::iterator     Outside_set_iterator;
 
    CGAL_assertion(!outside_set.empty());
    typename Traits::Less_signed_distance_to_plane_3 less_dist_to_plane =
@@ -233,16 +233,19 @@ void compute_plane_equation(Facet_handle f)
 */
 }
 
-template <class Facet_handle, class Traits, class UHM>
+// using a template for the Unique_hash_map is required by M$VC7
+// using a template for the Point type instead of getting it from
+// the traits class as it should be is required by M$VC6
+template <class Facet_handle, class Traits, class UHM, class Point>
 void     
 partition_outside_sets(const std::list<Facet_handle>& new_facets,
-        std::list<typename Traits::Point_3>& vis_outside_set, 
+        std::list<Point>& vis_outside_set, 
         UHM& outside_sets,
         std::list<Facet_handle>& pending_facets, 
         const Traits& traits)
 {
    typename std::list<Facet_handle>::const_iterator        f_list_it;
-   typename std::list<typename Traits::Point_3>::iterator  point_it;
+   typename std::list<Point>::iterator  point_it;
 
    typename Traits::Has_on_positive_side_3 has_on_positive_side =
            traits.has_on_positive_side_3_object();
@@ -285,13 +288,14 @@ partition_outside_sets(const std::list<Facet_handle>& new_facets,
 #if defined(_MSC_VER)
 
 #ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
-template <class Tr, class Traits, class HDS>	
+// using templates for the Facet_handle and Point type instead of getting these
+// from Polyhedron and Traits, respectively is required to make M$VC6 happy.  
+template <class Tr, class Traits, class HDS, class Facet_hdl, class Point>	
 void 
 ch_quickhull_3_scan(Polyhedron_3<Tr,HDS>& P,
-        std::list<typename Polyhedron_3<Tr,HDS>::Facet_handle>& pending_facets,
-        CGAL::Unique_hash_map<typename Polyhedron_3<Tr,HDS>::Facet_handle, 
-                   std::list<typename Traits::Point_3> >& outside_sets,
-				   const Traits& traits)
+        std::list<Facet_hdl>& pending_facets,
+        CGAL::Unique_hash_map<Facet_hdl, std::list<Point> >& outside_sets,
+        const Traits& traits)
 #else // CGAL_USE_POLYHEDRON_DESIGN_ONE //
 template < class Tr, class Traits, class Items,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
@@ -321,7 +325,11 @@ ch_quickhull_3_scan(
 {
  
 #if defined(_MSC_VER)
-  typedef Polyhedron_3<Tr,Items,HDS,Alloc>                Polyhedron;
+  #ifndef CGAL_USE_POLYHEDRON_DESIGN_ONE
+     typedef Polyhedron_3<Tr,Items,HDS,Alloc>             Polyhedron;
+  #else
+     typedef Polyhedron_3<Tr, HDS>                        Polyhedron;
+  #endif // CGAL_USE_POLYHEDRON_DEGIGN_ONE
 #else
   typedef Polyhedron_3                                    Polyhedron;
 #endif // _MSC_VER
@@ -451,9 +459,11 @@ ch_quickhull_3_scan(
 #if defined(_MSC_VER)
 
 #ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
-template <class Tr, class Traits, class HDS>	
-void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
-	Polyhedron_3<Tr,HDS>& P, const Traits& traits)
+// the use of a template parameter for Point instead of getting this from
+// the Traits class as it should be is required by M$VC6
+template <class Tr, class Traits, class HDS, class Point>	
+void non_coplanar_quickhull_3(std::list<Point>& points,
+                              Polyhedron_3<Tr,HDS>& P, const Traits& traits)
 #else // CGAL_USE_POLYHEDRON_DESIGN_ONE //
 template < class Tr, class Traits, class Items,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
@@ -473,14 +483,18 @@ void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
 
 {
 #if defined (_MSC_VER)
-  typedef typename Polyhedron_3<Tr,Items,HDS,Alloc>::Facet_handle  
-                                                          Facet_handle;
-  typedef typename Polyhedron_3<Tr,Items,HDS,Alloc>::Facet_iterator 
-                                                          Facet_iterator;
+  #ifndef CGAL_USE_POLYHEDRON_DESIGN_ONE
+    typedef typename Polyhedron_3<Tr,Items,HDS,Alloc>     Polyhedron;
+  #else
+    typedef typename Polyhedron_3<Tr, HDS>                Polyhedron;
+  #endif // CGAL_USE_POLYEDRON_DESIGN_ONE
 #else
-  typedef typename Polyhedron_3::Facet_handle             Facet_handle;
-  typedef typename Polyhedron_3::Facet_iterator           Facet_iterator;
-#endif
+  typedef Polyhedron_3                                    Polyhedron;
+#endif // _MS_VER
+
+  typedef typename Polyhedron::Facet_handle               Facet_handle;
+  typedef typename Polyhedron::Facet_iterator             Facet_iterator;
+
   typedef typename Traits::Point_3                        Point_3;
   typedef CGAL::Unique_hash_map<Facet_handle, std::list<Point_3> >   
                                                           Outside_set_map;
