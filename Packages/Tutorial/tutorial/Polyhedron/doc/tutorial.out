@@ -1,0 +1,17 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}
+\BOOKMARK [1][-]{section.2}{Prerequisites}{}
+\BOOKMARK [1][-]{section.3}{Halfedge data structure}{}
+\BOOKMARK [1][-]{section.4}{Polyhedron Data Structure}{}
+\BOOKMARK [2][-]{subsection.4.1}{Declaration}{section.4}
+\BOOKMARK [2][-]{subsection.4.2}{Extending primitives}{section.4}
+\BOOKMARK [2][-]{subsection.4.3}{Iteration and Circulation}{section.4}
+\BOOKMARK [2][-]{subsection.4.4}{Mesh Editing}{section.4}
+\BOOKMARK [2][-]{subsection.4.5}{Incremental Builder}{section.4}
+\BOOKMARK [1][-]{section.5}{Subdivision Surfaces}{}
+\BOOKMARK [2][-]{subsection.5.1}{3-Subdivision using Euler Operators}{section.5}
+\BOOKMARK [2][-]{subsection.5.2}{Quad-triangle Subdivision using Incremental Builder}{section.5}
+\BOOKMARK [2][-]{subsection.5.3}{Subdivision using a rule template}{section.5}
+\BOOKMARK [1][-]{section.6}{Application demo}{}
+\BOOKMARK [2][-]{subsection.6.1}{Compiling on Windows}{section.6}
+\BOOKMARK [2][-]{subsection.6.2}{Compiling on Linux}{section.6}
+\BOOKMARK [1][-]{section.7}{Conclusion}{}

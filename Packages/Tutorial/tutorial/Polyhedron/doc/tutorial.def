@@ -1,0 +1,4 @@
+\graphicspath{{figs/}}
+\def\figurename{Figure}
+\def\tablename{Tableau}
+\newcommand{\italic}[1]{\emph{#1}} 

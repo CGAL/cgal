@@ -1,0 +1,123 @@
+\documentclass[a4paper,twoside,10pt]{article}
+\usepackage{tutorial}
+\input{tutorial.def}
+
+\begin{document}
+
+% TITLE
+\date{}
+\title{{\LARGE {\sffamily\bfseries Getting started with CGAL
+Polyhedron}}\\ the example of subdivision surfaces}
+\author{
+\sffamily Pierre Alliez\footnote{GEOMETRICA, INRIA Sophia-Antipolis}
+\and 
+\sffamily Andreas Fabri\footnote{GeometryFactory, Sophia-Antipolis}
+\and 
+\sffamily Lutz Kettner\footnote{Max-Planck Institut für Informatik, Saarbrücken}
+\and
+\sffamily Le-Jeng Shiue\footnote{SurfLab, University of Florida}
+\and
+\sffamily Radu Ursu\footnote{GEOMETRICA, INRIA Sophia-Antipolis}}
+\maketitle
+
+\thispagestyle{empty}
+
+% ABSTRACT
+
+\abstract{This document gives a rapid description for a user to get
+started with the halfedge data structure provided by the Computational
+Geometry Algorithm Library (CGAL). Assuming the reader to be familiar
+with the C++ template mechanisms and the key concepts of the Standard
+Template Library (STL), we describe three different approaches with
+increasing level of sophistication for implementing mesh subdivision
+schemes. The simplest approach uses simple Euler operators to
+implement the $\sqrt{3}$ subdivision scheme applicable to triangle
+meshes. A second approach overloads the incremental builder already
+provided by CGAL to implement the quad-triangle subdivision scheme
+applicable to polygon meshes. The third approach is more generic and
+offers an efficient way to design its own subdivision scheme through
+the definition of a set of rules. Catmull-Clark, Loop and Doo-Sabin
+schemes are illustrated using the latter approach. A companion MS .NET
+application developed using MFC and OpenGL implements the subdivision
+schemes listed herein, as well as several functionalities for
+interaction, visualization and raster/vectorial output.}
+
+\vskip 3mm
+
+\noindent {\bf Keywords:}
+                 CGAL library,
+                 tutorial, 
+                 halfedge data structure, 
+                 polygon surface mesh,
+                 subdivision surfaces,
+                 quad-triangle subdivision scheme,
+                 $\sqrt{3}$,
+                 Loop,
+                 Doo-Sabin,
+                 Catmull-Clark,
+                 OpenGL.
+
+                 
+\section{Introduction}  
+
+Motivations:
+
+\begin{itemize}
+\item stop reinventing the wheel
+\item the use of an optimized and robust computational 
+      geometry library guarantees a much easier implementation, as
+      well as fast and robust results
+\item feel the power of generic programming
+\end{itemize}               
+
+\section{Prerequisites}
+
+C++ and generic programming
+STL
+Concepts of iterators and circulators in general.
+Concepts of iterators and circulators in general on a mesh.
+
+\section{Halfedge data structure}
+
+Description. 
+
+Why it is so convenient (circulation around vertices, inside facets,
+along a boundary, etc).
+
+Euler operators.
+
+
+
+\section{Subdivision surfaces}
+
+A nice example to illustrate (i) iteration and circulation on a
+halfedge data structure, (ii) modification of the connectivity, and
+iii) modification of the geometry.
+
+\subsection{Concept}
+
+A subdivision surface is the limit surface of a subdivision process
+applied over a control mesh...etc.
+
+\subsection{Using Euler operators}
+
+$\sqrt{3}$
+
+\subsection{Using incremental builder}
+
+quad-triangle
+
+\subsection{Using a rule template}
+
+Doo-Sabin, Catmull-Clark, Loop.
+
+\section{Companion example application}
+
+List of features, snapshots.
+How to compile it.
+How to use it.
+
+\section{Conclusion}
+
+
+\end{document}
