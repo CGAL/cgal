@@ -1,3 +1,7 @@
+4.80      (24 Feb 03)
+- Remove g++ 2.95 warnings (windows end-of-line)
+  and MipsPro warnings (unused variables).
+
 4.79      (11 Feb 03)
 - Fix square(MP_Float).
 

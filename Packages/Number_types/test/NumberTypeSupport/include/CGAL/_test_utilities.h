@@ -27,6 +27,10 @@
 
 CGAL_BEGIN_NAMESPACE
 
+// Used to shut down some warnings about unused variables.
+template < class T > 
+void use(const T&) {}
+
 template < class NT >
 bool
 test_sqrt(NT, CGAL::Tag_true)
@@ -91,21 +95,23 @@ test_basic_operators(const NT&)
   NT one(1);
 
   NT a = zero + one;
-  (void)a;
+  use(a);
   NT b = zero - one;
   a = zero * one;
   a += b;
   a -= b;
-  a *= b; (void)a;
+  a *= b;
   a =  -b;
+  use(a);
 
   bool d;
-  d = a<b; (void)d;
-  d = a>b; (void)d;
-  d = a<=b; (void)d;
-  d = a>=b; (void)d;
-  d = a==b; (void)d;
-  d = a!=b; (void)d;
+  d = a<b;
+  d = a>b;
+  d = a<=b;
+  d = a>=b;
+  d = a==b;
+  d = a!=b;
+  use(d);
 
 return true;
 }
