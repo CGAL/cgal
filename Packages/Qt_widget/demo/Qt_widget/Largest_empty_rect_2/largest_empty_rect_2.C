@@ -1,39 +1,16 @@
 // ============================================================================
 //
-// Copyright (c) 1997-2000 The CGAL Consortium
-
+// Copyright (c) 1997-2003 The CGAL Consortium
 // This software and related documentation are part of the Computational
 // Geometry Algorithms Library (CGAL).
 // This software and documentation are provided "as-is" and without warranty
 // of any kind. In no event shall the CGAL Consortium be liable for any
 // damage of any kind. 
-//
-// Every use of CGAL requires a license. 
-//
-// Academic research and teaching license
-// - For academic research and teaching purposes, permission to use and copy
-//   the software and its documentation is hereby granted free of charge,
-//   provided that it is not a component of a commercial product, and this
-//   notice appears in all copies of the software and related documentation. 
-//
-// Commercial licenses
-// - Please check the CGAL web site http://www.cgal.org/index2.html for 
-//   availability.
-//
-// The CGAL Consortium consists of Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbrucken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).
-//
 // ----------------------------------------------------------------------
 //
-// file          : demo/Qt_widget/Max_k-gon/max_k-gon.C
+// file          : largest_empty_rect_2.C
 // package       : Qt_widget
 // author(s)     : Radu Ursu
-// release       : CGAL-2.4
-// release_date  : 2002, May 16
-//
 // coordinator   : Laurent Rineau
 //
 // email         : contact@cgal.org
@@ -45,8 +22,6 @@
 // if QT is not installed, a message will be issued in runtime.
 #ifndef CGAL_USE_QT
 #include <iostream>
-
-
 int main(int, char*)
 {
 
@@ -71,6 +46,7 @@ int main(int, char*)
 #include <CGAL/IO/Qt_widget_Polygon_2.h>
 #include "Qt_widget_toolbar.h"
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
+#include <CGAL/IO/Qt_widget_helpwindow.h>
 #include <CGAL/IO/Qt_widget_layer.h>
 
 #include <qplatinumstyle.h>
@@ -117,7 +93,7 @@ public:
       Largest_empty_rect empty_rectangle(iso_rect);
 
       //VERTICES
-      *widget << CGAL::PointSize(7) << CGAL::PointStyle(CGAL::CROSS);
+      *widget << CGAL::PointSize(6);
       *widget << CGAL::GREEN;
       std::list<Point>::iterator itp = list_of_points.begin();
       while(itp!=list_of_points.end()){
@@ -171,6 +147,8 @@ public:
     // help menu
     QPopupMenu * help = new QPopupMenu( this );
     menuBar()->insertItem( "&Help", help );
+    help->insertItem("How To", this, SLOT(howto()), Key_F1);
+    help->insertSeparator();
     help->insertItem("&About", this, SLOT(about()), CTRL+Key_A );
     help->insertItem("About &Qt", this, SLOT(aboutQt()) );
 
@@ -230,13 +208,22 @@ private slots:
   void about()
   {
     QMessageBox::about( this, my_title_string,
-		"This is a demo for Maximum inscribed k-gon,\n"
-  		"Copyright CGAL @2002");
+		"This is a demo for Largest empty rectangle\n"
+  		"Copyright CGAL @2003");
   };
 
   void aboutQt()
   {
     QMessageBox::aboutQt( this, my_title_string );
+  }
+
+  void howto(){
+    QString home;
+    home = "help/index.html";
+    HelpWindow *help = new HelpWindow(home, ".", 0, "help viewer");
+    help->resize(400, 400);
+    help->setCaption("Demo HowTo");
+    help->show();
   }
 
   void new_window(){

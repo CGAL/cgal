@@ -1,3 +1,25 @@
+// ============================================================================
+//
+// Copyright (c) 1997-2003 The CGAL Consortium
+// This software and related documentation are part of the Computational
+// Geometry Algorithms Library (CGAL).
+// This software and documentation are provided "as-is" and without warranty
+// of any kind. In no event shall the CGAL Consortium be liable for any
+// damage of any kind. 
+// ----------------------------------------------------------------------
+//
+// file          : min_quadrilateral_2.C
+// package       : Qt_widget
+// author(s)     : Radu Ursu
+// coordinator   : Laurent Rineau
+//
+// email         : contact@cgal.org
+// www           : http://www.cgal.org
+//
+//
+// ======================================================================
+
+
 // if QT is not installed, a message will be issued in runtime.
 #ifndef CGAL_USE_QT
 #include <iostream>
@@ -30,6 +52,7 @@ int main(int, char*)
 #include "Qt_widget_toolbar_layers.h"
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
+#include <CGAL/IO/Qt_widget_helpwindow.h>
 #include <CGAL/IO/Qt_widget_layer.h>
 
 //Qt
@@ -97,6 +120,8 @@ public:
     // help menu
     QPopupMenu * help = new QPopupMenu( this );
     menuBar()->insertItem( "&Help", help );
+    help->insertItem("How To", this, SLOT(howto()), Key_F1);
+    help->insertSeparator();
     help->insertItem("&About", this, SLOT(about()), CTRL+Key_A );
     help->insertItem("About &Qt", this, SLOT(aboutQt()) );
 
@@ -153,13 +178,22 @@ private slots:
   void about()
   {
     QMessageBox::about( this, my_title_string,
-		"This is a demo for Minimum enclosing quadrilateral,\n"
-  		"Copyright CGAL @2001");
+		"This is a demo for Minimum enclosing quadrilateral\n"
+  		"Copyright CGAL @2003");
   };
 
   void aboutQt()
   {
     QMessageBox::aboutQt( this, my_title_string );
+  }
+
+  void howto(){
+    QString home;
+    home = "help/index.html";
+    HelpWindow *help = new HelpWindow(home, ".", 0, "help viewer");
+    help->resize(400, 400);
+    help->setCaption("Demo HowTo");
+    help->show();
   }
 
   void new_window(){

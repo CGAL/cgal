@@ -1,3 +1,25 @@
+// ============================================================================
+//
+// Copyright (c) 1997-2003 The CGAL Consortium
+// This software and related documentation are part of the Computational
+// Geometry Algorithms Library (CGAL).
+// This software and documentation are provided "as-is" and without warranty
+// of any kind. In no event shall the CGAL Consortium be liable for any
+// damage of any kind. 
+// ----------------------------------------------------------------------
+//
+// file          : convex_hull_2.C
+// package       : Qt_widget
+// author(s)     : Radu Ursu
+// release_date  : 2002, May 16
+//
+// coordinator   : Laurent Rineau
+//
+// email         : contact@cgal.org
+// www           : http://www.cgal.org
+//
+// ======================================================================
+
 // if QT is not installed, a message will be issued in runtime.
 #ifndef CGAL_USE_QT
 #include <iostream>
@@ -29,6 +51,7 @@ int main(int, char*)
 #include <CGAL/IO/Qt_widget.h>
 #include "Qt_widget_toolbar.h"
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
+#include <CGAL/IO/Qt_widget_helpwindow.h>
 #include <CGAL/IO/Qt_widget_layer.h>
 
 #include <qplatinumstyle.h>
@@ -63,8 +86,8 @@ class Qt_layer_show_ch : public CGAL::Qt_widget_layer
 public:
   void draw()
   {
-     widget->lock();
-    *widget << CGAL::PointSize(7) << CGAL::PointStyle(CGAL::CROSS);
+    widget->lock();
+    *widget << CGAL::PointSize(6);
     *widget << CGAL::GREEN;
     std::list<Point>::iterator itp = list_of_points.begin();
     while(itp!=list_of_points.end())
@@ -136,6 +159,8 @@ public:
     // help menu
     QPopupMenu * help = new QPopupMenu( this );
     menuBar()->insertItem( "&Help", help );
+    help->insertItem("How To", this, SLOT(howto()), Key_F1);
+    help->insertSeparator();
     help->insertItem("&About", this, SLOT(about()), CTRL+Key_A );
     help->insertItem("About &Qt", this, SLOT(aboutQt()) );
 
@@ -172,7 +197,8 @@ public slots:
     widget->lock();
     list_of_points.clear();
     widget->clear_history();
-    widget->set_window(-1.1, 1.1, -1.1, 1.1); // set the Visible Area to the Interval
+    widget->set_window(-1.1, 1.1, -1.1, 1.1); 
+    // set the Visible Area to the Interval
     widget->unlock();
     something_changed();
   }
@@ -187,11 +213,20 @@ private slots:
     }
   };
 
+  void howto(){
+    QString home;
+    home = "help/index.html";
+    HelpWindow *help = new HelpWindow(home, ".", 0, "help viewer");
+    help->resize(400, 400);
+    help->setCaption("Demo HowTo");
+    help->show();
+  }
+
   void about()
   {
     QMessageBox::about( this, my_title_string,
-		"This is a demo for Triangulation,\n"
-  		"Copyright CGAL @2001");
+		"This is a demo for Convex_hull_2\n"
+  		"Copyright CGAL @2003");
   };
 
   void aboutQt()
@@ -219,10 +254,11 @@ private slots:
   void gen_points()
   {
     widget->clear_history();
-    widget->set_window(-1.1, 1.1, -1.1, 1.1); // set the Visible Area to the Interval
+    widget->set_window(-1.1, 1.1, -1.1, 1.1); 
+    // set the Visible Area to the Interval
 
     // send resizeEvent only on show.
-    CGAL::Random_points_in_disc_2<Point> g(0.5);
+    CGAL::Random_points_in_disc_2<Point> g(1);
     for(int count=0; count<200; count++) {
       list_of_points.push_back(*g++);
     }

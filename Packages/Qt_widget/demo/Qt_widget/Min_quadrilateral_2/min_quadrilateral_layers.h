@@ -160,7 +160,7 @@ public:
   {
     //Draw the points as CROSS
     widget->lock();
-      *widget << CGAL::PointSize(7) << CGAL::PointStyle(CGAL::CROSS);
+      *widget << CGAL::PointSize(6) << CGAL::PointStyle(CGAL::DISC);
       *widget << CGAL::GREEN;
       typename std::list<Point>::iterator itp = (*list_of_points).begin();
       while(itp!=(*list_of_points).end())

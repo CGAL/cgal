@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : demo/Qt_widget/Max_k-gon/max_k-gon.C
+// file          : max_k-gon.C
 // package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : 
@@ -53,6 +53,7 @@ int main(int, char*)
 #include <CGAL/IO/Qt_widget_Polygon_2.h>
 #include "Qt_widget_toolbar.h"
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
+#include <CGAL/IO/Qt_widget_helpwindow.h>
 #include <CGAL/IO/Qt_widget_layer.h>
 
 #include <qplatinumstyle.h>
@@ -125,7 +126,7 @@ public:
       widget->setRasterOp(old);  
 
       //VERTICES
-      *widget << CGAL::PointSize(7) << CGAL::PointStyle(CGAL::CROSS);
+      *widget << CGAL::PointSize(6);
       *widget << CGAL::GREEN;
       std::list<Point>::iterator itp = list_of_points.begin();
       while(itp!=list_of_points.end())
@@ -198,6 +199,8 @@ public:
     // help menu
     QPopupMenu * help = new QPopupMenu( this );
     menuBar()->insertItem( "&Help", help );
+    help->insertItem("How To", this, SLOT(howto()), Key_F1);
+    help->insertSeparator();
     help->insertItem("&About", this, SLOT(about()), CTRL+Key_A );
     help->insertItem("About &Qt", this, SLOT(aboutQt()) );
 
@@ -254,13 +257,22 @@ private slots:
   void about()
   {
     QMessageBox::about( this, my_title_string,
-		"This is a demo for Maximum inscribed k-gon,\n"
-  		"Copyright CGAL @2002");
+		"This is a demo for Maximum inscribed k-gon\n"
+  		"Copyright CGAL @2003");
   };
 
   void aboutQt()
   {
     QMessageBox::aboutQt( this, my_title_string );
+  }
+
+  void howto(){
+    QString home;
+    home = "help/index.html";
+    HelpWindow *help = new HelpWindow(home, ".", 0, "help viewer");
+    help->resize(400, 400);
+    help->setCaption("Demo HowTo");
+    help->show();
   }
 
   void new_window(){
@@ -287,7 +299,7 @@ private slots:
 		// set the Visible Area to the Interval
 
     // send resizeEvent only on show.
-    CGAL::Random_points_in_disc_2<Point> g(0.5);
+    CGAL::Random_points_in_disc_2<Point> g(1);
     for(int count=0; count<200; count++) {
       list_of_points.push_back(*g++);
     }
