@@ -51,17 +51,25 @@ described.
 \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
-<center>
-<img border=1 src="./apollonius_diagram.gif" align=center
-alt="The Apollonius diagram">
-<img border=1 src="./apollonius_graph.gif" align=center
-alt="The Apollonius graph (dual of the Apollonius diagram)">
+  <center>
+  <img border=1 src="./apollonius_diagram.gif" align=center
+  alt="The Apollonius diagram" title="The Apollonius diagram">
+  <!-- -->
+  <img border=1 src="./apollonius_graph.gif" align=center
+  alt="The Apollonius graph (dual of the Apollonius diagram)"
+  title="The Apollonius graph (dual of the Apollonius diagram)">
 </center>
+\end{ccHtmlOnly}
+\begin{ccHtmlOnly}
+<font size=-1>
 \end{ccHtmlOnly}
 \begin{center}
 \caption{The Apollonius diagram (left) and its dual the Apollonius
   graph (right).}\label{fig-apollonius}
 \end{center}
+\begin{ccHtmlOnly}
+</font>
+\end{ccHtmlOnly}
 \end{figure}
 
 The 2D Apollonius graph class of \cgal\ is designed to compute the
@@ -339,10 +347,16 @@ not.
 \begin{ccHtmlOnly}
   <center>
   <img border=1 src="./apollonius-vertex_conflict-false.gif" align=center
-  alt="The Vertex_conflict_2 predicate returns false">
+  alt="The Vertex_conflict_2 predicate returns NEGATIVE"
+  title="The Vertex_conflict_2 predicate returns NEGATIVE">
+  <!-- -->
   <img border=1 src="./apollonius-vertex_conflict-true.gif" align=center
-  alt="The Vertex_conflict_2 predicate returns true">
+  alt="The Vertex_conflict_2 predicate returns POSITIVE"
+  title="The Vertex_conflict_2 predicate returns POSITIVE">
   </center>
+\end{ccHtmlOnly}
+\begin{ccHtmlOnly}
+<font size=-1>
 \end{ccHtmlOnly}
 \caption{
     The \ccc{Vertex_conflict_2} predicate. The left-most, bottom-most
@@ -352,6 +366,9 @@ not.
     the bisector of the top-most and bottom-most circles. Left: the
     predicate returns \ccc{NEGATIVE}. Right: the predicate returns
     \ccc{POSITIVE}.}
+\begin{ccHtmlOnly}
+</font>
+\end{ccHtmlOnly}
 \end{figure}
 
 What we essentially want to compute when we construct incrementally a
@@ -398,16 +415,39 @@ otherwise it is a finite edge.
 \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
-<center>
-<img border=1 src="./apollonius-left_vertex.gif" align=center alt="">
-<img border=1 src="./apollonius-right_vertex.gif" align=center alt="">
-<br><br>
-<img border=1 src="./apollonius-no_conflict.gif" align=center alt="">
-<img border=1 src="./apollonius-entire_edge.gif" align=center alt="">
-<br><br>
-<img border=1 src="./apollonius-interior.gif" align=center alt="">
-<img border=1 src="./apollonius-both_vertices.gif" align=center alt="">
+  <center>
+  <img border=1 src="./apollonius-left_vertex.gif" align=center
+  alt="In conflict with a neighborhood of the left-most vertex of the
+  Apollonius edge"
+  title="In conflict with a neighborhood of the left-most vertex of the Apollonius edge">
+  <!-- -->
+  <img border=1 src="./apollonius-right_vertex.gif" align=center
+  alt="In conflict with a neighborhoof of the right-most vertex of the
+  Apollonius edge"
+  title="In conflict with a neighborhoof of the right-most vertex of the Apollonius edge">
+  <br><br>
+  <!-- -->
+  <img border=1 src="./apollonius-no_conflict.gif" align=center
+  alt="No conflict" title="No conflict">
+  <!-- -->
+  <img border=1 src="./apollonius-entire_edge.gif" align=center
+  alt="In conflict with the entire Apollonius edge"
+  title="In conflict with the entire Apollonius edge">
+  <br><br>
+  <!-- -->
+  <img border=1 src="./apollonius-interior.gif" align=center
+  alt="In conflict with a portion of the interior of the Apollonius
+  edge"
+  title="In conflict with a portion of the interior of the Apollonius edge">
+  <!-- -->
+  <img border=1 src="./apollonius-both_vertices.gif" align=center
+  alt="In conflict with (disjoint) neighborhoods of the vertices of
+  the Apollonius edge"
+  title="In conflict with (disjoint) neighborhoods of the vertices of the Apollonius edge">
 </center>
+\end{ccHtmlOnly}
+\begin{ccHtmlOnly}
+<font size=-1>
 \end{ccHtmlOnly}
 \caption{The 6 possible outcomes of the
   \ccc{Finite_edge_interior_conflict_2} predicate.
@@ -428,6 +468,9 @@ otherwise it is a finite edge.
   unaffected. Bottom right: The neighborhood around the two endpoints
   will be destroyed, but an interval in the interior of the edge will
   remain in the new diagram.}\label{fig-ag2edgeconflict}
+\begin{ccHtmlOnly}
+</font>
+\end{ccHtmlOnly}
 \end{figure}
 
 The last predicate that we want to discuss is called
