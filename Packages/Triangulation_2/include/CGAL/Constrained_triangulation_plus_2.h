@@ -159,6 +159,10 @@ public:
  
   // REMOVAL
   void remove_constraint(Vertex_handle va, Vertex_handle vb);
+  //  template <class OutpuItFaces>
+  //  OutputItFaces    remove_constraint(Vertex_handle va, 
+  //				         Vertex_handle vb, 
+  //                                     OutputItFaces out);
   
   // Query of the constraint hierarchy
   Constraint_iterator constraints_begin() const;
@@ -195,19 +199,41 @@ public:
 public:
   template < class InputIterator >
 #if defined(_MSC_VER) || defined(__SUNPRO_CC)
-   int insert(InputIterator first, InputIterator last, int i = 0)
+    int insert(InputIterator first, InputIterator last, int i = 0)
 #else
-   int insert(InputIterator first, InputIterator last) 
+    int insert(InputIterator first, InputIterator last) 
 #endif
-    {
-      int n = number_of_vertices();
-      while(first != last){
-	insert(*first);
-	++first;
-      }
-      return number_of_vertices() - n;
+  {
+    int n = number_of_vertices();
+    while(first != last){
+      insert(*first);
+      ++first;
     }
+    return number_of_vertices() - n;
+  }
 
+  template <class OutputItFaces>
+    OutputItFaces
+    remove_constraint(Vertex_handle va, 
+		      Vertex_handle vb, 
+		      OutputItFaces out) {
+    CGAL_triangulation_precondition(hierarchy.is_constrained_edge(va,vb));
+    for(Vertices_in_constraint_iterator it = 
+	  hierarchy.vertices_in_constraint_begin(va,vb),  succ = it; 
+	++succ != hierarchy.vertices_in_constraint_end(va,vb); 
+	++it){
+      Face_handle fh;
+      int i;
+      CGAL_triangulation_assertion_code( bool b = )
+	Triangulation::is_edge(*it, *succ, fh, i);
+      CGAL_triangulation_assertion(b);
+      // this does also flipping if necessary.
+      Triangulation::remove_constrained_edge(fh,i,out);
+ 
+    } 
+    hierarchy.remove_constraint(va,vb);
+    return out;
+  }
 };
 
 template <class Tr>
@@ -495,21 +521,8 @@ void
 Constrained_triangulation_plus_2<Tr>::
 remove_constraint(Vertex_handle va, Vertex_handle vb)
 {
-  CGAL_triangulation_precondition(hierarchy.is_constrained_edge(va,vb));
-  for(Vertices_in_constraint_iterator it = 
-	hierarchy.vertices_in_constraint_begin(va,vb),  succ = it; 
-      ++succ != hierarchy.vertices_in_constraint_end(va,vb); 
-      ++it){
-    Face_handle fh;
-    int i;
-    CGAL_triangulation_assertion_code( bool b = )
-    Triangulation::is_edge(*it, *succ, fh, i);
-    CGAL_triangulation_assertion(b);
-    // this does also flipping if necessary.
-    Triangulation::remove_constrained_edge(fh,i); 
-  }
-  hierarchy.remove_constraint(va,vb);
- }
+    remove_constraint(va, vb, Emptyset_iterator());
+}
 
 template <class Tr>
 std::ostream &

@@ -110,6 +110,7 @@ public:
   Vertex_handle push_back(const Point &p);
 
   void  remove(Vertex_handle v );
+  void restore_Delaunay(Vertex_handle v);
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2  
   using Triangulation::cw;
@@ -117,7 +118,6 @@ public:
 #endif
 
 private:
-  void restore_Delaunay(Vertex_handle v);
   void propagating_flip(Face_handle& f,int i);
   void remove_2D(Vertex_handle v );
 

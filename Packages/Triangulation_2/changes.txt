@@ -1,6 +1,12 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+1 october 2004
+- make restore_Delaunay public in Delaunay_triangulation_2
+- remove_constrained_edge of Constraint and Delaunay Constraint triangulation
+  + remove_constraint of Constraint_triangulation_plus_2
+  have a template version with a output iterator to output deleted faces.
+
 14 october 2004 Mariette
 - add an output iterator to get flipped facets
   in propogating_flip(List_edges) of 

@@ -137,7 +137,15 @@ public:
   void remove(Vertex_handle  v);
   void remove_constrained_edge(Face_handle f, int i);
   void remove_incident_constraints(Vertex_handle  v);
-  
+  // to be used by Constrained_triangulation_plus_2
+ template <class OutputItFaces>
+ OutputItFaces 
+ remove_constrained_edge(Face_handle f, int i, OutputItFaces out) 
+ {
+   remove_constrained_edge(f, i);
+   return out;
+ }
+
   //for backward compatibility
   void remove_constraint(Face_handle f, int i) {remove_constrained_edge(f,i);}
   void insert(Point a, Point b) { insert_constraint(a, b);}
