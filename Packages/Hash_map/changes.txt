@@ -1,4 +1,14 @@
 Hash_map Package: Release changes
 ----------------------------------------------------------------------
 
+0.9.2 (09 Jul 2001)
+
+     - Changed Hash_map to Unique_hash_map. Kept old file.
+     - Separated Handle_hash_function into own file.
+     - Improved performance of default Handle_hash_function.
+     - Rewrote manual pages including the UniqueHandleFunction concept.
+     - Made protected methods in chained_map.h public such that
+       Unique_hash_map can be implemented using a private member
+       instead of private inheritance.
+     
 0.9	initial release        

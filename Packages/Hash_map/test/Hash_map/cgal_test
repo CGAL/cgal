@@ -33,10 +33,10 @@ compile_and_run()
     rm -f $OUTPUTFILE
     COMMAND="./$1"
     if [ -f $1.cmd ] ; then
-      COMMAND="$COMMAND '`cat $1.cmd`'"
+      COMMAND="$COMMAND `cat $1.cmd`"
     fi
     if [ -f $1.cin ] ; then
-      COMMAND="echo '`cat $1.cin`' | $COMMAND"
+      COMMAND="cat $1.cin | $COMMAND"
     fi
     echo "Executing $1 ... "
     echo
@@ -63,4 +63,12 @@ touch $ERRORFILE
 #                    compile and run the tests
 #---------------------------------------------------------------------#
 
-compile_and_run Hash_map-test
+if [ $# -ne 0 ] ; then
+  for file in $* ; do
+    compile_and_run $file
+  done
+else
+  compile_and_run Hash_map-test
+  compile_and_run Unique_hash_map_test
+fi
+

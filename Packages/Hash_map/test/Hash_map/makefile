@@ -18,7 +18,6 @@ CXXFLAGS = \
            $(EXTRA_FLAGS) \
            -Iinclude \
            $(CGAL_CXXFLAGS) \
-           $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
 
 #---------------------------------------------------------------------#
@@ -31,24 +30,33 @@ LIBPATH = \
 
 LDFLAGS = \
           $(TESTSUITE_LDFLAGS) \
-          $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
-all:            Hash_map-test 
+all:            \
+                Hash_map-test \
+                Unique_hash_map_test 
 
 Hash_map-test$(EXE_EXT): Hash_map-test$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Hash_map-test Hash_map-test$(OBJ_EXT) $(LDFLAGS)
 
-clean: Hash_map-test.clean 
+Unique_hash_map_test$(EXE_EXT): Unique_hash_map_test$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Unique_hash_map_test Unique_hash_map_test$(OBJ_EXT) $(LDFLAGS)
+
+clean: \
+                   Hash_map-test.clean \
+                   Unique_hash_map_test.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#
 
 .C$(OBJ_EXT):
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
+
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 

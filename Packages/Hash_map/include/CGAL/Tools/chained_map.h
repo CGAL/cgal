@@ -63,7 +63,7 @@ class chained_map
 
    unsigned long old_index;
 
-protected:
+public:
    T& xdef() { return STOP.i; }
    const T& cxdef() const { return STOP.i; }
 private:
@@ -79,7 +79,7 @@ private:
 
    inline void insert(unsigned long x, T y);
 
-protected:
+public:
    typedef chained_map_elem<T>*  chained_map_item;
    typedef chained_map_item item;
 
