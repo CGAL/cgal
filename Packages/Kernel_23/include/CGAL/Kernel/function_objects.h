@@ -22,6 +22,8 @@
 #ifndef CGAL_KERNEL_FUNCTION_OBJECTS_H
 #define CGAL_KERNEL_FUNCTION_OBJECTS_H
 
+#include <CGAL/functional_base.h>
+
 CGAL_BEGIN_NAMESPACE
 namespace CGALi {
 
@@ -113,6 +115,7 @@ class Call_make_object_to_get
 {
   public:
     typedef  ToBeConstructed  result_type;
+    typedef  Arity_tag< 1 >   Arity;
 
     template <class Cls>
     ToBeConstructed
@@ -125,6 +128,7 @@ class Construct_scaled_vector
 {
    public:
      typedef Vector    result_type;
+     typedef  Arity_tag< 2 >   Arity;
 
      template <class NT>
      Vector
@@ -137,6 +141,7 @@ class Construct_translated_point
 {
    public:
      typedef Point    result_type;
+     typedef  Arity_tag< 2 >   Arity;
 
      template <class Vector>
      Point
@@ -149,6 +154,7 @@ class Construct_projected_xy_point
 {
    public:
      typedef Point_2    result_type;
+     typedef  Arity_tag< 2 >   Arity;
 
      template <class Plane_3, class Point_3>
      Point_2
@@ -178,6 +184,7 @@ class Call_second_point_to_get
 {
   public:
     typedef ReturnType     result_type;
+    typedef  Arity_tag< 1 >   Arity;
 
     template <class Cls>
     ReturnType
@@ -207,6 +214,7 @@ class Call_perpendicular_plane_to_get
 {
   public:
     typedef ReturnType     result_type;
+    typedef  Arity_tag< 2 >   Arity;
 
     template <class Cls, class A1>
     ReturnType
@@ -219,6 +227,7 @@ class Call_perpendicular_line_to_get
 {
   public:
     typedef ReturnType     result_type;
+    typedef  Arity_tag< 2 >   Arity;
 
     template <class Cls, class A1>
     ReturnType
@@ -231,6 +240,7 @@ class Call_orthogonal_vector_to_get
 {
   public:
     typedef Vector     result_type;
+    typedef  Arity_tag< 1 >   Arity;
 
     template <class Cls>
     Vector
@@ -243,6 +253,7 @@ class Call_projection_to_get
 {
   public:
     typedef Point     result_type;
+    typedef  Arity_tag< 2 >   Arity;
 
     template <class Cls>
     Point
@@ -255,6 +266,7 @@ class Call_squared_area_to_get
 {
   public:
     typedef ReturnType     result_type;
+    typedef  Arity_tag< 1 >   Arity;
 
     template <class Cls>
     ReturnType
@@ -267,6 +279,7 @@ class Call_area_to_get
 {
   public:
     typedef ReturnType     result_type;
+    typedef Arity_tag< 1 >   Arity;
 
     template <class Cls>
     ReturnType
@@ -279,6 +292,7 @@ class Call_volume_to_get
 {
   public:
     typedef ReturnType     result_type;
+    typedef Arity_tag< 1 >   Arity;
 
     template <class Cls>
     ReturnType
@@ -291,6 +305,7 @@ class p_Midpoint
 {
   public:
     typedef Point          result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     Point
     operator()(const Point& p, const Point& q) const
@@ -302,6 +317,7 @@ class p_Center
 {
   public:
     typedef Point          result_type;
+    typedef Arity_tag< 1 >   Arity;
 
     template <class C>
     Point
@@ -346,6 +362,7 @@ class pl_Bisector
 {
   public:
     typedef Line           result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     Line
     operator()(const Point& p, const Point& q) const
@@ -357,6 +374,7 @@ class v_Opposite
 {
    public: 
      typedef Vector        result_type;
+     typedef Arity_tag< 1 >   Arity;
    
    Vector
    operator()(const Vector& v) const
@@ -368,6 +386,7 @@ class v_Cross_product
 {
   public:
     typedef Vector          result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     Vector
     operator()(const Vector& v, const Vector& w) const
@@ -379,6 +398,7 @@ class v_Base
 {
    public:
      typedef Vector        result_type;
+     typedef Arity_tag< 2 >   Arity;
 
      template <class Plane>
      Vector
@@ -395,6 +415,7 @@ class Intersect
 {
   public:
     typedef CGAL::Object   result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     template <class T1, class T2>
     CGAL::Object
@@ -406,6 +427,7 @@ class Do_intersect
 {
   public:
     typedef bool   result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     template <class T1, class T2>
     bool
@@ -417,6 +439,7 @@ class Assign
 {
   public:
     typedef bool           result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     template <class T1>
     bool
@@ -429,6 +452,7 @@ class Call_y_at_x_to_get
 {
   public:
     typedef ReturnType     result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     template <class Cls>
     ReturnType
@@ -441,6 +465,7 @@ class Call_x_at_y_to_get
 {
   public:
     typedef ReturnType     result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     template <class Cls>
     ReturnType
@@ -453,6 +478,7 @@ class Call_squared_length_to_get
 {
   public:
     typedef ReturnType     result_type;
+    typedef Arity_tag< 1 >   Arity;
 
     template <class Cls>
     ReturnType
@@ -465,6 +491,7 @@ class Call_squared_distance
 {
   public:
     typedef ReturnType     result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     template <class T1, class T2>
     ReturnType
@@ -498,6 +525,7 @@ class p_Angle
 {
   public:
     typedef Angle           result_type;
+    typedef Arity_tag< 3 >   Arity;
 
     template <class T>
     Angle
@@ -510,6 +538,7 @@ class p_Lifted
 {
    public:
      typedef Point_3        result_type;
+     typedef Arity_tag< 2 >   Arity;
 
      template <class Plane, class Point_2>
      Point_3
@@ -521,6 +550,7 @@ class Counterclockwise_in_between
 {
   public:
     typedef bool           result_type;
+    typedef Arity_tag< 3 >   Arity;
 
     template <class T>
     bool
@@ -532,6 +562,7 @@ class Collinear
 {
   public:
     typedef bool           result_type;
+    typedef Arity_tag< 3 >   Arity;
 
     template <class T>
     bool
@@ -543,6 +574,7 @@ class Coplanar
 {
   public:
     typedef bool  result_type;
+    typedef Arity_tag< 4 >   Arity;
 
     template <class T>
     bool
@@ -554,6 +586,7 @@ class Coplanar_orientation
 {
   public:
     typedef Orientation  result_type;
+    typedef Arity_tag< 4 >   Arity;
 
     template <class P>
     Orientation
@@ -565,6 +598,7 @@ class Coplanar_side_of_bounded_circle
 {
   public:
     typedef Bounded_side  result_type;
+    typedef Arity_tag< 4 >   Arity;
 
     template <class P>
     Bounded_side
@@ -576,6 +610,7 @@ class Side_of_oriented_circle
 {
   public:
     typedef Oriented_side  result_type;
+    typedef Arity_tag< 4 >   Arity;
 
     template <class T>
     Oriented_side
@@ -603,6 +638,7 @@ class Side_of_oriented_sphere
 {
   public:
     typedef Oriented_side  result_type;
+    typedef Arity_tag< 5 >   Arity;
 
     template <class T>
     Oriented_side
@@ -637,6 +673,7 @@ class Call_is_horizontal
 {
   public:
     typedef bool           result_type;
+    typedef Arity_tag< 1 >   Arity;
 
     template <class Cls>
     bool
@@ -648,6 +685,7 @@ class Call_is_vertical
 {
   public:
     typedef bool           result_type;
+    typedef Arity_tag< 1 >   Arity;
 
     template <class Cls>
     bool
@@ -659,6 +697,7 @@ class Call_is_degenerate
 {
   public:
     typedef bool           result_type;
+    typedef Arity_tag< 1 >   Arity;
 
     template <class Cls>
     bool
@@ -670,6 +709,7 @@ class Call_has_on_bounded_side
 {
   public:
     typedef bool           result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     template <class Cls, class Arg>
     bool
@@ -681,6 +721,7 @@ class Call_has_on_unbounded_side
 {
   public:
     typedef bool           result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     template <class Cls, class Arg>
     bool
@@ -692,6 +733,7 @@ class Call_has_on_boundary
 {
   public:
     typedef bool           result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     template <class Cls, class Arg>
     bool
@@ -703,6 +745,7 @@ class Call_has_on_positive_side
 {
   public:
     typedef bool           result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     template <class Cls, class Arg>
     bool
@@ -714,6 +757,7 @@ class Call_has_on_negative_side
 {
   public:
     typedef bool           result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     template <class Cls, class Arg>
     bool
@@ -725,6 +769,7 @@ class Call_oriented_side
 {
   public:
     typedef Oriented_side   result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     template <class Cls, class Arg>
     Oriented_side
@@ -736,6 +781,7 @@ class Call_bounded_side
 {
   public:
     typedef Bounded_side    result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     template <class Cls, class Arg>
     Bounded_side
@@ -747,6 +793,7 @@ class Less_x
 {
   public:
     typedef bool           result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     template <class T1, class T2>
     bool
@@ -758,6 +805,7 @@ class Less_y
 {
   public:
     typedef bool           result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     template <class T1, class T2>
     bool
@@ -769,6 +817,7 @@ class Less_z
 {
   public:
     typedef bool           result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     template <class T1, class T2>
     bool
@@ -780,6 +829,7 @@ class Less_xy
 {
   public:
     typedef bool           result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     template <class T1, class T2>
     bool
@@ -791,6 +841,7 @@ class Less_yx
 {
   public:
     typedef bool           result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     template <class T1, class T2>
     bool
@@ -802,6 +853,7 @@ class Less_xyz
 {
   public:
     typedef bool           result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     template <class T1, class T2>
     bool
@@ -813,6 +865,7 @@ class Equal
 {
   public:
     typedef bool           result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     template <class T1, class T2>
     bool
@@ -824,6 +877,7 @@ class Equal_x
 {
   public:
     typedef bool           result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     template <class T1, class T2>
     bool
@@ -835,6 +889,7 @@ class Equal_y
 {
   public:
     typedef bool           result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     template <class T1, class T2>
     bool
@@ -846,6 +901,7 @@ class Equal_z
 {
   public:
     typedef bool           result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     template <class T1, class T2>
     bool
@@ -857,6 +913,7 @@ class Equal_xy
 {
   public:
     typedef bool           result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     template <class T1, class T2>
     bool
@@ -868,6 +925,7 @@ class Equal_xyz
 {
   public:
     typedef bool           result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     template <class T1, class T2>
     bool
@@ -924,6 +982,7 @@ class Compare_z
 {
   public:
     typedef Comparison_result result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     template <class T1, class T2>
     Comparison_result
@@ -935,6 +994,7 @@ class Compare_xy
 {
   public:
     typedef Comparison_result result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     template <class T1, class T2>
     Comparison_result
@@ -946,6 +1006,7 @@ class Compare_xyz
 {
   public:
     typedef Comparison_result result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     template <class T1, class T2>
     Comparison_result
@@ -1000,6 +1061,7 @@ class Compare_distance
 {
   public:
     typedef Comparison_result           result_type;
+    typedef Arity_tag< 3 >   Arity;
 
     Comparison_result
     operator()(const T& p, const T& q, const T& r) const
@@ -1011,6 +1073,7 @@ class Compare_angle_with_x_axis
 {
   public:
     typedef Comparison_result           result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     Comparison_result
     operator()(const T& p, const T& q) const
@@ -1022,6 +1085,7 @@ class Less_signed_distance_to_plane
 {
   public:
     typedef bool           result_type;
+    typedef Arity_tag< 3 >   Arity;
 
     bool operator()( const Plane & p, const Point& q, const Point& r) const
     { return has_smaller_signed_dist_to_plane(p,q,r); }
@@ -1031,6 +1095,7 @@ class Are_ordered_along_line
 {
   public:
     typedef bool           result_type;
+    typedef Arity_tag< 3 >   Arity;
 
     template <class T>
     bool
@@ -1042,6 +1107,7 @@ class Are_strictly_ordered_along_line
 {
   public:
     typedef bool           result_type;
+    typedef Arity_tag< 3 >   Arity;
 
     template <class T>
     bool
@@ -1053,6 +1119,7 @@ class Collinear_are_ordered_along_line
 {
   public:
     typedef bool           result_type;
+    typedef Arity_tag< 3 >   Arity;
 
     template <class T>
     bool
@@ -1064,6 +1131,7 @@ class Collinear_are_strictly_ordered_along_line
 {
   public:
     typedef bool           result_type;
+    typedef Arity_tag< 3 >   Arity;
 
     template <class T>
     bool
@@ -1087,6 +1155,7 @@ class Call_source_to_get
 {
   public:
     typedef ReturnType     result_type;
+    typedef Arity_tag< 1 >   Arity;
 
     template <class Cls>
     ReturnType
@@ -1099,6 +1168,7 @@ class Call_target_to_get
 {
   public:
     typedef ReturnType     result_type;
+    typedef Arity_tag< 1 >   Arity;
 
     template <class Cls>
     ReturnType
@@ -1111,6 +1181,7 @@ class Call_min_to_get
 {
   public:
     typedef ReturnType     result_type;
+    typedef Arity_tag< 1 >   Arity;
 
     template <class Cls>
     ReturnType
@@ -1123,6 +1194,7 @@ class Call_max_to_get
 {
   public:
     typedef ReturnType     result_type;
+    typedef Arity_tag< 1 >   Arity;
 
     template <class Cls>
     ReturnType
@@ -1135,6 +1207,7 @@ class Call_vertex_to_get
 {
   public:
     typedef ReturnType     result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     template <class Cls>
     ReturnType
@@ -1147,6 +1220,7 @@ class Call_direction_to_get
 {
   public:
     typedef ReturnType     result_type;
+    typedef Arity_tag< 1 >   Arity;
 
     template <class Cls>
     ReturnType
@@ -1159,6 +1233,7 @@ class Call_supporting_line_to_get
 {
   public:
     typedef ReturnType     result_type;
+    typedef Arity_tag< 1 >   Arity;
 
     template <class Cls>
     ReturnType
@@ -1171,6 +1246,7 @@ class Call_supporting_plane_to_get
 {
   public:
     typedef ReturnType     result_type;
+    typedef Arity_tag< 1 >   Arity;
 
     template <class Cls>
     ReturnType
@@ -1183,6 +1259,7 @@ class Call_opposite_to_get
 {
   public:
     typedef ReturnType     result_type;
+    typedef Arity_tag< 1 >   Arity;
 
     template <class Cls>
     ReturnType
@@ -1195,6 +1272,7 @@ class Call_has_on
 {
   public:
     typedef bool           result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     template <class Cls, class A1>
     bool
@@ -1206,6 +1284,7 @@ class Call_collinear_has_on
 {
   public:
     typedef bool           result_type;
+    typedef Arity_tag< 2 >   Arity;
 
     template <class Cls, class A1>
     bool
