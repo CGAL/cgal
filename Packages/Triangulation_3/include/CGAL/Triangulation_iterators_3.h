@@ -190,9 +190,9 @@ public:
   Triangulation_vertex_iterator_3()
     : _ib(), _tr(NULL), _inf(true)
   {}
-        
+
   Triangulation_vertex_iterator_3(const Triang * tr, bool inf)
-    : _ib( &(tr->_tds)), _tr(tr), _inf(inf)
+    : _ib(tr->_tds.vertices_begin()), _tr(tr), _inf(inf)
     { 
       if (! _inf) {
 	if ( _tr->is_infinite(Vertex_handle( (Vertex *) &(*(_ib)) )) ) {
@@ -204,7 +204,7 @@ public:
   // for past-end iterator
   // does not need to find a finite cell
   Triangulation_vertex_iterator_3(const Triang * tr)
-    : _ib( &(tr->_tds), 1), _tr(tr)
+    : _ib(tr->_tds.vertices_end()), _tr(tr)
   { }
        
   bool

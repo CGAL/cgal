@@ -36,10 +36,8 @@ template < class Vb, class Cb > class Triangulation_ds_vertex_3;
 
 template < class Vb, class Cb > class Triangulation_data_structure_3;
 
-template < class Tds> class Triangulation_ds_cell_iterator_3;
 template < class Tds> class Triangulation_ds_facet_iterator_3;
 template < class Tds> class Triangulation_ds_edge_iterator_3;
-template < class Tds> class Triangulation_ds_vertex_iterator_3;
 template < class Elt, class Alloc > class DS_Container;
 
 template < class Vb, class Cb >
@@ -62,10 +60,8 @@ public:
 
   friend class Triangulation_data_structure_3<Vb,Cb>;
 
-  friend class Triangulation_ds_cell_iterator_3<Tds>;
   friend class Triangulation_ds_facet_iterator_3<Tds>;
   friend class Triangulation_ds_edge_iterator_3<Tds>;
-  friend class Triangulation_ds_vertex_iterator_3<Tds>;
 
   typedef Triangulation_ds_vertex_3<Vb,Cb> Vertex;
   typedef Triangulation_ds_cell_3<Vb,Cb> Cell;

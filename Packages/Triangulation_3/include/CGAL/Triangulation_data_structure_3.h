@@ -68,18 +68,18 @@ public:
   typedef std::pair<Cell*, int>                    Facet;
   typedef triple<Cell*, int, int>                  Edge;
 
-  friend class DS_Container<Cell>;
   friend class Triangulation_ds_facet_iterator_3<Tds>;
   friend class Triangulation_ds_edge_iterator_3<Tds>;
-  friend class Triangulation_ds_vertex_iterator_3<Tds>;
 
   friend class Triangulation_ds_cell_circulator_3<Tds>;
   friend class Triangulation_ds_facet_circulator_3<Tds>;
 
-  typedef typename DS_Container<Cell>::iterator    Cell_iterator;
+  typedef DS_Container<Cell>                       Cell_container;
+  typedef DS_Container<Vertex>                     Vertex_container;
+  typedef typename Cell_container::iterator        Cell_iterator;
+  typedef typename Vertex_container::iterator      Vertex_iterator;
   typedef Triangulation_ds_facet_iterator_3<Tds>   Facet_iterator;
   typedef Triangulation_ds_edge_iterator_3<Tds>    Edge_iterator;
-  typedef Triangulation_ds_vertex_iterator_3<Tds>  Vertex_iterator;
 
   typedef Triangulation_ds_cell_circulator_3<Tds>  Cell_circulator;
   typedef Triangulation_ds_facet_circulator_3<Tds> Facet_circulator;
@@ -113,7 +113,6 @@ public:
   int number_of_cells() const 
     { 
       if ( dimension() < 3 ) return 0;
-      // return std::distance(cells_begin(), cells_end());
       return cell_container().size();
     }
   
@@ -140,7 +139,7 @@ public:
 
   Vertex* create_vertex()
   {
-      return new Vertex();
+      return vertex_container().get_new_element();
   }
 
   Cell* create_cell() 
@@ -193,10 +192,8 @@ public:
 
   void delete_vertex( Vertex* v )
   {
-      // We can't check this condition because vertices are not linked in a
-      // list, unlike the cells.
-      // CGAL_triangulation_expensive_precondition( is_vertex(v) );
-      delete v;
+      CGAL_triangulation_expensive_precondition( is_vertex(v) );
+      vertex_container().release_element(v);
   }
 
   void delete_cell( Cell* c )
@@ -420,14 +417,12 @@ public:
 
   Vertex_iterator vertices_begin() const
   {
-    if ( number_of_vertices() <= 0 )
-	return vertices_end();
-    return Vertex_iterator(this);
+    return vertex_container().begin();
   }
 
   Vertex_iterator vertices_end() const
   {
-    return Vertex_iterator(this, 1);
+    return vertex_container().end();
   }
 
   // CIRCULATOR METHODS
@@ -511,25 +506,22 @@ public:
 
   void clear();
 
-  void clear_cells_only(std::vector<Vertex *> & Vertices);
+  void clear_cells_only();
 
 private:
-  DS_Container<Cell> & cell_container()
-  {
-      return _cell_container;
-  }
+  Cell_container & cell_container()             { return _cell_container; }
+  const Cell_container & cell_container() const { return _cell_container; }
 
-  const DS_Container<Cell> & cell_container() const
-  {
-      return _cell_container;
-  }
+  Vertex_container & vertex_container()             {return _vertex_container;}
+  const Vertex_container & vertex_container() const {return _vertex_container;}
 
   // in dimension i, number of vertices >= i+2 
   // ( the boundary of a simplex in dimension i+1 has i+2 vertices )
   int _dimension;
   int _number_of_vertices;
 
-  DS_Container<Cell> _cell_container;
+  Cell_container   _cell_container;
+  Vertex_container _vertex_container;
 
   // used by is-valid :
   bool count_vertices(int & i, bool verbose = false, int level = 0) const;
@@ -623,12 +615,9 @@ operator<<(std::ostream& os, const Triangulation_data_structure_3<Vb,Cb> &tds)
   
   // index the vertices
   int i = 0;
-  Vertex_iterator it = tds.vertices_begin();
-    
-  while(it != tds.vertices_end()){
+  for (Vertex_iterator it=tds.vertices_begin(); it != tds.vertices_end(); ++it)
     V[&(*it)] = i++;
-    ++it;
-  }
+
   CGAL_triangulation_assertion( i == n );
 
   tds.print_cells(os, V);
@@ -641,13 +630,7 @@ bool
 Triangulation_data_structure_3<Vb,Cb>::
 is_vertex(Vertex* v) const
 {
-      Vertex_iterator it = vertices_begin();
-      while (it != vertices_end()) {
-	if ( v == &(*it) )
-	    return true;
-	++it;
-      }
-      return false;
+    return vertex_container().is_element(v);
 }
 
 template < class Vb, class Cb>
@@ -666,7 +649,7 @@ is_edge(Vertex* u, Vertex* v, Cell* & c, int & i, int & j) const
     }
   }
   return false;
-} 
+}
 
 template < class Vb, class Cb>
 bool
@@ -1782,16 +1765,16 @@ insert_increase_dimension(Vertex * v, // new vertex
 	Vertex* vtmp;
 	Cell* ctmp;
 	Facet_iterator fit = facets_begin();
-	  
+
 	while(fit != facets_end()) {
 	  vtmp = (*fit).first->vertex(1);
 	  (*fit).first->set_vertex(1,(*fit).first->vertex(0));
 	  (*fit).first->set_vertex(0,vtmp);
-	    
+
 	  ctmp = (*fit).first->neighbor(1);
 	  (*fit).first->set_neighbor(1,(*fit).first->neighbor(0));
 	  (*fit).first->set_neighbor(0,ctmp);
-	    
+
 	  ++fit;
 	}
       }
@@ -2279,6 +2262,7 @@ swap(Tds & tds)
   std::swap(_dimension, tds._dimension);
   std::swap(_number_of_vertices, tds._number_of_vertices);
   cell_container().swap(tds.cell_container());
+  vertex_container().swap(tds.vertex_container());
 }
 
 template <class Vb, class Cb >
@@ -2286,37 +2270,18 @@ void
 Triangulation_data_structure_3<Vb,Cb>::
 clear()
 {
-  std::vector<Vertex*> Vertices;
-  clear_cells_only(Vertices);
-
-  // deletion of the vertices
-  for (typename std::vector<Vertex*>::iterator vit = Vertices.begin();
-       vit != Vertices.end(); ++vit)
-    delete *vit;
+  cell_container().clear();
+  vertex_container().clear();
 
   set_number_of_vertices(0);
   set_dimension(-2);
 }
 
-
 template <class Vb, class Cb >
 void
 Triangulation_data_structure_3<Vb,Cb>::
-clear_cells_only(std::vector<Vertex *> & Vertices)
+clear_cells_only()
 {
-  // It's probably not needed to special case this.
-  if (number_of_vertices() == 0) {
-    cell_container().clear();
-    set_dimension(-2); // why here and not below ???
-    return;
-  }
-
-  // We must save all vertices because we're going to delete the cells.
-  Vertices.reserve(number_of_vertices());
-
-  for (Vertex_iterator Vit = vertices_begin(); Vit != vertices_end(); ++Vit)
-        Vertices.push_back(&(*Vit));
-
   cell_container().clear();
 }
 

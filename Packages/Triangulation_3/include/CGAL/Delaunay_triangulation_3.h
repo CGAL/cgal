@@ -364,19 +364,19 @@ remove(Vertex_handle v)
 
     Vertex_handle inf = infinite_vertex();
 
-    std::vector< CGAL_TYPENAME_MSVC_NULL Tds::Vertex * > Vertices;
-    _tds.clear_cells_only(Vertices); 
+    _tds.clear_cells_only();
 
     _tds.set_number_of_vertices(0);
     _tds.set_dimension(-2);
     _tds.insert_increase_dimension( &(*inf) );
     CGAL_triangulation_assertion( inf == infinite_vertex() );
 
-    typename std::vector<CGAL_TYPENAME_MSVC_NULL Tds::Vertex * >::iterator vit;
+    typename Tds::Vertex_iterator vit;
 
-    for ( vit = Vertices.begin(); vit != Vertices.end(); ++vit ) 
-      if ( *vit != &(*inf) && *vit != &(*v) ) 
-	insert( (*vit)->point(), NULL, (Vertex *) *vit );
+    for ( vit = _tds.vertices_begin(); vit != _tds.vertices_end(); ++vit ) 
+      if ( &*vit != (typename Tds::Vertex *) &(*inf) &&
+	   &*vit != (typename Tds::Vertex *) &(*v) ) 
+	insert( (&*vit)->point(), NULL, (Vertex *) &*vit );
 
     _tds.delete_vertex(&(*v));
 

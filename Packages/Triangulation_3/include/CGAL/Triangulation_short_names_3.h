@@ -33,10 +33,8 @@
 #define Triangulation_ds_vertex_3                   TDS_v
 #define Triangulation_ds_cell_3                     TDS_c
 
-#define Triangulation_ds_vertex_iterator_3          TDS_vit
 #define Triangulation_ds_edge_iterator_3            TDS_eit
 #define Triangulation_ds_facet_iterator_3           TDS_fit
-#define Triangulation_ds_cell_iterator_3            TDS_cit
 
 #define Triangulation_ds_cell_circulator_3          TDS_ccir
 #define Triangulation_ds_facet_circulator_3         TDS_fcir

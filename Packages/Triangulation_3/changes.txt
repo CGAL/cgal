@@ -2,11 +2,12 @@ Version 1.84 (?? August 01)
 - Use std::swap instead of temporary variables in swap().
 - Commonize code between operator=() and copy_triangulation().
 - Test iterators/circulators for Delaunay too.
-- New cell container in DS_Container.h using an allocator.
+- New cell and vertex container in DS_Container.h using an allocator.
 - TDS uses DS_Container.
 - Remove list pointer from ds_cell, to make it more compact.
 - Circulators don't store a TDS* anymore as it's not used.
-- ds_cell_iterator removed, replaced by DS_Container::iterator.
+- ds_cell_iterator removed, replaced by DS_Container<Cell>::iterator.
+- ds_vertex_iterator removed, replaced by DS_Container<Vertex>::iterator.
 - other ds_iterators use the one above internally, also don't derive from
   Triangulation_utils_3.
 - const correctness fixes.

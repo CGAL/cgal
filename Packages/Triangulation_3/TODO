@@ -26,9 +26,6 @@ Exemples - demo
 
 TDS
 - Unification de Triangulation::Vertex et TDS::Vertex.
-- Facet_circulator : Est-ce qu'il y a besoin de stocker un TDS * ?  Stocker
-  deux Vertex * plutot que deux ints, ca permet de gagner une Cell *, et
-  d'etre plus rapide, non ? 
 - comprendre bug dans ancienne version de is_edge de tds, dim 2 
 	(pb edge_iterator...? etonnant)
 - Why are the iterators friend in the ds_cell ?
@@ -54,6 +51,7 @@ T3
 - is_valid devrait verifier l'enveloppe convexe
 - prevoir differentes sorties : geomview (ameliorer le rendu pour
   donner un effet de perspective), vrml, viewer_3...
+  cf Polyhedron_3, file I/O.
 - point iterator
 
 Delaunay
