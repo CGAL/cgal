@@ -42,6 +42,7 @@ int main()
 
 #include <unistd.h>
 #include <vector>
+#include <cassert>
 
 typedef CGAL::Filtered_kernel<CGAL::Simple_cartesian<double> > K;
 
