@@ -6,7 +6,7 @@
 @! author: Sven Schönherr <sven@inf.ethz.ch>
 @! ----------------------------------------------------------------------------
 @! $CGAL_Chapter: Geometric Optimisation $
-@! $CGAL_Package: Min_sphere_d WIP $
+@! $CGAL_Package: Min_sphere_d_new WIP $
 @! $Revision$
 @! $Date$
 @! ============================================================================
@@ -1480,7 +1480,7 @@ web file.
     @<file name>(@1)
     @<file description>(
         "Geometric Optimisation",
-        "Min_sphere_d", "Min_sphere_d",
+        "Min_sphere_d_new", "Min_sphere_d",
         "$Revision$","$Date$",
         "Bernd Gärtner, Sven Schönherr",
         "Sven Schönherr <sven@@inf.ethz.ch>",
