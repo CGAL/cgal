@@ -49,7 +49,7 @@ according to the
 $y$-ordering of points \ccc{p} and \ccc{q}.}
 \ccGlue
 
-\ccNestedType{snap_2}{The snap operation as defined
+\ccNestedType{Snap_2}{The snap operation as defined
 in \cite{isr-2002}. It rounds a point to a center of a pixel (unit square)
 in the grid used by the Snap Rounding algorithm. Must have the syntax
 \ccc{void operator()(Point_2 p,NT pixel_size,NT &x,NT &y)} where $p$ is the
@@ -57,25 +57,25 @@ input point, \ccc{pixel_size} is the size of the pixel of the grid,
 and $x$ and $y$ are the $x$ and $y$-coordinates of the rounded point
 respectively.}
 
-\ccNestedType{segment_direction_2}{Returns a floating-point approximation of the
+\ccNestedType{Segment_direction_2}{Returns a floating-point approximation of the
 slope of a segment as described in \cite{isr-2002}.
 Must have the syntax \ccc{double operator()(Segment_2 s)}
 where $s$ is the input segment.}
 
-\ccNestedType{rotate_point_2}{Rotate a point by an approximation of a given angle
+\ccNestedType{Rotate_point_2}{Rotate a point by an approximation of a given angle
 as desribed in \cite{isr-2002}.
 Must have the syntax \ccc{Point_2 operator()(Point_2 p,NT angle)}
 where $p$ is the point to rotate and angle is the rotation magnitude
 in radians.}
 
-\ccNestedType{integer_grid_point_2}{return the conversion of a point
+\ccNestedType{Integer_grid_point_2}{return the conversion of a point
 from an arbitrary-precision representation into an integer one as
 described in \cite{isr-2002}. 
 Must have the syntax \ccc{Point_2 operator()(Point_2 p,NT pixel_size)}
 where $p$ is the converted point and \ccc{pixel_size} is the size of the pixel of the grid.
 }
 
-\ccNestedType{box_of_minkowski_sum_2}{Get the bounding box
+\ccNestedType{Box_of_minkowski_sum_2}{Get the bounding box
 of the minkowski sum of a segment and a unit pixel as described in \cite{isr-2002}.
 Must have the syntax \ccc{Iso_rectangle_2 operator()(Segment_2 s,NT unit_squere,NT angle)}
 where $s$ is the segment, {\ccc unit\_square} is the edge size of the pixel
@@ -107,15 +107,15 @@ and constructor objects.
 \ccGlue
 \ccMethod{Comparison_y_2 compare_y_2_object();}{}
 \ccGlue
-\ccMethod{snap_2 snap_2_object();}{}
+\ccMethod{Snap_2 snap_2_object();}{}
 \ccGlue
-\ccMethod{segment_direction_2 segment_direction_object();}{}
+\ccMethod{Segment_direction_2 segment_direction_2_object();}{}
 \ccGlue
-\ccMethod{rotate_point_2 rotate_point_object();}{}
+\ccMethod{Rotate_point_2 rotate_point_2_object();}{}
 \ccGlue
-\ccMethod{integer_grid_point_2 integer_grid_point_object();}{}
+\ccMethod{Integer_grid_point_2 integer_grid_point_2_object();}{}
 \ccGlue
-\ccMethod{box_of_minkowski_sum_2 box_of_minkowski_sum_object();}{}
+\ccMethod{Box_of_minkowski_sum_2 box_of_minkowski_sum_2_object();}{}
 \ccGlue
 
 
