@@ -21,6 +21,7 @@
 //                 Lutz Kettner <kettner@cs.unc.edu>
 //
 // maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
+// coordinator   : ETH
 //
 // Stl_Extensions: In place list.
 // ============================================================================
@@ -189,6 +190,18 @@ struct item : public In_place_list_base<item> {
   bool operator<  (const item& i) const { return key < i.key;}
 };
 int test_value_type( item*)           { return 1;}
+
+struct Cont : public CGAL::In_place_list_base<Cont>
+{
+  int i_;
+  Cont() : i_(4711) {}
+  Cont(int i) : i_(i) {};
+};
+
+struct ContLt {
+  bool operator()(const Cont& c1, const Cont& c2) const
+  { return (c1.i_)<(c2.i_); }
+};
 
 void test_In_place_list() {
   {
@@ -869,6 +882,23 @@ void test_In_place_list() {
     b[0] = 1; // avoids warning with NDEBUG
     CGAL_assertion( l.size() == 5);
     CGAL_assertion( std::equal( l.begin(), l.end(), b));
+  }
+  {
+    typedef CGAL::In_place_list<Cont,false> ContList;
+    typedef CGAL::In_place_list<Cont,false>::iterator Iterator;
+
+    ContList L;
+    L.push_back(* new Cont(3));
+    L.push_back(* new Cont(5));
+    L.push_back(* new Cont(-2));
+    L.push_back(* new Cont(-2));
+    L.push_back(* new Cont(-7));
+    L.push_back(* new Cont(11));
+    L.sort(ContLt());
+    Iterator it1 = L.begin(), it2 = it1;
+    for (++it2; it2 != L.end(); it1=it2, ++it2) {
+      CGAL_assertion( (*it1).i_ <= (*it2).i_ );
+    }
   }
 }
 

@@ -21,6 +21,7 @@
 //                 Lutz Kettner <kettner@cs.unc.edu>
 //
 // maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
+// coordinator   : ETH
 //
 // An circulator built over a linked node structure.
 // ============================================================================

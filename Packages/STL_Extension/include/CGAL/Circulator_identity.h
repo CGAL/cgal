@@ -21,6 +21,7 @@
 //                 Lutz Kettner <kettner@cs.unc.edu>
 //
 // maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
+// coordinator   : ETH
 //
 // An circulator adaptor for the identity function.
 // ============================================================================

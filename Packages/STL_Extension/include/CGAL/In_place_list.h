@@ -21,6 +21,7 @@
 //                 Lutz Kettner <kettner@cs.unc.edu>
 //
 // maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
+// coordinator   : ETH
 //
 // A doubly linked list managing items in place.
 // ============================================================================
@@ -573,10 +574,59 @@ public:
   // stable. Precondition: Both lists are increasingly sorted. A
   // suitable `operator<' for the type T.
 
+  template < class StrictWeakOrdering >
+  void merge(Self& x, StrictWeakOrdering ord)
+  // merges the list x into the list `l' and x becomes empty.
+  // It is stable.
+  // Precondition: Both lists are increasingly sorted wrt. ord.
+  {
+    iterator first1 = begin();
+    iterator last1 = end();
+    iterator first2 = x.begin();
+    iterator last2 = x.end();
+    while (first1 != last1 && first2 != last2)
+      if (ord(*first2, *first1)) {
+        iterator next = first2;
+        transfer(first1, first2, ++next);
+        first2 = next;
+      } else
+        ++first1;
+    if (first2 != last2)
+      transfer(last1, first2, last2);
+    length += x.length;
+    x.length= 0;
+  }
+
   void sort();
   // sorts the list `l' according to the `operator<' in time O(n
   // log n) where `n = size()'. It is stable. Precondition: a
   // suitable `operator<' for the type T.
+
+  template < class StrictWeakOrdering >
+  void sort(StrictWeakOrdering ord)
+  // sorts the list `l' according to ord in time O(n log n)
+  // where `n = size()'. It is stable.
+  {
+    if (size() < 2) return;
+    In_place_list<T,managed> carry;
+    In_place_list<T,managed> counter[64];
+    int fill = 0;
+    while (!empty()) {
+      carry.splice(carry.begin(), *this, begin());
+      int i = 0;
+      while(i < fill && !counter[i].empty()) {
+        counter[i].merge(carry, ord);
+        carry.swap(counter[i++]);
+      }
+      carry.swap(counter[i]);
+      if (i == fill)
+        ++fill;
+    }
+    for (int i = 1; i < fill; ++i)
+      counter[i].merge(counter[i-1], ord);
+    swap(counter[fill-1]);
+  }
+
 };
 
 template <class T, bool managed>
