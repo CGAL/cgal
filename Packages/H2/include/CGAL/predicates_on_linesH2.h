@@ -138,15 +138,15 @@ compare_x_at_y(const PointH2<R>& p,
   typedef typename R::RT RT;
   CGAL_kernel_precondition( ! h.is_horizontal() );
   Oriented_side ors = h.oriented_side( p );
-  if ( h.b() < RT(0) )
+  if ( h.a() < RT(0) )
   {
       ors = opposite( ors );
   }
   if ( ors == ON_POSITIVE_SIDE )
   {
-      return SMALLER;
+      return LARGER;
   }
-  return ( ors == ON_NEGATIVE_SIDE ) ? LARGER : EQUAL;
+  return ( ors == ON_NEGATIVE_SIDE ) ? SMALLER : EQUAL;
 }
 
 template <class R>
