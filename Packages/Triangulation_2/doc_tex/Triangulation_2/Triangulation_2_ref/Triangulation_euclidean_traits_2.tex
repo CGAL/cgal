@@ -20,7 +20,7 @@
   
 The class \ccRefName\ is a model for the \ccc{Triangulation_traits_2}
 and \ccc{Delaunay_triangulation_traits_2} 
-concepts. It uses types defined in \cgal kernel
+concepts. It uses types defined in \cgal\ kernel
 as geometric primitives types.
 
 \ccInclude{Triangulation_euclidean_traits_2.h}
@@ -40,9 +40,16 @@ as geometric primitives types.
 \ccGlue
 \ccTypedef{typedef CGAL::Line_2<R> Line_2;}{}
 \ccGlue
+\ccTypedef{typedef CGAL::Direction_2<R> Direction_2;}{}
+\ccGlue
 \ccTypedef{typedef CGAL::Ray_2<R>  Ray_2;}{}
 
 The following predicates and constructor types are provided
+
+\ccNestedType{Construct_segment_2}
+\ccGlue
+\ccNestedType{Construct_triangle_2}
+\ccGlue
 \ccNestedType{Compare_x_2}{}
 \ccGlue
 \ccNestedType{Compare_y_2}{}
@@ -51,27 +58,39 @@ The following predicates and constructor types are provided
 \ccGlue
 \ccNestedType{Side_of_oriented_circle_2}{}
 \ccGlue
+\ccNestedType{Less_distance_to_point_2}
+\ccGlue
 \ccNestedType{Construct_circumcenter_2}{}
 \ccGlue
 \ccNestedType{Construct_bisector_2}{}
 \ccGlue
-\ccNestedType{Construct_midpoint}{}
+\ccNestedType{Construct_ray_2}{}
+\ccGlue
+\ccNestedType{Construct_direction_of_line_2}{}
 
 \ccHeading{Access to predicate objects}
 The following access functions are provided
+
+\ccMethod{Construct_segment_2 construct_segment_2_object();}
+\ccGlue
+\ccMethod{Construct_triangle_2 construct_triangle_2_object();}
+\ccGlue
 \ccMethod{Comparison_x_2 compare_x_2_object();}{}                               \ccGlue
 \ccMethod{Comparison_y_2 compare_y_2_object();}{}
 \ccGlue
 \ccMethod{Orientation_2  orientation_2_object();}{}
 \ccGlue
 \ccMethod{Side_of_oriented_circle_2
-side_of_oriented_circle_2_object();}{}
+          side_of_oriented_circle_2_object();}{}
 \ccGlue
 \ccMethod{Construct_circumcenter_2 construct_circumcenter_2_object();}{}
 \ccGlue
 \ccMethod{Construct_bisector_2 construct_bisector_2_object();}{}
 \ccGlue
-\ccMethod{Construct_midpoint construct_midpoint_object();}{}
+\ccMethod{Construct_ray_2 construct_ray_2_object();}{}
+\ccGlue
+\ccMethod{Construct_direction_of_line_2 
+          construct_direction_of_line_2_object();}{} 
 
 \ccSeeAlso
 \ccc{Triangulation_traits_2} \\

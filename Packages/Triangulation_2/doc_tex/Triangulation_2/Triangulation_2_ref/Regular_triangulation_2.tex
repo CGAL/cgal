@@ -173,12 +173,14 @@ of some points implies the destruction of the hiding face.
 \ccThree{Vertex_handle}{T.push_back(const Point &p);}{}
 
 \ccMethod{bool insert(const Weighted_point& p, Face_handle f=Face_handle());}
-{inserts  weighted point \ccc{p}.
+{inserts  weighted point \ccc{p} and 
 returns true if a new vertex is created. 
 If a weighted point with the same center point but a 
 different weight already exists in the triangulation, 
 it is removed and replaced by the new point.
-}
+If given the parameter \ccc{f} is used as an hint
+for the place to start the location process of point \ccc{p}.}
+
 
 \ccMethod{bool insert(const Weighted_point &p,
 	 	       Locate_type  lt,

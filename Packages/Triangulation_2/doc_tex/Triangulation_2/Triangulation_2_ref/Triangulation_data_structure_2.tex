@@ -122,12 +122,13 @@ number of faces stored in the triangulation data structure.}
 \ccc{va vb} is an edge of \ccVar.}
 \ccGlue
 \ccMethod{bool is_edge(const Vertex* va, const Vertex* vb, Face* &fr,
-int &i) const;}{as previous and makes \ccc{fi}  of the face of \ccVar
-with the ordered edge \ccc{va vb} and \ccc{i} be the index of this
-edge in \ccc{fr}.}
+int &i) const;}{as previous. In addition, if true is returned
+\ccc{fr} and \ccc{i} are set such that the pair \ccc{(fr,i)}
+is the descrition 
+of  the ordered edge \ccc{va vb}.}
 \ccGlue
 \ccMethod{bool is_face(const Vertex* v1, const Vertex* v2, const
-Vertex* v3) const;}{\ccc{true} if there is a face having \ccc{v1}, \ccc{v2} and a\ccc{v3} 
+Vertex* v3) const;}{\ccc{true} if there is a face having \ccc{v1}, \ccc{v2} and\ccc{v3} 
 as vertices.}
 \ccGlue
 \ccMethod{bool is_face(const Vertex* v1, const Vertex* v2, const Vertex* v3,
@@ -165,7 +166,7 @@ diagonal of the quadrilateral formed by \ccc{f} and  \ccc{f->neighbor(i)}.}
 \ccMethod{Vertex* insert_first();} {creates the first 
 vertex and returns a pointer to it.}
 \ccGlue
-\ccMethod{Vertex* insert_second();} {creates the second finite
+\ccMethod{Vertex* insert_second();} {creates the second 
 vertex and returns a pointer to it.}
 \ccMethod{Vertex* insert_in_edge(Face* f, int i);} {adds a
 vertex \ccc{v} splitting 
@@ -180,7 +181,7 @@ two new faces are created. Return a  pointer to \ccc{v} }
 a vertex \ccc{v}, increasing by one the dimension of the triangulation.
 Vertex \ccc{v} and the existing vertex \ccc{w} are linked to all 
 the vertices of the triangulation. 
-The boolean orient decides the final orientation of all 
+The boolean \ccc{orient} decides the final orientation of all 
 faces. A pointer to vertex \ccc{v} is returned.
 }
 
@@ -229,13 +230,14 @@ The following modifiers are required for convenience of the advanced
 user.
 They do not guarantee the combinatorial validity 
 of the resulting triangulation.
+
 \ccMethod{Face* create_face(Face* f1, int i1, Face* f2, int i2, Face*
 f3, int i3);}{adds a face which is the neighbor \ccc{i1} of \ccc{f1}, 
-\ccc{i2} of ccc{f2} and \ccc{i3} of \ccc{f3}.}
+\ccc{i2} of \ccc{f2} and \ccc{i3} of \ccc{f3}.}
 \ccGlue
 \ccMethod{Face* create_face(Face* f1, int i1, Face* f2, int i2);}
 {adds a face which is the neighbor \ccc{i1} of \ccc{f1}, 
-and the neighbor \ccc{i2} of ccc{f2}.}
+and the neighbor \ccc{i2} of \ccc{f2}.}
 \ccGlue
 \ccMethod{Face* create_face(Face* f1, int i1, Vertex* v);}
 {adds a face which is the neighbor \ccc{i1} of \ccc{f1},

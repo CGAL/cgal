@@ -86,12 +86,13 @@ constrained edges with null length are allowed.
 
 \ccConstructor{Constrained_triangulation_2();}{default constructor.}
 \ccConstructor{Constrained_triangulation_2(const
-Constrained_triangulation_2& ctbis)}
+Constrained_triangulation_2& ct1)}
  {Copy constructor, all faces and vertices
 are duplicated and  the constrained status of edges
 is copied. This last feature is not yet implemented.}
 
-\ccConstructor{Constrained_triangulation_2(list<Constrained>& lc, Traits& t = Traits());}
+\ccConstructor{Constrained_triangulation_2(list<Constrained>& lc,
+const Traits& t = Traits());}
 {Introduces a constrained triangulation, the constrained edges of which
 are the edges of the list \ccc{lc}.}
 
@@ -120,12 +121,12 @@ replaced by the two constraints ac and cb. Apart from the insertion of
 a and b, the algorithm runs in time proportionnal to the number of
 removed triangles. 
 \ccPrecond The relative interior of segment \ccc{ab} does not
-intersect the relative interior of another constrained edge}
+intersect the relative interior of another constrained edge.}
 
 \ccMethod{ void insert(const Vertex_handle & va, const Vertex_handle & vb);}
 { Inserts the line segment \ccc{s} whose endpoints are the vertices 
 \ccc{va} and
-\ccc{vb}  as a constraintedge \ccc{e}. The triangles intersected by s
+\ccc{vb}  as a constrained edge \ccc{e}. The triangles intersected by s
 are removed and new ones are created. 
 \ccPrecond The relative interior of \ccc{s} does not
 intersect the relative interior of another constrained edge.  
@@ -140,13 +141,9 @@ and the index \ccc{i}  of the vertex of \ccc{fr} opposite to
 \ccc{e}, i.e.  \ccc{e}=\ccc{(fr,i)}.}	    
 
 \ccMethod{void insert(const Vertex_handle & va, const Vertex_handle & vb,
-	    Face_handle & fr, int & i, List_edges & new_edges,
-	List_vertices & new_vertices);}
+	    Face_handle & fr, int & i, List_edges & new_edges );}
 {Same as above. In addition,  the edges that are created are put in
-the list \ccc{new\_edges} and the new vertices
-\(resulting from the intersection of two constraints\) are put in the
-list
-\ccc{new\_vertices}.}
+the list \ccc{new\_edges}.} 
 
 \ccMethod{void remove(const Vertex_handle & v);}
 { Removes a vertex v. All constraints incident to the removed vertex are removed. }
@@ -168,8 +165,6 @@ write ``C'' or ``N'' depending whether edge
 \ccc{Constrained_triangulation_face_base_2}
 
 
-\ccExample
-TODO An example is required here.
 
 \ccHeading{Implementation}
 
@@ -188,12 +183,6 @@ call the face class method
 which, in the case of a constrained triangulation,
 includes a test of the consistency of the
 information about constrained edges.
-\ccOperations
-
-
-
-
-
 
 \end{ccRefClass}
 

@@ -24,7 +24,7 @@ of set of points ${  A}$ in the plane.
 Such a triangulation has as its vertices the points of ${  A}$
 and its domain covers the convex hull of ${  A}$.
 It can be viewed as a planar partition of the plane
-whoses bounded faces are triangular. and cover
+whoses bounded faces are triangular and cover
 the convex hull of ${  A}$. The single unbounded face of this partition
 is the complementary of the convex hull of ${  A}$. 
 In many applications, such as Kirkpatrick's hierarchy
@@ -92,7 +92,7 @@ neighbor of \ccc{f}  which is next to \ccc{neighbor(i)} turning clockwise
 around \ccc{f}. The face \ccc{neighbor(cw(i))}
 is also the first face encountered after \ccc{f} when
 turning clockwise around vertex \ccc{i}
-of~\ccc{f}.
+of~\ccc{f} (see Figure~\ref{Triangulation_ref_Fig_neighbors}).
 
 
 
@@ -127,9 +127,6 @@ The second parameter expects a model of the
 This class provides the functions \ccc{cw(i)} et \ccc{ccw(i)}.
 
 \ccTypes
-\ccThree{typedef Traits::Trianglperle sirius gemma procyon algorab zosma alcyone sargas taniae}{}{the triangulation data structure type.}
-\ccThreeToTwo
-
 \ccTypedef{typedef Traits Geom_traits;}{the traits class.}
 \ccGlue
 \ccNestedType{Tds}{the triangulation data structure type.}
@@ -151,7 +148,7 @@ The \ccc{Edge(f,i)} is edge common to faces \ccc{f} and
 \ccc{vertex(cw(i))} and \ccc{vertex(ccw(i))} of \ccc{f}.}
 
 
-\ccThree{typedef Gt::Triangle}{}{the triangulation data structure type}
+\ccThree{typedef Traits::Triangle}{}{the triangulation data structure type}
 \ccThreeToTwo
 The vertices and faces of the triangulations are accessed through 
 \ccc{handles}, 
@@ -559,7 +556,7 @@ the vertex \ccc{i} of face \ccc{f}.}}
 {Inserts 
  a point which is outside the convex hull  but in the affine hull.
 Face handle \ccc{f} is assumed to point to a an infinite face
-which is a prove of the point's location (see the description of the
+which is a witness of the point's location (see the description of the
 \ccc{locate} method above.)
 \ccPrecond{
  \ccc{f} point to a face which is a proof  of the location
@@ -893,31 +890,24 @@ of the triangulation data structure.
 
 \ccSeeAlso
 
-\ccc{CGAL::Triangulation_2<Traits,Tds>::Face},
-\ccc{CGAL::Triangulation_2<Traits,Tds>::Vertex},
-\ccc{Triangulation_traits_2},
-\ccc{Triangulation_data_structure},
-\ccc{CGAL::Triangulation_default_data_structure},
+\ccc{CGAL::Triangulation_2<Traits,Tds>::Face} \\
+\ccc{CGAL::Triangulation_2<Traits,Tds>::Vertex} \\
+\ccc{Triangulation_traits_2} \\
+\ccc{Triangulation_data_structure} \\
+\ccc{CGAL::Triangulation_default_data_structure} \\
 \ccc{CGAL::Triangulation_data_structure_using_list}.
 
 
 
 
-\ccExample
+%\ccExample
 
-The following code fragment creates a  triangulation of 2D points
-for the  usual Euclidean metric. The points are read from {\tt cin},
-inserted in the triangulation 
-and finally points on the convex hull are written to {\tt cout}. 
-%\ccIncludeExampleCode{../../examples/Triangulation/triangulation_prog1.C}
-%\ccIncludeExampleCode{examples/Triangulation/triangulation_prog1.C}
-\ccIncludeExampleCode{Triangulation/triangulation_prog1.C}
-%\lcTex{
+%The following code fragment creates a  triangulation of 2D points
+%for the  usual Euclidean metric. The points are read from {\tt cin},
+%inserted in the triangulation 
+%and finally points on the convex hull are written to {\tt cout}. 
 %\ccIncludeExampleCode{Triangulation/triangulation_prog1.C}
-%}
-%\lcHtml{
-%\ccIncludeExampleCode{../../../examples/Triangulation/triangulation_prog1.C}
-%}
+
 
 \end{ccRefClass}
 

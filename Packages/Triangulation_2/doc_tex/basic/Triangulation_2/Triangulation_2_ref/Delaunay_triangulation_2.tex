@@ -24,8 +24,8 @@ A  Delaunay triangulation of a set of points
 is a triangulation of the sets of points that fulfills
 the following {\em empty circle property} 
 (also called {\em Delaunay property}): the circumscribing
-circle of each
- face does not contain any vertex.
+circle of any face
+of the triangulation contains no point of the set in its interior.
 For a point set with no case of cocircularity 
 of more than three points,
 the Delaunay triangulation is unique, it is  the dual
@@ -44,13 +44,13 @@ and the same models can be used to instantiate the
 triangulation data structure of either a \ccc{Triangulation_2<Traits,Tds>}
 or a \ccRefName. On the contrary, because the
 Delaunay triangulation relies on the notions of 
-empty circles and of distance, 
-the concept of \ccc{Delaunay_triangulation_traits_2}, described
-\ccRefPage{Delaunay_triangulation_traits_2},
- has to provide
-the \ccc{side_of_oriented_circle} predicate
-a Distance class. 
-Changing the Distance class and the \ccc{side_of_oriented_circle} predicate 
+empty circles and of distance, the geometric traits
+ has to provide the famous \ccc{in_circle(p,q,r,s)} predicate
+which decides the position of  the point $s$ (interior, exterior
+or on the boundary) with respect to the circle
+passing through $p$, $q$ and $r$. The \ccc{in_circle(p,q,r,s)}
+predicate actually defines the Delaunay triangulation.
+Changing this predicate 
 allows to build Delaunay triangulations for different metrics
 such that $L_1$ or $L_{\infty}$ or any metric defined by a
 convex object. However, the user of an exotic metric
@@ -59,7 +59,9 @@ has to be a triangulation of the convex hull
 which means that convex hull edges have to be Delaunay edges.
 This is granted for any smooth convex metric (like $L_2$)
 and can be ensured for other metrics (like  $L_{\infty}$)
-by the addition to the point set of well chosen sentinel points.
+by the addition to the point set of well chosen sentinel points
+The concept of \ccc{Delaunay_triangulation_traits_2} is  described
+\ccRefPage{Delaunay_triangulation_traits_2}.
 
 
 \ccInclude{Delaunay_triangulation_2.h}
@@ -76,7 +78,6 @@ defines a type for the distance object function, and
 some types to
 represent the dual Voronoi diagram.
 
-\ccTypedef{typedef Traits::Distance Distance;}{}
 
 \ccTypedef{typedef Traits::Line Line;}{}
 \ccGlue
@@ -244,11 +245,12 @@ average.
 
 Removal calls the removal in the triangulation and then retriangulates
 the hole in such a way that  the Delaunay criterion is satisfied. Removal of a
-vertex of degree \ccTexHtml{$d$}{d} takes time \ccTexHtml{$O(d^2)$}{O(d^2)},
-which is \ccTexHtml{$O(1)$}{O(1)} for a random
+vertex of degree \ccTexHtml{$d$}{d} takes time \ccTexHtml{$O(d^2)$}{O(d^2)}.
+The degree \ccTexHtml{$d$}{d} is \ccTexHtml{$O(1)$}{O(1)} for a random
 vertex in the triangulation.
 
-Nearest neighbor is found in time \ccTexHtml{$O(n)$}{O(n)} in the
+After a point location step, the nearest neighbor 
+is found in time \ccTexHtml{$O(n)$}{O(n)} in the
 worst case, but in time \ccTexHtml{$O(1)$}{O(1)}
 for vertices distributed uniformly at random  and any query point. 
 

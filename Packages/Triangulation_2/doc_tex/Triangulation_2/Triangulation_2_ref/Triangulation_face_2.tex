@@ -23,22 +23,20 @@ vertices indexed 0,1, and 2 in counterclockwise order
 and to its three adjacent faces, also called neighbors.
 The neighbors are indexed in such a way that neighbor $i$ lies
 opposite to vertex i. 
+
 \ccInclude{CGAL/Triangulation_2.h}
+
 \ccInheritsFrom{\ccc{Tds::Face}}
 
 
 \ccTypes
-
 The class  \ccRefName\  defines the same types 
 as the class \ccc{Triangulation_2<Traits,Tds>} except the iterators and circulators
 which are not needed.
 
+\begin{ccAdvanced}
 \ccCreation
 \ccCreationVariable{f}  %% choose variable name
-
-\begin{ccAdvanced}
-\ccHeading{Creation}
-
 For user defined triangulation algorithms, faces need to
 be explicitly constructed and linked to their neighbors.
 
@@ -156,12 +154,12 @@ therein.}
 
 
 \ccSeeAlso
-\ccc{CGAL::Triangulation_cw_ccw_2}
-\ccc{CGAL::Triangulation_2<Traits,Tds>}
-\ccc{CGAL::Triangulation_2<Traits,Tds>::Vertex}
-\ccc{Triangulation_data_structure}
-\ccc{Triangulation_data_structure::Face}
-\ccc{Triangulation_face_base_2}
+\ccc{CGAL::Triangulation_cw_ccw_2} \\
+\ccc{CGAL::Triangulation_2<Traits,Tds>} \\
+\ccc{CGAL::Triangulation_2<Traits,Tds>::Vertex} \\
+\ccc{Triangulation_data_structure} \\
+\ccc{Triangulation_data_structure::Face} \\
+\ccc{Triangulation_face_base_2} \\
 \end{ccRefClass}
 
 % +------------------------------------------------------------------------+

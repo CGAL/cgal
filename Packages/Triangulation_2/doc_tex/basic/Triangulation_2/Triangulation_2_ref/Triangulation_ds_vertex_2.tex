@@ -98,13 +98,24 @@ by any modification of anyone of the two faces incident to \ccc{v}
 and \ccc{w}.
 
 \ccMethod{Vertex_circulator
-          incident_vertices(Face* f=NULL) const;}{} 
+          incident_vertices(Face* f=NULL) const;}{\ccPrecond If the
+face \ccc{f} is given, it has to be incident to \ccVar\ 
+and the circulators begins with a vertex of \ccc{f} :
+the vertex \ccc{f->vertex(ccw(i))} 
+if \ccc{i} is the index of \ccVar\  in \ccc{f}.} 
 \ccGlue
 \ccMethod{Edge_circulator
-          incident_edges(Face* f=NULL) const;}{}
+          incident_edges(Face* f=NULL) const;}{\ccPrecond If the
+face \ccc{f} is given, it has to be incident to \ccVar\ 
+and the circulators begins with an edge of \ccc{f} :
+the edge \ccc{(f,cw(i))}
+where \ccc{i} is the index of \ccVar\  in \ccc{f}.}
 \ccGlue
 \ccMethod{Face_circulator
-          incident_faces(Face* f=NULL) const;}{}
+          incident_faces(Face* f=NULL) const;}{\ccPrecond If the
+face \ccc{f} is given, it has to be incident to \ccVar\
+and the crculators begins with the face
+\ccc{f}.}
 
 \ccHeading{Miscellaneous}
 

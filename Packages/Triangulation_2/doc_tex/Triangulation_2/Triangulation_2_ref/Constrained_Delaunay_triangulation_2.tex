@@ -80,12 +80,12 @@ All types used in this class are inherited from the base class
 {Introduces an empty constrained Delaunay triangulation \ccVar.}
 
 \ccConstructor{Constrained_Delaunay_triangulation_2(const
-Constrained_Delaunay_triangulation_2& cdtbis)}
+Constrained_Delaunay_triangulation_2& cdt1)}
  {Copy constructor, all faces and vertices
 are duplicated and  the constrained status of edges
 is copied. This last feature is not yet implemented.}
 
-\ccConstructor{Constrained_Delaunay_triangulation_2(list<Constrained>& lc, Traits& t = Traits());}
+\ccConstructor{Constrained_Delaunay_triangulation_2(list<Constrained>& lc,const Traits& t = Traits());}
 {Introduces a constrained triangulation, the constrained edges of which
 are the edges of the list \ccc{lc}.}
 
@@ -102,8 +102,8 @@ $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
 
 
 \ccHeading{Insertion and Removal}
-The following member functions override the corresponding
-member of the base class to include a step restoring
+The following member functions overwrite the corresponding
+members of the base class to include a step restoring
  the Delaunay constrained
 property after modification of the triangulation.
 
@@ -137,13 +137,14 @@ a constraint for its two incident faces.}
 \ccHeading{Flips}
 
 \ccMethod{bool is_flipable(Face_handle f, int i);}
-{ Determines if edge (f,i) can be flipped. Returns true if
-1. edge(f,i) is not constrained and 2. the circle circumscribing f
-does not contain the vertex of f->neighbor(i) not on edge(f,i). }
+{ Determines if edge \ccc{(f,i)} can be flipped. Returns true if
+edge \ccc{(f,i)} is not constrained and  the circle circumscribing f
+does not contain the vertex of \ccc{f->neighbor(i)}
+opposite to edge \ccc{(f,i)}. }
 
 \ccMethod{void flip(Face_handle& f, int i);}
-{ Flip f and f->neighbor(i).
-\ccPrecond f->is\_constrained(i) == FALSE.}
+{ Flip \ccc{f} and \ccc{f->neighbor(i)}.
+\ccPrecond \ccc{f->is\_constrained(i) == FALSE}.}
 
 
 \ccMethod{void propagating_flip(List_edges & edges);}

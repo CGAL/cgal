@@ -177,7 +177,7 @@ Section~\ref{I1_Sect_Tds}  presents the requirements for the
  and the {triangulation data structure} classes
 provided by \cgal. 
 Section~\ref{I1_Sect_Base_classes} describes the requirements
-for the base classes \ccc{Vertex_base} and \ccc{Face_base}  
+for the base classes for vertices and faces
 together with the defaults provided for these classes.
 The remaining sections of this chapter introduce
 several classes derived from the basic triangulation class
@@ -194,10 +194,10 @@ and  appear as a generalization of
 Delaunay triangulations. Section~\ref{I1_Sect_Constrained} 
 describes a class to handle a constrained triangulation,
 that is a triangulation in which certain edges are enforced.
-Constrained triangulations allow in particular to deal with the 
-triangulations of a planar polygons.
+Constrained triangulations allow in particular to build  
+triangulations of planar polygons.
 At last section~\ref{I1_Sect_Hierarchy} describes the
-Delaunay hierarchy, a hierarchical data
+Triangulation hierarchy, a hierarchical data
 structure which may be used to improve the efficiency
 of point location queries.
 
@@ -481,8 +481,6 @@ The following program  creates a  triangulation of 2D points
 for the  usual Euclidean metric. The points are read from {\tt cin},
 and inserted in the triangulation.
 Finally points on the convex hull are written to {\tt cout}. 
-
-//examples/Triangulation/triangulation\_prog1.C
 \ccIncludeExampleCode{Triangulation/triangulation_prog1.C}
 
 
@@ -572,11 +570,11 @@ and use it to define a triangulation class.
 
 \begin{cprog}
 typedef Cartesian<double> Rp;
-typedef Triangulation_euclidean_traits_2<Rp> Traits;
-typedef Triangulation_vertex_base_2<Traits> Vb;
-typedef Triangulation_face_base_2<Traits> Fb;
-typedef Triangulation_default_data_structure_2<Traits,Vb,Fb > Tds;
-typedef Triangulation_2<Traits,Tds> Triangulation;
+typedef Triangulation_euclidean_traits_2<Rp> Gt;
+typedef Triangulation_vertex_base_2<Gt> Vb;
+typedef Triangulation_face_base_2<Gt> Fb;
+typedef Triangulation_default_data_structure_2<Gt,Vb,Fb > Tds;
+typedef Triangulation_2<Gt,Tds> Triangulation;
 \end{cprog}
 
 
@@ -606,7 +604,7 @@ examples of combinatorial operation performed at the data structure level.
 
 
 The triangulation data structure is itself a template class
-parametrized by the base classes \ccc{Vertex_base} and \ccc{Face_base},
+parametrized by the base classes for vertices and faces,
 and derives from thoses base classes its own 
 vertex and face classes. This design  allows to restore at the 
 triangulation data structure
@@ -695,7 +693,8 @@ as a default for the triangulation data structure class of a triangulation.
 This class has two template parameters \ccc{Vb} anf \ccc{Fb}
 which have 
 to be models for respectively the
-\ccc{Vertex_base} and \ccc{Face_base} concepts whose requirements are described in next 
+\ccc{Triangulation_vertex_base_2_concept} and 
+\ccc{Triangulation_face_base_2_concept} concepts whose requirements are described in next 
 section~\ref{I1_Sect_Base_classes}. 
 
 In addition, this model of triangulation data structure has a first template parameter
@@ -745,7 +744,7 @@ full dimensional faces of the triangulation.
 
 
 
-\section{The Base Classes \protect \ccc{Vertex_base} and  \protect \ccc{Face_base} }
+\section{The Base Vertex and Face Classes }
 \label{I1_Sect_Base_classes}
 
 \subsection{Requirements for the Base Classes}
@@ -770,7 +769,8 @@ order around the face. The neighbor indexed \ccc{i}
 \ccc{Triangulation_face_base_2<Traits>} and
 \ccc{Triangulation_vertex_base_2<Traits>} for 
 respectively 
-the \ccc{Vertex_base} and the \ccc{Face_base} concepts.
+the \ccc{Triangulation_vertex_base_2_concept} and the 
+\ccc{Triangulation_face_base_2_concept} concepts.
 Both of them are templated by a geometric traits class.
 Using for this traits class, the geometric traits class used for the triangulation class
 is strongly recommended. 
@@ -783,8 +783,8 @@ other base classes with some additional attribute (a color for example)
 tuned for a specific application.
 
 
-\subsection{Using one's own \ccc{Face_base}}.
-The following example derives a new \ccc{Face_base} class from the default
+\subsection{Using one's own Base Face}.
+The following example derives a new base face class from the default
 one and add a color to the faces of the triangulation. 
 The face of the triangulation data structure
 and the face of the triangulation will inherit the new data member 
@@ -795,7 +795,6 @@ as long as this functionality  does not involve additional pointers to vertices 
 of the vertex or face types.).
 
 \ccExample
-//examples/Triangulation/colored\_face.C
 \ccIncludeExampleCode{Triangulation/colored_face.C}
 
 
@@ -808,11 +807,11 @@ of the vertex or face types.).
 The class \ccc{Delaunay_triangulation_2<Traits,Tds>} is designed to represent
 the Delaunay triangulation of a set of points in a plane.
 A  Delaunay triangulation of a set of points
-is a triangulation of the sets of points that fulfills
+fulfills
 the following {\em empty circle property} 
 (also called {\em Delaunay property}): the circumscribing
-circle of each
- face does not contain any vertex.
+circle of any triangle 
+contains no point of the set in its interior.
 For a point set with no case of cocircularity 
 of more than three points,
 the Delaunay triangulation is unique, it is  the dual
@@ -826,21 +825,24 @@ The template parameters \ccc{Traits} and \ccc{Tds} stand
 respectively
 for a model of geometric traits and for a model of triangulation data structure.
 The requirements for the triangulation data structure
-are those described previously in section~\ref{I1_Sect_Tds}
-and the same models can be used to instantiate the
+of a Delaunay triangulation are
+the same as the requirements for the triangulation data structure
+of a basic triangulation (which are described in
+section~\ref{I1_Sect_Tds}).
+Therefore the same models
+ can be used to instantiate the
 triangulation data structure of either a \ccc{Triangulation_2<Traits,Tds>}
 or a \ccc{Delaunay_triangulation_2<Traits,Tds>}. On the contrary, because the
-concept of Delaunay triangulation relies on the notions of 
-empty circles and of distance, 
+concept of Delaunay triangulation relies on the notions of
+distance and  
+empty circles, 
 the geometric traits has to provide
-the \ccc{side_of_oriented_circle} predicate
-(which was only optional in the traits of plain triangulation),
-and also
-a Distance class. The additional requirements
-to be fulfilled by the geometric traits class
-of a \ccc{Delaunay_triangulation_2<Traits,Tds>} are described in 
-subsection~\ref{I1_Sect_Delaunay_geom_traits}. 
-Changing the Distance class and the \ccc{side_of_oriented_circle} predicate 
+the famous \ccc{in_circle(p,q,r,s)} predicate
+which decides the position of  the point $s$ (interior, exterior
+or on the boundary) with respect to the circle
+passing through $p$, $q$ and $r$. The \ccc{in_circle(p,q,r,s)}
+predicate actually defines the Delaunay triangulation.
+Changing this predicate 
 allows to build Delaunay triangulations for different metrics
 such that $L_1$ or $L_{\infty}$ or any metric defined by a
 convex object. However, the user of an exotic metric
@@ -850,11 +852,17 @@ which means that convex hull edges have to be Delaunay edges.
 This is granted for any smooth convex metric (like $L_2$)
 and can be ensured for other metrics (like  $L_{\infty}$)
 by the addition to the point set of well chosen sentinel points.
+The additional requirements
+to be fulfilled by the geometric traits class
+of a \ccc{Delaunay_triangulation_2<Traits,Tds>} are described in 
+subsection~\ref{I1_Sect_Delaunay_geom_traits}. 
 
 
 The class \ccc{Delaunay_triangulation_2<Traits,Tds>}
-inherits all the types of the \ccc{Triangulation_2<Traits>}.
-and define additionnal types to represent the dual Voronoi diagram.
+inherits the types defined by the 
+basic class \ccc{Triangulation_2<Traits,Tds>}.
+Additionnal types, provided by the trits class,
+are defined to represent the dual Voronoi diagram.
 \ccTypedef{typedef Traits::Line Line;}{}
 \ccGlue
 \ccTypedef{typedef Traits::Direction Direction;}{}
@@ -862,63 +870,42 @@ and define additionnal types to represent the dual Voronoi diagram.
 \ccTypedef{typedef Traits::Ray Ray;}{}
 
 The class \ccc{Delaunay_triangulation_2<Traits,Tds>}
-overwrite the insertion and removal  functions
+overwrite the insertion and removal  member functions
 to maintain the Delaunay property.
-It also has a member function to answer nearest vertex queries
-and member function to construct the elements of the dual Voronoi diagram.
+It also has a member function (\ccc{Vertex_handle
+        nearest_vertex(const Point& p)})
+to answer nearest neighbor queries
+and member functions to construct the elements (vertices and edges)
+of the dual Voronoi diagram.
 
 \ccExample
-The following code fragment creates a Delaunay triangulation with 
+The following code  creates a Delaunay triangulation with 
 the usual Euclidean metric for the vertical projection of a 
-terrain model. The points have elevation, that is they are 3D points
-and the predicates which are defined in the Delaunay triangulation 
-traits class forget about the $z$-coordinate of these points. 
+terrain model. The points have elevation, that is they are 3D points,
+but the predicates used to build the  Delaunay triangulation
+are computed using only  th4 $x$ and $y$ coordinates  
+of these points. 
 \ccIncludeExampleCode{Triangulation/terrain.C}
-%\begin{cprog}
-%/*  terrain.C      */
-%/*  -------------- */
-%#include <CGAL/Homogeneous.h>
-%#include <CGAL/leda_integer.h>
-%#include <CGAL/Triangulation_euclidean_traits_xy_3.h>
-%#include <CGAL/Delaunay_triangulation_2.h>
-
-%using namespace CGAL;
-
-%typedef Homogeneous<leda_integer>  Rp;
-%typedef Triangulation_euclidean_traits_xy_3<Rp>  Terrain;
-%typedef Triangulation_vertex_base_2<Traits> Vb;
-%typedef Triangulation_face_base_2<Traits> Fb;
-%typedef Triangulation_default_data_structure_2<Traits,Vb,Fb > Tds;
-%typedef Delaunay_triangulation_2<Terrain, Tds> Delaunay;
-
-%int main()
-%{
-%    Delaunay dt(Terrain());
-
-%    Point_3<Rp> p;
-%    while(std::cin >> p){
-%        dt.insert(p);
-%    }
-%    return 1;    
-%}
-%\end{cprog} 
-
 
 \ccHeading{Implementation}
 
-Insertion is implemented by inserting in the triangulation, then
-performing a sequence of Delaunay flips. The number of flips is \ccTexHtml{$O(d)$}{O(d)}
-if the new vertex is of degree \ccTexHtml{$d$}{d} in the new triangulation. For
+The insertion of a new point in the Delaunay triangulation
+is performed using first the insertion member function
+of the basic triangulation and second 
+performing a sequence of flip to restore the Delaunay property. 
+The number of flips which have to be performed is \ccTexHtml{$O(d)$}{O(d)}
+if the new vertex has degree \ccTexHtml{$d$}{d} in the updated
+Delaunay triangulation. For
 points distributed uniformly at random, insertion takes time \ccTexHtml{$O(1)$}{O(1)} on
 average.
 
 Removal calls the removal in the triangulation and then retriangulates
 the hole in such a way that  the Delaunay criterion is satisfied. Removal of a
 vertex of degree \ccTexHtml{$d$}{d} takes time \ccTexHtml{$O(d^2)$}{O(d^2)},
-which is \ccTexHtml{$O(1)$}{O(1)} for a random
+the degree $d$ is \ccTexHtml{$O(1)$}{O(1)} for a random
 vertex in the triangulation.
 
-Nearest neighbor is found in time \ccTexHtml{$O(n)$}{O(n)} in the
+After a point location, nearest neighbor is found in time \ccTexHtml{$O(n)$}{O(n)} in the
 worst case, but in time \ccTexHtml{$O(1)$}{O(1)}
 for vertices distributed uniformly at random  and any query point. 
 
@@ -927,7 +914,7 @@ for vertices distributed uniformly at random  and any query point.
 \subsection{The Geometric Traits of a Delaunay Triangulation}
 \label{I1_Sect_Delaunay_geom_traits}
 
-\subsubsection{Requirements}
+\ccHeading{Requirements}
 In addition to the requirements described in section~\ref{I1_Sect_Geom_traits}
 for the geometrics traits of any triangulation,
 the geometrics traits of a Delaunay triangulation
@@ -936,26 +923,33 @@ for the basic \ccc{in_circle} test used to maintain the
 empty circle property.
 The \ccc{in_circle} test is the test 
 that actually defines the triangulation.
-The additional types \ccc{Line_2}, \ccc{Direction_2} and
+The traits is also required 
+to provide additional types \ccc{Line_2}, \ccc{Direction_2} and
 and \ccc{Ray_2} and the constructor objects
 \ccc{Construct_direction_of_line2}, \ccc{Construct_ray_2}
 \ccc{Construct_circumcenter_2}, \ccc{Construct_bisector_2},
-\ccc{Construct_midpoint}
-are used to build the dual Voronoi diagram
-and are required only if the dual functions are called.
-The additional \ccc{Less_distance_to_point_2} is only required
-if \ccc{nearest_vertex(..)} query are issued.
+\ccc{Construct_midpoint} which 
+are used to build the dual Voronoi diagram. Those types 
+are required only if the member functions relative to
+the dual diagrams  are called.
+At last, the traits provide a type \ccc{Less_distance_to_point_2} 
+to compare the distances between a first point and two other
+given points. This type 
+ is only required
+if nearest neighbor queries are issued.
 
 
 
 
-\subsubsection{Predefined Geometric Traits Class}
+\ccHeading{Predefined Geometric Traits Class}
 The class \ccc{Triangulation_euclidean_traits_2<R>}
 introduced in section~\ref{I1_Sect_Geom_traits} is 
  designed to be 
 the geometric traits class of a Delaunay triangulation.
-It implements the usual Euclidean metric
-for the  two dimensional points \ccc{Points_2<R>}.
+It is templated by a representation class and
+implements the usual Euclidean metric
+for the  two dimensional points of the \cgal kernel,
+*\ccc{Points_2<R>}.
 Three traits classes are provided to deal with
 the Delaunay triangulation of two dimensional points which are
 the \ccc{xy}, \ccc{yz} or \ccc{zx} projections of three dimensional points:\\
@@ -975,14 +969,15 @@ Let ${  PW} = \{(p_i, w_i), i = 1, \ldots , n \}$ be a set of
 weighted points where each $p_i$ is a point and each $w_i$
 is a scalar called the weight of point $p_i$.
 Alternatively, each weighted point $(p_i, w_i)$ can be regarded
-as a two dimensional sphere with center $p_i$ and radius $r_i=\sqrt{w_i}$.
+as a sphere (or a circle, depending on the dimensionality
+of $p_i$)  with center $p_i$ and radius $r_i=\sqrt{w_i}$.
 
-The power diagram of the set ${  PW}$ is a planar partition 
-such that each cell corresponds to sphere $(p_i, w_i)$ of ${  PW}$
+The power diagram of the set ${  PW}$ is space partition in which
+ each cell corresponds to a sphere $(p_i, w_i)$ of ${  PW}$
 and is the locus of points  $p$ whose power with respect to $(p_i, w_i)$
 is less than its power with respect to any other sphere $(p_j, w_j)$
-in ${  PW}$. 
-The dual of this diagram is a triangulation 
+in ${  PW}$. In the two dimensional space,
+the dual of this diagram is a triangulation 
 whose domain covers the convex hull of the set 
 ${  P}= \{ p_i, i = 1, \ldots , n \}$ of center points
 and whose vertices are a subset of ${  P}$.
@@ -1010,17 +1005,18 @@ and $(p_k, w_k)$.
 The regular triangulation of the sets ${  PW}$
 satisfies the following {\em regular property} (which just reduces to the 
 Delaunay property when all the weights are null):
-a triangle $p_ip_jp_k$ of the regular triangulation
-of ${  PW}$ is such that the power product of any weighted point
+a triangle $p_ip_jp_k$ is a face of the regular triangulation
+of ${  PW}$ iff the power product of any weighted point
  $(p_l, w_l)$ of ${  PW}$ with the power circle of
- $(p_i, w_i)$, $(p_j, w_j)$ is $(p_k, w_k)$ is positive or null.
+ $(p_i, w_i)$, $(p_j, w_j)$ and $(p_k, w_k)$ is positive or null.
 We call  power test of the weighted point $(p_l, w_l)$ with respect
 to the face  $p_ip_jp_k$, the predicates which amount to compute
 the sign of 
 the power product of $(p_l, w_l)$ with respect to
 the power circle of
- $(p_i, w_i)$, $(p_j, w_j)$ is $(p_k, w_k)$,
-which is given by the following
+ $(p_i, w_i)$, $(p_j, w_j)$ and $(p_k, w_k)$.
+This predicate amounts to compute the sign of
+the following
 determinant
 \[\left| \begin{array}{cccc}
 1    & 1                       & 1                       & 1 \\
@@ -1053,7 +1049,7 @@ ${  P'}= \{ (p_i,p_i ^2 - w_i ), i = 1, \ldots , n \}$.
 \subsection{ The  Class \protect \ccc{Regular_triangulation_2<Traits, Tds>}}
 The \cgal\  class \ccc{Regular_triangulation_2<Traits, Tds>}
  is designed to maintain the
-regular triangulation of a set of weighted points.
+regular triangulation of a set of $2d$ weighted points.
 The template parameters \ccc{Traits}  and \ccc{Tds} stand respectively
  for a geometric traits class and a triangulation data structure class.
 Any triangulation data structure that fulfills the requirements of 
@@ -1108,47 +1104,16 @@ of some points implies the destruction of the hidding face.
 %*************************
 
 \ccExample
-The following code fragment creates a regular triangulation 
+The following code  creates a regular triangulation 
 of a set of weighted points.
+
+//examples/Triangulation/regular.C
 \ccIncludeExampleCode{Triangulation/regular.C}
 
-%\begin{cprog}
-%/*     regular.C */
-%/*-------------- */
-%#include <CGAL/basic.h>
-%#include <iostream>
-%#include <CGAL/Cartesian.h>
-%#include <CGAL/Regular_triangulation_euclidean_traits_2.h>
-%#include <CGAL/Regular_triangulation_2.h>
-
-%using namespace CGAL;
-
-%typedef Cartesian<double> Rp;
-%typedef double W;
-%typedef Regular_triangulation_euclidean_traits_2<Rp,W>  Traits;
-%typedef Triangulation_vertex_base_2<Traits> Vb;
-%typedef Regular_triangulation_face_base_2<Traits> Fb;
-%typedef Triangulation_default_data_structure_2<Traits,Vb,Fb > Tds;
-%typedef Regular_triangulation_2<Traits, Tds> Regular_triangulation;
-
-%int main()
-%{
-%   Regular_triangulation rt;
-
-%   Traits::Weighted_point wp;
-%   while(std::cin >> wp){
-%     std::cout << wp << std::endl;
-%     rt.insert(wp);
-%   }
-%   rt.is_valid();
-%   return 1;	
-%}
-
-%\end{cprog} 
 
 \subsection{The Face Type of a Regular Triangulation}
 
-\subsection{Requirements for the Base Face}
+\ccHeading{Requirements for the Base Face}
 The regular triangulation of a set of weighted point does not
 necessarily
 have one vertex for each of the input points. Some of the input
@@ -1157,13 +1122,14 @@ and therefore do not correspond to a vertex of the regular
 triangulation.
 Those weighted point are said to be {\it hidden} points.
 A  point which is hidden at a given time may appear later as a vertex of
-the regular triangulation upon removal on some other weighted point.
+the regular triangulation if some other weighted point are removed.
 Therefore, hidden points have to be stored somewhere.
 A hidden point can appear as vertex of the triangulation
 only when the
 two dimensional face where its point component is located
 (the face which hides it)
-is removed. Therefore we decided to store each hidden point
+is removed from the triangulation. 
+Therefore we decided to store each hidden point
 in the face which  hides it and the nested face type of a 
 regular triangulation is assumed to include a list of hidden 
 weighted points. This list of weighted point is in fact included
@@ -1174,7 +1140,7 @@ is required to provide access to a list of weigthed points,
 designed to store the points hidden by the face.
 
 
-\subsubsection{A Default Base Face .}
+\ccHeading{A Default Base Face .}
 \cgal\ provides the templated class 
 \ccc{Regular_triangulation_face_base_2<Traits>}
 which derives from \ccc{Triangulation_face_base_2<Traits>}
@@ -1184,15 +1150,19 @@ and can be used as a default base class for faces of regular triangulations.
 
 \subsection{The Geometric Traits of a Regular Triangulation}
 
-\subsubsection{Requirements}
+\ccHeading{Requirements}
 
 The geometrics traits class of a regular triangulation
 must fulfill the requirements of section~\ref{I1_Sect_Geom_traits}
-and additionally provide  
-\ccc{Weitghed_point} type (which derives from the type \ccc{Point} 
+and is required to additionally provide  
+a \ccc{Weitghed_point} type (which derives from the type \ccc{Point} 
 and add a weight data member )
-and a two types \ccc{Power_test_2} and \ccc{Power_test_degenerated_2}
-for the power tests.
+and a two function object types \ccc{Power_test_2} and \ccc{Power_test_degenerated_2}
+for the power tests. The type \ccc{Power_test_degenerated_2}
+provides a special power test for three weighted points
+ $(p_i, w_i)$, $(p_j, w_j)$ and $(p_k, w_k)$ such that
+$p_i$, $p_j$ and $p_k$ are collinear.
+
 
 
 \subsubsection{A Predefined Geometric Traits Class}
@@ -1210,13 +1180,14 @@ derived from the type \ccc{Point} of
 
 \subsection{Weighted Points}
 
-\subsubsection{requirements for a weighted-point}
-The weighted point type  required by a regular triangulation
+\ccHeading{Requirements for a weighted-point}
+The weighted point type  
 is required to provide access to the underlying  point and to its weight.
 
-\subsubsection{Default Class for a Weighted Point}
+
+\ccHeading{Predefined Weighted Point}
 \cgal\ provides the class \ccc{Weighted_point<Point,Weight>}
-as a default type for a  weighted two dimensional point.
+as a default type for a  weighted point.
 This default type has two template parameters \ccc{Point}
 and  \ccc{Weight} which have to be instantiated respectively 
 with a point type and a weight type.
@@ -1270,7 +1241,7 @@ of section~\ref{I1_Sect_Geom_traits} and ~\ref{I1_Sect_Tds}.
 
 The class \ccc{Constrained_triangulation_2<Traits,Tds>}
 inherits from \ccc{Triangulation_2<Traits,Tds>}.
-It defines an additionnal type \ccc{Constraint;}
+It defines an additionnal type \ccc{Constraint}
 to represent the constraints. A
 constraint is represented as a pair of points.
 
@@ -1290,7 +1261,8 @@ or the removal of a constraint.
 
 \ccHeading{Implementation}
 
-The constructors build the triangulation using a sweeping line
+The constructors from a list of constrained edges
+build the triangulation using a sweeping line
 algorithm. The complexity of this algorithm is $O(n\log n)$ if $n$
 endpoints are present. The sweep structure is an \stl\ map.
  The insertion of a constrained edge runs in time
@@ -1311,16 +1283,21 @@ in addition to the functionalities required in section~\ref{I1_Sect_Base_classes
 
 \subsubsection{Requirements for the Base Face}
 The base face of a constrained triangulation is required
-to have a fonction members providing access to the status
-(constrained ou unconstrained) of each of its edges.
-has function mem
+to have a fonction member
+(\ccc{bool is_constrained(int i)})
+ providing the status
+(constrained ou unconstrained) of each of its edges
+and also a function member
+(\ccc{void  set_constraint(int i, bool b)}) to set this status.
+
 
 \subsubsection{A predefined Base Face}
-Of course  \cgal\ provides a default \ccc{Face_base} class
-for the constrained triangulation. The class
+\cgal\ provides a default Base Face class
+for constrained triangulations. This class named
 \ccc{Constrained_triangulation_face_base_2<Traits>}
-simply derived from 
-\ccc{Triangulation_face_base_2<Traits>}. 
+simply derives from 
+\ccc{Triangulation_face_base_2<Traits>}
+and add three boolean to store the status of the edges. 
 %and override the
 %functions \ccc{reorient()}, \ccc{ccw_permute()} and 
 %\ccc{cw_permute()}.
@@ -1329,7 +1306,7 @@ simply derived from
 \subsection{A Constrained Triangulation Class for Animation Purposes
 \label{I1_Subsec_Constrained_Demo_2}}
 
-\cgal provides 
+\cgal\ provides 
 a class  \ccc{Constrained_triangulation_demo_2<Traits,Tds>}
 specially designed to show an animation of the sweep algorithm 
 that builds a 
@@ -1346,14 +1323,14 @@ constrained edges which tries to be as much Delaunay as possible.
 As constrained edges are not necessarily Delaunay edges,
 the triangles of a constrained Delaunay triangulation do not
 necessarily fulfill the empty circle property
-but they fulfill a weaker constrained empty circle property.
+but they fulfill a weaker \ccc{constrained empty circle property}.
  To state this property,
 it is convenient to think of  constrained
 edges as blocking the view. Then, a triangulation is 
-constrained Delaunay if
+constrained Delaunay iff
  the circumscribing circle
 of any of its triangular faces includes in its interior 
-no vertex  that is visible
+no vertex  visible
 from the interior of the triangle.
 
 \subsection{The Class 
@@ -1397,3 +1374,69 @@ to  restore
  the Delaunay constrained
 property.
 
+\section{The Triangulation Hierarchy}
+
+\subsection{Definition}
+The class \ccc{Triangulaton_hierarchy_2<Tr>}
+ implements a triangulation augmented with
+a data structure which allows fast point location
+queries.
+The
+data structure  is a hierarchy 
+of triangulations. The triangulation at the lowest level is
+ the original triangulation where operations and point location are to 
+be performed.
+Then at each succedding level, the data structure
+store a triangulation of a small random sample of the vertices
+of the triangulation at the preceeding level. Point location
+is done through a top down nearest neighbor query.
+The nearest neighbor query is first
+performed naively in the top level triangulation.
+Then, at each following level, the nearest neighbor at that level
+is found through a linear march performed from
+the nearest neighbor found at the preceeding level.
+Because the number of vertices in each triangulation is only a small
+fraction
+of the number of vertices of the preceeding triangulation 
+the data structure remains small and achieve fast point location 
+queries  on real
+data. As proved in~\cite{d-iirdt-98}, this structure has an optimal behaviour
+when it is build for Delaunay triangulations.
+However it can be used as well for other triangulations
+and the 
+ class \ccc{Triangulation_hierarchy_2<Tr>} is templated by a parameter
+which is to be instantiated by one of the \cgal triangulation
+classes.
+
+\subsection{The class \protect \ccc{Triangulation_hierarchy_2<Tr>}}
+The class \ccc{Triangulation_hierarchy_2<Tr>} inherits from
+triangulation type passed as template parameter Tr. 
+The insert and remove member functions
+are  overwritten to update the data structure at each operation.
+The locate queries are also overwritten taking advantage of the data
+structure for a fast processing.
+
+\subsection{The Vertex type of a Triangulation Hierachy}
+\ccHeading{Requirements}
+The vertex of a triangulation  
+included in a  triangulation hierarchy has to provided
+some pointers to the corresponding vertices in the
+triangulations of the next and preceeding levels.
+Therefore the base vertex of a triangulation used as
+the base class of a triangulation hierachy has to be a model of the
+concept
+\ccc{Triangulation_hierarchy_vertex_base_2_concept} which extends
+the concept \ccc{Triangulation_vertex_base_2_concept} adding
+access and setting member fonctions 
+for two pointers  to the corresponding vertex in the 
+triangulations of the next and preceeding levels.
+
+\ccHeading{A predefined Vertex Base type}
+\cgal provides the class \ccc{Triangulation_hierarchy_vertex_base_2<Traits>}
+which is a model for the concept 
+\ccc{Triangulation_hierarchy_vertex_base_2_concept}
+This class inherits from the default vertex base class
+\ccc{Triangulation_vertex_base_2<Traits>}. It is templated,
+as its base class, by a geometric traits class \ccc{Traits}
+which is required to provide  the point type
+used in the triangulation.

@@ -43,9 +43,9 @@ Test:
 
 clean:
 	rm -f $(PACKAGE).tar.gz
-	cd test/Triangulation ; make -f Makefile realclean
+	cd test/Triangulation ; make -f Makefile realclean;
 	cd test/Triangulation2_Delaunay; make -f Makefile realclean
-	cd test/Triangulation2_constraint; make -f Makefile realclean
+	cd test/Triangulation2_constrained; make -f Makefile realclean
 	cd examples/Triangulation ; make realclean
 	cd demo/Triangulation ; make clean
 
