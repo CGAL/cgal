@@ -406,7 +406,7 @@ class Optimisation_ellipse_2 {
 	 // a circle only if the four points are cocircular;
 	 // if so, compute this circle (as a conic) and check
 	 // its volume derivative
-	 if (!CGAL::ON_BOUNDARY ==  CGAL::side_of_bounded_circle
+	 if (CGAL::ON_BOUNDARY !=  CGAL::side_of_bounded_circle
 	           (boundary_point1, 
                     boundary_point2,
                     boundary_point3,

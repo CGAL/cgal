@@ -76,7 +76,7 @@ eps_equal (const Point& p, const Point& q)
 
 #ifdef CGAL_USE_CORE
 
-typedef  CGAL::Cartesian<CORE::Expr>                  KerCCore;
+typedef  CGAL::Cartesian<CORE::Expr>                 KerCCore;
 typedef  CGAL::Homogeneous<CORE::Expr>               KerHCore;
 typedef  CGAL::Min_ellipse_2_traits_2< KerCCore >    TraitsCCore;
 typedef  CGAL::Min_ellipse_2_traits_2< KerHCore >    TraitsHCore;
@@ -94,7 +94,8 @@ core_test_Min_ellipse_2( bool verbose, const Traits&)
     
     CGAL::Verbose_ostream verr( verbose);
     
-    verr << endl << "   3-point case, equilateral triangle...";
+    verr << endl << "CORE tests..." << endl 
+         << "   3-point case, equilateral triangle...";
     {
       std::vector<Point> P;
       CORE::Expr sqrt_3(sqrt(CORE::Expr(3)));
@@ -158,7 +159,8 @@ double_test_Min_ellipse_2( bool verbose, const Traits&, const Conic&)
 
     CGAL::Verbose_ostream verr( verbose);
     
-    verr << endl << "   4-point case, unit square...";
+    verr << endl << "double tests..." << endl 
+         << "   4-point case, unit square...";
     {
 	std::vector<Point> P;
 	P.push_back(Point(1,0));
@@ -192,6 +194,12 @@ double_test_Min_ellipse_2( bool verbose, const Traits&, const Conic&)
         // check whether double_coefficients does the same
 	double r,s,t,u,v,w;
 	me.ellipse().double_coefficients(r,s,t,u,v,w);
+	assert(r==dc.r());
+        assert(s==dc.s());
+	assert(t==dc.t());
+	assert(u==dc.u());
+        assert(v==dc.v());
+	assert(w==dc.w());
 	assert(dc == Conic(r,s,t,u,v,w));
     }
     verr << endl << "   4-point case, paper example..." << endl;
