@@ -21,23 +21,25 @@ struct item : public In_place_list_base<item> {
 
 int main() {
     typedef CGAL::In_place_list<item,true> List;
-    List  l;
+    List l;
     item* p = new item(1);
-    l.push_back(  *p);
-    l.push_back(  *new item(2));
-    l.push_front( *new item(3));
-    l.push_front( *new item(4));
-    l.push_front( *new item(2));
+    l.push_back(*p);
+    l.push_back(*new item(2));
+    l.push_front(*new item(3));
+    l.push_front(*new item(4));
+    l.push_front(*new item(2));
     List::iterator i = l.begin();
     ++i;
-    l.insert( i, *new item(5));
-    l.insert( p, *new item(5));
+    l.insert(i, *new item(5));
+    l.insert(p, *new item(5));
     int a[7] = {2,5,4,3,5,1,2};
-    assert( std::equal( l.begin(), l.end(), a));
+    bool ok = std::equal(l.begin(), l.end(), a);
+    assert(ok);
     l.sort();
     l.unique();
+    assert(l.size() == 5);
     int b[5] = {1,2,3,4,5};
-    assert( l.size() == 5);
-    assert( std::equal( l.begin(), l.end(), b));
+    ok = std::equal(l.begin(), l.end(), b);
+    assert(ok);
     return 0;
 }

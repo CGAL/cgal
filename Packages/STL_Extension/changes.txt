@@ -8,6 +8,8 @@
 //---------------------------------------------------------------------
 
 DOCS: Changed compose function/class.
+TEST: Fixed warnings with NDEBUG.
+ALL : Fixed leading underscore names.
 SRC : Replace reverse_bidirectional_iterator by reverse_iterator.
 SRC : Fixed composition class/functions.
 TEST: Initial revision

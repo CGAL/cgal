@@ -1,4 +1,5 @@
 #include <CGAL/algorithm.h>
+#include <CGAL/function_objects.h>
 #include <vector>
 #include <iostream>
 #include <functional>
@@ -8,8 +9,8 @@ using std::cout;
 using std::endl;
 using std::modulus;
 using std::greater;
-using std::compose1;
 using std::bind2nd;
+using CGAL::compose1_1;
 using CGAL::min_element_if;
 
 int main()
@@ -21,8 +22,8 @@ int main()
   cout << "min_odd = "
        << *min_element_if(v.begin(), 
 			  v.end(), 
-			  compose1(bind2nd(greater< int >(), 0),
-				   bind2nd(modulus< int >(), 2)))
+			  compose1_1(bind2nd(greater< int >(), 0),
+				     bind2nd(modulus< int >(), 2)))
        << endl;
   return 0;
 }
