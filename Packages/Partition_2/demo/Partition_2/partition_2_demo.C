@@ -162,9 +162,9 @@ void compute_partitions(Polygon_2& polygon)
                                   ".opt_cvx");
 
     CGAL::greene_approx_convex_partition_2(polygon.vertices_begin(), 
-                                        polygon.vertices_end(),
-                                        std::back_inserter(greene_approx_polys),
-                                        partition_traits);
+                                       polygon.vertices_end(),
+                                       std::back_inserter(greene_approx_polys),
+                                       partition_traits);
     save_partition_p_list_to_file(greene_opt_polys, current_file_name,
                                   ".greene_approx");
 
