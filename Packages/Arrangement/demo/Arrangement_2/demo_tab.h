@@ -263,7 +263,7 @@ private:
 	    //constructor
 		FillFace(Qt_widget_demo_tab<Tab_traits>* tab) : ptr(tab){}
 
-		void operator()(Qt_widget_demo_tab<Tab_traits>::Face_handle& face) 
+		void operator()(typename Qt_widget_demo_tab<Tab_traits>::Face_handle& face) 
 		
 		{
 			ptr->m_tab_traits.fill_face(ptr,face);
@@ -282,7 +282,7 @@ private:
 		 //constructor
 		OverLay(Qt_widget_demo_tab<Tab_traits>* tab,std::vector<QColor> colors) : ptr(tab),overlay_colors(colors){}
 
-		void operator()(Qt_widget_demo_tab<Tab_traits>::Face_handle& face) 
+		void operator()(typename Qt_widget_demo_tab<Tab_traits>::Face_handle& face) 
 		{
 			ptr->overlay(face,overlay_colors);
 		}
@@ -380,7 +380,7 @@ public:
     // it and paint the point if they are different (beacuse ew want to color red
     // the intersection opints between two different planar maps which are overlayed
     *this << CGAL::DISC;
-    (*this) << CGAL::LineWidth(m_vertex_width);
+    // AF: does not compile: (*this) << CGAL::LineWidth(m_vertex_width);
 
     Vertex_iterator   vit;
     for (vit = m_curves_arr.vertices_begin(); 
@@ -1072,7 +1072,7 @@ void visit_ccb_faces(Face_handle & fh , Function func)
      */
   void mouseMoveEvent(QMouseEvent *e)
   {
-    (*this) << CGAL::LineWidth(m_line_width);
+    // AF: get error mesage    (*this) << CGAL::LineWidth(m_line_width);
     if(mode == DELETE)
       find_removable_halfedges(e);  // find removable edges , store them in the list 
                                     //'removable_halfedges' and highlight them
