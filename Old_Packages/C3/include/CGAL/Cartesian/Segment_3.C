@@ -18,24 +18,16 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class R >
-inline
-_Twotuple< typename SegmentC3<R CGAL_CTAG>::Point_3 > *
-SegmentC3<R CGAL_CTAG>::ptr() const
-{
-  return (_Twotuple< Point_3 >*)PTR;
-}
-
-template < class R >
 SegmentC3<R CGAL_CTAG>::
 SegmentC3()
 {
-  PTR = new _Twotuple< Point_3 >;
+  new (static_cast< void*>(ptr)) Twotuple< Point_3 >;
 }
 
 template < class R >
 SegmentC3<R CGAL_CTAG>::
 SegmentC3(const SegmentC3<R CGAL_CTAG>  &s) :
-  Handle((Handle&)s)
+  Handle_for<Twotuple<typename R::Point_3 > >(s)
 {}
 
 template < class R >
@@ -43,20 +35,13 @@ SegmentC3<R CGAL_CTAG>::
 SegmentC3(const typename SegmentC3<R CGAL_CTAG>::Point_3 &sp,
           const typename SegmentC3<R CGAL_CTAG>::Point_3 &ep)
 {
-  PTR = new _Twotuple< Point_3 >(sp, ep);
+  new (static_cast< void*>(ptr)) Twotuple< Point_3 >(sp, ep);
 }
 
 template < class R >
 inline SegmentC3<R CGAL_CTAG>::~SegmentC3()
 {}
 
-template < class R >
-SegmentC3<R CGAL_CTAG> &
-SegmentC3<R CGAL_CTAG>::operator=(const SegmentC3<R CGAL_CTAG> &s)
-{
-  Handle::operator=(s);
-  return *this;
-}
 
 template < class R >
 inline
@@ -74,38 +59,33 @@ SegmentC3<R CGAL_CTAG>::operator!=(const SegmentC3<R CGAL_CTAG> &s) const
   return !(*this == s);
 }
 
-template < class R >
-long  SegmentC3<R CGAL_CTAG>::id() const
-{
-  return (long) PTR;
-}
 
 template < class R >
 typename SegmentC3<R CGAL_CTAG>::Point_3
 SegmentC3<R CGAL_CTAG>::start() const
 {
-  return ptr()->e0;
+  return ptr->e0;
 }
 
 template < class R >
 typename SegmentC3<R CGAL_CTAG>::Point_3
 SegmentC3<R CGAL_CTAG>::end() const
 {
-  return ptr()->e1;
+  return ptr->e1;
 }
 
 template < class R >
 typename SegmentC3<R CGAL_CTAG>::Point_3
 SegmentC3<R CGAL_CTAG>::source() const
 {
-  return ptr()->e0;
+  return ptr->e0;
 }
 
 template < class R >
 typename SegmentC3<R CGAL_CTAG>::Point_3
 SegmentC3<R CGAL_CTAG>::target() const
 {
-  return ptr()->e1;
+  return ptr->e1;
 }
 
 template < class R >

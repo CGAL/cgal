@@ -16,7 +16,7 @@ class RayC3
 // This is a partial specialization
 <R_,Cartesian_tag>
 #endif
-  : public Handle
+  : public Handle_for<Twotuple<typename R_::Point_3 > >
 {
 public:
   typedef R_                               R;
@@ -42,11 +42,8 @@ public:
   RayC3(const Point_3 &sp, const Direction_3 &d);
   ~RayC3();
 
-  Self        &operator=(const Self &r);
-
   bool        operator==(const Self &r) const;
   bool        operator!=(const Self &r) const;
-  long        id() const;
 
   Point_3     start() const;
   Point_3     source() const;
@@ -63,8 +60,6 @@ public:
   bool        has_on(const Point_3 &p) const;
   bool        collinear_has_on(const Point_3 &p) const;
 
-private:
-  _Twotuple< Point_3 > *ptr() const;
 };
 
 CGAL_END_NAMESPACE

@@ -16,7 +16,7 @@ class DirectionC3
 // This is a partial specialization
 <R_,Cartesian_tag>
 #endif
-  : public Handle
+  : public Handle_for< Threetuple<typename R_::FT> >
 {
 public:
   typedef R_                               R;
@@ -38,11 +38,8 @@ public:
   DirectionC3(const FT &x, const FT &y, const FT &z);
   ~DirectionC3();
 
-  Self&          operator=(const Self &d);
-
   bool           operator==(const Self &d) const;
   bool           operator!=(const Self &d) const;
-  long           id() const;
 
   Vector_3       to_vector() const;
   Self           transform(const Aff_transformation_3 &t) const;
@@ -58,8 +55,6 @@ public:
   FT             hdz() const;
   FT             hw() const;
 
-private:
-  _Threetuple<FT>*   ptr() const;
 };
 
 CGAL_END_NAMESPACE

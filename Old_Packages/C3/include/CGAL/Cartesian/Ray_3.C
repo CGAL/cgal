@@ -18,22 +18,15 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class R >
-_Twotuple< typename RayC3<R CGAL_CTAG>::Point_3 > *
-RayC3<R CGAL_CTAG>::ptr() const
-{
-  return (_Twotuple< Point_3 >*)PTR;
-}
-
-template < class R >
 RayC3<R CGAL_CTAG>::RayC3()
 {
-  PTR = new _Twotuple< Point_3 >;
+  new (static_cast< void*>(ptr)) Twotuple< Point_3 >;
 }
 
 template < class R >
 RayC3<R CGAL_CTAG>::
 RayC3(const RayC3<R CGAL_CTAG>  &r)
-  : Handle((Handle&)r)
+  : Handle_for<Twotuple<typename R::Point_3> >(r)
 {}
 
 template < class R >
@@ -41,7 +34,7 @@ RayC3<R CGAL_CTAG>::
 RayC3(const typename RayC3<R CGAL_CTAG>::Point_3 &sp,
       const typename RayC3<R CGAL_CTAG>::Point_3 &secondp)
 {
-  PTR = new _Twotuple< Point_3 >(sp,secondp);
+  new (static_cast< void*>(ptr)) Twotuple< Point_3 >(sp,secondp);
 }
 
 template < class R >
@@ -49,20 +42,13 @@ RayC3<R CGAL_CTAG>::
 RayC3(const typename RayC3<R CGAL_CTAG>::Point_3 &sp,
       const typename RayC3<R CGAL_CTAG>::Direction_3 &d)
 {
-  PTR = new _Twotuple< Point_3 >(sp, sp + d.to_vector());
+  new (static_cast< void*>(ptr)) Twotuple< Point_3 >(sp, sp + d.to_vector());
 }
 
 template < class R >
 inline RayC3<R CGAL_CTAG>::~RayC3()
 {}
 
-template < class R >
-RayC3<R CGAL_CTAG> &
-RayC3<R CGAL_CTAG>::operator=(const RayC3<R CGAL_CTAG> &r)
-{
-  Handle::operator=(r);
-  return *this;
-}
 
 template < class R >
 inline bool RayC3<R CGAL_CTAG>::operator==(const RayC3<R CGAL_CTAG> &r) const
@@ -76,19 +62,13 @@ inline bool RayC3<R CGAL_CTAG>::operator!=(const RayC3<R CGAL_CTAG> &r) const
   return !(*this == r);
 }
 
-template < class R >
-inline
-long RayC3<R CGAL_CTAG>::id() const
-{
-  return (long) PTR;
-}
 
 template < class R >
 inline
 typename RayC3<R CGAL_CTAG>::Point_3
 RayC3<R CGAL_CTAG>::start() const
 {
-  return ptr()->e0;
+  return ptr->e0;
 }
 
 template < class R >
@@ -96,7 +76,7 @@ inline
 typename RayC3<R CGAL_CTAG>::Point_3
 RayC3<R CGAL_CTAG>::source() const
 {
-  return ptr()->e0;
+  return ptr->e0;
 }
 
 template < class R >
@@ -104,7 +84,7 @@ inline
 typename RayC3<R CGAL_CTAG>::Point_3
 RayC3<R CGAL_CTAG>::second_point() const
 {
-  return ptr()->e1;
+  return ptr->e1;
 }
 
 template < class R >
@@ -114,10 +94,10 @@ RayC3<R CGAL_CTAG>::point(int i) const
 {
   CGAL_kernel_precondition( i >= 0 );
   if (i == 0)
-    return ptr()->e0;
+    return ptr->e0;
 
   if (i == 1)
-    return ptr()->e1;
+    return ptr->e1;
 
   return source() + FT(i) * (second_point() - source());
 }

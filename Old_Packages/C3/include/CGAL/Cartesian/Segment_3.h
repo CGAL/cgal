@@ -16,7 +16,7 @@ class SegmentC3
 // This is a partial specialization
 <R_,Cartesian_tag>
 #endif
-  : public Handle
+  : public Handle_for<Twotuple<typename R_::Point_3 > >
 {
 public:
   typedef R_                               R;
@@ -41,14 +41,11 @@ public:
   SegmentC3(const Point_3 &sp, const Point_3 &ep);
   ~SegmentC3();
 
-  Self        &operator=(const Self &s);
-
   bool        has_on(const Point_3 &p) const;
   bool        collinear_has_on(const Point_3 &p) const;
 
   bool        operator==(const Self &s) const;
   bool        operator!=(const Self &s) const;
-  long        id() const;
 
   Point_3     start() const;
   Point_3     end() const;
@@ -71,9 +68,6 @@ public:
 
   bool        is_degenerate() const;
   Bbox_3      bbox() const;
-
-private:
-  _Twotuple< Point_3 >*   ptr() const;
 };
 
 CGAL_END_NAMESPACE

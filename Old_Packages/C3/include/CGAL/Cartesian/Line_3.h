@@ -16,7 +16,7 @@ class LineC3
 // This is a partial specialization
 <R_,Cartesian_tag>
 #endif
-  : public Handle
+  : public Handle_for<Twotuple<typename R_::Point_3> >
 {
 public:
   typedef R_                               R;
@@ -50,11 +50,8 @@ public:
   LineC3(const Point_3 &p, const Direction_3 &d);
   ~LineC3();
 
-  Self        &operator=(const Self &l);
-
   bool        operator==(const Self &l) const;
   bool        operator!=(const Self &l) const;
-  long        id() const;
 
   Plane_3     perpendicular_plane(const Point_3 &p) const;
   Self        opposite() const;
@@ -72,7 +69,6 @@ public:
   Self        transform(const Aff_transformation_3 &t) const;
 
 private:
-  _Twotuple< Point_3 >* ptr() const;
   void            new_rep(const Point_3 &p,
                           const Vector_3 &v);
 };

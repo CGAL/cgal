@@ -18,29 +18,22 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class R >
-inline _Threetuple<typename R::FT>*
-VectorC3<R CGAL_CTAG>::ptr() const
-{
-  return (_Threetuple<FT>*)PTR;
-}
-
-template < class R >
 VectorC3<R CGAL_CTAG>::VectorC3()
 {
-  PTR = new _Threetuple<FT>(FT(0), FT(0), FT(0));
+  new ( static_cast< void*>(ptr)) Threetuple<FT>(FT(0), FT(0), FT(0));
 }
 
 template < class R >
 VectorC3<R CGAL_CTAG>::
 VectorC3(const VectorC3<R CGAL_CTAG>  &v)
-  : Handle(v)
+  : Handle_for<Threetuple<typename R::FT> >(v)
 {}
 
 template < class R >
 VectorC3<R CGAL_CTAG>::
 VectorC3(const Null_vector  &)
 {
-  PTR = new _Threetuple<FT>(FT(0), FT(0), FT(0));
+  new  (static_cast< void*>(ptr)) Threetuple<FT>(FT(0), FT(0), FT(0));
 }
 
 template < class R >
@@ -49,7 +42,7 @@ VectorC3(const typename VectorC3<R CGAL_CTAG>::FT &x,
          const typename VectorC3<R CGAL_CTAG>::FT &y,
          const typename VectorC3<R CGAL_CTAG>::FT &z)
 {
-  PTR = new _Threetuple<FT>(x, y, z);
+  new (static_cast< void*>(ptr)) Threetuple<FT>(x, y, z);
 }
 
 template < class R >
@@ -60,34 +53,27 @@ VectorC3(const typename VectorC3<R CGAL_CTAG>::FT &x,
          const typename VectorC3<R CGAL_CTAG>::FT &w)
 {
   if (w != FT(1))
-    PTR = new _Threetuple<FT>(x/w, y/w, z/w);
+    new (static_cast< void*>(ptr)) Threetuple<FT>(x/w, y/w, z/w);
   else
-    PTR = new _Threetuple<FT>(x, y, z);
+    new (static_cast< void*>(ptr)) Threetuple<FT>(x, y, z);
 }
 
 template < class R >
 VectorC3<R CGAL_CTAG>::~VectorC3()
 {}
 
-template < class R >
-VectorC3<R CGAL_CTAG> &
-VectorC3<R CGAL_CTAG>::operator=(const VectorC3<R CGAL_CTAG> &v)
-{
-  Handle::operator=(v);
-  return *this;
-}
 
 template < class R >
 inline
 VectorC3<R CGAL_CTAG>::
 VectorC3(const typename VectorC3<R CGAL_CTAG>::Point_3 &p)
-  : Handle((Handle&)p)
+  : Handle_for<Threetuple<typename R::FT> >(p)
 {}
 
 template < class R >
 inline VectorC3<R CGAL_CTAG>::
 VectorC3(const typename VectorC3<R CGAL_CTAG>::Direction_3 &d)
-  : Handle((Handle&)d)
+  : Handle_for<Threetuple<typename R::FT> >(d)
 {}
 
 template < class R >
@@ -119,21 +105,12 @@ VectorC3<R CGAL_CTAG>::operator!=(const Null_vector &v) const
   return !(*this == v);
 }
 
-
-template < class R >
-inline
-long
-VectorC3<R CGAL_CTAG>::id() const
-{
-  return (long) PTR;
-}
-
 template < class R >
 inline
 typename VectorC3<R CGAL_CTAG>::FT
 VectorC3<R CGAL_CTAG>::x()  const
 {
-  return ptr()->e0;
+  return ptr->e0;
 }
 
 template < class R >
@@ -141,7 +118,7 @@ inline
 typename VectorC3<R CGAL_CTAG>::FT
 VectorC3<R CGAL_CTAG>::y()  const
 {
-  return  ptr()->e1;
+  return  ptr->e1;
 }
 
 template < class R >
@@ -149,7 +126,7 @@ inline
 typename VectorC3<R CGAL_CTAG>::FT
 VectorC3<R CGAL_CTAG>::z()  const
 {
-  return  ptr()->e2;
+  return  ptr->e2;
 }
 
 template < class R >
@@ -186,7 +163,7 @@ inline
 typename VectorC3<R CGAL_CTAG>::FT
 VectorC3<R CGAL_CTAG>::hx()  const
 {
-  return ptr()->e0;
+  return ptr->e0;
 }
 
 template < class R >
@@ -194,7 +171,7 @@ inline
 typename VectorC3<R CGAL_CTAG>::FT
 VectorC3<R CGAL_CTAG>::hy()  const
 {
-  return ptr()->e1;
+  return ptr->e1;
 }
 
 template < class R >
@@ -202,7 +179,7 @@ inline
 typename VectorC3<R CGAL_CTAG>::FT
 VectorC3<R CGAL_CTAG>::hz()  const
 {
-  return ptr()->e2;
+  return ptr->e2;
 }
 
 template < class R >

@@ -16,7 +16,7 @@ class PointC3
 // This is a partial specialization
 <R_,Cartesian_tag>
 #endif
-  : public Handle
+  : public Handle_for< Threetuple<typename R_::FT> >
 {
 public:
   typedef R_                               R;
@@ -40,11 +40,8 @@ public:
   PointC3(const FT &x, const FT &y, const FT &z, const FT &hw);
   ~PointC3();
 
-  Self        &operator=(const Self &p);
-
   bool        operator==(const Self &p) const;
   bool        operator!=(const Self &p) const;
-  long        id() const;
 
   FT          x() const;
   FT          y() const;
@@ -64,9 +61,6 @@ public:
   Bbox_3      bbox() const;
 
   Self        transform( const Aff_transformation_3 &) const;
-
-private:
-  _Threetuple<FT>*   ptr() const;
 
 };
 

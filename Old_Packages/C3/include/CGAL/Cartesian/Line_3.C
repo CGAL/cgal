@@ -22,32 +22,24 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R >
 inline
-_Twotuple< typename LineC3<R CGAL_CTAG>::Point_3 > *
-LineC3<R CGAL_CTAG>::ptr() const
-{
-  return (_Twotuple<Point_3>*)PTR;
-}
-
-template < class R >
-inline
 void
 LineC3<R CGAL_CTAG>::
 new_rep(const typename LineC3<R CGAL_CTAG>::Point_3 &p,
         const typename LineC3<R CGAL_CTAG>::Vector_3 &v)
 {
   // CGAL_kernel_precondition(  v != NULL_VECTOR );
-  PTR = new _Twotuple< Point_3 > (p, ORIGIN+v);
+  new ( static_cast< void*>(ptr)) Twotuple< Point_3 > (p, ORIGIN+v);
 }
 
 template < class R >
 LineC3<R CGAL_CTAG>::LineC3()
 {
-  PTR = new _Twotuple<FT>();
+  new ( static_cast< void*>(ptr)) Twotuple<Point_3>();
 }
 
 template < class R >
 LineC3<R CGAL_CTAG>::LineC3(const LineC3<R CGAL_CTAG>  &l)
-  : Handle((Handle&)l)
+  : Handle_for<Twotuple<typename R::Point_3 > >(l)
 {}
 
 template < class R >
@@ -88,19 +80,10 @@ LineC3<R CGAL_CTAG>::~LineC3()
 
 template < class R >
 inline
-LineC3<R CGAL_CTAG> &
-LineC3<R CGAL_CTAG>::operator=(const LineC3<R CGAL_CTAG> &l)
-{
-  Handle::operator=(l);
-  return *this;
-}
-
-template < class R >
-inline
 bool
 LineC3<R CGAL_CTAG>::operator==(const LineC3<R CGAL_CTAG> &l) const
 {
-  if (id() == l.id()) return true;
+  if (ptr == l.ptr) return true;
   return has_on(l.point()) && (direction() == l.direction());
 }
 
@@ -112,20 +95,13 @@ LineC3<R CGAL_CTAG>::operator!=(const LineC3<R CGAL_CTAG> &l) const
   return !(*this == l);
 }
 
-template < class R >
-inline
-long
-LineC3<R CGAL_CTAG>::id() const
-{
-  return (long) PTR ;
-}
 
 template < class R >
 inline
 typename LineC3<R CGAL_CTAG>::Point_3
 LineC3<R CGAL_CTAG>::point() const
 {
-  return ptr()->e0;
+  return ptr->e0;
 }
 
 template < class R >
@@ -134,7 +110,7 @@ typename LineC3<R CGAL_CTAG>::Direction_3
 LineC3<R CGAL_CTAG>::
 direction() const
 {
-  return ((ptr()->e1) - ORIGIN).direction();
+  return ((ptr->e1) - ORIGIN).direction();
 }
 
 template < class R >
