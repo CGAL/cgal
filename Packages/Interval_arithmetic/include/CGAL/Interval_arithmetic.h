@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998,1999,2000 The CGAL Consortium
+// Copyright (c) 1998,1999,2000,2001,2002 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -40,9 +40,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-// bool or Tag_true/false, I don't know yet.
-// Note that later, other behaviours might arise, such as "nothrow" => bool is
-// probably not the best choice.  But it's easy to have !Protected. We'll see !
 template <bool Protected = true>
 struct Interval_nt : public Interval_base
 {
@@ -65,6 +62,7 @@ struct Interval_nt : public Interval_base
 
   // The advantage of non-member operators is that (double * IA) just works...
   // But is it really useful and wishable in CGAL ?
+  // Probably YES => TODO.
   IA operator+ (const IA &d) const
   {
     Protect_FPU_rounding<Protected> P;
@@ -86,6 +84,53 @@ struct Interval_nt : public Interval_base
   IA & operator-= (const IA &d) { return *this = *this - d; }
   IA & operator*= (const IA &d) { return *this = *this * d; }
   IA & operator/= (const IA &d) { return *this = *this / d; }
+  
+  static void overlap_action() // throw (unsafe_comparison)
+  {
+    number_of_failures++;
+    throw unsafe_comparison();
+  }
+
+  bool operator<  (const IA &d) const
+  {
+    if (sup_  < d.inf_) return true;
+    if (inf_ >= d.sup_) return false;
+    overlap_action();
+    return false;
+  }
+
+  bool operator>  (const IA &d) const
+  {
+    return d < *this;
+  }
+
+  bool operator<= (const IA &d) const
+  {
+    if (sup_ <= d.inf_) return true;
+    if (inf_ >  d.sup_) return false;
+    overlap_action();
+    return false;
+  }
+
+  bool operator>= (const IA &d) const
+  {
+    return d <= *this;
+  }
+
+  bool operator== (const IA &d) const
+  {
+    if (d.inf_ >  sup_ || d.sup_  < inf_) return false;
+    if (d.inf_ == sup_ && d.sup_ == inf_) return true;
+    overlap_action();
+    return false;
+  }
+
+  bool operator!= (const IA &d) const
+  {
+    return !(*this == d);
+  }
+
+  // TODO : Maybe I should suppress these : they are useless.
 
   // The (join, union, ||) operator.
   IA operator|| (const IA & d) const
@@ -205,7 +250,7 @@ Interval_nt<Protected>::operator/ (const Interval_nt<Protected> & d) const
 	   // but is this worth ?
 }
 
-#if 0 // Do this for the next release, same for is_one()
+#if 0 // TODO : Do this for the next release, same for is_one()
 bool is_zero(const NT &n)
 {
   if (0 >  n.sup_ || 0  < n.inf_) return false;

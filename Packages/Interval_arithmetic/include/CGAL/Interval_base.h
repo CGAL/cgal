@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 2000 The CGAL Consortium
+// Copyright (c) 2000,2001,2002 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -56,51 +56,6 @@ struct Interval_base
       // Or should I use is_valid() ? or is_valid_or_nan() ?
     CGAL_assertion_msg(!(i>s),
 	      " Variable used before being initialized (or CGAL bug)");
-  }
-
-  static void overlap_action() // throw (unsafe_comparison)
-  {
-    number_of_failures++;
-    throw unsafe_comparison();
-  }
-
-  bool operator<  (const IA &d) const
-  {
-    if (sup_  < d.inf_) return true;
-    if (inf_ >= d.sup_) return false;
-    overlap_action();
-    return false;
-  }
-
-  bool operator>  (const IA &d) const
-  {
-    return d < *this;
-  }
-
-  bool operator<= (const IA &d) const
-  {
-    if (sup_ <= d.inf_) return true;
-    if (inf_ >  d.sup_) return false;
-    overlap_action();
-    return false;
-  }
-
-  bool operator>= (const IA &d) const
-  {
-    return d <= *this;
-  }
-
-  bool operator== (const IA &d) const
-  {
-    if (d.inf_ >  sup_ || d.sup_  < inf_) return false;
-    if (d.inf_ == sup_ && d.sup_ == inf_) return true;
-    overlap_action();
-    return false;
-  }
-
-  bool operator!= (const IA &d) const
-  {
-    return !(*this == d);
   }
 
   bool is_point() const
