@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <bench name_length="64" header="false">
-  <clo name="format" command="-If="></clo> 
+  <clo name="format" command="-If="/>
   <clo name="samples" command="-s"/> 
   <clo name="header" command="-bh="/> 
   <clo name="name_length" command="-bnl="/> 
