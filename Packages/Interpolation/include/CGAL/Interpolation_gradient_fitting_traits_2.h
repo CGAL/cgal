@@ -92,6 +92,9 @@ public:
   typedef R                                          Rep;
 
   typedef typename Rep::FT                           FT;
+  typedef typename Rep::Point_2                      Point;
+  typedef typename Rep::Vector_2                     Vector;
+
   typedef typename Rep::Construct_vector_2           Construct_vector;
   typedef typename Rep::Construct_scaled_vector_2    Construct_scaled_vector;
   //only one not needed by gradient fitting:
@@ -99,8 +102,6 @@ public:
   
   
   //additional types for gradient computation:
-  typedef typename Rep::Point_2                      Point;
-  typedef typename Rep::Vector_2                     Vector;
   typedef typename Rep::Aff_transformation_2         Aff_transformation;
 
   typedef Construct_null_matrix_2<Aff_transformation>   

@@ -33,6 +33,9 @@ class Interpolation_traits_2
 {
 public:
   typedef typename R::FT                     FT;
+  typedef typename R::Point_2                Point;
+  typedef typename R::Vector_2               Vector;
+
   typedef typename R::Construct_vector_2     Construct_vector;
   typedef typename R::Construct_scaled_vector_2
                                              Construct_scaled_vector;
