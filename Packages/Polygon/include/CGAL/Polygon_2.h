@@ -156,9 +156,20 @@ class Polygon_2 {
     Polygon_2(l_ri first, l_ri last)
       { copy(first, last, back_inserter(d_container)); }
 #else
-    template <class InputIterator>
+   template <class InputIterator>
     Polygon_2(InputIterator first, InputIterator last)
       { std::copy(first, last, std::back_inserter(d_container)); }
+
+    template <class Circulator>
+    Polygon_2(Circulator start)
+	{
+	    if (start != NULL) {
+		Circulator cur = start;
+		do {
+		    d_container.push_back(*cur); ++cur;
+		} while (cur != start);
+	    }
+	}
 #endif
 
     //--------------------------------------------------------
