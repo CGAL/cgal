@@ -330,7 +330,6 @@ class Distance_smaller
 
     // * operator
     Item_with_distance& operator* () {    
-            		std::cout << "started *" << std::endl;
 			return *(Item_PriorityQueue->top());
     }
 
@@ -344,12 +343,12 @@ class Distance_smaller
 
     // postfix operator
     std::auto_ptr<Item_with_distance> operator++(int) {     
-        std::cout << "started postfix operator" << std::endl;   
+        
         Item_with_distance Value = *(Item_PriorityQueue->top());        
         std::auto_ptr<Item_with_distance>
         result(new Item_with_distance(Value));
         ++*this;        
-        std::cout << "finished postfix operator" << std::endl;
+        
         return result;
     }
 
@@ -396,7 +395,7 @@ class Distance_smaller
 
     void Compute_the_next_nearest_neighbour() {
 
-        std::cout << "started compute_the_next_nearest_neighbour" << std::endl;
+      
         // compute the next item
         bool next_neighbour_found=false;
         if (!(Item_PriorityQueue->empty())) {
@@ -505,7 +504,7 @@ else {
           }
         }   // next_neighbour_found or priority queue is empty
         // in the latter case also the item priority quee is empty
-        std::cout << "finished compute_the_next_nearest_neighbour" << std::endl;
+        
     }
 }; // class Iterator_implementation
 }; // class iterator

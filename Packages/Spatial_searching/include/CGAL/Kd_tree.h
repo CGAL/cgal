@@ -42,6 +42,7 @@ class Kd_tree {
 public:
   
   typedef typename Traits::Item Item;
+  typedef typename Traits::Item_container Item_container;
   typedef typename std::list<Item>::iterator input_iterator;
   typedef typename Traits::NT NT;
   typedef Kd_tree_node<Traits> Node;
@@ -79,7 +80,7 @@ private:
 
   // The leaf node
   Node_handle 
-  create_leaf_node(Point_container<Item>& c)
+  create_leaf_node(Item_container& c)
   {
     Node n;
     Node_handle nh = nodes.insert(n);
@@ -100,23 +101,31 @@ private:
   //       It is not proper yet, but the goal was to see if there is
   //       a potential performance gain through the Compact_container
   Node_handle 
-  create_internal_node_use_extension(Point_container<Item>& c, Traits& t) 
+  create_internal_node_use_extension(Item_container& c, Traits& t) 
   {
     Node n;
     Node_handle nh = nodes.insert(n);
-
+    
     nh->the_node_type = Node::EXTENDED_INTERNAL;
 
-    Point_container<Item> 
-      c_low = Point_container<Item>(c.dimension());
-    Kd_tree_rectangle<NT> bbox(c.bounding_box());
-
+    Item_container
+      c_low = Item_container(c.dimension());
+    
     t.split(nh->sep, c, c_low);
 	        
     int cd  = nh->sep.cutting_dimension();
+    
+    nh->low_val = c_low.bounding_box().min_coord(cd);
+   
 
-    nh->low_val = bbox.min_coord(cd);
-    nh->high_val = bbox.max_coord(cd);
+    
+    nh->high_val = c.bounding_box().max_coord(cd);
+
+    
+    assert(nh->sep.cutting_value() >= nh->low_val);
+    assert(nh->sep.cutting_value() <= nh->high_val);
+
+    
 
     if (c_low.size() > t.bucket_size())
       nh->lower_ch = create_internal_node_use_extension(c_low,t);
@@ -128,6 +137,7 @@ private:
     else
       nh->upper_ch = create_leaf_node(c);
 
+    
     return nh;
   }
 
@@ -135,17 +145,16 @@ private:
   // Note also that I duplicated the code to get rid if the if's for
   // the boolean use_extension which was constant over the construction
   Node_handle 
-  create_internal_node(Point_container<Item>& c, Traits& t) 
+  create_internal_node(Item_container& c, Traits& t) 
   {
     Node n;
     Node_handle nh = nodes.insert(n);
-
+    
     nh->the_node_type = Node::INTERNAL;
 
-    Point_container<Item> 
-      c_low = Point_container<Item>(c.dimension());
-    Kd_tree_rectangle<NT> bbox(c.bounding_box());
-
+    Item_container
+    c_low = Item_container(c.dimension());
+    
     t.split(nh->sep, c, c_low);
 	        
     if (c_low.size() > t.bucket_size())
@@ -180,7 +189,7 @@ public:
     data = std::vector<Item*>(pts.size()); // guarantees that iterators we store in Kd_tree_nodes stay valid
     data_iterator = data.begin();
 
-    Point_container<Item> c(dim, pts.begin(), pts.end());
+    Item_container c(dim, pts.begin(), pts.end());
 
     bbox = new Kd_tree_rectangle<NT>(c.bounding_box());
     
@@ -229,7 +238,7 @@ public:
 	{it=tree_root->tree_items(it);
 	 return it;}
 
-    ~Kd_tree() {
+    ~Kd_tree() {  
 		  delete bbox;
 	};
 

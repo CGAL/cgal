@@ -24,7 +24,7 @@
 #ifndef  ORTHOGONAL_STANDARD_SEARCH_H
 #define  ORTHOGONAL_STANDARD_SEARCH_H
 #include <cstring>
-#include <list>
+#include <list> 
 #include <queue>
 #include <memory>
 #include <CGAL/Kd_tree_node.h>

@@ -64,6 +64,7 @@ namespace CGAL {
          (*The_weights)[1]=NT(1);
     }*/
 
+    // default constructor
     Weighted_Minkowski_distance() 
     { 
        Item P;
@@ -71,7 +72,16 @@ namespace CGAL {
 	 for (unsigned int i = 0; i < The_dimension; ++i) (*The_weights)[i]=NT(1);
     }
 
-	Weighted_Minkowski_distance (NT power, int dim,
+
+    //copy constructor
+    Weighted_Minkowski_distance(const Weighted_Minkowski_distance& wmd) :
+	p(wmd.p), The_dimension(wmd.The_dimension) {
+		The_weights = new Weight_vector(The_dimension);
+	 	for (unsigned int i = 0; i < The_dimension; ++i) 
+		(*The_weights)[i]=(*(wmd.The_weights))[i];
+	}
+
+    	Weighted_Minkowski_distance (NT power, int dim,
 		Weight_vector Weights) : p(power), The_dimension(dim)
 	{
 		assert(p >= NT(0));
@@ -81,10 +91,10 @@ namespace CGAL {
 		The_weights = new Weight_vector(The_dimension);
 		for (unsigned int i = 0; i < The_dimension; ++i) 
 		(*The_weights)[i]=Weights[i];
-	}
+    	}
 
-	~Weighted_Minkowski_distance() {
-		delete The_weights;
+   	~Weighted_Minkowski_distance() {
+		delete The_weights;		
 	};
 
 	inline NT distance(const Item& p1, const Item& p2) {

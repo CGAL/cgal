@@ -8,15 +8,15 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       :
-// release_date  :
+// release       : $CGAL_Revision: CGAL-2.5-I-99 $
+// release_date  : $CGAL_Date: 2003/05/23 $
 //
 // file          : include/CGAL/Splitters.h
-// package       : ASPAS
+// package       : ASPAS (3.12)
+// maintainer    : Hans Tangelder <hanst@cs.uu.nl>
 // revision      : 2.4 
 // revision_date : 2002/16/08 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
-// maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
 // coordinator   : Utrecht University
 //
 // ======================================================================
@@ -31,13 +31,15 @@
 #include <CGAL/Plane_separator.h>
 namespace CGAL {
 
-template <class Item>
+template <class Item, class Item_container=Point_container<Item> >
 class Median_of_max_spread {
 private:
   typedef typename Item::R::FT NT;
 public:
-  void operator() (Plane_separator<NT>& sep, Point_container<Item>& c0,
-  			     Point_container<Item>& c1, 
+  typedef Item_container Container;
+ 
+  void operator() (Plane_separator<NT>& sep, Container& c0,
+  			     Container& c1, 
   			     NT Aspect_ratio=NT(3)) {        
         sep=Plane_separator<NT>(c0.max_tight_span_coord(),NT(0));
         sep.set_cutting_val(c0.median(sep.cutting_dimension()));
@@ -45,13 +47,14 @@ public:
   }
 };
 
-template <class Item>
+template <class Item, class Item_container=Point_container<Item> >
 class Fair {
 private:
   typedef typename Item::R::FT NT;
 public:
-  void operator() (Plane_separator<NT>& sep, Point_container<Item>& c0,
-  			     Point_container<Item>& c1, 
+  typedef Item_container Container;
+  void operator() (Plane_separator<NT>& sep, Container& c0,
+  			     Container& c1, 
   			     NT Aspect_ratio=NT(3)) {
 	// find legal cut with max spread
         sep=Plane_separator<NT>(c0.max_tight_span_coord_balanced(Aspect_ratio),
@@ -62,13 +65,14 @@ public:
   }
 };
 
-template <class Item>
+template <class Item,  class Item_container=Point_container<Item> >
 class Sliding_fair {
 private:
   typedef typename Item::R::FT NT;
 public:
-  void operator() (Plane_separator<NT>& sep, Point_container<Item>& c0,
-  			     Point_container<Item>& c1, 
+  typedef Item_container Container;
+  void operator() (Plane_separator<NT>& sep, Container& c0,
+  			     Container& c1, 
   			     NT Aspect_ratio=NT(3))  {
     // find legal cut with max spread
    
@@ -82,13 +86,14 @@ public:
 };
 
 
-template <class Item>
+template <class Item,  class Item_container=Point_container<Item> >
 class Sliding_midpoint {
 private:
   typedef typename Item::R::FT NT;
 public:
-  void operator() (Plane_separator<NT>& sep, Point_container<Item>& c0,
-  			     Point_container<Item>& c1, 
+  typedef Item_container Container;
+  void operator() (Plane_separator<NT>& sep, Container& c0,
+  			     Container& c1, 
   			     NT Aspect_ratio=NT(3))
   {
         sep=Plane_separator<NT>(c0.max_span_coord(),
@@ -107,13 +112,14 @@ public:
   }
 };
 
-template <class Item>
+template <class Item,  class Item_container=Point_container<Item> >
 class Median_of_rectangle {
 private:
   typedef typename Item::R::FT NT;
 public:
-  void operator() (Plane_separator<NT>& sep, Point_container<Item>& c0,
-  			     Point_container<Item>& c1, 
+  typedef Item_container Container;
+  void operator() (Plane_separator<NT>& sep, Container& c0,
+  			     Container& c1, 
   			     NT Aspect_ratio=NT(3))
   {
     sep=Plane_separator<NT>(c0.max_span_coord(),NT(0));
@@ -122,13 +128,14 @@ public:
   }
 };
 
-template <class Item>
+template <class Item,  class Item_container=Point_container<Item> >
 class Midpoint_of_max_spread {
 private:
   typedef typename Item::R::FT NT;
 public:
-  void operator() (Plane_separator<NT>& sep, Point_container<Item>& c0,
-  			     Point_container<Item>& c1, 
+  typedef Item_container Container;
+  void operator() (Plane_separator<NT>& sep, Container& c0,
+  			     Container& c1, 
   			     NT Aspect_ratio=NT(3))
   {
     sep= Plane_separator<NT>(c0.max_tight_span_coord(),
@@ -137,13 +144,14 @@ public:
   }
 };
 
-template <class Item>
+template <class Item, class Item_container=Point_container<Item> >
 class Midpoint_of_rectangle {
 private:
   typedef typename Item::R::FT NT;
 public:
-  void operator() (Plane_separator<NT>& sep, Point_container<Item>& c0,
-  			     Point_container<Item>& c1, 
+  typedef Item_container Container;
+  void operator() (Plane_separator<NT>& sep, Container& c0,
+  			     Container& c1, 
   			     NT Aspect_ratio=NT(3))
   {
     sep = Plane_separator<NT>(c0.max_span_coord(),

@@ -39,6 +39,7 @@ namespace CGAL {
     // CGAL dependency typedef typename Kernel_traits<Item>::Kernel K;
     // CGAL dependency typedef typename K::FT NT;
     typedef typename Item::R::FT NT;
+    typedef typename Splitter::Container Item_container;
     
     
   private:
@@ -49,9 +50,15 @@ namespace CGAL {
 
   public:
 
-       
-        
-	Kd_tree_traits_point(unsigned int bucket_size=1, 
+        //default constructor
+
+	Kd_tree_traits_point() {
+		the_bucket_size = 1;		
+		the_aspect_ratio = NT(3);
+		use_extended_nodes_option = true;
+        }
+               
+	Kd_tree_traits_point(unsigned int bucket_size, 
 			     NT aspect_ratio=NT(3), 
 			     bool use_extended_nodes=true) {
 		the_bucket_size = bucket_size;

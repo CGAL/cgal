@@ -415,7 +415,7 @@ class iterator;
                                 (*query_point)[new_cut_dim];
                                 if (old_off>NT(0.0)) old_off=NT(0.0);
                                 new_rd=Orthogonal_distance_instance->
-                                new_distance(copy_rd,old_off,new_off,new_cut_dim);
+                                new_distance(copy_rd,old_off,new_off,new_cut_dim);  
 				assert(new_rd >= copy_rd);
 				if (search_nearest_neighbour) {
                                 	Node_with_distance *Lower_Child =

@@ -18,9 +18,8 @@
 #include <CGAL/Splitters.h>
 #include <CGAL/Orthogonal_standard_search.h>
 #include <CGAL/Cartesian_d.h>
-#include <CGAL/L1_distance_rectangle_point.h>
 #include <CGAL/Weighted_Minkowski_distance.h>
-
+ 
 typedef CGAL::Cartesian_d<double> R;
 typedef CGAL::Point_d<R> Point;
 typedef Point::R::FT NT;
@@ -85,8 +84,7 @@ int main() {
      " nn= " << *(nearest_neighbours[j].first) << std::endl; 
   }
   
-  std::cout << "error in destructor to be found" << std::endl;
-
+  
   return 0;
 
 }; 

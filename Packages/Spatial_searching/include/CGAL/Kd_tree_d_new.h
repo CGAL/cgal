@@ -26,18 +26,19 @@
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Fuzzy_iso_box_d.h>
 #include <CGAL/Iso_rectangle_2.h>
+#include <CGAL/Iso_cuboid_3.h>
+#include <CGAL/Iso_rectangle_d.h>
 
 namespace CGAL {
 
   // implementing backward compability to old kdtree
 
   template <class Traits>
-  class Kdtree_d : public Kd_tree<Traits> {
+  class Kdtree_d {
 
   typedef typename Traits::Iso_box_d Box;
   typedef typename Traits::Item Item;
-
-  private: 
+ 
 
   Kd_tree<Traits>* t;
 
@@ -58,6 +59,17 @@ namespace CGAL {
   // not implemented for Kd_tree
   void dump() {}
 
+  template <class OutputIterator, class FuzzyQueryItem>
+	OutputIterator search(OutputIterator it, const FuzzyQueryItem& q) {
+		it = t->search(it,q);
+		return it;
+	}
+
+  template <class OutputIterator>
+	OutputIterator report_all_points(OutputIterator it) 
+	{it=t->report_all_points(it);
+	 return it;}
+
   ~Kdtree_d() {}
         
 
@@ -73,9 +85,39 @@ namespace CGAL {
 
   typedef typename Item::R R;
   typedef typename Item::R::FT NT;
-  typedef Fuzzy_iso_box_d<Item,Iso_rectangle_2<R> > Iso_box_d;
 
-  // constructor 
+  typedef Fuzzy_iso_box_d<Item,Iso_rectangle_2<R> > Iso_box_2;
+  // work around, because old kd-tree constructor requires unneeded specification of dim
+  class Iso_box_d {
+
+  private:
+
+  Iso_box_2 *b;
+
+  public:
+
+  //constuctor 
+  Iso_box_d(const Item& p, const Item&q, int dim) {
+	b=new Iso_box_2(p,q);
+  }
+ 
+  bool contains(const Item& p) const {	 
+	return b->contains(p);
+  }
+
+  bool inner_range_intersects(const Kd_tree_rectangle<NT>* rectangle) const {   
+	return b->inner_range_intersects(rectangle);
+  }
+
+  bool outer_range_is_contained_by(const Kd_tree_rectangle<NT>* rectangle) const { 
+	return b->outer_range_is_contained_by(rectangle);
+  }
+
+  //destructor
+  ~Iso_box_d() { delete b;}
+};
+
+  //constructor 
   Kdtree_interface_2d(unsigned int bucket_size=1, 
 			     NT aspect_ratio=NT(3), 
 			     bool use_extended_nodes=true) {
@@ -88,6 +130,115 @@ namespace CGAL {
 
 };
 
+template <class Item,
+	    class Splitter=Sliding_midpoint<Item>, 
+	    class Separator=Plane_separator<typename Item::R::FT> > 
+  class Kdtree_interface_3d : 
+	public Kd_tree_traits_point<Item,Splitter,Separator> {
+
+  public:
+
+  typedef typename Item::R R;
+  typedef typename Item::R::FT NT;
+
+  typedef Fuzzy_iso_box_d<Item,Iso_cuboid_3<R> > Iso_box_3;
+  // work around, because old kd-tree constructor requires unneeded specification of dim
+  class Iso_box_d {
+
+  private:
+
+  Iso_box_3 *b;
+
+  public:
+
+  //constuctor 
+  Iso_box_d(const Item& p, const Item&q, int dim) {
+	b=new Iso_box_3(p,q);
+  }
+ 
+  bool contains(const Item& p) const {	 
+	return b->contains(p);
+  }
+
+  bool inner_range_intersects(const Kd_tree_rectangle<NT>* rectangle) const {   
+	return b->inner_range_intersects(rectangle);
+  }
+
+  bool outer_range_is_contained_by(const Kd_tree_rectangle<NT>* rectangle) const { 
+	return b->outer_range_is_contained_by(rectangle);
+  }
+
+  //destructor
+  ~Iso_box_d() { delete b;}
+};
+
+  //constructor 
+  Kdtree_interface_3d(unsigned int bucket_size=1, 
+			     NT aspect_ratio=NT(3), 
+			     bool use_extended_nodes=true) {
+		Kd_tree_traits_point<Item>(bucket_size,aspect_ratio,use_extended_nodes);
+  }
+
+    	
+  // destructor
+  ~Kdtree_interface_3d() {}
+
+};
+
+template <class Item,
+	  class Splitter=Sliding_midpoint<Item>, 
+	  class Separator=Plane_separator<typename Item::R::FT> > 
+  class Kdtree_interface : 
+	public Kd_tree_traits_point<Item,Splitter,Separator> {
+
+  public:
+
+  typedef typename Item::R R;
+  typedef typename Item::R::FT NT;
+
+  typedef Fuzzy_iso_box_d<Item,Iso_rectangle_d<R> > Iso_box;
+  // work around, because old kd-tree constructor requires unneeded specification of dim
+  class Iso_box_d {
+
+  private:
+
+  Iso_box *b;
+
+  public:
+
+  //constuctor 
+  Iso_box_d(const Item& p, const Item&q, int dim) {
+	b=new Iso_box(p,q);
+  }
+ 
+  bool contains(const Item& p) const {	 
+	return b->contains(p);
+  }
+
+  bool inner_range_intersects(const Kd_tree_rectangle<NT>* rectangle) const {   
+	return b->inner_range_intersects(rectangle);
+  }
+
+  bool outer_range_is_contained_by(const Kd_tree_rectangle<NT>* rectangle) const { 
+	return b->outer_range_is_contained_by(rectangle);
+  }
+
+  //destructor
+  ~Iso_box_d() { delete b;}
+};
+
+  //constructor 
+  Kdtree_interface(unsigned int bucket_size=1, 
+			     NT aspect_ratio=NT(3), 
+			     bool use_extended_nodes=true) {
+		Kd_tree_traits_point<Item>(bucket_size,aspect_ratio,use_extended_nodes);
+  }
+
+    	
+  // destructor
+  ~Kdtree_interface() {}
+
+}; 
 
 } // namespace CGAL
 #endif // CGAL_KD_TREE_D_NEW_H

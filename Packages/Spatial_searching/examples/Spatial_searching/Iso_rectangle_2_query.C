@@ -12,7 +12,6 @@
 #include <iostream>
 #include <fstream>
 
-
 typedef CGAL::Cartesian<double> R;
 typedef R::Point_2 Point;
 
