@@ -1,3 +1,6 @@
+1.5 (27/4/2002) AF
+Added gmp-4.0.1 precompiled libraries
+
 1.4 (17/1/2002) MH
 Changed tarfile to gmp-4. winlib tbd.
 
