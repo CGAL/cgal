@@ -7,14 +7,12 @@
 #include <CGAL/Planar_map_2.h>
 #include <CGAL/sweep_to_construct_planar_map_2.h>
 #include <CGAL/Arr_segment_exact_traits.h>
-#include <CGAL/IO/Pm_iostream.h>
+#include <CGAL/IO/Pm_iostream.h> 
 #include <iostream>
 #include <vector>
 
-
-#include <CGAL/IO/Pm_Window_stream.h>
-#include <CGAL/IO/cgal_window.h>  //used for visualization.
-#include <CGAL/IO/cgal_window_redefine.h>
+// #include <CGAL/IO/cgal_window.h>  //used for visualization.
+// #include <CGAL/IO/Pm_Window_stream.h>
 
 typedef CGAL::Quotient<CGAL::MP_Float>           NT;
 typedef CGAL::Cartesian<NT>                      Kernel;
@@ -27,7 +25,7 @@ typedef Traits::Curve                            Curve;
 typedef CGAL::Pm_default_dcel<Traits>            Dcel;   
 typedef CGAL::Planar_map_2<Dcel, Traits>         PM;
 typedef CGAL::Pm_file_writer<PM>                 Pm_writer;
-
+ 
 int main()
 {
   PM                 pm;
@@ -63,10 +61,10 @@ int main()
   verbose_writer.write_halfedges(pm.halfedges_begin(), pm.halfedges_end());
 
   // Use a window visualization
-  CGAL::Window_stream W(700, 700);
-  W.init(-10, 10, -10);
-  W.set_mode(leda_src_mode);
-  W.set_node_width(3);
-  W.display();
-  W << pm;
+  // CGAL::Window_stream W(700, 700, "CGAL Sweep Line Example");
+  // W.init(-10, 10, -10);
+  // W.set_node_width(3);
+  // W.display();
+  // W << pm;
+  // W.read_mouse();
 }

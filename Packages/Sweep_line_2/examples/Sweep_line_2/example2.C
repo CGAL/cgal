@@ -11,16 +11,10 @@
 #include <iostream>
 #include <vector>
 
-//uncomment if you have LEDA installed.
-#ifndef CGAL_IO_PM_WINDOW_STREAM_H
-#include <CGAL/IO/Pm_Window_stream.h>
-#endif
-#ifndef CGAL_ARR_POLYLINE_TRAITS_WINDOW_STREAM_H  
-#include <CGAL/IO/Arr_polyline_traits_Window_stream.h>
-#endif
+// #include <CGAL/IO/cgal_window.h>
 
-#include <CGAL/IO/cgal_window.h>  //used for visualization.
-#include <CGAL/IO/cgal_window_redefine.h>
+// #include <CGAL/IO/Pm_Window_stream.h>
+// #include <CGAL/IO/Arr_polyline_traits_Window_stream.h>
 
 typedef CGAL::Quotient<CGAL::MP_Float>       NT;
 typedef CGAL::Cartesian<NT>                  Kernel;
@@ -94,17 +88,14 @@ int main()
   std::vector<Curve> polylines;
   
   // Read input 
-
   read_polylines(polylines);
 
   // Construct the planar map  
-
   Traits traits;
   CGAL::sweep_to_construct_planar_map_2(polylines.begin(),polylines.end(), 
 					traits, pm);
 
   // Write output 
-  
   std::cout << " * * * Printing list of all halfedges of the resulting ";
   std::cout << "Planar map" << std::endl;
   
@@ -113,14 +104,12 @@ int main()
   verbose_writer.write_halfedges(pm.halfedges_begin(), pm.halfedges_end());
 
   // Use a window visualization
-  
-  CGAL::Window_stream W(700, 700);
-  W.init(-10, 10, -10);
-  W.set_mode(leda_src_mode);
-  W.set_node_width(3);
-  W.button("finish",2);
-  W.display();
-  W << pm;
+  // CGAL::Window_stream W(700, 700);
+  // W.init(-10, 10, -10);
+  // W.set_node_width(3);
+  // W.button("Finish",2);
+  // W.display();
+  // W << pm;
 }
 
 
