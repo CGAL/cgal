@@ -243,70 +243,18 @@ svd_compare_distanceC2(const FT& qx, const FT& qy,
 
 //--------------------------------------------------------------------------
 
-#if 0
-template<class FT, class Method_tag>
-inline
-Edge_conflict_test_result
-svd_edge_predicate_ftC2(const std::vector<FT>& v,
-			char site_types[], int num_sites,
-			bool is_degenerate, Method_tag)
-{
-  FT a;
-  must_be_filtered(a);
-  
-  typedef Simple_cartesian<FT>                        Rep;
-  typedef Point_2<Rep>                         Point;
-  typedef Segment_2<Rep>                       Segment;
-  typedef Segment_Voronoi_diagram_site_2<Rep>  Site;
-
-  Site t[num_sites];
-
-  for (int i = 0, k = 0; i < num_sites; i++) {
-    if ( site_types[i] == 'p' ) {
-      Point p(v[k], v[k+1]);
-      t[i].set_point( p );
-    } else if ( site_types[i] == 's' ) {
-      Point p1(v[k], v[k+1]), p2(v[k+2], v[k+3]);
-      Segment s(p1, p2);
-      t[i].set_segment( s );
-    } else {
-      CGAL_assertion( site_types[i] == 'p' ||
-		      site_types[i] == 's' );
-    }
-    k += ( (site_types[i] == 'p') ? 2 : 4 );
-  }
-
-  CGAL_precondition( num_sites >= 3 && num_sites <= 5 );
-  if ( num_sites == 3 ) {
-    return svd_edge_test_degenerated_2(t[0], t[1], t[2]);
-  }
-
-  if ( num_sites == 4 ) {
-    if ( is_degenerate ) {
-      return svd_edge_test_degenerated_2(t[0], t[1], t[2], t[3]);   
-    } else {
-      return svd_infinite_edge_test_2(t[0], t[1], t[2], t[3]);
-    }
-  }
-
-  return svd_edge_test_2(t[0], t[1], t[2], t[3], t[4]);
-}
-#endif
-
-//--------------------------------------------------------------------------
-
 template<class K, class Method_tag>
 inline
 Sign
 svd_vertex_conflict_ftC2(const typename K::Site_2 t[],
-			 int num_sites, Method_tag mtag)
+			 unsigned int num_sites, Method_tag mtag)
 {
   typedef typename K::FT   FT;
   char site_types[num_sites];
 
   std::vector<FT> v;
 
-  for (int i = 0; i < num_sites; i++) {
+  for (unsigned int i = 0; i < num_sites; i++) {
     if ( t[i].is_point() ) {
       v.push_back( t[i].point().x() );
       v.push_back( t[i].point().y() );
@@ -375,7 +323,7 @@ svd_vertex_conflict_ftC2(const std::vector<FT>& v,
 
   Site_2* t = new Site_2[num_sites];
 
-  for (int i = 0, k = 0; i < num_sites; i++) {
+  for (unsigned int i = 0, k = 0; i < num_sites; i++) {
     if ( site_types[i] == 'p' ) {
       Point_2 p(v[k], v[k+1]);
       t[i].set_point( p );
@@ -409,14 +357,15 @@ template<class K, class Method_tag>
 inline
 bool
 svd_finite_edge_conflict_ftC2(const typename K::Site_2 t[],
-			      Sign sgn, int num_sites, Method_tag mtag)
+			      Sign sgn, unsigned int num_sites,
+			      Method_tag mtag)
 {
   typedef typename K::FT   FT;
   char site_types[num_sites];
 
   std::vector<FT> v;
 
-  for (int i = 0; i < num_sites; i++) {
+  for (unsigned int i = 0; i < num_sites; i++) {
     if ( t[i].is_point() ) {
       v.push_back( t[i].point().x() );
       v.push_back( t[i].point().y() );
@@ -504,7 +453,7 @@ svd_finite_edge_conflict_ftC2(const std::vector<FT>& v, Sign sgn,
 
   Site_2* t = new Site_2[num_sites];
 
-  for (int i = 0, k = 0; i < num_sites; i++) {
+  for (unsigned int i = 0, k = 0; i < num_sites; i++) {
     if ( site_types[i] == 'p' ) {
       Point_2 p(v[k], v[k+1]);
       t[i].set_point( p );
@@ -539,14 +488,15 @@ template<class K, class Method_tag>
 inline
 bool
 svd_infinite_edge_conflict_ftC2(const typename K::Site_2 t[],
-				Sign sgn, int num_sites, Method_tag mtag)
+				Sign sgn, unsigned int num_sites,
+				Method_tag mtag)
 {
   typedef typename K::FT   FT;
   char site_types[num_sites];
 
   std::vector<FT> v;
 
-  for (int i = 0; i < num_sites; i++) {
+  for (unsigned int i = 0; i < num_sites; i++) {
     if ( t[i].is_point() ) {
       v.push_back( t[i].point().x() );
       v.push_back( t[i].point().y() );
@@ -584,7 +534,7 @@ template<class FT, class Method_tag>
 inline
 bool
 svd_infinite_edge_conflict_ftC2(const std::vector<FT>& v, Sign sgn,
-				char site_types[], int num_sites,
+				char site_types[], unsigned int num_sites,
 				Method_tag)
 {
   CGAL_precondition( num_sites == 4 );
@@ -603,7 +553,7 @@ svd_infinite_edge_conflict_ftC2(const std::vector<FT>& v, Sign sgn,
 
   Site_2* t = new Site_2[num_sites];
 
-  for (int i = 0, k = 0; i < num_sites; i++) {
+  for (unsigned int i = 0, k = 0; i < num_sites; i++) {
     if ( site_types[i] == 'p' ) {
       Point_2 p(v[k], v[k+1]);
       t[i].set_point( p );
@@ -631,14 +581,14 @@ template<class K, class Method_tag>
 inline
 bool
 svd_is_degenerate_edge_ftC2(const typename K::Site_2 t[],
-			    int num_sites, Method_tag mtag)
+			    unsigned int num_sites, Method_tag mtag)
 {
   typedef typename K::FT   FT;
   char site_types[num_sites];
 
   std::vector<FT> v;
 
-  for (int i = 0; i < num_sites; i++) {
+  for (unsigned int i = 0; i < num_sites; i++) {
     if ( t[i].is_point() ) {
       v.push_back( t[i].point().x() );
       v.push_back( t[i].point().y() );
@@ -675,7 +625,7 @@ template<class FT, class Method_tag>
 inline
 bool
 svd_is_degenerate_edge_ftC2(const std::vector<FT>& v,
-			    char site_types[], int num_sites,
+			    char site_types[], unsigned int num_sites,
 			    Method_tag)
 {
   CGAL_precondition( num_sites == 4 );
@@ -694,7 +644,7 @@ svd_is_degenerate_edge_ftC2(const std::vector<FT>& v,
 
   Site_2* t = new Site_2[num_sites];
 
-  for (int i = 0, k = 0; i < num_sites; i++) {
+  for (unsigned int i = 0, k = 0; i < num_sites; i++) {
     if ( site_types[i] == 'p' ) {
       Point_2 p(v[k], v[k+1]);
       t[i].set_point( p );
