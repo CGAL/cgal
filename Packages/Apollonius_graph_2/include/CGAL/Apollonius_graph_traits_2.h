@@ -27,7 +27,6 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_TRAITS_2_H
 #define CGAL_APOLLONIUS_GRAPH_TRAITS_2_H
 
-#include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/Parabola_segment_2.h>
 #include <CGAL/Hyperbola_2.h>
 #include <CGAL/Hyperbola_segment_2.h>

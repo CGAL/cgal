@@ -39,7 +39,7 @@
 #include <CGAL/Apollonius_graph_face_base_2.h>
 #include <CGAL/Apollonius_graph_hierarchy_vertex_base_2.h>
 
-#include <CGAL/Apollonius_graph_euclidean_traits_wrapper_2.h>
+#include <CGAL/Apollonius_graph_traits_wrapper_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
