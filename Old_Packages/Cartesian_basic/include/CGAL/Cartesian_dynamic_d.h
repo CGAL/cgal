@@ -19,12 +19,12 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template< class R, class _FT >
+template< class R, class FT_ >
 struct Cartesian_base_dynamic_d
 {
     // Number types and representation tag
-    typedef _FT                                 RT;
-    typedef _FT                                 FT;
+    typedef FT_                                 RT;
+    typedef FT_                                 FT;
     typedef Cartesian_tag                       Rep_tag;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
@@ -48,17 +48,17 @@ CGAL_BEGIN_NAMESPACE
 // It is useful only if you do not need the 3D kernel
 // If you need both, you should be using Cartesian<FT>
 
-template< class _FT >
+template< class FT_ >
 struct Cartesian_dynamic_d
-  : public Cartesian_base_dynamic_d< Cartesian_dynamic_d<_FT>, _FT >
+  : public Cartesian_base_dynamic_d< Cartesian_dynamic_d<FT_>, FT_ >
 {
     // Number types and representation tag
-    typedef _FT                                 RT;
-    typedef _FT                                 FT;
+    typedef FT_                                 RT;
+    typedef FT_                                 FT;
     typedef Cartesian_tag                       Rep_tag;
 
-    typedef Cartesian_dynamic_d<_FT>            Self;
-    typedef Cartesian_base_dynamic_d<Self,_FT>  Kernel_base;
+    typedef Cartesian_dynamic_d<FT_>            Self;
+    typedef Cartesian_base_dynamic_d<Self,FT_>  Kernel_base;
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
     // The lasses are inherited and because of partial specialization,

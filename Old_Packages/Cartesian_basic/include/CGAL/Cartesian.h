@@ -16,16 +16,16 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template< class R, class _FT >
+template< class R, class FT_ >
 struct Cartesian_base :
-    public Cartesian_base_2<R,_FT>
-    , public Cartesian_base_3<R,_FT>
-    , public Cartesian_base_dynamic_d<R,_FT>
+    public Cartesian_base_2<R,FT_>
+    , public Cartesian_base_3<R,FT_>
+    , public Cartesian_base_dynamic_d<R,FT_>
 {
     // Number types and representation tag (to avoid ambiguity in
     // inheritance tree)
-    typedef _FT                                           RT;
-    typedef _FT                                           FT;
+    typedef FT_                                           RT;
+    typedef FT_                                           FT;
     typedef Cartesian_tag                                 Rep_tag;
     typedef Cartesian_tag                                 Kernel_tag;
 
@@ -34,9 +34,9 @@ struct Cartesian_base :
     // template parameter, we need to explicitly write the inheritance
     // (see mail from Michael Hoffmann of July 28th 1999 in cgal-develop)
 
-    typedef Cartesian_base_2<R,_FT>                       Kernel_base_2;
-    typedef Cartesian_base_3<R,_FT>                       Kernel_base_3;
-    typedef Cartesian_base_dynamic_d<R,_FT>               Kernel_base_d;
+    typedef Cartesian_base_2<R,FT_>                       Kernel_base_2;
+    typedef Cartesian_base_3<R,FT_>                       Kernel_base_3;
+    typedef Cartesian_base_dynamic_d<R,FT_>               Kernel_base_d;
 
     typedef typename Kernel_base_2::Object_2              Object_2;
     typedef typename Kernel_base_3::Object_3              Object_3;          
@@ -78,12 +78,12 @@ CGAL_END_NAMESPACE
 
 CGAL_BEGIN_NAMESPACE
 
-template< class _FT >
-struct Cartesian : public Cartesian_base< Cartesian<_FT>, _FT >
+template< class FT_ >
+struct Cartesian : public Cartesian_base< Cartesian<FT_>, FT_ >
 {
     // Number types and representation tag (to avoid ambiguity)
-    typedef _FT                                           RT;
-    typedef _FT                                           FT;
+    typedef FT_                                           RT;
+    typedef FT_                                           FT;
     typedef Cartesian_tag                                 Rep_tag;
     typedef Cartesian_tag                                 Kernel_tag;
 

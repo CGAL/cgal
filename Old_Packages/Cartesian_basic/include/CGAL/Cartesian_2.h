@@ -19,12 +19,12 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template< class R, class _FT >
+template< class R, class FT_ >
 struct Cartesian_base_2
 {
     // Number types and representation tag
-    typedef _FT                                    RT;
-    typedef _FT                                    FT;
+    typedef FT_                                    RT;
+    typedef FT_                                    FT;
     typedef Cartesian_tag                          Rep_tag;
     typedef Cartesian_tag                          Kernel_tag;
     typedef CGAL::Object                           Object_2;
@@ -105,18 +105,18 @@ CGAL_BEGIN_NAMESPACE
 // It is useful only if you do not need the 3D kernel
 // If you need both, you should be using Cartesian<FT>
 
-template< class _FT >
+template< class FT_ >
 struct Cartesian_2 :
-  public Cartesian_base_2< Cartesian_2<_FT>, _FT >
+  public Cartesian_base_2< Cartesian_2<FT_>, FT_ >
 {
     // Number types and representation tag
-    typedef _FT                                 RT;
-    typedef _FT                                 FT;
+    typedef FT_                                 RT;
+    typedef FT_                                 FT;
     typedef Cartesian_tag                       Rep_tag;
     typedef Cartesian_tag                       Kernel_tag;
 
-    typedef Cartesian_2<_FT>                    Self;
-    typedef Cartesian_base_2<Self,_FT>          Kernel_base;
+    typedef Cartesian_2<FT_>                    Self;
+    typedef Cartesian_base_2<Self,FT_>          Kernel_base;
 
     typedef typename Kernel_base::Object_2        Object_2;
     
