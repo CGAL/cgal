@@ -23,6 +23,9 @@
 // ======================================================================
 
 
+#ifndef CGAL_APOLLONIUS_GRAPH_EUCLIDEAN_TRAITS_2_C
+#define CGAL_APOLLONIUS_GRAPH_EUCLIDEAN_TRAITS_2_C
+
 
 // class implementation continued
 //=================================
@@ -1354,5 +1357,9 @@ public:
 
 
 
-
 CGAL_END_NAMESPACE
+
+
+
+#endif // CGAL_APOLLONIUS_GRAPH_EUCLIDEAN_TRAITS_2_C
+

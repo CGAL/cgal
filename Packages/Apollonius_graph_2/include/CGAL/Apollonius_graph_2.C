@@ -23,7 +23,8 @@
 // ======================================================================
 
 
-
+#ifndef CGAL_APOLLONIUS_GRAPH_2_C
+#define CGAL_APOLLONIUS_GRAPH_2_C
 
 // class implementation continued
 //=================================
@@ -1938,3 +1939,6 @@ minimize_degree(Vertex_handle v)
 }
 
 CGAL_END_NAMESPACE
+
+
+#endif // CGAL_APOLLONIUS_GRAPH_2_C

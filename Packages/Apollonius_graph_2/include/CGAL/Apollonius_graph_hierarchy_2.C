@@ -22,6 +22,8 @@
 //
 // ======================================================================
 
+#ifndef CGAL_APOLLONIUS_GRAPH_HIERARCHY_2_C
+#define CGAL_APOLLONIUS_GRAPH_HIERARCHY_2_C
 
 
 // class implementation
@@ -445,3 +447,6 @@ random_level()
 }
 
 CGAL_END_NAMESPACE
+
+
+#endif // CGAL_APOLLONIUS_GRAPH_HIERARCHY_2_C
