@@ -79,7 +79,7 @@ int main(int argc,char *argv[])
 
   if(argc == 1 || argc == 2) {
     // initialize window
-    W.init(-2,13,-2);
+    W.init(MIN_X - 2,MAX_X + 3,MIN_Y - 2);
     W.set_mode(leda_src_mode);
     W.set_node_width(3);
     W.button("Show Largest Empty Rectangle",1);
