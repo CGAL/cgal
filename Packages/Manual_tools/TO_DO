@@ -1,7 +1,21 @@
 Manual_tools/TO_DO
 ==================
 
--- fix [cgal:cite] problem
+-- Macro to detect CGAL packages collected in a module
+
+-- Documentation
+
+-- Test suite
+
+-- Check what to do with
+   Installation/doc_tex/installation
+   Tutorial/doc_tex
+
+-- Macro to analyse length value (1pt, 2in, ...) and store in \lciLength
+   Implement \hspace and \vspace
+
+-- Allow several chapters in one file, all chapters except the first
+   have output filenames with a chapter number per file as suffix
 
 -- OS License GPL for Manual tools: ask ETH/MPI for allowance
 
