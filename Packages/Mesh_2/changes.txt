@@ -1,3 +1,18 @@
+17 October 2004 Laurent Rineau
+- Attempt to fix remaining bug: the list of faces modified by the insertion
+of a point on a segment is not the conflicts zone of the
+point. remove_constrained_edge() and insert_constraint() flip some faces. I
+have added a class Refine_edges_for_refine_faces that handles a special
+member special_zone (bad name) which is a set of
+faces. do_before_conflict() and do_after_insertion() deal with functions
+remove_constrained_edge() and insert_contraint() and fill the set
+special_zone. The visitor Refine_edges_visitor uses this set to remove
+those faces from bad_faces in after_insertion() (before the two
+sub-segments are added back by Refine_edges::do_after_insertion().
+- However, this attempt fails! Seems that adding back the two
+subconstraints intersects some other constrained edges already in the
+triangulation.
+
 12 October 2004 Laurent Rineau
 - Added parents and names to every layers, so that Qt releases the memory.
 - Added debugging functions in Delaunay_mesher_2, and new debugging 

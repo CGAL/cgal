@@ -20,7 +20,7 @@
 #ifndef CGAL_DELAUNAY_MESHER_2_H
 #define CGAL_DELAUNAY_MESHER_2_H
 
-#include <CGAL/Mesh_2/Refine_edges_with_clusters.h>
+#include <CGAL/Mesh_2/Refine_edges_for_refine_faces.h>
 #include <CGAL/Mesh_2/Refine_edges_visitor.h>
 #include <CGAL/Mesh_2/Refine_faces.h>
 
@@ -38,7 +38,7 @@ class Delaunay_mesher_2
   typedef typename Tr::Point Point;
 
   /** \name Types needed for private member datas */
-  typedef Mesh_2::Refine_edges_with_clusters<Tr,
+  typedef Mesh_2::Refine_edges_for_refine_faces<Tr,
     Mesh_2::Is_locally_conforming_Gabriel<Tr> > Edges_level;
 
   typedef Mesh_2::Refine_faces<Tr, Crit, Edges_level> Faces_level;
@@ -62,9 +62,12 @@ private:
   Null_mesher_level null_level;
   Null_mesh_visitor null_visitor;
   Clusters clusters_;
+  typedef typename Edges_level::Special_zone Special_zone;
+  Special_zone special_zone;
   Edges_level edges_level;
   Faces_level faces_level;
-  Mesh_2::Refine_edges_visitor_from_faces<Faces_level> visitor;
+  Mesh_2::Refine_edges_visitor_from_faces<Faces_level,
+                                          Special_zone> visitor;
 
   Seeds seeds;
   bool seeds_mark;
@@ -76,9 +79,10 @@ public:
       null_level(),
       null_visitor(),
       clusters_(tr),
-      edges_level(tr, clusters_, null_level),
+      special_zone(),
+      edges_level(tr, clusters_, special_zone, null_level),
       faces_level(tr, criteria, edges_level),
-      visitor(faces_level, null_visitor),
+      visitor(faces_level, special_zone, null_visitor),
       initialized(false)
   {
   }

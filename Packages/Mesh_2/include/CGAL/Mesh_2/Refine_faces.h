@@ -152,20 +152,13 @@ public:
   void do_before_insertion(const Face_handle& fh, const Point&,
                            Zone& zone)
   {
+    /** @todo Perhaps this function is useless. */
     for(typename Zone::Faces_iterator fh_it = zone.faces.begin();
         fh_it != zone.faces.end();
         ++fh_it)
       {
         if(*fh_it != fh && (*fh_it)->is_marked() )
-        {
-#ifdef DEBUG
-          std::cerr << "bad_faces.erase("
-                    << (*fh_it)->vertex(0)->point() << ","
-                    << (*fh_it)->vertex(1)->point() << ","
-                    << (*fh_it)->vertex(2)->point() << ")\n";
-#endif // DEBUG
-          bad_faces.erase(*fh_it);
-        }
+          remove_bad_face(*fh_it);
         (*fh_it)->set_marked(false);
       }
   }
@@ -188,18 +181,22 @@ public:
 private:
   /** \name AUXILIARY FUNCTIONS */
 
-  /** \name Functions that maintain the map of bad faces. */
-
   /** Auxiliary function called to put a new face in the map. */
   void push_in_bad_faces(Face_handle fh, const Quality& q);
 
+
 public:
+  /** \name Functions that maintain the map of bad faces. */
+
   /**
    * Updates the map with faces incident to the vertex \a v.
    * @todo The visitor should be made friend, instead of this function to
    * be public.
    */
   void compute_new_bad_faces(Vertex_handle v);
+
+  /** Auxiliary function called to erase a face handle from the map. */
+  void remove_bad_face(Face_handle fh);
 
 public:
   /** \name ACCESS FUNCTION */
@@ -244,6 +241,20 @@ push_in_bad_faces(Face_handle fh, const Quality& q)
                               fh->vertex(2)->point()) != COLLINEAR );
   CGAL_assertion(fh->is_marked());
   bad_faces.insert(fh, q);
+}
+
+template <typename Tr, typename Criteria>
+inline
+void Refine_faces_base<Tr, Criteria>::
+remove_bad_face(Face_handle fh)
+{
+#ifdef DEBUG
+  std::cerr << "bad_faces.erase("
+            << fh->vertex(0)->point() << ","
+            << fh->vertex(1)->point() << ","
+            << fh->vertex(2)->point() << ")\n";
+#endif // DEBUG
+  bad_faces.erase(fh);
 }
 
 template <typename Tr, typename Criteria>

@@ -28,10 +28,11 @@ namespace Mesh_2 {
 /**
  * This class is the visitor needed when Refine_edges<Tr> if called from 
  * Refine_faces<Tr>.
- *
- * \param Mesher_base should be instanciated with Refine_face_base<Tr>.
+ * \param Faces_base should be instanciated with Refine_face_base<Tr>.
+ * \param Special_zone is the special container of faces from
+ * Refine_edges_for_refine_faces.
  */
-template <typename Mesher_base>
+template <typename Mesher_base, typename Special_zone>
 class Refine_edges_visitor : public ::CGAL::Null_mesh_visitor
 {
 public:
@@ -49,10 +50,15 @@ private:
   Vertex_handle va, vb;
   bool mark_at_right, mark_at_left;
   Null_mesh_visitor& null_mesh_visitor;
+  Special_zone& special_zone;
 
 public:
-  Refine_edges_visitor(Mesher_base& mesher_base_, Null_mesh_visitor& null)
-    : mesher_base(mesher_base_), null_mesh_visitor(null)
+  Refine_edges_visitor(Mesher_base& mesher_base_,
+                       Special_zone& sp_,
+                       Null_mesh_visitor& null)
+    : mesher_base(mesher_base_),
+      null_mesh_visitor(null),
+      special_zone(sp_)
   {
   }
 
@@ -78,9 +84,21 @@ public:
     mesher_base.do_before_insertion(Face_handle(), p, z);
   }
 
-  /** Restore markers in the star of \c v. */
+  /** Remove extra bad faces that could have been flipped during the
+      insertion.
+      Restore markers in the star of \c v. */
   void after_insertion(const Vertex_handle& v)
   {
+    // Remove bad faces stored in special_zone.
+    // This container has been filled by Refine_edges_for_refine_faces.
+    /** @todo Perhaps should we use also this container for calculating new
+        bad faces and markers. */
+    for(typename Special_zone::const_iterator it = special_zone.begin();
+        it != special_zone.end();
+        ++it)
+      mesher_base.remove_bad_face(*it);
+    special_zone.clear();
+
     Tr& tr = mesher_base.get_triangulation_ref();
 
     int dummy;
@@ -119,11 +137,11 @@ public:
 /**
  * This class is the visitor for Refine_faces<Tr>.
  */
-template <typename Mesher_base>
+template <typename Mesher_base, typename Special_zone>
 class Refine_edges_visitor_from_faces
 {
 public:
-  typedef Refine_edges_visitor<Mesher_base> Previous_level;
+  typedef Refine_edges_visitor<Mesher_base, Special_zone> Previous_level;
 
 private:
   Previous_level previous;
@@ -131,8 +149,9 @@ private:
 public:
 
   Refine_edges_visitor_from_faces(Mesher_base& mesher_base,
+                                  Special_zone& sp_,
                                   Null_mesh_visitor& null)
-    : previous(mesher_base, null)
+    : previous(mesher_base, sp_, null)
   {
   }
 
