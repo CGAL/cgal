@@ -30,12 +30,11 @@ CGAL_BEGIN_NAMESPACE
 // Kernel::Point_2 and CGAL::Point_2<Kernel>
 // (and similar for the other types).
 
-template < typename K_base >
+template < typename K_base, typename Kernel = typename K_base::Kernel >
 struct Type_equality_wrapper
   : public K_base
 {
     typedef K_base                                  Kernel_base;
-    typedef typename K_base::Kernel                 Kernel;
 
     typedef CGAL::Point_2<Kernel>                   Point_2;
     typedef CGAL::Vector_2<Kernel>                  Vector_2;
