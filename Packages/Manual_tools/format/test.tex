@@ -1,9 +1,12 @@
 % ----------------------------------------------------------------------
-% Documentation for the CGAL manual LaTeX style:
+% Test document for the CGAL manual LaTeX style:
 % 
 % 16.08.1995   Lutz Kettner
+%
+% $Revision$
+% $Date$
 % ----------------------------------------------------------------------
-% The style is compatible with LaTeX2e, try:
+% The style is compatible with LaTeX2e:
 \documentclass[12pt]{article}
 \usepackage{latexsym}
 \usepackage{amssymb}
@@ -18,20 +21,19 @@
 \evensidemargin 3mm 
 \oddsidemargin 3mm
 
-\input{cgal_manual.sty}
+\input{cc_manual.sty}
 
 \parindent0em
 \setlength{\parskip}{1ex minus 0.9ex}
 
 \sloppy
 
-\title {cgal\_manual.sty\\
-        The CGAL Kernel User Manual \LaTeX\ style\\
+\title {Test Suite for the cc\_manual.sty\\
         \vspace{5mm}
-        \CCrevision}
+        \ccRevision}
 \author{Lutz Kettner}
 
-\date{\CCdate}
+\date{\ccDate}
 
 \begin{document}
 
@@ -40,55 +42,41 @@
 % ----------------------------------------------------------------------
 \section{Introduction}
 
-The {\tt cgal\_manual}-style was developed with a tight look at the
-LEDA manual style. It has two facilities. First, it provides a couple
-of macros for structuring the manual as the LEDA manual does. These
-are {\tt \string\CCdefinition}, {\tt \string\CCcreation}, {\tt
-  \string\CCoperations}, {\tt \string\CCimplementation}, {\tt
-  \string\CCexample}, and {\tt \string\CCprecond}. There are demonstrated
-in the next section.
+This document was formerly the reference manual. It has changed now to
+a test document. A new reference manual exists which is better
+organized.  The remaining part of this document will have rather
+arbitrary structure and mostly no explanations whats going on. There
+will be no efforts in proof reading or cleaning up this document,
+excuse me. The sole purpose of this document is testing of the
+possibilities of this style.
 
-The second facility of this style deals with the special handling of
-\CC\ language features. The style will be used in conjunction with a
-tool that extracts a class declaration with all its method and
-function declarations and plugs it in a \CC\ header file. Therefore,
-pure \CC\ code will stay in several arguments and has to be
-reformatted neatly for the manual. Again, the LEDA manual was the
-ideal we want to meet. In our case, \TeX\ will do the complete
-reformatting as it is written as macros in the style. Another
-section below explains all features. Demo classes with and without
-template parameters are defined.
-
-The benefit of using \TeX\ is that no other tool has to be invoked
-before the final specification is printer ready. Thus, no inconsistent
-versions can appear as it is the case e.g.\ for index making
-procedures for \TeX. If the programming turns out to be too slow, I am
-not a \TeX\ wizard, maybe someone can do it better or it can be even
-switched to an external tool.
+If the programming turns out to be too slow, I am not a \TeX\ wizard,
+maybe someone can do it better or it can be even switched to an
+external tool.
 
 % ----------------------------------------------------------------------
 \section{Structuring Macros}
 
-\CCdefinition Here comes the general introductory explanation for a
+\ccDefinition Here comes the general introductory explanation for a
 class etc.
 
-\CCprecond Specific conditions can be stated as preconditions in any place.
+\ccPrecond Specific conditions can be stated as preconditions in any place.
 
-\CCcreation Constructors are defined and explained here.
+\ccCreation Constructors are defined and explained here.
 
-\CCoperations The complete list of methods and functions (including
+\ccOperations The complete list of methods and functions (including
 operators) are defined here.
 
-\CCimplementation Specific notes about implementation issues that belong
+\ccImplementation Specific notes about implementation issues that belong
 to the user can be given here. These might be space requirements and
 runtime statements.
 
-\CCexample How to solve a small but interesting problem with this class.
+\ccExample How to solve a small but interesting problem with this class.
 
 
 % ----------------------------------------------------------------------
-\begin{CCclass}{Demo_Class}
-\CCsection{A Simple Class}
+\begin{ccClass}{Demo_Class}
+\ccSection{A Simple Class}
 
 The class with its name is declared by 
 \verb"\b"\verb"egin{class}{Demo_Class}". 
@@ -100,9 +88,9 @@ character ``\_'' has not to be quoted as it is usual within \LaTeX.
 In any case, the complete original \CC\ source text is written
 without quoting. The formatting macros handle for example the special
 characters \_, {\tt <}, {\tt >}, and {\tt \&} as they appear in \CC\
-names and the characters \#, \%, \CChat, and \CCtilde\ as they appear
+names and the characters \#, \%, \ccHat, and \ccTilde\ as they appear
 with operators. See the following example: 
-\CCstyle{
+\ccStyle{
     #define %^~ Return_Type<Template_Param, X<Y> > fct_foo( const X<Y> &a);}
 
 This example is created using the {\verb+\CC+}{\tt style} macro
@@ -118,17 +106,17 @@ within other macros. In that case, the argument text was just once
 parsed from \TeX\ and the catcodes are all fixed before the catcode
 changing macro expands.
 
-\CCdefinition 
+\ccDefinition 
 
-The class \CCclassName\ does nothing. The formatted name of the class
+The class \ccClassName\ does nothing. The formatted name of the class
 can be accessed using the macro \verb"\"\verb"classname". The unformatted
 name as it was originally written can be accessed using the
 \verb"\"\verb"pureclassname" macro.
 
-\CCcreationVariable{p}
-\CCcreation
+\ccCreationVariable{p}
+\ccCreation
 
-The constructors create a variable \CCvar\ of the class. The
+The constructors create a variable \ccVar\ of the class. The
 \verb"\"\verb"creationvariable{"\ldots\verb"}" macro sets the name for the
 future use. It can be accessed with the \verb"\"\verb"var" or
 \verb"\"\verb"purevar" macro.
@@ -143,42 +131,42 @@ to declare a variable for this class. For convinience,
 formatting. It makes no difference in the usage of a parameter. If the
 type of a constructor, method, or function parameter equals the
 current class, it is also omitted. In the case that nothing is left,
-the \CCemptyParameter\ symbol is used. See the copy constructor for an
+the \ccEmptyParameter\ symbol is used. See the copy constructor for an
 example. All together we achieve this natural looking descriptions.
 
-\CCstyle{#include< demo_class.h>}
+\ccStyle{#include< demo_class.h>}
 
-  \CCconstructor{Demo_Class();}{introduces
-     a variable \CCvar\ initialized to the default. \CC\ code:
-     {\tt Demo\_Class();}. Test CCstyle: \CCstyle{Underscore\_within
+  \ccConstructor{Demo_Class();}{introduces
+     a variable \ccVar\ initialized to the default. \CC\ code:
+     {\tt Demo\_Class();}. Test CCstyle: \ccStyle{Underscore\_within
      CCstyle}.}
 
-  \CCconstructor{Demo_Class( const Demo_Class &);}{copy
+  \ccConstructor{Demo_Class( const Demo_Class &);}{copy
     constructor. \CC\ code: {\tt Demo\_Class(const Demo\_Class \&);}}
 
-  \CCconstructor{Demo_Class( RT hx, RT hy, RT hw);}{arbitrary constructor.
+  \ccConstructor{Demo_Class( RT hx, RT hy, RT hw);}{arbitrary constructor.
      \CC\ code: {\tt Demo\_Class(RT hx, RT hy, RT hw);}}
 
 The font and style in which the declarations are formatted can be
-changed by overwriting the \verb"\CCfont" and \verb"\CCendFont"
+changed by overwriting the \verb"\ccFont" and \verb"\ccEndFont"
 macros. Their default settings are
-\verb"\gdef\CCfont{\it}\gdef\CCendFont{\/}". They are used within a
+\verb"\gdef\ccFont{\it}\gdef\ccEndFont{\/}". They are used within a
 group, so font changing commands are local. The rest of this document is
-formatted using the definitions \verb"\gdef\CCfont{\tt}\gdef\CCendFont{}".
+formatted using the definitions \verb"\gdef\ccFont{\tt}\gdef\ccEndFont{}".
 
-\gdef\CCfont{\tt}\gdef\CCendFont{}
-  \CCconstructor{Demo_Class( int a, X<Y> &x);}{arbitrary constructor.}
+\gdef\ccFont{\tt}\gdef\ccEndFont{}
+  \ccConstructor{Demo_Class( int a, X<Y> &x);}{arbitrary constructor.}
 
-\gdef\CCfont{\it}\gdef\CCendFont{\/}
+\gdef\ccFont{\it}\gdef\ccEndFont{\/}
 
 Also changable are the special characters the formatting has to
-deal with. They are named \verb"\CCunderscore", \verb"\CCopenAngle",
-\verb"\CCcloseAngle", \verb"\CCampersand", \verb"\CChat", and
-\verb"\CCtilde". The symbol for the empty parameter is named
-\verb"\CCemptyParameter".
+deal with. They are named \verb"\ccUnderscore", \verb"\ccOpenAngle",
+\verb"\ccCloseAngle", \verb"\ccAmpersand", \verb"\ccHat", and
+\verb"\ccTilde". The symbol for the empty parameter is named
+\verb"\ccEmptyParameter".
 
-  \CCoperations
-  \CCsetTwoOfThreeColumns{2.8cm}{2.8cm}
+  \ccOperations
+  \ccSetTwoOfThreeColumns{2.8cm}{2.8cm}
 
 The layout of this section can be customized to the width of the
 return types and the declarations. The
@@ -193,18 +181,18 @@ The return value is handled like a parameter type. That means that
 {\tt const\ldots\&} declarations are removed, but if the type equals
 to the class, it is {\em not} removed.
 
-  \CCmethod{FT   x()  const;}{Cartesian x-coordinate. \CC\ code: {\tt
+  \ccMethod{FT   x()  const;}{Cartesian x-coordinate. \CC\ code: {\tt
       FT x() const;}}
 
-  \CCmethod{const FT&   y();}{Cartesian y-coordinate. \CC\ code: {\tt
+  \ccMethod{const FT&   y();}{Cartesian y-coordinate. \CC\ code: {\tt
       const FT\& y();}}
 
-  \CCmethod{Demo_Class   
+  \ccMethod{Demo_Class   
              transform( const CGAL_HAff_transformation<FT,RT> &t) const;
              }{ Longish declarations forces the comment to start in
              the next line.}
 
-  \CCmethod{Demo_Class   
+  \ccMethod{Demo_Class   
              longish_function_name( 
                         const CGAL_Aff_transformation<FT,RT> &t,
                         const Dummy_Type &q,
@@ -219,13 +207,13 @@ name. The formatting normalizes them to the left side. This
 formatting is not done within the parameters (, but maybe in the
 future). An example: 
 
-    \CCfunction{Demo_Class& foo( int& a, int* b);}{}
+    \ccFunction{Demo_Class& foo( int& a, int* b);}{}
 
-    \CCfunction{Demo_Class* foo( int& a, int* b);}{}
+    \ccFunction{Demo_Class* foo( int& a, int* b);}{}
 
-    \CCfunction{Demo_Class &foo( int &a, int *b);}{}
+    \ccFunction{Demo_Class &foo( int &a, int *b);}{}
 
-    \CCfunction{Demo_Class *foo( int &a, int *b);}{}
+    \ccFunction{Demo_Class *foo( int &a, int *b);}{}
 
 Operator declarations are formatted as like the operators are
 used.  All operators that are allowed to be overloaded in \CC\ are
@@ -236,119 +224,119 @@ Type casting through a conversion operator is the default behavior
 for the formatting routine if the return type before the {\tt 
 operator} keyword is empty.
 
-  \CCfunction{ operator int () const;}{Conversion operator.}
+  \ccFunction{ operator int () const;}{Conversion operator.}
 
-  \CCfunction{operator A< FT>() const;}{Conversion operator.}
+  \ccFunction{operator A< FT>() const;}{Conversion operator.}
 
 Sometimes, there is a choice between
 implementing an operator as a method or as a function. Both
 declarations will produce the same formatting, as demonstrated
 with the next two declarations.
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator+(Demo_Class p, Demo_Class q);}{Declaration via function.}
 
-  \CCmethod{Demo_Class
+  \ccMethod{Demo_Class
         operator+(Demo_Class q);}{Declaration via method.}
 
 One can locally activate that the operator declaration is shown as it
 is written without operator formatting, {\tt const ...\&}, classname, or
 trailing const declarations for methods removal. This can be done with
-\verb+\C+\verb+CtagFullDeclarations+ within a scope of braces {\tt
+\verb+\+\verb+ccTagFullDeclarations+ within a scope of braces {\tt
   \{...\}}.
 
-{\CCtagFullDeclarations
-  \CCmethod{Demo_Class
+{\ccTagFullDeclarations
+  \ccMethod{Demo_Class
         operator+(const Demo_Class& q) const;}{Declaration via method.}
 }
 
 There is some laziness allowed in placing spaces around the operator
 characters. See the following examples:
 
-\CCmethod{A
+\ccMethod{A
     operator+(Demo_Class q);}{\CC\ code: {\tt A operator+(Demo\_Class q);}}
 
-\CCmethod{A
+\ccMethod{A
     operator +(Demo_Class q);}{\CC\ code: {\tt A operator +(Demo\_Class q);}}
 
-\CCmethod{A
+\ccMethod{A
     operator+ (Demo_Class q);}{\CC\ code: {\tt A operator+ (Demo\_Class q);}}
 
-\CCmethod{A
+\ccMethod{A
     operator + (Demo_Class q);}{\CC\ code: {\tt A operator + (Demo\_Class q);}}
 
 The keyword {\tt operator} is reserved, but it can appear as a
 substring in another name. See the following examples that this
 style can handle such cases:
 
-\CCmethod{A foo_operator(Demo_Class q);}{}
+\ccMethod{A foo_operator(Demo_Class q);}{}
 
-\CCmethod{A noperator(Demo_Class q);}{}
+\ccMethod{A noperator(Demo_Class q);}{}
 
-\CCmethod{A operatoro(Demo_Class q);}{}
+\ccMethod{A operatoro(Demo_Class q);}{}
 
-\CCmethod{A operator_(Demo_Class q);}{}
+\ccMethod{A operator_(Demo_Class q);}{}
 
-\CCmethod{A operator0(Demo_Class q);}{}
+\ccMethod{A operator0(Demo_Class q);}{}
 
 CGAL will use {\tt typedef}'s and the scope operator to define types.
 Here is an example for the scope operator within types.  The scope
 operator cannot be used within the function or method name.
 
-  \CCsetTwoOfThreeColumns{5.8cm}{1.8cm}
-  \CCfunction{Rep_Class::Nested_Class
+  \ccSetTwoOfThreeColumns{5.8cm}{1.8cm}
+  \ccFunction{Rep_Class::Nested_Class
         foo(Rep_Class::Nested_Class p, Demo_Class q);}{
          Declaration with scope.}
 
-  \CCfunction{Rep_Class :: Nested_Class
+  \ccFunction{Rep_Class :: Nested_Class
         foo(Rep_Class :: Nested_Class p, Demo_Class q);}{
          The same, surrounded by spaces.}
 
-\end{CCclass}
+\end{ccClass}
 
 
 % ----------------------------------------------------------------------
-\begin{classtemplate}{Demo_Class<FT<RT> >}
-\CCsection{Demo Class Template}
+\begin{ccClassTemplate}{Demo_Class<FT<RT> >}
+\ccSection{Demo Class Template}
 
 This class template is given within a
 \verb"\be"\verb"gin{classtemplate}{Demo_Class<FT<RT> >}" environment.
 
-\CCcreationVariable{p}
-\CCcreation
+\ccCreationVariable{p}
+\ccCreation
 
 A current misbehaviour (or feature?) of the structuring macros is that
 they have fixed numbers. So the \verb"\"\verb"definition" macro is here
 missing.
 
-  \CCconstructor{ Demo_Class();}{ default.}
+  \ccConstructor{ Demo_Class();}{ default.}
 
-  \CCconstructor{ Demo_Class( Demo_Class<FT<RT> > q);}{ copy.}
+  \ccConstructor{ Demo_Class( Demo_Class<FT<RT> > q);}{ copy.}
 
-  \CCconstructor{ Demo_Class( A a, B *b);}{ arbitrary.}
+  \ccConstructor{ Demo_Class( A a, B *b);}{ arbitrary.}
 
-\CCoperations
-\CCsetTwoOfThreeColumns{4.3cm}{2.3cm}
+\ccOperations
+\ccSetTwoOfThreeColumns{4.3cm}{2.3cm}
 
-  \CCmethod{ Demo_Class foo( Demo_Class q);}{
+  \ccMethod{ Demo_Class foo( Demo_Class q);}{
       wrong, without template parameters.}
 
-  \CCfunction{ Demo_Class<FT<RT> > foo( Demo_Class<FT<RT> > q);}{
+  \ccFunction{ Demo_Class<FT<RT> > foo( Demo_Class<FT<RT> > q);}{
       right, with template parameters.}
 
 Another example demonstrating a const pointer declaration of a 
 class template.
 
-    \CCfunction{Demo_Class& foo( const Class< int>* b);}{}
+    \ccFunction{Demo_Class& foo( const Class< int>* b);}{}
 
-    \CCfunction{Demo_Class& foo( const Demo_Class< int>* b);}{}
+    \ccFunction{Demo_Class& foo( const Demo_Class< int>* b);}{}
 
-\end{classtemplate}
+\end{ccClassTemplate}
 
 % ----------------------------------------------------------------------
 \section{New Features Introduced with Version 1.8}
 
-\begin{CCclass}{Demo_Class}
+\begin{ccClass}{Demo_Class}
 
 A small set of handy abbreviations are added. Here they are all together:
 
@@ -365,11 +353,11 @@ A small set of handy abbreviations are added. Here they are all together:
   \> \verb+\plageo+     \> \plageo  
 \end{tabbing}
 
-\def\CCalternateThreeColumn{\CCtrue}
-\CCcreationVariable{p}
-\CCsetTwoOfThreeColumns{2.8cm}{2.8cm}
+\def\ccAlternateThreeColumn{\ccTrue}
+\ccCreationVariable{p}
+\ccSetTwoOfThreeColumns{2.8cm}{2.8cm}
 
-  \CCconstructor{Demo_Class( Paramter1 hx, 
+  \ccConstructor{Demo_Class( Paramter1 hx, 
                            Paramter2 hy, 
                            Paramter3 hw, 
                            Paramter4 hw, 
@@ -378,9 +366,9 @@ A small set of handy abbreviations are added. Here they are all together:
      Therefore, the parameter {\tt $\backslash$CCalternateThreeColumn} was 
      set to {\tt $\backslash$CCtrue}.}
 
-\def\CCalternateThreeColumn{\CCtrue}
+\def\ccAlternateThreeColumn{\ccTrue}
 
-  \CCmethod{Demo_Class   
+  \ccMethod{Demo_Class   
              longish_naming( 
                         const DGAL_HAff_transformation<FT,RT> &t,
                         const Dummy_Type &q,
@@ -390,7 +378,7 @@ A small set of handy abbreviations are added. Here they are all together:
                 $\backslash$CCalternateThreeColumn} to {\tt 
                 $\backslash$CCtrue}.}
 
-  \CCmethod{Even_a_long_return_value
+  \ccMethod{Even_a_long_return_value
              longish_naming( 
                         const DGAL_HAff_transformation<FT,RT> &t,
                         const Dummy_Type &q,
@@ -398,7 +386,7 @@ A small set of handy abbreviations are added. Here they are all together:
              }{ Now, a long return value forces the function to start 
                 in the next line.}
 
-\def\CCalternateThreeColumn{\CCfalse}
+\def\ccAlternateThreeColumn{\ccFalse}
 
 Function templates are written with the macro \verb+\fu+\verb+nctiontemplate+
 that has an additional parameter in front for the template
@@ -406,41 +394,41 @@ parameters. They are visible in the manual because the user does not
 see them, but the parameters are necessary for the specification
 checking tool.
 
-\CCsetTwoOfThreeColumns{2.8cm}{8.7cm}
+\ccSetTwoOfThreeColumns{2.8cm}{8.7cm}
 
-\CCfunctionTemplate{R}{bool CGAL_is_intersecting( Point< R>, Point<
+\ccFunctionTemplate{R}{bool CGAL_is_intersecting( Point< R>, Point<
   R>);}{comment.}
 
 Enum's are formatted similiar to constructors. Exactly one pair of
 matching braces has to be in the declaration.
 
-\CCenum{enum Short { A, B, C};}{ Comment.}
+\ccEnum{enum Short { A, B, C};}{ Comment.}
 
-\CCenum{enum Funny_type_name { A_couple_of_entries,
+\ccEnum{enum Funny_type_name { A_couple_of_entries,
     one_with_initialisation = 5, another = -3};}{ Comment.}
 
 We can even switch the alternative layout on:
 
-\gdef\CCalternateThreeColumn{\CCtrue}
+\gdef\ccAlternateThreeColumn{\ccTrue}
 
-\CCenum{enum Funny_type_name { A_couple_of_entries,
+\ccEnum{enum Funny_type_name { A_couple_of_entries,
     one_with_initialisation = 5, another = -3};}{ Comment.}
 
-\CCsetTwoOfThreeColumns{3.5cm}{3.5cm}
+\ccSetTwoOfThreeColumns{3.5cm}{3.5cm}
 
-\CCvariable{long int foo;}{Local variables are possible.}
+\ccVariable{long int foo;}{Local variables are possible.}
 
-\CCvariable{long int foo = 15;}{Initialisation.}
+\ccVariable{long int foo = 15;}{Initialisation.}
 
-\CCvariable{const long int foo = 15;}{Make a constant.}
+\ccVariable{const long int foo = 15;}{Make a constant.}
 
-\CCtypedef{typedef int integer;}{Simple typedef.}
+\ccTypedef{typedef int integer;}{Simple typedef.}
 
-\CCtypedef{typedef List< int>  Integer_list;}{Typedef including template
+\ccTypedef{typedef List< int>  Integer_list;}{Typedef including template
     parameters.}
 
 
-\end{CCclass}
+\end{ccClass}
 
 Global functions and other global declarations can be written with the 
 normal macros that are used within class declarations. For convenience, 
@@ -448,24 +436,24 @@ a set of {\em global\/} macros are provided that omit the last comment
 parameter. Global declarations are usually commented in the lines
 inbetween. So here comes a global function:
 
-\CCglobalFunction{CGAL_intersection_type CGAL_Intersection_type(
+\ccGlobalFunction{CGAL_intersection_type CGAL_Intersection_type(
       Polygon_2< R>, Polygon_2< R>);}The same 
 as a function template:
 
-\CCglobalFunctionTemplate{R}{CGAL_intersection_type CGAL_Intersection_type(
+\ccGlobalFunctionTemplate{R}{CGAL_intersection_type CGAL_Intersection_type(
       Polygon_2< R>, Polygon_2< R>);}A global enum.
 
-\CCglobalEnum{enum Funny_type_name { A_couple_of_entries,
+\ccGlobalEnum{enum Funny_type_name { A_couple_of_entries,
     one_with_initialisation = 5, another = -3};}
 
-\CCglobalVariable{int CGAL_global;}Thats it.
+\ccGlobalVariable{int CGAL_global;}Thats it.
 
 
 
 % ----------------------------------------------------------------------
 \section{New Features Introduced with Version 1.9}
 
-\begin{CCclass}{Demo_Class}
+\begin{ccClass}{Demo_Class}
 
 A set of handy abbreviations has been extended. They need the package
 {\tt amssymb} and \LaTeXe.
@@ -484,14 +472,14 @@ code.  It is intended for declarations that are somehow implied by the
 surrounded text, but should not be explicitly visible. For example,
 this example is not visible (smile).
 
-\CCdeclaration{Some arbitary funny *%&_ looking # C++ code declaration()...}
+\ccDeclaration{Some arbitary funny *%&_ looking # C++ code declaration()...}
 
 A \verb+\+verb+hidden+ macro can be prepended to each macro with two
 parameters.  It will remove the macro and its parameters from the
 manual.  Again, the checker tests the macro as usual. Again an
 invisible example.
 
-\CChidden\CCfunction{int foo( double d);}{This is a foo function.}
+\ccHidden\ccFunction{int foo( double d);}{This is a foo function.}
 
 If these non visible parts of the code should be made visible once,
 the \verb+\+\verb+CCmakeAllVisible+ macro switches it on. For
@@ -499,33 +487,33 @@ the \verb+\+\verb+CCmakeAllVisible+ macro switches it on. For
 \verb+\+verb+hidden+ macro vanishes simply.  The two funny invisible
 examples from above are repeated here.
 
-\CCmakeAllVisible
+\ccMakeAllVisible
 
-\CCdeclaration{Some arbitary funny *%&_ looking # C++ code declaration()...}
+\ccDeclaration{Some arbitary funny *%&_ looking # C++ code declaration()...}
 
-\CChidden\CCfunction{int foo( double d);}{This is a foo function
+\ccHidden\ccFunction{int foo( double d);}{This is a foo function
     previously hidden.}
 
 The following example demonstrates the new ability to write default
 parameters with initializers in parantheses notion of \CC.
-\end{CCclass}
+\end{ccClass}
 
-\begin{classtemplate}{CGAL_Point_2< R>}
-\CCconstructor{CGAL_Point_2(const R::RT &x, const R::RT &y, const R::RT &w = R::RT(1.0));}{blabla}
-\end{classtemplate}
+\begin{ccClassTemplate}{CGAL_Point_2< R>}
+\ccConstructor{CGAL_Point_2(const R::RT &x, const R::RT &y, const R::RT &w = R::RT(1.0));}{blabla}
+\end{ccClassTemplate}
 
 A problem has occured in detecting the operator keyword if it was
 directly preceded by an {\tt \&} or {\tt *} character. It is fixed as
 the following example demonstrates:
 
-\CCfunction{Int &operator+=( Int a, Int b);}{}
+\ccFunction{Int &operator+=( Int a, Int b);}{}
 
-%\begin{CCclass}{Demo_class}
-% \CCcreationVariable{demo_var}%
+%\begin{ccClass}{Demo_class}
+% \ccCreationVariable{demo_var}%
 %
-% \CCconstructor{Demo_class();}{Default constructor creating variable \CCvar.}
+% \ccConstructor{Demo_class();}{Default constructor creating variable \ccVar.}
 %
-% \end{CCclass}
+% \end{ccClass}
 
 The \verb+\+verb+CCstyle+ macro is not appropriate to format multiple lines
 of \CC\ code. Use other environments like the {\tt cprog} style.
@@ -545,10 +533,10 @@ code. These are
 
 \begin{itemize}
     \item
-        \verb+\begin{CCtexOnly} ... \end{CCtexOnly}+ for parts only valid
+        \verb+\begin{ccTexOnly} ... \end{ccTexOnly}+ for parts only valid
         in \TeX.
     \item
-        \verb+\begin{CChtmlOnly} ... \end{CChtmlOnly}+ for parts only valid
+        \verb+\begin{ccHtmlOnly} ... \end{ccHtmlOnly}+ for parts only valid
         in the HTML manual. Note that this environment modifies the 
         catcodes of a couple of characters. So, do not use this
         environment within a parameter of another \TeX\ macro. On the
@@ -561,7 +549,7 @@ code. These are
 
 \begin{itemize}
     \item
-        \verb+\CCtexHtml{ TeX code ... }{ HTML code ...}+
+        \verb+\ccTexHtml{ TeX code ... }{ HTML code ...}+
 \end{itemize}
 
 For convinience a solution is provided that easily includes
@@ -571,174 +559,174 @@ fully HTML anchor with the given URL around the \TeX\ source after the
 
 \begin{itemize}
     \item
-        \verb+\CCanchor{ URL }{ TeX code ... }+
+        \verb+\ccAnchor{ URL }{ TeX code ... }+
 \end{itemize}
 
 %----------------------------------------------------------------------
-\CCtagDefaults
-\begin{CCclass}{Demo_Class}
+\ccTagDefaults
+\begin{ccClass}{Demo_Class}
 \section{The List of All Operators}
 
-  \CCfunction{Ptr_Class
+  \ccFunction{Ptr_Class
         operator->(Demo_Class p);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator[](Demo_Class p, int i);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator()(Demo_Class p);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator()(Demo_Class p, int i);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator()(Demo_Class p, int i, int j);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator()(Demo_Class p, int i, int j, int k);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator()(Demo_Class p,
                    const A& a, B& b, C c, const D& d, Demo_Class
                    e);}{all number and types of parameters are possible.}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator++(Demo_Class p);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator++(Demo_Class p, int);}{The postfix incr.\ operator
         has a hidden {\tt int} parameter that the formatting does not show.}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator--(Demo_Class p);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator--(Demo_Class p, int);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator~(Demo_Class p);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator!(Demo_Class p);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator-(Demo_Class p);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator+(Demo_Class p);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator&(Demo_Class p);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator*(Demo_Class p);}{}
 
-  \CCmethod{ void*
+  \ccMethod{ void*
         operator new( size_t);}{Hidden parameters are not shown. \CC\ code: 
         $\backslash${\tt method\{ void* operator new( size\_t);\}}.}
 
-  \CCmethod{ void
+  \ccMethod{ void
         operator delete( void*, size_t);}{Hidden parameters are not shown.
         \CC\ code: $\backslash${\tt method\{ void operator 
             delete( void*, size\_t);\}}}
 
-  \CCmethod{ void
+  \ccMethod{ void
         operator delete[]( void*, size_t);}{Hidden parameters are not
         shown again. 
         \CC\ code: $\backslash${\tt method\{ void operator
             delete[]( void*, size\_t);\}}}
 
-  \CCfunction{Member_Ptr
+  \ccFunction{Member_Ptr
         operator->*(Demo_Class p);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator*(Demo_Class p, Demo_Class q);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator/(Demo_Class p, Demo_Class q);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator%(Demo_Class p, Demo_Class q);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator+(Demo_Class p, Demo_Class q);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator-(Demo_Class p, Demo_Class q);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator<<(Demo_Class p, int i);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator>>(Demo_Class p, int i);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator<(Demo_Class p, Demo_Class q);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator<=(Demo_Class p, Demo_Class q);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator>(Demo_Class p, Demo_Class q);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator>=(Demo_Class p, Demo_Class q);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator==(Demo_Class p, Demo_Class q);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator!=(Demo_Class p, Demo_Class q);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator&(Demo_Class p, Demo_Class q);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator^(Demo_Class p, Demo_Class q);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator|(Demo_Class p, Demo_Class q);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator&&(Demo_Class p, Demo_Class q);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator||(Demo_Class p, Demo_Class q);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator=(Demo_Class p, Demo_Class q);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator*=(Demo_Class p, Demo_Class q);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator/=(Demo_Class p, Demo_Class q);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator%=(Demo_Class p, Demo_Class q);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator+=(Demo_Class p, Demo_Class q);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator-=(Demo_Class p, Demo_Class q);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator<<=(Demo_Class p, Demo_Class q);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator>>=(Demo_Class p, Demo_Class q);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator&=(Demo_Class p, Demo_Class q);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator|=(Demo_Class p, Demo_Class q);}{}
 
-  \CCfunction{Demo_Class
+  \ccFunction{Demo_Class
         operator^=(Demo_Class p, Demo_Class q);}{}
 
-\end{CCclass}
+\end{ccClass}
 
 % ----------------------------------------------------------------------
 \section{Test Indentation and Alternate Formatting}
@@ -748,7 +736,7 @@ possibilities. Two long declarations with alternative formatting rules
 for the function arguments are used. First the  declaration without
 any indentation or margins.
 
-\CCfunction{int a_really_long_function_name( double paramter1, double
+\ccFunction{int a_really_long_function_name( double paramter1, double
   paramter2);}{the default formatting. A bit more text is necessary to
   demonstrate the right margin.}
 
@@ -756,101 +744,250 @@ Now with 10mm indentation and 10mm right margin. Note that the
 description is also further indented since all dimensions are
 calculated from left.
 
-\CCtagDefaults
+\ccTagDefaults
 \def\ind{\hspace*{7mm}}
-\CCWindent=10mm
-\CCWrightMargin=10mm
+\ccwIndent=10mm
+\ccwRightMargin=10mm
 
-\CCfunction{int a_really_long_function_name( double paramter1, double
+\ccFunction{int a_really_long_function_name( double paramter1, double
   paramter2);}{the default formatting. A bit more text is necessary to
   demonstrate the right margin.}
+\renewcommand{\ccLongParamLayout}{\ccTrue}
 
-\CCfunction{int a_really_long_function_name( double paramter1, double
+\ccFunction{int a_really_long_function_name( double paramter1, double
   paramter2);}{the alternative formatting. A bit more text is necessary to
   demonstrate the right margin.}
 
 Show the indentation also for template functions.
 
-\CCfunction{template<class A> int bar(A a);}{A bit more text to
+\ccFunction{template<class A> int bar(A a);}{A bit more text to
   demonstrate the right margin.}
 
-\renewcommand{\CCalternateThreeColumn}{\CCtrue}
-\CCWindent=0mm
-\CCWrightMargin=0mm
+\renewcommand{\ccLongParamLayout}{\ccFalse}
+
+Check the same alternate indentation with the compatibility mode 
+\verb+\renewcommand{\ccAlternateThreeColumn}{\ccFalse}+
+
+\renewcommand{\ccAlternateThreeColumn}{\ccFalse}
+
+\ccFunction{int a_really_long_function_name( double paramter1, double
+  paramter2);}{the alternative formatting. A bit more text is necessary to
+  demonstrate the right margin.}
+
+Show the indentation also for template functions.
+
+\ccFunction{template<class A> int bar(A a);}{A bit more text to
+  demonstrate the right margin.}
+
+\renewcommand{\ccAlternateThreeColumn}{\ccTrue}
+\ccwIndent=0mm
+\ccwRightMargin=0mm
 
 % ----------------------------------------------------------------------
 \section{Test the Setting of the Column Widths by Example Texts}
 
 
-\CCsetThreeColumns{int}{foo( int i, int j);}{}
-\CCfunction{int foo( int i, int j);}{returns gnats$(i,j)$.}
+\ccSetThreeColumns{int}{foo( int i, int j);}{}
+\ccFunction{int foo( int i, int j);}{returns gnats$(i,j)$.}
 
-\CCsetThreeColumns{int}{}{returns gnats$(i,j)$.}
-\CCfunction{int foo( int i, int j);}{returns gnats$(i,j)$.}
+\ccSetThreeColumns{int}{}{returns gnats$(i,j)$.}
+\ccFunction{int foo( int i, int j);}{returns gnats$(i,j)$.}
 
-\CCsetThreeColumns{}{foo( int i, int j);}{returns gnats$(i,j)$.}
-\CCfunction{int foo( int i, int j);}{returns gnats$(i,j)$.}
+\ccSetThreeColumns{}{foo( int i, int j);}{returns gnats$(i,j)$.}
+\ccFunction{int foo( int i, int j);}{returns gnats$(i,j)$.}
 
 Test it with the special characters (changed catcodes) for function
 and contructor declarations.  
 
 
-\CCsetThreeColumns{%#_^}{%#_^f*&*&oo( int i);}{}
-\CCsetTwoColumns{%#_^ foo( int i, int j);}{}
-\begin{CCclass}{Gnu}
-  \CCcreationVariable{g}
-  \CCconstructor{Gnu( double d);}{test.}
-  \CCfunction{int foo( Gnats<T> gn);}{blablabla.}
-\end{CCclass}
+\ccSetThreeColumns{%#_^}{%#_^f*&*&oo( int i);}{}
+\ccSetTwoColumns{%#_^ foo( int i, int j);}{}
+\begin{ccClass}{Gnu}
+  \ccCreationVariable{g}
+  \ccConstructor{Gnu( double d);}{test.}
+  \ccFunction{int foo( Gnats<T> gn);}{blablabla.}
+\end{ccClass}
 
 Specify a column layout for a function and propagate it to a contructor.
 
-\CCsetThreeColumns{intM}{foo( Gnats<T> gn);M}{}
-\CCpropagateThreeToTwoColumns
-\begin{CCclass}{Gnu}
-  \CCcreationVariable{g}
-  \CCconstructor{Gnu( double d);}{test.}
-  \CCfunction{int foo( Gnats<T> gn);}{blablabla.}
-\end{CCclass}
+\ccSetThreeColumns{intM}{foo( Gnats<T> gn);M}{}
+\ccPropagateThreeToTwoColumns
+\begin{ccClass}{Gnu}
+  \ccCreationVariable{g}
+  \ccConstructor{Gnu( double d);}{test.}
+  \ccFunction{int foo( Gnats<T> gn);}{blablabla.}
+\end{ccClass}
 
 
 % ----------------------------------------------------------------------
 \section{Check Long Constructor Calls}
 
-\begin{classtemplate}{CBP_Bidirectional_circulator< C, C*
+\begin{ccClassTemplate}{CBP_Bidirectional_circulator< C, C*
    (C::*next)(), C* (C::*previous)()>} 
-\CCcreationVariable{circ}
-\CCsetTwoColumns{}{a const circulator \CCvar\ with singular value.}
+\ccCreationVariable{circ}
+\ccSetTwoColumns{}{a const circulator \ccVar\ with singular value.}
 
 NOTHING is interesting here.
 
 
-\CCconstructor{CBP_Bidirectional_circulator();}{%
- a const circulator \CCvar\ with singular value.}
+\ccConstructor{CBP_Bidirectional_circulator();}{%
+ a const circulator \ccVar\ with singular value.}
 
-\CCconstructor{CBP_Bidirectional_circulator( const C* ptr);}{a
-  const circulator \CCvar\ initialized to point to the element \CCstyle{*ptr}.} 
-\end{classtemplate}
+\ccConstructor{CBP_Bidirectional_circulator( const C* ptr);}{a
+  const circulator \ccVar\ initialized to point to the element \ccStyle{*ptr}.} 
+\end{ccClassTemplate}
 
 % ----------------------------------------------------------------------
 \section{Glueing Declarations Together}
 
-\CCfunction{int foo( double x);}{}
-\CCglueDeclarations
-\CCfunction{int bar( double x);}{}
+\ccFunction{int foo( double x);}{}
+\ccGlueDeclarations
+\ccFunction{int bar( double x);}{}
 
-\CCfunction{int foo( double x);}{Bla.}
-\CCglueDeclarations
-\CCfunction{int bar( double x);}{Blubb blubb.}
+\ccFunction{int foo( double x);}{Bla.}
+\ccGlueDeclarations
+\ccFunction{int bar( double x);}{Blubb blubb.}
 
-\CCfunction{int foo_baaaaaaaarrrr( double x);}{%
+\ccFunction{int foo_baaaaaaaarrrr( double x);}{%
      Bla bal blabal blabal blabal blab.}
-\CCglueDeclarations
-\CCfunction{int barfoooooooooooooooooo( double x);}{%
+\ccGlueDeclarations
+\ccFunction{int barfoooooooooooooooooo( double x);}{%
     Blubb blubblubb blubblubb blubblubb blubb.}
+
+
+% ----------------------------------------------------------------------
+\section{Nested Classes}
+
+First try, use the scope operator in the class name.
+
+\begin{ccClass}{Base::Derived}
+\ccCreationVariable{a}
+
+\ccConstructor{Base::Derived( double x);}{a constructor.}
+\ccFunction{Base::Derived foo( Base::Derived b);}{a function.}
+\end{ccClass}
+
+% ----------------------------------------------------------------------
+\section{Prefix Substitution}
+
+The example illustrates both typical usages (with a fantasy function
+that does not exist in \cgal).
+
+\ccSetThreeColumns{CGAL_Point<R>}{CGAL_f( CGAL_Vector<R> v)}{}
+
+\ccStyle{#include <CGAL/point.h>}
+\\
+\ccFunction{CGAL_Point<R> CGAL_f( CGAL_Vector<R> v);}{%
+    the original \cgal\ prefix.}
+\vspace{-\parskip}
+
+\begin{tabbing}
+  CCimplementationNNNMMMMMMMMMMMMMMMMMMMM \= ImplementationMMMMM \= \kill
+  \verb+\def\ccTargetPrefix{}+ \\
+  \verb+\renewcommand{\ccTagReplacePrefix}{\ccTrue}+
+\end{tabbing}
+\def\ccTargetPrefix{}
+\renewcommand{\ccTagReplacePrefix}{\ccTrue}
+\vspace{-\parskip}
+
+\ccStyle{#include <CGAL/point.h>}
+\\
+\ccFunction{CGAL_Point<R> CGAL_f( CGAL_Vector<R> v);}{%
+    assuming name spaces. {\tt ;-)}}
+\vspace{-\parskip}
+
+\begin{tabbing}
+  CCimplementationNNNMMMMMMMMMMMMMMMMMMMM \= ImplementationMMMMM \= \kill
+  \verb+\def\ccTargetPrefix{GTE}+ \\
+  \verb+\renewcommand{\ccTagReplaceInclude}{\ccTrue}+
+\end{tabbing}
+\def\ccTargetPrefix{GTE}
+\renewcommand{\ccTagReplaceInclude}{\ccTrue}
+\vspace{-\parskip}
+
+\ccStyle{#include <CGAL/point.h>}
+\\
+\ccFunction{CGAL_Point<R> CGAL_f( CGAL_Vector<R> v);}{%
+    make a Porsche from this declaration.}
+\vspace{-\parskip}
+
+\begin{tabbing}
+  CCimplementationNNNMMMMMMMMMMMMMMMMMMMM \= ImplementationMMMMM \= \kill
+  \verb+\renewcommand{\ccTagReplacePrefix}{\ccFalse}+ \\
+  \verb+\renewcommand{\ccTagReplaceInclude}{\ccFalse}+
+\end{tabbing}
+\renewcommand{\ccTagReplacePrefix}{\ccFalse}
+\renewcommand{\ccTagReplaceInclude}{\ccFalse}
+
+% ----------------------------------------------------------------------
+\section{A Constructor for a Nested Class}
+
+The method how it should work:
+
+\begin{ccClass}{CGAL_SegmentTree_2d<T1>::SegTree}
+\ccCreationVariable{t}
+\ccConstructor{CGAL_SegmentTree_2d<T1>::SegTree
+(S2dList::const_iterator first);}{constructor.}
+
+\ccMemberFunction{CGAL_SegmentTree_2d<T1>::SegTree
+    foo (CGAL_SegmentTree_2d<T1>::SegTree same);}{%
+    removal of own type in parameterlist of a member function.} 
+\end{ccClass}
+
+
+The hack I have recommended previously.
+
+\ccFunction{CGAL_SegmentTree_2d<T1>::SegTree
+t(S2dList::const_iterator first);}{fake constructor.}
+
+Another check with the trouble making operator in a member function.
+
+\begin{ccClass}{Demo_Class}
+\ccCreationVariable{pp}
+  \ccMethod{Demo_Class operator+(Demo_Class qq);}{%
+      Declaration of an operator as a member function.}
+\end{ccClass}
+
+
+
+% ----------------------------------------------------------------------
+\section{Font Changes within a Declaration}
+
+\ccVariable{\tt k-th\ccFont -dim \tt k-th\ccFont -foo;}{%
+    a {\tt k-th}-dimensional variable.}
+
+% ----------------------------------------------------------------------
+\begin{ccClass}{Demo_Class}
+\section{Customization Tags for the Style}
+
+First, a  declaration  with all default substitution rule active.
+
+\ccCreationVariable{pp}
+
+\ccMemberFunction{Demo_Class operator+(const Demo_Class& qq) const;}{%
+      member function.}
+
+Second, all rules switched off.
+\ccTagFullDeclarations
+
+\ccMemberFunction{Demo_Class operator+(const Demo_Class& qq) const;}{%
+      member function.}
+
+Third, back to the default.
+\ccTagDefaults
+
+\ccMemberFunction{Demo_Class operator+(const Demo_Class& qq) const;}{%
+      member function.}
+
+\end{ccClass}
 
 
 
 
 \end{document}
+
+% EOF %
+
+
+
 
