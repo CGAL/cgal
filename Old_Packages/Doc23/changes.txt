@@ -1,3 +1,6 @@
+2.51    (3 May 2002)
+- updated editorial committee
+
 2.50    (17 Apr 2002)
 - corrected doc of LessSignedDistanceToLine_2
 
