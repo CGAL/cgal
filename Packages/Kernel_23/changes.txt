@@ -1,3 +1,7 @@
+1.64 (27 August 2003)
+- Change Exact_predicates_inexact_constructions_kernel from Filtered_kernel
+  to Filtered_exact.
+
 1.63 (27 August 2003)
 - Remove parts of last change, since some code triggers the assertion.
 
