@@ -12,31 +12,15 @@
 // release       :
 // release_date  :
 // 
-// source        : webCH2D/ch_demo.fw
 // file          : demo/ConvexHull/ch_demo.C
-// revision      : 3.3
-// revision_date : 03 Aug 2000 
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan Schirra
-//
-// maintainer    : Stefan Schirra <Stefan.Schirra@mpi-sb.mpg.de> 
-//
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ============================================================================
  
 
 #include <CGAL/Cartesian.h>
 
-#ifndef CGAL_USE_LEDA
-int main()
-{
-  std::cout << "Sorry.  This demo needs LEDA for visualization" << std::endl;
-  return 0;
-}
-#else
-
-#include <CGAL/leda_real.h>
-#include <CGAL/Point_2.h>
-#include <CGAL/Segment_2.h>
 #include <vector>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/function_objects.h>
@@ -49,18 +33,15 @@ int main()
 #include <list>
 #include <CGAL/IO/Window_stream.h>
 
-typedef CGAL::Cartesian<double>                               R;
-typedef CGAL::Cartesian<leda_real>                            Real_R;
-typedef CGAL::Point_2<R>                                      Point;
-typedef CGAL::Point_2<Real_R>                                 Real_Point;
+typedef CGAL::Cartesian<double>                               K;
+typedef CGAL::Point_2<K>                                      Point;
 typedef CGAL::Creator_uniform_2<double,Point>                 Point_creator;
-typedef CGAL::Segment_2<R>                                    Segment;
-typedef CGAL::Segment_2<Real_R>                               Real_Segment;
+typedef CGAL::Segment_2<K>                                    Segment;
 typedef CGAL::Random_points_on_circle_2<Point,Point_creator>  Source;
 typedef CGAL::Creator_uniform_2< Point, Segment>              Segment_creator;
 typedef CGAL::Join_input_iterator_2< Source, Source, Segment_creator>
                                                               Segment_iterator;
-typedef CGAL::Polygon_traits_2<R>                             PolygonTraits;
+typedef CGAL::Polygon_traits_2<K>                             PolygonTraits;
 typedef std::list<Point>                                      Container;
 typedef CGAL::Polygon_2<PolygonTraits,Container>              Polygon;
 
@@ -87,7 +68,7 @@ int main()
   std::vector<Point>   Vip;
   CGAL::segment_intersection_points_2( Vs.begin(), Vs.end(),
                                        std::back_inserter( Vip),
-                                       R() );
+                                       K() );
   std::cout << "The " << Vip.size();
   std::cout << " intersection points are now shown in blue in the window";
   std::cout << std::endl;
@@ -108,4 +89,3 @@ int main()
   std::cout << "Click in the window to exit." << std::endl; 
   W.read_mouse();
 }
-#endif // CGAL_USE_LEDA
