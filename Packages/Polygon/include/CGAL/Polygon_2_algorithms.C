@@ -36,6 +36,8 @@
 #endif
 #include <vector.h>
 
+CGAL_BEGIN_NAMESPACE
+
 //-----------------------------------------------------------------------//
 //                          CGAL_Simplicity_test_2
 //-----------------------------------------------------------------------//
@@ -943,4 +945,6 @@ CGAL_Orientation CGAL_orientation_2(ForwardIterator first,
   // return the orientation of the triple (prev,i,next)
   return traits.orientation(*prev, *i, *next);
 }
+
+CGAL_END_NAMESPACE
 

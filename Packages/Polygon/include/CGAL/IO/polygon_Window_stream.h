@@ -28,12 +28,15 @@
 #ifdef CGAL_POLYGON_2_H
 #ifndef CGAL_WINDOW_STREAM_POLYGON_2_H
 #define CGAL_WINDOW_STREAM_POLYGON_2_H
+
+CGAL_BEGIN_NAMESPACE
+
 template <class Traits, class Container>
-CGAL_Window_stream&
-operator<<(CGAL_Window_stream& ws,
-           const CGAL_Polygon_2<Traits,Container> &polygon)
+Window_stream&
+operator<<(Window_stream& ws,
+           const Polygon_2<Traits,Container> &polygon)
 {
-  typedef CGAL_Polygon_2<Traits,Container>::Edge_const_circulator EI;
+  typedef Polygon_2<Traits,Container>::Edge_const_circulator EI;
   EI e = polygon.edges_circulator();
   if (e != NULL) {
     EI end = e;
@@ -45,6 +48,9 @@ operator<<(CGAL_Window_stream& ws,
     }
   return ws;
 }
+
+CGAL_END_NAMESPACE
+
 #endif // CGAL_WINDOW_STREAM_POLYGON_2_H
 #endif // CGAL_POLYGON_2_H
 

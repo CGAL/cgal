@@ -21,7 +21,7 @@ void test_polygon(const R&, const Point&, const char* FileName)
     CGAL_STD::cerr << "could not open file " << FileName << "!" << endl;
     exit(1);
   }
-  CGAL_set_ascii_mode(from);
+  CGAL::set_ascii_mode(from);
 
   Point point;
   CGAL_STD::vector<Point> polygon;
@@ -40,27 +40,27 @@ void test_polygon(const R&, const Point&, const char* FileName)
     CGAL_STD::cout << endl;
 
     iterator left =
-	CGAL_left_vertex_2(polygon.begin(), polygon.end());
+	CGAL::left_vertex_2(polygon.begin(), polygon.end());
     iterator right =
-	CGAL_right_vertex_2(polygon.begin(), polygon.end());
+	CGAL::right_vertex_2(polygon.begin(), polygon.end());
     iterator top =
-	CGAL_top_vertex_2(polygon.begin(), polygon.end());
+	CGAL::top_vertex_2(polygon.begin(), polygon.end());
     iterator bottom =
-	CGAL_bottom_vertex_2(polygon.begin(), polygon.end());
+	CGAL::bottom_vertex_2(polygon.begin(), polygon.end());
     bool simple =
-	CGAL_is_simple_2(polygon.begin(), polygon.end());
+	CGAL::is_simple_2(polygon.begin(), polygon.end());
     bool convex =
-	CGAL_is_convex_2(polygon.begin(), polygon.end());
-    CGAL_Bbox_2 bbox =
-	CGAL_bbox_2(polygon.begin(), polygon.end());
+	CGAL::is_convex_2(polygon.begin(), polygon.end());
+    CGAL::Bbox_2 bbox =
+	CGAL::bbox_2(polygon.begin(), polygon.end());
     typename R::FT area = 0;
-    CGAL_area_2(polygon.begin(), polygon.end(), area);
-    CGAL_Bounded_side bside =
-	 CGAL_bounded_side_2(polygon.begin(), polygon.end(), point);
-    CGAL_Oriented_side oside =
-	CGAL_oriented_side_2(polygon.begin(), polygon.end(), point);
-    CGAL_Orientation orientation =
-	CGAL_orientation_2(polygon.begin(), polygon.end());
+    CGAL::area_2(polygon.begin(), polygon.end(), area);
+    CGAL::Bounded_side bside =
+	 CGAL::bounded_side_2(polygon.begin(), polygon.end(), point);
+    CGAL::Oriented_side oside =
+	CGAL::oriented_side_2(polygon.begin(), polygon.end(), point);
+    CGAL::Orientation orientation =
+	CGAL::orientation_2(polygon.begin(), polygon.end());
 
     CGAL_STD::cout << "left   = " << *left << endl;
     CGAL_STD::cout << "right  = " << *right << endl;
@@ -76,37 +76,37 @@ void test_polygon(const R&, const Point&, const char* FileName)
     CGAL_STD::cout << "the area is " << area << endl;
 
     switch (bside) {
-    case CGAL_ON_BOUNDED_SIDE:
+    case CGAL::ON_BOUNDED_SIDE:
 	CGAL_STD::cout << "the point is on bounded side" << endl;
 	break;
-    case CGAL_ON_BOUNDARY:
+    case CGAL::ON_BOUNDARY:
 	CGAL_STD::cout << "the point is on the boundary" << endl;
 	break;
-    case CGAL_ON_UNBOUNDED_SIDE:
+    case CGAL::ON_UNBOUNDED_SIDE:
 	CGAL_STD::cout << "the point is on the unbounded side" << endl;
 	break;
     }
 
     switch (oside) {
-    case CGAL_ON_NEGATIVE_SIDE:
+    case CGAL::ON_NEGATIVE_SIDE:
 	CGAL_STD::cout << "the point is on the negative side" << endl;
 	break;
-    case CGAL_ON_ORIENTED_BOUNDARY:
+    case CGAL::ON_ORIENTED_BOUNDARY:
 	CGAL_STD::cout << "the point is on the oriented boundary" << endl;
 	break;
-    case CGAL_ON_POSITIVE_SIDE:
+    case CGAL::ON_POSITIVE_SIDE:
 	CGAL_STD::cout << "the point is on the positive side" << endl;
 	break;
     }
 
     switch(orientation) {
-    case CGAL_CLOCKWISE:
+    case CGAL::CLOCKWISE:
 	CGAL_STD::cout << "the orientation is clockwise" << endl;
 	break;
-    case CGAL_COUNTERCLOCKWISE:
+    case CGAL::COUNTERCLOCKWISE:
 	CGAL_STD::cout << "the orientation is counter clockwise" << endl;
 	break;
-    case CGAL_COLLINEAR:
+    case CGAL::COLLINEAR:
 	CGAL_STD::cout << "the orientation is collinear" << endl;
 	break;
     }
@@ -118,17 +118,17 @@ void test_polygon(const R&, const Point&, const char* FileName)
 
 int main()
 {
-  CGAL_set_pretty_mode(CGAL_STD::cout);
+  CGAL::set_pretty_mode(CGAL_STD::cout);
 
   CGAL_STD::cout << endl;
   CGAL_STD::cout << "--------------------------------------------------------" << endl;
   CGAL_STD::cout << "-   testing polygon algorithms with cartesian/double   -" << endl;
   CGAL_STD::cout << "--------------------------------------------------------" << endl;
   CGAL_STD::cout << endl;
-  typedef CGAL_Cartesian<double> R1;
-//  CGAL_Polygon_traits_2<R1> traits1;
+  typedef CGAL::Cartesian<double> R1;
+//  CGAL::Polygon_traits_2<R1> traits1;
 
-  typedef CGAL_Point_2<R1> Point1;
+  typedef CGAL::Point_2<R1> Point1;
   test_polygon(R1(), Point1(), "data/polygon_cartesian.dat");
 
   CGAL_STD::cout << endl;
@@ -136,8 +136,8 @@ int main()
   CGAL_STD::cout << "-   testing polygon algorithms with homogeneous/double -" << endl;
   CGAL_STD::cout << "--------------------------------------------------------" << endl;
   CGAL_STD::cout << endl;
-  typedef CGAL_Homogeneous<double> R2;
-  typedef CGAL_Point_2<R2> Point2;
+  typedef CGAL::Homogeneous<double> R2;
+  typedef CGAL::Point_2<R2> Point2;
   test_polygon(R2(), Point2(), "data/polygon_homogeneous.dat");
 
   return 0;

@@ -61,12 +61,14 @@
 #include <CGAL/Polygon_2_edge_circulator.h>
 #endif // CGAL_POLYGON_2_EDGE_CIRCULATOR_H
 
+CGAL_BEGIN_NAMESPACE
+
 //-----------------------------------------------------------------------//
-//                          CGAL_Polygon_2
+//                          Polygon_2
 //-----------------------------------------------------------------------//
 
 template <class _Traits, class _Container>
-class CGAL_Polygon_2 {
+class Polygon_2 {
   private:
     _Container d_container;
 
@@ -94,36 +96,36 @@ class CGAL_Polygon_2 {
     typedef iterator Vertex_iterator;
     typedef const_iterator Vertex_const_iterator;
 
-    typedef CGAL_Bidirectional_circulator_from_container<_Container>
+    typedef Bidirectional_circulator_from_container<_Container>
             Vertex_circulator;
 
-    typedef CGAL_Bidirectional_const_circulator_from_container<_Container>
+    typedef Bidirectional_const_circulator_from_container<_Container>
             Vertex_const_circulator;
 
-    typedef CGAL_Polygon_2_edge_iterator<_Traits,_Container>
+    typedef Polygon_2_edge_iterator<_Traits,_Container>
             Edge_const_iterator;
 
-    typedef CGAL_Polygon_2_const_edge_circulator<_Traits,_Container>
+    typedef Polygon_2_const_edge_circulator<_Traits,_Container>
             Edge_const_circulator;
 
     //--------------------------------------------------------
     //             Creation
     //--------------------------------------------------------
 
-    CGAL_Polygon_2()
+    Polygon_2()
       { }
 
-    CGAL_Polygon_2(const CGAL_Polygon_2<_Traits,_Container>& polygon)
+    Polygon_2(const Polygon_2<_Traits,_Container>& polygon)
       : d_container(polygon.d_container) { }
 
-    CGAL_Polygon_2<_Traits,_Container>&
-    operator=(const CGAL_Polygon_2<_Traits,_Container>& polygon)
+    Polygon_2<_Traits,_Container>&
+    operator=(const Polygon_2<_Traits,_Container>& polygon)
     {
       d_container = polygon.d_container;
       return *this;
     }
 
-    ~CGAL_Polygon_2()
+    ~Polygon_2()
       { }
 
 #ifdef CGAL_CFG_NO_MEMBER_TEMPLATES
@@ -137,25 +139,25 @@ class CGAL_Polygon_2 {
     typedef typename CGAL_STD::list<Point_2>::iterator                 l_i;
     typedef typename CGAL_STD::list<Point_2>::reverse_iterator         l_ri;
 
-    CGAL_Polygon_2(v_ci first, v_ci last)
+    Polygon_2(v_ci first, v_ci last)
       { copy(first, last, back_inserter(d_container)); }
-    CGAL_Polygon_2(v_cri first, v_cri last)
+    Polygon_2(v_cri first, v_cri last)
       { copy(first, last, back_inserter(d_container)); }
-    CGAL_Polygon_2(v_i first, v_i last)
+    Polygon_2(v_i first, v_i last)
       { copy(first, last, back_inserter(d_container)); }
-    CGAL_Polygon_2(v_ri first, v_ri last)
+    Polygon_2(v_ri first, v_ri last)
       { copy(first, last, back_inserter(d_container)); }
-    CGAL_Polygon_2(l_ci first, l_ci last)
+    Polygon_2(l_ci first, l_ci last)
       { copy(first, last, back_inserter(d_container)); }
-    CGAL_Polygon_2(l_cri first, l_cri last)
+    Polygon_2(l_cri first, l_cri last)
       { copy(first, last, back_inserter(d_container)); }
-    CGAL_Polygon_2(l_i first, l_i last)
+    Polygon_2(l_i first, l_i last)
       { copy(first, last, back_inserter(d_container)); }
-    CGAL_Polygon_2(l_ri first, l_ri last)
+    Polygon_2(l_ri first, l_ri last)
       { copy(first, last, back_inserter(d_container)); }
 #else
     template <class InputIterator>
-    CGAL_Polygon_2(InputIterator first, InputIterator last)
+    Polygon_2(InputIterator first, InputIterator last)
       { copy(first, last, back_inserter(d_container)); }
 #endif
 
@@ -228,132 +230,132 @@ class CGAL_Polygon_2 {
     //--------------------------------------------------------
 
     bool is_simple() const
-      { return CGAL_is_simple_2(d_container.begin(),
+      { return is_simple_2(d_container.begin(),
                                 d_container.end(),
                                 Traits()); }
 
     bool is_convex() const
     {
-      return CGAL_is_convex_2(d_container.begin(),
+      return is_convex_2(d_container.begin(),
                               d_container.end(),
                               Traits());
     }
 
-    CGAL_Orientation orientation() const
+    Orientation orientation() const
     {
       CGAL_polygon_precondition(is_simple());
-      return CGAL_orientation_2(d_container.begin(),
+      return orientation_2(d_container.begin(),
                                 d_container.end(),
                                 Traits());
     }
 
-    CGAL_Oriented_side oriented_side(const Point_2& value) const
+    Oriented_side oriented_side(const Point_2& value) const
     {
       CGAL_polygon_precondition(is_simple());
-      return CGAL_oriented_side_2(d_container.begin(),
+      return oriented_side_2(d_container.begin(),
                                   d_container.end(),
                                   value,
                                   Traits());
     }
 
-    CGAL_Bounded_side bounded_side(const Point_2& value) const
+    Bounded_side bounded_side(const Point_2& value) const
     {
       CGAL_polygon_precondition(is_simple());
-      return CGAL_bounded_side_2(d_container.begin(),
+      return bounded_side_2(d_container.begin(),
                                  d_container.end(),
                                  value,
                                  Traits());
     }
 
-    CGAL_Bbox_2 bbox() const
-      {  return CGAL_bbox_2(d_container.begin(), d_container.end()); }
+    Bbox_2 bbox() const
+      {  return bbox_2(d_container.begin(), d_container.end()); }
 
     FT area() const
     {
       FT area(0);
-      CGAL_area_2(d_container.begin(), d_container.end(), area, Traits());
+      area_2(d_container.begin(), d_container.end(), area, Traits());
       return area;
     }
 
     Vertex_const_iterator left_vertex() const
     {
-      return CGAL_left_vertex_2(d_container.begin(),
+      return left_vertex_2(d_container.begin(),
                                 d_container.end(),
                                 Traits());
     }
 
     Vertex_iterator left_vertex()
     {
-      return CGAL_left_vertex_2(d_container.begin(),
+      return left_vertex_2(d_container.begin(),
                                 d_container.end(),
                                 Traits());
     }
 
     Vertex_const_iterator right_vertex() const
     {
-      return CGAL_right_vertex_2(d_container.begin(),
+      return right_vertex_2(d_container.begin(),
                                  d_container.end(),
                                  Traits());
     }
 
     Vertex_iterator right_vertex()
     {
-      return CGAL_right_vertex_2(d_container.begin(),
+      return right_vertex_2(d_container.begin(),
                                  d_container.end(),
                                  Traits());
     }
 
     Vertex_const_iterator top_vertex() const
     {
-      return CGAL_top_vertex_2(d_container.begin(),
+      return top_vertex_2(d_container.begin(),
                                d_container.end(),
                                Traits());
     }
 
     Vertex_iterator top_vertex()
     {
-      return CGAL_top_vertex_2(d_container.begin(),
+      return top_vertex_2(d_container.begin(),
                                d_container.end(),
                                Traits());
     }
 
     Vertex_const_iterator bottom_vertex() const
     { 
-      return CGAL_bottom_vertex_2(d_container.begin(),
+      return bottom_vertex_2(d_container.begin(),
                                   d_container.end(),
                                   Traits());
     }
 
     Vertex_iterator bottom_vertex()
     {
-      return CGAL_bottom_vertex_2(d_container.begin(),
+      return bottom_vertex_2(d_container.begin(),
                                   d_container.end(),
                                   Traits());
     }
 
     bool is_counterclockwise_oriented() const
-      { return orientation() == CGAL_COUNTERCLOCKWISE; }
+      { return orientation() == COUNTERCLOCKWISE; }
 
     bool is_clockwise_oriented() const
-      { return orientation() == CGAL_CLOCKWISE; }
+      { return orientation() == CLOCKWISE; }
 
     bool is_collinear_oriented() const
-      { return orientation() == CGAL_COLLINEAR; }
+      { return orientation() == COLLINEAR; }
 
     bool has_on_positive_side(const Point_2& q) const
-      { return oriented_side(q) == CGAL_ON_POSITIVE_SIDE; }
+      { return oriented_side(q) == ON_POSITIVE_SIDE; }
 
     bool has_on_negative_side(const Point_2& q) const
-      { return oriented_side(q) == CGAL_ON_NEGATIVE_SIDE; }
+      { return oriented_side(q) == ON_NEGATIVE_SIDE; }
 
     bool has_on_boundary(const Point_2& q) const
-      { return bounded_side(q) == CGAL_ON_BOUNDARY; }
+      { return bounded_side(q) == ON_BOUNDARY; }
 
     bool has_on_bounded_side(const Point_2& q) const
-      { return bounded_side(q) == CGAL_ON_BOUNDED_SIDE; }
+      { return bounded_side(q) == ON_BOUNDED_SIDE; }
 
     bool has_on_unbounded_side(const Point_2& q) const
-      { return bounded_side(q) == CGAL_ON_UNBOUNDED_SIDE; }
+      { return bounded_side(q) == ON_UNBOUNDED_SIDE; }
 
     //--------------------------------------------------------
     //             Random access methods
@@ -389,7 +391,7 @@ class CGAL_Polygon_2 {
     const _Container& container() const
       { return d_container; }
 
-    bool identical(const CGAL_Polygon_2<_Traits,_Container> &q) const
+    bool identical(const Polygon_2<_Traits,_Container> &q) const
       { return this == &q; }
 };
 
@@ -398,22 +400,29 @@ class CGAL_Polygon_2 {
 //-----------------------------------------------------------------------//
 
 template <class _Traits, class _Container1, class _Container2>
-bool operator==( const CGAL_Polygon_2<_Traits,_Container1> &x,
-                 const CGAL_Polygon_2<_Traits,_Container2> &y );
+bool operator==( const Polygon_2<_Traits,_Container1> &x,
+                 const Polygon_2<_Traits,_Container2> &y );
 
 template <class _Traits, class _Container1, class _Container2>
 inline
 bool
-operator!=(const CGAL_Polygon_2<_Traits,_Container1> &x,
-           const CGAL_Polygon_2<_Traits,_Container2> &y);
+operator!=(const Polygon_2<_Traits,_Container1> &x,
+           const Polygon_2<_Traits,_Container2> &y);
 
 #ifdef CGAL_REP_CLASS_DEFINED
-#ifndef CGAL_POLYGON_TRAITS_2_H
-#include <CGAL/Polygon_traits_2.h>
-#endif // CGAL_POLYGON_TRAITS_2_H
+
+CGAL_END_NAMESPACE
+
+#  ifndef CGAL_POLYGON_TRAITS_2_H
+#    include <CGAL/Polygon_traits_2.h>
+#  endif // CGAL_POLYGON_TRAITS_2_H
+
+CGAL_BEGIN_NAMESPACE
+
 template <class Transformation, class _Traits, class _Container>
-CGAL_Polygon_2<_Traits,_Container>
-CGAL_transform(const Transformation& t, const CGAL_Polygon_2<_Traits,_Container>& p);
+Polygon_2<_Traits,_Container>
+transform(const Transformation& t, const Polygon_2<_Traits,_Container>& p);
+
 #endif // CGAL_REP_CLASS_DEFINED
 
 //-----------------------------------------------------------------------//
@@ -421,27 +430,33 @@ CGAL_transform(const Transformation& t, const CGAL_Polygon_2<_Traits,_Container>
 //-----------------------------------------------------------------------//
 
 template <class _Traits, class _Container>
-istream &operator>>(istream &is, CGAL_Polygon_2<_Traits,_Container>& p);
+istream &operator>>(istream &is, Polygon_2<_Traits,_Container>& p);
 
 template <class _Traits, class _Container>
-ostream &operator<<(ostream &os, const CGAL_Polygon_2<_Traits,_Container>& p);
+ostream &operator<<(ostream &os, const Polygon_2<_Traits,_Container>& p);
 
 //-----------------------------------------------------------------------//
 //                         implementation
 //-----------------------------------------------------------------------//
 
+CGAL_END_NAMESPACE
+
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 #include <CGAL/Polygon_2.C>
 #endif
 
+CGAL_BEGIN_NAMESPACE
+
 template <class _Traits, class _Container1, class _Container2>
 inline
 bool
-operator!=(const CGAL_Polygon_2<_Traits,_Container1> &x,
-           const CGAL_Polygon_2<_Traits,_Container2> &y)
+operator!=(const Polygon_2<_Traits,_Container1> &x,
+           const Polygon_2<_Traits,_Container2> &y)
 {
   return !(x==y);
 }
+
+CGAL_END_NAMESPACE
 
 #endif
 

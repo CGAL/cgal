@@ -29,18 +29,20 @@
 //                          operator==
 //-----------------------------------------------------------------------//
 
+CGAL_BEGIN_NAMESPACE
+
 template <class _Traits, class _Container1, class _Container2>
-bool operator==( const CGAL_Polygon_2<_Traits,_Container1> &x,
-                 const CGAL_Polygon_2<_Traits,_Container2> &y )
+bool operator==( const Polygon_2<_Traits,_Container1> &x,
+                 const Polygon_2<_Traits,_Container2> &y )
 {
   CGAL_polygon_precondition( (x.size() != 0) || (y.size() != 0));
 
   if (x.size() != y.size()) return false;
 
-  typename CGAL_Polygon_2<_Traits,_Container1>::Vertex_const_iterator x_iter =
+  typename Polygon_2<_Traits,_Container1>::Vertex_const_iterator x_iter =
     x.vertices_begin();
 
-  typename CGAL_Polygon_2<_Traits,_Container2>::Vertex_const_iterator y_iter =
+  typename Polygon_2<_Traits,_Container2>::Vertex_const_iterator y_iter =
     find(y.vertices_begin(), y.vertices_end(), *x.vertices_begin());
 
   // if y doesn't contain the first point of x ...
@@ -70,7 +72,7 @@ bool operator==( const CGAL_Polygon_2<_Traits,_Container1> &x,
 //-----------------------------------------------------------------------//
 
 template <class _Traits, class _Container>
-istream &operator>>(istream &is, CGAL_Polygon_2<_Traits,_Container>& p)
+istream &operator>>(istream &is, Polygon_2<_Traits,_Container>& p)
 {
   int n; // number of vertices
   is >> n;
@@ -90,19 +92,19 @@ istream &operator>>(istream &is, CGAL_Polygon_2<_Traits,_Container>& p)
 //-----------------------------------------------------------------------//
 
 template <class _Traits, class _Container>
-ostream &operator<<(ostream &os, const CGAL_Polygon_2<_Traits,_Container>& p)
+ostream &operator<<(ostream &os, const Polygon_2<_Traits,_Container>& p)
 {
-  typename CGAL_Polygon_2<_Traits,_Container>::Vertex_const_iterator i;
+  typename Polygon_2<_Traits,_Container>::Vertex_const_iterator i;
 
-  switch(os.iword(CGAL_IO::mode)) {
-    case CGAL_IO::ASCII :
+  switch(os.iword(IO::mode)) {
+    case IO::ASCII :
       os << p.size() << ' ';
       for (i = p.vertices_begin(); i != p.vertices_end(); ++i) {
         os << *i << ' ';
       }
       return os;
 
-    case CGAL_IO::BINARY :
+    case IO::BINARY :
       os << p.size();
       for (i = p.vertices_begin(); i != p.vertices_end(); ++i) {
         os << *i;
@@ -119,6 +121,8 @@ ostream &operator<<(ostream &os, const CGAL_Polygon_2<_Traits,_Container>& p)
   }
 }
 
+CGAL_END_NAMESPACE
+
 //-----------------------------------------------------------------------//
 //                          transform
 //-----------------------------------------------------------------------//
@@ -127,15 +131,21 @@ ostream &operator<<(ostream &os, const CGAL_Polygon_2<_Traits,_Container>& p)
 #ifndef CGAL_POLYGON_TRAITS_2_H
 #include <CGAL/Polygon_traits_2.h>
 #endif // CGAL_POLYGON_TRAITS_2_H
+
+CGAL_BEGIN_NAMESPACE
+
 template <class Transformation, class _Traits, class _Container>
-CGAL_Polygon_2<_Traits,_Container>
-CGAL_transform(const Transformation& t, const CGAL_Polygon_2<_Traits,_Container>& p)
+Polygon_2<_Traits,_Container>
+transform(const Transformation& t, const Polygon_2<_Traits,_Container>& p)
 {
-  typedef typename CGAL_Polygon_2<_Traits,_Container>::Vertex_const_iterator VI;
-  CGAL_Polygon_2<_Traits,_Container> result;
+  typedef typename Polygon_2<_Traits,_Container>::Vertex_const_iterator VI;
+  Polygon_2<_Traits,_Container> result;
   for (VI i = p.vertices_begin(); i != p.vertices_end(); ++i)
     result.push_back(t(*i));
   return result;
 }
+
+CGAL_END_NAMESPACE
+
 #endif // CGAL_REP_CLASS_DEFINED
 

@@ -1,8 +1,8 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>
 
-typedef CGAL_Cartesian<double> R;
-typedef CGAL_Polygon_traits_2<R> Traits;
+typedef CGAL::Cartesian<double> R;
+typedef CGAL::Polygon_traits_2<R> Traits;
 typedef Traits::Point_2 Point;
 typedef Traits::Segment_2 Segment;
 typedef Traits::Vector_2 Vector_2;
@@ -10,8 +10,8 @@ typedef Traits::Vector_2 Vector_2;
 #include <CGAL/std/list>
 #include <CGAL/std/vector>
 
-typedef CGAL_Polygon_2<Traits, CGAL_STD::list<Point> > ListPolygon;
-typedef CGAL_Polygon_2<Traits, CGAL_STD::vector<Point> > VectorPolygon;
+typedef CGAL::Polygon_2<Traits, CGAL_STD::list<Point> > ListPolygon;
+typedef CGAL::Polygon_2<Traits, CGAL_STD::vector<Point> > VectorPolygon;
 
 #include <CGAL/std/fstream>
 #include <CGAL/std/algorithm>
@@ -27,38 +27,38 @@ void test_default_methods(      CGAL_STD::vector<Point>& pvec0,
                           const CGAL_STD::list<Point>&   plist1)
 {
   {
-    CGAL_Polygon_2<Traits, CGAL_STD::list<Point> >   x;
-    CGAL_Polygon_2<Traits, CGAL_STD::list<Point> >   p0(pvec0.begin(), pvec0.end());
-    CGAL_Polygon_2<Traits, CGAL_STD::list<Point> >   p1(pvec0.rbegin(), pvec0.rend());
-    CGAL_Polygon_2<Traits, CGAL_STD::list<Point> >   p2(plist0.begin(), plist0.end());
-    CGAL_Polygon_2<Traits, CGAL_STD::list<Point> >   p3(plist0.rbegin(), plist0.rend());
-    CGAL_Polygon_2<Traits, CGAL_STD::list<Point> >   p0_copy(p0);
+    CGAL::Polygon_2<Traits, CGAL_STD::list<Point> >   x;
+    CGAL::Polygon_2<Traits, CGAL_STD::list<Point> >   p0(pvec0.begin(), pvec0.end());
+    CGAL::Polygon_2<Traits, CGAL_STD::list<Point> >   p1(pvec0.rbegin(), pvec0.rend());
+    CGAL::Polygon_2<Traits, CGAL_STD::list<Point> >   p2(plist0.begin(), plist0.end());
+    CGAL::Polygon_2<Traits, CGAL_STD::list<Point> >   p3(plist0.rbegin(), plist0.rend());
+    CGAL::Polygon_2<Traits, CGAL_STD::list<Point> >   p0_copy(p0);
 
-    CGAL_Polygon_2<Traits, CGAL_STD::vector<Point> > y;
-    CGAL_Polygon_2<Traits, CGAL_STD::vector<Point> > p4(pvec0.begin(), pvec0.end());
-    CGAL_Polygon_2<Traits, CGAL_STD::vector<Point> > p5(pvec0.rbegin(), pvec0.rend());
-    CGAL_Polygon_2<Traits, CGAL_STD::vector<Point> > p6(plist0.begin(), plist0.end());
-    CGAL_Polygon_2<Traits, CGAL_STD::vector<Point> > p7(plist0.rbegin(), plist0.rend());
-    CGAL_Polygon_2<Traits, CGAL_STD::vector<Point> > p4_copy(p4);
+    CGAL::Polygon_2<Traits, CGAL_STD::vector<Point> > y;
+    CGAL::Polygon_2<Traits, CGAL_STD::vector<Point> > p4(pvec0.begin(), pvec0.end());
+    CGAL::Polygon_2<Traits, CGAL_STD::vector<Point> > p5(pvec0.rbegin(), pvec0.rend());
+    CGAL::Polygon_2<Traits, CGAL_STD::vector<Point> > p6(plist0.begin(), plist0.end());
+    CGAL::Polygon_2<Traits, CGAL_STD::vector<Point> > p7(plist0.rbegin(), plist0.rend());
+    CGAL::Polygon_2<Traits, CGAL_STD::vector<Point> > p4_copy(p4);
 
     x=p0;
     assert(x == p0);
   }
 
   {
-    CGAL_Polygon_2<Traits, CGAL_STD::list<Point> >   x;
-    CGAL_Polygon_2<Traits, CGAL_STD::list<Point> >   p0(pvec1.begin(), pvec1.end());
-    CGAL_Polygon_2<Traits, CGAL_STD::list<Point> >   p1(pvec1.rbegin(), pvec1.rend());
-    CGAL_Polygon_2<Traits, CGAL_STD::list<Point> >   p2(plist1.begin(), plist1.end());
-    CGAL_Polygon_2<Traits, CGAL_STD::list<Point> >   p3(plist1.rbegin(), plist1.rend());
-    CGAL_Polygon_2<Traits, CGAL_STD::list<Point> >   p0_copy(p0);
+    CGAL::Polygon_2<Traits, CGAL_STD::list<Point> >   x;
+    CGAL::Polygon_2<Traits, CGAL_STD::list<Point> >   p0(pvec1.begin(), pvec1.end());
+    CGAL::Polygon_2<Traits, CGAL_STD::list<Point> >   p1(pvec1.rbegin(), pvec1.rend());
+    CGAL::Polygon_2<Traits, CGAL_STD::list<Point> >   p2(plist1.begin(), plist1.end());
+    CGAL::Polygon_2<Traits, CGAL_STD::list<Point> >   p3(plist1.rbegin(), plist1.rend());
+    CGAL::Polygon_2<Traits, CGAL_STD::list<Point> >   p0_copy(p0);
 
-    CGAL_Polygon_2<Traits, CGAL_STD::vector<Point> > y;
-    CGAL_Polygon_2<Traits, CGAL_STD::vector<Point> > p4(pvec1.begin(), pvec1.end());
-    CGAL_Polygon_2<Traits, CGAL_STD::vector<Point> > p5(pvec1.rbegin(), pvec1.rend());
-    CGAL_Polygon_2<Traits, CGAL_STD::vector<Point> > p6(plist1.begin(), plist1.end());
-    CGAL_Polygon_2<Traits, CGAL_STD::vector<Point> > p7(plist1.rbegin(), plist1.rend());
-    CGAL_Polygon_2<Traits, CGAL_STD::vector<Point> > p4_copy(p4);
+    CGAL::Polygon_2<Traits, CGAL_STD::vector<Point> > y;
+    CGAL::Polygon_2<Traits, CGAL_STD::vector<Point> > p4(pvec1.begin(), pvec1.end());
+    CGAL::Polygon_2<Traits, CGAL_STD::vector<Point> > p5(pvec1.rbegin(), pvec1.rend());
+    CGAL::Polygon_2<Traits, CGAL_STD::vector<Point> > p6(plist1.begin(), plist1.end());
+    CGAL::Polygon_2<Traits, CGAL_STD::vector<Point> > p7(plist1.rbegin(), plist1.rend());
+    CGAL::Polygon_2<Traits, CGAL_STD::vector<Point> > p4_copy(p4);
 
     x=p0;
     assert(x == p0);
@@ -78,7 +78,7 @@ void test_iterators(ListPolygon& p, const ListPolygon& q)
   typedef ListPolygon::Edge_const_circulator EC;
   typedef ListPolygon::Edge_const_iterator EI;
 
-  CGAL_set_ascii_mode(CGAL_STD::cout);
+  CGAL::set_ascii_mode(CGAL_STD::cout);
 
   {
     VC v = p.vertices_circulator();
@@ -154,28 +154,28 @@ void test_stream_operators(ListPolygon& p)
 {
   {
     CGAL_STD::ofstream to("polytest.ascii");
-    CGAL_set_ascii_mode(to);
+    CGAL::set_ascii_mode(to);
     to << p;
     to.close();
 
     ListPolygon p_copy;
     CGAL_STD::ifstream from("polytest.ascii");
-    CGAL_set_ascii_mode(from);
+    CGAL::set_ascii_mode(from);
     from >> p_copy;
 
     assert(p == p_copy);
   }
   {
     CGAL_STD::ofstream to("polytest.pretty");
-    CGAL_set_pretty_mode(to);
+    CGAL::set_pretty_mode(to);
     to << p;
   }
   {
     CGAL_STD::ofstream to("polytest.binary");
-    CGAL_set_binary_mode(to);
+    CGAL::set_binary_mode(to);
     to << p;
   }
-  CGAL_set_pretty_mode(CGAL_STD::cout);
+  CGAL::set_pretty_mode(CGAL_STD::cout);
 }
 
 //-----------------------------------------------------------------------//
@@ -194,7 +194,7 @@ void test_access_functions(VectorPolygon& p)
     CGAL_STD::cout << "edge   " << i << " = " << p.edge(i) << endl;
   }
 
-  typedef CGAL_Polygon_2<Traits, CGAL_STD::vector<Point> >::Edge_const_iterator EI;
+  typedef CGAL::Polygon_2<Traits, CGAL_STD::vector<Point> >::Edge_const_iterator EI;
   EI edges_begin = p.edges_begin();
   EI edges_end   = p.edges_end();
   assert(edges_begin < edges_end);
@@ -212,29 +212,29 @@ void test_geometric_predicates(ListPolygon& p)
   CGAL_STD::cout << "p.is_simple()          = " << int(p.is_simple()) << endl;
   CGAL_STD::cout << "p.is_convex()          = " << int(p.is_convex()) << endl;
 
-  CGAL_Orientation orientation = p.orientation();
+  CGAL::Orientation orientation = p.orientation();
   CGAL_STD::cout << "p.orientation()        = ";
   switch (orientation) {
-     case CGAL_CLOCKWISE:        CGAL_STD::cout << "clockwise"; break;
-     case CGAL_COUNTERCLOCKWISE: CGAL_STD::cout << "counter clockwise"; break;
-     case CGAL_COLLINEAR:        CGAL_STD::cout << "collinear"; break;
+     case CGAL::CLOCKWISE:        CGAL_STD::cout << "clockwise"; break;
+     case CGAL::COUNTERCLOCKWISE: CGAL_STD::cout << "counter clockwise"; break;
+     case CGAL::COLLINEAR:        CGAL_STD::cout << "collinear"; break;
   }
   CGAL_STD::cout << endl;
 
-  CGAL_Oriented_side oside  = p.oriented_side(point);
+  CGAL::Oriented_side oside  = p.oriented_side(point);
   CGAL_STD::cout << "p.oriented_side(point) = ";
   switch (oside) {
-    case CGAL_ON_NEGATIVE_SIDE:     CGAL_STD::cout << "on negative side" << endl; break;
-    case CGAL_ON_ORIENTED_BOUNDARY: CGAL_STD::cout << "on oriented boundary" << endl; break;
-    case CGAL_ON_POSITIVE_SIDE:     CGAL_STD::cout << "on positive side" << endl; break;
+    case CGAL::ON_NEGATIVE_SIDE:     CGAL_STD::cout << "on negative side" << endl; break;
+    case CGAL::ON_ORIENTED_BOUNDARY: CGAL_STD::cout << "on oriented boundary" << endl; break;
+    case CGAL::ON_POSITIVE_SIDE:     CGAL_STD::cout << "on positive side" << endl; break;
   }
 
   CGAL_STD::cout << "p.bounded_side(point)  = ";
-  CGAL_Bounded_side bside   = p.bounded_side(point);
+  CGAL::Bounded_side bside   = p.bounded_side(point);
   switch (bside) {
-    case CGAL_ON_BOUNDED_SIDE:   CGAL_STD::cout << "on bounded side" << endl; break;
-    case CGAL_ON_BOUNDARY:       CGAL_STD::cout << "on boundary" << endl; break;
-    case CGAL_ON_UNBOUNDED_SIDE: CGAL_STD::cout << "on unbounded side" << endl; break;
+    case CGAL::ON_BOUNDED_SIDE:   CGAL_STD::cout << "on bounded side" << endl; break;
+    case CGAL::ON_BOUNDARY:       CGAL_STD::cout << "on boundary" << endl; break;
+    case CGAL::ON_UNBOUNDED_SIDE: CGAL_STD::cout << "on unbounded side" << endl; break;
   }
 
   CGAL_STD::cout << "p.bbox()               = " << p.bbox() << endl;

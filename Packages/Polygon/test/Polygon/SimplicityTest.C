@@ -14,8 +14,8 @@
 bool TestSimplicity(const char* FileName)
 // tests the simplicity of the polygon in the file FileName
 {
-  typedef CGAL_Cartesian<CGAL_Quotient<CGAL_Gmpz> > R;
-  typedef CGAL_Point_2<R> Point;
+  typedef CGAL::Cartesian<CGAL::Quotient<CGAL::Gmpz> > R;
+  typedef CGAL::Point_2<R> Point;
 
   CGAL_STD::cout << "-----------------------------------------------" << endl;
   CGAL_STD::cout << "-      Testing polygon " << FileName << endl;
@@ -30,7 +30,7 @@ bool TestSimplicity(const char* FileName)
   int n;                  // number of points
   CGAL_STD::vector<Point> polygon;
 
-  CGAL_set_ascii_mode(from);
+  CGAL::set_ascii_mode(from);
   from >> answer >> n;
   CGAL_STD::cout << "  polygon has " << n << " points" << endl;
   for (int i=0; i<n; i++) {
@@ -40,7 +40,7 @@ bool TestSimplicity(const char* FileName)
     polygon.push_back(point);
   }
 
-  bool b = CGAL_is_simple_2(polygon.begin(), polygon.end());
+  bool b = CGAL::is_simple_2(polygon.begin(), polygon.end());
 
   CGAL_STD::cout << "(Polygon " << FileName << " is simple) == "
        << (b ? "true" : "false")
@@ -50,15 +50,15 @@ bool TestSimplicity(const char* FileName)
 
 void TestDegenerateCases()
 {
-  typedef CGAL_Cartesian<double> R;
-  typedef CGAL_Point_2<R> Point;
+  typedef CGAL::Cartesian<double> R;
+  typedef CGAL::Point_2<R> Point;
   CGAL_STD::vector<Point> polygon;
 
   polygon.push_back(Point(1,1));
-  assert(CGAL_is_simple_2(polygon.begin(), polygon.end()));
+  assert(CGAL::is_simple_2(polygon.begin(), polygon.end()));
 
   polygon.push_back(Point(1,2));
-  assert(CGAL_is_simple_2(polygon.begin(), polygon.end()));
+  assert(CGAL::is_simple_2(polygon.begin(), polygon.end()));
 }
 
 int main()
