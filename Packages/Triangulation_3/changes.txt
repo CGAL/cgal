@@ -1,4 +1,4 @@
-Version 1.44 (? dec 00)
+Version 1.44 (11 dec 00)
 - typdefs _3 fixed in demo and example
 - locate() small optimization. [syl]
 
