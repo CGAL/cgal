@@ -8,6 +8,7 @@
 //---------------------------------------------------------------------
 
 DEMO: New User-Interface with different Generators.
+DEMO: Fixed MSVC problems.
 DEMO: Fixed a few things for VC++.
 ALL : Replaced selfmade timer by CGAL::Timer.
 DEMO: Prefixed leda_drawing_mode.
@@ -22,6 +23,7 @@ ALL : added some return 0;
 ALL : MSVBC workaround for TYPENAME_BUGs.
 DOCS: fixed "cal" problem with html converter
 DOCS: fixed preconditions in replace_column (reported by Mariette).
+SRC : Fixed bug in four-center computation.
 SRC : Fixed range bug in expensive_assertion in extremal_polygon.
 SRC : Workaround for peculiar egcs-1.* bug with pcenter_random tests.
 SRC : Fixed two little bugs in 3cover (greater_equal ==> greater).

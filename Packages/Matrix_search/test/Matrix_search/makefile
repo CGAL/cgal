@@ -38,11 +38,11 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                all_furthest_neighbors_2_test \
-                extremal_polygon_2_test \
-                rectangular_p_center_2_random1_test \
-                rectangular_p_center_2_random2_test \
-                sorted_matrix_search_test 
+                all_furthest_neighbors_2_test$(EXE_EXT) \
+                extremal_polygon_2_test$(EXE_EXT) \
+                rectangular_p_center_2_random1_test$(EXE_EXT) \
+                rectangular_p_center_2_random2_test$(EXE_EXT) \
+                sorted_matrix_search_test$(EXE_EXT) 
 
 all_furthest_neighbors_2_test$(EXE_EXT): all_furthest_neighbors_2_test$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)all_furthest_neighbors_2_test all_furthest_neighbors_2_test$(OBJ_EXT) $(LDFLAGS)
