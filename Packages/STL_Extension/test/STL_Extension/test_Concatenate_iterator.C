@@ -72,7 +72,22 @@ void print_container(C c)
 
 
 template<class C, class A, class B>
+void copy_wrapper(C& c, A a, B b)
+{
+#if defined(__GNUC__) && (__GNUC__ < 3)
+  copy1(c, a, b);
+#else
+  ::copy(c, a, b);
+#endif
+}
+
+
+template<class C, class A, class B>
+#if defined(__GNUC__) && (__GNUC__ < 3)
+void copy1(C& c, A a, B b)
+#else
 void copy(C& c, A a, B b)
+#endif
 {
   c.clear();
 
@@ -126,19 +141,19 @@ int test(A a, B b)
 
   AB_container ab(a, b);
 
-  ::copy(c, a, b);
+  copy_wrapper(c, a, b);
   assert( test_creation(c, ab) );
   assert( ab.size() == ab.lazy_size() && ab.size() == c.size() );
 
   AA_container aa(a, a);
 
-  ::copy(c, a, a);
+  copy_wrapper(c, a, a);
   assert( test_creation(c, aa) );
   assert( aa.size() == aa.lazy_size() && aa.size() == c.size() );
 
   BA_container ba(b, a);
 
-  ::copy(c, b, a);
+  copy_wrapper(c, b, a);
   assert( test_creation(c, ba) );
   assert( ba.size() == ba.lazy_size() && ba.size() == c.size() );
 
