@@ -27,39 +27,39 @@
 
 CGAL_BEGIN_NAMESPACE
 
-class Leda_like_rep
+class Rep
 {
-    friend class Leda_like_handle;
+    friend class Handle;
   protected:
-             Leda_like_rep() { count = 1; }
-    virtual ~Leda_like_rep() {}
+             Rep() { count = 1; }
+    virtual ~Rep() {}
 
     int      count;
 };
 
-class Leda_like_handle
+class Handle
 {
   public:
-    Leda_like_handle()
-	: PTR(static_cast<Leda_like_rep*>(0)) {}
+    Handle()
+	: PTR(static_cast<Rep*>(0)) {}
 
-    Leda_like_handle(const Leda_like_handle& x)
+    Handle(const Handle& x)
     {
-      CGAL_kernel_precondition( x.PTR != static_cast<Leda_like_rep*>(0) );
+      CGAL_kernel_precondition( x.PTR != static_cast<Rep*>(0) );
       PTR = x.PTR;
       PTR->count++;
     }
 
-    ~Leda_like_handle()
+    ~Handle()
     {
 	if ( PTR && (--PTR->count == 0))
 	    delete PTR;
     }
 
-    Leda_like_handle&
-    operator=(const Leda_like_handle& x)
+    Handle&
+    operator=(const Handle& x)
     {
-      CGAL_kernel_precondition( x.PTR != static_cast<Leda_like_rep*>(0) );
+      CGAL_kernel_precondition( x.PTR != static_cast<Rep*>(0) );
       x.PTR->count++;
       if ( PTR && (--PTR->count == 0))
 	  delete PTR;
@@ -70,15 +70,15 @@ class Leda_like_handle
     int
     refs()  const { return PTR->count; }
 
-    friend unsigned long id(const Leda_like_handle& x);
+    friend unsigned long id(const Handle& x);
 
   protected:
-    Leda_like_rep* PTR;
+    Rep* PTR;
 };
 
 inline
 unsigned long
-id(const Leda_like_handle& x)
+id(const Handle& x)
 { return reinterpret_cast<unsigned long>(x.PTR); }
 
 template < class T >
@@ -87,11 +87,6 @@ bool
 identical(const T &t1, const T &t2)
 { return id(t1) == id(t2); }
 
-
-typedef Leda_like_handle Handle;
-typedef Leda_like_rep    Rep;
-
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_HANDLE_H

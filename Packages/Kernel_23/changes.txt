@@ -1,3 +1,6 @@
+1.17 (20 January 2003)
+- Rename Leda_like_handle to Handle, similar for Leda_like_rep to Rep.
+
 1.16 (17 January 2003)
 - Add CGAL/LEDA_basic.h at the beginning, otherwise the dirty LEDA macros add
   a non-consistent mess.
