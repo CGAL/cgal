@@ -201,12 +201,6 @@ int main()
   T111.insert(wp11);
   T111.insert(wp12);
 
-  for(Cls::Finite_vertices_iterator vit = T111.finite_vertices_begin();
-      vit != T111.finite_vertices_end(); vit++){
-    std::cout << "Point : " << vit->point().point() << " Weight: "
-              << vit->point().weight() << " " << std::endl;
-  }
-
   assert(T111.is_valid());
  }
 
