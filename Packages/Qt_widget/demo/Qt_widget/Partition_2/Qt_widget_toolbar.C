@@ -53,6 +53,7 @@ namespace CGAL {
   
   but[1] = new QToolButton(maintoolbar, "spolygon");
   but[1]->setPixmap(QPixmap( (const char**)polygon_xpm ));
+  but[1]->setTextLabel("Input Simple Polygon");
   
   button_group = new QButtonGroup(0, "exclusive_group");
   button_group->insert(but[0]);
