@@ -1,3 +1,26 @@
+// ======================================================================
+//
+// Copyright (c) 2000,2001 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       : $CGAL_Revision$
+// release_date  : $CGAL_Date$
+//
+// file          : include/CGAL/Homogeneous_d.h
+// package       : Kernel_d
+// maintainer    : Michael Seel <Michael.Seel@mpi-sb.mpg.de>
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Michael Seel
+// coordinator   : MPI Saarbruecken (Susan.Hert@mpi-sb.mpg.de)
+//
+// ======================================================================
+
 #ifndef HOMOGENEOUS_D_H
 #define HOMOGENEOUS_D_H
 
@@ -55,6 +78,45 @@ public:
   typedef CGAL::Segment_d<Self>  Segment_d;
   typedef CGAL::Ray_d<Self>      Ray_d;
   typedef CGAL::Line_d<Self>     Line_d;
+
+  // construction objects:
+  typedef CGALi::Construct<Point_d> Construct_point_d;
+  Construct_point_d construct_point_d_object() const
+  { return Construct_point_d(); }
+
+  typedef CGALi::Construct<Vector_d> Construct_vector_d;
+  Construct_vector_d construct_vector_d_object() const
+  { return Construct_vector_d(); }
+
+  typedef CGALi::Construct<Direction_d> Construct_direction_d;
+  Construct_direction_d construct_direction_d_object() const
+  { return Construct_direction_d(); }
+
+  typedef CGALi::Construct<Segment_d> Construct_segment_d;
+  Construct_segment_d construct_segment_d_object() const
+  { return Construct_segment_d(); }
+
+  typedef CGALi::Construct<Ray_d> Construct_ray_d;
+  Construct_ray_d construct_ray_d_object() const
+  { return Construct_ray_d(); }
+
+  typedef CGALi::Construct<Line_d> Construct_line_d;
+  Construct_line_d construct_line_d_object() const
+  { return Construct_line_d(); }
+
+  typedef CGALi::Construct<Hyperplane_d> Construct_hyperplane_d;
+  Construct_hyperplane_d construct_hyperplane_d_object() const
+  { return Construct_hyperplane_d(); }
+
+  typedef CGALi::Construct<Sphere_d> Construct_sphere_d;
+  Construct_sphere_d construct_sphere_d_object() const
+  { return Construct_sphere_d(); }
+
+  typedef CGALi::Construct<Aff_transformation_d> 
+    Construct_aff_transformation_d;
+  Construct_aff_transformation_d 
+    construct_aff_transformation_d_object() const
+  { return Construct_aff_transformation_d(); }
 
   // function objects:
   typedef Lift_to_paraboloidHd<Self> Lift_to_paraboloid_d;
@@ -169,22 +231,6 @@ public:
   };
   Component_accessor_d component_accessor_d_object() const
   { return Component_accessor_d(); }
-
-  typedef CGALi::Construct<Point_d> Construct_point_d;
-  Construct_point_d construct_point_d_object() const
-  { return Construct_point_d(); }
-
-  typedef CGALi::Construct<Vector_d> Construct_vector_d;
-  Construct_vector_d construct_vector_d_object() const
-  { return Construct_vector_d(); }
-
-  typedef CGALi::Construct<Sphere_d> Construct_sphere_d;
-  Construct_sphere_d construct_sphere_d_object() const
-  { return Construct_sphere_d(); }
-
-  typedef CGALi::Construct<Hyperplane_d> Construct_hyperplane_d;
-  Construct_hyperplane_d construct_hyperplane_d_object() const
-  { return Construct_hyperplane_d(); }
 
   typedef CGALi::Call_has_on_positive_side Has_on_positive_side_d;
   Has_on_positive_side_d has_on_positive_side_d_object() const
