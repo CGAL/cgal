@@ -27,8 +27,8 @@ public:
   {
     const double SB;
   public:
-    typedef Base::Is_bad::Point_2 Point_2;
-    typedef Base::Is_bad::Traits Traits;
+    typedef typename Base::Is_bad::Point_2 Point_2;
+    typedef typename Base::Is_bad::Traits Traits;
 
     Is_bad(const double aspect_bound,
 	   const double size_bound)

@@ -1585,7 +1585,7 @@ is_bad_faces_valid()
 	}
     }
 
-  for(Bad_faces_list::iterator it = bad_faces_list.begin();
+  for(typename Bad_faces_list::iterator it = bad_faces_list.begin();
       it != bad_faces_list.end();
       ++it)
     bad_faces.insert(it->second, it->first);
