@@ -113,7 +113,7 @@ class Segment_circle_2
  private:
 
   Conic    _conic;              // The conic that contains the arc.
-  int      _deg;                // The degree of the conic (either 0 or 1).
+  int      _deg;                // The degree of the conic (either 1 or 2).
   Point    _source;             // The source of the arc. 
   Point    _target;             // The target of the arc.
   bool     _is_full;            // Indicated whether the arc is a full conic.
@@ -619,11 +619,19 @@ class Segment_circle_2
       C = arc._conic.w();
       E = arc._conic.v();
     }
-    else
+    else if (_conic.s() == arc._conic.s())
     {
+      // Both conics have the same orientation.
       B = _conic.u() - arc._conic.u();
       C = _conic.w() - arc._conic.w();
       E = _conic.v() - arc._conic.v();
+    }
+    else
+    {
+      // The two conics have opposite orientations.
+      B = _conic.u() + arc._conic.u();
+      C = _conic.w() + arc._conic.w();
+      E = _conic.v() + arc._conic.v();      
     }
 
     n_roots = _solve_quadratic_eq
