@@ -13,12 +13,15 @@
 
 \ccDefinition
 An object of type \ccRefName\ creates a \cgal\ circle in this way: one 
-left click on the mouse will be the center of the circle and the second point will be considered at the coordinates where the button is released, the squared distance between those 2 representing the radius of the new circle.
+left click on the mouse will be the center of the circle and the
+second point will be considered at the coordinates where the left
+mouse button is pressed for the second time, the distance
+between those 2 representing the radius of the new circle.
 
 \ccInclude{CGAL/IO/Qt_widget_get_circle.h}
 
 \ccInheritsFrom
-\ccc{Qt_widget_tool}
+\ccc{Qt_widget_layer}
 
 \ccGlue
 

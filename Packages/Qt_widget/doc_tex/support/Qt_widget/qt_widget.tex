@@ -23,6 +23,23 @@
 \ccChapterRelease{\qtwidgetRev. \ \qtwidgetDate}\\
 \ccChapterAuthor{Radu Ursu}
 
+
+\begin{figure}[h]
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics{./triangulation.eps} 
+\end{center}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+<CENTER>
+<IMG BORDER=0 SRC="./triangulation.gif"  ALIGN=center  ALT="The
+standard toolbar">
+</CENTER>
+\end{ccHtmlOnly}
+\end{figure}
+\begin{table}[h]
+\end{table}
+
 \qt\ is a {\sc Gui} toolkit\footnote{http://www.trolltech.com} for
 cross-platform application development. 
 
@@ -39,9 +56,9 @@ as zooming and panning functionality.
 The \ccStyle{Qt_widget} allows to attach {\em layers}. Layers usually
 draw on the drawing area of the widget. Layers can be activated and
 deactivated, and what you see in the drawing area is the overlay of
-all attached activated layers. Layers could be used also for entering
+all attached activated layers. Layers can be used also for entering
 input, and \cgal\ provides input \ccc{layers} for the two-dimensional
-\cgal\ objects. There are no limitations in using \ccc{layers}.
+\cgal\ objects.
 
 Finally, we provide a {\em toolbar} for controlling the basic functionality
 of the \ccStyle{Qt_widget}.
@@ -86,17 +103,37 @@ computation. As in any event driven {\sc Gui} application, you have to provide
 a draw callback so that the window system can update the drawing
 whenever necessary. This is the topic of the next example.
 
-\subsection{Example: A Triangulation}
+\subsection{Example: Draw Callback}
 
 This example is slightly more involved. The user can enter points and
 the application draws the Delaunay triangulation of the point set. 
 
 \ccIncludeExampleCode{Qt_widget/basic/tutorial2/tutorial2.C}
 
+As most {\sc Gui} toolkits Qt is event driven.  In the last line
+of function \ccc{main}, the program enters an event dispatch loop.
+
+When events, like keyboard or mouse events, happen, they
+are forwarded to the widget that has focus.  Whenever one
+presses a mouse button on the drawing area of the \ccc{CGAL::Qt\_widget},
+the callback \ccc{mousePressEvent(QMouseEvent*e)} is called.
+The event itself carries information about the position of the mouse.
+
+In the example you see some Qt specific keywords that we explain
+next.  [signals/slots, the connect statement, moc  s'inspirer
+du livre Qt ou du tutorial]
+
+The control flow in the example is now as follows. When you press the
+mouse button, a point is inserted in the triangulation.  The widget's
+method \ccc{redraw} is called. At the end it emits a signal, which is
+connected to the slot of \ccc{My_window::redraw_win()}. In this
+function the drawing if the Delaunay triangulation then finally
+happens.  Note that the very same happens automatically when you
+resize the window.
 
 \section{Layers}
 \label{Qt_widget_layers}
-\subsection{Using Layers to draw}
+\subsection{Using Layers to Draw}
 
 In the examples from the previous section the code for drawing on the
 widget was in the \ccStyle{redraw_win()} function. As soon as the
@@ -126,7 +163,7 @@ layers. All the layers derived from this base class
 \ccc{Qt_widget_layer} have the functionality described.
 
 
-\subsection{Example: Using A Layer to Draw}
+\subsection{Example: Using a Layer to Draw}
 \ccIncludeExampleCode{Qt_widget/basic/tutorial3/tutorial3.C}
 
 This example defines a class derived from
@@ -164,7 +201,7 @@ and to clean up when they are deactivated.
 
 \cgal\ provides some predefined input layers. You can have a lot of
 layers attached that could be active in the same time. You have to
-take care how you manage the events if you don't want to have
+take care how you manage the events if you do not want to have
 conflicts. A conflict is when two attached layers that are active need 
 both the same event and getting and using it might not have such a
 good effect in your application. For example the predefined layers that 
@@ -172,16 +209,16 @@ builds a new line and a new circle produce bad visual effects when are
 both active.
 
 You can resolve conflicts by using \ccc{layers} exclusive. If you have 
-n layers that can not be active in the same time without creating
-conflicts, you can resolve that by letting the user not to activate
-more than one of those n at one time.
+several layers that can not be active at the same time without creating
+conflicts, you can resolve that by letting the user not activate
+more than one of those at a time.
 
 \begin{ccAdvanced}
 In all the \cgal\ demos that are provided, the layers are used with a
 toolbar and buttons. To activate and deactivate a layer you have to
 click one of the toolbar buttons. There are layers that need exclusive 
-use. This is acomplished by grouping the buttons in one group, and
-making that group exclusive. The group class is QButtonGroup that
+use. This is accomplished by grouping the buttons in one group, and
+making that group exclusive. The group class is \ccc{QButtonGroup} that
 comes with \qt\ .
 \end{ccAdvanced}
 
@@ -202,11 +239,11 @@ creates a signal that gets passed to the connected slot
 
 \ccIncludeExampleCode{Qt_widget/Examples/layer.C}
 
-The \ccStyle{Qt_widget} forwards all event that receives to the
+The \ccStyle{Qt_widget} forwards all events that it receives to the
 attached and active layers. If a layer is attached but not active, it
-not gets the events. It is put in a passive state. Activating and
+does not get the events. It is put in a passive state. Activating and
 deactivating the layer does not mean that the object is destructed,
-you have to take care what should be the construction and destructin
+you have to take care what should be the construction and destruction
 code for your layers.
 
 \subsection{Example: How Layers Work}
@@ -276,10 +313,10 @@ The \ccStyle{Qt\_widget} allows to zoom and pan. This functionality is
 accessible through the class \ccStyle{Qt_widget_standard_toolbar}. The 
 example further down shows how to use it in your application.
 
-\begin{figure}
+\begin{figure}[h]
 \begin{ccTexOnly}
 \begin{center}
-\includegraphics{standard_toolbar.eps} 
+\includegraphics{./standard_toolbar.eps} 
 \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
@@ -536,7 +573,7 @@ Qt_widget::mousePressEvent(e);
 \end{ccExampleCode}
 It is the \ccc{Qt\_widget} that forward events to the attached
 layers. In order to forward the events, it should receive them
-first. So, if you are not using layers, and you don't need the
+first. So, if you are not using layers, and you do not need the
 \ccc{Qt\_widget} to handle this event, you should not use this line.
 You can experience more this feature in tutorial 5 were it is used the
 standard toolbar. Try to remove there this line to see what
@@ -706,8 +743,8 @@ widget->attach(&t);
 To receive the object that the layer creates, in the constructor of
 \ccc{My\_window}, we connect:
 \begin{ccExampleCode}
-connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), 
-            this, SLOT(get_object(CGAL::Object)));
+connect (widget, SIGNAL(new_cgal_object(CGAL::Object)), 
+         this, SLOT(get_object(CGAL::Object)));
 \end{ccExampleCode}
 In \ccc{My\_window} class the private slot
 \ccc{get\_object(CGAL::Object obj)} is declared. This is what you have
@@ -716,8 +753,8 @@ member function from \ccStyle{Qt\_widget}, that emits a signal
 \ccc{new\_cgal\_object(CGAL::Object)}. To receive this signal, in the
 constructor of \ccc{My\_window} a connect is declared:
 \begin{ccExampleCode}
-connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), 
-             this, SLOT(get_object(CGAL::Object)));
+connect (widget, SIGNAL(new_cgal_object(CGAL::Object)), 
+         this, SLOT(get_object(CGAL::Object)));
 \end{ccExampleCode}
 
 This connect tells the application that every time
@@ -808,8 +845,8 @@ get_point_but->setToggleButton(TRUE);
 The connection between the button and the layer is done in the
 following way, using the \ccc{stateChanged(int)} public slot of \ccc{Qt\_widget\_layer}:
 \begin{ccExampleCode}
-    connect(get_point_button, SIGNAL(stateChanged(int)),
-	    &get_point, SLOT(stateChanged(int)));
+connect (get_point_button, SIGNAL(stateChanged(int)),
+         &get_point, SLOT(stateChanged(int)));
 \end{ccExampleCode}
 \begin{ccAdvanced}
 This public slot was desinged to be used only with \qt\/ buttons. The
