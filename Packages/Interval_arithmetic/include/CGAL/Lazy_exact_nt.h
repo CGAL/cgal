@@ -320,6 +320,10 @@ to_interval(const Lazy_exact_nt<ET> & a)
     return a.approx();
 }
 
+// VC++ doesn't support partial overloading of function templates.
+// The other way would be to not define the global templates so that
+// they don't interfere with template NTs.
+#ifndef _MSC_VER
 // Note:  GCC 2.95 completely and silently ignores the catch block
 //        of _template_ function-try-blocks.  Later versions fix the bug. 
 namespace NTS {
@@ -370,12 +374,15 @@ square(const Lazy_exact_nt<ET> & a)
 
 } // namespace NTS
 
+#endif // _MSC_VER
+
 template <typename ET>
 inline
 Lazy_exact_nt<ET>
 sqrt(const Lazy_exact_nt<ET> & a)
 { return new Lazy_exact_Sqrt<ET>(a); }
 
+#ifndef _MSC_VER
 template <typename ET>
 inline
 Lazy_exact_nt<ET>
@@ -387,6 +394,7 @@ inline
 Lazy_exact_nt<ET>
 max(const Lazy_exact_nt<ET> & a, const Lazy_exact_nt<ET> & b)
 { return new Lazy_exact_Max<ET>(a, b); }
+#endif // _MSC_VER
 
 template <typename ET>
 std::ostream &
