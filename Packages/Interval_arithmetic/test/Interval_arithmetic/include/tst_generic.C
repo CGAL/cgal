@@ -148,15 +148,17 @@ int division_test()
 }
 
 
-// Here it's just to have a 100% coverage by the test-suite.
+// Here it's just to have a 100% coverage for the test-suite.
 
 int multiplication_test()
 {
-  IA a (-2,-1), b (-1,1), c;
-  IA d (-2,2), e (1,2), f (-2,-1), g, h;
+  const IA a (-2,-1), b (-1,1);
+  const IA d (-2,2), e (1,2), f (-2,-1);
+  IA c, g, h, i;
   c = a * b;
   g = d * e;
   h = d * f;
+  i = a * e;
 
   return -1;
 }
