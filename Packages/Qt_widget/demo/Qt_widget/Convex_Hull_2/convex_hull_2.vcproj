@@ -85,7 +85,7 @@
 				AdditionalOptions="$(CGALROOT)\lib\msvc7\CGAL.lib $(CGALROOT)\lib\msvc7\CGALQt.lib $(QTDIR)\lib\qt.lib $(QTDIR)\lib\qtmain.lib  $(CGALROOT)\lib\msvc7\gmp.lib wsock32.lib winmm.lib imm32.lib opengl32.lib glu32.lib"
 				OutputFile="$(OutDir)/convex_hull_2.exe"
 				LinkIncremental="1"
-				IgnoreDefaultLibraryNames="LIBC"
+				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -166,14 +166,16 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_move_list_point.moc Qt_widget_move_list_point.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_move_list_point.moc Qt_widget_move_list_point.h
+"
 						Outputs="Qt_widget_move_list_point.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_move_list_point.moc Qt_widget_move_list_point.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_move_list_point.moc Qt_widget_move_list_point.h
+"
 						Outputs="Qt_widget_move_list_point.moc"/>
 				</FileConfiguration>
 			</File>
@@ -183,14 +185,16 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_toolbar.moc Qt_widget_toolbar.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_toolbar.moc Qt_widget_toolbar.h
+"
 						Outputs="Qt_widget_toolbar.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_toolbar.moc Qt_widget_toolbar.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o Qt_widget_toolbar.moc Qt_widget_toolbar.h
+"
 						Outputs="Qt_widget_toolbar.moc"/>
 				</FileConfiguration>
 			</File>
@@ -200,14 +204,16 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o convex_hull_2.moc convex_hull_2.C"
+						CommandLine="$(QTDIR)/bin/moc.exe -o convex_hull_2.moc convex_hull_2.C
+"
 						Outputs="convex_hull_2.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o convex_hull_2.moc convex_hull_2.C"
+						CommandLine="$(QTDIR)/bin/moc.exe -o convex_hull_2.moc convex_hull_2.C
+"
 						Outputs="convex_hull_2.moc"/>
 				</FileConfiguration>
 			</File>
