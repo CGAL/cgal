@@ -185,7 +185,7 @@ public:
   iterator begin() { return iterator(first_item, 0, 0); } // , 0, 0
   iterator end()   { return iterator(last_item, 0); }
 
-  const_iterator begin() const { return const_iterator(first_item, 0, 0); } // , 0, 0
+  const_iterator begin() const { return const_iterator(first_item, 0, 0); }
   const_iterator end()   const { return const_iterator(last_item, 0); }
 
   reverse_iterator rbegin() { return reverse_iterator(end()); }
