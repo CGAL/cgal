@@ -1,3 +1,8 @@
+18 December 2004 Sylvain Pion
+- Rename makefile_Core simply "makefile".
+
+================================ CGAL 3.1 ============================
+
 14 November 2004 Efi Fogel
 - Replaced everything with the new version
 
