@@ -1,0 +1,6348 @@
+#!/bin/sh
+# ---------------------------------------------------------------------
+# A CGAL Installation Script Prototype 
+# ---------------------------------------------------------------------
+# $Id$
+# ---------------------------------------------------------------------
+# 
+# Copyright (c) 1998-2000 The CGAL Consortium
+#
+# This software and related documentation is part of the Computational
+# Geometry Algorithms Library (CGAL).
+#
+# This software and documentation is provided "as-is" and without warranty
+# of any kind. In no event shall the CGAL Consortium be liable for any
+# damage of any kind. 
+#
+# Every use of CGAL requires a license. 
+#
+# Academic research and teaching license
+# - For academic research and teaching purposes, permission to use and copy
+#   the software and its documentation is hereby granted free of charge,
+#   provided that it is not a component of a commercial product, and this
+#   notice appears in all copies of the software and related documentation. 
+#
+# Commercial licenses
+# - A commercial license is available through Algorithmic Solutions, who 
+#   also  markets LEDA (http://www.algorithmic-solutions.de). 
+# - Commercial users may apply for an evaluation license by writing to
+#   Algorithmic Solutions (contact@algorithmic-solutions.com). 
+#
+# The CGAL Consortium consists of Utrecht University (The Netherlands),
+# ETH Zurich (Switzerland), Free University of Berlin (Germany),
+# INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
+# (Germany) Max-Planck-Institute Saarbrucken (Germany), RISC Linz (Austria),
+# and Tel-Aviv University (Israel).
+#
+# ---------------------------------------------------------------------
+
+# ---------------------------------------------------------------------
+# some important global variables
+# ---------------------------------------------------------------------
+
+# ---------------------------------------------
+# CGAL specific:
+
+# ---------------------------------------------
+CGAL_VERSION='2.3'
+# ---------------------------------------------
+CGAL_INSTALL_CGAL="`basename ${0}`"
+# ---------------------------------------------
+CGAL_INSTALL_VERSION='$Revision$'
+# ---------------------------------------------
+CGAL_INSTALL_CONF_VERSION='1.1'
+# ---------------------------------------------
+CGAL_DIR=`pwd`
+
+# -------------------------------------------------------
+# several directories depend on the setting of CGAL_DIR
+# we put these into a function that can be called in case
+# that CGAL_DIR is changed later
+# -------------------------------------------------------
+set_dirs_dependant_on_cgal_dir()
+{
+    CGAL_EXAMPLE_DIR=${CGAL_DIR}/examples
+    CGAL_INCL_DIR=${CGAL_DIR}/include
+    CGAL_INCL_CONF_DIR=${CGAL_INCL_DIR}/CGAL/config
+    CGAL_LIB_DIR=${CGAL_DIR}/lib
+    CGAL_MAKE_DIR=${CGAL_DIR}/make
+    CGAL_SRC_DIR=${CGAL_DIR}/src
+    CGAL_TEST_DIR=${CGAL_DIR}/test
+    CGAL_CONF_DIR=${CGAL_DIR}/config
+    CGAL_AUX_DIR=${CGAL_DIR}/auxiliary
+    CGAL_INSTALL_CONF_DIR=${CGAL_CONF_DIR}/install
+    CGAL_TEST_CONF_DIR=${CGAL_CONF_DIR}/testfiles
+    CGAL_TESTFILE=${CGAL_TEST_DIR}/run_testsuite
+
+    # ---------------------------------------------
+    # logfile for testsuite:
+    TEST_LOGFILE=${CGAL_TEST_DIR}/error.txt
+
+    # ---------------------------------------------
+    # internal variables
+    # ---------------------------------------------
+
+    # installation logfile (verbose)
+    INSTALL_LOGFILE="${CGAL_DIR}/install.log"
+
+    # installation logfile (only completed compile/test runs)
+    # (Really Important Stuff)
+    INSTALL_RIS_LOGFILE=${CGAL_DIR}/install.completed
+    
+    # compilation logfile
+    COMPILE_LOGFILE=${CGAL_DIR}/compile.log
+    
+    # logfile for temporary use (e.g. compiler tests)
+    TMP_LOGFILE=${CGAL_DIR}/tmptmp.log
+    
+    # temporary file for confidence tests
+#    TMP_CXX_FILE=${CGAL_DIR}/tmp_test [why?]
+    TMP_CXX_FILE=./tmp_test
+}
+
+# initialize once
+set_dirs_dependant_on_cgal_dir
+
+
+# ---------------------------------------------
+# set to non-empty, if you want to view the logs of 
+# ALL failed tests
+INSTALL_VERBOSE=''
+
+# ---------------------------------------------
+# prefix of CGAL compiler specific configuration flags
+CGAL_CONFIG_PREFIX='CGAL_CFG_'
+
+# ---------------------------------------------
+# set to empty string, if you want to disable testsuite 
+INTERNAL_RELEASE='y'
+
+# ---------------------------------------------
+# set to non-empty string, if MIPSPRO 64 compiler
+# is to be supported
+SUPPORT_MIPSPRO_64='y'
+
+# ---------------------------------------------
+# the directory of an existing CGAL installation
+# we want to upgrade 
+UPGRADE_FROM=''
+
+# ---------------------------------------------
+# LEDA specific:
+
+# suffix for include makefile:
+# toggles the use of LEDA: ('' - no LEDA, '_LEDA' - LEDA)
+LEDA_SUPPORT=''
+
+# directories for LEDA
+LEDA_INCL_DIR=''
+LEDA_LIB_DIR=''
+
+# do we have to provide extra incl/lib flags for LEDA('y') 
+# is it installed in standard system dirs(''),
+# or do we want to provide extra incl/lib flags, although it is
+# installed in sysdirs ('x')?
+# set to 'n', if this has not been tested yet
+NEED_EXTRA_LEDA_IDIR='y'
+NEED_EXTRA_LEDA_LDIR='y'
+
+# did LEDA tests succeed ('' - no, 'y' - yep)
+LEDA_TEST_PASSED=''
+
+# ---------------------------------------------
+# GMP specific:
+#
+
+# version of gmp shipped with CGAL:
+GMP_VERSION='gmp-2.0.2'
+
+# toggles use of GMP ('' - no, '_GMP' - use it)
+GMP_SUPPORT=''
+
+# indicate whether GMP is installed 
+# ('' - didn't try, 
+# 's' - in sysdirs, no flags necessary, 
+# 'e' - we need compiler/linker flags and GMP_INCL_DIR/GMP_LIB_DIR for this,
+# 'x' - in sysdirs, but specify GMP_INCL_DIR/GMP_LIB_DIR anyway
+# 'c' - in the cgal tree,
+# 'z' - in the cgal tree, but specify GMP_INCL_DIR/GMP_LIB_DIR anyway)
+GMP_INSTALLATION=''
+GMP_INCL_DIR=''
+GMP_LIB_DIR=''
+
+# did GMP tests succeed ('' - no, 'y' - yep)
+GMP_TEST_PASSED=''
+
+# ---------------------------------------------
+# CLN specific:
+#
+
+# version of CLN shipped with CGAL:
+CLN_VERSION='cln-1.0.1'
+
+# toggles use of CLN ('' - no, '_CLN' - use it)
+CLN_SUPPORT=''
+
+# indicate whether CLN is installed 
+# ('' - didn't try, 
+# 's' - in sysdirs, no flags necessary, 
+# 'e' - we need compiler/linker flags and CLN_INCL_DIR/CLN_LIB_DIR for this,
+# 'x' - in sysdirs, but specify CLN_INCL_DIR/CLN_LIB_DIR anyway
+# 'c' - in the cgal tree,
+# 'z' - in the cgal tree, but specify CLN_INCL_DIR/CLN_LIB_DIR anyway)
+CLN_INSTALLATION=''
+CLN_INCL_DIR=''
+CLN_LIB_DIR=''
+
+# did CLN tests succeed ('' - no, 'y' - yep)
+CLN_TEST_PASSED=''
+
+# ---------------------------------------------
+# QT specific:
+#
+
+# toggles use of QT ('' - no, '_QT' - use it)
+QT_SUPPORT=''
+
+# directories for QT
+QT_DIR=''
+QT_INCL_DIR=''
+QT_LIB_DIR=''
+
+# Qt Meta Object Compiler
+QT_MOC=''
+
+# Qt advanced mode ('' - basic mode, 'y' - advanced mode)
+QT_ADVANCED_MODE=''
+
+# do we have to provide extra incl/lib flags for Qt('y') 
+# is it installed in standard system dirs(''),
+# or do we want to provide extra incl/lib flags, although it is
+# installed in sysdirs ('x')?
+# set to 'n', if this has not been tested yet
+NEED_EXTRA_QT_IDIR='y'
+NEED_EXTRA_QT_LDIR='y'
+# do we have to provide a path for moc
+# or is it in $PATH (''),
+# or do we want to provide a path for moc, although it is in
+# the path ('x')
+# set to 'n', if this has not been tested yet
+NEED_EXTRA_QTMOC='y'
+# do we have to provide an extra QTDIR ('y') 
+# or is it in environment (''),
+# or do we want to provide extra QTDIR, although it is defined
+# in the environment
+# set to 'n', if this has not been tested yet
+NEED_EXTRA_QTDIR='y'
+
+# did QT tests succeed ('' - no, 'y' - yep)
+QT_MOC_TEST_PASSED=''
+QT_TEST_PASSED=''
+
+# indicate whether there is a "long name problem" on 
+# the current platform
+LONG_NAME_PROBLEM=''
+
+# ---------------------------------------------------------------------
+# internal variables
+# ---------------------------------------------------------------------
+
+# width of menu screen / 10 (in characters)
+_MENU_WIDTH=6 
+
+# left indentation of menu
+_LEFTSPACE='  '             
+
+# installation logfile (verbose)
+INSTALL_LOGFILE_REDIRECTION='>/dev/null'
+
+
+# compiler to be used 
+# This is a string defined as follows:
+# <BASENAME>@<DESCRIPTION>@<CC_EXECUTABLE>@<CXX_EXECUTABLE>@<VERSION_ID>@<LEDA>
+# The components can be accessed using the functions:
+#   compiler_basename, (extended_)compiler_description,
+#   c_compiler_bin, compiler_bin and compiler_version
+# The strings are set in search_for_compilers resp. compiler_absolute
+COMPILER=''
+
+# indicates whether the compiler is supported by CGAL or not
+# empty <=> unsupported
+CGAL_SUPPORT_COMPILER=''
+
+# string defining OS and compiler
+# (used for naming makefiles and lib directories)
+CGAL_OS_COMPILER=''
+
+# can we start building the libs?
+SETUP_COMPLETE=''
+
+# has compiler config test been run ('' - no, 'y' - yep)
+CONFIG_TEST_PASSED=''
+
+# does there exist a CGALlib for this compiler?
+LIB_COMPILED=''
+
+# Was there any successfull compile run during this session?
+ANY_LIB_COMPILED=''
+
+# custom options for compiler/linker:
+CUSTOM_CXXFLAGS=''
+CUSTOM_LDFLAGS=''
+
+
+# ---------------------------------------------------------------------
+# How to use this script
+# ---------------------------------------------------------------------
+print_general_information()
+{
+    ${_printf} "%s\n\n" \
+"You can get a list of all options with \"${CGAL_INSTALL_CGAL} --help\"
+
+First-time-installers: 
+----------------------
+Just type \"${CGAL_INSTALL_CGAL} -i\" and follow the menus.
+If you get stuck, please read the documentation."
+}
+
+print_usage_information()
+{
+	${_printf} "%s\n\n" \
+"usage: ${CGAL_INSTALL_CGAL}
+      [--help | --version | -i | --interactive | -u <dir> | 
+       --upgrade <dir> | --build-all | --rebuild-all |
+       -ni <comp> | --non-interactive <comp> | -os <comp>]
+      [-leda] [-gmp] [-cln] [-qt] [--verbose]
+      [--CGAL_DIR <dir>] [--leda-sys-incl] [--leda-sys-lib]
+      [--LEDA_INCL_DIR <dir>] [--LEDA_LIB_DIR <dir>]
+      [--GMP_INCL_DIR <dir>] [--GMP_LIB_DIR <dir>]
+      [--CLN_INCL_DIR <dir>] [--CLN_LIB_DIR <dir>]
+      [--QT_DIR <dir] [--QT_INCL_DIR <dir>] 
+      [--QT_LIB_DIR <dir>] [--QT_MOC <exe>]
+      [--CUSTOM_CXXFLAGS <flags>] [--CUSTOM_LDFLAGS <flags>]
+
+  -leda        enables LEDA support
+  -gmp         enables support for GNU GMP
+  -cln         enables support for CLN
+  -qt          enables support for Qt
+  --verbose    give report for each test that fails
+               (not generally recommended)
+  --help       gives this message
+  --version    prints ${CGAL_INSTALL_CGAL} version number
+  --interactive  
+               runs the script in interactive mode
+               (other options - except for --CGAL_DIR - are ignored)
+  --upgrade <dir>
+               runs the script in upgrade mode
+	       Use this option, if you upgrade from CGAL-1.*/2.0
+	       and supply the directory where CGAL is installed
+	       on your system.
+	       The config/install files and GMP installations will 
+	       be copied from there.
+  --rebuild-all
+	       (Re)build compiler configuration files and libraries
+	       for all compilers for which a config/install file
+	       exists.
+  --non-interactive <comp>   
+               runs the script in non-interactive mode
+               i.e. makefiles are generated for C++ compiler
+               specified by <comp>.
+               For the rest you are on your own.
+               (Have a look at the README file.)
+  -os <comp>   prints architecture/os/compiler spec"
+}
+
+# ---------------------------------------------------------------------
+# exit with error message "$*"
+# ---------------------------------------------------------------------
+exit_on_error()
+{
+    ${_printf} "\n%s\n" \
+	"==================================================="
+    ${_printf} "%s" "ERROR: ${1}"
+    shift
+    while [ ${#} -gt 0 ]; do
+	${_printf} "\n\t%s" "${1}"
+	shift
+    done
+    ${_printf} "%s\n" ", exiting."
+    ${_printf} "%s\n" \
+	"==================================================="
+    exit 1
+}
+
+
+# ---------------------------------------------------------------------
+# system related functions:
+# ---------------------------------------------------------------------
+
+# print the value of variable $1
+value_of()
+{
+    _value=`eval "${_printf} '$'$1"`
+    eval "${_printf} \"%s\" \"${_value}\""
+}
+
+# print the value of variable $1, except for the first occurrence 
+# of the regexps $2 - $n
+value_of_without()
+{
+    _tmp=`value_of "$1"`
+    while [ $# -gt 1 ]; do
+	_tmp=`${_printf} "${_tmp}\n" | ${_sed} "s/${2}//1"`
+	shift
+    done
+    ${_printf} "%s" "${_tmp}"
+}
+
+# (/usr)/bin/which is completely STUPID
+# it looks at ~/.cshrc and reports aliases 
+# that do not exist, if you run a shell other than csh
+# so it's us who have to do the work again :)
+# needs awk!
+real_which()
+{
+    for i in `echo ${PATH} | sed 's/ //g' | awk 'BEGIN {RS=":"}{print $0}'`
+    do
+	i=`echo $i | sed 's// /g'`
+	if [ -x "${i}/$1" ]; then
+	    echo ${i}/$1
+	    return 
+	fi
+    done
+}
+
+# basename/dirname is somewhat nasty when having options like:
+# /<path>/<cmd> -<opt1> ... -<optn>
+_real_basename()
+{
+    ${_basename} "`${_printf} \"${*}\" | ${_awk} '{ printf \"%s\",$1; for (i=2; i<=NF; ++i) if (substr($i,0,1) != \"-\") printf \"%s\",$i }'`"
+}
+
+_real_dirname()
+{
+    ${_dirname} "`${_printf} \"${*}\" | ${_awk} '{ printf \"%s\",$1; for (i=2; i<=NF; ++i) if (substr($i,0,1) != \"-\") printf \"%s\",$i }'`"
+}
+
+_real_options()
+{
+    ${_printf} "${*}" | ${_awk} '{ for (i=2; i<=NF; ++i) if (substr($i,0,1) == "-") printf "%s",$i }'
+}
+
+# print to logfile
+log_print()
+{
+    eval "${_printf} \"%s\n\" \"$*\" ${INSTALL_LOGFILE_REDIRECTION}"
+}
+
+# checks for existency of program $1 
+# and set variable _$3 to its full path 
+# ($3 defaults to $1 if not specified)
+# (if $2 is 'y', exit if it is not existent,
+# otherwise return 0, iff it exists)
+_check_for_util()
+{
+    _tmp="`${_which} $1`"
+    if [ -x "${_tmp}" ]; then
+	eval "_${3:-$1}=\"${_tmp}\"" 
+    elif [ "$2" = "y" ]; then
+	exit_on_error "Couldn't find \"${1}\""
+    else
+	log_print "WARNING: Couldn't find $1." 
+	return 1
+    fi
+    _tmp="echo $\_`echo ${3:-$1}`"
+    _tmp=`eval "${_tmp}"`
+    _tmp=`eval "echo ${_tmp}"`
+    log_print "$1 is ${_tmp}." 
+    return 0
+}
+
+# same as _check_for_util above except that it searches
+# in /bin and /usr/bin first
+_check_for_sysutil()
+{
+    if [ -x /bin/$1 ]; then 
+	eval "_$1=/bin/$1" 
+    elif [ -x /usr/bin/$1 ]; then 
+	eval "_$1=/usr/bin/$1" 
+    else
+	_check_for_util ${*}
+	return $?
+    fi
+    _tmp="echo $\_`echo ${3:-$1}`"
+    _tmp=`eval "${_tmp}"`
+    _tmp=`eval "echo ${_tmp}"`
+    log_print "$1 is ${_tmp}." 
+    return 0
+}
+
+# exit, if we have no read permission for $1
+_check_read()
+{
+    if [ ! -r "$1" ]; then
+	exit_on_error "Cannot read \"$1\""
+    fi
+}
+
+# exit, if we have no execute permission for $1
+_check_execute()
+{
+    if [ ! -x "$1" ]; then
+	exit_on_error "Cannot execute \"$1\""
+    fi
+}
+
+# exit, if we have no write permission for $1
+_check_write()
+{
+    if [ ! -w "$1" ]; then
+	exit_on_error "Cannot write to \"$1\""
+    fi
+}
+
+# exit, if there is no directory $1 or it is not readable and executable
+_check_dir_exists()
+{
+    if [ ! -d "$1" ]; then
+	exit_on_error "Directory \"$1\" does not exist"
+    fi
+    _check_read ${1}
+    _check_execute ${1}
+}
+
+# check, whether there is a directory $1 (if not create it)
+# and make sure, you have read/write/execute permission
+_check_dir_exists_create()
+{
+    if [ ! -d "${1}" ]; then
+	log_print \
+	    "WARNING: Directory ${1} does not exist, it will be created."
+	${_mkdir} -p ${1}
+    fi
+    _check_read ${1}
+    _check_write ${1}
+    _check_execute ${1}
+}
+
+# check some very basic stuff
+initial_check()
+{
+    _check_dir_exists ${CGAL_DIR}
+    _check_write ${CGAL_DIR}
+    for i in ${TMP_LOGFILE} ${TMP_CXX_FILE} ${INSTALL_RIS_LOGFILE} \
+	${INSTALL_LOGFILE}; do
+	if [ -f "${i}" ]; then
+	    ${_rm} -f ${i}
+	fi
+    done
+}
+
+# fetch CGAL version id from ${CGAL_INCL_DIR}/CGAL/config.h
+# and compiler-testsuite version id 
+# from ${CGAL_TEST_CONF_DIR}/CGAL_CFG_NO_ITERATOR_TRAITS.C
+get_cgal_version()
+{
+    # this file is assumed to contain one line matching "CGAL_VERSION "
+    # where the third field describes the CGAL version
+    FILE="${CGAL_INCL_DIR}/CGAL/config.h"
+    _check_read ${FILE}
+    CGAL_VERSION=`${_fgrep} "CGAL_VERSION " ${FILE} | \
+	${_awk} '{printf "%s",$3}'`
+    
+    # this file is assumed to contain one line matching "revision "
+    # where the fourth field describes the compiler-testsuite version
+    FILE="${CGAL_TEST_CONF_DIR}/CGAL_CFG_NO_ITERATOR_TRAITS.C"
+    _check_read ${FILE}
+    CGAL_INSTALL_CONF_VERSION=`${_fgrep} 'revision ' ${FILE} | \
+	${_awk} '{printf "%s",$4}'`
+    log_print "CGAL version is ${CGAL_VERSION}."
+    log_print \
+	"Install Testsuite version is ${CGAL_INSTALL_CONF_VERSION}."
+}
+
+# initialize the logfiles
+init_logfiles()
+{
+    ${_printf} "%s\n" \
+	"----------------------------------------------------------" \
+	>${INSTALL_LOGFILE}
+    log_print "log of $0 $*" 
+    log_print "called by $LOGNAME on `date`" 
+    log_print "CGAL_DIR is ${CGAL_DIR}" 
+    log_print "----------------------------------------------------------" 
+    ${_printf} "${_LEFTSPACE}%s\n" \
+	"----------------------------------------------------------" \
+	>${INSTALL_RIS_LOGFILE}
+    ${_printf} "%s\n" \
+	"${_LEFTSPACE}You built CGAL ${CGAL_VERSION} on:" \
+	>>${INSTALL_RIS_LOGFILE}
+    ${_printf} "${_LEFTSPACE}%s\n" \
+	"----------------------------------------------------------" \
+	>>${INSTALL_RIS_LOGFILE}
+}
+
+# first do a confidence test, if ${CGAL_DIR} is really 
+# the CGAL directory
+# check ${CGAL_CONF_DIR}: create it, if not existent
+check_conf_dir()
+{
+    # confidence tests
+    case `${_basename} ${CGAL_DIR}` in
+	CGAL*) 
+	    log_print "Confidence test passed."
+	    ;;
+	*)
+	    exit_on_error "The name of this directory" \
+		"does not start with \"CGAL\""
+	    ;;
+    esac
+    _check_dir_exists ${CGAL_MAKE_DIR}
+    _check_dir_exists ${CGAL_SRC_DIR}
+    _check_dir_exists ${CGAL_INCL_DIR}
+    _check_dir_exists ${CGAL_LIB_DIR}
+    _check_dir_exists ${CGAL_CONF_DIR}
+    _check_dir_exists ${CGAL_TEST_CONF_DIR}
+    _check_dir_exists_create ${CGAL_INSTALL_CONF_DIR}
+}
+
+# print the version number of this file
+# (in an RCS Revision string this is field nr two)
+_install_version_number()
+{
+    ${_printf} "%s\n" "${CGAL_INSTALL_VERSION}" | ${_awk} '{print $2}'
+}
+
+# check, if all needed utility programs are available
+# (they should be on a unix system, but ...)
+check_for_utils()
+{
+    _which=real_which
+    _check_for_sysutil basename y
+    _check_for_sysutil dirname y
+    _check_for_sysutil uname y
+    _check_for_sysutil printf y
+    _check_for_sysutil cat y
+    _check_for_sysutil cp y
+    _check_for_sysutil mv y
+    _check_for_sysutil rm y
+    _check_for_sysutil ln y
+    _check_for_sysutil ls y
+    _check_for_sysutil chmod y
+    _check_for_sysutil mkdir y
+    _check_for_sysutil fgrep y
+    _check_for_sysutil sed y
+    _check_for_sysutil awk y
+    _check_for_sysutil tee y
+    _check_for_sysutil find y
+    if [ -n "${PAGER}" -a ! -x "${PAGER}" ]; then
+	_check_for_sysutil `$_basename ${PAGER}` y
+	PAGER=`eval "echo \$\_$PAGER"`
+	PAGER=`eval "echo ${PAGER}"`
+    fi
+    CGAL_INSTALL_VERSION=`_install_version_number`
+    log_print "This is ${CGAL_INSTALL_CGAL} version ${CGAL_INSTALL_VERSION}."
+}
+
+# guess operating system, write logs via $1
+# set SYST to [architecture]_[os][os-version]
+# try to get architecture from uname -p,
+# if this fails (e.g. on some linux systems), try uname -m
+# if this also fails, leave architecture blank
+guess_os()
+{
+    _tmp=`${_uname} -p 2>/dev/null`
+    if [ -z "${_tmp}" -o "${_tmp}" = 'unknown' ]; then
+	_tmp=`${_uname} -m 2>/dev/null`
+    fi
+    if [ -n "${_tmp}" ]; then
+	_tmp=${_tmp}"_"
+    else
+	$1 "WARNING: Could not determine architecture."
+    fi
+    SYST="${_tmp}`${_uname} -s | ${_sed} 's/_//g'`-`${_uname} -r | ${_sed} 's/(.*)//g' | ${_awk} '{print $1}'`"
+    $1 "OS is \"${SYST}\"." 
+}
+
+# -------------------------------------------------------------------
+# compiler related functions:
+# -------------------------------------------------------------------
+
+
+# give version numbers for GNU GCC
+# NB: truncated to *.*.* (three numbers)
+# since we don't want to make a difference between 2.7.2.*
+# ($* is full path to executable)
+_gpp_version()
+{
+    ${_printf} "%s" \
+	"`${*} --version 2>&1 | ${_awk} '{print $1}' | \
+	${_awk} 'BEGIN {FS=\".\"}
+		{print $1\".\"$2\".\"$3}'`"
+}
+
+# give version numbers for Borland C++
+# ($* is full path to executable)
+_borland_version()
+{
+    ${_printf} "%s" \
+    "`${*} | head -1 | ${_awk} '{print $3}'`"
+}
+
+# give version numbers for Microsoft Visual C++
+# ($* is full path to executable)
+_microsoft_vc_version()
+{
+    ${_printf} "%s" \
+    "`${*} 2>&1 | head -1 | ${_awk} '{print $7,$8}' | \
+		${_sed} 's/, fuer//;s/Version //'`"
+}
+
+# give version numbers for SUNPRO CC
+# ($* is full path to executable)
+_sunpro_version()
+{
+    _tmp="`$* -V 2>&1 | ${_fgrep} \"C++\" | ${_awk} '{print $9}'`"
+    if [ -n "${_tmp}" ]; then
+	# sunpro 4.2
+	${_printf} "%s" "${_tmp}" 
+    else
+	# sunpro 4.1
+	$* -V 2>&1 | ${_fgrep} "C++" | ${_awk} '{print $NF}'
+    fi
+}
+
+# give version numbers for KAI C++ (KCC)
+# ($* is full path to executable)
+_kcc_version()
+{
+    TMP_KCC_FILE=./tmp_kcc.C
+    ${_printf} "%s\n" "int main() {return 0;}" > ${TMP_KCC_FILE}
+    _tmp="`$* --version ${TMP_KCC_FILE} 2>&1 | ${_fgrep} \"KAI C++\" | ${_awk} '{print $3}'`"
+    ${_printf} "%s" "${_tmp}" 
+    ${_rm} -f ${TMP_KCC_FILE}
+}
+
+# give version numbers for IRIX MIPSPRO CC
+# ($* is full path to executable)
+_sgi_version()
+{
+    case ${SYST} in
+	*IRIX*5.*)
+	    ${_printf} "%s" \
+		"`${_versions} -b c++_dev | ${_fgrep} c++_dev | \
+		${_awk} '{print $5}'`"
+	    ;;
+	*IRIX*6.*)
+	    # CC -version should be fine
+	    if ${*} -version >/dev/null 2>&1; then
+		 ${*} -version 2>&1 | ${_awk} '{print $(NF)}'
+	    else
+	    # ... but not for CC -32
+		# use versions - looks either like this:
+		# I  c++_dev              03/11/97  C++, 7.1
+		# (version nr on position 5)
+		# or like that:
+		# I  c++_dev              11/27/97  C++ Headers and Libraries, 7.2 on irix 6.2
+		# (version nr on position 8)
+		_tmp="`${_versions} -b c++_dev | ${_fgrep} c++_dev | \
+		    ${_awk} '{print $5}'`"
+		if [ "${_tmp}" = "Headers" ]; then
+		    ${_versions} -b c++_dev | ${_fgrep} c++_dev | \
+			${_awk} '{print $8}'
+		else
+		    ${_printf} "%s" "${_tmp}" 
+		fi
+	    fi
+	    ;;
+    esac
+}
+
+# return the cmdline-switch to add directory variable $1 
+# to the runtime linker path of current compiler
+rpath_directive()
+{
+    if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
+	${_printf} "%s" "${RUNTIME_LINKER_FLAG}"
+	_where_is "${1}"
+    fi
+}
+
+# --------------------------------------------------------------------
+# Now the new function to create the include makefile
+# for compiler/os combination CGAL_OS_COMPILER
+set_compiler_flags()
+{
+    # set some compiler/os specific variables
+
+    # defaults:
+    ADDITIONAL_CXXFLAGS=""
+    ADDITIONAL_LDFLAGS=""
+    LONG_NAME_PROBLEM_LDFLAGS=""
+    CGAL_LIB_CXXFLAGS=""
+    CGAL_LIB_LDFLAGS=""
+    CGAL_LIB_CREATE="ar cr ''"
+    CGAL_OBJ_PREFIX=""
+    CGAL_SHARED_LIB_CXXFLAGS="-fpic"
+    CGAL_SHARED_LIB_LDFLAGS=
+    CGAL_SHARED_LIB_CREATE="false"
+    WINDOW_DIR="/usr/lib/X11"
+    XLIBS="-lX11"
+    RUNTIME_LINKER_FLAG=''
+    PRINT_STACKTRACE_PROGRAM=
+    WINDOWS_COMPILER=""
+    SUFFIX_LIST=
+    OBJ_EXT=".o"
+    OBJ_OPT="-c"
+    LIB_SUFFIX=""
+    REMOVE_EXT_LIST=".o"
+    LIB_OPT="-l"
+    LEDA_LIB_OPT='-l'
+    LIBPATH_OPT="-L"
+    DEBUG_OPT="-g"
+    EXE_OPT="-o "
+    SAVE_THE_BLANK=""
+    EXE_EXT=""
+    CGAL_LIBNAME="libCGAL.a"
+    GMP_LIBNAME="libgmp.a"
+    MATH_LIB="m"
+    SEPARATE_LIBPATH=""
+    START_LD_OPT=""
+    CGAL_CXX="`compiler_bin`"
+    LIB_CREATION_COMMANDS=""
+
+    case ${CGAL_OS_COMPILER} in
+	*bcc32.exe*|*BCC32*)
+	    #### settings Borland C++ compiler 
+	    ADDITIONAL_CXXFLAGS="-P -vi- -w-inl"
+	    CGAL_LIB_CXXFLAGS="-P"
+	    CGAL_LIB_CREATE="tlib /C /P512 ''"
+	    CGAL_OBJ_PREFIX="+"
+	    WINDOW_DIR=""
+	    XLIBS=""
+	    WINDOWS_COMPILER="y"
+	    SUFFIX_LIST=".obj .exe"
+	    OBJ_EXT=".obj"
+	    LIB_SUFFIX=".lib"
+	    REMOVE_EXT_LIST=".obj .tds"
+	    LIB_OPT=""
+            LEDA_LIB_OPT="lib"
+	    DEBUG_OPT=""
+	    EXE_OPT="-e"
+	    EXE_EXT=".exe"
+	    CGAL_LIBNAME="CGAL.lib"
+	    GMP_LIBNAME="gmp.lib"
+	    MATH_LIB=""
+	    SEPARATE_LIBPATH="y"
+            LIB_CREATION_COMMANDS="tlib @borland_lib_creation"
+	    ;;
+	*CL.*|*cl.*)
+	    #### settings Microsoft Visual C++ compiler 
+	    WINDOWS_COMPILER="y"
+	    ADDITIONAL_CXXFLAGS="-TP -GR -GX -Zm900 -nologo"
+	    ADDITIONAL_LDFLAGS="-nologo"
+#	    CGAL_LIB_CXXFLAGS="-TP"
+	    CGAL_LIB_CREATE="LIB /OUT:"
+	    CGAL_SHARED_LIB_CXXFLAGS=
+	    CGAL_SHARED_LIB_CREATE=
+	    WINDOW_DIR=
+	    XLIBS="ws2_32.lib user32.lib gdi32.lib comdlg32.lib shell32.lib advapi32.lib"
+	    SUFFIX_LIST=".obj .exe"
+	    OBJ_EXT=".obj"
+	    LIB_SUFFIX=".lib"
+	    REMOVE_EXT_LIST=".obj"
+	    LIB_OPT=""
+            LEDA_LIB_OPT="lib"
+	    LIBPATH_OPT="-LIBPATH:"
+	    DEBUG_OPT="-Z7"
+	    EXE_OPT="-Fp"
+	    EXE_EXT=".exe"
+	    CGAL_LIBNAME="CGAL.lib"
+	    GMP_LIBNAME="gmp.lib"
+	    MATH_LIB=
+	    START_LD_OPT="-link "
+	    ;;
+	*IRIX*5.*CC*)
+	    #### settings for sgi mipspro compiler on irix5
+	    CGAL_SHARED_LIB_CXXFLAGS=
+	    CGAL_SHARED_LIB_LDFLAGS="-lm"
+	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
+	    RUNTIME_LINKER_FLAG="-rpath "
+	    PRINT_STACKTRACE_PROGRAM="dbx"
+	    ;;
+	*IRIX*6.*CC*7.3*)
+	    #### settings for sgi mipspro compiler V7.3 on irix6
+	    ADDITIONAL_CXXFLAGS="-LANG:std"
+	    ADDITIONAL_LDFLAGS="-LANG:std"
+	    CGAL_SHARED_LIB_CXXFLAGS=
+	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
+	    RUNTIME_LINKER_FLAG="-rpath "
+	    PRINT_STACKTRACE_PROGRAM="dbx"
+	    ;;
+	*IRIX*6.*CC*)
+	    #### settings for sgi mipspro compiler on irix6
+	    CGAL_SHARED_LIB_CXXFLAGS=
+	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
+	    RUNTIME_LINKER_FLAG="-rpath "
+	    PRINT_STACKTRACE_PROGRAM="dbx"
+	    ;;
+	*IRIX*g++*)
+	    #### settings for egcs/gcc2.8 on irix
+	    ADDITIONAL_CXXFLAGS="-Wall"
+	    LONG_NAME_PROBLEM_LDFLAGS="-U -s"
+	    CGAL_SHARED_LIB_LDFLAGS="-lm"
+	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
+	    RUNTIME_LINKER_FLAG="-rpath "
+	    PRINT_STACKTRACE_PROGRAM="gdb"
+	    ;;
+        *SunOS*5.*KCC*)
+            #### settings for KAI C++ compiler on solaris
+            ADDITIONAL_CXXFLAGS="--one_instantiation_per_object"
+            CGAL_LIB_CREATE="\$(CGAL_CXX) -o ''"
+            CGAL_SHARED_LIB_CXXFLAGS="-Kpic"
+            CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
+            WINDOW_DIR="/usr/openwin/lib"
+            RUNTIME_LINKER_FLAG="-R "
+            PRINT_STACKTRACE_PROGRAM="dbx"
+	    SAVE_THE_BLANK="\$(SAVESTHEBLANK)"
+            ;;
+	*SunOS*5.*CC*)
+	    #### settings for sunpro compiler on solaris
+	    ADDITIONAL_CXXFLAGS="-pto"
+	    CGAL_LIB_CREATE="\$(CGAL_CXX) -xar -o ''"
+	    CGAL_SHARED_LIB_CXXFLAGS="-pic"
+	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
+	    WINDOW_DIR="/usr/openwin/lib"
+	    RUNTIME_LINKER_FLAG="-R "
+	    PRINT_STACKTRACE_PROGRAM="dbx"
+	    ;;
+	*SunOS*5.*g++*)
+	    #### settings for egcs/gcc2.8 on solaris
+	    ADDITIONAL_CXXFLAGS="-Wall"
+	    LONG_NAME_PROBLEM_LDFLAGS="-z nodefs -s"
+	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
+	    WINDOW_DIR="/usr/openwin/lib"
+	    RUNTIME_LINKER_FLAG="-R "
+	    PRINT_STACKTRACE_PROGRAM="gdb"
+	    ;;
+         *alpha*Linux*g++*)
+             #### settings for g++ on alpha-linux (special FPU handling)
+             #### LONG_NAME_PROBLEM is cured by disabling debugging
+             ADDITIONAL_CXXFLAGS="-Wall -mieee -mfp-rounding-mode=d"
+             CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -Xlinker -shared"
+             WINDOW_DIR="/usr/X11R6/lib"
+             RUNTIME_LINKER_FLAG='-Wl,-R'
+             PRINT_STACKTRACE_PROGRAM="gdb"
+             ;;
+	*Linux*g++*)
+	    #### settings for egcs/gcc2.8 on linux
+	    ADDITIONAL_CXXFLAGS="-Wall"
+	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -Xlinker -shared"
+	    WINDOW_DIR="/usr/X11R6/lib"
+	    RUNTIME_LINKER_FLAG='-Wl,-R'
+	    PRINT_STACKTRACE_PROGRAM="gdb"
+	    ;;
+	*CYGWIN*g++-egcs*)
+	    #### settings for egcs/gcc2.8 on linux
+	    ADDITIONAL_CXXFLAGS="-Wall -D__STL_NO_DRAND48"
+	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -Xlinker -shared"
+	    WINDOW_DIR=
+	    XLIBS="-luser32 -lgdi32 -lcomdlg32 -lshell32"
+	    PRINT_STACKTRACE_PROGRAM="gdb"
+	    EXE_EXT=".exe"
+	    ;;
+	*CYGWIN*g++*)
+	    #### settings for gcc-2.95.2 on Cygwin
+	    ADDITIONAL_CXXFLAGS="-Wall"
+	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -Xlinker -shared"
+	    WINDOW_DIR=
+	    XLIBS="-luser32 -lgdi32 -lcomdlg32 -lshell32"
+	    PRINT_STACKTRACE_PROGRAM="gdb"
+	    EXE_EXT=".exe"
+	    ;;
+	*)
+	    #### settings for unknown compiler 
+	    CGAL_SHARED_LIB_CREATE="`compiler_bin` -G"
+	    ;;
+    esac
+    # version specific adjustments for gcc
+    case `compiler_description` in
+	*GNU*) 
+	    case `compiler_version` in
+		egcs*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} -ftemplate-depth-25";;
+		2.*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} -ftemplate-depth-25";;
+	    esac
+	    ;;
+    esac
+    # version specific adjustments for msvc
+    case ${CGAL_OS_COMPILER} in
+	*CL.*-13.*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} `include_dir_option ${CGAL_DIR}/include/compilers/vc7`";;
+	*CL.*|*cl.*) ADDITIONAL_CXXFLAGS="${ADDITIONAL_CXXFLAGS} `include_dir_option ${CGAL_DIR}/stlport`";;
+    esac
+}
+
+# --------------------------------------------------------------------------
+# Following code is taken from make_redirection_headers
+# (by Geert-Jan <geert@cs.uu.nl>)
+
+#
+# internal variables from make_redirection_headers
+#
+
+tmp_code_file=redirect_tmpfile.C
+tmp_header_file=redirect_tmpfile
+
+# this function is used to add symbols to namespace std
+# (that should be present, but are not due to compiler/stdlib bugs)
+print_using()
+{
+    _tmp=${1}
+    shift
+    ${_printf} "\n%s\n" \
+	"#if defined(CGAL_CFG_NO_STD${_tmp}_NAMESPACE) && !defined(CGAL_NO_STD${_tmp}_NAMESPACE)"
+    ${_printf} "\n%s\n" "namespace std {"
+    for i in ${*}; do
+	${_printf} "\t%s\n" "using ::${i};"
+    done
+    ${_printf} "%s\n" "}"
+    ${_printf} "\n%s\n" \
+	"#endif // CGAL_CFG_NO_STD${_tmp}_NAMESPACE && !CGAL_NO_STD${_tmp}_NAMESPACE"
+}
+
+# this function is used to undefine macros (used for cctype)
+print_undef()
+{
+    for i in ${*}; do
+	${_printf} "%s\n" "#ifdef ${i}"
+	${_printf} "%s\n" "#undef ${i}"
+	${_printf} "%s\n" "#endif // ${i}"
+    done
+}
+
+create_replacement_header()
+#
+# Create one header as a replacement for a standard header, if necessary.
+# Should be invoked as
+#   create_replacement_header standard_header_name suffix replacements...
+#
+{
+    uncond=''
+    # special option to create header unconditionally (for CCTYPE_MACRO_BUG)
+    if [ "${1}" = "notest" ]; then
+	shift
+	uncond='y'
+    fi
+    replacement_header=rh
+    header_name=$1
+    header_suffix=$2
+    shift 2
+    _final_file="${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}/${header_name}${header_suffix}"
+#
+# Test if the standard header exists. Return if it does.
+#
+    if [ -z "${uncond}" ]; then
+	${_printf} "%s\n" "#include <$header_name>" > ${tmp_code_file}
+	${_printf} "%s\n" "int main() {return 0;}" >> ${tmp_code_file}
+
+#  	echo
+#  	echo '---------------------------------------'
+#  	echo "`compiler_bin` ${ADDITIONAL_CXXFLAGS} ${tmp_code_file}"  
+#  	echo
+#  	echo '---------------------------------------'
+#  	eval "eval \"`compiler_bin` ${ADDITIONAL_CXXFLAGS} ${tmp_code_file} 2>&1\""
+#  	echo
+#  	echo '---------------------------------------'
+
+	if eval "`compiler_bin` ${ADDITIONAL_CXXFLAGS} ${tmp_code_file} >/dev/null 2>&1"; then 
+	    ${_printf} "%s\n" " ok."
+	    return;
+	fi
+	${_printf} "%s\n" " no."
+    fi
+#
+# The standard header does not exist.
+# If some of the replacement headers exist, they are included in a
+# newly created replacement header.
+#
+    rm -f ${replacement_header}
+    touch ${replacement_header}
+    for arg in $* ; do
+        ${_printf} "%s\n" "#include <$arg>" > ${tmp_code_file}
+	${_printf} "%s\n" "int main() {return 0;}" >> ${tmp_code_file}
+	if eval "`compiler_bin` ${ADDITIONAL_CXXFLAGS} ${tmp_code_file} >/dev/null 2>&1"; then
+	    ${_sed} "s/@CGAL@/${CGAL_VERSION}/;s@FILE@${_final_file};s/@VERSION@/${CGAL_INSTALL_VERSION}/" <<EOF3 >>${replacement_header}
+// Copyright (c) 1999,2000 The CGAL Consortium
+//
+// This software and related documentation is part of the
+// Computational Geometry Algorithms Library (CGAL).
+//
+// release       : @CGAL@
+// file          : @FILE@
+// package       : Installation (@VERSION@)
+//
+// This file was automatically generated during installation.
+// It wraps a standard header file that did not exist for this compiler
+// and adds its symbols to namespace std.
+// The existence of this file indicates that your compiler does not
+// conform to the ISO/IEC standard 14882 for C++.
+
+EOF3
+	    ${_printf} "%s\n" "#include <$arg>" >> ${replacement_header}
+	fi
+    done
+
+
+
+#
+# Move the replacement header to the platform specific config directory.
+# This directory should be created first.
+#
+    if [ -s ${replacement_header} ]
+    then
+#
+# this is just an ugly list of additions to namespace std
+#  
+	case ${header_name} in
+	    iosfwd|ios) 
+		print_using IO ios >> ${replacement_header};;
+	    fstream) print_using IO filebuf ifstream ofstream fstream >> ${replacement_header};;
+	    streambuf) print_using IO streampos streamoff streambuf >> ${replacement_header};;
+	    iomanip) print_using IO setbase resetiosflags setiosflags setfill setprecision setw >> ${replacement_header};;
+	    iostream) print_using IO cin cout cerr clog endl ends flush ios streampos streamoff streambuf ostream istream iostream istream_withassign ostream_withassign iostream_withassign >> ${replacement_header};;
+# those do not exist e.g. on mipspro: wcin wcout wcerr wclog
+ 	    istream) print_using IO istream istream_withassign >> ${replacement_header};;
+	    ostream) print_using IO ostream ostream_withassign >> ${replacement_header};;
+	    strstream) print_using IO strstream istrstream ostrstream >> ${replacement_header};;
+	    csetjmp) print_using C longjmp jmp_buf >> ${replacement_header};;
+	    cstdarg) print_using C va_list >> ${replacement_header};;
+	    ctime) print_using C size_t time_t clock_t tm asctime ctime clock difftime gmtime localtime mktime time strftime >> ${replacement_header};;
+	    csignal) print_using C sig_atomic_t raise signal >> ${replacement_header};;
+	    cstdlib) print_using C abort atexit exit getenv system calloc malloc free realloc atof atoi atol mblen mbstowcs mbtowc strtod strtol strtoul wcstombs wctomb bsearch qsort div_t ldiv_t abs div labs ldiv rand srand >> ${replacement_header};;
+	    # the functions from cctype are implemented as macros
+	    # on some platforms (IRIX6, Solaris2.6)
+	    # but they have to be functions according to the std!
+	    cctype) ${_printf} "\n%s\n" \
+		"#ifdef CGAL_CFG_CCTYPE_MACRO_BUG" >> ${replacement_header}
+		    print_undef isalnum isalpha iscntrl isdigit isgraph islower isprint ispunct isspace isupper isxdigit >> ${replacement_header}
+		    ${_printf} "\n%s\n" \
+		"#endif // CGAL_CFG_CCTYPE_MACRO_BUG" >> ${replacement_header}
+		    print_using C isalnum isalpha iscntrl isdigit isgraph islower isprint ispunct isspace isupper isxdigit >> ${replacement_header};;
+	    cwctype) print_using C wctrans_t wctype_t wint_t iswalnum iswalpha iswcntrl iswctype iswdigit iswgraph iswlower iswprint iswpunct iswspace iswupper iswxdigit towctrans towlower towupper wctrans wctype >> ${replacement_header};;
+	    cstring) print_using C size_t memchr memcmp memcpy memmove memset strcat strchr strcmp strcoll strcpy strcspn strerror strlen strncat strncmp strncpy strpbrk strrchr strspn strstr strtok strxfrm >> ${replacement_header};;
+	    cwchar) print_using C wint_t size_t fgetwc fgetws fputwc fputws getwc getwchar putwc putwchar ungetwc wcscat wcschr wcscmp wcscoll wcscpy wcscspn wcsftime wcslen wcsncat wcsncmp wcsncpy wcspbrk wcsrchr wcsspn wcstod wcstok wcstol wcstoul wcsxfrm >> ${replacement_header};;
+	    cstdio) print_using C FILE fpos_t size_t clearerr fclose feof ferror fflush fgetc fgetpos fgets fopen fprintf fputc fputs fread freopen fscanf fseek fsetpos ftell fwrite getc getchar gets perror printf putc putchar puts remove rename rewind scanf setbuf setvbuf sprintf sscanf tmpfile tmpnam ungetc vfprintf vprintf vsprintf >> ${replacement_header};;
+	    cmath) print_using C acos asin atan2 atan ceil cos cosh exp fabs floor fmod frexp ldexp log10 log modf pow sin sinh sqrt tan tanh >> ${replacement_header};;
+	    cstddef) print_using C ptrdiff_t size_t >> ${replacement_header};;
+	esac
+#
+# end of ugly list of additions to namespace std :)
+#  
+	${_printf} "\n%s\n" "// EOF //" >> ${replacement_header}
+	mv ${replacement_header} "${_final_file}"
+    fi
+}
+
+create_standard_header_replacements()
+{
+    ${_printf} "%s\n" "${_LEFTSPACE}Checking for standard header files"
+#
+# Decide if a .h suffix is needed for header files.
+#
+    ${_printf} "%s\n" "typedef int CGAL_nt;" > ${tmp_header_file}
+    ${_printf} "%s\n" "#include <${tmp_header_file}>" > ${tmp_code_file}
+    ${_printf} "%s\n" \
+	"int main() { CGAL_nt result = 0; return result;}" >> ${tmp_code_file}
+    if eval "`compiler_bin` ${ADDITIONAL_CXXFLAGS} -I. ${tmp_code_file} >/dev/null 2>&1"; then
+	header_suffix=""
+    else
+	header_suffix=".h"
+    fi
+#
+# Now create the necessary replacement files from the list below.
+#
+    while read a b; do
+	${_printf} "%s" "${_LEFTSPACE}$a ..."
+	create_replacement_header $a "$header_suffix" $b
+    done <<EOF2
+algorithm algobase.h algo.h
+ostream ostream.h
+numeric numeric.h
+new new.h
+memory alloc.h algobase.h
+map map.h multimap.h
+locale locale.h
+list list.h
+limits
+iterator iterator.h
+istream istream.h
+iostream iostream.h
+iosfwd iostream.h
+ios ios.h
+iomanip iomanip.h
+functional function.h
+fstream fstream.h
+exception exception.h
+deque deque.h
+cwctype wctype.h
+cwchar wchar.h
+ctime time.h
+cstring string.h
+cstdlib stdlib.h
+cstdio stdio.h
+cstddef stddef.h
+cstdarg stdarg.h
+csignal signal.h
+csetjmp setjmp.h
+complex complex.h
+cmath math.h
+clocale locale.h
+climits limits.h
+ciso646 iso646.h
+cfloat float.h
+cerrno errno.h
+cctype ctype.h
+cassert assert.h
+bitset bitset.h
+queue stack.h
+vector vector.h
+valarray valarray.h
+utility function.h pair.h
+typeinfo typeinfo.h
+string
+streambuf streambuf.h
+strstream strstream.h
+stdexcept stdexcept.h
+stack stack.h
+sstream sstream.h
+set set.h multiset.h
+EOF2
+}
+
+#
+# end of code segment from make_redirection_headers
+# --------------------------------------------------------------------------
+
+# COMPILER SPECS TEST:
+# set some compiler specific flags needed for CGAL
+# these flags are determined by the corresponding test-sources
+# in CGAL_CONF_DIR
+# ($1 nonzero indicates verbosity)
+test_compiler_specifica()
+{
+    cd ${CGAL_TEST_CONF_DIR}
+    _check_dir_exists_create ${CGAL_INCL_CONF_DIR}
+    _check_dir_exists_create ${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}
+    create_standard_header_replacements
+    _check_dir_exists_create ${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}/CGAL
+    _file=${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}/CGAL/compiler_config.h
+    ${_printf} "%s\n" \
+	"// Copyright (c) 1998, 1999 The CGAL Consortium" \
+	> ${_file}
+    ${_printf} "%s\n" \
+	"//" \
+	>> ${_file}
+    ${_printf} "%s\n" \
+	"// This software and related documentation is part of the" \
+	>> ${_file}
+    ${_printf} "%s\n" \
+	"// Computational Geometry Algorithms Library (CGAL)." \
+	>> ${_file}
+    ${_printf} "%s\n" \
+	"//" \
+	>> ${_file}
+    ${_printf} "%s\n" \
+        "// release       : CGAL-${CGAL_VERSION}" \
+        >> ${_file}
+    ${_printf} "%s\n" \
+        "// file          : include/CGAL/config/${CGAL_OS_COMPILER}/CGAL/compiler_config.h" \
+        >> ${_file}
+    ${_printf} "%s\n" \
+        "// package       : Installation (${CGAL_INSTALL_VERSION})" \
+        >> ${_file}
+    ${_printf} "%s\n" \
+        "//" \
+        >> ${_file}
+    ${_printf} "%s\n" \
+	"// Compiler specific configuration file for CGAL ${CGAL_VERSION}" \
+	>> ${_file}
+    ${_printf} "%s\n" \
+	"// System: ${CGAL_OS_COMPILER}" \
+	>> ${_file}
+    ${_printf} "%s\n" \
+	"// generated by ${CGAL_INSTALL_CGAL} ${CGAL_INSTALL_VERSION}" \
+	>> ${_file}
+    ${_printf} "%s\n" \
+	"// with install testsuite ${CGAL_INSTALL_CONF_VERSION}" \
+	>> ${_file}
+    ${_printf} "%s\n\n" \
+	"//" \
+	>> ${_file}
+
+    # test for STL
+    ${_printf} "%s%s\n" \
+	"//+----------------------------------------------------------" \
+	"----------------" \
+	    >> ${_file}
+    ${_printf} "%s\n" \
+	"// The compiler has to provide a Standard Template Library" \
+	    >> ${_file}
+    ${_printf} "%s%s\n" \
+	"//+----------------------------------------------------------" \
+	"----------------" \
+	    >> ${_file}
+    if test_stl_general "${INSTALL_VERBOSE}" 'STL'; then
+	log_print "`extended_compiler_description` seems to have STL."
+	${_printf} "%s\n\n" "// STL test ok" >> ${_file}
+    else
+	log_print "`extended_compiler_description` seems NOT to have STL."
+	${_printf} "%s\n\n" \
+	    "#error \"This compiler does not have a working STL\"" \
+	    >> ${_file}
+    fi
+
+    # test for other compiler features/bugs
+    LONG_NAME_PROBLEM=''
+    for i in ${CGAL_TEST_CONF_DIR}/CGAL*.C; do
+	${_cat} ${i} > ${TMP_CXX_FILE}.C
+	${_printf} "%s%s\n" \
+	    "//+----------------------------------------------------------" \
+	    "----------------" \
+	    >> ${_file}
+	${_cat} ${i} | ${_awk} '/\/\/\|/ {print $0}' >> ${_file}
+	${_printf} "%s%s\n" \
+	    "//+----------------------------------------------------------" \
+	    "----------------" \
+	    >> ${_file}
+	_test_name="`value_of_without \
+	    \"${i}\" \"${CGAL_CONFIG_PREFIX}\" \"\.C\"`"
+	_test_name=`${_basename} "${_test_name}"`
+	_tmp_name="`value_of_without \"_test_name\" \"^NO_\"`"
+	if [ "${_tmp_name}" = "${_test_name}" ]; then
+	  _NO='unfortunately.'
+	else
+	  _NO='no.'
+	fi
+	if _compile_test \
+	    "${_tmp_name}" \
+	    "`compiler_test_cxxflags` " \
+	    "$1" \
+	    "${_NO}" \
+	  && _link_run_test \
+	    "${_tmp_name}" \
+	    "`compiler_test_libpathflags` " \
+	    "`compiler_test_ldflags` " \
+	    "$1" \
+	    "${_NO}"
+	then
+	    ${_printf} "%s" "//" >> ${_file}
+	elif [ "`${_basename} ${i}`" = "CGAL_CFG_CCTYPE_MACRO_BUG.C" ]; then
+	    # we have to generate the redirection header cctype
+	    create_replacement_header notest cctype "" ctype.h
+	elif [ "`${_basename} ${i}`" = "CGAL_CFG_NO_LONGNAME_PROBLEM.C" ]; then
+	    LONG_NAME_PROBLEM=y
+	fi
+	${_printf} "%s\n\n" \
+	    "#define ${CGAL_CONFIG_PREFIX}${_test_name} 1" \
+	    >> ${_file}
+	cleanup_after_compile
+	cleanup_after_link_run
+    done
+    cd ${CGAL_DIR}
+    CONFIG_TEST_PASSED='y'
+}
+
+
+#---------------------------------------------------------
+# flags for CGAL
+
+# print message used to remind the user of setting 
+# his DIR variables correctly
+_where_is()
+{
+    if [ -z "`value_of \"${1}\"`" ]; then
+	${_printf} "%s" "WHERE_IS_YOUR_${1}"
+    else
+	filename_for_compiler "`value_of \"${1}\"`"
+    fi
+}
+
+posix_path()
+{
+    if [ -z "${WINDOWS_COMPILER}" ]; then
+	${_printf} "%s" "$*"
+    else
+	${_printf} "%s" "`${_cygpath} -u $*`"
+    fi
+}
+
+filename_for_compiler()
+{
+    if [ -z "${WINDOWS_COMPILER}" ]; then
+	${_printf} "%s" "$1"
+    else
+	${_printf} "%s" "`${_cygpath} -w $1`"
+    fi
+}
+
+include_dir_option()
+{
+    if [ -z "${WINDOWS_COMPILER}" ]; then
+	${_printf} "-I%s " "$1"
+    else
+	${_printf} "'-I%s' " "`${_cygpath} -w $1`"
+    fi
+}
+
+libpath_option()
+{
+    if [ -z "${WINDOWS_COMPILER}" ]; then
+	${_printf} "${LIBPATH_OPT}%s " "$*"
+    else
+	${_printf} "'${LIBPATH_OPT}%s' " "`${_cygpath} -w $*`"
+    fi
+}
+
+leda_lib_option()
+{
+    if [ -z "${WINDOWS_COMPILER}" ]; then
+        ${_printf} "${LIB_OPT}%s${LIB_SUFFIX} " "$*"
+    else
+        ${_printf} "${LIB_OPT}lib%s${LIB_SUFFIX} " "$*"
+    fi
+}
+
+lib_option()
+{
+    ${_printf} "${LIB_OPT}%s${LIB_SUFFIX} " "$*"
+}
+
+object_file_name()
+{
+    if [ -z "${WINDOWS_COMPILER}" ]; then
+	${_printf} "%s" "$1${OBJ_EXT}"
+    else
+	${_printf} "%s" "'`${_cygpath} -w $1`${OBJ_EXT}'"
+    fi
+}
+
+to_object_file_option()
+{
+    if [ -z "${WINDOWS_COMPILER}" ]; then
+	${_printf} "%s" "-o $1.o"
+    else
+	${_printf} "%s" "'-o`${_cygpath} -w $1`'"
+    fi
+}
+
+output_file_option()
+{
+    if [ -z "${WINDOWS_COMPILER}" ]; then
+	${_printf} "%s" "${EXE_OPT}$1"
+    else
+	${_printf} "%s" "'${EXE_OPT}`${_cygpath} -w $1`'"
+    fi
+}
+
+concat_path()
+{
+  if [ $# != 0 ] ; then
+    ${_printf} "%s" "$1"
+    shift
+    if [ -n "${WINDOWS_COMPILER}" ]; then
+        for elem in "$@"
+        do
+            ${_printf} "%s%s" '\' "${elem}"
+        done
+    else
+        for elem in "$@"
+        do
+            ${_printf} "/%s" "${elem}"
+        done
+    fi
+  fi
+}
+
+cgal_cxxflags()
+{
+    ${_printf} "%s" "${ADDITIONAL_CXXFLAGS} "
+    include_dir_option "`_where_is 'CGAL_INCL_DIR'`"
+}
+
+cgal_ldflags()
+{
+    libpath_option "`_where_is 'CGAL_LIB_DIR'`/`full_ostype`"
+    rpath_directive 'CGAL_LIB_DIR'
+    if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
+	${_printf} "%s" "/`full_ostype` "
+    fi
+    ${_printf} "%s" "${ADDITIONAL_LDFLAGS} "
+}
+
+#---------------------------------------------------------
+# flags for the math library 
+
+math_ldflags()
+{
+    if [ -n "${MATH_LIB}" ] ; then
+        lib_option "${MATH_LIB}"
+    fi
+}
+
+#---------------------------------------------------------
+# flags for the compiler tests
+
+compiler_test_cxxflags()
+{
+    ${_printf} "%s" \
+	"${CUSTOM_CXXFLAGS} ${ADDITIONAL_CXXFLAGS} `include_dir_option ${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}` "
+}
+
+compiler_test_libpathflags()
+{
+    return 0;
+}
+
+compiler_test_ldflags()
+{
+    ${_printf} "%s" "${CUSTOM_LDFLAGS} ${ADDITIONAL_LDFLAGS} `math_ldflags`"
+}
+
+#---------------------------------------------------------
+# flags for GMP
+
+gmp_cxxflags()
+{
+    if [ -n "${GMP_SUPPORT}" -a \
+	"${GMP_INSTALLATION}" != 'c' -a \
+	"${GMP_INSTALLATION}" != 's' ]; then
+	tmp_dir_name=`_where_is 'GMP_INCL_DIR'`
+	${_printf} "%s" "`include_dir_option ${tmp_dir_name}` "
+    fi
+}
+
+gmp_libpathflags()
+{
+    if [ -n "${SEPARATE_LIBPATH}" -a -n "${GMP_SUPPORT}" ]; then
+	if [ "${GMP_INSTALLATION}" != 'c' -a \
+	     "${GMP_INSTALLATION}" != 's' ]; then
+	    libpath_option "`_where_is 'GMP_LIB_DIR'`"
+	    ${_printf} "%s" "`rpath_directive 'GMP_LIB_DIR'` "
+	fi
+    fi
+}
+
+gmp_ldflags()
+{
+    if [ -n "${GMP_SUPPORT}" ]; then
+	if [ -z "${SEPARATE_LIBPATH}" -a "${GMP_INSTALLATION}" != 'c' -a \
+             "${GMP_INSTALLATION}" != 's' ]; then
+	    libpath_option "`_where_is 'GMP_LIB_DIR'`"
+	    ${_printf} "%s" "`rpath_directive 'GMP_LIB_DIR'` "
+	fi
+	lib_option "gmp"
+    fi
+}
+
+gmp_test_cxxflags()
+{
+    compiler_test_cxxflags
+    if [ -n "${GMP_SUPPORT}" -a "${GMP_INSTALLATION}" = 'c' ]; then
+	cgal_cxxflags
+    fi
+    gmp_cxxflags
+}
+
+gmp_test_libpathflags()
+{
+    compiler_test_libpathflags
+    gmp_libpathflags
+    if [ -n "${GMP_SUPPORT}" -a "${GMP_INSTALLATION}" = 'c' ]; then
+	cgal_ldflags
+    fi
+}
+
+gmp_test_ldflags()
+{
+    compiler_test_ldflags
+    gmp_ldflags
+}
+
+#---------------------------------------------------------
+# flags for CLN
+
+cln_cxxflags()
+{
+    if [ -n "${CLN_SUPPORT}" -a \
+	"${CLN_INSTALLATION}" != 'c' -a \
+	"${CLN_INSTALLATION}" != 's' ]; then
+	include_dir_option "`_where_is 'CLN_INCL_DIR'`"
+    fi
+}
+
+cln_libpathflags()
+{
+    if [ -n "${SEPARATE_LIBPATH}" -a -n "${CLN_SUPPORT}" ]; then
+	if [ "${CLN_INSTALLATION}" != 'c' -a \
+             "${CLN_INSTALLATION}" != 's' ]; then
+	    libpath_option "`_where_is 'CLN_LIB_DIR'`"
+	    ${_printf} "%s" "`rpath_directive 'CLN_LIB_DIR'` "
+	fi
+    fi
+}
+
+cln_ldflags()
+{
+    if [ -n "${CLN_SUPPORT}" ]; then
+	if [ -z "${SEPARATE_LIBPATH}" -a "${CLN_INSTALLATION}" != 'c' -a \
+             "${CLN_INSTALLATION}" != 's' ]; then
+	    libpath_option "`_where_is 'CLN_LIB_DIR'`"
+	    ${_printf} "%s" "`rpath_directive 'CLN_LIB_DIR'` "
+	fi
+	lib_option "cln"
+    fi
+}
+
+cln_test_cxxflags()
+{
+    ${_printf} "%s" "${CUSTOM_CXXFLAGS} "
+    if [ -n "${CLN_SUPPORT}" -a "${CLN_INSTALLATION}" = 'c' ]; then
+	cgal_cxxflags
+    fi
+    cln_cxxflags
+}
+
+cln_test_ldflags()
+{
+    ${_printf} "%s" "${CUSTOM_LDFLAGS} "
+    if [ -n "${CLN_SUPPORT}" -a "${CLN_INSTALLATION}" = 'c' ]; then
+	cgal_ldflags
+    fi
+    cln_ldflags
+}
+
+#---------------------------------------------------------
+# flags for QT
+
+qt_cxxflags()
+{
+    if [ -n "${QT_SUPPORT}" ]; then
+	if [ -z "${QT_ADVANCED_MODE}" ]; then
+	    include_dir_option "`_where_is 'QT_DIR'`/include"
+	else
+	    if [ -n "${NEED_EXTRA_QT_IDIR}" ]; then
+		include_dir_option "`_where_is 'QT_INCL_DIR'`"
+	    fi
+	fi
+    fi
+}
+
+qt_libpathflags()
+{
+    if [ -n "${SEPARATE_LIBPATH}" -a -n "${QT_SUPPORT}" ]; then
+	if [ -z "${QT_ADVANCED_MODE}" ]; then
+	    libpath_option "`_where_is 'QT_DIR'`/lib "
+	    ${_printf} "%s" "`rpath_directive 'QT_LIB_DIR'` "
+	else
+	    if [ -n "${NEED_EXTRA_QT_LDIR}" ]; then
+		libpath_option "`_where_is 'QT_LIB_DIR'` "
+		${_printf} "%s" "`rpath_directive 'QT_LIB_DIR'` "
+	    fi
+	fi
+    fi
+}
+
+qt_ldflags()
+{
+    if [ -n "${QT_SUPPORT}" ]; then
+	if [ -z "${SEPARATE_LIBPATH}" ]; then
+	    if [ -z "${QT_ADVANCED_MODE}" ]; then
+		libpath_option "`_where_is 'QT_DIR'`/lib "
+		${_printf} "%s" "`rpath_directive 'QT_LIB_DIR'` "
+	    else
+		if [ -n "${NEED_EXTRA_QT_LDIR}" ]; then
+		    libpath_option "`_where_is 'QT_LIB_DIR'` "
+		    ${_printf} "%s" "`rpath_directive 'QT_LIB_DIR'` "
+		fi
+	    fi
+	fi
+	lib_option "qt"
+    fi
+}
+
+qt_test_cxxflags()
+{
+    ${_printf} "%s" "`compiler_test_cxxflags` "
+    qt_cxxflags
+}
+
+qt_test_ldflags()
+{
+    ${_printf} "%s" "`compiler_test_ldflags` "
+    qt_ldflags
+}
+
+#---------------------------------------------------------
+# flags for LEDA
+
+leda_cxxflags()
+{
+    if [ -n "${LEDA_SUPPORT}" -a -n "${NEED_EXTRA_LEDA_IDIR}" ]; then
+	pathname1=`_where_is 'LEDA_INCL_DIR'`
+	pathname2=`filename_for_compiler ${pathname1}`
+	${_printf} "%s" "`include_dir_option ${pathname2}` "
+    fi
+}
+
+leda_libpathflags()
+{
+    if [ -n "${SEPARATE_LIBPATH}" -a -n "${LEDA_SUPPORT}" ]; then
+	if [ -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
+	    libpath_option "`_where_is 'LEDA_LIB_DIR'`"
+	    ${_printf} "%s" "`rpath_directive 'LEDA_LIB_DIR'` "
+	fi
+    fi
+}
+
+leda_ldflags()
+{
+    if [ -n "${LEDA_SUPPORT}" ]; then
+	if [ -z "${SEPARATE_LIBPATH}" -a -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
+#	    ${_printf} "%s" "${START_LD_OPT}"
+	    libpath_option "`_where_is 'LEDA_LIB_DIR'`"
+	    ${_printf} "%s" "`rpath_directive 'LEDA_LIB_DIR'` "
+	fi
+	leda_lib_option "P"
+	leda_lib_option "G"
+	leda_lib_option "L"
+    fi
+}
+
+leda_test_cxxflags()
+{
+    ${_printf} "%s" "`compiler_test_cxxflags` "
+    leda_cxxflags
+}
+
+leda_test_ldflags()
+{
+    ${_printf} "%s" "`compiler_test_ldflags` "
+    leda_ldflags
+    math_ldflags
+}
+
+#---------------------------------------------------------
+# all flags
+
+# print cxxflags for current setting
+compiler_flags()
+{
+    ${_printf} "%s" "${CUSTOM_CXXFLAGS} `cgal_cxxflags``leda_cxxflags``gmp_cxxflags``cln_cxxflags``qt_cxxflags`"
+}
+
+# print ldflags for current setting (do not link with cgal lib,
+# used for test before lib is compiled)
+linker_flags_no_cgal_lib()
+{
+    ${_printf} "%s" "${CUSTOM_LDFLAGS} `cgal_ldflags``leda_ldflags``gmp_ldflags``cln_ldflags``qt_ldflags``math_ldflags`"
+}
+
+# print version number of compiler $1 
+# (full path to executable)
+get_compiler_version()
+{
+    case `_real_basename ${1:-${COMPILER}}` in
+	*bcc32*|*BCC32*)
+		_borland_version "$*";;
+	*CL.*|*cl.*)
+		_microsoft_vc_version "$*";;
+	*KCC*)
+		_kcc_version "$*";;
+	*CC*)
+	    case ${SYST} in
+		*IRIX*)  _check_for_sysutil versions y
+			 _sgi_version "$*"
+			 ;;
+		*SunOS*) _sunpro_version "$*"
+			 ;;
+		*) ${_printf} "%s" "UnknownVersion";;
+     	    esac;;
+	*g++*) _gpp_version "$*";;
+	    *) ${_printf} "%s" "UnknownVersion";;
+    esac
+}
+
+# print compiler description of compiler $1 
+# (executable)
+get_compiler_description()
+{
+    case ${1:-${COMPILER}} in
+	*bcc32*)
+	    ${_printf} "%s" "Borland";;
+	*KCC*)
+	    ${_printf} "%s" "KAI CC";;
+	*CL.*|*cl.*)
+	    ${_printf} "%s" "VC++";;
+	*CC*-32*)
+	    ${_printf} "%s" "MIPSPRO (o32)";;
+	*CC*-n32*)
+	    ${_printf} "%s" "MIPSPRO (n32)";;
+	*CC*-64*)
+	    ${_printf} "%s" "MIPSPRO (64)";;
+	*CC*)
+	    case ${SYST} in
+		*IRIX*) ${_printf} "%s" "MIPSPRO";;
+		*SunOS*) ${_printf} "%s" "SUNPRO";;
+		*) ${_printf} "%s" "UnknownCompiler";;
+     	    esac;;
+	*g++*) ${_printf} "%s" "GNU";;
+	*xlC*) ${_printf} "%s" "IBM CSet";;
+	    *) ${_printf} "%s" "UnknownCompiler";;
+    esac
+}
+
+# $1 is a compiler string
+# print compiler basenam
+compiler_basename()
+{
+    ${_printf} "%s\n" "${*:-${COMPILER}}" | \
+	${_awk} 'BEGIN {FS="@"} {printf "%s",$1}'
+}
+
+# $1 is a compiler string
+# print compiler description
+compiler_description()
+{
+    ${_printf} "%s\n" "${*:-${COMPILER}}" | \
+	${_awk} 'BEGIN {FS="@"} {printf "%s",$2}'
+}
+
+# $1 is a compiler string
+# print compiler executable
+c_compiler_bin()
+{
+    ${_printf} "%s\n" "${*:-${COMPILER}}" | \
+	${_awk} 'BEGIN {FS="@"} {printf "%s",$3}'
+}
+
+# $1 is a compiler string
+# print compiler executable
+compiler_bin()
+{
+    ${_printf} "%s\n" "${*:-${COMPILER}}" | \
+	${_awk} 'BEGIN {FS="@"} {printf "%s",$4}'
+}
+
+# $1 is a compiler string
+# print compiler executable
+compiler_version()
+{
+    ${_printf} "%s\n" "${*:-${COMPILER}}" | \
+	${_awk} 'BEGIN {FS="@"} {printf "%s",$5}'
+}
+
+# $1 is a compiler string
+# print leda support
+leda_support()
+{
+    ${_printf} "%s\n" "${*:-${COMPILER}}" | \
+	${_awk} 'BEGIN {FS="@"} {printf "%s",$6}'
+}
+
+# reassemble compiler string, i.e. adjust to LEDA_SUPPORT
+reassemble_compiler()
+{
+    COMPILER="`compiler_basename`@`compiler_description`@`c_compiler_bin`@`compiler_bin`@`compiler_version`@${LEDA_SUPPORT}"
+}
+
+# $1 is a compiler string
+# print extended compiler description
+extended_compiler_description()
+{
+    ${_printf} "%s\n" "${*:-${COMPILER}}" | \
+	${_awk} 'BEGIN {FS="@"} {printf "%s %s",$2,$5}'
+    if [ -n "`leda_support \"${*:-${COMPILER}}\"`" ]; then
+	${_printf} "%s" " + LEDA"
+    fi
+    ${_printf} "\n"
+}
+
+
+# register compiler with description $*,
+# iff there is no corresponding config file in CGAL_INSTALL_CONF_DIR
+# (since in this case it already has been registered)
+_check_and_register_compiler()
+{
+    _ORIG_COMPILER="${COMPILER}"
+    COMPILER="${*}"
+    set_ostype
+    file="${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}"
+    if [ -r ${file} ]; then
+	try_to_get_var_from_file COMPILER ${file}
+	if [ ${?} != 0 ]; then
+	    log_print "${CGAL_OS_COMPILER} has already been registered."
+	else
+	    _register_compiler "${*}"
+	fi
+    else
+	_register_compiler "${*}"
+    fi
+    COMPILER="${_ORIG_COMPILER}"
+}
+
+# register compiler with description $*
+_register_compiler()
+{
+    log_print \
+	"found compiler `extended_compiler_description \"${*}\"`."
+    eval "_COMPILER_${_COMPILER_NUMBER}=\"${*}\""
+    eval "${_EXPR} ${_COMPILER_NUMBER} + 1"
+    _COMPILER_NUMBER=${_result}
+}
+
+# search for compiler and set COMPILER correspondingly
+# $1 is the basename of the C compiler executable (e.g. cc)
+# $2 is the basename of the C++ compiler executable (e.g. CC)
+# if $3 is non-zero, don't register compiler
+# return 0, iff found
+_search_compiler()
+{
+    if _check_for_util "$2" n tmp1; then 
+	_check_for_util "$1" n tmp2
+	COMPILER="$2@`get_compiler_description \"$2\"`@${_tmp2}@${_tmp1}@`get_compiler_version \"${_tmp1}\"`@"
+	if [ -z "$3" ]; then
+	    _check_and_register_compiler "${COMPILER}"
+	fi
+	return 0
+    fi
+    return 1
+}
+
+# $1 is a compiler string
+# append $2 to basename $3 to the description field 
+# and $4 to the executable fields
+_add_flags()
+{
+    compiler_basename "$1"
+    ${_printf} "%s" "$2@"
+    compiler_description "$1"
+    ${_printf} "%s" "$3@"
+    c_compiler_bin "$1"
+    ${_printf} "%s" "$4@"
+    compiler_bin "$1"
+    ${_printf} "%s" "$4@"
+    compiler_version "$1"
+}
+
+# search for supported compilers 
+search_for_compilers()
+{
+    guess_os log_print
+    case ${SYST} in
+	*CYGWIN*) _check_for_sysutil cygpath y;;
+    esac
+    _COMPILER_NUMBER=1
+
+    # first check, which config files exist
+    for i in `${_ls} ${CGAL_INSTALL_CONF_DIR}/${SYST}* 2>/dev/null`
+    do
+	try_to_get_var_from_file COMPILER ${i}
+	if [ ${?} != 0 ]; then
+	    # now we have to check for old config files
+	    # where the leda token was not included in COMPILER
+	    if [ "5" = "`${_printf} \"%s\n\" \"${*:-${COMPILER}}\" | \
+		${_awk} 'BEGIN {FS=\"@\"} {printf \"%d\",NF}'`" ]
+	    then
+		COMPILER="${COMPILER}@OLD"
+	    fi
+	    _register_compiler "${COMPILER}"
+	fi
+    done
+
+    case ${SYST} in 
+	*IRIX64*)
+	    if _search_compiler cc CC 'n'; then
+		_check_and_register_compiler \
+		    "`_add_flags \"${COMPILER}\" '-n32' ' (n32)' ' -n32'`"
+		_check_and_register_compiler \
+		    "`_add_flags \"${COMPILER}\" '-32' ' (o32)' ' -32'`"
+		if [ -n "${SUPPORT_MIPSPRO_64}" ]; then
+		    _check_and_register_compiler \
+			"`_add_flags \"${COMPILER}\" '-64' ' (64)' ' -64'`"
+		fi
+	    fi
+	    _search_compiler gcc g++ ''
+	    _search_compiler cc KCC ''
+	    ;;
+	*IRIX*-6*)
+	    if _search_compiler cc CC 'n'; then
+		_check_and_register_compiler \
+		    "`_add_flags \"${COMPILER}\" '-n32' ' (n32)' ' -n32'`"
+		_check_and_register_compiler \
+		    "`_add_flags \"${COMPILER}\" '-32' ' (o32)' ' -32'`"
+	    fi
+	    _search_compiler gcc g++ ''
+	    _search_compiler cc KCC ''
+	    ;;
+	*IRIX*|*SunOS*)
+	    _search_compiler gcc g++ ''
+	    _search_compiler cc KCC ''
+	    _search_compiler cc CC ''
+	    ;;
+	*CYGWIN*)
+	    _search_compiler bcc32.exe bcc32.exe ''
+	    _search_compiler CL.EXE CL.EXE ''
+	    _search_compiler gcc g++ ''
+	    ;;
+	*)
+	    _search_compiler gcc g++ ''
+	    _search_compiler cc KCC ''
+	    ;;
+    esac
+    if [ ${_COMPILER_NUMBER} = 1 ]; then
+	exit_on_error "Couldn't find any compiler"
+    fi
+    _set_compiler 1
+    write_buffer "\n\n${_LEFTSPACE}Choosing compiler `extended_compiler_description`.\n"
+    flush_buffer
+    _choose_compiler 
+}
+
+# our compiler shall be ${*} (absolute path)
+# (used in non-interactive mode)
+compiler_absolute()
+{
+    _args="${*}"
+    _tmp="`_real_basename \"${*}\"`"
+    shift
+    ${_printf} "%s" "${_tmp}"
+    # concat options - replace space by "-":
+    _tmp1=`${_printf} "%s\n" "${*}" | ${_sed} 's/"//g;s/ -/-/g' | \
+	${_sed} "s/'//g;s/ /-/g;s#/#-#g"`
+    if [ -n "${_tmp1}" ]; then
+	${_printf} "%s" "${_tmp1}"
+    fi
+    ${_printf} "%s" "@"
+    get_compiler_description "${_args}"
+    ${_printf} "%s" "@"
+    _tmp1=`_real_dirname "${_args}"`
+    if [ "${_tmp1}" != "." ]; then
+	${_printf} "%s" "${_tmp1}/"
+    fi
+    # guess C compiler:
+    case ${_tmp} in
+	g++) ${_printf} "%s" "gcc";;
+	xlC) ${_printf} "%s" "xlc";;
+	*) ${_printf} "%s" "cc";;
+    esac
+    _tmp1=`_real_options "${_args}"`
+    if [ -n "${_tmp1}" ]; then
+	${_printf} "%s" " ${_tmp1}"
+    fi
+    ${_printf} "%s" "@${_args}@"
+    get_compiler_version "${_args}"
+    ${_printf} "%s" "@${LEDA_SUPPORT}"
+}
+
+
+# ---------------------------------------------------------------------
+# arithmetic functions
+# ---------------------------------------------------------------------
+
+# since this great shell does not generally support
+# arithmetics, we have to use a supplement in some cases.
+# this may be expr or bc.
+
+# evaluate expression $1 $2 $3 using shell let
+# and store result in _result
+_let_expr()
+{
+    if ! eval "let _result=${1}${2}${3}"; then
+	exit_on_error "Cannot evaluate \"${1}${2}${3}\" in _let_expr()"
+    fi
+}
+
+# evaluate expression $1 $2 $3 using expr
+# and store result in _result
+_expr_expr()
+{
+    # we have to do the indirection in three steps
+    # (since there can be only one `...` expression level)
+    eval "_result=`${_expr} ${1} \"${2}\" ${3}`"
+    if [ $? != 0 ]; then
+	exit_on_error "Cannot evaluate \"${1}\" in _expr_expr()"
+    fi
+}
+
+# evaluate expression $1 $2 $3 using bc
+# and store result in _result
+_bc_expr()
+{
+    # we have to do the indirection in three steps
+    # (since there can be only one `...` expression level)
+    eval "_result=`echo $1 \"$2\" $3 | ${_bc}`"
+    if [ $? != 0 ]; then
+	exit_on_error "Cannot evaluate \"${1}\" in _bc_expr()"
+    fi
+}
+
+# set _EXPR such that eval "$_EXPR op1 op op2" evaluates 
+# the expression and stores the result in _result
+set_expr()
+{
+    # first try shell let, then expr, bc, dc and csh
+    if /bin/sh -tc 'e=0; let e+=1' 2>/dev/null; then
+	_EXPR=_let_expr
+#    elif [ -x /bin/expr ]; then
+    elif _check_for_sysutil expr n; then
+	_EXPR=_expr_expr
+    elif _check_for_sysutil expr n; then
+	_EXPR=_bc_expr
+    else
+	exit_on_error "Cannot find either of \"expr\" or \"bc\"" \
+	    "nor does /bin/sh support \"let\""
+    fi
+    log_print "use $_EXPR() for evaluating arithmetic expressions." 
+}
+
+# ---------------------------------------------------------------------
+# terminal related functions
+# ---------------------------------------------------------------------
+
+# ---------------------------------------------------------------------
+# read an input string 
+# (since 'read' breaks its input according to field separator IFS
+# (normally including space), we have to change IFS to be able
+# to read multiword strings like needed for the custom compiler options)
+_read()
+{
+    _tmp=${IFS}
+    IFS='
+'
+    read KEY
+    IFS=${_tmp}
+}
+
+# ---------------------------------------------------------------------
+# BUFFERED OUTPUT:
+# for the sake of efficiency we buffer all output
+
+clear_buffer()
+{
+    _BUF=''
+}
+
+# print buffer
+flush_buffer()
+{
+    ${_printf} "${_BUF}"
+    clear_buffer
+}
+
+# write $* to buffer
+write_buffer()
+{
+    _BUF="$_BUF$*"
+}
+
+
+# ---------------------------------------------------------------------
+# STRING FUNCTIONS:
+
+print_with_indent()
+{
+    if [ -z "$*" ]; then
+	_read
+	${_printf} "${_LEFTSPACE}${KEY}\n"
+    else
+	${_printf} "${_LEFTSPACE}${*}\n"
+    fi
+}
+
+print_as_shell_comment()
+{
+    if [ -z "$*" ]; then
+	_read
+	${_printf} "# ${KEY}\n"
+    else
+	${_printf} "# ${*}\n"
+    fi
+}
+
+# print $2 times string $1 ($1 must not contain '@'!)
+string_n_print()
+{
+    _tmp=`eval "printf \"\`${_printf} \"$1@$2\" | ${_awk} 'BEGIN {FS=\"@\"} 
+	{ for ( i=0; i<$2; ++i) printf $1}'\`\""`
+   write_buffer "${_tmp}"
+}
+
+# count length of variable $1 (in characters)
+length()
+{
+    # first try ${#var} substitution, if that fails wc
+    # if neither succeeds, we just return 30
+    # (this function is used to layout the menus,
+    #  so worst case it just looks a little bit ugly ;)
+    
+    if /bin/sh -tc 'echo ${#1} >/dev/null' 2>/dev/null
+    then
+	return ${#1}
+    elif [ -x /bin/wc ]; then
+	return `${_printf} "%s" "$1" | /bin/wc -c`
+    else
+	return 30
+    fi
+}
+
+# ---------------------------------------------------------------------
+# FUNCTIONS FOR MENUS:
+
+clear_screen()
+{
+    write_buffer "$_clear_screen\n"
+}
+
+# moves cursor up $1 lines
+go_up_lines()
+{
+    string_n_print '${_line_up}' $1
+    write_buffer "\r"
+}
+
+# moves cursor down $1 lines
+go_down_lines()
+{
+    string_n_print '\\\\\\n' $1
+}
+
+# print a line containing string $1
+# bounded by two stars on each side
+print_line()
+{
+    write_buffer "$_MENU_LINE_EMPTY\r${_LEFTSPACE}**   $1\n"
+}
+
+# print string $1 on possibly several lines
+# bounded by two stars on each side
+# (the lines are indented by 5 more chars, since this
+#  is only used for displaying the custom options)
+print_multi_line()
+{
+    _tmp=`${_printf} "%s" "$1" | \
+	eval "${_awk} \`${_printf} \"${_MULTILINE_LAYOUT_AWK_PROG}\" dummy\`"`
+    write_buffer "${_tmp}"
+}
+
+# print an empty line bounded by two stars on each side
+print_empty_line()
+{
+    write_buffer "$_MENU_LINE_EMPTY\n"
+}
+
+# print a line filled with stars
+print_filled_line()
+{
+    write_buffer "$_MENU_LINE_FILLED\n"
+}
+
+# give a prompt with text $1
+print_prompt()
+{
+    write_buffer "$_MENU_LINE_EMPTY\r${_LEFTSPACE}**   $1"
+    flush_buffer
+}
+
+# print a centered line with text $1
+print_center_line()
+{
+    length "`echo "$1"`"
+    l=$?
+    eval "$_EXPR $_MENU_WIDTH \* 10"
+    eval "$_EXPR $_result - $l"
+    eval "$_EXPR $_result / 2"
+    write_buffer "$_MENU_LINE_EMPTY\r${_LEFTSPACE}**"
+    string_n_print " " $_result
+    write_buffer "$1\n"
+}
+
+# print a headline with text $1
+print_headline()
+{
+    length "`echo "$1"`"
+    l=$?
+    eval "$_EXPR $_MENU_WIDTH \* 10"
+    eval "$_EXPR $_result - $l"
+    eval "$_EXPR $_result / 2"
+    write_buffer "$_MENU_LINE_EMPTY\r${_LEFTSPACE}**"
+    string_n_print " " $_result
+    write_buffer "$1\n"
+    write_buffer "$_MENU_LINE_EMPTY\r${_LEFTSPACE}**"
+    string_n_print " " $_result
+    string_n_print "=" $l
+    write_buffer "\n"
+    print_empty_line
+}
+
+# wait until enter is pressed
+wait_for_enter()
+{
+    if [ -n "${INSTALL_INTERACTIVE}" ]; then
+	print_center_line "Please press <ENTER> to continue."
+	print_filled_line
+	flush_buffer
+	read dummy
+    else
+	print_center_line "D O N E"
+	print_filled_line
+	flush_buffer
+    fi
+}
+
+# setup two strings for printing the menu
+set_menu_lines()
+{
+    _MENU_LINE_FILLED="${_LEFTSPACE}**"
+    _MENU_LINE_EMPTY="${_LEFTSPACE}**"
+    clear_buffer
+    string_n_print "**********" ${_MENU_WIDTH} 
+    _MENU_LINE_FILLED=${_MENU_LINE_FILLED}${_BUF}"**"
+    clear_buffer
+    string_n_print "          " ${_MENU_WIDTH} 
+    _MENU_LINE_EMPTY=${_MENU_LINE_EMPTY}${_BUF}"**"
+    clear_buffer
+    eval "${_EXPR} ${_MENU_WIDTH} \* 10"
+    eval "${_EXPR} ${_result} - 10"
+    _MULTILINE_LAYOUT_AWK_PROG="'{ for (i=1; i <= length(\$0); i+=${_result}) printf \"${_MENU_LINE_EMPTY}"'\\r'"${_LEFTSPACE}**       "'%%s''\\''\\n'"\",substr(\$0,i,${_result})}'"
+}
+
+# set some variables for output
+set_terminal_variables()
+{
+    if _check_for_sysutil tput n; then
+	${_tput} smcup # turn on cup (see man terminfo)
+	_line_up=`${_tput} cuu1`"\r"
+	_bold_on=`${_tput} bold`
+	_bold_off=`${_tput} sgr0`
+	_clear_screen=`${_tput} clear`
+	_clear_end_of_display=`${_tput} ed`
+	eval "${_EXPR} ${_MENU_WIDTH} \* 10"
+	length "${_LEFTSPACE}"
+	eval "${_EXPR} ${_result} + $?"
+	# for two-star('**') border
+	eval "${_EXPR} ${_result} + 4"
+	if [ `${_tput} cols` -lt ${_result} ]; then
+	    print_filled_line
+	    print_line \
+	    "${_bold_on}WARNING${_bold_off}: Your terminal screen is too narrow."
+	    print_line "It should have at least ${_result} columns."
+	    print_filled_line
+	    wait_for_enter
+	fi
+    else
+	eval "${_EXPR} ${_MENU_WIDTH} \* 10"
+	length "${_LEFTSPACE}"
+	eval "${_EXPR} ${_result} + $?"
+	# for two-star('**') border
+	eval "${_EXPR} ${_result} + 4"
+    fi
+}
+
+
+# ---------------------------------------------------------------------
+# FILE / DIR FUNCTIONS:
+
+# some confidence test for the directories 
+# (return 0, iff problem - output with command $1)
+check_GMP_SUPPORT()
+{
+    if [ "${GMP_SUPPORT}" != "" -a "${GMP_SUPPORT}" != "_GMP" ]; then
+	$1 "WARNING: GMP_SUPPORT is not set correctly." 
+	return 0
+    fi
+    return 1
+}
+
+check_GMP_INSTALLATION()
+{
+    if [ -n "${GMP_INSTALLATION}" -a \
+	"${GMP_INSTALLATION}" != 'x' -a \
+	"${GMP_INSTALLATION}" != 'c' -a \
+	"${GMP_INSTALLATION}" != 'z' -a \
+	"${GMP_INSTALLATION}" != 'e' -a \
+	"${GMP_INSTALLATION}" != 's' ]; then
+	$1 "WARNING: GMP_INSTALLATION should be \"e\", \"z\","
+	$1 "   \"c\", \"x\", \"s\" or empty."
+	return 0
+    fi
+    return 1
+}
+
+check_GMP_INCL_DIR()
+{
+    if [ -n "${GMP_INCL_DIR}" ]; then
+	if [ ! -r ${GMP_INCL_DIR}/gmp.h ]; then 
+	    $1 "WARNING: GMP_INCL_DIR should contain"
+	    $1 "         gmp.h." 
+	else
+	    return 1
+	fi
+    fi
+    return 0
+}
+
+check_GMP_LIB_DIR()
+{
+    if [ -n "${GMP_LIB_DIR}" ]; then
+	if [ ! -r ${GMP_LIB_DIR}/${GMP_LIBNAME} -a \
+	     ! -r ${GMP_LIB_DIR}/libgmp.so ]; then 
+	    $1 "WARNING: GMP_LIB_DIR should contain"
+	    $1 "      libgmp.a, libgmp.so or gmp.lib." 
+	else
+	    return 1
+	fi
+    fi
+    return 0
+}
+
+check_CLN_SUPPORT()
+{
+    if [ "${CLN_SUPPORT}" != "" -a "${CLN_SUPPORT}" != "_CLN" ]; then
+	$1 "WARNING: CLN_SUPPORT is not set correctly." 
+	return 0
+    fi
+    return 1
+}
+
+check_CLN_INSTALLATION()
+{
+    if [ -n "${CLN_INSTALLATION}" -a \
+	"${CLN_INSTALLATION}" != 'x' -a \
+	"${CLN_INSTALLATION}" != 'c' -a \
+	"${CLN_INSTALLATION}" != 'z' -a \
+	"${CLN_INSTALLATION}" != 'e' -a \
+	"${CLN_INSTALLATION}" != 's' ]; then
+	$1 "WARNING: CLN_INSTALLATION should be \"e\", \"z\","
+	$1 "   \"c\", \"x\", \"s\" or empty."
+	return 0
+    fi
+    return 1
+}
+
+check_CLN_INCL_DIR()
+{
+    if [ -n "${CLN_INCL_DIR}" ]; then
+	if [ ! -r ${CLN_INCL_DIR}/cln.h ]; then 
+	    $1 "WARNING: CLN_INCL_DIR should contain"
+	    $1 "         cln.h." 
+	else
+	    return 1
+	fi
+    fi
+    return 0
+}
+
+check_CLN_LIB_DIR()
+{
+    if [ -n "${CLN_LIB_DIR}" ]; then
+	if [ ! -r ${CLN_LIB_DIR}/libcln.a -a \
+	     ! -r ${CLN_LIB_DIR}/libcln.so ]; then 
+	    $1 "WARNING: CLN_LIB_DIR should contain"
+	    $1 "         libcln.a or libcln.so." 
+	else
+	    return 1
+	fi
+    fi
+    return 0
+}
+
+check_QT_SUPPORT()
+{
+    if [ "${QT_SUPPORT}" != "" -a "${QT_SUPPORT}" != "_QT" ]; then
+	$1 "WARNING: Qt_SUPPORT is not set correctly." 
+	return 0
+    fi
+    return 1
+}
+
+check_NEED_EXTRA_QT_IDIR()
+{
+    if [ -n "${NEED_EXTRA_QT_IDIR}" -a \
+	"${NEED_EXTRA_QT_IDIR}" != 'n' -a \
+	"${NEED_EXTRA_QT_IDIR}" != 'y' -a \
+	"${NEED_EXTRA_QT_IDIR}" != 'x' ]; then
+	$1  "WARNING: NEED_EXTRA_QT_IDIR should be \"n\", \"x\", \"y\" or empty."
+	return 0
+    fi
+    return 1
+}
+
+check_NEED_EXTRA_QT_LDIR()
+{
+    if [ -n "${NEED_EXTRA_QT_LDIR}" -a \
+	"${NEED_EXTRA_QT_LDIR}" != 'n' -a \
+	"${NEED_EXTRA_QT_LDIR}" != 'y' -a \
+	"${NEED_EXTRA_QT_LDIR}" != 'x' ]; then
+	$1  "WARNING: NEED_EXTRA_QT_LDIR should be \"n\", \"x\", \"y\" or empty."
+	return 0
+    fi
+    return 1
+}
+
+check_NEED_EXTRA_QTMOC()
+{
+    if [ -n "${NEED_EXTRA_QTMOC}" -a \
+	"${NEED_EXTRA_QTMOC}" != 'n' -a \
+	"${NEED_EXTRA_QTMOC}" != 'y' -a \
+	"${NEED_EXTRA_QTMOC}" != 'x' ]; then
+	$1  "WARNING: NEED_EXTRA_QTMOC should be \"n\", \"x\", \"y\" or empty."
+	return 0
+    fi
+    return 1
+}
+
+check_NEED_EXTRA_QTDIR()
+{
+    if [ -n "${NEED_EXTRA_QTDIR}" -a \
+	"${NEED_EXTRA_QTDIR}" != 'n' -a \
+	"${NEED_EXTRA_QTDIR}" != 'y' -a \
+	"${NEED_EXTRA_QTDIR}" != 'x' ]; then
+	$1  "WARNING: NEED_EXTRA_QTDIR should be \"n\", \"x\", \"y\" or empty."
+	return 0
+    fi
+    return 1
+}
+
+check_QT_DIR()
+{
+    if [ -n "${QT_DIR}" ]; then
+	if [ -d "${QT_DIR}" -a -d "${QT_DIR}/bin" -a \
+	     -d "${QT_DIR}/include" -a \
+	     -d "${QT_DIR}/lib" -a -x "${QT_DIR}/bin/moc${EXE_EXT}" -a \
+	     -r ${QT_DIR}/include/qaction.h ]; then
+	     return 1
+	else
+	    $1 "WARNING: QT_DIR should contain"
+	    $1 "         bin/moc${EXE_EXT}, include/qaction.h lib/."
+	fi
+    fi
+    return 0
+}
+
+check_QT_INCL_DIR()
+{
+    if [ -n "${QT_INCL_DIR}" ]; then
+	if [ -r ${QT_INCL_DIR}/qaction.h ]; then
+	    return 1
+	else
+	    $1 "WARNING: QT_INCL_DIR should contain qaction.h."
+	fi
+    fi
+    return 0
+}
+
+check_QT_LIB_DIR()
+{
+    if [ -n "${QT_LIB_DIR}" ]; then
+	if [ ! -r ${QT_LIB_DIR}/libqt.${LIB_SUFFIX} -a \
+	     ! -r ${QT_LIB_DIR}/libqt.so ]; then
+	     $1 "WARNING: QT_LIB_DIR should contain libqt.${LIB_SUFFIX} or libqt.so."
+	else
+	    return 1
+	fi
+    fi
+    return 0
+}
+
+check_QT_MOC()
+{
+    if [ -n "${QT_MOC}" ]; then
+	if [ -x "${QT_MOC}" ]; then
+	    return 1
+	else
+	    $1 "WARNING: QT_MOC sould be executable."
+	fi
+    fi
+    return 0
+}
+
+check_QT_ADVANCED_MODE()
+{
+    if [ -n "${QT_ADVANCED_MODE}" -a \
+	"${QT_ADVANCED_MODE}" != 'y' ]; then
+	$1 "WARNING: QT_ADVANCED_MODE sould be \"y\" or empty."
+	return 0
+    fi
+    return 1
+}
+
+# user's business
+check_CUSTOM_CXXFLAGS()
+{
+    return 1
+}
+
+# user's business
+check_CUSTOM_LDFLAGS()
+{
+    return 1
+}
+
+# nothing to check here
+check_LONG_NAME_PROBLEM()
+{
+    return 1
+}
+
+check_NEED_EXTRA_LEDA_IDIR()
+{
+    if [ -n "${NEED_EXTRA_LEDA_IDIR}" -a \
+	"${NEED_EXTRA_LEDA_IDIR}" != 'y' -a \
+	"${NEED_EXTRA_LEDA_IDIR}" != 'x' ]; then
+	$1  "WARNING: NEED_EXTRA_LEDA_IDIR should be \"x\", \"y\" or empty."
+	return 0
+    fi
+    return 1
+}
+
+check_NEED_EXTRA_LEDA_LDIR()
+{
+    if [ -n "${NEED_EXTRA_LEDA_LDIR}" -a \
+	"${NEED_EXTRA_LEDA_LDIR}" != 'y' -a \
+	"${NEED_EXTRA_LEDA_LDIR}" != 'x' ]; then
+	$1  "WARNING: NEED_EXTRA_LEDA_LDIR should be \"x\", \"y\" or empty."
+	return 0
+    fi
+    return 1
+}
+
+check_LEDA_INCL_DIR()
+{
+    if [ -n "${LEDA_INCL_DIR}" ]; then
+	if [ ! -d $LEDA_INCL_DIR/LEDA ]; then 
+	    $1 "WARNING: LEDA_INCL_DIR should contain"
+	    $1 "         a subdirectory LEDA." 
+	elif [ ! -r $LEDA_INCL_DIR/LEDA/basic.h ]; then 
+	    $1 "WARNING: LEDA_INCL_DIR should contain"
+	    $1 "         LEDA/basic.h." 
+	else
+	    return 1
+	fi
+    fi
+    return 0
+}
+
+check_LEDA_LIB_DIR()
+{
+    if [ -n "${LEDA_LIB_DIR}" ]; then
+	if [ ! -r $LEDA_LIB_DIR/libL.a -a \
+	     ! -r $LEDA_LIB_DIR/libL${LIB_SUFFIX} -a \
+	     ! -r $LEDA_LIB_DIR/libL.so ]; then
+	    $1 "WARNING: LEDA_LIB_DIR should contain libL.${LIB_SUFFIX} or libL.so." 
+	else
+	    return 1
+	fi
+    fi
+    return 0
+}
+
+check_UPGRADE_FROM()
+{
+    if [ ! -d "${UPGRADE_FROM}/include/CGAL" ]; then
+	$1 "WARNING: UPGRADE_FROM should contain a subdirectory \"include/CGAL\"." 
+    elif [ ! -d "${UPGRADE_FROM}/lib" ]; then
+	$1 "WARNING: UPGRADE_FROM should contain a subdirectory \"lib\"." 
+    else
+	return 1
+    fi
+    return 0
+}
+
+check_LEDA_SUPPORT()
+{
+    if [ "${LEDA_SUPPORT}" != "" -a "${LEDA_SUPPORT}" != "_LEDA" ]; then
+	$1 "WARNING: LEDA_SUPPORT is not set correctly." 
+	return 0
+    fi
+    return 1
+}
+
+check_CGAL_INSTALL_VERSION()
+{
+    case ${CGAL_INSTALL_VERSION} in
+	*.*) return 1;;
+	  *) $1 "WARNING: CGAL_INSTALL_VERSION is not set correctly." 
+	     return 0;;
+    esac
+}
+
+check_COMPILER()
+{
+    _check_comp_executable `compiler_bin`
+    return 1
+}
+
+# try to read variable $1 from file $2 
+# (usually this is $CGAL_DIRECTORY_FILE)
+# (and run "check_$1", if you got it)
+# return 0, iff something went wrong
+try_to_get_var_from_file()
+{
+    if [ -r ${2} ]; then
+	_awkprg="/${1}/"'{print $0}'
+	_tmp2=`${_awk} "${_awkprg}" ${2}`
+	if [ -n "${_tmp2}" ]; then
+	    _tmp2=`${_printf} "%s\n" "${_tmp2}" | \
+		${_awk} '{for (i=4; i<NF-1; ++i) printf "%s ",$(i); \
+		    printf "%s",$(NF-1)}'`
+	    log_print "got ${1} from config/`${_basename} ${2}`."
+	    log_print "set to <\${_tmp2}>."
+	    eval $1="${_tmp2}"
+	    eval "check_${1} log_print"
+	    return ${?}
+	else
+	    log_print \
+		"WARNING: cannot find field ${1} in file `${_basename} ${2}`." 
+	fi
+    else
+	log_print "WARNING: cannot find file ${2}." 
+    fi
+    # delete previous value of ${1}
+    eval ${1}=''
+    return 0
+}
+
+# ---------------------------------------------------------------------
+# THE MENUS:
+# ---------------------------------------------------------------------
+
+# ---------------------------------------------------------------------
+# compiler menu
+#
+
+# cleanup after compilation
+# (this is not called by _compile_test but has to be called 
+#  by the caller of _compile_test,
+#  since it is not clear whether the files are still needed
+#  for linking or not)
+cleanup_after_compile()
+{
+    # remove tmp C++ file 
+    ${_rm} -f ${TMP_CXX_FILE}.C
+    # remove sunpro template database
+    ${_rm} -rf Templates.DB
+    # remove irix mipspro template database
+    ${_rm} -rf ii_files
+    # remove tmp object file 
+    ${_rm} -f ${TMP_CXX_FILE}${OBJ_EXT}
+    # remove log file 
+    ${_rm} -f ${TMP_LOGFILE}
+    # remove moc file
+    ${_rm} -f ${TMP_CXX_FILE}.moc
+}
+
+# run a compiler test named $1, return 0, iff ok
+# if $2 is empty, use standard compiler flags
+# if $2 is non-empty, use it as compiler flags
+# if $3 is non-empty, inform about eventually occurring problems
+# if $4 is non-empty, it is the message to give 
+#    in case compilation fails (defaults to 'no.')
+_compile_test()
+{
+    # add newlines to ${TMP_CXX_FILE}.C (ANSI)
+    ${_printf} "\n\n" >> ${TMP_CXX_FILE}.C
+    ${_printf} "%s" "${_LEFTSPACE}Testing for $1 ..."
+
+    # set flags
+    if [ -z "$2" ]; then
+	_flags="`compiler_flags`"
+    else
+	_flags="$2"
+    fi
+#    _flags="${_flags} -c '`filename_for_compiler ${TMP_CXX_FILE}.C`' `to_object_file_option ${TMP_CXX_FILE}`"
+    _flags="${_flags} -c '`filename_for_compiler ${TMP_CXX_FILE}.C`'"
+
+    # compile
+    ${_printf} "%s\n%s\n" \
+	"Compiler call:" "--------------" >${TMP_LOGFILE}
+    ${_printf} "%s" \
+	"`compiler_bin` ${_flags}" >>${TMP_LOGFILE}
+    ${_printf} "\n\n%s\n" \
+	"Got the following error messages:" >>${TMP_LOGFILE}
+    ${_printf} "%s\n" \
+	"---------------------------------" >>${TMP_LOGFILE}
+    eval "`compiler_bin` ${_flags} >>${TMP_LOGFILE} 2>&1"
+    if [ $? = 0 ]; then
+	log_print "$1 test compiled."
+	return 0
+    else
+	if [ -n "$3" ]; then
+	    if [ -n "${INSTALL_INTERACTIVE}" ]; then
+		log_print "ERROR: $1 test did NOT compile."
+		write_buffer "\n"
+		print_filled_line
+		print_empty_line
+		print_headline "Compilation failed"
+		print_center_line "You will be shown a log now ..."
+		wait_for_enter
+		${_cat} ${TMP_LOGFILE} | ${PAGER:-${_cat}}
+		write_buffer "\n"
+		print_filled_line
+		wait_for_enter
+	    else
+		${_printf} "%s\n\n" " compilation failed."
+		${_cat} ${TMP_LOGFILE} 
+		${_printf} "%s\n\n" \
+		    "--------------------------------------------------------"
+	    fi
+	else
+	    log_print "remark: $1 test did not compile."
+	    ${_printf} "%s\n" " ${4:-no.}"
+	fi
+	return 1
+    fi
+}
+
+# cleanup after compilation
+cleanup_after_link_run()
+{
+    cleanup_after_compile
+    # remove executable and core
+    ${_rm} -f ${TMP_CXX_FILE} core
+}
+
+# run a link&run test named $1, return 0, iff ok
+# if $2 is non-empty, use it as libpath flags
+# if $3 is empty, use standard linker flags
+# if $3 is non-empty, use it as linker flags
+# if $4 is non-zero, inform about eventually occurring problems
+_link_run_test()
+{
+    # set flags
+    if [ -z "${3}" ]; then
+	_flags="`linker_flags_no_cgal_lib`"
+    else
+	_flags="${3}"
+    fi
+    _flags="${2}`output_file_option ${TMP_CXX_FILE}` `object_file_name ${TMP_CXX_FILE}` ${_flags}"
+
+    # link
+    _link=`compiler_bin`
+    case ${COMPILER} in
+	*CL.*|*cl.*) _link="link";;
+    esac
+    ${_printf} "%s\n%s\n" "Linker call:" "--------------" >${TMP_LOGFILE}
+    ${_printf} "%s\n\n" "${_link} ${_flags}" >>${TMP_LOGFILE}
+    ${_printf} "%s\n" "Got the following error messages:" >>${TMP_LOGFILE}
+    ${_printf} "%s\n" "---------------------------------" >>${TMP_LOGFILE}
+    eval "${_link} ${_flags} >>${TMP_LOGFILE} 2>&1"
+    i=$?
+    j=1
+    if [ $i = 0 ]; then 
+	log_print "$1 test linking succeeded."
+	# run
+	${_printf} "%s\n" \
+	    "Run program `${_basename} ${TMP_CXX_FILE}`:" >>${TMP_LOGFILE}
+	${_printf} "%s\n\n" \
+	    "----------------------" >>${TMP_LOGFILE}
+	${_printf} "%s\n" "Got the following output:" >>${TMP_LOGFILE}
+	${_printf} "%s\n" "---------------------------------" >>${TMP_LOGFILE}
+	eval "${TMP_CXX_FILE} >>${TMP_LOGFILE} 2>&1"
+	j=$?
+	if [ $j = 0 ]; then
+	    log_print "$1 test execution succeeded."
+	else
+	    if [ -n "${4}" ]; then
+		log_print "ERROR: $1 test execution FAILED."
+	    else
+		log_print "remark: $1 test execution failed."
+	    fi
+	fi
+    else
+	if [ -n "${4}" ]; then
+	    log_print "ERROR: $1 test linking FAILED."
+	else
+	    log_print "remark: $1 test linking failed."
+	fi
+    fi
+    if [ $j = 0 -a $i = 0 ]; then
+	${_printf} "%s\n" " ok."
+	cleanup_after_link_run
+	return 0
+    else
+	if [ -n "${4}" ]; then
+	    if [ -n "${INSTALL_INTERACTIVE}" ]; then
+		log_print "ERROR: $1 test FAILED."
+		write_buffer "\n"
+		print_filled_line
+		print_empty_line
+		print_headline "Linking or execution failed"
+		print_center_line "You will be shown a log now ..."
+		wait_for_enter
+		$_cat ${TMP_LOGFILE} | ${PAGER:-${_cat}}
+		write_buffer "\n"
+		print_filled_line
+		wait_for_enter
+	    else
+		${_printf} "%s\n\n" " linking or execution failed."
+		${_cat} ${TMP_LOGFILE} 
+		printf "%s\n\n" \
+		    "--------------------------------------------------------"
+	    fi
+	else
+	    ${_printf} "%s\n" " ${5:-no.}"
+	fi
+	cleanup_after_link_run
+	return 1
+    fi
+}
+
+
+# ---------------------------------------------------------------------
+# LEDA TEST:
+
+# test if leda header files are in some sys include dir
+# and sets NEED_EXTRA_LEDA_IDIR correspondingly
+# ($1 nonzero indicates verbosity)
+# [ checks for the existence of <LEDA/bool.h>, since this
+#   is a file where no LEDA lib has to be linked in order to 
+#   produce an executable; <LEDA/basic.h> needs some
+#   mem_manager stuff ... ]
+test_for_leda_incl_in_sys_incl()
+{
+    ${_printf} "%s\n" "
+    #include <LEDA/basic.h>
+    int main() {
+	return 0;
+    }" > ${TMP_CXX_FILE}.C
+    if _compile_test "LEDA sysincl" "${CUSTOM_CXXFLAGS} " "$1"; then
+	cleanup_after_compile
+	${_printf} "%s\n" " ok."
+	NEED_EXTRA_LEDA_IDIR=''
+	return 0
+    fi
+    cleanup_after_compile
+    NEED_EXTRA_LEDA_IDIR='y'
+    return 1
+}
+
+# test if leda libs are in some sys lib dir
+# and sets NEED_EXTRA_LEDA_LDIR correspondingly
+# ($1 nonzero indicates verbosity)
+test_for_leda_lib_in_sys_lib()
+{
+    ${_printf} "%s\n" "
+    int main() {
+	return 0;
+    }" > ${TMP_CXX_FILE}.C
+    if _compile_test "LEDA syslibs" "${CUSTOM_CXXFLAGS} " "$1"; then
+	if _link_run_test "LEDA syslibs" "" \
+	    "${CUSTOM_LDFLAGS} `leda_lib_option P``leda_lib_option G``leda_lib_option L``math_ldflags`" "$1"; then
+	    NEED_EXTRA_LEDA_LDIR=''
+	    return 0
+	fi
+    fi
+    NEED_EXTRA_LEDA_LDIR='y'
+    return 1
+}
+
+# test if LEDA setting works (return 0, iff ok)
+# ($1 nonzero indicates verbosity)
+test_leda()
+{
+    if [ -n "${LEDA_SUPPORT}" ]; then
+	${_printf} "%s\n" '
+	    #include <LEDA/integer.h>
+	    #if defined(_MSC_VER) || defined(__BORLANDC__)
+	    #ifndef LEDA_STD_HEADERS
+	    #error "LEDA_STD_HEADERS is not defined. Please consult the troubleshooting section of the installation manual."
+	    #endif // ! LEDA_STD_HEADERS
+	    #endif // MSVC || BORLAND
+
+	    #include <LEDA/REDEFINE_NAMES.h>
+	    typedef integer I;
+	    #include <LEDA/UNDEFINE_NAMES.h>
+
+	    int main() {
+	    I a(123456); 
+	    I b(456789);
+	    
+	    if (a + b != I(580245))
+	      return 1;
+	    if (a - b != I(-333333))
+	      return 1;
+
+	    return 0;
+	  }' > ${TMP_CXX_FILE}.C
+
+	if _compile_test LEDA "`leda_test_cxxflags`" $1 && \
+	    _link_run_test LEDA \
+		"`leda_libpathflags`" "`leda_test_ldflags`" $1
+	then
+	    LEDA_TEST_PASSED='y'
+	    return 0
+	else    
+	    LEDA_TEST_PASSED=''
+	    return 1
+	fi
+    else
+	return 0
+    fi
+}
+
+# ---------------------------------------------------------------------
+# STL TEST:
+
+
+# test, if STL works
+# (return 0, iff it is)
+# (test program due to Lutz Kettner)
+# ($1 nonzero indicates verbosity)
+# ($2 gives comment for _compile_test)
+test_stl_general()
+{
+    ${_printf} "%s\n" '
+	#include <algorithm>
+	#include <list>
+	#include <iterator>
+	#include <cassert>
+
+	using std::list;
+
+	list<char> lst( char* s) {
+	    list<char> x;
+	    while (*s != '\0') x.push_back( *s++);
+	    return x;
+	}
+
+	int main() {
+	    list<char> list1 = lst( "mark twain");
+	    std::reverse( list1.begin(), list1.end());
+	    assert( list1 == lst( "niawt kram"));
+	    return 0;
+	}' > ${TMP_CXX_FILE}.C
+    
+    if [ -z "$1" ]; then
+	_compile_test "${2}" "`compiler_test_cxxflags` " '' && \
+	    _link_run_test "${2}" \
+		"`compiler_test_libpathflags` " "`compiler_test_ldflags` " ''
+    else
+	_compile_test "${2}" "`compiler_test_cxxflags` " $1 && \
+	    _link_run_test "${2}" \
+		"`compiler_test_libpathflags` " "`compiler_test_ldflags` " $1 
+    fi
+    return $?
+}
+
+# ---------------------------------------------------------------------
+# GNU GMP TEST:
+
+# gmp test from the gmp/README
+# (return 0, iff it works)
+# ($1 is either 'GMP' or 'GMP syslib')
+# ($2 nonzero indicates verbosity)
+test_gmp()
+{
+    if [ -n "${GMP_SUPPORT}" ]; then
+	${_printf} "%s\n" '
+	#include <cstdio>
+	#ifdef __BORLANDC__
+	#include <cstddef>
+	using std::size_t;
+	using std::printf;
+	#endif 
+	#include "gmp.h"
+	int main()
+	{
+	    mpz_t b, p;
+	    mpz_init (p);
+	    mpz_init_set_str (b, "31", 0);
+	    mpz_mul_ui (p, b, 75);          /* generate product */
+	    char *str = new char[mpz_sizeinbase(p, 10) + 2];
+	    str = mpz_get_str(str, 10, p);
+	    printf("%s\n", str);
+	    delete[] str;
+	    return 0;
+	}' > ${TMP_CXX_FILE}.C
+
+	if _compile_test "$1" "`gmp_test_cxxflags`" "$2" && \
+	    _link_run_test "$1" \
+		"`gmp_test_libpathflags`" "`gmp_test_ldflags`" "$2"
+	then
+	    GMP_TEST_PASSED='y'
+	    return 0
+	else
+	    GMP_TEST_PASSED=''
+	    return 1
+	fi
+    else
+	return 0
+    fi
+}
+
+# ---------------------------------------------------------------------
+# CLN TEST:
+
+# cln test based on the GMP test.
+# (return 0, iff it works)
+# ($1 is either 'CLN' or 'CLN syslib')
+# ($2 nonzero indicates verbosity)
+test_cln()
+{
+    if [ -n "${CLN_SUPPORT}" ]; then
+	${_printf} "%s\n" '
+	#include <iostream>
+	#include "cl_integer.h"
+	#include "cl_io.h"
+	#include "cl_integer_io.h"
+	int
+	main ()
+	{
+	    cl_I b ("31");
+	    cl_I p = b * 75;
+	    std::cout << p << std::endl;
+	    return 0;
+	}' > ${TMP_CXX_FILE}.C
+
+	if _compile_test "$1" "`cln_test_cxxflags`" "$2" && \
+	    _link_run_test "$1" \
+		"`cln_libpathflags`" "`cln_test_ldflags`" "$2"
+	then
+	    CLN_TEST_PASSED='y'
+	    return 0
+	else
+	    CLN_TEST_PASSED=''
+	    return 1
+	fi
+    else
+	return 0
+    fi
+}
+
+# ---------------------------------------------------------------------
+# QT TEST:
+
+qt_dir_has_changed()
+{
+    if [ -n "${WINDOWS_COMPILER}" ]; then
+	QT_INCL_DIR="${QT_DIR}\\include"
+	QT_LIB_DIR="${QT_DIR}\\lib"
+	QT_MOC="${QT_DIR}\\bin\\moc${EXE_EXT}"
+    else
+	QT_INCL_DIR="${QT_DIR}/include"
+	QT_LIB_DIR="${QT_DIR}/lib"
+	QT_MOC="${QT_DIR}/bin/moc${EXE_EXT}"
+    fi
+#    if [ -z "${NEED_EXTRA_QTDIR}" ]; then
+#	NEED_EXTRA_QTDIR='x'
+#    fi
+    if [ -z "${NEED_EXTRA_QT_IDIR}" ]; then
+	NEED_EXTRA_QT_IDIR='x'
+    fi
+    if [ -z "${NEED_EXTRA_QT_LDIR}" ]; then
+	NEED_EXTRA_QT_LDIR='x'
+    fi
+    if [ -z "${NEED_EXTRA_QTMOC}" ]; then
+	NEED_EXTRA_QTMOC='x'
+    fi
+}
+
+# test if $QTDIR is a valid Qt directory
+# and sets NEED_EXTRA_QTDIR correspondingly
+# ($1 nonzero indicates verbosity)
+# [ tests if $QTDIR/{include,lib,bin} are directories and checks if
+#   $QTDIR/bin/moc exists and is executable ]
+test_for_qt_dir()
+{
+    ${_printf} "%s" "${_LEFTSPACE}Testing for \$QTDIR ..."
+    if [ -d "${QTDIR}" -a -d "${QTDIR}/bin" -a -d "${QTDIR}/include" -a \
+         -d "${QTDIR}/lib" -a -x "${QTDIR}/bin/moc${EXE_EXT}" -a \
+	 -r "${QTDIR}/include/qaction.h" ]; then
+	log_print 'remark: $QTDIR is a valid Qt directory.'
+	QT_DIR="$QTDIR"
+	NEED_EXTRA_QTDIR=''
+	qt_dir_has_changed
+	${_printf} "%s\n" " ok."
+	return 0
+    else
+	if [ -n "$1" ];then
+	    if [ -n "${INSTALL_INTERACTIVE}" ]; then
+		log_print 'ERROR: $QTDIR is not a valid Qt directory.'
+	    else
+		${_printf} "%s\n\n" 'ERROR: $QTDIR is not a valid Qt directory.'
+	    fi
+	else
+	    log_print 'remark: $QTDIR is not a valid Qt directory.'
+	fi
+	${_printf} "%s\n" " no."
+	NEED_EXTRA_QTDIR='y'
+	return 1
+    fi
+}
+
+# test if Qt header files are in some sys include dir
+# and sets NEED_EXTRA_QT_IDIR correspondingly
+# ($1 nonzero indicates verbosity)
+# [ checks for the existence of <qaction.h>, since this
+#   is a new file of Qt 2.2 ]
+test_for_qt_incl_in_sys_incl()
+{
+    ${_printf} "%s\n" "
+    #include <qaction.h>
+    int main() {
+	return 0;
+    }" > ${TMP_CXX_FILE}.C
+    if _compile_test "Qt sysincl" "${CUSTOM_CXXFLAGS} " "$1"; then
+	cleanup_after_compile
+	${_printf} "%s\n" " ok."
+	NEED_EXTRA_QT_IDIR=''
+	return 0
+    fi
+    cleanup_after_compile
+    NEED_EXTRA_QT_IDIR='y'
+    return 1
+}
+
+# test if Qt libs are in some sys lib dir
+# and sets NEED_EXTRA_QT_LDIR correspondingly
+# ($1 nonzero indicates verbosity)
+test_for_qt_lib_in_sys_lib()
+{
+    ${_printf} "%s\n" "
+    int main() {
+	return 0;
+    }" > ${TMP_CXX_FILE}.C
+    if _compile_test "Qt syslibs" "${CUSTOM_CXXFLAGS} " "$1";
+    then
+	if _link_run_test "Qt syslibs" "" \
+	    "${CUSTOM_LDFLAGS} `lib_option qt`" "$1"; then
+	    NEED_EXTRA_QT_LDIR=''
+	    return 0
+	fi
+    fi
+    NEED_EXTRA_QT_LDIR='y'
+    return 1
+}
+
+# test if Qt moc is in path 
+# and set NEED_EXTRA_QTMOC correspondingly
+# ($1 nonzero indicates verbosity)
+test_for_qt_moc_in_path()
+{
+    ${_printf} "%s" "${_LEFTSPACE}Testing for moc${EXE_EXT}..."
+    _tmp="`${_which} moc${EXE_EXT}`"
+    if [ -x "${_tmp}" ]; then
+	log_print "remark: moc${EXE_EXT} is in path directories."
+	NEED_EXTRA_QTMOC=''
+	QT_MOC="moc"
+	${_printf} "%s\n" " ok."
+	return 0
+    else
+	if [ -n "$1" ];then
+	    if [ -n "${INSTALL_INTERACTIVE}" ]; then
+		log_print "ERROR: moc${EXE_EXT} is not in path directories."
+		write_buffer "\n"
+		wait_for_enter
+	    else
+		${_printf} "%s\n\n" \
+		    "ERROR: moc${EXE_EXT} is in path directories."
+	    fi
+	else
+	    log_print "remark: moc${EXE_EXT} is in path directories."
+	fi
+	${_printf} "%s\n" " no."
+	NEED_EXTRA_QTMOC='y'
+	return 1
+    fi
+}
+
+# test if Qt Meta Object Compiler setting works (return 0, iff ok)
+# ($1 nonzero indicates verbosity)
+test_qt_moc()
+{
+    if [ -n "${QT_SUPPORT}" ]; then
+	${_printf} "%s\n" '
+#include <qobject.h>
+
+ class Foo : public QObject
+    {
+        Q_OBJECT
+    public:
+        Foo() {};
+        int  value() const { return val; }
+    public slots:
+        void setValue( int );
+    signals:
+        void valueChanged( int );
+    private:
+        int  val;
+    };
+
+
+ void Foo::setValue( int v )
+    {
+        if ( v != val ) {
+            val = v;
+            emit valueChanged(v);
+        }
+    }
+
+int main( int argc, char **argv )
+{
+    Foo a, b;
+    a.connect(&a, SIGNAL(valueChanged(int)), &b, SLOT(setValue(int)));
+    b.setValue( 11 );
+    a.setValue( 79 );
+    if (b.value()==79)
+      return 0;
+    return 1;
+}' > ${TMP_CXX_FILE}.C
+	${_printf} "%s\n" "
+#include \"${TMP_CXX_FILE}.moc\"
+" >> ${TMP_CXX_FILE}.C 
+	${_printf} "%s\n%s\n" \
+	    "MOC call:" "--------------" >${TMP_LOGFILE}
+	${_printf} "%s" \
+	    "${QT_MOC} -o ${TMP_CXX_FILE}.moc ${TMP_CXX_FILE}.C" >>${TMP_LOGFILE}
+	${_printf} "\n\n%s\n" \
+	    "Got the following error messages:" >>${TMP_LOGFILE}
+	${_printf} "%s\n" \
+	"---------------------------------" >>${TMP_LOGFILE} 	
+	${QT_MOC} -o ${TMP_CXX_FILE}.moc ${TMP_CXX_FILE}.C >>${TMP_LOGFILE} 2>&1 
+	if [ $? = 0 ]; then
+	    log_print "Qt MOC test has passed \$QT_MOC execution."
+	    if _compile_test "Qt MOC" "`qt_test_cxxflags`" $1 && \
+	       _link_run_test "Qt MOC" \
+		    "`qt_libpathflags`" "`qt_test_ldflags`" $1
+	    then
+		QT_MOC_TEST_PASSED='y'
+		return 0
+	    else
+		QT_MOC_TEST_PASSED=''
+		return 1
+	    fi
+	else
+	    if [ -n "$1" ]; then
+		if [ -n "${INSTALL_INTERACTIVE}" ]; then
+		    log_print "ERROR: Qt MOC test did not passed \$QT_MOC execution."
+		    write_buffer "\n"
+		    print_filled_line
+		    print_empty_line
+		    print_headline "Compilation failed because of \$QT_MOC."
+		    print_center_line "You will be shown a log now ..."
+		    wait_for_enter
+		    ${_cat} ${TMP_LOGFILE} | ${PAGER:-${_cat}}
+		    write_buffer "\n"
+		    print_filled_line
+		    wait_for_enter
+		else
+		    ${_printf} "%s\n\n" " compilation failed."
+		    ${_cat} ${TMP_LOGFILE} 
+		    ${_printf} "%s\n\n" \
+			"--------------------------------------------------------"
+		fi
+	    else
+		log_print "remark: Qt MOC test did not passed \$QT_MOC execution."
+		${_printf} "%s" "${_LEFTSPACE}Testing for Qt MOC ... no."
+	    fi		
+	    QT_MOC_TEST_PASSED=''
+	    return 1
+	fi
+    else
+	return 0
+    fi
+}
+
+# test if Qt setting works (return 0, iff ok)
+# ($1 nonzero indicates verbosity)
+test_qt()
+{
+    if [ -n "${QT_SUPPORT}" ]; then
+	${_printf} "%s\n" '
+#include <qarray.h>
+
+QArray<int> fib( int num )                  // returns fibonacci array
+{
+    ASSERT( num > 2 );
+    QArray<int> f( num );                   // array of ints
+
+    f[0] = f[1] = 1;                        // initialize first two numbers
+    for ( int i=2; i<num; i++ )
+        f[i] = f[i-1] + f[i-2];     
+
+    return f;
+}
+
+int main()
+{
+    QArray<int> a = fib( 6 );               // get 6 first fibonaccis
+
+    if(4==a.find(5))
+	return 0;
+    return 1;
+}' > ${TMP_CXX_FILE}.C
+	if _compile_test Qt "`qt_test_cxxflags`" $1 && \
+           _link_run_test Qt \
+		"`qt_libpathflags`" "`qt_test_ldflags`" $1
+	then
+	    QT_TEST_PASSED='y'
+	    return 0
+	else    
+	    QT_TEST_PASSED=''
+	    return 1
+	fi
+    else
+	return 0
+    fi
+}
+
+# set variable CGAL_OS_COMPILER according to the current
+# compiler settings
+set_ostype()
+{
+    if [ -n "`compiler_version`" ]; then
+	CGAL_OS_COMPILER="${SYST}_`compiler_basename`-`compiler_version`"
+    else
+	CGAL_OS_COMPILER="${SYST}_`compiler_basename`"
+    fi
+}
+ 
+# return the full os/compiler string 
+# (i.e. including LEDA extension)
+full_ostype()
+{
+    ${_printf} "%s" "${CGAL_OS_COMPILER}${LEDA_SUPPORT}"
+}
+
+# print the current os/compiler in a readable fashion
+# $1 is the print command
+print_os_setting()
+{
+    ${1} "OS:\t\t${SYST}" 
+    ${1} "COMPILER:\t`extended_compiler_description`" 
+#    _set_tmp_to_not_or_not "${LEDA_SUPPORT}"
+#    ${1} "LEDA:\t\t${_tmp}supported" 
+    _set_tmp_to_not_or_not "${GMP_SUPPORT}"
+    ${1} "GMP:\t\t${_tmp}supported" 
+    _set_tmp_to_not_or_not "${CLN_SUPPORT}"
+    ${1} "CLN:\t\t${_tmp}supported" 
+    _set_tmp_to_not_or_not "${QT_SUPPORT}"
+    ${1} "Qt:\t\t${_tmp}supported" 
+}
+
+set_lib_compiled_flag()
+{
+    # does there exist a lib for this os/compiler?
+    if [ -r ${CGAL_LIB_DIR}/`full_ostype`/${CGAL_LIBNAME} ]; then
+	LIB_COMPILED='ok'
+    else
+	LIB_COMPILED=''
+    fi
+}
+
+# set GMP_INSTALLATION
+# first check for sysdir installation, then in CGAL tree,
+# finally an external installation
+# return 0, iff one of these test succeeded
+# ($1 non-empty indicates verbosity)
+search_gmp()
+{
+    GMP_INSTALLATION='s'
+    if test_gmp 'GMP syslib' "$1"; then
+	log_print "remark: GMP is installed in sysdirs."
+    else
+	make_lib_dir
+	GMP_INSTALLATION='c'
+	if test_gmp 'GMP CGAL' "$1"; then
+	    log_print "remark: GMP is installed in CGAL tree."
+	else
+	    GMP_INSTALLATION='e'
+	    log_print "remark: GMP is not installed."
+	    return 1
+	fi
+    fi
+    return 0
+}
+
+# set CLN_INSTALLATION
+# first check for sysdir installation, then in CGAL tree,
+# finally an external installation
+# return 0, iff one of these test succeeded
+# ($1 non-empty indicates verbosity)
+search_cln()
+{
+    CLN_INSTALLATION='s'
+    if test_cln 'CLN syslib' "$1"; then
+	log_print "remark: CLN is installed in sysdirs."
+    else
+	make_lib_dir
+	CLN_INSTALLATION='c'
+	if test_cln 'CLN CGAL' "$1"; then
+	    log_print "remark: CLN is installed in CGAL tree."
+	else
+	    CLN_INSTALLATION='e'
+	    log_print "remark: CLN is not installed."
+	    return 1
+	fi
+    fi
+    return 0
+}
+
+
+# ---------------------------------------------------------------------
+# compiler related functions
+#
+
+# try to retrieve the compiler specific settings from
+# file ${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}`leda_support`
+retrieve_compiler_settings()
+{
+    _file="${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}`leda_support`"
+    # old config file names have been always without _LEDA
+    case `leda_support` in
+	OLD*) 
+	    # maybe someone hacked an _LEDA file ...
+	    if [ -r "${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}_LEDA" ]; then
+		_file="${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}_LEDA"
+	    else
+		_file="${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}"
+	    fi
+	    if try_to_get_var_from_file LEDA_SUPPORT "${_file}"; then
+	        LEDA_SUPPORT=''
+	    fi
+	    reassemble_compiler
+	    ;;
+    esac
+    _tmp_version=${CGAL_INSTALL_VERSION}
+    if try_to_get_var_from_file CGAL_INSTALL_VERSION "${_file}"; then
+	SETUP_COMPLETE=''
+	CGAL_INSTALL_VERSION=${_tmp_version}
+    elif [ "${_tmp_version}" != "${CGAL_INSTALL_VERSION}" ]; then
+	# this config file was generated by an older install
+	log_print "WARNING: config file `$_basename ${_file}`" 
+	log_print "  was generated by another ${CGAL_INSTALL_CGAL} version."
+	SETUP_COMPLETE=''
+	CGAL_INSTALL_VERSION=${_tmp_version}
+    else
+	SETUP_COMPLETE='y'
+    fi
+    
+    # these two have to be ok:
+    if try_to_get_var_from_file LEDA_SUPPORT "${_file}"; then
+	LEDA_SUPPORT=''
+    fi
+
+    # LEDA specific stuff:
+    if try_to_get_var_from_file NEED_EXTRA_LEDA_IDIR "${_file}" || \
+	try_to_get_var_from_file NEED_EXTRA_LEDA_LDIR "${_file}"; then
+	if [ -n "${LEDA_SUPPORT}" ]; then
+	    LEDA_SUPPORT=''
+	    SETUP_COMPLETE=''
+	fi
+	NEED_EXTRA_LEDA_IDIR='n'
+	NEED_EXTRA_LEDA_LDIR='n'
+    fi
+    if try_to_get_var_from_file LEDA_INCL_DIR "${_file}"; then
+	if [ -n "${LEDA_SUPPORT}" -a -n "${NEED_EXTRA_LEDA_IDIR}" ]; then
+	    SETUP_COMPLETE=''
+	fi
+    fi
+    if try_to_get_var_from_file LEDA_LIB_DIR "${_file}"; then
+	if [ -n "${LEDA_SUPPORT}" -a -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
+	    SETUP_COMPLETE=''
+	fi
+    fi
+
+    if try_to_get_var_from_file CUSTOM_CXXFLAGS "${_file}"; then
+	CUSTOM_CXXFLAGS=''
+    fi
+    if try_to_get_var_from_file CUSTOM_LDFLAGS "${_file}"; then
+	CUSTOM_LDFLAGS=''
+    fi
+
+    # GMP specific stuff:
+    if try_to_get_var_from_file GMP_SUPPORT "${_file}" ||\
+	try_to_get_var_from_file GMP_INSTALLATION "${_file}"; then
+	GMP_INSTALLATION=''
+	GMP_SUPPORT=''
+	SETUP_COMPLETE=''
+    fi
+    if try_to_get_var_from_file GMP_INCL_DIR "${_file}"; then
+	if [ -n "${GMP_SUPPORT}" ]; then
+	    if [ "${GMP_INSTALLATION}" = 'x' -o \
+		 "${GMP_INSTALLATION}" = 'z' -o \
+		 "${GMP_INSTALLATION}" = 'e' ]; then
+		SETUP_COMPLETE=''
+	    fi
+	fi
+    fi
+    if try_to_get_var_from_file GMP_LIB_DIR "${_file}"; then
+	if [ -n "${GMP_SUPPORT}" ]; then
+	    if [ "${GMP_INSTALLATION}" = 'x' -o \
+		 "${GMP_INSTALLATION}" = 'z' -o \
+		 "${GMP_INSTALLATION}" = 'e' ]; then
+		SETUP_COMPLETE=''
+	    fi
+	fi
+    fi
+
+    # CLN specific stuff:
+    if try_to_get_var_from_file CLN_SUPPORT "${_file}" ||\
+	try_to_get_var_from_file CLN_INSTALLATION "${_file}"; then
+	CLN_INSTALLATION=''
+	CLN_SUPPORT=''
+	SETUP_COMPLETE=''
+    fi
+    if try_to_get_var_from_file CLN_INCL_DIR "${_file}"; then
+	if [ -n "${CLN_SUPPORT}" ]; then
+	    if [ "${CLN_INSTALLATION}" = 'x' -o \
+		 "${CLN_INSTALLATION}" = 'z' -o \
+		 "${CLN_INSTALLATION}" = 'e' ]; then
+		SETUP_COMPLETE=''
+	    fi
+	fi
+    fi
+    if try_to_get_var_from_file CLN_LIB_DIR "${_file}"; then
+	if [ -n "${CLN_SUPPORT}" ]; then
+	    if [ "${CLN_INSTALLATION}" = 'x' -o \
+		 "${CLN_INSTALLATION}" = 'z' -o \
+		 "${CLN_INSTALLATION}" = 'e' ]; then
+		SETUP_COMPLETE=''
+	    fi
+	fi
+    fi
+
+    # Qt specific stuff:
+    if try_to_get_var_from_file QT_SUPPORT "${_file}"; then
+	QT_SUPPORT=''
+    fi
+    if try_to_get_var_from_file QT_ADVANCED_MODE "${_file}"; then
+        QT_ADVANCED_MODE=''
+    fi
+    if try_to_get_var_from_file NEED_EXTRA_QT_IDIR "${_file}" || \
+	try_to_get_var_from_file NEED_EXTRA_QT_LDIR "${_file}" || \
+	 try_to_get_var_from_file NEED_EXTRA_QTMOC "${_file}"; then
+	if [ -n "${QT_SUPPORT}" -a -n "${QT_ADVANCED_MODE}" ]; then
+	    QT_SUPPORT=''
+	    SETUP_COMPLETE=''
+	fi
+	NEED_EXTRA_QT_IDIR='n'
+	NEED_EXTRA_QT_LDIR='n'
+	NEED_EXTRA_QTMOC='n'
+    fi
+    if try_to_get_var_from_file NEED_EXTRA_QTDIR "${_file}"; then
+	if [ -n "${QT_SUPPORT}" -a -z "${QT_ADVANCED_MODE}" ]; then
+	    QT_SUPPORT=''
+	    SETUP_COMPLETE=''
+	fi
+	NEED_EXTRA_QTDIR='n'
+    fi
+    if try_to_get_var_from_file QT_DIR "${_file}"; then
+	if [ -n "${QT_SUPPORT}" -a -z "${QT_ADVANCED_MODE}" -a \
+	     -n "${NEED_EXTRA_QTDIR}" ]; then
+	    SETUP_COMPLETE=''
+	fi
+    fi
+    if try_to_get_var_from_file QT_INCL_DIR "${_file}"; then
+	if [ -n "${QT_SUPPORT}" -a -n "${QT_ADVANCED_MODE}" -a \
+             -n "${NEED_EXTRA_QT_IDIR}" ]; then
+	    SETUP_COMPLETE=''
+	fi
+    fi
+    if try_to_get_var_from_file QT_LIB_DIR "${_file}"; then
+	if [ -n "${QT_SUPPORT}" -a -n "${QT_ADVANCED_MODE}" -a \
+             -n "${NEED_EXTRA_QT_LDIR}" ]; then
+	    SETUP_COMPLETE=''
+	fi
+    fi
+    if try_to_get_var_from_file QT_MOC "${_file}"; then
+	if [ -n "${QT_SUPPORT}" -a -n "${QT_ADVANCED_MODE}" -a \
+             -n "${NEED_EXTRA_QTMOC}" ]; then
+	    SETUP_COMPLETE=''
+	fi
+    fi
+
+
+    if try_to_get_var_from_file CUSTOM_CXXFLAGS "${_file}"; then
+	CUSTOM_CXXFLAGS=''
+    fi
+    if try_to_get_var_from_file CUSTOM_LDFLAGS "${_file}"; then
+	CUSTOM_LDFLAGS=''
+    fi
+
+    if try_to_get_var_from_file LONG_NAME_PROBLEM "${_file}"; then
+	SETUP_COMPLETE=''
+    fi
+
+    set_lib_compiled_flag
+    reassemble_compiler
+}
+
+# used by store_compiler_settings to store variable $1
+# into the config file
+_store_install_config_variable()
+{
+    ${_printf} "%s\n" "/* $1 = '`value_of $1`' */"
+}
+
+# store the actual compiler specific settings to the
+# file ${CGAL_INSTALL_CONF_DIR}/`full_ostype`
+store_compiler_settings()
+{
+    _file="${CGAL_INSTALL_CONF_DIR}/`full_ostype`"
+    ${_printf} "%s\n" \
+	"/*" \
+	>${_file}
+    ${_printf} "%s\n" \
+	"** file: `$_basename ${_file}`" \
+	>>${_file}
+    ${_printf} "%s\n" \
+	"** Configuration file for CGAL ${CGAL_VERSION}" \
+	>>${_file}
+    ${_printf} "%s\n" \
+	"** on `extended_compiler_description`" \
+	>>${_file}
+    ${_printf} "%s%s\n" \
+	"** Automatically created by " \
+	"${CGAL_INSTALL_CGAL} ${CGAL_INSTALL_VERSION}." \
+	>>${_file}
+    ${_printf} "%s\n" \
+	"** Please do not edit." \
+	>>${_file}
+    ${_printf} "%s\n\n" \
+	"*/" \
+	>>${_file}
+    reassemble_compiler
+    _store_install_config_variable COMPILER >>${_file}
+    _store_install_config_variable CGAL_INSTALL_VERSION >>${_file}
+    _store_install_config_variable LEDA_SUPPORT >>${_file}
+    _store_install_config_variable NEED_EXTRA_LEDA_IDIR >>${_file}
+    _store_install_config_variable LEDA_INCL_DIR >>${_file}
+    _store_install_config_variable NEED_EXTRA_LEDA_LDIR >>${_file}
+    _store_install_config_variable LEDA_LIB_DIR >>${_file}
+    _store_install_config_variable QT_SUPPORT >>${_file}
+    _store_install_config_variable QT_ADVANCED_MODE >>${_file}
+    _store_install_config_variable NEED_EXTRA_QTDIR >>${_file}
+    _store_install_config_variable QT_DIR >>${_file}
+    _store_install_config_variable NEED_EXTRA_QT_IDIR >>${_file}
+    _store_install_config_variable QT_INCL_DIR >>${_file}
+    _store_install_config_variable NEED_EXTRA_QT_LDIR >>${_file}
+    _store_install_config_variable QT_LIB_DIR >>${_file}
+    _store_install_config_variable NEED_EXTRA_QTMOC >>${_file}
+    _store_install_config_variable QT_MOC >>${_file}
+    _store_install_config_variable GMP_SUPPORT >>${_file}
+    _store_install_config_variable GMP_INSTALLATION >>${_file}
+    _store_install_config_variable GMP_INCL_DIR >>${_file}
+    _store_install_config_variable GMP_LIB_DIR >>${_file}
+    _store_install_config_variable CLN_SUPPORT >>${_file}
+    _store_install_config_variable CLN_INSTALLATION >>${_file}
+    _store_install_config_variable CLN_INCL_DIR >>${_file}
+    _store_install_config_variable CLN_LIB_DIR >>${_file}
+    _store_install_config_variable CUSTOM_CXXFLAGS  >>${_file}
+    _store_install_config_variable CUSTOM_LDFLAGS >>${_file}
+    _store_install_config_variable LONG_NAME_PROBLEM >>${_file}
+    ${_printf} "\n%s\n" \
+	"/* EOF */" \
+	>>${_file}
+    log_print "Settings stored in ${_file}."
+}
+
+# just a tiny message template for test_setup
+_passed_message()
+{
+    ${_printf} "%s\n" \
+	"${_LEFTSPACE}$1 test has already been passed."
+}
+
+# test current setup and set SETUP_COMPLETE 
+# return 0, iff setup is ok
+test_setup()
+{
+    SETUP_COMPLETE=''
+    make_lib_dir
+    link_gmp
+
+    # COMPILER
+    if [ -z "${CONFIG_TEST_PASSED}" ]; then
+	test_compiler_specifica "${INSTALL_VERBOSE}"
+    fi
+
+    # LEDA
+    if [ -z "${LEDA_TEST_PASSED}" ]; then
+	test_leda 'v'
+	if [ $? = 1 ]; then
+	    return 1
+	fi
+    else
+	_passed_message 'LEDA'
+    fi
+
+    # GMP
+    if [ -z "${GMP_TEST_PASSED}" ]; then
+	test_gmp 'GMP' 'v'
+	if [ $? = 1 ]; then
+	    return 1
+	fi
+    else
+	_passed_message 'GMP'
+    fi
+
+    # CLN
+    if [ -z "${CLN_TEST_PASSED}" ]; then
+	test_cln 'CLN' 'v'
+	if [ $? = 1 ]; then
+	    return 1
+	fi
+    else
+	_passed_message 'CLN'
+    fi
+
+    # QT MOC
+    if [ -z "${QT_MOC_TEST_PASSED}" ]; then
+	test_qt_moc 'v'
+	if [ $? = 1 ]; then
+	    return 1
+	fi
+    else
+	_passed_message 'Qt MOC'
+    fi
+
+    # QT
+    if [ -z "${QT_TEST_PASSED}" ]; then
+	test_qt 'v'
+	if [ $? = 1 ]; then
+	    return 1
+	fi
+    else
+	_passed_message 'Qt'
+    fi
+
+    SETUP_COMPLETE='y'
+    ${_printf} "%s" "${_LEFTSPACE}Saving current setup ..."
+    store_compiler_settings
+    ${_printf} "%s\n" " done."
+    return 0
+}
+
+# called when the setup has been changed dramatically
+# such that all previous test results are invalidated
+reset_all_test_variables()
+{
+    CONFIG_TEST_PASSED=''
+    LEDA_TEST_PASSED=''
+    GMP_TEST_PASSED=''
+    CLN_TEST_PASSED=''
+    QT_TEST_PASSED=''
+    QT_MOC_TEST_PASSED=''
+}
+
+# load the settings for ${COMPILER},
+# if a config file exists, otherwise check for STL
+_choose_compiler()
+{
+    log_print \
+	"Choosing `extended_compiler_description` as compiler."
+    set_ostype
+    set_compiler_flags
+    retrieve_compiler_settings
+    if [ -z "${SETUP_COMPLETE}" ]; then
+	# reset all TEST_PASSED variables
+	reset_all_test_variables
+    else
+	# reset all TEST_PASSED variables
+	CONFIG_TEST_PASSED='y'
+	if [ -n "${LEDA_SUPPORT}" ]; then
+	    LEDA_TEST_PASSED='y'
+	else
+	    LEDA_TEST_PASSED=''
+	fi
+	if [ -n "${GMP_SUPPORT}" ]; then
+	    GMP_TEST_PASSED='y'
+	else
+	    GMP_TEST_PASSED=''
+	fi
+	if [ -n "${CLN_SUPPORT}" ]; then
+	    CLN_TEST_PASSED='y'
+	else
+	    CLN_TEST_PASSED=''
+	fi
+	if [ -n "${QT_SUPPORT}" ]; then
+	    QT_TEST_PASSED='y'
+	    QT_MOC_TEST_PASSED='y'
+	else
+	    QT_TEST_PASSED=''
+	    QT_MOC_TEST_PASSED=''
+	fi
+    fi
+}
+
+# sets the CGAL_SUPPORT_COMPILER variable for CGAL_COMPILER to
+# empty (unsupported) or 'y' (supported).
+_set_support()
+{
+    case `compiler_description` in
+	*Borland*)
+	    case `compiler_version` in
+		5.5*) CGAL_SUPPORT_COMPILER='y';;
+		*) CGAL_SUPPORT_COMPILER='';;
+	    esac
+	    ;;
+	*KAI*)
+	    case `compiler_version` in
+		4.*) CGAL_SUPPORT_COMPILER='y';;
+	    esac
+	    ;;
+	*SUNPRO*) CGAL_SUPPORT_COMPILER='';;
+	*MIPSPRO*n32*) 
+	    case `compiler_version` in
+		7.3*) CGAL_SUPPORT_COMPILER='y';;
+		*) CGAL_SUPPORT_COMPILER='';;
+	    esac
+	    ;;
+	*GNU*)
+	    case `compiler_version` in
+		2.9*) CGAL_SUPPORT_COMPILER='y';;
+		egcs-2*) CGAL_SUPPORT_COMPILER='y';;
+		*) CGAL_SUPPORT_COMPILER='';;
+	    esac
+	    ;;
+	*VC++*)
+	    case `compiler_version` in
+		12.00.8168*) CGAL_SUPPORT_COMPILER='y';;
+		12.00.8804*) CGAL_SUPPORT_COMPILER='y';;
+		*) CGAL_SUPPORT_COMPILER='';;
+	    esac
+	    ;;
+	*) CGAL_SUPPORT_COMPILER='';;
+    esac
+}
+
+# set COMPILER to ${COMPILER}_$1 (for $1 in {1..${_COMPILER_NUMBER}-1})
+_set_compiler()
+{
+    if [ $1 -ge ${_COMPILER_NUMBER} ]; then
+	exit_on_error "Argument greater than expected" \
+	    "(${1} >= ${_COMPILER_NUMBER}) in _set_compiler"
+    fi
+    _tmp=`eval "echo '$'_COMPILER_$1"`
+    _tmp=`eval "echo ${_tmp}"`
+    COMPILER=${_tmp}
+    _set_support
+}
+
+
+# ---------------------------------------------------------------------
+# functions common to all menus
+#
+
+# print current setup status, $1 is menu-name
+menu_header()
+{
+    clear_screen
+    print_filled_line
+    print_headline "CGAL $CGAL_VERSION Installation ${1} Menu"
+    print_line     "OS:                  ${SYST}"
+    print_line \
+	"Compiler:            `extended_compiler_description`"
+#    _set_tmp_to_not_or_not "${LEDA_SUPPORT}"
+#    print_line     "LEDA:                ${_tmp}supported." 
+    _set_tmp_to_not_or_not "${GMP_SUPPORT}"
+    print_line     "GMP:                 ${_tmp}supported." 
+    _set_tmp_to_not_or_not "${CLN_SUPPORT}"
+    print_line     "CLN:                 ${_tmp}supported." 
+    _set_tmp_to_not_or_not "${QT_SUPPORT}"
+    print_line     "Qt:                  ${_tmp}supported." 
+    print_empty_line
+    if [ -n "${CGAL_SUPPORT_COMPILER}" ]; then
+	print_line     "Compiler is supported by CGAL."
+    else
+	print_line     "Compiler is NOT supported by CGAL."
+    fi
+    if [ -z "${SETUP_COMPLETE}" ]; then
+	print_line "The setup has ${_bold_on}not${_bold_off} been tested." 
+    else
+	print_line "The setup has been tested ${_bold_on}ok${_bold_off}." 
+    fi
+    print_empty_line
+}
+
+# bottom lines for all menus, $1 is name of next-top menu
+menu_tailer()
+{
+    print_empty_line 
+    print_line     "${_bold_on}<Q>${_bold_off}  Back to ${1}" 
+    print_empty_line 
+    print_empty_line 
+    print_empty_line 
+    print_filled_line
+    go_up_lines 3
+    print_prompt "Your Choice: " 
+    _read
+}
+
+# read a new value for variable $1 
+# and store old value in _tmp
+change_value()
+{
+    go_up_lines 1
+    print_prompt "New $1: " 
+    _read
+    # store old value
+    _oldvalue=`eval "echo '$'$1"`
+    _oldvalue=\'`eval "echo $_oldvalue"`\'
+    eval "$1=\"${KEY}\""
+}
+
+# read a new value for variable $1
+# if $2 == "dir", it has to denote a directory
+# if $2 == "exe", it has to denote an executable file
+# check input for
+#  1) no whitespaces
+#  2) existence of the directory
+# and run the corresponding check function (check_$1)
+# return 0, if successful and return 1, if not
+change_dir()
+{
+    change_value $1
+    _tmp="`value_of $1`"
+    eval "$1=\"`posix_path ${_tmp}`\""
+    if [ "${_oldvalue}" = "`value_of $1`" ]; then
+	return 1
+    else
+	# make sure $1 is just one word:
+	go_down_lines 1
+	if [ -n "`${_printf} \"%s\" \"\`value_of $1\`\" | \
+	    ${_awk} '{printf $2}'`" ]
+	then
+	    print_filled_line
+	    print_center_line "ERROR: String contains whitespaces."
+	else
+	    print_filled_line
+	    if [ "${2}" = "dir" -a ! -d "`value_of $1`" ]; then
+		print_center_line "ERROR: Directory does not exist." 
+	    elif [ "${2}" = "exe" -a ! -x "`value_of $1`" ]; then
+		print_center_line \
+		    "ERROR: File does not exist or is not executable." 
+	    else
+		eval "check_$1 print_line"
+		if [ $? != 0 ]; then
+		    return 0
+		fi
+	    fi
+	fi
+    fi
+
+    # restore old value
+    eval $1="$_oldvalue"
+    wait_for_enter
+    return 1
+}
+
+# set _tmp to 'not', if $1 is an empty string
+# otherwise set _tmp to ''
+_set_tmp_to_not_or_not()
+{
+    if [ -z "$1" ]; then
+	_tmp='not '
+    else
+	_tmp=''
+    fi
+}
+
+# ---------------------------------------------------------------------
+# compiler_menu to setup compiler and STL options
+#
+
+compiler_choose_menu()
+{
+    _OLD_COMPILER=${COMPILER}
+    while [ 0 ]; do
+	menu_header 'Choose Compiler'
+	i=1
+	while [ $i -lt ${_COMPILER_NUMBER} ]; do
+	    _tmp=`eval "echo '$'_COMPILER_$i"`
+	    _tmp=`eval "echo ${_tmp}"`
+	    print_line \
+		"${_bold_on}<${i}>${_bold_off}  `extended_compiler_description \"${_tmp}\"`"
+	    eval "${_EXPR} ${i} + 1"
+	    i=${_result}
+	done
+	menu_tailer 'Compiler Menu'
+
+	case ${KEY} in
+	    1|2|3|4|5|6|7|8|9)
+		if [ ${KEY} -lt ${_COMPILER_NUMBER} ]; then
+		    _set_compiler ${KEY}
+		    if [ "${_OLD_COMPILER}" != "${COMPILER}" ]; then
+			go_down_lines 3
+			flush_buffer
+			_choose_compiler 
+		    fi
+		    return
+		fi
+		;;
+	    q|Q|b|B)
+		return
+		;;
+	esac
+    done
+}
+
+compiler_menu()
+{
+    while [ 0 ]; do
+	menu_header 'Compiler'
+	print_line "${_bold_on}<C>${_bold_off}  Choose compiler"
+	print_line "${_bold_on}<F>${_bold_off}  Set custom compiler flags"
+	print_multi_line "${CUSTOM_CXXFLAGS:-<none>}"
+	print_line "${_bold_on}<L>${_bold_off}  Set custom linker flags"
+	print_multi_line "${CUSTOM_LDFLAGS:-<none>}"
+	print_line "${_bold_on}<T>${_bold_off}  Test (and save) setup"
+	menu_tailer 'Main Menu'
+
+	case ${KEY} in
+	    c|C)
+		compiler_choose_menu
+		;;
+	    f|F)
+		change_value CUSTOM_CXXFLAGS
+		reset_all_test_variables
+		SETUP_COMPLETE=''
+		;;
+	    l|L)
+		change_value CUSTOM_LDFLAGS
+		reset_all_test_variables
+		SETUP_COMPLETE=''
+		;;
+	    t|T)
+		go_down_lines 3
+		flush_buffer
+		test_setup
+		;;
+	    q|Q|b|B)
+		return
+		;;
+	esac
+    done
+}
+
+
+# ---------------------------------------------------------------------
+# leda_menu to setup LEDA
+#
+
+leda_menu()
+{
+    while [ 0 ]; do
+	menu_header 'LEDA'
+	print_line     "${_bold_on}<E>${_bold_off}  Toggle LEDA support"
+	if [ -n "${LEDA_SUPPORT}" ]; then
+	    print_line     "${_bold_on}<I>${_bold_off}  LEDA include directory" 
+	    if [ -n "${NEED_EXTRA_LEDA_IDIR}" ]; then
+		print_line  "     ${LEDA_INCL_DIR:-<undefined>}" 
+		if [ "${NEED_EXTRA_LEDA_IDIR}" = "x" ]; then
+		    print_line \
+			"${_bold_on}<J>${_bold_off}  Use LEDA headers from system include."
+		fi
+	    else
+		print_line     "     <system include directory>"
+	    fi
+	    print_line     "${_bold_on}<L>${_bold_off}  LEDA lib directory" 
+	    if [ -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
+		print_line     "     ${LEDA_LIB_DIR:-<undefined>}" 
+		if [ "${NEED_EXTRA_LEDA_LDIR}" = "x" ]; then
+		    print_line \
+			"${_bold_on}<M>${_bold_off}  Use LEDA libs from system libdir."
+		fi
+	    else
+		print_line     "     <system lib directory>"
+	    fi
+	fi
+	print_line     "${_bold_on}<T>${_bold_off}  Test (and save) setup" 
+	menu_tailer 'Main Menu'
+	case ${KEY} in
+	    e|E)
+		if [ -z "${LEDA_SUPPORT}" ]; then 
+		    LEDA_SUPPORT='_LEDA'
+		    reassemble_compiler
+		    SETUP_COMPLETE=''
+		    make_lib_dir
+		    # check, if libgmp can be linked 
+		    link_gmp
+
+		    # test for LEDA sysincl/-lib, if this was not done before
+		    if [ "${NEED_EXTRA_LEDA_IDIR}" = 'n' -o \
+			 "${NEED_EXTRA_LEDA_LDIR}" = 'n' ]; then
+			go_down_lines 3
+			flush_buffer
+			test_for_leda_incl_in_sys_incl "${INSTALL_VERBOSE}"
+			test_for_leda_lib_in_sys_lib "${INSTALL_VERBOSE}"
+		    fi
+		else
+		    LEDA_SUPPORT=''
+		    reassemble_compiler
+		    # check, if libgmp can be linked 
+		    link_gmp
+		fi
+		;;
+	    i|I)
+		if [ -n "${LEDA_SUPPORT}" ]; then 
+			if [ -z "${NEED_EXTRA_LEDA_IDIR}" ]; then
+			    NEED_EXTRA_LEDA_IDIR='x'
+			fi
+		    if change_dir LEDA_INCL_DIR dir; then
+			if [ -z "${NEED_EXTRA_LEDA_IDIR}" ]; then
+			    NEED_EXTRA_LEDA_IDIR='x'
+			fi
+			LEDA_TEST_PASSED=''
+			SETUP_COMPLETE=''
+ 		    fi
+		fi
+		;;
+	    j|J)
+		if [ "${NEED_EXTRA_LEDA_IDIR}" = "x" ]; then
+		    NEED_EXTRA_LEDA_IDIR=''
+		    LEDA_TEST_PASSED=''
+		    SETUP_COMPLETE=''
+		fi
+		;;
+	    l|L)
+		if [ -n "${LEDA_SUPPORT}" ]; then 
+		    if change_dir LEDA_LIB_DIR dir; then
+			if [ -z "${NEED_EXTRA_LEDA_LDIR}" ]; then
+			    NEED_EXTRA_LEDA_LDIR='x'
+			fi
+			LEDA_TEST_PASSED=''
+			SETUP_COMPLETE=''
+		    fi
+		fi
+		;;
+	    m|M)
+		if [ "${NEED_EXTRA_LEDA_LDIR}" = "x" ]; then
+		    NEED_EXTRA_LEDA_LDIR=''
+		    LEDA_TEST_PASSED=''
+		    SETUP_COMPLETE=''
+		fi
+		;;
+	    t|T)
+		go_down_lines 3
+		flush_buffer
+		test_setup;;
+	    q|Q|b|B)
+		return;;
+	    *);;
+	esac
+    done
+}
+
+
+# ---------------------------------------------------------------------
+# gmp_menu to setup GMP
+#
+
+gmp_menu()
+{
+    while [ 0 ]; do
+	menu_header 'GMP'
+	print_line "${_bold_on}<C>${_bold_off}  Install GMP in CGAL tree"
+	print_line "${_bold_on}<G>${_bold_off}  Toggle GMP support" 
+	if [ -n "${GMP_SUPPORT}" ]; then
+	    print_line "${_bold_on}<I>${_bold_off}  GMP  include directory" 
+	    case ${GMP_INSTALLATION} in
+		c) _tmp='<CGAL include directory>';;
+		s) _tmp='<system include directory>';;
+		*) _tmp="${GMP_INCL_DIR}";;
+	    esac
+	    print_line "     ${_tmp:-<undefined>}" 
+	    print_line "${_bold_on}<L>${_bold_off}  GMP  lib directory" 
+	    case ${GMP_INSTALLATION} in
+		c) _tmp='<CGAL lib directory>';;
+		s) _tmp='<system lib directory>';;
+		*) _tmp="${GMP_LIB_DIR}";;
+	    esac
+	    print_line "     ${_tmp:-<undefined>}" 
+	    if [ "${GMP_INSTALLATION}" = 'z' ]; then
+		print_line \
+		    "${_bold_on}<Z>${_bold_off}  Use GMP installation in CGAL tree" 
+	    fi
+	    if [ "${GMP_INSTALLATION}" = 'x' ]; then
+		print_line \
+		    "${_bold_on}<S>${_bold_off}  Use GMP installation in system dirs" 
+	    fi
+	fi
+	print_line     "${_bold_on}<T>${_bold_off}  Test (and save) setup" 
+	menu_tailer 'Main Menu'
+
+	case $KEY in
+	    c|C) install_gmp;;
+	    g|G)
+		if [ -z "${GMP_SUPPORT}" ]; then 
+		    SETUP_COMPLETE=''
+		    GMP_SUPPORT='_GMP'
+		    if [ -z "${GMP_INSTALLATION}" ]; then
+			go_down_lines 3
+			flush_buffer
+			search_gmp "${INSTALL_VERBOSE}"
+		    fi
+		else
+		    GMP_SUPPORT=''
+		fi
+		;;
+	    i|I)
+		if [ -n "${GMP_SUPPORT}" ]; then
+		    if change_dir GMP_INCL_DIR dir; then
+			GMP_TEST_PASSED=''
+			SETUP_COMPLETE=''
+			case ${GMP_INSTALLATION} in 
+			    c|z) GMP_INSTALLATION='z';;
+			    s|x) GMP_INSTALLATION='x';;
+			    *) GMP_INSTALLATION='e';;
+			esac
+		    fi
+		fi
+		;;
+	    l|L)
+		if [ -n "${GMP_SUPPORT}" ]; then 
+		    if change_dir GMP_LIB_DIR dir; then
+			GMP_TEST_PASSED=''
+			SETUP_COMPLETE=''
+			case ${GMP_INSTALLATION} in 
+			    c|z) GMP_INSTALLATION='z';;
+			    s|x) GMP_INSTALLATION='x';;
+			    *) GMP_INSTALLATION='e';;
+			esac
+		    fi
+		fi
+		;;
+	   z|Z)
+		if [ -n "${GMP_SUPPORT}" -a \
+		     "${GMP_INSTALLATION}" = 'z' ]; then
+		    GMP_TEST_PASSED='y'
+		    GMP_INSTALLATION='c'
+		fi
+		;;
+	    t|T)
+		go_down_lines 3
+		flush_buffer
+		test_setup
+		;;
+	    s|S)
+		if [ "${GMP_SUPPORT}" -a \
+		     "${GMP_INSTALLATION}" = 'x' ]; then
+		    GMP_TEST_PASSED='y'
+		    GMP_INSTALLATION='s'
+		fi
+		;;
+	    q|Q|b|B)
+		return;;
+	    *);;
+	esac
+    done
+}
+
+
+# ---------------------------------------------------------------------
+# cln_menu to setup CLN
+#
+
+cln_menu()
+{
+    while [ 0 ]; do
+	menu_header 'CLN'
+	print_line "${_bold_on}<C>${_bold_off}  Toggle CLN support" 
+	if [ -n "${CLN_SUPPORT}" ]; then
+	    print_line "${_bold_on}<I>${_bold_off}  CLN  include directory" 
+	    case ${CLN_INSTALLATION} in
+		c) _tmp='<CGAL include directory>';;
+		s) _tmp='<system include directory>';;
+		*) _tmp="${CLN_INCL_DIR}";;
+	    esac
+	    print_line "     ${_tmp:-<undefined>}" 
+	    print_line "${_bold_on}<L>${_bold_off}  CLN  lib directory" 
+	    case ${CLN_INSTALLATION} in
+		c) _tmp='<CGAL lib directory>';;
+		s) _tmp='<system lib directory>';;
+		*) _tmp="${CLN_LIB_DIR}";;
+	    esac
+	    print_line "     ${_tmp:-<undefined>}" 
+	    if [ "${CLN_INSTALLATION}" = 'x' ]; then
+		print_line \
+		    "${_bold_on}<S>${_bold_off}  Use CLN installation in system dirs" 
+	    fi
+	fi
+	print_line     "${_bold_on}<T>${_bold_off}  Test (and save) setup" 
+	menu_tailer 'Main Menu'
+
+	case $KEY in
+	    c|C)
+		if [ -z "${CLN_SUPPORT}" ]; then 
+		    SETUP_COMPLETE=''
+		    CLN_SUPPORT='_CLN'
+		    if [ -z "${CLN_INSTALLATION}" ]; then
+			go_down_lines 3
+			flush_buffer
+			search_cln "${INSTALL_VERBOSE}"
+		    fi
+		else
+		    CLN_SUPPORT=''
+		fi
+		;;
+	    i|I)
+		if [ -n "${CLN_SUPPORT}" ]; then
+		    if change_dir CLN_INCL_DIR dir; then
+			CLN_TEST_PASSED=''
+			SETUP_COMPLETE=''
+			case ${CLN_INSTALLATION} in 
+			    c|z) CLN_INSTALLATION='z';;
+			    s|x) CLN_INSTALLATION='x';;
+			    *) CLN_INSTALLATION='e';;
+			esac
+		    fi
+		fi
+		;;
+	    l|L)
+		if [ -n "${CLN_SUPPORT}" ]; then 
+		    if change_dir CLN_LIB_DIR dir; then
+			CLN_TEST_PASSED=''
+			SETUP_COMPLETE=''
+			case ${CLN_INSTALLATION} in 
+			    c|z) CLN_INSTALLATION='z';;
+			    s|x) CLN_INSTALLATION='x';;
+			    *) CLN_INSTALLATION='e';;
+			esac
+		    fi
+		fi
+		;;
+	    t|T)
+		go_down_lines 3
+		flush_buffer
+		test_setup
+		;;
+	    s|S)
+		if [ "${CLN_SUPPORT}" -a \
+		     "${CLN_INSTALLATION}" = 'x' ]; then
+		    CLN_TEST_PASSED='y'
+		    CLN_INSTALLATION='s'
+		fi
+		;;
+	    q|Q|b|B)
+		return;;
+	    *);;
+	esac
+    done
+}
+
+# ---------------------------------------------------------------------
+# qt_menu to setup Qt
+#
+
+qt_menu()
+{
+    while [ 0 ]; do
+	menu_header 'Qt'
+	print_line     "${_bold_on}<K>${_bold_off}  Toggle Qt support"
+	if [ -n "${QT_SUPPORT}" ]; then
+	    if [ -z "${QT_ADVANCED_MODE}" ]; then
+		print_line     "${_bold_on}<A>${_bold_off}  Advanced mode" 
+		print_line \
+		"${_bold_on}<D>${_bold_off}  Qt directory" 
+		if [ -n "${NEED_EXTRA_QTDIR}" ]; then
+		    print_line  "     ${QT_DIR:-<undefined>}" 
+		    if [ "${NEED_EXTRA_QTDIR}" = "x" ]; then
+			print_line \
+	    "${_bold_on}<E>${_bold_off}  Use \$QTDIR as Qt directory."
+		    fi
+		else
+		    print_line     "     ${QT_DIR} <defined in \$QTDIR>"
+		fi
+	    else
+		print_line     "${_bold_on}<B>${_bold_off}  Basic mode"
+		print_line \
+		    "${_bold_on}<I>${_bold_off}  Qt include directory" 
+		if [ -n "${NEED_EXTRA_QT_IDIR}" ]; then
+		    print_line  "     ${QT_INCL_DIR:-<undefined>}" 
+		    if [ "${NEED_EXTRA_QT_IDIR}" = "x" ]; then
+			print_line \
+	    "${_bold_on}<J>${_bold_off}  Use Qt headers from system include."
+		    fi
+		else
+		    print_line     "     <system include directory>"
+		fi
+		print_line     "${_bold_on}<L>${_bold_off}  Qt lib directory" 
+		if [ -n "${NEED_EXTRA_QT_LDIR}" ]; then
+		    print_line     "     ${QT_LIB_DIR:-<undefined>}" 
+		    if [ "${NEED_EXTRA_QT_LDIR}" = "x" ]; then
+			print_line \
+	    "${_bold_on}<M>${_bold_off}  Use Qt libs from system libdir."
+		    fi
+		else
+		    print_line     "     <system lib directory>"
+		fi
+		print_line     "${_bold_on}<O>${_bold_off}  Qt moc executable"
+		if [ -n "${NEED_EXTRA_QTMOC}" ]; then
+		    print_line     "     ${QT_MOC:-<undefined>}" 
+		    if [ "${NEED_EXTRA_QTMOC}" = "x" ]; then
+			print_line \
+			    "${_bold_on}<P>${_bold_off}  Use Qt moc from path."
+		    fi
+		else
+		    print_line     "     <in path>"
+		fi
+	    fi
+
+	fi
+	print_line     "${_bold_on}<T>${_bold_off}  Test (and save) setup" 
+	menu_tailer 'Main Menu'
+	case ${KEY} in
+	    k|K)
+		if [ -z "${QT_SUPPORT}" ]; then 
+		    SETUP_COMPLETE=''
+		    QT_SUPPORT='_QT'
+		    go_down_lines 3
+		    flush_buffer
+		    # test for QT sysincl/-lib and moc, if this was not
+		    # done before
+		    if [ "${NEED_EXTRA_QT_IDIR}" = 'n' -o \
+			 "${NEED_EXTRA_QT_LDIR}" = 'n' -o \
+			 "${NEED_EXTRA_QTMOC}" = 'n' ]; then
+			test_for_qt_moc_in_path "${INSTALL_VERBOSE}"
+			test_for_qt_incl_in_sys_incl "${INSTALL_VERBOSE}"
+			test_for_qt_lib_in_sys_lib "${INSTALL_VERBOSE}"
+		    fi
+		    if [ "${NEED_EXTRA_QT_IDIR}" = 'x' -a \
+			 "${NEED_EXTRA_QT_LDIR}" = 'x' -a \
+			 "${NEED_EXTRA_QTMOC}" = 'x' ]; then
+			 QT_ADVANCED_MODE='y'
+		    else
+			QT_ADVANCED_MODE=''
+			# test QTDIR if this was not done before
+			if [ "${NEED_EXTRA_QTDIR}" = 'n' ]; then
+			    test_for_qt_dir "${INSTALL_VERBOSE}"
+			fi
+		    fi
+		else
+		    QT_SUPPORT=''
+		    QT_ADVANCED_MODE=''
+		fi
+		;;
+	    a|A)
+	        if [ -n "${QT_SUPPORT}" -a -z "${QT_ADVANCED_MODE}" ]; then 
+		    QT_ADVANCED_MODE='y'
+		    QT_TEST_PASSED=''
+		    QT_MOC_TEST_PASSED=''
+		    SETUP_COMPLETE=''
+		fi
+		;;  
+	    b|B)
+	        if [ -n "${QT_SUPPORT}" -a -n "${QT_ADVANCED_MODE}" ]; then 
+		    QT_ADVANCED_MODE=''
+		    QT_TEST_PASSED=''
+		    QT_MOC_TEST_PASSED=''
+		    SETUP_COMPLETE=''
+		    # test QTDIR if this was not done before
+		    if [ "${NEED_EXTRA_QTDIR}" = 'n' ]; then
+			go_down_lines 3
+			flush_buffer
+			test_for_qt_dir "${INSTALL_VERBOSE}"
+		    fi
+		    if [ -n "${QT_DIR}" ]; then
+			qt_dir_has_changed
+		    fi
+		fi
+		;; 
+	    d|D)
+		if [ -n "${QT_SUPPORT}" -a -z "${QT_ADVANCED_MODE}" ]; then
+		    if [ -z "${NEED_EXTRA_QTDIR}" ]; then
+			NEED_EXTRA_QTDIR='x'
+		    fi
+		    if change_dir QT_DIR dir; then
+			if [ -z "${NEED_EXTRA_QTDIR}" ]; then
+			    NEED_EXTRA_QTDIR='x'
+			fi
+			QT_TEST_PASSED=''
+			QT_MOC_TEST_PASSED=''
+			SETUP_COMPLETE=''
+			qt_dir_has_changed
+ 		    fi
+		fi
+		;;
+	    e|E)
+		if [ "${NEED_EXTRA_QTDIR}" = "x" ]; then
+		    NEED_EXTRA_QTDIR=''
+		    QT_TEST_PASSED=''
+		    QT_MOC_TEST_PASSED=''
+		    SETUP_COMPLETE=''
+		fi
+		;;
+	    i|I)
+		if [ -n "${QT_SUPPORT}" ]; then 
+			if [ -z "${NEED_EXTRA_QT_IDIR}" ]; then
+			    NEED_EXTRA_QT_IDIR='x'
+			fi
+		    if change_dir QT_INCL_DIR dir; then
+			if [ -z "${NEED_EXTRA_QT_IDIR}" ]; then
+			    NEED_EXTRA_QT_IDIR='x'
+			fi
+			QT_TEST_PASSED=''
+			QT_MOC_TEST_PASSED=''
+			SETUP_COMPLETE=''
+ 		    fi
+		fi
+		;;
+	    j|J)
+		if [ "${NEED_EXTRA_QT_IDIR}" = "x" ]; then
+		    NEED_EXTRA_QT_IDIR=''
+		    QT_TEST_PASSED=''
+		    QT_MOC_TEST_PASSED=''
+		    SETUP_COMPLETE=''
+		fi
+		;;
+	    l|L)
+		if [ -n "${QT_SUPPORT}" ]; then 
+		    if change_dir QT_LIB_DIR dir; then
+			if [ -z "${NEED_EXTRA_QT_LDIR}" ]; then
+			    NEED_EXTRA_QT_LDIR='x'
+			fi
+			QT_TEST_PASSED=''
+			QT_MOC_TEST_PASSED=''
+			SETUP_COMPLETE=''
+		    fi
+		fi
+		;;
+	    m|M)
+		if [ "${NEED_EXTRA_QT_LDIR}" = "x" ]; then
+		    NEED_EXTRA_QT_LDIR=''
+		    QT_TEST_PASSED=''
+		    QT_MOC_TEST_PASSED=''
+		    SETUP_COMPLETE=''
+		fi
+		;;
+	    o|O)
+		if [ -n "${QT_SUPPORT}" ]; then 
+		    if change_dir QT_MOC exe; then
+			if [ -z "${NEED_EXTRA_QTMOC}" ]; then
+			    NEED_EXTRA_QTMOC='x'
+			fi
+			QT_TEST_PASSED=''
+			QT_MOC_TEST_PASSED=''
+			SETUP_COMPLETE=''
+		    fi
+		fi
+		;;
+	    p|P)
+		if [ "${NEED_EXTRA_QTMOC}" = "x" ]; then
+		    NEED_EXTRA_QTMOC=''
+		    QT_TEST_PASSED=''
+		    QT_MOC_TEST_PASSED=''
+		    SETUP_COMPLETE=''
+		fi
+		;;
+	    t|T)
+		go_down_lines 3
+		flush_buffer
+		test_setup;;
+	    q|Q|b|B)
+		return;;
+	    *);;
+	esac    done
+}
+
+
+# ---------------------------------------------------------------------
+# GNU GMP installation
+#
+
+# $1 is the command to execute and $2 its description
+# if the command fails, exit with an error message
+_do_command()
+{
+    ${_printf} "%s" "${_LEFTSPACE}$2 ..."
+    if eval "$1 >${TMP_LOGFILE} 2>&1"; then
+	log_print "\"$2\" succeeded."
+	${_printf} "%s\n" " done."
+	${_rm} -f ${TMP_LOGFILE}
+    else
+	log_print "ERROR: \"$2\" failed."
+	${_cat} ${TMP_LOGFILE} | ${PAGER:-${_cat}}
+	${_rm} -f ${TMP_LOGFILE}
+	exit_on_error "\"$2\" failed"
+    fi
+}
+
+# $1 is the command to execute and $2 its description
+# if the command fails, show the log and return 1,
+# otherwise return 0
+_do_command_may_fail()
+{
+    ${_printf} "%s" "${_LEFTSPACE}$2 ..."
+    if eval "$1 >${TMP_LOGFILE} 2>&1"; then
+	log_print "\"$2\" succeeded."
+	${_printf} "%s\n" " done."
+	${_rm} -f ${TMP_LOGFILE}
+	return 0
+    else
+	log_print "ERROR: \"$2\" failed."
+	${_printf} "\n%s\n" "${_LEFTSPACE}\"$2\" failed."
+	${_printf} "%s\n" "${_LEFTSPACE}You will be shown a log now ..."
+	print_filled_line
+	wait_for_enter
+	${_cat} ${TMP_LOGFILE} | ${PAGER:-${_cat}}
+	${_rm} -f ${TMP_LOGFILE}
+	return 1
+    fi
+}
+
+# used by install_gmp to create symbolic links of libgmp.a
+# in the CGAL tree
+link_gmp()
+{
+    for i in ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER} \
+      ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}_LEDA; do
+	if [ ! -r ${CGAL_LIB_DIR}/`full_ostype`/${GMP_LIBNAME} -a \
+	    -r ${i}/${GMP_LIBNAME} ]
+	then
+	    case ${CGAL_OS_COMPILER} in 
+		*CYGWIN*) 
+		    ${_cp} ${i}/${GMP_LIBNAME} \
+			${CGAL_LIB_DIR}/`full_ostype`/${GMP_LIBNAME}
+		    log_print "remark: copied libgmp from ${i}" 
+		    ;;
+		*) 
+		    ${_ln} -s ${i}/${GMP_LIBNAME} \
+			${CGAL_LIB_DIR}/`full_ostype`/${GMP_LIBNAME}
+		    log_print "remark: linked libgmp from ${i}" 
+		    ;;
+	    esac
+	    log_print "  to ${CGAL_LIB_DIR}/`full_ostype`."
+	fi
+    done
+}
+
+# used by install_gmp
+install_gmp_sub()
+{
+    if [ ! -d ${GMP_VERSION} ]; then
+	# unzip
+	gmpfile=${CGAL_AUX_DIR}/${GMP_VERSION}.tar.gz
+	_check_read ${gmpfile}
+	_check_write ${CGAL_AUX_DIR}
+	_check_for_sysutil gunzip y
+	_do_command "${_gunzip} ${gmpfile}" "Unzip"
+
+	# untar
+	gmpfile=${CGAL_AUX_DIR}/${GMP_VERSION}.tar
+	_check_read ${gmpfile}
+	_check_for_sysutil tar y
+	_do_command "${_tar} xf ${gmpfile}" "Untar"
+
+	# re-zip
+	_check_for_sysutil gzip y
+	_do_command "${_gzip} -9 ${gmpfile}" "Re-zip"
+    fi
+    
+    cd ${GMP_VERSION}
+    case ${CGAL_OS_COMPILER} in
+	mips_IRIX*-6*_CC-*32-*)
+	    # gmp-2.0.2 build fails on irix6, since it assummes
+	    # 64 bit wordsize
+	    _host=mips-sgi-irix5;;
+	*)
+	    _host='';;
+    esac
+    if _do_command_may_fail "./configure ${_host}" Configuring; then
+	if _do_command_may_fail "make CC=\"`c_compiler_bin`\"" Building
+	then
+	    ${_printf} "%s" "${_LEFTSPACE}Installing ..."
+	    _check_write ${CGAL_INCL_DIR}
+	    ${_cp} gmp.h ${CGAL_INCL_DIR}
+	    ${_mv} libgmp.a ${CGAL_LIB_DIR}/`full_ostype`
+	    ${_printf} "%s\n" " done."
+	    _do_command "make clean" "Cleaning"
+	    GMP_INSTALLATION='c'
+	fi
+    fi
+    cd ..
+}
+
+
+# install GNU GMP in the CGAL directory tree
+install_gmp()
+{
+    make_lib_dir
+    if [ -r ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/${GMP_LIBNAME} -o \
+	 -r ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libgmp.so ]; then
+	if [ "${GMP_INSTALLATION}" != "c" ]; then
+	    GMP_INSTALLATION='c'
+	    GMP_TEST_PASSED=''
+	fi
+	go_down_lines 2
+	print_line "There already exists a GMP installation"
+	print_line "for this os/compiler in the CGAL tree."
+	print_empty_line
+	print_empty_line
+	print_filled_line
+	go_up_lines 2
+	print_prompt "Do you want to proceed anyway (y/N)? "
+	_read
+	if [ "${KEY}" != 'y' ]; then 
+	    return
+	fi
+    fi
+
+    # remove all os/compiler specific stuff
+    SAVE_LEDA="${LEDA_SUPPORT}"
+    LEDA_SUPPORT=''
+    make_lib_dir
+
+    clear_screen
+    print_filled_line
+    print_empty_line
+    print_headline "Installing GNU GMP in the CGAL tree"
+    print_filled_line
+    write_buffer "\n"
+    flush_buffer
+    ${_printf} "%s\t\t%s\n" "${_LEFTSPACE}OS:" "${SYST}" 
+    ${_printf} "%s\t%s\n\n" \
+	"${_LEFTSPACE}COMPILER:" "`extended_compiler_description`" 
+
+    case ${CGAL_OS_COMPILER} in 
+	*CYGWIN*) 
+	    gmpdir="${CGAL_AUX_DIR}/wingmp/gmp-2.0.2"
+	    case `compiler_description` in
+		*VC++*)    _tmp_name=msvc/gmp.lib;;
+		*Borland*) _tmp_name=bcc/gmp.lib;;
+		*)         _tmp_name=gcc/libgmp.a;;
+	    esac
+	    _check_write ${CGAL_INCL_DIR}
+	    ${_cp} "${gmpdir}/gmp.h" "${CGAL_INCL_DIR}"
+	    ${_cp} "${gmpdir}/${_tmp_name}" \
+		"${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}"
+	    GMP_INSTALLATION='c'
+	    ;;
+	*) install_gmp_sub;;
+    esac
+    write_buffer "\n"
+    print_filled_line
+    wait_for_enter
+
+    # restore os/compiler stuff
+    LEDA_SUPPORT="${SAVE_LEDA}"
+    link_gmp
+}
+
+# ---------------------------------------------------------------------
+# lib menu
+#
+
+# ---------------------------------------------------------------------
+# create include makefile
+# these makefiles are placed in ${CGAL_MAKE_DIR}
+# and define compiler/os specific flags
+# they should be included in any CGAL makefile
+# when compiling on this compiler/os
+# ---------------------------------------------------------------------
+
+makefile_header()
+{
+  ${_printf} "\n%s\n" \
+    "#---------------------------------------------------------------------#"
+  ${_printf} "%s\n" \
+    "#                    ${1}"
+  ${_printf} "%s\n\n" \
+    "#---------------------------------------------------------------------#"
+}
+
+# print args, if string is not empty
+# (empty strings on a line give problems with SGI make :()
+makefile_print_line()
+{
+    if [ -n "${*}" ]; then
+	${_printf} "\t%s \\\\\n" "${*}"
+    fi
+}
+
+# print args a s a continuation line, if not empty
+makefile_print_continuationline()
+{
+    if [ -n "${*}" ]; then
+	${_printf} " \\\\\n\t%s" "${*}"
+    fi
+}
+
+# write compiler flags for a CGAL include makefile
+write_compiler_flags()
+{
+  makefile_header "compiler flags" \
+    >> ${FILE}
+  print_as_shell_comment \
+    "For more information about the compiler flags see the installation guide.\n" \
+    >> ${FILE}
+
+  #
+  # CGAL_INCL_CONF_DIR
+  #
+  print_as_shell_comment \
+    "compiler specific configuration dir" \
+    >> ${FILE}
+  ${_printf} "%s\\\\\n" "CGAL_INCL_CONF_DIR = " >> ${FILE}
+  ${_printf} "\t" >>${FILE}
+  concat_path "\$(CGAL_INCL_DIR)" "CGAL" config "${CGAL_OS_COMPILER}" >> ${FILE}
+  ${_printf} "\n\n" >>${FILE}
+
+  #
+  # LEDA_INCL_DIR
+  #
+  if [ -n "${LEDA_SUPPORT}" -a -n "${NEED_EXTRA_LEDA_IDIR}" ]; then
+    print_as_shell_comment \
+      "*** Fill in your LEDA include directory ***" \
+      >> ${FILE}
+    print_as_shell_comment \
+      "(e.g. /usr/local/include)" \
+      >> ${FILE}
+    ${_printf} "%s\\\\\n" "LEDA_INCL_DIR = " >> ${FILE}
+    ${_printf} "\t%s\n\n" \
+      "`_where_is 'LEDA_INCL_DIR'`" \
+      >> ${FILE}
+  fi
+
+  #
+  # CUSTOM_CXXFLAGS 
+  #
+  print_as_shell_comment \
+    "*** Fill in any additional compiler flags you need ***" \
+    >> ${FILE}
+  ${_printf} "%s\n\n" \
+    "CUSTOM_CXXFLAGS = ${CUSTOM_CXXFLAGS}" \
+    >> ${FILE}
+
+  #
+  # GMP_INCL_DIR
+  #
+  if [ -n "${GMP_SUPPORT}" ]; then
+    if [ "${GMP_INSTALLATION}" = 'x' -o \
+	 "${GMP_INSTALLATION}" = 'z' -o \
+	 "${GMP_INSTALLATION}" = 'e' ]; then
+	print_as_shell_comment \
+	  "*** Fill in your GMP include directory ***" \
+	  >> ${FILE}
+	${_printf} "%s\\\\\n" "GMP_INCL_DIR = " >> ${FILE}
+	${_printf} "\t%s\n\n" \
+	  "`_where_is 'GMP_INCL_DIR'`" \
+	  >> ${FILE}
+    fi
+  fi
+
+  #
+  # CLN_INCL_DIR
+  #
+  if [ -n "${CLN_SUPPORT}" ]; then
+    if [ "${CLN_INSTALLATION}" = 'x' -o \
+	 "${CLN_INSTALLATION}" = 'z' -o \
+	 "${CLN_INSTALLATION}" = 'e' ]; then
+	print_as_shell_comment \
+	  "*** Fill in your CLN include directory ***" \
+	  >> ${FILE}
+	${_printf} "%s\\\\\n" "CLN_INCL_DIR = " >> ${FILE}
+	${_printf} "\t%s\n\n" \
+	  "`_where_is 'CLN_INCL_DIR'`" \
+	  >> ${FILE}
+    fi
+  fi
+
+  #
+  # QT_MOC
+  #
+  if [ -n "${QT_SUPPORT}" -a -n "${NEED_EXTRA_QTMOC}" ]; then
+    print_as_shell_comment \
+      "*** Fill in your Qt moc executable ***" \
+      >> ${FILE}
+    print_as_shell_comment \
+      "(e.g. /usr/local/lib/qt/bin/moc)" \
+      >> ${FILE}
+    ${_printf} "%s\\\\\n" "QT_MOC = " >> ${FILE}
+    ${_printf} "\t%s\n\n" \
+      "`_where_is 'QT_MOC'`" \
+      >> ${FILE}
+  fi
+
+  #
+  # QT_INCL_DIR
+  #
+  if [ -n "${QT_SUPPORT}" -a -n "${NEED_EXTRA_QT_IDIR}" ]; then
+    print_as_shell_comment \
+      "*** Fill in your Qt include directory ***" \
+      >> ${FILE}
+    print_as_shell_comment \
+      "(e.g. /usr/local/lib/qt/include)" \
+      >> ${FILE}
+    ${_printf} "%s\\\\\n" "QT_INCL_DIR = " >> ${FILE}
+    ${_printf} "\t%s\n\n" \
+      "`_where_is 'QT_INCL_DIR'`" \
+      >> ${FILE}
+  fi
+
+  #
+  # LONG_NAME_PROBLEM_CXXFLAGS
+  #
+  print_as_shell_comment \
+    "*** to work around the long-name-problem with sun as/ld" >> ${FILE}
+  if [ -n "${LONG_NAME_PROBLEM}" ]; then
+    ${_printf} "%s\n\n" "LONG_NAME_PROBLEM_CXXFLAGS = -g" >> ${FILE}
+  else
+    ${_printf} "%s\n\n" "LONG_NAME_PROBLEM_CXXFLAGS =" >> ${FILE}
+  fi
+
+  #
+  # CGAL_CXXFLAGS
+  #
+  ${_printf} "%s\\\\\n" "CGAL_CXXFLAGS = " >> ${FILE}
+  makefile_print_line "\$(CUSTOM_CXXFLAGS) ${ADDITIONAL_CXXFLAGS}" >> ${FILE}
+  if [ -n "${GMP_SUPPORT}" ]; then
+    makefile_print_line "-DCGAL_USE_GMP" >> ${FILE}
+    if [ "${GMP_INSTALLATION}" = 'x' -o \
+	 "${GMP_INSTALLATION}" = 'z' -o \
+	 "${GMP_INSTALLATION}" = 'e' ]; then
+	makefile_print_line "'-I\$(GMP_INCL_DIR)'" >> ${FILE}
+    fi
+  fi
+  if [ -n "${CLN_SUPPORT}" ]; then
+    makefile_print_line "-DCGAL_USE_CLN" >> ${FILE}
+    if [ "${CLN_INSTALLATION}" = 'x' -o \
+	 "${CLN_INSTALLATION}" = 'z' -o \
+	 "${CLN_INSTALLATION}" = 'e' ]; then
+	makefile_print_line "'-I\$(CLN_INCL_DIR)'" >> ${FILE}
+    fi
+  fi
+  if [ -n "${QT_SUPPORT}" ]; then
+    makefile_print_line "-DCGAL_USE_QT" >> ${FILE}
+    if [ -n "${NEED_EXTRA_QT_IDIR}" ]; then
+	makefile_print_line "'-I\$(QT_INCL_DIR)'" >> ${FILE}
+    fi
+  fi
+  makefile_print_line "'-I\$(CGAL_INCL_CONF_DIR)'" >> ${FILE}
+  if [ -n "${LEDA_SUPPORT}" ]; then
+    case ${CGAL_OS_COMPILER} in
+	*g++-2.8*)
+	    makefile_print_line "-DCGAL_USE_LEDA -DLEDA_PREFIX -DLEDA_NO_DEFAULT_COMPARE" \
+	    >> ${FILE};;
+		*)
+	    makefile_print_line "-DCGAL_USE_LEDA -DLEDA_PREFIX" >> ${FILE};;
+    esac
+    if [ -n "${NEED_EXTRA_LEDA_IDIR}" ]; then
+	makefile_print_line "'-I\$(CGAL_INCL_DIR)'" >> ${FILE}
+	${_printf} "\t%s\n\n" "'-I\$(LEDA_INCL_DIR)'" >> ${FILE}
+    else
+	${_printf} "\t%s\n\n" "'-I\$(CGAL_INCL_DIR)'" >> ${FILE}
+    fi
+  else
+    ${_printf} "\t%s\n\n" "'-I\$(CGAL_INCL_DIR)'" >> ${FILE}
+  fi
+}
+
+# write linker flags for a CGAL include makefile
+write_linker_flags()
+{
+  makefile_header "linker flags" >> ${FILE}
+
+  ${_printf} "%s%s\n" "EXE_OPT = " "${EXE_OPT}${SAVE_THE_BLANK}" >> ${FILE}
+
+  #
+  # LEDA_LIB_DIR
+  #
+  if [ -n "${LEDA_SUPPORT}" -a -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
+    print_as_shell_comment \
+      "*** Fill in your LEDA_lib_directory ***" \
+      >> ${FILE}
+    print_as_shell_comment \
+      "(e.g. /usr/local/lib)" \
+      >> ${FILE}
+    ${_printf} "%s\\\\\n" "LEDA_LIB_DIR = " >> ${FILE}
+    ${_printf} "\t%s\n\n" \
+      "`_where_is 'LEDA_LIB_DIR'`" \
+      >> ${FILE}
+  fi
+
+  #
+  # GMP_LIB_DIR
+  #
+  if [ -n "${GMP_SUPPORT}" ]; then
+    if [ "${GMP_INSTALLATION}" = 'x' -o \
+	 "${GMP_INSTALLATION}" = 'z' -o \
+	 "${GMP_INSTALLATION}" = 'e' ]; then
+	print_as_shell_comment \
+	  "*** Fill in your GMP lib directory ***" \
+	  >> ${FILE}
+	print_as_shell_comment \
+	  "(e.g. /usr/local/lib)" \
+	  >> ${FILE}
+	${_printf} "%s\\\\\n" "GMP_LIB_DIR = " >> ${FILE}
+	${_printf} "\t%s\n\n" \
+	  "`_where_is 'GMP_LIB_DIR'`" \
+	  >> ${FILE}
+    fi
+  fi
+
+  #
+  # CLN_LIB_DIR
+  #
+  if [ -n "${CLN_SUPPORT}" ]; then
+    if [ "${CLN_INSTALLATION}" = 'x' -o \
+	 "${CLN_INSTALLATION}" = 'z' -o \
+	 "${CLN_INSTALLATION}" = 'e' ]; then
+	print_as_shell_comment \
+	  "*** Fill in your CLN lib directory ***" \
+	  >> ${FILE}
+	print_as_shell_comment \
+	  "(e.g. /usr/local/lib)" \
+	  >> ${FILE}
+	${_printf} "%s\\\\\n" "CLN_LIB_DIR = " >> ${FILE}
+	${_printf} "\t%s\n\n" \
+	  "`_where_is 'CLN_LIB_DIR'`" \
+	  >> ${FILE}
+    fi
+  fi
+
+  #
+  # QT_LIB_DIR
+  #
+  if [ -n "${QT_SUPPORT}" -a -n "${NEED_EXTRA_QT_LDIR}" ]; then
+    print_as_shell_comment \
+      "*** Fill in your Qt lib directory ***" \
+      >> ${FILE}
+    print_as_shell_comment \
+      "(e.g. /usr/local/lib/qt/lib)" \
+      >> ${FILE}
+    ${_printf} "%s\\\\\n" "QT_LIB_DIR = " >> ${FILE}
+    ${_printf} "\t%s\n\n" \
+      "`_where_is 'QT_LIB_DIR'`" \
+      >> ${FILE}
+  fi
+
+  #
+  # CUSTOM_LDFLAGS
+  #
+  print_as_shell_comment \
+    "*** Fill in any additional linker flags you need ***" \
+    >> ${FILE}
+  ${_printf} "%s\n\n" "CUSTOM_LIBPATH = ${CUSTOM_LIBPATH}" \
+    >> ${FILE}
+  ${_printf} "%s\n\n" "CUSTOM_LDFLAGS = ${CUSTOM_LDFLAGS}" \
+    >> ${FILE}
+ 
+  #
+  # LIBS
+  #
+  if [ -n "${WINDOWS_COMPILER}" ]; then
+    LIB_PATH="'${LIBPATH_OPT}\$(CGAL_LIB_DIR)\\\$(CGAL_OS_COMPILER)'"
+    RUNTIME_LIB_PATH="\$(CGAL_LIB_DIR)\\\$(CGAL_OS_COMPILER)"
+  else
+    LIB_PATH="${LIBPATH_OPT}\$(CGAL_LIB_DIR)/\$(CGAL_OS_COMPILER)"
+    RUNTIME_LIB_PATH="\$(CGAL_LIB_DIR)/\$(CGAL_OS_COMPILER)"
+  fi
+  LIBS="`lib_option CGAL`"
+  WLIBS="`lib_option CGAL`"
+  if [ -n "${LEDA_SUPPORT}" ] ; then
+    if [ -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
+	if [ -n "${WINDOWS_COMPILER}" ]; then
+	    LIB_PATH="${LIB_PATH} '${LIBPATH_OPT}\$(LEDA_LIB_DIR)'"
+	else
+	    LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}\$(LEDA_LIB_DIR)"
+	fi
+	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:\$(LEDA_LIB_DIR)"
+    fi
+    LIBS="${LIBS} `leda_lib_option P``leda_lib_option G``leda_lib_option L`"
+    GEOWLIBS="${WLIBS} `leda_lib_option GeoW``leda_lib_option D3``leda_lib_option W``leda_lib_option P``leda_lib_option G``leda_lib_option L` ${XLIBS}"
+    WLIBS="${WLIBS} `leda_lib_option W``leda_lib_option P``leda_lib_option G``leda_lib_option L` ${XLIBS}"
+  fi
+  if [ -n "${GMP_SUPPORT}" ]; then
+    if [ "${GMP_INSTALLATION}" = 'x' -o \
+	 "${GMP_INSTALLATION}" = 'z' -o \
+	 "${GMP_INSTALLATION}" = 'e' ]; then
+	if [ -n "${WINDOWS_COMPILER}" ]; then
+	    LIB_PATH="${LIB_PATH} '${LIBPATH_OPT}\$(GMP_LIB_DIR)'"
+	else
+	    LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}\$(GMP_LIB_DIR)"
+	fi
+	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:\$(GMP_LIB_DIR)"
+    fi
+    LIBS="${LIBS} `lib_option gmp`"
+    GEOWLIBS="${GEOWLIBS} `lib_option gmp`"
+    WLIBS="${WLIBS} `lib_option gmp`"
+  fi
+  if [ -n "${CLN_SUPPORT}" ]; then
+    if [ "${CLN_INSTALLATION}" = 'x' -o \
+	 "${CLN_INSTALLATION}" = 'z' -o \
+	 "${CLN_INSTALLATION}" = 'e' ]; then
+	LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}\$(CLN_LIB_DIR)"
+	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:\$(CLN_LIB_DIR)"
+    fi
+    LIBS="${LIBS} `lib_option cln`"
+    GEOWLIBS="${GEOWLIBS} `lib_option cln`"
+    WLIBS="${WLIBS} `lib_option cln`"
+  fi
+  if [ -n "${QT_SUPPORT}" ] ; then
+    if [ -n "${NEED_EXTRA_QT_LDIR}" ]; then
+	if [ -n "${WINDOWS_COMPILER}" ]; then
+	    LIB_PATH="${LIB_PATH} '${LIBPATH_OPT}\$(QT_LIB_DIR)'"
+	else
+	    LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}\$(QT_LIB_DIR)"
+	fi
+	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:\$(QT_LIB_DIR)"
+    fi
+    LIBS="${LIBS} `lib_option qt`"
+    GEOWLIBS="${GEOWLIBS} `lib_option qt`"
+    WLIBS="${WLIBS} `lib_option qt`"
+  fi
+
+  LIBS="${LIBS} `math_ldflags`"
+  GEOWLIBS="${GEOWLIBS} `math_ldflags`"
+  WLIBS="${WLIBS} `math_ldflags`"
+
+  #
+  # LONG_NAME_PROBLEM_LDFLAGS
+  #
+  print_as_shell_comment \
+    "*** to work around the long-name-problem with sun as/ld" >> ${FILE}
+  if [ -n "${LONG_NAME_PROBLEM}" ]; then
+    ${_printf} "%s\n\n" "LONG_NAME_PROBLEM_LDFLAGS = ${LONG_NAME_PROBLEM_LDFLAGS}" \
+    >> ${FILE}
+  else
+    ${_printf} "%s\n\n" "LONG_NAME_PROBLEM_LDFLAGS =" >> ${FILE}
+  fi
+
+  #
+  # CGAL_LIBPATH
+  #
+  if [ -n "${SEPARATE_LIBPATH}" ] ; then
+    ${_printf}  "CGAL_LD_LIBPATH =\n\n" >> ${FILE}
+    ${_printf}  "CGAL_LIBPATH =" >> ${FILE}
+  else
+    ${_printf}  "CGAL_LIBPATH =\n\n" >> ${FILE}
+    ${_printf}  "CGAL_LD_LIBPATH =" >> ${FILE}
+  fi
+  makefile_print_continuationline "\$(CUSTOM_LIBPATH)" >> ${FILE}
+  makefile_print_continuationline "${LIB_PATH}" >> ${FILE}
+  if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
+    makefile_print_continuationline \
+      "${RUNTIME_LINKER_FLAG}${RUNTIME_LIB_PATH}" \
+      >> ${FILE}
+  fi
+  ${_printf} "\n"  >> ${FILE}
+
+  #
+  # CGAL_LDFLAGS
+  #
+  ${_printf} "\n%s\\\\\n" "CGAL_LDFLAGS = " >> ${FILE}
+  makefile_print_line "${START_LD_OPT}\$(CGAL_LD_LIBPATH) ${ADDITIONAL_LDFLAGS}" >> ${FILE}
+  makefile_print_line "\$(CUSTOM_LDFLAGS)" >> ${FILE}
+  ${_printf} "\t%s\n\n" "${LIBS}" >> ${FILE}
+
+  #
+  # CGAL_WINDOW_LIBPATH
+  #
+  if [ -n "${LEDA_SUPPORT}" ]; then
+    if [ -n "${WINDOW_DIR}" ]; then 
+	LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}${WINDOW_DIR}"
+	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:${WINDOW_DIR}"
+    fi
+    if [ -n "${SEPARATE_LIBPATH}" ]; then
+	${_printf}  "CGAL_WINDOW_LD_LIBPATH =\n\n" >> ${FILE}
+	${_printf}  "CGAL_WINDOW_LIBPATH =" >> ${FILE}
+    else
+	${_printf}  "CGAL_WINDOW_LIBPATH =\n\n" >> ${FILE}
+	${_printf}  "CGAL_WINDOW_LD_LIBPATH =" >> ${FILE}
+    fi
+    makefile_print_continuationline "${CUSTOM_LIBPATH}" >> ${FILE}
+    makefile_print_continuationline "${LIB_PATH}" >> ${FILE}
+    if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
+      makefile_print_continuationline "${RUNTIME_LINKER_FLAG}${RUNTIME_LIB_PATH}" \
+	>> ${FILE}
+    fi
+    ${_printf} "\n\n"  >> ${FILE}
+  fi
+
+  #
+  # CGAL_WINDOW_LDFLAGS
+  #
+  ${_printf} "%s\\\\\n" "CGAL_WINDOW_LDFLAGS = " >> ${FILE}
+  if [ -n "${LEDA_SUPPORT}" ]; then
+    makefile_print_line "${START_LD_OPT}\$(CGAL_WINDOW_LD_LIBPATH) ${ADDITIONAL_LDFLAGS}" >> ${FILE}
+    makefile_print_line "\$(CUSTOM_LDFLAGS)" >> ${FILE}
+    ${_printf} "\t%s\n\n" "${WLIBS}" >> ${FILE}
+  else
+    ${_printf} "\t%s\n\n" "\$(CGAL_LDFLAGS)" >> ${FILE}
+  fi
+
+  #
+  # CGAL_GEOWIN_LDFLAGS
+  #
+  ${_printf} "%s\\\\\n" "CGAL_GEOWIN_LDFLAGS = " >> ${FILE}
+  if [ -n "${LEDA_SUPPORT}" ]; then
+    makefile_print_line "${START_LD_OPT}\$(CGAL_WINDOW_LD_LIBPATH) ${ADDITIONAL_LDFLAGS}" >> ${FILE}
+    makefile_print_line "\$(CUSTOM_LDFLAGS)" >> ${FILE}
+    ${_printf} "\t%s\n\n" "${GEOWLIBS}" >> ${FILE}
+  else
+    ${_printf} "\t%s\n\n" "\$(CGAL_LDFLAGS)" >> ${FILE}
+  fi
+}
+
+# create the include makefile for current configuration
+create_include_makefile()
+{
+  FILE=${CGAL_MAKEFILE}
+
+  print_as_shell_comment \
+    "This file contains CGAL makefile settings for the following platform:" \
+    > ${FILE}
+  print_os_setting 'print_as_shell_comment' \
+    >> ${FILE}
+
+  # 
+  # CGAL_DIRECTORIES
+  # 
+  makefile_header "include/lib directory settings" \
+    >> ${FILE}
+  ${_printf} "%s\n" "CGAL_INCL_DIR = `filename_for_compiler ${CGAL_INCL_DIR}`" \
+    >> ${FILE}
+  ${_printf} "%s\n" "CGAL_LIB_DIR = `filename_for_compiler ${CGAL_LIB_DIR}`" \
+    >> ${FILE}
+
+  # 
+  # CGAL_OS_COMPILER
+  # 
+  makefile_header "os/compiler description" \
+    >> ${FILE}
+  ${_printf} "%s\n" "CGAL_OS_COMPILER = `full_ostype`" >> ${FILE}
+
+  # 
+  # filename specific stuff
+  # 
+  makefile_header "filename related flags" >> ${FILE}
+  ${_printf} "%s\n" "OBJ_EXT = ${OBJ_EXT}" >> ${FILE}
+  ${_printf} "%s\n" "EXE_EXT = ${EXE_EXT}" >> ${FILE}
+  ${_printf} "%s\n" "LIB_SUFFIX = ${LIB_SUFFIX}" >> ${FILE}
+
+  # 
+  # some specific compiler flags 
+  # 
+  makefile_header "some specific compiler flags" >> ${FILE}
+  ${_printf} "%s\n" "OBJ_OPT = ${OBJ_OPT}" >> ${FILE}
+  ${_printf} "%s\n" "DEBUG_OPT = ${DEBUG_OPT}" >> ${FILE}
+  ${_printf} "%s\n" "START_LD_OPT = ${START_LD_OPT}" >> ${FILE}
+  ${_printf} "%s\n" "LIBPATH_OPT = ${LIBPATH_OPT}" >> ${FILE}
+  ${_printf} "%s\n" "LIB_OPT = ${LIB_OPT}" >> ${FILE}
+
+  # 
+  # suffixes and rules
+  # 
+  makefile_header "suffixes and rules" >> ${FILE}
+  ${_printf} "%s\n" ".SUFFIXES:  ${SUFFIX_LIST} .clean" >> ${FILE}
+  if [ -n "${EXE_EXT}" ]; then
+    case ${CGAL_OS_COMPILER} in 
+	*CYGWIN*g++*) ${_printf} "\n.o:\n" >> ${FILE};;
+	*)            ${_printf} "\n.C:\n" >> ${FILE};;
+    esac
+    ${_printf} "\t%s %s%s\n" "\$(MAKE)" '$*' "${EXE_EXT}" >> ${FILE}
+  fi
+  ${_printf} "\n.C.clean:\n" >> ${FILE}
+  ${_printf} "\trm -f \$*%s" "${EXE_EXT}" >> ${FILE}
+  if [ -n "${REMOVE_EXT_LIST}" ]; then
+      for extension in ${REMOVE_EXT_LIST}
+      do
+          ${_printf} " \$*%s" "${extension}" >> ${FILE}
+      done
+  fi
+  case ${CGAL_OS_COMPILER} in 
+	mips_IRIX*-6*_CC-*32-*) 
+	    ${_printf} " ii_files/\$*.ii*\n" >> ${FILE};;
+	*_KCC-*) 
+	    ${_printf} " ti_files/\$*.ti*\n" >> ${FILE}
+	    ${_printf} "\trm -rf ti_files/\$*\n" >> ${FILE};;
+	*)  
+	    ${_printf} "\n" >> ${FILE};;
+  esac
+  ${_printf} "\n" >> ${FILE}
+
+  # 
+  # CGAL_CXX
+  # 
+  makefile_header "compiler" >> ${FILE}
+  ${_printf} "%s\n" "CGAL_CC  = `c_compiler_bin`" >> ${FILE}
+  ${_printf} "%s\n" "CGAL_CXX = ${CGAL_CXX}" >> ${FILE}
+
+  write_compiler_flags
+  write_linker_flags
+
+  makefile_header "commands and flags for creating libraries" \
+    >> ${FILE}
+
+  # 
+  # CGAL_EXTRA_OBJECTS
+  # 
+  case ${SYST} in
+    *IRIX*-5) 
+	${_printf} "%s\n" \
+	"CGAL_EXTRA_OBJECTS = workaround_4_irix.o" \
+	>> ${FILE}
+	;;
+    *IRIX*-6*) 
+	${_printf} "%s\n" \
+	"CGAL_EXTRA_OBJECTS = workaround_4_irix6.o" \
+	>> ${FILE}
+	;;
+    *CYGWIN*)
+	case `compiler_description` in
+	    *VC++*)
+		${_printf} "%s\n" \
+		    "CGAL_EXTRA_OBJECTS = workaround_4_ms.obj" >> ${FILE}
+	    ;;
+	    *GNU*)
+		${_printf} "%s\n" \
+		    "CGAL_EXTRA_OBJECTS = workaround_4_ms.o" >> ${FILE}
+	    ;;
+	esac
+	;;
+  esac
+
+  # 
+  # CGAL_LIB
+  # 
+  ${_printf} "%s\n" "CGAL_LIB = ${CGAL_LIBNAME}" >> ${FILE}
+
+  # 
+  # CGAL_LIB_CXXFLAGS
+  # 
+  ${_printf} "%s\\\\\n" "CGAL_LIB_CXXFLAGS = " >> ${FILE}
+  makefile_print_line "${CGAL_LIB_CXXFLAGS}" >> ${FILE}
+  ${_printf} "\t%s\n" "\$(CGAL_CXXFLAGS)" >> ${FILE}
+
+  # 
+  # CGAL_LIB_LDFLAGS
+  # 
+  ${_printf} "%s\n\n" "CGAL_LIB_LDFLAGS = ${CGAL_LIB_LDFLAGS}" >> ${FILE}
+
+  # 
+  # CGAL_LIB_CREATE
+  # 
+  ${_printf} "%s\n" "CGAL_LIB_CREATE = ${CGAL_LIB_CREATE}" >> ${FILE}
+  ${_printf} "%s\n" "CGAL_OBJ_PREFIX = ${CGAL_OBJ_PREFIX}" >> ${FILE}
+  ${_printf} "%s\n" "CGAL_LIB_DESTINATION = ${CGAL_LIB_DIR}/\$(CGAL_OS_COMPILER)" >> ${FILE}
+
+  # 
+  # CGAL_SHARED_LIB
+  # 
+  ${_printf} "%s\n" "CGAL_SHARED_LIB = libCGAL.so" >> ${FILE}
+
+  # 
+  # CGAL_SHARED_LIB_CXXFLAGS
+  # 
+  ${_printf} "%s\\\\\n" "CGAL_SHARED_LIB_CXXFLAGS = " >> ${FILE}
+  makefile_print_line "${CGAL_SHARED_LIB_CXXFLAGS}" >> ${FILE}
+  ${_printf} "\t%s\n" "\$(CGAL_CXXFLAGS)" >> ${FILE}
+
+  # 
+  # CGAL_SHARED_LIB_LDFLAGS
+  # 
+  if [ -n "${LEDA_SUPPORT}" -a -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
+    ${_printf} "%s\\\\\n" "CGAL_SHARED_LIB_LDFLAGS = " >> ${FILE}
+    makefile_print_line "${LIBPATH_OPT}\$(LEDA_LIB_DIR)" >> ${FILE}
+    if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
+      makefile_print_line "${RUNTIME_LINKER_FLAG}\$(LEDA_LIB_DIR)" \
+	>> ${FILE}
+    fi
+    ${_printf} "\t%s\n" "`leda_lib_option L`${CGAL_SHARED_LIB_LDFLAGS}" >> ${FILE}
+  else
+    ${_printf} "%s\n" \
+	"CGAL_SHARED_LIB_LDFLAGS = ${CGAL_SHARED_LIB_LDFLAGS}" >> ${FILE}
+  fi
+  ${_printf} "\n" >> ${FILE}
+  
+  # 
+  # CGAL_SHARED_LIB_CREATE
+  # 
+  ${_printf} "%s\n\n" \
+    "CGAL_SHARED_LIB_CREATE = ${CGAL_SHARED_LIB_CREATE} -o ''" \
+    >> ${FILE}
+
+  #
+  # PRINT_STACKTRACE_PROGRAM
+  #
+  print_as_shell_comment \
+    "*** only used for the testsuite" >> ${FILE}
+  print_as_shell_comment \
+    "*** program used to create stacktrace from coredump" >> ${FILE}
+  ${_printf} "%s\n\n" \
+    "PRINT_STACKTRACE_PROGRAM = ${PRINT_STACKTRACE_PROGRAM}" \
+    >> ${FILE}
+
+  makefile_header "EOF" >> ${FILE}
+}
+
+
+#--------------------------------------------------------------------#
+#   replace_line <file> <string> <replacement>
+#   replaces all the lines in <file> that start with <string> 
+#       with <replacement>
+#--------------------------------------------------------------------#
+
+replace_line()
+{
+  if [ ! -f $1 ] ; then
+    ${_printf} "%s\n" "Error: could not open file $1 in replace_line()"
+    return
+  fi
+  if eval '${_sed} -e "/^$2/c\\
+$3" $1 > $1.TEMP' ; then
+    ${_mv} $1.TEMP $1
+  else
+    ${_printf} "%s\n" "Error sed replacement failed in replace_line()"
+  fi
+}
+
+prepare_lib_makefiles()
+{
+    for FILE in ${CGAL_SRC_DIR}/makefile_lib \
+	${CGAL_SRC_DIR}/makefile_sharedlib \
+	${CGAL_EXAMPLE_DIR}/makefile
+    do
+	replace_line ${FILE} CGAL_MAKEFILE \
+	    "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
+    done
+}
+
+# log via $1
+generatemakefiles()
+{
+  _check_dir_exists ${CGAL_MAKE_DIR}
+  _check_write ${CGAL_MAKE_DIR}
+  # create ${CGAL_MAKEFILE}, if it does not exist
+  if [ ! -r ${CGAL_MAKEFILE} ]; then
+    $1 "remark: `${_basename} ${CGAL_MAKEFILE}` does not exist,"
+    $1 " creating."
+  else
+    $1 "remark: `${_basename} ${CGAL_MAKEFILE}` already exists,"
+    $1 " saving as \".bak\"."
+    ${_mv} ${CGAL_MAKEFILE} ${CGAL_MAKEFILE}.bak
+  fi
+  create_include_makefile
+
+  prepare_lib_makefiles
+
+  for FILE in `${_ls} ${CGAL_EXAMPLE_DIR}/*/makefile`; do
+    replace_line ${FILE} CGAL_MAKEFILE \
+    "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
+  done
+
+  if [ -n "${INTERNAL_RELEASE}" ]; then
+    for FILE in `${_ls} ${CGAL_TEST_DIR}/*/makefile`; do
+	replace_line ${FILE} CGAL_MAKEFILE \
+	  "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
+    done
+  fi
+
+}
+
+# compile $1 (= lib or sharedlib)
+# return 0, iff success
+_do_compile()
+{
+    ${_printf} "%s" "${_LEFTSPACE}Building CGAL_$1 ..."
+    if [ -f ${COMPILE_LOGFILE} -a ! -w ${COMPILE_LOGFILE} ]; then
+	${_rm} -f ${COMPILE_LOGFILE} 
+    fi
+    ${_rm} -f *${OBJ_EXT}
+    MAKE_OPTION="-k"
+    if [ -n "${INTERNAL_RELEASE}" -a "$1" != "sharedlib" ]; then
+	MAKE_OPTION="-i"
+    fi
+    if make ${MAKE_OPTION} -f makefile_$1 >${COMPILE_LOGFILE} 2>&1; then
+	log_print "Compilation of $1 ${_libname} succeeded."
+	${_printf} "%s\n" " done."
+	ANY_LIB_COMPILED='y'
+	return 0
+    else
+	log_print "Compilation of $1 ${_libname} failed."
+	${_printf} "\n%s\n" "${_LEFTSPACE}Compilation of CGAL_$1 failed."
+	${_printf} "%s\n" "${_LEFTSPACE}You will be shown a log now ..."
+	print_filled_line
+	wait_for_enter
+	${_cat} ${COMPILE_LOGFILE} | ${PAGER:-${_cat}}
+	write_buffer "\n"
+	return 1
+    fi
+}
+
+# make lib dir 
+make_lib_dir()
+{
+    _libname=${CGAL_LIB_DIR}/`full_ostype`
+    _check_dir_exists_create ${_libname}
+    _libname=`${_basename} ${_libname}`
+}
+
+# create appropriate dirs and makefiles
+make_makefiles()
+{
+    # generate directoryfile and makefile:
+    ${_printf} "%s" "${_LEFTSPACE}Generating Makefiles ..."
+    CGAL_MAKEFILE=${CGAL_MAKE_DIR}/makefile_${_libname}
+    generatemakefiles log_print
+    ${_printf} "%s\n" " done."
+}
+
+write_menu_information()
+{
+    if [ -n "${INSTALL_INTERACTIVE}" ]; then
+	clear_screen
+    else
+	write_buffer "\n"
+    fi
+    print_filled_line
+    print_empty_line
+    print_headline "$1 CGAL ${CGAL_VERSION}"
+    print_filled_line
+    write_buffer "\n"
+    flush_buffer
+    print_os_setting 'print_with_indent'
+    ${_printf} "\n"
+}
+
+build_cgal()
+{
+    cd ${CGAL_SRC_DIR}
+    if _do_compile lib; then
+	LIB_COMPILED='ok'
+	${_printf} "%s" "`print_os_setting 'print_with_indent'`" \
+	    >> ${INSTALL_RIS_LOGFILE}
+	${_printf} "\n${_LEFTSPACE}%s\n" \
+	"----------------------------------------------------------" \
+	    >> ${INSTALL_RIS_LOGFILE}
+	case ${CGAL_OS_COMPILER} in
+	    *CYGWIN*)
+		${_printf} "%s\n" \
+		"${_LEFTSPACE}No shared libraries on this platform!"
+		;;
+	    *)  if _do_compile sharedlib; then
+		    ${_rm} -f ${CGAL_DIR}/.upgrade-tag
+		fi
+		;;
+	esac
+    fi
+    write_buffer "\n"
+    print_filled_line
+    wait_for_enter
+    cd ${CGAL_DIR}
+}
+
+lib_menu()
+{
+    write_menu_information "Compiling"
+
+    make_lib_dir
+    make_makefiles
+
+    # build the libs:
+    build_cgal
+}
+
+
+# ---------------------------------------------------------------------
+# (re)build all function
+#
+build_all()
+{
+    guess_os log_print
+    case ${SYST} in
+	*CYGWIN*) _check_for_sysutil cygpath y;;
+    esac
+    ${_printf} "\n\n"
+    for i in `${_ls} ${CGAL_INSTALL_CONF_DIR}/${SYST}* 2>/dev/null`
+    do
+	INSTALL_LOGFILE_REDIRECTION="|print_with_indent | ${_tee} -a ${INSTALL_LOGFILE}"
+	log_print
+	log_print \
+	    "--------------------------------------------------------"
+	log_print "Build on `${_basename} ${i}`:" 
+	log_print \
+	    "--------------------------------------------------------"
+	INSTALL_LOGFILE_REDIRECTION=">>${INSTALL_LOGFILE}"
+	try_to_get_var_from_file COMPILER ${i}
+	if [ -n "${COMPILER}" ]; then
+	    set_ostype
+	    set_compiler_flags
+	    retrieve_compiler_settings
+	    case ${_WHAT_TO_DO} in
+		*rebuild-all*)
+		    test_compiler_specifica "${INSTALL_VERBOSE}";;
+	    esac
+	    lib_menu
+	    store_compiler_settings
+	else
+	    log_print "Cannot rebuild the library."
+	    print_filled_line
+	    print_empty_line
+	    print_headline "Cannot build on `${_basename} ${i}` !" 
+	    print_headline "No COMPILER defined in config/install/..."
+	    print_filled_line
+	    write_buffer "\n"
+	    flush_buffer
+	fi
+    done
+}
+
+
+# ---------------------------------------------------------------------
+# test menu
+#
+
+test_menu()
+{
+    write_menu_information "Testing"
+
+    ${_printf} "%s" "${_LEFTSPACE}Updating `$_basename ${CGAL_TESTFILE}` ..."
+    _check_write ${CGAL_TESTFILE}
+    replace_line ${CGAL_TESTFILE} 'run_testsuite ' ""
+    ${_printf} "%s" "run_testsuite ${CGAL_MAKE_DIR}/makefile_`full_ostype`" \
+	>> ${CGAL_TESTFILE}
+    $_chmod 744 ${CGAL_TESTFILE}
+    ${_printf} "%s\n" " done."
+
+    ${_printf} "%s\n" "${_LEFTSPACE}Starting ${CGAL_TESTFILE} ..."
+    cd ${CGAL_TEST_DIR}
+    ${CGAL_TESTFILE}
+    cleanup_after_compile
+    log_print "Test completed."
+    print_filled_line
+    print_empty_line
+    print_headline "Test completed."
+    print_center_line "You will be shown a log now ..."
+    wait_for_enter
+    ${_cat} ${TEST_LOGFILE} | ${PAGER:-${_cat}}
+    write_buffer "\n"
+    print_filled_line
+    cd ${CGAL_DIR}
+    wait_for_enter
+    return 
+}
+
+
+
+# ---------------------------------------------------------------------
+# upgrade menu
+#
+
+upgrade()
+{
+    _check_read ${UPGRADE_FROM}
+    _check_execute ${UPGRADE_FROM}
+    # copy config install files
+    write_buffer "\n"
+    print_filled_line
+    print_headline "Upgrading from ${UPGRADE_FROM}"
+    print_filled_line
+    print_line "copying config install files"
+    print_filled_line
+    flush_buffer
+    log_print "copy config install files ... "
+    ${_cp} -r ${UPGRADE_FROM}/config/install ${CGAL_DIR}/config
+    log_print "done."
+
+    # copy gmp header and libs
+    if [ -f ${UPGRADE_FROM}/include/gmp.h ]; then
+	go_up_lines 1
+	print_line "copying gmp header"
+	print_filled_line
+	flush_buffer
+	log_print "copy gmp header ... "
+	${_cp} ${UPGRADE_FROM}/include/gmp.h ${CGAL_INCL_DIR}
+	log_print "done."
+    fi
+    go_up_lines 1
+    print_line "searching/copying evt. gmp libs"
+    print_filled_line
+    flush_buffer
+    log_print "copy gmp libs ... "
+    for i in `${_find} ${UPGRADE_FROM}/lib -follow -name "libgmp.a" -print` \
+	`${_find} ${UPGRADE_FROM}/lib -follow -name "gmp.lib" -print`
+    do
+	go_up_lines 1
+	print_line "`${_printf} ${i} | ${_awk} 'BEGIN {FS=\"/\"} {i=NF-1;print $i}'`"
+	print_filled_line
+	flush_buffer
+	newdir=`${_dirname} ${i} | ${_sed} "s${UPGRADE_FROM}/lib${CGAL_LIB_DIR}g"`
+	_check_dir_exists_create ${newdir}
+	cp ${i} ${newdir}
+    done
+    print_headline "D O N E"
+    go_up_lines 1
+    print_filled_line
+    flush_buffer
+    log_print "done."
+}
+
+upgrade_menu()
+{
+    # try to find old CGAL directories first
+    for try in ${CGAL_DIR}/../CGAL-2.0* ${CGAL_DIR}/../CGAL-1.*; do
+	if [ -d "${try}" -a -r "${try}" -a -x "${try}" ]; then
+	    UPGRADE_FROM="`cd ${try}; pwd`"
+	fi
+    done
+    while [ 0 ]; do
+	clear_screen
+	print_filled_line
+	print_headline "CGAL $CGAL_VERSION Installation Upgrade Menu"
+	print_line     "OS: ${SYST}"
+	print_empty_line
+	print_line     "${_bold_on}<U>${_bold_off}  Upgrade from an existing CGAL Installation" 
+	print_line     "  in ${UPGRADE_FROM:-<undefined>}" 
+	print_line     "${_bold_on}<D>${_bold_off}  Change directory for upgrade" 
+	menu_tailer 'Main Menu'
+
+	case ${KEY} in
+	    u|U) if [ -n "${UPGRADE_FROM}" ]; then
+		    print_empty_line
+		    upgrade
+		    _WHAT_TO_DO=rebuild-all
+		    go_up_lines 2
+		    flush_buffer
+		    build_all
+		    ${_rm} -f ${CGAL_DIR}/.upgrade-tag
+		    return
+		 fi
+		 ;;
+	    d|D) change_dir UPGRADE_FROM dir;;
+	    q|Q) return;;
+	esac
+    done
+}
+
+
+
+# ---------------------------------------------------------------------
+# main menu
+#
+
+# get timestamp of file $1 via ls
+# (assumed to be in columns 6-8)
+_get_timestamp()
+{
+    ${_ls} -l $1 | ${_awk} '{printf "%s %s %s",$7,$6,$8}'
+}
+
+main_menu()
+{
+    while [ 0 ]; do
+	menu_header 'Main'
+	if [ -r ${CGAL_LIB_DIR}/`full_ostype`/${CGAL_LIBNAME} ]; then
+	    print_line "Libs built:          `_get_timestamp ${CGAL_LIB_DIR}/\`full_ostype\`/${CGAL_LIBNAME}`"
+	else
+	    print_line "There are no libs for this os/compiler."
+	fi
+	print_empty_line 
+	print_line     "${_bold_on}<C>${_bold_off}  Compiler Menu" 
+	print_line     "${_bold_on}<L>${_bold_off}  LEDA Menu" 
+	print_line     "${_bold_on}<G>${_bold_off}  GMP Menu" 
+	print_line     "${_bold_on}<M>${_bold_off}  CLN Menu" 
+	print_line     "${_bold_on}<K>${_bold_off}  Qt Menu" 
+	print_line     "${_bold_on}<T>${_bold_off}  Test (and save) setup" 
+	print_line     "${_bold_on}<A>${_bold_off}  Run all setup tests (no cache)" 
+	print_empty_line 
+	print_line     "${_bold_on}<B>${_bold_off}  Build CGAL Libraries" 
+	if [ -n "${INTERNAL_RELEASE}" -a -n "${LIB_COMPILED}" ]; then
+	    print_line     "${_bold_on}<S>${_bold_off}  Run CGAL testsuite" 
+	fi
+	if [ -f ${CGAL_DIR}/.upgrade-tag ]; then
+	    print_line "${_bold_on}<U>${_bold_off}  Upgrade from an existing CGAL installation" 
+	fi
+	menu_tailer 'OS'
+
+	case $KEY in
+	    c|C) compiler_menu;;
+	    l|L) leda_menu;;
+	    g|G) gmp_menu;;
+	    m|M) cln_menu;;
+	    k|K) qt_menu;;
+	    b|B)
+		if [ -z "${SETUP_COMPLETE}" ]; then
+		    test_setup
+		fi
+		lib_menu
+		;;
+	    u|U)
+		if [ -f ${CGAL_DIR}/.upgrade-tag ]; then
+		    upgrade_menu
+		fi
+		;;
+	    a|A)
+		reset_all_test_variables
+		go_down_lines 3
+		flush_buffer
+		if [ -n "${LEDA_SUPPORT}" ]; then
+		    test_for_leda_incl_in_sys_incl "${INSTALL_VERBOSE}"
+		    test_for_leda_lib_in_sys_lib "${INSTALL_VERBOSE}"
+		fi
+		if [ -n "${GMP_SUPPORT}" ]; then
+		    search_gmp "${INSTALL_VERBOSE}"
+		fi
+		if [ -n "${CLN_SUPPORT}" ]; then
+		    search_cln "${INSTALL_VERBOSE}"
+		fi
+		if [ -n "${QT_SUPPORT}" ]; then
+		    test_for_qt_moc_in_path "${INSTALL_VERBOSE}"
+		    test_for_qt_incl_in_sys_incl "${INSTALL_VERBOSE}"
+		    test_for_qt_lib_in_sys_lib "${INSTALL_VERBOSE}"
+		    test_for_qt_dir "${INSTALL_VERBOSE}"
+		fi
+		test_setup;;
+	    t|T) 
+		go_down_lines 3
+		flush_buffer
+		test_setup;;
+	    s|S)
+		if [ -n "${INTERNAL_RELEASE}" -a -n "${LIB_COMPILED}" ]; then
+		    test_menu
+		fi
+		;;
+	    q|Q)
+		return;;
+	esac
+    done
+}
+
+# ---------------------------------------------------------------------
+# MAIN BODY
+#
+
+# for command line parsing: check if ${*} is really a compiler
+# with its full path and set _tmp to its basename
+_check_comp_executable()
+{
+    _tmp=`eval "_real_basename ${*} 2>/dev/null"`
+    if [ -z "${_tmp}" ]; then
+	exit_on_error "basename returned empty string"
+    elif [ -z "${*}" ]; then
+	exit_on_error "Missing argument"
+    elif [ "`_real_dirname \"${*}\"`" != "." ]; then
+	_check_execute ${1}
+    elif [ ! -x "${1}" ]; then
+	# that was not an absolute path -> try which
+	_tmp1="`real_which ${_tmp}`"
+	if [ -z "${_tmp1}" ]; then
+	    exit_on_error "Cannot find \"${_tmp}\""
+	fi
+	_check_execute "${_tmp1}"
+	log_print "${_tmp} is \"${_tmp1}\"."
+    fi
+}
+
+cgal_install_header()
+{
+    ${_printf} "\n%s\n" \
+	"--------------------------------------------------------"
+    ${_printf} "%s\n" \
+	"  This is the install script for CGAL ${CGAL_VERSION}."
+    ${_printf} "%s\n\n" \
+	"--------------------------------------------------------"
+}
+
+
+# ---------------------------------------------------------------------
+# functions for interactive modes:
+#
+
+startup_interactive()
+{
+    ${_printf} "%s\n" " one moment, please"
+    INSTALL_LOGFILE_REDIRECTION=">>${INSTALL_LOGFILE}"
+    if [ -n "${_ANY_OPT}" ]; then
+	${_printf} "\n%s\n" \
+	    "WARNING: In interactive mode all command line options"
+	${_printf} "%s\n\n" \
+	    "  except for \"-i\" and \"--CGAL_DIR\" are ignored."
+	clear_buffer
+    fi
+    init_logfiles
+    ${_printf} "."
+    check_for_utils
+    ${_printf} "."
+    get_cgal_version
+    ${_printf} "."
+    check_conf_dir
+    ${_printf} "."
+    set_expr
+    ${_printf} "."
+    set_menu_lines
+    ${_printf} "."
+    set_terminal_variables
+    ${_printf} "."
+}
+
+finish_interactive()
+{
+    if [ -z "${ANY_LIB_COMPILED}" ]; then
+	go_down_lines 1
+	print_filled_line
+	print_line \
+	    "WARNING: You did not build any libs during this session."
+    else
+	go_down_lines 3
+	flush_buffer
+	${_cat} ${INSTALL_RIS_LOGFILE}
+	print_filled_line
+	print_center_line "${CGAL_INSTALL_CGAL} completed."
+    fi
+    print_center_line \
+	"If something went wrong, (or maybe also, if not:)"
+    print_center_line \
+	"have a look at `${_basename} ${INSTALL_LOGFILE}`." 
+    print_filled_line
+    flush_buffer
+}
+
+
+# ---------------------------------------------------------------------
+# command line parsing
+#
+
+# for variable setting:
+# checks if $2 contains '='
+# if so, sets variable $1 to the substring of $2 to the right of '='
+# and returns 1
+# otherwise sets variable $1 to $3 and returns 0
+set_variable_from_command_line()
+{
+    _tmp=`${_printf} "%s\n" "$2" | ${_awk} 'BEGIN {FS="="} {printf $2}'`
+    if [ -n "${_tmp}" ]; then
+	eval "$1=\"${_tmp}\""
+	write_buffer "${_LEFTSPACE}Set $1 to \"`value_of $1`\".\n" 
+	return 1
+    elif [ -n "$3" ]; then
+	eval "$1=\"$3\""
+	write_buffer "${_LEFTSPACE}Set $1 to \"`value_of $1`\".\n" 
+	return 0
+    else
+	exit_on_error "Argument \"${1}\" expected"
+    fi
+}
+
+
+_WHAT_TO_DO=''
+_CONFLICT=''
+_ANY_OPT=''
+_awk=awk
+_printf=printf
+_rm=rm
+initial_check
+while [ ${#} -gt 0 ]; do
+    case ${*} in
+	--cgal_dir*|--CGAL_DIR*|-CGAL_DIR*|-cgal_dir*)
+	    if set_variable_from_command_line 'CGAL_DIR' "$1" "$2"; then
+		shift
+	    fi
+	    set_dirs_dependant_on_cgal_dir
+	    initial_check
+	    ;;
+	--leda_sys_incl*|--LEDA_SYS_INCL*|--leda-sys-incl*|--LEDA-SYS-INCL*|\
+-leda_sys_incl*|-LEDA_SYS_INCL*|-leda-sys-incl*|-LEDA-SYS-INCL*)
+	    _ANY_OPT='y'
+	    NEED_EXTRA_LEDA_IDIR=''
+	    ;;
+	--leda_incl_dir*|--LEDA_INCL_DIR*|-LEDA_INCL_DIR*|-leda_incl_dir*)
+	    _ANY_OPT='y'
+	    if set_variable_from_command_line 'LEDA_INCL_DIR' "$1" "$2"; then
+		shift
+	    fi
+	    ;;
+	--leda_sys_lib*|--LEDA_SYS_LIB*|--leda-sys-lib*|--LEDA-SYS-LIB*|\
+-leda_sys_lib*|-LEDA_SYS_LIB*|-leda-sys-lib*|-LEDA-SYS-LIB*)
+	    _ANY_OPT='y'
+	    NEED_EXTRA_LEDA_LDIR=''
+	    ;;
+	--leda_lib_dir*|--LEDA_LIB_DIR*|-LEDA_LIB_DIR*|-leda_lib_dir*)
+	    _ANY_OPT='y'
+	    if set_variable_from_command_line 'LEDA_LIB_DIR' "$1" "$2"; then
+		shift
+	    fi
+	    ;;
+	--gmp_incl_dir*|--GMP_INCL_DIR*|-GMP_INCL_DIR*|-gmp_incl_dir*)
+	    _ANY_OPT='y'
+	    if set_variable_from_command_line 'GMP_INCL_DIR' "$1" "$2"; then
+		shift
+	    fi
+	    GMP_INSTALLATION='e'
+	    ;;
+	--gmp_lib_dir*|--GMP_LIB_DIR*|-GMP_LIB_DIR*|-gmp_lib_dir*)
+	    _ANY_OPT='y'
+	    if set_variable_from_command_line 'GMP_LIB_DIR' "$1" "$2"; then
+		shift
+	    fi
+	    GMP_INSTALLATION='e'
+	    ;;
+	--cln_incl_dir*|--CLN_INCL_DIR*|-CLN_INCL_DIR*|-cln_incl_dir*)
+	    _ANY_OPT='y'
+	    if set_variable_from_command_line 'CLN_INCL_DIR' "$1" "$2"; then
+		shift
+	    fi
+	    CLN_INSTALLATION='e'
+	    ;;
+	--cln_lib_dir*|--CLN_LIB_DIR*|-CLN_LIB_DIR*|-cln_lib_dir*)
+	    _ANY_OPT='y'
+	    if set_variable_from_command_line 'CLN_LIB_DIR' "$1" "$2"; then
+		shift
+	    fi
+	    CLN_INSTALLATION='e'
+	    ;;
+	--qt_incl_dir*|--QT_INCL_DIR*|-qt_incl_dir*|-QT_INCL_DIR*)
+	    _ANY_OPT='y'
+	    if set_variable_from_command_line 'QT_INCL_DIR' "$1" "$2"; then
+		QT_ADVANCED_MODE='y'
+		shift
+	    fi
+	    ;;
+	--qt_dir*|--QT_DIR*|-qt_dir*|-QT_DIR*)
+	    _ANY_OPT='y'
+	    if set_variable_from_command_line 'QT_DIR' "$1" "$2"; then
+		qt_dir_has_changed
+		shift
+	    fi
+	    ;;
+	--qt_lib_dir*|--QT_LIB_DIR*|-qt_lib_dir*|-QT_LIB_DIR*)
+	    _ANY_OPT='y'
+	    if set_variable_from_command_line 'QT_LIB_DIR' "$1" "$2"; then
+		QT_ADVANCED_MODE='y'
+		shift
+	    fi
+	    ;;
+	--qt_moc*|--QT_MOC*|-qt_moc*|-QT_MOC*)
+	    _ANY_OPT='y'
+	    if set_variable_from_command_line 'QT_MOC' "$1" "$2"; then
+		QT_ADVANCED_MODE='y'
+		shift
+	    fi
+	    ;;
+	--custom_cxxflags*|--CUSTOM_CXXFLAGS*|-CUSTOM_CXXFLAGS*|-custom_cxxflags*)
+	    _ANY_OPT='y'
+	    if set_variable_from_command_line 'CUSTOM_CXXFLAGS' "$1" "$2"; then
+		shift
+	    fi
+	    ;;
+	--custom_ldflags*|--CUSTOM_LDFLAGS*|-CUSTOM_LDFLAGS*|-custom_ldflags*)
+	    _ANY_OPT='y'
+	    if set_variable_from_command_line 'CUSTOM_LDFLAGS' "$1" "$2"; then
+		shift
+	    fi
+	    ;;
+	-LEDA*|-leda*|--leda*|--LEDA*)
+	    _ANY_OPT='y'
+	    LEDA_SUPPORT='_LEDA'
+	    write_buffer "${_LEFTSPACE}Enable LEDA support.\n"
+	    ;;
+	-gmp*|-GMP*|--gmp*|--GMP*)
+	    _ANY_OPT='y'
+	    GMP_SUPPORT='_GMP'
+	    write_buffer "${_LEFTSPACE}Enable GMP support.\n"
+	    ;;
+	-cln*|-CLN*|--cln*|--CLN*)
+	    _ANY_OPT='y'
+	    CLN_SUPPORT='_CLN'
+	    write_buffer "${_LEFTSPACE}Enable CLN support.\n"
+	    ;;
+	-qt*|-QT*|--qt*|--QT*)
+	    _ANY_OPT='y'
+	    QT_SUPPORT='_QT'
+	    write_buffer "${_LEFTSPACE}Enable Qt support.\n"
+	    ;;
+	-os*|-OS*)
+	    if [ -n "${_WHAT_TO_DO}" ]; then
+		_CONFLICT='y'
+	    fi
+	    _WHAT_TO_DO='ostype'
+	    COMPILER=$2
+	    shift
+	    ;;
+	--non-interactive*|-ni*)
+	    if [ -n "${_WHAT_TO_DO}" ]; then
+		_CONFLICT='y'
+	    fi
+	    _WHAT_TO_DO='non-interactive'
+	    COMPILER=$2
+	    shift
+	    ;;
+	--interactive*|-i*|-I*)
+	    if [ -n "${_WHAT_TO_DO}" ]; then
+		_CONFLICT='y'
+	    fi
+	    _WHAT_TO_DO='interactive'
+	    ;;
+	--upgrade*|-u*|-U*)
+	    if [ -n "${_WHAT_TO_DO}" ]; then
+		_CONFLICT='y'
+	    fi
+	    if set_variable_from_command_line 'UPGRADE_FROM' "$1" "$2"; then
+		shift
+	    fi
+	    _WHAT_TO_DO='upgrade'
+	    ;;
+	--verbose*|-verbose*)
+	    INSTALL_VERBOSE='y'
+	    ;;
+	*--version*|-V*|-v*)
+	    # version
+	    ${_printf} "%s\n" "${CGAL_INSTALL_CGAL} is ${CGAL_INSTALL_VERSION}."
+	    exit 0
+	    ;;
+	--rebuild-all*|-ra*|-RA*|-rba*|-RBA*)
+	    if [ -n "${_WHAT_TO_DO}" ]; then
+		_CONFLICT='y'
+	    fi
+	    _WHAT_TO_DO='rebuild-all'
+	    ;;
+	--build-all*|-ba*|-BA*)
+	    if [ -n "${_WHAT_TO_DO}" ]; then
+		_CONFLICT='y'
+	    fi
+	    _WHAT_TO_DO='build-all'
+	    ;;
+	*) 
+	    _WHAT_TO_DO='help'
+	    ;;
+    esac
+    shift
+done
+
+if [ -n "${QT_SUPPORT}" -a -z "${QT_ADVANCED_MODE}" -a -z "${QT_DIR}" ]; then
+    if [ -n "${QTDIR}" ]; then
+	QT_DIR=${QTDIR}
+	write_buffer "remark: QT_DIR has been set to \$QTDIR (${QTDIR})"
+    else
+	write_buffer "WARNING: --QT_DIR not set unless Qt support enable.\n"
+    fi
+fi
+
+if [ -n "${_CONFLICT}" ]; then
+    _WHAT_TO_DO='help'
+fi
+
+case ${_WHAT_TO_DO} in
+    *non-interactive*)
+	cgal_install_header
+	${_printf} "%s\n" "running non interactive mode ..."
+	INSTALL_INTERACTIVE=''
+	INSTALL_LOGFILE_REDIRECTION='|print_with_indent'
+	${_printf} "\n%s\n" \
+	    "--------------------------------------------------------"
+	${_printf} "%s\n" "Locating Utilities:"
+	${_printf} "%s\n" \
+	    "--------------------------------------------------------"
+	check_for_utils
+	check_conf_dir
+	guess_os 'print_with_indent'
+	case ${SYST} in
+	    *CYGWIN*) _check_for_sysutil cygpath y;;
+	esac
+	${_printf} "\n%s\n" \
+	    "--------------------------------------------------------"
+	${_printf} "%s\n" "Determining CGAL Version:"
+	${_printf} "%s\n" \
+	    "--------------------------------------------------------"
+	get_cgal_version
+	${_printf} "\n%s\n" \
+	    "--------------------------------------------------------"
+	${_printf} "%s\n" "Settings from Command Line:"
+	${_printf} "%s\n" \
+	    "--------------------------------------------------------"
+	_check_comp_executable ${COMPILER}
+	INSTALL_LOGFILE_REDIRECTION='>/dev/null'
+	COMPILER="`compiler_absolute ${COMPILER}`"
+	INSTALL_LOGFILE_REDIRECTION='|print_with_indent'
+	set_ostype
+	set_compiler_flags
+	flush_buffer
+	${_printf} "\n%s\n" \
+	    "--------------------------------------------------------"
+	${_printf} "%s\n" "Determining Compiler Specs:"
+	${_printf} "%s\n" \
+	    "--------------------------------------------------------"
+	INSTALL_LOGFILE_REDIRECTION='>/dev/null'
+	test_compiler_specifica "${INSTALL_VERBOSE}"
+	INSTALL_LOGFILE_REDIRECTION='|print_with_indent'
+	${_printf} "\n%s\n" \
+	    "--------------------------------------------------------"
+	${_printf} "%s\n" "Show Setup:"
+	${_printf} "%s\n" \
+	    "--------------------------------------------------------"
+	print_os_setting 'print_with_indent'
+	${_printf} "\n%s\n" \
+	    "--------------------------------------------------------"
+	${_printf} "%s\n" "Creating Directories and Makefiles:" 
+	${_printf} "%s\n" \
+	    "--------------------------------------------------------"
+	make_lib_dir
+	CGAL_MAKEFILE=${CGAL_MAKE_DIR}/makefile_`full_ostype`
+	generatemakefiles 'print_with_indent'
+	store_compiler_settings
+
+	${_printf} "\n%s\n" \
+	    "--------------------------------------------------------"
+	${_printf} "%s\n" \
+	    "--         DONE, please read the documentation        --"
+	${_printf} "%s\n" \
+	    "--                 on how to proceed                  --"
+	${_printf} "%s\n" \
+	    "--------------------------------------------------------"
+	;;
+    *upgrade*)
+	cgal_install_header
+	${_printf} "%s" "starting ${_WHAT_TO_DO} -"
+	startup_interactive
+	guess_os log_print
+	upgrade
+	finish_interactive
+	;;
+    *interactive*)
+	cgal_install_header
+	# start interactive part
+	${_printf} "%s" "starting interactive mode -"
+	startup_interactive
+	INSTALL_INTERACTIVE='y'
+	search_for_compilers
+	main_menu
+	finish_interactive
+	;;
+    *ostype*)
+	# architecture/os key
+	_uname=uname
+	_basename=basename
+	_dirname=dirname
+	_fgrep=fgrep
+	_which=real_which
+	_sed=sed
+	eval "guess_os ${_printf}" >/dev/null
+	_check_comp_executable "${COMPILER}"
+	COMPILER="`compiler_absolute ${COMPILER}`"
+	set_ostype
+	set_compiler_flags
+	full_ostype
+	${_printf} "\n"
+	;;
+    *build-all*)
+	cgal_install_header
+	${_printf} "%s" "starting ${_WHAT_TO_DO} -"
+	startup_interactive
+	build_all
+	finish_interactive
+	;;
+    *help*)
+	cgal_install_header
+	print_usage_information
+	;;
+    *)
+	cgal_install_header
+	print_general_information
+	;;
+esac
+exit 0
+
+# ---------------------------------------------------------------------
+# EOF 
+# ---------------------------------------------------------------------
