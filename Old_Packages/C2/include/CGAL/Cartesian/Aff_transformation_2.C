@@ -65,7 +65,7 @@ Aff_transformationC2( const Rotation,
 template < class R >
 Aff_transformationC2<R CGAL_CTAG>::
 Aff_transformationC2(const Rotation,
-                     const FT &sine, const FT &cosine, const FT &w)
+                     const typename R::FT &sine, const typename R::FT &cosine, const typename R::FT &w)
 {
   if (w != FT(1)) // Idem...
     PTR = new Rotation_repC2<R>(sine/w, cosine/w);
@@ -76,7 +76,7 @@ Aff_transformationC2(const Rotation,
 template < class R >
 Aff_transformationC2<R CGAL_CTAG>::
 Aff_transformationC2(const Scaling,
-                     const FT &s, const FT &w)
+                     const typename R::FT &s, const typename R::FT &w)
 {
   if (w != FT(1)) // ....
     PTR = new Scaling_repC2<R>(s/w);
@@ -89,9 +89,9 @@ Aff_transformationC2(const Scaling,
 // and a 3x2 matrix for the operations combining rotation, scaling, translation
 template < class R >
 Aff_transformationC2<R CGAL_CTAG>::
-Aff_transformationC2( const FT & m11, const FT & m12, const FT & m13,
-                      const FT & m21, const FT & m22, const FT & m23,
-                      const FT & w)
+Aff_transformationC2( const typename R::FT & m11, const typename R::FT & m12, const typename R::FT & m13,
+                      const typename R::FT & m21, const typename R::FT & m22, const typename R::FT & m23,
+                      const typename R::FT & w)
 {
   if (w != FT(1)) // ...
     PTR = new Aff_transformation_repC2<R>(m11/w, m12/w, m13/w,

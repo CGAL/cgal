@@ -1,3 +1,7 @@
+Version 3.2.5 (September 2 1999)
+- corrected a few buggy FT in Aff_transformation_2<R>::member(FT)
+  should have been typenamed R::FT
+
 Version 3.2.4 (September 2 1999)
 - corrected buggy typename R::LineC2<R..>::Point_2 in Line_2.C
   (should have been typename LineC2<R..>::Point_2)
