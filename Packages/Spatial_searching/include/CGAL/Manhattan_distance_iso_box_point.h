@@ -50,7 +50,7 @@ namespace CGAL {
 
     ~Manhattan_distance_iso_box_point() {}
 
-    inline FT transformed_distance(const QueryItem& q, const Point_d& p) {
+    inline FT transformed_distance(const Query_item& q, const Point_d& p) {
 		FT distance = FT(0);
 		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
                 typename SearchTraits::Cartesian_const_iterator_d qmaxit = construct_it(q.max()),
@@ -66,7 +66,7 @@ namespace CGAL {
     }
 
 
-    inline FT min_distance_to_rectangle(const QueryItem& q,
+    inline FT min_distance_to_rectangle(const Query_item& q,
 					      const Kd_tree_rectangle<SearchTraits>& r) {
 		FT distance = FT(0);
 		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
@@ -83,7 +83,7 @@ namespace CGAL {
 
     inline 
     FT 
-    max_distance_to_rectangle(const QueryItem& q,
+    max_distance_to_rectangle(const Query_item& q,
 			      const Kd_tree_rectangle<SearchTraits>& r) {
       FT distance=FT(0);
       typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
