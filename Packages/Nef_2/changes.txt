@@ -1,6 +1,9 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
 
+1.16 (7 May 2002)
+     -  casting of Standard_RT(0) required before assignment for Borland
+
 1.15 (2 May 2002)
      - enclose the temporary variable in a small scope to ensure it
        is destroyed earlier for SunPRO compiler

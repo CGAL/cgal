@@ -190,8 +190,8 @@ on the extended geometric objects.}*/
                          CGAL_NTS abs(p.hy()[0])/p.hw()[0]);
       } else {
         RT rx = CGAL_NTS abs(p.hx()), ry = CGAL_NTS abs(p.hy());
-        mx = ( rx.degree()>0 ? rx[1] : 0 ); nx = rx[0];
-        my = ( ry.degree()>0 ? ry[1] : 0 ); ny = ry[0];
+        mx = ( rx.degree()>0 ? rx[1] : Standard_RT(0) ); nx = rx[0];
+        my = ( ry.degree()>0 ? ry[1] : Standard_RT(0) ); ny = ry[0];
         if ( mx > my )      R = CGAL_NTS abs((ny-nx)/(mx-my));
         else if ( mx < my ) R = CGAL_NTS abs((nx-ny)/(my-mx));
         else /* mx == my */ R = CGAL_NTS abs(nx-ny)/(2*p.hw()[0]);
