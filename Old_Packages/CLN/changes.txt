@@ -1,5 +1,12 @@
 Changes done to the CLN package.
 
+Version 1.2 on 7 July 1999.
+- include files moved to the subdirectory include/CGAL/CLN/.
+- removed "#include <cl_io.h>" in each of them.
+- made a simple example in examples/CLN/example_cln.C.
+- patched install_cgal so that CGAL_USE_CLN is set accordingly,
+  as well as the correct flags.
+
 Version 1.1 on 26 June 1999.
 - Rewrote the doc.
 - Submitted the package to internal releases.
