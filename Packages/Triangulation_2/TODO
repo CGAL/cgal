@@ -1,6 +1,4 @@
 
-- check the behavior of regular triangulations on 
-  degenerate cases
 - change the return of get_conflicts and find_conflict to
   an output iterator ?
 - doc de le triangulation reguliere a mettre a jour

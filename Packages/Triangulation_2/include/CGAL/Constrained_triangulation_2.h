@@ -920,7 +920,7 @@ are_there_incident_constraints(Vertex_handle v) const
 template < class Gt, class Tds, class Itag >
 inline  bool 
 Constrained_triangulation_2<Gt,Tds,Itag>::
-is_valid(bool verbose = false, int level = 0) const
+is_valid(bool verbose, int level) const
 {
     bool result = Triangulation::is_valid(verbose,level);
     for( All_faces_iterator it = all_faces_begin(); 

@@ -13,6 +13,7 @@ int main()
 #else
 #include <CGAL/Cartesian.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_2.h>
+#include <CGAL/Triangulation_ds_face_base_2.h>
 #include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/IO/Window_stream.h>
 
@@ -21,7 +22,8 @@ typedef CGAL::Cartesian<double> Rp;
 typedef double W;
 typedef CGAL::Regular_triangulation_euclidean_traits_2<Rp,W>  Gt;
 typedef CGAL::Regular_triangulation_vertex_base_2<Gt> Vb;
-typedef CGAL::Regular_triangulation_face_base_2<Gt> Fb;
+typedef CGAL::Regular_triangulation_face_base_2<> Fb2;
+typedef CGAL::Regular_triangulation_face_base_2<Fb2> Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb,Fb > Tds;
 typedef CGAL::Regular_triangulation_2<Gt, Tds> Regular_triangulation;
 typedef CGAL::Window_stream  Window_stream;

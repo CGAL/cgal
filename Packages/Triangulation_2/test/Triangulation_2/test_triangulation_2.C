@@ -27,7 +27,7 @@
 #include <CGAL/_test_types.h>
 
 #include <CGAL/Triangulation_vertex_base_2.h>
-#include <CGAL/Triangulation_face_base_2.h>
+#include <CGAL/Triangulation_ds_face_base_2.h>
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/Triangulation_2.h>
