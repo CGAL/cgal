@@ -8,6 +8,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>
 
+#include <CGAL/Random.h>
 #include <CGAL/MP_Float.h>
 
 #include <CGAL/Triangulation_data_structure_3.h>
@@ -27,7 +28,7 @@ typedef CGAL::Delaunay_triangulation_3<Gt3d, Tds3d> Delaunay3d;
 
 int my_rand()
 {
-  return int(drand48()*(1<<31));
+  return int(CGAL::default_random.get_double()*(1<<31));
 }
 
 int main()
