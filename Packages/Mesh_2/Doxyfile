@@ -161,7 +161,7 @@ ENABLE_PREPROCESSING   = YES
 MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = NO
 SEARCH_INCLUDES        = YES
-INCLUDE_PATH           = /users/algo2/gecoal/CGAL/CGAL-I/include/CGAL \
+INCLUDE_PATH           = /absinthe/CGAL-testsuites/CGAL-I/include/CGAL \
                          /0/prisme_util/CGAL/CGAL-I/include/CGAL
 INCLUDE_FILE_PATTERNS  = 
 PREDEFINED             = "CGAL_USE_GMP CGAL_USE_QT" \
