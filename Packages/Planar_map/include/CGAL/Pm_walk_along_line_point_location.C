@@ -183,6 +183,7 @@ Pm_walk_along_line_point_location<Planar_map>::vertical_ray_shoot(
                                      );
                       
 #endif                      
+	                  f=e->face();
                     case Planar_map::UNBOUNDED_FACE:
                       break;
                     default:
@@ -628,4 +629,5 @@ bool Pm_walk_along_line_point_location<Planar_map>::find_closest(
 CGAL_END_NAMESPACE
 
 #endif
+
 
