@@ -843,7 +843,7 @@ set_compiler_flags()
 	    ;;
 	*SunOS*5.*g++*)
 	    #### settings for egcs/gcc2.8 on solaris
-	    ADDITIONAL_CXXFLAGS="-Wall"
+	    #ADDITIONAL_CXXFLAGS="-Wall"
 	    LONG_NAME_PROBLEM_LDFLAGS="-z nodefs -s"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
 	    CGAL_WINLIB_CXXFLAGS="-fpermissive"
