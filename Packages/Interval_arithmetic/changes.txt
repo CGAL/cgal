@@ -1,3 +1,6 @@
+Version 4.170 on 16 July 2003
+- src/Interval_arithmetic.C : change <Filtered_exact.h> to <FPU.h>.
+
 Version 4.169 on 10 July 2003 [af]
 - Added full specialization for Filtered_exact
 

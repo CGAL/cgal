@@ -33,7 +33,9 @@
 #include <CGAL/predicates/Regular_triangulation_rtH3.h>
 #endif
 
-#include <CGAL/Filtered_exact.h>
+// #include <CGAL/Filtered_exact.h> // only for CGAL_IA_NEW_FILTERS
+// But VC++ 7.0 would need some macros defined.
+#include <CGAL/FPU.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -41,8 +43,6 @@ CGAL_BEGIN_NAMESPACE
 #ifdef CGAL_IA_NEW_FILTERS
 #include <CGAL/Arithmetic_filter/static_infos/dispatch.h>
 #endif
-
-
 
 
 void force_ieee_double_precision()
@@ -93,10 +93,8 @@ FPU_empiric_test()
 // needed in order that the test suite passes for Intel7
 namespace CGALi {
 
-double 
-zero() { 
-  return 0; 
-}
+double zero() { return 0; }
 
 }
+
 CGAL_END_NAMESPACE
