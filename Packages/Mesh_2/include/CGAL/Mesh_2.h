@@ -548,6 +548,7 @@ read_poly(std::istream &f)
   reset();
 
   unsigned int number_of_points;
+  skip_comment_OFF(f);
   f >> number_of_points;
   skip_until_EOL(f);
   skip_comment_OFF(f);
@@ -578,7 +579,6 @@ read_poly(std::istream &f)
   // read holes
   unsigned int number_of_holes;
   f >> number_of_holes;
-  
   for(unsigned int m = 0; m < number_of_holes; ++m)
     {
       unsigned int n;
