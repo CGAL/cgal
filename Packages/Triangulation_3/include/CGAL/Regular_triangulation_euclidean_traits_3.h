@@ -184,7 +184,8 @@ public:
 		     const Weighted_point q,
 		     const Weighted_point r,
 		     const Weighted_point s) {
-    return does_simplex_intersect_dual_supportC3(p.x(), p.y(), p.z(), p.weight(),
+    return does_simplex_intersect_dual_supportC3(
+                                        p.x(), p.y(), p.z(), p.weight(),
 					q.x(), q.y(), q.z(), q.weight(),
 					r.x(), r.y(), r.z(), r.weight(),
 					s.x(), s.y(), s.z(), s.weight());
@@ -193,14 +194,16 @@ public:
   Bounded_side  operator() ( const Weighted_point p,
 		     const Weighted_point q,
 		     const Weighted_point r) {
-    return does_simplex_intersect_dual_supportC3(p.x(), p.y(), p.z(), p.weight(),
+    return does_simplex_intersect_dual_supportC3(
+                                        p.x(), p.y(), p.z(), p.weight(),
 					q.x(), q.y(), q.z(), q.weight(),
 					r.x(), r.y(), r.z(), r.weight()); 
   }
 
   Bounded_side  operator() ( const Weighted_point p,
 		     const Weighted_point q) {
-    return does_simplex_intersect_dual_supportC3(p.x(), p.y(), p.z(), p.weight(),
+    return does_simplex_intersect_dual_supportC3(
+                                        p.x(), p.y(), p.z(), p.weight(),
 					q.x(), q.y(), q.z(), q.weight());
   }
 };
