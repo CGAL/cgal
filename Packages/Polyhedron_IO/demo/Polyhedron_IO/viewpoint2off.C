@@ -156,7 +156,7 @@ int main( int argc, char **argv) {
     }
     if ( binary_mesh) {
         vout << "Scanning Viewpoint binary mesh data file ..." << endl;
-        CGAL::_Binary_read_big_endian_integer32( in, number);
+        CGAL::I_Binary_read_big_endian_integer32( in, number);
         int tmesh = 0;
         while( in) {
             tmesh ++;
@@ -174,20 +174,20 @@ int main( int argc, char **argv) {
                     }
                 }
                 // Scan vertex coordinates.
-                CGAL::_Binary_read_big_endian_float32( in, x);
-                CGAL::_Binary_read_big_endian_float32( in, y);
-                CGAL::_Binary_read_big_endian_float32( in, z);
+                CGAL::I_Binary_read_big_endian_float32( in, x);
+                CGAL::I_Binary_read_big_endian_float32( in, y);
+                CGAL::I_Binary_read_big_endian_float32( in, z);
                 points.push_back( Point( x, y, z));
             }
             for ( int k = 0; k < number; k++) {
                 // Scan vertex normal.
-                CGAL::_Binary_read_big_endian_float32( in, x);
-                CGAL::_Binary_read_big_endian_float32( in, y);
-                CGAL::_Binary_read_big_endian_float32( in, z);
+                CGAL::I_Binary_read_big_endian_float32( in, x);
+                CGAL::I_Binary_read_big_endian_float32( in, y);
+                CGAL::I_Binary_read_big_endian_float32( in, z);
                 if ( ! no_normals)
                     normals.push_back( Point( x, y, z));
             }
-            CGAL::_Binary_read_big_endian_integer32( in, number);
+            CGAL::I_Binary_read_big_endian_integer32( in, number);
         }
         in.close();
         vout << points.size() << " vertex coordinates read." << endl;

@@ -48,7 +48,8 @@ public:
         // ignore ostream. Output goes to Geomview_stream.
         // Print header.
         out->set_ascii_mode();
-        *out << "(geometry polyhedron  {appearance {}{ ";
+        *out << "(geometry " << out->get_new_id("polyhedron")
+             << " {appearance {}{ ";
         out->set_binary_mode();
         *out << "OFF BINARY\n"  << int(vertices) << int(facets) << 0 ;
     }
@@ -71,9 +72,20 @@ public:
 };
 
 
+#ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
 template < class Traits, class HDS >
 Geomview_stream&
 operator<<( Geomview_stream &gv, const Polyhedron_3<Traits,HDS> &P) {
+#else // CGAL_USE_POLYHEDRON_DESIGN_ONE //
+template < class Traits,
+           class Items,
+#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
+           template < class T, class I>
+#endif
+           class HDS>
+Geomview_stream&
+operator<<( Geomview_stream &gv, const Polyhedron_3<Traits,Items,HDS> &P) {
+#endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
     Polyhedron_writer_geomview  writer(gv);
     generic_print_polyhedron( std::cerr, P, writer); // note: cerr not used.
     return gv;

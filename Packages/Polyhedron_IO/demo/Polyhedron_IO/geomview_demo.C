@@ -24,16 +24,14 @@
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_3.h>
-#include <CGAL/Halfedge_data_structure_polyhedron_default_3.h>
 #include <CGAL/Polyhedron_default_traits_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_geomview_ostream.h>
 
-typedef  CGAL::Cartesian<double>                               R;
-typedef  CGAL::Point_3<R>                                      Point;
-typedef  CGAL::Polyhedron_default_traits_3<R>                  Traits;
-typedef  CGAL::Halfedge_data_structure_polyhedron_default_3<R> HDS;
-typedef  CGAL::Polyhedron_3<Traits,HDS>                        Polyhedron;
+typedef  CGAL::Cartesian<double>               R;
+typedef  CGAL::Point_3<R>                      Point;
+typedef  CGAL::Polyhedron_default_traits_3<R>  Traits;
+typedef  CGAL::Polyhedron_3<Traits>            Polyhedron;
 
 int main() {
     Point p( 1.0, 0.0, 0.0);
@@ -43,7 +41,7 @@ int main() {
     Polyhedron P;
     P.make_tetrahedron( p,q,r,s);
     CGAL::Geomview_stream geo;
-    geo << P;
+    geo << CGAL::GREEN << P;
 
     // wait for a mouse click.
     Point click;

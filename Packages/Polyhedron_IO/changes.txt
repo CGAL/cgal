@@ -1,11 +1,16 @@
 Polyhedron_IO Package: Release changes:
 ---------------------------------------------------------------------
+3.3 (18 Jun 2001)
+
+     - Converted files in the demo and example directory to the new design.
+     - Fixed geomview problem with polyhedron names.
+
 3.2 (18 Jun 2001)
 
      - Merged old design files and new design files into one package.
        First internal release of new design. Old design disabled by 
        default. Can be enabled using #define CGAL_USE_POLYHEDRON_DESIGN_ONE
-     - File in the demo and example directory are not yet converted
+     - Files in the demo and example directory are not yet converted
        to the new design.
 
 3.1 (21 Sep 2000)

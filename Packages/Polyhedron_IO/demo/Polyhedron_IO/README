@@ -13,6 +13,6 @@ viewpoint2off.C
 geomview_demo.C
 
     Displays a polyhedron from CGAL in Geomview using
-    CGAL_Geomview_stream. Type 'make geomview_demo' to compile it.
+    CGAL::Geomview_stream. Type 'make geomview_demo' to compile it.
 
 Lutz Kettner
