@@ -961,30 +961,15 @@ namespace HomogeneousKernelFunctors {
   {
     typedef typename K::Point_2    Point_2;
     typedef typename K::Line_2     Line_2;
+    typedef typename K::Segment_2  Segment_2;
   public:
     typedef Comparison_result      result_type;
-    typedef Arity_tag< 2 >     Arity;
+    typedef Arity_tag< 2 >         Arity;
 
     Comparison_result
     operator()( const Point_2& p, const Point_2& q) const
     {
-      typedef typename K::RT RT;
-      
-      const RT& phx = p.hx();
-      const RT& phw = p.hw();
-      const RT& qhx = q.hx();
-      const RT& qhw = q.hw();
-      const RT  RT0 = RT(0);
-      RT com = phx * qhw - qhx * phw;
-      if ( com < RT0 )
-	{
-	  return SMALLER;
-	}
-      else if ( RT0 < com )
-	{
-	  return LARGER;
-	}
-      return EQUAL;
+      return (Comparison_result) CGAL_NTS sign(p.hx()*q.hw() - q.hx()*p.hw());
     }
 
     Comparison_result
@@ -1008,7 +993,12 @@ namespace HomogeneousKernelFunctors {
       Point_2 hip = gp_linear_intersection( h1, h2 );
       return compare_x( lip, hip );
     } // FIXME
-  };
+
+    Comparison_result
+    operator()( const Segment_2& s1, int i1,
+                const Segment_2& s2, int i2) const
+    { return operator()(s1.vertex(i1), s2.vertex(i2)); }
+   };
 
   template <typename K>
   class Compare_x_3
