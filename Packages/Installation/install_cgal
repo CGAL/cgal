@@ -1,7 +1,37 @@
 #!/bin/sh
 # ---------------------------------------------------------------------
 # A CGAL Installation Script Prototype 
+# ---------------------------------------------------------------------
 # $Id$
+# ---------------------------------------------------------------------
+# 
+# Copyright (c) 1997 The CGAL Consortium
+# 
+# This software and related documentation is part of the 
+# Computational Geometry Algorithms Library (CGAL).
+# 
+# Permission to use, copy, and distribute this software and its 
+# documentation is hereby granted free of charge, provided that 
+# (1) it is not a component of a commercial product, and 
+# (2) this notice appears in all copies of the software and
+#     related documentation. 
+# 
+# CGAL may be distributed by any means, provided that the original
+# files remain intact, and no charge is made other than for
+# reasonable distribution costs.
+# 
+# CGAL may not be distributed as a component of any commercial
+# product without a prior license agreement with the authors.
+# 
+# This software and documentation is provided "as-is" and without 
+# warranty of any kind. In no event shall the CGAL Consortium be
+# liable for any damage of any kind.
+# 
+# The CGAL Consortium consists of Utrecht University (The Netherlands), 
+# ETH Zurich (Switzerland), Free University of Berlin (Germany), 
+# INRIA Sophia-Antipolis (France), Max-Planck-Institute Saarbrucken
+# (Germany), RISC Linz (Austria), and Tel-Aviv University (Israel).
+#
 # ---------------------------------------------------------------------
 
 # ---------------------------------------------------------------------
@@ -16,22 +46,27 @@ CGAL_INSTALL_VERSION='$Revision$'
 CGAL_DIR=`pwd`
 CGAL_EXAMPLE_DIR=${CGAL_DIR}/examples
 CGAL_INCL_DIR=${CGAL_DIR}/include
+CGAL_INCL_CONF_DIR=${CGAL_INCL_DIR}/CGAL/config
 CGAL_LIB_DIR=${CGAL_DIR}/lib
 CGAL_MAKE_DIR=${CGAL_DIR}/make
 CGAL_SRC_DIR=${CGAL_DIR}/src
 CGAL_TEST_DIR=${CGAL_DIR}/test
 CGAL_CONF_DIR=${CGAL_DIR}/config
+CGAL_INSTALL_CONF_DIR=${CGAL_CONF_DIR}/install
+CGAL_TEST_CONF_DIR=${CGAL_CONF_DIR}/testfiles
 CGAL_AUX_DIR=${CGAL_DIR}/auxiliary
 CGAL_LIB_NAME='libCGAL'
 CGAL_DIRFILE=${CGAL_DIR}/make/CGAL_directories
-CGAL_TESTFILE=${CGAL_TEST_DIR}/cgal_test
+CGAL_TESTFILE=${CGAL_TEST_DIR}/run_testsuite
 # logfile for testsuite:
 TEST_LOGFILE=${CGAL_TEST_DIR}/error.txt
 # set to non-empty, if you want to view the logs of 
 # ALL failed tests
 INSTALL_VERBOSE=''
+# prefix of CGAL compiler specific configuration flags
+CGAL_CONFIG_PREFIX='CGAL_CFG_NO_'
 # set to empty string, if you want to disable testsuite 
-CGAL_TESTSUITE=''
+CGAL_TESTSUITE='y'
 
 
 # ---------------------------------------------
@@ -172,6 +207,18 @@ value_of()
     eval "${_printf} \"$_value\""
 }
 
+# print the value of variable $1, except for the first occurrence 
+# of the regexps $2 - $n
+value_of_without()
+{
+    _tmp=`value_of "$1"`
+    while [ $# -gt 1 ]; do
+        _tmp=`${_printf} "${_tmp}\n" | ${_sed} "s/${2}//1"`
+	shift
+    done
+    ${_printf} "${_tmp}"
+}
+
 # (/usr)/bin/which is completely STUPID
 # it looks at ~/.cshrc and reports aliases 
 # that do not exist, if you run a shell other than csh
@@ -238,6 +285,36 @@ _check_for_sysutil()
     return 0
 }
 
+# exit, if we have no read permission for $1
+_check_read()
+{
+    if [ ! -r $1 ]; then
+	echo
+	echo "ERROR: Cannot read $1, exiting."
+	exit 1
+    fi
+}
+
+# exit, if we have no execute permission for $1
+_check_execute()
+{
+    if [ ! -x $1 ]; then
+	echo
+	echo "ERROR: Cannot execute $1, exiting."
+	exit 1
+    fi
+}
+
+# exit, if we have no write permission for $1
+_check_write()
+{
+    if [ ! -w $1 ]; then
+	echo
+	echo "ERROR: Cannot write to $1, exiting."
+	exit 1
+    fi
+}
+
 # exit, if there is no directory $1 or it is not readable and executable
 _check_dir_exists()
 {
@@ -246,46 +323,22 @@ _check_dir_exists()
 	echo "ERROR: Directory $1 does not exist, exiting."
 	exit 1
     fi
-    if [ ! -r $1 ]; then
-	echo
-	echo "ERROR: Cannot read from directory $1, exiting."
-	exit 1
-    fi
-    if [ ! -x $1 ]; then
-	echo
-	echo "ERROR: No execute permission for directory $1, exiting."
-	exit 1
-    fi
+    _check_read ${1}
+    _check_execute ${1}
 }
 
-# exit, if there is no directory $1 or it is not readable and executable
-_check_file_exists()
+# check, whether there is a directory $1 (if not create it)
+# and make sure, you have read/write/execute permission
+_check_dir_exists_create()
 {
-    if [ ! -r $1 ]; then
-	echo
-	echo "ERROR: Cannot find file $1, exiting."
-	exit 1
+    if [ ! -d ${1} ]; then
+	log_print \
+	    "WARNING: Directory ${1} does not exist, it will be created."
+	${_mkdir} ${1}
     fi
-}
-
-# exit, if there is no directory $1 or it is not readable and executable
-_check_file_execute()
-{
-    if [ ! -x $1 ]; then
-	echo
-	echo "ERROR: Cannot execute file $1, exiting."
-	exit 1
-    fi
-}
-
-# exit, if you can't write to directory/file $1
-_check_write()
-{
-    if [ ! -w $1 ]; then
-	echo
-	echo "ERROR: Cannot write to $1, exiting."
-	exit 1
-    fi
+    _check_read ${1}
+    _check_write ${1}
+    _check_execute ${1}
 }
 
 # initialize the logfiles
@@ -332,14 +385,9 @@ check_conf_dir()
     _check_dir_exists ${CGAL_SRC_DIR}
     _check_dir_exists ${CGAL_INCL_DIR}
     _check_dir_exists ${CGAL_LIB_DIR}
-
-    # test for ${CGAL_CONF_DIR}
-    if [ ! -d ${CGAL_CONF_DIR} ]; then
-	log_print \
-	    "WARNING: ${CGAL_CONF_DIR} does not exist, it will be created."
-	mkdir ${CGAL_CONF_DIR}
-    fi
-    _check_write ${CGAL_CONF_DIR}
+    _check_dir_exists ${CGAL_CONF_DIR}
+    _check_dir_exists ${CGAL_TEST_CONF_DIR}
+    _check_dir_exists_create ${CGAL_INSTALL_CONF_DIR}
 }
 
 # print the version number of this file
@@ -1193,7 +1241,7 @@ try_to_get_var_from_file()
 	_awkprg="/$1/"'{printf $1}'
 	_tmp=`${_awk} "${_awkprg}" $2`
 	if [ -n "${_tmp}" ]; then
-	    _awkprg="/$1/"'{printf $3}'
+	    _awkprg="/$1/"'{printf $4}'
 	    _tmp=`${_awk} "${_awkprg}" $2`
 	    log_print "got $1 from config/`$_basename $2`.\nset to <${_tmp}>."
 	    _tmp=\'${_tmp}\'
@@ -1379,6 +1427,53 @@ _link_run_test()
 	cleanup_after_link_run
 	return 1
     fi
+}
+
+
+# ---------------------------------------------------------------------
+# COMPILER SPECS TEST:
+
+
+# set some compiler specific flags needed for CGAL
+# these flags are determined by the corresponding test-sources
+# in CGAL_CONF_DIR
+# ($1 nonzero indicates verbosity)
+test_compiler_specifica()
+{
+    _check_dir_exists_create ${CGAL_INCL_CONF_DIR}
+    _check_dir_exists_create ${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}
+    _check_dir_exists_create ${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}/CGAL
+    _file=${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}/CGAL/compiler_config.h
+    ${_printf} "/* Copyright (c) 1997 The CGAL Consortium\n" > ${_file}
+    ${_printf} " *\n" >> ${_file}
+    ${_printf} " * This software and related documentation is part of the\n" \
+	>> ${_file}
+    ${_printf} " * Computational Geometry Algorithms Library (CGAL).\n" \
+	>> ${_file}
+    ${_printf} " *\n" >> ${_file}
+    ${_printf} " * Compiler specific configuration file\n" >> ${_file}
+    ${_printf} " * System: ${CGAL_OS_COMPILER}\n" >> ${_file}
+    ${_printf} " * generated by `${_basename} $0`\n" >> ${_file}
+    ${_printf} " */\n\n" >> ${_file}
+    set_stl_version "${INSTALL_VERBOSE}"
+    ${_printf} "#define ${CGAL_STL_VERSION} 1\n\n" >> ${_file}
+    for i in ${CGAL_TEST_CONF_DIR}/*.C; do
+	${_cat} ${i} > ${TMP_CXX_FILE}.C
+	${_printf} '//+--------------------------------------------------------------------------\n' >> ${_file}
+	${_cat} ${i} | ${_awk} '/\/\/\|/ {print $0}' >> ${_file}
+	${_printf} '//+--------------------------------------------------------------------------\n' >> ${_file}
+	_test_name="`value_of_without \"${i}\" \"${CGAL_CONFIG_PREFIX}\" \"\.C\"`"
+	_test_name=`${_basename} "${_test_name}"`
+	if _compile_test "${_test_name}" \
+	  "${CUSTOM_CXXFLAGS} `stl_cxxflags`" "$1" && \
+	  _link_run_test "${_test_name}" "${CUSTOM_LDFLAGS}" "$1"; then
+	    ${_printf} "//" >> ${_file}
+	fi
+	${_printf} \
+	 "#define ${CGAL_CONFIG_PREFIX}${_test_name} 1\n\n" >> ${_file}
+	cleanup_after_compile
+	cleanup_after_link_run
+    done
 }
 
 
@@ -1741,7 +1836,7 @@ test_for_builtin_stl()
     STL_STATUS='b'
     if test_stl_general "${INSTALL_VERBOSE}" 'builtin STL'; then
 	log_print "${COMPILER} seems to have builtin STL."
-	set_stl_version "${INSTALL_VERBOSE}"
+	test_compiler_specifica "${INSTALL_VERBOSE}"
 	STL_TEST_PASSED='y'
 	return 0
     else
@@ -1757,7 +1852,7 @@ test_for_builtin_stl()
 test_stl()
 {
     if test_stl_general 'v' 'STL'; then
-	set_stl_version "${INSTALL_VERBOSE}"
+	test_compiler_specifica "${INSTALL_VERBOSE}"
 	STL_TEST_PASSED='y'
 	return 0
     fi
@@ -1934,10 +2029,10 @@ search_gmp()
 #
 
 # try to retrieve the compiler specific settings from
-# file ${CGAL_CONF_DIR}/${CGAL_OS_COMPILER}  
+# file ${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}  
 retrieve_compiler_settings()
 {
-    _file="${CGAL_CONF_DIR}/${CGAL_OS_COMPILER}"
+    _file="${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}"
     _tmp_version=${CGAL_INSTALL_VERSION}
     if try_to_get_var_from_file CGAL_INSTALL_VERSION "${_file}"; then
 	SETUP_COMPLETE=''
@@ -2015,6 +2110,7 @@ retrieve_compiler_settings()
     # GMP specific stuff:
     if try_to_get_var_from_file GMP_SUPPORT "${_file}" ||\
 	try_to_get_var_from_file GMP_INSTALLATION "${_file}"; then
+        GMP_SUPPORT='_GMP'
 	search_gmp "${INSTALL_VERBOSE}"
 	GMP_SUPPORT=''
 	SETUP_COMPLETE=''
@@ -2041,32 +2137,43 @@ retrieve_compiler_settings()
     set_lib_compiled_flag
 }
 
+# used by store_compiler_settings to store variable $1
+# into the config file
+_store_install_config_variable()
+{
+    ${_printf} "/* $1 = '`value_of $1`' */\n"
+}
+
 # store the actual compiler specific settings to the
-# file ${CGAL_CONF_DIR}/${CGAL_OS_COMPILER}  
+# file ${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}  
 store_compiler_settings()
 {
-    _file="${CGAL_CONF_DIR}/${CGAL_OS_COMPILER}"
-    ${_printf} "# file: `$_basename ${_file}`\n" >${_file}
-    ${_printf} "# Configuration file for ${COMPILER} on ${SYST}\n" >>${_file}
-    ${_printf} "# Automatically created by $0.\n" >>${_file}
-    ${_printf} "# Please do not edit.\n" >>${_file}
-    ${_printf} "CGAL_INSTALL_VERSION     = ${CGAL_INSTALL_VERSION}\n" >>${_file}
-    ${_printf} "STL_STATUS               = ${STL_STATUS}\n" >>${_file}
-    ${_printf} "CGAL_STL_VERSION         = ${CGAL_STL_VERSION}\n" >>${_file}
-    ${_printf} "STL_DIR                  = ${STL_DIR}\n" >>${_file}
-    ${_printf} "LEDA_SUPPORT             = ${LEDA_SUPPORT}\n" >>${_file}
-    ${_printf} "NEED_EXTRA_LEDA_IDIR     = ${NEED_EXTRA_LEDA_IDIR}\n" >>${_file}
-    ${_printf} "LEDA_INCL_DIR            = ${LEDA_INCL_DIR}\n" >>${_file}
-    ${_printf} "NEED_EXTRA_LEDA_LDIR     = ${NEED_EXTRA_LEDA_LDIR}\n" >>${_file}
-    ${_printf} "LEDA_LIB_DIR             = ${LEDA_LIB_DIR}\n" >>${_file}
-    ${_printf} "GMP_SUPPORT              = ${GMP_SUPPORT}\n" >>${_file}
-    ${_printf} "GMP_INSTALLATION         = ${GMP_INSTALLATION}\n" >>${_file}
-    ${_printf} "GMP_INCL_DIR             = ${GMP_INCL_DIR}\n" >>${_file}
-    ${_printf} "GMP_LIB_DIR              = ${GMP_LIB_DIR}\n" >>${_file}
-    ${_printf} "GCC_RTTI_PATCH_SUPPORT   = ${GCC_RTTI_PATCH_SUPPORT}\n" >>${_file}
-    ${_printf} "GCC_RTTI_PATCH_DIR       = ${GCC_RTTI_PATCH_DIR}\n" >>${_file}
-    ${_printf} "CUSTOM_CXXFLAGS          = ${CUSTOM_CXXFLAGS}\n" >>${_file}
-    ${_printf} "CUSTOM_LDFLAGS           = ${CUSTOM_LDFLAGS}\n" >>${_file}
+    _file="${CGAL_INSTALL_CONF_DIR}/${CGAL_OS_COMPILER}"
+    ${_printf} "/*\n" >${_file}
+    ${_printf} "** file: `$_basename ${_file}`\n" >>${_file}
+    ${_printf} "** Configuration file for ${COMPILER} on ${SYST}\n" >>${_file}
+    ${_printf} "** Automatically created by $0.\n" >>${_file}
+    ${_printf} "** Please do not edit.\n" >>${_file}
+    ${_printf} "*/\n\n" >>${_file}
+    _store_install_config_variable CGAL_INSTALL_VERSION >>${_file}
+    _store_install_config_variable STL_STATUS >>${_file}
+    _store_install_config_variable STL_DIR >>${_file}
+    _store_install_config_variable LEDA_SUPPORT >>${_file}
+    _store_install_config_variable NEED_EXTRA_LEDA_IDIR >>${_file}
+    _store_install_config_variable LEDA_INCL_DIR >>${_file}
+    _store_install_config_variable NEED_EXTRA_LEDA_LDIR >>${_file}
+    _store_install_config_variable LEDA_LIB_DIR >>${_file}
+    _store_install_config_variable GMP_SUPPORT >>${_file}
+    _store_install_config_variable GMP_INSTALLATION >>${_file}
+    _store_install_config_variable GMP_INCL_DIR >>${_file}
+    _store_install_config_variable GMP_LIB_DIR >>${_file}
+    _store_install_config_variable GCC_RTTI_PATCH_SUPPORT >>${_file}
+    _store_install_config_variable GCC_RTTI_PATCH_DIR >>${_file}
+    _store_install_config_variable CUSTOM_CXXFLAGS  >>${_file}
+    _store_install_config_variable CUSTOM_LDFLAGS >>${_file}
+    _store_install_config_variable CUSTOM_LDFLAGS >>${_file}
+    _store_install_config_variable CGAL_STL_VERSION >>${_file}
+    ${_printf} "\n/* EOF */\n" >>${_file}
     log_print "Settings stored in ${_file}."
 }
 
@@ -2751,14 +2858,14 @@ install_gmp()
     if [ ! -d ${GMP_VERSION} ]; then
 	# unzip
 	gmpfile=${CGAL_AUX_DIR}/${GMP_VERSION}.tar.gz
-	_check_file_exists ${gmpfile}
+	_check_read ${gmpfile}
 	_check_write ${CGAL_AUX_DIR}
 	_check_for_sysutil gunzip y
 	_do_command "$_gunzip ${gmpfile}" "Unzip"
 
 	# untar
 	gmpfile=${CGAL_AUX_DIR}/${GMP_VERSION}.tar
-	_check_file_exists ${gmpfile}
+	_check_read ${gmpfile}
 	_check_for_sysutil tar y
 	_do_command "$_tar xf ${gmpfile}" "Untar"
 
@@ -2826,101 +2933,100 @@ header()
 write_compiler_flags()
 {
   header "compiler flags" >> $FILE
-  echo "# For more information about the compiler flags see the installation guide." >> $FILE
-  echo >> $FILE
+  ${_printf} "# For more information about the compiler flags see the installation guide.\n\n" >> $FILE
 
-  echo "CGAL_STL_VERSION = CGAL_STL_UNKNOWN" >> $FILE
-  echo "# *** Fill in your STL include directory ***" >> $FILE
-  echo "# (including the -I directive)" >> $FILE
-  echo "# (e.g. -I/usr/local/STL)" >> $FILE
-  echo "CGAL_STL_INCLUDE_DIRECTIVE =" >> $FILE
+  ${_printf} "# compiler specific configuration dir\n" >> $FILE
+  ${_printf} "CGAL_INCL_CONF_DIR = \\\\\n" >> $FILE
+  ${_printf} "	\$(CGAL_INCL_DIR)/CGAL/config/${CGAL_OS_COMPILER}\n\n"  >> $FILE
+  ${_printf} "# *** Fill in your STL include directory ***\n" >> $FILE
+  ${_printf} "# (including the -I directive)\n" >> $FILE
+  ${_printf} "# (e.g. -I/usr/local/STL)\n" >> $FILE
+
+  ${_printf} "CGAL_STL_VERSION = CGAL_STL_UNKNOWN\n\n" >> $FILE
+  ${_printf} "# *** Fill in your STL include directory ***\n" >> $FILE
+  ${_printf} "# (including the -I directive)\n" >> $FILE
+  ${_printf} "# (e.g. -I/usr/local/STL)\n" >> $FILE
+  ${_printf} "CGAL_STL_INCLUDE_DIRECTIVE =\n\n" >> $FILE
   if [ ! -z "$USE_LEDA" -a -n "${NEED_EXTRA_LEDA_IDIR}" ] ; then
-    echo "# *** Fill in your LEDA include directory ***" >> $FILE
-    echo "LEDA_INCL_DIR =" >> $FILE
+    ${_printf} "# *** Fill in your LEDA include directory ***\n" >> $FILE
+    ${_printf} "LEDA_INCL_DIR =\n\n" >> $FILE
   fi
-  echo >> $FILE
 
-  echo "# *** Fill in any additional compiler flags you need ***" >> $FILE
-  echo "CUSTOM_CXXFLAGS = ${CUSTOM_CXXFLAGS}" >> $FILE
-  echo >> $FILE
+  ${_printf} "# *** Fill in any additional compiler flags you need ***\n" >> $FILE
+  ${_printf} "CUSTOM_CXXFLAGS = ${CUSTOM_CXXFLAGS}\n\n" >> $FILE
 
   if [ -n "${GMP_SUPPORT}" ]; then
     if [ "${GMP_INSTALLATION}" = 'x' -o \
 	 "${GMP_INSTALLATION}" = 'z' -o \
 	 "${GMP_INSTALLATION}" = 'e' ]; then
-	echo "# *** Fill in your GMP include directory ***" >> $FILE
-	echo "GMP_INCL_DIR = \\" >> $FILE
-	echo "	${GMP_INCL_DIR}" >> $FILE
-	echo >> $FILE
+	${_printf} "# *** Fill in your GMP include directory ***\n" >> $FILE
+	${_printf} "GMP_INCL_DIR = \\\\\n" >> $FILE
+	${_printf} "	${GMP_INCL_DIR}\n\n" >> $FILE
     fi
   fi
 
-  echo "CGAL_CXXFLAGS = \\" >> $FILE
-  echo "	\$(CUSTOM_CXXFLAGS) \\" >> $FILE
-  echo "	-D${CGAL_COMPILER} \\" >> $FILE
-  echo "	-D\$(CGAL_STL_VERSION) \\" >> $FILE
+  ${_printf} "CGAL_CXXFLAGS = \\\\\n" >> $FILE
+  ${_printf} "	\$(CUSTOM_CXXFLAGS) \\\\\n" >> $FILE
+  ${_printf} "	-D${CGAL_COMPILER} \\\\\n" >> $FILE
+  ${_printf} "	-D\$(CGAL_STL_VERSION) \\\\\n" >> $FILE
   if [ ! -z "$USE_LEDA" ] ; then
-    echo "	-DCGAL_USE_LEDA_BOOL \\" >> $FILE
+    ${_printf} "	-DCGAL_USE_LEDA_BOOL \\\\\n" >> $FILE
   fi
   if [ ! -z "$USE_RTTI_PATCH" ] ; then
-    echo "	-frtti \\" >> $FILE
-    echo "	-DRTTI_PATCH \\" >> $FILE
+    ${_printf} "	-frtti \\\\\n" >> $FILE
+    ${_printf} "	-DRTTI_PATCH \\\\\n" >> $FILE
   fi
   if [ ! -z "$USE_STDEXCEPT" ] ; then
-    echo "	-D__STDEXCEPT__ \\" >> $FILE
+    ${_printf} "	-D__STDEXCEPT__ \\\\\n" >> $FILE
   fi
   if [ ! -z "$ADDITIONAL_CXXFLAGS" ] ; then
-    echo "	$ADDITIONAL_CXXFLAGS \\" >> $FILE
+    ${_printf} "	$ADDITIONAL_CXXFLAGS \\\\\n" >> $FILE
   fi
-  echo "	\$(CGAL_STL_INCLUDE_DIRECTIVE) \\" >> $FILE
+  ${_printf} "	\$(CGAL_STL_INCLUDE_DIRECTIVE) \\\\\n" >> $FILE
   if [ -n "${GMP_SUPPORT}" ]; then
     if [ "${GMP_INSTALLATION}" = 'x' -o \
 	 "${GMP_INSTALLATION}" = 'z' -o \
 	 "${GMP_INSTALLATION}" = 'e' ]; then
-	echo "	-I\$(GMP_INCL_DIR) \\" >> $FILE
+	${_printf} "	-I\$(GMP_INCL_DIR) \\\\\n" >> $FILE
     fi
   fi
+  ${_printf} "	-I\$(CGAL_INCL_CONF_DIR) \\\\\n" >> $FILE
   if [ ! -z "$USE_LEDA" -a -n "${NEED_EXTRA_LEDA_IDIR}" ] ; then
-    echo "	-I\$(CGAL_INCL_DIR) \\" >> $FILE
-    echo "	-I\$(LEDA_INCL_DIR)" >> $FILE
+    ${_printf} "	-I\$(CGAL_INCL_DIR) \\\\\n" >> $FILE
+    ${_printf} "	-I\$(LEDA_INCL_DIR)\n\n" >> $FILE
   else
-    echo "	-I\$(CGAL_INCL_DIR)" >> $FILE
+    ${_printf} "	-I\$(CGAL_INCL_DIR)\n\n" >> $FILE
   fi
-  echo >> $FILE
 }
 
 write_linker_flags()
 {
-  header "linker flags" >> $FILE
-  echo >> $FILE
+  header "linker flags\n" >> $FILE
+  ${_printf} "\n" >> $FILE
 
   if [ ! -z "$USE_LEDA" -a -n "${NEED_EXTRA_LEDA_LDIR}" ] ; then
-    echo "# *** Fill in your LEDA_lib_directory ***" >> $FILE
-    echo "LEDA_LIB_DIR =" >> $FILE
-    echo >> $FILE
+    ${_printf} "# *** Fill in your LEDA_lib_directory ***\n" >> $FILE
+    ${_printf} "LEDA_LIB_DIR =\n\n" >> $FILE
   fi
 
   if [ -n "${GMP_SUPPORT}" ]; then
     if [ "${GMP_INSTALLATION}" = 'x' -o \
 	 "${GMP_INSTALLATION}" = 'z' -o \
 	 "${GMP_INSTALLATION}" = 'e' ]; then
-	echo "# *** Fill in your GMP lib directory ***" >> $FILE
-	echo "GMP_LIB_DIR = \\" >> $FILE
-	echo "	${GMP_LIB_DIR}" >> $FILE
-	echo >> $FILE
+	${_printf} "# *** Fill in your GMP lib directory ***\n" >> $FILE
+	${_printf} "GMP_LIB_DIR = \\\\\n" >> $FILE
+	${_printf} "	${GMP_LIB_DIR}\n\n" >> $FILE
     fi
   fi
 
   if [ ! -z "$USE_RTTI_PATCH" ] ; then
-    echo "# *** Fill in your g++_rttipatch_directory ***" >> $FILE
-    echo "GCC_RTTI_PATCH_DIR =" >> $FILE
-    echo >> $FILE
-  fi
+    ${_printf} "# *** Fill in your g++_rttipatch_directory ***\n" >> $FILE
+    ${_printf} "GCC_RTTI_PATCH_DIR =\n\n" >> $FILE
+   fi
 
-  echo "# *** Fill in any additional linker flags you need ***" >> $FILE
-  echo "CUSTOM_LDFLAGS = ${CUSTOM_LDFLAGS}" >> $FILE
-  echo >> $FILE
-
+  ${_printf} "# *** Fill in any additional linker flags you need ***\n" >> $FILE
+  ${_printf} "CUSTOM_LDFLAGS = ${CUSTOM_LDFLAGS}\n\n" >> $FILE
+ 
   LIB_PATH="-L\$(CGAL_LIB_DIR)/\$(CGAL_OS_COMPILER)"
   RUNTIME_LIB_PATH="\$(CGAL_LIB_DIR)/\$(CGAL_OS_COMPILER)"
   LIBS="-lCGAL"
@@ -2952,26 +3058,24 @@ write_linker_flags()
     WLIBS="${WLIBS} \\\\\n       -nodefaultlibs -lstdc++ -liberty -lg++ -lgcc -lc"
   fi
 
-  echo "CGAL_LDFLAGS = \\" >> $FILE
-  echo "       \$(CUSTOM_LDFLAGS) \\" >> $FILE
-  echo "       $LIB_PATH \\" >> $FILE
+  ${_printf} "CGAL_LDFLAGS = \\\\\n" >> $FILE
+  ${_printf} "       \$(CUSTOM_LDFLAGS) \\\\\n" >> $FILE
+  ${_printf} "       $LIB_PATH \\\\\n" >> $FILE
   if [ ! -z "$RUNTIME_FLAG" ] ; then
-    echo "       ${RUNTIME_FLAG}${RUNTIME_LIB_PATH} \\" >> $FILE
+    ${_printf} "       ${RUNTIME_FLAG}${RUNTIME_LIB_PATH} \\\\\n" >> $FILE
   fi
-  echo "       ${LIBS}" >> $FILE
-  echo >> $FILE
+  ${_printf} "       ${LIBS}\n\n" >> $FILE
 
   if [ ! -z "$USE_LEDA" ] ; then
     LIB_PATH="${LIB_PATH} -L$WINDOW_DIR"
     RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:$WINDOW_DIR"
-    echo "CGAL_WINDOW_LDFLAGS = \\" >> $FILE
-    echo "       ${CUSTOM_LDFLAGS} \\" >> $FILE
-    echo "       $LIB_PATH \\" >> $FILE
+    ${_printf} "CGAL_WINDOW_LDFLAGS = \\\\\n" >> $FILE
+    ${_printf} "       ${CUSTOM_LDFLAGS} \\\\\n" >> $FILE
+    ${_printf} "       $LIB_PATH \\\\\n" >> $FILE
     if [ ! -z "$RUNTIME_FLAG" ] ; then
-      echo "       ${RUNTIME_FLAG}${RUNTIME_LIB_PATH} \\" >> $FILE
+      ${_printf} "       ${RUNTIME_FLAG}${RUNTIME_LIB_PATH} \\\\\n" >> $FILE
     fi
-    echo "       ${WLIBS}" >> $FILE
-    echo >> $FILE
+    ${_printf} "       ${WLIBS}\n\n" >> $FILE
   fi
 }
 
@@ -3190,7 +3294,7 @@ generatemakefiles()
 {
   _check_dir_exists ${CGAL_MAKE_DIR}
   _check_write ${CGAL_MAKE_DIR}
-  _check_file_exists ${CGAL_DIRFILE}
+  _check_read ${CGAL_DIRFILE}
   _check_write ${CGAL_DIRFILE}
 
   replace_line $CGAL_DIRFILE CGAL_INCL_DIR      "CGAL_INCL_DIR      = $CGAL_INCL_DIR"
@@ -3244,11 +3348,7 @@ generatemakefiles()
   replace_line $FILE CGAL_MAKEFILE "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
 
   if [ -n "${CGAL_TESTSUITE}" ]; then
-    FILE=${CGAL_TEST_DIR}/cgal_test
-    replace_line $FILE CGAL_MAKE_DIR "CGAL_MAKE_DIR=${CGAL_MAKE_DIR}"
-    $_chmod 744 $FILE
-    
-    for FILE in `/bin/ls ${CGAL_TEST_DIR}/*/makefile` ; do
+    for FILE in `${_ls} ${CGAL_TEST_DIR}/*/makefile` ; do
 	replace_line $FILE CGAL_MAKEFILE "CGAL_MAKEFILE = ${CGAL_MAKEFILE}"
     done
   fi
@@ -3367,13 +3467,15 @@ test_menu()
 
     ${_printf} "${_LEFTSPACE}Updating `$_basename ${CGAL_TESTFILE}` ..."
     _check_write ${CGAL_TESTFILE}
-    replace_line ${CGAL_TESTFILE} PLATFORM "PLATFORM=`full_ostype`; testplatform"
+    replace_line ${CGAL_TESTFILE} 'run_testsuite ' ""
+    ${_printf} "run_testsuite ${CGAL_MAKE_DIR}/makefile_`full_ostype`" \
+	>> ${CGAL_TESTFILE}
     $_chmod 744 ${CGAL_TESTFILE}
     ${_printf} " done.\n"
 
     ${_printf} "${_LEFTSPACE}Starting ${CGAL_TESTFILE} ...\n"
     cd ${CGAL_TEST_DIR}
-    cgal_test 
+    ${CGAL_TESTFILE}
     cleanup_after_compile
     log_print "Test completed."
     print_filled_line
@@ -3506,9 +3608,8 @@ _check_comp_executable()
 cgal_install_header()
 {
     printf "\n--------------------------------------------------------\n"
-    echo "  This is the install script for CGAL ${CGAL_VERSION}."
-    echo "--------------------------------------------------------"
-    echo
+    printf "  This is the install script for CGAL ${CGAL_VERSION}.\n"
+    printf "--------------------------------------------------------\n\n"
 }
 
 
@@ -3654,6 +3755,7 @@ case ${_WHAT_TO_DO} in
 		echo "Locating Utilities:"
 		echo "--------------------------------------------------------"
 		check_for_utils
+		check_conf_dir
 		guess_os 'print_with_indent'
 		_check_comp_executable ${COMPILER}
 		set_compiler_absolute "${COMPILER}"
@@ -3667,11 +3769,11 @@ case ${_WHAT_TO_DO} in
 		flush_buffer
 		printf \
 		    "\n--------------------------------------------------------\n"
-		echo "Determining STL Version:"
+		echo "Determining Compiler Specs:"
 		printf \
 		    "--------------------------------------------------------\n"
 		INSTALL_LOGFILE_REDIRECTION='>/dev/null'
-		set_stl_version "${INSTALL_VERBOSE}"
+		test_compiler_specifica "${INSTALL_VERBOSE}"
 		INSTALL_LOGFILE_REDIRECTION='|print_with_indent'
 		printf \
 		    "\n--------------------------------------------------------\n"
