@@ -7,6 +7,11 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: Added flags for patched STLport to ADDIOTIONAL_CXXFLAGS for MSVC.
+GLOB: Standard header tests give now feedback (ok/no).
+GLOB: Stripped quotes from unix file/pathnames.
+GLOB: Added cygpath use for non-iteractive modes also.
+GLOB: No object file specification in compiler call.
 GLOB: fixed EXE_OPT setting.
 GLOB: Added GMP support for MSVC.
 GLOB: Fixed "nospace" bug in LIB_CREATE commands introduced by VC support.
@@ -34,6 +39,7 @@ GLOB: no support for gcc prior to 2.8 anymore.
 GLOB: fixed little problem with install-script name - now $CGAL_INSTALL_CGAL.
 DOCS: Added description of CLN support.
 DOCS: Some minor corrections.
+TEST: Added return 0;
 TEST: Converted to namespace CGAL.
 
 //---------------------------------------------------------------------

@@ -4,6 +4,17 @@
 
 
 //---------------------------------------------------------------------
+//	revision 1.58
+//---------------------------------------------------------------------
+
+GLOB: Added flags for patched STLport to ADDIOTIONAL_CXXFLAGS for MSVC.
+GLOB: Standard header tests give now feedback (ok/no).
+GLOB: Stripped quotes from unix file/pathnames.
+GLOB: Added cygpath use for non-iteractive modes also.
+GLOB: No object file specification in compiler call.
+TEST: Added return 0;
+
+//---------------------------------------------------------------------
 //	revision 1.57
 //---------------------------------------------------------------------
 
