@@ -1,6 +1,23 @@
+// ======================================================================
+//
+// Copyright (c) 2000 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------
+//
+// release       :
+// release_date  :
+//
+// file          : include/CGAL/predicates/kernel_ftCd.h
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Hervé Brönnimann
+// coordinator   : INRIA Sophia-Antipolis (Mariette.Yvinec@sophia.inria.fr)
+//
+// ======================================================================
 
 #ifndef CGAL_PREDICATES_KERNEL_FTCD_H
 #define CGAL_PREDICATES_KERNEL_FTCD_H
@@ -54,7 +71,7 @@ is_positively_proportionalCd(
   CGAL_kernel_assertion( nz1 != last1 );
   InputIterator nz2 = first2 + (nz1-first1);
   // check that the factor of proportionality (*nz2/*nz1) is positive
-  if ( CGAL::sign(*nz1) == CGAL::sign(*nz2))
+  if ( CGAL_NTS sign(*nz1) == CGAL_NTS sign(*nz2))
   // check that all positions before nz2 are null 
     if (std::find_if(first2,nz2,bind1st(not_equal_to<FT>(),FT(0)))==nz2)
   // check that all subsequent positions are proportional
@@ -145,7 +162,7 @@ side_of_oriented_planeCd(const InputIterator &hb, const InputIterator &he,
 {
   std::iterator_traits<InputIterator>::value_type zero(0);
   return Oriented_side(
-            CGAL::compare(std::inner_product(hb, he-1, pb, *(he-1)), zero) );
+            CGAL_NTS compare(std::inner_product(hb, he-1, pb, *(he-1)), zero) );
 }
 
 template < class R, class PointIterator, class InputIterator >
@@ -239,8 +256,8 @@ cmp_dist_to_pointCd(
    const InputIterator &qb, const InputIterator &/*qe*/,
    const InputIterator &rb, const InputIterator &/*re*/)
 {
-  return CGAL::compare(squared_distanceCd(pb,pe,qb),
-                       squared_distanceCd(pb,pe,rb));
+  return CGAL_NTS compare(squared_distanceCd(pb,pe,qb),
+                          squared_distanceCd(pb,pe,rb));
 }
 
 template < class InputIterator >
@@ -270,8 +287,8 @@ cmp_signed_dist_to_directionCd(
    const InputIterator &pb, const InputIterator &pe,
    const InputIterator &qb, const InputIterator &qe)
 {
-  return CGAL::compare(scaled_distance_to_directionCd(hb,he,pb,pe),
-                       scaled_distance_to_directionCd(hb,he,qb,qe));
+  return CGAL_NTS compare(scaled_distance_to_directionCd(hb,he,pb,pe),
+                          scaled_distance_to_directionCd(hb,he,qb,qe));
 }
 
 template < class InputIterator >
@@ -301,8 +318,8 @@ cmp_signed_dist_to_directionCd(
    const InputIterator &pb, const InputIterator &pe,
    const InputIterator &qb, const InputIterator &qe)
 {
-  return CGAL::compare(scaled_distance_to_directionCd(first,last,pb,pe),
-                       scaled_distance_to_directionCd(first,last,qb,qe));
+  return CGAL_NTS compare(scaled_distance_to_directionCd(first,last,pb,pe),
+                          scaled_distance_to_directionCd(first,last,qb,qe));
 }
 
 template < class PointIterator, class InputIterator >
