@@ -388,7 +388,7 @@ dual(const Edge &e) const
     Point p = (e.first)->vertex(cw(e.second))->point();
     Point q = (e.first)->vertex(ccw(e.second))->point();
     Line l  = geom_traits().construct_bisector_2_object()(p,q);
-    return Object(new Wrapper< Line >(l));
+    return make_object(l);
   }
 		    
   // dimension==2
@@ -396,7 +396,7 @@ dual(const Edge &e) const
       (!is_infinite(e.first->neighbor(e.second))) ) {
     Segment s = geom_traits().construct_segment_2_object()
                           (dual(e.first),dual(e.first->neighbor(e.second)));
-    return Object(new Wrapper< Segment >(s));
+    return make_object(s);
   } 
   // one of the adjacent face is infinite
   Face_handle f; int i;
@@ -411,7 +411,7 @@ dual(const Edge &e) const
   Line l = geom_traits().construct_bisector_2_object()(p,q);
   Direction d = geom_traits().construct_direction_of_line_2_object()(l);
   Ray r = geom_traits().construct_ray_2_object()(dual(f), d);
-  return Object(new Wrapper< Ray >(r));
+  return make_object(r);
 }
   
 template < class Gt, class Tds >

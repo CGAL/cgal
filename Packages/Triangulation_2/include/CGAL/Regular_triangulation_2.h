@@ -412,7 +412,7 @@ dual(const Edge &e) const
     Weighted_point p = (e.first)->vertex(cw(e.second))->point();
     Weighted_point q = (e.first)->vertex(ccw(e.second))->point();
     Line l  = geom_traits().construct_radical_axis_2_object()(p,q);
-    return Object(new Wrapper< Line >(l));
+    return make_object(l);
   }
   
   // dimension==2
@@ -420,7 +420,7 @@ dual(const Edge &e) const
       (! is_infinite(e.first->neighbor(e.second))) ) {
     Segment s = geom_traits().construct_segment_2_object()
       (dual(e.first),dual(e.first->neighbor(e.second)));
-    return CGAL::Object(new CGAL::Wrapper< Segment >(s));
+    return make_object(s);
   } 
 
   // one of the adjacent face is infinite
@@ -437,7 +437,7 @@ dual(const Edge &e) const
   Direction d =
     geom_traits().construct_direction_of_line_2_object()(l);
   Ray r = geom_traits().construct_ray_2_object()(dual(f), d);
-  return CGAL::Object(new CGAL::Wrapper< Ray >(r));
+  return make_object(r);
 }
   
 
