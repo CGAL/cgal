@@ -615,7 +615,7 @@ static void motion (int x, int y)
 {
     switch ( interaction) {
     case SCALE:
-        s *= exp( (x - mouse_x + y - mouse_y) * factor_s );
+        s *= exp( (x - mouse_x + mouse_y -y) * factor_s );
         break;
     case ROTATE: {
         double old_x =   1.2 * (mouse_x -  window_width/2) / window_radius;
@@ -728,7 +728,7 @@ static void reshape(int width, int height)
   window_width  = width;
   window_height = height;
   window_radius = std::min( width, height) / 2;
-  factor_s = std::log(4.0) / (window_radius/2.0); // radius == scale factor 4
+  factor_s = std::log(2.0) / (window_radius/2.0); // radius == scale factor 2
 
   glViewport(0, 0, (GLint)width, (GLint)height);
   glMatrixMode(GL_PROJECTION);

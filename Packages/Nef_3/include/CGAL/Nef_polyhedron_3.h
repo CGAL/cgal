@@ -675,21 +675,21 @@ public:
             clone_rep();
         SNC_decorator deco( snc());
         Vertex_iterator vi = deco.vertices_begin();
-        // HACK to skip infbox, needs deco.is_infbox_vertex() test!
-        std::advance( vi, 8);
         for ( ; vi != deco.vertices_end(); ++vi) {
-            vi->point() = vi->point().transform( aff);
+            if ( ! deco.is_infbox_vertex(vi)) {
+                vi->point() = vi->point().transform( aff);
 #if 0
-            SM_decorator sdeco;
-            for ( SVertex_iterator si = vi->svertices_begin();
-                  si != vi->svertices_end(); ++si) {
-                Sphere_point& sp = sdeco.point(si);
-                Point_3 p( sp.x(), sp.y(), sp.z());
-                p = p.transform( aff);
-                sp = Sphere_point( p.hx(), p.hy(), p.hz());
-                //sdeco.point(si) = Point_3(sdeco.point(si)).transform( aff);
-            }
+                SM_decorator sdeco;
+                for ( SVertex_iterator si = vi->svertices_begin();
+                      si != vi->svertices_end(); ++si) {
+                    Sphere_point& sp = sdeco.point(si);
+                    Point_3 p( sp.x(), sp.y(), sp.z());
+                    p = p.transform( aff);
+                    sp = Sphere_point( p.hx(), p.hy(), p.hz());
+                    //sdeco.point(si)=Point_3(sdeco.point(si)).transform( aff);
+                }
 #endif
+            }
         }
         Halffacet_iterator fi;
         CGAL_nef3_forall_halffacets(fi,snc()) {

@@ -97,6 +97,9 @@ public:
   USING(Halffacet_cycle_const_iterator);
   USING(Shell_entry_iterator);
   USING(Shell_entry_const_iterator);
+  USING(Kernel);
+  USING(FT);
+  USING(RT);
   USING(Point_3);
   USING(Plane_3);
   USING(Segment_3);
@@ -383,6 +386,14 @@ public:
       l->incident_facet_ = twin(f);
       SD.twin(l)->incident_facet_ = f;
     }
+  }
+
+  // returns true if |v| is part of the infinimaximal box. ###################
+  // Needs to be fixed for true infbox! LK! ##################################
+  bool is_infbox_vertex( Vertex_handle v) const {
+      return CGAL_NTS abs( v->point().hx()) == RT(INT_MAX)
+          || CGAL_NTS abs( v->point().hy()) == RT(INT_MAX)
+          || CGAL_NTS abs( v->point().hz()) == RT(INT_MAX);
   }
 
   /* returns true if |f| is part of the infinimaximal box.*/
