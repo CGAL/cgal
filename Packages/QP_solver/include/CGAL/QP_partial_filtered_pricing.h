@@ -51,8 +51,8 @@ class QPE_partial_filtered_pricing
     typedef  Rep_                               Rep;
     typedef  QPE_pricing_strategy<Rep>          Base;
     typedef  QPE__partial_base<Rep>             Partial_base;
-    typedef  QPE__filtered_base<Rep>            Filtered_base;
-    typedef  QPE_partial_filtered_pricing<Rep>  Self;
+    typedef  QPE__filtered_base<Rep, NT_, ET2NT_>            Filtered_base;
+    typedef  QPE_partial_filtered_pricing<Rep, NT_, ET2NT_>  Self;
 
     // types from the base class
     typedef  typename Base::ET                            ET;
@@ -74,6 +74,10 @@ class QPE_partial_filtered_pricing
 
     void  init( );
     void  transition( );
+    
+    
+    // cleanup
+    ~QPE_partial_filtered_pricing() {};
 };
 
 // ----------------------------------------------------------------------------
@@ -124,6 +128,9 @@ pricing( )
     NT                            mu, min_mu = this->nt0;
     for ( it = this->active_set_begin(); it != this->active_set_end(); ++it) {
 
+	// don't price artificial variables
+	if (this->solver().is_artificial( *it)) continue;
+
 	// compute mu_j
 	mu = mu_j_NT( *it);
 
@@ -164,6 +171,9 @@ pricing( )
 	}
 	Index_const_iterator  active_it;
 	for ( it = this->inactive_set_begin(); it != this->inactive_set_end(); ++it) {
+
+	    // don't price artificial variables
+	    if (this->solver().is_artificial( *it)) continue;
 
 	    // compute mu_j
 	    mu = mu_j_NT( *it);
@@ -212,6 +222,9 @@ pricing( )
 
 	// loop over all non-basic variables again
 	for ( it = this->active_set_begin(); it != this->inactive_set_end(); ++it) {
+
+	    // don't price artificial variables
+	    if (this->solver().is_artificial( *it)) continue;
 
 	    // certify 'mu_j >= 0'
 	    if ( ! certify_mu_j_NT( *it)) {

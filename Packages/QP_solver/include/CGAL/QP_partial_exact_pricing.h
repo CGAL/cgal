@@ -63,6 +63,9 @@ class QPE_partial_exact_pricing : public QPE__partial_base<Rep_> {
 
     // operations
     int  pricing( );
+    
+    // creation
+    ~QPE_partial_exact_pricing(){ };
 };
 
 // ----------------------------------------------------------------------------
@@ -93,6 +96,9 @@ pricing( )
     }
     for ( it = this->active_set_begin(); it != this->active_set_end(); ++it) {
 
+        // don't price artificial variables
+	if (this->solver().is_artificial( *it)) continue;
+
 	// compute mu_j
 	mu = mu_j( *it);
 
@@ -115,6 +121,9 @@ pricing( )
 	Index_const_iterator  active_it;
 	for ( it = this->inactive_set_begin(); it != this->inactive_set_end(); ++it) {
 
+	    // don't price artificial variables
+	    if (this->solver().is_artificial( *it)) continue;
+	    
 	    // compute mu_j
 	    mu = mu_j( *it);
 

@@ -47,8 +47,8 @@ class QPE_full_filtered_pricing : public QPE__filtered_base<Rep_,NT_,ET2NT_> {
     // self
     typedef  Rep_                            Rep;
     typedef  QPE_pricing_strategy<Rep>       Base;
-    typedef  QPE__filtered_base<Rep>         Filtered_base;
-    typedef  QPE_full_filtered_pricing<Rep>  Self;
+    typedef  QPE__filtered_base<Rep, NT_, ET2NT_>         Filtered_base;
+    typedef  QPE_full_filtered_pricing<Rep, NT_, ET2NT_>  Self;
 
     // types from the base class
     typedef  typename Base::ET          ET;
@@ -64,6 +64,10 @@ class QPE_full_filtered_pricing : public QPE__filtered_base<Rep_,NT_,ET2NT_> {
 
     // operations
     int  pricing( );
+    
+    // cleanup
+    ~QPE_full_filtered_pricing() { };
+
 };
 
 // ----------------------------------------------------------------------------
@@ -98,6 +102,10 @@ pricing( )
 
 	// variable non-basic?
 	if ( ! this->solver().is_basic( j)) {
+	
+	    // don't price artificial variables
+	    if (this->solver().is_artificial( j)) continue;
+
 
 	    // compute mu_j
 	    mu = this->mu_j_NT( j);
@@ -137,6 +145,10 @@ pricing( )
 
 	    // variable non-basic?
 	    if ( ! this->solver().is_basic( j)) {
+	    
+	        // don't price artificial variables
+	        if (this->solver().is_artificial( j)) continue;
+
 
 		// certify 'mu_j >= 0'
 		if ( ! this->certify_mu_j_NT( j)) {

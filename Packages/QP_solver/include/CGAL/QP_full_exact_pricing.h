@@ -59,6 +59,9 @@ class QPE_full_exact_pricing : public QPE_pricing_strategy<Rep_> {
 
     // operations
     int  pricing( );
+    
+    // cleanup
+    ~QPE_full_exact_pricing() { };
 };
 
 // ----------------------------------------------------------------------------
@@ -89,6 +92,9 @@ pricing( )
 
 	// variable non-basic?
 	if ( ! this->solver().is_basic( j)) {
+	
+	    // don't price artificial variables
+	    if (this->solver().is_artificial( j)) continue;
 
 	    // compute mu_j
 	    mu = this->mu_j( j);
