@@ -1,3 +1,8 @@
+Version 2.69 (8 April 2003) [af]
+- Fixed a bug reported by Serge Pashkov on 08/01/2003
+- A vector was too long.
+- Replaced (..size()>0)  with (! ..empty())
+
 Version 2.68 (27 April 2002)
 - Kill "unused argument dummy" warnings.
 
