@@ -3938,7 +3938,7 @@ write_linker_flags()
 {
   makefile_header "linker flags" >> ${FILE}
 
-  ${_printf} "%s%s\n" "EXE_OPT = " "\"${EXE_OPT}\"" >> ${FILE}
+  ${_printf} "%s%s\n" "EXE_OPT = " "${EXE_OPT}" >> ${FILE}
 
   #
   # LEDA_LIB_DIR
