@@ -44,7 +44,7 @@ public:
 
 };
 
-
+#ifndef CGAL_NO_DEPRECATED_CODE
 template<class HELP_KERNEL>
 class CGAL_compute_leda_rat_y_at_x_2 {
 public:
@@ -62,7 +62,7 @@ public:
      return leda_rational(result.numerator(), result.denominator());  
   }
 };
-
+#endif
 
 /*
 

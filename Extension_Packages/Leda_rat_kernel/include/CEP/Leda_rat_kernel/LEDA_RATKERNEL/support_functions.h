@@ -13,8 +13,8 @@ CGAL_BEGIN_NAMESPACE
 inline CGAL::Orientation reverse_orientation(CGAL::Orientation ori)
 {
   switch(ori){
-    case CGAL::LEFTTURN:  { return CGAL::RIGHTTURN; }
-    case CGAL::RIGHTTURN: { return LEFTTURN; }
+    case CGAL::LEFT_TURN:  { return CGAL::RIGHT_TURN; }
+    case CGAL::RIGHT_TURN: { return CGAL::LEFT_TURN; }
     case CGAL::COLLINEAR: { return CGAL::COLLINEAR; }
     //case CLOCKWISE: return COUNTERCLOCKWISE; (like RIGHTTURN)
     //case COUNTERCLOCKWISE: return CLOCKWISE; (like LEFTTURN)

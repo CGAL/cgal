@@ -13,7 +13,106 @@
 #include <CEP/Leda_rat_kernel/LEDA_RATKERNEL/d3_rat_support_functions.h>
 #include <CEP/Leda_rat_kernel/LEDA_RATKERNEL/support_functions.h>
 
+#include <LEDA/interval.h>
+
+#if !defined(LEDA_NAMESPACE_NAME)
+#define LEDA_NAMESPACE_NAME
+#endif
+
+/*
+Todo:
+provide complete bbox construction
+*/
+
 CGAL_BEGIN_NAMESPACE
+
+template <class K>
+class Construct_leda_d3_rat_bbox
+{
+    typedef typename K::Point_3          Point_3;
+    typedef typename K::Segment_3        Segment_3;
+    typedef typename K::Iso_cuboid_3     Iso_cuboid_3;
+    typedef typename K::Triangle_3       Triangle_3;
+    typedef typename K::Tetrahedron_3    Tetrahedron_3;
+    typedef typename K::Sphere_3         Sphere_3;
+public:
+    typedef Bbox_3          result_type;
+    typedef Arity_tag< 1 >   Arity;
+    
+    Bbox_3 get_point_bbox(const Point_3& p) const
+    { 
+      leda_rational x = p.xcoord();
+      leda_rational y = p.ycoord();
+      leda_rational z = p.zcoord();
+      
+      LEDA_NAMESPACE_NAME::interval xi(x);
+      LEDA_NAMESPACE_NAME::interval yi(y);
+      LEDA_NAMESPACE_NAME::interval zi(z);
+      
+      return Bbox_3(xi.lower_bound(),yi.lower_bound(),zi.lower_bound,
+                    xi.upper_bound(),yi.upper_bound(),zi.upper_bound);    
+    }    
+
+    Bbox_3
+    operator()(const Point_3& p) const
+    { return get_point_bbox(p); }
+
+    Bbox_3
+    operator()(const Segment_3& s) const
+    { return get_point_bbox(s.source()) + get_point_bbox(s.target()); }
+
+    
+    Bbox_3
+    operator()(const Triangle_3& t) const
+    { return get_point_bbox(t.point1()) + get_point_bbox(t.point2()) + get_point_bbox(t.point3()); } 
+
+    Bbox_3
+    operator()(const Iso_cuboid_3& r) const
+    {
+      leda_d3_rat_point min(r.xmin(), r.ymin(), r.zmin());
+      leda_d3_rat_point max(r.xmax(), r.ymax(), r.zmax());
+      
+      return get_point_bbox(min) + get_point_bbox(max);      
+    }
+
+    Bbox_3
+    operator()(const Tetrahedron_3& t) const
+    {
+      return get_point_bbox(t.point1()) + get_point_bbox(t.point2()) + 
+             get_point_bbox(t.point3()) + get_point_bbox(t.point4()); 
+    }
+
+    Bbox_3
+    operator()(const Sphere_3& s) const
+    { 
+    leda_d3_rat_point p = s.center();
+    leda_rational     r = s.sqr_radius();
+    
+    LEDA_NAMESPACE_NAME::interval i(r);
+    i = LEDA_NAMESPACE_NAME::sqrt(i);
+    
+    // now build the bbox ...
+    leda_rational x = p.xcoord();
+    leda_rational y = p.ycoord();
+    leda_rational z = p.zcoord();
+      
+    LEDA_NAMESPACE_NAME::interval xi(x);
+    LEDA_NAMESPACE_NAME::interval yi(y);
+    LEDA_NAMESPACE_NAME::interval zi(z);
+    
+    LEDA_NAMESPACE_NAME::interval xmin = xi - i;
+    LEDA_NAMESPACE_NAME::interval ymin = yi - i;
+    LEDA_NAMESPACE_NAME::interval zmin = zi - i;
+    LEDA_NAMESPACE_NAME::interval xmax = xi + i;
+    LEDA_NAMESPACE_NAME::interval ymax = yi + i;
+    LEDA_NAMESPACE_NAME::interval zmax = zi + i;
+      
+    return Bbox_2(xmin.lower_bound(),ymin.lower_bound(),zmin.lower_bound(),
+                  xmax.upper_bound(),ymax.upper_bound(),zmax.upper_bound());        
+    }
+};
+
+
 
 template<class K>
 class Construct_leda_d3_rat_point {
@@ -368,9 +467,9 @@ public:
      
       CGAL::Orientation cg_ori;
       switch(ori){
-        case -1: { cg_ori = CGAL::RIGHTTURN; break; }
+        case -1: { cg_ori = CGAL::RIGHT_TURN; break; }
 	case  0: { cg_ori = CGAL::COLLINEAR; break; }
-	case  1: { cg_ori = CGAL::LEFTTURN; break; }
+	case  1: { cg_ori = CGAL::LEFT_TURN; break; }
       }
     
       return LEDA_NAMESPACE_NAME::cgal_d3_rat_sphere(center,p1,cg_ori);
@@ -442,10 +541,6 @@ public:
   typedef Arity_tag< 2 > Arity;
   typedef Segment_3       result_type;
 
-#if defined(CGAL_GEOMETRY_EVENTS)
-  static CGAL::event ev_leda_d3_rat_point;
-#endif 
-
   Segment_3 operator()() const
   {
     Segment_3 s;
@@ -454,18 +549,9 @@ public:
 
   Segment_3 operator()(const Point_3& p, const Point_3& q) const
   {
-#if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const Point_3&, const Point_3&> \
-      (Construct_leda_d3_rat_segment::ev_leda_d3_rat_point, p, q);
-#endif   
     return Segment_3(p,q);
   }
 };
-
-#if defined(CGAL_GEOMETRY_EVENTS)
-template<class K> CGAL::event Construct_leda_d3_rat_segment<K>::ev_leda_d3_rat_point;
-#endif 
-
 
 template<class K>
 class Construct_leda_d3_rat_triangle {
@@ -475,10 +561,6 @@ class Construct_leda_d3_rat_triangle {
 public:
   typedef Arity_tag< 3 > Arity;
   typedef Triangle_3       result_type;
-  
-#if defined(CGAL_GEOMETRY_EVENTS)
-  static CGAL::event ev_leda_d3_rat_point;
-#endif   
 
   Triangle_3 operator()() const
   {
@@ -488,18 +570,9 @@ public:
 
   Triangle_3 operator()(const Point_3& p1, const Point_3& p2, const Point_3& p3) const
   {
-#if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const Point_3&, const Point_3&, const Point_3&> \
-      (Construct_leda_d3_rat_triangle::ev_leda_d3_rat_point, p1, p2, p3);
-#endif   
     return Triangle_3(p1,p2,p3);
   }
 };
-
-#if defined(CGAL_GEOMETRY_EVENTS)
-template<class K> CGAL::event Construct_leda_d3_rat_triangle<K>::ev_leda_d3_rat_point;
-#endif 
-
 
 template<class K>
 class Construct_leda_d3_rat_simplex {
@@ -510,10 +583,6 @@ class Construct_leda_d3_rat_simplex {
 public:
   typedef Arity_tag< 4 > Arity;
   typedef Tetrahedron_3       result_type;
-  
-#if defined(CGAL_GEOMETRY_EVENTS)
-  static CGAL::event ev_leda_d3_rat_point;
-#endif   
 
   Tetrahedron_3 operator()() const
   {
@@ -524,17 +593,9 @@ public:
   Tetrahedron_3 operator()(const Point_3& p1, const Point_3& p2,
                            const Point_3& p3, const Point_3& p4) const
   {
-#if defined(CGAL_GEOMETRY_EVENTS)
-    CGAL::occur<const Point_3&, const Point_3&, const Point_3&, const Point_3&> \
-      (Construct_leda_d3_rat_simplex::ev_leda_d3_rat_point, p1, p2, p3, p4);
-#endif    
     return Tetrahedron_3(p1,p2,p3,p4);
   }
 };
-
-#if defined(CGAL_GEOMETRY_EVENTS)
-template<class K> CGAL::event Construct_leda_d3_rat_simplex<K>::ev_leda_d3_rat_point;
-#endif 
 
 class Construct_leda_d3_rat_object {
 public:

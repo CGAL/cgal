@@ -66,7 +66,7 @@ public:
    bool 
    operator()(const leda_d3_rat_point& p, const leda_d3_rat_point& q, const leda_d3_rat_point& r) const
    { 
-    return orientationC2(p.ycoord(), p.zcoord(), q.ycoord(), q.zcoord(), r.ycoord(), r.zcoord()) == LEFTTURN;
+    return orientationC2(p.ycoord(), p.zcoord(), q.ycoord(), q.zcoord(), r.ycoord(), r.zcoord()) == LEFT_TURN;
    }
 };
 
@@ -82,7 +82,7 @@ public:
    operator()(const leda_d3_rat_point& c) const
    {
       return orientationC2(p_a.ycoord(), p_a.zcoord(), p_b.ycoord(), p_b.zcoord(), c.ycoord(), c.zcoord()) ==
-             LEFTTURN; 
+             LEFT_TURN; 
    }
 private:
    leda_d3_rat_point p_a;
@@ -125,9 +125,9 @@ public:
    {
       Orientation orient =
                orientationC2(r.ycoord(), r.zcoord(), p.ycoord(), p.zcoord(), q.ycoord(), q.zcoord());
-      if ( orient ==  LEFTTURN )
+      if ( orient ==  LEFT_TURN )
          return true;
-      else if ( orient == RIGHTTURN )
+      else if ( orient == RIGHT_TURN )
          return false;
       else
       {

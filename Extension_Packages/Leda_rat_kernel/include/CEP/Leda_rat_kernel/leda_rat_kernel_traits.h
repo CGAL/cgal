@@ -3,7 +3,8 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Object.h>
-
+#include <CGAL/Bbox_2.h>
+#include <CGAL/Bbox_3.h>
 
 // I had to add the log function for LEDA integers to CGAL namespace 
 // for the VC compiler (otherwise log in CGAL/leda_integer.h causes trouble ...)
@@ -205,6 +206,9 @@ public:
 #if defined(CGAL_PROVIDE_LEDA_PARTITION_TRAITS)
   typedef CGAL::Polygon_2<CGAL::leda_rat_kernel_traits, std::list<leda_rat_point> > Polygon_2;
 #endif  
+
+  // new : bbox construction
+  typedef Construct_leda_rat_bbox<Self>                           Construct_bbox_2;
   
   // 2d construction types ...
   typedef Construct_leda_rat_point<Self>                          Construct_point_2;
@@ -247,7 +251,9 @@ public:
     
   // 2d computations
   typedef CGAL_compute_leda_rat_squared_distance_2<HELP_KERNEL>  Compute_squared_distance_2;
+#ifndef CGAL_NO_DEPRECATED_CODE  
   typedef CGAL_compute_leda_rat_y_at_x_2<HELP_KERNEL>            Compute_y_at_x_2;  
+#endif  
   typedef Compute_leda_rat_squared_length_2<Self>                Compute_squared_length_2;
   typedef Compute_leda_rat_squared_radius_2<Self>                Compute_squared_radius_2;
   typedef Compute_leda_rat_area_2<Self>                          Compute_area_2;    
@@ -314,6 +320,9 @@ public:
 // -----------------------------------------------------------
 // support for 3d kernel traits ...
 #if defined(CGAL_PROVIDE_LEDA_RAT_KERNEL_TRAITS_3)
+   // new : bbox construction
+   typedef Construct_leda_d3_rat_bbox<Self>                       Construct_bbox_3;
+
    // 3d constructions ...
    typedef Construct_leda_d3_rat_point<Self>                      Construct_point_3;
    typedef Construct_leda_d3_rat_vector<Self>                     Construct_vector_3;
@@ -432,6 +441,9 @@ public:
   // ----------------------------------------------------------------------------------------------------------------
 
   // 2d construction objects ...
+  Construct_bbox_2
+  construct_bbox_2_object() const
+  { return Construct_bbox_2(); }    
     
   Construct_point_2
   construct_point_2_object() const
@@ -597,9 +609,11 @@ public:
   compute_area_2_object() const
   { return Compute_area_2(); }
 
+#ifndef CGAL_NO_DEPRECATED_CODE 
   Compute_y_at_x_2
   compute_y_at_x_2_object() const
   { return Compute_y_at_x_2(); }
+#endif
 
   // ----------------------------------------------------------------------
   // 2d predicates
@@ -792,7 +806,10 @@ public:
 #if defined(CGAL_PROVIDE_LEDA_RAT_KERNEL_TRAITS_3)
 
    // 3d constructions
-
+   Construct_bbox_3
+   construct_bbox_3_object() const
+   { return Construct_bbox_3(); }    
+    
    Construct_point_3
    construct_point_3_object() const
    { return Construct_point_3(); }
