@@ -88,6 +88,9 @@ namespace std {
     return n;
   }
 
+} // namespace std
+
+namespace CGAL {
 
   template < class T >
   inline typename T::value_type*
@@ -108,27 +111,29 @@ namespace std {
   }
 
 
-#if ( __SUNPRO_CC == 0x550)
+  //#if ( __SUNPRO_CC == 0x550)
 
   template < class T >
   inline T* __value_type(T*)
-  { return _RWSTD_STATIC_CAST(T*,0); }
+  { 
+    return (T*)(0);
+  }
 
   template <class T>
-  inline ptrdiff_t* 
+  inline std::ptrdiff_t* 
   __distance_type (T*)
   { 
-    return _RWSTD_STATIC_CAST(ptrdiff_t*,0);
+    return (std::ptrdiff_t*)(0);
   }
 
   template <class T>
   inline random_access_iterator_tag 
   __iterator_category (T*)
   {
-    return random_access_iterator_tag();
+    return std::random_access_iterator_tag();
   }
-#endif
+  // #endif
 
-} // namespace std
+} // namespace CGAL
 
 #endif // CGAL_SUN_FIXES_H
