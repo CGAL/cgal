@@ -1595,69 +1595,80 @@ linker_flags_no_cgal_lib()
 get_compiler_description()
 {
   ${_cat} <<EOF4 >${TMP_CXX_FILE}.C
+// We need the following lines, since MIPSPRO only knows <iostream>,
+// if it is called with -LANG:std (as of Rel 7.3)
+// and I do not want to check for this before compiling ...
+#if defined(__sgi) && defined(_COMPILER_VERSION) && !defined(_STANDARD_C_PLUS_PLUS)
+#include <iostream.h>
+#define CGAL_STDCOUT cout
+#define CGAL_STDENDL endl
+#else
 #include <iostream>
+#define CGAL_STDCOUT std::cout
+#define CGAL_STDENDL std::endl
+#endif
 
 void output_first_ciff_separate(int x, int base)
 {
   int j = 1;
   while (x / (base * j) >= 1) j *= base;
-  std::cout << x/j << "." << x - j * (x/j);
+  CGAL_STDCOUT << x/j << "." << x - j * (x/j);
 }
 
 int main()
 {
 #ifdef __GNUC__
   // GNU cc
-  std::cout << "GNU@" << __GNUC__ << "." << __GNUC_MINOR__;
+  CGAL_STDCOUT << "GNU@" << __GNUC__ << "." << __GNUC_MINOR__;
 #ifdef __GNUC_PATCHLEVEL__
-  std::cout << "." << __GNUC_PATCHLEVEL__;
+  CGAL_STDCOUT << "." << __GNUC_PATCHLEVEL__;
 #endif
-  std::cout << std::endl;
+  CGAL_STDCOUT << CGAL_STDENDL;
 #elif defined(__sgi) && defined(_COMPILER_VERSION)
   // SGI mipspro
-  std::cout << "MIPSPRO";
+  CGAL_STDCOUT << "MIPSPRO";
 #if (_MIPS_SIM == _OABI32)
-  std::cout << " (o32)";
+  CGAL_STDCOUT << " (o32)";
 #elif (_MIPS_SIM == _NABI32)
-  std::cout << " (n32)";
+  CGAL_STDCOUT << " (n32)";
 #elif (_MIPS_SIM == _ABI64)
-  std::cout << " (64)";
+  CGAL_STDCOUT << " (64)";
 #endif // _MIPS_SIM
-  std::cout << "@";
+  CGAL_STDCOUT << "@";
   output_first_ciff_separate(_COMPILER_VERSION, 10);
-  std::cout << std::endl;
+  CGAL_STDCOUT << CGAL_STDENDL;
 #elif defined(__sun) && defined(__SUNPRO_CC)
   // SUN workshop
-  std::cout << "SUNPRO@" << std::hex;
+  CGAL_STDCOUT << "SUNPRO@" << std::hex;
   output_first_ciff_separate(__SUNPRO_CC, 16);
-  std::cout << std::endl;
+  CGAL_STDCOUT << CGAL_STDENDL;
 #elif defined(__BORLANDC__)
   // Borland 
-  std::cout << "Borland@" << std::hex;
+  CGAL_STDCOUT << "Borland@" << std::hex;
   output_first_ciff_separate(__BORLANDC__, 16);
-  std::cout << std::endl;
+  CGAL_STDCOUT << CGAL_STDENDL;
 #elif defined(__MWERKS__)
   // Metrowerks
-  std::cout << "Metrowerks@" << std::hex;
+  CGAL_STDCOUT << "Metrowerks@" << std::hex;
 #if (__MWERKS__ == 1)
-  std::cout << "precw7" << std::endl;
+  CGAL_STDCOUT << "precw7" << CGAL_STDENDL;
 #else
   output_first_ciff_separate(__MWERKS__, 16);
-  std::cout << std::endl;
+  CGAL_STDCOUT << CGAL_STDENDL;
 #endif // (__MWERKS__ == 1)
 #elif defined(__KCC)
   // KAI CC
-  std::cout << "KAI CC@";
+  CGAL_STDCOUT << "KAI CC@";
   output_first_ciff_separate(__KCC_VERSION / 100, 10);
   if (__KCC_VERSION % 100 != 0) 
-    std::cout << char(__KCC_VERSION % 100 + int('a') - 1);
-  std::cout << std::endl;
+    CGAL_STDCOUT << char(__KCC_VERSION % 100 + int('a') - 1);
+  CGAL_STDCOUT << CGAL_STDENDL;
 #elif defined(_MSC_VER)
   // Microsoft Visual C++
-  std::cout << "VC++@" << _MSC_VER << std::endl;
+  CGAL_STDCOUT << "VC++@" << _MSC_VER << CGAL_STDENDL;
 #else
   // we do not know this compiler --> add specs if supported
-  std::cout << "unknown" << std::endl;
+  CGAL_STDCOUT << "unknown" << CGAL_STDENDL;
 #endif // def __GNUC_
 
   return 0;
@@ -1666,10 +1677,10 @@ EOF4
     # set flags
     EXE_OPT="-o "
     case $1 in
-  	*bcc32.exe*|*BCC32*) EXE_OPT="-e";;
-	*CL.*|*cl.*)         EXE_OPT="-Fp";;
+  	*bcc32.exe*|*BCC32*) EXE_OPT="-P -e";;
+	*CL.*|*cl.*)         EXE_OPT="-TP -GR -GX -nologo -Fp";;
     esac
-    _flags="${ADDITIONAL_CXXFLAGS} ${TMP_CXX_FILE}.C ${EXE_OPT}${TMP_CXX_FILE}"
+    _flags="${TMP_CXX_FILE}.C ${EXE_OPT}${TMP_CXX_FILE}"
 
     # compile
     ${_printf} "%s\n%s\n" \
