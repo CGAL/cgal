@@ -1,3 +1,5 @@
+Version 4.16 (30 September 2003) [af]
+- Changed doc_tex/basic/Spatial_searching_ref/introdcution.tex to intro.tex
 
 Version 4.08 (15 September 2003) [rursu]
 - Qt_help_window is in the CGAL namespace now
