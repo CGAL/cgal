@@ -96,7 +96,7 @@ _test_fct_direction_2(const R& )
      for (j = 0 ; j < 8; ++j )
          for ( k = 0; k < 8; ++k)
          {
-             std::cout << i << ' ' << j << ' ' << k << std::endl;
+             // std::cout << i << ' ' << j << ' ' << k << std::endl;
              if ( ccw(i,j,k) || ((j == k)&&( i != j)) )
                 assert( d[i].counterclockwise_in_between(d[j],d[k]));
              else

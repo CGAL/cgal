@@ -158,8 +158,6 @@ _test_fct_point_3(const R& )
 // CGAL::side_of_bounded_sphere() is further tested in
 // _test_fct_points_implicit_sphere(const R& )
 
- std::cout <<'&';
-
  assert( CGAL::compare_distance_to_point(p3, p3 + v001, p3+v010) == 
                                                         CGAL::EQUAL );
  assert( CGAL::compare_distance_to_point(p0, p1, p2) == CGAL::LARGER );
