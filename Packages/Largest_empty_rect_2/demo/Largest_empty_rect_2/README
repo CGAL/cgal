@@ -1,0 +1,34 @@
+Using demo
+==========
+ 
+1) The user paint point inside a
+   graphics interface by pressing mouse left
+   button. The largest empty rectangle is shown
+   by pressing control buttons. There are five control
+   buttons:
+    * Show Largest Empty Rectangle: In manual mode,
+      the largest empty rectangle is painted.
+    * Clear: Clear points.
+    * Automatic: Change to automatic mode. In this
+      mode, the largest empty rectangle is shown
+      automatically after each point is inserted.
+    * Manual: Change to manual mode
+    * Exit
+
+   Syntax:   demo
+
+2) Using input files. Showing the largest empty rectangle
+   of input points inside files. The syntax of the files is the following:
+
+     Four points indicating the bounding box coordinates (x1,y1,x2,y2)
+     number of points
+     A list of points in the format (x,y)
+
+   There are several example files (data1 - data6) that can be used.
+
+   Syntax:   demo <file name>
+
+ 
+
+
+
