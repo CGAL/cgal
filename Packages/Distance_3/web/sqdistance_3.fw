@@ -1506,19 +1506,11 @@ Saarbruecken@)
 #ifndef CGAL_DISTANCE_3_0_H
 #define CGAL_DISTANCE_3_0_H
 
-#ifndef CGAL_POINT_3_H
 #include <CGAL/Point_3.h>
-#endif // CGAL_POINT_3_H
 
-#ifndef CGAL_UTILS_H
 #include <CGAL/utils.h>
-#endif // CGAL_UTILS_H
-#ifndef CGAL_ENUM_H
 #include <CGAL/enum.h>
-#endif // CGAL_ENUM_H
-#ifndef CGAL_WMULT_H
 #include <CGAL/wmult.h>
-#endif // CGAL_WMULT_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -1542,31 +1534,15 @@ Saarbruecken@)
 #ifndef CGAL_DISTANCE_3_1_H
 #define CGAL_DISTANCE_3_1_H
 
-#ifndef CGAL_SEGMENT_3_H
 #include <CGAL/Segment_3.h>
-#endif // CGAL_SEGMENT_3_H
-#ifndef CGAL_LINE_3_H
 #include <CGAL/Line_3.h>
-#endif // CGAL_LINE_3_H
-#ifndef CGAL_RAY_3_H
 #include <CGAL/Ray_3.h>
-#endif // CGAL_RAY_3_H
 
-#ifndef CGAL_UTILS_H
 #include <CGAL/utils.h>
-#endif // CGAL_UTILS_H
-#ifndef CGAL_POINT_3_H
 #include <CGAL/Point_3.h>
-#endif // CGAL_POINT_3_H
-#ifndef CGAL_ENUM_H
 #include <CGAL/enum.h>
-#endif // CGAL_ENUM_H
-#ifndef CGAL_WMULT_H
 #include <CGAL/wmult.h>
-#endif // CGAL_WMULT_H
-#ifndef CGAL_SQUARED_DISTANCE_3_0_H
 #include <CGAL/squared_distance_3_0.h>
-#endif // CGAL_SQUARED_DISTANCE_3_0_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -1589,38 +1565,18 @@ Saarbruecken@)
 #ifndef CGAL_DISTANCE_3_2_H
 #define CGAL_DISTANCE_3_2_H
 
-#ifndef CGAL_SEGMENT_3_H
 #include <CGAL/Segment_3.h>
-#endif // CGAL_SEGMENT_3_H
-#ifndef CGAL_LINE_3_H
 #include <CGAL/Line_3.h>
-#endif // CGAL_LINE_3_H
-#ifndef CGAL_RAY_3_H
 #include <CGAL/Ray_3.h>
-#endif // CGAL_RAY_3_H
-#ifndef CGAL_PLANE_3_H
 #include <CGAL/Plane_3.h>
-#endif // CGAL_PLANE_3_H
 
 
-#ifndef CGAL_UTILS_H
 #include <CGAL/utils.h>
-#endif // CGAL_UTILS_H
-#ifndef CGAL_POINT_3_H
 #include <CGAL/Point_3.h>
-#endif // CGAL_POINT_3_H
-#ifndef CGAL_PLANE_3_H
 #include <CGAL/Plane_3.h>
-#endif // CGAL_PLANE_3_H
-#ifndef CGAL_ENUM_H
 #include <CGAL/enum.h>
-#endif // CGAL_ENUM_H
-#ifndef CGAL_WMULT_H
 #include <CGAL/wmult.h>
-#endif // CGAL_WMULT_H
-#ifndef CGAL_SQUARED_DISTANCE_3_0_H
 #include <CGAL/squared_distance_3_0.h>
-#endif // CGAL_SQUARED_DISTANCE_3_0_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -1643,15 +1599,9 @@ Saarbruecken@)
 #ifndef CGAL_DISTANCE_3_H
 #define CGAL_DISTANCE_3_H
 
-#ifndef CGAL_SQUARED_DISTANCE_3_0_H
 #include <CGAL/squared_distance_3_0.h>
-#endif // CGAL_SQUARED_DISTANCE_3_0_H
-#ifndef CGAL_SQUARED_DISTANCE_3_1_H
 #include <CGAL/squared_distance_3_1.h>
-#endif // CGAL_SQUARED_DISTANCE_3_1_H
-#ifndef CGAL_SQUARED_DISTANCE_3_2_H
 #include <CGAL/squared_distance_3_2.h>
-#endif // CGAL_SQUARED_DISTANCE_3_2_H
 
 #endif
 @}
