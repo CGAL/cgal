@@ -3,7 +3,7 @@ Version 4.8 (22 June 2000)
 
 Version 4.7 (2 May 2000)
 - make the following classes derive from HandleCfor instead of Handle
-DirectionC3
+DirectionC3make commit
 IsoCcuboidC3
 LineC3
 PlaneC3
