@@ -31,6 +31,7 @@
 #include <cstddef>
 #include <list>
 #include <vector>
+#include <CGAL/utility.h>
 #include <CGAL/iterator.h>
 #include <CGAL/In_place_list.h>
 #include <CGAL/Iterator_identity.h>
@@ -75,10 +76,9 @@ struct Node {
     int   key;
     Node* next;
     Node* prev;
-    Node() : key(0), next(this), prev( this) {}
-    Node( int n) : key(n), next(this), prev( this) {}
-    Node( Node* nx_, Node* pv_, int n)
-        : key(n), next(nx_), prev( pv_) {}
+    Node() : key(0), next(0), prev(0) { next = prev = this; }
+    Node(int n) : key(n), next(0), prev(0) { next = prev = this; }
+    Node(Node* nx_, Node* pv_, int n) : key(n), next(nx_), prev(pv_) {}
 };
 Node* new_node( Node* nx_, Node* pv_, int n) {
     return new Node( nx_, pv_, n);
@@ -126,8 +126,8 @@ class CNode {
     const CNode* next() const { return next_;}
     CNode*       prev()       { return prev_;}
     const CNode* prev() const { return prev_;}
-    CNode() : next_(this), prev_( this), key(0) {}
-    CNode( int n) : next_(this), prev_( this), key(n) {}
+    CNode() : next_(0), prev_(0), key(0) { next_ = prev_ = this; }
+    CNode( int n) : next_(0), prev_(0), key(n) { next_ = prev_ = this; }
     CNode( CNode* nx_, CNode* pv_, int n)
         : next_(nx_), prev_( pv_), key(n) {}
     friend CNode* new_cnode( CNode* nx_, CNode* pv_, int n);
@@ -7903,6 +7903,8 @@ void test_Filter_iterator()
     l.push_back(f1); l.push_back(f2); l.push_back(f3); l.push_back(f4);
     Filt2 fi;
     FI1 f(l.begin(), l.end(), fi);
+    // next line just to get rid of "unused variable f" warning
+    if (f == filter_iterator(l.begin(), l.end(), fi)) f1 = 3;
     CGAL_assertion(
       1 ==
       std::distance(f, filter_iterator(l.begin(), l.end(), fi, l.end())));
@@ -8097,6 +8099,56 @@ void test_Oneset_iterator()
   *g = b;
   ++g;
 }
+void test_triple()
+{
+  typedef CGAL::triple<int,double,bool> T1;
+  typedef CGAL::triple<T1,double,bool>  T2;
+  typedef CGAL::triple<T1,T2,bool>      T3;
+
+  T1 x1;
+  T2 x2;
+  T3 x3;
+  T1 y1(2, 2.2, true);
+  T2 y2(x1, 2.2, true);
+  T3 y3(y1, y2, false);
+
+  T1 z1 = CGAL::make_triple(2, 2.0, false);
+  T3 z3 = CGAL::make_triple(z1, CGAL::make_triple(z1, 1.0, true), false);
+  x2 = CGAL::make_triple(x1, 2.2, true);
+
+  CGAL_assertion(z3 < y3);
+  if (z3 < y3) z3 = y3;
+  CGAL_assertion(x2 == y2);
+  if (x2 == y2) x3 = z3;
+}
+void test_quadruple()
+{
+  typedef CGAL::quadruple<int,float,double,bool> T1;
+  typedef CGAL::quadruple<T1,float,double,bool>  T2;
+  typedef CGAL::quadruple<T1,T2,double,bool>     T3;
+  typedef CGAL::quadruple<T1,T2,T3,bool>         T4;
+
+  T1 x1;
+  T2 x2;
+  T3 x3;
+  T4 x4;
+  T1 y1(2, 1.5f, 2.2, true);
+  T2 y2(x1, 2.5f, 2.2, true);
+  T3 y3(y1, y2, 2.2, false);
+  T4 y4(y1, y2, y3, true);
+
+  T1 z1 = CGAL::make_quadruple(2, 1.0f, 2.0, false);
+  T4 z4 = CGAL::make_quadruple(z1, y2,
+                               CGAL::make_quadruple(z1, y2, 2.0, true),
+                               false);
+
+  CGAL_assertion(z4 < y4);
+  if (z4 < y4) x2 = make_quadruple(x1, 2.5f , 2.2, true);
+  CGAL_assertion(x2 == y2);
+  if (x2 == y2) x4.third = x3;
+
+}
+
 
 int main() {
   init_global_data();
@@ -8112,6 +8164,8 @@ int main() {
   test_Random_access_adaptor();
   test_Emptyset_iterator();
   test_Oneset_iterator();
+  test_triple();
+  test_quadruple();
   clean_global_data();
   return 0;
 }
