@@ -44,7 +44,6 @@ public:
   typedef std::pair< Edge, int > Edge_IFacet;
   typedef std::pair< Edge_IFacet, Edge_IFacet > IO_edge_type;
 
-  //  typedef std::pair< coord_type, coord_type > criteria;
   typedef coord_type criteria;
 
   typedef std::pair< criteria, IO_edge_type > Radius_edge_type;

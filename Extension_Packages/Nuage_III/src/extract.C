@@ -1,6 +1,6 @@
-#define DEBUG
-#define VERBOSE
-#define FACET_NUMBER
+//#define DEBUG
+//#define VERBOSE
+//#define FACET_NUMBER
 //=====================================================================
 // selection de facettes dans Delaunay....
 //=====================================================================
@@ -18,7 +18,7 @@
 // Kernel
 #include <CGAL/Simple_cartesian.h>
 
-#if defined( _MSC_VER)
+#if 1
 #include <CGAL/Filtered_kernel.h>
 #else
 #include <CGAL/Static_filters.h>
@@ -45,7 +45,7 @@
 typedef double coord_type;
 typedef double NT;
 
-#if defined( _MSC_VER)
+#if 1
 struct Kernel : public CGAL::Filtered_kernel<CGAL::Simple_cartesian<NT> > {};
 #else
 struct Kernel : public CGAL::Static_filters<CGAL::Simple_cartesian<NT> > {};
@@ -53,6 +53,7 @@ struct Kernel : public CGAL::Static_filters<CGAL::Simple_cartesian<NT> > {};
 
 
 typedef Kernel::Point_3  Point;
+typedef Kernel::Vector_3 Vector;
 typedef Kernel::Point_2  Point_2;
 
 typedef CGAL::Triangulation_vertex_base_3<Kernel> TVb;
@@ -293,14 +294,14 @@ int main(int argc,  char* argv[])
   int size_before_postprocessing = T.number_of_vertices();
   bool re_init(false);
   int number_of_connected_comp(0);
-  coord_type total_time(0);
+  double  total_time(0);
 
   Surface S(T,opt.DELTA);
   std::cout << "A" << std::endl;
   do
     {
       number_of_connected_comp++;
-      coord_type sum_time;
+      double sum_time=0;
       if (re_init)
 	std::cout << ">> searching another grain [init " <<
 	  number_of_connected_comp << "] : "

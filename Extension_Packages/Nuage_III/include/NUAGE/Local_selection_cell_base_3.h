@@ -174,6 +174,7 @@ facet_number(int i)
 #ifdef FACET_NUMBER
   return _facet_number[i];
 #endif
+  return 0;
 }
   //-------------------------------------------------------------------
   

@@ -131,10 +131,8 @@ public:
   typedef Triangulation Triangulation_3;
   typedef Extract_surface<Triangulation_3,Kernel> Extract;
   typedef typename Triangulation_3::Geom_traits Geom_traits;
-  typedef typename Geom_traits::Point_3 P;
-  //typedef CGAL::Kernel_traits<P> Kernel;
 
-  typedef typename Kernel::FT coord_type;  //af: why does this not compile???
+  typedef typename Kernel::FT coord_type;
 
   typedef typename Kernel::Point_3  Point;
   typedef typename Kernel::Vector_3 Vector;
@@ -185,8 +183,8 @@ public:
     std::less<criteria> > Ordered_border_type;
   typedef typename Ordered_border_type::iterator Ordered_border_iterator;
 
-  enum Validation_case {not_valid, not_valid_connecting_case, final_case,
-			ear_case, exterior_case, connecting_case};
+  enum Validation_case {NOT_VALID, NOT_VALID_CONNECTING_CASE, FINAL_CASE,
+			EAR_CASE, EXTERIOR_CASE, CONNECTING_CASE};
 
   //=====================================================================
   //=====================================================================
@@ -324,8 +322,6 @@ public:
   }
 
   //---------------------------------------------------------------------
-
-  //af: Why does key get changed??
 
    bool is_border_elt(Edge_like& key, Border_elt& result) const
   {
@@ -529,7 +525,7 @@ public:
   //---------------------------------------------------------------------
 
    void
-  visu_facet(const Cell_handle& c, const int& i)
+  select_facet(const Cell_handle& c, const int& i)
   {
     c->select_facet(i);
     _facet_number++;
@@ -537,6 +533,11 @@ public:
   }
 
 
+   void
+  unselect_facet(const Cell_handle& c, const int& i)
+  {
+    c->unselect_facet(i);
+  }
 
   int number_of_border_edges()
   {
@@ -659,7 +660,7 @@ public:
 	      }
 	  }
       }
-    // stockage des valeurs deja calculee...
+    // cache computed values
     c->set_smallest_radius(index, value);
     n->set_smallest_radius(n->index(c), value);
 
@@ -682,7 +683,7 @@ public:
     Facet min_facet, min_facetA;
     bool border_facet(false);
 
-    coord_type pscal;//, prec_pliure = e.third;
+    coord_type pscal;
     const Point& p1 = c->vertex(i1)->point();
     const Point& p2 = c->vertex(i2)->point();
     const Point& pc = c->vertex(i3)->point();
@@ -693,7 +694,6 @@ public:
 
     coord_type norm, norm1 = v1*v1;
     coord_type norm12 = P2P1*P2P1;
-    //int count(0); 
 
     e_it = inc_facet_circ(e_it);
     bool succ_start(true);
@@ -704,7 +704,6 @@ public:
 	Facet facet_it(neigh, e_it.second);
 
 	if (!T.is_infinite(facet_it))
-	  // &&!CGAL::collinear(p1, p2, pc) en principe inutile car HUGE_VAL ???
 	  {
 	    int n_ind = facet_it.second;
 	    int n_i1 = e_it.first.second;
@@ -713,17 +712,9 @@ public:
 
 	    coord_type tmp = get_smallest_radius_delaunay_sphere(neigh, n_ind);
 	      
-	    // 	  bool is_on_same_border
-	    // 	    (neigh->vertex(n_i3)->is_on_border(result12.second));
-
 	    Edge_like el1(neigh->vertex(n_i1),neigh->vertex(n_i3)),
 	      el2(neigh->vertex(n_i2),neigh->vertex(n_i3));
 
-	    // si on veut ne s'autoriser que le meme bord pour vni3
-	    //         if ((neigh->vertex(n_i3)->is_exterior() || is_on_same_border)&&
-	    // si on veut pouvoir connecter des bords differents
-	    //         if (neigh->vertex(n_i3)->not_interior()&&
-	  
 	    if ((tmp != HUGE_VAL)&&
 		neigh->vertex(n_i3)->not_interior()&&
 		(!is_interior_edge(el1))&&(!is_interior_edge(el2)))
@@ -762,7 +753,6 @@ public:
 		  }
 	      }
 	  }
-	//count++;
 	e_it = inc_facet_circ(e_it);
       }
     while(e_it.first.first != c);
@@ -771,7 +761,6 @@ public:
 
     if ((min_valueA == HUGE_VAL) || border_facet) // bad facets case
       { 
-	//std::cout << "aucune facette candidate parmi " << count-1 << std::endl;
 	min_facet = Facet(c, i); // !!! sans aucune signification....
 	value = NOT_VALID_CANDIDATE; // Attention a ne pas inserer dans PQ
       }
@@ -885,15 +874,11 @@ public:
 	c_min->vertex(i1)->inc_mark();
 	c_min->vertex(i2)->inc_mark();
 	c_min->vertex(i3)->inc_mark();
-	//       if (e12.first < NOT_VALID_CANDIDATE)
 	_ordered_border.insert(Radius_ptr_type (e12.first, p12));
-	//       if (e23.first < NOT_VALID_CANDIDATE)
 	_ordered_border.insert(Radius_ptr_type (e23.first, p23));
-	//       if (e31.first < NOT_VALID_CANDIDATE)
 	_ordered_border.insert(Radius_ptr_type (e31.first, p31));
 
-	// Pour une visu correcte_e_it_bis
-	visu_facet(c_min, ind);
+	select_facet(c_min, ind);
 	return true;
       }
     return false;
@@ -935,7 +920,7 @@ public:
   //---------------------------------------------------------------------
 
   void
-  _ordered_map_erase(const criteria& value, const IO_edge_type* pkey)
+  ordered_map_erase(const criteria& value, const IO_edge_type* pkey)
   {
     int number_of_conflict = _ordered_border.count(value);  
     int verif(0); 
@@ -976,12 +961,10 @@ public:
   void
   force_merge(const Edge_like& ordered_key, const Border_elt& result)
   {
-    //  Border_map_iterator bord_it = _border_map.find(key);
-
     criteria value = result.first.first;
     IO_edge_type* pkey = get_border_IO_elt(ordered_key.first, ordered_key.second);
 
-    _ordered_map_erase(value, pkey);
+    ordered_map_erase(value, pkey);
 
     remove_border_elt(ordered_key);
   }
@@ -1074,13 +1057,7 @@ public:
 
     v1->dec_mark();
 
-    // if e2 contain HUGE_VAL there is no candidates to
-    // continue: compute_value is not valid...
-
-    //   if (e2.first < NOT_VALID_CANDIDATE)
     _ordered_border.insert(Radius_ptr_type(e2.first, p2));
-    //   else
-    //     try_to_close_border(p2);
 
     //depiler les eventuelles requettes de connections avortees... zones etoilees, 
     //en effet le bord a change donc on peut peut etre maintenant.
@@ -1120,7 +1097,6 @@ public:
 
     v3->inc_mark(); 
 
-
     //depiler les eventuelles requettes de connections avortees... zones etoilees, 
     //en effet le bord a change donc on peut peut etre maintenant.
     dequeue_incidence_request(v1);
@@ -1138,15 +1114,8 @@ public:
 	     - edge_Efacet.first.third);
     Cell_handle c =  edge_Efacet.first.first;
 
-    //   coord_type candidate_alpha =  c->get_smallest_radius(edge_Efacet.second);
-    //  coord_type pre_pliure = edge_Efacet.third;
-
-    //  if ((c->vertex(i)->not_interior() > 0)&&(value > K*alpha_max))
-    //     return not_valid;
-
-    Vertex_handle 
-      v1 = c->vertex(edge_Efacet.first.second),
-      v2 = c->vertex(edge_Efacet.first.third);
+    Vertex_handle v1 = c->vertex(edge_Efacet.first.second),
+                  v2 = c->vertex(edge_Efacet.first.third);
       	      
     Edge_like ordered_el1(c->vertex(i), v1);
     Edge_like ordered_el2(c->vertex(i), v2);
@@ -1159,8 +1128,6 @@ public:
 
     bool is_border_el1 = is_border_elt(ordered_el1, result1),
       is_border_el2 = is_border_elt(ordered_el2, result2);
-
-    //  bool is_on_same_border (c->vertex(i)->is_on_border(result12.second));
 
     Radius_edge_type e1, e2;
 
@@ -1182,10 +1149,9 @@ public:
 		v2->dec_mark();
 		c->vertex(i)->dec_mark();
 
-		//Pour une visu correcte
-		visu_facet(c, edge_Efacet.second);	
+		select_facet(c, edge_Efacet.second);	
 
-		return final_case;
+		return FINAL_CASE;
 	      }
 
 	    //--------------------------------------------------------------------- 
@@ -1193,40 +1159,28 @@ public:
 	    //sans faire de calcul inutile???
 	    if (is_border_el1)
 	      {
-		// 	      if (test_merge_ear(ordered_el1, result1, v2, candidate_alpha)&&
-		// 		  (result12.second==result1.second))// force a merger
-		// 		{
 		Edge_IFacet edge_Ifacet_2(Edge(c, i, edge_Efacet.first.third), 
 					  edge_Efacet.second);
 		merge_ear(ordered_el1, result1, 
 			  ordered_key, v1, v2, edge_Ifacet_2);
 
-		//Pour une visu correcte
-		visu_facet(c, edge_Efacet.second);
+		select_facet(c, edge_Efacet.second);
 
-		return ear_case;
-		// 		}
-		// 	      return not_valid;
+		return EAR_CASE;
 	      }
 
 	    //---------------------------------------------------------------------
 	    //idem pour v2
 	    if (is_border_el2)
 	      {
-		// 	      if (test_merge_ear(ordered_el2, result2, v1, candidate_alpha)&&
-		// 		  (result12.second==result2.second))// force a merger
-		// 		{
 		Edge_IFacet edge_Ifacet_1(Edge(c, i, edge_Efacet.first.second), 
 					  edge_Efacet.second);
 		merge_ear(ordered_el2, result2, 
 			  ordered_key, v2, v1, edge_Ifacet_1);
 
-		//Pour une visu correcte
-		visu_facet(c, edge_Efacet.second);
+		select_facet(c, edge_Efacet.second);
 
-		return ear_case;
-		// 		}
-		// 	      return not_valid;
+		return EAR_CASE;
 	      }
 	    
 
@@ -1262,21 +1216,13 @@ public:
 		    // if e1 contain HUGE_VAL there is no candidates to
 		    // continue: compute_value is not valid...
 
-		    // 		   if (e1.first < NOT_VALID_CANDIDATE)
 		    _ordered_border.insert(Radius_ptr_type(e1.first, p1));
-		    // 		   else
-		    // 		     try_to_close_border(p1);
-		    // if e2 contain HUGE_VAL there is no candidates to
-		    // continue: compute_value is not valid...
 
-		    // 		   if (e2.first < NOT_VALID_CANDIDATE)
 		    _ordered_border.insert(Radius_ptr_type(e2.first, p2));
-		    // 		   else
-		    // 		     try_to_close_border(p2);
-		    //Pour une visu correcte
-		    visu_facet(c, edge_Efacet.second);
 
-		    return exterior_case;
+		    select_facet(c, edge_Efacet.second);
+
+		    return EXTERIOR_CASE;
 		  }
 		else // c->vertex(i) is a border point (and now there's only 1
 		  // border incident to a point... _mark<1 even if th orientation
@@ -1294,7 +1240,7 @@ public:
 		    e2 = compute_value(edge_Ifacet_2);
 
 		    if ((e1.first >= STANDBY_CANDIDATE)&&(e2.first >= STANDBY_CANDIDATE)) 
-		      return not_valid_connecting_case;
+		      return NOT_VALID_CONNECTING_CASE;
 
 		    // vu compute value: les candidats oreilles fournis sont sans
 		    // aretes interieures et le sommet oppose n'est pas non plus interieur
@@ -1331,9 +1277,7 @@ public:
 		    bool is_border_ear1 = is_ordered_border_elt(ear1_e, result_ear1);		  
 		    bool is_border_ear2 = is_ordered_border_elt(ear2_e, result_ear2);
 		    bool ear1_valid(false), ear2_valid(false);
-		    //version sans controle d'orientabilite
-		    // 		  bool is_border_ear1 = is_border_elt(ear1_e, result_ear1);		  
-		    // 		  bool is_border_ear2 = is_border_elt(ear2_e, result_ear2);
+
 		    if (is_border_ear1&&(e1.first < STANDBY_CANDIDATE)&&
 			(e1.first <=  value)&&
 			(result12.second==result_ear1.second))
@@ -1341,13 +1285,6 @@ public:
 			ear1_valid = test_merge(ear1_e, result_ear1, v1,
 						get_smallest_radius_delaunay_sphere(ear1_c, 
 										    ear1.second));
-			// si on veut etre plus restrictif
-			// et exiger au moins une bonne pliure:
-			// 		      int test_merge_ear1 = 
-			// 			test_merge(ear1_e, result_ear1, v1,
-			// 				   ear1_c->get_smallest_radius(ear1.second));	      
-			// 		      ear1_valid = (test_merge_ear1&&(e1.first < -1)&&
-			// 				    ((value < -1)||(test_merge_ear1 == 1)));
 		      }
 		  
 		    if (is_border_ear2&&(e2.first < STANDBY_CANDIDATE)&&
@@ -1357,17 +1294,10 @@ public:
 			ear2_valid = test_merge(ear2_e, result_ear2, v2,
 						get_smallest_radius_delaunay_sphere(ear2_c, 
 										    ear2.second));
-			// si on veut etre plus restrictif
-			// et exiger au moins une bonne pliure:
-			// 		      int test_merge_ear2 = 
-			// 			test_merge(ear2_e, result_ear2, v2,
-			// 				   ear2_c->get_smallest_radius(ear2.second));		      
-			// 		      ear2_valid = (test_merge_ear2&&(e2.first < -1)&&
-			// 				    ((value < -1)||(test_merge_ear2 == 1)));
 		      } 
 
 		    if ((!ear1_valid)&&(!ear2_valid)) 
-		      return not_valid_connecting_case;
+		      return NOT_VALID_CONNECTING_CASE;
 
 		    IO_edge_type* p1;  
 		    IO_edge_type* p2;		  
@@ -1381,7 +1311,7 @@ public:
 			if (e1.first < e2.first)
 			  { 
 			    Validation_case res = validate(ear1, e1.first);
-			    if (!((res == ear_case)||(res == final_case)))
+			    if (!((res == EAR_CASE)||(res == FINAL_CASE)))
 			      std::cerr << "+++probleme de recollement : cas " 
 					<< res << std::endl;
 			    e2 = compute_value(edge_Ifacet_2);
@@ -1393,15 +1323,12 @@ public:
 			      p2 = set_again_border_elt(v2, c->vertex(i),
 							Border_elt(e2, result2.second));
 
-			    // 			  if (e2.first < NOT_VALID_CANDIDATE)
 			    _ordered_border.insert(Radius_ptr_type(e2.first, p2));
-			    // 			  else 
-			    // 			    try_to_close_border(p2);
 			  }
 			else
 			  {
 			    Validation_case res = validate(ear2, e2.first);
-			    if (!((res == ear_case)||(res == final_case)))
+			    if (!((res == EAR_CASE)||(res == FINAL_CASE)))
 			      std::cerr << "+++probleme de recollement : cas " 
 					<< res << std::endl;
 			    e1 = compute_value(edge_Ifacet_1);
@@ -1413,10 +1340,7 @@ public:
 			      p1 = set_again_border_elt(c->vertex(i), v1,
 							Border_elt(e1, result1.second));
 
-			    // 			  if (e1.first < NOT_VALID_CANDIDATE)
 			    _ordered_border.insert(Radius_ptr_type(e1.first, p1));
-			    // 			  else 
-			    // 			    try_to_close_border(p1);
 			  }
 		      }
 		    else// les deux oreilles ne se recollent pas sur la meme arete...
@@ -1425,14 +1349,14 @@ public:
 			if (ear1_valid)
 			  {
 			    Validation_case res = validate(ear1, e1.first);
-			    if (!((res == ear_case)||(res == final_case)))
+			    if (!((res == EAR_CASE)||(res == FINAL_CASE)))
 			      std::cerr << "+++probleme de recollement : cas " 
 					<< res << std::endl;
 			  }
 			if (ear2_valid)
 			  {
 			    Validation_case res = validate(ear2, e2.first);
-			    if (!((res == ear_case)||(res == final_case)))
+			    if (!((res == EAR_CASE)||(res == FINAL_CASE)))
 			      std::cerr << "+++probleme de recollement : cas " 
 					<< res << std::endl;
 			  }
@@ -1440,74 +1364,22 @@ public:
 			// avant la resolution de la singularite
 			if (!ear1_valid)
 			  {
-			    // 			  if (e1.first < NOT_VALID_CANDIDATE)
 			    _ordered_border.insert(Radius_ptr_type(e1.first, p1));
-			    // 			  else
-			    // 			    try_to_close_border(p1);
 			  }
 			if (!ear2_valid)		
 			  {
-			    // 			  if (e2.first < NOT_VALID_CANDIDATE)
 			    _ordered_border.insert(Radius_ptr_type(e2.first, p2));
-			    // 			  else
-			    // 			    try_to_close_border(p2);
 			  }
 		      }
 
-		    //Pour une visu correcte
-		    visu_facet(c, edge_Efacet.second);
+		    select_facet(c, edge_Efacet.second);
 
-		    return connecting_case;
+		    return CONNECTING_CASE;
 		  }
-
-		// 	      if (is_on_same_border)
-		// 		{
-		// 		  _number_of_border++;
-		// 		  Incident_border_iterator tmp;
-		// 		  std::cout << "En train de separer deux bords :"
-		// 			    << result12.second << " et " << _number_of_border 
-		// 			    << std::endl;
-		// 		  Vertex_handle circ =  c->vertex(i), done = circ;
-		// 		  do
-		// 		    {
-		// 		      tmp = circ->get_next_on_border(result12.second);
-		// 		      (*tmp).second.second = _number_of_border;
-		// 		      circ = (Vertex*) (*tmp).first;
-		// 		    }
-		// 		  while(circ != done);
-		// 		}
-		// 	      else
-		// 		{ 
-		// 		  //certainement un probleme avec le recollement de bords differents
-		// 		  if (c->vertex(i)->not_interior() > 1)
-		// 		    {
-		// 		      std::cout << "En train de recoller des bords au bord :"
-		// 				<< result12.second << std::endl;
-		// 		      Incident_border_iterator tmp;
-		// 		      for(Incident_border_iterator it =
-		// 			    c->vertex(i)->first_incident();
-		// 			  it != c->vertex(i)->not_incident();
-		// 			  it++)
-		// 			{
-		// 			  int current_index = (*it).second.second;
-		// 			  if (current_index != result12.second)
-		// 			    {
-		// 			      Vertex_handle circ =  c->vertex(i), done = circ;
-		// 			      do
-		// 				{
-		// 				  tmp = circ->get_next_on_border(current_index);
-		// 				  (*tmp).second.second = result12.second;
-		// 				  circ = (Vertex*) (*tmp).first;
-		// 				}
-		// 			      while(circ != done);
-		// 			    }
-		// 			}
-		// 		    }
-		// 		}
 	      }
 	  }							  	  
       }
-    return not_valid;
+    return NOT_VALID;
   }
 
   //=====================================================================
@@ -1528,22 +1400,19 @@ public:
 	    Radius_edge_type new_candidate;
 	    new_candidate = compute_value(mem_Ifacet);
 
-	    // 	  if (new_candidate.first < NOT_VALID_CANDIDATE)
-	    {	
-	      if (new_candidate.first == STANDBY_CANDIDATE)
-		{
-		  // a garder pour un K un peu plus grand...
-		  new_candidate.first = STANDBY_CANDIDATE_BIS;
-		}
-
-	      Border_elt result;
-	      Edge_like key_tmp(v1,v2);
-	      is_border_elt(key_tmp, result);
-	      IO_edge_type* pnew = 
-		set_again_border_elt(key_tmp.first, key_tmp.second, 
-				     Border_elt (new_candidate, result.second));
-	      _ordered_border_tmp.insert(Radius_ptr_type(new_candidate.first, pnew));
-	    }
+	    if (new_candidate.first == STANDBY_CANDIDATE)
+	      {
+		// a garder pour un K un peu plus grand...
+		new_candidate.first = STANDBY_CANDIDATE_BIS;
+	      }
+	    
+	    Border_elt result;
+	    Edge_like key_tmp(v1,v2);
+	    is_border_elt(key_tmp, result);
+	    IO_edge_type* pnew = 
+	      set_again_border_elt(key_tmp.first, key_tmp.second, 
+				   Border_elt (new_candidate, result.second));
+	    _ordered_border_tmp.insert(Radius_ptr_type(new_candidate.first, pnew));
 	  }
 	while(!_ordered_border.empty());
 
@@ -1558,11 +1427,7 @@ public:
   {
     // initilisation de la variable globale K: qualite d'echantillonnage requise
     K = K_init; // valeur d'initialisation de K pour commencer prudemment...
-    //-------------------------------------------------------------------
-    // modif
-    //int _facet_number_test = _last_component_facet_number+3;
-    //bool close_result(false);
-    // modif
+
     Vertex_handle v1, v2;
     t1.start();
     if (_ordered_border.empty()) return;
@@ -1592,31 +1457,23 @@ public:
 		v2 = c_tmp->vertex(mem_Ifacet.first.third);
 
 		Radius_edge_type mem_e_it(e_it->first, *e_it->second);
-		// Radius_ptr_type mem_first_it(*e_it);
 
 		_ordered_border.erase(e_it);
-	      
-		// modif: Pour boucher les trous triangulaires avant de faire des conneries???
-		//if (_facet_number > _facet_number_test)
-		//close_result = try_to_close_border(e_it->second);
-
-		//if (!close_result)
-		//{
-		// fin de la modif...   
+	        
 		Validation_case validate_result = validate(candidate, value);
-		//      Cell_handle ccc =  candidate.first.first;
-		if ((validate_result == not_valid)||
-		    (validate_result == not_valid_connecting_case))
+
+		if ((validate_result == NOT_VALID)||
+		    (validate_result == NOT_VALID_CONNECTING_CASE))
 		  { 
 		    Radius_edge_type new_candidate;
 		    Border_elt result;
 		    Edge_like key_tmp(v1,v2);
 		    is_border_elt(key_tmp, result);
 
-		    if (validate_result == not_valid_connecting_case)
+		    if (validate_result == NOT_VALID_CONNECTING_CASE)
 		      set_incidence_request(c_ext->vertex(i3), value, key_tmp);
 
-		    if (validate_result == not_valid)
+		    if (validate_result == NOT_VALID)
 		      { 
 			new_candidate = compute_value(mem_Ifacet);
 			if ((new_candidate != mem_e_it))
@@ -1628,31 +1485,8 @@ public:
 			    _ordered_border.insert(Radius_ptr_type(new_candidate.first,
 								    pnew));
 			  }
-			// 			  else
-			// 			    try_to_close_border(e_it->second);
 		      }
 		  }
-		else // valid candidate...
-		  {
-		    //	  alpha_max = std::max(alpha_max, value);
-		    //  if (validate_result != final_case)
-		    // 	    {
-		    // 	      Radius_edge_type v1_candidate, v2_candidate, v3_candidate;
-		    // 	      if (v1->not_interior())
-		    // 		if (v1->is_incidence_requested())//le bord ayant change autant essayer
-		    // 		  v1_candidate = v1->get_best_incidence_request();
-		    // 	      if (v2->not_interior())
-		    // 		if (v2->is_incidence_requested())
-		    // 		  v2_candidate = v2->get_best_incidence_request();
-		    // 	      if (validate_result != exterior_case)
-		    // 		if (c_ext->vertex(i3)->is_incidence_requested())
-		    // 		  v3_candidate =
-		    // 		    c_ext->vertex(i3)->get_best_incidence_request();
-		    // 	    }
-		  }
-		// modif
-		//}
-		// modif
 	      }
 	  }
 	while((!_ordered_border.empty())&&
@@ -1709,7 +1543,7 @@ public:
 	if (c->is_selected_facet(index))
 	  {
 	    int fn = c->facet_number(index);
-	    c->unselect_facet(index);
+	    unselect_facet(c, index);
 	    neigh->select_facet(n_ind);
 	    neigh->set_facet_number(n_ind, fn);
 	    int i1 = (n_ind+1) & 3;
@@ -1784,8 +1618,8 @@ public:
     int index = i_facet.second;
     int i3 = 6 - index - i1 - i2;
     Vertex_handle vh_int = c->vertex(i3);
-    _ordered_map_erase(border_elt.second.first.first, 
-		       get_border_IO_elt(vh, vh_succ));
+    ordered_map_erase(border_elt.second.first.first, 
+		      get_border_IO_elt(vh, vh_succ));
     vh->remove_border_edge(vh_succ);
     // 1- a virer au cas ou car vh va etre detruit
     vh_succ->remove_interior_edge(vh);
@@ -1795,12 +1629,8 @@ public:
 	_facet_number--;
 
 	assert(c->is_selected_facet(index));
-	c->unselect_facet(index);
+	unselect_facet(c, index);
  
-	//        if (!vh_succ->is_on_border())
-	// 	{
-	// 	  vh_succ->re_init();
-	// 	}
 	Facet f32 = 
 	  get_next_selected_facet_around_edge(Edge_IFacet(Edge(c, i3, i2), 
 							  index));
@@ -1809,16 +1639,6 @@ public:
 	  {
 	    vh_int->re_init(); 
 	    vh_int->inc_mark();
-	    // 	  std::list<Vertex_handle> vh_set;
-	    // 	  T.incident_vertices(vh_int, std::back_inserter(vh_set));
-	    // 	  for (std::list<Vertex_handle>::iterator v_it = vh_set.begin();
-	    // 	       v_it != vh_set.end(); v_it++)
-	    // 	    if((*v_it)->is_on_border())
-	    // 	      {
-	    // 		// pour retrouver cette info, on a besoin de savoir si l'arete
-	    // 		// [vh_hint, *v_it] est une arete de la reconstruction...
-	    // 		vh_int->set_interior_edge(*v_it);
-	    // 	      }
 	  }
 
 	Edge_IFacet e32(Edge(f32.first, 
@@ -1828,7 +1648,7 @@ public:
 	Border_elt result;
 	if (is_ordered_border_elt(Edge_like(vh_int, vh), result))
 	  {
-	    _ordered_map_erase(result.first.first, get_border_IO_elt(vh_int, vh));
+	    ordered_map_erase(result.first.first, get_border_IO_elt(vh_int, vh));
 	    vh_int->remove_border_edge(vh);
 	    // 1- a virer au cas ou car vh va etre detruit
 	    vh_int->remove_interior_edge(vh);
@@ -1968,17 +1788,6 @@ public:
 
     std::list<Vertex_handle> L_v;
 
-    // Pour prendre en compte tous sommets exterieurs ou sur le bord
-    //   for(Finite_vertices_iterator v_it = T.finite_vertices_begin();
-    //       v_it != T.finite_vertices_end(); v_it++)
-    //     {
-    //       if (v_it->number_of_incident_border() != 0)
-    // 	{
-    // 	  L_v.push_back(v_it->handle());
-    // 	  v_it->erase_incidence_request();
-    // 	}
-    //     }
-
     //  Pour controler les sommets choisis sur le bord...
   
     // nombre d'aretes a partir duquel on considere que c'est irrecuperable NB_BORDER_MAX
@@ -2000,12 +1809,6 @@ public:
 	    do
 	      {		      
 		vh_it =  vprev_it->first_incident()->first;
-		// 	      vsucc_it = (Vertex*) vh_it->first_incident()->first;
-		// 	      D_Point p1 = convert()(vprev_it->point());
-		// 	      D_Point p = convert()(vh_it->point());
-		// 	      D_Point p2 = convert()(vsucc_it->point());
-		// pour imposer une condition sur l'angle d'aretes...
-		// 	      if ((p1-p)*(p2-p) > 0)
 		L_v_tmp.push_back(vh_it);
 		vh_it->set_post_mark(_postprocessing_counter);
 		vprev_it = vh_it;
