@@ -149,7 +149,7 @@ private:
 
   //  Conflict_set
   void
-  star_region_delete_points( const Conflict_set & region, 
+  star_region_delete_points( Conflict_set & region, 
 			     Vertex* v, 
 			     Cell* c, int li);
     // region is a set of connected cells
@@ -516,7 +516,7 @@ template < class Gt, class Tds >
 // ...::Conflict_set
 void
 Regular_triangulation_3<Gt,Tds>::
-star_region_delete_points(const Conflict_set & region,
+star_region_delete_points(Conflict_set & region,
                           Vertex* v, Cell* c, int li) 
   // region is a set of connected cells
   // c belongs to region and has facet i on the boundary of region 
