@@ -1,3 +1,7 @@
+2.12 (8 September 2003) [af]
+- Switched to unconditional  #include <CGAL/intersection_3_1.C>
+  as Sun and Sgi CC complain about undefined functions
+
 2.11 (7 September 2003) [af]
 - Added missing typenames
 
