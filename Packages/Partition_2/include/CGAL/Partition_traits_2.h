@@ -30,7 +30,6 @@
 #define PARTITION_TRAITS_2_H
 
 #include <CGAL/Polygon_2.h>
-#include <CGAL/Polygon_traits_2.h>
 #include <CGAL/Partition_traits_2_base.h>
 #include <CGAL/polygon_function_objects.h>
 #include <list>
@@ -44,10 +43,9 @@ class Partition_traits_2  : public Partition_traits_2_base<Kernel_>
     typedef Kernel_                                     Kernel;
     typedef Partition_traits_2<Kernel_>                 Self;
   public:
-    typedef CGAL::Polygon_traits_2<Kernel_>             Poly_Traits;
-    typedef typename Poly_Traits::Point_2               Point_2;
+    typedef typename Kernel::Point_2                    Point_2;
     typedef ::std::list<Point_2>                        Container;
-    typedef CGAL::Polygon_2<Poly_Traits, Container>     Polygon_2;
+    typedef CGAL::Polygon_2<Kernel, Container>          Polygon_2;
     typedef typename Kernel::Less_yx_2                  Less_yx_2;
     typedef typename Kernel::Less_xy_2                  Less_xy_2;
     typedef typename Kernel::Left_turn_2                 Left_turn_2;

@@ -3,36 +3,23 @@
 //
 
 #include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Partition_traits_2.h>
 #include <CGAL/partition_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/random_polygon_2.h>
 #include <cassert>
 #include <list>
-#ifdef CGAL_USE_LEDA
-#include <CGAL/leda_integer.h>
-typedef leda_integer NT;
-#else
-#ifdef CGAL_USE_GMP
-#include <CGAL/Gmpz.h>
-typedef CGAL::Gmpz NT;
-#else
-// NOTE: the choice of double here for a number type may cause problems
-//       for degenerate point sets
-#include <CGAL/double.h>
-typedef double NT;
-#endif
-#endif
 
-typedef CGAL::Cartesian<double>                           K;
-typedef CGAL::Partition_traits_2<K>                       Traits;
-typedef Traits::Point_2                                   Point_2;
-typedef Traits::Polygon_2                                 Polygon_2;
-typedef Polygon_2::Vertex_iterator                        Vertex_iterator;
-typedef std::list<Polygon_2>                              Polygon_list;
-typedef CGAL::Creator_uniform_2<int, Point_2>             Creator;
-typedef CGAL::Random_points_in_square_2<Point_2, Creator> Point_generator;
+
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Partition_traits_2<K>                         Traits;
+typedef Traits::Point_2                                     Point_2;
+typedef Traits::Polygon_2                                   Polygon_2;
+typedef Polygon_2::Vertex_iterator                          Vertex_iterator;
+typedef std::list<Polygon_2>                                Polygon_list;
+typedef CGAL::Creator_uniform_2<int, Point_2>               Creator;
+typedef CGAL::Random_points_in_square_2<Point_2, Creator>   Point_generator;
 
 void make_polygon(Polygon_2& polygon)
 {
