@@ -1,0 +1,308 @@
+%%%    modified for TeX version before 3.0
+%%%     for TeX version after 3.0 check the line indicated by %XXXXX
+%
+%%%  @LaTeX-style-file{
+%%%     author          = "Philip Taylor",
+%%%     version         = "3.02",
+%%%     date            = "23-Oct-1991 13:45:12",
+%%%     filename        = "path.sty",
+%%%     address         = "The Computer Centre
+%%%                        RHBNC, University of London
+%%%                        Egham Hill
+%%%                        Egham, Surrey TW20 0EX, ENGLAND
+%%%                        Tel:   +44 784 443172
+%%%                        Fax:   +44 784 434348
+%%%     checksum        = "20022 300 1599 12491",
+%%%     email           = "P.Taylor@Vax.Rhbnc.Ac.Uk (Internet)",
+%%%     codetable       = "ISO/ASCII",
+%%%     keywords        = "file name, filename, path name, pathname,
+%%%                        discretionary, discretionaries",
+%%%     supported       = "yes",
+%%%     docstring       = {Computer filenames, host names, and e-mail
+%%%                        addresses tend to be long strings that
+%%%                        cause line breaking problems for TeX.
+%%%                        Sometimes rather long strings are
+%%%                        encountered; here are two examples:
+%%%
+%%% Friesland%rz.informatik.uni-hamburg.dbp.de%germany.csnet@relay.cs.net
+%%%
+%%%                        mighty-mouse-gw.scrc.symbolics.com
+%%%
+%%%                        This file defines a macro, \path|...|,
+%%%                        similar to LaTeX's \verb|...| macro, that
+%%%                        sets the text in the typewriter font,
+%%%                        allowing hyphen-less line breaks at
+%%%                        punctuation characters.
+%%%
+%%%                        The default set of punctuation characters is
+%%%                        defined as
+%%%
+%%%                        \discretionaries |~!@$%^&*()_+`-=#{"}[]:;'<>,.?\/|
+%%%
+%%%                        However, you can change it as needed, for
+%%%                        example
+%%%
+%%%                        \discretionaries +@%!.+
+%%%
+%%%                        would assign to it the set @ % ! . which
+%%%                        commonly occur in electronic mail addresses.
+%%%
+%%%                        The delimiter characters surrounding the
+%%%                        arguments to \discretionaries and \path
+%%%                        will normally be a punctuation character not
+%%%                        found in the argument, and not otherwise
+%%%                        significant to TeX.  In particular, backslash
+%%%                        cannot be used as a delimiter.  In the rare
+%%%                        event that this is required, set
+%%%
+%%%                        \specialpathdelimiterstrue
+%%%
+%%%                        This practice is not recommended, because TeX
+%%%                        then runs about four times slower while it is
+%%%                        typesetting \path\...\ requests.
+%%%                        \specialpathdelimitersfalse is the normal
+%%%                        setting.
+%%%
+%%%                        This file may be used in Plain TeX or AmSTeX
+%%%                        by
+%%%
+%%%                        \input path.sty
+%%%
+%%%                        and in LaTeX by
+%%%
+%%%                        \documentstyle[...,path,...]{...}
+%%%
+%%%                        The checksum field above contains a CRC-16
+%%%                        checksum as the first value, followed by the
+%%%                        equivalent of the standard UNIX wc (word
+%%%                        count) utility output of lines, words, and
+%%%                        characters.  This is produced by Robert
+%%%                        Solovay's checksum utility.}
+%%%  }
+%%% ====================================================================
+
+% ======================================================================
+%
+%                          The \path Macro
+%
+% An early prototype of this code which was developed by Nelson H. F.
+% Beebe <beebe@math.utah.edu> used a recursive macro to peel off one
+% character at a time, then with a nest of \ifx statements, test for
+% each punctuation character, and if one is found, insert discretionary
+% linebreaks in the form of \- or \penalty0.  While this usually works,
+% it is not entirely satisfactory, because the nested \ifx statements
+% are ugly, and the recursion can exhaust TeX's macro stack for
+% arguments longer than about 30 characters.
+%
+% A second version by NHFB built upon the ideas used by the LaTeX
+% \verb|...| macro; this was mostly successful, but was flawed by its
+% inability to handle at least the three characters ^ [ ], by loss of
+% use of @ for naming internal private macros, and by its inability to
+% allow the set of characters at which breaks are permissible.
+%
+% The problem was then passed off to Philip Taylor, who wrote this third
+% version which fully solves the problem.  Phil therefore gets the
+% author credit in the file header above.  [Gee, thanks !  ** Phil]
+%
+% ======================================================================
+
+\immediate\write16{This is path.sty, Version 3.02 <23-Oct-1991 13:45:12>}
+\immediate\write16{%
+modified for TeX version<3.0 (10/19/1992) by M.Wat. (bear)}
+% watanabe@akiu.gw.tohoku.ac.jp suggested correction at "XXXXX" below
+% added by bear@hashi1.civil.tohoku.ac.jp
+
+%%% We will regrettably need one \count variable with an open name,
+%%% in which to save the category code of commercial-at ...
+
+\newcount \ATcode
+\ATcode = \catcode `\@
+
+%%% Make commercial-at a letter to provide concealed control sequences
+
+\catcode `\@ = 11
+
+%%% and then declare two \count variables with concealed names
+
+\newcount \c@tcode
+\newcount \c@unter
+
+%%% and a boolean variable with an open name, to specify the nature of
+%%% the delimiters which will be associated with the \path command
+
+\newif \ifspecialpathdelimiters
+
+%%% We need to define control sequences which expand to both
+%%% active and passive spaces ...
+
+\begingroup
+\catcode `\ = 10
+\gdef \passivesp@ce { }
+\catcode `\ = 13\relax%
+\gdef\activesp@ce{ }%
+\endgroup
+
+%%% \discretionaries will define a macro \discr@ti@n@ri@s which will
+%%% make every character between the first and final <delim> a
+%%% discretionary breakpoint.
+
+\def \discretionaries %%% <delim> <chars> <delim>
+     % start a group (ended in \discr@ti@naries ),
+     % make every character (apart from space) active,
+     % then transfer control to \discr@tionaries ...
+    {\begingroup
+        \c@tcodes = 13
+        \discr@tionaries
+    }
+
+%%% \discr@tionaries will receive as parameter the initial <delim>
+%%% which will delimit the set of discretionaries; this <delim>
+%%% will be active.
+
+\def \discr@tionaries #1%%% <delim>
+     % knowing the initial <delim>, define \discr@ti@naries with a
+     % delimited parameter structure, the final delimiter being
+     % the second instance of <delim>
+    {\def \discr@ti@naries ##1#1%%% <chars> <delim>
+          % \discr@ti@naries will receive as parameter the set of
+          % characters which are to be made discretionaries; it ends the
+          % group and then defines \discr@ti@n@ries, a tail-recursive
+          % macro, which will quietly process each of the
+          % discretionaries in turn ...
+         {\endgroup
+          \def \discr@ti@n@ries ####1%%% <char> or <delim>
+               % by checking to see if it has reached the end of the
+               % list, i.e. comparing its parameter with the known final
+               % <delim> ...
+              {\if   \noexpand ####1\noexpand #1%
+                     % if they match, there is no more to do ...
+                     \let \n@xt = \relax
+               \else
+                     % otherwise the character becomes active and is
+                     % defined as a discretionary with the three texts
+                     % <self> <empty> <self>, thus suppressing true
+                     % hyphenation; the macro then prepares to process
+                     % the next character.
+                     \catcode `####1 = 13
+                     \def ####1{\discretionary
+                                  {\char `####1}{}{\char `####1}}%
+                     \let \n@xt = \discr@ti@n@ries
+               \fi
+               % here either tail recursion occurs, if there are more
+               % characters to process, or tail recursion ceases if all
+               % have been exhausted
+               \n@xt
+              }%
+          % of course, none of this must take place during the \stress
+          % {call} of \discretionaries; execution is deferred until
+          % another macro such as \path calls the concealed action
+          % macro \discr@ti@n@ri@s; we therefore define this macro to
+          % have the desired effect.
+          \def \discr@ti@n@ri@s {\discr@ti@n@ries ##1#1}%
+         }%
+     % and finally invoke \discr@ti@naries to process the set of
+     % discretionary characters; it will take everything up to the
+     % second instance of <delim> as its parameter (and therefore as the
+     % set of characters to be processed).
+     \discr@ti@naries
+    }
+
+%%% \path, which is the user interface to \p@th, first checks
+%%% to see whether \specialpathdelimiters is <true> or <false>;
+%%% if <true>, it needs to take special action to ensure that
+%%% \stress {all} characters (apart from <space>) are acceptable
+%%% as delimiters; this is very time-consuming, and should be
+%%% avoided if at all possible.  It also defines \endp@th, to
+%%% close the appropriate number of groups, and finally transfers
+%%% control to \p@th
+
+\def \path
+    {\ifspecialpathdelimiters
+        \begingroup
+        \c@tcodes = 12
+        \def \endp@th {\endgroup \endgroup}%
+     \else
+        \let \endp@th = \endgroup
+     \fi
+     \p@th
+    }
+
+%%% \p@th, which has essentially the same syntax as \discretionaries,
+%%% expects to be followed by a <delim>, a <path>, and a second instance
+%%% of <delim>; it will typeset <path> in the \tt font with hyphenation
+%%% inhibited --- breaks (but not true hyphenation) are allowed at any
+%%% or all of the special characters which have
+%%% previously been declared as \discretionaries.
+
+\def \p@th #1%%% <delim>
+     % it starts by opening a group (ended in \p@@th) ...
+     % switches to \tt, and inhibits hyphenation;
+     % allows breaks at \discretionaries;  saves the
+     % catcode of the initial <delim>, because if it has also been
+     % declared within \discretionaries, the initial and final <delim>
+     % won't match (which would be a disaster); \c@tcode is overloaded,
+     % but there is no conflict that I can detect ...
+     % invokes \discr@ti@n@ri@s to render active the set of special
+     % characters which have previously been declared as
+     % \discretionaries; each of these characters will expand to a real
+     % \discretionary, with replacement texts <self> <null> <self>; and
+     % re-instates the catcode of the initial <delim>.
+    {\begingroup
+        \tt
+        \c@tcode = \catcode `#1
+        \discr@ti@n@ri@s
+        \catcode `\ = \active
+        \expandafter \edef \activesp@ce {\passivesp@ce \hbox {}}%
+        \catcode `#1 = \c@tcode
+        % it next defines an inner macro \p@@th with delimited parameter
+        % structure, the final delimiter being the same as the initial
+        % delimiter which it has itself received as #1.
+        \def \p@@th ##1#1% <chars> <delim>
+             % Within \p@@th,
+             % permissible breakpoints are specified,
+             % the path is typeset,
+             % and the group(s) ended.
+            {\hbox {}##1%
+             \endp@th
+            }%
+     \p@@th
+    }
+
+%%% \c@tcodes expects to be followed by the r-h-s of a numeric
+%%% assignment optionally including the assignment operator; it saves
+%%% the value of the r-h-s in \c@tcode, and invokes \c@tc@des.
+
+\def \c@tcodes {\afterassignment \c@tc@des \c@tcode}
+
+%%% \c@tc@des uses the value saved in \c@tcode, and assigns it to the
+%%% \catcode of all characters with the single exception of <space>,
+%%% which retains its normal catcode of 10; on exit, every single
+%%% character apart from <space> will have the catcode which followed
+%%% \c@tcodes.  The code is optimised to avoid unnecessary usage of
+%%% save-stack space.
+
+\def \c@tc@des
+    {\c@unter = 0
+     \loop
+            \ifnum \catcode \c@unter = \c@tcode
+            \else
+                \catcode \c@unter = \c@tcode
+            \fi
+%      \ifnum \c@unter < 255 %XXXXX
+     \ifnum \c@unter < 127
+            \advance \c@unter by 1
+     \repeat
+     \catcode `\ = 10
+    }
+
+%%% We restore the original catcode of commercial-at
+
+\catcode `\@ = \ATcode
+
+%%% Define a default set of discretionary break characters
+%%% to include all punctuation characters except vertical
+%%% bar
+
+\discretionaries |~!@$%^&*()_+`-=#{}[]:";'<>,.?\/|
+
+\endinput
