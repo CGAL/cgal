@@ -35,6 +35,42 @@ Concerning the new filters:
 - Add a "number of bits" field in Static_filter_error ?
   (so that we get the same thing as Fixed for 24 bits)
 
+- Un patch dans GCC 2.96:
+        (C++) patch: -fno-enforce-eh-specs
+
+            To: gcc-patches at gcc dot gnu dot org 
+            Subject: (C++) patch: -fno-enforce-eh-specs 
+            From: Jason Merrill <jason at cygnus dot com> 
+            Date: Fri, 10 Mar 2000 03:54:15 -0800 
+
+        throw() specs are now useful for optimization, but they also incur a
+        penalty, as we need to trap any passing exception and call
+        unexpected.  -fno-enforce-eh-specs disables that checking, much like
+        defining NDEBUG in code that uses assert.
+        
+        2000-03-10  Jason Merrill  <jason@casey.cygnus.com>
+
+                * lang-options.h, decl2.c: Add -fno-enforce-eh-specs.
+                * cp-tree.h: Declare flag_enforce_eh_specs.
+                * decl.c (store_parm_decls, finish_function): Check it.
+
+- Idem avec "C9x FP unordered compares":
+  +  /* ISO C99 IEEE Unordered compares.  */
+  +  builtin_function ("__builtin_isgreater", default_function_type,
+  +                   BUILT_IN_ISGREATER, BUILT_IN_NORMAL, NULL_PTR);
+  +  builtin_function ("__builtin_isgreaterequal", default_function_type,
+  +                   BUILT_IN_ISGREATEREQUAL, BUILT_IN_NORMAL, NULL_PTR);
+  +  builtin_function ("__builtin_isless", default_function_type,
+  +                   BUILT_IN_ISLESS, BUILT_IN_NORMAL, NULL_PTR);
+  +  builtin_function ("__builtin_islessequal", default_function_type,
+  +                   BUILT_IN_ISLESSEQUAL, BUILT_IN_NORMAL, NULL_PTR);
+  +  builtin_function ("__builtin_islessgreater", default_function_type,
+  +                   BUILT_IN_ISLESSGREATER, BUILT_IN_NORMAL, NULL_PTR);
+  +  builtin_function ("__builtin_isunordered", default_function_type,
+  +                   BUILT_IN_ISUNORDERED, BUILT_IN_NORMAL, NULL_PTR);
+  [voir le draft C9X]
+
+
 Concerning the main code:
 -------------------------
 - Turn CGAL_IA_CHECK_RESTRICT into an [expensive] assertion ?
