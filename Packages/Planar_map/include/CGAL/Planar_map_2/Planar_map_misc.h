@@ -304,9 +304,6 @@ public:
 
 CGAL_END_NAMESPACE
  
-
-#else   //CGAL_PLANAR_MAP_MISC_H 
-#error  Header file Planar_map_misc.h included twice
 #endif  //CGAL_PLANAR_MAP_MISC_H 
 
 /*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
