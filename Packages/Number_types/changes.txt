@@ -1,3 +1,6 @@
+4.25     (25 June 01)
+- operator<<(MP_Float) was missing the approximation when zero.
+
 4.24     (25 June 01)
 - to_interval(Gmpz) is exact when < 2^53.
 

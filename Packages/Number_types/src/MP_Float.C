@@ -269,7 +269,7 @@ operator<< (std::ostream & os, const MP_Float &b)
 {
   // Binary format would be nice and not hard to have too (useful ?).
   if (b.is_zero())
-    return os << 0;
+    return os << 0 << " [ double approx == " << 0.0 << " ]";
 
   MP_Float::const_iterator i;
   int exp = b.min_exp() * log_limb;
