@@ -102,7 +102,7 @@ public:
   Stream& draw_dual(Stream & ps)
     {
       Finite_edges_iterator eit= finite_edges_begin();
-      for (; eit != finite_edges_end(), eend; ++eit) {
+      for (; eit != finite_edges_end(); ++eit) {
 	Object o = t.dual(eit);
 	Ray r;
 	Segment s;
