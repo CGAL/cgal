@@ -127,10 +127,10 @@ public:
   }
 
   Pm_trapezoid_dag_point_location(const_Self_ref pl) : 
-    td(*pl.get_trapezoidal_decomposition())
+    td(*pl.get_trapezoidal_decomposition()), pm(NULL)
   {
-    const_Planar_map_ptr pm = pl.get_planar_map();
-    init(* ((Planar_map *) pm), *pl.get_traits());
+    const_Planar_map_ptr pm2 = pl.get_planar_map();
+    init(* ((Planar_map *) pm2), *pl.get_traits());
   }
 
   ~Pm_trapezoid_dag_point_location() 
