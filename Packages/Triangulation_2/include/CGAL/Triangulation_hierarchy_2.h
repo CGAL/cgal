@@ -115,10 +115,23 @@ private:
   int random_level();
 
   // helping function to copy_triangulation
-  void add_hidden_vertices_into_map(Tag_true,
-				    std::map<Vertex_handle,Vertex_handle >& V);
-  void add_hidden_vertices_into_map(Tag_false,
-				    std::map<Vertex_handle,Vertex_handle >& V);
+  // the version to be used with Tag_true is templated to avoid
+  // systematique instanciation
+  template <class Tag>
+  void add_hidden_vertices_into_map(Tag,
+				    std::map<Vertex_handle,Vertex_handle >& V)
+  {
+    for (typename Tr_Base::Hidden_vertices_iterator 
+	   it=hierarchy[0]->hidden_vertices_begin(); 
+	 it != hierarchy[0]->hidden_vertices_end(); ++it) {
+      if (it->up() != Vertex_handle()) V[ it->up()->down() ] = it;
+    }
+  }
+  
+  
+  void add_hidden_vertices_into_map(Tag_false ,
+				    std::map<Vertex_handle,Vertex_handle >& V)
+  {return;}
 };
 
 
@@ -198,27 +211,27 @@ copy_triangulation(const Triangulation_hierarchy_2<Tr> &tr)
   }
 }
 
-template <class Tr>
-void
-Triangulation_hierarchy_2<Tr>:: 
-add_hidden_vertices_into_map(Tag_false,
-			     std::map<Vertex_handle,Vertex_handle >& V) {
-  return;
-}
+/* template <class Tr> */
+/* void */
+/* Triangulation_hierarchy_2<Tr>::  */
+/* add_hidden_vertices_into_map(Tag_false, */
+/* 			     std::map<Vertex_handle,Vertex_handle >& V) { */
+/*   return; */
+/* } */
 
 
-template <class Tr>
-void
-Triangulation_hierarchy_2<Tr>:: 
-add_hidden_vertices_into_map(Tag_true,
-			     std::map<Vertex_handle,Vertex_handle >& V) 
-{
-  for (typename Tr_Base::Hidden_vertices_iterator 
-	 it=hierarchy[0]->hidden_vertices_begin(); 
-       it != hierarchy[0]->hidden_vertices_end(); ++it) {
-    if (it->up() != Vertex_handle()) V[ it->up()->down() ] = it;
-  }
-}
+/* template <class Tr> */
+/* void */
+/* Triangulation_hierarchy_2<Tr>::  */
+/* add_hidden_vertices_into_map(Tag_true, */
+/* 			     std::map<Vertex_handle,Vertex_handle >& V)  */
+/* { */
+/*   for (typename Tr_Base::Hidden_vertices_iterator  */
+/* 	 it=hierarchy[0]->hidden_vertices_begin();  */
+/*        it != hierarchy[0]->hidden_vertices_end(); ++it) { */
+/*     if (it->up() != Vertex_handle()) V[ it->up()->down() ] = it; */
+/*   } */
+/* } */
 
 
 template <class Tr>
