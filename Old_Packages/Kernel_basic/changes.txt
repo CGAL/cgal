@@ -1,3 +1,6 @@
+3.83   (19 March 2002)
+- moved LEDA_basic.h and LEDA/allocator.h files to LEDA package
+
 3.82   (18 March 2002)
 - added LEDA basic file to accommodate LEDA namespace to be introduced
   with LEDA 4.4
