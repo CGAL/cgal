@@ -319,6 +319,7 @@ sub print_platform_descriptions()
 <TH>Tester</TH>
 <TH>LEDA</TH>
 <TH>GMP</TH>
+<TH>GMPXX</TH>
 <TH>CORE</TH>
 <TH>QT</TH>
 <TH class=ok>y</TH>

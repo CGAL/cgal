@@ -39,7 +39,7 @@ sub reformat_results($)
     }
     open (PLATFORM_INFO,">${platform}.info") or return;
     open (PLATFORM_NEW_RESULTS,">${platform}.new_results") or return;
-    my ($CGAL_VERSION,$LEDA_VERSION,$TESTER,$TESTER_NAME,$TESTER_ADDRESS,$GMP,$CORE,$QT) = ("-","-","-","-","-","-","-","-");
+    my ($CGAL_VERSION,$LEDA_VERSION,$TESTER,$TESTER_NAME,$TESTER_ADDRESS,$GMP,$GMPXX,$CORE,$QT) = ("-","-","-","-","-","-","-","-","-");
     while (! /^------/) {
 	if (/^CGAL_VERSION\s+([\w\.-]+)/) {
 	    $CGAL_VERSION = $1;
@@ -58,6 +58,9 @@ sub reformat_results($)
 	}
 	if (/GMP_SUPPORT\s*=\s*\'_GMP\'/) {
 	    $GMP="+";
+	}
+	if (/GMPXX_SUPPORT\s*=\s*\'_GMPXX\'/) {
+	    $GMPXX="+";
 	}
 	if (/CORE_SUPPORT\s*=\s*\'_CORE\'/) {
 	    $CORE="+";
@@ -81,6 +84,7 @@ $TESTER_NAME
 $TESTER_ADDRESS
 $LEDA_VERSION
 $GMP
+$GMPXX
 $CORE
 $QT
 EOF

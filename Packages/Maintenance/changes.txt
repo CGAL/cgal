@@ -1,3 +1,6 @@
+27 March 2005 Sylvain Pion
+- Show GMPXX support in the test-suite.
+
 22 February 2005 Sylvain Pion
 - Added Curved_kernel to the internal release.
 
