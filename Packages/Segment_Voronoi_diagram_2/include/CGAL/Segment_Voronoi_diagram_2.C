@@ -499,10 +499,7 @@ Segment_Voronoi_diagram_2<Gt,Svdds>::
 insert(const Site& t, Vertex_handle vnear, bool insert_endpoints)
 {
   if ( t.is_segment() && is_degenerate_segment(t) ) {
-    // MK: this may be buggy; does it work when the segment is not an
-    // input one?
-    // insert the point
-    return insert(t.source(), vnear);
+    return insert(t.source_site(), vnear);
   }
 
   if ( number_of_vertices() == 0 ) {
@@ -534,7 +531,7 @@ insert(const Site& t, Vertex_handle vnear, bool insert_endpoints)
   } else if ( insert_endpoints ) {
     // if we insert a segment, insert the endpoints first
     vnearest = insert( t.source_site(), vnear );
-    insert( t.target_site(), Vertex_handle(NULL) );
+    insert( t.target_site(), vnearest );
   } else {
     vnearest = vnear;
   }

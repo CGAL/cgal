@@ -59,6 +59,9 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template< class Gt, class Svdds >
+class Segment_Voronoi_diagram_hierarchy_2;
+
 
 template < class Gt,
   class Svdds = Segment_Voronoi_diagram_data_structure_2 < 
@@ -68,6 +71,7 @@ class Segment_Voronoi_diagram_2
   : private Triangulation_2<
           Segment_Voronoi_diagram_traits_wrapper_2<Gt>, Svdds >
 {
+  friend class Segment_Voronoi_diagram_hierarchy_2<Gt, Svdds>;
 private:
   static const char point_descriptor;
   static const char segment_descriptor;
@@ -750,7 +754,8 @@ protected:
   Vertex_handle  insert_third(const Site& t);
   Vertex_handle insert_intersecting_segment(const Site_2& t,
 					    Vertex_handle v);
-  Vertex_handle insert(const Site_2& t, Vertex_handle vnear, bool);
+  Vertex_handle insert(const Site_2& t, Vertex_handle vnear,
+		       bool insert_endpoints);
 
   // methods for insertion
   void initialize_conflict_region(const Face_handle& f, List& l);
