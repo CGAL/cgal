@@ -1,6 +1,18 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+6 September 2004 Menelaos Karavelas
+- Documentation: moved join and split methods from the concept TDS_2 to the
+  model of T_d_s_2
+- Documentation: the methods insert_degree_2 and remove_degree_2 (from
+  the Apollonius_graph_2 package) were added in T_d_s_2.
+- Code: the methods insert_degree_2 and remove_degree_2 where moved from
+  Apollonius_graph_data_structure_2 (obsolete) to
+  Triangulation_data_structure_2.
+
+4 September 2004 Menelaos Karavelas
+- re-wrote author names in copyright notices using 7-bit characters
+
 1 september 2004 Mariette
 - fixed typo in doc : ref page of Triangulation_2
 
