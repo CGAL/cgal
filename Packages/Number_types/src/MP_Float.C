@@ -297,7 +297,7 @@ to_double_exp(const MP_Float &b)
   }
 
   // the (int) cast is necessary for SunPro 5.3...
-  return std::make_pair(d, (int) exp * log_limb);
+  return std::make_pair(d, (int) (exp * log_limb));
 }
 }
 
