@@ -20,8 +20,8 @@
 #ifndef CGAL_CONIC_ARC_2_EQ_CORE_H
 #define CGAL_CONIC_ARC_2_EQ_CORE_H
 
-#include <CORE/poly/Poly.h>
-#include <CORE/poly/Sturm.h>
+//#include <CORE/poly/Poly.h>
+//#include <CORE/poly/Sturm.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -126,13 +126,22 @@ void _make_square_free (CORE::Polynomial<CfNT>& p)
   }
   
   // Now we have g(x) = gcd (p(x), p'(x)):
-  if (g.getTrueDegree() <= 0)
+  const int    g_deg = g.getTrueDegree();
+
+  if (g_deg <= 0)
     return;
 
-  // Make p(x) square-free by dividing it by g(x).
-  int    sf_deg = p.getTrueDegree() - g.getTrueDegree();
+  // Make p(x) square-free by dividing it by g(x). To avoid complications,
+  // make sure that p's leading coefficient is at least as large as g's.
+  const int    p_deg = p.getTrueDegree();
+  const int    sf_deg = p_deg - g_deg;
+  const CfNT   lead_p = p.getCoeff(p_deg);
+
+  std::vector<CfNT>  cmul(1);
+  cmul[0] = g.getCoeff(g_deg);
+  p *= CORE::Polynomial<CfNT>(cmul);
   p = p.pseudoRemainder(g);
-    
+
   // For some reason (IS THIS A BUG?), the leading coefficient of the 
   // remainder is missing -- fix this problem.
   if (p.getTrueDegree() != sf_deg)
@@ -142,7 +151,7 @@ void _make_square_free (CORE::Polynomial<CfNT>& p)
 
     for (i = 0; i < sf_deg; i++)
       cadd[i] = 0;
-    cadd[sf_deg] = 1;
+    cadd[sf_deg] = lead_p;
 
     p += CORE::Polynomial<CfNT>(cadd);
   }
@@ -187,7 +196,7 @@ int _solve_cubic_eq (const CfNT& a, const CfNT& b,
   {
     // Get the i'th real-valued root.
     roots[i - 1] = rootOf(p, i);
-  }
+  }  
 
   return (n_roots);
 }
@@ -333,7 +342,7 @@ int solve_quartic_eq (const CfNT& a, const CfNT& b, const CfNT& c,
   {
     // Get the i'th real-valued root.
     roots[i - 1] = rootOf(p, i);
-  }
+  } 
 
   return (n_roots);
 }
