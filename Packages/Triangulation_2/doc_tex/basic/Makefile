@@ -1,7 +1,7 @@
 LATEX_CONV_INPUTS=.:../../examples:Triangulation_2:TDS_2:Triangulation_2_ref:TDS2_ref:
 TEXINPUTS=.:/0/prisme_util/latex:/u/abeille/0/prisme/yvinec/tex/inputs:Triangulation_2:TDS_2:../../examples:Triangulation_2_ref:TD2_ref:
 
-doc:
+doc :
 	latex wrapper;
 	bibtex wrapper;
 	latex wrapper;
