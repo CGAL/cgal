@@ -86,8 +86,9 @@ quadratic_interpolation(ForwardIterator first, ForwardIterator beyond,
   for(; first !=beyond; ++first){
     f = function_value(first->first);
     grad = function_gradient(first->first);
-    if(!f.second || !grad.second)
-      //test is the values are correct:
+    //test if value and gradient are correctly retrieved:
+    CGAL_assertion(f.second);
+    if(!grad.second)
       return std::make_pair(Value_type(0), false);
     result += (first->second/norm) 
       *( f.first + grad.first*

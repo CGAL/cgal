@@ -25,7 +25,10 @@
 #include <CGAL/Voronoi_intersection_2_traits_3.h>
 #include <CGAL/Regular_triangulation_2.h>
 
-//contains the definition of the Comparator "closer_to_point":
+#include <CGAL/Iterator_project.h>
+
+//contains the definition of the Comparator "closer_to_point" and 
+// the function object Project_vertex_iterator_to_point
 #include <CGAL/surface_neighbor_coordinates_3.h>
 
 //-------------------------------------------------------------------
@@ -178,8 +181,9 @@ surface_neighbors_certified_3(InputIterator first,
   Face_circulator fc(it.incident_faces(vh)),
     fdone(fc);
   do
-    valid = (4*radius > traits.compute_squared_distance_2_object()
-	     (p, it.dual(fc)));
+    valid = (!it.is_infinite(fc) && 
+	     (4*radius > traits.compute_squared_distance_2_object()
+	      (p, it.dual(fc))));
   while(!valid && ++fc!=fdone);
   
   //get the neighbor points:
@@ -198,21 +202,22 @@ surface_neighbors_certified_3(InputIterator first,
 // => no certification is necessary
 template <class Dt, class OutputIterator>
 OutputIterator 
-surface_neighbors_3(const Dt& T, 
-			       const typename Dt::Geom_traits::Point_3& p,
-			       const typename Dt::Geom_traits::Vector_3& 
-			       normal, 
-			       OutputIterator out, 
-			       typename Dt::Cell_handle start 
-			       = typename Dt::Cell_handle(NULL)){
+surface_neighbors_3(const Dt& dt, 
+		    const typename Dt::Geom_traits::Point_3& p,
+		    const typename Dt::Geom_traits::Vector_3& 
+		    normal, 
+		    OutputIterator out, 
+		    typename Dt::Cell_handle start 
+		    = typename Dt::Cell_handle(NULL)){
   
   typedef Voronoi_intersection_2_traits_3<typename Dt::Geom_traits> I_gt;
-  return surface_neighbors_3(T, p, out, I_gt(p,normal),start);
+  return surface_neighbors_3(dt, p, out, I_gt(p,normal),start);
   
 };
+
 template <class Dt, class OutputIterator, class ITraits>
 OutputIterator 
-surface_neighbors_3(const Dt& T,
+surface_neighbors_3(const Dt& dt,
 		    const typename ITraits::Point_2& p,
 		    OutputIterator out, const ITraits& traits,
 		    typename Dt::Cell_handle start 
@@ -221,41 +226,38 @@ surface_neighbors_3(const Dt& T,
   typedef typename ITraits::FT            Coord_type;
   typedef typename ITraits::Point_2       Point_3;
   
-  typedef typename Dt::Cell_handle       Cell_handle;
-  typedef typename Dt::Facet             Facet;
-  typedef typename Dt::Locate_type       Locate_type;
+  typedef typename Dt::Cell_handle        Cell_handle;
+  typedef typename Dt::Vertex_handle      Vertex_handle;
+  typedef typename Dt::Locate_type        Locate_type;
+		    
+  //the Vertex_handle is, in fact, an iterator over vertex:
+  typedef Project_vertex_iterator_to_point< Vertex_handle>   Proj_point;
+  typedef Iterator_project<
+    typename std::vector< Vertex_handle >::iterator, 
+    Proj_point,
+    const Point_3&, 
+    const Point_3*,
+    std::ptrdiff_t,
+    std::forward_iterator_tag>  Point_iterator;
   
   Locate_type lt;
   int li, lj ;
-  Cell_handle c = T.locate(p, lt, li,lj,start);
-  
+  Cell_handle c = dt.locate(p, lt, li,lj,start);
+
+  //if p is located on a vertex: the only neighbor is found
   if(lt == Dt::VERTEX){
     *out++= (c->vertex(li))->point();
     return out;
   }
+
+  //otherwise get vertices in conflict
+  typename std::vector< Vertex_handle >  conflict_vertices;
+  dt.vertices_in_conflict(p,c,
+			 std::back_inserter(conflict_vertices));
   
-  typename std::vector<Facet> hole;
-  T.find_conflicts(p, c, std::back_inserter(hole), 
-		   Emptyset_iterator());
-  
-  
-  typename std::set< Point_3, 
-    typename Dt::Geom_traits::Less_xyz_3 > adjacent;
-  int idx;
-  typename std::vector<Facet>::const_iterator hit 
-    = hole.begin();
-  for(; hit!=hole.end(); hit++){
-    c = hit->first;
-    idx = hit->second;
-    for(int j=0;j<4;++j)
-      if(j!=idx)
-	if(!T.is_infinite(c->vertex(j)))
-	  adjacent.insert(c->vertex(j)->point());
-  }
-  
-  return 
-    surface_neighbors_3
-    (adjacent.begin(), adjacent.end(), p, out, traits);
+  return surface_neighbors_3(Point_iterator(conflict_vertices.begin()),
+			     Point_iterator(conflict_vertices.end()), 
+			     p, out, traits); 
 };
 CGAL_END_NAMESPACE
 

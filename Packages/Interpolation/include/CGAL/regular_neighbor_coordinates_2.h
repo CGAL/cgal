@@ -190,7 +190,7 @@ regular_neighbor_coordinates_2(const Rt& rt,
   EdgeIterator hit = hole_end;
   --hit;
   //to start: prev is the "last" vertex of the hole
-  // later: prev is the last vertex processed (previously) 
+  // later: prev is the last vertex processed (previously)
   Vertex_handle prev = hit->first->vertex(rt.cw(hit->second));
   hit = hole_begin;
   while(hit != hole_end)
@@ -198,15 +198,18 @@ regular_neighbor_coordinates_2(const Rt& rt,
       Coord_type area(0);
       Vertex_handle current = hit->first->vertex(rt.cw(hit->second));
       
+      //a first Voronoi vertex of the cell of p:
       vor[0] = traits.construct_weighted_circumcenter_2_object()
  	(current->point(),
 	 hit->first->vertex(rt.ccw(hit->second))->point(), p);
       *vor_vertices++= vor[0];
-
+      
+      //triangulation of the Voronoi subcell: 
+      //a second vertex as base
       Face_circulator fc = rt.incident_faces(current, hit->first);
       ++fc;
       vor[1] = rt.dual(fc);
-  
+      // iteration over all other "old" Voronoi vertices
       while(!fc->has_vertex(prev))
 	{
 	  ++fc;
@@ -215,7 +218,7 @@ regular_neighbor_coordinates_2(const Rt& rt,
 	  area += polygon_area_2(vor.begin(), vor.end(), Traits());
 	  vor[1] = vor[2];
 	}
-
+      //the second Voronoi vertex of the cell of p:
       vor[2] = 
 	traits.construct_weighted_circumcenter_2_object()
 	(prev->point(),current->point(),p);

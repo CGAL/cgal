@@ -73,7 +73,6 @@ int main()
 //   _test_surface_neighbors_3_sphere( Dt3() );
 //   std::cout << " done." << std::endl << std::endl;
 
-
   std::cout << "Using Exact_predicates_exact_constructions_kernel: "
 	    << std::endl;
 
@@ -81,14 +80,15 @@ int main()
   Transformation identity(CGAL::IDENTITY);
   std::cout << "Testing surface_neighbors_3 on a cube with axis : " 
 	    << identity(K2::Vector_3(0,0,1)) << ",  "
-	    << identity(K2::Vector_3(0,1,0))<< ",  "<< identity(K2::Vector_3(1,0,0))
+	    << identity(K2::Vector_3(0,1,0))<< ",  "
+	    << identity(K2::Vector_3(1,0,0))
 	    << std::endl;
   std::cout << " with grid sample points";
   _test_surface_neighbors_3_cube(Dt2(),identity);
   std::cout << " done." << std::endl; 
   
   std::cout << " with random sample points";
-  _test_surface_neighbors_3_cube( Dt2(), identity,75, K2::FT(1e-2),false);
+  _test_surface_neighbors_3_cube( Dt2(), identity,150, K2::FT(1e-2),false);
   std::cout << " done." << std::endl << std::endl; 
   
   //ROTATED CUBE
