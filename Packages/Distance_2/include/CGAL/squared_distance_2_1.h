@@ -50,7 +50,7 @@ namespace CGALi {
 		   const K& k)
   {
     typename K::Vector_2 vec = k.construct_vector_2_object()(pt2, pt1);
-    return (typename K::FT)(vec*vec);
+    return (typename K::FT)k.compute_squared_length_2_object()(vec);
   }
 
   template <class K>
@@ -116,7 +116,7 @@ namespace CGALi {
     Vector_2 diff = construct_vector(ray.source(), pt);
     const Vector_2 &dir = ray.direction().vector();
     if (!is_acute_angle(dir,diff, k) )
-      return (typename K::FT)(diff*diff);
+      return (typename K::FT)k.compute_squared_length_2_object()(diff);
     return CGALi::squared_distance(pt, ray.supporting_line(), k);
   }
 
@@ -143,7 +143,7 @@ namespace CGALi {
     Vector_2 segvec = construct_vector(seg.source(), seg.target());
     RT d = wdot(diff,segvec, k);
     if (d <= (RT)0)
-      return (typename K::FT)(diff*diff);
+      return (typename K::FT)k.compute_squared_length_2_object()(diff);
     RT e = wdot(segvec,segvec, k);
     if (wmult((K*)0 ,d, segvec.hw()) > wmult((K*)0, e, diff.hw()))
       return CGALi::squared_distance(pt, seg.target(), k);
@@ -487,7 +487,7 @@ namespace CGALi {
     typedef typename K::FT FT;
     if (!is_acute_angle(ray1dir, from1to2, k)) {
       if (!same_direction(ray1dir, ray2dir, k))
-	return (typename K::FT)(from1to2*from1to2);
+	return (typename K::FT)k.compute_squared_length_2_object()(from1to2);
     }
     RT wcr, w;
     wcr = wcross(ray1dir, from1to2, k);
@@ -553,7 +553,7 @@ namespace CGALi {
     typedef typename K::Vector_2 Vector_2;
     Vector_2 normalvec(line.a(), line.b());
     Vector_2 diff = construct_vector(line.point(), ray.source());
-    FT sign_dist = diff*normalvec;
+    FT sign_dist = k.compute_scalar_product_2_object()(diff,normalvec);
     if (sign_dist < FT(0)) {
       if (is_acute_angle(normalvec, ray.direction().vector(), k) )
 	return (FT)0;
@@ -561,7 +561,7 @@ namespace CGALi {
       if (is_obtuse_angle(normalvec, ray.direction().vector(), k) )
 	return (FT)0;
     }
-    return (typename K::FT)((sign_dist*sign_dist)/(normalvec*normalvec));
+    return (typename K::FT)((sign_dist*sign_dist)/k.compute_squared_length_2_object()(normalvec));
   }
 
   template <class K>
@@ -719,9 +719,10 @@ class Squared_distance_to_ray {
     typename K::FT operator()(typename K::Point_2 const &pt) const
     {
       typename K::Construct_vector_2 construct_vector;
+      typename K::Compute_squared_length_2 compute_squared_length;
         typename K::Vector_2 diff = construct_vector(ray_source, pt);
         if (! CGALi::is_acute_angle(ray_dir,diff, K()) )
-            return (typename K::FT)(diff*diff);
+            return (typename K::FT)compute_squared_length(diff);
         return supline_dist(pt);
     }
 };
@@ -763,12 +764,13 @@ class Squared_distance_to_segment {
     typename K::FT operator()(typename K::Point_2 const &pt) const
     {
         typename K::Construct_vector_2 construct_vector;
+	typename K::Compute_squared_length_2 compute_squared_length;
         typedef typename K::RT RT;
         // assert that the segment is valid (non zero length).
         typename K::Vector_2 diff = construct_vector(seg_source, pt);
         RT d = CGALi::wdot(diff,segvec, K());
         if (d <= (RT)0)
-            return (typename K::FT)(diff*diff);
+            return (typename K::FT)compute_squared_length(diff);
         if (wmult((K*)0 ,d, segvec.hw()) > wmult((K*)0, e, diff.hw()))
             return CGALi::squared_distance(pt, seg_target, K());
         return supline_dist(pt);

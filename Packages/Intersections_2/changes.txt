@@ -1,3 +1,6 @@
+09 Mar 2004 Andreas Fabri
+Replaced operator*(Vector,Vector), and operator*(Vector,NT) with functors
+
 2.33 (02 Jan 2004) [rursu]
 - fixed Ray_2_Triangle_2_intersection.h for gcc 3.4
 

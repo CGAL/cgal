@@ -1,3 +1,6 @@
+09 Mar 2004  Andreas Fabri
+- Replaced operator*(Vector,Vector), and operator*(Vector,NT) with functors
+
 25 Feb 2004  Sylvain Pion
 - parallel(x,x,k) is now in CGALi::.
 

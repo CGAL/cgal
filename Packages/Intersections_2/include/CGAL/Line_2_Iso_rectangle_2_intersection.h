@@ -173,12 +173,13 @@ Line_2_Iso_rectangle_2_pair<K>::
 intersection(typename K::Point_2 &result) const
 {
   typename K::Construct_translated_point_2 translated_point;
+  typename K::Construct_scaled_vector_2 construct_scaled_vector;
 
     if (!_known)
         intersection_type();
     if (_result != POINT)
         return false;
-    result = translated_point(_ref_point,_dir * _min);
+    result = translated_point(_ref_point, construct_scaled_vector(_dir, _min));
     return true;
 }
 
@@ -189,12 +190,13 @@ intersection(typename K::Segment_2 &result) const
 {
   typename K::Construct_segment_2 construct_segment_2;
   typename K::Construct_translated_point_2 translated_point;
+  typename K::Construct_scaled_vector_2 construct_scaled_vector;
     if (!_known)
         intersection_type();
     if (_result != SEGMENT)
         return false;
-    result = construct_segment_2(translated_point(_ref_point, _dir*_min), 
-				 translated_point(_ref_point, _dir*_max));
+    result = construct_segment_2(translated_point(_ref_point, construct_scaled_vector(_dir,_min)), 
+				 translated_point(_ref_point, construct_scaled_vector(_dir,_max)));
     return true;
 }
 
