@@ -1,17 +1,17 @@
 % C++ and generic programming
-\noindent \textbf{CGAL and generic programming.}
-The CGAL library is a joint effort between nine European
-institutes~\cite{fgkss-dccga-00}. The goal of CGAL is to make
-available to users in industry and academia some efficient solutions
-to basic geometric problems developed in the area of computational
-geometry in a C++ software library.
+\noindent \textbf{Design patterns and generic programming.}
+Before using CGAL, it is mandatory to be familiar with C++,
+\emph{design patterns} and the \emph{generic programming paradigm}. 
+Design patterns \cite{Gamma:1995:DP} describe successful
+and \emph{reusable} solutions to standard software problems.
+The generic programming paradigm \cite{Alexandrescu:2001:MCD}
+features the notion of C++ class templates and function 
+templates, which is at the corner stone of all features 
+provided by CGAL. Details of the design of the CGAL polyhedron
+data structure are given in next section.
 
-Before using CGAL, it is mandatory to be familiar with C++ and the
-\italic{generic programming paradigm}. The latter features the notion
-of C++ class templates and function templates, which is at the corner
-stone of all features provided by CGAL.
-
-An example illustrating generic programming is the Standard Template
+An example illustrating design patterns and the generic 
+programming is the Standard Template
 Library (STL)~\cite{ms-stl-96}. Generality and flexibility is achieved
 with a set of \italic{concepts}, where a concept is a well defined set
 of requirements. One of them is the \italic{iterator} concept, which
