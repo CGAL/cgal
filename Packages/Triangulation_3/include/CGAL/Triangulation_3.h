@@ -2568,7 +2568,7 @@ flip_flippable( Cell_handle c, int i, int j )
   // flips edge i,j of cell c
 {
 #if !defined CGAL_TRIANGULATION_NO_PRECONDITIONS && \
-    !defined CGAL_NO_PRECONDITIONS
+    !defined CGAL_NO_PRECONDITIONS && !defined NDEBUG
   CGAL_triangulation_precondition( (dimension() == 3) 
 				   && (0<=i) && (i<4) 
 				   && (0<=j) && (j<4)
