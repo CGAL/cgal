@@ -89,8 +89,8 @@ int  main()
   cout<<"Calling map overlay"<<endl;
   cout<<endl;
   
-  PmWalkPL  ovl_walk, map1_walk1, map2_walk2;
-  MapOverlay map1(pm1, &map1_walk1), map2(pm2, &map2_walk2);
+  PmWalkPL  ovl_walk;
+  MapOverlay map1(pm1), map2(pm2);
   MapOverlay map_overlay(map1, map2, &ovl_walk);
 
   cout<<"Writing the resulting subdivision induced the the overlay of the two input subdivision"<<endl;
@@ -111,10 +111,3 @@ int  main()
   
   return 0;
 }
-
-
-
-
-
-
-
