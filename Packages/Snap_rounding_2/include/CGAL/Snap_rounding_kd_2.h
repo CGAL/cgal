@@ -141,6 +141,7 @@ private:
   }
 
 public:
+
   Multiple_kd_tree(std::list<std::pair<Point_2,SAVED_OBJECT> > 
                    &inp_points_list,int inp_number_of_trees,
                    std::list<Segment> &seg_list) : 
@@ -219,7 +220,7 @@ public:
 			  right_iter->second);
 
     Point_2 p1 = rec.vertex(0);
-    Point_2 p2 = rec.vertex(2);// end of new code
+    Point_2 p2 = rec.vertex(2);
 
     my_point<NT,SAVED_OBJECT> point1(p1); 
     my_point<NT,SAVED_OBJECT> point2(p2);
