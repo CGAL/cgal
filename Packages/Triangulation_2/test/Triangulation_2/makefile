@@ -31,7 +31,7 @@ LDFLAGS = $(TESTSUITE_LDFLAGS) \
 #---------------------------------------------------------------------#
 
 all: test_triangulation_geom_traits test_triangulation_tds \
-	test_triangulation_2 test_delaunay_triangulation_2
+	test_triangulation_2 test_delaunay_triangulation_2 test_constrained_triangulation_2
 
 test_triangulation_geom_traits: test_triangulation_geom_traits.o
 	$(CGAL_CXX) -o test_triangulation_geom_traits test_triangulation_geom_traits.o $(LDFLAGS)
