@@ -1,3 +1,8 @@
+3.6    (24 May 2001)
+- shortened lines over 80 characters
+- fixed paths to example code in doc.
+- change names of example, demo and test subdirectories to Convex_hull_2
+
 3.5    (22 May 2001)
 - converted to new documentation style
 
