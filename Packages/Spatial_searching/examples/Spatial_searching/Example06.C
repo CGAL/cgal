@@ -118,8 +118,14 @@ int test_range_searching(CGAL::Split_rules::Split_rule s) {
   std::vector<NN_priority_search::Item_with_distance>::iterator it = nearest_neighbours.begin();
 
   // CGAL::copy_n(NN.begin(), nearest_neighbour_number, it);
-  NN_priority_search::iterator NN_it=NN.begin();
-  my_copy_n(NN_it, nearest_neighbour_number, it);
+  // NN_priority_search::iterator NN_it=NN.begin();
+  // use non const int neighbour_number instead of const int nearest_neighbour nubmer
+  // to avoid Borland compiler bug
+  int neighbour_number_copy=nearest_neighbour_number;
+  CGAL::copy_n(NN.begin(), neighbour_number_copy, it);
+  // my_copy_n(NN_it, neighbour_number, it);
+  // my_copy_n(NN.begin(), neighbour_number, it);
+
 
   // my_copy_n(NN.begin(), nearest_neighbour_number, it); 
   // compiler  i686_CYGWINNT-5.0-1.3.2_bcc32.exe-5.51 complained
