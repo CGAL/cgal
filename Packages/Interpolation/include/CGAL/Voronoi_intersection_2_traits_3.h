@@ -248,11 +248,11 @@ private:
     }
 };
 
-template < class _R>
+template < class K >
 class Voronoi_intersection_2_traits_3
 {
 public:
-  typedef _R Rep;
+  typedef K Rep;
 
   typedef typename Rep::RT                          Weight;
   typedef typename Rep::FT                          FT;
@@ -338,9 +338,7 @@ public:
   //for constructions of dual:
   Construct_weighted_circumcenter_2
   construct_weighted_circumcenter_2_object() const
-    {
-      return Construct_weighted_circumcenter_2(a,normal);
-    }
+    { return Construct_weighted_circumcenter_2(a,normal); }
 
   Construct_radical_axis_2  construct_radical_axis_2_object() const
     {return Construct_radical_axis_2(a,normal);}
@@ -348,8 +346,8 @@ public:
   Construct_ray_2  construct_ray_2_object() const
     {return Construct_ray_2();}
 
-Construct_segment_2  construct_segment_2_object() const
-{return Construct_segment_2();}
+  Construct_segment_2  construct_segment_2_object() const
+    {return Construct_segment_2();}
 
   Construct_triangle_2  construct_triangle_2_object() const
     {return Construct_triangle_2();}
@@ -359,14 +357,12 @@ Construct_segment_2  construct_segment_2_object() const
   Less_distance_to_point_2 less_distance_to_point_2_object() const
      { return Less_distance_to_point_2();}
 
-Compute_squared_distance_2 compute_squared_distance_2_object() const
+  Compute_squared_distance_2 compute_squared_distance_2_object() const
     { return Compute_squared_distance_2();}
 
-public:
-    Voronoi_intersection_2_traits_3<_R>(const Point_2& _p = Point_2(),
-					const Vector_2& _normal
-					= NULL_VECTOR)
-      : a(_p), normal(_normal){};
+  Voronoi_intersection_2_traits_3<K>(const Point_2& _p = Point_2(),
+				     const Vector_2& _normal = NULL_VECTOR)
+      : a(_p), normal(_normal) {}
 
   const Vector_2& get_normal() const {return normal;}
   const Point_2&  get_point() const {return a;}
@@ -378,7 +374,6 @@ private:
 };
 
 
- /********************************************/
 //put the homogeneous or cartesian tag
 template < class Point, class Vector >
 inline

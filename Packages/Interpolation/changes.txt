@@ -1,13 +1,16 @@
-10 September Sylvain Pion
+11 September 2004 Sylvain Pion
+- Replace _R by K.
+
+10 September 2004 Sylvain Pion
 - Repair breakage due to Weighted_point changes.
 
-9 September Sylvain Pion
+9 September 2004 Sylvain Pion
 - Code reformatting.
 
-8 September Sylvain Pion
+8 September 2004 Sylvain Pion
 - Remove makefile_local files, regenerate makefiles, update README files.
 
-7 September Andreas Fabri
+7 September 2004 Andreas Fabri
 - Encapsulated \includegraphics in a \begin{texonly} and added \begin{htmlonly}
 
 27 August 2004 Sylvain Pion
