@@ -27,11 +27,12 @@ int main()
 {
   //SETDTHREAD(3); CGAL::set_pretty_mode ( std::cerr );
   CGAL_TEST_START;
+  
   { PRT(Integer,Integer);
     typedef Integer NT; typedef Polynomial<Integer> RP;
       RP::NT seq[4] = { 0, 1, 2, 0 };
       RP p1, p2(NT(1)), p3(NT(1),NT(1)), p4(5,2), p5(-2,5), p6(4,1), 
-         p7(3,0), p8(seq,seq+4);
+         p7(3,0), p8(std::make_pair(&seq[0], &seq[4]));
       RP p10(-1,0,1), p11(-1,1), p12(1,1);
       NT r1(2), r2(-2);
       std::cout << "A" << std::endl;
@@ -45,7 +46,7 @@ int main()
       CGAL_TEST((p4+p5) == RP(3,7));
       CGAL_TEST((p4-p5) == RP(7,-3));
       RP::NT prod[3] = { -10, 21, 10 };
-      CGAL_TEST((p4*p5) == RP(prod,prod+3));
+      CGAL_TEST((p4*p5) == RP(std::make_pair(&prod[0],&prod[3])));
       CGAL_TEST((p2*p3) == p3);
       r1+p3;
       p3+r1;
@@ -126,7 +127,7 @@ int main()
     typedef int NT; typedef Polynomial<Integer> RP;
       RP::NT seq[4] = { 0, 1, 2, 0 };
       RP p1, p2(NT(1)), p3(NT(1),NT(1)), p4(5,2), p5(-2,5), p6(4,1), 
-         p7(3,0), p8(seq,seq+4);
+         p7(3,0), p8(std::make_pair(&seq[0],&seq[4]));
       RP p10(-1,0,1), p11(-1,1), p12(1,1);
       NT r1(2), r2(-2);
 
@@ -140,7 +141,7 @@ int main()
       CGAL_TEST((p4+p5) == RP(3,7));
       CGAL_TEST((p4-p5) == RP(7,-3));
       RP::NT prod[3] = { -10, 21, 10 };
-      CGAL_TEST((p4*p5) == RP(prod,prod+3));
+      CGAL_TEST((p4*p5) == RP(std::make_pair(&prod[0],&prod[3])));
       CGAL_TEST((p2*p3) == p3);
       r1+p3;
       p3+r1;
@@ -210,12 +211,14 @@ int main()
       CGAL::is_valid(p6);
 
   }
+  
   { PRT(double,Integer);
     typedef double NT; typedef Polynomial<Integer> RP;
       RP::NT seq[4] = { 0, 1, 2, 0 };
       RP p1, p2(NT(1)), p3(NT(1),NT(1)), p4(5,2), p5(-2,5), p6(4,1), 
-         p7(3,0), p8(seq,seq+4);
+         p7(3,0), p8(std::make_pair(&seq[0],&seq[4]));
       RP p10(-1,0,1), p11(-1,1), p12(1,1);
+
       NT r1(2), r2(-2);
 
       CGAL_TEST(p1.degree()==-1);
@@ -228,7 +231,7 @@ int main()
       CGAL_TEST((p4+p5) == RP(3,7));
       CGAL_TEST((p4-p5) == RP(7,-3));
       RP::NT prod[3] = { -10, 21, 10 };
-      CGAL_TEST((p4*p5) == RP(prod,prod+3));
+      CGAL_TEST((p4*p5) == RP(std::make_pair(&prod[0],&prod[3])));
       CGAL_TEST((p2*p3) == p3);
       r1+p3;
       p3+r1;
@@ -298,11 +301,12 @@ int main()
       CGAL::is_valid(p6);
 
   }
+  
   { PRT(int,int);
     typedef int NT; typedef Polynomial<int> RP;
       RP::NT seq[4] = { 0, 1, 2, 0 };
       RP p1, p2(NT(1)), p3(NT(1),NT(1)), p4(5,2), p5(-2,5), p6(4,1), 
-         p7(3,0), p8(seq,seq+4);
+         p7(3,0), p8(std::make_pair(&seq[0],&seq[4]));
       RP p10(-1,0,1), p11(-1,1), p12(1,1);
       NT r1(2), r2(-2);
 
@@ -316,7 +320,7 @@ int main()
       CGAL_TEST((p4+p5) == RP(3,7));
       CGAL_TEST((p4-p5) == RP(7,-3));
       RP::NT prod[3] = { -10, 21, 10 };
-      CGAL_TEST((p4*p5) == RP(prod,prod+3));
+      CGAL_TEST((p4*p5) == RP(std::make_pair(&prod[0],&prod[3])));
       CGAL_TEST((p2*p3) == p3);
       r1+p3;
       p3+r1;
@@ -386,11 +390,12 @@ int main()
       CGAL::is_valid(p6);
 
   }
+  
   { PRT(double,int);
     typedef double NT; typedef Polynomial<int> RP;
       RP::NT seq[4] = { 0, 1, 2, 0 };
       RP p1, p2(NT(1)), p3(NT(1),NT(1)), p4(5,2), p5(-2,5), p6(4,1), 
-         p7(3,0), p8(seq,seq+4);
+         p7(3,0), p8(std::make_pair(&seq[0],&seq[4]));
       RP p10(-1,0,1), p11(-1,1), p12(1,1);
       NT r1(2), r2(-2);
 
@@ -404,7 +409,7 @@ int main()
       CGAL_TEST((p4+p5) == RP(3,7));
       CGAL_TEST((p4-p5) == RP(7,-3));
       RP::NT prod[3] = { -10, 21, 10 };
-      CGAL_TEST((p4*p5) == RP(prod,prod+3));
+      CGAL_TEST((p4*p5) == RP(std::make_pair(&prod[0],&prod[3])));
       CGAL_TEST((p2*p3) == p3);
       r1+p3;
       p3+r1;
