@@ -1062,7 +1062,7 @@ os << "] } }\n"
       "} # Shape\n";
   os << "] # children\n"
     "} # Group\n";
-  std::cout << "-- vrml result dumped." << std::endl;
+  std::cout << "-- wrl result dumped." << std::endl;
 }
 
 
