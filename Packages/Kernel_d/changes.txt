@@ -1,5 +1,8 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
+0.9.63 (17 April 2002)
+   removed SIMPLE_INTERFACE for Borland in Vector__.h
+
 0.9.62 (17 April 2002)
    removed more non-const macros for SIMPLE_INTERFACE to resolve more
    ambiguities

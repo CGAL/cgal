@@ -8,11 +8,11 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.4-I-64 $
-// release_date  : $CGAL_Date: 2002/03/18 $
+// release       : $CGAL_Revision: CGAL-2.4-I-75 $
+// release_date  : $CGAL_Date: 2002/04/10 $
 //
 // file          : include/CGAL/Kernel_d/Vector__.h
-// package       : Kernel_d (0.9.54)
+// package       : Kernel_d (0.9.59)
 // maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
 // chapter       : Kernel
 //
@@ -44,7 +44,7 @@
 
 namespace CGALLA {
 
-#if defined(_MSC_VER) || defined(__BORLANDC__)
+#if defined(_MSC_VER)//  let's only do it  for Microsoft  || defined(__BORLANDC__)
 #define CGAL_SIMPLE_INTERFACE
 #endif
 
@@ -111,7 +111,7 @@ protected:
   NT* v_; int d_;
   static allocator_type MM;
 
-#ifndef CGAL_SIMPLE_INTERFACE
+#if ! defined( CGAL_SIMPLE_INTERFACE ) //&& ! defined(__BORLANDC__)
 
   inline void allocate_vec_space(NT*& vi, int di)
   {
@@ -132,7 +132,7 @@ protected:
      manager. */
 
     NT* p = vi + di - 1;
-    while (p >= vi)  { p->~NT(); p--; }
+    while (p >= vi)  { MM.destroy(p); p--; }  //af:  as proposed by sylvain
     MM.deallocate(vi, di);
     vi = (NT*)0;
   }
@@ -196,9 +196,9 @@ Vector_(int d, const NT& x)
 
 #ifdef CGAL_SIMPLE_INTERFACE
 
-//FIXIT(NT*)
+FIXIT(NT*)
 FIXIT(const NT*)
-//FIXIT(int*)
+FIXIT(int*)
 FIXIT(const int*)
 //FIXIT(std::vector<NT>::interator)
 //FIXIT(std::vector<NT>::const_interator)
