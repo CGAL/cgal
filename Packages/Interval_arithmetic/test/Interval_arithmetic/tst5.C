@@ -39,27 +39,27 @@
 #define CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
 #include <CGAL/Arithmetic_filter.h>
 
-using namespace CGAL;
-
 // Please pay attention to the workaround at the top of the file.
 
 // Don't be stupid, Gmpz can only store integers !!!
-// typedef Filtered_exact<double, Gmpz> NT;
-// typedef Filtered_exact<leda_real, leda_real> NT;
-// typedef Filtered_exact<double, leda_bigfloat> NT;
+// typedef CGAL::Filtered_exact<double, CGAL::Gmpz> NT;
+// typedef CGAL::Filtered_exact<leda_real, leda_real> NT;
+// typedef CGAL::Filtered_exact<double, leda_bigfloat> NT;
 #ifdef CGAL_USE_LEDA
-typedef Filtered_exact<double, leda_real> NT;
+typedef CGAL::Filtered_exact<double, leda_real> NT;
+#elif defined(CGAL_USE_GMP)
+typedef CGAL::Filtered_exact<double, CGAL::Gmpz> NT; // Should be exact rationnals
 #else
-typedef Filtered_exact<double, Gmpz> NT; // Should be rationnals
+typedef CGAL::Filtered_exact<double, double> NT; // Should be exact rationnals
 #endif // CGAL_USE_LEDA
-// typedef Filtered_exact<double, leda_real, Filter_Cache> NT;
-// typedef Filtered_exact<double, leda_rational> NT;
-// typedef Filtered_exact<float, leda_real> NT;
-// typedef Filtered_exact<unsigned short int, leda_real> NT;
-// typedef Filtered_exact<int, leda_real> NT;
+// typedef CGAL::Filtered_exact<double, leda_real, Filter_Cache> NT;
+// typedef CGAL::Filtered_exact<double, leda_rational> NT;
+// typedef CGAL::Filtered_exact<float, leda_real> NT;
+// typedef CGAL::Filtered_exact<unsigned short int, leda_real> NT;
+// typedef CGAL::Filtered_exact<int, leda_real> NT;
 // typedef Fixed_precision_nt NT;
 // typedef double NT;
-// typedef Gmpz NT;
+// typedef CGAL::Gmpz NT;
 // typedef leda_real NT;
 // typedef leda_rational NT;
 // typedef Double_eps NT;
@@ -77,7 +77,7 @@ int main()
   // double d = to_double(ia);
   // cin >> ia;
   // std::cout << ia << std::endl;
-  set_eps(0.0001);
+  CGAL::set_eps(0.0001);
   bench();
   return test();
 }
@@ -88,7 +88,7 @@ void bench()
   int i;
   CGAL::Timer t;
   double dt;
-  Comparison_result result;
+  CGAL::Comparison_result result;
   NT px, py, la, lb, lc;
 
   px=1; py=2.0/3; la=3.0/5; lb=4.0/7; lc=5.0/6;
@@ -97,7 +97,7 @@ void bench()
   // NT ppx(py);
   dt = t.time(); t.start();
   for (i=0; i<loops; i++)
-    result = compare_y_at_xC2(px, py, la, lb, lc);
+    result = CGAL::compare_y_at_xC2(px, py, la, lb, lc);
   t.stop();
   std::cout << (int) result << "\t" << t.time()-dt << std::endl;
 }
@@ -108,11 +108,13 @@ int test()
   NT px, py, la, lb, lc;
   NT a (1);
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
-  Filtered_exact< Quotient<Gmpz>, Quotient<Gmpz> > qq (3,5);
-  std::cout << (int) compare_y_at_xC2(qq,qq,qq,qq,qq);
+#ifdef CGAL_USE_GMP
+  CGAL::Filtered_exact< CGAL::Quotient<CGAL::Gmpz>, CGAL::Quotient<CGAL::Gmpz> > qq (3,5);
+  std::cout << (int) CGAL::compare_y_at_xC2(qq,qq,qq,qq,qq);
+#endif
 #ifdef CGAL_USE_LEDA
-  Filtered_exact< Quotient<int>, leda_rational> ii (3,2);
-  Filtered_exact< Quotient<leda_integer>, Quotient<leda_integer> > jj (4,5);
+  CGAL::Filtered_exact< CGAL::Quotient<int>, leda_rational> ii (3,2);
+  CGAL::Filtered_exact< CGAL::Quotient<leda_integer>, CGAL::Quotient<leda_integer> > jj (4,5);
 
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
   Interval_nt nt = jj.interval();
@@ -122,10 +124,10 @@ int test()
 #endif // CGAL_USE_LEDA
 #endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
   px=1; py=2; la=3; lb=4; lc=5;
-  std::cout << "Result 1st test: " << (int)compare_y_at_xC2(px, py, la, lb, lc);
+  std::cout << "Result 1st test: " << (int)CGAL::compare_y_at_xC2(px, py, la, lb, lc);
   std::cout << " ( == 1 )\n";
   px=1.1; py=1.7; la=1.3; lb=1.5; lc=-3.98;
-  std::cout << "Result 2nd test: " << (int)compare_y_at_xC2(px, py, la, lb, lc);
+  std::cout << "Result 2nd test: " << (int)CGAL::compare_y_at_xC2(px, py, la, lb, lc);
   std::cout << " ( == 0 ) (not sure, it depends of the first approx)\n";
   std::cout << a << std::endl;
   return 0;
