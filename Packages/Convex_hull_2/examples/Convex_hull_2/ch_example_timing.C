@@ -1,15 +1,7 @@
 //
 // file: examples/Convex_hull_2/ch_example_timing.C
 //
-#include <CGAL/Homogeneous.h>
 #include <CGAL/Cartesian.h>
-
-#ifdef CGAL_USE_LEDA
-#include <CGAL/leda_integer.h>
-#include <CGAL/leda_rational.h>
-#include <CGAL/leda_real.h>
-#endif // CGAL_USE_LEDA
-
 #include <CGAL/convex_hull_traits_2.h>
 
 #include <fstream>
@@ -26,29 +18,26 @@
 
 #include <CGAL/ch_timing_2.h>
 
-using namespace std;
-
 typedef double                                      nu_type;
 typedef CGAL::Cartesian< nu_type >                  TraitsCls;
 typedef TraitsCls::Point_2                          Point2;
 
-int
-main( int argc, char* argv[] )
+int main( int argc, char* argv[] )
 {
   if (argc < 2 || argc > 3)   // assertion
   {
-      cerr << "Usage: ch_example_timing datafilename ";
-      cerr << "[number_of_iterations]";
+      std::cerr << "Usage: ch_example_timing data_file_name ";
+      std::cerr << "[number_of_iterations]" << std::endl;
       exit(1);
   }
-  vector< Point2 > V;
-  vector< Point2 > VE;
-  ifstream F(argv[1]);
+  std::vector< Point2 > V;
+  std::vector< Point2 > VE;
+  std::ifstream F(argv[1]);
   CGAL::set_ascii_mode( F );
-  istream_iterator< Point2>  in_start( F );
-  istream_iterator< Point2>  in_end;
-  copy( in_start, in_end , back_inserter(V) );
-  copy( V.begin(), V.end(), back_inserter(VE) );
+  std::istream_iterator< Point2>  in_start( F );
+  std::istream_iterator< Point2>  in_end;
+  std::copy( in_start, in_end , std::back_inserter(V) );
+  std::copy( V.begin(), V.end(), std::back_inserter(VE) );
   int iterations;
   if (argc == 3)
     iterations = atoi( argv[2] );

@@ -34,16 +34,11 @@ ch_timing( ForwardIterator first, ForwardIterator last,
            int iterations, 
            const Traits& ch_traits)
 {
-#ifndef CGAL_CFG_NO_NAMESPACE
-  using std::cout;
-  using std::endl;
-#endif // CGAL_CFG_NO_NAMESPACE
-
   int i;
   CGAL::Timer  Clck;
   double       delta_t;
 
-  cout << endl;
+  std::cout << std::endl;
   OutputIterator  restart = result;
 
   Clck.start();
@@ -57,7 +52,7 @@ ch_timing( ForwardIterator first, ForwardIterator last,
   delta_t = Clck.time();
   Clck.reset();
 
-  cout << "ch_akl_toussaint:         " << delta_t << endl;
+  std::cout << "ch_akl_toussaint:         " << delta_t << std::endl;
 
   Clck.start();
 
@@ -70,7 +65,7 @@ ch_timing( ForwardIterator first, ForwardIterator last,
   delta_t = Clck.time();
   Clck.reset();
 
-  cout << "ch_eddy:                  " << delta_t << endl;
+  std::cout << "ch_eddy:                  " << delta_t << std::endl;
 
   Clck.start();
 
@@ -83,7 +78,7 @@ ch_timing( ForwardIterator first, ForwardIterator last,
   delta_t = Clck.time();
   Clck.reset();
 
-  cout << "ch_bykat                  " << delta_t << endl;
+  std::cout << "ch_bykat                  " << delta_t << std::endl;
 
   Clck.start();
 
@@ -96,7 +91,7 @@ ch_timing( ForwardIterator first, ForwardIterator last,
   delta_t = Clck.time();
   Clck.reset();
 
-  cout << "ch_bykat_with_threshold:  " << delta_t << endl;
+  std::cout << "ch_bykat_with_threshold:  " << delta_t << std::endl;
 
   Clck.start();
 
@@ -109,7 +104,7 @@ ch_timing( ForwardIterator first, ForwardIterator last,
   delta_t = Clck.time();
   Clck.reset();
 
-  cout << "ch_graham_andrew:         " << delta_t << endl;
+  std::cout << "ch_graham_andrew:         " << delta_t << std::endl;
 
   Clck.start();
 
@@ -122,7 +117,7 @@ ch_timing( ForwardIterator first, ForwardIterator last,
   delta_t = Clck.time();
   Clck.reset();
 
-  cout << "ch_jarvis:                " << delta_t << endl;
+  std::cout << "ch_jarvis:                " << delta_t << std::endl;
 
 }
 
