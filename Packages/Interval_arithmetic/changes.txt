@@ -1,5 +1,9 @@
 Changes done to the Interval Arithmetic package.
 
+Version 2.5 on 26 November 1998
+- Mips assembly commented out, it fails for the test-suite...
+- Filtering stuff in place, doc updated.
+
 Version 2.4 on 12 November 1998
 - Mips + GNU uses assembly versions (thanks to Christoph Burnikel).
 - CGAL_{sign,compare,abs,min,max,is_valid,is_finite} specialized for speed and
