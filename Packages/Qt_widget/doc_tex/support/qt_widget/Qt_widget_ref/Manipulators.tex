@@ -13,8 +13,8 @@
 \ccHeading{Manipulators for Qt\_widget}
 
 
-A \ccc{manipulator} is an object which can be inserted in the Qt\_widget 
-stream, via the operator \(<<\), to change the context for further
+A \ccc{manipulator} is an object which can be inserted in the \ccc{Qt_widget}
+stream, via the operator \ccc{<<}, to change the context for further
 drawing.
 
 Here, we simply document the use of these operators which is all the
@@ -22,7 +22,7 @@ user needs to know to modify the state of a stream. The design of
 \ccc{manipulators} and \ccc{manipulator-creator} being given after.
 
 \ccFunction{Qt_widget& operator<<(Qt_widget& win, BackgroundColor(const
-Color& c));}{Sets the color used for backgroundcolor.}
+Color& c));}{Sets the color used for background color.}
 \ccGlue
 
 \ccFunction{Qt_widget& operator<<(Qt_widget& win, FillColor(const
@@ -46,7 +46,7 @@ color used as the Qt\_widget fillColor.}
 \ccGlue
 
 \ccFunction{Qt_widget& operator<<(Qt_widget& win, const PointStyle& ps);}{Sets
- the point style for Qt\_widget. \ccc{PointStyle} is a global enumeration declared in Qt\_widget.h.}
+ the point style for \ccc{Qt_widget}.}
 \ccGlue
 
 
