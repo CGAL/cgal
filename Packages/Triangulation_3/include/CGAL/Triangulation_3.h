@@ -1136,6 +1136,16 @@ public:
 // 	    o1 = geom_traits().compare_x(p,p1);
 // 	  }
 	  
+	  if (o0 == CGAL_EQUAL) {
+	    lt = VERTEX;
+	    li = 0;
+	    return c;
+	  }
+	  if (o1 == CGAL_EQUAL) {
+	    lt = VERTEX;
+	    li = 1;
+	    return c;
+	  }
 	  if ( o0 == o1 ) {
 	    lt = EDGE;
 	    li = 0;
@@ -1149,16 +1159,6 @@ public:
 	  if ( o1 == o ) { 
 	    c = c->neighbor(1);
 	    continue; 
-	  }
-	  if (o0 == CGAL_EQUAL) {
-	    lt = VERTEX;
-	    i = 0;
-	    return c;
-	  }
-	  if (o1 == CGAL_EQUAL) {
-	    lt = VERTEX;
-	    i = 1;
-	    return c;
 	  }
 	}
 // 	do {
