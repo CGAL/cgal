@@ -27,6 +27,7 @@
 
 #include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/Weighted_point.h>
+#include <CGAL/number_utils_classes.h>
 
 #ifndef CGAL_REP_CLASS_DEFINED
 #error  no representation class defined
@@ -248,6 +249,23 @@ power_test(const Weighted_point<Point, Weight> &p,
   return power_test(p, q, t, Tag());
 }
 
+template < class Point, class Weight >
+inline
+Oriented_side
+power_test(const Weighted_point<Point, Weight> &p,
+           const Weighted_point<Point, Weight> &t)
+{
+  typedef typename Point::R::RT  RT;
+  Comparison_result r = Compare<RT>()(p.weight(), t.weight());
+  if(r == LARGER){
+    return ON_NEGATIVE_SIDE;
+  } else if (r == SMALLER) {
+    return ON_POSITIVE_SIDE;
+  }
+  return ON_ORIENTED_BOUNDARY;
+}
+
+
 template <class Point, class Weight>
 class Power_test_2
 {
@@ -275,6 +293,13 @@ public:
       //CGAL_triangulation_precondition( collinear(p, q, r) );
       //CGAL_triangulation_precondition( p.point() != q.point() );
       return CGAL::power_test(p,q,r);
+    }  
+
+  Oriented_side operator() ( Weighted_point p,
+			     Weighted_point r)
+    {
+      //CGAL_triangulation_precondition( p.point() == r.point() );
+      return CGAL::power_test(p,r);
     }
 };
 
