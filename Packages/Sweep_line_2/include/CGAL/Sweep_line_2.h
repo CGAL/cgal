@@ -11,9 +11,9 @@
 // release       : $CGAL_Revision: CGAL-2.3-I-44 $
 // release_date  : $CGAL_Date: 2001/03/09 $
 //
-// file          : include/CGAL/Sweep_line_2/Sweep_curves_to_subcurves_2.h
+// file          : include/CGAL/Sweep_line_2.h
 // package       : arr (1.87)
-// maintainer    : Eyal Flato <flato@math.tau.ac.il>
+// maintainer    : Tali Zvi <talizvi@post.tau.ac.il>
 // source        : 
 // revision      : 
 // revision_date : 
@@ -34,7 +34,6 @@
 #include <CGAL/In_place_list.h>
 #include <CGAL/memory.h>
 #include <CGAL/Handle_for.h>
-#include <CGAL/assertions.h>
 #include <CGAL/Sweep_line_2/Sweep_curves_base_2.h>
 
 CGAL_BEGIN_NAMESPACE
