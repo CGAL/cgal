@@ -82,7 +82,7 @@ class CGAL_Triangulation_data_structure_3
   
 public:
   
-  typedef typename Vb::Point Point;
+  //  typedef typename Vb::Point Point;
   
   typedef CGAL_Triangulation_ds_vertex_3<Vb,Cb> Vertex;
   typedef CGAL_Triangulation_ds_cell_3<Vb,Cb> Cell;

@@ -53,6 +53,7 @@ class CGAL_Triangulation_ds_cell_3
   : public Cb,
     public CGAL_Triangulation_utils_3
 {
+
   friend class CGAL_Triangulation_data_structure_3<Vb,Cb>;
 
   //  friend class CGAL_Triangulation_ds_iterator_base_3
@@ -69,7 +70,7 @@ class CGAL_Triangulation_ds_cell_3
 
 public:
 
-  typedef typename Vb::Point Point;
+  //  typedef typename Vb::Point Point;
 
   typedef CGAL_Triangulation_data_structure_3<Vb,Cb> Tds;
   typedef CGAL_Triangulation_ds_vertex_3<Vb,Cb> Vertex;
