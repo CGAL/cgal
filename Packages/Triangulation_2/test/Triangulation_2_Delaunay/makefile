@@ -50,10 +50,14 @@ test_delaunay_triangulation_2$(EXE_EXT): test_delaunay_triangulation_2$(OBJ_EXT)
 test_regular_triangulation_2$(EXE_EXT): test_regular_triangulation_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_regular_triangulation_2 test_regular_triangulation_2$(OBJ_EXT) $(LDFLAGS)
 
+test_regular_hierarchy_2$(EXE_EXT): test_regular_hierarchy_2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_regular_hierarchy_2 test_regular_hierarchy_2$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
 		test_delaunay_hierarchy_2.clean \
 		test_delaunay_triangulation_2.clean \
-		test_regular_triangulation_2.clean 
+		test_regular_triangulation_2.clean \
+		test_regular_hierarchy_2.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules

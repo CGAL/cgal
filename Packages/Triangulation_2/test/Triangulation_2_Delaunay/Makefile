@@ -5,7 +5,7 @@
 # Choose the right include file from the <cgalroot>/make directory.
 
 
-#CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.18_g++-2.95_LEDA
+CGAL_MAKEFILE = /0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.18_g++-2.95_LEDA
 include $(CGAL_MAKEFILE)
 
 
@@ -48,11 +48,17 @@ test_regular_triangulation_2: test_regular_triangulation_2.o
 test_delaunay_hierarchy_2: test_delaunay_hierarchy_2.o
 	$(CGAL_CXX) -o test_delaunay_hierarchy_2 test_delaunay_hierarchy_2.o $(LDFLAGS)
 
+test_regular_hierarchy_2: test_regular_hierarchy_2.o
+	$(CGAL_CXX) -o test_regular_hierarchy_2 test_regular_hierarchy_2.o $(LDFLAGS)
+
+
+
 clean:
 	- rm -f *.o  *.obj *.exe \
 	test_delaunay_triangulation_2 \
 	test_regular_triangulation_2 \
 	test_delaunay_hierarchy_2 \
+	test_regular_hierarchy_2 \
 	 core \
 	T??.triangulation  file_tds? 
 
