@@ -9,7 +9,7 @@
 // ----------------------------------------------------------------------------
 //
 // file          : include/CGAL/IO/Qt_Window_MovePoint.h
-// package       : QT_window
+// package       : QT_widget
 // author(s)     : Radu Ursu
 // release       : 
 // release_date  : 
@@ -41,10 +41,6 @@ namespace CGAL {
   public slots:
     void delete_point();
     void move_point();
-    virtual void widget_repainted() {};
-
-  signals:
-    void redraw();	//emited when this tool need to repaint the screen
   };
 
   template <class T>
@@ -128,7 +124,6 @@ namespace CGAL {
       dt->remove(current_v);
       current_v = dt->insert(Point(x, y));
       widget->redraw();	//redraw the scenes
-      //emit(redraw());
       old_point = Point(x, y);
     }
   };
@@ -146,7 +141,6 @@ namespace CGAL {
     void delete_pointi(){
       dt->remove(current_v);
       widget->redraw();	//redraw the scenes
-      emit(redraw());
     };
     void move_pointi(){
       on_first = TRUE;
