@@ -140,7 +140,6 @@ public:
   USING(Line_3);
   USING(Plane_3);
   USING(Vector_3);
-  USING(Direction_3);
 
   USING(Sphere_kernel);
   USING(Sphere_point);
@@ -750,7 +749,7 @@ public:
 
     Halffacet_handle res = facet(sh);    
 
-    Direction_3 ed(segment(e).direction());
+    Vector_3 ed(segment(e).direction());
     Vector_3 ev(segment(e).direction()), rv(ray.direction());
     SHalfedge_around_svertex_circulator sh(SD.first_out_edge(e)), send(sh);
     Vector_3 vec0(cross_product(ev,plane(res).orthogonal_vector()));
@@ -864,8 +863,8 @@ public:
     SFace_handle f = SD.new_face();
     SD.mark(f) = mark(c);
     TRACEN("volume "<<&*c<<" marked as "<<mark(c)); 
-    SM_point_locator PL(v);
-    PL.init_marks_of_halfspheres(); // necessary to init default marks
+    //    SM_point_locator PL(v);
+    //    PL.init_marks_of_halfspheres(); // necessary to init default marks
     return v;
   }
 
@@ -1171,11 +1170,13 @@ public:
   
   void compute_all_marks_of_halfspheres() {
     
-    Vertex_handle v;
+    //    Vertex_handle v;
+    /*
     CGAL_nef3_forall_vertices(v,*this) {
       SM_point_locator L(v);
       L.init_marks_of_halfspheres();
-    }    
+    } 
+    */   
   }
 
   bool is_valid( bool verb = false, int level = 0) {
@@ -1211,15 +1212,15 @@ public:
 
       Points.push_back(point(vi));
 
-      Mark m1 = SD.mark_of_halfsphere(-1);  
-      Mark m2 = SD.mark_of_halfsphere(+1);
-      SM_point_locator PL(vi);
-      PL.init_marks_of_halfspheres();
-      valid = valid && (SD.mark_of_halfsphere(-1) == m1);
-      valid = valid && (SD.mark_of_halfsphere(+1) == m2);
+      //      Mark m1 = SD.mark_of_halfsphere(-1);  
+      //      Mark m2 = SD.mark_of_halfsphere(+1);
+      //      SM_point_locator PL(vi);
+      //      PL.init_marks_of_halfspheres();
+      //      valid = valid && (SD.mark_of_halfsphere(-1) == m1);
+      //      valid = valid && (SD.mark_of_halfsphere(+1) == m2);
      
-      TRACEN(m1 << "," << m2 << " should have been " << 
-	     SD.mark_of_halfsphere(-1) << "," << SD.mark_of_halfsphere(+1));
+      //      TRACEN(m1 << "," << m2 << " should have been " << 
+      //	     SD.mark_of_halfsphere(-1) << "," << SD.mark_of_halfsphere(+1));
 
       valid = valid && (++count <= max);
     }

@@ -48,7 +48,6 @@ struct Facet_plane_3 {
     typedef Kernel_traits< Plane>               KernelTraits;
     typedef typename KernelTraits::Kernel       Kernel;
     typedef typename Kernel::Vector_3           Vector;
-    typedef typename Kernel::Direction_3        Direction;
     typedef typename Facet::Halfedge_around_facet_const_circulator
                                                 Halfedge_circulator;
     typedef typename Facet::Halfedge            Halfedge;
@@ -67,8 +66,8 @@ struct Facet_plane_3 {
     Vector plane_orthogonal_vector;
     normal_vector_newell_3( point_cir, point_cir, plane_orthogonal_vector);
     TRACEN( *point_cir);
-    TRACEN(Plane( *point_cir, Direction( plane_orthogonal_vector)));
-    return( Plane( *point_cir, Direction( plane_orthogonal_vector)));
+    TRACEN(Plane( *point_cir, Vector( plane_orthogonal_vector)));
+    return( Plane( *point_cir, Vector( plane_orthogonal_vector)));
   }
 };
 
@@ -200,8 +199,8 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
     SM.mark(fext) = false;
     SM.check_integrity_and_topological_planarity();   
 
-    SM_point_locator L(nv);
-    L.init_marks_of_halfspheres(); 
+    //    SM_point_locator L(nv);
+    //    L.init_marks_of_halfspheres(); 
   }
 }
 

@@ -31,6 +31,7 @@
 #include <CGAL/Nef_2/geninfo.h>
 #include <CGAL/Nef_S2/Sphere_geometry.h>
 #include <CGAL/Nef_3/SNC_SM_decorator.h>
+#include <CGAL/Nef_3/SNC_SM_point_locator.h>
 #include <CGAL/Nef_3/SNC_SM_io_parser.h>
 #include <CGAL/Nef_3/Normalizing.h>
 #undef _DEBUG
@@ -279,6 +280,7 @@ public:
   typedef SNC_SM_decorator<Refs_> Base;
   typedef SNC_SM_decorator<Refs_> Decorator;
   typedef SNC_SM_overlayer<Refs_> Self;
+  typedef CGAL::SNC_SM_point_locator<SNC_structure> SM_point_locator;
 
 #define USING(t) typedef typename Refs_::t t
   USING(Vertex_handle);
@@ -570,7 +572,7 @@ public:
 
   template <typename Below_accessor>
   void complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
-    const Below_accessor& D, int pos) const;
+    Below_accessor& D, std::vector<Mark>& mohs, int offset);
 
   void dump(std::ostream& os = std::cerr) const
   { SNC_SM_io_parser<Refs_>::dump(center_vertex(),os); }
@@ -838,8 +840,15 @@ subdivide(Vertex_handle v0, Vertex_handle v1)
     TRACEN(PH(u) << " with circle " << circle(u));
   }
 
-  complete_face_support(svertices_begin(), v, O, +1);
-  complete_face_support(v, svertices_end(), O, -1);
+  std::vector<Mark> mohs(4);
+  SM_point_locator L0(PI[0].center_vertex());
+  SM_point_locator L1(PI[1].center_vertex());
+  
+  L0.init_marks_of_halfspheres(mohs, 0);
+  L1.init_marks_of_halfspheres(mohs, 2);
+
+  complete_face_support(svertices_begin(), v, O, mohs, 1);
+  complete_face_support(v, svertices_end(), O, mohs, 0);
 
   /* DEBUG CODE: to do: have all svertices a halfedge below associated? */
   TRACEN("Vertex info after swep");
@@ -1007,7 +1016,7 @@ template <typename Refs_>
 template <typename Below_accessor>
 void SNC_SM_overlayer<Refs_>::
 complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
-  const Below_accessor& D, int pos) const
+  Below_accessor& D, std::vector<Mark>& mohs, int offset)
 { TRACEN("complete_face_support");
   for (SVertex_iterator v = v_start; v != v_end; ++v) { 
     TRACEN("VERTEX = "<<PH(v));
@@ -1036,10 +1045,10 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
 	  }
 	}
 	else {
-	  m_buffer[i] = PI[i].mark_of_halfsphere(-pos);
+	  m_buffer[i] = mohs[offset+2*i];
 	  TRACEN("no initial support");
 	}     
-//	m_buffer[i] = PI[i].mark_of_halfsphere(-pos);
+//	m_buffer[i] = mohs[offset+2*i];
       }
     } else if ( e_below != SHalfedge_handle() ) {
       for (int i=0; i<2; ++i) {
@@ -1048,7 +1057,7 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
       }
     } else { // e_below does not exist
       CGAL_nef3_assertion( point(v).hz() == 0 && 
-                      ( pos > 0 ? (point(v).hx() >= 0) : (point(v).hx()<=0)) );
+			   ( offset > 0 ? (point(v).hx() >= 0) : (point(v).hx()<=0)) );
       for (int i=0; i<2; ++i) 
         m_buffer[i] = incident_mark(previous(first_out_edge(v)),i);
     } TRACEN(" faces right and below "<<m_buffer[0]<<" "<<m_buffer[1]);
@@ -1253,15 +1262,6 @@ select(const Selection& SP) const
     mark(f) = SP(mark(f,0),mark(f,1));
     discard_info(f);
   }
-
-  mark_of_halfsphere(-1) = SP(PI[0].mark_of_halfsphere(-1),
-                              PI[1].mark_of_halfsphere(-1));
-  mark_of_halfsphere(+1) = SP(PI[0].mark_of_halfsphere(+1),
-                              PI[1].mark_of_halfsphere(+1));
-
-  TRACEN(PI[0].mark_of_halfsphere(-1) << "," << PI[1].mark_of_halfsphere(-1) << "=>" << mark_of_halfsphere(-1));
-  TRACEN(PI[0].mark_of_halfsphere(+1) << "," << PI[1].mark_of_halfsphere(+1) << "=>" << mark_of_halfsphere(+1));
-
 }
 
 template <typename Refs_>

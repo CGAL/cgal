@@ -1918,10 +1918,12 @@ public:
 
       CGAL_nef3_assertion(OK);
 
+      /*
       for(i = 0; i<v; i++) {
 	SM_point_locator PL(V[i]);
 	PL.init_marks_of_halfspheres(); 
       }
+      */
 
       CGAL_nef3_assertion(OK);
 
@@ -2362,10 +2364,12 @@ public:
 	
       }
 
+      /*
       for(i = 0; i<v+addInfiBox*8; i++) {
 	SM_point_locator PL(V[i]);
 	PL.init_marks_of_halfspheres(); 
       }
+      */
 
       delete[] V;
       delete[] E;

@@ -804,8 +804,8 @@ create_SM_on_infibox(Point_3 center, Sphere_point* SP, int size,
   SD.link_as_face_cycle(SD.twin(she[0]),sf[1]);
   SD.link_as_face_cycle(SD.twin(she[1]),sf[2]);
 
-  SM_point_locator L(v);
-  L.init_marks_of_halfspheres();
+  //  SM_point_locator L(v);
+  //  L.init_marks_of_halfspheres();
 }
 
 // ----------------------------------------------------------------------------
@@ -863,8 +863,8 @@ create_box_corner(int x, int y, int z, bool space, bool boundary) const {
   // SD.mark_of_halfsphere(-1) = (x<0 && y>0 && z>0);
   // SD.mark_of_halfsphere(+1) = (x>0 && y>0 && z<0);
   /* TODO: to check if the commented code above could be wrong */
-  SM_point_locator L(v);
-  L.init_marks_of_halfspheres();
+  //  SM_point_locator L(v);
+  //  L.init_marks_of_halfspheres();
   return v;
 }
 
@@ -927,8 +927,8 @@ create_extended_box_corner(int x,int y,int z,bool space,bool boundary) const {
   // SD.mark_of_halfsphere(-1) = (x<0 && y>0 && z>0);
   // SD.mark_of_halfsphere(+1) = (x>0 && y>0 && z<0);
   /* TODO: to check if the commented code above could be wrong */
-  SM_point_locator L(v);
-  L.init_marks_of_halfspheres();
+  //  SM_point_locator L(v);
+  //  L.init_marks_of_halfspheres();
   return v;
 }
 
@@ -961,6 +961,7 @@ create_from_facet(Halffacet_handle f, const Point_3& p) const
   D.mark(f2) = mark(volume(twin(f)));
   D.mark(l) = mark(f);
 #ifdef CGAL_NEF3_BUGGY_CODE
+  /*
   Sphere_point q(0,-1,0);
   CGAL::Oriented_side os = c.oriented_side(q);
   switch ( os ) {
@@ -976,10 +977,11 @@ create_from_facet(Halffacet_handle f, const Point_3& p) const
       if ( c.a()>=0 && c.c()<=0 ) // normal(c) dx<=0&&dz>=0
         D.mark_of_halfsphere(-1) = true;
   }
+  */
   /* TODO: to find why the code chuck above is wrong */
 #endif // CGAL_NEF3_BUGGY_CODE
-  SM_point_locator L(v);
-  L.init_marks_of_halfspheres();
+  //  SM_point_locator L(v);
+  //  L.init_marks_of_halfspheres();
   return v;
 }
 
@@ -1053,8 +1055,8 @@ create_from_edge(Halfedge_handle e,
   }
 
   TRACEN(" ");
-  SM_point_locator L(v);
-  L.init_marks_of_halfspheres();
+  //  SM_point_locator L(v);
+  //  L.init_marks_of_halfspheres();
 
   /*
   CGAL_nef3_forall_shalfedges(eee,D)
@@ -1139,8 +1141,8 @@ clone_SM( typename SNC_::Vertex_handle vin) {
     }
   }
 
-  D.mark_of_halfsphere(-1) = E.mark_of_halfsphere(-1);
-  D.mark_of_halfsphere(+1) = E.mark_of_halfsphere(+1);
+  //  D.mark_of_halfsphere(-1) = E.mark_of_halfsphere(-1);
+  //  D.mark_of_halfsphere(+1) = E.mark_of_halfsphere(+1);
 
   return vout;
 }
@@ -1243,8 +1245,8 @@ create_edge_facet_overlay( typename SNC_::Halfedge_handle e,
     }   
   }
 
-  SM_point_locator L(D.center_vertex());
-  L.init_marks_of_halfspheres();
+  //  SM_point_locator L(D.center_vertex());
+  //  L.init_marks_of_halfspheres();
 
   return D.center_vertex();
 }

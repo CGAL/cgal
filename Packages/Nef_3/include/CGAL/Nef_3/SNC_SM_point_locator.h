@@ -20,6 +20,7 @@
 #ifndef CGAL_SNC_SM_POINT_LOCATOR_H
 #define CGAL_SNC_SM_POINT_LOCATOR_H
 
+#include <vector>
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Nef_2/geninfo.h>
@@ -457,7 +458,7 @@ public:
     return h;
   }
 
-  void init_marks_of_halfspheres();
+  void init_marks_of_halfspheres(std::vector<Mark>& mohs, int offset);
   /*{\Mop initializes the default marks of the sphere map.}*/
 
   // C++ is really friendly:
@@ -484,15 +485,16 @@ public:
 
 
 template <typename D>
-void SNC_SM_point_locator<D>::init_marks_of_halfspheres()
+void SNC_SM_point_locator<D>::init_marks_of_halfspheres(std::vector<Mark>& mohs, int offset)
 { TRACEN("init_marks_of_halfspheres " << center_vertex()->point());
+  
   Sphere_point y_minus(0,-1,0);
   SObject_handle h = locate(y_minus);
   SFace_const_handle f;
   if ( assign(f,h) ) { 
     TRACEN("on face " << mark(f));
-    mark_of_halfsphere(-1) = mark_of_halfsphere(+1) = mark(f);
-    TRACEN(mark_of_halfsphere(-1) << " " << mark_of_halfsphere(+1));
+    mohs[offset] = mohs[offset+1] = mark(f);
+    //    TRACEN(mark_of_halfsphere(-1) << " " << mark_of_halfsphere(+1));
     return;
   }
 
@@ -503,9 +505,9 @@ void SNC_SM_point_locator<D>::init_marks_of_halfspheres()
     TRACEN("on edge "<<op);
     if ( (op.x() > 0) || (op.x() == 0) && (op.z() < 0) ) e = twin(e);
     // if ( (op.z() < 0) || (op.z() == 0) && (op.x() > 0) ) e = twin(e);
-    mark_of_halfsphere(+1) = mark(face(e));
-    mark_of_halfsphere(-1) = mark(face(twin(e)));
-    TRACEN(mark_of_halfsphere(-1) << " " << mark_of_halfsphere(+1));
+    mohs[offset+1] = mark(face(e));
+    mohs[offset] = mark(face(twin(e)));
+    //    TRACEN(mark(face(e)) << " " << mark(face(twin(e)));
     return;
   }
 
@@ -516,9 +518,9 @@ void SNC_SM_point_locator<D>::init_marks_of_halfspheres()
     TRACEN("on loop "<<op);
     if ( (op.x() > 0) || ((op.x() == 0) && (op.z() < 0)) ) l = twin(l);
     // if ( (op.z() < 0) || (op.z() == 0) && (op.x() > 0) ) l = twin(l);
-    mark_of_halfsphere(+1) = mark(face(l));
-    mark_of_halfsphere(-1) = mark(face(twin(l)));
-    TRACEN(mark_of_halfsphere(-1) << " " << mark_of_halfsphere(+1));
+    mohs[offset+1] = mark(face(l));
+    mohs[offset] = mark(face(twin(l)));
+    //    TRACEN(mark_of_halfsphere(-1) << " " << mark_of_halfsphere(+1));
     return;
   }
 
@@ -529,21 +531,21 @@ void SNC_SM_point_locator<D>::init_marks_of_halfspheres()
   if ( assign(v,h) ) {
     CGAL_nef3_assertion(point(v)==y_minus);
     if(is_isolated(v))
-      mark_of_halfsphere(+1) = mark_of_halfsphere(-1) = mark(face(v));
+      mohs[offset+1] = mohs[offset] = mark(face(v));
     else {
       e = out_wedge(v,left,collinear); 
-      if ( collinear ) mark_of_halfsphere(+1) = mark(face(twin(e)));
-      else mark_of_halfsphere(+1) = mark(face(e));
+      if ( collinear ) mohs[offset+1] = mark(face(twin(e)));
+      else mohs[offset+1] = mark(face(e));
       e = out_wedge(v,right,collinear); 
-      if ( collinear ) mark_of_halfsphere(-1) = mark(face(twin(e)));
-      else mark_of_halfsphere(-1) = mark(face(e));
+      if ( collinear ) mohs[offset] = mark(face(twin(e)));
+      else mohs[offset] = mark(face(e));
     }
-    TRACEN(mark_of_halfsphere(-1) << " " << mark_of_halfsphere(+1));
+    //    TRACEN(mark_of_halfsphere(-1) << " " << mark_of_halfsphere(+1));
     return;
   }
   /*
   TRACEN("1 dimensional object");
-  mark_of_halfsphere(-1) = mark_of_halfsphere(+1) = 0;
+  mohs[offset] = mohs[offset+1] = 0;
   */
   CGAL_nef3_assertion_msg(0,"damn wrong type");
   return;
