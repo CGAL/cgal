@@ -71,9 +71,10 @@ while (<>)
     }
     print "
   }
-  CGAL_assertion(false);
 }
 ";
+  # MipsPro complains about the following assertion at the end, so it's
+  # removed: CGAL_assertion(false);
     # print "args: @args\n" ;
     @args=();
     next;

@@ -85,7 +85,6 @@ compare_xC2(
 		l2b.exact(),
 		l2c.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -147,7 +146,6 @@ compare_xC2(
 		h2b.exact(),
 		h2c.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -186,7 +184,6 @@ compare_y_at_xC2(
 		lb.exact(),
 		lc.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -232,7 +229,6 @@ compare_y_at_xC2(
 		l2b.exact(),
 		l2c.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -284,7 +280,6 @@ compare_y_at_xC2(
 		hb.exact(),
 		hc.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -346,7 +341,6 @@ compare_y_at_xC2(
 		h2b.exact(),
 		h2c.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -382,7 +376,6 @@ compare_deltax_deltayC2(
 		ry.exact(),
 		sy.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -418,7 +411,6 @@ compare_lexicographically_xyC2(
 		qx.exact(),
 		qy.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -461,7 +453,6 @@ orientationC2(
 		rx.exact(),
 		ry.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -504,7 +495,6 @@ collinear_are_ordered_along_lineC2(
 		rx.exact(),
 		ry.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -547,7 +537,6 @@ collinear_are_strictly_ordered_along_lineC2(
 		rx.exact(),
 		ry.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -597,7 +586,6 @@ side_of_oriented_circleC2(
 		tx.exact(),
 		ty.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -647,7 +635,6 @@ side_of_bounded_circleC2(
 		tx.exact(),
 		ty.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -690,7 +677,6 @@ cmp_dist_to_pointC2(
 		rx.exact(),
 		ry.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -733,7 +719,6 @@ has_larger_dist_to_pointC2(
 		rx.exact(),
 		ry.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -776,7 +761,6 @@ has_smaller_dist_to_pointC2(
 		rx.exact(),
 		ry.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -822,7 +806,6 @@ cmp_signed_dist_to_lineC2(
 		qx.exact(),
 		qy.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -868,7 +851,6 @@ has_larger_signed_dist_to_lineC2(
 		qx.exact(),
 		qy.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -914,7 +896,6 @@ has_smaller_signed_dist_to_lineC2(
 		qx.exact(),
 		qy.exact());
   }
-  CGAL_assertion(false);
 }
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
@@ -963,7 +944,6 @@ cmp_signed_dist_to_lineC2(
 		sx.exact(),
 		sy.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -1013,7 +993,6 @@ has_larger_signed_dist_to_lineC2(
 		sx.exact(),
 		sy.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -1063,7 +1042,6 @@ has_smaller_signed_dist_to_lineC2(
 		sx.exact(),
 		sy.exact());
   }
-  CGAL_assertion(false);
 }
 
 

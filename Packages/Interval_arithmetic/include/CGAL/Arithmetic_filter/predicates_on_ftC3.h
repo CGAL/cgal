@@ -77,7 +77,6 @@ compare_lexicographically_xyzC3(
 		y2.exact(),
 		z2.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -129,7 +128,6 @@ collinearC3(
 		ry.exact(),
 		rz.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -191,7 +189,6 @@ orientationC3(
 		sy.exact(),
 		sz.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -244,7 +241,6 @@ collinear_are_ordered_along_lineC3(
 		ry.exact(),
 		rz.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -297,7 +293,6 @@ collinear_are_strictly_ordered_along_lineC3(
 		ry.exact(),
 		rz.exact());
   }
-  CGAL_assertion(false);
 }
 
 
@@ -370,7 +365,6 @@ side_of_oriented_sphereC3(
 		ty.exact(),
 		tz.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -442,7 +436,6 @@ side_of_bounded_sphereC3(
 		ty.exact(),
 		tz.exact());
   }
-  CGAL_assertion(false);
 }
 
 
@@ -495,7 +488,6 @@ cmp_dist_to_pointC3(
 		ry.exact(),
 		rz.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -547,7 +539,6 @@ has_larger_dist_to_pointC3(
 		ry.exact(),
 		rz.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -599,7 +590,6 @@ has_smaller_dist_to_pointC3(
 		ry.exact(),
 		rz.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -655,7 +645,6 @@ cmp_signed_dist_to_planeC3(
 		qy.exact(),
 		qz.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -711,7 +700,6 @@ has_larger_signed_dist_to_planeC3(
 		qy.exact(),
 		qz.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -767,7 +755,6 @@ has_smaller_signed_dist_to_planeC3(
 		qy.exact(),
 		qz.exact());
   }
-  CGAL_assertion(false);
 }
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
@@ -839,7 +826,6 @@ cmp_signed_dist_to_planeC3(
 		qy.exact(),
 		qz.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -912,7 +898,6 @@ has_larger_signed_dist_to_planeC3(
 		qy.exact(),
 		qz.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -985,7 +970,6 @@ has_smaller_signed_dist_to_planeC3(
 		qy.exact(),
 		qz.exact());
   }
-  CGAL_assertion(false);
 }
 
 

@@ -79,7 +79,6 @@ orientationH2(
 		rhy.exact(),
 		rhw.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -131,7 +130,6 @@ leftturnH2(
 		rhy.exact(),
 		rhw.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -183,7 +181,6 @@ rightturnH2(
 		rhy.exact(),
 		rhw.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -235,7 +232,6 @@ collinearH2(
 		rhy.exact(),
 		rhw.exact());
   }
-  CGAL_assertion(false);
 }
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
@@ -296,7 +292,6 @@ side_of_bounded_circleH2(
 		thy.exact(),
 		thw.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -358,7 +353,6 @@ side_of_oriented_circleH2(
 		thy.exact(),
 		thw.exact());
   }
-  CGAL_assertion(false);
 }
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 template < class CGAL_IA_CT, class CGAL_IA_ET, class CGAL_IA_CACHE >
@@ -399,7 +393,6 @@ compare_lexicographically_xyH2(
 		qhy.exact(),
 		qhw.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -435,7 +428,6 @@ compare_xH2(
 		qhx.exact(),
 		qhw.exact());
   }
-  CGAL_assertion(false);
 }
 
 // No compare_yH2; use compare_xH2( py, pw, qy, qw)
@@ -552,7 +544,6 @@ collinear_are_ordered_along_lineH2(
 		rhw.exact(),
 		.exact());
   }
-  CGAL_assertion(false);
 }
 
 #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
@@ -605,7 +596,6 @@ collinear_are_strictly_ordered_along_lineH2(
 		rhy.exact(),
 		rhw.exact());
   }
-  CGAL_assertion(false);
 }
 
 
