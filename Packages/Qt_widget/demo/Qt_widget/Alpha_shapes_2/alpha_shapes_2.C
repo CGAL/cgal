@@ -133,8 +133,10 @@ public:
   file->insertItem("&New", this, SLOT(new_instance()), CTRL+Key_N);
   file->insertItem("New &Window", this, SLOT(new_window()), CTRL+Key_W);
   file->insertSeparator();
-  file->insertItem("&Load Triangulation", this, SLOT(load_triangulation()), CTRL+Key_L);
-  file->insertItem("&Save Triangulation", this, SLOT(save_triangulation()), CTRL+Key_T);
+  file->insertItem("&Load Triangulation", this, 
+		   SLOT(load_triangulation()), CTRL+Key_L);
+  file->insertItem("&Save Triangulation", 
+		   this, SLOT(save_triangulation()), CTRL+Key_T);
   file->insertSeparator();
   file->insertItem( "&Close", this, SLOT(close()), CTRL+Key_X );
   file->insertItem( "&Quit", qApp, SLOT( closeAllWindows() ), CTRL+Key_Q );
@@ -143,8 +145,10 @@ public:
   // drawing menu
   QPopupMenu * edit = new QPopupMenu( this );
   menuBar()->insertItem( "&Edit", edit );
-  edit->insertItem("&Generate Triangulation", this, SLOT(gen_tr()), CTRL+Key_G );
-  edit->insertItem("&Change Alpha", this, SLOT(change_alpha()), CTRL+Key_C );
+  edit->insertItem("&Generate Triangulation", this, 
+		   SLOT(gen_tr()), CTRL+Key_G );
+  edit->insertItem("&Change Alpha", this, 
+		   SLOT(change_alpha()), CTRL+Key_C );
 
   // help menu
   QPopupMenu * help = new QPopupMenu( this );
@@ -203,7 +207,8 @@ public slots:
     A.clear();
     L.clear();
     win.clear_history();
-    win.set_window(-1.1, 1.1, -1.1, 1.1); // set the Visible Area to the Interval
+    win.set_window(-1.1, 1.1, -1.1, 1.1); 
+    // set the Visible Area to the Interval
     win.unlock();
     something_changed();
   }
@@ -242,7 +247,9 @@ private slots:
 
   void change_alpha() {
     bool ok = FALSE;
-    double res = QInputDialog::getDouble( tr( "Please enter a decimal number" ),"Between 0 and 1", 0.001, 0, 1, 3, &ok, this );
+    double res = QInputDialog::getDouble( 
+		 tr( "Please enter a decimal number" ),
+		 "Between 0 and 1", 0.001, 0, 1, 3, &ok, this );
     if ( ok ){
       alpha_index = res;
       win.redraw();
