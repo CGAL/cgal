@@ -17,6 +17,9 @@ using namespace std;
 #ifdef __GNUC__
 #include <hashtable.h>
 
+// needed for g++ 3.0.4
+namespace std {
+
 struct hash<string>
 {
   size_t operator()(const string& str) const
@@ -28,6 +31,9 @@ struct hash<string>
     return size_t(h);
   }
 };
+
+}
+
 #endif
 
 #endif // MY_STRING_H //

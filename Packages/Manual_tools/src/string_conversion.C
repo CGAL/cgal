@@ -86,7 +86,7 @@ string replace_template_braces_and_colons( string name) {
 	else if ( name[i]=='>' ) {
 	    name.replace(i,1,"-");
 	}
-	else if ( name[i]==':' ) {
+	else if ( name[i]==':' || name[i]==',' ) {
 	    name.replace(i,1,"-");
 	}
     }
