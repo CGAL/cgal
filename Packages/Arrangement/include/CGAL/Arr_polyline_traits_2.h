@@ -1301,12 +1301,12 @@ private:
  * Output operator for a polyline.
  */
 template <class Segment_traits_, class Stream_>
-Stream_ & operator<< (Stream_ & os, const Polyline_2<Segment_traits_> & cv)
+inline Stream_ & operator<<(Stream_ & os,
+                            const Polyline_2<Segment_traits_> & cv)
 {
   typename Polyline_2<Segment_traits_>::const_iterator ps = cv.begin();
   typename Polyline_2<Segment_traits_>::const_iterator pt = ps; pt++;
 
-  os << cv.points() << " ";
   while (pt != cv.end()) {
     typename Segment_traits_::Curve_2 seg(*ps, *pt);
     os << seg;
@@ -1315,11 +1315,25 @@ Stream_ & operator<< (Stream_ & os, const Polyline_2<Segment_traits_> & cv)
   return (os);
 }
 
+/*! Specialized exporter for output stream.
+ * In this case we export the number of points followed by the points
+ */
+template <class Segment_traits_>
+inline std::ostream & operator<<(std::ostream & os,
+                                 const Polyline_2<Segment_traits_> & cv)
+{
+  os << cv.points() << " ";
+  typename Polyline_2<Segment_traits_>::const_iterator it;
+  for (it = cv.begin(); it != cv.end(); it++) os << (*it);
+  return (os);
+}
+
 /*!
  * Input operator for a polyline.
  */
 template <class Segment_traits_, class Stream_>
-Stream_ & operator>> (Stream_ & is, const Polyline_2<Segment_traits_> & cv)
+inline Stream_ & operator>>(Stream_ & is,
+                            const Polyline_2<Segment_traits_> & cv)
 {
   int n_points;
   is >> n_points;
@@ -1328,7 +1342,7 @@ Stream_ & operator>> (Stream_ & is, const Polyline_2<Segment_traits_> & cv)
   for (int i=0; i<n_points; i++)
   {
     is >> point;
-	points.push_back(point);
+    points.push_back(point);
   }
   //const Polyline_2<Segment_traits_> & pol(points.begin(), points.end());
   //cv = pol;
