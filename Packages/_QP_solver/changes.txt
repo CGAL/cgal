@@ -1,5 +1,8 @@
 Changes done to the `_QP_solver' package
 
+Version 0.9.20 on 6-Oct-2003
+- Submit again.
+
 Version 0.9.19 on 27-Sep-2003
 - new headers
 
