@@ -1,4 +1,6 @@
-2.2.18 put reference pages in SearchStructures_ref directory
+2.2.20 moved _ref directory up one level and removed some undefined commands
+
+2.2.19 put reference pages in SearchStructures_ref directory
 
 2.2.18 Added example and name of classes and concepts in section Kd-Trees.
 
