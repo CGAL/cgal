@@ -48,9 +48,6 @@ test_const_del_triangulation_2: test_const_del_triangulation_2.o
 test_const_triang_plus_2: test_const_triang_plus_2.o	
 	$(CGAL_CXX) -o test_const_triang_plus_2 test_const_triang_plus_2.o $(LDFLAGS)
 
-test_delaunay_hierarchy_2: test_delaunay_hierarchy_2.o
-	$(CGAL_CXX) -o test_delaunay_hierarchy_2 test_delaunay_hierarchy_2.o $(LDFLAGS)
-
 clean:
 	- rm -f *.o  *.obj *.exe \
 	test_constrained_triangulation_2 \

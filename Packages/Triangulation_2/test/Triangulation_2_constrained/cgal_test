@@ -72,5 +72,6 @@ if [ $# -ne 0 ] ; then
 else
   compile_and_run test_const_del_triangulation_2
   compile_and_run test_constrained_triangulation_2
+  compile_and_run test_const_triang_plus_2
 fi
 

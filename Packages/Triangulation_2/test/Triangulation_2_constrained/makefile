@@ -37,7 +37,8 @@ LDFLAGS = \
 
 all: \
 		test_const_del_triangulation_2$(EXE_EXT) \
-		test_constrained_triangulation_2$(EXE_EXT) 
+		test_constrained_triangulation_2$(EXE_EXT) \
+		test_const_triang_plus_2$(EXE_EXT) 
 
 test_const_del_triangulation_2$(EXE_EXT): test_const_del_triangulation_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_const_del_triangulation_2 test_const_del_triangulation_2$(OBJ_EXT) $(LDFLAGS)
@@ -45,9 +46,14 @@ test_const_del_triangulation_2$(EXE_EXT): test_const_del_triangulation_2$(OBJ_EX
 test_constrained_triangulation_2$(EXE_EXT): test_constrained_triangulation_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_constrained_triangulation_2 test_constrained_triangulation_2$(OBJ_EXT) $(LDFLAGS)
 
+test_const_triang_plus_2: test_const_triang_plus_2.$(OBJ_EXT)	
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_const_triang_plus_2 test_const_triang_plus_2$(OBJ_EXT) $(LDFLAGS)
+
+
 clean: \
 		test_const_del_triangulation_2.clean \
-		test_constrained_triangulation_2.clean 
+		test_constrained_triangulation_2.clean \
+		test_const_triang_plus_2
 
 #---------------------------------------------------------------------#
 #                    suffix rules
