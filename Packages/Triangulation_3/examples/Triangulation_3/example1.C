@@ -52,22 +52,12 @@ typedef CGAL::Triangulation_cell_base_3<Gt>  Cb;
 
 typedef CGAL::Triangulation_data_structure_3<Vb,Cb> TDS;
 typedef CGAL::Triangulation_3<Gt,TDS> Triangulation;
-//typedef CGAL::Delaunay_triangulation_3<Gt,TDS> Delaunay;
 
-//typedef CGAL::Triangulation_vertex_iterator_3<Gt,TDS> Vertex_iterator;
-//typedef CGAL::Triangulation_edge_iterator_3<Gt,TDS> Edge_iterator;
-//typedef CGAL::Triangulation_cell_iterator_3<Gt,TDS> Cell_iterator;
-//typedef CGAL::Triangulation_facet_iterator_3<Gt,TDS> Facet_iterator;
-//typedef CGAL::Triangulation_cell_circulator_3<Gt,TDS> Cell_circulator;
-
-//typedef typename Triangulation::Cell Cell;
-//typedef typename Triangulation::Vertex Vertex;
 typedef typename Triangulation::Cell_handle Cell_handle;
 typedef typename Triangulation::Vertex_handle Vertex_handle;
 typedef typename Triangulation::Locate_type Locate_type;
 
 typedef Gt::Point Point;
-//typedef CGAL::Point_3<Rep>  Point;
 
 int main(int argc, char* argv[])
 {
@@ -91,7 +81,6 @@ int main(int argc, char* argv[])
   n = n + T.insert(V.begin(), V.end());
 
   // 6 points have been inserted :
-  //  CGAL::CGAL_triangulation_assertion( n == 6 );
   assert( n == 6 );
 
   // checking validity of T :
@@ -114,7 +103,7 @@ int main(int argc, char* argv[])
   assert(  nc->has_vertex( v, nli ) );
   // nli is the index of v in nc
 
-  std::ofstream oFileT("data/output",ios::out);
+  std::ofstream oFileT("output",ios::out);
   // writing file data/output; 
   oFileT << T; 
 

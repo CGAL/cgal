@@ -1,0 +1,10 @@
+------- example1 -------------------------------------------------
+Construction of a triangulation.
+
+Makes different tests on it.
+
+Writes the triangulation into a file "output"
+
+This example program uses "doubles". 
+For a robust version, another arithmetic should be used.
+--------------------------------------------------------------
