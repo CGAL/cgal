@@ -11,8 +11,7 @@
 // release       : 
 // release_date  : 
 // 
-// file          : predicates_on_pointsH2.h
-// package       : H2
+// file          : include/CGAL/predicates_on_pointsH2.h
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
@@ -72,8 +71,7 @@ equal_xy(const PointH2<R>& p,
 template < class R>
 CGAL_KERNEL_INLINE
 Comparison_result
-compare_lexicographically_xy(const PointH2<R>& p,
-                             const PointH2<R>& q)
+compare_xy(const PointH2<R>& p, const PointH2<R>& q)
 {
   typedef typename R::RT RT;
 
@@ -101,6 +99,17 @@ compare_lexicographically_xy(const PointH2<R>& p,
   }
 }
 
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+template < class R>
+inline
+Comparison_result
+compare_lexicographically_xy(const PointH2<R>& p,
+                             const PointH2<R>& q)
+{
+   return compare_xy(p, q);
+}
+#endif
 
 template < class R>
 CGAL_KERNEL_INLINE
@@ -200,11 +209,11 @@ lexicographically_xy_larger(const PointH2<R>& p,
   qV = qhy * phw;
   return ( qV < pV  );
 }
+
 template < class R>
 CGAL_KERNEL_INLINE
 Comparison_result
-compare_lexicographically_yx(const PointH2<R>& p,
-                             const PointH2<R>& q)
+compare_yx(const PointH2<R>& p, const PointH2<R>& q)
 {
   typedef typename R::RT RT;
 
@@ -231,6 +240,16 @@ compare_lexicographically_yx(const PointH2<R>& p,
       return ( qV < pV ) ? LARGER : EQUAL;
   }
 }
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+template < class R>
+inline
+Comparison_result
+compare_lexicographically_yx(const PointH2<R>& p, const PointH2<R>& q)
+{
+  return compare_yx(p, q);
+}
+#endif
 
 template < class R>
 CGAL_KERNEL_INLINE
@@ -443,9 +462,7 @@ angle( const PointH2<R>& p,
 template < class R>
 CGAL_KERNEL_MEDIUM_INLINE
 bool
-leftturn( const PointH2<R>& p,
-          const PointH2<R>& q,
-          const PointH2<R>& r)
+left_turn( const PointH2<R>& p, const PointH2<R>& q, const PointH2<R>& r)
 {
   typedef typename R::RT RT;
 
@@ -485,12 +502,20 @@ leftturn( const PointH2<R>& p,
   return ( RT0 < det );
 }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+template < class R>
+inline
+bool
+leftturn( const PointH2<R>& p, const PointH2<R>& q, const PointH2<R>& r)
+{
+   return left_turn(p, q, r);
+}
+#endif
+
 template < class R>
 CGAL_KERNEL_MEDIUM_INLINE
 bool
-rightturn( const PointH2<R>& p,
-                const PointH2<R>& q,
-                const PointH2<R>& r)
+right_turn( const PointH2<R>& p, const PointH2<R>& q, const PointH2<R>& r)
 {
   typedef typename R::RT RT;
 
@@ -529,6 +554,16 @@ rightturn( const PointH2<R>& p,
 
   return ( det < RT0 );
 }
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+template < class R>
+inline
+bool
+rightturn( const PointH2<R>& p, const PointH2<R>& q, const PointH2<R>& r)
+{
+   return right_turn(p, q, r);
+}
+#endif
 
 template < class R>
 CGAL_KERNEL_MEDIUM_INLINE

@@ -1,5 +1,12 @@
+2.36   (?? July 2001)
+- renamed cmp_* to compare_* and *_dist_* to *_distance_* and
+  leftturn, Leftturn, LEFTTURN to left_turn, Left_turn, LEFT_TURN and
+  rightturn, Rightturn, RIGHTTURN to right_turn, Right_turn, RIGHT_TURN
+  and compare_lexicographically* to compare_*
+  (deprecated the old names but didn't remove them).
+
 2.35   (9 July 2001)
-- added miss Object_2 and Object_3 types in Homogeneous classes
+- added missing Object_2 and Object_3 types in Homogeneous classes
 
 2.34   (21 June 2001)
 - New constructors for DirectionH2.

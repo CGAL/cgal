@@ -11,8 +11,7 @@
 // release       : 
 // release_date  : 
 // 
-// file          : distance_predicatesH2.h
-// package       : H2
+// file          : include/CGAL/distance_predicatesH2.h
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
@@ -87,19 +86,9 @@ compare_distance_to_point(const PointH2<R>& p,
 }
 
 template < class R>
-inline
-Comparison_result
-cmp_dist_to_point(const PointH2<R>& p,
-                  const PointH2<R>& q,
-                  const PointH2<R>& r)
-{
-   return compare_distance_to_point(p, q, r);
-}
-
-template < class R>
 CGAL_KERNEL_MEDIUM_INLINE
 bool
-has_larger_dist_to_point(const PointH2<R>& p,
+has_larger_distance_to_point(const PointH2<R>& p,
                               const PointH2<R>& q,
                               const PointH2<R>& r)
 {
@@ -149,9 +138,9 @@ has_larger_dist_to_point(const PointH2<R>& p,
 template < class R>
 CGAL_KERNEL_MEDIUM_INLINE
 bool
-has_smaller_dist_to_point(const PointH2<R>& p,
-                               const PointH2<R>& q,
-                               const PointH2<R>& r)
+has_smaller_distance_to_point(const PointH2<R>& p,
+                              const PointH2<R>& q,
+                              const PointH2<R>& r)
 {
   typedef typename R::RT RT;
 
@@ -196,12 +185,13 @@ has_smaller_dist_to_point(const PointH2<R>& p,
   return ( dosd < RT0 );
 }
 
+
 template < class R>
 CGAL_KERNEL_INLINE
 Comparison_result
-cmp_signed_dist_to_line(const LineH2<R>&  l,
-                             const PointH2<R>& p,
-                             const PointH2<R>& q)
+compare_signed_distance_to_line(const LineH2<R>&  l,
+                                const PointH2<R>& p,
+                                const PointH2<R>& q)
 {
   typedef typename R::RT RT;
 
@@ -232,10 +222,11 @@ cmp_signed_dist_to_line(const LineH2<R>&  l,
   }
 }
 
+
 template < class R>
 CGAL_KERNEL_INLINE
 bool
-has_larger_signed_dist_to_line(const LineH2<R>&  l,
+has_larger_signed_distance_to_line(const LineH2<R>&  l,
                                     const PointH2<R>& p,
                                     const PointH2<R>& q)
 {
@@ -260,12 +251,13 @@ has_larger_signed_dist_to_line(const LineH2<R>&  l,
   return ( scaled_dist_p_minus_scaled_dist_q > RT0 );
 }
 
+
 template < class R>
 CGAL_KERNEL_INLINE
 bool
-has_smaller_signed_dist_to_line(const LineH2<R>&  l,
-                                     const PointH2<R>& p,
-                                     const PointH2<R>& q)
+has_smaller_signed_distance_to_line(const LineH2<R>&  l,
+                                    const PointH2<R>& p,
+                                    const PointH2<R>& q)
 {
   typedef typename R::RT RT;
 
@@ -283,17 +275,17 @@ has_smaller_signed_dist_to_line(const LineH2<R>&  l,
       la*( phx*qhw - qhx*phw )
     + lb*( phy*qhw - qhy*phw );
 
-
-
   return ( scaled_dist_p_minus_scaled_dist_q < RT0 );
 }
+
+
 template < class R>
 CGAL_KERNEL_MEDIUM_INLINE
 Comparison_result
-cmp_signed_dist_to_line(const PointH2<R>& p,
-                             const PointH2<R>& q,
-                             const PointH2<R>& r,
-                             const PointH2<R>& s)
+compare_signed_distance_to_line(const PointH2<R>& p,
+                                const PointH2<R>& q,
+                                const PointH2<R>& r,
+                                const PointH2<R>& s)
 {
   typedef typename R::RT RT;
 
@@ -327,13 +319,14 @@ cmp_signed_dist_to_line(const PointH2<R>& p,
   }
 }
 
+
 template < class R>
 CGAL_KERNEL_MEDIUM_INLINE
 bool
-has_smaller_signed_dist_to_line(const PointH2<R>& p,
-                                     const PointH2<R>& q,
-                                     const PointH2<R>& r,
-                                     const PointH2<R>& s)
+has_smaller_signed_distance_to_line(const PointH2<R>& p,
+                                    const PointH2<R>& q,
+                                    const PointH2<R>& r,
+                                    const PointH2<R>& s)
 {
   typedef typename R::RT RT;
 
@@ -355,14 +348,15 @@ has_smaller_signed_dist_to_line(const PointH2<R>& p,
          ( rhx*shw - shx*rhw ) * (phy*qhw - qhy*phw)
        - ( rhy*shw - shy*rhw ) * (phx*qhw - qhx*phw);
 
-
   return ( scaled_dist_r_minus_scaled_dist_s < RT0 );
 }
+
+
 
 template < class R>
 CGAL_KERNEL_MEDIUM_INLINE
 bool
-has_larger_signed_dist_to_line(const PointH2<R>& p,
+has_larger_signed_distance_to_line(const PointH2<R>& p,
                                     const PointH2<R>& q,
                                     const PointH2<R>& r,
                                     const PointH2<R>& s)
@@ -390,6 +384,100 @@ has_larger_signed_dist_to_line(const PointH2<R>& p,
 
   return ( scaled_dist_r_minus_scaled_dist_s > RT0 );
 }
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+template < class R>
+inline
+Comparison_result
+cmp_dist_to_point(const PointH2<R>& p,
+                  const PointH2<R>& q,
+                  const PointH2<R>& r)
+{
+   return compare_distance_to_point(p, q, r);
+}
+
+template < class R>
+inline
+bool
+has_larger_dist_to_point(const PointH2<R>& p,
+                              const PointH2<R>& q,
+                              const PointH2<R>& r)
+{
+   return has_larger_distance_to_point(p,q,r);
+}
+
+template < class R>
+inline
+bool
+has_smaller_dist_to_point(const PointH2<R>& p,
+                               const PointH2<R>& q,
+                               const PointH2<R>& r)
+{
+   return has_smaller_distance_to_point(p, q, r);
+}
+
+template < class R>
+inline
+Comparison_result
+cmp_signed_dist_to_line(const LineH2<R>&  l,
+                             const PointH2<R>& p,
+                             const PointH2<R>& q)
+{
+   return compare_signed_distance_to_line(l, p, q);
+}
+
+template < class R>
+inline
+bool
+has_larger_signed_dist_to_line(const LineH2<R>&  l,
+                               const PointH2<R>& p,
+                               const PointH2<R>& q)
+{
+   return has_larger_signed_distance_to_line(l, p, q);
+}
+
+
+template < class R>
+inline
+bool
+has_smaller_signed_dist_to_line(const LineH2<R>&  l,
+                                const PointH2<R>& p,
+                                const PointH2<R>& q)
+{
+   return has_smaller_signed_distance_to_line(l, p, q);
+}
+
+template < class R>
+inline
+Comparison_result
+cmp_signed_dist_to_line(const PointH2<R>& p, const PointH2<R>& q,
+                        const PointH2<R>& r, const PointH2<R>& s)
+{
+   return compare_signed_distance_to_line(p,q,r,s);
+}
+
+template < class R>
+inline
+bool
+has_smaller_signed_dist_to_line(const PointH2<R>& p,
+                                const PointH2<R>& q,
+                                const PointH2<R>& r,
+                                const PointH2<R>& s)
+{
+   return has_smaller_signed_distance_to_line(p, q, r, s);
+}
+
+template < class R>
+inline
+bool
+has_larger_signed_dist_to_line(const PointH2<R>& p,
+                                    const PointH2<R>& q,
+                                    const PointH2<R>& r,
+                                    const PointH2<R>& s)
+{
+   return has_larger_signed_distance_to_line(p, q, r, s);
+}
+#endif
 
 CGAL_END_NAMESPACE
 

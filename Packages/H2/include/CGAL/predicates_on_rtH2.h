@@ -11,8 +11,7 @@
 // release       : 
 // release_date  : 
 // 
-// file          : predicates_on_rtH2.h
-// package       : H2
+// file          : include/CGAL/predicates_on_rtH2.h
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
@@ -60,7 +59,7 @@ orientationH2( const RT& phx, const RT& phy, const RT& phw,
 template <class RT>
 CGAL_KERNEL_INLINE
 bool
-leftturnH2( const RT& phx, const RT& phy, const RT& phw,
+left_turnH2( const RT& phx, const RT& phy, const RT& phw,
                  const RT& qhx, const RT& qhy, const RT& qhw,
                  const RT& rhx, const RT& rhy, const RT& rhw )
 {
@@ -80,10 +79,22 @@ leftturnH2( const RT& phx, const RT& phy, const RT& phw,
   return ( RT0 < det );
 }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+template <class RT>
+inline
+bool
+leftturnH2( const RT& phx, const RT& phy, const RT& phw,
+                 const RT& qhx, const RT& qhy, const RT& qhw,
+                 const RT& rhx, const RT& rhy, const RT& rhw )
+{
+   return left_turnH2(phx, phy, phw, qhx, qhy, qhw, rhx, rhy, rhw);
+}
+#endif
+
 template <class RT>
 CGAL_KERNEL_INLINE
 bool
-rightturnH2(const RT& phx, const RT& phy, const RT& phw,
+right_turnH2(const RT& phx, const RT& phy, const RT& phw,
                  const RT& qhx, const RT& qhy, const RT& qhw,
                  const RT& rhx, const RT& rhy, const RT& rhw )
 {
@@ -102,6 +113,18 @@ rightturnH2(const RT& phx, const RT& phy, const RT& phw,
   
   return ( det < RT0 );
 }
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+template <class RT>
+CGAL_KERNEL_INLINE
+bool
+rightturnH2(const RT& phx, const RT& phy, const RT& phw,
+                 const RT& qhx, const RT& qhy, const RT& qhw,
+                 const RT& rhx, const RT& rhy, const RT& rhw )
+{
+   return right_turnH2(phx, phy, phw, qhx, qhy, qhw, rhx, rhy, rhw);
+}
+#endif
 
 template <class RT>
 CGAL_KERNEL_INLINE
