@@ -1,11 +1,9 @@
 // example9
 
-#include <CGAL/basic.h> //CGAL definitions that need to come before anything
+#include <CGAL/Cartesian.h>
 
 //#include <CGAL/leda_rational.h>
 #include <CGAL/Quotient.h>
-
-#include <CGAL/Cartesian.h>
 
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Planar_map_2.h>
