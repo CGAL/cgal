@@ -565,6 +565,7 @@ public slots:
     }
 
 private:
+  Meshtraits traits;
   Mesh mesh;
   bool is_mesh_initialized;
 
