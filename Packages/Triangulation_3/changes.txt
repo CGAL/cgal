@@ -1,10 +1,11 @@
 Version 1.44 (? dec 00)
-- locate() optimisation. [syl]
+- typdefs _3 fixed in demo and example
+- locate() small optimization. [syl]
 
 Version 1.43 (6 dec 00)
 - Regular 3D compile for simple cartesian kernels too. [syl]
 - Geomview output. [syl]
-- typedefs _3 dans les traits [andreas]
+- typedefs _3 in traits [andreas]
 - minor optimization in side_of_tetrahedron(). [syl]
 - gcc 2.97 stuff. [syl]
 
