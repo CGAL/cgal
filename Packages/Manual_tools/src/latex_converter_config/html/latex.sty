@@ -947,6 +947,8 @@
     \gdef{\lciIfHtmlLinks}{\lcTrue}%
     \gdef{\lciIfHtmlIndex}{\lcTrue}%
     \lciChapter{#1}}
+\newcommand{\section*}[1]{\lcRawHtml{<H1>}#C1\lcRawHtml{</H1>
+}}
 
 
 \gdef\lciSectionAnchorCounter{0}
@@ -1485,6 +1487,9 @@
 \newcommand{\smallskip}{\lcRawHtml{<BR>}}
 \newcommand{\medskip}{\lcRawHtml{<BR><BR>}}
 \newcommand{\bigskip}{\lcRawHtml{<BR><BR><BR>}}
+
+\newcommand{\quad}{~~}
+\newcommand{\qquad}{~~~~}
 
 \newcommand{\addvspace}[1]{}
 

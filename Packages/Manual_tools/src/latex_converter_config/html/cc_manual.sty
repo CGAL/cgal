@@ -182,6 +182,16 @@
 \newcommand{\ccIncludeVerbatim}[1]{\lciParseFile{\lciLocalVerbatim}{#1}}
 
 % +--------------------------------------------------------------------------
+% | C++ Program Examples
+% +--------------------------------------------------------------------------
+% Environment to format contents as C++ code
+\newenvironment{ccExampleCode}{%
+    \lciParseUntilEndToken{\lciLocalVerbatim}{ccExampleCode}}{}
+
+% Format exernal file:  #1  the file name.
+\newcommand{\ccIncludeExampleCode}[1]{\ccIncludeVerbatim{#1}}
+
+% +--------------------------------------------------------------------------
 % | A handy macro to define macros for RCS entries in a TeX file
 % +--------------------------------------------------------------------------
 % --> see latex_converter.sty
@@ -249,6 +259,7 @@
 \newcommand{\ccCommentHeading}[1]{\lcRawHtml{<BR><EM>}#1: \lcRawHtml{</EM>}}
 
 \newcommand{\ccDefinition     }{\ccHeading{Definition}}
+\newcommand{\ccIsModel        }{\ccHeading{Is Model for the Concept}}
 \newcommand{\ccInheritsFrom   }{\ccHeading{Inherits From}}
 \newcommand{\ccParameters     }{\ccHeading{Parameters}}
 \newcommand{\ccConstants      }{\ccHeading{Constants}}
@@ -258,6 +269,7 @@
 \newcommand{\ccAccessFunctions}{\ccHeading{Access Functions}}
 \newcommand{\ccPredicates     }{\ccHeading{Predicates}}
 \newcommand{\ccModifiers      }{\ccHeading{Modifiers}}
+\newcommand{\ccHasModels      }{\ccHeading{Has Models}}
 \newcommand{\ccSeeAlso        }{\ccHeading{See Also}}
 \newcommand{\ccImplementation }{\ccHeading{Implementation}}
 \newcommand{\ccExample        }{\ccHeading{Example}}
@@ -330,7 +342,19 @@
 % | ...ccRefFunction, ...ccRefVariable, ...ccRefMacro, 
 % | \ccRefName
 % +--------------------------------------------------------------------------
+
+% make the new manual style parameterized.
+\newcommand{\ccNewRefManualStyle}{}   % false -> old style, true -> new style
+\gdef\ccNewRefManualStyle{\ccFalse}
+
+\newcommand{\ccRefPageBegin}{}
+\newcommand{\ccRefPageEnd}{}
+
 % predeclare variable names
+\newcommand{\ccGlobalScope}{}
+\newcommand{\ccPureGlobalScope}{}
+\newcommand{\ccRefScope}{}
+\newcommand{\ccPureRefScope}{}
 \newcommand{\ccRefCategory}{}
 \newcommand{\ccRefName}{}
 \newcommand{\ccPureRefName}{}
@@ -338,13 +362,25 @@
 \newcommand{\ccClassTemplateName}{}
 \newcommand{\ccPureClassTemplateName}{}
 
+% #1 == global scope used in ref-page section title 
+\newcommand{\ccDefGlobalScope}[1]{%
+                   \gdef\ccPureGlobalScope{#1}%
+                   \gdef\ccGlobalScope{\ccc{#1}}%
+}
+
 % #1 == token describing the category (Concept, Class ...)
 \newenvironment{ccRefDeclaration}[1]{%
                    \def\ccRefCategory{#C1}%
+                   \def\ccPureRefScope{}%
+                   \def\ccRefScope{}%
                    \lciParseCC{\lciRefDeclCont}%
                }{
+                   \ccRefPageEnd
+                   \end{lciClass}%
                    \end{ccHtmlClassFile}%
                    \def\ccRefCategory{}%
+                   \def\ccPureRefScope{}%
+                   \def\ccRefScope{}%
                    \def\ccPureRefName{}%
                    \renewcommand{\ccRefName}{}%
                    % needed for compliance with ccClass
@@ -358,24 +394,40 @@
                    \gdef{\lciIfHtmlRefLinks}{\lcTrue}%
                    \gdef{\lciIfHtmlRefIndex}{\lcTrue}%
                }
+\lciOptionalParameterAtEnd{\begin@ccRefDeclaration}{1}
+\newcommand{\begin@ccRefDeclaration@mo}{%
+                   \def\ccRefCategory{#C1}%
+                   \def\ccPureRefScope{#C2}%
+                   \def\ccRefScope{\ccc{#C2}}%
+                   \lciParseCC{\lciRefDeclCont}%
+               }
 
 \newcommand{\lciRefDeclCont}{\lciRefDeclContX\lciCCParameter}
 \newcommand{\lciRefDeclContX}[1]{%
                    \def\ccPureRefName{#XC1}%
                    \renewcommand{\ccRefName}{\ccc{#XC1}}%
                    \lciParseUntilDelimiter{\lciRefDeclDefFilename}<#XC1<@%
+                   \ccRefPageBegin
                    \ccRefSection{\ccRefCategory}{\ccPureRefName}%
                    % needed for compliance with ccClass
                    \def\ccPureClassTemplateName{#XC1}%
                    \renewcommand{\ccClassTemplateName}{\ccc{#XC1}}%
+                   \begin{lciClass}%% to make classname and templateclassname
+                                   %% known internally
                }
 
+% #1 = classname (functioname etc.) without template parameters
 \newcommand{\lciRefDeclDefFilename}[1]{%
+    \lciRefDeclDefFilenameX{#1}{\ccRefCategory}}
+
+% #1 = classname (functioname etc.) without template parameters
+% #2 = Ref category
+\newcommand{\lciRefDeclDefFilenameX}[2]{%
     \newcommand{\ccPureClassName}{#C1}%
     \newcommand{\ccClassName}{\ccc{#C1}}%
     \newcommand{\ccRefFilename}{#C1}%
     \gdef{\lciIfHtmlClassToc}{\lcFalse}%
-    \begin{ccHtmlClassFile}{#C1.html}{\ccRefName~~(\ccRefCategory)}%
+    \begin{ccHtmlClassFile}{#XC2_#C1.html}{\ccRefName}%
     \ccHtmlCrossLink{#C1}%
     \ccHtmlIndexC[\ccRefCategory]{#C1}%
     \gdef{\lciIfHtmlClassLinks}{\lcFalse}%
@@ -386,27 +438,56 @@
 
 %% Args: ccCategory, ccRefName
 \newcommand{\ccRefSection}[2]{%
+    \lciIf{\ccNewRefManualStyle}{\lcDrawRefTabs{#1}{#2}}{}
+    \ccRefSectionX{\ccRefPureGlobalScope}{\ccPureRefScope}{#C2}
+}
+
+%% Args: ccRefPureGlobalScope, ccPureRefScope, ccRefName
+\newcommand{\ccRefSectionX}[3]{%
+    %%\section*{\lcAsciiToHtml{#XC1#XC2#XC3}}
+    \section*{\lciIf{\ccNewRefManualStyle}{}{\ccRefCategory~}%
+      \ccc{#XC1#XC2#XC3}}\label{ccRef_#XC1#XC2#XC3}}
+
+%% #1 == ccCategory
+%% #2 == ccRefName
+\newcommand{\lcDrawRefTabs}[2]{%
     \lcRawHtml{<TABLE ALIGN=RIGHT><TR><TD><IMG ALIGN=TOP SRC="cc_#XC1.gif">}%
     \lcRawHtml{</TD></TR></TABLE>
-}\section*{\lcRawHtml{<I><B>#XC2</B></I>}}}
+}
+}
 
 \newenvironment{ccRefConcept}{%
+                   \gdef\ccRefPureGlobalScope{}%
                    \begin{ccRefDeclaration}{Concept}}{\end{ccRefDeclaration}}
 
 \newenvironment{ccRefClass}{%
+                   \gdef\ccRefPureGlobalScope{\ccPureGlobalScope}%
                    \begin{ccRefDeclaration}{Class}}{\end{ccRefDeclaration}}
 
 \newenvironment{ccRefEnum}{%
+                   \gdef\ccRefPureGlobalScope{\ccPureGlobalScope}%
                    \begin{ccRefDeclaration}{Enum}}{\end{ccRefDeclaration}}
 
 \newenvironment{ccRefFunction}{%
+                   \gdef\ccRefPureGlobalScope{\ccPureGlobalScope}%
                    \begin{ccRefDeclaration}{Function}}{\end{ccRefDeclaration}}
 
 \newenvironment{ccRefVariable}{%
+                   \gdef\ccRefPureGlobalScope{\ccPureGlobalScope}%
                    \begin{ccRefDeclaration}{Variable}}{\end{ccRefDeclaration}}
 
 \newenvironment{ccRefMacro}{%
+                   \gdef\ccRefPureGlobalScope{}%
                    \begin{ccRefDeclaration}{Macro}}{\end{ccRefDeclaration}}
+
+\newcommand{\ccRefPage}{\lciParseCC{\lciRefDummyX}}
+\newcommand{\lciRefDummyX}{}
+
+\newcommand{\ccRefLabel}{\lciParseCC{\lciRefLabelX}}
+\newcommand{\lciRefLabelX}{\lciRefLabelXX\lciCCParameter}
+\newcommand{\lciRefLabelXX}[1]{\label{ccRef_#XC1}}
+
+\newcommand{\ccRefIdfierPage}{\ccc}
 
 % ___________________________________________________________________________
 % ###########################################################################
@@ -581,6 +662,8 @@
 \newcommand{\ccTexHtml}[1]{\lcRawHtml}
 \newenvironment{ccTexOnly}{%
     \lciParseUntilEndToken{\lciSkipOneParameter}{ccTexOnly}}{}
+
+\newcommand{\lciLocalHtmlOnly}[1]{\lciRawOutputN{#L1}#1}
 \newenvironment{ccHtmlOnly}{%
     \lciParseUntilEndToken{\lciLocalHtmlOnly}{ccHtmlOnly}}{}
 
