@@ -6,6 +6,7 @@
 //---------------------------------------------------------------------
 //	actual revision
 //---------------------------------------------------------------------
+ALL : Added support for Core
 ALL : upgrade to GMP-4.1.2 for Windows
 GLOB: added licensing information about Qt widget stuff
 GLOB: removed stlport from README
