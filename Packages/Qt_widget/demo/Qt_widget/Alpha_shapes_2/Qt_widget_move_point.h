@@ -31,6 +31,8 @@
 #include <qpopupmenu.h>
 #include <qcursor.h>
 
+#include <list>
+
 namespace CGAL {
   class Qt_widget_movepoint_helper : public Qt_widget_layer
   {
@@ -45,7 +47,7 @@ namespace CGAL {
     void move_point();
   };
 
-  template <class T>
+  template <class T, class A>
   class Qt_widget_movepoint : public Qt_widget_movepoint_helper
   {
   public:
@@ -54,7 +56,9 @@ namespace CGAL {
     typedef typename T::Segment			    Segment;
     typedef typename T::Face_handle                 Face_handle;
     typedef typename T::Vertex_handle               Vertex_handle;
+    typedef typename T::Vertex_iterator             Vertex_iterator;
     typedef typename T::Geom_traits::Coord_type     FT;
+    typedef std::list<Point>                        CGALPointlist;
   protected:
     FT            first_x, first_y;
     FT            x2, y2;
@@ -64,11 +68,14 @@ namespace CGAL {
     Vertex_handle current_v;	//the vertex that will be process
     Point	  old_point;
     T		  *dt;
+    A             *as;
     QPopupMenu	  *popup1;
+    CGALPointlist L;
+
   public:
     Qt_widget_movepoint() : wasrepainted(true), on_first(FALSE)
     {};
-    void set_Delaunay (T *t) {dt = t;}
+    void set_variables (T *t, A* a) {dt = t; as = a;}
   private:
     QCursor oldcursor;
 
@@ -122,7 +129,18 @@ namespace CGAL {
       *widget << Point(x, y);
       dt->remove(current_v);
       current_v = dt->insert(Point(x, y));
-      widget->redraw();	//redraw the scenes
+      FT alpha_index = as->get_alpha();
+      as->clear();
+      L.clear();
+      Vertex_iterator it = dt->vertices_begin(), 
+	              beyond = dt->vertices_end();
+      while(it != beyond) {      
+        L.push_back((*it).point());
+        ++it;
+	}
+      as->make_alpha_shape(L.begin(), L.end());
+      as->set_alpha(alpha_index);
+      widget->redraw();	//redraw the layers
       old_point = Point(x, y);
     }
   };

@@ -61,33 +61,14 @@ std::list<Wpoint> LW;
 Alpha_shape       A;
 Alpha_shape_w     AW;
 int               current_state;
-double            alpha_index;
+double            alpha_index; //this is the alpha value for
+                               //the alpha_shape
+double            mult;  //this is used to compute the real value from
+                         //the slide
 QImage            image;
 Coord_type        xmin, ymin, xmax, ymax;
 
 
-class Qt_layer_show_alpha_shape : public CGAL::Qt_widget_layer
-{
-public:
-  Qt_layer_show_alpha_shape(){};
-private:
-  void draw(){
-    A.set_alpha(alpha_index);
-    A.set_mode(Alpha_shape::GENERAL);
-    *widget << CGAL::LineWidth(2) << CGAL::GREEN;
-    *widget << A;
-  }
-};
-
-class Qt_layer_show_image : public CGAL::Qt_widget_layer{
-public:
-  Qt_layer_show_image(QImage* i) : image(i){}
-  ~Qt_layer_show_image(){};
-  void draw(){
-    widget->get_painter().drawImage(0, 0, *image, 0, 0, widget->width(), widget->height(), 0);
-  }
-  QImage *image;
-};
 class Layout_widget : public QWidget{
 public:
   Layout_widget(QWidget *parent, const char *name=0):
@@ -123,10 +104,6 @@ public:
   slider = cwidget->get_slider();
   label  = cwidget->get_label();
   setCentralWidget(cwidget);
-
-  //image = new QImage();
-  image_layer = new Qt_layer_show_image(&image);
-  widget->attach(image_layer);
 
   //create a timer for checking if somthing changed
   QTimer *timer = new QTimer( this );
@@ -170,21 +147,21 @@ public:
   help->insertItem("About &Qt", this, SLOT(aboutQt()) );
 
   //the new input layers toolbar
-  newtoolbar = new CGAL::Tools_toolbar(widget, this, &tr1);	
+  newtoolbar = new CGAL::Tools_toolbar(widget, this, &tr1, &A);	
   //the new drawing layers toolbar
-  vtoolbar = new CGAL::Layers_toolbar(widget, this, &tr1);
+  vtoolbar = new CGAL::Layers_toolbar(widget, this, &tr1, &A, &image);
   //the standard toolbar
   stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this);
   this->addToolBar(stoolbar->toolbar(), Top, FALSE);
   this->addToolBar(newtoolbar->toolbar(), Top, FALSE);
   this->addToolBar(vtoolbar->toolbar(), Top, FALSE);
-  
+
   *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::BLACK);
 
   resize(w,h);
   widget->show();
   widget->setMouseTracking(TRUE);  
-	
+
   //connect the widget to the main function that receives the objects
   connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), 
     this, SLOT(get_new_object(CGAL::Object)));
@@ -192,14 +169,19 @@ public:
 
   //application flag stuff
   old_state = 0;
-  //layers
-  widget->attach(&alpha_shape_layer);
   alpha_index = 0.001;
+  mult = 1;
+  A.set_alpha(alpha_index);
   };
 
   ~MyWindow()
   {
   };
+  
+  void  init_coordinates(){
+    xmin = -1; xmax = 1;
+    ymin = -1; ymax = 1;
+  }
 
 private:
   void something_changed(){current_state++;};
@@ -227,7 +209,7 @@ public slots:
 
   void load_image(){
     QString s( QFileDialog::getOpenFileName( QString::null,
-		    "Image files (*.bmp)", this ) );
+		    "Image files (*.bmp) (*.jpg)", this ) );
     if ( s.isEmpty() )
         return;
     QImage img(s);
@@ -272,8 +254,10 @@ private slots:
       tr1.insert(p);
       LW.push_back(wp);
       L.push_back(p);
+      A.clear();
       A.make_alpha_shape(L.begin(), L.end());
       AW.make_alpha_shape(LW.begin(), LW.end());
+      A.set_alpha(alpha_index);
       something_changed();
     } 
   };
@@ -302,10 +286,13 @@ private slots:
     bool ok = FALSE;
     double res = QInputDialog::getDouble( 
 		 tr( "Please enter a decimal number" ),
-		 "Between 0 and 1", alpha_index, 0, 1, 3, &ok, this );
+		 "alpha > 0:", alpha_index, 0, 1, 3, &ok, this );
     if ( ok ){
       alpha_index = res;
-      slider->setValue(res*10000);
+      if(mult < res)
+        mult = res;
+      slider->setValue(res*10000/mult);	
+      A.set_alpha(alpha_index);
       widget->redraw();      
     }
   }
@@ -325,11 +312,6 @@ private slots:
     LW.clear();
     A.clear();
     AW.clear();
-    widget->clear_history();
-    widget->lock();
-    widget->set_window(-1.1, 1.1, -1.1, 1.1); 
-    // set the Visible Area to the Interval
-    widget->unlock();
     Wpoint pw;
     CGAL::Random_points_in_disc_2<Point> g(0.5);
     for(int count=0; count<200; count++) {
@@ -338,8 +320,25 @@ private slots:
       L.push_back(*g++);
       LW.push_back(pw);
     }
+    xmin = ymin = xmax = ymax = 0;
+    Vertex_iterator it = tr1.vertices_begin();
+    while(it != tr1.vertices_end()) {
+      L.push_back((*it).point());
+      if(xmin > (*it).point().x())
+	xmin = (*it).point().x();
+      if(xmax < (*it).point().x())
+	xmax = (*it).point().x();
+      if(ymin > (*it).point().y())
+	ymin = (*it).point().y();
+      if(ymax < (*it).point().y())
+	ymax = (*it).point().y();
+      it++;
+    }
+    widget->clear_history();
+    widget->set_window(xmin, xmax, ymin, ymax);
     A.make_alpha_shape(L.begin(), L.end());
     AW.make_alpha_shape(LW.begin(), LW.end());
+    A.set_alpha(alpha_index);
     something_changed();    
   }
   void save_triangulation()
@@ -366,6 +365,7 @@ private slots:
     std::ifstream in(s);
     CGAL::set_ascii_mode(in);
     in >> tr1;
+    xmin = ymin = xmax = ymax = 0;
     Vertex_iterator it = tr1.vertices_begin();
     while(it != tr1.vertices_end()) {
       L.push_back((*it).point());
@@ -379,14 +379,19 @@ private slots:
 	ymax = (*it).point().y();
       it++;
     }
+    widget->clear_history();
     widget->set_window(xmin, xmax, ymin, ymax);
     A.make_alpha_shape(L.begin(), L.end());
+    A.set_alpha(alpha_index);
     something_changed();
   }
 
   void slider_changed(int new_value)	{
-    alpha_index = 0.0001 * new_value;
-    label->setText(QString("The current alpha value: ") + QString::number(alpha_index));
+    alpha_index = 0.0001 * new_value * mult;
+    label->setText(QString("The current alpha value: ") +
+		   QString::number(alpha_index));
+    A.set_alpha(alpha_index);
+    A.set_mode(Alpha_shape::GENERAL);
     widget->redraw();   
   }
 
@@ -397,11 +402,8 @@ private:
   CGAL::Qt_widget_standard_toolbar
                           *stoolbar;
   int                     old_state;
-  Qt_layer_show_alpha_shape
-                          alpha_shape_layer;
   QSlider                 *slider;
   QLabel                  *label;
-  Qt_layer_show_image     *image_layer;
 };
 
 #include "alpha_shapes_2.moc"
@@ -420,6 +422,7 @@ main(int argc, char **argv)
   win.setMouseTracking(TRUE);
   win.show();
   // because Qt send resizeEvent only on show.
+  win.init_coordinates();
   win.set_window(-1, 1, -1, 1);
   current_state = -1;
   return app.exec();

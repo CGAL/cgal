@@ -64,3 +64,5 @@ typedef Alpha_shape::Vertex_iterator                       Vertex_iterator;
 typedef Alpha_shape::Edge_iterator                         Edge_iterator;
 typedef Alpha_shape::Edge_circulator                       Edge_circulator;
 typedef Alpha_shape::Alpha_iterator                        Alpha_iterator;
+
+

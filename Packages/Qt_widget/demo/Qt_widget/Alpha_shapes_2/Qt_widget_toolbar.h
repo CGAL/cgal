@@ -43,7 +43,8 @@ class Tools_toolbar : public QObject
 {
 	Q_OBJECT
 public:
-  Tools_toolbar(Qt_widget *w, QMainWindow *mw, Delaunay *t);
+  Tools_toolbar(Qt_widget *w, QMainWindow *mw, 
+                Delaunay *t, Alpha_shape *a);
 
   QToolBar*	toolbar(){return maintoolbar;}
 
@@ -59,7 +60,7 @@ private:
   int			nr_of_buttons;
 	
   CGAL::Qt_widget_get_point<RP> 	    pointbut;
-  CGAL::Qt_widget_movepoint<Delaunay> movepointbut;
+  CGAL::Qt_widget_movepoint<Delaunay, Alpha_shape> movepointbut;
 };//end class
 
 };//end namespace

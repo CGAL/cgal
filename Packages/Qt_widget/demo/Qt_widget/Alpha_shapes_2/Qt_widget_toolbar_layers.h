@@ -27,9 +27,10 @@
 #include <CGAL/IO/Qt_widget.h>
 
 //Qt_widget_layer
-#include "Qt_layer_show_triangulation.h"
-#include "Qt_layer_show_voronoi.h"
-#include "Qt_layer_show_points.h"
+//#include "Qt_layer_show_triangulation.h"
+//#include "Qt_layer_show_voronoi.h"
+//#include "Qt_layer_show_points.h"
+#include "alpha_shapes_2_layers.h"
 
 //Qt
 #include <qobject.h>
@@ -43,27 +44,26 @@ namespace CGAL {
 
 class Layers_toolbar : public QObject
 {
-	Q_OBJECT
+  Q_OBJECT
 public:
-	Layers_toolbar(Qt_widget *w, QMainWindow *mw, Delaunay *t);
+  Layers_toolbar(Qt_widget *w, QMainWindow *mw, 
+                 Delaunay *t, Alpha_shape *a, QImage *i);
 
-	QToolBar*	toolbar(){return maintoolbar;};
-
+  QToolBar*	toolbar(){return maintoolbar;};
 
 private:
-	QToolBar      *maintoolbar;	
-        QToolButton   *but[10];
-        QButtonGroup  *button_group;
-	Qt_widget     *widget;
-	QMainWindow   *window;
-	//Delaunay      *dt;
+  QToolBar      *maintoolbar;	
+  QToolButton   *but[10];
+  QButtonGroup  *button_group;
+  Qt_widget     *widget;
+  QMainWindow   *window;  	
+  int           nr_of_buttons;
 	
-	int			nr_of_buttons;
-	
-
-	CGAL::Qt_layer_show_triangulation < Delaunay >  *showT;
-	CGAL::Qt_layer_show_voronoi < Delaunay >        *showV;
-	CGAL::Qt_layer_show_points < Delaunay >         *showP;
+  CGAL::Qt_layer_show_triangulation < Delaunay >  *showT;
+  CGAL::Qt_layer_show_voronoi < Delaunay >        *showV;
+  CGAL::Qt_layer_show_points < Delaunay >         *showP;
+  CGAL::Qt_layer_show_alpha_shape                 *showA;
+  CGAL::Qt_layer_show_image                       *showI;
 };//end class
 
 };//end namespace
