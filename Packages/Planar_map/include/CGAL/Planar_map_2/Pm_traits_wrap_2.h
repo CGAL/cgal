@@ -87,10 +87,10 @@ public:
   { return (point_is_right_top(p1, p2) ? p1 : p2); }
     
   Point_2 curve_leftmost(const X_monotone_curve_2 & cv) const 
-  { return point_leftmost(curve_source(cv),curve_target(cv)); }
+  { return point_leftmost(curve_source(cv), curve_target(cv)); }
     
   Point_2 curve_rightmost(const X_monotone_curve_2 & cv) const
-  { return point_rightmost(curve_source(cv),curve_target(cv)); }
+  { return point_rightmost(curve_source(cv), curve_target(cv)); }
       
   Point_2 curve_leftlow_most(const X_monotone_curve_2 & cv) const 
   {
