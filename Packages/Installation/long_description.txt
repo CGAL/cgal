@@ -4,6 +4,16 @@
 
 
 //---------------------------------------------------------------------
+//	revision 1141
+//---------------------------------------------------------------------
+
+GLOB: Fixed (removed) check_COMPILER.
+GLOB: Fixed check_comp_executable for irix.
+GLOB: Added support for QT window.
+GLOB: Added settings for vc7.
+DOCS: Added Qt stuff.
+
+//---------------------------------------------------------------------
 //	revision 1140
 //---------------------------------------------------------------------
 
