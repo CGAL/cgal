@@ -1,7 +1,7 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-Ver 7.95
+Ver 7.95 (2/07/06)
 - fixed rxpensive precondition in delete_face
 - added is_face(Face_handle fh) 
         is_edge(Face_handle fh, int i)
