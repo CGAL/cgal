@@ -1,5 +1,5 @@
 ---------------------------------------------------------------
-- TEST RESULTS FROM PLATFORM sparc_SunOS-5.6_eg++-egcs-2.91.60_LEDA
+- TEST RESULTS FROM PLATFORM sparc_SunOS-5.6_eg++-egcs-2.91.66_LEDA
 ---------------------------------------------------------------
 
 DIRECTORY CVS:
@@ -8,16 +8,16 @@ ERROR: could not execute the script CVS/cgal_test
 
 DIRECTORY Triangulation:
 
-   ERROR: compilation of test_triangulation_tds failed
-   ERROR: could not execute test_triangulation_tds
-   ERROR: compilation of test_triangulation_geom_traits failed
-   ERROR: could not execute test_triangulation_geom_traits
-   ERROR: compilation of test_triangulation_2 failed
-   ERROR: could not execute test_triangulation_2
-   ERROR: compilation of test_delaunay_triangulation_2 failed
-   ERROR: could not execute test_delaunay_triangulation_2
-   ERROR: compilation of test_constrained_triangulation_2 failed
-   ERROR: could not execute test_constrained_triangulation_2
-   ERROR: compilation of test_regular_triangulation_2 failed
-   ERROR: could not execute test_regular_triangulation_2
+   compilation of test_triangulation_tds succeeded
+   execution of test_triangulation_tds succeeded
+   compilation of test_triangulation_geom_traits succeeded
+   ERROR: execution of test_triangulation_geom_traits failed
+   compilation of test_triangulation_2 succeeded
+   execution of test_triangulation_2 succeeded
+   compilation of test_delaunay_triangulation_2 succeeded
+   execution of test_delaunay_triangulation_2 succeeded
+   compilation of test_constrained_triangulation_2 succeeded
+   execution of test_constrained_triangulation_2 succeeded
+   compilation of test_regular_triangulation_2 succeeded
+   execution of test_regular_triangulation_2 succeeded
 
