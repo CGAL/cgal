@@ -26,6 +26,7 @@
 #include <algorithm>
 #include <set>
 #include <vector>
+#include "CGAL/polygon_assertions.h"
 
 CGAL_BEGIN_NAMESPACE
 //-----------------------------------------------------------------------//
@@ -586,4 +587,4 @@ bool Simplicity_test_2<ForwardIterator, Traits>::consecutive_edges(
 
 CGAL_END_NAMESPACE
 
-#endif CGAL_SIMPLICITY_TEST_H
+#endif // CGAL_SIMPLICITY_TEST_H
