@@ -54,7 +54,7 @@ using std::endl;
 using std::strcmp;
 using std::exit;
 
-#define CGAL_USE_EXTENDED_KERNEL
+// #define CGAL_USE_EXTENDED_KERNEL
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
@@ -409,7 +409,7 @@ int eval( int argc, char* argv[]) {
                 continue;
             }
             if ( assert_argc( argv[i], 1, argc - i - 1)) {
-                double alpha = M_PI * std::atof( argv[i+1]) / 180.0;
+                double alpha = CGAL_PI * std::atof( argv[i+1]) / 180.0;
                 NT diry = std::sin( alpha) * 256*256*256;
                 NT dirx = std::cos( alpha) * 256*256*256;
                 NT sin_alpha;
@@ -434,7 +434,7 @@ int eval( int argc, char* argv[]) {
                 continue;
             }
             if ( assert_argc( argv[i], 1, argc - i - 1)) {
-                double alpha = M_PI * std::atof( argv[i+1]) / 180.0;
+                double alpha = CGAL_PI * std::atof( argv[i+1]) / 180.0;
                 NT diry = std::sin( alpha) * 256*256*256;
                 NT dirx = std::cos( alpha) * 256*256*256;
                 NT sin_alpha;
@@ -459,7 +459,7 @@ int eval( int argc, char* argv[]) {
                 continue;
             }
             if ( assert_argc( argv[i], 1, argc - i - 1)) {
-                double alpha = M_PI * std::atof( argv[i+1]) / 180.0;
+                double alpha = CGAL_PI * std::atof( argv[i+1]) / 180.0;
                 NT diry = std::sin( alpha) * 256*256*256;
                 NT dirx = std::cos( alpha) * 256*256*256;
                 NT sin_alpha;
