@@ -12,18 +12,44 @@
   qui calcule la borne d'erreur, et mes scripts (voir si y'a pas trop de
   branches, etc...).
 
+Concerning the new stuff:
+- New Cartesian predicates must also be in CGAL-I for the whole thing to work
+  properly (NO_FILTER_SECTION).
+- A __NO_FILTER attribute would be better ?  These are needed (like built-ins)
+  for the new adaptative stuff.
+- Integrate into Filtered_Exact<>.
+- Offer static filtering facilities.
+- What to do with branches...  Treat those predicates by hand ?
+  Or automatically with some guidance ?
+  CollinearC3 is the only example, but it would be nice to have a way to
+  detect it at compile-time.
+  The user could provide _in place_ the alternative epsilon version...
+- Long term: match operator< and co ?
+- # of bounds  : one per predicate, or one per argument ?  give choice.
+- # of epsilons: one per predicate, or one set per sub-predicate ?  choice.
+- Check the compiler optimizes the epsilon computation
+  (use __attribute__((const)) for Static_filter_error operators) ?
+- Note that there a conflict right now between the $new_protect_macro...
+- Document the script (before I forget what's inside...)
+
 Concerning the code itself:
 
+- Offer the possibility to push out of the predicates the rounding mode
+  changes, and then add checks (rounding==up) there.
+- Use "Self" in all my classes to denote the class name as typedef.
+- There's a next_after(double) required by IEEE.  It would be nicer for the
+  conversion functions, compared to +min_double...
 - Write include/CGAL/predicates/README to say what I want.
   avec un main.h que je sources depuis Arithmetic_filter.h...
-- Interval_nt doesn't need to be fast => no inline => libCGAL ?
-- Converning in_smallest_orthogonalcircle_ftC2.h, it needs some #include at
+- Investigate sqrt() bug on CygWin (no idea... does it call a buggy lib fct ?)
+- Concerning in_smallest_orthogonalcircle_ftC2.h, it needs some #include at
   the end for the overloading (when it's more mature), same thing for
   Arithmetic_filter.h (could this be automated ?).  Same thing for Regular T3D.
 - Est-ce que les spécialisations doivent être sous CVS ?
 - Essayer de bencher avec -fbranch-probabilities ?  Ça pourrait être pas mal.
 - Expertiser le bench de Stefan.
-- Drop the class Interval_nt ?
+- Interval_nt doesn't need to be fast => no inline => libCGAL ?
+- Drop the class Interval_nt ?  It's 230 lines for nothing...
   Or have a boolean template parameter, instead or the derivation ?
 - Filter_Cache: Faire des benchs, et une test-suite qui soit raisonnable.
   Hum, rajouter un booléen pour calculer le cache seulement sur demande ?
@@ -62,11 +88,10 @@ Concerning the code itself:
 
 Concerning the script:
 
-- Have a command line option "--in-CGAL" for differencing user vs CGAL code.
-- Try to be less pedantic (accept more C++).
-- Add a warning/check to the argument being "const".
-- Add determinant_signs.h to the list of filtered files ?  And send the 3
-  lines to Stefan to add to the end of the original determinant.h.
+- Have command line options:
+  "--static-filter" for the new filter scheme.
+  "--only-marked-functions" to process only stuff inside CGAL_FILTER_BEGIN/END.
+    (similar to expcomp)
 - Produire un fichier avec juste les déclarations, et un autre avec les
   définitions, ça aidera à faire une library séparée de trucs précompilés.
 - Parser des declarations sans definition ?
@@ -84,7 +109,7 @@ Concerning the doc:
 - document overlap_action(), when it is made customisable.
 - Passer au nouveau format de doc.
 - Document CGAL_IA_STOP_CONSTANT_PROPAGATION ?
-- Document "//CGAL_NO_FILTER_BEGIN" and "//CGAL_NO_FILTER_END".
+- Document the script !!!
 
 Concerning the test-suite:
 

@@ -124,7 +124,7 @@ tst_static_adaptatif: tst_static_adaptatif.o
 	$(CGAL_CXX) -o $@ $+ $(LDFLAGS)
 
 clean:
-	rm -f *.o *.bb *.bbg *.da *.gcov core tst? *.rpo .pure
+	rm -f *.o *.bb *.bbg *.da *.gcov core tst? tst_static_adaptatif *.rpo .pure
 
 #---------------------------------------------------------------------#
 #                    suffix rules
