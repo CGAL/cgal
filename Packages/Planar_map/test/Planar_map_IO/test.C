@@ -220,7 +220,8 @@ private:
       std::cout << std::endl;
     }
   
-  bool point_is_in_expected_place(Planar_map &pm, Point &pnt, Planar_map::Locate_type exp_lt)
+  bool point_is_in_expected_place(Planar_map &pm, Point &pnt, 
+				  Planar_map::Locate_type exp_lt)
     {
       Planar_map::Locate_type    location_of_vertex;
       
@@ -229,19 +230,25 @@ private:
       return (location_of_vertex == exp_lt);
     }
   
-  void check_that_vertices_are_in_arrangement(Planar_map &pm, Point_list & all_points_list)
+  void check_that_vertices_are_in_arrangement(Planar_map &pm, 
+					      Point_list & all_points_list)
     {
       Point_list::iterator pit;
       
+      std::cout << "Following points should be on vertices or edges:";
+      std::cout << std::endl;
       for (pit = all_points_list.begin(); pit != all_points_list.end(); pit++)
 	{
 #if CGAL_PM_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
-	  std::cout << (*pit).xcoord() << " " << (*pit).ycoord() << "*** ";
+	  std::cout << (*pit).xcoord() << " " << (*pit).ycoord();
 #else
-	  std::cout << (*pit).x() << " " << (*pit).y() << "*** ";
+	  std::cout << (*pit).x() << " " << (*pit).y();
 #endif
-	  CGAL_assertion(point_is_in_expected_place(pm, *pit, Planar_map::VERTEX) ||
-                         point_is_in_expected_place(pm, *pit, Planar_map::EDGE));
+	  std::cout << std::endl;
+	  CGAL_assertion(point_is_in_expected_place(pm, *pit, 
+						    Planar_map::VERTEX) ||
+                         point_is_in_expected_place(pm, *pit, 
+						    Planar_map::EDGE));
 	}
     }
   
@@ -405,15 +412,15 @@ X_curve read_polyline_curve(std::ifstream& file, bool reverse_order)
       file1.getline(s1, STR_LEN);
       file2.getline(s2, STR_LEN);
       
-      //cout<<s1<<endl;
-      //cout<<s2<<endl;
+      //std::cout<<s1<<endl;
+      //std::cout<<s2<<endl;
       
-      assert(string(s1) == string(s2));
+      CGAL_assertion(std::string(s1) == std::string(s2));
     }
     
-    assert (file1.eof() && file2.eof());
+    CGAL_assertion (file1.eof() && file2.eof());
 
-    cout<<"Reading and writing file  - O.K"<<std::endl;
+    std::cout<<"Reading and writing file  - O.K"<<std::endl;
   }
   
   void read_file_build_arrangement(std::ifstream& input_file, std::ifstream& file, bool reverse_order)
@@ -453,7 +460,7 @@ X_curve read_polyline_curve(std::ifstream& file, bool reverse_order)
       pm_file << pm;
       
       // debugging!
-      cout<<pm;
+      std::cout<<pm;
       //input_file.close();
       //arr_file.close();
       //arr_file.open("temp", _IO_INPUT);
@@ -481,22 +488,23 @@ X_curve read_polyline_curve(std::ifstream& file, bool reverse_order)
       //      std::getline(file, s); // skip
       //      std::getline(file, s, ':'); // skip
       expected_num_vertices = get_next_int(file);
-      cout<<"expected number of  vertices "<<expected_num_vertices<<endl;
+      std::cout<<"expected number of  vertices "<<expected_num_vertices;
+      std::cout<<std::endl;
       
       //      std::getline(file, s); // skip
       //      std::getline(file, s, ':'); // skip
       expected_num_edges = get_next_int(file);
-      cout<<"expected number of edges "<< expected_num_edges<<endl;
+      std::cout<<"expected number of edges "<< expected_num_edges<<std::endl;
       
       //      std::getline(file, s); // skip
       //      std::getline(file, s, ':'); // skip
       expected_num_faces = get_next_int(file);
-      cout<<"expected number of faces "<<expected_num_faces <<endl;
+      std::cout<<"expected number of faces "<<expected_num_faces <<std::endl;
       
       //      std::getline(file, s); // skip
       //      std::getline(file, s, ':'); // skip
       //expected_num_overlaps = get_next_int(file);
-      //cout<<"expected number of overlaps "<<expected_num_overlaps<<endl;
+      //std::cout<<"expected number of overlaps "<<expected_num_overlaps<<std::endl;
     }
 
   /****************************
