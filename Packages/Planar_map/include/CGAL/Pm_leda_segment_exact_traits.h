@@ -154,9 +154,9 @@ public:
 		{
 			//return CURVE_VERTICAL; //&&& - copied from exact-traits ask Oren & Iddo 1/4/99
 			
-			if (is_lower(p,lowest(curve_source(cv),curve_target(cv))))
+			if (is_lower(p,lowest(cv.source(),cv.target())))
 				return UNDER_CURVE;
-			if (is_higher(p,highest(curve_source(cv),curve_target(cv))))
+			if (is_higher(p,highest(cv.source(),cv.target())))
 				return ABOVE_CURVE;
 			// if (curve_is_in_y_range(cv,p))
 			return ON_CURVE;
