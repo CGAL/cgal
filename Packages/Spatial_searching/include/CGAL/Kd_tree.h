@@ -48,6 +48,7 @@ public:
   typedef typename Compact_container<Node>::iterator Node_handle;
   typedef typename std::vector<Point_d*>::iterator Point_d_iterator;
   typedef typename Splitter::Separator Separator;
+  std::vector<Point_d>::iterator iterator;
 
 private:
 
@@ -64,7 +65,6 @@ private:
   // and we only store an iterator range in the Kd_tree_node.
   // 
   std::vector<Point_d*> data;
-  Point_d_iterator data_iterator;
   SearchTraits tr;
 
   // protected copy constructor
@@ -180,7 +180,7 @@ public:
     typename SearchTraits::Construct_cartesian_const_iterator_d ccci;
     int dim = std::distance(ccci(p), ccci(p,0)); 
 
-    data = std::vector<Point_d*>(pts.size());
+    data.reserve(pts.size());
     for(int i = 0; i < pts.size(); i++){
       data[i] = &pts[i];
     }
@@ -217,7 +217,7 @@ public:
   }
 
   Node_handle 
-  root()const 
+  root() const 
   { 
     return tree_root; 
   }
@@ -228,10 +228,22 @@ public:
     return *bbox; 
   }
 
+  iterator
+  begin() const
+  {
+    return pts.begin();
+  }
+
+  iterator
+  end() const
+  {
+    return pts.end();
+  }
+
   int 
   size() const 
   {
-    return data.size();
+    return pts.size();
   }
 
   // Print statistics of the tree.
