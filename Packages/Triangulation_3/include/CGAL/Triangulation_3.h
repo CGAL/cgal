@@ -156,8 +156,10 @@ public:
 
   // copy constructor duplicates vertices and cells
   CGAL_Triangulation_3(const CGAL_Triangulation_3<GT,Tds> & tr)
-    : _tds(tr._tds), _gt(tr._gt), infinite(tr.infinite)
-  {}
+    : _gt(tr._gt)
+  {
+    infinite = (Vertex *) _tds.copy_tds(tr._tds, &(*(tr.infinite)) );
+  }
 
   // debug
   CGAL_Triangulation_3(const Point & p0,
@@ -275,7 +277,12 @@ public:
 			      it->vertex(1)->point(),
 			      it->vertex(2)->point(),
 			      it->vertex(3)->point()) != CGAL_LEFTTURN ) {
-	  if (verbose) { cerr << "badly oriented cell" << endl; }
+	  if (verbose) { cerr << "badly oriented cell " 
+			      << it->vertex(0)->point() << ", " 
+			      << it->vertex(1)->point() << ", " 
+			      << it->vertex(2)->point() << ", " 
+			      << it->vertex(3)->point() << ", " 
+			      << endl; }
 	  CGAL_triangulation_assertion(false); return false;
 	}
       }
