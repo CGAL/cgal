@@ -8,6 +8,8 @@
 //---------------------------------------------------------------------
 
 DOCS: now joind into stl_extension.tex.
+ALL : Added file algorithm.h.
+ALL : New functions min_max_element and min/max_element_if.
 DOCS: Joined with compose.tex.
 SRC : Added N_step_adaptor_derived.
 SRC : Fixed _Circulator_size_traits to I_Circulator_size_traits.
