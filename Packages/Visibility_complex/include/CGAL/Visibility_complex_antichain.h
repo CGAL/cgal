@@ -214,7 +214,7 @@ private:
     In_place_list<Vertex,false> _minimals_cw;
 
 #ifdef DEBUG
-    map<long,int>               Key;
+    std::map<long,int>               Key;
 #endif
 
 public :
