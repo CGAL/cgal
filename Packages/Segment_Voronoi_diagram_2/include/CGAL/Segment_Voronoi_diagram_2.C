@@ -448,7 +448,6 @@ typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Vertex_handle
 Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 insert_third(const Point& p)
 {
-  std::cout << "inside insert third..." << std::endl;
   CGAL_triangulation_precondition( number_of_vertices() == 2 );
 
   Site_2 t(p);
