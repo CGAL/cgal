@@ -465,8 +465,8 @@ bool Hot_pixel<Traits_>::intersect_top(const Segment_2 & seg,
 
 /*! */
 template<class Traits_>
-bool Hot_pixel<Traits_>::intersect(Segment_data<Traits_> & seg,
-                                   Direction seg_dir) const
+bool
+Hot_pixel<Traits_>::intersect(Segment_data & seg, Direction seg_dir) const
 {
   Segment_2 s = seg.segment();
 
@@ -477,7 +477,7 @@ bool Hot_pixel<Traits_>::intersect(Segment_data<Traits_> & seg,
 // a function for compare two hot pixels for the set of hot pixels
 template<class Traits_>
 bool Hot_pixel_auclidian_cmp<Traits_>::
-operator()(const Hot_pixel<Traits_> *h1, const Hot_pixel<Traits_> *h2) const
+operator()(const Hot_pixel * h1, const Hot_pixel * h2) const
 {
   typedef typename Traits_::Compare_x_2         Compare_x_2;
   typedef typename Traits_::Compare_y_2         Compare_y_2;
@@ -494,8 +494,8 @@ operator()(const Hot_pixel<Traits_> *h1, const Hot_pixel<Traits_> *h2) const
 // a function for compare two hot pixels for the set of hot pixels a certain
 // segment intersect
 template<class Traits_>
-bool Hot_pixel_dir_cmp<Traits_>::operator ()(const Hot_pixel<Traits_> *h1,
-                                             const Hot_pixel<Traits_> *h2) 
+bool Hot_pixel_dir_cmp<Traits_>::operator ()(const Hot_pixel * h1,
+                                             const Hot_pixel * h2) 
 {
   typedef typename Traits_::Compare_x_2         Compare_x_2;
   typedef typename Traits_::Compare_y_2         Compare_y_2;
@@ -527,8 +527,8 @@ void Snap_rounding_2<Traits,OutputContainer>::
 find_hot_pixels_and_create_kd_trees
 (NT pixel_size,
  unsigned int number_of_kd_trees,
- std::list<Segment_data<Traits> > &seg_list,
- Multiple_kd_tree<Traits, Hot_pixel<Traits> *> **mul_kd_tree)
+ std::list<Segment_data> & seg_list,
+ Multiple_kd_tree<Traits, Hot_pixel *> **mul_kd_tree)
 {
   typedef Hot_pixel<Traits>                             Hot_pixel;
   typedef Segment_data<Traits>                          Segment_data;
@@ -584,14 +584,13 @@ find_hot_pixels_and_create_kd_trees
 /*! */
 template<class Traits_,class OutputContainer>
 void Snap_rounding_2<Traits_,OutputContainer>::
-find_intersected_hot_pixels(Segment_data<Traits_> &seg,
-                            std::set<Hot_pixel<Traits_> *,
+find_intersected_hot_pixels(Segment_data & seg,
+                            std::set<Hot_pixel *,
                             Hot_pixel_dir_cmp<Traits_> >
                             &hot_pixels_intersected_set,
                             int &number_of_intersections,
                             NT pixel_size,
-                            Multiple_kd_tree<Traits,Hot_pixel<Traits> *>
-                            *mul_kd_tree)
+                            Multiple_kd_tree<Traits,Hot_pixel *> *mul_kd_tree)
 {
   typedef Hot_pixel<Traits_>                            Hot_pixel;
   typedef typename std::list<Hot_pixel *>::iterator     Hot_pixel_iter;
@@ -626,13 +625,11 @@ find_intersected_hot_pixels(Segment_data<Traits_> &seg,
 /*! */
 template<class Traits_,class OutputContainer>
 void Snap_rounding_2<Traits_,OutputContainer>::
-reroute_sr(std::set<Hot_pixel<Traits_> *,
-           Hot_pixel_dir_cmp<Traits_> > &inp_hot_pixels_intersected_set,
-           Polyline_type& seg_output,
+reroute_sr(std::set<Hot_pixel *, Hot_pixel_dir_cmp>
+           & inp_hot_pixels_intersected_set,
+           Polyline_type & seg_output,
            bool int_output)
 {
-  typedef Hot_pixel<Traits_>            Hot_pixel;
-  typedef Hot_pixel_dir_cmp<Traits_>    Hot_pixel_dir_cmp;
   typedef typename std::set<Hot_pixel *, Hot_pixel_dir_cmp>::iterator
     Hot_pixel_iter;
 
@@ -657,9 +654,6 @@ reroute_isr(std::set<Hot_pixel<Traits_> *,
             bool int_output,
             Multiple_kd_tree<Traits,Hot_pixel<Traits> *> *mul_kd_tree)
 {
-  typedef Hot_pixel<Traits_>                            Hot_pixel;
-  typedef Segment_data<Traits>                          Segment_data;
-  typedef Hot_pixel_dir_cmp<Traits_>                    Hot_pixel_dir_cmp;
   typedef std::set<Hot_pixel *, Hot_pixel_dir_cmp>      Hot_pixel_set;
   typedef typename std::set<Hot_pixel *, Hot_pixel_dir_cmp>::iterator
     Hot_pixel_iter;
@@ -705,9 +699,6 @@ iterate(OutputContainer & output_container, NT pixel_size,
         std::list<Segment_data<Traits> > & seg_list,
         Multiple_kd_tree<Traits, Hot_pixel<Traits> *> * mul_kd_tree)
 {
-  typedef Hot_pixel<Traits_>                            Hot_pixel;
-  typedef Segment_data<Traits>                          Segment_data;
-  typedef Hot_pixel_dir_cmp<Traits_>                    Hot_pixel_dir_cmp;
   typedef std::set<Hot_pixel *, Hot_pixel_dir_cmp>      Hot_pixel_set;
   typedef typename std::set<Hot_pixel *, Hot_pixel_dir_cmp>::iterator
     Hot_pixel_iter;
