@@ -19,6 +19,7 @@
 #ifndef CGAL_NORMALIZING_H
 #define CGAL_NORMALIZING_H
 
+#include <CGAL/assertions.h>
 #include <CGAL/Nef_3/Infimaximal_box.h>
 
 #include <CGAL/basic.h>
@@ -67,7 +68,7 @@ template <typename R>
 CGAL::Sphere_direction<R> normalized(CGAL::Sphere_direction<R>& c)
 {
   CGAL::Plane_3<R> h = c.plane();
-  CGAL_nef3_assertion(!(h.a()==0 && h.b()==0 && h.c()==0 && h.d()==0));
+  CGAL_assertion(!(h.a()==0 && h.b()==0 && h.c()==0 && h.d()==0));
   
   typedef typename R::RT     RT;
 
@@ -98,7 +99,7 @@ CGAL::Sphere_direction<R> normalized(CGAL::Sphere_direction<R>& c)
 template <typename R>
 CGAL::Plane_3<R> normalized(CGAL::Plane_3<R>& h)
 { 
-  CGAL_nef3_assertion(!(h.a()==0 && h.b()==0 && h.c()==0 && h.d()==0));
+  CGAL_assertion(!(h.a()==0 && h.b()==0 && h.c()==0 && h.d()==0));
   
   typedef typename R::RT     RT;
 
@@ -137,7 +138,7 @@ template <typename R>
 CGAL::Sphere_circle<R> normalized(CGAL::Sphere_circle<R>& c)
 { 
   CGAL::Plane_3<R> h = c.plane();
-  CGAL_nef3_assertion(!(h.a()==0 && h.b()==0 && h.c()==0 && h.d()==0));
+  CGAL_assertion(!(h.a()==0 && h.b()==0 && h.c()==0 && h.d()==0));
   
   typedef typename R::RT     RT;
 
