@@ -365,7 +365,7 @@ Qt_widget& operator<<(Qt_widget& w, const Bbox_2& r)
 void Qt_widget::attach_standard(Qt_widget_standard_tool* tool) {
   if (has_standard_tool()) {
     current_standard_tool->detach();
-    emit(detached_tool());
+    emit(detached_standard_tool());
   }
   current_standard_tool=tool;
   _has_standard_tool=true;
@@ -376,6 +376,11 @@ void Qt_widget::attach(Qt_widget_tool* tool) {
   if (has_tool()) {
     current_tool->detach();
     emit(detached_tool());
+  }
+  if (has_standard_tool()) {
+    current_standard_tool->detach();
+    emit(detached_standard_tool());
+    _has_standard_tool=false;
   }
   current_tool=tool;
   _has_tool=true;

@@ -101,16 +101,24 @@ namespace CGAL {
     but[3]->setToggleButton(TRUE);
     but[4]->setToggleButton(TRUE);
     but[5]->setToggleButton(TRUE);
-
     nr_of_buttons = 6;
+
+    connect(w, SIGNAL(detached_standard_tool()), this, SLOT(toggle_button()));
   };
+
+  //the definition of the slots
+  void Standard_toolbar::toggle_button()
+  {
+    if(is_active) {
+      but[activebutton]->toggle();
+      is_active = false;
+    }
+  }	
 
   void Standard_toolbar::toolregion()
   {
     if (but[3]->isOn())
     {
-      if(is_active)
-	but[activebutton]->toggle();
       widget->attach_standard(&zoombut);
       activebutton = 3;
       is_active = true;
@@ -126,8 +134,6 @@ namespace CGAL {
   {
     if (but[4]->isOn())
     {
-      if(is_active)
-	but[activebutton]->toggle();
       widget->attach_standard(&zoomrectbut);
       activebutton = 4;
       is_active = true;
@@ -163,8 +169,6 @@ namespace CGAL {
   {
     if (but[5]->isOn())
     {      
-      if(is_active)
-	but[activebutton]->toggle();
       widget->attach_standard(&handtoolbut);
       activebutton = 5;
       is_active = true;
