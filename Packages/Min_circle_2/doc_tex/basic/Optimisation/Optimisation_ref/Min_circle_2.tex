@@ -374,13 +374,13 @@ To illustrate the creation of \ccClassTemplateName\ and to show that
 randomization can be useful in certain cases, we give an example.
 
 \begin{cprog}
-  #include <CGAL/Integer.h>
+  #include <CGAL/Gmpz.h>
   #include <CGAL/Homogeneous.h>
   #include <CGAL/Point_2.h>
   #include <CGAL/Optimisation_traits_2.h>
   #include <CGAL/Min_circle_2.h>
 
-  typedef  integer                        NT;
+  typedef  CGAL_Gmpz                      NT;
   typedef  CGAL_Homogeneous<NT>           R;
   typedef  CGAL_Point_2<R>                Point;
   typedef  CGAL_Optimisation_traits_2<R>  Traits;
