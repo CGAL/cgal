@@ -1,4 +1,4 @@
-Version 1.140 (11 May 03)
+Version 1.141 (11 May 03)
 - Remove Direction_3 from DelaunayTraits_3.
 
 Version 1.139 (08 May 03)
