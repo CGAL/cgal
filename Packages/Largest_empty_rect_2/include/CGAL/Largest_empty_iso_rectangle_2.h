@@ -157,6 +157,9 @@ private:
   NT largest_rect_size;
   //  Polygon *polygon;
 
+template<class T>
+
+  bool insert(const Point& _p,Point_type i_type = REG);
   void phase_1();
   void phase_1_on_x();
   void phase_1_on_y();
@@ -225,7 +228,7 @@ public:
 
   // add a point to data
   bool
-  insert(const Point& p, Point_type i_type = REG);
+  insert(const Point& p);
 
   // and the STL standard member function for insertion:
   void
@@ -321,12 +324,11 @@ Largest_empty_iso_rectangle_2<T>::Point_data::Point_data(const Point& _p,
 
 template<class T>
 bool
-Largest_empty_iso_rectangle_2<T>::insert(const Point& _p,
-					 Point_type i_type)
+Largest_empty_iso_rectangle_2<T>::insert(const Point& _p)
 {
   // check that the point is inside the bounding box 
-  if((i_type == REG) &_(p.x() <= bl_p.x() || _p.x() >= tr_p.x() ||
-     _p.y() <= bl_p.y() || _p.y() >= tr_p.y()))
+  if(p.x() <= bl_p.x() || _p.x() >= tr_p.x() ||
+     _p.y() <= bl_p.y() || _p.y() >= tr_p.y())
     return(false);
 
   cache_valid = false;
@@ -446,6 +448,26 @@ Largest_empty_iso_rectangle_2<T>::phase_1_on_y()
     }
     ++iter;
   }
+}
+
+template<class T>
+bool
+Largest_empty_iso_rectangle_2<T>::insert(const Point& _p,
+					 Point_type i_type = REG)
+{
+  // check that the point is inside the bounding box 
+  if((i_type == REG) && _(p.x() <= bl_p.x() || _p.x() >= tr_p.x() ||
+     _p.y() <= bl_p.y() || _p.y() >= tr_p.y()))
+    return(false);
+
+  cache_valid = false;
+  Point_data_set_of_y *right_tent = new Point_data_set_of_y(Less_yx(geom_traits()));
+  Point_data_set_of_y *left_tent = new Point_data_set_of_y(Less_yx(geom_traits()));
+  Point_data *po = new Point_data(_p,right_tent,left_tent,i_type);
+
+  x_sorted.insert(po);
+  y_sorted.insert(po);
+  return(true);
 }
 
 template<class T>
