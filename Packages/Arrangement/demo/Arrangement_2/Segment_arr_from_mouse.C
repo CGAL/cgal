@@ -40,7 +40,7 @@ int main()
 #include <CGAL/Arr_2_bases.h>
 #include <CGAL/Arr_2_default_dcel.h>
 #include <CGAL/Arrangement_2.h>
-
+#include <CGAL/leda_rational.h>
 #include <LEDA/rat_window.h>
 #include <CGAL/Draw_preferences.h>
 #include <vector>
@@ -49,21 +49,21 @@ int main()
 using namespace leda;
 #endif
 
-typedef CGAL::Arr_leda_segment_exact_traits         Traits;
+typedef leda_rational                                   NT;
+typedef CGAL::Arr_leda_segment_exact_traits<NT>         Traits;
 
-typedef Traits::Point                                  Point;
-typedef Traits::X_curve                                X_curve;
+typedef Traits::Point_2                                 Point;
+typedef Traits::X_curve_2                               X_curve;
 
-typedef CGAL::Arr_base_node<X_curve>   Base_node;
-typedef CGAL::Arr_2_default_dcel<Traits> Dcel;
+typedef CGAL::Arr_base_node<X_curve>                    Base_node;
+typedef CGAL::Arr_2_default_dcel<Traits>                Dcel;
 
-typedef CGAL::Arrangement_2<Dcel,Traits,Base_node > Arr_2;
+typedef CGAL::Arrangement_2<Dcel,Traits,Base_node>      Arr_2;
 
 //I had to add these in global namespace for the program to compile
 
 /*
-CGAL::Window_stream& operator<<(CGAL::Window_stream& os,
-                          const Point& p)
+CGAL::Window_stream& operator<<(CGAL::Window_stream& os, const Point& p)
 {
   //return os << leda_point(p.xcoordD(),p.ycoordD());
   return os << p.to_point();
@@ -71,7 +71,7 @@ CGAL::Window_stream& operator<<(CGAL::Window_stream& os,
 */
 
 CGAL::Window_stream& operator<<(CGAL::Window_stream& os,
-                          const X_curve &c)
+                                const X_curve &c)
 {
   return os << c.to_segment();
 }
@@ -82,7 +82,7 @@ static Arr_2 arr;
 static CGAL::Window_stream W(400, 400, "CGAL - Segment Arrangement Demo");
 
 CGAL_BEGIN_NAMESPACE
-Window_stream& operator<<(Window_stream& os, Arr_2 &A)
+Window_stream & operator<<(Window_stream& os, Arr_2 &A)
 {
   My_Arr_drawer< Arr_2,
                  Arr_2::Ccb_halfedge_circulator, 
