@@ -12,7 +12,8 @@ $l$ is called the {\em sweep line}. The {\em status} of the sweep line is
 the set of curves intersecting it. The status changes while the sweep line 
 moves to the right, but not continuously. The sweep line status is updated at 
 specific points called the {\em event points}. These points are actually
-the endpoints of all curves and their intersection points. The initial set of 
+the endpoints of all curves and their \ccHtmlNoLinksFrom{intersection} points.
+The initial set of 
 {\em event points} are only the endpoints of the curves. More
 {\em event points} are added as intersection points are calculated.
 
@@ -34,12 +35,13 @@ in order to gain simplicity and speed.}) curves in a plane, the
 performed on $C$:
 
 \begin{itemize}
-\item calculate the intersection points between the curves of $C$. 
+\item calculate the \ccHtmlNoLinksFrom{intersection} points between the curves
+  of $C$. 
 \item calculate the interior-disjoint curves induced by $C$.
-\item calculate the intersection points and return a list of curves 
-  participating at each intersection point.
-\item answer the query whether an intersection point between any two curves
-  exists.
+\item calculate the \ccHtmlNoLinksFrom{intersection} points and return a list
+  of curves participating at each \ccHtmlNoLinksFrom{intersection} point.
+\item answer the query whether an \ccHtmlNoLinksFrom{intersection} point between
+  any two curves exists.
 \end{itemize}
 
 \subsection{A Simple Program}

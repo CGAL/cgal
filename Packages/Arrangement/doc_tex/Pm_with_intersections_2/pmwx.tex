@@ -18,11 +18,11 @@ Given a collection ${\mathcal C}$ of (possibly intersecting and not necessarily
 $x$-monotone curves) in the plane, we construct a collection ${\mathcal C}''$ in
 two steps, as follows: First, we decompose each curve in ${\mathcal C}$ into
 maximal $x$-monotone curves, thus obtaining the collection
-${\mathcal C}'$. Second, We decompose each curve in ${\mathcal C}'$ into 
+${\mathcal C}'$. Then, we decompose each curve in ${\mathcal C}'$ into 
 maximal connected pieces not intersecting any other curve in ${\mathcal C}'$.
 This way we obtain the collection ${\mathcal C}''$ of $x$-monotone, pairwise 
-interior disjoint curves.  Constructing the {\it planar map with 
-intersection} of the curves in ${\mathcal C}$ is therefore equivalent to the
+interior disjoint curves. Constructing the {\it planar map with 
+intersections} of the curves in ${\mathcal C}$ is therefore equivalent to the
 construction of the {\it planar map}(see Chapter~\ref{I1_ChapterPlanarMap}) 
 induced by the curves in ${\mathcal C}''$.
 
@@ -51,7 +51,8 @@ input (including vertical segments). However, while in the planar map the input
 curves were assumed to be non-intersecting in their interiors, there is no 
 such assumption when using planar map with intersections. Furthermore, 
 overlapping curves are also supported: If two curves overlap the traits 
-intersection function must return the two endpoints of the common part.
+\ccHtmlNoLinksFrom{intersection} function must return the two endpoints of the
+common part.
 
 %---------------------------------------------------
 \subsection{A Simple Program}
@@ -101,11 +102,11 @@ of the \ccc{Planar_map_with_intersections_2} class is the
 tends to be very large when no restrictions are applied on the input curves.
 
 \subsection{Operations}
-The set of operations that can be applied to a planar map with intersection 
-is divided into four subsets, namely constructors, modifiers, queries, and
-input/output operations. These operations are overviewed in detail in
-section~\ref{I1_ChapterPlanarMap}, so next we will just emphasize the 
-differences between the two classes.
+The set of operations that can be applied to a planar map with
+\ccHtmlNoLinksFrom{intersection} is divided into four subsets, namely
+constructors, modifiers, queries, and input/output operations. These
+operations are overviewed in detail in section~\ref{I1_ChapterPlanarMap},
+so next we will just emphasize the differences between the two classes.
 % RWRW - Give a more exact reference.
 
 \subsubsection{Aggregated Insert}
@@ -149,8 +150,8 @@ in order to speed up the construction of the map:
 not intersect any one of the curves currently in the map in its interior,
 it is possible to insert this curve using the \ccc{non_intersecting_insert()}
 function. A similar function is also available for a range of $x$-monotone
-and interior-disjoint curves, that does not induce any intersection with the
-existing curves in the map.
+and interior-disjoint curves, that does not induce any
+\ccHtmlNoLinksFrom{intersection} with the existing curves in the map.
 \item Sometimes the exact location of the $x$-monotone curve in the map is known. It may be inserted (1) within the interior of a given face, (2) with one given vertex as one of its endpoints, or (3) between to given vertices. The \ccc{non_intersecting_insert_in_face_interior()}, \ccc{non_intersecting_insert_from_vertex()} and \ccc{non_intersecting_insert_at_vertices()} functions serve for this purpose. For more details regrading these special insertion functions, as well as for an example for their usage, see section~\ref{I1_ChapterPlanarMap}.
 % RWRW - refine this reference.
 \end{itemize}

@@ -113,7 +113,8 @@ in the tree).
 The hierarchy tree enables us to intersect the curves without loss of
 information. The original curve and the intermediate subcurves are stored
 in the tree and the user can traverse them. Furthermore, users can
-define their own hierarchy by passing their own intersection sequence.
+define their own hierarchy by passing their own
+\ccHtmlNoLinksFrom{intersection} sequence.
 This can be of use in some applications. For example, in an arrangement
 of spline curves the users might want to intersect a curve in the
 junction points before making the curve $x$-monotone. 
@@ -125,10 +126,10 @@ while in the planar map the input curves were assumed to be
 $x$-monotone and non-intersecting in their interiors, there are no
 such assumptions in the arrangement. A non $x$-monotone curve is
 partitioned into $x$-monotone subcurves, and curves are intersected in
-their points of intersection with other points before they are
-inserted into the map. Furthermore, overlapping curves are
-supported. If two curves overlap the traits intersection function
-returns the two endpoints of the common part. Circulators of the
+their points of \ccHtmlNoLinksFrom{intersection} with other points before they
+are inserted into the map. Furthermore, overlapping curves are
+supported. If two curves overlap the traits \ccHtmlNoLinksFrom{intersection}
+function returns the two endpoints of the common part. Circulators of the
 \ccc{Overlap_circulator} type (of 
 \ccc{Arrangement_2<Dcel,Traits,Base_node>}) enables to traverse all
 overlapping \ccc{edge_nodes} that correspond to the same pair of
@@ -316,9 +317,9 @@ The arrangement created by this example is depicted in
 Figure~\ref{fig:conics}. The program outputs the number of vertices, edges and
 faces in the resulting arrangement, and the correctness of these figures can
 be easily verified by counting them in this figure: Notice that arrangement
-vertices may be original endpoints of the input curves, intersection points
-of two (or more) curves or points where the tangent to the curve is a vertical
-line.
+vertices may be original endpoints of the input curves, \
+ccHtmlNoLinksFrom{intersection} points of two (or more) curves or points where
+the tangent to the curve is a vertical line.
 
 \begin{figure}[h]
 \begin{ccTexOnly}
