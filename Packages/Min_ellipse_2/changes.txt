@@ -1,5 +1,9 @@
 Changes done to the `Min_ellipse_2' package.
 
+Version 3.5.4 on 20-Dec-1999
+- missing 'typename's added.
+- workaround for 'cbrt' function (not in ANSI-C++ standard).
+
 Version 3.5.3 on 07-Dec-1999
 - demos fixed.
 
