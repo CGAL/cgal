@@ -49,6 +49,22 @@
 \newcommand{\sgistlpage}{\path'http://www.sgi.com/Technology/STL/'}
 \newcommand{\stlportpage}{\path'http://www.metabyte.com/~fbp/stl/'}
 
+%%
+%% titlepage
+%%
+\input{title}
+
+%%
+%% table of contents 
+%%
+\pagenumbering{arabic}
+
+\tableofcontents
+
+%%
+%% main body 
+%%
+
 \section{Introduction}
 
 \cgal\ is a \textit{Computational Geometry Algorithms Library\/} written
@@ -137,7 +153,7 @@ file that contains descriptions of the files in this directory. An
 example of an FTP-session is given below.
 
 \begin{alltt}
-       ftp ftp.cs.uu.nl 
+      $ ftp ftp.cs.uu.nl 
       Name (ftp.cs.uu.nl:<your username>): anonymous
       Password: <type your email address here>
       ftp> cd pub/CGAL
