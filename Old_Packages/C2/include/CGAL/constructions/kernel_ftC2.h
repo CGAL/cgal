@@ -160,14 +160,14 @@ line_project_pointC2(const FT &la, const FT &lb, const FT &lc,
 		     const FT &px, const FT &py,
 		     FT &x, FT &y)
 {
-#if 0
+#if 1
   // Original old version
-  if (la==0) // horizontal line
+  if (la==FT(0)) // horizontal line
   {
     x = px;
     y = -lc/lb;
   }
-  else if (lb==0) // vertical line
+  else if (lb==FT(0)) // vertical line
   {
     x = -lc/la;
     y = py;
@@ -182,11 +182,11 @@ line_project_pointC2(const FT &la, const FT &lb, const FT &lc,
   // New version, with more multiplications, but less divisions and tests.
   // Let's compare the results of the 2, benchmark them, as well as check
   // the precision with the intervals.
-  FT a2 = CGAL_NTS square(a);
-  FT b2 = CGAL_NTS square(b);
+  FT a2 = CGAL_NTS square(la);
+  FT b2 = CGAL_NTS square(lb);
   FT d = a2 + b2;
-  x = (a * (b * py - c) - px * b2) / d;
-  y = (b * (c - a * px) + py * a2) / d;
+  x = (la * (lb * py - lc) - px * b2) / d;
+  y = (lb * (lc - la * px) + py * a2) / d;
 #endif
 }
 
