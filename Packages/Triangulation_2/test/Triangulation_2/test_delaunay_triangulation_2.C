@@ -47,7 +47,7 @@ int main()
   typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
   typedef CGAL::Delaunay_triangulation_2<Gt,Tds>                 Cls;
 
-  CGAL::_test_cls_delaunay_triangulation_2( Cls() );
+  _test_cls_delaunay_triangulation_2( Cls() );
 
   return 0;
 }
