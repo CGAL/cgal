@@ -1702,8 +1702,14 @@ Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/quadtriangle.ico
 Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/quadtriangle.xpm -text
 Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/smooth.ico -text svneol=unset#unset
 Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/smooth.xpm -text
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/sqrt3.ico -text svneol=unset#unset
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/sqrt3.xpm -text
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/sqrt3_twice.ico -text svneol=unset#unset
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/sqrt3_twice.xpm -text
 Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/superimposed_edges.ico -text svneol=unset#unset
 Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/superimposed_edges.xpm -text
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/superimposed_vertices.ico -text svneol=unset#unset
+Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/superimposed_vertices.xpm -text
 Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/wireframe.ico -text svneol=unset#unset
 Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/icons/wireframe.xpm -text
 Packages/Tutorial/tutorial/Polyhedron/Qt/Subdivision/tool/subdivision.sln -text

@@ -1,0 +1,27 @@
+/* XPM */
+static const char *sqrt3_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 5 1",
+"  c black",
+". c red",
+"X c #808080",
+"o c #C0C0C0",
+"O c None",
+/* pixels */
+"OOOOOOOXXOOOOOOO",
+"OOOOOOXXXOOOOOOO",
+"OOOOOOXXXXOOOOOO",
+"OOOOOXXOXXOOOOOO",
+"OOOOOXXOOXXOOOOO",
+" OOOXXOOOXXOOO  ",
+"   OXXOOOOXX    ",
+"O    OOOOO    OO",
+"OOO    ..   XOOO",
+"OOXXO  .. OXXOOO",
+"OOXXOOO  OOOXXOO",
+"OXXOOOO  OOOXXOO",
+"OXXOOOO  OOOOXXO",
+"XXXXXXX  XXXXXXO",
+"XXXXXXX  XXXXXXX",
+"oooooooooooooooo"
+};

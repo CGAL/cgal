@@ -1,0 +1,28 @@
+/* XPM */
+static const char *sqrt3_twice_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 6 1",
+"  c black",
+". c green",
+"X c red",
+"o c #808080",
+"O c #C0C0C0",
+"+ c None",
+/* pixels */
+"+++++++oo+++++++",
+"++++++ooo+++++++",
+"++++++oooo++++++",
+"+++++oo+oo++++++",
+"+++++oo++oo....+",
+" +++oo+++o..++..",
+"   +oo++++..  ..",
+"+    +++++    ..",
+"+++    XX   o..+",
+"++oo+  XX +o..++",
+"++oo+++  ++..o++",
+"+oo++++  +..oo++",
+"+oo++++  +..+oo+",
+"ooooooo  o......",
+"ooooooo  ooooooo",
+"OOOOOOOOOOOOOOOO"
+};
