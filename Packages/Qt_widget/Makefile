@@ -20,8 +20,13 @@ all:
 	make -C src/CGALQt -f makefile_Qt
 	make -C demo/Qt_widget
 
+# compile the doc_tex in a .dvi file.
 doc:
 	TEXINPUTS="`pwd`/demo:$$TEXINPUTS"; cd doc_tex/support/Qt_widget; latex wrapper.tex
+
+# show the doc
+show-doc: doc
+	cd doc_tex/support/Qt_widget; xdvi wrapper.dvi
 
 # clean all object files
 clean: 
