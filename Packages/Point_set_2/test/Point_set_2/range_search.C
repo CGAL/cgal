@@ -55,19 +55,25 @@ int check2(std::list<Vertex_handle> L)
 
 int check3(std::list<Vertex_handle> L)
 {
- cout << "check 3!\n";
- if (L.size() != 3) return 1; 
- std::list<Vertex_handle>::const_iterator it = L.begin();
- int i=0;
- int w=0;
-    
- for(; it != L.end();it++){
-    if (ar3[i] != (*it)->point()) w=1;
-    i++;
- }
- 
+  cout << "check 3!\n";
+  if (L.size() != 3) return 1; 
+  std::list<Vertex_handle>::const_iterator it = L.begin();
+  int i=0;
+  int w=0;
+  int i_sum=0;
+  
+  for(; it != L.end();it++){
+    for(i=0;i<3;i++){
+      if (ar3[i] == (*it)->point()){
+	i_sum += i;
+	break;
+      }
+    }
+  }
+  w = (i_sum != 3)? 1 : 0;
+  
   if (w==1) cout << "check3 failed!\n";
- return w;
+  return w;
 }
 
 int main()
