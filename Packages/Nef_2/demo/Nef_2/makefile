@@ -40,7 +40,7 @@ Qt_widget_toolbar$(OBJ_EXT): Qt_widget_toolbar.C Qt_widget_toolbar.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_toolbar.C
 
 Qt_widget_toolbar.moc: Qt_widget_toolbar.h
-	$(QT_MOC) -o Qt_widget_toolbar.moc $<
+	$(QT_MOC) -o Qt_widget_toolbar.moc Qt_widget_toolbar.h
 
 nef_2.moc: nef_2.C
 	${QT_MOC} -o nef_2.moc nef_2.C
