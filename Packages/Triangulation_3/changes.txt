@@ -1,3 +1,9 @@
+Version 1.23 (16 nov 99)
+Function is_valid(cell) added in Delaunay (had been forgotten...)
+
+Version 1.22 (3 nov 99)
+Fixes in the documentation (section titles)
+
 Version 1.21 (2 nov 99)
 - another vertex base in Triangulation_vertex_base_3.h, that does not 
 copy points
