@@ -1,3 +1,0 @@
-#!/bin/sh
-
-zip -r Distance_2.zip version changes.txt description.txt include test
