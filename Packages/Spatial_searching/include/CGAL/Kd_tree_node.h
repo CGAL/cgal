@@ -25,7 +25,7 @@
 #include <CGAL/Compact_container.h>
 namespace CGAL {
 
-  template <class SearchTraits, class Splitter=Sliding_midpoint<SearchTraits>, class UseExtendedNode = Tag_true > 
+  template <class SearchTraits, class Splitter, class UseExtendedNode> 
   class Kd_tree;
 
 	template < class TreeTraits, class Splitter, class UseExtendedNode > 
@@ -38,8 +38,8 @@ namespace CGAL {
 	typedef typename TreeTraits::Point_d Point_d;
 
 	typedef typename TreeTraits::FT FT;
-	typedef typename Kd_tree<TreeTraits>::Separator Separator;
-	typedef typename Kd_tree<TreeTraits>::Point_d_iterator Point_d_iterator;
+	typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::Separator Separator;
+	typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::Point_d_iterator Point_d_iterator;
 
         private:
 
