@@ -21,10 +21,6 @@
 #ifndef CGAL_PM_CHANGE_NOTIFICATION_H
 #define CGAL_PM_CHANGE_NOTIFICATION_H
 
-//#ifndef CGAL_PLANAR_MAP_MISC_H
-//#include <CGAL/Planar_map_2/Planar_map_misc.h>
-//#endif
-
 CGAL_BEGIN_NAMESPACE
 
 template<class Planar_map_>

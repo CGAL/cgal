@@ -28,7 +28,7 @@
 #define CGAL_PM_NAIVE_POINT_LOCATION_H
 
 #include <CGAL/Pm_point_location_base.h>
-#include <CGAL/Planar_map_2/Planar_map_misc.h>
+#include <CGAL/Planar_map_2/Pm_traits_wrap_2.h>
 
 CGAL_BEGIN_NAMESPACE
 

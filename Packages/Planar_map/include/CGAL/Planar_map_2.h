@@ -35,7 +35,7 @@
  * The implementation of the Planar_map_2<Dcel,Traits> class.
  */
 
-#include <CGAL/Planar_map_2/Planar_map_misc.h>
+#include <CGAL/Planar_map_2/Pm_traits_wrap_2.h>
 #include <CGAL/Planar_map_2/Pm_change_notification.h>
 #include <CGAL/Topological_map.h>
 
@@ -82,7 +82,7 @@ public:
   typedef PlanarMapTraits_2                     Traits;
   typedef Planar_map_2<Dcel,Traits>             Planar_map;   
   typedef Planar_map_2<Dcel,Traits>             Self;
-  typedef Planar_map_traits_wrap<Traits>        Traits_wrap;
+  typedef Pm_traits_wrap_2<Traits>              Traits_wrap;
   typedef typename Traits::X_curve_2            X_curve_2;
   typedef typename Traits::Point_2              Point_2;
   

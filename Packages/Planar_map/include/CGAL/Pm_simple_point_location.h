@@ -28,13 +28,8 @@
 #ifndef CGAL_PM_SIMPLE_POINT_LOCATION_H
 #define CGAL_PM_SIMPLE_POINT_LOCATION_H
 
-#ifndef CGAL_PM_POINT_LOCATION_BASE_H
 #include <CGAL/Pm_point_location_base.h>
-#endif
-
-#ifndef CGAL_PLANAR_MAP_MISC_H
-#include <CGAL/Planar_map_2/Planar_map_misc.h>
-#endif
+#include <CGAL/Planar_map_2/Pm_traits_wrap_2.h>
 
 #include <list>
 

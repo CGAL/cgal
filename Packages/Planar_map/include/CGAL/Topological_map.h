@@ -28,7 +28,7 @@
 #define  CGAL_TOPOLOGICAL_MAP_H
 
 #include <CGAL/Polyhedron_iterator_3.h>
-#include <CGAL/Planar_map_2/Planar_map_misc.h>
+#include <CGAL/Planar_map_2/Pm_traits_wrap_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
