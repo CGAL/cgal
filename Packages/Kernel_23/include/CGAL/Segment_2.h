@@ -34,11 +34,7 @@ class Segment_2 : public R_::Kernel_base::Segment_2
 public:
   typedef  R_                               R;
 
-  Segment_2()
-    : RSegment_2() {}
-
-  Segment_2(const CGAL::Segment_2<R>& s)
-    : RSegment_2(static_cast<const RSegment_2&>(s)) {}
+  Segment_2() {}
 
   Segment_2(const Point_2 &sp, const Point_2 &ep)
     :  RSegment_2(sp,ep) {}

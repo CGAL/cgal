@@ -34,11 +34,7 @@ class Iso_rectangle_2 : public R_::Kernel_base::Iso_rectangle_2
 public:
   typedef  R_   R;
 
-  Iso_rectangle_2()
-    : RIso_rectangle_2() {}
-
-  Iso_rectangle_2(const CGAL::Iso_rectangle_2<R> &r)
-    : RIso_rectangle_2(r) {}
+  Iso_rectangle_2() {}
 
   Iso_rectangle_2(const RIso_rectangle_2& r)
     : RIso_rectangle_2(r) {}

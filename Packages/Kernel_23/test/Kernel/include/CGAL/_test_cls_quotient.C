@@ -20,11 +20,6 @@
 // coordinator   : MPI, Saarbruecken
 // ============================================================================
  
-
-
-template <class NT> bool _test_cls_quotient(const NT& );
-
-
 template <class NT>
 bool
 _test_cls_quotient(const NT& )

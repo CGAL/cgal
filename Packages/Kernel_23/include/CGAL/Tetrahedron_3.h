@@ -33,11 +33,7 @@ class Tetrahedron_3 : public R_::Kernel_base::Tetrahedron_3
 public:
   typedef          R_                       R;
 
-  Tetrahedron_3()
-      : RTetrahedron_3() {}
-
-  Tetrahedron_3(const CGAL::Tetrahedron_3<R>& t)
-      : RTetrahedron_3(t) {}
+  Tetrahedron_3() {}
 
   Tetrahedron_3(const RTetrahedron_3& t)
       : RTetrahedron_3(t) {}

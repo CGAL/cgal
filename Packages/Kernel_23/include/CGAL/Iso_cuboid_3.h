@@ -34,11 +34,7 @@ class Iso_cuboid_3 : public R_::Kernel_base::Iso_cuboid_3
 public:
   typedef          R_                    R;
 
-  Iso_cuboid_3() : RIso_cuboid_3()
-  {}
-
-  Iso_cuboid_3(const CGAL::Iso_cuboid_3<R>& r)
-      : RIso_cuboid_3(r) {}
+  Iso_cuboid_3() {}
 
   Iso_cuboid_3(const RIso_cuboid_3&  r)
       : RIso_cuboid_3(r) {}

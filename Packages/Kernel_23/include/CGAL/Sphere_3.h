@@ -34,8 +34,7 @@ class Sphere_3 : public R_::Kernel_base::Sphere_3
 public:
   typedef          R_                       R;
 
-      Sphere_3()
-      {}
+      Sphere_3() {}
 
       Sphere_3(const RSphere_3& s)
       : RSphere_3(s) {}

@@ -40,11 +40,7 @@ class Vector_3 : public R_::Kernel_base::Vector_3
 public:
   typedef          R_                       R;
 
-  Vector_3()
-  {}
-
-  Vector_3(const CGAL::Vector_3<R>& v)
-    : RVector_3( static_cast<const RVector_3&>(v) ) {}
+  Vector_3() {}
 
   Vector_3(const Point_3& a, const Point_3& b)
     : RVector_3(a, b) {}

@@ -37,11 +37,7 @@ class Ray_3 : public R_::Kernel_base::Ray_3
 public:
   typedef          R_                       R;
 
-  Ray_3()
-      : RRay_3() {}
-
-  Ray_3(const CGAL::Ray_3<R>& r)
-      : RRay_3(r) {}
+  Ray_3() {}
 
   Ray_3(const RRay_3& r)
       : RRay_3(r) {}

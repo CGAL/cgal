@@ -38,11 +38,7 @@ class Line_2 : public R_::Kernel_base::Line_2
 public:
   typedef  R_   R;
 
-  Line_2()
-    : RLine_2() {}
-
-  Line_2(const CGAL::Line_2<R>  &l)
-    : RLine_2(static_cast<const RLine_2&>(l)) {}
+  Line_2() {}
 
   Line_2(const Point_2 &p, const Point_2 &q)
     : RLine_2(p,q) {}

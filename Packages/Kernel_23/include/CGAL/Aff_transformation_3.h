@@ -34,11 +34,7 @@ class Aff_transformation_3 : public R_::Kernel_base::Aff_transformation_3
 public:
   typedef R_                        R;
 
-  Aff_transformation_3()
-      : RAff_transformation_3() {}
-
-  Aff_transformation_3(const CGAL::Aff_transformation_3<R>& t)
-    : RAff_transformation_3(t) {}
+  Aff_transformation_3() {}
 
   Aff_transformation_3(const RAff_transformation_3&  t)
     : RAff_transformation_3(t) {}

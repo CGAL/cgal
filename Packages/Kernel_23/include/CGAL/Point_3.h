@@ -36,14 +36,10 @@ class Point_3 : public R_::Kernel_base::Point_3
 public:
   typedef          R_                       R;
 
-  Point_3()
-  {}
+  Point_3() {}
 
   Point_3(const Origin& o)
       : RPoint_3(o) {}
-
-  Point_3(const CGAL::Point_3<R>& p)
-      : RPoint_3( static_cast<const RPoint_3&>(p) ) {}
 
   Point_3(const RPoint_3& p)
       : RPoint_3(p) {}

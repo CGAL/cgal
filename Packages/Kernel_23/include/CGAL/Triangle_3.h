@@ -34,11 +34,7 @@ class Triangle_3 : public R_::Kernel_base::Triangle_3
 public:
   typedef          R_                       R;
 
-  Triangle_3()
-      : RTriangle_3() {}
-
-  Triangle_3(const CGAL::Triangle_3<R>& t)
-      : RTriangle_3(t) {}
+  Triangle_3() {}
 
   Triangle_3(const RTriangle_3& t)
       : RTriangle_3(t) {}

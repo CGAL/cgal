@@ -35,8 +35,7 @@ class Bbox_3 : public Simple_Handle_for< Sixtuple<double> >
   typedef BBox_handle_3::element_type                  BBox_ref_3;
 
 public:
-        Bbox_3()
-	  : BBox_handle_3(BBox_ref_3()) {}
+        Bbox_3() {}
 
         Bbox_3(double x_min, double y_min, double z_min,
                double x_max, double y_max, double z_max)

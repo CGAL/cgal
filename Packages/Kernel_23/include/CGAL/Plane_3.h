@@ -39,11 +39,7 @@ class Plane_3 : public R_::Kernel_base::Plane_3
 public:
   typedef          R_                       R;
 
-  Plane_3()
-      : RPlane_3() {}
-
-  Plane_3(const CGAL::Plane_3<R>& p)
-      : RPlane_3(p) {}
+  Plane_3() {}
 
   Plane_3(const RPlane_3& p)
       : RPlane_3(p) {}

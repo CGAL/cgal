@@ -35,11 +35,7 @@ class Circle_2 : public R_::Kernel_base::Circle_2
 public:
   typedef  R_   R;
 
-    Circle_2()
-      : RCircle_2() {}
-
-    Circle_2(const CGAL::Circle_2<R> &t)
-      : RCircle_2((RCircle_2&)t) {}
+    Circle_2() {}
 
     Circle_2(const RCircle_2& t)
       : RCircle_2(t) {}

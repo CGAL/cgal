@@ -42,9 +42,6 @@ public:
 
   Vector_2() {}
 
-  Vector_2(const CGAL::Vector_2<R> &v)
-      : RVector_2(static_cast<const RVector_2&>(v)) {}
-
   Vector_2(const Point_2& a, const Point_2& b)
       : RVector_2(a, b) {}
 

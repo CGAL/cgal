@@ -37,11 +37,7 @@ class Direction_3 : public R_::Kernel_base::Direction_3
 public:
   typedef          R_                       R;
 
-  Direction_3()
-  {}
-
-  Direction_3(const CGAL::Direction_3<R>& d)
-    : RDirection_3( static_cast<const RDirection_3&>(d) ) {}
+  Direction_3() {}
 
   Direction_3(const RDirection_3& d)
     : RDirection_3(d) {}

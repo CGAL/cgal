@@ -39,11 +39,7 @@ class Line_3 : public R_::Kernel_base::Line_3
 public:
   typedef          R_                       R;
 
-  Line_3() : RLine_3()
-  {}
-
-  Line_3(const CGAL::Line_3<R>  & l)
-      : RLine_3( static_cast<const RLine_3&>(l)) {}
+  Line_3() {}
 
   Line_3(const Point_3 & p, const Point_3 & q)
       : RLine_3(p,q) {}

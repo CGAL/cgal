@@ -1,3 +1,6 @@
+1.57 (12 August 2003)
+- Simplify default and copy ctors in the "user" classes (Point_2<> and co).
+
 1.56 (8 August 2003)
 - Handle_for : optimize the default constructor using a static instance.
 - *Handle_for : remove the unused TO_BE_USED_ONLY_WITH_CONSTRUCT_WITH stuff

@@ -37,11 +37,7 @@ class Ray_2 : public R_::Kernel_base::Ray_2
 public:
   typedef  R_   R;
 
-  Ray_2()
-    : RRay_2() {}
-
-  Ray_2(const CGAL::Ray_2<R> &r)
-    : RRay_2(static_cast<const RRay_2&>(r)) {}
+  Ray_2() {}
 
   Ray_2(const RRay_2& r)
     : RRay_2(r) {}

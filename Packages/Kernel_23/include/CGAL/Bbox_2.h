@@ -36,8 +36,7 @@ class Bbox_2 : public Simple_Handle_for< Fourtuple<double> >
   typedef BBox_handle_2::element_type                   BBox_ref_2;
 
 public:
-             Bbox_2()
-		 : BBox_handle_2(BBox_ref_2()) {}
+             Bbox_2() {}
 
              Bbox_2(double x_min, double y_min,
                     double x_max, double y_max)
