@@ -2402,6 +2402,7 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::RT       RT;
     typedef typename K::Point_3  Point_3;
     typedef typename K::Plane_3  Plane_3;
+    typedef typename K::Construct_plane_3  Construct_plane_3;
   public:
     typedef bool             result_type;
     typedef Arity_tag< 3 >   Arity;
@@ -2428,6 +2429,14 @@ namespace HomogeneousKernelFunctors {
 	+ plc*( phz*qhw - qhz*phw );
 
       return ( scaled_dist_p_minus_scaled_dist_q < RT0 );
+    }
+
+    bool
+    operator()(const Point_3& plp, const Point_3& plq,const Point_3& plr,
+	       const Point_3& p, const Point_3& q) const
+    { 
+      Construct_plane_3 construct_plane_3;
+      return operator()(construct_plane_3(plq, plq, plr), p, q);
     }
   };
 

@@ -1,5 +1,6 @@
  8 Mar 2003 Andreas Fabri
-- Added functor and function for constructing orthogilnal vector of three points
+- Added functor and function for constructing orthogonal vector of three points
+- Added Less_signed_distance_to_plane_3::operator(Point^5)
 
 29 Feb 2004 Sylvain Pion
 - Replace TriangleH2 by Cartesian's TriangleC2 !
