@@ -152,7 +152,7 @@ insert(const Weighted_point &p)
     }
 
     // if it hidden just return it right away
-    if ( vertex.ptr() == NULL ) {
+    if ( &(*vertex) == NULL ) {
       return vertex;
     }
 
@@ -175,7 +175,7 @@ insert(const Weighted_point &p)
   // locate the nearest neighbor using hierarchy
   nearest_neighbor(p, vnear);
 
-  CGAL_assertion( vnear[0].ptr() != NULL );
+  CGAL_assertion( vnear[0] != NULL );
 
   // check if it is hidden
   Weighted_point wp_nearest = vnear[0]->point();
@@ -261,7 +261,7 @@ insert(const Weighted_point &p)
       typename Apollonius_graph_base::Vertex_map::iterator it;
       for (it = v_hidden.begin(); it != v_hidden.end(); it++) {
 	Vertex_handle vh = (*it).first;
-	Vertex* v = static_cast<Vertex*>(vh.ptr());
+	Vertex* v = static_cast<Vertex*>( &(*vh) );
 	void * u = v->up();
 	if ( u != NULL ) {
 	  v = (Vertex*)u;

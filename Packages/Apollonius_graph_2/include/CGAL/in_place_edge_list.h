@@ -51,12 +51,12 @@ public:
   }
 
   inline void set_next(const Edge& e, const Edge& next) {
-    std::pair<void*,int> _next(next.first.ptr(), next.second);
+    std::pair<void*,int> _next(&(*next.first), next.second);
     e.first->set_next(e.second, _next);
   }
 
   inline void set_previous(const Edge& e, const Edge& prev) {
-    std::pair<void*,int> _prev(prev.first.ptr(), prev.second);
+    std::pair<void*,int> _prev(&(*prev.first), prev.second);
     e.first->set_previous(e.second, _prev);
   }
 

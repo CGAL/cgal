@@ -293,7 +293,7 @@ typename Apollonius_graph_2<Gt,StoreHidden,Agds>::Edge
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 flip(Face_handle& f, int i)
 {
-  CGAL_triangulation_precondition ( ! f.is_null() );
+  CGAL_triangulation_precondition ( &(*f) != NULL );
   CGAL_triangulation_precondition (i == 0 || i == 1 || i == 2);
   CGAL_triangulation_precondition( dimension()==2 ); 
 
@@ -343,7 +343,7 @@ typename Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 insert_degree_2(Edge e)
 {
-  return _tds.insert_degree_2(e.first.ptr(),e.second);
+  return _tds.insert_degree_2(&(*e.first),e.second);
 }
 
 template< class Gt, bool StoreHidden, class Agds >
@@ -367,7 +367,7 @@ remove_degree_2(Vertex_handle v)
 {
   CGAL_triangulation_precondition( is_degree_2(v) );
 
-  _tds.remove_degree_2(v.ptr());
+  _tds.remove_degree_2( &(*v) );
 }
 
 
@@ -388,7 +388,7 @@ Apollonius_graph_2<Gt,StoreHidden,Agds>::
 remove_degree_3(Vertex_handle v, Face* f)
 {
   CGAL_triangulation_precondition( v->degree() == 3 );
-  _tds.remove_degree_3(v.ptr(), f);
+  _tds.remove_degree_3( &(*v), f);
 }
 
 //--------------------------------------------------------------------
@@ -581,7 +581,7 @@ insert(const Weighted_point& p, Vertex_handle vnear)
   // first find the nearest neighbor
   Vertex_handle vnearest = nearest_neighbor(p.point(), vnear);
 
-  CGAL_assertion( vnearest.ptr() != NULL );
+  CGAL_assertion( &(*vnearest) != NULL );
 
 
   // check if it is hidden
@@ -678,7 +678,7 @@ find_conflict_region_remove(const Vertex_handle& v,
     return;
   }
 
-  CGAL_precondition( vnearest.ptr() != NULL );
+  CGAL_precondition( &(*vnearest) != NULL );
 
 
   // find the first conflict
@@ -961,7 +961,7 @@ get_faces_for_recycling(Face_map& fm, unsigned int n_wanted)
   typename Face_map::iterator fmit;
   for (fmit = fm.begin(); fmit != fm.end(); ++fmit) {
     Face_handle f = (*fmit).first;
-    if ( fm[f] == true ) { vf.push_back(f.ptr()); }
+    if ( fm[f] == true ) { vf.push_back( &(*f) ); }
   }
 
   while ( vf.size() < n_wanted ) {
@@ -987,7 +987,7 @@ remove_hidden_vertices(Vertex_handle&v, Vertex_map& vm, Face_map& fm)
 
   for (it = vm.begin(); it != vm.end(); ++it) {
     Vertex_handle vhidden = (*it).first;
-    _tds.delete_vertex(vhidden.ptr());
+    _tds.delete_vertex( &(*vhidden) );
   }
   vm.clear();
 }
@@ -1127,7 +1127,7 @@ retriangulate_conflict_region(const Weighted_point& p,	List& l,
   Edge efront = l.front();
   Edge e = efront;
   do {
-    ve.push_back(Agds_edge(e.first.ptr(), e.second));
+    ve.push_back(Agds_edge(&(*e.first), e.second));
     e = l.next(e);
   } while ( e != efront );
 
@@ -1137,8 +1137,8 @@ retriangulate_conflict_region(const Weighted_point& p,	List& l,
   remove_hidden_vertices(v, vm, fm);
 
   // 6. retriangulate the hole
-  //  _tds.star_hole(v.ptr(), ve.begin(), ve.end(), vf.begin(), vf.end());
-  _tds.star_hole(v.ptr(), ve.begin(), ve.end());
+  //  _tds.star_hole( &(*v), ve.begin(), ve.end(), vf.begin(), vf.end());
+  _tds.star_hole(&(*v), ve.begin(), ve.end());
 
   // 7. remove the bogus vertices
   remove_bogus_vertices(dummy_vertices);
@@ -1147,7 +1147,7 @@ retriangulate_conflict_region(const Weighted_point& p,	List& l,
   typename Face_map::iterator it;
   for (it = fm.begin(); it != fm.end(); ++it) {
     Face_handle fh = (*it).first;
-    _tds.delete_face(fh.ptr());
+    _tds.delete_face( &(*fh) );
   }
 
   CGAL_assertion( number_of_vertices() == num_vert - vmsize + 1 );
@@ -1181,11 +1181,11 @@ nearest_neighbor(const Point& p,
     return Vertex_handle(NULL);
   }
 
-  if ( start_vertex.ptr() == NULL ) {
+  if ( &(*start_vertex) == NULL ) {
     start_vertex = finite_vertex();
   }
 
-  //  if ( start_vertex.ptr() == NULL ) { return start_vertex; }
+  //  if ( &(*start_vertex) == NULL ) { return start_vertex; }
 
   Vertex_handle vclosest;
   Vertex_handle v = start_vertex;
@@ -1690,7 +1690,7 @@ remove_third(Vertex_handle v)
     }
   }
 
-  _tds.remove_dim_down(v.ptr());
+  _tds.remove_dim_down( &(*v) );
 }
 
 
@@ -1782,7 +1782,7 @@ remove_degree_d_vertex(Vertex_handle v)
       vmap[vh_small] = vh_large;
     } else { 
       vh_small = ag_small.insert(vc->point());
-      if ( vh_small.ptr() != NULL ) {
+      if ( &(*vh_small) != NULL ) {
 	vmap[vh_small] = vh_large;
       }
     }
@@ -1846,7 +1846,7 @@ remove_degree_d_vertex(Vertex_handle v)
   }
   CGAL_triangulation_precondition( v->degree() == 3 );
 
-  _tds.remove_degree_3(v.ptr(), NULL);
+  _tds.remove_degree_3( &(*v), NULL);
 
   for (unsigned int i = 0; i < num_fe; i++) {
     delete flipped_edges[i];

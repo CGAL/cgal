@@ -60,6 +60,7 @@ int main(int argc, char* argv[])
 
   // validate the Apollonius graph
   assert( ag.is_valid(true, 1) );
+  std::cout << std::endl;
 
   return 0;
 }

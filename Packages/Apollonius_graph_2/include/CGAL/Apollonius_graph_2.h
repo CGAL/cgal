@@ -228,21 +228,23 @@ public:
 public:
   // CIRCULATORS
   //------------
+  // I had to add the initialization of Face_handle to NULL because
+  // CGAL-2.5-I-82 was not working with Face_handle()
   inline Face_circulator
   incident_faces(Vertex_handle v,
-		 Face_handle f = Face_handle()) const {
+		 Face_handle f = Face_handle(NULL)) const {
     return DG::incident_faces(v, f);
   }
 
   inline Vertex_circulator
   incident_vertices(Vertex_handle v,
-		    Face_handle f = Face_handle()) const { 
+		    Face_handle f = Face_handle(NULL)) const { 
     return DG::incident_vertices(v, f);
   }
 
   inline Edge_circulator
   incident_edges(Vertex_handle v,
-		 Face_handle f = Face_handle()) const {
+		 Face_handle f = Face_handle(NULL)) const {
     return DG::incident_edges(v, f);
   }
  

@@ -10,8 +10,7 @@
 
 // I SHOULD BE ABLE TO DO THE FOLLOWING INSTEAD OF JUST PUTTING ONLY
 //ONE ARGUMENT
-//typedef CGAL::Filtered_exact<double,CGAL::MP_Float> NT;
-typedef CGAL::Filtered_exact<double> NT;
+typedef CGAL::Filtered_exact<double,CGAL::MP_Float> NT;
 
 // choose the kernel
 #include <CGAL/Simple_cartesian.h>
@@ -45,6 +44,7 @@ int main(int argc, char* argv[])
 
   // validate the Apollonius graph
   assert( ag.is_valid(true, 1) );
+  std::cout << std::endl;
 
   return 0;
 }
