@@ -1,4 +1,4 @@
-// Copyright (c) 1999  Utrecht University (The Netherlands),
+// Copyright (c) 1999,2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -27,22 +27,21 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Fourtuple.h>
-#include <CGAL/Simple_Handle_for.h>
 
 CGAL_BEGIN_NAMESPACE
 
-class Bbox_2 : public Simple_Handle_for< Fourtuple<double> >
+class Bbox_2
 {
-  typedef Simple_Handle_for< Fourtuple<double> > BBox_handle_2;
-  typedef BBox_handle_2::element_type                   BBox_ref_2;
+  typedef Fourtuple<double>            BBox_rep_2;
+
+  BBox_rep_2 rep;
 
 public:
              Bbox_2() {}
 
              Bbox_2(double x_min, double y_min,
                     double x_max, double y_max)
-		 : BBox_handle_2(BBox_ref_2(x_min, y_min,
-                                            x_max, y_max)) {}
+		 : rep(x_min, y_min, x_max, y_max) {}
 
   inline bool       operator==(const Bbox_2 &b) const;
   inline bool       operator!=(const Bbox_2 &b) const;
@@ -63,22 +62,22 @@ public:
 inline
 double
 Bbox_2::xmin() const
-{ return Ptr()->e0; }
+{ return rep.e0; }
 
 inline
 double
 Bbox_2::ymin() const
-{ return Ptr()->e1; }
+{ return rep.e1; }
 
 inline
 double
 Bbox_2::xmax() const
-{ return Ptr()->e2; }
+{ return rep.e2; }
 
 inline
 double
 Bbox_2::ymax() const
-{ return Ptr()->e3; }
+{ return rep.e3; }
 
 inline
 bool

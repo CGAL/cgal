@@ -1,4 +1,4 @@
-// Copyright (c) 1999  Utrecht University (The Netherlands),
+// Copyright (c) 1999,2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -26,22 +26,19 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Sixtuple.h>
-#include <CGAL/Simple_Handle_for.h>
 
 CGAL_BEGIN_NAMESPACE
 
-class Bbox_3 : public Simple_Handle_for< Sixtuple<double> >
+class Bbox_3
 {
-  typedef Simple_Handle_for< Sixtuple<double> > BBox_handle_3;
-  typedef BBox_handle_3::element_type                  BBox_ref_3;
+  Sixtuple<double>   rep;
 
 public:
         Bbox_3() {}
 
         Bbox_3(double x_min, double y_min, double z_min,
                double x_max, double y_max, double z_max)
-	  : BBox_handle_3(BBox_ref_3(x_min, y_min, z_min,
-                                     x_max, y_max, z_max)) {}
+	  : rep(x_min, y_min, z_min, x_max, y_max, z_max) {}
 
   double  xmin() const;
   double  ymin() const;
@@ -56,32 +53,32 @@ public:
 inline
 double
 Bbox_3::xmin() const
-{ return Ptr()->e0; }
+{ return rep.e0; }
 
 inline
 double
 Bbox_3::ymin() const
-{ return Ptr()->e1; }
+{ return rep.e1; }
 
 inline
 double
 Bbox_3::zmin() const
-{ return Ptr()->e2; }
+{ return rep.e2; }
 
 inline
 double
 Bbox_3::xmax() const
-{ return Ptr()->e3; }
+{ return rep.e3; }
 
 inline
 double
 Bbox_3::ymax() const
-{ return Ptr()->e4; }
+{ return rep.e4; }
 
 inline
 double
 Bbox_3::zmax() const
-{ return Ptr()->e5; }
+{ return rep.e5; }
 
 inline
 Bbox_3
