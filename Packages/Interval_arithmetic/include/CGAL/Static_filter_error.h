@@ -30,26 +30,25 @@
 // 
 // The original idea is from Olivier Devillers.
 
-// TODO: I need to add some missing operators and functions, min/max...
+// TODO:
+// - I need to add some missing operators and functions, min/max...
+// - Remove the degree stuff, it's only meant for debug.
 
 #include <CGAL/basic.h>
 #include <CGAL/Interval_arithmetic/_FPU.h>
 
 CGAL_BEGIN_NAMESPACE
 
-struct Static_filter_error;
-inline Comparison_result compare_SAF(const Static_filter_error &a,
-       	    const Static_filter_error &b, double &epsilon);
-inline Sign sign_SAF(const Static_filter_error &a, double &epsilon);
-
 struct Static_filter_error
 {
   typedef Static_filter_error Sfe;
 
-  Static_filter_error (const int &i)
-      : _b(i), _e(0), _d(1) {}
+  Static_filter_error () {}
 
-  Static_filter_error (const double &b, const double &e, const int &d)
+  Static_filter_error (const int &i, const double &e = 0, const int &d = 1)
+      : _b(i), _e(e), _d(d) {}
+
+  Static_filter_error (const double &b, const double &e = 0, const int &d = 1)
       : _b(b), _e(e), _d(d) {}
 
   Sfe operator+ (const Sfe &f) const
@@ -74,18 +73,18 @@ struct Static_filter_error
 
   Sfe operator- (const Sfe &f) const { return *this + f; }
   Sfe operator- ()             const { return *this; }
-  Sfe operator/ (const Sfe &) const { abort(); } // Division not supported.
+  // Sfe operator/ (const Sfe &) const { abort(); } // Division not supported.
 
   Sfe& operator+=(const Sfe &f) { return *this = *this + f; }
   Sfe& operator-=(const Sfe &f) { return *this = *this - f; }
   Sfe& operator*=(const Sfe &f) { return *this = *this * f; }
-  Sfe& operator/=(const Sfe &f) { return *this = *this / f; }
+  // Sfe& operator/=(const Sfe &f) { return *this = *this / f; }
 
   bool operator< (const Sfe &f) const
   {
       double e;
-      compare_SAF(*this, f, e);
-      std::cerr << "Static error is" << e << endl;
+      // compare_SAF(*this, f, e); // needs to be changed.
+      std::cerr << "Static error is" << e << std::endl;
       abort();
       return false;
   }
@@ -99,7 +98,7 @@ struct Static_filter_error
   double bound()  const { return _b; }
   int    degree() const { return _d; }
 
-  double ulp (const double &d) const
+  static double ulp (const double &d)
   {
       // You are supposed to call this function with rounding towards
       // +infinity, and on a positive number.
@@ -127,41 +126,9 @@ sqrt(const Static_filter_error &f)
 	  "you really want a non integer degree ???");
   double b = std::sqrt(f.bound());
   FPU_CW_t backup = FPU_get_and_set_cw(FPU_cw_up);
-  double e = std::sqrt(f.error()) + f.ulp(b)/2;
+  double e = std::sqrt(f.error()) + Static_filter_error::ulp(b)/2;
   FPU_set_cw(backup);
   return Static_filter_error(b, e, f.degree()/2);
-}
-
-
-// Now the overloaded built-in predicates, that will _set_ the epsilons.
-
-inline
-Sign
-lexicographical_sign_SAF(const Static_filter_error &,
-       	    const Static_filter_error &,
-       	    double &)
-{
-    // not finished..
-  return ZERO; // ??
-}
-
-inline
-Comparison_result
-compare_SAF(const Static_filter_error &a,
-       	    const Static_filter_error &b,
-       	    double &epsilon)
-{
-  Static_filter_error c = a-b;
-  epsilon = c.error();
-  return EQUAL; // ??
-}
-
-inline
-Sign
-sign_SAF(const Static_filter_error &a, double &epsilon)
-{
-  epsilon = a.error();
-  return ZERO; // ??
 }
 
 CGAL_END_NAMESPACE
