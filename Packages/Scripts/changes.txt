@@ -1,3 +1,6 @@
+22 July 2004 Radu Ursu
+- applied previous patch made by Sylvain also to create_internal_module script 
+
 22 July 2004 Sylvain Pion
 - create_internal_release : remove headers editing of obsolete fields
   "file", "release" and "release_date".

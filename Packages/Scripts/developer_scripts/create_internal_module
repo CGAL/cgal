@@ -854,9 +854,6 @@ sub check_and_update_file($$)
 	    if m|^// Copyright \(c\) \d{4}(,\s?\d{4})* The CGAL Consortium|;
 	$lines_exceeding_length +=1 if length $_ > 80;
 	$has_line_directives = 1 if m|^\s*#\s*line\s|;
-	s<^\s*//\s*file\s*:.*$><// file          : $filename_with_dir>;
-	s<^\s*// release\b.*$><// release       : \$CGAL_Revision: $VERSION \$>;
-	s<^\s*// release_date.*$><$release_date>;
 	print TEMPFILE $_;
     }
     close SOURCE_FILE || die "Error closing $filename_with_dir: $!";
@@ -886,8 +883,6 @@ sub set_file_headers()
 {
     print "Setting file headers...\n";
     chdir "$RELEASEDIR/$MODULE_NAME";
-    $release_date =
-	`date '+// release_date  : \$CGAL_Date: %Y/%m/%d \$'`;
     chomp($release_date);
     open(FILE_CHECKS,">$PARENT_DIR/code_check_$VERSION");
     find(\&file_header_setting, 'include', 'src', 'examples', 'config/testfiles');
