@@ -955,16 +955,7 @@ create_replacement_header()
 	${_printf} "%s\n" "#include <$header_name>" > ${tmp_code_file}
 	${_printf} "%s\n" "int main() {return 0;}" >> ${tmp_code_file}
 
-#  	echo
-#  	echo '---------------------------------------'
-#  	echo "`compiler_bin` ${ADDITIONAL_CXXFLAGS} ${tmp_code_file}"  
-#  	echo
-#  	echo '---------------------------------------'
-#  	eval "eval \"`compiler_bin` ${ADDITIONAL_CXXFLAGS} ${tmp_code_file} 2>&1\""
-#  	echo
-#  	echo '---------------------------------------'
-
-	if eval "`compiler_bin` ${ADDITIONAL_CXXFLAGS} ${tmp_code_file} >/dev/null 2>&1"; then 
+	if eval "`quote \`compiler_bin\`` ${ADDITIONAL_CXXFLAGS} ${tmp_code_file} >/dev/null 2>&1"; then 
 	    ${_printf} "%s\n" " ok."
 	    return;
 	fi
@@ -980,7 +971,7 @@ create_replacement_header()
     for arg in $* ; do
         ${_printf} "%s\n" "#include <$arg>" > ${tmp_code_file}
 	${_printf} "%s\n" "int main() {return 0;}" >> ${tmp_code_file}
-	if eval "`compiler_bin` ${ADDITIONAL_CXXFLAGS} ${tmp_code_file} >/dev/null 2>&1"; then
+	if eval "`quote \`compiler_bin\`` ${ADDITIONAL_CXXFLAGS} ${tmp_code_file} >/dev/null 2>&1"; then
 	    ${_sed} "s/@CGAL@/${CGAL_VERSION}/;s@FILE@${_final_file};s/@VERSION@/${CGAL_INSTALL_VERSION}/" <<EOF3 >>${replacement_header}
 // Copyright (c) 1999,2000 The CGAL Consortium
 //
@@ -1063,7 +1054,7 @@ create_standard_header_replacements()
     ${_printf} "%s\n" "#include <${tmp_header_file}>" > ${tmp_code_file}
     ${_printf} "%s\n" \
 	"int main() { CGAL_nt result = 0; return result;}" >> ${tmp_code_file}
-    if eval "`compiler_bin` ${ADDITIONAL_CXXFLAGS} -I. ${tmp_code_file} >/dev/null 2>&1"; then
+    if eval "`quote \`compiler_bin\`` ${ADDITIONAL_CXXFLAGS} -I. ${tmp_code_file} >/dev/null 2>&1"; then
 	header_suffix=""
     else
 	header_suffix=".h"
@@ -1687,7 +1678,7 @@ EOF4
 	*CL.*|*cl.*)         EXE_OPT="-TP -GR -GX -nologo -Fp";;
         *mwcc.exe*|*MWCC*)   EXE_OPT="-gccincludes -lang c++ -msgstyle gcc -o ";
     esac
-    _flags="${TMP_CXX_FILE}.C ${EXE_OPT}${TMP_CXX_FILE}"
+    _flags="${EXE_OPT}${TMP_CXX_FILE} ${TMP_CXX_FILE}.C"
 
     # compile
     ${_printf} "%s\n%s\n" \
@@ -1945,8 +1936,8 @@ search_for_compilers()
 	    _search_compiler cc CC ''
 	    ;;
 	*CYGWIN*)
-	    _search_compiler bcc32.exe bcc32.exe ''
 	    _search_compiler CL.EXE CL.EXE ''
+	    _search_compiler bcc32.exe bcc32.exe ''
 	    _search_compiler gcc g++ ''
 	    _search_compiler mwcc.exe mwcc.exe ''
 	    ;;
@@ -2187,7 +2178,7 @@ print_line()
 print_multi_line()
 {
     _tmp=`${_printf} "%s" "$1" | \
-	eval "${_awk} \`${_printf} \"${_MULTILINE_LAYOUT_AWK_PROG}\" dummy\`"`
+	eval "${_awk} \`${_printf} \"${_MULTILINE_LAYOUT_AWK_PROG}\"\`"`
     write_buffer "${_tmp}"
 }
 
@@ -2515,7 +2506,7 @@ check_CGAL_INSTALL_VERSION()
 
 check_COMPILER()
 {
-    _check_comp_executable `compiler_bin`
+    _check_comp_executable "`quote \`compiler_bin\``"
     return 1
 }
 
@@ -2606,7 +2597,7 @@ _compile_test()
 	"Got the following error messages:" >>${TMP_LOGFILE}
     ${_printf} "%s\n" \
 	"---------------------------------" >>${TMP_LOGFILE}
-    eval "`compiler_bin` ${_flags} >>${TMP_LOGFILE} 2>&1"
+    eval "`quote \`compiler_bin\`` ${_flags} >>${TMP_LOGFILE} 2>&1"
     if [ $? = 0 ]; then
 	log_print "$1 test compiled."
 	return 0
@@ -2670,7 +2661,7 @@ _link_run_test()
     ${_printf} "%s\n\n" "${_link} ${_flags}" >>${TMP_LOGFILE}
     ${_printf} "%s\n" "Got the following error messages:" >>${TMP_LOGFILE}
     ${_printf} "%s\n" "---------------------------------" >>${TMP_LOGFILE}
-    eval "${_link} ${_flags} >>${TMP_LOGFILE} 2>&1"
+    eval "`quote ${_link}` ${_flags} >>${TMP_LOGFILE} 2>&1"
     i=$?
     j=1
     if [ $i = 0 ]; then 
@@ -3568,7 +3559,7 @@ compiler_menu()
 	print_multi_line "${CUSTOM_LDFLAGS:-<none>}"
 	print_line "${_bold_on}<T>${_bold_off}  Test (and save) setup"
 	menu_tailer 'Main Menu'
-
+ 
 	case ${KEY} in
 	    c|C)
 		compiler_choose_menu
@@ -4560,8 +4551,8 @@ create_include_makefile()
   # CGAL_CXX
   # 
   makefile_header "compiler" >> ${FILE}
-  ${_printf} "%s\n" "CGAL_CC  = `c_compiler_bin`" >> ${FILE}
-  ${_printf} "%s\n" "CGAL_CXX = ${CGAL_CXX}" >> ${FILE}
+  ${_printf} "%s\n" "CGAL_CC  = `quote \`c_compiler_bin\``" >> ${FILE}
+  ${_printf} "%s\n" "CGAL_CXX = `quote ${CGAL_CXX}`" >> ${FILE}
 
   write_compiler_flags
   write_linker_flags
@@ -5107,7 +5098,7 @@ _check_comp_executable()
     elif [ -z "${*}" ]; then
 	exit_on_error "Missing argument"
     elif [ "`_real_dirname \"${*}\"`" != "." ]; then
-	_check_execute ${1}
+	_check_execute "${*}"
     elif [ ! -x "${1}" ]; then
 	# that was not an absolute path -> try which
 	_tmp1="`real_which ${_tmp}`"
