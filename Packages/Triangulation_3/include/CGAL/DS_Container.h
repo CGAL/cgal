@@ -161,6 +161,7 @@ public:
 
     void release_element(Elt *x) // erase() is the std naming ?
     {
+	CGAL_assertion(!is_free(x));
 	alloc.destroy(x);
 	put_on_free_list((Free_elt *)x);
     }
