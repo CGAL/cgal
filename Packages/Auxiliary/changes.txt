@@ -1,3 +1,7 @@
+02 September Andreas Fabri
+- gmp.lib and mpfr.lib rebuilt with "--enable-alloca=malloc-rentrant".
+- Added a README file with the recipe of how the lib was built.
+
 26 August 2004 Sylvain Pion (for Radu Ursu)
 - gmp.lib and mpfr.lib rebuilt with "--disable-alloca".
 
