@@ -26,36 +26,5 @@
 // Random Access Value Adaptor provides random access for sequences.
 // ============================================================================
 
-#ifndef CGAL_RANDOM_ACCESS_VALUE_ADAPTOR_H
-#define CGAL_RANDOM_ACCESS_VALUE_ADAPTOR_H 1
-#include <CGAL/Random_access_adaptor.h>
-
-CGAL_BEGIN_NAMESPACE
-
-template < class IC, class T >
-class Random_access_value_adaptor : public Random_access_adaptor<IC> {
-public:
-  typedef typename Random_access_adaptor<IC>::size_type size_type;
-
-  Random_access_value_adaptor() {}
-  // invalid index.
-
-  Random_access_value_adaptor( const IC& i)
-  : Random_access_adaptor<IC>(i) {}
-  // empty random access index initialized to start at i.
-
-  Random_access_value_adaptor( const IC& i, const IC& j)
-  : Random_access_adaptor<IC>(i,j) {}
-  // random access index initialized with range [i,j).
-
-  // OPERATIONS
-
-  T& operator[]( size_type n) const {
-    // returns inverse index of k.
-    return *(Random_access_adaptor<IC>::operator[](n));
-  }
-};
-
-CGAL_END_NAMESPACE
-#endif // CGAL_RANDOM_ACCESS_VALUE_ADAPTOR_H //
+#include <CGAL/iterator.h>
 // EOF //
