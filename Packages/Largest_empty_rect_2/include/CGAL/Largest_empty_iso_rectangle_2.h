@@ -104,18 +104,20 @@ private:
   }
 
   // was y_smaller
-  bool less_yx(const Point_data *a, const Point_data *b) {
+  bool less_yx(const Point_data *a, const Point_data *b) const
+  {
     return traits().less_yx_2_object()(a->p, b->p);
-    }
+  }
 
   // was x_larger
-  bool larger_xy(const Point_data *a, const Point_data *b) {
+  bool larger_xy(const Point_data *a, const Point_data *b) const
+  {
     return traits().compare_xy_2_object()(a->p, b->p) == LARGER;
   }
 
   // was y_larger
-  bool larger_yx(const Point_data *a, const Point_data *b) {
-
+  bool larger_yx(const Point_data *a, const Point_data *b) const
+  {
     Comparison_result c = traits().compare_y_2_object()(a->p, b->p);
     if(c == LARGER) {
       return true;
@@ -167,6 +169,7 @@ private:
   Point_data_set_of_y y_sorted;
 
   Point bl_p, tr_p;
+  Iso_rectangle_2 bbox_p;
 
   // the points that define the largest empty iso-rectangle
   Point left_p, bottom_p, right_p ,top_p; 
@@ -379,7 +382,8 @@ private:
 				typename Point_data_set_of_y::iterator iter2,
 				typename Point_data_set_of_y::iterator iter3,
 				bool first_iter_is_right,
-				bool second_iter_is_right){
+				bool second_iter_is_right)
+  {
     if(first_iter_is_right) {
       if(!second_iter_is_right)
 	check_for_larger((*iter2)->p, (*iter)->p, (*iter1)->p, (*iter3)->p);
@@ -533,7 +537,7 @@ void Largest_empty_iso_rectangle_2<T>::
   // copy bounding box
   bl_p = ler.bl_p;
   tr_p = ler.tr_p;
-
+  bbox_p = ler.bbox_p;
     // copy points
   for(typename Point_data_set_of_x::const_iterator iter = ler.x_sorted.begin();
         iter != ler.x_sorted.end();
@@ -578,14 +582,12 @@ bool
 Largest_empty_iso_rectangle_2<T>::insert(const Point& _p)
 {
   // check that the point is inside the bounding box 
-  if(_p.x() <= bl_p.x() || _p.x() >= tr_p.x() ||
-     _p.y() <= bl_p.y() || _p.y() >= tr_p.y())
+  if(bbox_p.has_on_unbounded_side(_p)) {
     return(false);
-
+  }
   // check that the point is not already inserted
-  Point_data *po = new Point_data(_p);
-  typename Point_data_set_of_x::iterator iter = x_sorted.find(po);
-  delete(po);
+  Point_data po(_p);
+  typename Point_data_set_of_x::iterator iter = x_sorted.find(&po);
 
   if(iter != x_sorted.end())
     return(false);
@@ -595,10 +597,10 @@ Largest_empty_iso_rectangle_2<T>::insert(const Point& _p)
     new Point_data_set_of_y(Less_yx(traits()));
   Point_data_set_of_y *left_tent =
     new Point_data_set_of_y(Less_yx(traits()));
-  po = new Point_data(_p,right_tent,left_tent,REG);
+  Point_data * ppo = new Point_data(_p,right_tent,left_tent,REG);
 
-  x_sorted.insert(po);
-  y_sorted.insert(po);
+  x_sorted.insert(ppo);
+  y_sorted.insert(ppo);
   return(true);
 }
 
@@ -609,10 +611,9 @@ bool
 Largest_empty_iso_rectangle_2<T>::remove(const Point& _p)
 {
   cache_valid = false;
-  Point_data *po = new Point_data(_p);
-  typename Point_data_set_of_x::iterator iter1 = x_sorted.find(po);
-  typename Point_data_set_of_y::iterator iter2 = y_sorted.find(po);
-  delete(po);
+  Point_data po(_p);
+  typename Point_data_set_of_x::iterator iter1 = x_sorted.find(&po);
+  typename Point_data_set_of_y::iterator iter2 = y_sorted.find(&po);
 
   // point does not exist or a corner point
   if(iter1 == x_sorted.end() || (*iter1)->type != REG)
@@ -709,14 +710,12 @@ Largest_empty_iso_rectangle_2<T>::insert(const Point& _p,
 					 Point_type i_type)
 {
   // check that the point is inside the bounding box 
-  if((i_type == REG) && (_p.x() <= bl_p.x() || _p.x() >= tr_p.x() ||
-     _p.y() <= bl_p.y() || _p.y() >= tr_p.y()))
-    return(false);
-
+  if((i_type == REG) && bbox_p.has_on_unbounded_side(_p)) {
+    return false;
+  }
   // check that the point is not already inserted
-  Point_data *po = new Point_data(_p);
-  typename Point_data_set_of_x::iterator iter = x_sorted.find(po);
-  delete(po);
+  Point_data po(_p);
+  typename Point_data_set_of_x::iterator iter = x_sorted.find(&po);
 
   if(iter != x_sorted.end())
     return(false);
@@ -726,10 +725,10 @@ Largest_empty_iso_rectangle_2<T>::insert(const Point& _p,
     new Point_data_set_of_y(Less_yx(traits()));
   Point_data_set_of_y *left_tent = 
     new Point_data_set_of_y(Less_yx(traits()));
-  po = new Point_data(_p,right_tent,left_tent,i_type);
+  Point_data *ppo = new Point_data(_p,right_tent,left_tent,i_type);
 
-  x_sorted.insert(po);
-  y_sorted.insert(po);
+  x_sorted.insert(ppo);
+  y_sorted.insert(ppo);
   return(true);
 }
 
@@ -1262,7 +1261,7 @@ template<class T>
 typename Largest_empty_iso_rectangle_2<T>::Iso_rectangle_2
 Largest_empty_iso_rectangle_2<T>::get_bounding_box()
 {
-  return(Iso_rectangle_2(bl_p, tr_p));
+  return bbox_p;
 }
 
 /* Performs the computation if the cache is invalid
@@ -1322,12 +1321,13 @@ Largest_empty_iso_rectangle_2<T>::init(const Point& bl, const Point& tr)
   // determine extreme values of bounding box
   bl_p = bl;
   tr_p = tr;
-
+  bbox_p = Iso_rectangle_2(bl,tr);
   // add extreme points
-  insert(Point(bl.x(),bl.y()), BOT_LEFT);
-  insert(Point(tr.x(),bl.y()), BOT_RIGHT);
-  insert(Point(bl.x(),tr.y()), TOP_LEFT);
-  insert(Point(tr.x(),tr.y()), TOP_RIGHT);
+  
+  insert(bbox_p.vertex(0), BOT_LEFT);
+  insert(bbox_p.vertex(1), BOT_RIGHT);
+  insert(bbox_p.vertex(3), TOP_LEFT);
+  insert(bbox_p.vertex(2), TOP_RIGHT);
 }
 
 // ctor
@@ -1409,10 +1409,11 @@ Largest_empty_iso_rectangle_2<T>::clear()
   x_sorted.clear();
   y_sorted.clear();
 
-  insert(Point(bl_p.x(),bl_p.y()),BOT_LEFT);
-  insert(Point(tr_p.x(),bl_p.y()),BOT_RIGHT);
-  insert(Point(bl_p.x(),tr_p.y()),TOP_LEFT);
-  insert(Point(tr_p.x(),tr_p.y()),TOP_RIGHT);
+  // add extreme points
+  insert(bbox_p.vertex(0), BOT_LEFT);
+  insert(bbox_p.vertex(1), BOT_RIGHT);
+  insert(bbox_p.vertex(3), TOP_LEFT);
+  insert(bbox_p.vertex(2), TOP_RIGHT);
 }
 
 /*
