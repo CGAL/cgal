@@ -1,3 +1,6 @@
+1.3.7 (06 December 2001)
+- sources of the demos were changed
+
 1.3.6 (03 December 2001)
 - CGAL_delaunay_triang_3.C changed
 
