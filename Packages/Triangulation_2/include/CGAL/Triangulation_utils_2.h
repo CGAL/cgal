@@ -15,6 +15,7 @@
 // revision      : $Revision$
 // author(s)     : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 //                 Sylvain Pion    <Sylvain.Pion@sophia.inria.fr>
+//                 Andreas Fabri   <Andreas.Fabri@geometryfactory.com>
 //
 // coordinator   : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 //
@@ -23,20 +24,32 @@
 #define CGAL_TRIANGULATION_UTILS_2_H
 
 CGAL_BEGIN_NAMESPACE 
+template < class T = void >
+struct Triangulation_cw_ccw_static_2 {
 
-class Triangulation_cw_ccw_2
+static const int ccw_map[3];
+static const int cw_map[3];
+};
+template < class T = void >
+const int Triangulation_cw_ccw_static_2<T>::ccw_map[3] = {1, 2, 0};
+
+template < class T = void >
+const int Triangulation_cw_ccw_static_2<T>::cw_map[3] = {2, 0, 1};
+
+class Triangulation_cw_ccw_2 
+  : public  Triangulation_cw_ccw_static_2<>
 {
 public:
   static int ccw(const int i) 
     {
       CGAL_triangulation_precondition( i >= 0 && i < 3);
-      return (i==2) ? 0 : i+1;
+      return ccw_map[i];
     }
 
   static int cw(const int i)
     {
       CGAL_triangulation_precondition( i >= 0 && i < 3);
-      return (i==0) ? 2 : i-1;
+      return cw_map[i];
     }
 };
 
