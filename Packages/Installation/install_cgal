@@ -5,7 +5,7 @@
 # $Id$
 # ---------------------------------------------------------------------
 # 
-# Copyright (c) 1997-2002 The CGAL Consortium
+# Copyright (c) 1997-2003 The CGAL Consortium
 #
 # This software and related documentation are part of the Computational
 # Geometry Algorithms Library (CGAL).
@@ -5200,7 +5200,7 @@ install_gmp_sub()
     fi
     
     cd ${GMP_VERSION}
-    _preopts="CC=\"`c_compiler_bin`\""
+    _preopts=""
     _opts="--prefix=${CGAL_DIR}/GMP"
     _opts="${_opts} --libdir=${CGAL_LIB_DIR}/`full_ostype`"
     _opts="${_opts} --includedir=${CGAL_INCL_DIR}"

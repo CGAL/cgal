@@ -6,6 +6,7 @@
 //---------------------------------------------------------------------
 //	actual revision
 //---------------------------------------------------------------------
+GLOB: Remove CC specification from GMP's configure, and update the doc.
 GLOB: fix a bashism in install_cgal
 GLOB: QT_MOC is now always added in the master makefile, as it should be.
 GLOB: Removed linkage against Core

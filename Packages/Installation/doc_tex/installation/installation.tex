@@ -583,13 +583,25 @@ this test does not succeed, you have to supply directories containing
 the GMP header files (\texttt{GMP\_INCL\_DIR})\TTindex{GMP\_INCL\_DIR}
 and GMP libraries ({\tt GMP\_LIB\_DIR})\TTindex{GMP\_LIB\_DIR}.  Even
 if the tests are passed, you still have the option to set these
-directories differently.\bigskip
+directories differently.
+
+If you decide to install the GMP distribution shipped with \cgal\ from the
+install script, GMP will be configured by calling its \textit{configure}
+script.  GMP being a C library, it requires a C compiler.  Its
+\textit{configure} script usually does a good job at finding a C compiler on
+the system, but it also gives the possibility to specify it by setting the
+environment variable \textit{CC} before calling \textit{configure}.  If you
+want the \cgal\ install script to build GMP and specify the C compiler to be
+used, you can also to the same, by setting the \textit{CC} environment variable
+(see the GMP installation documentation for details).  If you need a more
+complex configuration of GMP, we recommend that you install GMP yourself
+separately.
 
 If GMP support is enabled, you may additionnally enable support for GMPXX,
 GMP's built-in C++ interface, from the GMP menu.  Note that this is not
 supported by all C++ compilers, you should check the GMP manual for more
 information.  Once you choose to have GMPXX support, then if you install GMP
-from the CGAL tree, GMP will be configured with C++ support.
+from the CGAL tree, GMP will be configured with C++ support.\bigskip
 
 \index{GMP@\gmp!installing}\index{GMP@\gmp!enable support}
 \fbox{
