@@ -1,0 +1,68 @@
+// examples/Nef_3/shell_exploration.C
+// -------------------------------------
+#include <CGAL/Gmpz.h>
+#include <CGAL/Homogeneous.h>
+#include <CGAL/Nef_polyhedron_3.h>
+#include <CGAL/IO/Nef_polyhedron_iostream_3.h>
+
+typedef CGAL::Gmpz RT;
+typedef CGAL::Homogeneous<RT> Kernel;
+typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron;
+typedef Nef_polyhedron::Vertex_const_handle Vertex_const_handle;
+typedef Nef_polyhedron::Halfedge_const_handle Halfedge_const_handle;
+typedef Nef_polyhedron::Halffacet_const_handle Halffacet_const_handle;
+typedef Nef_polyhedron::SHalfedge_const_handle SHalfedge_const_handle;
+typedef Nef_polyhedron::SHalfloop_const_handle SHalfloop_const_handle;
+typedef Nef_polyhedron::SFace_const_handle SFace_const_handle;
+typedef Nef_polyhedron::Volume_const_iterator Volume_const_iterator;
+typedef Nef_polyhedron::Shell_entry_const_iterator Shell_entry_const_iterator;
+typedef Kernel::Point_3 Point_3;
+
+class Shell_explorer {
+  bool first;
+  const Nef_polyhedron& N;
+  Vertex_const_handle v_min;
+
+public:
+  Shell_explorer(const Nef_polyhedron& N_) 
+    : first(true), N(N_) {}
+  
+  void visit(Vertex_const_handle h) {
+    if(first) {
+      v_min = h;
+      first=false; 
+    } else if (CGAL::lexicographically_xyz_smaller(N.point(h),N.point(v_min)))
+      v_min = h; 
+  }
+  
+  void visit(Halfedge_const_handle e) {}
+  void visit(Halffacet_const_handle f) {}
+  void visit(SHalfedge_const_handle se) {}
+  void visit(SHalfloop_const_handle sl) {}
+  void visit(SFace_const_handle sf) {}
+  
+  Vertex_const_handle& minimal_vertex() { return v_min; }
+  void reset_minimal_vertex() { first = true; }
+};    
+
+int main() {
+
+  Nef_polyhedron N;
+  std::cin >> N;
+
+  int ic = 0;
+  Volume_const_iterator c;
+  Shell_explorer SE(N);
+  CGAL_forall_volumes(c,N) {
+    std::cout << "Volume " << ic++ << std::endl;
+    int is = 0;
+    Shell_entry_const_iterator it;
+    CGAL_forall_shells_of(it,c) {
+      SE.reset_minimal_vertex();
+      N.visit_shell_objects(SFace_const_handle(it),SE);
+      Point_3 p(N.point(SE.minimal_vertex()));
+      std::cout << "  minimal vertex of shell " << is++ 
+		<< " is at " << p << std::endl;
+    }
+  } 
+}
