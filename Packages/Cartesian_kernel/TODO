@@ -13,9 +13,10 @@ Stuff to look at, as time permits:
     - It must have the same interface than Handle_for<> [due, it can't !]
     - Must use the allocator, see Stefan's mail. [due, impossible !]
     - Ok, after reflexion : it can't use STL allocators, however we can do
-      something clean by looking at auto_ptr<>, I think.  It would also be
-      nice if we could remove the ref-counting mecanism easily, like for
-      Handle_for<>.
+      something clean by looking at auto_ptr<>, I think.
+    - It would also be nice if we could remove the ref-counting mecanism
+      easily, like for Handle_for<>. [low priority, but would be nice to
+      get the right interface able to do that]
     - Apply them to Aff_transformations, then Lazy_exact_nt<>, then... :)
 
 - Advanced Kernel :
