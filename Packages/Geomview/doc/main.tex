@@ -21,7 +21,8 @@ viewer for three-dimensional objects, developed at the Geometry Center
 in Minneapolis\footnote{\tt http://www.geom.umn.edu/}.
 
 \noindent {\bf Important:} The last line in the startup file \ccc{.geomview}
-must be \ccc{(echo "started")}.
+must be \ccc{(echo "started")}. The two commands \ccc{rsh} and \ccc{geomview}
+must be in the user's path. Otherwise the program will not be able to execute.
 
 \begin{ccClass}{CGAL_Geomview_stream}
 \ccDefinition
@@ -103,12 +104,6 @@ operators. 2D objects are embedded in the \ccc{xy}-plane.
 {Inserts the tetrahedron \ccc{t} into the stream \ccVar.}
 
 
-\ccFunction{template <class Traits, class HDS>
-CGAL_Geomview_stream&
-operator<<(CGAL_Geomview_stream &G,
-           const CGAL_Polyhedron_3<Traits,HDS> &P);}
-{Inserts the polyhedron \ccc{P} into the stream \ccVar.}
-
 
 \ccMethod{CGAL_Geomview_stream&
           operator<<(const CGAL_Bbox_2& b);}
@@ -133,54 +128,63 @@ can be moved anywhere with the left mouse button, before a point is entered.
  echoed.}
 
 
-\ccHeading{IO Operators for CGAL Basic Library Classes}
+\ccHeading{Output Operators for CGAL Basic Library Classes}
 
+\ccFunction{template <class Traits, class HDS>
+CGAL_Geomview_stream&
+operator<<(CGAL_Geomview_stream &G,
+           const CGAL_Polyhedron_3<Traits,HDS> &P);}
+{Inserts the polyhedron \ccc{P} into the stream \ccVar.}
 
-\ccFunction{template <class Traits>
-            CGAL_Geomview_stream&
-            operator<<(CGAL_Geomview_stream& G,
-                       const CGAL_Tetrahedralization_3<Traits>& T);}
-{Inserts the tetrahedralization \ccc{T} into the stream \ccVar.}
-
-For geometric structures as a tetrahedalization only one geomview
-object is created. If you want to select a single simplex you have
-to insert the simplices individually with the following operator.
-
-\ccFunction{template <class V>
-            CGAL_Geomview_stream&
-            operator<<(CGAL_Geomview_stream& G,
-                       const CGAL_Tetrahedralization_simplex<V>* s);}
-{Inserts the tetrahedralization simplex \ccc{s} into the stream \ccVar.}
-
-
-\ccFunction{template < class V >
-            CGAL_Geomview_stream&
-            operator>>(CGAL_Geomview_stream &G,
-                       CGAL_Tetrahedralization_simplex<V>*& s);}
-{Assigns the pointer to the tetrahedralization simplex the user selected
- with the right mouse button to variable \ccc{s}. 
-\ccPrecond It is in the responsibility of the user to guarantee that the
-pointer still points to memory allocated for a simplex.}
-
-
-\ccFunction{template <class P>
-            CGAL_Geomview_stream&
-            operator<<(CGAL_Geomview_stream& G,
-                       const CGAL_Tetrahedralization_vertex<P>* v);}
-{Inserts the tetrahedralization vertex \ccc{v} into the stream \ccVar.
- Vertices are drawn as a cube with twice \ccc{G.get_vertex_radius}
- as side length. This value is 1/100'th of the \ccc{x}-length of the
-initial bounding box.}
-
-
-\ccFunction{template < class P>
-            CGAL_Geomview_stream&
-            operator>>(CGAL_Geomview_stream &G,
-                       CGAL_Tetrahedralization_vertex<V>*& v);}
-{Assigns the pointer to the tetrahedralization vertex the user selected
- with the right mouse button to variable \ccc{v}. 
-\ccPrecond It is in the responsibility of the user to guarantee that the
-pointer still points to memory allocated for a vertex.}
+%% There is no tetrahedralization class at the moment
+%% 
+%% \ccFunction{template <class Traits>
+%%             CGAL_Geomview_stream&
+%%             operator<<(CGAL_Geomview_stream& G,
+%%                        const CGAL_Tetrahedralization_3<Traits>& T);}
+%% {Inserts the tetrahedralization \ccc{T} into the stream \ccVar.}
+%% 
+%% For geometric structures as a tetrahedalization only one geomview
+%% object is created. If you want to select a single simplex you have
+%% to insert the simplices individually with the following operator.
+%% 
+%% \ccFunction{template <class V>
+%%             CGAL_Geomview_stream&
+%%             operator<<(CGAL_Geomview_stream& G,
+%%                        const CGAL_Tetrahedralization_simplex<V>* s);}
+%% {Inserts the tetrahedralization simplex \ccc{s} into the stream \ccVar.}
+%% 
+%% 
+%% \ccFunction{template < class V >
+%%             CGAL_Geomview_stream&
+%%             operator>>(CGAL_Geomview_stream &G,
+%%                        CGAL_Tetrahedralization_simplex<V>*& s);}
+%% {Assigns the pointer to the tetrahedralization simplex the user selected
+%%  with the right mouse button to variable \ccc{s}. 
+%% \ccPrecond It is in the responsibility of the user to guarantee that the
+%% pointer still points to memory allocated for a simplex.}
+%% 
+%% 
+%% \ccFunction{template <class P>
+%%             CGAL_Geomview_stream&
+%%             operator<<(CGAL_Geomview_stream& G,
+%%                        const CGAL_Tetrahedralization_vertex<P>* v);}
+%% {Inserts the tetrahedralization vertex \ccc{v} into the stream \ccVar.
+%%  Vertices are drawn as a cube with twice \ccc{G.get_vertex_radius}
+%%  as side length. This value is 1/100'th of the \ccc{x}-length of the
+%% initial bounding box.}
+%% 
+%% 
+%% \ccFunction{template < class P>
+%%             CGAL_Geomview_stream&
+%%             operator>>(CGAL_Geomview_stream &G,
+%%                        CGAL_Tetrahedralization_vertex<V>*& v);}
+%% {Assigns the pointer to the tetrahedralization vertex the user selected
+%%  with the right mouse button to variable \ccc{v}. 
+%% \ccPrecond It is in the responsibility of the user to guarantee that the
+%% pointer still points to memory allocated for a vertex.}
+%% 
+%% end of commented section
 
 \ccHeading{Colors}
 
@@ -246,11 +250,12 @@ is at the same time the color of vertices.
           get_trace();}
 {Returns \ccc{true} iff tracing is on.}
 
+\begin{ccAdvanced}
 
 \ccHeading{Advanced and Developers Features}
 
 The following functions are helpful if you develop your own insert
-and extraxt functions. The following functions allow to pass a string
+and extract functions. The following functions allow to pass a string
 from geomview and to read data sent back by geomview.
 
 \ccMethod{CGAL_Geomview_stream&
@@ -294,8 +299,9 @@ that can be inserted in the stream.
             operator<<(binary);}
 {Sets the stream in binary mode.}
 
-%\ccExample
+\end{ccAdvanced}
 
+%\ccExample
 
 \begin{cprog}
 
@@ -332,6 +338,7 @@ Mark Phillips et al.
 \bibitem{GV_Impl}
 Andreas Fabri.
 \newblock {How to Implement Geomview Stream IO Operators.}
-\newblock July 2997.
+\newblock July 1997. \ccc{http://www.cs.ru.nl/CGAL/}
+
 \end{thebibliography}
 
