@@ -12,8 +12,8 @@
 // release_date  :
 //
 // file          : include/CGAL/Interval_arithmetic.h
-// revision      : 1.0
-// revision_date : 3 December 1997
+// revision      : 1.1
+// revision_date : 16 December 1997
 // author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //
 // coordinator   : INRIA Sophia-Antipolis (<Herve.Bronnimann@sophia.inria.fr>)
@@ -25,8 +25,7 @@
 // - CGAL_Interval_nt		(derived from the other one)
 
 /*
- * TODO list:
- * ----------
+ * TODO:
  * - get/set FPU rounding modes.
  * - Check_assertions, when it's needed.
  * - don't force (check if it's ok) the precision: long doubles internally
@@ -37,7 +36,7 @@
 #define CGAL_INTERVAL_ARITHMETIC_H
 
 #include <iostream.h>
-#include <CGAL/Double.h>        // For CGAL_is_valid() and CGAL_is_finite().
+#include <CGAL/double.h>        // For CGAL_is_valid() and CGAL_is_finite().
 #include <CGAL/_FPU.h>          // FPU rounding mode functions.
 
 
@@ -59,13 +58,15 @@ public:
     inf = -d; sup = d;
   }
 
-  inline CGAL_Interval_nt_advanced& operator=(const CGAL_Interval_nt_advanced& d)
+  inline CGAL_Interval_nt_advanced&
+         operator=(const CGAL_Interval_nt_advanced& d)
   {
     inf = d.inf; sup = d.sup;
     return *this;
   }
 
-  inline CGAL_Interval_nt_advanced operator+(const CGAL_Interval_nt_advanced& d) const
+  inline CGAL_Interval_nt_advanced
+         operator+(const CGAL_Interval_nt_advanced& d) const
   {
     CGAL_Interval_nt_advanced tmp;
     tmp.inf = inf + d.inf;
@@ -73,7 +74,8 @@ public:
     return tmp;
   }
 
-  inline CGAL_Interval_nt_advanced operator-(const CGAL_Interval_nt_advanced& d) const
+  inline CGAL_Interval_nt_advanced
+         operator-(const CGAL_Interval_nt_advanced& d) const
   {
     CGAL_Interval_nt_advanced tmp;
     tmp.inf = inf + d.sup;
@@ -81,7 +83,8 @@ public:
     return tmp;
   }
 
-  inline CGAL_Interval_nt_advanced operator*(const CGAL_Interval_nt_advanced& d) const
+  inline CGAL_Interval_nt_advanced
+         operator*(const CGAL_Interval_nt_advanced& d) const
   {
     CGAL_Interval_nt_advanced tmp;
     if (inf<=0)                                   /* this>=0 */
@@ -146,7 +149,8 @@ public:
     return tmp;
   }
 
-  inline CGAL_Interval_nt_advanced operator/(const CGAL_Interval_nt_advanced& d) const
+  inline CGAL_Interval_nt_advanced
+         operator/(const CGAL_Interval_nt_advanced& d) const
   {
     CGAL_Interval_nt_advanced tmp;
     if (d.inf<0.0)                            /* d>0 */

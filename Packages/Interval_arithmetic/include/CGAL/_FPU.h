@@ -12,8 +12,8 @@
 // release_date  :
 //
 // file          : include/CGAL/_FPU.h
-// revision      : 1.0
-// revision_date : 3 December 1997
+// revision      : 1.1
+// revision_date : 16 December 1997
 // author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //
 // coordinator   : INRIA Sophia-Antipolis (<Herve.Bronnimann@sophia.inria.fr>)
@@ -45,7 +45,8 @@
 #error "Architecture not recognized."
 #endif
 
-#if (defined(__GNUC__) && (defined(__i386) || defined(__sparc) || defined(__alpha)))
+#if ( (defined(__i386) || defined(__sparc) || defined(__alpha)) && \
+      defined(__GNUC__))
 #define __USE_ASSEMBLY
 #endif
 
@@ -54,7 +55,6 @@
 #include <fpu_control.h>
 #endif
 #ifdef __osf
-/* #include </usr/include/float.h> */
 #include <float.h>
 #endif
 #ifdef __sgi
