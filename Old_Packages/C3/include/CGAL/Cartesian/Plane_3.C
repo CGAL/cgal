@@ -148,7 +148,6 @@ inline
 PlaneC3<R CGAL_CTAG>::~PlaneC3()
 {}
 
-
 template < class R >
 CGAL_KERNEL_INLINE
 bool PlaneC3<R CGAL_CTAG>::

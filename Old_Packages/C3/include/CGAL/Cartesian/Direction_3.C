@@ -80,7 +80,6 @@ DirectionC3<R CGAL_CTAG>::operator!=(const DirectionC3<R CGAL_CTAG> &d) const
   return !(*this == d);
 }
 
-
 template < class R >
 inline
 typename DirectionC3<R CGAL_CTAG>::Vector_3

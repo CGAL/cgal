@@ -64,7 +64,6 @@ inline
 TetrahedronC3<R CGAL_CTAG>::~TetrahedronC3()
 {}
 
-
 template < class Point_3 >
 struct Less_xyzC3 {
   // cannot reuse it from predicate_classes, because of
