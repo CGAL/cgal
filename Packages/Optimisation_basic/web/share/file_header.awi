@@ -3,7 +3,7 @@
 @! Implementation: macros for file headers
 @! ----------------------------------------------------------------------------
 @! file  : web/file_header.awi
-@! author: Sven Schönherr <sven@inf.fu-berlin.de>
+@! author: Sven Schönherr <sven@inf.ethz.ch>
 @! ----------------------------------------------------------------------------
 @! $Revision$
 @! $Date$
