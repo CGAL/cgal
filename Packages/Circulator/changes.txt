@@ -1,5 +1,8 @@
 Circulator Package: Release changes:
 ---------------------------------------------------------------------
+3.9 (18 october 99)
+     one more small correction to the doc
+
 3.8 (14 october 99)
     made some corections suggested by Susan to the doc
 
