@@ -67,7 +67,7 @@ private:
     CGAL::Orientation
     orientation( const Point& p, const Point& q, const Point& r) const
     {
-      Orientation_2 orienntation;
+      Orientation_2 orientation;
         return(orientation( p, q, r));
     }
 };
