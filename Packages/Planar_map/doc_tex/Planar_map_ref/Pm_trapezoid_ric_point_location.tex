@@ -1,5 +1,5 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: Pm_trapezoid_dag_point_location.tex (Planar_map)
+% | Reference manual page: Pm_trapezoid_ric_point_location.tex (Planar_map)
 % +------------------------------------------------------------------------+
 % | 
 % | Package: pm (Planar_map_2)
@@ -16,7 +16,7 @@
 \renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
 \renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
 
-\begin{ccRefClass}{Pm_trapezoid_dag_point_location<Planar_map>}
+\begin{ccRefClass}{Pm_trapezoid_ric_point_location<Planar_map>}
 \label{PL_sec:default}
 
 \ccDefinition
@@ -35,7 +35,7 @@ building time.
 \ccThree{Curve}{}{\hspace*{10cm}}
 \ccThreeToTwo
 
-\ccInclude{CGAL/Pm_trapezoid_dag_point_location.h}
+\ccInclude{CGAL/Pm_trapezoid_ric_point_location.h}
 
 \ccCreationVariable{pl}
 
@@ -47,7 +47,7 @@ building time.
 
 \ccCreation
 
-\ccConstructor{Pm_trapezoid_dag_point_location<Planar_map>(bool preprocess = false);}
+\ccConstructor{Pm_trapezoid_ric_point_location<Planar_map>(bool preprocess = false);}
 { constructs the point location object. If \ccc{preprocess} is \ccc{true} then
 preprocessing is done to guarantee a deterministic worst case query time of
 $O(\log n)$. However, the preprocessing step can slow down considerably

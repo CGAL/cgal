@@ -24,7 +24,7 @@ int main()
 #include <CGAL/IO/Pm_Window_stream.h>
 #include <CGAL/IO/Conic_arc_2_Window_stream.h>
 
-#include <CGAL/Pm_trapezoid_dag_point_location.h>
+#include <CGAL/Pm_trapezoid_ric_point_location.h>
 #include <CGAL/Pm_walk_along_line_point_location.h>
 #include <CGAL/Pm_naive_point_location.h>
 #include <CGAL/Pm_dummy_point_location.h>
@@ -66,7 +66,7 @@ typedef Traits_2::Curve_2                               Curve_2;
 typedef Traits_2::X_monotone_curve_2                    X_monotone_curve_2;
 typedef std::list<Curve_2>                              CurveList;
 
-typedef CGAL::Pm_trapezoid_dag_point_location<Pm_2>     Trap_point_location;
+typedef CGAL::Pm_trapezoid_ric_point_location<Pm_2>     Trap_point_location;
 typedef CGAL::Pm_naive_point_location<Pm_2>             Naive_point_location;
 typedef CGAL::Pm_walk_along_line_point_location<Pm_2>   Walk_point_location;
 typedef CGAL::Pm_dummy_point_location<Pm_2>             Dummy_point_location;
