@@ -11,11 +11,11 @@
 // release       : $CGAL_Revision$
 // release_date  : $CGAL_Date$
 //
-// file          : include/CGAL/Nef_2/PM_constr_triang_traits.h
+// file          : include/CGAL/Nef_2/Constrained_triang_traits.h
 // package       : Nef_2 
 // chapter       : Nef Polyhedra
 //
-// source        : nef_2d/PM_constr_triang.lw
+// source        : nef_2d/Constrained_triang.lw
 // revision      : $Revision$
 // revision_date : $Date$
 //
@@ -30,7 +30,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Hash_map.h>
-#include <CGAL/gen_plane_sweep.h>
+#include <CGAL/generic_sweep.h>
 #include <CGAL/Nef_2/PM_checker.h>
 #include <string>
 #include <map>
@@ -53,14 +53,16 @@ template <typename ARG>
 void operator()(ARG&) const {}
 };
 
+
 template <typename PMDEC, typename GEOM, 
-          typename EDGEDA = Do_nothing>
-class PM_constr_triang_traits : public PMDEC {
+          typename NEWEDGE = Do_nothing>
+class Constrained_triang_traits : public PMDEC {
 public:
-  typedef PM_constr_triang_traits<PMDEC,GEOM,EDGEDA> Self;
-  typedef PMDEC                                      Base;
+  typedef Constrained_triang_traits<PMDEC,GEOM,NEWEDGE> Self;
+  typedef PMDEC                                         Base;
+
   // the types interfacing the sweep:
-  typedef EDGEDA                    INPUT;
+  typedef NEWEDGE                   INPUT;
   typedef typename PMDEC::Plane_map OUTPUT; 
   typedef GEOM                      GEOMETRY;
 
@@ -129,25 +131,25 @@ public:
 
 
     typedef std::map<Halfedge_handle, Halfedge_handle, lt_edges_in_sweepline> 
-            SWEEP_STATUS_STRUCTURE; 
-    typedef typename SWEEP_STATUS_STRUCTURE::iterator   ss_iterator;
-    typedef typename SWEEP_STATUS_STRUCTURE::value_type ss_pair;
-    typedef std::set<Vertex_iterator,lt_pnts_xy> EVENTQ;
-    typedef typename EVENTQ::const_iterator event_iterator;
+            Sweep_status_structure; 
+    typedef typename Sweep_status_structure::iterator   ss_iterator;
+    typedef typename Sweep_status_structure::value_type ss_pair;
+    typedef std::set<Vertex_iterator,lt_pnts_xy> Event_Q;
+    typedef typename Event_Q::const_iterator event_iterator;
 
     const GEOMETRY&         K;
-    EVENTQ                  EventQ;
+    Event_Q                 event_Q;
     event_iterator          event_it;         
     Vertex_handle           event;
     Point                   p_sweep;
-    SWEEP_STATUS_STRUCTURE  SL;
+    Sweep_status_structure  SL;
     CGAL::Hash_map<Halfedge_handle,ss_iterator> SLItem;
-    const EDGEDA&           Treat_new_edge;
+    const NEWEDGE&          Treat_new_edge;
     Halfedge_handle         e_low,e_high; // framing edges !
     Halfedge_handle         e_search;
 
-    PM_constr_triang_traits(const INPUT& in, OUTPUT& out, const GEOMETRY& k) :
-      Base(out), K(k), EventQ(lt_pnts_xy(*this,K)), 
+    Constrained_triang_traits(const INPUT& in, OUTPUT& out, const GEOMETRY& k) :
+      Base(out), K(k), event_Q(lt_pnts_xy(*this,K)), 
       SL(lt_edges_in_sweepline(p_sweep,e_low,e_high,*this,K)), 
       SLItem(SL.end()),  Treat_new_edge(in)
     { TRACEN("Constrained Triangulation Sweep"); }
@@ -284,8 +286,7 @@ public:
       if ( SLItem[e] != SL.end() ) 
         {
           TRACEN("ending " << seg(e));
-          if (ending_edges) 
-            triangulate_between(e,cyclic_adj_succ(e));
+          if (ending_edges) triangulate_between(e,cyclic_adj_succ(e));
           ending_edges = true;
           SL.erase(SLItem[e]);
           link_bi_edge_to(e,SL.end());
@@ -297,8 +298,7 @@ public:
           TRACEN("starting "<<seg(e));
           sit = SL.insert(sit,ss_pair(e,e));
           link_bi_edge_to(e,sit);
-          if ( !starting_edges )
-            eb_high = cyclic_adj_succ(e);
+          if ( !starting_edges ) eb_high = cyclic_adj_succ(e);
           starting_edges = true;
         }
 
@@ -322,7 +322,7 @@ public:
   }
 
   bool event_exists() 
-  { if ( event_it != EventQ.end() ) {
+  { if ( event_it != event_Q.end() ) {
       // event is set at end of loop and in init
       event = *event_it;
       p_sweep = point(event);
@@ -343,10 +343,10 @@ public:
       TRACEN("initialize_structures ");
     
     for ( event=vertices_begin(); event != vertices_end(); ++event )
-      EventQ.insert(event); // sorted order of vertices
+      event_Q.insert(event); // sorted order of vertices
 
-    event_it = EventQ.begin();
-    if ( EventQ.empty() ) return;
+    event_it = event_Q.begin();
+    if ( event_Q.empty() ) return;
     event = *event_it;
     p_sweep = point(event); 
     if ( !is_isolated(event) ) {
@@ -360,8 +360,7 @@ public:
     }
 
 
-    Vertex_handle v_tmp = new_vertex(); 
-    point(v_tmp) = Point();
+    Vertex_handle v_tmp = new_vertex(); point(v_tmp) = Point();
     e_high = Base::new_halfedge_pair(event,v_tmp);
     e_low  = Base::new_halfedge_pair(event,v_tmp);
     // this are two symbolic edges just accessed as sentinels
@@ -426,25 +425,22 @@ public:
     error_status.freeze(0);
   }
 
-  #define CHECKINVARS
-
   void check_invariants()
   {
-  #ifdef CHECKINVARS
-    if ( event_it == EventQ.end() ) return;
+  #ifdef CGAL_CHECK_EXPENSIVE
+    if ( event_it == event_Q.end() ) return;
     check_ccw_local_embedding();
   #endif
   }
 
   void check_final()
   {
-  #ifdef CHECKINVARS
-    PM_checker<PMDEC,GEOM> C(*this,K);
-    C.check_is_triangulation();
+  #ifdef CGAL_CHECK_EXPENSIVE
+    PM_checker<PMDEC,GEOM> C(*this,K); C.check_is_triangulation();
   #endif
   }
 
-}; // PM_constr_triang_traits<PMDEC,GEOM,EDGEDA>
+}; // Constrained_triang_traits<PMDEC,GEOM,NEWEDGE>
 
 CGAL_END_NAMESPACE
 #endif // CGAL_PM_CONSTR_TRIANG_TRAITS_H

@@ -11,11 +11,11 @@
 // release       : $CGAL_Revision$
 // release_date  : $CGAL_Date$
 //
-// file          : include/CGAL/Nef_2/PM_constr_triang_anim.h
+// file          : include/CGAL/Nef_2/Constrained_triang_anim.h
 // package       : Nef_2 
 // chapter       : Nef Polyhedra
 //
-// source        : nef_2d/PM_constr_triang.lw
+// source        : nef_2d/Constrained_triang.lw
 // revision      : $Revision$
 // revision_date : $Date$
 //
@@ -33,7 +33,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class GT>
-class PM_constr_triang_anim {
+class Constrained_triang_anim {
 
   CGAL::Window_stream _W;
 public:
@@ -42,7 +42,7 @@ public:
   typedef typename GT::Base     PMDEC;
   typedef typename PMDEC::Point Point;
 
-  PM_constr_triang_anim() : _W(400,400) 
+  Constrained_triang_anim() : _W(400,400) 
   { _W.set_show_coordinates(true); _W.init(-120,120,-120,5); _W.display(); }
   VDEVICE& device() { return _W; } 
 
