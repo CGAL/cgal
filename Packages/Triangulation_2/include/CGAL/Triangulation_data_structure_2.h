@@ -1580,7 +1580,7 @@ vrml_output( std::ostream& os, Vertex_handle v, bool skip_infinite) const
   int inum = 0;
   if ( v != Vertex_handle()) {
     vmap[v] = inum++;
-    if( ! skip_infinite)  os << "\t\t\t\t" << *vit << std::endl;
+    if( ! skip_infinite)  os << "\t\t\t\t" << *v << std::endl;
   }
 
   //other vertices
