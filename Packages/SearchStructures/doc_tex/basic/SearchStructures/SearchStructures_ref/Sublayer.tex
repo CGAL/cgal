@@ -1,0 +1,26 @@
+\begin{ccRefConcept}{Sublayer}
+
+\ccDefinition
+
+Defines the requirements that a
+\ccStyle{Sublayer_type} of class \ccStyle{Range_tree_d}
+or \ccStyle{Segment_tree_d} has to fulfill.
+
+First of all, the class has to be derived from the abstract base
+class \ccStyle{Tree_base} and therefore
+has to provide  methods
+\ccStyle{make\_tree}, \ccStyle{window\_query},
+\ccStyle{enclosing\_query} and
+\ccStyle{is\_inside}
+with the same parameter types as the instantiated class
+\ccStyle{Range\_tree\_d} or \ccStyle{Segment\_tree\_d},
+respectively.
+Furthermore a method \ccStyle{bool
+  is\_anchor()} has to be provided. If the \ccStyle{Sublayer\_type} class
+ builds a recursion anchor for class
+\ccStyle{Segment\_tree\_d}, this function is expected to
+return \ccStyle{true}, \ccStyle{false} otherwise.
+
+Such a recursion anchor class is provided by the class  class.
+\ccc{Tree_anchor<Data, Window>}.
+\end{ccRefConcept}

@@ -1,0 +1,42 @@
+\chapter{dD Search Structures}
+
+This chapter presents the {\cgal} range tree, segment tree, and $Kd$-tree
+data structures.
+The range tree is theoretically superior to the $Kd$-tree, but the
+latter often seems to perform better.
+However, the range tree as implemented in {\cgal} is more flexible than the
+$Kd$-tree implementation, in that it enables to layer together range trees
+and segment trees in the same data structure.
+
+\ccHeading{Concepts}
+
+\ccRefConceptPage{KdtreeDTraits} \\
+\ccRefConceptPage{RangeSegmentTreeTraits_k} \\
+\ccRefConceptPage{Sublayer} \\
+
+\ccHeading{Traits Classes}
+
+\ccRefIdfierPage{CGAL::Kdtree_Interface<Point>} \\
+\ccRefIdfierPage{CGAL::Kdtree_Interface_2d<Point>}\\
+\ccRefIdfierPage{CGAL::Kdtree_Interface_3d<Point>}\\
+\ccRefIdfierPage{CGAL::Range_segment_tree_traits_set_2<R>} \\
+\ccRefIdfierPage{CGAL::Range_segment_tree_traits_set_3<R>} \\
+\ccRefIdfierPage{CGAL::Range_tree_traits_map_2<R,T>} \\
+\ccRefIdfierPage{CGAL::Range_tree_traits_map_3<R,T>} \\
+\ccRefIdfierPage{CGAL::Segment_tree_traits_map_2<R,T>} \\
+\ccRefIdfierPage{CGAL::Segment_tree_traits_map_3<R,T>} \\
+\ccRefIdfierPage{CGAL::tree_interval_traits} \\
+\ccRefIdfierPage{CGAL::tree_point_traits} \\
+
+
+\ccHeading{Search Structure Classes}
+
+\ccRefIdfierPage{CGAL::Kdtree_d<Traits>}\\
+\ccRefIdfierPage{CGAL::Kdtree_d<Traits>::Box}\\
+\ccRefIdfierPage{CGAL::Range_tree_d<Data, Window, Traits>}\\
+\ccRefIdfierPage{CGAL::Range_tree_k<Traits>}\\
+\ccRefIdfierPage{CGAL::Segment_tree_d<Data, Window, Traits>}\\
+\ccRefIdfierPage{CGAL::Segment_tree_k<Traits>}\\
+\ccRefIdfierPage{CGAL::Tree_anchor<Data, Window>}\\
+
+\lcHtml{\ccHeading{Alphabetical Listing of Reference Pages}}

@@ -1,0 +1,79 @@
+\begin{ccRefClass}{tree_point_traits}
+
+\ccDefinition
+\ccStyle{tree_point_traits} is a template class
+that provides an interface to data items.
+
+\ccInclude{CGAL/Tree_traits.h}\\
+
+\ccTypes
+\gdef\ccPureClassName{Point_traits}
+\gdef\ccPureTemplateClassName{Point_traits}
+\ccStyle{typedef}\\
+\ccStyle{tree_point_traits<Data, Window, Key,
+         Data_func, Window_left_func, Window_right_func,
+         Compare> Point_traits;}
+
+\ccNestedType{Data}{the container
+  \ccStyle{Data} --- defines the Data type. It may consist of
+         several data slots. One of these data slots has to be of
+         type \ccStyle{Key}.}
+\ccNestedType{Window}{the container
+  \ccStyle{Window} --- defines the type of the query rectangle. It
+  may consist of
+         several data slots. Two of these data slots has to be of
+         type \ccStyle{Key}}
+
+\ccNestedType{Key}{the type
+  \ccStyle{Key} of the data
+  slot this  traits class provides access to.}
+
+\ccNestedType{Data_func}{
+  \ccStyle{Data_func} is a
+         function object  providing an
+  \ccc{operator()} that takes an argument of type \ccc{Data} and returns
+  a component of type \ccc{Key}.}
+\ccNestedType{Window_left_func}{
+  \ccStyle{Window_left_func}  is a function objects that
+         allow to access the
+         left data slot of container
+         \ccStyle{Window} which has type \ccStyle{Key}}
+\ccNestedType{Window_right_func}{
+  \ccStyle{Window_right_func}  is a function objects that
+         allow to access the
+         right data slot of container
+         \ccStyle{Window} which has type \ccStyle{Key}}
+\ccNestedType{Compare}{ defines a comparison relation which must
+         define a strict ordering of the objects of type
+         \ccStyle{Key}. If defined, \ccStyle{less<Key>}
+         is sufficient.}
+
+
+\ccCreation
+\ccStyle{tree_point_traits<Data, Window, Key,
+         Data_func, Window_left_func,
+         Window_right_func, Compare> d();}\\
+\ccCreationVariable{d}
+%\renewcommand{\ccAlternateThreeColumn}{\ccFalse}
+\hspace*{0.2\linewidth}\parbox{0.8\linewidth}{
+ Generation of a \ccStyle{tree\_point\_traits} instance. It is a template class
+that provides an interface to data items.}
+
+
+\ccOperations
+\ccMethod{Key get_key(Data d);}{The data slot of
+  the data item of \ccStyle{d} of type \ccStyle{Key} is
+  accessed by function object \ccStyle{Data_func}.}
+\ccMethod{Key get_left(Window w);}{The data slot of
+  the data item of \ccStyle{w} of type \ccStyle{Key} is
+  accessed by function object
+  \ccStyle{Window_left_func}.}
+\ccMethod{Key get_right(Window w);}{The data slot of
+  the data item of \ccStyle{w} of type \ccStyle{Key} is
+  accessed by function object \ccStyle{Window_right_func}.}
+\ccMethod{bool comp(Key& key1, Key&
+  key2);}{returns \ccStyle{Compare(key1, key2)}.}
+\ccMethod{bool key_comp(Data& data1, Data&
+  data2);}{returns \ccStyle{Compare(get_key(data1), get_key(data2))}.}
+
+\end{ccRefClass}

@@ -1,0 +1,17 @@
+\begin{ccRefClass} {Range_tree_traits_map_2<R,T>}
+
+\ccDefinition
+The class \ccClassName\ is a range tree traits class for the
+2-dimensional point class from the \cgal\ kernel, where data of
+type \ccc{T} is associated to each key. The class is
+parameterized with a representation class \ccc{R} and the type of
+the associated data \ccc{T}.
+
+\ccInclude{CGAL/Range_segment_tree_traits.h}
+
+\ccTypes
+\ccTypedef{std::pair<R::Point_2,T> Key;}{}
+\ccTypedef{std::pair<R::Point_2, R::Point_2 > Interval;}{}
+
+
+\end{ccRefClass} 

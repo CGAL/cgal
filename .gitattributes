@@ -375,13 +375,6 @@ Packages/Polyhedron/examples/Polyhedron/corner.off -text
 Packages/Polyhedron/examples/Polyhedron/corner_with_hole.off -text
 Packages/Polyhedron/examples/Polyhedron/corner_with_sharp_edge.off -text
 Packages/Polyhedron/examples/Polyhedron/cross.off -text
-Packages/SearchStructures/doc_tex/SearchStructures/SearchStructures_ref/d-range.gif svneol=native#unset
-Packages/SearchStructures/doc_tex/SearchStructures/SearchStructures_ref/d-segment.gif svneol=native#unset
-Packages/SearchStructures/doc_tex/SearchStructures/SearchStructures_ref/range2.gif svneol=native#unset
-Packages/SearchStructures/doc_tex/SearchStructures/SearchStructures_ref/rsd.gif svneol=native#unset
-Packages/SearchStructures/doc_tex/SearchStructures/SearchStructures_ref/segment2.gif svneol=native#unset
-Packages/SearchStructures/doc_tex/SearchStructures/SearchStructures_ref/segment_ex2.gif svneol=native#unset
-Packages/SearchStructures/doc_tex/SearchStructures/SearchStructures_ref/segment_ex4.gif svneol=native#unset
 Packages/SearchStructures/doc_tex/SearchStructures/d-range.eps -text
 Packages/SearchStructures/doc_tex/SearchStructures/d-range.gif -text svneol=unset#unset
 Packages/SearchStructures/doc_tex/SearchStructures/d-segment.eps -text
@@ -397,13 +390,6 @@ Packages/SearchStructures/doc_tex/SearchStructures/segment_ex2.eps -text
 Packages/SearchStructures/doc_tex/SearchStructures/segment_ex2.gif -text svneol=unset#unset
 Packages/SearchStructures/doc_tex/SearchStructures/segment_ex4.eps -text
 Packages/SearchStructures/doc_tex/SearchStructures/segment_ex4.gif -text svneol=unset#unset
-Packages/SearchStructures/doc_tex/basic/SearchStructures/SearchStructures_ref/d-range.gif svneol=native#unset
-Packages/SearchStructures/doc_tex/basic/SearchStructures/SearchStructures_ref/d-segment.gif svneol=native#unset
-Packages/SearchStructures/doc_tex/basic/SearchStructures/SearchStructures_ref/range2.gif svneol=native#unset
-Packages/SearchStructures/doc_tex/basic/SearchStructures/SearchStructures_ref/rsd.gif svneol=native#unset
-Packages/SearchStructures/doc_tex/basic/SearchStructures/SearchStructures_ref/segment2.gif svneol=native#unset
-Packages/SearchStructures/doc_tex/basic/SearchStructures/SearchStructures_ref/segment_ex2.gif svneol=native#unset
-Packages/SearchStructures/doc_tex/basic/SearchStructures/SearchStructures_ref/segment_ex4.gif svneol=native#unset
 Packages/SearchStructures/doc_tex/basic/SearchStructures/d-range.eps -text
 Packages/SearchStructures/doc_tex/basic/SearchStructures/d-range.gif -text svneol=unset#unset
 Packages/SearchStructures/doc_tex/basic/SearchStructures/d-segment.eps -text

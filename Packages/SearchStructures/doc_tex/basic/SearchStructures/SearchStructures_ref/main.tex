@@ -1,37 +1,32 @@
-\def\ccTagRmEigenClassName{\ccFalse}
-\def\ccLongParamLayout{\ccTrue}
+% +------------------------------------------------------------------------+
+% | CBP Reference Manual:  main.tex
+% +------------------------------------------------------------------------+
+% | Automatically generated driver file for the reference manual chapter
+% | of this package. Do not edit manually, you may loose your changes.
+% +------------------------------------------------------------------------+
 
-\ccSetThreeColumns{Oriented_side}{}{\hspace*{10cm}}
-\ccThreeToTwo
+\input{SearchStructures_ref/intro.tex}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%% Range_tree %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{SearchStructures_ref/Kdtree_d.tex}
+\input{SearchStructures_ref/Kdtree_d_Box.tex}
+\input{SearchStructures_ref/Kdtree_d_traits.tex}
+\input{SearchStructures_ref/Kdtree_Interface.tex}
+\input{SearchStructures_ref/Kdtree_Interface_2d.tex}
+\input{SearchStructures_ref/Kdtree_Interface_3d.tex}
+\input{SearchStructures_ref/RangeSegmentTreeTraits_k.tex}
+\input{SearchStructures_ref/Range_segment_tree_traits_set_2.tex}
+\input{SearchStructures_ref/Range_segment_tree_traits_set_3.tex}
+\input{SearchStructures_ref/Range_tree_d.tex}
+\input{SearchStructures_ref/Range_tree_k.tex}
+\input{SearchStructures_ref/Range_tree_traits_map_2.tex}
+\input{SearchStructures_ref/Range_tree_traits_map_3.tex}
+\input{SearchStructures_ref/Segment_tree_d.tex}
+\input{SearchStructures_ref/Segment_tree_k.tex}
+\input{SearchStructures_ref/Segment_tree_traits_map_2.tex}
+\input{SearchStructures_ref/Segment_tree_traits_map_3.tex}
+\input{SearchStructures_ref/Sublayer.tex}
+\input{SearchStructures_ref/tree_interval_traits.tex}
+\input{SearchStructures_ref/tree_point_traits.tex}
+\input{SearchStructures_ref/Tree_anchor.tex}
 
-\ccSetThreeColumns{Oriented_side}{}{\hspace*{10cm}}
-\ccThreeToTwo
-
-%\ccChapterSubTitle{\rangetreeRevision, \rangetreeDate}
-
-\chapter{Search Structures} \label{Trees}
-
-\section{Introduction}
-
-This chapter presents the {\cgal} range tree, segment tree, and $KD$-tree 
-data structures. 
-The range tree is theoretically superior to the $KD$-tree, but the 
-latter often seems to perform better.
-However, the range tree as implemented in {\cgal} is more flexible than the
-$KD$-tree implementation, in that it enables to layer together range trees 
-and segment trees in the same data structure.
-
-First the range and segment trees are introduced in 
-sections~\ref{s-rangesegment} through~\ref{general}.
-Then the $KD$-tree is presented in Sections~\ref{KDT_chapter} through
-\ref{KDT_sec:req:interface}.
-
-\input{rangesegmentreference}
-
-\input{kd-tree}
-
-%\bibliographystyle{alpha}
-%\bibliography{geom,prelim,cgal}
+%% EOF

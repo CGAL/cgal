@@ -1,0 +1,106 @@
+\begin{ccRefClass} {Segment_tree_d<Data, Window, Traits>}
+
+\ccTypes
+\ccNestedType{Data}{container \ccStyle{Data}.}
+\ccNestedType{Window}{container \ccStyle{Window}.}
+\ccNestedType{Traits}{class \ccStyle{Traits}.}
+
+\ccCreation
+\ccCreationVariable{s}
+%\renewcommand{\ccAlternateThreeColumn}{\ccFalse}
+\ccInclude{CGAL/Segment_tree_d.h}\\
+\ccConstructor{Segment_tree_d<Data, Window,
+  Traits> s(Tree_base<Data, Window> sublayer_tree)}%
+{A segment tree is defined, such that the subtree of  each
+  vertex is of the   same type prototype
+\ccStyle{sublayer\_tree} is.\\
+We assume that the dimension of the tree is $d$. This means, that
+\ccStyle{ sublayer_tree} is a  prototype of a $d-1$-dimensional
+tree. All data items of the $d$-dimensional segment tree
+  have container type \ccStyle{Data}. The query window of the
+  tree has container type
+  \ccStyle{Window}. \ccStyle{Traits}
+ provides access to the corresponding data slots of container
+ \ccStyle{Data} and  \ccStyle{Window} for the $d$-th
+ dimension. The traits  class \ccStyle{Traits}
+ must at least provide all functions and type definitions
+ described, for example, in the reference page for
+ \ccc{tree_point_traits}.
+The template class
+ described there is fully generic and should fulfill the most
+ requirements one can have.
+In order
+  to generate a one-dimensional segment tree instantiate %
+  \ccStyle{Tree\_anchor<Data, Window> sublayer\_tree} %
+  with the same template parameters \ccStyle{Data} and
+  \ccStyle{Window} \ccStyle{Segment\_tree\_d} is defined. In
+  order to construct a two-dimensional segment tree, create
+  \ccStyle{Segment\_tree\_d} with
+   a one-dimensional \ccStyle{Segment\_tree\_d} with the
+  corresponding \ccStyle{Traits} of the first dimension.\\
+  \ccStyle{Precondition: Traits::Data==Data and
+    Traits::Window==Window.}}
+
+\ccOperations
+%\renewcommand{\ccAlternateThreeColumn}{\ccTrue}
+
+\ccMethod{bool make_tree(In_it first, In_it last);}
+{The tree is constructed according to the data items in the
+  sequence between the element pointed by iterator \ccStyle{first} and
+  iterator \ccStyle{last}.}
+\ccPrecond{This function can only be called once. If it is the
+first call the tree is build and \ccStyle{true} is
+returned. Otherwise, nothing is done but a  \ccStyle{CGAL
+  warning} is given and \ccStyle{false}
+returned.}
+
+
+
+\ccMethod{OutputIterator window_query(Window win, OutputIterator result);}
+{ \ccStyle{
+      win}$=[a_1,b_1),\ldots , [a_d,b_d)$, $a_i,b_i\in T_i$, $1\le
+    i\le d$. All elements that
+  intersect the associated $d$-dimensional interval of
+\ccStyle{win} are placed in the
+associated sequence container of  \ccStyle{OutputIterator}  and
+returns an
+output iterator that points
+to the last location the function wrote to.
+In order to perform an inverse range query, a range query of
+$\epsilon$ width has to be performed.
+}
+
+\ccMethod{OutputIterator enclosing_query(Window win, OutputIterator result);}%
+{ All elements that
+  enclose the associated $d$-dimensional interval of
+\ccStyle{win} are placed in the
+associated sequence container of  \ccStyle{OutputIterator}  and returns an output iterator that points
+to the last location the function wrote to.}
+
+\ccMethod{bool is_valid();}{The tree structure is checked. For each
+  vertex either the
+  sublayer tree is a tree anchor, or it stores a (possibly empty)
+  list of data items. In the first case, the sublayer tree of the
+  vertex is checked on being valid. In the second case, each data
+  item is checked weather it contains the associated interval of
+  the vertex and does not contain the associated interval of the
+  parent vertex or not. True is returned if the tree structure is valid,
+  false otherwise.}
+
+{\bf Protected Operations}
+
+\ccMethod{bool is_inside(Window win,
+  Data object);}{returns true, if the
+  interval of \ccStyle{object} is contained in the
+  interval of \ccStyle{win}. False otherwise.}
+
+
+\ccMethod{bool is_anchor();}{returns false.}
+
+\ccImplementation
+
+A $d$-dimensional segment tree is constructed in ${O}(n\log n^d)$ time.
+An inverse range query is performed in time ${O}(k+{\log}^d n )$, where $k$
+is the number of reported intervals.
+The tree uses ${O}(n\log n^d)$ storage.
+\end{ccRefClass}
