@@ -43,27 +43,21 @@ typedef Traits::Point_2                                 Point;
 typedef Traits::X_curve_2                               Curve;
 typedef std::list<Curve>                                CurveList;
 
+
 static char OptionStr[] = "hs:t:v";
 
 /*
  */
-class Construct_Pm {
+class Basic_Pm {
 public:
   /*
    */
-  Construct_Pm() : m_filename(0), m_verbose(false) {}
+  Basic_Pm() : m_filename(0), m_verbose(false) {}
+  virtual ~Basic_Pm() {}
   
   /*
    */
-  void op()
-  {
-    Planar_map pm;
-    pm.insert(m_curveList.begin(), m_curveList.end());
-    // if (!pm.is_valid()) std::cerr << "map invalid!" << std::endl;
-    //std::cout << "# of vertices: " << pm.number_of_vertices() << std::endl;
-    //std::cout << "# of halfedges: " << pm.number_of_halfedges() << std::endl;
-    //std::cout << "# of faces: " << pm.number_of_faces() << std::endl;
-  }
+  virtual void op() = 0;
 
   /*
    */
@@ -89,23 +83,38 @@ public:
       m_curveList.push_back(curve);
     }
     inp.close();
-    std::cout << m_curveList.size() << std::endl;
+    if (m_verbose) std::cout << m_curveList.size() << std::endl;
     
     return 0;
   }
 
   /*
    */
-  void clean() {}
+  void clean() { m_curveList.clear(); }
   void sync(){}
 
   void setFilename(const char * filename) { m_filename = filename; }
   void setVerbose(const bool verbose) { m_verbose = verbose; }
 
-private:
+protected:
   const char * m_filename;
   CurveList m_curveList;
   bool m_verbose;
+};
+
+/*!
+ */
+class Construct_Pm : public Basic_Pm {
+public:
+  virtual void op()
+  {
+    Planar_map pm;
+    pm.insert(m_curveList.begin(), m_curveList.end());
+    // if (!pm.is_valid()) std::cerr << "map invalid!" << std::endl;
+    //std::cout << "# of vertices: " << pm.number_of_vertices() << std::endl;
+    //std::cout << "# of halfedges: " << pm.number_of_halfedges() << std::endl;
+    //std::cout << "# of faces: " << pm.number_of_faces() << std::endl;
+  }
 };
 
 typedef CGAL::Bench<Construct_Pm> ConstructPmBench;
@@ -167,7 +176,7 @@ int main(int argc, char * argv[])
   bench();
 
   // Ensure the compiler doesn't optimize the code away...
-  std::cout << "(" << bench.getIterations() << ") " << std::endl;
+  if (verbose) std::cout << "(" << bench.getIterations() << ") " << std::endl;
   
   return 0;
 }
