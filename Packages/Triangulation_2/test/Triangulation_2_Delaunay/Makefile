@@ -20,7 +20,8 @@ CXXFLAGS = \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS)\
 	$(LONG_NAME_PROBLEM_CXXFLAGS) \
-	-g -DCGAL_NO_CONCEPT_CHECKING
+	-g 
+# -DCGAL_NO_CONCEPT_CHECKING
 
 
 #---------------------------------------------------------------------#

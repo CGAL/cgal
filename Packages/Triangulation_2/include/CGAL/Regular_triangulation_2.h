@@ -401,8 +401,9 @@ is_valid_vertex(Vertex_handle vh) const
 			 loc->neighbor(li)) );
         if ( !result) {
       std::cerr << vh->point() << " " << std::endl;
-      std::cerr << "vh_>face " << vh->face()  << " " << std::endl;
-      std::cerr <<  "loc      " <<  loc 
+      std::cerr << "vh_>face " <<  static_cast<void*>(&(*vh->face()))
+		<< " " << std::endl;
+      std::cerr <<  "loc      " <<  static_cast<void*>(&(*loc)) 
 	        << " lt " << lt  << " li " << li << std::endl;
       show_face(vh->face());
       show_face(loc);
