@@ -270,51 +270,27 @@ public:
 				     bool reorient = false);
 
 private:
-  // The two find_conflicts_[23] below could probably be merged ?
-  // The only difference between them is the test "j<3" instead of "j<4"...
   template < class Conflict_test >
   void
-  find_conflicts_3(Cell *c, Cell * &ac, int &i, const Conflict_test &tester)
+  find_conflicts(Cell* c, Cell* &ac, int &i, const Conflict_test &tester) const
   {
     // The semantic of the flag is the following :
     // 0  -> never went on the cell
     // 1  -> cell is in conflict
     // 2  -> cell is not in conflict
 
+    CGAL_triangulation_precondition( dimension()>=2 );
     CGAL_triangulation_precondition( tester(c) );
 
     temp_cells.push_back(c);
     c->set_in_conflict_flag(1);
 
-    for ( int j=0; j<4; j++ ) {
+    for ( int j=0; j<=dimension(); j++ ) {
       Cell * test = c->neighbor(j);
       if (test->get_in_conflict_flag() != 0)
         continue; // test was already tested.
       if ( tester(test) )
-        find_conflicts_3(test, ac, i, tester);
-      else {
-        test->set_in_conflict_flag(2);
-        ac = c;
-        i = j;
-      }
-    }
-  }
-
-  template < class Conflict_test >
-  void
-  find_conflicts_2(Cell *c, Cell * &ac, int &i, const Conflict_test &tester)
-  {
-    CGAL_triangulation_precondition( tester(c) );
-
-    temp_cells.push_back(c);
-    c->set_in_conflict_flag(1);
-
-    for ( int j=0; j<3; j++ ) {
-      Cell * test = c->neighbor(j);
-      if (test->get_in_conflict_flag() != 0)
-        continue; // test was already tested.
-      if ( tester(test) )
-        find_conflicts_2(test, ac, i, tester);
+        find_conflicts(test, ac, i, tester);
       else {
         test->set_in_conflict_flag(2);
         ac = c;
@@ -324,7 +300,7 @@ private:
   }
 
   // FIXME : This stuff will probably be replaced by an iterator somehow.
-  std::vector<Cell *> temp_cells;
+  mutable std::vector<Cell *> temp_cells;
 
   Cell * create_star_3(Vertex* v, Cell* c, int li,
 	               Cell * prev_c = NULL, Vertex * prev_v = NULL);
@@ -334,7 +310,6 @@ public:
 
   // This one takes a function object to recursively determine the cells in
   // conflict, then inserts by starring.
-  // Maybe we need _2 and _3 versions ?
   template < class Conflict_test >
   Vertex * insert_conflict( Vertex * w, Cell *c, const Conflict_test &tester)
   {
@@ -345,28 +320,15 @@ public:
     if ( w == NULL ) 
       w = create_vertex();
 
-    if (dimension() == 3)
-    {
-      // Find the cells in conflict.
-      Cell *ccc;
-      int i;
-      find_conflicts_3(c, ccc, i, tester);
+    // Find the cells in conflict.
+    Cell *ccc;
+    int i;
+    find_conflicts(c, ccc, i, tester);
 
-      // Create the new cells, and returns one of them.
-      Cell * nouv = create_star_3( w, ccc, i );
-      w->set_cell( nouv );
-    }
-    else // dim == 2
-    {
-      // Find the cells in conflict.
-      Cell *ccc;
-      int i;
-      find_conflicts_2(c, ccc, i, tester);
-
-      // Create the new cells, and returns one of them.
-      Cell * nouv = create_star_2( w, ccc, i );
-      w->set_cell( nouv );
-    }
+    // Create the new cells, and returns one of them.
+    Cell * nouv = (dimension() == 3) ? create_star_3( w, ccc, i )
+	                             : create_star_2( w, ccc, i );
+    w->set_cell( nouv );
 
     for(typename std::vector<Cell *>::iterator cit = temp_cells.begin();
 	cit != temp_cells.end(); ++cit)
