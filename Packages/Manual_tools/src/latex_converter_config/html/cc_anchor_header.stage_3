@@ -163,32 +163,3 @@ glue            {ws}("<P>"{ws})*"<!GLUE>"{ws}("<P>"{ws})*
 <TAGMODE>.                     { ECHO;}
 
 
-"</TABLE><!3>"{glue}"<!3><TABLE"[^>]*">"    { ; /* smooth adjacent tables */}
-"</TABLE><!2>"{glue}"<!2><TABLE"[^>]*">"    { ; /* smooth adjacent tables */}
-"</TABLE><!".">"{glue}"<!"."><TABLE"        { /* smooth other tables   */
-                               fputs( "</TABLE>\n        <TABLE", stdout);
-}
-"</TABLE><!3>"{par}"<!3><TABLE"[^>]*">"     {
-                               /* smooth adjacent tables */
-                               fputs( "<TR><TD><BR></TD></TR>", stdout);
-}
-"</TABLE><!2>"{par}"<!2><TABLE"[^>]*">"    {
-                               /* smooth adjacent tables */
-                               fputs( "<TR><TD><BR></TD></TR>", stdout);
-}
-"</TABLE><!".">"{par}"<!"."><TABLE"        { /* smooth other tables   */
-                               fputs( "</TABLE>\n<P>\n\n        <TABLE", stdout);
-}
-{ws}"<P>"{ws}("<P>"{ws})+  {   /* Reduce <P>'s to one <P> */
-                               fputs( "\n<P>\n\n", stdout);
-}
-{ws}"<P>"{ws}              {   /* Pretty print single <P>'s */
-                               fputs( "\n<P>\n\n", stdout);
-}
-{ws}"<BR>"{ws}             {   /* Pretty print single <BR>'s */
-                               fputs( "<BR>\n\n", stdout);
-}
-"<!GLUE>"                  { ; /* remove superfluous glues */ }
-"<!3>"                     { ; /* remove superfluous table hints */ }
-"<!2>"                     { ; /* remove superfluous table hints */ }
-

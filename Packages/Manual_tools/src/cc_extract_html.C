@@ -85,6 +85,21 @@ void init_commandline_args() {
     insertInternalGlobalMacro( "\\lciExtractHtmlRelease", prog_release);
     insertInternalGlobalMacro( "\\lciReferenceIcon",  reference_icon);
     insertInternalGlobalMacro( "\\lciManualDate",     manual_date);
+    // check for date format as provided by latex_to_html
+    if ( std::count( manual_date.begin(), manual_date.end(), ',') == 2) {
+        // skip the day
+        std::size_t pos = std::find( manual_date.begin(), manual_date.end(),
+                                     ',') - manual_date.begin();
+        if ( manual_date[pos+1] == ' ' )
+            ++pos;
+        string aux_date = manual_date;
+        aux_date.replace( 0, pos, string());
+        insertInternalGlobalMacro( "\\today", aux_date);
+        
+    } else {
+        // else keep the full date as provided
+        insertInternalGlobalMacro( "\\today", manual_date);
+    }
     insertInternalGlobalMacro( "\\lciManualRelease",  manual_release);
     insertInternalGlobalMacro( "\\lciManualTitle",    manual_title);
     insertInternalGlobalMacro( "\\lciManualAuthor",   manual_author);

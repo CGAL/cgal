@@ -133,6 +133,7 @@ ${BoldColor}Parameter-Options:${ResetColor}
     ${BoldColor}-title${ResetColor}    <text>    set a title text for the manual.
     ${BoldColor}-author${ResetColor}   <text>    set an author address (email) for the manual.
 ${BoldColor}Debug-Options:${ResetColor}
+    ${BoldColor}-keeptmp${ResetColor}            keeps the temporary working directory for inspection.
     ${BoldColor}-defaults${ResetColor}           show the settings of the internal variables.
     ${BoldColor}-macrodef${ResetColor}           trace macro definitions.
     ${BoldColor}-macroexp${ResetColor}           trace macro expansions.
@@ -339,6 +340,11 @@ anchor_filter() {
 #---------------------------------------------------------------------#
 
 convert() {
+    # check if file exists
+    if [[ ! -r ${1}.tex || ! -r ${1} ]]; then
+        error 1 "LaTeX filename '${1}' does not exist."
+    fi
+
     # prepare timing result for logfile
     local StartTime=$SECONDS
 
@@ -412,9 +418,9 @@ convert() {
     # copy just the local stage_2 rule set to the sudirectories again.
     #   We append the stage_3 rules from the current directory
     # with the stage_2 rules from all sibling directories to form the
-    # stage 3 rule set for a subdirectory. We initialize with an empty
-    # stage_3 rule set in the root.
-    \touch cc_anchor_rules.stage_3
+    # stage 3 rule set for a subdirectory. We initialize the stage_3 rule
+    # set in the root with the stage_1 rule set in the root.
+    \cp cc_anchor_rules.stage_1  cc_anchor_rules.stage_3
     for dir in ${AllSubDirs} ; do
         vout "    processing in '$dir'"
         vout -n "      -->"
@@ -580,6 +586,7 @@ OutDir="html"
 ConfigPath=${LATEX_CONV_CONFIG}
 
 ShowDefaults=0
+KeepTmp=0
 ExtractOptions=""
 Quiet=0
 RealQuiet=0
@@ -634,6 +641,9 @@ while [ $# -gt 0 ]; do
     -V | --version)
         all_versions
         exit 0
+        ;;
+    -keeptmp)
+	KeepTmp=1
         ;;
     -defaults)
 	ShowDefaults=1
@@ -812,7 +822,11 @@ done
 
 # Cleanup
 # -------
-\rm -r ${TmpDir}
+if [ $KeepTmp -eq 0 ]; then 
+    \rm -r ${TmpDir}
+else
+    echo "NOTE: The tmp directory '${TmpDir}' was kept."  1>&2
+fi
 
 exit $GlobalExitCode
 

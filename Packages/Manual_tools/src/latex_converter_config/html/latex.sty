@@ -175,7 +175,7 @@
     \lciReadBbl{\lciMainPath}{\lciMainRootname}%    read bbl    file
 }{%
     % print remaining footnotes at the end of the conversion
-    \lciPrintFootnotes
+    \lciPrintFootnotes\lciResetFootnotes
     % close all parts, chapters, and sections at the end of the conversion
     \lciEndPart
     % finish table of contents
@@ -223,7 +223,7 @@
 %    \lcRawHtml{<IMG WIDTH=68 HEIGHT=18 ALIGN=TOP SRC="cc_LaTeXe_big.gif">}}
     \lcRawHtml{<IMG ALIGN=BOTTOM SRC="cc_LaTeXe.gif">}}
 
-\newcommand{\today}{\lciManualDate}
+%% \newcommand{\today}{\lciManualDate}
 
 % +--------------------------------------------------------------------------
 % |     * Paragraphs
@@ -250,11 +250,18 @@
 % +--------------------------------------------------------------------------
 
 % the counter '\lciCounterfootnote' used for footnotes is defined in C.8,
-% see below
+% see below. We also have a '\lciCounterfootnotefn' for \fnsymbol type
+% footnotes used in page titles with \lciFootnoteSymbol
 
-\gdef{\lciFootnotes}{}         %% collected footnotes
+\gdef{\lciFootnotes}{}            %% collected footnotes
+\gdef{\lciFootnoteStyle}{}        %% either empty or \lciFootnoteSymbol
+\gdef{\lciFootnotePrefix}{}       %% either empty or 'fn_' for use of \fnsymbol
 
-\gdef{\lciFootnoteStack}{}     %% stack for counter and collected footnotes
+% Args: num; prints num as \fnsymbol
+\newcommand{\lciFootnoteSymbol}[1]{%
+  \setcounter{footnotefn}{#XC1}\fnsymbol{footnotefn}}
+
+\gdef{\lciFootnoteStack}{}        %% stack for counter and collected footnotes
 \newcommand{\lciPushFootnotes}{%
     \lciPushGlobalStack{\lciFootnoteStack}{\lciCounterfootnote}%
     \lciPushGlobalStack{\lciFootnoteStack}{\lciFootnotes}%
@@ -277,23 +284,27 @@
     \addtocounter{footnote}{1}%
     \footnotemark[\lciCounterfootnote]}
 \newcommand{\footnotemark@o}{%
-    \lcRawHtml{<A HREF="##Footnote_#XC1"><SUP>#XC1</SUP></A>}}
+    \lcRawHtml{<A HREF="##Footnote_}\lcRawHtmlExpanded{\lciFootnotePrefix}%
+        \lcRawHtml{#XC1"><SUP>}\lciFootnoteStyle{#XC1}%
+    \lcRawHtml{</SUP></A>}}
 \newcommand{\footnotetext}[1]{%
     \footnotetext[\lciCounterfootnote]{#1}}
 \newcommand{\footnotetext@om}{%
-    \lciAddFootnote{\lciFootnotes}{#1}{#2}}
+ \lciAddFootnote{\lciFootnotes}{\lciFootnoteStyle}{\lciFootnotePrefix}{#1}{#2}}
 
-%% Args: collected footnotes, footnote number, footnote text
-\newcommand{\lciAddFootnote}[3]{%
+%% Args: collected footnotes, footnote style, prefix, number, text
+\newcommand{\lciAddFootnote}[5]{%
     \lciIfEqualExpanded{\lciCounterfootnote}{0}{
         \gdef{\lciFootnotes}{#X1%
-        \lcRawHtml{<A NAME="Footnote_#XC2">&nbsp;<SUP>#XC2</SUP>&nbsp;</A></TD><TD VALIGN=TOP>
-}#3
+        \lcRawHtml{<A NAME="Footnote_#XC3#XC4">&nbsp;<SUP>}#XC2{#XC4}%
+            \lcRawHtml{</SUP>&nbsp;</A></TD><TD VALIGN=TOP>
+}#5
 }}%
     {%
         \gdef{\lciFootnotes}{#X1\lcRawHtml{</TD></TR><TR><TD VALIGN=TOP>}
-        \lcRawHtml{<A NAME="Footnote_#XC2">&nbsp;<SUP>#XC2</SUP>&nbsp;</A></TD><TD VALIGN=TOP>
-}#3
+        \lcRawHtml{<A NAME="Footnote_#XC3#XC4">&nbsp;<SUP>}#XC2{#XC4}%
+            \lcRawHtml{</SUP>&nbsp;</A></TD><TD VALIGN=TOP>
+}#5
 }}}
 
 
@@ -1015,6 +1026,7 @@
 \newcommand{\chapter}[1]{\chapter[#1]{#1}}
 \newcommand{\chapter@om}{%
     \lciEndChapter
+    \lciPushFootnotes
     \gdef{\lciIfHtmlLinks}{\lcTrue}%
     \gdef{\lciIfHtmlIndex}{\lcTrue}%
     \refstepcounter{chapter}%
@@ -1052,6 +1064,7 @@
   \lciEndSection
   \lciIfEqualExpanded{\lciCounterchapter}{0}{}{% check for first chapter
     \lciPrintFootnotes\lciResetFootnotes
+    \lciPopFootnotes
     % navigation footer
     \addtocounter{chapter}{1}%
     \lcRawHtml{<!Next_chapter_link_}\value{part}\_\value{chapter}\lcRawHtml{!>
@@ -1189,17 +1202,71 @@
 \newcommand{\twocolumn@o}{#1}
 \newcommand{\onecolumn}{}
 
-\newcommand{\maketitle}{}
-\newcommand{\title}[1]{}
-\newcommand{\author}[1]{}
-\newcommand{\date}[1]{}
-\newcommand{\thanks}[1]{}
+\gdef\lcIfTitlePageInline{\lcTrue}
+\gdef\lciTitlePageTitle{}
+\gdef\lciTitlePageAuthor{}
+\gdef\lciTitlePageDate{\today}
+\newcommand{\title}[1]{\gdef\lciTitlePageTitle{#1}}
+\newcommand{\author}[1]{\gdef\lciTitlePageAuthor{#1}}
+\newcommand{\date}[1]{\gdef\lciTitlePageDate{#1}}
+\newcommand{\thanks}[1]{% 
+  % change footnote symbols to \fnsymbol if we have documentclass article
+  \lciIfEqualExpanded{\lciDocumentClass}{article}{%
+    \gdef{\lciFootnoteStyle}{\lciFootnoteSymbol}\gdef{\lciFootnotePrefix}{fn_}%
+    \footnote{#1}%
+    \gdef{\lciFootnoteStyle}{}\gdef{\lciFootnotePrefix}{}%
+  }{%
+    \footnote{#1}%
+  }}
+
+\newenvironment{titlepage}{%
+  \lcIfTitlePageInline{\lciIfEqualExpanded{\lciDocumentClass}{article}{%
+    % switch to \fnsymbol style footnote numbers and reset counter for that
+    \lciPushGlobalStack{\lciFootnoteStack}{\lciCounterfootnote}%
+    \setcounter{footnote}{0}}{}%
+  }{%
+    \lciPushFootnotes
+    \lciOpenFile{\lciTitleFilename}%
+    \lciTitleFileHeader
+  }
+}{%
+  \lcIfTitlePageInline{\lciIfEqualExpanded{\lciDocumentClass}{article}{%
+      \lciTopGlobalStack{\lciFootnoteStack}{\lciCounterfootnote}%
+      \lciPopGlobalStack{\lciFootnoteStack}}{}%
+  }{%
+    \lciPrintFootnotes\lciPopFootnotes
+    \lciTitleFileFooter
+    \lciCloseFile
+  }
+}
+
+\newcommand{\maketitle}{\begin{titlepage}
+  \begin{center}
+    \lcRawHtml{<br><br><br><br>
+
+<h1 class="TitlePageTitle">}\lciTitlePageTitle\lcRawHtml{</h1>}
+
+    \lciIfEmpty{\lciTitlePageAuthor}{}{%
+      \lciBeginScope%
+      \newcommand{\and}{\lcRawHtml{  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+}}\lcRawHtml{<br><br><p class="TitlePageAuthor">
+}\lciTitlePageAuthor\lcRawHtml{</p>}%
+      \lciEndScope%
+    }%
+
+    \lciIfEmpty{\lciTitlePageDate}{}{%
+      \lcRawHtml{<br><p class="TitlePageDate">}\lciTitlePageDate\lcRawHtml{</p>}%
+    }%
+
+    \lcRawHtml{<br><br><br>}
+  \end{center}
+\end{titlepage}}
+
 
 \newenvironment{abstract}{%
     \lcRawHtml{<CENTER><B>Abstract</B></CENTER><P><BLOCKQUOTE><SUB>}}{
     \lcRawHtml{</SUB></BLOCKQUOTE>}}
 
-\newenvironment{titlepage}{}{}
 
 
 % ___________________________________________________________________________
@@ -1350,15 +1417,15 @@
 \newcommand{\alph}[1]{\lciExpandedCallOne\lciToAlpha{\lciCounter#GC1}}
 \newcommand{\Alph}[1]{\lciExpandedCallOne\lciToAlphaUpper{\lciCounter#GC1}}
 \newcommand{\fnsymbol}[1]{%
-    \ifEqualExpanded{\lciCounter#GC1}{1}{\ast}{%
-      \ifEqualExpanded{\lciCounter#GC1}{2}{\dag}{%
-        \ifEqualExpanded{\lciCounter#GC1}{3}{\ddag}{%
-          \ifEqualExpanded{\lciCounter#GC1}{4}{\S}{%
-            \ifEqualExpanded{\lciCounter#GC1}{5}{\P}{%
-              \ifEqualExpanded{\lciCounter#GC1}{6}{\parallel}{%
-                \ifEqualExpanded{\lciCounter#GC1}{7}{\ast\ast}{%
-                  \ifEqualExpanded{\lciCounter#GC1}{8}{\dag\dag}{%
-                    \ifEqualExpanded{\lciCounter#GC1}{9}{\ddag\ddag}{%
+    \lciIfEqualExpanded{\lciCounter#GC1}{1}{\ast}{%
+      \lciIfEqualExpanded{\lciCounter#GC1}{2}{\dag}{%
+        \lciIfEqualExpanded{\lciCounter#GC1}{3}{\ddag}{%
+          \lciIfEqualExpanded{\lciCounter#GC1}{4}{\S}{%
+            \lciIfEqualExpanded{\lciCounter#GC1}{5}{\P}{%
+              \lciIfEqualExpanded{\lciCounter#GC1}{6}{\parallel}{%
+                \lciIfEqualExpanded{\lciCounter#GC1}{7}{\ast\ast}{%
+                  \lciIfEqualExpanded{\lciCounter#GC1}{8}{\dag\dag}{%
+                    \lciIfEqualExpanded{\lciCounter#GC1}{9}{\ddag\ddag}{%
                       \lciError{Counter must be between 1 and 9 in \\fnsymbol}%
                     }}}}}}}}}}
 
@@ -1588,7 +1655,7 @@
     \newcommand{\lciCiteDelim}{}%
     \lciParseUntilDelimiter{\lciLocalCite},#1,,}}
 \newcommand{\lciLocalCite}[1]{\lciIfEmpty{#C1}{}{%
-    \lciCiteDelim\lcRawHtml{<A HREF="}\lciBibFilename
+    \lciCiteDelim\lcRawHtml{<A HREF="}\lciOutputUppath\lciBibFilename
     \lcRawHtml{##Biblio_}#C1\lcRawHtml{">}#C1\lcRawHtml{</A>}%
     \newcommand{\lciCiteDelim}{, }%
     \lciParseUntilDelimiter{\lciLocalCite},}}
@@ -1603,8 +1670,8 @@
     \{\lciRawOutput{ fputs( "<A NAME=\"Biblio_#C1\"></A><B>[}#2%
     \lciRawOutput{]</B>", stdout); }\}\lciRawOutput{
 }%
-    \lciRawOutput{"<A HREF="["]"#XC3##Biblio_#C1"["]">#C1"    }%
-    \{\lciRawOutput{ fputs( "<A HREF=\"#XC3##Biblio_#C1\">}#2%
+    \lciRawOutput{<ANCHORMODE>"#XC3##Biblio_#C1"["]">#C1"    }%
+    \{\lciRawOutput{ fputs( "#XC3##Biblio_#C1\">}#2%
     \lciRawOutput{", stdout); }\}\lciRawOutput{
 }}
 

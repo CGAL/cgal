@@ -284,6 +284,27 @@
 % ___________________________________________________________________________
 % ###########################################################################
 % |
+% |   o   HTML Title Page Layout
+% |
+% ###########################################################################
+
+
+% Args: none
+\newcommand{\lciTitleFileHeader}{%
+    \lciHtmlFileHeader{\lciIfEmpty{\lciManualTitle}{}{\lciManualTitle : }%
+      Title Page}%
+    \lciHtmlNavigationTop
+}
+
+% Args: none
+\newcommand{\lciTitleFileFooter}{%
+    \lciHtmlNavigationBottom
+    \lciHtmlFileFooter
+}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
 % |   o   HTML Bibliography File Layout
 % |
 % ###########################################################################

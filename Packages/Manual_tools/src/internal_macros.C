@@ -445,10 +445,8 @@ void handleIndexRefName() {
 }
 
 
-// Opens a new classfile. Only a filename and a HTML formatted reference
-// text are given.
+// Opens a new classfile of name 'filename'
 void handleClassFile( string filename) { 
-//		      const string& formatted_anchor_text) {
     string filepath = macroX( "\\lciInputPath");
     if ( filepath[0] == '/' ) {
         printErrorMessage( ClassAbsolutePathError);
@@ -472,8 +470,8 @@ void handleClassFile( string filename) {
     } else if ( current_filepath == main_filepath) {
         anchor_stream = main_anchor_stream;
     } else {
-        anchor_stream = open_file_for_append( tmp_path + current_filepath +
-                                              macroX( "\\lciAnchorFilename"));
+        anchor_stream = open_file_for_append_with_path( 
+            tmp_path + current_filepath + macroX( "\\lciAnchorFilename"));
     }
     class_stream = open_file_for_write_with_path( tmp_path + class_filename);
     current_ostream  = class_stream;
@@ -1008,7 +1006,7 @@ copy_file( const string&, string param[], size_t n, size_t opt) {
     remove_separator( source);
     remove_separator( target);
     istream* in  = open_file_for_read_w_input_dirs( source);
-    ostream* out = open_file_for_write( target);
+    ostream* out = open_file_for_write_with_path( target);
     if ( in != 0 && out != 0) {
         char c; // yes, probably slow, but then not that often used anyway
         while( in->get(c)) {
