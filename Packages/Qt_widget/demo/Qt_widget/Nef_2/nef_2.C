@@ -43,7 +43,7 @@
 
 
 // if QT is not installed, a message will be issued in runtime.
-#ifndef CGAL_USE_QT
+#if !defined CGAL_USE_QT
 #include <iostream>
 
 
@@ -51,6 +51,19 @@ int main(int, char*)
 {
 
   std::cout << "Sorry, this demo needs QT...";
+  std::cout << std::endl;
+
+  return 0;
+}
+
+#elif !defined CGAL_USE_GMP
+#include <iostream>
+
+
+int main(int, char*)
+{
+
+  std::cout << "Sorry, this demo needs GMP...";
   std::cout << std::endl;
 
   return 0;

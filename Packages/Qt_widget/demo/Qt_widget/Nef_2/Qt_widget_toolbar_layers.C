@@ -42,7 +42,7 @@
 // ======================================================================
 
 
-#ifdef CGAL_USE_QT
+#if defined CGAL_USE_QT && defined CGAL_USE_GMP
 
 #include "Qt_widget_toolbar_layers.h"
 
