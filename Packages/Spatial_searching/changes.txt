@@ -1,3 +1,4 @@
+- Made type  Midpoint_of_rectangle<>::Separator   public [af]
 
 - Replaced new/delete with Compact_container and std::vector
 - Point_container::size() returns unsigned int instead of int
