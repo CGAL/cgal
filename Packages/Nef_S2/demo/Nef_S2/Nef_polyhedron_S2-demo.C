@@ -19,7 +19,6 @@ typedef CGAL::Nef_polyhedron_S2<Kernel>           Nef_polyhedron_S2;
 typedef Nef_polyhedron_S2::Sphere_point           Sphere_point;
 typedef Nef_polyhedron_S2::Sphere_segment         Sphere_segment;
 typedef Nef_polyhedron_S2::Sphere_circle          Sphere_circle;
-typedef Nef_polyhedron_S2::Explorer               Explorer;
 
 typedef CGAL::Creator_uniform_3<NT,Point_3>  Creator;
 typedef CGAL::Random_points_in_cube_3<Point_3,Creator> Point_source;

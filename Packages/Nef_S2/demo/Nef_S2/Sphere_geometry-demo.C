@@ -55,14 +55,14 @@ int main(int argc, char **argv)
       SPoint p3(h.projection(p1)),p4(h.projection(p2));
       int which = CGAL::default_random.get_int(0,3);
       if ( p3 == p4 ) which = 3;
-      if ( p3 == p4.opposite() ) which = 2;
+      if ( p3 == CGAL::ORIGIN - p4 ) which = 2;
       switch ( which ) {
         case 0: // short
           L.push_back( SSegment(p3,p4,true) ); break;
         case 1: // long
           L.push_back( SSegment(p3,p4,false) ); break;
         case 2: // halfcircle
-          L.push_back( SSegment(p3,p3.opposite(),h) ); break;
+          L.push_back( SSegment(p3,CGAL::ORIGIN - p3,h) ); break;
         case 3: // trivial
           L.push_back( SSegment(p3,p3,h) ); break;
       }

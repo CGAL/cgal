@@ -1,11 +1,16 @@
+#ifndef CGAL_USE_QT
+#include <iostream>
+int main(int, char*){
+  std::cout << "Sorry, this demo needs QT..." << std::endl; return 0;}
+#else
 #include <CGAL/basic.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Gmpz.h>
 #include <CGAL/random_selection.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Nef_polyhedron_S2.h>
-#include <CGAL/IO/Nef_polyhedron_S2_OGLUT_stream.h>
 #include <CGAL/Nef_S2/SM_items.h>
+#include "NefS2Widget.h"
 #include <fstream>
 
 typedef CGAL::Gmpz NT;
@@ -13,8 +18,7 @@ typedef CGAL::Homogeneous<NT> Kernel;
 typedef Kernel::Point_3       Point_3;
 typedef Kernel::Plane_3       Plane_3;
 
-typedef CGAL::SM_items<Kernel, bool>      SM_items;
-typedef CGAL::Nef_polyhedron_S2<SM_items> Nef_polyhedron_S2;
+typedef CGAL::Nef_polyhedron_S2<Kernel> Nef_polyhedron_S2;
 typedef Nef_polyhedron_S2::Sphere_point   Sphere_point;
 typedef Nef_polyhedron_S2::Sphere_segment Sphere_segment;
 typedef Nef_polyhedron_S2::Sphere_circle  Sphere_circle;
@@ -70,16 +74,15 @@ int main(int argc, char **argv)
       first = false;
     } else {
       Ni = Nef_polyhedron_S2(*it);
-      N = N ^ Ni;
+      N = N.symmetric_difference(Ni);
     }
   }
 
-  //std::cerr << Ni << N std::endl;
-  CGAL::ogl << N; 
-  CGAL::ogl << "Symmetric Difference"; 
-  CGAL::ogl.display();
-  return 0;
-
+  QApplication a(argc, argv);
+  Qt_widget_Nef_S2* w = new Qt_widget_Nef_S2(N);
+  a.setMainWidget(w);
+  w->show();
+  return a.exec();
 }
-
+#endif
 
