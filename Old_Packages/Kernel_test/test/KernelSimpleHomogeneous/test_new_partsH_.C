@@ -41,9 +41,8 @@ typedef leda_integer  Precise_integer;
 #include <CGAL/_test_fct_constructions_3.h>
 #include <CGAL/_test_fct_point_3.C>
 #include <CGAL/_test_fct_coplanar_3.h>
-#ifndef CGAL_STRICT21
 #include <CGAL/_test_cls_iso_cuboid_3.C>
-#endif // CGAL_STRICT21
+#include <CGAL/_test_angle.h>
 
 
 int
@@ -58,9 +57,8 @@ main()
   _test_fct_constructions_3( Cls() );
   _test_fct_point_3( Cls() );
   _test_fct_coplanar_3( Cls() );
-  #ifndef CGAL_STRICT21
   _test_cls_iso_cuboid_3( Cls() );
-  #endif // CGAL_STRICT21
-  
+  _test_angle( Cls() );
+
   return 0;
 }

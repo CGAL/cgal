@@ -23,9 +23,8 @@
 
 #ifndef CGAL__TEST_CLS_PLANE_3_C
 #define CGAL__TEST_CLS_PLANE_3_C
-#ifndef CGAL__TEST_CLS_PLANE_3_H
+
 #include <CGAL/_test_cls_plane_3.h>
-#endif // CGAL__TEST_CLS_PLANE_3_H
 
 template <class R>
 bool
@@ -109,7 +108,6 @@ _test_cls_plane_3(const R& )
  assert( neg_xy_pl_eq.opposite() == xy_pl );
  assert( plr != plr.opposite() );
 
-#ifndef CGAL_STRICT_09
  CGAL::Point_3<R> pp0( RT(4), RT(6), RT( 0), RT(2) );
  CGAL::Point_3<R> pp1( RT(4), RT(6), RT(-8), RT(2) );
  assert( xy_pl_eq.projection( pp0 ) == pp0 );
@@ -117,7 +115,6 @@ _test_cls_plane_3(const R& )
  assert( xy_pl_eq.has_on( xy_pl_eq.projection( pp1 ) )  );
  assert( pl1.has_on( pl1.projection( pp0 ) )  );
  assert( pl1.has_on( pl1.projection( pp1 ) )  );
-#endif // CGAL_STRICT_09
 
  assert( plc.has_on_boundary(plc.point()) );
  assert( plc.orthogonal_direction() == pla.orthogonal_direction() );

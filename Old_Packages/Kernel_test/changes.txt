@@ -1,5 +1,6 @@
 3.20   (?? Apr 2001)
 - angle.
+- Removed obsolete uses of CGAL_STRICT21 and CGAL_STRICT_09.
 
 3.19   (27 Apr 2001)
 - Rename construct_tetrahedron_object to construct_tetrahedron_3_object.

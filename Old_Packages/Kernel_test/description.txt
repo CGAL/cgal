@@ -1,2 +1,1 @@
-Kernel test files (define CGAL_STRICT09 if you want to use the tests
-with release 0.9)
+Kernel test files.
