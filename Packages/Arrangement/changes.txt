@@ -1,3 +1,13 @@
+1.77 (Shai)
+====
+- Chaged Arr_circles_real_traits_test to support clean exit when leda 
+is not installed.
+
+1.76 (Shai)
+====
+- Added a new partial test for Arr_circles_real_traits in a new test 
+directory called Arrangement_2_Traits.
+
 1.75 (Shai)
 ====
 - Fix bugs in Segment_arr_from_mouse and Polyline_arr_from_mouse demos.
