@@ -1,3 +1,6 @@
+2.34    (?? ??? ????)
+- fixed typo in doc
+
 2.33    (5 Dec 2001)
 - changed from reinterpret_cast to Kernel_traits
 - removed use of deprecated incident_vertices function from Triangulation_3
