@@ -36,11 +36,6 @@ class MyPoint: public Point_2<R>
 typedef Cartesian<double> R;
 typedef MyPoint<R> Point;
 
-//#ifdef CGAL_CFG_NO_TEMPLATE_FUNCTION_MATCHING
-// This is a workaround for the g++ 2.7.2 compiler.
-//#include "template_function_matching_workaround.h"
-//#endif // CGAL_CFG_NO_TEMPLATE_FUNCTION_MATCHING
-
 #include <CGAL/Polygon_2.h>
 #include <list>
 
@@ -66,7 +61,7 @@ int main()
   p.push_back(Point(2,2,Red));
   p.push_back(Point(0,4,Red));
 
-  set_pretty_mode(std::cout);
+  CGAL::set_pretty_mode(std::cout);
   std::cout << "created the polygon p:" << std::endl;
   std::cout << p << std::endl;
   std::cout << std::endl;
