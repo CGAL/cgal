@@ -10,64 +10,6 @@ LEDA_RATIONAL_CAR_TEST=true
 LEDA_RATIONAL_HOM_TEST=true
 ABSTRACT_TEST=false
 
-#specail one run for test_cat.C - with one parameter (category), 
-#and no need of other categories
-one_run_cat()
-{
-    goodresult=RESULT/test_cat.$1
-    # This following filename is in the format ProgramOutput.*.${PLATFORM}
-    # so it should get collected as part of the test results.
-    OUTPUTFILE=ProgramOutput.${base}.test_cat.$1.${PLATFORM}
-    echo "Executing ${base} `basename test_cat.$1` platform ${PLATFORM} ..."
-    rm -f aresult
-    if ./${base} > ${OUTPUTFILE} 2>&1
-    then
-        cp ${OUTPUTFILE} aresult
-	if [ -r ${goodresult} ]
-	then
-	    if grep -c "LEDA installation missing." aresult > /dev/null ||
-               grep -c "GMPZ installation missing." aresult > /dev/null ||
-               ${CMP} aresult ${goodresult}
-	    then
-		succes=oui
-	    else
-		succes=non
-	    fi
-	else
-            if grep -c "LEDA installation missing." aresult > /dev/null
-            then
-               echo "LEDA installation missing."
-            elif grep -c "GMPZ installation missing." aresult > /dev/null
-            then
-               echo "GMPZ installation missing."
-            else
-                cp aresult ${goodresult}
-            fi               
-            succes=unknown            
-	fi
-    else
-	succes=non
-    fi
-    if [ ${succes} = oui ]
-    then
-	echo  "${base} < ${datafile} succesful">> ${ERRORFILE}
-    else
-        if [ ${succes} = non ]
-        then
-            echo "ERROR: ${base} < ${datafile} did not run well" >> ${ERRORFILE}
-            if [ -f aresult ] 
-            then 
-                echo ${CMP} aresult ${goodresult} >> ${ERRORFILE}
-                ${CMP} aresult ${goodresult} >> ${ERRORFILE}
-                cp aresult result.$1.$2
-            fi
-        else
-            echo  "${base} < ${datafile} not tested">> ${ERRORFILE}
-        fi
-    fi
-}
-
-#one run - run the test after it has been compiled, and compare the output
 one_run()
 {
     goodresult=RESULT/`basename ${datafile}.$1.$2`
@@ -85,9 +27,9 @@ one_run()
                grep -c "GMPZ installation missing." aresult > /dev/null ||
                ${CMP} aresult ${goodresult}
 	    then
-		succes=oui
+			succes=oui
 	    else
-		succes=non
+			succes=non
 	    fi
 	else
             if grep -c "LEDA installation missing." aresult > /dev/null
@@ -131,14 +73,14 @@ make_and_execute()
 	mv ii_files/${base}.ii.$1 ii_files/${base}.ii
     fi
     
-    EXTRA_FLAGS="${EXTRA_FLAGS} -DTESTR=$1 -DBBOX=$2 -DSTRATEGY=$3 -DCATEGORY=$4"
+    EXTRA_FLAGS="${EXTRA_FLAGS} -DTESTR=$1 -DBBOX=$2 -DSTRATEGY=$3"
     export EXTRA_FLAGS
     if eval 'make CGAL_MAKEFILE=${CGAL_MAKEFILE} \
                   TESTSUITE_CXXFLAGS="${TESTSUITE_CXXFLAGS}" \
                   TESTSUITE_LDFLAGS="${TESTSUITE_LDFLAGS}" \
                   ${base} # 2>/dev/null"'
     then
-	echo "compilation of ${file} with TESTR=$1 -DBBOX=$2 -DSTRATEGY=$3 -DCATEGORY=$4 succeeded" >> ${ERRORFILE}
+	echo "compilation of ${file} with TESTR=$1 -DBBOX=$2 -DSTRATEGY=$3 succeeded" >> ${ERRORFILE}
 	if [ -r ii_files/${base}.ii ]
 	then
 	    mv ii_files/${base}.ii ii_files/${base}.ii.$1
@@ -147,41 +89,15 @@ make_and_execute()
 	do
 	    if [ -r ${datafile} ]
 	    then
-		one_run $1 $2 $3
+			one_run $1 $2 $3
 	    fi
 	done
     else
-	echo "ERROR: compilation of ${file}  with TESTR=$1 BBOX=$2 and STRATEGY=$3 and CATEGORY=$4 failed" >> ${ERRORFILE}
+	echo "ERROR: compilation of ${file}  with TESTR=$1 BBOX=$2 and STRATEGY=$3 failed" >> ${ERRORFILE}
     fi
     rm -f ${base}.exe ${base} ${base}.obj ${base}.o
 }
 
-#specail make for test_cat.C, which call one_run_cat
-make_and_execute_cat()
-{    
-    if [ -r ii_files/${base}.ii.$1 ]
-    then
-		mv ii_files/${base}.ii.$1 ii_files/${base}.ii
-    fi
-    
-    EXTRA_FLAGS="${EXTRA_FLAGS} -DCATEGORY=$1"
-    export EXTRA_FLAGS
-    if eval 'make CGAL_MAKEFILE=${CGAL_MAKEFILE} \
-                  TESTSUITE_CXXFLAGS="${TESTSUITE_CXXFLAGS}" \
-                  TESTSUITE_LDFLAGS="${TESTSUITE_LDFLAGS}" \
-                  ${base} # 2>/dev/null"'
-    then
-	echo "compilation of ${file} with -DCATEGORY=$1 succeeded" >> ${ERRORFILE}
-	if [ -r ii_files/${base}.ii ]
-	then
-	    mv ii_files/${base}.ii ii_files/${base}.ii.$1
-	fi
-	one_run_cat $1
-    else
-	echo "ERROR: compilation of ${file}  with CATEGORY=$1 failed" >> ${ERRORFILE}
-    fi
-    rm -f ${base}.exe ${base} ${base}.obj ${base}.o
-}
 
 #----------------------------------------------------------------#
 #                clear the output file                           #
@@ -219,35 +135,15 @@ do
     idatafiles="DATA/${base}.i.*[0-9]"
     ixdatafiles="DATA/${base}.ix.*[0-9]"
     datafiles="${ixdatafiles}"
-
-    #the main operation - call make and execute with the relevant parameters
-
-    echo "file = ${file} datafiles = ${datafiles}"
-    if [ ${file} == "test_cat.C" ]
-    then
-	echo "CATEGORY   "
-	(make_and_execute_cat 1);
-	(make_and_execute_cat 2);
-	(make_and_execute_cat 3);
-    else
-	if [ ${file} == "test_notification.C" ]
-	then
-	    echo "NOTIFICATION   "
+    if ${HOM_TEST}
+        then
+	datafiles="${ixdatafiles}"
+	if [  "${datafiles}" ]
+            then
+                #TESTR BBOX STRATEGY
+	    (make_and_execute 2 1 2);
 	    (make_and_execute 2 1 1);
-	else
-	    if ${HOM_TEST}
-	    then
-		datafiles="${ixdatafiles}"
-		if [  "${datafiles}" ]
-		then
-		    echo "REGULAR TEST0X"
-		    #TESTR BBOX STRATEGY
-		    (make_and_execute 2 1 2);
-		    (make_and_execute 2 1 1);
-		    (make_and_execute 2 1 3);
-		fi
-	    fi
+	    (make_and_execute 2 1 3);
 	fi
     fi
-
 done
