@@ -20,19 +20,12 @@
 #ifndef CGAL_OPTIMISATION_ELLIPSE_2_H
 #define CGAL_OPTIMISATION_ELLIPSE_2_H
 
-// the following include is needed by `to_double()'
-#ifndef CGAL_CARTESIAN_H
-#  include <CGAL/Cartesian.h>
-#endif
+
 
 // includes
 
-#ifndef CGAL_CONIC_2_H
 #  include <CGAL/Conic_2.h>
-#endif
-#ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #  include <CGAL/Optimisation/assertions.h>
-#endif
 #ifndef CGAL_IO_FORWARD_DECL_WINDOW_STREAM_H
 #  include <CGAL/IO/forward_decl_window_stream.h>
 #endif
@@ -62,7 +55,7 @@ class Optimisation_ellipse_2 {
     typedef  typename K_::RT            RT;
     typedef  typename K_::FT            FT;
     typedef  typename K::Point_2        Point;
-    typedef           CGAL::Conic_2<K>  Conic;
+    typedef  typename K::Conic_2  Conic;
     
     /**************************************************************************
     WORKAROUND: Some compilers are unable to match member functions defined
@@ -185,8 +178,9 @@ class Optimisation_ellipse_2 {
         return( n_boundary_points);
     }
     
-    Conic_2< Cartesian< double > >
-    to_double( ) const
+    template <typename DoubleConic_2>
+    void
+    double_conic(typename DoubleConic_2& e) const
     {
         CGAL_optimisation_precondition( ! is_degenerate());
     
@@ -195,8 +189,8 @@ class Optimisation_ellipse_2 {
         if ( n_boundary_points == 4)
             t = conic1.vol_minimum( dr, ds, dt, du, dv, dw);
     
-        Conic_2<K> c( conic1);
-        Conic_2< Cartesian<double> > e;
+        Conic_2 c( conic1);
+
         e.set( CGAL::to_double( c.r()) + t*CGAL::to_double( dr),
                CGAL::to_double( c.s()) + t*CGAL::to_double( ds),
                CGAL::to_double( c.t()) + t*CGAL::to_double( dt),
@@ -204,7 +198,6 @@ class Optimisation_ellipse_2 {
                CGAL::to_double( c.v()) + t*CGAL::to_double( dv),
                CGAL::to_double( c.w()) + t*CGAL::to_double( dw));
     
-        return( e);
     }
 
     // Equality tests

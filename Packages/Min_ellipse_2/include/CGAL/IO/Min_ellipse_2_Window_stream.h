@@ -23,10 +23,8 @@
 // Window_stream I/O operators
 // ===========================
 // includes
-#ifndef CGAL_CONIC_2_WINDOW_STREAM_H
-#  include <CGAL/IO/Conic_2_Window_stream.h>
-#endif
-
+#include <CGAL/IO/Conic_2_Window_stream.h>
+#include <CGAL/Cartesian.h>
 // Optimisation_ellipse_2
 // ----------------------
 #ifdef CGAL_OPTIMISATION_ELLIPSE_2_H
@@ -54,7 +52,9 @@ operator << ( CGAL::Window_stream &ws,
       case 3:
       case 4:
       case 5:
-        ws << oe.to_double();
+	Cartesian<double>::Conic_2 dc;
+	oe.double_conic(dc);
+        ws << dc;
         break;
       default:
         CGAL_optimisation_assertion( ( oe.n_boundary_points >= 0) &&

@@ -1,4 +1,6 @@
 Changes done to the `Min_ellipse_2' package.
+Version 3.32 on 14-Nov-2003 [af]
+- Moved depedency from Cartesian<double> from Optimisation_ellipse_2 to the IO routine
 
 Version 3.31 on 14-Nov-2003 [af]
 Replaced CGAL::Point_2<K>  with K::Point_2
