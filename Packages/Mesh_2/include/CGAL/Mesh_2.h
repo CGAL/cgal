@@ -83,8 +83,8 @@ public:
   typedef typename Tr::List_constraints       List_constraints;
 
 public:
-  void write(ostream &f);
-  void read(istream &f);
+  void write(std::ostream &f);
+  void read(std::istream &f);
   void reset() {
     cluster_map.clear();
     c_edge_queue.clear();
@@ -345,7 +345,7 @@ get_cluster(Vertex_handle va, Vertex_handle vb, Cluster &c, bool erase)
 //the function that writes a file
 template <class Tr>
 void Mesh_2<Tr>::
-write(ostream &f)
+write(std::ostream &f)
 {
   int nedges = 0;
   Finite_edges_iterator eit = finite_edges_begin();
@@ -370,7 +370,7 @@ write(ostream &f)
 //the function that reads a file
 template <class Tr>
 void Mesh_2<Tr>::
-read(istream &f)
+read(std::istream &f)
 {
   int nedges = 0;
   clear();
@@ -395,7 +395,7 @@ fill_edge_queue()
       if((*ei).first->is_constrained((*ei).second) && 
 	 is_encroached(va, vb))
 	{
-	  c_edge_queue.push_back(make_pair(va, vb));
+	  c_edge_queue.push_back(std::make_pair(va, vb));
 	}
     }
 }
@@ -429,7 +429,7 @@ fill_facette_map()
 	    va = fit->vertex(0),
 	    vb = fit->vertex(1),
 	    vc = fit->vertex(2);
-	  Bad_faces.insert(make_pair(aspect_ratio(fit),
+	  Bad_faces.insert(std::make_pair(aspect_ratio(fit),
 				     Threevertices(va,vb,vc)));
 	}
     }
@@ -551,7 +551,7 @@ refine_face(Face_handle f)
   else
     if(keep_the_face_bad)
       {
-	Bad_faces.insert(make_pair(aspect_ratio(f),
+	Bad_faces.insert(std::make_pair(aspect_ratio(f),
 				   Threevertices(va,vb,vc)));
       }
 }
@@ -685,7 +685,7 @@ construct_cluster(Vertex_handle v,
 	}
     }
   while(next++,begin++!=end);
-  cluster_map.insert(make_pair(v,c));
+  cluster_map.insert(std::make_pair(v,c));
 }
 
 template <class Tr>
@@ -808,7 +808,7 @@ update_facette_map(Vertex_handle v)
 	  vb = fc->vertex(1),
 	  vc = fc->vertex(2);
 	
-	Bad_faces.insert(make_pair(aspect_ratio(fc),
+	Bad_faces.insert(std::make_pair(aspect_ratio(fc),
 				   Threevertices(va,vb,vc)));
       }
     }
@@ -847,7 +847,7 @@ update_cluster(Cluster& c, Vertex_handle va,Vertex_handle vb,
   if(c.reduced())
     c.rmin = squared_distance(c.smallest_angle.first->point(),
 			      c.smallest_angle.second->point())/FT(4);
-  cluster_map.insert(make_pair(va,c));
+  cluster_map.insert(std::make_pair(va,c));
 }
 
 template <class Tr>

@@ -493,7 +493,7 @@ public slots:
         "Constrained edges (*.edg);;All files (*)", this ) );
       if ( s.isEmpty() )
         return;
-      ifstream f(s);
+      std::ifstream f(s);
       mesh.read(f);
       is_mesh_initialized=false;
       widget->redraw();
@@ -505,13 +505,13 @@ public slots:
         "Constrained edges (*.edg)", this ) );
       if ( s.isEmpty() )
         return;
-      ofstream of(s);
+      std::ofstream of(s);
       mesh.write(of);
     }
 
   void saveTriangulationUrgently(QString s=QString("dump.edg"))
     {
-      ofstream of(s);
+      std::ofstream of(s);
       mesh.write(of);
     }
 
