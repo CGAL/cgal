@@ -10,30 +10,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class R >
-Comparison_result
-compare_lexicographically_xyz(const PointC3<R CGAL_CTAG> &p,
-                              const PointC3<R CGAL_CTAG> &q)
-{
-  return compare_lexicographically_xyzC3(p.x(),p.y(),p.z(),
-                                         q.x(),q.y(),q.z());
-}
-
-template < class R >
-bool
-lexicographically_xyz_smaller_or_equal(const PointC3<R CGAL_CTAG> &p,
-                                       const PointC3<R CGAL_CTAG> &q)
-{
-  return compare_lexicographically_xyz(p,q) != LARGER;
- }
-
-template < class R >
-bool
-lexicographically_xyz_smaller(const PointC3<R CGAL_CTAG> &p,
-                              const PointC3<R CGAL_CTAG> &q)
-{
-  return compare_lexicographically_xyz(p,q) == SMALLER;
-}
 
 template < class R >
 inline
@@ -59,22 +35,30 @@ z_equal(const PointC3<R CGAL_CTAG> &p, const PointC3<R CGAL_CTAG> &q)
   return p.z() == q.z();
 }
 
+
 template < class R >
 inline
 bool
-equal_xy(const PointC3<R CGAL_CTAG> &p, const PointC3<R CGAL_CTAG> &q)
+less_x(const PointC3<R CGAL_CTAG> &p, const PointC3<R CGAL_CTAG> &q)
 {
-  return p.x() == q.x() && p.y() == q.y();
+  return p.x() < q.x();
 }
 
 template < class R >
 inline
 bool
-equal_xyz(const PointC3<R CGAL_CTAG> &p, const PointC3<R CGAL_CTAG> &q)
+less_y(const PointC3<R CGAL_CTAG> &p, const PointC3<R CGAL_CTAG> &q)
 {
-  return p.x() == q.x() && p.y() == q.y() && p.z() == q.z();
+  return p.y() < q.y();
 }
 
+template < class R >
+inline
+bool
+less_z(const PointC3<R CGAL_CTAG> &p, const PointC3<R CGAL_CTAG> &q)
+{
+  return p.z() < q.z();
+}
 
 template < class R >
 inline
@@ -98,6 +82,84 @@ Comparison_result
 compare_z(const PointC3<R CGAL_CTAG> &p, const PointC3<R CGAL_CTAG> &q)
 {
  return CGAL::compare(p.z(), q.z());
+}
+
+
+template < class R >
+inline
+bool
+equal_xy(const PointC3<R CGAL_CTAG> &p, const PointC3<R CGAL_CTAG> &q)
+{
+  return p.x() == q.x() && p.y() == q.y();
+}
+
+template < class R >
+inline
+Comparison_result
+compare_xy(const PointC3<R CGAL_CTAG> &p, 
+			     const PointC3<R CGAL_CTAG> &q)
+{
+  return compare_lexicographically_xy(p.x(),p.y(),q.x(),q.y()); 
+}
+
+template < class R >
+inline
+Comparison_result
+compare_lexicographically_xy(const PointC3<R CGAL_CTAG> &p, 
+			     const PointC3<R CGAL_CTAG> &q)
+{
+  return compare_lexicographically_xyC2(p.x(),p.y(),q.x(),q.y()); 
+}
+
+template < class R >
+inline
+bool
+lexicographically_xy_smaller_or_equal(const PointC3<R CGAL_CTAG> &p, 
+			     const PointC3<R CGAL_CTAG> &q)
+{ 
+  return compare_lexicographically_xy(p,q) != LARGER;
+}
+
+template < class R >
+inline
+bool
+lexicographically_xy_smaller(const PointC3<R CGAL_CTAG> &p, 
+			     const PointC3<R CGAL_CTAG> &q)
+{ 
+  return compare_lexicographically_xy(p,q) == SMALLER;
+}
+
+template < class R >
+inline
+bool
+equal_xyz(const PointC3<R CGAL_CTAG> &p, const PointC3<R CGAL_CTAG> &q)
+{
+  return p.x() == q.x() && p.y() == q.y() && p.z() == q.z();
+}
+
+template < class R >
+Comparison_result
+compare_lexicographically_xyz(const PointC3<R CGAL_CTAG> &p,
+                              const PointC3<R CGAL_CTAG> &q)
+{
+  return compare_lexicographically_xyzC3(p.x(),p.y(),p.z(),
+                                         q.x(),q.y(),q.z());
+}
+
+template < class R >
+bool
+lexicographically_xyz_smaller_or_equal(const PointC3<R CGAL_CTAG> &p,
+                                       const PointC3<R CGAL_CTAG> &q)
+{
+  return compare_lexicographically_xyz(p,q) != LARGER;
+ }
+
+template < class R >
+bool
+lexicographically_xyz_smaller(const PointC3<R CGAL_CTAG> &p,
+                              const PointC3<R CGAL_CTAG> &q)
+{
+  return compare_lexicographically_xyz(p,q) == SMALLER;
 }
 
 
