@@ -1,3 +1,6 @@
+Version 6.6 (?? February 2001)
+- moved Kernel_traits_common.h file to Kernel_basic package
+
 Version 6.5 (13 February 2001)
 - Kernel_traits_common.h shorted with the use of a macro
 - Several missing function object classes added
