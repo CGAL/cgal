@@ -1,4 +1,10 @@
 -----
+* 2.5 *
++ Altered implementation of do_intersect for segment segment case.
+  This version is much faster (factor 20 to 30 with Cartesian<double>)
+  and is accurate when the segment is degenerated to a point.
+
+-----
 * 2.4 *
 + Replaced const casting by mutable keyword.
 
