@@ -24,6 +24,15 @@
 #define CGAL_STATIC_FILTERS_H
 
 #include <CGAL/basic.h>
+
+// Workaround for buggy compilers.
+#ifdef CGAL_CFG_MATCHING_BUG_2
+#  define CGAL_IA_CT double
+#  define CGAL_IA_ET CGAL::MP_Float
+#  define CGAL_IA_PROTECTED true
+#  define CGAL_IA_CACHE No_Filter_Cache
+#endif
+
 #include <CGAL/Static_filters/Orientation_2.h>
 #include <CGAL/Static_filters/Orientation_3.h>
 #include <CGAL/Static_filters/Side_of_oriented_sphere_3.h>
