@@ -4,6 +4,7 @@
 
 #include <CGAL/basic.h>
 
+
 #include <vector>
 #include <numeric>
 #include <cassert>
@@ -12,7 +13,8 @@
 #include <iostream>
 #include <fstream> 
 
-#include <CGAL/Kd_tree_rectangle.h>
+#include <CGAL/MP_Float.h>
+#include <CGAL/Iso_rectangle_d.h>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Kd_tree_traits_point.h>
 #include <CGAL/point_generators_3.h>
@@ -22,12 +24,12 @@
 #include <CGAL/Homogeneous.h>
 #include <CGAL/L1_distance_rectangle_point.h>
 
-typedef CGAL::Homogeneous<int> R;
+typedef CGAL::Homogeneous<CGAL::MP_Float> R;
 typedef CGAL::Point_3<R> Point;
 typedef Point::R::FT FT;
 typedef Point::R::RT RT;
 
-typedef CGAL::Kd_tree_rectangle<FT> Rectangle;
+typedef CGAL::Iso_cuboid_3<R> Rectangle;
 typedef CGAL::Plane_separator<FT> Separator;
 
 typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
@@ -48,7 +50,7 @@ int test_range_searching(CGAL::Split_rule_enumeration::Split_rule s) {
   typedef std::list<Point> point_list;
   point_list data_points;
   
-  CGAL::Random_points_in_cube_3<Point,Creator> g( 1000.0);
+  CGAL::Random_points_in_cube_3<Point,Creator> g(1000.0);
   CGAL::copy_n( g, data_point_number, std::back_inserter(data_points));
   
   
@@ -58,16 +60,23 @@ int test_range_searching(CGAL::Split_rule_enumeration::Split_rule s) {
   Tree d(data_points.begin(), data_points.end(), tr);
 
   // define range query
-  Rectangle query_rectangle(dim);
+  // define range query
+  int p[dim];
+  int q[dim];
   for (int i=0; i<dim; i++) {
-  	query_rectangle.set_lower_bound(i,0.0);
-        query_rectangle.set_upper_bound(i,200.0);
+  	p[i]=     0;
+        q[i]=  200;
   }
 
+  Point P(p[0],p[1],p[2],1);  
+  Point Q(q[0],q[1],q[2],1);
+  Rectangle query_rectangle(P,Q);
+
+ 
   std::vector<NN_priority_search::Item_with_distance> nearest_neighbours;
   nearest_neighbours.reserve(nearest_neighbour_number);
 
-  NN_priority_search NN(d, query_rectangle, tr_dist, 0.0);
+  NN_priority_search NN(d, query_rectangle, tr_dist, 0);
   std::cout << "neighbour searching statistics using no extended nodes: " << std::endl;
   
   // NN.the_k_neighbours(std::back_inserter(nearest_neighbours));

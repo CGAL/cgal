@@ -49,10 +49,11 @@ namespace CGAL {
 
   public:
 
+       
         
 	Kd_tree_traits_point(unsigned int bucket_size=1, 
 			     split_rule My_split_rule=Split_rule_enumeration::SLIDING_MIDPOINT,
-			     NT aspect_ratio=NT(3.0), 
+			     NT aspect_ratio=NT(3), 
 			     bool use_extended_nodes=true) {
 		the_bucket_size = bucket_size;
 		the_selected_split_rule = My_split_rule;
@@ -81,7 +82,9 @@ namespace CGAL {
 
 			case Split_rule_enumeration::SLIDING_FAIR:
 				{Sliding_fair<Item> M;
+                                
 				sep=M.rule(c0,aspect_ratio());
+                                
 				c0.split_container(c1,sep,true);}
 				break;
 
@@ -118,7 +121,7 @@ namespace CGAL {
 			default:
 				std::cerr << "Split rule corrupted\n";
 		}
-
+                
 		return sep;
     }
 

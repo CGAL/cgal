@@ -59,10 +59,10 @@ namespace CGAL {
     };
 
     inline NT distance(const Query_item& q, const Item& p) {
-		NT distance = NT(0.0);
+		NT distance = NT(0);
 		for (unsigned int i = 0; i < The_dimension; ++i) {
-			if (p[i]>q.upper(i)) distance += (p[i]-q.upper(i)); 
-			if (p[i]<q.lower(i)) distance += (q.lower(i)-p[i]);	
+			if (p[i]>q.max_coord(i)) distance += (p[i]-q.max_coord(i)); 
+			if (p[i]<q.min_coord(i)) distance += (q.min_coord(i)-p[i]);	
 		}
         	return distance;
     }
@@ -70,22 +70,22 @@ namespace CGAL {
 
     inline NT min_distance_to_queryitem(const Query_item& q,
 					      const Kd_tree_rectangle<NT>& r) {
-		NT distance = NT(0.0);
+		NT distance = NT(0);
 		for (unsigned int i = 0; i < The_dimension; ++i)  {
-			if (r.lower(i)>q.upper(i)) distance += (r.lower(i)-q.upper(i)); 
-			if (r.upper(i)<q.lower(i)) distance += (q.lower(i)-r.upper(i));
+			if (r.lower(i)>q.max_coord(i)) distance += (r.lower(i)-q.max_coord(i)); 
+			if (r.upper(i)<q.min_coord(i)) distance += (q.min_coord(i)-r.upper(i));
 	        }
 		return distance;
 	}
 
     inline NT max_distance_to_queryitem(const Query_item& q,
 					      const Kd_tree_rectangle<NT>& r) {
-		NT distance=NT(0.0);
+		NT distance=NT(0);
 		for (unsigned int i = 0; i < The_dimension; ++i)
-			if ( r.upper(i)-q.lower(i) > q.upper(i)-r.lower(i) )  
-				distance += (r.upper(i)-q.lower(i));
+			if ( r.upper(i)-q.min_coord(i) > q.max_coord(i)-r.lower(i) )  
+				distance += (r.upper(i)-q.min_coord(i));
 			else 
-				distance += (q.upper(i)-r.lower(i));
+				distance += (q.max_coord(i)-r.lower(i));
 		return distance;
 	}
 

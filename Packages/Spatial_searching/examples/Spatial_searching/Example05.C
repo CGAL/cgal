@@ -12,7 +12,7 @@
 #include <iostream>
 #include <fstream> 
 
-#include <CGAL/Kd_tree_rectangle.h>
+#include <CGAL/Iso_rectangle_d.h>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Kd_tree_traits_point.h>
 #include <CGAL/Random.h>
@@ -25,7 +25,7 @@ typedef CGAL::Cartesian_d<double> R;
 typedef CGAL::Point_d<R> Point;
 typedef Point::R::FT NT;
 
-typedef CGAL::Kd_tree_rectangle<NT> Rectangle;
+typedef CGAL::Iso_rectangle_d<R> Rectangle;
 typedef CGAL::Plane_separator<NT> Separator;
 
 typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
@@ -61,11 +61,17 @@ int test_range_searching(CGAL::Split_rule_enumeration::Split_rule s) {
   Tree d(data_points.begin(), data_points.end(), tr);
 
   // define range query
-  Rectangle query_rectangle(dim);
+  int p[dim];
+  int q[dim];
   for (int i=0; i<dim; i++) {
-  	query_rectangle.set_lower_bound(i,0.0);
-        query_rectangle.set_upper_bound(i,1.0);
+  	p[i]=     0;
+        q[i]=  1000;
   }
+
+  Point P(p[0],p[1],p[2],1000);
+  Point Q(q[0],q[1],q[2],1000);
+
+  Rectangle query_rectangle(P,Q);
 
   std::vector<NN_standard_search::Item_with_distance> nearest_neighbours;
   

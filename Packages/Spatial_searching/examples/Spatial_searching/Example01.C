@@ -23,6 +23,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_3.h>
 
+
 typedef CGAL::Homogeneous<int> R;
 
 typedef R::Point_3 Point;
@@ -43,17 +44,16 @@ int generate_kd_tree(CGAL::Split_rule_enumeration::Split_rule s) {
   point_list data_points;
   
  
-  CGAL::Random_points_in_cube_3<Point,Creator> g( 1000.0);
+  CGAL::Random_points_in_cube_3<Point,Creator> g( 1000);
   CGAL::copy_n( g, data_point_number, std::back_inserter(data_points));
   
   
   
-  Traits tr(bucket_size, s, 3.0, true);
+  Traits tr(bucket_size, s, 3, true);
 
   
   typedef CGAL::Kd_tree<Traits> Tree;
 
-  
 
   Tree d(data_points.begin(), data_points.end(), tr);
 

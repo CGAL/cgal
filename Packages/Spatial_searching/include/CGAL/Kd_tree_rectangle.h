@@ -149,7 +149,7 @@ namespace CGAL {
 		if (empty) { // no points
 		  for (int i=0; i < dim; ++i)
 		  {
-			lower_[i]= NT(1.0); upper_[i]= NT(-1.0);
+			lower_[i]= NT(1); upper_[i]= NT(-1);
 		  }
 		} else {
           // initialize with values of first point
@@ -198,6 +198,7 @@ namespace CGAL {
     Kd_tree_rectangle* split(int d, NT value) {
 		// assert(d >= 0 && d < dim);
 		// assert(lower_[d] <= value && value <= upper_[d]);
+                
 		Kd_tree_rectangle* r = new Kd_tree_rectangle(*this);
 		upper_[d]=value;
                 r->lower_[d]=value;

@@ -1,11 +1,4 @@
-#include <vector>
-#include <numeric>
-#include <cassert>
-#include <string>
-
-#include <iostream>
-#include <fstream> 
-
+#include <CGAL/basic.h>
 #include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Kd_tree_traits_point.h>
@@ -14,6 +7,9 @@
 #include <CGAL/Orthogonal_priority_search.h>
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/Weighted_Minkowski_distance.h>
+
+#include <vector>
+#include <iostream>
 
 typedef CGAL::Cartesian_d<double> R;
 typedef CGAL::Point_d<R> Point;
@@ -50,7 +46,7 @@ OutputIterator get_n_positive_elements( InputIterator first, Size& n,
   return result;
 }
   
-int positive_nearest_neighbour_searching(CGAL::Split_rule_enumeration::Split_rule s) {
+int main() {
 
   int bucket_size=1;
   const int dim=4;
@@ -70,7 +66,7 @@ int positive_nearest_neighbour_searching(CGAL::Split_rule_enumeration::Split_rul
         data_points.push_front(Random_point);
   }
   
-  Traits tr(bucket_size, s, 3.0, false);
+  Traits tr(bucket_size, CGAL::Split_rule_enumeration::SLIDING_FAIR, 3.0, false);
  
   typedef CGAL::Kd_tree<Traits> Tree;
   Tree d(data_points.begin(), data_points.end(), tr);
@@ -103,9 +99,9 @@ int positive_nearest_neighbour_searching(CGAL::Split_rule_enumeration::Split_rul
   "The first " << n << " positive nearest neighbours are: " 
   << std::endl;
 
-  for (int i=0; i < n; ++i) { 
+  for (int j=0; j < n; ++j) { 
      std::cout <<    
-     *(elements_in_query[i].first)
+     *(elements_in_query[j].first)
      << std::endl; 
   }
   
@@ -113,9 +109,5 @@ int positive_nearest_neighbour_searching(CGAL::Split_rule_enumeration::Split_rul
 }; 
   
 
-int main() {
-  positive_nearest_neighbour_searching(CGAL::Split_rule_enumeration::SLIDING_FAIR);    
-  return 0;
-};
 
 

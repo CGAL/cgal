@@ -89,7 +89,7 @@ class iterator;
 
     // constructor
     General_priority_search(Tree& tree, Query_item& q, Distance& tr,
-    NT Eps=NT(0.0), bool search_nearest=true)
+    NT Eps=NT(0), bool search_nearest=true)
     {
         start = new iterator(tree,q,tr,Eps,search_nearest);
         past_the_end = new iterator();
@@ -134,7 +134,7 @@ class iterator;
     }
 
     // constructor
-    iterator(Tree& tree, Query_item& q, Distance& tr, NT eps=NT(0.0), bool search_nearest=true) {
+    iterator(Tree& tree, Query_item& q, Distance& tr, NT eps=NT(0), bool search_nearest=true) {
         Ptr_implementation =
         new Iterator_implementation(tree, q, tr, eps, search_nearest);
     }
@@ -271,7 +271,7 @@ class Distance_smaller
 
     // constructor
     Iterator_implementation(Tree& tree, Query_item& q, Distance& tr,
-        NT Eps=NT(0.0), bool search_nearest=true)
+        NT Eps=NT(0), bool search_nearest=true)
     {
         
 	
@@ -287,7 +287,7 @@ class Distance_smaller
 	reference_count=1;
         Distance_instance=&tr;
         multiplication_factor=
-	Distance_instance->transformed_distance(NT(1.0)+Eps);
+	Distance_instance->transformed_distance(NT(1)+Eps);
 
         Node_box *bounding_box = new Node_box(*(tree.bounding_box()));
         

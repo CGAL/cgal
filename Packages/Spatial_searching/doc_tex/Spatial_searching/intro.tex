@@ -33,41 +33,41 @@ The approximate spatial searching package is designed for data sets that are sma
 the search structure in main memory (in contrast to approaches
 from databases that assume that the data reside in secondary storage).
 
-\subsection{Incremental Nearest Neighbour Searching and Distance Browsing}
+\subsection{Spatial Searching}
 
 Spatial searching supports browsing through a collection of spatial objects
 stored in a spatial data structure on the basis of their distances to an arbitrary spatial
-query object. The first approach is one that makes use of a $k$-nearest neighbour
-algorithm, where $k$ is know prior to the invocation of the algorithm.
+query object.
+Spatial searching is supported in several ways. 
+The first approach is $k$-{\bf nearest neighbour searching} that makes use of a $k$-nearest neighbour
+algorithm, where $k$ is known prior to the invocation of the algorithm.
 Hence, the number of nearest neighbours has to be
 guessed. If the guess is too large redundant computations are performed.
 If the number is too small the computation has to be  
 reinvoked for a larger number of neighbours, thereby performing redundant computations.
-The second approach is incremental in the sense that having obtained
+The second approach is {\bf incremental nearest neighbour searching} in the sense that having obtained
 the $k$ nearest neighbours, the $k$ + 1$^{st}$ neighbour can be obtained without
 having to calculate the $k$ + 1 nearest neighbour from scratch.
 The incremental approach is useful when processing queries where
 one but not all of the conditions involves spatial proximity (e.g. the nearest city to Paris with
 population greater than a million).
 
-\subsection{Furthest Neighbour Searching}
-
 With relatively minor modifications, nearest neighbour searching algorithms can be
-used to find the furthest object from the query object. Furthest neighbour searching is invoked if
-a boolean \ccc{Search_nearest} is set to false in the constructor of the searching classes.
-If this boolean is set to true, or is not set, nearest neighbour searching is invoked.
+used to find the furthest object from the query object. 
+Therefore, {\bf Furthest neighbour searching} is also supported
+by the approximate spatial searching package.
 
-\subsection{Range Searching}
-
-Range queries are supported by using incremental nearest neighbour search
+{\bf Range searching}
+is supported for $d$-dimensional rectangles and spheres using incremental nearest neighbour search. 
+Rectangular range queries are supported by 
 using iso-rectangles as query item, and using a $L1$-distance between iso-rectangles and points.
-This distance is defined such that all points contained in a query item have distance zero
-to the query. Hence, an incremental nearest neighbour search will report first all points
+Spherical range queries are supported by using spheres as query item, and using a $L2$-distance
+between spheres and points.
+In both cases the distance is defined such that all points contained in a query item have distance zero
+to the query item. Hence, an incremental nearest neighbour search will report first all points
 contained in the query item.  
 
-\subsection{Approximate Searching}
-
-The approximate spatial searching package supports both exact and approximate browsing, by
+{\bf Approximate searching}, is supported by
 specifying an approximation factor $\epsilon \geq 0$ with the query.
 
 \subsection{The $k$-$d$ tree}
@@ -105,83 +105,52 @@ The search stops when the distance of the query point to the nearest nodes
 exceeds the distance to the nearest point found with a factor 1/ (1+$\epsilon$).
 Priority search supports next neighbour search, standard search does not.
 
-\subsection {Splitting Rules}
 
-The approximate spatial searching package provides the following different splitting rules,
-which determine how a separating hyperplane is selected:
 
-\begin{itemize}
 
-\item \ccc{Midpoint_of_rectangle}
+\section{Example Programs}
 
-This splitting rule cuts a rectangle through its midpoint orthogonal
-to the longest side.
+The first example program illustrates searching for the nearest and the farthest neighbour using the
+same $k$-$d$ tree.
+The way the $k$-$d$ tree is build is defined by the traits variable \ccc{tr(bucket_size, s, 3.0 true)}.
+In the example the \ccc{bucket_size} is set to 10.
+Hence, each leaf nodes stores at most 10 points.
+The strategy for splitting the nodes is defined by $s$.
+Some rules use a maximal aspect ratio to define
+the maximal allowed ratio between the largest and smallest side of a rectangle.
+This aspect ratio is set to 3.0. The boolean value true indicates that
+extended internal nodes are used.
 
-\item \ccc{Midpoint_of_max_spread}
+The nearest neighbour is searched using orthogonal standard search and
+the farthest neighhour is searched using general standard search, because the
+incremental distance update technique works only for nearest neighbour searching.
 
-This splitting rule cuts a rectangle through $Mind+Maxd/2$ orthogonal
-to the dimension with the maximum point spread $[Mind,Maxd]$.
+In this example the user provides an implementation of 3-dimensional points and an
+implementation of the Euclidean distance.
 
-\item \ccc{Sliding_midpoint}
+\ccIncludeExampleCode{ExampleA.C}
 
-This is a modification of the midpoint of rectangle splitting rule.
-It first attempts to perform a midpoint of rectangle split as
-described above. If data points lie on both sides of the separating
-plane the sliding midpoint rule computes the same separator as
-the midpoint of rectangle rule. If the data points lie only on one
-side it avoids this by sliding the separator, computed by
-the midpoint of rectangle rule, to the nearest datapoint.
+The second example program illustrates approximate nearest neighbour searching
+using orthogonal standard search using the point class \ccc{CGAL::Point_d}
+and the distance class \ccc{CGAL::Weighted_Minkowski_distance}.
+ 
+\ccIncludeExampleCode{ExampleB.C}
 
-\item \ccc{Median_of_rectangle}
+The third example program illustrates range querying using general priority search.
+A range query is defined by a $d$-dimensional iso-rectangle implemented by
+the class \ccc{CGAL::Kd_tree_rectangle}. The appropriate distance is defined by
+the class \ccc{CGAL::L1_distance_rectangle_point}.
 
-The splitting dimension is the dimension of the longest side of the rectangle.
-The splitting value is defined by the median of the coordinates of the data points
-along this dimension.
+\ccIncludeExampleCode{ExampleC.C}
 
-\item \ccc{Median_of_max_spread}
+The fourth example program illustrates browsing for $4$-dimensional points with
+a positive first coordinate using orthogonal priority search
+using the point class \ccc{CGAL::Point_d}
+and the distance class \ccc{CGAL::Weighted_Minkowski_distance}.
+ 
 
-The splitting dimension is the dimension of the longest side of the rectangle.
-The splitting value is defined by the median of the coordinates of the data points
-along this dimension.
+\ccIncludeExampleCode{ExampleD.C}
 
-\item \ccc{Fair}
-
-This splitting rule is a compromise between the median of rectangle splitting rule
-and the midpoint of rectangle splitting rule. This splitting rule maintains an upper
-bound on the maximal allowed ratio of the longest and shortest side of
-a rectangle (the value of this upper bound is set in the constructor of the
-fair splitting rule). Among the splits that satisfy this bound, it selects
-the one in which the points have the largest spread.
-It then splits the points in the most even manner possible, subject
-to maintaining the bound on the ratio of the resulting rectangles.
-
-\item \ccc{Sliding_fair}
-
-This splitting rule is a compromise between the fair splitting rule
-and the sliding midpoint rule.
-Sliding fair-split is based on the theory that there are
-two types of splits that are good: balanced splits that
-produce fat rectangles, and unbalanced splits provided
-the rectangle with fewer points is fat.
-
-Also, this splitting rule maintains an upper
-bound on the maximal allowed ratio of the longest and shortest side of
-a rectangle (the value of this upper bound is set in the constructor of the
-fair splitting rule). Among the splits that satisfy this bound, it selects
-the one one in which the points have the largest spread.
-It then considers the most extreme cuts that would be allowed by the
-aspect ratio bound. This is done by dividing the longest side of
-the rectangle by the aspect ratio bound. If the median cut lies
-between these extreme cuts, then we use the median cut. If not,
-then consider the extreme cut that is closer to the median.
-If all the points lie to one side of this cut, then we slide the cut
-until it hits the first point.
-This may violate the aspect ratio bound, but will never generate empty cells.
-
-\end{itemize}
-
-Also, a user may provide an implementation of his own
-splitting rule.
 
 \section{Software Design}
 
@@ -335,47 +304,83 @@ distance computation this distance class should meet the requirements of the con
 \ccc{CGAL::OrthogonalDistance}. Otherwise the distance class has only to meet the
 requirements of the concept \ccc{CGAL::GeneralDistance}.
 
-\section{Example Programs}
+\section{Advanced}
 
-The first example program illustrates searching for the nearest and the farthest neighbour using the
-same $k$-$d$ tree.
-The way the $k$-$d$ tree is build is defined by the traits variable \ccc{tr(bucket_size, s, 3.0 true)}.
-In the example the \ccc{bucket_size} is set to 10.
-Hence, each leaf nodes stores at most 10 points.
-The strategy for splitting the nodes is defined by $s$.
-Some rules use a maximal aspect ratio to define
-the maximal allowed ratio between the largest and smallest side of a rectangle.
-This aspect ratio is set to 3.0. The boolean value true indicates that
-extended internal nodes are used.
+\subsection{Splitting Rules}
 
-The nearest neighbour is searched using orthogonal standard search and
-the farthest neighhour is searched using general standard search, because the
-incremental distance update technique works only for nearest neighbour searching.
+The approximate spatial searching package provides the following different splitting rules,
+which determine how a separating hyperplane is selected:
 
-In this example the user provides an implementation of 3-dimensional points and an
-implementation of the Euclidean distance.
+\begin{itemize}
 
-\ccIncludeExampleCode{ExampleA.C}
+\item \ccc{Midpoint_of_rectangle}
 
-The second example program illustrates approximate nearest neighbour searching
-using orthogonal standard search using the point class \ccc{CGAL::Point_d}
-and the distance class \ccc{CGAL::Weighted_Minkowski_distance}.
- 
-\ccIncludeExampleCode{ExampleB.C}
+This splitting rule cuts a rectangle through its midpoint orthogonal
+to the longest side.
 
-The third example program illustrates range querying using general priority search.
-A range query is defined by a $d$-dimensional iso-rectangle implemented by
-the class \ccc{CGAL::Kd_tree_rectangle}. The appropriate distance is defined by
-the class \ccc{CGAL::L1_distance_rectangle_point}.
+\item \ccc{Midpoint_of_max_spread}
 
-\ccIncludeExampleCode{ExampleC.C}
+This splitting rule cuts a rectangle through $Mind+Maxd/2$ orthogonal
+to the dimension with the maximum point spread $[Mind,Maxd]$.
 
-The fourth example program illustrates browsing for $4$-dimensional points with
-a positive first coordinate using orthogonal priority search
-using the point class \ccc{CGAL::Point_d}
-and the distance class \ccc{CGAL::Weighted_Minkowski_distance}.
- 
+\item \ccc{Sliding_midpoint}
 
-\ccIncludeExampleCode{ExampleD.C}
+This is a modification of the midpoint of rectangle splitting rule.
+It first attempts to perform a midpoint of rectangle split as
+described above. If data points lie on both sides of the separating
+plane the sliding midpoint rule computes the same separator as
+the midpoint of rectangle rule. If the data points lie only on one
+side it avoids this by sliding the separator, computed by
+the midpoint of rectangle rule, to the nearest datapoint.
 
+\item \ccc{Median_of_rectangle}
+
+The splitting dimension is the dimension of the longest side of the rectangle.
+The splitting value is defined by the median of the coordinates of the data points
+along this dimension.
+
+\item \ccc{Median_of_max_spread}
+
+The splitting dimension is the dimension of the longest side of the rectangle.
+The splitting value is defined by the median of the coordinates of the data points
+along this dimension.
+
+\item \ccc{Fair}
+
+This splitting rule is a compromise between the median of rectangle splitting rule
+and the midpoint of rectangle splitting rule. This splitting rule maintains an upper
+bound on the maximal allowed ratio of the longest and shortest side of
+a rectangle (the value of this upper bound is set in the constructor of the
+fair splitting rule). Among the splits that satisfy this bound, it selects
+the one in which the points have the largest spread.
+It then splits the points in the most even manner possible, subject
+to maintaining the bound on the ratio of the resulting rectangles.
+
+\item \ccc{Sliding_fair}
+
+This splitting rule is a compromise between the fair splitting rule
+and the sliding midpoint rule.
+Sliding fair-split is based on the theory that there are
+two types of splits that are good: balanced splits that
+produce fat rectangles, and unbalanced splits provided
+the rectangle with fewer points is fat.
+
+Also, this splitting rule maintains an upper
+bound on the maximal allowed ratio of the longest and shortest side of
+a rectangle (the value of this upper bound is set in the constructor of the
+fair splitting rule). Among the splits that satisfy this bound, it selects
+the one one in which the points have the largest spread.
+It then considers the most extreme cuts that would be allowed by the
+aspect ratio bound. This is done by dividing the longest side of
+the rectangle by the aspect ratio bound. If the median cut lies
+between these extreme cuts, then we use the median cut. If not,
+then consider the extreme cut that is closer to the median.
+If all the points lie to one side of this cut, then we slide the cut
+until it hits the first point.
+This may violate the aspect ratio bound, but will never generate empty cells.
+
+\end{itemize}
+
+Also, a user may provide an implementation of his own
+splitting rule.
 

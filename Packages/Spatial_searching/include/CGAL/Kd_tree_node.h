@@ -20,7 +20,7 @@
 // coordinator   : Utrecht University
 //
 // ======================================================================
- 
+
 #ifndef CGAL_KD_TREE_NODE_H
 #define CGAL_KD_TREE_NODE_H
 
@@ -92,9 +92,9 @@ namespace CGAL {
 
     		Point_container<Item> c_low = Point_container<Item>(c.dimension());
 			Kd_tree_rectangle<NT> bbox(c.bounding_box());
-
+                
     		sep = t.split(c, c_low);
-	
+	        
     		int cd  = sep->cutting_dimension();
 
 		if (use_extension) {

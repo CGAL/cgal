@@ -1,6 +1,6 @@
-// Approximate spatial searching: Example08.C
+// Approximate spatial searching: Example09.C
 // Example illustrating for each separate splitting rule 
-// building a kd-tree using orthogonal priority search
+// building a kd-tree using general priority search
 #include <CGAL/basic.h>
 
 #include <vector>
@@ -16,11 +16,10 @@
 #include <CGAL/Kd_tree_traits_point.h>
 #include <CGAL/Random.h>
 #include <CGAL/Splitting_rules.h>
-#include <CGAL/Orthogonal_priority_search.h>
+#include <CGAL/General_priority_search.h>
 #include <CGAL/algorithm.h>
 
   // create own Point type (adapted from example3.C from kdtree and Point_3.h)
- 
 class Point
 {
 public:
@@ -134,7 +133,6 @@ inline double min_distance_to_queryitem(const Point& p,
     return distance;
 }
 
-
 inline double max_distance_to_queryitem(const Point& p,
 					      const CGAL::Kd_tree_rectangle<double>& b) 
 {   double distance(0.0);
@@ -177,7 +175,7 @@ typedef CGAL::Plane_separator<double> Separator;
 
 typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
 
-typedef CGAL::Orthogonal_priority_search<Traits, Point, Point3D_distance> 
+typedef CGAL::General_priority_search<Traits, Point, Point3D_distance> 
 NN_priority_search;
 
 int test_range_searching(CGAL::Split_rule_enumeration::Split_rule s) {
@@ -203,8 +201,7 @@ int test_range_searching(CGAL::Split_rule_enumeration::Split_rule s) {
         data_points.push_front(Random_point);
   }
   
-  
-  Traits tr(bucket_size, s, 3.0, true);
+  Traits tr(bucket_size, s, 3.0, false);
 
   Point3D_distance tr_dist;
 
@@ -220,7 +217,7 @@ int test_range_searching(CGAL::Split_rule_enumeration::Split_rule s) {
   std::vector<NN_priority_search::Item_with_distance> nearest_neighbours; 
   nearest_neighbours.reserve(nearest_neighbour_number);
 
-  NN_priority_search NN(d, query_item, tr_dist, 0.0, true);
+  NN_priority_search NN(d, query_item, tr_dist, 0.0, false);
 
   std::vector<NN_priority_search::Item_with_distance>::iterator 
   it = nearest_neighbours.begin();

@@ -59,8 +59,8 @@ namespace CGAL {
     Weighted_Minkowski_distance() : p(NT(2.0)), The_dimension(2) 
     { 
          The_weights = new Weight_vector(2);
-         The_weights[0]=NT(1.0);
-         The_weights[1]=NT(1.0);
+         (*The_weights)[0]=NT(1.0);
+         (*The_weights)[1]=NT(1.0);
     }
 
 	Weighted_Minkowski_distance (float power, int dim,

@@ -24,6 +24,7 @@
 #ifndef CGAL_KD_TREE_H
 #define CGAL_KD_TREE_H
 #include <CGAL/Kd_tree_node.h>
+#include <cassert>
 
 namespace CGAL {
 
@@ -54,11 +55,12 @@ public:
   Kd_tree(input_iterator first, input_iterator beyond,
 	    Traits t = Traits()) : tr(t) {
     assert(first != beyond);
-    int dim = first->dimension(); 
+    int dim = first->dimension();
     
     std::copy(first, beyond, std::back_inserter(pts));
-    
+
     Point_container<Item> c(dim, pts.begin(), pts.end());
+
     bbox = new Kd_tree_rectangle<NT>(c.bounding_box());
     
     the_item_number=c.size();

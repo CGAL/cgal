@@ -107,13 +107,15 @@ namespace CGAL {
 
 	int max_tight_span_coord_balanced(NT Aspect_ratio) const {
 		int cut_dim(-1);
-		NT max_spread_points(NT(-1.0));
+		NT max_spread_points(NT(-1));
 		NT max_length=max_spread();  // length of longest side of box
 		int dim=dimension();
 		for (int d=0; d<dim; d++) {
 			NT length=bbox.upper(d)-bbox.lower(d);
-		        if (NT(2.0)*max_length/length <= Aspect_ratio) {
+                     
+		        if (NT(2)*max_length/length <= Aspect_ratio) {
 			        NT spread=tbox.upper(d)-tbox.lower(d);
+                                
 			        if (spread > max_spread_points) {
 				        max_spread_points = spread;
 				        cut_dim = d;
@@ -125,7 +127,7 @@ namespace CGAL {
 	}
 
 	NT max_span_upper_without_dim(int d) const {
-		NT max_span(NT(0.0));
+		NT max_span(NT(0));
         	int dim=dimension();
 		for (int i=0; i<dim; i++) {
 			NT span = bbox.upper(i)-bbox.lower(i);
@@ -347,7 +349,7 @@ template <class Item_, class Value>
       median_point_ptr++;
       NT val2=(*(*median_point_ptr))[split_coord];
       
-      return (val1+val2)/2; 
+      return (val1+val2)/NT(2); 
     };
 
 
