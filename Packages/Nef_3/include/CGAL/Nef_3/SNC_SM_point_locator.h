@@ -25,6 +25,7 @@
 #include <CGAL/Nef_2/Object_handle.h>
 #include <CGAL/Nef_3/SNC_SM_decorator.h>
 #include <CGAL/Nef_3/Normalizing.h>
+#include <CGAL/Nef_3/SNC_decorator_traits.h>
 #undef _DEBUG
 #define _DEBUG 47
 #include <CGAL/Nef_3/debug.h>
@@ -56,6 +57,9 @@ public:
   /*{\Mtypes 5}*/
   typedef SNC_SM_decorator<Refs_> Decorator;
   /*{\Mtypemember equals |Decorator_|.}*/
+
+  typedef SNC_decorator_traits<Refs_> SNC_decorator_traits;
+  typedef SNC_decorator_const_traits<Refs_> SNC_decorator_const_traits;
 
   typedef typename Refs_::Mark      Mark;
   /*{\Mtypemember the attribute of all objects (vertices, edges, loops,
@@ -89,28 +93,35 @@ public:
 
   #define USING(t) typedef typename Refs_::t t
   USING(Vertex_handle);   
+
   USING(SVertex_handle);   
   USING(SHalfedge_handle);   
   USING(SHalfloop_handle);   
   USING(SFace_handle);     
+
   USING(SVertex_const_handle); 
   USING(SHalfedge_const_handle); 
   USING(SHalfloop_const_handle); 
   USING(SFace_const_handle); 
+
   USING(SVertex_iterator);
   USING(SHalfedge_iterator);
   USING(SHalfloop_iterator);
   USING(SFace_iterator);
+
   USING(SVertex_const_iterator);
   USING(SHalfedge_const_iterator);
   USING(SHalfloop_const_iterator);
   USING(SFace_const_iterator);
   #undef USING
+
   #define DECUSING(t) typedef typename Base::t t
+  DECUSING(SHalfedge_around_svertex_circulator);
+  DECUSING(SHalfedge_around_sface_circulator);
+
   DECUSING(SHalfedge_around_svertex_const_circulator);
   DECUSING(SHalfedge_around_sface_const_circulator);
   #undef DECUSING
-
 
   Sphere_segment segment(SHalfedge_const_handle e) const
   { return Sphere_segment(point(source(e)), point(target(e)), circle(e)); }
@@ -118,20 +129,39 @@ public:
   Sphere_direction direction(SHalfedge_const_handle e) const
   { return Sphere_direction(circle(e)); }
 
-  SHalfedge_const_handle out_wedge(SVertex_const_handle v, 
-    const Sphere_direction& d, bool& collinear) const
+  SHalfedge_handle out_wedge( SVertex_handle v, 
+			      const Sphere_direction& d, 
+			      bool& collinear) const {
+    return out_wedge<SNC_decorator_traits>( v, d, collinear);
+  }
+  
+  SHalfedge_const_handle out_wedge( SVertex_const_handle v, 
+				    const Sphere_direction& d, 
+				    bool& collinear) const {
+    return out_wedge<SNC_decorator_const_traits>( v, d, collinear);
+  }
+
+  template <class Traits>
+  typename Traits::SHalfedge_handle out_wedge( typename Traits::SVertex_handle v, 
+					       const Sphere_direction& d, 
+					       bool& collinear) const
   /*{\Xop returns a halfedge |e| bounding a wedge in between two
   neighbored edges in the adjacency list of |v| which contains |d|.
   If |d| extends along a edge then |e| is this edge. If |d| extends
   into the interior of such a wedge then |e| is the first edge hit
-  when |d| is rotated clockwise. \precond |v| is not isolated.}*/
-  { TRACEN("out_wedge "<<PH(v));
+  when |d| is rotated clockwise. \precond |v| is not isolated.}*/  { 
+
+    typedef typename Traits::SHalfedge_handle SHalfedge_handle;
+    typedef typename Traits::SHalfedge_around_svertex_circulator 
+      SHalfedge_around_svertex_circulator;
+
+    TRACEN("out_wedge "<<PH(v));
     CGAL_nef3_assertion(!is_isolated(v));
     collinear=false;
     Sphere_point p = point(v);
-    SHalfedge_const_handle e_res = first_out_edge(v);
+    SHalfedge_handle e_res = first_out_edge(v);
     Sphere_direction d_res = direction(e_res);
-    SHalfedge_around_svertex_const_circulator el(e_res),ee(el);
+    SHalfedge_around_svertex_circulator el(e_res),ee(el);
     if(direction(el) == d) {
       collinear = true;
       TRACEN("  determined "<<PH(e_res) << circle(e_res));
@@ -180,9 +210,11 @@ public:
   /*{\Mop returns the mark associated to the object |h|.}*/
   { SVertex_const_handle v; 
     SHalfedge_const_handle e; 
+    SHalfloop_const_handle l;
     SFace_const_handle f;
     if ( assign(v,h) ) return mark(v);
     if ( assign(e,h) ) return mark(e);
+    if ( assign(l,h) ) return mark(l);
     if ( assign(f,h) ) return mark(f);
     CGAL_nef3_assertion_msg(0,
     "PM_point_locator::mark: SObject_handle holds no object.");
@@ -190,14 +222,36 @@ public:
 
   enum SOLUTION { is_vertex_, is_edge_, is_loop_ };
   // enumeration for internal use
-  
+
   SObject_handle locate(const Sphere_point& p) const
   /*{\Mop returns a generic handle |h| to an object (vertex, halfedge,
   face) of the underlying plane map |P| which contains the point |p =
   s.source()| in its relative interior. |s.target()| must be a point
-  such that |s| intersects the $1$-skeleton of |P|.}*/
-  { TRACEN("locate naivly "<<p);
-    SVertex_const_iterator v;
+  such that |s| intersects the $1$-skeleton of |P|.}*/ {
+    SObject_handle o = locate_mutable(p);
+    SVertex_handle v; 
+    SHalfedge_handle e; 
+    SHalfloop_handle l;
+    SFace_handle f;
+    if ( assign( v, o)) 
+      return SObject_handle(SVertex_const_handle(v));
+    else if ( assign( e, o)) 
+      return SObject_handle(SHalfedge_const_handle(e));
+    else if ( assign( l, o))
+      return SObject_handle(SHalfloop_const_handle(l));
+    else if ( assign( f, o)) 
+      return SObject_handle(SFace_const_handle(f));
+    CGAL_nef3_assertion_msg( 0, "wrong handle");
+    return SObject_handle(); // never reached
+  }
+
+  SObject_handle locate_mutable(const Sphere_point& p) const
+  /*{\Mop returns a generic handle |h| to an object (vertex, halfedge,
+  face) of the underlying plane map |P| which contains the point |p =
+  s.source()| in its relative interior. |s.target()| must be a point
+  such that |s| intersects the $1$-skeleton of |P|.}*/  { 
+    TRACEN("locate naivly "<<p);
+    SVertex_iterator v;
     CGAL_nef3_forall_svertices(v,*this) {
       if ( p == point(v) ) {
 	TRACEN( "  on point"); 
@@ -205,7 +259,7 @@ public:
       }
     }
 
-    SHalfedge_const_iterator e;
+    SHalfedge_iterator e;
     CGAL_nef3_forall_sedges(e,*this) {
       if ( segment(e).has_on(p) ) {
 	TRACEN( "  on segment"); 
@@ -216,7 +270,7 @@ public:
     //TODO: next line is probably fase - both loops have to be tested
     if ( has_loop() && circle(shalfloop()).has_on(p) ) {
       TRACEN( "  on loop"); 
-      SHalfloop_const_handle l = shalfloop();
+      SHalfloop_handle l = shalfloop();
       return SObject_handle(l);
     }
 
@@ -225,13 +279,13 @@ public:
     //    if ( number_of_svertices() == 0 && ! has_loop() ) {
     if(number_of_sfaces() == 1) {
       TRACEN("  on unique face");
-      SFace_const_handle f = sfaces_begin();
+      SFace_handle f = sfaces_begin();
       return SObject_handle(f);
     }
 
-    SVertex_const_handle v_res;
-    SHalfedge_const_handle e_res;
-    SHalfloop_const_handle l_res;
+    SVertex_handle v_res;
+    SHalfedge_handle e_res;
+    SHalfloop_handle l_res;
     SOLUTION solution;
 
     TRACEN("  on face...");
@@ -246,18 +300,16 @@ public:
       TRACEN(circle(l_res));
     } else { // has vertices !
       CGAL_nef3_assertion( number_of_svertices()!=0 );
-      SVertex_const_handle vt = svertices_begin();
-      Sphere_point pvt = point(vt);
-      if ( p == pvt.antipode() ) {
-	vt = ++(svertices_begin());
-	pvt = point(vt);
+      CGAL_nef3_warning( number_of_svertices()>1);
+      SVertex_iterator vi = svertices_begin();
+      if( p == point(vi).antipode()) {
+	++vi;
+	CGAL_nef3_assertion( vi != svertices_end());
       }
-      s = Sphere_segment(p,pvt);
-      //     else s = Sphere_segment(p,pvt,Sphere_circle(p,pvt));
-      /* to verify if it is necesary to determine exactly the sphere circle
-	 of (p, pvt) segment based on the Halffacet plane information 
-	 when they are antipodal */
-      v_res = vt;
+      TRACEN("initial segment: "<<p<<","<<point(vi));
+      CGAL_nef3_assertion( p != point(vi).antipode());
+      s = Sphere_segment( p, point(vi));
+      v_res = vi;
       solution = is_vertex_;
       TRACEN("has vertices, initial ray "<<s);
     }
@@ -265,7 +317,7 @@ public:
     // s now initialized
     
     Sphere_direction dso(s.sphere_circle().opposite());
-    Unique_hash_map<SHalfedge_const_handle,bool> visited(false);
+    Unique_hash_map<SHalfedge_handle,bool> visited(false);
     CGAL_nef3_forall_svertices(v,*this) {
       Sphere_point vp = point(v);
       if ( s.has_on(vp) ) {
@@ -277,7 +329,7 @@ public:
         } else { // not isolated
           bool dummy;
           e_res = out_wedge(v,dso,dummy);
-          SHalfedge_around_svertex_const_circulator el(e_res),ee(el);
+          SHalfedge_around_svertex_circulator el(e_res),ee(el);
           CGAL_For_all(el,ee) 
             visited[el] = visited[twin(el)] = true;
           /* e_res is now the counterclockwise maximal halfedge out
@@ -307,16 +359,17 @@ public:
 
     switch ( solution ) {
       case is_edge_: 
-        return SObject_handle(SFace_const_handle(face(e_res)));
+        return SObject_handle(SFace_handle(face(e_res)));
       case is_loop_:
-        return SObject_handle(SFace_const_handle(face(l_res)));
+        return SObject_handle(SFace_handle(face(l_res)));
       case is_vertex_:
-        return SObject_handle(SFace_const_handle(face(v_res)));
+        return SObject_handle(SFace_handle(face(v_res)));
       default: CGAL_nef3_assertion_msg(0,"missing solution.");
     }
     
     return SObject_handle(); // never reached!
   }
+
 
   template <typename Object_predicate>
   SObject_handle ray_shoot(const Sphere_point& p, 
@@ -436,7 +489,7 @@ void SNC_SM_point_locator<D>::init_marks_of_halfspheres()
   Sphere_point y_minus(0,-1,0);
   SObject_handle h = locate(y_minus);
   SFace_const_handle f;
-  if ( CGAL::assign(f,h) ) { 
+  if ( assign(f,h) ) { 
     TRACEN("on face " << mark(f));
     mark_of_halfsphere(-1) = mark_of_halfsphere(+1) = mark(f);
     TRACEN(mark_of_halfsphere(-1) << " " << mark_of_halfsphere(+1));
@@ -444,7 +497,7 @@ void SNC_SM_point_locator<D>::init_marks_of_halfspheres()
   }
 
   SHalfedge_const_handle e;
-  if ( CGAL::assign(e,h) ) { 
+  if ( assign(e,h) ) { 
     CGAL_nef3_assertion(circle(e).has_on(y_minus));
     Sphere_point op(CGAL::ORIGIN+circle(e).orthogonal_vector());
     TRACEN("on edge "<<op);
@@ -457,7 +510,7 @@ void SNC_SM_point_locator<D>::init_marks_of_halfspheres()
   }
 
   SHalfloop_const_handle l;
-  if ( CGAL::assign(l,h) ) {
+  if ( assign(l,h) ) {
     CGAL_nef3_assertion(circle(l).has_on(y_minus));
     Sphere_point op(CGAL::ORIGIN+circle(l).orthogonal_vector());
     TRACEN("on loop "<<op);
@@ -473,7 +526,7 @@ void SNC_SM_point_locator<D>::init_marks_of_halfspheres()
   Sphere_direction right(c),left(c.opposite());
   bool collinear(false);
   SVertex_const_handle v;
-  if ( CGAL::assign(v,h) ) {
+  if ( assign(v,h) ) {
     CGAL_nef3_assertion(point(v)==y_minus);
     if(is_isolated(v))
       mark_of_halfsphere(+1) = mark_of_halfsphere(-1) = mark(face(v));
