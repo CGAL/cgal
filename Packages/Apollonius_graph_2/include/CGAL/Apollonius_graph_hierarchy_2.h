@@ -157,8 +157,11 @@ public:
   }
 
   Vertex_handle insert(const Site_2& p);
-  inline Vertex_handle insert(const Site_2& p,
-			      Vertex_handle vnear) {
+  Vertex_handle insert(const Site_2& p,
+		       Vertex_handle vnear) {
+    // the following statement has been added in order to avoid
+    // a g++3.2.1_FreeBSD-RELEASE warning
+    vnear = Vertex_handle(NULL);
     return insert(p);
   }
 
