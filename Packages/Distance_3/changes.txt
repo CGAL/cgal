@@ -1,5 +1,7 @@
-2.7 (7 August 2003) [mh,af]
+2.8 (12 August 2003)
+- Bug fix in squared_distance_3_0.h [af]
 
+2.7 (7 August 2003) [mh,af]
 A first step towards the extendible Kernel:
 
 * All functionality is moved into namespace CGALi, in namespace CGAL
