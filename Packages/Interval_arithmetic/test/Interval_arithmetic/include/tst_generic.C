@@ -316,6 +316,13 @@ bool utility_test()
 
 double zero = 0.0; // I put it here to avoid compiler warnings.
 
+// needed for making the testsuite pass for Intel7
+namespace CGAL {
+  namespace CGALi {
+    extern double zero();
+  }
+}
+
 bool is_valid_test()
 {
   CGAL::Failure_behaviour backup = CGAL::set_error_behaviour(CGAL::CONTINUE);

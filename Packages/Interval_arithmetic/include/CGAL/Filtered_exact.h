@@ -424,8 +424,6 @@ sqrt (const Filtered_exact<CT, ET, Type, Protected, Cache>& fil)
 
 
 
-namespace NTS {
-
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
@@ -465,7 +463,6 @@ square (const Filtered_exact<CGAL_IA_CT, CGAL_IA_ET, Dynamic,
 { return CGAL_NTS square(fil.value()); }
 
 
-} // namespace NTS
 #endif // CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER
 
 template < class CT, class ET, class Type, bool Protected, class Cache >
@@ -492,7 +489,6 @@ std::pair<double, double>
 to_interval (const Filtered_exact<CT, ET, Type, Protected, Cache>& fil)
 { return CGAL::to_interval(fil.value()); }
 
-namespace NTS {
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
@@ -534,7 +530,6 @@ abs (const Filtered_exact<CGAL_IA_CT, CGAL_IA_ET, Dynamic,
                           CGAL_IA_PROTECTED, CGAL_IA_CACHE>& fil)
 { return CGAL_NTS abs(fil.value()); }
 
-} // namespace NTS
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,

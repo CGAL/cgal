@@ -545,8 +545,6 @@ to_interval(const Lazy_exact_nt<ET> & a)
 }
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
-namespace NTS {
-
 template <typename ET>
 inline
 Sign
@@ -590,8 +588,6 @@ inline
 Lazy_exact_nt<ET>
 square(const Lazy_exact_nt<ET> & a)
 { return new Lazy_exact_Square<ET>(a); }
-
-} // namespace NTS
 
 #endif // CGAL_CFG_MATCHING_BUG_2
 

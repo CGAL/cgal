@@ -1,3 +1,6 @@
+Version 4.179 on 27 August 2003
+- CGAL::NTS updates.
+
 Version 4.178 on 7 August 2003
 - Interval_converter -> To_interval.
 

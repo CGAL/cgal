@@ -553,8 +553,6 @@ max (const Interval_nt<true> & d, const Interval_nt<true> & e)
 
 #endif // CGAL_CFG_MATCHING_BUG_2
 
-namespace NTS {
-
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template <bool Protected>
 inline
@@ -700,8 +698,6 @@ compare (const Interval_nt<false> & d, const Interval_nt<false> & e)
 }
 #endif // CGAL_CFG_MATCHING_BUG_2
 
-} // namespace NTS
-
 inline
 std::pair<double,double>
 to_interval (const long & l)
@@ -720,16 +716,6 @@ to_interval (const long & l)
 #endif
     return std::pair<double,double>(l,l);
 }
-
-
-// needed for making the testsuite pass for Intel7
-
-namespace CGALi {
-
-  extern double zero();
-}
-
-
 
 CGAL_END_NAMESPACE
 
