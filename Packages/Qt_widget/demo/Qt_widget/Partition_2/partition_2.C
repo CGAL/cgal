@@ -62,20 +62,19 @@ class MyWindow : public QMainWindow
 {
   Q_OBJECT
 public:
-  MyWindow(int w, int h): win(this) {
-  setCentralWidget(&win);
+  MyWindow(int w, int h){
+    widget = new CGAL::Qt_widget(this);
+    setCentralWidget(widget);
     
-
-  //create a timer for checking if somthing changed
-  QTimer *timer = new QTimer( this );
-  connect( timer, SIGNAL(timeout()),
+    //create a timer for checking if somthing changed
+    QTimer *timer = new QTimer( this );
+    connect( timer, SIGNAL(timeout()),
            this, SLOT(timerDone()) );
-  timer->start( 200, FALSE );
+    timer->start( 200, FALSE );
 
-
-  // file menu
-  QPopupMenu * file = new QPopupMenu( this );
-  menuBar()->insertItem( "&File", file );
+    // file menu
+    QPopupMenu * file = new QPopupMenu( this );
+    menuBar()->insertItem( "&File", file );
     file->insertItem("&New", this, SLOT(new_instance()), CTRL+Key_N);
     file->insertItem("New &Window", this, SLOT(new_window()), CTRL+Key_W);
     file->insertSeparator();
@@ -85,47 +84,47 @@ public:
     file->insertItem( "&Close", this, SLOT(close()), CTRL+Key_X );
     file->insertItem( "&Quit", qApp, SLOT( closeAllWindows() ), CTRL+Key_Q );
 
-
-  // drawing menu
-  QPopupMenu * draw = new QPopupMenu( this );
-  menuBar()->insertItem( "&Draw", draw );
+    // drawing menu
+    QPopupMenu * draw = new QPopupMenu( this );
+    menuBar()->insertItem( "&Draw", draw );
     draw->insertItem("Generate Polygon", this, SLOT(gen_poly()), CTRL+Key_G);
 
-  // help menu
-  QPopupMenu * help = new QPopupMenu( this );
-  menuBar()->insertItem( "&Help", help );
-  help->insertItem("&About", this, SLOT(about()), CTRL+Key_A );
-  help->insertItem("About &Qt", this, SLOT(aboutQt()) );
+    // help menu
+    QPopupMenu * help = new QPopupMenu( this );
+    menuBar()->insertItem( "&Help", help );
+    help->insertItem("&About", this, SLOT(about()), CTRL+Key_A );
+    help->insertItem("About &Qt", this, SLOT(aboutQt()) );
 
-  //the new tools toolbar
-  setUsesBigPixmaps(TRUE);
-  newtoolbar = new CGAL::Tools_toolbar(&win, this);	
-  //the new scenes toolbar
-  vtoolbar = new CGAL::Layers_toolbar(&win, this, &polygon);
-  //the standard toolbar
-  stoolbar = new CGAL::Standard_toolbar (&win, this);
-  this->addToolBar(stoolbar->toolbar(), Top, FALSE);
-  this->addToolBar(newtoolbar->toolbar(), Top, FALSE);
-  this->addToolBar(vtoolbar->toolbar(), Top, FALSE);
+    //the new tools toolbar
+    setUsesBigPixmaps(TRUE);
+    newtoolbar = new CGAL::Tools_toolbar(widget, this);	
+    //the new scenes toolbar
+    vtoolbar = new CGAL::Layers_toolbar(widget, this, &polygon);
+    //the standard toolbar
+    stoolbar = new CGAL::Standard_toolbar (widget, this);
+    this->addToolBar(stoolbar->toolbar(), Top, FALSE);
+    this->addToolBar(newtoolbar->toolbar(), Top, FALSE);
+    this->addToolBar(vtoolbar->toolbar(), Top, FALSE);
 
-
-  win << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::BLACK);
-
-  resize(w,h);
+    *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::BLACK);
+    resize(w,h);
   
-  win.show();
-  win.setMouseTracking(TRUE);
+    widget->show();
+    widget->setMouseTracking(TRUE);
 	
-  //connect the widget to the main function that receives the objects
-  connect(&win, SIGNAL(new_cgal_object(CGAL::Object)), this, SLOT(get_new_object(CGAL::Object)));
+    //connect the widget to the main function that receives the objects
+    connect(widget, SIGNAL(new_cgal_object(CGAL::Object)), this, SLOT(get_new_object(CGAL::Object)));
 
-  //application flag stuff
-  old_state = 0;
-  win.set_window(-1, 1, -1, 1);
-};
+    //application flag stuff
+    old_state = 0;
+    widget->set_window(-1, 1, -1, 1);
+  };
 
   ~MyWindow()
   {
+    delete newtoolbar;
+    delete vtoolbar;
+    delete stoolbar;
   };
 
 	
@@ -136,15 +135,15 @@ public slots:
 
   void set_window(double xmin, double xmax, double ymin, double ymax)
   {
-    win.set_window(xmin, xmax, ymin, ymax);
+    widget->set_window(xmin, xmax, ymin, ymax);
   }
   void new_instance()
   {
-    win.detach_current_tool();
-    win.lock();
-    win.clear();
-    win.set_window(-1.1, 1.1, -1.1, 1.1); // set the Visible Area to the Interval
-    win.unlock();
+    widget->detach_current_tool();
+    widget->lock();
+    widget->clear();
+    widget->set_window(-1.1, 1.1, -1.1, 1.1); // set the Visible Area to the Interval
+    widget->unlock();
   }
 
 
@@ -154,7 +153,7 @@ private slots:
     CGAL::random_polygon_2(100,
 			   std::back_inserter(polygon),
 			   Point_generator(1));
-    win.redraw();
+    widget->redraw();
   }
 
   void get_new_object(CGAL::Object obj)
@@ -165,7 +164,7 @@ private slots:
       polygon = poly;
       something_changed();
     }
-    win.redraw();
+    widget->redraw();
   };
 
 	
@@ -214,13 +213,13 @@ private slots:
     std::ifstream in(s);
     CGAL::set_ascii_mode(in);
     in >> polygon;
-    win.redraw();
+    widget->redraw();
   }
 
 	
 
 private:
-  CGAL::Qt_widget	  win;	
+  CGAL::Qt_widget	  *widget;	
   CGAL::Tools_toolbar	  *newtoolbar;
   CGAL::Layers_toolbar	  *vtoolbar;
   CGAL::Standard_toolbar  *stoolbar;
@@ -240,12 +239,12 @@ main(int argc, char **argv)
   app.setPalette( p, TRUE );
   current_state = -1;
   
-  MyWindow win(800,800); // physical window size
-  app.setMainWidget(&win);
-  win.setCaption(my_title_string);
-  win.setMouseTracking(TRUE);
-  win.show();
-  win.set_window(-1, 1, -1, 1);
+  MyWindow widget(800,800); // physical window size
+  app.setMainWidget(&widget);
+  widget.setCaption(my_title_string);
+  widget.setMouseTracking(TRUE);
+  widget.show();
+  widget.set_window(-1, 1, -1, 1);
   // because Qt send resizeEvent only on show.
   
   return app.exec();
