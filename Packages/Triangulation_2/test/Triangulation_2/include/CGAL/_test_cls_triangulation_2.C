@@ -27,7 +27,7 @@
 
 #include <utility>
 #include <list>
-#include <vector>
+//#include <vector>
 
 #include <CGAL/_test_cls_triangulation_vertex.C>
 #include <CGAL/_test_cls_triangulation_face.C>
