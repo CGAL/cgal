@@ -1,5 +1,5 @@
-Concerning the new stuff:
--------------------------
+Concerning the new filters:
+---------------------------
 - What to do with branches (collinearC3() and power_test()):
   - The epsilon computation type should return ZERO/EQUAL as default.
     This way, collinearC3() works.
@@ -7,10 +7,10 @@ Concerning the new stuff:
     by special symbols /*CGAL_FILTER_BODY ... */.  That's the solution for CGAL.
   - Checks that the epsilons have been updated (which will not prove that
     it's correct, but is better than nothing).
-- New Cartesian predicates must also be in CGAL-I for the whole thing to work.
 - /*DEGREE=2*/ attribute to the arguments ?
 - /*CGAL_NO_FILTER*/ attribute instead of //CGAL_FILTER(BEGIN|END) ?
 - Long term: match operator<(a,b) and co ?
+- Or use the GCC interface as a parser ?
 - # of bounds  : one per predicate, or one per argument ?  give choice.
 - # of epsilons: one per predicate, or one set per sub-predicate ?  choice.
 - Check that the compiler optimizes the epsilon computation
@@ -33,23 +33,24 @@ Concerning the new stuff:
   .bound()      (basically a bound on: fabs(.dbl_approx()))
   .error()
 
-Concerning the code itself:
----------------------------
-- See GCC' __builtin_constant_p() for stopping constant propagation.
-  It could be the perfect solution ;-) (for GCC).
+Concerning the main code:
+-------------------------
+- volatile should be removed from FPU_empiric_test() now that we enforce this
+  everywhere.
+- Replace the macros CGAL_IA_SMALLEST/CGAL_IA_LARGEST by consts ?  See if it
+  impacts performance before.
+- Move the constant propagation barriers more deeply, where they are needed.
+  (i.e. just before the actual FP operations that need to be done at run time)
 - Mark the cache as "mutable" (see Stroustrup, page 232) ?
 - Replace the NT wrapping, by Filtered_Cartesian<FT>, a new kernel ?
   this would be cleaner, and won't rely on some optimizations in the compiler.
   (same thing for Fixed)
-- Fix Michael's problem with max() and co.  At least add a testcase.
+- Fix Michael's problem with min/max/sqrt() and co.  At least add a testcase.
 - Get rid of convert_to() ?  This is a mess for nothing (benchmark first).
-  Target convert_from_to (const Target, const Source) is fine.
+  Target convert_from_to (const Target, const Source) is fine ?
   It could maybe be made better this way:
     void convert_from_to(Target &, const Source &) ?
   Suggest that to Stefan for misc.h ?
-? GYGWIN square_root_test() bug: it disappears with -O2.  It's a bug in the
-  non-inline version of std::sqrt().  Hopefully it is fixed in CygWin 2.95.
-- Essayer "attribute(noreturn)" pour overlap_action().
 - Handle in_smallest_orthogonalcircle_ftC2.h correctly (needs an include)
 - Essayer de bencher avec -fbranch-probabilities ?  Ça pourrait être pas mal.
 - Expertiser le bench de Stefan... à la prochaine version.
@@ -64,16 +65,11 @@ Concerning the code itself:
   required between ldfsr and next FBfcc; nops inserted
 ? See the C++ Standard numeric_limits<>, section 18.2.
 ? convert_to à faire pour: long double, long long (CGAL..._64), CLN.
-- Use friend functions for operator+(IA,IA) (and others), because this way,
-  there's no need for a special version for double...  That would simplify
-  the code, but I need to check it doesn't impact performance first.
 - Have a look at the "function-try-blocks" ?
-- Replace the macros CGAL_IA_SMALLEST/CGAL_IA_LARGEST by consts ?  See if it
-  impacts performance before.
 - The idea of an CGAL::Ieee_double, which would have corrected operators
   is not so bad.  It would save VC++, as well as allow to replace all the
   CGAL_IA_FORCE_TO_DOUBLE.  But it would perhaps impact performance and
-  compile time...
+  compile time...   Hum, maybe it's not needed after all.
 
 Concerning the script:
 ----------------------
@@ -87,10 +83,8 @@ Concerning the doc:
   Idem, my fct to_double(Ia) is not the same as the others...
 - add a pointer to my MISC'99 paper.
 - Use the new doc format.
-- Document CGAL_IA_STOP_CONSTANT_PROPAGATION ?
 - DOCUMENT the script.
 - DOCUMENT the new static stuff !!!
-- Update the status of the compilers (MipsPro 7.3 and Visual/Borland).
 
 Concerning the test-suite:
 --------------------------
@@ -98,5 +92,5 @@ Concerning the test-suite:
 - Add a simple test to check that exceptions do work indeed.
 - Make a more extensive test-suite for the filtered predicates.
   The script could output information to test them generically somehow.
-- test NaNs (and Infs?).  Comparisons with these should throw the exception...
+- Test NaN propagation.  Comparisons with these should throw the exception...
   Check that they are correctly propagated (by min(), max(), even operator*...)

@@ -1,5 +1,22 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.30 on 19 October 1999
+- Added one more missing header.
+- Documentation updates: new flags CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT and
+  CGAL_IA_DONT_STOP_CONSTANT_PROPAGATION.
+- Constant propagation stopping is on by default, and has a new implementation
+  for GCC which should be zero-cost thanks to __builtin_constant_p() :-).
+- Put all operators on Interval_nt* friend instead of member, and got rid of
+  the particular version for doubles.
+- Finally got rid of Interval_nt::bound_t, as well as Double_IEEE.h.
+- New file src/Interval_arithmetic/workaround_4_ms.c that defines a C function
+  to compute sqrt(double).  The problem is that it must be compiled _with_
+  optimization.  I ship the .obj too.
+- force_ieee_double_precision() does the same things on VC++ and Borland, as
+  on Linux/x86.
+- Don't submit test files for the experimental stuff [yet].
+- Lazy_nt_exact<> is now supposed to work ;)
+
 Version 4.29 on 13 October 1999
 - Added headers to the automaticaly generated static_infos files.
 
@@ -23,7 +40,7 @@ Version 4.26 on 11 October 1999
 - New class Double_IEEE (in Double_IEEE.h), which is a wrapper for a double,
   but with corrected operators so that it's IEEE 754 compliant (enough).
 - Replaced lot's of .inf() and .sup() by ._inf and ._sup, using friend
-  functions.  Hopefully it's work... faster.
+  functions.  Hopefully it works... faster.
 - Remove special version of operator*(IA, double) and operator/(IA, double).
   They were faster than the normal one, but not that used, and potentially
   risky.
