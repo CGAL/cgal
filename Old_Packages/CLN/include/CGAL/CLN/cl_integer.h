@@ -60,6 +60,16 @@ operator>> (std::istream& in, Quotient<cl_I>& z)
 
 inline double	to_double	(const cl_I &I) { return cl_double_approx(I); }
 
+// We hope the conversion cl_integer -> double is guaranteed one bit error
+// max...
+inline Interval_base to_interval (const cl_I &I)
+{
+  Protect_FPU_rounding<true> P (CGAL_FE_TONEAREST);
+  Interval_nt_advanced cl_double_approx(I);
+  FPU_set_cw(CGAL_FE_UPWARD);
+  return approx + Interval_base::Smallest;
+}
+
 // Specialized utilities.
 
 namespace NTS {
@@ -73,9 +83,5 @@ inline Comparison_result compare (const cl_I &I, const cl_I &J)
 } // namespace NTS
 
 CGAL_END_NAMESPACE
-
-// #ifdef CGAL_INTERVAL_ARITHMETIC_H
-// #include <CGAL/Interval_arithmetic/IA_cl_integer.h>
-// #endif
 
 #endif // CGAL_CL_INTEGER_H

@@ -30,6 +30,7 @@
 #include <CGAL/number_utils.h>
 #include <CGAL/number_type_tags.h>
 #include <CGAL/IO/io_tags.h>
+#include <CGAL/Interval_arithmetic.h>
 
 // So that CLN defines the operators += -= *= /=
 #define WANT_OBFUSCATING_OPERATORS
