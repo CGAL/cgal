@@ -6,16 +6,6 @@
 #include <fstream>
 #include <cassert>
 
-// Workaround for buggy compilers.
-#if 0
-#ifdef CGAL_CFG_MATCHING_BUG_2
-#  define CGAL_IA_CT double
-#  define CGAL_IA_PROTECTED true
-#  define CGAL_IA_CACHE No_Filter_Cache
-#  define CGAL_IA_ET CGAL::MP_Float
-#endif
-#endif
-
 // example that uses the filtered traits and
 // the segment Voronoi diagram hierarchy
 
