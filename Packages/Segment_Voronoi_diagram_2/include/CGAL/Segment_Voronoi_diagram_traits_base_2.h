@@ -50,58 +50,6 @@ CGAL_BEGIN_NAMESPACE
 //***********************************************************************
 
 //-----------------------------------------------------------------------
-//                           compare x
-//-----------------------------------------------------------------------
-
-template< class K >
-class Svd_compare_x_2
-{
-public:
-  typedef typename K::Site_2         Site_2;
-  typedef typename K::Point_2        Point_2;
-
-  typedef Comparison_result          result_type;
-
-  typedef Arity_tag<2>               Arity;
-
-private:
-  typedef typename K::Compare_x_2    compare_x_2;
-
-public:
-
-  result_type operator()(const Site_2& p, const Site_2& q) const
-  {
-    CGAL_precondition( p.is_point() && q.is_point() );
-    return compare_x_2()( p.point(), q.point() );
-  }
-};
-
-//-----------------------------------------------------------------------
-//                           compare y
-//-----------------------------------------------------------------------
-
-template< class K >
-class Svd_compare_y_2
-{
-public:
-  typedef typename K::Site_2         Site_2;
-  typedef typename K::Point_2        Point_2;
-  typedef Comparison_result          result_type;
-  typedef Arity_tag<2>               Arity;
-
-private:
-  typedef typename K::Compare_y_2  compare_y_2;
-
-public:
-
-  result_type operator()(const Site_2& p, const Site_2& q) const
-  {
-    CGAL_precondition( p.is_point() && q.is_point() );
-    return compare_y_2()( p.point(), q.point() );
-  }
-};
-
-//-----------------------------------------------------------------------
 //                           orientation
 //-----------------------------------------------------------------------
 
