@@ -8,15 +8,15 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.4-I-65 $
-// release_date  : $CGAL_Date: 2002/03/19 $
+// release       : 
+// release_date  : 
 //
 // file          : include/CGAL/config.h
-// package       : Configuration (2.29)
+// package       : Configuration
 // maintainer    : Geert-Jan Giezeman <geert@cs.uu.nl>
 // source        :
-// revision      : 1.11
-// revision_date : 30 Mar 1998
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Wieger Wesselink <wieger@cs.ruu.nl>
 //                 Michael Hoffmann
 //
@@ -30,7 +30,6 @@
 #define CGAL_VERSION 2.4-I-65
 #define CGAL_VERSION_NR 1002004065
 
-#define CGAL_CFG_NO_ADVANCED_KERNEL 1
 
 //----------------------------------------------------------------------//
 //             STLport fix for MSVC
@@ -112,9 +111,13 @@
 #endif
 
 #ifdef CGAL_CFG_NO_STDC_NAMESPACE
-#define CGAL_CLIB_STD
+#  define CGAL_CLIB_STD
 #else
-#define CGAL_CLIB_STD std
+#  define CGAL_CLIB_STD std
+#endif
+
+#ifndef CGAL_CFG_NO_LONG_LONG
+#  define CGAL_USE_LONG_LONG
 #endif
 
 //----------------------------------------------------------------------//

@@ -1,3 +1,7 @@
+2.36
+- Introduce CGAL_USE_LONG_LONG.
+- Delete CGAL_CFG_NO_ADVANCED_KERNEL.
+
 2.35
 - Fix some warnings.
 - Add CGAL_CFG_NO_LONG_LONG.C to test if the compiler knows about
