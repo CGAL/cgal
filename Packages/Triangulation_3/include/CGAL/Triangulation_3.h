@@ -1023,18 +1023,11 @@ operator<< (std::ostream& os, const Triangulation_3<GT, Tds> &tr)
   int i = 0;
 
   // write the vertices
-  // the vertices must be indexed by their order of creation so
-  // that when reread from file, the orders of vertices are the
-  // same - important for remove 
 
   for (Vertex_iterator it=tr.vertices_begin(); it!=tr.vertices_end(); ++it)
     TV[i++] = it;
 
   CGAL_triangulation_assertion( i == n+1 ); 
-
-  std::sort(TV.begin(), TV.end(), 
-	    Vertex_tds_compare_order_of_creation<Vertex_handle>()); 
-
   CGAL_triangulation_assertion( tr.is_infinite(TV[0]) );
 
   std::map<Vertex_handle, int > V;

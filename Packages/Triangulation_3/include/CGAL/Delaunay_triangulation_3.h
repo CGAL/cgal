@@ -95,18 +95,12 @@ public:
 protected:
 
   Oriented_side
-  side_of_oriented_sphere(const Point &p, const Point &q, const Point &r,
-	                  const Point &s, const Point &t) const
-  {
-      return geom_traits().side_of_oriented_sphere_3_object()(p, q, r, s, t);
-  }
+  side_of_oriented_sphere(const Point &p0, const Point &p1, const Point &p2,
+	 const Point &p3, const Point &t, bool perturb = false) const;
 
   Bounded_side
   coplanar_side_of_bounded_circle(const Point &p, const Point &q,
-	                          const Point &r, const Point &s) const
-  {
-      return geom_traits().coplanar_side_of_bounded_circle_3_object()(p,q,r,s);
-  }
+		  const Point &r, const Point &s, bool perturb = false) const;
 
   // for dual:
   Point
@@ -258,19 +252,29 @@ private:
   void remove_2D(Vertex_handle v);
   void make_hole_2D(Vertex_handle v, std::list<Edge_2D> & hole);
   void fill_hole_delaunay_2D(std::list<Edge_2D> & hole);
+
+  Bounded_side
+  side_of_sphere(Vertex_handle v0, Vertex_handle v1,
+		 Vertex_handle v2, Vertex_handle v3,
+		 const Point &p, bool perturb) const;
 public:
 
   Bounded_side
-  side_of_sphere( Cell_handle c, const Point & p) const;
+  side_of_sphere( Cell_handle c, const Point & p, bool perturb = false) const
+  {
+      return side_of_sphere(c->vertex(0), c->vertex(1),
+                            c->vertex(2), c->vertex(3), p, perturb);
+  }
 
   Bounded_side
-  side_of_circle( const Facet & f, const Point & p) const
-    {
-      return side_of_circle(f.first, f.second, p);
-    }
+  side_of_circle( const Facet & f, const Point & p, bool perturb = false) const
+  {
+      return side_of_circle(f.first, f.second, p, perturb);
+  }
 
   Bounded_side
-  side_of_circle( Cell_handle c, int i, const Point & p) const;
+  side_of_circle( Cell_handle c, int i, const Point & p,
+	          bool perturb = false) const;
 
   Vertex_handle
   nearest_vertex_in_cell(const Point& p, Cell_handle c) const;
@@ -315,19 +319,6 @@ private:
       return less_distance(p, v->point(), w->point()) ? v : w;
   }
 
-  Bounded_side
-  side_of_sphere_inf_perturb(Vertex_handle v0, 
-			     Vertex_handle v1, 
-			     Vertex_handle v2, 
-			     Vertex_handle v) const;
-
-  Bounded_side
-  side_of_sphere_finite_perturb(Vertex_handle v0, 
-				Vertex_handle v1, 
-				Vertex_handle v2, 
-				Vertex_handle v3, 
-				Vertex_handle v) const;
-
   void make_hole_3D_ear( Vertex_handle v, 
 	                 std::vector<Facet> & boundhole,
 	                 std::vector<Cell_handle> & hole);
@@ -347,7 +338,7 @@ private:
 
       bool operator()(const Cell_handle c) const
       {
-	  return t->side_of_sphere(c, p) == ON_BOUNDED_SIDE;
+	  return t->side_of_sphere(c, p, true) == ON_BOUNDED_SIDE;
       }
   };
 
@@ -363,9 +354,25 @@ private:
 
       bool operator()(const Cell_handle c) const
       {
-	  return t->side_of_circle(c, 3, p) == ON_BOUNDED_SIDE;
+	  return t->side_of_circle(c, 3, p, true) == ON_BOUNDED_SIDE;
       }
   };
+
+  class Perturbation_order {
+      const Self *t;
+
+  public:
+      Perturbation_order(const Self *tr)
+	  : t(tr) {}
+
+      bool operator()(const Point *p, const Point *q) const {
+	  return t->compare_xyz(*p, *q) == SMALLER;
+      }
+  };
+
+  friend class Perturbation_order;
+  friend class Conflict_tester_3;
+  friend class Conflict_tester_2;
 };
 
 template < class Gt, class Tds >
@@ -515,7 +522,7 @@ fill_hole_delaunay_2D(std::list<Edge_2D> & first_hole)
 	  const Point &p = vv->point();
 	  if (coplanar_orientation(p0, p1, p) == COUNTERCLOCKWISE) {
 	    if (is_infinite(v2) ||
-	        coplanar_side_of_bounded_circle(p0, p1, *p2, p)
+	        coplanar_side_of_bounded_circle(p0, p1, *p2, p, true)
 		  == ON_BOUNDED_SIDE) {
 		v2 = vv;
 		p2 = &p;
@@ -658,180 +665,152 @@ remove(Vertex_handle v)
 }
 
 template < class Gt, class Tds >
-Bounded_side
+Oriented_side
 Delaunay_triangulation_3<Gt,Tds>::
-side_of_sphere(Cell_handle c, const Point & p) const
+side_of_oriented_sphere(const Point &p0, const Point &p1, const Point &p2,
+	                const Point &p3, const Point &p, bool perturb) const
 {
-  CGAL_triangulation_precondition( dimension() == 3 );
-  int i3;
-  if ( ! c->has_vertex( infinite_vertex(), i3 ) ) 
-    return Bounded_side( side_of_oriented_sphere( c->vertex(0)->point(),
-						  c->vertex(1)->point(),
-						  c->vertex(2)->point(),
-						  c->vertex(3)->point(),
-						  p ) );
-  // else infinite cell :
-  unsigned char i[3] = {(i3+1)&3, (i3+2)&3, (i3+3)&3};
-  if ( (i3&1) == 0 )
-      std::swap(i[0], i[1]);
-  Orientation o = orientation( c->vertex(i[0])->point(),
-			       c->vertex(i[1])->point(),
-			       c->vertex(i[2])->point(),
-			       p );
-  if (o != ZERO)
-    return Bounded_side(o);
+    CGAL_triangulation_precondition( orientation(p0, p1, p2, p3) == POSITIVE );
 
-  return coplanar_side_of_bounded_circle( c->vertex(i[0])->point(), 
-					  c->vertex(i[1])->point(),
-					  c->vertex(i[2])->point(),
-					  p );
+    Oriented_side os =
+	geom_traits().side_of_oriented_sphere_3_object()(p0, p1, p2, p3, p);
+
+    if (os != ON_ORIENTED_BOUNDARY || !perturb)
+	return os;
+
+    // We are now in a degenerate case => we do a symbolic perturbation.
+
+    // We sort the points lexicographically.
+    const Point * points[5] = {&p0, &p1, &p2, &p3, &p};
+    std::sort(points, points+5, Perturbation_order(this) );
+
+    // We successively look whether the leading monomial, then 2nd monomial
+    // of the determinant has non null coefficient.
+    // 2 iterations are enough (cf paper)
+    for (int i=4; i>2; --i) {
+        if (points[i] == &p)
+            return ON_NEGATIVE_SIDE; // since p0 p1 p2 p3 are non coplanar
+	                             // and positively oriented
+        Orientation o;
+        if (points[i] == &p3 && (o = orientation(p0,p1,p2,p)) != COPLANAR )
+            return Oriented_side(o);
+        if (points[i] == &p2 && (o = orientation(p0,p1,p3,p)) != COPLANAR )
+            return Oriented_side(-o);
+        if (points[i] == &p1 && (o = orientation(p0,p2,p3,p)) != COPLANAR )
+            return Oriented_side(o);
+        if (points[i] == &p0 && (o = orientation(p1,p2,p3,p)) != COPLANAR )
+            return Oriented_side(-o);
+    }
+
+    CGAL_triangulation_assertion(false);
+    return ON_NEGATIVE_SIDE; 
 }
 
 template < class Gt, class Tds >
 Bounded_side
 Delaunay_triangulation_3<Gt,Tds>::
-side_of_sphere_inf_perturb(Vertex_handle v0, 
-			   Vertex_handle v1, 
-			   Vertex_handle v2, 
-			   Vertex_handle v) const
-  // v0,v1,v2 are supposed to form a facet of the triangulation
+coplanar_side_of_bounded_circle(const Point &p0, const Point &p1,
+	       const Point &p2, const Point &p, bool perturb) const
 {
-  CGAL_triangulation_precondition( (dimension() == 3) &&
-				   (! is_infinite(v0)) &&
-				   (! is_infinite(v1)) &&
-				   (! is_infinite(v2)) &&
-				   (! is_infinite(v)) );
-  
-  const Point & p0 = v0->point();
-  const Point & p1 = v1->point();
-  const Point & p2 = v2->point();
-  const Point & p = v->point();
+    // In dim==2, we should even be able to assert orient == POSITIVE.
+    CGAL_triangulation_precondition( coplanar_orientation(p0, p1, p2)
+	                             != COLLINEAR );
 
-  Orientation o = orientation(p0,p1,p2,p);
+    Bounded_side bs =
+      geom_traits().coplanar_side_of_bounded_circle_3_object()(p0, p1, p2, p);
 
-  if (o != ZERO)
-    return Bounded_side(o);
+    if (bs != ON_BOUNDARY || !perturb)
+	return bs;
 
-  Bounded_side bs = coplanar_side_of_bounded_circle (p0,p1,p2,p);
+    // We are now in a degenerate case => we do a symbolic perturbation.
 
-  if ( bs == ON_BOUNDARY ) {
-    // the 4 points are coplanar, cocircular
-    // the facet is supposed to exist, so:
-    return ON_UNBOUNDED_SIDE;
-  }
-  
-  return bs;
+    // We sort the points lexicographically.
+    const Point * points[4] = {&p0, &p1, &p2, &p};
+    std::sort(points, points+4, Perturbation_order(this) );
+
+    Orientation local = coplanar_orientation(p0, p1, p2);
+
+    // we successively look whether the leading monomial, then 2nd monimial,
+    // then 3rd monomial, of the determinant which has non null coefficient
+    // [syl] : TODO : Probably it can be stopped earlier like the 3D version
+    for (int i=3; i>0; --i) {
+        if (points[i] == &p)
+            return Bounded_side(NEGATIVE); // since p0 p1 p2 are non collinear
+	                           // but not necessarily positively oriented
+        Orientation o;
+        if (points[i] == &p2
+		&& (o = coplanar_orientation(p0,p1,p)) != COLLINEAR )
+	    // [syl] : TODO : I'm not sure of the signs here (nor the rest :)
+            return Bounded_side(o*local);
+        if (points[i] == &p1
+		&& (o = coplanar_orientation(p0,p2,p)) != COLLINEAR )
+            return Bounded_side(-o*local);
+        if (points[i] == &p0
+		&& (o = coplanar_orientation(p1,p2,p)) != COLLINEAR )
+            return Bounded_side(o*local);
+    }
+
+    // case when the first non null coefficient is the coefficient of 
+    // the 4th monomial
+    // moreover, the tests (points[] == &p) were false up to here, so the
+    // monomial corresponding to p is the only monomial with non-zero
+    // coefficient, it is equal to coplanar_orient(p0,p1,p2) == positive 
+    // so, no further test is required
+    return Bounded_side(-local); //ON_UNBOUNDED_SIDE;
 }
 
 template < class Gt, class Tds >
 Bounded_side
 Delaunay_triangulation_3<Gt,Tds>::
-side_of_sphere_finite_perturb(Vertex_handle v0, 
-			      Vertex_handle v1, 
-			      Vertex_handle v2, 
-			      Vertex_handle v3, 
-			      Vertex_handle v) const
-  // v0,v1,v2 and v0,v1,v3 are supposed to form two finite facets of
-  // the triangulation, forming a convex angle 
-  // must not be used otherwise
+side_of_sphere(Vertex_handle v0, Vertex_handle v1,
+	       Vertex_handle v2, Vertex_handle v3,
+	       const Point &p, bool perturb) const
 {
-  CGAL_triangulation_precondition( (dimension() == 3) &&
-				   (! is_infinite(v0)) &&
-				   (! is_infinite(v1)) &&
-				   (! is_infinite(v2)) &&
-				   (! is_infinite(v3)) );
+    CGAL_triangulation_precondition( dimension() == 3 );
 
-  const Point & p0 = v0->point();
-  const Point & p1 = v1->point();
-  const Point & p2 = v2->point();
-  const Point & p3 = v3->point();
+    // TODO :
+    // - avoid accessing points of infinite vertex
+    // - share the 4 codes below (see old version)
+    const Point &p0 = v0->point();
+    const Point &p1 = v1->point();
+    const Point &p2 = v2->point();
+    const Point &p3 = v3->point();
 
-  CGAL_triangulation_precondition( orientation(p0,p1,p2,p3) == POSITIVE );
-				   
-  if (is_infinite(v))
-      return ON_UNBOUNDED_SIDE;
+    if (is_infinite(v0)) {
+	Orientation o = orientation(p2, p1, p3, p);
+	if (o != COPLANAR)
+	    return Bounded_side(o);
+	return coplanar_side_of_bounded_circle(p2, p1, p3, p, perturb);
+    }
 
-  const Point & p = v->point();
+    if (is_infinite(v1)) {
+	Orientation o = orientation(p2, p3, p0, p);
+	if (o != COPLANAR)
+	    return Bounded_side(o);
+	return coplanar_side_of_bounded_circle(p2, p3, p0, p, perturb);
+    }
 
-  Bounded_side bs = Bounded_side(side_of_oriented_sphere(p0,p1,p2,p3,p));
+    if (is_infinite(v2)) {
+	Orientation o = orientation(p1, p0, p3, p);
+	if (o != COPLANAR)
+	    return Bounded_side(o);
+	return coplanar_side_of_bounded_circle(p1, p0, p3, p, perturb);
+    }
 
-  if ( bs != ON_BOUNDARY )
-      return bs;
+    if (is_infinite(v3)) {
+	Orientation o = orientation(p0, p1, p2, p);
+	if (o != COPLANAR)
+	    return Bounded_side(o);
+	return coplanar_side_of_bounded_circle(p0, p1, p2, p, perturb);
+    }
 
-  // Array of the 5 vertices.
-  Vertex_handle vertices[5] = {v0, v1, v2, v3, v};
-
-  // We sort them by order_of_creation order (later it will be lexicographic).
-  std::sort(vertices, vertices+5,
-	    Vertex_tds_compare_order_of_creation<Vertex_handle>() );
-
-  Orientation o;
-
-  // we look whether the leading monomial of the determinant has non null 
-  // coefficient 
-  if (vertices[4] == v) 
-    return ON_UNBOUNDED_SIDE;
-  // since p0 p1 p2 p3 are supposed to be non coplanar and positively oriented
-  if (vertices[4] == v3 && (o = orientation(p0,p1,p2,p)) != ZERO )
-    return Bounded_side(o);
-  if (vertices[4] == v2 && (o = orientation(p0,p1,p3,p)) != ZERO )
-    return Bounded_side(-o);
-  if (vertices[4] == v1 && (o = orientation(p0,p2,p3,p)) != ZERO )
-    return Bounded_side(o);
-  if (vertices[4] == v0 && (o = orientation(p1,p2,p3,p)) != ZERO )
-    return Bounded_side(-o);
-
-  // if not yet returned, then the leading monomial of the determinant
-  // has null coefficient 
-  // we look whether the 2nd monomial has non null coefficient 
-  if (vertices[3] == v) 
-    return ON_UNBOUNDED_SIDE;
-  if (vertices[3] == v3 && (o = orientation(p0,p1,p2,p)) != ZERO )
-    return Bounded_side(o);
-  if (vertices[3] == v2 && (o = orientation(p0,p1,p3,p)) != ZERO )
-    return Bounded_side(-o);
-  if (vertices[3] == v1 && (o = orientation(p0,p2,p3,p)) != ZERO )
-    return Bounded_side(o);
-  if (vertices[3] == v0 && (o = orientation(p1,p2,p3,p)) != ZERO )
-    return Bounded_side(-o);
-
-  // we look whether the 3rd monomial also has non null coefficient 
-  if (vertices[2] == v) 
-    return ON_UNBOUNDED_SIDE;
-  if (vertices[2] == v3 && (o = orientation(p0,p1,p2,p)) != ZERO )
-    return Bounded_side(o);
-  if (vertices[2] == v2 && (o = orientation(p0,p1,p3,p)) != ZERO )
-    return Bounded_side(-o);
-  if (vertices[2] == v1 && (o = orientation(p0,p2,p3,p)) != ZERO )
-    return Bounded_side(o);
-  if (vertices[2] == v0 && (o = orientation(p1,p2,p3,p)) != ZERO )
-    return Bounded_side(-o);
-
-  // we look whether the 4th monomial also has non null coefficient 
-  if (vertices[1] == v) 
-    return ON_UNBOUNDED_SIDE;
-  if (vertices[1] == v3 && (o = orientation(p0,p1,p2,p)) != ZERO )
-    return Bounded_side(o);
-  if (vertices[1] == v2 && (o = orientation(p0,p1,p3,p)) != ZERO )
-    return Bounded_side(-o);
-  if (vertices[1] == v1 && (o = orientation(p0,p2,p3,p)) != ZERO )
-    return Bounded_side(o);
-  if (vertices[1] == v0 && (o = orientation(p1,p2,p3,p)) != ZERO )
-    return Bounded_side(-o);
-
-  // case when the first non null coefficient is the coefficient of 
-  // the 5th monomial
-  // moreover, the tests (vertices[] == v) were false up to here, so the
-  // monomial corresponding to v is the only monomial with non-zero
-  // coefficient, it is equal to orient(p0,p1,p2,p3) == positive 
-  // so, no further test is required
-  return ON_UNBOUNDED_SIDE; 
+    return (Bounded_side) side_of_oriented_sphere(p0, p1, p2, p3, p, perturb);
 }
 
 template < class Gt, class Tds >
 Bounded_side
 Delaunay_triangulation_3<Gt,Tds>::
-side_of_circle(Cell_handle c, int i, const Point & p) const
+side_of_circle(Cell_handle c, int i, const Point & p, bool perturb) const
   // precondition : dimension >=2
   // in dimension 3, - for a finite facet
   // returns ON_BOUNDARY if the point lies on the circle,
@@ -857,7 +836,7 @@ side_of_circle(Cell_handle c, int i, const Point & p) const
       return coplanar_side_of_bounded_circle( c->vertex(0)->point(),
 					      c->vertex(1)->point(),
 					      c->vertex(2)->point(),
-					      p );
+					      p, perturb);
     // else infinite facet
     // v1, v2 finite vertices of the facet such that v1,v2,infinite
     // is positively oriented
@@ -866,10 +845,10 @@ side_of_circle(Cell_handle c, int i, const Point & p) const
     CGAL_triangulation_assertion(coplanar_orientation(v1->point(), v2->point(),
 		                 (c->mirror_vertex(i3))->point()) == NEGATIVE);
     Orientation o = coplanar_orientation(v1->point(), v2->point(), p);
-    if ( o != ZERO )
+    if ( o != COLLINEAR )
 	return Bounded_side( o );
     // because p is in f iff
-    // is does not lie on the same side of v1v2 as vn
+    // it does not lie on the same side of v1v2 as vn
     int i_e;
     Locate_type lt;
     // case when p collinear with v1v2
@@ -894,7 +873,7 @@ side_of_circle(Cell_handle c, int i, const Point & p) const
     return coplanar_side_of_bounded_circle( c->vertex(i0)->point(),
 					    c->vertex(i1)->point(),
 					    c->vertex(i2)->point(),
-					    p );
+					    p, perturb);
   }
 
   //else infinite facet
@@ -907,7 +886,7 @@ side_of_circle(Cell_handle c, int i, const Point & p) const
 			                 c->vertex(i)->point()) *
                   coplanar_orientation( v1->point(), v2->point(), p ));
   // then the code is duplicated from 2d case
-  if ( o != ZERO )
+  if ( o != COLLINEAR )
       return Bounded_side( -o );
   // because p is in f iff 
   // it is not on the same side of v1v2 as c->vertex(i)
@@ -1222,17 +1201,14 @@ fill_hole_3D_ear(const std::vector<Facet> & boundhole)
 	// there will be another ear, so let's ignore this one,
 	// because it is complicated to treat
 	continue;
-    }       
+    }
     w0 = f->vertex(k);
     w3 = n->vertex(fi);
 
     v0 = w0->info();
     v3 = w3->info();
 
-    bool inf_0 = is_infinite(v0);
-    bool inf_3 = is_infinite(v3);
-
-    if( !inf_0 && !inf_3 && 
+    if( !is_infinite(v0) && !is_infinite(v3) && 
 	  orientation(v0->point(), v1->point(), 
 		      v2->point(), v3->point()) != POSITIVE)
         continue;
@@ -1246,16 +1222,7 @@ fill_hole_3D_ear(const std::vector<Facet> & boundhole)
       if (is_infinite(v) || v == v0 || v == v1 || v == v2 || v == v3)
 	  continue;
 
-      Bounded_side bs;
-	
-      if (inf_0)
-	  bs = side_of_sphere_inf_perturb(v2, v1, v3, v);
-      else if (inf_3)
-	  bs = side_of_sphere_inf_perturb(v0, v1, v2, v);
-      else
-	  bs = side_of_sphere_finite_perturb(v0,v1,v2,v3,v);
-
-      if (bs == ON_BOUNDED_SIDE)
+      if (side_of_sphere(v0,v1,v2,v3, v->point(), true) == ON_BOUNDED_SIDE)
 	  goto next_edge;
     }
 

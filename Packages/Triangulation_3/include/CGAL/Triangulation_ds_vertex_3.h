@@ -41,14 +41,13 @@ public:
   typedef typename Tds::Cell        Cell;
 
   Triangulation_ds_vertex_3()
-    : Vb()
-  { set_order_of_creation(); }
-    
+    : Vb() {}
+
   Cell_handle cell() const
   {
     return (Cell *) (Vb::cell());
   }
-    
+
   void set_cell(const Cell_handle c)
   {
     Vb::set_cell(&*c);
@@ -56,40 +55,12 @@ public:
 
   bool is_valid(bool verbose = false, int level = 0) const;
 
-  // used for symbolic perturbation in remove_vertex for Delaunay
-  // undocumented
-  int get_order_of_creation() const
-  {
-      return _order_of_creation;
-  }
-
   Vertex_handle handle() const
   {
       return const_cast<Vertex*>(this);
   }
-
-private:
-  void set_order_of_creation()
-  {
-    _order_of_creation = ++nb;
-  }
-
-  int _order_of_creation;
-
-  static int nb;
 };
 
-template <class Tds>
-int Triangulation_ds_vertex_3<Tds>::nb;
-
-
-template < class VH>
-class Vertex_tds_compare_order_of_creation {
-public:
-  bool operator()(VH u, VH v) const {
-    return u->get_order_of_creation() < v->get_order_of_creation();
-  }
-};
 
 template <class Tds>
 bool

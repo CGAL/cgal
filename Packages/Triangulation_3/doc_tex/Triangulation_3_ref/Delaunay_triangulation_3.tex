@@ -75,9 +75,10 @@ triangulations to ensure the empty sphere property of Delaunay
 triangulations.
 
 In the degenerate case when there are cospherical points, the Delaunay
-triangulation is known not to be uniquely defined. In this case, the
-Delaunay triangulation computed by CGAL only depends on the order of
-insertion of the points.
+triangulation is known not to be uniquely defined. In this case, CGAL
+chooses a particular Delaunay triangulation using a symbolic perturbation
+scheme.
+% TODO : rajouter un ref au papier des que c'est pret.
 
 \ccThree{Vertex_handle}{dt.remove()}{}
 

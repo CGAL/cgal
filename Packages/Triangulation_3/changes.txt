@@ -1,3 +1,6 @@
+Version 1.122 (10 Dec 02)
+- Delaunay perturbation order is now lexicographic, nor insertion order.
+
 Version 1.121 (27 Nov 02)
 - Move explicit instantiation in test_delaunay_3 after main() to please MipsPro.
 

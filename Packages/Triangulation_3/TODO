@@ -61,11 +61,6 @@ T3
 Delaunay
 - remplacer les create_face du remove2D par des create_cell et virer 
   les create_face de la tds
-- perturbation ne dependant plus de l'ordre d'insertion 
-  (et enlever note a ce propos dans la doc)
-- le numero de vertex necessaire au remove devrait etre un requirement de
-  Delaunay sur VertexBase, et le compteur, un data member de Delaunay.
-  (question sans objet si la perturbation change)
 - optimiser remove :
   - algo d'Olivier si constructions filtrees disponibles (cf Olivier
 	rappel de la reunion a ce sujet)
