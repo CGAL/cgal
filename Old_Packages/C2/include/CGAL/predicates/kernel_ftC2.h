@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1997, 1998, 1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -8,12 +8,10 @@
 //
 // ----------------------------------------------------------------------------
 //
-
 // release       :
 // release_date  :
 //
 // file          : include/CGAL/predicates/kernel_ftC2.h
-// source        : include/CGAL/predicates/kernel_ftC2.h
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Herve Bronnimann (Herve.Bronnimann@sophia.inria.fr)
@@ -27,15 +25,9 @@
 #ifndef CGAL_PREDICATES_KERNEL_FTC2_H
 #define CGAL_PREDICATES_KERNEL_FTC2_H
 
-#ifndef CGAL_NUMBER_UTILS_H
 #include <CGAL/number_utils.h>
-#endif // CGAL_NUMBER_UTILS_H
-#ifndef CGAL_DETERMINANT_H
 #include <CGAL/determinant.h>
-#endif // CGAL_DETERMINANT_H
-#ifndef CGAL_CONSTRUCTIONS_KERNEL_FTC2_H
 #include <CGAL/constructions/kernel_ftC2.h>
-#endif // CGAL_CONSTRUCTIONS_KERNEL_FTC2_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -43,19 +35,16 @@ template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
 bool
 equal_lineC2(const FT &l1a, const FT &l1b, const FT &l1c,
-               const FT &l2a, const FT &l2b, const FT &l2c)
+             const FT &l2a, const FT &l2b, const FT &l2c)
 {
-  if ( (l1a * l2c != l2a * l1c)
-    || (l1b * l2c != l2b * l1c) )
-    return false;
-  int sc  = CGAL::sign(l1c);
-  int slc = CGAL::sign(l2c);
-  if (sc == slc)
-     return (sc == 0) ?  (l1a*l2b ==  l1b*l2a)
-                      && (CGAL::sign(l1a) == CGAL::sign(l2a))
-                      && (CGAL::sign(l1b) == CGAL::sign(l2b))
-                      : true;
-  return false;
+    if (sign_of_determinant2x2(l1a, l1b, l2a, l2b) != ZERO)
+        return false; // Not parallel.
+    CGAL::Sign s1a = CGAL::sign(l1a);
+    if (s1a != ZERO)
+        return s1a == CGAL::sign(l2a)
+	    && sign_of_determinant2x2(l1a, l1c, l2a, l2c) == ZERO;
+    return CGAL::sign(l1b) == CGAL::sign(l2b)
+	&& sign_of_determinant2x2(l1b, l1c, l2b, l2c) == ZERO;
 }
 
 template < class FT >
@@ -151,19 +140,20 @@ bool
 equal_directionC2(const FT &dx1, const FT &dy1,
                   const FT &dx2, const FT &dy2) 
 {
-  return (CGAL::sign(dx1) == CGAL::sign(dx2))
-      && (CGAL::sign(dy1) == CGAL::sign(dy2))
-      && (dy1*dx2 == dy2*dx1);
+  return CGAL::sign(dx1) == CGAL::sign(dx2)
+      && CGAL::sign(dy1) == CGAL::sign(dy2)
+      && sign_of_determinant2x2(dx1, dy1, dx2, dy2) == ZERO;
 }
 
+//CGAL_NO_FILTER_BEGIN
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
 Comparison_result
 compare_angle_with_x_axisC2(const FT &dx1, const FT &dy1,
                             const FT &dx2, const FT &dy2) 
 {
-  // angles are in [-pi,pi], and the angle bewteen Ox and d1 is compared
-  // with the angle bewteen Ox and d2
+  // angles are in [-pi,pi], and the angle between Ox and d1 is compared
+  // with the angle between Ox and d2
   int quadrant_1 = (dx1 >= FT(0)) ? ((dy1 >= FT(0))?1:4)
                                   : ((dy1 >= FT(0))?2:3);
   int quadrant_2 = (dx2 >= FT(0)) ? ((dy2 >= FT(0))?1:4)
@@ -176,6 +166,7 @@ compare_angle_with_x_axisC2(const FT &dx1, const FT &dy1,
     return SMALLER;
   return Comparison_result(-sign_of_determinant2x2(dx1,dy1,dx2,dy2));
 }
+//CGAL_NO_FILTER_END
 
 template < class FT >
 inline
@@ -207,6 +198,7 @@ orientationC2(const FT &px, const FT &py,
                                              qx-rx, qy-ry));
 }
 
+//CGAL_NO_FILTER_BEGIN
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
 bool
@@ -214,7 +206,6 @@ collinear_are_ordered_along_lineC2(const FT &px, const FT &py,
                                    const FT &qx, const FT &qy,
                                    const FT &rx, const FT &ry)
 {
-  CGAL_kernel_exactness_precondition( collinear(p, q, r) );
   if (px < qx) return !(rx < qx);
   if (qx < px) return !(qx < rx);
   if (py < qy) return !(ry < qy);
@@ -229,13 +220,13 @@ collinear_are_strictly_ordered_along_lineC2(const FT &px, const FT &py,
                                             const FT &qx, const FT &qy,
                                             const FT &rx, const FT &ry)
 {
-  CGAL_kernel_exactness_precondition( collinear(p, q, r) );
   if (px < qx) return (qx < rx);
   if (qx < px) return (rx < qx);
   if (py < qy) return (qy < ry);
   if (qy < py) return (ry < qy);
   return false;
 }
+//CGAL_NO_FILTER_END
 
 template < class FT >
 CGAL_KERNEL_LARGE_INLINE
@@ -291,6 +282,7 @@ cmp_dist_to_pointC2(const FT &px, const FT &py,
                        squared_distanceC2(px,py,rx,ry));
 }
 
+//CGAL_NO_FILTER_BEGIN
 template < class FT >
 inline
 bool
@@ -298,8 +290,7 @@ has_larger_dist_to_pointC2(const FT &px, const FT &py,
                            const FT &qx, const FT &qy,
                            const FT &rx, const FT &ry)
 {
-  return squared_distanceC2(px,py,rx,ry)
-       < squared_distanceC2(px,py,qx,qy);
+  return cmp_dist_to_pointC2(px,py,qx,qy,rx,ry) == LARGER;
 }
 
 template < class FT >
@@ -309,9 +300,9 @@ has_smaller_dist_to_pointC2(const FT &px, const FT &py,
                             const FT &qx, const FT &qy,
                             const FT &rx, const FT &ry)
 {
-  return squared_distanceC2(px,py,qx,qy)
-       < squared_distanceC2(px,py,rx,ry);
+  return cmp_dist_to_pointC2(px,py,qx,qy,rx,ry) == SMALLER;
 }
+//CGAL_NO_FILTER_END
 
 template < class FT >
 inline
@@ -324,6 +315,7 @@ cmp_signed_dist_to_directionC2(const FT &la, const FT &lb,
                        scaled_distance_to_directionC2(la,lb,qx,qy));
 }
 
+//CGAL_NO_FILTER_BEGIN
 template < class FT >
 inline
 bool
@@ -331,8 +323,7 @@ has_larger_signed_dist_to_directionC2(const FT &la, const FT &lb,
                                       const FT &px, const FT &py,
                                       const FT &qx, const FT &qy)
 {
-  return scaled_distance_to_directionC2(la,lb,qx,qy)
-       < scaled_distance_to_directionC2(la,lb,px,py);
+  return cmp_signed_dist_to_directionC2(la,lb,px,py,qx,qy) == LARGER;
 }
 
 template < class FT >
@@ -342,9 +333,10 @@ has_smaller_signed_dist_to_directionC2(const FT &la, const FT &lb,
                                        const FT &px, const FT &py,
                                        const FT &qx, const FT &qy)
 {
-  return scaled_distance_to_directionC2(la,lb,px,py)
-       < scaled_distance_to_directionC2(la,lb,qx,qy);
+  return cmp_signed_dist_to_directionC2(la,lb,px,py,qx,qy) == SMALLER;
 }
+//CGAL_NO_FILTER_END
+
 template <class FT>
 inline
 Comparison_result
@@ -357,6 +349,7 @@ cmp_signed_dist_to_lineC2(const FT &px, const FT &py,
                        scaled_distance_to_lineC2(px,py,qx,qy,sx,sy));
 }
 
+//CGAL_NO_FILTER_BEGIN
 template <class FT>
 inline
 bool
@@ -365,8 +358,7 @@ has_larger_signed_dist_to_lineC2(const FT &px, const FT &py,
                                  const FT &rx, const FT &ry,
                                  const FT &sx, const FT &sy)
 {
-  return scaled_distance_to_lineC2(px,py,qx,qy,sx,sy)
-       < scaled_distance_to_lineC2(px,py,qx,qy,rx,ry);
+  return cmp_signed_dist_to_lineC2(px,py,qx,qy,rx,ry,sx,sy) == LARGER;
 }
 
 template <class FT>
@@ -377,17 +369,14 @@ has_smaller_signed_dist_to_lineC2(const FT &px, const FT &py,
                                   const FT &rx, const FT &ry,
                                   const FT &sx, const FT &sy)
 {
-  return scaled_distance_to_lineC2(px,py,qx,qy,rx,ry)
-       < scaled_distance_to_lineC2(px,py,qx,qy,sx,sy);
+  return cmp_signed_dist_to_lineC2(px,py,qx,qy,rx,ry,sx,sy) == SMALLER;
 }
-
+//CGAL_NO_FILTER_END
 
 CGAL_END_NAMESPACE
 
 #ifdef CGAL_ARITHMETIC_FILTER_H
-#ifndef CGAL_ARITHMETIC_FILTER_PREDICATES_ON_FTC2_H
 #include <CGAL/Arithmetic_filter/predicates/kernel_ftC2.h>
-#endif // CGAL_ARITHMETIC_FILTER_PREDICATES_ON_FTC2_H
 #endif
 
 #endif  // CGAL_PREDICATES_KERNEL_FTC2_H
