@@ -31,6 +31,13 @@ GetOptions("databaseFile=s" => \$databaseFile,
 
 usage() if $help;
 
+$databaseFile =$dataDir . '/' . $databaseFile unless -f $databaseFile;
+
+die "Can't find file \"$databaseFile\"" unless -f $databaseFile;
+
+my %Files = ();
+my %Classes = ();
+
 # Parse database file:
 my $parser = new XML::Parser(ErrorContext => 2,
 			     Handlers     => {Start      => \&start_handler,
@@ -47,9 +54,9 @@ $logFile = findLogFile($logDir) if (!defined($logFile));
 
 my $date = $logFile;
 $date =~ s/bcgal_(.*)%.*/$1/;
-my $day = substr($date, 0, 2);
+my $year = substr($date, 0, 2);
 my $month = substr($date, 2, 2);
-my $year = substr($date, 4, 2);
+my $day = substr($date, 4, 2);
 
 if (!defined($phpFile)) {
   $phpFile = $logFile;
@@ -169,35 +176,35 @@ while ($line = <LOGFILE>) {
     next if $line =~ /^\s*$/;		# skip empty lines
     chop($line);			# remove 'end of line'
     if ($line =~ /^COMPILER NAME: (.*)/) {
-      $compilerName = $1;
+      $compilerName = $1; next;
     } elsif ($line =~ /^COMPILER INFO: (.*)/) {
-      $compilerInfo = $1;	
+      $compilerInfo = $1; next;
     } elsif ($line =~ /^OS NAME: (.*)/) {
-      $osName = $1;
+      $osName = $1; next;
     } elsif ($line =~ /^OS INFO: (.*)/) {
-      $osInfo = $1;
+      $osInfo = $1; next;
     } elsif ($line =~ /^PROCESSOR: (.*)/) {
-      $procId = $1;
+      $procId = $1; next;
     } elsif ($line =~ /^CPU SPEED: (.*)/) {
-      $cpus[$procId]{'cpuSpeed'} = $1;
+      $cpus[$procId]{'cpuSpeed'} = $1; next;
     } elsif ($line =~ /^CPU TYPE: (.*)/) {
-      $cpus[$procId]{'cpuType'} = $1;
+      $cpus[$procId]{'cpuType'} = $1; next;
     } elsif ($line =~ /^PRIMARY DATA CACHE: (.*)/) {
-      $cpus[$procId]{'primDataCache'} = $1;
+      $cpus[$procId]{'primDataCache'} = $1; next;
     } elsif ($line =~ /^SECONDARY DATA CACHE: (.*)/) {
-      $cpus[$procId]{'secDataCache'} = $1;
+      $cpus[$procId]{'secDataCache'} = $1; next;
     } elsif ($line =~ /^INSTRUCTION CACHE: (.*)/) {
-      $cpus[$procId]{'instCache'} = $1;
+      $cpus[$procId]{'instCache'} = $1; next;
     } elsif ($line =~ /^MEM SIZE: (.*)/) {
-      $memSize = $1;
+      $memSize = $1; next;
     } elsif ($line =~ /^GFX BOARD: (.*)/) {
-      $gfxBoard = $1;
+      $gfxBoard = $1; next;
     } elsif ($line =~ /^CGAL VERSION: (.*)/) {
-      $cgalVersion = $1;
+      $cgalVersion = $1; next;
     } elsif ($line =~ /^LEDA VERSION: (.*)/) {
-      $ledaVersion = $1;
+      $ledaVersion = $1; next;
     } elsif ($line =~ /^QT VERSION: (.*)/) {
-      $qtVersion = $1;
+      $qtVersion = $1; next;
     } elsif ($line =~ /^(Sun|Mon|Tue|Wed|Thu|Fri|Sat)/) {
       @words = split ' ', $line;
       if ($cnt == 0) {
@@ -214,33 +221,22 @@ while ($line = <LOGFILE>) {
     $offset = 0;
     $name = substr($line, $offset, $nameLength); $offset += $nameLength + 1;
     $name =~ s/\s*$//;
-    if ($name =~ m/CGAL Kernel/) {
-      $kernel = 'cgal_kernel';
-      $time_class = 'cgal_kernel_time';
-    } elsif ($name =~ m/My Leda Kernel/) {
-      $kernel = 'my_kernel';
-      $time_class = 'my_kernel_time';
-    } elsif ($name =~ m/Leda Kernel Fast/) {
-      $kernel = 'cgal_kernel';
-      $time_class = 'cgal_kernel_time';
-    } elsif ($name =~ m/Leda Kernel/) {
-      $kernel = 'leda_kernel';
-      $time_class = 'leda_kernel_time';
-    } elsif ($name =~ m/new Conics/) {
-      $kernel = 'leda_kernel';
-      $time_class = 'leda_kernel_time';
-    } elsif ($name =~ m/old Conics/) {
-      $kernel = 'cgal_kernel';
-      $time_class = 'cgal_kernel_time';
-    } elsif ($name =~ m/Tight Sweep/) {
-      $kernel = 'cgal_kernel';
-      $time_class = 'cgal_kernel_time';
-    } elsif ($name =~ m/Sweep/) {
-      $kernel = 'leda_kernel';
-      $time_class = 'leda_kernel_time';
-    } else {
-      next;
+
+    # Specific:
+    $found = 0;
+    foreach $classItem (keys %Classes) {
+      $className = $Classes{$classItem}->{'name'};
+      $key = $Classes{$classItem}->{'key'};
+      if ($name =~ $key) {
+	$class = $className;
+	$time_class = $class . '_time';
+	$found = 1;
+	last;
+      }
     }
+
+    next unless $found;
+    
     $time = substr($line, $offset, 8);		 $offset += 9;
     $ops = substr($line, $offset, 8);		 $offset += 9;
     $total = substr($line, $offset, 8);		 $offset += 9;
@@ -250,19 +246,19 @@ while ($line = <LOGFILE>) {
     $tr = HTML::Element->new('tr');
 
     $td_name = HTML::Element->new('td', align => 'left', 'nowrap');
-    $td_name->attr('class', $kernel) if defined($kernel);
+    $td_name->attr('class', $class) if defined($class);
     $td_name->push_content($name);
 
     $td_time = HTML::Element->new('td', align => 'right');
-    $td_time->attr('class', $kernel) if defined($kernel);
+    $td_time->attr('class', $class) if defined($class);
     $td_time->push_content($time);
 
     $td_ops = HTML::Element->new('td', align => 'right');
-    $td_ops->attr('class', $kernel) if defined($kernel);
+    $td_ops->attr('class', $class) if defined($class);
     $td_ops->push_content($ops);
 
     $td_total = HTML::Element->new('td', align => 'right');
-    $td_total->attr('class', $kernel) if defined($kernel);
+    $td_total->attr('class', $class) if defined($class);
     $td_total->push_content($total);
 
     $td_single = HTML::Element->new('td', align => 'right');
@@ -270,7 +266,7 @@ while ($line = <LOGFILE>) {
     $td_single->push_content($single);
 
     $td_num = HTML::Element->new('td', align => 'right');
-    $td_num->attr('class', $kernel) if defined($kernel);
+    $td_num->attr('class', $class) if defined($class);
     $td_num->push_content($num);
 
     $tr->push_content($td_name);
@@ -443,22 +439,39 @@ sub findLogFile {
   opendir LOGDIR, $logDir or die "serious braindamage: $logDir $!";
   @logFiles = grep /bcgal/, readdir LOGDIR;
   closedir LOGDIR;
-  $day = 0;
-  $month = 0;
   $year = 0;
+  $month = 0;
+  $day = 0;
+  $hour = 0;
+  $minute = 0;
+  
   foreach $newLogFile (@logFiles) {
-    next if !($newLogFile =~ /bcgal_([^\.%]*)%[^\.]+\.log$/);
+    next if !($newLogFile =~ /bcgal_([^\.%]*%[^\.]+)\.log$/);
     $date = $1;
-    $newDay = substr($date, 0, 2);
+    $newYear = substr($date, 0, 2);
     $newMonth = substr($date, 2, 2);
-    $newYear = substr($date, 4, 2);
+    $newDay = substr($date, 4, 2);
+
+    $newHour = substr($date, 7, 2);
+    $newMinute = substr($date, 9, 2);
+    $newSecond = substr($date, 11, 2);
     if (($newYear > $year) ||
 	(($newYear == $year) && ($newMonth > $month)) ||
-	(($newYear == $year) && ($newMonth == $month) && ($newDay > $day)))
+	(($newYear == $year) && ($newMonth == $month) && ($newDay > $day)) ||
+	(($newYear == $year) && ($newMonth == $month) && ($newDay == $day) &&
+	 ($newHour > $hour)) ||
+	(($newYear == $year) && ($newMonth == $month) && ($newDay == $day) &&
+	 ($newHour == $hour) && ($newMinute > $minute)) ||
+	(($newYear == $year) && ($newMonth == $month) && ($newDay == $day) &&
+	 ($newHour == $hour) && ($newMinute == $minute) &&
+	 ($newSecond > $second)))
     {
-      $day = $newDay;
-      $month = $newMonth;
       $year = $newYear;
+      $month = $newMonth;
+      $day = $newDay;
+      $hour = $newHour;
+      $minute = $newMinute;
+      $second = $newSecond;
       $logFile = $newLogFile;
     }
   }
@@ -481,6 +494,7 @@ sub start_handler
     $attrTable->{$id} = $val;
   }
   $Files{$attrTable->{'name'}} = $attrTable if ($currentElement eq 'file');
+  $Classes{$attrTable->{'name'}} = $attrTable if ($currentElement eq 'class');
 }
 
 #
