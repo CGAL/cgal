@@ -17,6 +17,8 @@
 @usepackage{epsf}
 @usepackage{cc_manual}
 @article
+
+\setlength{\parskip}{1ex}
 \setcounter{secnumdepth}{4}
 \setcounter{tocdepth}{4}
 
@@ -45,15 +47,6 @@
 \footnotetext[1]{This work was supported by the ESPRIT IV LTR Project
   No.~21957 (CGAL).}
 
-@! ============================================================================
-@! Introduction and Contents
-@! ============================================================================
-
-@section{Introduction}
-
-We define a class template @prg{CGAL_Conic_2<R>} to store, access and
-manipulate @em{conics} in the plane, a.k.a. @em{second order curves}.
-
 @t table_of_contents
 
 \renewcommand{\R}{I\!\!R}
@@ -69,6 +62,12 @@ manipulate @em{conics} in the plane, a.k.a. @em{second order curves}.
 \newtheorem{Definition}{Definition}[section]
 \newtheorem{Lemma}[Definition]{Lemma}
 
+@! ============================================================================
+@section{Introduction}
+@! ============================================================================
+
+We define a class template @prg{CGAL_Conic_2<R>} to store, access and
+manipulate @em{conics} in the plane, a.k.a. @em{second order curves}.
 
 @! ---------------------------------------------------------------------------
 @subsection{Conics}
