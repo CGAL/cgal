@@ -46,11 +46,14 @@ public:
   typedef typename T::Iso_rectangle_2   Iso_rectangle_2;
   typedef T                             Traits;
 
-private:
-  struct Internal_point {
-     Point_2 x_part;
-     Point_2 y_part;
 
+private:
+  /* this struct is the point representation. It is composed of two points
+   * such that one holds the x coordinate and the other holds the y coordinate
+   */
+  struct Internal_point {
+    Point_2 x_part;// the x coordinate of the point
+    Point_2 y_part;// the y coordinate of the point
 
     Internal_point &
      operator=(const Internal_point &other)
@@ -64,19 +67,19 @@ private:
     Internal_point() // no real value - just to allow construction of LER
       : x_part(Point_2(0,0)), y_part(Point_2(0,0)) {}
 
-     Internal_point(const Point_2 &p) // "original" point
+     Internal_point(const Point_2 &p)
        : x_part(p), y_part(p) {}
 
-     // "pseudo constructed" point
      Internal_point(const Point_2 &p, const Point_2 &q)
        : x_part(p), y_part(q) {}
-
-     // ... and similar constructors if you need them, e.g. :
 
      Internal_point(const Internal_point &p, const Internal_point &q)
        : x_part(p.x_part), y_part(q.y_part) {}
   };
 
+  /* false if no points were inserted or removed, thus the previous
+     results hold. Otherwise there is a need to find the new LER
+  */
   bool cache_valid;
   Traits _gt;
   class Less_yx;
@@ -88,6 +91,8 @@ private:
   friend class Less_xy;
   friend class Less_yx;
 
+  /* this class holds points' data as needed in the LER process
+   */
   class Point_data {
   public:
 
@@ -229,20 +234,29 @@ private:
   typedef std::set<Point_data *,Less_xy> Point_data_set_of_x;
   typedef std::set<Point_data *,Less_yx> Point_data_set_of_y;
 
+  // the next sets store the points sorted
   Point_data_set_of_x x_sorted;
   Point_data_set_of_y y_sorted;
 
+  // bottom left and top right points of the bounding box
   Point bl_p, tr_p;
+
+  // the bounding box of the points
   Iso_rectangle_2 bbox_p;
 
   // the points that define the largest empty iso-rectangle
   Point left_p, bottom_p, right_p ,top_p; 
 
+  // save the largest empty rectangle size found by now
   NT largest_rect_size;
 
-
+  // insert points
   bool insert(const Point& _p,Point_type i_type);
   bool insert(const Point_2& _p,Point_type i_type);
+  
+  /* the phases of the algorithm as described in the paper
+     and auxilary methods they use
+  */
   void phase_1();
   void phase_1_on_x();
   void phase_1_on_y();
@@ -333,7 +347,8 @@ private:
 				 typename Point_data_set_of_y::iterator &iter3,
 				 bool &first_iter_is_right,
 				 bool &second_iter_is_right,
-				 bool &third_iter_is_right){
+				 bool &third_iter_is_right)
+  {
   if(first_iter_is_right) {
     if(second_iter_is_right) {
       iter1 = iter2;
@@ -369,7 +384,7 @@ private:
       second_iter_is_right = third_iter_is_right;  
     }
   }
-}
+  }
 
   
   void determine_next_iter(
@@ -379,7 +394,8 @@ private:
 		    typename Point_data_set_of_y::const_iterator right_iter_end,
 		    typename Point_data_set_of_y::const_iterator left_iter_end,
 		    bool &iter_is_right,
-		    bool &exist){
+		    bool &exist)
+  {
   if((typename Point_data_set_of_y::const_iterator)right_iter 
      != right_iter_end) {
     if((typename Point_data_set_of_y::const_iterator)left_iter 
@@ -407,10 +423,11 @@ private:
      } else
       exist = false;
   }
-}
+  }
 
   void calls_for_tents(typename Point_data_set_of_y::iterator iter1,
-		       typename Point_data_set_of_y::iterator iter2){
+		       typename Point_data_set_of_y::iterator iter2)
+  {
     if(less_xy(*iter1, *iter2))
       tent(*iter1,*iter2);
     else
@@ -420,7 +437,8 @@ private:
 
   void calls_for_tents(typename Point_data_set_of_y::iterator iter1,
 		       typename Point_data_set_of_y::iterator iter2,
-		       typename Point_data_set_of_y::iterator iter3){
+		       typename Point_data_set_of_y::iterator iter3)
+  {
   bool first_is_right_to_second = less_xy(*iter1, *iter2);
   bool second_is_right_to_third = less_xy(*iter2, *iter3);
 
@@ -440,7 +458,8 @@ private:
       tent(*iter3,*iter2);
     }
   }
-}
+  }
+
   void phase_2_update_y_sorted_list();
   void phase_3_check_for_larger(typename Point_data_set_of_y::iterator iter,
 				typename Point_data_set_of_y::iterator iter1,
@@ -1041,9 +1060,9 @@ template<class T>
 void 
 Largest_empty_iso_rectangle_2<T>::phase_2()
 {
-    phase_2_on_top();
-    phase_2_on_left();
-    phase_2_on_right();
+  phase_2_on_top();
+  phase_2_on_left();
+  phase_2_on_right();
 
   // Done only for building tents for phase 3
   phase_2_on_bot();
