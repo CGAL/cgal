@@ -1,4 +1,4 @@
-#!/local/bin/perl -w
+#!/sw/bin/perl -w
 # alter the path above to the result of `which perl` on your system
 
 # usage: cgal_conditional_include file1 ...
@@ -35,11 +35,11 @@
 $tmpfilename = "CondIncl$$";
 FILE:
 foreach $filename (@ARGV) {
-    if (!open(infile, $filename)) {
+    if (!open("infile", $filename)) {
 	print STDERR "Could not open ${filename} for reading\n$!\n";
 	next FILE;
     }
-    open(tmpfile, ">$tmpfilename")
+    open("tmpfile", ">$tmpfilename")
 	    || die "Could not open temp file for writing\n$!\n";
     $last = '';
     Line:

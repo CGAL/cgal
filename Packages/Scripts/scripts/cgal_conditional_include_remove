@@ -51,7 +51,7 @@ foreach $filename (@ARGV) {
 	    $_ = <INFILE>;
 	    my $include_file;
 	    if ( !(($include_file) =
-		m|^[\s]*#[\s]*include[\s]*<(.*)(?:\.h)?>[\s]*|)) {
+		m|^[\s]*#[\s]*include[\s]*<(.*?)(?:\.h)?>[\s]*|)) {
 		  warn "'#include <...>' missing in line ",
 		  	$.-$skipped," ($filename)\n";
 		  print TMPFILE $protect_line;
@@ -108,7 +108,7 @@ foreach $filename (@ARGV) {
 	    $_ = <INFILE>;
 	    my $include_file;
 	    if ( !(($include_file) =
-		m|^[\s]*#[\s]*include[\s]*<CGAL\/(.*)(?:\.h)?>[\s]*|)) {
+		m|^[\s]*#[\s]*include[\s]*<CGAL\/(.*?)(?:\.h)?>[\s]*|)) {
 		  print TMPFILE $protect_line;
 		  redo;
             }
