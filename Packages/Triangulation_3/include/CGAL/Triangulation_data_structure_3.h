@@ -1358,9 +1358,9 @@ read_cells(std::istream& is,
 	V[i2]->set_cell(c);
 	V[i3]->set_cell(c);
       }
-      for(int i = 0; i < m; i++) {
+      for(int j = 0; j < m; j++) {
         is >> i0 >> i1 >> i2 >> i3;
-        c = C[i];
+        c = C[j];
         c->set_neighbor(0, C[i0]);
         c->set_neighbor(1, C[i1]);
         c->set_neighbor(2, C[i2]);
@@ -1382,9 +1382,9 @@ read_cells(std::istream& is,
 	V[i1]->set_cell(c);
 	V[i2]->set_cell(c);
       }
-      for(int i = 0; i < m; i++) {
+      for(int j = 0; j < m; j++) {
         is >> i0 >> i1 >> i2;
-	c = C[i];
+	c = C[j];
         c->set_neighbor(0, C[i0]);
         c->set_neighbor(1, C[i1]);
         c->set_neighbor(2, C[i2]);
@@ -1404,9 +1404,9 @@ read_cells(std::istream& is,
 	V[i0]->set_cell(c);
 	V[i1]->set_cell(c);
       }
-      for(int i = 0; i < m; i++) {
+      for(int j = 0; j < m; j++) {
         is >> i0 >> i1;
-	c = C[i];
+	c = C[j];
         c->set_neighbor(0, C[i0]);
         c->set_neighbor(1, C[i1]);
       }
@@ -1423,9 +1423,9 @@ read_cells(std::istream& is,
 	C[i] = c;
 	V[i]->set_cell(c);
       }
-      for (int i=0; i < 2; i++) {
-	c = C[i];
-        c->set_neighbor(0, C[1-i]);
+      for (int j=0; j < 2; j++) {
+	c = C[j];
+        c->set_neighbor(0, C[1-j]);
       }
       break;
     }
