@@ -212,6 +212,13 @@ public:
       cell_container().release_element(c);
     }
 
+  template <class It>
+  void delete_cells(It begin, It end)
+  {
+      for(It i = begin; i != end; ++i)
+	  delete_cell(&**i);
+  }
+
   // QUERIES
 
   bool is_vertex(Vertex* v) const;
@@ -270,6 +277,22 @@ public:
   Vertex * insert_increase_dimension(Vertex * v, // new vertex
 				     Vertex* star = NULL,
 				     bool reorient = false);
+
+  template <class FacetIt, class CellIt>
+  void star_hole_3(Vertex* newv, FacetIt facet_begin, FacetIt facet_end,
+	           CellIt cell_begin, CellIt cell_end)
+  {
+      star_hole_3(newv, facet_begin, facet_end);
+      delete_cells(cell_begin, cell_end);
+  }
+
+  template <class FacetIt, class CellIt>
+  void star_hole_2(Vertex* newv, FacetIt facet_begin, FacetIt facet_end,
+	           CellIt cell_begin, CellIt cell_end)
+  {
+      star_hole_2(newv, facet_begin, facet_end);
+      delete_cells(cell_begin, cell_end);
+  }
 
   // Facets->first is in conflict, and we walk inside the hole.
   //
@@ -357,8 +380,8 @@ public:
       }
   }
 
-  // Note : the code is entirely duplicated, just to have dimension() a
-  // constant.  That's not nice.
+  // Note : the code is almost entirely duplicated, just to have dimension() a
+  // constant for performance.  That's not perfect...
   template <class FacetIt>
   void star_hole_2(Vertex* newv, FacetIt facet_begin, FacetIt facet_end)
   {
@@ -1536,52 +1559,25 @@ insert_in_edge(Vertex * v, Cell* c, int i, int j)
     {
       CGAL_triangulation_expensive_precondition( is_cell(c) );
       CGAL_triangulation_precondition( i>=0 && i<=3 && j>=0 && j<=3 );
-      Vertex* vi=c->vertex(i);
-      Vertex* vj=c->vertex(j);
-	
-      cnew = create_cell(c);
-      c->set_vertex(j,v);
-      vj->set_cell(cnew);
-      v->set_cell(c);
-      c->neighbor(i)->set_neighbor(c->neighbor(i)->index(c),cnew);
-      cnew->set_vertex(i,v);
-      set_adjacency(c, cnew, i, j);
 
-      // the code here duplicates a large part of the code 
-      // of Triangulation_ds_cell_circulator_3
+      std::vector<Cell *> cells;
+      std::vector<Facet> facets;
+      cells.reserve(32);
+      facets.reserve(64);
+      const Vertex* vi=c->vertex(i);
+      const Vertex* vj=c->vertex(j);
+      Cell_circulator ccir = incident_cells(c, i, j);
+      do {
+	  Cell *cc = &*ccir;
+	  cells.push_back(cc);
+	  facets.push_back(Facet(cc, cc->index(vi)));
+	  facets.push_back(Facet(cc, cc->index(vj)));
+	  ++ccir;
+      } while (&*ccir != c);
 
-      Cell* ctmp = c->neighbor( next_around_edge(i,j) );
-
-      Cell* cprev = c;
-      Cell* cnewprev = cnew;
-
-      while ( ctmp != c ) {
-	// the current cell is duplicated. vertices and neighbors i and j
-	// are updated during the traversal.
-	// uses the field prev of the circulator
-	i = ctmp->index(vi);
-	j = ctmp->index(vj);
-	cnew = create_cell(ctmp);
-	// v will become vertex j of c
-	// and vertex i of cnew
-	ctmp->set_vertex(j,v);
-	ctmp->neighbor(i)->set_neighbor(ctmp->neighbor(i)->index(ctmp),cnew);
-	cnew->set_vertex(i,v);
-	set_adjacency(ctmp, cnew, i, j);
-
-	// neighbor relations of all cells are used
-	// to find relations between new cells
-	set_adjacency(cnew, cnewprev, ctmp->index(cprev), cprev->index(ctmp));
-
-	cnewprev = cnew;
-	cprev = ctmp;
-	ctmp = ctmp->neighbor( next_around_edge(i,j) );
-      }
-      cnew = c->neighbor(c->index(vi));
-      set_adjacency(cnew, cnewprev, c->index(cprev), cprev->index(c));
+      star_hole_3(v, facets.begin(), facets.end(), cells.begin(), cells.end());
       break;
     }
-
   case 2:
     {
       CGAL_triangulation_expensive_precondition( is_edge(c,i,j) );
