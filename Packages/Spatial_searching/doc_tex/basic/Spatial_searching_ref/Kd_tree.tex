@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Kd_tree<PointTraits, Splitter>}  %% add template arg's if necessary
+\begin{ccRefClass}{Kd_tree<PointTraits, Splitter, UseExtendedNode>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -28,6 +28,9 @@ Expects for the first template argument a model of the concept
 
 Excepts for the second template argument a model for the concept \ccc{Splitter}.
 It defaults  to \ccc{Sliding_midpoint<PointTraits>}
+
+Expects for the third template argument \ccc{CGAL::Tag_true} if the 
+tree shall be built with extended nodes, and otherwise \ccc{CGAL::Tag_false}.
 
 \ccTypes
 

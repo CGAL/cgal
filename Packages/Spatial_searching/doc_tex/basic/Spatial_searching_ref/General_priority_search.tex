@@ -35,7 +35,8 @@ concept GeneralDistance. The default type is
 
 
 Expects for third template argument a model of the concept \ccc{SpatialTree}.
-The default type is \ccc{CGAL::Kd_tree<PointTraits, Splitter>}.
+The default type is \ccc{CGAL::Kd_tree<PointTraits, Splitter, CGAL::Tag_false>}. The 
+template argument \ccc{CGAL::Tag_false} makes that the tree is built with unextended nodes.
 
 \ccTypes
 

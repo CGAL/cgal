@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{General_standard_search<PointTraits, GeneralDistance, SpatialTree>} 
+\begin{ccRefClass}{General_standard_search<PointTraits, Splitter, GeneralDistance, SpatialTree>} 
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -20,7 +20,7 @@
   
 The class \ccRefName\ implements approximate $k$-nearest and $k$-furthest neighbor searching
 using standard search on a tree using a general distance 
-class. It is not required that the tree is built with extended nodes.
+class. 
 
 \ccInclude{CGAL/General_standard_search.h}
 
@@ -35,7 +35,8 @@ concept GeneralDistance. The default type is
 
 
 Expects for fourth template argument an implementation of the concept \ccc{SpatialTree}.
-The default type is \ccc{CGAL::Kd_tree<PointTraits>}.
+The default type is \ccc{CGAL::Kd_tree<PointTraits, Splitter, CGAL::Tag_false>}. The 
+template argument \ccc{CGAL::Tag_false} makes that the tree is built with unextended nodes.
 
 \ccTypes
 
