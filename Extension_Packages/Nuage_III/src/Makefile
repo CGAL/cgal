@@ -4,29 +4,20 @@
 #                    include platform specific settings
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
-
-
-
-
-
-##  2.4    2.4    2.4
-CGAL_MAKEFILE =/cygdrive/d/cgal/CGAL-2.4-I-84/make/makefile_i686_CYGWINNT-5.0-1.3.3_bcc32.exe-5.51
-
-#CGAL_MAKEFILE =/cygdrive/d/cgal/CGAL-2.4-I-84/make/makefile_i686_CYGWINNT-5.0-1.3.3_mwcc.exe-2.400
-
-#CGAL_MAKEFILE =/cygdrive/d/cgal/CGAL-2.4-I-78/make/makefile_i686_CYGWINNT-5.0-1.3.3_g++-2.95
-
-#CGAL_MAKEFILE =/cygdrive/d/cgal/CGAL-2.4-I-78/make/makefile_i686_CYGWINNT-5.0-1.3.3_CL.EXE-1200
-
+CGAL_MAKEFILE = d:/cgal/CGAL-2.5-I-105/make/makefile_i686_CYGWINNT-5.0-1.3.12_ICL.EXE-7
+#CGAL_MAKEFILE = d:/cgal/CGAL-2.5-I-93/make/makefile_i686_CYGWINNT-5.0-1.3.12_g++-2.95
+#CGAL_MAKEFILE =/cygdrive/d/cgal/CGAL-2.5-I-93/make/makefile_i686_CYGWINNT-5.0-1.3.12_ICL.EXE-7
+#CGAL_MAKEFILE = d:/cgal/CGAL-2.5-I-36/make/makefile_i686_CYGWINNT-5.0-1.3.12_bcc32.exe-5.51
+#CGAL_MAKEFILE = d:/cgal/CGAL-2.5-I-36/make/makefile_i686_CYGWINNT-5.0-1.3.12_g++-2.95
 include $(CGAL_MAKEFILE)
 
 # ---------------------------------------------------------------------#
 #                    compiler flags
 #----------------------------------------------------------------------#
 # rajouter CGAL_LOCAL_CXXFLAGS si on veut les packages de Local
-MY_OPT_FLAGS = -O2 -DNOLAZY -DBLIND -DNDEBUG
+MY_OPT_FLAGS =  -DNOLAZY -DBLIND -DDEBUG 
 
-#MY_OPT_FLAGS = -O3 -DNOLAZY -DBLIND -mcpu=pentiumpro -march=pentiumpro
+#MY_OPT_FLAGS = -O3 -funroll-loops -DNOLAZY -DBLIND -mcpu=pentiumpro -march=pentiumpro
 #pour desactiver le dump dans geomview -DBLIND
 #pour desactiver l'evaluation paresseuse -DNOLAZY
 
@@ -58,6 +49,13 @@ all: nuage$(EXE_EXT)
 
 nuage$(EXE_EXT): nuage$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)nuage  nuage$(OBJ_EXT) $(LDFLAGS)
+
+extract$(EXE_EXT): extract$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)extract  extract$(OBJ_EXT) $(LDFLAGS)
+
+
+vc-6$(EXE_EXT): vc-6$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)vc-6  vc-6$(OBJ_EXT) $(LDFLAGS)
 
 fill$(EXE_EXT): fill$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)fill  fill$(OBJ_EXT) $(LDFLAGS)
