@@ -1,3 +1,6 @@
+20 July 2004 Sylvain Pion
+- create_testresult_page : Identify "cgal" person.
+
 23 May 2004 Sylvain Pion
 - Add Boost.
 

@@ -634,6 +634,9 @@ sub email_address_in_html_format($)
 	} elsif ($responsible eq 'spion') {
 	    return '<A HREF="mailto:Sylvain.Pion@sophia.inria.fr">'.
 		   "Sylvain Pion</A>$qualification";
+	} elsif ($responsible eq 'cgal') {
+	    return '<A HREF="mailto:Sylvain.Pion@sophia.inria.fr">'.
+		   "Sylvain Pion</A>$qualification";
 	} elsif ($responsible eq 'rursu') {
 	    return '<A HREF="mailto:rursu@geometryfactory.com">'.
 		   "Radu Ursu</A>$qualification";
