@@ -39,36 +39,59 @@ _test_circulator( const Triangulation &T )
   int n = 0;
   Cell_circulator cc, cc0;
   Edge_iterator eit;
-  // testing incident_cells(edge *);
-  for (eit=T.all_edges_begin(); eit!=T.edges_end();  eit++)
-    {
-     cc0=cc=T.incident_cells(*eit);
+
+  // testing incident_cells(edge *); 
+//   for (eit=T.all_edges_begin(); eit!=T.edges_end();  eit++)
+  eit=T.all_edges_begin();
+  {
+    cc0=cc=T.incident_cells(*eit);
+    do {
+      cc++; n++;
+    } while (cc != cc0);
+  }
+  // test of incident_cells(cellhandle,int,int) and --
+  eit=T.finite_edges_begin();
+  {
+    cc0=cc=T.incident_cells((*eit).first,(*eit).second,(*eit).third);
       do {
-	cc++; n++;
+	cc--; n++;
       } while (cc != cc0);
     }
-  // testing incident_cells(edge *,cell *);
-  for (eit=T.all_edges_begin(); eit!=T.edges_end();  eit++)
-    {
-     cc0=cc=T.incident_cells(*eit,(*eit).first);
+  // testing incident_cells(edge *,cell *); and ++
+//   for (eit=T.all_edges_begin(); eit!=T.edges_end();  eit++)
+  eit=T.all_edges_begin();
+  {
+    cc0=cc=T.incident_cells(*eit,(*eit).first);
+    do {
+      cc++; n++;
+    } while (cc != cc0);
+  }
+  // test of incident_cells(cellhandle,int,int,cellhandle) and --
+  eit=T.finite_edges_begin();
+  {
+    cc0=cc=T.incident_cells((*eit).first,(*eit).second,(*eit).third, 
+			    (*eit).first);
       do {
-	cc++; n++;
+	cc--; n++;
       } while (cc != cc0);
     }
-  for (eit=T.finite_edges_begin(); eit!=T.edges_end();  eit++)
-    {
-     cc0=cc=T.incident_cells(*eit);
-      do {
-	cc++; n++;
-      } while (cc != cc0);
-    }
-  for (eit=T.finite_edges_begin(); eit!=T.edges_end(); eit++)
-    {
-     cc0=cc=T.incident_cells(*eit,(*eit).first);
-      do {
-	cc++; n++;
-      } while (cc != cc0);
-    }
+  // the following is not useful here, it tests iterators more than
+  // circulators 
+//   for (eit=T.finite_edges_begin(); eit!=T.edges_end();  eit++)
+//     {
+//      cc0=cc=T.incident_cells(*eit);
+//       do {
+// 	cc++; n++;
+//       } while (cc != cc0);
+//     }
+//   for (eit=T.finite_edges_begin(); eit!=T.edges_end(); eit++)
+//     {
+//      cc0=cc=T.incident_cells(*eit,(*eit).first);
+//       do {
+// 	cc++; n++;
+//       } while (cc != cc0);
+//     }
+
   std::set<Cell*, less<Cell*> > cells ;
   std::set<Vertex*, less<Vertex*> > vertices ;
 

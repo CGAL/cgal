@@ -695,13 +695,28 @@ public:
 	= (Triangulation_3<GT, Tds>*)this;
       return Cell_circulator(ncthis,e);
     }
-
-  Cell_circulator incident_cells(const Edge & e, Cell_handle c) const
+  Cell_circulator incident_cells(Cell_handle c, int i, int j) const
     {
       CGAL_triangulation_precondition( dimension() == 3 );
       Triangulation_3<GT, Tds>* ncthis 
 	= (Triangulation_3<GT, Tds>*)this;
-      return Cell_circulator(ncthis,e,c);
+      return Cell_circulator(ncthis,c,i,j);
+    }
+
+  Cell_circulator incident_cells(const Edge & e, Cell_handle start) const
+    {
+      CGAL_triangulation_precondition( dimension() == 3 );
+      Triangulation_3<GT, Tds>* ncthis 
+	= (Triangulation_3<GT, Tds>*)this;
+      return Cell_circulator(ncthis,e,start);
+    }
+  Cell_circulator incident_cells(Cell_handle c, int i, int j, 
+				 Cell_handle start) const  
+    {
+      CGAL_triangulation_precondition( dimension() == 3 );
+      Triangulation_3<GT, Tds>* ncthis 
+	= (Triangulation_3<GT, Tds>*)this;
+      return Cell_circulator(ncthis,c,i,j,start);
     }
 
   void

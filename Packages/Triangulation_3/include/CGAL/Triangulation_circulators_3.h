@@ -61,15 +61,29 @@ public:
     : _cb(), _tr(NULL)
     {}
 
-  Triangulation_cell_circulator_3(Triangulation * tr, Edge e)
-    : _cb( &(tr->_tds), make_triple( (Ctds *) &(*(e.first)), 
-				     e.second, e.third ) ), _tr(tr)
+  Triangulation_cell_circulator_3(Triangulation * tr, Cell_handle c,
+				  int s, int t)
+    : _cb( &(tr->_tds), (Ctds *) &(*c), s, t ), _tr(tr)
     {}
 
-   Triangulation_cell_circulator_3(Triangulation * tr, Edge e, Cell_handle c)
+  Triangulation_cell_circulator_3(Triangulation * tr, Edge e)
+    : _cb( &(tr->_tds), (Ctds *) &(*(e.first)), e.second, e.third ), _tr(tr)
+    {}
+
+   Triangulation_cell_circulator_3(Triangulation * tr, 
+				   Cell_handle c, int s, int t,
+				   Cell_handle start)
     : _cb( &(tr->_tds), 
-	   make_triple( (Ctds *) &(*(e.first)), e.second, e.third ),
-	   (Ctds *) &(*c) ), 
+	   (Ctds *) &(*c), s, t,
+	   (Ctds *) &(*start) ),
+      _tr(tr)
+    {}
+
+   Triangulation_cell_circulator_3(Triangulation * tr, Edge e, 
+				   Cell_handle start)
+    : _cb( &(tr->_tds), 
+	   (Ctds *) &(*(e.first)), e.second, e.third, 
+	   (Ctds *) &(*start) ),
       _tr(tr)
     {}
  

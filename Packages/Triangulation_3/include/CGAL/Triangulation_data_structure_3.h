@@ -394,20 +394,34 @@ public:
     Tds* ncthis = (Tds *)this;
     return Cell_circulator(ncthis,e);
   }
-  Cell_circulator incident_cells(Cell* ce, int i, int j) const
-  {
-    return incident_cells(make_triple(ce,i,j));
-  }
 
-  Cell_circulator incident_cells(const Edge & e, Cell* c) const
+//   Cell_circulator incident_cells(Cell* ce, int i, int j) const
+//   {
+//     return incident_cells(make_triple(ce,i,j));
+//   }
+  Cell_circulator incident_cells(Cell* ce, int i, int j) const
   {
     CGAL_triangulation_precondition( dimension() == 3 );
     Tds* ncthis = (Tds *)this;
-    return Cell_circulator(ncthis,e,c);
+    return Cell_circulator(ncthis,ce,i,j);
   }
-  Cell_circulator incident_cells(Cell* ce, int i, int j, Cell* c) const
+
+  Cell_circulator incident_cells(const Edge & e, Cell* start) const
   {
-    return incident_cells(make_triple(ce,i,j),c);
+    CGAL_triangulation_precondition( dimension() == 3 );
+    Tds* ncthis = (Tds *)this;
+    return Cell_circulator(ncthis,e,start);
+  }
+
+//   Cell_circulator incident_cells(Cell* ce, int i, int j, Cell* c) const
+//   {
+//     return incident_cells(make_triple(ce,i,j),c);
+//   }
+  Cell_circulator incident_cells(Cell* ce, int i, int j, Cell* start) const
+  {
+    CGAL_triangulation_precondition( dimension() == 3 );
+    Tds* ncthis = (Tds *)this;
+    return Cell_circulator(ncthis,ce,i,j,start);
   }
 
   void
