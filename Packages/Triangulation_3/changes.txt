@@ -1,3 +1,9 @@
+2 avril 2004 Mariette Yvinec
+- added is_Gabriel in Delaunay_triangulation_3.h + test
+- slightly changed is_Gabriel in Regular_triangulation_3 to make
+  the whoe more homogeneous
+- is_Gabriel is still to be documented (waiting for new wrapper
+  and tools of the doc)
 
 2 avril 2004 Mariette Yvinec
 - fixes in Regular_triangulation_euclidean_traits_3.h

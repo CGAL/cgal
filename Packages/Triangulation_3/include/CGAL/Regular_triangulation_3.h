@@ -555,31 +555,30 @@ Regular_triangulation_3<Gt,Tds>::
 is_Gabriel(Cell_handle c, int i) const
 {
   CGAL_triangulation_precondition(dimension() == 3 && !is_infinite(c,i));
-  typename Geom_traits::In_smallest_orthogonal_sphere_3
-    in_smallest_orthogonal_sphere = 
-    geom_traits().in_smallest_orthogonal_sphere_3_object();
+  typename Geom_traits::Side_of_bounded_orthogonal_sphere_3
+    side_of_bounded_orthogonal_sphere = 
+    geom_traits().side_of_bounded_orthogonal_sphere_3_object();
 
   if ((!is_infinite(c->vertex(i))) &&
-      in_smallest_orthogonal_sphere(
+      side_of_bounded_orthogonal_sphere(
 	 c->vertex(vertex_triple_index[i][0])->point(),
 	 c->vertex(vertex_triple_index[i][1])->point(),
 	 c->vertex(vertex_triple_index[i][2])->point(),
-	 c->vertex(i)->point()) == NEGATIVE ) return false;
+	 c->vertex(i)->point()) == ON_BOUNDED_SIDE ) return false;
 
   Cell_handle neighbor = c->neighbor(i);
   int in = neighbor->index(c);
 
   if ((!is_infinite(neighbor->vertex(in))) &&
-      in_smallest_orthogonal_sphere(
+      side_of_bounded_orthogonal_sphere(
 	 c->vertex(vertex_triple_index[i][0])->point(),
 	 c->vertex(vertex_triple_index[i][1])->point(),
 	 c->vertex(vertex_triple_index[i][2])->point(),	
-	 neighbor->vertex(in)->point()) == NEGATIVE ) return false;
+	 neighbor->vertex(in)->point()) == ON_BOUNDED_SIDE ) return false;
  
   return true;
 }
   
-
 
 template < class Gt, class Tds >
 bool
@@ -595,9 +594,9 @@ Regular_triangulation_3<Gt,Tds>::
 is_Gabriel(Cell_handle c, int i, int j) const
 {
   CGAL_triangulation_precondition(dimension() == 3 && !is_infinite(c,i,j));
-  typename Geom_traits::In_smallest_orthogonal_sphere_3
-    in_smallest_orthogonal_sphere = 
-    geom_traits().in_smallest_orthogonal_sphere_3_object();
+  typename Geom_traits::Side_of_bounded_orthogonal_sphere_3
+    side_of_bounded_orthogonal_sphere = 
+    geom_traits().side_of_bounded_orthogonal_sphere_3_object();
 
   Facet_circulator fcirc = incident_facets(c,i,j),
                    fdone(fcirc);
@@ -609,10 +608,10 @@ is_Gabriel(Cell_handle c, int i, int j) const
       Cell_handle cc = (*fcirc).first;
       int ii = (*fcirc).second;
       if (!is_infinite(cc->vertex(ii)) &&
-	  in_smallest_orthogonal_sphere( v1->point(), 
+	  side_of_bounded_orthogonal_sphere( v1->point(), 
 					 v2->point(),
 					 cc->vertex(ii)->point())  
-	  == NEGATIVE ) return false;
+	  == ON_BOUNDED_SIDE ) return false;
   } while(++fcirc != fdone);
   return true;
 }

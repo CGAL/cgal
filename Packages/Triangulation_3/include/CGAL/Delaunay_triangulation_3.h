@@ -72,11 +72,12 @@ public:
   typedef typename Tr_Base::Facet  Facet;
   typedef typename Tr_Base::Edge   Edge;
 
-  typedef typename Tr_Base::Cell_circulator Cell_circulator;
-  typedef typename Tr_Base::Cell_iterator   Cell_iterator;
-  typedef typename Tr_Base::Facet_iterator  Facet_iterator;
-  typedef typename Tr_Base::Edge_iterator   Edge_iterator;
-  typedef typename Tr_Base::Vertex_iterator Vertex_iterator;
+  typedef typename Tr_Base::Cell_circulator  Cell_circulator;
+  typedef typename Tr_Base::Facet_circulator Facet_circulator;
+  typedef typename Tr_Base::Cell_iterator    Cell_iterator;
+  typedef typename Tr_Base::Facet_iterator   Facet_iterator;
+  typedef typename Tr_Base::Edge_iterator    Edge_iterator;
+  typedef typename Tr_Base::Vertex_iterator  Vertex_iterator;
 
   typedef typename Tr_Base::Finite_vertices_iterator Finite_vertices_iterator;
   typedef typename Tr_Base::Finite_cells_iterator    Finite_cells_iterator;
@@ -342,6 +343,7 @@ private:
 		 const Point &p, bool perturb) const;
 public:
 
+  // Queries
   Bounded_side
   side_of_sphere(const Cell_handle& c, const Point & p,
 	         bool perturb = false) const
@@ -366,6 +368,12 @@ public:
   Vertex_handle
   nearest_vertex(const Point& p, Cell_handle c = Cell_handle()) const;
 
+  bool is_Gabriel(Cell_handle c, int i) const;
+  bool is_Gabriel(Cell_handle c, int i, int j) const;
+  bool is_Gabriel(const Facet& f)const ;
+  bool is_Gabriel(const Edge& e) const;
+
+// Dual functions
   Point dual(Cell_handle c) const;
 
   Object dual(const Facet & f) const
@@ -1291,6 +1299,80 @@ nearest_vertex(const Point& p, Cell_handle start) const
     }
 
     return nearest;
+}
+
+
+template < class Gt, class Tds >
+bool
+Delaunay_triangulation_3<Gt,Tds>::
+is_Gabriel(const Facet& f) const
+{
+  return is_Gabriel(f.first, f.second);
+}
+
+template < class Gt, class Tds >
+bool
+Delaunay_triangulation_3<Gt,Tds>::
+is_Gabriel(Cell_handle c, int i) const
+{
+  CGAL_triangulation_precondition(dimension() == 3 && !is_infinite(c,i));
+  typename Geom_traits::Side_of_bounded_sphere_3 
+    side_of_bounded_sphere =
+    geom_traits().side_of_bounded_sphere_3_object();
+
+  if ((!is_infinite(c->vertex(i))) &&
+      side_of_bounded_sphere (
+	c->vertex(vertex_triple_index[i][0])->point(),
+	c->vertex(vertex_triple_index[i][1])->point(),
+	c->vertex(vertex_triple_index[i][2])->point(),
+	c->vertex(i)->point()) == ON_BOUNDED_SIDE ) return false;
+    Cell_handle neighbor = c->neighbor(i);
+  int in = neighbor->index(c);
+
+  if ((!is_infinite(neighbor->vertex(in))) &&
+      side_of_bounded_sphere(
+	 c->vertex(vertex_triple_index[i][0])->point(),
+	 c->vertex(vertex_triple_index[i][1])->point(),
+	 c->vertex(vertex_triple_index[i][2])->point(),	
+	 neighbor->vertex(in)->point()) == ON_BOUNDED_SIDE ) return false;
+ 
+  return true;
+}
+
+template < class Gt, class Tds >
+bool
+Delaunay_triangulation_3<Gt,Tds>::
+is_Gabriel(const Edge& e) const
+{
+  return is_Gabriel(e.first, e.second, e.third);
+}
+
+template < class Gt, class Tds >
+bool
+Delaunay_triangulation_3<Gt,Tds>::
+is_Gabriel(Cell_handle c, int i, int j) const
+{
+  CGAL_triangulation_precondition(dimension() == 3 && !is_infinite(c,i,j));
+  typename Geom_traits::Side_of_bounded_sphere_3 
+    side_of_bounded_sphere = 
+    geom_traits().side_of_bounded_sphere_3_object();
+
+  Facet_circulator fcirc = incident_facets(c,i,j),
+                   fdone(fcirc);
+  Vertex_handle v1 = c->vertex(i);
+  Vertex_handle v2 = c->vertex(j);
+  do {
+      // test whether the vertex of cc opposite to *fcirc
+      // is inside the sphere defined by the edge e = (s, i,j)
+      Cell_handle cc = (*fcirc).first;
+      int ii = (*fcirc).second;
+      if (!is_infinite(cc->vertex(ii)) &&
+	   side_of_bounded_sphere( v1->point(), 
+				   v2->point(),
+				   cc->vertex(ii)->point())  
+	  == ON_BOUNDED_SIDE ) return false;
+  } while(++fcirc != fdone);
+  return true;
 }
 
 template < class Gt, class Tds >

@@ -16,6 +16,7 @@
 // $Name$
 //
 // Author(s)     : Francois Rebufat, Monique Teillaud, Sylvain Pion
+//                 Mariette Yvinec
 
 #ifndef CGAL_TEST_CLS_DELAUNAY_C
 #define CGAL_TEST_CLS_DELAUNAY_C
@@ -701,6 +702,34 @@ _test_cls_delaunay_3(const Triangulation &)
       _test_circulator(T3_2);
   }
 
+
+  std::cout << "   Test is_Gabriel " << std::endl;
+  Point q0(0.,0.,0.);
+  Point q1(2.,0.,0.);
+  Point q2(0.,2.,0.);
+  Point q3(0.,0.,2.);
+  Cls T4;
+  v0 = T4.insert(q0);
+  Vertex_handle v1 = T4.insert(q1);
+  Vertex_handle v2 = T4.insert(q2);
+  Vertex_handle v3 = T4.insert(q3);
+  Cell_handle c;
+  int j,k,l;
+  assert(T4.is_facet(v0,v1,v2,c,j,k,l));
+  i = 6 - (j+k+l);
+  Facet f = std::make_pair(c,i);
+  assert(T4.is_Gabriel(c,i));
+  assert(T4.is_Gabriel(f));
+  assert(T4.is_facet(v1,v2,v3,c,j,k,l));
+  i = 6 - (j+k+l);
+  assert(!T4.is_Gabriel(c,i));
+  assert(T4.is_edge(v0,v1,c,i,j));
+  assert(T4.is_Gabriel(c,i,j));
+  Edge e = make_triple(c,i,j);
+  assert(T4.is_Gabriel(e));
+  assert(T4.is_edge(v2,v3,c,i,j));
+  assert(T4.is_Gabriel(c,i,j));
+  
   std::cout <<"   Test destructors and quit "<< std::endl;
 
   T0.clear();
