@@ -1039,7 +1039,7 @@ public:
     point_location_SNC();
     intersection();   
     point_location_SM();
-    //    simplification_SNC();
+    simplification_SNC();
     simplification_SM();
     synthesis();
     unary_operations();
