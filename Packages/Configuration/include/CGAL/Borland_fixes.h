@@ -135,6 +135,25 @@ __value_type(_Iter& const)
   return static_cast<_value_type*>(0);
 }
 
+// another strange Borland-specific fix by AF
+// af: added
+template <class _Iter>
+inline typename iterator_traits<_Iter>::difference_type*
+__distance_type(_Iter& const)
+{
+   typedef typename iterator_traits<_Iter>::difference_type _difference_type;
+   return static_cast<_difference_type*>(0);
+}
+
+// af: added This one is commented in iterator.h
+template <class T>
+inline _TYPENAME T::iterator_category
+__iterator_category (const T&)
+{
+   _TYPENAME T::iterator_category tmp;
+    return tmp;
+}
+
 // quick (and dirty ?) fix for reverse_bidirectional_iterator
 template <class It, class Cat, class T, class Ref = T&, 
   class P = T*, class Dist = ptrdiff_t>

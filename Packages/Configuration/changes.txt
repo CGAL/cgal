@@ -1,3 +1,6 @@
+2.24
+- Borland fix.
+
 2.23
 + Fix another typo in VC 7 workaround.
 
