@@ -1,4 +1,8 @@
 //-----------------------------------------------------------------------//
+// 1.49
++ Added pragma for MSVC to report truncation of names only once.
+
+//-----------------------------------------------------------------------//
 // 1.48
 + Added file Borland_fixes.h that gets included by config.h
 

@@ -7,7 +7,7 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/BCC_standard_header_fixes.h
+// file          : include/CGAL/Borland_fixes.h
 // chapter       : $CGAL_Chapter: Configuration $
 //
 // author(s)     : Dimitri Pasechnik <dima@cs.uu.nl>
