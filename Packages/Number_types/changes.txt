@@ -1,4 +1,7 @@
 26 March 2005 Sylvain Pion
+- Gmpq : add removed mpq_canonicalize().
+
+26 March 2005 Sylvain Pion
 - Gmpz/Gmpq : remove some copies.
 
 13 March 2005 Sylvain Pion

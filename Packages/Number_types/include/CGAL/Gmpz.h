@@ -44,6 +44,9 @@
 
 CGAL_BEGIN_NAMESPACE
 
+// TODO : benchmark without ref-counting, and maybe give the possibility
+// to select ref-counting or not, then... => template class.
+
 // Wrapper around mpz_t to get the destructor call mpz_clear.
 struct Gmpz_rep
 {

@@ -125,7 +125,10 @@ public:
   { mpq_set_d(mpq(), d); }
 
   Gmpq(const std::string& str, int base = 10)
-  { mpq_set_str(mpq(), str.c_str(), base); }
+  {
+    mpq_set_str(mpq(), str.c_str(), base);
+    mpq_canonicalize(mpq());
+  }
 
 
   Gmpz numerator() const
