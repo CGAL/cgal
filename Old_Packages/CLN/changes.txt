@@ -1,5 +1,9 @@
 Changes done to the CLN package.
 
+Version 1.5 on 10 October 1999.
+- Removed "#include <fstream.h>" to please Visual C++.
+- Reference the 1.0.2 version of CLN in the biblio.
+
 Version 1.4 on 7 October 1999.
 - Doc updates about installation, and IOs.
 - The tests don't fail anymore when CLN is not installed.
