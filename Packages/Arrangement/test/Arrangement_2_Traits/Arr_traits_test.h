@@ -6,8 +6,10 @@
 template <class arr_traits>
 class Arr_traits_test {
 
+public:
   typedef arr_traits              Traits;
   typedef typename Traits::Curve  Curve;
+
 private:
   Traits tr;
 
