@@ -10,7 +10,7 @@
 // release       : 
 // release_date  : 
 //
-// file          : convex_hull_traits_2.h
+// file          : include/CGAL/convex_hull_traits_2.h
 // package       : Convex_hull_2 
 // revision      : $Revision$
 // revision_date : $Date$
@@ -20,58 +20,20 @@
 // ======================================================================
 
 
-#ifndef CGAL_CONVEX_HULL_TRAITS_2_H
-#define CGAL_CONVEX_HULL_TRAITS_2_H
+#ifndef CGAL_cONVEX_HULL_TRAITS_2_H
+#define CGAL_cONVEX_HULL_TRAITS_2_H
 
-#include <CGAL/Point_2.h>
-#include <CGAL/predicates_on_points_2.h>
-#include <CGAL/distance_predicates_2.h>
-#include <CGAL/predicate_objects_on_points_2.h>
+// maintained only for backwards compatability
 
+#include <CGAL/Convex_hull_traits_2.h>
 CGAL_BEGIN_NAMESPACE
-template <class K_>
-class convex_hull_traits_2 : public K_
+
+template <class K>
+class convex_hull_traits_2 : public Convex_hull_traits_2<K>
 {
-public:
-  typedef K_                                 K;
-  typedef typename K::Point_2                         Point_2;    
-  typedef typename K::Less_xy_2                       Less_xy_2;
-  typedef typename K::Less_yx_2                       Less_yx_2;
-  typedef typename K::Left_of_line_2                  Left_of_line_2;
-  typedef typename K::Less_singed_distance_to_line_2  
-                                         Less_signed_distance_to_line_2;
-  typedef typename K::Less_rotate_ccw_2               Less_rotate_ccw_2;
-  typedef typename K::Leftturn_2                      Leftturn_2;
-  typedef typename K::Segment_2                       Segment_2;    
-  
-  Less_xy_2
-  less_xy_2_object() const 
-  { return Less_xy_2(); } 
-
-  Less_yx_2
-  less_yx_2_object() const 
-  { return Less_yx_2(); } 
-
-  Left_of_line_2
-  left_of_line_2_object( const Point_2& p, const Point_2& q) const 
-  { return Left_of_line_2( p, q); } 
-
-  Less_signed_distance_to_line_2
-  less_signed_distance_to_line_2_object( const Point_2& p, 
-                                         const Point_2& q) const
-  { return Less_signed_distance_to_line_2( p, q); } 
-
-  Less_rotate_ccw_2
-  less_rotate_ccw_2_object( const Point_2& p ) const
-  { return Less_rotate_ccw_2( p); }
-
-  Leftturn_2
-  leftturn_2_object() const
-  { return Leftturn_2(); }
-
 };
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_CONVEX_HULL_TRAITS_2_H
+#endif CGAL_cONVEX_HULL_TRAITS_2_H
 

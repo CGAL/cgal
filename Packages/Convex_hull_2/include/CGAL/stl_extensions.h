@@ -10,13 +10,11 @@
 // release       : 
 // release_date  : 2000, August 03
 //
-// file          : stl_extensions.h
-// package       : Convex_hull (3.3)
-// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
-// source        : stl_extensions.lw
-// revision      : 3.2.1
-// revision_date : 19 Apr 2000
-// author(s)     : Stefan Schirra <Stefan.Schirra@@mpi-sb.mpg.de>
+// file          : include/CGAL/stl_extensions.h
+// package       : Convex_hull_2
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Stefan Schirra 
 //
 // coordinator   : MPI, Saarbruecken
 // ======================================================================

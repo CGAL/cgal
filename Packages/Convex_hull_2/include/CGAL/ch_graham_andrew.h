@@ -8,14 +8,12 @@
 //
 // ----------------------------------------------------------------------
 // release       : 
-// release_date  : 2000, August 03
+// release_date  : 
 //
-// file          : ch_graham_andrew.h
-// package       : Convex_hull (3.3)
-// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
-// source        : convex_hull_2.lw
-// revision      : 3.3
-// revision_date : 03 Aug 2000
+// file          : include/CGAL/ch_graham_andrew.h
+// package       : Convex_hull_2
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
 // coordinator   : MPI, Saarbruecken
@@ -27,14 +25,15 @@
 
 #include <CGAL/ch_utils.h>
 #include <CGAL/ch_value_type.h>
+
 #ifdef CGAL_REP_CLASS_DEFINED
-#include <CGAL/convex_hull_traits_2.h>
 #ifdef STL_GCC
 #ifndef GNU_ISTREAM_ITERATOR_VALUE_TYPE_FIX_H
 #include <CGAL/gnu_istream_iterator_value_type_fix.h>
 #endif // GNU_ISTREAM_ITERATOR_VALUE_TYPE_FIX_H
 #endif // STL_GCC
 #endif // CGAL_REP_CLASS_DEFINED
+
 #ifndef CH_NO_POSTCONDITIONS
 #include <CGAL/convexity_check_2.h>
 #endif // CH_NO_POSTCONDITIONS

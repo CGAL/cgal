@@ -13,8 +13,8 @@
 // file          : include/CGAL/Convex_hull_projective_xz_traits_2.h
 // package       : Convex_hull_2 
 // revision      : $Revision$
-// revision_date : $Date#
-// author(s)     : Stefan Schirra
+// revision_date : $Date$
+// author(s)     : Susan Hert
 //
 // coordinator   : MPI, Saarbruecken
 // ======================================================================

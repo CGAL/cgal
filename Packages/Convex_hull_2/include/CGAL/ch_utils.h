@@ -8,14 +8,12 @@
 //
 // ----------------------------------------------------------------------
 // release       : 
-// release_date  : 2000, August 03
+// release_date  : 
 //
-// file          : ch_utils.h
-// package       : Convex_hull (3.3)
-// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
-// source        : convex_hull_2.lw
-// revision      : 3.3
-// revision_date : 03 Aug 2000
+// file          : include/CGAL/ch_utils.h
+// package       : Convex_hull_2 
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
 // coordinator   : MPI, Saarbruecken
@@ -25,9 +23,7 @@
 #ifndef CGAL_CH_UTILS_H
 #define CGAL_CH_UTILS_H
 
-#ifndef CGAL_CONFIG_H
 #include <CGAL/config.h>
-#endif // CGAL_CONFIG_H
 #include <CGAL/ch_assertions.h>
 
 #define CGAL_CH_USE_ARGUMENT(arg)  (void)(arg)
