@@ -235,7 +235,7 @@ public:
 	const Point& c = fh->vertex(i)->point();
 	const Point& d = fh->mirror_vertex(i)->point();
 	
-	return( in_circle(c, b, a, d) == ON_POSITIVE_SIDE );
+	return( in_circle(c, b, a, d) == ON_NEGATIVE_SIDE );
       }
   };
 
@@ -515,7 +515,7 @@ private:
   void init(const Is_locally_conform&);
 
   template <class Is_locally_conform>
-  bool step_be_step(const Is_locally_conform&);
+  bool step_by_step(const Is_locally_conform&);
   //@}
 
   /** \name Templated access functions */
@@ -645,7 +645,7 @@ template <class Tr>
 template <class Is_locally_conform>
 inline
 bool Conforming_Delaunay_triangulation_2<Tr>::
-step_be_step(const Is_locally_conform& is_loc_conf)
+step_by_step(const Is_locally_conform& is_loc_conf)
 {
   if( !edges_to_be_conformed.empty() )
     process_one_edge(is_loc_conf);
