@@ -83,8 +83,8 @@ private:
     QMap<int, QString> mHistory;
 };
 
-static char*back[];
-static char*forward[];
-static char*home[];
+static char* back[100];
+static char* forward[100];
+static char* home[100];
 
 #endif

@@ -20,6 +20,87 @@
 
 #include <CGAL/IO/Qt_widget_helpwindow.h>
 
+/* XPM */
+/* Drawn  by Mark Donohoe for the K Desktop Environment */
+/* See http://www.kde.org */
+static char*backb[]={
+"16 16 5 1",
+"# c #000000",
+"a c #ffffff",
+"c c #808080",
+"b c #c0c0c0",
+". c None",
+"................",
+".......#........",
+"......##........",
+".....#a#........",
+"....#aa########.",
+"...#aabaaaaaaa#.",
+"..#aabbbbbbbbb#.",
+"...#abbbbbbbbb#.",
+"...c#ab########.",
+"....c#a#ccccccc.",
+".....c##c.......",
+"......c#c.......",
+".......cc.......",
+"........c.......",
+"................",
+"......................"};
+
+/* XPM */
+/* Drawn  by Mark Donohoe for the K Desktop Environment */
+/* See http://www.kde.org */
+static char*forwardb[]={
+"16 16 5 1",
+"# c #000000",
+"a c #ffffff",
+"c c #808080",
+"b c #c0c0c0",
+". c None",
+"................",
+"................",
+".........#......",
+".........##.....",
+".........#a#....",
+"..########aa#...",
+"..#aaaaaaabaa#..",
+"..#bbbbbbbbbaa#.",
+"..#bbbbbbbbba#..",
+"..########ba#c..",
+"..ccccccc#a#c...",
+"........c##c....",
+"........c#c.....",
+"........cc......",
+"........c.......",
+"................",
+"................"};
+
+/* XPM */
+/* Drawn  by Mark Donohoe for the K Desktop Environment */
+/* See http://www.kde.org */
+static char*homeb[]={
+"16 16 4 1",
+"# c #000000",
+"a c #ffffff",
+"b c #c0c0c0",
+". c None",
+"........... ....",
+"   ....##.......",
+"..#...####......",
+"..#..#aabb#.....",
+"..#.#aaaabb#....",
+"..##aaaaaabb#...",
+"..#aaaaaaaabb#..",
+".#aaaaaaaaabbb#.",
+"###aaaaaaaabb###",
+"..#aaaaaaaabb#..",
+"..#aaa###aabb#..",
+"..#aaa#.#aabb#..",
+"..#aaa#.#aabb#..",
+"..#aaa#.#aabb#..",
+"..#aaa#.#aabb#..",
+"..#####.######..",
+"................"};
 
 HelpWindow::HelpWindow( const QString& home_, const QString& _path,
 			QWidget* parent, const char *name )
@@ -38,9 +119,9 @@ HelpWindow::HelpWindow( const QString& home_, const QString& _path,
            statusBar(), SLOT( message( const QString&)) );
 
   // The same three icons are used twice each.
-  QIconSet icon_back( QPixmap((const char**)back) );
-  QIconSet icon_forward( QPixmap((const char**)forward) );
-  QIconSet icon_home( QPixmap((const char**)home) );
+  QIconSet icon_back( QPixmap((const char**)backb) );
+  QIconSet icon_forward( QPixmap((const char**)forwardb) );
+  QIconSet icon_home( QPixmap((const char**)homeb) );
 
 
   QPopupMenu* file = new QPopupMenu( this );
@@ -159,88 +240,6 @@ void HelpWindow::readHistory()
 	    history.remove( history.begin() );
     }
 }
-
-/* XPM */
-/* Drawn  by Mark Donohoe for the K Desktop Environment */
-/* See http://www.kde.org */
-static char*back[]={
-"16 16 5 1",
-"# c #000000",
-"a c #ffffff",
-"c c #808080",
-"b c #c0c0c0",
-". c None",
-"................",
-".......#........",
-"......##........",
-".....#a#........",
-"....#aa########.",
-"...#aabaaaaaaa#.",
-"..#aabbbbbbbbb#.",
-"...#abbbbbbbbb#.",
-"...c#ab########.",
-"....c#a#ccccccc.",
-".....c##c.......",
-"......c#c.......",
-".......cc.......",
-"........c.......",
-"................",
-"......................"};
-
-/* XPM */
-/* Drawn  by Mark Donohoe for the K Desktop Environment */
-/* See http://www.kde.org */
-static char*forward[]={
-"16 16 5 1",
-"# c #000000",
-"a c #ffffff",
-"c c #808080",
-"b c #c0c0c0",
-". c None",
-"................",
-"................",
-".........#......",
-".........##.....",
-".........#a#....",
-"..########aa#...",
-"..#aaaaaaabaa#..",
-"..#bbbbbbbbbaa#.",
-"..#bbbbbbbbba#..",
-"..########ba#c..",
-"..ccccccc#a#c...",
-"........c##c....",
-"........c#c.....",
-"........cc......",
-"........c.......",
-"................",
-"................"};
-
-/* XPM */
-/* Drawn  by Mark Donohoe for the K Desktop Environment */
-/* See http://www.kde.org */
-static char*home[]={
-"16 16 4 1",
-"# c #000000",
-"a c #ffffff",
-"b c #c0c0c0",
-". c None",
-"........... ....",
-"   ....##.......",
-"..#...####......",
-"..#..#aabb#.....",
-"..#.#aaaabb#....",
-"..##aaaaaabb#...",
-"..#aaaaaaaabb#..",
-".#aaaaaaaaabbb#.",
-"###aaaaaaaabb###",
-"..#aaaaaaaabb#..",
-"..#aaa###aabb#..",
-"..#aaa#.#aabb#..",
-"..#aaa#.#aabb#..",
-"..#aaa#.#aabb#..",
-"..#aaa#.#aabb#..",
-"..#####.######..",
-"................"};
 
 
 #include "Qt_widget_helpwindow.moc"
