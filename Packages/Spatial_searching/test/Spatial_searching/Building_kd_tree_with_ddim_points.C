@@ -1,97 +1,85 @@
-#include <CGAL/basic.h>
+// file: Building_kd_tree_with_ddim_points.C
 
+#include <CGAL/Cartesian_d.h>
+#include <CGAL/Homogeneous_d.h>
+#include <CGAL/constructions_d.h>
+#include <CGAL/Kd_tree.h>
+#include <CGAL/Random.h>
+#include <CGAL/algorithm.h>
+#include <CGAL/Orthogonal_k_neighbor_search.h>
+#include <CGAL/K_neighbor_search.h>
+#include <CGAL/point_generators_d.h>
 #include <vector>
 #include <cassert>
 #include <iostream>
 
-#include <CGAL/Kd_tree.h>
-#include <CGAL/Kd_tree_traits_point.h>
-#include <CGAL/Random.h>
-#include <CGAL/Splitters.h>
-#include <CGAL/point_generators_3.h>
-#include <CGAL/algorithm.h>
-#include <CGAL/Orthogonal_k_neighbor_search.h>
-#include <CGAL/K_neighbor_search.h>
+//typedef CGAL::Cartesian_d<double> K;
+typedef CGAL::Homogeneous_d<double> K;
+typedef CGAL::Point_d<K> Point;
 
-// create own Point type (adapted from example3.C from kdtree and Point_3.h)
-#include "../../examples/Spatial_searching/Point.h" 
+typedef CGAL::Random_points_in_iso_box_d<Point> Point_generator;
 
-typedef CGAL::Creator_uniform_3<double,Point> Creator;
+typedef K SearchTraits;
+typedef CGAL::Orthogonal_k_neighbor_search<SearchTraits> Orthogonal_k_neighbor_search;
+typedef CGAL::K_neighbor_search<SearchTraits>  K_neighbor_search;
 
-typedef CGAL::Kd_tree_traits_point<double, Point, const double*, Construct_coord_iterator> Traits;
-typedef CGAL::Orthogonal_k_neighbor_search<Traits, Distance> 
-  NN_orthogonal_search;
-typedef CGAL::K_neighbor_search<Traits, Distance> 
-  NN_general_search;
-
-typedef NN_general_search::Splitter Splitter;
-typedef std::vector<Point> Vector;
-typedef std::vector<Point> Query_vector;
 
 int main() {
+  
+  const int N = 1000;
+  const int K = 20;
+  
+  std::vector<Point> points;
+  
+  Point_generator g(3);
+  CGAL::copy_n( g, N, std::back_inserter(points));
+  g++;
+  Point query = *g;
+  
+  Orthogonal_k_neighbor_search::Tree o_tree(points.begin(), points.end());
+  o_tree.statistics(std::cout);
 
-  int bucket_size=10;
-  
-  const int data_point_number=1000;
-  
-  typedef std::list<Point> point_list;
-  point_list data_points;
-  
-  CGAL::Random_points_in_cube_3<Point,Creator> g( 1.0);
-  CGAL::copy_n( g, data_point_number, std::back_inserter(data_points));
-  
-  
-  Splitter split1(bucket_size);
+  K_neighbor_search::Tree tree(points.begin(), points.end());
+  tree.statistics(std::cout);
 
-  NN_orthogonal_search::Tree d1(data_points.begin(), data_points.end(), split1);
-
-  
-  
-  std::cout << "created kd tree using extended nodes containing "   
-  << data_point_number << " points. " << std::endl;
-  d1.statistics(std::cout);
-
-  
-  Splitter split2(bucket_size);
-  NN_general_search::Tree d2(data_points.begin(), data_points.end(), split2);
-
-  std::cout << "created kd tree using no extended nodes containing "
-  << data_point_number << " points. " << std::endl;
-  d2.statistics(std::cout);
-  
-  // neighbour searching
-  const int query_point_number=5;
-  Query_vector query_points;
-  CGAL::copy_n(g, query_point_number+1, std::back_inserter(query_points));
-  
-  // nearest neighbour searching using extended nodes
-  std::vector<NN_orthogonal_search::Point_with_distance> nearest_neighbours1;
-  // nearest_neighbours1.reserve(query_point_number+1);
-  
-  
-  // nearest neighbour searching using no extended nodes
-  std::vector<NN_general_search::Point_with_distance> nearest_neighbours2;
-  // nearest_neighbours2.reserve(query_point_number+1);
-  
-  for (int i=1; i < query_point_number+1; ++i) { 
-
-     NN_orthogonal_search NN1(d1, query_points[i], 1, 0.0);
-     std::cout << "neighbour searching statistics using extended nodes: " << std::endl;
-     NN1.statistics(std::cout);
-     NN1.the_k_neighbors(std::back_inserter(nearest_neighbours1));
-     NN_general_search NN2(d2, query_points[i], 1, 0.0, false);
-     std::cout << "neighbor searching statistics using no extended nodes: " << std::endl;
-     NN2.statistics(std::cout);
-     NN2.the_k_neighbors(std::back_inserter(nearest_neighbours2));
+  // do checking
+  double dist = 0;
+  std::vector<Point> result;
+  Orthogonal_k_neighbor_search o_search(o_tree, query,K);
+  for(Orthogonal_k_neighbor_search::iterator it = o_search.begin();
+      it != o_search.end();
+      it++){
+    result.push_back(it->first);
+    if(CGAL::to_double(it->second) > dist) dist = CGAL::to_double(it->second);
   }
-  
-  std::cout << "results neighbor searching:" << std::endl;
 
-  for (int j=0; j < query_point_number; ++j) { 
-     std::cout << " d(q,nearest neighbor)=" << nearest_neighbours1[j].second << 
-     " d(q,furthest neighbour)=" << nearest_neighbours2[j].second << std::endl; 
-  } 
+  assert(result.size() == K);
+  for(std::vector<Point>::iterator it = points.begin();
+      it != points.end();
+      it++){
+    if( std::find(result.begin(), result.end(), *it) == result.end()){
+      assert(CGAL::squared_distance(query, *it) >= dist);
+    }
+  }
 
+  result.clear();
+  K_neighbor_search search(tree, query,K);
+  for(K_neighbor_search::iterator it = search.begin();
+      it != search.end();
+      it++){
+    result.push_back(it->first);
+    if(CGAL::to_double(it->second) > dist) dist = CGAL::to_double(it->second);
+  }
+
+  assert(result.size() == K);
+  for(std::vector<Point>::iterator it = points.begin();
+      it != points.end();
+      it++){
+    if( std::find(result.begin(), result.end(), *it) == result.end()){
+      assert(CGAL::squared_distance(query, *it) >= dist);
+    }
+  }
+  std::cout << "done" << std::endl;
   return 0;
 };
 
