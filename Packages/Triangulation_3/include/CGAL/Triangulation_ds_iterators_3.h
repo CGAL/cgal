@@ -57,16 +57,20 @@ public:
   CGAL_Triangulation_ds_cell_iterator_3(Tds * tds)
     : _tds(tds)
     {
-      if ( _tds->dimension() <3 ) { pos = NULL; } // there is no cell yet
-      else { pos = _tds->list_of_cells()._next_cell; } // first cell of the list
+//       if ( _tds->dimension() <3 ) { pos = NULL; } // there is no cell yet
+      if ( _tds->dimension() <3 ) { pos = _tds->past_end_cell(); }
+      // there is no cell yet
+      else { pos = _tds->list_of_cells()._next_cell; } 
+      // first cell of the list
     }
 
   // used to initialize the past-the end iterator
   CGAL_Triangulation_ds_cell_iterator_3(Tds* tds, int i)
     : _tds(tds)
     {
-      if ( _tds->dimension() <3 ) { pos = NULL; } // there is no cell yet
-      else { pos = _tds->past_end_cell(); }
+//       if ( _tds->dimension() <3 ) { pos = NULL; } // there is no cell yet
+//       else { pos = _tds->past_end_cell(); }
+      pos = _tds->past_end_cell();
     }
   
 // MT ne sert a rien ?
@@ -181,7 +185,8 @@ public:
   CGAL_Triangulation_ds_vertex_iterator_3(Tds * tds)
     : _tds(tds), index(0)
     {
-      if ( _tds->number_of_vertices() == 0 ) { pos = NULL; }
+      //      if ( _tds->number_of_vertices() == 0 ) { pos = NULL; }
+      if ( _tds->number_of_vertices() == 0 ) { pos = tds->past_end_cell(); }
       else { 
 	pos = tds->list_of_cells()._next_cell; 
 	while ( (pos != _tds->past_end_cell())
@@ -195,8 +200,9 @@ public:
   CGAL_Triangulation_ds_vertex_iterator_3(Tds* tds, int i)
     : _tds(tds), index(0)
     {
-      if ( _tds->number_of_vertices() == 0 ) { pos = NULL; }
-      else { pos = tds->past_end_cell() ; }
+      //      if ( _tds->number_of_vertices() == 0 ) { pos = NULL; }
+      //      else { pos = tds->past_end_cell() ; }
+      pos = tds->past_end_cell() ;
     }
   
   Vertex_iterator&
@@ -318,7 +324,8 @@ public:
 	}
 	return;
       default:
-	pos = NULL;
+	// pos = NULL;
+	pos = tds->past_end_cell() ;
 	return;
       }
     }
@@ -327,17 +334,18 @@ public:
   CGAL_Triangulation_ds_facet_iterator_3(Tds* tds, int i)
     : _tds(tds), index(0)
     {
-      if ( _tds->dimension() < 2 ) { pos = NULL; }
-      else { 
+      //      if ( _tds->dimension() < 2 ) { pos = NULL; }
+      //      else { 
 	pos = tds->past_end_cell() ; 
 	if  ( _tds->dimension() == 2 ) { index = 3; }
-      }
+	//      }
     }
   
   Facet_iterator&
   operator++()
   {
-    //    if (_tds->dimension() < 2){ return *this;} should not be accessed
+    if (_tds->dimension() < 2){ return *this;} 
+
     if ( _tds->dimension() == 3 ) {
       do {
 	increment();
@@ -345,31 +353,35 @@ public:
 		&& ( (pos->neighbor(index)) < pos ) );
       // reports a facet when the current cell has a pointer inferior
       // to the pointer of the neighbor cell
+    return *this;
     }
-    else { pos = pos->_next_cell; }
+
+    pos = pos->_next_cell; // dimension 2
     return *this;
   }
     
   Facet_iterator&
   operator--()
   {
-    // if (_tds->dimension() < 2) { return *this;} should not be accessed
+    if (_tds->dimension() < 2) { return *this;} 
+    
     if ( _tds->dimension() == 2 ) {
       pos = pos->_previous_cell; // index remains 3
+     return *this;
     }
-    else { // dimension 3
-      do{
-	if (index == 0){
-	  // all the facets of the current cell have been examined
-	  index = 3;
-	  pos = pos->_previous_cell;
-	}
-	else { index--; }
-      } while ( (pos != _tds->past_end_cell())
-		&& (pos->neighbor(index) < pos ) );
-      // reports a facet when the current cell has a pointer inferior
-      // to the pointer of the neighbor cell
-    }
+
+    // dimension 3
+    do{
+      if (index == 0){
+	// all the facets of the current cell have been examined
+	index = 3;
+	pos = pos->_previous_cell;
+      }
+      else { index--; }
+    } while ( (pos != _tds->past_end_cell())
+	      && (pos->neighbor(index) < pos ) );
+    // reports a facet when the current cell has a pointer inferior
+    // to the pointer of the neighbor cell
     return *this;
   }
     
@@ -489,7 +501,8 @@ public:
 	}
       default:
 	{
-	  pos = NULL;
+	  //	  pos = NULL;
+	  pos = tds->past_end_cell() ; 
 	  return;
 	}
       }
@@ -499,67 +512,60 @@ public:
   CGAL_Triangulation_ds_edge_iterator_3(Tds* tds, int i)
     : _tds(tds), b(0), e(1)
     {
-      if ( _tds->dimension() < 1 ) { pos = NULL; }
-      else { 
+      //      if ( _tds->dimension() < 1 ) { pos = NULL; }
+      //      else { 
 	pos = tds->past_end_cell() ; 
 	// always b == 0 and e == 1 for past-end-cell
-// 	switch ( _tds->dimension() ) {
-// 	  // b and e set to the indices of the "last" --the
-// 	  // edges are lexicographically ordered-- possible edge in a cell
-// 	case 1:
-// 	  b = 0; 
-// 	  e = 1;
-// 	  break;
-// 	case 2:
-// 	  b = 0; //2
-// 	  e = 1; //0
-// 	  break;
-// 	case 3:
-// 	  b = 0; //2
-// 	  e = 1; //3
-// 	  break;
-// 	}
-      }
+	//      }
     }
   
   Edge_iterator&
   operator++()
   {
     switch ( _tds->dimension() ) {
-      // dimension < 1 should not occur
     case 1:
-      pos = pos->_next_cell;
-      break;
+      {
+	pos = pos->_next_cell;
+	break;
+      }
     case 2:
-      do {
-	increment2();
-      } while ( (pos != _tds->past_end_cell()) && 
-		( pos->neighbor(3-b-e) < pos) );
-      break;
+      {
+	do {
+	  increment2();
+	} while ( (pos != _tds->past_end_cell()) && 
+		  ( pos->neighbor(3-b-e) < pos) );
+	break;
+      }
     case 3:
-      bool notfound = true;
-      do {
-	increment3();
-	if (pos != _tds->past_end_cell()) {
-	  Cell_circulator ccir = _tds->incident_cells(CGAL_make_triple(pos,b,e));
-	  //	  cerr << "sommets pos" << endl ;
-	  //	  pp_tds_cell(pos) ;
-	  do {
-	    ++ccir;
-	    //	    cerr << "&*ccir " << &(*ccir) << " pos " << pos << endl;
-	    //	    cerr << "sommets ccir " << endl;
-	    //	    pp_tds_cell(&(*ccir));
-	  } while ( &(*ccir) > pos );
-	  if ( &(*ccir) == pos ) {// pos is the cell with minimum pointer
-	    notfound = false;
+      {
+	bool notfound = true;
+	do {
+	  increment3();
+	  if (pos != _tds->past_end_cell()) {
+	    Cell_circulator ccir = _tds->incident_cells(CGAL_make_triple(pos,b,e));
+	    //	  cerr << "sommets pos" << endl ;
+	    //	  pp_tds_cell(pos) ;
+	    do {
+	      ++ccir;
+	      //	    cerr << "&*ccir " << &(*ccir) << " pos " << pos << endl;
+	      //	    cerr << "sommets ccir " << endl;
+	      //	    pp_tds_cell(&(*ccir));
+	    } while ( &(*ccir) > pos );
+	    if ( &(*ccir) == pos ) {// pos is the cell with minimum pointer
+	      notfound = false;
+	    }
 	  }
-	}
-	else {
-	  b=0; e=1;
-	}
-      } while ( (pos != _tds->past_end_cell()) &&
-		notfound );
-      break;
+	  else {
+	    b=0; e=1;
+	  }
+	} while ( (pos != _tds->past_end_cell()) &&
+		  notfound );
+	break;
+      }
+    default:
+      {
+	return *this;
+      }
     }
     return *this;
   }
@@ -567,64 +573,71 @@ public:
   Edge_iterator&
   operator--()
   {
-    // if (_tds->dimension() < 2) { return *this;} should not be accessed
     switch (  _tds->dimension() ) {
     case 1:
-      pos = pos->_previous_cell; // b, e remain 0, 1
-      break;
+      {
+	pos = pos->_previous_cell; // b, e remain 0, 1
+	break;
+      }
     case 2:
-      do {
-	if (b == 0) {
-	  b = 2; e = 0;
-	  pos = pos->_previous_cell;
-	}
-	else {
-	  b--; 
-	  e = b+1; // case b==2, e==0 forbids to write e--
-	}
-      } while ( (pos != _tds->past_end_cell()) && 
-		( pos->neighbor(3-b-e) < pos) );
-      break;
-    case 3:
-      bool notfound = true;
-      do {
-	if (b == 0) {
-	  if (e == 1) {
-	    // all the edges of the current cell have been examined
-	    b = 2; e = 3;
+      {
+	do {
+	  if (b == 0) {
+	    b = 2; e = 0;
 	    pos = pos->_previous_cell;
 	  }
 	  else {
-	    e--;
+	    b--; 
+	    e = b+1; // case b==2, e==0 forbids to write e--
 	  }
-	}
-	else {
-	  if (e == b+1) {
-	    b--;
-	    e = 3;
+	} while ( (pos != _tds->past_end_cell()) && 
+		  ( pos->neighbor(3-b-e) < pos) );
+	break;
+      }
+    case 3:
+      {
+	bool notfound = true;
+	do {
+	  if (b == 0) {
+	    if (e == 1) {
+	      // all the edges of the current cell have been examined
+	      b = 2; e = 3;
+	      pos = pos->_previous_cell;
+	    }
+	    else {
+	      e--;
+	    }
 	  }
 	  else {
-	    e--;
+	    if (e == b+1) {
+	      b--;
+	      e = 3;
+	    }
+	    else {
+	      e--;
+	    }
 	  }
-	}
-	if (pos != _tds->past_end_cell()) {
-	  Cell_circulator ccir = _tds->incident_cells(CGAL_make_triple(pos,b,e));
-// 	while ( &(*ccir) > pos ) {
-// 	  --ccir;
-// 	}
-	  do {
-	    ++ccir;
-	  } while ( &(*ccir) > pos );
-	  if ( &(*ccir) == pos ) {// pos is the cell with minimum pointer
-	    notfound = false;
+	  if (pos != _tds->past_end_cell()) {
+	    Cell_circulator ccir = _tds->incident_cells(CGAL_make_triple(pos,b,e));
+	    // 	while ( &(*ccir) > pos ) {
+	    // 	  --ccir;
+	    // 	}
+	    do {
+	      ++ccir;
+	    } while ( &(*ccir) > pos );
+	    if ( &(*ccir) == pos ) {// pos is the cell with minimum pointer
+	      notfound = false;
+	    }
 	  }
-	}
-	else {
-	  b=0; e=1;
-	}
-      } while ( (pos != _tds->past_end_cell()) &&
-		notfound );
-      break;
+	  else {
+	    b=0; e=1;
+	  }
+	} while ( (pos != _tds->past_end_cell()) &&
+		  notfound );
+	break;
+      }
+    default :
+      return *this;
     }
     // reports an edge when the current cell has a pointer inferior
     // to the pointer of the neighbor cell
