@@ -1,6 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.95 (11/6/01)
+- Try to solve a VCC compilation problem around the Iterator_project
+  for Point_iterator
+
 Ver 4.94 (7/6/01)
 - suppress the typedef Point in Triangulation_data_structure_using_list_2
 - GCC 3.0 fixes.
