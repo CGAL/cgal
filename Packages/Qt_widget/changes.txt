@@ -1,3 +1,9 @@
+1.2.36
+-----------
+The Nef_2 demo is up to date.
+The Qt_widget_Nef_2 ouput operator is almost ready. (need tests)
+Qt_widget has sizeHint virtual function that is useful with layouts
+
 1.2.35 = 1.2.33
 
 1.2.33
