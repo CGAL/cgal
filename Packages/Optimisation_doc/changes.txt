@@ -1,5 +1,8 @@
 Changes done to the `Optimisation_doc' package
 
+Version 1.0.6 on 27-Jul-2001
+- Susan made changes necessary for manual split
+
 Version 1.0.5 on 19-Jul-2001
 - removed definitons of '\ccRequirements' and '\ccRequire' (moved to cc_manual)
 
