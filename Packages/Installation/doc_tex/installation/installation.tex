@@ -30,7 +30,7 @@
 \newcommand{\msvc}[1]{\textsc{Microsoft}~Visual~\texttt{C++}~{\rm #1}}
 
 %% macro for CGAL release number
-%\newcommand{\cgalrelease}{2.0}
+\newcommand{\cgalrelease}{2.1}
 
 %% macro for CGAL directory
 \newcommand{\cgaldir}{\texttt{CGAL-\cgalrelease}}
@@ -244,7 +244,7 @@ A menu similar to the following will appear on your screen.
 {\ccTexHtml{\scriptsize}{} \label{pic:main-menu}
 \begin{alltt}
   ****************************************************************
-  **              CGAL 2.0 Installation Main Menu               **
+  **              CGAL 2.1 Installation Main Menu               **
   **              -------------------------------               **
   **                                                            **
   **   OS:                  sparc_SunOS-5.6                     **
@@ -304,7 +304,7 @@ from compiler or linker).
 \begin{verbatim}
   ****************************************************************
   **                                                            **
-  **                     Compiling CGAL 2.0                     **
+  **                     Compiling CGAL 2.1                     **
   **                     ------------------                     **
   **                                                            **
   ****************************************************************
@@ -677,7 +677,7 @@ compiler.  To achieve this, the first section of each makefile
 contains an include statement that looks as follows:
 
 \begin{verbatim}
-      CGAL_MAKEFILE = /users/jannes/CGAL-2.0/make/makefile_<CGAL-OS description>
+      CGAL_MAKEFILE = /users/jannes/CGAL-2.1/make/makefile_<CGAL-OS description>
       include $(CGAL_MAKEFILE)
 \end{verbatim}
 
@@ -733,7 +733,7 @@ have consequences for the makefile variables \texttt{CGAL\_CXX} and
 \texttt{CXXFLAGS}.
 
 \section{Compiling a \cgal\ application}
-The directory \texttt{CGAL-2.0/examples} contains a small program
+The directory \texttt{\cgaldir/examples} contains a small program
 (example.C) and a sample makefile with some comments. The
 \texttt{CGAL\_MAKEFILE} variable in this makefile (see section
 \ref{sec:makefiles}) is automatically substituted by the
