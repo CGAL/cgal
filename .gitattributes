@@ -1793,6 +1793,9 @@ Packages/Triangulation_3/doc_tex/TriangulationDS_3_ref/topo-insert_outside_affin
 Packages/Triangulation_3/doc_tex/TriangulationDS_3_ref/utils.eps -text
 Packages/Triangulation_3/doc_tex/TriangulationDS_3_ref/utils.gif -text svneol=unset#unset
 Packages/Triangulation_3/doc_tex/TriangulationDS_3_ref/utils.ipe -text
+Packages/Triangulation_3/doc_tex/Triangulation_3/derivation.eps -text
+Packages/Triangulation_3/doc_tex/Triangulation_3/derivation.fig -text
+Packages/Triangulation_3/doc_tex/Triangulation_3/derivation.gif -text svneol=unset#unset
 Packages/Triangulation_3/doc_tex/Triangulation_3/design.eps -text
 Packages/Triangulation_3/doc_tex/Triangulation_3/design.fig -text
 Packages/Triangulation_3/doc_tex/Triangulation_3/design.gif -text svneol=unset#unset
@@ -1856,6 +1859,9 @@ Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3_ref/topo-insert_outside
 Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3_ref/utils.eps -text
 Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3_ref/utils.gif -text svneol=unset#unset
 Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3_ref/utils.ipe -text
+Packages/Triangulation_3/doc_tex/basic/Triangulation_3/derivation.eps -text
+Packages/Triangulation_3/doc_tex/basic/Triangulation_3/derivation.fig -text
+Packages/Triangulation_3/doc_tex/basic/Triangulation_3/derivation.gif -text svneol=unset#unset
 Packages/Triangulation_3/doc_tex/basic/Triangulation_3/design.eps -text
 Packages/Triangulation_3/doc_tex/basic/Triangulation_3/design.fig -text
 Packages/Triangulation_3/doc_tex/basic/Triangulation_3/design.gif -text svneol=unset#unset
