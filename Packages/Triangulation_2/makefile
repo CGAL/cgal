@@ -5,7 +5,7 @@ WWW_CGAL=$(WWW)/CGAL/DR:/Members
 WWW_dir=$(WWW_CGAL)/Triangulation_2
 TMP_file=/tmp/submit-mail
 CGAL_MAKEFILE=/u/alcor/0/prisme_util/CGAL/CGAL-2.1/make/makefile_i686_Linux-2.2.13_g++-2.95.2_LEDA
-MAINTAINER= Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
+MAINTAINER=Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 
 package: 
 	@echo "----------------------------------"
@@ -26,7 +26,7 @@ package:
 
 Version:
 	echo "$(VERSION) (`date '+%e %b %Y'`)" > version 
-	echo  "maintainer : $(MAINTAINER)" >> version
+	echo  "$(MAINTAINER)" >> version
 
 Tag:
 	cvs tag v`echo $(VERSION) | sed -e "s/\./_/g"` demo doc examples include test
