@@ -519,7 +519,7 @@ public:
     return DG::clear();
   }
 
-  inline void swap(const Apollonius_graph_2& ag) {
+  inline void swap(Apollonius_graph_2& ag) {
     DG::swap(ag);
   }
 
