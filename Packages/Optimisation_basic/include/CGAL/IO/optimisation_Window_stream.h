@@ -16,13 +16,13 @@
 // chapter       : Geometric Optimisation
 //
 // source        : web/Optimisation_basic.aw
-// revision      : 5.10
-// revision_date : 2001/03/21
+// revision      : $Revision$
+// revision_date : $Date$
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
 //
-// implementation: graphical output to `leda_window' for optimisation algorith.
+// implementation: graphical output to window stream for optimisation algorithms
 // ============================================================================
 
 #include <CGAL/IO/Min_circle_2_Window_stream.h>

@@ -16,8 +16,8 @@
 // chapter       : Geometric Optimisation
 //
 // source        : web/Optimisation_basic.aw
-// revision      : 5.10
-// revision_date : 2001/03/21
+// revision      : $Revision$
+// revision_date : $Date$
 //
 // author(s)     : Geert-Jan Giezeman, Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
@@ -38,7 +38,7 @@
 #  define  CGAL_optimisation_assertion(EX)         ((void)0)
 #  define  CGAL_optimisation_assertion_msg(EX,MSG) ((void)0)
 #  define  CGAL_optimisation_assertion_code(CODE)
-#  undef  CGAL_OPTIMISATION_ASSERTION_TAG
+#  undef   CGAL_OPTIMISATION_ASSERTION_TAG
 #else
 #  define  CGAL_optimisation_assertion(EX) \
      ((EX)?((void)0): ::CGAL::assertion_fail( # EX ,__FILE__,__LINE__,0))
@@ -55,7 +55,7 @@
 #  define  CGAL_optimisation_exactness_assertion(EX)         ((void)0)
 #  define  CGAL_optimisation_exactness_assertion_msg(EX,MSG) ((void)0)
 #  define  CGAL_optimisation_exactness_assertion_code(CODE)
-#  undef  CGAL_OPTIMISATION_EXACTNESS_ASSERTION_TAG
+#  undef   CGAL_OPTIMISATION_EXACTNESS_ASSERTION_TAG
 #else
 #  define  CGAL_optimisation_exactness_assertion(EX) \
      ((EX)?((void)0): ::CGAL::assertion_fail( # EX ,__FILE__,__LINE__,0))
@@ -186,7 +186,7 @@
 #  define  CGAL_optimisation_postcondition(EX)         ((void)0)
 #  define  CGAL_optimisation_postcondition_msg(EX,MSG) ((void)0)
 #  define  CGAL_optimisation_postcondition_code(CODE)
-#  undef  CGAL_OPTIMISATION_POSTCONDITION_TAG
+#  undef   CGAL_OPTIMISATION_POSTCONDITION_TAG
 #else
 #  define  CGAL_optimisation_postcondition(EX) \
      ((EX)?((void)0): ::CGAL::postcondition_fail( # EX ,__FILE__,__LINE__,0))
@@ -315,7 +315,7 @@
 #  define  CGAL_optimisation_expensive_exactness_warning_msg(EX,MSG) \
                                                                   ((void)0)
 #  define  CGAL_optimisation_expensive_exactness_warning_code(CODE)
-#  undef  CGAL_OPTIMISATION_EXPENSIVE_EXACTNESS_WARNING_TAG
+#  undef   CGAL_OPTIMISATION_EXPENSIVE_EXACTNESS_WARNING_TAG
 #else
 #  define  CGAL_optimisation_expensive_exactness_warning(EX) \
      ((EX)?((void)0): ::CGAL::warning_fail( # EX ,__FILE__,__LINE__,0))

@@ -16,8 +16,8 @@
 // chapter       : Geometric Optimisation
 //
 // source        : web/Optimisation_d_traits.aw
-// revision      : 1.3
-// revision_date : 2001/03/21
+// revision      : $Revision$
+// revision_date : $Date$
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
@@ -43,39 +43,39 @@ CGAL_BEGIN_NAMESPACE
 
 // Class declaration
 // =================
-template < class R_, class ET_ = CGAL_TYPENAME_MSVC_NULL R_::RT,
-                     class NT_ = CGAL_TYPENAME_MSVC_NULL R_::RT >
+template < class K_, class ET_ = CGAL_TYPENAME_MSVC_NULL K_::RT,
+                     class NT_ = CGAL_TYPENAME_MSVC_NULL K_::RT >
 class Optimisation_d_traits_d;
 
 // Class interface
 // ===============
-template < class R_, class ET_, class NT_>
+template < class K_, class ET_, class NT_>
 class Optimisation_d_traits_d {
   public:
     // self
-    typedef  R_                         R;
+    typedef  K_                         K;
     typedef  ET_                        ET;
     typedef  NT_                        NT;
-    typedef  Optimisation_d_traits_d<R,ET,NT>
+    typedef  Optimisation_d_traits_d<K,ET,NT>
                                         Self;
 
     // types
-    typedef  typename R::Point_d        Point_d;
+    typedef  typename K::Point_d        Point_d;
 
-    typedef  typename R::Rep_tag        Rep_tag;
+    typedef  typename K::Rep_tag        Rep_tag;
 
-    typedef  typename R::RT             RT;
-    typedef  typename R::FT             FT;
+    typedef  typename K::RT             RT;
+    typedef  typename K::FT             FT;
 
-    typedef  Access_dimension_d<R>      Access_dimension_d;
-    typedef  Access_coordinates_begin_d<R>
+    typedef  Access_dimension_d<K>      Access_dimension_d;
+    typedef  Access_coordinates_begin_d<K>
                                         Access_coordinates_begin_d;
 
-    typedef  Construct_point_d<R>       Construct_point_d;
+    typedef  Construct_point_d<K>       Construct_point_d;
 
     // creation
     Optimisation_d_traits_d( ) { }
-    Optimisation_d_traits_d( const Optimisation_d_traits_d<R_,ET_,NT_>&) {}
+    Optimisation_d_traits_d( const Optimisation_d_traits_d<K_,ET_,NT_>&) {}
 
     // operations
     Access_dimension_d
