@@ -27,32 +27,41 @@ interior disjoint subcurves induced by the given input curves.
 \def\ccLongParamLayout{\ccTrue} 
 
 \ccGlobalFunction{
-   template <class Curve_iterator, class Planar_map>
+   template <class InputIterator, class SweepLineTraits_2, class Planar_map>
    void 
    sweep_to_construct_planar_map(
-   Curve_iterator curves_begin, 
-   Curve_iterator curves_end, 
+   InputIterator curves_begin, 
+   InputIterator curves_end, 
+   SweepLineTraits_2& traits,
    Planar_map &result);
 }
 
 constructs a \ccc{Planar map} from the curves given in the range
 \ccStyle{[curves_begin, curves_end)}. The parameter \ccStyle{result}
-holding the resulting \ccc{Planar map}, if \ccStyle{result} holds a
-non empty \ccc {Planar map} before calling to
-\ccc{sweep_to_construct_planar_map} - then \ccStyle{result} will be
+holds the resulting \ccc{Planar map}. If \ccStyle{result} holds a
+non empty \ccc {Planar map} then \ccStyle{result} will be
 cleared and the curves \ccStyle{result} was holding would be sweeped
 together with the curves in \ccStyle{[curves_begin, curves_end)}.
 
 \ccc{sweep_to_construct_planar_map} supports curves which are
-interior intersect, overlap or non x-monotone, and hence the user may
-provide his curves as input without any restriction of the kind
-mentioned above. This function is also updating the \ccc{Planar map}
+interior intersect, overlap or are non $x$-monotone. 
+%and hence the user may provide his curves as input without any restriction of the kind
+%mentioned above. 
+This function constructs the \ccc{Planar map}
 efficiently, since it makes no point location operations when
 inserting curves to the \ccc{Planar map}. Hence, inserting curves to a
 \ccc{Planar map}, even when there are no interior intersections
 between those curves and only iteratively inserting them to a
 \ccc{Planar map} is legal, will be more efficient when using
 \ccc{sweep_to_construct_planar_map}.
+
+\ccHeading{Requirements}
+\begin{enumerate}
+   \item    \ccc{InputIterator::value_type} is equivalent to \ccc{Traits::Curve_2}.
+   \item    \ccc{SweepLineTraits_2} is a model of the \ccc{SweepLineTraits_2} concept
+   \item    \ccc{Planar_map} is the \cgal Planar Map.
+\end{enumerate}
+
 
 \ccSeeAlso
 

@@ -2,25 +2,19 @@
 // ------------------------------
 #include <CGAL/Cartesian.h>
 #include <CGAL/Quotient.h> 
-
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Planar_map_2.h>
-
 #include <CGAL/sweep_to_produce_subcurves_2.h>
-
 #include <CGAL/Arr_polyline_traits.h>
-//#include <CGAL/IO/Arr_polyline_traits_iostream.h>
-
 #include <iostream>
 #include <vector>
 
 typedef CGAL::Quotient<int>                  NT;
 typedef CGAL::Cartesian<NT>                  R;
 typedef CGAL::Arr_polyline_traits<R>         Traits;
-
-typedef Traits::Point                                 Point;
-typedef Traits::X_curve                               X_curve;
-typedef Traits::Curve                                 Curve;
+typedef Traits::Point                        Point;
+typedef Traits::X_curve                      X_curve;
+typedef Traits::Curve                        Curve;
 
 using namespace CGAL;
 

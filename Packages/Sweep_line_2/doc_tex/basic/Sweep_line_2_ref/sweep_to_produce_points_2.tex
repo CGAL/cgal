@@ -25,10 +25,10 @@ include the endpoints of the input curves within the output.
 \ccInclude{sweep_to_produce_points_2.h}
 
 \ccFunction{
-   template<class Curve_iterator, class Traits, class PointOutputIterator>
+   template<class InputIterator, class SweepLineTraits_2, class OutputIterator>
    void 
-   sweep_to_produce_points_2(Curve_iterator curves_begin, 
-   Curve_iterator curves_end,  
+   sweep_to_produce_points_2(InputIterator curves_begin, 
+   InputIterator curves_end,  
    SweepLineTraits_2& traits, 
    OutpoutIterator points,
    bool edge_points = true);}
@@ -44,7 +44,13 @@ include the endpoints of the input curves within the output.
    by setting the flag \ccStyle{edge_points} to true. 
    The default choice provides this first possibility.}
 
-\ccRequirements
+\ccHeading{Requirements}
+\begin{enumerate}
+   \item    \ccc{InputIterator::value_type} is equivalent to \ccc{Traits::Curve_2}.
+   \item    \ccc{SweepLineTraits_2} is a model of the \ccc{SweepLineTraits_2} concept
+   \item    \ccc{InputIterator::value_type} is equivalent to \ccc{Traits::Point_2}..
+\end{enumerate}
+
 
 \ccSeeAlso
 \ccc{CGAL::sweep_to_construct_planar_map_2} \\
@@ -72,6 +78,12 @@ And the output of the program looks like this:
 %%RefPage: end of main body, begin of footer
 % EOF
 % +------------------------------------------------------------------------+
+
+
+
+
+
+
 
 
 

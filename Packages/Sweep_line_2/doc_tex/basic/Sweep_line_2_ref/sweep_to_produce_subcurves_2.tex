@@ -26,13 +26,13 @@ as many times as it is covered by input curves.
 \def\ccLongParamLayout{\ccTrue} 
 
 \ccFunction{
-   template <class Curve_iterator, class Traits, class Container>
+   template <class Inputiterator, class SweepLineTraits_2, class OutputIterator>
    void 
    sweep_to_produce_planar_map_subcurves(
-   Curve_iterator curves_begin, 
-   Curve_iterator curves_end, 
-   Traits& traits, 
-   Container &subcurves, 
+   Inputiterator curves_begin, 
+   Inputiterator curves_end, 
+   SweepLineTraits_2& traits, 
+   OutputIterator &subcurves, 
    bool overlapping = false);}
    {reports all the disjoint interior subcurves induced by the curves
    given in the range \ccStyle{[curves_begin, curves_end)}. The
@@ -47,6 +47,13 @@ as many times as it is covered by input curves.
    each overlapping subcurve only once or that the reported subcurves
    will have each overlapping subcurve per each original curve it
    created of. The default choice provides the first possibility.}
+
+\ccHeading{Requirements}
+\begin{enumerate}
+   \item    \ccc{InputIterator::value_type} is equivalent to \ccc{Traits::Curve_2}.
+   \item    \ccc{SweepLineTraits_2} is a model of the \ccc{SweepLineTraits_2} concept
+   \item    \ccc{InputIterator::value_type} is equivalent to \ccc{Traits::X_curve_2}..
+\end{enumerate}
 
 \ccSeeAlso
 

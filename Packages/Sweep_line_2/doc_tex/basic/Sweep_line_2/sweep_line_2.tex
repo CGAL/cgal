@@ -1,23 +1,40 @@
 \section{Sweep Line}
 
 % Describe the functionality of the package
+
+Given a collection $C$ of possibly intersecting 
+(not necessarily $x$-monotone~\footnote{
+We stress this fact because some implementation, such as, 
+\ccc{Planar_map_2<Dcel,Traits> assume all curves are $x$-monotone 
+in order to gain simplicity and speed.}) 
+curves in the plane, the sweep line algorithm can produce the collections of their 
+intersections and the disjoint-interior subcurves induced by $C$, or rather 
+construct the planar map induced by $C$. Use the functions \ccc{sweep_to_produce_points_2},
+\ccc{sweep_to_produce_subcurves_2} and \ccc{sweep_to_construct_planar_map_2} respectively.
+
+The sweep line implementation supports not only segments but rather 
+general curves, and hence users may define their own geometry by providing a 
+suitable {\em Traits} class and gain all sweep line functionality. 
+In addition, the sweep line implementation supports degenerate cases as  
+vertical curves, tangency between two different curves and overlapping curves. 
+In the latter case, the sweep line implementation can report all overlapping cases 
+in a given collection of curves. 
+ 
+Am important advancement gained by using the sweep line algorithm 
+is the ability to construct a planar map much faster.
 A \ccc{Planar Map with Intersections} can be built incrementally by
 inserting one curve after the other into the map. 
-Given a collection $C$ of possibly intersecting and not necessarily 
-$x$-monotone curves in the plane, the sweep line algorithm can construct 
-the planar map induced by $C$, or rather produce the collections of their 
-intersections and the disjoint-interior subcurves induced by $C$.
- 
 In general, it is much faster to perform the sweep line algorithm on
 the collection of input curves in order to produce their planar map 
 rather using the \ccc{Planar_map_with_intersections_2<Planar_map>} 
 or \ccc{Arrangement_2<Dcel,Traits,Base_node>} packages, due to an 
 efficient calculation of intersections and avoiding the usage of 
-point location when inserting a curve to the planar map. 
-The utility can either build the induced planar
-map, collect the pairwise interior disjoint subcurves
-computed in a container, or rather collect the intersections of all 
-curves to a container of points. 
+point location operations when inserting curves to the planar map. 
+The sweep line implementation has been also optimized in order to 
+save geometric predicates. The above optimization speeds up performance. 
+The utility can either report the pairwise interior disjoint subcurves
+computed, report the intersection points of all curves, 
+or rather build the induced planar map, 
 
 %If no additional insertions of intersecting curves are planned following the building of the map it is possible to perform a sweep
 %line operation that will build the simpler class \ccc{Planar_map_2}.
@@ -38,21 +55,25 @@ calculated.
 \label{ssec:example1_sweep}
 The following example demonstrates the usage of the 
 \ccc {Sweep line} algorithm. 
-It constructs a planar map out of four segments
+It reports all disjoint-interior subsegments out of four segments
 --- $(0,0)-(1,1)$ , $(0,1)-(1,0)$ , $(0,0)-(1,0)$ and $(0,1)-(1,1)$
 (an hourglass shape), two of them are intersecting in their
-interior. The resulting planar map will contain all the disjoint
+interior. A resulting container which will contain all the disjoint
 interior sub-segments obtained by the calculation of the sweep
-line algorithm. For clarity, we printed all the halfedges of the
+line algorithm is constructed. For clarity, we printed all the halfedges of the
 resulting planar map to the standard output using the I/O functions
 for the \ccc{Planar map} package.
 
-\ccIncludeExampleCode{Sweep_line_2/example1.C}
+\ccIncludeExampleCode{Sweep_line_2/example3.C}
 
 The output of the program looks like this:
 
-\ccIncludeExampleCode{Sweep_line_2/example1.cout}
+\ccIncludeExampleCode{Sweep_line_2/example3.cout}
 
 % EOF ------------------------------------------------------------------------80
+
+
+
+
 
 
