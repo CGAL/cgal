@@ -7,7 +7,9 @@ Version 1.172 (17 October 03)
 
 Version 1.171 (17 October 03) [af]
 - Replaced Vertex_handle and Cell_handle by const & versions
-  in order to regain performance
+  in order to regain performance.
+- Replaced the nested Vertex and Cell handle classes in the TDS3
+  by a typedef to the iterator class of the underlying container.
 
 Version 1.170 (22 September 03) [af]
 - Moved \chapter to main.tex
