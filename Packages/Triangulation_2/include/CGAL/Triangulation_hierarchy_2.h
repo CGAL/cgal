@@ -25,6 +25,7 @@
 #define CGAL_TRIANGULATION_HIERARCHY_2_H
 
 #include <CGAL/Random.h>
+#include <map>
 
 CGAL_BEGIN_NAMESPACE
 
