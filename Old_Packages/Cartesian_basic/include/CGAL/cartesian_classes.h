@@ -55,6 +55,7 @@ template < class R, class T = typename R::Rep_tag > class Ray_3;
 template < class R, class T = typename R::Rep_tag > class Segment_3;
 template < class R, class T = typename R::Rep_tag > class Triangle_3;
 template < class R, class T = typename R::Rep_tag > class Tetrahedron_3;
+template < class R, class T = typename R::Rep_tag > class Sphere_3;
 template < class R, class T = typename R::Rep_tag > class Iso_cuboid_3;
 template < class R, class T = typename R::Rep_tag > class Aff_transformation_3;
 
@@ -94,6 +95,7 @@ template < class R > class RayC3;
 template < class R > class SegmentC3;
 template < class R > class TriangleC3;
 template < class R > class TetrahedronC3;
+template < class R > class SphereC3;
 template < class R > class Iso_cuboidC3;
 template < class R > class Aff_transformationC3;
 

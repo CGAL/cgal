@@ -69,6 +69,7 @@ struct Cartesian_base_3
     typedef CGAL::Segment_3<R,Rep_tag>            Segment_3;
     typedef CGAL::Triangle_3<R,Rep_tag>           Triangle_3;
     typedef CGAL::Tetrahedron_3<R,Rep_tag>        Tetrahedron_3;
+    typedef CGAL::Sphere_3<R,Rep_tag>             Sphere_3;
     typedef CGAL::Iso_cuboid_3<R,Rep_tag>         Iso_cuboid_3;
     typedef CGAL::Aff_transformation_3<R,Rep_tag> Aff_transformation_3;
 #else
@@ -94,6 +95,7 @@ struct Cartesian_base_3
     typedef SegmentC3<R>                          Segment_3;
     typedef TriangleC3<R>                         Triangle_3;
     typedef TetrahedronC3<R>                      Tetrahedron_3;
+    typedef SphereC3<R>                           Sphere_3;
     typedef Iso_cuboidC3<R>                       Iso_cuboid_3;
     typedef Aff_transformationC3<R>               Aff_transformation_3;
 #endif // CGAL_CFG_NO_ADVANCED_KERNEL
@@ -191,6 +193,7 @@ struct Cartesian_3 :
     typedef typename Kernel_base::Segment_3       Segment_3;
     typedef typename Kernel_base::Triangle_3      Triangle_3;
     typedef typename Kernel_base::Tetrahedron_3   Tetrahedron_3;
+    typedef typename Kernel_base::Sphere_3        Sphere_3;
     typedef typename Kernel_base::Iso_cuboid_3    Iso_cuboid_3;
     typedef typename Kernel_base::Aff_transformation_3 Aff_transformation_3;
 
@@ -223,6 +226,7 @@ struct Cartesian_3 :
     typedef typename Kernel_base::Segment_3       Segment_3_base;
     typedef typename Kernel_base::Triangle_3      Triangle_3_base;
     typedef typename Kernel_base::Tetrahedron_3   Tetrahedron_3_base;
+    typedef typename Kernel_base::Sphere_3        Sphere_3_base;
     typedef typename Kernel_base::Iso_cuboid_3    Iso_cuboid_3_base;
     typedef typename Kernel_base::Aff_transformation_3    
                                                   Aff_transformation_3_base;
@@ -254,6 +258,7 @@ struct Cartesian_3 :
     typedef CGAL::Segment_3<Self>                 Segment_3;
     typedef CGAL::Triangle_3<Self>                Triangle_3;
     typedef CGAL::Tetrahedron_3<Self>             Tetrahedron_3;
+    typedef CGAL::Sphere_3<Self>                  Sphere_3;
     typedef CGAL::Iso_cuboid_3<Self>              Iso_cuboid_3;
     typedef CGAL::Aff_transformation_3<Self>      Aff_transformation_3;
 
