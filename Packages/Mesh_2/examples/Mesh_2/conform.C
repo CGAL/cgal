@@ -68,7 +68,10 @@ int main(int argc, char** argv)
   if(input)
     {
       read_poly(conform, input);
-      conform.make_conforming_Delaunay();
+      Tr t;
+      t.swap(conform);
+      CGAL::make_conforming_Delaunay_2(t);
+      conform.swap(t);
     }
   else
     {

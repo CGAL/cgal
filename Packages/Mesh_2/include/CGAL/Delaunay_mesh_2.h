@@ -33,8 +33,6 @@ public:
   typedef typename Base::Finite_faces_iterator  Finite_faces_iterator;
   typedef typename Base::All_faces_iterator     All_faces_iterator;
   typedef typename Base::Point                  Point;
-  typedef typename Conform::Is_locally_gabriel_conform
-    Is_locally_gabriel_conform;
   //@}
 
   /** \name Types needed to access member datas */
@@ -343,9 +341,9 @@ refine_mesh()
 {
   if(!initialized) init();
 
-  while(!Conform::is_conformed() || !bad_faces.empty() )
+  while(!Conform::is_conforming_done() || !bad_faces.empty() )
     {
-      Conform::conform(Is_locally_gabriel_conform());
+      Conform::make_conforming_Gabriel();
       if ( !bad_faces.empty() )
 	process_one_face();
     }
@@ -357,7 +355,7 @@ template <class Tr>
 inline
 void Delaunay_mesh_2<Tr>::
 set_geom_traits(const Geom_traits& gt,
-		bool recalculate_bad_faces = true)
+		bool recalculate_bad_faces/* = true */)
 {
   this->_gt = gt;
   if (recalculate_bad_faces) fill_facet_map();
@@ -373,7 +371,7 @@ init()
   bad_faces.clear();
   mark_facets(); // facets should be marked before the call to Base::init()
 
-  Base::init(Is_locally_gabriel_conform());
+  Base::init_Gabriel();
   // handles clusters and edges
 
   fill_facet_map();
@@ -384,7 +382,7 @@ inline
 bool Delaunay_mesh_2<Tr>::
 refine_step()
 {
-  if( !Conform::refine_step(Is_locally_gabriel_conform()) )
+  if( !step_by_step_conforming_Delaunay() ) // TODO, WARNING: changer ça!!!
     if ( !bad_faces.empty() )
       process_one_face();
     else
@@ -491,7 +489,7 @@ template <class Tr>
 void Delaunay_mesh_2<Tr>::
 refine_face(const Face_handle f)
 {
-  Is_locally_gabriel_conform is_gabriel_conform;
+  Is_locally_conforming_Gabriel is_gabriel_conform;
 
   const Point& pc = circumcenter(f);
 

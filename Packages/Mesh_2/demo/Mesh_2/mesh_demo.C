@@ -24,7 +24,7 @@ int main(int, char*)
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Polygon_2.h>
 #define CGAL_MESH_2_USE_TIMERS
-#include <CGAL/Mesh_2.h>
+#include <CGAL/Delaunay_mesh_2.h>
 #include <CGAL/Mesh_local_size_traits_2.h>
 #include <CGAL/Mesh_face_base_2.h>
 
@@ -93,7 +93,7 @@ typedef K::Point_2 Point;
 typedef K::Circle_2 Circle;
 typedef CGAL::Polygon_2<K> CGALPolygon;
 
-typedef CGAL::Mesh_2<Tr> Mesh;
+typedef CGAL::Delaunay_mesh_2<Tr> Mesh;
 typedef Mesh::Vertex Vertex;
 
 template <class M>
@@ -267,7 +267,7 @@ public:
 	new Show_points_from_triangulation(mesh,
 					   &Mesh::finite_vertices_begin,
 					   &Mesh::finite_vertices_end,
-					   CGAL::BLACK, 1);
+					   CGAL::BLACK, 2);
 
       show_seeds = new Show_seeds(mesh,
 				  &Mesh::seeds_begin,
@@ -608,7 +608,6 @@ public slots:
 	      }
 	    mesh->set_geom_traits(traits);
 	    mesh->set_bad_faces(l.begin(), l.end());
-	    mesh->calculate_bad_faces();
 	    while( mesh->refine_step() );
 	  }
 	else
@@ -681,7 +680,7 @@ public slots:
   void refineMesh()
     {
       saveTriangulationUrgently("last_input.edg");
-      mesh->refine();
+      mesh->refine_mesh();
       is_mesh_initialized=true;
       updatePointCounter();
       widget->redraw();
@@ -695,7 +694,7 @@ public slots:
 	  mesh->init();
 	  is_mesh_initialized=true;
 	}
-      mesh->conform(Mesh::Is_locally_gabriel_conform());
+      mesh->make_conforming_Delaunay();
       updatePointCounter();
       widget->redraw();
     }
@@ -705,7 +704,7 @@ public slots:
       int counter = step_lenght;
       if(!is_mesh_initialized)
 	{
-	  mesh->init();
+	  mesh->init_Gabriel();
 	  std::cerr << "mesh->init();"<< std::endl;
 	  is_mesh_initialized=true;
 	  saveTriangulationUrgently("last_input.edg");

@@ -56,6 +56,9 @@ mesh$(OBJ_EXT): ../../include/CGAL/Mesh_2.h \
 mesh$(EXE_EXT): mesh$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)mesh mesh$(OBJ_EXT) $(LDFLAGS)
 
+polygon2poly$(EXE_EXT): polygon2poly$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)polygon2poly polygon2poly$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
                    mesh.clean conform.clean
 

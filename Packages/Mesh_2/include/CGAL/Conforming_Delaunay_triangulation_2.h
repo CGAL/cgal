@@ -1137,7 +1137,7 @@ make_conforming_Gabriel_2(Tr& t)
 
   Conform conform;
   conform.swap(t);
-  conform.conforming_Gabriel();
+  conform.make_conforming_Gabriel();
   t.swap(conform);
 }
 
@@ -1149,7 +1149,7 @@ make_conforming_Delaunay_2(Tr& t)
 
   Conform conform;
   conform.swap(t);
-  conform.conforming_Delaunay();
+  conform.make_conforming_Delaunay();
   t.swap(conform);
 }
 
