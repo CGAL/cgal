@@ -1,3 +1,6 @@
+3.63   (31 October 2001)
+- Missing include of cstddef in New_delete_allocator.h
+
 3.62   (29 October 2001)
 - Missing std:: for CodeWarrior.
 

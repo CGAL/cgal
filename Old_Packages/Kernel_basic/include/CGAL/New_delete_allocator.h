@@ -23,17 +23,19 @@
 #ifndef CGAL_NEW_DELETE_ALLOCATOR_H
 #define CGAL_NEW_DELETE_ALLOCATOR_H
 
+#include <cstddef> 
+
 template <class T>
 class New_delete_allocator
 {
  public:
   typedef std::size_t      size_type;
   typedef std::ptrdiff_t   difference_type;
-  typedef T           value_type;
-  typedef T*          pointer;
-  typedef const T*    const_pointer;
-  typedef T&          reference;
-  typedef const T&    const_reference;
+  typedef T                value_type;
+  typedef T*               pointer;
+  typedef const T*         const_pointer;
+  typedef T&               reference;
+  typedef const T&         const_reference;
 
   template <class U> struct rebind { typedef New_delete_allocator<U> other; };
 
