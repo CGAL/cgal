@@ -61,6 +61,13 @@ public:
   typedef Tag_false                       Has_left_category;
 #endif
     
+  // #define HAS_REFLECT
+#if !defined(HAS_REFLECT)
+  typedef Tag_false                       Has_reflect_category;
+#else
+  typedef Tag_true                        Has_reflect_category;
+#endif
+
   // Traits objects
   typedef typename Kernel::Point_2        Point_2;
   typedef My_x_curve_2                    X_monotone_curve_2;

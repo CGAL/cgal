@@ -37,11 +37,18 @@ public:
   typedef Kernel_                         Kernel;
 
   // Categories:
-  // #define HAS_LEFT_NOT
+  //#define HAS_LEFT_NOT
 #if !defined(HAS_LEFT_NOT)
   typedef Tag_true                        Has_left_category;
 #else
   typedef Tag_false                       Has_left_category;
+#endif
+
+  //#define HAS_REFLECT
+#if !defined(HAS_REFLECT)
+  typedef Tag_false                       Has_reflect_category;
+#else
+  typedef Tag_true                        Has_reflect_category;
 #endif
     
   // Traits objects
@@ -192,7 +199,7 @@ public:
   {
     Point_2 org = construct_point_2_object()(ORIGIN);      
     typename Kernel::Vector_2 v = construct_vector_2_object()(pt, org);
-    Point_2 reflected_pt(v);
+    Point_2 reflected_pt = org + v;
     return reflected_pt;
   }
 
