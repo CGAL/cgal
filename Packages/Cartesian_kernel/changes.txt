@@ -1,3 +1,6 @@
+16 Feb 2004 Sylvain Pion
+- Fix compare_signed_distance_to_plane(Point, Point, Point, Point, Point).
+
 15 Feb 2004 Sylvain Pion
 - Add circumcenter(Triangle_[23]) and circumcenter(Tetrahedron_3).
 

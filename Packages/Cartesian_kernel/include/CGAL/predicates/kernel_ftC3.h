@@ -496,7 +496,7 @@ cmp_signed_dist_to_planeC3(
   return Comparison_result(sign_of_determinant3x3(
 	      pqx-ppx, pqy-ppy, pqz-ppz,
 	      prx-ppx, pry-ppy, prz-ppz,
-	      qx-px,   qy-py,   qz-pz));
+	      px-qx,   py-qy,   pz-qz));
 }
 
 template < class FT >
