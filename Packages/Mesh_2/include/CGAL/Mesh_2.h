@@ -87,7 +87,7 @@ public:
   // TODO!
 
   // ACCESS FUNCTIONS
-  unsigned int number_of_contrained_edges() const;
+  unsigned int number_of_constrained_edges() const;
 
   bool is_bad(const Face_handle fh) const;
 
@@ -132,7 +132,7 @@ public:
       timer.reset();
       timer.start();
 #endif
-      while(! (c_edge_queue.empty() && bad_faces.empty()) )
+      while(! (edges_to_be_conformed.empty() && bad_faces.empty()) )
 	{
 	  conform();
 	  if ( !bad_faces.empty() )
@@ -172,8 +172,8 @@ public:
   template <class InputIterator>
   Mesh_2(InputIterator first, InputIterator last, 
 	 const Geom_traits& gt = Geom_traits())
-    : Tr(gt), is_really_a_contrained_edge(*this), 
-      c_edge_queue(is_really_a_contrained_edge)
+    : Tr(gt), is_really_a_constrained_edge(*this), 
+      edges_to_be_conformed(is_really_a_constrained_edge)
     {
       while(first != last){
 	insert((*first).first, (*first).second);
@@ -193,7 +193,7 @@ public:
   void init(Seed_it begin, Seed_it end, bool mark = false)
     {
       cluster_map.clear();
-      c_edge_queue.clear();
+      edges_to_be_conformed.clear();
       bad_faces.clear();
       
       mark_facets(begin, end, mark);
@@ -230,9 +230,11 @@ public:
     };
 
   // Conform edges and doesn't refine faces
+  // Need init(...) see bellow
   void conform();
 
   // Execute on step of the algorithm.
+  // Need init(...) see bellow
   bool refine_step();
 
 private:
@@ -320,10 +322,10 @@ private:
       }
   };
 
-  class Is_really_a_contrained_edge {
+  class Is_really_a_constrained_edge {
     const Self& _m;
   public:
-    explicit Is_really_a_contrained_edge(const Self& m) : _m(m) {};
+    explicit Is_really_a_constrained_edge(const Self& m) : _m(m) {};
     bool operator()(const Constrained_edge& ce) const
       {
 	Face_handle fh;
@@ -341,7 +343,7 @@ private:
 
   typedef std::list<Constrained_edge> List_of_constraints;
   typedef CGAL::Filtred_container<List_of_constraints, 
-                                  Is_really_a_contrained_edge>
+                                  Is_really_a_constrained_edge>
     Constrained_edges_queue;
 
   typedef std::multimap<Vertex_handle, Cluster> Cluster_map;
@@ -355,11 +357,11 @@ private:
   //  from the map.
   Bad_faces bad_faces;
 
-  // c_edge_queue: list of encroached constrained edges
+  // edges_to_be_conformed: list of encroached constrained edges
   //  warning: some edges could be destroyed, use the same wrapper
-  // is_really_a_contrained_edge: tester to filter c_edge_queue
-  const Is_really_a_contrained_edge is_really_a_contrained_edge;
-  Constrained_edges_queue c_edge_queue;
+  // is_really_a_constrained_edge: tester to filter edges_to_be_conformed
+  const Is_really_a_constrained_edge is_really_a_constrained_edge;
+  Constrained_edges_queue edges_to_be_conformed;
 
   // Cluster_map: multimap Vertex_handle -> Cluster
   // each vertex can have several clusters
@@ -422,7 +424,7 @@ private:
   void fill_edge_queue();
 
   // update the queue with edges incident to vm
-  void update_c_edge_queue(Vertex_handle va,
+  void update_edges_to_be_conformed(Vertex_handle va,
 			   Vertex_handle vb,
 			   Vertex_handle vm);
 
@@ -453,7 +455,7 @@ private:
   // or insert_middle
   void refine_edge(Vertex_handle va, Vertex_handle vb);
 
-  // handle one face; call split_face or put in the c_edge_queue the
+  // handle one face; call split_face or put in the edges_to_be_conformed the
   // list of edges that would be encroached by the circum_center of f
   // This function uses Shewchuk's terminator criteria.
   void refine_face(Face_handle f);
@@ -514,15 +516,15 @@ private:
 template <class Tr>
 Mesh_2<Tr>::
 Mesh_2(const Geom_traits& gt)
-  : Tr(gt), is_really_a_contrained_edge(*this),
-    c_edge_queue(is_really_a_contrained_edge)
+  : Tr(gt), is_really_a_constrained_edge(*this),
+    edges_to_be_conformed(is_really_a_constrained_edge)
 {};
 
 template <class Tr>
 Mesh_2<Tr>::
 Mesh_2(Triangulation& t, const Geom_traits& gt, bool dont_refine)
-  : Tr(gt), is_really_a_contrained_edge(*this),
-    c_edge_queue(is_really_a_contrained_edge)
+  : Tr(gt), is_really_a_constrained_edge(*this),
+    edges_to_be_conformed(is_really_a_constrained_edge)
 {
   swap(t);
   if(!dont_refine)
@@ -533,7 +535,7 @@ Mesh_2(Triangulation& t, const Geom_traits& gt, bool dont_refine)
 
 template <class Tr>
 unsigned int Mesh_2<Tr>::
-number_of_contrained_edges() const
+number_of_constrained_edges() const
 {
   int nedges = 0;
   for(Finite_edges_iterator eit = finite_edges_begin();
@@ -590,7 +592,7 @@ template <class Tr>
 void Mesh_2<Tr>::
 write(std::ostream &f) const
 {
-  f << number_of_contrained_edges() << std::endl;
+  f << number_of_constrained_edges() << std::endl;
   for(Finite_edges_iterator eit = finite_edges_begin();
       eit!=finite_edges_end();
       ++eit)
@@ -647,7 +649,7 @@ write_poly(std::ostream &f) const
 
   // write constrained edges
 
-  f << number_of_contrained_edges() << " " << 0 << std::endl;
+  f << number_of_constrained_edges() << " " << 0 << std::endl;
   unsigned int edges_counter = 0;
   for(Finite_edges_iterator eit = finite_edges_begin();
       eit != finite_edges_end();
@@ -728,7 +730,7 @@ void Mesh_2<Tr>::
 clear() 
 {
   cluster_map.clear();
-  c_edge_queue.clear();
+  edges_to_be_conformed.clear();
   bad_faces.clear();
   seeds.clear();
   Triangulation::clear();
@@ -753,8 +755,8 @@ refine()
 template <class Tr>
 Mesh_2<Tr>::
 Mesh_2(List_constraints& lc, const Geom_traits& gt)
-  : Tr(gt), is_really_a_contrained_edge(*this),
-    c_edge_queue(is_really_a_contrained_edge)
+  : Tr(gt), is_really_a_constrained_edge(*this),
+    edges_to_be_conformed(is_really_a_constrained_edge)
 {
   typename List_constraints::iterator lcit = lc.begin();
   for( ; lcit != lc.end(); ++lcit)
@@ -788,7 +790,7 @@ inline
 void Mesh_2<Tr>::
 conform()
 {
-  while( !c_edge_queue.empty() )
+  while( !edges_to_be_conformed.empty() )
     {
       process_one_edge();	
     };
@@ -799,7 +801,7 @@ inline
 bool Mesh_2<Tr>::
 refine_step()
 {
-  if( !c_edge_queue.empty() )
+  if( !edges_to_be_conformed.empty() )
     process_one_edge();
   else
     if ( !bad_faces.empty() )
@@ -1035,7 +1037,7 @@ fill_edge_queue()
       if((*ei).first->is_constrained((*ei).second) && 
 	 is_encroached(va, vb))
 	{
-	  c_edge_queue.push_back(std::make_pair(va, vb));
+	  edges_to_be_conformed.push_back(std::make_pair(va, vb));
 	}
     }
 }
@@ -1045,7 +1047,8 @@ fill_edge_queue()
 // TODO: rewrite this function one day
 template <class Tr>
 void Mesh_2<Tr>::
-update_c_edge_queue(Vertex_handle va, Vertex_handle vb, Vertex_handle vm)
+update_edges_to_be_conformed(Vertex_handle va, Vertex_handle vb, 
+			     Vertex_handle vm)
 {
   Face_circulator fc = incident_faces(vm), fcbegin(fc);
 
@@ -1055,17 +1058,17 @@ update_c_edge_queue(Vertex_handle va, Vertex_handle vb, Vertex_handle vm)
       Vertex_handle v2 = fc->vertex(ccw(i));
       if( fc->is_constrained(i) && !is_infinite(v1) &&
 	  !is_infinite(v2) && is_encroached(v1, v2) )
-	c_edge_queue.push_back(Constrained_edge(v1, v2));
+	edges_to_be_conformed.push_back(Constrained_edge(v1, v2));
     }
     ++fc;
   } while(fc != fcbegin);
 
   if(is_encroached(va, vm)) {
-    c_edge_queue.push_back(Constrained_edge(va, vm));
+    edges_to_be_conformed.push_back(Constrained_edge(va, vm));
   }
 
   if(is_encroached(vb, vm)) {
-    c_edge_queue.push_back(Constrained_edge(vb, vm));
+    edges_to_be_conformed.push_back(Constrained_edge(vb, vm));
   }
 }
 
@@ -1118,8 +1121,8 @@ inline
 void Mesh_2<Tr>::
 process_one_edge()
 {
-  Constrained_edge ce = c_edge_queue.front();
-  c_edge_queue.pop_front();
+  Constrained_edge ce = edges_to_be_conformed.front();
+  edges_to_be_conformed.pop_front();
 
   refine_edge(ce.first, ce.second);
 }
@@ -1206,7 +1209,7 @@ refine_face(const Face_handle f)
 	      (!is_cluster_at_va && !is_cluster_at_vb) )
 	    {
 	      // two clusters or no cluster
-	      c_edge_queue.push_back(Constrained_edge(va,vb));
+	      edges_to_be_conformed.push_back(Constrained_edge(va,vb));
 	      keep_the_face_bad = true;
 	    }
 	  else
@@ -1225,12 +1228,12 @@ refine_face(const Face_handle f)
 	      if( !c.is_reduced() || 
 		  c.rmin >= shortest_edge_squared_length(f) )
 		{
-		  c_edge_queue.push_back(Constrained_edge(va,vb));
+		  edges_to_be_conformed.push_back(Constrained_edge(va,vb));
 		  keep_the_face_bad = true;
 		}
 	    }
 	}
-    }; // after here c_edge_queue contains edges encroached by pc
+    }; // after here edges_to_be_conformed contains edges encroached by pc
 
   const Vertex_handle&
     va = f->vertex(0),
@@ -1359,7 +1362,7 @@ cut_cluster_edge(Vertex_handle va, Vertex_handle vb, Cluster& c)
 
       vc = insert_in_the_edge(fh, index, i);
     }
-  update_c_edge_queue(va, vb, vc);
+  update_edges_to_be_conformed(va, vb, vc);
   compute_new_bad_faces(vc);
   update_cluster(c, va, vb, vc);
 }
@@ -1380,7 +1383,7 @@ insert_middle(Face_handle f, int i)
 
   Vertex_handle vm = insert_in_the_edge(f, i, mp);
 
-  update_c_edge_queue(va, vb, vm);
+  update_edges_to_be_conformed(va, vb, vm);
   return vm;
 }
 // # used by refine_face
