@@ -156,17 +156,6 @@ LEDA_TEST_PASSED=''
 # STL specific:
 #
 
-# specifies STL setting (since this is compiler specific,
-# it will be updated each time a compiler is chosen)
-# 'e' means an extra STL is needed and
-# 'b' means compiler is shipped with an STL (and it should be used)
-# while 'x' means to use an extra STL anyway
-STL_STATUS='b'
-STL_DIR=''
-
-# type of STL: (see test_stl_version below)
-CGAL_STL_VERSION='CGAL_STL_UNKNOWN'
-
 # did STL tests succeed ('' - no, 'y' - yep)
 STL_TEST_PASSED=''
 
@@ -262,8 +251,7 @@ print_usage_information()
        --upgrade <dir> | --build-all | --rebuild-all |
        -ni <comp> | --non-interactive <comp> | -os <comp>]
       [-leda] [-gmp] [--verbose]
-      [--CGAL_DIR <dir>] [--STL_DIR <dir>]
-      [--leda-sys-incl] [--leda-sys-lib]
+      [--CGAL_DIR <dir>] [--leda-sys-incl] [--leda-sys-lib]
       [--LEDA_INCL_DIR <dir>] [--LEDA_LIB_DIR <dir>]
       [--GMP_INCL_DIR <dir>] [--GMP_LIB_DIR <dir>]
 
@@ -614,21 +602,6 @@ guess_os()
 # compiler related functions:
 # -------------------------------------------------------------------
 
-
-# this header is used to disable the STL-in-std-namespace
-# for MIPSPRO later than 7.2
-write_sgi_no_namespace_header()
-{
-    ${_printf} "%s\n" '
-    #if defined(__sgi) && !defined(__GNUC__) && defined(_COMPILER_VERSION)
-    #if (_COMPILER_VERSION >= 721) && defined(_NAMESPACES)
-    #define __STL_NO_NAMESPACES
-    #include <stl_config.h>
-    #undef __STL_USE_NAMESPACES
-    #endif
-    #endif
-'
-}
 
 # give version numbers for GNU GCC
 # NB: truncated to *.*.* (three numbers)
@@ -1048,13 +1021,6 @@ test_compiler_specifica()
     ${_printf} "%s\n\n" \
 	"//" \
 	>> ${_file}
-    set_stl_version "${INSTALL_VERBOSE}"
-    ${_printf} "%s\n" \
-	"// CGAL STL version id:" \
-	>> ${_file}
-    ${_printf} "%s\n\n" \
-	"#define ${CGAL_STL_VERSION} 1" \
-	>> ${_file}
     cd ${CGAL_TEST_CONF_DIR}
     for i in ${CGAL_TEST_CONF_DIR}/CGAL*.C; do
 	${_cat} ${i} > ${TMP_CXX_FILE}.C
@@ -1078,7 +1044,7 @@ test_compiler_specifica()
 	fi
 	if _compile_test \
 	    "${_tmp_name}" \
-	    "${CUSTOM_CXXFLAGS} `stl_cxxflags`" \
+	    "${CUSTOM_CXXFLAGS} " \
 	    "$1" \
 	    "${_NO}" \
 	  && _link_run_test \
@@ -1171,26 +1137,6 @@ gmp_test_ldflags()
 }
 
 #---------------------------------------------------------
-# flags for STL
-
-stl_cxxflags()
-{
-    if [ "${STL_STATUS}" != "b" ]; then
-	${_printf} "%s" "-I`_where_is 'STL_DIR'` "
-    fi
-}
-
-stl_test_cxxflags()
-{
-    ${_printf} "%s" "${CUSTOM_CXXFLAGS} `stl_cxxflags`"
-}
-
-stl_test_ldflags()
-{
-    ${_printf} "%s" "${CUSTOM_LDFLAGS} -lm"
-}
-
-#---------------------------------------------------------
 # flags for LEDA
 leda_cxxflags()
 {
@@ -1229,7 +1175,7 @@ leda_test_ldflags()
 # print cxxflags for current setting
 compiler_flags()
 {
-    ${_printf} "%s" "${CUSTOM_CXXFLAGS} `cgal_cxxflags``stl_cxxflags``leda_cxxflags``gmp_cxxflags`"
+    ${_printf} "%s" "${CUSTOM_CXXFLAGS} `cgal_cxxflags``leda_cxxflags``gmp_cxxflags`"
 }
 
 # print ldflags for current setting
@@ -1905,18 +1851,6 @@ check_LEDA_LIB_DIR()
     return 0
 }
 
-check_STL_DIR()
-{
-    if [ -n "${STL_DIR}" ]; then
-	if [ ! -r $STL_DIR/iterator.h ]; then
-	    $1 "WARNING: STL_DIR should contain iterator.h." 
-	else
-	    return 1
-	fi
-    fi
-    return 0
-}
-
 check_UPGRADE_FROM()
 {
     if [ ! -d "${UPGRADE_FROM}/include/CGAL" ]; then
@@ -1936,28 +1870,6 @@ check_LEDA_SUPPORT()
 	return 0
     fi
     return 1
-}
-
-check_STL_STATUS()
-{
-    if [ "${STL_STATUS}" != "b" -a "${STL_STATUS}" != "x" \
-	-a "${STL_STATUS}" != "e" ]; then
-	$1 "WARNING: STL_STATUS is not set correctly." 
-	return 0
-    fi
-    return 1
-}
-
-check_CGAL_STL_VERSION()
-{
-    case ${CGAL_STL_VERSION} in
-	CGAL_STL_GCC|CGAL_STL_HP|CGAL_STL_SGI_WWW|CGAL_STL_SGI_3_0|\
-	    CGAL_STL_SGI_WWW_OLD|CGAL_STL_SGI_CC|CGAL_STL_UNKNOWN)
-	return 1;;
-	*)
-	$1 "WARNING: CGAL_STL_VERSION is not set correctly." 
-	return 0;;
-    esac
 }
 
 check_CGAL_INSTALL_VERSION()
@@ -2236,10 +2148,12 @@ test_for_leda_lib_in_sys_lib()
 test_leda()
 {
     if [ -n "${LEDA_SUPPORT}" ]; then
-	write_sgi_no_namespace_header > ${TMP_CXX_FILE}.C
 	${_printf} "%s\n" '
-	    #include <iostream.h>
+	    #if defined(__sgi) && !defined(__GNUC__) && defined(_COMPILER_VERSION) && (_COMPILER_VERSION >= 721)
 	    #include <assert.h>
+	    #else
+	    #include <cassert>
+	    #endif
 	    #include <LEDA/integer.h>
 	    #include <LEDA/REDEFINE_NAMES.h>
 	    typedef integer I;
@@ -2251,7 +2165,7 @@ test_leda()
 	    assert( a + b == I( 580245));
 	    assert( a - b == I( -333333));
 	    return 0;
-	    }' >> ${TMP_CXX_FILE}.C
+	    }' > ${TMP_CXX_FILE}.C
 
 	if _compile_test LEDA "`leda_test_cxxflags`" $1 && \
 	    _link_run_test LEDA "`leda_test_ldflags`" $1
@@ -2268,187 +2182,8 @@ test_leda()
 }
 
 # ---------------------------------------------------------------------
-# STL TESTS:
-# (I use "@error" instead of "#error" to indicate an error,
-#  since sunpro CC treats the latter as warnings ...)
+# STL TEST:
 
-# test, if STL is original HP from 1994 (or compatible?)
-# (return 0, iff it is)
-# (test program due to Lutz Kettner)
-# ($1 nonzero indicates verbosity)
-_test_hp_1994_stl()
-{
-    ${_printf} "%s\n" '
-	#include <assert.h>
-	#include <defalloc.h>
-	#include <iterator.h>
-	#define Allocator allocator
-	#include <list.h>
-	
-	#ifndef LIST_H
-	@error Program does not use the HP STL from 1994.
-	#endif
-	
-	#ifdef Allocator
-	@error Program does not use the HP STL from 1994.
-	#endif
-
-	int main() {
-	    list<int> l;
-	    l.push_back(42);
-	    assert( 42 == *(l.begin()));
-	    return 0;
-	}' > ${TMP_CXX_FILE}.C
-    
-    _compile_test "HP STL" "`stl_test_cxxflags` " $1 && \
-	_link_run_test "HP STL" "`stl_test_ldflags` " $1
-    return $?
-}
-
-# test, if STL is SGI STL from 1996 (or compatible?)
-# (return 0, iff it is)
-# (test program due to Lutz Kettner)
-# ($1 nonzero indicates verbosity)
-_test_sgi_1996_stl()
-{
-    ${_printf} "%s\n" '
-	#include <assert.h>
-	#include <defalloc.h>
-	#include <iterator.h>
-	#define Allocator allocator
-	#include <list.h>
-
-	#ifndef __SGI_STL_LIST_H
-	@error Program does not use the old SGI STL from the web from 1996.
-	#endif
-
-	#ifndef Allocator
-	@error Program does not use the old SGI STL from the web from 1996.
-	#endif
-
-	template< class T> inline
-	int check( const __list_const_iterator<T>&){
-	    return 1;
-	}
-
-	int main() {
-	    const list<int> l;
-	    assert( check( l.begin()));
-	    return 0;
-	}' > ${TMP_CXX_FILE}.C
-    
-    _compile_test "SGI 1996 STL" "`stl_test_cxxflags` " $1 && \
-	_link_run_test "SGI 1996 STL" "`stl_test_ldflags` " $1
-    return $?
-}
-
-# test, if STL is SGI STL supplied with compiler (or compatible?)
-# (return 0, iff it is)
-# (test program due to Lutz Kettner)
-# ($1 nonzero indicates verbosity)
-_test_sgi_cc_stl()
-{
-    ${_printf} "%s\n" '
-	#include <assert.h>
-	#include <defalloc.h>
-	#include <iterator.h>
-	#define Allocator allocator
-	#include <list.h>
-
-	#ifndef LIST_H
-	@error Program does not use the SGI STL shipped with C++ from 1996.
-	#endif
-
-	#ifndef Allocator
-	@error Program does not use the SGI STL shipped with C++ from 1996.
-	#endif
-
-	int main() {
-	    list<int> l;
-	    l.push_back(42);
-	    assert( 42 == *(l.begin()));
-	    return 0;
-	}' > ${TMP_CXX_FILE}.C
-    
-    _compile_test "SGI CC STL" "`stl_test_cxxflags` " $1 && \
-	_link_run_test "SGI CC STL" "`stl_test_ldflags` " $1
-    return $?
-}
-
-# test, if STL is SGI STL from June 1997 (or compatible?)
-# (return 0, iff it is)
-# (test program due to Lutz Kettner)
-# ($1 nonzero indicates verbosity)
-_test_sgi_june_1997_stl()
-{
-    ${_printf} "%s\n" '
-	#include <assert.h>
-	#include <defalloc.h>
-	#include <iterator.h>
-	#define Allocator allocator
-	#include <list.h>
-
-	#ifndef __SGI_STL_LIST_H
-	@error Program does not use the SGI STL from June 13, 1997.
-	#endif
-
-	#ifndef Allocator
-	@error Program does not use the SGI STL from June 13, 1997.
-	#endif
-    
-	template< class T, class Ref> inline
-	int check( const __list_iterator<T,Ref>&){
-	    return 1;
-	}
-
-	int main() {
-	    list<int> l;
-	    assert( check( l.begin()));
-	    return 0;
-	}' > ${TMP_CXX_FILE}.C
-    
-    _compile_test "SGI 6/97 STL" "`stl_test_cxxflags` " $1 && \
-	_link_run_test "SGI 6/97 STL" "`stl_test_ldflags` " $1
-    return $?
-}
-
-# test, if STL is SGI STL 3.0 (or compatible?)
-# (return 0, iff it is)
-# (test program due to Lutz Kettner)
-# ($1 nonzero indicates verbosity)
-_test_sgi_3_0_stl()
-{
-    write_sgi_no_namespace_header > ${TMP_CXX_FILE}.C
-    ${_printf} "%s\n" '
-	#include <assert.h>
-	#include <defalloc.h>
-	#include <iterator.h>
-	#define Allocator allocator
-	#include <list.h>
-
-	#ifndef __SGI_STL_LIST_H
-	#error Program does not use the SGI STL 3.0.
-	#endif
-
-	#ifndef Allocator
-	#error Program does not use the SGI STL 3.0.
-	#endif
-
-	template< class T, class Ref, class Ptr> inline
-	int check( const __list_iterator<T,Ref,Ptr>&){
-	    return 1;
-	}
-
-	int main() {
-	    list<int> l;
-	    assert( check( l.begin()));
-	    return 0;
-	}' >> ${TMP_CXX_FILE}.C
-    
-    _compile_test "SGI STL 3.0" "`stl_test_cxxflags` " $1 && \
-	_link_run_test "SGI STL 3.0" "`stl_test_ldflags` " $1
-    return $?
-}
 
 # test, if STL works
 # (return 0, iff it is)
@@ -2457,14 +2192,20 @@ _test_sgi_3_0_stl()
 # ($2 gives comment for _compile_test)
 test_stl_general()
 {
-    write_sgi_no_namespace_header > ${TMP_CXX_FILE}.C
     ${_printf} "%s\n" '
-	#include <iostream.h>
+	#if defined(__sgi) && !defined(__GNUC__) && defined(_COMPILER_VERSION) && (_COMPILER_VERSION >= 721)
 	#include <algo.h>
-	#include <vector.h>
 	#include <list.h>
 	#include <iterator.h>
 	#include <assert.h>
+	#else
+	#include <algorithm>
+	#include <list>
+	#include <iterator>
+	#include <cassert>
+	#endif
+
+	using std::list;
 
 	list<char> lst( char* s) {
 	    list<char> x;
@@ -2474,73 +2215,31 @@ test_stl_general()
 
 	int main() {
 	    list<char> list1 = lst( "mark twain");
-	    reverse( list1.begin(), list1.end());
+	    std::reverse( list1.begin(), list1.end());
 	    assert( list1 == lst( "niawt kram"));
 	    return 0;
-	}' >> ${TMP_CXX_FILE}.C
+	}' > ${TMP_CXX_FILE}.C
     
     if [ -z "$1" ]; then
 	_compile_test "${2}" "${CUSTOM_CXXFLAGS} " '' && \
 	    _link_run_test "${2}" "${CUSTOM_LDFLAGS} " ''
     else
-	_compile_test "${2}" "`stl_test_cxxflags` " $1 && \
-	    _link_run_test "${2}" "`stl_test_ldflags` " $1 
+	_compile_test "${2}" " " $1 && \
+	    _link_run_test "${2}" " " $1 
     fi
     return $?
 }
 
-# determine which STL version is used
-# ($1 nonzero indicates verbosity)
-# we have the following different types:
-# CGAL_STL_GCC
-# CGAL_STL_HP
-# CGAL_STL_SGI_3_0
-# CGAL_STL_SGI_WWW
-# CGAL_STL_SGI_WWW_OLD
-# CGAL_STL_SGI_CC
-# CGAL_STL_UNKNOWN
-set_stl_version()
-{
-    if [ "`compiler_basename`" = "g++" -a \
-	 "`compiler_version`" = "2.7.2" -a \
-	 "${STL_STATUS}" = "b" ]
-    then
-	CGAL_STL_VERSION='CGAL_STL_GCC'
-    elif _test_sgi_3_0_stl $1; then
-	CGAL_STL_VERSION='CGAL_STL_SGI_3_0'
-    elif _test_sgi_june_1997_stl $1; then
-	CGAL_STL_VERSION='CGAL_STL_SGI_WWW'
-    elif _test_sgi_1996_stl $1; then
-	CGAL_STL_VERSION='CGAL_STL_SGI_WWW_OLD'
-    elif _test_sgi_cc_stl $1; then
-	CGAL_STL_VERSION='CGAL_STL_SGI_CC'
-    elif _test_hp_1994_stl $1; then
-	CGAL_STL_VERSION='CGAL_STL_HP'
-    else
-	CGAL_STL_VERSION='CGAL_STL_UNKNOWN'
-    fi
-    log_print "STL type seems to be ${CGAL_STL_VERSION}."
-}
-
-# checks, if current compiler has a builtin STL
-# (iff so, return 0) and sets STL_STATUS 
-# (and CGAL_STL_VERSION) correspondingly
+# checks, if current compiler has a builtin STL (iff so, return 0) 
 test_for_builtin_stl()
 {
-    _OLD_STL_STATUS=${STL_STATUS}
-    STL_STATUS='b'
-    if test_stl_general "${INSTALL_VERBOSE}" 'builtin STL'; then
-	log_print "`extended_compiler_description` seems to have builtin STL."
-	if [ "${_OLD_STL_STATUS}" = "x" ]; then
-	    log_print "... but we do not use it."
-	    STL_STATUS="x"
-	fi	
+    if test_stl_general "${INSTALL_VERBOSE}" 'STL'; then
+	log_print "`extended_compiler_description` seems to have STL."
 	test_compiler_specifica "${INSTALL_VERBOSE}"
 	STL_TEST_PASSED='y'
 	return 0
     else
-	log_print "`extended_compiler_description` seems NOT to have builtin STL."
-	STL_STATUS='e'
+	log_print "`extended_compiler_description` seems NOT to have STL."
 	STL_TEST_PASSED=''
 	return 1
     fi
@@ -2623,7 +2322,6 @@ print_os_setting()
 {
     ${1} "OS:\t\t${SYST}" 
     ${1} "COMPILER:\t`extended_compiler_description`" 
-    ${1} "STL:\t\t${CGAL_STL_VERSION}" 
     _set_tmp_to_not_or_not "${LEDA_SUPPORT}"
     ${1} "LEDA:\t\t${_tmp}supported" 
     _set_tmp_to_not_or_not "${GMP_SUPPORT}"
@@ -2714,22 +2412,6 @@ retrieve_compiler_settings()
 	fi
     fi
 
-    # STL specific stuff:
-    if try_to_get_var_from_file STL_STATUS "${_file}"; then
-	# couldn't get STL_STATUS
-	SETUP_COMPLETE=''
-    fi
-    if try_to_get_var_from_file STL_DIR "${_file}"; then
-	if [ "${STL_STATUS}" != "b" ]; then
-	    SETUP_COMPLETE=''
-	fi
-    fi
-    if try_to_get_var_from_file CGAL_STL_VERSION "${_file}"; then
-	# couldn't get CGAL_STL_VERSION
-	CGAL_STL_VERSION='CGAL_STL_UNKNOWN'
-	SETUP_COMPLETE=''
-    fi
-
     if try_to_get_var_from_file CUSTOM_CXXFLAGS "${_file}"; then
 	CUSTOM_CXXFLAGS=''
     fi
@@ -2802,8 +2484,6 @@ store_compiler_settings()
 	>>${_file}
     _store_install_config_variable COMPILER >>${_file}
     _store_install_config_variable CGAL_INSTALL_VERSION >>${_file}
-    _store_install_config_variable STL_STATUS >>${_file}
-    _store_install_config_variable STL_DIR >>${_file}
     _store_install_config_variable LEDA_SUPPORT >>${_file}
     _store_install_config_variable NEED_EXTRA_LEDA_IDIR >>${_file}
     _store_install_config_variable LEDA_INCL_DIR >>${_file}
@@ -2815,7 +2495,6 @@ store_compiler_settings()
     _store_install_config_variable GMP_LIB_DIR >>${_file}
     _store_install_config_variable CUSTOM_CXXFLAGS  >>${_file}
     _store_install_config_variable CUSTOM_LDFLAGS >>${_file}
-    _store_install_config_variable CGAL_STL_VERSION >>${_file}
     ${_printf} "\n%s\n" \
 	"/* EOF */" \
 	>>${_file}
@@ -2883,8 +2562,7 @@ reset_all_test_variables()
 }
 
 # load the settings for ${COMPILER},
-# if a config file exists, otherwise check for "builtin" STL
-# and set STL_STATUS accordingly
+# if a config file exists, otherwise check for STL
 _choose_compiler()
 {
     log_print \
@@ -2895,8 +2573,7 @@ _choose_compiler()
     if [ -z "${SETUP_COMPLETE}" ]; then
 	# reset all TEST_PASSED variables
 	reset_all_test_variables
-	test_for_builtin_stl
-	if [ "${STL_STATUS}" = "b" -o -n "${STL_DIR}" ]; then
+	if test_for_builtin_stl; then
 	    test_setup
     	else
 	    SETUP_COMPLETE=''
@@ -2967,16 +2644,6 @@ menu_header()
     print_line     "OS:                  ${SYST}"
     print_line \
 	"Compiler:            `extended_compiler_description`"
-    if [ "${STL_STATUS}" = "x" ]; then
-	print_line "Builtin STL:         not used." 
-    elif [ "${STL_STATUS}" = "b" ]; then
-	print_line "Builtin STL:         used." 
-    fi
-    if [ "${STL_STATUS}" != 'b' -a -z "${STL_DIR}" ]; then
-	print_line     "STL_DIR:             please configure!!!" 
-    else
-	print_line     "STL_VERSION:         ${CGAL_STL_VERSION}"
-    fi
     _set_tmp_to_not_or_not "${LEDA_SUPPORT}"
     print_line     "LEDA:                ${_tmp}supported." 
     _set_tmp_to_not_or_not "${GMP_SUPPORT}"
@@ -3120,13 +2787,6 @@ compiler_menu()
     while [ 0 ]; do
 	menu_header 'Compiler'
 	print_line "${_bold_on}<C>${_bold_off}  Choose compiler"
-	if [ "${STL_STATUS}" != "e" ]; then
-	    print_line "${_bold_on}<S>${_bold_off}  Toggle use of builtin STL" 
-	fi
-	if [ "${STL_STATUS}" != "b" ]; then
-	    print_line "${_bold_on}<I>${_bold_off}  STL  include directory" 
-	    print_line "     ${STL_DIR:-<undefined>}" 
-	fi
 	print_line "${_bold_on}<F>${_bold_off}  Set custom compiler flags"
 	print_multi_line "${CUSTOM_CXXFLAGS:-<none>}"
 	print_line "${_bold_on}<L>${_bold_off}  Set custom linker flags"
@@ -3137,25 +2797,6 @@ compiler_menu()
 	case ${KEY} in
 	    c|C)
 		compiler_choose_menu
-		;;
-	    s|S)
-		if [ "${STL_STATUS}" = "x" ]; then
-		    STL_STATUS="b"
-		    STL_TEST_PASSED='y'
-		elif [ "${STL_STATUS}" = "b" ]; then
-		    STL_STATUS="x"
-		    STL_TEST_PASSED=''
-		    SETUP_COMPLETE=''
-		fi
-		;;
-	    i|I)
-		if [ "${STL_STATUS}" != "b" ]; then
-		    if change_dir STL_DIR dir; then
-			go_down_lines 1
-			flush_buffer
-			test_stl 'v'
-		    fi
-    		fi
 		;;
 	    f|F)
 		change_value CUSTOM_CXXFLAGS
@@ -3596,22 +3237,6 @@ write_compiler_flags()
     >> ${FILE}
 
   #
-  # CGAL_STL_INCLUDE_DIRECTIVE
-  #
-  print_as_shell_comment \
-    "*** Fill in your STL include directory ***" \
-    >> ${FILE}
-  print_as_shell_comment \
-    "(including the -I directive)" \
-    >> ${FILE}
-  print_as_shell_comment \
-    "(e.g. -I/usr/local/STL)" \
-    >> ${FILE}
-  ${_printf} "%s\n\n" \
-    "CGAL_STL_INCLUDE_DIRECTIVE = `stl_cxxflags`" \
-    >> ${FILE}
-
-  #
   # LEDA_INCL_DIR
   #
   if [ -n "${LEDA_SUPPORT}" -a -n "${NEED_EXTRA_LEDA_IDIR}" ]; then
@@ -3671,7 +3296,6 @@ write_compiler_flags()
   ${_printf} "%s\\\\\n" "CGAL_CXXFLAGS = " >> ${FILE}
   makefile_print_line "\$(CUSTOM_CXXFLAGS)" >> ${FILE}
   makefile_print_line "${ADDITIONAL_CXXFLAGS}" >> ${FILE}
-  makefile_print_line "\$(CGAL_STL_INCLUDE_DIRECTIVE)" >> ${FILE}
   if [ -n "${GMP_SUPPORT}" ]; then
     makefile_print_line "-DCGAL_USE_GMP" >> ${FILE}
     if [ "${GMP_INSTALLATION}" = 'x' -o \
@@ -4463,13 +4087,6 @@ while [ ${#} -gt 0 ]; do
 	    fi
 	    set_dirs_dependant_on_cgal_dir
 	    initial_check
-	    ;;
-	--stl_dir*|--STL_DIR*|-STL_DIR*|-stl_dir*)
-	    _ANY_OPT='y'
-	    if set_variable_from_command_line 'STL_DIR' "$1" "$2"; then
-		shift
-	    fi
-	    STL_STATUS='e'
 	    ;;
 	--leda_sys_incl*|--LEDA_SYS_INCL*|--leda-sys-incl*|--LEDA-SYS-INCL*|\
 -leda_sys_incl*|-LEDA_SYS_INCL*|-leda-sys-incl*|-LEDA-SYS-INCL*)
