@@ -1,4 +1,4 @@
-Version 1.89 (?? September 01)
+Version 1.89 (18 September 01)
 - Finite_vertex_iterator -> Finite_vertices_iterator, idem for cell, facet and
   edge.
 
