@@ -18,6 +18,41 @@
 
 \ccDefinition
 
+A halffacet is an oriented, rectilinear bounded part of a plane. The following
+figure depicts the incidences to halfedges, vertices and the notion of facet
+cycles.
+
+\begin{ccTexOnly}
+    \begin{figure}[bht]
+        \begin{center}
+          \parbox{0.4\textwidth}{%
+              \includegraphics[width=0.4\textwidth]{Nef_3/fig/snc.ips}%
+          }
+        \end{center}
+        \label{figureNef3FacetIncidences}
+    \end{figure}
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+    <CENTER>
+    <A NAME="figureNef3FacetIncidences">
+    <A HREF="./poly_optional.gif">
+        <img src="./poly_optional_small.gif" 
+             alt="Class Diagram"></A><BR>
+    <A HREF="./poly_optional.gif">Figure:</A>
+    The three classes <I>Vertex</I>, <I>Halfedge</I>, and 
+          <I>Facet</I> of the polyhedral surface. Member
+          functions with shaded background are mandatory. The others
+          are optionally supported.
+    </CENTER>
+\end{ccHtmlOnly}
+
+The member function \ccc{twin} returns the opposite halffacet, \ccc{volume}
+returns the incident volume. A Halffacet cycle either consists of consecutive
+shalfedges along the border (or a hole) of the halffacet, or of a single
+shalfloop on the sphere map of a vertex isolated on the halffacet. The 
+iterator range (\ccc{halffacet_cycles_begin()}/\ccc{halffacet_cycles_end()})
+provides an entry element for each halffacet cycle of a halffacet.
 
 \ccInclude{CGAL/Nef_polyhedron_3.h}
 
@@ -61,9 +96,6 @@
 
 \ccMethod{Halffacet_cycle_const_iterator  facet_cycle_end() const;}
 {past-the-end iterator.}
-
-\ccMethod{const Object_list&  boundary_entry_objects() const;}
-{list of entries to all halffacet cycles of \ccVar\ .}
 
 \ccSeeAlso
 

@@ -18,6 +18,70 @@
 
 \ccDefinition
 
+A shalfedge is a great arc on a sphere map. 
+Figure~\ccTexHtml{\ref{figureNef3HalfedgeIncidences} on page 
+\pageref{figureNef3HalfedgeIncidences}}{}\begin{ccHtmlOnly}
+  <A HREF="#figureNef3HalfedgeIncidences"><IMG 
+  SRC="cc_ref_up_arrow.gif" ALT="reference arrow" WIDTH="10" HEIGHT="10"></A>
+\end{ccHtmlOnly}
+depicts the relationship between a shalfedge and its incident
+shalfedges, svertices, and sfaces on a sphere map.  A shalfedge is 
+an oriented sedge between two svertices. It is always paired with a 
+shalfedge pointing in
+the opposite direction. The \ccc{twin()} member function returns
+this shalfedge of opposite orientation.
+
+\begin{ccTexOnly}
+    \begin{figure}[bht]
+        \begin{center}
+          \parbox{0.4\textwidth}{%
+              \includegraphics[width=0.4\textwidth]{Nef_3/fig/shalfedge}%
+          }
+        \end{center}
+        \label{figureNef3HalfedgeIncidences}
+    \end{figure}
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+    <CENTER>
+    <A NAME="figureNef3HalfedgeIncidences">
+    <A HREF="./poly_optional.gif">
+        <img src="./poly_optional_small.gif" 
+             alt="Class Diagram"></A><BR>
+    <A HREF="./poly_optional.gif">Figure:</A>
+    The three classes <I>Vertex</I>, <I>Halfedge</I>, and 
+          <I>Facet</I> of the polyhedral surface. Member
+          functions with shaded background are mandatory. The others
+          are optionally supported.
+    </CENTER>
+\end{ccHtmlOnly}
+
+The \ccc{snext()} member function points 
+to the successor shalfedge around this sface while the \ccc{sprev()} member 
+function points to the preceding shalfedge.  An
+successive assignments of the form \ccc{se = se->snext()} cycles
+counterclockwise around the sface (or hole).
+
+Similarly, the successive
+assignments of the form \ccc{se = se->snext()->twin()} cycle
+clockwise around the svertex and traverse all halfedges incident to
+this svertex. The assignment \ccc{se = se->cyclic_adj_succ()} can be 
+used as a shortcut.
+
+The role of shalfedges in a facet is illustrated in 
+Figure~\ccTexHtml{\ref{figureNef3FacetIncidences} on page 
+\pageref{figureNef3FacetIncidences}}{}\begin{ccHtmlOnly}
+  <A HREF="#figureNef3FacetIncidences"><IMG 
+  SRC="cc_ref_up_arrow.gif" ALT="reference arrow" WIDTH="10" HEIGHT="10"></A>
+\end{ccHtmlOnly}. The \ccc{incident_facet()} member function returns the facet 
+in which
+the shalfedge is part of one of the facet cycles. The successive assignment of 
+the form \ccc{se = se->next()} cycles counterclockwise around the facet (or a
+hole of the facet).
+
+A const circulators is provided for each of the three circular orders.
+The circulators are bidirectional and assignable to \ccc{Halfedge_const_handle}.
+
 \ccInclude{CGAL/Nef_polyhedron_3.h}
 
 \ccTypes
@@ -51,6 +115,8 @@
 
 \ccMethod{SVertex_const_handle source() const;}{the source svertex of \ccVar\ .}
 
+\ccMethod{SVertex_const_handle target() const;}{equals \ccc{twin()->source()}.}
+
 \ccMethod{SHalfedge_const_handle prev() const;}
 {the SHalfedge previous to \ccVar\ in a facet cycle.}
 
@@ -63,6 +129,12 @@
 \ccMethod{SHalfedge_const_handle snext() const;}
 {the next SHalfedge of \ccVar\ in a sface cycle.}
 
+\ccMethod{SHalfedge_const_handle cyclic_adj_pred() const;}
+{the edge before \ccVar\ in the cyclic ordered adjacency list of source().}
+
+\ccMethod{SHalfedge_const_handle cyclic_adj_succ() const;}
+{the edge after \ccVar\ in the cyclic ordered adjacency list of source().}
+
 \ccMethod{Halffacet_const_handle incident_facet() const;}{the incident facet of \ccVar\ .}
 
 \ccMethod{Halffacet_const_handle incident_sface() const;}{the incident sface of \ccVar\ .}
@@ -71,7 +143,8 @@
 
 \ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::Halfedge}\\
 \ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::Halffacet}\\
-\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::SFace}
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::SFace}\\
+\ccRefIdfierPage{CGAL::Nef_polyhedron_S2<Traits>::Sphere_circle}
 
 \ccTagDefaults
 \end{ccRefClass}

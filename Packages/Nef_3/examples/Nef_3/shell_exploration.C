@@ -1,12 +1,11 @@
-// examples/Nef_3/shell_exploration.C
-// -------------------------------------
+// file: examples/Nef_3/shell_exploration.C
+
 #include <CGAL/Gmpz.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 
-typedef CGAL::Gmpz RT;
-typedef CGAL::Homogeneous<RT> Kernel;
+typedef CGAL::Homogeneous<CGAL::Gmpz> Kernel;
 typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron;
 typedef Nef_polyhedron::Vertex_const_handle Vertex_const_handle;
 typedef Nef_polyhedron::Halfedge_const_handle Halfedge_const_handle;
@@ -27,12 +26,11 @@ public:
   Shell_explorer(const Nef_polyhedron& N_) 
     : first(true), N(N_) {}
   
-  void visit(Vertex_const_handle h) {
-    if(first) {
-      v_min = h;
-      first=false; 
-    } else if (CGAL::lexicographically_xyz_smaller(N.point(h),N.point(v_min)))
-      v_min = h; 
+  void visit(Vertex_const_handle v) {
+    if(first || CGAL::lexicographically_xyz_smaller(v->point(),v_min->point())) {
+      v_min = v;
+      first=false;
+    } 
   }
   
   void visit(Halfedge_const_handle e) {}
@@ -46,7 +44,6 @@ public:
 };    
 
 int main() {
-
   Nef_polyhedron N;
   std::cin >> N;
 
@@ -60,9 +57,9 @@ int main() {
     CGAL_forall_shells_of(it,c) {
       SE.reset_minimal_vertex();
       N.visit_shell_objects(SFace_const_handle(it),SE);
-      Point_3 p(N.point(SE.minimal_vertex()));
+      Point_3 p(SE.minimal_vertex()->point());
       std::cout << "  minimal vertex of shell " << is++ 
-		<< " is at " << p << std::endl;
+                << " is at " << p << std::endl;
     }
   } 
 }

@@ -17,13 +17,27 @@
 
 \ccDefinition
 
-An instance of data type \ccc{Nef_polyhedron_3<Traits>} is a subset of the
+A 3D Nef polyhedrono is a subset of the
 3-dimensional space that is the result of forming complements and intersections
 starting from a finite set \ccc{H} of
-3-dimensional halfspaces. \ccc{Nef_polyhedron_3} is closed under all binary set
-operations, i.e. \ccc{intersection}, \ccc{union}, \ccc{difference},
-\ccc{complement}, and under the topological operations \ccc{boundary},
-\ccc{closure}, and \ccc{interior}.
+3-dimensional halfspaces. Nef polyhedra are closed under all binary set
+operations, i.e. intersection, union, difference,
+complement, and under the topological operations boundary,
+closure, and interior.
+
+A 3D Nef polyhedron can be represented by the local pyramids of the minimal
+elments of its incidence structure. Without going into to much detail, a local
+pyramid essentially reflects the topologic and geometric situation at a certain
+location in a point set. For finite polyhedra the minimal elements 
+of the incidence structure are vertices only. This means, that it suffices to 
+model the topologic and geometric situation of the vertices. For 
+3D Nef polyhedra, the local pyramid of a vertex is represented by 
+a planar Nef polyhedra embedded on a sphere.
+
+A \ccc{Nef_polyhedron_3} consists of vertices \emph{V}, a sphere map for each
+vertex in \emph{V}, edges \emph{E}, facets \emph{F}, volumes \emph{C}, a mark
+for every item, and an incidence relation on them. Each edge and each facet
+is represented by two halfedges or two halffacets, respectively.
 
 \ccInclude{CGAL/Nef_polyhedron_3.h}
 
@@ -136,14 +150,14 @@ By default, the class \ccc{CGAL::SNC_items} is preseleted.
 \ccEnum{enum Content { EMPTY,  COMPLETE }}{construction selection.}
 
 \ccNestedType{Nef_polyhedron_S2}{a sphere map.}
-
+\ccGlue
 \ccNestedType{Polyhedron}{a polyhedral surface.}
 
 
 \ccCreation
 \ccCreationVariable{N}
 
-\ccThree{}{}{}
+\ccThree{Nef_polyhedron_3<Traits>;}{N}{}
 \ccThreeToTwo
 
 \ccConstructor{Nef_polyhedron_3(Content space = EMPTY);} {
@@ -165,7 +179,63 @@ By default, the class \ccc{CGAL::SNC_items} is preseleted.
 %  loads a Nef polyhedron from \ccc{filename}.}
 
 
-\ccOperations
+\ccHeading{Access Member Functions}
+
+\ccThree{bool}{N.operator==();}{}
+
+\ccMethod{bool is_simple() const;}{returns true, if \ccVar\ is a 2-manifold.}
+\ccGlue
+\ccMethod{bool is_valid() const;}{checks the integrity of \ccVar\ .}
+
+\ccThree{Size_type}{N.number_of_halffacets();}{}
+
+\ccMethod{Size_type number_of_vertices() const;}
+{returns the number of vertices.}
+\ccGlue
+\ccMethod{Size_type number_of_halfedges() const;}
+{return the number of halfedges.} 
+\ccGlue
+\ccMethod{Size_type number_of_edges() const;}
+{returns the number of halfedge pairs.}     
+\ccGlue
+\ccMethod{Size_type number_of_halffacets() const;}
+{returns the number of halffacets.}   
+\ccGlue
+\ccMethod{Size_type number_of_facets() const;}
+{returns the number of halffacet pairs.}    
+\ccGlue
+\ccMethod{Size_type number_of_volumes() const;}
+{returns the number of volumes.}   
+
+\ccThree{Halffacet_const_iterator}{N.halffacets_begin();}{}
+
+\ccMethod{Vertex_const_iterator   vertices_begin() const;}{iterator over all vertices.}
+\ccGlue
+\ccMethod{Vertex_const_iterator   vertices_end()   const;}{past-the-end iterator.}
+\ccMethod{Halfedge_const_iterator halfedges_begin()const;}{iterator over all halfedges.}
+\ccGlue
+\ccMethod{Halfedge_const_iterator halfedges_end()  const;}{past-the-end iterator.}
+\ccMethod{Halffacet_const_iterator halffacets_begin() const;}{iterator over all halffacets.}
+\ccGlue
+\ccMethod{Halffacet_const_iterator halffacets_end() const;}{past-the-end iterator.}
+\ccMethod{Volume_const_iterator   volumes_begin() const;}{iterator over all volumes.}
+\ccGlue
+\ccMethod{Volume_const_iterator   volumes_end()   const;}{past-the-end iterator.}
+
+The following macros are provided: \ccc{CGAL_forall_vertices(v,N)},
+\ccc{CGAL_forall_halfedges(e,N)}, \ccc{CGAL_forall_edges(e,N)},
+\ccc{CGAL_forall_halffacets(f,N)}, \ccc{CGAL_forall_facets(f,N)},
+\ccc{CGAL_forall_volumes(c,N)} where \ccc{N} is a \ccc{Nef_polyhedron_3}.
+
+\ccMethod{Object_handle locate(const Point_3& p) const;}
+{returns a generic handle to the object (vertex, edge, facet or volume) which contains the point p in its relative interior.}
+%\ccMethod{bool contains(Object_handle h) const;}{}
+%\ccMethod{bool contained_in_boundary(Object_handle h) const;}{}
+
+\ccMethod{Nef_polyhedron_S2 get_sphere_map(Vertex_const_iterator v) const;}
+{returns the neighborhood of a vertex modeled by a \ccc{Nef_polyhedron_S2}.}
+
+\ccHeading{Point Set Predicates}
 
 \ccThree{bool}{N.operator==();}{}
 
@@ -175,77 +245,84 @@ By default, the class \ccc{CGAL::SNC_items} is preseleted.
 \ccMethod{bool is_space() const;}{returns true, if \ccVar\ is the 
                                   complete 3D space.}
 
-\ccMethod{bool is_simple() const;}{returns true, if \ccVar\ is a 2-manifold.}
-\ccGlue
-\ccMethod{bool is_valid() const;}{checks the integrity of \ccVar\ .}
-
 \ccMethod{bool operator==(const Nef_polyhedron_3<Traits>& N1) const;}
 {returns true, if \ccVar\ and N1 comprise the same point sets.}
+\ccGlue
 \ccMethod{bool operator!=(const Nef_polyhedron_3<Traits>& N1) const;}
 {returns true, if \ccVar\ and N1 comprise different point sets. }
+\ccGlue
 \ccMethod{bool operator<(const Nef_polyhedron_3<Traits>& N1) const;}
 {returns true, if \ccVar\ is a proper subset of N1. }
+\ccGlue
 \ccMethod{bool operator>(const Nef_polyhedron_3<Traits>& N1) const;}
 {returns true, if \ccVar\ is a proper superset of N1. }
+\ccGlue
 \ccMethod{bool operator<=(const Nef_polyhedron_3<Traits>& N1) const;}
 {returns true, if \ccVar\ is a subset of N1. }
+\ccGlue
 \ccMethod{bool operator>=(const Nef_polyhedron_3<Traits>& N1) const;}
 {returns true, if \ccVar\ is a superset of N1. }
 
-\ccMethod{Size_type number_of_vertices() const;}
-{returns the number of vertices.}  
-\ccMethod{Size_type number_of_halfedges() const;}
-{return the number of halfedges.} 
-\ccMethod{Size_type number_of_edges() const;}
-{returns the number of halfedge pairs.}     
-\ccMethod{Size_type number_of_halffacets() const;}
-{returns the number of halffacets.}   
-\ccMethod{Size_type number_of_facets() const;}
-{returns the number of halffacet pairs.}    
-\ccMethod{Size_type number_of_volumes() const;}
-{returns the number of volumes.}   
+\ccHeading{Unary Set Operations}
+
+\ccThree{Nef_polyhedron_3<Traits>}{N.intersection(N1);}{}
 
 \ccMethod{Nef_polyhedron_3<Traits> complement() const;}
 {returns the complement of \ccVar\ .}
+\ccGlue
 \ccMethod{Nef_polyhedron_3<Traits> interior() const;}
 {returns the interior of \ccVar\ .}
+\ccGlue
 \ccMethod{Nef_polyhedron_3<Traits> boundary() const;}
 {returns the boundary of \ccVar\ .}
+\ccGlue
 \ccMethod{Nef_polyhedron_3<Traits> closure() const;}
 {returns the closure of \ccVar\ .}
+\ccGlue
 \ccMethod{Nef_polyhedron_3<Traits> regularization() const;}
 {returns the regularization, i.e. the closure of the interior, of \ccVar\ .}
 
-\ccMethod{void operator!();}
+\ccMethod{Nef_polyhedron_3<Traits> operator!() const;}
 {returns the complement of \ccVar\ .}
+
+\ccHeading{Binary Set Operations}
 
 \ccMethod{Nef_polyhedron_3<Traits> intersection(const Nef_polyhedron_3<Traits>& N1) const;}
 {return the intersection of \ccVar\ and N1.}
+\ccGlue
 \ccMethod{Nef_polyhedron_3<Traits> join(const Nef_polyhedron_3<Traits>& N1) const;}
 {return the union of \ccVar\ and N1. (Note that ''union'' is a C++ keyword and cannot be used for this operation.)}
+\ccGlue
 \ccMethod{Nef_polyhedron_3<Traits> difference(const Nef_polyhedron_3<Traits>& N1) const;}
 {return the difference between \ccVar\ and N1.}
+\ccGlue
 \ccMethod{Nef_polyhedron_3<Traits> symmetric_difference(const Nef_polyhedron_3<Traits>& N1) const;}
 {return the symmetric difference of \ccVar\ and N1.}
 
 \ccMethod{Nef_polyhedron_3<Traits> operator*(const Nef_polyhedron_3<Traits>& N1) const;}
 {return the intersection of \ccVar\ and N1.}
-\ccMethod{Nef_polyhedron_3<Traits> operator+(const Nef_polyhedron_3<Traits>& N1) const;}{}
+\ccGlue
+\ccMethod{Nef_polyhedron_3<Traits> operator+(const Nef_polyhedron_3<Traits>& N1) const;}
 {return the union of \ccVar\ and N1.}
-\ccMethod{Nef_polyhedron_3<Traits> operator-(const Nef_polyhedron_3<Traits>& N1) const;}{}
+\ccGlue
+\ccMethod{Nef_polyhedron_3<Traits> operator-(const Nef_polyhedron_3<Traits>& N1) const;}
 {return the difference between \ccVar\ and N1.}
-\ccMethod{Nef_polyhedron_3<Traits> operator^(const Nef_polyhedron_3<Traits>& N1) const;}{}
+\ccGlue
+\ccMethod{Nef_polyhedron_3<Traits> operator^(const Nef_polyhedron_3<Traits>& N1) const;}
 {return the symmetric difference of \ccVar\ and N1.}
 
 \ccMethod{void operator*=(const Nef_polyhedron_3<Traits>& N1);}{intersects \ccVar\ and N1.}
+\ccGlue
 \ccMethod{void operator+=(const Nef_polyhedron_3<Traits>& N1);}{unites \ccVar\ with N1.}
+\ccGlue
 \ccMethod{void operator-=(const Nef_polyhedron_3<Traits>& N1);}{subtracts N1 from \ccVar\ .}
+\ccGlue
 \ccMethod{void operator^=(const Nef_polyhedron_3<Traits>& N1);}{performs a symmetric intersection of \ccVar\ and N1.}
 
-\ccMethod{Object_handle locate(const Point_3& p) const;}
-{returns a generic handle to the object (vertex, edge, facet or volume) which contains the point p in its relative interior.}
-%\ccMethod{bool contains(Object_handle h) const;}{}
-%\ccMethod{bool contained_in_boundary(Object_handle h) const;}{}
+\ccHeading{Operations}
+
+\ccThree{void}{N}{}
+\ccThreeToTwo
 
 \ccMethod{void clear(Content space = EMPTY);}
 {make \ccVar\ the empty set if \ccc{space == EMPTY} and
@@ -254,67 +331,37 @@ By default, the class \ccc{CGAL::SNC_items} is preseleted.
 \ccMethod{void transform(const Aff_transformation_3& aff);}{applies an affine transformation to \ccVar\ .}
 
 %\ccMethod{void dump() const;}{}
-\ccMethod{void convert_to_Polyhedron(Polyhedron& P) const;}{converts \ccVar\ into a Polyhedron. \ccc{Precondition: \ccVar\ .is_simple()}.}
-\ccMethod{Nef_polyhedron_S2 get_sphere_map(Vertex_const_iterator v) const;}{returns the neighborhood of a vertex modeled by a \ccc{Nef_polyhedron_S2}.}
-
-\ccMethod{Mark mark(Vertex_const_handle v) const;}{returns the mark of v.}
-\ccMethod{Mark mark(Halfedge_const_handle e) const;}{returns the mark of e.}
-\ccMethod{Mark mark(Halffacet_const_handle f) const;}{returns the mark of f.}
-\ccMethod{Mark mark(Volume_const_handle c) const;}{returns the mark of c.}
-
-\ccMethod{Vertex_const_iterator   vertices_begin() const;}{iterator over all vertices.}
-\ccMethod{Vertex_const_iterator   vertices_end()   const;}{past-the-end iterator.}
-\ccMethod{Halfedge_const_iterator halfedges_begin()const;}{iterator over all halfedges.}
-\ccMethod{Halfedge_const_iterator halfedges_end()  const;}{past-the-end iterator.}
-\ccMethod{Halffacet_const_iterator halffacets_begin() const;}{iterator over all halffacets.}
-\ccMethod{Halffacet_const_iterator halffacets_end() const;}{past-the-end iterator.}
-\ccMethod{Volume_const_iterator   volumes_begin() const;}{iterator over all volumes.}
-\ccMethod{Volume_const_iterator   volumes_end()   const;}{past-the-end iterator.}
-\ccMethod{Shell_entry_const_iterator shells_begin(Volume_const_handle c) const;}{}
-\ccMethod{Shell_entry_const_iterator shells_end(Volume_const_handle c) const;}{past-the-end iterator.}
-
-\ccMethod{Vertex_const_handle vertex(Halfedge_const_handle e) const;}{returns the source vertex of e.}
-\ccMethod{Vertex_const_handle source(Halfedge_const_hnalde e) const;}{returns the source vertex of e.}
-\ccMethod{Vertex_const_handle target(Halfedge_const_handle e) const;}{returns source(twin(e)).}
-\ccMethod{Halfedge_const_handle twin(Halfedge_const_handle e) const;}{returns the twin of e.}
-\ccMethod{SFace_const_handle sface(Halfedge_const_handle e) const;}{returns the incident sface of e.}
-
-\ccMethod{Vertex_const_handle vertex(SHalfedge_const_handle e) const;}{}
-\ccMethod{SHalfedge_const_handle twin(SHalfedge_const_handle e) const;}{}
-\ccMethod{Vertex_const_handle source(SHalfedge_const_handle e) const;}{}
-\ccMethod{Vertex_const_handle target(SHalfedge_const_handle e) const;}{}
-\ccMethod{SHalfedge_const_handle previous(SHalfedge_const_handle e) const;}{}
-\ccMethod{SHalfedge_const_handle next(SHalfedge_const_handle e) const;}{}
-\ccMethod{Halffacet_const_handle facet(SHalfedge_const_handle e) const;}{}
-\ccMethod{SFace_const_handle sface(SHalfedge_const_handle e) const;}{}
-\ccMethod{Halfedge_const_handle ssource(SHalfedge_const_handle e) const;}{}
-\ccMethod{Halfedge_const_handle starget(SHalfedge_const_handle e) const;}{}
-
-\ccMethod{SHalfloop_const_handle twin( SHalfloop_const_handle l) const;}{}
-\ccMethod{Halffacet_const_handle facet( SHalfloop_const_handle l) const;}{}
-\ccMethod{Vertex_const_handle vertex( SHalfloop_const_handle l) const;}{}
-\ccMethod{SFace_const_handle sface( SHalfloop_const_handle l) const;}{}
-
-\ccMethod{Vertex_const_handle vertex(SFace_const_handle f) const;}{}
-\ccMethod{Volume_const_handle volume(SFace_const_handle f) const;}{}
-
-\ccMethod{Halffacet_const_handle twin(Halffacet_const_handle f) const;}{returns the twin of f.}
-\ccMethod{Volume_const_handle volume(Halffacet_const_handle f) const;}{returns the incident volume of f.}
-\ccMethod{SFace_const_handle adjacent_sface(Halffacet_const_handle f) const;}{}
+\ccMethod{void convert_to_Polyhedron(Polyhedron& P) const;}
+{converts \ccVar\ into a Polyhedron.~\ccPrecond \ccVar\ is simple.}
 
 \ccMethod{void visit_shell_objects(SFace_const_handle f, Visitor& V) const;}
 {calls the visit function of V for every item which belongs to the same shell as sf.}
-
-\ccMethod{const Point_3& point(Vertex_const_handle v) const;}{returns the location of v.}
-\ccMethod{Segment_3 segment(Halfedge_const_handle e) const;}{returns \ccc{Segment_3(point(source(e)),point(target(e)))}.}
-\ccMethod{Vector_3 vector(Halfedge_const_handle e) const;}{returns the direction of e.}
-\ccMethod{const Plane_3& plane(Halffacet_const_handle f) const;}{returns the supporting plane of f.}
 
 %\ccMethod{static bool is_standard(const Vertex_const_handle v);}{}
 %\ccMethod{static bool is_standard(const Halffacet_const_handle v);}{}
 %\ccMethod{static bool is_standard_kernel() { return Infi_box::standard_kernel();}{}
 %\ccMethod{static bool is_extended_kernel() { return Infi_box::extended_kernel();}{}
 %\ccMethod{static void set_size_of_infimaximal_box(const typename Infi_box::NT& size);}{}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::Vertex}\\
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::Halfedge}\\
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::Halffacet}\\
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::Volume}\\
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::SHalfedge}\\
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::SHalfloop}\\
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::SFace}\\
+\ccRefIdfierPage{CGAL::Nef_polyhedron_S2<Traits>}\\
+\ccRefIdfierPage{CGAL::Polyhedron<Traits>}
+
+\ccExample
+
+This example program creates two Nef polyhedra - one representing
+the empty point set, one representing the whole 3D space. The complement
+of the latter one is computeted and compared with the first one.
+
+\ccIncludeExampleCode{Nef_3/simple.C}
 
 \end{ccRefClass}
 

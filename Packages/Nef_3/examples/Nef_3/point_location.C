@@ -1,12 +1,11 @@
-// examples/Nef_3/point_location.C
-// -------------------------------------
+// file: examples/Nef_3/point_location.C
+
 #include <CGAL/Gmpz.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 
-typedef CGAL::Gmpz RT;
-typedef CGAL::Homogeneous<RT> Kernel;
+typedef CGAL::Homogeneous<CGAL::Gmpz> Kernel;
 typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron_3;
 typedef Nef_polyhedron_3::Vertex_const_handle Vertex_const_handle;
 typedef Nef_polyhedron_3::Halfedge_const_handle Halfedge_const_handle;
@@ -16,7 +15,6 @@ typedef Nef_polyhedron_3::Object_handle Object_handle;
 typedef Kernel::Point_3 Point_3;
 
 int main() {
-
   Nef_polyhedron_3 N;
   std::cin >> N;
 
@@ -33,10 +31,7 @@ int main() {
     std::cout << "Locating facet" << std::endl;
   else if(CGAL::assign(c,o))
     std::cout << "Locating volume" << std::endl;
-  else {
-    std::cout << "something wrong" << std::endl;
-    return 1;
-  }
+  //other cases can not occur
 
   return 0;
 }

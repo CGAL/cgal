@@ -1,0 +1,67 @@
+% +------------------------------------------------------------------------+
+% | Cbp Reference Manual:  intro.tex
+% +------------------------------------------------------------------------+
+% | Polyhedron reference manual pages
+% |
+% | 14.05.1998   Lutz Kettner
+\RCSdef{\polyhedronRefRev}{$Revision$}
+\RCSdefDate{\polyhedronRefDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\clearpage
+\chapter{3D Nef Polyhedron}
+%% \section{Reference Pages for Polyhedral Surface}
+\label{chapterPolyhedronRef}
+%% \ccChapterRelease{\polyhedronRefRev. \ \polyhedronRefDate}\\
+%% \ccChapterAuthor{Lutz Kettner}
+
+% +------------------------------------------------------------------------+
+\section*{Summary}
+
+A Nef polyhedron in 3-dimensional space is
+any point set generated from a finite number of open halfspaces by set
+complement and set intersection operations. It is also closed under 
+all other binary set operations and under topological (unary) set operations. 
+
+A 3D Nef polyhedron can be represented by the local pyramids of the minimal
+elments of its incidence structure. Without going into to much detail, a local
+pyramid essentially reflects the topologic and geometric situation at a certain
+location in a point set. For finite polyhedra the minimal elements 
+of the incidence structure are vertices only. This means, that it suffices to 
+model the topologic and geometric situation of the vertices. For 
+3D Nef polyhedra, the local pyramid of a vertex is represented by 
+a planar Nef polyhedra embedded on a sphere.
+
+\subsection*{Classes}
+
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>}\\ 
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::Vertex}\\ 
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::Halfedge}\\ 
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::Halffacet}\\ 
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::Volume}\\ 
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::SHalfedge}\\ 
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::SHalfloop}\\ 
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::SFace}\\ 
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::SFace_cycle_iterator}\\ 
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::Shell_entry_iterator} 
+
+\subsection*{Functions}
+\ccThree{ostream&}{}{page 999.}
+
+\ccHtmlNoLinks\ccHtmlNoIndex
+\ccFunction{template <class Traits>
+            ostream& operator<<( ostream& out, 
+                                 const CGAL::Nef_polyhedron_3<Traits>& N);}
+    {\lcRawHtml{<A HREF="Function_operator.html">(go there)</A>}
+     \lcTex{\hfill page~\pageref{refNef_polyhedron_operator_leftshift_3}}}
+
+\ccHtmlNoLinks\ccHtmlNoIndex
+\ccFunction{template <class Traits>
+            istream& operator>>( istream& in, 
+                                 CGAL::Nef_polyhedron_3<Traits>& N);}
+    {\lcRawHtml{<A HREF="Function_operator--.html">(go there)</A>}
+     \lcTex{\hfill page~\pageref{refNef_polyhedron_operator_rightshift_3}}}
+
+\lcHtml{\subsection*{Links to the Reference Sections}}
+
+%% EOF %%

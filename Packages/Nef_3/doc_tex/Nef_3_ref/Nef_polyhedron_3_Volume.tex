@@ -18,6 +18,11 @@
 
 \ccDefinition
 
+A volume is a full-dimensional connected point set in $\mathbb{R}^3$. It is
+bounded by several shells, i.e. a connected part of the boundary incident
+to a single volume. An entry element to each shell is provided by the 
+iterator range (\ccc{shells_begin()}/\ccc{shells_end()}). A 
+\ccc{Shell_entry_iterator} is assignable to \ccc{SFace_handle}.
 
 \ccInclude{CGAL/Nef_polyhedron_3.h}
 
@@ -43,14 +48,11 @@
 
 \ccMethod{const Mark& mark() const;}{the mark of \ccVar\ .}
 
-\ccMethod{Shell_entry_const_iterator  facet_cycle_begin() const;}
+\ccMethod{Shell_entry_const_iterator  shells_begin() const;}
 {const iterator over the entries to all shells adjacent to \ccVar\ .}
 
-\ccMethod{Shell_entry_const_iterator  facet_cycle_end() const;}
+\ccMethod{Shell_entry_const_iterator  shells_cycle_end() const;}
 {past-the-end iterator.}
-
-\ccMethod{const Object_list&  boundary_entry_objects() const;}
-{list of entries to all shells adjacent to \ccVar\ .}
 
 \ccSeeAlso
 

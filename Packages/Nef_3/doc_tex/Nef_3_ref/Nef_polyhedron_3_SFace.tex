@@ -1,5 +1,5 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: SFace.tex
+% | Reference manual page: Nef_polyhedron_3_SFace.tex
 % +------------------------------------------------------------------------+
 % | 14.05.2004   Peter Hachenberger
 % | Package: Nef_3
@@ -17,6 +17,25 @@
 \begin{ccRefClass}[Nef_polyhedron_3<Traits>::]{SFace}
 
 \ccDefinition
+
+Figure~\ccTexHtml{\ref{figureNef3HalfedgeIncidences} on page 
+\pageref{figureNef3HalfedgeIncidences}}{}\begin{ccHtmlOnly}
+  <A HREF="#figureNef3HalfedgeIncidences"><IMG 
+  SRC="cc_ref_up_arrow.gif" ALT="reference arrow" WIDTH="10" HEIGHT="10"></A>
+\end{ccHtmlOnly} and
+figure~\ccTexHtml{\ref{figureNef3HalfloopIncidences} on page 
+\pageref{figureNef3HalfloopIncidences}}{}\begin{ccHtmlOnly}
+  <A HREF="#figureNef3HalfloopIncidences"><IMG 
+  SRC="cc_ref_up_arrow.gif" ALT="reference arrow" WIDTH="10" HEIGHT="10"></A>
+\end{ccHtmlOnly} illustrate the incidences of an sface. An sface is described
+by its boundaries. An entry item to each boundary cycle can be accessed
+using the iterator range (\ccc{sface_cycles_begin()}/\ccc{sface_cycles_end()}).
+Additionally, \ccc{Nef_polyhedron_S2} provides the macro 
+\ccc{CGAL_forall_sface_cylces_of}. The iterators are of type 
+\ccc{SFace_cycle_const_iterator} and represent either a shalfedge, a shalfloop,
+or a svertex.
+
+
 
 \ccInclude{CGAL/Nef_polyhedron_3.h}
 
@@ -54,9 +73,6 @@
 
 \ccMethod{SFace_cycle_const_iterator  sface_cycle_end() const;}
 {past-the-end iterator.}
-
-\ccMethod{const Object_list&  boundary_entry_objects() const;}
-{list of entries to all sface cycles of \ccVar\ .}
 
 \ccSeeAlso
 

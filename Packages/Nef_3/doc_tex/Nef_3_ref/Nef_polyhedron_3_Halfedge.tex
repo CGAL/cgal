@@ -18,6 +18,33 @@
 
 \ccDefinition
  
+A Halfedge has a double meaning. In the global incidence structure of a
+\ccc{Nef_polyhedron_3} it is an oriented edge going from one vertex to another.
+A halfedge also coincides wiht an svertex of the sphere map of its source 
+vertex. Because of this, we offer the types \ccc{Halfedge} and \ccc{SVertex}
+which are the same. Furthermore, the redundant functions \ccc{center_vertex()}
+and \ccc{source()} are provided. The reason is, that we get the same vertex
+either if we want to have the source vertex of a halfedge, or if we want to 
+have the vertex in the center of the sphere map a svertex lies on. 
+Figure~\ccTexHtml{\ref{figureNef3HalfedgeIncidences} on page 
+\pageref{figureNef3HalfedgeIncidences}}{}\begin{ccHtmlOnly}
+  <A HREF="#figureNef3HalfedgeIncidences"><IMG 
+  SRC="cc_ref_up_arrow.gif" ALT="reference arrow" WIDTH="10" HEIGHT="10"></A>
+\end{ccHtmlOnly} and
+figure~\ccTexHtml{\ref{figureNef3FacetIncidences} on page 
+\pageref{figureNef3FacetIncidences}}{}\begin{ccHtmlOnly}
+  <A HREF="#figureNef3HalffacetIncidences"><IMG 
+  SRC="cc_ref_up_arrow.gif" ALT="reference arrow" WIDTH="10" HEIGHT="10"></A>
+\end{ccHtmlOnly} illustrate the incidence of a svertex on a sphere map and of
+a halfedge in the global structure. 
+
+As part of the global incidence structure, the member fuctions \ccc{source} 
+and \ccc{target} return the source and target vertex of an edge. The member
+function \ccc{twin()} returns the opposite halfedge.
+
+Looking at the incidence structure on a sphere map, the member function 
+\ccc{out_sedge} returns the first outgoing shalfedge, and \ccc{incident_sface}
+returns the the incident sface.
 
 \ccInclude{CGAL/Nef_polyhedron_3.h}
 
@@ -51,8 +78,17 @@
 
 \ccMethod{const Sphere_point& point() const;}{the sphere point of \ccVar\ .}
 
+\ccMethod{bool is_isolated() const;}
+{returns |true| if \ccVar\ has no adjacent sedges.}
+
 \ccMethod{Vertex_const_handle center_vertex() const;}
 {the center vertex of the sphere map \ccVar\ belongs to.}
+
+\ccMethod{Vertex_const_handle source() const;}
+{the source vertex of \ccVar\ .}
+
+\ccMethod{Vertex_const_handle target() const;}
+{the target vertex \ccVar.}
 
 \ccMethod{Halfedge_const_handle twin() const;}{the twin of \ccVar\ .}
 
@@ -66,7 +102,8 @@
 
 \ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::Vertex}\\
 \ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::SHalfedge}\\
-\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::SFace}
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::SFace} \\
+\ccRefIdfierPage{CGAL::Nef_polyhedron_S2<Traits>::Sphere_point}
 
 \ccTagDefaults
 \end{ccRefClass}

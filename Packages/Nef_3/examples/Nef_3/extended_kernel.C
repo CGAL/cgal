@@ -1,5 +1,5 @@
-// examples/Nef_3/extended_kernel.C
-// -------------------------------------
+// file: examples/Nef_3/extended_kernel.C
+
 #include <CGAL/Gmpz.h>
 #include <CGAL/Extended_homogeneous_3.h>
 #include <CGAL/Nef_polyhedron_3.h>
@@ -19,8 +19,8 @@ int main() {
   std::cin >> N;
   
   Vertex_const_iterator v;
-  CGAL_forall_vertices(v, N) {
-    Point_3 p(N.point(v));
+  for(v = vertices_begin(); v != vertices_end(); v++) {
+    Point_3 p(v->point());
     if(p.hx().degree() > 0 || p.hy().degree() > 0 || p.hz().degree() > 0)
       std::cout << "extended vertex at " << p << std::endl;
     else

@@ -1,3 +1,5 @@
+// file: examples/Nef_3/nefIO.C
+
 #include <CGAL/Gmpz.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Extended_homogeneous_3.h>
@@ -11,7 +13,6 @@ typedef CGAL::Nef_polyhedron_3<SK>  Nef_polyhedron_S;
 typedef CGAL::Nef_polyhedron_3<EK>  Nef_polyhedron_E;
 
 int main() {
-
   Nef_polyhedron_E E;
   Nef_polyhedron_S S;
 
@@ -23,5 +24,4 @@ int main() {
     ifstream in("temp.nef3");
     in >> S;
   }
-    
 }
