@@ -1,4 +1,6 @@
 
+- Replaced CORE.lib with $(CGAL_CORE_LIB) to get it platform independent
+
 Version 0.7 (30 June 03) [af]
 - Replaced SUFFIXES with .SUFFIXES
 
