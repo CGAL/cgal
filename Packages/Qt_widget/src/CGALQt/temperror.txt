@@ -1,0 +1,8 @@
+In file included from Qt_widget_view.moc:16,
+                 from Qt_widget_view.C:31:
+../../include/CGAL/IO/Qt_widget_view.h:31: redefinition of `class CGAL::Qt_widget_view'
+/u/papillon/1/prisme/rursu/CGAL_RELEASES/CGAL-2.4-I-49/include/CGAL/IO/Qt_widget_view.h:53: previous definition here
+../../include/CGAL/IO/Qt_widget_view.h:53: warning: type mismatch with previous external decl
+/u/papillon/1/prisme/rursu/CGAL_RELEASES/CGAL-2.4-I-49/include/CGAL/IO/Qt_widget_view.h:53: warning: previous external decl of `vtable for struct CGAL::Qt_widget_view'
+../../include/CGAL/IO/Qt_widget_view.h:53: confused by earlier errors, bailing out
+gmake: *** [Qt_widget_view.o] Error 1
