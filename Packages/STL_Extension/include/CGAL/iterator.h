@@ -109,7 +109,7 @@ inserter(Container &x)
 // +----------------------------------------------------------------+
 // | Oneset_iterator
 // +----------------------------------------------------------------+
-// |  stores a reference to an object of type T
+// |  stores a pointer to an object of type T
 // |  which will be affected by operator*().
 // +----------------------------------------------------------------+
 
@@ -121,14 +121,44 @@ class Oneset_iterator
   : public std::iterator< std::output_iterator_tag, void, void, void*, void >
 #endif // defined(__GNUC__) && (__GNUC__ < 3)
 {
-  T& t;
+  T* t;
 public:
-  Oneset_iterator(T& tt) : t(tt) {}
+  Oneset_iterator(T& tt) : t(&tt) {}
 
   Oneset_iterator& operator++()    { return *this; }
   Oneset_iterator& operator++(int) { return *this; }
 
-  T& operator*() { return t; }
+  T& operator*() { return *t; }
+};
+
+// +----------------------------------------------------------------+
+// | Counting_output_iterator
+// +----------------------------------------------------------------+
+// |  stores a pointer to an int,
+// |  which will be incremented by operator=().
+// +----------------------------------------------------------------+
+
+// Undocumented, because there is some hope to merge it into Counting_iterator
+class Counting_output_iterator
+#if defined(__GNUC__) && (__GNUC__ < 3)
+  : public std::output_iterator
+#else
+  : public std::iterator< std::output_iterator_tag, void, void, void*, void >
+#endif // defined(__GNUC__) && (__GNUC__ < 3)
+{
+  std::size_t c;
+public:
+  Counting_output_iterator() : c(0) {}
+
+  Counting_output_iterator& operator++()    { return *this; }
+  Counting_output_iterator& operator++(int) { return *this; }
+
+  Counting_output_iterator& operator*() { return *this; }
+
+  template <typename T>
+  void operator=(const T&) { ++c; }
+
+  std::size_t current_counter() const { return c;}
 };
 
 template < class I,
