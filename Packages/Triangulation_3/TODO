@@ -1,2 +1,3 @@
 - For Delaunay, we can use the visibility (non stochastic) walk.  How to
   choose ?
+- why are the iterators friend in the ds_cell ?
