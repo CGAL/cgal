@@ -240,11 +240,9 @@ public slots:
         dt.push_back(TPoint_3(x, y, landscape[x][y]));
 	    }
     }
-    progress.setProgress( gridSize );
-    terrain->lock();
+    progress.setProgress( gridSize );    
     terrain->compute_normals_for_faces();
-    terrain->compute_normals_for_vertices();
-    terrain->unlock();
+    terrain->compute_normals_for_vertices();    
     terrain->touch();
     viewer->viewAll();
   }
