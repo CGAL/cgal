@@ -309,12 +309,8 @@ int main(int argc,char *argv[])
 	  }
 	}
         
-        if(closest_iter != seg_list.end()) {
+        if(closest_iter != seg_list.end())
           seg_list.erase(closest_iter);
-          CGAL::snap_rounding_2<Sr_traits,std::list<Segment_2>::const_iterator,
-            std::list<std::list<Point_2> > >
-            (seg_list.begin(),seg_list.end(),output_list,prec,do_isr,false,5);
-	}
 
 	redraw(seg_list,W,b,show_input,argc == 1);
       } else {
@@ -330,24 +326,27 @@ int main(int argc,char *argv[])
           Segment_2 tmp1(Point_2(x3,y3),Point_2(x4,y4));
           seg_list.push_back(tmp1);
           W << tmp1;
-          CGAL::snap_rounding_2<Sr_traits,std::list<Segment_2>::const_iterator,
-            std::list<std::list<Point_2> > >
-            (seg_list.begin(),seg_list.end(),output_list,prec,do_isr,false,5);
         }
       }
 
       if(automatic_show) {
         // automatic display of biggest rectangle
+        CGAL::snap_rounding_2<Sr_traits,std::list<Segment_2>::const_iterator,
+          std::list<std::list<Point_2> > >
+          (seg_list.begin(),seg_list.end(),output_list,prec,do_isr,false,5);
         show_results(output_list,prec,W,show_hp,show_output);
         sr_shown = true;
       }
     } else if(mouse_input == 1) {
-      // show biggest rectangle
+      CGAL::snap_rounding_2<Sr_traits,std::list<Segment_2>::const_iterator,
+        std::list<std::list<Point_2> > >
+        (seg_list.begin(),seg_list.end(),output_list,prec,do_isr,false,5);
       show_results(output_list,prec,W,show_hp,show_output);
       sr_shown = true;
     } else if(mouse_input == 2) {
       clear(W,b,argc == 1);
       sr_shown = false;
+      seg_list.clear();
     } else if(mouse_input == 3) {
       // change to automatic mode
       automatic_show = true;
@@ -412,17 +411,11 @@ int main(int argc,char *argv[])
       if(prec == 2)
         W.disable_button(15);
       W.enable_button(16);
-      CGAL::snap_rounding_2<Sr_traits,std::list<Segment_2>::const_iterator,
-        std::list<std::list<Point_2> > >
-        (seg_list.begin(),seg_list.end(),output_list,prec,do_isr,false,5);
     } else if(mouse_input == 16) {
       prec = prec / 2;
       if(prec < 1.0 / 5)
         W.disable_button(16);
       W.enable_button(15);
-      CGAL::snap_rounding_2<Sr_traits,std::list<Segment_2>::const_iterator,
-        std::list<std::list<Point_2> > >
-        (seg_list.begin(),seg_list.end(),output_list,prec,do_isr,false,5);
     } else if(mouse_input == 17) {
       prec = PRECISION;
       W.enable_button(15);
@@ -435,10 +428,14 @@ int main(int argc,char *argv[])
       break;
     }
 
-    if(mouse_input > 4 && mouse_input < 18) {
+    if(mouse_input > 2 && mouse_input < 18) {
       redraw(seg_list,W,b,show_input,argc == 1);
-      if(automatic_show)
+      if(automatic_show) {
+        CGAL::snap_rounding_2<Sr_traits,std::list<Segment_2>::const_iterator,
+          std::list<std::list<Point_2> > >
+          (seg_list.begin(),seg_list.end(),output_list,prec,do_isr,false,5);
         show_results(output_list,prec,W,show_hp,show_output);
+      }
     }
 
     if(automatic_show)
