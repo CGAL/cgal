@@ -28,6 +28,7 @@
 #include <CGAL/IO/Qt_widget_Polygon_2.h>
 
 // Personnal headers
+#include "Qt_widget_style_editor.h"
 #include "Show_points.h"
 #include "Show_lines.h"
 #include "Show_pseudo_triangulation.h"
@@ -44,6 +45,11 @@
 #include <qpushbutton.h>
 #include <qframe.h>
 #include <qhbox.h>
+#include <qvbox.h>
+#include <qdialog.h>
+#include <qcheckbox.h>
+#include <qtabwidget.h>
+#include <qgroupbox.h>
 #include <qtimer.h>
 #include <qtooltip.h>
 #include <qpixmap.h>
@@ -112,6 +118,43 @@ void display_zone(CGAL::Qt_widget* widget, Vertex_handle top)
 
   *widget << poly;
 }
+
+class Preferences : public QDialog
+{
+private:
+  QGridLayout* layout;
+  QTabWidget* tab;
+
+public:
+  Preferences(QWidget* parent = 0, const char* name = 0, bool modal = false)
+    : QDialog(parent, name, modal)
+  {
+    layout = new QGridLayout(this, 1,1, 11, 6, "pref_layout");
+    tab = new QTabWidget(this);
+    layout->addWidget(tab, 0, 0);
+  }
+
+  template <typename LayersIterator>
+  void setLayers(LayersIterator begin, LayersIterator end)
+  {
+    QWidget* w;
+    while( (w = tab->currentPage()) != 0)
+      {
+	tab->removePage(w);
+	delete w;
+      }
+
+    for(LayersIterator it = begin; it!=end; ++it)
+      {
+	QVBox* box = new QVBox(tab);
+	//	QCheckBox* check = new QCheckBox("&Enable", box);
+	//	QGroupBox* group = new QGroupBox("&Properties", box);
+	CGAL::Qt_widget_style_editor* editor =
+	  new CGAL::Qt_widget_style_editor((*it)->style(), box);
+	tab->addTab(box, (*it)->name());
+      }
+  }
+};
 
 // ********* MAIN WINDOW CLASS  ********** //
 class MyWindow : public QMainWindow
@@ -229,7 +272,9 @@ public:
 		      "Compute the initial pseudo-triangulation",
 		      this, SLOT(compute_gmin()),
 		      maintoolbar, "tb_gmin");
-      
+
+      std::list<CGAL::Qt_widget_styled_layer*> styled_layers;
+
       // set points_widget layers
       CGAL::Qt_widget_get_point<K>* get_point = 
 	new CGAL::Qt_widget_get_point<K>();
@@ -241,22 +286,35 @@ public:
       CGAL::Show_pseudo_triangulation<Antichain>* show_ptrig =
 	new CGAL::Show_pseudo_triangulation<Antichain>(antichain, false,
 						       CGAL::RED,
-						       1);
+						       1,
+						       points_widget,
+						       "Show pseudo "
+						       "triangulation");
       points_widget->attach(show_ptrig);
+
+      styled_layers.push_back(show_ptrig);
 
       Show_points_from_list* show_points = 
 	new Show_points_from_list(list_of_points,
 				  &List_of_points::begin,
 				  &List_of_points::end,
-				  CGAL::BLUE, 4);
+				  CGAL::BLUE, 4, CGAL::DISC,
+				  static_cast<QObject*>(points_widget),
+				  "Show points");
       points_widget->attach(show_points);
       
+      styled_layers.push_back(show_points);
+
       Nearest_vertex* nearest_point = 
 	new Nearest_vertex(dt_of_points,
 			   0,
 			   Qt::green,
 			   4,
-			   CGAL::DISC);
+			   CGAL::DISC,
+			   Qt::green,
+			   1,
+			   points_widget,
+			   "Show nearest point");
       points_widget->attach(nearest_point);
 
       Follow_point_dual* follow_point_dual_from_primal =
@@ -275,25 +333,40 @@ public:
 	new Show_lines_from_list(list_of_lines,
 				 &List_of_lines::begin,
 				 &List_of_lines::end,
-				 CGAL::BLUE, 1);
+				 CGAL::BLUE, 1,
+				 lines_widget,
+				 "Show lines");
       lines_widget->attach(show_lines);
 
+      styled_layers.push_back(show_lines);
+
       CGAL::Show_antichain<Antichain>* show_antichain =
-	new CGAL::Show_antichain<Antichain>(antichain, CGAL::PURPLE);
+	new CGAL::Show_antichain<Antichain>(antichain, CGAL::PURPLE, 3,
+					    lines_widget,
+					    "Show antichain");
       lines_widget->attach(show_antichain);
 
       CGAL::Show_pseudo_triangulation<Antichain>* show_ptrig_dual =
 	new CGAL::Show_pseudo_triangulation<Antichain>(antichain, true,
 						       CGAL::RED,
-						       5);
+						       5,
+						       lines_widget,
+						       "Show dual of pseudo"
+						       " triangulation");
       lines_widget->attach(show_ptrig_dual);
+
+      styled_layers.push_back(show_ptrig_dual);
 
       Special_Nearest_vertex* nearest_bitangent = 
 	new Special_Nearest_vertex(dt_of_bitangents,
-			   nearest_point,
-			   Qt::green,
-			   5,
-			   CGAL::DISC);
+				   nearest_point,
+				   Qt::green,
+				   5,
+				   CGAL::DISC,
+				   Qt::green,
+				   1,
+				   lines_widget,
+				   "Show nearest bitangent");
       lines_widget->attach(nearest_bitangent);
 
       nearest_point->set_twin(nearest_bitangent);
@@ -316,6 +389,10 @@ public:
       setUsesBigPixmaps(true);
       resize(700,500);
       //      hbox->show();
+
+      Preferences* prefs = new Preferences(0, "Preferences", false);
+      prefs->setLayers(styled_layers.begin(), styled_layers.end());
+      prefs->show();
 
       points_widget->set_window(-1., 1., -1., 1.);
       lines_widget->set_window(-1., 1., -1., 1.);

@@ -12,7 +12,13 @@ namespace CGAL {
 
 class Qt_widget_style : public QObject {
   Q_OBJECT
+
+  typedef QMap<QString,QVariant> Map;
 public:
+
+  typedef Map::const_iterator const_iterator;
+  typedef Map::size_type size_type;
+
   Qt_widget_style()
     : map() {};
 
@@ -28,8 +34,23 @@ public:
   QColor getColor(QString name);
   PointStyle getPointStyle(QString name);
 
+  const_iterator begin() const
+  {
+    return map.begin();
+  }
+
+  const_iterator end() const
+  {
+    return map.end();
+  }
+
+  size_type size() const
+  {
+    return map.size();
+  }
+
 private:
-  QMap<QString,QVariant> map;
+  Map map;
 };
 
 class Qt_widget_styled_layer : public Qt_widget_layer {

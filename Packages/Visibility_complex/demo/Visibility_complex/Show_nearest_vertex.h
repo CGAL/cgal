@@ -36,8 +36,11 @@ public:
 		      const int point_size = 10,
 		      const PointStyle point_style = CIRCLE,
 		      const QColor &line_color = Qt::green,
-		      const int line_width = 1)
-    : tr(t),
+		      const int line_width = 1,
+		      QObject* parent = 0,
+		      const char* name = 0)
+    : Qt_widget_layer(parent, name),
+      tr(t),
       _point_color(point_color),
       _point_size(point_size),
       _point_style(point_style),

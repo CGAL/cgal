@@ -48,6 +48,12 @@ Qt_widget_styled_layer.moc:  Qt_widget_styled_layer.h
 Qt_widget_styled_layer$(OBJ_EXT): Qt_widget_styled_layer.moc \
 		Qt_widget_styled_layer.C
 
+Qt_widget_style_editor.moc:  Qt_widget_style_editor.h
+	$(QT_MOC) -o Qt_widget_style_editor.moc Qt_widget_style_editor.h
+
+Qt_widget_style_editor$(OBJ_EXT): Qt_widget_style_editor.moc \
+		Qt_widget_style_editor.C
+
 Show_points.moc:  Show_points.h
 	$(QT_MOC) -o Show_points.moc Show_points.h
 
@@ -70,7 +76,8 @@ arrangements$(OBJ_EXT): arrangements.moc \
 	Show_lines.h \
 	Show_points.h \
 	Show_nearest_vertex.h \
-	Show_pseudo_triangulation.h
+	Show_pseudo_triangulation.h \
+	Qt_widget_style_editor.h
 
 arrangements.moc:  arrangements.C
 	$(QT_MOC) -o arrangements.moc arrangements.C
@@ -81,8 +88,9 @@ arrangements$(EXE_EXT): arrangements$(OBJ_EXT) \
 		Show_points$(OBJ_EXT) \
 		Show_lines_base$(OBJ_EXT) \
 		Qt_widget_styled_layer$(OBJ_EXT) \
+		Qt_widget_style_editor$(OBJ_EXT) \
 		Show_pseudo_triangulation$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)arrangements arrangements$(OBJ_EXT) Show_points$(OBJ_EXT) Show_lines_base$(OBJ_EXT) Qt_widget_styled_layer$(OBJ_EXT) Show_pseudo_triangulation$(OBJ_EXT) $(LDFLAGSQT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)arrangements arrangements$(OBJ_EXT) Show_points$(OBJ_EXT) Show_lines_base$(OBJ_EXT) Qt_widget_styled_layer$(OBJ_EXT) Qt_widget_style_editor$(OBJ_EXT) Show_pseudo_triangulation$(OBJ_EXT) $(LDFLAGSQT)
 
 shortest_path$(EXE_EXT): shortest_path$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)shortest_path shortest_path$(OBJ_EXT) $(LDFLAGS)
@@ -95,8 +103,10 @@ visibility_graph$(EXE_EXT): visibility_graph$(OBJ_EXT)
 
 clean: \
                    Qt_widget_styled_layer.clean \
+                   Qt_widget_style_editor.clean \
                    Show_points.clean \
                    Show_pseudo_triangulation.clean \
+                   Show_lines_base.clean \
                    arrangements.clean \
                    shortest_path.clean \
                    visibility_graph.clean \

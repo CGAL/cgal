@@ -4,23 +4,28 @@
 #include <qcolor.h>
 #include <qcolordialog.h>
 #include <qpushbutton.h>
-#include <qspinbox.>
+#include <qspinbox.h>
 #include <qcombobox.h>
 #include <qscrollview.h>
 #include <qlabel.h>
-#include <qvbox.h
+#include <qvbox.h>
 #include <qhbox.h>
-#include <qgridlayout.h>
+#include <qlayout.h>
+#include <qgrid.h>
+#include <qpixmap.h>
+#include <qvariant.h>
+#include <qsizepolicy.h>
+#include "Qt_widget_styled_layer.h"
 
 namespace CGAL {
 
-namespace Qt_widget {
+namespace Qt_widget_internals {
   class Color_selector : public QPushButton
   {
     Q_OBJECT
   public:
-    Color_label(QColor c = Qt::black,
-		QWidget* parent = 0, const char* name = 0)
+    Color_selector(QColor c = Qt::black,
+		   QWidget* parent = 0, const char* name = 0)
       : QPushButton(parent, name)
     {
       setColor(c);
@@ -28,12 +33,14 @@ namespace Qt_widget {
 	      this, SLOT(color_dialog()) );
     }
 
+    virtual ~Color_selector() {};
+
     void setColor(QColor c)
     {
       color = c;
 
       QPixmap pix(24,20);
-      pix->fill(c);
+      pix.fill(c);
       setPixmap(pix);
     }
 
@@ -45,7 +52,9 @@ namespace Qt_widget {
   private slots:
     void color_dialog()
     {
-      setColor(QColorDialog::getColor());
+      QColor c = QColorDialog::getColor(value());
+      if( c.isValid() )
+	setColor(c);
     }
   private:
     QColor color;
@@ -60,6 +69,8 @@ namespace Qt_widget {
     {
       setValue(i);
     }
+
+    virtual ~Int_selector() {};
   };
 
   class Bool_selector : public QComboBox
@@ -67,16 +78,18 @@ namespace Qt_widget {
     Q_OBJECT
   public:
     Bool_selector(bool b_, QWidget *parent = 0, const char *name = 0)
-      : QComboBox(false, parent, name), b(b_)
+      : QComboBox(false, parent, name)
     {
       insertItem("False");
       insertItem("True");
 
-      if(b)
+      if(b_)
 	setCurrentItem(1);
       else
 	setCurrentItem(0);
     }
+
+    virtual ~Bool_selector() {};
 
     bool value() const
     {
@@ -88,10 +101,10 @@ namespace Qt_widget {
   {
     Q_OBJECT
   public:
-    typdef ::CGAL::PointStyle PointStyle;
+    typedef ::CGAL::PointStyle PointStyle;
     Point_style_selector(PointStyle s,
 			 QWidget *parent = 0, const char *name = 0)
-      : QComboBox(false, parent, name), b(b_)
+      : QComboBox(false, parent, name)
     {
       insertItem("Pixel");
       insertItem("Cross");
@@ -103,6 +116,8 @@ namespace Qt_widget {
 
       setCurrentItem(static_cast<int>(s));
     }
+
+    virtual ~Point_style_selector() {};
 
     PointStyle value() const
     {
@@ -116,49 +131,57 @@ class Qt_widget_style_editor : public QScrollView {
   Q_OBJECT
 public:
 
- typedef QMap<QString,QVariant> Style;
+  typedef Qt_widget_styled_layer::Style Style;
 
   Qt_widget_style_editor(Style* style,
-			 QWidget *parent, const char *name )
+			 QWidget *parent = 0 , const char *name = 0)
     : QScrollView(parent, name)
   {
-    using namespace ::CGAL::Qt_widget;
+    using namespace ::CGAL::Qt_widget_internals;
     typedef Style::const_iterator iterator;
 
-    QGridLayout layout = new QGridLayout(style->size(), 3, viewport());
-    layout->addColSpacing(1, 5);
+    setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
 
-    for(iterator it = style.begin();
-	it != style.end; ++it)
+    QGrid* layout = new QGrid(2, viewport());
+    layout->setSpacing(5);
+
+    int i = 0;
+    for(iterator it = style->begin();
+	it != style->end(); ++it)
       {
-	QLabel label = new QLabel(it->first, hbox);
-	label->setText(it->first);
-	layout->addItem(label);
+	QLabel* label = new QLabel(it.key(), layout);
+	label->setText(it.key());
 
-	switch(it->second.type()) {
-	case Color:
-	  Color_selector color_sel = new Color_selector(it->second.toColor(),
-							viewport());
+	QWidget* selector;
+
+	switch(it.data().type()) {
+	case QVariant::Color:
+	  selector = new Color_selector(it.data().toColor(),
+					layout);
 	  break;
-	case Int:
-	  Int_selector int_sel = new Int_selector(it->second.toInt(),
-						  viewport());
+	case QVariant::Int:
+	  selector = new Int_selector(it.data().toInt(),
+				      layout);
 	  break;
-	case Bool:
-	  Bool_selector bool_sel = new Bool_selector(it->second.toBool(),
-						     viewport());
+	case QVariant::Bool:
+	  selector = new Bool_selector(it.data().toBool(),
+				       layout);
 	  break;
-	case Uint:
-	  Point_style_selector ps_sel = 
-	    new Point_style_selector(PointStyle(it->second.toUint()),
-				     viewport());
+	case QVariant::UInt:
+	  selector = 
+	    new Point_style_selector(PointStyle(it.data().toUInt()),
+				     layout);
+	  break;
 	default:
 	  CGAL_assertion(false);
 	  break;
-	}
+	};
+	++i;
       }
   }
-} // end of class Qt_widget_style_editor
+
+  virtual ~Qt_widget_style_editor() {}
+}; // end of class Qt_widget_style_editor
 
 } // end namespace CGAL
 
