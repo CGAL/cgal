@@ -12,10 +12,10 @@
 // release_date  : 
 //
 // file          : include/CGAL/geowin_support.h
-// package       : GeoWin (1.4.1)
+// package       : GeoWin (1.4.7)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 1.4.1
-// revision_date : 15 March 2002 
+// revision      : 1.4.7
+// revision_date : 25 April 2002 
 // author(s)     : Matthias Baesken, Ulrike Bartuschka, Stefan Naeher
 //
 // coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>)
@@ -156,8 +156,8 @@ typedef std::list<CGALTetrahedron_3>    CGALTetrahedron_3_list;
 #endif
 
 
-// no templates on VC++
-#if defined (_MSC_VER)
+// no fucntion templates on VC++ 6.0 ...
+#if defined (_MSC_VER) && (_MSC_VER < 1300)
 #define GEOWIN_SUPPORT_NO_TEMPLATES
 #endif
 

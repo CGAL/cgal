@@ -1,3 +1,8 @@
+1.4.7 (25 April 2002)
+- the function templates in geowin_support.h work with VC 7.0
+  -> I could change the setting of the GEOWIN_SUPPORT_NO_TEMPLATES
+     flag for VC 7.0
+
 1.4.6 (23 April 2002)
 - a few demo were changed to remove warnings
 - Largest empty rectangle demo (CGAL_ler_2) added
