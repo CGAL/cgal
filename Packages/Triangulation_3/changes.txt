@@ -1,4 +1,4 @@
-Version 1.46 (?? ??? 01)
+Version 1.46 (3 Mar 01)
 - violates() optimization (remove() speed up). [syl]
 - new insert_conflict() in the TDS. [syl]
 - rand4() can now be inline (locate() speed up). [syl]
