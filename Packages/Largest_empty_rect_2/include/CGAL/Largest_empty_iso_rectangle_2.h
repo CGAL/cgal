@@ -1464,7 +1464,5 @@ Largest_empty_iso_rectangle_2<T>::determine_first_two_iters(
 */
 
 CGAL_END_NAMESPACE
-    
 
 #endif // CGAL_LARGEST_EMPTY_ISO_RECTANGLE_2_H
-

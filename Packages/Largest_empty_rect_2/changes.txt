@@ -1,3 +1,7 @@
+version 1.12 [sp]
+- Avoid Windows end of lines in include/CGAL/Largest_empty_iso_rectangle_2.h
+  (gcc 2.95.2 preprocessor warning)
+
 version 1.11 [sp]
 - Avoid Windows end of lines in demo/makefile...
 
