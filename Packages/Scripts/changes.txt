@@ -1,3 +1,7 @@
+20 April 2004 Radu Ursu
+- rolled back changes to create_internal_release to version 1.13 (14 April) 
+  until Sylvain comes back to work. 
+
 18 April 2004 Radu Ursu
 - create_internal_release script calls create_cgal_test script when generating
   cgal_test in each test directory
