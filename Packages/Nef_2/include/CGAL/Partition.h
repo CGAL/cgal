@@ -35,6 +35,10 @@
 #include <cassert>
 #define ALLOC(t) std::allocator<t>
 
+#ifdef _MSC_VER
+#define CGAL_PARTITION_NO_ALLOCATOR
+#endif
+
 CGAL_BEGIN_NAMESPACE
 
 template <typename T, typename A = ALLOC(int) > 
@@ -69,9 +73,11 @@ public:
   typedef Partition_struct* item;
   /*{\Mtypemember the item type.}*/
 
+#ifndef CGAL_PARTITION_NO_ALLOCATOR
   typedef typename A::template rebind<Partition_struct>::other  
           allocator;
   /*{\Mtypemember the allocator.}*/
+#endif
 
 /*{\Mcreation 4}*/
 
@@ -128,18 +134,26 @@ public:
 protected:
   partition_item _first;
   size_t         _blocks;
+#ifndef CGAL_PARTITION_NO_ALLOCATOR
   static allocator _a;
+#endif
 };
 
+#ifndef CGAL_PARTITION_NO_ALLOCATOR
 template <typename T, typename A>
 typename Partition<T,A>::allocator Partition<T,A>::_a;
+#endif
 
 template <typename T, typename A>
 typename Partition<T,A>::partition_item 
 Partition<T,A>::make_block(const T& x) 
 { partition_item tmp = _first;
+#ifndef CGAL_PARTITION_NO_ALLOCATOR
   _first = _a.allocate(1);
   new ((void*)_first) Partition_struct(tmp,x);
+#else
+  _first = new Partition_struct(tmp,x);
+#endif
   _blocks++;
   return _first;
 }
@@ -148,8 +162,12 @@ template <typename T, typename A>
 void Partition<T,A>::clear()
 { while (_first) { 
      partition_item n = _first->_next;
+#ifndef CGAL_PARTITION_NO_ALLOCATOR
      _a.destroy(_first);
      _a.deallocate(_first,1);
+#else
+     delete _first;
+#endif
      _first = n;
   }
   _blocks = 0;

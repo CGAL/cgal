@@ -30,7 +30,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/In_place_list.h>
 #include <CGAL/Nef_2/HalfedgeDS_items_decorator.h>
-#include <map>
+#include <CGAL/Hash_map.h>
 #include <iterator>
 
 
@@ -468,15 +468,9 @@ _HDS_IP_List<p_Traits,p_Items>::
 pointer_update( const _HDS_IP_List<p_Traits,p_Items>& hds) {
     // Update own pointers assuming that they lived previously
     // in a halfedge data structure `hds' with lists.
-    typedef map< Vertex_const_handle,
-                 Vertex_handle,
-                 _HDS_Cmp_handle< Vertex_const_handle> >    V_map;
-    typedef map< Halfedge_const_handle,
-                 Halfedge_handle,
-                 _HDS_Cmp_handle< Halfedge_const_handle > > H_map;
-    typedef map< Face_const_handle,
-                 Face_handle,
-                 _HDS_Cmp_handle< Face_const_handle > >     F_map;
+    typedef CGAL::Hash_map<Vertex_const_handle,Vertex_handle>     V_map;
+    typedef CGAL::Hash_map<Halfedge_const_handle,Halfedge_handle> H_map;
+    typedef CGAL::Hash_map<Face_const_handle,Face_handle>         F_map;
     V_map v_map;
     H_map h_map;
     F_map f_map;

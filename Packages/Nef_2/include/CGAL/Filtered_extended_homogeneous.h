@@ -321,12 +321,12 @@ std::istream& operator>>(std::istream& is, Extended_point<RT>& p)
 
 
 template <typename NT> inline
-int orientation_coeff2(const NT&  mx1, const NT&  nx1, 
-                       const NT&  my1, const NT&  ny1, const NT&  w1,
-                       const NT&  mx2, const NT&  nx2, 
-                       const NT&  my2, const NT&  ny2, const NT&  w2,
-                       const NT&  mx3, const NT&  nx3, 
-                       const NT&  my3, const NT&  ny3, const NT&  w3) 
+int orientation_coeff2(const NT& mx1, const NT& /*nx1*/, 
+                       const NT& my1, const NT& /*ny1*/, const NT& w1,
+                       const NT& mx2, const NT& /*nx2*/, 
+                       const NT& my2, const NT& /*ny2*/, const NT& w2,
+                       const NT& mx3, const NT& /*nx3*/, 
+                       const NT& my3, const NT& /*ny3*/, const NT& w3) 
 {
   NT coeff2 = mx1*w3*my2-mx1*w2*my3+mx3*w2*my1-
               mx2*w3*my1-mx3*w1*my2+mx2*w1*my3;
@@ -334,12 +334,12 @@ int orientation_coeff2(const NT&  mx1, const NT&  nx1,
 }
 
 template <typename NT> inline 
-int orientation_coeff1(const NT&  mx1, const NT&  nx1, 
-                       const NT&  my1, const NT&  ny1, const NT&  w1,
-                       const NT&  mx2, const NT&  nx2, 
-                       const NT&  my2, const NT&  ny2, const NT&  w2,
-                       const NT&  mx3, const NT&  nx3, 
-                       const NT&  my3, const NT&  ny3, const NT&  w3) 
+int orientation_coeff1(const NT& mx1, const NT& nx1, 
+                       const NT& my1, const NT& ny1, const NT& w1,
+                       const NT& mx2, const NT& nx2, 
+                       const NT& my2, const NT& ny2, const NT& w2,
+                       const NT& mx3, const NT& nx3, 
+                       const NT& my3, const NT& ny3, const NT& w3) 
 {
   NT coeff1 = mx1*w3*ny2-mx1*w2*ny3+nx1*w3*my2-mx2*w3*ny1-
               nx1*w2*my3+mx2*w1*ny3-nx2*w3*my1+mx3*w2*ny1+
@@ -348,12 +348,12 @@ int orientation_coeff1(const NT&  mx1, const NT&  nx1,
 }
 
 template <typename NT> inline
-int orientation_coeff0(const NT&  mx1, const NT&  nx1, 
-                       const NT&  my1, const NT&  ny1, const NT&  w1,
-                       const NT&  mx2, const NT&  nx2, 
-                       const NT&  my2, const NT&  ny2, const NT&  w2,
-                       const NT&  mx3, const NT&  nx3, 
-                       const NT&  my3, const NT&  ny3, const NT&  w3) 
+int orientation_coeff0(const NT& /*mx1*/, const NT& nx1, 
+                       const NT& /*my1*/, const NT& ny1, const NT& w1,
+                       const NT& /*mx2*/, const NT& nx2, 
+                       const NT& /*my2*/, const NT& ny2, const NT& w2,
+                       const NT& /*mx3*/, const NT& nx3, 
+                       const NT& /*my3*/, const NT& ny3, const NT& w3) 
 {
   NT coeff0 = -nx2*w3*ny1+nx1*w3*ny2+nx2*w1*ny3-
                nx1*w2*ny3+nx3*w2*ny1-nx3*w1*ny2;
@@ -495,14 +495,14 @@ inline bool operator!=(const Extended_point<RT>& p1,
 
 template <typename NT> 
 inline
-int cmppd_coeff2(const NT&  mx1, const NT&  nx1, 
-                 const NT&  my1, const NT&  ny1, const NT&  w1,
-                 const NT&  mx2, const NT&  nx2, 
-                 const NT&  my2, const NT&  ny2, const NT&  w2,
-                 const NT&  mx3, const NT&  nx3, 
-                 const NT&  my3, const NT&  ny3, const NT&  w3, 
-                 const NT&  mx4, const NT&  nx4, 
-                 const NT&  my4, const NT&  ny4, const NT&  w4) 
+int cmppd_coeff2(const NT& mx1, const NT& /*nx1*/, 
+                 const NT& my1, const NT& /*ny1*/, const NT& w1,
+                 const NT& mx2, const NT& /*nx2*/, 
+                 const NT& my2, const NT& /*ny2*/, const NT& w2,
+                 const NT& mx3, const NT& /*nx3*/, 
+                 const NT& my3, const NT& /*ny3*/, const NT& w3, 
+                 const NT& mx4, const NT& /*nx4*/, 
+                 const NT& my4, const NT& /*ny4*/, const NT& w4) 
 { 
   NT w1Q(w1*w1), w2Q(w2*w2), w3Q(w3*w3), w4Q(w4*w4);
   NT w1w2Q(w1Q*w2Q), w3w4Q(w3Q*w4Q), two(2);
@@ -524,14 +524,14 @@ int cmppd_coeff2(const NT&  mx1, const NT&  nx1,
 
 template <typename NT> 
 inline
-int cmppd_coeff1(const NT&  mx1, const NT&  nx1, 
-                 const NT&  my1, const NT&  ny1, const NT&  w1,
-                 const NT&  mx2, const NT&  nx2, 
-                 const NT&  my2, const NT&  ny2, const NT&  w2,
-                 const NT&  mx3, const NT&  nx3, 
-                 const NT&  my3, const NT&  ny3, const NT&  w3, 
-                 const NT&  mx4, const NT&  nx4, 
-                 const NT&  my4, const NT&  ny4, const NT&  w4) 
+int cmppd_coeff1(const NT& mx1, const NT& nx1, 
+                 const NT& my1, const NT& ny1, const NT& w1,
+                 const NT& mx2, const NT& nx2, 
+                 const NT& my2, const NT& ny2, const NT& w2,
+                 const NT& mx3, const NT& nx3, 
+                 const NT& my3, const NT& ny3, const NT& w3, 
+                 const NT& mx4, const NT& nx4, 
+                 const NT& my4, const NT& ny4, const NT& w4) 
 { 
   NT w1Q(w1*w1), w2Q(w2*w2), w3Q(w3*w3), w4Q(w4*w4);
   NT w1w2Q(w1Q*w2Q), w3w4Q(w3Q*w4Q), two(2);
@@ -556,14 +556,14 @@ int cmppd_coeff1(const NT&  mx1, const NT&  nx1,
 
 template <typename NT> 
 inline
-int cmppd_coeff0(const NT&  mx1, const NT&  nx1, 
-                 const NT&  my1, const NT&  ny1, const NT&  w1,
-                 const NT&  mx2, const NT&  nx2, 
-                 const NT&  my2, const NT&  ny2, const NT&  w2,
-                 const NT&  mx3, const NT&  nx3, 
-                 const NT&  my3, const NT&  ny3, const NT&  w3, 
-                 const NT&  mx4, const NT&  nx4, 
-                 const NT&  my4, const NT&  ny4, const NT&  w4) 
+int cmppd_coeff0(const NT& /*mx1*/, const NT& nx1, 
+                 const NT& /*my1*/, const NT& ny1, const NT& w1,
+                 const NT& /*mx2*/, const NT& nx2, 
+                 const NT& /*my2*/, const NT& ny2, const NT& w2,
+                 const NT& /*mx3*/, const NT& nx3, 
+                 const NT& /*my3*/, const NT& ny3, const NT& w3, 
+                 const NT& /*mx4*/, const NT& nx4, 
+                 const NT& /*my4*/, const NT& ny4, const NT& w4) 
 { 
   NT w1Q(w1*w1), w2Q(w2*w2), w3Q(w3*w3), w4Q(w4*w4);
   NT w1w2Q(w1Q*w2Q), w3w4Q(w3Q*w4Q), two(2);
@@ -721,9 +721,9 @@ Extended_point<RT> intersection(
   RT w = a1*b2 - a2*b1; CGAL_assertion(w!=0);
   #ifdef REDUCE_INTERSECTION_POINTS
   RT xgcd,ygcd;
-  if ( x.m() == 0 )  xgcd = ( x.n() == 0 ? 1 : x.n() ); 
+  if ( x.m() == RT(0) )  xgcd = ( x.n() == 0 ? RT(1) : x.n() ); 
   else /* != 0 */    xgcd = ( x.n() == 0 ? x.m() : gcd(x.m(),x.n()) ); 
-  if ( y.m() == 0 )  ygcd = ( y.n() == 0 ? 1 : y.n() ); 
+  if ( y.m() == RT(0) )  ygcd = ( y.n() == 0 ? RT(1) : y.n() ); 
   else /* != 0 */    ygcd = ( y.n() == 0 ? y.m() : gcd(y.m(),y.n()) ); 
   RT d = gcd(w,gcd(xgcd,ygcd));
   x /= d;
@@ -791,14 +791,14 @@ std::istream& operator>>(std::istream& is, Extended_direction<RT>& d)
 
 template <typename NT>
 inline
-int coeff2_dor(const NT&  mx1, const NT&  nx1, 
-               const NT&  my1, const NT&  ny1, const NT&  w1,
-               const NT&  mx2, const NT&  nx2, 
-               const NT&  my2, const NT&  ny2, const NT&  w2,
-               const NT&  mx3, const NT&  nx3, 
-               const NT&  my3, const NT&  ny3, const NT&  w3, 
-               const NT&  mx4, const NT&  nx4, 
-               const NT&  my4, const NT&  ny4, const NT&  w4) 
+int coeff2_dor(const NT& mx1, const NT& /*nx1*/, 
+               const NT& my1, const NT& /*ny1*/, const NT& w1,
+               const NT& mx2, const NT& /*nx2*/, 
+               const NT& my2, const NT& /*ny2*/, const NT& w2,
+               const NT& mx3, const NT& /*nx3*/, 
+               const NT& my3, const NT& /*ny3*/, const NT& w3, 
+               const NT& mx4, const NT& /*nx4*/, 
+               const NT& my4, const NT& /*ny4*/, const NT& w4) 
 {
   NT coeff2 = w1*mx2*w3*my4-w1*mx2*w4*my3-w2*mx1*w3*my4+w2*mx1*w4*my3-
               w1*my2*w3*mx4+w1*my2*w4*mx3+w2*my1*w3*mx4-w2*my1*w4*mx3;
@@ -807,14 +807,14 @@ int coeff2_dor(const NT&  mx1, const NT&  nx1,
 
 template <typename NT>
 inline
-int coeff1_dor(const NT&  mx1, const NT&  nx1, 
-               const NT&  my1, const NT&  ny1, const NT&  w1,
-               const NT&  mx2, const NT&  nx2, 
-               const NT&  my2, const NT&  ny2, const NT&  w2,
-               const NT&  mx3, const NT&  nx3, 
-               const NT&  my3, const NT&  ny3, const NT&  w3, 
-               const NT&  mx4, const NT&  nx4, 
-               const NT&  my4, const NT&  ny4, const NT&  w4)
+int coeff1_dor(const NT& mx1, const NT& nx1, 
+               const NT& my1, const NT& ny1, const NT& w1,
+               const NT& mx2, const NT& nx2, 
+               const NT& my2, const NT& ny2, const NT& w2,
+               const NT& mx3, const NT& nx3, 
+               const NT& my3, const NT& ny3, const NT& w3, 
+               const NT& mx4, const NT& nx4, 
+               const NT& my4, const NT& ny4, const NT& w4)
 {
   NT coeff1 = -w1*my2*w3*nx4+w1*mx2*w3*ny4+w1*my2*w4*nx3-w1*mx2*w4*ny3+
                w1*nx2*w3*my4-w1*nx2*w4*my3+w2*my1*w3*nx4-w2*mx1*w3*ny4-
@@ -825,14 +825,14 @@ int coeff1_dor(const NT&  mx1, const NT&  nx1,
 
 template <typename NT>
 inline
-int coeff0_dor(const NT&  mx1, const NT&  nx1, 
-               const NT&  my1, const NT&  ny1, const NT&  w1,
-               const NT&  mx2, const NT&  nx2, 
-               const NT&  my2, const NT&  ny2, const NT&  w2,
-               const NT&  mx3, const NT&  nx3, 
-               const NT&  my3, const NT&  ny3, const NT&  w3, 
-               const NT&  mx4, const NT&  nx4, 
-               const NT&  my4, const NT&  ny4, const NT&  w4)
+int coeff0_dor(const NT& /*mx1*/, const NT& nx1, 
+               const NT& /*my1*/, const NT& ny1, const NT& w1,
+               const NT& /*mx2*/, const NT& nx2, 
+               const NT& /*my2*/, const NT& ny2, const NT& w2,
+               const NT& /*mx3*/, const NT& nx3, 
+               const NT& /*my3*/, const NT& ny3, const NT& w3, 
+               const NT& /*mx4*/, const NT& nx4, 
+               const NT& /*my4*/, const NT& ny4, const NT& w4)
 {
   NT coeff0 = w1*nx2*w3*ny4-w1*nx2*w4*ny3-w2*nx1*w3*ny4+w2*nx1*w4*ny3-
               w1*ny2*w3*nx4+w1*ny2*w4*nx3+w2*ny1*w3*nx4-w2*ny1*w4*nx3;
@@ -1059,8 +1059,8 @@ point_type type(const Point_2& p) const
   // now we are on the square frame
   RT rx = p.hx();
   RT ry = p.hy();
-  int sx = sign(rx);
-  int sy = sign(ry);
+  int sx = CGAL_NTS sign(rx);
+  int sy = CGAL_NTS sign(ry);
   if (sx < 0) rx = -rx;
   if (sy < 0) ry = -ry;
   if (rx>ry) {

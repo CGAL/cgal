@@ -32,9 +32,12 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h> 
 #include <CGAL/Line_2_Line_2_intersection.h>
-#define RPCARTESIAN
+#ifndef _MSC_VER
 #include <CGAL/RPolynomial.h>
-#undef RPCARTESIAN
+#else
+#include <CGAL/RPolynomial_MSC.h>
+#define RPolynomial RPolynomial_MSC
+#endif
 #undef _DEBUG
 #define _DEBUG 51
 #include <CGAL/Nef_2/debug.h>
@@ -49,7 +52,7 @@ template <class T> class Extended_cartesian;
 template <class pFT>
 class Extended_cartesian : public 
   CGAL::Cartesian< CGAL::RPolynomial<pFT> > {
-typedef CGAL::Cartesian< CGAL::RPolynomial<pFT> >  Base;
+typedef CGAL::Cartesian< CGAL::RPolynomial<pFT> > Base;
 typedef Extended_cartesian<pFT> Self;
 
 /*{\Xdefinition |\Mname| is a kernel model realizing the concept
@@ -224,8 +227,8 @@ enum point_type { SWCORNER=1, LEFTFRAME, NWCORNER,
   \precond |!\Mvar.is_standard(p)|.}*/
   { CGAL_assertion( type(p)!=STANDARD );
     FT x = p.x(), y = p.y();
-    sFT dx = x.degree()>0 ? x[1] : 0;
-    sFT dy = y.degree()>0 ? y[1] : 0;
+    sFT dx = x.degree()>0 ? x[1] : sFT(0);
+    sFT dy = y.degree()>0 ? y[1] : sFT(0);
     sPoint_2 p0(x[0],y[0]);
     sPoint_2 p1(x[0]+dx,y[0]+dy);
     return sLine_2(p0,p1);
@@ -426,6 +429,7 @@ enum point_type { SWCORNER=1, LEFTFRAME, NWCORNER,
 
 
 
+#undef RPolynomial
 CGAL_END_NAMESPACE
 #endif // CGAL_EXTENDED_CARTESIAN_H
 

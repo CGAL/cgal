@@ -20,6 +20,5 @@ int main() {
   P.change_inf(p1,111);
   CGAL_TEST(P.inf(p1)==111);
   CGAL_TEST_END;
-  return 0;
 }
 

@@ -29,31 +29,26 @@
 #ifndef CGAL_RPOLYNOMIAL_H
 #define CGAL_RPOLYNOMIAL_H
 
-//#define CGAL_NO_LEDA_HANDLE
-//#define CGAL_DEBUG_HANDLE_REP
-
 #include <CGAL/basic.h>
-#include <vector>
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/Handle_for.h>
 #include <CGAL/number_type_basic.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/IO/io.h>
-#include <CGAL/IO/Istream_iterator.h> 
-#include <CGAL/IO/Ostream_iterator.h> 
-
 #undef _DEBUG
 #define _DEBUG 3
 #include <CGAL/Nef_2/debug.h>
 
-#ifdef _MSC_VER
-#define MSC_HACK_ARGDECL ,char dummy1, char dummy2
-#define MSC_HACK_ARGINS  ,'x','x'
+#if defined(_MSC_VER) || defined(__BORLANDC__)
+#include <CGAL/Nef_2/MSC_vector.h>
+#define CGAL_SIMPLE_NEF_INTERFACE
+#define SNIHACK ,char,char
+#define SNIINST ,'c','c'
 #else
-#define MSC_HACK_ARGDECL
-#define MSC_HACK_ARGINS 
-#define rp_gcd gcd
-#endif
+#include <vector>
+#define SNIHACK
+#define SNIINST
+#endif     
 
 class ring_or_field_dont_know {};
 class ring_with_gcd {};
@@ -67,11 +62,54 @@ struct ring_or_field {
 template <>
 struct ring_or_field<int> {
   typedef ring_with_gcd kind;
+  typedef int RT;
+  static RT gcd(const RT& a, const RT& b) 
+  { if (a == 0)
+      if (b == 0)  return 1;
+      else         return CGAL_NTS abs(b);
+    if (b == 0)    return CGAL_NTS abs(a);
+    // here both a and b are non-zero
+    int u = CGAL_NTS abs(a);
+    int v = CGAL_NTS abs(b);
+    if (u < v) v = v%u;
+    while (v != 0)
+    { int tmp = u % v; 
+      u = v;
+      v = tmp;
+    }
+    return u;
+  }
 };
+
+template <>
+struct ring_or_field<long> {
+  typedef ring_with_gcd kind;
+  typedef long RT;
+  static RT gcd(const RT& a, const RT& b) 
+  { if (a == 0)
+      if (b == 0)  return 1;
+      else         return CGAL_NTS abs(b);
+    if (b == 0)    return CGAL_NTS abs(a);
+    // here both a and b are non-zero
+    int u = CGAL_NTS abs(a);
+    int v = CGAL_NTS abs(b);
+    if (u < v) v = v%u;
+    while (v != 0)
+    { int tmp = u % v; 
+      u = v;
+      v = tmp;
+    }
+    return u;
+  }
+};
+
 
 template <>
 struct ring_or_field<double> {
   typedef field_with_div kind;
+  typedef double RT;
+  static RT gcd(const RT& a, const RT& b) 
+  { return 1.0; }
 };
 
 
@@ -90,6 +128,8 @@ CGAL_TEMPLATE_NULL class RPolynomial<double> ;
 
 /*{\Mtext \headerline{Range template}}*/
 
+#ifndef CGAL_SIMPLE_NEF_INTERFACE
+
 template <class Forward_iterator>
 typename std::iterator_traits<Forward_iterator>::value_type 
 gcd_of_range(Forward_iterator its, Forward_iterator ite)
@@ -99,12 +139,15 @@ where |++it == ite| and |NT| is the value type of |Forward_iterator|.
 \precond there exists a pairwise gcd operation |NT gcd(NT,NT)| and 
 |its!=ite|.}*/
 { CGAL_assertion(its!=ite);
-  std::iterator_traits<Forward_iterator>::value_type res = *its++;
-  for(; its!=ite; ++its) res = (*its==0 ? res : gcd(res, *its));
+  typedef typename std::iterator_traits<Forward_iterator>::value_type NT;
+  NT res = *its++;
+  for(; its!=ite; ++its) res = 
+    (*its==0 ? res : ring_or_field<NT>::gcd(res, *its));
   if (res==0) res = 1;
   return res;
 }
 
+#endif
 
 
 template <class NT>  /*CGAL_KERNEL_MEDIUM_INLINE*/ RPolynomial<NT>
@@ -118,53 +161,10 @@ template <class NT>   /*CGAL_KERNEL_MEDIUM_INLINE*/ RPolynomial<NT>
 template <class NT> inline RPolynomial<NT>
   operator / (const RPolynomial<NT>&, const RPolynomial<NT>&);
 
-
-#ifdef _MSC_VER
-/* no koenig lookup thus we put the following two completing
-   functions into global space */
-CGAL_END_NAMESPACE
-#endif
-
-int gcd(const int& a, const int& b)
-{ if (a ==0 )
-    if (b == 0)  return 1;
-    else         return CGAL_NTS abs(b);
-  if (b == 0)    return CGAL_NTS abs(a);
-  // here both a and b are non-zero
-  int u = CGAL_NTS abs(a);
-  int v = CGAL_NTS abs(b);
-  if (u < v) v = v%u;
-  while (v != 0)
-  { int tmp = u % v; 
-    u = v;
-    v = tmp;
-  }
-  return u;
-}
-
-double gcd (const double&, const double&)
-{ return 1.0; }
-
-#ifdef _MSC_VER
-CGAL_BEGIN_NAMESPACE
-#endif
-
-template <class NT>   /*CGAL_KERNEL_MEDIUM_INLINE*/ RPolynomial<NT>
-  rp_gcd(const RPolynomial<NT>&, const RPolynomial<NT>&);
-
 #ifndef _MSC_VER 
 template<class NT> /*CGAL_KERNEL_INLINE*/ CGAL::Sign 
   sign(const RPolynomial<NT>& p);
 #endif // collides with global CGAL sign
-
-template <class NT>   /*CGAL_KERNEL_MEDIUM_INLINE*/ 
-  void pseudo_div(const RPolynomial<NT>& f, const RPolynomial<NT>& g, 
-         RPolynomial<NT>& q, RPolynomial<NT>& r, NT& D);
-
-template <class NT>   /*CGAL_KERNEL_MEDIUM_INLINE*/ 
-  void euclidean_div(const RPolynomial<NT>& f, const RPolynomial<NT>& g, 
-         RPolynomial<NT>& q, RPolynomial<NT>& r);
-
 
 template <class NT> /*CGAL_KERNEL_INLINE*/ double 
   to_double(const RPolynomial<NT>& p) ;
@@ -232,8 +232,15 @@ template<class NT> inline bool operator >=
 template <class pNT> class RPolynomial_rep : public Ref_counted
 { 
   typedef pNT NT;
-  typedef typename std::vector<NT>::size_type Size_type;
-  std::vector<NT> coeff;
+  #ifndef CGAL_SIMPLE_NEF_INTERFACE
+  typedef std::vector<NT> Vector;
+  #else
+  typedef CGAL::MSC_vector<NT> Vector;
+  #endif
+  typedef typename Vector::size_type      Size_type;
+  typedef typename Vector::iterator       iterator;
+  typedef typename Vector::const_iterator const_iterator;
+  Vector coeff;
 
   RPolynomial_rep() : coeff() {}
   RPolynomial_rep(const NT& n) : coeff(1) { coeff[0]=n; }
@@ -243,15 +250,22 @@ template <class pNT> class RPolynomial_rep : public Ref_counted
     { coeff[0]=a; coeff[1]=b; coeff[2]=c; }
   RPolynomial_rep(Size_type s) : coeff(s,NT(0)) {}
 
+  #ifndef CGAL_SIMPLE_NEF_INTERFACE
+
   template <class Forward_iterator>
-  RPolynomial_rep(Forward_iterator first, Forward_iterator last
-                  MSC_HACK_ARGDECL) : coeff(first,last) {}
+  RPolynomial_rep(Forward_iterator first, Forward_iterator last SNIHACK) 
+    : coeff(first,last) {}
+
+  #else
+  template <class Forward_iterator>
+  RPolynomial_rep(Forward_iterator first, Forward_iterator last SNIHACK) 
+    : coeff() 
+  { while (first!=last) coeff.push_back(*first++); }
+
+  #endif
 
   void reduce() 
-  { typename std::vector<NT>::iterator it;
-    while (*(--(it = coeff.end()))==NT(0) && coeff.size()>1)
-    { coeff.pop_back(); }
-  }
+  { while ( coeff.size()>1 && coeff.back()==NT(0) ) coeff.pop_back(); }
 
   friend class RPolynomial<pNT>;
   friend class RPolynomial<int>;
@@ -265,11 +279,8 @@ template <class pNT> class RPolynomial_rep : public Ref_counted
 // SPECIALIZE_CLASS(NT,int double) START
 // CLASS TEMPLATE NT: 
 /*{\Msubst 
-rp_gcd#gcd
 typename iterator_traits<Forward_iterator>::value_type#NT
 CGAL_NULL_TMPL_ARGS#
-MSC_HACK_ARGDECL#
-CGAL_SCOPE#
 }*/
 
 /*{\Manpage{RPolynomial}{NT}{Polynomials in one variable}{p}}*/
@@ -291,17 +302,20 @@ determines the sign for the limit process $x \rightarrow \infty$.
   typedef pNT NT;
   /*{\Mtypemember the component type representing the coefficients.}*/
 
-  typedef typename std::vector<NT>::const_iterator const_iterator;
+  typedef Handle_for< RPolynomial_rep<NT> > Base;
+  typedef RPolynomial_rep<NT> Rep;
+  typedef typename Rep::Vector    Vector;
+  typedef typename Rep::Size_type Size_type;
+  typedef typename Rep::iterator  iterator;
+
+  typedef typename Rep::const_iterator const_iterator;
   /*{\Mtypemember a random access iterator for read-only access to the
   coefficient vector.}*/
 
-  typedef Handle_for< RPolynomial_rep<NT> > Base;
-  typedef typename RPolynomial_rep<pNT>::Size_type Size_type;
-
   protected:
   void reduce() { ptr->reduce(); }
-  std::vector<NT>& coeffs() { return ptr->coeff; }
-  const std::vector<NT>& coeffs() const { return ptr->coeff; }
+  Vector& coeffs() { return ptr->coeff; }
+  const Vector& coeffs() const { return ptr->coeff; }
   RPolynomial(Size_type s) : Base( RPolynomial_rep<NT>(s) ) {}
   // creates a polynomial of degree s-1
 
@@ -330,16 +344,29 @@ determines the sign for the limit process $x \rightarrow \infty$.
   the polynomial $a_0 + a_1 x + a_2 x^2$. }*/
     : Base(RPolynomial_rep<NT>(a0,a1,a2)) { reduce(); }
 
+  #ifndef CGAL_SIMPLE_NEF_INTERFACE
   template <class Forward_iterator>
-  RPolynomial(Forward_iterator first, Forward_iterator last
-    MSC_HACK_ARGDECL)
-
+  RPolynomial(Forward_iterator first, Forward_iterator last)
   /*{\Mcreate introduces a variable |\Mvar| of type |\Mname| representing
   the polynomial whose coefficients are determined by the iterator range,
   i.e. let $(a_0 = |*first|, a_1 = |*++first|, \ldots a_d = |*it|)$, 
   where |++it == last| then |\Mvar| stores the polynomial $a_1 + a_2 x + 
   \ldots a_d x^d$.}*/
-    : Base(RPolynomial_rep<NT>(first,last MSC_HACK_ARGINS)) { reduce(); }
+    : Base(RPolynomial_rep<NT>(first,last)) { reduce(); }
+
+  #else
+  #define RPOL(I)\
+  RPolynomial(I first, I last) : \
+  Base(RPolynomial_rep<NT>(first,last SNIINST)) { reduce(); }
+  RPOL(const NT*)
+  // KILL int START
+  RPOL(const int*)
+  // KILL int END
+  // KILL double START
+  RPOL(const double*)
+  // KILL double END
+  #undef RPOL
+  #endif // CGAL_SIMPLE_NEF_INTERFACE
 
   // KILL double START
   RPolynomial(double n) : Base(RPolynomial_rep<NT>(NT(n))) { reduce(); }
@@ -370,7 +397,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
     return ptr->coeff[i]; }
 
   protected: // accessing coefficients internally:
-  NT& a(unsigned int i) 
+  NT& coeff(unsigned int i) 
   { CGAL_assertion(!ptr->is_shared()); 
     CGAL_assertion(i<(ptr->coeff.size()));
     return ptr->coeff[i]; 
@@ -396,7 +423,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   CGAL::Sign sign() const
   /*{\Mop returns the sign of the limit process for $x \rightarrow \infty$
   (the sign of the leading coefficient).}*/
-  { std::vector<NT>::const_iterator it = (ptr->coeff.end()); --it;
+  { const_iterator it = (ptr->coeff.end()); --it;
     if (*it < NT(0)) return (CGAL::NEGATIVE);
     if (*it > NT(0)) return (CGAL::POSITIVE);
     return CGAL::ZERO;
@@ -404,12 +431,14 @@ determines the sign for the limit process $x \rightarrow \infty$.
 
   bool is_zero() const
   /*{\Mop returns true iff |\Mvar| is the zero polynomial.}*/
-  { return degree()==0 && ptr->coeff[0]==0; }
+  { return degree()==0 && ptr->coeff[0]==NT(0); }
 
   RPolynomial<NT> abs() const
   /*{\Mop returns |-\Mvar| if |\Mvar.sign()==NEGATIVE| and |\Mvar| 
   otherwise.}*/
   { if ( sign()==CGAL::NEGATIVE ) return -*this; return *this; }
+
+  #ifndef CGAL_SIMPLE_NEF_INTERFACE
 
   NT content() const
   /*{\Mop returns the content of |\Mvar| (the gcd of its coefficients).
@@ -418,6 +447,19 @@ determines the sign for the limit process $x \rightarrow \infty$.
     return gcd_of_range(ptr->coeff.begin(),ptr->coeff.end());
   }
 
+  #else
+
+  NT content() const
+  { CGAL_assertion( degree()>=0 );
+    iterator its=ptr->coeff.begin(),ite=ptr->coeff.end();
+    NT res = *its++;
+    for(; its!=ite; ++its) res = 
+      (*its==0 ? res : ring_or_field<NT>::gcd(res, *its));
+    if (res==0) res = 1;
+    return res;
+  }
+
+  #endif
 
   static void set_R(const NT& R) { _R = R; }
 
@@ -461,49 +503,43 @@ determines the sign for the limit process $x \rightarrow \infty$.
 
   /*{\Mtext \headerline{Non member functions}}*/
 
-  friend /*CGAL_KERNEL_MEDIUM_INLINE*/ 
-
-  RPolynomial<NT> rp_gcd CGAL_NULL_TMPL_ARGS 
-  (const RPolynomial<NT>& p1, const RPolynomial<NT>& p2);
-  /*{\Mfunc returns the greatest common divisor of |p1| and |p2|.
+  static RPolynomial<NT> gcd
+    (const RPolynomial<NT>& p1, const RPolynomial<NT>& p2);
+  /*{\Mstatic returns the greatest common divisor of |p1| and |p2|.
   \textbf{Note} that |NT=int| quickly leads to overflow errors when
   using this operation.  \precond Requires |NT| to be a unique
   factorization domain, i.e. to provide a |gdc| operation.}*/
 
-  friend /*CGAL_KERNEL_MEDIUM_INLINE*/ 
-
-  void CGAL_SCOPE pseudo_div CGAL_NULL_TMPL_ARGS 
+  static void pseudo_div
     (const RPolynomial<NT>& f, const RPolynomial<NT>& g, 
      RPolynomial<NT>& q, RPolynomial<NT>& r, NT& D);
-  /*{\Mfunc implements division with remainder on polynomials of 
+  /*{\Mstatic implements division with remainder on polynomials of 
   the ring |NT[x]|: $D*f = g*q + r$.  \precond |NT| is a unique
   factorization domain, i.e., there exists a |gcd| operation and an
   integral division operation on |NT|.}*/
 
-  friend /*CGAL_KERNEL_MEDIUM_INLINE*/ 
-
-  void CGAL_SCOPE euclidean_div CGAL_NULL_TMPL_ARGS 
+  static void euclidean_div 
     (const RPolynomial<NT>& f, const RPolynomial<NT>& g, 
      RPolynomial<NT>& q, RPolynomial<NT>& r);
-  /*{\Mfunc implements division with remainder on polynomials of 
+  /*{\Mstatic implements division with remainder on polynomials of 
   the ring |NT[x]|: $f = g*q + r$.  \precond |NT| is a field, i.e.,
   there exists a division operation on |NT|.  }*/
 
   friend /*CGAL_KERNEL_INLINE*/ double to_double
-  CGAL_NULL_TMPL_ARGS (const RPolynomial<NT>& p) ;
+  CGAL_NULL_TMPL_ARGS (const RPolynomial<NT>& p);
 
 
   RPolynomial<NT>& operator += (const RPolynomial<NT>& p1)
   { copy_on_write();
     int d = std::min(degree(),p1.degree()), i;
-    for(i=0; i<=d; ++i) a(i) += p1[i];
+    for(i=0; i<=d; ++i) coeff(i) += p1[i];
     while (i<=p1.degree()) ptr->coeff.push_back(p1[i++]);
     reduce(); return (*this); }
 
   RPolynomial<NT>& operator -= (const RPolynomial<NT>& p1)
   { copy_on_write();
     int d = std::min(degree(),p1.degree()), i;
-    for(i=0; i<=d; ++i) a(i) -= p1[i];
+    for(i=0; i<=d; ++i) coeff(i) -= p1[i];
     while (i<=p1.degree()) ptr->coeff.push_back(-p1[i++]);
     reduce(); return (*this); }
 
@@ -519,58 +555,58 @@ determines the sign for the limit process $x \rightarrow \infty$.
     
   RPolynomial<NT>& operator += (const NT& num)
   { copy_on_write();
-    a(0) += (NT)num; return *this; }
+    coeff(0) += (NT)num; return *this; }
 
   RPolynomial<NT>& operator -= (const NT& num)
   { copy_on_write();
-    a(0) -= (NT)num; return *this; }
+    coeff(0) -= (NT)num; return *this; }
 
   RPolynomial<NT>& operator *= (const NT& num)
   { copy_on_write();
-    for(int i=0; i<=degree(); ++i) a(i) *= (NT)num; 
+    for(int i=0; i<=degree(); ++i) coeff(i) *= (NT)num; 
     reduce(); return *this; }
 
   RPolynomial<NT>& operator /= (const NT& num)
   { copy_on_write(); CGAL_assertion(num!=0);
-    for(int i=0; i<=degree(); ++i) a(i) /= (NT)num; 
+    for(int i=0; i<=degree(); ++i) coeff(i) /= (NT)num; 
     reduce(); return *this; }
 // SPECIALIZING_MEMBERS FOR const int& 
     
   RPolynomial<NT>& operator += (const int& num)
   { copy_on_write();
-    a(0) += (NT)num; return *this; }
+    coeff(0) += (NT)num; return *this; }
 
   RPolynomial<NT>& operator -= (const int& num)
   { copy_on_write();
-    a(0) -= (NT)num; return *this; }
+    coeff(0) -= (NT)num; return *this; }
 
   RPolynomial<NT>& operator *= (const int& num)
   { copy_on_write();
-    for(int i=0; i<=degree(); ++i) a(i) *= (NT)num; 
+    for(int i=0; i<=degree(); ++i) coeff(i) *= (NT)num; 
     reduce(); return *this; }
 
   RPolynomial<NT>& operator /= (const int& num)
   { copy_on_write(); CGAL_assertion(num!=0);
-    for(int i=0; i<=degree(); ++i) a(i) /= (NT)num; 
+    for(int i=0; i<=degree(); ++i) coeff(i) /= (NT)num; 
     reduce(); return *this; }
 // SPECIALIZING_MEMBERS FOR const double& 
     
   RPolynomial<NT>& operator += (const double& num)
   { copy_on_write();
-    a(0) += (NT)num; return *this; }
+    coeff(0) += (NT)num; return *this; }
 
   RPolynomial<NT>& operator -= (const double& num)
   { copy_on_write();
-    a(0) -= (NT)num; return *this; }
+    coeff(0) -= (NT)num; return *this; }
 
   RPolynomial<NT>& operator *= (const double& num)
   { copy_on_write();
-    for(int i=0; i<=degree(); ++i) a(i) *= (NT)num; 
+    for(int i=0; i<=degree(); ++i) coeff(i) *= (NT)num; 
     reduce(); return *this; }
 
   RPolynomial<NT>& operator /= (const double& num)
   { copy_on_write(); CGAL_assertion(num!=0);
-    for(int i=0; i<=degree(); ++i) a(i) /= (NT)num; 
+    for(int i=0; i<=degree(); ++i) coeff(i) /= (NT)num; 
     reduce(); return *this; }
 
   // SPECIALIZE_MEMBERS(int double) END
@@ -579,7 +615,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   void minus_offsetmult(const RPolynomial<NT>& p, const NT& b, int k)
   { CGAL_assertion(!ptr->is_shared());
     RPolynomial<NT> s(Size_type(p.degree()+k+1)); // zero entries
-    for (int i=k; i <= s.degree(); ++i) s.a(i) = b*p[i-k];
+    for (int i=k; i <= s.degree(); ++i) s.coeff(i) = b*p[i-k];
     operator-=(s);
   }
 
@@ -595,11 +631,8 @@ operation on two instances of the ring type.}*/
 
 // CLASS TEMPLATE int: 
 /*{\Xsubst 
-rp_gcd#gcd
  iterator_traits<Forward_iterator>::value_type#int
 CGAL_NULL_TMPL_ARGS#
-MSC_HACK_ARGDECL#
-CGAL_SCOPE#
 }*/
 
 /*{\Xanpage{RPolynomial}{int}{Polynomials in one variable}{p}}*/
@@ -621,17 +654,20 @@ determines the sign for the limit process $x \rightarrow \infty$.
   typedef int NT;
   /*{\Xtypemember the component type representing the coefficients.}*/
 
-  typedef  std::vector<int>::const_iterator const_iterator;
+  typedef Handle_for< RPolynomial_rep<int> > Base;
+  typedef RPolynomial_rep<int> Rep;
+  typedef  Rep::Vector    Vector;
+  typedef  Rep::Size_type Size_type;
+  typedef  Rep::iterator  iterator;
+
+  typedef  Rep::const_iterator const_iterator;
   /*{\Xtypemember a random access iterator for read-only access to the
   coefficient vector.}*/
 
-  typedef Handle_for< RPolynomial_rep<int> > Base;
-  typedef  RPolynomial_rep<int>::Size_type Size_type;
-
   protected:
   void reduce() { ptr->reduce(); }
-  std::vector<int>& coeffs() { return ptr->coeff; }
-  const std::vector<int>& coeffs() const { return ptr->coeff; }
+  Vector& coeffs() { return ptr->coeff; }
+  const Vector& coeffs() const { return ptr->coeff; }
   RPolynomial(Size_type s) : Base( RPolynomial_rep<int>(s) ) {}
   // creates a polynomial of degree s-1
 
@@ -660,16 +696,26 @@ determines the sign for the limit process $x \rightarrow \infty$.
   the polynomial $a_0 + a_1 x + a_2 x^2$. }*/
     : Base(RPolynomial_rep<int>(a0,a1,a2)) { reduce(); }
 
+  #ifndef CGAL_SIMPLE_NEF_INTERFACE
   template <class Forward_iterator>
-  RPolynomial(Forward_iterator first, Forward_iterator last
-    MSC_HACK_ARGDECL)
-
+  RPolynomial(Forward_iterator first, Forward_iterator last)
   /*{\Xcreate introduces a variable |\Mvar| of type |\Mname| representing
   the polynomial whose coefficients are determined by the iterator range,
   i.e. let $(a_0 = |*first|, a_1 = |*++first|, \ldots a_d = |*it|)$, 
   where |++it == last| then |\Mvar| stores the polynomial $a_1 + a_2 x + 
   \ldots a_d x^d$.}*/
-    : Base(RPolynomial_rep<int>(first,last MSC_HACK_ARGINS)) { reduce(); }
+    : Base(RPolynomial_rep<int>(first,last)) { reduce(); }
+
+  #else
+  #define RPOL(I)\
+  RPolynomial(I first, I last) : \
+  Base(RPolynomial_rep<int>(first,last SNIINST)) { reduce(); }
+  RPOL(const int*)
+  // KILL double START
+  RPOL(const double*)
+  // KILL double END
+  #undef RPOL
+  #endif // CGAL_SIMPLE_NEF_INTERFACE
 
   // KILL double START
   RPolynomial(double n) : Base(RPolynomial_rep<int>(int(n))) { reduce(); }
@@ -694,7 +740,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
     return ptr->coeff[i]; }
 
   protected: // accessing coefficients internally:
-  int& a(unsigned int i) 
+  int& coeff(unsigned int i) 
   { CGAL_assertion(!ptr->is_shared()); 
     CGAL_assertion(i<(ptr->coeff.size()));
     return ptr->coeff[i]; 
@@ -720,7 +766,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   CGAL::Sign sign() const
   /*{\Xop returns the sign of the limit process for $x \rightarrow \infty$
   (the sign of the leading coefficient).}*/
-  { std::vector<int>::const_iterator it = (ptr->coeff.end()); --it;
+  { const_iterator it = (ptr->coeff.end()); --it;
     if (*it < int(0)) return (CGAL::NEGATIVE);
     if (*it > int(0)) return (CGAL::POSITIVE);
     return CGAL::ZERO;
@@ -728,12 +774,14 @@ determines the sign for the limit process $x \rightarrow \infty$.
 
   bool is_zero() const
   /*{\Xop returns true iff |\Mvar| is the zero polynomial.}*/
-  { return degree()==0 && ptr->coeff[0]==0; }
+  { return degree()==0 && ptr->coeff[0]==int(0); }
 
   RPolynomial<int> abs() const
   /*{\Xop returns |-\Mvar| if |\Mvar.sign()==NEGATIVE| and |\Mvar| 
   otherwise.}*/
   { if ( sign()==CGAL::NEGATIVE ) return -*this; return *this; }
+
+  #ifndef CGAL_SIMPLE_NEF_INTERFACE
 
   int content() const
   /*{\Xop returns the content of |\Mvar| (the gcd of its coefficients).
@@ -742,6 +790,19 @@ determines the sign for the limit process $x \rightarrow \infty$.
     return gcd_of_range(ptr->coeff.begin(),ptr->coeff.end());
   }
 
+  #else
+
+  int content() const
+  { CGAL_assertion( degree()>=0 );
+    iterator its=ptr->coeff.begin(),ite=ptr->coeff.end();
+    int res = *its++;
+    for(; its!=ite; ++its) res = 
+      (*its==0 ? res : ring_or_field<int>::gcd(res, *its));
+    if (res==0) res = 1;
+    return res;
+  }
+
+  #endif
 
   static void set_R(const int& R) { _R = R; }
 
@@ -785,49 +846,43 @@ determines the sign for the limit process $x \rightarrow \infty$.
 
   /*{\Xtext \headerline{Non member functions}}*/
 
-  friend /*CGAL_KERNEL_MEDIUM_INLINE*/ 
-
-  RPolynomial<int> rp_gcd CGAL_NULL_TMPL_ARGS 
-  (const RPolynomial<int>& p1, const RPolynomial<int>& p2);
-  /*{\Xfunc returns the greatest common divisor of |p1| and |p2|.
+  static RPolynomial<int> gcd
+    (const RPolynomial<int>& p1, const RPolynomial<int>& p2);
+  /*{\Xstatic returns the greatest common divisor of |p1| and |p2|.
   \textbf{Note} that |int=int| quickly leads to overflow errors when
   using this operation.  \precond Requires |int| to be a unique
   factorization domain, i.e. to provide a |gdc| operation.}*/
 
-  friend /*CGAL_KERNEL_MEDIUM_INLINE*/ 
-
-  void CGAL_SCOPE pseudo_div CGAL_NULL_TMPL_ARGS 
+  static void pseudo_div
     (const RPolynomial<int>& f, const RPolynomial<int>& g, 
      RPolynomial<int>& q, RPolynomial<int>& r, int& D);
-  /*{\Xfunc implements division with remainder on polynomials of 
+  /*{\Xstatic implements division with remainder on polynomials of 
   the ring |int[x]|: $D*f = g*q + r$.  \precond |int| is a unique
   factorization domain, i.e., there exists a |gcd| operation and an
   integral division operation on |int|.}*/
 
-  friend /*CGAL_KERNEL_MEDIUM_INLINE*/ 
-
-  void CGAL_SCOPE euclidean_div CGAL_NULL_TMPL_ARGS 
+  static void euclidean_div 
     (const RPolynomial<int>& f, const RPolynomial<int>& g, 
      RPolynomial<int>& q, RPolynomial<int>& r);
-  /*{\Xfunc implements division with remainder on polynomials of 
+  /*{\Xstatic implements division with remainder on polynomials of 
   the ring |int[x]|: $f = g*q + r$.  \precond |int| is a field, i.e.,
   there exists a division operation on |int|.  }*/
 
   friend /*CGAL_KERNEL_INLINE*/ double to_double
-  CGAL_NULL_TMPL_ARGS (const RPolynomial<int>& p) ;
+  CGAL_NULL_TMPL_ARGS (const RPolynomial<int>& p);
 
 
   RPolynomial<int>& operator += (const RPolynomial<int>& p1)
   { copy_on_write();
     int d = std::min(degree(),p1.degree()), i;
-    for(i=0; i<=d; ++i) a(i) += p1[i];
+    for(i=0; i<=d; ++i) coeff(i) += p1[i];
     while (i<=p1.degree()) ptr->coeff.push_back(p1[i++]);
     reduce(); return (*this); }
 
   RPolynomial<int>& operator -= (const RPolynomial<int>& p1)
   { copy_on_write();
     int d = std::min(degree(),p1.degree()), i;
-    for(i=0; i<=d; ++i) a(i) -= p1[i];
+    for(i=0; i<=d; ++i) coeff(i) -= p1[i];
     while (i<=p1.degree()) ptr->coeff.push_back(-p1[i++]);
     reduce(); return (*this); }
 
@@ -843,39 +898,39 @@ determines the sign for the limit process $x \rightarrow \infty$.
     
   RPolynomial<int>& operator += (const int& num)
   { copy_on_write();
-    a(0) += (int)num; return *this; }
+    coeff(0) += (int)num; return *this; }
 
   RPolynomial<int>& operator -= (const int& num)
   { copy_on_write();
-    a(0) -= (int)num; return *this; }
+    coeff(0) -= (int)num; return *this; }
 
   RPolynomial<int>& operator *= (const int& num)
   { copy_on_write();
-    for(int i=0; i<=degree(); ++i) a(i) *= (int)num; 
+    for(int i=0; i<=degree(); ++i) coeff(i) *= (int)num; 
     reduce(); return *this; }
 
   RPolynomial<int>& operator /= (const int& num)
   { copy_on_write(); CGAL_assertion(num!=0);
-    for(int i=0; i<=degree(); ++i) a(i) /= (int)num; 
+    for(int i=0; i<=degree(); ++i) coeff(i) /= (int)num; 
     reduce(); return *this; }
 // SPECIALIZING_MEMBERS FOR const double& 
     
   RPolynomial<int>& operator += (const double& num)
   { copy_on_write();
-    a(0) += (int)num; return *this; }
+    coeff(0) += (int)num; return *this; }
 
   RPolynomial<int>& operator -= (const double& num)
   { copy_on_write();
-    a(0) -= (int)num; return *this; }
+    coeff(0) -= (int)num; return *this; }
 
   RPolynomial<int>& operator *= (const double& num)
   { copy_on_write();
-    for(int i=0; i<=degree(); ++i) a(i) *= (int)num; 
+    for(int i=0; i<=degree(); ++i) coeff(i) *= (int)num; 
     reduce(); return *this; }
 
   RPolynomial<int>& operator /= (const double& num)
   { copy_on_write(); CGAL_assertion(num!=0);
-    for(int i=0; i<=degree(); ++i) a(i) /= (int)num; 
+    for(int i=0; i<=degree(); ++i) coeff(i) /= (int)num; 
     reduce(); return *this; }
 
   // SPECIALIZE_MEMBERS(int double) END
@@ -884,7 +939,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   void minus_offsetmult(const RPolynomial<int>& p, const int& b, int k)
   { CGAL_assertion(!ptr->is_shared());
     RPolynomial<int> s(Size_type(p.degree()+k+1)); // zero entries
-    for (int i=k; i <= s.degree(); ++i) s.a(i) = b*p[i-k];
+    for (int i=k; i <= s.degree(); ++i) s.coeff(i) = b*p[i-k];
     operator-=(s);
   }
 
@@ -900,11 +955,8 @@ operation on two instances of the ring type.}*/
 
 // CLASS TEMPLATE double: 
 /*{\Xsubst 
-rp_gcd#gcd
  iterator_traits<Forward_iterator>::value_type#double
 CGAL_NULL_TMPL_ARGS#
-MSC_HACK_ARGDECL#
-CGAL_SCOPE#
 }*/
 
 /*{\Xanpage{RPolynomial}{double}{Polynomials in one variable}{p}}*/
@@ -926,17 +978,20 @@ determines the sign for the limit process $x \rightarrow \infty$.
   typedef double NT;
   /*{\Xtypemember the component type representing the coefficients.}*/
 
-  typedef  std::vector<double>::const_iterator const_iterator;
+  typedef Handle_for< RPolynomial_rep<double> > Base;
+  typedef RPolynomial_rep<double> Rep;
+  typedef  Rep::Vector    Vector;
+  typedef  Rep::Size_type Size_type;
+  typedef  Rep::iterator  iterator;
+
+  typedef  Rep::const_iterator const_iterator;
   /*{\Xtypemember a random access iterator for read-only access to the
   coefficient vector.}*/
 
-  typedef Handle_for< RPolynomial_rep<double> > Base;
-  typedef  RPolynomial_rep<double>::Size_type Size_type;
-
   protected:
   void reduce() { ptr->reduce(); }
-  std::vector<double>& coeffs() { return ptr->coeff; }
-  const std::vector<double>& coeffs() const { return ptr->coeff; }
+  Vector& coeffs() { return ptr->coeff; }
+  const Vector& coeffs() const { return ptr->coeff; }
   RPolynomial(Size_type s) : Base( RPolynomial_rep<double>(s) ) {}
   // creates a polynomial of degree s-1
 
@@ -965,16 +1020,26 @@ determines the sign for the limit process $x \rightarrow \infty$.
   the polynomial $a_0 + a_1 x + a_2 x^2$. }*/
     : Base(RPolynomial_rep<double>(a0,a1,a2)) { reduce(); }
 
+  #ifndef CGAL_SIMPLE_NEF_INTERFACE
   template <class Forward_iterator>
-  RPolynomial(Forward_iterator first, Forward_iterator last
-    MSC_HACK_ARGDECL)
-
+  RPolynomial(Forward_iterator first, Forward_iterator last)
   /*{\Xcreate introduces a variable |\Mvar| of type |\Mname| representing
   the polynomial whose coefficients are determined by the iterator range,
   i.e. let $(a_0 = |*first|, a_1 = |*++first|, \ldots a_d = |*it|)$, 
   where |++it == last| then |\Mvar| stores the polynomial $a_1 + a_2 x + 
   \ldots a_d x^d$.}*/
-    : Base(RPolynomial_rep<double>(first,last MSC_HACK_ARGINS)) { reduce(); }
+    : Base(RPolynomial_rep<double>(first,last)) { reduce(); }
+
+  #else
+  #define RPOL(I)\
+  RPolynomial(I first, I last) : \
+  Base(RPolynomial_rep<double>(first,last SNIINST)) { reduce(); }
+  RPOL(const double*)
+  // KILL int START
+  RPOL(const int*)
+  // KILL int END
+  #undef RPOL
+  #endif // CGAL_SIMPLE_NEF_INTERFACE
 
   // KILL int START
   RPolynomial(int n) : Base(RPolynomial_rep<double>(double(n))) { reduce(); }
@@ -999,7 +1064,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
     return ptr->coeff[i]; }
 
   protected: // accessing coefficients internally:
-  double& a(unsigned int i) 
+  double& coeff(unsigned int i) 
   { CGAL_assertion(!ptr->is_shared()); 
     CGAL_assertion(i<(ptr->coeff.size()));
     return ptr->coeff[i]; 
@@ -1025,7 +1090,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   CGAL::Sign sign() const
   /*{\Xop returns the sign of the limit process for $x \rightarrow \infty$
   (the sign of the leading coefficient).}*/
-  { std::vector<double>::const_iterator it = (ptr->coeff.end()); --it;
+  { const_iterator it = (ptr->coeff.end()); --it;
     if (*it < double(0)) return (CGAL::NEGATIVE);
     if (*it > double(0)) return (CGAL::POSITIVE);
     return CGAL::ZERO;
@@ -1033,12 +1098,14 @@ determines the sign for the limit process $x \rightarrow \infty$.
 
   bool is_zero() const
   /*{\Xop returns true iff |\Mvar| is the zero polynomial.}*/
-  { return degree()==0 && ptr->coeff[0]==0; }
+  { return degree()==0 && ptr->coeff[0]==double(0); }
 
   RPolynomial<double> abs() const
   /*{\Xop returns |-\Mvar| if |\Mvar.sign()==NEGATIVE| and |\Mvar| 
   otherwise.}*/
   { if ( sign()==CGAL::NEGATIVE ) return -*this; return *this; }
+
+  #ifndef CGAL_SIMPLE_NEF_INTERFACE
 
   double content() const
   /*{\Xop returns the content of |\Mvar| (the gcd of its coefficients).
@@ -1047,6 +1114,19 @@ determines the sign for the limit process $x \rightarrow \infty$.
     return gcd_of_range(ptr->coeff.begin(),ptr->coeff.end());
   }
 
+  #else
+
+  double content() const
+  { CGAL_assertion( degree()>=0 );
+    iterator its=ptr->coeff.begin(),ite=ptr->coeff.end();
+    double res = *its++;
+    for(; its!=ite; ++its) res = 
+      (*its==0 ? res : ring_or_field<double>::gcd(res, *its));
+    if (res==0) res = 1;
+    return res;
+  }
+
+  #endif
 
   static void set_R(const double& R) { _R = R; }
 
@@ -1090,49 +1170,43 @@ determines the sign for the limit process $x \rightarrow \infty$.
 
   /*{\Xtext \headerline{Non member functions}}*/
 
-  friend /*CGAL_KERNEL_MEDIUM_INLINE*/ 
-
-  RPolynomial<double> rp_gcd CGAL_NULL_TMPL_ARGS 
-  (const RPolynomial<double>& p1, const RPolynomial<double>& p2);
-  /*{\Xfunc returns the greatest common divisor of |p1| and |p2|.
+  static RPolynomial<double> gcd
+    (const RPolynomial<double>& p1, const RPolynomial<double>& p2);
+  /*{\Xstatic returns the greatest common divisor of |p1| and |p2|.
   \textbf{Note} that |double=int| quickly leads to overflow errors when
   using this operation.  \precond Requires |double| to be a unique
   factorization domain, i.e. to provide a |gdc| operation.}*/
 
-  friend /*CGAL_KERNEL_MEDIUM_INLINE*/ 
-
-  void CGAL_SCOPE pseudo_div CGAL_NULL_TMPL_ARGS 
+  static void pseudo_div
     (const RPolynomial<double>& f, const RPolynomial<double>& g, 
      RPolynomial<double>& q, RPolynomial<double>& r, double& D);
-  /*{\Xfunc implements division with remainder on polynomials of 
+  /*{\Xstatic implements division with remainder on polynomials of 
   the ring |double[x]|: $D*f = g*q + r$.  \precond |double| is a unique
   factorization domain, i.e., there exists a |gcd| operation and an
   integral division operation on |double|.}*/
 
-  friend /*CGAL_KERNEL_MEDIUM_INLINE*/ 
-
-  void CGAL_SCOPE euclidean_div CGAL_NULL_TMPL_ARGS 
+  static void euclidean_div 
     (const RPolynomial<double>& f, const RPolynomial<double>& g, 
      RPolynomial<double>& q, RPolynomial<double>& r);
-  /*{\Xfunc implements division with remainder on polynomials of 
+  /*{\Xstatic implements division with remainder on polynomials of 
   the ring |double[x]|: $f = g*q + r$.  \precond |double| is a field, i.e.,
   there exists a division operation on |double|.  }*/
 
   friend /*CGAL_KERNEL_INLINE*/ double to_double
-  CGAL_NULL_TMPL_ARGS (const RPolynomial<double>& p) ;
+  CGAL_NULL_TMPL_ARGS (const RPolynomial<double>& p);
 
 
   RPolynomial<double>& operator += (const RPolynomial<double>& p1)
   { copy_on_write();
     int d = std::min(degree(),p1.degree()), i;
-    for(i=0; i<=d; ++i) a(i) += p1[i];
+    for(i=0; i<=d; ++i) coeff(i) += p1[i];
     while (i<=p1.degree()) ptr->coeff.push_back(p1[i++]);
     reduce(); return (*this); }
 
   RPolynomial<double>& operator -= (const RPolynomial<double>& p1)
   { copy_on_write();
     int d = std::min(degree(),p1.degree()), i;
-    for(i=0; i<=d; ++i) a(i) -= p1[i];
+    for(i=0; i<=d; ++i) coeff(i) -= p1[i];
     while (i<=p1.degree()) ptr->coeff.push_back(-p1[i++]);
     reduce(); return (*this); }
 
@@ -1148,39 +1222,39 @@ determines the sign for the limit process $x \rightarrow \infty$.
     
   RPolynomial<double>& operator += (const double& num)
   { copy_on_write();
-    a(0) += (double)num; return *this; }
+    coeff(0) += (double)num; return *this; }
 
   RPolynomial<double>& operator -= (const double& num)
   { copy_on_write();
-    a(0) -= (double)num; return *this; }
+    coeff(0) -= (double)num; return *this; }
 
   RPolynomial<double>& operator *= (const double& num)
   { copy_on_write();
-    for(int i=0; i<=degree(); ++i) a(i) *= (double)num; 
+    for(int i=0; i<=degree(); ++i) coeff(i) *= (double)num; 
     reduce(); return *this; }
 
   RPolynomial<double>& operator /= (const double& num)
   { copy_on_write(); CGAL_assertion(num!=0);
-    for(int i=0; i<=degree(); ++i) a(i) /= (double)num; 
+    for(int i=0; i<=degree(); ++i) coeff(i) /= (double)num; 
     reduce(); return *this; }
 // SPECIALIZING_MEMBERS FOR const int& 
     
   RPolynomial<double>& operator += (const int& num)
   { copy_on_write();
-    a(0) += (double)num; return *this; }
+    coeff(0) += (double)num; return *this; }
 
   RPolynomial<double>& operator -= (const int& num)
   { copy_on_write();
-    a(0) -= (double)num; return *this; }
+    coeff(0) -= (double)num; return *this; }
 
   RPolynomial<double>& operator *= (const int& num)
   { copy_on_write();
-    for(int i=0; i<=degree(); ++i) a(i) *= (double)num; 
+    for(int i=0; i<=degree(); ++i) coeff(i) *= (double)num; 
     reduce(); return *this; }
 
   RPolynomial<double>& operator /= (const int& num)
   { copy_on_write(); CGAL_assertion(num!=0);
-    for(int i=0; i<=degree(); ++i) a(i) /= (double)num; 
+    for(int i=0; i<=degree(); ++i) coeff(i) /= (double)num; 
     reduce(); return *this; }
 
   // SPECIALIZE_MEMBERS(int double) END
@@ -1189,7 +1263,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   void minus_offsetmult(const RPolynomial<double>& p, const double& b, int k)
   { CGAL_assertion(!ptr->is_shared());
     RPolynomial<double> s(Size_type(p.degree()+k+1)); // zero entries
-    for (int i=k; i <= s.degree(); ++i) s.a(i) = b*p[i-k];
+    for (int i=k; i <= s.degree(); ++i) s.coeff(i) = b*p[i-k];
     operator-=(s);
   }
 
@@ -1231,8 +1305,8 @@ template <class NT> /*CGAL_KERNEL_MEDIUM_INLINE*/
 RPolynomial<NT> operator - (const RPolynomial<NT>& p)
 {
   CGAL_assertion(p.degree()>=0);
-  RPolynomial<NT> res(p.coeffs().begin(),p.coeffs().end() MSC_HACK_ARGINS);
-  std::vector<NT>::iterator it, ite=res.coeffs().end();
+  RPolynomial<NT> res(p.coeffs().begin(),p.coeffs().end());
+  typename RPolynomial<NT>::iterator it, ite=res.coeffs().end();
   for(it=res.coeffs().begin(); it!=ite; ++it) *it = -*it;
   return res;
 }
@@ -1249,9 +1323,9 @@ RPolynomial<NT> operator + (const RPolynomial<NT>& p1,
   if (p1d_smaller_p2d) { min = p1.degree(); max = p2.degree(); }
   else                 { max = p1.degree(); min = p2.degree(); }
   RPolynomial<NT>  p( (Size_type)(max + 1));
-  for (i = 0; i <= min; ++i ) p.a(i) = p1[i]+p2[i];
-  if (p1d_smaller_p2d)  for (; i <= max; ++i ) p.a(i)=p2[i];
-  else /* p1d >= p2d */ for (; i <= max; ++i ) p.a(i)=p1[i];
+  for (i = 0; i <= min; ++i ) p.coeff(i) = p1[i]+p2[i];
+  if (p1d_smaller_p2d)  for (; i <= max; ++i ) p.coeff(i)=p2[i];
+  else /* p1d >= p2d */ for (; i <= max; ++i ) p.coeff(i)=p1[i];
   p.reduce();
   return p;
 }
@@ -1268,9 +1342,9 @@ RPolynomial<NT> operator - (const RPolynomial<NT>& p1,
   if (p1d_smaller_p2d) { min = p1.degree(); max = p2.degree(); }
   else                 { max = p1.degree(); min = p2.degree(); }
   RPolynomial<NT>  p( (Size_type)(max+1) );
-  for (i = 0; i <= min; ++i ) p.a(i)=p1[i]-p2[i];
-  if (p1d_smaller_p2d)  for (; i <= max; ++i ) p.a(i)= -p2[i];
-  else /* p1d >= p2d */ for (; i <= max; ++i ) p.a(i)=  p1[i];
+  for (i = 0; i <= min; ++i ) p.coeff(i)=p1[i]-p2[i];
+  if (p1d_smaller_p2d)  for (; i <= max; ++i ) p.coeff(i)= -p2[i];
+  else /* p1d >= p2d */ for (; i <= max; ++i ) p.coeff(i)=  p1[i];
   p.reduce();
   return p;
 }
@@ -1286,7 +1360,7 @@ RPolynomial<NT> operator * (const RPolynomial<NT>& p1,
   // initialize with zeros
   for (int i=0; i <= p1.degree(); ++i)
     for (int j=0; j <= p2.degree(); ++j)
-    { p.a(i+j) += (p1[i]*p2[j]); }
+    { p.coeff(i+j) += (p1[i]*p2[j]); }
   p.reduce();
   return p;
 }
@@ -1315,67 +1389,17 @@ RPolynomial<NT> operator / (const RPolynomial<NT>& p1,
 
 
 template <class NT> /*CGAL_KERNEL_MEDIUM_INLINE*/ 
-void euclidean_div(const CGAL::RPolynomial<NT>& f,
-                   const CGAL::RPolynomial<NT>& g,
-                   RPolynomial<NT>& q, RPolynomial<NT>& r)
-{
-  r = f; r.copy_on_write();
-  int rd=r.degree(), gd=g.degree(), qd(0);
-  if ( rd < gd ) { q = RPolynomial<NT>(size_t(0)); }
-  else { qd = rd-gd+1; q = RPolynomial<NT>(size_t(qd)); }
-  while ( rd >= gd ) {
-    NT S = r[rd] / g[gd];
-    qd = rd-gd;
-    q.a(qd) += S;
-    r.minus_offsetmult(g,S,qd);
-    rd = r.degree();
-  }
-  CGAL_postcondition( f==q*g+r );
-}
-
-template <class NT> /*CGAL_KERNEL_MEDIUM_INLINE*/ 
 RPolynomial<NT> divop (const RPolynomial<NT>& p1, 
                        const RPolynomial<NT>& p2,
                        field_with_div)
 { CGAL_assertion(!p2.is_zero());
   if (p1.is_zero()) return 0;
   RPolynomial<NT> q,r;
-  euclidean_div(p1,p2,q,r);
+  RPolynomial<NT>::euclidean_div(p1,p2,q,r);
   CGAL_postcondition( (p2*q+r==p1) );
   return q;
 }
 
-
-template <class NT> /*CGAL_KERNEL_MEDIUM_INLINE*/   
-void pseudo_div(const RPolynomial<NT>& f, const RPolynomial<NT>& g, 
-            RPolynomial<NT>& q, RPolynomial<NT>& r, NT& D)
-{
-  TRACEN("pseudo_div "<<f<<" , "<< g);
-  int fd=f.degree(), gd=g.degree();
-  if ( fd<gd ) 
-  { q = RPolynomial<NT>(0); r = f; D = 1; 
-    CGAL_postcondition(RPolynomial<NT>(D)*f==q*g+r); return; 
-  }
-  // now we know fd >= gd and f>=g
-  int qd=fd-gd, delta=qd+1, rd=fd;
-  q = RPolynomial<NT>( size_t(delta) );
-  NT G = g[gd]; // highest order coeff of g
-  D = G; while (--delta) D*=G; // D = G^delta
-  RPolynomial<NT> res = RPolynomial<NT>(D)*f;
-  TRACEN("  pseudo_div start "<<res<<" "<<qd<<" "<<q.degree());
-  while (qd >= 0) {
-    NT F = res[rd]; // highest order coeff of res
-    NT t = F/G;     // ensured to be integer by multiplication of D
-    q.a(qd) = t;    // store q coeff
-    res.minus_offsetmult(g,t,qd); 
-    if (res.is_zero()) break;
-    rd = res.degree();
-    qd = rd - gd;
-  }
-  r = res;
-  CGAL_postcondition(RPolynomial<NT>(D)*f==q*g+r);
-  TRACEN("  returning "<<q<<", "<<r<<", "<< D);
-}
 
 template <class NT> /*CGAL_KERNEL_MEDIUM_INLINE*/ 
 RPolynomial<NT> divop (const RPolynomial<NT>& p1, const RPolynomial<NT>& p2,
@@ -1383,42 +1407,16 @@ RPolynomial<NT> divop (const RPolynomial<NT>& p1, const RPolynomial<NT>& p2,
 { CGAL_assertion(!p2.is_zero());
   if (p1.is_zero()) return 0;
   RPolynomial<NT> q,r; NT D; 
-  pseudo_div(p1,p2,q,r,D); 
+  RPolynomial<NT>::pseudo_div(p1,p2,q,r,D); 
   CGAL_postcondition( (p2*q+r==p1*RPolynomial<NT>(D)) );
   return q/=D;
 }
 
 
-template <class NT> /*CGAL_KERNEL_MEDIUM_INLINE*/ RPolynomial<NT>
-rp_gcd(const RPolynomial<NT>& p1, const RPolynomial<NT>& p2)
-{ TRACEN("gcd("<<p1<<" , "<<p2<<")");
-  if ( p1.is_zero() )
-    if ( p2.is_zero() ) return RPolynomial<NT>(NT(1));
-    else return p2.abs();
-  if ( p2.is_zero() )
-    return p1.abs();
-
-  RPolynomial<NT> f1 = p1.abs();
-  RPolynomial<NT> f2 = p2.abs();
-  NT f1c = f1.content(), f2c = f2.content();
-  f1 /= f1c; f2 /= f2c;
-  NT F = gcd(f1c,f2c);
-  RPolynomial<NT> q,r; NT M=1,D;
-  bool first = true;
-  while ( ! f2.is_zero() ) { 
-    pseudo_div(f1,f2,q,r,D);
-    if (!first) M*=D;
-    TRACEV(f1);TRACEV(f2);TRACEV(q);TRACEV(r);TRACEV(M);
-    r /= r.content();
-    f1=f2; f2=r;
-    first=false;
-  }
-  TRACEV(f1.content());
-  return RPolynomial<NT>(F)*f1.abs();
-}
-
-
-
+template <class NT> 
+inline RPolynomial<NT> 
+gcd(const RPolynomial<NT>& p1, const RPolynomial<NT>& p2)
+{ return RPolynomial<NT>::gcd(p1,p2); }
 
 template <class NT> /*CGAL_KERNEL_INLINE*/ bool operator == 
   (const RPolynomial<NT>& p1, const RPolynomial<NT>& p2)
@@ -1850,7 +1848,7 @@ std::ostream& operator << (std::ostream& os, const RPolynomial<NT>& p)
 #else
       print_monomial(os,p[p.degree()],p.degree());
       for(i=p.degree()-1; i>=0; --i) {
-        if (p[i]!=0) { os << " + "; print_monomial(os,p[i],i); }
+        if (p[i]!=NT(0)) { os << " + "; print_monomial(os,p[i],i); }
       }    
 #endif
       return os;
@@ -1868,19 +1866,19 @@ std::istream& operator >> (std::istream& is, RPolynomial<NT>& p)
       is >> d;
       if (d < 0) p = RPolynomial<NT>();
       else {
-        std::vector<NT> coeffs(d+1);
+        typename RPolynomial<NT>::Vector coeffs(d+1);
         for(i=0; i<=d; ++i) is >> coeffs[i];
-        p = RPolynomial<NT>(coeffs.begin(),coeffs.end() MSC_HACK_ARGINS);
+        p = RPolynomial<NT>(coeffs.begin(),coeffs.end());
       }
       break;
     case CGAL::IO::BINARY :
       CGAL::read(is, d);
       if (d < 0) p = RPolynomial<NT>();
       else {
-        std::vector<NT> coeffs(d+1);
+        typename RPolynomial<NT>::Vector coeffs(d+1);
         for(i=0; i<=d; ++i) 
         { CGAL::read(is,c); coeffs[i]=c; }
-        p = RPolynomial<NT>(coeffs.begin(),coeffs.end() MSC_HACK_ARGINS);
+        p = RPolynomial<NT>(coeffs.begin(),coeffs.end());
       }
       break;
     default:
@@ -1891,6 +1889,261 @@ std::istream& operator >> (std::istream& is, RPolynomial<NT>& p)
 }
 
 
+
+// SPECIALIZE_IMPLEMENTATION(NT,int double) START
+// SPECIALIZING to :
+ /*CGAL_KERNEL_MEDIUM_INLINE*/ 
+void RPolynomial<int>::euclidean_div(
+  const RPolynomial<int>& f, const RPolynomial<int>& g,
+  RPolynomial<int>& q, RPolynomial<int>& r)
+{
+  r = f; r.copy_on_write();
+  int rd=r.degree(), gd=g.degree(), qd(0);
+  if ( rd < gd ) { q = RPolynomial<int>(size_t(0)); }
+  else { qd = rd-gd+1; q = RPolynomial<int>(size_t(qd)); }
+  while ( rd >= gd ) {
+    int S = r[rd] / g[gd];
+    qd = rd-gd;
+    q.coeff(qd) += S;
+    r.minus_offsetmult(g,S,qd);
+    rd = r.degree();
+  }
+  CGAL_postcondition( f==q*g+r );
+}
+
+
+ /*CGAL_KERNEL_MEDIUM_INLINE*/   
+void RPolynomial<int>::pseudo_div(
+  const RPolynomial<int>& f, const RPolynomial<int>& g, 
+  RPolynomial<int>& q, RPolynomial<int>& r, int& D)
+{
+  TRACEN("pseudo_div "<<f<<" , "<< g);
+  int fd=f.degree(), gd=g.degree();
+  if ( fd<gd ) 
+  { q = RPolynomial<int>(0); r = f; D = 1; 
+    CGAL_postcondition(RPolynomial<int>(D)*f==q*g+r); return; 
+  }
+  // now we know fd >= gd and f>=g
+  int qd=fd-gd, delta=qd+1, rd=fd;
+  q = RPolynomial<int>( size_t(delta) );
+  int G = g[gd]; // highest order coeff of g
+  D = G; while (--delta) D*=G; // D = G^delta
+  RPolynomial<int> res = RPolynomial<int>(D)*f;
+  TRACEN("  pseudo_div start "<<res<<" "<<qd<<" "<<q.degree());
+  while (qd >= 0) {
+    int F = res[rd]; // highest order coeff of res
+    int t = F/G;     // ensured to be integer by multiplication of D
+    q.coeff(qd) = t;    // store q coeff
+    res.minus_offsetmult(g,t,qd); 
+    if (res.is_zero()) break;
+    rd = res.degree();
+    qd = rd - gd;
+  }
+  r = res;
+  CGAL_postcondition(RPolynomial<int>(D)*f==q*g+r);
+  TRACEN("  returning "<<q<<", "<<r<<", "<< D);
+}
+
+
+ /*CGAL_KERNEL_MEDIUM_INLINE*/ 
+RPolynomial<int> RPolynomial<int>::gcd(
+  const RPolynomial<int>& p1, const RPolynomial<int>& p2)
+{ TRACEN("gcd("<<p1<<" , "<<p2<<")");
+  if ( p1.is_zero() )
+    if ( p2.is_zero() ) return RPolynomial<int>(int(1));
+    else return p2.abs();
+  if ( p2.is_zero() )
+    return p1.abs();
+
+  RPolynomial<int> f1 = p1.abs();
+  RPolynomial<int> f2 = p2.abs();
+  int f1c = f1.content(), f2c = f2.content();
+  f1 /= f1c; f2 /= f2c;
+  int F = ring_or_field<int>::gcd(f1c,f2c);
+  RPolynomial<int> q,r; int M=1,D;
+  bool first = true;
+  while ( ! f2.is_zero() ) { 
+    RPolynomial<int>::pseudo_div(f1,f2,q,r,D);
+    if (!first) M*=D;
+    TRACEV(f1);TRACEV(f2);TRACEV(q);TRACEV(r);TRACEV(M);
+    r /= r.content();
+    f1=f2; f2=r;
+    first=false;
+  }
+  TRACEV(f1.content());
+  return RPolynomial<int>(F)*f1.abs();
+}
+
+
+// SPECIALIZING to :
+ /*CGAL_KERNEL_MEDIUM_INLINE*/ 
+void RPolynomial<double>::euclidean_div(
+  const RPolynomial<double>& f, const RPolynomial<double>& g,
+  RPolynomial<double>& q, RPolynomial<double>& r)
+{
+  r = f; r.copy_on_write();
+  int rd=r.degree(), gd=g.degree(), qd(0);
+  if ( rd < gd ) { q = RPolynomial<double>(size_t(0)); }
+  else { qd = rd-gd+1; q = RPolynomial<double>(size_t(qd)); }
+  while ( rd >= gd ) {
+    double S = r[rd] / g[gd];
+    qd = rd-gd;
+    q.coeff(qd) += S;
+    r.minus_offsetmult(g,S,qd);
+    rd = r.degree();
+  }
+  CGAL_postcondition( f==q*g+r );
+}
+
+
+ /*CGAL_KERNEL_MEDIUM_INLINE*/   
+void RPolynomial<double>::pseudo_div(
+  const RPolynomial<double>& f, const RPolynomial<double>& g, 
+  RPolynomial<double>& q, RPolynomial<double>& r, double& D)
+{
+  TRACEN("pseudo_div "<<f<<" , "<< g);
+  int fd=f.degree(), gd=g.degree();
+  if ( fd<gd ) 
+  { q = RPolynomial<double>(0); r = f; D = 1; 
+    CGAL_postcondition(RPolynomial<double>(D)*f==q*g+r); return; 
+  }
+  // now we know fd >= gd and f>=g
+  int qd=fd-gd, delta=qd+1, rd=fd;
+  q = RPolynomial<double>( size_t(delta) );
+  double G = g[gd]; // highest order coeff of g
+  D = G; while (--delta) D*=G; // D = G^delta
+  RPolynomial<double> res = RPolynomial<double>(D)*f;
+  TRACEN("  pseudo_div start "<<res<<" "<<qd<<" "<<q.degree());
+  while (qd >= 0) {
+    double F = res[rd]; // highest order coeff of res
+    double t = F/G;     // ensured to be integer by multiplication of D
+    q.coeff(qd) = t;    // store q coeff
+    res.minus_offsetmult(g,t,qd); 
+    if (res.is_zero()) break;
+    rd = res.degree();
+    qd = rd - gd;
+  }
+  r = res;
+  CGAL_postcondition(RPolynomial<double>(D)*f==q*g+r);
+  TRACEN("  returning "<<q<<", "<<r<<", "<< D);
+}
+
+
+ /*CGAL_KERNEL_MEDIUM_INLINE*/ 
+RPolynomial<double> RPolynomial<double>::gcd(
+  const RPolynomial<double>& p1, const RPolynomial<double>& p2)
+{ TRACEN("gcd("<<p1<<" , "<<p2<<")");
+  if ( p1.is_zero() )
+    if ( p2.is_zero() ) return RPolynomial<double>(double(1));
+    else return p2.abs();
+  if ( p2.is_zero() )
+    return p1.abs();
+
+  RPolynomial<double> f1 = p1.abs();
+  RPolynomial<double> f2 = p2.abs();
+  double f1c = f1.content(), f2c = f2.content();
+  f1 /= f1c; f2 /= f2c;
+  double F = ring_or_field<double>::gcd(f1c,f2c);
+  RPolynomial<double> q,r; double M=1,D;
+  bool first = true;
+  while ( ! f2.is_zero() ) { 
+    RPolynomial<double>::pseudo_div(f1,f2,q,r,D);
+    if (!first) M*=D;
+    TRACEV(f1);TRACEV(f2);TRACEV(q);TRACEV(r);TRACEV(M);
+    r /= r.content();
+    f1=f2; f2=r;
+    first=false;
+  }
+  TRACEV(f1.content());
+  return RPolynomial<double>(F)*f1.abs();
+}
+
+
+// SPECIALIZE_FUNCTION ORIGINAL
+template <class NT> /*CGAL_KERNEL_MEDIUM_INLINE*/ 
+void RPolynomial<NT>::euclidean_div(
+  const RPolynomial<NT>& f, const RPolynomial<NT>& g,
+  RPolynomial<NT>& q, RPolynomial<NT>& r)
+{
+  r = f; r.copy_on_write();
+  int rd=r.degree(), gd=g.degree(), qd(0);
+  if ( rd < gd ) { q = RPolynomial<NT>(size_t(0)); }
+  else { qd = rd-gd+1; q = RPolynomial<NT>(size_t(qd)); }
+  while ( rd >= gd ) {
+    NT S = r[rd] / g[gd];
+    qd = rd-gd;
+    q.coeff(qd) += S;
+    r.minus_offsetmult(g,S,qd);
+    rd = r.degree();
+  }
+  CGAL_postcondition( f==q*g+r );
+}
+
+
+template <class NT> /*CGAL_KERNEL_MEDIUM_INLINE*/   
+void RPolynomial<NT>::pseudo_div(
+  const RPolynomial<NT>& f, const RPolynomial<NT>& g, 
+  RPolynomial<NT>& q, RPolynomial<NT>& r, NT& D)
+{
+  TRACEN("pseudo_div "<<f<<" , "<< g);
+  int fd=f.degree(), gd=g.degree();
+  if ( fd<gd ) 
+  { q = RPolynomial<NT>(0); r = f; D = 1; 
+    CGAL_postcondition(RPolynomial<NT>(D)*f==q*g+r); return; 
+  }
+  // now we know fd >= gd and f>=g
+  int qd=fd-gd, delta=qd+1, rd=fd;
+  q = RPolynomial<NT>( size_t(delta) );
+  NT G = g[gd]; // highest order coeff of g
+  D = G; while (--delta) D*=G; // D = G^delta
+  RPolynomial<NT> res = RPolynomial<NT>(D)*f;
+  TRACEN("  pseudo_div start "<<res<<" "<<qd<<" "<<q.degree());
+  while (qd >= 0) {
+    NT F = res[rd]; // highest order coeff of res
+    NT t = F/G;     // ensured to be integer by multiplication of D
+    q.coeff(qd) = t;    // store q coeff
+    res.minus_offsetmult(g,t,qd); 
+    if (res.is_zero()) break;
+    rd = res.degree();
+    qd = rd - gd;
+  }
+  r = res;
+  CGAL_postcondition(RPolynomial<NT>(D)*f==q*g+r);
+  TRACEN("  returning "<<q<<", "<<r<<", "<< D);
+}
+
+
+template <class NT> /*CGAL_KERNEL_MEDIUM_INLINE*/ 
+RPolynomial<NT> RPolynomial<NT>::gcd(
+  const RPolynomial<NT>& p1, const RPolynomial<NT>& p2)
+{ TRACEN("gcd("<<p1<<" , "<<p2<<")");
+  if ( p1.is_zero() )
+    if ( p2.is_zero() ) return RPolynomial<NT>(NT(1));
+    else return p2.abs();
+  if ( p2.is_zero() )
+    return p1.abs();
+
+  RPolynomial<NT> f1 = p1.abs();
+  RPolynomial<NT> f2 = p2.abs();
+  NT f1c = f1.content(), f2c = f2.content();
+  f1 /= f1c; f2 /= f2c;
+  NT F = ring_or_field<NT>::gcd(f1c,f2c);
+  RPolynomial<NT> q,r; NT M=1,D;
+  bool first = true;
+  while ( ! f2.is_zero() ) { 
+    RPolynomial<NT>::pseudo_div(f1,f2,q,r,D);
+    if (!first) M*=D;
+    TRACEV(f1);TRACEV(f2);TRACEV(q);TRACEV(r);TRACEV(M);
+    r /= r.content();
+    f1=f2; f2=r;
+    first=false;
+  }
+  TRACEV(f1.content());
+  return RPolynomial<NT>(F)*f1.abs();
+}
+
+
+// SPECIALIZE_IMPLEMENTATION(NT,int double) END
 
 CGAL_END_NAMESPACE
 

@@ -12,7 +12,6 @@ typedef list<int>::iterator list_handle;
 int main() 
 {
   CGAL_TEST_START;
- {
   list<int> L;
   L.push_back(1);
   list_handle it1 = L.begin();
@@ -27,25 +26,7 @@ int main()
   list_handle it2 = L.end();
   const Hash_map<list_handle,int>* pH = &H2;
   CGAL_TEST((*pH)[it2]==-2);
- }
-#if 0
- {
-  point p1(1,2), p2(3,4);
-  Hash_map<point,int,Kernel_index> H1,H2(-1);
-  H1[p1] = 2; 
-  CGAL_TEST(H1[p1]==2);
-  CGAL_TEST(H2[p1]==-1);
-  H1.clear(); H2.clear(-2);
-  H2[p1] = 2; 
-  CGAL_TEST(H1[p1]==0);
-  CGAL_TEST(H2[p1]==2);
-  const Hash_map<point,int,Kernel_index>* pH = &H2;
-  CGAL_TEST((*pH)[p2]==-2);
-  //H1.statistics();  H2.statistics();
- }
-#endif
   CGAL_TEST_END;
-  return 0;
 }
 
 

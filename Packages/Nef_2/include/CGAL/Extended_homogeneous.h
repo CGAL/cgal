@@ -33,9 +33,12 @@
 #include <CGAL/Point_2.h> 
 #include <CGAL/Line_2_Line_2_intersection.h> 
 #include <CGAL/squared_distance_2.h> 
-#define RPHOMOGENEOUS
+#ifndef _MSC_VER
 #include <CGAL/RPolynomial.h>
-#undef RPHOMOGENEOUS
+#else
+#include <CGAL/RPolynomial_MSC.h>
+#define RPolynomial RPolynomial_MSC
+#endif
 #undef _DEBUG
 #define _DEBUG 5
 #include <CGAL/Nef_2/debug.h>
@@ -339,8 +342,8 @@ on the extended geometric objects.}*/
   /*{\Xop only used internally.}*/
   { TRACEN("simplify("<<p<<")");
     RT x=p.hx(), y=p.hy(), w=p.hw();
-    RT common = x.is_zero() ? y : gcd(x,y);
-    common = gcd(common,w);
+    RT common = x.is_zero() ? y : RT::gcd(x,y);
+    common = RT::gcd(common,w);
     p = Point_2(x/common,y/common,w/common);
     TRACEN("canceled="<<p);
   }
@@ -354,8 +357,8 @@ on the extended geometric objects.}*/
   { Line_2 l(p1,p2);
       TRACEN("eline("<<p1<<p2<<")="<<l);
     RT a=l.a(), b=l.b(), c=l.c();
-    RT common = a.is_zero() ? b : gcd(a,b);
-    common = gcd(common,c);
+    RT common = a.is_zero() ? b : RT::gcd(a,b);
+    common = RT::gcd(common,c);
     l =  Line_2(a/common,b/common,c/common);
       TRACEN("canceled="<<l);
     return l; 
@@ -501,6 +504,7 @@ on the extended geometric objects.}*/
 };
 
 
+#undef RPolynomial
 CGAL_END_NAMESPACE
 #endif // CGAL_EXTENDED_HOMOGENEOUS_H
 
