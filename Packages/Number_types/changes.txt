@@ -1,3 +1,6 @@
+4.15     (28 May 01)
+- to_interval(leda_integer) improvement, by Michael Seel.
+
 4.14     (1 Mar 01)
 - Added operator% to Gmpz.
 

@@ -20,40 +20,20 @@
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
  
-
-#ifndef CGAL_INTEGER_H
-#define CGAL_INTEGER_H
+#ifndef CGAL_LEDA_INTEGER_H
+#define CGAL_LEDA_INTEGER_H
 
 #include <CGAL/basic.h>
-
-// #ifndef IO_IO_TAGS_H
-// #include <CGAL/IO/io_tags.h>
-// #endif // IO_IO_TAGS_H
-// #ifndef CGAL_NUMBER_TYPE_TAGS_H
-// #include <CGAL/number_type_tags.h>
-// #endif // CGAL_NUMBER_TYPE_TAGS_H
-
-/*
-#if !defined(LEDA_ROOT_INCL_ID)
-#define LEDA_ROOT_INCL_ID 349063
-#include <LEDA/REDEFINE_NAMES.h>
-#endif
-*/
-
-#ifndef CGAL_PROTECT_LEDA_INTEGER_H
 #include <LEDA/integer.h>
-#define CGAL_PROTECT_LEDA_INTEGER_H
-#endif // CGAL_PROTECT_LEDA_INTEGER_H
 
 CGAL_BEGIN_NAMESPACE
-
 
 #ifndef CGAL_CFG_NO_NAMESPACE
 inline
 double
 to_double(const leda_integer & i)
 { return i.to_double(); }
-#endif // CGAL_CFG_NO_NAMESPACE
+#endif
 
 inline
 Number_tag
@@ -80,27 +60,23 @@ inline
 Sign
 sign(const leda_integer& n)
 { return (Sign)::sign(n); }
-#endif // CGAL_CFG_NO_NAMESPACE
+#endif
 
 inline
 Interval_base
 to_interval (const leda_integer & z)
 {
   Protect_FPU_rounding<true> P (CGAL_FE_TONEAREST);
-  Interval_nt_advanced approx (z.to_double());
-  FPU_set_cw(CGAL_FE_UPWARD);
-  return approx + Interval_base::Smallest;
+  double cn = CGAL::to_double(n);
+  leda_integer pn = ( n>0 ? n : -n);
+  if ( pn.iszero() || log(pn) < 53 )
+      return Interval_base(cn);
+  else {
+    FPU_set_cw(CGAL_FE_UPWARD);
+    return Interval_base(cn)+Interval_base::Smallest;
+  }
 }
-
 
 CGAL_END_NAMESPACE
 
-
-/*
-#if LEDA_ROOT_INCL_ID == 349063
-#undef LEDA_ROOT_INCL_ID
-#include <LEDA/UNDEFINE_NAMES.h>
-#endif
-*/
-
-#endif // CGAL_INTEGER_H
+#endif // CGAL_LEDA_INTEGER_H
