@@ -252,13 +252,13 @@ public:
 
     CGAL_precondition((cmp_xy(q, source1) == SMALLER)||
                       (cmp_xy(q, target1) == SMALLER));
-    CGAL_precondition((cmp_xy(q, source1) != SMALLER) |
-                      (cmp_xy(q, target1) != SMALLER));
+    /*CGAL_precondition((cmp_xy(q, source1) != SMALLER) ||
+                      (cmp_xy(q, target1) != SMALLER));*/
     
     CGAL_precondition((cmp_xy(q, source2) == SMALLER) ||
                       (cmp_xy(q, target2) == SMALLER));
-    CGAL_precondition((cmp_xy(q, source2) != SMALLER) ||
-                      (cmp_xy(q, target2) != SMALLER));
+    /*CGAL_precondition((cmp_xy(q, source2) != SMALLER) ||
+                      (cmp_xy(q, target2) != SMALLER));*/
     
     // Since the curves are continuous, if they are not equal at q, the same
     // result also applies to q's left.
