@@ -51,31 +51,32 @@ void Qt_widget_history::backward()
       it--;
       restore();
     }
-  emit(forwardAvaillable(true));
+  emit forwardAvaillable(true);
   if(it == history_list.begin())
-    emit(backwardAvaillable(false));
+    emit backwardAvaillable(false);
 }
 
 void Qt_widget_history::forward()
 {
   if( it != history_list.end() ) 
-    {
-      if( ++it != history_list.end() )
-	restore();
-      else 
-	--it;
-    }
-  emit(backwardAvaillable(true));
-  if( it == --history_list.end())
-    emit(forwardAvaillable(false));
+  {
+    if( ++it != history_list.end() )
+      restore();
+    else 
+      --it;
+  }
+  emit backwardAvaillable(true);
+  if(it == --history_list.end())
+    emit forwardAvaillable(false);
 }
+
 void Qt_widget_history::save()
 {
   if( it != history_list.end() )
-    {
-      ++it;
-      history_list.erase(it, history_list.end());
-    }
+  {
+    ++it;
+    history_list.erase(it, history_list.end());
+  }
   
   History_atom* atom = new History_atom();
   atom->save(*widget);
@@ -85,8 +86,8 @@ void Qt_widget_history::save()
   it--;
 
   if( it != history_list.begin() )
-    emit(backwardAvaillable(true));
-  emit(forwardAvaillable(false));
+    emit backwardAvaillable(true);
+  emit forwardAvaillable(false);
 }
 
 }; // end namespace

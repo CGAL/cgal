@@ -62,33 +62,30 @@ namespace CGAL {
   private:
     struct Free {
       void operator()(History_atom* atom) const
-	{
-	  delete atom;
-	}
-    };
+      {
+        delete atom;
+      }
+    };    
     
   public slots:
     void save();
-
     void clear() {
       std::for_each(history_list.begin(), history_list.end(), Free());
       history_list.clear();
       it = history_list.begin();
-      emit(backwardAvaillable(false));
-      emit(forwardAvaillable(false));
+      emit backwardAvaillable(false);
+      emit forwardAvaillable(false);
     }
 
   private:
-
-    void restore()
-      {
-	disconnect(widget, SIGNAL(rangesChanged()),
-		   this, SLOT(save()));
-	(*it)->restore(*widget);
-	connect(widget, SIGNAL(rangesChanged()),
-		this, SLOT(save()));
-	widget->redraw();
-      }
+    void restore(){
+      disconnect( widget, SIGNAL(rangesChanged()), 
+        this, SLOT(save()));
+      (*it)->restore(*widget);
+      connect(widget, SIGNAL(rangesChanged()), 
+        this, SLOT(save()));
+      widget->redraw();
+    }
 
   private:
     std::list<History_atom*> history_list;
