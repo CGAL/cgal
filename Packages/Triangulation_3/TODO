@@ -25,6 +25,7 @@ TEST SUITE
 Doc
 - (optional) sphere et grille en couleur version eps
 - (revoir les anciennes corrections de JF Dufourd)
+- note pour faire remarquer que Delaunay depend de l'ordre d'insertion
 
 Exemples - demo
 - en rajouter si bonnes idees...
