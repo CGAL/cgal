@@ -59,8 +59,9 @@ public:
     typedef typename PM::Halfedge_const_handle                    Pm_halfedge_const_handle;
     typedef typename PM::Face_const_handle                        Pm_face_const_handle;*/
   
+private:
   typedef Map_overlay_naive<Arrangement, Map_overlay_ChangeNotification>       Self;
-
+public:
 
   Map_overlay_naive() {}
 
@@ -98,19 +99,23 @@ public:
     //  std::cout<<"Notifier is NULL" << std::endl;
 
     // Creaing the new arrangement of both subdivisions. inserting the curevs of the halfedges (already calculated fomr the given subdivisions 
-    for (half_edge_iter = a1.halfedges_begin(); half_edge_iter != a1.halfedges_end(); half_edge_iter++, half_edge_iter++){
+    for (half_edge_iter = a1.halfedges_begin(); 
+         half_edge_iter != a1.halfedges_end(); 
+         ++half_edge_iter, ++half_edge_iter){
       pmwx_change_notf->set_curve_attributes(half_edge_iter->curve(), 
                                              half_edge_iter, 
-                                             half_edge_iter->twin(), true);
+                                             true);
       result.insert(half_edge_iter->curve(), pmwx_change_notf);
       
       //result.insert(half_edge_iter->curve(), NULL); //debug only!
     }
     
-    for (half_edge_iter = a2.halfedges_begin(); half_edge_iter != a2.halfedges_end(); half_edge_iter++, half_edge_iter++){
+    for (half_edge_iter = a2.halfedges_begin(); 
+         half_edge_iter != a2.halfedges_end(); 
+         ++half_edge_iter, ++half_edge_iter){
       pmwx_change_notf->set_curve_attributes(half_edge_iter->curve(), 
                                              half_edge_iter, 
-                                             half_edge_iter->twin(), false); 
+                                             false); 
       result.insert(half_edge_iter->curve(), pmwx_change_notf);
       
       //result.insert(half_edge_iter->curve(), NULL);  //debug only!

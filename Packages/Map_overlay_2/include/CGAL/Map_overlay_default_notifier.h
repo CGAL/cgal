@@ -33,7 +33,7 @@ public:
   typedef typename Arrangement::Holes_const_iterator                       Holes_const_iterator;
   typedef typename Arrangement::Locate_type                                Locate_type;
   typedef typename Arrangement::Traits_wrap                                Traits_wrap;
-  typedef typename Arrangement::Change_notification                        Pmwx_change_notification; 
+  typedef typename Arrangement::Change_notification                        Change_notification; 
   
   typedef typename Arrangement::Traits                                     Traits;
   typedef typename Traits::Point                                           Point;
@@ -51,25 +51,26 @@ public:
   typedef Map_overlay_default_notifier<Arrangement>        Self;
   typedef const Arrangement*                               Arr_const_pointer;
   
-  Map_overlay_default_notifier() { arr1 = NULL; arr2 = NULL; }
+  Map_overlay_default_notifier() : arr1(0), arr2(0) {}
 
   Map_overlay_default_notifier (Arr_const_pointer sub_division1, 
                                 Arr_const_pointer sub_division2) 
     : arr1(sub_division1), arr2(sub_division2) {}
   
   Map_overlay_default_notifier (const Self& notf) 
-    : arr1(notf.get_sub_division1()), arr2(notf.get_sub_division2()) {}
+    : arr1(notf.arr1), arr2(notf.arr2) {}
   
-  Map_overlay_default_notifier (const Self* notf) 
-    : arr1(notf->get_sub_division1()), arr2(notf->get_sub_division2()) {}
+  //Map_overlay_default_notifier (const Self* notf) 
+  //  : arr1(notf->get_sub_division1()), arr2(notf->get_sub_division2()) {}
   
   virtual ~Map_overlay_default_notifier() {}
 
-  void add_edge(const X_curve& cv, Pm_halfedge_handle e, 
-                bool left_to_right, bool overlap = false)
+  void add_edge(const X_curve& cv, 
+                Pm_halfedge_handle e, 
+                bool left_to_right, 
+                bool overlap = false)
   { 
     //std::cout<<"in add_edge" << std::endl;
-    
     if ((CGAL::compare_lexicographically_xy(e->source()->point(), 
                                             e->target()->point()) == CGAL::SMALLER && 
          CGAL::compare_lexicographically_xy(orig_halfedge1->source()->point(), 
@@ -105,14 +106,14 @@ public:
       }
     }
     
-    else if ((CGAL::compare_lexicographically_xy(e->source()->point(), 
-                                                 e->target()->point()) == CGAL::SMALLER && 
-              CGAL::compare_lexicographically_xy(orig_halfedge2->source()->point(), 
-                                                 orig_halfedge2->target()->point()) == CGAL::SMALLER)
-             || (CGAL::compare_lexicographically_xy(e->source()->point(), 
-                                                    e->target()->point()) == CGAL::LARGER && 
-                 CGAL::compare_lexicographically_xy(orig_halfedge2->source()->point(), 
-                                                    orig_halfedge2->target()->point()) == CGAL::LARGER)){
+    else{
+      //if ((CGAL::compare_lexicographically_xy(e->source()->point(), e->target()->point()) == CGAL::SMALLER && 
+      //              CGAL::compare_lexicographically_xy(orig_halfedge2->source()->point(), 
+      //                                          orig_halfedge2->target()->point()) == CGAL::SMALLER)
+      //      || (CGAL::compare_lexicographically_xy(e->source()->point(), 
+      //                                             e->target()->point()) == CGAL::LARGER && 
+      //          CGAL::compare_lexicographically_xy(orig_halfedge2->source()->point(), 
+      //                                             orig_halfedge2->target()->point()) == CGAL::LARGER))
       if (first_halfedge){
         set_first_halfedge_above(Halfedge_handle(e), orig_halfedge2);
         set_first_halfedge_above(Halfedge_handle(e->twin()), orig_halfedge2->twin());
@@ -140,8 +141,6 @@ public:
         //e->twin()->set_second_halfedge_above(orig_halfedge2->twin().operator->());
       }
     }
-    else
-      assert(0);
 
     // now making point location to update vertex pointers only if neccesary.
     if (get_first_vertex_above(e->source()) == e->source()){   // if the first vertex above the source of e is NULL.
@@ -190,20 +189,23 @@ public:
       }
     }
 
-    // now making a nother test for the face to the new_edge side, in order to take care of overlapping halfedges.
+    // now making another test for the face to the new_edge side, 
+    // in order to take care of overlapping halfedges.
     if ( !(e->face()->is_unbounded()) ){
       Ccb_halfedge_circulator  ccb_cir = Halfedge_handle(e)->face()->outer_ccb();
       
       do{
         if (ccb_cir->get_first_halfedge_above() != NULL){
           //std::cout<<"overlapping bogi"<<std::endl;
-          set_first_face_above ( Halfedge_handle(e)->face(), get_first_halfedge_above(ccb_cir)->face());
+          set_first_face_above ( Halfedge_handle(e)->face(), 
+                                 get_first_halfedge_above(ccb_cir)->face());
         }
         
         if (ccb_cir->get_second_halfedge_above() != NULL){ 
-          set_second_face_above ( Halfedge_handle(e)->face(), get_second_halfedge_above(ccb_cir)->face());
+          set_second_face_above ( Halfedge_handle(e)->face(), 
+                                  get_second_halfedge_above(ccb_cir)->face());
         }
-        ccb_cir++;
+        ++ccb_cir;
       } while (ccb_cir !=  Halfedge_handle(e)->face()->outer_ccb());
     }
     
@@ -213,34 +215,30 @@ public:
       do{
         if (ccb_cir->get_first_halfedge_above() != NULL){
           //std::cout<<"overlapping twin bogi"<<std::endl;
-          set_first_face_above ( Halfedge_handle(e->twin())->face(), get_first_halfedge_above(ccb_cir)->face());
+          set_first_face_above ( Halfedge_handle(e->twin())->face(), 
+                                 get_first_halfedge_above(ccb_cir)->face());
         }
         
         if (ccb_cir->get_second_halfedge_above() != NULL){ 
-          set_second_face_above ( Halfedge_handle(e->twin())->face(), get_second_halfedge_above(ccb_cir)->face());
+          set_second_face_above ( Halfedge_handle(e->twin())->face(), 
+                                  get_second_halfedge_above(ccb_cir)->face());
         }
-        ccb_cir++;
+        ++ccb_cir;
       } while (ccb_cir !=  Halfedge_handle(e->twin())->face()->outer_ccb());
     }
   }
   
-  void split_edge(Pm_halfedge_handle orig_edge, Pm_halfedge_handle new_edge, const X_curve& c1, const X_curve& c2)
+  void split_edge(Pm_halfedge_handle orig_edge, 
+                  Pm_halfedge_handle new_edge, 
+                  const X_curve& c1, 
+                  const X_curve& c2)
   {
-    //std::cout<<"is split_edge" << std::endl;
-
-    // debug only!
-    /*if (new_edge->get_first_halfedge_above() != NULL)
-      cout<<"new blue edge ";
-    if (new_edge->get_second_halfedge_above() != NULL)
-      cout<<"new red edge ";
-      cout<<"\n";*/
-
     // update half edges above new_edge and its twin.
     new_edge->set_first_halfedge_above(orig_edge->get_first_halfedge_above());
     new_edge->set_second_halfedge_above(orig_edge->get_second_halfedge_above());
     new_edge->twin()->set_first_halfedge_above(orig_edge->twin()->get_first_halfedge_above());
     new_edge->twin()->set_second_halfedge_above(orig_edge->twin()->get_second_halfedge_above());
-
+    
     // upadate halfedge above the edge points of new_edge.
     if (get_first_halfedge_above(orig_edge) != orig_edge){
       set_first_halfedge_above(Vertex_handle(new_edge->source()), get_first_halfedge_above(orig_edge));
@@ -268,7 +266,7 @@ public:
         set_second_face_above ( Halfedge_handle(new_edge)->face(), 
                                 get_second_halfedge_above(ccb_cir)->face());
       }
-      ccb_cir++;
+      ++ccb_cir;
     } while (ccb_cir !=  Halfedge_handle(new_edge)->face()->outer_ccb());
   }
   
@@ -299,8 +297,74 @@ public:
         //std::cout<<ccb_cir->curve()<<" had red face above "<<std::endl;
         //new_face->set_second_face_above(((Halfedge* ) ccb_cir->get_second_halfedge_above())->face().operator->());
       }
-      ccb_cir++;
+      ++ccb_cir;
     } while (ccb_cir != new_face->outer_ccb());
+
+    // now updating the faces above the halfedges and vertices of the new face.
+    /*do{
+      if (new_face->get_first_face_above() != NULL){ 
+        set_first_face_above (ccb_cir, get_first_face_above(new_face));
+        set_first_face_above (ccb_cir->source(), get_first_face_above(new_face));
+      }
+      
+      if (new_face->get_second_face_above() != NULL){ 
+        set_second_face_above (ccb_cir, get_second_face_above(new_face));
+        set_second_face_above (ccb_cir->source(), get_second_face_above(new_face));
+      }
+      ++ccb_cir;
+      } while (ccb_cir != new_face->outer_ccb());*/
+    
+    // making point location to the original subdivision 
+    // (if new_face is a hole of at least one of them).
+    if (new_face->get_first_face_above() == NULL){
+      ccb_cir != new_face->outer_ccb();
+      do{
+        Point p = ccb_cir->source()->point();
+        //std::cout<<"internal point is : "<< p <<std::endl;
+        
+        Locate_type lt;
+        Halfedge_const_handle e = arr1->locate(p, lt);
+        if (lt == Arrangement::FACE || lt == Arrangement::UNBOUNDED_FACE)
+          {
+            //cout<<"internal point in FACE is : "<< p <<endl;
+            //if (e->face()->is_unbounded())
+            //  cout<<"Unbounded"<<endl;
+            //else
+            //  cout<<"Bounded"<<endl;
+
+            set_first_face_above(new_face, e->face());
+            set_first_face_above(ccb_cir, e->face());
+            set_first_face_above(ccb_cir->source(), e->face());  // also set the face above the vertex.
+            break;
+          }
+        ++ccb_cir;
+      } while (ccb_cir != new_face->outer_ccb());
+    }
+    
+    if (new_face->get_second_face_above() == NULL){
+      ccb_cir != new_face->outer_ccb();
+      do{
+        Point p = ccb_cir->source()->point();
+        //cout<<"internal point is : "<< p <<"\n";
+        
+        Locate_type lt;
+        Halfedge_const_handle e = arr2->locate(p, lt);
+        if (lt == Arrangement::FACE || lt == Arrangement::UNBOUNDED_FACE)
+          {
+            //cout<<"internal point in FACE is : "<< p <<endl;
+            //if (e->face()->is_unbounded())
+            //  cout<<"Unbounded"<<endl;
+            //else
+            //  cout<<"Bounded"<<endl;
+            
+            set_second_face_above(new_face, e->face());
+            set_second_face_above(ccb_cir, e->face());
+            set_second_face_above(ccb_cir->source(), e->face());  // also set the face above the vertex.
+            break;
+          }
+        ++ccb_cir;
+      } while (ccb_cir != new_face->outer_ccb());
+    }
 
     // now updating the faces above the halfedges and vertices of the new face.
     do{
@@ -313,45 +377,8 @@ public:
         set_second_face_above (ccb_cir, get_second_face_above(new_face));
         set_second_face_above (ccb_cir->source(), get_second_face_above(new_face));
       }
-      ccb_cir++;
+      ++ccb_cir;
     } while (ccb_cir != new_face->outer_ccb());
-    
-    // making point location to the original subdivision (if new_face is a hole of at least one of them).
-    if (new_face->get_first_face_above() == NULL){
-      do{
-        Point p = ccb_cir->source()->point();
-        //std::cout<<"internal point is : "<< p <<std::endl;
-        
-        Locate_type lt;
-        Halfedge_const_handle e = arr1->locate(p, lt);
-        if (lt != Arrangement::VERTEX || lt != Arrangement::EDGE)
-          {
-            set_first_face_above(new_face, e->face());
-            set_first_face_above(ccb_cir, e->face());
-            set_first_face_above(ccb_cir->source(), e->face());  // also set the face above the vertex.
-            break;
-          }
-        ccb_cir++;
-      } while (ccb_cir != new_face->outer_ccb());
-    }
-    
-    if (new_face->get_second_face_above() == NULL){
-      do{
-        Point p = ccb_cir->source()->point();
-        //cout<<"internal point is : "<< p <<"\n";
-        
-        Locate_type lt;
-        Halfedge_const_handle e = arr2->locate(p, lt);
-        if (lt != Arrangement::VERTEX || lt != Arrangement::EDGE)
-          {
-            set_second_face_above(new_face, e->face());
-            set_second_face_above(ccb_cir, e->face());
-            set_second_face_above(ccb_cir->source(), e->face());  // also set the face above the vertex.
-            break;
-          }
-        ccb_cir++;
-      } while (ccb_cir != new_face->outer_ccb());
-    }
   }
   
   void split_face(Pm_face_handle orig_face, Pm_face_handle new_face)
@@ -392,9 +419,9 @@ public:
     first_halfedge = first_halfedge_;
   }
   
-  Arr_const_pointer get_sub_division1 () const { return arr1;}
+  Arr_const_pointer first_subdivision () const { return arr1;}
   
-  Arr_const_pointer get_sub_division2 () const { return arr2;}
+  Arr_const_pointer second_subdivision () const { return arr2;}
   
   //-----------------------------------------  handle wrappering.
   // setting the vertex above.

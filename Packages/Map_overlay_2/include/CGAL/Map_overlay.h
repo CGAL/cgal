@@ -21,13 +21,13 @@
 CGAL_BEGIN_NAMESPACE
 
 template  <class Arrangement_, 
-  class Map_overlay_change_notification_ = Map_overlay_default_notifier<Arrangement_> > 
+           class Change_notification_ = Map_overlay_default_notifier<Arrangement_> > 
 class  Map_overlay {
 public:  
   
   typedef Arrangement_                                          Arrangement;
-  typedef Map_overlay_change_notification_                      Map_overlay_change_notification;
-  //typedef typename Arrangement::Planar_map                    PM;
+  typedef Change_notification_                                  Change_notification;
+  typedef typename Arrangement::Planar_map                      Planar_map;
   //typedef typename Arrangement::Pmwx                          Pmwx;
   typedef typename Arrangement::Vertex                          Vertex;
   typedef typename Arrangement::Face                            Face;
@@ -49,18 +49,20 @@ public:
   typedef typename Arrangement::Holes_iterator                  Holes_iterator;
   typedef typename Arrangement::Holes_const_iterator            Holes_const_iterator;
   typedef typename Arrangement::Locate_type                     Locate_type;
-  typedef typename Arrangement::Point_location_base             Point_location_base;
+  //typedef typename Arrangement::Point_location_base             Point_location_base;
 
-  typedef Map_overlay_base<Arrangement, Map_overlay_change_notification>   Map_ovl_base;
-  typedef Map_overlay_sweep<Arrangement, Map_overlay_change_notification>  Map_ovl_sweep;
- 
+  typedef Map_overlay_base<Arrangement, Change_notification>   Map_ovl_base;
+  typedef Map_overlay_sweep<Arrangement, Change_notification>  Map_ovl_sweep;
+  
+  typedef Pm_point_location_base<Planar_map> Point_location_base;
+  
 private:
-  typedef Map_overlay<Arrangement, Map_overlay_change_notification>       Self;
+  typedef Map_overlay<Arrangement, Change_notification>       Self;
   
 public:
 
   Map_overlay() : sub_division1(0), sub_division2(0), 
-    ovl_change_notf(new Map_overlay_change_notification),  
+    ovl_change_notf(new Change_notification),  
     ovl(new Map_ovl_sweep), 
     use_delete_notf(true), 
     use_delete_ovl(true) {
@@ -74,7 +76,7 @@ public:
 
   Map_overlay (const Arrangement &arr) : arr_(arr), 
     sub_division1(0), sub_division2(0),  
-    ovl_change_notf(new Map_overlay_change_notification),  
+    ovl_change_notf(new Change_notification),  
     ovl(new Map_ovl_sweep), 
     use_delete_notf(true), 
     use_delete_ovl(true)
@@ -90,7 +92,8 @@ public:
         sub_division1 = sub_division2 = NULL;*/
   }
   
-  Map_overlay (const Arrangement &arr, Map_overlay_change_notification* pmwx_change_notf) : 
+  Map_overlay (const Arrangement &arr, 
+               Change_notification* pmwx_change_notf) : 
     arr_(arr), sub_division1(0), sub_division2(0), 
     ovl_change_notf(pmwx_change_notf), ovl(new Map_ovl_sweep), 
     use_delete_notf (false), use_delete_ovl(true)  
@@ -102,44 +105,69 @@ public:
     //ovl->map_overlay(arr, empty_subdivision, ovl_change_notf, arr_);
   }
   
-  Map_overlay (const Arrangement &arr, Map_ovl_base *ovl_ptr) : ovl(ovl_ptr) //, arr_(arr)
+  Map_overlay (const Arrangement &arr, Map_ovl_base *ovl_ptr) : arr_(arr), ovl(ovl_ptr) 
   { 
-    copy_arr(arr, arr_);
+    //copy_arr(arr, arr_);
     
-    ovl_change_notf = new Map_overlay_change_notification;
+    ovl_change_notf = new Change_notification;
     use_delete_notf = true;
     use_delete_ovl = false;
     
-    sub_division1 = sub_division2 = NULL;
+    sub_division1 = sub_division2 = 0;
   }
 
   Map_overlay (const Arrangement &arr,  
-               Map_overlay_change_notification* pmwx_change_notf, 
+               Change_notification* pmwx_change_notf, 
                Map_ovl_base *ovl_ptr) 
-    : ovl_change_notf(pmwx_change_notf) , ovl(ovl_ptr) //, arr_(arr)
+    : ovl_change_notf(pmwx_change_notf) , ovl(ovl_ptr) , arr_(arr)
   { 
-    copy_arr(arr, arr_);
+    //copy_arr(arr, arr_);
     
     use_delete_notf = false;
     use_delete_ovl = false;
     
-    sub_division1 = sub_division2 = NULL;
+    sub_division1 = sub_division2 = 0;
   }
+
+  /*Map_overlay (const Arrangement &arr1, const Arrangement &arr2)
+    {
+    
+  }*/
 
   Map_overlay (const Self &ovl1, const Self &ovl2)
   {
     ovl = new Map_ovl_sweep;
     use_delete_ovl = true;
 
-    ovl_change_notf = new Map_overlay_change_notification( &(ovl1.get_subdivision()), 
-                                                           &(ovl2.get_subdivision()) );
+    ovl_change_notf = new Change_notification( &(ovl1.subdivision()), 
+                                               &(ovl2.subdivision()) );
     use_delete_notf = true;
 
     //int c_sweep_t;
     //c_sweep_t = clock();
-    ovl->map_overlay(ovl1.get_subdivision(), ovl2.get_subdivision(), ovl_change_notf, arr_);
+    ovl->map_overlay(ovl1.subdivision(), ovl2.subdivision(), ovl_change_notf, arr_);
     //c_sweep_t = clock() - c_sweep_t;
     //std::cout<<"The time required by sweep line : "<< (double) c_sweep_t / (double) CLOCKS_PER_SEC<<std::endl;
+
+    sub_division1 = (Self *) &ovl1;
+    sub_division2 = (Self *) &ovl2;
+  }
+  
+  Map_overlay (const Self &ovl1, const Self &ovl2, 
+               Point_location_base *pl_ptr) : arr_(pl_ptr)
+  {
+    ovl = new Map_ovl_sweep;
+    use_delete_ovl = true;
+
+    ovl_change_notf = new Change_notification( &(ovl1.subdivision()), 
+                                               &(ovl2.subdivision()) );
+    use_delete_notf = true;
+
+    int c_sweep_t;
+    c_sweep_t = clock();
+    ovl->map_overlay(ovl1.subdivision(), ovl2.subdivision(), ovl_change_notf, arr_);
+    c_sweep_t = clock() - c_sweep_t;
+    std::cout<<"The time required by sweep line : "<< (double) c_sweep_t / (double) CLOCKS_PER_SEC<<std::endl;
 
     sub_division1 = (Self *) &ovl1;
     sub_division2 = (Self *) &ovl2;
@@ -147,14 +175,14 @@ public:
 
   Map_overlay (const Self &ovl1, 
                const Self &ovl2, 
-               Map_overlay_change_notification* pmwx_change_notf) 
+               Change_notification* pmwx_change_notf) 
     : ovl_change_notf(pmwx_change_notf)
   {
     ovl = new Map_ovl_sweep;
     use_delete_ovl = true;
     use_delete_notf = false;
 
-    ovl->map_overlay(ovl1.get_subdivision(), ovl2.get_subdivision(), ovl_change_notf, arr_);
+    ovl->map_overlay(ovl1.subdivision(), ovl2.subdivision(), ovl_change_notf, arr_);
 
     sub_division1 = (Self *) &ovl1;
     sub_division2 = (Self *) &ovl2;
@@ -163,12 +191,12 @@ public:
   Map_overlay (const Self &ovl1, const Self &ovl2, Map_ovl_base *ovl_ptr) 
     :  ovl(ovl_ptr) 
   {
-    ovl_change_notf = new Map_overlay_change_notification( &(ovl1.get_subdivision()), 
-                                                           &(ovl2.get_subdivision()) );
+    ovl_change_notf = new Change_notification( &(ovl1.subdivision()), 
+                                                           &(ovl2.subdivision()) );
     use_delete_notf = true;
     use_delete_ovl = false;
 
-    ovl->map_overlay(ovl1.get_subdivision(), ovl2.get_subdivision(), ovl_change_notf, arr_);
+    ovl->map_overlay(ovl1.subdivision(), ovl2.subdivision(), ovl_change_notf, arr_);
     
     sub_division1 = (Self *) &ovl1;
     sub_division2 = (Self *) &ovl2;
@@ -176,14 +204,14 @@ public:
   
   Map_overlay (const Self &ovl1, 
                const Self &ovl2, 
-               Map_overlay_change_notification* pmwx_change_notf, 
+               Change_notification* pmwx_change_notf, 
                Map_ovl_base *ovl_ptr) 
     :  ovl_change_notf(pmwx_change_notf) , ovl(ovl_ptr) 
   {
     use_delete_notf = false;
     use_delete_ovl = false;
 
-    ovl->map_overlay(ovl1.get_subdivision(), ovl2.get_subdivision(), ovl_change_notf, arr_);
+    ovl->map_overlay(ovl1.subdivision(), ovl2.subdivision(), ovl_change_notf, arr_);
     
     sub_division1 = (Self *) &ovl1;
     sub_division2 = (Self *) &ovl2;
@@ -208,13 +236,13 @@ public:
       f_iter->reset();
   }
   
-  const Arrangement & get_subdivision() const 
+  const Arrangement& subdivision() const 
   { return arr_; }
  
-  const Self*  get_first_subdivision () const
+  const Self*  first_creator () const
   { return sub_division1; }
   
-  const Self*  get_second_subdivision () const
+  const Self*  second_creator () const
   { return sub_division2; }
 
 private:
@@ -282,7 +310,7 @@ private:
   
   Arrangement                       arr_;
   const Self                        *sub_division1, *sub_division2;
-  Map_overlay_change_notification   *ovl_change_notf;
+  Change_notification               *ovl_change_notf;
   Map_ovl_base                      *ovl;
   bool use_delete_notf;
   bool use_delete_ovl;

@@ -4,7 +4,7 @@
 CGAL_BEGIN_NAMESPACE         
 
 template <class Arrangement_>
-class Map_overlay_post_proc_notifier :  public Arrangement_::PMWXChangeNotification 
+class Map_overlay_post_proc_notifier :  public Arrangement_::Change_notification 
 {
 public:
   typedef Arrangement_                                                     Arrangement;
@@ -29,7 +29,7 @@ public:
   typedef typename Arrangement::Holes_const_iterator                       Holes_const_iterator;
   typedef typename Arrangement::Locate_type                                Locate_type;
   typedef typename Arrangement::Traits_wrap                                Traits_wrap;
-  typedef typename Arrangement::PMWXChangeNotification                     PMWXChangeNotification; 
+  typedef typename Arrangement::Change_notification                        Change_notification; 
   
   typedef typename Arrangement::Traits                                     Traits;
   typedef typename Traits::Point                                           Point;
@@ -46,9 +46,10 @@ public:
   typedef Map_overlay_post_proc_notifier<Arrangement>        Self;
   typedef const Arrangement*                                 Arr_const_pointer;
   
-  Map_overlay_post_proc_notifier() {arr1 = NULL; arr2 = NULL;}
+  Map_overlay_post_proc_notifier() : arr1(0), arr2(0) {}
 
-  Map_overlay_post_proc_notifier (Arr_const_pointer sub_division1, Arr_const_pointer sub_division2) 
+  Map_overlay_post_proc_notifier (Arr_const_pointer sub_division1, 
+                                  Arr_const_pointer sub_division2) 
     : arr1(sub_division1), arr2(sub_division2) {}
   
   Map_overlay_post_proc_notifier (const Self& notf) 
@@ -59,9 +60,12 @@ public:
   
   virtual ~Map_overlay_post_proc_notifier() {}
 
-  void add_edge(const X_curve& cv, Pm_halfedge_handle e, bool left_to_right, bool overlap = false)
+  void add_edge(const X_curve& cv, 
+                Pm_halfedge_handle e, 
+                bool left_to_right, 
+                bool overlap = false)
   {
-    mapOverlay   tmp_ovl;
+    //mapOverlay   tmp_ovl;
     
 #ifdef CGAL_SWEEP_LINE_DEBUG
     std::cout<<"in add_edge" << std::endl;
@@ -76,47 +80,52 @@ public:
          CGAL::compare_lexicographically_xy(orig_halfedge1->source()->point(), 
                                             orig_halfedge1->target()->point()) == CGAL::LARGER)){
       if (first_halfedge){
-        tmp_ovl.set_first_halfedge_above(Halfedge_handle(e), orig_halfedge1);
-        tmp_ovl.set_first_halfedge_above(Halfedge_handle(e->twin()), orig_halfedge1->twin());
+        set_first_halfedge_above(Halfedge_handle(e), orig_halfedge1);
+        set_first_halfedge_above(Halfedge_handle(e->twin()), orig_halfedge1->twin());
         //e->twin()->set_first_halfedge_above(orig_halfedge1->twin().operator->());
       }
       else{ 
-        tmp_ovl.set_second_halfedge_above(Halfedge_handle(e), orig_halfedge1);
-        tmp_ovl.set_second_halfedge_above(Halfedge_handle(e->twin()), orig_halfedge1->twin());
+        set_second_halfedge_above(Halfedge_handle(e), orig_halfedge1);
+        set_second_halfedge_above(Halfedge_handle(e->twin()), orig_halfedge1->twin());
 
         //e->set_second_halfedge_above(orig_halfedge1.operator->());
         //e->twin()->set_second_halfedge_above(orig_halfedge1->twin().operator->());
       }
     }
     
-    else if ((CGAL::compare_lexicographically_xy(e->source()->point(), 
-                                                 e->target()->point()) == CGAL::SMALLER && 
-              CGAL::compare_lexicographically_xy(orig_halfedge2->source()->point(), 
-                                                 orig_halfedge2->target()->point()) == CGAL::SMALLER)
-             || (CGAL::compare_lexicographically_xy(e->source()->point(), 
-                                                    e->target()->point()) == CGAL::LARGER && 
-                 CGAL::compare_lexicographically_xy(orig_halfedge2->source()->point(), 
-                                                    orig_halfedge2->target()->point()) == CGAL::LARGER)){
-      if (first_halfedge){
-        tmp_ovl.set_first_halfedge_above(Halfedge_handle(e), orig_halfedge2);
-        tmp_ovl.set_first_halfedge_above(Halfedge_handle(e->twin()), orig_halfedge2->twin());
-        
-        //e->set_first_halfedge_above(orig_halfedge2.operator->());
-        //e->twin()->set_first_halfedge_above(orig_halfedge2->twin().operator->());
+    else 
+      /*if ((CGAL::compare_lexicographically_xy(e->source()->point(), 
+        e->target()->point()) == CGAL::SMALLER && 
+        CGAL::compare_lexicographically_xy(orig_halfedge2->source()->point(), 
+        orig_halfedge2->target()->point()) == CGAL::SMALLER)
+        || (CGAL::compare_lexicographically_xy(e->source()->point(), 
+        e->target()->point()) == CGAL::LARGER && 
+        CGAL::compare_lexicographically_xy(orig_halfedge2->source()->point(), 
+        orig_halfedge2->target()->point()) == CGAL::LARGER))*/
+      {
+        if (first_halfedge){
+          set_first_halfedge_above(Halfedge_handle(e), orig_halfedge2);
+          set_first_halfedge_above(Halfedge_handle(e->twin()), orig_halfedge2->twin());
+          
+          //e->set_first_halfedge_above(orig_halfedge2.operator->());
+          //e->twin()->set_first_halfedge_above(orig_halfedge2->twin().operator->());
+        }
+        else{
+          set_second_halfedge_above(Halfedge_handle(e), orig_halfedge2);
+          set_second_halfedge_above(Halfedge_handle(e->twin()), orig_halfedge2->twin());
+          
+          //e->set_second_halfedge_above(orig_halfedge2.operator->());
+          //e->twin()->set_second_halfedge_above(orig_halfedge2->twin().operator->());
+        }
       }
-      else{
-        tmp_ovl.set_second_halfedge_above(Halfedge_handle(e), orig_halfedge2);
-        tmp_ovl.set_second_halfedge_above(Halfedge_handle(e->twin()), orig_halfedge2->twin());
-
-        //e->set_second_halfedge_above(orig_halfedge2.operator->());
-        //e->twin()->set_second_halfedge_above(orig_halfedge2->twin().operator->());
-      }
-    }
-    else
-      assert(0);
+    //else
+    //  assert(0);
   } 
   
-  void split_edge(Pm_halfedge_handle orig_edge, Pm_halfedge_handle new_edge, const X_curve& c1, const X_curve& c2)
+  void split_edge(Pm_halfedge_handle orig_edge, 
+                  Pm_halfedge_handle new_edge, 
+                  const X_curve& c1, 
+                  const X_curve& c2)
   {
 #ifdef CGAL_SWEEP_LINE_DEBUG
     std::cout<<"is split_edge" << std::endl;
@@ -159,22 +168,16 @@ public:
     return false;
   }
 
-  /***************************************** new functions **********************************************************/
-  void set_curve_attributes(const X_curve& cv, Halfedge_const_handle orig_halfedge1_, Halfedge_const_handle orig_halfedge2_, bool first_halfedge_)
+  void  update_all_faces(Arrangement& pmwx, 
+                         const Arrangement& first_creator,  
+                         const Arrangement& second_creator)
   {
-    orig_halfedge1 = orig_halfedge1_;
-    orig_halfedge2 = orig_halfedge2_;
-    first_halfedge = first_halfedge_;
-  }
-
-  void  update_all_faces(Arrangement& pmwx, const Arrangement& first_creator,  const Arrangement& second_creator)
-  {
-    mapOverlay   tmp_ovl;
+    //mapOverlay   tmp_ovl;
     Face_handle  unbounded = pmwx.unbounded_face();
 
     // first taking care of the unbounded face.
-    tmp_ovl.set_first_face_above(unbounded, first_creator.unbounded_face());
-    tmp_ovl.set_second_face_above(unbounded, second_creator.unbounded_face());
+    set_first_face_above(unbounded, first_creator.unbounded_face());
+    set_second_face_above(unbounded, second_creator.unbounded_face());
     unbounded->set_color(Face::BLACK);
 
     for (Holes_iterator hit = unbounded->holes_begin(); hit != unbounded->holes_end(); ++hit) {
@@ -191,22 +194,22 @@ public:
           do{
             if (ccb_cir->get_first_halfedge_above() != NULL){
 #ifdef CGAL_SWEEP_LINE_DEBUG
-              if (tmp_ovl.get_first_halfedge_above(ccb_cir)->face()->is_unbounded())
+              if (get_first_halfedge_above(ccb_cir)->face()->is_unbounded())
                 std::cout<<"Face (of first halfedge) above begin_face->outer_ccb() is unbounded"<<std::endl;
               std::cout<<"ccb_cir->get_first_halfedge_above() != NULL" << std::endl;
 #endif
-              tmp_ovl.set_first_face_above(begin_face, tmp_ovl.get_first_halfedge_above(ccb_cir)->face());
+              set_first_face_above(begin_face, get_first_halfedge_above(ccb_cir)->face());
               //begin_face->set_first_face_above (tmp_ovl.get_first_halfedge_above(ccb_cir)->face().operator->());
               //begin_face->set_first_face_above(((Halfedge*) ccb_cir->get_first_halfedge_above())->face().operator->());
             }
             if (ccb_cir->get_second_halfedge_above() != NULL){
 #ifdef CGAL_SWEEP_LINE_DEBUG
-              if (tmp_ovl.get_second_halfedge_above(ccb_cir)->face()->is_unbounded())
+              if (get_second_halfedge_above(ccb_cir)->face()->is_unbounded())
                 std::cout<<"Face above (ofsecond halfedge) begin_face->outer_ccb() is unbounded"<<std::endl;
               std::cout<<"ccb_cir->get_second_halfedge_above() != NULL" << std::endl;
 #endif
                 
-              tmp_ovl.set_second_face_above(begin_face, tmp_ovl.get_second_halfedge_above(ccb_cir)->face());
+              set_second_face_above(begin_face, get_second_halfedge_above(ccb_cir)->face());
               //begin_face->set_second_face_above(tmp_ovl.get_second_halfedge_above(ccb_cir)->face().operator->());
               //begin_face->set_second_face_above( ((Halfedge*) ccb_cir->get_second_halfedge_above())->face().operator->());
             }
@@ -215,23 +218,23 @@ public:
           do{
             if (ccb_cir->get_first_face_above() != NULL && begin_face->get_first_face_above() == NULL){
 #ifdef CGAL_SWEEP_LINE_DEBUG
-              if (tmp_ovl.get_first_face_above(ccb_cir)->is_unbounded())
+              if (get_first_face_above(ccb_cir)->is_unbounded())
                 std::cout<<"First face above ccb_cir of begin_face is unbounded"<<std::endl;
               std::cout<<"ccb_cir->get_first_face_above() != NULL" << std::endl;
 #endif
                 
-              tmp_ovl.set_first_face_above(begin_face, tmp_ovl.get_first_face_above(ccb_cir));
+              set_first_face_above(begin_face, get_first_face_above(ccb_cir));
               //begin_face->set_first_face_above(ccb_cir->get_first_face_above());
             }
             
             else if (ccb_cir->get_second_face_above() != NULL &&  begin_face->get_second_face_above() == NULL){
 #ifdef CGAL_SWEEP_LINE_DEBUG
-              if (tmp_ovl.get_second_face_above(ccb_cir)->is_unbounded())
+              if (get_second_face_above(ccb_cir)->is_unbounded())
                 std::cout<<"Second face above ccb_cir of begin_face is unbounded"<<std::endl;
               cout<<"ccb_cir->get_second_face_above() != NULL" << std::endl;
 #endif
               
-              tmp_ovl.set_second_face_above(begin_face, tmp_ovl.get_second_face_above(ccb_cir));
+              set_second_face_above(begin_face, get_second_face_above(ccb_cir));
               //begin_face->set_second_face_above(ccb_cir->get_second_face_above());  
             }
           } while (++ccb_cir != begin_face->outer_ccb());
@@ -242,7 +245,7 @@ public:
             std::cout<<"first face above begin_face is NULL - putting unbounded"<<std::endl;
 #endif
             
-            tmp_ovl.set_first_face_above(begin_face, first_creator.unbounded_face());
+            set_first_face_above(begin_face, first_creator.unbounded_face());
             //begin_face->set_first_face_above(first_creator.unbounded_face().operator->());
           }
    
@@ -251,7 +254,7 @@ public:
             std::cout<<"second face above begin_face is NULL - putting unbounded"<<std::endl;
 #endif
             
-            tmp_ovl.set_second_face_above(begin_face, second_creator.unbounded_face());
+            set_second_face_above(begin_face, second_creator.unbounded_face());
             //begin_face->set_second_face_above(second_creator.unbounded_face().operator->());
           }
 
@@ -277,12 +280,12 @@ public:
                 
                 if (next_hole_face->get_color() == Face::WHITE){  
                   if (next_hole_edge->get_first_halfedge_above() == NULL && face->get_first_face_above() != NULL){
-                    tmp_ovl.set_first_face_above(next_hole_edge, tmp_ovl.get_first_face_above(face));
+                    set_first_face_above(next_hole_edge, get_first_face_above(face));
                     //next_hole_edge->set_first_face_above(face->get_first_face_above());
                   }
                   
                   if (next_hole_edge->get_second_halfedge_above() == NULL && face->get_second_face_above() != NULL){
-                    tmp_ovl.set_second_face_above(next_hole_edge, tmp_ovl.get_second_face_above(face));
+                    set_second_face_above(next_hole_edge, get_second_face_above(face));
                     //next_hole_edge->set_second_face_above(face->get_second_face_above()); 
                   }
                   
@@ -292,13 +295,13 @@ public:
                   
                   do{
                     if (next_hole_cc->get_first_halfedge_above() != NULL){
-                      tmp_ovl.set_first_face_above(next_hole_face, tmp_ovl.get_first_halfedge_above(next_hole_cc)->face());
+                      set_first_face_above(next_hole_face, get_first_halfedge_above(next_hole_cc)->face());
                       //next_hole_face->set_first_face_above(tmp_ovl.get_first_halfedge_above(next_hole_cc)->face().operator->());
                       //next_hole_face->set_first_face_above(((Halfedge*) next_hole_cc->get_first_halfedge_above())->face().operator->());
                       //cout<<next_hole_cc->curve()<<" got blue above\n"; 
                     }
                     if (next_hole_cc->get_second_halfedge_above() != NULL){
-                      tmp_ovl.set_second_face_above(next_hole_face, tmp_ovl.get_second_halfedge_above(next_hole_cc)->face());
+                      set_second_face_above(next_hole_face, get_second_halfedge_above(next_hole_cc)->face());
                       //next_hole_face->set_second_face_above(tmp_ovl.get_second_halfedge_above(next_hole_cc)->face().operator->());
                       //next_hole_face->set_second_face_above(((Halfedge*) next_hole_cc->get_second_halfedge_above())->face().operator->());
                       //std::cout<<next_hole_cc->curve()<<" got red above\n";
@@ -307,13 +310,13 @@ public:
 
                   do{
                     if (next_hole_cc->get_first_face_above() != NULL && next_hole_face->get_first_face_above() == NULL){
-                      tmp_ovl.set_first_face_above(next_hole_face, tmp_ovl.get_first_face_above(next_hole_cc));
+                      set_first_face_above(next_hole_face, get_first_face_above(next_hole_cc));
                       //next_hole_face->set_first_face_above(next_hole_cc->get_first_face_above());
                       //cout<<next_hole_cc->curve()<<" got blue above\n";
                     }
                     
                     if (next_hole_cc->get_second_face_above() != NULL && next_hole_face->get_second_face_above() == NULL){
-                      tmp_ovl.set_second_face_above(next_hole_face, tmp_ovl.get_second_face_above(next_hole_cc));
+                      set_second_face_above(next_hole_face, get_second_face_above(next_hole_cc));
                       //next_hole_face->set_second_face_above(next_hole_cc->get_second_face_above());
                       //std::cout<<next_hole_cc->curve()<<" got red above\n";
                     }
@@ -336,12 +339,12 @@ public:
               
               if (next_face->get_color() == Face::WHITE){  
                 if (next_edge->get_first_halfedge_above() == NULL && face->get_first_face_above() != NULL){  //there was a bug here!
-                  tmp_ovl.set_first_face_above(next_edge, tmp_ovl.get_first_face_above(face));
+                  set_first_face_above(next_edge, get_first_face_above(face));
                   //next_edge->set_first_face_above(face->get_first_face_above());
                 }
                 
                 if (next_edge->get_second_halfedge_above() == NULL && face->get_second_face_above() != NULL){
-                  tmp_ovl.set_second_face_above(next_edge, tmp_ovl.get_second_face_above(face));
+                  set_second_face_above(next_edge, get_second_face_above(face));
                   //next_edge->set_second_face_above(face->get_second_face_above());
                 }
                 
@@ -351,13 +354,13 @@ public:
                 
                 do{
                   if (next_cc->get_first_halfedge_above() != NULL){
-                    tmp_ovl.set_first_face_above(next_face, tmp_ovl.get_first_halfedge_above(next_cc)->face());
+                    set_first_face_above(next_face, get_first_halfedge_above(next_cc)->face());
                     //next_face->set_first_face_above(tmp_ovl.get_first_halfedge_above(next_cc)->face().operator->());
                     //next_face->set_first_face_above(((Halfedge*) next_cc->get_first_halfedge_above())->face().operator->());
                     //std::cout<<next_cc->curve()<<" got blue above\n";
                   }                  
                   if (next_cc->get_second_halfedge_above() != NULL){
-                    tmp_ovl.set_second_face_above(next_face, tmp_ovl.get_second_halfedge_above(next_cc)->face());
+                    set_second_face_above(next_face, get_second_halfedge_above(next_cc)->face());
                     //next_face->set_second_face_above(tmp_ovl.get_second_halfedge_above(next_cc)->face().operator->());
                     //next_face->set_second_face_above(((Halfedge*) next_cc->get_second_halfedge_above())->face().operator->());
                     //std::cout<<next_cc->curve()<<" got red above\n";
@@ -372,13 +375,13 @@ public:
 
                    
 
-                    tmp_ovl.set_first_face_above(next_face, tmp_ovl.get_first_face_above(next_cc));
+                    set_first_face_above(next_face, get_first_face_above(next_cc));
                     //next_face->set_first_face_above(next_cc->get_first_face_above());  
                   }
                   if (next_cc->get_second_face_above() != NULL && next_face->get_second_face_above() == NULL){
                     //cout<<"bogi red face1\n";
                     
-                    tmp_ovl.set_second_face_above(next_face, tmp_ovl.get_second_face_above(next_cc));
+                    set_second_face_above(next_face, get_second_face_above(next_cc));
                     
                     //next_face->set_second_face_above(next_cc->get_second_face_above());  
                     //cout<<"bogi red face2\n";
@@ -401,10 +404,20 @@ public:
       } while (++begin_halfedge != *hit);
     }
   }
+
+  /***************************************** new functions **********************************************************/
+  void set_curve_attributes(const X_curve& cv, 
+                            Halfedge_const_handle orig_halfedge1_, 
+                            bool first_halfedge_)
+  {
+    orig_halfedge1 = orig_halfedge1_;
+    orig_halfedge2 = orig_halfedge1_->twin();
+    first_halfedge = first_halfedge_;
+  }
   
-  Arr_const_pointer get_sub_division1 () const { return arr1;}
+  Arr_const_pointer first_subdivision () const { return arr1;}
   
-  Arr_const_pointer get_sub_division2 () const { return arr2;}
+  Arr_const_pointer second_subdivision () const { return arr2;}
   
   //-----------------------------------------  handle wrappering.
   // setting the vertex above.
@@ -781,3 +794,7 @@ private:
   Halfedge_const_handle  orig_halfedge1, orig_halfedge2;
   Arr_const_pointer      arr1, arr2;
 };
+
+CGAL_END_NAMESPACE
+
+#endif

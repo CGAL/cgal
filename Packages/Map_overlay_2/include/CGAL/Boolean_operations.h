@@ -65,7 +65,7 @@ public:
                      const Arrangement& arr2) : 
     arr1_( *(new Map_overlay(arr1)) ), 
     arr2_( *(new Map_overlay(arr2)) ),
-    map_overlay( *(new Map_overlay(arr1_, arr2_)) )
+    map_overlay_( *(new Map_overlay(arr1_, arr2_)) )
     //map_overlay( Map_overlay(Map_overlay(arr1, &ovl_notf), Map_overlay(arr2, &ovl_notf), &ovl_notf) ) 
   {}
 
@@ -74,7 +74,7 @@ public:
                      Map_ovl_base *ovl_ptr) : 
     arr1_( *(new Map_overlay(arr1, ovl_ptr)) ), 
     arr2_( *(new Map_overlay(arr2, ovl_ptr)) ),
-    map_overlay( *(new Map_overlay(arr1_, arr2_, ovl_ptr)) )
+    map_overlay_( *(new Map_overlay(arr1_, arr2_, ovl_ptr)) )
     //map_overlay( Map_overlay(Map_overlay(arr1, &ovl_notf), Map_overlay(arr2, &ovl_notf), &ovl_notf) ) 
   {}
 
@@ -83,19 +83,19 @@ public:
                      Map_overlay_change_notification* ovl_notf_ptr, Map_ovl_base *ovl_ptr) : 
     arr1_( *(new Map_overlay(arr1, ovl_notf, ovl_ptr)) ), 
     arr2_( *(new Map_overlay(arr2, ovl_notf_ptr, ovl_ptr)) ),
-    map_overlay(*(new Map_overlay(arr1_, arr2_, ovl_notf_ptr, ovl_ptr)) )
+    map_overlay_(*(new Map_overlay(arr1_, arr2_, ovl_notf_ptr, ovl_ptr)) )
     //map_overlay( Map_overlay(Map_overlay(arr1, &ovl_notf), Map_overlay(arr2, &ovl_notf), &ovl_notf) ) 
   {}
 
   Boolean_operations(const Arrangement& arr1, const Arrangement& arr2, Map_overlay_change_notification* ovl_notf) : 
     arr1_( *(new Map_overlay(arr1, ovl_notf)) ), arr2_( *(new Map_overlay(arr2, ovl_notf)) ),
-    map_overlay( *(new Map_overlay(arr1_, arr2_, ovl_notf)) )
+    map_overlay_( *(new Map_overlay(arr1_, arr2_, ovl_notf)) )
     //map_overlay( Map_overlay(Map_overlay(arr1, &ovl_notf), Map_overlay(arr2, &ovl_notf), &ovl_notf) ) 
   {}
   
   Boolean_operations(const Map_overlay& map_ovl) :  
     arr1_(*(map_ovl.get_first_subdivision())), arr2_(*(map_ovl.get_second_subdivision())), 
-    map_overlay(map_ovl)
+    map_overlay_(map_ovl)
   {}
 
   
@@ -104,7 +104,7 @@ public:
                      Halfedges_container& list_of_halfedges, 
                      Vertices_container& list_of_vertices) const 
   {
-    const Arrangement&              arr = map_overlay.get_subdivision();
+    const Arrangement&              arr = map_overlay_.subdivision();
     //Map_overlay_change_notification  tmp_notf;
     
     // a vertex is in the intersection if it gots two vertices above it or two halfedges or two face.
@@ -130,7 +130,7 @@ public:
   
   void intersection (Faces_container& list_of_faces) const 
   {
-    const Arrangement&              arr = map_overlay.get_arr();
+    const Arrangement&              arr = map_overlay_.subdivision();
     //Map_overlay_change_notification  tmp_notf;
     
     // a face is in the intersection if it gots two faces above it.
@@ -144,7 +144,7 @@ public:
   
   void intersection (Halfedges_container& list_of_halfedges) const
   {
-    const Arrangement&              arr = map_overlay.get_subdivision();
+    const Arrangement&              arr = map_overlay_.subdivision();
     //Map_overlay_change_notification  tmp_notf;
     
     // an halfedge is in the intersection if it gots two halfedges above it or two faces.
@@ -156,7 +156,7 @@ public:
 
   void intersection (Vertices_container& list_of_vertices) const
   {
-    const Arrangement&              arr = map_overlay.get_subdivision();
+    const Arrangement&              arr = map_overlay_.subdivision();
     //Map_overlay_change_notification  tmp_notf;
     
     // a vertex is in the intersection if it gots two vertices above it or two halfedges or two face.
@@ -169,7 +169,7 @@ public:
   void intersection (Faces_container& list_of_faces,
                      Halfedges_container& list_of_halfedges) const
   {
-    const Arrangement&              arr = map_overlay.get_subdivision();
+    const Arrangement&              arr = map_overlay_.subdivision();
     //Map_overlay_change_notification  tmp_notf;
     
     // an halfedge is in the intersection if it gots two halfedges above it or two faces.
@@ -190,7 +190,7 @@ public:
   void intersection (Halfedges_container& list_of_halfedges, 
                      Vertices_container& list_of_vertices)  const
   {
-    const Arrangement&              arr = map_overlay.get_subdivision();
+    const Arrangement&              arr = map_overlay_.subdivision();
     //Map_overlay_change_notification  tmp_notf;
     
     // a vertex is in the intersection if it gots two vertices above it or two halfedges or two face.
@@ -209,7 +209,7 @@ public:
   void intersection (Faces_container& list_of_faces,
                      Vertices_container& list_of_vertices) const
   {
-    const Arrangement&              arr = map_overlay.get_subdivision();
+    const Arrangement&              arr = map_overlay_.subdivision();
     //Map_overlay_change_notification  tmp_notf;
     
     // a vertex is in the intersection if it gots two vertices above it or two halfedges or two face.
@@ -232,7 +232,7 @@ public:
               Halfedges_container& list_of_halfedges, 
               Vertices_container& list_of_vertices)  const 
   {
-    const Arrangement& arr = map_overlay.get_subdivision();
+    const Arrangement& arr = map_overlay_.subdivision();
     //Map_overlay_change_notification  tmp_notf;
 
     // a vertex is on the union if it gots at least one vertex above it, or one halfedg or one face. 
@@ -258,7 +258,7 @@ public:
   
   void Union (Faces_container& list_of_faces) const
   {
-    const Arrangement& arr = map_overlay.get_subdivision();
+    const Arrangement& arr = map_overlay_.subdivision();
     //Map_overlay_change_notification  tmp_notf;
     
     // a face is in the union if it gots at least one face above it.
@@ -273,7 +273,7 @@ public:
   //template <class Faces_output_container, class Halfedges_output_container, class Vertices_output_container>
   void Union (Halfedges_container& list_of_halfedges) const
   {
-    const Arrangement& arr = map_overlay.get_subdivision();
+    const Arrangement& arr = map_overlay_.subdivision();
     //Map_overlay_changeNotification  tmp_notf;
 
     // an halfedge is in the union if it gots at least one halfedge above it or one face.
@@ -285,7 +285,7 @@ public:
 
   void Union (Vertices_container& list_of_vertices) const
   {
-    const Arrangement& arr = map_overlay.get_subdivision();
+    const Arrangement& arr = map_overlay_.subdivision();
     //Map_overlay_changeNotification  tmp_notf;
 
     // a vertex is on the union if it gots at least one vertex above it, or one halfedg or one face. 
@@ -298,7 +298,7 @@ public:
   void Union (Faces_container& list_of_faces, 
               Halfedges_container& list_of_halfedges) const
   {
-    const Arrangement& arr = map_overlay.get_subdivision();
+    const Arrangement& arr = map_overlay_.subdivision();
     //Map_overlay_changeNotification  tmp_notf;
     
     // an halfedge is in the union if it gots at least one halfedge above it or one face.
@@ -319,7 +319,7 @@ public:
   void Union (Halfedges_container& list_of_halfedges, 
               Vertices_container& list_of_vertices) const
   {
-    const Arrangement& arr = map_overlay.get_subdivision();
+    const Arrangement& arr = map_overlay_.subdivision();
     //Map_overlay_changeNotification  tmp_notf;
 
     // a vertex is on the union if it gots at least one vertex above it, or one halfedg or one face. 
@@ -338,7 +338,7 @@ public:
   void Union (Faces_container& list_of_faces, 
               Vertices_container& list_of_vertices) const
   {
-    const Arrangement& arr = map_overlay.get_subdivision();
+    const Arrangement& arr = map_overlay_.subdivision();
     //Map_overlay_changeNotification  tmp_notf;
 
     // a vertex is on the union if it gots at least one vertex above it, or one halfedg or one face. 
@@ -361,7 +361,7 @@ public:
                              Vertices_container& list_of_vertices) const 
   {
     //Map_overlay tmp_ovl;
-    const Arrangement& arr = map_overlay.get_subdivision();
+    const Arrangement& arr = map_overlay_.subdivision();
 
     for (Vertex_const_iterator vertices_iter = arr.vertices_begin(); vertices_iter !=  arr.vertices_end(); vertices_iter++){
       if ((vertex_is_below_first_map(vertices_iter) && !vertex_is_below_second_map(vertices_iter)) || 
@@ -390,7 +390,7 @@ public:
   void symmetric_difference (Vertices_container& list_of_vertices) const
   {
     //Map_overlay tmp_ovl;
-    const Arrangement& arr = map_overlay.get_subdivision();
+    const Arrangement& arr = map_overlay_.subdivision();
 
     for (Vertex_const_iterator vertices_iter = arr.vertices_begin(); vertices_iter !=  arr.vertices_end(); vertices_iter++){
       if ((vertex_is_below_first_map(vertices_iter) && !vertex_is_below_second_map(vertices_iter)) || 
@@ -402,7 +402,7 @@ public:
   void symmetric_difference (Halfedges_container& list_of_halfedges) const
   {
     //Map_overlay tmp_ovl;
-    const Arrangement& arr = map_overlay.get_subdivision();
+    const Arrangement& arr = map_overlay_.subdivision();
     
     for (Halfedge_const_iterator halfedge_iter = arr.halfedges_begin(); halfedge_iter !=  arr.halfedges_end(); halfedge_iter++){
       if ((halfedge_is_below_first_map(halfedge_iter) && !halfedge_is_below_second_map(halfedge_iter)) || 
@@ -415,7 +415,7 @@ public:
   void symmetric_difference (Faces_container& list_of_faces) const
   {
     //Map_overlay tmp_ovl;
-    const Arrangement& arr = map_overlay.get_subdivision();
+    const Arrangement& arr = map_overlay_.subdivision();
     
     for (Face_const_iterator face_iter = arr.faces_begin(); face_iter !=  arr.faces_end(); face_iter++){
       //if ( (tmp_notf.get_first_face_above(face_iter)->bop() && !(tmp_notf.get_second_face_above(face_iter)->bop()) ) 
@@ -432,7 +432,7 @@ public:
                              Vertices_container& list_of_vertices) const
   {
     //Map_overlay tmp_ovl;
-    const Arrangement& arr = map_overlay.get_subdivision();
+    const Arrangement& arr = map_overlay_.subdivision();
     //Map_overlay_changeNotification  tmp_notf;
 
     for (Vertex_const_iterator vertices_iter = arr.vertices_begin(); vertices_iter !=  arr.vertices_end(); vertices_iter++){
@@ -453,7 +453,7 @@ public:
                               Halfedges_container& list_of_halfedges) const
   {
     //Map_overlay tmp_ovl;
-    const Arrangement& arr = map_overlay.get_subdivision();
+    const Arrangement& arr = map_overlay_.subdivision();
     
     for (Halfedge_const_iterator halfedge_iter = arr.halfedges_begin(); halfedge_iter !=  arr.halfedges_end(); halfedge_iter++){
       if ((halfedge_is_below_first_map(halfedge_iter) && !halfedge_is_below_second_map(halfedge_iter)) || 
@@ -477,7 +477,7 @@ public:
                              Vertices_container& list_of_vertices) const
   {
     //Map_overlay tmp_ovl;
-    const Arrangement& arr = map_overlay.get_subdivision();
+    const Arrangement& arr = map_overlay_.subdivision();
 
     for (Vertex_const_iterator vertices_iter = arr.vertices_begin(); vertices_iter !=  arr.vertices_end(); vertices_iter++){
       if ((vertex_is_below_first_map(vertices_iter) && !vertex_is_below_second_map(vertices_iter)) || 
@@ -503,7 +503,7 @@ public:
                    bool first = true) const
   {
     //Map_overlay tmp_ovl;
-    const Arrangement& arr = map_overlay.get_subdivision();
+    const Arrangement& arr = map_overlay_.subdivision();
     //Map_overlay_changeNotification  tmp_notf;
 
     for (Vertex_const_iterator vertices_iter = arr.vertices_begin(); vertices_iter !=  arr.vertices_end(); vertices_iter++){
@@ -546,7 +546,7 @@ public:
                    bool first = true) const
   {
     //Map_overlay tmp_ovl;
-    const Arrangement& arr = map_overlay.get_subdivision();
+    const Arrangement& arr = map_overlay_.subdivision();
     //Map_overlay_changeNotification  tmp_notf;
 
     for (Vertex_const_iterator vertices_iter = arr.vertices_begin(); vertices_iter !=  arr.vertices_end(); vertices_iter++){
@@ -564,7 +564,7 @@ public:
                     bool first = true) const
   {
     //Map_overlay tmp_ovl;
-    const Arrangement& arr = map_overlay.get_subdivision();
+    const Arrangement& arr = map_overlay_.subdivision();
     
     for (Halfedge_const_iterator halfedge_iter = arr.halfedges_begin(); halfedge_iter !=  arr.halfedges_end(); halfedge_iter++){
       if (first){
@@ -581,7 +581,7 @@ public:
                    bool first = true) const
   {
     //Map_overlay tmp_ovl;
-    const Arrangement& arr = map_overlay.get_subdivision();
+    const Arrangement& arr = map_overlay_.subdivision();
     
     for (Face_const_iterator face_iter = arr.faces_begin(); face_iter !=  arr.faces_end(); face_iter++){
       if (first){
@@ -604,7 +604,7 @@ public:
                    bool first = true) const
   {
     //Map_overlay tmp_ovl;
-    const Arrangement& arr = map_overlay.get_subdivision();
+    const Arrangement& arr = map_overlay_.subdivision();
     //Map_overlay_changeNotification  tmp_notf;
 
     for (Vertex_const_iterator vertices_iter = arr.vertices_begin(); vertices_iter !=  arr.vertices_end(); vertices_iter++){
@@ -633,7 +633,7 @@ public:
                    bool first = true) const
   {
     //Map_overlay tmp_ovl;
-    const Arrangement& arr = map_overlay.get_subdivision();
+    const Arrangement& arr = map_overlay_.subdivision();
     
     
     for (Halfedge_const_iterator halfedge_iter = arr.halfedges_begin(); halfedge_iter !=  arr.halfedges_end(); halfedge_iter++){
@@ -667,7 +667,7 @@ public:
                    bool first = true) const
   {
     //Map_overlay tmp_ovl;
-    const Arrangement& arr = map_overlay.get_subdivision();
+    const Arrangement& arr = map_overlay_.subdivision();
     //Map_overlay_changeNotification  tmp_notf;
 
     for (Vertex_const_iterator vertices_iter = arr.vertices_begin(); vertices_iter !=  arr.vertices_end(); vertices_iter++){
@@ -696,7 +696,7 @@ public:
     }
   }
   
-  const Map_overlay&  get_map_overlay() const {return map_overlay;}
+  const Map_overlay&  map_overlay() const {return map_overlay_;}
   
   ~Boolean_operations () {}
   
@@ -750,13 +750,17 @@ private:
   }
   
   const Map_overlay &arr1_, &arr2_;
-  const Map_overlay &map_overlay;
+  const Map_overlay &map_overlay_;
   //std::list<Face_const_iterator> faces;
 };
 
 CGAL_END_NAMESPACE
 
 #endif
+
+
+
+
 
 
 
