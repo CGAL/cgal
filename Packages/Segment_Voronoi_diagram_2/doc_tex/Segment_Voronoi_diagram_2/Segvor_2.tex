@@ -17,9 +17,6 @@
 %%
 %% Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 
-\newcommand{\hide}[1]{}
-
-
 This chapter describes the two-dimensional segment Voronoi diagram
 package of \cgal. We start with a few definitions in 
 Section~\ref{sec:segvor2-definitions}.
@@ -80,6 +77,7 @@ reader may want to refer to the paper by Karavelas
 \cite{cgal:k-reisv-04} for the general idea as well as the details of
 the algorithm implemented.
 
+\paragraph{Definitions.}
 Before describing the details of the implementation we make a brief
 introduction to the theory of segment Voronoi diagrams.
 The segment Voronoi diagram is defined over a set of non-intersecting
@@ -224,7 +222,7 @@ parametrized by two arguments:
 \end{itemize}
 
 
-\paragraph{Intersecting sites and their representation.}
+\paragraph{Strongly intersecting sites and their representation.}
 As we have mentioned above, the segment Voronoi diagram package of
 \cgal\ is designed to support the computation of the segment Voronoi
 diagram even when the input segment sites are intersecting. This
@@ -343,9 +341,9 @@ the predicates) have coefficients which are always of bit size
 $2b+O(1)$. As a result, the bit size of the expressions involved in
 our predicates will always be $O(b)$, independently of the
 size of the input.
-
+%
 The \ccc{SegmentVoronoiDiagramSite_2} concept encapsulates the ideas
-presented below. A site is represented in this concept by up to four
+presented above. A site is represented in this concept by up to four
 points and a boolean, or up to six points, depending on its type. The
 class \ccc{Segment_Voronoi_diagram_site_2<K>} implements this
 concept.
@@ -382,9 +380,9 @@ objects) instead of 6 points, which are, compared to handles of
 course, very heavy objects.
 
 \paragraph{Optimizing memory allocation.}
-There applications where we know beforehand that the input consists of
-only weakly intersecting sites. In these cases the site representation
-described in the previous section poses a significant overhead in the
+There are applications where we know beforehand that the input
+consists of only weakly intersecting sites. In these cases the site
+representation described above poses a significant overhead in the
 memory requirements of our implementation: instead of representing
 sites with up to two points (or ultimately with to two handles), we
 require sites to store six points (respectively, six handles). To
@@ -405,18 +403,20 @@ avoid this overhead we have introduced two series of traits classes:
 The advantages of having different traits classes are as follows:
 \begin{itemize}
 \item When the user chooses to use one of the traits classes in the
-  second series we only store two points per site. This implies a
-  reduction my a factor of three in the memory allocated per site with
+  second series we only store two handles per site. This implies a
+  reduction by a factor of three in the memory allocated per site with
   respect to the first series of traits classes.
 \item In the case of the first series of traits classes, we can better
   exploit the knowledge that have strongly intersecting sites, in
   order to further apply geometric filters (see below) during the
-  evaluation of the predicates.
+  evaluation of the predicates. On the contrary, if the second series
+  of traits classes is used, we can avoid geometric filtering tests
+  that have meaning only in the case of strongly intersecting sites.
 \end{itemize}
 
 
 \section{The Geometric Traits}
-\label{sec:apollonius2-traits}
+\label{sec:segvor2-traits}
 
 The predicates required for the computation of the segment Voronoi
 diagram are rather complicated. It is not the purpose of this document to
@@ -453,9 +453,9 @@ To illustrate the application and effectiveness of this approach,
 let us consider a very simple example usage.
 Suppose we want to determine if two non-input points are
 identical (we assume here that the input sites are represented by
-{\tt double}s). In order to do that we need to compute their
+\ccc{double}s). In order to do that we need to compute their
 coordinates and compare them. If the two points are identical, the
-answer to our question using {\tt double} arithmetic may be 
+answer to our question using \ccc{double} arithmetic may be 
 wrong (due to numerical errors), in which case we will have to reside
 to the more expensive exact computation. Instead, before testing the
 coordinates for equality, we can use the representation of the points
@@ -465,7 +465,7 @@ test if the defining segments of the two points are the same. If they
 are not, then we proceed to comparing their coordinates as
 usual. Testing the defining segments for equality does not involve any
 arithmetic operations on the input, but rather only comparisons on
-{\tt double}s. By performing this very simple test we avoid a
+\ccc{double}s. By performing this very simple test we avoid a
 numerically difficult computation, which could be performed
 thousands of times during the computation of a Voronoi diagram.
 
@@ -493,13 +493,13 @@ segment Voronoi diagrams:
   \ccc{Segment_Voronoi_diagram_2<K,MTag>} or
   \ccc{Segment_Voronoi_diagram_with_intersections_2<K,MTag>} class.
 \item The user can define up to three different kernels \ccc{CK},
-  \ccc{FK} and \ccc{EK} (some default values are provided). The first
-  kernel \ccc{CK} will be used only for constructions. The second
-  kernel \ccc{FK} is the filtering kernel: the traits class will
-  attempt to compute the predicates using this kernel. If the
-  filtering kernel fails to successfully compute a predicate, the
-  exact kernel \ccc{EK} will be used. These three kernels are then
-  used in the 
+  \ccc{FK} and \ccc{EK} (default values are provided for most
+  parameters). The first kernel \ccc{CK} is used only for
+  constructions. The second kernel \ccc{FK} is the filtering kernel:
+  the traits class will attempt to compute the predicates using this
+  kernel. If the filtering kernel fails to successfully compute a
+  predicate, the exact kernel \ccc{EK} will be used. These three
+  kernels are then used in the 
   \ccc{Segment_Voronoi_diagram_filtered_traits_2<CK,CM,EK,EM,FK,FM>} and
   \ccc{Segment_Voronoi_diagram_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}
   classes, which have been implemented using the
@@ -517,11 +517,12 @@ to the user, who can indicate the type of arithmetic operations to
 be used in the evaluation of the predicates. More specifically, in
 both classes, \ccc{MTag} can be \ccc{CGAL::Sqrt_field_tag}, in
 which case the predicates will be evaluated using all four basic
-arithmetic operations plus square roots; this requires of course
+arithmetic operations plus square roots; this requires, of course,
 that the number type used in the kernel \ccc{K} supports these
-operations exactly. The second choices is \ccc{CGAL::Field_tag} for
-the \ccc{Segment_Voronoi_diagram_2<K,MTag>}, and \ccc{CGAL::Ring_tag}
-for the \ccc{Segment_Voronoi_diagram_with_intersections_2<K,MTag>}
+operations exactly. The second choices are \ccc{CGAL::Field_tag} for
+the \ccc{Segment_Voronoi_diagram_2<K,MTag>} class, and
+\ccc{CGAL::Ring_tag} for the
+\ccc{Segment_Voronoi_diagram_with_intersections_2<K,MTag>}
 class. In the first case we indicate that we want the predicates to be
 computed using only the four basic arithmetic operations, whereas in
 the second case we evaluate the predicates using only ring operations.
@@ -556,10 +557,11 @@ class is used, the possible values are \ccc{CGAL::Sqrt_field_tag} and
 
 
 The
-\ccc{Segment_Voronoi_diagram_hierarchy_2<SegmentVoronoiDiagramTraits_2,SSTag,SegmentVoronoiDiagramDataStructure_2>}
-class is the analogue of the
-\ccc{Triangulation_hierarchy_2} or the \ccc{Apollonius_graph_hierarchy_2}
-class, applied to the segment Voronoi diagram. It consists of a series of
+\ccc{Segment_Voronoi_diagram_hierarchy_2<SegmentVoronoiDiagramTraits_2,
+  SSTag, SegmentVoronoiDiagramDataStructure_2>} class is the analogue
+of the \ccc{Triangulation_hierarchy_2} or the
+\ccc{Apollonius_graph_hierarchy_2} classes, applied to the segment
+Voronoi diagram. It consists of a hierarchy of
 segment Voronoi diagrams constructed in a manner analogous to the
 Delaunay hierarchy by Devillers \cite{cgal:d-dh-02}. Unlike the
 triangulation hierarchy or the Apollonius graph hierarchy, the
@@ -568,7 +570,7 @@ segments are treated as three objects instead of one (the two
 endpoints and the interior of the segments), and secondly, the
 presence of strongly intersecting sites complicates significantly the
 way the hierarchy is constructed. The interested reader may refer to
-the paper by Karavelas \cite{k-reisv-04} for the details of the
+the paper by Karavelas \cite{cgal:k-reisv-04} for the details of the
 construction of the hierarchy.
 Another alternative is to have a hybrid hierarchy that consists of the
 segment Voronoi diagram at the bottom-most level and point Voronoi
@@ -578,20 +580,22 @@ Voronoi diagram for segments at the upper levels of the
 hierarchy. However, it seems much less likely to be possible to give
 any theoretical guarantees for its performance, in contrast to the
 hierarchy with segment Voronoi diagrams at all levels
-(cf. \cite{k-reisv-04}). The user can choose between the two types of
-hierarchies by means of the template parameter \ccc{SSTag}. If
-\ccc{SSTag} is set to \ccc{false} (which is also the default value),
-the upper levels of the hierarchy consist of point Voronoi
-diagrams. If \ccc{SSTag} is set to \ccc{true}, we have segment Voronoi
-diagrams at all levels of the hierarchy.
+(cf. \cite{cgal:k-reisv-04}). The user can choose between the two
+types of hierarchies by means of the template parameter
+\ccc{SSTag}. If \ccc{SSTag} is set to \ccc{false} (which is also the
+default value), the upper levels of the hierarchy consist of point
+Voronoi diagrams. If \ccc{SSTag} is set to \ccc{true}, we have segment
+Voronoi diagrams at all levels of the hierarchy.
 
-The class \ccc{Segment_Voronoi_diagram_hierarchy_2<SegmentVoronoiDiagramTraits_2,SSTag,SegmentVoronoiDiagramDataStructure_2>}
+The class
+\ccc{Segment_Voronoi_diagram_hierarchy_2<SegmentVoronoiDiagramTraits_2,
+  SSTag, SegmentVoronoiDiagramDataStructure_2>}
 has exactly the same interface and functionality as the
 \ccc{Segment_Voronoi_diagram_2<SegmentVoronoiDiagramTraits_2,SegmentVoronoiDiagramDataStructure_2>}
 class. Using the segment Voronoi diagram hierarchy involves an
 additional cost in space and time for maintaining the hierarchy. Our
 experiments have shown that it usually pays off to use the hierarchy
-for inputs consisting of more than 1,000 sites. 
+for inputs consisting of more than about 1,000 sites. 
 
 %This threshold holds
 %for both the construction of the  diagram itself, as well as for
