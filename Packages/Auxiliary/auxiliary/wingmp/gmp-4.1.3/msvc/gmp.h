@@ -26,7 +26,6 @@ MA 02111-1307, USA. */
 #include <iosfwd>   /* for istream, ostream */
 #endif
 
-
 /* Instantiated by configure. */
 #if ! defined (__GMP_WITHIN_CONFIGURE)
 #define __GMP_BITS_PER_MP_LIMB             32
@@ -39,7 +38,6 @@ MA 02111-1307, USA. */
 #define GMP_NUMB_MASK     ((~ __GMP_CAST (mp_limb_t, 0)) >> GMP_NAIL_BITS)
 #define GMP_NUMB_MAX      GMP_NUMB_MASK
 #define GMP_NAIL_MASK     (~ GMP_NUMB_MASK)
-
 
 /* The following (everything under ifndef __GNU_MP__) must be identical in
    gmp.h and mp.h to allow both to be included in an application or during
@@ -57,10 +55,8 @@ MA 02111-1307, USA. */
 
 /* Instantiated by configure. */
 #if ! defined (__GMP_WITHIN_CONFIGURE)
-/* #undef _LONG_LONG_LIMB */
-#define __GMP_LIBGMP_DLL  1
+#undef _LONG_LONG_LIMB
 #endif
-
 
 /* __STDC__ - some ANSI compilers define this only to 0, hence the use of
        "defined" and not "__STDC__-0".  In particular Sun workshop C 5.0
@@ -279,7 +275,6 @@ typedef __mpq_struct *mpq_ptr;
 /* all other cases */
 #define __GMP_DECLSPEC_XX
 #endif
-
 
 #if __GMP_HAVE_PROTOTYPES
 #define __GMP_PROTO(x) x
