@@ -1,3 +1,7 @@
+Version 11.33 (09/07/03) [af]
+- Alpha_shape_2 used backward compatible functions of Triangulation_2
+- Prefixed min and max function calls with std::
+
 Version 11.32 (25/06/03) [af]
 - bugfix in demo: we forgot to blend in the Regular_triangulation_vertex_base_2
 
