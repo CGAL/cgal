@@ -1,6 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 7.91 (13/06/03)
+- moved the definition of Infinite_tester
+  removed the friend declaration for it
+
 Ver 7.90 (11/06/03)
 - make the declaration for class Infinite_tester public in Triangulation_2
 
