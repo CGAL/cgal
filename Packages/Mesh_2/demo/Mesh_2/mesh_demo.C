@@ -1148,13 +1148,18 @@ public slots:
       widget->redraw();
     }
 
-  void clearSeeds()
+  void clearSeeds_without_redraw()
     {
       seeds.clear();
       delete mesher;
       mesher = 0;
       emit initializedMesher();
       mark_facets();
+    }
+
+  void clearSeeds()
+    {
+      clearSeeds_without_redraw();
       widget->redraw();
     }
 
@@ -1176,7 +1181,7 @@ public slots:
 
       if(s.right(5) == ".poly")
         {
-          clearSeeds();
+          clearSeeds_without_redraw();
           CGAL::read_triangle_poly_file(cdt, f, std::back_inserter(seeds));
         }
       else if(s.right(5) == ".data")
@@ -1261,12 +1266,12 @@ public slots:
           cdt.insert_constraint(tr, tl);
           cdt.insert_constraint(tl, bl);
 
-          clearSeeds();
+          clearSeeds_without_redraw();
         }
       else
         {
           read_constraints(cdt, f);
-          clearSeeds();
+          clearSeeds_without_redraw();
         }
 
       // compute bounds
@@ -1284,7 +1289,8 @@ public slots:
 
       emit( insertedInput() );
       updatePointCounter();
-      widget->redraw();
+      // widget->set_window() calls widget->redraw()
+      //      widget->redraw();
     }
 
   void saveTriangulation()

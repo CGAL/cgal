@@ -22,7 +22,6 @@
 
 #include <CGAL/IO/Qt_widget_layer.h>
 #include <iostream>
-#include "boost/date_time/posix_time/posix_time.hpp"
 
 namespace CGAL {
 
@@ -38,7 +37,7 @@ public:
   
   void draw()
   {
-    stream << ::boost::posix_time::second_clock::universal_time() << std::endl;
+    stream << "redraw()" << std::endl;
   }
 }; // end class Debug_layer
 
