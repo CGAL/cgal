@@ -258,12 +258,18 @@ Packages/Nef_2/demo/Nef_2/xpms/newopen.pcx -text svneol=unset#unset
 Packages/Nef_2/demo/Nef_2/xpms/newpoly.pcx -text svneol=unset#unset
 Packages/Nef_2/demo/Nef_2/xpms/union.pcx -text svneol=unset#unset
 Packages/Nef_2/demo/Nef_2/xpms/union.xpm -text svneol=unset#unset
-Packages/Nef_2/doc_tex/Nef_2/Nef_2_ref/complex.gif svneol=native#unset
-Packages/Nef_2/doc_tex/Nef_2/Nef_2_ref/extsegs.gif svneol=native#unset
-Packages/Nef_2/doc_tex/Nef_2/Nef_2_ref/halfplane.gif svneol=native#unset
-Packages/Nef_2/doc_tex/basic/Nef_2/Nef_2_ref/complex.gif svneol=native#unset
-Packages/Nef_2/doc_tex/basic/Nef_2/Nef_2_ref/extsegs.gif svneol=native#unset
-Packages/Nef_2/doc_tex/basic/Nef_2/Nef_2_ref/halfplane.gif svneol=native#unset
+Packages/Nef_2/doc_tex/Nef_2/complex.gif -text svneol=unset#unset
+Packages/Nef_2/doc_tex/Nef_2/complex.ps -text
+Packages/Nef_2/doc_tex/Nef_2/halfplane.gif -text svneol=unset#unset
+Packages/Nef_2/doc_tex/Nef_2/halfplane.ps -text
+Packages/Nef_2/doc_tex/Nef_2_ref/extsegs.eps -text
+Packages/Nef_2/doc_tex/Nef_2_ref/extsegs.gif -text svneol=unset#unset
+Packages/Nef_2/doc_tex/basic/Nef_2/complex.gif -text svneol=unset#unset
+Packages/Nef_2/doc_tex/basic/Nef_2/complex.ps -text
+Packages/Nef_2/doc_tex/basic/Nef_2/halfplane.gif -text svneol=unset#unset
+Packages/Nef_2/doc_tex/basic/Nef_2/halfplane.ps -text
+Packages/Nef_2/doc_tex/basic/Nef_2_ref/extsegs.eps -text
+Packages/Nef_2/doc_tex/basic/Nef_2_ref/extsegs.gif -text svneol=unset#unset
 Packages/PS_Stream/doc_tex/PS_Stream/exemple.ps -text
 Packages/PS_Stream/doc_tex/PS_Stream/style.ps -text
 Packages/PS_Stream/doc_tex/support/PS_Stream/exemple.ps -text
