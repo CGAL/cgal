@@ -78,18 +78,13 @@ static int debugthread=3141592;
 #define CTRACEN(b,t) 
 #endif
 
-#ifndef _ASSERT
-#define  ASSERT(cond,fstr) 
-#else
-#define ASSERT(cond,fstr)   \
-  if (!(cond)) {       \
-    std::cerr<<"   ASSERT:   "<< #fstr << endl; \
-    std::cerr<<"   COND:     "<< #cond << endl; \
-    std::cerr<<"   POSITION: "<<__FILE__<<" at line "<<__LINE__<<std::endl; \
-    abort();           \
-  }
-#endif
-
+template <typename C>
+void debug_container(const C& container,
+		     std::ostream& os = std::cerr)
+{ typename C::const_iterator it;
+  for(it = container.begin(); it != container.end(); ++it)
+    os << *it << std::endl;
+}
 
 #endif //CGAL_DEBUG_H
 

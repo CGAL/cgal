@@ -52,10 +52,11 @@ create any great circle that contains $p$ and $q$.}*/
   }
 }
 
-Sphere_circle(const CGAL::Plane_3<R>& h) 
-/*{\Mcreate creates the circle corresponding to the plane |h|.
-\precond |h| contains the origin.}*/
- : Base(h) { CGAL_assertion(h.d() == 0); } 
+Sphere_circle(const Plane_3& h) : Base(h) 
+/*{\Mcreate creates the circle of $S_2$ corresponding to the plane
+|h|. If |h| does not contain the origin, then |\Mvar| becomes the
+circle parallel to |h| containing the origin.}*/
+{ if ( h.d() != 0 ) *this = Plane_3(h.a(), h.b(), h.c(), RT(0)); } 
 
 Sphere_circle(const RT& x, const RT& y, const RT& z) : Base(x,y,z,0) {} 
 /*{\Mcreate creates the circle orthogonal to the vector $(x,y,z)$.}*/
@@ -83,6 +84,11 @@ bool has_on(const Sphere_point<R>& p) const
 
 Plane_3 plane() const { return Base(*this); }
 /*{\Mop returns the plane supporting |\Mvar|.}*/
+
+Plane_3 plane_through(const Point_3& p) const 
+/*{\Mop returns the plane parallel to |\Mvar| that
+contains point |p|.}*/
+{ return Plane_3(p,orthogonal_direction()); }
 
 Sphere_point<R> orthogonal_pole() const 
 /*{\Mop returns the point that is the pole of the 
@@ -123,7 +129,6 @@ Sphere_point<R> intersection(const Sphere_circle<R>& c1,
   if ( !assign(lres,o) ) CGAL_assertion_msg(0,"damn id planes.");
   return CGAL::ORIGIN + lres.direction().vector();
 }
-
 
 
 CGAL_END_NAMESPACE

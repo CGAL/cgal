@@ -55,6 +55,7 @@ typedef typename R_::RT RT;
 /*{\Mtypemember field number type.}*/
 typedef Sphere_point<R>    Self;
 typedef typename R::Point_3     Base;
+typedef typename R::Vector_3    Vector_3;
 typedef typename R::Direction_3 Direction_3;
 
 /*{\Mcreation 5}*/
@@ -71,6 +72,9 @@ and the surface of $S_2$.}*/
   Base(x,y,z,1) { CGAL_assertion(x!=0 || y!=0 || z!=0); }
 
 Sphere_point(const Base& p) : Base(p) {} 
+Sphere_point(const Vector_3& v) : Base(CGAL::ORIGIN+v) {} 
+Sphere_point(const Direction_3& d) : 
+  Base(CGAL::ORIGIN+d.vector()) {} 
 
 /*{\Moperations 4 2}*/
 

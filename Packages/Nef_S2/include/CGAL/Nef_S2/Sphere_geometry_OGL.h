@@ -617,7 +617,7 @@ void construct()
 public:
 
 void draw() const
-{ //gluQuadricDrawStyle(sphere_,style_);
+{ 
   gluQuadricDrawStyle(sphere_,GLenum(GLU_FILL));
   glEnable(GL_LIGHTING);
   if ( style_ == SM_SKELETON ) {
