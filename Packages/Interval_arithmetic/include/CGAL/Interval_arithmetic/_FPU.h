@@ -140,7 +140,7 @@ enum {
 };
 #endif // __sgi
 
-#ifdef __mips__
+#if defined(__mips__) && !defined(__sgi)
 #define CGAL_IA_SETFPCW(CW) __asm__ volatile ("ctc1 %0,$31" : :"r" (CW))
 #define CGAL_IA_GETFPCW(CW) __asm__ volatile ("cfc1 %0,$31" : "=r" (CW))
 typedef unsigned int FPU_CW_t;
@@ -150,7 +150,7 @@ enum {
     FPU_cw_up   = 0x2,
     FPU_cw_down = 0x3
 };
-#endif // __mips__
+#endif // __mips__ && !__sgi
 
 #ifdef __alpha__ // This one is not really supported [yet].
 #define CGAL_IA_SETFPCW(CW) __asm__ volatile ("mt_fpcr %0; excb" : :"f" (CW))
