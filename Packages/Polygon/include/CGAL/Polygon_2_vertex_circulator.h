@@ -168,7 +168,7 @@ operator+( typename Polygon_circulator<Ctnr>::
 template <class Ctnr>
 Polygon_circulator<Ctnr>&
 Polygon_circulator<Ctnr>::
-operator+=( typename Ctnr::difference_type n) {
+operator+=( typename Polygon_circulator<Ctnr>::difference_type n) {
     CGAL_assertion( ctnr != NULL);
     CGAL_assertion( current_iterator() != ctnr->end());
     typename Ctnr::difference_type j    = current_iterator() - ctnr->begin();
