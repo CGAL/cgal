@@ -24,7 +24,7 @@ WALKER = $(HOME)/projects/SNC_walker
 K3TREE = $(MY_DIR)/Nef_3/k3tree/include
 BBOX = $(MY_DIR)/Box_intersection_d/include
 
-# CUSTOM_CXXFLAGS = -I$(POLY) -I$(NEF3) -I$(NEF2) -I$(NEFS2) -I$(BBOX) 
+CUSTOM_CXXFLAGS = -I$(POLY) -I$(NEF3) -I$(NEF2) -I$(NEFS2) -I$(BBOX) 
 
 CXXFLAGS = \
            $(CGAL_CXXFLAGS) \
@@ -52,18 +52,18 @@ LDFLAGS = \
 all:            \
                 nef_3$(EXE_EXT) 
 
-moc_Qt_widget_Nef_3.C:  Qt_widget_Nef_3.h
-	$(QT_MOC) -o moc_Qt_widget_Nef_3.C Qt_widget_Nef_3.h
+moc_Qt_widget_OpenGL.C: Qt_widget_OpenGL.h
+	$(QT_MOC) -o moc_Qt_widget_OpenGL.C Qt_widget_OpenGL.h
 
-moc_Qt_widget_Nef_3$(OBJ_EXT): moc_Qt_widget_Nef_3.C
+moc_Qt_widget_OpenGL$(OBJ_EXT): moc_Qt_widget_OpenGL.C
 
-Qt_widget_Nef_3$(OBJ_EXT): Qt_widget_Nef_3.C
+# Qt_widget_OpenGL$(OJB_EXT): Qt_widget_OpenGL.C
 
 nef_3.clean:
-	rm -f nef_3.o moc_Qt_widget_Nef_3.C moc_Qt_widget_Nef_3.o Qt_widget_Nef_3.o
+	rm -f nef_3 nef_3.o moc_Qt_widget_OpenGL.C moc_Qt_widget_OpenGL.o
 
-nef_3$(EXE_EXT): nef_3$(OBJ_EXT) Qt_widget_Nef_3$(OBJ_EXT) moc_Qt_widget_Nef_3$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)nef_3 nef_3$(OBJ_EXT) Qt_widget_Nef_3$(OBJ_EXT) moc_Qt_widget_Nef_3$(OBJ_EXT) $(LDFLAGS)
+nef_3$(EXE_EXT): nef_3$(OBJ_EXT) moc_Qt_widget_OpenGL$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)nef_3 nef_3$(OBJ_EXT) moc_Qt_widget_OpenGL$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
                    nef_3.clean  
