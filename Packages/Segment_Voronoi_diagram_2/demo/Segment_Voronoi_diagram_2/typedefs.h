@@ -18,7 +18,7 @@ struct Gt
 
 typedef Gt::Point_2            Point;
 typedef Gt::Segment_2          Segment;
-typedef CGAL::Polygon_2<Rep>   Polygon;
+typedef CGAL::Polygon_2<Rep>   Polygon_2;
 typedef Gt::Site_2             Site;
 
 typedef CGAL::Segment_Voronoi_diagram_hierarchy_2<Gt>          SVD_2;

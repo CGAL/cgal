@@ -62,7 +62,7 @@ private:
   CGAL::Qt_widget_standard_toolbar *stoolbar;
   CGAL::Qt_widget_get_segment<Rep> get_segment;
   CGAL::Qt_widget_get_point<Rep> get_point;
-  CGAL::Qt_widget_get_simple_polygon<Polygon> get_polygon;
+  CGAL::Qt_widget_get_simple_polygon<Polygon_2> get_polygon;
   Input_mode input_mode;
   bool is_remove_mode;
   bool is_snap_mode;
@@ -219,7 +219,7 @@ private slots:
 	}
       }
     } else if ( input_mode == SVD_POLYGON ) {
-      Polygon pgn;
+      Polygon_2 pgn;
       if ( CGAL::assign(pgn, obj) ) {
 	for (int i = 0; i < pgn.size(); i++ ) {
 	  svd.insert( pgn.edge(i) );
