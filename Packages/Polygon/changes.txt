@@ -1,3 +1,6 @@
+4.2.3 (31 July 2001)
++ Susan moved Polygon_2_ref directory up one level
+
 4.2.2 (27 July 2001)
 + Susan made minor formatting changes, fixed some undefined references, and
   commented out some headings for empty sections.  Added TOC for reference
