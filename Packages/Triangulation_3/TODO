@@ -1,11 +1,13 @@
 FINIR CORRECTIONS SUR output_stream de T_3 (ordre)
 pour tester, example/Triangulation_3/example_hierarchy
 
+- penser a enlever -I../../include\ dans demo/Triangulation_3/makefile
+- changer le nom du fichier include pour Filtered_exact dans exemples et demos
+                   --> CGAL/Filtered_Exact.h
+- Voir mail Laurent Rineau pour read_cells
+
 a negocier 
 - mise a jour de la doc de Filtered_exact...
-
-penser a enlever -I../../include\ dans demo/Triangulation_3/makefile
-changer le nom du fichier include pour Filtered_exact dans exemples et demos
 
 General
 - new Vertex/Cell
