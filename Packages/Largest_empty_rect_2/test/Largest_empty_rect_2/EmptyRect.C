@@ -6,9 +6,8 @@
 #include <cassert>
 #include <fstream>
 
-typedef double                                 Number_Type;
-
-typedef CGAL::Cartesian<Number_Type>           K;
+typedef double                                 NT;
+typedef CGAL::Cartesian<NT>                    K;
 typedef K::Point_2                             Point; 
 typedef K::Iso_rectangle_2                     Iso_rectangle_2;
 typedef CGAL::Largest_empty_iso_rectangle_2<K> Largest_empty_rect;
@@ -24,7 +23,7 @@ int main(int /*argc*/,char */*argv[]*/)
   Iso_rectangle_2 b(bl, tr);
 
   // missing default constructor
-  //  Largest_empty_rect dc;  // af: does not compile
+  Largest_empty_rect dc;  
   // by the way what is the bounding box ((0,0),(1,1)) ??  
   Largest_empty_rect empty_rectangle(b);
   assert(b == empty_rectangle.get_largest_empty_iso_rectangle());
@@ -42,13 +41,13 @@ int main(int /*argc*/,char */*argv[]*/)
   bool b1 = empty_rectangle.insert(V[0]);
   assert(b1 == true);
   bool b2 = empty_rectangle.insert(V[0]);
-  //assert(b2 == false); // af: assertion fails
+  assert(b2 == false); 
 
   std::cout << empty_rectangle.get_largest_empty_iso_rectangle()  << std::endl;
 
   int n = empty_rectangle.insert(V.begin(), V.end());
   std::cout << "n = " << n << std::endl;
-  // assert(n == 1); // af: assertion fails
+  assert(n == 1); 
   for(Largest_empty_rect::const_iterator it = empty_rectangle.begin();
       it != empty_rectangle.end();
       ++it){
@@ -64,7 +63,7 @@ int main(int /*argc*/,char */*argv[]*/)
   assert(empty_rectangle.begin() == empty_rectangle.end());
   Point pp(6,6);
   assert(empty_rectangle.insert(pp));
-  //  assert(empty_rectangle.remove(pp)); // af does not compile
+  assert(empty_rectangle.remove(pp)); 
   assert(empty_rectangle.begin() == empty_rectangle.end());
 
   return(0);
