@@ -1,6 +1,11 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 7.64 (08/03/03)
+- fixed missing test files
+- fixed missing typename
+- there is still a bug in test_regular_hierarchy on Sun only
+
 ver 7.63 (26/03/03)
 - fixed Regular and Regular_hierarchy and their testsuites
 - fixes typos in doc
