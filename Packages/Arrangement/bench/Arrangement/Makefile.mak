@@ -1,5 +1,9 @@
 BASEDIR =.
 
+USE_QT=1
+USE_LEDA=1
+USE_CORE=1
+
 include $(ROOT)/include/make/cgaldef.mak
 
 # Initialize:
