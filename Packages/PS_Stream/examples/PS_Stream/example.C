@@ -12,7 +12,7 @@ typedef K::Ray_2                 Ray;
 typedef K::Triangle_2            Triangle;
 typedef K::Iso_rectangle_2       Rect;
 typedef K::Circle_2              Circle;
-typedef K::Bbox_2                BBox;
+typedef CGAL::Bbox_2             BBox;
 
 int main()
 {
