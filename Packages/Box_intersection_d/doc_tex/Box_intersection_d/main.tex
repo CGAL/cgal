@@ -62,17 +62,18 @@ and~\cite{cgal:ze-fsbi-02} for more details.
 % +------------------------------------------------------------------------+
 \section{Definition}\label{sec:box-inters-def}
 
-A $d$-dimensional iso-oriented box is defined as the Cartesian product
-of $d$ intervals. We call the box \emph{half-open} if the $d$
-intervals $\{ [lo_i,hi_i) \,|\, 0 \leq i < d\}$ are half-open intervals,
-and we call the box \emph{closed} if the $d$ intervals $\{ [lo_i,hi_i]
-\,|\, 0 \leq i < d\}$ are closed intervals. Note that closed boxes support
-zero-width boxes and they can intersect at their boundaries, while
-non-empty half-open boxes always have a positive volume and they only
-intersect iff their interiors overlap.  The distinction between closed
-and half-open boxes does not require a different representation of
-boxes, just a different interpretation when comparing boxes, which is
-selected with the two possible values for the \ccc{topology} parameter:
+A $d$-dimensional iso-oriented box is defined as the
+\ccHtmlNoLinksFrom{Cartesian} product of $d$ intervals. We call the
+box \emph{half-open} if the $d$ intervals $\{ [lo_i,hi_i) \,|\, 0 \leq
+i < d\}$ are half-open intervals, and we call the box \emph{closed} if
+the $d$ intervals $\{ [lo_i,hi_i] \,|\, 0 \leq i < d\}$ are closed
+intervals. Note that closed boxes support zero-width boxes and they
+can intersect at their boundaries, while non-empty half-open boxes
+always have a positive volume and they only intersect iff their
+interiors overlap.  The distinction between closed and half-open boxes
+does not require a different representation of boxes, just a different
+interpretation when comparing boxes, which is selected with the two
+possible values for the \ccc{topology} parameter:
 
 \begin{itemize}
   \item \ccc{CGAL::Box_intersection_d::HALF_OPEN} and
