@@ -266,7 +266,8 @@ class Arr_conic_traits_2
                 <<  CGAL::to_double(ps2[0].y()) << ")" << std::endl
                 << "res = " << (res == EQUAL ?
                                 "EQUAL" : res == SMALLER ?
-                                "SMALLER" : "LARGER") << std::endl << std::endl;
+                                "SMALLER" : "LARGER") << std::endl
+                                << std::endl;
     return (res);
     */
   }
@@ -415,7 +416,8 @@ class Arr_conic_traits_2
                 <<  CGAL::to_double(ps1[0].y()) << std::endl
                 << "res = " << (res == EQUAL ?
                                 "EQUAL" : res == SMALLER ?
-                                "SMALLER" : "LARGER") << std::endl << std::endl;
+                                "SMALLER" : "LARGER") << std::endl
+                                << std::endl;
     return (res);
     */
   }  
