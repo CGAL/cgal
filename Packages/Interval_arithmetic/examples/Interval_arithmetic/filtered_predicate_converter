@@ -44,12 +44,11 @@ while (<>)
       {print STDERR "Warning: $result_type is unknown\n"; }
     print
 "{
-  $result_type result;
   FPU_CW_t backup = FPU_get_cw();
   FPU_set_cw(FPU_cw_up);
   try
   {
-    result = $function_name(
+    $result_type result = $function_name(
 ";
     foreach (@args) {
       print "\t\t$_.interval()";
@@ -58,11 +57,12 @@ while (<>)
     }
     print "
     FPU_set_cw(backup);
+    return result;
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
     FPU_set_cw(backup);
-    result = $function_name(
+    return $function_name(
 ";
     foreach (@args) {
       print "\t\t$_.exact()";
@@ -71,7 +71,7 @@ while (<>)
     }
     print "
   }
-  return result;
+  CGAL_assertion(false);
 }
 ";
     # print "args: @args\n" ;
