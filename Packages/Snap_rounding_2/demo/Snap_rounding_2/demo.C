@@ -9,8 +9,8 @@
 #include <CGAL/squared_distance_2.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/IO/Window_stream.h>
-#include "../../include/CGAL/Snap_rounding_traits_2.h"
-#include "../../include/CGAL/Snap_rounding_2.h"
+#include <CGAL/Snap_rounding_traits_2.h>
+#include <CGAL/Snap_rounding_2.h>
 
 typedef CGAL::Quotient<CGAL::MP_Float>         Number_type;
 typedef CGAL::Cartesian<Number_type>           Rep;

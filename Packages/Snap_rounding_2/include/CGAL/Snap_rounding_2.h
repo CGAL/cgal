@@ -35,7 +35,7 @@
 #include <CGAL/Sweep_line_2.h>
 #include <list>
 #include <set>
-#include "Snap_rounding_kd_2.h"
+#include <CGAL/Snap_rounding_kd_2.h>
 #include <CGAL/utility.h>
 #include <CGAL/Iterator_project.h>
 #include <CGAL/function_objects.h>

@@ -1,8 +1,8 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/MP_Float.h>
-#include "../../include/CGAL/Snap_rounding_traits_2.h"
-#include "../../include/CGAL/Snap_rounding_2.h"
+#include <CGAL/Snap_rounding_traits_2.h>
+#include <CGAL/Snap_rounding_2.h>
 
 typedef CGAL::Quotient<CGAL::MP_Float>           Number_Type;
 typedef CGAL::Cartesian<Number_Type>             Rep;

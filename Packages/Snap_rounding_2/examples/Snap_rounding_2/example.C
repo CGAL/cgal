@@ -2,8 +2,8 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/MP_Float.h>
-#include "../../include/CGAL/Snap_rounding_traits_2.h"
-#include "../../include/CGAL/Snap_rounding_2.h"
+#include <CGAL/Snap_rounding_traits_2.h>
+#include <CGAL/Snap_rounding_2.h>
 
 typedef CGAL::Quotient<CGAL::MP_Float>           Number_type;
 typedef CGAL::Cartesian<Number_type>             Rep;
@@ -24,8 +24,8 @@ int main()
   seg_list.push_back(Segment_2(Point_2(3,0),Point_2(3,10)));
   seg_list.push_back(Segment_2(Point_2(7,0),Point_2(7,10)));
 
-  CGAL::snap_rounding_2<Sr_traits,std::list<Segment_2>::const_iterator,
-                        std::list<std::list<Point_2> > >(
+  CGAL::snap_rounding_2<Sr_traits,Segment_list_2::const_iterator,
+                        Polyline_list_2>(
       seg_list.begin(),seg_list.end(),output_list,
       1.0,true,false,5);
 
