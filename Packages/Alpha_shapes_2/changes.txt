@@ -1,3 +1,8 @@
+Version 11.31 (20/06/03)
+- The same as before (I had to resubmit because the server 
+  in Ultrecht was down and the changes were not taken into 
+  account)
+
 Version 11.30 (20/06/03)
 - Replaced Leda_Window based demo with the Qt_widget based demo
 

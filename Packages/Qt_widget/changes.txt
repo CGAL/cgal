@@ -1,3 +1,7 @@
+1.3.40 - 20/06/2003(rursu)
+---------------------------
+	- removed Nef_2 demo and modified the demo makefile
+
 1.3.39 - 20/06/2003(rursu)
 ---------------------------
 	- removed Partition_2 demo too.
