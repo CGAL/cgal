@@ -59,7 +59,6 @@ public:
 
 signals:
   void new_object(CGAL::Object);
-  void was_repainted();
 
 private slots:
   void notool();
