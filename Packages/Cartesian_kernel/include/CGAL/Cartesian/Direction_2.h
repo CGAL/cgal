@@ -68,6 +68,15 @@ public:
   DirectionC2(const Vector_2 &v)
     : Direction_handle_2_(v) {}
 
+  DirectionC2(const Line_2 &l)
+    : Direction_handle_2_(l.direction()) {}
+
+  DirectionC2(const Ray_2 &r)
+    : Direction_handle_2_(r.direction()) {}
+
+  DirectionC2(const Segment_2 &s)
+    : Direction_handle_2_(s.direction()) {}
+
   DirectionC2(const FT &x, const FT &y)
     : Direction_handle_2_(Direction_ref_2(x, y)) {}
 

@@ -41,10 +41,16 @@ public:
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef DirectionC3<R CGAL_CTAG>         Self;
   typedef typename R::Vector_3             Vector_3;
+  typedef typename R::Line_3               Line_3;
+  typedef typename R::Ray_3                Ray_3;
+  typedef typename R::Segment_3            Segment_3;
   typedef typename R::Aff_transformation_3 Aff_transformation_3;
 #else
   typedef DirectionC3<R>                   Self;
   typedef typename R::Vector_3_base        Vector_3;
+  typedef typename R::Line_3_base          Line_3;
+  typedef typename R::Ray_3_base           Ray_3;
+  typedef typename R::Segment_3_base       Segment_3;
   typedef typename R::Aff_transformation_3_base Aff_transformation_3;
 #endif
 
@@ -53,6 +59,15 @@ public:
 
   DirectionC3(const Vector_3 &v)
     : Direction_handle_3_(v) {}
+
+  DirectionC3(const Line_3 &l)
+    : Direction_handle_3_(l.direction()) {}
+
+  DirectionC3(const Ray_3 &r)
+    : Direction_handle_3_(r.direction()) {}
+
+  DirectionC3(const Segment_3 &s)
+    : Direction_handle_3_(s.direction()) {}
 
   DirectionC3(const FT &x, const FT &y, const FT &z)
     : Direction_handle_3_(Direction_ref_3(x, y, z)) {}
