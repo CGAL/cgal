@@ -676,9 +676,10 @@ pattern ~\cite{cgal:ghjv-dpero-95}. The indirection overhead due to the virtual
 functions is negligible since the optimal point location algorithm 
 (e.g., the one implemented in our default strategy) takes $\Theta(\log n)$ time.
 We have derived three concrete classes for point location strategies,
-the {\it default\/} strategy, based on trapezoidal decomposition of the map,
-the {\it naive\/} strategy, which goes over all the vertices and halfedges
-of the planar map and the {\it walk-along-a-line strategy\/}, which improves
+the {\it trapezoid-randomized-incremental-construction\/} strategy, based on
+a trapezoidal decomposition of the map, the {\it naive\/} strategy, which goes
+over all the vertices and halfedges of the planar map and the
+{\it walk-along-a-line\/} strategy, which improves
 the {\it naive\/} one by ``walking'' only along the zone of the vertical ray
 emanating from the query point. All three strategies are classes
 that inherit \ccc{Pm_point_location_base<Planar_map>}.
