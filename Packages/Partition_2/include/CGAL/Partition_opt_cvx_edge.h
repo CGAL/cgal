@@ -62,16 +62,16 @@ public:
 
    void set_valid(Partition_opt_cvx_edge_validity val) { _validity = val; }
    
-   template <class Point_2, class Traits>
-   void set_valid(const Point_2& p1, const Point_2& p2, const Point_2& p3,
-                  const Point_2& p4, const Point_2& p5, const Point_2& p6,
+   template <class Point_2_, class Traits>
+   void set_valid(const Point_2_& p1, const Point_2_& p2, const Point_2_& p3,
+                  const Point_2_& p4, const Point_2_& p5, const Point_2_& p6,
                   const Traits& traits)
    { 
       typedef typename Traits::Leftturn_2     Leftturn_2;
       Leftturn_2 leftturn = traits.leftturn_2_object();
 
       _validity = PARTITION_OPT_CVX_NOT_VALID;
-      Turn_reverser<Point_2, Leftturn_2>  rightturn(leftturn);
+      Turn_reverser<Point_2_, Leftturn_2>  rightturn(leftturn);
       if (rightturn(p1, p2, p3))
          _validity = PARTITION_OPT_CVX_START_VALID;
       if (rightturn(p4, p5, p6))
