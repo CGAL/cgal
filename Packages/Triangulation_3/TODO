@@ -1,3 +1,6 @@
+FINIR CORRECTIONS SUR output_stream de T_3 (ordre)
+pour tester, example/Triangulation_3/example_hierarchy
+
 a negocier 
 - mise a jour de la doc de Filtered_exact...
 
@@ -17,6 +20,8 @@ General
 TEST SUITE
 
 Doc
+- quand on sauve hierarchie dans fichier, et qu'on relit le fichier, 
+on perd la hierarchie... et la copie, etc ???
 - ameliorer user manual
 - revoir les anciennes corrections de JF Dufourd
 
