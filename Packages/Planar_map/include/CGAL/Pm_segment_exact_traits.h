@@ -27,6 +27,9 @@
 
 CGAL_BEGIN_NAMESPACE
 
+// This file serves for backward compatibility purposes.
+// Pm_segment_exact_traits is obsolete. Please use Pm_segment_traits_2 instead.
+
 #include <CGAL/Pm_segment_traits_2.h>
 #define Pm_segment_traits_2 Pm_segment_exact_traits
 
