@@ -122,7 +122,10 @@ public:
                        Previous_level> Self;
 
   /** \name CONSTRUCTORS */
-  Mesher_level(Previous_level& previous): previous_level(previous) {};
+  Mesher_level(Previous_level& previous)
+    : previous_level(previous)
+  {
+  }
 
   /** \name FUNCTIONS IMPLEMENTED IN THE CLASS \c Derived */
 
@@ -139,6 +142,18 @@ public:
   }
   //@}
 
+  /** Access to the triangulation traits */
+  //@{
+  Triangulation_traits& triangulation_traits()
+  {
+    return derived().get_triangulation_traits();
+  }
+
+  const Triangulation_traits& triangulation_traits() const
+  {
+    return derived().get_triangulation_traits();
+  }
+  //@}
 
   /** Called before the first refinement, to initialized the queue of
       elements that should be refined. */
@@ -343,9 +358,8 @@ public:
 
     before_conflicts(e, p, visitor);
 
-    Triangulation_traits t_traits;
-
-    Zone zone = t_traits.get_conflicts_zone(triangulation(), p);
+    Zone zone =
+      triangulation_traits().get_conflicts_zone(triangulation(), p);
 
     const std::pair<bool, bool> result = test_point_conflict(p, zone);
 
@@ -353,8 +367,8 @@ public:
     {
       before_insertion(e, p, zone, visitor);
 
-      Vertex_handle v = t_traits.insert(triangulation(),
-					p, zone);
+      Vertex_handle v = triangulation_traits().insert(triangulation(),
+							  p, zone);
 
       after_insertion(v, visitor);
 
@@ -415,6 +429,6 @@ public:
 
 }; // end Mesher_level
 
-}; // end namespace CGAL
+}  // end namespace CGAL
 
 #endif // CGAL_MESHER_LEVEL_H

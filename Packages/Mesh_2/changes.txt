@@ -4,6 +4,14 @@
   propagate_conflicts(), from the CDT. For that, Refine_edges uses a
   special Triangulation_mesher_level_traits_2.
 - Special_zone is now useless.
+- That's it: the bug is over!!
+- Mesh_level no wants a function get_triangulation_traits() that
+  returns a reference to the Triangulation_mesher_level_traits. THAT
+BREAKS COMPATIBILTY with previous codes.
+- The special traits class
+  Refine_edges_triangulation_mesher_level_traits_2 has a function to
+  set the current edge. This function is used to pass the edge to it,
+  so that get_conflicts_zone() can work.
 
 18 October 2004 Laurent Rineau
 - Conforming_Delaunay_triangulation_maker_2 renamed to 

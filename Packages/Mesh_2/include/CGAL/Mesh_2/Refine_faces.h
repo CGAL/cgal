@@ -44,7 +44,8 @@ class Refine_faces_base
   typedef typename Tr::All_faces_iterator     All_faces_iterator;
   typedef typename Tr::Point                  Point;
 
-  typedef typename Triangulation_mesher_level_traits_2<Tr>::Zone Zone;
+  typedef Triangulation_mesher_level_traits_2<Tr> Triangulation_traits;
+  typedef typename Triangulation_traits::Zone Zone;
 
 protected: // --- PROTECTED TYPES ---
   /** Meshing criteria. */
@@ -59,6 +60,7 @@ protected:
   // --- PROTECTED MEMBER DATAS ---
 
   Tr& tr; /**< The triangulation itself. */
+  Triangulation_mesher_level_traits_2<Tr> traits;
   Criteria& criteria; /**<The meshing criteria */
 
   /** List of bad finite faces */
@@ -81,6 +83,16 @@ public:
   const Tr& get_triangulation_ref() const
   {
     return tr;
+  }
+
+  Triangulation_traits& get_triangulation_traits()
+  {
+    return traits;
+  }
+
+  const Triangulation_traits& get_triangulation_traits() const
+  {
+    return traits;
   }
 
   /** Scans all marked faces and put them in the map if they are

@@ -10,9 +10,11 @@
 
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 
-#include <CGAL/Delaunay_mesh_2.h>
+#include <CGAL/Delaunay_mesher_2.h>
 #include <CGAL/Delaunay_mesh_face_base_2.h>
-#include <CGAL/Delaunay_mesh_area_traits_2.h>
+#include <CGAL/Delaunay_mesh_area_criteria_2.h>
+
+#include <CGAL/IO/File_poly.h>
 
 typedef CGAL::Simple_cartesian<double> K1;
 typedef CGAL::Filtered_kernel<K1> K2;
@@ -26,11 +28,10 @@ struct K : public K1 {};
 typedef CGAL::Triangulation_vertex_base_2<K> Vb;
 typedef CGAL::Delaunay_mesh_face_base_2<K> Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb, Fb> Tds;
-typedef CGAL::Delaunay_mesh_area_traits_2<K> Meshtraits;
-typedef CGAL::Constrained_Delaunay_triangulation_2<Meshtraits, Tds,
-  CGAL::Exact_predicates_tag> Tr;
+typedef CGAL::Constrained_Delaunay_triangulation_2<K, Tds> Tr;
+typedef CGAL::Delaunay_mesh_area_criteria_2<Tr> Mesh_criteria;
 
-typedef CGAL::Delaunay_mesh_2<Tr> Mesh;
+typedef CGAL::Delaunay_mesher_2<Tr, Mesh_criteria> Mesher;
 
 typedef K::Point_2 Point;
 
@@ -45,9 +46,11 @@ int main(int argc, char** argv)
   int arg_count = 1;
   bool terminal_output = true;
 
-  Mesh mesh;
+  Tr tr;
 
-  Meshtraits traits;
+  Mesher mesher(tr);
+
+  Mesh_criteria criteria;
 
   if(argc < 2)
     {
@@ -65,7 +68,7 @@ int main(int argc, char** argv)
 	    if( (argc > arg_count+1) && 
 		std::istringstream(argv[arg_count+1]) >> area_bound )
 	      {
-		traits.set_area_bound(area_bound);
+		criteria.set_area_bound(area_bound);
 		++arg_count;
 	      }
 	    else
@@ -97,15 +100,15 @@ int main(int argc, char** argv)
     {
       CGAL::Timer t;
       t.start();
-      CGAL::read_poly(mesh, input);
+      CGAL::read_triangle_poly_file(tr, input);
       t.stop();
       if(terminal_output)
 	std::cout << "Delaunay time: " << t.time() << std::endl;
       
-      mesh.set_geom_traits(traits);
+      mesher.set_criteria(criteria);
       
       t.reset(); t.start();
-      mesh.refine_mesh();
+      mesher.refine_mesh();
       t.stop();
       if(terminal_output)
 	std::cout << "Meshing time: " << t.time() << std::endl;
@@ -123,12 +126,12 @@ int main(int argc, char** argv)
   else
     {
       std::ofstream output(argv[arg_count+1]);
-      CGAL::write_poly(mesh, output);
+      CGAL::write_triangle_poly_file(tr, output);
     }
   if(terminal_output)
     std::cout 
-      << "Mesh points: " << mesh.number_of_vertices() << std::endl
-      << "Mesh triangles: " << mesh.number_of_faces () << std::endl;
+      << "Mesh points: " << tr.number_of_vertices() << std::endl
+      << "Mesh triangles: " << tr.number_of_faces () << std::endl;
 
   return 0;
 };

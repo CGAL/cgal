@@ -283,11 +283,12 @@ template <
 struct Refine_edges_with_clusters : 
   public Base, 
   public details::Refine_edges_types<Tr, 
-    Refine_edges_with_clusters<Tr, Is_locally_conform, Base> >::
-    Edges_mesher_level
+    Refine_edges_with_clusters<Tr, Is_locally_conform, Base>
+    >::Edges_mesher_level
 {
   typedef Refine_edges_with_clusters<Tr, Is_locally_conform, Base> Self;
-  typedef typename details::Refine_edges_types<Tr, Self>::Edges_mesher_level
+  typedef typename details::Refine_edges_types<Tr,
+					       Self>::Edges_mesher_level
                                  Mesher;
 public:
   Refine_edges_with_clusters(Tr& t,

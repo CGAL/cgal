@@ -57,8 +57,16 @@ namespace Mesh_2 {
 
     typedef typename Std_traits::Zone Zone;
 
+  private:
+    Edge edge;
+
   public:
-    static Zone get_conflicts_zone(Tr& t, const Point& p)
+    void set_edge(const Edge e)
+    {
+      edge = e;
+    }
+
+    Zone get_conflicts_zone(Tr& t, const Point& p)
     {
       Zone zone;
 
@@ -68,13 +76,12 @@ namespace Mesh_2 {
       OutputItFaces faces_out(zone.faces);
       OutputItEdges edges_out(zone.boundary_edges);
 
-      int i;
-      Locate_type lt;
-      Face_handle f = t.locate(p,lt,i);
+      const Face_handle& f = edge.first;
+      const int& i = edge.second;
       *faces_out++ = f;
-      Face_handle n = f->neighbor(i);
+      const Face_handle n = f->neighbor(i);
       *faces_out++ = n;
-      int ni = f->mirror_index(i);
+      const int ni = f->mirror_index(i);
       std::pair<OutputItFaces,OutputItEdges>
 	pit = std::make_pair(faces_out,edges_out);
       pit = t.propagate_conflicts(p,f,t.ccw(i),pit);
@@ -332,6 +339,9 @@ public:
 
   typedef typename Triangulation_mesher_level_traits_2<Tr>::Zone Zone;
 
+  typedef Refine_edges_triangulation_mesher_level_traits_2<Tr>
+    Triangulation_traits;
+
   typedef typename details::Refine_edges_base_types<Tr>::Constrained_edge
                                Constrained_edge;
 
@@ -339,6 +349,7 @@ protected:
   /* --- protected datas --- */
 
   Tr& tr; /**< The triangulation itself. */
+  Triangulation_traits traits;
 
   /** Predicates to filter edges. */
   typedef typename details::Refine_edges_base_types<Tr>
@@ -357,7 +368,7 @@ public:
   /** \name CONSTRUCTORS */
 
   Refine_edges_base(Tr& tr_) :
-    tr(tr_), is_really_a_constrained_edge(tr_),
+    tr(tr_), traits(), is_really_a_constrained_edge(tr_),
     edges_to_be_conformed(is_really_a_constrained_edge),
     is_locally_conform(), converter(tr_)
   {
@@ -380,6 +391,16 @@ public:
   const Tr& get_triangulation_ref() const
   {
     return tr;
+  }
+
+  Triangulation_traits& get_triangulation_traits()
+  {
+    return traits;
+  }
+
+  const Triangulation_traits& get_triangulation_traits() const
+  {
+    return traits;
   }
 
   /** Scans all constrained edges and put them in the queue if they are
@@ -453,9 +474,10 @@ public:
     return midpoint(va->point(), vb->point());
   }
 
-  /** Do nothing. */
-  void do_before_conflicts(const Edge&, const Point&)
+  /** Passes the edge to the triangulation traits. */
+  void do_before_conflicts(const Edge& e, const Point&)
   {
+    traits.set_edge(e);
   }
 
   /** Do nothing. */
@@ -627,8 +649,11 @@ public:  /** \name DEBUGGING FUNCTIONS */
     template <typename Tr, typename Self>
     struct Refine_edges_types
     {
+      typedef Refine_edges_triangulation_mesher_level_traits_2<Tr>
+        Triangulation_traits;
+
       typedef Mesher_level <
-        Refine_edges_triangulation_mesher_level_traits_2<Tr>,
+	Triangulation_traits,
         Self,
         typename Tr::Edge,
         Null_mesher_level > Edges_mesher_level;
@@ -644,10 +669,14 @@ struct Refine_edges :
     Refine_edges<Tr, Is_locally_conform, Base> >::Edges_mesher_level
 {
   typedef Refine_edges<Tr, Is_locally_conform, Base> Self;
-  typedef typename details::Refine_edges_types<Tr, Self>::Edges_mesher_level
-                                 Mesher;
+
+  typedef typename details::Refine_edges_types<Tr,
+					       Self> Types;
+
+  typedef typename Types::Edges_mesher_level Mesher;
 public:
-  Refine_edges(Tr& t, Null_mesher_level& null_level)
+  Refine_edges(Tr& t, 
+	       Null_mesher_level& null_level)
     : Base(t), Mesher(null_level)
   {
   }
