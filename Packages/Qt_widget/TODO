@@ -22,6 +22,7 @@ RADU URSU
 2) The demo for Min_quadrilateral_2				[done]
 3) Add << operator for Alpha_shapes_2
 4) Make attach uniform for tools and layers. (pointer vs ref)
+5) Split the demos .C files in 2 .h and .C
 
 
 TODO FOR DOC
