@@ -63,7 +63,7 @@ private:
 
   bool predicate(const Site_2& p, const Site_2& q, const Tag_true&) const
   {
-    if ( !p.is_exact() && !q.is_exact() ) {
+    if ( !p.is_input() && !q.is_input() ) {
       Segment_2 s[2] = { p.supporting_segment(0),
 			 p.supporting_segment(1) };
       Segment_2 t[2] = { q.supporting_segment(0),

@@ -146,7 +146,7 @@ insert_point(const Point_2& p, int level, Vertex_handle* vertices)
       Storage_site_2 ss = create_storage_site(p);
 
       if ( at_res == AT2::INTERIOR ) {
-	CGAL_assertion( t.is_exact() );
+	CGAL_assertion( t.is_input() );
 
 	int vnear_level = find_level(vnear[0]);
 
@@ -236,7 +236,7 @@ insert_point(const Site_2& t, const Storage_site_2& ss,
     } else if ( n == 2 ) {
       vertex = hierarchy[k]->insert_third(t, ss);
     } else {
-      if ( ss.is_exact() ) {
+      if ( ss.is_input() ) {
 	vertex = hierarchy[k]->insert_no_register(t.point(), vnear[k]);
       } else {
 	break;
@@ -422,7 +422,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
       CGAL_assertion( vv->is_point() );
       if ( at_res == AT2::INTERIOR ) {
 	Storage_site_2 svv = vv->storage_site();
-	if ( svv.is_exact() ) {
+	if ( svv.is_input() ) {
 #if 1
 	  return insert_segment_on_point(ss, vv, level, stag, 2);
 #else
@@ -665,14 +665,14 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
 
   Storage_site_2 ss3, ss4;
   Site_2 s3, s4;
-  if ( t.is_exact(0) ) {
+  if ( t.is_input(0) ) {
     ss3 = create_storage_site(ss, ssitev, true);
   } else {
     ss3 = create_storage_site_type1(ss, ss, ssitev);
   }
   s3 = ss3.site();
 
-  if ( t.is_exact(1) ) {
+  if ( t.is_input(1) ) {
     ss4 = create_storage_site(ss, ssitev, false);
   } else {
     ss4 = create_storage_site_type2(ss, ssitev, ss);
@@ -765,14 +765,14 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
 
   Storage_site_2 ss3, ss4;
   Site_2 s3, s4;
-  if ( t.is_exact(0) ) {
+  if ( t.is_input(0) ) {
     ss3 = create_storage_site(ss, ssitev, true);
   } else {
     ss3 = create_storage_site_type1(ss, ss, ssitev);
   }
   s3 = ss3.site();
 
-  if ( t.is_exact(1) ) {
+  if ( t.is_input(1) ) {
     ss4 = create_storage_site(ss, ssitev, false);
   } else {
     ss4 = create_storage_site_type2(ss, ssitev, ss);

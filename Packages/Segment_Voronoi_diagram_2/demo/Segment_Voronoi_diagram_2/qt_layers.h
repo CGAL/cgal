@@ -73,7 +73,7 @@ public:
       for (vit = svd.finite_vertices_begin();
 	   vit != svd.finite_vertices_end(); ++vit) {
 	typename T::Site_2 s = vit->site();
-	if ( s.is_exact() ) {
+	if ( s.is_input() ) {
 	  *widget << CGAL::RED;
 	} else {
 	  *widget << CGAL::YELLOW;

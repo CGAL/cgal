@@ -99,8 +99,8 @@ public:
   bool is_defined() const { return type_; }
   bool is_point() const { return (type_ & 3) == 1; }
   bool is_segment() const { return (type_ & 3) == 2; }
-  bool is_exact() const { return !(type_ & 12); }
-  bool is_exact(unsigned int i) const {
+  bool is_input() const { return !(type_ & 12); }
+  bool is_input(unsigned int i) const {
     CGAL_precondition( is_segment() && i < 2 );
     if ( i == 0 ) { return !(type_ & 4); }
     return !(type_ & 8);
@@ -111,23 +111,23 @@ public:
     CGAL_precondition( i < 6 );
     if ( i == 0 ) { return p_[0]; }
     else if ( i == 1 ) {
-      CGAL_precondition( is_segment() || !is_exact() );
+      CGAL_precondition( is_segment() || !is_input() );
       return p_[1];
     } else if ( i == 2 ) {
-      CGAL_precondition( (is_point() && !is_exact()) ||
-			 (is_segment() && !is_exact(0)) );
+      CGAL_precondition( (is_point() && !is_input()) ||
+			 (is_segment() && !is_input(0)) );
       return p_[2];
     } else if ( i == 3 ) {
-      CGAL_precondition( (is_point() && !is_exact()) ||
-			 (is_segment() && !is_exact(0)) );
+      CGAL_precondition( (is_point() && !is_input()) ||
+			 (is_segment() && !is_input(0)) );
       return p_[3];
     } else if ( i == 4 ) {
-      CGAL_precondition( (is_point() && !is_exact()) ||
-			 (is_segment() && !is_exact(1)) );
+      CGAL_precondition( (is_point() && !is_input()) ||
+			 (is_segment() && !is_input(1)) );
       return p_[4];
     } else {  // i == 5
-      CGAL_precondition( (is_point() && !is_exact()) ||
-			 (is_segment() && !is_exact(1)) );
+      CGAL_precondition( (is_point() && !is_input()) ||
+			 (is_segment() && !is_input(1)) );
       return p_[5];
     }
   }
@@ -135,7 +135,7 @@ public:
 
   Point_2 point() const { 
     CGAL_precondition ( is_point() );
-    if ( !is_exact() ) {
+    if ( !is_input() ) {
       return compute_intersection_point(p_[2], p_[3], p_[4], p_[5]);
     } else {
       return p_[0];
@@ -164,14 +164,14 @@ public:
 
   Self supporting_site(unsigned int i) const {
     CGAL_precondition( is_point() && i < 2);
-    CGAL_precondition( !is_exact() );
+    CGAL_precondition( !is_input() );
     if ( i == 0 ) { return construct_site_2(p_[2], p_[3]); }
     return construct_site_2(p_[4], p_[5]);
   }
 
   Self crossing_site(unsigned int i) const {
-    CGAL_precondition( is_segment() && !is_exact() );
-    CGAL_precondition( i < 2 && !is_exact(i) );
+    CGAL_precondition( is_segment() && !is_input() );
+    CGAL_precondition( i < 2 && !is_input(i) );
     if ( i == 0 ) {
       return construct_site_2(p_[2], p_[3]);
     } else {
@@ -181,7 +181,7 @@ public:
 
   Self source_site() const {
     CGAL_precondition( is_segment() );
-    if ( is_exact() || is_exact(0) ) {
+    if ( is_input() || is_input(0) ) {
       return construct_site_2(p_[0]);
     } else {
       return construct_site_2(p_[0], p_[1], p_[2], p_[3]);
@@ -190,7 +190,7 @@ public:
 
   Self target_site() const {
     CGAL_precondition( is_segment() );
-    if ( is_exact() || is_exact(1) ) {
+    if ( is_input() || is_input(1) ) {
       return construct_site_2(p_[1]);
     } else {
       return construct_site_2(p_[0], p_[1], p_[4], p_[5]);
@@ -199,15 +199,15 @@ public:
 
   Self opposite_site() const {
     CGAL_precondition( is_segment() );
-    if ( is_exact() ) {
+    if ( is_input() ) {
       return construct_site_2(p_[1], p_[0]);
     }
 
-    CGAL_assertion( !is_exact(0) || !is_exact(1) );
+    CGAL_assertion( !is_input(0) || !is_input(1) );
 
-    if ( is_exact(0) && !is_exact(1) ) {
+    if ( is_input(0) && !is_input(1) ) {
       return construct_site_2(p_[1], p_[0], p_[4], p_[5], false);
-    } else if ( !is_exact(0) && is_exact(1) ) {
+    } else if ( !is_input(0) && is_input(1) ) {
       return construct_site_2(p_[1], p_[0], p_[2], p_[3], true);
     } else {
       return construct_site_2(p_[1], p_[0], p_[4], p_[5], p_[2], p_[3]);
@@ -222,7 +222,7 @@ public:
   }
 
   Segment_2 supporting_segment(unsigned int i) const {
-    CGAL_precondition( is_point() && !is_exact() && i < 2 );
+    CGAL_precondition( is_point() && !is_input() && i < 2 );
     if ( i == 0 ) {
       return Segment_2(p_[2], p_[3]);
     } else {
@@ -231,8 +231,8 @@ public:
   }
 
   Segment_2 crossing_segment(unsigned int i) const {
-    CGAL_precondition( is_segment() && !is_exact() );
-    CGAL_precondition( i < 2 && !is_exact(i) );
+    CGAL_precondition( is_segment() && !is_input() );
+    CGAL_precondition( i < 2 && !is_input(i) );
     if ( i == 0 ) {
       return Segment_2(p_[2], p_[3]);
     } else {
@@ -299,7 +299,7 @@ protected:
 
   Point_2 compute_source() const {
     CGAL_precondition( is_segment() );
-    if ( is_exact() || is_exact(0) ) {
+    if ( is_input() || is_input(0) ) {
       return p_[0];
     } else {
       return compute_intersection_point(p_[0], p_[1], p_[2], p_[3]);
@@ -308,7 +308,7 @@ protected:
 
   Point_2 compute_target() const {
     CGAL_precondition( is_segment() );
-    if ( is_exact() || is_exact(1) ) {
+    if ( is_input() || is_input(1) ) {
       return p_[1];
     } else {
       return compute_intersection_point(p_[0], p_[1], p_[4], p_[5]);

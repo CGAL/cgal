@@ -111,8 +111,8 @@ public:
   bool is_defined() const { return type_; }
   bool is_point() const { return (type_ & 3) == 1; }
   bool is_segment() const { return (type_ & 3) == 2; }
-  bool is_exact() const { return !(type_ & 12); }
-  bool is_exact(unsigned int i) const {
+  bool is_input() const { return !(type_ & 12); }
+  bool is_input(unsigned int i) const {
     CGAL_precondition( is_segment() && i < 2 );
     if ( i == 0 ) { return !(type_ & 4); }
     return !(type_ & 8);
@@ -127,7 +127,7 @@ public:
 
   Self source_site() const {
     CGAL_precondition( is_segment() );
-    if ( is_exact() || is_exact(0) ) {
+    if ( is_input() || is_input(0) ) {
       return Self(h_[0]);
     } else {
       return Self(h_[0], h_[1], h_[2], h_[3]);
@@ -136,7 +136,7 @@ public:
 
   Self target_site() const {
     CGAL_precondition( is_segment() );
-    if ( is_exact() || is_exact(1) ) {
+    if ( is_input() || is_input(1) ) {
       return Self(h_[1]);
     } else {
       return Self(h_[0], h_[1], h_[4], h_[5]);
@@ -149,7 +149,7 @@ public:
   }
 
   Self supporting_segment_site(unsigned int i) const {
-    CGAL_precondition( is_point() && !is_exact() && i < 2 );
+    CGAL_precondition( is_point() && !is_input() && i < 2 );
     if ( i == 0 ) {
       return Self(h_[2], h_[3]);
     } else {
@@ -158,8 +158,8 @@ public:
   }
 
   Self crossing_segment_site(unsigned int i) const {
-    CGAL_precondition( is_segment() && !is_exact() );
-    CGAL_precondition( i < 2 && !is_exact(i) );
+    CGAL_precondition( is_segment() && !is_input() );
+    CGAL_precondition( i < 2 && !is_input(i) );
     if ( i == 0 ) {
       return Self(h_[2], h_[3]);
     } else {
@@ -169,18 +169,18 @@ public:
 
   Site_2 site() const {
     if ( is_point() ) {
-      if ( is_exact() ) {
+      if ( is_input() ) {
 	return Site_2::construct_site_2(*h_[0]);
       } else {
 	return Site_2::construct_site_2(*h_[2], *h_[3], *h_[4], *h_[5]);
       }
     } else {
-      if ( is_exact() ) {
+      if ( is_input() ) {
 	return Site_2::construct_site_2(*h_[0], *h_[1]);
-      } else if ( is_exact(0) ) {
+      } else if ( is_input(0) ) {
 	return Site_2::construct_site_2(*h_[0], *h_[1], *h_[4],
 					*h_[5], true);
-      } else if ( is_exact(1) ) {
+      } else if ( is_input(1) ) {
 	return Site_2::construct_site_2(*h_[0], *h_[1], *h_[2],
 					*h_[3], false);
       } else {
@@ -254,7 +254,7 @@ protected:
     if ( !other.is_defined() ) { return; }
 
     if ( other.is_point() ) {
-      if ( other.is_exact() ) {
+      if ( other.is_input() ) {
 	h_[0] = other.h_[0];
       } else {
 	h_[2] = other.h_[2];
@@ -265,11 +265,11 @@ protected:
     } else {
       h_[0] = other.h_[0];
       h_[1] = other.h_[1];
-      if ( !other.is_exact() ) {
-	if ( other.is_exact(0) ) {
+      if ( !other.is_input() ) {
+	if ( other.is_input(0) ) {
 	  h_[4] = other.h_[4];
 	  h_[5] = other.h_[5];
-	} else if ( other.is_exact(1) ) {
+	} else if ( other.is_input(1) ) {
 	  h_[2] = other.h_[2];
 	  h_[3] = other.h_[3];
 	} else {

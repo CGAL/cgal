@@ -329,7 +329,7 @@ insert_point(const Storage_site_2& ss, const Site_2& t,
     CGAL_assertion( at_res != AT2::TOUCH_2 );
     CGAL_assertion( at_res == AT2::DISJOINT || at_res == AT2::INTERIOR );
     if ( at_res == AT2::INTERIOR ) {
-      CGAL_assertion( t.is_exact() );
+      CGAL_assertion( t.is_input() );
 
       Vertex_triple vt = insert_exact_point_on_segment(ss, t, vnearest);
       return vt.first;
@@ -570,7 +570,7 @@ insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
   // corresponding to t and the two subsegments of v->site()
 
   CGAL_assertion( t.is_point() );
-  CGAL_assertion( t.is_exact() );
+  CGAL_assertion( t.is_input() );
 
   Storage_site_2 ssitev = v->storage_site();  
 
@@ -624,7 +624,7 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& t,
   Vertex_handle v1 = qq.first;
   Storage_site_2 ssv1;
   Site_2 sv1;
-  if ( sitev.is_exact(0) ) {
+  if ( sitev.is_input(0) ) {
     ssv1 = create_storage_site(ssitev, ss, true);
   } else {
     ssv1 = create_storage_site_type1(ssitev, ssitev, ss);
@@ -635,7 +635,7 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& t,
   Vertex_handle v2 = qq.second;
   Storage_site_2 ssv2;
   Site_2 sv2;
-  if ( sitev.is_exact(1) ) {
+  if ( sitev.is_input(1) ) {
     ssv2 = create_storage_site(ssitev, ss, false);
   } else {
     ssv2 = create_storage_site_type2(ssitev, ss, ssitev);
@@ -660,7 +660,7 @@ Segment_Voronoi_diagram_2<Gt,DS,LTag>::
 insert_segment(const Site_2& t, Vertex_handle vnear)
 {
   CGAL_precondition( t.is_segment() );
-  CGAL_precondition( t.is_exact() );
+  CGAL_precondition( t.is_input() );
 
   if ( is_degenerate_segment(t) ) {
     return insert_point(t.source(), vnear);
@@ -740,7 +740,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
       CGAL_assertion( vv->is_point() );
       if ( at_res == AT2::INTERIOR ) {
 	Storage_site_2 ssvv = vv->storage_site();
-	if ( ssvv.is_exact() ) {
+	if ( ssvv.is_input() ) {
 	  Intersections_tag itag;
 	  Storage_site_2 ss1 = split_storage_site(ss, ssvv, 0, itag);
 	  Storage_site_2 ss2 = split_storage_site(ss, ssvv, 1, itag);
@@ -878,14 +878,14 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
   
   Storage_site_2 ss3, ss4;
   Site_2 s3, s4;
-  if ( t.is_exact(0) ) {
+  if ( t.is_input(0) ) {
     ss3 = create_storage_site(ss, ssitev, true);
   } else {
     ss3 = create_storage_site_type1(ss, ss, ssitev);
   }
   s3 = ss3.site();
 
-  if ( t.is_exact(1) ) {
+  if ( t.is_input(1) ) {
     ss4 = create_storage_site(ss, ssitev, false);
   } else {
     ss4 = create_storage_site_type2(ss, ssitev, ss);
@@ -1712,19 +1712,19 @@ copy_storage_site(const Storage_site_2& ss_other, Handle_map& hm,
 		  const Tag_true&)
 {
   if ( ss_other.is_segment() ) {
-    if ( ss_other.is_exact() ) {
+    if ( ss_other.is_input() ) {
       Point_handle p0 = hm[ ss_other.point_handle(0) ];
       Point_handle p1 = hm[ ss_other.point_handle(1) ];
 
       return Storage_site_2(p0, p1);
-    } else if ( ss_other.is_exact(0) ) {
+    } else if ( ss_other.is_input(0) ) {
       Point_handle p0 = hm[ ss_other.point_handle(0) ];
       Point_handle p1 = hm[ ss_other.point_handle(1) ];
       Point_handle p4 = hm[ ss_other.point_handle(4) ];
       Point_handle p5 = hm[ ss_other.point_handle(5) ];
 
       return Storage_site_2(p0, p1, p4, p5, true);
-    } else if ( ss_other.is_exact(1) ) {
+    } else if ( ss_other.is_input(1) ) {
       Point_handle p0 = hm[ ss_other.point_handle(0) ];
       Point_handle p1 = hm[ ss_other.point_handle(1) ];
       Point_handle p2 = hm[ ss_other.point_handle(2) ];
@@ -1742,7 +1742,7 @@ copy_storage_site(const Storage_site_2& ss_other, Handle_map& hm,
       return Storage_site_2(p0, p1, p2, p3, p4, p5);
     }
   } else {
-    if ( ss_other.is_exact() ) {
+    if ( ss_other.is_input() ) {
       Point_handle p0 = hm[ ss_other.point_handle(0) ];
       return Storage_site_2(p0);
     } else {

@@ -58,7 +58,7 @@ private:
 
   bool have_common_support(const Site_2& p, const Site_2& q) const
   {
-    CGAL_precondition( !p.is_exact() && !q.is_exact() );
+    CGAL_precondition( !p.is_input() && !q.is_input() );
 
     return
       same_segments(p.supporting_site(0), q.supporting_site(0)) ||
@@ -70,7 +70,7 @@ private:
   bool have_common_support(const Site_2& p, const Site_2& q,
 			   Site_2& support) const
   {
-    CGAL_precondition( !p.is_exact() && !q.is_exact() );
+    CGAL_precondition( !p.is_input() && !q.is_input() );
 
     if ( same_segments(p.supporting_site(0),
 		       q.supporting_site(0)) ||
@@ -107,9 +107,9 @@ private:
   {
 #if 1
     // do geometric filtering
-    bool pe = p.is_exact();
-    bool qe = q.is_exact();
-    bool re = r.is_exact();
+    bool pe = p.is_input();
+    bool qe = q.is_input();
+    bool re = r.is_input();
     Site_2 support;
     if ( !pe && !qe && !re ) {
       if ( have_common_support(p, q, support) &&

@@ -211,7 +211,7 @@ public:
   Vertex_handle  insert(const Site_2& t) {
     // the intended use is to unify the calls to insert(...);
     // thus the site must be an exact one; 
-    CGAL_precondition( t.is_exact() );
+    CGAL_precondition( t.is_input() );
 
     this->register_input_site(t);
 

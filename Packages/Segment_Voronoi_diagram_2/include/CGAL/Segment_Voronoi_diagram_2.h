@@ -509,7 +509,7 @@ public:
   {
     // the intended use is to unify the calls to insert(...);
     // thus the site must be an exact one; 
-    CGAL_precondition( t.is_exact() );
+    CGAL_precondition( t.is_input() );
 
     // update input site container
     register_input_site(t);
@@ -546,7 +546,7 @@ protected:
 
   inline void register_input_site(const Site_2& t)
   {
-    CGAL_precondition( t.is_exact() );
+    CGAL_precondition( t.is_input() );
     if ( t.is_point() ) {
       register_input_site( t.point(0) );
     } else {
@@ -812,7 +812,7 @@ protected:
     // second storage site which is a exact point
     // i denotes whether the first or second half is to be created
     CGAL_precondition( ss0.is_segment() && ss1.is_point() );
-    CGAL_precondition( ss1.is_exact() );
+    CGAL_precondition( ss1.is_input() );
     CGAL_precondition( i < 2 );
 
     if ( i == 0 ) {
@@ -830,12 +830,12 @@ protected:
     // second storage site which is a exact point
     // i denotes whether the first or second half is to be created
     CGAL_precondition( ss0.is_segment() && ss1.is_point() );
-    //    CGAL_precondition( ss1.is_exact() );
+    //    CGAL_precondition( ss1.is_input() );
     CGAL_precondition( i < 2 );
 
     if ( i == 0 ) {
-      if ( ss0.is_exact(0) ) {
-	if ( ss1.is_exact() ) {
+      if ( ss0.is_input(0) ) {
+	if ( ss1.is_input() ) {
 	  return Storage_site_2(ss0.point_handle(0), ss1.point_handle(0));
 	} else {
 	  Storage_site_2 supp0 = ss0.supporting_segment_site();
@@ -850,7 +850,7 @@ protected:
 				supp1.point_handle(1), true);
 	}
       } else {
-	if ( ss1.is_exact() ) {
+	if ( ss1.is_input() ) {
 	  return Storage_site_2(ss0.point_handle(0), ss1.point_handle(0),
 				ss0.point_handle(2), ss0.point_handle(3),
 				false);
@@ -870,8 +870,8 @@ protected:
 	}
       }
     } else { // i == 1
-      if ( ss0.is_exact(1) ) {
-	if ( ss1.is_exact() ) {
+      if ( ss0.is_input(1) ) {
+	if ( ss1.is_input() ) {
 	  return Storage_site_2(ss1.point_handle(0), ss0.point_handle(1));
 	} else {
 	  Storage_site_2 supp0 = ss0.supporting_segment_site();
@@ -886,7 +886,7 @@ protected:
 				supp1.point_handle(1), false);
 	}
       } else {
-	if ( ss1.is_exact() ) {
+	if ( ss1.is_input() ) {
 	  return Storage_site_2(ss1.point_handle(0), ss0.point_handle(1),
 				ss0.point_handle(4), ss0.point_handle(5),
 				true);

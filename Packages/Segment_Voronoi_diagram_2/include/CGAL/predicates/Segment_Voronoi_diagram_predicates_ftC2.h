@@ -54,7 +54,7 @@ public:
 
     if ( t.is_point() ) {
       site_types[j] = 'p';
-      if ( t.is_exact() ) {
+      if ( t.is_input() ) {
 	site_types[j+1] = 'e';
 	v[k] = t.point().x();
 	v[k+1] = t.point().y();
@@ -75,7 +75,7 @@ public:
       }
     } else {
       site_types[j] = 's';
-      if ( t.is_exact() ) {
+      if ( t.is_input() ) {
 	site_types[j+1] = 'e';
 	v[k] = t.source().x();
 	v[k+1] = t.source().y();
@@ -91,10 +91,10 @@ public:
 
 	Segment_2 cs, cs2;
 	char stype;
-	if ( t.is_exact(0) ) {
+	if ( t.is_input(0) ) {
 	  stype = '0';
 	  cs = t.crossing_segment(1);
-	} else if ( t.is_exact(1) ) {
+	} else if ( t.is_input(1) ) {
 	  stype = '1';
 	  cs = t.crossing_segment(0);
 	} else {
@@ -175,7 +175,7 @@ void svd_predicate_push_back_C2(const typename K::Site_2& t,
 
   if ( t.is_point() ) {
     site_types[j] = 'p';
-    if ( t.is_exact() ) {
+    if ( t.is_input() ) {
       site_types[j+1] = 'e';
       v[k] = t.point().x();
       v[k+1] = t.point().y();
@@ -196,7 +196,7 @@ void svd_predicate_push_back_C2(const typename K::Site_2& t,
     }
   } else {
     site_types[j] = 's';
-    if ( t.is_exact() ) {
+    if ( t.is_input() ) {
       site_types[j+1] = 'e';
       v[k] = t.source().x();
       v[k+1] = t.source().y();
@@ -212,10 +212,10 @@ void svd_predicate_push_back_C2(const typename K::Site_2& t,
 
       typename K::Segment_2 cs, cs2;
       char stype;
-      if ( t.is_exact(0) ) {
+      if ( t.is_input(0) ) {
 	stype = '0';
 	cs = t.crossing_segment(1);
-      } else if ( t.is_exact(1) ) {
+      } else if ( t.is_input(1) ) {
 	stype = '1';
 	cs = t.crossing_segment(0);
       } else {

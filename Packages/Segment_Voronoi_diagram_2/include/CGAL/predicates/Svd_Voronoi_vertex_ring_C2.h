@@ -380,7 +380,7 @@ private:
   bool check_if_exact(const Site_2& s, unsigned int i,
 		      const Tag_true&) const
   {
-    return s.is_exact(i);
+    return s.is_input(i);
   }
 
   // determines of the segment s is on the positive halfspace as

@@ -54,7 +54,7 @@ private:
   bool is_on_common_support(const Site_2& s1, const Site_2& s2,
 			    const Point_2& p) const
   {
-    CGAL_precondition( !s1.is_exact() && !s2.is_exact() );
+    CGAL_precondition( !s1.is_input() && !s2.is_input() );
 
     if (  same_segments(s1.supporting_site(0),
 			s2.supporting_site(0)) ||
@@ -80,7 +80,7 @@ private:
 
   bool have_common_support(const Site_2& p, const Site_2& q) const
   {
-    CGAL_precondition( !p.is_exact() && !q.is_exact() );
+    CGAL_precondition( !p.is_input() && !q.is_input() );
 
     return
       same_segments(p.supporting_site(0), q.supporting_site(0)) ||
@@ -92,7 +92,7 @@ private:
   bool have_common_support(const Site_2& s, const Point_2& p1,
 			   const Point_2& p2) const
   {
-    CGAL_precondition( !s.is_exact() );
+    CGAL_precondition( !s.is_input() );
 
     Site_2 t = Site_2::construct_site_2(p1, p2);
 
@@ -137,9 +137,9 @@ private:
                                // order a compiler warning
 
     // do some geometric filtering...
-    bool p_exact = p.is_exact();
-    bool q_exact = q.is_exact();
-    bool t_exact = t.is_exact();
+    bool p_exact = p.is_input();
+    bool q_exact = q.is_input();
+    bool t_exact = t.is_input();
     bool filtered = false;
     // the following if-statement does the gometric filtering...
     // maybe it is not so important since this will only be
@@ -229,9 +229,9 @@ private:
                                  // order a compiler warning
 
       // do some geometric filtering...
-      bool p_exact = p.is_exact();
-      bool q_exact = q.is_exact();
-      bool t_exact = t.is_exact();
+      bool p_exact = p.is_input();
+      bool q_exact = q.is_input();
+      bool t_exact = t.is_input();
       bool filtered = false;
       // the following if-statement does the gometric filtering...
       // maybe it is not so important since this will only be

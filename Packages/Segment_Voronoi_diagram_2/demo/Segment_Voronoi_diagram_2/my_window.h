@@ -111,15 +111,15 @@ private:
 #if 1
       std::cout << "degree: " << v->degree() << std::endl;
       if ( v->site().is_segment() &&
-	   !v->site().is_exact() ) {
+	   !v->site().is_input() ) {
 	std::cout << "site: " << v->site() << std::endl;
 	std::cout << "supporting segment: "
 		  << v->site().supporting_segment() << std::endl;
-	if ( !v->site().is_exact(0) ) {
+	if ( !v->site().is_input(0) ) {
 	  std::cout << "crossing segment for source: "
 		    << v->site().crossing_segment(0) << std::endl;
 	}
-	if ( !v->site().is_exact(1) ) {
+	if ( !v->site().is_input(1) ) {
 	  std::cout << "crossing segment for target: "
 		    << v->site().crossing_segment(1) << std::endl;
 	}

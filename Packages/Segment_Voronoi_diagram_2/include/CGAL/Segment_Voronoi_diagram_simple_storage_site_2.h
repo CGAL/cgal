@@ -81,8 +81,8 @@ public:
   bool is_defined() const { return type_; }
   bool is_point() const { return type_ == 1; }
   bool is_segment() const { return type_ == 2; }
-  bool is_exact() const { return true; }
-  bool is_exact(unsigned int i) const { return true; }
+  bool is_input() const { return true; }
+  bool is_input(unsigned int i) const { return true; }
 
   // ACCESS METHODS
   //---------------

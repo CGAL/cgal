@@ -223,7 +223,7 @@ private:
 
   bool check_if_exact(const Site_2& t1, const Tag_true&) const
   {
-    return t1.is_exact();
+    return t1.is_input();
   }
 
   bool

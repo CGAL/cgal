@@ -113,7 +113,7 @@ private:
   K2_Site_2 convert_site(const K1_Site_2& t, const Tag_true&) const
   {
     if ( t.is_point() ) {
-      if ( t.is_exact() ) {
+      if ( t.is_input() ) {
 	return K2_Site_2::construct_site_2( Base::operator()(t.point()) );
       } else {
 	K1_Site_2 s1 = t.supporting_site(0);
@@ -125,19 +125,19 @@ private:
       }
     }
 
-    if ( t.is_exact() ) {
+    if ( t.is_input() ) {
       return K2_Site_2::construct_site_2( Base::operator()(t.point(0)),
 					  Base::operator()(t.point(1)) );
     } else {
       K1_Site_2 supp = t.supporting_site();
-      if ( t.is_exact(0) ) {
+      if ( t.is_input(0) ) {
 	K1_Site_2 cs = t.crossing_site(1);
 	return K2_Site_2::construct_site_2(Base::operator()(supp.point(0)),
 					   Base::operator()(supp.point(1)),
 					   Base::operator()(cs.point(0)),
 					   Base::operator()(cs.point(1)),
 					   true);
-      } else if ( t.is_exact(1) ) {
+      } else if ( t.is_input(1) ) {
 	K1_Site_2 cs = t.crossing_site(0);
 	return K2_Site_2::construct_site_2(Base::operator()(supp.point(0)),
 					   Base::operator()(supp.point(1)),
