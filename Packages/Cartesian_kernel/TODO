@@ -1,14 +1,18 @@
 Stuff to look at, as time permits:
 ----------------------------------
 
+- Handles :
+  - Having a proper Handle_for_virtual<> is becoming important...
+  - It must have the same interface than Handle_for<>
+  - Must use the allocator, see Stefan's mail.
+  - Aff_tranformations can't use Handle_for<> yet.
+
 *** Before submitting : check the test-suite on M$, especially for
   CGAL_TYPENAME_BUG stuff...
 
 - What's this new_rep() ?
 - Finish merging .C files in corresponding .h files.
 - Write a Checker for full kernels, like Pm_traits_checker.h ?
-- SphereC3 should be tested...  Sphere_3<R> is missing right now, so...
-- Aff_tranformations can't use Handle_for<> yet.
 - Use CGAL_TYPENAME_MSVC_NULL instead of "#define typename".
   Only in the template parameters, right ?
 - Rename CGAL_CFG_NO_ADVANCED_KERNEL to CGAL_USE_ADVANCED_KERNEL, definable on
@@ -146,4 +150,3 @@ Notes:
 ------
 - To run the test-suite, download the Kernel_test package, and add the correct
   "-I../../../Cartesian_kernel/include" line in the makefile.
-- To test Sphere_3, you also need to add -DTEST_SPHERE...  It's 100% buggy now.

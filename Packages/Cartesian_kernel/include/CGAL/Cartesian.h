@@ -81,8 +81,8 @@ struct Cartesian_base :
     typedef typename Kernel_base_3::Segment_3             Segment_3;
     typedef typename Kernel_base_3::Triangle_3            Triangle_3;
     typedef typename Kernel_base_3::Tetrahedron_3         Tetrahedron_3;
-    typedef typename Kernel_base_3::Iso_cuboid_3          Iso_cuboid_3;
     typedef typename Kernel_base_3::Sphere_3              Sphere_3;
+    typedef typename Kernel_base_3::Iso_cuboid_3          Iso_cuboid_3;
     typedef typename Kernel_base_3::Aff_transformation_3  Aff_transformation_3;
 
     typedef typename Kernel_base_d::Point_d                     Point_d;
@@ -140,6 +140,7 @@ struct Cartesian : public Cartesian_base< Cartesian<FT_>, FT_ >
     typedef typename Kernel_base::Segment_3               Segment_3;
     typedef typename Kernel_base::Triangle_3              Triangle_3;
     typedef typename Kernel_base::Tetrahedron_3           Tetrahedron_3;
+    typedef typename Kernel_base::Sphere_3                Sphere_3;
     typedef typename Kernel_base::Iso_cuboid_3            Iso_cuboid_3;
     typedef typename Kernel_base::Aff_transformation_3    Aff_transformation_3;
 
@@ -174,6 +175,7 @@ struct Cartesian : public Cartesian_base< Cartesian<FT_>, FT_ >
     typedef typename Kernel_base::Segment_3               Segment_3_base;
     typedef typename Kernel_base::Triangle_3              Triangle_3_base;
     typedef typename Kernel_base::Tetrahedron_3           Tetrahedron_3_base;
+    typedef typename Kernel_base::Sphere_3                Sphere_3_base;
     typedef typename Kernel_base::Iso_cuboid_3            Iso_cuboid_3_base;
     typedef typename Kernel_base::Aff_transformation_3    
                                                   Aff_transformation_3_base;
@@ -207,6 +209,7 @@ struct Cartesian : public Cartesian_base< Cartesian<FT_>, FT_ >
     typedef CGAL::Segment_3<Self>                         Segment_3;
     typedef CGAL::Triangle_3<Self>                        Triangle_3;
     typedef CGAL::Tetrahedron_3<Self>                     Tetrahedron_3;
+    typedef CGAL::Sphere_3<Self>                          Sphere_3;
     typedef CGAL::Iso_cuboid_3<Self>                      Iso_cuboid_3;
     typedef CGAL::Aff_transformation_3<Self>              Aff_transformation_3;
 

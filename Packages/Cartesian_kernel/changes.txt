@@ -8,6 +8,7 @@ Version 6.0 (?? ????? 00)
 - Replaced `x == FT(0)' by `CGAL_NTS is_zero(x)'.
 - Use identical() instead of comparing "ptr".
 - Call identical() in all operator==() in order to be consistent.
+- Sphere_3 is back to life.
 - Various cleanups.
 
 --- CGAL 2.2 is out ---
