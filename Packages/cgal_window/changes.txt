@@ -1,3 +1,5 @@
+1.0.2  fix for BCC added
+
 1.0.1  some files had to be converted 
        from DOS to UNIX format to avoid warnings
 
