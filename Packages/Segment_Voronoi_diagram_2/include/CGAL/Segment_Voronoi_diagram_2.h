@@ -926,9 +926,10 @@ protected:
   Vertex_handle insert_segment(const Site_2& t, Vertex_handle vnear,
 			       bool insert_endpoints);
 
-  Vertex_handle insert_segment2(const Site_2& t,
-				const Storage_site_2& ss,
-				Vertex_handle vnear, bool insert_endpoints);
+  Vertex_handle insert_segment_interior(const Site_2& t,
+					const Storage_site_2& ss,
+					Vertex_handle vnear,
+					bool insert_endpoints);
 
   template<class ITag>
   Vertex_handle  insert_intersecting_segment(const Storage_site_2& ss,

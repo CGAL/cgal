@@ -677,7 +677,7 @@ Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>::
 insert_point(const Storage_site_2& ss, const Site_2& t,
 	     Vertex_handle vnear)
 {
-  CGAL_assertion( false );
+  //  CGAL_assertion( false );
 
   CGAL_precondition( t.is_point() );
   CGAL_precondition( !t.is_exact() );
@@ -694,7 +694,7 @@ insert_point(const Storage_site_2& ss, const Site_2& t,
 #endif
 
   // first find the nearest neighbor
-  Vertex_handle  vnearest = nearest_neighbor( t.point(), vnear );
+  Vertex_handle  vnearest = nearest_neighbor( t, vnear );
 
   CGAL_assertion( vnearest != Vertex_handle() );
 
@@ -785,7 +785,7 @@ insert_point(const Storage_site_2& ss, const Site_2& t,
   // LIST OF FLIPPED EDGES AND WHAT IS DOES IS INITIALIZE THE CONFLICT 
   // REGION AND EXPANDS THE CONFLICT REGION.
   initialize_conflict_region(start_f, l);
-  expand_conflict_region(start_f, t, l, fm, sign_map, vcross, NULL);
+  expand_conflict_region(start_f, t, ss, l, fm, sign_map, vcross, NULL);
 
   CGAL_assertion( !vcross.first );
 
@@ -832,7 +832,7 @@ insert_segment(const Site_2& t, Vertex_handle vnear,
     Storage_site_2 ss = create_storage_site(v0, v1);
     // we do not add vs in the vertex list; it is inserted inside
     // the method insert_segment2
-    vs = insert_segment2( t, ss, v0, false );
+    vs = insert_segment_interior( t, ss, v0, false );
     return vs;
   } // if ( number_of_vertices() == 0 ) {
 }
@@ -841,8 +841,8 @@ insert_segment(const Site_2& t, Vertex_handle vnear,
 template<class Gt, class PC, class DS, class LTag>
 typename Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>::Vertex_handle
 Segment_Voronoi_diagram_2<Gt,PC,DS,LTag>::
-insert_segment2(const Site_2& t, const Storage_site_2& ss,
-		Vertex_handle vnearest, bool insert_endpoints)
+insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
+			Vertex_handle vnearest, bool insert_endpoints)
 {
   CGAL_precondition( t.is_segment() );
   CGAL_precondition( !insert_endpoints );
@@ -892,8 +892,8 @@ insert_segment2(const Site_2& t, const Storage_site_2& ss,
     }
     if ( do_intersect(t, vv) ) {
       if ( t.is_segment() ) {
-	return insert_intersecting_segment(ss, t, vv,
-					   Intersections_tag());
+	Intersections_tag itag;
+	return insert_intersecting_segment(ss, t, vv, itag);
       }
     }
     ++vc;
@@ -1168,8 +1168,8 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
 		    ss.point_handle(4), ss.point_handle(5));
   }
 
-  insert_segment2(s3, ss3, vsx, false);
-  insert_segment2(s4, ss4, vsx, false);
+  insert_segment_interior(s3, ss3, vsx, false);
+  insert_segment_interior(s4, ss4, vsx, false);
   return vsx;
 }
 
