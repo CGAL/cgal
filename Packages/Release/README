@@ -28,6 +28,7 @@ Let <release_dir> be the directory in which you plan to build the release.
                    #define CGAL_VERSION ...
                    #define CGAL_VERSION_NR ...
       7.  Edit install_cgal script: remove the "y" in INTERNAL_RELEASE='y'.
+      8.  Copy Release/CHANGES
 
 For the manuals:
 
@@ -59,7 +60,7 @@ Package the code:
            zip -r CGAL-M.m.zip CGAL-M.m
       3.  The .zip file for the code needs to be repackaged for use with
           InstallShield.  Contact the person in charge of Windows support
-          (currently Radu.Ursu@sophia.inria.fr).
+          (currently Radu Ursu <rursu@geometryfactory.com>).
 
 For the web pages:
       1.  edit the following web pages (at least)
