@@ -122,7 +122,7 @@ alt="4D simplex and a 3D geometric embedding">
 simplex, i.e. the boundary of a tetrahedron. The geometric embedding in
 the plane consists in choosing one of these vertices to be infinite,
 then the geometric triangulation has one finite triangle whose edges are
-adjacent to the infinite triangles. See Figure~\ref{TDS3-fig-topo-simplex3}.
+incident to the infinite triangles. See Figure~\ref{TDS3-fig-topo-simplex3}.
 \begin{ccTexOnly}
 \begin{figure}
 \begin{center} 
@@ -158,7 +158,7 @@ The last three cases are defined uniquely:
 combinatorially equivalent to the boundary of a 1-dimensional simplex
 (an edge), which consists of 2 vertices. One of them becomes infinite
 in the geometric embedding, and there is only one finite vertex
-remaining. The two vertices are disconnected.
+remaining. The two vertices are adjacent.
 \item \emph{dimension -1.} This dimension is a convention to represent a 
 0-dimensional simplex, that is a sole vertex, which will be
 geometrically embedded as an ``empty'' triangulation, only having one
@@ -183,17 +183,21 @@ dimension~1, each cell has one edge $(0,1)$.
 A 3D combinatorial triangulation is said to be \ccc{locally valid} 
 iff the following is true:
 
-{\bf (a)} Two adjacent cells have neighbor pointers to each other and
-they have three vertices in common. 
+{\bf (a)} When a cell $c$ has a neighbor pointer to another cell $c'$,
+then reciprocally this cell $c'$ has a neighbor pointer to $c$, and
+$c$ and $c'$ have three vertices in common. These cells are called
+adjacent. 
+% Two adjacent cells have reciprocal neighbor pointers to each
+% other and they have three vertices in common. 
 
 {\bf (b)} The cells have a coherent orientation: if two cells $c_1$
-and $c_2$ are neighbors and share a facet with vertices $u,v,w$, then
+and $c_2$ are adjacent and share a facet with vertices $u,v,w$, then
 the vertices of $c_1$ are numbered $(v_0^1 = u, v_1^1 = v, v_2^1 = w,
 v_3^1)$, and the vertices of $c_2$ are numbered $(v_0^2 = v, v_1^2 = u,
 v_2^2 = w, v_3^2)$, up to positive permutations of $(0,1,2,3)$. In
-other words, the fourth vertices $v_3^1$ and $v_3^2$ of $c_1$ and
-$c_2$ see the common facet in opposite orientations. See
-Figure~\ref{TDS3-fig-comborient}.
+other words, if we embed the triangulation in $\R^3$, then the fourth
+vertices $v_3^1$ and $v_3^2$ of $c_1$ and $c_2$ see the common facet
+in opposite orientations. See Figure~\ref{TDS3-fig-comborient}.
 
 The set {\Large $\sigma$}$_4$ of permutations of
 $(0,1,2,3)$ has cardinality 24, and the set of positive permutations
@@ -255,14 +259,14 @@ has a pointer to a cell of the triangulation data structure, and a
 cell has four pointers to vertices. These pointers are usual
 \ccc{C++} pointers. The triangulation data structure provides
 operations such as insertion of a new vertex in a given cell, on a
-$1$ or $2$-face, or, if the dimension of the triangulation is smaller
-than 3, outside the ``affine'' hull of the vertices, thus increasing
-the dimension of the triangulation by one. The triangulation data
+$1$ or $2$-face. It also allows, if the dimension of the triangulation
+is smaller than $3$, to insert a vertex so that the dimension of the
+triangulation is increased by one. The triangulation data
 structure is responsible for the combinatorial integrity of the
 triangulation. 
 
 It is up to the user to derive its own base classes from the \cgal\
-base classes to add any other information the may need for his given
+base classes to add any other information he may need for his given
 application, or to write his own base classes from scratch. In this
 case, his base classes must be models for the concepts described in
 Section~\ref{TDS3-sec-concept-Base}. As the triangulation data
@@ -289,10 +293,7 @@ structure by inserting vertices.
 \begin{verbatim}
 #include <CGAL/basic.h>
 
-#include <cstring>
 #include <iostream>
-#include <fstream>
-#include <strstream.h>
 
 #include <vector>
 
@@ -402,8 +403,13 @@ operations.
 \ccThree{typedef triple <Cell*, int, int>}{Facet }{}
 \ccThreeToTwo
 
-\ccNestedType{Vertex}{}
+\ccNestedType{Vertex }{Vertex}
 \ccGlue
+\ccNestedType{Cell}{Cell type}
+Requirements for \ccc{Vertex} and \ccc{Cell} are described in
+Sections~\ref{TDS3-sec-concept-Tds_Vertex}
+and~\ref{TDS3-sec-concept-Tds_Cell}.
+
 \ccTypedef{typedef triple<Cell*, int, int> Edge;}{\ccc{(c,i,j)} is the
 edge of cell \ccc{c} whose vertices indices are \ccc{i} and
 \ccc{j}. (see Section~\ref{TDS3-sec-def})}
@@ -411,10 +417,6 @@ edge of cell \ccc{c} whose vertices indices are \ccc{i} and
 \ccTypedef{typedef pair<Cell*, int>  Facet;}{\ccc{(c,i)} is the facet
 of \ccc{c} opposite to the vertex of index \ccc{i}. (see
 Section~\ref{TDS3-sec-def})} 
-\ccGlue
-\ccNestedType{Cell}{}
-Requirements for \ccc{Vertex} and \ccc{Cell} are described in
-Sections~\ref{TDS3-sec-concept-Tds_Vertex} and~\ref{TDS3-sec-concept-Tds_Cell}.
 
 
 The following iterators allow to visit all the vertices, edges, facets
@@ -450,16 +452,16 @@ incident to a given edge. They are bidirectional and non mutable.
 
 The previous first two methods are equivalent.
 
-\ccMethod{void swap(Tds & tds1);}
-{Swaps \ccVar\ and \ccc{tds1}. Should be preferred to \ccVar=\ccc{tds1}
-or \ccVar(\ccc{tds1}) when tds1 is deleted after that. Indeed, there is no
-copy of cells and vertices, thus this method runs in constant time.}
+\ccMethod{void swap(Tds & tds1);} 
+{Swaps \ccVar\ and \ccc{tds1}. There is no copy of cells and vertices,
+thus this method runs in constant time. Should be preferred to
+\ccVar=\ccc{tds1} or \ccVar(\ccc{tds1}) when \ccc{tds1} is deleted after
+that.}
 
 \ccMethod{Vertex* copy_tds(const Tds & tds1, Vertex* v = NULL);}
-{\ccc{tds1} is copied into \ccVar. The vertex of \ccVar\ 
-corresponding to \ccc{v} is returned.
-\ccPrecond{The optional argument \ccc{v} is a vertex of
-\ccc{tds1}.}}
+{\ccc{tds1} is copied into \ccVar. If $v != NULL$, the vertex of \ccVar\ 
+corresponding to \ccc{v} is returned, otherwise \ccc{NULL} is returned.
+\ccPrecond{The optional argument \ccc{v} is a vertex of \ccc{tds1}.}}
 
 \ccFunction{void \ccTilde\ccVar();}
 {Destructor. All vertices and cells are deleted, and \ccVar\ itself is
@@ -477,23 +479,22 @@ infinite vertex is a standard vertex and is thus also counted.}
 
 \ccHeading{Non constant-time access functions}
 \ccMethod{int number_of_cells() const;}
-{The number of cells.
-\ccPrecond{\ccVar.\ccc{dimension()}=3.}}
+{The number of cells. Returns 0 if \ccVar.\ccc{dimension()}$<3$.}
 \ccGlue
 \ccMethod{int number_of_facets() const;}
-{The number of facets.
-\ccPrecond{\ccVar.\ccc{dimension()}$\geq 2$.}}
+{The number of facets. Returns 0 if \ccVar.\ccc{dimension()}$<2$.}
 \ccGlue
 \ccMethod{int number_of_edges() const;}
-{The number of edges.
-\ccPrecond{\ccVar.\ccc{dimension()}$\geq 1$.}}
+{The number of edges. Returns 0 if \ccVar.\ccc{dimension()}$<1$.}
 
+\begin{ccAdvanced}
 \ccHeading{Setting}
 \ccMethod{void set_dimension(int n);}
 {Sets the dimension to \ccc{n}.}
 
 \ccMethod{void set_number_of_vertices(int n);}
 {Sets the number of vertices to \ccc{n}.}
+\end{ccAdvanced}
 
 \ccHeading{Queries}
 
@@ -522,38 +523,41 @@ and \ccc{l} of the vertices \ccc{u}, \ccc{v}, \ccc{w} and \ccc{t} in
 
 \ccModifiers
 
-The following modifier member functions must guarantee
+The following modifier member functions guarantee
 the combinatorial validity of the resulting triangulation.
 
 \ccMethod{Vertex * insert_in_cell(const Vertex & v, Cell* c);} 
 {Inserts vertex \ccc{v} in cell \ccc{c}. Cell \ccc{c} is split into four
 new cells, each of these cells being formed with \ccc{v} and a facet
 of \ccc{c}.
-\ccPrecond{\ccVar.dimension() $=3$.}}
+\ccPrecond{\ccVar.dimension() $=3$ and \ccc{c} is a cell of \ccVar.}}
 
 \ccMethod{Vertex * insert_in_facet(const Vertex & v, const Facet & f);} 
 {Inserts vertex \ccc{v} in facet \ccc{f}. In dimension 3, the two
 incident cells are split into 3 new cells; in dimension 2, the facet is
 split into 3 facets.
-\ccPrecond{\ccc{\ccVar.dimension()} $\geq 2$.}}
+\ccPrecond{\ccc{\ccVar.dimension()} $\geq 2$ and \ccc{f} is a
+facet of \ccVar.}} 
 
 \ccMethod{Vertex * insert_in_facet(const Vertex & v, Cell* c, int i);} 
 {Inserts \ccc{v} in facet \ccc{i} of \ccc{c}.
-\ccPrecond{\ccc{\ccVar.dimension()} $\geq 2$. $i \in \{0,1,2,3\}$ 
-in dimension~3, $i=3$ in dimension~2.}}
+\ccPrecond{\ccc{\ccVar.dimension()} $\geq 2$, $i \in \{0,1,2,3\}$ 
+in dimension~3, $i=3$ in dimension~2 and \ccc{(c,i)} is a facet of
+\ccVar.}} 
 
 \ccMethod{Vertex * insert_in_edge(const Vertex & v, Edge e);} 
 {Inserts vertex \ccc{v} in edge \ccc{e}. In dimension 3, all the
 incident cells are split into 2 new cells; in dimension 2, the 2
 incident facets are split into 2 new facets; in dimension 1, the edge is 
 split into 2 new edges.
-\ccPrecond{\ccc{\ccVar.dimension()} $\geq 1$.}}
+\ccPrecond{\ccc{\ccVar.dimension()} $\geq 1$ and \ccc{e} is an edge of
+\ccVar.}} 
 
 \ccMethod{Vertex * insert_in_edge(const Vertex & v, Cell* c, int i, int j);} 
 {Inserts \ccc{v} in edge $(i,j)$ of \ccc{c}.
 \ccPrecond{\ccc{\ccVar.dimension()} $\geq 1$. $i\neq j$, $i,j \in
 \{0,1,2,3\}$ in dimension~3, $i,j \in \{0,1,2\}$ in dimension~2, $i,j
-\in \{0,1\}$ in dimension~1.}}
+\in \{0,1\}$ in dimension~1 and \ccc{(c,i,j)} is an edge of \ccVar.}}
 
 \ccMethod{Vertex * insert_increase_dimension(
 			const Vertex & v, 
@@ -572,8 +576,8 @@ boolean \ccc{reorient} is set to true, all the faces of maximal
 dimension are given the opposite orientation.\\
 This method can be used to insert the first two vertices in an empty
 triangulation.
-\ccPrecond{\ccc{\ccVar.dimension()} $= d < 3$ and, when
-\ccc{\ccVar.number_of_vertices()} $>0$, $star \neq NULL$. \ccc{star}
+\ccPrecond{\ccc{\ccVar.dimension()} $= d < 3$. When
+\ccc{\ccVar.number_of_vertices()} $>0$, $star \neq NULL$ and \ccc{star}
 is a vertex of \ccVar.}} 
 
 \begin{ccTexOnly}
@@ -619,6 +623,32 @@ element of \ccc{region} whose facet of index \ccc{i} lies on the
 boundary of \ccc{region} (this precondition is not checked
 but must be satisfied).}}
 
+\begin{ccAdvanced}
+\ccHeading{Other modifiers}
+The following modifiers can affect the validity of the triangulation
+data structure.
+
+\ccMethod{void add_cell( Cell* c );}
+{Adds an already existing cell to the triangulation data structure.
+\ccPrecond{\ccc{c != NULL}.}}
+
+\ccMethod{Cell * create_cell();}
+{Creates a cell and adds it into the triangulation data structure. Its 
+vertices and neighbors are initialized to \ccc{NULL}.
+The setting functions of the cell can be used later to modify them.}
+
+\ccMethod{Cell * create_cell(Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3);}
+{Creates a cell and adds it into the triangulation data
+structure. Initializes the vertices of the cell, its neighbor pointers 
+being initialized with \ccc{NULL}.}
+
+\ccMethod{Cell* create_cell( Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3,
+		     Cell* n0, Cell* n1, Cell* n2, Cell* n3);}
+{Creates a cell, initializes its vertices and neighbors, and adds it
+into the triangulation data structure.}
+
+\end{ccAdvanced}
+
 \ccHeading{Traversing the triangulation}
 \ccThree{Facet_circulator}{tds.facets_begin()toto}{}
 
@@ -646,20 +676,21 @@ but must be satisfied).}}
 {Starts at an arbitrary cell incident to \ccc{e}.
 \ccPrecond{\ccc{\ccVar.dimension()}~$=3$}}
 \ccGlue
-\ccMethod{Cell_circulator incident_cells(Cell* ce, int i) const;}
-{Idem for edge \ccc{i} of \ccc{ce}.}
+\ccMethod{Cell_circulator incident_cells(Cell* ce, int i, int j) const;}
+{Idem for edge \ccc{(i,j)} of \ccc{ce}.}
 \ccGlue
 \ccMethod{Cell_circulator incident_cells(const Edge & e, Cell* c) const;}
 {Starts at cell \ccc{c}.
 \ccPrecond{\ccc{\ccVar.dimension()}~$=3$ and \ccc{c} is incident to
 \ccc{e}.}}
 \ccGlue
-\ccMethod{Cell_circulator incident_cells(Cell* ce, int i, Cell* c)
+\ccMethod{Cell_circulator incident_cells(Cell* ce, int i, int j, Cell* c)
 const;}
-{Idem for edge \ccc{i} of \ccc{ce}.}
+{Idem for edge \ccc{(i,j)} of \ccc{ce}.}
 
 \ccMethod{Facet_circulator incident_facets(Edge e) const;}
-{Starts at an arbitrary facet incident to \ccc{e}. \textit{not yet implemented}}
+{Starts at an arbitrary facet incident to \ccc{e}.\\
+\textit{not yet implemented}} 
 \ccGlue
 \ccMethod{Facet_circulator incident_facets(Edge e, Facet f) const;}
 {Starts at facet \ccc{f}.
@@ -687,6 +718,7 @@ the optional argument \ccc{c} is a cell having \ccc{v} as vertex.}}
 \ccPrecond{\ccc{v} $\neq$ \ccc{NULL}, \ccc{\ccVar.is_vertex(v)} and
 the optional argument \ccc{c} is a cell having \ccc{v} as vertex.}}
 
+\begin{ccAdvanced}
 \ccHeading{Checking}
 
 \ccMethod{bool is_valid(bool verbose = false) const;}
@@ -695,6 +727,7 @@ validity of all its cells and vertices (see~\pageref{TDS3-sec-Valid}). Moreover,
 any dimension.\\ 
 When \ccc{verbose} is set to \ccc{true}, messages are printed to give
 a precise indication on the kind of invalidity encountered.}
+\end{ccAdvanced}
 
 \ccHeading{I/O}
 
@@ -819,25 +852,27 @@ The class \ccClassName\ defines the following types.
 \ccCreation
 \ccThree{Tds::Vertex}{v(const Point & p, Cell* c);}{}
 
+The constructors of a cell do not insert it into any triangulation
+data structure. To add a cell into a given triangulation
+data structure, the \ccc{add_cell()} method of the triangulation
+data structure must be used. Note that a given cell can only be
+inserted into \textit{one} triangulation data structure.
+
 \ccConstructor{\ccClassName();}
 {Introduces a cell \ccVar\ and initializes all vertices and neighbors 
  with \ccc{NULL}.}
 
-\ccConstructor{\ccClassName(Tds & tds);}
-{Introduces a cell \ccVar\ and inserts it in the triangulation 
-data structure \ccc{tds}.}
+%\ccConstructor{\ccClassName(Tds & tds);}
+%{Introduces a cell \ccVar\ and inserts it in the triangulation 
+%data structure \ccc{tds}.}
 
-\ccConstructor{\ccClassName(Tds & tds,
-			Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3);}
-{Introduces a cell \ccVar, and initializes its related triangulation 
-data structure and the vertices. The neighbors are initialized with
-\ccc{NULL}.} 
+\ccConstructor{\ccClassName(Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3);}
+{Introduces a cell \ccVar, and initializes its vertices. The neighbors
+are initialized with \ccc{NULL}.} 
 
-\ccConstructor{\ccClassName(Tds & tds,
-		Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3,
+\ccConstructor{\ccClassName(Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3,
                 Cell* n0, Cell* n1, Cell* n2, Cell* n3);}
-{Introduces a cell \ccVar, and initializes its related triangulation 
-data structure, the vertices and the neighbors.}
+{Introduces a cell \ccVar, and initializes its vertices and neighbors.}
 
 \ccAccessFunctions
 
@@ -1007,7 +1042,7 @@ pointer to an incident cell is not \ccc{NULL}.}
 
 \ccFunction{istream& operator>>
 (istream& is, Vertex_base & v);}
-{Inputs the non combinatorial operation given by the vertex: 
+{Inputs the non combinatorial information given by the vertex: 
 the optional point and other possible information.
 \ccPrecond{The point and the other information have a corresponding
 operator \ccc{>>}.}} 

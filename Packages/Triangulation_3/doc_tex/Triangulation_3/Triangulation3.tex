@@ -57,11 +57,11 @@ access to its four incident vertices and to its four adjacent
 cells. Each vertex gives access to one of its incident cells.
 
 The four vertices of a cell are indexed with 0, 1, 2 and 3 in positive
-orientation, the orientation being defined by the orientation of the
-underlying space $\R^3$. The neighbors of a cell are also indexed with
-0, 1, 2, 3 in such a way that the neighbor indexed by $i$ is opposite
-to the vertex with the same index. See
-Figure~\ref{Triangulation3-fig-orient}. 
+orientation, the positive orientation being defined by the orientation
+of the underlying space $\R^3$. The neighbors of a cell are also
+indexed with 0, 1, 2, 3 in such a way that the neighbor indexed by $i$
+is opposite to the vertex with the same index. See
+Figure~\ref{Triangulation3-fig-orient}.
 
 \begin{ccTexOnly}
 \begin{figure}[htbp]
@@ -91,11 +91,12 @@ endpoints are the vertices of indices \ccc{i} and \ccc{j} of
 \subsection{Degenerate Dimensions}
 \label{Triangulation3-sec-degen_dim}
 
-The class \ccc{Triangulation_3<Traits,Tds>} can deal with degenerate 
-dimensions. A triangulation of a set of points in $\R^d$ is a partition of the
-whole space $\R^d$ into cells having $d+1$ vertices: some of them
-are infinite, they are obtained by linking the additional infinite
-vertex to each facet of the convex hull of the points. 
+The class \ccc{Triangulation_3<Traits,Tds>} can deal with
+triangulations whose dimension is less than~3. A triangulation of a
+set of points in $\R^d$ covers the whole space $\R^d$ and consists of
+cells having $d+1$ vertices: some of them are infinite, they are
+obtained by linking the additional infinite vertex to each facet of
+the convex hull of the points.
 \begin{itemize}
 \item {} \emph{dimension 2:} when a triangulation only contains
 coplanar points (which is the case when there are only three points), 
@@ -125,8 +126,9 @@ dimension~1, each cell has one edge $(0,1)$.
 
 A geometric 3D-triangulation is said to be \ccc{locally valid} iff
 
-{\bf (a)-(b)} Its underlying combinatorial graph is \ccc{locally valid} 
-(see Section~\ref{TDS3-sec-Valid} of Chapter~\ref{chapter-TDS3})
+{\bf (a)-(b)} Its underlying combinatorial graph, the triangulation
+data structure, is \ccc{locally valid} 
+(see Section~\ref{TDS3-sec-Valid} of Chapter~\ref{chapter-TDS3})\\
 {\bf (c)} Any cell has its vertices ordered according to positive
 orientation. See Figure~\ref{Triangulation3-fig-orient}.
 
@@ -189,15 +191,10 @@ on indices in a cell.
 \begin{verbatim}
 #include <CGAL/basic.h>
 
-#include <cstring>
 #include <iostream>
-#include <fstream>
-#include <strstream.h>
 
 #include <list>
 #include <vector>
-
-#include <CGAL/triangulation_assertions.h>
 
 #include <CGAL/Cartesian.h>
 
@@ -430,7 +427,7 @@ deleted.}
 
 \ccMethod{Triangulation_3<Traits,Tds>
 		operator=(const Triangulation_3<Traits,Tds> & tr);}
-{The triangulation is duplicated, and modifying one after the
+{The triangulation \ccc{tr} is duplicated, and modifying one after the 
 copy does not modify the other.}
 
 \ccMethod{void copy_triangulation
@@ -475,31 +472,38 @@ cell incident to the infinite vertex. Similarly we call \ccc{infinite}
 an edge (resp. facet) incident to the infinite vertex.
 
 \ccMethod{int number_of_cells() const;}
-{The number of cells.
-\ccPrecond{\ccVar.\ccc{dimension()}=3.}}
+{The number of cells. Returns 0 if \ccVar.\ccc{dimension()}$<3$.}
 \ccGlue
 \ccMethod{int number_of_facets() const;}
-{The number of facets.
-\ccPrecond{\ccVar.\ccc{dimension()}$\geq 2$.}}
+{The number of facets. Returns 0 if \ccVar.\ccc{dimension()}$<2$.}
 \ccGlue
 \ccMethod{int number_of_edges() const;}
-{The number of edges.
-\ccPrecond{\ccVar.\ccc{dimension()}$\geq 1$.}}
+{The number of edges. Returns 0 if \ccVar.\ccc{dimension()}$<1$.}
 
 \ccMethod{int number_of_finite_cells() const;}
-{The number of finite cells.
-\ccPrecond{\ccVar.\ccc{dimension()}=3.}}
+{The number of finite cells. Returns 0 if \ccVar.\ccc{dimension()}$<3$.}
 \ccGlue
 \ccMethod{int number_of_finite_facets() const;}
-{The number of finite facets.
-\ccPrecond{\ccVar.\ccc{dimension()}$\geq 2$.}}
+{The number of finite facets. Returns 0 if \ccVar.\ccc{dimension()}$<2$.}
 \ccGlue
 \ccMethod{int number_of_finite_edges() const;}
-{The number of finite edges.
-\ccPrecond{\ccVar.\ccc{dimension()}$\geq 1$.}}
+{The number of finite edges. Returns 0 if \ccVar.\ccc{dimension()}$<1$.}
 
+\begin{ccAdvanced}
 \ccHeading{Setting}
 \ccMethod{void set_number_of_vertices(int n);}{}
+
+\ccModifiers
+The geometric triangulation is not supposed to perform any operation
+on its underlying triangulation data structure. We nevertheless
+propose the following function to add a cell created by a constructor
+of the cell class of a triangulation
+\ccc{Triangulation_cell_3<Traits,Tds>}.
+
+\ccMethod{void add_cell( Cell_handle c );}
+{Adds \ccc{c} to the triangulation.
+\ccPrecond{\ccc{c} is not \ccc{NULL}.}}
+\end{ccAdvanced}
 
 \ccHeading{Geometric access functions}
 
@@ -752,9 +756,9 @@ form the new triangulation. See
 Figure~\ref{Triangulation3-fig-insert_outside_convex_hull}.\\  
 If point \ccc{p} is outside the affine hull of the points, \ccc{p} is
 linked to all the points, and the dimension of the triangulation is
-incremented. The infinite vertex is linked to all the points to
-triangulate the new infinite face, so that all the points now belong to
-the boundary of the convex hull. See
+incremented. All the points now belong to the boundary of the convex
+hull, so, the infinite vertex is linked to all the points to
+triangulate the new infinite face. See 
 Figure~\ref{Triangulation3-fig-insert_outside_affine_hull}.}
 
 \ccMethod{Vertex_handle insert(const Point & p, Cell_handle start);}
@@ -768,22 +772,22 @@ place for the location done within the insertion.}
 \ccc{last}$\left.\right)$.  Returns the number of inserted points.
 \ccPrecond{The \ccc{value_type} of \ccc{first} and \ccc{last} is
 \ccc{Point}.}}
-\ccGlue
-\ccMethod{int insert(list<Point>::const_iterator first,
-	     list<Point>::const_iterator last);}
-{Same as the previous one.}
-\ccGlue
-\ccMethod{int insert(vector<Point>::const_iterator first,
-	     vector<Point>::const_iterator last);}
-{Same as the previous one.}
-\ccGlue
-\ccMethod{int insert(istream_iterator<Point, ptrdiff_t> first,
-	     istream_iterator<Point, ptrdiff_t> last);}
-{Same as the previous one.}
-\ccGlue
-\ccMethod{int insert(Point* first,
-	     Point* last);}
-{Same as the previous one.}
+%\ccGlue
+%\ccMethod{int insert(list<Point>::const_iterator first,
+%	     list<Point>::const_iterator last);}
+%{Same as the previous one.}
+%\ccGlue
+%\ccMethod{int insert(vector<Point>::const_iterator first,
+%	     vector<Point>::const_iterator last);}
+%{Same as the previous one.}
+%\ccGlue
+%\ccMethod{int insert(istream_iterator<Point, ptrdiff_t> first,
+%	     istream_iterator<Point, ptrdiff_t> last);}
+%{Same as the previous one.}
+%\ccGlue
+%\ccMethod{int insert(Point* first,
+%	     Point* last);}
+%{Same as the previous one.}
 
 The previous methods are sufficient to build a whole triangulation. We
 also provide some other methods that can be used instead of
@@ -1164,20 +1168,22 @@ The class \ccClassTemplateName\ defines the same types as the
 \begin{ccAdvanced}
 \ccCreation
 The user needs to construct explicitly cells only when designing his
-own triangulation algorithms. 
+own triangulation algorithms. The constructors of a cell do not insert
+it into any triangulation. To add a cell into a given triangulation,
+the \ccc{add_cell()} method of the triangulation must be used. Note
+that a given cell can only be inserted into \textit{one} triangulation.
 
 \ccConstructor{\ccClassName()}
 {Introduces a variable \ccVar\ and initializes all its vertices and
 neighbors in such a way that tests on the handles for equality with
 \ccc{NULL} will answer \ccc{true}.} 
 
-\ccConstructor{\ccClassName(Tds & tds);}
-{Introduces a variable \ccVar, initializes the triangulation data
-structure related, and initializes all its vertices and
-neighbors as the preceding constructor.}
+%\ccConstructor{\ccClassName(Tds & tds);}
+%{Introduces a variable \ccVar, initializes the triangulation data
+%structure related, and initializes all its vertices and
+%neighbors as the preceding constructor.}
 
-\ccConstructor{\ccClassName(Tds & tds,
-	                    Vertex_handle v0,	
+\ccConstructor{\ccClassName(Vertex_handle v0,	
     	                    Vertex_handle v1,
                             Vertex_handle v2,
                             Vertex_handle v3);}
@@ -1185,8 +1191,7 @@ neighbors as the preceding constructor.}
 neighbors are initialized so that tests on the handles for equality with
 \ccc{NULL} will answer \ccc{true}.} 
 
-\ccConstructor{\ccClassName(Tds & tds,
-	                Vertex_handle v0,
+\ccConstructor{\ccClassName(Vertex_handle v0,
                     	Vertex_handle v1,
                     	Vertex_handle v2,
                     	Vertex_handle v3,
@@ -1492,7 +1497,7 @@ addition the empty sphere property of all the created faces.}
 {Same as the previous method, \ccc{start} is used as a starting
 place for the location done within the insertion.}
 
-The following methods allow to insert several points. They return the
+The following method allows to insert several points. It returns the
 number of inserted points. 
 \ccMethod{template < class InputIterator >
           int
@@ -1501,29 +1506,27 @@ number of inserted points.
 \ccc{last}$\left.\right)$. 
 \ccPrecond{The \ccc{value_type} of \ccc{first} and \ccc{last} is
 \ccc{Point}.}}
-
-\ccMethod{int insert(list<Point>::const_iterator first,
-	     list<Point>::const_iterator last);}
-{}
-\ccGlue
-\ccMethod{int insert(vector<Point>::const_iterator first,
-	     vector<Point>::const_iterator last);}
-{}
-\ccGlue
-\ccMethod{int insert(istream_iterator<Point, ptrdiff_t> first,
-	     istream_iterator<Point, ptrdiff_t> last);}
-{}
-\ccGlue
-\ccMethod{int insert(Point* first,
-	     Point* last);}
-{}
+%\ccMethod{int insert(list<Point>::const_iterator first,
+%	     list<Point>::const_iterator last);}
+%{}
+%\ccGlue
+%\ccMethod{int insert(vector<Point>::const_iterator first,
+%	     vector<Point>::const_iterator last);}
+%{}
+%\ccGlue
+%\ccMethod{int insert(istream_iterator<Point, ptrdiff_t> first,
+%	     istream_iterator<Point, ptrdiff_t> last);}
+%{}
+%\ccGlue
+%\ccMethod{int insert(Point* first,
+%	     Point* last);}
+%{}
 
 \ccHeading{Removal}
 
 \ccMethod{void remove(Point p);}
-{\ccPrecond{\ccc{p} is a vertex of the triangulation.}\\
-Removes the associated vertex. 
-\ccPrecond{\ccc{p} is a vertex of the triangulation.}\\
+{Removes the vertex associated with \ccc{p}.
+\ccPrecond{There is a vertex of the triangulation associated with \ccc{p}.}\\
 \textit{not yet implemented}}
 
 \ccHeading{Queries}
