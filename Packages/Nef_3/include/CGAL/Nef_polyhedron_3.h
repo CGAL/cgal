@@ -236,19 +236,19 @@ protected:
   
   void initialize_infibox_vertices(Content space) {
     SNC_constructor C(snc());
-    Infi_box::initialize_infibox_vertices(C, space==COMPLETE);
+    Infi_box::initialize_infibox_vertices(C, space == COMPLETE);
   }
 
   void initialize_simple_cube_vertices(Content space) {
     SNC_constructor C(snc());
-    C.create_box_corner( INT_MAX, INT_MAX, INT_MAX, space );
-    C.create_box_corner(-INT_MAX, INT_MAX, INT_MAX, space );
-    C.create_box_corner( INT_MAX,-INT_MAX, INT_MAX, space );
-    C.create_box_corner(-INT_MAX,-INT_MAX, INT_MAX, space );
-    C.create_box_corner( INT_MAX, INT_MAX,-INT_MAX, space );
-    C.create_box_corner(-INT_MAX, INT_MAX,-INT_MAX, space );
-    C.create_box_corner( INT_MAX,-INT_MAX,-INT_MAX, space );
-    C.create_box_corner(-INT_MAX,-INT_MAX,-INT_MAX, space );
+    C.create_extended_box_corner( 1, 1, 1, space == COMPLETE);
+    C.create_extended_box_corner(-1, 1, 1, space == COMPLETE);
+    C.create_extended_box_corner( 1,-1, 1, space == COMPLETE);
+    C.create_extended_box_corner(-1,-1, 1, space == COMPLETE);
+    C.create_extended_box_corner( 1, 1,-1, space == COMPLETE);
+    C.create_extended_box_corner(-1, 1,-1, space == COMPLETE);
+    C.create_extended_box_corner( 1,-1,-1, space == COMPLETE);
+    C.create_extended_box_corner(-1,-1,-1, space == COMPLETE);
   }
 
   /*
@@ -969,8 +969,12 @@ template <typename T>
 Nef_polyhedron_3<T>::
 Nef_polyhedron_3(Content space) : Base(Nef_rep()) {
   TRACEN("construction from empty or space.");
-  initialize_simple_cube_vertices(space);
-  build_external_structure();
+  if(Infi_box::extended_Kernel()) {
+    SNC_constructor C(snc());
+    Infi_box::initialize_infibox_vertices(C,space == COMPLETE);
+    //  initialize_simple_cube_vertices(space);
+    build_external_structure();
+  }
 }
 
 template <typename T>
@@ -1024,23 +1028,12 @@ void Nef_polyhedron_3<T>::extract_interior() {
   SNC_decorator D(snc());
   Vertex_iterator v;
   CGAL_nef3_forall_vertices(v,D){
-    //    if(Infi_box::is_standard(v->point())) {
-      D.mark(v) = false;
-      SM_decorator SM(v);
-      SM.extract_interior();
-      //    }
+    D.mark(v) = false;
+    SM_decorator SM(v);
+    SM.extract_interior();
   }
   Halffacet_iterator f;
   CGAL_nef3_forall_facets(f,D) D.mark(f) = false;
-
-  /*
-  int count = 0;
-  Volume_iterator c;
-  CGAL_nef3_forall_volumes(c,D) {
-    count++;
-    if(count > 2) D.mark(c) = true;
-  }
-  */
 
   simplify();
 }
@@ -1061,7 +1054,6 @@ void Nef_polyhedron_3<T>::extract_boundary() {
   CGAL_nef3_forall_facets(f,D) D.mark(f) = true;
   Volume_iterator c;
   CGAL_nef3_forall_volumes(c,D) D.mark(c) = false;
-  //  clear_box_marks();
   simplify();
 }
 
