@@ -151,24 +151,24 @@ compare_xC2(
 
   // Check the bounds.  All arguments must be <= SAF_bound.
   if (
-	fabs(px.value()) > SAF_bound ||
-	fabs(l1a.value()) > SAF_bound ||
-	fabs(l1b.value()) > SAF_bound ||
-	fabs(l1c.value()) > SAF_bound ||
-	fabs(l2a.value()) > SAF_bound ||
-	fabs(l2b.value()) > SAF_bound ||
-	fabs(l2c.value()) > SAF_bound)
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(l1a.to_double()) > SAF_bound ||
+	fabs(l1b.to_double()) > SAF_bound ||
+	fabs(l1c.to_double()) > SAF_bound ||
+	fabs(l2a.to_double()) > SAF_bound ||
+	fabs(l2b.to_double()) > SAF_bound ||
+	fabs(l2c.to_double()) > SAF_bound)
   {
 re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.value()));
-    NEW_bound = std::max(NEW_bound, fabs(l1a.value()));
-    NEW_bound = std::max(NEW_bound, fabs(l1b.value()));
-    NEW_bound = std::max(NEW_bound, fabs(l1c.value()));
-    NEW_bound = std::max(NEW_bound, fabs(l2a.value()));
-    NEW_bound = std::max(NEW_bound, fabs(l2b.value()));
-    NEW_bound = std::max(NEW_bound, fabs(l2c.value()));
+    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(l1a.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(l1b.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(l1c.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(l2a.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(l2b.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(l2c.to_double()));
     // Re-adjust the context.
     Static_Filtered_compare_xC2_7::new_bound(NEW_bound);
   }
@@ -176,13 +176,13 @@ re_adjust:
   try
   {
     return Static_Filtered_compare_xC2_7::epsilon_variant(
-		px.to_double(),
-		l1a.to_double(),
-		l1b.to_double(),
-		l1c.to_double(),
-		l2a.to_double(),
-		l2b.to_double(),
-		l2c.to_double(),
+		px.dbl(),
+		l1a.dbl(),
+		l1b.dbl(),
+		l1c.dbl(),
+		l2a.dbl(),
+		l2b.dbl(),
+		l2c.dbl(),
 		SAF_epsilon_0,
 		SAF_epsilon_1);
   }
@@ -374,34 +374,34 @@ compare_xC2(
 
   // Check the bounds.  All arguments must be <= SAF_bound.
   if (
-	fabs(l1a.value()) > SAF_bound ||
-	fabs(l1b.value()) > SAF_bound ||
-	fabs(l1c.value()) > SAF_bound ||
-	fabs(l2a.value()) > SAF_bound ||
-	fabs(l2b.value()) > SAF_bound ||
-	fabs(l2c.value()) > SAF_bound ||
-	fabs(h1a.value()) > SAF_bound ||
-	fabs(h1b.value()) > SAF_bound ||
-	fabs(h1c.value()) > SAF_bound ||
-	fabs(h2a.value()) > SAF_bound ||
-	fabs(h2b.value()) > SAF_bound ||
-	fabs(h2c.value()) > SAF_bound)
+	fabs(l1a.to_double()) > SAF_bound ||
+	fabs(l1b.to_double()) > SAF_bound ||
+	fabs(l1c.to_double()) > SAF_bound ||
+	fabs(l2a.to_double()) > SAF_bound ||
+	fabs(l2b.to_double()) > SAF_bound ||
+	fabs(l2c.to_double()) > SAF_bound ||
+	fabs(h1a.to_double()) > SAF_bound ||
+	fabs(h1b.to_double()) > SAF_bound ||
+	fabs(h1c.to_double()) > SAF_bound ||
+	fabs(h2a.to_double()) > SAF_bound ||
+	fabs(h2b.to_double()) > SAF_bound ||
+	fabs(h2c.to_double()) > SAF_bound)
   {
 re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(l1a.value()));
-    NEW_bound = std::max(NEW_bound, fabs(l1b.value()));
-    NEW_bound = std::max(NEW_bound, fabs(l1c.value()));
-    NEW_bound = std::max(NEW_bound, fabs(l2a.value()));
-    NEW_bound = std::max(NEW_bound, fabs(l2b.value()));
-    NEW_bound = std::max(NEW_bound, fabs(l2c.value()));
-    NEW_bound = std::max(NEW_bound, fabs(h1a.value()));
-    NEW_bound = std::max(NEW_bound, fabs(h1b.value()));
-    NEW_bound = std::max(NEW_bound, fabs(h1c.value()));
-    NEW_bound = std::max(NEW_bound, fabs(h2a.value()));
-    NEW_bound = std::max(NEW_bound, fabs(h2b.value()));
-    NEW_bound = std::max(NEW_bound, fabs(h2c.value()));
+    NEW_bound = std::max(NEW_bound, fabs(l1a.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(l1b.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(l1c.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(l2a.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(l2b.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(l2c.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(h1a.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(h1b.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(h1c.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(h2a.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(h2b.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(h2c.to_double()));
     // Re-adjust the context.
     Static_Filtered_compare_xC2_12::new_bound(NEW_bound);
   }
@@ -409,18 +409,18 @@ re_adjust:
   try
   {
     return Static_Filtered_compare_xC2_12::epsilon_variant(
-		l1a.to_double(),
-		l1b.to_double(),
-		l1c.to_double(),
-		l2a.to_double(),
-		l2b.to_double(),
-		l2c.to_double(),
-		h1a.to_double(),
-		h1b.to_double(),
-		h1c.to_double(),
-		h2a.to_double(),
-		h2b.to_double(),
-		h2c.to_double(),
+		l1a.dbl(),
+		l1b.dbl(),
+		l1c.dbl(),
+		l2a.dbl(),
+		l2b.dbl(),
+		l2c.dbl(),
+		h1a.dbl(),
+		h1b.dbl(),
+		h1c.dbl(),
+		h2a.dbl(),
+		h2b.dbl(),
+		h2c.dbl(),
 		SAF_epsilon_0,
 		SAF_epsilon_1,
 		SAF_epsilon_2);
@@ -558,20 +558,20 @@ compare_y_at_xC2(
 
   // Check the bounds.  All arguments must be <= SAF_bound.
   if (
-	fabs(px.value()) > SAF_bound ||
-	fabs(py.value()) > SAF_bound ||
-	fabs(la.value()) > SAF_bound ||
-	fabs(lb.value()) > SAF_bound ||
-	fabs(lc.value()) > SAF_bound)
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(py.to_double()) > SAF_bound ||
+	fabs(la.to_double()) > SAF_bound ||
+	fabs(lb.to_double()) > SAF_bound ||
+	fabs(lc.to_double()) > SAF_bound)
   {
 re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.value()));
-    NEW_bound = std::max(NEW_bound, fabs(py.value()));
-    NEW_bound = std::max(NEW_bound, fabs(la.value()));
-    NEW_bound = std::max(NEW_bound, fabs(lb.value()));
-    NEW_bound = std::max(NEW_bound, fabs(lc.value()));
+    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(la.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(lb.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(lc.to_double()));
     // Re-adjust the context.
     Static_Filtered_compare_y_at_xC2_5::new_bound(NEW_bound);
   }
@@ -579,11 +579,11 @@ re_adjust:
   try
   {
     return Static_Filtered_compare_y_at_xC2_5::epsilon_variant(
-		px.to_double(),
-		py.to_double(),
-		la.to_double(),
-		lb.to_double(),
-		lc.to_double(),
+		px.dbl(),
+		py.dbl(),
+		la.dbl(),
+		lb.dbl(),
+		lc.dbl(),
 		SAF_epsilon_0,
 		SAF_epsilon_1);
   }
@@ -731,24 +731,24 @@ compare_y_at_xC2(
 
   // Check the bounds.  All arguments must be <= SAF_bound.
   if (
-	fabs(px.value()) > SAF_bound ||
-	fabs(l1a.value()) > SAF_bound ||
-	fabs(l1b.value()) > SAF_bound ||
-	fabs(l1c.value()) > SAF_bound ||
-	fabs(l2a.value()) > SAF_bound ||
-	fabs(l2b.value()) > SAF_bound ||
-	fabs(l2c.value()) > SAF_bound)
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(l1a.to_double()) > SAF_bound ||
+	fabs(l1b.to_double()) > SAF_bound ||
+	fabs(l1c.to_double()) > SAF_bound ||
+	fabs(l2a.to_double()) > SAF_bound ||
+	fabs(l2b.to_double()) > SAF_bound ||
+	fabs(l2c.to_double()) > SAF_bound)
   {
 re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.value()));
-    NEW_bound = std::max(NEW_bound, fabs(l1a.value()));
-    NEW_bound = std::max(NEW_bound, fabs(l1b.value()));
-    NEW_bound = std::max(NEW_bound, fabs(l1c.value()));
-    NEW_bound = std::max(NEW_bound, fabs(l2a.value()));
-    NEW_bound = std::max(NEW_bound, fabs(l2b.value()));
-    NEW_bound = std::max(NEW_bound, fabs(l2c.value()));
+    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(l1a.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(l1b.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(l1c.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(l2a.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(l2b.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(l2c.to_double()));
     // Re-adjust the context.
     Static_Filtered_compare_y_at_xC2_7::new_bound(NEW_bound);
   }
@@ -756,13 +756,13 @@ re_adjust:
   try
   {
     return Static_Filtered_compare_y_at_xC2_7::epsilon_variant(
-		px.to_double(),
-		l1a.to_double(),
-		l1b.to_double(),
-		l1c.to_double(),
-		l2a.to_double(),
-		l2b.to_double(),
-		l2c.to_double(),
+		px.dbl(),
+		l1a.dbl(),
+		l1b.dbl(),
+		l1c.dbl(),
+		l2a.dbl(),
+		l2b.dbl(),
+		l2c.dbl(),
 		SAF_epsilon_0,
 		SAF_epsilon_1,
 		SAF_epsilon_2);
@@ -927,28 +927,28 @@ compare_y_at_xC2(
 
   // Check the bounds.  All arguments must be <= SAF_bound.
   if (
-	fabs(l1a.value()) > SAF_bound ||
-	fabs(l1b.value()) > SAF_bound ||
-	fabs(l1c.value()) > SAF_bound ||
-	fabs(l2a.value()) > SAF_bound ||
-	fabs(l2b.value()) > SAF_bound ||
-	fabs(l2c.value()) > SAF_bound ||
-	fabs(ha.value()) > SAF_bound ||
-	fabs(hb.value()) > SAF_bound ||
-	fabs(hc.value()) > SAF_bound)
+	fabs(l1a.to_double()) > SAF_bound ||
+	fabs(l1b.to_double()) > SAF_bound ||
+	fabs(l1c.to_double()) > SAF_bound ||
+	fabs(l2a.to_double()) > SAF_bound ||
+	fabs(l2b.to_double()) > SAF_bound ||
+	fabs(l2c.to_double()) > SAF_bound ||
+	fabs(ha.to_double()) > SAF_bound ||
+	fabs(hb.to_double()) > SAF_bound ||
+	fabs(hc.to_double()) > SAF_bound)
   {
 re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(l1a.value()));
-    NEW_bound = std::max(NEW_bound, fabs(l1b.value()));
-    NEW_bound = std::max(NEW_bound, fabs(l1c.value()));
-    NEW_bound = std::max(NEW_bound, fabs(l2a.value()));
-    NEW_bound = std::max(NEW_bound, fabs(l2b.value()));
-    NEW_bound = std::max(NEW_bound, fabs(l2c.value()));
-    NEW_bound = std::max(NEW_bound, fabs(ha.value()));
-    NEW_bound = std::max(NEW_bound, fabs(hb.value()));
-    NEW_bound = std::max(NEW_bound, fabs(hc.value()));
+    NEW_bound = std::max(NEW_bound, fabs(l1a.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(l1b.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(l1c.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(l2a.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(l2b.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(l2c.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(ha.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(hb.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(hc.to_double()));
     // Re-adjust the context.
     Static_Filtered_compare_y_at_xC2_9::new_bound(NEW_bound);
   }
@@ -956,15 +956,15 @@ re_adjust:
   try
   {
     return Static_Filtered_compare_y_at_xC2_9::epsilon_variant(
-		l1a.to_double(),
-		l1b.to_double(),
-		l1c.to_double(),
-		l2a.to_double(),
-		l2b.to_double(),
-		l2c.to_double(),
-		ha.to_double(),
-		hb.to_double(),
-		hc.to_double(),
+		l1a.dbl(),
+		l1b.dbl(),
+		l1c.dbl(),
+		l2a.dbl(),
+		l2b.dbl(),
+		l2c.dbl(),
+		ha.dbl(),
+		hb.dbl(),
+		hc.dbl(),
 		SAF_epsilon_0,
 		SAF_epsilon_1,
 		SAF_epsilon_2,
@@ -1160,34 +1160,34 @@ compare_y_at_xC2(
 
   // Check the bounds.  All arguments must be <= SAF_bound.
   if (
-	fabs(l1a.value()) > SAF_bound ||
-	fabs(l1b.value()) > SAF_bound ||
-	fabs(l1c.value()) > SAF_bound ||
-	fabs(l2a.value()) > SAF_bound ||
-	fabs(l2b.value()) > SAF_bound ||
-	fabs(l2c.value()) > SAF_bound ||
-	fabs(h1a.value()) > SAF_bound ||
-	fabs(h1b.value()) > SAF_bound ||
-	fabs(h1c.value()) > SAF_bound ||
-	fabs(h2a.value()) > SAF_bound ||
-	fabs(h2b.value()) > SAF_bound ||
-	fabs(h2c.value()) > SAF_bound)
+	fabs(l1a.to_double()) > SAF_bound ||
+	fabs(l1b.to_double()) > SAF_bound ||
+	fabs(l1c.to_double()) > SAF_bound ||
+	fabs(l2a.to_double()) > SAF_bound ||
+	fabs(l2b.to_double()) > SAF_bound ||
+	fabs(l2c.to_double()) > SAF_bound ||
+	fabs(h1a.to_double()) > SAF_bound ||
+	fabs(h1b.to_double()) > SAF_bound ||
+	fabs(h1c.to_double()) > SAF_bound ||
+	fabs(h2a.to_double()) > SAF_bound ||
+	fabs(h2b.to_double()) > SAF_bound ||
+	fabs(h2c.to_double()) > SAF_bound)
   {
 re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(l1a.value()));
-    NEW_bound = std::max(NEW_bound, fabs(l1b.value()));
-    NEW_bound = std::max(NEW_bound, fabs(l1c.value()));
-    NEW_bound = std::max(NEW_bound, fabs(l2a.value()));
-    NEW_bound = std::max(NEW_bound, fabs(l2b.value()));
-    NEW_bound = std::max(NEW_bound, fabs(l2c.value()));
-    NEW_bound = std::max(NEW_bound, fabs(h1a.value()));
-    NEW_bound = std::max(NEW_bound, fabs(h1b.value()));
-    NEW_bound = std::max(NEW_bound, fabs(h1c.value()));
-    NEW_bound = std::max(NEW_bound, fabs(h2a.value()));
-    NEW_bound = std::max(NEW_bound, fabs(h2b.value()));
-    NEW_bound = std::max(NEW_bound, fabs(h2c.value()));
+    NEW_bound = std::max(NEW_bound, fabs(l1a.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(l1b.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(l1c.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(l2a.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(l2b.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(l2c.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(h1a.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(h1b.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(h1c.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(h2a.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(h2b.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(h2c.to_double()));
     // Re-adjust the context.
     Static_Filtered_compare_y_at_xC2_12::new_bound(NEW_bound);
   }
@@ -1195,18 +1195,18 @@ re_adjust:
   try
   {
     return Static_Filtered_compare_y_at_xC2_12::epsilon_variant(
-		l1a.to_double(),
-		l1b.to_double(),
-		l1c.to_double(),
-		l2a.to_double(),
-		l2b.to_double(),
-		l2c.to_double(),
-		h1a.to_double(),
-		h1b.to_double(),
-		h1c.to_double(),
-		h2a.to_double(),
-		h2b.to_double(),
-		h2c.to_double(),
+		l1a.dbl(),
+		l1b.dbl(),
+		l1c.dbl(),
+		l2a.dbl(),
+		l2b.dbl(),
+		l2c.dbl(),
+		h1a.dbl(),
+		h1b.dbl(),
+		h1c.dbl(),
+		h2a.dbl(),
+		h2b.dbl(),
+		h2c.dbl(),
 		SAF_epsilon_0,
 		SAF_epsilon_1,
 		SAF_epsilon_2,
@@ -1329,18 +1329,18 @@ compare_deltax_deltayC2(
 
   // Check the bounds.  All arguments must be <= SAF_bound.
   if (
-	fabs(px.value()) > SAF_bound ||
-	fabs(qx.value()) > SAF_bound ||
-	fabs(ry.value()) > SAF_bound ||
-	fabs(sy.value()) > SAF_bound)
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(qx.to_double()) > SAF_bound ||
+	fabs(ry.to_double()) > SAF_bound ||
+	fabs(sy.to_double()) > SAF_bound)
   {
 re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(ry.value()));
-    NEW_bound = std::max(NEW_bound, fabs(sy.value()));
+    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(ry.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(sy.to_double()));
     // Re-adjust the context.
     Static_Filtered_compare_deltax_deltayC2_4::new_bound(NEW_bound);
   }
@@ -1348,10 +1348,10 @@ re_adjust:
   try
   {
     return Static_Filtered_compare_deltax_deltayC2_4::epsilon_variant(
-		px.to_double(),
-		qx.to_double(),
-		ry.to_double(),
-		sy.to_double(),
+		px.dbl(),
+		qx.dbl(),
+		ry.dbl(),
+		sy.dbl(),
 		SAF_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
@@ -1475,22 +1475,22 @@ orientationC2(
 
   // Check the bounds.  All arguments must be <= SAF_bound.
   if (
-	fabs(px.value()) > SAF_bound ||
-	fabs(py.value()) > SAF_bound ||
-	fabs(qx.value()) > SAF_bound ||
-	fabs(qy.value()) > SAF_bound ||
-	fabs(rx.value()) > SAF_bound ||
-	fabs(ry.value()) > SAF_bound)
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(py.to_double()) > SAF_bound ||
+	fabs(qx.to_double()) > SAF_bound ||
+	fabs(qy.to_double()) > SAF_bound ||
+	fabs(rx.to_double()) > SAF_bound ||
+	fabs(ry.to_double()) > SAF_bound)
   {
 re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.value()));
-    NEW_bound = std::max(NEW_bound, fabs(py.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.value()));
-    NEW_bound = std::max(NEW_bound, fabs(rx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(ry.value()));
+    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(rx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(ry.to_double()));
     // Re-adjust the context.
     Static_Filtered_orientationC2_6::new_bound(NEW_bound);
   }
@@ -1498,12 +1498,12 @@ re_adjust:
   try
   {
     return Static_Filtered_orientationC2_6::epsilon_variant(
-		px.to_double(),
-		py.to_double(),
-		qx.to_double(),
-		qy.to_double(),
-		rx.to_double(),
-		ry.to_double(),
+		px.dbl(),
+		py.dbl(),
+		qx.dbl(),
+		qy.dbl(),
+		rx.dbl(),
+		ry.dbl(),
 		SAF_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
@@ -1671,26 +1671,26 @@ side_of_oriented_circleC2(
 
   // Check the bounds.  All arguments must be <= SAF_bound.
   if (
-	fabs(px.value()) > SAF_bound ||
-	fabs(py.value()) > SAF_bound ||
-	fabs(qx.value()) > SAF_bound ||
-	fabs(qy.value()) > SAF_bound ||
-	fabs(rx.value()) > SAF_bound ||
-	fabs(ry.value()) > SAF_bound ||
-	fabs(tx.value()) > SAF_bound ||
-	fabs(ty.value()) > SAF_bound)
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(py.to_double()) > SAF_bound ||
+	fabs(qx.to_double()) > SAF_bound ||
+	fabs(qy.to_double()) > SAF_bound ||
+	fabs(rx.to_double()) > SAF_bound ||
+	fabs(ry.to_double()) > SAF_bound ||
+	fabs(tx.to_double()) > SAF_bound ||
+	fabs(ty.to_double()) > SAF_bound)
   {
 re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.value()));
-    NEW_bound = std::max(NEW_bound, fabs(py.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.value()));
-    NEW_bound = std::max(NEW_bound, fabs(rx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(ry.value()));
-    NEW_bound = std::max(NEW_bound, fabs(tx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(ty.value()));
+    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(rx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(ry.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(tx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(ty.to_double()));
     // Re-adjust the context.
     Static_Filtered_side_of_oriented_circleC2_8::new_bound(NEW_bound);
   }
@@ -1698,14 +1698,14 @@ re_adjust:
   try
   {
     return Static_Filtered_side_of_oriented_circleC2_8::epsilon_variant(
-		px.to_double(),
-		py.to_double(),
-		qx.to_double(),
-		qy.to_double(),
-		rx.to_double(),
-		ry.to_double(),
-		tx.to_double(),
-		ty.to_double(),
+		px.dbl(),
+		py.dbl(),
+		qx.dbl(),
+		qy.dbl(),
+		rx.dbl(),
+		ry.dbl(),
+		tx.dbl(),
+		ty.dbl(),
 		SAF_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
@@ -1855,26 +1855,26 @@ side_of_bounded_circleC2(
 
   // Check the bounds.  All arguments must be <= SAF_bound.
   if (
-	fabs(px.value()) > SAF_bound ||
-	fabs(py.value()) > SAF_bound ||
-	fabs(qx.value()) > SAF_bound ||
-	fabs(qy.value()) > SAF_bound ||
-	fabs(rx.value()) > SAF_bound ||
-	fabs(ry.value()) > SAF_bound ||
-	fabs(tx.value()) > SAF_bound ||
-	fabs(ty.value()) > SAF_bound)
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(py.to_double()) > SAF_bound ||
+	fabs(qx.to_double()) > SAF_bound ||
+	fabs(qy.to_double()) > SAF_bound ||
+	fabs(rx.to_double()) > SAF_bound ||
+	fabs(ry.to_double()) > SAF_bound ||
+	fabs(tx.to_double()) > SAF_bound ||
+	fabs(ty.to_double()) > SAF_bound)
   {
 re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.value()));
-    NEW_bound = std::max(NEW_bound, fabs(py.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.value()));
-    NEW_bound = std::max(NEW_bound, fabs(rx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(ry.value()));
-    NEW_bound = std::max(NEW_bound, fabs(tx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(ty.value()));
+    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(rx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(ry.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(tx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(ty.to_double()));
     // Re-adjust the context.
     Static_Filtered_side_of_bounded_circleC2_8::new_bound(NEW_bound);
   }
@@ -1882,14 +1882,14 @@ re_adjust:
   try
   {
     return Static_Filtered_side_of_bounded_circleC2_8::epsilon_variant(
-		px.to_double(),
-		py.to_double(),
-		qx.to_double(),
-		qy.to_double(),
-		rx.to_double(),
-		ry.to_double(),
-		tx.to_double(),
-		ty.to_double(),
+		px.dbl(),
+		py.dbl(),
+		qx.dbl(),
+		qy.dbl(),
+		rx.dbl(),
+		ry.dbl(),
+		tx.dbl(),
+		ty.dbl(),
 		SAF_epsilon_0,
 		SAF_epsilon_1);
   }
@@ -2020,22 +2020,22 @@ cmp_dist_to_pointC2(
 
   // Check the bounds.  All arguments must be <= SAF_bound.
   if (
-	fabs(px.value()) > SAF_bound ||
-	fabs(py.value()) > SAF_bound ||
-	fabs(qx.value()) > SAF_bound ||
-	fabs(qy.value()) > SAF_bound ||
-	fabs(rx.value()) > SAF_bound ||
-	fabs(ry.value()) > SAF_bound)
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(py.to_double()) > SAF_bound ||
+	fabs(qx.to_double()) > SAF_bound ||
+	fabs(qy.to_double()) > SAF_bound ||
+	fabs(rx.to_double()) > SAF_bound ||
+	fabs(ry.to_double()) > SAF_bound)
   {
 re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.value()));
-    NEW_bound = std::max(NEW_bound, fabs(py.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.value()));
-    NEW_bound = std::max(NEW_bound, fabs(rx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(ry.value()));
+    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(rx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(ry.to_double()));
     // Re-adjust the context.
     Static_Filtered_cmp_dist_to_pointC2_6::new_bound(NEW_bound);
   }
@@ -2043,12 +2043,12 @@ re_adjust:
   try
   {
     return Static_Filtered_cmp_dist_to_pointC2_6::epsilon_variant(
-		px.to_double(),
-		py.to_double(),
-		qx.to_double(),
-		qy.to_double(),
-		rx.to_double(),
-		ry.to_double(),
+		px.dbl(),
+		py.dbl(),
+		qx.dbl(),
+		qy.dbl(),
+		rx.dbl(),
+		ry.dbl(),
 		SAF_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
@@ -2182,24 +2182,24 @@ cmp_signed_dist_to_lineC2(
 
   // Check the bounds.  All arguments must be <= SAF_bound.
   if (
-	fabs(la.value()) > SAF_bound ||
-	fabs(lb.value()) > SAF_bound ||
-	fabs(lc.value()) > SAF_bound ||
-	fabs(px.value()) > SAF_bound ||
-	fabs(py.value()) > SAF_bound ||
-	fabs(qx.value()) > SAF_bound ||
-	fabs(qy.value()) > SAF_bound)
+	fabs(la.to_double()) > SAF_bound ||
+	fabs(lb.to_double()) > SAF_bound ||
+	fabs(lc.to_double()) > SAF_bound ||
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(py.to_double()) > SAF_bound ||
+	fabs(qx.to_double()) > SAF_bound ||
+	fabs(qy.to_double()) > SAF_bound)
   {
 re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(la.value()));
-    NEW_bound = std::max(NEW_bound, fabs(lb.value()));
-    NEW_bound = std::max(NEW_bound, fabs(lc.value()));
-    NEW_bound = std::max(NEW_bound, fabs(px.value()));
-    NEW_bound = std::max(NEW_bound, fabs(py.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.value()));
+    NEW_bound = std::max(NEW_bound, fabs(la.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(lb.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(lc.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
     // Re-adjust the context.
     Static_Filtered_cmp_signed_dist_to_lineC2_7::new_bound(NEW_bound);
   }
@@ -2207,13 +2207,13 @@ re_adjust:
   try
   {
     return Static_Filtered_cmp_signed_dist_to_lineC2_7::epsilon_variant(
-		la.to_double(),
-		lb.to_double(),
-		lc.to_double(),
-		px.to_double(),
-		py.to_double(),
-		qx.to_double(),
-		qy.to_double(),
+		la.dbl(),
+		lb.dbl(),
+		lc.dbl(),
+		px.dbl(),
+		py.dbl(),
+		qx.dbl(),
+		qy.dbl(),
 		SAF_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
@@ -2354,26 +2354,26 @@ cmp_signed_dist_to_lineC2(
 
   // Check the bounds.  All arguments must be <= SAF_bound.
   if (
-	fabs(px.value()) > SAF_bound ||
-	fabs(py.value()) > SAF_bound ||
-	fabs(qx.value()) > SAF_bound ||
-	fabs(qy.value()) > SAF_bound ||
-	fabs(rx.value()) > SAF_bound ||
-	fabs(ry.value()) > SAF_bound ||
-	fabs(sx.value()) > SAF_bound ||
-	fabs(sy.value()) > SAF_bound)
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(py.to_double()) > SAF_bound ||
+	fabs(qx.to_double()) > SAF_bound ||
+	fabs(qy.to_double()) > SAF_bound ||
+	fabs(rx.to_double()) > SAF_bound ||
+	fabs(ry.to_double()) > SAF_bound ||
+	fabs(sx.to_double()) > SAF_bound ||
+	fabs(sy.to_double()) > SAF_bound)
   {
 re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.value()));
-    NEW_bound = std::max(NEW_bound, fabs(py.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.value()));
-    NEW_bound = std::max(NEW_bound, fabs(rx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(ry.value()));
-    NEW_bound = std::max(NEW_bound, fabs(sx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(sy.value()));
+    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(rx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(ry.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(sx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(sy.to_double()));
     // Re-adjust the context.
     Static_Filtered_cmp_signed_dist_to_lineC2_8::new_bound(NEW_bound);
   }
@@ -2381,14 +2381,14 @@ re_adjust:
   try
   {
     return Static_Filtered_cmp_signed_dist_to_lineC2_8::epsilon_variant(
-		px.to_double(),
-		py.to_double(),
-		qx.to_double(),
-		qy.to_double(),
-		rx.to_double(),
-		ry.to_double(),
-		sx.to_double(),
-		sy.to_double(),
+		px.dbl(),
+		py.dbl(),
+		qx.dbl(),
+		qy.dbl(),
+		rx.dbl(),
+		ry.dbl(),
+		sx.dbl(),
+		sy.dbl(),
 		SAF_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)

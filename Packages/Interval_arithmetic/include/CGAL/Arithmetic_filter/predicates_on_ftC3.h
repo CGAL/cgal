@@ -173,28 +173,28 @@ collinearC3(
 
   // Check the bounds.  All arguments must be <= SAF_bound.
   if (
-	fabs(px.value()) > SAF_bound ||
-	fabs(py.value()) > SAF_bound ||
-	fabs(pz.value()) > SAF_bound ||
-	fabs(qx.value()) > SAF_bound ||
-	fabs(qy.value()) > SAF_bound ||
-	fabs(qz.value()) > SAF_bound ||
-	fabs(rx.value()) > SAF_bound ||
-	fabs(ry.value()) > SAF_bound ||
-	fabs(rz.value()) > SAF_bound)
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(py.to_double()) > SAF_bound ||
+	fabs(pz.to_double()) > SAF_bound ||
+	fabs(qx.to_double()) > SAF_bound ||
+	fabs(qy.to_double()) > SAF_bound ||
+	fabs(qz.to_double()) > SAF_bound ||
+	fabs(rx.to_double()) > SAF_bound ||
+	fabs(ry.to_double()) > SAF_bound ||
+	fabs(rz.to_double()) > SAF_bound)
   {
 re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.value()));
-    NEW_bound = std::max(NEW_bound, fabs(py.value()));
-    NEW_bound = std::max(NEW_bound, fabs(pz.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qz.value()));
-    NEW_bound = std::max(NEW_bound, fabs(rx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(ry.value()));
-    NEW_bound = std::max(NEW_bound, fabs(rz.value()));
+    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(pz.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qz.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(rx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(ry.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(rz.to_double()));
     // Re-adjust the context.
     Static_Filtered_collinearC3_9::new_bound(NEW_bound);
   }
@@ -202,15 +202,15 @@ re_adjust:
   try
   {
     return Static_Filtered_collinearC3_9::epsilon_variant(
-		px.to_double(),
-		py.to_double(),
-		pz.to_double(),
-		qx.to_double(),
-		qy.to_double(),
-		qz.to_double(),
-		rx.to_double(),
-		ry.to_double(),
-		rz.to_double(),
+		px.dbl(),
+		py.dbl(),
+		pz.dbl(),
+		qx.dbl(),
+		qy.dbl(),
+		qz.dbl(),
+		rx.dbl(),
+		ry.dbl(),
+		rz.dbl(),
 		SAF_epsilon_0,
 		SAF_epsilon_1,
 		SAF_epsilon_2);
@@ -381,34 +381,34 @@ orientationC3(
 
   // Check the bounds.  All arguments must be <= SAF_bound.
   if (
-	fabs(px.value()) > SAF_bound ||
-	fabs(py.value()) > SAF_bound ||
-	fabs(pz.value()) > SAF_bound ||
-	fabs(qx.value()) > SAF_bound ||
-	fabs(qy.value()) > SAF_bound ||
-	fabs(qz.value()) > SAF_bound ||
-	fabs(rx.value()) > SAF_bound ||
-	fabs(ry.value()) > SAF_bound ||
-	fabs(rz.value()) > SAF_bound ||
-	fabs(sx.value()) > SAF_bound ||
-	fabs(sy.value()) > SAF_bound ||
-	fabs(sz.value()) > SAF_bound)
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(py.to_double()) > SAF_bound ||
+	fabs(pz.to_double()) > SAF_bound ||
+	fabs(qx.to_double()) > SAF_bound ||
+	fabs(qy.to_double()) > SAF_bound ||
+	fabs(qz.to_double()) > SAF_bound ||
+	fabs(rx.to_double()) > SAF_bound ||
+	fabs(ry.to_double()) > SAF_bound ||
+	fabs(rz.to_double()) > SAF_bound ||
+	fabs(sx.to_double()) > SAF_bound ||
+	fabs(sy.to_double()) > SAF_bound ||
+	fabs(sz.to_double()) > SAF_bound)
   {
 re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.value()));
-    NEW_bound = std::max(NEW_bound, fabs(py.value()));
-    NEW_bound = std::max(NEW_bound, fabs(pz.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qz.value()));
-    NEW_bound = std::max(NEW_bound, fabs(rx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(ry.value()));
-    NEW_bound = std::max(NEW_bound, fabs(rz.value()));
-    NEW_bound = std::max(NEW_bound, fabs(sx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(sy.value()));
-    NEW_bound = std::max(NEW_bound, fabs(sz.value()));
+    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(pz.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qz.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(rx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(ry.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(rz.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(sx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(sy.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(sz.to_double()));
     // Re-adjust the context.
     Static_Filtered_orientationC3_12::new_bound(NEW_bound);
   }
@@ -416,18 +416,18 @@ re_adjust:
   try
   {
     return Static_Filtered_orientationC3_12::epsilon_variant(
-		px.to_double(),
-		py.to_double(),
-		pz.to_double(),
-		qx.to_double(),
-		qy.to_double(),
-		qz.to_double(),
-		rx.to_double(),
-		ry.to_double(),
-		rz.to_double(),
-		sx.to_double(),
-		sy.to_double(),
-		sz.to_double(),
+		px.dbl(),
+		py.dbl(),
+		pz.dbl(),
+		qx.dbl(),
+		qy.dbl(),
+		qz.dbl(),
+		rx.dbl(),
+		ry.dbl(),
+		rz.dbl(),
+		sx.dbl(),
+		sy.dbl(),
+		sz.dbl(),
 		SAF_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
@@ -651,40 +651,40 @@ side_of_oriented_sphereC3(
 
   // Check the bounds.  All arguments must be <= SAF_bound.
   if (
-	fabs(px.value()) > SAF_bound ||
-	fabs(py.value()) > SAF_bound ||
-	fabs(pz.value()) > SAF_bound ||
-	fabs(qx.value()) > SAF_bound ||
-	fabs(qy.value()) > SAF_bound ||
-	fabs(qz.value()) > SAF_bound ||
-	fabs(rx.value()) > SAF_bound ||
-	fabs(ry.value()) > SAF_bound ||
-	fabs(rz.value()) > SAF_bound ||
-	fabs(sx.value()) > SAF_bound ||
-	fabs(sy.value()) > SAF_bound ||
-	fabs(sz.value()) > SAF_bound ||
-	fabs(tx.value()) > SAF_bound ||
-	fabs(ty.value()) > SAF_bound ||
-	fabs(tz.value()) > SAF_bound)
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(py.to_double()) > SAF_bound ||
+	fabs(pz.to_double()) > SAF_bound ||
+	fabs(qx.to_double()) > SAF_bound ||
+	fabs(qy.to_double()) > SAF_bound ||
+	fabs(qz.to_double()) > SAF_bound ||
+	fabs(rx.to_double()) > SAF_bound ||
+	fabs(ry.to_double()) > SAF_bound ||
+	fabs(rz.to_double()) > SAF_bound ||
+	fabs(sx.to_double()) > SAF_bound ||
+	fabs(sy.to_double()) > SAF_bound ||
+	fabs(sz.to_double()) > SAF_bound ||
+	fabs(tx.to_double()) > SAF_bound ||
+	fabs(ty.to_double()) > SAF_bound ||
+	fabs(tz.to_double()) > SAF_bound)
   {
 re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.value()));
-    NEW_bound = std::max(NEW_bound, fabs(py.value()));
-    NEW_bound = std::max(NEW_bound, fabs(pz.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qz.value()));
-    NEW_bound = std::max(NEW_bound, fabs(rx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(ry.value()));
-    NEW_bound = std::max(NEW_bound, fabs(rz.value()));
-    NEW_bound = std::max(NEW_bound, fabs(sx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(sy.value()));
-    NEW_bound = std::max(NEW_bound, fabs(sz.value()));
-    NEW_bound = std::max(NEW_bound, fabs(tx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(ty.value()));
-    NEW_bound = std::max(NEW_bound, fabs(tz.value()));
+    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(pz.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qz.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(rx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(ry.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(rz.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(sx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(sy.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(sz.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(tx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(ty.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(tz.to_double()));
     // Re-adjust the context.
     Static_Filtered_side_of_oriented_sphereC3_15::new_bound(NEW_bound);
   }
@@ -692,21 +692,21 @@ re_adjust:
   try
   {
     return Static_Filtered_side_of_oriented_sphereC3_15::epsilon_variant(
-		px.to_double(),
-		py.to_double(),
-		pz.to_double(),
-		qx.to_double(),
-		qy.to_double(),
-		qz.to_double(),
-		rx.to_double(),
-		ry.to_double(),
-		rz.to_double(),
-		sx.to_double(),
-		sy.to_double(),
-		sz.to_double(),
-		tx.to_double(),
-		ty.to_double(),
-		tz.to_double(),
+		px.dbl(),
+		py.dbl(),
+		pz.dbl(),
+		qx.dbl(),
+		qy.dbl(),
+		qz.dbl(),
+		rx.dbl(),
+		ry.dbl(),
+		rz.dbl(),
+		sx.dbl(),
+		sy.dbl(),
+		sz.dbl(),
+		tx.dbl(),
+		ty.dbl(),
+		tz.dbl(),
 		SAF_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
@@ -917,40 +917,40 @@ side_of_bounded_sphereC3(
 
   // Check the bounds.  All arguments must be <= SAF_bound.
   if (
-	fabs(px.value()) > SAF_bound ||
-	fabs(py.value()) > SAF_bound ||
-	fabs(pz.value()) > SAF_bound ||
-	fabs(qx.value()) > SAF_bound ||
-	fabs(qy.value()) > SAF_bound ||
-	fabs(qz.value()) > SAF_bound ||
-	fabs(rx.value()) > SAF_bound ||
-	fabs(ry.value()) > SAF_bound ||
-	fabs(rz.value()) > SAF_bound ||
-	fabs(sx.value()) > SAF_bound ||
-	fabs(sy.value()) > SAF_bound ||
-	fabs(sz.value()) > SAF_bound ||
-	fabs(tx.value()) > SAF_bound ||
-	fabs(ty.value()) > SAF_bound ||
-	fabs(tz.value()) > SAF_bound)
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(py.to_double()) > SAF_bound ||
+	fabs(pz.to_double()) > SAF_bound ||
+	fabs(qx.to_double()) > SAF_bound ||
+	fabs(qy.to_double()) > SAF_bound ||
+	fabs(qz.to_double()) > SAF_bound ||
+	fabs(rx.to_double()) > SAF_bound ||
+	fabs(ry.to_double()) > SAF_bound ||
+	fabs(rz.to_double()) > SAF_bound ||
+	fabs(sx.to_double()) > SAF_bound ||
+	fabs(sy.to_double()) > SAF_bound ||
+	fabs(sz.to_double()) > SAF_bound ||
+	fabs(tx.to_double()) > SAF_bound ||
+	fabs(ty.to_double()) > SAF_bound ||
+	fabs(tz.to_double()) > SAF_bound)
   {
 re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.value()));
-    NEW_bound = std::max(NEW_bound, fabs(py.value()));
-    NEW_bound = std::max(NEW_bound, fabs(pz.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qz.value()));
-    NEW_bound = std::max(NEW_bound, fabs(rx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(ry.value()));
-    NEW_bound = std::max(NEW_bound, fabs(rz.value()));
-    NEW_bound = std::max(NEW_bound, fabs(sx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(sy.value()));
-    NEW_bound = std::max(NEW_bound, fabs(sz.value()));
-    NEW_bound = std::max(NEW_bound, fabs(tx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(ty.value()));
-    NEW_bound = std::max(NEW_bound, fabs(tz.value()));
+    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(pz.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qz.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(rx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(ry.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(rz.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(sx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(sy.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(sz.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(tx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(ty.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(tz.to_double()));
     // Re-adjust the context.
     Static_Filtered_side_of_bounded_sphereC3_15::new_bound(NEW_bound);
   }
@@ -958,21 +958,21 @@ re_adjust:
   try
   {
     return Static_Filtered_side_of_bounded_sphereC3_15::epsilon_variant(
-		px.to_double(),
-		py.to_double(),
-		pz.to_double(),
-		qx.to_double(),
-		qy.to_double(),
-		qz.to_double(),
-		rx.to_double(),
-		ry.to_double(),
-		rz.to_double(),
-		sx.to_double(),
-		sy.to_double(),
-		sz.to_double(),
-		tx.to_double(),
-		ty.to_double(),
-		tz.to_double(),
+		px.dbl(),
+		py.dbl(),
+		pz.dbl(),
+		qx.dbl(),
+		qy.dbl(),
+		qz.dbl(),
+		rx.dbl(),
+		ry.dbl(),
+		rz.dbl(),
+		sx.dbl(),
+		sy.dbl(),
+		sz.dbl(),
+		tx.dbl(),
+		ty.dbl(),
+		tz.dbl(),
 		SAF_epsilon_0,
 		SAF_epsilon_1);
   }
@@ -1128,28 +1128,28 @@ cmp_dist_to_pointC3(
 
   // Check the bounds.  All arguments must be <= SAF_bound.
   if (
-	fabs(px.value()) > SAF_bound ||
-	fabs(py.value()) > SAF_bound ||
-	fabs(pz.value()) > SAF_bound ||
-	fabs(qx.value()) > SAF_bound ||
-	fabs(qy.value()) > SAF_bound ||
-	fabs(qz.value()) > SAF_bound ||
-	fabs(rx.value()) > SAF_bound ||
-	fabs(ry.value()) > SAF_bound ||
-	fabs(rz.value()) > SAF_bound)
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(py.to_double()) > SAF_bound ||
+	fabs(pz.to_double()) > SAF_bound ||
+	fabs(qx.to_double()) > SAF_bound ||
+	fabs(qy.to_double()) > SAF_bound ||
+	fabs(qz.to_double()) > SAF_bound ||
+	fabs(rx.to_double()) > SAF_bound ||
+	fabs(ry.to_double()) > SAF_bound ||
+	fabs(rz.to_double()) > SAF_bound)
   {
 re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.value()));
-    NEW_bound = std::max(NEW_bound, fabs(py.value()));
-    NEW_bound = std::max(NEW_bound, fabs(pz.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qz.value()));
-    NEW_bound = std::max(NEW_bound, fabs(rx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(ry.value()));
-    NEW_bound = std::max(NEW_bound, fabs(rz.value()));
+    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(pz.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qz.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(rx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(ry.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(rz.to_double()));
     // Re-adjust the context.
     Static_Filtered_cmp_dist_to_pointC3_9::new_bound(NEW_bound);
   }
@@ -1157,15 +1157,15 @@ re_adjust:
   try
   {
     return Static_Filtered_cmp_dist_to_pointC3_9::epsilon_variant(
-		px.to_double(),
-		py.to_double(),
-		pz.to_double(),
-		qx.to_double(),
-		qy.to_double(),
-		qz.to_double(),
-		rx.to_double(),
-		ry.to_double(),
-		rz.to_double(),
+		px.dbl(),
+		py.dbl(),
+		pz.dbl(),
+		qx.dbl(),
+		qy.dbl(),
+		qz.dbl(),
+		rx.dbl(),
+		ry.dbl(),
+		rz.dbl(),
 		SAF_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
@@ -1320,30 +1320,30 @@ cmp_signed_dist_to_planeC3(
 
   // Check the bounds.  All arguments must be <= SAF_bound.
   if (
-	fabs(pa.value()) > SAF_bound ||
-	fabs(pb.value()) > SAF_bound ||
-	fabs(pc.value()) > SAF_bound ||
-	fabs(pd.value()) > SAF_bound ||
-	fabs(px.value()) > SAF_bound ||
-	fabs(py.value()) > SAF_bound ||
-	fabs(pz.value()) > SAF_bound ||
-	fabs(qx.value()) > SAF_bound ||
-	fabs(qy.value()) > SAF_bound ||
-	fabs(qz.value()) > SAF_bound)
+	fabs(pa.to_double()) > SAF_bound ||
+	fabs(pb.to_double()) > SAF_bound ||
+	fabs(pc.to_double()) > SAF_bound ||
+	fabs(pd.to_double()) > SAF_bound ||
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(py.to_double()) > SAF_bound ||
+	fabs(pz.to_double()) > SAF_bound ||
+	fabs(qx.to_double()) > SAF_bound ||
+	fabs(qy.to_double()) > SAF_bound ||
+	fabs(qz.to_double()) > SAF_bound)
   {
 re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(pa.value()));
-    NEW_bound = std::max(NEW_bound, fabs(pb.value()));
-    NEW_bound = std::max(NEW_bound, fabs(pc.value()));
-    NEW_bound = std::max(NEW_bound, fabs(pd.value()));
-    NEW_bound = std::max(NEW_bound, fabs(px.value()));
-    NEW_bound = std::max(NEW_bound, fabs(py.value()));
-    NEW_bound = std::max(NEW_bound, fabs(pz.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qz.value()));
+    NEW_bound = std::max(NEW_bound, fabs(pa.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(pb.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(pc.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(pd.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(pz.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qz.to_double()));
     // Re-adjust the context.
     Static_Filtered_cmp_signed_dist_to_planeC3_10::new_bound(NEW_bound);
   }
@@ -1351,16 +1351,16 @@ re_adjust:
   try
   {
     return Static_Filtered_cmp_signed_dist_to_planeC3_10::epsilon_variant(
-		pa.to_double(),
-		pb.to_double(),
-		pc.to_double(),
-		pd.to_double(),
-		px.to_double(),
-		py.to_double(),
-		pz.to_double(),
-		qx.to_double(),
-		qy.to_double(),
-		qz.to_double(),
+		pa.dbl(),
+		pb.dbl(),
+		pc.dbl(),
+		pd.dbl(),
+		px.dbl(),
+		py.dbl(),
+		pz.dbl(),
+		qx.dbl(),
+		qy.dbl(),
+		qz.dbl(),
 		SAF_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
@@ -1556,40 +1556,40 @@ cmp_signed_dist_to_planeC3(
 
   // Check the bounds.  All arguments must be <= SAF_bound.
   if (
-	fabs(ppx.value()) > SAF_bound ||
-	fabs(ppy.value()) > SAF_bound ||
-	fabs(ppz.value()) > SAF_bound ||
-	fabs(pqx.value()) > SAF_bound ||
-	fabs(pqy.value()) > SAF_bound ||
-	fabs(pqz.value()) > SAF_bound ||
-	fabs(prx.value()) > SAF_bound ||
-	fabs(pry.value()) > SAF_bound ||
-	fabs(prz.value()) > SAF_bound ||
-	fabs(px.value()) > SAF_bound ||
-	fabs(py.value()) > SAF_bound ||
-	fabs(pz.value()) > SAF_bound ||
-	fabs(qx.value()) > SAF_bound ||
-	fabs(qy.value()) > SAF_bound ||
-	fabs(qz.value()) > SAF_bound)
+	fabs(ppx.to_double()) > SAF_bound ||
+	fabs(ppy.to_double()) > SAF_bound ||
+	fabs(ppz.to_double()) > SAF_bound ||
+	fabs(pqx.to_double()) > SAF_bound ||
+	fabs(pqy.to_double()) > SAF_bound ||
+	fabs(pqz.to_double()) > SAF_bound ||
+	fabs(prx.to_double()) > SAF_bound ||
+	fabs(pry.to_double()) > SAF_bound ||
+	fabs(prz.to_double()) > SAF_bound ||
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(py.to_double()) > SAF_bound ||
+	fabs(pz.to_double()) > SAF_bound ||
+	fabs(qx.to_double()) > SAF_bound ||
+	fabs(qy.to_double()) > SAF_bound ||
+	fabs(qz.to_double()) > SAF_bound)
   {
 re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(ppx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(ppy.value()));
-    NEW_bound = std::max(NEW_bound, fabs(ppz.value()));
-    NEW_bound = std::max(NEW_bound, fabs(pqx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(pqy.value()));
-    NEW_bound = std::max(NEW_bound, fabs(pqz.value()));
-    NEW_bound = std::max(NEW_bound, fabs(prx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(pry.value()));
-    NEW_bound = std::max(NEW_bound, fabs(prz.value()));
-    NEW_bound = std::max(NEW_bound, fabs(px.value()));
-    NEW_bound = std::max(NEW_bound, fabs(py.value()));
-    NEW_bound = std::max(NEW_bound, fabs(pz.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qz.value()));
+    NEW_bound = std::max(NEW_bound, fabs(ppx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(ppy.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(ppz.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(pqx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(pqy.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(pqz.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(prx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(pry.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(prz.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(pz.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qz.to_double()));
     // Re-adjust the context.
     Static_Filtered_cmp_signed_dist_to_planeC3_15::new_bound(NEW_bound);
   }
@@ -1597,21 +1597,21 @@ re_adjust:
   try
   {
     return Static_Filtered_cmp_signed_dist_to_planeC3_15::epsilon_variant(
-		ppx.to_double(),
-		ppy.to_double(),
-		ppz.to_double(),
-		pqx.to_double(),
-		pqy.to_double(),
-		pqz.to_double(),
-		prx.to_double(),
-		pry.to_double(),
-		prz.to_double(),
-		px.to_double(),
-		py.to_double(),
-		pz.to_double(),
-		qx.to_double(),
-		qy.to_double(),
-		qz.to_double(),
+		ppx.dbl(),
+		ppy.dbl(),
+		ppz.dbl(),
+		pqx.dbl(),
+		pqy.dbl(),
+		pqz.dbl(),
+		prx.dbl(),
+		pry.dbl(),
+		prz.dbl(),
+		px.dbl(),
+		py.dbl(),
+		pz.dbl(),
+		qx.dbl(),
+		qy.dbl(),
+		qz.dbl(),
 		SAF_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)

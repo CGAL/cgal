@@ -313,60 +313,60 @@ power_testH3(
 
   // Check the bounds.  All arguments must be <= SAF_bound.
   if (
-	fabs(phx.value()) > SAF_bound ||
-	fabs(phy.value()) > SAF_bound ||
-	fabs(phz.value()) > SAF_bound ||
-	fabs(phw.value()) > SAF_bound ||
-	fabs(pwt.value()) > SAF_bound ||
-	fabs(qhx.value()) > SAF_bound ||
-	fabs(qhy.value()) > SAF_bound ||
-	fabs(qhz.value()) > SAF_bound ||
-	fabs(qhw.value()) > SAF_bound ||
-	fabs(qwt.value()) > SAF_bound ||
-	fabs(rhx.value()) > SAF_bound ||
-	fabs(rhy.value()) > SAF_bound ||
-	fabs(rhz.value()) > SAF_bound ||
-	fabs(rhw.value()) > SAF_bound ||
-	fabs(rwt.value()) > SAF_bound ||
-	fabs(shx.value()) > SAF_bound ||
-	fabs(shy.value()) > SAF_bound ||
-	fabs(shz.value()) > SAF_bound ||
-	fabs(shw.value()) > SAF_bound ||
-	fabs(swt.value()) > SAF_bound ||
-	fabs(thx.value()) > SAF_bound ||
-	fabs(thy.value()) > SAF_bound ||
-	fabs(thz.value()) > SAF_bound ||
-	fabs(thw.value()) > SAF_bound ||
-	fabs(twt.value()) > SAF_bound)
+	fabs(phx.to_double()) > SAF_bound ||
+	fabs(phy.to_double()) > SAF_bound ||
+	fabs(phz.to_double()) > SAF_bound ||
+	fabs(phw.to_double()) > SAF_bound ||
+	fabs(pwt.to_double()) > SAF_bound ||
+	fabs(qhx.to_double()) > SAF_bound ||
+	fabs(qhy.to_double()) > SAF_bound ||
+	fabs(qhz.to_double()) > SAF_bound ||
+	fabs(qhw.to_double()) > SAF_bound ||
+	fabs(qwt.to_double()) > SAF_bound ||
+	fabs(rhx.to_double()) > SAF_bound ||
+	fabs(rhy.to_double()) > SAF_bound ||
+	fabs(rhz.to_double()) > SAF_bound ||
+	fabs(rhw.to_double()) > SAF_bound ||
+	fabs(rwt.to_double()) > SAF_bound ||
+	fabs(shx.to_double()) > SAF_bound ||
+	fabs(shy.to_double()) > SAF_bound ||
+	fabs(shz.to_double()) > SAF_bound ||
+	fabs(shw.to_double()) > SAF_bound ||
+	fabs(swt.to_double()) > SAF_bound ||
+	fabs(thx.to_double()) > SAF_bound ||
+	fabs(thy.to_double()) > SAF_bound ||
+	fabs(thz.to_double()) > SAF_bound ||
+	fabs(thw.to_double()) > SAF_bound ||
+	fabs(twt.to_double()) > SAF_bound)
   {
 re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(phx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(phy.value()));
-    NEW_bound = std::max(NEW_bound, fabs(phz.value()));
-    NEW_bound = std::max(NEW_bound, fabs(phw.value()));
-    NEW_bound = std::max(NEW_bound, fabs(pwt.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qhx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qhy.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qhz.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qhw.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qwt.value()));
-    NEW_bound = std::max(NEW_bound, fabs(rhx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(rhy.value()));
-    NEW_bound = std::max(NEW_bound, fabs(rhz.value()));
-    NEW_bound = std::max(NEW_bound, fabs(rhw.value()));
-    NEW_bound = std::max(NEW_bound, fabs(rwt.value()));
-    NEW_bound = std::max(NEW_bound, fabs(shx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(shy.value()));
-    NEW_bound = std::max(NEW_bound, fabs(shz.value()));
-    NEW_bound = std::max(NEW_bound, fabs(shw.value()));
-    NEW_bound = std::max(NEW_bound, fabs(swt.value()));
-    NEW_bound = std::max(NEW_bound, fabs(thx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(thy.value()));
-    NEW_bound = std::max(NEW_bound, fabs(thz.value()));
-    NEW_bound = std::max(NEW_bound, fabs(thw.value()));
-    NEW_bound = std::max(NEW_bound, fabs(twt.value()));
+    NEW_bound = std::max(NEW_bound, fabs(phx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(phy.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(phz.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(phw.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(pwt.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qhx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qhy.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qhz.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qhw.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qwt.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(rhx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(rhy.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(rhz.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(rhw.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(rwt.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(shx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(shy.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(shz.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(shw.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(swt.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(thx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(thy.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(thz.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(thw.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(twt.to_double()));
     // Re-adjust the context.
     Static_Filtered_power_testH3_25::new_bound(NEW_bound);
   }
@@ -374,31 +374,31 @@ re_adjust:
   try
   {
     return Static_Filtered_power_testH3_25::epsilon_variant(
-		phx.to_double(),
-		phy.to_double(),
-		phz.to_double(),
-		phw.to_double(),
-		pwt.to_double(),
-		qhx.to_double(),
-		qhy.to_double(),
-		qhz.to_double(),
-		qhw.to_double(),
-		qwt.to_double(),
-		rhx.to_double(),
-		rhy.to_double(),
-		rhz.to_double(),
-		rhw.to_double(),
-		rwt.to_double(),
-		shx.to_double(),
-		shy.to_double(),
-		shz.to_double(),
-		shw.to_double(),
-		swt.to_double(),
-		thx.to_double(),
-		thy.to_double(),
-		thz.to_double(),
-		thw.to_double(),
-		twt.to_double(),
+		phx.dbl(),
+		phy.dbl(),
+		phz.dbl(),
+		phw.dbl(),
+		pwt.dbl(),
+		qhx.dbl(),
+		qhy.dbl(),
+		qhz.dbl(),
+		qhw.dbl(),
+		qwt.dbl(),
+		rhx.dbl(),
+		rhy.dbl(),
+		rhz.dbl(),
+		rhw.dbl(),
+		rwt.dbl(),
+		shx.dbl(),
+		shy.dbl(),
+		shz.dbl(),
+		shw.dbl(),
+		swt.dbl(),
+		thx.dbl(),
+		thy.dbl(),
+		thz.dbl(),
+		thw.dbl(),
+		twt.dbl(),
 		SAF_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)

@@ -33,16 +33,6 @@
 #include <CGAL/Arithmetic_filter/predicates_on_ftC3.h>
 #endif
 
-// #if defined( CGAL_PREDICATES_ON_RTH2_H ) && \
-//       !defined( CGAL_ARITHMETIC_FILTER_PREDICATES_ON_RTH2_H )
-// #include <CGAL/Arithmetic_filter/predicates_on_rtH2.h>
-// #endif
-// 
-// #if defined( CGAL_PREDICATES_ON_RTH3_H ) && \
-//        !defined( CGAL_ARITHMETIC_FILTER_PREDICATES_ON_RTH3_H )
-// #include <CGAL/Arithmetic_filter/predicates_on_rtH3.h>
-// #endif
-
 #if defined( CGAL_PREDICATES_SIGN_OF_DETERMINANT_H ) && \
        !defined( CGAL_ARITHMETIC_FILTER_PREDICATES_SIGN_OF_DETERMINANT_H )
 #include <CGAL/Arithmetic_filter/predicates/sign_of_determinant.h>

@@ -163,28 +163,28 @@ in_smallest_orthogonalcircleC2(
 
   // Check the bounds.  All arguments must be <= SAF_bound.
   if (
-	fabs(px.value()) > SAF_bound ||
-	fabs(py.value()) > SAF_bound ||
-	fabs(pw.value()) > SAF_bound ||
-	fabs(qx.value()) > SAF_bound ||
-	fabs(qy.value()) > SAF_bound ||
-	fabs(qw.value()) > SAF_bound ||
-	fabs(tx.value()) > SAF_bound ||
-	fabs(ty.value()) > SAF_bound ||
-	fabs(tw.value()) > SAF_bound)
+	fabs(px.to_double()) > SAF_bound ||
+	fabs(py.to_double()) > SAF_bound ||
+	fabs(pw.to_double()) > SAF_bound ||
+	fabs(qx.to_double()) > SAF_bound ||
+	fabs(qy.to_double()) > SAF_bound ||
+	fabs(qw.to_double()) > SAF_bound ||
+	fabs(tx.to_double()) > SAF_bound ||
+	fabs(ty.to_double()) > SAF_bound ||
+	fabs(tw.to_double()) > SAF_bound)
   {
 re_adjust:
     // Compute the new bound.
     double NEW_bound = 0.0;
-    NEW_bound = std::max(NEW_bound, fabs(px.value()));
-    NEW_bound = std::max(NEW_bound, fabs(py.value()));
-    NEW_bound = std::max(NEW_bound, fabs(pw.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qy.value()));
-    NEW_bound = std::max(NEW_bound, fabs(qw.value()));
-    NEW_bound = std::max(NEW_bound, fabs(tx.value()));
-    NEW_bound = std::max(NEW_bound, fabs(ty.value()));
-    NEW_bound = std::max(NEW_bound, fabs(tw.value()));
+    NEW_bound = std::max(NEW_bound, fabs(px.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(py.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(pw.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qy.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(qw.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(tx.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(ty.to_double()));
+    NEW_bound = std::max(NEW_bound, fabs(tw.to_double()));
     // Re-adjust the context.
     Static_Filtered_in_smallest_orthogonalcircleC2_9::new_bound(NEW_bound);
   }
@@ -192,15 +192,15 @@ re_adjust:
   try
   {
     return Static_Filtered_in_smallest_orthogonalcircleC2_9::epsilon_variant(
-		px.to_double(),
-		py.to_double(),
-		pw.to_double(),
-		qx.to_double(),
-		qy.to_double(),
-		qw.to_double(),
-		tx.to_double(),
-		ty.to_double(),
-		tw.to_double(),
+		px.dbl(),
+		py.dbl(),
+		pw.dbl(),
+		qx.dbl(),
+		qy.dbl(),
+		qw.dbl(),
+		tx.dbl(),
+		ty.dbl(),
+		tw.dbl(),
 		SAF_epsilon_0);
   }
   catch (Restricted_double::unsafe_comparison)
