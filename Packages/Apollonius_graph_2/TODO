@@ -20,3 +20,17 @@
   also update the doc on this
 - in the user manual change 10^5 to 10^3 as the critical point where the
   hierarchy becomes better from the one-layer solution
+- add in user manual geometric interpretation in terms of cones in 3D; see
+  corresponding emails
+- add section about dimension of Apollonius_graph_2 in user manual
+- in the reference manual:
+     "Gt" => "ApolloniusGraphTraits_2"
+     "Agds" and "ApolloniusGraphDataStructure_2" => "ApolloniusGraphDS_2"
+- replace Bare_point type by Point_2 type
+- "CGAL::Apollonius_graph_data_structure_2<Vb, Fb>" : replace
+  Vb/Fb by the concept names ApolloniusGraphVertexBase_2/...
+  Similarly in references to it, where you could also don't put anything,
+  i.e. just "CGAL::Apollonius_graph_data_structure_2" (?).
+- "number_of_hidden_weighted_points()" in vertex base should return size_t
+- see email to cgal-editor with answers to Sylvain's questions
+
