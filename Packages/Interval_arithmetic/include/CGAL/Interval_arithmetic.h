@@ -54,10 +54,12 @@ private:
   }
 
 public:
-  friend CGAL_Interval_nt_advanced sqrt(const CGAL_Interval_nt_advanced&);
+  friend CGAL_Interval_nt_advanced sqrt (const CGAL_Interval_nt_advanced&);
+  friend double CGAL_to_double (const CGAL_Interval_nt_advanced&);
+  friend bool   CGAL_is_valid  (const CGAL_Interval_nt_advanced&);
+  friend bool   CGAL_is_finite (const CGAL_Interval_nt_advanced&);
   friend CGAL_Interval_nt_advanced operator*
       (const double, const CGAL_Interval_nt_advanced&);
-  friend double CGAL_to_double(const CGAL_Interval_nt_advanced&);
 
   // The constructors.
   CGAL_Interval_nt_advanced() {}
@@ -105,12 +107,6 @@ public:
 
   // For speed...
   CGAL_Interval_nt_advanced operator*(const double d) const;
-
-  bool is_valid() const
-  { return CGAL_is_valid(inf) && CGAL_is_valid(sup) && (sup >= -inf); }
-
-  bool is_finite() const
-  { return CGAL_is_finite(inf) && CGAL_is_finite(sup); }
 
   bool operator<(const CGAL_Interval_nt_advanced& d) const
   {
@@ -266,6 +262,12 @@ inline CGAL_Interval_nt_advanced sqrt(const CGAL_Interval_nt_advanced& d)
 
 inline double CGAL_to_double(const CGAL_Interval_nt_advanced& d)
 { return (d.sup-d.inf)*.5; }
+
+inline bool CGAL_is_valid(const CGAL_Interval_nt_advanced& d)
+{ return CGAL_is_valid(d.inf) && CGAL_is_valid(d.sup) && (d.sup >= -d.inf); }
+
+inline bool CGAL_is_finite(const CGAL_Interval_nt_advanced& d)
+{ return CGAL_is_finite(d.inf) && CGAL_is_finite(d.sup); }
 
 ostream& operator<<(ostream& os, const CGAL_Interval_nt_advanced& d)
 { return os << "[" << d.lower_bound() << ";" << d.upper_bound() << "]"; }
