@@ -117,7 +117,6 @@
 #if defined(__BORLANDC__) && __BORLANDC__ > 0x520
 #include <CGAL/Borland_fixes.h>
 #endif
-#include <CGAL/workaround_return_type.h>
 #include <CGAL/workaround_casts.h>
 
 //----------------------------------------------------------------------//
