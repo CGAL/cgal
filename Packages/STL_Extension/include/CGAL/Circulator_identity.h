@@ -36,7 +36,7 @@ template < class C,
            class Ref = typename C::reference,
            class Ptr = typename C::pointer>
 class Circulator_identity {
-private:
+protected:
   C        nt;    // The internal circulator.
 public:
   typedef C  Circulator;

@@ -44,7 +44,7 @@ template < class I,
            class Ctg = typename std::iterator_traits<I>::iterator_category>
 #endif
 class Iterator_identity {
-private:
+protected:
   I        nt;    // The internal iterator.
 public:
   typedef I      Iterator;

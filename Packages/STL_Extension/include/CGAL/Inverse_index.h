@@ -60,7 +60,7 @@ protected:
   typedef typename Index::const_iterator  Index_const_iterator;
   typedef typename Index::value_type      Item;
 
-private:
+protected:
   void ini_idx( IC i, const IC& j, std::input_iterator_tag);
   void ini_idx( const IC& i, const IC& j, std::forward_iterator_tag){
     ini_idx( i, j, std::input_iterator_tag());
@@ -88,7 +88,7 @@ public:
 #endif
   }
 
-private:
+protected:
   void push_back( const IC& k, std::input_iterator_tag) {
     std::size_t d = idx.size();
     idx[ &*k] = d;

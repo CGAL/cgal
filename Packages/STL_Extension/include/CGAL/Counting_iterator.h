@@ -40,7 +40,7 @@ template < class I,
            class Val = typename std::iterator_traits<I>::value_type>
 #endif
 class Counting_iterator {
-private:
+protected:
   I            nt;    // The internal iterator.
   std::size_t  d_i;   // The internal counter.
 public:
