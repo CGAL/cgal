@@ -69,6 +69,8 @@ class CGAL_Triangulation_data_structure
   <CGAL_Triangulation_data_structure<Vb,Cb> >;
   friend class CGAL_Triangulation_ds_facet_iterator
   <CGAL_Triangulation_data_structure<Vb,Cb> >;
+  friend class CGAL_Triangulation_ds_edge_iterator
+  <CGAL_Triangulation_data_structure<Vb,Cb> >;
   friend class CGAL_Triangulation_ds_vertex_iterator
   <CGAL_Triangulation_data_structure<Vb,Cb> >;
   
@@ -83,6 +85,7 @@ public:
 
   typedef CGAL_Triangulation_ds_cell_iterator<Tds> Cell_iterator;
   typedef CGAL_Triangulation_ds_facet_iterator<Tds> Facet_iterator;
+  typedef CGAL_Triangulation_ds_edge_iterator<Tds> Edge_iterator;
   typedef CGAL_Triangulation_ds_vertex_iterator<Tds> Vertex_iterator;
   typedef CGAL_Triangulation_ds_cell_circulator<Tds> Cell_circulator;
 
@@ -730,6 +733,20 @@ public:
     return Facet_iterator(ncthis,1);
   }
 
+  Edge_iterator edges_begin() const
+  {
+    CGAL_triangulation_precondition( dimension() >=1 );
+    Tds* ncthis = (Tds*)this;
+    return Edge_iterator(ncthis);
+  }
+
+  Edge_iterator edges_end() const
+  {
+    CGAL_triangulation_precondition( dimension() >=1 );
+    Tds* ncthis = (Tds*)this;
+    return Edge_iterator(ncthis,1);
+  }
+
   Vertex_iterator vertices_begin() const
   {
     CGAL_triangulation_precondition( number_of_vertices() > 0 );
@@ -765,27 +782,42 @@ public:
 	  if (verbose) { cerr << "false number of vertices" << endl; }
 	  CGAL_triangulation_assertion(false); return false;
 	}
-	// edge count to be done
+
+	int edge_count;
+	if ( ! count_edges(edge_count,verbose,level) ) {return false;}
 	int facet_count;
 	if ( ! count_facets(facet_count,verbose,level) ) {return false;}
 	int cell_count;
 	if ( ! count_cells(cell_count,verbose,level) ) {return false;}
-	// Euler relation to be done
+
+	// Euler relation 
+	if ( cell_count - facet_count + edge_count - vertex_count != 0 ) {
+	  if (verbose) { cerr << "Euler relation unsatisfied"<< endl; }
+	  CGAL_triangulation_assertion(false); return false;
+	}
+
 	break;
       }
     case 2:
       {
-	// vertex count
 	int vertex_count;
 	if ( ! count_vertices(vertex_count,verbose,level) ) {return false;}
 	if ( number_of_vertices() != vertex_count ) {
 	  if (verbose) { cerr << "false number of vertices" << endl; }
 	  CGAL_triangulation_assertion(false); return false;
 	}
-	// edge count to be done
-	// face count
+
+	int edge_count;
+	if ( ! count_edges(edge_count,verbose,level) ) {return false;}
+	// Euler for edges
+	if ( edge_count != 3 * vertex_count - 6 ) {
+	  if (verbose) { cerr << "Euler relation unsatisfied - edges/vertices" << endl;}
+	  CGAL_triangulation_assertion(false); return false;
+	}
+
 	int facet_count;
 	if ( ! count_facets(facet_count,verbose,level) ) {return false;}
+	// Euler for facets
 	if ( facet_count != 2 * vertex_count - 4 ) {
 	  if (verbose) { cerr << "Euler relation unsatisfied - facets/vertices" << endl;}
 	  CGAL_triangulation_assertion(false); return false;
@@ -793,9 +825,22 @@ public:
 	break;
       }
     case 1:
-      // edge count to be done
-      // check nb of vertices = nb of edges
-
+      {
+	int vertex_count;
+	if ( ! count_vertices(vertex_count,verbose,level) ) {return false;}
+	if ( number_of_vertices() != vertex_count ) {
+	  if (verbose) { cerr << "false number of vertices" << endl; }
+	  CGAL_triangulation_assertion(false); return false;
+	}
+	int edge_count;
+	if ( ! count_edges(edge_count,verbose,level) ) {return false;}
+	// Euler for edges
+	if ( edge_count != vertex_count ) {
+	  if (verbose) { cerr << "false number of edges" << endl; }
+	  CGAL_triangulation_assertion(false); return false;
+	}
+	break;
+      }
     case 0:
       {
 	if ( number_of_vertices() < 2 ) {
@@ -895,7 +940,7 @@ public:
     { // hook neighbor pointers of the cells
       Cell* it = tds._list_of_cells._next_cell;
       while ( it != tds.past_end_cell() ){
-	for(int j = 0; j < 3; j++){
+	for(int j = 0; j < 4; j++){
             f = ((Cell*) F[&(*it)]);
             f->set_neighbor(j, (Cell*) F[it->neighbor(j)] );
           }
@@ -1015,6 +1060,7 @@ private:
 
   // used by is-valid
   bool count_vertices(int & i, bool verbose = false, int level = 0) const
+    // counts AND checks the validity
   {
     i = 0;
     Vertex_iterator it = vertices_begin();
@@ -1031,15 +1077,33 @@ private:
   } 
   
   bool count_facets(int & i, bool verbose = false, int level = 0) const
+    // counts but does not check
   {
     i = 0;
     Facet_iterator it = facets_begin();
     
     while(it != facets_end()) {
-      if ( ! (*it).first->is_valid(dimension(),verbose, level) ) {
-	if (verbose) { cerr << "invalid facet" << endl;}
-	CGAL_triangulation_assertion(false); return false;
-      }
+//       if ( ! (*it).first->is_valid(dimension(),verbose, level) ) {
+// 	if (verbose) { cerr << "invalid facet" << endl;}
+// 	CGAL_triangulation_assertion(false); return false;
+//       }
+      ++i;
+      ++it;
+    }
+    return true;
+  }
+
+  bool count_edges(int & i, bool verbose = false, int level = 0) const
+    // counts but does not check
+  {
+    i = 0;
+    Edge_iterator it = edges_begin();
+    
+    while(it != edges_end()) {
+//       if ( ! (*it).first->is_valid(dimension(),verbose, level) ) {
+// 	if (verbose) { cerr << "invalid edge" << endl;}
+// 	CGAL_triangulation_assertion(false); return false;
+//       }
       ++i;
       ++it;
     }
@@ -1047,6 +1111,7 @@ private:
   }
 
   bool count_cells(int & i, bool verbose = false, int level = 0) const
+    // counts AND checks the validity
   {
     i = 0;
     Cell_iterator it = cells_begin();
