@@ -319,9 +319,41 @@ CGAL_compare_y_at_xC2(const CGAL_Filtering<CT,ET> &l1a,
 }
 
 template < class CT, class ET >
+// inline
+CGAL_Comparison_result
+CGAL_compare_deltax_deltayC2(const CGAL_Filtering<CT,ET> &px,
+	const CGAL_Filtering<CT,ET> &qx,
+	                             const CGAL_Filtering<CT,ET> &ry,
+	const CGAL_Filtering<CT,ET> &sy)
+{ // This is the default filter (specialization).
+
+  CGAL_Comparison_result result;
+  CGAL_FPU_set_rounding_to_infinity();
+  try
+  {
+    result = CGAL_compare_deltax_deltayC2(
+		CGAL_to_Interval_nt_advanced(px.value),
+		CGAL_to_Interval_nt_advanced(qx.value),
+		CGAL_to_Interval_nt_advanced(ry.value),
+		CGAL_to_Interval_nt_advanced(sy.value));
+    CGAL_FPU_set_rounding_to_nearest();
+  } 
+  catch (CGAL_Interval_nt_advanced::unsafe_comparison)
+  {
+    CGAL_FPU_set_rounding_to_nearest();
+    result = CGAL_compare_deltax_deltayC2(
+		CGAL_to_exact_type<ET>(px.value),
+		CGAL_to_exact_type<ET>(qx.value),
+		CGAL_to_exact_type<ET>(ry.value),
+		CGAL_to_exact_type<ET>(sy.value));
+  }
+  return result;
+}
+
+template < class CT, class ET >
 // CGAL_KERNEL_MEDIUM_INLINE
 CGAL_Comparison_result
-inline
+// inline
 CGAL_compare_lexicographically_xyC2(const CGAL_Filtering<CT,ET> &px,
 	const CGAL_Filtering<CT,ET> &py,
 	                                    const CGAL_Filtering<CT,ET> &qx,
