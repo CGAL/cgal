@@ -30,6 +30,11 @@ template <class Triangulation>
 void 
 _test_cls_constrained_triangulation(const Triangulation &)
 {
+  using std::cout;
+  using std::ofstream;
+  using std::ifstream;
+  using std::endl;
+
   typedef Triangulation                       Cls;
 
   // We assume the traits class has been tested already

@@ -301,7 +301,7 @@ istream &operator>>(istream &is, Triangulation_test_point &p)
   return is;
 }
 
-istream &operator>>(istream &is, Triangulation_test_triangle &t)
+std::istream &operator>>(std::istream &is, Triangulation_test_triangle &t)
 {
   Triangulation_test_triangle::Point p,q,r;
   is >> p >> q >> r ;
@@ -312,7 +312,7 @@ istream &operator>>(istream &is, Triangulation_test_triangle &t)
 
 
 
-ostream &operator<<(ostream &os, const Triangulation_test_point &p)
+std::ostream &operator<<(std::ostream &os, const Triangulation_test_point &p)
 {
   return os << p.test_x() << ' ' << p.test_y();
 }

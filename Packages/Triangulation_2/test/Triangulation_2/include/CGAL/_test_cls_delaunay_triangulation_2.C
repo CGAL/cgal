@@ -11,13 +11,13 @@
 // release       :
 // release_date  :
 // 
-// source        : 
+// source        : $RCSfile$
 // file          : include/CGAL/_test_cls_delaunay_triangulation_2.C
-// revision      : 
-// revision_date : 
-// author(s)     : Herve Bronnimann (Herve.Bronnimann@sophia.inria.fr)
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Herve Bronnimann,Mariette Yvinec
 //
-// coordinator   : INRIA Sophia-Antipolis
+// coordinator   : INRIA Sophia-Antipolis <Mariette Yvinec@sophia.inria.fr>
 // ============================================================================
 
 #include <iostream>
