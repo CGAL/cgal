@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.114 on 1 August 2001
+- Add missing operators in Lazy_exact_nt.
+
 Version 4.113 on 25 July 2001
 - Use Filtered_kernel instead of Filtered_exact in test/Kernel_checker.C .
 

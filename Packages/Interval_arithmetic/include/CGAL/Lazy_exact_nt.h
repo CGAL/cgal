@@ -180,6 +180,7 @@ struct NAME : public Lazy_exact_unary<ET>                            \
   void update_exact()  { et = new ET(OP(op1.exact())); }             \
 };
 
+CGAL_LAZY_UNARY_OP(CGAL::opposite,  Lazy_exact_Opp)
 CGAL_LAZY_UNARY_OP(CGAL_NTS abs,    Lazy_exact_Abs)
 CGAL_LAZY_UNARY_OP(CGAL_NTS square, Lazy_exact_Square)
 CGAL_LAZY_UNARY_OP(CGAL::sqrt,      Lazy_exact_Sqrt)
@@ -247,6 +248,9 @@ public :
   Lazy_exact_nt (const ET & e)
   { PTR = new Lazy_exact_Ex_Cst<ET>(e); }
 
+  Self operator- () const
+  { return new Lazy_exact_Opp<ET>(*this); }
+
   Self operator+ (const Self & a) const
   { return new Lazy_exact_Add<ET>(*this, a); }
 
@@ -268,7 +272,6 @@ public :
   ET exact() const
   { return ptr()->exact(); }
 
-  // The other comparison operators are currently provided by the STL.
   bool operator< (const Self & a) const
   {
     try
@@ -282,6 +285,21 @@ public :
     }
   }
 
+  bool operator> (const Self & a) const
+  {
+      return a<*this;
+  }
+
+  bool operator>= (const Self & a) const
+  {
+      return !(*this<a);
+  }
+
+  bool operator<= (const Self & a) const
+  {
+      return !(a<*this);
+  }
+
   bool operator== (const Self & a) const
   {
     try
@@ -293,6 +311,11 @@ public :
       // std::cerr << "Interval filter failure (==)" << std::endl;
       return exact() == a.exact();
     }
+  }
+
+  bool operator!= (const Self & a) const
+  {
+      return ! (*this == a);
   }
 
 private:
