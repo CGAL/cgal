@@ -30,8 +30,8 @@
 //
 // The differences are:
 // - The second one is slower.
-// - The first one supposes the rounding mode is set -> +infinity before
-// nearly all operations, and might set it -> +infinity when leaving, whereas
+// - The first one assumes that the rounding mode is set -> +infinity before
+// some operations, and might set it -> +infinity when leaving, whereas
 // the second leaves the rounding -> nearest.
 //
 // Note: When rounding is towards +infinity, to make an operation rounded
@@ -59,7 +59,8 @@ struct Interval_nt_advanced
 {
   typedef Interval_nt_advanced IA;
   struct unsafe_comparison {};		// Exception class.
-  static unsigned number_of_failures;	// Counts the number of failures.
+  static unsigned number_of_failures;	// Number of filter failures.
+  static const IA Smallest, Largest;	// Useful constant intervals.
 
   friend inline IA operator+     (const IA &, const IA &);
   friend inline IA operator-     (const IA &, const IA &);
@@ -153,17 +154,6 @@ protected:
   double _inf, _sup;	// "_inf" stores the lower bound, "_sup" the upper.
 };
 
-// Two useful constant intervals.
-// Smallest interval strictly containing zero.
-static const Interval_nt_advanced Interval_Smallest
-             (-CGAL_IA_MIN_DOUBLE, CGAL_IA_MIN_DOUBLE);
-// [-inf;+inf]
-static const Interval_nt_advanced Interval_Largest (-HUGE_VAL, HUGE_VAL);
-
-// I'll remove those macros once it's tested.
-#define CGAL_IA_SMALLEST CGAL::Interval_Smallest
-#define CGAL_IA_LARGEST  CGAL::Interval_Largest
-
 inline
 Interval_nt_advanced
 operator+ (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
@@ -193,26 +183,25 @@ operator* (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
   CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
   if (e._inf>=0.0)					// e>=0
   {
-      // d>=0     [_inf*d._inf; _sup*d._sup]
-      // d<=0     [_sup*d._inf; _inf*d._sup]
-      // d~=0     [_sup*d._inf; _sup*d._sup]
-      double a = e._inf, b = e._sup;
+    // d>=0     [_inf*d._inf; _sup*d._sup]
+    // d<=0     [_sup*d._inf; _inf*d._sup]
+    // d~=0     [_sup*d._inf; _sup*d._sup]
+    double a = e._inf, b = e._sup;
     if (d._inf < 0.0)
     {
 	a=b;
 	if (d._sup < 0.0)
 	    b=e._inf;
     }
-
     return Interval_nt_advanced(-CGAL_IA_FORCE_TO_DOUBLE(a*(-d._inf)),
 	                         CGAL_IA_FORCE_TO_DOUBLE(b*d._sup));
   }
   else if (e._sup<=0.0)				// e<=0
   {
-      // d>=0     [_inf*d._sup; _sup*d._inf]
-      // d<=0     [_sup*d._sup; _inf*d._inf]
-      // d~=0     [_inf*d._sup; _inf*d._inf]
-      double a = e._sup, b = e._inf;
+    // d>=0     [_inf*d._sup; _sup*d._inf]
+    // d<=0     [_sup*d._sup; _inf*d._inf]
+    // d~=0     [_inf*d._sup; _inf*d._inf]
+    double a = e._sup, b = e._inf;
     if (d._inf < 0.0)
     {
 	a=b;
@@ -250,10 +239,10 @@ operator/ (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
   CGAL_expensive_assertion(FPU_empiric_test() == FPU_cw_up);
   if (d._inf>0.0)				// d>0
   {
-      // e>=0	[_inf/d._sup; _sup/d._inf]
-      // e<=0	[_inf/d._inf; _sup/d._sup]
-      // e~=0	[_inf/d._inf; _sup/d._inf]
-      double a = d._sup, b = d._inf;
+    // e>=0	[_inf/d._sup; _sup/d._inf]
+    // e<=0	[_inf/d._inf; _sup/d._sup]
+    // e~=0	[_inf/d._inf; _sup/d._inf]
+    double a = d._sup, b = d._inf;
     if (e._inf<0.0)
     {
 	a=b;
@@ -265,10 +254,10 @@ operator/ (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
   }
   else if (d._sup<0.0)			// d<0
   {
-      // e>=0	[_sup/d._sup; _inf/d._inf]
-      // e<=0	[_sup/d._inf; _inf/d._sup]
-      // e~=0	[_sup/d._sup; _inf/d._sup]
-      double a = d._sup, b = d._inf;
+    // e>=0	[_sup/d._sup; _inf/d._inf]
+    // e<=0	[_sup/d._inf; _inf/d._sup]
+    // e~=0	[_sup/d._sup; _inf/d._sup]
+    double a = d._sup, b = d._inf;
     if (e._inf<0.0)
     {
 	b=a;
@@ -279,7 +268,7 @@ operator/ (const Interval_nt_advanced & e, const Interval_nt_advanced & d)
 	                         CGAL_IA_FORCE_TO_DOUBLE(e._inf/b));
   }
   else					// d~0
-    return CGAL_IA_LARGEST; // IA (-HUGE_VAL, HUGE_VAL);
+    return Interval_nt_advanced::Largest;
 	   // We could do slightly better -> [0;HUGE_VAL] when d._sup==0,
 	   // but is this worth ?
 }
@@ -387,9 +376,7 @@ Interval_nt_advanced::operator/= (const Interval_nt_advanced & d)
 inline
 double
 to_double (const Interval_nt_advanced & d)
-{
-    return (d._sup + d._inf) * 0.5;
-}
+{ return (d._sup + d._inf) * 0.5; }
 
 inline
 bool
