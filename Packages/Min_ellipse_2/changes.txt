@@ -1,5 +1,8 @@
 Changes done to the `Min_ellipse_2' package.
 
+Version 3.2.10 on 01-Oct-1999
+- inequality operator added to 'MyPoint[CH]2'.
+
 Version 3.2.9 on 29-Sep-1999
 - removed friend declarations from 'Optimisation_ellipse_2'.
 
