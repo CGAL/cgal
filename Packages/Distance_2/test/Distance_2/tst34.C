@@ -15,8 +15,8 @@ int main()
     randomint ri;
     int x1, x2, x3, y1, y2, y3, w1, w2, w3;
     TestR::FT d;
-    cin >> x1 >> y1 >> x2 >> y2 >> x3 >> y3;
-    if (!cin)
+    std::cin >> x1 >> y1 >> x2 >> y2 >> x3 >> y3;
+    if (!std::cin)
 	return 1;
     w1 = ri.next();
     w2 = ri.next();
@@ -25,8 +25,8 @@ int main()
     point_t tp2(to_nt(w2*x2), to_nt(w2*y2), to_nt(w2));
     point_t tp3(to_nt(w3*x3), to_nt(w3*y3), to_nt(w3));
     triangle_t tr1(tp1, tp2, tp3);
-    cin >> x1 >> y1 >> x2 >> y2 >> x3 >> y3;
-    if (!cin)
+    std::cin >> x1 >> y1 >> x2 >> y2 >> x3 >> y3;
+    if (!std::cin)
 	return 1;
     w1 = ri.next();
     w2 = ri.next();
@@ -36,6 +36,6 @@ int main()
     point_t tp6(to_nt(w3*x3), to_nt(w3*y3), to_nt(w3));
     triangle_t tr2(tp4, tp5, tp6);
     d = CGAL::squared_distance(tr1, tr2);
-    cout << CGAL::to_double(d) << '\n';
+    std::cout << CGAL::to_double(d) << '\n';
     return 0;
 }

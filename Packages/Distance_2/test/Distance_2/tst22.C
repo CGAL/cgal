@@ -18,21 +18,21 @@ int main()
     randomint ri;
     int x1, x2, y1, y2, w1, w2;
     TestR::FT d;
-    cin >> x1 >> y1 >> x2 >> y2;
-    if (!cin)
+    std::cin >> x1 >> y1 >> x2 >> y2;
+    if (!std::cin)
 	return 1;
     w1 = ri.next();
     w2 = ri.next();
     point_t tp1(to_nt(w1*x1), to_nt(w1*y1), to_nt(w1));
     point_t tp2(to_nt(w2*x2), to_nt(w2*y2), to_nt(w2));
     segment_t seg1(tp1, tp2);
-    cin >> x1 >> y1 >> x2 >> y2;
-    if (!cin)
+    std::cin >> x1 >> y1 >> x2 >> y2;
+    if (!std::cin)
 	return 1;
     point_t tp3(to_nt(w1*x1), to_nt(w1*y1), to_nt(w1));
     point_t tp4(to_nt(w2*x2), to_nt(w2*y2), to_nt(w2));
     segment_t seg2(tp3, tp4);
     d = CGAL::squared_distance(seg1, seg2);
-    cout << CGAL::to_double(d) << '\n';
+    std::cout << CGAL::to_double(d) << '\n';
     return 0;
 }
