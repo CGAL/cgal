@@ -1424,6 +1424,7 @@ Packages/Polyhedron/examples/Polyhedron/corner_with_sharp_edge.off -text
 Packages/Polyhedron/examples/Polyhedron/cross.off -text
 Packages/Qt_widget/demo/Qt_widget/Alpha_shapes_2/alpha_shape.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Alpha_shapes_2/demo.dsp -text
+Packages/Qt_widget/demo/Qt_widget/Convex_Hull_2/convex_hull_2.vcproj -text
 Packages/Qt_widget/demo/Qt_widget/Convex_Hull_2/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/Largest_empty_rect_2/demo.dsp -text
 Packages/Qt_widget/demo/Qt_widget/Max_k-gon/demo.dsp -text
