@@ -1,3 +1,6 @@
+- Changed many occurences of Point to const Point& in argument lists
+  and for local variables [af]
+
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 

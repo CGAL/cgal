@@ -123,7 +123,7 @@ public:
 //   template < class InputIterator >
 //   int insert(InputIterator first, InputIterator last);
  
-  void insert_constraint(Point a, Point b);
+  void insert_constraint(const Point& a, const Point& b);
   void insert_constraint(Vertex_handle va, Vertex_handle  vb);
   void push_back(const Constraint& c);
 
@@ -252,7 +252,7 @@ public:
   // the following fonctions are overloaded 
   // to take care of constraint marks 
   template<class EdgeIt>
-  Vertex_handle star_hole( Point p, EdgeIt edge_begin,  EdgeIt edge_end){
+  Vertex_handle star_hole( const Point& p, EdgeIt edge_begin,  EdgeIt edge_end){
     std::list<Face_handle> empty_list;
     return star_hole(p, 
 		     edge_begin, 
@@ -262,7 +262,7 @@ public:
   }
 
   template<class EdgeIt, class FaceIt>
-  Vertex_handle star_hole( Point p, 
+  Vertex_handle star_hole( const Point& p, 
 			   EdgeIt edge_begin,
 			   EdgeIt edge_end,
 			   FaceIt face_begin,
@@ -382,7 +382,7 @@ special_insert_in_edge(const Point & a, Face_handle f, int i)
 template < class Gt, class Tds, class Itag >
 inline void
 Constrained_triangulation_2<Gt,Tds,Itag>::
-insert_constraint(Point a, Point b)
+insert_constraint(const Point& a, const Point& b)
 // the algorithm first inserts a and b, 
 // and then forces the constraint [va,vb]
 {
@@ -461,8 +461,8 @@ find_intersected_faces(Vertex_handle vaa,
   // list_ab consists of the edges from vaa to vi (i.e. on the left of a->b)
   // list_ba    "         "        from vi to vaa (i.e. on the right of a->b)
 {
-  Point aa = vaa->point();
-  Point bb = vbb->point();
+  const Point& aa = vaa->point();
+  const Point& bb = vbb->point();
   Line_face_circulator current_face=Line_face_circulator(vaa, this, bb);
   int ind=current_face->index(vaa);
       
@@ -581,10 +581,10 @@ intersect(Face_handle f, int i,
   std::cerr << "using a Constrained_triangulation_plus_2 class" << std::endl;
   std::cerr << "would avoid cascading intersection computation" << std::endl;
   std::cerr << " and be much more efficient" << std::endl;
-  Point pa = vaa->point();
-  Point pb = vbb->point();
-  Point pc = f->vertex(cw(i))->point();
-  Point pd = f->vertex(ccw(i))->point();
+  const Point& pa = vaa->point();
+  const Point& pb = vbb->point();
+  const Point& pc = f->vertex(cw(i))->point();
+  const Point& pd = f->vertex(ccw(i))->point();
   Point pi;
   Itag itag = Itag();
   bool ok = intersection(geom_traits(), pa, pb, pc, pd, pi, itag );
@@ -605,10 +605,10 @@ intersect(Face_handle f, int i,
   vcc = f->vertex(cw(i));
   vdd = f->vertex(ccw(i));
 
-  Point pa = vaa->point();
-  Point pb = vbb->point();
-  Point pc = vcc->point();
-  Point pd = vdd->point();
+  const Point& pa = vaa->point();
+  const Point& pb = vbb->point();
+  const Point& pc = vcc->point();
+  const Point& pd = vdd->point();
 
   Point pi; //creator for point is required here
   Itag itag = Itag();
