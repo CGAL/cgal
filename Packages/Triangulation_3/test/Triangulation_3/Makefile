@@ -20,6 +20,7 @@ CXXFLAGS = \
            $(CGAL_CXXFLAGS) \
 	   -W -Wall \
            -DCGAL_CHECK_EXPENSIVE 
+
 	 #  -g
 
 	# -DCGAL_NO_DEPRECATED_CODE \

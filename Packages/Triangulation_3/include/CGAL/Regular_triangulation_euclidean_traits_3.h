@@ -283,7 +283,7 @@ public:
 		  const Weighted_point r,
 		  const Weighted_point s) 
     {
-        return squared_radius_smallest_orthogonal_sphereC3(
+        return squared_radius_orthogonal_sphereC3(
                               p.x(), p.y(), p.z(), p.weight(),
 			      q.x(), q.y(), q.z(), q.weight(),
 			      r.x(), r.y(), r.z(), r.weight(),

@@ -1,4 +1,9 @@
 
+27 April 2004 Mariette Yvinec
+- changed the order in tab_vertex_triple_index[4][3]
+- fixed Compute_squared_radius_smallest_orthogonal_sphere_3 in
+  Regular_triangulation_euclidean_traits_3.h
+
 9 avril 2004 Mariette Yvinec
 - fixed by Mariette of the previous change
 
