@@ -58,21 +58,21 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template< class Gt, class PContainer, class Svdds >
+template< class Gt, class PContainer, class DS >
 class Segment_Voronoi_diagram_hierarchy_2;
 
 
 template < class Gt,
 	   class PContainer = Point_container<typename Gt::Point_2>,
-  class Svdds = Segment_Voronoi_diagram_data_structure_2 < 
+           class DS = Segment_Voronoi_diagram_data_structure_2 < 
                 Segment_Voronoi_diagram_vertex_base_2<Gt,
 	                         typename PContainer::Point_handle>,
                 Segment_Voronoi_diagram_face_base_2<Gt> > >
 class Segment_Voronoi_diagram_2
   : private Triangulation_2<
-          Segment_Voronoi_diagram_traits_wrapper_2<Gt>, Svdds >
+          Segment_Voronoi_diagram_traits_wrapper_2<Gt>, DS >
 {
-  friend class Segment_Voronoi_diagram_hierarchy_2<Gt,PContainer,Svdds>;
+  friend class Segment_Voronoi_diagram_hierarchy_2<Gt,PContainer,DS>;
 protected:
   bool intersection_flag;
 
@@ -128,7 +128,7 @@ private:
 protected:
   // some local types
   typedef Segment_Voronoi_diagram_traits_wrapper_2<Gt>  Modified_traits;
-  typedef Triangulation_2<Modified_traits,Svdds>  DG;
+  typedef Triangulation_2<Modified_traits,DS>           DG;
   typedef DG                         Delaunay_graph;
   typedef typename DG::Vertex        Vertex;
   typedef typename DG::Face          Face;
@@ -136,7 +136,7 @@ protected:
 public:
   // TYPES
   //------
-  typedef Svdds                                  Data_structure;
+  typedef DS                                     Data_structure;
   typedef Gt                                     Geom_traits;
   typedef typename Gt::Site_2                    Site_2;
   typedef Site_2                                 Site;
@@ -160,10 +160,12 @@ public:
 
   typedef Point_container<Point>                  Point_container;
   typedef typename Point_container::Point_handle  Point_handle;
-  
+
+  typedef typename DG::size_type                  size_type;
+
 protected:
   // some more local types
-  //  typedef typename Svdds::Vertex_base          Vertex_base;
+  typedef typename DS::Vertex_base             Vertex_base;
 
   typedef std::map<Face_handle,bool>           Face_map;
   typedef std::map<Face_handle, Face_handle>   Face_face_map;
@@ -173,12 +175,8 @@ protected:
   typedef typename Vertex_list::iterator   Vertex_list_iterator;
   typedef Vertex_handle                    Vh_triple[3];
 
-#ifdef USE_STORAGE_SITE
   typedef
   typename Data_structure::Vertex_base::Storage_site_2  Storage_site_2;
-
-  typedef typename Storage_site_2::Handle_pair       Point_handle_pair;
-#endif
 
   // the in place edge list
 #ifdef USE_INPLACE_EDGE_LIST
@@ -232,11 +230,11 @@ public:
     return DG::geom_traits();
   }
 
-  int number_of_vertices() const {
+  size_type number_of_vertices() const {
     return DG::number_of_vertices();
   }
 
-  unsigned int number_of_incident_segments(Vertex_handle v) const;
+  size_type number_of_incident_segments(Vertex_handle v) const;
 
 
   Vertex_handle infinite_vertex() const {
@@ -355,26 +353,52 @@ public:
 public:
   // INSERTION
   //----------
-  template< class Input_iterator >
-  void insert(Input_iterator first, Input_iterator beyond,
-	      bool do_shuffle = true)
+  template<class Input_iterator>
+  size_type insert(Input_iterator first, Input_iterator beyond)
+  {
+    return insert_with_tag(first, beyond, Tag_false());
+  }
+
+  template<class Input_iterator>
+  size_type insert_with_tag(Input_iterator first,
+			    Input_iterator beyond,
+			    Tag_true)
+  {
+    // MK::ERROR: this changes the data I would have to copy them to
+    //            a vector first and then do the suffling thing...
+    std::random_shuffle(first, beyond);
+    return insert_with_tag(first, beyond, Tag_false());
+  }
+
+  template<class Input_iterator>
+  size_type insert_with_tag(Input_iterator first,
+			    Input_iterator beyond,
+			    Tag_false)
   {
     // do it the obvious way: insert them as they come;
     // one might think though that it might be better to first insert
     // all end points and then all segments, or a variation of that.
 
-    if ( do_shuffle ) {
-      std::random_shuffle(first, beyond);
-    }
-
+    size_type n_before = number_of_vertices();
     for (Input_iterator it = first; it != beyond; ++it) {
       insert(*it);
     }
+    size_type n_after = number_of_vertices();
+    return n_after - n_before;
+  }
+
+
+
+  template<class Input_iterator, class True_false_tag>
+  size_type insert(Input_iterator first, Input_iterator beyond,
+		   True_false_tag tag)
+  {
+    return insert_with_tag(first, beyond, tag);
   }
 
   // insert a point
   Vertex_handle  insert(const Point& p) {
-    return insert_point(p, Vertex_handle(NULL));
+    return insert_point(p, Vertex_handle());
   }
 
   Vertex_handle  insert(const Point& p, Vertex_handle vnear) {
@@ -384,7 +408,7 @@ public:
   // insert a segment
   Vertex_handle  insert(const Point& p1, const Point& p2) {
     return
-    insert_segment(Site(Segment(p1, p2)), Vertex_handle(NULL), true);
+    insert_segment(Site(Segment(p1, p2)), Vertex_handle(), true);
   }
 
   Vertex_handle  insert(const Point& p0, const Point& p1, 
@@ -393,11 +417,22 @@ public:
     insert_segment(Site(Segment(p0, p1)), vnear, true);
   }
 
-#if 0
+  // MK::ERROR: I may not want to expose this...
+  // insert a site
   Vertex_handle  insert(const Site& t) {
-    return insert(t, Vertex_handle(NULL), true);
+    if ( t.is_segment() ) {
+      return insert_segment(t, Vertex_handle(), true);
+    } else if ( t.is_point() ) {
+      // MK::ERROR: the following does not work if the point is not
+      //            exact...
+      return insert_point(t.point(), Vertex_handle());
+    } else {
+      CGAL_precondition ( t.is_defined() );
+      return Vertex_handle(); // to avoid compiler error
+    }
   }
 
+#if 0
   Vertex_handle  insert(const Site& t, Vertex_handle vnear)
   {
     return insert(t, vnear, true);
@@ -479,9 +514,9 @@ protected:
     Finite_vertices_iterator vit = finite_vertices_begin();
     for (; vit != finite_vertices_end(); ++vit) {
       if ( vit->is_point() ) {
-	str << "p " << vit->site().point() << std::endl;
+	str << "p " << vit->storage_site().point() << std::endl;
       } else {
-	str << "s " << vit->site().segment() << std::endl;
+	str << "s " << vit->storage_site().segment() << std::endl;
       }
     }
     return str;
@@ -695,6 +730,7 @@ protected:
 		     const Vertex_handle& v,
 		     Sign sgn) const;
 
+#if 0
   bool is_degenerate_edge(const Site& t1,
 				 const Site& t2,
 				 const Site& t3,
@@ -726,6 +762,7 @@ protected:
   bool is_degenerate_edge(const Edge& e) const {
     return is_degenerate_edge(e.first, e.second);
   }
+#endif
 
   bool do_intersect(const Site& t, Vertex_handle v) const;
   bool do_intersect(const Site& p, const Site& q) const
@@ -807,11 +844,7 @@ protected:
   bool          is_degree_2(const Vertex_handle& v) const;
 
   Vertex_handle insert_degree_2(Edge e);
-#ifdef USE_STORAGE_SITE
   Vertex_handle insert_degree_2(Edge e, const Storage_site_2& ss);
-#else
-  Vertex_handle insert_degree_2(Edge e, const Site_2& t);
-#endif
 
   void          remove_degree_2(Vertex_handle v);
 #if 0
@@ -820,7 +853,6 @@ protected:
 #endif
 
   // this was defined because the hierarchy needs it
-#ifdef USE_STORAGE_SITE
   Vertex_handle create_vertex(const Storage_site_2& ss) {
     Vertex_handle v = this->_tds.create_vertex();
     v->set_site(ss);
@@ -832,19 +864,6 @@ protected:
     v->set_site(ss);
     return v;
   }
-#else
-  Vertex_handle create_vertex(const Site_2& s) {
-    Vertex_handle v = this->_tds.create_vertex();
-    v->set_site(s);
-    return v;
-  }
-
-  Vertex_handle create_vertex_dim_up(const Site_2& s) {
-    Vertex_handle v = this->_tds.insert_dim_up(infinite_vertex());
-    v->set_site(s);
-    return v;
-  }
-#endif
 
 
 protected:
@@ -852,7 +871,6 @@ protected:
 
   // the first two objects can only be points, since we always
   // add the endpoints first and then the segment.
-#ifdef USE_STORAGE_SITE
   Storage_site_2 create_storage_site(const Point& p)
   {
     Point_handle ph = pc_.insert(p);
@@ -862,48 +880,38 @@ protected:
   Storage_site_2 create_storage_site(Vertex_handle v0,
 				     Vertex_handle v1)
   {
+    typedef typename Storage_site_2::Handle_pair   Point_handle_pair;
+
     Point_handle_pair ph_pair(v0->storage_site().point_handle(),
 			      v1->storage_site().point_handle());
     return Storage_site_2( ph_pair );
   }
-#endif
 
   Vertex_handle  insert_first(const Point& p);
   Vertex_handle  insert_second(const Point& p);
   Vertex_handle  insert_third(const Point& p);
   //  Vertex_handle  insert_third(const Point& p0, const Point& p1);
   Vertex_handle  insert_third(Vertex_handle v0, Vertex_handle v1);
-#ifdef USE_STORAGE_SITE
+
   Vertex_handle  insert_intersecting_segment(const Storage_site_2& ss,
 					     const Site_2& t,
 					     Vertex_handle v);
-#else
-  Vertex_handle  insert_intersecting_segment(const Site_2& t,
-					     Vertex_handle v);
-#endif
-#ifdef USE_STORAGE_SITE
-  Vertex_handle insert_point(const Storage_site_2& t,
-			     const Site_2& t, Vertex_handle vnear);
-#else
-  Vertex_handle insert_point(const Site_2& t, Vertex_handle vnear);
-#endif
 
   Vertex_handle insert_point(const Point& p, Vertex_handle vnear);
+  Vertex_handle insert_point(const Storage_site_2& t,
+			     const Site_2& t, Vertex_handle vnear);
+
   Vertex_handle insert_segment(const Site_2& t, Vertex_handle vnear,
 			       bool insert_endpoints);
   Vertex_handle insert_segment2(const Site_2& t,
-#ifdef USE_STORAGE_SITE
 				const Storage_site_2& ss,
-#endif
 				Vertex_handle vnear, bool insert_endpoints);
 
   // methods for insertion
   void initialize_conflict_region(const Face_handle& f, List& l);
 
   void expand_conflict_region(const Face_handle& f, const Site& t,
-#ifdef USE_STORAGE_SITE
 			      const Storage_site_2& ss,
-#endif
 			      List& l, Face_map& fm,
 			      std::map<Face_handle,Sign>& sign_map,
 			      std::pair<bool, Vertex_handle>& vcross,

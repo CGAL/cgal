@@ -1,8 +1,4 @@
-- rewrite the insert method that takes two iterators and a bool as
-  a template method templated by the iterator and Tag_{true,false};
-  this way insert can be called with Tag_false, with out the restriction that
-  the iterator is a random access iterator; finally add a default method
-  that does not take a tag and which does not shuffling.
+- make number_of* methods return a size_type
 - add two different storage sites, one for the case of intersecting
   segments and one for the case of non-intersecting segments
 - add boolean parameter in Segment_Voronoi_diagram_2 class that indicates
@@ -40,13 +36,13 @@
   use the Edge_list class and a set in add_bogus_vertices; in the case of time
   use the In_place_edge_list_class and a vector in add_bogus_vertices
 - remove the macros USE_VECTOR, USE_SET from the add_bogus_vertices
-  method of the Segment_Voronoi_diagram_2 class; use a set (which should
-  static)
+  method of the Segment_Voronoi_diagram_2 class; use a set (which
+  should be static)
 - remove the macros USE_BF, USE_STD_MAP and USE_INIT from the Edge_list
   class; change the class Edge_list so that it takes an additional
   boolean template parameter that indicates whether to use Unique_hash_map
-  of CGAL, or STL's map
-- remove the macros USE_STORAGE_SITE and USE_INPLACE_EDGE_LIST
+  of CGAL, or STL's map; use the STL map by default
+- remove the macro USE_INPLACE_EDGE_LIST
 - check if using an STL map in place of the Unique_hash_map, the edge
   list runs faster. Also check if the Edge_vector, Vertex_map and
   Face_map can be replaced by implementations using the

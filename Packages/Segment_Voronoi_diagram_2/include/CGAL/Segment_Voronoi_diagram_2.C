@@ -351,11 +351,7 @@ template< class Gt, class PContainer, class Svdds >
 inline
 typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Vertex_handle
 Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
-#ifdef USE_STORAGE_SITE
 insert_degree_2(Edge e,	const Storage_site_2& ss)
-#else
-insert_degree_2(Edge e,	const Site_2& ss)
-#endif
 {
   Vertex_handle v = insert_degree_2(e);
   v->set_site(ss);
@@ -408,11 +404,8 @@ insert_first(const Point& p)
 {
   CGAL_precondition( number_of_vertices() == 0 );
 
-#ifdef USE_STORAGE_SITE
   Storage_site_2 ss = create_storage_site(p);
-#else
-  Site ss(p);
-#endif
+
   //  return create_vertex_dim_up(ss);
   Vertex_handle v = this->_tds.insert_second();
   v->set_site(ss);
@@ -434,11 +427,7 @@ insert_second(const Point& p)
     return Vertex_handle(finite_vertices_begin());
   }
 
-#ifdef USE_STORAGE_SITE
   Storage_site_2 ss = create_storage_site(p);
-#else
-  Site ss(p);
-#endif
   return create_vertex_dim_up(ss);
 }
 
@@ -464,12 +453,7 @@ insert_third(const Point& p)
     return Vertex_handle(++finite_vertices_begin());
   }
 
-#ifdef USE_STORAGE_SITE
   Storage_site_2 ss = create_storage_site(p);
-#else
-  Site ss(p);
-#endif
-
   Vertex_handle v = create_vertex_dim_up(ss);
 
   Face_handle f(finite_faces_begin());
@@ -510,11 +494,7 @@ insert_third(Vertex_handle v0, Vertex_handle v1)
   //  this can only be the case if the first site is a segment
   CGAL_precondition( ds().dimension() == 1 );
 
-#ifdef USE_STORAGE_SITE
   Storage_site_2 ss = create_storage_site(v0, v1);
-#else
-  Site ss(Segment(v0->site().point(), v1->site().point()));
-#endif
   Vertex_handle v = create_vertex_dim_up(ss);
 
   Face_circulator fc = incident_faces(v);
@@ -646,12 +626,8 @@ insert_point(const Point& p, Vertex_handle vnear)
 
     CGAL_assertion( interior_in_conflict );
 
-#ifdef USE_STORAGE_SITE
     Storage_site_2 ss = create_storage_site(p);
     return insert_degree_2(e, ss);
-#else
-    return insert_degree_2(e, t);
-#endif
   }
 
 
@@ -667,23 +643,14 @@ insert_point(const Point& p, Vertex_handle vnear)
   // LIST OF FLIPPED EDGES AND WHAT IS DOES IS INITIALIZE THE CONFLICT 
   // REGION AND EXPANDS THE CONFLICT REGION.
 
-#ifdef USE_STORAGE_SITE
   Storage_site_2 ss = create_storage_site(p);
-#endif
 
   initialize_conflict_region(start_f, l);
-#ifdef USE_STORAGE_SITE
   expand_conflict_region(start_f, t, ss, l, fm, sign_map, vcross, NULL);
-#else
-  expand_conflict_region(start_f, t, l, fm, sign_map, vcross, NULL);
-#endif
+
   CGAL_assertion( !vcross.first );
 
-#ifdef USE_STORAGE_SITE
   Vertex_handle v = create_vertex(ss);
-#else
-  Vertex_handle v = create_vertex(t);
-#endif
 
   retriangulate_conflict_region(v, l, fm);
 
@@ -694,12 +661,8 @@ insert_point(const Point& p, Vertex_handle vnear)
 template< class Gt, class PContainer, class Svdds >
 typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Vertex_handle
 Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
-#ifdef USE_STORAGE_SITE
 insert_point(const Storage_site_2& ss, const Site& t,
 	     Vertex_handle vnear)
-#else
-insert_point(const Site& t, Vertex_handle vnear)
-#endif
 {
   CGAL_assertion( false );
 
@@ -793,11 +756,7 @@ insert_point(const Site& t, Vertex_handle vnear)
 
     CGAL_assertion( interior_in_conflict );
 
-#ifdef USE_STORAGE_SITE
     return insert_degree_2(e, ss);
-#else
-    return insert_degree_2(e, t);
-#endif
   }
 
 
@@ -817,11 +776,7 @@ insert_point(const Site& t, Vertex_handle vnear)
 
   CGAL_assertion( !vcross.first );
 
-#ifdef USE_STORAGE_SITE
   Vertex_handle v = create_vertex(ss);
-#else
-  Vertex_handle v = create_vertex(t);
-#endif
 
   retriangulate_conflict_region(v, l, fm);
 
@@ -861,12 +816,8 @@ insert_segment(const Site& t, Vertex_handle vnear,
       v1 = insert_point( t.target(), v0 );
     }
 
-#ifdef USE_STORAGE_SITE
     Storage_site_2 ss = create_storage_site(v0, v1);
     return insert_segment2( t, ss, v0, false );
-#else
-    return insert_segment2( t, v0, false );
-#endif
     //    insert_point( t.source_site(), Vertex_handle(NULL) );
     //    insert_point( t.target_site(), Vertex_handle(NULL) );
   }
@@ -876,10 +827,7 @@ insert_segment(const Site& t, Vertex_handle vnear,
 template< class Gt, class PContainer, class Svdds >
 typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Vertex_handle
 Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
-insert_segment2(const Site_2& t,
-#ifdef USE_STORAGE_SITE
-		const Storage_site_2& ss,
-#endif
+insert_segment2(const Site_2& t, const Storage_site_2& ss,
 		Vertex_handle vnearest, bool insert_endpoints)
 {
   CGAL_precondition( t.is_segment() );
@@ -930,11 +878,7 @@ insert_segment2(const Site_2& t,
     }
     if ( do_intersect(t, vv) ) {
       if ( t.is_segment() ) {
-#ifdef USE_STORAGE_SITE
 	return insert_intersecting_segment(ss, t, vv);
-#else
-	return insert_intersecting_segment(t, vv);
-#endif
 	//	return Vertex_handle(NULL);
       }
     }
@@ -1009,30 +953,18 @@ insert_segment2(const Site_2& t,
   // LIST OF FLIPPED EDGES AND WHAT IS DOES IS INITIALIZE THE CONFLICT 
   // REGION AND EXPANDS THE CONFLICT REGION.
   initialize_conflict_region(start_f, l);
-#ifdef USE_STORAGE_SITE
   expand_conflict_region(start_f, t, ss, l, fm, sign_map, vcross, NULL);
-#else
-  expand_conflict_region(start_f, t, l, fm, sign_map, vcross, NULL);
-#endif
 
   // the following condition becomes true only if intersecting
   // segments are found
   if ( vcross.first ) {
     if ( t.is_segment() ) {
-#ifdef USE_STORAGE_SITE
       return insert_intersecting_segment(ss, t, vcross.second);
-#else
-      return insert_intersecting_segment(t, vcross.second);
-#endif
       //      return vcross.second;
     }
   }
 
-#ifdef USE_STORAGE_SITE
   Vertex_handle v = create_vertex(ss);
-#else
-  Vertex_handle v = create_vertex(t);
-#endif
 
   retriangulate_conflict_region(v, l, fm);
 
@@ -1046,25 +978,19 @@ insert_segment2(const Site_2& t,
 template< class Gt, class PContainer, class Svdds >
 typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Vertex_handle
 Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
-#ifdef USE_STORAGE_SITE
 insert_intersecting_segment(const Storage_site_2& ss,
 			    const Site_2& t, Vertex_handle v)
-#else
-insert_intersecting_segment(const Site_2& t, Vertex_handle v)
-#endif
 {
-#if 1
   CGAL_precondition( t.is_segment() && v->is_segment() );
 
   if ( same_segments(t, v->site()) ) {
     return v;
   }
 
-#ifdef USE_STORAGE_SITE
   Storage_site_2 ssx(ss.supporting_segment_handle(),
 		     v->storage_site().supporting_segment_handle());
   Storage_site_2 ssitev = v->storage_site();
-#endif
+
   Site_2 sx(t.supporting_segment(), v->site().supporting_segment());
   Site_2 sitev(v->site());
 
@@ -1107,123 +1033,79 @@ insert_intersecting_segment(const Site_2& t, Vertex_handle v)
 
   // now I need to update the sites for vertices v1 and v2
   Vertex_handle v1 = qq.first;
-#ifdef USE_STORAGE_SITE
   Storage_site_2 ssv1;
-#endif
   Site_2 sv1;
   if ( sitev.is_exact(0) ) {
     sv1.set_segment(sitev.supporting_segment(),
 		    t.supporting_segment(), true);
-#ifdef USE_STORAGE_SITE
     ssv1.set_segment(ssitev.supporting_segment_handle(),
 		     ss.supporting_segment_handle(), true);
-#endif
   } else {
     sv1.set_segment(sitev.supporting_segment(),
 		    sitev.crossing_segment(0),
 		    t.supporting_segment());
-#ifdef USE_STORAGE_SITE
     ssv1.set_segment(ssitev.supporting_segment_handle(),
 		     ssitev.crossing_segment_handle(0),
 		     ss.supporting_segment_handle());
-#endif
   }
-#ifdef USE_STORAGE_SITE
   v1->set_site( ssv1 );
-#else
-  v1->set_site( sv1 );
-#endif
 
   Vertex_handle v2 = qq.second;
-#ifdef USE_STORAGE_SITE
   Storage_site_2 ssv2;
-#endif
   Site_2 sv2;
   if ( sitev.is_exact(1) ) {
     sv2.set_segment(sitev.supporting_segment(),
 		    t.supporting_segment(), false);
-#ifdef USE_STORAGE_SITE
     ssv2.set_segment(ssitev.supporting_segment_handle(),
 		     ss.supporting_segment_handle(), false);
-#endif
   } else {
     sv2.set_segment(sitev.supporting_segment(),
 		    t.supporting_segment(),
 		    sitev.crossing_segment(1));
-#ifdef USE_STORAGE_SITE
     ssv2.set_segment(ssitev.supporting_segment_handle(),
 		     ss.supporting_segment_handle(),
 		     ssitev.crossing_segment_handle(1));
-#endif
   }
-#ifdef USE_STORAGE_SITE
   v2->set_site( ssv2 );
-#else
-  v2->set_site( sv2 );
-#endif
 
   Vertex_handle vsx =
     this->_tds.insert_in_edge(qq.third, cw(qq.third->index(v1)));
 
-#ifdef USE_STORAGE_SITE
   vsx->set_site(ssx);
-#else
-  vsx->set_site(sx);
-#endif
 
-#ifdef USE_STORAGE_SITE
   Storage_site_2 ss3, ss4;
-#endif
   Site_2 s3, s4;
   if ( t.is_exact(0) ) {
     s3.set_segment(t.supporting_segment(),
 		   sitev.supporting_segment(), true);
-#ifdef USE_STORAGE_SITE
     ss3.set_segment(ss.supporting_segment_handle(),
 		    ssitev.supporting_segment_handle(), true);
-#endif
   } else {
     s3.set_segment(t.supporting_segment(),
 		   t.crossing_segment(0),
 		   sitev.supporting_segment());
-#ifdef USE_STORAGE_SITE
     ss3.set_segment(ss.supporting_segment_handle(),
 		    ss.crossing_segment_handle(0),
 		    ssitev.supporting_segment_handle());
-#endif
   }
 
   if ( t.is_exact(1) ) {
     s4.set_segment(t.supporting_segment(),
 		   sitev.supporting_segment(), false);
-#ifdef USE_STORAGE_SITE
     ss4.set_segment(ss.supporting_segment_handle(),
 		    ssitev.supporting_segment_handle(), false);
-#endif
   } else {
     s4.set_segment(t.supporting_segment(),
 		   sitev.supporting_segment(),
 		   t.crossing_segment(1));
-#ifdef USE_STORAGE_SITE
     ss4.set_segment(ss.supporting_segment_handle(),
 		    ssitev.supporting_segment_handle(),
 		    ss.crossing_segment_handle(1));
-#endif
   }
 
-#ifdef USE_STORAGE_SITE
   insert_segment2(s3, ss3, vsx, false);
   insert_segment2(s4, ss4, vsx, false);
-#else
-  insert_segment2(s3, vsx, false);
-  insert_segment2(s4, vsx, false);
-#endif
   return vsx;
-
-#else
-  CGAL_assertion( false );
-  return Vertex_handle(NULL);
-#endif
 }
 
 //--------------------------------------------------------------------
@@ -1248,9 +1130,7 @@ template< class Gt, class PContainer, class Svdds >
 void
 Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 expand_conflict_region(const Face_handle& f, const Site& t,
-#ifdef USE_STORAGE_SITE
 		       const Storage_site_2& ss,
-#endif
 		       List& l, Face_map& fm,
 		       std::map<Face_handle,Sign>& sign_map,
 		       std::pair<bool,Vertex_handle>& vcross,
@@ -1341,11 +1221,7 @@ expand_conflict_region(const Face_handle& f, const Site& t,
       fe->push_back(vhq);
     }
 
-#ifdef USE_STORAGE_SITE
     expand_conflict_region(n, t, ss, l, fm, sign_map, vcross, fe);
-#else
-    expand_conflict_region(n, t, l, fm, sign_map, vcross, fe);
-#endif
 
     // this is done to stop the recursion when intersecting segments
     // are found
@@ -2615,7 +2491,8 @@ find_conflict_region_remove(const Vertex_handle& v,
 
 
 template< class Gt, class PContainer, class Svdds >
-unsigned int
+typename
+Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::size_type
 Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 number_of_incident_segments(Vertex_handle v) const
 {

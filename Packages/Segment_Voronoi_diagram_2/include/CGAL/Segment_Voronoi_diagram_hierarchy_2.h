@@ -30,65 +30,19 @@
 #include <CGAL/Segment_Voronoi_diagram_2.h>
 #include <CGAL/Segment_Voronoi_diagram_data_structure_2.h>
 #include <CGAL/Segment_Voronoi_diagram_vertex_base_2.h>
+#include <CGAL/Segment_Voronoi_diagram_hierarchy_vertex_base_2.h>
 #include <CGAL/Segment_Voronoi_diagram_face_base_2.h>
+
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Vbb>
-class Segment_Voronoi_diagram_hierarchy_vertex_base_2
- : public Vbb
-{
-public:
-  typedef Vbb V_Base;
-  typedef typename V_Base::Segment_Voronoi_diagram_data_structure_2 Svdds;
-
-  typedef typename V_Base::Site_2             Site_2;
-
-#ifdef USE_STORAGE_SITE
-  typedef typename V_Base::Storage_site_2     Storage_site_2;
-#endif
-
-  typedef Svdds         Segment_Voronoi_diagram_data_structure_2;
-  typedef typename Svdds::Vertex_handle       Vertex_handle;
-  typedef typename Svdds::Face_handle         Face_handle;
-
-  template < typename SVDDS2 >
-  struct Rebind_TDS {
-    typedef typename Vbb::template Rebind_TDS<SVDDS2>::Other      Vb2;
-    typedef Segment_Voronoi_diagram_hierarchy_vertex_base_2<Vb2>  Other;
-  };
-
-  Segment_Voronoi_diagram_hierarchy_vertex_base_2()
-    : V_Base(), _up(0), _down(0) {}
-
-#ifdef USE_STORAGE_SITE
-  Segment_Voronoi_diagram_hierarchy_vertex_base_2(const Storage_site_2& ss,
-						  Face_handle f)
-    : V_Base(ss,f), _up(0), _down(0) {}
-#else
-  Segment_Voronoi_diagram_hierarchy_vertex_base_2(const Site_2& t,
-						  Face_handle f)
-    : V_Base(t,f), _up(0), _down(0) {}
-#endif
-
-public:  // for use in hierarchy only
-  Vertex_handle up() { return _up; }
-  Vertex_handle down() { return _down; }
-  void set_up(Vertex_handle u) { _up=u; }
-  void set_down(Vertex_handle d) { if (this) _down = d; }
-
-private:
-  Vertex_handle _up;    // same vertex one level above
-  Vertex_handle _down;  // same vertex one level below
-};
-
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
 
-// parameterization of the  hierarchy
-const int svd_hierarchy_2__ratio    = 30;
-const int svd_hierarchy_2__minsize  = 20;
-const int svd_hierarchy_2__maxlevel = 5;
+// parameterization of the hierarchy
+const unsigned int svd_hierarchy_2__ratio    = 30;
+const unsigned int svd_hierarchy_2__minsize  = 20;
+const unsigned int svd_hierarchy_2__maxlevel = 5;
 // maximal number of points is 30^5 = 24 millions !
 
 //--------------------------------------------------------------------
@@ -133,9 +87,7 @@ public:
 private:
   static const int UNDEFINED_LEVEL;
 
-#ifdef USE_STORAGE_SITE
   typedef typename Base::Storage_site_2            Storage_site_2;
-#endif
 
 private:
   // here is the stack of triangulations which form the hierarchy
@@ -237,7 +189,7 @@ Segment_Voronoi_diagram_hierarchy_2(const Geom_traits& traits)
   : Base(traits), random((long)0)
 { 
   hierarchy[0] = this; 
-  for(int i = 1; i < svd_hierarchy_2__maxlevel; ++i)
+  for(unsigned int i = 1; i < svd_hierarchy_2__maxlevel; ++i)
     hierarchy[i] = new Base(traits);
 }
 
@@ -311,7 +263,7 @@ Segment_Voronoi_diagram_hierarchy_2<Gt,P,Tds>::
 ~Segment_Voronoi_diagram_hierarchy_2()
 {
   clear();
-  for(int i = 1; i < svd_hierarchy_2__maxlevel; ++i){ 
+  for(unsigned int i = 1; i < svd_hierarchy_2__maxlevel; ++i){ 
     delete hierarchy[i];
   }
 }
@@ -321,7 +273,7 @@ void
 Segment_Voronoi_diagram_hierarchy_2<Gt,P,Tds>:: 
 clear()
 {
-  for(int i = 0; i < svd_hierarchy_2__maxlevel; ++i) {
+  for(unsigned int i = 0; i < svd_hierarchy_2__maxlevel; ++i) {
     hierarchy[i]->clear();
   }
 }
@@ -424,19 +376,14 @@ insert_segment(const Point& p0, const Point& p1, int level)
   CGAL_assertion( vertices0[0] != Vertex_handle(NULL) );
   CGAL_assertion( vertices1[0] != Vertex_handle(NULL) );
 
-#ifdef USE_STORAGE_SITE
   Storage_site_2 ss = create_storage_site(vertices0[0], vertices1[0]);
-#endif
+
   Vertex_handle vertex;
 
   if ( hierarchy[0]->number_of_vertices() == 2 ) {
     vertex = hierarchy[0]->insert_third(vertices0[0], vertices1[0]);
   } else {
-#ifdef USE_STORAGE_SITE
     vertex = hierarchy[0]->insert_segment2(t, ss, vertices0[0], false);
-#else
-    vertex = hierarchy[0]->insert_segment2(t, vertices0[0], false);  
-#endif
   }
 
   CGAL_assertion( vertex != Vertex_handle(NULL) );
@@ -464,11 +411,7 @@ insert_segment(const Point& p0, const Point& p1, int level)
     if ( hierarchy[k]->number_of_vertices() == 2 ) {
       vertex = hierarchy[k]->insert_third(vertices0[k], vertices1[k]);
     } else {
-#ifdef USE_STORAGE_SITE
       vertex = hierarchy[k]->insert_segment2(t, ss, vertices0[k], false);
-#else
-      vertex = hierarchy[k]->insert_segment2(t, vertices0[k], false);
-#endif
     }
 
     CGAL_assertion( vertex != Vertex_handle(NULL) );
@@ -526,7 +469,7 @@ nearest_neighbor(const Site& p,
 	  < svd_hierarchy_2__minsize ) {
     if ( !level ) break;  // do not go below 0
   }
-  for (int i = level + 1; i < svd_hierarchy_2__maxlevel; i++) {
+  for (unsigned int i = level + 1; i < svd_hierarchy_2__maxlevel; i++) {
     vnear[i] = Vertex_handle(NULL);
   }
 
@@ -549,8 +492,8 @@ int
 Segment_Voronoi_diagram_hierarchy_2<Gt,P,Tds>::
 random_level()
 {
-  int l = 0;
-  while (1) {
+  unsigned int l = 0;
+  while ( true ) {
     if ( random(svd_hierarchy_2__ratio) ) break;
     ++l;
   }
@@ -568,7 +511,7 @@ is_valid(bool verbose, int level) const
   bool result(true);
 
   //verify correctness of triangulation at all levels
-  for(int i = 0; i < svd_hierarchy_2__maxlevel; ++i) {
+  for(unsigned int i = 0; i < svd_hierarchy_2__maxlevel; ++i) {
     if ( verbose ) {
       std::cout << "Level " << i << ": " << std::flush;
     }
@@ -584,7 +527,7 @@ is_valid(bool verbose, int level) const
   }
 
   //verify that other levels has down pointer and reciprocal link is fine
-  for(int i = 1; i < svd_hierarchy_2__maxlevel; ++i) {
+  for(unsigned int i = 1; i < svd_hierarchy_2__maxlevel; ++i) {
     for( Finite_vertices_iterator it = hierarchy[i]->finite_vertices_begin(); 
 	 it != hierarchy[i]->finite_vertices_end(); ++it) {
       Vertex_handle vit(it);

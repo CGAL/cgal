@@ -36,7 +36,7 @@ class Segment_Voronoi_diagram_vertex_base_2
   : public Vb
 {
 private:
-  typedef typename Vb::Triangulation_data_structure    SVDDS;
+  typedef typename Vb::Triangulation_data_structure  DS;
 public:
   // TYPES
   //------
@@ -45,63 +45,37 @@ public:
   typedef Vb                      Base;
   typedef typename Gt::Site_2     Site_2;
 
-#ifdef USE_STORAGE_SITE
   typedef
   Segment_Voronoi_diagram_storage_site_2<Gt,Point_handle>
   Storage_site_2;
-#endif
 
-  typedef SVDDS           Segment_Voronoi_diagram_data_structure_2;
+  typedef DS           Segment_Voronoi_diagram_data_structure_2;
   
-  typedef typename SVDDS::Face_handle    Face_handle;
-  typedef typename SVDDS::Vertex_handle  Vertex_handle;
+  typedef typename DS::Face_handle    Face_handle;
+  typedef typename DS::Vertex_handle  Vertex_handle;
 
 
-  template < typename SVDDS2 >
+  template < typename DS2 >
   struct Rebind_TDS {
-    typedef typename Vb::template Rebind_TDS<SVDDS2>::Other  Vb2;
-    //    typedef Segment_Voronoi_diagram_vertex_base_2<Site_2,Vb2> Other;
+    typedef typename Vb::template Rebind_TDS<DS2>::Other  Vb2;
     typedef
     Segment_Voronoi_diagram_vertex_base_2<Gt,Point_handle,Vb2>  Other;
   };
 
   
-#ifdef USE_STORAGE_SITE
   Segment_Voronoi_diagram_vertex_base_2 () : Vb(), ss_() {}
     
   Segment_Voronoi_diagram_vertex_base_2(const Storage_site_2& ss,
 					Face_handle f)
     : Vb(f), ss_(ss)  {}
-#else
-  Segment_Voronoi_diagram_vertex_base_2 () : Vb(), s_() {}
-    
-  Segment_Voronoi_diagram_vertex_base_2(const Site_2& s,
-					Face_handle f)
-    : Vb(f), s_(s)  {}
-#endif
 
-#ifdef USE_STORAGE_SITE
-  void set_site(const Storage_site_2& ss) {
-    ss_ = ss;
-  }
-#else
-  void set_site(const Site_2& s) {
-    s_ = s;
-  }  
-#endif
+  void set_site(const Storage_site_2& ss) { ss_ = ss; }
 
-#ifdef USE_STORAGE_SITE
   const Storage_site_2& storage_site() const { return ss_; }
   Site_2                site()         const { return ss_.site(); }
 
   bool is_segment() const { return ss_.is_segment(); }
   bool is_point()   const { return ss_.is_point(); }
-#else
-  const Site_2&         site()         const { return s_; }
-
-  bool is_segment() const { return s_.is_segment(); }
-  bool is_point()   const { return s_.is_point(); }
-#endif
 
   //the following trivial is_valid to allow
   // the user of derived face base classes 
@@ -110,11 +84,7 @@ public:
   { return true; }
 
 private:
-#ifdef USE_STORAGE_SITE
   Storage_site_2 ss_;
-#else
-  Site_2 s_;
-#endif
   //  std::list<Vb>  adjseg_list; // list of adjacent segments; this is
   // important when I want to do deletions
   //  bool _is_point; // false if it is a segment; true otherwise
