@@ -354,7 +354,7 @@ private:
                                 std::list<typename PM::Locate_type> & lt_list)
     {
       Point_list::iterator              pit;
-      std::list<CGAL_TYPENAME_MSVC_NULL PM::Locate_type>::iterator lt_it;
+      typename std::list<CGAL_TYPENAME_MSVC_NULL PM::Locate_type>::iterator lt_it;
       
       for (pit = point_list.begin(), lt_it = lt_list.begin();
 	   pit != point_list.end();
