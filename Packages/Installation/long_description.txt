@@ -4,6 +4,15 @@
 
 
 //---------------------------------------------------------------------
+//	revision 1.68
+//---------------------------------------------------------------------
+
+GLOB: Added LIB_SUFFIX, START_LD_OPT, LIBPATH_OPT and LIB_OPT to include
+GLOB:  makefile.
+GLOB: Added CGAL_GEOWIN_LDFLAGS.
+GLOB: No workaround_4_ms.obj in EXTRA_OBJECTS for Borland.
+
+//---------------------------------------------------------------------
 //	revision 1.67
 //---------------------------------------------------------------------
 

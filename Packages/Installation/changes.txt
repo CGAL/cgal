@@ -7,6 +7,10 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: Added LIB_SUFFIX, START_LD_OPT, LIBPATH_OPT and LIB_OPT to include
+GLOB:  makefile.
+GLOB: Added CGAL_GEOWIN_LDFLAGS.
+GLOB: No workaround_4_ms.obj in EXTRA_OBJECTS for Borland.
 GLOB: Add workaround_4_ms.obj to CGAL_EXTRA_OBJECTS on CYGWIN.
 GLOB: Fixed newline problem in include makefile.
 GLOB: Fixed VC++ pattern problem (match for CL|cl without .exe).
