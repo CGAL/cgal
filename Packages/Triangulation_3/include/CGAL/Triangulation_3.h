@@ -192,8 +192,8 @@ public:
   void clear()
   {
     _tds.clear();
-    infinite->set_cell( (Cell *) NULL);
-  }
+    init_tds();
+   }
 
  //ACCESS FUNCTIONS
   inline
@@ -1307,6 +1307,12 @@ public:
     return Cell_circulator(ncthis,e);
   }
 
+  Cell_circulator incident_cells(Edge e, Cell_handle c) const
+  {
+    CGAL_triangulation_precondition( dimension() == 3 );
+    CGAL_Triangulation_3<GT, Tds>* ncthis = (CGAL_Triangulation_3<GT, Tds>*)this;
+    return Cell_circulator(ncthis,e,c);
+  }
   // PREDICATES ON POINTS ``TEMPLATED'' by the geom traits
 
   CGAL_Bounded_side
