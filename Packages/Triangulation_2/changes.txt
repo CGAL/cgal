@@ -1,6 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.51 (27 july 00)
+try to make is_edge compiles on vcc
+added is_face() + test, added test of is_edge, includes_edge()
+
 Ver 4.50 (& july 00)
 add the missing test file _test_cls_triangulation_short_2.C
 file (due to previous operation)
