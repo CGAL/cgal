@@ -824,27 +824,22 @@ empty ellipse.
 @! ----------------------------------------------------------------------------
 \subsubsection{Validity Check}
 
-A \ccc{Min_ellipse_2<Traits>} object can be checked for validity.
-This means, it is checked whether (a) the ellipse contains all points
-of its defining set $P$, (b) the ellipse is the smallest ellipse
-spanned by its support set, and (c) the support set is minimal, i.e.\
-no support point is redundant. (\emph{Note:} (b) and (c) are not yet
-implemented. Instead we check if the support set lies on the boundary
-of the ellipse.) The function \ccc{is_valid} is mainly intended for
-debugging user supplied traits classes but also for convincing the
-anxious user that the traits class implementation is correct. If
-\ccc{verbose} is \ccc{true}, some messages concerning the performed
-checks are written to standard error stream. The second parameter
-\ccc{level} is not used, we provide it only for consistency with
-interfaces of other classes.
+A \ccc{Min_ellipse_2<Traits>} object can be checked for validity.  This
+means, it is checked whether (a) the ellipse contains all points of its
+defining set $P$, (b) the ellipse is the smallest ellipse spanned by its
+support set, and (c) the support set is minimal, i.e.\ no support point is
+redundant. (\emph{Note:} (b) and (c) are not yet implemented. Instead we
+check if the support set lies on the boundary of the ellipse.) If
+\ccc{verbose} is \ccc{true}, some messages concerning the performed checks
+are written to standard error stream.  The second parameter \ccc{level} is
+not used, we provide it only for consistency with interfaces of other
+classes.
 
 @macro <Min_ellipse_2 validity check> = @begin
     bool
     is_valid( bool verbose = false, int level = 0) const
     {
-    #ifndef CGAL_CFG_NO_NAMESPACE
-        using std::endl;
-    #endif
+        CGAL_USING_NAMESPACE_STD
         
         CGAL::Verbose_ostream verr( verbose);
         verr << endl;
@@ -932,9 +927,7 @@ traits class object.
     operator << ( std::ostream& os,
                   const Min_ellipse_2<_Traits>& min_ellipse)
     {
-    #ifndef CGAL_CFG_NO_NAMESPACE
-        using namespace std;
-    #endif
+        CGAL_USING_NAMESPACE_STD
 
         typedef  Min_ellipse_2<_Traits>::Point  Point;
         typedef  ostream_iterator<Point>        Os_it;
@@ -982,9 +975,7 @@ traits class object.
     std::istream&
     operator >> ( std::istream& is, CGAL::Min_ellipse_2<_Traits>& min_ellipse)
     {
-    #ifndef CGAL_CFG_NO_NAMESPACE
-        using namespace std;
-    #endif
+        CGAL_USING_NAMESPACE_STD
         
         switch ( CGAL::get_mode( is)) {
 
@@ -2530,8 +2521,6 @@ number type \ccc{Gmpz} or \ccc{integer}.
     #include <cstring>
     #include <fstream>
 
-    using namespace std;
-
     #ifdef CGAL_USE_LEDA_FOR_OPTIMISATION_TEST
     #  include <CGAL/leda_integer.h>
        typedef  leda_integer                       Rt;
@@ -2577,6 +2566,8 @@ once to ensure code coverage.
     void
     cover_Min_ellipse_2( bool verbose, const Traits&, const RT&)
     {
+        CGAL_USING_NAMESPACE_STD
+
         typedef  CGAL::Min_ellipse_2< Traits >  Min_ellipse;
         typedef  typename Min_ellipse::Point    Point;
         typedef  typename Min_ellipse::Ellipse  Ellipse;
@@ -2994,11 +2985,11 @@ end of each file.
         CGAL::Verbose_ostream verr( verbose);
 
         // read points from file
-        verr << endl << "input file: `" << argv[ 1] << "'" << flush;
+        verr << std::endl << "input file: `" << argv[ 1] << "'" << std::flush;
 
-        list<Point>  points;
-        int          n, x, y;
-        ifstream     in( argv[ 1]);
+        std::list<Point>  points;
+        int               n, x, y;
+        std::ifstream     in( argv[ 1]);
         in >> n;
         assert( in);
         for ( int i = 0; i < n; ++i) {
