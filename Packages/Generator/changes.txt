@@ -1,5 +1,10 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
+2.63 (12 Aug 2002)
+   - replaced LEFTTURN and relatives with LEFT_TURN and relatives
+
+%%%%%%%%%%%%%%%%%%% Release 2.4 %%%%%%%%%%%%%%%%%%%%%%%%
+
 2.62 (2 May 2002)
    - removed reference to deleted section
 
