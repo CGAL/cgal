@@ -1,3 +1,7 @@
+Version 3.24 (20/07/03) [af]
+- Made predicates independent from CGAL::Cartesian
+- Switched from Cartesian to Filtered_kernel<Simple_cartesian<double> >
+
 Version 3.23 (18/07/03) [af]
 - Introduced caching for the vertex and facet list
 
