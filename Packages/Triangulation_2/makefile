@@ -19,9 +19,9 @@ package:
 	@echo "---- make Test                ----"
 	@echo "---- make Doc --------------------"
 	@echo "---- editer changes.txt       ----"
-	@echo "---- make VERSION=4.41 Version ---"
+	@echo "---- make VERSION=4.42 Version ---"
 	@echo "---- cvs commit ------------------"
-	@echo "---- make VERSION=4.41 Tag -------"
+	@echo "---- make VERSION=4.42 Tag -------"
 	@echo "---- make Submit -----------------"
 	@echo "----------------------------------"
 
@@ -65,20 +65,23 @@ Doc : Doc_ps Doc_html
 
 
 Doc_ps:
+	rm -f doc_ps/Triangulation.ps.gz;
 	cd doc_tex/basic/Triangulation;\
 	latex wrapper.tex; bibtex wrapper; \
 	latex wrapper.tex; latex wrapper.tex; \
 	dvips -o Triangulation.ps wrapper.dvi; \
-	gzip Triangulation.ps;
-	mv Triangulation.ps.gz ../../../doc_ps/ ; \
-	rm -f *.aux *.log *.dvi *.ps *.blg *.bbl *.toc
+	gzip Triangulation.ps;\
+	rm -f *.aux *.log *.dvi *.ps *.blg *.bbl *.toc ;
+	mv doc_tex/basic/Triangulation/Triangulation.ps.gz doc_ps ; 
+	rm -f doc_ps/pointer.ps.gz;
 	cd doc_tex/support/Handle;\
 	latex wrapper.tex; bibtex wrapper; \
 	latex wrapper.tex; latex wrapper.tex; \
 	dvips -o pointer.ps wrapper.dvi; \
 	gzip pointer.ps; \
-	mv pointer.ps.gz ../../../doc_ps/ ; \
 	rm -f *.aux *.log *.dvi *.ps *.blg *.bbl *.toc
+	mv doc_tex/support/Handle/pointer.ps.gz doc_ps ; \
+
 
 Doc_html :
 	cd doc_tex/basic/Triangulation; \
