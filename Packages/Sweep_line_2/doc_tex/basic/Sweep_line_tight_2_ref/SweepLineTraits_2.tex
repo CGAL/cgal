@@ -97,7 +97,7 @@ primitive operations used by the sweep line functions.
   \ccPrecond{$cv1$ and $cv2$ are defined to the left of $pnt$'s
   $x$-coordinate.}}
 
-  \ccMethod{Curve_point_status curve_get_point_status(const X_curve_2& cv,
+  \ccMethod{Comparison_result curve_get_point_status(const X_curve_2& cv,
             const Point_2& pnt);}
   {compares the y-coordinates of $pnt$ and the vertical projection of $pnt$
   on $cv$. Returns \ccStyle{SMALLER} if $cv(x(p)) < y(p)$; \ccStyle{LARGER}
