@@ -581,8 +581,8 @@ _test_cls_triangulation_2( const Triangulation & )
   // the assert() are to avoid compiler warnings about unused variables
   f = T2_1.locate(p12,lt,li); // from section locate above
   Triangle t = T2_1.triangle(f); assert( &t == &t );
-  Segment  s = T2_1.segment(f,li); assert( &s == &s );
-  s = T2_1.segment(Edge(f,li)); assert( &s == &s );
+  Segment  s = T2_1.segment(f,0); assert( &s == &s );
+  s = T2_1.segment(Edge(f,1)); assert( &s == &s );
   s = T2_1.segment(v2_1_6->incident_edges()); assert( &s == &s );
   s = T2_1.segment(T2_1.finite_edges_begin()); assert( &s == &s );
 

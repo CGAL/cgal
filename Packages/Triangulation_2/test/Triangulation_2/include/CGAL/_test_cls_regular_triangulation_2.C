@@ -12,11 +12,11 @@
 // release_date  :
 // 
 // source        : 
-// file          : include/CGAL/_test_cls_triangulation_2.C
+// file          : include/CGAL/_test_cls_regular_triangulation_2.C
 // revision      : 
 // revision_date : 
 
-// author(s)     : Herve Bronnimann (Herve.Bronnimann@sophia.inria.fr)
+// author(s)     : Francois Rebufat
 
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
@@ -535,8 +535,8 @@ _test_cls_reg_triangulation_2( const Triangulation & )
   // the assert() are to avoid compiler warnings about unused variables
   loc = T2_1.locate(p12,lt,li); // from section locate above
   Triangle t = T2_1.triangle(loc); assert( &t == &t );
-  Segment  s = T2_1.segment(loc,li); assert( &s == &s );
-  s = T2_1.segment(Edge(loc,li)); assert( &s == &s );
+  Segment  s = T2_1.segment(loc,0); assert( &s == &s );
+  s = T2_1.segment(Edge(loc,1)); assert( &s == &s );
   s = T2_1.segment(v2_1_6->incident_edges()); assert( &s == &s );
   s = T2_1.segment(T2_1.finite_edges_begin()); assert( &s == &s );
 
