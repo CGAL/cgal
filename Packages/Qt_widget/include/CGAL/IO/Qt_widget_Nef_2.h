@@ -157,9 +157,8 @@ CGAL::Qt_widget& operator<<(CGAL::Qt_widget& ws, const Nef_polyhedron_2<T>& P)
 	//TExplorer D = P.explorer();
     //get the background color, fill color, and the object color
     QColor bgcolor = ws.backgroundColor();
-	QColor fillcolor = ws.fillColor();
-	QColor color = ws.color();
-	ws << LineWidth(1) << PointSize(2) << PointStyle(DISC);
+	  QColor fillcolor = ws.fillColor();
+	  QColor color = ws.color();
     
     //The faces
     Face_const_iterator 
@@ -186,9 +185,25 @@ CGAL::Qt_widget& operator<<(CGAL::Qt_widget& ws, const Nef_polyhedron_2<T>& P)
 	it++;
       }
       ws.get_painter().drawPolygon(array);
-
+/*
+      Isolated_vertex_const_iterator iv_it;
+      for (iv_it = D.isolated_vertices_begin(fit); 
+        iv_it != D.isolated_vertices_end(fit); ++iv_it) {
+        if(D.mark(iv_it))
+          ws.setColor(color);
+        else
+       	  ws.setColor(bgcolor);
+        if(D.is_standard(iv_it))
+          ws << D.point(iv_it);
+      }
+*/
     }//endfor Face_const_iterator
     
+    //save the initial raster mode
+    Qt::RasterOp old_raster = ws.rasterOp();
+    ws.setRasterOp(Qt::CopyROP);
+
+
     // draw segments underlying halfedges: 
     Halfedge_const_iterator hit, hend = D.halfedges_end();
     for (hit = D.halfedges_begin(); hit != hend; ++(++hit)) {
@@ -206,13 +221,14 @@ CGAL::Qt_widget& operator<<(CGAL::Qt_widget& ws, const Nef_polyhedron_2<T>& P)
     Vertex_const_iterator vit, vend = D.vertices_end();
     for (vit = D.vertices_begin(); vit != vend; ++vit){
       if(D.mark(vit))
-		ws.setColor(color);
+        ws.setColor(color);
       else
        	ws.setColor(bgcolor);
       if(D.is_standard(vit))
-	ws << D.point(vit);
+        ws << D.point(vit);
     }
     
+    ws.setRasterOp(old_raster);
     return ws;
 }
 
