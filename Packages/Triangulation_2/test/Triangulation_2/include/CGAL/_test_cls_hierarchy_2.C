@@ -80,9 +80,7 @@ _test_cls_hierarchy_2()
   assert(h.is_subconstrained_edge(v[1],v[5]));
   assert(h.is_constrained_edge(v[1],v[2]));
   H_constraint_list hcl;
-  h.print();
   h.enclosing_constraints(v[1], v[5], hcl);
-  h.print();
   assert(hcl.size() == 2);
  
   //h.print();
