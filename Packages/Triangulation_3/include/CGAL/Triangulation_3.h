@@ -222,14 +222,6 @@ public:
       init_function_objects();
     }
 
-  // DESTRUCTOR
-
-  ~Triangulation_3()
-    {
-      clear();
-      //    infinite.Delete();    BUG !!! already deleted by _tds.clear()
-    }
-
   void clear()
     {
       _tds.clear();

@@ -34,9 +34,7 @@
 #include <CGAL/triple.h>
 //#include <pair.h>
 #include <utility>
-#include <list>
 #include <map>
-// #include <hash_set>
 #include <set>
 #include <vector>
 
@@ -80,31 +78,24 @@ template <class Vb, class Cb>
 class Triangulation_data_structure_3
   :public Triangulation_utils_3
 {
-
-  friend std::istream& operator >> CGAL_NULL_TMPL_ARGS
-  (std::istream&, Triangulation_data_structure_3<Vb,Cb>&);
-
-  friend class Triangulation_ds_cell_iterator_3
-  <Triangulation_data_structure_3<Vb,Cb> >;
-  friend class Triangulation_ds_facet_iterator_3
-  <Triangulation_data_structure_3<Vb,Cb> >;
-  friend class Triangulation_ds_edge_iterator_3
-  <Triangulation_data_structure_3<Vb,Cb> >;
-  friend class Triangulation_ds_vertex_iterator_3
-  <Triangulation_data_structure_3<Vb,Cb> >;
-
-   friend class Triangulation_ds_cell_circulator_3
-  <Triangulation_data_structure_3<Vb,Cb> >;
-   friend class Triangulation_ds_facet_circulator_3
-  <Triangulation_data_structure_3<Vb,Cb> >;
-
 public:
+
+  typedef Triangulation_data_structure_3<Vb,Cb> Tds;
+
+  friend std::istream& operator >> CGAL_NULL_TMPL_ARGS (std::istream&, Tds&);
+
+  friend class Triangulation_ds_cell_iterator_3<Tds>;
+  friend class Triangulation_ds_facet_iterator_3<Tds>;
+  friend class Triangulation_ds_edge_iterator_3<Tds>;
+  friend class Triangulation_ds_vertex_iterator_3<Tds>;
+
+  friend class Triangulation_ds_cell_circulator_3<Tds>;
+  friend class Triangulation_ds_facet_circulator_3<Tds>;
+
   typedef Triangulation_ds_vertex_3<Vb,Cb> Vertex;
   typedef Triangulation_ds_cell_3<Vb,Cb> Cell;
   typedef std::pair<Cell*, int>  Facet;
   typedef triple<Cell*, int, int> Edge;
-
-  typedef Triangulation_data_structure_3<Vb,Cb> Tds;
 
   typedef Triangulation_ds_cell_iterator_3<Tds> Cell_iterator;
   typedef Triangulation_ds_facet_iterator_3<Tds> Facet_iterator;
@@ -254,40 +245,17 @@ public:
 
   void delete_cell( Cell* c ) 
     { 
-      CGAL_triangulation_expensive_precondition_code
-	( if ( dimension() == 3 ) {
-	  CGAL_triangulation_expensive_precondition( is_cell(c) ); }
-	  else {
-	    if ( dimension() == 2 ) {
-	      CGAL_triangulation_expensive_precondition( is_facet(c,3) ); }
-	    else {
-	      if ( dimension() == 1 ) {
-		CGAL_triangulation_expensive_precondition( is_edge(c,0,1) ); }
-	      else {
-		if ( dimension() == 0 ) {
-		  CGAL_triangulation_expensive_precondition
-		    ( is_vertex(c->vertex(0)) ); }
-	      }
-	    }
-	  }
-	  );
-	  
-      c->_previous_cell->_next_cell = c->_next_cell;
-      c->_next_cell->_previous_cell = c->_previous_cell;
-
-//       int i;
-//       Vertex* v;
-//       for ( i=0; i <= dimension(); i++ ) {
-// 	v = c->vertex(i);
-// 	if ( v != NULL ) {
-// 	  v->set_cell( c->neighbor( (i+1)%(dimension()+1) ) );
-// 	  // may be NULL
-// 	}
-//       };
-
-      delete( c ); 
+      CGAL_triangulation_expensive_precondition( dimension() != 3 ||
+                                                 is_cell(c) );
+      CGAL_triangulation_expensive_precondition( dimension() != 2 ||
+                                                 is_facet(c,3) );
+      CGAL_triangulation_expensive_precondition( dimension() != 1 ||
+                                                 is_edge(c,0,1) );
+      CGAL_triangulation_expensive_precondition( dimension()!=0 ||
+                                                 is_vertex(c->vertex(0)) );
+      delete c; 
     }
-    
+
   // QUERIES
 
   bool is_vertex(Vertex* v) const;
@@ -386,8 +354,11 @@ public:
     // -- changes the dimension
     // -- if (reorient) the orientation of the cells is modified
 
-  // typedef std::hash_set<const char *> Conflict_set;
+#ifdef SYL
+  typedef std::vector<void *> Conflict_set;
+#else
   typedef std::set<void *> Conflict_set;
+#endif
 
   // for Delaunay :
   void star_region(const Conflict_set & region, Vertex* v, Cell* c, int li);
@@ -397,7 +368,11 @@ public:
     // by linking v to the boundary of region 
     
 private:
-  Cell* create_star(const Conflict_set & region, Vertex* v, Cell* c, int li);
+  Cell* create_star(
+#ifndef SYL
+                    const Conflict_set & region,
+#endif
+                    Vertex* v, Cell* c, int li);
     // creates the cells needed by star_region
 
 public:
@@ -1210,7 +1185,8 @@ flip_flippable( Cell* c, int i, int j )
 }
 
 template < class Vb, class Cb>
-inline void
+inline
+void
 Triangulation_data_structure_3<Vb,Cb>::
 flip_really( Cell* c, int i, int j,// int next, 
 	     Cell* c1, Vertex* v1, int i1, int j1, int next1,
@@ -2098,12 +2074,20 @@ star_region(const Conflict_set & region, Vertex* v, Cell* c, int li )
   // by linking v to the boundary of region
 {
   CGAL_triangulation_precondition( dimension() >= 2 );
-  CGAL_triangulation_precondition( region.find( (Conflict_set::key_type) c )  
+#ifdef SYL
+  CGAL_triangulation_precondition( c->get_flags() == 1 );
+#else
+  CGAL_triangulation_precondition( region.find( (Conflict_set::value_type) c )  
 				   != region.end() );
+#endif
+
   // does not check whether region is connected 
+#ifdef SYL
+  Cell* nouv = create_star(v, c, li );
+#else
   Cell* nouv = create_star( region, v, c, li );
+#endif
   v->set_cell( nouv );
-  // v->set_cell( create_star( region, v, c, li ) );
   Conflict_set::const_iterator it;
   for( it = region.begin(); it != region.end(); ++it)
     delete (Cell *) *it;
@@ -2112,7 +2096,11 @@ star_region(const Conflict_set & region, Vertex* v, Cell* c, int li )
 template <class Vb, class Cb >
 Triangulation_data_structure_3<Vb,Cb>::Cell*
 Triangulation_data_structure_3<Vb,Cb>::
-create_star(const Conflict_set & region, Vertex* v, Cell* c, int li )
+create_star(
+#ifndef SYL
+            const Conflict_set & region,
+#endif
+            Vertex* v, Cell* c, int li )
   // creates the cells needed by star_region
 {
   Cell* cnew;
@@ -2146,8 +2134,11 @@ create_star(const Conflict_set & region, Vertex* v, Cell* c, int li )
       while (true) {
 	j1 = n->index( cur->vertex(j1) );
 	j2 = n->index( cur->vertex(j2) );
-	if ( region.find( (Conflict_set::key_type) n ) == region.end() )
-	// if (n->get_flags() == 0)
+#ifdef SYL
+	if (n->get_flags() == 0)
+#else
+	if ( region.find( (Conflict_set::value_type) n ) == region.end() )
+#endif
 	  break; //not in conflict
 	CGAL_triangulation_assertion( n != c );
 	cur = n;
@@ -2157,7 +2148,11 @@ create_star(const Conflict_set & region, Vertex* v, Cell* c, int li )
       if ( n->neighbor( next_around_edge(j2,j1) ) == cur ) {
 	// neighbor relation is reciprocical, ie
 	// the cell we are looking for is not yet created
+#ifdef SYL
+	cnew->set_neighbor(ii,create_star(v,cur,cur->index(n)));
+#else
 	cnew->set_neighbor(ii,create_star(region,v,cur,cur->index(n)));
+#endif
 	continue;
       }
       // else the cell we are looking for was already created
@@ -2180,8 +2175,12 @@ create_star(const Conflict_set & region, Vertex* v, Cell* c, int li )
   do {
     cur = bound;
     // turn around v2 until we reach the boundary of region
-    while ( region.find( (Conflict_set::key_type) cur->neighbor(cw(i1)) ) !=
+#ifdef SYL
+    while ( cur->neighbor(cw(i1))->get_flags() == 1 ) {
+#else
+    while ( region.find( (Conflict_set::value_type) cur->neighbor(cw(i1)) ) !=
 	    region.end() ) {
+#endif
       // neighbor in conflict
       cur = cur->neighbor(cw(i1));
       i1 = cur->index( v1 );
@@ -2394,9 +2393,7 @@ Triangulation_data_structure_3<Vb,Cb>::
 copy_tds(const Tds & tds, Vertex* vert )
   // returns the new vertex corresponding to vert in the new tds 
 {
-  if ( vert != NULL ) {
-    CGAL_triangulation_precondition( tds.is_vertex(vert) );
-  }
+  CGAL_triangulation_precondition( vert==NULL || tds.is_vertex(vert) );
 
   std::map< void*, void*, std::less<void*> > V;
   std::map< void*, void*, std::less<void*> > F;
@@ -2535,54 +2532,42 @@ void
 Triangulation_data_structure_3<Vb,Cb>::
 clear()
 {
-
-  if(number_of_vertices() == 0) {
+  if (number_of_vertices() == 0) {
     // the list of cells must be cleared even in this case
-    Cell* it=_list_of_cells._next_cell;
-    while ( it != past_end_cell() ) {
-      delete it;
-      // uses the destructor of ds_cell, which 
-      // removes the cell from the list of cells
-      it=_list_of_cells._next_cell;    
-    };
+    for (Cell* it = _list_of_cells._next_cell; it != past_end_cell();
+         it=_list_of_cells._next_cell)
+      delete it; // The ds_cell destructor removes it from the list.
+
     // then _list_of_cells points on itself, nothing more to do
     set_dimension(-2);
     return;
   }
 
-  std::list<Vertex *> Vertices;
-  {// creation of a list of all vertices
-    Vertex_iterator it = vertices_begin(), done = vertices_end();
-    do{
-      Vertices.push_back(&(*it));
-    } while(++it!=done);
-  }
-    
-  {// deletion of the cells
-    // does not use the cell iterator to work in any dimension
-    Cell* it=_list_of_cells._next_cell;
-    while ( it != past_end_cell() ) {
-      delete it;
-      // uses the destructor of ds_cell, which 
-      // removes the cell from the list of cells
-      it=_list_of_cells._next_cell;    
-    };
-    // then _list_of_cells points on itself, nothing more to do
+  // We must save all vertices because we're going to delete the cells.
+  std::vector<Vertex *> Vertices;
+  Vertices.reserve(number_of_vertices());
+
+  // deletion of the cells
+  // does not use the cell iterator to work in any dimension
+  for (Cell* it = _list_of_cells._next_cell; it != past_end_cell();
+       it = _list_of_cells._next_cell)
+  {
+    // We save the vertices to delete them after.
+    // We use the same trick as the Vertex_iterator.
+    for (int i=0; i<=dimension(); i++)
+      if (it->vertex(i)->cell() == it)
+        Vertices.push_back(&(*it->vertex(i)));
+    delete it; // The ds_cell destructor removes it from the list.
   }
 
+  // then _list_of_cells points on itself, nothing more to do
+  CGAL_triangulation_assertion(_list_of_cells._next_cell == &_list_of_cells);
+  CGAL_triangulation_assertion(_list_of_cells._previous_cell==&_list_of_cells);
 
-
-  {// deletion of the vertices
-    typename std::list<Vertex*>::iterator
-      it=Vertices.begin(),done=Vertices.end();
-    while ( it != done ) {
-      delete *it;
-      ++it;
-    }
-    //       do{
-    // 	delete *it;
-    //       } while (++it!=done);
-  }
+  // deletion of the vertices
+  for (std::vector<Vertex*>::iterator it = Vertices.begin();
+       it != Vertices.end(); it++)
+    delete *it;
 
   set_number_of_vertices(0);
   set_dimension(-2);

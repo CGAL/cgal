@@ -27,7 +27,6 @@
 
 #include <CGAL/basic.h>
 
-// #include <hash_set>
 #include <set>
 #include <CGAL/Triangulation_utils_3.h>
 #include <CGAL/Triangulation_3.h>
@@ -151,8 +150,11 @@ public:
   void print(Vertex_handle v) const;
 
 private:
-  // typedef std::hash_set<const char *> Conflict_set;
+#ifdef SYL
+  typedef std::vector<void *> Conflict_set;
+#else
   typedef std::set<void *> Conflict_set;
+#endif
 
   void
   find_conflicts_3(Conflict_set & conflicts, const Point & p,
@@ -264,6 +266,9 @@ insert(const Point & p, Cell_handle start)
 	  Vertex_handle v = new Vertex(p);
 	  set_number_of_vertices(number_of_vertices()+1);
 	  Conflict_set conflicts;
+#ifdef SYL
+	  conflicts.reserve(32);
+#endif
 	  Cell_handle aconflict;
 	  int ineighbor;
 	  find_conflicts_3(conflicts,p,c,aconflict,ineighbor);
@@ -286,6 +291,9 @@ insert(const Point & p, Cell_handle start)
 	  Vertex_handle v = new Vertex(p);
 	  set_number_of_vertices(number_of_vertices()+1);
 	  Conflict_set conflicts;
+#ifdef SYL
+	  conflicts.reserve(16);
+#endif
 	  Cell_handle aconflict;
 	  int ineighbor;
 	  find_conflicts_2(conflicts,p,c,aconflict,ineighbor);
@@ -417,8 +425,7 @@ make_hole_3D( Vertex_handle v,
     indv = (*cit)->index(&(*v));
     opp_cit = (*cit)->neighbor( indv );
     
-    boundhole.insert
-      ( std::make_pair( opp_cit, opp_cit->index(*cit)) );
+    boundhole.insert (  std::make_pair( opp_cit, opp_cit->index(*cit)) );
     outside.push_back(  std::make_pair( opp_cit, opp_cit->index(*cit)) );
     inside.push_back(   std::make_pair( Cell_handle(*cit), indv) );
     for ( i=0; i<4; i++) {
@@ -997,13 +1004,20 @@ find_conflicts_3(Conflict_set & conflicts, const Point & p,
   // gives a cell ac having a facet on the boundary of conflicts
   // and the index i of its facet on the boundary
 {
-  (void) conflicts.insert( (Conflict_set::key_type) &(*c) );
-  // c->set_flags(1);
+#ifdef SYL
+  conflicts.push_back( (Conflict_set::value_type) &(*c) );
+  c->set_flags(1);
+#else
+  (void) conflicts.insert( (Conflict_set::value_type) &(*c) );
+#endif
 
   for ( int j=0; j<4; j++ ) {
     Cell_handle test = c->neighbor(j);
-    if (conflicts.find( (Conflict_set::key_type) &(*test) ) != conflicts.end())
-    // if (test->get_flags() == 1)
+#ifdef SYL
+    if (test->get_flags() == 1)
+#else
+    if (conflicts.find( (Conflict_set::value_type) &(*test) ) != conflicts.end())
+#endif
       continue; // test was already tested and found to be in conflict.
     if ( side_of_sphere( test, p ) == ON_BOUNDED_SIDE )
       find_conflicts_3(conflicts, p, test, ac, i);
@@ -1097,11 +1111,20 @@ find_conflicts_2(Conflict_set & conflicts, const Point & p,
   // gives a cell ac having a facet on the boundary of conflicts
   // and the index i of its facet on the boundary
 {
-  (void) conflicts.insert( (Conflict_set::key_type) &(*c) );
+#ifdef SYL
+  conflicts.push_back( (Conflict_set::value_type) &(*c) );
+  c->set_flags(1);
+#else
+  (void) conflicts.insert( (Conflict_set::value_type) &(*c) );
+#endif
 
   for ( int j=0; j<3; j++ ) {
     Cell_handle test = c->neighbor(j);
-    if (conflicts.find( (Conflict_set::key_type) &(*test) ) != conflicts.end())
+#ifdef SYL
+    if (test->get_flags() == 1)
+#else
+    if (conflicts.find( (Conflict_set::value_type) &(*test) ) != conflicts.end())
+#endif
       continue;   // test was already found
     if ( side_of_circle( test, 3, p ) == ON_BOUNDED_SIDE )
       find_conflicts_2(conflicts, p, test, ac, i);
