@@ -4,9 +4,8 @@
 #include <list>
 
 #include <CGAL/Simple_cartesian.h>
-
-#include <CEP/Visibility_complex/Visibility_complex_segment_traits.h>
-#include <CEP/Visibility_complex/Visibility_complex_2.h>
+#include <CGAL/Visibility_complex_segment_traits.h>
+#include <CGAL/Visibility_complex_2.h>
 
 typedef int                                         FT;
 typedef CGAL::Simple_cartesian <FT>                 Rep;
