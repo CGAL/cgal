@@ -31,6 +31,9 @@
 #include <cstring>
 #include <unistd.h>
 
+#include <sys/types.h> // kill() on SunPro requires these 2 #includes.
+#include <signal.h>
+
 #include <CGAL/IO/Geomview_stream.h>
 #include <CGAL/IO/binary_file_io.h>
 
