@@ -1,3 +1,6 @@
+2.51   (5 December 2001)
+- added compare_slopes
+
 2.50   (1 December 2001)
 - operator<< of various kernel object required more than R to be public.        
 

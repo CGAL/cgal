@@ -62,6 +62,7 @@
 #include <CGAL/Homogeneous/predicates_on_directionsH2.h>
 #include <CGAL/Homogeneous/predicates_on_linesH2.h>
 #include <CGAL/Homogeneous/predicates_on_pointsH2.h>
+#include <CGAL/Homogeneous/predicates_on_segmentsH2.h>
 #include <CGAL/Homogeneous/predicates_on_rtH2.h>
 
 #include <CGAL/Homogeneous/basic_constructionsH3.h>
