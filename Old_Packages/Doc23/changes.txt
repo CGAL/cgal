@@ -1,6 +1,9 @@
-2.19    (?? Apr 2001)
+2.19    (1 May 2001)
 - Fix return type of Kernel::Orientation_?.
 - angle()
+- compare_x_at_y()
+- Less_signed_distance_to_plane_3()
+- Has_on_3(Plane_3, Point_3)
 
 2.18    (27 Apr 2001)
 - Rename construct_tetrahedron_object to construct_tetrahedron_3_object.

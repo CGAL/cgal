@@ -11,6 +11,7 @@ Old_Packages/Doc23/doc_tex/kernel/arrtwo.gif svneol=native#unset
 Old_Packages/Doc23/doc_tex/kernel/arrtwo2.gif svneol=native#unset
 Old_Packages/Doc23/doc_tex/kernel/compare1.gif svneol=native#unset
 Old_Packages/Doc23/doc_tex/kernel/compare2.gif svneol=native#unset
+Old_Packages/Doc23/doc_tex/kernel/compare_x_at_y.gif svneol=native#unset
 Old_Packages/Doc23/doc_tex/kernel/transvecthree.gif svneol=native#unset
 Old_Packages/Doc23/doc_tex/kernel/transvectwo.gif svneol=native#unset
 Old_Packages/Halfedge_DS/doc_tex/basic/Halfedge_DS/euler_facet.gif svneol=native#unset
@@ -156,6 +157,9 @@ Packages/Kernel_23/doc_tex/kernel/compare1.gif -text svneol=unset#unset
 Packages/Kernel_23/doc_tex/kernel/compare1.ipe -text
 Packages/Kernel_23/doc_tex/kernel/compare2.gif -text svneol=unset#unset
 Packages/Kernel_23/doc_tex/kernel/compare2.ipe -text
+Packages/Kernel_23/doc_tex/kernel/compare_x_at_y.eps -text
+Packages/Kernel_23/doc_tex/kernel/compare_x_at_y.fig -text
+Packages/Kernel_23/doc_tex/kernel/compare_x_at_y.gif -text svneol=unset#unset
 Packages/Kernel_23/doc_tex/kernel/transvecthree.gif -text svneol=unset#unset
 Packages/Kernel_23/doc_tex/kernel/transvectwo.gif -text svneol=unset#unset
 Packages/Kernel_d/doc_ps/basic/Convex_hull_d/Appman.ps.gz svneol=native#unset

@@ -15,6 +15,10 @@ A model for this must provide:
                                   const Kernel::Point_3&p);}
 {returns true iff $p$ lies on $s$.}
 
+\ccMemberFunction{bool operator()(const Kernel::Plane_3&pl,
+                                  const Kernel::Point_3&p);}
+{returns true iff $p$ lies on $pl$.}
+
 \ccMemberFunction{bool operator()(const Kernel::Triangle_3&t,
                                   const Kernel::Point_3&p);}
 {returns true iff $p$ lies on $t$.}

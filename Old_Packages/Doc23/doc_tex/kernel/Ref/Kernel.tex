@@ -154,8 +154,8 @@ If the result type is a number type, the prefix is \ccc{Compute_}:
 \ccNestedType{Less_yx_2}{}
 \ccGlue
 \ccNestedType{Compare_x_2}{}
-%\ccGlue
-%\ccNestedType{Compare_x_at_y_2}{}
+\ccGlue
+\ccNestedType{Compare_x_at_y_2}{}
 \ccGlue
 \ccNestedType{Compare_y_2}{}
 \ccGlue
@@ -371,6 +371,8 @@ If the result type is a number type, the prefix is \ccc{Compute_}:
 \ccGlue
 \ccNestedType{Less_distance_to_point_3}{}
 \ccGlue
+\ccNestedType{Less_signed_distance_to_plane_3}{}
+\ccGlue
 \ccNestedType{Compare_distance_to_point_3}{}
 \ccGlue
 \ccNestedType{Collinear_3}{}
@@ -533,14 +535,14 @@ an \ccc{_object} suffix.
 \ccGlue
 \ccMemberFunction{Kernel::Compare_x_2 compare_x_2_object() const ;}{}
 \ccGlue
+\ccMemberFunction{Kernel::Compare_x_at_y_2 compare_x_at_y_2_object() const ;}{}
+\ccGlue
 \ccMemberFunction{Kernel::Compare_y_2 compare_y_2_object() const ;}{}
 \ccGlue
 \ccMemberFunction{Kernel::Compare_xy_2 compare_xy_2_object() const ;}{}
 \ccGlue
 \ccMemberFunction{Kernel::Compare_y_at_x_2 compare_y_at_x_2_object() const ;}{}
 \ccGlue
-%\ccMemberFunction{Kernel::Compare_x_at_y_2 compare_x_at_y_2_object() const ;}{}
-%\ccGlue
 \ccMemberFunction{Kernel::Compare_distance_to_point_2 compare_distance_to_point_2_object(const Kernel::Point_2& p) const ;}{}
 \ccGlue
 \ccMemberFunction{Kernel::Less_distance_to_point_2 less_distance_to_point_2_object(const Kernel::Point_2& p) const ;}{}
@@ -712,6 +714,8 @@ an \ccc{_object} suffix.
 \ccMemberFunction{Kernel::Compare_xyz_3 compare_xyz_3_object() const ;}{}
 \ccGlue
 \ccMemberFunction{Kernel::Less_distance_to_point_3 less_distance_to_point_3_object(const Kernel::Point_3& p) const ;}{}
+\ccGlue
+\ccMemberFunction{Kernel::Less_signed_distance_to_plane_3 less_signed_distance_to_plane_3_object() const ;}{}
 \ccGlue
 \ccMemberFunction{Kernel::Compare_distance_to_point_3 compare_distance_to_point_3_object(const Kernel::Point_3& p) const ;}{}
 \ccGlue
