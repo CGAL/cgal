@@ -96,7 +96,6 @@ set_dirs_dependant_on_cgal_dir()
     TMP_LOGFILE=${CGAL_DIR}/tmptmp.log
     
     # temporary file for confidence tests
-#    TMP_CXX_FILE=${CGAL_DIR}/tmp_test [why?]
     TMP_CXX_FILE=./tmp_test
 }
 
@@ -924,6 +923,32 @@ set_compiler_flags()
 	    PRINT_STACKTRACE_PROGRAM="gdb"
 	    EXE_EXT=".exe"
 	    ;;
+	*mwcc.exe*|*MWCC*)
+	    #### settings Metroworks C++ compiler 
+	    ADDITIONAL_CXXFLAGS="-lang c++"
+	    CGAL_LIB_CXXFLAGS=""
+	    CGAL_LIB_CREATE=""
+	    CGAL_OBJ_PREFIX="+"
+	    WINDOW_DIR=""
+	    XLIBS=""
+	    WINDOWS_COMPILER="y"
+	    SUFFIX_LIST=".obj .exe"
+	    OBJ_EXT=".obj"
+	    LIB_SUFFIX=".lib"
+	    REMOVE_EXT_LIST=".obj"
+	    LIB_OPT=""
+	    LEDA_LIB_OPT="lib"
+	    DEBUG_OPT=""
+	    EXE_OPT="-o "
+	    EXE_EXT=".exe"
+	    CGAL_LIBNAME="CGAL.lib"
+	    CGAL_WIN_LIBNAME="CGALWin.lib"
+	    CGAL_WIN_EXTRA_DIR=mswin
+	    GMP_LIBNAME="gmp.lib"
+	    MATH_LIB=""
+	    SEPARATE_LIBPATH="y"
+	    LIB_CREATION_COMMANDS="mwld.exe"
+	    ;;
 	*)
 	    #### settings for unknown compiler 
 	    CGAL_SHARED_LIB_CREATE="`compiler_bin` -G"
@@ -1649,58 +1674,162 @@ linker_flags_no_cgal_lib()
     ${_printf} "%s" "${CUSTOM_LDFLAGS} `cgal_ldflags``leda_ldflags``gmp_ldflags``cln_ldflags``math_ldflags`"
 }
 
-# print version number of compiler $1 
-# (full path to executable)
-get_compiler_version()
-{
-    case `_real_basename ${1:-${COMPILER}}` in
-	*bcc32*|*BCC32*)
-		_borland_version "$*";;
-	*CL.*|*cl.*)
-		_microsoft_vc_version "$*";;
-	*KCC*)
-		_kcc_version "$*";;
-	*CC*)
-	    case ${SYST} in
-		*IRIX*)  _check_for_sysutil versions y
-			 _sgi_version "$*"
-			 ;;
-		*SunOS*) _sunpro_version "$*"
-			 ;;
-		*) ${_printf} "%s" "UnknownVersion";;
-     	    esac;;
-	*g++*) _gpp_version "$*";;
-	    *) ${_printf} "%s" "UnknownVersion";;
-    esac
-}
-
-# print compiler description of compiler $1 
-# (executable)
+# print compiler description/version of compiler $1 (executable)
+# in the format DESCRIPTION@VERSION
 get_compiler_description()
 {
-    case ${1:-${COMPILER}} in
-	*bcc32*)
-	    ${_printf} "%s" "Borland";;
-	*KCC*)
-	    ${_printf} "%s" "KAI CC";;
-	*CL.*|*cl.*)
-	    ${_printf} "%s" "VC++";;
-	*CC*-32*)
-	    ${_printf} "%s" "MIPSPRO (o32)";;
-	*CC*-n32*)
-	    ${_printf} "%s" "MIPSPRO (n32)";;
-	*CC*-64*)
-	    ${_printf} "%s" "MIPSPRO (64)";;
-	*CC*)
-	    case ${SYST} in
-		*IRIX*) ${_printf} "%s" "MIPSPRO";;
-		*SunOS*) ${_printf} "%s" "SUNPRO";;
-		*) ${_printf} "%s" "UnknownCompiler";;
-     	    esac;;
-	*g++*) ${_printf} "%s" "GNU";;
-	*xlC*) ${_printf} "%s" "IBM CSet";;
-	    *) ${_printf} "%s" "UnknownCompiler";;
+  ${_cat} <<EOF4 >${TMP_CXX_FILE}.C
+// We need the following lines, since MIPSPRO only knows <iostream>,
+// if it is called with -LANG:std (as of Rel 7.3)
+// and I do not want to check for this before compiling ...
+#if defined(__sgi) && defined(_COMPILER_VERSION) && !defined(_STANDARD_C_PLUS_PLUS)
+#include <iostream.h>
+#define CGAL_STDCOUT cout
+#define CGAL_STDENDL endl
+#else
+#include <iostream>
+#define CGAL_STDCOUT std::cout
+#define CGAL_STDENDL std::endl
+#endif
+
+void output_first_ciff_separate(int x, int base)
+{
+  int j = 1;
+  while (x / (base * j) >= 1) j *= base;
+  CGAL_STDCOUT << x/j << "." << x - j * (x/j);
+}
+
+int main()
+{
+#ifdef __GNUC__
+  // GNU cc
+  CGAL_STDCOUT << "GNU@" << __GNUC__ << "." << __GNUC_MINOR__;
+#ifdef __GNUC_PATCHLEVEL__
+  CGAL_STDCOUT << "." << __GNUC_PATCHLEVEL__;
+#endif
+  CGAL_STDCOUT << CGAL_STDENDL;
+#elif defined(__sgi) && defined(_COMPILER_VERSION)
+  // SGI mipspro
+  CGAL_STDCOUT << "MIPSPRO";
+#if (_MIPS_SIM == _OABI32)
+  CGAL_STDCOUT << " (o32)";
+#elif (_MIPS_SIM == _NABI32)
+  CGAL_STDCOUT << " (n32)";
+#elif (_MIPS_SIM == _ABI64)
+  CGAL_STDCOUT << " (64)";
+#endif // _MIPS_SIM
+  CGAL_STDCOUT << "@";
+  output_first_ciff_separate(_COMPILER_VERSION, 10);
+  CGAL_STDCOUT << CGAL_STDENDL;
+#elif defined(__sun) && defined(__SUNPRO_CC)
+  // SUN workshop
+  CGAL_STDCOUT << "SUNPRO@" << std::hex;
+  output_first_ciff_separate(__SUNPRO_CC, 16);
+  CGAL_STDCOUT << CGAL_STDENDL;
+#elif defined(__BORLANDC__)
+  // Borland 
+  CGAL_STDCOUT << "Borland@" << std::hex;
+  output_first_ciff_separate(__BORLANDC__, 16);
+  CGAL_STDCOUT << CGAL_STDENDL;
+#elif defined(__MWERKS__)
+  // Metrowerks
+  CGAL_STDCOUT << "Metrowerks@" << std::hex;
+#if (__MWERKS__ == 1)
+  CGAL_STDCOUT << "precw7" << CGAL_STDENDL;
+#else
+  output_first_ciff_separate(__MWERKS__, 16);
+  CGAL_STDCOUT << CGAL_STDENDL;
+#endif // (__MWERKS__ == 1)
+#elif defined(__KCC)
+  // KAI CC
+  CGAL_STDCOUT << "KAI CC@";
+  output_first_ciff_separate(__KCC_VERSION / 100, 10);
+  if (__KCC_VERSION % 100 != 0) 
+    CGAL_STDCOUT << char(__KCC_VERSION % 100 + int('a') - 1);
+  CGAL_STDCOUT << CGAL_STDENDL;
+#elif defined(_MSC_VER)
+  // Microsoft Visual C++
+  CGAL_STDCOUT << "VC++@" << _MSC_VER << CGAL_STDENDL;
+#else
+  // we do not know this compiler --> add specs if supported
+  CGAL_STDCOUT << "unknown" << CGAL_STDENDL;
+#endif // def __GNUC_
+
+  return 0;
+}
+EOF4
+    # set flags
+    EXE_OPT="-o "
+    case $1 in
+  	*bcc32.exe*|*BCC32*) EXE_OPT="-e";;
+	*CL.*|*cl.*)         EXE_OPT="-Fp";;
     esac
+    _flags="${TMP_CXX_FILE}.C ${EXE_OPT}${TMP_CXX_FILE}"
+
+    # compile
+    ${_printf} "%s\n%s\n" \
+	"Compiler call:" "--------------" >${TMP_LOGFILE}
+    ${_printf} "%s" \
+	"$1 ${_flags}" >>${TMP_LOGFILE}
+    ${_printf} "\n\n%s\n" \
+	"Got the following error messages:" >>${TMP_LOGFILE}
+    ${_printf} "%s\n" \
+	"---------------------------------" >>${TMP_LOGFILE}
+    eval "$1 ${_flags} >>${TMP_LOGFILE} 2>&1"
+    if [ $? = 0 ]; then
+	log_print "Compiler version test compiled."
+	${_printf} "\n\n%s\n" "Execution:" >>${TMP_LOGFILE}
+	${_printf} "%s\n" \
+	    "---------------------------------" >>${TMP_LOGFILE}
+	_tmp3=`eval "${TMP_CXX_FILE} 2>&1 | ${_tee} -a ${TMP_LOGFILE}"`
+	if [ $? = 0 ]; then 	
+	    cleanup_after_compile
+	    cleanup_after_link_run
+	    return 0
+	elif [ -n "${INSTALL_INTERACTIVE}" ]; then
+	    log_print "ERROR: Compiler version test execution failed."
+	    write_buffer "\n"
+	    print_filled_line
+	    print_empty_line
+	    print_headline " Compiler version test execution failed"
+	    print_center_line "You will be shown a log now ..."
+	    wait_for_enter
+	    ${_cat} ${TMP_LOGFILE} | ${PAGER:-${_cat}}
+	    write_buffer "\n"
+	    print_filled_line
+	    wait_for_enter
+	else
+	    ${_printf} "%s\n\n" " execution failed."
+	    ${_cat} ${TMP_LOGFILE} 
+	    ${_printf} "%s\n\n" \
+		"--------------------------------------------------------"
+	fi
+	cleanup_after_compile
+	cleanup_after_link_run
+	return 1
+    else
+	if [ -n "${INSTALL_INTERACTIVE}" ]; then
+	    log_print "ERROR: Compiler version test did NOT compile."
+	    write_buffer "\n"
+	    print_filled_line
+	    print_empty_line
+	    print_headline "Compiler version test compilation failed"
+	    print_center_line "You will be shown a log now ..."
+	    wait_for_enter
+	    ${_cat} ${TMP_LOGFILE} | ${PAGER:-${_cat}}
+	    write_buffer "\n"
+	    print_filled_line
+	    wait_for_enter
+	else
+	    ${_printf} "%s\n\n" " compilation failed."
+	    ${_cat} ${TMP_LOGFILE} 
+	    ${_printf} "%s\n\n" \
+		"--------------------------------------------------------"
+	fi
+	cleanup_after_compile
+	cleanup_after_link_run
+	return 1
+    fi
 }
 
 # $1 is a compiler string
@@ -1811,7 +1940,8 @@ _search_compiler()
 {
     if _check_for_util "$2" n tmp1; then 
 	_check_for_util "$1" n tmp2
-	COMPILER="$2@`get_compiler_description \"$2\"`@${_tmp2}@${_tmp1}@`get_compiler_version \"${_tmp1}\"`@"
+	get_compiler_description "$2"
+	COMPILER="$2@`compiler_basename \"${_tmp3}\"`@${_tmp2}@${_tmp1}@`compiler_description \"${_tmp3}\"`@"
 	if [ -z "$3" ]; then
 	    _check_and_register_compiler "${COMPILER}"
 	fi
@@ -1926,6 +2056,7 @@ compiler_absolute()
     fi
     ${_printf} "%s" "@"
     get_compiler_description "${_args}"
+    compiler_basename "${_tmp3}"
     ${_printf} "%s" "@"
     _tmp1=`_real_dirname "${_args}"`
     if [ "${_tmp1}" != "." ]; then
@@ -1942,7 +2073,7 @@ compiler_absolute()
 	${_printf} "%s" " ${_tmp1}"
     fi
     ${_printf} "%s" "@${_args}@"
-    get_compiler_version "${_args}"
+    compiler_description "${_tmp3}"
     ${_printf} "%s" "@${LEDA_SUPPORT}"
 }
 
@@ -5424,6 +5555,8 @@ case ${_WHAT_TO_DO} in
 	_fgrep=fgrep
 	_which=real_which
 	_sed=sed
+	_cat=cat
+	_tee=tee
 	eval "guess_os ${_printf}" >/dev/null
 	_check_comp_executable "${COMPILER}"
 	COMPILER="`compiler_absolute ${COMPILER}`"
