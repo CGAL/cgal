@@ -809,11 +809,11 @@ set_compiler_flags()
 	    SEPARATE_LIBPATH="y"
             LIB_CREATION_COMMANDS="tlib @borland_lib_creation"
 	    ;;
-	*CL.*|*cl.*)
-	    #### settings Microsoft Visual C++ compiler 
+	*ICL.*|*icl.*)
+	    #### settings Intel C++ compiler 
 	    WINDOWS_COMPILER="y"
 	    CYGWIN_COMPILER="y"
-	    ADDITIONAL_CXXFLAGS="-TP -GR -GX -Zm900 -nologo"
+	    ADDITIONAL_CXXFLAGS="-TP -GR -GX -Zm900 -nologo -Zc:forScope"
 	    ADDITIONAL_LDFLAGS="-nologo"
 #	    CGAL_LIB_CXXFLAGS="-TP"
 #	    CGAL_QT_CXXFLAGS="-DQT_DLL -DQT_THREAD_SUPPORT"
@@ -842,11 +842,11 @@ set_compiler_flags()
 	    MATH_LIB=
 	    START_LD_OPT="-link "
 	    ;;
-	*ICL.*|*icl.*)
-	    #### settings Intel C++ compiler 
+	*CL.*|*cl.*)
+	    #### settings Microsoft Visual C++ compiler 
 	    WINDOWS_COMPILER="y"
 	    CYGWIN_COMPILER="y"
-	    ADDITIONAL_CXXFLAGS="-TP -GR -GX -Zm900 -nologo -Zc:forScope"
+	    ADDITIONAL_CXXFLAGS="-TP -GR -GX -Zm900 -nologo"
 	    ADDITIONAL_LDFLAGS="-nologo"
 #	    CGAL_LIB_CXXFLAGS="-TP"
 #	    CGAL_QT_CXXFLAGS="-DQT_DLL -DQT_THREAD_SUPPORT"
