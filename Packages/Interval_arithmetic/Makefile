@@ -53,7 +53,7 @@ $(Package).tar.gz:
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile --exclude=TODO \
 	--exclude="*".swp --exclude=tst_Static_filter_error.C \
 	--exclude=tst_static_adaptatif.C --exclude=Lazy_exact_nt.C \
-	version description.txt changes.txt \
+	version description.txt changes.txt maintainer \
 	src include doc_tex doc_ps test scripts
 
 doc: doc_ps/$(Package).ps

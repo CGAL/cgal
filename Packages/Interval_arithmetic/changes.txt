@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.43 on 4 May 2000
+- Don't forget to submit it...
+
 Version 4.42 on 4 May 2000
 - Added maintainer file.
 
