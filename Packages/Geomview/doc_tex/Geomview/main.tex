@@ -84,6 +84,28 @@ operators. 2D objects are embedded in the \ccc{xy}-plane.
 
 \ccFunction{template <class R>
             Geomview_stream&
+            operator<<(Geomview_stream& G, const Ray_2<R>& r);}
+{Inserts the ray \ccc{r} into the stream \ccVar.}
+
+\ccFunction{template <class R>
+            Geomview_stream&
+            operator<<(Geomview_stream& G, const Ray_3<R>& r);}
+{Inserts the ray \ccc{r} into the stream \ccVar.}
+
+
+\ccFunction{template <class R>
+            Geomview_stream&
+            operator<<(Geomview_stream& G, const Line_2<R>& l);}
+{Inserts the line \ccc{l} into the stream \ccVar.}
+
+\ccFunction{template <class R>
+            Geomview_stream&
+            operator<<(Geomview_stream& G, const Line_3<R>& l);}
+{Inserts the line \ccc{l} into the stream \ccVar.}
+
+
+\ccFunction{template <class R>
+            Geomview_stream&
             operator<<(Geomview_stream& G, const Triangle_2<R>& t);}
 {Inserts the triangle \ccc{t} into the stream \ccVar.}
 
