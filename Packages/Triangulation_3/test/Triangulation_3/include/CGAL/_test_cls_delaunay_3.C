@@ -1,4 +1,4 @@
-// Copyright (c) 1998-2003  INRIA Sophia-Antipolis (France).
+// Copyright (c) 1998-2004  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -94,6 +94,67 @@ struct If <CGAL::Tag_false, Then, Else>
   typedef Else type;
 };
 
+
+// test_conflicts() has to be distingushed between Delaunay and Regular,
+// since Regular does not have it at the moment, and it will probably
+// have a different interface once it will be implemented anyway.
+template < typename T, typename P >
+void test_conflicts(T&t, const P *q)
+{
+  test_conflicts(t, q, typename T::Weighted_tag());
+}
+
+template < typename T, typename P >
+void test_conflicts(T&t, const P *q, CGAL::Tag_true)
+{
+  bool WARNING_REGULAR_DOES_NOT_HAVE_FIND_CONFLICTS_AND_CO;
+  std::cerr << "--- WARNING : find_conflicts not tested for Regular ---" << std::endl;
+  for (int i=0; i<22; ++i)
+      t.insert(q[i]);
+}
+
+template < typename T, typename P >
+void test_conflicts(T& T3_13, const P *q, CGAL::Tag_false)
+{
+  typedef T Cls;
+  typedef typename Cls::Locate_type   Locate_type;
+  typedef typename Cls::Vertex_handle Vertex_handle;
+  typedef typename Cls::Cell_handle   Cell_handle;
+  typedef typename Cls::Facet         Facet;
+
+  for (int i=0; i<22; ++i) {
+    if (T3_13.dimension() < 2)
+      T3_13.insert(q[i]);
+    else {
+      // First locate the point.
+      Locate_type lt;
+      int li, lj;
+      Cell_handle c = T3_13.locate(q[i], lt, li, lj);
+      if (lt == Cls::VERTEX) // Already exist, skip.
+        continue;
+      if (lt == Cls::OUTSIDE_AFFINE_HULL) { // Increases dimension.
+        T3_13.insert_outside_affine_hull(q[i]);
+        continue;
+      }
+      // Get the stuff in conflicts.
+      std::vector<Cell_handle>   C;
+      std::vector<Facet>         F;
+      std::vector<Vertex_handle> V;
+
+      T3_13.vertices_in_conflict(q[i], c, std::back_inserter(V));
+      T3_13.find_conflicts(q[i], c, std::back_inserter(F),
+                           std::back_inserter(C));
+
+      if (T3_13.dimension() == 3)
+          assert(F.size() == 2*V.size() - 4); // Euler relation.
+      if (T3_13.dimension() == 2)
+          assert(F.size() == V.size());
+
+      T3_13.insert_in_hole(q[i], C.begin(), C.end(),
+                           F.begin()->first, F.begin()->second);
+    }
+  }
+}
 
 template <class Triangulation>
 void
@@ -519,38 +580,9 @@ _test_cls_delaunay_3(const Triangulation &)
   std::cout << "    Testing find_conflicts/vertices_in_conflict/insert_in_hole"
             << std::endl;
   Cls T3_13;
-  for (i=0; i<22; ++i) {
-    if (T3_13.dimension() < 2)
-      T3_13.insert(q[i]);
-    else {
-      // First locate the point.
-      Locate_type lt;
-      int li, lj;
-      Cell_handle c = T3_13.locate(q[i], lt, li, lj);
-      if (lt == Cls::VERTEX) // Already exist, skip.
-        continue;
-      if (lt == Cls::OUTSIDE_AFFINE_HULL) { // Increases dimension.
-        T3_13.insert_outside_affine_hull(q[i]);
-        continue;
-      }
-      // Get the stuff in conflicts.
-      std::vector<Cell_handle>   C;
-      std::vector<Facet>         F;
-      std::vector<Vertex_handle> V;
 
-      T3_13.vertices_in_conflict(q[i], c, std::back_inserter(V));
-      T3_13.find_conflicts(q[i], c, std::back_inserter(F),
-                           std::back_inserter(C));
+  test_conflicts(T3_13, q);
 
-      if (T3_13.dimension() == 3)
-          assert(F.size() == 2*V.size() - 4); // Euler relation.
-      if (T3_13.dimension() == 2)
-          assert(F.size() == V.size());
-
-      T3_13.insert_in_hole(q[i], C.begin(), C.end(),
-                           F.begin()->first, F.begin()->second);
-    }
-  }
   assert(T3_13.is_valid());
   assert(T3_13.number_of_vertices()==22);
   assert(T3_13.dimension()==3);
