@@ -91,7 +91,16 @@ void read_polylines(Container& curves)
 
   while (num_polylines--) {
     Curve      polyline;
+    int        num_points;
     
+    std::cin >> num_points;
+
+    while (num_points--) {
+      std::cin >> x >> y;
+      Point s(x, y);
+      
+      polyline.push_back(s);
+    }
     std::cin>>polyline;
     curves.push_back(polyline);
   }
@@ -121,10 +130,3 @@ int main(/*int argc, char* argv[]*/)
   //W.display();
   //W << pm;
 }
-
-
-
-
-
-
-

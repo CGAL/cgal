@@ -53,12 +53,3 @@ int main(/*int argc, char* argv[]*/)
        scv_iter++)
     cout<<*scv_iter<<endl;
 }
-
-
-
-
-
-
-
-
-

@@ -111,6 +111,3 @@ int main(/*int argc, char* argv[]*/)
   for (list<Curve>::iterator scv_iter = subcurves.begin(); scv_iter != subcurves.end(); scv_iter++)    
     cout<<*scv_iter<<endl;
 }
-
-
-
