@@ -48,25 +48,37 @@ public:
 private:
   QCursor oldcursor;
 
+  bool is_pure(Qt::ButtonState s){
+    if((s & Qt::ControlButton) ||
+       (s & Qt::ShiftButton) ||
+       (s & Qt::AltButton))
+      return 0;
+    else
+      return 1;
+  }
+
   void mousePressEvent(QMouseEvent *e)
   {
-    if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON && !firstpoint)
+    if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON 
+       && !firstpoint
+       && is_pure(e->state()))
     {
       FT
-	x=static_cast<FT>(widget->x_real(e->x())),
-	y=static_cast<FT>(widget->y_real(e->y()));
+	      x=static_cast<FT>(widget->x_real(e->x())),
+	      y=static_cast<FT>(widget->y_real(e->y()));
       x1 = x;
       y1 = y;
       x2 = x;
       y2 = y;
       firstpoint = TRUE;
-    } else if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON){
+    } else if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON
+       && is_pure()){
       FT
-	x=static_cast<FT>(widget->x_real(e->x())),
-	y=static_cast<FT>(widget->y_real(e->y()));
+	      x=static_cast<FT>(widget->x_real(e->x())),
+	      y=static_cast<FT>(widget->y_real(e->y()));
       if(x1!=x || y1!=y) {
-	widget->new_object(make_object(Line(Point(x1,y1),Point(x,y))));
-	firstpoint = FALSE;
+        widget->new_object(make_object(Line(Point(x1,y1),Point(x,y))));
+        firstpoint = FALSE;
       }    
     }
   }
@@ -78,11 +90,11 @@ private:
       RasterOp old_raster = widget->rasterOp();//save the initial raster mode
       QColor old_color = widget->color();
       widget->lock();
-	widget->setRasterOp(XorROP);
-	*widget << CGAL::GREEN;
-	*widget << Line(Point(x1,y1),Point(x2,y2));
-	widget->setRasterOp(old_raster);
-	widget->setColor(old_color);
+        widget->setRasterOp(XorROP);
+        *widget << CGAL::GREEN;
+        *widget << Line(Point(x1,y1),Point(x2,y2));
+        widget->setRasterOp(old_raster);
+        widget->setColor(old_color);
       widget->unlock();
       firsttime = true;
     }
@@ -91,25 +103,24 @@ private:
   {
     if(firstpoint)
     {
-      FT
-	x=static_cast<FT>(widget->x_real(e->x())),
-	y=static_cast<FT>(widget->y_real(e->y()));
-	RasterOp old_raster = widget->rasterOp();//save the initial raster mode
-	QColor old_color = widget->color();
-	widget->setRasterOp(XorROP);
-	widget->lock();
-	*widget << CGAL::GREEN;
-	if(!firsttime)
-	  *widget << Line(Point(x1,y1),Point(x2,y2));
-	*widget << Line(Point(x1,y1),Point(x,y));
-	widget->unlock();
-	widget->setRasterOp(old_raster);
-	widget->setColor(old_color);
+      FT x=static_cast<FT>(widget->x_real(e->x()));
+      FT y=static_cast<FT>(widget->y_real(e->y()));
+      RasterOp old_raster = widget->rasterOp();//save the initial raster mode
+      QColor old_color = widget->color();
+      widget->setRasterOp(XorROP);
+      widget->lock();
+      *widget << CGAL::GREEN;
+      if(!firsttime)
+        *widget << Line(Point(x1,y1),Point(x2,y2));
+      *widget << Line(Point(x1,y1),Point(x,y));
+      widget->unlock();
+      widget->setRasterOp(old_raster);
+      widget->setColor(old_color);
 
-	//save the last coordinates to redraw the screen
-	x2 = x;
-	y2 = y;
-	firsttime = false;
+      //save the last coordinates to redraw the screen
+      x2 = x;
+      y2 = y;
+      firsttime = false;
     }
   };
   void activating()

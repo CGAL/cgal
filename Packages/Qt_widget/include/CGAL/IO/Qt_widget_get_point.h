@@ -42,9 +42,18 @@ public:
     cursor(c) {};
   
 private:
+  bool is_pure(Qt::ButtonState s){
+    if((s & Qt::ControlButton) ||
+       (s & Qt::ShiftButton) ||
+       (s & Qt::AltButton))
+      return 0;
+    else
+      return 1;
+  }
   void mousePressEvent(QMouseEvent *e)
   {
-    if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON)
+    if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON
+       && is_pure(e->state()))
     {
       FT x=static_cast<FT>(widget->x_real(e->x()));
       FT y=static_cast<FT>(widget->y_real(e->y()));

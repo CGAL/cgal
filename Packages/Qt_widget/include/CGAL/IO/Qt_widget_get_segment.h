@@ -44,25 +44,37 @@ public:
 
 private:
   QCursor oldcursor;
+
+  bool is_pure(Qt::ButtonState s){
+    if((s & Qt::ControlButton) ||
+       (s & Qt::ShiftButton) ||
+       (s & Qt::AltButton))
+      return 0;
+    else
+      return 1;
+  }
+
   void mousePressEvent(QMouseEvent *e)
   {
-    if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON && !firstpoint)
+    if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON 
+       && !firstpoint
+       && is_pure(e->state()))
     {
-      FT
-	x=static_cast<FT>(widget->x_real(e->x())),
-	y=static_cast<FT>(widget->y_real(e->y()));
+      FT x=static_cast<FT>(widget->x_real(e->x()));
+      FT y=static_cast<FT>(widget->y_real(e->y()));
       x1 = x;
       y1 = y;
       x2 = x;
       y2 = y;
       firstpoint = TRUE;
-    } else if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON){
-      FT
-	x=static_cast<FT>(widget->x_real(e->x())),
-	y=static_cast<FT>(widget->y_real(e->y()));
+    } else if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON 
+              && is_pure(e->state())){
+      FT x=static_cast<FT>(widget->x_real(e->x()));
+      FT y=static_cast<FT>(widget->y_real(e->y()));
       if(x1!=x || y1!=y) {
-	widget->new_object(make_object(Segment(Point(x1,y1),Point(x,y))));
-	firstpoint = FALSE;
+        widget->new_object(
+          make_object(Segment(Point(x1,y1),Point(x,y))));
+        firstpoint = FALSE;
       }    
     }
   }

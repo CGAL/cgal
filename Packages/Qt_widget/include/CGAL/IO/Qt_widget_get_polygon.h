@@ -39,13 +39,21 @@ public:
     : active(false), lastx(0), lasty(0), num_points(0), poly(),
       qpoints(0), qpoints_old(0) {};
 
+  bool is_pure(Qt::ButtonState s){
+    if((s & Qt::ControlButton) ||
+       (s & Qt::ShiftButton) ||
+       (s & Qt::AltButton))
+      return 0;
+    else
+      return 1;
+  }
+
   void mousePressEvent(QMouseEvent *e)
   {
-    if(e->button() == Qt::LeftButton)
+    if(e->button() == Qt::LeftButton && is_pure(e->state()))
     {
-      FT
-	x=static_cast<FT>(widget->x_real(e->x())),
-	y=static_cast<FT>(widget->y_real(e->y()));
+      FT x=static_cast<FT>(widget->x_real(e->x()));
+	    FT y=static_cast<FT>(widget->y_real(e->y()));
       poly.push_back(Point_2(x,y));
       qpoints.putPoints(num_points, 1, e->x(), e->y());
       qpoints_old.putPoints(num_points, 1, e->x(), e->y());
@@ -54,28 +62,25 @@ public:
       widget->setMouseTracking(TRUE);
       return;
     };
-    if(e->button() == Qt::RightButton)
+    if(e->button() == Qt::RightButton && is_pure(e->state()))
     {
       if (active)
       {
-	RasterOp old_rasterop=widget->rasterOp();
-	widget->get_painter().setRasterOp(NotROP);
-	widget->get_painter().drawPolyline(qpoints_old);
-	widget->setRasterOp(old_rasterop);
-	widget->do_paint();
-	FT
-	  x=static_cast<FT>(widget->x_real(e->x())),
-	  y=static_cast<FT>(widget->y_real(e->y()));
-	poly.push_back(Point_2(x, y));
-	widget->new_object(make_object(poly));
-
-	poly.erase(poly.vertices_begin(),poly.vertices_end());
-
-	qpoints.resize(0);
-	qpoints_old.resize(0);
-	num_points=0;
-	active=false;
-	};
+        RasterOp old_rasterop=widget->rasterOp();
+        widget->painter().setRasterOp(NotROP);
+        widget->painter().drawPolyline(qpoints_old);
+        widget->setRasterOp(old_rasterop);
+        widget->do_paint();
+        FT x=static_cast<FT>(widget->x_real(e->x()));
+        FT y=static_cast<FT>(widget->y_real(e->y()));
+	      poly.push_back(Point_2(x, y));
+        widget->new_object(make_object(poly));
+		poly.erase(poly.vertices_begin(),poly.vertices_end());
+        qpoints.resize(0);
+        qpoints_old.resize(0);
+        num_points=0;
+        active=false;
+      };
     };
   };
 
@@ -83,23 +88,23 @@ public:
   {
     if (active)
     {
-      int 
-	x=(e->pos()).x(),
-	y=(e->pos()).y();
-	if ((lastx != x) || (lasty != y)) {
-	  widget->lock();
-	  RasterOp old_rasterop=widget->rasterOp();
-	  widget->get_painter().setRasterOp(NotROP);
-	  qpoints.putPoints(num_points,1,x,y);
-	  widget->get_painter().drawPolyline(qpoints);
-	  // Erase old polyline
-	  widget->get_painter().drawPolyline(qpoints_old);
-	  widget->setRasterOp(old_rasterop);
-	  widget->unlock();
-	  lastx= x;
-	  lasty= y;
-	  qpoints_old.putPoints(num_points,1,x,y);
-	}
+
+      int x=(e->pos()).x();
+      int y=(e->pos()).y();
+      if ((lastx != x) || (lasty != y)) {
+        widget->lock();
+        RasterOp old_rasterop=widget->rasterOp();
+        widget->painter().setRasterOp(NotROP);
+        qpoints.putPoints(num_points,1,x,y);
+        widget->painter().drawPolyline(qpoints);
+        // Erase old polyline
+        widget->painter().drawPolyline(qpoints_old);
+        widget->setRasterOp(old_rasterop);
+        widget->unlock();
+        lastx= x;
+        lasty= y;
+        qpoints_old.putPoints(num_points,1,x,y);
+      }
     }
   };
   void activating()

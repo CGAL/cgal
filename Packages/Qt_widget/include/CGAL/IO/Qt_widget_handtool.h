@@ -115,16 +115,20 @@ private:
       widget->lock();
         *widget << CGAL::GRAY;
       if(!wasrepainted) {
-        CGAL_CLIB_STD::sprintf(tempc1, " dx=%20.6f", widget->x_real(x2 - first_x));
-        CGAL_CLIB_STD::sprintf(tempc2, ", dy=%20.6f", widget->x_real(y2 - first_y));
+        CGAL_CLIB_STD::sprintf(tempc1, " dx=%20.6f",
+			widget->x_real(x2 - first_x));
+        CGAL_CLIB_STD::sprintf(tempc2, ", dy=%20.6f",
+			widget->x_real(y2 - first_y));
         strcat(tempc1, tempc2);
         widget->get_painter().drawLine(first_x, first_y, x2, y2);
         *widget << CGAL::GREEN;
         widget->get_painter().drawText(x2, y2, tempc1, 49);
         *widget << CGAL::GRAY;
       }
-      CGAL_CLIB_STD::sprintf(tempc1, " dx=%20.6f", widget->x_real(x - first_x));
-      CGAL_CLIB_STD::sprintf(tempc2, ", dy=%20.6f", widget->x_real(y - first_y));
+      CGAL_CLIB_STD::sprintf(tempc1, " dx=%20.6f",
+		  widget->x_real(x - first_x));
+      CGAL_CLIB_STD::sprintf(tempc2, ", dy=%20.6f",
+		  widget->x_real(y - first_y));
       strcat(tempc1, tempc2);
       widget->get_painter().drawLine(first_x, first_y, x, y);
       *widget << CGAL::GREEN;

@@ -94,15 +94,26 @@ public:
 		break;
 	}
   }
-private:  
+private:
+  bool is_pure(Qt::ButtonState s){
+    if((s & Qt::ControlButton) ||
+       (s & Qt::ShiftButton) ||
+       (s & Qt::AltButton))
+      return 0;
+    else
+      return 1;
+  }
   void mousePressEvent(QMouseEvent *e)
   {
-    double
-      x=widget->x_real(e->x()),
-      y=widget->y_real(e->y());
+    if(e->button() == Qt::LeftButton
+       && is_pure(e->state()))
+    {
+      double x=widget->x_real(e->x());
+      double y=widget->y_real(e->y());
 	
-	  widget->set_center(x, y);
-    widget->redraw();
+      widget->set_center(x, y);
+      widget->redraw();
+    }
   };
   void deactivating()
   {    
