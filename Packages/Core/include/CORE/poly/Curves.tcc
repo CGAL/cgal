@@ -135,7 +135,17 @@ BiPoly<NT>::BiPoly(int deg, int *d, NT *C){
 //                    | '(' [bipoly]')'|'-'
 //Unary minus is treated as a basic term
 template <class NT>
-BiPoly<NT>::BiPoly(string s, char myX='x', char myY='y'){
+BiPoly<NT>::BiPoly(const char * s, char myX, char myY){
+	string ss(s);
+	constructFromString(ss, myX, myY);
+}
+template <class NT>
+BiPoly<NT>::BiPoly(const string & s, char myX, char myY){
+	string ss(s);
+	constructFromString(ss, myX, myY);
+}
+template <class NT>
+void BiPoly<NT>::constructFromString(string & s, char myX, char myY){
   if((myX != 'x' || myX != 'X') && (myY != 'y' || myY != 'Y')){
     //Replace myX with 'x' and myY with 'y' in s.
     unsigned int loc = s.find(myX, 0);
@@ -372,7 +382,17 @@ BiPoly<NT> BiPoly<NT>::getbipoly(string s){
     BiPoly<NT> P;
     // P will be the polynomial in which we accumulate the
     //sum and difference of the different terms.
-    unsigned int ind = getterm(s, P);
+    unsigned int ind;
+
+    if(cstr[0] == '-'){
+      t = s.substr(1, len);
+      ind = getterm(t,P) + 1;
+      NT negone(-1);
+      P.mulScalar(negone);
+    }else{
+      ind = getterm(s, P);
+    }
+
     unsigned int oind =0;//the string between oind and ind is a term
     while(ind != len -1){
       BiPoly<NT> R;
@@ -1108,18 +1128,12 @@ Curve<NT>::Curve(int n)
 
   //Creates a curve from a string (no parentheses, no *)
 template < class NT >
-Curve<NT>::Curve(string s, char myX, char myY)
+Curve<NT>::Curve(const string & s, char myX, char myY)
 	  : BiPoly<NT>(s, myX, myY){
   }
-
 template < class NT >
-Curve<NT>::Curve(string s, bool asd, char myX, char myY)
-	  : BiPoly<NT>(s, asd, myX, myY){
-  }
-
-template < class NT >
-Curve<NT>::Curve(string s)
-	  : BiPoly<NT>(s){
+Curve<NT>::Curve(const char * s, char myX, char myY)
+	  : BiPoly<NT>(s, myX, myY){
   }
 
 

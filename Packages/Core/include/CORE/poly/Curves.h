@@ -120,6 +120,7 @@ class BiPoly{
  private:
   //The following are used in the constructor from strings.
   //For more details see the related constructor.
+  void constructFromString(string& s, char myX='x', char myY='y');
   void constructX(int n, BiPoly<NT>& P);
   void constructY(int n, BiPoly<NT>& P);
   int getnumber(const char* c, int i, unsigned int len, BiPoly<NT> & P);
@@ -170,7 +171,8 @@ class BiPoly{
   //
   //  For now, we assume no parentheses, * or =.
   
-  BiPoly(string s, char myX, char myY);
+  BiPoly(const string& s, char myX='x', char myY='y');
+  BiPoly(const char* s, char myX='x', char myY='y');
 
   // copy constructor
   BiPoly(const BiPoly<NT>&);
@@ -439,12 +441,8 @@ public:
   Curve(int n);
 
   //Creates a curve from a string (no parentheses, no *, no =)
-  Curve(string s, char myX, char myY);
-
-  //Experimental version...
-  Curve(string s, bool asd, char myX, char myY);
-
-  Curve(string s);
+  Curve(const string & s, char myX='x', char myY='y');
+  Curve(const char* s, char myX='x', char myY='y');
 
   /////////////////////////////////////////////////////////////////////////
   // verticalIntersections(x, vecI, aprec=0):

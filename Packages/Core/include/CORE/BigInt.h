@@ -261,6 +261,10 @@ public:
 
   /// \name Helper Functions
   //@{
+  /// Has Exact Division
+  static bool hasExactDivision() {
+    return false;
+  }
   /// get mpz pointer (const)
   mpz_srcptr get_mp() const {
     return rep->get_mp();

@@ -267,6 +267,10 @@ public:
   void canonicalize() {
     makeCopy();
     mpq_canonicalize(get_mp());
+  } 
+  /// Has Exact Division
+  static bool hasExactDivision() {
+    return true;
   }
 
   /// return mpz pointer of numerator (const)

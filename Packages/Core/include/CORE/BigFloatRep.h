@@ -252,8 +252,8 @@ inline BigFloatRep::BigFloatRep(double d)
 }
 */
 
-inline BigFloatRep::BigFloatRep(const BigInt& I, unsigned long u, long l)
-  : m(I), err(u), exp(l) {}
+inline BigFloatRep::BigFloatRep(const BigInt& I, unsigned long er, long ex)
+  : m(I), err(er), exp(ex) {}
 
 inline BigFloatRep::BigFloatRep(const char *str) : m(0), err(0), exp(0) {
   fromString(str);

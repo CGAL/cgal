@@ -59,6 +59,7 @@
 #define CORE_STURM_H
 
 #include "CORE/BigFloat.h"
+#include "CORE/Expr.h"
 #include "CORE/poly/Poly.h"
 
 CORE_BEGIN_NAMESPACE
@@ -185,6 +186,16 @@ public:
   }
 
   // METHODS
+
+  // hasExactDivision()
+  //   CHECKING if NT has exact division
+  //   NOTE: it is important that the compiler does not try to
+  //   prove theorems about arithmetic identities like "x*(y/x) == y"
+  inline bool hasExactDivision(){
+     NT one(1);
+     NT three(3);
+     return (three*(one/three) == one);
+  }
 
   // dump functions
   void dump(std::string msg) const {
@@ -572,56 +583,46 @@ public:
   }//End of newtonRefineAllRoots
 
 
-  /////////////////////////////////////////////////////////////////
-  //  DIAGNOSTIC TOOLS
-  /////////////////////////////////////////////////////////////////
-  // Polynomial tester:   P is polynomial to be tested
-  //          prec is the bit precision for root isolation
-  //          n is the number of roots predicted
+/* Evaluation of BigRat or Expr polynomial at BigFloat value using Filter.
+ * We will evaluate this polynomial approximately using BigFloats.
+ * However, we guarantee the sign of this evaluation
+ *
+   We use the following heuristic estimates of precision for coefficients:
 
-  static void testSturm(PolyNT &P, int prec, int n = -1) {
-    Sturm<NT> SS (P);
-    BFVecInterval v;
-    SS.refineAllRoots(v, prec);
-    std::cout << "   Number of roots is " << v.size() <<std::endl;
-    if ((n >= 0) & (v.size() == (unsigned)n))
-      std::cout << " (CORRECT!)" << std::endl;
-    else
-      std::cout << " (ERROR!) " << std::endl;
-    int i = 0;
-    for (BFVecInterval::const_iterator it = v.begin();
-         it != v.end(); ++it) {
-      std::cout << ++i << "th Root is in ["
-      << it->first << " ; " << it->second << "]" << std::endl;
+      r = 1 + lg(|P|_\infty) + lg(d+1)  		if f <= 1
+      r = 1 + lg(|P|_\infty) + lg(d+1) + d*lg|f| 	if f > 1
+      
+   if the filter fails, then we use Expr to do evaluation. */
+  BigFloat evalExactSign(const Polynomial<NT>& p, const BigFloat& val, 
+  		const extLong& oldMSB) const {
+    assert(val.isExact());
+    if (p.getTrueDegree() == -1)
+      return BigFloat(0);
+  
+    extLong r;
+    r = 1 + BigFloat(p.height()).uMSB() + clLg(long(p.getTrueDegree()+1));
+    if (val > 1)
+      r += p.getTrueDegree() * val.uMSB();
+    r += core_max(extLong(0), -oldMSB);
+  
+    bool validFlag;
+  
+    BigFloat rVal = p.evalFilter(val, validFlag, r);
+    if (validFlag)
+      return rVal;
+    else {
+      return p.evalExact(Expr(val));
     }
-  }// testSturm
-
-  // testNewtonSturm( Poly, aprec, n)
-  //   will run the Newton-Sturm refinement to isolate the roots of Poly
-  //         until absolute precision aprec.
-  //   n is the predicated number of roots
-  //      (will print an error message if n is wrong)
-  static void testNewtonSturm(PolyNT &P, int prec, int n = -1) {
-    Sturm<NT> SS (P);
-    BFVecInterval v;
-    SS.newtonRefineAllRoots(v, prec);
-    std::cout << "   Number of roots is " << v.size();
-    if ((n >= 0) & (v.size() == (unsigned)n))
-      std::cout << " (CORRECT!)" << std::endl;
-    else
-      std::cout << " (ERROR!) " << std::endl;
-
-    int i = 0;
-    for (BFVecInterval::iterator it = v.begin();
-         it != v.end(); ++it) {
-      std::cout << ++i << "th Root is in ["
-      << it->first << " ; " << it->second << "]" << std::endl;
-      if(it->second - it->first <= (1/power(BigFloat(2), prec)))
-	std::cout << " (CORRECT!) Precision attained" << std::endl;
-      else
-	std::cout << " (ERROR!) Precision not attained" << std::endl;
-    }
-  }// testNewtonSturm
+  }//evalExactSign
+  
+  BigFloat evalPoly(const Polynomial<NT>& p, const BigFloat& val,
+		    const extLong& r) {
+    //if (NT::hasExactDivision()){// only BigRat and Expr
+    if (hasExactDivision()){// only BigRat and Expr
+      return evalExactSign(p, val, r);
+    }else
+      return p.eval(val);
+  }
 
   // val = newtonIterN(n, bf, del, err)
   // 
@@ -636,7 +637,7 @@ public:
   //    then Polynomial<NT>::eval(x) will be exact!
   //    
   BigFloat newtonIterN(long n, const BigFloat& bf, BigFloat& del,
-		  unsigned long & err) {
+	unsigned long & err, extLong& fuMSB, extLong& ffuMSB) {
     if (len <= 0) return bf;   // Nothing to do!  User must
                                // check this possibility!
     BigFloat val = bf;  
@@ -644,8 +645,14 @@ public:
 
     // newton iteration
     for (int i=0; i<n; i++) {
-      BigFloat ff = seq[1].eval(val);
-      			// ff= f'(val), exact result as val is exact!
+      ////////////////////////////////////////////////////
+      // Filtered Eval
+      ////////////////////////////////////////////////////
+      BigFloat ff = evalPoly(seq[1], val, ffuMSB);
+      ffuMSB = ff.uMSB();
+      //ff is guaranteed to have the correct sign as the exact evaluation.
+      ////////////////////////////////////////////////////
+
       if (ff == 0) {
         NEWTON_DIV_BY_ZERO = true;
         del = 0;
@@ -653,15 +660,21 @@ public:
                 __FILE__, __LINE__, false);
         return 0;
       }
-      BigFloat f = seq[0].eval(val);
-      			// f = f(val), exact result as val is exact!
+
+      ////////////////////////////////////////////////////
+      // Filtered Eval
+      ////////////////////////////////////////////////////
+      BigFloat f= evalPoly(seq[0], val, fuMSB);
+      fuMSB = f.uMSB();
+      ////////////////////////////////////////////////////
+
       if (f == 0) {
         NEWTON_DIV_BY_ZERO = false;
         del = 0;    // Indicates that we have reached the exact root
 		    //    This is because eval(val) is exact!!!
         return val; // val is the exact root, before the last iteration
       }
-      del = (f/ff); // But the accuracy of "f/ff" must be controllable
+      del = f/ff; // But the accuracy of "f/ff" must be controllable
 		    // by the caller...
       err = del.err();
       del.makeExact(); // makeExact() is necessary
@@ -671,6 +684,14 @@ public:
     return val;
   }//newtonIterN
 
+  //Another version of newtonIterN which does not return the error 
+  //and passing the uMSB as arguments; it is easier for the user to call
+  //this.
+  BigFloat newtonIterN(long n, const BigFloat& bf, BigFloat& del){
+    unsigned long err;
+    extLong fuMSB=0, ffuMSB=0;
+    return newtonIterN(n, bf, del, err, fuMSB, ffuMSB);
+  }
   // v = newtonIterE(prec, bf, del)
   //
   //    return the value v which is obtained by Newton iteration
@@ -689,7 +710,8 @@ public:
   //       in the Newton zone.  So we use the global N_STOP_ITER to
   //       prevent infinite loop.
 
-  BigFloat newtonIterE(int prec, const BigFloat& bf, BigFloat& del) {
+  BigFloat newtonIterE(int prec, const BigFloat& bf, BigFloat& del, 
+	extLong& fuMSB, extLong& ffuMSB) {
     // usually, prec is positive
     int count = N_STOP_ITER; // upper bound on number of iterations
     int stepsize = 1;
@@ -697,7 +719,7 @@ public:
     unsigned long err = 0;
 
     do {
-      val = newtonIterN(stepsize, val, del, err);
+      val = newtonIterN(stepsize, val, del, err, fuMSB, ffuMSB);
       count -= stepsize;
       stepsize++; // heuristic
     } while ((del != 0) && ((del.uMSB() >= -prec) && (count >0))) ;
@@ -709,6 +731,11 @@ public:
     return val;
   }
 
+  //Another version of newtonIterE which avoids passing the uMSB's.
+  BigFloat newtonIterE(int prec, const BigFloat& bf, BigFloat& del){
+    extLong fuMSB=0, ffuMSB=0;
+    return newtonIterE(prec, bf, del, fuMSB, ffuMSB);
+  }
   // A Smale bound which is an \'a posteriori condition. Applying 
   // Newton iteration to any point z satisfying this condition we are 
   // sure to converge to the nearest root in a certain interval of z.
@@ -846,7 +873,7 @@ public:
 
 #ifdef CORE_DEBUG_NEWTON
 std::cout << "In newtonRefine, input J=" << J.first
-	<< ", " << J.second << std::endl;
+	<< ", " << J.second << " precision = " << aprec << std::endl;
 #endif
 
     if (len <= 0) return J;   // Nothing to do!  User must
@@ -883,11 +910,14 @@ std::cout << "In newtonRefine, input J=" << J.first
 
     x = (J.second + J.first).div2();
 
+    // initial estimate for the evaluation of filter
+    extLong fuMSB=0, ffuMSB=0;
+
     //MAIN WHILE LOOP. We always make sure that J contains the root
     while ( !smaleBoundTest(x) && 
 	    (J.second - J.first) > yap &&
 	   (J.second - J.first).uMSB() >= -aprec) {
-      x = newtonIterN(N, x, del, err);
+      x = newtonIterN(N, x, del, err, fuMSB, ffuMSB);
       if ((del == 0)&&(NEWTON_DIV_BY_ZERO == false)) {  // reached exact root!
         J.first = J.second = x;
         return J;
@@ -1014,7 +1044,7 @@ std::cout << "In newtonRefine, input J=" << J.first
       }
 
       //int k = clLg((-(J.second - J.first).lMSB() + aprec).asLong());
-      x = newtonIterE(aprec, x, del);
+      x = newtonIterE(aprec, x, del, fuMSB, ffuMSB);
       xSign = sign(seq[0].eval(x));
 
       if(xSign == leftSign){//Root is greater than x
@@ -1031,15 +1061,19 @@ std::cout << "In newtonRefine, input J=" << J.first
 
 
 #ifdef CORE_DEBUG
-    std::cout << " Returning from Newton Refine: J.first = " << J.first << " J.second = " << J.second << " aprec = " << aprec << " Sign at the interval endpoints = " << sign(seq[0].eval(J.first)) << " : " << sign(seq[0].eval(J.second)) << " Err at starting = " << J.first.err() << " Err at end = " << J.second.err() << std::endl;
+    std::cout << " Returning from Newton Refine: J.first = " << J.first
+	      << " J.second = " << J.second << " aprec = " << aprec
+	      << " Sign at the interval endpoints = " << sign(seq[0].eval(J.first))
+	      << " : " << sign(seq[0].eval(J.second)) << " Err at starting = " 
+	      << J.first.err() << " Err at end = " << J.second.err() << std::endl;
 #endif
 
     if(seq[0].eval(J.first) * seq[0].eval(J.second) > 0)
-      std::cerr <<" ERROR! Root is not in the Interval " << std::endl;
+      std::cout <<" ERROR! Root is not in the Interval " << std::endl;
 
 #ifdef CORE_DEBUG_NEWTON
     if(J.second - J.first >  BigFloat(1).exp2(-aprec))
-      std::cerr << "ERROR! Newton Refine failed to achieve the desired precision" << std::endl;
+      std::cout << "ERROR! Newton Refine failed to achieve the desired precision" << std::endl;
 #endif
 
       return(J);
@@ -1060,9 +1094,62 @@ int Sturm<NT>:: N_STOP_ITER = 10000;   // stop IterE after this many loops
 
 // isZeroIn(I):
 //          returns true iff 0 is in the closed interval I
-inline bool isZeroIn(BFInterval I) {
+CORE_INLINE bool isZeroIn(BFInterval I) {
 	return ((I.first <= 0.0) && (I.second >= 0.0));
 }
+
+/////////////////////////////////////////////////////////////////
+//  DIAGNOSTIC TOOLS
+/////////////////////////////////////////////////////////////////
+// Polynomial tester:   P is polynomial to be tested
+//          prec is the bit precision for root isolation
+//          n is the number of roots predicted
+
+template<class NT>
+CORE_INLINE void testSturm(const Polynomial<NT>&P, int prec, int n = -1) {
+  Sturm<NT> SS (P);
+  BFVecInterval v;
+  SS.refineAllRoots(v, prec);
+  std::cout << "   Number of roots is " << v.size() <<std::endl;
+  if ((n >= 0) & (v.size() == (unsigned)n))
+    std::cout << " (CORRECT!)" << std::endl;
+  else
+    std::cout << " (ERROR!) " << std::endl;
+  int i = 0;
+  for (BFVecInterval::const_iterator it = v.begin();
+       it != v.end(); ++it) {
+    std::cout << ++i << "th Root is in ["
+    << it->first << " ; " << it->second << "]" << std::endl;
+  }
+}// testSturm
+
+// testNewtonSturm( Poly, aprec, n)
+//   will run the Newton-Sturm refinement to isolate the roots of Poly
+//         until absolute precision aprec.
+//   n is the predicated number of roots
+//      (will print an error message if n is wrong)
+template<class NT>
+CORE_INLINE void testNewtonSturm(const Polynomial<NT>&P, int prec, int n = -1) {
+  Sturm<NT> SS (P);
+  BFVecInterval v;
+  SS.newtonRefineAllRoots(v, prec);
+  std::cout << "   Number of roots is " << v.size();
+  if ((n >= 0) & (v.size() == (unsigned)n))
+    std::cout << " (CORRECT!)" << std::endl;
+  else
+    std::cout << " (ERROR!) " << std::endl;
+
+  int i = 0;
+  for (BFVecInterval::iterator it = v.begin();
+       it != v.end(); ++it) {
+    std::cout << ++i << "th Root is in ["
+    << it->first << " ; " << it->second << "]" << std::endl;
+    if(it->second - it->first <= (1/power(BigFloat(2), prec)))
+      std::cout << " (CORRECT!) Precision attained" << std::endl;
+    else
+      std::cout << " (ERROR!) Precision not attained" << std::endl;
+  }
+}// testNewtonSturm
 
 CORE_END_NAMESPACE
 

@@ -60,9 +60,17 @@ public:
   /// constructor for <tt>std::string</tt>(default base = 10)
   BigFloat(const std::string& s) : RCBigFloat(new BigFloatRep(s)) {}
 
-  /// constructor for <tt>BigInt</tt>
-  BigFloat(const BigInt& I, unsigned long u = 0, long l = 0)
-      : RCBigFloat(new BigFloatRep(I, u, l)) {}
+  /// constructor for <tt>int</tt> and <tt>long</tt>
+  //     This is a hack because in Sturm, we need to approximate any
+  //     coefficient type NT to a BigFloat, and it would complain if we
+  //     do not have this method explicitly:
+  BigFloat(int& i, const extLong& r, const extLong& a)
+      : RCBigFloat(new BigFloatRep(i)) {}
+  BigFloat(long& x, const extLong& r, const extLong& a)
+      : RCBigFloat(new BigFloatRep(x)) {}
+  /// constructor from <tt>BigInt</tt>, error and exponent values
+  BigFloat(const BigInt& I, unsigned long er = 0, long ex = 0)
+      : RCBigFloat(new BigFloatRep(I, er, ex)) {}
   /// constructor for <tt>BigRat</tt>
   BigFloat(const BigRat& R, const extLong& r = defRelPrec,
            const extLong& a = defAbsPrec)
@@ -200,6 +208,10 @@ public:
 
   /// \name Helper Functions
   //@{
+  /// Has Exact Division
+  static bool hasExactDivision() {
+    return false;
+  }
   
   //CONSTANTS
   /// return BigFloat(0)
@@ -356,106 +368,6 @@ public:
 
 }; // class BigFloat
 
-/// minStar(m,n) returns the min-star of m and n
-inline long minStar(long m, long n) {
-  if (m*n <= 0) return 0;
-  if (m>0) 
-    return core_min(m, n);
-  else 
-    return core_max(m, n);
-}
-/// \name Functions for Compatibility with BigInt (needed by Poly, Curves)
-//@{
-/// isDivisible(x,y) = "is x divisible by y"
-/** 	Assuming that x and  y are in coanonized forms.
-	Defined to be true if mantissa(y) | mantissa(x) && 
-	exp(y) = min*(exp(y), exp(x)).
- *      This concepts assume x and y are exact BigFloats.
- */
-inline bool isDivisible(const BigFloat& a, const BigFloat& b) {
-  // assert: x and y are exact BigFloats.
-  if (sign(b.m()) == 0) return true;
-  if (sign(a.m()) == 0) return false;
-  unsigned long bin_a = getBinExpo(a.m());
-  unsigned long bin_b = getBinExpo(b.m());
-  
-  BigInt m_a = a.m() >> bin_a;
-  BigInt m_b = b.m() >> bin_b;
-  long e_a = bin_a + BigFloatRep::bits(a.exp());
-  long e_b = bin_b + BigFloatRep::bits(b.exp());
-  long dx = minStar(e_a, e_b);
-
-  return isDivisible(m_a, m_b) && (dx == e_b); 
-}
-
-inline bool isDivisible(double x, double y) {
-  //Are these exact?
-  return isDivisible(BigFloat(x), BigFloat(y)); 
-}
-
-/// div_exact(x,y) returns the BigFloat quotient of x divided by y
-/**	This is defined only if isDivisible(x,y).
- */
-// Chee (8/1/2004)   The definition of div_exact(x,y) 
-//   ensure that Polynomials<NT> works with NT=BigFloat and NT=double:
-inline BigFloat div_exact(const BigFloat& x, const BigFloat& y) {
-  BigInt z;
-  assert (isDivisible(x,y));
-  mpz_divexact(z.get_mp(), x.m().get_mp(), y.m().get_mp());
-  // assert: x.exp() - y.exp() does not under- or over-flow.
-  return BigFloat(z, 0, x.exp()-y.exp());  
-}
-
-inline BigFloat div_exact(double x, double y) {
-  return div_exact(BigFloat(x), BigFloat(y));
-}
-// Remark: there is another notion of "exact division" for BigFloats,
-// 	and that is to make the division return an "exact" BigFloat
-// 	i.e., err()=0.  
-
-/// gcd(a,b) =  BigFloat(gcd(a.mantissa,b.matissa), min(a.exp(), b.exp()) )
-inline BigFloat gcd(const BigFloat& a, const BigFloat& b) {
-  if (sign(a.m()) == 0) return b;
-  if (sign(b.m()) == 0) return a;
-
-  BigInt r;
-  long dx;
-  unsigned long bin_a = getBinExpo(a.m());
-  unsigned long bin_b = getBinExpo(b.m());
-
-/* THE FOLLOWING IS ALTERNATIVE CODE, for GCD using base B=2^{14}:
- *std::cout << "bin_a=" << bin_a << ",bin_b=" << bin_b << std::endl;
-  std::cout << "a.exp()=" << a.exp() << ",b.exp()=" << b.exp() << std::endl;
-  long chunk_a = BigFloatRep::chunkFloor(bin_a);
-  long chunk_b = BigFloatRep::chunkFloor(bin_b);
-  BigInt m_a = BigFloatRep::chunkShift(a.m(), chunk_a);
-  BigInt m_b = BigFloatRep::chunkShift(b.m(), chunk_b);
-
-  r = gcd(m_a, m_b);
-  dx = minStar(chunk_a + a.exp(), chunk_b + b.exp());
-*/
-  BigInt m_a = a.m() >> bin_a;
-  BigInt m_b = b.m() >> bin_b;
-  r = gcd(m_a, m_b);
-  dx = minStar(bin_a + BigFloatRep::bits(a.exp()),
-		  bin_b + BigFloatRep::bits(b.exp()));
-
-  long chunks = BigFloatRep::chunkFloor(dx);
-  r <<= (dx - BigFloatRep::bits(chunks));
-  dx = chunks;
-
-  return BigFloat(r, 0, dx);
-}
-
-// Not needed for now:
-/// div_rem
-// inline void div_rem(BigFloat& q, BigFloat& r,
-// 	const BigFloat& a, const BigFloat& b) {
-  //q.makeCopy();
-  //r.makeCopy();
-  //mpz_tdiv_qr(q.get_mp(), r.get_mp(), a.get_mp(), b.get_mp());
-//}//
-
 //@} // For compatibility with BigInt
 
 /// \name File I/O Functions
@@ -569,6 +481,107 @@ inline BigFloat centerize(const BigFloat& a, const BigFloat& b) {
   z.getRep().centerize(a.getRep(), b.getRep());
   return z;
 }
+
+/// minStar(m,n) returns the min-star of m and n
+inline long minStar(long m, long n) {
+  if (m*n <= 0) return 0;
+  if (m>0) 
+    return core_min(m, n);
+  else 
+    return core_max(m, n);
+}
+/// \name Functions for Compatibility with BigInt (needed by Poly, Curves)
+//@{
+/// isDivisible(x,y) = "is x divisible by y"
+/** 	Assuming that x and  y are in coanonized forms.
+	Defined to be true if mantissa(y) | mantissa(x) && 
+	exp(y) = min*(exp(y), exp(x)).
+ *      This concepts assume x and y are exact BigFloats.
+ */
+inline bool isDivisible(const BigFloat& a, const BigFloat& b) {
+  // assert: x and y are exact BigFloats.
+  if (sign(b.m()) == 0) return true;
+  if (sign(a.m()) == 0) return false;
+  unsigned long bin_a = getBinExpo(a.m());
+  unsigned long bin_b = getBinExpo(b.m());
+  
+  BigInt m_a = a.m() >> bin_a;
+  BigInt m_b = b.m() >> bin_b;
+  long e_a = bin_a + BigFloatRep::bits(a.exp());
+  long e_b = bin_b + BigFloatRep::bits(b.exp());
+  long dx = minStar(e_a, e_b);
+
+  return isDivisible(m_a, m_b) && (dx == e_b); 
+}
+
+inline bool isDivisible(double x, double y) {
+  //Are these exact?
+  return isDivisible(BigFloat(x), BigFloat(y)); 
+}
+
+/// div_exact(x,y) returns the BigFloat quotient of x divided by y
+/**	This is defined only if isDivisible(x,y).
+ */
+// Chee (8/1/2004)   The definition of div_exact(x,y) 
+//   ensure that Polynomials<NT> works with NT=BigFloat and NT=double:
+inline BigFloat div_exact(const BigFloat& x, const BigFloat& y) {
+  BigInt z;
+  assert (isDivisible(x,y));
+  mpz_divexact(z.get_mp(), x.m().get_mp(), y.m().get_mp());
+  // assert: x.exp() - y.exp() does not under- or over-flow.
+  return BigFloat(z, 0, x.exp()-y.exp());  
+}
+
+inline BigFloat div_exact(double x, double y) {
+  return div_exact(BigFloat(x), BigFloat(y));
+}
+// Remark: there is another notion of "exact division" for BigFloats,
+// 	and that is to make the division return an "exact" BigFloat
+// 	i.e., err()=0.  
+
+/// gcd(a,b) =  BigFloat(gcd(a.mantissa,b.matissa), min(a.exp(), b.exp()) )
+inline BigFloat gcd(const BigFloat& a, const BigFloat& b) {
+  if (sign(a.m()) == 0) return core_abs(b);
+  if (sign(b.m()) == 0) return core_abs(a);
+
+  BigInt r;
+  long dx;
+  unsigned long bin_a = getBinExpo(a.m());
+  unsigned long bin_b = getBinExpo(b.m());
+
+/* THE FOLLOWING IS ALTERNATIVE CODE, for GCD using base B=2^{14}:
+ *std::cout << "bin_a=" << bin_a << ",bin_b=" << bin_b << std::endl;
+  std::cout << "a.exp()=" << a.exp() << ",b.exp()=" << b.exp() << std::endl;
+  long chunk_a = BigFloatRep::chunkFloor(bin_a);
+  long chunk_b = BigFloatRep::chunkFloor(bin_b);
+  BigInt m_a = BigFloatRep::chunkShift(a.m(), chunk_a);
+  BigInt m_b = BigFloatRep::chunkShift(b.m(), chunk_b);
+
+  r = gcd(m_a, m_b);
+  dx = minStar(chunk_a + a.exp(), chunk_b + b.exp());
+*/
+  BigInt m_a = a.m() >> bin_a;
+  BigInt m_b = b.m() >> bin_b;
+  r = gcd(m_a, m_b);
+  dx = minStar(bin_a + BigFloatRep::bits(a.exp()),
+		  bin_b + BigFloatRep::bits(b.exp()));
+
+  long chunks = BigFloatRep::chunkFloor(dx);
+  r <<= (dx - BigFloatRep::bits(chunks));
+  dx = chunks;
+
+  return BigFloat(r, 0, dx);
+}
+
+// Not needed for now:
+/// div_rem
+// inline void div_rem(BigFloat& q, BigFloat& r,
+// 	const BigFloat& a, const BigFloat& b) {
+  //q.makeCopy();
+  //r.makeCopy();
+  //mpz_tdiv_qr(q.get_mp(), r.get_mp(), a.get_mp(), b.get_mp());
+//}//
+
 
 CORE_END_NAMESPACE
 #endif // _CORE_BIGFLOAT_H_

@@ -292,6 +292,11 @@ public:
   /// return Expr(1)
   static const Expr& getOne();
 
+  /// Has Exact Division
+  static bool hasExactDivision() {
+    return true;
+  }
+
   /// get the sign
   int sign() const {
     return rep->getSign();
@@ -516,7 +521,6 @@ inline Expr rootOf(const Polynomial<NT>& p, double x, double y) {
 /// helper function for constructing Polynomial node with pair of ints
 template <class NT>
 inline Expr rootOf(const Polynomial<NT>& p, int x, int y) {
-	cout<<"rootOf(P,int,int)" << endl;
   return Expr(p, BFInterval(BigFloat(x), BigFloat(y)) );
 }
 
@@ -525,17 +529,13 @@ inline Expr rootOf(const Polynomial<NT>& p, int x, int y) {
  * */
 template <class NT>
 inline Expr radical(const NT& n, int m) {
-  assert(n>=0);
-  if (n <= 1)
-    return Expr(n);
-  assert(m>=1);
-  if (m == 1)
+  assert(n>=0 && m>=1);
+  if (n == 0 || n == 1 || m == 1)
     return Expr(n);
   Polynomial<NT> Q(m);
-  BFInterval I(0, n);
   Q.setCoeff(0, -n);
   Q.setCoeff(m, 1);
-  return Expr(new ConstPolyRep<NT>(Q, I));
+  return Expr(Q, 0);
 }
 
 // We include this file here and not from inside Poly.h,

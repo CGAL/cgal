@@ -408,8 +408,6 @@ public:
   friend std::ostream& operator<<(std::ostream&, ExprRep&);
   //@}
 
-  CORE_MEMORY(ExprRep)
-
 private:
   int refCount;    // reference count
 
@@ -483,7 +481,6 @@ public:
   /// print debug information in tree mode
   void debugTree(int level, int indent, int depthLimit) const;
   //@}
-  CORE_MEMORY(ConstRep)
 protected:
   /// initialize nodeInfo
   virtual void initNodeInfo();
@@ -574,7 +571,8 @@ public:
     if ((I.first == 0)&&(I.second == 0))
       ffVal = 0;
     else
-      ffVal = computeFilteredValue();
+      ffVal = computeFilteredValue();	// silly to use a filter here!
+    					// since sign is known.
   }
 
   /// constructor for Polynomial
@@ -588,7 +586,7 @@ public:
 		      __FILE__, __LINE__, true);
       abort();
     }
-    ffVal = computeFilteredValue(); // Chee: this line doesn't make sense!
+    ffVal = computeFilteredValue(); // Chee: this line seems unnecessary
   }
 
   /// destructor
@@ -610,6 +608,7 @@ private:
     // I=ss.newtonRefine(I,
     //            54-(ss.seq[0].CauchyLowerBound()).lMSB().asLong());
     extLong lbd = ss.seq[0].CauchyLowerBound().lMSB();
+
     if (lbd.isTiny())
       I = ss.newtonRefine(I, 54);
     else
@@ -719,8 +718,6 @@ public:
   /// print debug information in tree mode
   void debugTree(int level, int indent, int depthLimit) const;
   //@}
-
-  CORE_MEMORY(UnaryOpRep)
 protected:
   ExprRep* child; ///< pointer to its child node
   /// initialize nodeInfo
@@ -818,8 +815,6 @@ public:
   /// print debug information in tree mode
   void debugTree(int level, int indent, int depthLimit) const;
   //@}
-
-  CORE_MEMORY(BinOpRep)
 protected:
   ExprRep* first;  ///< first operand
   ExprRep* second; ///< second operand

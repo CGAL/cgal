@@ -121,12 +121,15 @@ Polynomial<NT>::Polynomial(int n, const char * s[]) {
 }
 
 //The BNF syntax is the following:-
-//    [bipoly] -> [term]| [term] +/- [bipoly]
-//    [term] -> [basic term]|[basic term] [term]|[basic term]*[term]
-//    [basic term] -> [number]|'x'|[basic term]'^'[number]
-//                    | '(' [bipoly]')'|'-'
-//Unary minus is treated as a basic term. Number is a BigInt, rest of the
-//cases are still not handled.
+//    [poly] -> [term]| [term] '+/-' [poly] |
+//    		'-' [term] | '-' [term] '+/-' [poly]
+//    [term] -> [basic term] | [basic term] [term] | [basic term]*[term]
+//    [basic term] -> [number] | 'x' | [basic term] '^' [number]
+//                    | '(' [poly] ')' 
+//COMMENT: 
+//  [number] is assumed to be a BigInt; in the future, we probably
+//  want to generalize this to BigFloat, etc.
+//
 template <class NT>
 Polynomial<NT>::Polynomial(const string & s, char myX) {
    string ss(s);
@@ -253,10 +256,6 @@ int Polynomial<NT>::getbasicterm(string & s, Polynomial<NT> & P){
     i = matchparen(cstr, i);
     string t = s.substr(oldi+1, i -oldi -1);
     P = getpoly(t);
-  }else if(cstr[i] == '-'){//Unary Minus
-    NT cs[] = {-1};
-    Polynomial<NT> q(0, cs);
-    P = q;
   }else{
     std::cout <<"ERROR IN PARSING BASIC TERM" << std::endl;
   }
@@ -335,7 +334,14 @@ Polynomial<NT> Polynomial<NT>::getpoly(string & s){
     Polynomial<NT> P;
     // P will be the polynomial in which we accumulate the
     //sum and difference of the different terms.
-    unsigned int ind = getterm(s, P);
+    unsigned int ind;
+    if(cstr[0] == '-'){
+      t = s.substr(1, len);
+      ind = getterm(t,P) + 1;
+      P.negate();
+    }else{
+      ind = getterm(s, P);
+    }
     unsigned int oind =0;//the string between oind and ind is a term
     while(ind != len -1){
       Polynomial<NT> R;
@@ -723,21 +729,6 @@ Polynomial<NT> & Polynomial<NT>::power(unsigned int n) {	// self-power
   return *this;
 }
 
-// evaluation of Expr value
-template <class NT>
-Expr Polynomial<NT>::eval(const Expr& e) const {		// evaluation
-  if (degree == -1)
-    return Expr(0);
-  if (degree == 0)
-    return Expr(coeff[0]);
-  Expr val(0);
-  for (int i=degree; i>=0; i--) {
-    val *= e;
-    val += coeff[i];
-  }
-  return val;
-}//eval
-
 // evaluation of BigFloat value
 //   NOTE: we think of the polynomial as an analytic function in this setting
 //      If the coefficients are more general than BigFloats,
@@ -746,6 +737,7 @@ Expr Polynomial<NT>::eval(const Expr& e) const {		// evaluation
 //      BigFloats, and this conversion precision is controlled by the
 //      global variables defRelPrec and defAbsPrec.
 //   
+/*
 template <class NT>
 BigFloat Polynomial<NT>::eval(const BigFloat& f) const {	// evaluation
   if (degree == -1)
@@ -759,10 +751,21 @@ BigFloat Polynomial<NT>::eval(const BigFloat& f) const {	// evaluation
   }
   return val;
 }//eval
+*/
 
-// evaluation (generic version)
+// Evaluation Function (generic version)
+//
 //  NOTE: to call this method, a constructor of the form T(NT) must
 //    be available.  Here NT is the type of the coefficients.
+//
+// ASSERT:
+// 		Type T must be >= Type NT
+//
+// E.g., if NT is BigRat, then T be either BigRat or Expr, but NOT BigFloat.
+// 	
+// E.g., if NT is BigFloat, it is assumed that the BigFloat has
+// 	no error.  Thus, T can be BigFloat, BigRat or Expr in this case.
+
 template <class NT>
 template <class T>
 T Polynomial<NT>::eval(const T& f) const {	// evaluation
@@ -770,13 +773,54 @@ T Polynomial<NT>::eval(const T& f) const {	// evaluation
     return T(0);
   if (degree == 0)
     return T(coeff[0]);
-  BigFloat val(0);
+  T val(0);
   for (int i=degree; i>=0; i--) {
     val *= f;
     val += T(coeff[i]);	
   }
   return val;
 }//eval
+
+
+// Evaluation Filter function:
+//
+// 	ASSERT: NT = BigRat or Expr
+//
+template <class NT>
+BigFloat Polynomial<NT>::evalFilter(const BigFloat& f, bool& validFlag, 
+	const extLong& r, const extLong& a) const {	// evaluation
+  if (degree == -1)
+    return BigFloat(0);
+  if (degree == 0)
+    return BigFloat(coeff[0], r, a);
+
+  BigFloat fErrFree(f), val(0), valErrFree(0), c;
+  fErrFree.makeExact();
+  for (int i=degree; i>=0; i--) {
+    c = BigFloat(coeff[i], r, a);	
+    val *= f; 
+    val += c;
+    valErrFree *= fErrFree;
+    valErrFree += c.makeExact();	
+  }
+  validFlag = !val.isZeroIn();
+  return valErrFree;
+}//evalFilter
+
+template <>
+CORE_INLINE
+BigFloat Polynomial<BigInt>::evalFilter(const BigFloat& f, bool& validFlag, 
+	const extLong& r, const extLong& a) const {	// evaluation
+  assert(0);
+  return BigFloat(0);
+}
+
+template <class NT>
+BigFloat Polynomial<NT>::evalExact(const Expr& e) const {
+  Expr eVal = eval(e);
+  eVal.approx();
+  return eVal.BigFloatValue();
+} 
 //============================================================
 // Bounds
 //============================================================

@@ -195,8 +195,10 @@ public:
   // the tail coeff is non-zero. Return k.
 
   // Evaluation
-  Expr eval(const Expr&) const;		// evaluation
-  BigFloat eval(const BigFloat&) const;	// evaluation
+  //BigFloat eval(const BigFloat&) const;	// evaluation
+  BigFloat evalFilter(const BigFloat& f, bool& validFlag,
+    const extLong& r=defRelPrec, const extLong& a=defAbsPrec) const;
+  BigFloat evalExact(const Expr&) const;	// evaluation
   template <class T>
   T eval(const T&) const;	// evaluation
 
@@ -406,7 +408,8 @@ bool Polynomial<NT>::setCoeff(int i, const NT & cc) {
 
 // IMPLEMENTATIONS ARE FOUND IN
 //#include <CORE/poly/Poly.tcc>
-// and we include this file from CORE/Expr.h  AFTER the definition
+//
+// We include this file from CORE/Expr.h, AFTER the definition
 // of class Expr, because otherwise VC++.net2003 can'y compile Expr.cpp
 
 CORE_END_NAMESPACE
