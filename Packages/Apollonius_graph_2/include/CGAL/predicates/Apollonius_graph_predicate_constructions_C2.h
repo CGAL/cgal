@@ -35,13 +35,13 @@ class Inverted_weighted_point
   : public K::Site_2
 {
 public:
-  typedef typename K::Site_2             Site_2;
+  typedef typename K::Site_2             K_Site_2;
   typedef typename K::FT                 FT;
 private:
   FT   _p;
 public:
-  Inverted_weighted_point(const Site_2& wp, const FT& p)
-    : Site_2(wp), _p(p) {}
+  Inverted_weighted_point(const K_Site_2& wp, const FT& p)
+    : K_Site_2(wp), _p(p) {}
 
   inline FT p() const { return _p; }
 };
