@@ -12,9 +12,16 @@ email                : pierre.alliez@sophia.inria.fr
 #include "enriched_polyhedron.h"
 #include "builder.h"
 
-// "Quad/Triangle Subdivision"
-// Levin-Levin 02 
-// Stam-Loop 03
+// Implemented from:
+// Stam and Loop. Quad/Triangle Subdivision. 
+// Computer Graphics Forum.
+// Volume 22, Issue 1, March 2003.
+
+// Another reference is:
+// Levin. Polynomial Generation and Quasi-Interpolation 
+// in Stationary Non-Uniform Subdivision.
+// Computer Aided Geometric Design.
+// pages 41-60, volume 20(1), 2003.
 
 template <class HDS,class Polyhedron,class kernel>
 class CModifierQuadTriangle : public CGAL::Modifier_base<HDS>
@@ -25,7 +32,6 @@ private:
   typedef typename HDS::Face_handle     Face_handle;
   typedef typename HDS::Halfedge_handle Halfedge_handle;
   typedef typename CGAL::Enriched_polyhedron_incremental_builder_3<HDS> builder;
-
   Polyhedron *m_pMesh;
 
 public:
@@ -36,9 +42,9 @@ public:
     CGAL_assertion(pMesh != NULL);
     m_pMesh = pMesh;
   }
-	~CModifierQuadTriangle() {}
+  ~CModifierQuadTriangle() {}
 
-	// subdivision
+  // subdivision
   void operator()( HDS& hds)
   {
     builder B(hds,true);
@@ -48,9 +54,7 @@ public:
     B.end_surface();
   }
 
-  //***************************************************
   // add vertices
-  //***************************************************
   void add_vertices(builder &B)
   {
     // put original vertices
@@ -75,7 +79,7 @@ public:
       if(pHalfedge->tag() != -1)
         continue;
 
-      // simple edge bissection
+      // simple edge bisection
       const Point& p1 = pHalfedge->vertex()->point();
       const Point& p2 = pHalfedge->opposite()->vertex()->point();
       Point point = Point(0.5f*(p1.x()+p2.x()),
@@ -105,16 +109,14 @@ public:
 
       // barycentric subdivision
       Point barycenter;
-	    m_pMesh->compute_facet_center(pFacet,barycenter);
+      m_pMesh->compute_facet_center(pFacet,barycenter);
       B.add_vertex(barycenter);
       pFacet->tag(index);
       index++;
     }
   }
 
-  //***************************************************
   // add facets
-  //***************************************************
   void add_facets(builder &B)
   {
     Polyhedron::Facet_iterator pFacet;
@@ -240,11 +242,9 @@ public:
     }
   }
 
-  //***************************************************
   // correcting factor
-  //***************************************************
-	static float correcting_factor(unsigned int ne,
-		                             unsigned int nq)
+  static float correcting_factor(unsigned int ne,
+                                 unsigned int nq)
   {
     if(ne == 2 && nq == 1)
       return -0.20505f;
@@ -261,9 +261,7 @@ public:
     return 0.0f;
   }
   
-  //***************************************************
   // smooth vertex positions
-  //***************************************************
   static void smooth(Polyhedron *pMesh,
                      bool smooth_boundary = true)
   {
@@ -398,13 +396,13 @@ public:
 template <class Polyhedron,class kernel>
 class CSubdivider_quad_triangle
 {
-	public:
+  public:
     typedef typename Polyhedron::HalfedgeDS HalfedgeDS;
-		CSubdivider_quad_triangle() {}
-		~CSubdivider_quad_triangle() {}
+    CSubdivider_quad_triangle() {}
+    ~CSubdivider_quad_triangle() {}
 
-	public:
-		void subdivide(Polyhedron &OriginalMesh,
+  public:
+    void subdivide(Polyhedron &OriginalMesh,
                    Polyhedron &NewMesh,
                    const bool smooth_boundary = true)
     {

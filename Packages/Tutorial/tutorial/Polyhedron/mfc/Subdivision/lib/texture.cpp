@@ -17,14 +17,7 @@ email                : pierre.alliez@sophia.inria.fr
 static char THIS_FILE[] = __FILE__;
 #endif
 
-
-//////////////////////////////////////////////
-// CONSTRUCTORS
-//////////////////////////////////////////////
-
-//********************************************
 // Constructor
-//********************************************
 CTexture::CTexture()
 {
   m_pData = NULL;
@@ -36,9 +29,9 @@ CTexture::CTexture()
   strcpy(m_pFileName,"");
 }
 
-//********************************************
+
 // Destructor
-//********************************************
+
 CTexture::~CTexture()
 {
   Free();
@@ -46,13 +39,7 @@ CTexture::~CTexture()
 }
 
 
-//////////////////////////////////////////////
-// DATA
-//////////////////////////////////////////////
-
-//********************************************
 // Alloc
-//********************************************
 int CTexture::Alloc(unsigned int width, unsigned int height, unsigned int depth)
 {
   Free();
@@ -76,9 +63,9 @@ int CTexture::Alloc(unsigned int width, unsigned int height, unsigned int depth)
   return 1;
 }
 
-//********************************************
+
 // Free
-//********************************************
+
 void CTexture::Free()
 {
   if(m_pData != NULL)
@@ -92,16 +79,13 @@ void CTexture::Free()
 }
 
 
-//////////////////////////////////////////////
-//////////////////////////////////////////////
-// FILE READING
-//////////////////////////////////////////////
-//////////////////////////////////////////////
 
-//********************************************
 // ReadFile (dispatch function)
-//********************************************
-int CTexture::ReadFile(char *filename, unsigned int width, unsigned int height, unsigned int depth)
+
+int CTexture::ReadFile(char *filename, 
+                       unsigned int width, 
+                       unsigned int height, 
+                       unsigned int depth)
 {
   // Cleanup
   Free();
@@ -124,13 +108,13 @@ int CTexture::ReadFile(char *filename, unsigned int width, unsigned int height, 
 }
 
 
-//********************************************
+
 // ReadFileBMP (*.bmp)
-//********************************************
+
 // Read windows bmp files
 // Accept only 24 bits
 // Size : 2^n x 2^m
-//********************************************
+
 int CTexture::ReadFileBMP(char *filename)
 {
   
@@ -213,17 +197,17 @@ int CTexture::ReadFileBMP(char *filename)
   return 1;
 }
 
-//********************************************
+
 // UpdateWidthByte32
-//********************************************
+
 void CTexture::UpdateWidthByte32()
 {
   m_WidthByte32 = WidthByte32(m_Width,m_Depth);
 }
 
-//********************************************
+
 // WidthByte32
-//********************************************
+
 unsigned int CTexture::WidthByte32(unsigned int width, unsigned int depth)
 {
   // 32 bits alignment (4 bytes)
@@ -234,9 +218,9 @@ unsigned int CTexture::WidthByte32(unsigned int width, unsigned int depth)
     return (width*depth/8);
 }
 
-//********************************************
+
 // UpdateHeader
-//********************************************
+
 void CTexture::UpdateHeader()
 {
   UpdateWidthByte32();
@@ -255,14 +239,12 @@ void CTexture::UpdateHeader()
   m_Header.biClrImportant = 0;
 }
 
-
-//********************************************
 // ReadFileRAW (*.raw)
-//********************************************
+
 // Read raw files
 // Accept only 24 or 32 bits
 // Size : 2^n x 2^m
-//********************************************
+
 int CTexture::ReadFileRAW(char *filename, unsigned int width, unsigned int height, unsigned int depth)
 {
   // Check for valid file
@@ -294,15 +276,9 @@ int CTexture::ReadFileRAW(char *filename, unsigned int width, unsigned int heigh
   return 1;
 }
 
-//////////////////////////////////////////////
-//////////////////////////////////////////////
-// FILE SAVING
-//////////////////////////////////////////////
-//////////////////////////////////////////////
 
-//********************************************
 // SaveFile (dispatch function)
-//********************************************
+
 int CTexture::SaveFile(char *filename)
 {
   TRACE("CTexture::SaveFile : file : %s\n",filename);
@@ -319,9 +295,9 @@ int CTexture::SaveFile(char *filename)
 }
 
 
-//********************************************
+
 // SaveFileRAW
-//********************************************
+
 int CTexture::SaveFileRAW(char *filename)
 {
   // Check for valid image
@@ -351,12 +327,12 @@ int CTexture::SaveFileRAW(char *filename)
 }
 
 
-//********************************************
+
 // SaveFileBMP (*.bmp)
-//********************************************
+
 // Save windows bmp files
 // Accept only 24 bits
-//********************************************
+
 int CTexture::SaveFileBMP(char *filename)
 {
   if(!IsValid())
@@ -421,15 +397,8 @@ int CTexture::SaveFileBMP(char *filename)
 }
 
 
-//////////////////////////////////////////////
-//////////////////////////////////////////////
-// CHECKING
-//////////////////////////////////////////////
-//////////////////////////////////////////////
 
-//********************************************
 // IsValid
-//********************************************
 int CTexture::IsValid()
 {
   int success = 0;
@@ -450,9 +419,9 @@ int CTexture::IsValid()
 }
 
 
-//********************************************
+
 // HigherPowerOfTwo
-//********************************************
+
 int CTexture::HigherPowerOfTwo(int value)
 {
   if(value <= 0)
@@ -470,9 +439,9 @@ int CTexture::HigherPowerOfTwo(int value)
   }
 }
 
-//********************************************
+
 // LowerPowerOfTwo
-//********************************************
+
 int CTexture::LowerPowerOfTwo(int value)
 {
   if(value <= 0)
@@ -490,9 +459,9 @@ int CTexture::LowerPowerOfTwo(int value)
   }
 }
 
-//********************************************
+
 // SameSize
-//********************************************
+
 int CTexture::SameSize(CTexture *pTexture)
 {
   int success = (m_Width == pTexture->GetWidth());
@@ -501,9 +470,9 @@ int CTexture::SameSize(CTexture *pTexture)
 }
 
 
-//********************************************
+
 // Flip BGR to RGB
-//********************************************
+
 int CTexture::BGRtoRGB()
 {
   if(!IsValid())
@@ -515,21 +484,14 @@ int CTexture::BGRtoRGB()
     for(unsigned int i=0;i<m_Width;i++)
     {
       pixel = m_pData[m_WidthByte32*j+i*BytePerPixel+2];
-      m_pData[m_WidthByte32*j+i*BytePerPixel+2] = m_pData[m_WidthByte32*j+i*BytePerPixel];
+      m_pData[m_WidthByte32*j+i*BytePerPixel+2] = 
+        m_pData[m_WidthByte32*j+i*BytePerPixel];
       m_pData[m_WidthByte32*j+i*BytePerPixel] = pixel;
     }
   return 1;
 }
 
-//////////////////////////////////////////////
-//////////////////////////////////////////////
-// DUPLICATE
-//////////////////////////////////////////////
-//////////////////////////////////////////////
-
-//********************************************
 // Extract
-//********************************************
 int CTexture::Extract(int left, int top, int right, int bottom)
 {
   // Saturate
@@ -569,7 +531,8 @@ int CTexture::Extract(int left, int top, int right, int bottom)
   for(j=0;j<NewHeight;j++)
     for(i=0;i<NewWidth;i++)
       for(k=0;k<BytePerPixel;k++)
-	pData[NewWidthByte32*j+i*BytePerPixel+k] = m_pData[m_WidthByte32*(m_Height-1-(j+top))+(i+left)*BytePerPixel+k];
+        pData[NewWidthByte32*j+i*BytePerPixel+k] = 
+        m_pData[m_WidthByte32*(m_Height-1-(j+top))+(i+left)*BytePerPixel+k];
 
   // Replace datas
   delete [] m_pData;
@@ -584,9 +547,8 @@ int CTexture::Extract(int left, int top, int right, int bottom)
 }
 
 
-//********************************************
+
 // DuplicateMirror
-//********************************************
 int CTexture::DuplicateMirror(int left, int top, int right, int bottom)
 {
 
@@ -622,25 +584,29 @@ int CTexture::DuplicateMirror(int left, int top, int right, int bottom)
   for(j=0;j<NewHeight/2;j++)
     for(i=0;i<NewWidth/2;i++)
       for(k=0;k<BytePerPixel;k++)
-	pData[NewWidthByte32*j+i*BytePerPixel+k] = m_pData[m_WidthByte32*(bottom-(j+top))+(i+left)*BytePerPixel+k];
+        pData[NewWidthByte32*j+i*BytePerPixel+k] = 
+          m_pData[m_WidthByte32*(bottom-(j+top))+(i+left)*BytePerPixel+k];
   // o o
   // o x
   for(j=0;j<NewHeight/2;j++)
     for(i=NewWidth/2;i<NewWidth;i++)
       for(k=0;k<BytePerPixel;k++)
-	pData[NewWidthByte32*j+i*BytePerPixel+k] = m_pData[m_WidthByte32*(bottom-(j+top))+(right-(i-NewWidth/2+left))*BytePerPixel+k];
+        pData[NewWidthByte32*j+i*BytePerPixel+k] = 
+          m_pData[m_WidthByte32*(bottom-(j+top))+(right-(i-NewWidth/2+left))*BytePerPixel+k];
   // x o
   // o o
   for(j=NewHeight/2;j<NewHeight;j++)
     for(i=0;i<NewWidth/2;i++)
       for(k=0;k<BytePerPixel;k++)
-	pData[NewWidthByte32*j+i*BytePerPixel+k] = m_pData[m_WidthByte32*(j-NewHeight/2+top)+(i+left)*BytePerPixel+k];
+        pData[NewWidthByte32*j+i*BytePerPixel+k] = 
+        m_pData[m_WidthByte32*(j-NewHeight/2+top)+(i+left)*BytePerPixel+k];
   // o x
   // o o
   for(j=NewHeight/2;j<NewHeight;j++)
     for(i=NewWidth/2;i<NewWidth;i++)
       for(k=0;k<BytePerPixel;k++)
-	pData[NewWidthByte32*j+i*BytePerPixel+k] = m_pData[m_WidthByte32*(j-NewHeight/2+top)+(right-(i-NewWidth/2+left))*BytePerPixel+k];
+        pData[NewWidthByte32*j+i*BytePerPixel+k] = 
+        m_pData[m_WidthByte32*(j-NewHeight/2+top)+(right-(i-NewWidth/2+left))*BytePerPixel+k];
 
   // Replace datas
   delete [] m_pData;
@@ -655,11 +621,7 @@ int CTexture::DuplicateMirror(int left, int top, int right, int bottom)
 }
 
 
-
-
-//********************************************
 // DuplicateRepeatWidth
-//********************************************
 int CTexture::DuplicateRepeatWidth(int left, int top, int right, int bottom)
 {
   if(!Extract(left,top,right,bottom))
@@ -693,12 +655,14 @@ int CTexture::DuplicateRepeatWidth(int left, int top, int right, int bottom)
   for(j=0;j<NewHeight;j++)
     for(i=0;i<NewWidth/2;i++)
       for(k=0;k<BytePerPixel;k++)
-	pData[NewWidthByte32*j+i*BytePerPixel+k] = m_pData[m_WidthByte32*(bottom-(j+top))+(i+left)*BytePerPixel+k];
+        pData[NewWidthByte32*j+i*BytePerPixel+k] = 
+          m_pData[m_WidthByte32*(bottom-(j+top))+(i+left)*BytePerPixel+k];
   // o x
   for(j=0;j<NewHeight;j++)
     for(i=NewWidth/2;i<NewWidth;i++)
       for(k=0;k<BytePerPixel;k++)
-	pData[NewWidthByte32*j+i*BytePerPixel+k] = m_pData[m_WidthByte32*(bottom-(j+top))+(i-NewWidth/2+left)*BytePerPixel+k];
+        pData[NewWidthByte32*j+i*BytePerPixel+k] = 
+        m_pData[m_WidthByte32*(bottom-(j+top))+(i-NewWidth/2+left)*BytePerPixel+k];
 
   // Replace datas
   delete [] m_pData;
@@ -713,82 +677,70 @@ int CTexture::DuplicateRepeatWidth(int left, int top, int right, int bottom)
 }
 
 
-//********************************************
+
 // Fill
-//********************************************
+
 void CTexture::Fill(unsigned char r,
-										unsigned char g,
-										unsigned char b)
+                    unsigned char g,
+                    unsigned char b)
 {
   if(!IsValid()) return;
   if(m_Depth != 24) return;
   for(unsigned int j=0;j<m_Height;j++)
     for(unsigned int i=0;i<m_Width;i++)
-		{
-			m_pData[m_WidthByte32*j+i*3] = b;
-			m_pData[m_WidthByte32*j+i*3+1] = g;
-			m_pData[m_WidthByte32*j+i*3+2] = r;
-		}
+    {
+      m_pData[m_WidthByte32*j+i*3] = b;
+      m_pData[m_WidthByte32*j+i*3+1] = g;
+      m_pData[m_WidthByte32*j+i*3+2] = r;
+    }
 }
 
 
-//***************************************
 // GreyToColor
-//***************************************
 void CTexture::GreyToColor(unsigned char grey,
-													 unsigned char r, 
-													 unsigned char g,
-													 unsigned char b)
+                           unsigned char r, 
+                           unsigned char g,
+                           unsigned char b)
 {
   if(!IsValid()) return;
   if(m_Depth != 24) return;
   for(unsigned int j=0;j<m_Height;j++)
     for(unsigned int i=0;i<m_Width;i++)
-		{
-			if(m_pData[m_WidthByte32*j+i*3] == grey)
-			{
-				m_pData[m_WidthByte32*j+i*3] = b;
-				m_pData[m_WidthByte32*j+i*3+1] = g;
-				m_pData[m_WidthByte32*j+i*3+2] = r;
-			}
-		}
+    {
+      if(m_pData[m_WidthByte32*j+i*3] == grey)
+      {
+        m_pData[m_WidthByte32*j+i*3] = b;
+        m_pData[m_WidthByte32*j+i*3+1] = g;
+        m_pData[m_WidthByte32*j+i*3+2] = r;
+      }
+    }
 }
 
-//***************************************
 // ColorToColor
-//***************************************
 void CTexture::ColorToColor(unsigned char r1,
-														unsigned char g1,
-														unsigned char b1,
-														unsigned char r2, 
-														unsigned char g2,
-													  unsigned char b2)
+                            unsigned char g1,
+                            unsigned char b1,
+                            unsigned char r2, 
+                            unsigned char g2,
+                            unsigned char b2)
 {
   if(!IsValid()) return;
   if(m_Depth != 24) return;
   for(unsigned int j=0;j<m_Height;j++)
     for(unsigned int i=0;i<m_Width;i++)
-		{
-			if(m_pData[m_WidthByte32*j+i*3] == b1 &&
-				 m_pData[m_WidthByte32*j+i*3+1] == g1 &&
-				 m_pData[m_WidthByte32*j+i*3+2] == r1)
-			{
-				m_pData[m_WidthByte32*j+i*3]   = b2;
-				m_pData[m_WidthByte32*j+i*3+1] = g2;
-				m_pData[m_WidthByte32*j+i*3+2] = r2;
-			}
-		}
+    {
+      if(m_pData[m_WidthByte32*j+i*3] == b1 &&
+         m_pData[m_WidthByte32*j+i*3+1] == g1 &&
+         m_pData[m_WidthByte32*j+i*3+2] == r1)
+      {
+        m_pData[m_WidthByte32*j+i*3]   = b2;
+        m_pData[m_WidthByte32*j+i*3+1] = g2;
+        m_pData[m_WidthByte32*j+i*3+2] = r2;
+      }
+    }
 }
 
-//////////////////////////////////////////////
-//////////////////////////////////////////////
-// ALPHA
-//////////////////////////////////////////////
-//////////////////////////////////////////////
-
-//********************************************
 // SetAlphaLayer
-//********************************************
 int CTexture::SetAlphaLayer(unsigned char alpha) // 0 - 255
 {
   // Check
@@ -806,9 +758,8 @@ int CTexture::SetAlphaLayer(unsigned char alpha) // 0 - 255
   return 1;
 }
 
-//********************************************
+
 // AddAlphaLayer
-//********************************************
 int CTexture::AddAlphaLayer(unsigned char alpha) // 0 - 255
 {
   // Check
@@ -848,11 +799,8 @@ int CTexture::AddAlphaLayer(unsigned char alpha) // 0 - 255
   return 1;
 }
 
-
-//********************************************
 // SetAlpha
 // From RGB to grey scales, then alpha layer
-//********************************************
 int CTexture::SetAlphaLayer(CTexture *pTexture) 
 {
   // Check
@@ -873,26 +821,18 @@ int CTexture::SetAlphaLayer(CTexture *pTexture)
   int BytePerPixel = pTexture->GetDepth() / 8;
   for(int i=0;i<size;i++)
     m_pData[4*i+3] = (unsigned char)((int)pData[BytePerPixel*i+0]+
-				     (int)pData[BytePerPixel*i+1]+
-				     (int)pData[BytePerPixel*i+2])/3;
+             (int)pData[BytePerPixel*i+1]+
+             (int)pData[BytePerPixel*i+2])/3;
 
   return 1;
 }
 
-//////////////////////////////////////////////
-//////////////////////////////////////////////
-// DISPLAY
-//////////////////////////////////////////////
-//////////////////////////////////////////////
-
-//********************************************
 // Draw
-//********************************************
 int CTexture::Draw(CDC *pDC, 
-									 int xOffset, 
-									 int yOffset, 
-									 int width, 
-									 int height)
+                   int xOffset, 
+                   int yOffset, 
+                   int width, 
+                   int height)
 {
   // Checking
   if(!IsValid())
@@ -906,43 +846,42 @@ int CTexture::Draw(CDC *pDC,
 
   // Painting
   return SetDIBitsToDevice(pDC->m_hDC, xOffset, yOffset, width, height, 0, 0, 0, 
-			   m_Height, GetData(), (CONST BITMAPINFO *)&m_Header, DIB_RGB_COLORS);
+         m_Height, GetData(), (CONST BITMAPINFO *)&m_Header, DIB_RGB_COLORS);
 }
 
-//********************************************
+
 // Stretch
-//********************************************
+
 int CTexture::Stretch(CDC *pDC,
-											CRect *pRect)
+                      CRect *pRect)
 {
-	// Checking
-	if(!IsValid())
-		return 0;
-	
-	SetStretchBltMode(pDC->m_hDC,COLORONCOLOR);
-	
-	// Painting
-	return StretchDIBits(pDC->m_hDC,
-		pRect->left,
-		pRect->top,
-		pRect->Width(),
-		pRect->Height(),
-		0,
-		0,
-		m_Width,
-		m_Height,
-		GetData(),
-		(CONST BITMAPINFO *)&m_Header,
-		DIB_RGB_COLORS,SRCCOPY);
+  // Checking
+  if(!IsValid())
+    return 0;
+  
+  SetStretchBltMode(pDC->m_hDC,COLORONCOLOR);
+  
+  // Painting
+  return StretchDIBits(pDC->m_hDC,
+    pRect->left,
+    pRect->top,
+    pRect->Width(),
+    pRect->Height(),
+    0,
+    0,
+    m_Width,
+    m_Height,
+    GetData(),
+    (CONST BITMAPINFO *)&m_Header,
+    DIB_RGB_COLORS,SRCCOPY);
 }
 
-//********************************************
+
 // ReadBuffer
-//********************************************
 int CTexture::ReadBuffer(unsigned char *buffer, 
-												 int width, 
-												 int height, 
-												 int depth)
+                         int width, 
+                         int height, 
+                         int depth)
 {
   if(buffer == NULL)
     return 0;
@@ -955,44 +894,41 @@ int CTexture::ReadBuffer(unsigned char *buffer,
   for(int j=0;j<height;j++)
     for(int i=0;i<width;i++)
       for(int k=0;k<BytePerPixel;k++)
-				m_pData[m_WidthByte32*j + i*BytePerPixel+k] = 
-				buffer[(width*j+i)*BytePerPixel+k];
+        m_pData[m_WidthByte32*j + i*BytePerPixel+k] = 
+        buffer[(width*j+i)*BytePerPixel+k];
 
   return 1;
 }
 
 
-//********************************************
+
 // ReadBufferByte32
-//********************************************
 int CTexture::ReadBufferByte32(unsigned char *pData, 
-															 int width, 
-															 int height)
+                               int width, 
+                               int height)
 {
-	// alloc 32 bits buffer
+  // alloc 32 bits buffer
   if(!Alloc(width,height,32))
     return 0;
 
   if(pData == NULL)
     return 0;
 
-	memcpy(m_pData,pData,height*m_WidthByte32);
+  memcpy(m_pData,pData,height*m_WidthByte32);
   return 1;
 }
 
 
-//***************************************
 // Copy
-//***************************************
 void CTexture::Copy(CTexture *pTexture)
 {
-	unsigned char *pBuffer = pTexture->GetData();
+  unsigned char *pBuffer = pTexture->GetData();
   if(pBuffer == NULL)
     return;
 
-	unsigned int width = pTexture->GetWidth();
-	unsigned int height = pTexture->GetHeight();
-	unsigned int depth = pTexture->GetDepth();
+  unsigned int width = pTexture->GetWidth();
+  unsigned int height = pTexture->GetHeight();
+  unsigned int depth = pTexture->GetDepth();
   if(!Alloc(width,height,depth))
     return;
 
@@ -1001,18 +937,18 @@ void CTexture::Copy(CTexture *pTexture)
   for(unsigned int j=0;j<height;j++)
     for(unsigned int i=0;i<width;i++)
       for(unsigned int k=0;k<BytePerPixel;k++)
-				m_pData[m_WidthByte32*j + i*BytePerPixel+k] = 
-				pBuffer[(width*j+i)*BytePerPixel+k];
+        m_pData[m_WidthByte32*j + i*BytePerPixel+k] = 
+        pBuffer[(width*j+i)*BytePerPixel+k];
 }
 
 
-//********************************************
+
 // ReadBuffer
-//********************************************
+
 int CTexture::ReadBuffer(float *buffer, 
-												 int width, 
-												 int height, 
-												 int depth)
+                         int width, 
+                         int height, 
+                         int depth)
 {
   if(buffer == NULL)
     return 0;
@@ -1025,19 +961,19 @@ int CTexture::ReadBuffer(float *buffer,
   for(int j=0;j<height;j++)
     for(int i=0;i<width;i++)
       for(int k=0;k<BytePerPixel;k++)
-	      m_pData[m_WidthByte32*j + i*BytePerPixel+k] = 
-				(BYTE)(255.0f * buffer[(width*j+i)*BytePerPixel+k]);
+        m_pData[m_WidthByte32*j + i*BytePerPixel+k] = 
+        (BYTE)(255.0f * buffer[(width*j+i)*BytePerPixel+k]);
 
   return 1;
 }
 
-//********************************************
+
 // ReadBuffer
-//********************************************
+
 int CTexture::ReadBuffer(float **ppBuffer, 
-												 int width, 
-												 int height,
-												 float ratio)
+                         int width, 
+                         int height,
+                         float ratio)
 {
   if(ppBuffer == NULL)
     return 0;
@@ -1047,64 +983,64 @@ int CTexture::ReadBuffer(float **ppBuffer,
 
   for(int j=0;j<height;j++)
     for(int i=0;i<width;i++)
-		{
-	   m_pData[m_WidthByte32*j + i*3]   = (unsigned char)(ratio*ppBuffer[j][i]);
-	   m_pData[m_WidthByte32*j + i*3+1] = (unsigned char)(ratio*ppBuffer[j][i]);
-	   m_pData[m_WidthByte32*j + i*3+2] = (unsigned char)(ratio*ppBuffer[j][i]);
-		}
+    {
+     m_pData[m_WidthByte32*j + i*3]   = (unsigned char)(ratio*ppBuffer[j][i]);
+     m_pData[m_WidthByte32*j + i*3+1] = (unsigned char)(ratio*ppBuffer[j][i]);
+     m_pData[m_WidthByte32*j + i*3+2] = (unsigned char)(ratio*ppBuffer[j][i]);
+    }
   return 1;
 }
 
-//********************************************
+
 // WriteBuffer
-//********************************************
+
 int CTexture::WriteBuffer(float **ppBuffer, 
-												 int width, 
-												 int height)
+                         int width, 
+                         int height)
 {
   if(ppBuffer == NULL)
     return 0;
 
   for(int j=0;j<height;j++)
     for(int i=0;i<width;i++) // only first channel
-			ppBuffer[j][i] = m_pData[m_WidthByte32*j + i*3];
+      ppBuffer[j][i] = m_pData[m_WidthByte32*j + i*3];
   return 1;
 }
 
-//********************************************
+
 // WriteBuffer32
-//********************************************
+
 int CTexture::WriteBuffer32(float **ppBuffer, 
-														int width, 
-														int height)
+                            int width, 
+                            int height)
 {
   if(ppBuffer == NULL)
     return 0;
-	ASSERT(m_Depth == 32);
-	unsigned int r,g,b;
-	int tmp;
+  ASSERT(m_Depth == 32);
+  unsigned int r,g,b;
+  int tmp;
   for(int j=0;j<height;j++)
-	{
-		tmp = m_WidthByte32*j;
+  {
+    tmp = m_WidthByte32*j;
     for(int i=0;i<width;i++) // from 3 channels
-		{
-			b = m_pData[tmp + i*4];
-			g = m_pData[tmp + i*4+1];
-			r = m_pData[tmp + i*4+2];
-			unsigned int value = (r << 16) + (g << 8) + b;
-			ppBuffer[j][i] = (float)value;
-		}
-	}
+    {
+      b = m_pData[tmp + i*4];
+      g = m_pData[tmp + i*4+1];
+      r = m_pData[tmp + i*4+2];
+      unsigned int value = (r << 16) + (g << 8) + b;
+      ppBuffer[j][i] = (float)value;
+    }
+  }
   return 1;
 }
 
-//********************************************
+
 // ReadBuffer
-//********************************************
+
 int CTexture::ReadBuffer(double *buffer, 
-												 int width, 
-												 int height, 
-												 int depth)
+                         int width, 
+                         int height, 
+                         int depth)
 {
   if(buffer == NULL)
     return 0;
@@ -1116,19 +1052,17 @@ int CTexture::ReadBuffer(double *buffer,
 
   for(int j=0;j<height;j++)
     for(int i=0;i<width;i++)
-		{
-	   m_pData[m_WidthByte32*j + i*BytePerPixel]   = (unsigned char)buffer[width*j+i];
-	   m_pData[m_WidthByte32*j + i*BytePerPixel+1] = (unsigned char)buffer[width*j+i];
-	   m_pData[m_WidthByte32*j + i*BytePerPixel+2] = (unsigned char)buffer[width*j+i];
-		}
+    {
+     m_pData[m_WidthByte32*j + i*BytePerPixel]   = (unsigned char)buffer[width*j+i];
+     m_pData[m_WidthByte32*j + i*BytePerPixel+1] = (unsigned char)buffer[width*j+i];
+     m_pData[m_WidthByte32*j + i*BytePerPixel+2] = (unsigned char)buffer[width*j+i];
+    }
 
   return 1;
 }
 
-
-//********************************************
 // Grey
-//********************************************
+
 int CTexture::Grey(unsigned int x, unsigned int y)
 {
   int BytePerPixel = m_Depth / 8;
@@ -1137,15 +1071,15 @@ int CTexture::Grey(unsigned int x, unsigned int y)
     return (int)m_pData[m_WidthByte32*y + x]; 
   else // 24 or 32 bits (alpha layer)
     return (int)((int)m_pData[m_WidthByte32*y + x*BytePerPixel+0]+ 
-		 (int)m_pData[m_WidthByte32*y + x*BytePerPixel+1]+
-		 (int)m_pData[m_WidthByte32*y + x*BytePerPixel+2])/3;
+     (int)m_pData[m_WidthByte32*y + x*BytePerPixel+1]+
+     (int)m_pData[m_WidthByte32*y + x*BytePerPixel+2])/3;
 }
 
-//********************************************
+
 // Color
-//********************************************
+
 void CTexture::Color(unsigned int x, unsigned int y, 
-		     unsigned char *pRed, unsigned char *pGreen, unsigned char *pBlue)
+         unsigned char *pRed, unsigned char *pGreen, unsigned char *pBlue)
 {
   int BytePerPixel = m_Depth / 8;
   // Grey scale
@@ -1163,11 +1097,7 @@ void CTexture::Color(unsigned int x, unsigned int y,
   }
 }
 
-
-
-//***************************************
 // ExportHandle
-//***************************************
 HANDLE CTexture::ExportHandle()
 { 
   HANDLE handle;
@@ -1193,119 +1123,113 @@ HANDLE CTexture::ExportHandle()
     ::GlobalUnlock((HGLOBAL)handle);
   }
   TRACE("ok\n");
-	ASSERT(handle);
+  ASSERT(handle);
   return handle;
 }
 
-//********************************************
 // ImportHandle
-//********************************************
 int CTexture::ImportHandle(HANDLE handle)
 {
-	TRACE("Import handle...");
+  TRACE("Import handle...");
   ASSERT(handle != NULL);
-	char *pData = (char *) ::GlobalLock((HGLOBAL)handle);
-	
-	// Header
-	memcpy(&m_Header,pData,sizeof(BITMAPINFOHEADER));
-	
-	TRACE("\n");
-	TRACE("IMAGE HEADER :\n");
-	TRACE("biSize : %d\n",m_Header.biSize);
-	TRACE("biWidth : %d\n",m_Header.biWidth);
-	TRACE("biHeight : %d\n",m_Header.biHeight);
-	TRACE("biPlanes : %d\n",m_Header.biPlanes);
-	TRACE("biBitCount : %d\n",m_Header.biBitCount);
-	TRACE("biCompression : %d\n",m_Header.biCompression);
-	TRACE("biSizeImage : %d\n",m_Header.biSizeImage);
-	TRACE("biXPelsPerMeter : %d\n",m_Header.biXPelsPerMeter);
-	TRACE("biYPelsPerMeter : %d\n",m_Header.biYPelsPerMeter);
-	TRACE("biClrUsed : %d\n",m_Header.biClrUsed);
-	TRACE("biClrImportant : %d\n",m_Header.biClrImportant);
-	
-	// 24 bits ?
-	if(m_Header.biPlanes != 1 ||
-		m_Header.biBitCount != 24)
-	{
-		AfxMessageBox("Texture file must have 24 bits depth");
-		return 0;
-	}
-	
-	// Alloc (does call Free before)
-	Alloc(m_Header.biWidth,m_Header.biHeight,m_Header.biBitCount);
-	memcpy(m_pData,pData+sizeof(BITMAPINFOHEADER),m_WidthByte32*m_Height);
-	
-	::GlobalUnlock((HGLOBAL)handle);
-	return 1;
+  char *pData = (char *) ::GlobalLock((HGLOBAL)handle);
+  
+  // Header
+  memcpy(&m_Header,pData,sizeof(BITMAPINFOHEADER));
+  
+  TRACE("\n");
+  TRACE("IMAGE HEADER :\n");
+  TRACE("biSize : %d\n",m_Header.biSize);
+  TRACE("biWidth : %d\n",m_Header.biWidth);
+  TRACE("biHeight : %d\n",m_Header.biHeight);
+  TRACE("biPlanes : %d\n",m_Header.biPlanes);
+  TRACE("biBitCount : %d\n",m_Header.biBitCount);
+  TRACE("biCompression : %d\n",m_Header.biCompression);
+  TRACE("biSizeImage : %d\n",m_Header.biSizeImage);
+  TRACE("biXPelsPerMeter : %d\n",m_Header.biXPelsPerMeter);
+  TRACE("biYPelsPerMeter : %d\n",m_Header.biYPelsPerMeter);
+  TRACE("biClrUsed : %d\n",m_Header.biClrUsed);
+  TRACE("biClrImportant : %d\n",m_Header.biClrImportant);
+  
+  // 24 bits ?
+  if(m_Header.biPlanes != 1 ||
+    m_Header.biBitCount != 24)
+  {
+    AfxMessageBox("Texture file must have 24 bits depth");
+    return 0;
+  }
+  
+  // Alloc (does call Free before)
+  Alloc(m_Header.biWidth,m_Header.biHeight,m_Header.biBitCount);
+  memcpy(m_pData,pData+sizeof(BITMAPINFOHEADER),m_WidthByte32*m_Height);
+  
+  ::GlobalUnlock((HGLOBAL)handle);
+  return 1;
 }
 
 
-//***************************************
 // GenerateGrid
-//***************************************
 void CTexture::GenerateGrid(unsigned int width,
-														unsigned int height, 
-														int size,
-														unsigned char r,
-														unsigned char g,
-														unsigned char b,
-														unsigned char rb,
-														unsigned char gb,
-														unsigned char bb)
+                            unsigned int height, 
+                            int size,
+                            unsigned char r,
+                            unsigned char g,
+                            unsigned char b,
+                            unsigned char rb,
+                            unsigned char gb,
+                            unsigned char bb)
 {
-	Alloc(width,height,24);
+  Alloc(width,height,24);
 
-	// fill background
+  // fill background
   for(unsigned int j=0;j<height;j++)
     for(unsigned int i=0;i<width;i++)
-		{
-			m_pData[m_WidthByte32*j + i*3]   = rb;
-			m_pData[m_WidthByte32*j + i*3+1] = gb;
-			m_pData[m_WidthByte32*j + i*3+2] = bb;
-		}
+    {
+      m_pData[m_WidthByte32*j + i*3]   = rb;
+      m_pData[m_WidthByte32*j + i*3+1] = gb;
+      m_pData[m_WidthByte32*j + i*3+2] = bb;
+    }
 
-	// horizontal
+  // horizontal
   for(j=0;j<height;j+=size)
     for(unsigned int i=0;i<width;i++)
-		{
-			m_pData[m_WidthByte32*j + i*3]   = r;
-			m_pData[m_WidthByte32*j + i*3+1] = g;
-			m_pData[m_WidthByte32*j + i*3+2] = b;
-		}
+    {
+      m_pData[m_WidthByte32*j + i*3]   = r;
+      m_pData[m_WidthByte32*j + i*3+1] = g;
+      m_pData[m_WidthByte32*j + i*3+2] = b;
+    }
 
-	// vertical
+  // vertical
   for(j=0;j<height;j++)
-	  for(unsigned int i=0;i<width;i+=size)
-		{
-			m_pData[m_WidthByte32*j + i*3]   = r;
-			m_pData[m_WidthByte32*j + i*3+1] = g;
-			m_pData[m_WidthByte32*j + i*3+2] = b;
-		}
+    for(unsigned int i=0;i<width;i+=size)
+    {
+      m_pData[m_WidthByte32*j + i*3]   = r;
+      m_pData[m_WidthByte32*j + i*3+1] = g;
+      m_pData[m_WidthByte32*j + i*3+2] = b;
+    }
 }
 
-//***************************************
 // GenerateLines
-//***************************************
 void CTexture::GenerateLines(unsigned int width,
-														 unsigned int height, 
-														 int size,
-														 unsigned char r,
-														 unsigned char g,
-														 unsigned char b,
-														 unsigned char rb,
-														 unsigned char gb,
-														 unsigned char bb)
+                             unsigned int height, 
+                             int size,
+                             unsigned char r,
+                             unsigned char g,
+                             unsigned char b,
+                             unsigned char rb,
+                             unsigned char gb,
+                             unsigned char bb)
 {
-	Alloc(width,height,24);
+  Alloc(width,height,24);
 
-	// fill background
+  // fill background
   for(unsigned int j=0;j<height;j++)
     for(unsigned int i=0;i<width;i++)
-		{
-			m_pData[m_WidthByte32*j + i*3]   = rb;
-			m_pData[m_WidthByte32*j + i*3+1] = gb;
-			m_pData[m_WidthByte32*j + i*3+2] = bb;
-		}
+    {
+      m_pData[m_WidthByte32*j + i*3]   = rb;
+      m_pData[m_WidthByte32*j + i*3+1] = gb;
+      m_pData[m_WidthByte32*j + i*3+2] = bb;
+    }
 
   // horizontal zebra
   for(j=0;j<height;j++)
@@ -1319,11 +1243,6 @@ void CTexture::GenerateLines(unsigned int width,
       }
   }
 }
-
-
-
-
-
 // ** EOF **
 
 
