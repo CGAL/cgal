@@ -2,14 +2,15 @@
 // #define CGAL_NO_POSTCONDITIONS
 // #define CGAL_IA_DEBUG
 
+#include <CGAL/config.h>
+#include <CGAL/basic.h>
+
 #ifdef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 #define CGAL_IA_CT double
 #define CGAL_IA_ET leda_real
 #endif
 
-#include <CGAL/basic.h>
 #include <CGAL/misc.h>
-#include <CGAL/config.h>
 // #include <CGAL/kernel_basic.h>
 // #include <CGAL/number_utils.h>
 #include <CGAL/Timer.h>
@@ -109,5 +110,6 @@ int test()
   px=1.1; py=1.7; la=1.3; lb=1.5; lc=-3.98;
   cout << "Result 2nd test: " << (int)compare_y_at_xC2(px, py, la, lb, lc);
   cout << " ( == 0 ) (not sure, it depends of the first approx)\n";
+  cout << (int) compare_y_at_xC2(qq,qq,qq,qq,qq);
   return 0;
 }
