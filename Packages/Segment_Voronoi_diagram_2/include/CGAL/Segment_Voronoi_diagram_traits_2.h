@@ -47,6 +47,12 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template<class T>
+void debug_info(char msg[], const T& t)
+{
+  std::cerr << msg << " \t\t\t" << t << std::endl;
+}
+
 //***********************************************************************
 //***********************************************************************
 //                              PREDICATES
@@ -77,7 +83,7 @@ public:
   bool operator()(const Site_2& p, const Site_2& q) const
   {
     CGAL_precondition( p.is_point() && q.is_point() );
-
+    //    debug_info("are_same_points_2::", p);
     return svd_are_same_points_C2<K>(p, q);
   }
 };
@@ -136,6 +142,7 @@ public:
     std::cout << "t2: " << t2 << std::endl;
     std::cout << "q: " << q << std::endl;
 #endif
+    debug_info("oriented_side_of_bisector_2::", q);
     return svd_oriented_side_of_bisector_ftC2<K,Method_tag>
       (t1, t2, q, Method_tag());
   }
@@ -160,6 +167,7 @@ public:
   Sign operator()(const Site_2& p, const Site_2& q,
 		  const Site_2& t) const
   {
+    //    debug_info("vertex_conflict_2 (3)::", p);
     return
       svd_vertex_conflict_ftC2<K,Method_tag>(q, p, t, Method_tag());
   }
@@ -167,6 +175,7 @@ public:
   Sign operator()(const Site_2& p, const Site_2& q,
 		  const Site_2& r, const Site_2& t) const
   {
+    debug_info("vertex_conflict_2 (4)::", p);
     return
       svd_vertex_conflict_ftC2<K,Method_tag>(p, q, r, t, Method_tag());
   }
@@ -189,6 +198,7 @@ public:
   bool operator()(const Site_2& p, const Site_2& q,
 		  const Site_2& t, Sign sgn) const
   {
+    //    debug_info("finite_edge_interior_2 (3)::", p);
     return
       svd_finite_edge_conflict_ftC2<K,Method_tag>(p, q, t,
 						  sgn, Method_tag());
@@ -198,6 +208,7 @@ public:
   bool operator()(const Site_2& p, const Site_2& q,
 		  const Site_2& r, const Site_2& t, Sign sgn) const
   {
+    //    debug_info("finite_edge_interior_2 (4)::", p);
     return
       svd_finite_edge_conflict_ftC2<K,Method_tag>(p, q, r, t,
 						  sgn, Method_tag());
@@ -207,6 +218,7 @@ public:
 		  const Site_2& r, const Site_2& s,
 		  const Site_2& t, Sign sgn) const
   {
+    debug_info("finite_edge_interior_2 (5)::", p);
     return
       svd_finite_edge_conflict_ftC2<K,Method_tag>(p, q, r, s, t,
 						  sgn, Method_tag());
@@ -233,6 +245,7 @@ public:
   bool operator()(const Site_2& q, const Site_2& r, const Site_2& s,
 		  const Site_2& t, Sign sgn) const
   {
+    //    debug_info("infinite_edge_interior_2 (4)::", q);
     return
       svd_infinite_edge_conflict_ftC2<K,Method_tag>(q, r, s, t,
 						    sgn, Method_tag());

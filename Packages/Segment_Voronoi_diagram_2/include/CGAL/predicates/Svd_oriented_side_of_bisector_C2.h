@@ -294,13 +294,6 @@ public:
   typedef typename K::Rep_tag    Rep_tag;
   typedef Svd_are_same_points_C2<K>  Are_same_points_C2;
 
-  static
-  bool are_same(const Point_2& p, const Point_2& q)
-  {
-    return Are_same_points_C2()(p, q);
-    //return p.x() == q.y() && p.y() == q.y();
-  }
-
 private:
   Comparison_result
   operator()(const Point_2& q,
@@ -404,7 +397,7 @@ public:
   operator()(const Site_2& t1, const Site_2& t2,
 	     const Site_2& q) const
   {
-#if 0
+#if 1
     std::cout << "inside oriented side of bisector top "
 	      << "level operator()" << std::endl;
     std::cout << "t1: " << t1 << std::endl;
@@ -414,6 +407,10 @@ public:
     CGAL_precondition( q.is_point() );
     return operator()(t1, t2, q.point());
   }
+
+
+private:
+  Are_same_points_C2  are_same;
 };
 
 

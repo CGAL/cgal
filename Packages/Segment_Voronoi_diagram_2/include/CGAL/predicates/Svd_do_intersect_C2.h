@@ -1,7 +1,10 @@
 #ifndef CGAL_SVD_DO_INTERSECT_C2_H
 #define CGAL_SVD_DO_INTERSECT_C2_H
 
+#include <CGAL/enum.h>
 #include <CGAL/determinant.h>
+#include <CGAL/predicates/Svd_basic_predicates_C2.h>
+#include <CGAL/predicates/Svd_are_same_points_C2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -22,7 +25,7 @@ svd_do_intersect_C2(const RT& x1, const RT& y1,
 					    x3, y3, x4, y4, delta);
   } else {
     return svd_do_intersect_parallel_C2(x1, y1, x2, y2,
-					x3, y3, x4, y4, delta);
+					x3, y3, x4, y4);
   }
 }
 
@@ -91,8 +94,7 @@ std::pair<int,int>
 svd_do_intersect_parallel_C2(const RT& x1, const RT& y1,
 			     const RT& x2, const RT& y2,
 			     const RT& x3, const RT& y3,
-			     const RT& x4, const RT& y4,
-			     const RT& D)
+			     const RT& x4, const RT& y4)
 {
   RT D1 = det2x2_by_formula(x2 - x1, x3 - x1,
 			    y2 - y1, y3 - y1);
@@ -174,12 +176,9 @@ svd_do_intersect_parallel_C2(const RT& x1, const RT& y1,
 
 template<class K>
 class Svd_do_intersect_C2
+  : public Svd_basic_predicates_C2<K>
 {
 public:
-  //  typedef typename K::Point_2      Point_2;
-  typedef typename K::Segment_2    Segment_2;
-  typedef typename K::Site_2       Site_2;
-
   //  typedef std::pair<Intersection_type,Intersection_type>  result_type;
   typedef std::pair<int,int>       result_type;
 
@@ -188,11 +187,114 @@ public:
       NO_INTERSECTION, IDENTICAL, SUBSEGMENT
     } Intersection_type;
 
+private:
+  typedef Svd_basic_predicates_C2<K>  Base;
+
+  typedef typename Base::Point_2        Point_2;
+  typedef typename Base::Segment_2      Segment_2;
+  typedef typename Base::Site_2         Site_2;
+  typedef typename Base::Line_2         Line_2;
+
+  typedef typename Base::FT             FT;
+  typedef typename Base::RT             RT;
+
+  typedef typename K::Orientation_2     Orientation_2;
+
+  typedef Svd_are_same_points_C2<K>  Are_same_points_C2;
+
+private:
+  bool same_segments(const Site_2& p, const Site_2& q) const
+  {
+    CGAL_precondition( p.is_segment() && q.is_segment() );
+    return
+      ( are_same(p.source_site(), q.source_site()) &&
+	are_same(p.target_site(), q.target_site()) ) ||
+      ( are_same(p.source_site(), q.target_site()) &&
+	are_same(p.target_site(), q.source_site()) );
+  }
+
+  //------------------------------------------------------------------------
+
+  result_type
+  do_intersect_same_point(const Site_2& p, const Site_2& q,
+			  unsigned int ip, unsigned int iq) const
+  {
+    CGAL_precondition( ip < 2 && iq < 2 );
+
+    if ( same_segments(p.supporting_segment(),
+		       q.supporting_segment()) ) { 
+      Line_2 l = compute_supporting_line(p.supporting_segment());
+      Line_2 lp;
+
+      if ( ip == 0 ) {
+	lp = compute_perpendicular(l, p.segment().source());
+      } else {
+	lp = compute_perpendicular(l, p.segment().target());
+	lp = opposite_line(lp);
+      }
+
+      Oriented_side os;
+
+      if ( iq == 0 ) {
+	os = oriented_side_of_line(lp, q.segment().target());
+      } else {
+	os = oriented_side_of_line(lp, q.segment().source());
+      }
+
+      CGAL_assertion( os != ON_ORIENTED_BOUNDARY );
+
+      if ( os == ON_POSITIVE_SIDE ) {
+	return std::pair<int,int>(ip,iq);
+      } else {
+	return std::pair<int,int>(5,5);
+      }
+    }
+
+    Point_2 p1 = p.supporting_segment().source();
+    Point_2 p2 = p.supporting_segment().target();
+    Point_2 p3;
+
+    if ( iq == 0 ) {
+      p3 = q.supporting_segment().target();
+    } else {
+      p3 = q.supporting_segment().source();
+    }
+
+    if ( Orientation_2()(p1, p2, p3) != COLLINEAR ) {
+      return std::pair<int,int>(ip,iq);
+    } else {
+      Segment_2 s1 = p.segment();
+      Segment_2 s2 = q.segment();
+
+      return
+	svd_do_intersect_parallel_C2( s1.source().x(), s1.source().y(),
+				      s1.target().x(), s1.target().y(),
+				      s2.source().x(), s2.source().y(),
+				      s2.target().x(), s2.target().y() );
+    }
+  }
+
+
 public:
   result_type
   operator()(const Site_2& p, const Site_2& q) const
   {
     CGAL_precondition( p.is_segment() && q.is_segment() );
+
+    if ( same_segments(p, q) ) {
+      return std::pair<int,int>(4,4);
+    }
+
+    if ( are_same(p.source_site(), q.source_site()) ) {
+      return do_intersect_same_point(p, q, 0, 0);
+    } if ( are_same(p.source_site(), q.target_site()) ) {
+      return do_intersect_same_point(p, q, 0, 1);
+    } else if ( are_same(p.target_site(), q.source_site()) ) {
+      return do_intersect_same_point(p, q, 1, 0);
+    } else if ( are_same(p.target_site(), q.target_site()) ) {
+      return do_intersect_same_point(p, q, 1, 1);
+    }
+    
 
     Segment_2 s1 = p.segment();
     Segment_2 s2 = q.segment();
@@ -210,6 +312,10 @@ public:
 
     //    return result_type(it1, it2);
   }
+
+private:
+  Are_same_points_C2  are_same;
+
 };
 
 //---------------------------------------------------------------------
