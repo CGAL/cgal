@@ -397,7 +397,7 @@ public:
   void extract_closure()
   /*{\Xop converts |\Mvar| to its closure. }*/
   { TRACEN("extract closure");
-    if (refs()>1) *this = Nef_polyhedron_3<T>(snc()); // clone
+    if( is_shared()) clone_rep();
     extract_complement();
     extract_interior();
     extract_complement();
@@ -406,7 +406,7 @@ public:
   void extract_regularization()
   /*{\Xop converts |\Mvar| to its regularization. }*/
   { TRACEN("extract regularization");
-    if (refs()>1) *this = Nef_polyhedron_3<T>(snc()); // clone
+    if( is_shared()) clone_rep();
     extract_interior();
     extract_closure();
   }
@@ -702,57 +702,48 @@ void Nef_polyhedron_3<T>::extract_complement() {
   if( is_shared()) clone_rep();
   SNC_decorator D(snc());
   Vertex_iterator v;
-  CGAL_nef3_forall_vertices(v,D) {
-    TRACE(D.mark(v));
-    D.mark(v) = !D.mark(v); 
-    TRACEN(" vcomplement "<<D.mark(v));
-  }
+  CGAL_nef3_forall_vertices(v,D) D.mark(v) = !D.mark(v); 
   Halfedge_iterator e;
   CGAL_nef3_forall_edges(e,D) D.mark(e) = !D.mark(e);
   Halffacet_iterator f;
-  CGAL_nef3_forall_facets(f,D) {
-    TRACE(D.mark(f)<<f->mark_<<f->twin_->mark_);
-    D.mark(f) = !D.mark(f); 
-    TRACEN(" fcomplement "<<D.mark(f)<<", "<<&*f);
-  }
+  CGAL_nef3_forall_facets(f,D) D.mark(f) = !D.mark(f); 
   Volume_iterator c;
   CGAL_nef3_forall_volumes(c,D) D.mark(c) = !D.mark(c);
   clear_box_marks();
-  dump();
 }
 
 
 template <typename T>
 void Nef_polyhedron_3<T>::extract_interior() {
   TRACEN("extract interior");
-  //if (refs()>1) *this = Nef_polyhedron_3<T>(snc()); // clone
-  //EW_overlayer D(snc());
+  if (is_shared()) clone_rep();
+  SNC_decorator D(snc());
   Vertex_iterator v;
-  //forall_vertices(v,D) D.mark(v) = false;
+  CGAL_nef3_forall_vertices(v,D) D.mark(v) = false;
   Halfedge_iterator e;
-  //forall_edges(e,D) D.mark(e) = false;
+  CGAL_nef3_forall_edges(e,D) D.mark(e) = false;
   Halffacet_iterator f;
-  //forall_facets(f,D) D.mark(f) = false;
+  CGAL_nef3_forall_facets(f,D) D.mark(f) = false;
   Volume_iterator c;
-    //forall_volumes(c,D) D.mark(c) = true;
-  //D.simplify();
+  CGAL_nef3_forall_volumes(c,D) D.mark(c) = true;
+  simplify();
 }
 
 template <typename T>
 void Nef_polyhedron_3<T>::extract_boundary() {
   TRACEN("extract boundary");
-  //if (refs()>1) *this = Nef_polyhedron_3<T>(snc()); // clone
-  //EW_overlayer D(snc());
+  if (is_shared()) clone_rep();
+  SNC_decorator D(snc());
   Vertex_iterator v;
-  //forall_vertices(v,D) D.mark(v) = true;
+  CGAL_nef3_forall_vertices(v,D) D.mark(v) = true;
   Halfedge_iterator e;
-  //forall_edges(e,D) D.mark(e) = true;
+  CGAL_nef3_forall_edges(e,D) D.mark(e) = true;
   Halffacet_iterator f;
-  //forall_facets(f,D) D.mark(f) = true;
+  CGAL_nef3_forall_facets(f,D) D.mark(f) = true;
   Volume_iterator c;
-    //forall_volumes(c,D) D.mark(c) = false;
+  CGAL_nef3_forall_volumes(c,D) D.mark(c) = false;
   clear_box_marks();
-  //D.simplify();
+  simplify();
 }
 
 template <typename T>

@@ -582,11 +582,11 @@ public:
   bool does_ray_intersect_internally( const Segment_3& ray,
 				      const Halffacet_handle f,
 				      Point_3& p) const { 
-    // TRACEN("-> Intersection face - ray");
+    TRACEN("-> Intersection face - ray");
     Plane_3 h( plane(f));
-    // TRACEN("-> facet plane " << h);
-    // TRACEN("-> a point on " << h.point());
-    // TRACEN("-> ray segment " << ray);
+    TRACEN("-> facet plane " << h);
+    TRACEN("-> a point on " << h.point());
+    TRACEN("-> ray segment " << ray);
     CGAL_assertion( !h.is_degenerate());
     CGAL_assertion( !ray.is_degenerate());
     if( h.has_on( ray.source()))
@@ -595,15 +595,15 @@ public:
     Segment_3 s;
     if ( assign( s, o) ) {
       CGAL_assertion( s == ray );
-      // TRACEN( "-> ray belongs to facet's plane." << p );
+      TRACEN( "-> ray belongs to facet's plane." << p );
       return false;
     }
     else if( !assign( p, o))
       return false;
-    // TRACEN( "-> intersection point " << p );
+    TRACEN( "-> intersection point " << p );
     Oriented_side os1 = h.oriented_side(ray.source());
     Oriented_side os2 = h.oriented_side(ray.target());
-    // TRACEN( "-> endpoint plane side " << os1 << " " << os2);
+    TRACEN( "-> endpoint plane side " << os1 << " " << os2);
     CGAL_assertion( h.has_on(p));
     CGAL_assertion( ray.has_on(p));
     if (os1 == os2)
