@@ -16,7 +16,8 @@ CXXFLAGS = \
         -I../../include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS) \
-	-g -gdwarf-2 -W -Wall
+	-g -W -Wall
+	# -DCGAL_IA_NEW_FILTERS
 	# -O2 -mcpu=pentiumpro -march=pentiumpro -W -Wall -DLOOPS=10000000
 	# -g -Wall -W
 	# -O2 -Wall -W
