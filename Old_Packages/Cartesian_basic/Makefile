@@ -15,11 +15,10 @@ package: clean $(Package).tar.gz
 	@echo "----------------------------------"
 	@echo "---- changes.txt              ----"
 	@echo "---- make Test                ----"
-	@echo "---- make VERSION=3.1 version ----"
+	@echo "---- make VERSION=x.x version ----"
 	@echo "---- make Commit               ----"
-	@echo "---- make VERSION=3.1 Rtag    ----"
-	@echo "---- make Package             ----"
-	@echo "---- make Submit              ----"
+	@echo "---- make VERSION=x.x rtag    ----"
+	@echo "---- make submit              ----"
 	@echo "----------------------------------"
 
 version:
@@ -50,7 +49,8 @@ $(Package).tar.gz:
 	tar -zcvf $(Package).tar.gz \
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
 	--exclude=TODO \
-	version long_description.txt description.txt changes.txt \
+	version maintainer \
+	long_description.txt description.txt changes.txt \
 	include
 	./check_headers.pl -u include/CGAL/*.[Ch]
 	./check_headers.pl -u include/CGAL/*/*.[Ch]

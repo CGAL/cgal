@@ -1,3 +1,8 @@
+Version 3.4 (22 March 2000)
+- fixed iso_cuboid_3 bugs
+- added maintainer files
+- changed Makefile of the package
+
 Version 3.3.11 (6 mars 2000)
 -commented lines related to Iso_cuboid_3 in  Cartesian_3.h
  and Cartesian.h. TO BE FIXED LATER [my]
