@@ -40,6 +40,11 @@ CGAL_BEGIN_NAMESPACE
 // Protection = Advanced/Protected
 // Cache = Filter_Cache/No_Filter_Cache
 //
+//   Static  + Protected : static adaptative
+//   Static  + Advanced  : really static (needs some way to initialize bounds)
+//   Dynamic + Protected : the current old one, based on intervals
+//   Dynamic + Advanced  : rounding assumes +infty before entering predicates
+//
 // (Interval_nt_advanced) = used for filtering.
 //
 // 2 conversion functions must be provided:
@@ -47,6 +52,11 @@ CGAL_BEGIN_NAMESPACE
 //     which gives an interval SURELY containing the CT value.
 // - convert_to <ET> (CT)
 //     which converts EXACTLY the CT value to ET.
+//
+// Let's add a .error() for when CT -> double is not exact.
+
+// The user can initialize bounds using:
+// Static_Filtered_orientationC2_6::new_bound(NEW_bound);
 
 struct Static {};
 struct Dynamic {};
@@ -56,7 +66,7 @@ struct No_Filter_Cache {};
 typedef Interval_nt_advanced Filter_Cache;
 
 
-template < class CT, class ET, class Type = Static,
+template < class CT, class ET, class Type = Dynamic,
            class Protection = Protected, class Cache = No_Filter_Cache >
 class Filtered_exact
 {
