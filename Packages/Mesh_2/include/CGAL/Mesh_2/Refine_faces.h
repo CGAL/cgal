@@ -151,8 +151,8 @@ public:
     for(typename Zone::Faces_iterator fh_it = zone.faces.begin();
         fh_it != zone.faces.end();
         ++fh_it)
-      if(*fh_it != fh) 
-	bad_faces.erase(*fh_it);
+      if(*fh_it != fh)
+        bad_faces.erase(*fh_it);
   }
 
   /** Do nothing. */

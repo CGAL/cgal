@@ -87,7 +87,7 @@ public:
     // if we put edge_index instead of dummy, Intel C++ does not find
     // a matching function for is_edge
     Face_handle fh;
-    
+
     tr.is_edge(va, v, fh, dummy);
     // set fh to the face at the right of [va,v]
 

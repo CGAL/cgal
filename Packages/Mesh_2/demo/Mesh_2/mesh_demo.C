@@ -748,6 +748,7 @@ public slots:
     {
       dumpTriangulation("last_input.edg");
       CGAL::make_conforming_Gabriel_2(cdt);
+      mark_facets();
       updatePointCounter();
       widget->redraw();
     }

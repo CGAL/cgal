@@ -131,8 +131,8 @@ public :
       reverse_func.erase(rit);
       CGAL_assertion(is_valid());
 
-      std::cerr << "After Double_map::pop_front()\n";
-      dump_direct_func(std::cerr);      
+      //      std::cerr << "After Double_map::pop_front()\n";
+      //      dump_direct_func(std::cerr);      
     }
 
   class Second_is {

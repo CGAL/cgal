@@ -428,8 +428,8 @@ public:
     for(typename Zone::Edges_iterator eit = z.boundary_edges.begin();
         eit != z.boundary_edges.end(); ++eit)
       { 
-        const Face_handle& fh = it->first;
-        const int& i = it->second;
+        const Face_handle& fh = eit->first;
+        const int& i = eit->second;
 
         if(fh->is_constrained(i) && !is_locally_conform(tr, fh, i, p))
           {

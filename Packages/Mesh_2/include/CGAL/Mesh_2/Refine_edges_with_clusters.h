@@ -85,8 +85,8 @@ public:
 
   Point get_refinement_point(const Constrained_edge& edge)
   {
-    const Vertex_handle& va = edge.first;
-    const Vertex_handle& vb = edge.second;
+    va = edge.first;
+    vb = edge.second;
     va_has_a_cluster = false;
     vb_has_a_cluster = false;
     
@@ -119,10 +119,10 @@ public:
   {
     Super::do_after_insertion(v);
     if( va_has_a_cluster ) 
-      clusters.update_cluster(ca,va,vb,v,false);
+      clusters.update_cluster(ca,this->va,this->vb,v,false);
     // false == 'edge not reduced'
     if( vb_has_a_cluster )
-      clusters.update_cluster(cb,vb,va,v,false);
+      clusters.update_cluster(cb,this->vb,this->va,v,false);
   }
 
   /**
@@ -151,8 +151,8 @@ public:
 	
         if(fh->is_constrained(i) && !is_locally_conform(tr, fh, i, p))
           {
-	    const Vertex_handle& va = fh->vertex( tr.cw (i));
-	    const Vertex_handle& vb = fh->vertex( tr.ccw(i));
+	    const Vertex_handle& v1 = fh->vertex( tr.cw (i));
+	    const Vertex_handle& v2 = fh->vertex( tr.ccw(i));
 
 	    std::cerr << fh->is_constrained(i) << !is_locally_conform(tr, fh, i, p) << std::endl;
 	    
@@ -162,33 +162,33 @@ public:
 	    
             split_the_face = false;
 
-            va_has_a_cluster = clusters.get_cluster(va,vb,ca),
-            vb_has_a_cluster = clusters.get_cluster(vb,va,cb);
+            bool v1_has_a_cluster = clusters.get_cluster(v1,v2,ca),
+            bool v2_has_a_cluster = clusters.get_cluster(v2,v1,cb);
 
-          if( ( va_has_a_cluster && vb_has_a_cluster) ||
-              (!va_has_a_cluster && !vb_has_a_cluster) )
+          if( ( v1_has_a_cluster && v2_has_a_cluster) ||
+              (!v1_has_a_cluster && !v2_has_a_cluster) )
             {
               // two clusters or no cluster
-              add_constrained_edge_to_be_conformed(va, vb);
+              add_constrained_edge_to_be_conformed(v1, v2);
               remove_the_bad_face = false;
             }
           else
             {
               // only one cluster: c or c2
-              if(vb_has_a_cluster)
+              if(v2_has_a_cluster)
                 ca = cb;
 // What Shewchuk says:
 // - If the cluster is not reduced (all segments don't have the same
-// length as [va,vb]), then split the edge
+// length as [v1,v2]), then split the edge
 // - Else, let rmin be the minimum insertion radius introduced by the
 // potential split, let T be the triangle whose circumcenter
-// encroaches [va,vb] and let rg be the length of the shortest edge
+// encroaches [v1,v2] and let rg be the length of the shortest edge
 // of T. If rmin >= rg, then split the edge.
 
               if( !ca.is_reduced() ||
                   ca.rmin >= shortest_edge_squared_length(fh) )
                 {
-                  add_constrained_edge_to_be_conformed(va,vb);
+                  add_constrained_edge_to_be_conformed(v1,v2);
                   remove_the_bad_face = false;
                 }
             }
@@ -208,7 +208,7 @@ private:
   FT shortest_edge_squared_length(Face_handle f)
   {
     typename Geom_traits::Compute_squared_distance_2 squared_distance =
-      tr.geom_traits().compute_squared_distance_2_object();
+      this->tr.geom_traits().compute_squared_distance_2_object();
 
     const Point& pa = (f->vertex(0))->point();
     const Point& pb = (f->vertex(1))->point();
