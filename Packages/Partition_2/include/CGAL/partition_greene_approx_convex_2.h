@@ -269,10 +269,9 @@ void visible(Polygon& polygon,
 template <class Polygon, class BidirectionalCirculator, 
           class OutputIterator, class Traits>
 void stack_extend(Polygon& polygon,
-                  const BidirectionalCirculator& point_ref, 
+                  BidirectionalCirculator& point_ref, 
                   Circ_pair< BidirectionalCirculator >& stack, 
                   Circ_pair< BidirectionalCirculator >& top_chain,
-                  Circ_pair< BidirectionalCirculator >& bottom_chain,
                   OutputIterator& result, const Traits& traits)
 {
 #ifdef CGAL_GREENE_APPROX_DEBUG
@@ -545,7 +544,6 @@ void make_polygons_from_stack(Polygon& polygon,
                             const BidirectionalCirculator& high_point_ref, 
                             Circ_pair< BidirectionalCirculator >& stack,
                             Circ_pair< BidirectionalCirculator >& bottom_chain,
-                            Circ_pair< BidirectionalCirculator >& top_chain,
                             OutputIterator& result, const Traits& )
 {
    bool update_required;
@@ -760,12 +758,12 @@ void ga_convex_decomposition(ForwardIterator first, ForwardIterator beyond,
       if (ccw_chain_ref == cw_chain_ref)
       {
          make_polygons_from_stack(polygon, point_ref, stack, 
-                                  bottom_chain, top_chain, result, traits);
+                                  bottom_chain, result, traits);
          return;
       }
       if (is_adjacent_to(point_ref, stack.front()))
          stack_extend(polygon, point_ref, stack, top_chain, 
-                      bottom_chain, result, traits);
+                      result, traits);
       else if (is_adjacent_to(point_ref, top_chain.front()))
          change_top_chain(polygon, point_ref, stack, top_chain, 
                           result, traits);
