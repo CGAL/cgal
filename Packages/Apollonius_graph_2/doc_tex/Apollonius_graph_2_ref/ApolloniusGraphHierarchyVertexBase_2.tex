@@ -24,7 +24,7 @@ some pointers to the corresponding vertices in the
 graphs of the next and preceeding levels.
 Therefore, the concept \ccc{ApolloniusGraphHierarchyVertexBase_2}
 extends the concept \ccc{ApolloniusGraphVertexBase_2}, by
-adding two \ccc{void*} pointers to the correponding vertices in the
+adding two vertex handles to the correponding vertices in the
 next and previous level graphs.
 
 
@@ -39,51 +39,50 @@ types in addition to those of \ccc{ApolloniusGraphVertexBase_2}.
 
 \ccCreation
 \ccCreationVariable{v}  %% choose variable name
-\ccTwo{ApolloniusGraphHierarchyVertexBase_2 v(Weighted_point_2 p, void* f);++}{}
+\ccTwo{ApolloniusGraphHierarchyVertexBase_2 v(Site_2 s, Face_handle f);++}{}
 %
 \ccConstructor{ApolloniusGraphHierarchyVertexBase_2();}{Default
 constructor.}
 \ccGlue
-\ccConstructor{ApolloniusGraphHierarchyVertexBase_2(Weighted_point_2 p).}
-{Constructs a vertex associated with the weighted point \ccc{p} and
-  embedded at the center of \ccc{p}.}
+\ccConstructor{ApolloniusGraphHierarchyVertexBase_2(Site_2 s).}
+{Constructs a vertex associated with the site \ccc{s} and
+  embedded at the center of \ccc{s}.}
 \ccGlue
 \ccConstructor
-{ApolloniusGraphHierarchyVertexBase_2(Weighted_point_2 p, void* f).}
+{ApolloniusGraphHierarchyVertexBase_2(Site_2 s, Face_handle f).}
 {Constructs a vertex associated with
-the weighted point \ccc{p}, embedded at the center of \ccc{p},
+the site \ccc{s}, embedded at the center of \ccc{s},
 and pointing to face \ccc{f}.}
 
 
 \ccOperations
-\ccThree{void*}{v.set_down(void* d)+}{}
+\ccThree{Vertex_handle}{v.set_down(Vertex_handle d)+}{}
 %
-\ccMethod{void* up();}{Returns a pointer to the corresponding vertex
-(if any) of the next level Apollonius graph.}
+\ccMethod{Vertex_handle up();}{Returns a handle to the corresponding
+  vertex (if any) of the next level Apollonius graph.}
 \ccGlue
-\ccMethod{void* down();}{Returns a pointer to the corresponding vertex
- of the previous level Apollonius graph.}
+\ccMethod{Vertex_handle down();}{Returns a handle to the corresponding
+  vertex of the previous level Apollonius graph.}
 \ccGlue
-\ccMethod{void set_up(void *u);}{Sets the pointer to the corresponding vertex
-of the next level Apollonius graph.} 
+\ccMethod{void set_up(Vertex_handle u);}{Sets the handle for the
+  vertex of the next level Apollonius graph.} 
 \ccGlue 
-\ccMethod{void set_down(void *d);}{Sets the pointer to the corresponding vertex
-of the previous level Apollonius graph;}
+\ccMethod{void set_down(Vertex_handle d);}{Sets the handle for the
+  vertex of the previous level Apollonius graph;}
 
 
 
 
 \ccHasModels
 
-\ccc{CGAL::Triangulation_hierarchy_vertex_base_2<CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden>>}
+\ccc{CGAL::Apollonius_graph_hierarchy_vertex_base_2<CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden> >}
 
 
 \ccSeeAlso
 
 \ccc{ApolloniusGraphDataStructure_2} \\
 \ccc{ApolloniusGraphVertexBase_2}\\
-\ccc{CGAL::Apollonius_graph_hierarchy_2<Gt,StoreHidden,Agds>}\\
-\ccc{CGAL::Triangulation_hierarchy_vertex_base<Vb>}
+\ccc{CGAL::Apollonius_graph_hierarchy_2<Gt,Agds>}
 
 \end{ccRefConcept}
 

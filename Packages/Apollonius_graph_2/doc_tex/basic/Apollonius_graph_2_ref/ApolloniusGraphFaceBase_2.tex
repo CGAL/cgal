@@ -16,10 +16,10 @@
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 \ccDefinition
 The \ccc{ApolloniusGraphFaceBase_2} refines the
-\ccc{TriangulationFaceBase_2} concept by adding three \ccc{void*}
-pointers and three integers. These triplets intended to support an
+\ccc{TriangulationFaceBase_2} concept by adding three face handles
+and three integers. These triplets are intended to support an
 in-place edge list. Since edges are not represented explicitly, but
-rather as pairs of a \ccc{void*} pointer and an integer, the only way
+rather as pairs of a \ccc{Face_handle} and an integer, the only way
 to support this in-place edge list is by adding this functionality in
 the face base of the Apollonius graph data structure.
 
@@ -27,24 +27,44 @@ the face base of the Apollonius graph data structure.
 \ccc{TriangulationFaceBase_2}
 
 \ccTypes
-\ccc{ApolloniusGraphFaceBase_2} does not introduce any
-types in addition to those of \ccc{TriangulationFaceBase_2}.
+\ccTwo{ApolloniusGraphFaceBase_2::Vertex_handle+}{}
+\ccNestedType{Geom_traits}{A type for the geometric traits of the
+  Apollonius graph.}
+%
+\ccGlue
+\ccNestedType{Apollonius_graph_data_structure}{A type for the
+  Apollonius graph data structure, to which the face belongs to.}
+%
+\ccGlue
+\ccNestedType{Vertex_handle}{A type for the vertex handle of the
+  Apollonius graph data structure.}
+%
+\ccGlue
+\ccNestedType{Face_handle}{A type for the face handle of the
+  Apollonius graph data structure.}
+%
+\ccGlue
+\ccNestedType{Edge}{A type for the edge of the Apollonius graph data
+  structure.}
+
 
 \ccCreation
 \ccCreationVariable{fb}
-\ccTwo{ApolloniusGraphFaceBase_2 fb(void* v0, void* v1, void* v2);++}{}
+\ccTwo{ApolloniusGraphFaceBase_2 fb()+}{}
 %
 \ccConstructor{ApolloniusGraphFaceBase_2();}{Default constructor.}
 %\ccGlue
-\ccConstructor{ApolloniusGraphFaceBase_2(void* v0, void* v1, void* v2);}
+\ccConstructor{ApolloniusGraphFaceBase_2(Vertex_handle v0,
+  Vertex_handle v1, Vertex_handle  v2);}
 {Initializes the vertices of the face with \ccc{v0}, \ccc{v1} and
-\ccc{v2}. Neighbors are initialized to \ccc{NULL}.}
+\ccc{v2}. Neighbors are initialized to \ccc{Face_handle(NULL)}.}
 %\ccGlue
-\ccConstructor{ApolloniusGraphFaceBase_2(void* v0, void* v1, void* v2,
-void* n0, void* n1, void* n2);}
-{Initializes the vertices of the face with \ccc{v0}, \ccc{v1} and
-\ccc{v2}. Initializes the neighbors of the face with \ccc{n0},
-\ccc{n1} and \ccc{n2}.}
+\ccConstructor{ApolloniusGraphFaceBase_2(Vertex_handle v0,
+  Vertex_handle v1, Vertex_handle v2,
+  Face_handle n0, Face_handle n1, Face_handle n2);}
+	      {Initializes the vertices of the face with \ccc{v0},
+		\ccc{v1} and \ccc{v2}. Initializes the neighbors of
+		the face with \ccc{n0}, \ccc{n1} and \ccc{n2}.}
 
 
 \ccHeading{Operations}
@@ -52,27 +72,27 @@ We only cite the additional operations with respect to those of the
 \ccc{TriangulationFaceBase_2} concept.
 
 %
-\ccThree{std::pair<void*, int>}{fb.is_in_list(int i)+}{}
+\ccThree{Edge}{fb.set_previous(int i, Edge prev)+}{}
 %
 \ccMethod{bool is_in_list(int i);}
 {Checks if the edge corresponding to the pair (\ccc{fb}, \ccc{i})
 is currently in the in-place edge list. Returns \ccc{true} if
 (\ccc{fb}, \ccc{i}) is in the list, \ccc{false} otherwise.}
 \ccGlue
-\ccMethod{void set_next(int i, std::pair<void*,int> next);}
-{Sets the edge defined by the pair \ccc{next} as the successor of
+\ccMethod{void set_next(int i, Edge next);}
+{Sets the edge \ccc{next} as the successor of
 (\ccc{fb}, \ccc{i}) in the list.
 \ccPrecond \ccc{next} must correspond to a valid edge.}
 \ccGlue
-\ccMethod{void set_previous(int i, std::pair<void*,int> prev);}
-{Sets the edge defined by the pair \ccc{prev} as the predecessor of
+\ccMethod{void set_previous(int i, Edge prev);}
+{Sets the edge \ccc{prev} as the predecessor of
 (\ccc{fb}, \ccc{i}) in the list.
 \ccPrecond \ccc{prev} must correspond to a valid edge.}
 \ccGlue
-\ccMethod{std::pair<void*, int> next(int i);}
+\ccMethod{Edge next(int i);}
 {Returns the successor of (\ccc{fb}, \ccc{i}) in the list.}
 \ccGlue
-\ccMethod{std::pair<void*, int> previous(int i);}
+\ccMethod{Edge previous(int i);}
 {Returns the predecessor of (\ccc{fb}, \ccc{i}) in the list.}
 
 

@@ -1,0 +1,56 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Weighted_point.tex
+% +------------------------------------------------------------------------+
+% | 13.04.2000   Author
+% | Package: Package
+% | 
+% | \RCSdef{\RCSWeightedpointRev}{$Revision$}
+% | \RCSdefDate{\RCSWeightedpointDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Apollonius_site_2<K>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is a model for the concept
+\ccc{ApolloniusSite_2}. It is parametrized by a template parameter
+\ccc{K} which mush be a model of \ccc{CGAL::Kernel}.
+
+\ccInclude{CGAL/Apollonius_site_2.h}
+
+\ccIsModel
+\ccc{ApolloniusSite_2}
+
+\ccTypes
+
+The class \ccRefName\ does not introduce any types in addition to the
+concept \ccc{ApolloniusSite_2}.
+
+
+\ccCreation
+\ccCreationVariable{s}  %% choose variable name
+\ccConstructor{Apollonius_site_2(Point_2 p=Point_2(), Weight w= Weight(0))}{}
+\ccGlue
+\ccConstructor{Apollonius_site_2(Apollonius_site_2<K> other)}
+{Copy constructor.}
+
+
+
+\ccSeeAlso
+\ccc{ApolloniusSite_2}\\
+\ccc{CGAL::Apollonius_graph_traits_2<K,Method_tag>}
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

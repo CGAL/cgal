@@ -25,11 +25,11 @@ required by the \ccc{ApolloniusGraphDataStructure_2} concept. The
 class \ccRefName\ has two template arguments, the first being the
 geometric traits of the Apollonius graph and should be a model of the
 concept \ccc{ApolloniusGraphTraits_2}. The second is a boolean which
-controls whether hidden weighted points are actually stored. Such a
-control is important if the user is not interested in hidden weighted
-points and/or if only insertions are made, in which case no hidden
-weighted point can become non-hidden. If \ccc{StoreHidden} is set to
-\ccc{true}, hidden weighted points are stored, otherwise they are
+controls whether hidden sites are actually stored. Such a
+control is important if the user is not interested in hidden sites
+and/or if only insertions are made, in which case no hidden
+site can become visible. If \ccc{StoreHidden} is set to
+\ccc{true}, hidden sites are stored, otherwise they are
 discarded. By default \ccc{StoreHidden} is set to \ccc{true}.
 
 \ccInclude{CGAL/Apollonius_graph_vertex_base_2.h}
@@ -40,26 +40,26 @@ discarded. By default \ccc{StoreHidden} is set to \ccc{true}.
 \ccCreation
 \ccCreationVariable{vb}  %% choose variable name
 \ccTwo{Apollonius_graph_vertex_base_2<Gt,StoreHidden>
-vb(Weighted_point p);++}{}
+vb(Site_2 s);+}{}
 
 \ccConstructor{Apollonius_graph_bertex_base_2();}{Default constructor.}
 \ccGlue
-\ccConstructor{Apollonius_graph_vertex_base_2(Weighted_point p);}
-{Constructs a vertex associated with the weighted point \ccc{p} and
-embedded at the center of \ccc{p}.}
+\ccConstructor{Apollonius_graph_vertex_base_2(Site_2 s);}
+{Constructs a vertex associated with the site \ccc{s} and
+embedded at the center of \ccc{s}.}
 \ccGlue
-\ccConstructor{Apollonius_graph_vertex_base_2(Weighted_point p,
-               void* f);}
-{Constructs a vertex associated with
-the weighted point \ccc{p}, embedded at the center of \ccc{p},
-and pointing to face \ccc{f}.}
+\ccConstructor{Apollonius_graph_vertex_base_2(Site_2 s, Face_handle f);}
+	      {Constructs a vertex associated with
+		the site \ccc{s}, embedded at the center of \ccc{s},
+		and pointing to the face associated with the face
+		handle \ccc{f}.}
 
 
 
 \ccSeeAlso
 \ccc{ApolloniusGraphVertexBase_2}\\
 \ccc{ApolloniusGraphTraits_2}\\
-\ccc{CGAL::Apollonius_graph_euclidean_traits_2<R,W,Method_tag>}
+\ccc{CGAL::Apollonius_graph_euclidean_traits_2<K,Method_tag>}
 
 \end{ccRefClass}
 

@@ -28,16 +28,18 @@ traits of the Apollonius graph. It derives publicly from the class
 
 \ccCreation
 \ccCreationVariable{fb}
-\ccTwo{Apollonius_graph_face_base_2<Gt> fb(void* v0, void* v1, void* v2);++}{}
+\ccTwo{Apollonius_graph_face_base_2<Gt> fb();+}{}
 %
 \ccConstructor{Apollonius_graph_face_base_2<Gt>();}{Default constructor.}
 %\ccGlue
-\ccConstructor{Apollonius_graph_face_base_2<Gt>(void* v0, void* v1, void* v2);}
+\ccConstructor{Apollonius_graph_face_base_2<Gt>(Vertex_handle v0,
+  Vertex_handle v1, Vertex_handle v2);}
 {Initializes the vertices of the face with \ccc{v0}, \ccc{v1} and
-\ccc{v2}. Neighbors are initialized to \ccc{NULL}.}
+\ccc{v2}. Neighbors are initialized to \ccc{Face_handle(NULL)}.}
 %\ccGlue
-\ccConstructor{Apollonius_graph_face_base_2<Gt>(void* v0, void* v1, void* v2,
-void* n0, void* n1, void* n2);}
+\ccConstructor{Apollonius_graph_face_base_2<Gt>(Vertex_handle v0,
+  Vertex_handle v1, Vertex_handle v2,
+  Face_handle n0, Face_handle n1, Face_handle n2);}
 {Initializes the vertices of the face with \ccc{v0}, \ccc{v1} and
 \ccc{v2}. Initializes the neighbors of the face with \ccc{n0},
 \ccc{n1} and \ccc{n2}.}

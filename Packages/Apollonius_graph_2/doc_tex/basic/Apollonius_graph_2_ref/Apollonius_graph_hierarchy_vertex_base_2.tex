@@ -10,7 +10,7 @@
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
-\begin{ccRefClass}{Apollonius_graph_vertex_base_2<Gt,StoreHidden>}
+\begin{ccRefClass}{Apollonius_graph_hierarchy_vertex_base_2<Agvb>}
 
 %% add template arg's if necessary
 
@@ -20,31 +20,28 @@
 \ccDefinition
 
 The class \ccRefName\ provides a model for the
-\ccc{ApolloniusGraphVertexBase_2} concept which is the vertex base
-required by the \ccc{ApolloniusGraphDataStructure_2} concept. The
-class \ccRefName\ has two template arguments, the first being the
-geometric traits of the Apollonius graph and should be a model of the
-concept \ccc{ApolloniusGraphTraits_2}. The second is a boolean which
-controls whether hidden sites are actually stored. Such a
-control is important if the user is not interested in hidden sites
-and/or if only insertions are made, in which case no hidden
-site can become visible. If \ccc{StoreHidden} is set to
-\ccc{true}, hidden sites are stored, otherwise they are
-discarded. By default \ccc{StoreHidden} is set to \ccc{true}.
+\ccc{ApolloniusGraphHierarchyVertexBase_2} concept which is the vertex
+base required by the \ccc{Apollonius_graph_hierarchy_2<Gt,Agds>}
+class. The class \ccRefName\ is templated by a class \ccc{Agvb} which
+must be a model of the \ccc{ApolloniusGraphVertexBase_2} concept.
 
-\ccInclude{CGAL/Apollonius_graph_vertex_base_2.h}
+\ccInclude{CGAL/Apollonius_graph_hierarchy_vertex_base_2.h}
+
+\ccInheritsFrom
+\ccc{Agvb}
 
 \ccIsModel
-\ccc{ApolloniusGraphVertexBase_2}
+\ccc{ApolloniusGraphHierarchyVertexBase_2}
 
 \ccCreation
-\ccCreationVariable{vb}  %% choose variable name
-\ccTwo{Apollonius_graph_vertex_base_2<Gt,StoreHidden>
-vb(Site_2 s);+}{}
+\ccCreationVariable{hvb}  %% choose variable name
+\ccTwo{Apollonius_graph_hierarchy_vertex_base_2<Agvb>
+hvb(Site_2 s);++}{}
 
-\ccConstructor{Apollonius_graph_bertex_base_2();}{Default constructor.}
+\ccConstructor{Apollonius_graph_hierarchy_vertex_base_2();}
+{Default constructor.}
 \ccGlue
-\ccConstructor{Apollonius_graph_vertex_base_2(Site_2 s);}
+\ccConstructor{Apollonius_graph_hierarchy_vertex_base_2(Site_2 s);}
 {Constructs a vertex associated with the site \ccc{s} and
 embedded at the center of \ccc{s}.}
 \ccGlue
@@ -58,8 +55,8 @@ embedded at the center of \ccc{s}.}
 
 \ccSeeAlso
 \ccc{ApolloniusGraphVertexBase_2}\\
+\ccc{ApolloniusGraphHierarchyVertexBase_2}\\
 \ccc{ApolloniusGraphTraits_2}\\
-\ccc{CGAL::Apollonius_graph_euclidean_traits_2<K,Method_tag>}
 
 \end{ccRefClass}
 
