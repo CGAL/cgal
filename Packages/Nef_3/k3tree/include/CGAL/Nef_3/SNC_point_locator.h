@@ -118,7 +118,8 @@ class SNC_point_locator_by_spatial_subdivision :
   typedef SNC_decorator<SNC_structure> SNC_decorator;
   typedef SNC_point_locator<SNC_structure> SNC_point_locator;
   typedef SNC_point_locator_by_spatial_subdivision<SNC_structure> Self;
-  typedef SM_decorator<SNC_structure> SM_decorator;
+  typedef typename SNC_structure::Sphere_map  Sphere_map;
+  typedef SM_decorator<Sphere_map>  SM_decorator;
   typedef SNC_intersection<SNC_structure> SNC_intersection;
 
   typedef typename SNC_structure::Kernel Kernel;
@@ -485,7 +486,7 @@ private:
       f_below = get_visible_facet( v, ray);
       if( f_below != Halffacet_handle())
         return volume(f_below);
-      SM_decorator SD(v); // now, the vertex has no incident facets
+      SM_decorator SD(&*v); // now, the vertex has no incident facets
       CGAL_assertion( SD.number_of_sfaces() == 1);
       return volume(SD.sfaces_begin());
     }
@@ -494,7 +495,7 @@ private:
       f_below = get_visible_facet( e, ray);
       if( f_below != Halffacet_handle())
         return volume(f_below);
-      SM_decorator SD(source(e)); // now, the edge has no incident facets
+      CGAL_assertion_code(SM_decorator SD(&*source(e))); // now, the edge has no incident facets
       CGAL_assertion(SD.is_isolated(e));
       return volume(sface(e));
     }

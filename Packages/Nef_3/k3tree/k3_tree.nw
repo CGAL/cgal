@@ -264,7 +264,7 @@ for( Object_const_iterator o = objects.begin(); o != objects.end(); ++o) {
   if( assign( v, *o))
     n_vertices++;
 }
-frexp( n_vertices, &max_depth);
+frexp( (double) n_vertices, &max_depth);
 
 @ 
 The bounding box of the input set of objects is used in two moments.  First, during the construction of the spatial subdivision, where the bounding box is recursivelly divided in halves defining each one a node on the tree, and second, during the ray shooting where the bounding box is used to clip the infinite rays.
@@ -620,7 +620,7 @@ else {
     CGAL_assertion( !r.is_degenerate());
     S.pop_front();
     if( n->is_leaf()) {
-#ifdef _DEBUG
+#ifndef NDEBUG
       if( first_ray) {
         first_ray = false;
         TRACEN("operator++: prev_ray=(none), ray="<<r);
@@ -863,7 +863,7 @@ else {
     Segment_3 s = S.front().second;
     S.pop_front();
     if( n->is_leaf()) {
-#ifdef _DEBUG
+#ifndef NDEBUG
       if( first_segment) {
         first_segment = false;
         TRACEN("operator++: prev_segment=(none), segment="<<s);

@@ -177,7 +177,7 @@ for( Object_const_iterator o = objects.begin(); o != objects.end(); ++o) {
   if( assign( v, *o))
     n_vertices++;
 }
-frexp( n_vertices, &max_depth);
+frexp( (double) n_vertices, &max_depth);
 
 #line 86 "k3_tree.nw"
     
@@ -363,7 +363,7 @@ else {
     Segment_3 s = S.front().second;
     S.pop_front();
     if( n->is_leaf()) {
-#ifdef _DEBUG
+#ifndef NDEBUG
       if( first_segment) {
         first_segment = false;
         TRACEN("operator++: prev_segment=(none), segment="<<s);
