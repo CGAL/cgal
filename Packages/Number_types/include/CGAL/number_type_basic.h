@@ -283,7 +283,7 @@ Sign sign(const Gmpq &);
 bool is_valid(const Gmpq &);
 bool is_finite(const Gmpq &);
 std::pair<double, double> to_interval (const Gmpq &);
-#endif
+#endif // CGAL_USE_GMP
 
 #ifdef CGAL_USE_GMPXX
 // GMPXX
@@ -359,9 +359,9 @@ bool is_valid(const CORE::Expr &);
 Sign sign(const CORE::Expr&);
 Comparison_result compare(const CORE::Expr&, const CORE::Expr&);
 std::pair<double,double> to_interval (const CORE::Expr &);
+#endif // CGAL_USE_CORE
 
 CGAL_END_NAMESPACE
-#endif
 
 // specializations for Quotient
 
@@ -369,7 +369,7 @@ CGAL_END_NAMESPACE
 
 #ifdef CGAL_USE_GMP
 #  include <CGAL/Gmpz.h>
-#endif
+#endif // CGAL_USE_GMP
 
 #include <CGAL/MP_Float.h>
 
@@ -377,7 +377,7 @@ CGAL_BEGIN_NAMESPACE
 
 #ifdef CGAL_USE_GMP
 double to_double(const Quotient<Gmpz>&);
-#endif
+#endif // CGAL_USE_GMP
 
 double to_double(const Quotient<MP_Float>&);
 std::pair<double,double> to_interval(const Quotient<MP_Float>&);
