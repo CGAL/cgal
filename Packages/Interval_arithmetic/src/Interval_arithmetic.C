@@ -26,3 +26,17 @@
 
 unsigned CGAL::Interval_nt_advanced::number_of_failures=0;
 
+std::ostream &
+operator<< (std::ostream & os, const CGAL::Interval_nt_advanced & I)
+{
+    return os << "[" << I.inf() << ";" << I.sup() << "]";
+}
+
+std::istream &
+operator>> (std::istream & is, CGAL::Interval_nt_advanced & I)
+{
+    double d;
+    is >> d;
+    I = d;
+    return is;
+}

@@ -490,20 +490,8 @@ max (const Interval_nt_advanced & d, const Interval_nt_advanced & e)
 			      std::max(d.sup(), e.sup()));
 }
 
-inline
-std::ostream &
-operator<< (std::ostream & os, const Interval_nt_advanced & d)
-{ return os << "[" << d.inf() << ";" << d.sup() << "]"; }
-
-inline
-std::istream &
-operator>> (std::istream & is, Interval_nt_advanced & ia)
-{
-    double d;
-    is >> d;
-    ia = d;
-    return is;
-}
+std::ostream & operator<< (std::ostream & os, const Interval_nt_advanced & d);
+std::istream & operator>> (std::istream & is, Interval_nt_advanced & ia);
 
 
 // The non-advanced class.
