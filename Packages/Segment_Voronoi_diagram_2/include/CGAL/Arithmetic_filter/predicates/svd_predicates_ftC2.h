@@ -48,6 +48,8 @@ static unsigned int num_failures_vertex_conflict = 0;
 static unsigned int num_failures_finite_edge_conflict = 0;
 static unsigned int num_failures_infinite_edge_conflict = 0;
 static unsigned int num_failures_do_intersect = 0;
+static unsigned int num_failures_are_parallel = 0;
+static unsigned int num_failures_oriented_side = 0;
 
 template < class CT, class ET, bool Protected, class Cache, class Method_tag >
 inline
@@ -340,7 +342,7 @@ svd_do_intersect_ftC2(const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& x1,
   catch (Interval_nt_advanced::unsafe_comparison) {
     Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
 
-    num_failures_side_of_bisector++;
+    num_failures_do_intersect++;
 
     ET x1_et = x1.exact();
     ET y1_et = y1.exact();
@@ -358,6 +360,94 @@ svd_do_intersect_ftC2(const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& x1,
   }
 }
 
+
+//----------------------------------------------------------------------------
+
+template < class CT, class ET, bool Protected, class Cache >
+inline
+bool
+svd_are_parallel_ftC2(const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& x1,
+		      const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& y1,
+		      const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& x2,
+		      const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& y2,
+		      const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& x3,
+		      const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& y3,
+		      const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& x4,
+		      const Filtered_exact<CT,ET,Dynamic,Protected,Cache>& y4)
+{
+  //  do_not_compile();
+
+  try {
+    Protect_FPU_rounding<Protected> Protection;
+
+    Interval_nt_advanced x1_it = x1.interval();
+    Interval_nt_advanced y1_it = y1.interval();
+    Interval_nt_advanced x2_it = x2.interval();
+    Interval_nt_advanced y2_it = y2.interval();
+    Interval_nt_advanced x3_it = x3.interval();
+    Interval_nt_advanced y3_it = y3.interval();
+    Interval_nt_advanced x4_it = x4.interval();
+    Interval_nt_advanced y4_it = y4.interval();
+
+    return svd_are_parallel_C2(x1_it, y1_it, x2_it, y2_it,
+			       x3_it, y3_it, x4_it, y4_it);
+  }
+  catch (Interval_nt_advanced::unsafe_comparison) {
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
+
+    num_failures_are_parallel++;
+
+    ET x1_et = x1.exact();
+    ET y1_et = y1.exact();
+    ET x2_et = x2.exact();
+    ET y2_et = y2.exact();
+    ET x3_et = x3.exact();
+    ET y3_et = y3.exact();
+    ET x4_et = x4.exact();
+    ET y4_et = y4.exact();
+
+    return svd_are_parallel_C2(x1_et, y1_et, x2_et, y2_et,
+			       x3_et, y3_et, x4_et, y4_et);
+  }
+}
+
+
+//----------------------------------------------------------------------------
+
+template < class CT, class ET, bool Protected, class Cache, class Method_tag >
+inline
+Sign
+svd_oriented_side_ftC2(const std::vector< 
+		       Filtered_exact<CT,ET,Dynamic,Protected,Cache> >& v,
+		       char site_types[], unsigned int num_sites,
+		       Method_tag method_tag)
+{
+  try {
+    Protect_FPU_rounding<Protected> Protection;
+
+    std::vector<Interval_nt_advanced> v_IT(v.size());
+
+    for (unsigned int i = 0; i < v.size(); i++) {
+      v_IT[i] = v[i].interval();
+    }
+    return svd_oriented_side_ftC2(v_IT, site_types, num_sites,
+				  method_tag);
+  }
+  catch (Interval_nt_advanced::unsafe_comparison) {
+    Protect_FPU_rounding<!Protected> Protection(CGAL_FE_TONEAREST);
+
+    num_failures_oriented_side++;
+
+    std::vector<ET> v_ET(v.size());
+
+    for (unsigned int i = 0; i < v.size(); i++) {
+      v_ET[i] = v[i].exact();
+    }
+
+    return svd_oriented_side_ftC2(v_ET, site_types, num_sites,
+				  method_tag);
+  }
+}
 
 //----------------------------------------------------------------------------
 
