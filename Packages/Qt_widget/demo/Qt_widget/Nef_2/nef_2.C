@@ -98,12 +98,11 @@ Nef_polyhedron Nef_visible2(Nef_polyhedron::EMPTY);
 //This class contains a Nef_2 object and a text description
 class Nef_description{
 public:
-  Nef_description(Nef_polyhedron n, char *name_p):
-      N(n)
-  { strcpy(name, name_p);}
+  Nef_description(Nef_polyhedron n, QString name_p):
+      N(n), name(name_p){}
   ~Nef_description(){}
   Nef_polyhedron N;
-  char name[300];
+  QString name;
 };
 
 
@@ -240,7 +239,7 @@ public:
     Nef_polyhedron N2(l2, Nef_polyhedron::INCLUDED);
     Nef_visible2 = N2;
 
-    insert_in_list(N1, "LeftHalf");insert_in_list(N2, "TopHalf");
+    insert_in_list(N1, QString("LeftHalf"));insert_in_list(N2, QString("TopHalf"));
 
     *widget << CGAL::BackgroundColor (CGAL::BLACK);
   
@@ -464,7 +463,7 @@ private slots:
       //if there is something selected
       Nef_polyhedron NT = Nef_visible.intersection(Nef_visible2);
       QString s = "AND(" + list1->currentText() + ", " + list2->currentText() + ")";
-      insert_in_list(NT, s.data());
+      insert_in_list(NT, s);
       Nef_visible = NT;
       Nef_visible2 = Nef_polyhedron(Nef_polyhedron::EMPTY);
       list1->setSelected(list1->count()-1, true);
@@ -477,7 +476,7 @@ private slots:
       //if there is something selected
       Nef_polyhedron NT = Nef_visible.join(Nef_visible2);
       QString s = "OR(" + list1->currentText() + ", " + list2->currentText() + ")";
-      insert_in_list(NT, s.data());
+      insert_in_list(NT, s);
       Nef_visible = NT;
       Nef_visible2 = Nef_polyhedron(Nef_polyhedron::EMPTY);
       list1->setSelected(list1->count()-1, true);
@@ -490,7 +489,7 @@ private slots:
       //if there is something selected
       Nef_polyhedron NT = Nef_visible.difference(Nef_visible2);
       QString s = "Dif(" + list1->currentText() + ", " + list2->currentText() + ")";
-      insert_in_list(NT, s.data());
+      insert_in_list(NT, s);
       Nef_visible = NT;
       Nef_visible2 = Nef_polyhedron(Nef_polyhedron::EMPTY);
       list1->setSelected(list1->count()-1, true);
@@ -503,7 +502,7 @@ private slots:
       //if there is something selected
       Nef_polyhedron NT = Nef_visible.symmetric_difference(Nef_visible2);
       QString s = "SYM_DIF(" + list1->currentText() + ", " + list2->currentText() + ")";
-      insert_in_list(NT, s.data());
+      insert_in_list(NT, s);
       Nef_visible = NT;
       Nef_visible2 = Nef_polyhedron(Nef_polyhedron::EMPTY);
       list1->setSelected(list1->count()-1, true);
@@ -516,7 +515,7 @@ private slots:
       //if there is something from the 1st list selected
       Nef_polyhedron NT = Nef_visible.complement();
       QString s = "COMPLEMENT( " + list1->currentText() + " )";
-      insert_in_list(NT, s.data());
+      insert_in_list(NT, s);
       Nef_visible = NT;
       list1->setSelected(list1->count()-1, true);
       widget->redraw();
@@ -527,7 +526,7 @@ private slots:
       //if there is something from the 1st list selected
       Nef_polyhedron NT = Nef_visible.interior();
       QString s = "INTERIOR( " + list1->currentText() + " )";
-      insert_in_list(NT, s.data());
+      insert_in_list(NT, s);
       Nef_visible = NT;
       list1->setSelected(list1->count()-1, true);
       widget->redraw();
@@ -538,7 +537,7 @@ private slots:
       //if there is something from the 1st list selected
       Nef_polyhedron NT = Nef_visible.closure();
       QString s = "CLOSURE( " + list1->currentText() + " )";
-      insert_in_list(NT, s.data());
+      insert_in_list(NT, s);
       Nef_visible = NT;
       list1->setSelected(list1->count()-1, true);
       widget->redraw();
@@ -549,7 +548,7 @@ private slots:
       //if there is something from the 1st list selected
       Nef_polyhedron NT = Nef_visible.boundary();
       QString s = "BOUNDARY( " + list1->currentText() + " )";
-      insert_in_list(NT, s.data());
+      insert_in_list(NT, s);
       Nef_visible = NT;
       list1->setSelected(list1->count()-1, true);
       widget->redraw();
@@ -560,24 +559,25 @@ private slots:
       //if there is something from the 1st list selected
       Nef_polyhedron NT = Nef_visible.regularization();
       QString s = "REGULARIZATION( " + list1->currentText() + " )";
-      insert_in_list(NT, s.data());
+      insert_in_list(NT, s);
       Nef_visible = NT;
       list1->setSelected(list1->count()-1, true);
       widget->redraw();
     }
   }
 private:
-  void  insert_in_list(Nef_polyhedron n,const char *name)
+  void  insert_in_list(Nef_polyhedron n,QString name)
   {
     char tname[300], tnr[5];
     sprintf(tnr, "%d", nef_index++);
     strcpy(tname, "N");
     strcat(tname, tnr);strcat(tname, "= ");
-    strcat(tname, name);
-    Nef_description tempND(n, tname);
+    QString qs_tname(tname);
+    qs_tname += name;
+    Nef_description tempND(n, qs_tname);
     nef_2_list.push_back(tempND);
-    list1->insertItem(tname);
-    list2->insertItem(tname);
+    list1->insertItem(qs_tname);
+    list2->insertItem(qs_tname);
   }
   Nef_polyhedron
         return_selected_nef(QString text){          
