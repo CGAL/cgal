@@ -16,8 +16,8 @@
 // chapter       : Geometric Optimisation
 //
 // source        : web/Min_annulus_d.aw
-// revision      : 1.9
-// revision_date : 2001/03/21
+// revision      : $Revision$
+// revision_date : $Date$
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
@@ -28,15 +28,14 @@
 // includes and typedefs
 // ---------------------
 #include <CGAL/Cartesian.h>
-#include <CGAL/Point_3.h>
 #include <CGAL/Min_annulus_d.h>
 #include <CGAL/Optimisation_d_traits_3.h>
 
 // test variant 1 (needs LEDA)
 #ifdef CGAL_USE_LEDA
 # include <CGAL/leda_integer.h>
-  typedef  CGAL::Cartesian<leda_integer>       R_1;
-  typedef  CGAL::Optimisation_d_traits_3<R_1>   Traits_1;
+  typedef  CGAL::Cartesian<leda_integer>       K_1;
+  typedef  CGAL::Optimisation_d_traits_3<K_1>  Traits_1;
 # define TEST_VARIANT_1 \
     "Optimisation_d_traits_3< Cartesian<leda_integer> >"
   CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( leda_integer)
@@ -45,8 +44,8 @@
 // test variant 2 (needs GMP)
 #ifdef CGAL_USE_GMP
 # include <CGAL/_QP_solver/Double.h>
-  typedef  CGAL::Cartesian< int >                                 R_2;
-  typedef  CGAL::Optimisation_d_traits_3<R_2,GMP::Double,double>   Traits_2;
+  typedef  CGAL::Cartesian< int >                                 K_2;
+  typedef  CGAL::Optimisation_d_traits_3<K_2,GMP::Double,double>  Traits_2;
 # define TEST_VARIANT_2 \
     "Optimisation_d_traits_3< Cartesian<int>, GMP::Double, double >"
 #endif
@@ -69,13 +68,15 @@ main( int argc, char* argv[])
     
     int verbose = -1;
     if ( argc > 1) verbose = atoi( argv[ 1]);
-    CGAL::Verbose_ostream  verr( verbose >= 0);
+    CGAL::Verbose_ostream  verr ( verbose >= 0); verr  << "";
     
     // test variant 1
     // --------------
     #ifdef TEST_VARIANT_1
     
         verr << endl
+             << "==================================="
+             << "===================================" << endl
              << "Testing `Min_annulus_d' with traits class model" << endl
              << "==> " << TEST_VARIANT_1 << endl
              << "==================================="
@@ -83,12 +84,11 @@ main( int argc, char* argv[])
              << endl;
     
         // generate point set
-        std::vector<R_1::Point_3>  points_1;
+        std::vector<K_1::Point_3>  points_1;
         points_1.reserve( 100);
-        CGAL::copy_n( CGAL::Random_points_on_sphere_3<R_1::Point_3>( 0x100000),
+        CGAL::copy_n( CGAL::Random_points_on_sphere_3<K_1::Point_3>( 0x100000),
                       100, std::back_inserter( points_1));
     
-        // call test function
         // call test function
         CGAL::test_Min_annulus_d( points_1.begin(), points_1.end(),
                                   Traits_1(), verbose);
@@ -100,6 +100,8 @@ main( int argc, char* argv[])
     #ifdef TEST_VARIANT_2
     
         verr << endl
+             << "==================================="
+             << "===================================" << endl
              << "Testing `Min_annulus_d' with traits class model" << endl
              << "==> " << TEST_VARIANT_2 << endl
              << "==================================="
@@ -107,12 +109,11 @@ main( int argc, char* argv[])
              << endl;
     
         // generate point set
-        std::vector<R_2::Point_3>  points_2;
+        std::vector<K_2::Point_3>  points_2;
         points_2.reserve( 100);
-        CGAL::copy_n( CGAL::Random_points_on_sphere_3<R_2::Point_3>( 0x100000),
+        CGAL::copy_n( CGAL::Random_points_on_sphere_3<K_2::Point_3>( 0x100000),
                       100, std::back_inserter( points_2));
     
-        // call test function
         // call test function
         CGAL::test_Min_annulus_d( points_2.begin(), points_2.end(),
                                   Traits_2(), verbose);

@@ -16,8 +16,8 @@
 // chapter       : Geometric Optimisation
 //
 // source        : web/Min_annulus_d.aw
-// revision      : 1.9
-// revision_date : 2001/03/21
+// revision      : $Revision$
+// revision_date : $Date$
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
@@ -45,7 +45,7 @@ CGAL_BEGIN_NAMESPACE
 template < class ForwardIterator, class Traits >
 void
 test_Min_annulus_d( ForwardIterator first, ForwardIterator last,
-                   const Traits& traits, int verbose)
+                    const Traits& traits, int verbose)
 {
     CGAL_USING_NAMESPACE_STD
 
