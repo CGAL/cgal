@@ -1,9 +1,15 @@
 #define CGAL_POLYGON_DEBUG 1
 
 #include <CGAL/basic.h>
-#include <CGAL/Quotient.h>
-#include <CGAL/Gmpz.h>
 #include <CGAL/Cartesian.h>
+#include <CGAL/Quotient.h>
+#ifdef CGAL_USE_GMP
+#include <CGAL/Gmpz.h>
+typedef CGAL::Quotient<CGAL::Gmpz> NT;
+#else
+#include <CGAL/MP_Float.h>
+typedef CGAL::Quotient<CGAL::MP_Float> NT;
+#endif
 #include <CGAL/Point_2.h>
 #include <CGAL/Polygon_2_algorithms.h>
 
@@ -18,8 +24,8 @@ using std::endl;
 bool TestSimplicity(const char* FileName)
 // tests the simplicity of the polygon in the file FileName
 {
-  typedef CGAL::Cartesian<CGAL::Quotient<CGAL::Gmpz> > R;
-  typedef CGAL::Point_2<R> Point;
+  typedef CGAL::Cartesian<NT> K;
+  typedef CGAL::Point_2<K> Point;
 
   cout << "-----------------------------------------------" << endl;
   cout << "-      Testing polygon " << FileName << endl;
@@ -54,8 +60,8 @@ bool TestSimplicity(const char* FileName)
 
 void TestDegenerateCases()
 {
-  typedef CGAL::Cartesian<double> R;
-  typedef CGAL::Point_2<R> Point;
+  typedef CGAL::Cartesian<double> K;
+  typedef CGAL::Point_2<K> Point;
   std::vector<Point> polygon;
 
   polygon.push_back(Point(1,1));
