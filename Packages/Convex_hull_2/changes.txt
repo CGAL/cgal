@@ -1,3 +1,6 @@
+3.20    (26 Jul 2001)
+- minor formatting changes
+
 3.19    (26 Jul 2001)
 - made changes in doc necessary for split manual
 
