@@ -1,3 +1,4 @@
+
 // Copyright (c) 1999  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
@@ -38,6 +39,11 @@ public:
   typedef typename Cb::Cell_handle                     Cell_handle;
 
   typedef GT                                           Geom_traits;
+  typedef typename Geom_traits::Point_3                Point;
+
+  typedef Point*           Point_container;
+  typedef Point*           Point_iterator;
+  typedef const Point*     Point_const_iterator;
 
   template < typename TDS2 >
   struct Rebind_TDS {
@@ -57,6 +63,10 @@ public:
                             const Cell_handle&   n0, const Cell_handle&   n1,
                             const Cell_handle&   n2, const Cell_handle&   n3)
     : Cb(v0, v1, v2, v3, n0, n1, n2, n3) {}
+
+  Point_iterator hidden_points_begin() const { return hidden_points_end(); }
+  Point_iterator hidden_points_end() const { return NULL; }
+  void hide_point (const Point &p) const { }
 };
 
 // The following should be useless.

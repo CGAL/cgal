@@ -351,7 +351,9 @@ int main()
   T3.insert(wpp5);
   T3.insert(wpp6);
   T3.insert(wpp7);
-  T3.insert(wpp8);
+  // Avoid inserting the same point twice, now that hidden points are handled,
+  // insert (existing_point) returns Vertex_handle().
+  // T3.insert(wpp8);
   Vertex_handle v8 = T3.insert(wpp8);
   Point query(0.5,0.5,0.5);
   assert(T3.nearest_power_vertex(query) == v8);
@@ -420,6 +422,15 @@ int main()
   assert(T5.nearest_power_vertex(v0->point().point()) == v3);
   assert(T5.is_Gabriel(v3));
   assert(!T5.is_Gabriel(v0));
+
+  // test remove
+  // TODO: this does not test all the paths remove() can go through.
+  std::cout << " test remove" << std::endl;
+  assert (T4.is_vertex (v01));
+  T4.remove (v01);
+  Vertex_handle remove_v;
+  // check that wq0 was really reinserted.
+  assert (T4.is_vertex (wq0, remove_v));
 
   std::cout << " quit " << std::endl;
   return 0;
