@@ -57,7 +57,13 @@ operator << ( Qt_widget &ws,
       case 3:
       case 4:
       case 5:
-        ws << oe.to_double();
+	{
+	  typedef CGAL::Conic_2<CGAL::Cartesian<double> >
+	    DoubleConic_2;
+	  DoubleConic_2 dc2;
+	  oe.double_conic(dc2);
+	  ws << dc2;
+	}
         break;
       default:
         CGAL_optimisation_assertion( ( oe.n_boundary_points >= 0) &&
