@@ -9,14 +9,14 @@ CGAL_BEGIN_NAMESPACE
 /*!
  */
 template< class FT_ >
-class Direction_2 : public leda_rat_point {
+class my_rat_direction : public leda_rat_point {
 public:
 public:
   typedef FT_                                   RT;
   typedef FT_                                   FT;
 
-  Direction_2(const leda_rat_point & p) : leda_rat_point(p) {}
-  Direction_2(const FT x, const FT y) : leda_rat_point(x,y) {}
+  my_rat_direction(const leda_rat_point & p) : leda_rat_point(p) {}
+  my_rat_direction(const FT x, const FT y) : leda_rat_point(x,y) {}
 
   /*!
    */
@@ -49,25 +49,25 @@ public:
   /*!
    */
   Comparison_result
-  compare_angle_with_x_axis(const Direction_2 & d1,
-                            const Direction_2 & d2) const
+  compare_angle_with_x_axis(const my_rat_direction & d1,
+                            const my_rat_direction & d2) const
   { return compare_angle_with_x_axis_2(d1.xcoord(), d1.ycoord(),
                                        d2.xcoord(), d2.ycoord()); }
 
   /*!
    */
-  bool operator<(const Direction_2 & d) const
+  bool operator<(const my_rat_direction & d) const
   { return compare_angle_with_x_axis(*this, d) == SMALLER; }
 
   /*!
    */
-  bool operator<=(const Direction_2 & d) const
+  bool operator<=(const my_rat_direction & d) const
   { return compare_angle_with_x_axis(*this, d) != LARGER; }
       
   /*!
    */
-  bool counterclockwise_in_between(const Direction_2 & d1,
-                                     const Direction_2 & d2) const
+  bool counterclockwise_in_between(const my_rat_direction & d1,
+                                   const my_rat_direction & d2) const
   {
     if (d1 <*this) return (*this < d2 || d2 <= d1);
     return (*this < d2 && d2 <= d1);
@@ -84,7 +84,7 @@ public:
   typedef FT_                                   FT;
   typedef leda_rat_point                        Point_2;
   typedef leda_rat_segment                      Segment_2;
-  typedef Direction_2<FT>                       Direction_2;
+  typedef my_rat_direction<FT>                  Direction_2;
 
   /*! Functor
    */
