@@ -11,38 +11,28 @@
 // release       :
 // release_date  :
 // 
-// source        : degeneracy_test.fw
-// file          : test/ConvexHull3D/degeneracy_test.C
-// revision      : 2.6
-// revision_date : 21 Aug 2000 
+// file          : test/Convex_hull_3/degeneracy_test.C
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-// maintainer    : Stefan Schirra <Stefan.Schirra@mpi-sb.mpg.de> 
-//
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken  
 // ============================================================================
  
 
-#include <CGAL/Homogeneous.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_3.h>
-#include <CGAL/point_generators_3.h>
 #include <CGAL/Halfedge_data_structure_polyhedron_default_3.h>
 #include <CGAL/Polyhedron_default_traits_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/ch_assertions.h>
 #include <CGAL/convex_hull_3.h>
-#include <CGAL/kernel_to_kernel.h>
 #include <vector>
 
 typedef double                                                      NumberType;
 
 /* representation class */
 typedef CGAL::Cartesian<NumberType>                                 RepCls;
-
-/* define convex hull types */
-typedef CGAL::chull_traits_3<RepCls>                                ChullTraits;
-typedef chull< ChullTraits >                                        ChullType;
 
 /* define polyhedron type */
 typedef CGAL::Halfedge_data_structure_polyhedron_default_3<RepCls>  HDS;
