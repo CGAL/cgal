@@ -48,18 +48,18 @@ Saarbruecken@)
 CGAL_BEGIN_NAMESPACE
 
 template <class R>
-struct _Pointlist_2_rec {
-    _Pointlist_2_rec *next;
+struct Pointlist_2_rec_ {
+    Pointlist_2_rec_ *next;
     Point_2<R> point;
     Oriented_side side;
 };
 
 template <class R>
-struct _Pointlist_2 {
+struct Pointlist_2_ {
     int size;
-    _Pointlist_2_rec<R> *first;
-    _Pointlist_2() ;
-    ~_Pointlist_2() ;
+    Pointlist_2_rec_<R> *first;
+    Pointlist_2_() ;
+    ~Pointlist_2_() ;
 };
 
 template <class R>
@@ -88,7 +88,7 @@ protected:
     Triangle_2<R> const *  _trian2;
     mutable bool                    _known;
     mutable Intersection_results    _result;
-    mutable _Pointlist_2<R>    _pointlist;
+    mutable Pointlist_2_<R>    _pointlist;
 };
 
 @<do_intersect macro@>@(Triangle_2@,Triangle_2@)
@@ -160,16 +160,16 @@ which it should do, probably.
 CGAL_BEGIN_NAMESPACE
 
 template <class R>
-_Pointlist_2<R>::_Pointlist_2()
+Pointlist_2_<R>::Pointlist_2_()
 {
     size = 0;
     first = 0;
 }
 
 template <class R>
-_Pointlist_2<R>::~_Pointlist_2()
+Pointlist_2_<R>::~Pointlist_2_()
 {
-    _Pointlist_2_rec<R> *cur;
+    Pointlist_2_rec_<R> *cur;
     for (int i=0; i<size; i++) {
         cur = first;
         first = cur->next;
@@ -183,7 +183,7 @@ _Pointlist_2<R>::~_Pointlist_2()
 @$@<Triangle_2_Triangle_2_pair implementation@>+=@{
 
 template <class R>
-void _init_list(_Pointlist_2<R> &list,
+void _init_list(Pointlist_2_<R> &list,
                 const Triangle_2<R> &trian)
 {
     // check on degeneracies of trian.
@@ -191,8 +191,8 @@ void _init_list(_Pointlist_2<R> &list,
         list.size = 3;
         list.first = 0;
         for (int i=0; i<3; i++) {
-            _Pointlist_2_rec<R> *newrec =
-                        new _Pointlist_2_rec<R>;
+            Pointlist_2_rec_<R> *newrec =
+                        new Pointlist_2_rec_<R>;
             newrec->next = list.first;
             list.first = newrec;
             newrec->point = trian[i];
@@ -212,12 +212,12 @@ CGAL_END_NAMESPACE
 CGAL_BEGIN_NAMESPACE
 
 template <class R>
-void _cut_off(_Pointlist_2<R> &list,
+void _cut_off(Pointlist_2_<R> &list,
                 const Line_2<R> &cutter)
 {
     int i;
     int add = 0;
-    _Pointlist_2_rec<R> *cur, *last, *newrec;
+    Pointlist_2_rec_<R> *cur, *last, *newrec;
     for (i=0, cur = list.first; i<list.size; i++, cur = cur->next) {
         cur->side = cutter.oriented_side(cur->point);
         last = cur;
@@ -233,7 +233,7 @@ Add vertices on the cutter.
             // add a vertex after cur
             add++;
             Line_2<R> l(cur->point, last->point);
-            newrec = new _Pointlist_2_rec<R>;
+            newrec = new Pointlist_2_rec_<R>;
             newrec->next = last->next;
             last->next = newrec;
             newrec->side = ON_ORIENTED_BOUNDARY;
@@ -249,7 +249,7 @@ Add vertices on the cutter.
 @}
 remove the vertices on the right side of the line.
 @$@<Triangle_2_Triangle_2_pair implementation@>+=@{@-
-    _Pointlist_2_rec<R> **curpt;
+    Pointlist_2_rec_<R> **curpt;
     curpt = &list.first;
     while (*curpt != 0) {
         cur = *curpt;
@@ -317,7 +317,7 @@ Triangle_2_Triangle_2_pair<R>::intersection(
         intersection_type();
     if (_result != TRIANGLE  &&  _result != POLYGON)
         return false;
-    _Pointlist_2_rec<R> *cur;
+    Pointlist_2_rec_<R> *cur;
     int i;
     for (i=0, cur = _pointlist.first;
          i<_pointlist.size;
@@ -343,7 +343,7 @@ Triangle_2_Triangle_2_pair<R>::vertex(int n) const
 {
     CGAL_kernel_assertion(_known);
     CGAL_kernel_assertion(n >= 0 && n < _pointlist.size);
-    _Pointlist_2_rec<R> *cur;
+    Pointlist_2_rec_<R> *cur;
     int k;
     for (k=0, cur = _pointlist.first;
          k < n;
