@@ -12,10 +12,10 @@
 // release_date  : $CGAL_Date: 2001/06/21 $
 //
 // file          : include/CGAL/LEDA/window.h
-// package       : cgal_window (1.0)
+// package       : cgal_window (1.0.3)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 0.9.7
-// revision_date : 23 May 2001
+// revision      : 1.0.3
+// revision_date : 25 June 2001
 // author(s)     : Matthias Baesken, Algorithmic Solutions
 //
 // coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>) 
@@ -50,18 +50,18 @@ typedef void (*show_coord_handler_func)(window*,double,double);
 
 class __exportC window : public BASE_WINDOW {
 
-friend class __exportC GraphWin;
-friend class _exportC  GeoWinTypeName;
+//friend class __exportC GraphWin;
+//friend class _exportC  GeoWinTypeName;
 
 
 /*{\Mdefinition
 The data type $window$ provides an interface for graphical input and output 
 of basic two-dimensional geometric objects.
-Application programs using this data type have to be linked with {\em libW.a} 
+Application programs using this data type have to be linked with {\em libCGALWin.a} 
 and (on UNIX systems) with the X11 base library {\em libX11.a}
 (cf.~section~1.6):
 
-CC $prog.c$ -lW -lP -lG -lL -lX11 -lm
+CC $prog.c$ -lCGALWin -lX11 -lm
 
 An instance $W$ of type $window$ is an iso-oriented rectangular window in the 
 two-dimensional plane. The default representation of $W$ on the screen is a 
@@ -97,7 +97,7 @@ A list of all window parameters:
 \item
 The {\em foreground color} parameter (default $black$) defines 
 the default color to be used in all drawing operations.
-There are 18 predefined colors (enumeration in \<LEDA/incl/impl/x\_window.h\>):
+There are 18 predefined colors (enumeration in \<CGAL/LEDA/incl/impl/x\_window.h\>):
 $black$, $white$, $red$, $green$, $blue$, $yellow$, $violet$, $orange$,
 $cyan$, $brown$, $pink$, $green2$, $blue2$, $grey1$, $grey2$, $grey3$
 $ivory$, and $invisible$. 
@@ -196,7 +196,7 @@ after the binary point.
 
 \end{enumerate} 
 
-In addition to call-back (handler) functions LEDA windows now also
+In addition to call-back (handler) functions windows now also
 support the usage of function objects. Function object classes have
 to be derived from the |window_handler| base class.
 \begin{verbatim}
@@ -456,7 +456,7 @@ void set_icon_label(string s){ BASE_WINDOW::set_icon_label(s.c_str()); }
 /*{\Mopl     makes $s$ the window icon label. }*/
 
 void reset_frame_label() { BASE_WINDOW::reset_frame_label(); }
-/*{\Mop      restores the standard LEDA frame label. }*/
+/*{\Mop      restores the standard frame label. }*/
 
 
 void set_window_delete_handler(void (*F)(window*)) 
@@ -577,7 +577,7 @@ drawing_mode get_mode() const {return BASE_WINDOW::get_mode();}
 
 int          get_cursor() const {return BASE_WINDOW::get_cursor();}
 /*{\Mop      returns the id of the current cursor, i.e, one of the constants
-             predefined in <X11/cursorfont.h> or $-1$ for the default
+             predefined in $<X11/cursorfont.h>$ or $-1$ for the default
              cursor. }*/ 
 
 double xmin() const {return BASE_WINDOW::xmin();}
@@ -615,13 +615,13 @@ void* get_client_data(int i=0) const { return BASE_WINDOW::get_inf(i); }
           \precond $i < 16$. }*/ 
 
 
-GraphWin* get_graphwin() const { return BASE_WINDOW::get_graphwin(); }
-/*{\Mop   returns a pointer to the |GraphWin| (see \ref{Graph Windows})
+//GraphWin* get_graphwin() const { return BASE_WINDOW::get_graphwin(); }
+/*{\Xop   returns a pointer to the |GraphWin| (see \ref{Graph Windows})
           that uses |\Mvar| as its display window or |NULL| if |\Mvar| 
           is not used by any |GraphWin|. }*/ 
 
-GeoWinTypeName*   get_geowin() const { return BASE_WINDOW::get_geowin(); }
-/*{\Mop   returns a pointer to the |GeoWin| (see \ref{Geo Windows})
+//GeoWinTypeName*   get_geowin() const { return BASE_WINDOW::get_geowin(); }
+/*{\Xop   returns a pointer to the |GeoWin| (see \ref{Geo Windows})
           that uses |\Mvar| as its display window or |NULL| if |\Mvar| 
           is not used by any |GeoWin|. }*/ 
 
@@ -1224,7 +1224,7 @@ the constant NO\_BUTTON if no button was pressed.
 
 The window data type also provides two more general input operations 
 $W$.read\_event() and $W$.get\_event() for reading events. They return 
-the event type (enumeration in \<LEDA/impl/x\_window.h\>), the value of 
+the event type (enumeration in \<CGAL/LEDA/impl/x\_window.h\>), the value of 
 the event, the position of the event in the drawing section, and a time 
 stamp of the event.
 
@@ -1362,7 +1362,7 @@ int  read_event(int& val, double& x, double& y, unsigned long& t)
 /*{\Mopl   waits for next event in window $W$ and returns it. 
            Assigns the button or key to $val$, the position in $W$ 
            to  $(x,y)$, and the time stamp of the event to $t$. 
-           Possible events are (cf. \<LEDA/impl/x\_window.h\>): 
+           Possible events are (cf. \<CGAL/LEDA/impl/x\_window.h\>): 
            key\_press\_event, key\_release\_event,
            button\_press\_event, button\_release\_event, 
            configure\_event, motion\_event, destroy\_event. }*/
@@ -1467,17 +1467,6 @@ void  panel_read(string p, string& x);
 \bigskip
 {\bf 3.7 Input and output operators}
 
-For input and output of basic geometric objects in the plane such as
-points, lines, line segments, circles, and polygons the \<\< and \>\>
-operators can be used. Similar to \CC input streams windows have an internal 
-state indicating whether there is more input to read or not. Its initial value 
-is true and it is turned to false if an input sequence is terminated  by 
-clicking the right mouse button (similar to ending stream input by the eof 
-character). In conditional statements, objects of type $window$ are 
-automatically converted to boolean by returning this internal state. Thus, 
-they can be used in conditional statements in the same way as \CC input 
-streams. For example, to read a sequence of points terminated by a right 
-button click,  use `` {\bf while} ($W\ \>\>\ p$) $\{$ \dots $\}$ ''. 
 }*/
 
 /*{\Mtext
@@ -1520,11 +1509,6 @@ std::list<window_point> read_polygon();
 /*{\Mopl    as above, however, returns list of vertices. }*/
 
 
-/*{\Mtext
-As long as an input operation has not been completed the last read point can 
-be erased by simultaneously pressing the shift key and the left mouse button.
-}*/
-
 
 /*{\Mtext
 \bigskip
@@ -1535,7 +1519,7 @@ friend int  read_event(window*& w, int& val, double& x, double& y)
 { return BASE_WINDOW::read_event((BASE_WINDOW*&)w,val,x,y); }
 /*\{\Mfuncl waits for next event and returns it. Assigns the window to
             $w$, the button or key to $val$ and the position in $w$ to 
-            $(x,y)$. Possible events are (cf. <LEDA/impl/x_window.h>): 
+            $(x,y)$. Possible events are (cf. <CGAL/LEDA/impl/x_window.h>): 
             key_press_event, key_release_event,
             button_press_event, button_release_event, 
             configure_event,motion_event, destroy_event. }*/

@@ -12,10 +12,10 @@
 // release_date  : $CGAL_Date: 2001/06/21 $
 //
 // file          : include/CGAL/LEDA/color.h
-// package       : cgal_window (1.0)
+// package       : cgal_window (1.0.3)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 0.9.7
-// revision_date : 23 May 2001
+// revision      : 1.0.3
+// revision_date : 25 June 2001
 // author(s)     : Matthias Baesken, Algorithmic Solutions
 //
 // coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>) 
@@ -47,7 +47,7 @@ $0\le r,g,b \le 255$, the so-called {\em rgb-value} of the color.
 The number of available colors is restricted and depends on the 
 underlying hardware. Colors can be created from rgb-values,
 from names in a color data base (X11), or from the 16 integer 
-constants (enumeration in \<LEDA/incl/impl/x\_window.h\>)
+constants (enumeration in \<CGAL/LEDA/incl/impl/x\_window.h\>)
 $black$, $white$, $red$, $green$, $blue$, $yellow$, $violet$, $orange$;
 $cyan$, $brown$, $pink$, $green2$, $blue2$, $grey1$, $grey2$, $grey3$. 
 }*/

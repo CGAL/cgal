@@ -12,10 +12,10 @@
 // release_date  : $CGAL_Date: 2001/06/21 $
 //
 // file          : include/CGAL/LEDA/menu.h
-// package       : cgal_window (1.0)
+// package       : cgal_window (1.0.3)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 0.9.7
-// revision_date : 23 May 2001
+// revision      : 1.0.3
+// revision_date : 25 June 2001
 // author(s)     : Matthias Baesken, Algorithmic Solutions
 //
 // coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>) 
