@@ -433,7 +433,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
 
   NT content() const
   { CGAL_assertion( degree()>=0 );
-    iterator its=ptr()->coeff.begin(),ite=ptr()->coeff.end();
+    const_iterator its=ptr()->coeff.begin(),ite=ptr()->coeff.end();
     NT res = *its++;
     for(; its!=ite; ++its) res = 
       (*its==0 ? res : ring_or_field<NT>::gcd(res, *its));
