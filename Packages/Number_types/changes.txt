@@ -1,3 +1,6 @@
+4.38	 (19 December 01)
+- Added Geert-Jan's Counted_number.h.
+
 4.37	 (20 November 01)
 - Darwin support.
 
