@@ -42,15 +42,16 @@ int main()
   point a1(1, 1), a2(1, 0), a3(0, 0), a4(0, 1), a5(1,4,2) ;
 	
   /*
-	a5 
-	/\  
-	/  \
-	a4  ----  a1
-	|    | 
-	|    | 
-	|    |
-	a3  ----  a2
-	*/        
+       a5 
+       /\  
+      /  \
+  a4  ----  a1
+     |    | 
+     |    | 
+     |    |
+  a3  ----  a2
+
+  */        
 	
 	
 	// those curves are about to enter to pm
@@ -84,15 +85,15 @@ int main()
   e[5]=pm.insert_at_vertices(cv[5],e[0]->source(),e[2]->target() );
 	
   /*             
-	e3  /\  e4
+     e3  /\  e4
 	/  \
 	----
-	| e5 | 
-	e2 |    | e0
-	|    |
-	----
-	e1 
-	*/
+       | e5 | 
+    e2 |    | e0
+       |    |
+        ----
+         e1 
+  */
 	
 	// check the validity of the map
   std::cout << "check map validity... ";
