@@ -1,30 +1,406 @@
 % =============================================================================
 % The CGAL Reference Manual
 % Chapter: Geometric Optimisation
-% Section: Distance of Convex Polytopes in Arbitrary Dimension
-% Subsec.: Distance of Convex Polytopes in Arbitrary Dimension
+% Class  : CGAL::Polytope_distance_d<Traits>
 % -----------------------------------------------------------------------------
-% file  : doc_tex/basic/Optimisation/Polytope_distance_d
+% file  : doc_tex/basic/Optimisation/Optimisation_ref/Polytope_distance_d.tex
 % author: Sven Schönherr <sven@inf.ethz.ch>
 % -----------------------------------------------------------------------------
+% $CGAL_Chapter: Geometric Optimisation $
+% $CGAL_Package: Polytope_distance_d WIP $
 % $Revision$
 % $Date$
 % =============================================================================
 
-\begin{ccClassTemplate}{Polytope_distance_d<Traits>}
-\ccSubsection{Distance of Convex Polytopes in Arbitrary Dimension}
-\label{sec:Polytope_distance_d}
+\begin{ccRefClass}{Polytope_distance_d<Traits>}
 
+\ccSaveThreeColumns
 \cgalPolytopeDistanceLayout
+
+\newcommand{\PDempty}{%
+  $pd(\mbox{\ccTexHtml{$\emptyset$}{&Oslash;}},%
+      \mbox{\ccTexHtml{$\emptyset$}{&Oslash;}})$}
 
 % -----------------------------------------------------------------------------
 \ccDefinition
 
-\ldots
+An object of the class \ccRefName\ represents the (squared) distance
+between two convex polytopes, given as the convex hulls of two finite point
+sets in $d$-dimensional Euclidean space $\E_d$. For point sets $P$ and $Q$
+we denote by $pd(P,Q)$ the distance between the convex hulls of $P$ and
+$Q$.  Note that $pd(P,Q)$ can be degenerate, i.e.~$pd(P,Q)=0$ if the convex
+hulls of $P$ and $Q$ intersect, and $pd(P,Q)=\infty$ if $P$ or $Q$ is
+empty.
 
+Two inclusion-minimal subsets $S_P$ of $P$ and $S_Q$ of $Q$ with
+$pd(S_P,S_Q)=pd(P,Q)$ are called \emph{pair of support sets}, the points in
+$S_P$ and $S_Q$ are the \emph{support points}. A pair of support sets has
+size at most $d+2$ (by size we mean $|S_P|+|S_Q|$). The distance between
+the two polytopes is \emph{realized} by a pair of points $p$ and $q$
+lying in the convex hull of $S_P$ and $S_Q$, repectively,
+i.e.~$\sqrt{||p-q||}=pd(P,Q)$. In general, neither the support sets nor
+the realizing points are necessarily unique.
+
+The underlying algorithm can cope with all kinds of input, e.g.~$P$ and~$Q$
+may be in non-convex position or points may occur more than once. The
+algorithm computes a pair of support sets $S_P$ and $S_Q$ with realizing
+points $p$ and $q$ which remain fixed until the next set, insert, or clear
+operation.
+
+The class \ccRefName\ expects a model of the concept
+\ccc{Polytope_distance_d_traits} as its template argument. We provide the
+models \ccc{Polytope_distance_d_traits_2},
+\ccc{Polytope_distance_d_traits_3}, and \ccc{Polytope_distance_d_traits_d}
+for two-, three-, and $d$-dimensional input points, respectively.
+
+\ccInclude{CGAL/Polytope_distance_d.h}
+
+% -----------------------------------------------------------------------------
+\ccTypes
+
+\ccSetTwoColumns{\ccRefName:: Point}{}
+
+\ccNestedType{ Point}{ Typedef to \ccc{Traits::Point_d}.
+        Point type used to represent the input points.}
+
+\ccNestedType{ FT}{ Typedef to \ccc{Traits::FT}.
+        Number type used to return the squared distance
+        between the two polytopes.}
+
+\ccNestedType{ ET}{ Typedef to \ccc{Traits::ET}.
+        Number type used to do the exact computations in the underlying
+        solver for quadratic programs (cf.~\textbf{Implementation}).}
+
+\ccNestedType{ Point_iterator}{
+        Non-mutable model of the \stl\ concept \emph{RandomAccessIterator}
+        with value type \ccc{Point}. Used to access the points
+        of the two polytopes.}
+
+\ccNestedType{ Support_point_iterator}{
+        Non-mutable model of the \stl\ concept \emph{RandomAccessIterator}
+        with value type \ccc{Point}. Used to access the support points.}
+
+\ccNestedType{ Coordinate_iterator}{
+        Non-mutable model of the \stl\ concept \emph{RandomAccessIterator}
+        with value type \ccc{ET}. Used to access the coordinates of
+        the realizing points.}
+
+\ccPropagateThreeToTwoColumns
+
+% -----------------------------------------------------------------------------
+\ccCreation
+\ccCreationVariable{poly_dist}
+
+\ccConstructor{ Polytope_distance_d( const Traits&  traits  = Traits(),
+                                     int            verbose = 0,
+                                     std::ostream&  stream  = std::cout);}{
+        creates a variable of type \ccRefName\ and initializes it
+        to \PDempty.}
+
+\ccConstructor{ template < class InputIterator1, class InputIterator2 >
+                Polytope_distance_d( InputIterator1  p_first,
+                                     InputIterator1  p_last,
+                                     InputIterator2  q_first,
+                                     InputIterator2  q_last,
+                                     const Traits&   traits = Traits(),
+                                     int             verbose = 0,
+                                     std::ostream&   stream  = std::cout);}{
+        creates a variable \ccVar\ of type \ccRefName.
+        It is initialized to $pd(P,Q)$ with $P$ and $Q$ being the sets of
+        points in the range [\ccc{p_first},\ccc{p_last}) and
+        [\ccc{q_first},\ccc{q_last}), respectively.
+        \ccPrecond  The value type of \ccc{InputIterator1} and
+        \ccc{InputIterator2} is \ccc{Point}, and all points have the same
+        dimension.}
+
+\begin{ccAdvanced}
+  If \ccc{verbose} is set to $1$, $2$, or $3$ then some, more, or full
+  verbose output of the underlying solver for quadratic programs is
+  written to \ccc{stream}, resp.
+\end{ccAdvanced}
+
+% -----------------------------------------------------------------------------
+\ccAccessFunctions
+
+\ccMemberFunction{ int  ambient_dimension( ) const;}{
+        returns the dimension of the points in $P$ and $Q$.
+        If \ccVar\ is \PDempty, the ambient dimension is $-1$.}
+
+\medskip
+\ccGlueBegin
+\ccMemberFunction{ int  number_of_points( ) const;}{
+        returns the number of all points of \ccVar, i.e.~$|P|+|Q|$.}
+%
+\ccMemberFunction{ int  number_of_points_p( ) const;}{
+        returns the number of points in $P$.}
+%
+\ccMemberFunction{ int  number_of_points_q( ) const;}{
+        returns the number of points in $Q$.}
+\ccGlueEnd
+
+\medskip
+\ccGlueBegin
+\ccMemberFunction{ int  number_of_support_points( ) const;}{
+        returns the number of support points of \ccVar, i.e.~$|S_P|+|S_Q|$.}
+%
+\ccMemberFunction{ int  number_of_support_points_p( ) const;}{
+        returns the number of support points in $S_P$.}
+%
+\ccMemberFunction{ int  number_of_support_points_q( ) const;}{
+        returns the number of support points in $S_Q$.}
+\ccGlueEnd
+
+\medskip
+\ccGlueBegin
+\ccMemberFunction{ Point_iterator  points_p_begin( ) const;}{
+        returns an iterator referring to the first point in $P$.}
+%
+\ccMemberFunction{ Point_iterator  points_p_end( ) const;}{
+        returns the corresponding past-the-end iterator.}
+\ccGlueEnd
+
+\medskip
+\ccGlueBegin
+\ccMemberFunction{ Point_iterator  points_q_begin( ) const;}{
+        returns an iterator referring to the first point in $Q$.}
+%
+\ccMemberFunction{ Point_iterator  points_q_end( ) const;}{
+        returns the corresponding past-the-end iterator.}
+\ccGlueEnd
+
+\medskip
+\ccGlueBegin
+\ccMemberFunction{ Support_point_iterator  support_points_p_begin( ) const;}{
+        returns an iterator referring to the first support point in $S_P$.}
+%
+\ccMemberFunction{ Support_point_iterator  support_points_p_end( ) const;}{
+        returns the corresponding past-the-end iterator.}
+\ccGlueEnd
+
+\medskip
+\ccGlueBegin
+\ccMemberFunction{ Support_point_iterator  support_points_q_begin( ) const;}{
+        returns an iterator referring to the first support point in $S_Q$.}
+%
+\ccMemberFunction{ Support_point_iterator  support_points_q_end( ) const;}{
+        returns the corresponding past-the-end iterator.}
+\ccGlueEnd
+
+\ccMemberFunction{ Point  realizing_point_p( ) const;}{
+        returns the realizing point of $P$.
+        \ccPrecond $pd(P,Q)$ is finite and an implicit conversion
+        from \ccc{ET} to \ccc{RT} must be available.}
+
+\ccMemberFunction{ Point  realizing_point_q( ) const;}{
+        returns the realizing point of $Q$.
+        \ccPrecond $pd(P,Q)$ is finite and an implicit conversion
+        from \ccc{ET} to \ccc{RT} must be available.}
+
+\ccMemberFunction{ FT  squared_distance( ) const;}{
+        returns the squared distance of \ccVar, i.e.~$(pd(P,Q))^2$.
+        \ccPrecond $pd(P,Q)$ is finite and an implicit conversion
+        from \ccc{ET} to \ccc{RT} must be available.}
+
+\medskip
+\ccGlueBegin
+\ccMemberFunction{ Coordinate_iterator
+                   realizing_point_p_coordinates_begin() const;}{
+        returns an iterator referring to the first coordinate of the
+        realizing point of $P$.
+        \ccCommentHeading{Note} The coordinates have a rational
+        representation, i.e.~the first $d$ elements of the iterator
+        range are the numerators and the $(d\!+\!1)$-st element is the
+        common denominator.}
+%
+\ccMemberFunction{ Coordinate_iterator
+                   realizing_point_p_coordinates_end() const;}{
+        returns the corresponding past-the-end iterator.}
+\ccGlueEnd
+
+\medskip
+\ccGlueBegin
+\ccMemberFunction{ Coordinate_iterator
+                   realizing_point_q_coordinates_begin() const;}{
+        returns an iterator referring to the first coordinate of the
+        realizing point of $Q$.
+        \ccCommentHeading{Note} The coordinates have a rational
+        representation, i.e.~the first $d$ elements of the iterator
+        range are the numerators and the $(d\!+\!1)$-st element is the
+        common denominator.}
+%
+\ccMemberFunction{ Coordinate_iterator
+                   realizing_point_q_coordinates_end() const;}{
+        returns the corresponding past-the-end iterator.}
+\ccGlueEnd
+
+\ccMemberFunction{ ET  squared_distance_numerator( ) const;}{
+        returns the numerator of the squared distance of \ccVar.}
+
+\ccMemberFunction{ ET  squared_distance_denominator( ) const;}{
+        returns the denominator of the squared distance of \ccVar.}
+
+% -----------------------------------------------------------------------------
+\ccPredicates
+
+\ccMemberFunction{ bool  is_finite( ) const;}{
+        returns \ccc{true}, if $pd(P,Q)$ is finite,
+        i.e.~none of the two polytopes is empty.}
+
+\ccMemberFunction{ bool  is_zero( ) const;}{
+        returns \ccc{true}, if $pd(P,Q)$ is zero,
+        i.e.~the two polytopes intersect (this implies degeneracy).}
+
+\ccMemberFunction{ bool  is_degenerate( ) const;}{
+        returns \ccc{true}, iff $pd(P,Q)$ is degenerate,
+        i.e.~$pd(P,Q)=0$ or $pd(P,Q)=\infty$.}
+
+% -----------------------------------------------------------------------------
+\ccModifiers
+
+\ccMemberFunction{ void  clear( );}{
+        resets \ccVar\ to \PDempty.}
+
+\ccMemberFunction{ template < class InputIterator1, class InputIterator2 >
+                   void  set( InputIterator1 p_first,
+                              InputIterator1 p_last,
+                              InputIterator2 q_first,
+                              InputIterator2 q_last );}{
+        sets \ccVar\ to $pd(P,Q)$ with $P$ and $Q$ being the sets of
+        points in the ranges [\ccc{p_first},\ccc{p_last}) and
+        [\ccc{q_first},\ccc{q_last}), respectively.
+        \ccPrecond  The value type of \ccc{InputIterator1} and
+        \ccc{InputIterator2} is \ccc{Point}, and all points have the same
+        dimension.}
+
+\ccMemberFunction{ template < class InputIterator >
+                   void  set_p( InputIterator p_first,
+                                InputIterator p_last );}{
+        sets \ccVar\ to $pd(P,Q)$ with $P$ being the set of points
+        in the range [\ccc{p_first},\ccc{p_last}) ($Q$ remains unchanged).
+        \ccPrecond  The value type of \ccc{InputIterator} is \ccc{Point},
+        and all points in $P$ have dimension \ccVar\ccc{.ambient_dimension()}
+        if $Q$ is not empty.}
+
+\ccMemberFunction{ template < class InputIterator >
+                   void  set_q( InputIterator q_first,
+                                InputIterator q_last );}{
+        sets \ccVar\ to $pd(P,Q)$ with $Q$ being the set of points
+        in the range [\ccc{q_first},\ccc{q_last}) ($P$ remains unchanged).
+        \ccPrecond  The value type of \ccc{InputIterator} is \ccc{Point},
+        and all points in $Q$ have dimension \ccVar\ccc{.ambient_dimension()}
+        if $P$ is not empty.}
+
+\ccMemberFunction{ void  insert_p( const Point& p);}{
+        inserts \ccc{p} into $P$.
+        \ccPrecond  The dimension of \ccc{p} equals
+        \ccVar\ccc{.ambient_dimension()} if \ccVar\ is not \PDempty.}
+
+\ccMemberFunction{ void  insert_q( const Point& q);}{
+        inserts \ccc{q} into $Q$.
+        \ccPrecond  The dimension of \ccc{q} equals
+        \ccVar\ccc{.ambient_dimension()} if \ccVar\ is not \PDempty.}
+
+\ccMemberFunction{ template < class InputIterator1, class InputIterator2 >
+                   void  insert( InputIterator1  p_first,
+                                 InputIterator1  p_last,
+                                 InputIterator2  q_first,
+                                 InputIterator2  q_last );}{
+        inserts the points in the range [\ccc{p_first},\ccc{p_last})
+        and [\ccc{q_first},\ccc{q_last}) into $P$ and $Q$, respectively,
+        and recomputes the (squared) distance.
+        \ccPrecond  The value type of \ccc{InputIterator1} and
+        \ccc{InputIterator2} is \ccc{Point}, and all points have the same
+        dimension. If \ccVar\ is not \PDempty, this dimension must be equal to
+        \ccVar\ccc{.ambient_dimension()}.}
+
+\ccMemberFunction{ template < class InputIterator >
+                   void  insert_p( InputIterator  p_first,
+                                   InputIterator  p_last );}{
+        inserts the points in the range [\ccc{p_first},\ccc{p_last}) into
+        $P$ and recomputes the (squared) distance ($Q$ remains unchanged).
+        \ccPrecond  The value type of \ccc{InputIterator} is \ccc{Point},
+        and all points have the same dimension.
+        If \ccVar\ is not empty, this dimension must be equal to
+        \ccVar\ccc{.ambient_dimension()}.}
+
+\ccMemberFunction{ template < class InputIterator >
+                   void  insert_q( InputIterator  q_first,
+                                   InputIterator  q_last );}{
+        inserts the points in the range [\ccc{q_first},\ccc{q_last}) into
+        $Q$ and recomputes the (squared) distance ($P$ remains unchanged).
+        \ccPrecond  The value type of \ccc{InputIterator} is \ccc{Point},
+        and all points have the same dimension.
+        If \ccVar\ is not empty, this dimension must be equal to
+        \ccVar\ccc{.ambient_dimension()}.}
+
+% -----------------------------------------------------------------------------
+\begin{ccAdvanced}
+  \nopagebreak
+  \ccHeading{Validity Check}
+
+  An object \ccVar\ is valid, iff
+  \ldots
+  \begin{itemize}
+    \item \ccVar\ contains all points of its defining set $P$,
+    \item \ccVar\ is the smallest sphere containing its support set $S$, and
+    \item $S$ is minimal, i.e.\ no support point is redundant.
+  \end{itemize}
+
+  \ccMemberFunction{ bool is_valid( bool verbose = false,
+                                    int  level   = 0    ) const;}{
+        returns \ccc{true}, iff \ccVar\ is valid. If \ccc{verbose} is
+        \ccc{true}, some messages concerning the performed checks are
+        written to standard error stream. The second parameter
+        \ccc{level} is not used, we provide it only for consistency
+        with interfaces of other classes.}
+
+\end{ccAdvanced}
+
+% -----------------------------------------------------------------------------
+\ccHeading{Miscellaneous}
+
+\ccMemberFunction{ const Traits&  traits( ) const;}{
+        returns a const reference to the traits class object.}
+
+% -----------------------------------------------------------------------------
+\ccHeading{I/O}
+
+\ccFunction{ ostream& operator << ( ostream& os,
+                               const Polytope_distance_d<Traits>& poly_dist);}{
+        writes \ccVar\ to output stream \ccc{os}.
+        \ccPrecond  The output operator is defined for \ccc{Point_d}.}
+
+\ccFunction{ istream& operator >> ( istream& is,
+                                    Polytope_distance_d<Traits>& poly_dist);}{
+        reads \ccVar\ from input stream \ccc{is}.
+        \ccPrecond  The input operator is defined for \ccc{Point_d}.}
+
+% -----------------------------------------------------------------------------
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Polytope_distance_d_traits_2<R,ET,NT>}\\
+\ccRefIdfierPage{CGAL::Polytope_distance_d_traits_3<R,ET,NT>}\\
+\ccRefIdfierPage{CGAL::Polytope_distance_d_traits_d<R,ET,NT>}\\[1ex]
+\ccRefIdfierPage{Polytope_distance_d_traits}
+
+% -----------------------------------------------------------------------------
+\ccImplementation
+
+The problem of finding the distance between two convex polytopes given as
+the convex hulls of two finite point sets can be formulated as an
+optimization problem with linear constraints and a convex quadratic
+objective function. The solution is obtained using our exact solver for
+quadratic programs~\cite{gs-eegqp-00}.
+
+The creation time is almost always linear in the number of points.  Access
+functions and predicates take constant time, inserting a point might take
+up to linear time.  The clear operation and the check for validity each
+take linear time.
 
 % -----------------------------------------------------------------------------
 
-\end{ccClassTemplate}
+\ccRestoreThreeColumns
+
+\end{ccRefClass}
 
 % ===== EOF ===================================================================
