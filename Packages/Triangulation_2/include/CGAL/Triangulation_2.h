@@ -896,6 +896,7 @@ insert(const Point& p, Locate_type lt, Face_handle loc, int li)
 
 
 template <class Gt, class Tds >
+inline
 Triangulation_2<Gt,Tds>::Vertex_handle
 Triangulation_2<Gt,Tds>::
 push_back(const Point &p)
@@ -904,7 +905,7 @@ push_back(const Point &p)
 }
 
 template <class Gt, class Tds >
-void inline
+inline void 
 Triangulation_2<Gt,Tds>::
 remove_degree_3(Vertex_handle  v, Face_handle f)
 {
@@ -914,7 +915,7 @@ remove_degree_3(Vertex_handle  v, Face_handle f)
 }
 
 template <class Gt, class Tds >
-void inline
+inline void
 Triangulation_2<Gt,Tds>::
 remove_first(Vertex_handle  v)
 {
@@ -923,7 +924,7 @@ remove_first(Vertex_handle  v)
 }
 
 template <class Gt, class Tds >
-void inline
+inline void 
 Triangulation_2<Gt,Tds>::
 remove_second(Vertex_handle v)
 {
@@ -947,7 +948,7 @@ remove(Vertex_handle  v)
 }
 
 template <class Gt, class Tds >
-void inline
+inline void
 Triangulation_2<Gt, Tds>::
 remove_1D(Vertex_handle v)
 {
