@@ -4,6 +4,7 @@
 
 // Define shorter names to please linker (g++/egcs)
 
+   #define Gmpz Gz
    #define Cartesian Ct
    #define Homogeneous Hg
    #define Quotient Qt

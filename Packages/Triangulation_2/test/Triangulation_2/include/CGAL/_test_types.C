@@ -72,7 +72,7 @@ class Triangulation_test_direction {
     Triangulation_test_direction(const Point &p, const Point &q)
       : _p(p), _q(q) {}
 
-    Triangulation_test_direction perpendicular(const CGAL::Orientation &o) const {
+    Triangulation_test_direction perpendicular(const CGAL::Orientation &) const {
     	return *this;
     }
     void test_set(const Point &p, const Point &q) { _p=p; _q=q; }
@@ -287,7 +287,7 @@ public:
     
   // perpendicular bisector (clockwise or counterclockwise)
   static
-  Line bisector(const Segment &s)
+  Line bisector(const Segment &)
     {
       return Line();
     }
