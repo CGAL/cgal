@@ -1,5 +1,10 @@
 Changes done to the `Min_sphere_d_new' package
 
+Version 0.10 on 28-Sep-2000
+- unified traits class models for dD optimisation algorithms
+- added indexing commands
+- fixed `unused variable' warnings
+
 Version 0.9 on 13-Sep-2000
 - additional test added: comparing with other implementations in CGAL
 - documentation split up into user and reference manual parts
