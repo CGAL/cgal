@@ -1,7 +1,16 @@
 Version 4.7 (2 May 2000)
-- make the following classes derive from Handle_for instead of Handle
-
-
+- make the following classes derive from HandleCfor instead of Handle
+DirectionC3
+IsoCcuboidC3
+LineC3
+PlaneC3
+PointC3
+RayC3
+SegmentC3
+TetrahedronC3
+TriangleC3
+VectorC3
+remain to be done : Aff_transformationC3, SphereC3
 
 Version 4.6 (21 April 2000)
 - fixed a bug related to previous
