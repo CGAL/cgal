@@ -51,12 +51,18 @@ public:
 
   ~Td_traits(void)
   {
-    if (POINT_AT_LEFT_TOP_INFINITY)
+    if (POINT_AT_LEFT_TOP_INFINITY) {
       delete POINT_AT_LEFT_TOP_INFINITY;
-    if (POINT_AT_RIGHT_BOTTOM_INFINITY)
+      POINT_AT_LEFT_TOP_INFINITY = 0;
+    }
+    if (POINT_AT_RIGHT_BOTTOM_INFINITY) {
       delete POINT_AT_RIGHT_BOTTOM_INFINITY;
-    if (CURVE_AT_INFINITY)
+      POINT_AT_RIGHT_BOTTOM_INFINITY = 0;
+    }
+    if (CURVE_AT_INFINITY) {
       delete CURVE_AT_INFINITY;
+      CURVE_AT_INFINITY = 0;
+    }
   }
 
 protected:
