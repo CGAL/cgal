@@ -95,6 +95,7 @@ void iterator_cb(Fl_Widget* w, void* v)
       count ++;
       i++;
     }
+  cerr << "delete group" << endl;
   win->delete_group(gr);
 }
 
