@@ -35,8 +35,6 @@
 #include <qgl.h>
 #include <Inventor/SbLinear.h>
 #include <Inventor/SbBox.h>
-#include <Inventor/SoPickedPoint.h>
-#include <Inventor/actions/SoRayPickAction.h>
 #include <Inventor/SoPrimitiveVertex.h>
 #include <Inventor/elements/SoGLLazyElement.h>
 #include <Inventor/elements/SoGLTextureCoordinateElement.h>
@@ -51,8 +49,6 @@
 #include <Inventor/fields/SoFieldData.h>
 #include <Inventor/nodes/SoNode.h>
 #include <Inventor/nodes/SoNonIndexedShape.h>
-
-#include "SoPolyhedronDetail.h"
 
 
 template <class Kernel>
@@ -88,7 +84,7 @@ public:
       } while (0);
     } while (0);
   };            // Initializes this class
-  Node_tetrahedron_3() : t(t_temp){
+  Node_tetrahedron_3(){
     do {
       Node_tetrahedron_3::classinstances++;
       // Catch attempts to use a node class which has not been initialized.
@@ -105,7 +101,7 @@ public:
       this->isBuiltIn = FALSE;
     } while (0);
   };                // The constructor
-  Node_tetrahedron_3(Tetrahedron &T) : t(T){
+  Node_tetrahedron_3(Tetrahedron *T) : t(T){
     do {
       Node_tetrahedron_3::classinstances++;
       // Catch attempts to use a node class which has not been initialized.
@@ -194,10 +190,10 @@ protected:
     Point_3 p0, p1, p2, p3;
 
     
-    if(t.orientation() == CGAL::NEGATIVE){
-      p0 = t[0]; p1 = t[2]; p2 = t[1]; p3 = t[3];
+    if(t->orientation() == CGAL::NEGATIVE){
+      p0 = (*t)[0]; p1 = (*t)[2]; p2 = (*t)[1]; p3 = (*t)[3];
     } else {
-      p0 = t[0]; p1 = t[1]; p2 = t[2]; p3 = t[3];
+      p0 = (*t)[0]; p1 = (*t)[1]; p2 = (*t)[2]; p3 = (*t)[3];
     }
 
     glPushMatrix();
@@ -253,18 +249,18 @@ protected:
     SbBox3f &box, SbVec3f &center){
     Kernel::FT xmin = 0, ymin = 0, zmin = 0, xmax = 0, ymax = 0, zmax = 0;
     for(int i=0; i<4; i++){
-      if(t.vertex(i).x() < xmin)
-        xmin = t.vertex(i).x();
-      if(t.vertex(i).y() < ymin)
-        ymin = t.vertex(i).y();
-      if(t.vertex(i).z() < zmin)
-        zmin = t.vertex(i).z();
-      if(t.vertex(i).x() > xmax)
-        xmax = t.vertex(i).x();
-      if(t.vertex(i).y() > ymax)
-        ymax = t.vertex(i).y();
-      if(t.vertex(i).z() > zmax)
-        zmax = t.vertex(i).z();
+      if(t->vertex(i).x() < xmin)
+        xmin = t->vertex(i).x();
+      if(t->vertex(i).y() < ymin)
+        ymin = t->vertex(i).y();
+      if(t->vertex(i).z() < zmin)
+        zmin = t->vertex(i).z();
+      if(t->vertex(i).x() > xmax)
+        xmax = t->vertex(i).x();
+      if(t->vertex(i).y() > ymax)
+        ymax = t->vertex(i).y();
+      if(t->vertex(i).z() > zmax)
+        zmax = t->vertex(i).z();
       
     }    
     SbVec3f min, max;
@@ -361,9 +357,7 @@ protected:
 private:
   virtual ~Node_tetrahedron_3(){};       //The destructor
 
-  Tetrahedron &t;
-  Tetrahedron t_temp;
-
+  Tetrahedron *t;
 };
 
 template<class Tetrahedron_3>
