@@ -35,9 +35,9 @@ the orientation-determinant for three points.
 
 \ccTypedef{typedef R::Point_2                        Point_2;}{}
 \ccGlue
-\ccTypedef{typedef R::Less_xy                        Less_xy_2;}{}
+\ccTypedef{typedef R::Less_xy_2                      Less_xy_2;}{}
 \ccGlue
-\ccTypedef{typedef R::Less_yx                        Less_yx_2;}{}
+\ccTypedef{typedef R::Less_yx_2                      Less_yx_2;}{}
 \ccGlue
 \ccTypedef{typedef CGAL::r_Less_dist_to_line<R>
                                       Less_signed_distance_to_line_2;}{}
@@ -45,7 +45,8 @@ the orientation-determinant for three points.
 \ccTypedef{typedef R::Less_rotate_ccw                Less_rotate_ccw_2;}{}
 \ccGlue
 \ccTypedef{typedef R::Left_turn_2                     Left_turn_2;}{}
-
+\ccGlue
+\ccTypedef{typedef R::Equal_2                        Equal_2;}{}
 
 \ccCreation
 \ccCreationVariable{traits}  %% choose variable name
@@ -65,6 +66,8 @@ the orientation-determinant for three points.
                   less_rotate_ccw_2_object(); }{}
 \ccGlue
 \ccMemberFunction{Left_turn_2 left_turn_2_object(); }{}
+\ccGlue
+\ccMemberFunction{Equal_2 equal_2_object(); }{}
 \ccAutoIndexingOn
 
 
