@@ -31,7 +31,7 @@ while (<>)
     next;
   }
   next if ($in_def);
-  if (/^{$/) {
+  if (/^{/) {
     $after_template=0;
     $in_decl=0;
     $in_def=1;
