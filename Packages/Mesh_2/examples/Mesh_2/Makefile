@@ -39,7 +39,9 @@ all:            \
 mesh$(OBJ_EXT): ../../include/CGAL/Mesh_2.h \
                 ../../include/CGAL/Mesh_face_base_2.h \
                 ../../include/CGAL/Mesh_default_traits_2.h \
-                ../../include/CGAL/Double_map.h
+		../../include/CGAL/Double_map.h
+		../../include/CGAL/Filtred_circulator.h
+		../../include/CGAL/Filtred_container.h
 
 mesh$(EXE_EXT): mesh$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)mesh mesh$(OBJ_EXT) $(LDFLAGS)
