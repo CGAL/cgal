@@ -87,36 +87,11 @@ bool
 identical(const T &t1, const T &t2)
 { return id(t1) == id(t2); }
 
-CGAL_END_NAMESPACE
-
-#if defined(CGAL_USE_LEDA) && !defined(CGAL_NO_LEDA_HANDLE)
-#  include <LEDA/basic.h>
-
-CGAL_BEGIN_NAMESPACE
-
-#ifdef LEDA_NAMESPACE
-typedef leda::handle_base      Handle;
-typedef leda::handle_rep       Rep;
-#else
-typedef handle_base            Handle;
-typedef handle_rep             Rep;
-#endif
-
-inline
-unsigned long
-id(const Handle& x)
-{ return CGAL_LEDA_SCOPE::ID_Number(x); }
-
-CGAL_END_NAMESPACE
-
-#  else
-
-CGAL_BEGIN_NAMESPACE
 
 typedef Leda_like_handle Handle;
 typedef Leda_like_rep    Rep;
 
 CGAL_END_NAMESPACE
 
-#endif // defined(CGAL_USE_LEDA) && !defined(CGAL_NO_LEDA_HANDLE)
+
 #endif // CGAL_HANDLE_H

@@ -1,3 +1,6 @@
+3.102  (10 December 2002)
+- Remove CGAL_NO_LEDA_HANDLE : always use CGAL's handles.
+
 3.101  (9 December 2002)
 - define LEDA_NO_MIN_MAX_TEMPL in basic.h for LEDA 4.4.
 
