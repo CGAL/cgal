@@ -3,6 +3,7 @@ constrained and regular triangulations with  tests and examples.
 
 13 September 2004 Sylvain Pion
 - Regular traits cleanups.
+- Added Regular_triangulation_filtered_traits_2.
 
 7 September 2004 Menelaos Karavelas
 - re-added commented code in join_vertices that was referring to degree

@@ -30,9 +30,14 @@
 #include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/_test_cls_regular_triangulation_2.C>
 
+#include <CGAL/Filtered_kernel.h>
+#include <CGAL/Regular_triangulation_filtered_traits_2.h>
+
 // Explicit instantiation of the whole class :
-typedef CGAL::Regular_triangulation_euclidean_traits_2
-                               <Test_rep_cartesian, Ftype>      RGt;
+//typedef CGAL::Regular_triangulation_euclidean_traits_2
+//                              <Test_rep_cartesian, Ftype>      RGt;
+typedef CGAL::Filtered_kernel<CGAL::Simple_cartesian<double> >  FK;
+typedef CGAL::Regular_triangulation_filtered_traits_2<FK>       RGt;
 template class CGAL::Regular_triangulation_2<RGt>;
 
 int main()
