@@ -34,6 +34,9 @@ Packages/Mesh_2/examples/Mesh_2/*.core
 Packages/Mesh_2/examples/Mesh_2/conform
 Packages/Mesh_2/examples/Mesh_2/conforming
 Packages/Mesh_2/examples/Mesh_2/mesh
+Packages/Mesh_2/examples/Mesh_2/mesh_class
+Packages/Mesh_2/examples/Mesh_2/mesh_global
+Packages/Mesh_2/examples/Mesh_2/mesh_with_seeds
 Packages/Mesh_2/examples/Mesh_2/semantic.cache
 Packages/Mesh_2/include/CGAL/semantic.cache
 Packages/Mesh_2/test/Mesh_2/*.core

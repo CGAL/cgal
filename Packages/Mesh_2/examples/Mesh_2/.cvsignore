@@ -3,3 +3,8 @@ conform
 conforming
 semantic.cache
 *.core
+conform
+conforming
+mesh_class
+mesh_global
+mesh_with_seeds
