@@ -1,4 +1,8 @@
 
+Ajouter test dans Delaunay pour
+does_conflict
+find_conflicts
+
 Corriger la doc pour includes_edge in Triangulation_2
 
 

@@ -1,6 +1,11 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.62 (31 August 00)
+added does_conflict(..)
+      find_conflicts(..) in Delaunay_triangulation_2.h
+fixed Triangulation_2_traits_3.h
+
 Ver 4.61 (29 August 00)
 added typedef fur dummy template parameter Vb and Fb in
 	Triangulation_default_data_structure_2<Gt,Vb,Fb> and
