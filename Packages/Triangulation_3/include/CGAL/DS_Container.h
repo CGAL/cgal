@@ -133,7 +133,7 @@ public:
 };
 
 // const int DS_Container_allocation_size = 1024;
-const int DS_Container_allocation_size = 16384;
+const int DS_Container_allocation_size = 8192;
 
 template < class DSC > class DS_Container_iterator;
 
