@@ -2,6 +2,9 @@
 //	Revision History for package Installation
 //=====================================================================
 
+05 May 2004 Sylvain Pion
+- Undo April 30's change for ICC.
+
 04 May 2004 Radu Ursu
 - fixed temporay bug in installation of gmp: gmp.h, gmpxx.h are not copied 
   to the right location
