@@ -2,7 +2,8 @@ Package triangulation: provides triangulations Delaunay triangulations,
 constrained and regular triangulations with  tests and examples.
 
 
-ver 8.33 (?/1/04)
+ver 8.33 (21/1/04)
+- changed NULL to default constructed handles.
 - First shot at changing NULL to default constructed handles.
 - Add links from Weighted_point's doc to Regular_traits_3.
 - Regular_triangulation_euclidean_traits_2<K> now derives directly from K.
