@@ -39,6 +39,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <fstream>
+#include <cassert>
 
 
 // USAGE EXAMPLES
@@ -49,7 +50,7 @@
 // output is a ps map
 // input file is mesh.off (the latter must be at the very end)
 //----------------------------------------------------------
-// ./polyhedron_ex_parameterization -t conformal -b circle -o map mesh.off > mesh.eps
+// ./polyhedron_ex_parameterization -t conformal -b circle -o eps mesh.off > mesh.eps
 
 //----------------------------------------------------------
 // floater parameterization
@@ -57,7 +58,7 @@
 // output is a ps map
 // input file is mesh.off
 //----------------------------------------------------------
-// ./polyhedron_ex_parameterization -t floater -b square -o map mesh.off > mesh.eps
+// ./polyhedron_ex_parameterization -t floater -b square -o eps mesh.off > mesh.eps
 
 //----------------------------------------------------------
 // natural parameterization
@@ -65,7 +66,7 @@
 // output is a ps map
 // input file is mesh.off
 //----------------------------------------------------------
-// ./polyhedron_ex_parameterization -t natural -o map mesh.off > mesh.eps
+// ./polyhedron_ex_parameterization -t natural -o eps mesh.off > mesh.eps
 
 //----------------------------------------------------------
 // LSCM parameterization
@@ -80,6 +81,7 @@ extern "C" {
    long atol(const char *);
 }
 
+// Parameters description for Options library
 static const char *  optv[] = {	
 
    //     '|' -- indicates that the option takes NO argument;
@@ -96,16 +98,23 @@ static const char *  optv[] = {
    //       authalic    -> weak area-preserving
    //       lscm        -> Least Squares Conformal Maps
 
-   "o:output <string>", // -o or --output
-   // -o map   -> eps map       (-o map file.off > file.eps)
-   //    obj   -> Wavefront obj (-o obj file.off > file.obj)
 
    "b:boundary <string>", // -b or --boundary (for fixed border parameterizations)
    // -b circle		-> map mesh boundary onto a circle
    //    square		-> map mesh boundary onto a square
 
+   "o:output <string>", // -o or --output
+   // -o eps   -> eps map       (-o eps file.off > file.eps)
+   //    obj   -> Wavefront obj (-o obj file.off > file.obj)
+   
    NULL
 } ;
+
+// Parameters description for usage
+static const char * usage = "off-file\n\
+where type is:     conformal, natural, floater, uniform, authalic or lscm\n\
+      boundary is: circle or square\n\
+      output is:   eps or obj";
 
 // Border parameterization methods
 enum boundary_type {BOUNDARY_CIRCLE, BOUNDARY_SQUARE};
@@ -138,7 +147,7 @@ int main(int argc,char * argv[])
           std::cerr << "  " << type << " parameterization" << std::endl;
           break;
 
-        // output: "map" or "obj"
+        // output: "eps" or "obj"
         case 'o' :
           output = optarg;
           std::cerr << "  " << "output: " << output << std::endl;
@@ -158,7 +167,7 @@ int main(int argc,char * argv[])
         // help
         case '?' :
         case 'H' :
-           opts.usage(cerr, "files ...");
+           opts.usage(cerr, usage);
            ::exit(0);
            break;
 
@@ -174,7 +183,7 @@ int main(int argc,char * argv[])
    {
       if(! errors)
          cerr << opts.name() << ": no filenames given." << endl ;
-      opts.usage(cerr, "files ...");
+      opts.usage(cerr, usage);
       ::exit(1);
    }
 
@@ -210,66 +219,79 @@ int main(int argc,char * argv[])
       		
      		//***************************************     		
      		// switch parameterization
-     		//***************************************     	
+     		//*************************************** 
+			
+			// The parameterization package needs an adaptor to handle Polyhedrons   
+			Mesh_adaptor_polyhedron_ex* mesh_adaptor = new Mesh_adaptor_polyhedron_ex(&mesh);
+			assert(mesh_adaptor != NULL);
+			
+			// switch parameterization
 			CGAL::Parametizer_3<Mesh_adaptor_polyhedron_ex>::ErrorCode err;
 			if ( (strcmp(type,"uniform") == 0) && (strcmp(boundary,"circle") == 0) )
 			{
-				err = CGAL::parameterize(&Mesh_adaptor_polyhedron_ex(&mesh),
+				err = CGAL::parameterize(mesh_adaptor,
 										 CGAL::Barycentric_mapping_parametizer_3<Mesh_adaptor_polyhedron_ex, 
 										 CGAL::Circular_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
 			}
 			else if ( (strcmp(type,"uniform") == 0) && (strcmp(boundary,"square") == 0) )
 			{
-				err = CGAL::parameterize(&Mesh_adaptor_polyhedron_ex(&mesh),
+				err = CGAL::parameterize(mesh_adaptor,
 										 CGAL::Barycentric_mapping_parametizer_3<Mesh_adaptor_polyhedron_ex, 
 										 CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
 			}
 			else if ( (strcmp(type,"conformal") == 0) && (strcmp(boundary,"circle") == 0) )
 			{
-				err = CGAL::parameterize(&Mesh_adaptor_polyhedron_ex(&mesh),
+				err = CGAL::parameterize(mesh_adaptor,
 										 CGAL::Discrete_conformal_map_parametizer_3<Mesh_adaptor_polyhedron_ex, 
 										 CGAL::Circular_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
 			}
 			else if ( (strcmp(type,"conformal") == 0) && (strcmp(boundary,"square") == 0) )
 			{
-				err = CGAL::parameterize(&Mesh_adaptor_polyhedron_ex(&mesh),
+				err = CGAL::parameterize(mesh_adaptor,
 										 CGAL::Discrete_conformal_map_parametizer_3<Mesh_adaptor_polyhedron_ex, 
 										 CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
 			}
 			else if ( (strcmp(type,"authalic") == 0) && (strcmp(boundary,"circle") == 0) )
 			{
-				err = CGAL::parameterize(&Mesh_adaptor_polyhedron_ex(&mesh),
+				err = CGAL::parameterize(mesh_adaptor,
 										 CGAL::Discrete_authalic_parametizer_3<Mesh_adaptor_polyhedron_ex, 
 										 CGAL::Circular_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
 			}
 			else if ( (strcmp(type,"authalic") == 0) && (strcmp(boundary,"square") == 0) )
 			{
-				err = CGAL::parameterize(&Mesh_adaptor_polyhedron_ex(&mesh),
+				err = CGAL::parameterize(mesh_adaptor,
 										 CGAL::Discrete_authalic_parametizer_3<Mesh_adaptor_polyhedron_ex, 
 										 CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
 			}
 			else if ( (strcmp(type,"floater") == 0) && (strcmp(boundary,"circle") == 0) )
 			{
 				// Floater/circle is the default parameterization algorithm
-				err = CGAL::parameterize(&Mesh_adaptor_polyhedron_ex(&mesh));
+				err = CGAL::parameterize(mesh_adaptor);
 			}
 			else if ( (strcmp(type,"floater") == 0) && (strcmp(boundary,"square") == 0) )
 			{
-				err = CGAL::parameterize(&Mesh_adaptor_polyhedron_ex(&mesh),
+				err = CGAL::parameterize(mesh_adaptor,
 										 CGAL::Mean_value_coordinates_parametizer_3<Mesh_adaptor_polyhedron_ex, 
 										 CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
 			}
 			else if (strcmp(type,"lscm") == 0)
 			{
-				err = CGAL::parameterize(&Mesh_adaptor_polyhedron_ex(&mesh),
+				err = CGAL::parameterize(mesh_adaptor,
 										 CGAL::LSCM_parametizer_3<Mesh_adaptor_polyhedron_ex>());
 			}
 			else 
 			{
      			fprintf(stderr,"invalid choice\n");
+				
+				delete mesh_adaptor;
      			return -1;
      		}
-			//
+			
+			// Clean up the adaptor. CAUTION: must be done before saving the mesh into the file.
+			delete mesh_adaptor;
+			mesh_adaptor = NULL;
+			
+ 			// On parameterization error
 			if (err != CGAL::Parametizer_3<Mesh_adaptor_polyhedron_ex>::OK)
 			{
 				fprintf(stderr,"parameterization failure: error = %d\n", (int)err);
@@ -279,7 +301,7 @@ int main(int argc,char * argv[])
      		//***************************************     		
      		// output
      		//***************************************     		
-     		if(strcmp(output,"map") == 0)
+     		if(strcmp(output,"eps") == 0)
        			mesh.dump_param();				// write EPS file
      		else
      		if(strcmp(output,"obj") == 0)

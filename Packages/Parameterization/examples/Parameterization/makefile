@@ -13,12 +13,18 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
+# Remove stupid gcc warnings and turn on debugger (optional)
+EXTRA_FLAGS = \
+           -Wno-reorder \
+		   -Wno-sign-compare \
+		   -g
+
 CXXFLAGS = \
            -I../../include \
            -I../../../OpenNL/include \
            $(TESTSUITE_CXXFLAGS) \
-           $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
+           $(EXTRA_FLAGS) \
            -Iinclude \
            $(LONG_NAME_PROBLEM_CXXFLAGS)
 
