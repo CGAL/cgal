@@ -1,4 +1,4 @@
-Version 3.9 (?? Juin 00)
+Version 3.9 (29 Juin 00)
 - Re-added headers, got rid of check_headers.pl [syl].
 
 Version 3.8 (15 Juin 00)
