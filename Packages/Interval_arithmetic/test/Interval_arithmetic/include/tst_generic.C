@@ -85,9 +85,9 @@ int overflow_test()
   IA_nt c (-2,2), d(-2.1,2.1);
 
   DEBUG( cout << "+infinity = " << HUGE_VAL; )
-  DEBUG( cout << "  maxdouble = " << IA_nt::max_double << endl; )
-  DEBUG( cout << "largest = " << IA_nt::largest << endl; )
-  DEBUG( cout << "smallest = " << IA_nt::smallest << endl; )
+  DEBUG( cout << "  maxdouble = " << CGAL_IA_MAX_DOUBLE << endl; )
+  DEBUG( cout << "largest = " << CGAL_IA_LARGEST << endl; )
+  DEBUG( cout << "smallest = " << CGAL_IA_SMALLEST << endl; )
   while (++i < 20)
   {
     a *= a;
@@ -98,10 +98,10 @@ int overflow_test()
     // DEBUG( cout << a << endl; )
   }
 
-  return a.is_same(IA_nt(IA_nt::max_double, HUGE_VAL)) &&
-         b.is_same(IA_nt(IA_nt::max_double, HUGE_VAL)) &&
-         c.is_same(IA_nt::largest) &&
-         d.is_same(IA_nt::largest);
+  return a.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, HUGE_VAL)) &&
+         b.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, HUGE_VAL)) &&
+         c.is_same(CGAL_IA_LARGEST) &&
+         d.is_same(CGAL_IA_LARGEST);
 }
 
 
@@ -115,7 +115,7 @@ int underflow_test()
   int i=0;
   IA_nt a (0.5), b(-0.5,0.5);
 
-  DEBUG( cout << IA_nt::min_double << endl;)
+  DEBUG( cout << CGAL_IA_MIN_DOUBLE << endl;)
   while (++i < 20)
   {
     a *= a;
@@ -123,7 +123,7 @@ int underflow_test()
     DEBUG( cout << a << b << endl; )
   }
 
-  return a.is_same(IA_nt(0, IA_nt::min_double)) && b.is_same(IA_nt::smallest);
+  return a.is_same(IA_nt(0, CGAL_IA_MIN_DOUBLE)) && b.is_same(CGAL_IA_SMALLEST);
 }
 
 
@@ -151,7 +151,7 @@ int division_test()
   DEBUG( cout << d << e << i << endl; )
   DEBUG( cout << d-1 << e+1 << endl; )
 
-  return c.is_same(IA_nt::largest) && (i == 54);
+  return c.is_same(CGAL_IA_LARGEST) && (i == 54);
 }
 
 
