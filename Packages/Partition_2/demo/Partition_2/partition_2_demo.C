@@ -216,7 +216,7 @@ int main( )
             polygon.erase(polygon.vertices_begin(), polygon.vertices_end());
             CGAL::random_polygon_2(CGAL::Random().get_int(4,MAX_POLY_SIZE),
                                    std::back_inserter(polygon),
-                                   Point_generator(RADIUS), Traits());
+                                   Point_generator(RADIUS));
             polygon = CGAL::transform(translate, polygon);
             compute_partitions(polygon);
             break;
