@@ -87,7 +87,7 @@ public:
 
   Segment_Voronoi_diagram_site_2(const Object &o) {
     if ( assign(p_, o) ) {
-      initialize_site(p);
+      initialize_site(p_);
       return;
     }
 
@@ -97,7 +97,7 @@ public:
       return;
     }
 
-    defined_ = false;
+    type_ = 0;
   }
 
 #if 0

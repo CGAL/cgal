@@ -24,6 +24,7 @@
 
 #include <CGAL/Random.h>
 #include <map>
+// the following include should be removed
 #include <CGAL/Triangulation_hierarchy_2.h>
 
 #include <CGAL/Segment_Voronoi_diagram_2.h>

@@ -39,7 +39,7 @@ is_valid(bool verbose, int level) const
   if (number_of_vertices() <= 1) { return true; }
 
   // level 0 test: check the TDS
-  bool result = _tds.is_valid(verbose, level);
+  bool result = ds().is_valid(verbose, level);
   //  bool result(true);
 
   //  CGAL_assertion( result );
@@ -54,7 +54,7 @@ is_valid(bool verbose, int level) const
 
   if (number_of_vertices() < 3)  return true;
 
-  //  CGAL_triangulation_assertion(result);
+  //  CGAL_assertion(result);
 
 #if 0
   std::cout << "inside is_valid BEGIN....................." << std::endl;
@@ -92,7 +92,7 @@ is_valid(bool verbose, int level) const
 
       result = result &&
 	( incircle(f, v->site()) != NEGATIVE );
-      //    CGAL_triangulation_assertion(result);
+      //    CGAL_assertion(result);
     }
     Edge sym_e = sym_edge(e);
     f = sym_e.first;
@@ -122,7 +122,7 @@ is_valid(bool verbose, int level) const
 
       result = result &&
 	( incircle(f, v->site()) != NEGATIVE );
-      //    CGAL_triangulation_assertion(result);
+      //    CGAL_assertion(result);
     }
   }
 
@@ -137,7 +137,7 @@ is_valid(bool verbose, int level) const
     std::cout << "Segment Voronoi diagram is NOT valid..." << std::flush;
   }
 
-  //  CGAL_triangulation_assertion(result);
+  //  CGAL_assertion(result);
   return result;
 }
 
@@ -155,7 +155,7 @@ typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Point
 Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 circumcenter(const Face_handle& f) const
 {
-  CGAL_triangulation_precondition (dimension()==2 || !is_infinite(f));
+  CGAL_precondition( this->dimension()==2 || !is_infinite(f) );
   return circumcenter(f->vertex(0)->site(),
 		      f->vertex(1)->site(),
 		      f->vertex(2)->site());
@@ -179,7 +179,7 @@ typename Gt::Circle_2
 Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 circumcircle(const Face_handle& f) const
 {
-  CGAL_triangulation_precondition (dimension()==2 || !is_infinite(f));
+  CGAL_precondition( this->dimension()==2 || !is_infinite(f) );
   return circumcircle(f->vertex(0)->site(),
 		      f->vertex(1)->site(),
 		      f->vertex(2)->site());
@@ -226,9 +226,9 @@ primal(const Edge e) const
   typedef typename Gt::Line_2   Line;
   typedef typename Gt::Ray_2    Ray;
 
-  CGAL_triangulation_precondition( !is_infinite(e) );
+  CGAL_precondition( !is_infinite(e) );
 
-  if ( dimension() == 1 ) {
+  if ( this->dimension() == 1 ) {
     Site p = (e.first)->vertex(cw(e.second))->site();
     Site q = (e.first)->vertex(ccw(e.second))->site();
 
@@ -257,18 +257,17 @@ primal(const Edge e) const
   }
 
   // only one of the adjacent faces is infinite
-  CGAL_triangulation_assertion( is_infinite( e.first ) ||
-				is_infinite( e.first->neighbor(e.second) )
-				);
+  CGAL_assertion( is_infinite( e.first ) ||
+		  is_infinite( e.first->neighbor(e.second) )
+		  );
 
-  CGAL_triangulation_assertion( !(is_infinite( e.first ) &&
-				  is_infinite( e.first->neighbor(e.second) )
-				  )
-				);
+  CGAL_assertion( !(is_infinite( e.first ) &&
+		    is_infinite( e.first->neighbor(e.second) )
+		    )
+		  );
 
-  CGAL_triangulation_assertion
-    (  is_infinite( e.first->vertex(e.second) ) ||
-       is_infinite( e.first->mirror_vertex(e.second) )  );
+  CGAL_assertion(  is_infinite( e.first->vertex(e.second) ) ||
+		   is_infinite( e.first->mirror_vertex(e.second) )  );
 
   Edge ee = e;
   if ( is_infinite( e.first->vertex(e.second) )  ) {
@@ -293,13 +292,13 @@ typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Edge
 Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 flip(Face_handle& f, int i)
 {
-  CGAL_triangulation_precondition ( f != NULL );
-  CGAL_triangulation_precondition (i == 0 || i == 1 || i == 2);
-  CGAL_triangulation_precondition( dimension()==2 ); 
+  CGAL_precondition ( f != NULL );
+  CGAL_precondition (i == 0 || i == 1 || i == 2);
+  CGAL_precondition( this->dimension()==2 ); 
 
-  CGAL_triangulation_precondition( f->vertex(i) != f->mirror_vertex(i) );
+  CGAL_precondition( f->vertex(i) != f->mirror_vertex(i) );
 
-  _tds.flip(f, i);
+  this->_tds.flip(f, i);
 
   return Edge(f, ccw(i));
 }
@@ -320,7 +319,7 @@ typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Vertex_handle
 Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 insert_in_face(Face_handle& f, const Weighted_point& p)
 {
-  Vertex_handle v = _tds.insert_in_face( f );
+  Vertex_handle v = ds().insert_in_face( f );
 
   v->set_point(p);
   return v;
@@ -345,7 +344,7 @@ typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Vertex_handle
 Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 insert_degree_2(Edge e)
 {
-  return _tds.insert_degree_2(e.first,e.second);
+  return this->_tds.insert_degree_2(e.first,e.second);
 }
 
 template< class Gt, class PContainer, class Svdds >
@@ -369,9 +368,9 @@ void
 Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 remove_degree_2(Vertex_handle v)
 {
-  CGAL_triangulation_precondition( is_degree_2(v) );
+  CGAL_precondition( is_degree_2(v) );
 
-  _tds.remove_degree_2(v);
+  this->_tds.remove_degree_2(v);
 }
 
 
@@ -392,8 +391,8 @@ void
 Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 remove_degree_3(Vertex_handle v, Face* f)
 {
-  CGAL_triangulation_precondition( v->degree() == 3 );
-  _tds.remove_degree_3(v, f);
+  CGAL_precondition( v->degree() == 3 );
+  this->_tds.remove_degree_3(v, f);
 }
 #endif
 
@@ -407,7 +406,7 @@ typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Vertex_handle
 Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 insert_first(const Point& p)
 {
-  CGAL_triangulation_precondition( number_of_vertices() == 0 );
+  CGAL_precondition( number_of_vertices() == 0 );
 
 #ifdef USE_STORAGE_SITE
   Storage_site_2 ss = create_storage_site(p);
@@ -415,7 +414,7 @@ insert_first(const Point& p)
   Site ss(p);
 #endif
   //  return create_vertex_dim_up(ss);
-  Vertex_handle v = _tds.insert_second();
+  Vertex_handle v = this->_tds.insert_second();
   v->set_site(ss);
   return v;
 }
@@ -426,7 +425,7 @@ typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Vertex_handle
 Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 insert_second(const Point& p)
 {
-  CGAL_triangulation_precondition( number_of_vertices() == 1 );
+  CGAL_precondition( number_of_vertices() == 1 );
   // p0 is actually a point
   Site_2 p0 = finite_vertices_begin()->site();
   // MK: change the equality test between points by the functor in
@@ -448,7 +447,7 @@ typename Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::Vertex_handle
 Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 insert_third(const Point& p)
 {
-  CGAL_triangulation_precondition( number_of_vertices() == 2 );
+  CGAL_precondition( number_of_vertices() == 2 );
 
   Site_2 t(p);
 
@@ -509,7 +508,7 @@ insert_third(Vertex_handle v0, Vertex_handle v1)
   CGAL_precondition( number_of_vertices() == 2 );
 
   //  this can only be the case if the first site is a segment
-  CGAL_precondition( _tds.dimension() == 1 );
+  CGAL_precondition( ds().dimension() == 1 );
 
 #ifdef USE_STORAGE_SITE
   Storage_site_2 ss = create_storage_site(v0, v1);
@@ -1560,7 +1559,7 @@ retriangulate_conflict_region(Vertex_handle v, List& l,
 
   // 4. retriangulate the hole
   //  _tds.star_hole(v, ve.begin(), ve.end(), vf.begin(), vf.end());
-  _tds.star_hole(v, ve.begin(), ve.end());
+  this->_tds.star_hole(v, ve.begin(), ve.end());
 
   // 5. remove the bogus vertices
   remove_bogus_vertices(dummy_vertices);
@@ -1569,7 +1568,7 @@ retriangulate_conflict_region(Vertex_handle v, List& l,
   typename Face_map::iterator it;
   for (it = fm.begin(); it != fm.end(); ++it) {
     Face_handle fh = (*it).first;
-    _tds.delete_face(fh);
+    this->_tds.delete_face(fh);
   }
 
   fm.clear();
@@ -2189,7 +2188,7 @@ remove_third(Vertex_handle v, bool remove_endpoints)
     }
   }
 
-  _tds.remove_dim_down(v);
+  this->_tds.remove_dim_down(v);
 
   return 1;
 }
@@ -2200,8 +2199,8 @@ unsigned int
 Segment_Voronoi_diagram_2<Gt,PContainer,Svdds>::
 remove(Vertex_handle v, bool remove_endpoints)
 {
-  CGAL_triangulation_precondition( v != Vertex_handle(NULL) );
-  CGAL_triangulation_precondition( !is_infinite(v) );
+  CGAL_precondition( v != Vertex_handle(NULL) );
+  CGAL_precondition( !is_infinite(v) );
 
   int num_removed(0);
   int n = number_of_vertices();
@@ -2224,7 +2223,7 @@ remove(Vertex_handle v, bool remove_endpoints)
     }
   }
 
-  //  CGAL_triangulation_assertion( is_valid(false, 2) );
+  //  CGAL_assertion( is_valid(false, 2) );
 
   return num_removed;
 }
@@ -2386,9 +2385,9 @@ remove_degree_d(Vertex_handle v, bool remove_endpoints)
     CGAL_assertion( found );
   }
 
-  CGAL_triangulation_precondition( v->degree() == 3 );
+  CGAL_precondition( v->degree() == 3 );
 
-  _tds.remove_degree_3(v, NULL);
+  this->_tds.remove_degree_3(v, NULL);
 
   for (unsigned int i = 0; i < num_fe; i++) {
     delete flipped_edges[i];
@@ -2490,9 +2489,9 @@ remove_degree_d_vertex(Vertex_handle v)
 
     CGAL_assertion( found );
   }
-  CGAL_triangulation_precondition( v->degree() == 3 );
+  CGAL_precondition( v->degree() == 3 );
 
-  _tds.remove_degree_3(v, NULL);
+  this->_tds.remove_degree_3(v, NULL);
 
   for (unsigned int i = 0; i < num_fe; i++) {
     delete flipped_edges[i];

@@ -27,6 +27,7 @@
 #include <algorithm>
 
 #include <CGAL/Triangulation_2.h>
+// the following include should be removed
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Segment_Voronoi_diagram_site_2.h>
 #include <CGAL/Segment_Voronoi_diagram_data_structure_2.h>
@@ -249,6 +250,9 @@ public:
   Vertex_handle finite_vertex() const {
     return DG::finite_vertex();
   }
+protected:
+  using Delaunay_graph::cw;
+  using Delaunay_graph::ccw;
 
 public:
   // TRAVERSAL OF THE DUAL GRAPH
@@ -386,7 +390,7 @@ public:
   Vertex_handle  insert(const Point& p0, const Point& p1, 
 			Vertex_handle vnear) {
     return
-    insert_segment(Site(Segment(p1, p2)), vnear, true);
+    insert_segment(Site(Segment(p0, p1)), vnear, true);
   }
 
 #if 0
@@ -818,25 +822,25 @@ protected:
   // this was defined because the hierarchy needs it
 #ifdef USE_STORAGE_SITE
   Vertex_handle create_vertex(const Storage_site_2& ss) {
-    Vertex_handle v = _tds.create_vertex();
+    Vertex_handle v = this->_tds.create_vertex();
     v->set_site(ss);
     return v;
   }
 
   Vertex_handle create_vertex_dim_up(const Storage_site_2& ss) {
-    Vertex_handle v = _tds.insert_dim_up(infinite_vertex());
+    Vertex_handle v = this->_tds.insert_dim_up(infinite_vertex());
     v->set_site(ss);
     return v;
   }
 #else
   Vertex_handle create_vertex(const Site_2& s) {
-    Vertex_handle v = _tds.create_vertex();
+    Vertex_handle v = this->_tds.create_vertex();
     v->set_site(s);
     return v;
   }
 
   Vertex_handle create_vertex_dim_up(const Site_2& s) {
-    Vertex_handle v = _tds.insert_dim_up(infinite_vertex());
+    Vertex_handle v = this->_tds.insert_dim_up(infinite_vertex());
     v->set_site(s);
     return v;
   }

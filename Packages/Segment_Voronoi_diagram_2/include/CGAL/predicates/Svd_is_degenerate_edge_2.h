@@ -34,7 +34,7 @@ CGAL_BEGIN_NAMESPACE
 
 
 template<class R, class Method_tag>
-class Svd_is_degen_edge_2
+class Svd_is_degenerate_edge_C2
 {
 public:
   typedef typename R::Site_2      Site_2;

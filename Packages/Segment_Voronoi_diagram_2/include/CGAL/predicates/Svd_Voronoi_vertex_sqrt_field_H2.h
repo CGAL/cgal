@@ -78,9 +78,9 @@ private:
     RT q_yw = q.hy() * q.hw();
     RT r_yw = r.hy() * r.hw();
 
-    RT p_w_sq = CGAL::square( p.hw() );
-    RT q_w_sq = CGAL::square( q.hw() );
-    RT r_w_sq = CGAL::square( r.hw() );
+    RT p_hw_sq = CGAL::square( p.hw() );
+    RT q_hw_sq = CGAL::square( q.hw() );
+    RT r_hw_sq = CGAL::square( r.hw() );
 
     ux = -det3x3_by_formula(p_yw, np, p_hw_sq,
 			    q_yw, nq, q_hw_sq,

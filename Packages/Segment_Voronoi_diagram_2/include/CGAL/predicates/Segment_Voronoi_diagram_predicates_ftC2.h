@@ -540,7 +540,7 @@ svd_is_degenerate_edge_ftC2(const typename K::Site_2& p,
 {
   typename K::Site_2 site_vec[] = {p, q, r, t};
   return
-    svd_predicate_C2<Svd_is_degenerate_edge_2,bool,K,Method_tag,4>(site_vec);
+    svd_predicate_C2<Svd_is_degenerate_edge_C2,bool,K,Method_tag,4>(site_vec);
 }
 
 //--------------------------------------------------------------------------

@@ -205,7 +205,7 @@ public:
     RT hy = p.hy();
     RT hw = p.hw();
 
-    if ( w < 0 ) {
+    if ( hw < 0 ) {
       hx = -hx;
       hy = -hy;
       hw = -hw;
