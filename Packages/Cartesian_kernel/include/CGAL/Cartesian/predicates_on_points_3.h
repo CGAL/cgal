@@ -236,24 +236,44 @@ coplanar(const PointC3<R CGAL_CTAG> &p,
 template < class R >
 inline
 Orientation
-coplanar_orientation(const PointC3<R CGAL_CTAG> &q,
-         const PointC3<R CGAL_CTAG> &r,
-         const PointC3<R CGAL_CTAG> &s,
-         const PointC3<R CGAL_CTAG> &p)
+coplanar_orientation(const PointC3<R CGAL_CTAG> &p,
+                     const PointC3<R CGAL_CTAG> &q,
+                     const PointC3<R CGAL_CTAG> &r,
+                     const PointC3<R CGAL_CTAG> &s)
 {
-  // p,q,r,s supposed to be coplanar                                   
-  // q,r,s supposed to be non collinear                                
-  // tests whether p is on the same side of q,r as s                   
-  // returns :                                                         
-  // COLLINEAR if pqr collinear                                        
-  // POSITIVE if qrp and qrs have the same orientation                 
-  // NEGATIVE if qrp and qrs have opposite orientations       
-  CGAL_kernel_exactness_precondition( ! collinear(q, r, s) );
+  // p,q,r,s supposed to be coplanar
+  // p,q,r supposed to be non collinear
+  // tests whether s is on the same side of p,q as r
+  // returns :
+  // COLLINEAR if pqr collinear
+  // POSITIVE if qrp and qrs have the same orientation
+  // NEGATIVE if qrp and qrs have opposite orientations
+  CGAL_kernel_exactness_precondition( ! collinear(p, q, r) );
   CGAL_kernel_exactness_precondition( coplanar(p, q, r, s) );
-  return coplanar_orientationC3(q.x(), q.y(), q.z(),
+  return coplanar_orientationC3(p.x(), p.y(), p.z(),
+                                q.x(), q.y(), q.z(),
                                 r.x(), r.y(), r.z(),
-                                s.x(), s.y(), s.z(),
-                                p.x(), p.y(), p.z());
+                                s.x(), s.y(), s.z());
+}
+
+template < class R >
+inline
+Orientation
+coplanar_orientation(const PointC3<R CGAL_CTAG> &p,
+                     const PointC3<R CGAL_CTAG> &q,
+                     const PointC3<R CGAL_CTAG> &r,
+                     const VectorC3<R CGAL_CTAG> &v)
+{
+  // p,q,r are supposed to be in a plane perpendicular to v.
+  // v determines an orientation of this plane
+  // returns the orientation of p,q,r in this plane
+  CGAL_kernel_exactness_precondition( v != Null_vector );
+  CGAL_kernel_exactness_precondition( (p-q)*v == R::FT(0) );
+  CGAL_kernel_exactness_precondition( (p-r)*v == R::FT(0) );
+  return coplanar_orientation_vectorC3(p.x(), p.y(), p.z(),
+                                       q.x(), q.y(), q.z(),
+                                       r.x(), r.y(), r.z(),
+                                       v.x(), v.y(), v.z());
 }
 
 template < class R>
