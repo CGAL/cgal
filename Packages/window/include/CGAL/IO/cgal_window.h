@@ -25,9 +25,14 @@
 #ifndef CGAL_LEDA_WINDOW_H
 #define CGAL_LEDA_WINDOW_H
 
+#include <CGAL/basic.h>
 #include <CGAL/IO/Color.h>
 #include <CGAL/LEDA/window.h>
 #include <CGAL/IO/cgal_logo.h>
+
+#define Str(x)     #x
+#define Xstr(x)    Str(x)
+#define OP         CGAL CGAL_VERSION
 
 
 CGAL_BEGIN_NAMESPACE
@@ -48,7 +53,7 @@ inline
 void
 cgalize(CGAL::window& w)
 {
-  w.set_frame_label("CGAL-2.4");
+  w.set_frame_label(Xstr(OP));
   w.set_icon_label("CGAL");
   w.set_line_width( 2);
   w.set_icon_pixrect( w.create_pixrect((const char**) cgal_logo));

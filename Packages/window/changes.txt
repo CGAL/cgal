@@ -1,3 +1,7 @@
+
+2.8.29
+- current version number appears in window frame label
+
 2.8.28 (?? ???? 2002)
 - updated version number in window header
 
