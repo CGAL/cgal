@@ -262,6 +262,11 @@ test_new_3(const R& rep)
   bool tmp12a;
   bool tmp12b;
 
+  typename R::Do_intersect_3 do_intersect
+        = rep.do_intersect_3_object();
+     tmp12a = do_intersect(l2,h2);
+     tmp12b = do_intersect(r2,h2);
+
   typename R::Assign_3  assign
         = rep.assign_3_object();
        tmp12a = assign(p1,tmp10a);

@@ -70,6 +70,9 @@ _test_cls_iso_cuboid_3(const R& )
  CGAL::Iso_cuboid_3<R> r4( p5, p2);
  CGAL::Iso_cuboid_3<R> r5( p9, p2);
  CGAL::Iso_cuboid_3<R> r6( r2 );
+ CGAL::Iso_cuboid_3<R> r7( n3, n3, n3, n12, n12, n9, n3);
+ CGAL::Iso_cuboid_3<R> r8( n4, n1, n1, n5, n4, n3, n1);
+ CGAL::Iso_cuboid_3<R> r9( n4, n1, n1, n5, n4, n3);
  r0 = r1;
 
  assert( r1 == r1 );
@@ -79,12 +82,10 @@ _test_cls_iso_cuboid_3(const R& )
  assert( r1 == r4 );
  assert( r2 == r6 );
  assert( r2 != r5 );
+ assert( r1 == r7 );
+ assert( r8 == r9 );
 
  std::cout << '.';
-
- std::cout << std::endl;
- std::cout << r1.min() << std::endl;
- std::cout << r1.max() << std::endl;
 
  assert( r1.min() == p1 );
  assert( r1.max() == p3 );
@@ -121,6 +122,15 @@ _test_cls_iso_cuboid_3(const R& )
 
  std::cout << '.';
 
+ assert ( r1.min_coord(0) == r1.xmin() );
+ assert ( r1.min_coord(1) == r1.ymin() );
+ assert ( r1.min_coord(2) == r1.zmin() );
+ assert ( r2.max_coord(0) == r1.xmax() );
+ assert ( r2.max_coord(1) == r1.ymax() );
+ assert ( r2.max_coord(2) == r1.zmax() );
+
+ std::cout << '.';
+
  assert( r1.bounded_side( p8 ) == CGAL::ON_BOUNDED_SIDE );
  assert( r2.bounded_side( p7 ) == CGAL::ON_BOUNDED_SIDE );
  assert( r3.bounded_side( p9 ) == CGAL::ON_UNBOUNDED_SIDE );
@@ -153,4 +163,4 @@ _test_cls_iso_cuboid_3(const R& )
  std::cout << "done" << std::endl;
  return true;
 }
-#endif // CGAL__TEST_CLS_ISO_RECTANGLE_2_C
+#endif // CGAL__TEST_CLS_ISO_CUBOID_3_C

@@ -257,6 +257,11 @@ test_new_2(const R& rep)
 
   bool tmp_bool;
 
+  typename R::Do_intersect_2 do_intersect
+        = rep.do_intersect_2_object();
+   tmp_bool = do_intersect(l2,l3);
+   tmp_bool = do_intersect(l2,r2);
+
   typename R::Assign_2  assign
         = rep.assign_2_object();
        tmp_bool = assign(p1,tmp21a);

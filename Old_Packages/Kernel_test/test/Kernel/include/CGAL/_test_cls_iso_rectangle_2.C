@@ -17,15 +17,15 @@
 // author(s)     : Stefan Schirra
 //
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken  
 // ============================================================================
  
 
 #ifndef CGAL__TEST_CLS_ISO_RECTANGLE_2_C
 #define CGAL__TEST_CLS_ISO_RECTANGLE_2_C
-#ifndef CGAL__TEST_CLS_ISO_RECTANGLE_2_H
+
 #include <CGAL/_test_cls_iso_rectangle_2.h>
-#endif // CGAL__TEST_CLS_ISO_RECTANGLE_2_H
+
 
 template <class R>
 bool
@@ -68,6 +68,11 @@ _test_cls_iso_rectangle_2(const R& )
  CGAL::Iso_rectangle_2<R> r4( p5, p2);
  CGAL::Iso_rectangle_2<R> r5( p9, p2);
  CGAL::Iso_rectangle_2<R> r6( r2 );
+ CGAL::Iso_rectangle_2<R> r7( n3, n3, n12, n12, n3);
+ CGAL::Iso_rectangle_2<R> r8( n4, n2, n6, n8, n2);
+ CGAL::Iso_rectangle_2<R> r9( n2, n1, n3, n4, n1);
+ CGAL::Iso_rectangle_2<R> r10( n2, n1, n3, n4);
+
  r0 = r1;
 
  assert( r1 == r1 );
@@ -77,6 +82,9 @@ _test_cls_iso_rectangle_2(const R& )
  assert( r1 == r4 );
  assert( r2 == r6 );
  assert( r2 != r5 );
+ assert( r7 == r1 );
+ assert( r8 == r9 );
+ assert( r9 == r10 );
 
  std::cout << '.';
 
@@ -101,6 +109,15 @@ _test_cls_iso_rectangle_2(const R& )
  assert( r1.min() == p1 );
  assert( r5.min() != p9 );
  assert( r2.max() == p3 );
+
+ std::cout << '.';
+ 
+ assert ( r1.min_coord(0) == r1.xmin() );
+ assert ( r1.min_coord(1) == r1.ymin() );
+ assert ( r2.max_coord(0) == r2.xmax() );
+ assert ( r2.max_coord(1) == r2.ymax() );
+
+ std::cout << '.';
 
  assert( r1.bounded_side( p8 ) == CGAL::ON_BOUNDED_SIDE );
  assert( r2.bounded_side( p7 ) == CGAL::ON_BOUNDED_SIDE );

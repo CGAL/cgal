@@ -38,6 +38,7 @@
 #include <CGAL/_test_cls_triangle_3.C>
 #include <CGAL/_test_cls_tetrahedron_3.C>
 #include <CGAL/_test_cls_aff_transformation_3.C>
+#include <CGAL/_test_cls_iso_cuboid_3.C>
 
 
 template <class R> bool _test_3(const R& r);
@@ -62,6 +63,7 @@ _test_3(const R& r)
  && _test_cls_triangle_3( r )
  && _test_cls_tetrahedron_3( r )
  && _test_cls_aff_transformation_3( r )
+ && _test_cls_iso_cuboid_3( r )
  ;
 }
 
