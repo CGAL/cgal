@@ -1,6 +1,10 @@
 HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
 
+3.34 (10 Apr 2003)
+
+     - Fixed typos spotted by g++ 3.4.
+
 3.33 (26 Apr 2002)
 
      - Fixed broken HalfedgeDS_vector.

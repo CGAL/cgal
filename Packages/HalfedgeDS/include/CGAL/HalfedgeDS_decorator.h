@@ -835,7 +835,7 @@ private:
 
     void faces_pop_front( Tag_false) {}
     void faces_pop_front( Tag_true) {
-        hds->faces_(pop_front);
+        hds->faces_pop_front();
     }
 
     void faces_pop_back( Tag_false) {}

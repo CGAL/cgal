@@ -176,7 +176,7 @@ public:
         ff = (Face*)((char*) f - (std::ptrdiff_t)((Face_base*)ff));
         return ff;
     }
-    static inline Face_const_handle face_handle( const Face_base* h) {
+    static inline Face_const_handle face_handle( const Face_base* f) {
         const Face* ff = 0;
         ff = (const Face*)((const char*)f -
                  (std::ptrdiff_t)((const Face_base*)ff));
