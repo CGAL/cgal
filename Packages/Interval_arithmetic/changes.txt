@@ -1,3 +1,6 @@
+Version 4.157 on 25 November 2002
+- Use CGAL_CFG_MATCHING_BUG_2 instead of #ifdef _MSC_VER
+
 Version 4.156 on 25 November 2002
 - Move to_interval(long) from Interval_base.h to Interval_arithmetic.h,
   and fix it for 64bits platforms.
