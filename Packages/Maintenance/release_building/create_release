@@ -433,7 +433,19 @@ sub make_testscripts()
 		close MAKEFILE;
 		rename("makefile.new","makefile");
 	    } else {
-		system("$SCRIPTDIR/create_makefile", '-t');
+                my $options = '-t';
+		if ( -f 'create_makefile_options') {
+		    if (open(OPTIONS, "<create_makefile_options")) {
+		        $_ = <OPTIONS>;
+			chomp;
+			if (/^[\w\s-]+$/) { $options = $_;
+			} else {
+			    print STDERR "Rejected create_makefile_options in $DIR\n";
+			}
+			close OPTIONS;
+		    }
+		}
+		system("$SCRIPTDIR/create_makefile", $options);
 	    }
 	    if ( ! -f 'cgal_test' ) {
 		system("$SCRIPTDIR/create_cgal_test");
@@ -461,7 +473,19 @@ sub make_testscripts()
 		close MAKEFILE;
 		rename("makefile.new","makefile");
 	    } else {
-		system("$SCRIPTDIR/create_makefile", '-d');
+                my $options = '-d';
+		if ( -f 'create_makefile_options') {
+		    if (open(OPTIONS, "<create_makefile_options")) {
+		        $_ = <OPTIONS>;
+			chomp;
+			if (/^[\w\s-]+$/) { $options = $_;
+			} else {
+			    print STDERR "Rejected create_makefile_options in $DIR\n";
+			}
+			close OPTIONS;
+		    }
+		}
+		system("$SCRIPTDIR/create_makefile", $options);
 	    }
 	    chdir '..';
 	}
