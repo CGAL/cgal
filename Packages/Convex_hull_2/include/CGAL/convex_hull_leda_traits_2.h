@@ -8,14 +8,12 @@
 //
 // ----------------------------------------------------------------------
 // release       : 
-// release_date  : 2000, August 03
+// release_date  : 
 //
-// file          : convex_hull_leda_traits_2.h
-// package       : Convex_hull (3.3)
-// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
-// source        : convex_hull_2.lw
-// revision      : 3.3
-// revision_date : 03 Aug 2000
+// file          : include/CGAL/convex_hull_leda_traits_2.h
+// package       : Convex_hull_2 
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
 // coordinator   : MPI, Saarbruecken

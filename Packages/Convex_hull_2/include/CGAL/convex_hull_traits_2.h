@@ -8,14 +8,12 @@
 //
 // ----------------------------------------------------------------------
 // release       : 
-// release_date  : 2000, August 03
+// release_date  : 
 //
 // file          : convex_hull_traits_2.h
-// package       : Convex_hull (3.3)
-// maintainer    : Stefan Schirra <stschirr@mpi-sb.mpg.de>
-// source        : convex_hull_2.lw
-// revision      : 3.3
-// revision_date : 03 Aug 2000
+// package       : Convex_hull_2 
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
 // coordinator   : MPI, Saarbruecken
@@ -31,20 +29,20 @@
 #include <CGAL/predicate_objects_on_points_2.h>
 
 CGAL_BEGIN_NAMESPACE
-template <class R_>
-class convex_hull_traits_2 : public R_
+template <class K_>
+class convex_hull_traits_2 : public K_
 {
 public:
-  typedef   R_                                              R;
-  typedef   CGAL::Point_2<R>                                Point_2;    
-  typedef   CGAL::p_Less_xy<Point_2>                        Less_xy_2;
-  typedef   CGAL::p_Less_yx<Point_2>                        Less_yx_2;
-  typedef   CGAL::p_Left_of_line_2p<Point_2>                Left_of_line_2;
-  typedef   CGAL::p_Less_dist_to_line_2p<Point_2>  
-                                               Less_signed_distance_to_line_2;
-  typedef   CGAL::p_Less_rotate_ccw<Point_2>                Less_rotate_ccw_2;
-  typedef   CGAL::p_Leftturn<Point_2>                       Leftturn_2;
-  typedef   CGAL::Segment_2<R>                              Segment_2;    
+  typedef K_                                 K;
+  typedef typename K::Point_2                         Point_2;    
+  typedef typename K::Less_xy_2                       Less_xy_2;
+  typedef typename K::Less_yx_2                       Less_yx_2;
+  typedef typename K::Left_of_line_2                  Left_of_line_2;
+  typedef typename K::Less_singed_distance_to_line_2  
+                                         Less_signed_distance_to_line_2;
+  typedef typename K::Less_rotate_ccw_2               Less_rotate_ccw_2;
+  typedef typename K::Leftturn_2                      Leftturn_2;
+  typedef typename K::Segment_2                       Segment_2;    
   
   Less_xy_2
   less_xy_2_object() const 
