@@ -1209,15 +1209,13 @@ output: trapezoid iterator
 	tr.top()
 	vertical_ray_shoot upward from tr
 	*/
-	reference insert_curve_at_point_using_geometry(const X_curve& cv,const Point& p,pointer& tr,const Locate_type& lt)
+	reference insert_curve_at_point_using_geometry(const X_curve&     cv,
+						       const Point&       p,
+						       pointer &          tr,
+						       const Locate_type& lt)
 	{
-		
-#ifdef CGAL_TD_DEBUG
-		
 		CGAL_assertion(traits);
 		CGAL_precondition(lt==POINT);
-		
-#endif
 		
 		if (traits->curve_compare_at_x_from_top(cv,tr->top(),p)==SMALLER)
 			tr->set_top(cv);
@@ -1228,12 +1226,7 @@ output: trapezoid iterator
 	
 	reference insert_curve_at_point_using_data_structure(const X_curve& cv,const Point& p,pointer& tr,const Locate_type& lt)
 	{
-		
-#ifdef CGAL_TD_DEBUG
-		
 		CGAL_precondition(lt==TRAPEZOID || lt==UNBOUNDED_TRAPEZOID);
-		
-#endif
 		
 		Data_structure *tt=tr->get_node();
 		
