@@ -1,5 +1,8 @@
 Changes done to the `Optimisation_doc' package
 
+Version 1.0.1 on 20-Mar-2001
+- no changes (moved to cvs-server)
+
 Version 1.0 on 29-Sep-2000
 - added package `Width_3'
 
