@@ -1,5 +1,11 @@
 Circulator Package: Release changes:
 ---------------------------------------------------------------------
+3.31 (14 May 2003)
+
+     - Addressed remarks by Colin Dunlop and made difference_type as argument
+       type of operator+= scoped with the class and not one of its parameters.
+     - Removes a MSC macro.
+
 3.30 (8 May 2003)
      - made VC7.0 happy [af]
 

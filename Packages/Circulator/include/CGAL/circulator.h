@@ -619,9 +619,6 @@ public:
         Self tmp = *this;
         return tmp += -n;
     }
-#ifndef _MSC_VER
-    difference_type  operator-( const Self& i) const;
-#else
     difference_type  operator-( const Self& i) const {
         CGAL_assertion( m_anchor  != CGAL_CIRC_NULL);
         CGAL_assertion( current   != CGAL_CIRC_NULL);
@@ -633,7 +630,6 @@ public:
         }
         return (current - *m_anchor) - (i.current - *m_anchor);
     }
-#endif
 
     Ref  operator[](difference_type n) const {
         Self tmp = *this;
@@ -665,23 +661,6 @@ operator+( Dist n, const Iterator_from_circulator<C,Ref,Ptr>& circ) {
     Iterator_from_circulator<C,Ref,Ptr> tmp = circ;
     return tmp += n;
 }
-
-#ifndef _MSC_VER
-template < class  C, class Ref, class Ptr>
-typename C::difference_type
-Iterator_from_circulator<C,Ref,Ptr>::
-operator-( const Iterator_from_circulator<C,Ref,Ptr>& i) const {
-    CGAL_assertion( m_anchor  != CGAL_CIRC_NULL);
-    CGAL_assertion( current   != CGAL_CIRC_NULL);
-    CGAL_assertion( m_anchor  == i.m_anchor);
-    if ( m_winding != i.m_winding) {
-        difference_type s = I_min_circulator_size( *m_anchor);
-        return   (current - *m_anchor) - (i.current - *m_anchor)
-               + s * (m_winding - i.m_winding);
-    }
-    return (current - *m_anchor) - (i.current - *m_anchor);
-}
-#endif // _MSC_VER //
 
 template < class  C >
 class Container_from_circulator {
@@ -875,7 +854,7 @@ operator+( typename Circulator_from_container<Ctnr>::difference_type n,
 template <class Ctnr>
 Circulator_from_container<Ctnr>&
 Circulator_from_container<Ctnr>::
-operator+=( typename Ctnr::difference_type n) {
+operator+=( typename Circulator_from_container<Ctnr>::difference_type n) {
     CGAL_assertion( ctnr != NULL);
     CGAL_assertion( i != ctnr->end());
     typename Ctnr::difference_type j    = i - ctnr->begin();
@@ -1022,8 +1001,7 @@ public:
 template <class Ctnr>
 inline
 Const_circulator_from_container<Ctnr>
-operator+( typename Const_circulator_from_container<Ctnr>::
-               difference_type n,
+operator+( typename Const_circulator_from_container<Ctnr>::difference_type n,
            const Const_circulator_from_container<Ctnr>& c) {
     Const_circulator_from_container<Ctnr> tmp = c;
     return tmp += n;
@@ -1033,7 +1011,7 @@ operator+( typename Const_circulator_from_container<Ctnr>::
 template <class Ctnr>
 Const_circulator_from_container<Ctnr>&
 Const_circulator_from_container<Ctnr>::
-operator+=( typename Ctnr::difference_type n) {
+operator+=( typename Const_circulator_from_container<Ctnr>::difference_type n){
     CGAL_assertion( ctnr != NULL);
     CGAL_assertion( i != ctnr->end());
     typename Ctnr::difference_type j    = i - ctnr->begin();
