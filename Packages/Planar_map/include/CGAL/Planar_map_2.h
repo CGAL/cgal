@@ -61,6 +61,8 @@
 
 #include <CGAL/IO/Pm_file_scanner.h>
 
+#include <CGAL/sweep_to_construct_planar_map_2.h>
+
 #include <list>
 
 CGAL_BEGIN_NAMESPACE
@@ -78,6 +80,7 @@ class Planar_map_2 : public Topological_map<PlanarMapDcel_2>
 public:
   typedef PlanarMapDcel_2                       Dcel;
   typedef PlanarMapTraits_2                     Traits;
+  typedef Planar_map_2<Dcel,Traits>             Planar_map;   
   typedef Planar_map_2<Dcel,Traits>             Self;
   typedef Planar_map_traits_wrap<Traits>        Traits_wrap;
   typedef typename Traits::X_curve              X_curve_2;
@@ -199,17 +202,22 @@ public:
                            const X_curve_2_iterator & end,
                            Change_notification * en = NULL)
   {
-    X_curve_2_iterator it = begin;
-    Halfedge_iterator out;
-    if (it!=end) {
+    
+    sweep_to_construct_planar_map_2(begin, end, *traits, *this);
+     
+    return halfedges_begin();
+    
+    /*X_curve_2_iterator it = begin;
+      Halfedge_iterator out;
+      if (it!=end) {
       out=insert(*it, en);
       it++;
-    }
-    while (it != end) {
+      }
+      while (it != end) {
       insert(*it, en);
       it++;
-    }
-    return out;
+      }
+      return out;*/
   }
 
   //! inserts a given curve into the map as a new inner component of a given
@@ -808,6 +816,12 @@ Planar_map_2(
     bb->init(*this,*traits);
   }  
 }
+
+//template < class Dcel, class Traits, class InputIterator >
+//Planar_map_2< Dcel, Traits >::
+//Planar_map_2(InputIterator curves_begin, InputIterator curves_end)
+//{}
+
 //-----------------------------------------------------------------------------
 template < class Dcel, class Traits >
 Planar_map_2< Dcel, Traits >::
