@@ -46,7 +46,7 @@
 #error "Architecture not supported."
 #endif
 
-#if defined (CGAL_IA_DONT_USE_ASSEMBLY) && defined (__GNUC__)
+#if defined (__GNUC__) && ! defined (CGAL_IA_DONT_USE_ASSEMBLY)
 #define CGAL_IA_USE_ASSEMBLY
 #endif
 
