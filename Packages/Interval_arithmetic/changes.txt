@@ -1,5 +1,9 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.35 on  7 November 1999
+- Replaced the macros CGAL_IA_SMALLEST (resp LARGEST) by static data members
+  Interval_nt_advanced::Smallest (resp Largest).
+
 Version 4.34 on  3 November 1999
 - The script now recognizes the per predicate marker /*CGAL_NO_FILTER*/.
 - Added an exact converter from double to Quotient<Gmpz>, so that

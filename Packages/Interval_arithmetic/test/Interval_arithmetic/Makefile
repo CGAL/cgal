@@ -16,7 +16,7 @@ CXXFLAGS = \
         -I../../include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS) \
-	-g -W -Wall
+	-O2 -DLOOPS=10000000 -W -Wall
 	# -DCGAL_IA_NEW_FILTERS
 	# -O2 -mcpu=pentiumpro -march=pentiumpro -W -Wall -DLOOPS=10000000
 	# -g -Wall -W
@@ -48,7 +48,7 @@ CXXFLAGS = \
 # LDFLAGS = Interval_arithmetic$(OBJ_EXT)
 # LDFLAGS = ../../src/Interval_arithmetic/workaround_4_ms.obj
 
-LDFLAGS =  \
+LDFLAGS = Interval_arithmetic$(OBJ_EXT) \
           $(TESTSUITE_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
