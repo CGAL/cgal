@@ -1,4 +1,4 @@
-#  Makefile for CGAL's Interval Arithmetic package. [Sylvain Pion]
+#  Makefile for CGAL's Triangulation3 package.
 
 CVS_MODULE_NAME=tet
 Package=Triangulation3
@@ -52,10 +52,6 @@ clean:
 $(Package).tar.gz:
 	tar -zcvf $(Package).tar.gz \
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
-	--exclude=Oriented_side_power_test_3.h \
-	--exclude=Regular_triangulation_3.h \
-	--exclude=Regular_triangulation_geom_traits_3.h \
-	--exclude=Weighted_point_3.h \
 	--exclude=TODO \
 	--exclude=.nfs*\
 	version description.txt changes.txt \
