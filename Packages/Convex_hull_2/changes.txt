@@ -1,3 +1,6 @@
+3.33 (19 Mar 2001)
+- moved the leda_in_CGAL.h and rat_leda_in_CGAL.h files to the LEDA package.
+
 3.32 (7 Mar 2002)
 - changed std:: to CGAL_CLIB_STD:: for atoi and exit in example
 
