@@ -74,8 +74,7 @@ public:
       std::sort(begin(), end(), swap_1(Traits().less_xy_2_object()));
       std::unique(begin(), end());
    
-      // b is the point with the largest x coordinate
-      Node largest_x = front();
+      // front() is the point with the largest x coordinate
    
       // push the point p_minus_infinity; the coordinates should never be used
       push_back(Point_2( 1, -1));

@@ -653,7 +653,6 @@ void Vertex_visibility_graph_2<Traits>::handle(Tree_iterator p,
    else
       std::cout << " NADA" << endl;
 #endif
-   Point_2 r;
 
    // if p and q are adjacent
    if (are_adjacent(polygon, (*p_it).second.first, (*q_it).second.first))
