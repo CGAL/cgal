@@ -115,6 +115,23 @@ curve to be $x$-monotone.
            \ccPrecond{$cv1$ and $cv2$ are defined to the left of $pnt$'s
              $x$-coordinate.}}
     
+\ccMethod{Point_2 point_reflect_in_x_and_y(const Point_2& pt);}
+         {returns the reflection of the point \ccStyle{pt} about the origin
+	   For example, the reflection of the point $(2,2)$ is the point as
+	   $(-2,-2)$. This predicate is not required for the aggregate
+	   insertion of curves into the planar map, or if the method
+	   \ccc{curves_compare_y_at_x_left()} is provided and
+	   the \ccc{Has_left_category} category is \ccc{Tag_true}.}
+	   
+\ccMethod{X_monotone_curve_2
+  curve_reflect_in_x_and_y(const X_monotone_curve_2& cv);}
+         {returns the reflection of the curve \ccc{cv} about the origin.
+          For example, the reflection of the line segment $((2,2),(3,3))$
+	  is $((-2,-2),(-3,-3))$. This predicate is not required for the
+	  aggregate insertion of curves into the planar map, or if the method
+	  \ccc{curves_compare_y_at_x_left()} is provided and the
+	  \ccc{Has_left_category} category is \ccc{Tag_true}.}
+
 \ccMethod{Comparison_result curve_compare_y_at_x(const Point_2& pnt,
                                                  const X_monotone_curve_2& cv);}
          {compares the $y$-coordinates of $pnt$ and the vertical projection of

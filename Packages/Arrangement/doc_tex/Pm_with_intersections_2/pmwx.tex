@@ -1,76 +1,29 @@
 %+-------------------------------------------------------
 %| CGAL Manual : pmwx.tex
-%|
-%| Soon to be split into User and Reference Manuals
 %+--------------------------------------------------------
 %| update log
 %|
 %| 04 May 2001  - Eyal Flato
 %|    Created from arr documentation
-%|
+%| 15 May 2003  - Efi Fogel
+%|    Cleanup
 %--------------------------------------------------------
 
-%\documentclass[12pt]{book}
-%\usepackage{graphics, amssymb,epsfig}
-%\usepackage{cprog,cc_manual}
-%
-%\def\Ipe#1{\def\IPEfile{#1}\input{#1}}
-%
-%\setlength{\evensidemargin}{.0in}
-%\setlength{\oddsidemargin}{-0.3in}
-%\setlength{\textwidth}{6.8in}
-%\setlength{\textheight}{8in}
-%
-%\renewcommand{\Re}{{\rm I\!\hspace{-0.025em} R}}
-%\newcommand{\normal}[1]{\eta_{#1}}
-%\newtheorem{theorem}{Theorem}[section] % section
-%\newtheorem{remark}[theorem]{Remark}
-%\newtheorem{lemma}[theorem]{Lemma}
-%\newenvironment{dfn}{{\vspace*{1ex} \noindent \bf Definition }}{\vspace*{1ex}}
-%\newcommand{\bigdef}[2]{\index{#1}\begin{dfn} {\rm #2} \end{dfn}}
-%\newenvironment{proof}{{\em Proof:}}{\hfill{\hfill\rule{2mm}{2mm}}}
-%
-%\newcommand{\comment}[1]{{\sf * #1 *}}
-%\newcommand{\ncomment}[1]{\noindent {\sf * #1 * }}
-%
-%\newtheorem{defn}[theorem]{Definition}
-%\newcommand{\intsupplanes}{P}
-%\def\C{{\cal C}}
-%\def\G{{\cal G}}
-%\def\F{{\cal F}}
-%\def\I{{\cal I}}
-%\def\U{{\cal U}}
-%\def\M{{\cal M}}
-%\def\eps{{\varepsilon}}
-%\def\bd{{\partial}}
-%\def\dm{{\cal D}}
-%
-% Title
-%\title{CGAL Arrangement Specifications}
-%
-%\date{ \today }
-%
-%\begin{document}
-%
-%\tableofcontents
-%
-%\maketitle
 \chapter{2D Planar Maps of Intersecting Curves} \label{I1_ChapterPmwx}
 %\minitoc
 
 \section{Introduction}
 
-\paragraph{2D Planar Map with Intersections:} 
-  Given a collection $C$ of (possibly intersecting and not necessarily
-  $x$-monotone curves in the plane, we construct a collection $C''$ in
-  two steps, as follows: First, we decompose each curve in C into
-  maximal x-monotone curves, thus obtaining the collection
-  $C'$. Second, We decompose each curve in $C'$ into maximal connected
-  pieces not intersecting any other curve in $C'$.  This way we obtain
-  the collection $C''$ of $x$-monotone, pairwise interior disjoint
-  curves.  Constructing the {\it planar map with intersection} of the
-  curves in $C$ gives the {\it planar map}(see
-  Chapter~\ref{I1_ChapterPlanarMap}) induced by the curves in $C''$.
+Given a collection $C$ of (possibly intersecting and not necessarily
+$x$-monotone curves in the plane, we construct a collection $C''$ in
+two steps, as follows: First, we decompose each curve in C into
+maximal x-monotone curves, thus obtaining the collection
+$C'$. Second, We decompose each curve in $C'$ into maximal connected
+pieces not intersecting any other curve in $C'$.  This way we obtain
+the collection $C''$ of $x$-monotone, pairwise interior disjoint
+curves.  Constructing the {\it planar map with intersection} of the
+curves in $C$ gives the {\it planar map}(see
+Chapter~\ref{I1_ChapterPlanarMap}) induced by the curves in $C''$.
 
   The \ccc{Planar Map with Intersections} package extends the
   functionality of the \ccc{Planar Map} package by enabling simple
@@ -119,16 +72,13 @@
 %   the intersections of input curves and planar map curves are also
 %   calculated.
 
-%******************************************************************************
-
 %---------------------------------------------------
-%\subsection{Simple Example of a Segment Planar Map with Intersections}
-\section{Simple Example of a Segment Planar Map with Intersections}
+\subsection{A Simple Program}
 \label{ssec:example1}
-The following example demonstrates the construction of an
+The simple program listed below demonstrates the construction of an
 $X$-shaped planar subdivision out of two intersecting segments.
-We output the coordinates of the halfedges of the constructed
-subdivision.
+The coordinates of the halfedges of the constructed subdivision are
+printed to standard output.
 
 \ccIncludeExampleCode{Pm_with_intersections/example1.C}
 
@@ -164,6 +114,56 @@ Edges of the planar map:
 
 % \ccIncludeExampleCode{Sweep_line/example1.cout}
 
+\begin{ccAdvanced}
+\subsection{Change Notification}
+%-----------------------------------------------
+  An insertion of an intersecting curve into a planar map may add
+  several halfedges and modify several features of the map (i.e.,
+  split halfedges, split faces). The so-called \ccc{Change
+  Notification} provides this flexibility. The modification methods
+  accept an additional parameter, a class which is a model of the
+  \ccc{PlanarMapWithIntersectionsChangeNotification_2} concept. The
+  change notification includes an associative function for each
+  modification method.  This function is called after each such
+  modification.
 
-% EOF ------------------------------------------------------------------------80
+  The change notification class is useful in many cases. For example,
+  one may add a color (or other extra data) to any halfedge of a
+  planar map. An insertion of a new curve can split halfedges that
+  were previously in the map. After such a split the color of the
+  newly created halfedges should be updated according to the original
+  color of the split halfedge. One can do this by implementing the
+  \ccc{split_edge} function of the change notification class. This
+  function will be called after each split of an halfedge in the map.
+
+\subsubsection{Example of Change Notification}
+\label{ssecn:example2}
+The following example demonstrates the usage of the change
+notification concept during the construction of a
+planar map out of three segments --- $(0,1)-(1,0)$, $(0,0)-(1,1)$
+and $(0,1)-(1,1)$.
+During the insertion we use \ccc{My_notification} instance to
+output the internal process of the construction of the planar map.
+We also count how many edges are in the map by incrementing a
+counter each time an edge is added (\ccc{add_edge})or
+split (\ccc{split_edge}).
+
+\ccIncludeExampleCode{Pm_with_intersections/example2.C}
+
+The output of the program looks like this:
+\begin{verbatim}
+inserting 0 1 1 0
+add_edge
+add_hole
+inserting 0 0 1 1
+split_edge
+add_edge
+add_edge
+inserting 0 1 1 1
+add_edge
+split_face
+Total number of edges 5
+\end{verbatim}
+
+\end{ccAdvanced}
 

@@ -42,7 +42,7 @@
 \label{I1_ChapterPlanarMap}
 \minitoc
 
-\section*{Introduction}
+\section{Introduction}
 \label{PM_sec:intro}
 
 {\em Planar maps} are embeddings of {\em topological maps} into the
@@ -67,10 +67,10 @@ geometric queries, such as point location.
 In this chapter we review the data and functionality added
 to the \ccc{Planar_map_2<Dcel,Traits>} class over that of the 
 \ccc{Topological_map<Dcel>} class. The combinatorial capabilities of
-the base class are covered in Chapter ~\ref{I1_ChapterTopologicalMap},
+the base class are covered in chapter ~\ref{I1_ChapterTopologicalMap},
 {\em Topological Maps}.
 
-\subsection*{Terms and Definitions}
+\subsection{Terms and Definitions}
 Before we expose a code fragment that manipulates a {\em planar
 map}, let us define precisely some of the terms used here after.
 
@@ -97,7 +97,7 @@ order. Halfedges around a vertex are also traversed in clockwise order.
 map and a query point $p$, find the region of the map containing $p$.
 \end{description}
 
-\subsection*{A simple Program}
+\subsection{A simple Program}
 The basic tasks of the simple program listed below are to construct a
 planar map of three segments, and issue a point location query.
 
@@ -154,7 +154,7 @@ information returned from the \ccc{locate()} function is not analyzed
 further, as this program is presented to illustrates a simple usage
 only.
 
-\section*{Architecture}
+\section{Architecture}
 The \ccc{Planar_map_2<Dcel,Traits>} class is parameterized with two
 objects. The \ccc{Dcel} object represents the underlying topological
 data structure and maintains a {\em doubly-connected edge list}. The
@@ -168,7 +168,7 @@ All the combinatorial entities have a geometric mapping, e.g.,
 a vertex of a planar map has a \ccc{Point} data member, a halfedge has
 a \ccc{X_monotone_curve_2} (x-monotone curve) data member, etc.
 
-\subsection*{Operations}
+\subsection{Operations}
 In addition to the modifying function, namely, insertion, removal,
 splitting and merging, the user can perform point location queries and
 vertical ray shoot queries.
@@ -222,7 +222,7 @@ classes as the \ccc{Polyline Traits} will force the user to define
 I/O operators on his polyline curve.
 
 \begin{ccAdvanced}
-\subsection*{I/O for User Defined Planar Maps and the I/O Format}
+\subsection{I/O for User Defined Planar Maps and the I/O Format}
 
 Users may wish to add their own attributes planar map components. If
 those attributes are to be written as part of the planar map
@@ -314,7 +314,7 @@ written in the same manner.
 
 \ccIncludeExampleCode{Planar_map/example9.cin}
 
-\subsection*{Example of User Defined I/O Functions}
+\subsection{Example of User Defined I/O Functions}
 \label{PM_sec:example10}
 
 The following program demonstrates the usage of I/O functions while
@@ -352,7 +352,7 @@ More details are given in sections
 
 \end{ccAdvanced}
 
-\subsection*{Traits Classes}
+\subsection{Traits Classes}
 The planar map class is parameterized with the interface class
 \ccStyle{PlanarMapTraits_2} which defines the abstract interface
 between planar maps and the primitives they use.
@@ -385,7 +385,7 @@ There are several supplied traits classes for the \ccc{Arrangement} which the us
 These classes are described at the end of Chapter \ref{I1_ChapterArrangement_2}
 (\ccc{2D Arrangements}).
 
-\subsection*{Point Location Strategies}
+\subsection{Point Location Strategies}
 Some of the basic operations on planar maps are queries such as ``what
 is the location of a point in the map?'', or ``which curve is
 vertically above the point?''. These geometric queries are supplied as
@@ -453,10 +453,10 @@ for some input sequences the structure might be unbalanced and therefore
 queries and updates might take longer, especially, if many removal and split 
 operation are performed.
 
-\section*{Implementation}
-\subsection*{Robustness}
+\section{Implementation}
+\subsection{Robustness}
 It can handle all inputs and requires no general position assumption.
-\subsection*{Programming Tips}
+\subsection{Programming Tips}
 This section presents some tips on how to tune
 \ccc{CGAL::Planar_map_2<Dcel,Traits>} for best performance.
 
@@ -506,7 +506,7 @@ significantly reduces running time.
 
 \end{enumerate}
 
-\subsection*{Performance}
+\subsection{Performance}
 
 % %\paragraph{Sweep Line}
 % %-------------------------------------------------
