@@ -1,6 +1,6 @@
 Changes done to the `Random_numbers' package
 
-Version 2.2.4 on 20-Mar-2001
+Version 2.2.4 on 21-Mar-2001
 - removed 'maintainer' line from file header
 
 Version 2.2.3 on 20-Mar-2001
