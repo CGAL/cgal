@@ -68,19 +68,25 @@ Bbox_2 bbox_2(InputIterator first, InputIterator last);
 template <class ForwardIterator, class Traits>
 void 
 area_2( ForwardIterator first, ForwardIterator last,
-   	typename std::iterator_traits<ForwardIterator>::value_type::FT& result,
+   //	typename std::iterator_traits<ForwardIterator>::value_type::FT& result,
+   	typename Traits::FT &result,
         const Traits& traits)
 {
-   typedef typename std::iterator_traits<ForwardIterator>::value_type::FT FT;
+   typedef typename Traits::FT FT;
    result = FT(0);
    // check if the polygon is empty
    if (first == last) return;
    ForwardIterator second = first; ++second;
    // check if the polygon has only one point
    if (second == last) return;
+   typename Traits::Compute_area_2 compute_area_2 =
+            traits.compute_area_2_object();
+   typename Traits::Construct_triangle_2 construct_triangle_2 =
+            traits.construct_triangle_2_object();
    ForwardIterator third = second;
    while (++third != last) {
-	result = result + traits.determinant_2(*first, *second, *third);
+	result = result + compute_area_2(
+                    construct_triangle_2(*first, *second, *third));
 	second = third;
    }
    result = result / FT(2);
@@ -127,7 +133,7 @@ ForwardIterator left_vertex_2_aux(ForwardIterator first,
                                        ForwardIterator last,
                                        const Point_2<R>)
 {
-  return left_vertex_2(first, last, Polygon_traits_2<R>());
+  return left_vertex_2(first, last, R());
 }
 
 template <class ForwardIterator>

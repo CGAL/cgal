@@ -24,6 +24,7 @@
 #ifndef CGAL_POLYGON_TRAITS_2_H
 #define CGAL_POLYGON_TRAITS_2_H
 
+/*
 #include <CGAL/Direction_2.h>
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Point_2.h>
@@ -35,6 +36,7 @@
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/predicate_classes_2.h>
 #include <CGAL/Segment_2_Segment_2_intersection.h>
+*/
 
 CGAL_BEGIN_NAMESPACE
 
@@ -46,7 +48,7 @@ CGAL_BEGIN_NAMESPACE
 // The template parameter _Point is added to simplify the use of points
 // with additional information. It is assumed that _Point inherits from
 // Point_2<_R>.
-
+/*
 template <class _R, class _FT, class _Point>
 class Polygon_traits_2_aux : public _R
 {
@@ -124,17 +126,20 @@ class Polygon_traits_2_aux : public _R
        return ::CGAL::Direction_2<_R>(v1) == ::CGAL::Direction_2<_R>(v2);
     }
 };
-
+*/
 //-----------------------------------------------------------------------//
 //                          Polygon_traits_2
 //-----------------------------------------------------------------------//
 // The class Polygon_traits_2 is a traits class for Polygon_2.
-
+/*
 template <class _R>
 class Polygon_traits_2 :
   public Polygon_traits_2_aux<_R, typename _R::FT, Point_2<_R> >
 {
 };
+*/
+template <class R_>
+class Polygon_traits_2 : public R_ {};
 
 CGAL_END_NAMESPACE
 
