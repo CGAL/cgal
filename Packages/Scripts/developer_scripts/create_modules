@@ -106,6 +106,7 @@ do
     tar -cf "${MAIN_NAME}.tar" ${MAIN_NAME}
     gzip "${MAIN_NAME}.tar"
     mv "${MAIN_NAME}.tar.gz" ${INSTALLATION_DIR}
+    rm -rf ${MAIN_NAME}
   fi
 
 done

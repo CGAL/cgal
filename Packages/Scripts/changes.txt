@@ -1,3 +1,6 @@
+21 July 2004 Radu Ursu
+- create_modules removes temporary dirs at the end of the modules creation.
+
 28 June 2004 Radu Ursu
 - create_internal_module script is taken from CVSDIR rather then the same directory as create_modules 
 
