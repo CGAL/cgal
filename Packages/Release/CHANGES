@@ -1,3 +1,35 @@
+----------------------------- Release 3.0.1 ----------------------------------
+This is a bug-fix release.
+No new features have been added in 3.0.1.  Here is the list of bug-fixes.
+
+Polyhedron:
+- Fixed wrong include files for output support. Added example.
+
+Planar_map :
+- Fixed the so called "Walk-along-a-line" point-location strategy to correctly
+  handle a degenerate case.
+
+Triangulation_2 :
+- added missing figure in html doc
+- in  Line_face_circulator_2.h :
+   Fixed changes made to support handles with a typedef to iterator.
+   The fix concerns operator== and !=.
+
+Alpha_shapes_3 :
+- fixed classify member function for edges
+
+Number types :
+- Lazy_exact_nt :
+  - added the possibility to select the relative precision of to_double()
+    (by default 1e-5).  This should fix reports that some circumcenters
+    computations have poor coordinates, e.g. nan).
+  - when exact computation is triggered, the interval is recomputed, this
+    should speed up some kinds of computations.
+- to_interval(Quotient<MP_Float>) : avoid spurious overflows.
+
+Kernel :
+- missing acknowledgment in the manual and minor clarification of intersect()
+  documentation.
 ----------------------------- Release 3.0 ------------------------------------
 Version 3.0 differs from version 2.4 in the platforms that are supported, in
 functionality, and in licensing. There have also been a number of bug fixes for
