@@ -85,7 +85,7 @@ public:
 
   CircleC2(const Point_2 &p, const Point_2 &q,
            const Orientation &orient = COUNTERCLOCKWISE) // And this too?
-  {
+  { // FIXME : construction
     CGAL_kernel_precondition( orient != COLLINEAR);
 
     if (p != q) {
@@ -98,7 +98,7 @@ public:
   }
 
   CircleC2(const Point_2 &p, const Point_2 &q, const Point_2 &r)
-  {
+  { // FIXME : construction
     Orientation orient = CGAL::orientation(p, q, r);
     CGAL_kernel_precondition( orient != COLLINEAR);
 
@@ -111,16 +111,26 @@ public:
   bool           operator==(const Self &s) const;
   bool           operator!=(const Self &s) const;
 
-  Point_2        center() const;
-  FT             squared_radius() const;
+  Point_2        center() const
+  {
+   return Ptr()->center;
+  }
+
+  FT             squared_radius() const
+  {
+   return Ptr()->squared_radius;
+  }
+
+  Orientation    orientation() const
+  {
+   return Ptr()->orient;
+  }
 
   Self           opposite() const;
 
 //  EllipseC2<FT> transform(const Aff_transformation_2 &t) const;
 
   Self           orthogonal_transform(const Aff_transformation_2 &t) const;
-
-  Orientation    orientation() const;
 
   Oriented_side  oriented_side(const Point_2 &p) const;
   Bounded_side   bounded_side(const Point_2 &p) const;
@@ -141,7 +151,7 @@ template < class R >
 CGAL_KERNEL_INLINE
 bool
 CircleC2<R CGAL_CTAG>::operator==(const CircleC2<R CGAL_CTAG> &c) const
-{
+{ // FIXME : predicate
   if (identical(c))
       return true;
   return center() == c.center() &&
@@ -158,30 +168,6 @@ CircleC2<R CGAL_CTAG>::operator!=(const CircleC2<R CGAL_CTAG> &c) const
 }
 
 template < class R >
-inline
-CircleC2<R CGAL_CTAG>::Point_2
-CircleC2<R CGAL_CTAG>::center() const
-{
- return Ptr()->center;
-}
-
-template < class R >
-inline
-CircleC2<R CGAL_CTAG>::FT
-CircleC2<R CGAL_CTAG>::squared_radius() const
-{
- return Ptr()->squared_radius;
-}
-
-template < class R >
-inline
-Orientation
-CircleC2<R CGAL_CTAG>::orientation() const
-{
- return Ptr()->orient;
-}
-
-template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
 Oriented_side
 CircleC2<R CGAL_CTAG>::
@@ -195,7 +181,7 @@ CGAL_KERNEL_INLINE
 Bounded_side
 CircleC2<R CGAL_CTAG>::
 bounded_side(const typename CircleC2<R CGAL_CTAG>::Point_2 &p) const
-{
+{ // FIXME : predicate
   return Bounded_side(CGAL_NTS compare(squared_radius(),
                                        squared_distance(center(),p)));
 }
@@ -205,9 +191,31 @@ inline
 bool
 CircleC2<R CGAL_CTAG>::
 has_on_boundary(const typename CircleC2<R CGAL_CTAG>::Point_2 &p) const
+{ // FIXME: predicate
+  // return squared_distance(center(), p) == squared_radius();
+  return bounded_side(p) == ON_BOUNDARY;
+}
+
+template < class R >
+inline
+bool
+CircleC2<R CGAL_CTAG>::
+has_on_bounded_side(const typename CircleC2<R CGAL_CTAG>::Point_2 &p) const
 {
     // FIXME: predicate
-  return squared_distance(center(), p) == squared_radius();
+  // return squared_distance(center(),p) < squared_radius();
+  return bounded_side(p) == ON_XXX_SIDE;
+}
+
+template < class R >
+inline
+bool
+CircleC2<R CGAL_CTAG>::
+has_on_unbounded_side(const typename CircleC2<R CGAL_CTAG>::Point_2 &p) const
+{
+    // FIXME: predicate
+  // return squared_distance(center(),p) > squared_radius();
+  return bounded_side(p) == ON_!!!_SIDE;
 }
 
 template < class R >
@@ -235,26 +243,6 @@ has_on_positive_side(const typename CircleC2<R CGAL_CTAG>::Point_2 &p) const
 template < class R >
 inline
 bool
-CircleC2<R CGAL_CTAG>::
-has_on_bounded_side(const typename CircleC2<R CGAL_CTAG>::Point_2 &p) const
-{
-    // FIXME: predicate
-  return squared_distance(center(),p) < squared_radius();
-}
-
-template < class R >
-inline
-bool
-CircleC2<R CGAL_CTAG>::
-has_on_unbounded_side(const typename CircleC2<R CGAL_CTAG>::Point_2 &p) const
-{
-    // FIXME: predicate
-  return squared_distance(center(),p) > squared_radius();
-}
-
-template < class R >
-inline
-bool
 CircleC2<R CGAL_CTAG>::is_degenerate() const
 {
     // FIXME: predicate
@@ -274,7 +262,7 @@ CircleC2<R CGAL_CTAG>::opposite() const
 template < class R >
 CGAL_KERNEL_INLINE
 Bbox_2
-CircleC2<R CGAL_CTAG>::bbox() const
+CircleC2<R CGAL_CTAG>::bbox() const // FIXME : to_interval()
 {
   // Robustness problems.
   double cx = CGAL::to_double(center().x());
@@ -289,7 +277,7 @@ CGAL_KERNEL_INLINE
 CircleC2<R CGAL_CTAG>
 CircleC2<R CGAL_CTAG>::orthogonal_transform
   (const typename CircleC2<R CGAL_CTAG>::Aff_transformation_2 &t) const
-{
+{ // FIXME : construction
   Vector_2 vec(FT(1), FT(0) );   // unit vector
   vec = vec.transform(t);             // transformed
   FT sq_scale = vec.squared_length();       // squared scaling factor

@@ -33,6 +33,7 @@ class Aff_transformation_rep_baseC2
 public:
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
+
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef typename R::Point_2                   Point_2;
   typedef typename R::Vector_2                  Vector_2;
@@ -94,32 +95,32 @@ friend class Scaling_repC2<R>;
   {}
 
   Aff_transformation_repC2( const FT& m11, const FT& m12,
-                             const FT& m21, const FT& m22)
+                            const FT& m21, const FT& m22)
     : t11(m11), t12(m12), t13(0),
       t21(m21), t22(m22), t23(0)
   {}
 
   Aff_transformation_repC2( const FT& m11, const FT& m12, const FT& m13,
-                             const FT& m21, const FT& m22, const FT& m23)
+                            const FT& m21, const FT& m22, const FT& m23)
     : t11(m11), t12(m12), t13(m13),
       t21(m21), t22(m22), t23(m23)
   {}
 
-  Point_2 transform(const Point_2& p) const
+  Point_2 transform(const Point_2& p) const // FIXME : construction
   {
     return Point_2(t11 * p.x() + t12 * p.y() + t13,
                    t21 * p.x() + t22 * p.y() + t23);
   }
 
   // note that a vector is not translated
-  Vector_2 transform(const Vector_2& v) const
+  Vector_2 transform(const Vector_2& v) const // FIXME : construction
   {
     return Vector_2(t11 * v.x() + t12 * v.y(),
                     t21 * v.x() + t22 * v.y());
   }
 
   // note that a direction is not translated
-  Direction_2 transform(const Direction_2& dir) const
+  Direction_2 transform(const Direction_2& dir) const // FIXME : construction
   {
     Vector_2 v = dir.to_vector();
     return Direction_2(t11 * v.x() + t12 * v.y(),
@@ -174,7 +175,7 @@ friend class Scaling_repC2<R>;
   }
 
 private:
-    FT   t11, t12, t13;
+    FT   t11, t12, t13; // FIXME : use an array instead ?
     FT   t21, t22, t23;
 };
 
@@ -183,7 +184,7 @@ template < class R >
 CGAL_KERNEL_LARGE_INLINE
 Aff_transformation_repC2<R>::Aff_transformation_2
 Aff_transformation_repC2<R>::
-inverse() const
+inverse() const // FIXME : construction
 {
   FT det = FT(1) / (t11 * t22 - t12 * t21);
   return Aff_transformation_2(
@@ -204,7 +205,7 @@ template < class R >
 CGAL_KERNEL_LARGE_INLINE
 typename Aff_transformation_repC2<R>::Aff_transformation_2
 Aff_transformation_repC2<R>::
-compose(const Aff_transformation_repC2<R> &t) const
+compose(const Aff_transformation_repC2<R> &t) const // FIXME : construction
 {
   return Aff_transformation_2(t.t11*t11 + t.t12*t21,
                               t.t11*t12 + t.t12*t22,
@@ -218,7 +219,7 @@ template < class R >
 CGAL_KERNEL_LARGE_INLINE
 typename Aff_transformation_repC2<R>::Aff_transformation_2
 Aff_transformation_repC2<R>::
-compose(const Translation_repC2<R> &t) const
+compose(const Translation_repC2<R> &t) const // FIXME : construction
 {
   return Aff_transformation_2(t11,
                               t12,
@@ -232,7 +233,7 @@ template < class R >
 CGAL_KERNEL_LARGE_INLINE
 typename Aff_transformation_repC2<R>::Aff_transformation_2
 Aff_transformation_repC2<R>::
-compose(const Rotation_repC2<R> &t) const
+compose(const Rotation_repC2<R> &t) const // FIXME : construction
 {
   return Aff_transformation_2(t.cosinus_*t11 - t.sinus_*t21,
                               t.cosinus_*t12 - t.sinus_*t22,
@@ -246,7 +247,7 @@ template < class R >
 CGAL_KERNEL_LARGE_INLINE
 typename Aff_transformation_repC2<R>::Aff_transformation_2
 Aff_transformation_repC2<R>::
-compose(const Scaling_repC2<R> &t) const
+compose(const Scaling_repC2<R> &t) const // FIXME : construction
 {
    return Aff_transformation_2(t.scalefactor_ * t11,
                                t.scalefactor_ * t12,

@@ -175,7 +175,7 @@ typename PlaneC3<R CGAL_CTAG>::Point_3
 PlaneC3<R CGAL_CTAG>::
 projection(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p) const
 {
-  return CGAL::projection_plane(p, *this);
+  return CGAL::projection_plane(p, *this); // FIXME : CGAL:: needed ?
 }
 
 template < class R >
@@ -207,14 +207,14 @@ PlaneC3<R CGAL_CTAG>::base1() const
   if ( CGAL_NTS is_zero(c()) )  // parallel to z-axis
       return Vector_3(FT(0), FT(0), FT(1));
 
-  return Vector_3(-b(), a(), FT(0));
+  return Vector_3(-b(), a(), FT(0)); // FIXME : construction
 }
 
 template < class R >
 typename PlaneC3<R CGAL_CTAG>::Vector_3
 PlaneC3<R CGAL_CTAG>::base2() const
-{
-  if ( CGAL_NTS is_zero(a()) ) // parallel to x-axis  x-axis already returned in base1
+{ // FIXME : construction
+  if ( CGAL_NTS is_zero(a()) ) // parallel to x-axis already returned in base1
     {
       if ( CGAL_NTS is_zero(b()) )  // parallel to y-axis
           return Vector_3(FT(0), FT(1), FT(0));
@@ -237,7 +237,7 @@ template < class R >
 typename PlaneC3<R CGAL_CTAG>::Point_3
 PlaneC3<R CGAL_CTAG>::
 to_plane_basis(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p) const
-{
+{ // FIXME : construction
   FT alpha, beta, gamma;
 
   solve(base1(), base2(), orthogonal_vector(), p - point(), alpha, beta, gamma);
@@ -249,7 +249,7 @@ template < class R >
 typename PlaneC3<R CGAL_CTAG>::Point_2
 PlaneC3<R CGAL_CTAG>::
 to_2d(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p) const
-{
+{ // FIXME : construction
   FT alpha, beta, gamma;
 
   solve(base1(), base2(), orthogonal_vector(), p - point(), alpha, beta, gamma);
@@ -262,7 +262,7 @@ inline
 typename PlaneC3<R CGAL_CTAG>::Point_3
 PlaneC3<R CGAL_CTAG>::
 to_3d(const typename PlaneC3<R CGAL_CTAG>::Point_2 &p) const
-{
+{ // FIXME : construction
   return point() + p.x() * base1() + p.y() * base2();
 }
 
@@ -279,8 +279,8 @@ template < class R >
 inline
 PlaneC3<R CGAL_CTAG>
 PlaneC3<R CGAL_CTAG>::opposite() const
-{
-  return PlaneC3<R CGAL_CTAG>(-a(),-b(),-c(),-d());
+{ // FIXME : construction
+  return PlaneC3<R CGAL_CTAG>(-a(), -b(), -c(), -d());
 }
 
 template < class R >
@@ -289,7 +289,7 @@ Oriented_side
 PlaneC3<R CGAL_CTAG>::
 oriented_side(const typename PlaneC3<R CGAL_CTAG>::Point_3 &p) const
 {
-  return side_of_oriented_plane(*this,p);
+  return side_of_oriented_plane(*this, p);
 }
 
 template < class R >
@@ -343,7 +343,7 @@ inline
 bool
 PlaneC3<R CGAL_CTAG>::
 is_degenerate() const
-{
+{ // FIXME : predicate
   return CGAL_NTS is_zero(a()) && CGAL_NTS is_zero(b()) &&
          CGAL_NTS is_zero(c());
 }

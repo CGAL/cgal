@@ -80,7 +80,6 @@ public:
     return Aff_transformation_2(scalefactor_,
                                 ft0,
                                 t.translationvector_.x(),
-
                                 ft0,
                                 scalefactor_,
                                 t.translationvector_.y());
@@ -90,7 +89,6 @@ public:
   {
     return Aff_transformation_2(scalefactor_ * t.cosinus_,
                                 scalefactor_ * -t.sinus_,
-
                                 scalefactor_ * t.sinus_,
                                 scalefactor_ * t.cosinus_);
   }
@@ -104,11 +102,10 @@ public:
   {
     return Aff_transformation_2(scalefactor_ * t.t11,
                                 scalefactor_ * t.t12,
-                                 t.t13,
-
+                                t.t13,
                                 scalefactor_ * t.t21,
                                 scalefactor_ * t.t22,
-                                 t.t23);
+                                t.t23);
   }
 
   Aff_transformation_2  inverse() const

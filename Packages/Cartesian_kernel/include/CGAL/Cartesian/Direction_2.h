@@ -180,7 +180,7 @@ template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
 DirectionC2<R CGAL_CTAG>
 DirectionC2<R CGAL_CTAG>::perpendicular(const Orientation &o) const
-{
+{ // FIXME : construction
   CGAL_kernel_precondition(o != COLLINEAR);
   if (o == COUNTERCLOCKWISE)
     return DirectionC2<R CGAL_CTAG>(-dy(), dx());
@@ -192,7 +192,7 @@ template < class R >
 inline
 DirectionC2<R CGAL_CTAG>
 DirectionC2<R CGAL_CTAG>::operator-() const
-{
+{ // FIXME : construction
   return DirectionC2<R CGAL_CTAG>(-dx(), -dy());
 }
 

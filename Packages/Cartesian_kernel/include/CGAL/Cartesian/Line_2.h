@@ -148,7 +148,7 @@ template < class R >
 inline
 bool
 LineC2<R CGAL_CTAG>::is_horizontal() const
-{
+{ // FIXME : predicate
   return CGAL_NTS is_zero(a());
 }
 
@@ -156,7 +156,7 @@ template < class R >
 inline
 bool
 LineC2<R CGAL_CTAG>::is_vertical() const
-{
+{ // FIXME : predicate
   return CGAL_NTS is_zero(b());
 }
 
@@ -193,7 +193,7 @@ template < class R >
 inline
 LineC2<R CGAL_CTAG>
 LineC2<R CGAL_CTAG>::opposite() const
-{
+{ // FIXME : construction
   return LineC2<R CGAL_CTAG>( -a(), -b(), -c() );
 }
 
@@ -226,7 +226,7 @@ template < class R >
 inline
 typename LineC2<R CGAL_CTAG>::Direction_2
 LineC2<R CGAL_CTAG>::direction() const
-{
+{ // FIXME : construction
   return Direction_2( b(), -a() );
 }
 

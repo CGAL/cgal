@@ -52,6 +52,7 @@ public:
   typedef typename R::FT                   FT;
   typedef typename R::RT                   RT;
   typedef Aff_transformation_rep_baseC2<R> Aff_t_base;
+
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef Aff_transformationC2<R,Cartesian_tag> Self;
   typedef typename R::Point_2              Point_2;
@@ -66,181 +67,124 @@ public:
   typedef typename R::Line_2_base          Line_2;
 #endif // CGAL_CFG_NO_ADVANCED_KERNEL
    
-  Aff_transformationC2();
+  Aff_transformationC2()
+  {
+    PTR = new Aff_transformation_repC2<R>(FT(1), FT(0), FT(0), FT(1));
+  }
 
-  // Identity
-  Aff_transformationC2(const Identity_transformation);
+  Aff_transformationC2(const Identity_transformation)
+  {
+    PTR = new Aff_transformation_repC2<R>(FT(1), FT(0), FT(0), FT(1));
+  }
 
-  // Translation:
-  Aff_transformationC2(const Translation,
-                       const Vector_2 &v);
+  Aff_transformationC2(const Translation, const Vector_2 &v)
+  {
+    PTR = new Translation_repC2<R>(v);
+  }
 
   // Rational Rotation:
   Aff_transformationC2(const Rotation,
                        const Direction_2 &d,
                        const FT &num,
-                       const FT &den = FT(1));
+                       const FT &den = FT(1))
+  {
+    PTR = new Rotation_repC2<R>(d, num, den);
+  }
 
   Aff_transformationC2(const Rotation,
-                       const FT &sine_rho,
-                       const FT &cosine_rho,
-                       const FT &hw = FT(1));
+                       const FT &sine,
+                       const FT &cosine,
+                       const FT &w = FT(1))
+  {
+    if (w != FT(1))
+      PTR = new Rotation_repC2<R>(sine/w, cosine/w);
+    else
+      PTR = new Rotation_repC2<R>(sine, cosine);
+  }
 
-  // Scaling:
-  Aff_transformationC2(const Scaling,
-                       const FT &s,
-                       const FT &w = FT(1));
+  Aff_transformationC2(const Scaling, const FT &s, const FT &w = FT(1))
+  {
+    if (w != FT(1))
+      PTR = new Scaling_repC2<R>(s/w);
+    else
+      PTR = new Scaling_repC2<R>(s);
+  }
 
   // The general case:
-  Aff_transformationC2(const FT & m11,
-                       const FT & m12,
-                       const FT & m13,
-                       const FT & m21,
-                       const FT & m22,
-                       const FT & m23,
-                       const FT &w = FT(1));
+  // a 3x2 matrix for the operations combining rotation, scaling, translation
+  Aff_transformationC2(const FT & m11, const FT & m12, const FT & m13,
+                       const FT & m21, const FT & m22, const FT & m23,
+                       const FT &w = FT(1))
+  {
+    if (w != FT(1))
+      PTR = new Aff_transformation_repC2<R>(m11/w, m12/w, m13/w,
+                                            m21/w, m22/w, m23/w);
+    else
+      PTR = new Aff_transformation_repC2<R>(m11, m12, m13,
+                                            m21, m22, m23);
+  }
 
   Aff_transformationC2(const FT & m11, const FT & m12,
                        const FT & m21, const FT & m22,
-                       const FT &w = FT(1));
+                       const FT &w = FT(1))
+  {
+    PTR = new Aff_transformation_repC2<R>(m11/w, m12/w, m21/w, m22/w);
+  }
 
-  Point_2     transform(const Point_2 &p) const 
+  Point_2
+  transform(const Point_2 &p) const 
   { return ptr()->transform(p); } 
 
-  Point_2     operator()(const Point_2 &p) const
+  Point_2
+  operator()(const Point_2 &p) const
   { return transform(p); }
 
-  Vector_2    transform(const Vector_2 &v) const 
+  Vector_2
+  transform(const Vector_2 &v) const 
   { return ptr()->transform(v); }
 
-  Vector_2    operator()(const Vector_2 &v) const
-  { return transform(p); } // FIXME : p ???
+  Vector_2
+  operator()(const Vector_2 &v) const
+  { return transform(v); } // FIXME : not compiled by the test-suite.
 
-  Direction_2 transform(const Direction_2 &d) const
+  Direction_2
+  transform(const Direction_2 &d) const
   { return ptr()->transform(d); }
 
-  Direction_2 operator()(const Direction_2 &d) const
+  Direction_2
+  operator()(const Direction_2 &d) const
   { return transform(d); }
 
-  Line_2      transform(const Line_2 &l) const
+  Line_2
+  transform(const Line_2 &l) const
   { return l.transform(*this); }
 
-  Line_2      operator()(const Line_2 &l) const
+  Line_2
+  operator()(const Line_2 &l) const
   { return transform(l); }
 
-  Self        inverse() const { return ptr()->inverse(); }
+  Self inverse() const { return ptr()->inverse(); }
 
-  bool        is_even() const { return ptr()->is_even(); }
-  bool        is_odd() const { return ! (ptr()->is_even()); }
+  bool is_even() const { return ptr()->is_even(); }
+  bool is_odd() const { return ! (ptr()->is_even()); }
 
-  FT          cartesian(int i, int j) const { return ptr()->cartesian(i,j); }
-  FT          homogeneous(int i, int j) const { return cartesian(i,j); }
-  FT          m(int i, int j) const { return cartesian(i,j); }
-  FT          hm(int i, int j) const { return cartesian(i,j); }
+  FT cartesian(int i, int j) const { return ptr()->cartesian(i,j); }
+  FT homogeneous(int i, int j) const { return cartesian(i,j); }
+  FT m(int i, int j) const { return cartesian(i,j); }
+  FT hm(int i, int j) const { return cartesian(i,j); }
 
   Self operator*(const Self &t) const
   {
     return (*ptr()) * (*t.ptr());
   }
 
-  std::ostream &print(std::ostream &os) const;
+  std::ostream &
+  print(std::ostream &os) const;
 
 private:
-  Aff_t_base* ptr() const { return  (Aff_t_base*)PTR; }
+  Aff_t_base* ptr() const { return (Aff_t_base*)PTR; }
+  // FIXME : ptr() should be in Handle.
 };
-
-
-template < class R >
-Aff_transformationC2<R CGAL_CTAG>::
-Aff_transformationC2()
-{
-  PTR = new Aff_transformation_repC2<R>(FT(1), FT(0), FT(0), FT(1));
-}
-
-template < class R >
-Aff_transformationC2<R CGAL_CTAG>::
-Aff_transformationC2(const Identity_transformation)
-{
-  PTR = new Aff_transformation_repC2<R>(FT(1), FT(0), FT(0), FT(1));
-}
-
-template < class R >
-Aff_transformationC2<R CGAL_CTAG>::
-Aff_transformationC2(
-        const typename Aff_transformationC2<R CGAL_CTAG>::FT & m11,
-        const typename Aff_transformationC2<R CGAL_CTAG>::FT & m12,
-        const typename Aff_transformationC2<R CGAL_CTAG>::FT & m21,
-	const typename Aff_transformationC2<R CGAL_CTAG>::FT & m22,
-        const typename Aff_transformationC2<R CGAL_CTAG>::FT & w)
-{
-    PTR = new Aff_transformation_repC2<R>(m11/w, m12/w, m21/w, m22/w);
-}
-
-template < class R >
-Aff_transformationC2<R CGAL_CTAG>::
-Aff_transformationC2(
-	const Translation,
-        const typename Aff_transformationC2<R CGAL_CTAG>::Vector_2 &v)
-{
-  PTR = new Translation_repC2<R>(v);
-}
-
-template < class R >
-Aff_transformationC2<R CGAL_CTAG>::
-Aff_transformationC2(
-        const Rotation,
-        const typename Aff_transformationC2<R CGAL_CTAG>::Direction_2 &d,
-        const typename Aff_transformationC2<R CGAL_CTAG>::FT &num,
-	const typename Aff_transformationC2<R CGAL_CTAG>::FT &den)
-{
-  PTR = new Rotation_repC2<R>(d, num, den);
-}
-
-template < class R >
-Aff_transformationC2<R CGAL_CTAG>::
-Aff_transformationC2(
-        const Rotation,
-        const typename Aff_transformationC2<R CGAL_CTAG>::FT &sine,
-	const typename Aff_transformationC2<R CGAL_CTAG>::FT &cosine,
-	const typename Aff_transformationC2<R CGAL_CTAG>::FT &w)
-{
-  if (w != FT(1)) // Idem...
-    PTR = new Rotation_repC2<R>(sine/w, cosine/w);
-  else
-    PTR = new Rotation_repC2<R>(sine, cosine);
-}
-
-template < class R >
-Aff_transformationC2<R CGAL_CTAG>::
-Aff_transformationC2(const Scaling,
-                     const typename Aff_transformationC2<R CGAL_CTAG>::FT &s,
-		     const typename Aff_transformationC2<R CGAL_CTAG>::FT &w)
-{
-  if (w != FT(1)) // ....
-    PTR = new Scaling_repC2<R>(s/w);
-  else
-    PTR = new Scaling_repC2<R>(s);
-}
-
-// and a 3x2 matrix for the operations combining rotation, scaling, translation
-template < class R >
-Aff_transformationC2<R CGAL_CTAG>::
-Aff_transformationC2(
-	const typename Aff_transformationC2<R CGAL_CTAG>::FT &m11,
-        const typename Aff_transformationC2<R CGAL_CTAG>::FT &m12,
-	const typename Aff_transformationC2<R CGAL_CTAG>::FT &m13,
-        const typename Aff_transformationC2<R CGAL_CTAG>::FT &m21,
-	const typename Aff_transformationC2<R CGAL_CTAG>::FT &m22,
-	const typename Aff_transformationC2<R CGAL_CTAG>::FT &m23,
-        const typename Aff_transformationC2<R CGAL_CTAG>::FT &w)
-{
-  if (w != FT(1)) // ...
-    PTR = new Aff_transformation_repC2<R>(m11/w, m12/w, m13/w,
-                                          m21/w, m22/w, m23/w);
-  else
-    PTR = new Aff_transformation_repC2<R>(m11, m12, m13,
-                                          m21, m22, m23);
-}
 
 template < class R >
 std::ostream&

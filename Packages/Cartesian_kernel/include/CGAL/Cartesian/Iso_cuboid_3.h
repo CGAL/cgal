@@ -52,7 +52,7 @@ public:
     : Iso_cuboid_handle_3(Iso_cuboid_ref_3()) {}
 
   Iso_cuboidC3(const Point_3 &p, const Point_3 &q)
-  {
+  { // FIXME : construction
     FT minx, maxx, miny, maxy, minz, maxz;
     if (p.x() < q.x()) { minx = p.x(); maxx = q.x(); }
     else               { minx = q.x(); maxx = p.x(); }
@@ -78,7 +78,7 @@ public:
   Point_3 vertex(int i) const;
   Point_3 operator[](int i) const;
 
-  Self         transform(const Aff_transformation_3 &t) const
+  Self transform(const Aff_transformation_3 &t) const
   {
     return Self(t.transform(min()), t.transform(max()));
   }
@@ -102,7 +102,7 @@ template < class R >
 CGAL_KERNEL_INLINE
 bool
 Iso_cuboidC3<R CGAL_CTAG>::operator==(const Iso_cuboidC3<R CGAL_CTAG>& r) const
-{
+{ // FIXME : predicate
   if (identical(r))
       return true;
   return min() == r.min() && max() == r.max();
@@ -168,7 +168,7 @@ template < class R >
 CGAL_KERNEL_LARGE_INLINE
 Iso_cuboidC3<R CGAL_CTAG>::Point_3
 Iso_cuboidC3<R CGAL_CTAG>::vertex(int i) const
-{
+{ // FIXME : construction
   switch (i%8)
   {
     case 0: return min();
@@ -180,7 +180,7 @@ Iso_cuboidC3<R CGAL_CTAG>::vertex(int i) const
     case 6: return Point_3(max().hx(), min().hy(), max().hz());
     case 7: return max();
   }
-  return Point_3();
+  return Point_3(); // FIXME : why ?
 }
 
 template < class R >
@@ -197,9 +197,9 @@ Bounded_side
 Iso_cuboidC3<R CGAL_CTAG>::
 bounded_side(const Iso_cuboidC3<R CGAL_CTAG>::Point_3& p) const
 {
-  if (strict_dominance(p,min()) && strict_dominance(max(),p) )
+  if (strict_dominance(p, min()) && strict_dominance(max(), p) )
     return ON_BOUNDED_SIDE;
-  if (dominance(p,min()) && dominance(max(),p))
+  if (dominance(p, min()) && dominance(max(), p))
     return ON_BOUNDARY;
   return ON_UNBOUNDED_SIDE;
 }
@@ -237,14 +237,14 @@ bool
 Iso_cuboidC3<R CGAL_CTAG>::
 has_on_unbounded_side(const Iso_cuboidC3<R CGAL_CTAG>::Point_3& p) const
 {
-  return  bounded_side(p) == ON_UNBOUNDED_SIDE;
+  return bounded_side(p) == ON_UNBOUNDED_SIDE;
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
 bool
 Iso_cuboidC3<R CGAL_CTAG>::is_degenerate() const
-{
+{ // FIXME : predicate
   return min().hx() == max().hx()
       || min().hy() == max().hy()
       || min().hz() == max().hz();
@@ -258,7 +258,7 @@ Iso_cuboidC3<R CGAL_CTAG>::bbox() const
   return min().bbox() + max().bbox();
 }
 
-#ifndef NO_OSTREAM_INSERT_ISO_CUBOIDC3
+#ifndef CGAL_NO_OSTREAM_INSERT_ISO_CUBOIDC3
 template < class R >
 std::ostream &
 operator<<(std::ostream& os, const Iso_cuboidC3<R CGAL_CTAG>& r)
@@ -272,9 +272,9 @@ operator<<(std::ostream& os, const Iso_cuboidC3<R CGAL_CTAG>& r)
     return os << "Iso_cuboidC3(" << min() << ", " << max() << ")";
   }
 }
-#endif // NO_OSTREAM_INSERT_ISO_CUBOIDC3
+#endif // CGAL_NO_OSTREAM_INSERT_ISO_CUBOIDC3
 
-#ifndef NO_ISTREAM_EXTRACT_ISO_CUBOIDC3
+#ifndef CGAL_NO_ISTREAM_EXTRACT_ISO_CUBOIDC3
 template < class R >
 std::istream &
 operator>>(std::istream& is, Iso_cuboidC3<R CGAL_CTAG>& r)
@@ -284,7 +284,7 @@ operator>>(std::istream& is, Iso_cuboidC3<R CGAL_CTAG>& r)
   r = Iso_cuboidC3<R CGAL_CTAG>(p, q);
   return is;
 }
-#endif // NO_ISTREAM_EXTRACT_ISO_CUBOIDC3
+#endif // CGAL_NO_ISTREAM_EXTRACT_ISO_CUBOIDC3
 
 CGAL_END_NAMESPACE
 

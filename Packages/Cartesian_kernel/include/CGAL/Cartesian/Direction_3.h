@@ -130,7 +130,7 @@ template < class R >
 inline
 DirectionC3<R CGAL_CTAG> 
 DirectionC3<R CGAL_CTAG>::operator-() const
-{
+{ // FIXME : construction
   return DirectionC3<R>(-dx(), -dy(), -dz());
 }
 

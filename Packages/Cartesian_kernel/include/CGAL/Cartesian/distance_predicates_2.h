@@ -34,7 +34,7 @@ cmp_dist_to_point(const PointC2<R CGAL_CTAG>& p,
                   const PointC2<R CGAL_CTAG>& q,
                   const PointC2<R CGAL_CTAG>& r)
 {
-  return cmp_dist_to_pointC2(p.x(),p.y(),q.x(),q.y(),r.x(),r.y());
+  return cmp_dist_to_pointC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
 }
 
 template <class R>
@@ -44,7 +44,7 @@ has_larger_dist_to_point(const PointC2<R CGAL_CTAG>& p,
                          const PointC2<R CGAL_CTAG>& q,
                          const PointC2<R CGAL_CTAG>& r)
 {
-  return has_larger_dist_to_pointC2(p.x(),p.y(),q.x(),q.y(),r.x(),r.y());
+  return has_larger_dist_to_pointC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
 }
 
 template <class R>
@@ -54,7 +54,7 @@ has_smaller_dist_to_point(const PointC2<R CGAL_CTAG>& p,
                           const PointC2<R CGAL_CTAG>& q,
                           const PointC2<R CGAL_CTAG>& r)
 {
-  return has_smaller_dist_to_pointC2(p.x(),p.y(),q.x(),q.y(),r.x(),r.y());
+  return has_smaller_dist_to_pointC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
 }
 
 template <class R>
@@ -64,7 +64,8 @@ cmp_signed_dist_to_line(const LineC2<R CGAL_CTAG>&  l,
                         const PointC2<R CGAL_CTAG>& p,
                         const PointC2<R CGAL_CTAG>& q)
 {
-  return cmp_signed_dist_to_directionC2(l.a(),l.b(),p.x(),p.y(),q.x(),q.y());
+  return cmp_signed_dist_to_directionC2(l.a(), l.b(), p.x(), p.y(),
+                                        q.x(), q.y());
 }
 
 template <class R>
@@ -74,8 +75,8 @@ has_larger_signed_dist_to_line(const LineC2<R CGAL_CTAG>&  l,
                                const PointC2<R CGAL_CTAG>& p,
                                const PointC2<R CGAL_CTAG>& q)
 {
-  return has_larger_signed_dist_to_directionC2
-           (l.a(),l.b(),p.x(),p.y(),q.x(),q.y());
+  return has_larger_signed_dist_to_directionC2(l.a(), l.b(), p.x(), p.y(),
+                                               q.x(), q.y());
 }
 
 template <class R>
@@ -85,8 +86,8 @@ has_smaller_signed_dist_to_line(const LineC2<R CGAL_CTAG>&  l,
                                 const PointC2<R CGAL_CTAG>& p,
                                 const PointC2<R CGAL_CTAG>& q)
 {
-  return has_smaller_signed_dist_to_directionC2
-           (l.a(),l.b(),p.x(),p.y(),q.x(),q.y());
+  return has_smaller_signed_dist_to_directionC2(l.a(), l.b(), p.x(), p.y(),
+                                                q.x(), q.y());
 }
 
 template <class R>
@@ -97,8 +98,8 @@ cmp_signed_dist_to_line(const PointC2<R CGAL_CTAG>& p,
                         const PointC2<R CGAL_CTAG>& r,
                         const PointC2<R CGAL_CTAG>& s)
 {
-  return cmp_signed_dist_to_lineC2
-           (p.x(),p.y(),q.x(),q.y(),r.x(),r.y(),s.x(),s.y());
+  return cmp_signed_dist_to_lineC2(p.x(), p.y(), q.x(), q.y(),
+                                   r.x(), r.y(), s.x(), s.y());
 }
 
 template <class R>
@@ -109,8 +110,8 @@ has_smaller_signed_dist_to_line(const PointC2<R CGAL_CTAG>& p,
                                 const PointC2<R CGAL_CTAG>& r,
                                 const PointC2<R CGAL_CTAG>& s)
 {
-  return has_smaller_signed_dist_to_lineC2
-           (p.x(),p.y(),q.x(),q.y(),r.x(),r.y(),s.x(),s.y());
+  return has_smaller_signed_dist_to_lineC2(p.x(), p.y(), q.x(), q.y(),
+                                           r.x(), r.y(), s.x(), s.y());
 }
 
 template <class R>
@@ -121,8 +122,8 @@ has_larger_signed_dist_to_line(const PointC2<R CGAL_CTAG>& p,
                                const PointC2<R CGAL_CTAG>& r,
                                const PointC2<R CGAL_CTAG>& s)
 {
-  return has_larger_signed_dist_to_lineC2
-           (p.x(),p.y(),q.x(),q.y(),r.x(),r.y(),s.x(),s.y());
+  return has_larger_signed_dist_to_lineC2(p.x(), p.y(), q.x(), q.y(),
+                                          r.x(), r.y(), s.x(), s.y());
 }
 
 CGAL_END_NAMESPACE

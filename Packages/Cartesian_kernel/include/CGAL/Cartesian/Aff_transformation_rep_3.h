@@ -34,6 +34,7 @@ class Aff_transformation_rep_baseC3
 public:
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
+
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef typename R::Point_3                   Point_3;
   typedef typename R::Vector_3                  Vector_3;
@@ -116,7 +117,7 @@ public:
   virtual ~Aff_transformation_repC3()
   {}
 
-  virtual Point_3 transform(const Point_3& p) const
+  virtual Point_3 transform(const Point_3& p) const // FIXME : construction
   {
     return Point_3(t11 * p.x() + t12 * p.y() + t13 * p.z() + t14,
                    t21 * p.x() + t22 * p.y() + t23 * p.z() + t24,
@@ -124,7 +125,7 @@ public:
   }
 
   // note that a vector is not translated
-  virtual Vector_3 transform(const Vector_3& v) const
+  virtual Vector_3 transform(const Vector_3& v) const // FIXME : construction
   {
     return Vector_3(t11 * v.x() + t12 * v.y() + t13 * v.z(),
                     t21 * v.x() + t22 * v.y() + t23 * v.z(),
@@ -133,7 +134,7 @@ public:
 
   // note that a direction is not translated
   virtual Direction_3 transform(const Direction_3& dir) const
-  {
+  { // FIXME : construction
     Vector_3 v = dir.to_vector();
     return Direction_3(t11 * v.x() + t12 * v.y() + t13 * v.z(),
                        t21 * v.x() + t22 * v.y() + t23 * v.z(),
@@ -202,8 +203,7 @@ public:
   }
 
 private:
-// Wouldn't this be better with an array ?
-  FT   t11, t12, t13, t14;
+  FT   t11, t12, t13, t14; // FIXME : Wouldn't this be better with an array ?
   FT   t21, t22, t23, t24;
   FT   t31, t32, t33, t34;
 };
@@ -212,7 +212,7 @@ private:
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
 typename Aff_transformation_repC3<R>::Aff_transformation_3
-Aff_transformation_repC3<R>::inverse() const
+Aff_transformation_repC3<R>::inverse() const // FIXME : construction
 {
   return Aff_transformation_3(
       det2x2_by_formula( t22, t23, t32, t33),         // i 11
@@ -246,7 +246,7 @@ template < class R >
 CGAL_KERNEL_LARGE_INLINE
 typename Aff_transformation_repC3<R>::Aff_transformation_3
 Aff_transformation_repC3<R>::
-compose(const Aff_transformation_repC3<R> &t) const
+compose(const Aff_transformation_repC3<R> &t) const // FIXME : construction
 {
   return Aff_transformation_3(t.t11*t11 + t.t12*t21 + t.t13*t31,
                               t.t11*t12 + t.t12*t22 + t.t13*t32,
@@ -268,7 +268,7 @@ template < class R >
 CGAL_KERNEL_LARGE_INLINE
 typename Aff_transformation_repC3<R>::Aff_transformation_3
 Aff_transformation_repC3<R>::
-compose(const Translation_repC3<R> &t) const
+compose(const Translation_repC3<R> &t) const // FIXME : construction
 {
   return Aff_transformation_3(t11,
                               t12,
@@ -290,7 +290,7 @@ template < class R >
 CGAL_KERNEL_LARGE_INLINE
 typename Aff_transformation_repC3<R>::Aff_transformation_3
 Aff_transformation_repC3<R>::
-compose(const Scaling_repC3<R> &t) const
+compose(const Scaling_repC3<R> &t) const // FIXME : construction
 {
   return Aff_transformation_3(t.scalefactor_ * t11,
                               t.scalefactor_ * t12,
@@ -313,7 +313,6 @@ CGAL_KERNEL_LARGE_INLINE
 typename Aff_transformation_repC3<R>::Aff_transformation_3
 Aff_transformation_repC3<R>::transpose() const
 {
-  FT ft0(0);
   return Aff_transformation_3( t11, t21, t31, t14,
                                t12, t22, t32, t24,
                                t13, t23, t33, t34);

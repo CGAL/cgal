@@ -5,6 +5,11 @@ Stuff to look at, as time permits:
   - GCOV
   - Write a Checker for full kernels, like Pm_traits_checker.h ?
 
+- Filtered_exact kernel :
+  - we can attack the problem by having the .x() and co return a
+    Lazy_exact_nt(), then implement the necessary higher level
+    constructions/predicates on top of that.
+
 - Handles :
   - Current scheme could be improved if Handle_for<T> defined :
       typedef T element_type;   (or value_type ? or sthg else ?)

@@ -36,9 +36,9 @@ cmp_dist_to_point(const PointC3<R CGAL_CTAG> &p,
                   const PointC3<R CGAL_CTAG> &q,
                   const PointC3<R CGAL_CTAG> &r)
 {
-  return cmp_dist_to_pointC3(p.x(),p.y(),p.z(),
-                             q.x(),q.y(),q.z(),
-                             r.x(),r.y(),r.z());
+  return cmp_dist_to_pointC3(p.x(), p.y(), p.z(),
+                             q.x(), q.y(), q.z(),
+                             r.x(), r.y(), r.z());
 }
 
 template < class R >
@@ -48,9 +48,9 @@ has_larger_dist_to_point(const PointC3<R CGAL_CTAG> &p,
                          const PointC3<R CGAL_CTAG> &q,
                          const PointC3<R CGAL_CTAG> &r)
 {
-  return has_larger_dist_to_pointC3(p.x(),p.y(),p.z(),
-                                    q.x(),q.y(),q.z(),
-                                    r.x(),r.y(),r.z());
+  return has_larger_dist_to_pointC3(p.x(), p.y(), p.z(),
+                                    q.x(), q.y(), q.z(),
+                                    r.x(), r.y(), r.z());
 }
 
 template < class R >
@@ -60,9 +60,9 @@ has_smaller_dist_to_point(const PointC3<R CGAL_CTAG> &p,
                           const PointC3<R CGAL_CTAG> &q,
                           const PointC3<R CGAL_CTAG> &r)
 {
-  return has_smaller_dist_to_pointC3(p.x(),p.y(),p.z(),
-                                     q.x(),q.y(),q.z(),
-                                     r.x(),r.y(),r.z());
+  return has_smaller_dist_to_pointC3(p.x(), p.y(), p.z(),
+                                     q.x(), q.y(), q.z(),
+                                     r.x(), r.y(), r.z());
 }
 
 template < class R >
@@ -71,10 +71,10 @@ Comparison_result
 cmp_signed_dist_to_plane(const PlaneC3<R CGAL_CTAG> &h,
                          const PointC3<R CGAL_CTAG> &p,
                          const PointC3<R CGAL_CTAG> &q)
-{
-  return cmp_signed_dist_to_directionC3(h.a(),h.b(),h.c(),
-                                        p.x(),p.y(),p.z(),
-                                        q,x(),q.y(),q.z());
+{ // FIXME : probably not compiled by the test-suite.
+  return cmp_signed_dist_to_directionC3(h.a(), h.b(), h.c(),
+                                        p.x(), p.y(), p.z(),
+                                        q.x(), q.y(), q.z());
 }
 
 template < class R >
@@ -83,10 +83,10 @@ bool
 has_larger_signed_dist_to_plane(const PlaneC3<R CGAL_CTAG> &h,
                                 const PointC3<R CGAL_CTAG> &p,
                                 const PointC3<R CGAL_CTAG> &q)
-{
-  return has_larger_signed_dist_to_directionC3(h.a(),h.b(),h.c(),
-                                               p.x(),p.y(),p.z(),
-                                               q,x(),q.y(),q.z());
+{ // FIXME : probably not compiled by the test-suite.
+  return has_larger_signed_dist_to_directionC3(h.a(), h.b(), h.c(),
+                                               p.x(), p.y(), p.z(),
+                                               q.x(), q.y(), q.z());
 }
 
 template < class R >
@@ -95,10 +95,10 @@ bool
 has_smaller_signed_dist_to_plane(const PlaneC3<R CGAL_CTAG> &h,
                                  const PointC3<R CGAL_CTAG> &p,
                                  const PointC3<R CGAL_CTAG> &q)
-{
-  return has_smaller_signed_dist_to_directionC3(h.a(),h.b(),h.c(),
-                                                p.x(),p.y(),p.z(),
-                                                q,x(),q.y(),q.z());
+{ // FIXME : probably not compiled by the test-suite.
+  return has_smaller_signed_dist_to_directionC3(h.a(), h.b(), h.c(),
+                                                p.x(), p.y(), p.z(),
+                                                q.x(), q.y(), q.z());
 }
 
 template < class R >
@@ -109,12 +109,12 @@ cmp_signed_dist_to_plane(const PointC3<R CGAL_CTAG> &hp,
                          const PointC3<R CGAL_CTAG> &hr,
                          const PointC3<R CGAL_CTAG> &p,
                          const PointC3<R CGAL_CTAG> &q)
-{
-  return cmp_signed_dist_to_planeC3(hp.x(),hp.y(),hp.z(),
-                                    hq.x(),hq.y(),hq.z(),
-                                    hr.x(),hr.y(),hr.z(),
-                                    p.x(),p.y(),p.z(),
-                                    q,x(),q.y(),q.z());
+{ // FIXME : probably not compiled by the test-suite.
+  return cmp_signed_dist_to_planeC3(hp.x(), hp.y(), hp.z(),
+                                    hq.x(), hq.y(), hq.z(),
+                                    hr.x(), hr.y(), hr.z(),
+                                    p.x(),  p.y(),  p.z(),
+                                    q.x(),  q.y(),  q.z());
 }
 
 template < class R >
@@ -125,12 +125,12 @@ has_larger_signed_dist_to_plane(const PointC3<R CGAL_CTAG> &hp,
                                 const PointC3<R CGAL_CTAG> &hr,
                                 const PointC3<R CGAL_CTAG> &p,
                                 const PointC3<R CGAL_CTAG> &q)
-{
-  return has_larger_signed_dist_to_planeC3(hp.x(),hp.y(),hp.z(),
-                                           hq.x(),hq.y(),hq.z(),
-                                           hr.x(),hr.y(),hr.z(),
-                                           p.x(),p.y(),p.z(),
-                                           q,x(),q.y(),q.z());
+{ // FIXME : probably not compiled by the test-suite.
+  return has_larger_signed_dist_to_planeC3(hp.x(), hp.y(), hp.z(),
+                                           hq.x(), hq.y(), hq.z(),
+                                           hr.x(), hr.y(), hr.z(),
+                                           p.x(),  p.y(),  p.z(),
+                                           q.x(),  q.y(),  q.z());
 }
 
 template < class R >
@@ -141,12 +141,12 @@ has_smaller_signed_dist_to_plane(const PointC3<R CGAL_CTAG> &hp,
                                  const PointC3<R CGAL_CTAG> &hr,
                                  const PointC3<R CGAL_CTAG> &p,
                                  const PointC3<R CGAL_CTAG> &q)
-{
-  return has_smaller_signed_dist_to_planeC3(hp.x(),hp.y(),hp.z(),
-                                            hq.x(),hq.y(),hq.z(),
-                                            hr.x(),hr.y(),hr.z(),
-                                            p.x(),p.y(),p.z(),
-                                            q,x(),q.y(),q.z());
+{ // FIXME : probably not compiled by the test-suite.
+  return has_smaller_signed_dist_to_planeC3(hp.x(), hp.y(), hp.z(),
+                                            hq.x(), hq.y(), hq.z(),
+                                            hr.x(), hr.y(), hr.z(),
+                                            p.x(),  p.y(),  p.z(),
+                                            q.x(),  q.y(),  q.z());
 }
 
 CGAL_END_NAMESPACE

@@ -39,7 +39,7 @@ squared_circumradius(const PointC2<R CGAL_CTAG> &p,
   return squared_circumradiusC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
 }
 
-// This one's used nowhere.  Probably should return a Circle ?
+// FIXME :  This one's used nowhere.  Probably should return a Circle ?
 template < class R >
 inline
 PointC2<R CGAL_CTAG>

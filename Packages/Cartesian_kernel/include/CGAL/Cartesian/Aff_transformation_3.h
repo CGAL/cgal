@@ -54,6 +54,7 @@ public:
   typedef typename R::FT                   FT;
   typedef typename R::FT                   RT;
   typedef Aff_transformation_rep_baseC3<R> Aff_t_base;
+
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef Aff_transformationC3<R,Cartesian_tag> Self;
   typedef typename R::Point_3              Point_3;
@@ -68,64 +69,109 @@ public:
   typedef typename R::Plane_3_base         Plane_3;
 #endif
 
-  Aff_transformationC3();
+  Aff_transformationC3()
+  {
+    FT ft1(1), ft0(0);
+    PTR = new Aff_transformation_repC3<R>(ft1, ft0, ft0,
+                                          ft0, ft1, ft0,
+                                          ft0, ft0, ft1);
+  }
 
-  // Identity constructor:
-  Aff_transformationC3(const Identity_transformation &);
+  Aff_transformationC3(const Identity_transformation)
+  {
+    FT ft1(1), ft0(0);
+    PTR = new Aff_transformation_repC3<R>(ft1, ft0, ft0,
+                                          ft0, ft1, ft0,
+                                          ft0, ft0, ft1);
+  }
 
-  // Translation:
-  Aff_transformationC3(const Translation,
-                       const Vector_3 &v);
+  Aff_transformationC3(const Translation, const Vector_3 &v)
+  {
+    PTR = new Translation_repC3<R>(v);
+  }
 
-  // Scaling:
-  Aff_transformationC3(const Scaling,
-                       const FT &s,
-                       const FT &w = FT(1));
+  Aff_transformationC3(const Scaling, const FT &s, const FT &w = FT(1))
+  {
+    if (w != FT(1))
+      PTR = new Scaling_repC3<R>(s/w);
+    else
+      PTR = new Scaling_repC3<R>(s);
+  }
 
   // General form: without translation
   Aff_transformationC3(const FT& m11, const FT& m12, const FT& m13,
                        const FT& m21, const FT& m22, const FT& m23,
                        const FT& m31, const FT& m32, const FT& m33,
-                       const FT& w= FT(1));
+                       const FT& w = FT(1))
+  {
+    if (w != FT(1))
+      PTR = new Aff_transformation_repC3<R>(m11/w, m12/w, m13/w,
+                                            m21/w, m22/w, m23/w,
+                                            m31/w, m32/w, m33/w);
+    else
+      PTR = new Aff_transformation_repC3<R>(m11, m12, m13,
+                                            m21, m22, m23,
+                                            m31, m32, m33);
+  }
 
   // General form: with translation
-  Aff_transformationC3(const FT& m11, const FT& m12, const FT& m13,
-                                                           const FT& m14,
-                       const FT& m21, const FT& m22, const FT& m23,
-                                                           const FT& m24,
-                       const FT& m31, const FT& m32, const FT& m33,
-                                                           const FT& m34,
-                       const FT& w = FT(1));
+  Aff_transformationC3(
+              const FT& m11, const FT& m12, const FT& m13, const FT& m14,
+              const FT& m21, const FT& m22, const FT& m23, const FT& m24,
+              const FT& m31, const FT& m32, const FT& m33, const FT& m34,
+              const FT& w = FT(1))
+  {
+    if (w != FT(1))
+      PTR = new Aff_transformation_repC3<R>(m11/w, m12/w, m13/w, m14/w,
+                                            m21/w, m22/w, m23/w, m24/w,
+                                            m31/w, m32/w, m33/w, m34/w);
+    else
+      PTR = new Aff_transformation_repC3<R>(m11, m12, m13, m14,
+                                            m21, m22, m23, m24,
+                                            m31, m32, m33, m34);
+  }
 
-  Point_3     transform(const Point_3 &p) const
+  Point_3
+  transform(const Point_3 &p) const
   { return ptr()->transform(p); }
-  Point_3     operator()(const Point_3 &p) const
+
+  Point_3
+  operator()(const Point_3 &p) const
   { return transform(p); }
 
-  Vector_3    transform(const Vector_3 &v) const
+  Vector_3
+  transform(const Vector_3 &v) const
   { return ptr()->transform(v); }
-  Vector_3    operator()(const Vector_3 &v) const
+
+  Vector_3
+  operator()(const Vector_3 &v) const
   { return transform(v); }
 
-  Direction_3 transform(const Direction_3 &d) const
+  Direction_3
+  transform(const Direction_3 &d) const
   { return ptr()->transform(d); }
-  Direction_3 operator()(const Direction_3 &d) const
+
+  Direction_3
+  operator()(const Direction_3 &d) const
   { return transform(d); }
 
-  Plane_3     transform(const Plane_3& p) const
+  Plane_3
+  transform(const Plane_3& p) const
   { return p.transform(*this); }
-  Plane_3     operator()(const Plane_3& p) const
-  { return transform(l); } // FIXME : l ???
 
-  Self        inverse() const { return ptr()->inverse(); }
+  Plane_3
+  operator()(const Plane_3& p) const
+  { return transform(p); } // FIXME : not compiled by the test-suite !
+
+  Self inverse() const { return ptr()->inverse(); }
   
-  bool        is_even() const { return ptr()->is_even(); }
-  bool        is_odd() const { return  ! (ptr()->is_even()); }
+  bool is_even() const { return ptr()->is_even(); }
+  bool is_odd() const { return  ! (ptr()->is_even()); }
   
-  FT          cartesian(int i, int j) const { return ptr()->cartesian(i,j); }
-  FT          homogeneous(int i, int j) const { return cartesian(i,j); }
-  FT          m(int i, int j) const { return cartesian(i,j); }
-  FT          hm(int i, int j) const { return cartesian(i,j); }
+  FT cartesian(int i, int j) const { return ptr()->cartesian(i,j); }
+  FT homogeneous(int i, int j) const { return cartesian(i,j); }
+  FT m(int i, int j) const { return cartesian(i,j); }
+  FT hm(int i, int j) const { return cartesian(i,j); }
 
   Self operator*(const Self &t) const { return (*ptr()) * (*t.ptr()); }
 
@@ -133,95 +179,9 @@ protected:
   Self        transpose() const { return ptr()->transpose(); }
 
 private:
-  Aff_t_base*       ptr() const { return  (Aff_t_base*)PTR; }
+  Aff_t_base* ptr() const { return (Aff_t_base*)PTR; }
 };
 
-
-template < class R >
-Aff_transformationC3<R CGAL_CTAG>::Aff_transformationC3()
-{
-  FT ft1(1), ft0(0);
-  PTR = new Aff_transformation_repC3<R>(ft1, ft0, ft0,
-                                        ft0, ft1, ft0,
-                                        ft0, ft0, ft1);
-}
-
-template < class R >
-Aff_transformationC3<R CGAL_CTAG>::
-Aff_transformationC3(const Identity_transformation &)
-{
-  FT ft1(1), ft0(0);
-  PTR = new Aff_transformation_repC3<R>(ft1, ft0, ft0,
-                                        ft0, ft1, ft0,
-                                        ft0, ft0, ft1);
-}
-
-template < class R >
-Aff_transformationC3<R CGAL_CTAG>::Aff_transformationC3(const Translation,
-        const typename Aff_transformationC3<R CGAL_CTAG>::Vector_3 &v)
-{
-  PTR = new Translation_repC3<R>(v);
-}
-
-template < class R >
-Aff_transformationC3<R CGAL_CTAG>::Aff_transformationC3(const Scaling,
-                     const typename Aff_transformationC3<R CGAL_CTAG>::FT &s,
-                     const typename Aff_transformationC3<R CGAL_CTAG>::FT &w)
-{
-  if (w != FT(1))
-    PTR = new Scaling_repC3<R>(s/w);
-  else
-    PTR = new Scaling_repC3<R>(s);
-}
-
-template < class R >
-Aff_transformationC3<R CGAL_CTAG>::
-Aff_transformationC3(const typename Aff_transformationC3<R CGAL_CTAG>::FT& m11,
-                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m12,
-                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m13,
-                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m14,
-                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m21,
-                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m22,
-                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m23,
-                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m24,
-                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m31,
-                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m32,
-                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m33,
-                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m34,
-                     const typename Aff_transformationC3<R CGAL_CTAG>::FT &w)
-{
-  if (w != FT(1))
-    PTR = new Aff_transformation_repC3<R>(m11/w, m12/w, m13/w, m14/w,
-                                          m21/w, m22/w, m23/w, m24/w,
-                                          m31/w, m32/w, m33/w, m34/w);
-  else
-    PTR = new Aff_transformation_repC3<R>(m11, m12, m13, m14,
-                                          m21, m22, m23, m24,
-                                          m31, m32, m33, m34);
-}
-
-template < class R >
-Aff_transformationC3<R CGAL_CTAG>::
-Aff_transformationC3(const typename Aff_transformationC3<R CGAL_CTAG>::FT& m11,
-                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m12,
-                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m13,
-                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m21,
-                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m22,
-                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m23,
-                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m31,
-                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m32,
-                     const typename Aff_transformationC3<R CGAL_CTAG>::FT& m33,
-                     const typename Aff_transformationC3<R CGAL_CTAG>::FT &w)
-{
-  if (w != FT(1))
-    PTR = new Aff_transformation_repC3<R>(m11/w, m12/w, m13/w,
-                                          m21/w, m22/w, m23/w,
-                                          m31/w, m32/w, m33/w);
-  else
-    PTR = new Aff_transformation_repC3<R>(m11, m12, m13,
-                                          m21, m22, m23,
-                                          m31, m32, m33);
-}
 
 #ifndef CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATIONC3
 template < class R >

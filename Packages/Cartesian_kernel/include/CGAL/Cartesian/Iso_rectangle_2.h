@@ -66,7 +66,7 @@ public:
     : Iso_rectangle_handle_2(Iso_rectangle_ref_2()) {}
 
   Iso_rectangleC2(const Point_2 &p, const Point_2 &q)
-  {
+  { // FIXME : construction
     FT minx, maxx, miny, maxy;
     if (p.x() < q.x()) { minx = p.x(); maxx = q.x(); }
     else               { minx = q.x(); maxx = p.x(); }
@@ -92,8 +92,7 @@ public:
 
   Self transform(const Aff_transformation_2 &t) const
   {
-      // FIXME
-    // We need a precondition like this!!!
+    // FIXME : We need a precondition like this!!!
     // CGAL_kernel_precondition(t.is_axis_preserving());
     return Iso_rectangleC2(t.transform(vertex(0)),
                            t.transform(vertex(2)));
@@ -191,9 +190,9 @@ CGAL_KERNEL_MEDIUM_INLINE
 Bounded_side
 Iso_rectangleC2<R CGAL_CTAG>::
 bounded_side(const Iso_rectangleC2<R CGAL_CTAG>::Point_2 &p) const
-{
-  bool x_incr = (xmin() < p.x()) &&  (p.x() < xmax()),
-       y_incr = (ymin() < p.y()) &&  (p.y() < ymax());
+{ // FIXME : predicate
+  bool x_incr = (xmin() < p.x()) && (p.x() < xmax()),
+       y_incr = (ymin() < p.y()) && (p.y() < ymax());
   if (x_incr)
     {
       if (y_incr)
@@ -238,15 +237,18 @@ has_on_unbounded_side(const typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 &p)
 }
 
 template < class R >
-bool Iso_rectangleC2<R CGAL_CTAG>::is_degenerate() const
+inline
+bool
+Iso_rectangleC2<R CGAL_CTAG>::is_degenerate() const
 {
   return (xmin() == xmax()) || (ymin() == ymax());
 }
 
 template < class R >
 inline
-Bbox_2 Iso_rectangleC2<R CGAL_CTAG>::bbox() const
-{
+Bbox_2
+Iso_rectangleC2<R CGAL_CTAG>::bbox() const
+{ // FIXME : to_interval
   return Bbox_2(CGAL::to_double(xmin()), CGAL::to_double(ymin()),
                 CGAL::to_double(xmax()), CGAL::to_double(ymax()));
 }

@@ -162,7 +162,7 @@ template < class R >
 Bbox_3
 PointC3<R CGAL_CTAG>::bbox() const
 {
-  // FIXME: Not robust...
+  // FIXME: to_interval
   double bx = CGAL::to_double(x());
   double by = CGAL::to_double(y());
   double bz = CGAL::to_double(z());

@@ -63,14 +63,14 @@ public:
   LineC3()
     : Line_handle_3(Line_ref_3()) {}
 
-  LineC3(const Point_3 &p, const Point_3 &q)
+  LineC3(const Point_3 &p, const Point_3 &q) // FIXME : construction
     : Line_handle_3(Line_ref_3(p, (q-p).direction())) {}
 
-  LineC3(const Segment_3 &s)
+  LineC3(const Segment_3 &s) // FIXME : construction
     : Line_handle_3(Line_ref_3(s.start(),
 		               (s.end() - s.start()).direction())) {}
 
-  LineC3(const Ray_3 &r)
+  LineC3(const Ray_3 &r) // FIXME : construction
     : Line_handle_3(Line_ref_3(r.start(),
 	                       (r.point(1) - r.start()).direction())) {}
 
@@ -170,7 +170,7 @@ template < class R >
 inline
 bool
 LineC3<R CGAL_CTAG>::is_degenerate() const
-{
+{ // FIXME : predicate
   return direction() == Direction_3(0,0,0);
 }
 
