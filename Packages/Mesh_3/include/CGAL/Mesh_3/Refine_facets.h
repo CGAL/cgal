@@ -1,9 +1,28 @@
+// Copyright (c) 2004-2005  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$ $Date$
+// $Name$
+//
+// Author(s)     : Laurent RINEAU
+
 #ifndef CGAL_MESH_3_REFINE_FACETS_H
 #define CGAL_MESH_3_REFINE_FACETS_H
 
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Mesh_3/Triangulation_mesher_level_traits_3.h>
-#include <CGAL/Mesh_3/Complex_2_in_triangulation_3.h>
+#include <CGAL/Complex_2_in_triangulation_3.h>
 
 #include <CGAL/Mesh_3/Refine_edges.h>
 #include <CGAL/Mesh_3/Simple_set_container.h>
@@ -17,11 +36,11 @@ namespace Mesh_3 {
 template <class Tr,
           class Container = Simple_set_container<typename Tr::Facet>
 >
-class Refine_facets_base
+class Refine_facets_base :
+    public Triangulation_mesher_level_traits_3<Tr>
 {
   typedef typename Tr::Bare_point Bare_point;
   typedef typename Tr::Point Point;
-  typedef typename Tr::Weighted_point Weighted_point;
   typedef typename Tr::Edge Edge;
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Cell_handle Cell_handle;
@@ -29,35 +48,33 @@ class Refine_facets_base
   typedef typename Tr::Geom_traits Geom_traits;
   typedef typename Triangulation_mesher_level_traits_3<Tr>::Zone Zone;
 
-  typedef typename Tr::Finite_facets_iterator Finite_facets_iterator;
-  typedef typename Tr::Facet_circulator Facet_circulator;
-
   typedef typename Tr::Facet Facet;
 
-  typedef Complex_2_in_triangulation_3<Tr, void, void> Complex_2;
+  typedef Complex_2_in_triangulation_3<Tr> Complex_2;
 
   typedef Container Facets_to_be_conformed;
+
+  using Triangulation_mesher_level_traits_3<Tr>::triangulation_ref_impl;
 public:
   /** \name CONSTRUCTORS */
 
   Refine_facets_base(Tr& t, Complex_2& comp) 
-    : tr(t), complex_2(comp)
+    : Triangulation_mesher_level_traits_3<Tr>(t),
+      complex_2(comp)
   {
   }
 
 private:
   /* --- private datas --- */
-  Tr& tr; /**< The triangulation itself. */
   Complex_2& complex_2; /**< The Complex_2_in_triangulation_3 */
-  Facets_to_be_conformed facets_to_be_conformed; /**< The set of facets to
-                                                    refine. */
+  Facets_to_be_conformed facets_to_be_conformed; /**< The container of
+                                                    facets to refine. */
   void fill_facets_to_be_conformed()
   {
-    for(Finite_facets_iterator it = tr.finite_facets_begin();
+    for(typename Tr::Finite_facets_iterator it = tr.finite_facets_begin();
 	it != tr.finite_facets_end();
 	++it)
-      if(complex_2.is_in_complex(*it) && is_not_locally_Delaunay(*it))
-	facets_to_be_conformed.add_element(*it);
+      test_if_facet_is_locally_encroached(*it);
   }
 
   bool is_not_locally_Delaunay(Facet f)
@@ -68,9 +85,9 @@ private:
     const Cell_handle& c = f.first;
     const int i = f.second;
     const Cell_handle& n = c->neighbor(i);
-    const Vertex_handle& va = c->vertex( (i+1) % 4 );
-    const Vertex_handle& vb = c->vertex( (i+2) % 4 );
-    const Vertex_handle& vc = c->vertex( (i+3) % 4 );
+    const Vertex_handle& va = c->vertex( (i+1) & 3 );
+    const Vertex_handle& vb = c->vertex( (i+2) & 3 );
+    const Vertex_handle& vc = c->vertex( (i+3) & 3 );
 
     const Vertex_handle& v1 = c->vertex(i);
     const Vertex_handle& v2 = n->vertex( n->index(c) );
@@ -83,7 +100,7 @@ private:
   }
 
 public:
-  bool test_for_facet(const Facet& facet)
+  bool test_if_facet_is_locally_encroached(const Facet& facet)
   {
     if(complex_2.is_in_complex(facet) &&
        is_not_locally_Delaunay(facet))
@@ -131,24 +148,23 @@ public:
     facets_to_be_conformed.remove_next_element();
   }
 
-  /** @todo Handle point().point() and Weighted_point. */
-  Weighted_point get_refinement_point(const Facet& facet) const
+  Point get_refinement_point(const Facet& facet) const
   {
     typename Geom_traits::Construct_circumcenter_3 circumcenter = 
       tr.geom_traits().construct_circumcenter_3_object();
 
     const int& index = facet.second; // aliases index
 
-    const int i = (index+1) % 4;
-    const int j = (index+2) % 4;
-    const int k = (index+3) % 4;
+    const int i = (index+1) & 3;
+    const int j = (index+2) & 3;
+    const int k = (index+3) & 3;
 
     const Vertex_handle& vi = facet.first->vertex(i);
     const Vertex_handle& vj = facet.first->vertex(j);
     const Vertex_handle& vk = facet.first->vertex(k);
-    return Weighted_point(circumcenter(vi->point().point(),
-                                       vj->point().point(),
-                                       vk->point().point()));
+    return circumcenter(vi->point(),
+                        vj->point(),
+                        vk->point());
   }
 
   void do_before_conflicts(const Facet&, const Point&)
@@ -175,9 +191,9 @@ public:
         const Cell_handle& c = (*fit).first;
         const int& i = (*fit).second; // aliases i
 
-        const Vertex_handle& va = c->vertex( (i+1) % 4 );
-        const Vertex_handle& vb = c->vertex( (i+2) % 4 );
-        const Vertex_handle& vc = c->vertex( (i+3) % 4 );
+        const Vertex_handle& va = c->vertex( (i+1) & 3 );
+        const Vertex_handle& vb = c->vertex( (i+2) & 3 );
+        const Vertex_handle& vc = c->vertex( (i+3) & 3 );
         
         if( power_test(va->point(),
 		       vb->point(),
@@ -208,7 +224,7 @@ public:
     for(Cell_iterator it = incident_cells.begin();
         it != incident_cells.end();
         ++it)
-      test_for_facet(Facet(*it, (*it)->index(v)));
+      test_if_facet_is_locally_encroached(Facet(*it, (*it)->index(v)));
 
 
   }
@@ -258,7 +274,8 @@ public:
         for(Cell_iterator it = incident_cells.begin();
             it != incident_cells.end();
             ++it)
-          refine_facets->test_for_facet(Facet(*it, (*it)->index(v)));
+          refine_facets->
+	    test_if_facet_is_locally_encroached(Facet(*it, (*it)->index(v)));
       }
 
       Null_mesh_visitor previous_level() const 
@@ -310,19 +327,21 @@ template <typename Tr,
 class Refine_facets : 
   public Base, 
   public Mesher_level <
-    Triangulation_mesher_level_traits_3<Tr>,
+    Tr,
     Refine_facets<Tr, Base, Edges_level>,
     typename Tr::Facet,
-    Edges_level
+    Edges_level,
+    Triangulation_mesher_level_traits_3<Tr>
   >
 {
 public:
   typedef Refine_facets<Tr, Base> Self;
   typedef Mesher_level <
-    Triangulation_mesher_level_traits_3<Tr>,
+    Tr,
     Refine_facets<Tr, Base, Edges_level>,
     typename Tr::Facet,
-    Edges_level
+    Edges_level,
+    Triangulation_mesher_level_traits_3<Tr>
   > Mesher;
   Refine_facets(Tr& t, Edges_level* edges_level)
     : Base(t), Mesher(edges_level) {}

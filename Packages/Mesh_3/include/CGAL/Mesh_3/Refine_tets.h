@@ -1,3 +1,22 @@
+// Copyright (c) 2004-2005  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision$ $Date$
+// $Name$
+//
+// Author(s)     : Laurent RINEAU
+
 #ifndef CGAL_MESH_3_REFINE_TETS_H
 #define CGAL_MESH_3_REFINE_TETS_H
 
@@ -9,19 +28,21 @@
 #include <CGAL/Mesh_3/Double_map_container.h>
 
 #include <list>
-#include <utility>
 
 namespace CGAL {
 namespace Mesh_3 {
 
 template <class Tr,
           class Criteria,
-          class Oracle,
-          class Container = 
-          Double_map_container<typename Tr::Cell_handle,
-                               typename Criteria::Quality>
+          class Container = Double_map_container<typename Tr::Cell_handle,
+                                                 typename Criteria::Quality>
 >
-class Refine_tets_base
+class Refine_tets_base :
+    public Container,
+    public Triangulation_mesher_level_traits_3<Tr>,
+    public No_test_point_conflict,
+    public No_before_insertion,
+    public No_after_insertion
 {
 protected:
   typedef typename Tr::Point Point;
@@ -42,19 +63,21 @@ protected:
 public:
   typedef typename Criteria::Quality Quality;
 
+  using Triangulation_mesher_level_traits_3<Tr>::triangulation_ref_impl;
+
 public:
   /** \name CONSTRUCTORS */
 
-  Refine_tets_base(Tr& t, Criteria crit, Oracle& o) 
-    : tr(t), criteria(crit), oracle(o) {}
+  Refine_tets_base(Tr& t, Criteria crit) 
+    : Triangulation_mesher_level_traits_3<Tr>(t), criteria(crit) {}
 
-private:
-  /* --- private datas --- */
-  Tr& tr; /**< The triangulation itself. */
-  Triangulation_mesher_level_traits_3<Tr> traits;
+protected:
+  /* --- protected datas --- */
+  //  Tr& tr; /**< The triangulation itself. */
   Criteria criteria; /**< Meshing criteria for tetrahedra. */
-  Oracle& oracle;
-  Container tets_to_refine; /**< The set of tets to refine. */
+
+protected:
+  /* --- protected functions --- */
 
   bool should_be_refined(const Cell_handle c, Quality& qual) const
   {
@@ -72,7 +95,7 @@ private:
     Quality q;
     if( c->is_in_domain() && should_be_refined(c, q) )
       {
-	tets_to_refine.add_element(c, q);
+	this->add_element(c, q);
 	return true;
       }
     return false;
@@ -81,55 +104,19 @@ private:
 public:
   /** \name Functions that this level must declare. */
 
-  Tr& get_triangulation_ref()
+  void scan_triangulation_impl()
   {
-    return tr;
-  }
-
-  const Tr& get_triangulation_ref() const
-  {
-    return tr;
-  }
-
-  Triangulation_traits& get_triangulation_traits()
-  {
-    return traits;
-  }
-
-  const Triangulation_traits& get_triangulation_traits() const
-  {
-    return traits;
-  }
-
-  void do_scan_triangulation()
-  {
-    for(typename Tr::Finite_cells_iterator cit = tr.finite_cells_begin();
-        cit != tr.finite_cells_end();
+    for(typename Tr::Finite_cells_iterator cit = 
+	  triangulation_ref_impl().finite_cells_begin();
+        cit != triangulation_ref_impl().finite_cells_end();
         ++cit)
       test_if_cell_is_bad(cit);
   }
 
-  bool is_no_longer_element_to_refine() const 
-  {
-    return tets_to_refine.empty();
-  }
-
-  Cell_handle do_get_next_element()
-  {
-    Cell_handle ch = tets_to_refine.get_next_element();
-    return ch;
-  }
-
-  void do_pop_next_element()
-  {
-    tets_to_refine.remove_next_element();
-  }
-
-  /** @todo Handle point().point() and Weighted_point. */
-  Point get_refinement_point(const Cell_handle& c) const
+  Point refinement_point_impl(const Cell_handle& c) const
   {
     typename Geom_traits::Construct_circumcenter_3 circumcenter = 
-      tr.geom_traits().construct_circumcenter_3_object();
+      triangulation_ref_impl().geom_traits().construct_circumcenter_3_object();
 
     const Point& p = c->vertex(0)->point();
     const Point& q = c->vertex(1)->point();
@@ -139,42 +126,90 @@ public:
     return circumcenter(p, q, r, s);
   }
 
-  void do_before_conflicts(const Cell_handle&, const Point& p)
+  void before_conflicts_impl(const Cell_handle&, const Point& 
+#if CGAL_MESH_3_DEBUG_BEFORE_CONFLICTS
+			   p)
   {
     std::cerr << "Refine_tets: before conflicts of " << p;
+#else
+    ) {
+#endif
   }
 
-  std::pair<bool, bool> do_private_test_point_conflict(const Point&,
-						       Zone& )
+  void after_no_insertion_impl(const Cell_handle&, const Point&,
+			       const Zone& )
   {
-    return std::make_pair(true, true);
+#if CGAL_MESH_3_DEBUG_AFTER_NO_INSERTION
+    std::cerr << "  REJECTED!" << std::endl;
+#endif
   }
+}; // end Refine_tets_base  
 
-  std::pair<bool, bool> do_test_point_conflict_from_superior(const Point&,
-                                                             Zone& )
-  {
-    return std::make_pair(true, true);
-  }
+template <class Tr,
+          class Criteria,
+          class Oracle,
+          class Container = Double_map_container<typename Tr::Cell_handle,
+                                                 typename Criteria::Quality>
+>
+class Refine_tets_with_oracle_base 
+  : public Refine_tets_base<Tr,
+                            Criteria,
+                            Container>
+{
+public:
+  typedef Refine_tets_base<Tr, Criteria, Container> Base;
+  typedef Refine_tets_with_oracle_base<Tr, 
+                                       Criteria,
+                                       Oracle,
+                                       Container> Self;
+  
+  typedef typename Base::Vertex_handle Vertex_handle;
+  typedef typename Base::Cell_handle Cell_handle;
+  typedef typename Base::Point Point;
+  typedef typename Base::Zone Zone;
+  
+  
 
+  /** \name CONSTRUCTORS */
+
+  Refine_tets_with_oracle_base(Tr& t, Criteria crit, Oracle& o)
+    : Base(t, crit), oracle(o) {}
+
+public:
+  /* \name Overriden functions of this level */
   void do_before_insertion(const Cell_handle& c, const Point&,
                            Zone& zone)
+  {
+    remove_star_from_bad_cells(c, zone); // FIXME: name
+  }
+
+  void remove_star_from_bad_cells(const Cell_handle& c, Zone& zone)
   {
     for(typename Zone::Cells_iterator cit = zone.cells.begin();
 	cit != zone.cells.end();
 	++cit)
       if(*cit != c)
-        tets_to_refine.remove_element(*cit);
+        this->remove_element(*cit);
   }
 
   void do_after_insertion(const Vertex_handle& v)
   {
+    std::cerr << ".";
+#if CGAL_MESH_3_DEBUG_AFTER_INSERTION
     std::cerr << "  INSERTED." << std::endl;
+#endif
+    scan_star(v);
+  }
+
+  void scan_star(const Vertex_handle& v)
+  {
     // scan tets
     typedef std::list<Cell_handle> Cells;
     typedef typename Cells::iterator Cell_iterator;
     Cells incident_cells;
 
-    tr.incident_cells(v, std::back_inserter(incident_cells));
+    triangulation_ref_impl().
+      incident_cells(v, std::back_inserter(incident_cells));
 
     for(Cell_iterator cit = incident_cells.begin();
         cit != incident_cells.end();
@@ -191,12 +226,11 @@ public:
       }
   }
 
-  void do_after_no_insertion(const Cell_handle&, const Point&,
-                             const Zone& )
-  {
-    std::cerr << "  REJECTED!" << std::endl;
-  }
-}; // end Refine_tets_base  
+private:
+  /* --- private datas --- */
+  Oracle& oracle;
+
+}; // end Refine_tets_with_oracle_base
 
   namespace tets {
 
@@ -220,15 +254,15 @@ public:
       void before_conflicts(E, P) const {}
 
       void before_insertion(const Facet&,
-                            const Point& p,
+                            const Point&,
                             Zone& zone) 
       {
-        refine_tets->do_before_insertion(Cell_handle(), p, zone);
+        refine_tets->remove_star_from_bad_cells(Cell_handle(), zone); // FIXME: beurk
       }
 
       void after_insertion(const Vertex_handle& v)
       {
-	refine_tets->do_after_insertion(v);
+	refine_tets->scan_star(v);
       }
 
       template <typename E, typename P, typename Z>
@@ -285,26 +319,29 @@ public:
 template <typename Tr,
           typename Criteria,
           typename Oracle,
-          typename Base = Refine_tets_base<Tr, Criteria, Oracle>,
+          typename Base = 
+            Refine_tets_with_oracle_base<Tr, Criteria, Oracle>,
           typename Facets_level = Refine_facets<Tr>
  >
 class Refine_tets : 
   public Base, 
   public Mesher_level <
-    Triangulation_mesher_level_traits_3<Tr>,
+    Tr,
     Refine_tets<Tr, Criteria, Oracle, Base, Facets_level>,
     typename Tr::Cell_handle,
-    Facets_level
+    Facets_level,
+    Triangulation_mesher_level_traits_3<Tr>
   >
 {
   Facets_level& f_level;
 public:
   typedef Refine_tets<Tr, Criteria, Oracle, Base, Facets_level> Self;
   typedef Mesher_level <
-    Triangulation_mesher_level_traits_3<Tr>,
+    Tr,
     Refine_tets<Tr, Criteria, Oracle, Base, Facets_level>,
     typename Tr::Cell_handle,
-    Facets_level
+    Facets_level,
+    Triangulation_mesher_level_traits_3<Tr>
   > Mesher;
   Refine_tets(Tr& t, Criteria crit, Oracle& oracle, Facets_level& facets_level)
     : Base(t, crit, oracle), Mesher(facets_level), f_level(facets_level)
@@ -323,7 +360,7 @@ void do_before_insertion(const typename Base::Cell_handle& c,
 
 void do_after_insertion(const typename Base::Vertex_handle& v)
 {
-  f_level.do_after_insertion(v);
+  f_level.restore_restricted_Delaunay(v);
   Base::do_after_insertion(v);
 }
 

@@ -48,10 +48,9 @@ public:
   typedef typename Mesh_3::Refine_tets<Tr,
                                        Tets_criteria,
                                        Oracle,
-                                       Mesh_3::Refine_tets_base<Tr,
-                                                                Tets_criteria,
-                                                                Oracle>,
-                                       Facets_level> Tets_level;
+                                       Mesh_3::Refine_tets_with_oracle_base<Tr,
+                                        Tets_criteria, Oracle>, Facets_level>
+                                                     Tets_level;
 
   typedef typename Mesh_3::tets::Refine_tets_visitor<Tr,
 						     Tets_level> Tets_visitor;
@@ -84,7 +83,7 @@ public:
 
   void init()
   {
-    Tr& tr = tets.get_triangulation_ref();
+    Tr& tr = tets.triangulation_ref_impl();
 
     typedef typename Tr::Geom_traits Geom_traits;
     typename Geom_traits::Construct_circumcenter_3 circumcenter = 
@@ -111,11 +110,21 @@ public:
   {
     if(!initialized)
       init();
-    facets.refine(tets_visitor);
+    
+    // TODO Refaire tout ca!
+    Tr& tr = tets.triangulation_ref_impl();
+    std::ofstream os2("dump_initial.off");
+    os2 << "{ LIST\n";
+    for(typename Tr::Finite_vertices_iterator vit = tr.finite_vertices_begin();
+	vit != tr.finite_vertices_end(); ++vit)
+      os2 << "{ SPHERE 0.05 " << vit->point() << " }\n";
+    os2 << "}\n";
+
+    facets.refine(tets_visitor.previous_level());
     {
       std::cerr << "surface finie\n";
       std::ofstream os("dump.off");
-      Tr& tr = tets.get_triangulation_ref();
+      
       output_surface_facets_to_off (os, tr);
     }
     tets.refine(tets_visitor);

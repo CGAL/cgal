@@ -2,6 +2,7 @@
 #define CGAL_MESH_3_TRIANGULATION_MESHER_LEVEL_TRAITS_3_H
 
 #include <list>
+#include <CGAL/Mesher_level.h>
 
 namespace CGAL {
 
@@ -24,7 +25,8 @@ namespace CGAL {
   } // end namespace Mesh_3
 
 template <typename Tr>
-struct Triangulation_mesher_level_traits_3
+struct Triangulation_mesher_level_traits_3 :
+    public Triangulation_ref_impl<Tr>
 {
   typedef Tr Triangulation;
 
@@ -34,6 +36,13 @@ struct Triangulation_mesher_level_traits_3
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Cell_handle Cell_handle;
   typedef typename Tr::Facet Facet;
+
+  using Triangulation_ref_impl<Tr>::triangulation_ref_impl;
+
+  Triangulation_mesher_level_traits_3(Tr& t)
+    : Triangulation_ref_impl<Tr>(t)
+  {
+  }
 
   class Zone {
     typedef std::list<Cell_handle> Cells;
@@ -55,29 +64,35 @@ struct Triangulation_mesher_level_traits_3
     Facets internal_facets;
   };
 
-  Zone get_conflicts_zone(Tr& t, const Point& p) const
+  Zone conflicts_zone_impl(const Point& p) const
   {
     Zone zone;
 
-    zone.cell = t.locate(p, zone.locate_type, zone.i, zone.j);
+    zone.cell = triangulation_ref_impl().locate(p,
+						zone.locate_type,
+						zone.i,
+						zone.j);
 
     if( zone.locate_type == Tr::VERTEX ) return zone;
 
-    t.find_conflicts(p, zone.cell,
+    triangulation_ref_impl().
+      find_conflicts(p, zone.cell,
                      std::back_inserter(zone.boundary_facets),
                      std::back_inserter(zone.cells),
                      std::back_inserter(zone.internal_facets));
     return zone;
   }
 
-  Vertex_handle insert(Tr&t, const Point& p, Zone& zone)
+  Vertex_handle insert_impl(const Point& p, Zone& zone)
   {
     if( zone.locate_type == Tr::VERTEX 
 	) return zone.cell->vertex(zone.i);
 
     const Facet& f = *(zone.boundary_facets.begin());
-    return t.insert_in_hole(p, zone.cells.begin(), zone.cells.end(),
-                            f.first, f.second);
+    return triangulation_ref_impl().insert_in_hole(p,
+						   zone.cells.begin(),
+						   zone.cells.end(),
+						   f.first, f.second);
   }
 
 }; // end Triangulation_mesher_level_traits_3

@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2004  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003-2005  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -18,8 +18,8 @@
 // Author(s)     : Steve OUDOT
 
 
-#ifndef COMPLEX_2_IN_TRIANGULATION_CELL_BASE_3_H
-#define COMPLEX_2_IN_TRIANGULATION_CELL_BASE_3_H
+#ifndef CGAL_MESH_3_COMPLEX_2_IN_TRIANGULATION_CELL_BASE_3_H
+#define CGAL_MESH_3_COMPLEX_2_IN_TRIANGULATION_CELL_BASE_3_H
 
 #include <CGAL/Triangulation_ds_cell_base_3.h>
 

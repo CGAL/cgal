@@ -30,12 +30,12 @@ template <
   class Container = 
     typename details::Refine_edges_base_types<Tr>::Default_container
 >
-class Refine_edges_base
+class Refine_edges_base :
+    public Triangulation_mesher_level_traits_3<Tr>
 {
 protected:
   typedef typename Tr::Bare_point Bare_point;
   typedef typename Tr::Point Point;
-  typedef typename Tr::Weighted_point Weighted_point;
   typedef typename Tr::Edge Edge;
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Cell_handle Cell_handle;
@@ -50,14 +50,16 @@ protected:
 
   typedef typename Types::Constrained_edge Constrained_edge;
 
+  using Triangulation_mesher_level_traits_3<Tr>::triangulation_ref_impl;
+
 public:
   /** \name CONSTRUCTORS */
 
-  Refine_edges_base(Tr& t) : tr(t) {}
+  Refine_edges_base(Tr& t)
+    : Triangulation_mesher_level_traits_3<Tr>(t) {}
 
 protected:
   /* --- protected datas --- */
-  Tr& tr; /**< The triangulation itself. */
   Container edges_to_be_conformed; /**< Edge queue */
   Vertex_handle va, vb; /**< (\c va, \c vb) is the edge that will be
                            refined. */
@@ -91,9 +93,9 @@ protected:
       typename Geom_traits::Angle_3 angle = 
 	tr.geom_traits().angle_3_object();
       
-      /** @todo S'occuper de ces point().point() */
-      if( angle(va->point().point(), v->point().point(),
-		vb->point().point()) == OBTUSE )
+      /** @todo S'occuper de ces point() */
+      if( angle(va->point(), v->point(),
+		vb->point()) == OBTUSE )
 	return true;
 
       ++f_circ;
@@ -115,8 +117,8 @@ protected:
     typename Geom_traits::Angle_3 angle = 
       tr.geom_traits().angle_3_object();
     
-    return( angle(va->point().point(), p,
-		  vb->point().point()) == OBTUSE );
+    return( angle(va->point(), p,
+		  vb->point()) == OBTUSE );
   }
 
   bool test_if_encroached(const Vertex_handle va, const Vertex_handle vb)
@@ -181,14 +183,13 @@ public:
     edges_to_be_conformed.remove_next_element();
   }
 
-  /** @todo Handle point().point() and Weighted_point. */
-  Weighted_point get_refinement_point(const Constrained_edge& edge) const
+  Point get_refinement_point(const Constrained_edge& edge) const
   {
     typename Geom_traits::Construct_midpoint_3 midpoint = 
       tr.geom_traits().construct_midpoint_3_object();
 
-    return Weighted_point(midpoint(edge.first->point().point(),
-                                   edge.second->point().point()));
+    return midpoint(edge.first->point(),
+                    edge.second->point());
   }
 
   void do_before_conflicts(const Constrained_edge&, const Point&)
@@ -281,10 +282,10 @@ public:
                 const Vertex_handle& vi = (*it)->vertex(i);
                 const Vertex_handle& vj = (*it)->vertex(j);
                 const Vertex_handle& vk = (*it)->vertex(k);
-                if( orientation(vindex->point().point(),
-                                vi->point().point(),
-                                vj->point().point(),
-                                vk->point().point())
+                if( orientation(vindex->point(),
+                                vi->point(),
+                                vj->point(),
+                                vk->point())
                     == CGAL::POSITIVE )
                   if(complex_2.is_in_complex(*it, i, j))
                     test_if_encroached(vi, vj);
@@ -300,20 +301,22 @@ template <typename Tr,
 struct Refine_edges : 
   public Base, 
   public Mesher_level <
-    Triangulation_mesher_level_traits_3<Tr>,
+    Tr,
     Refine_edges<Tr, Base>,
     std::pair<typename Tr::Vertex_handle,
               typename Tr::Vertex_handle>,
-    Null_mesher_level
+    Null_mesher_level,
+    Triangulation_mesher_level_traits_3<Tr>
   >
 {
   typedef Refine_edges<Tr, Base> Self;
   typedef Mesher_level <
-    Triangulation_mesher_level_traits_3<Tr>,
+    Tr,
     Refine_edges<Tr, Base>,
     std::pair<typename Tr::Vertex_handle,
               typename Tr::Vertex_handle>,
-    Null_mesher_level
+    Null_mesher_level,
+    Triangulation_mesher_level_traits_3<Tr>
   > Mesher;
 
   Refine_edges(Tr& t): Base(t), Mesher(&null_mesher_level) {}

@@ -7,7 +7,7 @@
 #include <CGAL/Mesh_3/Refine_facets.h>
 
 namespace CGAL {
-
+}
 
 }; // end namespace CGAL
 
