@@ -1285,7 +1285,7 @@ Polynomial<NT> operator - (const Polynomial<NT>& p)
   return res;
 }
 
-/*
+#if defined(_MSC_VER)
 Polynomial<int> operator - (const Polynomial<int>& p)
 {
   CGAL_assertion(p.degree()>=0);
@@ -1303,7 +1303,7 @@ Polynomial<double> operator - (const Polynomial<double>& p)
   for(it=res.coeffs().begin(); it!=ite; ++it) *it = -*it;
   return res;
 }
-*/
+#endif
 
 template <class NT> 
 Polynomial<NT> operator + (const Polynomial<NT>& p1, 
