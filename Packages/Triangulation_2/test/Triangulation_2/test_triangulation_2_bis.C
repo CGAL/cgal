@@ -59,5 +59,10 @@ int main()
 
   _test_cls_triangulation_short_2( Cls4() );
 
+  std::cout << std::endl;
+  std::cout << "Test defaults " << std::endl;
+  typedef CGAL::Triangulation_2<Gt2>  Cls5;
+  _test_cls_triangulation_short_2( Cls5() );
+
   return 0;
 }

@@ -38,6 +38,7 @@
 #include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/Triangulation_utils_2.h>
 #include <CGAL/Triangulation_default_data_structure_2.h>
+#include <CGAL/Triangulation_data_structure_using_list_2.h>
 #include <CGAL/Triangulation_face_2.h>
 #include <CGAL/Triangulation_vertex_2.h>
 #include <CGAL/Triangulation_handles_2.h>
@@ -54,7 +55,10 @@ template < class Gt, class Tds >  std::ostream& operator<<
   (std::ostream& os, const Triangulation_2<Gt,Tds> &tr);
   
 
-template < class Gt, class Tds >
+template < class Gt, 
+           class Tds = Triangulation_data_structure_using_list_2 <
+                       Triangulation_vertex_base_2<Gt>,
+		       Triangulation_face_base_2<Gt> > >
 class Triangulation_2
   : public Triangulation_cw_ccw_2
 {
