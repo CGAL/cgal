@@ -1,0 +1,55 @@
+# Created by the script create_makefile
+# This is the makefile for compiling a CGAL application.
+
+#---------------------------------------------------------------------#
+#                    include platform specific settings
+#---------------------------------------------------------------------#
+# Choose the right include file from the <cgalroot>/make directory.
+
+CGAL_MAKEFILE=/home/CGAL/make/makefile_i686_Linux-2.4.25-gentoo-r1_g++-3.3.2
+include $(CGAL_MAKEFILE)
+
+#---------------------------------------------------------------------#
+#                    compiler flags
+#---------------------------------------------------------------------#
+
+CXXFLAGS = -I../../include/ \
+           $(CGAL_CXXFLAGS) \
+           $(LONG_NAME_PROBLEM_CXXFLAGS) \
+           $(DEBUG_OPT)
+
+#---------------------------------------------------------------------#
+#                    linker flags
+#---------------------------------------------------------------------#
+
+LIBPATH = \
+          $(CGAL_LIBPATH)
+
+LDFLAGS = \
+          $(LONG_NAME_PROBLEM_LDFLAGS) \
+          $(CGAL_QT_LDFLAGS)
+
+
+#---------------------------------------------------------------------#
+#                    target entries
+#---------------------------------------------------------------------#
+
+all: edg_to_regions
+
+edg_to_regions.moc: edg_to_regions.C 
+	${QT_MOC} -o edg_to_regions.moc edg_to_regions.C
+
+edg_to_regions$(OBJ_EXT): edg_to_regions.C edg_to_regions.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) edg_to_regions.C
+
+edg_to_regions$(EXE_EXT): edg_to_regions$(OBJ_EXT)
+	$(CGAL_CXX) $(EXE_OPT)edg_to_regions edg_to_regions$(OBJ_EXT) $(LDFLAGS)
+
+clean: edg_to_regions.clean 
+
+#---------------------------------------------------------------------#
+#                    suffix rules
+#---------------------------------------------------------------------#
+
+.C$(OBJ_EXT):
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<

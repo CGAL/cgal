@@ -36,35 +36,56 @@ public:
   
   typedef R Rep ;
 
-  typedef typename Rep::Point_2   Point_2 ;
-  typedef typename Rep::Segment_2 Segment_2 ;
-  typedef typename Rep::FT        FT ;
+  typedef typename Rep::Point_2 Point_2 ;
+  typedef typename Rep::FT      FT ;
   
 public:
 
+  typedef std::pair<Point_2,Point_2> Point_2_Pair ;
+  
   typedef std::pair<Point_2,FT> EventData ;
   
   typedef boost::optional<EventData> OptionalEventData ;
   
-  OptionalEventData compute_event (  Segment_2 const& aA
-                                   , Segment_2 const& aB
-                                   , Segment_2 const& aC
+  OptionalEventData compute_event (  Point_2_Pair const& aA
+                                   , Point_2_Pair const& aB
+                                   , Point_2_Pair const& aC
                                   ) const ;
   
-  Comparison_result compare_events (  Segment_2 const& aLA
-                                    , Segment_2 const& aLB
-                                    , Segment_2 const& aLC
-                                    , Segment_2 const& aRA
-                                    , Segment_2 const& aRB
-                                    , Segment_2 const& aRC
+  Comparison_result compare_events (  Point_2_Pair const& aLA
+                                    , Point_2_Pair const& aLB
+                                    , Point_2_Pair const& aLC
+                                    , Point_2_Pair const& aRA
+                                    , Point_2_Pair const& aRB
+                                    , Point_2_Pair const& aRC
                                    ) const ;
                                    
-  bool is_event_inside_bounded_offset_zone (  Segment_2 const& aA
-                                            , Segment_2 const& aB
-                                            , Segment_2 const& aC
-                                            , Segment_2 const& aEdge
-                                            , Segment_2 const& aEdgeLeft
-                                            , Segment_2 const& aEdgeRight
+  Comparison_result compare_events_distance_to_seed ( Point_2             aSeedP
+                                                    , Point_2_Pair const& aLA
+                                                    , Point_2_Pair const& aLB
+                                                    , Point_2_Pair const& aLC
+                                                    , Point_2_Pair const& aRA
+                                                    , Point_2_Pair const& aRB
+                                                    , Point_2_Pair const& aRC
+                                                  ) const ;
+                                   
+  Comparison_result compare_events_distance_to_seed ( Point_2_Pair const& aSeedA
+                                                    , Point_2_Pair const& aSeedB
+                                                    , Point_2_Pair const& aSeedC
+                                                    , Point_2_Pair const& aLA
+                                                    , Point_2_Pair const& aLB
+                                                    , Point_2_Pair const& aLC
+                                                    , Point_2_Pair const& aRA
+                                                    , Point_2_Pair const& aRB
+                                                    , Point_2_Pair const& aRC
+                                                  ) const ;
+                                                  
+  bool is_event_inside_bounded_offset_zone (  Point_2_Pair const& aA
+                                            , Point_2_Pair const& aB
+                                            , Point_2_Pair const& aC
+                                            , Point_2_Pair const& aEdge
+                                            , Point_2_Pair const& aEdgeLeft
+                                            , Point_2_Pair const& aEdgeRight
                                            ) const ; 
 
 private :
@@ -72,6 +93,9 @@ private :
   typedef typename Rep::Vector_2    Vector_2 ;
   typedef typename Rep::Direction_2 Direction_2 ;
   typedef typename Rep::Line_2      Line_2 ;
+  typedef typename Rep::Segment_2   Segment_2 ;
+  
+  typename Rep::Construct_line_2 construct_line ;
   
   typedef boost::optional<Point_2> OptionalPoint_2 ;
   
@@ -92,7 +116,7 @@ private :
 CGAL_END_NAMESPACE
 
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#  include <CGAL/Straight_skeleton_builder_traits_2.c>
+#  include <CGAL/Straight_skeleton_builder_traits_2.C>
 #endif
 
 

@@ -52,7 +52,8 @@ public :
   typedef typename Base::Halfedge_handle Halfedge_handle  ;
   typedef typename Base::Face_handle     Face_handle  ;
   typedef typename Base::Vertex_iterator Vertex_iterator ;
-  
+  typedef typename Base::Halfedge_iterator Halfedge_iterator  ;
+ 
   Straight_skeleton_2() {}
   
 private:

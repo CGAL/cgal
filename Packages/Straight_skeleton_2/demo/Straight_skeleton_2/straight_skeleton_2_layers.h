@@ -18,49 +18,95 @@
 // Author(s)     : Radu Ursu
 
 #include <CGAL/IO/Qt_widget_layer.h>
-#include <CGAL/Cartesian.h>
 
-
-template <class T>
+template <class Ssds>
 class Qt_layer_show_skeleton : public CGAL::Qt_widget_layer
 {
 public:
 
-  Qt_layer_show_skeleton(T &h) : hds(h)
+  Qt_layer_show_skeleton(Ssds const& aSsds) : mSsds(aSsds)
   {};
+  
   void draw()
-  {  
-    *widget << CGAL::GREEN; 
-    for ( Halfedge_iterator i = hds.halfedges_begin(); i != hds.halfedges_end(); ++i ){
-      if(i->is_bisector()){
-	*widget << i->segment();
+  {
+    typename Ssds::Rep::Construct_segment_2 construct_segment ;
+    
+    widget->lock();
+    
+    for ( Face_const_iterator fit = mSsds.faces_begin(), efit = mSsds.faces_end()
+          ; fit != efit
+          ; ++ fit
+        )
+    {
+      Halfedge_const_handle hstart = fit->halfedge();
+      Halfedge_const_handle he     = hstart ;
+      do
+      {
+        if ( he == null_halfedge )
+          break ;
+        if ( he->is_bisector() )
+        {  
+          bool lOK =    he->vertex() != null_vertex 
+	             && he->opposite() != null_halfedge 
+		     && he->opposite()->vertex() != null_vertex ;
+		     
+          *widget << ( lOK ? (he->is_contour_bisector()? CGAL::GREEN : CGAL::BLUE ) : CGAL::YELLOW ) ;
+          *widget << construct_segment(he->opposite()->vertex()->point(),he->vertex()->point()) ;
+        }
+	he = he->next();
       }
-    } 
+      while ( he != hstart ) ;
+    }
+    
+    widget->unlock();
   }
 private:
-  T &hds;
 
-};//end class 
+  Ssds const& mSsds;
+  const Halfedge_const_handle null_halfedge ;
+  const Vertex_const_handle   null_vertex ;
+
+}
+;//end class
 
 
-template <class T>
+template <class PolygonalRegion>
 class Qt_layer_show_polygon : public CGAL::Qt_widget_layer
 {
 public:
+
+  Qt_layer_show_polygon(PolygonalRegion const& aRegion) : mRegion(aRegion){};
   
-  Qt_layer_show_polygon(T &h) : hds(h){};
   void draw()
-  {  
-    *widget << CGAL::BLUE; 
-    for ( Halfedge_iterator i = hds.halfedges_begin(); i != hds.halfedges_end(); ++i ){
-      if(! i->is_bisector()){
-	*widget << i->segment();
-      }
-    } 
+  {
+    widget->lock();
+    
+    *widget << CGAL::RED;
+
+    for ( typename PolygonalRegion::const_iterator bit = mRegion.begin(), ebit = mRegion.end()
+        ; bit != ebit 
+	; ++ bit 
+	)
+    {
+      Polygon::const_iterator first = (*bit)->vertices_begin();
+      Polygon::const_iterator end   = (*bit)->vertices_end  ();
+      Polygon::const_iterator last  = end - 1 ;
+      for ( Polygon::const_iterator it = first ; it != end ; ++ it )
+      {
+        Polygon::const_iterator nx = ( it != last ? it + 1 : first ) ;
+        *widget << Segment(*it,*nx) ;  
+      }  
+    }
+    
+    widget->unlock();
+
   }
-	
+
 private:
-  T &hds;
-};//end class 
+
+  PolygonalRegion const& mRegion;
+}
+;//end class
+
 
 

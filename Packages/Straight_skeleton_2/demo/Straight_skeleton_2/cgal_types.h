@@ -20,19 +20,15 @@
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>
-#include <CGAL/MP_Float.h>
-#include <CGAL/random_polygon_2.h>
-#include <CGAL/point_generators_2.h>
-#include <CGAL/Straight_skeleton_builder_2.h>
 
-typedef CGAL::MP_Float				    NT;
-typedef CGAL::Cartesian<NT>                         K;
-typedef K::Point_2                                  Point_2;
-typedef CGAL::Polygon_2<K>                          Polygon;
-typedef CGAL::Random_points_in_square_2<Point_2>    Point_generator;
+#include <boost/shared_ptr.hpp>
+#include <vector>
 
-typedef CGAL::Straight_skeleton_2<K>                Ssds;
-typedef CGAL::Straight_skeleton_builder_traits_2<K> BuilderTraits;
-typedef CGAL::Straight_skeleton_builder_2<BuilderTraits,Ssds> Builder;
-typedef Ssds::Halfedge_iterator          Halfedge_iterator;
-typedef Ssds::Vertex_handle              Vertex_handle;
+typedef double                     NT;
+typedef CGAL::Cartesian<NT>        K;
+typedef K::Point_2                 Point;
+typedef CGAL::Polygon_2<K>         Polygon;
+typedef boost::shared_ptr<Polygon> PolygonPtr;
+typedef CGAL::Segment_2<K>         Segment;
+typedef std::vector<PolygonPtr>    PolygonalRegion ;
+

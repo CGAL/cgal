@@ -17,10 +17,11 @@
 //
 // Author(s)     : Radu Ursu
 
-#ifndef CGAL_PARTITION_2_TOOLBAR_LAYERS_H
-#define CGAL_PARTITION_2_TOOLBAR_LAYERS_H
+#ifndef CGAL_STRAIGHTSKELETON_2_TOOLBAR_LAYERS_H
+#define CGAL_STRAIGHTSKELETON_2_TOOLBAR_LAYERS_H
 
 #include "cgal_types.h"
+#include "ss_types.h"
 #include <CGAL/IO/Qt_widget.h>
 
 #include <qobject.h>
@@ -38,7 +39,7 @@ class Layers_toolbar : public QToolBar
 {
   Q_OBJECT
 public:
-  Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, Ssds *p);
+  Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, PolygonalRegion const& pr, Ssds const& ss);
   ~Layers_toolbar();
 private:
   QToolButton         *but[10];
@@ -47,8 +48,8 @@ private:
   QButtonGroup        *button_group;
   int                 nr_of_buttons;
 
-  Qt_layer_show_polygon <Ssds>        *showP;
-  Qt_layer_show_skeleton<Ssds> *showGA;
+  Qt_layer_show_polygon <PolygonalRegion> *showP;
+  Qt_layer_show_skeleton<Ssds>   *showSS;
 
 };//end class
 

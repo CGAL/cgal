@@ -45,16 +45,16 @@ boost::optional
       ,typename Straight_skeleton_builder_traits_2<R>::FT 
     >
   >
-Straight_skeleton_builder_traits_2<R>::compute_event (  Segment_2 const& aA
-                                                      , Segment_2 const& aB
-                                                      , Segment_2 const& aC
+Straight_skeleton_builder_traits_2<R>::compute_event (  Point_2_Pair const& aA
+                                                      , Point_2_Pair const& aB
+                                                      , Point_2_Pair const& aC
                                                      ) const
 {
   OptionalEventData rResult ;
   
-  Line_2 lLineA = aA.supporting_line();
-  Line_2 lLineB = aB.supporting_line();
-  Line_2 lLineC = aC.supporting_line();
+  Line_2 lLineA = construct_line(aA.first,aA.second);
+  Line_2 lLineB = construct_line(aB.first,aB.second);
+  Line_2 lLineC = construct_line(aC.first,aC.second);
   
   OptionalPoint_2 lP = ConstructEventPoint(lLineA,lLineB,lLineC);
   
@@ -80,8 +80,8 @@ Straight_skeleton_builder_traits_2<R>::compute_event (  Segment_2 const& aA
 
 template<class R>
 Comparison_result Straight_skeleton_builder_traits_2<R>
-  ::compare_events (  Segment_2 const& aAa, Segment_2 const& aAb, Segment_2 const& aAc
-                    , Segment_2 const& aBa, Segment_2 const& aBb, Segment_2 const& aBc 
+  ::compare_events (  Point_2_Pair const& aAa, Point_2_Pair const& aAb, Point_2_Pair const& aAc
+                    , Point_2_Pair const& aBa, Point_2_Pair const& aBb, Point_2_Pair const& aBc 
                    ) const 
 {
   OptionalEventData lEventA = compute_event(aAa,aAb,aAc);
@@ -94,21 +94,72 @@ Comparison_result Straight_skeleton_builder_traits_2<R>
 }                   
 
 template<class R>
+Comparison_result Straight_skeleton_builder_traits_2<R>
+  ::compare_events_distance_to_seed ( Point_2             aSeedP
+                                    , Point_2_Pair const& aAa
+                                    , Point_2_Pair const& aAb
+                                    , Point_2_Pair const& aAc
+                                    , Point_2_Pair const& aBa
+                                    , Point_2_Pair const& aBb
+                                    , Point_2_Pair const& aBc
+                                  ) const 
+{
+  
+  OptionalEventData lEventA = compute_event(aAa,aAb,aAc);
+  OptionalEventData lEventB = compute_event(aBa,aBb,aBc);
+  CGAL_assertion( !!lEventA ) ;
+  CGAL_assertion( !!lEventB ) ;
+  typename Rep::Compare_distance_2 compare_distance ;
+  
+CGAL_SSBUILDER_TRACE ( "CompareDistToSeed: Seed: (" << aSeedP << ") EventA: (" 
+                      << lEventA->first << ")[" << lEventA->second << "] EventB: (" 
+                      << lEventB->first << ")[" << lEventB->second << "] Comparison: " 
+                      << compare_distance(aSeedP,lEventA->first,lEventB->first) 
+                     ) ;  
+                      
+  return compare_distance(aSeedP,lEventA->first,lEventB->first);
+}
+
+template<class R>
+Comparison_result Straight_skeleton_builder_traits_2<R>
+  ::compare_events_distance_to_seed ( Point_2_Pair const& aSa
+                                    , Point_2_Pair const& aSb
+                                    , Point_2_Pair const& aSc
+                                    , Point_2_Pair const& aAa
+                                    , Point_2_Pair const& aAb
+                                    , Point_2_Pair const& aAc
+                                    , Point_2_Pair const& aBa
+                                    , Point_2_Pair const& aBb
+                                    , Point_2_Pair const& aBc
+                                  ) const 
+{
+  
+  OptionalEventData lEventS = compute_event(aSa,aSb,aSc);
+  OptionalEventData lEventA = compute_event(aAa,aAb,aAc);
+  OptionalEventData lEventB = compute_event(aBa,aBb,aBc);
+  CGAL_assertion( !!lEventS ) ;
+  CGAL_assertion( !!lEventA ) ;
+  CGAL_assertion( !!lEventB ) ;
+  typename Rep::Compare_distance_2 compare_distance ;
+  return compare_distance(lEventS->first,lEventA->first,lEventB->first);
+}
+
+template<class R>
 bool Straight_skeleton_builder_traits_2<R>::is_event_inside_bounded_offset_zone 
-                                            (  Segment_2 const& aA
-                                             , Segment_2 const& aB
-                                             , Segment_2 const& aC
-                                             , Segment_2 const& aEdge
-                                             , Segment_2 const& aEdgeLeft
-                                             , Segment_2 const& aEdgeRight
+                                            (  Point_2_Pair const& aA
+                                             , Point_2_Pair const& aB
+                                             , Point_2_Pair const& aC
+                                             , Point_2_Pair const& aEdge
+                                             , Point_2_Pair const& aEdgeLeft
+                                             , Point_2_Pair const& aEdgeRight
                                             ) const  
 {
   OptionalEventData lEvent = compute_event(aA,aB,aC);
   CGAL_assertion( !!lEvent ) ;
   
-  Line_2 lEdgeLeftLine  = aEdgeLeft .supporting_line();
-  Line_2 lEdgeLine      = aEdge     .supporting_line();
-  Line_2 lEdgeRightLine = aEdgeRight.supporting_line();
+  Line_2 lEdgeLeftLine  = construct_line(aEdgeLeft .first,aEdgeLeft.second);
+  Line_2 lEdgeLine      = construct_line(aEdge     .first,aEdge    .second);
+  Line_2 lEdgeRightLine = construct_line(aEdgeRight.first,aEdgeRight.second);
   
   Line_2 lBisectorL = ConstructBisector(lEdgeLeftLine,lEdgeLine);
   Line_2 lBisectorR = ConstructBisector(lEdgeLine,lEdgeRightLine);
@@ -169,7 +220,7 @@ Straight_skeleton_builder_traits_2<R>::ConstructBisector(  Line_2 const& aA
     double lAngleA = std::atan2(to_double(lDirA.dy()), to_double(lDirA.dx()));
     double lAngleB = std::atan2(to_double(lDirB.dy()), to_double(lDirB.dx()));
     
-    double const cPi     = CGAL_PI ;
+    //double const cPi     = CGAL_PI ;
     double const cTwoPi  = CGAL_PI * 2 ;
     double const cFourPi = CGAL_PI * 4 ;
     
@@ -184,7 +235,9 @@ Straight_skeleton_builder_traits_2<R>::ConstructBisector(  Line_2 const& aA
     FT s = std::sin(lPhi) ;
     FT c = std::cos(lPhi) ;
   
-    typename Rep::Aff_transformation_2 Rot( CGAL::Rotation(), s ,c ) ;
+    CGAL::Rotation Rotate ;
+    
+    typename Rep::Aff_transformation_2 Rot( Rotate, s ,c ) ;
     
     lDir = lDirB.transform(Rot).to_vector();
   }
@@ -195,7 +248,7 @@ Straight_skeleton_builder_traits_2<R>::ConstructBisector(  Line_2 const& aA
     typename Rep::Compute_squared_distance_2 squared_distance ;
     typename Rep::Compute_squared_length_2   squared_length ;
     
-    FT lDist = squared_distance(aA,aB);
+    FT lDist = CGAL::sqrt(squared_distance(aA,aB));
     
     lDir = aA.to_vector();
     
@@ -203,7 +256,9 @@ Straight_skeleton_builder_traits_2<R>::ConstructBisector(  Line_2 const& aA
                                     
     FT lLen = CGAL::sqrt( squared_length(lN) ) ;
     
-    lBaseP = lQA + Vector_2(lN.x()*lDist,lN.y()*lDist,lLen);
+    Vector_2 lShift = lN * ( lDist / ( FT(2.0) * lLen )  ) ;
+    
+    lBaseP = lQA + lShift ;
   }
   
   return Line_2(lBaseP,lDir);

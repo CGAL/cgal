@@ -6,7 +6,7 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-CGAL_MAKEFILE = c:/cgal/CGAL-3.1/make/makefile_i686_CYGWINNT-5.1-1.5.11_CL.EXE-1310
+CGAL_MAKEFILE=/home/CGAL/make/makefile_i686_Linux-2.4.25-gentoo-r1_g++-3.3.2
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#

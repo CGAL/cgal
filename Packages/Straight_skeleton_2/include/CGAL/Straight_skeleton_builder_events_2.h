@@ -107,6 +107,8 @@ class Straight_skeleton_builder_edge_event_2 : public Straight_skeleton_builder_
   typedef typename R::Halfedge_handle Halfedge_handle ;
   typedef typename R::Vertex_handle   Vertex_handle ;
   
+  typedef typename Base::Type Type ;
+  
 public:
 
   Straight_skeleton_builder_edge_event_2 (  Halfedge_handle aBorderA
@@ -133,7 +135,7 @@ private :
   virtual void dump ( std::ostream& ss ) const 
   {
     this->Base::dump(ss);
-    ss << "LSeed=" << mLSeed->id() << " RSeed=" << mRSeed->id() << ')' ;
+    ss << " (LSeed=" << mLSeed->id() << " RSeed=" << mRSeed->id() << ')' ;
   }
   
 private :
@@ -157,7 +159,7 @@ class Straight_skeleton_builder_split_event_2 : public Straight_skeleton_builder
   
   typedef typename R::Halfedge_handle Halfedge_handle ;
   typedef typename R::Vertex_handle   Vertex_handle ;
-  
+  typedef typename Base::Type Type ;  
 public:
 
   Straight_skeleton_builder_split_event_2 (  Halfedge_handle aBorderA
@@ -193,7 +195,7 @@ private :
   virtual void dump ( std::ostream& ss ) const 
   {
     this->Base::dump(ss);
-    ss << "Seed=" << mSeed->id() << " OppBorder=" << mOppositeBorder->id() << ')' ;
+    ss << " (Seed=" << mSeed->id() << " OppBorder=" << mOppositeBorder->id() << ')' ;
   }
   
 private :

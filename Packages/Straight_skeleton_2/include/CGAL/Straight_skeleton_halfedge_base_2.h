@@ -33,27 +33,23 @@ template < class Refs, class S >
 class Straight_skeleton_halfedge_base_base_2 
   : public HalfedgeDS_halfedge_base<Refs, Tag_true, Tag_true, Tag_true >
 {
-
 public:
  
-  typedef HalfedgeDS_halfedge_base<Refs, Tag_true, Tag_true, Tag_true> Base ;
+  typedef HalfedgeDS_halfedge_base<Refs, Tag_true, Tag_true, Tag_true> HDSBase ;
   
-  typedef typename Base::Base_base HBase_base ;
+  typedef typename HDSBase::Base HBase ;
+  
+  typedef typename HDSBase::Base_base HBase_base ;
   
   typedef S Segment_2;
-
   typedef typename Refs::Halfedge_handle       Halfedge_handle ;
   typedef typename Refs::Halfedge_const_handle Halfedge_const_handle ;
-
 public:
   
   Straight_skeleton_halfedge_base_base_2() : mID(-1) {}
-
   Straight_skeleton_halfedge_base_base_2 ( int aID ) : mID(aID) {}
   
   int id() const { return mID ; }
-  
-  Segment_2 segment() const { return mSegment ; }
   
   bool is_bisector() const 
   {
@@ -68,48 +64,42 @@ public:
   Halfedge_const_handle defining_border() const { return face()->halfedge() ; }
   Halfedge_handle       defining_border()       { return face()->halfedge() ; }
   
-  void set_segment ( Segment_2 const& aSegment ) { mSegment = aSegment ; }
-  
+  void  set_opposite( Halfedge_handle h)  { HBase::set_opposite(h);}
 private:
-
-  int       mID ;
-  Segment_2 mSegment ;
+  int mID ;
 };
 
 template < class Refs, class S >
 class Straight_skeleton_halfedge_base_2 
   : public Straight_skeleton_halfedge_base_base_2 < Refs, S >
 {
-
 public:
  
-  typedef Straight_skeleton_halfedge_base_base_2 < Refs, S > Base ;
+  typedef Straight_skeleton_halfedge_base_base_2 < Refs, S > SSBase ;
   
-  typedef typename Base::HBase_base HBase_base ;
+  typedef typename SSBase::HBase_base HBase_base ;
   
-  typedef typename Base::Base      Base_base ;
-  typedef typename Base::Segment_2 Segment_2;
-
-  typedef typename Base_base::Halfedge_handle Halfedge_handle ; 
-  typedef typename Base_base::Vertex_handle   Vertex_handle ; 
-  typedef typename Base_base::Face_handle     Face_handle ; 
+  typedef typename SSBase::Base      HBase ;
+  
+  typedef typename SSBase::Segment_2 Segment_2;
+  typedef typename HBase::Halfedge_handle Halfedge_handle ; 
+  typedef typename HBase::Vertex_handle   Vertex_handle ; 
+  typedef typename HBase::Face_handle     Face_handle ; 
   
 public:
   
   Straight_skeleton_halfedge_base_2() {}
-
-  Straight_skeleton_halfedge_base_2( int aID ) : Base(aID) {}
+  Straight_skeleton_halfedge_base_2( int aID ) : SSBase(aID) {}
+  
+  void  set_opposite( Halfedge_handle h)  { HBase_base::set_opposite(h);}
   
 protected:
-
-  void set_segment ( Segment_2 const& aSegment ) { Base::set_segment(aSegment) ; }
   
-  void set_prev  ( Halfedge_handle h ) { Base_base::set_prev(h) ; }
-  void set_vertex( Vertex_handle   w ) { Base_base::set_vertex(w); }
-  void set_face  ( Face_handle     g ) { Base_base::set_face(g) ; }
+  void set_prev  ( Halfedge_handle h ) { HBase_base::set_prev(h) ; }
+  void set_vertex( Vertex_handle   w ) { HBase_base::set_vertex(w); }
+  void set_face  ( Face_handle     g ) { HBase_base::set_face(g) ; }
   
 };
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_STRAIGHT_SKELETON_HALFEDGE_BASE_2_H //

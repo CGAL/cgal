@@ -28,6 +28,7 @@
 
 #include <qiconset.h>
 
+
 Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw) :
   QToolBar(mw, "NT")
 {

@@ -43,7 +43,6 @@ template < class Refs, class P, class N >
 class Straight_skeleton_vertex_base_base_2 
   : public HalfedgeDS_vertex_base<Refs, Tag_true, P >
 {
-
 protected :
   
   template<class HalfedgeHandle, class AccessPolicy >
@@ -57,7 +56,7 @@ protected :
       
       typedef HalfedgeHandle value_type ;
       
-      Halfedge_circulator_base () : mH() {}
+      Halfedge_circulator_base () : mHandle() {}
       
       explicit Halfedge_circulator_base ( value_type aHandle ) : mHandle(aHandle) {}
       
@@ -69,7 +68,6 @@ protected :
     private :
     
       friend class boost::iterator_core_access ;
-
       template <class,class> friend class Halfedge_circulator_base;
      
       template < class OtherHalfedgeHandle, class OtherAccessPolicy >
@@ -78,9 +76,9 @@ protected :
         return mHandle == aOther.mHandle;
       }
 
-      void increment() { mHandle = mHandle->opposite()->next(); }      
+      void increment() { mHandle = mHandle->opposite()->prev(); }      
       
-      void decrement() { mHandle = mHandle->prev()->opposite() ; }
+      void decrement() { mHandle = mHandle->next()->opposite() ; }
       
       value_type& dereference() const { return *AccessPolicy::access(mHandle) ; }
       
@@ -91,6 +89,7 @@ protected :
  
   class Halfedge_circulator_around_vertex_access_policy
   {
+  public:
     template<class HalfedgeHandle>
     static HalfedgeHandle access ( HalfedgeHandle aHandle )
     {
@@ -100,6 +99,7 @@ protected :
   
   class Halfedge_circulator_across_incident_faces_access_policy
   {
+  public:
     template<class HalfedgeHandle>
     static HalfedgeHandle access ( HalfedgeHandle aHandle )
     {
@@ -113,12 +113,10 @@ public:
   
   typedef P Point_2;
   typedef N FT ;
-
   typedef typename Refs::Vertex_handle         Vertex_handle ;
   typedef typename Refs::Vertex_const_handle   Vertex_const_handle ;
   typedef typename Refs::Halfedge_handle       Halfedge_handle ;
   typedef typename Refs::Halfedge_const_handle Halfedge_const_handle ;
-
   typedef Halfedge_circulator_base< Halfedge_const_handle const
                                    ,Halfedge_circulator_around_vertex_access_policy
                                   >
@@ -142,21 +140,21 @@ public:
 protected:
   
   Straight_skeleton_vertex_base_base_2() : mID(-1) {}
-
-  Straight_skeleton_vertex_base_base_2 ( int aID, Point const& aP )
+  Straight_skeleton_vertex_base_base_2 ( int aID, Point_2 const& aP )
     :
       Base(aP)
     , mID(aID)
     , mTime(0.0)
-  {} 
+  {
+  } 
   
-  Straight_skeleton_vertex_base_base_2 ( int aID, Point const& aP, FT aTime )
+  Straight_skeleton_vertex_base_base_2 ( int aID, Point_2 const& aP, FT aTime )
     :
       Base(aP)
     , mID(aID)
     , mTime(aTime)
- {}
-
+ {
+ }
   
 public:
 
@@ -164,6 +162,10 @@ public:
   
   FT time() const { return mTime ; }
     
+  Halfedge_const_handle primary_bisector() const { return halfedge()->next(); }
+  
+  Halfedge_handle primary_bisector() { return halfedge()->next(); }
+  
   Halfedge_around_vertex_const_circulator incident_edges_begin() const
   {
     return Halfedge_around_vertex_const_circulator(halfedge()); 
@@ -173,7 +175,6 @@ public:
   {
     return Halfedge_around_vertex_circulator(halfedge()); 
   }
-
   Halfedge_across_incident_faces_const_circulator defining_borders_begin() const
   {
     return Halfedge_across_incident_faces_const_circulator(halfedge());
@@ -189,8 +190,8 @@ public:
   
 private:
 
-  int  mID ;
-  FT   mTime ;
+  int mID ;
+  FT  mTime ;
 };
 
 template < class Refs, class P, class N >
@@ -210,22 +211,18 @@ public:
 public:
   
   Straight_skeleton_vertex_base_2() {}
-
-  Straight_skeleton_vertex_base_2 ( int aID, Point const& aP )
+  Straight_skeleton_vertex_base_2 ( int aID, Point_2 const& aP )
     :
     Base(aID,aP)
   {} 
   
-  Straight_skeleton_vertex_base_2 ( int aID, Point const& aP, FT aTime )
+  Straight_skeleton_vertex_base_2 ( int aID, Point_2 const& aP, FT aTime )
     :
     Base(aID,aP,aTime)    
  {}
-
 protected:
-
   void set_halfedge( Halfedge_handle h ) { Base_base::set_halfedge(h) ; } 
 };
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_STRAIGHT_SKELETON_VERTEX_BASE_2_H //

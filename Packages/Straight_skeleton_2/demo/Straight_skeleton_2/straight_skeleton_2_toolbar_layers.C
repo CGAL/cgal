@@ -23,28 +23,27 @@
 #include "straight_skeleton_2_layers.h"
 
 // icons
-#include <CGAL/IO/pixmaps/ymonotone.xpm>
 #include <CGAL/IO/pixmaps/greene_approx.xpm>
 #include <CGAL/IO/pixmaps/show_polygon.xpm>
-#include <CGAL/IO/pixmaps/optimal_convex.xpm>
-#include <CGAL/IO/pixmaps/points.xpm>
 
 #include <qiconset.h>
 
-
-Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw,
-			       Ssds *p) : QToolBar(mw, "LT"),
+Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w
+                              ,QMainWindow *mw
+			      ,PolygonalRegion const& pr
+			      ,Ssds const& ss
+			      ) : QToolBar(mw, "LT"),
      nr_of_buttons(0)
   {
-    showP = new Qt_layer_show_polygon<Ssds>(*p);
-    showGA = new Qt_layer_show_skeleton<Ssds>(*p);
+    showP  = new Qt_layer_show_polygon<PolygonalRegion>(pr);
+    showSS = new Qt_layer_show_skeleton<Ssds>(ss);
 
     //set the widget
     widget = w;
     window = mw;
 
     widget->attach(showP);
-    widget->attach(showGA);
+    widget->attach(showSS);
 
 
 
@@ -56,7 +55,7 @@ Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw,
     but[0] = new QToolButton(this, "show_polygon");
     but[0]->setIconSet(set0);
     but[0]->setTextLabel("Show Simple Polygon");
-    but[1] = new QToolButton(this, "greene_approx");
+    but[1] = new QToolButton(this, "straight skeleton");
     but[1]->setIconSet(set1);
     but[1]->setTextLabel("Show Skeleton");
     
@@ -68,19 +67,20 @@ Layers_toolbar::Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw,
       but[i]->toggle();
       button_group->insert(but[i]);
     }
-    but[1]->toggle();
+    //but[1]->toggle();
     connect(but[0], SIGNAL(stateChanged(int)),
         showP, SLOT(stateChanged(int)));
     connect(but[1], SIGNAL(stateChanged(int)),
-        showGA, SLOT(stateChanged(int)));
+        showSS, SLOT(stateChanged(int)));
   }	
 
   Layers_toolbar::~Layers_toolbar()
   {
     delete showP;
-    delete showGA;
+    delete showSS;
     delete button_group;
   };
+
 
 #include "straight_skeleton_2_toolbar_layers.moc"
 
