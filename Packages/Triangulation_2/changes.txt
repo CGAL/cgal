@@ -1,6 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.96 (11/6/01)
+- readded a typedef for Triangulation suppressed by error
+in Triangulation_finite_vertices_iterator_2
+
 Ver 4.95 (11/6/01)
 - Try to solve a VCC compilation problem around the Iterator_project
   for Point_iterator
