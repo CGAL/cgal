@@ -59,8 +59,11 @@ typedef typename Triangulation_3::Vertex_handle Vertex_handle;
 typedef typename Triangulation_3::Cell_handle Cell_handle;
 
 void pp_tds_vertex(const TDSVertex*);
+void pp_tds_vertex(const TDSCell* c, int i);
 void pp_tds_edge(const TDSEdge);
+void pp_tds_edge(const TDSCell* c, int i, int j);
 void pp_tds_facet(const TDSFacet);
+void pp_tds_facet(const TDSCell* c, int i);
 void pp_tds_cell(const TDSCell*);
 
 void pp_point(const Point &);

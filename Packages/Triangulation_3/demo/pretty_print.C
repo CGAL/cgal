@@ -62,6 +62,11 @@ pp_tds_vertex(const TDSVertex* v)
 {
   cerr  << v->point() << endl;
 }
+void
+pp_tds_vertex(const TDSCell* c, int i)
+{
+  cerr  << c->vertex(i)->point() << endl;
+}
 
 void
 pp_tds_edge(const TDSEdge e)
@@ -69,9 +74,14 @@ pp_tds_edge(const TDSEdge e)
   cerr  << e.first->vertex(e.second)->point() << ", "
 	<< e.first->vertex(e.third)->point() << endl;
 }
-
 void
-pp_tds_3_facet(const TDSFacet f)
+pp_tds_edge(const TDSCell* c, int i, int j)
+{
+  cerr  << c->vertex(i)->point() << ", "
+	<< c->vertex(j)->point() << endl;
+}
+void
+pp_tds_facet(const TDSFacet f)
 {
   int i=f.second;
   if (i != 0) {
@@ -88,7 +98,23 @@ pp_tds_3_facet(const TDSFacet f)
   }
   cerr << endl;
 }
-
+void
+pp_tds_facet(const TDSCell* c, int i)
+{
+  if (i != 0) {
+  cerr  << c->vertex(0)->point() << ", " ;
+  }
+  if (i != 1) {
+  cerr  << c->vertex(1)->point() << ", " ;
+  }
+  if (i != 2) {
+    cerr  << c->vertex(2)->point() << ", " ;
+  }
+  if (i != 3) {
+    cerr  << c->vertex(3)->point() << ", " ;
+  }
+  cerr << endl;
+}
 void
 pp_tds_cell(const TDSCell* f)
 {
