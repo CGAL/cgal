@@ -3293,5 +3293,18 @@ CGAL_END_NAMESPACE
 
 #endif // CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION
 
+CGAL_BEGIN_NAMESPACE
+
+// adaptor for not/negation
+template < typename F > inline
+typename Compose< std::logical_not<typename F::result_type>, F >::Type
+negate(const F& f)
+{
+  return compose(std::logical_not<typename F::result_type>(), f);
+}
+
+CGAL_END_NAMESPACE
+
 #endif // CGAL_FUNCTIONAL_H //
+
 // EOF //

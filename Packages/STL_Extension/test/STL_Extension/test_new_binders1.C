@@ -1,5 +1,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/functional.h>
+#include <algorithm>
 
 using CGAL::set_arity_0;
 using CGAL::set_arity_1;
@@ -18,6 +19,8 @@ using CGAL::bind_4;
 using CGAL::bind_5;
 using CGAL::compose;
 using CGAL::compose_shared;
+using CGAL::negate;
+using std::equal_to;
 using std::cout;
 using std::endl;
 
@@ -213,6 +216,13 @@ int main()
   if (!(swap_3(f4)(1, 2, 3, 4) == f4(1, 2, 4, 3))) return 1;
   if (!(swap_3(f5)(1, 2, 3, 4, 5) == f5(1, 2, 4, 3, 5))) return 1;
   if (!(swap_4(f5)(1, 2, 3, 4, 5) == f5(1, 2, 3, 5, 4))) return 1;
+
+  // negate
+  equal_to<int> eq;
+  int a[] = {1,2,3,4,5,6,7};
+  int b[] = {2,1,4,5,3,6,8};
+  std::pair<int*,int*> pp = std::mismatch(a, a+7, b, negate(eq));
+  if (pp.first != a+5 || pp.second != b+5) return 1;
 
   // test combination
   cout << bind_1(swap_1(f2), 5)(1) << endl;

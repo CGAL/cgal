@@ -777,6 +777,26 @@
   
 \end{ccRefFunction}
 
+\begin{ccRefFunction}{negate}
+  \ccDefinition The function \ccRefName\ is a functor adaptor. For a
+  given functor $f$, it creates a new functor $f'$ which is the
+  negation of $f$. That is, $f' = !f$.
+
+  \ccInclude{CGAL/functional.h}
+  
+  \ccFunction{template < typename F > typename Compose<
+    std::logical_not<typename F::result_type>, F >::Type negate(const
+    F& f);}{returns the functor \ccc{!f} with the same arity as
+    \ccc{f}. \ccRequire \ccc{f} is a model for \ccc{AdaptableFunctor}.
+    Unary negation is defined for \ccc{F::result_type}. }
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Compose<F0,F1,F2,F3>}\\
+  \ccRefIdfierPage{CGAL::compose}\\
+  \ccRefConceptPage{AdaptableFunctor}
+  
+\end{ccRefFunction}
+
 \begin{ccRefClass}{Swap<F,i>}
   \ccDefinition The class \ccRefName\ is used to specify the type of a
   functor where the arguments \ccc{i} and \ccc{i+1} have been swapped.
