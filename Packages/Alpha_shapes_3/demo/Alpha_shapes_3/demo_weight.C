@@ -22,7 +22,15 @@ to the Alpha Shape.
 #include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Alpha_shape_3.h>
 
+#if ! defined(__BORLANDC__) && ! defined(_MSC_VER) && ! defined(__MWERKS__)
+#define GEOMVIEW_SUPPORT
+#endif
+
+#if defined(GEOMVIEW_SUPPORT)
 #include <CGAL/IO/Geomview_stream.h>
+#endif
+
+
 //#include <CGAL/IO/Triangulation_geomview_ostream_3.h>
 
 //Choose the better number type as possible
@@ -145,13 +153,14 @@ void set_alpha(Alpha_shape_3& A, int alpha_index)
 
 int main()
 {
+#if defined(GEOMVIEW_SUPPORT)
   CGAL::Geomview_stream gv(CGAL::Bbox_3(0,0,0, 2, 2, 2));
-  Alpha_shape_3 A;
-
   gv.set_line_width(4);
   gv.set_trace(false);
   gv.set_bg_color(CGAL::Color(0, 200, 200));
+#endif 
 
+  Alpha_shape_3 A;
   std::list<Wpoint> L;
   std::cout << "Enter a common weight for all points: ";
   coord_type w;
@@ -166,13 +175,19 @@ int main()
     while(n >= 0){
       std::cout << "Enter an alpha index (a < 0 -> quit): ";
       std::cin >> n; 
+#if defined(GEOMVIEW_SUPPORT)
       gv.clear();
       //gv << (Triangulation_3) A;
+#endif
       if (n == 0)
 	A.set_alpha(*A.find_optimal_alpha(2));
       else
-	set_alpha(A,n);      
+	set_alpha(A,n);
+#if defined(GEOMVIEW_SUPPORT)      
       gv << A;
+#else
+      std::cout << A << std::endl;
+#endif
     }
 
   return 0;
