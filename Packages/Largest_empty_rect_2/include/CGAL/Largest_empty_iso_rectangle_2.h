@@ -183,28 +183,120 @@ private:
 			const Point& py1);
   void tent(Point_data *first, Point_data *second);
   void tent(Point_data *first, Point_data *second, Point_data *third);
+
   void get_next_for_top(typename std::list<Point_data *>::iterator &iter,
-			typename std::list<Point_data *>::iterator &beyond);
-  void get_prev_for_top(typename std::list<Point_data *>::iterator &iter);
+			typename std::list<Point_data *>::iterator &beyond) {
+  while(iter != beyond && ((*iter)->type == BOT_RIGHT 
+			   || (*iter)->type == BOT_LEFT))
+    ++iter;
+  }
+ 
+
+  void get_prev_for_top(typename std::list<Point_data *>::iterator &iter){
+    while((*iter)->type == BOT_RIGHT || (*iter)->type == BOT_LEFT)
+      --iter;
+  }
+
   void get_next_for_bot(typename std::list<Point_data *>::iterator &iter,
-			typename std::list<Point_data *>::iterator &beyond);
-  void get_prev_for_bot(typename std::list<Point_data *>::iterator &iter);
-  void get_next_for_bot(typename Point_data_set_of_y::iterator &iter);
-  void get_next_for_bot(typename Point_data_set_of_y::iterator &iter,
-			typename Point_data_set_of_y::iterator &last);
-  void get_prev_for_bot(typename Point_data_set_of_y::iterator &iter);
+			typename std::list<Point_data *>::iterator &beyond){
+    while(iter != beyond && ((*iter)->type == TOP_LEFT 
+			     || (*iter)->type == TOP_RIGHT))
+      ++iter;
+  }
+
+  void get_prev_for_bot(typename std::list<Point_data *>::iterator &iter){
+    while((*iter)->type == TOP_LEFT || (*iter)->type == TOP_RIGHT)
+      --iter;
+  }
+
+
+  void get_next_for_bot(typename Point_data_set_of_y::iterator &iter){
+    while((*iter)->type == TOP_LEFT || (*iter)->type == TOP_RIGHT)
+      ++iter;
+  }
+ 
+ void get_next_for_bot(typename Point_data_set_of_y::iterator &iter,
+			typename Point_data_set_of_y::iterator &last){
+   while(iter != last && ((*iter)->type == TOP_LEFT 
+			  || (*iter)->type == TOP_RIGHT))
+     ++iter;
+ }
+
+  void get_prev_for_bot(typename Point_data_set_of_y::iterator &iter){
+    while((*iter)->type == TOP_LEFT || (*iter)->type == TOP_RIGHT)
+      --iter;
+  }
+
+
   void get_next_for_left(typename std::list<Point_data *>::iterator &iter,
-			 typename std::list<Point_data *>::iterator &beyond);
-  void get_prev_for_left(typename std::list<Point_data *>::iterator &iter);
+			 typename std::list<Point_data *>::iterator &beyond){
+    while(iter != beyond && ((*iter)->type == BOT_RIGHT 
+			     || (*iter)->type == TOP_RIGHT))
+      ++iter;
+  }
+
+  void get_prev_for_left(typename std::list<Point_data *>::iterator &iter){
+    while((*iter)->type == BOT_RIGHT || (*iter)->type == TOP_RIGHT)
+      --iter;
+  }
+
   void get_next_for_right(typename std::list<Point_data *>::iterator &iter,
-			  typename std::list<Point_data *>::iterator &beyond);
-  void get_prev_for_right(typename std::list<Point_data *>::iterator &iter);
+			  typename std::list<Point_data *>::iterator &beyond){
+  while(iter != beyond && ((*iter)->type == BOT_LEFT 
+			   || (*iter)->type == TOP_LEFT))
+    ++iter;
+  }
+
+
+  void get_prev_for_right(typename std::list<Point_data *>::iterator &iter){
+    while((*iter)->type == BOT_LEFT || (*iter)->type == TOP_LEFT)
+      --iter;
+  }
+
   void determine_first_two_iters(typename Point_data_set_of_y::iterator &iter1,
 				 typename Point_data_set_of_y::iterator &iter2,
 				 typename Point_data_set_of_y::iterator &iter3,
 				 bool &first_iter_is_right,
 				 bool &second_iter_is_right,
-				 bool &third_iter_is_right);
+				 bool &third_iter_is_right){
+  if(first_iter_is_right) {
+    if(second_iter_is_right) {
+      iter1 = iter2;
+      iter2 = iter3;
+      first_iter_is_right = second_iter_is_right;
+      second_iter_is_right = third_iter_is_right;
+    } else {
+      if(third_iter_is_right) {
+        iter1 = iter2;
+        iter2 = iter3;
+        first_iter_is_right = second_iter_is_right;
+        second_iter_is_right = third_iter_is_right;  
+      } else {
+        iter2 = iter3;
+        second_iter_is_right = third_iter_is_right;  
+      }
+    }
+  } else {
+    if(second_iter_is_right) {
+      if(third_iter_is_right) {
+        iter2 = iter3;
+        second_iter_is_right = third_iter_is_right;  
+      } else {
+        iter1 = iter2;
+        iter2 = iter3;
+        first_iter_is_right = second_iter_is_right;
+        second_iter_is_right = third_iter_is_right;  
+      }
+    } else {
+      iter1 = iter2;
+      iter2 = iter3;
+      first_iter_is_right = second_iter_is_right;
+      second_iter_is_right = third_iter_is_right;  
+    }
+  }
+}
+
+  
   void determine_next_iter(
 		    typename Point_data_set_of_y::iterator &iter,
 		    typename Point_data_set_of_y::iterator &right_iter,
@@ -212,20 +304,84 @@ private:
 		    typename Point_data_set_of_y::const_iterator right_iter_end,
 		    typename Point_data_set_of_y::const_iterator left_iter_end,
 		    bool &iter_is_right,
-		    bool &exist);
+		    bool &exist){
+  if((typename Point_data_set_of_y::const_iterator)right_iter 
+     != right_iter_end) {
+    if((typename Point_data_set_of_y::const_iterator)left_iter 
+       != left_iter_end) {
+      if(less_yx(*right_iter, *left_iter)) {
+        iter = right_iter;
+        iter_is_right = true;
+        ++right_iter;
+      } else {
+        iter = left_iter;
+        iter_is_right = false;
+        ++left_iter;
+      }
+    } else {
+      iter = right_iter;
+      iter_is_right = true;
+      ++right_iter;
+    }
+  } else { 
+    if((typename Point_data_set_of_y::const_iterator)left_iter 
+       != left_iter_end) {
+      iter = left_iter;
+      iter_is_right = false;
+      ++left_iter;
+     } else
+      exist = false;
+  }
+}
 
   void calls_for_tents(typename Point_data_set_of_y::iterator iter1,
-		       typename Point_data_set_of_y::iterator iter2);
+		       typename Point_data_set_of_y::iterator iter2){
+    if(less_xy(*iter1, *iter2))
+      tent(*iter1,*iter2);
+    else
+      tent(*iter2,*iter1);
+  }
+
+
   void calls_for_tents(typename Point_data_set_of_y::iterator iter1,
 		       typename Point_data_set_of_y::iterator iter2,
-		       typename Point_data_set_of_y::iterator iter3);
+		       typename Point_data_set_of_y::iterator iter3){
+  bool first_is_right_to_second = less_xy(*iter1, *iter2);
+  bool second_is_right_to_third = less_xy(*iter2, *iter3);
+
+  if(first_is_right_to_second) {
+    if(second_is_right_to_third) {
+      tent(*iter1,*iter2);
+      tent(*iter2,*iter3);
+    } else {
+      tent(*iter1,*iter3,*iter2);
+    }
+  } else {
+    if(second_is_right_to_third) {
+      tent(*iter2,*iter3,*iter1);
+    }
+    else {
+      tent(*iter2,*iter1);
+      tent(*iter3,*iter2);
+    }
+  }
+}
   void phase_2_update_y_sorted_list();
   void phase_3_check_for_larger(typename Point_data_set_of_y::iterator iter,
 				typename Point_data_set_of_y::iterator iter1,
 				typename Point_data_set_of_y::iterator iter2,
 				typename Point_data_set_of_y::iterator iter3,
 				bool first_iter_is_right,
-				bool second_iter_is_right);
+				bool second_iter_is_right){
+    if(first_iter_is_right) {
+      if(!second_iter_is_right)
+	check_for_larger((*iter2)->p, (*iter)->p, (*iter1)->p, (*iter3)->p);
+    } else
+      if(second_iter_is_right)
+	check_for_larger((*iter1)->p,(*iter)->p,(*iter2)->p,(*iter3)->p);
+  }
+  
+
   void empty_tents();
   void update();
   void init(const Point& bl, const Point& tr);
@@ -595,6 +751,7 @@ Largest_empty_iso_rectangle_2<T>::tent(Point_data *first,
     third->left_tent->insert(first);
 }
 
+/*
 template<class T>
 void 
 Largest_empty_iso_rectangle_2<T>::get_next_for_top(
@@ -703,6 +860,7 @@ Largest_empty_iso_rectangle_2<T>::get_prev_for_right(
   while((*iter)->type == BOT_LEFT || (*iter)->type == TOP_LEFT)
     --iter;
 }
+*/
 
 template<class T>
 void 
@@ -902,7 +1060,7 @@ Largest_empty_iso_rectangle_2<T>::phase_2()
   phase_2_on_bot();
 }
 
-
+/*
 template<class T>
 void 
 Largest_empty_iso_rectangle_2<T>::determine_next_iter(
@@ -943,6 +1101,7 @@ Largest_empty_iso_rectangle_2<T>::determine_next_iter(
   }
 }
 
+
 template<class T>
 void 
 Largest_empty_iso_rectangle_2<T>::phase_3_check_for_larger(
@@ -960,6 +1119,7 @@ Largest_empty_iso_rectangle_2<T>::phase_3_check_for_larger(
     if(second_iter_is_right)
       check_for_larger((*iter1)->p,(*iter)->p,(*iter2)->p,(*iter3)->p);
 }
+
 
 template<class T>
 void 
@@ -1000,7 +1160,7 @@ Largest_empty_iso_rectangle_2<T>::calls_for_tents(
   else
     tent(*iter2,*iter1);
 }
-
+*/
 template<class T>
 void 
 Largest_empty_iso_rectangle_2<T>::phase_3()
@@ -1239,7 +1399,7 @@ Largest_empty_iso_rectangle_2<T>::clear()
   insert(Point(tr_p.x(),tr_p.y()),TOP_RIGHT);
 }
 
-
+/*
 template<class T>
 void 
 Largest_empty_iso_rectangle_2<T>::determine_first_two_iters(
@@ -1286,7 +1446,7 @@ Largest_empty_iso_rectangle_2<T>::determine_first_two_iters(
     }
   }
 }
-
+*/
 
 CGAL_END_NAMESPACE
     
