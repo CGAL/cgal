@@ -133,7 +133,7 @@ bool is_strongly_convex_3(Polyhedron& P, const Traits& traits)
   }
 
   // Check 3 :  see if a ray from the interior point to a point in the
-  // middle of one of the facets intersects any ohter facets 
+  // middle of one of the facets intersects any other facets 
   typename Traits::Construct_ray_3 construct_ray = 
             traits.construct_ray_3_object();
   typename Traits::Construct_triangle_3 construct_triangle = 
@@ -170,7 +170,7 @@ bool is_strongly_convex_3(Polyhedron& P, const Traits& traits)
 }
 
 template<class Polyhedron, class R>
-bool CGAL_is_strongly_convex_3(Polyhedron& P, Point_3<R>)
+bool CGAL_is_strongly_convex_3(Polyhedron& P, Point_3<R>*)
 { 
   return is_strongly_convex_3(P, R());
 }
