@@ -162,8 +162,7 @@ sufficient for practical cases.
 \section{Delaunay Triangulation} 
 
 The class \ccc{Delaunay_triangulation_3} represents a three-dimensional
-Delaunay triangulation.  This implementation is fully dynamic: it
-supports both insertions of points and vertex removal.
+Delaunay triangulation.
 
 Delaunay triangulations have the specific \textit{empty sphere property},
 that is, the circumscribing sphere of each cell of such a triangulation
@@ -172,6 +171,8 @@ These triangulations are uniquely defined except in degenerate cases
 where five points are cospherical.  Note however that the \cgal\ implementation
 computes a unique triangulation even in these cases.
 
+This implementation is fully dynamic: it supports both insertions of points
+and vertex removal.
 The user is advised to use the class \ccc{Triangulation_hierarchy_3} in
 order to benefit from an increased efficiency for large data sets. 
 
