@@ -40,7 +40,7 @@ Geomview_stream::Geomview_stream(const Bbox_3 &bbox,
       segment_count(0), point_count(0), tetrahedron_count(0),
       vertex_color(BLACK), edge_color(BLACK), face_color(BLACK),
       trace_flag(false), binary_flag(false),
-      line_width_(1)
+      line_width(1)
 {
     setup_geomview(machine, login);
     frame(bbox);
@@ -135,8 +135,8 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
 void
 Geomview_stream::pickplane(const Bbox_3 &bbox)
 {
-    (*this) << binary
-            << "(geometry pickplane {QUAD BINARY\n"
+    set_binary_mode();
+    (*this) << "(geometry pickplane {QUAD BINARY\n"
             << 1
     // here are the four corners
             << bbox.xmin() << bbox.ymin() << bbox.zmin()
@@ -145,15 +145,8 @@ Geomview_stream::pickplane(const Bbox_3 &bbox)
             << bbox.xmax() << bbox.ymin() << bbox.zmin()
 
     // close the text bracket
-            << "}) (pickable pickplane no)"
-            << ascii;
-}
-
-Geomview_stream&
-Geomview_stream::operator<<(Geomview_stream&(*fct)(Geomview_stream&))
-{
-  (*fct)(*this);
-  return *this;
+            << "}) (pickable pickplane no)";
+    set_ascii_mode();
 }
 
 void
@@ -218,8 +211,8 @@ Geomview_stream::operator<<(double d)
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Bbox_2 &bbox)
 {
-    gv << ascii
-       << "(geometry Bbox" << gv.bbox_count++
+    gv.set_ascii_mode();
+    gv << "(geometry Bbox" << gv.bbox_count++
        << " {VECT 1 5 0 5 0 ";
     // here are the four corners
 
@@ -238,8 +231,8 @@ operator<<(Geomview_stream &gv, const Bbox_2 &bbox)
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Bbox_3 &bbox)
 {
-    gv << ascii
-       << "(geometry Bbox" << gv.bbox_count++
+    gv.set_ascii_mode();
+    gv << "(geometry Bbox" << gv.bbox_count++
        << " {appearance {material {edgecolor "
        << gv.ecr() << gv.ecg() << gv.ecb() <<  "}}{SKEL 8 4 "
     // here are the corners
@@ -266,8 +259,8 @@ operator<<(Geomview_stream &gv, const Bbox_3 &bbox)
 void
 Geomview_stream::set_bg_color(const Color &c)
 {
-    *this << ascii
-          << "(backcolor \"Camera\" "
+    set_ascii_mode();
+    *this << "(backcolor \"Camera\" "
           << double(c.r())/255.0
           << double(c.g())/255.0
           << double(c.b())/255.0
@@ -380,9 +373,9 @@ Geomview_stream::fcb() const
 void
 Geomview_stream::frame(const Bbox_3 &bbox)
 {
-    (*this) << bbox
-            << ascii
-            << "(look-recenter g0 c0)";
+    (*this) << bbox;
+    set_ascii_mode();
+    (*this) << "(look-recenter g0 c0)";
 }
 
 Geomview_stream&
