@@ -66,7 +66,7 @@ public:
   typedef Pmwx_sweep_line_event<Traits, CurveWrap> Self;
 
   typedef CurveWrap SubCurve;
-  typedef typename std::list<SubCurve *> SubcurveContainer;
+  typedef std::list<SubCurve *> SubcurveContainer;
   typedef typename SubcurveContainer::iterator SubCurveIter;
 
   typedef typename CurveWrap::PmwxInsertInfo PmwxInsertInfo;
