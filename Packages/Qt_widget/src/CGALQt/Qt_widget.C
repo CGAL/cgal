@@ -40,6 +40,7 @@ Qt_widget::Qt_widget(QWidget *parent, const char *name) :
   ymax = 1;
   constranges=false;
   set_scales();
+  emit(rangesChanged());
 
   // initialize the pixmap and the painter
   painter = new QPainter;
