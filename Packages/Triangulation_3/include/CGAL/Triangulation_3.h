@@ -785,7 +785,6 @@ public:
 		 Cell_handle c = Cell_handle(),
 		 int dummy_for_windows = 0) const;
 
-
   void
   incident_vertices(Vertex_handle v, 
 		    std::set<Vertex*> & vertices,
@@ -2782,6 +2781,7 @@ incident_cells(Vertex_handle v,
 	       Cell_handle c,
 	       int dummy_for_windows) const
 {
+  bool WARNING_THIS_FUNCTION_IS_DEPRECATED;
   CGAL_triangulation_precondition( &(*v) != NULL );
   CGAL_triangulation_expensive_precondition( _tds.is_vertex(&(*v)) );
 
@@ -2839,6 +2839,7 @@ incident_vertices(Vertex_handle v,
 		  Cell_handle c,
 		  int dummy_for_windows) const
 {
+  bool WARNING_THIS_FUNCTION_IS_DEPRECATED;
   CGAL_triangulation_precondition( &(*v) != NULL );
   CGAL_triangulation_expensive_precondition( _tds.is_vertex(&(*v)) );
       
@@ -2887,14 +2888,14 @@ util_incident_vertices(Vertex_handle v,
 		       Cell_handle c,
 		       int dummy_for_windows) const
 {
+  bool WARNING_THIS_FUNCTION_IS_DEPRECATED;
   if ( cells.find( &(*c) ) != cells.end() ) {
     return; // c was already visited
   }
   cells.insert( &(*c) );
 
   int d = dimension();
-  int j;
-  for ( j=0; j <= d; j++ )
+  for (int j=0; j <= d; j++ )
     if ( j != c->index(v) ) {
       if ( vertices.find( &(*(c->vertex(j))) ) == vertices.end() )
 	vertices.insert( &(*(c->vertex(j))) );
@@ -2917,8 +2918,7 @@ util_incident_vertices(Vertex_handle v,
   cells.insert( c );
 
   int d = dimension();
-  int j;
-  for ( j=0; j <= d; j++ )
+  for (int j=0; j <= d; j++ )
     if ( j != c->index(v) ) {
       if ( vertices.find( c->vertex(j) ) == vertices.end() )
 	vertices.insert( c->vertex(j) );
