@@ -15,6 +15,10 @@ Version 6.0 (?? ????? 00)
   We now do the same reasonnable thing as in the homogeneous kernel.
 - Got rid of empty useless destructors.
 - Changed ptr-> access to Ptr()-> .
+- Removed Cartesian_2 and Cartesian_3.
+- Handle and Representation specification come now from Cartesian<>,
+  so that we can customize them easily.
+- A few fixes for the advanced kernel.
 - Various cleanups.
 
 --- CGAL 2.2 is out ---
