@@ -107,7 +107,7 @@ public:
   // CONFLICTS
   bool test_conflict(Face_handle fh, const Point& p) const; //deprecated
   bool test_conflict(const Point& p, Face_handle fh) const;
-  void find_conflicts(const Point& p, std::list<Edge>& le,          //deprecated
+  void find_conflicts(const Point& p, std::list<Edge>& le,  //deprecated
 		      Face_handle hint= Face_handle()) const;
   //  //template member functions, declared and defined at the end 
   // template <class Out_it1, class Out_it2> 

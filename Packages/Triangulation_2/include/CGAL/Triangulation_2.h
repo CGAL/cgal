@@ -943,8 +943,8 @@ insert_outside_convex_hull_2(const Point& p, Face_handle f)
   while(! done){
     fc++;
     li = fc->index(infinite_vertex());
-    const Point& q = fc->vertex(ccw(li))->point();
-    const Point& r = fc->vertex(cw(li))->point();
+     const Point& q = fc->vertex(ccw(li))->point();
+     const Point& r = fc->vertex(cw(li))->point();
     if(orientation(p,q,r) == LEFTTURN ) { cwlist.push_back(&(*fc));}
     else {done=true;}
   }
@@ -1363,12 +1363,15 @@ fill_hole_delaunay(std::list<Edge> & first_hole)
       ff = (hole.front()).first;
       ii =(hole.front()).second;
       hole.pop_front();
-  
-  
-      Vertex_handle v0 = ff->vertex(ff->cw(ii)); const Point& p0 = v0->point();
-      Vertex_handle v1 = ff->vertex(ff->ccw(ii)); const Point& p1 = v1->point();
-      Vertex_handle v2 = infinite_vertex(); Point p2;
-      Vertex_handle vv; Point p;
+    
+      Vertex_handle v0 = ff->vertex(ff->cw(ii)); 
+      Vertex_handle v1 = ff->vertex(ff->ccw(ii)); 
+      Vertex_handle v2 = infinite_vertex(); 
+      const Point& p0 = v0->point();
+      const Point& p1 = v1->point();
+      Point p2;
+      Point p;
+      Vertex_handle vv; 
   
       typename Hole::iterator hdone = hole.end();
       hit =  hole.begin();

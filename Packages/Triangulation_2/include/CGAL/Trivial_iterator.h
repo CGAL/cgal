@@ -153,13 +153,19 @@ public:
   reference operator*() const { return *base_;  }
   pointer operator->() const  { return &*base_; }
 
-  bool operator==(const Comparable_iterator &b) const { return base()==b.base(); }
-  bool operator!=(const Comparable_iterator &b) const { return base()!=b.base(); }
+  bool operator==(const Comparable_iterator &b) const 
+    { return base()==b.base(); }
+  bool operator!=(const Comparable_iterator &b) const  
+    { return base()!=b.base(); }
 
-  bool operator< (const Comparable_iterator &b) const { return base()< b.base(); }
-  bool operator> (const Comparable_iterator &b) const { return base()> b.base(); }
-  bool operator<=(const Comparable_iterator &b) const { return base()<=b.base(); }
-  bool operator>=(const Comparable_iterator &b) const { return base()>=b.base(); }
+  bool operator< (const Comparable_iterator &b) const  
+    { return base()< b.base(); }
+  bool operator> (const Comparable_iterator &b) const  
+    { return base()> b.base(); }
+  bool operator<=(const Comparable_iterator &b) const  
+    { return base()<=b.base(); }
+  bool operator>=(const Comparable_iterator &b) const  
+    { return base()>=b.base(); }
 
 private:
   const Iterator & base() const { return base_; }

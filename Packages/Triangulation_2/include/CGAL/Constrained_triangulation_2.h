@@ -253,7 +253,9 @@ public:
   // the following fonctions are overloaded 
   // to take care of constraint marks 
   template<class EdgeIt>
-  Vertex_handle star_hole( const Point& p, EdgeIt edge_begin,  EdgeIt edge_end){
+  Vertex_handle star_hole( const Point& p, 
+			   EdgeIt edge_begin,  
+			   EdgeIt edge_end) {
     std::list<Face_handle> empty_list;
     return star_hole(p, 
 		     edge_begin, 
