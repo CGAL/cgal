@@ -1,3 +1,6 @@
+5.159 (03 Oct 2003) [rursu]
+- Provided a direct way to perform snapping when entering new segments
+
 5.155 (30 Sep 2003) [af]
 - Moved \chapter to main.tex
 
