@@ -486,6 +486,33 @@ public:
     }
   }
 
+  void reset_sm_object_list(Object_list& L)
+  { Object_iterator oit;
+    CGAL_nef3_forall_iterators(oit,L) reset_sm_iterator_hash(oit);
+    L.clear();
+  }
+
+  void reset_sm_iterator_hash(Object_iterator it)
+  { SVertex_handle sv;
+    SHalfedge_handle se;
+    SHalfloop_handle sl;
+    if ( assign(se,*it) ) { 
+      if( is_sm_boundary_object(se)) 
+	undef_sm_boundary_item(se); 
+      return; 
+    }
+    if ( assign(sl,*it) ) { 
+      if( is_sm_boundary_object(sl)) 
+	undef_sm_boundary_item(sl);
+      return; 
+    }
+    if ( assign(sv,*it) ) { 
+      if( is_sm_boundary_object(sv)) 
+	undef_sm_boundary_item(sv); 
+      return; 
+    }
+  }
+
   void reset_object_list(Object_list& L)
   { Object_iterator oit;
     CGAL_nef3_forall_iterators(oit,L) reset_iterator_hash(oit);
@@ -607,6 +634,15 @@ public:
            number_of_sfaces() == 0;
   }
 
+  bool has_bbox_only() const  {
+  /*{\Mop returns true if |\Mvar| is empty, false otherwise.}*/
+    return (number_of_vertices() == 8 &&
+	    number_of_halfedges() == 12 &&
+	    number_of_halffacets() == 6 &&
+	    number_of_volumes() == 2 &&
+	    (++volumes_begin())->mark_ == false);
+  }
+
   Vertex_handle new_vertex(const Point_3& p = Point_3(), Mark m = Mark())
   /*{\Mop returns a new vertex at point |p| marked by |m|.}*/ { 
     Vertex_handle vh = new_vertex_only();
@@ -678,7 +714,8 @@ public:
   void delete_halffacet_pair(Halffacet_handle f)
   /*{\Mop deletes the halffacet pair |f,twin(f)|. Does not care about
   boundary cycle objects.}*/ { 
-    TRACEN("~ deleting halffacets pair "<<&*f<<", "<<&*(f->twin_)<<" from "<<&*this);
+    TRACEN("~ deleting halffacets pair "<<&*f<<", "<<&*(f->twin_)<<
+	   " from "<<&*this);
     reset_object_list(f->boundary_entry_objects_);
     reset_object_list(f->twin_->boundary_entry_objects_);
     delete_halffacet_only(f->twin_);
@@ -772,33 +809,41 @@ public:
 
   Vertex_handle new_vertex_only() { 
     vertices_.push_back( * get_vertex_node(Vertex()));
+    TRACEN("  new vertex only "<<&*(--vertices_end()));
     return --vertices_end(); 
   }
   Halfedge_handle new_halfedge_only(Halfedge_handle e)  { 
+    TRACEN("  new halfedge only after "<<&*e);
     return halfedges_.insert(e, * get_halfedge_node(Halfedge()));
   }
   Halfedge_handle new_halfedge_only()  { 
+    TRACEN("  new halfedge only "<<&*(--halfedges_end()));
     halfedges_.push_back( * get_halfedge_node(Halfedge()));
     return --halfedges_end();
   }
   Halffacet_handle new_halffacet_only()  { 
     halffacets_.push_back( * get_halffacet_node(Halffacet()));
+    TRACEN("  new halffacet only "<<&*(--halffacets_end()));
     return --halffacets_end(); 
   } 
   Volume_handle new_volume_only()  { 
     volumes_.push_back( * get_volume_node(Volume()));
+    TRACEN("  new volume only "<<&*(--volumes_end()));
     return --volumes_end(); 
   }
   SHalfedge_handle new_shalfedge_only()  {
     shalfedges_.push_back( * get_shalfedge_node(SHalfedge()));
+    TRACEN("  new shalfedge only "<<&*(--shalfedges_end()));
     return --shalfedges_end();
   }
   SHalfloop_handle new_shalfloop_only()  {
     shalfloops_.push_back( * get_shalfloop_node(SHalfloop()));
+    TRACEN("  new shalfloop only "<<&*(--shalfloops_end()));
     return --shalfloops_end(); 
   }
   SFace_handle new_sface_only() {
     sfaces_.push_back( * get_sface_node(SFace()));
+    TRACEN("  new sface only "<<&*(--sfaces_end()));
     return --sfaces_end(); 
   }
 
@@ -1031,7 +1076,7 @@ public:
     SFace_iterator sf;
     CGAL_nef3_forall_sfaces( sf, *this) {
       hash_sface[sf] = uf_sface.make_set(sf);
-      reset_object_list(sf->boundary_entry_objects_);
+      reset_sm_object_list(sf->boundary_entry_objects_);
     }
     
     /* 

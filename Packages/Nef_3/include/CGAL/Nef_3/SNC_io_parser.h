@@ -257,6 +257,7 @@ void SNC_io_parser<EW>::print() const
   out << "/* SFace: index { fclist, ivlist, sloop, volume } */" << std::endl;
   SFace_iterator sf;
   CGAL_nef3_forall_sfaces(sf,*sncp()) print_sface(sf);
+  out << "/* end Selective Nef complex */" << std::endl;
 }
 
 template <typename EW>

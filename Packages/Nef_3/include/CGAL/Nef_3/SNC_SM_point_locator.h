@@ -185,26 +185,39 @@ public:
   { TRACEN("locate naivly "<<p);
     SVertex_const_iterator v;
     CGAL_nef3_forall_svertices(v,*this) {
-      if ( p == point(v) ) return SObject_handle(v);
+      if ( p == point(v) ) {
+	TRACEN( "  on point"); 
+	return SObject_handle(v);
+      }
     }
 
     SHalfedge_const_iterator e;
     CGAL_nef3_forall_sedges(e,*this) {
-      if ( segment(e).has_on(p) ) return SObject_handle(e);
+      if ( segment(e).has_on(p) ) {
+	TRACEN( "  on segment"); 
+	return SObject_handle(e);
+      }
     }
-    if ( has_loop() && circle(shalfloop()).has_on(p) )
-      return SObject_handle(shalfloop());
+    if ( has_loop() && circle(shalfloop()).has_on(p) ) {
+      TRACEN( "  on loop"); 
+      SHalfloop_const_handle l = shalfloop();
+      return SObject_handle(l);
+    }
 
     // now in face:
 
-    if ( number_of_svertices() == 0 && ! has_loop() ) 
-      return SObject_handle(sfaces_begin());
+    if ( number_of_svertices() == 0 && ! has_loop() ) {
+      TRACEN("  on unique face");
+      SFace_const_handle f = sfaces_begin();
+      return SObject_handle(f);
+    }
 
     SVertex_const_handle v_res;
     SHalfedge_const_handle e_res;
     SHalfloop_const_handle l_res;
     SOLUTION solution;
 
+    TRACEN("  on face...");
     Sphere_segment s; // we shorten the segment iteratively
     if ( has_loop() ) {
       Sphere_circle c(circle(shalfloop()),p); // orthogonal through p
@@ -212,6 +225,7 @@ public:
       l_res = circle(shalfloop()).has_on_positive_side(p) ? 
 	shalfloop() : twin(shalfloop());
       solution = is_loop_;
+      TRACEN("has loop, initial ray "<<s);
     } else { // has vertices !
       CGAL_nef3_assertion( number_of_svertices()!=0 );
       SVertex_const_handle vt = svertices_begin();
@@ -223,14 +237,15 @@ public:
 	 when they are antipodal */
       v_res = vt;
       solution = is_vertex_;
+      TRACEN("has vertices, initial ray "<<s);
     }
 
     // s now initialized
     
-    Sphere_direction dso(s.sphere_circle().opposite()), d_res;
+    Sphere_direction dso(s.sphere_circle().opposite());
     Unique_hash_map<SHalfedge_const_handle,bool> visited(false);
     CGAL_nef3_forall_svertices(v,*this) {
-      Sphere_point p_res, vp = point(v);
+      Sphere_point vp = point(v);
       if ( s.has_on(vp) ) {
         TRACEN(" location via vertex at "<<vp);
         s = Sphere_segment(p,vp,s.sphere_circle()); // we shrink the segment
@@ -397,7 +412,8 @@ void SNC_SM_point_locator<D>::init_marks_of_halfspheres()
   Sphere_point y_minus(0,-1,0);
   SObject_handle h = locate(y_minus);
   SFace_const_handle f;
-  if ( CGAL::assign(f,h) ) {
+  if ( CGAL::assign(f,h) ) { 
+    TRACEN("on face ");
     mark_of_halfsphere(-1) = mark_of_halfsphere(+1) = mark(f);
     return;
   }

@@ -36,7 +36,7 @@
 #include <CGAL/normal_vector_newell_3.h>
 
 #undef _DEBUG
-#define _DEBUG 5
+#define _DEBUG 29
 #include <CGAL/Nef_3/debug.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -75,6 +75,8 @@ struct Facet_plane_3 {
     Circulator point_cir( f.facet_begin());
     Vector plane_orthogonal_vector;
     normal_vector_newell_3( point_cir, point_cir, plane_orthogonal_vector);
+    TRACEN( *point_cir);
+    TRACEN(Plane( *point_cir, Direction( plane_orthogonal_vector)));
     return( Plane( *point_cir, Direction( plane_orthogonal_vector)));
   }
 };
@@ -96,12 +98,17 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
   typedef typename SNC_structure::Sphere_segment     Sphere_segment;
   typedef typename SNC_structure::Sphere_circle      Sphere_circle;
                                   
+  TRACEN("  calculating facet's planes...");
   std::transform( P.facets_begin(), P.facets_end(),
 		  P.planes_begin(), Facet_plane_3());
   /* determine the plane of polyhedron's facet */
-  // CGAL::set_pretty_mode( std::cout);
-  // std::copy( P.planes_begin(), P.planes_end(), std::ostream_iterator
-  //     < typename Polyhedron::Plane_3>( std::cout, "\n"));
+  std::copy( P.planes_begin(), P.planes_end(), std::ostream_iterator
+	     < typename Polyhedron::Plane_3>( std::cout, "\n"));
+  for( typename Polyhedron::Plane_iterator pi = P.planes_begin();
+       pi != P.planes_end();
+       pi++)
+    TRACEN(*pi);
+  TRACEN("  end facet's planes");
 
   SNC_decorator D(S);
     

@@ -795,7 +795,8 @@ subdivide(Vertex_handle v0, Vertex_handle v1)
   SVertex_iterator svi;
   for( svi=svertices_begin(); svi!=svertices_end(); svi++) {
     GenPtr i = info(svi);
-    TRACEN("vertex "<<point(svi)<<" info "<<i);
+    TRACEN("vertex "<<point(svi)<<" info "<<i<<
+	   " marks "<<mark(svi,0)<<" "<<mark(svi,1));
   }
 
   typedef typename PHS_traits::INPUT Input_range;
@@ -814,12 +815,6 @@ subdivide(Vertex_handle v0, Vertex_handle v1)
   // v = first vertex of CC in negative x-sphere
   // e = first edge of CC in negative x-sphere
    
-  /* DEBUG CODE: to do: have all svertices a halfedge below associated? */
-  TRACEN("Vertex info after swep");
-  for( svi=svertices_begin(); svi!=svertices_end(); svi++) {
-    GenPtr i = info(svi);
-    TRACEN("vertex "<<point(svi)<<" info "<<i);
-  }
   create_face_objects(shalfedges_begin(), e, svertices_begin(), v, O,
                       PH_geometry());
   create_face_objects(e, shalfedges_end(), v, svertices_end(), O,
@@ -832,10 +827,16 @@ subdivide(Vertex_handle v0, Vertex_handle v1)
     circle(twin(u)) = s.sphere_circle().opposite();
   }
 
-
-
   complete_face_support(svertices_begin(), v, O, +1);
   complete_face_support(v, svertices_end(), O, -1);
+
+  /* DEBUG CODE: to do: have all svertices a halfedge below associated? */
+  TRACEN("Vertex info after swep");
+  for( svi=svertices_begin(); svi!=svertices_end(); svi++) {
+    GenPtr i = info(svi);
+    TRACEN("vertex "<<point(svi)<<" info "<<i<<
+	   " marks "<<mark(svi,0)<<" "<<mark(svi,1));
+  }
 
   merge_halfsphere_maps(svertices_begin(),v,O);
   check_integrity_and_topological_planarity();
@@ -1170,10 +1171,6 @@ void SNC_SM_overlayer<Refs_>::simplify() const
         set_face(source(e),face(e));
       if ( is_closed_at_source(twin(e)) ) 
         set_face(target(e),face(e));
-      if( is_boundary_object(e))
-	sncp()->undef_sm_boundary_item(e);
-      if( is_boundary_object(twin(e)))
-	sncp()->undef_sm_boundary_item(twin(e));
       delete_edge_pair(e);
     }
   }

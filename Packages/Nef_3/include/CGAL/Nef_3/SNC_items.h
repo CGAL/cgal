@@ -252,19 +252,22 @@ public:
     }*/
 
     void clear_local_graph() 
-    /*{\Xop clears the local graph.}*/
-    { if ( shalfloop() != sncp()->shalfloops_end() ) {
+    /*{\Xop clears the local graph.}*/ { 
+      SFace_iterator fit = sfaces_begin(),
+                     fend = sfaces_end();
+      while (fit != fend) {
+        SFace_iterator fdel = fit++;
+	/* TO VERIFY: next statement needs access to a private attribute */
+	sncp()->reset_sm_object_list(fdel->boundary_entry_objects_);
+        sncp()->delete_sface_only(fdel);
+      }
+      sfaces_begin_ = sfaces_last_ = sncp()->sfaces_end();
+
+      if ( shalfloop() != sncp()->shalfloops_end() ) {
         sncp()->delete_shalfloop_only(shalfloop_->twin_);
         sncp()->delete_shalfloop_only(shalfloop_);
         shalfloop_ = sncp()->shalfloops_end();
       }
-      SVertex_iterator vit = svertices_begin(),
-                       vend = svertices_end();
-      while (vit != vend) {
-        SVertex_iterator vdel = vit++;
-        sncp()->delete_halfedge_only(vdel);
-      }
-      svertices_begin_ = svertices_last_ = sncp()->halfedges_end();
 
       SHalfedge_iterator eit = shalfedges_begin(),
                          eend = shalfedges_end();
@@ -274,15 +277,13 @@ public:
       }
       shalfedges_begin_ = shalfedges_last_ = sncp()->shalfedges_end();
 
-      SFace_iterator fit = sfaces_begin(),
-                     fend = sfaces_end();
-      while (fit != fend) {
-        SFace_iterator fdel = fit++;
-	/* TO VERIFY: next statement needs access to a private attribute */
-	sncp()->reset_object_list(fdel->boundary_entry_objects_);
-        sncp()->delete_sface_only(fdel);
+      SVertex_iterator vit = svertices_begin(),
+                       vend = svertices_end();
+      while (vit != vend) {
+        SVertex_iterator vdel = vit++;
+        sncp()->delete_halfedge_only(vdel);
       }
-      sfaces_begin_ = sfaces_last_ = sncp()->sfaces_end();
+      svertices_begin_ = svertices_last_ = sncp()->halfedges_end();
     }
 
     Point_3& point() { return point_at_center_; }
@@ -301,8 +302,7 @@ public:
 	<<&*sfaces_begin_    <<", "<<&*sfaces_last_    <<", "
 	<<&*shalfloop_       <<", "
 	<<m_neg_<<", "<<m_pos_<<", "<<info_<<" }";
-      std::string res(os.str());
-      return res;
+      return os.str();
     }
 
   }; // Vertex
@@ -381,8 +381,7 @@ public:
     { std::stringstream os; 
       set_pretty_mode(os);
       os<<"sv [ "<<tmp_point()<<info_<<" ] ";
-      std::string res(os.str());
-      return res;
+      return os.str();
     }
 
     bool is_twin() const { return (&*twin_ < this); }
@@ -624,8 +623,7 @@ public:
       set_pretty_mode(os); 
       os <<"e[ "<<source_->debug()<<", "
          <<twin_->source_->debug()<<" "<<info_<<" ] ";
-      std::string res(os.str());
-      return res;
+      return os.str();
     }
 
   }; // SHalfedge
@@ -699,8 +697,7 @@ public:
     { std::stringstream os; 
       set_pretty_mode(os); 
       os<<"sl [ "<<tmp_circle()<<" ] ";
-      std::string res(os.str());
-      return res;
+      return os.str();
     }
 
   }; // SHalfloop

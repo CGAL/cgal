@@ -42,7 +42,7 @@
 #include <CGAL/Nef_3/SNC_SM_const_decorator.h>
 #include <CGAL/Nef_3/SNC_SM_io_parser.h>
 #undef _DEBUG
-#define _DEBUG 137
+#define _DEBUG 73
 #include <CGAL/Nef_3/debug.h>
 
 #ifndef CGAL_USE_LEDA

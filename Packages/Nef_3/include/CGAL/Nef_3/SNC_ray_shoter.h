@@ -47,7 +47,7 @@
 #include <map>
 #include <list>
 #undef _DEBUG
-#define _DEBUG 43
+#define _DEBUG 37
 #include <CGAL/Nef_3/debug.h>
 
 #define IMMN 12345

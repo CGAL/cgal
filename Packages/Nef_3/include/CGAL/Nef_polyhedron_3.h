@@ -346,15 +346,8 @@ public:
   full space if |space == COMPLETE|.}*/
 
   bool is_empty() //const
-  /*{\Mop returns true if |\Mvar| is empty, false otherwise.}*/
-  { //SNC_structure snc_non_const = snc(); // const_decorator not implemented
-    SNC_decorator D(snc());
-    Volume_iterator v = D.volumes_begin(); // it should be const_iterator
-    return (D.number_of_vertices()==8 &&
-	    D.number_of_edges()==12 &&
-	    D.number_of_facets()==6 &&
-	    D.number_of_volumes()==2 &&
-	    D.mark(++v) == false);
+    /*{\Mop returns true if |\Mvar| is empty, false otherwise.}*/ {
+    return snc()->has_bbox_only();
   }
 
   bool is_space() //const
@@ -451,11 +444,11 @@ public:
 
   Nef_polyhedron_3<T> intersection(Nef_polyhedron_3<T>& N1)
     /*{\Mop returns |\Mvar| $\cap$ |N1|. }*/ {
-    SNC_decorator D(snc());
     AND _and;
-    SNC_structure res_snc = D.binary_operation( N1.snc(), _and); //copy?
-    //SNC_io_parser::dump( res_snc);
-    Nef_polyhedron_3<T> res(res_snc, false);
+    SNC_structure rsnc;
+    SNC_decorator D(snc());
+    D.binary_operation( N1.snc(), _and, rsnc);
+    Nef_polyhedron_3<T> res(rsnc);
     res.clear_box_marks();
     return res;
   }
@@ -677,7 +670,7 @@ Nef_polyhedron_3(const Plane_3& h, Boundary b) : Base(Nef_rep()) {
 template <typename T>
 Nef_polyhedron_3<T>::
 Nef_polyhedron_3(const SNC_structure& W, bool clone) : Base(Nef_rep()) {
-  TRACEN("construction from an existing nef3");
+  TRACEN("construction from an existing SNC structure");
   if (clone) { 
     snc() = W;
   }

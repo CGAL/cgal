@@ -138,7 +138,7 @@ representation. This is done by dividing all Pluecker
 coefficients by their common gcd.}*/
 { RT D = c_[0];
   for(int i=1; i<6; ++i) 
-    D = (c_[i]==0 ? D : gcd(D, c_[i]));
+    D = (c_[i]==0 ? D : CGAL_NTS gcd(D, c_[i]));
   if (D==0) return;
   for(int i=0; i<6; ++i) c_[i]/=D;
 }

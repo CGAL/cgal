@@ -1,7 +1,6 @@
 Nef_3 Package: TODO
 ---------------------------------------------------------------------
 
-- Remove volumes with no entries.
 - Test binary operations
 - Change &D.mark() to D.set_mark(...) and D.get_mark(...)
 - Extended kernel with infimaximal box

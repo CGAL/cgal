@@ -35,7 +35,7 @@
 #include <CGAL/Nef_3/SNC_SM_const_decorator.h>
 
 #undef _DEBUG
-#define _DEBUG  59
+#define _DEBUG  23
 #include <CGAL/Nef_3/debug.h>
 #include <string>
 #include <sstream>
@@ -495,7 +495,7 @@ void unlink_as_isolated_vertex(SVertex_handle v) const
 { undo_boundary_object(v,face(v)); }
 
 void clear_face_cycle_entries(SFace_handle f) const
-{ sncp()->reset_object_list(f->boundary_entry_objects_);
+{ sncp()->reset_sm_object_list(f->boundary_entry_objects_);
   // removes entries of list and the hashed membership
 }
 

@@ -39,9 +39,9 @@
 #include <CGAL/Nef_3/SNC_iteration.h>
 #include <string>
 #include <list>
-#include <strstream>
+#include <sstream>
 #undef _DEBUG
-#define _DEBUG 127
+#define _DEBUG 67
 #include <CGAL/Nef_3/debug.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -284,7 +284,7 @@ Size_type number_of_sface_cycles() const;
 Size_type number_of_connected_components() const;
 /*{\Mop calculates the number of connected components of |P|.}*/
 
-void print_statistics(std::ostream& os = std::cout) const
+void print_statistics(std::stringstream& os = std::cout) const
 /*{\Mop print the statistics of |P|: the number of vertices, edges, 
 and faces.}*/
 {
@@ -421,14 +421,20 @@ check_integrity_and_topological_planarity(bool faces) const
       } else if ( fci.is_svertex() ) {
         CGAL_nef3_assertion( face(SVertex_const_handle(fci)) == f ); 
 	++iv_num;
+      } else if( fci.is_shalfloop() ) {
+        CGAL_nef3_assertion( face(SHalfloop_const_handle(fci)) == f );
+	++fc_num;
       }
       else CGAL_nef3_assertion(0);
     }
   }
 
-  int v_num = number_of_svertices() - iso_vert_num;
-  int e_num = number_of_sedges();
-  int c_num = number_of_connected_components() - iso_vert_num;
+  int v_num = number_of_svertices() - iso_vert_num + 
+    number_of_shalfloops();
+  int e_num = number_of_sedges() + 
+    number_of_shalfloops();
+  int c_num = number_of_connected_components() - iso_vert_num + 
+    number_of_sloops();
   int f_num = number_of_sface_cycles() - c_num + 1;
   TRACEV(fc_num);TRACEV(iv_num);TRACEV(iso_vert_num);
   TRACEV(v_num);TRACEV(e_num);TRACEV(c_num);TRACEV(f_num);

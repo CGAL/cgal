@@ -101,10 +101,19 @@ template <typename R>
 CGAL::Plane_3<R> normalized(CGAL::Plane_3<R>& h)
 { typedef typename R::RT RT;
   RT a(h.a()),b(h.b()),c(h.c()),d(h.d());
-  RT x = ( a != 0 ? a : 1);
-  x = ( b != 0 ? gcd(x,b) : x );
-  x = ( c != 0 ? gcd(x,c) : x );
-  x = ( d != 0 ? gcd(x,d) : x );
+  RT x = (a==0) ? ((b==0) ? ((c==0) ? ((d==0) ? 1: d): c): b): a;
+  TRACE("gcd... i"<<x<<' ');
+  x = ( a != 0 ? a : x);
+  TRACE(x<<' ');
+  x = ( b != 0 ? CGAL_NTS gcd(x,b) : x );
+  TRACE(x<<' ');
+  x = ( c != 0 ? CGAL_NTS gcd(x,c) : x );
+  TRACE(x<<' ');
+  x = ( d != 0 ? CGAL_NTS gcd(x,d) : x );
+  TRACEN(x);
+  TRACEN("  before normalizing "<<h);
+  TRACEN("  after normalizing "<<CGAL::Plane_3<R>(a/x,b/x,c/x,d/x)<<std::endl);
+  CGAL_nef3_assertion( h == CGAL::Plane_3<R>(a/x,b/x,c/x,d/x));
   return CGAL::Plane_3<R>(a/x,b/x,c/x,d/x); 
 }
 
@@ -136,15 +145,15 @@ public:
   typedef SNC_structure_ SNC_structure;
   typedef typename SNC_structure_::Sphere_kernel  Sphere_kernel;
   typedef typename SNC_structure_::Kernel         Kernel;
-  typedef SNC_constructor<SNC_structure>          Self;
-  typedef SNC_decorator<SNC_structure>            Base;
-  typedef SNC_decorator<SNC_structure>            SNC_decorator;
-  typedef SNC_ray_shoter<SNC_structure>           SNC_ray_shoter;
-  typedef SNC_FM_decorator<SNC_structure>         FM_decorator;
-  typedef SNC_SM_decorator<SNC_structure>         SM_decorator;
-  typedef SNC_SM_overlayer<SNC_structure>         SM_overlayer;
-  typedef SNC_SM_point_locator<SNC_structure>     SM_point_locator;
-  typedef SNC_SM_const_decorator<SNC_structure>   SM_const_decorator;
+  typedef CGAL::SNC_constructor<SNC_structure>          Self;
+  typedef CGAL::SNC_decorator<SNC_structure>            Base;
+  typedef CGAL::SNC_decorator<SNC_structure>            SNC_decorator;
+  typedef CGAL::SNC_ray_shoter<SNC_structure>           SNC_ray_shoter;
+  typedef CGAL::SNC_FM_decorator<SNC_structure>         FM_decorator;
+  typedef CGAL::SNC_SM_decorator<SNC_structure>         SM_decorator;
+  typedef CGAL::SNC_SM_overlayer<SNC_structure>         SM_overlayer;
+  typedef CGAL::SNC_SM_point_locator<SNC_structure>     SM_point_locator;
+  typedef CGAL::SNC_SM_const_decorator<SNC_structure>   SM_const_decorator;
 
   #define USING(t) typedef typename SNC_structure::t t
   USING(Vertex);
@@ -414,7 +423,7 @@ SNC_constructor<SNC_>::
 create_from_facet(Halffacet_handle f, const Point_3& p) const
 { 
   /* TODO: CGAL_nef3_assertion(FM_decorator(f).contains(p));*/
-  Vertex_handle v = sncp()->new_vertex();
+  Vertex_handle v = sncp()->new_vertex( p, mark(f));
   point(v) = p;
   Sphere_circle c(plane(f)); // circle through origin parallel to h
   SM_decorator D(v);
@@ -423,8 +432,10 @@ create_from_facet(Halffacet_handle f, const Point_3& p) const
   D.link_as_loop(l,f1);
   D.link_as_loop(twin(l),f2);
 
-  D.circle(l) = c; D.circle(twin(l)) = c.opposite();
+  D.circle(l) = c; 
+  D.circle(twin(l)) = c.opposite();
   D.mark(f1) = mark(volume(f));
+  D.mark(f2) = mark(volume(twin(f)));
   D.mark(l) = mark(f);
   Sphere_point q(0,-1,0);
   CGAL::Oriented_side os = c.oriented_side(q);
@@ -441,6 +452,9 @@ create_from_facet(Halffacet_handle f, const Point_3& p) const
       if ( c.a()>=0 && c.c()<=0 ) // normal(c) dx<=0&&dz>=0
         D.mark_of_halfsphere(-1) = true;
   }
+  /* TODO: to check why the code chuck above is wrong */
+  SM_point_locator L(v);
+  L.init_marks_of_halfspheres();
   return v;
 }
 
@@ -456,8 +470,7 @@ SNC_constructor<SNC_>::
 create_from_edge(Halfedge_handle e,
 		 const Point_3& p) const
 { CGAL_nef3_assertion(segment(e).has_on(p));
-  Vertex_handle v = sncp()->new_vertex();
-  point(v) = p;
+  Vertex_handle v = sncp()->new_vertex( p, mark(e));
   SM_decorator D(v);
   SM_const_decorator E(source(e));
   Sphere_point ps = calc_point(e);
@@ -620,6 +633,7 @@ categorize_facet_cycles_and_create_facets() const
     Sphere_circle c(tmp_circle(e));
     Plane_3 h = c.plane_through(point(vertex(e))); 
     if ( sign_of(h)<0 ) continue;
+    CGAL_nef3_assertion( h == normalized(h));
     M[normalized(h)].push_back(SObject_handle(twin(e)));
   }
   SHalfloop_iterator l;
@@ -627,10 +641,12 @@ categorize_facet_cycles_and_create_facets() const
     Sphere_circle c(tmp_circle(l));
     Plane_3 h = c.plane_through(point(vertex(l))); 
     if ( sign_of(h)<0 ) continue;
+    CGAL_nef3_assertion( h == normalized(h));
     M[normalized(h)].push_back(SObject_handle(twin(l)));
   }
   typename Map_planes::iterator it;
-  CGAL_nef3_forall_iterators(it,M) { TRACEN("  plane "<<it->first);
+  CGAL_nef3_forall_iterators(it,M) { 
+    TRACEN("  plane "<<it->first<<" "<<(it->first).point());
     FM_decorator D(*sncp());
     D.create_facet_objects(it->first,it->second.begin(),it->second.end());
   }
