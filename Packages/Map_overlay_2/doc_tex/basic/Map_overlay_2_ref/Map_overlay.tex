@@ -103,17 +103,17 @@ The available subdivisions and notifier classes are described bellow.
 \ccCreation
   \ccCreationVariable{ovl}
     
-  \ccConstructor{Map_overlay<Subdivision,Notifier>();} {constructs an
+  \ccConstructor{Map_overlay_2<Subdivision,Notifier>();} {constructs an
      ``empty map overlay'' of two ``empty creators'', each of which 
      contains one unbounded face, which corresponds to the whole plane.}
   
-  \ccConstructor{Map_overlay<Subdivision,Notifier>(const Subdivision & s);}
+  \ccConstructor{Map_overlay_2<Subdivision,Notifier>(const Subdivision & s);}
   {a converter between a subdivision and overlay;}
   
-  \ccConstructor{Map_overlay<Subdivision,Notifier>(const Self & ovl1,const Self& ovl2);}
+  \ccConstructor{Map_overlay_2<Subdivision,Notifier>(const Self & ovl1,const Self& ovl2);}
   {constructs an overlay out of the two creators given in \ccStyle{ovl1} and \ccStyle{ovl2};}
   
-  \ccConstructor{Map_overlay<Subdivision,Notifier>(const Self & ovl);}{copy constructor;}
+  \ccConstructor{Map_overlay_2<Subdivision,Notifier>(const Self & ovl);}{copy constructor;}
     
 %  \ccConstructor{Planar_map<I>( list<X_curve_2> & l
 %       );} {construct the planar-map of the curves  of \ccStyle{l}
@@ -180,41 +180,41 @@ The concepts \ccc{MapOverlayAlgorithm_2} (\ccRefPage{MapOverlayAlgorithm_2})
 \ccc{PlanarMapPointLocation_2} (\ccRefPage{PlanarMapPointLocation_2}) 
 list the set of requirements of each class.
 
-\ccConstructor{Map_overlay (const Subdivision &arr, 
+\ccConstructor{Map_overlay_2 (const Subdivision &arr, 
    Notifier* notifier);}{}
   
-\ccConstructor{Map_overlay (const Subdivision &arr, 
+\ccConstructor{Map_overlay_2 (const Subdivision &arr, 
    Map_overlay_base<Subdivision,Notifier> *algo);}{}
 
-\ccConstructor{Map_overlay (const Subdivision &arr, 
+\ccConstructor{Map_overlay_2 (const Subdivision &arr, 
    Notifier* notifier
    Map_overlay_base<Subdivision,Notifier> *algo);}{}
 
-\ccConstructor{Map_overlay (const Self &ovl1, const Self &ovl2, 
+\ccConstructor{Map_overlay_2 (const Self &ovl1, const Self &ovl2, 
    Point_location_base<Subdivision> *pl);}{}
   
-\ccConstructor{Map_overlay (const Self &ovl1, const Self &ovl2, 
+\ccConstructor{Map_overlay_2 (const Self &ovl1, const Self &ovl2, 
    Notifier* notifier);}{}
 
-\ccConstructor{Map_overlay (const Self &ovl1, const Self &ovl2, 
+\ccConstructor{Map_overlay_2 (const Self &ovl1, const Self &ovl2, 
    Notifier* notifier);}{}
 
-\ccConstructor{Map_overlay (const Self &ovl1, const Self &ovl2, 
+\ccConstructor{Map_overlay_2 (const Self &ovl1, const Self &ovl2, 
    Point_location_base<Subdivision>* pl,
    Notifier* notifier);}{}
 
-\ccConstructor{Map_overlay (const Self &ovl1, const Self &ovl2, 
+\ccConstructor{Map_overlay_2 (const Self &ovl1, const Self &ovl2, 
    Map_overlay_base<Subdivision,Notifier> *algo);}{}
 
-\ccConstructor{Map_overlay (const Self &ovl1, const Self &ovl2, 
+\ccConstructor{Map_overlay_2 (const Self &ovl1, const Self &ovl2, 
    Point_location_base<Subdivision>* pl,
    Map_overlay_base<Subdivision,Notifier> *algo);}{}
 
-\ccConstructor{Map_overlay (const Self &ovl1, const Self &ovl2, 
+\ccConstructor{Map_overlay_2 (const Self &ovl1, const Self &ovl2, 
    Notifier* notifier,
    Map_overlay_base<Subdivision,Notifier> *algo);}{}
 
-\ccConstructor{Map_overlay (const Self &ovl1, const Self &ovl2, 
+\ccConstructor{Map_overlay_2 (const Self &ovl1, const Self &ovl2, 
    Point_location_base<Subdivision>* pl,
    Notifier* notifier,
    Map_overlay_base<Subdivision,Notifier> *algo);}{}
