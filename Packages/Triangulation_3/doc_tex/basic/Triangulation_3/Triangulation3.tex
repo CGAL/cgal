@@ -1812,7 +1812,7 @@ sphere circumscribing \ccc{p,q,r,s}.}
 			  const Point & test) const;}
 {Computes the side of \ccc{test} with respect to the oriented circle
 circumscribing \ccc{p,q,r}.
-\ccPrecond{\ccc{p,q,r,test} are coplanar.}}
+\ccPrecond{\ccc{p,q,r,test} are coplanar and \ccc{p,q,r} are not collinear.}} 
 
 \subsubsection{To be used by \protect 
 \ccc{Delaunay_hierarchic_triangulation_3<Traits, Tds>}}
@@ -1869,7 +1869,7 @@ power segment of \ccc{p} and \ccc{q}.
 
 If all the points have a weight equal to 0, then
 \ccc{power_test(p,q,t)} gives the same answer as the kernel predicate
-\ccc{s(p,q).collinear_has_on(t)}, where  \ccc{s(p,q)} denotes the
+\ccc{s(p,q).has_on(t)} would give, where  \ccc{s(p,q)} denotes the
 segment with endpoints \ccc{p} and \ccc{q}.
 
 	\end{ccClass} 
