@@ -45,7 +45,7 @@
 
 %----------------------------------------------------------------------
 
-\begin{ccRefConcept} {AlphaShapeEuclideanTraits_2}
+\begin{ccRefConcept} {AlphaShapeTraits_2}
 
 \ccCreationVariable{t}
 
@@ -53,6 +53,8 @@
 A model of the concept \ccRefName\  must provide the following predicate and
 operations in addition to the requirements for the underlying triangulation
 traits class.
+It means, the metric has to be Euclidean for Delaunay triangulation or the power 
+metric for regular triangulation.
 
 \ccRefines
 \ccc{TriangulationTraits_2}
@@ -79,15 +81,15 @@ can be provided.
 \ccMethod{Compute_squared_radius_2 compute_squared_radius_2_object();} 
 {Returns an object, which has to be able to compute the squared radius of the
 circle of the points \ccc{p0, p1, p2} or the squared radius of smallest  circle
-of the points \ccc{p0, p1}, as \ccc{Coord_type} associated with the metric used
-by \ccc{Dt}.} 
+of the points \ccc{p0, p1}, as \ccc{Coord_type} associated with \emph{the metric used
+by \ccc{Dt}}.} 
 
 \ccHeading{Predicate by function object}
 
 \ccMethod{Side_of_bounded_circle_2 side_of_bounded_circle_2_object();}
 {Returns an object, which has to be able to compute the relative position of
-point \ccc{test} to the smallest circle of the points \ccc{p0, p1}, using the
-same metric as \ccc{Dt}.}
+point \ccc{test} to the smallest circle of the points \ccc{p0, p1}, using \emph{the
+same metric as \ccc{Dt}}.}
 
 \end{ccRefConcept}
 
