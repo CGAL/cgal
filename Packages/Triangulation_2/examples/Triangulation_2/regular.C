@@ -23,10 +23,10 @@ int main()
      rt.insert(wp);
    }
    rt.is_valid();
-   std::cout << "number of inserted points \t" << count << std::endl;
-   std::cout << "number of vertices \t \t " ;
+   std::cout << "number of inserted points : " << count << std::endl;
+   std::cout << "number of vertices :  " ;
    std::cout << rt.number_of_vertices() << std::endl;
-   std::cout << "number of hidden vertices \t " ;
+   std::cout << "number of hidden vertices :  " ;
    std::cout << rt.number_of_hidden_vertices() << std::endl;
    return 0;	
 }

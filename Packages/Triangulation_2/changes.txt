@@ -1,11 +1,15 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-ver 8.13 ()
-- fixed bug in vrml_output de Trainulation_data_structure_2
+ver 8.13 (08/09/03)
+- fixed bug in vrml_output de Triangulation_data_structure_2
 - remove deprecated "custom_redraw() from constrained.C demo
 - Fix destructor documentation,
   so that the variable name doesn't appear in the index !
+- demos use now the new class Qt_help_window instead of HelpWindow
+- demos use the new demo icon demoicon
+- remove /t in regular.C demo in case it would be the real cause
+  of failure of html_convert
 
 ver 8.12 (29/08/03)
 - added missing eps files in doc_tex/basic/TDS_2
