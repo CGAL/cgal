@@ -1,4 +1,17 @@
-mesh_class.o: mesh_class.C \
+
+
+conforming.o: \
+  ../../include/CGAL/Triangulation_conformer_2.h \
+  ../../include/CGAL/Mesh_2/Refine_edges_with_clusters.h \
+  ../../include/CGAL/Mesh_2/Refine_edges.h \
+  ../../include/CGAL/Mesher_level.h \
+  ../../include/CGAL/Mesh_2/Triangulation_mesher_level_traits_2.h \
+  ../../include/CGAL/Mesh_2/Filtered_queue_container.h \
+  ../../include/CGAL/Mesh_2/Clusters.h \
+  ../../include/CGAL/Filter_circulator.h
+
+
+mesh_class.o: \
   ../../include/CGAL/Delaunay_mesher_2.h \
   ../../include/CGAL/Mesh_2/Refine_edges_with_clusters.h \
   ../../include/CGAL/Mesh_2/Refine_edges.h \
@@ -9,6 +22,43 @@ mesh_class.o: mesh_class.C \
   ../../include/CGAL/Filter_circulator.h \
   ../../include/CGAL/Mesh_2/Refine_edges_visitor.h \
   ../../include/CGAL/Mesh_2/Refine_faces.h \
+  ../../include/CGAL/Mesh_2/Face_badness.h \
+  ../../include/CGAL/Double_map.h \
+  ../../include/CGAL/Delaunay_mesh_face_base_2.h \
+  ../../include/CGAL/Delaunay_mesh_size_criteria_2.h \
+  ../../include/CGAL/Delaunay_mesh_criteria_2.h
+
+
+mesh_global.o: \
+  ../../include/CGAL/Delaunay_mesher_2.h \
+  ../../include/CGAL/Mesh_2/Refine_edges_with_clusters.h \
+  ../../include/CGAL/Mesh_2/Refine_edges.h \
+  ../../include/CGAL/Mesher_level.h \
+  ../../include/CGAL/Mesh_2/Triangulation_mesher_level_traits_2.h \
+  ../../include/CGAL/Mesh_2/Filtered_queue_container.h \
+  ../../include/CGAL/Mesh_2/Clusters.h \
+  ../../include/CGAL/Filter_circulator.h \
+  ../../include/CGAL/Mesh_2/Refine_edges_visitor.h \
+  ../../include/CGAL/Mesh_2/Refine_faces.h \
+  ../../include/CGAL/Mesh_2/Face_badness.h \
+  ../../include/CGAL/Double_map.h \
+  ../../include/CGAL/Delaunay_mesh_face_base_2.h \
+  ../../include/CGAL/Delaunay_mesh_size_criteria_2.h \
+  ../../include/CGAL/Delaunay_mesh_criteria_2.h
+
+
+mesh_with_seeds.o: \
+  ../../include/CGAL/Delaunay_mesher_2.h \
+  ../../include/CGAL/Mesh_2/Refine_edges_with_clusters.h \
+  ../../include/CGAL/Mesh_2/Refine_edges.h \
+  ../../include/CGAL/Mesher_level.h \
+  ../../include/CGAL/Mesh_2/Triangulation_mesher_level_traits_2.h \
+  ../../include/CGAL/Mesh_2/Filtered_queue_container.h \
+  ../../include/CGAL/Mesh_2/Clusters.h \
+  ../../include/CGAL/Filter_circulator.h \
+  ../../include/CGAL/Mesh_2/Refine_edges_visitor.h \
+  ../../include/CGAL/Mesh_2/Refine_faces.h \
+  ../../include/CGAL/Mesh_2/Face_badness.h \
   ../../include/CGAL/Double_map.h \
   ../../include/CGAL/Delaunay_mesh_face_base_2.h \
   ../../include/CGAL/Delaunay_mesh_size_criteria_2.h \

@@ -30,7 +30,10 @@ namespace Mesh_2 {
 
 // Previous is the whole previous edges_level.
 template <typename Tr, typename Criteria, typename Previous>
-class Refine_faces_base
+class Refine_faces_base :
+    public Triangulation_mesher_level_traits_2<Tr>,
+    public No_test_point_conflict,
+    public No_after_no_insertion
 {
   /** \name Types from Tr. */
 
@@ -49,6 +52,8 @@ class Refine_faces_base
   typedef Triangulation_mesher_level_traits_2<Tr> Triangulation_traits;
   typedef typename Triangulation_traits::Zone Zone;
 
+  using Triangulation_mesher_level_traits_2<Tr>::triangulation_ref_impl;
+
 protected: // --- PROTECTED TYPES ---
   /** Meshing criteria. */
   typedef typename Criteria::Is_bad s_bad;
@@ -61,8 +66,6 @@ protected: // --- PROTECTED TYPES ---
 protected:
   // --- PROTECTED MEMBER DATAS ---
 
-  Tr& tr; /**< The triangulation itself. */
-  Triangulation_mesher_level_traits_2<Tr> traits;
   Criteria& criteria; /**<The meshing criteria */
   Previous& previous;
 
@@ -75,38 +78,19 @@ public:
   /** \name CONSTRUCTORS */
 
   Refine_faces_base(Tr& t, Criteria& criteria_, Previous& prev) 
-    : tr(t), criteria(criteria_), previous(prev)
+    : Triangulation_traits(t), criteria(criteria_), previous(prev)
   {
   }
 
   /** \Name MESHER_LEVEL FUNCTIONS */
 
-  Tr& get_triangulation_ref()
-  {
-    return tr;
-  }
-
-  const Tr& get_triangulation_ref() const
-  {
-    return tr;
-  }
-
-  Triangulation_traits& get_triangulation_traits()
-  {
-    return traits;
-  }
-
-  const Triangulation_traits& get_triangulation_traits() const
-  {
-    return traits;
-  }
-
   /** Scans all marked faces and put them in the map if they are
       bad. */
-  void do_scan_triangulation()
+  void scan_triangulation_impl()
   {
-    for(typename Tr::Finite_faces_iterator fit = tr.finite_faces_begin();
-        fit != tr.finite_faces_end();
+    for(typename Tr::Finite_faces_iterator fit =
+	  triangulation_ref_impl().finite_faces_begin();
+        fit != triangulation_ref_impl().finite_faces_end();
         ++fit)
     {
       if( fit->is_marked() )
@@ -120,19 +104,21 @@ public:
   }
 
   /** Tells if the map of faces to be conformed is empty or not. */
-  bool is_no_longer_element_to_refine() const
+  bool no_longer_element_to_refine_impl() const
   {
     return bad_faces.empty();
   }
 
   /** Get the next face to conform. */
-  Face_handle do_get_next_element()
+  Face_handle get_next_element_impl()
   {
     Face_handle fh = bad_faces.front()->second;
     current_badness = is_bad(bad_faces.front()->first);
 
-    CGAL_assertion_code(typename Geom_traits::Orientation_2 orientation =
-                        tr.geom_traits().orientation_2_object());
+    CGAL_assertion_code
+      (typename Geom_traits::Orientation_2 orientation =
+       triangulation_ref_impl().geom_traits().orientation_2_object()
+       );
     CGAL_assertion(orientation(fh->vertex(0)->point(),
                                fh->vertex(1)->point(),
                                fh->vertex(2)->point()) != COLLINEAR );
@@ -140,42 +126,27 @@ public:
   }
 
   /** Pop the first face of the map. */
-  void do_pop_next_element()
+  void pop_next_element_impl()
   {
     bad_faces.pop_front();
   }
 
   /** Returns the circumcenter of the face. */
-  Point get_refinement_point(const Face_handle& f) const
+  Point refinement_point_impl(const Face_handle& f) const
   {
-    return tr.circumcenter(f);
+    return triangulation_ref_impl().circumcenter(f);
   }
 
   /** Do nothing */
-  void do_before_conflicts(const Face_handle&, const Point&)
-  {
+  void before_conflicts_impl(const Face_handle&, const Point&)
+  { /// @todo modularize
     previous.set_imperative_refinement(current_badness == 
 				       Mesh_2::IMPERATIVELY_BAD);
   }
 
-  /** Do nothing */
-  std::pair<bool, bool>
-  do_test_point_conflict_from_superior(const Point&,
-                                       Zone&)
-  {
-    return std::make_pair(true, true);
-  }
-
-  /** Do nothing */
-  std::pair<bool, bool>
-  do_private_test_point_conflict(const Point&, Zone& ) const
-  {
-    return std::make_pair(true, true);
-  }
-
   /** Remove the conflicting faces from the bad faces map. */
-  void do_before_insertion(const Face_handle& fh, const Point&,
-                           Zone& zone)
+  void before_insertion_impl(const Face_handle& fh, const Point&,
+			     Zone& zone)
   {
     /** @todo Perhaps this function is useless. */
     for(typename Zone::Faces_iterator fh_it = zone.faces.begin();
@@ -188,16 +159,11 @@ public:
       }
   }
 
-  /** Do nothing. */
-  void do_after_no_insertion(const Face_handle&, const Point&,
-                             Zone&)
-  {
-  }
-
   /** Restore markers in the star of \c v. */
-  void do_after_insertion(const Vertex_handle& v)
+  void after_insertion_impl(const Vertex_handle& v)
   {
-    typename Tr::Face_circulator fc = tr.incident_faces(v), fcbegin(fc);
+    typename Tr::Face_circulator fc = 
+      triangulation_ref_impl().incident_faces(v), fcbegin(fc);
     do {
       fc->set_marked(true);
     } while (++fc != fcbegin);
@@ -261,8 +227,10 @@ push_in_bad_faces(Face_handle fh, const Quality& q)
             << fh->vertex(1)->point() << ","
             << fh->vertex(2)->point() << ")\n";
 #endif // DEBUG
-  CGAL_assertion_code(typename Geom_traits::Orientation_2 orientation =
-                      tr.geom_traits().orientation_2_object());
+  CGAL_assertion_code
+    (typename Geom_traits::Orientation_2 orientation =
+     triangulation_ref_impl().geom_traits().orientation_2_object()
+     );
   CGAL_assertion( orientation(fh->vertex(0)->point(),
                               fh->vertex(1)->point(),
                               fh->vertex(2)->point()) != COLLINEAR );
@@ -290,7 +258,7 @@ compute_new_bad_faces(Vertex_handle v)
 {
   typename Tr::Face_circulator fc = v->incident_faces(), fcbegin(fc);
   do {
-    if(!tr.is_infinite(fc))
+    if(!triangulation_ref_impl().is_infinite(fc))
       if( fc->is_marked() )
 	{
 	  Quality q;
@@ -335,10 +303,13 @@ is_bad(Quality q) const
     struct Refine_faces_types
     {
       typedef Mesher_level <
-        Triangulation_mesher_level_traits_2<Tr>,
+	Tr,
         Self,
         typename Tr::Face_handle,
-        Previous > Faces_mesher_level;
+        Previous,
+	Triangulation_mesher_level_traits_2<Tr>,
+	>
+      Faces_mesher_level;
     }; // end Refine_faces_types
   } // end namespace details
 
@@ -397,8 +368,10 @@ public:
 
   bool check_bad_faces()
   {
-    CGAL_assertion_code(typename Geom_traits::Orientation_2 orientation =
-                        this->tr.geom_traits().orientation_2_object());
+    CGAL_assertion_code
+      (typename Geom_traits::Orientation_2 orientation =
+       this->triangulation_ref_impl().geom_traits().orientation_2_object()
+       );
     for(Bad_faces_const_iterator fit = begin();
         fit != end();
         ++fit)

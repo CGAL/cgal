@@ -36,14 +36,20 @@ namespace Mesh_2
     class Is_edge_constrained {
       const Tr& tr_;
     public:
+      typedef Is_edge_constrained<Tr> Self;
       typedef typename Tr::Edge_circulator Edge_circulator;
       
-      Is_edge_constrained(const Tr& tr)
+      Is_edge_constrained(const Tr& tr) : tr_(tr)
       {}
+
+      Self& operator=(const Self& p)
+      {
+	tr_=p.tr_;
+      }
 
       bool operator()(const Edge_circulator& ec) const
       {
-        return tr_.is_constrained(ec);
+        return tr_.is_constrained(*ec);
       }
     };
   } // end namespace details

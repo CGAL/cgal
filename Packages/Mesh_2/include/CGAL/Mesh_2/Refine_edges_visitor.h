@@ -76,7 +76,7 @@ public:
 
   void before_insertion(const Edge&, const Point& p, Zone& z)
   {
-    mesher_base.do_before_insertion(Face_handle(), p, z);
+    mesher_base.before_insertion(Face_handle(), p, z);
   }
 
   /** Restore markers in the star of \c v. */

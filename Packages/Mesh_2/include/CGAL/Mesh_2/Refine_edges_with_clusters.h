@@ -84,15 +84,15 @@ public:
 
   /** \name FUNCTIONS NEEDED BY Mesher_level OVERIDDEN BY THIS CLASS. */
 
-  Point get_refinement_point(const Edge& edge)
+  Point refinement_point_impl(const Edge& edge)
   {
     typename Geom_traits::Construct_midpoint_2
-      midpoint = this->tr.geom_traits().construct_midpoint_2_object();
+      midpoint = this->triangulation_ref_impl().geom_traits().construct_midpoint_2_object();
 
     this->va = edge.first->vertex(Tr::cw (edge.second));
     this->vb = edge.first->vertex(Tr::ccw(edge.second));
 
-//     std::cerr << "get_refinement_point\n" << this->va->point() << " / "
+//     std::cerr << "refinement_point_impl\n" << this->va->point() << " / "
 //               << this->vb->point() << std::endl;
 
     va_has_a_cluster = false;
@@ -124,7 +124,7 @@ public:
     }
   };
 
-  void do_after_insertion(const Vertex_handle& v)
+  void after_insertion_impl(const Vertex_handle& v)
   {
 #ifdef DEBUG    
     std::cerr << "update_clusters" << std::endl;
@@ -134,7 +134,7 @@ public:
               << std::endl;
     std::cerr << "clusters.size()=" << clusters.size() << std::endl;
 #endif // DEBUG
-    Super::do_after_insertion(v);
+    Super::after_insertion_impl(v);
     if( va_has_a_cluster ) 
       clusters.update_cluster(ca,ca_it,this->va,this->vb,v,cluster_splitted);
     if( vb_has_a_cluster )
@@ -149,23 +149,25 @@ public:
    * Test if the edges of the boundary are locally conforming.
    * Push which that are not in the list of edges to be conformed.
    */
-  std::pair<bool, bool>
-  do_test_point_conflict_from_superior(const Point& p,
-                                       Zone& z)
+  Mesher_level_conflict_status
+  test_point_conflict_from_superior_impl(const Point& p,
+					 Zone& z)
   {
     bool split_the_face = true;
     bool remove_the_bad_face = true;
 
-   for(typename Zone::Edges_iterator eit = z.boundary_edges.begin();
+    Tr& tr = triangulation_ref_impl();
+
+    for(typename Zone::Edges_iterator eit = z.boundary_edges.begin();
         eit != z.boundary_edges.end(); ++eit)
       {
         const Face_handle& fh = eit->first;
         const int& i = eit->second;
 
-        if(fh->is_constrained(i) && !is_locally_conform(this->tr, fh, i, p))
+        if(fh->is_constrained(i) && !is_locally_conform(tr, fh, i, p))
           {
-	    const Vertex_handle& v1 = fh->vertex( this->tr.cw (i));
-	    const Vertex_handle& v2 = fh->vertex( this->tr.ccw(i));
+	    const Vertex_handle& v1 = fh->vertex( tr.cw (i));
+	    const Vertex_handle& v2 = fh->vertex( tr.ccw(i));
 
             split_the_face = false;
 

@@ -21,17 +21,26 @@
 #define CGAL_MESH_2_TRIANGULATION_MESHER_LEVEL_TRAITS_2_H
 
 #include <list>
+#include <CGAL/Mesher_level.h>
 
 namespace CGAL {
 
 template <typename Tr>
-struct Triangulation_mesher_level_traits_2
+struct Triangulation_mesher_level_traits_2 : 
+    public Triangulation_ref_impl<Tr>
 {
   typedef Tr Triangulation;
   typedef typename Tr::Point Point;
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Face_handle Face_handle;
   typedef typename Tr::Edge Edge;
+
+  using Triangulation_ref_impl<Tr>::triangulation_ref_impl;
+
+  Triangulation_mesher_level_traits_2(Tr& tr)
+    : Triangulation_ref_impl<Tr>(tr)
+  {
+  }
 
   struct Zone {
     typedef std::list<Face_handle> Faces;
@@ -44,11 +53,12 @@ struct Triangulation_mesher_level_traits_2
     Edges boundary_edges;
   };
 
-  static Zone get_conflicts_zone(Tr& t, const Point& p)
+  static Zone conflicts_zone_impl(const Point& p)
   {
     Zone zone;
 
-    t.get_conflicts_and_boundary(p,
+    triangulation_ref_impl().
+      get_conflicts_and_boundary(p,
                                  std::back_inserter(zone.faces),
                                  std::back_inserter(zone.boundary_edges)
                                  );
@@ -60,19 +70,19 @@ struct Triangulation_mesher_level_traits_2
     return zone;
   }
 
-  static Vertex_handle insert(Tr&t, const Point& p, Zone& zone)
+  static Vertex_handle insert_impl(const Point& p, Zone& zone)
   {
 #ifdef DEBUG
     std::cerr << "insert(" << p << "): " 
               << zone.boundary_edges.size() << " edges." << std::endl;
 #endif
-    return t.star_hole(p,
-                       zone.boundary_edges.begin(),
-                       zone.boundary_edges.end(),
-                       zone.faces.begin(),
-                       zone.faces.end());
+    return triangulation_ref_impl().
+      star_hole(p,
+		zone.boundary_edges.begin(),
+		zone.boundary_edges.end(),
+		zone.faces.begin(),
+		zone.faces.end());
   }
-
 }; // end Triangulation_mesher_level_traits_2
 
 }; // end namespace CGAL

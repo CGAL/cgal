@@ -399,7 +399,7 @@ public:
 
   /** Scans all constrained edges and put them in the queue if they are
       encroached. */
-  void do_scan_triangulation()
+  void scan_triangulation_impl()
   {
     clear();
 #ifndef CGAL_IT_IS_A_CONSTRAINED_TRIANGULATION_PLUS
@@ -422,16 +422,16 @@ public:
         add_constrained_edge_to_be_conformed(v1, v2);
     }
 #endif
-  } // end do_scan_triangulation()
+  } // end scan_triangulation_impl()
 
   /** Tells if the queue of edges to be conformed is empty or not. */
-  bool is_no_longer_element_to_refine()
+  bool no_longer_element_to_refine_impl()
   {
     return edges_to_be_conformed.empty();
   }
 
   /** Get the next edge to conform. */
-  Edge do_get_next_element() 
+  Edge get_next_element_impl() 
   {
     Constrained_edge edge = edges_to_be_conformed.get_next_element();
 
@@ -446,7 +446,7 @@ public:
   }
 
   /** Pop the first edge of the queue. */
-  void do_pop_next_element()
+  void pop_next_element_impl()
   {
     edges_to_be_conformed.remove_next_element();
   }
@@ -457,7 +457,7 @@ public:
       Saves the handles of the edge that will be splitted.
       This function is overridden in class Refine_edge_with_clusters.
   */
-  Point get_refinement_point(const Edge& edge) 
+  Point refinement_point_impl(const Edge& edge) 
   {
     typename Geom_traits::Construct_midpoint_2
       midpoint = tr.geom_traits().construct_midpoint_2_object();
@@ -469,13 +469,13 @@ public:
   }
 
   /** Passes the edge to the triangulation traits. */
-  void do_before_conflicts(const Edge& e, const Point&)
+  void before_conflicts_impl(const Edge& e, const Point&)
   {
     traits.set_edge(e);
   }
 
   /** Do nothing. */
-  void do_after_no_insertion(const Edge&, const Point&,
+  void after_no_insertion_impl(const Edge&, const Point&,
                              const Zone& )
   {
   }
@@ -485,7 +485,7 @@ public:
    * Push which that are not in the list of edges to be conformed.
    */
   std::pair<bool, bool>
-  do_test_point_conflict_from_superior(const Point& p,
+  test_pprivate_test_point_conflict_imploint_conflict_from_superior_impl(const Point& p,
                                        Zone& z)
   {
     bool no_edge_is_encroached = true;
@@ -508,13 +508,13 @@ public:
 
   /** Do nothing. */
   std::pair<bool, bool> 
-  do_private_test_point_conflict(Point, Zone)
+  private_test_point_conflict_impl(Point, Zone)
   {
     return std::make_pair(true, true);
   }
 
   /** Unmark as constrained. */
-  void do_before_insertion(const Edge& e, const Point&,
+  void before_insertion(const Edge& e, const Point&,
                            const Zone&)
   {
     const Face_handle& f = e.first;
@@ -530,7 +530,7 @@ public:
    * conformed.
    * 
    */
-  void do_after_insertion(const Vertex_handle& v)
+  void after_insertion_impl(const Vertex_handle& v)
   {
     // @todo Perhaps we should remove destroyed edges too.
     // @warning This code has been rewroten!
@@ -569,7 +569,7 @@ public:
     
     if(!is_locally_conform(tr, vb, v))
       add_constrained_edge_to_be_conformed(vb, v);
-  } // end do_after_insertion
+  } // end after_insertion_impl
 
 protected:
   /** \name Auxiliary functions */
@@ -647,10 +647,11 @@ public:  /** \name DEBUGGING FUNCTIONS */
         Triangulation_traits;
 
       typedef Mesher_level <
-	Triangulation_traits,
+	Tr,
         Self,
         typename Tr::Edge,
-        Null_mesher_level > Edges_mesher_level;
+        Null_mesher_level,
+	Triangulation_traits> Edges_mesher_level;
     }; // end Refine_edges_types
   } // end namespace details
 
