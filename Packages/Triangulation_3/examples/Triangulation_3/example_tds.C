@@ -1,13 +1,11 @@
-#include <CGAL/basic.h>
+#include <CGAL/Triangulation_cell_base_3.h>
+#include <CGAL/Triangulation_vertex_base_3.h>
+#include <CGAL/Triangulation_data_structure_3.h>
 
 #include <iostream>
 #include <fstream>
 #include <cassert>
 #include <vector>
-
-#include <CGAL/Triangulation_cell_base_3.h>
-#include <CGAL/Triangulation_vertex_base_3.h>
-#include <CGAL/Triangulation_data_structure_3.h>
 
 // We define a minimal traits class, because the Point_3 type is needed in
 // order to instantiate Triangulation_vertex_base_3<>.

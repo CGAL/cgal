@@ -18,17 +18,14 @@
 // coordinator   : INRIA Sophia Antipolis (Mariette Yvinec)
 //
 // ============================================================================
-#include <CGAL/basic.h>
-
-#include <iostream>
-#include <fstream>
-
-#include <list>
-
 #include <CGAL/Cartesian.h>
 
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
+
+#include <iostream>
+#include <fstream>
+#include <list>
 
 typedef CGAL::Cartesian<double> Gt;
 

@@ -1,15 +1,12 @@
-#include <CGAL/basic.h>
-
-#include <iostream>
-#include <fstream>
-
-#include <cassert>
-#include <list>
-#include <vector>
-
 #include <CGAL/Cartesian.h>
 
 #include <CGAL/Triangulation_3.h>
+
+#include <iostream>
+#include <fstream>
+#include <cassert>
+#include <list>
+#include <vector>
 
 ////////////////////// 
 // chosing the number type

@@ -30,14 +30,6 @@ int main()
 }
 #else
 
-#include <CGAL/basic.h>
-
-#include <iostream>
-#include <fstream>
-#include <unistd.h>
-
-#include <list>
-
 #include <CGAL/Cartesian.h>
 
 #include <CGAL/Triangulation_3.h>
@@ -46,7 +38,20 @@ int main()
 #include <CGAL/IO/Geomview_stream.h>
 #include <CGAL/IO/Triangulation_geomview_ostream_3.h>
 
+#include <iostream>
+#include <fstream>
+#include <unistd.h>
+#include <list>
+
 typedef CGAL::Cartesian<double> Gt;
+// for this simple example, using doubles is ok
+// for more complicated examples with degenerate configurations,
+// using Filtered_exact number type is advised :
+// 
+// #include <CGAL/Arithmetic_filter.h>
+// #include <CGAL/MP_Float.h>
+// 
+// typedef CGAL::Filtered_exact<double, CGAL::MP_Float> NT;
 
 typedef CGAL::Triangulation_3<Gt> Triangulation;
 typedef CGAL::Delaunay_triangulation_3<Gt> Delaunay;
@@ -190,7 +195,7 @@ int main()
   gv.set_wired(true);
   gv << T;
   gv.set_wired(false);
-  std::cout <<"          You can translate or rotate one of the" <<std::endl
+  std::cout <<"          You can move one of the" <<std::endl
 	    <<"          two triangulations by selecting it"    <<std::endl
 	    <<"          in the Geomview targets" <<std::endl;
 
