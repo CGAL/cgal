@@ -42,7 +42,26 @@
 
 CGAL_BEGIN_NAMESPACE
 
+#if defined(__sun) && defined(__SUNPRO_CC)
+// workaround for the Sun CC-5.30 compiler; it does not like default
+// template parameters that are themselves templates and have
+// templated classes as parameters, which have then nested types as
+// arguments... oooof!!!
+//
+// In case you did understand what I just described you are most
+// probably crazy... If you did not, look below to see what kind of
+// code CC-5.30 did not like.
+namespace CGALi {
 
+  template<class CK, class FK>
+  struct SVD_SUNPRO_CC_Interval_converter
+    : public Cartesian_converter<CK, FK,
+                                 To_interval< typename CK::RT > >
+  {
+  };
+
+}
+#endif
 
 
 //-----------------------------------------------------------------------
@@ -67,8 +86,12 @@ template<class CK,
 	 class FK      = Simple_cartesian< Interval_nt<false> >,
 	 class FK_MTag = Sqrt_field_tag,
 	 class C2E     = Cartesian_converter<CK, EK>,
+#if defined(__sun) && defined(__SUNPRO_CC)
+         class C2F     = CGALi::SVD_SUNPRO_CC_Interval_converter<CK, FK> >
+#else
 	 class C2F     =
 	 Cartesian_converter<CK, FK, To_interval<typename CK::RT> >
+#endif
 >
 class Segment_Voronoi_diagram_filtered_traits_2
   : public Segment_Voronoi_diagram_filtered_traits_base_2<CK, CK_MTag,
@@ -91,8 +114,12 @@ template<class CK,
 	 class FK      = Simple_cartesian< Interval_nt<false> >,
 	 class FK_MTag = Sqrt_field_tag,
 	 class C2E     = Cartesian_converter<CK, EK>,
+#if defined(__sun) && defined(__SUNPRO_CC)
+         class C2F     = CGALi::SVD_SUNPRO_CC_Interval_converter<CK, FK> >
+#else
 	 class C2F     =
 	 Cartesian_converter<CK, FK, To_interval<typename CK::RT> >
+#endif
 >
 class Segment_Voronoi_diagram_filtered_traits_without_intersections_2
   : public Segment_Voronoi_diagram_filtered_traits_base_2<CK, CK_MTag,
