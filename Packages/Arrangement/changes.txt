@@ -1,3 +1,8 @@
+100.16 (30 Sep 2003)
+- Moved \chapter in main.tex
+
+
+
 - Added a typedef to avoid error messsage with pedantic mode of g++ [af]
 
 2.36 (Shai)
