@@ -157,43 +157,18 @@ compiler.
 
 This section applies to Unix-like environments, as well as to \mswin .
 
-The \cgal\ library can be downloaded in two different ways: using ftp
-or using WWW.  If you have a WWW connection, the easiest way to
-download \cgal\ is via the \cgal\ homepage:\index{CGAL@\cgal!homepage}
+The \cgal\ library can be downloaded from the \cgal\ 
+homepage:\index{CGAL@\cgal!homepage}
 \begin{quote}
       \cgalhomepage
 \end{quote}
-and go to the `Download' section.
-
-Just follow the instructions on this page to obtain your copy of the
-library. The \cgal\ library can also be downloaded using FTP. The
-library can be found at the following location:
-
-\begin{verbatim}
-      ftp.cs.uu.nl
-\end{verbatim}
-
-in the directory \texttt{/pub/CGAL}. This directory contains release
-\cgalrelease\ of the \cgal\ library. There is also a \texttt{README}
-file that contains descriptions of the files in this directory. An
-example of an FTP-session is given below.
-
-\begin{alltt}
-      > ftp ftp.cs.uu.nl 
-      Name (ftp.cs.uu.nl:<your username>): anonymous
-      Password: <type your email address here>
-      ftp> cd pub/CGAL
-      ftp> get README
-      ftp> binary
-      ftp> get \cgaldir.tar.gz
-      ftp> quit
-\end{alltt}
+and go to the `Download' section. Just follow the instructions on this
+page to obtain your copy of the library.
 
 After you have downloaded the file containing the \cgal\ library, you
 have to decompress it. For the zipfile use the
-command\footnote{\texttt{unzip} for \mswin\ 
-can be downloaded, for instance, from
-\texttt{http://virtunix.itribe.net/}}.
+command\footnote{\texttt{unzip} for \mswin\ can be downloaded, for
+  instance, from \texttt{http://virtunix.itribe.net/}}.
 
 \begin{verbatim}
       unzip <filename>.zip
@@ -350,7 +325,7 @@ A menu similar to the following will appear on your screen.\index{main
 {\ccTexHtml{\scriptsize}{} \label{pic:main-menu}
 \begin{alltt}
   ****************************************************************
-  **              CGAL 2.3 Installation Main Menu               **
+  **              CGAL 2.4 Installation Main Menu               **
   **              -------------------------------               **
   **                                                            **
   **   OS:                  sparc_SunOS-5.6                     **
@@ -412,7 +387,7 @@ the error messages from compiler or linker).
 \begin{verbatim}
   ****************************************************************
   **                                                            **
-  **                     Compiling CGAL 2.3                     **
+  **                     Compiling CGAL 2.4                     **
   **                     ------------------                     **
   **                                                            **
   ****************************************************************
@@ -903,7 +878,7 @@ right place:\TTsubindex{install\_cgal}{upgrade option}
 ./install_cgal --upgrade <OLD_CGAL_DIR>
 \end{verbatim}
 where \texttt{<OLD\_CGAL\_DIR>} is the root directory of your existing
-\cgal\ installation\\ (e.g. \texttt{/pub/local/CGAL-2.2}).  You can
+\cgal\ installation\\ (e.g. \texttt{/pub/local/CGAL-2.3}).  You can
 then build all libraries for the actual operating system that existed
 in your previous \cgal\ installation with
 \TTsubindex{install\_cgal}{rebuild-all option}
@@ -986,7 +961,7 @@ compiler.  To achieve this, the first section of each makefile
 contains an include statement that looks as follows:
 
 \begin{verbatim}
-      CGAL_MAKEFILE = /users/jannes/CGAL-2.3/make/makefile_<CGAL-OS description>
+      CGAL_MAKEFILE = /users/jannes/CGAL-2.4/make/makefile_<CGAL-OS description>
       include $(CGAL_MAKEFILE)
 \end{verbatim}
 %$
@@ -1515,7 +1490,7 @@ For each compiler a file \texttt{<CGAL/compiler\_config.h>}
 \index{files!\texttt{compiler\_config.h}} is defined, with the correct
 settings of all flags. This file is generated automatically by the
 \texttt{install\_cgal} script. For this the test programs in the
-directory \nonlinkedpath'CGAL-2.3/config/testfiles'
+directory \nonlinkedpath'CGAL-2.4/config/testfiles'
 \index{directories!config/testfiles@\texttt{config/testfiles}} are
 used.  The file \texttt{<CGAL/compiler\_config.h>} and the test
 programs contain a description of the problem, so in case of trouble
