@@ -17,18 +17,17 @@ int main()
 
 #include <CGAL/leda_rational.h>
 #include <CGAL/Arr_leda_polyline_traits.h>
+#include <CGAL/Pm_segment_traits_leda_kernel_2.h>
 #include "include/Polyline_traits_test.h"
 
-typedef leda_rational                           NT;
-typedef CGAL::Arr_leda_polyline_traits<NT>      Traits;
+typedef leda_rational                                   NT;
+typedef CGAL::Pm_segment_traits_leda_kernel_2           Kernel;
+typedef CGAL::Arr_leda_polyline_traits<Kernel>          Traits;
 
-int main( int argc, char** argv ){
-  Polyline_traits_test< Traits, leda_rational >  test_obj( argc, argv );
-
-  if (test_obj.start())
-    return (0); // SUCCESS
-  else 
-    return (1); // FAILURE  
+int main(int argc, char * argv[])
+{
+  Polyline_traits_test<Traits, leda_rational> test_obj(argc, argv);
+  return (test_obj.start()) ? 0 /* SUCCESS */ : 1 /* FAILURE */;
 }
 
-#endif // ! defined(CGAL_USE_LEDA) ...
+#endif
