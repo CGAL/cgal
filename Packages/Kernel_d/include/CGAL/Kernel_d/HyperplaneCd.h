@@ -55,7 +55,7 @@ HyperplaneCd(ForwardIterator first, ForwardIterator last,
   typename LA::Matrix A(m,d + 1);
 
   for (int i = 0; i < m; i++) {  /* define $i$-th equation */
-    for (int j = 0; j < d; j++)
+    for (int j = 0; j < d; j++)  
       A(i,j) = first->cartesian(j); // $j$ - th coord of $i$-th point
     A(i,d) = 1;
     ++first;
@@ -74,7 +74,7 @@ HyperplaneCd(ForwardIterator first, ForwardIterator last,
     for (int i = 0; i < d; i++)
       sum += spanning_vecs(i,j)*o.cartesian(i);
     sum += spanning_vecs(d,j);
-    if (sum != 0) break;
+    if (sum != FT(0)) break;
   }
 
   CGAL_assertion_msg(j != dim,

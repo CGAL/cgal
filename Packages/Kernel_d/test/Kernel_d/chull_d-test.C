@@ -82,6 +82,9 @@ int main()
     for (sit = T1.simplices_begin(); sit != T1.simplices_end(); sit++) *sit;
     T1.is_valid();
     T1.clear(2);
+    CGAL_TEST(T1.number_of_vertices()==0);
+    CGAL_TEST(T1.number_of_facets()==0);
+    CGAL_TEST(T1.number_of_simplices()==0);
   }
 
 

@@ -43,7 +43,7 @@
 #include <list>
 
 #undef _DEBUG
-#define _DEBUG 91
+#define _DEBUG 93
 #include <CGAL/Kernel_d/debug.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -98,9 +98,6 @@ class RC_vertex_d : public
   int            index_;
   Point_d        point_;
 
-  Simplex_handle simplex() const { return s_; }
-  int index() const { return index_; }
-  Point_d point() const { return point_; }
   void set_simplex(Simplex_handle s) { s_=s; }
   void set_index(int i) { index_=i; }
   void set_point(const Point_d& p) { point_=p; }
@@ -112,6 +109,10 @@ public:
   RC_vertex_d() :  s_(), index_(-42) {}
   // beware that ass_point was initialized here by nil_point
   ~RC_vertex_d() {}
+
+  Simplex_handle simplex() const { return s_; }
+  int index() const { return index_; }
+  const Point_d& point() const { return point_; }
 
 #ifdef CGAL_USE_LEDA
   LEDA_MEMORY(RC_vertex_d)
@@ -156,8 +157,53 @@ protected:
   bool& visited() { return visited_; }
   //------ only for convex hulls ------------------
 
-
 public:
+  struct Point_const_iterator {
+    typedef Point_const_iterator self;
+    typedef std::random_access_iterator_tag iterator_category;
+    typedef const Point_d&                  value_type;
+    typedef ptrdiff_t                       difference_type;
+    typedef const Point_d*                  pointer;
+    typedef const Point_d&                  reference;
+
+    typedef typename std::vector<Vertex_handle>::const_iterator 
+      ra_vertex_iterator;
+
+    Point_const_iterator() : _it() {}
+    Point_const_iterator(ra_vertex_iterator it) : _it(it) {}
+      
+    value_type operator*() const { return (*_it)->point(); }
+    pointer operator->() const { return &(operator*()); }
+
+    self& operator++() { ++_it; return *this; }
+    self  operator++(int) { self tmp = *this; ++_it; return tmp; }
+    self& operator--() { --_it; return *this; }
+    self  operator--(int) { self tmp = *this; --_it; return tmp; }
+
+    self& operator+=(difference_type i) { _it+=i; return *this; }
+    self& operator-=(difference_type i) { _it-=i; return *this; }
+    self operator+(difference_type i) const 
+    { self tmp=*this; tmp+=i; return tmp; }
+    self operator-(difference_type i) const 
+    { self tmp=*this; tmp-=i; return tmp; }
+
+    difference_type operator-(self x) const { return _it-x._it; }
+    reference operator[](difference_type i) { return *(*this + i); }
+
+    bool operator==(const self& x) const { return _it==x._it; }
+    bool operator!=(const self& x) const { return ! (*this==x); }
+    bool operator<(self x) const { (x - *this) > 0; }
+
+    private:
+      ra_vertex_iterator _it;  
+  }; // Point_const_iterator
+
+  Point_const_iterator points_begin() const 
+  { return Point_const_iterator(vertices.begin()); }
+  Point_const_iterator points_end() const 
+  { return Point_const_iterator(vertices.end()); }
+          
+
   RC_simplex_d() {}
   RC_simplex_d(int dmax) : 
     vertices(dmax+1), neighbors(dmax+1), opposite_vertices(dmax+1)
@@ -191,7 +237,6 @@ template <typename R>
 std::ostream& operator<<(std::ostream& O, const RC_simplex_d<R>& s)
 { s.print(O); return O; }
 
-        
 
 /*{\Manpage {Regular_complex_d}{R}{Regular Simplicial Complex}{C}}*/
 /*{\Mdefinition 

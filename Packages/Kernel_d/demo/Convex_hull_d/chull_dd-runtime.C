@@ -55,20 +55,46 @@ void destroy(pp_int& V, int n)
   V = 0;
 }
 
+void print_to_file(pp_int V, int n, int d, std::string s)
+{
+  std::ofstream Out(s.c_str());
+  Out << d << std::endl;
+  Out << n << std::endl;
+  for (int i=0; i<n; ++i) {
+    for (int j=0; j<d; ++j) Out << V[i][j] << " ";
+    Out << std::endl;
+  }
+  Out.close();
+}
+
+void read_from_file(pp_int& V, int& n, int& d, std::string s)
+{ 
+  std::ifstream In(s.c_str());
+  CGAL_assertion(In);
+  In >> d >> n;
+  create(V,n,d);int i=0,c;
+  while ( In >> c ) { V[i/d][i%d]=c; ++i;}
+  In.close();
+}
+
 template <class R>
 void time_insertion_and_check(pp_int V, int n, int d,
   CGAL::Convex_hull_d<R>& C, std::string s, bool check=true)
 {
   std::cout << " timing of " << s << std::endl;
+  std::vector< CGAL::Point_d<R> > P(n);
+  for(int i=0; i<n; ++i) 
+    P[i] = CGAL::Point_d<R>(d,V[i],V[i]+d,1);
+  
   float ti = used_time();
   for(int i=0; i<n; ++i) {
-    CGAL::Point_d<R> p(d,V[i],V[i]+d,1);
-    C.insert(p);
+    C.insert(P[i]);
     if (i%10==0) std::cout << i << " points inserted" << std::endl;
   }
   float t = used_time(ti);
   (*p_table_file) << s << "\t" << d << " " << n << " "
-                  << C.number_of_facets() << "\t" << t;
+                  << C.number_of_vertices() << " " << C.number_of_facets()
+                  << "\t" << t;
   C.print_statistics(); 
   std::cout << "used time for inserts  " << t << std::endl;
 
@@ -91,41 +117,64 @@ int main(int argc, char* argv[])
   // first param is dimension
   // second param is number of points
   int d = 4;  
-  int n = 100; 
+  int n = 100;
+  int range = 100;
+  unsigned which(255);
 
   if (argc > 1 && std::string(argv[1])=="-h") {
-    std::cout << "usage: " << argv[0] << " [dim] [#points] [ofile]\n";
+    std::cout << "usage: " << argv[0] << " [which] [dim] [#points] [range]\n";
+    std::cout << "       which=0 create testset in "<<argv[0]<<".ch\n" ;
+    std::cout << "       which=1 double cartesian\n" ;
+    std::cout << "       which=2 double homogeneous\n" ;
+    std::cout << "       which=4 LEDA integer homogeneous\n" ;
+    std::cout << "       which=8 GNU mpz homogeneous\n" ;
+    std::cout << "       which=16 LEDA real cartesian\n" ;
     exit(1);
   }
-  if (argc > 1) d = atoi(argv[1]);
-  if (argc > 2) n = atoi(argv[2]);
-  if (argc > 3) 
-    p_table_file = new std::ofstream(argv[3], std::ios::app); 
-  else 
-    p_table_file = new std::ofstream(
-      (std::string(argv[0])+".rts").c_str(), std::ios::app);
+  if (argc > 1) which = atoi(argv[1]);
+  if (argc > 2) d = atoi(argv[2]);
+  if (argc > 3) n = atoi(argv[3]);
+  if (argc > 4) range = atoi(argv[4]);
+  p_table_file = new std::ofstream(
+    (std::string(argv[0])+".rts").c_str(), std::ios::app);
 
   int** V;
-  create(V,n,d);
-  random_d_tuples_in_range(V,n,d,-n,n);
+  if ( which == 0 ) {
+    create(V,n,d);
+    random_d_tuples_in_range(V,n,d,-range,range);
+    print_to_file(V,n,d,std::string(argv[0])+".ch");
+    exit(0);
+  } else {
+    read_from_file(V,n,d,std::string(argv[0])+".ch");
+  }
+
+if ( which & 1 ) {
+  DCConvex_hull_d DCC(d);
+  time_insertion_and_check(V,n,d,DCC,"double cartesian        ");
+}
+if ( which & 2 ) {
+  DHConvex_hull_d DHC(d);
+  time_insertion_and_check(V,n,d,DHC,"double homogeneous      ");
+}
 
 #ifdef CGAL_USE_LEDA
+if ( which & 4 ) {
   LHConvex_hull_d LHC(d);
   time_insertion_and_check(V,n,d,LHC,"LEDA integer homogeneous");
+}
 #endif
 #ifdef CGAL_USE_GMP
+if ( which & 8 ) {
   GConvex_hull_d GC(d);
-  time_insertion_and_check(V,n,d,GC,"GNU mpz homogeneous");
+  time_insertion_and_check(V,n,d,GC,"GNU mpz homogeneous     ");
+}
 #endif
 #ifdef CGAL_USE_LEDA
+if ( which & 16 )  {
   LCConvex_hull_d LCC(d);
-  time_insertion_and_check(V,n,d,LCC,"LEDA real cartesian",false);
+  time_insertion_and_check(V,n,d,LCC,"LEDA real cartesian     ",false);
+}
 #endif
-
-  DHConvex_hull_d DHC(d);
-  time_insertion_and_check(V,n,d,DHC,"double homogeneous");
-  DCConvex_hull_d DCC(d);
-  time_insertion_and_check(V,n,d,DCC,"double cartesian");
 
 #ifdef CGAL_USE_LEDA
   print_statistics();

@@ -74,7 +74,7 @@ Gaussian_elimination(const Matrix &M,
   int sign = 1;
   // First create a copy of M into U, and set L and permutations to identity
   U = M; 
-  L = Matrix(dim,Matrix::Identity());
+  L = Matrix(dim,typename Matrix::Identity());
   for (i=0; i<dim; ++i) row_permutation.push_back(i);
   for (i=0; i<cdim; ++i) column_permutation.push_back(i);
   // Main loop : invariant is that L * M[q] = U
@@ -104,7 +104,7 @@ Gaussian_elimination(const Matrix &M,
     }
       TRACEN("after swap: "<<U);
     FT pivot = U[k][k];
-    CGAL_assertion(pivot !=0);
+    CGAL_assertion(pivot != FT(0));
     det *= pivot;
     for (i=k+1; i<dim; ++i) {
       FT temp = U[i][k] / pivot;

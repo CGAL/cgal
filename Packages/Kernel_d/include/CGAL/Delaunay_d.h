@@ -848,7 +848,7 @@ locate(const Point_d& x) const
   this -> visibility_search(origin_simplex_,lp,candidates,dummy1,loc,f);
   this -> clear_visited_marks(origin_simplex_);
   if ( f != Simplex_handle() ) return f;
-  std::list<Simplex_handle>::iterator it;
+  typename std::list<Simplex_handle>::iterator it;
   for(it = candidates.begin(); it != candidates.end(); ++it)
     if ( contains(*it,x) ) return *it;
   return Simplex_handle();
@@ -1060,7 +1060,7 @@ all_points() const
 { 
   std::list<Point_d> result;
   std::list<Vertex_handle> all_nearest_verts = all_vertices(NEAREST);
-  std::list<Vertex_handle>::iterator it;
+  typename std::list<Vertex_handle>::iterator it;
   for(it = all_nearest_verts.begin(); 
       it != all_nearest_verts.end();
       ++it) 

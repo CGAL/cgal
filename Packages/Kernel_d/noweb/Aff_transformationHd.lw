@@ -254,7 +254,7 @@ Aff_transformationHd(int d, const DirectionHd<RT,LA>& dir,
 {
   CGAL_assertion_msg((dir.dimension() == 2),
     "planar_rotation: dir has to be 2 dimensional.");
-  CGAL_assertion_msg((0<=num && num < den),
+  CGAL_assertion_msg((RT(0)<=num && num < den),
     "planar_rotation: num and den have to be positive.");
   CGAL_assertion_msg((0<=e1 && e1<=e2 && e2<d), 
     "planar_rotation: base vector indices wrong.");

@@ -84,7 +84,7 @@ Let |j = C.index_of_vertex_in_opposite_facet(f,i)|. Then
 #include <vector>
 
 #undef _DEBUG
-#define _DEBUG 91
+#define _DEBUG 93
 #include <CGAL/Kernel_d/debug.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -302,9 +302,9 @@ public:
   { return opposite_simplex(f,i+1); }
   /*{\Mop returns the facet opposite to the $i$-th vertex of $f$
   (|Facet_handle()| if there is no such facet). \precond $0 \leq i <
-  |dcur|$ and |dcur > 1|. }*/ Facet_const_handle
-  opposite_facet(Facet_const_handle f, int i) const { return
-  opposite_simplex(f,i+1); }
+  |dcur|$ and |dcur > 1|. }*/ 
+  Facet_const_handle opposite_facet(Facet_const_handle f, int i) const 
+  { return opposite_simplex(f,i+1); }
 
   int index_of_vertex_in_opposite_facet(Facet_handle f, int i) const
   { return index_of_vertex_in_opposite_simplex(f,i+1) - 1; }
@@ -332,18 +332,23 @@ public:
   vertex, the current hull is not changed and |Vertex_handle()| is 
   returned.}*/
 
+  template <typename Forward_iterator>
+  void insert(Forward_iterator first, Forward_iterator last)
+  { while (first != last) insert(*first++); }
+  /*{\Mop adds |S = set [first,last)| to the underlying set of
+  points. If any point |S[i]| is equal to (the point associated with) a
+  vertex of the current hull its associated point is changed to |S[i]|.}*/
+
+
   bool is_dimension_jump(const Point_d& x) const
-  /*{\Mop returns true if $x$ is not contained in the affine hull of |S|. }*/
+  /*{\Mop returns true if $x$ is not contained in the affine hull of |S|.}*/
   { 
     if (current_dimension() == dimension()) return false;
-    std::vector<Point_d>  A(current_dimension()+1); 
-    for (int l = 0; l <= current_dimension(); l++) 
-      A[l] = point_of_simplex(origin_simplex_,l);
     typename R::Contained_in_affine_hull_d contained_in_affine_hull =
       kernel().contained_in_affine_hull_d_object();
-    return ( !contained_in_affine_hull(A.begin(),A.end(),x) );
+    return ( !contained_in_affine_hull(origin_simplex_->points_begin(),
+      origin_simplex_->points_begin()+current_dimension()+1,x) );
   }
-
 
 
   std::list<Facet_handle>  facets_visible_from(const Point_d& x);
@@ -388,6 +393,10 @@ public:
   int number_of_facets() const
   /*{\Mop returns the number of facets of |\Mvar|.}*/
   { return num_of_unbounded_simplices; }
+
+  int number_of_simplices() const
+  /*{\Mop returns the number of bounded simplices of |\Mvar|.}*/
+  { return num_of_bounded_simplices; }
 
   #define STATISTIC(t) std::cout << #t << " = " << t << std::endl
 
@@ -599,25 +608,21 @@ template <class R>
 bool Convex_hull_d<R>::
 contains_in_base_facet(Simplex_handle s, const Point_d& x) const
 { 
-  std::vector<Point_d> A(current_dimension());
-  for (int i = 1; i <= dcur; i++) 
-    A[i - 1] = point_of_simplex(s,i);
   typename R::Contained_in_simplex_d contained_in_simplex =
     kernel().contained_in_simplex_d_object();
-  return contained_in_simplex(A.begin(),A.end(),x);
+  return contained_in_simplex(s->points_begin()+1,
+    s->points_begin()+current_dimension()+1,x);
 }
 
 template <class R>
 void Convex_hull_d<R>::
 compute_equation_of_base_facet(Simplex_handle S)
 { 
-  std::vector<Point_d> P(current_dimension()); 
-  for (int i = 0; i < current_dimension(); i++)
-    P[i] = point_of_simplex(S,i + 1); 
   typename R::Construct_hyperplane_d hyperplane_through_points =
     kernel().construct_hyperplane_d_object();
-  S->set_hyperplane_of_base_facet(
-    hyperplane_through_points(P.begin(),P.end(),center(), ON_NEGATIVE_SIDE)); 
+  S->set_hyperplane_of_base_facet( hyperplane_through_points(
+    S->points_begin()+1, S->points_begin()+1+current_dimension(),
+    center(), ON_NEGATIVE_SIDE)); // skip the first point !
 
   #ifdef CGAL_CHECK_EXPENSIVE
   { /* Let us check */
@@ -634,7 +639,6 @@ compute_equation_of_base_facet(Simplex_handle S)
 
  
 }
-
 
 template <class R>
 typename Convex_hull_d<R>::Vertex_handle 
@@ -729,7 +733,7 @@ Convex_hull_d<R>::insert(const Point_d& x)
         { num_of_vertices++; 
           z = new_vertex(x);
           std::list<Simplex_handle> NewSimplices; // list of new simplices
-          std::list<Simplex_handle>::iterator it;
+          typename std::list<Simplex_handle>::iterator it;
 
           for (it = visible_simplices.begin(); 
                it != visible_simplices.end(); ++it) {
@@ -1022,12 +1026,9 @@ bool Convex_hull_d<R>::is_valid() const
       Point_d p; Object op;
       Hyperplane_d  h = S->hyperplane_of_base_facet();
       if ( (op = intersect(l,h), assign(p,op)) ) {
-        std::vector<Point_d> A(current_dimension());
-        for (int i = 0; i < current_dimension(); i++) { 
-          A[i] = point_of_simplex(S,i + 1);
-        }
-        if (contained_in_simplex(A.begin(),A.end(),p))
-          CGAL_assertion_msg(0,"check: current hull has double coverage."); 
+        CGAL_assertion_msg( !contained_in_simplex(
+          S->points_begin()+1,S->points_begin()+1+current_dimension(),p),
+          "check: current hull has double coverage."); 
       }
     }
   }

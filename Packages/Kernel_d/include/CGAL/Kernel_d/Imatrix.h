@@ -207,8 +207,9 @@ by the iterator range |[first,last)|.  |\Mvar| is initialized to an $n
 provide a iterator type |V::const_iterator|, to have |V::value_type ==
 NT|.\\ Note that |Ivector| or |std::vector<NT,LA>| fulfill these
 requirements.}*/
-{ range_initialize(first,last,
-  std::iterator_traits<Forward_iterator>::iterator_category()); }
+{ typedef typename std::iterator_traits<Forward_iterator>::iterator_category 
+    iterator_category;
+  range_initialize(first,last,iterator_category()); }
 
 Imatrix(const std::vector< Vector >& A) 
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname|. Let $A$
@@ -445,7 +446,7 @@ Imatrix(int dim1, int dim2, const Initialize&, const NT& x) :
   if (d1 > 0) { 
     allocate_mat_space(v,d1);
     for (int i=0; i<d1; i++) 
-      v[i] = new Vector(d2, Vector::Initialize(), x); 
+      v[i] = new Vector(d2, typename Vector::Initialize(), x); 
   } else 
     v = (Vector**)0; 
 }

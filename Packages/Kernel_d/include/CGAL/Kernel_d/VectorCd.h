@@ -137,14 +137,14 @@ VectorCd<FT,LA>& operator*=(int n)
 { self_scale(n); return *this; }
 
 VectorCd<FT,LA> operator/(int n) const
-{ return scale(1/FT(n)); }
+{ return scale(FT(1)/FT(n)); }
 VectorCd<FT,LA> operator/(const FT& n) const
-{ return scale(1/n); }
+{ return scale(FT(1)/n); }
 
 VectorCd<FT,LA>& operator/=(const FT& n)
-{ self_scale(1/n); return *this; }
+{ self_scale(FT(1)/n); return *this; }
 VectorCd<FT,LA>& operator/=(int n) 
-{ self_scale(1/FT(n)); return *this; }
+{ self_scale(FT(1)/FT(n)); return *this; }
 
 FT operator* (const VectorCd<FT,LA>& w) const
 { return vector_rep()*w.vector_rep(); }

@@ -471,7 +471,7 @@ std::istream& operator>>(std::istream& is, Ivector<_NT,_ALLOC>& v)
     case IO::BINARY :
       is >> dim;
       v = Ivector<_NT,_ALLOC>(dim);
-      copy_n(std::istream_iterator<_NT>(is),dim,v.begin());
+      CGAL::copy_n(std::istream_iterator<_NT>(is),dim,v.begin());
       break;
     default:
       std::cerr<<"\nStream must be in ascii or binary mode"<<std::endl;
