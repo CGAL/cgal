@@ -693,7 +693,7 @@ public:
       //   Curve_node_iterator ncv_iter;
       //        for (ncv_iter = point_node.curves_begin(); 
       //             ncv_iter != point_node.curves_end(); ++ncv_iter){
-      //          if (event_point != traits->curve_source(ncv_iter->get_curve()) && 
+      //   if (event_point != traits->curve_source(ncv_iter->get_curve()) && 
       //              event_point == ncv_iter->get_rightmost_point().point())
       //            ncv_iter->erase_rightmost_point();
       //        }
