@@ -185,6 +185,13 @@ function \ccc{prev()}, otherwise they are of the forward category.
     {circulator of halfedges around the facet (counterclockwise).}
 %%\ccThree{Halfedge_const_handle}{h.next_on_vertex() const;;}{}
 
+\ccMethod{std::size_t vertex_degree() const;}{the degree of the 
+  incident vertex, i.e., number of edges emanating from this vertex.}
+
+\ccMethod{std::size_t facet_degree() const;}{the degree of the
+  incident facet, i.e., number of edges on the boundary of this facet.}
+
+
 \ccHeading{Operations available if \ccc{Supports_halfedge_vertex} $\equiv$ 
            \ccc{CGAL::Tag_true}}
 

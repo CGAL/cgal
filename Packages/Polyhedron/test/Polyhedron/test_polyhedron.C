@@ -359,6 +359,10 @@ void test_Polyhedron() {
         CGAL_assertion( P.is_valid());
         CGAL_assertion( P.is_triangle( h));
         CGAL_assertion( ! P.is_tetrahedron( h));
+        CGAL_assertion( h->vertex_degree() == 2);
+        CGAL_assertion( h->facet_degree() == 3);
+        CGAL_assertion( h->vertex()->vertex_degree() == 2);
+        CGAL_assertion( h->facet()->facet_degree() == 3);
         P.normalize_border();
         CGAL_assertion( P.is_valid( false, 1));
         P.inside_out();
@@ -372,6 +376,10 @@ void test_Polyhedron() {
         CGAL_assertion( P.is_valid());
         CGAL_assertion( P.is_tetrahedron( h));
         CGAL_assertion( ! P.is_triangle( h));
+        CGAL_assertion( h->vertex_degree() == 3);
+        CGAL_assertion( h->facet_degree() == 3);
+        CGAL_assertion( h->vertex()->vertex_degree() == 3);
+        CGAL_assertion( h->facet()->facet_degree() == 3);
         P.normalize_border();
         CGAL_assertion( P.is_valid( false, 1));
         P.inside_out();

@@ -116,9 +116,9 @@ public:
         return Halfedge_around_vertex_const_circulator( halfedge());
     }
 
-    size_type degree() const {
-        return circulator_size( vertex_begin());
-    }
+    // the degree of the vertex, i.e., edges emanating from this vertex 
+    std::size_t vertex_degree() const { return halfedge()->vertex_degree(); }
+    size_type degree() const { return vertex_degree(); } //backwards compatible
 
     // No longer hidden. Now the restricted version with precondition.
     // sets incident halfedge to h. Precondition: h is incident, i.e.,
@@ -283,6 +283,18 @@ public:
             HDS::halfedge_handle(this));
     }
 
+    // the degree of the incident vertex, i.e., edges emanating from this 
+    // vertex 
+    std::size_t vertex_degree() const { 
+        return circulator_size( vertex_begin()); 
+    }
+
+    // the degree of the incident facet, i.e., edges on the boundary of this 
+    // facet
+    std::size_t facet_degree() const {
+        return circulator_size( facet_begin()); 
+    }
+
 private:
     // Hide some other functions of H.
     void  set_next( Halfedge_handle hh)  { Base::set_next(hh);}
@@ -366,9 +378,10 @@ public:
         return Halfedge_around_facet_const_circulator( halfedge());
     }
 
-    size_type size() const {
-        return circulator_size( facet_begin());
-    }
+    // the degree of the incident facet, i.e., edges on the boundary of this 
+    // facet
+    std::size_t facet_degree() const { return halfedge()->facet_degree(); }
+    size_type size() const { return facet_degree(); } // backwards compatible
 
     // No longer hidden. Now the restricted version with precondition.
     // sets incident halfedge to h. Precondition: h is incident, i.e.,
