@@ -1309,6 +1309,14 @@ Packages/Nef_2/doc_tex/Nef_2_ref/extsegs.gif -text svneol=unset#unset
 Packages/Nef_3/demo/Nef_3/cube.off -text
 Packages/Nef_3/demo/Nef_3/cube2.off -text
 Packages/Nef_3/demo/Nef_3/cube3.off -text
+Packages/Nef_3/doc_tex/Nef_3/fig/halfloop.eps svneol=native#unset
+Packages/Nef_3/doc_tex/Nef_3/fig/nef_example.eps -text
+Packages/Nef_3/doc_tex/Nef_3/fig/nef_non_manifold3a.ps -text
+Packages/Nef_3/doc_tex/Nef_3/fig/nef_pyramids.eps -text
+Packages/Nef_3/doc_tex/Nef_3/fig/shalfloopB.eps svneol=native#unset
+Packages/Nef_3/doc_tex/Nef_3/fig/shells.eps -text svneol=unset#unset
+Packages/Nef_3/doc_tex/Nef_3/fig/snc.eps -text
+Packages/Nef_3/doc_tex/Nef_3/fig/visualization_SNC.ps -text
 Packages/Nef_3/test/Nef_3/data/centered_cube.off -text
 Packages/Nef_3/test/Nef_3/data/cube+v.off -text
 Packages/Nef_3/test/Nef_3/data/cube+vONe.off -text
