@@ -1,5 +1,9 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
+
+19 December 2004 Andreas Fabri
+- Updated file headers in the demos
+
 05 November 2004 Sylvain Pion
 - Move debugthread inside namespace CGAL, and protect it under CGAL_NEF_DEBUG.
 
