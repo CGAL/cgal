@@ -20,7 +20,7 @@
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
 
-#include <CGAL/config.h>
+#include <CGAL/basic.h>
 #include <CGAL/_test_types.h>
 
 #include <CGAL/Triangulation_vertex_base_2.h>

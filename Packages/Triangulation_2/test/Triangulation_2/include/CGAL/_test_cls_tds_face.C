@@ -66,21 +66,24 @@ _test_cls_tds_face( const Face &, const Gt & )
   assert( f5.has_vertex(&v3,i) && (i==2) );
 
   // Test set_vertex()
+  f1.set_vertex(0,&v4);
   f1.set_vertex(1,&v3);
   f1.set_vertex(2,&v2);
-  f2.set_vertex(2,&v1);
   f2.set_vertex(0,&v3);
+  f2.set_vertex(1,&v4);
+  f2.set_vertex(2,&v1);
   f3.set_vertex(0,&v2);
   f3.set_vertex(1,&v1);
-  assert( f1.vertex(0) == NULL );
+  f3.set_vertex(2,&v4);
+  assert( f1.vertex(0) == &v4 );
   assert( f1.vertex(1) == &v3 );
   assert( f1.vertex(2) == &v2 );
   assert( f2.vertex(0) == &v3 );
-  assert( f2.vertex(1) == NULL );
+  assert( f2.vertex(1) == &v4 );
   assert( f2.vertex(2) == &v1 );
   assert( f3.vertex(0) == &v2 );
   assert( f3.vertex(1) == &v1 );
-  assert( f3.vertex(2) == NULL );
+  assert( f3.vertex(2) == &v4 );
   
   // Test set_vertices()
   f5.set_vertices();
@@ -132,8 +135,7 @@ _test_cls_tds_face( const Face &, const Gt & )
 
   // Test is_valid
   assert( f4.is_valid() );
-  assert( !f5.is_valid() );
-
+  
   // Test ccw() and cw()
   assert( f1.ccw(0) == 1 );
   assert( f1.ccw(1) == 2 );
@@ -141,6 +143,27 @@ _test_cls_tds_face( const Face &, const Gt & )
   assert( f1.cw(0) == 2 );
   assert( f1.cw(1) == 0 );
   assert( f1.cw(2) == 1 );
+
+  // Test dimension
+  assert(f4.dimension() == 2);
+
+  //Test low dimensional faces
+  Face g1(&v2,&v3,NULL);
+  Face g2(&v3,&v1, NULL);
+  Face g3(&v1,&v2, NULL);
+  g1.set_neighbors( &g2, &g3, NULL);
+  g2.set_neighbors( &g3, &g1, NULL);
+  g3.set_neighbors( &g1, &g2, NULL);
+  assert(g1.dimension() == 1);
+  assert (g1.is_valid());
+
+  Face h1(&v1, NULL, NULL);
+  Face h2(&v2, NULL, NULL, &h1, NULL, NULL);
+  h1.set_neighbor(0, &h2);
+  assert (h1.dimension() == 0);
+  assert (h1.is_valid()); 
+
+  return;
 }
 
 CGAL_END_NAMESPACE

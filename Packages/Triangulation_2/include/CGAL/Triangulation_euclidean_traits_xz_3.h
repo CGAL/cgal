@@ -81,17 +81,12 @@ public:
       }
     
 
-    
-        return orientationC2(x(p), y(p), x(q), y(q), x(r), y(r));
-      }
-    
     Oriented_side side_of_oriented_circle(const Point &p,
 					  const Point &q,
 					  const Point &r,
 					  const Point &s) const
       {
-            
-        return side_of_oriented_circleC2(x(p), y(p),
+                return side_of_oriented_circleC2(x(p), y(p),
                                               x(q), y(q),
                                               x(r), y(r),
                                               x(s), y(s));

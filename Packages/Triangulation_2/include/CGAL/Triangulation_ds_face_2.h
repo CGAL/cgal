@@ -55,7 +55,7 @@ public:
     :  Fb(v0,v1,v2,n0,n1,n2)
   {}
 
-   CGAL_Triangulation_ds_face_2( const Face * f)
+  Triangulation_ds_face_2( const Face * f)
     :  Fb()
   {
     set_vertices(f->vertex(0), f->vertex(1), f->vertex(2));
@@ -76,8 +76,7 @@ public:
     Fb::set_neighbor(i,n);
   }
 
-  inline
-  void set_vertices() 
+    void set_vertices() 
   {
     Fb::set_vertices();
   }
@@ -90,7 +89,7 @@ public:
     Fb::set_vertices(v0,v1,v2);
    }
     
-  inline
+ //  inline
   void set_neighbors() 
   {
     Fb::set_neighbors();
@@ -104,18 +103,26 @@ public:
     Fb::set_neighbors(n0,n1,n2);
   }
 
+  void reorient()
+  {
+    Vertex* vtemp = vertex(0);
+    Face* ftemp   = neighbor(0);
+    set_vertex(0, vertex(1)) ; set_vertex(1,vtemp);
+    set_neighbor(0, neighbor(1));set_neighbor(1,ftemp);
+  }
+
   //Vertex Access Member Functions
+  inline
   Vertex* vertex(int i) const
   {
     return( (Vertex*) (Fb::vertex(i)));
   } 
 
  inline
-   bool has_vertex(const Vertex* v) const
-  {
-    //Triangulation_ds_vertex_2<Vb,Fb>* w=v;
-    return (Fb::has_vertex(v));
-  }
+ bool has_vertex(const Vertex* v) const
+ {
+   return (Fb::has_vertex(v));
+ }
     
     
   inline 
@@ -166,35 +173,11 @@ public:
 
 
 
-  //Additionnal Operations
-
-  //the following function has been moved to the tds class
-//   void insert_in_face(Vertex*& v)
-
-//   void insert_in_edge(const Vertex* v, int i)
-
-//   bool insert_outside(const Vertex* v, int i)
-//   bool remove(Vertex* v)
-
-//   void flip(int i)
-
-
    bool is_valid(bool verbose = false, int level = 0) const
   {
     bool result = Fb::is_valid(verbose, level);
-    for(int i = 0; i < 3; i++) {
+    for(int i = 0; i <= dimension(); i++) {
       Face* n = neighbor(i);
-            
-      // The following seems natural, but it may fail if the faces
-      // this and n are neighbors on two edges (1-dim triangulation,
-      // with infinite faces
-      // int ni = n->index(this);
-
-      //  int ni = cw(n->index(vertex(cw(i))));
-      // CGAL_triangulation_assertion( this == n->neighbor(ni) );
-      // result = result && (vertex(cw(i)) == n->vertex(ccw(ni)));
-      // result = result && (vertex(ccw(i)) == n->vertex(cw(ni)));
-
       int in = n->index(this);
       result = result && ( this == n->neighbor(in) );
       switch(dimension()) {

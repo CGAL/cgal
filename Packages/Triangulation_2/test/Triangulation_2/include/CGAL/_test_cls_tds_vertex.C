@@ -31,7 +31,6 @@ _test_cls_tds_vertex( const Vertex &, const Gt & )
   cout << "    vertex" << endl;
 
   typedef typename Vertex::Point                Point;
-
   typedef typename Vertex::Face                 Face;
   typedef typename Vertex::Edge                 Edge;
 
@@ -75,14 +74,19 @@ _test_cls_tds_vertex( const Vertex &, const Gt & )
   assert( v1.cw(2) == 1 );
   
   // The functions degree(), incident_faces(), incident_vertices(),
-  // incident_edges() need a vertex in some triangulation,
+  // incident_edges() and is_valid() need a vertex in some
+  // triangulation,
+  // idem  for circulators
   // They are tested in _test_cls_triangulation_2.h
   
   // The following are here to test the presence of the types
   // otherwise the compiler might not instantiate them
-  Face_circulator   fc = v1.incident_faces(); assert( &fc == &fc);
-  Edge_circulator   ec = v1.incident_edges(); assert( &ec == &ec);
-  Vertex_circulator vc = v1.incident_vertices(); assert( &vc == &vc);
+  // v1 is chosen because its face() is NULL, 
+  // the constructors calls function that crashes with those
+  // incomplete data
+     Face_circulator   fc = v1.incident_faces(); assert( &fc == &fc);
+     Edge_circulator   ec = v1.incident_edges(); assert( &ec == &ec);
+     Vertex_circulator vc = v1.incident_vertices(); assert( &vc == &vc);
 
   // Test degree()
   assert( v1.degree() == 0 );

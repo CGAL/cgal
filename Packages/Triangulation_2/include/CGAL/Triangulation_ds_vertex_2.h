@@ -98,12 +98,12 @@ public:
   
   inline Vertex_circulator incident_vertices() 
   {
-    return Vertex_circulator(this, face());
+    return Vertex_circulator(this);
   }
     
   inline Face_circulator incident_faces() 
   {
-    return Face_circulator(this, face());
+    return Face_circulator(this);
   }
     
   inline Face_circulator incident_faces(const Face* f) 
@@ -113,7 +113,7 @@ public:
     
   inline Edge_circulator incident_edges() 
   {
-    return Edge_circulator(this, face());
+    return Edge_circulator(this);
   }
        
   inline Edge_circulator incident_edges(const Face* f) 

@@ -80,7 +80,8 @@ test_constrained_triangulation_2: test_constrained_triangulation_2.o
 clean:
 	- rm -f *.o test_triangulation_geom_traits test_triangulation_2 \
 	            test_triangulation_tds test_delaunay_triangulation_2 core \
-	            T??.triangulation test_constrained_triangulation_2 test_regular_triangulation_2
+	            T??.triangulation  file_tds? \
+		    test_constrained_triangulation_2 test_regular_triangulation_2
 
 realclean: clean
 	- rm -f Program* Error* Compiler* error*

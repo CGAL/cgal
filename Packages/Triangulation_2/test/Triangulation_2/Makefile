@@ -19,19 +19,15 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-#CXXFLAGS = \
-#	-I../../include \
-#	-I./include \
-#	$(CGAL_CXXFLAGS)\
-#	$(TESTSUITE_CXXFLAGS) \
-#	-g
-
 CXXFLAGS = \
 	-I../../include \
 	-I./include \
-	$(CGAL_CXXFLAGS)\
 	$(TESTSUITE_CXXFLAGS) \
-	-g  
+	$(CGAL_CXXFLAGS)\
+	-g \
+	-B$(UTIL)/Binutils/SunOS/bin/ 
+#	$(LONG_NAME_PROBLEM_CXXFLAGS) 
+#	-g \
 #       -B$(UTIL)/Binutils/SunOS/bin/ 
 #	-DCGAL_NO_PRECONDITIONS -DCGAL_NO_ASSERTIONS -DCGAL_NO_POSTCONDITIONS
 #	-fhonor-std
@@ -44,6 +40,7 @@ CXXFLAGS = \
 
 LDFLAGS = $(TESTSUITE_LDFLAGS) \
           $(CGAL_LDFLAGS)
+#	  $(LONG_NAME_PROBLEM_LDFLAGS) \
 
 #---------------------------------------------------------------------#
 #                    target entries
@@ -79,7 +76,8 @@ test_constrained_triangulation_2: test_constrained_triangulation_2.o
 clean:
 	- rm -f *.o test_triangulation_geom_traits test_triangulation_2 \
 	            test_triangulation_tds test_delaunay_triangulation_2 core \
-	            T??.triangulation test_constrained_triangulation_2 test_regular_triangulation_2
+	            T??.triangulation  file_tds? \
+		    test_constrained_triangulation_2 test_regular_triangulation_2
 
 realclean: clean
 	- rm -f Program* Error* Compiler* error*

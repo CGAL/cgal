@@ -28,7 +28,7 @@
 
 
 
-#include <CGAL/Weighted_point_2.h>
+#include <CGAL/Weighted_point.h>
 
 #include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Regular_triangulation_2.h>
@@ -38,16 +38,28 @@ int main()
 {
   cout << "Testing Regular_triangulation_2" <<endl;
   cout << " with CGAL::Regular_triangulation_euclidean_traits_2 : "<<endl;
-  cout << "using  Quotient<Gmpz>  type coordinates  and double Weight" << endl;
+  cout << "using  Cartesian  points "   <<  endl;
+
   typedef CGAL::Regular_triangulation_euclidean_traits_2
-    <Test_rep_cartesian, double>           RGt2;
+    <Test_rep_cartesian, Ftype>           RGt;
+  typedef CGAL::Triangulation_vertex_base_2<RGt>                     RVb;
+  typedef CGAL::Regular_triangulation_face_base_2<RGt>               RFb;
+  typedef CGAL::Triangulation_default_data_structure_2<RGt,RVb,RFb>  RTds;
+  typedef CGAL::Regular_triangulation_2<RGt,RTds>                    RCls;
+
+    _test_cls_reg_triangulation_2( RCls() );
+
+  cout << "Testing Regular_triangulation_2" <<endl;
+  cout << " with CGAL::Regular_triangulation_euclidean_traits_2 : "<<endl;
+  cout << "using  Homogeneous points "<< endl;
+  typedef CGAL::Regular_triangulation_euclidean_traits_2
+    <Test_rep_homogeneous, Rtype>            RGt2;
   typedef CGAL::Triangulation_vertex_base_2<RGt2>                     RVb2;
   typedef CGAL::Regular_triangulation_face_base_2<RGt2>               RFb2;
   typedef CGAL::Triangulation_default_data_structure_2<RGt2,RVb2,RFb2>  RTds2;
   typedef CGAL::Regular_triangulation_2<RGt2,RTds2>                    RCls2;
 
     _test_cls_reg_triangulation_2( RCls2() );
-
-  return 0;
+return 0;
 }
 

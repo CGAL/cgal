@@ -25,12 +25,12 @@
 #ifndef CGAL_TRIANGULATION_DEFAULT_DATA_STRUCTURE_2_H
 #define CGAL_TRIANGULATION_DEFAULT_DATA_STRUCTURE_2_H
 
-#include <
-utility>
+#include <utility>
 #include <iostream>
 #include <list>
 #include <map>
 #include <vector>
+#include <functional>
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_2.h>
@@ -52,6 +52,9 @@ class Triangulation_default_data_structure_2
   friend std::istream& operator>> CGAL_NULL_TMPL_ARGS
      ( std::istream& is, 
        Triangulation_default_data_structure_2<Gt,Vb,Fb>& tds);
+  friend std::ostream& operator<< CGAL_NULL_TMPL_ARGS
+     ( std::ostream& os, 
+      const Triangulation_default_data_structure_2<Gt,Vb,Fb>& tds);
 
 public:
   typedef Gt Geom_traits;
@@ -61,6 +64,7 @@ public:
   typedef std::pair<Face*, int>  Edge;
 
   typedef Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
+  typedef Triangulation_ds_iterator_base_2<Tds> Iterator_base;
   typedef Triangulation_ds_face_iterator_2<Tds> Face_iterator;
   typedef Triangulation_ds_vertex_iterator_2<Tds> Vertex_iterator;
   typedef Triangulation_ds_edge_iterator_2<Tds> Edge_iterator;
@@ -79,32 +83,10 @@ private:
 
 public:
   //creators
-  Triangulation_default_data_structure_2() 
+  Triangulation_default_data_structure_2(const Geom_traits& gt=Geom_traits()) 
     :  _geom_traits(),_infinite_vertex(NULL),
-       _dimension(0),_number_of_vertices(0)
+       _number_of_vertices(0),_dimension(-1)
   { }
-
-   Triangulation_default_data_structure_2(const Geom_traits& gt) 
-    : _geom_traits(gt), _infinite_vertex(NULL), 
-      _dimension(0), _number_of_vertices(0)      
-  { }
-
-  Triangulation_default_data_structure_2(Vertex * v)
-    : _infinite_vertex(NULL),_finite_vertex(NULL), _number_of_vertices(0)
-  {
-    init(v);
-    CGAL_triangulation_postcondition( is_valid() );
-  }
-
-
-  Triangulation_default_data_structure_2(Vertex * v, 
-					 const Geom_traits& gt)
-    : _infinite_vertex(NULL), 
-      _number_of_vertices(0), _geom_traits(gt)
-  {
-    init(v);
-    CGAL_triangulation_postcondition( is_valid() );
-  }
 
   Triangulation_default_data_structure_2(const Tds &tds)
   {
@@ -129,24 +111,20 @@ public:
   int  dimension() const { return _dimension;  }
   int number_of_vertices() const {return _number_of_vertices;}
   int number_of_faces() const {
-    if (number_of_vertices() < 2) return 0;
-    switch(dimension()){
-    case 0 : return 2;
-    case 1: return number_of_vertices();
-    case 2: return  2 * number_of_vertices() - 4;
-    }
-    CGAL_triangulation_assertion(false);
-    return -1;
-  }    
+    return ( dimension() < 2) ? 0 : (2*number_of_vertices()- 4);
+  }
+  int number_of_edges() const;
+  int number_of_full_dim_faces() const; //number of faces stored by tds
   const Geom_traits& geom_traits() const {return _geom_traits;}
+  
 
 public:
-  //this should be private but
+  //this  should be private but
   // it is used by >> input operator
   // and apparently friend declaration does not work
   Vertex* infinite_vertex() const  {return _infinite_vertex;  }
 
-private:
+  //this should be private but it is needed by Triangulatin_ds_iterators
   Face* infinite_face() const
   {
     //CGAL_triangulation_precondition( number_of_vertices() >= 2  &&
@@ -154,7 +132,7 @@ private:
     return _infinite_vertex->face();
   }
 
-  // TEST IF INFINITE FEATURES
+  // TEST IF INFINITE FEATURES 
   bool is_infinite(const Face* f) const {
     return f->has_vertex(infinite_vertex());
   }
@@ -186,93 +164,160 @@ private:
 public:
   void set_number_of_vertices(int n) {_number_of_vertices = n;}
   void set_dimension (int n) {_dimension = n ;}
-
-private:
   void set_infinite_vertex(Vertex*  v) { _infinite_vertex = v;}
 
 public:
   // MODIFY
-
   void flip(Face* f, int i);
  
-  void insert_first(Vertex* v);
+  Vertex* insert_first();
+  Vertex* insert_second();
+  Vertex* insert_in_face(Face* f);
+  Vertex* insert_in_edge(Face* f, int i);
+  Vertex* insert_dim_up(Vertex *w, bool orient=true);
   
-  void insert_second(Vertex* v);
- 
-  void insert_in_face(Vertex* v, Face* f);
- 
-  void insert_in_edge(Vertex* v, Face* f, int i);
- 
-  // the following function insert in 1_dim triangulation
-  // a vertex which is outside the convex hull of the vertices (a segment)
-  // loc->vertex(li) is the verex of the triangulation closest to v
-  void insert_collinear_outside(Vertex * v, Face * loc, int li);
-  
-
   void remove_degree_3(Vertex* v, Face* f = NULL);
- 
+  void remove_1D(Vertex* v); 
+  //TODO ? regroup this two under remove_degree_d+1
+   
   void remove_second(Vertex* v);
-  
   void remove_first(Vertex* v);
- 
-    
+  void remove_dim_down(Vertex* v);
+
+     
 // ITERATOR METHODS
-    Face_iterator faces_begin() const
-    {
-        Tds* ncthis = (Tds *)this;
-        return Face_iterator(ncthis);
-    }
-
-    Face_iterator faces_end() const
-    {
-        Tds* ncthis = (Tds *)this;
-        return Face_iterator(ncthis, 1);
-    }
-
-    Vertex_iterator vertices_begin() const
-    {
-        Tds* ncthis = (Tds*)this;
-        return Vertex_iterator(ncthis);
-    }
-
-    Vertex_iterator vertices_end() const
-    {
-        Tds* ncthis = (Tds*)this;
-        return Vertex_iterator(ncthis,1);
-    }
-
-    Edge_iterator edges_begin() const
-    {
-        Tds* ncthis = (Tds*)this;
-        return Edge_iterator(ncthis);
-    }
-
-    Edge_iterator edges_end() const
-    {
-        Tds* ncthis = (Tds*)this;
-        return Edge_iterator(ncthis,1);
-    }
-
+public:
+  Iterator_base iterator_base_begin() const;
+  Iterator_base iterator_base_end() const;
+  Face_iterator faces_begin() const;
+  Face_iterator faces_end() const;
+  Vertex_iterator vertices_begin() const;
+  Vertex_iterator vertices_end() const;
+  Edge_iterator edges_begin() const;
+  Edge_iterator edges_end() const;
+  
 
   // CHECKING
   bool is_valid(bool verbose = false, int level = 0) const;
 
   //Helping functions
-public:
-   void init(Vertex*  v);
+private:
+  //void init(Vertex*  v);
+  std::istream& file_input(std::istream& is);
+  std::ostream& file_output(std::ostream& os, Vertex* =infinite_vertex()) const;
 
 public:
   void copy_tds(const Tds &tds);
- 
-  
   void swap(Tds &tds);
-  
   void clear();
 
 };
 
-
+template < class Gt , class Vb, class Fb>
+int
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+number_of_edges() const
+{
+  switch (dimension()) {
+  case 1:  return number_of_vertices();
+  case 2:  return 3*number_of_vertices()-6;
+  default: return 0;
+  }
+}
       
+template < class Gt , class Vb, class Fb>
+int
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+number_of_full_dim_faces() const
+{
+  switch (dimension()) {
+  case -1: return 0;
+  case 0:  return number_of_vertices();
+  case 1:  return number_of_edges();
+  case 2:  return number_of_faces();
+  default: return 0;
+  }
+}
+
+template <class Gt , class Vb, class Fb>
+Triangulation_ds_iterator_base_2<
+Triangulation_default_data_structure_2<Gt,Vb,Fb> >
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+iterator_base_begin() const
+{
+ return Iterator_base(this);
+}
+
+template <class Gt , class Vb, class Fb>
+Triangulation_ds_iterator_base_2<
+Triangulation_default_data_structure_2<Gt,Vb,Fb> >
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+iterator_base_end() const
+{
+ return Iterator_base(this,1);
+}
+
+template <class Gt , class Vb, class Fb>
+Triangulation_ds_face_iterator_2<
+Triangulation_default_data_structure_2<Gt,Vb,Fb> > 
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+faces_begin() const
+{
+  Tds* ncthis = (Tds *)this;
+  return Face_iterator(ncthis);
+}
+
+template <class Gt , class Vb, class Fb>
+Triangulation_ds_face_iterator_2<
+Triangulation_default_data_structure_2<Gt,Vb,Fb> > 
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+faces_end() const
+{
+  Tds* ncthis = (Tds *)this;
+  return Face_iterator(ncthis, 1);
+}
+
+template <class Gt , class Vb, class Fb>
+Triangulation_ds_vertex_iterator_2<
+Triangulation_default_data_structure_2<Gt,Vb,Fb> > 
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+vertices_begin() const
+{
+  Tds* ncthis = (Tds*)this;
+  return Vertex_iterator(ncthis);
+}
+
+template <class Gt , class Vb, class Fb>
+Triangulation_ds_vertex_iterator_2<
+Triangulation_default_data_structure_2<Gt,Vb,Fb> > 
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+vertices_end() const
+{
+  Tds* ncthis = (Tds*)this;
+  return Vertex_iterator(ncthis,1);
+}
+
+template <class Gt , class Vb, class Fb>
+Triangulation_ds_edge_iterator_2<
+Triangulation_default_data_structure_2<Gt,Vb,Fb> > 
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+edges_begin() const
+{
+  Tds* ncthis = (Tds*)this;
+  return Edge_iterator(ncthis);
+}
+
+ 
+template <class Gt , class Vb, class Fb>
+Triangulation_ds_edge_iterator_2<
+Triangulation_default_data_structure_2<Gt,Vb,Fb> > 
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+edges_end() const
+{
+  Tds* ncthis = (Tds*)this;
+  return Edge_iterator(ncthis,1);
+}
+
 
 template < class Gt , class Vb, class Fb>
 void
@@ -323,186 +368,192 @@ flip(Face* f, int i)
         }
     }
   
+template < class Gt , class Vb, class Fb>
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::Vertex*
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+insert_first( )
+{
+  CGAL_triangulation_precondition( number_of_vertices() == 0 &&
+				   dimension()==-1 );
+  Vertex* v1 = new Vertex;
+  set_infinite_vertex(v1);
+  set_number_of_vertices(1);
+  return v1;
+}
 
 template < class Gt , class Vb, class Fb>
-void
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::Vertex* 
 Triangulation_default_data_structure_2<Gt,Vb,Fb>::
-  void insert_second(Vertex* v)
-  {
-    CGAL_triangulation_precondition( number_of_vertices() == 1 &&
-				     v != infinite_vertex());
-    Face * f1 = new Face( _infinite_vertex, NULL, NULL);
-    Face * f2 = new Face( v, NULL, NULL);
-    f1->set_neighbor(0,f2);
-    f2->set_neighbor(0,f1);
-    _infinite_vertex->set_face(f1);
-    v->set_face(f2);
-    set_number_of_vertices(2);
-    set_dimension(0);
-    return;
+insert_second()
+{
+  CGAL_triangulation_precondition( number_of_vertices() == 1 &&
+				   dimension()==-1 );
+  Vertex* v2= new Vertex;
+  Face * f1 = new Face( _infinite_vertex, NULL, NULL);
+  Face * f2 = new Face( v2, NULL, NULL);
+  f1->set_neighbor(0,f2);
+  f2->set_neighbor(0,f1);
+  _infinite_vertex->set_face(f1);
+  v2->set_face(f2);
+  set_number_of_vertices(2);
+  set_dimension(0);
+  return v2;
+}
+
+
+template < class Gt , class Vb, class Fb>
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::Vertex*
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+insert_in_face(Face* f)
+  // New vertex will replace f->vertex(0) in face f
+{
+  CGAL_triangulation_precondition( f != NULL && dimension()== 2);
+  Vertex*  v = new Vertex;
+  Vertex* v0 = f->vertex(0);
+  Vertex* v2 = f->vertex(2);
+  Vertex* v1 = f->vertex(1);
+    
+  Face* n1 = f->neighbor(1);
+  Face* n2 = f->neighbor(2);
+    
+  Face* f1 = new Face(v0, v, v2, f, n1, NULL);
+  Face* f2 = new Face(v0, v1, v, f, NULL, n2);
+
+  f1->set_neighbor(2, f2);
+  f2->set_neighbor(1, f1);
+  if (n1 != NULL) {
+    int i1 = n1->index(f);
+    n1->set_neighbor(i1,f1);
   }
+  if (n2 != NULL) {
+    int i2 = n2->index(f);
+    n2->set_neighbor(i2,f2);}
+
+  f->set_vertex(0, v);
+  f->set_neighbor(1, f1);
+  f->set_neighbor(2, f2);
+
+  if( v0->face() == f  ) {  v0->set_face(f2); }
+  v->set_face(f);
+
+  set_number_of_vertices(number_of_vertices() +1);
+  return v;
+}
 
 
 template < class Gt , class Vb, class Fb>
-void
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::Vertex*
 Triangulation_default_data_structure_2<Gt,Vb,Fb>::
-insert_in_face(Vertex* v, Face* f)
-  // vertex v will replace f->vertex(0) in face f
-  {
-    CGAL_triangulation_precondition( v != NULL && f != NULL);
-    
-    Vertex* v0 = f->vertex(0);
-    Vertex* v2 = f->vertex(2);
-    Vertex* v1 = f->vertex(1);
-    
-    Face* n1 = f->neighbor(1);
-    Face* n2 = f->neighbor(2);
-//     int i1,i2 ;
-//     if (n1 != NULL) {i1= cw(n1->index(f->vertex(cw(1))));}
-//     if (n2 != NULL) {i2 = cw(n2->index(f->vertex(cw(2))));}
-    
-    Face* f1 = new Face(v0, v, v2,
-			f, n1, NULL);
-    
-    Face* f2 = new Face(v0, v1, v,
-			f, NULL, n2);
-
-    f1->set_neighbor(2, f2);
-    f2->set_neighbor(1, f1);
-    if (n1 != NULL) {
-      int i1 = cw(n1->index(f->vertex(cw(1))));
-      n1->set_neighbor(i1,f1);
-    }
-    if (n2 != NULL) {
-      int i2 = cw(n2->index(f->vertex(cw(2))));
-      n2->set_neighbor(i2,f2);}
-
-    f->set_vertex(0, v);
-    f->set_neighbor(1, f1);
-    f->set_neighbor(2, f2);
-
-    if( v0->face() == f  ) {  v0->set_face(f2); }
-    v->set_face(f);
-
+insert_in_edge(Face* f, int i)
+  //insert in the edge opposite to vertex i of face f
+{
+  CGAL_triangulation_precondition(f != NULL && dimension() >= 1); 
+  if (dimension() == 1) {CGAL_triangulation_precondition(i == 2);}
+  if (dimension() == 2) {CGAL_triangulation_precondition(i == 0 || i == 1 || i == 2);}
+  
+  Vertex * v = new Vertex;
+  if (dimension() == 1) {
+    Face * ff = f->neighbor(0);
+    Vertex * vv = f->vertex(1);
+    Face * g = new Face(v,vv,NULL,ff, f, NULL);
+    f->set_vertex(1,v);f->set_neighbor(0,g);
+    ff->set_neighbor(1,g);
+    v->set_face(g);
+    vv->set_face(ff);
     set_number_of_vertices(number_of_vertices() +1);
   }
-
-
-template < class Gt , class Vb, class Fb>
-void
-Triangulation_default_data_structure_2<Gt,Vb,Fb>::
-insert_in_edge(Vertex* v, Face* f, int i)
-   //insert in the edge opposite to vertex i of face f
-  {
-    CGAL_triangulation_precondition(v != NULL && f != NULL); 
-    CGAL_triangulation_precondition(dimension() >= 1);
-    if (dimension() == 1) {CGAL_triangulation_precondition( i == 2);}
-    if (dimension() == 2) {CGAL_triangulation_precondition(i == 0 || i == 1 || i == 2);}
-  
-    if (dimension() == 1) {
-      Face * ff = f->neighbor(0);
-      Vertex * vv = f->vertex(1);
-      Face * g = new Face(v,vv,NULL,ff, f, NULL);
-      f->set_vertex(1,v);f->set_neighbor(0,g);
-      ff->set_neighbor(1,g);
-      v->set_face(g);
-      vv->set_face(ff);
-      set_number_of_vertices(number_of_vertices() +1);
-    }
 
     else { //dimension() ==2
     Face* n = f->neighbor(i);
     int in = n->index(f);
-    CGAL_triangulation_assertion( f->vertex(cw(i)) == n->vertex(ccw(in)) &&
-				  f->vertex(ccw(i)) == n->vertex(cw(in)) );
-
-    insert_in_face(v,f);
+    v = insert_in_face(f);
     flip(n,in); 
     }
 
-    return;
-  }
+  return v;
+}
 
-
+//TODO voir le probleme d'orientation en dimension 1
 
 template < class Gt , class Vb, class Fb>
-void
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::Vertex*
 Triangulation_default_data_structure_2<Gt,Vb,Fb>::
-insert_outside_affine_hull(Vertex *v, Vertex *w, bool orient)
-  {
+insert_dim_up(Vertex *w, bool orient)
+{
   // the following function insert 
-  // a vertex  v which is outside the affine  hull of a 1 dim or 0 dim triangulation
+  // a vertex  v which is outside the affine  hull of a 1 dim or 0 dim Tds
   // w is the infinite vertex of the triangulation
   // orient governs the orientation of the resulting triangulation
+  CGAL_triangulation_precondition(dimension()==0 || dimension()== 1);
 
-    list<Face *> faces_list;
-    Face_iterator fit = faces_begin();
-    for ( ; fit != faces_end() ; ++fit){
-      faces_list.push_back( & (*fit));
-    }
+  Vertex * v = new Vertex;
 
-    list<Face *>  to_delete;
-    list<Face *>::iterator lfit = faces_list.begin();
-    int i = dimension()+1; // maximun non NULL index in faces after the insertion
-    Face *f, *g;
-
-    for ( ; lfit != faces_list.end() ; ++lfit) {
-      f = * lfit;
-      g = new Face( f);
-      f->set_vertex(i,v); f->set_neighbor(i,g);
-      g->set_vertex(i,w); g->set_neighbor(i,f);
-      if (f->has_vertex(w)) to_delete.push_back(g); // flat face to be deleted later
-    }
-
-    lfit = faces_list.begin();
-    for ( ; lfit != faces_list.end() ; ++lfit) {
-      f = * lfit;
-      g = f->neighbor(i);
-      for(int j = 0; j < i ; j++) {
-	g->set_neighbor(j, f->neighbor(j)->neighbor(i));
-      }
-    }
-
-    // couldn't unify the code for reorientation mater
-    if (dimension() == 0){
-      lfit = faces_list.begin() ; ++lfit;
-      f = *lfit;
-      Vertex* vtemp = f->vertex(0); 
-	f->set_vertex(0, f->vertex(1)) ; f->set_vertex(1,vtemp);
-	Face* ftemp = f->neighbor(0); f->set_neighbor(0, f->neighbor(1)); 
-	f->set_neighbor(1,ftemp);
-    }
-    else { // dimension == 1
-      lfit = faces_list.begin();
-      for( ;lfit  != faces_list.end(); ++lfit ){
-	if (orient) {f = (*lfit)->neighbor(2);}
-	else { f = *lfit;}
-	Vertex* vtemp = f->vertex(0); 
-	f->set_vertex(0, f->vertex(1)) ; f->set_vertex(1,vtemp);
-	Face* ftemp = f->neighbor(0); f->set_neighbor(0, f->neighbor(1)); 
-	f->set_neighbor(1,ftemp);
-      }
-    }
-
-    lfit = to_delete.begin();
-    Face *f1, *f2;
-    int i1, i2;
-    for ( ;lfit  != to_delete.end(); ++lfit){
-      f = *lfit ;
-      int j ;
-      if (f->vertex(0) == w) {j=0;}
-      else {j=1;}
-      f1= f->neighbor(i); i1= f1->index(f);
-      f2= f->neighbor(j); i2 = f2->index(f);
-      f1->set_neighbor(i1,f2);
-      f2->set_neighbor(i2,f1);
-      delete f;
-    }
-    
-    v->set_face( *(faces_list.begin()));
-    set_dimension(dimension() + 1);
-    set_number_of_vertices(number_of_vertices() + 1);
+  list<Face *> faces_list;
+  Iterator_base ib= Iterator_base(this); 
+  Iterator_base ib_end = Iterator_base(this,1);
+  for ( ; ib != ib_end ; ++ib){
+    faces_list.push_back( & (*ib));
   }
+
+  list<Face *>  to_delete;
+  list<Face *>::iterator lfit = faces_list.begin();
+  int i = dimension()+1; // maximun non NULL index in faces after the insertion
+  Face *f, *g;
+
+  for ( ; lfit != faces_list.end() ; ++lfit) {
+    f = * lfit;
+    g = new Face( f);
+    f->set_vertex(i,v); f->set_neighbor(i,g);
+    g->set_vertex(i,w); g->set_neighbor(i,f);
+    if (f->has_vertex(w)) to_delete.push_back(g); // flat face to be deleted later
+  }
+
+  lfit = faces_list.begin();
+  for ( ; lfit != faces_list.end() ; ++lfit) {
+    f = * lfit;
+    g = f->neighbor(i);
+    for(int j = 0; j < i ; j++) {
+      g->set_neighbor(j, f->neighbor(j)->neighbor(i));
+    }
+  }
+
+  // couldn't unify the code for reorientation mater
+  lfit = faces_list.begin() ; 
+  if (dimension() == 0){
+    if (orient) {
+      (*lfit)->reorient(); ++lfit ;  (*lfit)->neighbor(1)->reorient();
+    }
+    else {
+      (*lfit)->neighbor(1)->reorient(); ++lfit ; (*lfit)->reorient(); 
+    }
+  }
+  else { // dimension == 1
+    for( ;lfit  != faces_list.end(); ++lfit ) {
+     if (orient) {(*lfit)->neighbor(2)->reorient();}
+      else { (*lfit)->reorient();}
+     }
+  }
+
+  lfit = to_delete.begin();
+  Face *f1, *f2;
+  int i1, i2;
+  for ( ;lfit  != to_delete.end(); ++lfit){
+    f = *lfit ;
+    int j ;
+    if (f->vertex(0) == w) {j=0;}
+    else {j=1;}
+    f1= f->neighbor(i); i1= f1->index(f);
+    f2= f->neighbor(j); i2 = f2->index(f);
+    f1->set_neighbor(i1,f2);
+    f2->set_neighbor(i2,f1);
+    delete f;
+  }
+    
+  v->set_face( *(faces_list.begin()));
+  set_dimension(dimension() + 1);
+  set_number_of_vertices(number_of_vertices() + 1);
+  return v;
+}
 
 
 template < class Gt , class Vb, class Fb>
@@ -560,19 +611,19 @@ remove_degree_3(Vertex* v, Face* f)
 template < class Gt , class Vb, class Fb>
 void
 Triangulation_default_data_structure_2<Gt,Vb,Fb>::
-void remove_down(Vertex* v)
+remove_dim_down(Vertex* v)
   {
 
     CGAL_triangulation_precondition ( (dimension() == 1 && number_of_vertices() == 3) ||
 				      (dimension() == 2 && number_of_vertices() > 3) );
-    // the faces incident to v are down graded to one dimension
+    // the faces incident to v are down graded one dimension
     // the other faces are deleted
     list<Face* > to_delete;
     list<Face* > to_downgrade;
-    Face_iterator fit = faces_begin();
-    for( ; fit != faces_end(); fit++){
-      if ( ! fit->has_vertex(v) ) { to_delete.push_back(&(*fit));}
-      else { to_downgrade.push_back(&(*fit));}
+    Iterator_base ib = iterator_base_begin();
+    for( ; ib != iterator_base_end(); ++ib ){
+      if ( ! ib->has_vertex(v) ) { to_delete.push_back(&(*ib));}
+      else { to_downgrade.push_back(&(*ib));}
     }
 
     list<Face*>::iterator lfit = to_downgrade.begin();
@@ -626,10 +677,10 @@ void remove_down(Vertex* v)
 template < class Gt , class Vb, class Fb>
 void
 Triangulation_default_data_structure_2<Gt,Vb,Fb>::  
-  void remove_1D(Vertex* v)
+remove_1D(Vertex* v)
   {
     CGAL_triangulation_precondition( dimension() == 1 &&
-				     number_of_vertices() >= 3);
+				     number_of_vertices() > 3);
     Face* f = v->face();
     int i = f->index(v);
     if (i==0) {f = f->neighbor(1);}
@@ -650,16 +701,31 @@ Triangulation_default_data_structure_2<Gt,Vb,Fb>::
 template < class Gt , class Vb, class Fb>
 void
 Triangulation_default_data_structure_2<Gt,Vb,Fb>::
-  void remove_second(Vertex* v)
+remove_second(Vertex* v)
   {
-    CGAL_triangulation_precondition(number_of_vertices()== 2);
+    CGAL_triangulation_precondition(number_of_vertices()== 2 &&
+				    dimension() == 0);
     delete v;
     set_number_of_vertices(1);
+    set_dimension(-1);
     infinite_vertex()->set_face(NULL);
     return;
   }
 
     
+template < class Gt , class Vb, class Fb>
+void
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+remove_first(Vertex* v)
+{
+  CGAL_triangulation_precondition(number_of_vertices()== 1 && 
+				  dimension() == -1 &&
+				  v== infinite_vertex());
+  delete v;
+  set_number_of_vertices(0);
+  set_infinite_vertex(NULL);
+  return;
+}
 
 
 
@@ -669,114 +735,131 @@ template < class Gt , class Vb, class Fb>
 bool
 Triangulation_default_data_structure_2<Gt,Vb,Fb>::
 is_valid(bool verbose, int level) const
+{
+  if(number_of_vertices() == 0){ 
+    return (dimension() == -1  && infinite_vertex() == NULL);
+  }
+
+  if(number_of_vertices() == 1) {
+    return (dimension() == -1 && infinite_vertex() != NULL );
+  }
+    
+  bool result = true;
+
+  //test the validity of the faces whatever dimension() is
+  Iterator_base ib = Iterator_base(this); 
+  Iterator_base ib_end = Iterator_base(this,1);
+  int count_stored_faces =0;
+  for ( ; ib != ib_end ; ++ib){
+    count_stored_faces += 1;
+    result = result && ib->is_valid(verbose,level);
+    CGAL_triangulation_assertion(result);
+  }
+  CGAL_triangulation_assertion(
+		 count_stored_faces == number_of_full_dim_faces());
+ 
+  // vertex count
+  int vertex_count = 0;
   {
-        if(number_of_vertices() <= 2){
-            return true;
-        }
+    Vertex_iterator it = vertices_begin();
     
-        bool result = true;
-	CGAL_triangulation_assertion( is_infinite(infinite_vertex()->face()));
-	result = result && is_infinite(infinite_vertex()->face());
-
-	// vertex count
-        int vertex_count = 0;
-        {
-            Vertex_iterator it = vertices_begin();
+    while(it != vertices_end()){
+      result = result && it->is_valid(verbose,level);
+      CGAL_triangulation_assertion( it->is_valid(verbose, level) );
+      ++vertex_count;
+      ++it;
+    }
+  }
+  result = result && (number_of_vertices() == vertex_count);
+  CGAL_triangulation_assertion( number_of_vertices() == vertex_count );
     
-            while(it != vertices_end()){
-	        result = result && it->is_valid(verbose,level);
-		CGAL_triangulation_assertion( it->is_valid(verbose, level) );
-                ++vertex_count;
-                ++it;
-            }
-        }
-	result = result && (number_of_vertices() == vertex_count);
-	CGAL_triangulation_assertion( number_of_vertices() == vertex_count );
+  //edge count
+  int edge_count = 0;
+  {
+    Edge_iterator it = edges_begin();
     
-        //edge count
-	int edge_count = 0;
-        {
-            Edge_iterator it = edges_begin();
+    while(it != edges_end()){
+      ++edge_count;
+      ++it;
+    }
+  }
     
-            while(it != edges_end()){
-                ++edge_count;
-                ++it;
-            }
-        }
+  // face count
+  int face_count = 0;
+  {
+    Face_iterator it = faces_begin();
     
-        // face count
-	int face_count = 0;
-        {
-            Face_iterator it = faces_begin();
-    
-            while(it != faces_end()) {
-                ++face_count;
-                result = result && it->is_valid(verbose, level);
-                CGAL_triangulation_assertion( it->is_valid(verbose, level) );
-		++it;
-            }
-        }
+    while(it != faces_end()) {
+      ++face_count;
+      ++it;
+    }
+  }
         
-	switch(dimension()) {
-	case 0: 
-	  break;
-	case 1:
-	 result = result && ( edge_count == vertex_count); 
-	 CGAL_triangulation_assertion(edge_count == vertex_count); 
-	 result = result && ( face_count == vertex_count);
-	 CGAL_triangulation_assertion( face_count == vertex_count);
-	 break;
-	case 2:
-	result = result && ( edge_count == 3*vertex_count - 6 );
-        CGAL_triangulation_assertion( edge_count == 3*vertex_count -6 );
-        result = result && ( face_count == 2*vertex_count - 4 );
-        CGAL_triangulation_assertion( face_count == 2*vertex_count - 4 );
-	break;
-	}
-        return result;
-    }
+  switch(dimension()) {
+  case 0:
+    result = result && vertex_count == 2 && face_count == 0
+      && edge_count == 0;
+    CGAL_triangulation_assertion(result);
+    break;
+  case 1:
+    result = result &&  edge_count == vertex_count;
+    CGAL_triangulation_assertion(result);
+    result = result &&  face_count == 0;
+    CGAL_triangulation_assertion(result);
+    break;
+  case 2:
+    result = result &&  edge_count == 3*vertex_count - 6 ;
+    CGAL_triangulation_assertion(result);
+    result = result && ( face_count == 2*vertex_count - 4 );
+    CGAL_triangulation_assertion( face_count == 2*vertex_count - 4 );
+    break;
+  }
+  return result;
+}
 
-template < class Gt , class Vb, class Fb>
-void
-Triangulation_default_data_structure_2<Gt,Vb,Fb>::
-init(Vertex*  v)
-    {
-        if( v == NULL ){
-            return;
-        } 
+//TODO this function is to be removed
+// used only by constrained Triangulation ?
+// template < class Gt , class Vb, class Fb>
+// void
+// Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+// init(Vertex*  v)
+//     {
+//         if( v == NULL ){
+//             return;
+//         } 
 	
-	set_infinite_vertex(v);
+// 	set_infinite_vertex(v);
 
-	if( v->face() == NULL ){ //only one vertex
-	  set_number_of_vertices(1);
-	  set_dimension(0);
-	  return;
-        } 
+// 	if( v->face() == NULL ){ //only one vertex
+// 	  set_number_of_vertices(1);
+// 	  set_dimension(0);
+// 	  return;
+//         } 
 	
-	if( v->face()->neighbor(1) == NULL ){ //two vertices
-	  set_number_of_vertices(2);
-	  set_dimension(0);
-	  return;
-        } 
+// 	if( v->face()->neighbor(1) == NULL ){ //two vertices
+// 	  set_number_of_vertices(2);
+// 	  set_dimension(0);
+// 	  return;
+//         } 
 	  
-	if( v->face()->neighbor(2) == NULL ){  //One dimensional triangulation
-	  set_dimension(1);
-	}
+// 	if( v->face()->neighbor(2) == NULL ){  //One dimensional triangulation
+// 	  set_dimension(1);
+// 	}
 	    
-	else{
-	  set_dimension(2);
-	}
+// 	else{
+// 	  set_dimension(2);
+// 	}
 	  
-	  //count number of vertices
-	set_number_of_vertices(2);
-	Vertex_iterator it = vertices_begin();
-	while(it != vertices_end()){
-	  ++_number_of_vertices;
-	  ++it;
-	}
-	set_number_of_vertices(number_of_vertices()-2);
-	return;
-    }
+// 	  //count number of vertices
+// 	set_number_of_vertices(2);
+// 	Vertex_iterator it = vertices_begin();
+// 	while(it != vertices_end()){
+// 	  ++_number_of_vertices;
+// 	  ++it;
+// 	}
+// 	set_number_of_vertices(number_of_vertices()-2);
+// 	return;
+//     }
 
 
 template < class Gt , class Vb, class Fb>
@@ -784,29 +867,24 @@ void
 Triangulation_default_data_structure_2<Gt,Vb,Fb>::
 copy_tds(const Tds &tds)
 {
+    _number_of_vertices = tds.number_of_vertices();
+    _geom_traits = tds.geom_traits();
+    //the class Geom_traits is required to have a pertinent operator=
+    _dimension = tds.dimension();
+
+    if(tds.number_of_vertices() == 0){return;}
+
     std::map< void*, void*, less<void*> > V;
     std::map< void*, void*, less<void*> > F;
 
     Vertex*  v2;
     Face* f2;
 
-    clear();
-    int n = tds.number_of_vertices();
-    
-    _number_of_vertices = tds.number_of_vertices();
-    _geom_traits = tds.geom_traits();
-    //the class Geom_traits is required to have a pertinent operator=
-    _dimension = tds.dimension();
-    
-            
-    if(n == 0){  return NULL;    }
-
+    // create the vertices
     {
       Vertex_iterator it=tds.vertices_begin();
       while (it != tds.vertices_end()) {
-	//if ( & (*it) != infinite_vertex())
-	  {
-	  V[&(*it)] = new Vertex( it->point() );}
+	V[&(*it)] = new Vertex( it->point() );
 	++it;
       }
     }
@@ -817,12 +895,12 @@ copy_tds(const Tds &tds)
   
      // create the faces
     {
-      Face_iterator it = tds.faces_begin();
-      while(it != tds.faces_end()){
-	F[&(*it)]=  new Face( (Vertex*) V[it->vertex(0)],
-			      (Vertex*) V[it->vertex(1)],
-			      (Vertex*) V[it->vertex(2)] );
-	++(it);
+      Iterator_base ib = tds.iterator_base_begin();
+      while(ib != tds.iterator_base_end()){
+	F[&(*ib)]=  new Face( (Vertex*) V[ib->vertex(0)],
+			      (Vertex*) V[ib->vertex(1)],
+			      (Vertex*) V[ib->vertex(2)] );
+	++(ib);
         }
     }
     
@@ -839,287 +917,224 @@ copy_tds(const Tds &tds)
 
     // hook neighbor of the  faces
     {
-        Face_iterator  it = tds.faces_begin();
-        while(it != tds.faces_end()){
-          for(int j = 0; j < 3; j++){
-            f2 = ((Face*) F[&(*it)]);
-            f2->set_neighbor(j, (Face*) F[it->neighbor(j)] );
+        Iterator_base ib = tds.iterator_base_begin();
+	while(ib != tds.iterator_base_end()){
+	   for(int j = 0; j <= tds.dimension(); j++){
+	     f2 = (Face*) F[&(*ib)];
+	     f2->set_neighbor(j, (Face*) F[ib->neighbor(j)] );
           }
-          ++it;
+          ++ib;
         }
     }
 
     CGAL_triangulation_postcondition( is_valid() );
-    if ( vert != NULL ) {
-      return (Vertex*) V[vert];
-    }
-    else return NULL;
-
-  }
+    return;
+}
  
 template < class Gt , class Vb, class Fb>
 void
 Triangulation_default_data_structure_2<Gt,Vb,Fb>::
 swap(Tds &tds)
- {
-    Geom_traits   t  = geom_traits();
-    Vertex*  fv = finite_vertex();
-    Vertex*  iv = infinite_vertex();
-    int     nv = number_of_vertices();
+{
+  Geom_traits   t  = geom_traits();
+  Vertex*  iv = infinite_vertex();
+  int     nv = number_of_vertices();
+  int    dim = dimension();
 
-    _geom_traits = tds.geom_traits(); 
-    //the class Geom_traits is required to have a pertinent operator=
-    set_finite_vertex(tds.finite_vertex());
-    set_infinite_vertex(tds.infinite_vertex());
-    set_number_of_vertices(tds.number_of_vertices());
+  _geom_traits = tds.geom_traits(); 
+  //the class Geom_traits is required to have a pertinent operator=
+  set_infinite_vertex(tds.infinite_vertex());
+  set_number_of_vertices(tds.number_of_vertices());
+  set_dimension(tds.dimension());
 
-    tds._geom_traits = t;
-    tds.set_finite_vertex(fv);
-    tds.set_infinite_vertex(iv);
-    tds.set_number_of_vertices(nv);
-  }
+  tds._geom_traits = t;
+  tds.set_infinite_vertex(iv);
+  tds.set_number_of_vertices(nv);
+  tds.set_dimension(dim);
+}
 
 template < class Gt , class Vb, class Fb>
 void
 Triangulation_default_data_structure_2<Gt,Vb,Fb>::
 clear()
- {
-   if(number_of_vertices() == 0) return;
+{
+  if(number_of_vertices() == 0) return;
 
-   if(number_of_vertices()==1) {
-     delete infinite_vertex();
-     set_infinite_vertex(NULL);
-     set_dimension(0);
-     set_number_of_vertices(0);
-     return;
-   }
-      
-   std::list<Face*> Faces;
-   std::list<Vertex*> Vertices;
+  if(number_of_vertices()==1) delete infinite_vertex();
+  else{
+    std::list<Face*> Faces;
+    std::list<Vertex*> Vertices;
 
     {
-        Vertex_iterator it = vertices_begin(), done = vertices_end();
-        do{
-            Vertices.push_front(&(*it));
-        }while(++it!=done);
+      Vertex_iterator it = vertices_begin(), done = vertices_end();
+      do{
+	Vertices.push_front(&(*it));
+      }while(++it!=done);
+    }
+    { 
+      Iterator_base ib = iterator_base_begin(),
+	          done = iterator_base_end();
+      while(ib!=done){
+	Faces.push_front(&(*ib));
+	++ib;
+      }
+    }
+    
+    { 
+      std::list<Face*>::iterator
+	it=Faces.begin(),done=Faces.end();
+      do{
+	delete *it;
+      }while(++it!=done);
     }
     {
-        Face_iterator it = faces_begin(), done = faces_end();
-        while(it!=done){
-            Faces.push_front(&(*it));
-            ++it;
-        }
+      std::list<Vertex*>::iterator
+	it=Vertices.begin(),done=Vertices.end();
+      do{
+	delete *it;
+      }while(++it!=done);
     }
-    CGAL_triangulation_assertion( number_of_faces() == (int) Faces.size());
-     
-    {
-        std::list<Face*>::iterator
-          it=Faces.begin(),done=Faces.end();
-        do{
-            delete *it;
-        }while(++it!=done);
-    }
-    {
-        std::list<Vertex*>::iterator
-          it=Vertices.begin(),done=Vertices.end();
-        do{
-            delete *it;
-        }while(++it!=done);
-    }
-
-    set_infinite_vertex(NULL);
-    set_number_of_vertices(0);
-    set_dimension(0);
   }
 
-};
+  set_infinite_vertex(NULL);
+  set_number_of_vertices(0);
+  set_dimension(-1);
+  return;
+}
+
+
+
+template <class Gt , class Vb, class Fb>
+std::ostream&
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+file_output( std::ostream& os, Vertex* v) const
+{
+  // ouput to a file
+  // Vertex* is the vertex to be output first
+  // should be the infinite_vertex
+  CGAL_triangulation_assertion(v == infinite_vertex());
+  
+  int n = number_of_vertices();
+  int m = number_of_full_dim_faces();
+  if(is_ascii(os))  os << n << ' ' << m << ' ' << dimension() << endl;
+  else     os << n << m << dimension();
+  if (n==0) return os;
+
+  std::map< void*, int, less<void*> > V;
+  std::map< void*, int, less<void*> > F;
+
+  // write vertex v first
+  int inum = 0;
+  V[v] = inum;
+  os << v->point();
+  if(is_ascii(os))  os << ' ';
+  
+  // write the other vertices
+  for( Vertex_iterator it= vertices_begin(); it != vertices_end() ; it++) {
+    if ( &(*it) != v) {
+	V[&(*it)] = ++inum;
+	os << it->point();
+	if(is_ascii(os)) os << ' ';
+    }
+  }
+  if(is_ascii(os)) os << "\n";
+
+  // vertices of the faces
+  inum = 0;
+  for( Iterator_base it = iterator_base_begin();
+       it != iterator_base_end(); it++) {
+    F[&(*it)] = inum++;
+    for(int j = 0; j < dimension()+1; j++){
+      os << V[it->vertex(j)];
+      if(is_ascii(os)){
+	if(j== dimension())   os << "\n";
+	else     os <<  ' ';
+      }
+    }
+  }
+    
+  // neighbor pointers of the  faces
+  for( Iterator_base it = iterator_base_begin();
+       it != iterator_base_end(); it++) {
+    for(int j = 0; j < dimension()+1; j++){
+      os << F[&(*(it->neighbor(j)))];
+      if(is_ascii(os)){
+	if(j== dimension()) os << "\n";
+	else    os <<  ' ';
+      }
+    }
+  }
+
+  return os;
+}
+
+
+template <class Gt , class Vb, class Fb>
+std::istream&
+Triangulation_default_data_structure_2<Gt,Vb,Fb>::
+file_input( std::istream& is)
+{
+  //input from file
+  // set the first vertex as infinite_Vertex
+  if(number_of_vertices() != 0)    clear();
+  
+  int n, m, d;
+  is >> n >> m >> d;
+
+  set_number_of_vertices(n);
+  set_dimension(d);
+
+  std::vector<Vertex* > V(n);
+  std::vector<Face*> F(m);
+
+  // read vertices
+  for(int i = 0 ; i < n; i++) {
+    typename Gt::Point p;
+    is >> p;
+    V[i] = new Vertex(p);
+  }
+  if(n>0)   set_infinite_vertex(V[0]);
+
+  // Creation of the faces
+  int index;
+  for(int i = 0; i < m; i++) {
+    F[i] = new Face() ;
+    for(int j = 0; j < dimension()+1; j++){
+      is >> index;
+      F[i]->set_vertex(j, V[index]);
+      // The face pointer of vertices is set too often,
+      // but otherwise we had to use a further map
+      V[index]->set_face(F[i]);
+    }
+  }
+
+  // Setting the neighbor pointers is the same for the
+  // faces on the other side of the plane  and the other faces
+  for(int i = 0; i < m; i++) {
+    for(int j = 0; j < dimension()+1; j++){
+      is >> index;
+      F[i]->set_neighbor(j, F[index]);
+    }
+  }
+  return is;
+}
 
 
 template < class Gt , class Vb, class Fb>
 std::istream&
 operator>>(std::istream& is,  
-	   Triangulation_default_data_structure_2<Gt,Vb,Fb>& tds)
+	   Triangulation_default_data_structure_2<Gt,Vb,Fb>& tds) 
 {
-  typedef Triangulation_ds_vertex_2<Vb,Fb>::Vertex Vertex;
-  typedef Triangulation_ds_face_2<Vb,Fb>::Face Face;
-  typedef Gt Geom_traits;
-  typedef typename Vb::Point Point;
-
-  if(tds.number_of_vertices() != 0){ //clear but keep infinite_vertex;
-    Vertex* vtemp = tds.infinite_vertex();
-    tds.clear();
-    tds.set_infinite_vertex(vtemp);
-    tds.infinite_vertex()->set_face(NULL);
-    }
-
-    int i = 0;
-    int n, m, d;
-    is >> n >> m >> d;
-
-    tds.set_number_of_vertices(n);
-
-    std::vector<Vertex* > V(n);
-    std::vector<Face*> F(m);
-    Vertex * v;
-    Face * f=NULL; //initialised to avoid a warning
-
-    // the first point is at infinity
-
-    Point p;
-    is >> p;
-    v = tds.infinite_vertex();
-    v->set_point(p);
-    V[i] = v;
-    ++i;
-
-    if(n == 1){
-        return is;
-    }
-    // for the other points we create new vertices
-    for(; i < n; i++) {
-        Point p;
-        is >> p;
-        V[i] = new Vertex(p);
-    }
-
-
-    if(n == 2){
-        return is;
-    }
-    // Creation of the faces
-    for(i = 0; i < m; i++) {
-        int i0, i1, i2;
-        is >> i0 >> i1 >> i2;
-        f = new Face(V[i0], V[i1], V[i2]);
-        F[i] = f;
-        // The face pointer of vertices is set too often,
-        // but otherwise we had to use a further map
-        V[i0]->set_face(f);
-        V[i1]->set_face(f);
-        V[i2]->set_face(f);
-    }
-
-    // Setting the neighbor pointers is the same for the
-    // faces on the other side of the plane  and the other faces
-    for(i = 0; i < m; i++) {
-        int i0, i1, i2;
-        is >> i0 >> i1 >> i2;
-        f = F[i];
-        f->set_neighbor(0, F[i0]);
-        f->set_neighbor(1, F[i1]);
-        f->set_neighbor(2, F[i2]);
-    }
-    tds.infinite_vertex()->set_face(f);
-    return is;
+  return tds.file_input(is);
 }
 
 
 template < class Gt, class Vb, class Fb>
 std::ostream&
 operator<<(std::ostream& os, 
-	   const  Triangulation_default_data_structure_2<Gt,Vb,Fb>  &tds)
+	   const Triangulation_default_data_structure_2<Gt,Vb,Fb>  &tds) 
 {
-  std::map< void*, int, less<void*> > V;
-  std::map< void*, int, less<void*> > F;
-  typedef Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
-  typedef  Tds::Vertex  Vertex;
-  typedef  Tds::Face   Face;
-  typedef  Tds::Edge   Edge;
-  typedef  Tds::Face_iterator  Face_iterator;
-  typedef  Tds::Vertex_iterator  Vertex_iterator;
-  typedef  Tds::Edge_iterator  Edge_iterator;
-  typedef  Tds::Face_circulator  Face_circulator;
-
-  Vertex* v;
-
-    int n = tds.number_of_vertices();
-    int m = tds.number_of_faces();
-    if(is_ascii(os)){
-        os << n << ' ' << m << ' ' << tds.dimension() << endl;
-    } else {
-        os << n << m << tds.dimension();
-    }
-
-    // write the vertex at infinity
-    int i = 0;
-    v = tds.infinite_vertex();
-    V[v] = i;
-    os << v->point();
-    if(is_ascii(os)){
-        os << ' ';
-    }
-    if(n == 1){
-        return os;
-    }
-
-    // write the other vertices
-    {
-        Vertex_iterator
-          it = tds.vertices_begin();
-
-        while(it != tds.vertices_end()){
-	  if ( &(*it) != infinite_vertex()) {
-            V[&(*it)] = ++i;
-            os << it->point();
-            if(is_ascii(os)){
-                os << ' ';
-            }
-	  }
-	  ++it;
-        }
-    }
-
-    CGAL_triangulation_assertion( (i+1) == n );
-    if(is_ascii(os)){ os << "\n";}
-
-    if(n == 1){
-        return os;
-    }
-
-    i = 0;
-    // vertices of the faces
-    {
-        Face_iterator
-          it = tds.faces_begin();
-
-        while(it != tds.faces_end()){
-            F[&(*it)] = i++;
-            for(int j = 0; j < dimension()+1; j++){
-                os << V[it->vertex(j)];
-                if(is_ascii(os)){
-                    if(j==dimension()) {
-                        os << "\n";
-                    } else {
-                        os <<  ' ';
-                    }
-                }
-            }
-            ++it;
-        }
-    }
-
-
-    CGAL_triangulation_assertion( i == m );
-
-    // neighbor pointers of the  faces
-    {
-        Face_iterator
-            it = tds.faces_begin();
-        while(it != tds.faces_end()){
-            for(int j = 0; j < dimension()+1; j++){
-                os << F[&(* it->neighbor(j))];
-                if(is_ascii(os)){
-                    if(j== dimension()) {
-                        os << "\n";
-                    } else {
-                        os <<  ' ';
-                    }
-                }
-            }
-            ++it;
-        }
-    }
-    return os;
+   return tds.file_output(os,tds.infinite_vertex());
 }
 
 CGAL_END_NAMESPACE 
