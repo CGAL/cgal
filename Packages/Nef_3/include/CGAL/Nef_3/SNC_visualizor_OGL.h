@@ -244,20 +244,6 @@ namespace OGL {
     glNormal3dv(pu);
   }
 
-  inline void combineCallback(GLdouble coords[3], void *vertex_data[4], GLfloat weight[4], void **outData)
-  {
-    CGAL_msg("combineCallback was called. This should not happen. Tessellation is erroneous!!");
-    double* temp = new double[3];  
-    TRACE("combineCallback ");
-    for(int i=0;i<3;++i) {
-      temp[i] = coords[i];
-      TRACE(coords[i]);
-    }
-    TRACEN(" ");
- 
-    *outData = temp;
-  }
-
   class Polyhedron {
     std::list<DPoint>    vertices_;
     std::list<DSegment>  edges_;
@@ -334,8 +320,6 @@ namespace OGL {
 		      (GLvoid (*)()) &endCallback);
       gluTessCallback(tess_, GLenum(GLU_TESS_ERROR),
 		      (GLvoid (*)()) &errorCallback);
-      gluTessCallback(tess_, GLenum(GLU_TESS_COMBINE),
-		      (GLvoid (*)()) &combineCallback);
       gluTessProperty(tess_, GLenum(GLU_TESS_WINDING_RULE),
 		      GLU_TESS_WINDING_POSITIVE);
 
