@@ -1,0 +1,61 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual: Reference manual for Qt_widget.tex
+% +------------------------------------------------------------------------+
+% |
+% | 13.12.2001	Radu Ursu
+% | 
+% | \RCSdef{\qtwidgetRev}{$Revision$}
+% | \RCSdefDate{\qtwidgetDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+% +-----------------------------------------------------+
+
+\ccHeading{Operators for Output}
+
+%to do: add more comments
+\ccFunction{template<class R> Qt_widget& operator<<(Qt_widget& w, const
+Point_2<R>& p);}{Outputs a point.}
+
+\ccFunction{template<class R> Qt_widget& operator<<(Qt_widget& w, const
+Segment_2<R>& s);}{Outputs a segment.}
+
+\ccFunction{template<class R> Qt_widget& operator<<(Qt_widget& w, const
+Line_2<R>& l);}{Outputs a line.}
+
+\ccFunction{template<class R> Qt_widget& operator<<(Qt_widget& w, const
+Ray_2<R>& r);}{Outputs a ray.}
+
+\ccFunction{template<class R> Qt_widget& operator<<(Qt_widget& w, const
+Triangle_2<R>& t);}{Outputs a triangle.}
+
+\ccFunction{template<class R>Qt_widget& operator<<(Qt_widget& w, const 
+Iso_rectangle_2<R>& r);}{Outputs a iso\_rectangle.}
+
+\ccFunction{template<class R> Qt_widget& operator<<(Qt_widget& w, const
+Circle_2<R>& c);}{Outputs a circle.}
+
+\ccFunction{template<class Tr, class Co> Qt_widget& operator<<(Qt_widget& w, 
+const Polygon_2<Tr,Co>& pol);}{Outputs a polygon.}
+
+\ccFunction{template <class Gt, class Tds> Qt_widget& operator<<(Qt_widget& w, 
+const Triangulation_2<Gt, Tds>& t);}{Outputs a triangulation.}
+
+\ccFunction{template<class Gt, class Tds> Qt_widget& operator<<(Qt_widget& w,
+ const Delaunay_triangulation_2<R>& dt);}{Outputs a Delaunay triangulation.}
+
+\ccFunction{template<class Gt, class Tds> Qt_widget& operator<<(Qt_widget& w,
+ const Constrained_triangulation_2<Gt, Tds>& t);}{Outputs a constrained 
+triangulation.}
+
+\ccFunction{template<class Gt, class Tds> Qt_widget& operator<<(Qt_widget& w,
+ const Regular_triangulation_2<Gt, Tds>& t);}{Outputs a regular triangulation.}
+
+% +-----------------------------------------------------+
+% EOF
+
+
+
+
+
+
+
