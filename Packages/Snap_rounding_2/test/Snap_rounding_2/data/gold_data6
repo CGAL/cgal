@@ -1,0 +1,61 @@
+input segments (not const iterator)
+0/1 0/1 2/1 2/1
+2/1 0/1 0/1 2/1
+
+input segments (const iterator)
+0/1 0/1 2/1 2/1
+2/1 0/1 0/1 2/1
+
+the output
+Polyline number 1:
+    (0.5:0.5)
+    (1.5:1.5)
+    (2.5:2.5)
+
+Polyline number 2:
+    (2.5:0.5)
+    (1.5:1.5)
+    (0.5:2.5)
+
+
+output after removing first element
+Polyline number 1:
+    (2.5:0.5)
+    (0.5:2.5)
+
+
+output after inserting first element
+Polyline number 1:
+    (2.5:0.5)
+    (1.5:1.5)
+    (0.5:2.5)
+
+Polyline number 2:
+    (0.5:0.5)
+    (1.5:1.5)
+    (2.5:2.5)
+
+
+default ctor + multiple insertion
+Polyline number 1:
+    (0.5:0.5)
+    (1.5:1.5)
+    (2.5:2.5)
+
+Polyline number 2:
+    (2.5:0.5)
+    (1.5:1.5)
+    (0.5:2.5)
+
+
+testing sr
+Polyline number 1:
+    (0.5:0.5)
+    (1.5:1.5)
+    (2.5:2.5)
+
+Polyline number 2:
+    (2.5:0.5)
+    (1.5:1.5)
+    (0.5:2.5)
+
