@@ -80,7 +80,7 @@ public:
     {
       SubCurveIter iter = m_leftCurves->begin();
       while ( iter != m_leftCurves->end() &&
-	      m_traits->curve_compare_at_x(curve->getCurve(),
+	      m_traits->curve_compare_at_x_right(curve->getCurve(),
 					  (*iter)->getCurve(), 
 					   *(curve->getReferencePoint())) 
 	      == LARGER)
