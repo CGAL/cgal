@@ -29,8 +29,8 @@
 
 #include <utility>
 
-#define Level 4
-#include <CORE.h>
+#define CORE_LEVEL 4
+#include <CORE/CORE.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -69,14 +69,13 @@ io_tag(const CORE::Expr &)
 inline
 Sign
 sign(const CORE::Expr& e)
-{ return (Sign) e.getSign(); }
+{ return (Sign) e.sign(); }
 
 inline
 Comparison_result
 compare(const CORE::Expr& e1, const CORE::Expr& e2)
 {
-  CORE::Expr c = e1-e2;
-  return (c < 0) ? SMALLER : ((0 < c) ? LARGER : EQUAL);
+  return e1.cmp(e2);
 }
 
 // Should not be inline, but, well...
@@ -84,14 +83,8 @@ inline
 std::pair<double,double>
 to_interval (const CORE::Expr & e)
 {
-  Protect_FPU_rounding<true> P (CGAL_FE_TONEAREST);
-  double approx = to_double(e);
-  double rel_error = e.get_double_error();
-  FPU_set_cw(CGAL_FE_UPWARD);
-  Interval_nt_advanced ina = Interval_nt_advanced(-rel_error,rel_error);
-  ina += 1;
-  ina *= approx;
-  return ina.pair();
+  std::pair<double,double> result;
+  e.doubleInterval(result.first, result.second);
 }
 
 namespace NTS {
