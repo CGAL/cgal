@@ -1,4 +1,4 @@
-to compule and run all these examples type :
+To compule and run all these examples type :
 ./cgal_test
 To compute and run only some of them type
 ./cgal_test name-of_wanted_example
