@@ -34,8 +34,7 @@ sign_of_determinant2x2_SAF(
     const Static_filter_error &a10,
     const Static_filter_error &a11,
     double & epsilon_0)
-{ return static_cast<Sign>(static_cast<int>(CGAL::compare_SAF( a00*a11, a10*a01, epsilon_0)));
-}
+{ return static_cast<Sign>(static_cast<int>(CGAL::compare_SAF( a00*a11, a10*a01, epsilon_0))); }
 
 inline
 Sign
@@ -45,8 +44,7 @@ sign_of_determinant2x2_SAF(
     const Restricted_double &a10,
     const Restricted_double &a11,
     const double & epsilon_0)
-{ return static_cast<Sign>(static_cast<int>(CGAL::compare_SAF( a00*a11, a10*a01, epsilon_0)));
-}
+{ return static_cast<Sign>(static_cast<int>(CGAL::compare_SAF( a00*a11, a10*a01, epsilon_0))); }
 
 inline
 Sign
