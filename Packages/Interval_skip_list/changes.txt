@@ -1,3 +1,6 @@
+1.6 (19 September 2003) [af]
+- New license headers
+
 1.5 (17 May 2003) [af]
 - bug fix: replaced iterator with const_iterator
 
