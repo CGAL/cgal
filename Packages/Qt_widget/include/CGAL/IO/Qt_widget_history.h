@@ -41,11 +41,11 @@ namespace CGAL {
 
   class Qt_widget_history{
     public:
-      Qt_widget_history() : nr_of_items(0), current_item(0) {};
+      Qt_widget_history() : nr_of_items(0), current_item(1) {};
       ~Qt_widget_history(){};
 
     bool back(){
-      if(nr_of_items != 0){
+      if(nr_of_items > 1 && current_item > 1){
         current_item--;
         return true;
       }
@@ -56,17 +56,17 @@ namespace CGAL {
         current_item++;
         return true;
       }
-      return true;
+      return false;
     }
     History_atom* get_atom(){
-      return &history_vector[current_item];
+      return &history_vector[current_item-1];
     }
     void add_to_history(double xmin, double xmax, double ymin, double ymax)
       {
         History_atom atom(xmin, xmax, ymin, ymax);
         history_vector.push_back(atom);
         nr_of_items++;
-        current_item = history_vector.size();
+        current_item = nr_of_items;
       }
       
     private:

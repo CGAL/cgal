@@ -42,6 +42,7 @@ Qt_widget::Qt_widget(QWidget *parent, const char *name) :
   ycentre = ymin + (ymax - ymin)/2;
   constranges=false;
   set_scales();
+  is_the_first_time = true;
 
   // initialize the pixmap and the painter
   painter = new QPainter;
@@ -315,7 +316,8 @@ void Qt_widget::set_window(double  x_min, double x_max,
 			   double y_min, double y_max,
 			   bool const_ranges)
 {
-  add_to_history();
+  if(!is_the_first_time)
+    add_to_history();
   xmin = x_min;
   xmax = x_max;
   ymin = y_min;

@@ -235,6 +235,7 @@ private:
   double xmin, xmax, ymin, ymax; // real dimensions
   double xscal, yscal; // scalings int/double
   bool constranges; // tell if the ranges should be const
+  bool is_the_first_time;
 
   //for layers
   std::list<Qt_widget_layer*>	qt_layers;
