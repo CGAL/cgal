@@ -20,29 +20,29 @@ public:
 			    bool in_dual=false,
 			    Color c=CGAL::BLUE,
 			    int linewidth=1)
-    : ant(antichain), dual(in_dual), color(c), width(linewidth) {};
+    : ant(antichain), _dual(in_dual), color(c), width(linewidth) {};
 
   void draw()
   {
     *widget << color;
-    if(dual) *widget << CGAL::PointSize(width);
+    if(_dual) *widget << CGAL::PointSize(width);
     else *widget << CGAL::LineWidth(width);
 
     for(Vertex_iterator it = ant->vertices_begin();
 	it!=ant->vertices_end();
 	++it)
-      if(dual)
+      if(_dual)
 	{
 	  Line_2 l = it->supporting_line();
 	  if(l.b() == 0) return;
-	  *widget << Point_2( -l.a()/l.b(), l.c()/l.b() );
+	  *widget << dual(l);
 	}
       else
 	*widget << (*it);
   };
 private:
   Antichain*	&ant;
-  bool dual;
+  bool _dual;
   Color color;
   int width;
 };//end class 

@@ -48,7 +48,9 @@ arrangments.moc:  arrangments.C
 arrangments$(OBJ_EXT): arrangments.moc \
 	Show_pseudo_triangulation.h \
 	Qt_layer_show_lines.h \
-	Qt_layer_show_points.h
+	Qt_layer_show_points.h \
+	Qt_layer_show_nearest_vertex.h \
+	Show_pseudo_triangulation.h
 
 arrangments$(EXE_EXT): arrangments$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)arrangments arrangments$(OBJ_EXT) $(LDFLAGSQT)
@@ -65,7 +67,9 @@ visibility_graph$(EXE_EXT): visibility_graph$(OBJ_EXT)
 clean: \
                    arrangments.clean \
                    shortest_path.clean \
-                   visibility_graph.clean 
+                   visibility_graph.clean \
+                   visibility_graph_of_points.clean
+
 
 #---------------------------------------------------------------------#
 #                    suffix rules
@@ -73,4 +77,3 @@ clean: \
 
 .C$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
-
