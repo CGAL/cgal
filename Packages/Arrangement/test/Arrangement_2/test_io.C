@@ -154,7 +154,7 @@ std::istream&  operator>>(std::istream & in, Curve & cv)
     in >> p;
     pl.push_back(p);  
   }
-  cv = Curve(pl);
+  cv = Curve(pl.begin(), pl.end());
   
   return in;
 }

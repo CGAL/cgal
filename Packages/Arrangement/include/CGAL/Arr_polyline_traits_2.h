@@ -49,8 +49,6 @@ public:
   typedef typename Segment_traits_2::Point_2        Point_2;
   typedef typename Segment_traits_2::Curve_2        Segment_2;
 
-private:
-
   /*!
    * Inner representation of a polyline curve.
    */
@@ -147,9 +145,6 @@ private:
 
     friend class Arr_polyline_traits_2;
   };
-  friend class Polyline_2<Segment_traits_2>;
-
-public:
 
   typedef Polyline_2<Segment_traits_2>            Curve_2;
   typedef Polyline_2<Segment_traits_2>            X_monotone_curve_2;
@@ -1180,9 +1175,11 @@ public:
       CGAL_assertion(i >= 0 && i < n_pts);
 
       if (i == 0)
-	return (seg_traits.curve_source ((*cvP)[0]));
+	// First point is the source of the first segment.
+	return (seg_traits.curve_source (cvP->_get_segment(0)));
       else
-	return (seg_traits.curve_target ((*cvP)[i-1]));
+	// Return the target of the (i-1)'st segment
+	return (seg_traits.curve_target (cvP->_get_segment(i-1)));
     }
 
     /*!
@@ -1290,6 +1287,20 @@ public:
     else
       return (size() + 1);
   }
+
+private:
+
+  /*!
+   * Get the i'th segment of the polyline.
+   * \param i The index of the requested segment.
+   * \return The i'th segment.
+   * \pre i is between 0 and points()-1.
+   */
+  const Segment_2& _get_segment (const int& i) const
+  {
+    return ((*this)[i]);
+  }
+
 };
 
 CGAL_END_NAMESPACE
