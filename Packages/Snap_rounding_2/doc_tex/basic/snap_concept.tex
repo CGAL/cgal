@@ -64,10 +64,9 @@ and $x$ and $y$ are the $x$ and $y$-coordinates of the rounded point
 respectively.}
 
 \ccNestedType{Integer_grid_point_2}{Convert coordinates
-from an arbitrary-precision representation into an integer one 
-in which pixels' center are counted by integers. For instance,
-if a point has the coordinates $(3.7,5.3)$ and the pixel
-size is $1$, then the new point will have the coordinates of $(7,10)$.
+into an integer representation where one unit is equal to pixel size.
+For instance, if a point has the coordinates $(3.7,5.3)$ and the pixel
+size is $0.5$, then the new point will have the coordinates of $(7,10)$.
 Note, however, that the number type remains the same here, although
 integers are represented.
 Must have the syntax \ccc{Point_2 operator()(Point_2 p,NT pixel_size)}
