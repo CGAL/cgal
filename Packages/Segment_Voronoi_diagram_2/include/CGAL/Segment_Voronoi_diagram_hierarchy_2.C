@@ -625,7 +625,11 @@ nearest_neighbor(const Point_2& p, bool force_point) const
 {
   Vertex_handle vnear[svd_hierarchy_2__maxlevel];
   //  nearest_neighbor(Site_2(p), vnear, force_point);
-  Site_2 t = geom_traits().construct_site_2_object()(p);
+#ifdef USE_SC
+  Site_2 t(p);
+#else
+  Site_2 t = Site_2::construct_site_2(p);
+#endif
   nearest_neighbor(t, vnear, force_point);
   return vnear[0];
 }
