@@ -1,3 +1,7 @@
+2.37    (30 Apr 2002)
+- Used specific CGAL::Polyhedron_3 in convex_hull_3 functions to get M$ to 
+  understand.
+
 2.36    (22 Mar 2002)
 - removed one of the tests since it used coordinates not appropriate for
   the number types used in the test suite
