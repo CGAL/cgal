@@ -16,4 +16,4 @@ wrapper.dvi: alpha.tex
 all: alpha.ps
 
 clean:
-	rm -f *.aux *.log *.dvi *.ps *.blg *.bbl
+	rm -f *.aux *.log *.dvi *.ps *.blg *.bbl *.idx *.ind
