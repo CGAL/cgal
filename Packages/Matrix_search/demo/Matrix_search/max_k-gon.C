@@ -73,9 +73,9 @@ int main(int, char*)
 typedef double                       Coord_type;
 typedef CGAL::Cartesian<Coord_type>  Rep;
 
-typedef Rep::Point_2                 Point;
+typedef Rep::Point_2                 Point_2;
 typedef Rep::Segment_2               Segment;
-typedef std::vector<Point>           Container;
+typedef std::vector<Point_2>         Container;
 typedef CGAL::Polygon_2<Rep,Container> Polygonvec;
 
 const QString my_title_string("Maximum Inscribed K-gon Demo with"
@@ -83,7 +83,7 @@ const QString my_title_string("Maximum Inscribed K-gon Demo with"
 
 //global flags and variables
 int current_state;
-std::list<Point>	  list_of_points;
+std::list<Point_2>	  list_of_points;
 
 
 class Qt_layer_show_ch : public CGAL::Qt_widget_layer
@@ -127,20 +127,20 @@ public:
       //VERTICES
       *widget << CGAL::PointSize(3);
       *widget << CGAL::GREEN;
-      std::list<Point>::iterator itp = list_of_points.begin();
+      std::list<Point_2>::iterator itp = list_of_points.begin();
       while(itp!=list_of_points.end())
 	*widget << (*itp++);
           
 
       //CONVEX HULL
-      std::list<Point>  out;
+      std::list<Point_2>  out;
       std::list<Segment>  Sl;
       CGAL::convex_hull_points_2(list_of_points.begin(), 
 				list_of_points.end(), std::back_inserter(out));
       if( out.size() > 1 ) {
-	Point pakt,prev,pstart;
+	Point_2 pakt,prev,pstart;
 
-	std::list<Point>::const_iterator it;
+	std::list<Point_2>::const_iterator it;
 	it=out.begin();
 	prev= *it; pstart=prev;
 	it++;
@@ -243,7 +243,7 @@ public slots:
 private slots:
   void get_new_object(CGAL::Object obj)
   {
-    Point p;
+    Point_2 p;
     if(CGAL::assign(p,obj)) {
       list_of_points.push_back(p);
       something_changed();
@@ -296,7 +296,7 @@ private slots:
 		// set the Visible Area to the Interval
 
     // send resizeEvent only on show.
-    CGAL::Random_points_in_disc_2<Point> g(1);
+    CGAL::Random_points_in_disc_2<Point_2> g(1);
     for(int count=0; count<200; count++) {
       list_of_points.push_back(*g++);
     }
@@ -325,8 +325,10 @@ main(int argc, char **argv)
   app.setMainWidget(&widget);
   widget.setCaption(my_title_string);
   widget.setMouseTracking(TRUE);
+#if !defined (__POWERPC__)
   QPixmap cgal_icon = QPixmap((const char**)demoicon_xpm);
   widget.setIcon(cgal_icon);
+#endif
   widget.show();
   current_state = -1;
   return app.exec();
