@@ -71,16 +71,16 @@ public:
   
 #ifdef CGAL_PM_FRIEND_CLASS
   
-  friend class
+  friend 
 #if (__GNUC__==3) && (__GNUC_MINOR__>=2)
   typename
 #endif
-  Trapezoidal_decomposition_2<Traits>::Around_point_circulator;
-  friend class
+  class Trapezoidal_decomposition_2<Traits>::Around_point_circulator;
+  friend 
 #if (__GNUC__==3) && (__GNUC_MINOR__>=2) 
   typename
 #endif
-  Trapezoidal_decomposition_2<Traits>::In_face_iterator;
+  class Trapezoidal_decomposition_2<Traits>::In_face_iterator;
   
 #endif
   
