@@ -64,11 +64,11 @@ public:
     }
 
   // Identity constructor:
-  Aff_transformationCd(const Identity_transformation &)
+  Aff_transformationCd(const Identity_transformation &, int d)
     {
-      typename R::LA:Matrix M(v.dimension());
+      typename R::LA::Matrix M(d);
       std::fill(M.begin(),M.end(),FT(0));
-      int i; for (i=0; i<v.dimension(); ++i) M[i][i] = FT(1);
+      int i; for (i=0; i<d; ++i) M[i][i] = FT(1);
       PTR = new Aff_transformation_repCd<R>(d,M.begin(),M.end(),FT(1));
     }
 
@@ -76,11 +76,11 @@ public:
   Aff_transformationCd(const Translation,
                        const Vector_d &v)
     {
-      typename R::LA:Matrix M(v.dimension());
+      typename R::LA::Matrix M(v.dimension());
       std::fill(M.begin(),M.end(),FT(0));
       int i; for (i=0; i<v.dimension(); ++i) M[i][i] = FT(1);
-      PTR = new Aff_transformation_repCd<R>(d,
-	           M.begin(),M.end(),w.begin(),w.end(),FT(1));
+      PTR = new Aff_transformation_repCd<R>(v.dimension(),
+	           M.begin(),M.end(),v.begin(),v.end(),FT(1));
     }
 
   // Homothecy:
@@ -88,19 +88,19 @@ public:
                        const FT &s,
                        const FT &w = FT(1))
     {
-      typename R::LA:Matrix M(d);
+      typename R::LA::Matrix M(d);
       std::fill(M.begin(),M.end(),FT(0));
-      int i; for (i=0; i<v.dimension(); ++i) M[i][i] = s/w;
+      int i; for (i=0; i<d; ++i) M[i][i] = s/w;
       PTR = new Aff_transformation_repCd<R>(d,M.begin(),M.end(),FT(1));
     }
 
   // Scaling:
   template < class InputIterator >
   Aff_transformationCd(const Scaling, int d,
-                       const InputIterator &first, const InputIterator &last);
+                       const InputIterator &first, const InputIterator &last)
     {
       CGAL_kernel_precondion( last-first==d );
-      typename R::LA:Matrix M(d);
+      typename R::LA::Matrix M(d);
       std::fill(M.begin(),M.end(),FT(0));
       int i; InputIterator it;
       for (i=0,it=first; it!=last; ++i,++it) M[i][i] = *it;
@@ -111,8 +111,8 @@ public:
   Aff_transformationCd(const Reflexion,
                        const Plane_d &p)
     {
-      typename R::LA:Matrix M(d);
-      typename R::LA:Vector w(d);
+      typename R::LA::Matrix M(d);
+      typename R::LA::Vector w(d);
       //TODO aff_transformation_reflexion_from_plane(p,M.begin(),w.begin());
       PTR = new Aff_transformation_repCd<R>(d,
 	           M.begin(),M.end(),w.begin(),w.end(),FT(1));
@@ -136,7 +136,7 @@ public:
                        const FT& w = FT(1))
     {
       PTR = new Aff_transformation_repCd<R>(d,
-	           first, last, translation_first, translation_end, w);
+	           first, last, translation_first, translation_last, w);
     }
 
   ~Aff_transformationCd() {}
@@ -156,7 +156,7 @@ public:
 
   Self        inverse() const { return ptr()->inverse(); }
   
-  int         dimension() const { ptr()->dimension(); }
+  int         dimension() const { return ptr()->dimension(); }
   bool        is_even() const { return ptr()->is_even(); }
   bool        is_odd() const { return  ! (ptr()->is_even()); }
   

@@ -14,7 +14,7 @@ class Aff_transformation_rep_baseCd
   : public Rep
 {
 public:
-  typedef typename _R                           R;
+  typedef          _R                           R;
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
   typedef typename R::LA                        LA;
@@ -44,6 +44,7 @@ public:
   virtual Aff_transformation_d operator*(
                        const Aff_transformation_rep_baseCd &t) const = 0;
 
+  /*
   virtual Aff_transformation_d compose(
                        const Translation_repCd<R> &t) const  = 0;
 
@@ -55,6 +56,7 @@ public:
 
   virtual Aff_transformation_d compose(
                        const Reflexion_repCd<R> &t) const  = 0;
+  */
 
   virtual Aff_transformation_d compose(
                        const Aff_transformation_repCd<R> &t) const  = 0;
@@ -71,10 +73,12 @@ template < class R >
 class Aff_transformation_repCd
   : public Aff_transformation_rep_baseCd<R>
 {
+  /*
   friend class Translation_repCd<R>;
   friend class Scaling_repCd<R>;
   friend class Homothecy_repCd<R>;
   friend class Reflexion_repCd<R>;
+  */
 
 public:
   typedef typename R::FT                                FT;
@@ -85,13 +89,14 @@ public:
   typedef Aff_transformation_repCd<R>                   Self;
   typedef Aff_transformation_rep_baseCd<R>              Transformation_base_d;
   typedef Aff_transformation_repCd<R>                   Transformation_d;
-  typedef Translation_repCd<R>                          Translation_d;
-  typedef Scaling_repCd<R>                              Scaling_d;
-  typedef Homethecy_repCd<R>                            Homothecy_d;
-  typedef Reflexion_repCd<R>                            Reflexion_d;
+  // typedef Translation_repCd<R>                          Translation_d;
+  // typedef Scaling_repCd<R>                              Scaling_d;
+  // typedef Homethecy_repCd<R>                            Homothecy_d;
+  // typedef Reflexion_repCd<R>                            Reflexion_d;
   typedef typename Transformation_base_d::Point_d       Point_d;
   typedef typename Transformation_base_d::Vector_d      Vector_d;
   typedef typename Transformation_base_d::Direction_d   Direction_d;
+  typedef typename Transformation_base_d::Plane_d       Plane_d;
   typedef typename Transformation_base_d::
 	                           Aff_transformation_d Aff_transformation_d;
 
@@ -103,20 +108,23 @@ public:
                            const InputIterator &first,
                            const InputIterator &last, const FT &w)
   {
+    CGAL_kernel_precondition( last-first==d );
     _translation_vector = Vector(d);
     std::fill(_translation_vector.begin(), _translation_vector.end(), FT(0));
-    _linear_transformation = Matrix(d, d, first, last);
+    _linear_transformation = Matrix(d, d, first, last) / w;
   }
 
   template < class InputIterator1, class InputIterator2 >
   Aff_transformation_repCd(int d,
-     const InputIterator1 &first, const InputIterator2 &last,
-     const InputIterator1 &translation_first,
+     const InputIterator1 &first, const InputIterator1 &last,
+     const InputIterator2 &translation_first,
      const InputIterator2 &translation_last,
      const FT &w)
   {
-    _translation_vector = Vector(d, translation_first, translation_end);
-    _linear_transformation = Matrix(d, d, first, last);
+    CGAL_kernel_precondition( last-first==d );
+    CGAL_kernel_precondition( translation_last-translation_first==d );
+    _translation_vector = Vector(translation_first, translation_last) / w;
+    _linear_transformation = Matrix(d, d, first, last) / w;
   }
 
   virtual ~Aff_transformation_repCd()
@@ -124,6 +132,7 @@ public:
 
   virtual Point_d transform(const Point_d& p) const
   {
+    CGAL_kernel_precondition( p.dimension()==dimension() );
     Vector w( p.begin(), p.end() );
     w = _linear_transformation * w + _translation_vector;
     return Point_d(dimension(), w.begin(), w.end());
@@ -132,6 +141,7 @@ public:
   // note that a vector is not translated
   virtual Vector_d transform(const Vector_d& v) const
   {
+    CGAL_kernel_precondition( v.dimension()==dimension() );
     Vector w( v.begin(), v.end());
     w = _linear_transformation * w;
     return Vector_d(dimension(), w.begin(), w.end());
@@ -140,9 +150,20 @@ public:
   // note that a direction is not translated
   virtual Direction_d transform(const Direction_d& dir) const
   {
+    CGAL_kernel_precondition( dir.dimension()==dimension() );
     Vector w( dir.begin(), dir.end() );
     w = _linear_transformation * w;
     return Direction_d(dimension(), w.begin(), w.end());
+  }
+
+  virtual Plane_d transform(const Plane_d &p) const
+  {
+    CGAL_kernel_precondition( p.dimension()==dimension() );
+    Vector w( p.begin(), p.end() );
+    w = _linear_transformation * w;
+    w[p.dimension()] += std::inner_product(p.begin(),p.end(),
+                                           _translation_vector.begin(),FT(0));
+    return Plane_d(dimension(), w.begin(), w.end());
   }
 
   // Note that the return type Aff_transformation is not defined yet,
@@ -173,12 +194,12 @@ public:
                               j<=_linear_transformation.column_dimension());
     if (j==_linear_transformation.row_dimension())
       return _translation_vector[i];
-    return _linear_transformation[i,j];
+    return _linear_transformation[i][j];
   }
 
 private:
-  typename LA::Matrix<FT> _linear_transformation;
-  typename LA::Vector<FT> _translation_vector;
+  Matrix _linear_transformation;
+  Vector _translation_vector;
 };
 
 CGAL_END_NAMESPACE
