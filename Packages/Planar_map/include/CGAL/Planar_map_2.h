@@ -229,7 +229,7 @@ public:
 					    const X_curve_2_iterator & end,
 					    Change_notification * en = NULL)
   {
-    PointLessFunctor  event_queue_pred(traits);
+    PointLessFunctor event_queue_pred(traits);
     Event_queue event_queue(event_queue_pred);
     init_for_insert(begin, end, event_queue);
     
@@ -782,19 +782,19 @@ private:
       
       // look for the interection point in the queue. if does not exist, 
       // add it. if exists, merge it with the existing one (add the curve)
-      Event_queue_iterator  edge_point = 
+      Event_queue_iterator edge_point = 
 	event_queue.find( traits->curve_source(cv) );
       
       if (edge_point == event_queue.end() || 
 	  edge_point->second.get_point() != curr_point_plus->second) {
-	Point_node  new_ix = 
+	Point_node new_ix = 
 	  Point_node(cv_node, curr_point_plus->second, traits );
 	event_queue.insert(Event_queue_value_type(traits->curve_source(cv), 
 						  new_ix));
       }
-      else
+      else {
 	edge_point->second.add_curve(cv_node);
-      
+      }
       
       // same as above for the curve's target
       edge_point = event_queue.find( traits->curve_target(cv) );
@@ -820,12 +820,15 @@ private:
 //-----------------------------------------------------------------------------
 //  Member Function Definitions
 //-----------------------------------------------------------------------------
+
+/*! A parameter-less constructor.
+ */
 template < class Dcel, class Traits >
 Planar_map_2< Dcel, Traits >::Planar_map_2()
 {
   traits = new Traits_wrap();
   use_delete_traits = true;
-    
+
 #ifndef CGAL_NO_PM_DEFAULT_POINT_LOCATION
   pl = new Pm_default_point_location<Self>;
   use_delete_pl = true;
@@ -835,12 +838,13 @@ Planar_map_2< Dcel, Traits >::Planar_map_2()
     "No default point location is defined; you must supply one.");
 #endif
     
-  bb=init_default_bounding_box((Traits*)traits);
-  use_delete_bb=true;
-  bb->init(*this,*traits);
+  bb = init_default_bounding_box((Traits*)traits);
+  use_delete_bb = true;
+  bb->init(*this, *traits);
 }
 
-//-----------------------------------------------------------------------------
+/*! A constructor given a point-location parameter.
+ */
 template < class Dcel, class Traits >
 Planar_map_2< Dcel, Traits >::
 Planar_map_2(typename Planar_map_2<Dcel, Traits>::Point_location_base * pl_ptr)
@@ -850,19 +854,22 @@ Planar_map_2(typename Planar_map_2<Dcel, Traits>::Point_location_base * pl_ptr)
     
   pl = pl_ptr;
   use_delete_pl = false;
-  pl->init(*this,*traits);
+  pl->init(*this, *traits);
     
   bb = init_default_bounding_box((Traits*)traits);
   use_delete_bb = true;
-  bb->init(*this,*traits);
+  bb->init(*this, *traits);
 }
-//-----------------------------------------------------------------------------
+
+/*! A constructor given a copy traits, point-location, and
+ * Bounding-box parameters.
+ */
 template < class Dcel, class Traits >
 Planar_map_2< Dcel, Traits >::
 Planar_map_2(
-  const typename Planar_map_2< Dcel, Traits >::Traits & tr_, 
-  typename Planar_map_2< Dcel, Traits >::Point_location_base   * pl_ptr, 
-  typename Planar_map_2< Dcel, Traits >::Bounding_box_base     * bb_ptr )
+  const typename Planar_map_2<Dcel, Traits>::Traits & tr_, 
+  typename Planar_map_2<Dcel, Traits>::Point_location_base * pl_ptr, 
+  typename Planar_map_2<Dcel, Traits>::Bounding_box_base   * bb_ptr)
 {
   traits = new Traits_wrap(tr_);
   use_delete_traits = true;
@@ -882,7 +889,7 @@ Planar_map_2(
   {
     pl = pl_ptr;
     use_delete_pl = false;
-    pl->init(*this,*traits);
+    pl->init(*this, *traits);
   }
     
   if (bb_ptr == NULL)
@@ -898,13 +905,16 @@ Planar_map_2(
     bb->init(*this,*traits);
   }
 }
-//-----------------------------------------------------------------------------
+
+/*! A constructor given a copy traits wrap, point-location, and
+ * Bounding-box parameters.
+ */
 template < class Dcel, class Traits >
 Planar_map_2< Dcel, Traits >::
 Planar_map_2(
-  typename Planar_map_2< Dcel, Traits >::Traits_wrap          *tr_ptr, 
-  typename Planar_map_2< Dcel, Traits >::Point_location_base  *pl_ptr, 
-  typename Planar_map_2< Dcel, Traits >::Bounding_box_base    *bb_ptr )
+  typename Planar_map_2< Dcel, Traits >::Traits_wrap         * tr_ptr, 
+  typename Planar_map_2< Dcel, Traits >::Point_location_base * pl_ptr, 
+  typename Planar_map_2< Dcel, Traits >::Bounding_box_base   * bb_ptr )
 {
   if (tr_ptr == NULL)
   {
@@ -949,15 +959,13 @@ Planar_map_2(
   }  
 }
 
-//template < class Dcel, class Traits, class InputIterator >
-//Planar_map_2< Dcel, Traits >::
-//Planar_map_2(InputIterator curves_begin, InputIterator curves_end)
-//{}
-
-//-----------------------------------------------------------------------------
+/*! A copy constructor.
+ * \todo get rid of the cast. Instead implement a copy constructor and a clone
+ * operation for the various point location strategies.
+ */
 template < class Dcel, class Traits >
 Planar_map_2< Dcel, Traits >::
-Planar_map_2(const Planar_map_2< Dcel, Traits >& pm )
+Planar_map_2(const Planar_map_2<Dcel, Traits> & pm)
 {
   // doing the same as Planar_map_2(pm.get_traits(),pm.get_point_location(),
   //                                pm.get_point_bbox());
@@ -1859,8 +1867,8 @@ update_subdivision(Point_node& point_node,
 
     // if the point is the source of the curve, we ignore it for now.
     // the curve will be handled when we get to its target
-    if ( traits->curve_source(cv_iter->get_curve()) == 
-	 point_node.get_point().point())  {
+      if (traits->point_is_same(traits->curve_source(cv_iter->get_curve()),
+                                point_node.get_point().point()))  {
       continue;
     }
 
@@ -1890,20 +1898,22 @@ update_subdivision(Point_node& point_node,
     }
 
     // Update the vertex handle of each point, for future use
-    if (h->source()->point() == cv_iter->get_point().point())
+    if (traits->point_is_same(h->source()->point(),
+                              cv_iter->get_point().point()))
       cv_iter->get_point().set_vertex(h->source());
-    else if (h->target()->point() == 
-	     cv_iter->get_point().point())
+    else if (traits->point_is_same(h->target()->point(),
+                                   cv_iter->get_point().point()))
       cv_iter->get_point().set_vertex(h->target());
     
-    if (h->source()->point() == point_node.get_point().point())
+    if (traits->point_is_same(h->source()->point(),
+                              point_node.get_point().point()))
       point_node.get_point().set_vertex(h->source());
-    else if (h->target()->point() == point_node.get_point().point())
+    else if (traits->point_is_same(h->target()->point(),
+                                   point_node.get_point().point()))
       point_node.get_point().set_vertex(h->target());
   }
 }
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_PLANAR_MAP_2_H
-// EOF
+#endif
