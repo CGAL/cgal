@@ -528,10 +528,10 @@ public:
     
     // Check if the intersection is a single point.
     if (res == 1)
-      return (CGAL::make_object (ps[0]));
+      return CGAL::make_object(ps[0]);
 
     // Return a polyline (which is actaully a single segment).
-    return (CGAL::make_object (X_monotone_curve_2 (ps + 0, ps + 2)));
+    return CGAL::make_object(X_monotone_curve_2(ps + 0, ps + 2));
   }
 
   /*!
@@ -573,10 +573,10 @@ public:
     
     // Check if the intersection is a single point.
     if (res == 1)
-      return (CGAL::make_object (ps[0]));
+      return CGAL::make_object(ps[0]);
 
     // Return a polyline (which is actaully a single segment).
-    return (CGAL::make_object (X_monotone_curve_2 (ps + 0, ps + 2)));
+    return CGAL::make_object(X_monotone_curve_2(ps + 0, ps + 2));
   }
 
   /*!
