@@ -37,37 +37,37 @@ template<class T>
 class Largest_empty_iso_rectangle_2 {
   enum Point_type{REG, BOT_RIGHT, BOT_LEFT, TOP_LEFT, TOP_RIGHT};
   typedef typename T::FT NT;
-  typedef typename T::Point_2               Point_2;
+  typedef typename T::Point_2               Point;
   //  typedef typename T::Vector_2              Vector_2; 
   typedef typename T::Iso_rectangle_2       Iso_rectangle_2;
 
-public:
+
   typedef T                        Traits;
 private:
 
-  Traits _gt;
   bool cache_valid;
-  struct y_ptr_larger;
-  struct x_ptr_larger;
+  Traits _gt;
+  class Less_yx;
+  class Less_xy;
 
   class Point_data {
   public:
 
-    Point_2 p;
+    Point p;
 
-    set<Point_data *,y_ptr_larger> *right_tent;
-    set<Point_data *,y_ptr_larger> *left_tent;
+    set<Point_data *,Less_yx> *right_tent;
+    set<Point_data *,Less_yx> *left_tent;
     Point_type type;
 
-    Point_data(const Point_2& p);
+    Point_data(const Point& p);
 
-    Point_data(const Point_2& p,
-	       set<Point_data *,y_ptr_larger> *r_tent,
-	       set<Point_data *,y_ptr_larger> *l_tent);
+    Point_data(const Point& p,
+	       set<Point_data *,Less_yx> *r_tent,
+	       set<Point_data *,Less_yx> *l_tent);
 
-    Point_data(const Point_2& p,
-	       set<Point_data *,y_ptr_larger> *r_tent,
-	       set<Point_data *,y_ptr_larger> *l_tent,
+    Point_data(const Point& p,
+	       set<Point_data *,Less_yx> *r_tent,
+	       set<Point_data *,Less_yx> *l_tent,
 	       Point_type i_type);
 
     Point_data (const Point_data &other) : 
@@ -108,13 +108,15 @@ private:
     return false;
   }
 
-  struct y_ptr_larger
+  class Less_yx
   {
+  private:
     Traits gt;
 
-    y_ptr_larger(){}
+    Less_yx(){}
 
-    y_ptr_larger(const Traits& t)
+  public:
+    Less_yx(const Traits& t)
       : gt(t)
     {}
 
@@ -125,11 +127,13 @@ private:
   };
 
 
-  struct x_ptr_larger
+  class Less_xy
   {
+  private:
     Traits gt;
 
-    x_ptr_larger(const Traits& t)
+  public:
+    Less_xy(const Traits& t)
       : gt(t)
     {}
 
@@ -139,16 +143,16 @@ private:
     }
   };
 
-  typedef set<Point_data *,x_ptr_larger> Point_data_set_of_x;
-  typedef set<Point_data *,y_ptr_larger> Point_data_set_of_y;
+  typedef set<Point_data *,Less_xy> Point_data_set_of_x;
+  typedef set<Point_data *,Less_yx> Point_data_set_of_y;
 
   Point_data_set_of_x x_sorted;
   Point_data_set_of_y y_sorted;
 
-  Point_2 bl_p, tr_p;
+  Point bl_p, tr_p;
 
   // the points that define the largest empty iso-rectangle
-  Point_2 left_p, bottom_p, right_p ,top_p; 
+  Point left_p, bottom_p, right_p ,top_p; 
 
   NT largest_rect_size;
   //  Polygon *polygon;
@@ -162,10 +166,10 @@ private:
   void phase_2_on_right();
   void phase_2();
   void phase_3();
-  void check_for_larger(const Point_2& px0, 
-			const Point_2& py0, 
-			const Point_2& px1,
-			const Point_2& py1);
+  void check_for_larger(const Point& px0, 
+			const Point& py0, 
+			const Point& px1,
+			const Point& py1);
   void tent(Point_data *first, Point_data *second);
   void tent(Point_data *first, Point_data *second, Point_data *third);
   void get_next_for_top(list<Point_data *>::iterator &iter,list<Point_data *>::iterator &beyond);
@@ -187,15 +191,15 @@ private:
   void phase_3_check_for_larger(Point_data_set_of_y::iterator iter,Point_data_set_of_y::iterator iter1,Point_data_set_of_y::iterator iter2,Point_data_set_of_y::iterator iter3,bool first_iter_is_right,bool second_iter_is_right,bool third_iter_is_right);
   void empty_tents();
   void update();
-  void init(const Point_2& bl, const Point_2& tr);
+  void init(const Point& bl, const Point& tr);
   // Auxiliary iterators for convenience
 
   template < class Node>
   struct Proj_point {
     typedef Node                  argument_type;
-    typedef Point_2                 result_type;
-    Point_2&       operator()( Node& x)       const { return x->p; }
-    const Point_2& operator()( const Node& x) const { return x->p; }
+    typedef Point                 result_type;
+    Point&       operator()( Node& x)       const { return x->p; }
+    const Point& operator()( const Node& x) const { return x->p; }
 };
 
 public:
@@ -204,14 +208,14 @@ public:
   // the points in a set where they are stored
   typedef Iterator_project<Point_data_set_of_x::const_iterator, 
                            Proj_point<Point_data*>, 
-                           const Point_2&,
-                           const Point_2*> const_iterator;
+                           const Point&,
+                           const Point*> const_iterator;
 
 
   const Traits & geom_traits() const {return _gt;};
 
   // ctor
-  Largest_empty_iso_rectangle_2(const Point_2& bl, const Point_2& tr);
+  Largest_empty_iso_rectangle_2(const Point& bl, const Point& tr);
 
   // ctor
   Largest_empty_iso_rectangle_2(const Iso_rectangle_2 &b);
@@ -221,11 +225,11 @@ public:
 
   // add a point to data
   bool
-  insert(const Point_2& p, Point_type i_type = REG);
+  insert(const Point& p, Point_type i_type = REG);
 
   // and the STL standard member function for insertion:
   void
-  push_back(const Point_2& _p)
+  push_back(const Point& _p)
   {
     insert(_p);
   }
@@ -246,7 +250,7 @@ public:
 
   // remove a point from data
   bool 
-  remove(const Point_2& p);
+  remove(const Point& p);
 
   Iso_rectangle_2
   get_bounding_box();
@@ -256,7 +260,7 @@ public:
   get_largest_empty_iso_rectangle();
 
   // retrieve four points from the input that define the largest rectangle
-  quadruple<Point_2, Point_2, Point_2, Point_2>
+  quadruple<Point, Point, Point, Point>
   get_left_bottom_right_top();
 
   // clear data(remove points)
@@ -287,36 +291,34 @@ struct Delete {
 template<class T>
 Largest_empty_iso_rectangle_2<T>::~Largest_empty_iso_rectangle_2()
 {
-  
   for(Point_data_set_of_x::iterator iter = x_sorted.begin();
       iter != x_sorted.end();
       ++iter)
     delete(*iter);
-  
-  /*
+  /*  
   // Why does this not compile ????
-  for_each(x_sorted.begin(), 
+  std::for_each(x_sorted.begin(), 
 	   x_sorted.end(), 
 	   Delete<Point_data_set_of_x::iterator>());
   */
 }
 
 template<class T>
-Largest_empty_iso_rectangle_2<T>::Point_data::Point_data(const Point_2& _p) : p(_p),type(REG)
+Largest_empty_iso_rectangle_2<T>::Point_data::Point_data(const Point& _p) : p(_p),type(REG)
 {
   right_tent = 0;
   left_tent = 0;
 }
 
 template<class T>
-Largest_empty_iso_rectangle_2<T>::Point_data::Point_data(const Point_2& _p,
+Largest_empty_iso_rectangle_2<T>::Point_data::Point_data(const Point& _p,
 							 Point_data_set_of_y *r_tent,
 							 Point_data_set_of_y *l_tent)
   : p(_p),right_tent(r_tent),left_tent(l_tent),type(REG) 
 {}
 
 template<class T>
-Largest_empty_iso_rectangle_2<T>::Point_data::Point_data(const Point_2& _p,
+Largest_empty_iso_rectangle_2<T>::Point_data::Point_data(const Point& _p,
 							 Point_data_set_of_y *r_tent,
 							 Point_data_set_of_y *l_tent,
 							 Point_type i_type) 
@@ -326,7 +328,7 @@ Largest_empty_iso_rectangle_2<T>::Point_data::Point_data(const Point_2& _p,
 
 template<class T>
 bool
-Largest_empty_iso_rectangle_2<T>::insert(const Point_2& _p,
+Largest_empty_iso_rectangle_2<T>::insert(const Point& _p,
 					 Point_type i_type)
 {
   // check that the point is inside the bounding box 
@@ -335,8 +337,8 @@ Largest_empty_iso_rectangle_2<T>::insert(const Point_2& _p,
     return(false);
 
   cache_valid = false;
-  Point_data_set_of_y *right_tent = new Point_data_set_of_y(y_ptr_larger(geom_traits()));
-  Point_data_set_of_y *left_tent = new Point_data_set_of_y(y_ptr_larger(geom_traits()));
+  Point_data_set_of_y *right_tent = new Point_data_set_of_y(Less_yx(geom_traits()));
+  Point_data_set_of_y *left_tent = new Point_data_set_of_y(Less_yx(geom_traits()));
   Point_data *po = new Point_data(_p,right_tent,left_tent,i_type);
 
   x_sorted.insert(po);
@@ -348,7 +350,7 @@ Largest_empty_iso_rectangle_2<T>::insert(const Point_2& _p,
 
 template<class T>
 bool
-Largest_empty_iso_rectangle_2<T>::remove(const Point_2& _p)
+Largest_empty_iso_rectangle_2<T>::remove(const Point& _p)
 {
   cache_valid = false;
   Point_data *po = new Point_data(_p);
@@ -370,10 +372,10 @@ Largest_empty_iso_rectangle_2<T>::remove(const Point_2& _p)
 
 template<class T>
 void 
-Largest_empty_iso_rectangle_2<T>::check_for_larger(const Point_2& px0,
-						   const Point_2& py0,
-						   const Point_2& px1,
-						   const Point_2& py1)
+Largest_empty_iso_rectangle_2<T>::check_for_larger(const Point& px0,
+						   const Point& py0,
+						   const Point& px1,
+						   const Point& py1)
 {
   bool do_check = true;
   /*
@@ -383,7 +385,7 @@ Largest_empty_iso_rectangle_2<T>::check_for_larger(const Point_2& px0,
     NT bx = x0 + bw/2;
     NT by = y0 + bh/2;
 
-    Point_2 center(bx,by);
+    Point center(bx,by);
     do_check = polygon->has_on_bounded_side(center);
   }
   */
@@ -1003,18 +1005,18 @@ Largest_empty_iso_rectangle_2<T>::get_largest_empty_iso_rectangle()
     return(get_bounding_box());
   }
   update();
-  return(Iso_rectangle_2(Point_2(left_p.x(), bottom_p.y()),
-			 Point_2(right_p.x(),top_p.y())));
+  return(Iso_rectangle_2(Point(left_p.x(), bottom_p.y()),
+			 Point(right_p.x(),top_p.y())));
 }
 
 /* Some applications might be more interested in the four points
  * that are from the input and that define the empty rectangle
  */
 template<class T>
-quadruple<Largest_empty_iso_rectangle_2<T>::Point_2,
-          Largest_empty_iso_rectangle_2<T>::Point_2,
-          Largest_empty_iso_rectangle_2<T>::Point_2,
-          Largest_empty_iso_rectangle_2<T>::Point_2>
+quadruple<Largest_empty_iso_rectangle_2<T>::Point,
+          Largest_empty_iso_rectangle_2<T>::Point,
+          Largest_empty_iso_rectangle_2<T>::Point,
+          Largest_empty_iso_rectangle_2<T>::Point>
 Largest_empty_iso_rectangle_2<T>::get_left_bottom_right_top()
 {
   if(x_sorted.size() == 4) {
@@ -1037,17 +1039,17 @@ Largest_empty_iso_rectangle_2<T>::Largest_empty_iso_rectangle_2(Polygon &inp_pol
   max_y2 = max_y = polygon->top_vertex()->y();
 
   // add extreme points
-  insert(Point_2(min_x - 0.000001,min_y - 0.000001),BOT_LEFT);
-  insert(Point_2(max_x + 0.000001,min_y2 - 0.000001),BOT_RIGHT);
-  insert(Point_2(min_x2 - 0.000001,max_y + 0.000001),TOP_LEFT);
-  insert(Point_2(max_x2 + 0.000001,max_y2 + 0.000001),TOP_RIGHT);
+  insert(Point(min_x - 0.000001,min_y - 0.000001),BOT_LEFT);
+  insert(Point(max_x + 0.000001,min_y2 - 0.000001),BOT_RIGHT);
+  insert(Point(min_x2 - 0.000001,max_y + 0.000001),TOP_LEFT);
+  insert(Point(max_x2 + 0.000001,max_y2 + 0.000001),TOP_RIGHT);
 
   // insert the polygon 
   Polygon::Vertex_iterator it = polygon->vertices_begin();
   Polygon::Vertex_iterator next = it;
 
-  Point_2 p,q;
-  Point_2 p0 = *it;
+  Point p,q;
+  Point p0 = *it;
 
   while(it != polygon->vertices_end()) {
     insert(*it);
@@ -1072,7 +1074,7 @@ Largest_empty_iso_rectangle_2<T>::Largest_empty_iso_rectangle_2(Polygon &inp_pol
 
 template<class T>
 void
-Largest_empty_iso_rectangle_2<T>::init(const Point_2& bl, const Point_2& tr)
+Largest_empty_iso_rectangle_2<T>::init(const Point& bl, const Point& tr)
 {
   //  polygon = NULL;
 
@@ -1081,15 +1083,15 @@ Largest_empty_iso_rectangle_2<T>::init(const Point_2& bl, const Point_2& tr)
   tr_p = tr;
 
   // add extreme points
-  insert(Point_2(bl.x() - NT(0.000001) * (tr.x() - bl.x()), bl.y() - NT(0.000001) * (tr.y() - bl.y())), BOT_LEFT);
-  insert(Point_2(tr.x() + NT(0.000001) * (tr.x() - bl.x()), bl.y() - NT(0.000001) * (tr.y() - bl.y())), BOT_RIGHT);
-  insert(Point_2(bl.x() - NT(0.000001) * (tr.x() - bl.x()), tr.y() + NT(0.000001) * (tr.y() - bl.y())), TOP_LEFT);
-  insert(Point_2(tr.x() + NT(0.000001) * (tr.x() - bl.x()), tr.y() + NT(0.000001) * (tr.y() - bl.y())), TOP_RIGHT);
+  insert(Point(bl.x() - NT(0.000001) * (tr.x() - bl.x()), bl.y() - NT(0.000001) * (tr.y() - bl.y())), BOT_LEFT);
+  insert(Point(tr.x() + NT(0.000001) * (tr.x() - bl.x()), bl.y() - NT(0.000001) * (tr.y() - bl.y())), BOT_RIGHT);
+  insert(Point(bl.x() - NT(0.000001) * (tr.x() - bl.x()), tr.y() + NT(0.000001) * (tr.y() - bl.y())), TOP_LEFT);
+  insert(Point(tr.x() + NT(0.000001) * (tr.x() - bl.x()), tr.y() + NT(0.000001) * (tr.y() - bl.y())), TOP_RIGHT);
 }
 
 template<class T>
-Largest_empty_iso_rectangle_2<T>::Largest_empty_iso_rectangle_2(const Point_2& bl, const Point_2& tr)
-  : cache_valid(false), _gt(), y_sorted(y_ptr_larger(geom_traits())), x_sorted(x_ptr_larger(geom_traits()))
+Largest_empty_iso_rectangle_2<T>::Largest_empty_iso_rectangle_2(const Point& bl, const Point& tr)
+  : cache_valid(false), _gt(), x_sorted(Less_xy(geom_traits())), y_sorted(Less_yx(geom_traits()))
 {
   // precondition: bl and tr
   init(bl, tr);
@@ -1097,7 +1099,7 @@ Largest_empty_iso_rectangle_2<T>::Largest_empty_iso_rectangle_2(const Point_2& b
 
 template<class T>
 Largest_empty_iso_rectangle_2<T>::Largest_empty_iso_rectangle_2(const Iso_rectangle_2 &b)
-  : cache_valid(false), _gt(), y_sorted(y_ptr_larger(geom_traits())), x_sorted(x_ptr_larger(geom_traits()))
+  : cache_valid(false), _gt(), x_sorted(Less_xy(geom_traits())), y_sorted(Less_yx(geom_traits()))
 {
   init(b.min(), b.max());
 }
@@ -1135,10 +1137,10 @@ Largest_empty_iso_rectangle_2<T>::clear()
   x_sorted.clear();
   y_sorted.clear();
 
-  insert(Point_2(bl_p.x() - 0.000001, bl_p.y() - 0.000001),BOT_LEFT);
-  insert(Point_2(tr_p.x() + 0.000001, bl_p.y() - 0.000001),BOT_RIGHT);
-  insert(Point_2(bl_p.x() - 0.000001, tr_p.y() + 0.000001),TOP_LEFT);
-  insert(Point_2(tr_p.x() + 0.000001, tr_p.y() + 0.000001),TOP_RIGHT);
+  insert(Point(bl_p.x() - 0.000001, bl_p.y() - 0.000001),BOT_LEFT);
+  insert(Point(tr_p.x() + 0.000001, bl_p.y() - 0.000001),BOT_RIGHT);
+  insert(Point(bl_p.x() - 0.000001, tr_p.y() + 0.000001),TOP_LEFT);
+  insert(Point(tr_p.x() + 0.000001, tr_p.y() + 0.000001),TOP_RIGHT);
 }
 
 
