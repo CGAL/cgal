@@ -45,8 +45,9 @@ diff -ru CGAL-2.3-I-6/include/CGAL/SimpleCartesian/CircleS2.h CGAL-2.3-I-6-new/i
   Try to guess what it was supposed to be used for.
 - Move include/CGAL/Kernel_common_traits.h to
   include/CGAL/Kernel/common_traits.h ?
-- Use CGAL_TYPENAME_MSVC_NULL instead of "#define typename" ?
-  Only in the template parameters, right ?
+- Use CGAL_TYPENAME_MSVC_NULL where needed.
+  Only in the template parameters depending on a template parameter, right ?
+  See empirically where it breaks with VC++.
 - Iso_rectangleC2 should store a twotuple of _non_ ref-counted points ?
   whereas now it's a twotuple of ref-counted points, which is a pure lost.
   (all local, temporary objects don't need any ref-counting)
