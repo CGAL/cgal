@@ -56,7 +56,12 @@ CGAL_BEGIN_NAMESPACE
 #if defined(__sun) && defined(__SUNPRO_CC)
 // workaround for the Sun CC-5.30 compiler; it does not like default
 // template parameters that are themselves templates and have
-// templates are parameters
+// templated classes as parameters, which have then nested types as
+// arguments... oooof!!!
+//
+// In case you did understand what I just described you are most
+// probably crazy... If you did not, look below to see what kind of
+// code CC-5.30 did not like.
 namespace CGALi {
 
   template<class CK, class FK>
