@@ -652,7 +652,9 @@ bool construct_if_finite(POINT &pt, RT x, RT y, RT w, R &)
                              && ::CGAL::is_finite(y)
                              && w != RT(0));
 
-    if (!::CGAL::is_finite(FT(x)/FT(w)) || !::CGAL::is_finite(FT(y)/FT(w)))
+    FT xw = FT(x)/FT(w);
+    FT yw = FT(y)/FT(w);
+    if (!::CGAL::is_finite(xw) || !::CGAL::is_finite(yw))
         return false;
     pt = POINT(x, y, w);
     return true;
@@ -678,7 +680,10 @@ bool construct_if_finite(Point_2<R> &pt,
     typedef typename R::RT RT;
     CGAL_kernel_precondition(::CGAL::is_finite(x)
             && ::CGAL::is_finite(y) && w != (RT) 0);
-    if (!::CGAL::is_finite(FT(x)/FT(w)) || !::CGAL::is_finite(FT(y)/FT(w)))
+
+    FT xw = FT(x)/FT(w);
+    FT yw = FT(y)/FT(w);
+    if (!::CGAL::is_finite(xw) || !::CGAL::is_finite(yw))
         return false;
     pt = Point_2<R>(x, y, w);
     return true;
