@@ -1,4 +1,4 @@
-Version 4.4 (?? ?????? 2000)
+Version 4.4 (8 September 2000)
 - Use Vector::squared_length(). [syl]
 - Fixed line_project_pointC2(). [syl, from Stefan]
 
