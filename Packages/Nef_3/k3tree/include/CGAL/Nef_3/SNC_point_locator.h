@@ -98,7 +98,7 @@ class SNC_point_locator_by_spatial_subdivision :
   bool initialized;
 
 public:
-  SNC_point_locator_by_spatial_subdivision() : initialized(false) {}
+  SNC_point_locator_by_spatial_subdivision() : initialized(false), candidate_provider(0) {}
   virtual void initialize(SNC_structure* W) {
     CGAL_assertion( W != NULL);
     Base::initialize(W);
@@ -114,7 +114,7 @@ public:
     CGAL_nef3_forall_facets( f, *sncp())
       objects.push_back(Object_handle(Halffacet_handle(f)));
     candidate_provider = new SNC_candidate_provider(objects);
-    _TRACEN(*candidate_provider);
+    //_TRACEN(*candidate_provider);
   }
 
   virtual Self* clone() const { 
@@ -132,13 +132,13 @@ public:
                        Unique_hash_map<Halfedge_handle, bool>& E, 
                        Unique_hash_map<Halffacet_handle, bool>& F) {
     CGAL_assertion( initialized);
-    _TRACEN( *candidate_provider);
+    //_TRACEN( *candidate_provider);
     bool updated = candidate_provider->update( V, E, F);
-    _TRACEN( *candidate_provider);
+    //_TRACEN( *candidate_provider);
     return updated;
   }
   virtual ~SNC_point_locator_by_spatial_subdivision() {
-    CGAL_assertion( initialized);
+    // CGAL_assertion( initialized); required?
     delete candidate_provider;
   }
 

@@ -1,4 +1,4 @@
-#line 783 "k3_tree.nw"
+#line 788 "k3_tree.nw"
 #ifndef SNC_K3_TREE_TRAITS_H
 #define SNC_K3_TREE_TRAITS_H
 
@@ -75,6 +75,7 @@ class SNC_k3_tree_traits {
 
 public:
   typedef SNCstructure SNC_structure;
+  typedef typename SNCstructure::Infi_box Infimaximal_box;
   typedef typename SNCstructure::Vertex_handle Vertex_handle;
   typedef typename SNCstructure::Halfedge_handle Halfedge_handle;
   typedef typename SNCstructure::Halffacet_handle Halffacet_handle;
@@ -208,14 +209,14 @@ Objects_bbox<SNCstructure>::operator()
   CGAL_assertion( O.size() > 0);
   Vertex_handle v;
   typename Object_list::const_iterator o = O.begin();
-  while( !assign( v, *o) || !Kernel::is_standard(D.point(v))) {
+  while( !assign( v, *o)) {
     o++;
     CGAL_assertion( o != O.end());
   }
   Bounding_box_3 b((*this)(v));
   o++;
   while( o != O.end()) {
-    if( assign( v, *o) && Kernel::is_standard(D.point(v)))
+    if( assign( v, *o))
       b = b + (*this)(v);
     o++;
   }
