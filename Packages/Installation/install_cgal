@@ -987,9 +987,9 @@ set_compiler_flags()
 	    #### settings for gcc on Darwin
 	    ADDITIONAL_CXXFLAGS="-Wall -fno-common"
 	    CGAL_SHARED_LIB_CXXFLAGS=""
-	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -Wl,dynamiclib"
+	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -dynamiclib"
 	    WINDOW_DIR="/usr/X11R6/lib"
-	    RUNTIME_LINKER_FLAG='-Wl,-R'
+	    RUNTIME_LINKER_FLAG=''
 	    PRINT_STACKTRACE_PROGRAM="gdb"
 	    ;;
 	*mwcc.exe*|*MWCC*)
