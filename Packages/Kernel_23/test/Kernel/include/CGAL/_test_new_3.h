@@ -66,25 +66,42 @@ test_new_3(const R& rep)
         = rep.construct_point_3_object();
   Point_3 p1 = construct_point();
   Point_3 p2 = construct_point(ORIGIN);
+#ifndef CGAL_NO_DEPRECATED_CODE
   Point_3 p3 = construct_point(1,1,1);
   Point_3 p4 = construct_point(1,1,2,2);
   Point_3 p5 = construct_point(1,2,3,4);
   Point_3 p6 = construct_point(4,2,1,2);
+#else
+  Point_3 p3 (1,1,1);
+  Point_3 p4 (1,1,2,2);
+  Point_3 p5 (1,2,3,4);
+  Point_3 p6 (4,2,1,2);
+#endif // CGAL_NO_DEPRECATED_CODE
 
   typename R::Construct_vector_3 construct_vector
         = rep.construct_vector_3_object();
   Vector_3 v1 = construct_vector();
   Vector_3 v2 = construct_vector(NULL_VECTOR);
+#ifndef CGAL_NO_DEPRECATED_CODE
   Vector_3 v3 = construct_vector(1,1,1);
   Vector_3 v4 = construct_vector(1,1,2,2);
+#else
+  Vector_3 v3 (1,1,1);
+  Vector_3 v4 (1,1,2,2);
+#endif // CGAL_NO_DEPRECATED_CODE
   Vector_3 v5 = construct_vector(p5, p6);
 
   typename R::Construct_direction_3 construct_direction
         = rep.construct_direction_3_object();
   Direction_3 d1 = construct_direction();
   Direction_3 d2 = construct_direction(v3);
+#ifndef CGAL_NO_DEPRECATED_CODE
   Direction_3 d3 = construct_direction(1,1,5);
   Direction_3 d4 = construct_direction(1,5,5);
+#else
+  Direction_3 d3 (1,1,5);
+  Direction_3 d4 (1,5,5);
+#endif // CGAL_NO_DEPRECATED_CODE
   // remaining constructions tested below, after the 
   // corresponding types have been introduced
 
@@ -176,7 +193,7 @@ test_new_3(const R& rep)
 
   typename R::Construct_point_on_3 construct_point_on
         = rep.construct_point_on_3_object();
-  Point_3 tmp1 = construct_point_on(l2);
+  Point_3 tmp1 = construct_point_on(l2, 0);
 
   typename R::Construct_projected_point_3 construct_projected_point
         = rep.construct_projected_point_3_object();
@@ -324,6 +341,7 @@ test_new_3(const R& rep)
         = rep.transform_3_object();
   Point_3 tmp9a = transform(p2,a2);
   Triangle_3 tmp9b = transform(t2,a2);
+  (void) tmp9b;
 #endif // CGAL_NO_DEPRECATED_CODE
 
 
@@ -364,7 +382,7 @@ test_new_3(const R& rep)
 
   typename R::Compute_squared_area_3 compute_squared_area
         = rep.compute_squared_area_3_object();
-  FT tmp11a = compute_squared_area(tmp9b);
+  FT tmp11a = compute_squared_area(t2);
 
   typename R::Compute_volume_3 compute_volume
         = rep.compute_volume_3_object();
@@ -517,6 +535,7 @@ test_new_3(const R& rep)
         = rep.has_on_boundary_3_object();
 #ifndef CGAL_NO_DEPRECATED_CODE
   bool tmp36a = has_on_boundary(h2,p2);
+  (void) tmp36a;
 #endif // CGAL_NO_DEPRECATED_CODE
   bool tmp36b = has_on_boundary(th2,p2);
   bool tmp36c = has_on_boundary(sp2,p2);
@@ -581,7 +600,7 @@ test_new_3(const R& rep)
 
   use(tmp46);
   use(tmp45); use(tmp44); use(tmp43); use(tmp42); use(tmp41); use(tmp40);
-  use(tmp39); use(tmp38); use(tmp37); use(tmp36b); use(tmp36a); use(tmp35);
+  use(tmp39); use(tmp38); use(tmp37); use(tmp36b); use(tmp35);
   use(tmp34); use(tmp33b); use(tmp33a); use(tmp32); use(tmp31); use(tmp30);
   use(tmp28a); use(tmp33c); use(tmp35a); use(tmp35b); use(tmp34a); use(tmp34b); 
   use(tmp29); use(tmp27); use(tmp25); use(tmp24); use(tmp23); use(tmp22);

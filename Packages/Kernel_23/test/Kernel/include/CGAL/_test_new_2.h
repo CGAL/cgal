@@ -79,24 +79,40 @@ test_new_2(const R& rep)
         rep.construct_point_2_object();
   Point_2 p1 = construct_point();
   Point_2 p2 = construct_point(ORIGIN);
+#ifndef CGAL_NO_DEPRECATED_CODE
   Point_2 p3 = construct_point(1,1);
   Point_2 p4 = construct_point(1,2,2);
   Point_2 p5 = construct_point(3,4,5);
   Point_2 p6 = construct_point(3,4,6);
+#else
+  Point_2 p3 (1,1);
+  Point_2 p4 (1,2,2);
+  Point_2 p5 (3,4,5);
+  Point_2 p6 (3,4,6);
+#endif // CGAL_NO_DEPRECATED_CODE
 
   typename R::Construct_vector_2 construct_vector =
         rep.construct_vector_2_object();
   Vector_2 v1 = construct_vector();
   Vector_2 v2 = construct_vector(NULL_VECTOR);
+#ifndef CGAL_NO_DEPRECATED_CODE
   Vector_2 v3 = construct_vector(1,3);
   Vector_2 v4 = construct_vector(1,2,3);
+#else
+  Vector_2 v3 (1,3);
+  Vector_2 v4 (1,2,3);
+#endif // CGAL_NO_DEPRECATED_CODE
   Vector_2 v5 = construct_vector(p5, p6);
 
   typename R::Construct_direction_2 construct_direction
         = rep.construct_direction_2_object();
   Direction_2 d1 = construct_direction();
   Direction_2 d2 = construct_direction(v3);
+#ifndef CGAL_NO_DEPRECATED_CODE
   Direction_2 d3 = construct_direction(1,4);
+#else
+  Direction_2 d3 (1,4);
+#endif // CGAL_NO_DEPRECATED_CODE
   // remaining constructions tested below, after the 
   // corresponding types have been introduced
 
@@ -116,7 +132,11 @@ test_new_2(const R& rep)
   typename R::Construct_line_2 construct_line
         = rep.construct_line_2_object();
   Line_2 l1 = construct_line();
+#ifndef CGAL_NO_DEPRECATED_CODE
   Line_2 l2 = construct_line(1,1,1);
+#else
+  Line_2 l2 (1,1,1);
+#endif // CGAL_NO_DEPRECATED_CODE
   Line_2 l3 = construct_line(p2,p6);
   Line_2 l4 = construct_line(p2,d3);
   Line_2 l5 = construct_line(s2);
@@ -171,7 +191,7 @@ test_new_2(const R& rep)
 
   typename R::Construct_point_on_2 construct_point_on
         = rep.construct_point_on_2_object();
-  Point_2 tmp1 = construct_point_on(l2);
+  Point_2 tmp1 = construct_point_on(l2, 0);
 
   typename R::Construct_projected_point_2 construct_projected_point
         = rep.construct_projected_point_2_object();
@@ -333,9 +353,11 @@ test_new_2(const R& rep)
        tmp_bool = assign(p1,tmp21a);
        tmp_bool = assign(p1,tmp21b);
 
+#ifndef CGAL_NO_DEPRECATED_CODE
   typename R::Compute_y_at_x_2 compute_y_at_x
         = rep.compute_y_at_x_2_object();
   FT tmp22 = compute_y_at_x(l2, FT(11));
+#endif // CGAL_NO_DEPRECATED_CODE
 
   typename R::Compute_area_2 compute_area_2
         = rep.compute_area_2_object();

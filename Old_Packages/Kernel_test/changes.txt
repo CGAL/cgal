@@ -1,3 +1,6 @@
+3.49  (8 Oct 2002)
+- Make it work with -DCGAL_NO_DEPRECATED, and other fixes.
+
 3.48  (5 Oct 2002)
 - Better support expression templates NTs (GMP++).
 
