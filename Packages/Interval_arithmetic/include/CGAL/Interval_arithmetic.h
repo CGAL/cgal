@@ -62,11 +62,14 @@ struct Interval_nt_advanced
   friend Comparison_result compare (const IA &, const IA &);
   friend Sign sign        (const IA &);
 
+private:
   static void overlap_action() throw (unsafe_comparison)
   {
       number_of_failures++;
       throw unsafe_comparison();
   }
+
+public:
 
   // The constructors.
   Interval_nt_advanced() {}
