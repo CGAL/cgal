@@ -1,7 +1,4 @@
 CHANGES:
-1.7:
-	- fixed a bug in Rectangle_partition::first_left_of.
-	- made demos conforming to the new Window_stream.
 
 1.6:
 	- added package and chapter to file headers.
