@@ -1522,7 +1522,6 @@ No no \b[Bla]{bla}\b{no}\ no.\\
 %
 \newcommand{\bb}[1]{ #1}
 \newcommand{\bb@mo}{\textbf{#1} #2}
-\lciOptionalParameterAtEnd{\bb}{1}
 %
 No no \bb{Bla}[bla]\bb{no}\ no.\\
 %
@@ -1558,12 +1557,10 @@ Hallo Dummy World.\\
 \begin{e}{Hallo} Dummy \end{e}.\\
 \begin{e}[Hal]{lo} Dummy \end{e}.\\
 %
-\lciOptionalParameterAtEnd{\begin@e}{2}
 \newcommand{\begin@e@moo}{#1#2#3}
 \begin{e}{Ha}[l][lo] Dummy \end{e}.\\
 %
 \newenvironment{ee}{Hallo }{World}
-\lciOptionalParameterAtEnd{\begin@ee}{1}
 \newcommand{\begin@ee@o}{Ha#1o}
 \begin{ee} Dummy \end{ee}.\\
 \begin{ee}[ll] Dummy \end{ee}.\\

@@ -838,6 +838,7 @@
 }
 
 % #1 == token describing the category (Concept, Class ...)
+% #2 == item name (actually parsed later by ccRefDeclarationX)
 \catcode`@=11
 \newenvironment{ccRefDeclaration}[1]{%
                    \ifnum\ccNewRefManualStyle=\ccTrue \clearpage \fi
@@ -1544,6 +1545,7 @@
                        \fi
                        \def\ccExtendedFormat{\ }% Switches ext. format OFF.
                        \ccSeparateTrailingConst #6)\ccEnd
+                       \let\ccTagOperatorLayoutX=\ccTagOperatorLayout
                        \ccBool=\ccTagOperatorLayout\ifnum\ccBool=\ccTrue
                          \isOperator{#3 #4(#5)#6}\ifnum\ccBool=\ccTrue
                            \isConversionOperator{#3 #4(#5)#6}
@@ -1562,10 +1564,14 @@
 
                            \fi
                            \ccBool=\ccTrue
+                           \ifdim\wd\functioncallbox>\ccwSecondLong
+                               \ccBool=\ccFalse
+                               \let\ccTagOperatorLayoutX=\ccFalse
+                           \fi
                          \fi
                        \fi
                        \ifnum\ccBool=\ccFalse
-                           \ccBool=\ccTagOperatorLayout\ccInvert
+                           \ccBool=\ccTagOperatorLayoutX\ccInvert
                            \ifnum\ccBool=\ccTrue
                                \isOperator{#3 #4(#5)#6}\ifnum\ccBool=\ccTrue
                                    \isConversionOperator{#3 #4(#5)#6}
