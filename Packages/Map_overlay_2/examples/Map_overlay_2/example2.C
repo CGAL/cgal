@@ -28,7 +28,7 @@ typedef CGAL::Map_overlay_default_dcel<Traits> Dcel;
 typedef CGAL::Planar_map_2<Dcel,Traits>        Planar_map;
 typedef CGAL::Planar_map_with_intersections_2<Planar_map>    Pmwx;
 typedef CGAL::Map_overlay_incremental<Pmwx>     MapOverlay_incremental;
-typedef CGAL::Map_overlay<Pmwx>                 MapOverlay;
+typedef CGAL::Map_overlay_2<Pmwx>               MapOverlay;
 
 typedef CGAL::Pm_walk_along_line_point_location<Planar_map>  PmWalkPL;
 

@@ -85,12 +85,12 @@ protected:
   
   //typedef Arrangement::Halfedge_iterator                        Arr_halfedge_iterator;
   
-  typedef CGAL::Pm_naive_point_location<Planar_map>                    PmNaivePL;
-  typedef CGAL::Pm_walk_along_line_point_location<Planar_map>           PmWalkPL;
+  typedef CGAL::Pm_naive_point_location<Planar_map>                       PmNaivePL;
+  typedef CGAL::Pm_walk_along_line_point_location<Planar_map>             PmWalkPL;
   
   typedef CGAL::Map_overlay_default_notifier<Planar_map> 
                                                    MapOverlay_change_notification;
-  typedef CGAL::Map_overlay<Subdivision,MapOverlay_change_notification>    MapOverlay; 
+  typedef CGAL::Map_overlay_2<Subdivision,MapOverlay_change_notification>  MapOverlay; 
   
   //MapOverlay  map_overlay;  
   std::map<const void*, Vertex_const_handle>    vertices;

@@ -26,7 +26,7 @@ CGAL_BEGIN_NAMESPACE
 
 template  <class Subdivision_, 
            class Change_notification_ = Map_overlay_default_notifier<Subdivision_> > 
-class  Map_overlay {
+class  Map_overlay_2 {
 public:  
   
   typedef Subdivision_                                          Subdivision;
@@ -65,11 +65,11 @@ public:
   typedef Pm_point_location_base<Planar_map> Point_location_base;
   
 private:
-  typedef Map_overlay<Subdivision, Change_notification>       Self;
+  typedef Map_overlay_2<Subdivision, Change_notification>       Self;
   
 public:
 
-  Map_overlay() : 
+  Map_overlay_2 () : 
     arr_(new Subdivision()),
     sub_division1(0), sub_division2(0), 
     ovl_change_notf(new Change_notification),  
@@ -77,7 +77,7 @@ public:
     use_delete_notf(true), 
     use_delete_ovl(true) {}
 
-   Map_overlay(Point_location_base *pl_ptr) : 
+   Map_overlay_2 (Point_location_base *pl_ptr) : 
      arr_(new Subdivision(pl_ptr)), 
      sub_division1(0), sub_division2(0), 
      ovl_change_notf(new Change_notification),  
@@ -85,7 +85,7 @@ public:
      use_delete_notf(true), 
      use_delete_ovl(true) {}
   
-  Map_overlay (const Subdivision &arr) : 
+  Map_overlay_2 (const Subdivision &arr) : 
     arr_(new Subdivision(arr)), 
     sub_division1(0), sub_division2(0),  
     ovl_change_notf(new Change_notification),  
@@ -93,7 +93,7 @@ public:
     use_delete_notf(true), 
     use_delete_ovl(true) {}
   
-  Map_overlay (const Subdivision &arr, 
+  Map_overlay_2 (const Subdivision &arr, 
                Change_notification* pmwx_change_notf) : 
     arr_(new Subdivision(arr)), 
     sub_division1(0), sub_division2(0), 
@@ -101,7 +101,7 @@ public:
     ovl_alg(new Map_overlay_sweep), 
     use_delete_notf(false), use_delete_ovl(true) {}
   
-  Map_overlay (const Subdivision &arr, 
+  Map_overlay_2 (const Subdivision &arr, 
                Map_overlay_base *ovl_ptr) : 
     arr_(new Subdivision(arr)),  
     sub_division1(0), sub_division2(0), 
@@ -109,7 +109,7 @@ public:
     ovl_alg(ovl_ptr), 
     use_delete_notf(true), use_delete_ovl(false) {}
 
-  Map_overlay (const Subdivision &arr,  
+  Map_overlay_2 (const Subdivision &arr,  
                Change_notification* pmwx_change_notf, 
                Map_overlay_base *ovl_ptr) : 
     arr_(new Subdivision(arr)), 
@@ -117,7 +117,7 @@ public:
     ovl_change_notf(pmwx_change_notf), ovl_alg(ovl_ptr),
     use_delete_notf(false), use_delete_ovl(false) {}
 
-  Map_overlay (const Self &ovl1, const Self &ovl2) : 
+  Map_overlay_2 (const Self &ovl1, const Self &ovl2) : 
     arr_(new Subdivision),
     sub_division1(&ovl1), sub_division2(&ovl2),
     ovl_change_notf(new Change_notification(&(ovl1.subdivision()), 
@@ -128,8 +128,8 @@ public:
     ovl_alg->map_overlay(ovl1.subdivision(), ovl2.subdivision(), ovl_change_notf, *arr_);
   }
   
-  Map_overlay (const Self &ovl1, const Self &ovl2, 
-               Point_location_base *pl_ptr) : 
+  Map_overlay_2 (const Self &ovl1, const Self &ovl2, 
+                 Point_location_base *pl_ptr) : 
     arr_(new Subdivision(pl_ptr)), 
     sub_division1(&ovl1), sub_division2(&ovl2),
     ovl_change_notf(new Change_notification(&(ovl1.subdivision()), 
@@ -146,9 +146,9 @@ public:
     //std::cout<<"The time required by sweep line : "<< (double) c_sweep_t / (double) CLOCKS_PER_SEC<<std::endl;
   }
 
-  Map_overlay (const Self &ovl1, 
-               const Self &ovl2, 
-               Change_notification* pmwx_change_notf) : 
+  Map_overlay_2 (const Self &ovl1, 
+                 const Self &ovl2, 
+                 Change_notification* pmwx_change_notf) : 
     arr_(new Subdivision()),
     sub_division1(&ovl1), sub_division2(&ovl2),
     ovl_change_notf(pmwx_change_notf), ovl_alg(new Map_overlay_sweep),
@@ -157,22 +157,22 @@ public:
     ovl_alg->map_overlay(ovl1.subdivision(), ovl2.subdivision(), ovl_change_notf, *arr_);
   }
 
-   Map_overlay (const Self &ovl1, 
-                const Self &ovl2, 
-                Point_location_base* pl_ptr,
-                Change_notification* pmwx_change_notf) :  
-     arr_(new Subdivision(pl_ptr)), 
-     sub_division1(&ovl1), sub_division2(&ovl2),
-     ovl_change_notf(pmwx_change_notf), ovl_alg(new Map_overlay_sweep),
-     use_delete_notf(false), use_delete_ovl(true)
+  Map_overlay_2 (const Self &ovl1, 
+                 const Self &ovl2, 
+                 Point_location_base* pl_ptr,
+                 Change_notification* pmwx_change_notf) :  
+    arr_(new Subdivision(pl_ptr)), 
+    sub_division1(&ovl1), sub_division2(&ovl2),
+    ovl_change_notf(pmwx_change_notf), ovl_alg(new Map_overlay_sweep),
+    use_delete_notf(false), use_delete_ovl(true)
   {
     ovl_alg->map_overlay(ovl1.subdivision(), ovl2.subdivision(), ovl_change_notf, *arr_);
   }
-
   
-  Map_overlay (const Self &ovl1, 
-               const Self &ovl2, 
-               Map_overlay_base *ovl_ptr) :
+  
+  Map_overlay_2 (const Self &ovl1, 
+                 const Self &ovl2, 
+                 Map_overlay_base *ovl_ptr) :
     arr_(new Subdivision()),
     sub_division1(&ovl1), sub_division2(&ovl2),
     ovl_change_notf(new Change_notification(&(ovl1.subdivision()), 
@@ -183,10 +183,10 @@ public:
     ovl_alg->map_overlay(ovl1.subdivision(), ovl2.subdivision(), ovl_change_notf, *arr_);
   }
   
-  Map_overlay (const Self &ovl1, 
-               const Self &ovl2, 
-               Point_location_base* pl_ptr, 
-               Map_overlay_base *ovl_ptr) :
+  Map_overlay_2 (const Self &ovl1, 
+                 const Self &ovl2, 
+                 Point_location_base* pl_ptr, 
+                 Map_overlay_base *ovl_ptr) :
     arr_(new Subdivision(pl_ptr)),
     sub_division1(&ovl1), sub_division2(&ovl2),
     ovl_change_notf(new Change_notification(&(ovl1.subdivision()), 
@@ -198,10 +198,10 @@ public:
   }
   
   
-  Map_overlay (const Self &ovl1, 
-               const Self &ovl2, 
-               Change_notification* pmwx_change_notf, 
-               Map_overlay_base *ovl_ptr) :
+  Map_overlay_2 (const Self &ovl1, 
+                 const Self &ovl2, 
+                 Change_notification* pmwx_change_notf, 
+                 Map_overlay_base *ovl_ptr) :
     arr_(new Subdivision()),
     sub_division1(&ovl1), sub_division2(&ovl2),
     ovl_change_notf(pmwx_change_notf), ovl_alg(ovl_ptr),
@@ -210,11 +210,11 @@ public:
     ovl_alg->map_overlay(ovl1.subdivision(), ovl2.subdivision(), ovl_change_notf, *arr_);
   }
 
-  Map_overlay (const Self &ovl1, 
-               const Self &ovl2, 
-               Point_location_base* pl_ptr,
-               Change_notification* pmwx_change_notf, 
-               Map_overlay_base *ovl_ptr) :
+  Map_overlay_2 (const Self &ovl1, 
+                 const Self &ovl2, 
+                 Point_location_base* pl_ptr,
+                 Change_notification* pmwx_change_notf, 
+                 Map_overlay_base *ovl_ptr) :
     arr_(new Subdivision(pl_ptr)),
     sub_division1(&ovl1), sub_division2(&ovl2),
     ovl_change_notf(pmwx_change_notf), ovl_alg(ovl_ptr),
@@ -224,7 +224,7 @@ public:
   }
   
   // ------------------- Copy contructor -----------------------------
-  Map_overlay (const Self &ovl) : 
+  Map_overlay_2 (const Self &ovl) : 
     arr_(new Subdivision(*(ovl.arr_))), 
     sub_division1(ovl.sub_division1), 
     sub_division2(ovl.sub_division2), 
@@ -232,7 +232,7 @@ public:
     ovl_alg(ovl.ovl_alg),  // needs a copy constructor for Point location.
     use_delete_notf(true), use_delete_ovl(false) {}
   
-  virtual ~Map_overlay() 
+  virtual ~Map_overlay_2() 
   {
     delete arr_;
     if (use_delete_notf) delete ovl_change_notf;
@@ -256,7 +256,7 @@ public:
   }
 
   void	 delete_subtree() {
-    (*arr_) = Map_overlay(*arr_);
+    (*arr_) = Map_overlay_2(*arr_);
       
     for (Vertex_iterator v_iter = arr_->vertices_begin(); 
          v_iter !=  arr_->vertices_end(); v_iter++)
