@@ -35,6 +35,10 @@
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Nef_3/SNC_iteration.h>
 #include <CGAL/Nef_3/SNC_SM_decorator.h>
+#include <CGAL/Nef_3/SNC_SM_point_locator.h>
+#include <CGAL/Nef_3/SNC_SM_overlayer.h>
+#include <CGAL/Nef_3/SNC_SM_io_parser.h>
+#include <CGAL/Nef_3/SNC_ray_shoter.h>
 
 #undef _DEBUG
 #define _DEBUG 13
@@ -43,10 +47,14 @@
 CGAL_BEGIN_NAMESPACE
 
 template <typename SNC_structure_>
-class SNC_decorator 
-{ typedef SNC_structure_ SNC_structure;
-  typedef SNC_decorator<SNC_structure_> Self;
-  typedef CGAL::SNC_SM_decorator<SNC_structure_> SM_decorator;
+class SNC_decorator { 
+  typedef SNC_structure_ SNC_structure;
+  typedef SNC_decorator<SNC_structure>        Self;
+  typedef SNC_constructor<SNC_structure>      SNC_constructor;
+  typedef SNC_SM_decorator<SNC_structure>     SM_decorator;
+  typedef SNC_ray_shoter<SNC_structure>           SNC_ray_shoter;
+  typedef SNC_SM_overlayer<SNC_structure>     SM_overlayer;
+  typedef SNC_SM_point_locator<SNC_structure> SM_point_locator;
   SNC_structure* sncp_;
 public:
 #define USING(t) typedef typename SNC_structure_::t t
@@ -78,9 +86,14 @@ public:
   USING(SHalfedge_const_iterator); 
   USING(Object_handle);
   USING(SObject_handle);
+  USING(SHalfedge_around_facet_const_circulator);
+  USING(SHalfedge_around_facet_circulator);
   USING(SFace_cycle_iterator);
+  USING(SFace_cycle_const_iterator);
   USING(Halffacet_cycle_iterator);
+  USING(Halffacet_cycle_const_iterator);
   USING(Shell_entry_iterator);
+  USING(Shell_entry_const_iterator);
   USING(Point_3);
   USING(Plane_3);
   USING(Segment_3);
@@ -95,6 +108,12 @@ public:
   USING(SHalfedge_around_facet_const_circulator);
   USING(SHalfedge_around_facet_circulator);
 #undef USING
+
+#define DECUSING(t) typedef typename SM_decorator::t t
+  DECUSING(SHalfedge_around_svertex_const_circulator);
+  DECUSING(SHalfedge_around_svertex_circulator);
+#undef DECUSING
+
   typedef void* GenPtr;
 
   SNC_decorator() : sncp_() {}
@@ -377,6 +396,300 @@ public:
     SHalfedge_handle e1 = SD.first_out_edge(v);
     SHalfedge_handle e2 = SD.cyclic_adj_succ(e1);
     return( e1!=e2 && SD.cyclic_adj_succ(e2)==e1);
+  }
+
+  Halffacet_handle get_visible_facet( const Vertex_handle v, 
+				      const Segment_3& ray) const 
+    /*{\Mop when one shot a ray |ray| in order to find the facet below to
+      an object, and vertex |v| is hit, we need to choose one of the facets
+      in the adjacency list of |v| such that it could be 'seen' from the
+      piercing point of the |ray| on the sphere map on |v|.  We make it just
+      locating the sphere facet |sf| pierced by |ray| and taking the adjacent 
+      facet to one of the sphere segments on the boundary of |sf|.
+      \precondition |ray| target is on |v| and the intersection between
+      |ray| and the 2-skeleton incident to v is empty. }*/ {
+    Halffacet_handle f_visible;
+    CGAL_assertion( ray.target() == point(v));
+    Sphere_point sp(ray.source() - point(v));
+    TRACEN( "Locating " << sp <<" in " << point(v));
+    SM_point_locator L(v);
+    SObject_handle o = L.locate(sp);
+    SFace_const_handle sf;
+    CGAL_assertion( assign( sf, o));
+    assign( sf, o);
+    SFace_cycle_const_iterator fc = sf->sface_cycles_begin(),
+      fce = sf->sface_cycles_end();
+    if( is_empty_range( fc, fce)) {
+	TRACEN( "no adjacent facet found.");
+	f_visible =  Halffacet_handle();
+    }
+    else {
+      SHalfedge_handle se; 
+      SHalfloop_handle sl;
+      if ( assign( se, fc)) {
+	TRACEN( "adjacent facet found (SEdges cycle).");
+	f_visible = facet(twin(se));
+      }
+      else if ( assign( sl, fc)) {
+	TRACEN( "adjacent facet found (SHalfloop cycle).");
+	f_visible = facet(twin(sl));
+      }
+      else 
+	CGAL_assertion_msg(0, "Damn, wrong handle.");
+    }
+    return f_visible;
+  }
+
+  Halffacet_handle get_visible_facet( const Halfedge_handle e,
+				      const Segment_3& ray) const
+    /*{\Mop when one shot a ray |ray| in order to find the facet below to
+      an object, and an edge |e| is hit, we need to choose one of the two 
+      facets in the adjacency list of |e| that could be 'seen'  from the
+      piercing point of the |ray| on the local (virtual) view  of |e|
+      \precondition |ray| target belongs to |e|. }*/ {
+    CGAL_assertion( segment(e).has_on( ray.target()));
+    SM_decorator SD;
+    if( SD.is_isolated(e))
+      return Halffacet_handle();
+    Direction_3 ed(segment(e).direction()), rd(-ray.direction());
+    Vector_3 ev(ed), rv(ed);
+    SHalfedge_around_svertex_circulator sh(SD.first_out_edge(e)), sg(sh);
+    Vector_3 h(plane(facet(twin(sh))).orthogonal_vector());
+    TRACEN("initial face candidate "<<&*facet(twin(sh)));
+    sg++;
+    while ( true ) {
+      Vector_3 g(plane(facet(twin(sg))).orthogonal_vector());
+      if( CGAL_NTS is_positive( cross_product(g, ev) * h)) {
+	if( CGAL_NTS is_negative( rv * g))
+	  return facet(twin(sh));
+	else {
+	  sh = sg;
+	  h = g;
+	  TRACEN("new candidate "<<&*facet(twin(sh)));
+	}
+      }
+      else
+	return facet(twin(sh));
+    }
+    return Halffacet_handle(); // never reached
+  }
+  
+  Halffacet_handle get_visible_facet( const Halffacet_handle f,
+				      const Segment_3& ray) const 
+    /*{\Mop when one shot a ray |ray| in order to find the facet below to
+      an object, and a facet |f| is hit, we need to choose the right facet
+      from the halffacet pair |f| that  could be 'seen'  from the
+      piercing point of the |ray| on the local (virtual) view  of |f|.
+      \precondition |ray| target belongs to |f| and the intersection between
+      |ray| and is not coplanar with |f|. }*/ {
+    Halffacet_handle f_visible = f;
+    CGAL_nef3_assertion( !plane(f_visible).has_on(ray.source()));
+    if( plane(f_visible).has_on_negative_side(ray.source()))
+      f_visible = twin(f);
+    CGAL_nef3_assertion( plane(f_visible).has_on_positive_side(ray.source()));
+    return f_visible;
+  }
+
+  template <typename Selection>
+    void binop_local_views( Vertex_handle v0, Vertex_handle v1,
+			    const Selection& BOP) 
+    /*{\op }*/ {
+    typedef SNC_SM_io_parser<SNC_structure> SNC_SM_io_parser;
+    SNC_SM_io_parser IO0( std::cerr, v0);
+    SNC_SM_io_parser IO1( std::cerr, v1);
+    IO0.print();
+    IO1.print();
+    
+    SM_overlayer O(v0);
+    O.subdivide( v0, v1);
+    O.select( BOP);
+    O.simplify();
+  }
+
+#ifdef DEADCODE
+  Vertex_handle create_local_version_of( Vertex_handle v) {
+    SM_decorator D(v);
+    Vertex_handle v = sncp()->new_vertex( point(v), ma);
+    SVertex_iterator sv;
+    SHalfedge_iterator se;
+    SHalfloop_iterator sl;
+    SFace_iterator sf;
+    CGAL_nef3_forall_svertices_of( sv, v) {
+    }
+    CGAL_nef3_forall_shalfedges_of( sv, v) {
+    }
+    // sloops ?    
+    CGAL_nef3_forall_sfaces_of( sv, v) {
+    }
+  }
+#endif
+
+  Vertex_handle create_local_view_on( const Point_3& p, Halfedge_handle e) {
+    SNC_constructor C(*sncp());
+    return C.create_from_edge( e, p);
+
+    /*
+    CGAL_nef3_assertion( segment(e).has_on(p));  // TODO: in interior
+    Vertex_handle v = snc()->new_vertex(p, mark(e));
+
+    Sphere_point spa(point(e)-p), spb(point(twin(e))-p);
+    CGAL_nef3_assertion( sp0 == sp1.antipode());
+    SM_decorator D(vertex(e)), ND(v);
+    ND.new_vertex(sp0);
+    ND.new_vertex(sp1);
+
+    SHalfedge_around_svertex_circulator se(e), se0(se), send(se);
+    if( is_empty_range( se, send)) {
+      SFace_handle sf = ND.new_face();
+      mark(sf) = mark(D.face(e));
+      return v;
+    }
+
+    SHalfedge_handle ns0 = SD.new_edge_pair( spa, spb);
+    circle(ns0) = D.circle(se);
+    circle(twin(ns0)) = D.circle(D.twin(se));
+    se++;
+    
+    CGAL_For_all( se, send) {
+      SHalfedge_handle ns = SD.new_edge_pair( spa, spb);
+      ND.circle(ns) = D.circle(se);
+      ND.circle(twin(ns)) = D.circle(D.twin(se));
+      ND.link_as_prev_next( ns, twin(nsp));
+      ND.link_as_prev_next( twin(nsp), ns);
+      ND.link_as_prev_next( twin(ns), nsp);
+      ND.link_as_prev_next( nsp, twin(ns));
+      SFace_handle sf = ND.new_face();
+      ND.link_as_face_cycle( ns, sf);
+      mark(sf) = D.mark(D.face(se));
+      se++;
+    }
+
+    ns = ns0;
+    ND.circle(ns) = D.circle(se);
+    ND.circle(twin(ns)) = D.circle(D.twin(se));
+    ND.link_as_prev_next( ns, twin(nsp));
+    ND.link_as_prev_next( twin(nsp), ns);
+    ND.link_as_prev_next( twin(ns), nsp);
+    ND.link_as_prev_next( nsp, twin(ns));
+    SFace_handle sf = ND.new_face();
+    ND.link_as_face_cycle( ns, sf);
+    mark(sf) = D.mark(D.face(se));
+
+    ND.check_integrity_and_topological_planarity();
+
+    return v; */
+  }
+
+  Vertex_handle create_local_view_on( const Point_3& p, Halffacet_handle f) {
+    SNC_constructor C(*sncp());
+    return C.create_from_facet( f, p);
+
+    /* 
+    CGAL_nef3_assertion( segment(e).has_on(p));  // TODO: in interior
+    Vertex_handle v = snc()->new_vertex(p, mark(e));
+
+    SM_decorator D(v);
+    SHalfloop_handle sl = ND.new_loop_pair();
+    SFace_handle f1 = D.new_face(), f2 = D.new_face();
+    D.link_as_loop( l, f1);
+    D.link_as_loop( twin(l), f2);
+    Sphere_circle c(plane(f));
+    D.circle(l) = c;
+    D.circle(D.twin(l)) = c.opposite();
+    D.mark(f1) = mark(volume(f));
+    D.mark(f2) = mark(volume(twin(f)));
+    D.mark(l) = mark(f);
+
+    D.check_integrity_and_topological_planarity();
+
+    return v; */
+  }
+
+  Vertex_handle create_local_view_on( const Point_3& p, Volume_handle c) {
+    Vertex_handle v = sncp()->new_vertex( p, mark(c));
+    SM_decorator D(v);
+    SFace_handle f = D.new_face();
+    D.mark(f) = mark(c);
+    return v;
+  }
+
+  Vertex_handle qualify_with_respect( const Point_3 p,
+				      SNC_structure& P1i)
+    /*{\op }*/ {
+    SNC_ray_shoter rs(P1i);
+    Vertex_handle v;
+    Halfedge_handle e;
+    Halffacet_handle f;
+    Volume_handle c;
+    Object_handle o = rs.locate(p);
+    if( assign( v, o))
+      return v;
+    else if( assign( e, o))
+      return create_local_view_on( p, e);
+    else if( assign( f, o))
+      return create_local_view_on( p, f);
+    else if( assign( c, o))
+      return create_local_view_on( p, c);
+    else CGAL_nef3_assertion_msg(0, "Where is the point then?");
+    return Vertex_handle(); // never reached
+  }
+
+  template <typename Selection>
+    void binary_operation( SNC_structure& snc1i, const Selection& BOP)
+    /*{\op }*/ {
+    SNC_ray_shoter rs(*sncp());
+    Vertex_handle v0, v1;
+    CGAL_nef3_forall_vertices( v0, *sncp()) {
+      v1 = qualify_with_respect( point(v0), snc1i);
+      binop_local_views( v0, v1, BOP); /* result on v0 */
+      if( v1->sncp() == sncp())
+	sncp()->delete_vertex(v1); /* delete v1 only if that sphere map is
+				      a local copy */
+    }
+    CGAL_nef3_forall_vertices( v1, snc1i) {
+      v0 = qualify_with_respect( point(v1), *sncp());
+      binop_local_views( v0, v1, BOP); /* result on v0 */
+    }
+    Halfedge_handle e0, e1;
+    Halffacet_handle f0, f1;
+    CGAL_nef3_forall_edges( e0, *sncp()) { 
+      CGAL_nef3_forall_facets( f1, snc1i) { 
+	Point_3 ip;
+	if( rs.does_intersect_internally( segment(e0), f1, ip )) {
+	  v0 = qualify_with_respect( ip, *sncp());
+	  v1 = qualify_with_respect( ip, snc1i);
+	  binop_local_views( v0, v1, BOP); /* result on vi */
+ 	  sncp()->delete_vertex(v1);
+	}
+      }
+    }
+    CGAL_nef3_forall_edges( e1, snc1i) { 
+      CGAL_nef3_forall_facets( f0, *sncp()) { 
+	Point_3 ip;
+	if( rs.does_intersect_internally( segment(e1), f0, ip )) {
+	  v1 = qualify_with_respect( ip, snc1i);
+	  v0 = qualify_with_respect( ip, *sncp());
+	  binop_local_views( v0, v1, BOP); // result on vi
+	  sncp()->delete_vertex(v1);
+	}
+      }
+    }
+    CGAL_nef3_forall_edges( e0, *sncp()) { 
+      CGAL_nef3_forall_edges( e1, snc1i) { 
+	Point_3 ip;
+	if( rs.does_intersect_internally( segment(e0), segment(e1), ip )) {
+	  Vertex_handle v0, v1;
+	  v0 = qualify_with_respect( ip, *sncp());
+	  v1 = qualify_with_respect( ip, snc1i);
+	  binop_local_views( v0, v1, BOP); // result on v0
+	  sncp()->delete_vertex(v1);	    
+	}
+      }
+    }
+
+    // remove vertices whose local view is not that of a vertex
+    // TO VERIFY: clean adjacency information before next step?
+    // synthesis of spatial structure
   }
 
   template <typename Visitor>

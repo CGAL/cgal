@@ -35,6 +35,8 @@
 #include <CGAL/Nef_2/Object_index.h>
 #include <vector>
 
+using std::endl;
+
 CGAL_BEGIN_NAMESPACE
 
 /*{\Moptions outfile=SNC_SM_io_parser.man }*/

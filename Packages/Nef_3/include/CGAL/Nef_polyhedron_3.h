@@ -37,8 +37,8 @@
 #include <CGAL/Nef_3/SNC_structure.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
 #include <CGAL/Nef_3/SNC_constructor.h>
-#include <CGAL/Nef_3/SNC_point_locator.h>
 #include <CGAL/Nef_3/SNC_io_parser.h>
+#include <CGAL/Nef_3/SNC_ray_shoter.h>
 #ifdef SNC_VISUALIZOR
 #include <CGAL/Nef_3/SNC_visualizor_OGL.h>
 #endif // SNC_VISUALIZOR
@@ -78,7 +78,7 @@ class Nef_polyhedron_3_rep : public Rep
   typedef CGAL::SNC_structure<T>                       SNC_structure;
   typedef CGAL::SNC_decorator<SNC_structure>           SNC_decorator;
   typedef CGAL::SNC_constructor<SNC_structure>         SNC_constructor;
-  typedef CGAL::SNC_point_locator<SNC_structure>       SNC_point_locator;
+  typedef CGAL::SNC_ray_shoter<SNC_structure>          SNC_ray_shoter;
   typedef CGAL::SNC_io_parser<SNC_structure>           SNC_io_parser;
 #ifdef SNC_VISUALIZOR
   typedef CGAL::SNC_visualizor_OGL<SNC_structure>      SNC_visualizor;
@@ -143,7 +143,7 @@ protected:
   typedef typename Nef_rep::SNC_structure       SNC_structure;
   typedef typename Nef_rep::SNC_decorator       SNC_decorator;
   typedef typename Nef_rep::SNC_constructor     SNC_constructor;
-  typedef typename Nef_rep::SNC_point_locator   SNC_point_locator;
+  typedef typename Nef_rep::SNC_ray_shoter      SNC_ray_shoter;
   typedef typename Nef_rep::SNC_io_parser       SNC_io_parser;
 #ifdef SNC_VISUALIZOR
   typedef typename Nef_rep::SNC_visualizor      SNC_visualizor;
@@ -339,15 +339,6 @@ public:
 #endif // SNC_VISUALIZOR
   }
 
- protected:
-  void clone_rep() { *this = Nef_polyhedron_3<T>(snc()); }
-
-  Nef_polyhedron_3(const SNC_structure& H, bool cloneit=true);
-  /*{\Xcreate makes |\Mvar| a new object.  If |cloneit==true| then the
-  underlying structure of |H| is copied into |\Mvar|.}*/
-
-  /*{\Moperations 4 3 }*/
-
   void clear(Content space = EMPTY)
   { *this = Nef_polyhedron_3(space); }
   /*{\Mop makes |\Mvar| the empty set if |space == EMPTY| and the
@@ -381,7 +372,15 @@ public:
 
   /*{\Xtext \headerline{Destructive Operations}}*/
 
- private:
+ protected:
+  void clone_rep() { *this = Nef_polyhedron_3<T>(snc()); }
+
+  Nef_polyhedron_3(const SNC_structure& H, bool cloneit=true);
+  /*{\Xcreate makes |\Mvar| a new object.  If |cloneit==true| then the
+  underlying structure of |H| is copied into |\Mvar|.}*/
+
+  /*{\Moperations 4 3 }*/
+
   void simplify() {
     snc().simplify();
   }
@@ -449,27 +448,12 @@ public:
     return res;
   }
 
-
-  /* HERE I AM!!!
-
-  void binop( Self& P0, Self& P1) {
-    // for each vertex x of P_i do
-    //   qualify_x_with_respect_to P(1-i)
-    //   biopn both local views Px(0,1): subdivide-slect-simplify...
-    // for each edge-edge or edge-face interesection x do
-    //   binop both local views Px(0,1): subdivide-select-simplify...
-    // remove vertices whose local view is not that of a vertex
-    // synthesis f spatial structure...
-    } */
-
-  Nef_polyhedron_3<T> intersection(const Nef_polyhedron_3<T>& N1) const
+  Nef_polyhedron_3<T> intersection(Nef_polyhedron_3<T>& N1) const
   /*{\Mop returns |\Mvar| $\cap$ |N1|. }*/
-  { Nef_polyhedron_3<T> res(snc(),false); // empty, no frame
-  //EW_overlayer EWO(res.snc());
-  //EWO.subdivide(snc(),N1.snc());
-  //AND _and; EWO.select(_and);
-  //EWO.simplify();
-  //EWO.build_external_structure();
+  { Nef_polyhedron_3<T> res(snc(), true); // a copy
+    SNC_decorator D(res.snc());
+    AND _and;
+    D.binary_operation( N1.snc(), _and);
     res.clear_box_marks();
     return res;
   }
@@ -519,7 +503,7 @@ public:
   operation \emph{complement}. There are also the corresponding
   modification operations |*=,+=,-=,^=|.}*/
 
-  Nef_polyhedron_3<T>  operator*(const Nef_polyhedron_3<T>& N1) const
+  Nef_polyhedron_3<T>  operator*(Nef_polyhedron_3<T>& N1) const
   { return intersection(N1); }
 
   Nef_polyhedron_3<T>  operator+(const Nef_polyhedron_3<T>& N1) const
@@ -534,7 +518,7 @@ public:
   Nef_polyhedron_3<T>  operator!() const
   { return complement(); }
    
-  Nef_polyhedron_3<T>& operator*=(const Nef_polyhedron_3<T>& N1)
+  Nef_polyhedron_3<T>& operator*=(Nef_polyhedron_3<T>& N1)
   { this = intersection(N1); return *this; }
 
   Nef_polyhedron_3<T>& operator+=(const Nef_polyhedron_3<T>& N1)
@@ -583,7 +567,7 @@ public:
   /*{\Mtypemember a decorator to examine the underlying plane map. 
   See the manual page of |EW_explorer|.}*/
 
-  typedef typename SNC_point_locator::Object_handle Object_handle;
+  typedef typename SNC_structure::Object_handle Object_handle;
   /*{\Mtypemember a generic handle to an object of the underlying
   plane map. The kind of object |(vertex, halfedge, face)| can 
   be determined and the object can be assigned to a corresponding
@@ -600,7 +584,8 @@ public:
   bool contains(Object_handle h) const
   /*{\Mop  returns true iff the object |h| is contained in the set
   represented by |\Mvar|.}*/
-  { SNC_point_locator PL(snc()); return PL.mark(h); }
+    // TO IMPLEMENT: { SNC_point_locator PL(snc()); return PL.mark(h);} 
+    { return false; }
 
   bool contained_in_boundary(Object_handle h) const
   /*{\Mop  returns true iff the object |h| is contained in the $2$-skeleton

@@ -28,7 +28,9 @@
 //
 // SNC_point_locator.h     naive point location in SNCs
 // ============================================================================
-#ifndef CGAL_SNC_POINT_LOCATOR_H
+//#ifndef CGAL_SNC_POINT_LOCATOR_H
+#ifdef  CGAL_NEF3_DEPRECATED_CLASS
+/* funcionality now provided by SNC_ray_shoter.h */
 #define CGAL_SNC_POINT_LOCATOR_H
 
 #include <CGAL/basic.h>
@@ -194,5 +196,6 @@ SNC_point_locator<SNC_>::locate(const Point_3& p) const
 }
 
 CGAL_END_NAMESPACE
-#endif //CGAL_SNC_POINT_LOCATOR_H
 
+//#endif //CGAL_SNC_POINT_LOCATOR_H
+#endif //CGAL_NEF3_DEPRECATED_CLASS
