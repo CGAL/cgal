@@ -1,3 +1,6 @@
+Version 4.139 on 13 April 2002
+- Shorten symbol names in test/Filtered_kernel.C.
+
 Version 4.138 on 9 April 2002
 - Has_sqrt should not be surrounded by CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER.
 - Fix tst5.C for VC++.
