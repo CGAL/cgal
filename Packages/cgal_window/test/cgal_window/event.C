@@ -3,8 +3,10 @@
 #include <CGAL/LEDA/window.h>
 #include <cmath>
 
-int main()
+int main(int argc, char *argv[])
 {
+  if (argc >= 2) { return 0; }
+
   CGAL::window W(450,500,"Event Demo");
   W.display();
 

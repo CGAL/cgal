@@ -1,3 +1,6 @@
+0.9.9  /test subdir added
+       some Makefiles were removed
+
 0.9.8  a few file headers were fixed
 
 0.9.7  first version for an internal release ...

@@ -14,8 +14,10 @@ void dummy(string fn)
  std::cout << "dummy got parameter " << fn << "\n"; 
 }
 
-int main()
+int main(int argc, char *argv[])
 {
+ if (argc >= 2) { return 0; }
+
  CGAL::window Win(600,600);
  Win.init(0,600,0);
  

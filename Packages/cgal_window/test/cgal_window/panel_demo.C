@@ -16,8 +16,10 @@ static unsigned char* bm_bits [] = {
 using namespace std;
 
 
-int main()
+int main(int argc, char *argv[])
 { 
+  if (argc >= 2) { return 0; }  
+
   bool   B     = false;
   CGAL::color  col   = CGAL::blue2;
   double R     = 3.1415;

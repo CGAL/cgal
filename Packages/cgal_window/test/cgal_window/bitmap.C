@@ -13,8 +13,10 @@ list<std::string>        L2;
 #endif
 */
 
-int main()
+int main(int argc, char *argv[])
 { 
+  if (argc >= 2) { return 0; }
+
   CGAL::window W(400,400);
   W.set_bg_color(CGAL::yellow);
   W.display();

@@ -4,7 +4,9 @@
 #include <CGAL/LEDA/file.h>
 
 
-int main() {
+int main(int argc, char *argv[]) 
+{
+  if (argc >= 2) { return 0; }
 
   CGAL::menu M;
   M.button("button 1");

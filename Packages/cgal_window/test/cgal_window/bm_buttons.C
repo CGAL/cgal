@@ -5,8 +5,10 @@
 
 using namespace std;
 
-int main()
+int main(int argc, char *argv[])
 { 
+  if (argc >= 2) { return 0; }
+
   CGAL::panel P("Bitmap Buttons");
   P.buttons_per_line(8);
   P.set_button_space(3);

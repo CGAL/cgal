@@ -2,8 +2,10 @@
 
 #include <CGAL/LEDA/window.h>
 
-int main()
+int main(int argc, char *argv[])
 {
+  if (argc >= 2) { return 0; }
+
   int count = 0;
 
   CGAL::window W(400,100);

@@ -1,7 +1,0 @@
-
-OBJECTS = _x_basic$(o)
-
-# _x_basic.c cannot be compiled with -O ?
-
-CFLAGS=
-
