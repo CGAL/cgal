@@ -17,6 +17,7 @@
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Tran Kai Frank DA <Frank.Da@sophia.inria.fr>
+//                 Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //
 // coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
 //
@@ -29,7 +30,6 @@
 
 #include <CGAL/Triangulation_euclidean_traits_2.h>
 
-#include <CGAL/smallest_radius_2.h>
 
 //-------------------------------------------------------------------
 CGAL_BEGIN_NAMESPACE
@@ -37,20 +37,22 @@ CGAL_BEGIN_NAMESPACE
 
 //------------------ Function Objects ---------------------------------
 
-template < class return_type, class T >
+template < class K>
 class Compute_squared_radius_2
 {
 public:
-  typedef return_type result_type;
+  typedef typename K::FT result_type;
+  typedef typename K::Point_2 Point;
 
-  result_type operator()(const T& p, const T& q, const T& r) const
+  result_type operator()(const Point& p, const Point& q, const Point& r) const
     {
       return CGAL::squared_radius(p, q, r);
     }
 
-  result_type operator()(const T& p, const T& q) const
+  result_type operator()(const Point& p, const Point& q) const
     {
-      return CGAL::squared_radius_smallest_circumcircle(p, q);
+      typename K::Vector_2 v(p-q);
+      return (v*v)/4;
     }
 };
 
@@ -62,10 +64,9 @@ Triangulation_euclidean_traits_2<R>
 {
 public: 
   typedef typename R::FT Coord_type;
-  typedef typename Triangulation_euclidean_traits_2<R>::Point Point;
+  typedef typename R::Point_2 Point;
 
-  typedef CGAL::Compute_squared_radius_2<Coord_type, Point> 
-  Compute_squared_radius_2;
+  typedef CGAL::Compute_squared_radius_2<R> Compute_squared_radius_2;
   typedef typename R::Side_of_bounded_circle_2 Side_of_bounded_circle_2;
   
   //------------------------------------------------------------------
