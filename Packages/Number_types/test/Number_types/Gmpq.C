@@ -3,11 +3,35 @@
 #include <CGAL/basic.h>
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>
+
+#ifdef CGAL_USE_GMPXX
+#  include <CGAL/gmpxx.h>
+#endif
+
+#include <CGAL/Interval_arithmetic.h>
 #include <cassert>
 
 
 typedef CGAL::Gmpz Gmpz;
 typedef CGAL::Gmpq Gmpq;
+
+template < typename NT >
+void test_overflow_to_interval(const NT&)
+{
+  std::cout << "Tests if to_interval() handles overflow nicely or not."
+            << std::endl;
+
+  NT val = 2;
+  for (int i=0; i<20; ++i) {
+    val = val*val;
+    CGAL::Interval_nt<> inter = CGAL::to_interval(val);
+    CGAL::Interval_nt<> minter = CGAL::to_interval(-val);
+    assert(CGAL::is_valid(inter));
+    assert(CGAL::is_finite(inter.inf()));
+    assert(CGAL::is_valid(minter));
+    assert(CGAL::is_finite(minter.sup()));
+  }
+}
 
 void test_overflow_to_double()
 {
@@ -53,6 +77,12 @@ int main() {
   assert(qs2.denominator() == Gmpz(1));
 
   test_overflow_to_double();
+  test_overflow_to_interval(Gmpz());
+  test_overflow_to_interval(Gmpq());
+#ifdef CGAL_USE_GMPXX
+  test_overflow_to_interval(mpz_class());
+  test_overflow_to_interval(mpq_class());
+#endif
 
   return 0;
 }

@@ -120,6 +120,15 @@ to_interval (const mpz_class & z)
   // If it's lower than 2^53, then it's exact.
   if (CGAL_CLIB_STD::fabs(app) < double(1<<26)*double(1<<27))
       return to_interval(app);
+  
+  // If the double approximation is infinite, then adding a small +/-
+  // epsilon is not correct enough.
+  if (! CGAL::is_finite(app)) {
+      if (app > 0)
+          return std::pair<double, double>(CGAL_IA_MAX_DOUBLE,CGALi::infinity);
+      return std::pair<double, double>(-CGALi::infinity, -CGAL_IA_MAX_DOUBLE);
+  }
+
   FPU_set_cw(CGAL_FE_UPWARD);
   Interval_nt<false> approx(app);
   approx += Interval_nt<false>::smallest();
@@ -185,31 +194,6 @@ inline
 bool
 is_negative(const ::__gmp_expr<T, U> & e)
 { return ::sgn(e) < 0; }
-
-#if 0
-// Unfinished stuff for mpf_class.
-template <>
-struct Number_type_traits<mpf_class> {
-  typedef Tag_false Has_gcd;
-  typedef Tag_true  Has_division;
-  typedef Tag_true  Has_sqrt;
-};
-
-// Should not be inline, but well...
-inline
-std::pair<double,double>
-to_interval (const mpf_class & e)
-{
-  Protect_FPU_rounding<true> P (CGAL_FE_TONEAREST);
-  double approx = to_double(e);
-  double rel_error = e.get_double_error();
-  FPU_set_cw(CGAL_FE_UPWARD);
-  Interval_nt_advanced ina = (-rel_error,rel_error);
-  ina += 1;
-  ina *= approx;
-  return ina.pair();
-}
-#endif
 
 CGAL_END_NAMESPACE
 

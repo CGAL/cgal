@@ -1,3 +1,7 @@
+30 Apr 2004 Sylvain Pion
+- Fix to_interval() for all GMP types when there is overflow.
+  A really proper fix probably requires some work within GMP.
+
 27 Apr 2004 Sylvain Pion
 - Replace explicit compilers tests by CGAL_CFG_IEEE_754_BUG.
 
