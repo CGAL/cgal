@@ -1,5 +1,7 @@
 Polyhedron_IO Package: Release changes:
 ---------------------------------------------------------------------
+3.16 (16 July 2003)
+     - Changed example off2stl.C to avoid error in testsuite of VC7.0 that is confused with declaration and definition of one variable in the for scope and outside it
 
 3.15 (07 May 2003)
 
