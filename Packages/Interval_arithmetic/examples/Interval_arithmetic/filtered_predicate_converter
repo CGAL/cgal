@@ -33,11 +33,9 @@ $static_version=0;		# Default is the filtered_exact version.
 # Note: we don't actually care about a few fields ($body...) for these.
 $num_built_in_predicates=$#predicates+1;	# Number of built-in predicates.
 
-# Note: the built-in predicates need their overloaded code to be somewhere :).
-
-# We _must_ manipulate the fields of the struct predicate using these
-# constants:  (aren't there structs in Perl ?  Are packs the way to go ? )
-# ($CGAL_pos, $template_type_pos, $inline_pos, $ret_type_pos)=(0..3);
+# We _must_ manipulate the fields of @predicate using these constants:
+# (aren't there structs in Perl ?  Are packs the way to go ? )
+# ($CGAL_pos, $template_type_pos, $inline_pos, $ret_type_pos)=(0..3); # unused
 ($fct_name_pos, $eps_pos, $body_pos, $new_body_pos, $args_pos)=(4..8);
 
 # Useful regexps.
@@ -100,12 +98,12 @@ __RETURN_TYPE__
 __FUNCTION_NAME__(__ARGUMENTS_CALL__)
 {
   bool tried = false;
-  static double _bound = -1.0;
+  static double SAF_bound = -1.0;
 __STATIC_EPSILONS__
 letstry:
   try
   {
-    // Check the bounds.  All arguments must be <= _bound.
+    // Check the bounds.  All arguments must be <= SAF_bound.
     // The throw mecanism is not useful here, it should be before the try{}.
     if (__BOUNDS_CHECK__)
       throw CGAL::Restricted_double::unsafe_comparison();
@@ -118,8 +116,8 @@ letstry:
     if (!tried)
     {
       tried = true;
-      // Recompute _bound (tighter or larger).
-      _bound = 0;__COMPUTE_NEW_BOUND__
+      // Recompute SAF_bound (tighter or larger).
+      SAF_bound = 0;__COMPUTE_NEW_BOUND__
 
       // recompute epsilons: \"just\" call it over Static_filter_error.
       // That's the tricky part that might not work for everything.
@@ -127,7 +125,7 @@ letstry:
 
       // We should verify that all epsilons have really been updated.
 
-      // Try again with the updated (_bound, epsilon)
+      // Try again with the updated (SAF_bound, epsilon)
       goto letstry;
     }
     // This scheme definitely fails => exact computation (filtered_exact<> ?).
@@ -203,17 +201,6 @@ sub arg_string {
   return $output;
 }
 
-# Similar, but for epsilons, takes the number of them as arguments.
-sub eps_string {
-  my ($before, $after, $after_not_last, $eps) = @_;
-  my $output="";
-  for $i (0 .. $eps-1) {
-    $output.="$before$i$after";
-    $output.= $after_not_last unless $i eq $eps-1;
-  }
-  return $output;
-}
-
 # Print the Filtered_exact<> version of a predicate.
 sub print_filtered_exact {
   my ($CGAL, $t, $inline, $ret_type, $fct_name, $e, $b, $n, @args) = @_;
@@ -241,7 +228,7 @@ sub give_new_body {
   $new_body.="$ret_type\n";
   $new_body.="${fct_name}_SAF(";
   $new_body.=arg_string("\n    const $new_t &", ",", "", @args);
-  $new_body.=eps_string("\n    ${const}double & epsilon_", "", ",", $eps).")";
+  $new_body.=arg_string("\n    ${const}double & epsilon_", "", ",", 0..$eps-1).")";
   # Replace $template_type by the instantiated one.
   $_ = $body;
   s/$t/$new_t/smg; # Could be made more accurate ;-)
@@ -257,9 +244,6 @@ sub print_static_adaptatif {
     warning("Predicate \"$fct_name\" (".scalar(@args)." args) _must_ have at least one epsilon.");
   }
 
-  # Print the epsilons needed.
-  my $static_epsilons = eps_string("  static double _epsilon_",";\n", "", $eps);
-
   # Print the SFE version of the predicate.
   print FO give_new_body($ret_type, $fct_name, $new_body, $t, $eps,
   			 "${CGAL}Static_filter_error", "", @args);
@@ -269,13 +253,14 @@ sub print_static_adaptatif {
   			 "Restricted_double", "const ", @args);
 
   # Print the function declaration
-  my $bounds_check = arg_string("\n        fabs(", ".value()) > _bound", " ||", @args);
+  my $bounds_check = arg_string("\n        fabs(", ".value()) > SAF_bound", " ||", @args);
   my $args_value   = arg_string("\n\t\tRestricted_double(", ".value())", ",", @args);
-  my $args_error   = "\n\t\tStatic_filter_error(_bound,0,1)," x ($#args+1);
+  my $args_error   = "\n\t\tStatic_filter_error(SAF_bound,0,1)," x ($#args+1);
   my $args_exact   = arg_string("\n\t\t", ".exact()", ",", @args);
-  my $args_epsilons = eps_string("\n\t\t_epsilon_", "", ",", $eps);
+  my $args_epsilons = arg_string("\n\t\tSAF_epsilon_", "", ",", 0..$eps-1);
+  my $static_epsilons = arg_string("  static double SAF_epsilon_",";\n", "", 0..$eps-1);
   my $args_call = arg_string("\n    const ${CGAL}Static_adaptatif_filter &", "", ",", @args);
-  my $compute_new_bounds = arg_string("\n      _bound = std::max(_bound, fabs(", ".value()));", "", @args);
+  my $compute_new_bounds = arg_string("\n      SAF_bound = std::max(SAF_bound, fabs(", ".value()));", "", @args);
 
   $_=$Static_adaptif_template;
   s#CGAL::#$CGAL#msg;
