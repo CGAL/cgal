@@ -54,120 +54,8 @@ public:
                             typename K::Segment_2 const *seg2);
     ~Segment_2_Segment_2_pair() {}
 
-#ifndef CGAL_CFG_RETURN_TYPE_BUG_2
     Intersection_results intersection_type() const;
-#else
-    Intersection_results intersection_type() const
-{
-    if (_known)
-        return _result;
-    _known = true;
-    if (!do_intersect(*_seg1, *_seg2)) {
-        _result = NO;
-        return _result;
-    }
-    typename K::Line_2 const &l1 = _seg1->supporting_line();
-    typename K::Line_2 const &l2 = _seg2->supporting_line();
-    Line_2_Line_2_pair<K> linepair(&l1, &l2);
-    switch ( linepair.intersection_type()) {
-    case Line_2_Line_2_pair<K>::NO:
-        _result = NO;
-        break;
-    case Line_2_Line_2_pair<K>::POINT:
-        linepair.intersection(_intersection_point);
-        _result = POINT;
-        break;
-    case Line_2_Line_2_pair<K>::LINE:
-        {
-        typedef typename K::RT RT;
 
-	typename K::Construct_vector_2 construct_vector;
-        typename K::Point_2 const &start1 = _seg1->source();
-        typename K::Point_2 const &end1   = _seg1->target();
-        typename K::Point_2 const &start2 = _seg2->source();
-        typename K::Point_2 const &end2   = _seg2->target();
-        typename K::Vector_2 diff1 = construct_vector(start1, end1);
-        typename K::Point_2 const *minpt;
-        typename K::Point_2 const *maxpt;
-        if (CGAL_NTS abs(diff1.x()) > CGAL_NTS abs(diff1.y())) {
-            if (start1.x() < end1.x()) {
-                minpt = &start1;
-                maxpt = &end1;
-            } else {
-                minpt = &end1;
-                maxpt = &start1;
-            }
-            if (start2.x() < end2.x()) {
-                if (start2.x() > minpt->x()) {
-                    minpt = &start2;
-                }
-                if (end2.x() < maxpt->x()) {
-                    maxpt = &end2;
-                }
-            } else {
-                if (end2.x() > minpt->x()) {
-                    minpt = &end2;
-                }
-                if (start2.x() < maxpt->x()) {
-                    maxpt = &start2;
-                }
-            }
-            if (maxpt->x() < minpt->x()) {
-                _result = NO;
-                return _result;
-            }
-            if (maxpt->x() == minpt->x()) {
-                _intersection_point = *minpt;
-                _result = POINT;
-                return _result;
-            }
-            _intersection_point = *minpt;
-            _other_point = *maxpt;
-            _result = SEGMENT;
-            return _result; 
-        } else {
-            if (start1.y() < end1.y()) {
-                minpt = &start1;
-                maxpt = &end1;
-            } else {
-                minpt = &end1;
-                maxpt = &start1;
-            }
-            if (start2.y() < end2.y()) {
-                if (start2.y() > minpt->y()) {
-                    minpt = &start2;
-                }
-                if (end2.y() < maxpt->y()) {
-                    maxpt = &end2;
-                }
-            } else {
-                if (end2.y() > minpt->y()) {
-                    minpt = &end2;
-                }
-                if (start2.y() < maxpt->y()) {
-                    maxpt = &start2;
-                }
-            }
-            if (maxpt->y() < minpt->y()) {
-                _result = NO;
-                return _result;
-            }
-            if (maxpt->y() == minpt->y()) {
-                _intersection_point = *minpt;
-                _result = POINT;
-                return _result;
-            }
-            _intersection_point = *minpt;
-            _other_point = *maxpt;
-            _result = SEGMENT;
-            return _result; 
-        }
-        } 
-    }
-    return _result;
-}
-
-#endif // CGAL_CFG_RETURN_TYPE_BUG_2
     bool                intersection(typename K::Point_2 &result) const;
     bool                intersection(typename K::Segment_2 &result) const;
 protected:
@@ -437,7 +325,6 @@ Segment_2_Segment_2_pair<K>::Segment_2_Segment_2_pair(
     _known = false;
 }
 
-#ifndef CGAL_CFG_RETURN_TYPE_BUG_2
 template <class K>
 typename Segment_2_Segment_2_pair<K>::Intersection_results
 Segment_2_Segment_2_pair<K>::intersection_type() const
@@ -549,7 +436,6 @@ Segment_2_Segment_2_pair<K>::intersection_type() const
     return _result;
 }
 
-#endif // CGAL_CFG_RETURN_TYPE_BUG_2
 
 template <class K>
 bool

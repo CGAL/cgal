@@ -49,132 +49,7 @@ public:
 		     typename K::Ray_2 const *ray2);
     ~Ray_2_Ray_2_pair() {}
 
-#ifndef CGAL_CFG_RETURN_TYPE_BUG_2
     Intersection_results intersection_type() const;
-#else
-    Intersection_results intersection_type() const
-{
-    if (_known)
-        return _result;
-    // The non const this pointer is used to cast away const.
-    _known = true;
-//    if (!do_overlap(_ray1->bbox(), _ray2->bbox()))
-//        return NO;
-    const typename K::Line_2 &l1 = _ray1->supporting_line();
-    const typename K::Line_2 &l2 = _ray2->supporting_line();
-    Line_2_Line_2_pair<K> linepair(&l1, &l2);
-    switch ( linepair.intersection_type()) {
-    case Line_2_Line_2_pair<K>::NO:
-        _result = NO;
-        return _result;
-    case Line_2_Line_2_pair<K>::POINT:
-        linepair.intersection(_intersection_point);
-        _result = (_ray1->collinear_has_on(_intersection_point)
-                && _ray2->collinear_has_on(_intersection_point) )
-            ? POINT :  NO;
-        return _result;
-    case Line_2_Line_2_pair<K>::LINE:
-        {
-        typedef typename K::RT RT;
-        const typename K::Vector_2 &dir1 = _ray1->direction().to_vector();
-        const typename K::Vector_2 &dir2 = _ray2->direction().to_vector();
-        if (CGAL_NTS abs(dir1.x()) > CGAL_NTS abs(dir1.y())) {
-            typedef typename K::FT FT;
-            if (dir1.x() > FT(0)) {
-                if (dir2.x() > FT(0)) {
-                    _intersection_point =
-                            (_ray1->source().x() < _ray2->source().x())
-                            ? _ray2->source() : _ray1->source();
-                    _result = RAY;
-                    return _result;
-                } else {
-                    if (_ray1->source().x() > _ray2->source().x()) {
-                        _result = NO;
-                        return _result;
-                    }
-                    if (_ray1->source().x() == _ray2->source().x()) {
-                        _intersection_point = _ray1->source();
-                        _result = POINT;
-                        return _result;
-                    }
-                    _result = SEGMENT;
-                    return _result;
-                }
-            } else {
-                if (dir2.x() < FT(0)) {
-                    _intersection_point =
-                            (_ray1->source().x() > _ray2->source().x())
-                            ? _ray2->source() : _ray1->source();
-                    _result = RAY;
-                    return _result;
-                } else {
-                    if (_ray1->source().x() < _ray2->source().x()) {
-                        _result = NO;
-                        return _result;
-                    }
-                    if (_ray1->source().x() == _ray2->source().x()) {
-                        _intersection_point = _ray1->source();
-                        _result = POINT;
-                        return _result;
-                    }
-                    _result = SEGMENT;
-                    return _result;
-                }
-            }
-            
-        } else {
-            typedef typename K::FT FT;
-            if (dir1.y() > FT(0)) {
-                if (dir2.y() > FT(0)) {
-                    _intersection_point =
-                            (_ray1->source().y() < _ray2->source().y())
-                            ? _ray2->source() : _ray1->source();
-                    _result = RAY;
-                    return _result;
-                } else {
-                    if (_ray1->source().y() > _ray2->source().y()) {
-                        _result = NO;
-                        return _result;
-                    }
-                    if (_ray1->source().y() == _ray2->source().y()) {
-                        _intersection_point = _ray1->source();
-                        _result = POINT;
-                        return _result;
-                    }
-                    _result = SEGMENT;
-                    return _result;
-                }
-            } else {
-                if (dir2.y() < FT(0)) {
-                    _intersection_point =
-                            (_ray1->source().y() > _ray2->source().y())
-                            ? _ray2->source() : _ray1->source();
-                    _result = RAY;
-                    return _result;
-                } else {
-                    if (_ray1->source().y() < _ray2->source().y()) {
-                        _result = NO;
-                        return _result;
-                    }
-                    if (_ray1->source().y() == _ray2->source().y()) {
-                        _intersection_point = _ray1->source();
-                        _result = POINT;
-                        return _result;
-                    }
-                    _result = SEGMENT;
-                    return _result;
-                }
-            }
-            
-        }
-        } 
-    default:
-        CGAL_kernel_assertion(false); // should not be reached:
-        return _result;
-    }
-}
-
-#endif // CGAL_CFG_RETURN_TYPE_BUG_2
 
     bool                intersection(typename K::Point_2 &result) const;
     bool                intersection(typename K::Segment_2 &result) const;
@@ -217,7 +92,6 @@ Ray_2_Ray_2_pair<K>::Ray_2_Ray_2_pair(
     _known = false;
 }
 
-#ifndef CGAL_CFG_RETURN_TYPE_BUG_2
 template <class K>
 typename Ray_2_Ray_2_pair<K>::Intersection_results
 Ray_2_Ray_2_pair<K>::intersection_type() const
@@ -342,7 +216,6 @@ Ray_2_Ray_2_pair<K>::intersection_type() const
     }
 }
 
-#endif // CGAL_CFG_RETURN_TYPE_BUG_2
 
 template <class K>
 bool

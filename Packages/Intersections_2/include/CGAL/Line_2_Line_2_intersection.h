@@ -46,48 +46,7 @@ public:
 		       typename K::Line_2 const *line2);
     ~Line_2_Line_2_pair() {}
 
-#ifndef CGAL_CFG_RETURN_TYPE_BUG_2
     Intersection_results intersection_type() const;
-
-#else
-    Intersection_results intersection_type() const
-{
-    typedef typename K::RT RT;
-    if (_known)
-        return _result;
-    RT nom1, nom2, denom;
-    // The non const this pointer is used to cast away const.
-    _known = true;
-    denom = _line1->a()*_line2->b() - _line2->a()*_line1->b();
-    if (denom == RT(0)) {
-        if (RT(0) == (_line1->a()*_line2->c() - _line2->a()*_line1->c()) &&
-            RT(0) == (_line1->b()*_line2->c() - _line2->b()*_line1->c()))
-            _result = LINE;
-        else
-            _result = NO;
-        return _result;
-    }
-    nom1 = (_line1->b()*_line2->c() - _line2->b()*_line1->c());
-    if (!::CGAL::is_finite(nom1)) {
-        _result = NO;
-        return _result;
-    }
-    nom2 = (_line2->a()*_line1->c() - _line1->a()*_line2->c());
-    if (!::CGAL::is_finite(nom2)) {
-        _result = NO;
-        return _result;
-    }
-    K dummyK;
-    if (!construct_if_finite(_intersection_point,
-                            nom1, nom2, denom, dummyK)){
-        _result = NO;
-        return _result;
-    }
-    _result = POINT;
-    return _result;
-}
-
-#endif // CGAL_CFG_RETURN_TYPE_BUG_2
 
     bool                intersection(typename K::Point_2 &result) const;
     bool                intersection(typename K::Line_2 &result) const;
@@ -203,7 +162,6 @@ Line_2_Line_2_pair<K>::Line_2_Line_2_pair(
     _known = false;
 }
 
-#ifndef CGAL_CFG_RETURN_TYPE_BUG_2
 template <class K>
 typename Line_2_Line_2_pair<K>::Intersection_results
 Line_2_Line_2_pair<K>::intersection_type() const
@@ -243,7 +201,6 @@ Line_2_Line_2_pair<K>::intersection_type() const
     return _result;
 }
 
-#endif // CGAL_CFG_RETURN_TYPE_BUG_2
 
 template <class K>
 bool

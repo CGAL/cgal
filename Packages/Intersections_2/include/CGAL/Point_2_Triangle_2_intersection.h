@@ -46,44 +46,9 @@ public:
     Point_2_Triangle_2_pair(typename K::Point_2 const *pt,
                             typename K::Triangle_2 const *trian);
     ~Point_2_Triangle_2_pair() {}
-#ifdef CGAL_CFG_RETURN_TYPE_BUG_2
-    Intersection_results intersection_type() const
-    {
-        typedef Line_2<K> line_t;
-        if (_known)
-            return _result;
-    // The non const this pointer is used to cast away const.
-        _known = true;
-        if (_trian->has_on_unbounded_side(*_pt)) {
-            _result = NO;
-        } else {
-            _result = POINT;
-        }
-        return _result;
-    /*
-        line_t l(_trian->vertex(0), _trian->vertex(1));
-        if (l.has_on_positive_side(_trian->vertex(2))) {
-            for (int i=0; i<3; i++) {
-                if (line_t(_trian->vertex(i), _trian->vertex(i+1)).
-                                    has_on_negative_side(*_pt)) {
-                    _result = NO;
-                    return _result;
-                }
-            }
-        } else {
-            for (int i=0; i<3; i++)
-                if(line_t(_trian->vertex(i), _trian->vertex(i-1)).
-                                    has_on_negative_side(*_pt)){
-                    _result = NO;
-                    return _result;
-                }
-        }
-    */
-    }
-    
-#else
+
     Intersection_results intersection_type() const;
-#endif // CGAL_CFG_RETURN_TYPE_BUG_2
+
     bool                intersection(typename K::Point_2 &result) const;
 protected:
     typename K::Point_2 const *    _pt;
@@ -131,7 +96,6 @@ Point_2_Triangle_2_pair(typename K::Point_2 const *pt,
     _trian = trian;
 }
 
-#ifndef CGAL_CFG_RETURN_TYPE_BUG_2
 template <class K>
 typename Point_2_Triangle_2_pair<K>::Intersection_results
 Point_2_Triangle_2_pair<K>::intersection_type() const
@@ -167,8 +131,6 @@ Point_2_Triangle_2_pair<K>::intersection_type() const
     }
 */
 }
-
-#endif // CGAL_CFG_RETURN_TYPE_BUG_2
 
 
 

@@ -47,57 +47,9 @@ public:
     Segment_2_Triangle_2_pair(typename K::Segment_2 const *seg,
                             typename K::Triangle_2 const *trian);
     ~Segment_2_Triangle_2_pair() {}
-#ifdef CGAL_CFG_RETURN_TYPE_BUG_2
-    Intersection_results intersection_type() const
-    {
-        if (_known)
-            return _result;
-    // The non const this pointer is used to cast away const.
-        _known = true;
-        Straight_2_<K> straight(*_seg);
-    Line_2<K> l(_trian->vertex(0), _trian->vertex(1));
-    if (l.oriented_side(_trian->vertex(2)) == ON_POSITIVE_SIDE) {
-            straight.cut_right_off(
-                Line_2<K>(_trian->vertex(0), _trian->vertex(1)));
-            straight.cut_right_off(
-                Line_2<K>(_trian->vertex(1), _trian->vertex(2)));
-            straight.cut_right_off(
-                Line_2<K>(_trian->vertex(2), _trian->vertex(0)));
-        } else {
-            straight.cut_right_off(
-                Line_2<K>(_trian->vertex(2), _trian->vertex(1)));
-            straight.cut_right_off(
-                Line_2<K>(_trian->vertex(1), _trian->vertex(0)));
-            straight.cut_right_off(
-                Line_2<K>(_trian->vertex(0), _trian->vertex(2)));
-        }
-        switch (straight.current_state()) {
-        case Straight_2_<K>::EMPTY:
-            _result = NO;
-            return _result;
-        case Straight_2_<K>::POINT: {
-            straight.current(_intersection_point);
-            _result = POINT;
-            return _result;
-            }
-        case Straight_2_<K>::SEGMENT: {
-            typename K::Segment_2 seg;
-            straight.current(seg);
-            _intersection_point = seg.source();
-            _other_point = seg.target();
-            _result = SEGMENT;
-            return _result;
-            }
-        default:  // should not happen.
-            CGAL_kernel_assertion_msg(false, "Internal CGAL error.");
-            _result = NO;
-            return _result;
-        }
-    }
-    
-#else
+
     Intersection_results intersection_type() const;
-#endif // CGAL_CFG_RETURN_TYPE_BUG_2
+
     bool                intersection(typename K::Point_2 &result) const;
     bool                intersection(typename K::Segment_2 &result) const;
 protected:
@@ -143,7 +95,6 @@ Segment_2_Triangle_2_pair(typename K::Segment_2 const *seg,
     _trian = trian;
 }
 
-#ifndef CGAL_CFG_RETURN_TYPE_BUG_2
 template <class K>
 typename Segment_2_Triangle_2_pair<K>::Intersection_results
 Segment_2_Triangle_2_pair<K>::intersection_type() const
@@ -195,7 +146,6 @@ if (l.oriented_side(_trian->vertex(2)) == ON_POSITIVE_SIDE) {
     }
 }
 
-#endif // CGAL_CFG_RETURN_TYPE_BUG_2
 
 template <class K>
 bool

@@ -47,80 +47,10 @@ public:
     Ray_2_Iso_rectangle_2_pair(typename K::Ray_2 const *ray,
                           typename K::Iso_rectangle_2 const *rect) ;
 
-#ifndef CGAL_CFG_RETURN_TYPE_BUG_2
   Intersection_results intersection_type() const;
 
-#else
-  Intersection_results intersection_type() const
-{
-    typedef typename K::RT RT;
-    typedef typename K::FT FT;
-    if (_known)
-        return _result;
-    _known = true;
-    bool to_infinity = true;
-
-    typename K::Construct_cartesian_const_iterator_2 construct_cccit;
-    typename K::Cartesian_const_iterator_2 ref_point_it = construct_cccit(_ref_point);
-    typename K::Cartesian_const_iterator_2 end = construct_cccit(_ref_point, 0);
-    typename K::Cartesian_const_iterator_2 isomin_it = construct_cccit(_isomin);
-    typename K::Cartesian_const_iterator_2 isomax_it = construct_cccit(_isomax);
-
-    for (unsigned int i=0; ref_point_it != end; ++i, ++ref_point_it, ++isomin_it, ++isomax_it) {
-        if (_dir.homogeneous(i) == RT(0)) {
-            if ((*ref_point_it) < (*isomin_it)) {
-                _result = NO;
-                return _result;
-            }
-            if ((*ref_point_it) > (*isomax_it)) {
-                _result = NO;
-                return _result;
-            }
-        } else {
-            FT newmin, newmax;
-            if (_dir.homogeneous(i) > RT(0)) {
-                newmin = (*isomin_it - *ref_point_it) /
-                    _dir.cartesian(i);
-                newmax = (*isomax_it - *ref_point_it) /
-                    _dir.cartesian(i);
-            } else {
-                newmin = (*isomax_it - *ref_point_it) /
-                    _dir.cartesian(i);
-                newmax = (*isomin_it - *ref_point_it) /
-                    _dir.cartesian(i);
-            }
-            if (newmin > _min)
-                _min = newmin;
-            if (to_infinity) {
-                _max = newmax;
-            } else {
-                if (newmax < _max)
-                    _max = newmax;
-            }
-            if (_max < _min) {
-                _result = NO;
-                return _result;
-            }
-            to_infinity = false;
-        }
-    }
-    CGAL_kernel_assertion(!to_infinity);
-    if (_max == _min) {
-        _result = POINT;
-        return _result;
-    }
-    _result = SEGMENT;
-    return _result;
-}
-
-
-
-#endif // CGAL_CFG_RETURN_TYPE_BUG_2
-
-    bool                       intersection(
-                                    typename K::Point_2 &result) const;
-    bool                       intersection(
-                                    typename K::Segment_2 &result) const;
+    bool intersection( typename K::Point_2 &result) const;
+    bool intersection( typename K::Segment_2 &result) const;
 protected:
     mutable bool                       _known;
     mutable Intersection_results       _result;
@@ -205,7 +135,6 @@ Ray_2_Iso_rectangle_2_pair(
     _min = (typename K::FT)(0);
 }
 
-#ifndef CGAL_CFG_RETURN_TYPE_BUG_2
 template <class K>
 typename Ray_2_Iso_rectangle_2_pair<K>::Intersection_results
 Ray_2_Iso_rectangle_2_pair<K>::intersection_type() const
@@ -270,7 +199,6 @@ Ray_2_Iso_rectangle_2_pair<K>::intersection_type() const
     return _result;
 }
 
-#endif // CGAL_CFG_RETURN_TYPE_BUG_2
 
 template <class K>
 bool Ray_2_Iso_rectangle_2_pair<K>::

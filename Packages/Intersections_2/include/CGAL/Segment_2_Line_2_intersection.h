@@ -47,34 +47,7 @@ public:
                             typename K::Line_2 const *line);
     ~Segment_2_Line_2_pair() {}
 
-#ifndef CGAL_CFG_RETURN_TYPE_BUG_2
     Intersection_results intersection_type() const;
-#else
-    Intersection_results intersection_type() const
-{
-    if (_known)
-        return _result;
-    // The non const this pointer is used to cast away const.
-    _known = true;
-    const typename K::Line_2 &l1 = _seg->supporting_line();
-    Line_2_Line_2_pair<K> linepair(&l1, _line);
-    switch ( linepair.intersection_type()) {
-    case Line_2_Line_2_pair<K>::NO:
-        _result = NO;
-        break;
-    case Line_2_Line_2_pair<K>::POINT:
-        linepair.intersection(_intersection_point);
-        _result = (_seg->collinear_has_on(_intersection_point) )
-                ? POINT : NO;
-        break;
-    case Line_2_Line_2_pair<K>::LINE:
-        _result = SEGMENT;
-        break;
-    }
-    return _result;
-}
-
-#endif // CGAL_CFG_RETURN_TYPE_BUG_2
 
     bool                intersection(typename K::Point_2 &result) const;
     bool                intersection(typename K::Segment_2 &result) const;
@@ -168,7 +141,6 @@ Segment_2_Line_2_pair<K>::Segment_2_Line_2_pair(
     _known = false;
 }
 
-#ifndef CGAL_CFG_RETURN_TYPE_BUG_2
 template <class K>
 typename Segment_2_Line_2_pair<K>::Intersection_results
 Segment_2_Line_2_pair<K>::intersection_type() const
@@ -194,8 +166,6 @@ Segment_2_Line_2_pair<K>::intersection_type() const
     }
     return _result;
 }
-
-#endif // CGAL_CFG_RETURN_TYPE_BUG_2
 
 template <class K>
 bool

@@ -61,61 +61,9 @@ public:
                                 typename K::Triangle_2 const *trian1,
                                 typename K::Triangle_2 const *trian2) ;
     ~Triangle_2_Triangle_2_pair() {}
-#ifdef CGAL_CFG_RETURN_TYPE_BUG_2
-    Intersection_results intersection_type() const
-    {
-        if (_known)
-            return _result;
-    // The non const this pointer is used to cast away const.
-        _known = true;
-        if (!do_overlap(_trian1->bbox(), _trian2->bbox())) {
-            _result = NO;
-            return _result;
-        }
-        _init_list(_pointlist, *_trian1);
-        if (_trian2->is_degenerate()) {
-            // _not_implemented();
-            CGAL_kernel_assertion(false);
-        } else {
-            typename K::Line_2 l(_trian2->vertex(0), _trian2->vertex(1));
-            if (l.oriented_side(_trian2->vertex(2)) == ON_POSITIVE_SIDE) {
-                // counterclockwise triangle
-                _cut_off(_pointlist, l);
-                l = typename K::Line_2(_trian2->vertex(1), _trian2->vertex(2));
-                _cut_off(_pointlist, l);
-                l = typename K::Line_2(_trian2->vertex(2), _trian2->vertex(0));
-                _cut_off(_pointlist, l);
-            } else {
-                l = l.opposite();
-                _cut_off(_pointlist, l);
-                l = typename K::Line_2(_trian2->vertex(0), _trian2->vertex(2));
-                _cut_off(_pointlist, l);
-                l = typename K::Line_2(_trian2->vertex(2), _trian2->vertex(1));
-                _cut_off(_pointlist, l);
-            }
-        }
-        switch (_pointlist.size) {
-        case 0:
-            _result = NO;
-            break;
-        case 1:
-            _result = POINT;
-            break;
-        case 2:
-            _result = SEGMENT;
-            break;
-        case 3:
-            _result = TRIANGLE;
-            break;
-        default:
-            _result = POLYGON;
-        }
-        return _result;
-    }
-    
-#else
+
     Intersection_results intersection_type() const;
-#endif // CGAL_CFG_RETURN_TYPE_BUG_2
+
     bool                intersection(typename K::Point_2 &result) const;
     bool                intersection(typename K::Segment_2 &result) const;
     bool                intersection(typename K::Triangle_2 &result) const;
@@ -265,7 +213,6 @@ Triangle_2_Triangle_2_pair(typename K::Triangle_2 const *trian1,
     _known = false;
 }
 
-#ifndef CGAL_CFG_RETURN_TYPE_BUG_2
 template <class K>
 typename Triangle_2_Triangle_2_pair<K>::Intersection_results
 Triangle_2_Triangle_2_pair<K>::intersection_type() const
@@ -319,8 +266,6 @@ Triangle_2_Triangle_2_pair<K>::intersection_type() const
     }
     return _result;
 }
-
-#endif
 
 
 template <class K>

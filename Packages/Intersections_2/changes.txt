@@ -1,3 +1,6 @@
+2.32 (18 Jan 2004)
+- Removed CGAL_CFG_RETURN_TYPE_BUG_2 workarounds.
+
 2.31 (24 Nov 2003) [af]
 - moved file include/CGAL/intersections.h to package Intersections_3
 
