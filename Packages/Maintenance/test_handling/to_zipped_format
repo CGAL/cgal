@@ -69,7 +69,9 @@ EOF
     close(PLATFORM_INFO);
     close(PLATFORM_RESULTS);
     close(PLATFORM_NEW_RESULTS);
-    if ($version && $version ne $CGAL_VERSION) {
+    if ($version
+        && $version ne "CGAL-$CGAL_VERSION"
+        && ($version !~ /^CGAL-${CGAL_VERSION}-I-[\d]+$/)) {
 	die "Wrong version in $platform: $CGAL_VERSION instead of $version.\n";
     }
 }
