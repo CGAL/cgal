@@ -785,8 +785,8 @@ protected:
         second_cv<<std::endl; 
 #endif
       
-      // making this four cases in order to make an optimization for 
-      // not copying to first_cv and second_cv the original curves is not needed.
+      // making this four cases in order to make an optimization for not 
+      // copying to first_cv and second_cv the original curves is not needed.
       if (!update_first_cv && !update_second_cv) 
         result = traits->curve_compare_at_x_right (
                                cv1.get_curve(), 
@@ -1498,10 +1498,10 @@ protected:
     
   }
 
-  bool  check_status_neighbors_intersections(Event_queue& event_queue, 
-                                             Status_line& status,  
-                                             Status_line_iterator lower_neighbor
-					     ,const Point &event_point)
+  bool check_status_neighbors_intersections(Event_queue& event_queue, 
+					    Status_line& status,  
+					    Status_line_iterator lower_neighbor
+					    ,const Point &event_point)
   { 
 #ifdef CGAL_MAKE_PROFILING
     cout<<"In check_status_neighbors_intersections" <<endl;
@@ -1601,11 +1601,10 @@ protected:
         if (xp_event == event_queue.end())
           xp_event = 
 	    event_queue.insert(Event_queue_value_type(xp3, 
-						      Intersection_point_node(cv1,
-									      cv2,
-									      xp3, 
-									      traits)
-						      )).first;
+				      Intersection_point_node(cv1,
+							      cv2,
+							      xp3, 
+							      traits))).first;
         else{
           // have to check whether the event is a new event. 
           // (we might calculated this point before).
