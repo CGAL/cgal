@@ -4,8 +4,8 @@
 #include <CGAL/Search_traits.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
-#include "../../examples/Spatial_searching/Point.h"
-#include "../../examples/Spatial_searching/Distance.h"
+#include "Point.h"
+#include "Distance.h"
 
 typedef CGAL::Random_points_in_cube_3<Point> Random_points_iterator;
 typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator;
