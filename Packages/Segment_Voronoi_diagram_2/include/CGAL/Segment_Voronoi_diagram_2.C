@@ -1515,7 +1515,7 @@ arrangement_type(const Site_2& p, const Site_2& q) const
        res == AT2::TOUCH_INTERIOR_11 || res == AT2::TOUCH_INTERIOR_22 ) {
     return AT2::DISJOINT;
   }
-  if ( res == res == AT2::TOUCH_11 || res == AT2::TOUCH_12 ||
+  if ( res == AT2::TOUCH_11 || res == AT2::TOUCH_12 ||
        res == AT2::TOUCH_21 || res == AT2::TOUCH_22 ) {
     return AT2::DISJOINT;
   }
