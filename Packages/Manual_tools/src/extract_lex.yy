@@ -46,6 +46,8 @@ char* global_template_params = 0;
 #define YY_SKIP_YYWRAP 1
 #define yywrap() 1
 
+void skipspaces( void);
+
 %}
 
 /* The normal scanning mode parses TeX conventions.      */
@@ -281,7 +283,7 @@ blockintro      [\{][\\]((tt)|(em)|(it)|(sc)|(sl))
 		        yylval.string.len  = strlen( global_classname);
 		    } else {
 		        printErrorMessage( ClassnameUsedError);
-	                yylval.string.text = "Unknown classname";
+	                yylval.string.text = "[Unknown classname]";
 		        yylval.string.len  = strlen( yylval.string.text);
 		    }
 		    return STRING;
@@ -529,6 +531,44 @@ blockintro      [\{][\\]((tt)|(em)|(it)|(sc)|(sl))
 		    return ENDHTMLONLY;
 		}
 
+ /* Flexibility for HTML class files. */
+ /* -------------------------------------------------------------- */
+<INITIAL,NestingMode>[\\]ccHtmlNoClassLinks/{noletter}   {
+		    skipspaces();
+}
+<INITIAL,NestingMode>[\\]ccHtmlNoClassFile/{noletter}    {
+		    skipspaces();
+}
+<INITIAL,NestingMode>[\\]ccHtmlNoClassIndex/{noletter}   {
+		    skipspaces();
+}
+[\\]begin{w}[\{]ccHtmlClassFile[\}]{w}   {
+		    return GOBBLETWOPARAMS;
+}
+[\\]end{w}[\{]ccHtmlClassFile[\}]   {
+		    skipspaces();
+}
+[\\]ccHtmlIndex/{noletter}                                     {
+		    skipspaces();
+		    return GOBBLEONEPARAM;
+}
+[\\]ccHtmlIndex[\[][^\]][\]]/{noletter}                        {
+		    skipspaces();
+		    return GOBBLEONEPARAM;
+}
+[\\]ccHtmlIndexC/{noletter}                                    {
+		    skipspaces();
+		    return GOBBLEONEPARAM;
+}
+[\\]ccHtmlIndexC[\[][^\]][\]]/{noletter}                       {
+		    skipspaces();
+		    return GOBBLEONEPARAM;
+}
+[\\]ccHtmlCrossLink/{noletter}                                    {
+		    skipspaces();
+		    return GOBBLEONEPARAM;
+}
+
  /* make the $ delimiters for math mode disappear: */
  /* -------------------------------------------------------------- */
 [$]              {}
@@ -632,6 +672,13 @@ blockintro      [\{][\\]((tt)|(em)|(it)|(sc)|(sl))
 	  	    return CHAR;
 		}
 %%
+
+void skipspaces( void) {
+    int c = yyinput();
+    while( c && c <= ' ')
+        c = yyinput();
+    unput( c);
+}
 
 void init_scanner( FILE* in){
     line_number  = 1;

@@ -747,6 +747,7 @@ void handleClass( const char* classname) {
 void handleClassEnd( void) {
     if ( global_classname)
         free( global_classname);
+    global_classname = NULL;
     return;
 }
 
@@ -821,6 +822,7 @@ void handleClassTemplateEnd( void) {
     global_template_params = 0;
     if ( global_classname)
         free( global_classname);
+    global_classname = NULL;
     return;
 }
 

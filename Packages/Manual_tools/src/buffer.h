@@ -25,6 +25,7 @@
 #define LK_RestrictedOverloading 0
 #include <ADT/list.h>
 #include <string.h>
+#include <ctype.h>
 
 // Class declarations:
 // ==============================================
@@ -40,23 +41,8 @@ class  TextToken;
 
 // Substitute old style malloc, realloc, strdup ...
 // ================================================
-template < class T, class I>
-T* renew( T* old, I old_size, I new_size);
 
-template < class T, class I>
-T* renew( T* old, I old_size, I new_size) {
-    ADT_Assert( old);
-    ADT_Assert( strlen( old) == size_t(old_size - 1));
-    ADT_Assert( new_size > old_size);
-    T* cpy = new T[ size_t(new_size)];
-    if ( old && old_size > 0) {
-	size_t min = ( old_size < new_size ? old_size : new_size);
-	memcpy( cpy, old, min * sizeof( T));
-	delete[] old;
-    }
-    return cpy;
-}
-
+char* renew( char* old, size_t old_size, size_t new_size);
 char* newstr( const char* src);
 
 
@@ -234,6 +220,10 @@ public:
 	ADT_Assert( len < fibo2);
 	len = 0;
 	*data = '\0';
+    }
+    void capitalize() {
+	for ( int i = 0; i < len; i++) 
+	    data[i] = toupper( data[i]);
     }
 };
 

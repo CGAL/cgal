@@ -27,6 +27,7 @@ extern int set_INITIAL;
 extern int set_HTMLMODE;
 extern int set_MMODE;
 extern int line_number;
+extern int set_old_state;
 
 extern const char* in_filename;
 extern       char* creationvariable;
@@ -70,6 +71,7 @@ extern bool actual_defining;
 /* ============== */
 int yyerror( char *s);
 Text* blockintroProcessing( const char* text, int len, Text* t);
+Buffer* blockintroProcessing( const char* text, int len, Buffer* t);
 
 extern bool mbox_within_math;
 
@@ -101,7 +103,8 @@ extern bool mbox_within_math;
 %token             SUBSUBSECTION
 %token             BEGINBIBLIO
 %token             ENDBIBLIO
-%token <string>    BIBITEM
+%token             BIBCITE
+%token             BIBITEM
 %token <string>    CITE
 %token <string>    LABEL
 %token             BEGINCLASS
@@ -137,8 +140,14 @@ extern bool mbox_within_math;
 %token             TEXONLYEND
 %token             LATEXHTML
 %token             ANCHOR
+%token <string>    HTMLPATH
 %token             HTMLBEGIN
 %token             HTMLEND
+%token             HTMLBEGINCLASSFILE
+%token             HTMLENDCLASSFILE
+%token <string>    HTMLINDEX
+%token <string>    HTMLINDEXC
+%token             HTMLCROSSLINK
 
 %token             CCSTYLE
 %token             CCSECTION
@@ -162,6 +171,9 @@ extern bool mbox_within_math;
 %token             ITBLOCKINTRO
 %token             SCBLOCKINTRO
 %token             BFBLOCKINTRO
+%token             RMBLOCKINTRO
+%token             SFBLOCKINTRO
+%token             CALBLOCKINTRO
 
 %token             MBOX
 %token             FOOTNOTEMARK
@@ -223,6 +235,7 @@ stmt:             string              {   handleBuffer( * $1);
                                       }
 		| BEGINCLASS
 		  classname           {   handleClass( $2->string());
+ 		                          current_font = unknown_font;
 		                          delete $2;
                                       }
 		    decl_sequence 
@@ -234,6 +247,7 @@ stmt:             string              {   handleBuffer( * $1);
 				      }
 		| BEGINCLASSTEMPLATE
 		  classname           {   handleClassTemplate( $2->string());
+ 		                          current_font = unknown_font;
 		                          delete $2;
 		                      }
 		  decl_sequence
@@ -243,18 +257,41 @@ stmt:             string              {   handleBuffer( * $1);
                                           delete[] creationvariable;
                                           creationvariable = NULL;
 				      }
+		| HTMLBEGINCLASSFILE
+		  classname           {   set_NestingMode = 1; }
+                  comment_group 
+		                      {   handleHtmlClassFile( $2->string(),
+							       * $4);
+ 		                          set_INITIAL = 1;
+		                          delete $2;
+		                          delete $4;
+                                      }
+		  input
+		  HTMLENDCLASSFILE    {
+					  handleHtmlClassFileEnd();
+				      }
 		| CREATIONVARIABLE    {}
 		| CCSTYLE  '{' nested_token_sequence '}'  {
 					  set_INITIAL = 1;
-					  handleString( "<VAR>");
+					  handleString( "<I>");
 					  handleText( * $3);
-					  handleString( "</VAR>");
+					  handleString( "</I>");
+ 		                          current_font = unknown_font;
 					  delete $3;
 		                      }
 		| INCLUDE  '{' comment_sequence '}'  {
-					  handleString( "<EM>#include &lt;");
-					  handleText( * $3);
-					  handleString( "&gt;</EM>");
+					  handleString( "<I>#include &lt;");
+					  if (cgal_lib_dir) {
+					      handleString( "<A HREF=\"");
+					      handleString( cgal_lib_dir);
+					      handleText( * $3);
+					      handleString( "\">");
+					      handleText( * $3);
+					      handleString( "</A>");
+					  } else 
+					      handleText( * $3);
+					  handleString( "&gt;</I>");
+ 		                          current_font = unknown_font;
 					  delete $3;
 		                      }
 		| HEADING  '{' comment_sequence '}'  {
@@ -302,6 +339,10 @@ blockintro:       TTBLOCKINTRO { $$.text = "<TT>\0</TT>"; $$.len = 4; }
                 | ITBLOCKINTRO { $$.text = "<I>\0</I>";   $$.len = 3; }
                 | SCBLOCKINTRO { $$.text = "<TT>\0</TT>"; $$.len = -1; }
                 | BFBLOCKINTRO { $$.text = "<B>\0</B>";   $$.len = 3; }
+                  /* Sorry: \rm not supported. TT might be fine. */
+                | RMBLOCKINTRO { $$.text = "<TT>\0</TT>"; $$.len = 4; }
+                | SFBLOCKINTRO { $$.text = "<TT>\0</TT>"; $$.len = 4; }
+                | CALBLOCKINTRO { $$.text = "<TT>\0</TT>"; $$.len = 4; }
 ;
 
 
@@ -351,7 +392,60 @@ string_token:     STRING       {
 				  $$->add( $1.text, $1.len);
 				  $$->add( "\"></A>");
                                 }
-                | CITE          { $$ = handleCite( $1.text); }
+                | HTMLINDEX  '{' nested_token_sequence '}'     {
+		                  char* s = text_block_to_string(* $3);
+				  delete $3;
+                                  const char* p = handleHtmlIndex( $1.text, s);
+				  delete[] s;
+                                  $$ = new Buffer;
+				  $$->add( p);
+                                }
+                | HTMLINDEXC  '{' nested_token_sequence '}'     {
+		                  set_INITIAL = 1;
+		                  char* s = text_block_to_string(* $3);
+				  delete $3;
+                                  const char* p = handleHtmlIndexC( $1.text,s);
+				  delete[] s;
+                                  $$ = new Buffer;
+				  $$->add( p);
+                                }
+                | HTMLCROSSLINK  '{' nested_token_sequence '}'     {
+		                  set_INITIAL = 1;
+		                  char* s = text_block_to_string(* $3);
+				  delete $3;
+                                  const char* p = handleHtmlCrossLink( s);
+				  delete[] s;
+                                  $$ = new Buffer;
+				  $$->add( p);
+                                }
+                | CITE     '{' nested_token_sequence '}'     {
+		                  set_INITIAL = 1;
+		                  char* s = text_block_to_string(* $3);
+                                  $$ = handleCite( s);
+				  delete[] s;
+				  delete $3;
+				}
+                | CITE     '[' nested_token_sequence ']'
+		           '{' nested_token_sequence '}'     {
+		                  set_INITIAL = 1;
+		                  char* s = text_block_to_string(* $3);
+		                  char* p = text_block_to_string(* $6);
+                                  $$ = handleCite( p, s);
+				  delete[] s;
+				  delete[] p;
+				  delete $3;
+				  delete $6;
+				}
+                | BIBCITE  '{' nested_token_sequence '}'
+                           '{' nested_token_sequence '}'     {
+		                  set_INITIAL = 1;
+		                  char* s = text_block_to_string(* $3);
+		                  char* p = text_block_to_string(* $6);
+                                  $$ = handleBibCite( s, p);
+				  delete[] p;
+				  delete[] s;
+				  delete $3;
+				}
                 | BIBITEM  '{' nested_token_sequence '}'     {
 		                  set_INITIAL = 1;
 		                  char* s = text_block_to_string(* $3);
@@ -757,18 +851,19 @@ compound_comment:   '{' full_comment_sequence '}' {
 		                  set_INITIAL = 1;
                                   if ( $$->isEmpty() || 
 				       $$->head().isSpace)  // should not
-		                      $$->cons(   *new TextToken( "<VAR>", 1));
+		                      $$->cons(   *new TextToken( "<I>", 1));
                                   else
-		                      $$->head().prepend( "<VAR>");
+		                      $$->head().prepend( "<I>");
                                   InListFIter< TextToken> ix( * $$);
 				  ForAll( ix) {
 				      if ( ix.isLast())
 					  if ( ix->isSpace)
 					      $$->append( *new TextToken(
-                                                              "</VAR>", 1));
+                                                              "</I>", 1));
 					  else
-					      ix->add( "</VAR>");
+					      ix->add( "</I>");
 				  }
+	                          current_font = unknown_font;
                                 }
                   | verbatim_style {
 		                  $$ = new Text( managed);
@@ -798,10 +893,20 @@ compound_comment:   '{' full_comment_sequence '}' {
 		                }
                   | INCLUDE '{' comment_sequence '}'  {
                                   $$ = $3;
+				  if (cgal_lib_dir) {
+				      char* s = text_block_to_string(* $3);
+				      $$->cons(  *new TextToken("\">"));
+				      $$->cons(  *new TextToken(s));
+				      $$->cons(  *new TextToken(cgal_lib_dir));
+				      $$->cons(  *new TextToken("<A HREF=\""));
+				      $$->append( *new TextToken( "</A>"));
+				      delete[] s;
+				  }
 		                  $$->cons(   *new TextToken( "&lt;"));
 		                  $$->cons(   *new TextToken( " ", 1, true));
-		                  $$->cons(   *new TextToken( "<EM>#include"));
-		                  $$->append( *new TextToken( "&gt;</EM>"));
+		                  $$->cons(   *new TextToken( "<I>#include"));
+		                  $$->append( *new TextToken( "&gt;</I>"));
+	                          current_font = unknown_font;
                                 }
                   | HEADING '{' comment_sequence '}'  {
                                   $$ = $3;
@@ -897,6 +1002,7 @@ declaration:      '{'           {
 		  '}'           { 
 		                  set_INITIAL = 1;
 				  CCMode = 0;
+	                          current_font = unknown_font;
 				  $$ = $3;
 		                }
 ;
@@ -1010,6 +1116,14 @@ verbatim_style:   CPROGBEGIN string_with_nl_or_mt CPROGEND {
 		        delete[] s;
 		        delete $4;
 		    }
+                | HTMLPATH {
+			$$ = new Buffer;
+			$$->add( "<A HREF=\"");
+			$$->add( $1.text, strlen( $1.text) - 1);
+			$$->add( "\">");
+			$$->add( $1.text, strlen( $1.text) - 1);
+			$$->add( "</A>");
+		    }
 ;
 texonly_style:    TEXONLYBEGIN string_with_nl TEXONLYEND {
                                   delete $2;
@@ -1040,6 +1154,11 @@ math_token:
         {
 	    $$ = $2;
 	}
+    | blockintro math_sequence '}' {
+	$$ = blockintroProcessing( $1.text,
+				   $1.len, 
+				   $2); 
+        }
     | SINGLESUBSCRIPT
         {
             $$ = new Buffer;
@@ -1119,6 +1238,8 @@ const char* errorMessage( ErrorNumber n) {
         return "Cannot open include file";
     case ChapterStructureError:
         return "Malformed chapter structure: one chapter per file";
+    case UnknownIndexCategoryError:
+        return "Unknown index category in optional argument of \\ccHtmlIndex";
     }
     return "UNKNOWN ERROR MESSAGE NUMBER";
 }
@@ -1149,6 +1270,17 @@ Text* blockintroProcessing( const char* text, int len, Text* t) {
 	/* Hack! ptr arithmetic points to the closing tag text */
 	t->append( * new TextToken( text + len + 1));
     }
+    return t;
+}
+
+Buffer* blockintroProcessing( const char* text, int len, Buffer* t) { 
+    if ( len < 0) {  /* Hack! Here we know that t has to get capitalized.*/
+        len = 4;
+        t->capitalize();
+    }
+    t->prepend( text, len);
+    /* Hack! ptr arithmetic points to the closing tag text */
+    t->add( text + len + 1);
     return t;
 }
 

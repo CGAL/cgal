@@ -46,6 +46,15 @@ int set_INITIAL     = 0;
 int set_HTMLMODE    = 0;
 int set_MMODE       = 0;
 
+/* Store an old state like MMODE before treating macros like ccAnchor */
+/* Some constants for this purpose. */
+const int state_INITIAL     = 0;
+const int state_MMODE       = 1;
+const int state_NestingMode = 2;
+
+int set_old_state = 0;
+int old_state     = state_INITIAL;
+
 /* Tag to mark whenever the unchecked keyword occurs. */
 int   unchecked_tag = 0;
 
@@ -103,7 +112,9 @@ int stack_ptr = 0;
 /* The NestingMode parses only (){}[] nested expressions */
 /* The VerbMode parses LaTeX \verb"..." statements as    */
 /*     a sequence of characters                          */
+/* ccStyleMode parses only ccStyle expressions.          */
 %x CCMode
+%x ccStyleMode
 %x NestingMode
 %x VerbMode
 %x CPROGMode
@@ -121,7 +132,7 @@ CCletter        [a-zA-Z_]
 idfier          {letter}+
 texmacro        [\\]{idfier}
 CCidfier        ({CCletter}({CCletter}|{digit})*)
-filename        [^ \t\n/\\\{\}\[\]()]+
+filename        [^ \t\n\\\{\}\[\]()]+
 space           [\t ]
 w               {space}*
 ws              {space}+
@@ -135,11 +146,14 @@ expNumber       ({floatNumber}|{signNumber}){exp}{signNumber}
 No              ({signNumber}|{floatNumber}|{expNumber})
 operator        [^a-zA-Z_0-9\n\r\t \\]
 measure         {signNumber}{letter}{letter}
-ttblockintro    [\{][\\](tt)
-emblockintro    [\{][\\](em)
-itblockintro    [\{][\\]((it)|(sl))
-scblockintro    [\{][\\](sc)
-bfblockintro    [\{][\\](bf)
+rmblockintro    ([\{][\\](rm))|([\\]((text)|(math))rm[\{])
+ttblockintro    ([\{][\\](tt))|([\\]((text)|(math))tt[\{])
+emblockintro    ([\{][\\](em))|([\\]emph[\{])
+itblockintro    ([\{][\\]((it)|(sl)))|([\\]((text)|(math))((it)|(sl))[\{])
+scblockintro    ([\{][\\](sc))|([\\]textsc[\{])
+sfblockintro    ([\{][\\](sf))|([\\]((text)|(math))sf[\{])
+bfblockintro    ([\{][\\]((bf)|(mathbold)))|([\\]((text)|(math))bf[\{])
+calblockintro   ([\{][\\](cal))|([\\]mathcal[\{])
 
 %%
  /* Mode switching can be triggered from the parser */
@@ -164,16 +178,30 @@ bfblockintro    [\{][\\](bf)
 	    BEGIN( MMODE);
 	    set_MMODE = 0;
 	}
+	if (set_old_state) {
+	    switch ( old_state) {
+	    case state_INITIAL:
+		BEGIN( INITIAL);
+		break;
+	    case state_MMODE:
+		BEGIN( MMODE);
+		break;
+	    case state_NestingMode:
+		BEGIN( NestingMode);
+		break;
+	    }
+	    set_old_state = 0;
+	}
 
  /* Count line numbers in all modes for better error messages */
  /* --------------------------------------------------------- */
-<INITIAL,CCMode,NestingMode,CPROGMode,MMODE,ITEMMODE,TEXONLYMODE,HTMLMODE,HTMLGROUPMode>[\n]	{
+<INITIAL,CCMode,NestingMode,ccStyleMode,CPROGMode,MMODE,ITEMMODE,TEXONLYMODE,HTMLMODE,HTMLGROUPMode>[\n]	{
 		    line_number++;
 		    if ( line_switch)
 		        cerr << "src-line " << line_number << endl;
 		    return NEWLINE;
 		}
-<INITIAL,MMODE,NestingMode>[\\]"\n"      {
+<INITIAL,MMODE,NestingMode,ccStyleMode>[\\]"\n"      {
 		    line_number++;
 		    if ( line_switch)
 		        cerr << "src-line " << line_number << endl;
@@ -254,11 +282,11 @@ bfblockintro    [\{][\\](bf)
 
  /* Rules for TeX conventions */
  /* ------------------------- */
-<INITIAL,MMODE>[\\]"%"         {   /* Avoid the quoted comment symbol */
+<INITIAL,MMODE>[\\]"%"  {   /* Avoid the quoted comment symbol */
 		    yylval.character   = '%';
 		    return CHAR;
 		}
-<INITIAL,MMODE>"%".*[\n]{w}    {   /* Match one line TeX comments */
+<INITIAL,MMODE>"%".*[\n]{w}  { /* Match one line TeX comments */
 		    /* remove spaces in next line  */
 		    unput( '\n');
 		}
@@ -326,6 +354,7 @@ bfblockintro    [\{][\\](bf)
  /* ------------------------------------------------------------------ */
 [\\]begin{w}[\{]ccClass[\}]{w}   {
 		    BEGIN( CCMode);
+		    current_font = it_font;
 		    return BEGINCLASS;
 		}
 [\\]end{w}[\{]ccClass[\}]   {
@@ -333,6 +362,7 @@ bfblockintro    [\{][\\](bf)
 		}
 [\\]begin{w}[\{]ccClassTemplate[\}]{w}   {
 		    BEGIN( CCMode);
+		    current_font = it_font;
 		    return BEGINCLASSTEMPLATE;
 		}
 [\\]end{w}[\{]ccClassTemplate[\}]   {
@@ -355,98 +385,115 @@ bfblockintro    [\{][\\](bf)
 		        delete[] formatted_creationvariable;
 		    creationvariable = newstr( r);
 		    formatted_creationvariable = new char[ strlen( 
-		            creationvariable) + 12];
-		    strcpy( formatted_creationvariable, "<VAR>");
+		            creationvariable) + 8];
+		    strcpy( formatted_creationvariable, "<I>");
 		    strcat( formatted_creationvariable, creationvariable);
-		    strcat( formatted_creationvariable, "</VAR>");
+		    strcat( formatted_creationvariable, "</I>");
 	            yylval.string.text = r;
 		    yylval.string.len  = s - r + 1;
 		    return CREATIONVARIABLE;
 		}		    
 [\\]ccConstructor/{noletter} { /* constructor declaration: change to CCMode */
 		    skipspaces();
+		    current_font = it_font;
 		    BEGIN( CCMode);
 		    return CONSTRUCTOR;
 		}
 [\\]ccMemberFunction/{noletter}  { /* method declaration: change to CCMode */
 		    skipspaces();
+		    current_font = it_font;
 		    BEGIN( CCMode);
 		    return METHOD;
 		}
 [\\]ccMethod/{noletter}   {   /* method declaration: change to CCMode */
 		    skipspaces();
+		    current_font = it_font;
 		    BEGIN( CCMode);
 		    return METHOD;
 		}
 [\\]ccFunction/{noletter} {   /* function declaration: change to CCMode */
 		    skipspaces();
+		    current_font = it_font;
 		    BEGIN( CCMode);
 		    return FUNCTION;
 		}
 [\\]ccFunctionTemplate/{noletter} {   /* function template declaration: 
 			                 change to CCMode */
 		    skipspaces();
+		    current_font = it_font;
 		    BEGIN( CCMode);
 		    return FUNCTIONTEMPLATE;
 		}
 [\\]ccVariable/{noletter} {   /* variable declaration: change to CCMode */
 		    skipspaces();
+		    current_font = it_font;
 		    BEGIN( CCMode);
 		    return VARIABLE;
 		}
 [\\]ccTypedef/{noletter} {   /* typedef declaration: change to CCMode */
 		    skipspaces();
+		    current_font = it_font;
 		    BEGIN( CCMode);
 		    return TYPEDEF;
 		}
 [\\]ccNestedType/{noletter} {   /* nested type declaration: change to CCMode */
 		    skipspaces();
+		    current_font = it_font;
 		    BEGIN( CCMode);
 		    return NESTEDTYPE;
 		}
 [\\]ccEnum/{noletter} {   /* enum declaration: change to CCMode */
 		    skipspaces();
+		    current_font = it_font;
 		    BEGIN( CCMode);
 		    return ENUM;
 		}
 [\\]ccStruct/{noletter} {   /* struct declaration: change to CCMode */
 		    skipspaces();
+		    current_font = it_font;
 		    BEGIN( CCMode);
 		    return STRUCT;
 		}
 [\\]ccGlobalFunction/{noletter} {  /* function declaration: change to CCMode */
 		    skipspaces();
+		    current_font = it_font;
 		    BEGIN( CCMode);
 		    return GLOBALFUNCTION;
 		}
 [\\]ccGlobalFunctionTemplate/{noletter} {   /* function template declaration: 
 			       change to CCMode */
 		    skipspaces();
+		    current_font = it_font;
 		    BEGIN( CCMode);
 		    return GLOBALFUNCTIONTEMPLATE;
 		}
 [\\]ccGlobalVariable/{noletter} {  /* variable declaration: change to CCMode */
 		    skipspaces();
+		    current_font = it_font;
 		    BEGIN( CCMode);
 		    return GLOBALVARIABLE;
 		}
 [\\]ccGlobalTypedef/{noletter} {   /* typedef declaration: change to CCMode */
 		    skipspaces();
+		    current_font = it_font;
 		    BEGIN( CCMode);
 		    return GLOBALTYPEDEF;
 		}
 [\\]ccGlobalEnum/{noletter} {   /* enum declaration: change to CCMode */
 		    skipspaces();
+		    current_font = it_font;
 		    BEGIN( CCMode);
 		    return GLOBALENUM;
 		}
 [\\]ccGlobalStruct/{noletter} {   /* struct declaration: change to CCMode */
 		    skipspaces();
+		    current_font = it_font;
 		    BEGIN( CCMode);
 		    return GLOBALSTRUCT;
 		}
 [\\]ccDeclaration/{noletter} {   /* general declaration: change to CCMode */
 		    skipspaces();
+		    current_font = it_font;
 		    BEGIN( CCMode);
 		    return DECLARATION;
 		}
@@ -480,20 +527,42 @@ bfblockintro    [\{][\\](bf)
                  }
 
 [\\]"begin{ccHtmlOnly}" {
+                    old_state = state_INITIAL;
+		    BEGIN( HTMLGROUPMode);
+		    return HTMLBEGIN;
+                }
+<MMODE>[\\]"begin{ccHtmlOnly}" {
+                    old_state = state_MMODE;
+		    BEGIN( HTMLGROUPMode);
+		    return HTMLBEGIN;
+                }
+<NestingMode>[\\]"begin{ccHtmlOnly}" {
+                    old_state = state_NestingMode;
 		    BEGIN( HTMLGROUPMode);
 		    return HTMLBEGIN;
                 }
 <HTMLGROUPMode>[\\]"end{ccHtmlOnly}"  {
-		    BEGIN( INITIAL);
+		    set_old_state = 1;
 		    return HTMLEND;
                 }
 
 [\\]"begin{ccTexOnly}" {
+                    old_state = state_INITIAL;
+		    BEGIN( TEXONLYMODE);
+		    return TEXONLYBEGIN;
+                }
+<MMODE>[\\]"begin{ccTexOnly}" {
+                    old_state = state_MMODE;
+		    BEGIN( TEXONLYMODE);
+		    return TEXONLYBEGIN;
+                }
+<NestingMode>[\\]"begin{ccTexOnly}" {
+                    old_state = state_NestingMode;
 		    BEGIN( TEXONLYMODE);
 		    return TEXONLYBEGIN;
                 }
 <TEXONLYMODE>[\\]"end{ccTexOnly}"  {
-		    BEGIN( INITIAL);
+		    set_old_state = 1;
 		    return TEXONLYEND;
                 }
 <TEXONLYMODE>.    {
@@ -501,29 +570,105 @@ bfblockintro    [\{][\\](bf)
 		    return CHAR;
 		}
 [\\]ccTexHtml{w}[\{]  {
+                    old_state = state_INITIAL;
+		    return LATEXHTML;
+                }
+<MMODE>[\\]ccTexHtml{w}[\{]  {
+                    old_state = state_MMODE;
+		    return LATEXHTML;
+                }
+<NestingMode>[\\]ccTexHtml{w}[\{]  {
+                    old_state = state_NestingMode;
 		    return LATEXHTML;
                 }
 [\\]ccAnchor{w}[\{]  {
 		    /* The first parameter is the URL, the second is the */
                     /* message that will be highlighted */
+                    old_state = state_INITIAL;
+		    BEGIN( HTMLMODE);
+		    return ANCHOR;
+                }
+<MMODE>[\\]ccAnchor{w}[\{]  {
+                    old_state = state_MMODE;
+		    BEGIN( HTMLMODE);
+		    return ANCHOR;
+                }
+<NestingMode>[\\]ccAnchor{w}[\{]  {
+                    old_state = state_NestingMode;
 		    BEGIN( HTMLMODE);
 		    return ANCHOR;
                 }
 <HTMLMODE>[\}]  {
-		    BEGIN( INITIAL);
+		    set_old_state = 1;
 		    return '}';
                 }
 <HTMLMODE,HTMLGROUPMode>.     {
 		    yylval.character   = yytext[0];
 		    return CHAR;
 		}
+<INITIAL,MMODE,NestingMode>[\\]path[|][^|]*[|] {
+	            yylval.string.text = yytext + 6;
+		    yylval.string.len  = -1;
+                    return HTMLPATH;
+}
+
+ /* Flexibility for HTML class files. */
+ /* -------------------------------------------------------------- */
+<INITIAL,MMODE,NestingMode>[\\]ccHtmlNoClassLinks/{noletter}   {
+		    skipspaces();
+		    html_no_class_links = true;
+}
+<INITIAL,MMODE,NestingMode>[\\]ccHtmlNoClassFile/{noletter}    {
+		    skipspaces();
+		    html_no_class_file = true;
+}
+<INITIAL,MMODE,NestingMode>[\\]ccHtmlNoClassIndex/{noletter}   {
+		    skipspaces();
+		    html_no_class_index = true;
+}
+[\\]begin{w}[\{]ccHtmlClassFile[\}]{w}   {
+		    BEGIN( CCMode);
+		    return HTMLBEGINCLASSFILE;
+}
+[\\]end{w}[\{]ccHtmlClassFile[\}]   {
+		    skipspaces();
+		    return HTMLENDCLASSFILE;
+}
+[\\]ccHtmlIndex/{noletter}                                     {
+		    skipspaces();
+		    yylval.string.text = sort_key_class;
+		    return HTMLINDEX;
+}
+[\\]ccHtmlIndex[\[][^\]][\]]/{noletter}                        {
+		    skipspaces();
+		    yylval.string.text = find_sort_key( yytext + 13);
+		    return HTMLINDEX;
+}
+[\\]ccHtmlIndexC/{noletter}                                    {
+		    skipspaces();
+		    yylval.string.text = sort_key_class;
+		    BEGIN( CCMode);
+		    return HTMLINDEXC;
+}
+[\\]ccHtmlIndexC[\[][^\]][\]]/{noletter}                       {
+		    skipspaces();
+		    yylval.string.text = find_sort_key( yytext + 14);
+		    BEGIN( CCMode);
+		    return HTMLINDEXC;
+}
+[\\]ccHtmlCrossLink/{noletter}                                    {
+		    skipspaces();
+		    BEGIN( CCMode);
+		    return HTMLCROSSLINK;
+}
 
  /* Specialized keywords from the manual style */
  /* -------------------------------------------------------------- */
 [\\]cc((Style)|(c))/{noletter}  {
-                    /* CCstyle formatting: change to NestingMode */
+                    /* CCstyle formatting: change to ccStyleMode */
 		    skipspaces();
-		    BEGIN( NestingMode);
+		    BEGIN( ccStyleMode);
+		    current_font = it_font;
 		    return CCSTYLE;
 		}
 <INITIAL,MMODE,NestingMode>[\\]ccVar/{noletter}      {
@@ -772,21 +917,22 @@ bfblockintro    [\{][\\](bf)
                  }
 [\\]begin[\{]ccAdvanced[\}]   {
 		    skipspaces();
-	            yylval.string.text = "<br><img border=0 src=\""
-                        "./cc_advanced_begin.gif\" alt=\"begin of advanced "
-                        "section\"><br>";
+	            yylval.string.text = "<BR><IMG BORDER=0 SRC=\""
+                        "cc_advanced_begin.gif\" ALT=\"begin of advanced "
+                        "section\"><BR>";
 		    yylval.string.len  = -1;
 		    return STRING;
                  }
 [\\]end[\{]ccAdvanced[\}]   {
 		    skipspaces();
-	            yylval.string.text = "<br><img border=0 src=\""
-                        "./cc_advanced_end.gif\" alt=\"end of advanced "
-			"section\"><br>";
+	            yylval.string.text = "<BR><IMG BORDER=0 SRC=\""
+                        "cc_advanced_end.gif\" ALT=\"end of advanced "
+			"section\"><BR>";
 		    yylval.string.len  = -1;
 		    return STRING;
                  }
 [\\]ccInclude/{noletter}   {
+ 		    current_font = it_font;
                     return INCLUDE;
                  }
 [\\]ccHeading/{noletter}   {
@@ -964,7 +1110,7 @@ bfblockintro    [\{][\\](bf)
 		    yylval.string.len  = 3;
 		    return STRING;		    
                  }
-<INITIAL,MMODE,NestingMode>[\\]ldots/{noletter}     {
+<INITIAL,MMODE,NestingMode,ccStyleMode>[\\](l?)dots/{noletter}     {
 		    skipspaces();
 	            yylval.string.text = "...";
 		    yylval.string.len  = 3;
@@ -991,17 +1137,17 @@ bfblockintro    [\{][\\](bf)
 [\\]((big)|(med))skip/{noletter}          {
 		    return NEWLINE;
                  }
-<INITIAL,MMODE,NestingMode>[\\]"&"          {
+<INITIAL,MMODE,NestingMode,ccStyleMode>[\\]"&"          {
 		     yylval.string.text = "&amp;";
 		     yylval.string.len  = 5;
 		     return STRING;
 		 }
-<INITIAL,MMODE,NestingMode>[\\][_^#$~%]  {
+<INITIAL,MMODE,NestingMode,ccStyleMode>[\\][_^#$~%]  {
 		    yylval.character = yytext[1];
 		    return CHAR;
                  }
 <INITIAL,MMODE,NestingMode>[~]              |
-<INITIAL,MMODE,NestingMode>[\\]{space}      {
+<INITIAL,MMODE,NestingMode,ccStyleMode>[\\]{space}      {
 	            yylval.string.text = " ";
 		    yylval.string.len  = 1;
 	  	    return SPACE;
@@ -1057,7 +1203,6 @@ bfblockintro    [\{][\\](bf)
                  }
 
   /* yet not supported characters ...
-  <MMODE>[\\]times/{noletter}       { SET( "&times;");    return STRING;}
   <MMODE>[\\]delta/{noletter}       { SET( "&delta;");    return STRING;}
   <MMODE>[\\]epsilon/{noletter}     { SET( "&epsi;");     return STRING;}
   <MMODE>[\\]varepsilon/{noletter}  { SET( "&epsi;");     return STRING;}
@@ -1079,7 +1224,8 @@ bfblockintro    [\{][\\](bf)
 <INITIAL,NestingMode>[\\]"^"a     { SET( "&acirc;");    return STRING;}
 <INITIAL,NestingMode>[\\]"^"e     { SET( "&ecirc;");    return STRING;}
 <INITIAL,NestingMode>[\\]ss[\{][\}]  { SET( "&szlig;");    return STRING;}
-<MMODE>[\\]times/{noletter}       { SET( "x");    return STRING;}
+<MMODE>[\\]times/{noletter}       { SET( "&times;");    return STRING;}
+<MMODE>[\\]in/{noletter}          { SET( " is in ");    return STRING;}
 <MMODE>[\\]alpha/{noletter}       { SET( "&alpha;");    return STRING;}
 <MMODE>[\\]beta/{noletter}        { SET( "&beta;");     return STRING;}
 <MMODE>[\\]gamma/{noletter}       { SET( "&gamma;");    return STRING;}
@@ -1121,6 +1267,34 @@ bfblockintro    [\{][\\](bf)
 <MMODE>[\\]Psi/{noletter}         { SET( "&Psi;");      return STRING;}
 <MMODE>[\\]Omega/{noletter}       { SET( "&Omega;");    return STRING;}
 
+  /* math symbols */
+  /* ------------ */
+
+<MMODE>[\\]((arc)?)|((tan)|(sin)|(cos))/{noletter}  { 
+	            yylval.string.text = yytext+1;
+		    yylval.string.len  = yyleng-1;
+	  	    return STRING;
+}
+<MMODE>[\\]((arg)|(cosh)|(sinh)|(cot)|(coth)|(csc)|(deg)|(det))/{noletter} { 
+	            yylval.string.text = yytext+1;
+		    yylval.string.len  = yyleng-1;
+	  	    return STRING;
+}
+<MMODE>[\\]((dim)|(exp)|(gcd)|(hom)|(inf)|(ker)|(lg)|(lim))/{noletter}  { 
+	            yylval.string.text = yytext+1;
+		    yylval.string.len  = yyleng-1;
+	  	    return STRING;
+}
+<MMODE>[\\]((liminf)|(limsup)|(ln)|(log)|(max)|(min)|(Pr)|(sec))/{noletter}  { 
+	            yylval.string.text = yytext+1;
+		    yylval.string.len  = yyleng-1;
+	  	    return STRING;
+}
+<MMODE>[\\]((sinh)|(sup)|(tanh)|(bmod)|(pmod))/{noletter}  { 
+	            yylval.string.text = yytext+1;
+		    yylval.string.len  = yyleng-1;
+	  	    return STRING;
+}
 
  /* keywords from TeX/LaTeX that should vanish in HTML             */
  /* -------------------------------------------------------------- */
@@ -1173,7 +1347,7 @@ bfblockintro    [\{][\\](bf)
                     BEGIN( INITIAL);
 		    return MBOX;		    
                  }
-<INITIAL,MMODE,NestingMode>[\\][,;:!]  {}
+<INITIAL,MMODE,NestingMode,ccStyleMode>[\\][,;:!]  {}
 
 
 
@@ -1199,11 +1373,14 @@ bfblockintro    [\{][\\](bf)
 		    return ENDBIBLIO;		    
                  }
 [\\]newblock/{noletter}    {}
-[\\]cite{w}([\[][^\]]*[\]])?[\{][^\}]*[\}]     {
-	            yylval.string.text = yytext;
-		    yylval.string.len  = yyleng;
+[\\]cite{w}/{noletter}     {
+		    BEGIN( NestingMode);
 		    return CITE;		    
                  }
+[\\]bibcite{w}/{noletter}  {
+		    BEGIN( NestingMode);
+		    return BIBCITE;
+                }
 [\\]bibitem{w}/{noletter}  {
 		    BEGIN( NestingMode);
 		    return BIBITEM;
@@ -1212,11 +1389,11 @@ bfblockintro    [\{][\\](bf)
 
  /* Grouping symbols */
  /* ---------------- */
-<INITIAL,MMODE,NestingMode>[\\][\{]        {
+<INITIAL,MMODE,NestingMode,ccStyleMode>[\\][\{]        {
 	            yylval.character = '{';
 	  	    return CHAR;
 		}
-<INITIAL,MMODE,NestingMode>[\\][\}]        {
+<INITIAL,MMODE,NestingMode,ccStyleMode>[\\][\}]        {
 	            yylval.character = '}';
 	  	    return CHAR;
 		}
@@ -1228,20 +1405,43 @@ bfblockintro    [\{][\\](bf)
 	            yylval.character = yytext[6];
 	  	    return CHAR;
 		}
-<INITIAL,CCMode,NestingMode>[\{]    {
+<INITIAL,CCMode,NestingMode,ccStyleMode>[\{]    {
 		    return '{';
 		}
-<INITIAL,CCMode,NestingMode>[\}]    {
+<INITIAL,CCMode,NestingMode,ccStyleMode>[\}]    {
 	  	    return '}';
 		}
 
-{ttblockintro}  {  /* A couple of TeX styles like {\tt ... */
+<INITIAL,MMODE,NestingMode>{ttblockintro}  {  /* TeX styles like {\tt ... */
 		    return TTBLOCKINTRO;
 		}
-{emblockintro}  {   return EMBLOCKINTRO; }
-{itblockintro}  {   return ITBLOCKINTRO; }
-{scblockintro}  {   return SCBLOCKINTRO; }
-{bfblockintro}  {   return BFBLOCKINTRO; }
+<INITIAL,MMODE,NestingMode>{emblockintro}  {   return EMBLOCKINTRO; }
+<INITIAL,MMODE,NestingMode>{itblockintro}  {   return ITBLOCKINTRO; }
+<INITIAL,MMODE,NestingMode>{scblockintro}  {   return SCBLOCKINTRO; }
+<INITIAL,MMODE,NestingMode>{bfblockintro}  {   return BFBLOCKINTRO; }
+<INITIAL,MMODE,NestingMode>{rmblockintro}  {   return RMBLOCKINTRO; }
+<INITIAL,MMODE,NestingMode>{sfblockintro}  {   return SFBLOCKINTRO; }
+<INITIAL,MMODE,NestingMode>{calblockintro} {   return CALBLOCKINTRO; }
+
+<CCMode,ccStyleMode>[\\]tt/{noletter}      {
+		        skipspaces();
+		        yylval.string.text = "\\T\\";
+		        yylval.string.len  = -1;
+			return STRING;
+                }
+<CCMode,ccStyleMode>[\\]ccFont/{noletter}  {
+		        skipspaces();
+		        yylval.string.text = "\\I\\";
+		        yylval.string.len  = -1;
+			return STRING;
+                }
+<CCMode,ccStyleMode>[\\](l?)dots/{noletter}  {
+		        skipspaces();
+		        yylval.string.text = "...";
+		        yylval.string.len  = 3;
+			return STRING;
+                }
+<CCMode,ccStyleMode>[\\]ccEndFont/{noletter}   {}
 
 <NestingMode>[\[]    {
 		    return '[';
@@ -1257,6 +1457,19 @@ bfblockintro    [\{][\\](bf)
 	  	    return ')';
 		}
 
+<INITIAL,MMODE,NestingMode>"---" {
+		        skipspaces();
+		        yylval.string.text = " - ";
+		        yylval.string.len  = 3;
+			return STRING;
+                }
+
+<INITIAL,MMODE,NestingMode>"--" {
+		        yylval.string.text = "-";
+		        yylval.string.len  = 1;
+			return STRING;
+                }
+
  /* TeX macros                             */
  /* -------------------------------------- */
 <INITIAL,MMODE,NestingMode>[\\]((ref)|(ccTrue)|(ccFalse)|(kill)|(parskip)|(parindent))/{noletter}    {  // copy without warning
@@ -1264,7 +1477,7 @@ bfblockintro    [\{][\\](bf)
                     yylval.string.len  = -1;
 		    return STRING;    
                 }
-<INITIAL,MMODE,NestingMode>{texmacro}    {
+<INITIAL,MMODE,NestingMode,ccStyleMode>{texmacro}    {
                     if (actual_defining) {
                         yylval.string.text = yytext;
                     } else {
@@ -1298,7 +1511,7 @@ bfblockintro    [\{][\\](bf)
 		    }
 	  	    return SPACE;
 		}
-<CCMode,NestingMode>{ws}	{
+<CCMode,NestingMode,ccStyleMode>{ws}	{
 	            yylval.string.text = yytext;
 		    yylval.string.len  = yyleng;
 	  	    return SPACE;
@@ -1307,7 +1520,7 @@ bfblockintro    [\{][\\](bf)
 	            yylval.character = yytext[0];
 	  	    return CHAR;
 		}
-<INITIAL,NestingMode>[\\][/]  {}
+<INITIAL,NestingMode,ccStyleMode>[\\][/]  {}
 <INITIAL,MMODE,NestingMode>[&]  {
                     if ( tab_tag) {
 	                yylval.string.text = 
@@ -1320,7 +1533,7 @@ bfblockintro    [\{][\\](bf)
 		    return STRING;
                 }
 
-<INITIAL,NestingMode,MMODE,CPROGMode>.	{
+<INITIAL,NestingMode,MMODE,CPROGMode,ccStyleMode>.	{
 	            yylval.character = yytext[0];
 		    if ( is_html_multi_character( yylval.character)) {
 		        yylval.string.text = html_multi_character(

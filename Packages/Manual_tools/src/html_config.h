@@ -23,6 +23,61 @@ extern const char* prog_name;
 extern char* current_filename;
 
 
+extern char* cgal_lib_dir;
+
+/* An object storing the current font */
+/* ================================== */
+/* It is only used within CCMode at the moment */
+enum Font { unknown_font = -1, 
+	     rm_font, 
+	     tt_font, 
+	     bf_font, 
+	     it_font, 
+	     sl_font,
+             sc_font,
+             sf_font,
+             var_font,
+             math_font,
+             end_font_array};
+
+extern Font current_font;
+const char* font_changing_tags( Font old_font, Font new_font);
+const char* new_font_tags( Font new_font);
+const char* lazy_new_font_tags( Font new_font);
+
+// Index sorting.
+// ==============
+// sort_keys are used to sort the index according to different sections.
+// A sort_key is followed by a 0 to indicate the section title.
+// A sort_key is followed by a 1 to indicate a normal entry.
+
+extern const char* sort_key_class;
+extern const char* sort_key_nested_type;
+extern const char* sort_key_struct;
+extern const char* sort_key_enum;
+extern const char* sort_key_enum_tags;
+extern const char* sort_key_typedef;
+extern const char* sort_key_variable;
+extern const char* sort_key_function;
+extern const char* sort_key_member_function;
+
+const char* find_sort_key( const char* txt);
+
+/* Flexibility for HTML class files. */
+/* ================================= */
+extern bool html_no_class_links;
+extern bool html_no_class_file;
+extern bool html_no_class_index;
+
+extern bool html_inline_classes;
+
+void handleHtmlClassFile( const char* filename, const Text& T);
+void handleHtmlClassFileEnd();
+
+const char* handleHtmlIndexC( const char* category, const char* item);
+const char* handleHtmlIndex( const char* category, const char* item);
+const char* handleHtmlCrossLink( const char* key, bool tmpl_class = false);
+
 /* Functions to manage footnotes. */
 /* ============================== */
 void insertFootnote( char* s);
@@ -86,7 +141,9 @@ void handleString(     const char*      s);
 void handleChar(       char             c);
 
 void handleBiblio(  const Text& T);
-Buffer* handleCite( const char* l);
+Buffer* handleCite( const char* cite_keys, const char* option = 0);
+// Defines a mapping between cite keys and the visible item for a cite.
+Buffer* handleBibCite( const char* key, const char* item);
 // for an empty item name use the key name as item name
 Buffer* handleBibItem( const char* key_name, const char* item_name = 0);
 
@@ -94,6 +151,9 @@ void handleClass( const char* classname);
 void handleClassEnd( void);
 void handleClassTemplate( const char* classname);
 void handleClassTemplateEnd( void);
+
+void handleClassNameEnd( void);
+void handleClassFileEnd( void);
 
 void handleDeclaration( const char* decl);
 
@@ -134,7 +194,8 @@ enum ErrorNumber {
     SemicolonMissingError,
     IncludeNestingTooDeepError,
     IncludeOpenError,
-    ChapterStructureError
+    ChapterStructureError,
+    UnknownIndexCategoryError
 };
 
 

@@ -86,6 +86,7 @@ void handleClass( const char* classname) {
 void handleClassEnd( void) {
     if ( global_classname)
         free( global_classname);
+    global_classname = NULL;
     cout << outdent;
     cout << indNewline;
     cout << "};" << indNewline;
@@ -149,6 +150,7 @@ void handleClassTemplateEnd( void) {
     global_template_params = 0;
     if ( global_classname)
         free( global_classname);
+    global_classname = 0;
     cout << outdent;
     cout << indNewline;
     cout << "};" << indNewline;

@@ -21,6 +21,18 @@
 
 // Substitute old style malloc, realloc, strdup ...
 // ================================================
+char* renew( char* old, size_t old_size, size_t new_size) {
+    ADT_Assert( old);
+    ADT_Assert( new_size > old_size);
+    char* cpy = new char[ new_size];
+    if ( old && old_size > 0) {
+	size_t min = ( old_size < new_size ? old_size : new_size);
+	memcpy( cpy, old, min);
+	delete[] old;
+    }
+    return cpy;
+}
+
 char* newstr( const char* src) {
     ADT_Assert( src);
     if ( ! src)
