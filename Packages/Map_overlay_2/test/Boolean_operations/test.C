@@ -1,7 +1,5 @@
 #include <CGAL/config.h> // needed for the LONGNAME flag
-
 #include <CGAL/Cartesian.h>
-#include <CGAL/leda_rational.h>
 
 #ifndef CGAL_PLANAR_MAP_2
 #include <CGAL/Planar_map_2.h>
@@ -29,9 +27,6 @@
 #ifndef BOOLEAN_OPERATIONS_2_H
 #include <CGAL/Boolean_operations_2.h>
 #endif
-
-#include <CGAL/Polygon_2.h>
-#include <LEDA/polygon.h>
  
 #include <CGAL/IO/Arr_iostream.h>
 
@@ -62,6 +57,11 @@ int main(int argc, char* argv[])
   return 0;
 }
 #else
+
+#include <CGAL/leda_rational.h>
+
+#include <CGAL/Polygon_2.h>
+#include <LEDA/polygon.h>
 
 // Choose traits
 #include <CGAL/Arr_leda_segment_exact_traits.h>
@@ -669,8 +669,7 @@ private:
     CGAL_assertion(faces2.empty());
   }
 
-  void  check_intersection(const Planar_map& pm1,
-                           const Planar_map& pm2,
+  void  check_intersection(const Bops& bop,
                            const Polygon& polygon1, 
                            const Polygon& polygon2)
   { 
@@ -678,7 +677,7 @@ private:
     polygons.push_back(polygon1);
     polygons.push_back(polygon2);
     
-    Bops bop(pm1, pm2);
+    //Bops bop(pm1, pm2);
       
     Faces_container     bops_faces;
     Halfedges_container bops_halfedges;
@@ -722,8 +721,7 @@ private:
     //              bops_halfedges.begin(), bops_halfedges.end());
   }
 
-  void  check_union(const Planar_map& pm1,
-                    const Planar_map& pm2,   //const Bops& bop, 
+  void  check_union(const Bops &bop,
                     const Polygon& polygon1, 
                     const Polygon& polygon2)
   {
@@ -731,7 +729,7 @@ private:
     polygons.push_back(polygon1);
     polygons.push_back(polygon2);
     
-    Bops bop(pm1, pm2);
+    //Bops bop(pm1, pm2);
      
     Faces_container     bops_faces;
     Halfedges_container bops_halfedges;
@@ -789,8 +787,7 @@ private:
 
   }
  
-  void  check_symmetric_difference(const Planar_map& pm1,
-                                   const Planar_map& pm2,
+  void  check_symmetric_difference(const Bops &bop,
                                    const Polygon& polygon1, 
                                    const Polygon& polygon2)
   {
@@ -798,7 +795,7 @@ private:
     polygons.push_back(polygon1);
     polygons.push_back(polygon2);
 
-    Bops bop(pm1, pm2);
+    //Bops bop(pm1, pm2);
     
     Faces_container     bops_faces;
     Halfedges_container bops_halfedges;
@@ -890,7 +887,9 @@ private:
     while (num_curves--) {
       //file >> curr_curve;
       file >>x1 >>y1 >> x2>> y2;
-      curves.push_back(Curve(Point(x1,y1),Point(x2,y2)));
+
+      Point p1(x1,y1), p2(x2,y2);
+      curves.push_back(Curve(p1,p2));
     }
     
     Traits traits;
@@ -929,14 +928,15 @@ public:
     //bop.intersection(bops_faces,bops_halfedges,bops_vertices); 
     //cout<<"intersetion: bops_faces.size() "<<bops_faces.size()<<endl;
 
-    check_intersection(pm1,pm2,polygon1,polygon2);
+    Bops bop(pm1, pm2);
+    check_intersection(bop,polygon1,polygon2);
     
     //bop.Union(bops_faces,bops_halfedges,bops_vertices);
     //cout<<"union: bops_faces.size() "<<bops_faces.size()<<endl;
     
-    check_union(pm1,pm2,polygon1,polygon2);
+    check_union(bop,polygon1,polygon2);
 
-    check_symmetric_difference(pm1,pm2,polygon1,polygon2);
+    check_symmetric_difference(bop,polygon1,polygon2);
   }
 };
 
