@@ -131,8 +131,12 @@ static void read_directory(string dir_name, int what, std::list<string>& L,
  closedir(dir_p);
 }
 
-
+#if defined(__linux__)
+// don't use tmpnam for some reason on Linux
+string tmp_file_name() { return mktemp("tmpfile.XXXX"); }
+#else
 string tmp_file_name() { return tmpnam(NULL); }
+#endif
 
 }
 

@@ -1,3 +1,5 @@
+1.0.9  small fix in _file.C
+
 1.0.8  strstream - include removed from CGAL/LEDA/basic.h
 
 1.0.7  small fix in window.h to avoid warning
