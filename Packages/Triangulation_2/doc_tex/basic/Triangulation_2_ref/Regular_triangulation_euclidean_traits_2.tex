@@ -22,11 +22,9 @@
  \ccRefName\  is a  model for the concept \ccc{RegularTriangulationTraits_2}
 This traits class is templated by a kernel class \ccc{K}
 and a weight type \ccc{Weight}.
-This class inherits from
-\ccc{Triangulation_euclidean_traits_2 <K>}
+This class inherits from \ccc{K}
 and uses a \ccc{Weighted_point} type
-derived from the type \ccc{Point} of
-\ccc{Triangulation_euclidean_traits_2 <K>}.
+derived from the type \ccc{K::Point_2}.
 
 \ccInclude{CGAL/Regular_triangulation_euclidean_traits_2.h}
 
@@ -34,7 +32,7 @@ derived from the type \ccc{Point} of
 \ccc{RegularTriangulationTraits_2}
 
 \ccInheritsFrom
-\ccc{Triangulation_euclidean_traits_2 <K>}
+\ccc{K}
 
 
 \ccSeeAlso

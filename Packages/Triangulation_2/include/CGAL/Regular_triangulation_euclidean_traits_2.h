@@ -21,7 +21,6 @@
 #ifndef CGAL_REGULAR_TRIANGULATION_EUCLIDEAN_TRAITS_2_H
 #define CGAL_REGULAR_TRIANGULATION_EUCLIDEAN_TRAITS_2_H
 
-#include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/Weighted_point.h>
 #include <CGAL/number_utils_classes.h>
 
@@ -298,12 +297,12 @@ public:
 
 template < class R, class W = CGAL_TYPENAME_MSVC_NULL  R::RT>
 class Regular_triangulation_euclidean_traits_2
-  : public Triangulation_euclidean_traits_2<R>
+  : public R
 {
 public:
   typedef R                                     Rep;
   typedef W                                     Weight;
-  typedef Triangulation_euclidean_traits_2 <R>  Traits;
+  typedef R                                     Traits;
   typedef typename Traits::Point_2              Bare_point;
   typedef CGAL::Weighted_point <Bare_point, W>  Weighted_point;
   // This is required for the point() function of vertex base class

@@ -5,6 +5,7 @@ constrained and regular triangulations with  tests and examples.
 ver 8.33 (?/1/04)
 - First shot at changing NULL to default constructed handles.
 - Add links from Weighted_point's doc to Regular_traits_3.
+- Regular_triangulation_euclidean_traits_2<K> now derives directly from K.
 
 ver 8.32 (9/1/04)
 - fixed operator= of Constrained_triangulation_plus_2
