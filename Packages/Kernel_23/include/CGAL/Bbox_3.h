@@ -25,6 +25,7 @@
 #define CGAL_BBOX_3_H
 
 #include <CGAL/basic.h>
+#include <CGAL/IO/io.h>
 #include <CGAL/Sixtuple.h>
 
 CGAL_BEGIN_NAMESPACE

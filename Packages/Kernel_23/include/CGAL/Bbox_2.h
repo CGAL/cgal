@@ -26,6 +26,7 @@
 #define CGAL_BBOX_2_H
 
 #include <CGAL/basic.h>
+#include <CGAL/IO/io.h>
 #include <CGAL/Fourtuple.h>
 
 CGAL_BEGIN_NAMESPACE

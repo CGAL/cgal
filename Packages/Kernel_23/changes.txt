@@ -1,3 +1,6 @@
+24 August 2004 Sylvain Pion
+- Add #include <CGAL/IO/io.h> in Bbox_[23].h.
+
 23 August 2004 Sylvain Pion
 - Document check_tag().
 
