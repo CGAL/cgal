@@ -1,3 +1,7 @@
+2.35    (24 July 2001)
+- fixed undefined reference problems
+- revised introduction a bit
+
 2.34    (24 July 2001)
 - Remove merge bug.
 
