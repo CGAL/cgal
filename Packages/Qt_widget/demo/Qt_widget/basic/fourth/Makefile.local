@@ -1,0 +1,53 @@
+# Created by the script create_makefile
+# This is the makefile for compiling a CGAL application.
+
+#---------------------------------------------------------------------#
+#                    include platform specific settings
+#---------------------------------------------------------------------#
+# Choose the right include file from the <cgalroot>/make directory.
+
+# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
+include $(CGAL_MAKEFILE)
+
+#---------------------------------------------------------------------#
+#                    compiler flags
+#---------------------------------------------------------------------#
+
+CXXFLAGS = -I../../../../include/ \
+           $(CGAL_CXXFLAGS) \
+           $(LONG_NAME_PROBLEM_CXXFLAGS) \
+           $(DEBUG_OPT)
+
+#---------------------------------------------------------------------#
+#                    linker flags
+#---------------------------------------------------------------------#
+
+LIBPATH = \
+          $(CGAL_LIBPATH)
+
+LDFLAGS = \
+          $(LONG_NAME_PROBLEM_LDFLAGS) \
+          $(CGAL_LDFLAGS)
+
+#---------------------------------------------------------------------#
+#                    target entries
+#---------------------------------------------------------------------#
+
+SOURCES = ../../../../src/Qt_Widget.o ../../../../src/Qt_Widget_tool.o
+
+all: second$(EXE_EXT)
+
+second$(OBJ_EXT): second.C
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) second.C
+
+second$(EXE_EXT): second$(OBJ_EXT) $(SOURCES)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)second second$(OBJ_EXT) $(SOURCES) $(LDFLAGS)
+
+clean: second.clean
+
+#---------------------------------------------------------------------#
+#                    suffix rules
+#---------------------------------------------------------------------#
+
+.C$(OBJ_EXT):
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
