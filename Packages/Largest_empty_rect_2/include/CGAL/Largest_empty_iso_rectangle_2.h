@@ -97,28 +97,24 @@ public:
   //! corners of the bounding box.
   Largest_empty_iso_rectangle_2(const Point_2& bl, const Point_2& tr);
 
-  //! ctor given an Iso Rectangle parameter. The parameter is the bounding box.
+  //! Constructor given an Iso Rectangle parameter. The parameter is the bounding box.
   Largest_empty_iso_rectangle_2(const Iso_rectangle_2 &b);
 
   //! A parameter-less constructor
   Largest_empty_iso_rectangle_2();
 
-  //! add a point to the data
+  //! Add a point to the data.
   bool
   insert(const Point_2& p);
 
-  // add a point to data
-  bool
-  insert(const Point& p);
-
-  // and the STL standard member function for insertion:
+  //! The STL standard member function for insertion.
   void
   push_back(const Point& _p)
   {
     insert(_p);
   }
   
-  // and the insertion of an iterator range:
+  //! Insertion of an iterator range.
   template < class InputIterator >
   int
   insert(InputIterator first, InputIterator last)
@@ -133,19 +129,25 @@ public:
     return n;
   }
 
-  // remove a point from data
+  //! Remove a point from data.
   bool 
   remove(const Point& p);
 
-  // get the bounding box of the input set
+  //! Get the bounding box of the instance.
   Iso_rectangle_2
   get_bounding_box();
 
-  // retrieve largest rectangle
+  //! Retrieve largest empty iso rectangle.
+
+  /*! get_largest_empty_iso_rectangle() retrieve the largest empty iso rectangle
+   * exists inside the bounding box of the instance. An empty rectangle is defined
+   * as a rectangle that contains no points inside its interior.
+   * \return the largest empty iso rectangle.
+   */
   Iso_rectangle_2 
   get_largest_empty_iso_rectangle();
 
-  // retrieve four points from the input that define the largest rectangle
+  //! Retrieve four points from the input that define the largest empty iso rectangle.
   Quadruple<Point, Point, Point, Point>
   get_left_bottom_right_top()
   {
@@ -156,33 +158,33 @@ public:
     return(make_quadruple(left_p, bottom_p, right_p, top_p));
   }
 
-  // clear data(remove points)
+  //! Clear the data(remove the points).
   void 
   clear();
 
-  // get a begin iterator to points
+  //! Get a begin iterator to points
   const_iterator 
   begin()  const;
 
-  // get a after-the-end iterator to points
+  //! Get a after-the-end iterator to points
   const_iterator
   end()  const;
 
 
-  // dtor
+  //! A destructor
   ~Largest_empty_iso_rectangle_2();
 
-  // operator=
+  //! An operator=
   Largest_empty_iso_rectangle_2<T>&
     operator =(const Largest_empty_iso_rectangle_2<T>& ler);
 
-  // cctor
+  //! A copy constructor
   Largest_empty_iso_rectangle_2<T>(
 	       const Largest_empty_iso_rectangle_2<T>& ler);
   
 private:
 
-  /*! this struct is the point representation. It is composed of two points
+  /* this struct is the point representation. It is composed of two points
    * such that one holds the x coordinate and the other holds the y coordinate
    */
   struct Internal_point {
@@ -220,8 +222,11 @@ private:
   Traits _gt;
 
   // These friends are required by SUNPRO CC.
+  //! Internal data held under each point that the algorithm requires
   friend class Point_data;
+  //! A functor used to sort points lexicographically by their x and y coordinates
   friend class Less_xy;
+  //! A functor used to sort points lexicographically by their y and x coordinates
   friend class Less_yx;
 
   /*! this class holds points' data as needed in the LER process.
@@ -625,6 +630,10 @@ private:
   void init(const Point_2& bl, const Point_2& tr);
   void copy_memory(const Largest_empty_iso_rectangle_2<T>& ler);
   void free_memory();
+
+  // add a point to data
+  bool
+  insert(const Point& p);
 
   // Auxiliary iterators for convenience
 
