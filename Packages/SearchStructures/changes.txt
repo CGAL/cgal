@@ -1,4 +1,7 @@
-Version 2.71 (14 May 2003) [af]
+Version 2.73 (17 May 2003) [af]
+Added missing initialisation of static data member
+
+Version 2.72 (14 May 2003) [af]
 - testfile now reads from a data file instead from std::cin
 
 Version 2.71 (7 May 2003) [af]
