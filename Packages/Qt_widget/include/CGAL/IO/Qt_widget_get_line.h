@@ -72,7 +72,7 @@ private:
       y2 = y;
       firstpoint = TRUE;
     } else if(e->button() == CGAL_QT_WIDGET_GET_POINT_BUTTON
-       && is_pure()){
+       && is_pure(e->state())){
       FT
 	      x=static_cast<FT>(widget->x_real(e->x())),
 	      y=static_cast<FT>(widget->y_real(e->y()));
