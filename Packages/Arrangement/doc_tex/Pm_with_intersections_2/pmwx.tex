@@ -55,14 +55,14 @@
 %\tableofcontents
 %
 %\maketitle
-\chapter{2D Planar Maps of Intersecting Curves} \label{I1_ChapterPmwx}
+\chapter{2D Planar Maps of Intersecting Curves} \label{I1_ChapterPmwx}a
 
 \section{Introduction}
 
 \paragraph{2D Planar Map with Intersections:} 
   Given a collection $C$ of (possibly intersecting and not necessarily
   $x$-monotone curves in the plane, we construct a collection $C''$ in
-  two steps, as follows: First, we decompose each curve in C intor
+  two steps, as follows: First, we decompose each curve in C into
   maximal x-monotone curves, thus obtaining the collection
   $C'$. Second, We decompose each curve in $C'$ into maximal connected
   pieces not intersecting any other curve in $C'$.  This way we obtain
@@ -78,7 +78,7 @@
   functions but it uses the same data structures as the planar
   map. Therefore, almost any functionality of the planar map is also
   supported here (e.g., traversal of planar map features, point
-  location queries and I/O operations are suppoerted but infinite
+  location queries and I/O operations are supported but infinite
   objects are not supported). However, the planar map with
   intersections needs additional intersection functions in the
   geometric traits class. Note that if one needs to build a planar map
@@ -100,7 +100,7 @@
 % \paragraph{Sweep line}
 %   A \ccc{Planar Map with Intersections} can be built incrementally by
 %   inserting one curve after the other into the map. For a big number
-%   of curves it is much faster to perfrom the sweep line algorithm on
+%   of curves it is much faster to perform the sweep line algorithm on
 %   the collection of input curves. A sweep line utility is supported as
 %   part of the package. The utility can either build the induced planar
 %   map or rather collect the pairwise interior disjoint subcurves

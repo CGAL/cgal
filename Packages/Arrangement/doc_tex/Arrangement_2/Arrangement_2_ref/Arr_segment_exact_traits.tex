@@ -18,7 +18,7 @@
 
 \ccDefinition
    The class \ccRefName\ is
-   a traits class that uses the CGAL Kernal, that is, types and predicates.
+   a traits class that uses the CGAL Kernel, that is, types and predicates.
    The representation type \ccc{R} is recommended to be an
    exact type such as \ccc{Cartesian<leda_rational>} or
    \ccc{Homogeneous<Gmpz>} or any other
@@ -40,8 +40,8 @@
 %and \ccc{Curve} type are a new class that is derived from CGAL's
 %\ccc{Segment_2<R>} class, and stores another segment inside.
 %The other segment will correspond to the original segment the
-%current segment came from. This garauntees that the intersection points'
-%bitlength will not grow too much (even for cascaded intersections),
+%current segment came from. This guarantees that the intersection points'
+%bit-length will not grow too much (even for cascaded intersections),
 %since all intersections are done with the
 %original data.
 %The \ccc{get_o_seg()} member function returns the
