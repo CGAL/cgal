@@ -4,11 +4,23 @@
 @! ----------------------------------------------------------------------------
 @! file  : Library/web/Min_circle_2.aw
 @! author: Bernd Gärtner, Sven Schönherr (sven@inf.fu-berlin.de)
-@! $Id$
+@! ----------------------------------------------------------------------------
+@! $Revision$
+@! $Date$
 @! ============================================================================
  
+@p maximum_input_line_length = 180
+@p maximum_output_line_length = 180
+
 @documentclass[twoside]{article}
+@usepackage[latin1]{inputenc}
 @usepackage{a4wide2}
+@usepackage{amssymb}
+@usepackage{cc_manual}
+@article
+
+\input{cprog.sty}
+\setlength{\parskip}{0.8ex}
 
 @! LaTeX macros
 \newenvironment{pseudocode}[1]%
@@ -29,58 +41,73 @@
 
 \newcommand{\mc}{\texttt{mc}}
 
-@article
-@p maximum_input_line_length = 180
-@p maximum_output_line_length = 180
+@! ============================================================================
+@! Title
+@! ============================================================================
 
-@thickline
+\RCSdef{\rcsrevision}{$Revision$}
+\RCSdefDate{\rcsdate}{$Date$}
 
 @t vskip 5 mm
-@t title titlefont centre "CGAL: 2D Smallest Enclosing Circle"
+@t title titlefont centre "CGAL -- 2D Smallest Enclosing Circle*"
 @t vskip 1 mm
 @t title smalltitlefont centre "Implementation Documentation"
-@t vskip 8 mm
-@t title smalltitlefont centre "Bernd Gärtner, Sven Schönherr"
-@t title normalfont centre "$Revision$, $Date$"
+@t vskip 5 mm
+@t title smalltitlefont centre "Bernd Gärtner and Sven Schönherr"
+\smallskip
+\centerline{\rcsrevision\ , \rcsdate}
 @t vskip 1 mm
 
-@thickline
-@thinline
-@t table_of_contents
-
-@thinline
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\footnotetext[1]{This work was supported by the ESPRIT IV LTR Project
+  No.~21957 (CGAL).}
 
 @! ============================================================================
-@section{ Introduction}
+@! Introduction and Contents
 @! ============================================================================
 
-We define a class template @prg{CGAL_Min_circle_2<R>}. An object of
-this class represents the smallest (w.r.t. area) enclosing circle of a
-finite point set $P$ in the plane, denoted by $\mc(P)$. The template
-parameter of the representation class $R$ (the domain of the point
-coordinates) is any number type that fulfills the CGAL number type
-requirements, but correct results are in this version only guaranteed
-if the number type is an exact one (like LEDA's @prg{integer}). In
-particular, using the number type @prg{double} might lead to wrong
-results. A correct @prg{double} implementation is planned for the next
-release.
+\section*{Introduction}
 
-The implementation is based on an algorithm by Welzl \cite{Wel}, which
-we shortly describe now. $\mc(P)$ is built up incrementally, adding
-one point after another. Assume $\mc(P)$ has been constructed, and we
-would like to obtain $\mc(P \cup \{p\})$, $p$ some new point. There
-are two cases: if $p$ already lies inside $\mc(P)$, then $\mc(P \cup
-\{p\}) = \mc(P)$. Otherwise $p$ must lie on the boundary of $\mc(P
-\cup \{p\})$ (this is proved in \cite{Wel} and not hard to see), so we
-need to compute $\mc(P,\{p\})$, the smallest circle enclosing $P$ with
-$p$ on the boundary. This is recursively done in the same manner. In
-general, for point sets $P$,$B$, define $\mc(P,B)$ as the smallest
-circle enclosing $P$ that has the points of $B$ on the boundary (if
-defined). Although the algorithm finally delivers a circle
-$\mc(P,\emptyset)$, it internally deals with circles that have a
-possibly nonempty set $B$. Here is the pseudocode of Welzl's method.
-To compute $\mc(P)$, it is called with the pair $(P,\emptyset)$,
-assuming that $P=\{p_1,\ldots,p_n\}$ is stored in a linked list.
+We provide an implementation of an optimisation algorithm for computing
+the smallest (w.r.t.\ area) enclosing circle of a finite point set $P$ in
+the plane. The class template \ccc{CGAL_Min_circle_2<I>} is implemented
+as a semi-dynamic data structure, thus allowing to insert points while
+maintaining the smallest enclosing circle. It is parameterized with an
+interface class, that defines the interface between the optimisation
+algorithm and the primitives it uses.
+
+This document is organized as follows. The algorithm is described in
+Section~1. Section~2 contains the specification as it appears in the
+CGAL Reference Manual. Section~3 gives the implementation. In
+Section~4 we provide a test program which performs some correctness
+checks. Finally the product files are created in Section~5.
+
+\tableofcontents
+
+@! ============================================================================
+@! The Algorithm
+@! ============================================================================
+
+\clearpage
+\section{The Algorithm} \label{sec:algo}
+
+The implementation is based on an algorithm by Welzl~\cite{w-sedbe-91a},
+which we shortly describe now. The smallest (w.r.t.\ area) enclosing
+circle of a finite point set $P$ in the plane, denoted by $mc(P)$, is
+built up incrementally, adding one point after another. Assume $mc(P)$
+has been constructed, and we would like to obtain $mc(P \cup \{p\})$, $p$
+some new point. There are two cases: if $p$ already lies inside $mc(P)$,
+then $mc(P \cup \{p\}) = mc(P)$. Otherwise $p$ must lie on the boundary
+of $mc(P \cup \{p\})$ (this is proved in~\cite{w-sedbe-91a} and not hard
+to see), so we need to compute $mc(P,\{p\})$, the smallest circle
+enclosing $P$ with $p$ on the boundary. This is recursively done in the
+same manner. In general, for point sets $P$,$B$, define $mc(P,B)$ as the
+smallest circle enclosing $P$ that has the points of $B$ on the boundary
+(if defined). Although the algorithm finally delivers a circle
+$mc(P,\emptyset)$, it internally deals with circles that have a possibly
+nonempty set $B$. Here is the pseudocode of Welzl's method.  To compute
+$mc(P)$, it is called with the pair $(P,\emptyset)$, assuming that
+$P=\{p_1,\ldots,p_n\}$ is stored in a linked list.
 
 \begin{pseudocode}{$\mc(P,B)$:}
   $mc := \mc(\emptyset,B)$ \\
@@ -95,335 +122,521 @@ assuming that $P=\{p_1,\ldots,p_n\}$ is stored in a linked list.
 \end{pseudocode}
 
 Note the following: (a) $|B|$ is always bounded by 3, thus the
-computation of $\mc(\emptyset,B)$ is easy. In our implementation, it
-is done by the private member function @prg{compute_circle}. (b) One
-can check that the method maintains the invariant `$\mc(P,B)$ exists'.
-This justifies termination if $|B| = 3$, because then $\mc(P,B)$ must
-be the unique circle with the points of $B$ on the boundary, and
-$\mc(P,B)$ exists if and only if this circle contains the points of
-$P$. Thus, no subsequent in-circle tests are necessary anymore (for
-details see \cite{Wel}). (c) points which are found to lie outside the
-current circle $mc$ are considered `important' and are moved to the
-front of the linked list that stores $P$. This is crucial for the
-method's efficiency.
+computation of $mc(\emptyset,B)$ is easy. In our implementation, it is
+done by the private member function \ccc{compute_circle}. (b) One can
+check that the method maintains the invariant `$mc(P,B)$ exists'. This
+justifies termination if $|B| = 3$, because then $mc(P,B)$ must be the
+unique circle with the points of $B$ on the boundary, and $mc(P,B)$
+exists if and only if this circle contains the points of $P$. Thus, no
+subsequent in-circle tests are necessary anymore (for details
+see~\cite{w-sedbe-91a}). (c) points which are found to lie outside the
+current circle $mc$ are considered `important' and are moved to the front
+of the linked list that stores $P$. This is crucial for the method's
+efficiency.
 
 It can also be advisable to bring $P$ into random order before
 computation starts. There are `bad' insertion orders which cause the
 method to be very slow -- random shuffling gives these orders a very
 small probability.
 
-The private member function @prg{mc} directly realizes the pseudocode
-above.
+@! ============================================================================
+@! Specification
+@! ============================================================================
+
+\clearpage
+\section{Specification}
+
+\renewcommand{\ccSection}{\ccSubsection}
+\renewcommand{\ccFont}{\tt}
+\renewcommand{\ccEndFont}{}
+\ccSetThreeColumns{Support_point_iterator}{Circle;}{}
+\ccPropagateThreeToTwoColumns
+\input{../spec/Min_circle_2.tex}
 
 @! ============================================================================
-@section{ Class \texttt{CGAL\_Min\_circle\_2}: Interface}
+@! Implementation
 @! ============================================================================
+
+\clearpage
+\section{Implementation}
+
+First, we declare the class template \ccc{CGAL_Min_circle_2}.
+
+@macro<Min_circle_2 declaration> = @begin
+    template < class I >
+    class CGAL_Min_circle_2;
+@end
 
 The class interface looks as follows.
 
 @macro <Min_circle_2 interface> = @begin
-    template < class R >
+    template < class _I >
     class CGAL_Min_circle_2 {
       public:
-	@<public interface>
+	@<Min_circle_2 public interface>
 
       private:
-	@<private data members>
-	@<private member functions declaration>
+	// private data members
+	@<Min_circle_2 private data members>
+
+	// copying and assignment not allowed!
+	CGAL_Min_circle_2( const CGAL_Min_circle_2<_I>&);
+	CGAL_Min_circle_2<_I>& operator = ( const CGAL_Min_circle_2<_I>&);
+
+	// private member functions
+	@<Min_circle_2 private member functions declaration>
     };
 @end   
 
-The public interface is described and documented in the CGAL Reference
-Manual, so we do not comment on it here.
+The actual work of the algorithm is done in the private member
+functions \ccc{mc} and \ccc{compute_circle}. The former directly
+realizes the pseudocode of $\mc(P,B)$, the latter solves the basic
+case $\mc(\emptyset,B)$, see Section~\ref{sec:algo}.
 
-@macro <public interface> = @begin
+@macro <Min_circle_2 private member functions declaration> = @begin
+    void mc( Point_iterator const& last, int n_sp);
+    void compute_circle( );
+@end
+
+@! ----------------------------------------------------------------------------
+\subsection{Public Interface}
+
+The functionality is described and documented in the specification
+section, so we do not comment on it here.
+
+@macro <Min_circle_2 public interface> = @begin
+    // types
+    typedef           _I                           I;
+    typedef typename  I::Point                     Point;
+    typedef typename  I::Circle                    Circle;
+    typedef typename  list<Point>::const_iterator  Point_iterator;
+    typedef           const Point *                Support_point_iterator;
+
     // creation
-    CGAL_Min_circle_2( );
-    CGAL_Min_circle_2( const CGAL_Point_2<R>& p);
-    CGAL_Min_circle_2( const CGAL_Point_2<R>& p1,
-                       const CGAL_Point_2<R>& p2);
-    CGAL_Min_circle_2( const CGAL_Point_2<R>& p1,
-                       const CGAL_Point_2<R>& p2,
-                       const CGAL_Point_2<R>& p3);
-    CGAL_Min_circle_2( const CGAL_Point_2<R>* first,
-                       const CGAL_Point_2<R>* last,
-                       bool randomize = false);
-    ~CGAL_Min_circle_2( );
+    CGAL_Min_circle_2( I const& i = I());
+    CGAL_Min_circle_2( Point const& p,
+		       I const& i = I());
+    CGAL_Min_circle_2( Point const& p,
+                       Point const& q,
+		       I const& i = I());
+    CGAL_Min_circle_2( Point const& p1,
+                       Point const& p2,
+                       Point const& p3,
+		       I const& i = I());
+    CGAL_Min_circle_2( const Point* first,
+                       const Point* last,
+                       bool randomize = false,
+                       CGAL_Random& random = CGAL_Random(),
+		       I const& i = I());
+    CGAL_Min_circle_2( list<Point>::const_iterator first,
+                       list<Point>::const_iterator last,
+                       bool randomize = false,
+                       CGAL_Random& random = CGAL_Random(),
+		       I const& i = I());
 
-    // access
+    // access functions
     int  number_of_points        ( ) const;
     int  number_of_support_points( ) const;
 
-    const CGAL_Point_2<R>&  point        ( int i) const;
-    const CGAL_Point_2<R>&  support_point( int i) const;
-    const CGAL_Point_2<R>&  operator []  ( int i) const;
+    Point_iterator  points_begin( ) const;
+    Point_iterator  points_end  ( ) const;
 
-    const CGAL_Circle_2<R>&  circle( ) const;
+    Support_point_iterator  support_points_begin( ) const;
+    Support_point_iterator  support_points_end  ( ) const;
 
-    CGAL_Bbox_2  bbox( ) const;
+    Point const&  support_point( int i) const;
 
-    // updates
-    void  insert ( const CGAL_Point_2<R>& p);
-    void  reserve( int n);
-
-    // check
-    bool  check( bool verbose = false) const;
+    Circle const&  circle( ) const;
 
     // predicates
-    CGAL_Bounded_side  bounded_side( const CGAL_Point_2<R>& p) const;
-    bool  has_on_bounded_side      ( const CGAL_Point_2<R>& p) const;
-    bool  has_on_boundary          ( const CGAL_Point_2<R>& p) const;
-    bool  has_on_unbounded_side    ( const CGAL_Point_2<R>& p) const;
+    CGAL_Bounded_side  bounded_side( Point const& p) const;
+    bool  has_on_bounded_side      ( Point const& p) const;
+    bool  has_on_boundary          ( Point const& p) const;
+    bool  has_on_unbounded_side    ( Point const& p) const;
 
     bool  is_empty     ( ) const;
     bool  is_degenerate( ) const;
+
+    // modifiers
+    void  insert ( Point const& p);
+
+    // validity check
+    bool  is_valid( bool verbose = false, int level = 0) const;
 @end
 
-The private member functions -- the important ones being
-@prg{compute_circle} and @prg{mc} -- are in detail described in the
-implementation section below.
+@! ----------------------------------------------------------------------------
+\subsection{Private Data Members}
 
-@macro <private member functions declaration> = @begin
-    // copying and assignment not allowed!
-    CGAL_Min_circle_2( const CGAL_Min_circle_2<R>&);
-    CGAL_Min_circle_2<R>& operator = ( const CGAL_Min_circle_2<R>&);
+First, the interface class object is stored.
 
-    // private member functions
-    void mc( int n, int n_sp);
-    void compute_circle( );
-    void check_error_msg( char* error_msg) const;
+@macro <Min_circle_2 private data members> += @begin
+    I            ico;				// interface class object
 @end
 
-Now let us focus on the private data members.
+The points of $P$ are internally stored as a linked list that allows to
+bring points to the front of the list in constant time. We use the
+sequence container \ccc{list} from STL~\cite{sl-stl-95}.
 
-The points of $P$ are internally stored as a linked list that allows
-to bring points to the front of the list in constant time. The linked
-list is realized as an STL-@prg{vector} whose entries are points with
-successor and predecessor information, realized in the class
-@prg{_Point}.
-
-@macro <private data members> += @begin
-    // doubly linked list element, used for move-to-front heuristic
-    class _Point {
-      public:
-        CGAL_Point_2<R>  point;
-        int              pred, succ;
-        _Point( ) { }
-        _Point( const CGAL_Point_2<R>& _point, int _pred = -1, int _succ = -1)
-            : point( _point), pred( _pred), succ( _succ)
-        { }
-    };
+@macro <Min_circle_2 private data members> += @begin
+    list<Point>  points;			// double linked list of points
 @end
 
-Here is the vector @prg{points} itself, along with an index
-@prg{i_first_point} in @prg{points} referring to the current front
-element of the linked list.
+The support set $S$ of at most three support points is stored in an
+array \ccc{support_points}, the actual number of support points is
+given by \ccc{n_support_points}. During the computations, the set of
+support points coincides with the set $B$ appearing in the pseudocode
+for $\mc(P,B)$, see Section~\ref{sec:algo}.
 
-@macro <private data members> += @begin
-    vector< _Point >  points;
-    int               i_first_point;
+@macro <Min_circle_2 private data members> += @begin
+    int          n_support_points;		// number of support points
+    Point        support_points[ 3];		// array of support points
 @end
 
-A @prg{CGAL_Min_circle_2} object maintains an array
-@prg{support_points} of at most three \emph{support points} (the
-actual number is given by @prg{n_support_points}, which at the end of
-the computation contains the indices of a minimal subset $S \subseteq
-P$ with $\mc(P)= \mc(S)$. (Note: that subset is not necessarily
-\emph{minimum}). During the computations, the set of support points
-coincides with the set $B$ appearing in the pseudocode for $\mc(P,B)$,
-see the introduction above.
+Finally, an actual circle is stored in \ccc{min_circle}, by the end
+of computation equal to $mc(P)$. During computation, this circle
+equals the circle $mc$ appearing in the pseudocode for $\mc(P,B)$,
+see Section~\ref{sec:algo}.
 
-@macro <private data members> += @begin
-    int               n_support_points;
-    CGAL_Point_2<R>   support_points[ 3];
-@end
-
-Finally, an actual circle is stored in a @prg{CGAL_Min_circle_2}
-object, by the end of computation equal to $\mc(P)$. During
-computation, this circle equals the circle $mc$ appearing in the
-pseudocode for $\mc(P,B)$, see the introduction above.
-
-@macro <private data members> += @begin
-    CGAL_Circle_2<R>  min_circle;
+@macro <Min_circle_2 private data members> += @begin
+    Circle       min_circle;			// current circle
 @end  
 
-
-@! ============================================================================
-@section{ Class \texttt{CGAL\_Min\_circle\_2}: Implementation}
-@! ============================================================================
-
-The implementation consists of several parts, each of which is
-described in the sequel. The actual work is hidden in the functions
-@prg{mc} and @prg{compute_circle}.
-
-@macro <Min_circle_2 implementation> = @begin
-    @<access operations and predicates>
-
-    @<private member functions>
-
-    @<constructors>
-    @<update operations>
-    @<check operation>
-@end
-
-
 @! ----------------------------------------------------------------------------
-@subsection{ Constructors}
-@! ----------------------------------------------------------------------------
+\subsection{Constructors}
 
-In this version, @prg{CGAL_Min_circle_2} has five different
-construction methods, where the most important one builds the
-@prg{CGAL_Min_circle_2} $\mc(P)$ from a point set $P$, stored in a
-piece of memory delimited by two pointers (As soon as member templates
-are available, the pointers will become iterators). The constructor
-copies the points into the internal array @prg{points}, performs a
-random reordering if the corresponding flag requires that, then builds
-up the linked list over the point set, and finally calls the private
-method $\mc$ to compute $\mc(P)=\mc(P,\emptyset)$.
+We provide several different constructors, which can be put into two
+groups. The constructors in the first group, i.e. the more important
+ones, build the smallest enclosing circle $mc(P)$ from a point set
+$P$, given by a begin iterator and a past-the-end iterator. Usually
+this would be done by a single member template, but since most
+compilers do not support member templates yet, we provide specialized
+constructors for C~arrays (using pointers as iterators) and for STL
+sequence containers \ccc{vector<Point>} and \ccc{list<Point>}.
+Actually, the constructors for a C~array and a \ccc{vector<point>},
+resp., are the same, since the random access iterator of
+\ccc{vector<Point>} is implemented as \ccc{Point*}.
 
-@macro <constructors> += @begin
-    // constructors
-    // ------------
-    template < class R >
-    CGAL_Min_circle_2<R>::
-    CGAL_Min_circle_2( const CGAL_Point_2<R>* first,
-		       const CGAL_Point_2<R>* last,
-		       bool randomize)
+Both constructors of the first group copy the points into the
+internal list \ccc{points}. If randomization is demanded, the points
+are copied to a vector and shuffled at random, before being copied to
+\ccc{points}. Finally the private member function $mc$ is called to
+compute $mc(P)=mc(P,\emptyset)$.
+
+@macro <Min_circle_2 constructors> += @begin
+    #include <vector.h>
+    #include <algo.h>
+
+    // STL-like constructor for C array and vector<Point>
+    template < class I >
+    CGAL_Min_circle_2<I>::
+    CGAL_Min_circle_2( const Point* first,
+		       const Point* last,
+		       bool randomize,
+		       CGAL_Random& random,
+		       I const& i)
+	: ico( i)
     {
-	// store points
-	int n = 0;
-	distance( first, last, n);
-	if ( n > 0) {
-	    points.reserve( n);
-	    copy( first, last, back_inserter( points));
+	// compute number of points
+	if ( ( last-first) > 0) {
 
-	    // shuffle points at random
-	    if ( randomize)
-		random_shuffle( points.begin(), points.end());
+	    // store points
+	    if ( randomize) {
 
-	    // link points
-	    for ( int i = 0; i < number_of_points(); ++i) {
-		points[ i].pred = i-1;
-		points[ i].succ = i+1; }
-	    points[ 0].pred = points[ number_of_points()-1].succ = -1;
-	    i_first_point = 0; }
-	else
-	    i_first_point = -1;
+	        // shuffle points at random
+	        vector<Point> v( first, last);
+		random_shuffle( v.begin(), v.end(), random);
+		copy( v.begin(), v.end(), back_inserter( points)); }
+	    else
+		copy( first, last, back_inserter( points)); }
 
 	// compute mc
-	mc( points.size(), 0);
+	mc( points.end(), 0);
+    }
+
+    // STL-like constructor for list<Point>
+    template < class I >
+    CGAL_Min_circle_2<I>::
+    CGAL_Min_circle_2( list<Point>::const_iterator first,
+		       list<Point>::const_iterator last,
+		       bool randomize,
+		       CGAL_Random& random,
+		       I const& i)
+	: ico( i)
+    {
+	// compute number of points
+	list<Point>::size_type n = 0;
+	distance( first, last, n);
+	if ( n > 0) {
+
+	    // store points
+	    if ( randomize) {
+
+	        // shuffle points at random
+		vector<Point> v;
+		v.reserve( n);
+		copy( first, last, back_inserter( v));
+		random_shuffle( v.begin(), v.end(), random);
+		copy( v.begin(), v.end(), back_inserter( points)); }
+	    else
+		copy( first, last, back_inserter( points)); }
+
+	// compute mc
+	mc( points.end(), 0);
     }
 @end
 
 The remaining constructors are actually specializations of the
-previous one, building a @prg{CGAL_Min_circle_2} for up to three
+previous ones, building the smallest enclosing circle for up to three
 points. The idea is the following: recall that for any point set $P$
-there exists $S \subseteq P$, $|S| \leq 3$ with $\mc(S) = \mc(P)$ (in
-fact, such a set $S$ is determined during a @prg{CGAL_Min_circle_2}
-computation). Once $S$ has been computed (or given otherwise),
-$\mc(P)$ can easily be reconstructed from $S$ in constant time. To
-make this reconstruction more convenient, a method is available for
-each size of $|S|$, ranging from 0 to 3. For $|S| = 0$, we get the
-default constructor, building the empty @prg{CGAL_Min_circle_2}
-$\mc(\emptyset)$.
+there exists $S \subseteq P$, $|S| \leq 3$ with $mc(S) = mc(P)$ (in
+fact, such a set $S$ is determined by the algorithm). Once $S$ has
+been computed (or given otherwise), $mc(P)$ can easily be
+reconstructed from $S$ in constant time. To make this reconstruction
+more convenient, a constructor is available for each size of $|S|$,
+ranging from 0 to 3. For $|S|=0$, we get the default constructor,
+building $mc(\emptyset)$.
 
-@macro <constructors> += @begin
+@macro <Min_circle_2 constructors> += @begin
 
     // default constructor
-    template < class R >
-    CGAL_Min_circle_2<R>::
-    CGAL_Min_circle_2( )
-      : i_first_point( -1),
-	n_support_points( 0),
-	min_circle( CGAL_Point_2<R>( ), R::FT( 0))
-    { }
+    template < class I >
+    CGAL_Min_circle_2<I>::
+    CGAL_Min_circle_2( I const& i)
+	: ico( i), n_support_points( 0)
+    {
+	CGAL_optimisation_postcondition( is_empty());
+    }
 
     // constructor for one point
-    template < class R >
-    CGAL_Min_circle_2<R>::
-    CGAL_Min_circle_2( const CGAL_Point_2<R>& p)
-      : points( 1, _Point( p)),
-	i_first_point( 0),
-	n_support_points( 1),
-	min_circle( p, R::FT( 0))
+    template < class I >
+    CGAL_Min_circle_2<I>::
+    CGAL_Min_circle_2( Point const& p, I const& i)
+	: ico( i), points( 1, p), n_support_points( 1), min_circle( p)
     {
 	support_points[ 0] = p;
+	CGAL_optimisation_postcondition( is_degenerate());
     }
 
     // constructor for two points
-    template < class R >
-    CGAL_Min_circle_2<R>::
-    CGAL_Min_circle_2( const CGAL_Point_2<R>& p1, const CGAL_Point_2<R>& p2)
+    template < class I >
+    CGAL_Min_circle_2<I>::
+    CGAL_Min_circle_2( Point const& p1, Point const& p2, I const& i)
+	: ico( i)
     {
 	// store points
-	points.reserve( 2);
-	points.push_back( _Point( p1, -1,  1));
-	points.push_back( _Point( p2,  0, -1));
-	i_first_point = 0;
+	points.push_back( p1);
+	points.push_back( p2);
 
 	// compute mc
-	mc( 2, 0);
+	mc( points.end(), 0);
     }
 
     // constructor for three points
-    template < class R >
-    CGAL_Min_circle_2<R>::
-    CGAL_Min_circle_2( const CGAL_Point_2<R>& p1,
-		       const CGAL_Point_2<R>& p2,
-		       const CGAL_Point_2<R>& p3)
+    template < class I >
+    CGAL_Min_circle_2<I>::
+    CGAL_Min_circle_2( Point const& p1,
+		       Point const& p2,
+		       Point const& p3,
+		       I const& i)
+	: ico( i)
     {
 	// store points
-	points.reserve( 3);
-	points.push_back( _Point( p1, -1,  1));
-	points.push_back( _Point( p2,  0,  2));
-	points.push_back( _Point( p3,  1, -1));
-	i_first_point = 0;
+	points.push_back( p1);
+	points.push_back( p2);
+	points.push_back( p3);
 
 	// compute mc
-	mc( 3, 0);
+	mc( points.end(), 0);
     }
 @end
 
-Finally, we have a (default) destructor.
+@! ----------------------------------------------------------------------------
+\subsection{Access Functions}
 
-@macro <constructors> += @begin
+These functions are used to retrieve information about the current
+status of the \ccc{CGAL_Min_circle_2<I>} object. They are all very
+simple (and therefore \ccc{inline}) and mostly rely on corresponding
+access functions of the data members of \ccc{CGAL_Min_circle_2<I>}.
 
-    // destructor
-    template < class R >
-    CGAL_Min_circle_2<R>::
-    ~CGAL_Min_circle_2( )
-    { }
+First, we define the \ccc{number_of_...} methods.
+
+@macro <Min_circle_2 access functions `number_of_...'> = @begin
+    // #points and #support points
+    template < class I > inline
+    int
+    CGAL_Min_circle_2<I>::
+    number_of_points( ) const
+    {
+	return( points.size());
+    }
+
+    template < class I > inline
+    int
+    CGAL_Min_circle_2<I>::
+    number_of_support_points( ) const
+    {
+	return( n_support_points);
+    }
 @end
 
+Then, we have the access functions for points and support points.
 
-@! ----------------------------------------------------------------------------
-@subsection{ Update operations}
-@! ----------------------------------------------------------------------------
-
-There is another way to build up $\mc(P)$, other than by supplying the
-point set $P$ at once. Namely, $\mc(P)$ can be built up incrementally,
-adding one point after another. If you look at the pseudocode in the
-introduction, this comes quite naturally. The method @prg{insert},
-applied with point $p$ to a @prg{CGAL_Min_circle_2} object
-representing $\mc(P)$, computes $\mc(P \cup \{p\})$, where work has to
-be done only if $p$ lies outside $\mc(P)$.  In this case, $\mc(P \cup
-\{p\}) = \mc(P,\{p\})$ holds, so the method $\mc$ is called with
-support set $\{p\}$. After the insertion has been performed, $p$ is
-moved to the front of the point list, just like in the pseudocode and
-the `main' constructor above.
-
-@macro <update operations> += @begin
-    // update operations
-    // -----------------
-    template < class R >
-    void
-    CGAL_Min_circle_2<R>::
-    insert( const CGAL_Point_2<R>& p)
+@macro <Min_circle_2 access functions> += @begin
+    // access to points and support points
+    template < class I > inline
+    Point_iterator
+    CGAL_Min_circle_2<I>::
+    points_begin( ) const
     {
-	// store point
-	int old_n = number_of_points();
-	points.push_back( _Point( p));  // NOTE: p is not linked with list yet!
+	return( points.begin());
+    }
 
+    template < class I > inline
+    Point_iterator
+    CGAL_Min_circle_2<I>::
+    points_end( ) const
+    {
+	return( points.end());
+    }
+
+    template < class I > inline
+    Support_point_iterator
+    CGAL_Min_circle_2<I>::
+    support_points_begin( ) const
+    {
+	return( support_points);
+    }
+
+    template < class I > inline
+    Support_point_iterator
+    CGAL_Min_circle_2<I>::
+    support_points_end( ) const
+    {
+	return( support_points+n_support_points);
+    }
+
+    // random access for support points    
+    template < class I > inline
+    CGAL_Min_circle_2<I>::Point const&
+    CGAL_Min_circle_2<I>::
+    support_point( int i) const
+    {
+	CGAL_optimisation_precondition( (i >= 0) &&
+					(i <  number_of_support_points()));
+	return( support_points[ i]);
+    }
+@end
+
+Finally, the access function \ccc{circle}. Note that it is
+\ccc{const} to the outside world, but internally we check the
+orientation of the current circle and reverse it, if necessary
+(logical constness).
+
+@macro <Min_circle_2 access functions> += @begin
+
+    // circle
+    template < class I > inline
+    CGAL_Min_circle_2<I>::Circle const&
+    CGAL_Min_circle_2<I>::
+    circle( ) const
+    {
+        CGAL_optimisation_precondition( ! is_empty());
+	// ensure positive orientation
+	if ( min_circle.orientation() == CGAL_NEGATIVE)
+	    CGAL_const_cast( Circle&, min_circle) = min_circle.opposite();
+	CGAL_optimisation_assertion(min_circle.orientation() == CGAL_POSITIVE);
+	return( min_circle);
+    }
+@end
+
+@! ----------------------------------------------------------------------------
+\subsection{Predicates}
+
+The predicates \ccc{is_empty} and \ccc{is_degenerate} are used in
+preconditions and postconditions of some member functions. Therefore we define
+them \ccc{inline} and put them in a separate macro.
+
+@macro <Min_circle_2 predicates `is_...'> = @begin
+    // is_... predicates
+    template < class I > inline
+    bool
+    CGAL_Min_circle_2<I>::
+    is_empty( ) const
+    {
+	return( number_of_support_points() == 0);
+    }
+
+    template < class I > inline
+    bool
+    CGAL_Min_circle_2<I>::
+    is_degenerate( ) const
+    {
+	return( number_of_support_points() < 2);
+    }
+@end
+
+The remaining predicates perform in-circle tests, based on the
+corresponding predicates of class \ccc{Circle}.
+
+@macro <Min_circle_2 predicates> = @begin
+    // in-circle test predicates
+    template < class I > inline
+    CGAL_Bounded_side
+    CGAL_Min_circle_2<I>::
+    bounded_side( Point const& p) const
+    {
+	return( is_empty() ? CGAL_ON_UNBOUNDED_SIDE 
+			   : min_circle.bounded_side( p));
+    }
+
+    template < class I > inline
+    bool
+    CGAL_Min_circle_2<I>::
+    has_on_bounded_side( Point const& p) const
+    {
+	return( ( ! is_empty()) && ( min_circle.has_on_bounded_side( p)));
+    }
+
+    
+    template < class I > inline
+    bool
+    CGAL_Min_circle_2<I>::
+    has_on_boundary( Point const& p) const
+    {
+	return( ( ! is_empty()) && ( min_circle.has_on_boundary( p)));
+    }
+
+    template < class I > inline
+    bool
+    CGAL_Min_circle_2<I>::
+    has_on_unbounded_side( Point const& p) const
+    {
+	return( ( is_empty()) || ( min_circle.has_on_unbounded_side( p)));
+    }
+@end
+
+@! ----------------------------------------------------------------------------
+\subsection{Modifiers}
+
+There is another way to build up $mc(P)$, other than by supplying
+the point set $P$ at once. Namely, $mc(P)$ can be built up
+incrementally, adding one point after another. If you look at the
+pseudocode in the introduction, this comes quite naturally. The
+modifying method \ccc{insert}, applied with point $p$ to a
+\ccc{CGAL_Min_circle_2<I>} object representing $mc(P)$, computes
+$mc(P \cup \{p\})$, where work has to be done only if $p$ lies
+outside $mc(P)$. In this case, $mc(P \cup \{p\}) = mc(P,\{p\})$
+holds, so the private member function \ccc{mc} is called with
+support set $\{p\}$. After the insertion has been performed, $p$ is
+moved to the front of the point list, just like in the pseudocode
+in Section~\ref{sec:algo}.
+
+@macro <Min_circle_2 modifiers> = @begin
+    template < class I >
+    void
+    CGAL_Min_circle_2<I>::
+    insert( Point const& p)
+    {
 	// p not in current circle?
 	if ( has_on_unbounded_side( p)) {
 
@@ -431,226 +644,255 @@ the `main' constructor above.
 	    support_points[ 0] = p;
 
 	    // recompute mc
-	    mc( old_n, 1); }
+	    mc( points.end(), 1);
 
-	// make p the first point in list
-	if ( old_n > 0)                                  // old list not empty?
-	    points[ i_first_point].pred = old_n;
-	points[ old_n].succ = i_first_point;
-	i_first_point = old_n;
+	    // store p as the first point in list
+	    points.push_front( p); }
+	else
+
+	    // append p to the end of the list
+	    points.push_back( p);
     }
 @end
 
-The operation @prg{reserve} does nothing but tell the
-@prg{CGAL_Min_circle_2} that some number $n$ of points might
-eventually be inserted, allowing the object to allocate storage for
-them at once. Inserting the points without doing this might lead to
-overhead caused by moving the array @prg{points} around in memory
-while it grows.
+@! ----------------------------------------------------------------------------
+\subsection{Validity Check}
 
-@macro <update operations> += @begin
+A \ccc{CGAL_Min_circle_2<I>} object can be checked for
+validity. This means, it is checked whether (a) the circle contains
+all points of its defining set $P$, (b) the circle is the smallest
+circle spanned by its support set, and (c) the support set is
+minimal, i.e. no support point is redundant. The function
+\ccc{is_valid} is mainly intended for debugging user supplied
+interface classes. If \ccc{verbose} is \ccc{true}, some messages
+concerning the performed checks are written to standard error
+stream. The second parameter \ccc{level} is not used, we provide it
+only for consistency with interfaces of other classes.
 
-    template < class R > inline
-    void
-    CGAL_Min_circle_2<R>::
-    reserve( int n)
+@macro <Min_circle_2 validity check> = @begin
+    #include <CGAL/optimisation_misc.h>
+
+    template < class I>
+    bool
+    CGAL_Min_circle_2<I>::
+    is_valid( bool verbose = true, int level = 0) const
     {
-	points.reserve( n);
+	CGAL_Verbose_ostream verr( verbose);
+	verr << endl;
+	verr << "CGAL_Min_circle_2<I>::is_valid( true, "
+	     << level << "):" << endl;
+	verr << "  |P| = " << number_of_points()
+	     << ", |S| = " << number_of_support_points() << endl;
+
+	// containment check (a)
+	@<Min_circle_2 containment check>
+
+	// support set checks (b)+(c)
+	@<Min_circle_2 support set checks>
+
+	verr << "  object is valid!" << endl;
+	return( true);
     }
 @end
 
+The containment check (a) is easy to perform, just a loop over all
+points in \ccc{points}.
 
-@! ----------------------------------------------------------------------------
-@subsection{ Access Operations and Predicates}
-@! ----------------------------------------------------------------------------
-
-These operations are used to retrieve information about the current
-status of the @prg{CGAL_Min_circle_2} object. They are all very simple
-and mostly rely on corresponding access functions and predicates for
-the data members of @prg{CGAL_Min_circle_2}.
-
-@macro <access operations and predicates> = @begin
-    // 'number_of_' operations
-    // -----------------------
-    template < class R > inline
-    int
-    CGAL_Min_circle_2<R>::
-    number_of_points( ) const
-    {
-	return( points.size());
-    }
-
-    template < class R > inline
-    int
-    CGAL_Min_circle_2<R>::
-    number_of_support_points( ) const
-    {
-	return( n_support_points);
-    }
-
-    // 'is_' predicates
-    // ----------------
-    template < class R > inline
-    bool
-    CGAL_Min_circle_2<R>::
-    is_empty( ) const
-    {
-	return( number_of_support_points() == 0);
-    }
-
-    template < class R > inline
-    bool
-    CGAL_Min_circle_2<R>::
-    is_degenerate( ) const
-    {
-	return( number_of_support_points() < 2);
-    }
-
-    // access operations
-    // -----------------
-    template < class R > inline
-    const CGAL_Point_2<R>&
-    CGAL_Min_circle_2<R>::
-    point( int i) const
-    {
-	CGAL_Min_circle_2_precondition( (i >= 0) && (i < number_of_points()));
-	return( points[ i].point);
-    }
-
-    template < class R > inline
-    const CGAL_Point_2<R>&
-    CGAL_Min_circle_2<R>::
-    support_point( int i) const
-    {
-	CGAL_Min_circle_2_precondition( (i >= 0) &&
-					(i <  number_of_support_points()));
-	return( support_points[ i]);
-    }
-
-    template < class R > inline
-    const CGAL_Point_2<R>&
-    CGAL_Min_circle_2<R>::
-    operator [] ( int i) const
-    {
-	return( point( i));
-    }
-
-    template < class R > inline
-    const CGAL_Circle_2<R>&
-    CGAL_Min_circle_2<R>::
-    circle( ) const
-    {
-        CGAL_Min_circle_2_precondition( ! is_empty());
-	// ensure positive orientation
-	if ( min_circle.orientation() == CGAL_NEGATIVE)
-	    const_cast( CGAL_Circle_2<R>&, min_circle) = min_circle.opposite();
-	CGAL_Min_circle_2_assertion(min_circle.orientation() == CGAL_POSITIVE);
-	return( min_circle);
-    }
-
-    template < class R > inline
-    CGAL_Bbox_2
-    CGAL_Min_circle_2<R>::
-    bbox( ) const
-    {
-        CGAL_Min_circle_2_precondition( ! is_empty());
-	return( min_circle.bbox());
-    }
-
-    // incircle predicates
-    // -------------------
-    template < class R > inline
-    CGAL_Bounded_side
-    CGAL_Min_circle_2<R>::
-    bounded_side( const CGAL_Point_2<R>& p) const
-    {
-	return( is_empty() ? CGAL_ON_UNBOUNDED_SIDE 
-			   : min_circle.bounded_side( p));
-    }
-
-    template < class R > inline
-    bool
-    CGAL_Min_circle_2<R>::
-    has_on_bounded_side( const CGAL_Point_2<R>& p) const
-    {
-	return( ( ! is_empty()) && ( min_circle.has_on_bounded_side( p)));
-    }
-
-    template < class R > inline
-    bool
-    CGAL_Min_circle_2<R>::
-    has_on_boundary( const CGAL_Point_2<R>& p) const
-    {
-	return( ( ! is_empty()) && ( min_circle.has_on_boundary( p)));
-    }
-
-    template < class R > inline
-    bool
-    CGAL_Min_circle_2<R>::
-    has_on_unbounded_side( const CGAL_Point_2<R>& p) const
-    {
-	return( ( is_empty()) || ( min_circle.has_on_unbounded_side( p)));
-    }
+@macro <Min_circle_2 containment check> = @begin
+    verr << "  a) containment check..." << flush;
+    Point_iterator point_iter;
+    for ( point_iter  = points_begin();
+	  point_iter != points_end();
+	  ++point_iter)
+	if ( has_on_unbounded_side( *point_iter)) 
+	    return( CGAL__optimisation_is_valid_fail( verr,
+			"circle does not contain all points"));
+    verr << "passed." << endl;
 @end
 
+To check the support set (b) and (c), we distinguish four cases with
+respect to the number of support points, which may range from 0 to 3.
+
+@macro <Min_circle_2 support set checks> = @begin
+    verr << "  b)+c) support set checks..." << flush;
+    bool failed = false;
+    switch( number_of_support_points()) {
+
+      case 0:
+	@<Min_circle_2 check no support point>
+	break;
+
+      case 1:
+	@<Min_circle_2 check one support point>
+	break;
+
+      case 2: {
+	@<Min_circle_2 check two support points> }
+	break;
+
+      case 3: {
+	@<Min_circle_2 check three support points> }
+	break;
+
+      default:
+        return( CGAL__optimisation_is_valid_fail( verr,
+		    "illegal number of support points, not between 0 and 3."));
+    };
+    verr << "passed." << endl;
+@end
+
+The case of no support point happens if and only if the defining
+point set $P$ is empty.
+
+@macro <Min_circle_2 check no support point> = @begin
+    if ( ! is_empty())
+	return( CGAL__optimisation_is_valid_fail( verr,
+		    "P is nonempty, but there are no support points."));
+@end
+
+If the smallest enclosing circle has one support point $p$, it must
+be equal to that point, i.e.\ its center must be $p$ and its radius
+$0$.
+
+@macro <Min_circle_2 check one support point> = @begin
+    if ( ( circle().center() != support_point( 0)    ) ||
+	 ( ! CGAL_is_zero( circle().squared_radius())) )
+	return( CGAL__optimisation_is_valid_fail( verr,
+		    "circle differs from the circle \
+		     spanned by its single support point."));
+@end
+
+In case of two support points $p,q$, these points must form a diameter
+of the circle. The support set $\{p,q\}$ is minimal if and only if
+$p,q$ are distinct.
+
+The diameter property is checked as follows. If $p$ and $q$ both lie
+on the circle's boundary and if $p$, $q$ (knowing they are distinct)
+and the circle's center are collinear, then $p$ and $q$ form a
+diameter of the circle.
+
+@macro <Min_circle_2 check two support points> = @begin
+    Point const& p( support_point( 0)),
+		 q( support_point( 1));
+
+    // p equals q?
+    if ( p == q)
+	return( CGAL__optimisation_is_valid_fail( verr,
+		    "the two support points are equal."));
+
+    // segment(p,q) is not diameter?
+    if ( ( ! circle().has_on_boundary( p)                               ) ||
+	 ( ! circle().has_on_boundary( q)                               ) ||
+	 ( ico.orientation( p, q, circle().center()) != CGAL_COLLINEAR) )
+	return( CGAL__optimisation_is_valid_fail( verr,
+		  "circle does not have its two support points as diameter."));
+@end
+
+If the number of support points is three (and they are distinct and
+not collinear), the circle through them is unique, and must therefore
+equal \ccc{min_circle}. It is the smallest one defined by the three
+points if and only if the center of the circle lies inside or on the
+boundary of the triangle defined by the three points. The support set
+is minimal only if the center lies properly inside the triangle.
+
+Both triangle properties are checked by comparing the orientatons of
+three point triples, each containing two of the support points and the
+center $z$ of \ccc{min_circle}, resp. If one of these orientations
+equals \ccc{CGAL_COLLINEAR}, $z$ lies on the boundary of the triangle.
+Otherwise, if two triples have opposite orientations, $z$ is not
+contained in the triangle.
+
+@macro <Min_circle_2 check three support points> = @begin
+    Point const& p( support_point( 0)),
+		 q( support_point( 1)),
+		 r( support_point( 2));
+
+    // p, q, r not pairwise distinct?
+    if ( ( p == q) || ( q == r) || ( r == p))
+	return( CGAL__optimisation_is_valid_fail( verr,
+		    "at least two of the three support points are equal."));
+
+    // p, q, r collinear?
+    if ( ico.orientation( p, q, r) == CGAL_COLLINEAR)
+	return( CGAL__optimisation_is_valid_fail( verr,
+		    "the three support points are collinear."));
+
+    // circle() not equal the unique circle through p,q,r (except orientation)?
+    Circle c( p, q, r);
+    Point const& z( circle().center());
+    if ( ( z                         != c.center()        ) ||
+         ( circle().squared_radius() != c.squared_radius()) )
+	return( CGAL__optimisation_is_valid_fail( verr,
+		    "circle is not the unique circle \
+		     through its three support points."));
+
+    // circle().center() on boundary of triangle(p,q,r)?
+    CGAL_Orientation o_pqz = ico.orientation( p, q, z);
+    CGAL_Orientation o_qrz = ico.orientation( q, r, z);
+    CGAL_Orientation o_rpz = ico.orientation( r, p, z);
+    if ( ( o_pqz == CGAL_COLLINEAR) ||
+	 ( o_qrz == CGAL_COLLINEAR) ||
+	 ( o_rpz == CGAL_COLLINEAR) )
+	return( CGAL__optimisation_is_valid_fail( verr,
+		    "one of the three support points is redundant."));
+
+    // circle().center() not inside triangle(p,q,r)?
+    if ( ( o_pqz != o_qrz) || ( o_qrz != o_rpz) || ( o_rpz != o_pqz))
+	return( CGAL__optimisation_is_valid_fail( verr,
+		    "circle's center is not in the \
+		     convex hull of its three support points."));
+@end
 
 @! ----------------------------------------------------------------------------
-@subsection{ Private Member Function \texttt{compute\_circle}}
-@! ----------------------------------------------------------------------------
+\subsection{Private Member Function {\ccFont compute\_circle}}
 
-This is the method for computing $mc(\emptyset,B)$ the set $B$ given
-by the first @prg{n_support_points} indices in the array
-@prg{i_support_points}. It is realized by a simple case analysis,
+This is the method for computing the basic case $\mc(\emptyset,B)$,
+the set $B$ given by the first \ccc{n_support_points} in the array
+\ccc{support_points}. It is realized by a simple case analysis,
 noting that $|B| \leq 3$.
 
-@macro <private member functions> += @begin
-    // private member functions
-    // ------------------------
-    template < class R >
+@macro <Min_circle_2 private member function `compute_circle'> = @begin
+    // compute_circle
+    template < class I >
     void
-    CGAL_Min_circle_2<R>::
+    CGAL_Min_circle_2<I>::
     compute_circle( )
     {
 	switch ( n_support_points) {
 	  case 3:
-	    min_circle = CGAL_Circle_2<R>( support_points[0],
-					   support_points[1],
-					   support_points[2]);
+	    min_circle = Circle( support_points[ 0],
+				 support_points[ 1],
+				 support_points[ 2]);
             break;
-	  case 2: {
-	    const CGAL_Point_2<R>& p0( support_points[ 0]);
-	    const CGAL_Point_2<R>& p1( support_points[ 1]);
-	    min_circle = CGAL_Circle_2<R>( p0 + (p1-p0)/R::RT(2), p0); }
+	  case 2:
+	    min_circle = Circle( support_points[ 0], support_points[ 1]);
 	    break;
 	  case 1:
-	    min_circle = CGAL_Circle_2<R>( support_points[ 0], R::FT( 0));
+	    min_circle = Circle( support_points[ 0]);
 	    break;
 	  case 0:
-	    min_circle = CGAL_Circle_2<R>( CGAL_Point_2<R>( ), R::FT( 0));
+	    min_circle = Circle( );
 	    break;
 	  default:
-	    CGAL_Min_circle_2_assertion( ( n_support_points >= 0) &&
+	    CGAL_optimisation_assertion( ( n_support_points >= 0) &&
 					 ( n_support_points <= 3) ); }
     }
 @end
 
-
 @! ----------------------------------------------------------------------------
-@subsection{ Private Member Function \texttt{mc}}
-@! ----------------------------------------------------------------------------
+\subsection{Private Member Function {\ccFont mc}}
 
-This function computes the general circle $\mc(P,B)$, where $P$
-contains the first @prg{n} points stored in the array @prg{points} and
-$B$ is given by the first @prg{n_support_points} indices in the array
-@prg{i_support_points}. The function is directly modelled after the
-pseudocode above.
+This function computes the general circle $mc(P,B)$, where $P$
+contains the points in the range
+$[$\ccc{points.begin()}$,$\ccc{last}$)$ and $B$ is given by the first
+\ccc{n_sp} support points in the array \ccc{support_points}. The
+function is directly modelled after the pseudocode above.
 
-@macro <private member functions> += @begin
-
-    template < class R >
+@macro <Min_circle_2 private member function `mc'> = @begin
+    template < class I >
     void
-    CGAL_Min_circle_2<R>::
-    mc( int n, int n_sp)
+    CGAL_Min_circle_2<I>::
+    mc( Point_iterator const& last, int n_sp)
     {
 	// compute circle through support points
 	n_support_points = n_sp;
@@ -658,324 +900,227 @@ pseudocode above.
 	if ( n_sp == 3) return;
 
 	// test first n points
-	int index = i_first_point, succ;
-	for ( int i = 0; i < n; ++i) {
-	    _Point& p = points[ index];
-	    succ = p.succ;
+	list<Point>::iterator  point_iter( points.begin());
+	for ( ; last != point_iter; ) {
+	    Point const& p( *point_iter);
 
 	    // p not in current circle?
-	    if ( has_on_unbounded_side( p.point)) {
+	    if ( has_on_unbounded_side( p)) {
 
 		// recursive call with p as additional support point
-		support_points[ n_sp] = p.point;
-		mc( i, n_sp+1);
+		support_points[ n_sp] = p;
+		mc( point_iter, n_sp+1);
 
 		// move current point to front
-		if ( index != i_first_point) {               // p not first?
-		    points[ p.pred].succ = succ;
-		    if ( succ != -1)                         // p not last?
-			points[ succ].pred = p.pred;
-		    points[ i_first_point].pred = index;
-		    p.pred = -1;
-		    p.succ = i_first_point;
-		    i_first_point = index; } }
-
-	    // next point
-	    index = succ; }
+		if ( point_iter != points.begin()) {		// p not first?
+		    points.push_front( p);
+		    points.erase( point_iter++); }
+		else
+		    ++point_iter; }
+	    else
+		++point_iter; }
     }
 @end
 
+@! ============================================================================
+@! Test
+@! ============================================================================
 
-@! ----------------------------------------------------------------------------
-@subsection{Checking}
-@! ----------------------------------------------------------------------------
+\clearpage
+\section{Test}
 
-A @prg{CGAL_Min_circle_2} object can be checked for consistency. This
-means, it is checked whether (a) the circle contains all points of its
-defining set $P$, (b) the circle is the smallest circle spanned by its
-support set, (c) the support set is minimal, i.e. no support point is
-redundant. Ideally, the checking should be able to cope with a
-malicious implementor whose intention is not to provide correct code
-but to make the checker believe a wrong result.  However, since the
-malicious implementor in this case also provides the checker, this
-philosophy is not appropriate here. Instead, the checker is meant as a
-\emph{simple} device to detect problems the implementor overlooked
-although he/she tried the best to write correct code. Routines which
-are seen to be correct by a simple code inspection are not checked
-(for example, one can trust the in-circle test, because it is directly
-mapped to the corresponding test of the kernel class @prg{Circle_2},
-which me must assume to be correct here). This also applies to the
-check routine itself, which we keep simple in order to allow its
-correctness to be checked by just inspecting the code.
+We test \ccc{CGAL_Min_circle_2} with the default interface class for
+optimisation algorithms, using exact arithmetic, i.e.\ homogeneous
+representation and number type \ccc{integer}.
 
-The checking may be run in verbose mode where error messages are
-written to standard error stream, using the following auxiliary
-function.
+@macro <Min_circle_2 test (includes and typedefs)> = @begin
+    #include <CGAL/Integer.h>
+    #include <CGAL/Homogeneous.h>
+    #include <CGAL/Optimisation_default_interface_2.h>
+    #include <CGAL/Min_circle_2.h>
+    #include <CGAL/Random.h>
+    #include <CGAL/IO/ostream_2.h>
+    #include <algo.h>
+    #include <assert.h>
+    #include <fstream.h>
 
-@macro <check operation> += @begin
-    // check operation
-    // ---------------
-    template < class R >
-    void CGAL_Min_circle_2<R>::
-    check_error_msg (char* error_msg) const
+    typedef  integer				       NT;
+    typedef  CGAL_Homogeneous<NT>		       R;
+    typedef  CGAL_Optimisation_default_interface_2<R>  I;
+    typedef  CGAL_Min_circle_2<I>		       Min_circle;
+    typedef  Min_circle::Point			       Point;
+    typedef  Min_circle::Circle			       Circle;
+@end
+
+We call each function of class \ccc{CGAL_Min_circle_2<I>} at least once
+to ensure code coverage. The command line option \ccc{-verbose}
+enables verbose output.
+
+@macro <Min_circle_2 test (verbose option)> = @begin
+    bool verbose = false;
+    if ( ( argc > 1) && ( strcmp( argv[ 1], "-verbose") == 0)) {
+        verbose = true;
+	--argc;
+	++argv; }
+@end
+
+@macro <Min_circle_2 test (code coverage)> = @begin
+    // generate 10 points at random
+    CGAL_Random	 random_x, random_y;
+    Point	 random_points[ 10];
+    int		 i;
+    for ( i = 0; i < 10; ++i)
+	random_points[ i] = Point( random_x( 100), random_y( 100));
+    if ( verbose) {
+	cerr << "10 random points from [0,100)^2:" << endl;
+	for ( i = 0; i < 10; ++i)
+	    cerr << i << ": " << random_points[ i] << endl; }
+
+    // default constructor
     {
-	cerr << "CGAL_Min_circle_2 check error: " << error_msg << endl;
-	cerr.flush();
+	Min_circle mc;
+	assert( mc.is_empty());
+	assert( mc.is_valid( verbose));
     }
-@end  
 
-Here is the actual check function, returning @prg{true} if and only if
-neither the containment check (a) nor the checks (b) and (c) -- which
-we perform for each number of support points separately -- return
-@prg{false} before.
-
-@macro <check operation> += @begin 
-
-    template < class R >
-    bool
-    CGAL_Min_circle_2<R>::
-    check( bool verbose) const
+    // one point constructor
     {
-	// containment check
-	@<containment check>
-
-	// support set check
-	@<support set check>
-
-	return (true);
+	Min_circle mc( random_points[ 0]);
+	assert( mc.is_degenerate());
+	assert( mc.is_valid( verbose));
     }
-@end   
 
-The containment check (a) is easy to perform, without reference to the
-support set.
+    // two points constructor
+    assert( Min_circle( random_points[ 1],
+			random_points[ 2]).is_valid( verbose));
 
-@macro <containment check> = @begin
-    for ( int i = 0; i < number_of_points(); ++i) 
-        if ( has_on_unbounded_side( point( i))) {
-            if ( verbose)
-                check_error_msg( "Min_circle_2 does not enclose all points");
-            return (false); }
+    // three points constructor
+    assert( Min_circle( random_points[ 3],
+			random_points[ 4],
+			random_points[ 5]).is_valid( verbose));
+
+    // Point* constructor (without and with randomization)
+    assert( Min_circle( random_points, random_points+9).is_valid( verbose));
+    Min_circle mc( random_points, random_points+9, true);
+    assert( mc.is_valid( verbose));
+
+    // list<Point>::const_iterator constructor
+    assert( Min_circle( mc.points_begin(), mc.points_end(), true).circle()
+	                                                    == mc.circle());
+
+    // #points
+    assert( mc.number_of_points() == 9);
+
+    // points access already called above
+
+    // support points access
+    Min_circle::Support_point_iterator iter( mc.support_points_begin());
+    for ( i = 0; i < mc.number_of_support_points(); ++i, ++iter)
+	assert( mc.support_point( i) == *iter);
+    assert( iter == mc.support_points_end());
+
+    // circle access		   
+    Circle circle( mc.circle());
+
+    // in-circle predicates
+    for ( i = 0; i < 9; ++i) {
+	Point const& p( random_points[ i]);
+	assert( ( mc.bounded_side( p) != CGAL_ON_UNBOUNDED_SIDE       ) &&
+		( mc.has_on_bounded_side( p) || mc.has_on_boundary( p)) &&
+		( ! mc.has_on_unbounded_side( p)                      ) );
+	assert(
+	    (mc.bounded_side(p)          == circle.bounded_side(p)       ) &&
+	    (mc.has_on_bounded_side(p)   == circle.has_on_bounded_side(p)) &&
+	    (mc.has_on_boundary(p)       == circle.has_on_boundary(p)    ) &&
+	    (mc.has_on_unbounded_side(p) == circle.has_on_unbounded_side(p)));}
+
+    // is_... predicates already called above
+
+    // modifiers
+    mc.insert( random_points[ 9]);
+    assert( mc.is_valid( verbose));
+
+    // validity check already called several times
 @end
 
-Checks (b) and (c) are performed by distingushing between the number
-of support points which may range between 0 and 3.
+In addition, some data files can be given as command line
+arguments. A data file contains pairs of \ccc{int}, namely the x- and
+y-coordinates of a set of points. The first number in the file is the
+number of points. A short description of the test set is given at the
+end of each file.
 
-@macro <support set check> = @begin
-    switch( n_support_points) {
+@macro <Min_circle_2 test (external test sets)> = @begin
+    while ( argc > 1) {
 
-      case 0: {
-	@<check 0 support points> }
-	break;
+	// read points from file
+	if ( verbose)
+	    cerr << endl << "input file: `" << argv[ 1] << "'" << flush;
 
-      case 1: {
-	@<check 1 support point> }
-	break;
+	list<Point>  points;
+	int          n, x, y;
+	ifstream     in( argv[ 1]);
+	assert( in >> n);
+	for ( i = 0; i < n; ++i) {
+	    assert( in >> x >> y);
+	    points.push_back( Point( x, y)); }
 
-      case 2: {
-	@<check 2 support points> }
-	break;
+	// compute and check min_circle
+	assert( Min_circle( points.begin(), points.end()).is_valid( verbose));
 
-      case 3: {
-	@<check 3 support points> }
-	break;
-
-      default:
-	if (verbose)
-	    check_error_msg( "Min_circle_2 has illegal number of \
-			      support points, not between 0 and 3");
-	return (false); }
-@end
-
-The case of 0 support points happens if and only if the defining point
-set $P$ is empty.
-
-@macro <check 0 support points> = @begin
-    if ( ! is_empty()) {
-	if (verbose)
-	    check_error_msg( "Min_circle is nonempty \
-			      but has no support points");
-	return (false); }
-@end
-
-If the circle has one support point $p$, it must be equal to that
-point, i.e. its center must be $p$ and its radius $0$.
-
-@macro <check 1 support point> = @begin
-    if ( ( circle().center()         != support_point(0)) ||
-	 ( circle().squared_radius() != R::FT(0))         ) {
-	if (verbose)
-	    check_error_msg( "Min_circle differs from the circle spanned \
-                              by its single support point");  
-	return (false); }
-@end
-
-In case of two support points $p,q$, these points must form a diameter
-of the circle. The support set $\{p,q\}$ is minimal if and only if
-$p,q$ are distinct.
-
-The diameter property is checked by comparing the midpoint of the
-segment $\overline{pq}$ with the circle's center and the squared
-distance of $p$ to the midpoint with the circle's squared radius.
-
-@macro <check 2 support points> = @begin
-    CGAL_Point_2<R> p( support_point(0)),
-		    q( support_point(1));
-    if ( p == q) {
-	if (verbose)
-	    check_error_msg( "Min_circle has two support points \
-			      which are equal");
-	return (false); }
-    CGAL_Point_2<R> c( p + (q-p)/R::RT( 2));       // should be circle's center
-    R::FT           sqr_r( (p-c)*(p-c));   // should be circle's squared radius
-    if ( ( c != circle().center()) || ( sqr_r != circle().squared_radius())) {
-	if (verbose)
-            check_error_msg( "Min_circle does not have its two support \
-			      points as a diameter");
-	return (false); }
-@end
-
-If the number of support points is three (and they are distinct and
-not collinear), the circle through them is unique, and must therefore
-equal the @prg{min_circle}. It is the smallest one defined by the
-three points if and only if the center of the circle lies inside or on
-the boundary of the triangle defined by the three points. The support
-set is minimal only if the center lies properly inside the triangle.
-
-@macro <check 3 support points> = @begin
-    CGAL_Point_2<R> p( support_point(0)),
-		    q( support_point(1)),
-		    r( support_point(2));
-    if ( ( p == q) || ( q == r) || ( r == p)) {
-	if (verbose)
-	    check_error_msg( "Min_circle has three support points, \
-			      two of which are equal");
-	return (false); }
-    CGAL_Circle_2<R> circ( p, q, r);
-    if ( circ.orientation() == CGAL_COLLINEAR) {
-	if (verbose)
-	    check_error_msg( "Min_circle has three support points, \
-			      which are collinear");
-	return (false); }
-    // circle() should equal circ up to its orientation
-    if ( ( circle().center()         != circ.center())         ||
-	 ( circle().squared_radius() != circ.squared_radius()) ) {
-	if (verbose)
-	    check_error_msg( "Min_circle is not the unique circle \
-			      through its three support points");
-	return (false); }
-    CGAL_Triangle_2<R> t( p, q, r);
-    if ( t.has_on_unbounded_side( circle().center())) {
-	if (verbose)
-	    check_error_msg( "Min_circle has three support points \
-			      whose convex hull does not contain \
-			      the circle's center");
-	return (false); }
-    if ( t.has_on_boundary( circle().center())) {
-	if (verbose)
-	    check_error_msg( "Min_circle has three support points, \
-			      one of which is redundant");
-	return (false); }
+	// next file
+	--argc;
+	++argv; }
 @end
 
 
 @! ==========================================================================
-@section{ File Organisation}
+@! Files
 @! ==========================================================================
+
+\clearpage
+\section{Files}
 
 @file <Min_circle_2.h> = @begin
-    @<file header>("2D Smallest Enclosing Circle",
-		   "include/CGAL/Min_circle_2.h","Min_circle_2",
-		   "Bernd Gärtner, Sven Schönherr (sven@@inf.fu-berlin.de)")
+    @<Min_circle_2 header>("include/CGAL/Min_circle_2.h")
 
     #ifndef CGAL_MIN_CIRCLE_2_H
     #define CGAL_MIN_CIRCLE_2_H
 
     // Class declaration
     // =================
-    template < class R >
-    class CGAL_Min_circle_2;
-
-    class CGAL_Bbox_2;
+    @<Min_circle_2 declaration>
 
     // Class interface
     // ===============
     // includes
-    #ifndef CGAL_POINT_2_H
-    #  include <CGAL/Point_2.h>
+    #ifndef CGAL_RANDOM_H
+    #  include <CGAL/Random.h>
     #endif
-    #ifndef CGAL_CIRCLE_2_H
-    #  include <CGAL/Circle_2.h>
-    #endif
-    #include <vector.h>
+    #include <list.h>
 
     @<Min_circle_2 interface>
 
     @<dividing line>
 
-    // Class definition
-    // ================
+    // Class implementation (inline functions)
+    // =======================================
     // includes
-    // --------
-    #ifndef CGAL_UTILS_H
-    #include <CGAL/utils.h>
+    #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
+    #  include <CGAL/optimisation_assertions.h>
     #endif
-    #ifndef CGAL_TRIANGLE_2_H
-    #include <CGAL/Triangle_2.h>
-    #endif
-    #include <algo.h>
 
-    // check macros
-    // ------------
-    #ifdef CGAL_CHECK_ASSERTIONS
-    #define CGAL_Min_circle_2_assertion(EX) \
-     ((EX) ? ((void)0) : cgal_assertion_fail( #EX , __FILE__, __LINE__, NULL))
-    #define CGAL_Min_circle_2_assertion_msg(EX,MSG) \
-     ((EX) ? ((void)0) : cgal_assertion_fail( #EX , __FILE__, __LINE__, MSG))
-    #else
-    #define CGAL_Min_circle_2_assertion(EX) ((void)0)
-    #define CGAL_Min_circle_2_assertion_msg(EX,MSG) ((void)0)
-    #endif // CGAL_CHECK_ASSERTIONS
+    // Access functions and predicates
+    // -------------------------------
+    @<Min_circle_2 access functions `number_of_...'>
 
-    #ifdef CGAL_CHECK_PRECONDITIONS
-    #define CGAL_Min_circle_2_precondition(EX) \
-     ((EX) ? ((void)0) : cgal_precondition_fail( #EX , __FILE__, __LINE__, NULL))
-    #define CGAL_Min_circle_2_precondition_msg(EX,MSG) \
-     ((EX) ? ((void)0) : cgal_precondition_fail( #EX , __FILE__, __LINE__, MSG))
-    #else
-    #define CGAL_Min_circle_2_precondition(EX) ((void)0)
-    #define CGAL_Min_circle_2_precondition_msg(EX,MSG) ((void)0)
-    #endif // CGAL_CHECK_PRECONDITIONS
+    @<Min_circle_2 predicates `is_...'>
 
-    #ifdef CGAL_CHECK_POSTCONDITIONS
-    #define CGAL_Min_circle_2_postcondition(EX) \
-     ((EX) ? ((void)0) : cgal_postcondition_fail( #EX , __FILE__, __LINE__, NULL))
-    #define CGAL_Min_circle_2_postcondition_msg(EX,MSG) \
-     ((EX) ? ((void)0) : cgal_postcondition_fail( #EX , __FILE__, __LINE__, MSG))
-    #else
-    #define CGAL_Min_circle_2_postcondition(EX) ((void)0)
-    #define CGAL_Min_circle_2_postcondition_msg(EX,MSG) ((void)0)
-    #endif // CGAL_CHECK_POSTCONDITIONS
+    @<Min_circle_2 access functions>
 
-    // workaround for new C++-style casts
-    // ----------------------------------
-    #if (__SUNPRO_CC)
-    #define      static_cast(type,expr) (type)( expr)
-    #define       const_cast(type,expr) (type)( expr)
-    #define reinterpret_cast(type,expr) (type)( expr)
-    #define     dynamic_cast(type,expr) (type)( expr)
-    #else
-    #define      static_cast(type,expr)      static_cast< type>( expr)
-    #define       const_cast(type,expr)       const_cast< type>( expr)
-    #define reinterpret_cast(type,expr) reinterpret_cast< type>( expr)
-    #define     dynamic_cast(type,expr)     dynamic_cast< type>( expr)
-    #endif // (__SUNPRO_CC)
+    @<Min_circle_2 predicates>
 
-    @<Min_circle_2 implementation>
-
-    // specializations
-    // ---------------
-    #if ( defined( CGAL_INTEGER_H) && defined( CGAL_HOMOGENEOUS_H))
-    #include <CGAL/Min_circle_2__Homogeneous_integer.h>
+    #ifdef CGAL_INCLUDE_TEMPLATE_CODE
+    #  include <CGAL/Min_circle_2.C>
     #endif
 
     #endif // CGAL_MIN_CIRLCE_2_H
@@ -983,14 +1128,76 @@ set is minimal only if the center lies properly inside the triangle.
     @<end of file line>
 @end
 
+@file <Min_circle_2.C> = @begin
+    @<Min_circle_2 header>("src/Min_circle_2.C")
+
+    // Class implementation (continued)
+    // ================================
+    // Constructors
+    // ------------
+    @<Min_circle_2 constructors>
+
+    // Modifiers
+    // ---------
+    @<Min_circle_2 modifiers>
+
+    // Validity check
+    // --------------
+    @<Min_circle_2 validity check>
+
+    // Privat member functions
+    // -----------------------
+    @<Min_circle_2 private member function `compute_circle'>
+
+    @<Min_circle_2 private member function `mc'>
+
+    @<end of file line>
+@end
+
+@file <test_Min_circle_2.C> = @begin
+    @<Min_circle_2 header>("test/test_Min_circle_2.C")
+
+    #define typename
+
+    #define CGAL_kernel_assertion CGAL_assertion
+    #define CGAL_kernel_precondition CGAL_precondition
+    #define CGAL_kernel_postcondition CGAL_postcondition
+
+    @<Min_circle_2 test (includes and typedefs)>
+
+    int
+    main( int argc, char* argv[])
+    {
+        // command line options
+	// --------------------
+	// option `-verbose'
+	@<Min_circle_2 test (verbose option)>
+
+	// code coverage
+	// -------------
+	@<Min_circle_2 test (code coverage)>
+
+	// external test sets
+	// -------------------
+	@<Min_circle_2 test (external test sets)>
+    }
+
+    @<end of file line>
+@end
+
 @i file_header.awlib
  
+@macro <Min_circle_2 header>(1) many = @begin
+    @<file header>("2D Smallest Enclosing Circle",@1,"Min_circle_2",
+		   "Bernd Gärtner, Sven Schönherr (sven@@inf.fu-berlin.de)",
+		   "$Revision$","$Date$")
+@end
 
-\begin{thebibliography}{Wel} 
-\bibitem{Wel}
-E.~Welzl.
-\newblock Smallest enclosing disks (balls and ellipsoids).
-\newblock In H.~Maurer, editor, {\em New Results and New Trends in Computer
-  Science}, volume 555 of {\em Lecture Notes in Computer Science}, pages
-  359--370. Springer-Verlag, 1991.
-\end{thebibliography}
+@! ============================================================================
+@! Bibliography
+@! ============================================================================
+
+\bibliographystyle{plain}
+\bibliography{geom,cgal}
+
+@! ===== EOF ==================================================================

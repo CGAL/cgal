@@ -50,30 +50,30 @@ in the Euclidean plane.
 \cgal\ provides a ready-made implementation for the interface class as
 described in Section~\ref{sec:opt_I_Impl}. Customizing own interface
 classes for optimisation algorithms can be done according to the
-requirements for interface classes listed in
-Section~\ref{sec:opt_I_Req}.
+requirements for interface classes listed in Section~\ref{sec:opt_I_Req}.
 
 % -----------------------------------------------------------------------------
 \ccTypes
 
-\ccSetThreeColumns{typedef I::Circle}{Circle;M}{}
-\ccPropagateThreeToTwoColumns
-
 \ccNestedType{I}{Interface type.}
 
-\ccTypedef{typedef I::Point  Point; }{Point  type.}
-%\ccTypedef{typedef I::Circle Circle;}{Circle type.}
+\ccGlueBegin
+\ccTypedef{typedef I::Point    Point; }{Point  type.}
+\ccTypedef{typedef I::Circle   Circle;}{Circle type.}
+\ccGlueEnd
 
 The following types denote iterators that allow to traverse all points
 and support points of the smallest enclosing circle, resp. The
 iterators are non-mutable and their value type is \ccc{Point}. The
 iterator category is given in parentheses.
 
-\ccSetTwoColumns{CGAL_Min_circle_2<I>:: Support_point_const_iterator}{}
+\ccSetTwoColumns{CGAL_Min_circle_2<I>:: Support_point_iterator}{}
 
-\ccNestedType{Point_const_iterator}{(bidirectional).}
+\ccNestedType{Point_iterator}{(bidirectional).}
 
-\ccNestedType{Support_point_const_iterator}{(random access).}
+\ccNestedType{Support_point_iterator}{(random access).}
+
+\ccPropagateThreeToTwoColumns
 
 % -----------------------------------------------------------------------------
 \ccCreation
@@ -84,11 +84,7 @@ set $P$ and by specialized construction methods expecting no, one, two
 or three points as arguments. The latter methods can be useful for
 reconstructing $mc(P)$ from a given support set $S$ of $P$.
 
-\ccSetThreeColumns{CGAL_Bounded_side}{}{
-  returns \ccc{CGAL_ON_BOUNDED_SIDE}, \ccc{CGAL_ON_BOUNDARY},}
-\ccPropagateThreeToTwoColumns
-
-\ccConstructor{ CGAL_Min_circle_2( );}{
+\ccConstructor{ CGAL_Min_circle_2( I const& i = I());}{
         introduces a variable \ccVar\ of type \ccClassTemplateName.
         It is initialized to
         $mc($\ccTexHtml{$\emptyset$}{&Oslash;}$)$, the empty set.
@@ -98,20 +94,22 @@ reconstructing $mc(P)$ from a given support set $S$ of $P$.
 \ccConstructor{ CGAL_Min_circle_2( const CGAL_Min_circle_2<I>&);}{
         copy constructor.}
 
-\ccConstructor{ CGAL_Min_circle_2( Point const& p);}{
+\ccConstructor{ CGAL_Min_circle_2( Point const& p, I const& i = I());}{
         introduces a variable \ccVar\ of type \ccClassTemplateName.
         It is initialized to $mc(\{p\})$, the set $\{p\}$.
         \ccPostcond \ccc{\ccVar.is_degenerate()} = \ccc{true}.}
 
 \ccConstructor{ CGAL_Min_circle_2( Point const& p1,
-                                   Point const& p2);}{
+                                   Point const& p2,
+                                   I const& i = I());}{
         introduces a variable \ccVar\ of type \ccClassTemplateName.
         It is initialized to $mc(\{p1,p2\})$, the circle with diameter
         equal to the segment connecting $p1$ and $p2$.}
 
 \ccConstructor{ CGAL_Min_circle_2( Point const& p1,
                                    Point const& p2,
-                                   Point const& p3);}{
+                                   Point const& p3,
+                                   I const& i = I());}{
         introduces a variable \ccVar\ of type \ccClassTemplateName.
         It is initialized to $mc(\{p1,p2,p3\})$.}
 
@@ -119,8 +117,9 @@ reconstructing $mc(P)$ from a given support set $S$ of $P$.
 \ccConstructor{ template < class InputIterator >
                 CGAL_Min_circle_2( InputIterator first,
                                    InputIterator last,
-                                   bool randomize = false,
-                                   CGAL_Random& random = CGAL_Random());}{
+                                   bool          randomize = false,
+                                   CGAL_Random&  random    = CGAL_Random(),
+                                   I const&      i         = I()          );}{
         introduces a variable \ccVar\ of type \ccClassTemplateName. It
         is initialized to $mc(P)$ with $P$ being the set of points in
         the range [\ccc{first},\ccc{last}). If \ccc{randomize} is
@@ -141,15 +140,17 @@ for STL sequence containers \ccc{vector<Point>} and \ccc{list<Point>}.
 \ccHidden
 \ccConstructor{ CGAL_Min_circle_2( const Point* first,
                                    const Point* last,
-                                   bool randomize = false,
-                                   CGAL_Random& random = CGAL_Random());}{
+                                   bool         randomize = false,
+                                   CGAL_Random& random    = CGAL_Random(),
+                                   I const&     i         = I()          );}{
         STL-like constructor for random access iterators.}
 
 \ccHidden
 \ccConstructor{ CGAL_Min_circle_2( list<Point>::const_iterator first,
                                    list<Point>::const_iterator last,
-                                   bool randomize = false,
-                                   CGAL_Random& random = CGAL_Random());}{
+                                   bool         randomize = false,
+                                   CGAL_Random& random    = CGAL_Random(),
+                                   I const&     i         = I()          );}{
         STL-like constructor for sequence container list<Point>.}
 
 \ccHidden
@@ -166,16 +167,16 @@ for STL sequence containers \ccc{vector<Point>} and \ccc{list<Point>}.
 \ccMemberFunction{ int number_of_support_points( ) const;}{
         returns the number of support points of \ccVar, i.e.\ $|S|$.}
 
-\ccMemberFunction{ Point_const_iterator  points_begin() const;}{
+\ccMemberFunction{ Point_iterator  points_begin() const;}{
         returns an iterator referring to the first point of \ccVar.}
 
-\ccMemberFunction{ Point_const_iterator  points_end() const;}{
+\ccMemberFunction{ Point_iterator  points_end() const;}{
         returns the corresponding past-the-end iterator.}
 
-\ccMemberFunction{ Support_point_const_iterator support_points_begin() const;}{
+\ccMemberFunction{ Support_point_iterator  support_points_begin() const;}{
         returns an iterator referring to the first support point of \ccVar.}
 
-\ccMemberFunction{ Support_point_const_iterator support_points_end() const;}{
+\ccMemberFunction{ Support_point_iterator  support_points_end() const;}{
         returns the corresponding past-the-end iterator.}
 
 \ccMemberFunction{ Point const& support_point( int i) const;}{
@@ -184,32 +185,23 @@ for STL sequence containers \ccc{vector<Point>} and \ccc{list<Point>}.
         with the same \ccc{i} returns the same point.
         \ccPrecond $0 \leq i <$ \ccc{\ccVar.number_of_support_points()}.}
 
-%\ccMemberFunction{ Circle const& circle( ) const;}{
-%        returns an oriented circle with same center $c$ and same
-%        squared radius $r$ as \ccVar\ and positive orientation.
-%        \ccPrecond \ccc{\ccVar.is_empty()} = \ccc{false}.}
-
-\ccMemberFunction{ CGAL_Bbox_2 bbox( ) const;}{
-        returns a bounding box containing \ccVar.
+\ccMemberFunction{ Circle const& circle( ) const;}{
+        returns an oriented circle with same center $c$ and same
+        squared radius $r$ as \ccVar\ and positive orientation.
         \ccPrecond \ccc{\ccVar.is_empty()} = \ccc{false}.}
 
 % -----------------------------------------------------------------------------
-\ccHeading{Predicates}
-
-%The following predicates imitate the corresponding ones of the class
-%\ccc{Circle}, with the exception of \ccc{is_empty()}
-%which is not present in \ccc{Circle}, because objects of
-%this class cannot be empty.
+\ccPredicates
 
 By definition, an empty \ccClassTemplateName\ has no boundary and no
 bounded side, i.e.\ its unbounded side equals the whole plane $\E_2$.
 
 \ccMemberFunction{ CGAL_Bounded_side
                    bounded_side( Point const& p) const;}{
-        returns \ccc{CGAL_ON_BOUNDED_SIDE},
-        \ccc{CGAL_ON_BOUNDARY}, or
-        \ccc{CGAL_ON_UNBOUNDED_SIDE} iff \ccc{p} lies inside,
-        on the boundary, or outside of \ccVar, resp.}
+        returns \ccc{CGAL_ON_BOUNDED_SIDE},\ccTexHtml{$\:$}{ }%
+        \ccc{CGAL_ON_BOUNDARY}, or \ccc{CGAL_ON_UNBOUNDED_SIDE}
+        iff \ccc{p} lies inside, on the boundary, or outside of
+        \ccVar, resp.}
 
 \ccMemberFunction{ bool has_on_bounded_side( Point const& p) const;}{
         returns \ccc{true}, iff \ccc{p} lies inside \ccVar.}
@@ -232,7 +224,7 @@ bounded side, i.e.\ its unbounded side equals the whole plane $\E_2$.
         the number of support points is less than 2.}
 
 % -----------------------------------------------------------------------------
-\ccHeading{Modifiers}
+\ccModifiers
 
 New points can be added to an existing $\ccVar$, allowing to build
 $mc(P)$ incrementally, e.g.\ if $P$ is not known in advance. Compared
@@ -240,32 +232,43 @@ to the direct creation of $mc(P)$, this is not much slower, because
 the construction method is incremental itself.
 
 \ccMemberFunction{ void insert( Point const& p);}{
-        inserts \ccc{p} in \ccVar\ and recomputes the smallest
+        inserts \ccc{p} into \ccVar\ and recomputes the smallest
         enclosing circle.}
 
 % -----------------------------------------------------------------------------
 \ccHeading{Validity Check}
 
+An object \ccVar\ is valid, iff
+\begin{itemize}
+  \item[a)] \ccVar\ contains all points of its defining set $P$,
+  \item[b)] \ccVar\ is the smallest circle spanned by its support set $S$, and
+  \item[c)] $S$ is minimal, i.e.\ no support point is redundant.
+\end{itemize}
+Using the ready-made implementation for the interface class with exact
+arithmetic as described in Section~\ref{sec:opt_I_Impl} garantees
+validity of \ccVar. The following function is mainly intended for
+debugging user supplied interface classes.
+
+\begin{ccAdvanced}
 \ccMemberFunction{ bool is_valid( bool verbose = false,
                                   int  level   = 0    ) const;}{
-        checks \ccVar\ for validity. It returns \ccc{true}, iff
-        (a) \ccVar\ contains all points of its defining set $P$, (b)
-        \ccVar\ is the smallest circle spanned by its support set $S$,
-        and (c) $S$ is minimal, i.e.\ no support point is redundant.
-        If \ccc{verbose} is \ccc{true}, error messages are written to
-        standard error stream. The second parameter \ccc{level} is not
-        used, we provide it only for consistency with interfaces of
-        other classes.}
+        returns \ccc{true}, iff \ccVar\ is valid. If \ccc{verbose}
+        is \ccc{true}, some messages concerning the performed checks
+        are written to standard error stream. The second parameter
+        \ccc{level} is not used, we provide it only for consistency
+        with interfaces of other classes.}
+\end{ccAdvanced}
 
 % -----------------------------------------------------------------------------
 \ccImplementation
 
 We implement the algorithm of Welzl, with move-to-front
-heuristic~\cite{Welzl}. If randomization is chosen, the creation time
-is almost always linear in the number of points. Access functions and
-predicates take constant time, inserting a point might take up to
+heuristic~\cite{w-sedbe-91a}. If randomization is chosen, the creation
+time is almost always linear in the number of points. Access functions
+and predicates take constant time, inserting a point might take up to
 linear time, but substantially less than computing the new smallest
-enclosing circle from scratch.
+enclosing circle from scratch. The check for validity takes linear
+time.
 
 %We provide a specialization with homogeneous representation and
 %numbertype \ccc{integer} that uses floating-point filter for the sign
@@ -291,7 +294,8 @@ randomization can be useful in certain cases, we give an example.
 
     typedef  CGAL_Homogeneous<integer>  R;
     typedef  CGAL_Point_2<R>            Point;
-    typedef  CGAL_Min_circle_2< CGAL_Optimisation_default_interface<R> > Min_circle;
+    typedef  CGAL_Min_circle_2< CGAL_Optimisation_default_interface<R> >
+                                        Min_circle;
 
     int     n = 1000;
     Point*  P = new Point[ n];
