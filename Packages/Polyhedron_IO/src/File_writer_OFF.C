@@ -11,15 +11,16 @@
 // release       : $CGAL_Revision: $
 // release_date  : $CGAL_Date: $
 //
-// file          : File_writer_OFF.C
-// chapter       : $CGAL_Chapter: Support Library ... $
-// package       : $CGAL_Package: Polyhedron_IO 2.11 (04 Feb 2000) $
-// source        : polyhedron_io.fw
+// file          : src/File_writer_OFF.C
+// package       : Polyhedron_IO 2.11 (04 Feb 2000)
+// chapter       : Support Library
+//
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
 //
-// coordinator   : Herve Bronnimann  <Herve.Bronnimann@sophia.inria.fr>
+// author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
+// maintainer    :
+// coordinator   : INRIA, Sophia Antipolis
 //
 // Writer for polyhedral surfaces in object file format (OFF)
 // ============================================================================
@@ -43,7 +44,7 @@ write_header( std::ostream& o,
               std::size_t   vertices,
               std::size_t   halfedges,
               std::size_t   facets,
-              int           normals) {
+              bool          normals) {
     m_out = &o;
     m_header.set_vertices(  vertices);
     // Don't. This halfdges aren't trusted:

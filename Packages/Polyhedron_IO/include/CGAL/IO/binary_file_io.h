@@ -11,15 +11,16 @@
 // release       : $CGAL_Revision: $
 // release_date  : $CGAL_Date: $
 //
-// file          : binary_file_io.h
-// chapter       : $CGAL_Chapter: Support Library ... $
-// package       : $CGAL_Package: Polyhedron_IO 2.11 (04 Feb 2000) $
-// source        : polyhedron_io.fw
+// file          : include/CGAL/IO/binary_file_io.h
+// package       : Polyhedron_IO 2.11 (04 Feb 2000)
+// chapter       : Support Library
+//
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
 //
-// coordinator   : Herve Bronnimann  <Herve.Bronnimann@sophia.inria.fr>
+// author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
+// maintainer    :
+// coordinator   : INRIA, Sophia Antipolis
 //
 // Binary read and write on streams for Integer32 and float
 // ============================================================================

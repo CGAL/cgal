@@ -11,13 +11,16 @@
 // release       : $CGAL_Revision: $
 // release_date  : $CGAL_Date: $
 //
-// file          : Polyhedron_geomview_ostream.h
-// package       : $CGAL_Package: Polyhedron_IO 2.11 (04 Feb 2000) $
+// file          : include/CGAL/IO/Polyhedron_geomview_ostream.h
+// package       : Polyhedron_IO 2.11 (04 Feb 2000)
+// chapter       : Support Library
+//
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
 //
-// coordinator   : Herve Bronnimann  <Herve.Bronnimann@sophia.inria.fr>
+// author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
+// maintainer    :
+// coordinator   : INRIA, Sophia Antipolis
 //
 // Output stream operator for Polyhedrons into Geomview_stream.
 // ============================================================================

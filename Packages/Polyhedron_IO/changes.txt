@@ -1,5 +1,10 @@
 Polyhedron_IO Package: Release changes:
 ---------------------------------------------------------------------
+3.10 (17 Dec 2001)
+
+     - Fixed some warnings about double to float and int to bool conversions.
+     - Cleanup of file headers.
+     - Replaced derivation from std::iterator with local typedefs.
 
 3.9 (12 Jul 2001)
 

@@ -11,15 +11,16 @@
 // release       : $CGAL_Revision: $
 // release_date  : $CGAL_Date: $
 //
-// file          : File_scanner_OFF.h
-// chapter       : $CGAL_Chapter: Support Library ... $
-// package       : $CGAL_Package: Polyhedron_IO 2.11 (04 Feb 2000) $
-// source        : polyhedron_io.fw
+// file          : include/CGAL/IO/File_scanner_OFF.h
+// package       : Polyhedron_IO 2.11 (04 Feb 2000)
+// chapter       : Support Library
+//
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
 //
-// coordinator   : Herve Bronnimann  <Herve.Bronnimann@sophia.inria.fr>
+// author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
+// maintainer    :
+// coordinator   : INRIA, Sophia Antipolis
 //
 // File scanner for an object in an object file format (OFF) file
 // ============================================================================
@@ -438,29 +439,31 @@ public:
     void skip_to_next_facet( int current_facet);
 };
 
-template < class R> inline
-Point_3<R>&
-file_scan_vertex( File_scanner_OFF& scanner, Point_3<R>& p) {
-    typedef typename R::RT  RT;
+template < class Point> inline
+Point&
+file_scan_vertex( File_scanner_OFF& scanner, Point& p) {
+    typedef typename Point::R R;
+    typedef typename R::RT    RT;
     double x, y, z, w;
     scanner.scan_vertex( x, y, z, w);
     if ( w == 1)
-        p = Point_3<R>( RT(x), RT(y), RT(z));
+        p = Point( RT(x), RT(y), RT(z));
     else
-        p = Point_3<R>( RT(x), RT(y), RT(z), RT(w));
+        p = Point( RT(x), RT(y), RT(z), RT(w));
     return p;
 }
 
-template < class R> inline
-Vector_3<R>&
-file_scan_normal( File_scanner_OFF& scanner, Vector_3<R>& v) {
-    typedef typename R::RT  RT;
+template < class Vector> inline
+Vector&
+file_scan_normal( File_scanner_OFF& scanner, Vector& v) {
+    typedef typename Vector::R R;
+    typedef typename R::RT     RT;
     double x, y, z, w;
     scanner.scan_normal( x, y, z, w);
     if ( w == 1)
-        v = Vector_3<R>( RT(x), RT(y), RT(z));
+        v = Vector( RT(x), RT(y), RT(z));
     else
-        v = Vector_3<R>( RT(x), RT(y), RT(z), RT(w));
+        v = Vector( RT(x), RT(y), RT(z), RT(w));
     return v;
 }
 

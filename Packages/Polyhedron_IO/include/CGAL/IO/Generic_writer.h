@@ -11,15 +11,16 @@
 // release       : $CGAL_Revision: $
 // release_date  : $CGAL_Date: $
 //
-// file          : Generic_writer.h
-// chapter       : $CGAL_Chapter: Support Library ... $
-// package       : $CGAL_Package: Polyhedron_IO 2.11 (04 Feb 2000) $
-// source        : polyhedron_io.fw
+// file          : include/CGAL/IO/Generic_writer.h
+// package       : Polyhedron_IO 2.11 (04 Feb 2000)
+// chapter       : Support Library
+//
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
 //
-// coordinator   : Herve Bronnimann  <Herve.Bronnimann@sophia.inria.fr>
+// author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
+// maintainer    :
+// coordinator   : INRIA, Sophia Antipolis
 //
 // Generic STL compliant interface to write boundary rep file formats.
 // ============================================================================
@@ -47,11 +48,15 @@ public:
 
 template <class Writer>
 class I_Generic_writer_vertex_iterator
-    : public std::iterator< output_iterator_tag,
-                            typedef typename Writer::Point >
 {
     Writer&  m_writer;
 public:
+    typedef std::output_iterator_tag  iterator_category;
+    typedef typename Writer::Point    value_type;
+    typedef std::ptrdiff_t            difference_type;
+    typedef value_type*               pointer;
+    typedef value_type&               reference;
+
     typedef I_Generic_writer_vertex_proxy< Writer>    Proxy;
     typedef I_Generic_writer_vertex_iterator< Writer> Self;
 
@@ -71,10 +76,15 @@ public:
 
 template <class Writer>
 class I_Generic_writer_facet_iterator
-    : public std::iterator< output_iterator_tag, std::size_t>
 {
     Writer& m_writer;
 public:
+    typedef std::output_iterator_tag  iterator_category;
+    typedef std::size_t               value_type;
+    typedef std::ptrdiff_t            difference_type;
+    typedef value_type*               pointer;
+    typedef value_type&               reference;
+
     typedef  I_Generic_writer_facet_proxy<Writer>    Proxy;
     typedef  I_Generic_writer_facet_iterator<Writer> Self;
 

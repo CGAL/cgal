@@ -11,15 +11,16 @@
 // release       : $CGAL_Revision: $
 // release_date  : $CGAL_Date: $
 //
-// file          : File_header_OFF.C
-// chapter       : $CGAL_Chapter: Support Library ... $
-// package       : $CGAL_Package: Polyhedron_IO 2.11 (04 Feb 2000) $
-// source        : polyhedron_io.fw
+// file          : src/File_header_OFF.C
+// package       : Polyhedron_IO 2.11 (04 Feb 2000)
+// chapter       : Support Library
+//
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
 //
-// coordinator   : Herve Bronnimann  <Herve.Bronnimann@sophia.inria.fr>
+// author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
+// maintainer    :
+// coordinator   : INRIA, Sophia Antipolis
 //
 // File header information of an object file format (OFF) file
 // ============================================================================
