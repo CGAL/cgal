@@ -13,7 +13,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = \
+CXXFLAGS = -I../monCGAL/Qt_widget/include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
@@ -35,7 +35,9 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                main$(EXE_EXT)
+                main$(EXE_EXT) \
+                mesh_demo$(EXE_EXT) \
+                viewer$(EXE_EXT) 
 
 main$(EXE_EXT): main$(OBJ_EXT) viewer$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)main viewer$(OBJ_EXT) main$(OBJ_EXT) $(LDFLAGS)
@@ -47,6 +49,7 @@ viewer$(OBJ_EXT): viewer.moc
 
 clean: \
                    main.clean \
+                   mesh_demo.clean \
                    viewer.clean 
 
 #---------------------------------------------------------------------#
