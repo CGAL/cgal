@@ -17,6 +17,7 @@
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 //                 Efi Fogel         <efif@post.tau.ac.il>
+
 #ifndef CGAL_ARR_SEGMENT_CACHED_TRAITS_2_H
 #define CGAL_ARR_SEGMENT_CACHED_TRAITS_2_H
 

@@ -18,6 +18,7 @@
 // Author(s)     : Iddo Hanniel
 //                 Eyal Flato <flato@post.tau.ac.il>
 //                 Efi Fogel  <efif@post.tau.ac.il>
+
 #ifndef CGAL_ARR_LEDA_SEGMENT_EXACT_TRAITS
 #define CGAL_ARR_LEDA_SEGMENT_EXACT_TRAITS
 

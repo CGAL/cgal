@@ -18,6 +18,7 @@
 // Author(s)     : Iddo Hanniel, 
 //                 Eti Ezra <estere@post.tau.ac.il>,
 //                 Shai Hirsch <shaihi@post.tau.ac.il> 
+
 #ifndef CGAL_ARRANGEMENT_2_H
 #define CGAL_ARRANGEMENT_2_H
 

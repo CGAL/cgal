@@ -18,7 +18,6 @@
 // Author(s)     : Eran Leiserowitz <leiserow@post.tau.ac.il>
 //                 Efi Fogel    <efif@post.tau.ac.il>
 
-
 #ifndef CGAL_ARR_SEGMENT_DEBUG_EXACT_TRAITS_H
 #define CGAL_ARR_SEGMENT_DEBUG_EXACT_TRAITS_H
 

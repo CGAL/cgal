@@ -16,6 +16,7 @@
 // $Name$
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
+
 #ifndef CGAL_HYPER_SEGMENT_2_H
 #define CGAL_HYPER_SEGMENT_2_H
 

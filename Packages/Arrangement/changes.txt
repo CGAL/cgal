@@ -1,3 +1,6 @@
+27 May 2004 Radu Ursu
+- Updated headers in include/CGAL
+
 25 March 2004 Radu Ursu
 - made doc work with the current manual tools implementation
 

@@ -16,6 +16,7 @@
 // $Name$
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
+
 #ifndef CGAL_POLYNOM_H
 #define CGAL_POLYNOM_H
 

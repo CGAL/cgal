@@ -17,6 +17,7 @@
 //
 // Author(s)     : Iddo Hanniel <hanniel@math.tau.ac.il>
 //                 Efi Fogel    <efif@post.tau.ac.il>
+
 #ifndef CGAL_ARR_SEGMENT_EXACT_TRAITS_H
 #define CGAL_ARR_SEGMENT_EXACT_TRAITS_H
 
