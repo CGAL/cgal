@@ -138,10 +138,13 @@ public:
 // Point parameter in a base class with full specialization
 // on 'void', but we cannot get rid of the halfedge reference.
 // So, we just waste the space and have it always.
-//   Furthermore, is is likely to have a non-optimal memory
+//   Furthermore, it is likely to have a non-optimal memory
 // price-tag for the base class as well if it is the empty base
 // class for point type 'void', since empty structs probably
 // consume at least a byte, probably a word.
+
+// O.K. And we are stuck with a compiler not accepting void as specialization.
+// Lets use bool for that compiler.
 
 template <class Pt>
 struct I_HalfedgeDS_vertex_base_point {
@@ -152,13 +155,13 @@ struct I_HalfedgeDS_vertex_base_point {
     typedef Pt Point;
 };
 template <>
-struct I_HalfedgeDS_vertex_base_point<void> {
+struct I_HalfedgeDS_vertex_base_point<bool> {
     typedef Tag_false Supports_point;
     struct Point_not_supported {};
     typedef Point_not_supported Point;
 };
 
-template < class Refs, class T = Tag_true, class P = void>
+template < class Refs, class T = Tag_true, class P = bool>
 class HalfedgeDS_vertex_base : public I_HalfedgeDS_vertex_base_point<P> {
 public:
     typedef Refs                                 HalfedgeDS;
