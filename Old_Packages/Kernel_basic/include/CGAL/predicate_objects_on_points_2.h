@@ -32,6 +32,8 @@ class p_Left_of_line_2p
 {
 public:
    typedef bool    result_type;
+   typedef  Arity_tag< 1 >   Arity;
+
 
         p_Left_of_line_2p(const Point& a, const Point& b)
          : p_a(a), p_b(b)
@@ -50,6 +52,7 @@ class p_Right_of_line_2p
 {
 public:
    typedef bool    result_type;
+   typedef  Arity_tag< 1 >   Arity;
 
         p_Right_of_line_2p(const Point& a, const Point& b)
          : p_a(a), p_b(b)
@@ -68,6 +71,7 @@ class p_Left_of_line_2p_safer
 {
 public:
   typedef bool    result_type;
+   typedef  Arity_tag< 1 >   Arity;
 
         p_Left_of_line_2p_safer(const Point& a, const Point& b)
          : p_a(a), p_b(b)
@@ -89,6 +93,7 @@ template <class Point>
 struct p_Less_xy
 {
   typedef bool    result_type;
+  typedef  Arity_tag< 2 >   Arity;
 
   bool operator()( const Point& p1, const Point& p2) const
        { return lexicographically_xy_smaller( p1, p2); }
@@ -98,6 +103,7 @@ template <class Point>
 struct p_Greater_xy
 {
   typedef bool    result_type;
+  typedef  Arity_tag< 2 >   Arity;
 
   bool operator()( const Point& p1, const Point& p2) const
        { return lexicographically_xy_larger( p1, p2); }
@@ -107,6 +113,7 @@ template <class Point>
 struct p_Less_yx
 {
   typedef bool    result_type;
+  typedef  Arity_tag< 2 >   Arity;
 
   bool operator()( const Point& p1, const Point& p2) const
        { return lexicographically_yx_smaller( p1, p2); }
@@ -116,6 +123,7 @@ template <class Point>
 struct p_Greater_yx
 {
   typedef bool    result_type;
+  typedef  Arity_tag< 2 >   Arity;
 
   bool operator()( const Point& p1, const Point& p2) const
        { return lexicographically_yx_larger( p1, p2); }
@@ -126,6 +134,7 @@ class p_Less_dist_to_line_2p
 {
 public:
   typedef bool    result_type;
+  typedef  Arity_tag< 2 >   Arity;
 
         p_Less_dist_to_line_2p(const Point& a, const Point& b)
          : p_a(a), p_b(b)
@@ -159,6 +168,7 @@ class p_Less_negative_dist_to_line_2p
 {
 public:
   typedef bool    result_type;
+  typedef  Arity_tag< 2 >   Arity;
 
         p_Less_negative_dist_to_line_2p(const Point& a, const Point& b)
          : p_a(a), p_b(b)
@@ -192,6 +202,7 @@ class p_Less_rotate_ccw
 {
 public:
   typedef bool    result_type;
+  typedef  Arity_tag< 2 >   Arity;
 
         p_Less_rotate_ccw(const Point& p) : rot_point(p)
         {}
@@ -229,6 +240,7 @@ class p_Less_rotate_ccw_safer
 {
 public:
   typedef bool    result_type;
+  typedef  Arity_tag< 2 >   Arity;
 
         p_Less_rotate_ccw_safer(const Point& p) : rot_point(p)
         {}
@@ -266,6 +278,7 @@ class p_Less_rotate_ccw_E
 {
 public:
   typedef bool    result_type;
+  typedef  Arity_tag< 2 >   Arity;
 
         p_Less_rotate_ccw_E(const Point& p) : rot_point(p)
         {}
@@ -300,6 +313,7 @@ class r_Right_of_line
 {
 public:
   typedef bool    result_type;
+  typedef  Arity_tag< 1 >   Arity;
 
   typedef typename R::Point_2  Point;
   typedef typename R::Line_2   Line;
@@ -322,6 +336,7 @@ class r_Left_of_line
 {
 public:
   typedef bool                 result_type;
+  typedef  Arity_tag< 1 >   Arity;
 
   typedef typename R::Point_2  Point;
   typedef typename R::Line_2   Line;
@@ -338,6 +353,7 @@ private:
   bool    is_deg;
 };
 
+/*
 template <class Point>
 class p_Less_dist_to_point
 {
@@ -352,12 +368,28 @@ class p_Less_dist_to_point
  private:
   Point _p;
 };
+*/
+
+template <class Point>
+class p_Less_dist_to_point
+{
+ public:
+  typedef bool    result_type;
+  typedef  Arity_tag< 3 >   Arity;
+
+       p_Less_dist_to_point( ) 
+       {}
+
+  bool operator()( const Point& p0, const Point& p1, const Point& p2) const
+       { return has_smaller_dist_to_point(p0, p1, p2); }
+};
 
 template <class R>
 class r_Less_negative_dist_to_line
 {
 public:
   typedef bool                 result_type;
+  typedef  Arity_tag< 2 >   Arity;
 
   typedef typename R::Point_2  Point;
   typedef typename R::Line_2   Line;
@@ -392,6 +424,7 @@ class r_Less_dist_to_line
 {
 public:
   typedef bool    result_type;
+  typedef  Arity_tag< 2 >   Arity;
 
   typedef typename R::Point_2  Point;
   typedef typename R::Line_2   Line;
@@ -425,6 +458,7 @@ class r_Less_in_direction
 {
 public:
   typedef bool    result_type;
+  typedef  Arity_tag< 2 >   Arity;
 
   typedef typename  R::RT           RT;
   typedef typename  R::Direction_2  Direction;
@@ -460,6 +494,7 @@ template <class Point>
 struct p_Leftturn
 {
   typedef bool    result_type;
+  typedef  Arity_tag< 3 >   Arity;
 
   bool  operator()(const Point& p, const Point& q, const Point& r) const
         { return leftturn(p,q,r); }
@@ -469,6 +504,7 @@ template <class Point>
 struct p_Rightturn
 {
   typedef bool    result_type;
+  typedef  Arity_tag< 3 >   Arity;
 
   bool  operator()(const Point& p, const Point& q, const Point& r) const
         { return rightturn(p,q,r); }

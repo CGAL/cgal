@@ -426,6 +426,10 @@ test_new_2(const R& rep)
   Comparison_result tmp34cc = compare_x_at_y(l2,l3,l4);
   Comparison_result tmp34dd = compare_x_at_y(l2,l3,l4,l5);
 
+  typename R::Less_distance_to_point_2 less_distance_to_point
+        = rep.less_distance_to_point_2_object();
+  bool tmp35 = less_distance_to_point(p2, p3,p4);
+
   typename R::Compare_distance_2 compare_dist
         = rep.compare_distance_2_object();
   Comparison_result tmp34ab = compare_dist(p1,p2,p3);
@@ -577,7 +581,7 @@ test_new_2(const R& rep)
   use(tmp52b); use(tmp52a); use(tmp51b); use(tmp51a); use(tmp50b); use(tmp50a);
   use(tmp49b); use(tmp49a); use(tmp48b); use(tmp48a); use(tmp47); use(tmp46);
   use(tmp45); use(tmp44); use(tmp43); use(tmp42); use(tmp41); use(tmp40);
-  use(tmp39); use(tmp38); use(tmp37); use(tmp36); use(tmp34d);
+  use(tmp39); use(tmp38); use(tmp37); use(tmp36); use(tmp35); use(tmp34d);
   use(tmp34c); use(tmp34b); use(tmp34a); use(tmp32d); use(tmp32c); use(tmp32b);
   use(tmp32a); use(tmp31d); use(tmp31c); use(tmp31b); use(tmp31a); use(tmp30);
   use(tmp26); use(tmp25); use(tmp24);

@@ -33,11 +33,6 @@
 // The following are like constructive predicate, and are deprecated !
 #ifndef CGAL_NO_DEPRECATED_CODE
 
-typedef CGAL ::p_Less_dist_to_point<Point_2>       Less_distance_to_point_2;
-Less_distance_to_point_2
-less_distance_to_point_2_object(const Point_2& p) const  // XXX
-{ return Less_distance_to_point_2(p); }
-
 typedef CGAL ::p_Less_dist_to_line_2p<Point_2>  Less_signed_distance_to_line_2;
 Less_signed_distance_to_line_2
 less_signed_distance_to_line_2_object(const Point_2& p,
@@ -53,11 +48,6 @@ typedef CGAL ::p_Left_of_line_2p<Point_2>          Left_of_line_2;
 Left_of_line_2
 left_of_line_2_object(const Point_2& p, const Point_2& q) const  // XXX XXX
 { return Left_of_line_2(p,q); }
-
-typedef CGAL ::p_Less_dist_to_point<Point_3>    Less_distance_to_point_3;
-Less_distance_to_point_3
-less_distance_to_point_3_object(const Point_3& p) const  // XXX
-{ return Less_distance_to_point_3(p); }
 
 #endif // CGAL_NO_DEPRECATED_CODE
 

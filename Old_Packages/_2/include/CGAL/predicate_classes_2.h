@@ -231,14 +231,11 @@ class Compare_distance_to_point_2
 
 template <class Point>
 class Less_distance_to_point_2
- : public CGAL_STD::binary_function< Point, Point, bool>
 {
  public:
-  Less_distance_to_point_2( const Point& p) : _p(p) {}
-  bool operator()( const Point& q, const Point& r)
-       { return has_smaller_dist_to_point( _p,q,r); }
- private:
-  Point _p;
+  Less_distance_to_point_2( ) {}
+  bool operator()( const Point& p, const Point& q, const Point& r)
+       { return has_smaller_dist_to_point(p,q,r); }
 };
 
 template <class Point, class Line>

@@ -15,6 +15,7 @@ CXXFLAGS = \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            -I../Kernel/include \
+           -pedantic \
            $(CGAL_CXXFLAGS) \
            $(DEBUG_OPT)
 

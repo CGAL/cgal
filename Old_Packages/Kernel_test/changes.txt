@@ -1,3 +1,6 @@
+3.31   (18 July 2001)
+- restored Less_distance_to_point_[23] with default constructors
+
 3.30   (10 July 2001)
 - additions of function objects following discussion of kernel traits
 - New predicate : coplanar_orientation(3 points).

@@ -1,3 +1,6 @@
+3.52   (18 July 2001)
+- changed Less_distance_to_point_[23] to use default construction
+
 3.51   (12 July 2001)
 - Add Kernel_traits<>.
 

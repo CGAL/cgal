@@ -1,3 +1,6 @@
+3.18 (?? July 2001)
+- changed Less_distsance_to_point_2 to use default construction
+
 3.17 (27 June 2001)
 - Put the IO operators back in, they are needed by Borland.
 

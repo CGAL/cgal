@@ -448,6 +448,10 @@ test_new_3(const R& rep)
         = rep.compare_xyz_3_object();
   Comparison_result tmp27 = compare_xyz(p2,p3);
 
+  typename R::Less_distance_to_point_3 less_distance_to_point
+        = rep.less_distance_to_point_3_object();
+  bool tmp28 = less_distance_to_point(p4,p2,p3);
+
   typename R::Less_signed_distance_to_plane_3 less_signed_distance_to_plane
         = rep.less_signed_distance_to_plane_3_object();
   bool tmp28a = less_signed_distance_to_plane(tmp8,p2,p3);
@@ -585,7 +589,7 @@ test_new_3(const R& rep)
   use(tmp12d); use(tmp12e); use(tmp12f); use(tmp12g); use(tmp12l); 
   use(tmp12h); use(tmp12i); use(tmp12j); use(tmp12k); use(tmp36c); use(tmp36d); 
   use(tmp16); use(tmp18); use(tmp19); use(tmp20); use(tmp21);
-  use(tmp26); use(tmp30a); use(tmp30b); use(tmp34ab); 
+  use(tmp26); use(tmp28); use(tmp30a); use(tmp30b); use(tmp34ab); 
   use(tmp39a);
 
   return true;

@@ -174,15 +174,11 @@ _test_fctobj_point_line_2(const Point&, const Line& )
  
   std::cout << '.';
  
-  CGAL::Less_distance_to_point_2< Point>     has_smaller_dist_to_point_p4(p4);
-  assert( has_smaller_dist_to_point_p4(p9,p1) );
-  assert( has_smaller_dist_to_point_p4(p6,p5) );
- 
-  CGAL::Less_distance_to_point_2< Point>     has_smaller_dist_to_point_p9(p9);
-  assert( has_smaller_dist_to_point_p9(p9,p6) );
- 
-  CGAL::Less_distance_to_point_2< Point>     has_smaller_dist_to_point_p8(p8);
-  assert(!has_smaller_dist_to_point_p8(p3,p3) );
+  CGAL::Less_distance_to_point_2< Point>     has_smaller_dist_to_point();
+  assert( has_smaller_dist_to_point(p4,p9,p1) );
+  assert( has_smaller_dist_to_point(p4,p6,p5) );
+  assert( has_smaller_dist_to_point(p9,p9,p6) );
+  assert(!has_smaller_dist_to_point(p8,p3,p3) );
  
   std::cout << '.';
  
