@@ -1651,8 +1651,8 @@ protected:
   void  print_points_on_curves(const _Curve_node& cv);
 #endif
 
-  friend class less_point_xy;
-  friend class less_curve_xy;
+  friend class  Less_xy; // less_point_xy;
+  friend class  Less_yx; // less_curve_xy;
 
   Traits   *traits;
   bool      use_delete_traits;
