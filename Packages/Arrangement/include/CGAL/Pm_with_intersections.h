@@ -757,7 +757,7 @@ public:
       insert_point = (direction_right) ?
         pmwx_traits->point_leftlow_most(xpnt1, xpnt2) :
         pmwx_traits->point_righttop_most(xpnt1, xpnt2);
-      
+
       CGAL_assertion(!point_equal(pmwx_traits->curve_source(cv),
                                   insert_point));
 

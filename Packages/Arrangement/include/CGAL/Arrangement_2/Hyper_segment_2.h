@@ -162,7 +162,7 @@ private:
     _C = b*b;
 
     // Set the source and target point.
-    if (comp_x == SMALLER)
+    if (comp_x != LARGER)
     {
       _source = ps;
       _target = pt;
@@ -267,6 +267,30 @@ private:
     {
       y_min = y2;
       y_max = y1;
+    }
+
+    // Try to check if any extreme points are contained in our segment.
+    if (_A != 0)
+    {
+      // The x-coordinate of the extreme point is given by:
+      double  x_ext = CGAL::to_double(-_B / (2*_A));
+
+      if (x_min < x_ext && x_ext < x_max)
+      {
+	// The y-value at the extreme point is given by:
+	double   y_ext = (CGAL::to_double(_A)*x_ext + 
+			  CGAL::to_double(_B))*x_ext + CGAL::to_double(_C);
+
+	if (y_ext > 0)
+	  y_ext = CGAL::sqrt(y_ext);
+	else
+	  y_ext = 0;
+
+	if (y_ext < y_min)
+	  y_min = y_ext;
+	else if (y_ext > y_max)
+	  y_max = y_ext;
+      }
     }
 
     // Return the resulting bounding box.

@@ -13,11 +13,14 @@ public Base_traits_test<Traits_class, Number_type>
  public:
   typedef Number_type  NT;
 
-  typedef typename Traits_class::Point_2        Point;
-  typedef typename Traits_class::Segment_2      Segment;
-  typedef typename Traits_class::Circle_2       Circle;
-  typedef typename Traits_class::X_monotone_curve_2      X_curve;
-  typedef typename Traits_class::Curve_2        Curve;
+  typedef typename Traits_class::CfNT               CoNT;
+  typedef typename Traits_class::CoNT               CfNT;
+  typedef typename Traits_class::Point_2            Point;
+  typedef typename Traits_class::Int_point_2        IPoint;
+  typedef typename Traits_class::Int_segment_2      ISegment;
+  typedef typename Traits_class::Int_circle_2       ICircle;
+  typedef typename Traits_class::X_monotone_curve_2 X_curve;
+  typedef typename Traits_class::Curve_2            Curve;
 
  public:
   
@@ -57,8 +60,8 @@ read_curve (std::ifstream & is, Curve & cv)
   // Get the arc type.
   char     type;
   bool     is_circle = false;              // Is this a circle.
-  Circle   circle;
-  NT       r, s, t, u, v, w;               // The conic coefficients.
+  ICircle  circle;
+  CfNT     r, s, t, u, v, w;               // The conic coefficients.
 
   str_line >> type;
 
@@ -71,17 +74,17 @@ read_curve (std::ifstream & is, Curve & cv)
     //  ( -------- )  + ( -------- )  = 1
     //       a               b
     //
-    NT     a, b, x0, y0;
+    CfNT     a, b, x0, y0;
     
     str_line >> a >> b >> x0 >> y0;
     
-    NT     a_sq = a*a;
-    NT     b_sq = b*b;
+    CfNT     a_sq = a*a;
+    CfNT     b_sq = b*b;
 
     if (a == b)
     {
       is_circle = true;
-      circle = Circle (Point (x0, y0), a*b, CGAL::CLOCKWISE);
+      circle = ICircle (IPoint (x0, y0), a*b);
     }
     else
     {
@@ -112,12 +115,12 @@ read_curve (std::ifstream & is, Curve & cv)
     //  ( -------- )  - ( -------- )  = 1
     //       a               b
     //
-    NT     a, b, x0, y0;
+    CfNT     a, b, x0, y0;
     
     str_line >> a >> b >> x0 >> y0;
     
-    NT     a_sq = a*a;
-    NT     b_sq = b*b;
+    CfNT     a_sq = a*a;
+    CfNT     b_sq = b*b;
 
     r = b_sq;
     s= -a_sq;
@@ -133,7 +136,7 @@ read_curve (std::ifstream & is, Curve & cv)
     //                        2
     //  4c*(y - y0) = (x - x0)
     //
-    NT     c, x0, y0;
+    CfNT     c, x0, y0;
     
     str_line >> c >> x0 >> y0;
     
@@ -159,13 +162,13 @@ read_curve (std::ifstream & is, Curve & cv)
   else if (type == 's' || type == 'S')
   {
     // Read a segment, given by its endpoints (x1,y1) and (x2,y2);
-    NT      x1, y1, x2, y2;
+    CfNT      x1, y1, x2, y2;
 
     str_line >> x1 >> y1 >> x2 >> y2;
 
-    Point   source (x1, y1);
-    Point   target (x2, y2);
-    Segment segment (source, target);
+    IPoint   source (x1, y1);
+    IPoint   target (x2, y2);
+    ISegment segment (source, target);
 
     // Create the segment.
     cv = Curve (segment);
@@ -179,27 +182,28 @@ read_curve (std::ifstream & is, Curve & cv)
     // Read the approximated source, along with a general conic 
     // <r_1,s_1,t_1,u_1,v_1,w_1> whose intersection with <r,s,t,u,v,w>
     // defines the source.
-    NT     r1, s1, t1, u1, v1, w1;
-    NT     x1, y1;
+    CfNT     r1, s1, t1, u1, v1, w1;
+    double   x1, y1;
 
     str_line >> x1 >> y1;
     str_line >> r1 >> s1 >> t1 >> u1 >> v1 >> w1;
 
-    Point   app_source (x1, y1);
+    Point   app_source (CoNT(x1), CoNT(y1));
 
     // Read the approximated target, along with a general conic 
     // <r_2,s_2,t_2,u_2,v_2,w_2> whose intersection with <r,s,t,u,v,w>
     // defines the target.
-    NT     r2, s2, t2, u2, v2, w2;
-    NT     x2, y2;
+    CfNT     r2, s2, t2, u2, v2, w2;
+    double   x2, y2;
 
     str_line >> x2 >> y2;
     str_line >> r2 >> s2 >> t2 >> u2 >> v2 >> w2;
 
-    Point   app_target (x2, y2);
+    Point   app_target (CoNT(x2), CoNT(y2));
 
     // Create the conic arc.
     cv = Curve (r, s, t, u, v ,w,
+		CGAL::CLOCKWISE,
 		app_source, r1, s1, t1, u1, v1, w1,
 		app_target, r2, s2, t2, u2, v2, w2);
     return;
@@ -212,23 +216,23 @@ read_curve (std::ifstream & is, Curve & cv)
   }
 
   // Read the end points of the arc and create it.
-  NT    x1, y1, x2, y2;
+  double    x1, y1, x2, y2;
 
   str_line >> x1 >> y1 >> x2 >> y2;
 
-  Point source (x1, y1);
-  Point target (x2, y2);
+  Point source (CoNT(x1), CoNT(y1));
+  Point target (CoNT(x2), CoNT(y2));
 
   // Create the conic (or circular) arc.
   if (is_circle)
   {
     cv = Curve (circle,
-		  source, target);
+		source, target);
   }
   else
   {
     cv = Curve (r, s, t, u, v, w,
-		  source, target);
+		source, target);
   }
  
   return;

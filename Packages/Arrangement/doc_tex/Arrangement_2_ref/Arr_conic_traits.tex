@@ -11,20 +11,27 @@
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 % +========================================================================+
-%  Arr_conic_traits_2<Kernel>
+%  Arr_conic_traits_2<Int_kernel, Alg_kernel>
 % +========================================================================+
-\begin{ccRefClass}{Arr_conic_traits_2<Kernel>}
+\begin{ccRefClass}{Arr_conic_traits_2<Int_kernel, Alg_kernel>}
 
 \ccDefinition
-    The class \ccc{Arr_conic_traits_2<Kernel>} is a model of the 
-    \ccc{ArrangementTraits_2} concept and serves as a traits class for finite
-    segments of algebraic curves of degree 2 at most (conic curves).
-    The template parameter \ccc{Kernel} must be a model of the a CGAL Kernel 
-    concept that is templated by an exact number type that support the 
-    arithmetic operations plus the square root operation, to ensure the
-    robustness of the predicates and constructions carried out by the traits
-    class. For example, \ccStyle{Cartesian<leda_real>} would be a good choice
-    for the kernel.
+    The class \ccc{Arr_conic_traits_2<Int_kernel, Alg_kernel>}
+    is a model of the \ccc{ArrangementTraits_2} concept and serves as a 
+    traits class for finite segments of algebraic curves of degree 2 at most
+    (conic curves).
+    Both template parameters must be models of the a CGAL Kernel 
+    concept: The first, \ccc{Int_kernel}, should be templated with an 
+    unbounded integer number-type, which will be used to represent the
+    coefficients of the conic curves. The second parameter, \ccc{Alg_kernel},
+    should be templated with a number type constructible from an unbounded
+    integer, and that in addition to the arithmetic operations, also support
+    the square-root operation in an exact manner, as well as the extraction
+    of the $k$th-largest root of a given polynomial with integral coefficients.
+    This number type is used to represent the coordinates of the arrangement
+    vertices. The recommended choice for the two template parameters is
+    \ccStyle{Cartesian<CORE::BigInt>} as \ccc{Int_kernel} and
+    \ccStyle{Cartesian<CORE::Expr>} as \ccc{Alg_kernel}.
 
     A general conic curve $C$ is the locus of all points $(x,y)$ satisfying the
     equation $rx^2 + sy^2 + txy + ux + vy + w = 0$, where:
@@ -35,19 +42,17 @@
     \item If $4rs - t^2 = 0$, $C$ is a parabola. A special case occurs when
           $r = s = t = 0$, where $C$ becomes a line. 
     \end{itemize}
+    In our representation, all conic coefficients (namely $r,s,t,u,v,w$) must
+    be integers.
 
     A bounded conic arc is defined as one of the following:
     \begin{itemize}
     \item A full ellipse (or a circle) $C$.
     \item The supporting conic curve $C$ and two endpoints $s$ and $t$ (the 
-    source and target, respectively).
+    source and target, respectively). In this case one should determine if
+    we proceed from $s$ to $t$ in a clockwise or in a counterclockwise
+    direction.
     \end{itemize}
-
-    It is possible to construct conic arcs in several ways, specifying a full
-    ellipse or a conic curve and two endpoints. It is also possible to specify
-    implicit endpoint that are formed by an intersection of $C$ with two other
-    conic curves $C_1$ and $C_2$ --- in this case the user is just required to
-    supply some approximation to the endpoints.
 
     A very useful subset of the set of conic arcs are line segments and 
     circular arcs, since arrangements of circular arcs and line segments have 
@@ -65,7 +70,7 @@
 
 % The Conic_arc_2 class:
 %
-\subsection*{Class \ccc{Arr_conic_traits_2<Kernel>::Curve_2}}
+\subsection*{Class \ccc{Arr_conic_traits_2<Int_kernel,Alg_kernel>::Curve_2}}
 
 The \ccc{Curve_2} class nested within the conic arcs' traits can represent
 arbitrary conic arcs and support their construction in various ways. The copy 
@@ -73,73 +78,109 @@ and default constructor as well as the assignment and equality operators are
 provided for conic arcs. In addition, an \ccc{operator<<} for the curves is 
 defined for standard output streams and \ccc{Window_stream}.
 
-\begin{ccClass}{Arr_conic_traits_2<Kernel>::Curve_2}
+\begin{ccClass}{Arr_conic_traits_2<Int_kernel,Alg_kernel>::Curve_2}
     \ccCreation
     \ccCreationVariable{cv}
 
-\ccConstructor{Curve_2 (const Kernel::FT& r, 
-                        const Kernel::FT& s, 
-			const Kernel::FT& t, 
-                        const Kernel::FT& u, 
-                        const Kernel::FT& v, 
-                        const Kernel::FT& w,
-                        const Kernel::Point_2& ps,
-                        const Kernel::Point_2& pt);}
+\ccConstructor{Curve_2(const Int_kernel::Segment_2& seg);}
+  {constructs an arc from the line segment \ccc{seg}.}
+
+\ccConstructor{Curve_2(const Int_kernel::Circle_2& circ);}
+  {constructs a circular arc that corresponds to the full circle \ccc{circ}
+   (notice the circle center has integer coordinates and its squared radius
+   is also an integer).}
+
+\ccConstructor{Curve_2(const Int_kernel::Circle_2& circ,
+                       const Orientation& orient,
+                       const Alg_kernel::Point_2& ps,
+                       const Alg_kernel::Point_2& pt);}
+  {constructs a circular arc supported by the circle \ccc{circ} and with 
+   \ccc{ps} and \ccc{pt} as its endpoints, going in the given orientation.
+   \ccPrecond{\ccc{ps} and \ccc{pt} both lie on the circle \ccc{circ}}.}
+
+\ccConstructor{Curve_2(const Int_kernel::Point_2& p1,
+                       const Int_kernel::Point_2& p2,
+	               const Int_kernel::Point_2& p3);}
+  {constructs a circular arc going from \ccc{p1}, the source, through \ccc{p2}
+   to \ccc{p3}, the target (notice all points have integer coordinates).
+   The orientation of the arc is determined automatically.
+   \ccPrecond{The three points are not collinear}.}
+
+\ccConstructor{Curve_2(const Int_kernel::FT& r, 
+                       const Int_kernel::FT& s, 
+		       const Int_kernel::FT& t, 
+                       const Int_kernel::FT& u, 
+                       const Int_kernel::FT& v, 
+                       const Int_kernel::FT& w);}
+  {constructs a conic arc that corresponds to the full curve $rx^2 + sy^2 + 
+   txy + ux + vy + w = 0$.
+   \ccPrecond{The given curve is an ellipse, that is $4rs - t^2 > 0$.}}
+
+\ccConstructor{Curve_2 (const Int_kernel::FT& r, 
+                        const Int_kernel::FT& s, 
+			const Int_kernel::FT& t, 
+                        const Int_kernel::FT& u, 
+                        const Int_kernel::FT& v, 
+                        const Int_kernel::FT& w,
+	                const Orientation& orient,
+                        const Alg_kernel::Point_2& ps,
+                        const Alg_kernel::Point_2& pt);}
   {constructs a conic arc supported by the curve $rx^2 + sy^2 + txy + ux + 
-   vy + w = 0$ with \ccc{ps} as its source and \ccc{pt} as its target.
+   vy + w = 0$ with \ccc{ps} as its source and \ccc{pt} as its target, going
+   in the given orientation.
    \ccPrecond{\ccc{ps} and \ccc{pt} both satisfy the equation of the supporting
               curve and define a bounded segment from it (e.g. in case of a
               hyperbolic arc, both point should be located on the same branch
               of the hyperbola.}}
 
-\ccConstructor{Curve_2(const Kernel::FT& r, 
-                       const Kernel::FT& s, 
-		       const Kernel::FT& t, 
-                       const Kernel::FT& u, 
-                       const Kernel::FT& v, 
-                       const Kernel::FT& w);}
-  {constructs a conic arc that corresponds to the full curve $rx^2 + sy^2 + 
-   txy + ux + vy + w = 0$.
-   \ccPrecond{The given curve is an ellipse, that is $4rs - t^2 > 0$.}}
+\ccConstructor{Curve_2(const Int_kernel::FT& r, 
+                       const Int_kernel::FT& s, 
+		       const Int_kernel::FT& t, 
+                       const Int_kernel::FT& u, 
+                       const Int_kernel::FT& v, 
+                       const Int_kernel::FT& w,
+	               const Int_kernel::Line_2& l);}
+  {constructs a conic arc supported by the curve $rx^2 + sy^2 + 
+   txy + ux + vy + w = 0$, and whose endpoints are the intersection
+   points of the curve and the line $l$. We take the portion of the curve
+   that lies in the positive half-plane defined by $l$.
+   \ccPrecond{The line $l$ intersects the conic curve at two points.}}
 
-\ccConstructor{Curve_2(const Kernel::Segment_2& seg);}
-  {constructs an arc from the line segment \ccc{seg}.}
+\ccConstructor{Curve_2(const Int_kernel::Point_2& p1,
+                       const Int_kernel::Point_2& p2,
+                       const Int_kernel::Point_2& p3,
+                       const Int_kernel::Point_2& p4,
+	               const Int_kernel::Point_2& p5);}
+  {constructs a circular arc going from \ccc{p1}, the source, through \ccc{p2},
+   \ccc{p3} and \ccc{p4} to \ccc{p5}, the target (notice all points have
+   integer coordinates). The orientation of the arc is determined
+   automatically.
+   \ccPrecond{No three points of the five are not collinear}.}
 
-\ccConstructor{Curve_2(const Kernel::Circle_2& circ,
-                       const Kernel::Point_2& ps,
-                       const Kernel::Point_2& pt);}
-  {constructs a circular arc supported by the circle \ccc{circ} and with 
-   \ccc{ps} and \ccc{pt} as its endpoints. If \ccc{circ} has a positive
-   orientation, then the arc is formed by going in a counterclockwise 
-   direction from \ccc{ps} to \ccc{pt}, and going in a clockwise direction if
-   the circle has a negative orientation.
-   \ccPrecond{\ccc{ps} and \ccc{pt} both lie on the circle \ccc{circ}}.}
-
-\ccConstructor{Curve_2(const Kernel::Circle_2& circ);}
-  {constructs a circular arc that corresponds to the full circle \ccc{circ}.}
-
-\ccConstructor{Curve_2 (const Kernel::FT& r, 
-                        const Kernel::FT& s, 
-			const Kernel::FT& t, 
-                        const Kernel::FT& u, 
-                        const Kernel::FT& v, 
-                        const Kernel::FT& w,
-                        const Kernel::Point_2& ps,
-                        const Kernel::FT& r1, 
-                        const Kernel::FT& s1, 
-			const Kernel::FT& t1, 
-                        const Kernel::FT& u1, 
-                        const Kernel::FT& v1, 
-                        const Kernel::FT& w1,
-                        const Kernel::Point_2& pt,
-                        const Kernel::FT& r2, 
-                        const Kernel::FT& s2, 
-			const Kernel::FT& t2, 
-                        const Kernel::FT& u2, 
-                        const Kernel::FT& v2, 
-                        const Kernel::FT& w2);}
+\ccConstructor{Curve_2 (const Int_kernel::FT& r, 
+                        const Int_kernel::FT& s, 
+			const Int_kernel::FT& t, 
+                        const Int_kernel::FT& u, 
+                        const Int_kernel::FT& v, 
+                        const Int_kernel::FT& w,
+                        const Orientation& orient,
+                        const Alg_kernel::Point_2& ps,
+                        const Int_kernel::FT& r1, 
+                        const Int_kernel::FT& s1, 
+			const Int_kernel::FT& t1, 
+                        const Int_kernel::FT& u1, 
+                        const Int_kernel::FT& v1, 
+                        const Int_kernel::FT& w1,
+                        const Alg_kernel::Point_2& pt,
+                        const Int_kernel::FT& r2, 
+                        const Int_kernel::FT& s2, 
+			const Int_kernel::FT& t2, 
+                        const Int_kernel::FT& u2, 
+                        const Int_kernel::FT& v2, 
+                        const Int_kernel::FT& w2);}
   {constructs a conic are supported by the curve $rx^2 + sy^2 + txy + ux + 
-   vy + w = 0$ with \ccc{ps} as its source and \ccc{pt} as its target.
+   vy + w = 0$ with \ccc{ps} as its source and \ccc{pt} as its target, going
+   in the given orientation.
    In this case \ccc{ps} and  \ccc{pt} are just approximations of the 
    endpoints, and their exact values are given implicitly, as the 
    intersections of the supporting curve with $r_{1}x^2 + s_{1}y^2 + t_{1}xy +
@@ -153,10 +194,10 @@ defined for standard output streams and \ccc{Window_stream}.
 \ccMethod{bool is_full_conic() const;}
   {returns whether the arc represents a full conic curve (a full ellipse).}
 
-\ccMethod{const Kernel::Point_2& source() const;}
+\ccMethod{const Alg_kernel::Point_2& source() const;}
   {returns the source point of the arc.}
 
-\ccMethod{const Kernel::Point_2& target() const;}
+\ccMethod{const Alg_kernel::Point_2& target() const;}
   {returns the target point of the arc.}
 
 \ccMethod{bool is_x_monotone() const;}{returns \ccc{true} if the arc is

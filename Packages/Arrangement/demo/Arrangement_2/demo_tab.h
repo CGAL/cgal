@@ -164,8 +164,8 @@ public:
   Traits m_traits;
   /*! the curve to be merged */
   Halfedge_iterator closest_curve;
-  /*! the seconed curve to be merged */
-  Halfedge_iterator seconed_curve;
+  /*! the second curve to be merged */
+  Halfedge_iterator second_curve;
   /*! the first point in the split curve */
   Pm_point_2 split_point;
   
@@ -392,10 +392,10 @@ public:
 	// calculate cube size (minimum of 1)
     //int cube_size_x = std::max(1, abs(max_x - min_x)/20);
     //int cube_size_y = std::max(1, abs(max_y - min_y)/20);
-	if (cube_size < abs(max_x - min_x)/40 ||
-		cube_size < abs(max_y - min_y)/40)
-		cube_size = std::max(std::max(1, abs(max_x - min_x)/20),
-							 std::max(1, abs(max_y - min_y)/20));
+	if (cube_size < std::abs(max_x - min_x)/40 ||
+		cube_size < std::abs(max_y - min_y)/40)
+		cube_size = std::max(std::max(1, std::abs(max_x - min_x)/20),
+				     std::max(1, std::abs(max_y - min_y)/20));
 	
     int cube_size_x = cube_size;
     int cube_size_y = cube_size;
@@ -684,24 +684,24 @@ public:
     }
 	if (mode == MERGE && !first_time_merge)
     {
-	  if (seconed_curve != m_curves_arr.halfedges_end())
+	  if (second_curve != m_curves_arr.halfedges_end())
 	  {
-        int i = (seconed_curve->curve()).get_data().m_index;
+        int i = (second_curve->curve()).get_data().m_index;
         setColor(colors[i]);
-	    m_tab_traits.draw_xcurve(this,seconed_curve->curve());
+	    m_tab_traits.draw_xcurve(this,second_curve->curve());
 	  }
 	  Coord_type x, y;
       x_real(e->x(), x);
       y_real(e->y(), y);
       Coord_point p(x,y);
-      seconed_curve = m_curves_arr.halfedges_end();
-	  m_tab_traits.find_close_curve(closest_curve ,seconed_curve ,p ,this ,true);
+      second_curve = m_curves_arr.halfedges_end();
+	  m_tab_traits.find_close_curve(closest_curve ,second_curve ,p ,this ,true);
 	  setColor(Qt::red);
 	  m_tab_traits.draw_xcurve(this,closest_curve->curve());
-	  if (seconed_curve != m_curves_arr.halfedges_end())
+	  if (second_curve != m_curves_arr.halfedges_end())
 	  {
 	    setColor(Qt::green);
-	    m_tab_traits.draw_xcurve(this,seconed_curve->curve());
+	    m_tab_traits.draw_xcurve(this,second_curve->curve());
 	  }
 	  else
 	  {
@@ -920,12 +920,12 @@ public:
 		  return;
 		}
 	    m_tab_traits.draw_xcurve(this , closest_curve->curve() );
-		seconed_curve = m_curves_arr.halfedges_end();
+		second_curve = m_curves_arr.halfedges_end();
 	  }
 	  else
 	  {
 		first_time_merge = true;
-	    m_tab_traits.find_close_curve(closest_curve ,seconed_curve ,p ,this ,false);
+	    m_tab_traits.find_close_curve(closest_curve ,second_curve ,p ,this ,false);
 		redraw();	
 	  }	  
 	}
@@ -1136,7 +1136,7 @@ public:
   }
 
   void find_close_curve(Halfedge_iterator &closest_curve ,Halfedge_iterator 
-	&seconed_curve ,Coord_point &p ,Qt_widget_demo_tab<Segment_tab_traits> *w,
+	&second_curve ,Coord_point &p ,Qt_widget_demo_tab<Segment_tab_traits> *w,
 	bool move_event)
   {
     bool is_first = true;
@@ -1169,7 +1169,7 @@ public:
         if (is_first || dist < min_dist)
         {
 	      min_dist = dist;
-          seconed_curve = hei;
+          second_curve = hei;
           is_first = false;
         }    
       }
@@ -1180,8 +1180,8 @@ public:
 	}
 	else if (!move_event)	  
 	{	  
-	  Pm_point_2 s1 = seconed_curve->source()->point();
-	  Pm_point_2 t1 = seconed_curve->target()->point();
+	  Pm_point_2 s1 = second_curve->source()->point();
+	  Pm_point_2 t1 = second_curve->target()->point();
 	  Base_curve * base = 0;
 	  
 	  if ( t == s1 )
@@ -1201,7 +1201,7 @@ public:
       std::list<Xcurve> xcurve_list;
 	  m_traits.curve_make_x_monotone(*seg, std::back_inserter(xcurve_list));
       const Xcurve c = xcurve_list.front();
-	  w->m_curves_arr.merge_edge( closest_curve , seconed_curve , c); 
+	  w->m_curves_arr.merge_edge( closest_curve , second_curve , c); 
 	}
   }
 
@@ -1474,7 +1474,7 @@ public:
   }
  
   void find_close_curve(Halfedge_iterator &closest_curve ,Halfedge_iterator 
-	&seconed_curve ,Coord_point &p ,Qt_widget_demo_tab<Polyline_tab_traits> *w
+	&second_curve ,Coord_point &p ,Qt_widget_demo_tab<Polyline_tab_traits> *w
 	,bool move_event)
   {
     bool is_first = true;
@@ -1528,7 +1528,7 @@ public:
         if (is_first || dist < min_dist)
         {
 	      min_dist = dist;
-          seconed_curve = hei;
+          second_curve = hei;
           is_first = false;
         }    
       }
@@ -1542,10 +1542,10 @@ public:
 	else if (!move_event)
 	{
 	  Xcurve & c = closest_curve->curve();
-	  Xcurve & c1 = seconed_curve->curve();
+	  Xcurve & c1 = second_curve->curve();
 
-	  Pm_point_2 s1 = *(seconed_curve->curve().begin());
-	  Pm_point_2 t1 = *(seconed_curve->curve().rbegin());
+	  Pm_point_2 s1 = *(second_curve->curve().begin());
+	  Pm_point_2 t1 = *(second_curve->curve().rbegin());
 	  std::vector<Pm_pol_point_2> temp_points;
 	  Curve_const_iterator cit;
 	 
@@ -1583,7 +1583,7 @@ public:
 	  std::list<Xcurve> xcurve_list;
 	  m_traits.curve_make_x_monotone(*curve, std::back_inserter(xcurve_list));
       const Xcurve cc = xcurve_list.front();
-	  w->m_curves_arr.merge_edge( closest_curve , seconed_curve , cc); 
+	  w->m_curves_arr.merge_edge( closest_curve , second_curve , cc); 
 	}
   }
 
@@ -1820,7 +1820,7 @@ public:
   void first_point( Coord_point p )
   {
     m_p1 = m_p2 = p;
-	first_time_hyperbula = true;
+	first_time_hyperbola = true;
   }
   
   /*! middle_point - the last point of a segment */
@@ -1828,35 +1828,40 @@ public:
   {
     if(m_p1.x() != p.x() || m_p1.y() != p.y()) 
     {
-      CONIC_NT r, s, t, u, v, ww;  // The conic coefficients.
-      CONIC_NT a, b, c, a_sq, b_sq, x, y, x1, y1, x0, y0, temp;
-      x = m_p1.x();
-      y = m_p1.y();
-      x1 = p.x();
-      y1 = p.y();
-      Pm_base_conic_2 * cv = 0;
-      Coord_type dist;
+      CfNT r, s, t, u, v, ww;  // The conic coefficients.
+      CfNT a, b, c, a_sq, b_sq;
+      CfNT x, y, x1, y1, x0, y0, temp;
+      CfNT sq_rad;
+
+      x = CfNT(static_cast<int>(COORD_SCALE * m_p1.x()));
+      y = CfNT(static_cast<int>(COORD_SCALE * m_p1.y()));
+      x1 = CfNT(static_cast<int>(COORD_SCALE * p.x()));
+      y1 = CfNT(static_cast<int>(COORD_SCALE * p.y()));
+
+      Pm_base_conic_2 *cv = NULL;
+
       switch (w->conic_type)
       {
-       case CIRCLE:
-        dist = pow(m_p1.x() - p.x(), 2) + pow(m_p1.y() - p.y(), 2);
-        cv = new Pm_base_conic_2(Pm_conic_circle_2 
-                                 (Pm_conic_point_2(x,y ), dist,
-                                  CGAL::CLOCKWISE));
+      case CIRCLE:
+	sq_rad = CGAL::square(x - x1) + CGAL::square(y - y1);
+        cv = new Pm_base_conic_2(Int_circle_2 (Int_point_2(x, y), sq_rad)); 
         break;
-       case SEGMENT:
-        cv = new Pm_base_conic_2(Pm_conic_segment_2(Pm_conic_point_2(x,y),
-                                                    Pm_conic_point_2(x1,y1)));
+
+      case SEGMENT:
+        cv = new Pm_base_conic_2(Int_segment_2 (Int_point_2(x,y),
+						Int_point_2(x1,y1)));
         break;
-       case ELLIPSE:
-		if (y == y1 || x == x1)
-		{
-		  QMessageBox::information( w, "Insert Ellipse", "Invalid Ellipse");
-		  w->active = false;
+
+      case ELLIPSE:
+	if (y == y1 || x == x1)
+	{
+	  QMessageBox::information( w, "Insert Ellipse", "Invalid Ellipse");
+	  w->active = false;
           return;
         }
-        a = abs(x1 - x)/2;
-        b = abs(y1 - y)/2;
+
+        a = CORE::abs(x1 - x)/2;
+        b = CORE::abs(y1 - y)/2;
         a_sq = a*a;
         b_sq = b*b;
         x0 = (x + x1)/2;
@@ -1871,15 +1876,24 @@ public:
 
         cv = new Pm_base_conic_2(r, s, t, u, v, ww);
         break;
-       case PARABOLA:
-	    if (x == x1)
-		  return;
-        if (x > x1)
+
+	// RWRW: Do nothing ...
+      case PARABOLA:
+      case HYPERBOLA:
+	return;
+
+	/*
+      case PARABOLA:
+	if (x == x1)
+	  return;
+        
+	if (x > x1)
         {
           temp = x1;
           x1 = x;
           x = temp;
-        }		  
+        }
+	
         x0 = (x + x1)/2;
         y0 = y;
         a = (y1 - y0)/((x1 - x0)*(x1 - x0));
@@ -1893,11 +1907,13 @@ public:
         v = -1;
         ww = c;
 
-        cv = new Pm_base_conic_2(r, s, t, u, v, ww, Pm_conic_point_2(x1,y1), 
-                                 Pm_conic_point_2(x,y1));
+        cv = new Pm_base_conic_2 (r, s, t, u, v, ww,
+				  Pm_conic_point_2(CoNT(x1),CoNT(y1)), 
+				  Pm_conic_point_2(CoNT(x),CoNT(y1)));
         break;
-       case HYPERBOLA:
-        if (first_time_hyperbula)
+
+      case HYPERBOLA:
+        if (first_time_hyperbola)
         {
 		  if (m_p1.y() == p.y() || m_p1.x() == p.x())
 		  {
@@ -1905,7 +1921,8 @@ public:
 		    w->active = false;
             return;
           }
-		  int c = abs(static_cast<int>(m_p1.x()) - static_cast<int>(p.x()));
+		  int c = std::abs(static_cast<int>(m_p1.x()) - 
+                                   static_cast<int>(p.x()));
           if (w->snap_mode == GRID && (c == w->cube_size  || 
 			                           c == w->cube_size*2))
 		  {
@@ -1916,21 +1933,21 @@ public:
           *w << CGAL::RED;
           *w << Coord_segment( Coord_point(m_p1.x(),(m_p1.y() + p.y())/2) ,
 			                   Coord_point(p.x()   ,(m_p1.y() + p.y())/2) );   
-          first_time_hyperbula = false;
+          first_time_hyperbola = false;
           m_p3 = m_p2;
 
           return;
         }
         else
         {		  
-		  x1 = m_p3.x();         /*  x,y             */
-          y1 = m_p3.y();         /*     \    /       */
-                                 /*      \  /        */
-		                         /*       \/         */
-          x0 = (x + x1)/2;       /*       /\         */
-          y0 = (y + y1)/2;       /*      /  \        */
-                                 /*     /    \       */
-          a = abs(x0 - p.x());   /*           x1,y1  */
+	  x1 = m_p3.x();               //  (x,y)              
+          y1 = m_p3.y();               //     \    /      
+                                       //      \  /       
+		                       //       \/        
+          x0 = (x + x1)/2;             //       /\        
+          y0 = (y + y1)/2;             //      /  \       
+                                       //     /    \      
+          a = CORE::abs(x0 - p.x());   //          (x1,y1) 
           b = ((y - y1)/(x - x1))*a;
           
           if (p.x() == x0 || (p.x() <= x && x < x1 ) || (p.x() >= x && x > x1 )
@@ -1968,6 +1985,7 @@ public:
           
         }		
         break;	
+        */
       }
 
       Curve_conic_data cd;
@@ -2025,7 +2043,7 @@ public:
 	    }		
 	    case HYPERBOLA:
 	    {
-	      if (first_time_hyperbula)
+	      if (first_time_hyperbola)
 	 	  {
  		    *w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p2 );
 		    *w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p1 );
@@ -2235,7 +2253,15 @@ public:
   const Xcurve curve_make_x_monotone(Pm_point_2 p1 , Pm_point_2 p2)
   {
     Data d;
-	Pm_base_conic_2 base(Pm_conic_segment_2(p1 , p2));
+
+    // RWRW:
+    Int_point_2          my_p1 (static_cast<int> (CGAL::to_double(p1.x())),
+				static_cast<int> (CGAL::to_double(p1.y())));
+    Int_point_2          my_p2 (static_cast<int> (CGAL::to_double(p2.x())),
+				static_cast<int> (CGAL::to_double(p2.y())));
+    Pm_base_conic_2 base (Int_segment_2 (my_p1, my_p2));
+    //	Pm_base_conic_2 base(Pm_conic_segment_2(p1 , p2));
+
     const Pm_conic_2 cv( base , d);
 	std::list<Xcurve> xcurve_list;
 	m_traits.curve_make_x_monotone(cv, std::back_inserter(xcurve_list));
@@ -2244,7 +2270,7 @@ public:
   }
   
    void find_close_curve(Halfedge_iterator &closest_curve ,Halfedge_iterator 
-	&seconed_curve ,Coord_point &p ,Qt_widget_demo_tab<Conic_tab_traits> *w,
+	&second_curve ,Coord_point &p ,Qt_widget_demo_tab<Conic_tab_traits> *w,
 	bool move_event)
   {
     bool is_first = true;
@@ -2291,7 +2317,7 @@ public:
           if (is_first || dist < min_dist)
           {
 	        min_dist = dist;
-            seconed_curve = hei;
+            second_curve = hei;
             is_first = false;
            }    
 		}
@@ -2304,17 +2330,17 @@ public:
 	else if (!move_event)	  
 	{	  
 	  Xcurve curve;
-	  const Xcurve seconed = seconed_curve->curve();
+	  const Xcurve second = second_curve->curve();
 
-	  m_traits.curve_merge(curve , first , seconed );
+	  m_traits.curve_merge (first, second, curve);
 	
 	  Curve_conic_data cd1;
-      cd1.m_type = Curve_conic_data::LEAF;
-      cd1.m_index = first.get_data().m_index;
-      cd1.m_ptr.m_curve = first.get_data().m_ptr.m_curve;
+	  cd1.m_type = Curve_conic_data::LEAF;
+	  cd1.m_index = first.get_data().m_index;
+	  cd1.m_ptr.m_curve = first.get_data().m_ptr.m_curve;
 	
 	  w->m_curves_arr.remove_edge(closest_curve);
-	  w->m_curves_arr.remove_edge(seconed_curve);
+	  w->m_curves_arr.remove_edge(second_curve);
 	  w->m_curves_arr.insert(Pm_conic_2( curve , cd1));	
 	}
   }
@@ -2353,8 +2379,8 @@ public:
   Traits m_traits;
   /*! temporary points of the created conic */
   Coord_point m_p1,m_p2,m_p3;
-  /*! bool flag for hyperbula insertion */
-  bool first_time_hyperbula;
+  /*! bool flag for hyperbola insertion */
+  bool first_time_hyperbola;
 };
 
 typedef Qt_widget_demo_tab<Segment_tab_traits> Qt_widget_segment_tab;

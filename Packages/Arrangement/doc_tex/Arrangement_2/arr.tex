@@ -255,14 +255,29 @@ Section~\ref{ssec:example4}.
 
 \section{Arrangements of Conic Arcs}
 
-The \ccc{Arr_conic_traits_2<Kernel>} class can be used for constructing
-arrangement of bounded segments of algebraic curves of degree 2 (conic 
-curves). That is, it supports the construction of the arrangement of any 
+The \ccc{Arr_conic_traits_2<Int_kernel, Alg_kernel>} class can be used for
+constructing arrangement of bounded segments of algebraic curves of degree 2
+(conic curves).
+That is, it supports the construction of the arrangement of any 
 collection of elliptic arcs (a full ellipse or a circle may also be considered
 as a conic arc), hyperbolic arcs, parabolic arcs and also line segments.
-This traits class expects it kernel to be templated with a number type
-that supports the square root operation, as well as the arithmetic operations,
-in an exact manner.
+The template has two template parameters:
+\begin{itemize}
+\item The first template parameter, \ccc{Int_kernel}, is a geometric kernel
+with an unbounded integer number-type (i.e.~\ccc{Int_kernel::FT}, or 
+\ccc{CfNT} for short, should be an unbounded integer), that represents the
+coefficients of the conic curves. The kernel \ccStyle{Cartesian<CORE::BigInt>}
+is the most suitable choice for this parameter.
+\item The second parameter, \ccc{Alg_kernel}, is a geometric kernel whose 
+number type (\ccc{Alg_kernel::FT}, or \ccc{CoNT} for short) supports exact
+operations: In addition to the arithmetic operations, it must support the
+square-root operation in an exact manner, as well as the extraction of the
+$k$th-largest root of a given polynomial with integral coefficients.
+\ccc{CoNT} should be constructible from a \ccc{CfNT}, and it is used to
+represent the coordinates of the arrangement vertices (which are in general
+irrational algebraic numbers). At current, the \ccStyle{CORE:Expr} is the only
+number type that fills all the requirements above and must be the number
+type of \ccc{Alg_kernel}.
 
 \subsection{Example of an Arrangement of Circular Arcs}
 \label{ssec:example3}
@@ -293,10 +308,10 @@ since it returns a circular arcs whose end-points are $(3,4)$ and $(-5,0)$.
 
 The following example demonstrates the construction of an arrangement
 of various conic arcs of mixed types. The input \ccc{Curve_2} objects are
-created in a way that makes use of all the available constructors for conic
+created in a way that makes use of most available constructors for conic
 arcs.
 
-The arrangement created  by this example is depicted in 
+The arrangement created by this example is depicted in 
 Figure~\ref{fig:conics}. The program outputs the number of vertices, edges and
 faces in the resulting arrangement, and the correctness of these figures can
 be easily verified by counting them in this figure: Notice that arrangement

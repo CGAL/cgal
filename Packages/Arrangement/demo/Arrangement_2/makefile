@@ -16,6 +16,7 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = \
        -Iinclude \
        -I../../include \
+       -I$(COREROOT)/inc \
        $(CGAL_CXXFLAGS) \
        $(LONG_NAME_PROBLEM_CXXFLAGS)
 
@@ -24,9 +25,11 @@ CXXFLAGS = \
 #---------------------------------------------------------------------#
 
 LIBPATH = \
+          -L$(COREROOT)/lib \
           $(CGAL_LIBPATH)
 
 LDFLAGS = \
+          -lcore \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_QT_LDFLAGS)
 

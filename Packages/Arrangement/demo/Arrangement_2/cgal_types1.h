@@ -24,11 +24,11 @@
 #include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/IO/write_pm.h> 
 #include <CGAL/IO/Pm_iostream.h> 
-#include <CGAL/leda_real.h>
+#include <CORE/BigInt.h>
+#include <CGAL/CORE_Expr.h>
 #include <CGAL/Planar_map_2.h> 
 #include <CGAL/Bbox_2.h>
 #include <CGAL/IO/Postscript_file_stream.h> 
-//#include <CGAL/IO/Pm_Postscript_file_stream.h>
 #include <CGAL/IO/Pm_drawer.h> 
 #include <CGAL/IO/draw_pm.h> 
 
@@ -46,16 +46,18 @@ typedef CGAL::Cartesian<Coord_type>                        Coord_kernel;
 typedef Coord_kernel::Point_2                              Coord_point;
 typedef Coord_kernel::Segment_2                            Coord_segment;
 typedef Coord_kernel::Circle_2                             Coord_circle;
-//typedef CGAL::Polygon_traits_2<Coord_kernel>               PT;
-//typedef std::vector<Coord_point>                           Container;
-//typedef CGAL::Polygon_2<PT, Container>                     Cgal_polygon;
+
+// For the conic traits:
+#define COORD_SCALE  1000
 
 // Planar map typedef - using rational exact number type
 typedef CGAL::Quotient<CGAL::MP_Float>                     NT;
 typedef CGAL::Cartesian<NT>                                Kernel;
 
-typedef leda_real                                          CONIC_NT;
-typedef CGAL::Cartesian<CONIC_NT>                          Conic_kernel;
+typedef CORE::BigInt                                       CfNT;
+typedef CGAL::Cartesian<CfNT>                              Int_kernel;
+typedef CORE::Expr                                         CoNT;
+typedef CGAL::Cartesian<CoNT>                              Alg_kernel;
 
 // Segments: 
 typedef CGAL::Arr_segment_cached_traits_2<Kernel>          Base_seg_traits; 
@@ -121,8 +123,12 @@ typedef Pm_pol_list::const_iterator                        Pm_pol_const_iter;
 typedef Pm_pol_list::iterator                              Pm_pol_iter;
 
 // Conics
-typedef CGAL::Arr_conic_traits_2<Conic_kernel>             Base_conic_traits;
+typedef CGAL::Arr_conic_traits_2<Int_kernel, Alg_kernel>   Base_conic_traits;
 typedef Base_conic_traits::Curve_2                         Pm_base_conic_2;
+typedef Base_conic_traits::Int_point_2                     Int_point_2;
+typedef Base_conic_traits::Int_segment_2                   Int_segment_2;
+typedef Base_conic_traits::Int_circle_2                    Int_circle_2;
+typedef Base_conic_traits::Int_line_2                      Int_line_2;
 
 struct Curve_conic_data { 
   enum Type {LEAF, INTERNAL}; 
@@ -136,25 +142,23 @@ struct Curve_conic_data {
 };
 
 typedef CGAL::Arr_curve_data_traits_2<Base_conic_traits,
-                                      Curve_conic_data>    Conic_traits;
-typedef Conic_traits::Curve_2                              Pm_conic_2;
-typedef Conic_traits::X_monotone_curve_2                   Pm_xconic_2;
-typedef Conic_traits::Point_2                              Pm_conic_point_2;
-typedef Conic_traits::Segment_2                            Pm_conic_segment_2;
-typedef Conic_traits::Circle_2                             Pm_conic_circle_2;
-typedef CGAL::Pm_default_dcel<Conic_traits>                Conic_dcel;
-typedef CGAL::Planar_map_2<Conic_dcel, Conic_traits>       Conic_pm;
-typedef CGAL::Planar_map_with_intersections_2<Conic_pm>    Conic_arr;
-typedef Conic_arr::Locate_type                             Conic_locate_type;
+                                      Curve_conic_data>  Conic_traits;
+typedef Conic_traits::Curve_2                            Pm_conic_2;
+typedef Conic_traits::X_monotone_curve_2                 Pm_xconic_2;
+typedef Conic_traits::Point_2                            Pm_conic_point_2;
+typedef CGAL::Pm_default_dcel<Conic_traits>              Conic_dcel;
+typedef CGAL::Planar_map_2<Conic_dcel, Conic_traits>     Conic_pm;
+typedef CGAL::Planar_map_with_intersections_2<Conic_pm>  Conic_arr;
+typedef Conic_arr::Locate_type                           Conic_locate_type;
 typedef Conic_arr::Halfedge_handle                       Conic_halfedge_handle;
-typedef Conic_arr::Face_handle                             Conic_face_handle;
+typedef Conic_arr::Face_handle                           Conic_face_handle;
 typedef Conic_arr::Ccb_halfedge_circulator       Conic_ccb_halfedge_circulator;
-typedef Conic_arr::Holes_iterator                         Conic_holes_iterator;
-typedef CGAL::Pm_file_scanner<Conic_arr>                   Pm_scanner; 
+typedef Conic_arr::Holes_iterator                        Conic_holes_iterator;
+typedef CGAL::Pm_file_scanner<Conic_arr>                 Pm_scanner; 
 
-typedef std::list<Pm_xconic_2*>                            Pm_xconic_list;
-typedef Pm_xconic_list::const_iterator                    Pm_xconic_const_iter;
-typedef Pm_xconic_list::iterator                           Pm_xconic_iter;
+typedef std::list<Pm_xconic_2*>                          Pm_xconic_list;
+typedef Pm_xconic_list::const_iterator                   Pm_xconic_const_iter;
+typedef Pm_xconic_list::iterator                         Pm_xconic_iter;
 
 
 #endif

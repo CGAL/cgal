@@ -541,188 +541,145 @@ void MyWindow::ReadCurve(std::ifstream & is, Pm_base_conic_2 & cv)
 {
   // Read a line from the input file.
   char one_line[128];
-  
-  skip_comments (is, one_line);
-  std::string stringvalues(one_line);
-  std::istringstream str_line (stringvalues, std::istringstream::in);
-  
-  // Get the arc type.
-  char     type;
-  bool     is_circle = false;       // Is this a circle.
-  Pm_conic_circle_2 circle;
-  CONIC_NT       r, s, t, u, v, w;  // The conic coefficients.
-  
-  str_line >> type;
-  
-  // An ellipse (full ellipse or a partial ellipse):
-  if (type == 'f' || type == 'F' || type == 'e' || type == 'E')
-  {  
-    // Read the ellipse (using the format "a b x0 y0"):
-    //
-    //     x - x0   2      y - y0   2
-    //  ( -------- )  + ( -------- )  = 1
-    //       a               b
-    //
-    CONIC_NT     a, b, x0, y0;
-    
-    str_line >> a >> b >> x0 >> y0;
-    
-    CONIC_NT     a_sq = a*a;
-    CONIC_NT     b_sq = b*b;
-    
-    if (a == b)
-    {
-      is_circle = true;
-      circle = Pm_conic_circle_2 
-        (Pm_conic_point_2 (x0, y0), a*b, CGAL::CLOCKWISE);
-    }
-    else
-    {
-      r = b_sq;
-      s = a_sq;
-      t = 0;
-      u = -2*x0*b_sq;
-      v = -2*y0*a_sq;
-      w = x0*x0*b_sq + y0*y0*a_sq - a_sq*b_sq;
-    }
-    
-    if (type == 'f' || type == 'F')
-    {
-      // Create a full ellipse (or circle).
-      if (is_circle)
-        cv = Pm_base_conic_2 (circle);
-      else
-        cv = Pm_base_conic_2 (r, s, t, u, v, w);
       
-      return;
-    }
-  }
-  else if (type == 'h' || type == 'H')
+  skip_comments (is, one_line);
+  std::istringstream str_line (one_line);
+      
+  // Read the arc type and act accordingly.
+  char     type;
+      
+  str_line >> type;
+      
+  if (type == 's' || type == 'S')
   {
-    // Read the hyperbola (using the format "a b x0 y0"):
-    //
-    //     x - x0   2      y - y0   2
-    //  ( -------- )  - ( -------- )  = 1
-    //       a               b
-    //
-    CONIC_NT     a, b, x0, y0;
-    
-    str_line >> a >> b >> x0 >> y0;
-    
-    CONIC_NT     a_sq = a*a;
-    CONIC_NT     b_sq = b*b;
-    
-    r = b_sq;
-    s= -a_sq;
-    t = 0;
-    u = -2*x0*b_sq;
-    v = 2*y0*a_sq;
-    w = x0*x0*b_sq - y0*y0*a_sq - a_sq*b_sq;  
-  }
-  else if (type == 'p' || type == 'P')
-  {
-    // Read the parabola (using the format "c x0 y0"):
-    //
-    //                        2
-    //  4c*(y - y0) = (x - x0)
-    //
-    CONIC_NT     c, x0, y0;
-    
-    str_line >> c >> x0 >> y0;
-    
-    r = 1;
-    s = 0;
-    t = 0;
-    u = -2*x0;
-    v = -4*c;
-    w = x0*x0 + 4*c*y0;
-  }
-  else if (type == 'c' || type == 'C' || type == 'a' || type == 'A')
-  {
-    // Read a general conic, given by its coefficients <r,s,t,u,v,w>.
-    str_line >> r >> s >> t >> u >> v >> w;
-    
-    if (type == 'c' || type == 'C')
-    {
-      // Create a full conic (should work only for ellipses).
-      cv = Pm_base_conic_2 (r, s, t, u, v, w);
-      return;
-    }
-  }
-  else if (type == 's' || type == 'S')
-  {
-    // Read a segment, given by its endpoints (x1,y1) and (x2,y2);
-    CONIC_NT      x1, y1, x2, y2;
+    // Construct a line segment. The line should have the format:
+    //   s <x1> <y1> <x2> <y2>
+    // where (x1, y1), (x2, y2) are the endpoints of a segment.
+    CfNT    x1, y1, x2, y2;
     
     str_line >> x1 >> y1 >> x2 >> y2;
     
-    Pm_conic_point_2   source (x1, y1);
-    Pm_conic_point_2   target (x2, y2);
-    Pm_conic_segment_2 segment (source, target);
+    Int_point_2   p1(x1, y1), p2(x2, y2);
+    Int_segment_2 seg (p1, p2);
     
-    // Create the segment.
-    cv = Pm_base_conic_2(segment);
-    return;
+    cv = Pm_base_conic_2 (seg);
   }
-  else if (type == 'i' || type == 'I')
+  else if (type == 'c' || type == 'C')
   {
-    // Read a general conic, given by its coefficients <r,s,t,u,v,w>.
+    // Construct a full circle. The line should have the format:
+    //   c <x0> <y0> <R_sq>
+    // where (x0, y0) is the center of the circle and R_sq is its squared
+    // radius.
+    CfNT    x0, y0, R_sq;
+    
+    str_line >> x0 >> y0 >> R_sq;
+    
+    Int_point_2   p0(x0, y0);
+    Int_circle_2  circ(p0, R_sq);
+    
+    cv = Pm_base_conic_2 (circ);
+  }
+  else if (type == 't' || type == 'T')
+  {
+    // Construct a circular arc. The line should have the format:
+    //   t <x1> <y1> <x2> <y2> <x3> <y3>
+    // where (x1, y1), (x2, y2) and (x3, y3) define the arc.
+    CfNT    x1, y1, x2, y2, x3, y3;
+    
+    str_line >> x1 >> y1 >> x2 >> y2 >> x3 >> y3;
+    
+    Int_point_2   p1(x1, y1), p2(x2, y2), p3(x3, y3);
+
+    cv = Pm_base_conic_2 (p1, p2, p3);
+  }
+  else if (type == 'f' || type == 'F')
+  {
+    // Construct a full conic curve. The line should have the format:
+    //   c <r> <s> <t> <u> <v> <w>
+    // where r, s, t, u, v, w define the conic equation.
+    CfNT    r, s, t, u, v, w;
+
     str_line >> r >> s >> t >> u >> v >> w;
     
-    // Read the approximated source, along with a general conic 
-    // <r_1,s_1,t_1,u_1,v_1,w_1> whose intersection with <r,s,t,u,v,w>
-    // defines the source.
-    CONIC_NT     r1, s1, t1, u1, v1, w1;
-    CONIC_NT     x1, y1;
+    cv = Pm_base_conic_2 (r, s, t, u, v, w);
+  }
+  else if (type == 'a' || type == 'A')
+  {
+    // Construct a conic arc. The line should have the format:
+    //   c <r> <s> <t> <u> <v> <w> <orient> <x1> <y1> <x2> <y2>
+    // where r, s, t, u, v, w define the conic equation, while (x1, y1)
+    // and (x2, y2) are the arc's endpoints.
+    CfNT    r, s, t, u, v, w;
     
-    str_line >> x1 >> y1;
-    str_line >> r1 >> s1 >> t1 >> u1 >> v1 >> w1;
+    str_line >> r >> s >> t >> u >> v >> w;
+
+    // Read the orientation.
+    int               i_orient;
+    CGAL::Orientation orient;
+
+    str_line >> i_orient;
+    if (i_orient > 0)
+      orient = CGAL::COUNTERCLOCKWISE;
+    else if (i_orient < 0)
+      orient = CGAL::CLOCKWISE;
+    else
+      orient = CGAL::COLLINEAR;
+
+    // Read the end points of the arc and create it.
+    // Notice we read the coordinates as strings, then we convert them to 
+    // the CoNT type, as we do not want to initialize CoNT from a double.
+    char    num[50];
+    CoNT    x1, y1, x2, y2;
+      
+    str_line >> num;
+    x1 = CoNT(num);
+    str_line >> num;
+    y1 = CoNT(num);
     
-    Pm_conic_point_2   app_source (x1, y1);
+    str_line >> num;
+    x2 = CoNT(num);
+    str_line >> num;
+    y2 = CoNT(num);
     
-    // Read the approximated target, along with a general conic 
-    // <r_2,s_2,t_2,u_2,v_2,w_2> whose intersection with <r,s,t,u,v,w>
-    // defines the target.
-    CONIC_NT     r2, s2, t2, u2, v2, w2;
-    CONIC_NT     x2, y2;
+    Pm_conic_point_2 ps (x1, y1);
+    Pm_conic_point_2 pt (x2, y2);
+
+    cv = Pm_base_conic_2 (r, s, t, u, v, w, orient, ps ,pt);
+  }
+  else if (type == 'l' || type == 'L')
+  {
+    // Construct a conic arc. The line should have the format:
+    //   c <r> <s> <t> <u> <v> <w> <a> <b> <c>
+    // where r, s, t, u, v, w define the conic equation and a, b, c define
+    // a line that intersects it.
+    CfNT    r, s, t, u, v, w;
+    CfNT    a, b, c;
     
-    str_line >> x2 >> y2;
-    str_line >> r2 >> s2 >> t2 >> u2 >> v2 >> w2;
+    str_line >> r >> s >> t >> u >> v >> w >> a >> b >> c;
     
-    Pm_conic_point_2   app_target (x2, y2);
+    Int_line_2    line (a, b, c);
+
+    cv = Pm_base_conic_2 (r, s, t, u, v, w, line);
+  }
+  else if (type == 'q' || type == 'Q')
+  {
+    // Construct a circular arc. The line should have the format:
+    //   t <x1> <y1> <x2> <y2> <x3> <y3> <x4> <y4> <x5> <y5>
+    // where (x1, y1), (x2, y2), (x3, y3), (x4, y4) and (x5, y5) define the 
+    // arc.
+    CfNT    x1, y1, x2, y2, x3, y3, x4, y4, x5, y5;
+
+    str_line >> x1 >> y1 >> x2 >> y2 >> x3 >> y3 >> x4 >> y4 >> x5 >> y5;
+
+    Int_point_2   p1(x1, y1), p2(x2, y2), p3(x3, y3), p4(x4, y4), p5(x5, y5);
     
-    // Create the conic arc.
-    cv = Pm_base_conic_2 (r, s, t, u, v ,w,
-                          app_source, r1, s1, t1, u1, v1, w1,
-                          app_target, r2, s2, t2, u2, v2, w2);
-    return;
+    cv = Pm_base_conic_2 (p1, p2, p3, p4, p5);
   }
   else
   {
     std::cerr << "Illegal conic type specification: " << type << "."
-              << std::endl;
-    return;
+	      << std::endl;
   }
-  
-  // Read the end points of the arc and create it.
-  CONIC_NT    x1, y1, x2, y2;
-  
-  str_line >> x1 >> y1 >> x2 >> y2;
-  
-  Pm_conic_point_2 source (x1, y1);
-  Pm_conic_point_2 target (x2, y2);
-  
-  // Create the conic (or circular) arc.
-  if (is_circle)
-  {
-    cv = Pm_base_conic_2 (circle,
-                          source, target);
-  }
-  else
-  {
-    cv = Pm_base_conic_2 (r, s, t, u, v, w,
-                          source, target);
-  }
-  
+
   return;
 }

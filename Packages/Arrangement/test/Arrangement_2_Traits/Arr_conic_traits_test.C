@@ -1,8 +1,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 
-// Making sure test doesn't fail if LEDA is not installed
-#ifndef CGAL_USE_LEDA
+// Making sure test doesn't fail if CORE is not installed
+#ifndef CGAL_USE_CORE
 
 int main(int argc, char* argv[])
 {
@@ -15,7 +15,8 @@ int main(int argc, char* argv[])
 }
 #else
 
-#include <CGAL/leda_real.h>
+#include <CORE/BigInt.h>
+#include <CGAL/CORE_Expr.h>
 #include <CGAL/Arr_2_bases.h>
 #include <CGAL/Arr_2_default_dcel.h>
 #include <CGAL/Arrangement_2.h>
@@ -23,13 +24,15 @@ int main(int argc, char* argv[])
 #include <CGAL/Arr_conic_traits_2.h>
 #include "include/Conic_traits_test.h"
 
-typedef leda_real                               NT;
-typedef CGAL::Cartesian<NT>                     Kernel;
-typedef CGAL::Arr_conic_traits_2<Kernel>        Traits;
+typedef CORE::BigInt                                  CfNT;
+typedef CGAL::Cartesian<CfNT>                         IKernel;
+typedef CORE::Expr                                    CoNT;
+typedef CGAL::Cartesian<CoNT>                         AKernel;
+typedef CGAL::Arr_conic_traits_2<IKernel, AKernel>    Traits;
 
 int main (int argc, char** argv)
 {
-  Conic_traits_test<Traits, NT>  test_obj (argc, argv);
+  Conic_traits_test<Traits, CoNT>  test_obj (argc, argv);
 
   test_obj.start();
   return (0);

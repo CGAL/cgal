@@ -80,7 +80,8 @@ int main(int argc, char* argv[])
   #include <CGAL/Arr_polyline_traits_2.h>
   #include <CGAL/Arr_segment_cached_traits_2.h>
 #elif CGAL_ARR_TEST_TRAITS == CGAL_CONIC_TRAITS
-  #include <CGAL/leda_real.h>
+  #include <CORE/BigInt.h>
+  #include <CGAL/CORE_Expr.h>
   #include <CGAL/Arr_conic_traits_2.h>
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
@@ -162,11 +163,15 @@ int main(int argc, char* argv[])
   typedef CGAL::Arr_polyline_traits_2<Seg_traits>       Traits;
    
 #elif CGAL_ARR_TEST_TRAITS == CGAL_CONIC_TRAITS
-  typedef leda_real                                     NT;
-  typedef CGAL::Cartesian<NT>                           Kernel;
-  typedef CGAL::Arr_conic_traits_2<Kernel>              Traits;
-  typedef Traits::Segment_2                             Segment;
-  typedef Traits::Circle                                Circle;
+
+  typedef CORE::BigInt                                  CfNT;
+  typedef CGAL::Cartesian<CfNT>                         IKernel;
+  typedef Int_kernel::Point_2                           IPoint;
+  typedef Int_kernel::Segment_2                         ISegment;
+  typedef Int_kernel::Circle_2                          ICircle;
+  typedef CORE::Expr                                    NT;
+  typedef CGAL::Cartesian<NT>                           AKernel;
+  typedef CGAL::Arr_conic_traits_2<IKernel, AKernel>    Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
   typedef leda_rational                                 NT;
@@ -295,8 +300,9 @@ private:
 	      file >> num;
               result = NT(num.numerator(), num.denominator());
 #else
-	      num = num;
-	      file >> result;
+	      double d;
+	      file >> d;
+	      result = NT(d);
 #endif
 	    }
 	}
@@ -314,7 +320,7 @@ private:
       // is supplied here since input numbers are small.
       return get_next_num(file).numerator().to_long();
 #else
-      return (int) CGAL::to_double(get_next_num(file));
+      return (static_cast<int>(CGAL::to_double(get_next_num(file))));
 #endif
     }
 
@@ -373,26 +379,28 @@ Curve read_seg_circ_curve(std::ifstream& file, bool reverse_order)
 {
   Curve cv;
   
-  // Get the arc type.
-  char type;
+  // Get the arc type (and ignore comment lines).
+  char          type;
+  std::string   s;
 
-  // Currently expects no comments in input file
-  // Should be changed?
   file >> type;
+  /*
+  while (type == '#')
+  {
+    std::getline(file, s);
+    file >> type;
+    }*/
   
   // A full circle (c) or a circular arc (a):
   if (type == 'c' || type == 'C' || type == 'a' || type == 'A')
   {  
     // Read the circle, using the format "x0 y0 r^2"
-    NT     x0, y0, r2;
+    CfNT     x0, y0, r2;
     
     file >> x0 >> y0 >> r2;
-//     x0 = get_next_num(file);
-//     y0 = get_next_num(file);
-//     r2 = get_next_num(file);
     
-    Circle circle (Point (x0, y0), r2);
-
+    ICircle circle (IPoint (x0, y0), r2);
+    
     if (type == 'c' || type == 'C')
     {
       // Create a full circle.
@@ -401,23 +409,13 @@ Curve read_seg_circ_curve(std::ifstream& file, bool reverse_order)
     else
     {
       // Read the end points of the circular arc.
-      NT    x1, y1, x2, y2;
-
+      CfNT    x1, y1, x2, y2;
+      
       file >> x1 >> y1 >> x2 >> y2;
-//       x1 = get_next_num(file);
-//       y1 = get_next_num(file);
-//       x2 = get_next_num(file);
-//       y2 = get_next_num(file);
-
-      if ((x1 - x0)*(x1 - x0) + (y1 - y0)*(y1 - y0) != r2)
-	y1 = CGAL::sqrt(r2 - (x1 - x0)*(x1 - x0)) + y0;
-
-      if ((x2 - x0)*(x2 - x0) + (y2 - y0)*(y2 - y0) != r2)
-	y2 = CGAL::sqrt(r2 - (x2 - x0)*(x2 - x0)) + y0;
-
-      Point source (x1, y1);
-      Point target (x2, y2);
-
+      
+      Point source (CoNT(x1), CoNT(y1));
+      Point target (CoNT(x2), CoNT(y2));
+      
       // Create the circular arc.
       cv = Curve (circle, source, target);
     }
@@ -425,18 +423,14 @@ Curve read_seg_circ_curve(std::ifstream& file, bool reverse_order)
   else if (type == 's' || type == 'S')
   {
     // Read the end points of the segment.
-    NT    x1, y1, x2, y2;
-
-    file >> x1 >> y1 >> x2 >> y2;
-//     x1 = get_next_num(file);
-//     y1 = get_next_num(file);
-//     x2 = get_next_num(file);
-//     y2 = get_next_num(file);
+    CfNT    x1, y1, x2, y2;
     
-    Point source (x1, y1);
-    Point target (x2, y2);
-   
-    cv = Curve (Segment (source, target));
+    file >> x1 >> y1 >> x2 >> y2;
+    
+    IPoint source (x1, y1);
+    IPoint target (x2, y2);
+    
+    cv = Curve (ISegment (source, target));
   }
   else
   {
