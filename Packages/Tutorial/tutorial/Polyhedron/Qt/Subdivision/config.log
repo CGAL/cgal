@@ -128,56 +128,56 @@ configure: failed program was:
 |   choke me
 | #endif
 configure:2824: checking dependency style of gcc
-configure:2892: result: gcc
-configure:2990: checking for g++
-configure:3006: found /usr/local/bin/g++
-configure:3016: result: g++
-configure:3032: checking for C++ compiler version
-configure:3035: g++ --version </dev/null >&5
+configure:2907: result: gcc
+configure:3005: checking for g++
+configure:3021: found /usr/local/bin/g++
+configure:3031: result: g++
+configure:3047: checking for C++ compiler version
+configure:3050: g++ --version </dev/null >&5
 2.95.3
-configure:3038: $? = 0
-configure:3040: g++ -v </dev/null >&5
+configure:3053: $? = 0
+configure:3055: g++ -v </dev/null >&5
 Reading specs from /usr/local/gcc/lib/gcc-lib/i686-pc-linux-gnu/2.95.3/specs
 gcc version 2.95.3 20010315 (release)
-configure:3043: $? = 0
-configure:3045: g++ -V </dev/null >&5
+configure:3058: $? = 0
+configure:3060: g++ -V </dev/null >&5
 g++: argument to `-V' missing
 
-configure:3048: $? = 1
-configure:3051: checking whether we are using the GNU C++ compiler
-configure:3076: g++ -c    conftest.cc >&5
-configure:3079: $? = 0
-configure:3082: test -s conftest.o
-configure:3085: $? = 0
-configure:3098: result: yes
-configure:3104: checking whether g++ accepts -g
-configure:3126: g++ -c -g  conftest.cc >&5
-configure:3129: $? = 0
-configure:3132: test -s conftest.o
-configure:3135: $? = 0
-configure:3146: result: yes
-configure:3190: g++ -c    conftest.cc >&5
-configure:3193: $? = 0
-configure:3196: test -s conftest.o
-configure:3199: $? = 0
-configure:3226: g++ -c    conftest.cc >&5
-configure:3229: $? = 0
-configure:3232: test -s conftest.o
-configure:3235: $? = 0
-configure:3260: checking dependency style of g++
-configure:3328: result: gcc
-configure:3503: checking whether g++ supports -fno-check-new
-configure:3522: result: yes
-configure:3534: checking whether g++ supports -fexceptions
-configure:3553: result: yes
-configure:3629: checking how to run the C++ preprocessor
-configure:3661: g++ -E  conftest.cc
-configure:3667: $? = 0
-configure:3699: g++ -E  conftest.cc
-configure:3700: ac_nonexistent.h: No such file or directory
-configure:3705: $? = 1
+configure:3063: $? = 1
+configure:3066: checking whether we are using the GNU C++ compiler
+configure:3091: g++ -c    conftest.cc >&5
+configure:3094: $? = 0
+configure:3097: test -s conftest.o
+configure:3100: $? = 0
+configure:3113: result: yes
+configure:3119: checking whether g++ accepts -g
+configure:3141: g++ -c -g  conftest.cc >&5
+configure:3144: $? = 0
+configure:3147: test -s conftest.o
+configure:3150: $? = 0
+configure:3161: result: yes
+configure:3205: g++ -c    conftest.cc >&5
+configure:3208: $? = 0
+configure:3211: test -s conftest.o
+configure:3214: $? = 0
+configure:3241: g++ -c    conftest.cc >&5
+configure:3244: $? = 0
+configure:3247: test -s conftest.o
+configure:3250: $? = 0
+configure:3275: checking dependency style of g++
+configure:3358: result: gcc
+configure:3533: checking whether g++ supports -fno-check-new
+configure:3552: result: yes
+configure:3564: checking whether g++ supports -fexceptions
+configure:3583: result: yes
+configure:3659: checking how to run the C++ preprocessor
+configure:3691: g++ -E  conftest.cc
+configure:3697: $? = 0
+configure:3729: g++ -E  conftest.cc
+configure:3730: ac_nonexistent.h: No such file or directory
+configure:3735: $? = 1
 configure: failed program was:
-| #line 3690 "configure"
+| #line 3720 "configure"
 | /* confdefs.h.  */
 | 
 | #define PACKAGE_NAME ""
@@ -189,14 +189,14 @@ configure: failed program was:
 | #define VERSION "0.1"
 | /* end confdefs.h.  */
 | #include <ac_nonexistent.h>
-configure:3743: result: g++ -E
-configure:3768: g++ -E  conftest.cc
-configure:3774: $? = 0
-configure:3806: g++ -E  conftest.cc
-configure:3807: ac_nonexistent.h: No such file or directory
-configure:3812: $? = 1
+configure:3773: result: g++ -E
+configure:3798: g++ -E  conftest.cc
+configure:3804: $? = 0
+configure:3836: g++ -E  conftest.cc
+configure:3837: ac_nonexistent.h: No such file or directory
+configure:3842: $? = 1
 configure: failed program was:
-| #line 3797 "configure"
+| #line 3827 "configure"
 | /* confdefs.h.  */
 | 
 | #define PACKAGE_NAME ""
@@ -208,27 +208,27 @@ configure: failed program was:
 | #define VERSION "0.1"
 | /* end confdefs.h.  */
 | #include <ac_nonexistent.h>
-configure:3893: checking whether g++ supports -frepo
-configure:3912: result: yes
-configure:4090: checking for ld used by GCC
-configure:4153: result: /usr/bin/ld
-configure:4162: checking if the linker (/usr/bin/ld) is GNU ld
+configure:3923: checking whether g++ supports -frepo
+configure:3942: result: yes
+configure:4120: checking for ld used by GCC
+configure:4183: result: /usr/bin/ld
+configure:4192: checking if the linker (/usr/bin/ld) is GNU ld
 GNU ld version 2.13.90.0.2 20020802
-configure:4174: result: yes
-configure:4179: checking for /usr/bin/ld option to reload object files
-configure:4186: result: -r
-configure:4191: checking for BSD-compatible nm
-configure:4227: result: /usr/bin/nm -B
-configure:4230: checking whether ln -s works
-configure:4234: result: yes
-configure:4241: checking how to recognise dependant libraries
-configure:4412: result: pass_all
-configure:4601: checking for ranlib
-configure:4617: found /usr/bin/ranlib
-configure:4628: result: ranlib
-configure:4681: checking for strip
-configure:4697: found /usr/bin/strip
-configure:4708: result: strip
+configure:4204: result: yes
+configure:4209: checking for /usr/bin/ld option to reload object files
+configure:4216: result: -r
+configure:4221: checking for BSD-compatible nm
+configure:4257: result: /usr/bin/nm -B
+configure:4260: checking whether ln -s works
+configure:4264: result: yes
+configure:4271: checking how to recognise dependant libraries
+configure:4442: result: pass_all
+configure:4631: checking for ranlib
+configure:4647: found /usr/bin/ranlib
+configure:4658: result: ranlib
+configure:4711: checking for strip
+configure:4727: found /usr/bin/strip
+configure:4738: result: strip
 ltcf-c.sh:need_lc: gcc -c -O2    conftest.c 1>&5
 ltcf-c.sh:need_lc: gcc -shared conftest.  -v -Wl,-soname -Wl,conftest -o conftest
 ltconfig:678:checking for gcc option to produce PIC
@@ -262,20 +262,20 @@ ltconfig:1423: checking if global_symbol_pipe works
 ltconfig:1424: g++ -c -O2 -fno-check-new -fexceptions  conftest.cc 1>&5
 ltconfig:1427: eval "/usr/bin/nm -B conftest.o | sed -n -e 's/^.*[ 	]\([ABCDGISTW]\)[ 	][ 	]*\(\)\([_A-Za-z][_A-Za-z0-9]*\)$/\1 \2\3 \3/p' > conftest.nm"
 ltconfig:1479: g++ -o conftest -O2 -fno-check-new -fexceptions -fno-builtin -fno-rtti -fno-exceptions   conftest.cc conftstm.o 1>&5
-configure:5015: checking for msgfmt
-configure:5042: result: /usr/local/bin/msgfmt
-configure:5051: checking for gmsgfmt
-configure:5082: result: /usr/local/bin/msgfmt
-configure:5101: checking for xgettext
-configure:5128: result: /usr/local/bin/xgettext
-configure:5154: checking how to run the C preprocessor
-configure:5190: gcc -E  conftest.c
-configure:5196: $? = 0
-configure:5228: gcc -E  conftest.c
-configure:5230: ac_nonexistent.h: No such file or directory
-configure:5234: $? = 1
+configure:5045: checking for msgfmt
+configure:5072: result: /usr/local/bin/msgfmt
+configure:5081: checking for gmsgfmt
+configure:5112: result: /usr/local/bin/msgfmt
+configure:5131: checking for xgettext
+configure:5158: result: /usr/local/bin/xgettext
+configure:5184: checking how to run the C preprocessor
+configure:5220: gcc -E  conftest.c
+configure:5226: $? = 0
+configure:5258: gcc -E  conftest.c
+configure:5260: ac_nonexistent.h: No such file or directory
+configure:5264: $? = 1
 configure: failed program was:
-| #line 5219 "configure"
+| #line 5249 "configure"
 | /* confdefs.h.  */
 | 
 | #define PACKAGE_NAME ""
@@ -288,14 +288,14 @@ configure: failed program was:
 | #define HAVE_TEMPLATE_REPOSITORY 1
 | /* end confdefs.h.  */
 | #include <ac_nonexistent.h>
-configure:5272: result: gcc -E
-configure:5297: gcc -E  conftest.c
-configure:5303: $? = 0
-configure:5335: gcc -E  conftest.c
-configure:5337: ac_nonexistent.h: No such file or directory
-configure:5341: $? = 1
+configure:5302: result: gcc -E
+configure:5327: gcc -E  conftest.c
+configure:5333: $? = 0
+configure:5365: gcc -E  conftest.c
+configure:5367: ac_nonexistent.h: No such file or directory
+configure:5371: $? = 1
 configure: failed program was:
-| #line 5326 "configure"
+| #line 5356 "configure"
 | /* confdefs.h.  */
 | 
 | #define PACKAGE_NAME ""
@@ -308,85 +308,85 @@ configure: failed program was:
 | #define HAVE_TEMPLATE_REPOSITORY 1
 | /* end confdefs.h.  */
 | #include <ac_nonexistent.h>
-configure:5384: checking for egrep
-configure:5394: result: grep -E
-configure:5399: checking for ANSI C header files
-configure:5425: gcc -c -O2    conftest.c >&5
-configure:5428: $? = 0
-configure:5431: test -s conftest.o
-configure:5434: $? = 0
-configure:5523: gcc -o conftest -O2     conftest.c  >&5
-configure:5526: $? = 0
-configure:5528: ./conftest
-configure:5531: $? = 0
-configure:5546: result: yes
-configure:5570: checking for sys/types.h
-configure:5587: gcc -c -O2    conftest.c >&5
-configure:5590: $? = 0
-configure:5593: test -s conftest.o
-configure:5596: $? = 0
-configure:5607: result: yes
-configure:5570: checking for sys/stat.h
-configure:5587: gcc -c -O2    conftest.c >&5
-configure:5590: $? = 0
-configure:5593: test -s conftest.o
-configure:5596: $? = 0
-configure:5607: result: yes
-configure:5570: checking for stdlib.h
-configure:5587: gcc -c -O2    conftest.c >&5
-configure:5590: $? = 0
-configure:5593: test -s conftest.o
-configure:5596: $? = 0
-configure:5607: result: yes
-configure:5570: checking for string.h
-configure:5587: gcc -c -O2    conftest.c >&5
-configure:5590: $? = 0
-configure:5593: test -s conftest.o
-configure:5596: $? = 0
-configure:5607: result: yes
-configure:5570: checking for memory.h
-configure:5587: gcc -c -O2    conftest.c >&5
-configure:5590: $? = 0
-configure:5593: test -s conftest.o
-configure:5596: $? = 0
-configure:5607: result: yes
-configure:5570: checking for strings.h
-configure:5587: gcc -c -O2    conftest.c >&5
-configure:5590: $? = 0
-configure:5593: test -s conftest.o
-configure:5596: $? = 0
-configure:5607: result: yes
-configure:5570: checking for inttypes.h
-configure:5587: gcc -c -O2    conftest.c >&5
-configure:5590: $? = 0
-configure:5593: test -s conftest.o
-configure:5596: $? = 0
-configure:5607: result: yes
-configure:5570: checking for stdint.h
-configure:5587: gcc -c -O2    conftest.c >&5
-configure:5590: $? = 0
-configure:5593: test -s conftest.o
-configure:5596: $? = 0
-configure:5607: result: yes
-configure:5570: checking for unistd.h
-configure:5587: gcc -c -O2    conftest.c >&5
-configure:5590: $? = 0
-configure:5593: test -s conftest.o
-configure:5596: $? = 0
-configure:5607: result: yes
-configure:5626: checking for main in -lutil
-configure:5651: gcc -o conftest -O2     conftest.c -lutil   >&5
-configure:5654: $? = 0
-configure:5657: test -s conftest
-configure:5660: $? = 0
-configure:5672: result: yes
-configure:5678: checking for main in -lcompat
-configure:5703: gcc -o conftest -O2     conftest.c -lcompat   >&5
+configure:5414: checking for egrep
+configure:5424: result: grep -E
+configure:5429: checking for ANSI C header files
+configure:5455: gcc -c -O2    conftest.c >&5
+configure:5458: $? = 0
+configure:5461: test -s conftest.o
+configure:5464: $? = 0
+configure:5553: gcc -o conftest -O2     conftest.c  >&5
+configure:5556: $? = 0
+configure:5558: ./conftest
+configure:5561: $? = 0
+configure:5576: result: yes
+configure:5600: checking for sys/types.h
+configure:5617: gcc -c -O2    conftest.c >&5
+configure:5620: $? = 0
+configure:5623: test -s conftest.o
+configure:5626: $? = 0
+configure:5637: result: yes
+configure:5600: checking for sys/stat.h
+configure:5617: gcc -c -O2    conftest.c >&5
+configure:5620: $? = 0
+configure:5623: test -s conftest.o
+configure:5626: $? = 0
+configure:5637: result: yes
+configure:5600: checking for stdlib.h
+configure:5617: gcc -c -O2    conftest.c >&5
+configure:5620: $? = 0
+configure:5623: test -s conftest.o
+configure:5626: $? = 0
+configure:5637: result: yes
+configure:5600: checking for string.h
+configure:5617: gcc -c -O2    conftest.c >&5
+configure:5620: $? = 0
+configure:5623: test -s conftest.o
+configure:5626: $? = 0
+configure:5637: result: yes
+configure:5600: checking for memory.h
+configure:5617: gcc -c -O2    conftest.c >&5
+configure:5620: $? = 0
+configure:5623: test -s conftest.o
+configure:5626: $? = 0
+configure:5637: result: yes
+configure:5600: checking for strings.h
+configure:5617: gcc -c -O2    conftest.c >&5
+configure:5620: $? = 0
+configure:5623: test -s conftest.o
+configure:5626: $? = 0
+configure:5637: result: yes
+configure:5600: checking for inttypes.h
+configure:5617: gcc -c -O2    conftest.c >&5
+configure:5620: $? = 0
+configure:5623: test -s conftest.o
+configure:5626: $? = 0
+configure:5637: result: yes
+configure:5600: checking for stdint.h
+configure:5617: gcc -c -O2    conftest.c >&5
+configure:5620: $? = 0
+configure:5623: test -s conftest.o
+configure:5626: $? = 0
+configure:5637: result: yes
+configure:5600: checking for unistd.h
+configure:5617: gcc -c -O2    conftest.c >&5
+configure:5620: $? = 0
+configure:5623: test -s conftest.o
+configure:5626: $? = 0
+configure:5637: result: yes
+configure:5656: checking for main in -lutil
+configure:5681: gcc -o conftest -O2     conftest.c -lutil   >&5
+configure:5684: $? = 0
+configure:5687: test -s conftest
+configure:5690: $? = 0
+configure:5702: result: yes
+configure:5708: checking for main in -lcompat
+configure:5733: gcc -o conftest -O2     conftest.c -lcompat   >&5
 /usr/bin/ld: cannot find -lcompat
 collect2: ld returned 1 exit status
-configure:5706: $? = 1
+configure:5736: $? = 1
 configure: failed program was:
-| #line 5685 "configure"
+| #line 5715 "configure"
 | /* confdefs.h.  */
 | 
 | #define PACKAGE_NAME ""
@@ -417,26 +417,26 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:5724: result: no
-configure:5731: checking for crypt in -lcrypt
-configure:5762: gcc -o conftest -O2     conftest.c -lcrypt   >&5
-configure:5765: $? = 0
-configure:5768: test -s conftest
-configure:5771: $? = 0
-configure:5783: result: yes
-configure:5867: checking for socklen_t
-configure:5909: g++ -c -O2 -fno-check-new -fexceptions  conftest.cc >&5
-configure:5912: $? = 0
-configure:5915: test -s conftest.o
-configure:5918: $? = 0
-configure:5982: result: socklen_t
-configure:6004: checking for dnet_ntoa in -ldnet
-configure:6035: gcc -o conftest -O2     conftest.c -ldnet   >&5
+configure:5754: result: no
+configure:5761: checking for crypt in -lcrypt
+configure:5792: gcc -o conftest -O2     conftest.c -lcrypt   >&5
+configure:5795: $? = 0
+configure:5798: test -s conftest
+configure:5801: $? = 0
+configure:5813: result: yes
+configure:5897: checking for socklen_t
+configure:5939: g++ -c -O2 -fno-check-new -fexceptions  conftest.cc >&5
+configure:5942: $? = 0
+configure:5945: test -s conftest.o
+configure:5948: $? = 0
+configure:6012: result: socklen_t
+configure:6034: checking for dnet_ntoa in -ldnet
+configure:6065: gcc -o conftest -O2     conftest.c -ldnet   >&5
 /usr/bin/ld: cannot find -ldnet
 collect2: ld returned 1 exit status
-configure:6038: $? = 1
+configure:6068: $? = 1
 configure: failed program was:
-| #line 6011 "configure"
+| #line 6041 "configure"
 | /* confdefs.h.  */
 | 
 | #define PACKAGE_NAME ""
@@ -475,14 +475,14 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:6056: result: no
-configure:6063: checking for dnet_ntoa in -ldnet_stub
-configure:6094: gcc -o conftest -O2     conftest.c -ldnet_stub   >&5
+configure:6086: result: no
+configure:6093: checking for dnet_ntoa in -ldnet_stub
+configure:6124: gcc -o conftest -O2     conftest.c -ldnet_stub   >&5
 /usr/bin/ld: cannot find -ldnet_stub
 collect2: ld returned 1 exit status
-configure:6097: $? = 1
+configure:6127: $? = 1
 configure: failed program was:
-| #line 6070 "configure"
+| #line 6100 "configure"
 | /* confdefs.h.  */
 | 
 | #define PACKAGE_NAME ""
@@ -521,44 +521,44 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:6115: result: no
-configure:6122: checking for inet_ntoa
-configure:6172: gcc -o conftest -O2     conftest.c  >&5
-configure:6175: $? = 0
-configure:6178: test -s conftest
-configure:6181: $? = 0
-configure:6192: result: yes
-configure:6255: checking for connect
-configure:6305: gcc -o conftest -O2     conftest.c  >&5
-configure:6308: $? = 0
-configure:6311: test -s conftest
-configure:6314: $? = 0
-configure:6325: result: yes
-configure:6389: checking for remove
-configure:6439: gcc -o conftest -O2     conftest.c  >&5
-configure:6442: $? = 0
-configure:6445: test -s conftest
-configure:6448: $? = 0
-configure:6459: result: yes
-configure:6524: checking for shmat
-configure:6574: gcc -o conftest -O2     conftest.c  >&5
-configure:6577: $? = 0
-configure:6580: test -s conftest
-configure:6583: $? = 0
-configure:6594: result: yes
-configure:6665: checking for res_init
-configure:6715: gcc -o conftest -O2     conftest.c  >&5
-configure:6718: $? = 0
-configure:6721: test -s conftest
-configure:6724: $? = 0
-configure:6735: result: yes
-configure:6802: checking for killpg in -lucb
-configure:6833: gcc -o conftest -O2     conftest.c -lucb   >&5
+configure:6145: result: no
+configure:6152: checking for inet_ntoa
+configure:6202: gcc -o conftest -O2     conftest.c  >&5
+configure:6205: $? = 0
+configure:6208: test -s conftest
+configure:6211: $? = 0
+configure:6222: result: yes
+configure:6285: checking for connect
+configure:6335: gcc -o conftest -O2     conftest.c  >&5
+configure:6338: $? = 0
+configure:6341: test -s conftest
+configure:6344: $? = 0
+configure:6355: result: yes
+configure:6419: checking for remove
+configure:6469: gcc -o conftest -O2     conftest.c  >&5
+configure:6472: $? = 0
+configure:6475: test -s conftest
+configure:6478: $? = 0
+configure:6489: result: yes
+configure:6554: checking for shmat
+configure:6604: gcc -o conftest -O2     conftest.c  >&5
+configure:6607: $? = 0
+configure:6610: test -s conftest
+configure:6613: $? = 0
+configure:6624: result: yes
+configure:6695: checking for res_init
+configure:6745: gcc -o conftest -O2     conftest.c  >&5
+configure:6748: $? = 0
+configure:6751: test -s conftest
+configure:6754: $? = 0
+configure:6765: result: yes
+configure:6832: checking for killpg in -lucb
+configure:6863: gcc -o conftest -O2     conftest.c -lucb   >&5
 /usr/bin/ld: cannot find -lucb
 collect2: ld returned 1 exit status
-configure:6836: $? = 1
+configure:6866: $? = 1
 configure: failed program was:
-| #line 6809 "configure"
+| #line 6839 "configure"
 | /* confdefs.h.  */
 | 
 | #define PACKAGE_NAME ""
@@ -598,68 +598,68 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:6854: result: no
-configure:6927: checking for int
-configure:6952: gcc -c -O2    conftest.c >&5
-configure:6955: $? = 0
-configure:6958: test -s conftest.o
-configure:6961: $? = 0
-configure:6972: result: yes
-configure:6975: checking size of int
-configure:7250: gcc -o conftest -O2     conftest.c  >&5
-configure:7253: $? = 0
-configure:7255: ./conftest
-configure:7258: $? = 0
-configure:7281: result: 4
-configure:7287: checking for long
-configure:7312: gcc -c -O2    conftest.c >&5
-configure:7315: $? = 0
-configure:7318: test -s conftest.o
-configure:7321: $? = 0
-configure:7332: result: yes
-configure:7335: checking size of long
-configure:7610: gcc -o conftest -O2     conftest.c  >&5
-configure:7613: $? = 0
-configure:7615: ./conftest
-configure:7618: $? = 0
-configure:7641: result: 4
-configure:7647: checking for char *
-configure:7672: gcc -c -O2    conftest.c >&5
-configure:7675: $? = 0
-configure:7678: test -s conftest.o
-configure:7681: $? = 0
-configure:7692: result: yes
-configure:7695: checking size of char *
-configure:7970: gcc -o conftest -O2     conftest.c  >&5
-configure:7973: $? = 0
-configure:7975: ./conftest
-configure:7978: $? = 0
-configure:8001: result: 4
-configure:8007: checking for char
-configure:8032: gcc -c -O2    conftest.c >&5
-configure:8035: $? = 0
-configure:8038: test -s conftest.o
-configure:8041: $? = 0
-configure:8052: result: yes
-configure:8055: checking size of char
-configure:8330: gcc -o conftest -O2     conftest.c  >&5
-configure:8333: $? = 0
-configure:8335: ./conftest
-configure:8338: $? = 0
-configure:8361: result: 1
-configure:8369: checking for dlopen in -ldl
-configure:8400: gcc -o conftest -O2     conftest.c -ldl   >&5
-configure:8403: $? = 0
-configure:8406: test -s conftest
-configure:8409: $? = 0
-configure:8421: result: yes
-configure:8431: checking for shl_unload in -ldld
-configure:8462: gcc -o conftest -O2     conftest.c -ldld   >&5
+configure:6884: result: no
+configure:6957: checking for int
+configure:6982: gcc -c -O2    conftest.c >&5
+configure:6985: $? = 0
+configure:6988: test -s conftest.o
+configure:6991: $? = 0
+configure:7002: result: yes
+configure:7005: checking size of int
+configure:7280: gcc -o conftest -O2     conftest.c  >&5
+configure:7283: $? = 0
+configure:7285: ./conftest
+configure:7288: $? = 0
+configure:7311: result: 4
+configure:7317: checking for long
+configure:7342: gcc -c -O2    conftest.c >&5
+configure:7345: $? = 0
+configure:7348: test -s conftest.o
+configure:7351: $? = 0
+configure:7362: result: yes
+configure:7365: checking size of long
+configure:7640: gcc -o conftest -O2     conftest.c  >&5
+configure:7643: $? = 0
+configure:7645: ./conftest
+configure:7648: $? = 0
+configure:7671: result: 4
+configure:7677: checking for char *
+configure:7702: gcc -c -O2    conftest.c >&5
+configure:7705: $? = 0
+configure:7708: test -s conftest.o
+configure:7711: $? = 0
+configure:7722: result: yes
+configure:7725: checking size of char *
+configure:8000: gcc -o conftest -O2     conftest.c  >&5
+configure:8003: $? = 0
+configure:8005: ./conftest
+configure:8008: $? = 0
+configure:8031: result: 4
+configure:8037: checking for char
+configure:8062: gcc -c -O2    conftest.c >&5
+configure:8065: $? = 0
+configure:8068: test -s conftest.o
+configure:8071: $? = 0
+configure:8082: result: yes
+configure:8085: checking size of char
+configure:8360: gcc -o conftest -O2     conftest.c  >&5
+configure:8363: $? = 0
+configure:8365: ./conftest
+configure:8368: $? = 0
+configure:8391: result: 1
+configure:8399: checking for dlopen in -ldl
+configure:8430: gcc -o conftest -O2     conftest.c -ldl   >&5
+configure:8433: $? = 0
+configure:8436: test -s conftest
+configure:8439: $? = 0
+configure:8451: result: yes
+configure:8461: checking for shl_unload in -ldld
+configure:8492: gcc -o conftest -O2     conftest.c -ldld   >&5
 /usr/bin/ld: cannot find -ldld
 collect2: ld returned 1 exit status
-configure:8465: $? = 1
+configure:8495: $? = 1
 configure: failed program was:
-| #line 8438 "configure"
+| #line 8468 "configure"
 | /* confdefs.h.  */
 | 
 | #define PACKAGE_NAME ""
@@ -703,45 +703,45 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:8483: result: no
-configure:8509: checking for X
-configure:8761: result: libraries /usr/X11R6/lib, headers /usr/X11R6/include
-configure:8795: checking for IceConnectionNumber in -lICE
-configure:8826: gcc -o conftest -O2     -L/usr/X11R6/lib conftest.c -lICE   >&5
-configure:8829: $? = 0
-configure:8832: test -s conftest
-configure:8835: $? = 0
-configure:8847: result: yes
-configure:8861: checking for libXext
-configure:8897: gcc -o conftest -O2     -L/usr/X11R6/lib  conftest.c -lXext -lX11  >&5
-configure:8900: $? = 0
-configure:8903: test -s conftest
-configure:8906: $? = 0
-configure:8924: result: yes
-configure:8937: checking for Xinerama
-configure:9011: result: no
-configure:9131: checking for pthread_create in -lpthread
-configure:9162: gcc -o conftest -O2     conftest.c -lpthread   >&5
-configure:9165: $? = 0
-configure:9168: test -s conftest
-configure:9171: $? = 0
-configure:9183: result: yes
-configure:9508: checking for extra includes
-configure:9536: result: no
-configure:9540: checking for extra libs
-configure:9569: result: no
-configure:9575: checking for libz
-configure:9610: gcc -o conftest -O2   -I/usr/X11R6/include   -D_REENTRANT  conftest.c -L/usr/X11R6/lib  -lz  >&5
-configure:9613: $? = 0
-configure:9616: test -s conftest
-configure:9619: $? = 0
-configure:9641: result: -lz
-configure:9654: checking for libpng
-configure:9697: gcc -o conftest -O2   -I/usr/X11R6/include   -D_REENTRANT  conftest.c  -L/usr/X11R6/lib  -lpng -lz -lm -lX11  >&5
-configure:9704: png.h: No such file or directory
-configure:9700: $? = 1
+configure:8513: result: no
+configure:8539: checking for X
+configure:8791: result: libraries /usr/X11R6/lib, headers /usr/X11R6/include
+configure:8825: checking for IceConnectionNumber in -lICE
+configure:8856: gcc -o conftest -O2     -L/usr/X11R6/lib conftest.c -lICE   >&5
+configure:8859: $? = 0
+configure:8862: test -s conftest
+configure:8865: $? = 0
+configure:8877: result: yes
+configure:8891: checking for libXext
+configure:8927: gcc -o conftest -O2     -L/usr/X11R6/lib  conftest.c -lXext -lX11  >&5
+configure:8930: $? = 0
+configure:8933: test -s conftest
+configure:8936: $? = 0
+configure:8954: result: yes
+configure:8967: checking for Xinerama
+configure:9041: result: no
+configure:9161: checking for pthread_create in -lpthread
+configure:9192: gcc -o conftest -O2     conftest.c -lpthread   >&5
+configure:9195: $? = 0
+configure:9198: test -s conftest
+configure:9201: $? = 0
+configure:9213: result: yes
+configure:9538: checking for extra includes
+configure:9566: result: no
+configure:9570: checking for extra libs
+configure:9599: result: no
+configure:9605: checking for libz
+configure:9640: gcc -o conftest -O2   -I/usr/X11R6/include   -D_REENTRANT  conftest.c -L/usr/X11R6/lib  -lz  >&5
+configure:9643: $? = 0
+configure:9646: test -s conftest
+configure:9649: $? = 0
+configure:9671: result: -lz
+configure:9684: checking for libpng
+configure:9727: gcc -o conftest -O2   -I/usr/X11R6/include   -D_REENTRANT  conftest.c  -L/usr/X11R6/lib  -lpng -lz -lm -lX11  >&5
+configure:9734: png.h: No such file or directory
+configure:9730: $? = 1
 configure: failed program was:
-| #line 9674 "configure"
+| #line 9704 "configure"
 | /* confdefs.h.  */
 | 
 | #define PACKAGE_NAME ""
@@ -785,14 +785,14 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:9732: result: no
-configure:9740: checking for libjpeg6b
-configure:9787: gcc -o conftest -O2   -I/usr/X11R6/include   -D_REENTRANT  conftest.c -L/usr/X11R6/lib  -ljpeg6b -lm >&5
+configure:9762: result: no
+configure:9770: checking for libjpeg6b
+configure:9817: gcc -o conftest -O2   -I/usr/X11R6/include   -D_REENTRANT  conftest.c -L/usr/X11R6/lib  -ljpeg6b -lm >&5
 /usr/bin/ld: cannot find -ljpeg6b
 collect2: ld returned 1 exit status
-configure:9790: $? = 1
+configure:9820: $? = 1
 configure: failed program was:
-| #line 9756 "configure"
+| #line 9786 "configure"
 | /* confdefs.h.  */
 | 
 | #define PACKAGE_NAME ""
@@ -844,41 +844,41 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:9817: result: no
-configure:9820: checking for libjpeg
-configure:9867: gcc -o conftest -O2   -I/usr/X11R6/include   -D_REENTRANT  conftest.c -L/usr/X11R6/lib  -ljpeg -lm >&5
-configure:9870: $? = 0
-configure:9873: test -s conftest
-configure:9876: $? = 0
-configure:9894: result: -ljpeg
-configure: 9921: /usr/include/jpeglib.h
-configure: 9921: /usr/local/include/jpeglib.h
-configure:9943: WARNING:
+configure:9847: result: no
+configure:9850: checking for libjpeg
+configure:9897: gcc -o conftest -O2   -I/usr/X11R6/include   -D_REENTRANT  conftest.c -L/usr/X11R6/lib  -ljpeg -lm >&5
+configure:9900: $? = 0
+configure:9903: test -s conftest
+configure:9906: $? = 0
+configure:9924: result: -ljpeg
+configure: 9951: /usr/include/jpeglib.h
+configure: 9951: /usr/local/include/jpeglib.h
+configure:9973: WARNING:
 There is an installation error in jpeg support. You seem to have only one
 of either the headers _or_ the libraries installed. You may need to either
 provide correct --with-extra-... options, or the development package of
 libjpeg6b. You can get a source package of libjpeg from http://www.ijg.org/
 Disabling JPEG support.
 
-configure:10059: checking for Qt
-configure: 10127: /usr/local/qt3/include/qstyle.h
+configure:10089: checking for Qt
+configure: 10157: /usr/local/qt3/include/qstyle.h
 taking that
-configure:10234: rm -rf SunWS_cache; g++ -o conftest -O2 -fno-check-new -fexceptions -I/usr/local/qt3/include -I/usr/X11R6/include  -D_REENTRANT  -L/usr/local/qt3/lib -L/usr/X11R6/lib   conftest.cc  -lqt    -lXext -lX11 -lSM -lICE  1>&5
-configure:10237: $? = 0
-configure:10289: result: libraries /usr/local/qt3/lib, headers /usr/local/qt3/include 
-configure:10299: checking if Qt compiles without flags
-configure:10394: rm -rf SunWS_cache; g++ -o conftest -O2 -fno-check-new -fexceptions -I/usr/local/qt3/include  -D_REENTRANT  -L/usr/X11R6/lib conftest.cc -lqt    -lXext -lX11 -lSM -lICE  -lXext -lX11  1>&5
-configure:10397: $? = 0
-configure:10426: result: yes
-configure:10468: checking for moc
-configure:10537: result: /usr/local/qt3/bin/moc
-configure:10545: checking for uic
-configure:10596: result: /usr/local/qt3/bin/uic
-configure:10672: checking if admin should be compiled
-configure:10684: result: no
-configure:10672: checking if tool should be compiled
-configure:10684: result: yes
-configure:10811: creating ./config.status
+configure:10264: rm -rf SunWS_cache; g++ -o conftest -O2 -fno-check-new -fexceptions -I/usr/local/qt3/include -I/usr/X11R6/include  -D_REENTRANT  -L/usr/local/qt3/lib -L/usr/X11R6/lib   conftest.cc  -lqt    -lXext -lX11 -lSM -lICE  1>&5
+configure:10267: $? = 0
+configure:10319: result: libraries /usr/local/qt3/lib, headers /usr/local/qt3/include 
+configure:10329: checking if Qt compiles without flags
+configure:10424: rm -rf SunWS_cache; g++ -o conftest -O2 -fno-check-new -fexceptions -I/usr/local/qt3/include  -D_REENTRANT  -L/usr/X11R6/lib conftest.cc -lqt    -lXext -lX11 -lSM -lICE  -lXext -lX11  1>&5
+configure:10427: $? = 0
+configure:10456: result: yes
+configure:10498: checking for moc
+configure:10567: result: /usr/local/qt3/bin/moc
+configure:10575: checking for uic
+configure:10626: result: /usr/local/qt3/bin/uic
+configure:10702: checking if admin should be compiled
+configure:10714: result: no
+configure:10702: checking if tool should be compiled
+configure:10714: result: yes
+configure:10841: creating ./config.status
 
 ## ---------------------- ##
 ## Running config.status. ##
@@ -1212,21 +1212,3 @@ on criquet
 
 config.status:832: creating config.h
 config.status:955: config.h is unchanged
-
-## ---------------------- ##
-## Running config.status. ##
-## ---------------------- ##
-
-This file was extended by config.status, which was
-generated by GNU Autoconf 2.57.  Invocation command line was
-
-  CONFIG_FILES    = 
-  CONFIG_HEADERS  = 
-  CONFIG_LINKS    = 
-  CONFIG_COMMANDS = 
-  $ ./config.status tool/Makefile depfiles
-
-on criquet
-
-config.status:728: creating tool/Makefile
-config.status:1077: executing depfiles commands
