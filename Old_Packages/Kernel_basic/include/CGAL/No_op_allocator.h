@@ -41,22 +41,22 @@ class No_op_allocator
   No_op_allocator() : Don_t_call(true) {}
 
   pointer
-  allocate(size_type /*n*/, const_pointer = 0)
+  allocate(size_type, const_pointer = 0)
   { return static_cast<pointer>(0); }
 
   void
-  deallocate(pointer /*p*/, size_type /*n*/) {}
+  deallocate(pointer, size_type) {}
 
   pointer
-  address(reference /*r*/)
+  address(reference)
   { CGAL_precondition ( !Don_t_call ); return static_cast<pointer>(0); }
 
   const_pointer
-  address(const_reference /*r*/)
+  address(const_reference)
   { CGAL_precondition ( !Don_t_call ); return static_cast<const_pointer>(0); }
 
   void
-  construct(pointer /*p*/, const_reference /*r*/)
+  construct(pointer, const_reference)
   { CGAL_precondition ( !Don_t_call ); }
   // It is the user responsibility to construct
   // the element, e.g. using new
