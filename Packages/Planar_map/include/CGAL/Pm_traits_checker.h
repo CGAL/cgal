@@ -142,16 +142,6 @@ public:
     CGAL_assertion(t.compare_y(p1,p2)==b.compare_y(P(p1),P(p2)));
     return t.compare_y(p1,p2);
   }
-  Point point_to_left(const Point& p) const  
-    {
-    CGAL_assertion(P(t.point_to_left(p))==b.point_to_left(P(p)));
-    return t.point_to_left(p);
-    }
-  Point point_to_right(const Point& p) const 
-    {
-    CGAL_assertion(P(t.point_to_right(p))==b.point_to_right(P(p)));
-    return t.point_to_right(p);
-    }
   bool curve_is_same(const X_curve &cv1, const X_curve &cv2) const
     {
     CGAL_assertion(t.curve_is_same(cv1,cv2)==b.curve_is_same(P(cv1),P(cv2)));

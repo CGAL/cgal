@@ -3,30 +3,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Point_2_>
-struct Construct_point_to_right_2
-{
-  typedef Point_2_                      Point_2;
-  typedef typename Point_2::R::FT       FT;
-
-  Point_2 operator()(const Point_2 & pnt) const
-  { 
-    return Point_2(pnt.x() + FT(1), pnt.y());
-  }
-};
-
-template <class Point_2_>
-struct Construct_point_to_left_2
-{
-  typedef Point_2_                      Point_2;
-  typedef typename Point_2::R::FT       FT;
-
-  Point_2 operator()(const Point_2 & pnt) const
-  { 
-    return Point_2(pnt.x() - FT(1), pnt.y());
-  }
-};
-
 template<class Point_2>
 bool is_left(const Point_2 & p1, const Point_2 & p2)
 {
