@@ -36,7 +36,6 @@
 #include <CGAL/In_place_list.h>
 #include <CGAL/Handle_for.h>
 #include <CGAL/assertions.h>
-#include <CGAL/Arr_intersection_tags.h>
 
 #ifdef CGAL_SWEEP_LINE_DEBUG
 #define CGAL_SL_DEBUG(x) x
@@ -280,7 +279,7 @@ protected:
     typedef  typename Curve_node_container::iterator    Curve_node_iterator;
     typedef  typename Curve_node_container::const_iterator  
                                                 Curve_node_const_iterator;
-    typedef typename Traits::Intersection_category      Intersection_category;
+    typedef typename Traits::Has_left_category          Has_left_category;
 
       // Obsolete
     typedef Point_2                                     Point;
@@ -574,14 +573,14 @@ protected:
                                       Point_2 & p1, Point_2 & p2) const 
     {
       return nearest_intersection_to_left_imp(cv1, cv2, pt, p1, p2,
-                                              Intersection_category());
+                                              Has_left_category());
     }
 
     bool nearest_intersection_to_left_imp(const X_curve_2 & cv1,
                                           const X_curve_2 & cv2,
                                           const Point_2 & pt,
                                           Point_2 & p1, Point_2 & p2,
-                                          Efficient_intersection_tag) const
+                                          Tag_true) const
     {
       return traits->nearest_intersection_to_left(cv1, cv2, pt, p1, p2);
     }
@@ -590,7 +589,7 @@ protected:
                                           const X_curve_2 & cv2,
                                           const Point_2 & pt,
                                           Point_2 & p1, Point_2 & p2,
-                                          Lazy_intersection_tag) const 
+                                          Tag_false) const 
     { 
       Point_2 rpt = traits->point_reflect_in_x_and_y( pt);
       X_curve_2 rcv1 = traits->curve_reflect_in_x_and_y( cv1);
