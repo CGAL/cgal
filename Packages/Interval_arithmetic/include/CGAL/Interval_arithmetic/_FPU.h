@@ -45,7 +45,7 @@ inline double IA_force_to_double(const double x)
 // double precision mode !  It's a problem when the intervals overflow or
 // underflow.  To work around that, we store the variable to memory when
 // needed, using the macro below.
-// An other possible workaround would be to use intervals of "long doubles"
+// Another possible workaround would be to use intervals of "long doubles"
 // directly, but I think it would be much slower.
 #if !defined (CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT) && \
     (defined __i386__ || defined _MSC_VER || defined __BORLANDC__)
@@ -163,7 +163,7 @@ typedef unsigned int FPU_CW_t;
 #define CGAL_FE_UPWARD       FP_RND_RP
 #define CGAL_FE_DOWNWARD     FP_RND_RM
 
-#elif defined __alpha__  // This one is not really supported [yet].
+#elif defined __alpha__  // Not yet supported.
 #define CGAL_IA_SETFPCW(CW) asm volatile ("mt_fpcr %0; excb" : :"f" (CW))
 #define CGAL_IA_GETFPCW(CW) asm volatile ("excb; mf_fpcr %0" : "=f" (CW))
 typedef unsigned long FPU_CW_t;
