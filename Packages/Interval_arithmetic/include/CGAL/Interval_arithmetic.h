@@ -709,7 +709,7 @@ io_tag (const Interval_nt_advanced &)
 
 inline
 Number_tag
-number_type_tag (Interval_nt_advanced)
+number_type_tag (const Interval_nt_advanced &)
 { return Number_tag(); }
 
 
