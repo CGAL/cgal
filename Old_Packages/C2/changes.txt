@@ -1,3 +1,6 @@
+Version 3.4  (23 march 2000)
+- changes makefile to submit [my]
+
 Version 3.3.14
 - problem with the headers. resubmit
 
