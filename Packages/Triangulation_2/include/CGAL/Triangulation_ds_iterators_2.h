@@ -510,25 +510,24 @@ operator--(int)
 template<class Tds>
 Triangulation_ds_vertex_iterator_2<Tds> ::
 Triangulation_ds_vertex_iterator_2(const Tds * tds)
-  : Iterator_base(tds)
-   {
-        switch( tds->number_of_vertices() ){
-        case 0: // past-the-end
-            pos = NULL;
-            return;
-        case 1:
-	  pos = (Face*)1 ; // different from any pointer;
-	  return;         // the iterator points to the only vertex 
+  : Iterator_base(tds), index(0)
+{
+  switch( tds->number_of_vertices() ){
+  case 0: // past-the-end
+    pos = NULL;
+    return;
+  case 1:
+    pos = (Face*)1 ; // different from any pointer;
+    return;         // the iterator points to the only vertex 
 	
-        default:
-	  pos = tds->infinite_face();
-	  index = 0;
-	  while ( ! associated_vertex()){
-	    increment();
-	  }
-	  return;
-	}
+  default:
+    pos = tds->infinite_face();
+    while ( *this!=Vertex_iterator(tds,1) && !associated_vertex()){
+      increment();
     }
+    return;
+  }
+}
 
 template<class Tds>
 void   
@@ -566,18 +565,11 @@ Triangulation_ds_vertex_iterator_2<Tds>&
 Triangulation_ds_vertex_iterator_2<Tds> ::
 operator++()
 {
-   CGAL_triangulation_precondition(pos != NULL);
-   if (pos==(Face*)1){ //number_of_vertices() == 1
-     pos = NULL;          
-     return *this; 
-   }
+   CGAL_triangulation_precondition(*this != Vertex_iterator(_tds,1));
    do{
      increment();
-     if ( pos == _tds->infinite_face() && index == 0){
-       pos = NULL;   // complete tour
-       return *this;
-     }
-   }while ( ! associated_vertex() );
+     if (*this == Vertex_iterator(_tds)) *this= Vertex_iterator(_tds,1);
+   }while ( *this!=Vertex_iterator(_tds,1) &&  !associated_vertex() );
    return *this;
 }
     
@@ -586,20 +578,13 @@ Triangulation_ds_vertex_iterator_2<Tds>&
 Triangulation_ds_vertex_iterator_2<Tds> ::    
 operator--()
 {
-   CGAL_triangulation_assertion(pos != NULL);
-   if(pos == (Face*)1 || (pos==_tds->infinite_face() && index==0)) {
-     pos = NULL;
-     return *this;
+   CGAL_triangulation_assertion( *this != Vertex_iterator(_tds,1));
+   if( *this == Vertex_iterator(_tds)){
+     return *this=Vertex_iterator(_tds,1) ;
    }
-     
+   do   
    decrement();
-   while ( ! associated_vertex()) {
-     if (pos == _tds->infinite_face() && index == 0) {
-       pos = NULL;
-       return *this;
-     }
-     else decrement();
-   }
+   while ( *this != Vertex_iterator(_tds,1) && !associated_vertex()); 
    return *this;
 }
     
@@ -628,7 +613,8 @@ bool
 Triangulation_ds_vertex_iterator_2<Tds> :: 
 operator==(const Vertex_iterator& fi) const
 {
-  if (pos==NULL)  return (pos==fi.pos) && (_tds==fi._tds) ;
+  if (pos==NULL || pos==(Face*)1)
+    return (pos==fi.pos) && (_tds==fi._tds) ;
   return (pos==fi.pos) && (_tds==fi._tds) &&  (index == fi.index);
 }
  
@@ -680,7 +666,7 @@ Triangulation_ds_edge_iterator_2(const Tds * tds)
   }
   pos = _tds->infinite_face();
   index = (_tds->dimension() == 1) ? 2 : 0 ;
-  while ( !associated_edge() )    increment();
+  while ( *this!= Edge_iterator(_tds,1) && !associated_edge() ) increment();
 }
 
 
@@ -742,22 +728,11 @@ Triangulation_ds_edge_iterator_2<Tds>&
 Triangulation_ds_edge_iterator_2<Tds> ::
 operator++()
 {
-  CGAL_triangulation_precondition(pos != NULL);
-  //dimension >= 1
-  if(_tds->dimension()==1){
-    Iterator_base::increment();
-    if ( pos == _tds->infinite_face()) { pos = NULL;}
-    return *this;
-  }
-
-  // dimension == 2 et pos != NULL
-  do{
+  CGAL_triangulation_precondition(*this != Edge_iterator(_tds,1));
+  do {
     increment();
-    if ( pos == _tds->infinite_face() && index == 0){ 
-      pos = NULL;  // complete tour
-      return *this;
-    }
-  }while ( ! associated_edge() );
+    if (*this == Edge_iterator(_tds)) *this= Edge_iterator(_tds,1);
+  } while( *this != Edge_iterator(_tds,1) && !associated_edge());
   return *this;
 }
     
@@ -767,29 +742,16 @@ Triangulation_ds_edge_iterator_2<Tds>&
 Triangulation_ds_edge_iterator_2<Tds> ::
 operator--()
 {
-  CGAL_triangulation_assertion(pos != NULL);
-  switch(_tds->dimension()){
-  case 1:
-    if (pos !=  _tds->infinite_face()) { pos = NULL; }
-    else decrement();
-    break;
-  case 2:
-    if (pos == _tds->infinite_face() && index == 0) { 
-      pos = NULL; 
-      return *this;
-    }
-    decrement();
-    while ( ! associated_edge()){
-      if ( pos == _tds->infinite_face() && index == 0) {
-	pos = NULL;   // complete tour
-	return *this;
-      }
-      else decrement();
-    }
-    break;
-  }
-  return this;
+  CGAL_triangulation_assertion(*this != Edge_iterator(_tds,1));
+  if( *this == Edge_iterator(_tds)){
+     return *this=Vertex_iterator(_tds,1) ;
+   }
+  do   
+   decrement();
+  while ( *this != Vertex_iterator(_tds,1) && !associated_vertex()); 
+  return *this;
 }
+
     
 template<class Tds>
 Triangulation_ds_edge_iterator_2<Tds>
