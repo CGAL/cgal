@@ -1457,7 +1457,8 @@ calblockintro   ([\{][\\](cal))|([\\]mathcal[\{])
 
  /* Support for the Bibliography */
  /* ---------------------------- */
-[\\]begin[\{]thebibliography[\}][\{][^\}]*[\}]    {
+[\\]begin[\{]thebibliography[\}]    {
+		    BEGIN( NestingMode);
 		    return BEGINBIBLIO;		    
                  }
 [\\]end[\{]thebibliography[\}]   {

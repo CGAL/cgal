@@ -681,10 +681,14 @@ global_tagged_declarator:
 		                          handleString( "</H4>\n");
 					  delete $2;
 		                      }
-                | BEGINBIBLIO
+                | BEGINBIBLIO  '{' nested_token_sequence '}'
+                                      {   set_INITIAL = 1;
+				          delete $3;
+                                      }
 		  comment_sequence
-                  ENDBIBLIO           {   handleBiblio( * $2); 
-                                          delete $2;
+		  ENDBIBLIO           {
+                                          handleBiblio( * $6); 
+                                          delete $6;
 		                      }
 		| FUNCTION      declaration   comment_group {
 		                  handleFunctionDeclaration( $2->string(),

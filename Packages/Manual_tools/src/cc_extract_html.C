@@ -21,7 +21,7 @@
 #include <assert.h>
 
 #include <map.h>
-// Repair what the STL bool definitions made wrong.
+// Repair, what the STL bool definitions made wrong.
 #ifdef bool
 #undef bool
 #endif
