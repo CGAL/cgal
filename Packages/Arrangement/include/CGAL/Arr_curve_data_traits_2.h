@@ -83,11 +83,8 @@ public:
   typedef X_monotone_curve_2                    X_curve;
   typedef Curve_2                               Curve;
   
-private:
-  Traits m_traits;
-
 public:
-  Arr_curve_data_traits_2 () : m_traits() {}
+  Arr_curve_data_traits_2 () : Traits() {}
   
   /*! Cut the given curve into x-monotone subcurves and insert them to the
    * given output iterator. While segments are x_monotone, still need to pass
@@ -102,11 +99,12 @@ public:
   {
     std::list<Org_x_monotone_curve_2>  org_x_curves;
     
-    m_traits.curve_make_x_monotone (cv, std::back_inserter(org_x_curves));
+    Traits::curve_make_x_monotone (cv, std::back_inserter(org_x_curves));
 
     typename std::list<Org_x_monotone_curve_2>::const_iterator it;
-    for (it = org_x_curves.begin(); it != org_x_curves.end(); it++)
+    for (it = org_x_curves.begin(); it != org_x_curves.end(); it++) {
       *o++ = X_monotone_curve_2 (*it, cv.get_data());
+    }
     
     return o;
   } 
@@ -125,7 +123,7 @@ public:
                    const Point_2 & p) const
   {
     Org_x_monotone_curve_2 org_c1, org_c2;
-    m_traits.curve_split (cv, org_c1, org_c2, p);
+    Traits::curve_split (cv, org_c1, org_c2, p);
     c1 = X_monotone_curve_2 (org_c1, cv.get_data());
     c2 = X_monotone_curve_2 (org_c2, cv.get_data());
   }
