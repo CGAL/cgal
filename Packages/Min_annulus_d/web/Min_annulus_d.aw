@@ -1133,13 +1133,13 @@ number types and iterators used by the QP solver.
 
 @macro <Min_annulus_d declarations> += @begin
     
-    template < class ET_, class NT_, class Point, class Point_iterator,
+    template < class ET_, class NT_, class Point, class PointIterator,
                class Access_coord, class Access_dim >
     struct LP_rep_min_annulus_d;
 @end
 
 @macro <Min_annulus_d LP representation> = @begin
-    template < class ET_, class NT_, class Point, class Point_iterator,
+    template < class ET_, class NT_, class Point, class PointIterator,
                class Access_coord, class Access_dim >
     struct LP_rep_min_annulus_d {
         typedef  ET_                    ET;
@@ -1389,7 +1389,7 @@ error stream.
     template < class ForwardIterator, class Traits >
     void
     test_Min_annulus_d( ForwardIterator first, ForwardIterator last,
-                       const Traits& traits, int verbose)
+                        const Traits& traits, int verbose)
     {
         CGAL_USING_NAMESPACE_STD
         
@@ -1562,7 +1562,6 @@ e.g.~with $2$, $3$, or $d$.
 
 @macro <Min_annulus_d test: includes and typedefs>(1) many += @begin
     #include <CGAL/Cartesian.h>
-    #include <CGAL/Point_@1.h>
     #include <CGAL/Min_annulus_d.h>
     #include <CGAL/Optimisation_d_traits_@1.h>
 @end
@@ -1575,8 +1574,8 @@ variant.
     // test variant 1 (needs LEDA)
     #ifdef CGAL_USE_LEDA
     # include <CGAL/leda_integer.h>
-      typedef  CGAL::Cartesian<leda_integer>       R_1;
-      typedef  CGAL::Optimisation_d_traits_@1<R_1>   Traits_1;
+      typedef  CGAL::Cartesian<leda_integer>       K_1;
+      typedef  CGAL::Optimisation_d_traits_@1<K_1>  Traits_1;
     # define TEST_VARIANT_1 \
         "Optimisation_d_traits_@1< Cartesian<leda_integer> >"
       CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( leda_integer)
@@ -1594,8 +1593,8 @@ arithmetic.
     // test variant 2 (needs GMP)
     #ifdef CGAL_USE_GMP
     # include <CGAL/_QP_solver/Double.h>
-      typedef  CGAL::Cartesian< int >                                 R_2;
-      typedef  CGAL::Optimisation_d_traits_@1<R_2,GMP::Double,double>   Traits_2;
+      typedef  CGAL::Cartesian< int >                                 K_2;
+      typedef  CGAL::Optimisation_d_traits_@1<K_2,GMP::Double,double>  Traits_2;
     # define TEST_VARIANT_2 \
         "Optimisation_d_traits_@1< Cartesian<int>, GMP::Double, double >"
     #endif
@@ -1619,9 +1618,9 @@ or sphere, respectively.
 @end
 
 @macro <Min_annulus_d test: generate point set>(3) = @begin
-    std::vector<R_@1::Point_@2>  points_@1;
+    std::vector<K_@1::Point_@2>  points_@1;
     points_@1.reserve( 100);
-    CGAL::copy_n( CGAL::Random_points_on_@3_@2<R_@1::Point_@2>( 0x100000),
+    CGAL::copy_n( CGAL::Random_points_on_@3_@2<K_@1::Point_@2>( 0x100000),
                   100, std::back_inserter( points_@1));
 @end
 
@@ -1630,7 +1629,7 @@ The traits class model with $d$-dimensional points is tested with $d = 5$
 in a $d$-cube.
 
 @macro <Min_annulus_d test: generate point set (dD)>(1) = @begin
-    std::vector<R_@1::Point_d>  points_@1;
+    std::vector<K_@1::Point_d>  points_@1;
     points_@1.reserve( 100);
     {
         int d = 5*@1;
@@ -1639,7 +1638,7 @@ in a $d$-cube.
         for ( i = 0; i < 100; ++i) {
             for ( j = 0; j < d; ++j)
                 coords[ j] = CGAL::default_random( 0x100000);
-            points_@1.push_back( R_@1::Point_d( d, coords.begin(),
+            points_@1.push_back( K_@1::Point_d( d, coords.begin(),
                                                    coords.end()));
         }
     }
@@ -1653,7 +1652,6 @@ Finally we call the test function (described in the last section).
 @end
 
 @macro <Min_annulus_d test: call test function>(1) many = @begin
-    // call test function
     CGAL::test_Min_annulus_d( points_@1.begin(), points_@1.end(),
                               Traits_@1(), verbose);
 @end
@@ -1663,6 +1661,8 @@ respective number type is available.
 
 @macro <Min_annulus_d test: test variant output>(1) many = @begin
     verr << endl
+	 << "==================================="
+         << "===================================" << endl
          << "Testing `Min_annulus_d' with traits class model" << endl
          << "==> " << TEST_VARIANT_@1 << endl
          << "==================================="
@@ -1708,7 +1708,7 @@ can be enabled by giving a number between 0 and 3 at the command line.
 @macro <Min_annulus_d test: command line argument> many = @begin
     int verbose = -1;
     if ( argc > 1) verbose = atoi( argv[ 1]);
-    CGAL::Verbose_ostream  verr( verbose >= 0);
+    CGAL::Verbose_ostream  verr ( verbose >= 0); verr  << "";
 @end
 
 @macro <Min_annulus_d test: main>(2) many = @begin
