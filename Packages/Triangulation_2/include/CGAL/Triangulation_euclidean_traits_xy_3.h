@@ -96,9 +96,9 @@ public:
 
   Triangulation_euclidean_traits_xy_3(){}
   Triangulation_euclidean_traits_xy_3(
-		   const Triangulation_euclidean_traits_xy_3& et){}
+		   const Triangulation_euclidean_traits_xy_3&){}
   Triangulation_euclidean_traits_xy_3 &operator=(
-	    const Triangulation_euclidean_traits_xy_3&  et){return *this;}
+	    const Triangulation_euclidean_traits_xy_3&){return *this;}
 
   typename Rp::FT x(const Point_2 &p) const { return p.x(); }
   typename Rp::FT y(const Point_2 &p) const { return p.y(); }
