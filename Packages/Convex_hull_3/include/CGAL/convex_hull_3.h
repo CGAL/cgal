@@ -35,9 +35,9 @@
 #include <list>
 #include <vector>
 
-#ifndef CH_NO_POSTCONDITIONS
+#ifndef CGAL_CH_NO_POSTCONDITIONS
 #include <CGAL/convexity_check_3.h>
-#endif // CH_NO_POSTCONDITIONS
+#endif // CGAL_CH_NO_POSTCONDITIONS
 
 
 namespace CGAL {
@@ -272,25 +272,6 @@ partition_outside_sets(const std::list<Facet_handle>& new_facets,
 
 
 
-#if defined(CGAL_CFG_FUNCTION_OVERLOAD_BUG)
-
-
-template < class Tr, class Traits, class Items,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-           template < class T, class I, class A>
-#endif
-           class HDS, class Alloc>
-void 
-ch_quickhull_3_scan(Polyhedron_3<Tr,Items,HDS,Alloc>& P,
-  std::list<typename Polyhedron_3<Tr,Items,HDS,Alloc>::Facet_handle>& 
-                                                               pending_facets,
- CGAL::Unique_hash_map<typename Polyhedron_3<Tr,Items,HDS,Alloc>::Facet_handle,
- std::list<typename Traits::Point_3> >& outside_sets, const Traits& traits
-)
-
-
-#else 
-
 template <class Polyhedron_3, class Traits>
 void
 ch_quickhull_3_scan(
@@ -299,16 +280,8 @@ ch_quickhull_3_scan(
         CGAL::Unique_hash_map<typename Polyhedron_3::Facet_handle,
                    std::list<typename Traits::Point_3> >& outside_sets,
         const Traits& traits)
-#endif // CGAL_CFG_FUNCTION_OVERLOAD_BUG
 {
- 
-#if defined(CGAL_CFG_FUNCTION_OVERLOAD_BUG)
-
-  typedef Polyhedron_3<Tr,Items,HDS,Alloc>             Polyhedron;
-
-#else
   typedef Polyhedron_3                                    Polyhedron;
-#endif // CGAL_CFG_FUNCTION_OVERLOAD_BUG
   typedef typename Polyhedron::Halfedge_handle            Halfedge_handle;
   typedef typename Polyhedron::Halfedge_iterator          Halfedge_iterator;
   typedef typename Polyhedron::Facet_handle               Facet_handle;
@@ -426,32 +399,11 @@ ch_quickhull_3_scan(
   
 }
 
-#if defined(CGAL_CFG_FUNCTION_OVERLOAD_BUG)
-
-
-template < class Tr, class Traits, class Items,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-           template < class T, class I, class A>
-#endif
-           class HDS, class Alloc>
-void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
-	Polyhedron_3<Tr,Items,HDS,Alloc>& P, const Traits& traits)
-
-#else 
-
 template <class Polyhedron_3, class Traits>
 void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
                               Polyhedron_3& P, const Traits& traits)
-#endif // CGAL_CFG_FUNCTION_OVERLOAD_BUG
-
 {
-#if defined (CGAL_CFG_FUNCTION_OVERLOAD_BUG)
-
-  typedef typename Polyhedron_3<Tr,Items,HDS,Alloc>     Polyhedron;
-
-#else
   typedef Polyhedron_3                                    Polyhedron;
-#endif // _MS_VER
 
   typedef typename Polyhedron::Facet_handle               Facet_handle;
   typedef typename Polyhedron::Facet_iterator             Facet_iterator;
@@ -506,38 +458,12 @@ void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
 
 
 
-//
-#if defined(CGAL_CFG_FUNCTION_OVERLOAD_BUG)
-
-
-template < class InputIterator, class Tr, class Traits,
-           class Items,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-           template < class T, class I, class A>
-#endif
-           class HDS, class Alloc
-		>
-void
-ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
-		InputIterator point1_it, 
-        InputIterator point2_it, 
-        InputIterator point3_it, 
-        Polyhedron_3<Tr,Items,HDS,Alloc>& P,
-        const Traits& traits
-		)
-
-
-#else
-
 template <class InputIterator, class Polyhedron_3, class Traits>
 void
 ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
                           InputIterator point1_it, InputIterator point2_it,
                           InputIterator point3_it, Polyhedron_3& P,
                           const Traits& traits)
-
-#endif // CGAL_CFG_FUNCTION_OVERLOAD_BUG
-
 {
   typedef typename Traits::Point_3	  		  Point_3;  
   typedef typename Traits::Plane_3		      	  Plane_3;
@@ -700,35 +626,13 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
 
 
 
-#if defined(CGAL_CFG_FUNCTION_OVERLOAD_BUG)
-
-
-template < class InputIterator,
-		   class Tr,
-		   class Traits,
-           class Items,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-           template < class T, class I, class A>
-#endif
-           class HDS, class Alloc>
-void convex_hull_3(InputIterator first, InputIterator beyond, 
-                   Polyhedron_3<Tr,Items,HDS,Alloc>& polyhedron,
-				   const Traits& traits)
-
-#else
-
 template <class InputIterator, class Polyhedron_3, class Traits>
 void convex_hull_3(InputIterator first, InputIterator beyond,
                    Polyhedron_3& polyhedron,  const Traits& traits)
-#endif // CGAL_CFG_FUNCTION_OVERLOAD_BUG
 {
   typedef typename Traits::Point_3                Point_3;  
   typedef typename Traits::Plane_3	      	  Plane_3;
-#if defined(CGAL_CFG_FUNCTION_OVERLOAD_BUG)
-  typedef std::list< Traits::Point_3>             Point_3_list;
-#else
   typedef std::list<Point_3>                      Point_3_list;
-#endif // CGAL_CFG_FUNCTION_OVERLOAD_BUG
   typedef typename Point_3_list::iterator         P3_iterator;
 
   Point_3_list points(first, beyond);
@@ -758,29 +662,14 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
 
 }
 
-#if defined(CGAL_CFG_FUNCTION_OVERLOAD_BUG)
-
-
-template < class InputIterator, class Traits, class Items,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-           template < class T, class I, class A>
-#endif
-           class HDS, class Alloc>
-void convex_hull_3(InputIterator first, InputIterator beyond, 
-                   Polyhedron_3<Traits,Items,HDS,Alloc>& polyhedron )
-
-#else
 
 template <class InputIterator, class Polyhedron_3>
 void convex_hull_3(InputIterator first, InputIterator beyond,
                    Polyhedron_3& polyhedron)
-
-#endif // CGAL_CFG_FUNCTION_OVERLOAD_BUG
 {
    typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
    typedef typename Kernel_traits<Point_3>::Kernel                  K;
    convex_hull_3(first, beyond, polyhedron, Convex_hull_traits_3<K>());
-
 }
 
 } // namespace CGAL

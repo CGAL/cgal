@@ -1,3 +1,7 @@
+2.53 (18 Jan 2004)
+- Remove obsolete workaround CGAL_CFG_FUNCTION_OVERLOAD_BUG.
+- Rename CH_NO_POSTCONDITIONS to CGAL_CH_NO_POSTCONDITIONS.
+
 2.52 (18 Jan 2004)
 - Remove obsolete workaround CGAL_MSVC_DUMMY_ARGUMENT (VC++ <= 7.0).
 
