@@ -29,7 +29,7 @@
 #include <CGAL/Nef_3/SNC_constructor.h>
 #include <CGAL/Nef_3/SNC_io_parser.h>
 #include <CGAL/Nef_3/SNC_ray_shooter.h>
-#include <CGAL/Nef_3/SNC_walker.h>
+//#include <CGAL/Nef_3/SNC_walker.h>
 #ifdef CGAL_NEF3_VISUALIZOR
 #include <CGAL/Nef_3/SNC_visualizor_OGL.h>
 #endif // CGAL_NEF3_VISUALIZOR
@@ -81,7 +81,7 @@ class Nef_polyhedron_3_rep : public Ref_counted
   typedef CGAL::SNC_const_decorator<SNC_structure>     SNC_const_decorator;
   typedef CGAL::SNC_constructor<SNC_structure>         SNC_constructor;
   typedef CGAL::SNC_ray_shooter<SNC_structure> SNC_ray_shooter; // DEPRECATED
-  typedef CGAL::SNC_walker<SNC_structure>              SNC_walker;
+  //typedef CGAL::SNC_walker<SNC_structure>              SNC_walker;
   typedef CGAL::SNC_io_parser<SNC_structure>           SNC_io_parser;
   typedef CGAL::SNC_point_locator<SNC_structure>       SNC_point_locator;
   typedef CGAL::SNC_point_locator_by_spatial_subdivision<SNC_structure>
@@ -163,7 +163,7 @@ protected:
   typedef typename Nef_rep::SNC_decorator       SNC_decorator;
   typedef typename Nef_rep::SNC_constructor     SNC_constructor;
   typedef typename Nef_rep::SNC_ray_shooter SNC_ray_shooter; // DEPRECATED
-  typedef typename Nef_rep::SNC_walker          SNC_walker;
+  //typedef typename Nef_rep::SNC_walker          SNC_walker;
   typedef typename Nef_rep::SNC_io_parser       SNC_io_parser;
   typedef typename Nef_rep::SNC_point_locator   SNC_point_locator;
   typedef typename Nef_rep::SNC_point_locator_default 

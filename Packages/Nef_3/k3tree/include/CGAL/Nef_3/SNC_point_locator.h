@@ -8,7 +8,7 @@
 #include <CGAL/Nef_3/SNC_intersection.h>
 #include <CGAL/Nef_3/SNC_ray_shooter.h>
 #include <CGAL/Nef_3/SNC_k3_tree_traits.h>
-#include <CGAL/K3_tree.h>
+#include <CGAL/Nef_3/K3_tree.h>
 #include <CGAL/Unique_hash_map.h>
 
 #undef _DEBUG
