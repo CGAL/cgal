@@ -4,7 +4,9 @@
 @! ----------------------------------------------------------------------------
 @! file  : Kernel/web/Random.aw
 @! author: Sven Schönherr (sven@inf.fu-berlin.de)
-@! $Id$
+@! ----------------------------------------------------------------------------
+@! $Revision$
+@! $Date$
 @! ============================================================================
 
 @p maximum_input_line_length = 120
@@ -34,13 +36,13 @@
 @t vskip 5 mm
 @t title smalltitlefont centre "Sven Schönherr"
 \smallskip
-\centerline{\rcsrevision, \rcsdate}
+\centerline{\rcsrevision\ , \rcsdate}
 @t vskip 1 mm
 @!thickline
 
 \renewcommand{\thefootnote}{\fnsymbol{footnote}}
 \footnotetext[1]{This work was supported by the ESPRIT IV LTR Project
-  No. 21957 (CGAL).}
+  No.~21957 (CGAL).}
 
 @! ============================================================================
 @! Introduction and Contents
@@ -310,7 +312,7 @@ the given ranges.
 @macro <Random header>(1) many = @begin
     @<file header>("Random Numbers Generator",@1,"Random",
 		   "Sven Schönherr (sven@@inf.fu-berlin.de)",
-		   "$Id$")
+		   "$Revision$","$Date$")
 @end
 
 @! ===== EOF ==================================================================
