@@ -46,6 +46,7 @@ protected:
 @$@<2D Straight implementation@>==@{
 #include <CGAL/Line_2_Line_2_intersection.h>
 
+inline
 CGAL__Straight_2_base::
 CGAL__Straight_2_base()
 {
