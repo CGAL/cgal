@@ -1,5 +1,7 @@
-1.18
+1.18 (22 January 2003)
 - Added coordinate iterator
+- Add new constructors Iso_rectangle_2(left, right, bottom, top) and
+  Iso_cuboid_3(left, right, bottom, top, far, close).
 
 1.17 (20 January 2003)
 - Rename Leda_like_handle to Handle, similar for Leda_like_rep to Rep.
