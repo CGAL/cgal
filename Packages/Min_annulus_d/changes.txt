@@ -1,5 +1,8 @@
 Changes done to the `Min_annulus_d' package
 
+Version 0.7 on 12-Sep-2000
+- documentation split up into user and reference manual parts.
+
 Version 0.6 on 06-Sep-2000
 - features `inner/outer support points' implemented
 - adapted to "enhanced" QP solver
