@@ -257,7 +257,6 @@ public:
     unsigned int id = 0;
     for(xcv_iter = x_monotone_curves.begin(); 
         xcv_iter != x_monotone_curves.end(); ++xcv_iter, ++id){
-      
       X_curve cv(*xcv_iter);
       if (is_right(traits->curve_source(*xcv_iter), 
                    traits->curve_target(*xcv_iter)) )
@@ -310,7 +309,7 @@ public:
       else
         edge_point->second.merge(target_point_node);
     }
-    
+
     // now starting the sweeping.
     unsigned int queue_size = 0;
     bool         event_terminated = true;
@@ -373,10 +372,6 @@ public:
       event_queue.erase(event);
     }
     
-#ifdef  CGAL_SWEEP_LINE_DEBUG  
-    std::cout<<"the number of events was "<<queue_size<<std::endl;
-#endif
-
     CGAL_expensive_postcondition_code(is_valid(status)); 
   }
   
@@ -385,7 +380,6 @@ private:
                            Change_notification *pm_change_notf,
                            PM &pm)
   {
-
 #ifdef  CGAL_SWEEP_LINE_DEBUG
     cout<<"--------- updating map with point node"<<
       point_node.get_point().point() <<std::endl;
@@ -421,22 +415,22 @@ private:
         // and point_node.get_point().point().
         X_curve  cv = cv_iter->get_curve();
         X_curve  sub_cv = cv_iter->get_curve(), right_cv = cv;
-
+	
         //cout<<"cv is "<<cv<<endl;
         if (traits->curve_source(cv) != 
             cv_iter->get_rightmost_point().point() &&
             traits->curve_target(cv) != 
             cv_iter->get_rightmost_point().point() ) {
           traits->curve_split(cv, sub_cv, right_cv, 
-                             cv_iter->get_rightmost_point().point());
+			      cv_iter->get_rightmost_point().point());
           
           cv = right_cv;
         }
-
+	
         if (traits->curve_source(cv) != point_node.get_point().point() &&
             traits->curve_target(cv) != point_node.get_point().point())
           traits->curve_split(cv, sub_cv, right_cv, 
-                             point_node.get_point().point());
+			      point_node.get_point().point());
         else
           sub_cv = right_cv;
 
@@ -459,7 +453,7 @@ private:
           }
         }
         else {
-
+	  
 #ifdef  CGAL_SWEEP_LINE_DEBUG
           cout<<"inserting "<<sub_cv<<endl;
 #endif
@@ -473,28 +467,28 @@ private:
               //assert(point_node.get_point().point() == 
               // point_node.get_point().vertex()->point());
               
-              h = pm.insert_at_vertices(
+	      h = pm.insert_at_vertices(
                                     sub_cv, 
                                     cv_iter->get_rightmost_point().vertex(),
                                     point_node.get_point().vertex(), 
                                     pm_change_notf);
             }
-            else
-              h = pm.insert_from_vertex(
+            else {
+	      h = pm.non_intersecting_insert_from_vertex(
                                      sub_cv, 
                                      cv_iter->get_rightmost_point().vertex(), 
                                      pm_change_notf);
+	    }
           }
           else if (point_node.get_point().vertex() != Vertex_handle(NULL)) {
             //assert(point_node.get_point().point() 
             // == point_node.get_point().vertex()->point());
-            
-            h = pm.insert_from_vertex(sub_cv, 
+            h = pm.non_intersecting_insert_from_vertex(sub_cv, 
                                       point_node.get_point().vertex(), 
                                       pm_change_notf);
           }
-          else{
-            h = pm.insert_in_face_interior(sub_cv,  
+          else {
+	    h = pm.insert_in_face_interior(sub_cv,  
                                            pm.unbounded_face(),
                                            pm_change_notf);
             
@@ -509,7 +503,7 @@ private:
           }
         }
         
-        //assert(h->source()->point() ==
+	//assert(h->source()->point() ==
         //cv_iter->get_rightmost_point().point() ||
         //(h->target()->point() ==
         //cv_iter->get_rightmost_point().point()));
@@ -536,9 +530,9 @@ private:
             point_node.get_point().set_vertex(h->source());
           else if (h->target()->point() == point_node.get_point().point())
             point_node.get_point().set_vertex(h->target());
-        }
-      }  
+	}  
       // else - no new sub curve is inserted to the subdivision.
+      }
     }
   }
 
