@@ -414,7 +414,7 @@ $me(P)=me(P,\emptyset)$.
     Min_ellipse_2( InputIterator first,
                    InputIterator last,
                    bool          randomize
-#if !defined(__BORLANDC__) && (!defined(_MSC_VER) || _MSC_VER > 1200)
+#if !defined(__BORLANDC__) && (!defined(_MSC_VER) || _MSC_VER > 1300)
                                            = false
 #endif
                                                   ,
@@ -766,8 +766,6 @@ The following \ccc{insert} functions perform a call \ccc{insert(p)} for
 each point \ccc{p} in the range $[\mbox{\ccc{first}},\mbox{\ccc{last}})$.
 
 @macro <Min_ellipse_2 modifiers> += @begin
-#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
-
     template < class InputIterator >
     void
     insert( InputIterator first, InputIterator last)
@@ -775,36 +773,6 @@ each point \ccc{p} in the range $[\mbox{\ccc{first}},\mbox{\ccc{last}})$.
         for ( ; first != last; ++first)
             insert( *first);
     }
-
-#else
-
-    inline
-    void
-    insert( const Point* first, const Point* last)
-    {
-        for ( ; first != last; ++first)
-            insert( *first);
-    }
-
-    inline
-    void
-    insert( std::list<Point>::const_iterator first,
-            std::list<Point>::const_iterator last )
-    {
-        for ( ; first != last; ++first)
-            insert( *first);
-    }
-
-    inline
-    void
-    insert( std::istream_iterator<Point,std::ptrdiff_t>  first,
-            std::istream_iterator<Point,std::ptrdiff_t>  last )
-    {
-        for ( ; first != last; ++first)
-            insert( *first);
-    }
-
-#endif // CGAL_CFG_NO_MEMBER_TEMPLATES
 @end
 
 The member function \ccc{clear} deletes all points from a
@@ -2855,7 +2823,7 @@ representation) and corresponding data accessors.
       public:
         typedef  ::Ft  FT;
 
-	MyPointC2DA( ) { }
+        MyPointC2DA( ) { }
 
         const FT&  get_x( const MyPointC2& p) const { return( p.x()); }
         const FT&  get_y( const MyPointC2& p) const { return( p.y()); }
@@ -2933,7 +2901,7 @@ representation) and corresponding data accessors.
       public:
         typedef  ::Rt  RT;
 
-	MyPointH2DA( ) { }
+        MyPointH2DA( ) { }
 
         const RT&  get_hx( const MyPointH2& p) const { return( p.hx()); }
         const RT&  get_hy( const MyPointH2& p) const { return( p.hy()); }

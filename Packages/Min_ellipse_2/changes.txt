@@ -1,5 +1,9 @@
 Changes done to the `Min_ellipse_2' package.
 
+Version 3.20 on 7-May-2003
+- Removed old workarounds
+- Fixed constructor problem on intel7/vc1300
+
 Version 3.19 on 6-Feb-2002
 - Missing typename.
 
