@@ -1,3 +1,6 @@
+3.11   (? Mar 2001)
+- Added constructor Vector(Point, Point). 
+
 3.10 (14 Feb 2001)
 - added min_coord() and max_coord() funcions in Iso_rectangle_2 and new
   constructor

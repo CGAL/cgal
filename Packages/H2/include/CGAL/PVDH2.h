@@ -95,6 +95,7 @@ public:
 
             VectorH2();
             VectorH2(const VectorH2<R>& v);
+            VectorH2(const PointH2<R>& a, const PointH2<R>& b);
             VectorH2(const Null_vector &);
             VectorH2(const RT& x, const RT& y);
             VectorH2(const RT& x, const RT& y, const RT& w );
@@ -287,6 +288,11 @@ template < class R >
 CGAL_KERNEL_CTOR_INLINE
 VectorH2<R>::VectorH2(const VectorH2<R>& v)
   : Vector_handle_2_ (v) {}
+
+template < class R >
+CGAL_KERNEL_CTOR_INLINE
+VectorH2<R>::VectorH2(const PointH2<R>& a, const PointH2<R>& b)
+  : Vector_handle_2_ (b-a) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE

@@ -105,6 +105,9 @@ class VectorH3
   VectorH3()
     : Vector_handle_3_(Vector_ref_3()) {}
 
+  VectorH3(const PointH3<R>& a, const PointH3<R>& b)
+    : Vector_handle_3_(b-a) {}
+
   VectorH3(const Null_vector&)
     : Vector_handle_3_(Vector_ref_3(RT(0), RT(0), RT(0), RT(1))) {}
 

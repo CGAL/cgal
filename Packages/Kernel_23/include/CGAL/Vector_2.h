@@ -46,6 +46,7 @@ public:
   typedef  R_                        R;
   typedef typename R::RT             RT;
   typedef typename R::FT             FT;
+  typedef typename R::Point_2_base   RPoint_2;
   typedef typename R::Vector_2_base  RVector_2;
 
 friend CGAL_FRIEND_INLINE
@@ -57,6 +58,10 @@ friend CGAL_FRIEND_INLINE
 
   Vector_2(const CGAL::Vector_2<R> &v)
       : RVector_2(static_cast<const RVector_2&>(v)) {}
+
+  Vector_2(const CGAL::Point_2<R>& a, const CGAL::Point_2<R>& b)
+      : RVector_2(static_cast<const RPoint_2&>(a),
+	          static_cast<const RPoint_2&>(b) ) {}
 
   Vector_2(const RVector_2& v) : RVector_2(v) {}
 

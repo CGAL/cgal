@@ -1,3 +1,6 @@
+2.23   (? Mar 2001)
+- Added constructor Vector(Point, Point).
+
 2.22   (6 Mar 2001)
 - Remove useless friends in PVDH3.h.
 - Make operator*(VectorH3, VectorH3) a member function.

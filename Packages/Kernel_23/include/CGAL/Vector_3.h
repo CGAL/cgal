@@ -47,21 +47,22 @@ public:
   typedef          R_                       R;
   typedef typename R::RT                    RT;
   typedef typename R::FT                    FT;
-  typedef typename R::Vector_3_base  RVector_3;
+  typedef typename R::Point_3_base          RPoint_3;
+  typedef typename R::Vector_3_base         RVector_3;
 
 friend CGAL_FRIEND_INLINE
        CGAL::Vector_3<R>
        point_to_vector_conversion CGAL_NULL_TMPL_ARGS
                                        (const CGAL::Point_3<R>& p);
-/*
-friend CGAL::Vector_3<R>
-       CGAL::Direction_3<R>::vector() const;
-*/
 
   Vector_3()
   {}
   Vector_3(const CGAL::Vector_3<R>& v)
     : RVector_3( static_cast<const RVector_3&>(v) )
+  {}
+  Vector_3(const CGAL::Point_3<R>& a, const CGAL::Point_3<R>& b)
+    : RVector_3( static_cast<const RPoint_3&>(a),
+	         static_cast<const RPoint_3&>(b) )
   {}
   Vector_3(const RVector_3&  v) : RVector_3(v)
   {}
