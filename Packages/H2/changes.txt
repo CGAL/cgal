@@ -1,3 +1,6 @@
+2.100 (18 September 2003) [af]
+- bug fix in Homogeneous_base
+
 2.99 (6 September 2003) [af]
 - Bugfix in Construct_vector_[2,3]
 
