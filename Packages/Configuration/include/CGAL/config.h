@@ -65,7 +65,6 @@
 #   define CGAL_TYPENAME_MSVC_NULL typename
 #endif
 
-
 #ifdef CGAL_CFG_NO_NAMESPACE
 #  define CGAL_USING_NAMESPACE_STD
 #  define CGAL_STD
@@ -86,8 +85,10 @@
 #  define CGAL_END_NAMESPACE
 #endif
 
-#ifdef CGAL_CFG_NO_MUTABLE
-#  define mutable
+#ifdef CGAL_CFG_VC7_PRIVATE_TYPE_BUG
+#  define CGAL_VC7_BUG_PROTECTED protected:
+#else
+#  define CGAL_VC7_BUG_PROTECTED
 #endif
 
 #ifdef CGAL_CFG_NO_TEMPLATE_FRIEND_DISTINCTION
@@ -101,7 +102,6 @@
 #else
 #  define CGAL_TEMPLATE_NULL template <>
 #endif
-
 
 #ifdef CGAL_CFG_NO_STDC_NAMESPACE
 #define CGAL_CLIB_STD
