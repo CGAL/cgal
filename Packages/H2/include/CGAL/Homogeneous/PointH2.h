@@ -166,25 +166,16 @@ CGAL_KERNEL_MEDIUM_INLINE
 Bbox_2
 PointH2<R>::bbox() const
 {
-#ifndef CGAL_CFG_NO_NAMESPACE
-  using std::swap;
-#endif // CGAL_CFG_NO_NAMESPACE
+   Interval_nt<> ihx = CGAL::to_interval(hx());
+   Interval_nt<> ihy = CGAL::to_interval(hy());
+   Interval_nt<> ihw = CGAL::to_interval(hw());
 
-  // double eps  = exp2(-52);
-  // the following is faster as it can be evaluated at compile time
-  // and it is machine independent
-  double eps  = double(1.0) /(double(1<<26) * double(1<<26));
-  double hxd  = CGAL::to_double( hx() );
-  double hyd  = CGAL::to_double( hy() );
-  double hwd  = CGAL::to_double( hw() );
-  double xmin = ( hxd - eps*hxd ) / ( hwd + eps*hwd );
-  double xmax = ( hxd + eps*hxd ) / ( hwd - eps*hwd );
-  double ymin = ( hyd - eps*hyd ) / ( hwd + eps*hwd );
-  double ymax = ( hyd + eps*hyd ) / ( hwd - eps*hwd );
-  if ( hx() < RT(0)   ) { swap(xmin, xmax); }
-  if ( hy() < RT(0)   ) { swap(ymin, ymax); }
-  return Bbox_2(xmin, ymin, xmax, ymax);
+   Interval_nt<> ix = ihx/ihw;
+   Interval_nt<> iy = ihy/ihw;
+
+   return Bbox_2(ix.inf(), iy.inf(), ix.sup(), iy.sup());
 }
+
 
 template < class R >
 inline

@@ -269,39 +269,16 @@ CGAL_KERNEL_LARGE_INLINE
 Bbox_3
 PointH3<R>::bbox() const
 {
-#ifndef CGAL_CFG_NO_NAMESPACE
-  using std::swap;
-#endif // CGAL_CFG_NO_NAMESPACE
+   Interval_nt<> ihx = CGAL::to_interval(hx());
+   Interval_nt<> ihy = CGAL::to_interval(hy());
+   Interval_nt<> ihz = CGAL::to_interval(hz());
+   Interval_nt<> ihw = CGAL::to_interval(hw());
 
-  // double bx = to_double(x());
-  // double by = to_double(y());
-  // double bz = to_double(z());
-  // return Bbox_3(bx, by, bz, bx, by, bz);
+   Interval_nt<> ix = ihx/ihw;
+   Interval_nt<> iy = ihy/ihw;
+   Interval_nt<> iz = ihz/ihw;
 
-  double eps  = double(1.0) /(double(1<<26) * double(1<<26));
-  double hxd  = CGAL::to_double( hx() );
-  double hyd  = CGAL::to_double( hy() );
-  double hzd  = CGAL::to_double( hz() );
-  double hwd  = CGAL::to_double( hw() );
-  double xmin = ( hxd - eps*hxd ) / ( hwd + eps*hwd );
-  double xmax = ( hxd + eps*hxd ) / ( hwd - eps*hwd );
-  double ymin = ( hyd - eps*hyd ) / ( hwd + eps*hwd );
-  double ymax = ( hyd + eps*hyd ) / ( hwd - eps*hwd );
-  double zmin = ( hzd - eps*hzd ) / ( hwd + eps*hwd );
-  double zmax = ( hzd + eps*hzd ) / ( hwd - eps*hwd );
-  if ( hx() < RT(0)   )
-  {
-      swap(xmin, xmax);
-  }
-  if ( hy() < RT(0)   )
-  {
-      swap(ymin, ymax);
-  }
-  if ( hz() < RT(0)   )
-  {
-      swap(zmin, zmax);
-  }
-  return Bbox_3(xmin, ymin, zmin, xmax, ymax, zmax);
+   return Bbox_3(ix.inf(), iy.inf(), iz.inf(), ix.sup(), iy.sup(), iz.sup());
 }
 
 CGAL_END_NAMESPACE

@@ -24,6 +24,7 @@
 #define CGAL_SPHEREH3_H
 
 #include <CGAL/utility.h>
+#include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Homogeneous/predicates_on_pointsH3.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -234,40 +235,24 @@ CGAL_KERNEL_INLINE
 Bbox_3
 SphereH3<R>::bbox() const
 {
-  double eps  = double(1.0) /(double(1<<26) * double(1<<26));
-  double hxd  = CGAL::to_double( center().hx() );
-  double hyd  = CGAL::to_double( center().hy() );
-  double hzd  = CGAL::to_double( center().hz() );
-  double hwd  = CGAL::to_double( center().hw() );
-  double xmin = ( hxd - eps*hxd ) / ( hwd + eps*hwd );
-  double xmax = ( hxd + eps*hxd ) / ( hwd - eps*hwd );
-  double ymin = ( hyd - eps*hyd ) / ( hwd + eps*hwd );
-  double ymax = ( hyd + eps*hyd ) / ( hwd - eps*hwd );
-  double zmin = ( hzd - eps*hyd ) / ( hwd + eps*hwd );
-  double zmax = ( hzd + eps*hyd ) / ( hwd - eps*hwd );
-  if ( center().hx() < RT(0)   )
-  { std::swap(xmin, xmax); }
-  if ( center().hy() < RT(0)   )
-  { std::swap(ymin, ymax); }
-  if ( center().hz() < RT(0)   )
-  { std::swap(zmin, zmax); }
-  double sqradd = CGAL::to_double( squared_radius() );
-  sqradd += sqradd*eps;
-  sqradd = sqrt(sqradd);
-  sqradd += sqradd*eps;
-  xmin -= sqradd;
-  xmax += sqradd;
-  xmin -= xmin*eps;
-  xmax += xmax*eps;
-  ymin -= sqradd;
-  ymax += sqradd;
-  ymin -= ymin*eps;
-  ymax += ymax*eps;
-  zmin -= sqradd;
-  zmax += sqradd;
-  zmin -= ymin*eps;
-  zmax += ymax*eps;
-  return Bbox_3(xmin, ymin, zmin, xmax, ymax, zmax);
+
+  Bbox_3 b = center().bbox();
+
+  Interval_nt<> x (b.xmin(), b.xmax());
+  Interval_nt<> y (b.ymin(), b.ymax());
+  Interval_nt<> z (b.zmin(), b.zmax());
+
+  Interval_nt<> sqr = CGAL::to_interval(squared_radius());
+  Interval_nt<> r = CGAL::sqrt(sqr);
+  Interval_nt<> minx = x-r;
+  Interval_nt<> maxx = x+r;
+  Interval_nt<> miny = y-r;
+  Interval_nt<> maxy = y+r;
+  Interval_nt<> minz = z-r;
+  Interval_nt<> maxz = z+r;
+
+  return Bbox_3(minx.inf(), miny.inf(), minz.inf(), 
+		maxx.sup(), maxy.sup(), maxz.sup());
 }
 
 #ifndef CGAL_NO_OSTREAM_INSERT_SPHEREH3

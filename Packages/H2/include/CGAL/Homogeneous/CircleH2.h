@@ -26,6 +26,7 @@
 #define CGAL_CIRCLEH2_H
 
 #include <CGAL/utility.h>
+#include <CGAL/Interval_arithmetic.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -247,39 +248,19 @@ CGAL_KERNEL_MEDIUM_INLINE
 Bbox_2
 CircleH2<R>::bbox() const
 {
-#ifndef CGAL_CFG_NO_NAMESPACE
-  using std::swap;
-#endif // CGAL_CFG_NO_NAMESPACE
+  Bbox_2 b = center().bbox();
 
-  double eps  = double(1.0) /(double(1<<26) * double(1<<26));
-  double hxd  = CGAL::to_double( center().hx() );
-  double hyd  = CGAL::to_double( center().hy() );
-  double hwd  = CGAL::to_double( center().hw() );
-  double xmin = ( hxd - eps*hxd ) / ( hwd + eps*hwd );
-  double xmax = ( hxd + eps*hxd ) / ( hwd - eps*hwd );
-  double ymin = ( hyd - eps*hyd ) / ( hwd + eps*hwd );
-  double ymax = ( hyd + eps*hyd ) / ( hwd - eps*hwd );
-  if ( center().hx() < RT(0)   )
-  {
-      swap(xmin, xmax);
-  }
-  if ( center().hy() < RT(0)   )
-  {
-      swap(ymin, ymax);
-  }
-  double sqradd = CGAL::to_double( squared_radius() );
-  sqradd += sqradd*eps;
-  sqradd = sqrt(sqradd);
-  sqradd += sqradd*eps;
-  xmin -= sqradd;
-  xmax += sqradd;
-  xmin -= xmin*eps;
-  xmax += xmax*eps;
-  ymin -= sqradd;
-  ymax += sqradd;
-  ymin -= ymin*eps;
-  ymax += ymax*eps;
-  return Bbox_2(xmin, ymin, xmax, ymax);
+  Interval_nt<> x (b.xmin(), b.xmax());
+  Interval_nt<> y (b.ymin(), b.ymax());
+
+  Interval_nt<> sqr = CGAL::to_interval(squared_radius());
+  Interval_nt<> r = CGAL::sqrt(sqr);
+  Interval_nt<> minx = x-r;
+  Interval_nt<> maxx = x+r;
+  Interval_nt<> miny = y-r;
+  Interval_nt<> maxy = y+r;
+
+  return Bbox_2(minx.inf(), miny.inf(), maxx.sup(), maxy.sup());
 }
 
 template <class R>
