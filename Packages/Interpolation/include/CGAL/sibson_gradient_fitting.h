@@ -35,7 +35,7 @@ sibson_gradient_fitting(ForwardIterator first, ForwardIterator beyond,
 			std::iterator_traits<ForwardIterator>::value_type::
 			first_type& p, 
 			Functor f,
-			const Traits& geom_traits)
+			const Traits& traits)
 {  
   typedef typename Traits::Aff_transformation Aff_transformation;
   typedef typename Traits::FT                 Coord_type;
@@ -43,26 +43,26 @@ sibson_gradient_fitting(ForwardIterator first, ForwardIterator beyond,
   typename Functor::result_type fn =  f(p);
   
   typename Traits::Vector pn = 
-    geom_traits.construct_vector_object()(NULL_VECTOR);
+    traits.construct_vector_object()(NULL_VECTOR);
   Aff_transformation scaling, m,
-    Hn(geom_traits.construct_null_matrix_object()());
+    Hn(traits.construct_null_matrix_object()());
   
   for(;first!=beyond; first++){
-    Coord_type square_dist = geom_traits.compute_squared_distance_object()
+    Coord_type square_dist = traits.compute_squared_distance_object()
       (first->first, p);
     Coord_type  scale(first->second/(norm*square_dist));
     typename Traits::Vector d= 
-      geom_traits.construct_vector_object()(p, first->first);
+      traits.construct_vector_object()(p, first->first);
  
     //compute the vector pn:
-    pn = pn + geom_traits.construct_scaled_vector_object()
+    pn = pn + traits.construct_scaled_vector_object()
       (d,scale * (f(first->first) - fn));  
     
     //compute the matrix Hn:
-    m = geom_traits.construct_outer_product_object()(d);
-    scaling = geom_traits.construct_scaling_matrix_object()(scale);
+    m = traits.construct_outer_product_object()(d);
+    scaling = traits.construct_scaling_matrix_object()(scale);
  
-    Hn =  geom_traits.construct_sum_matrix_object()(Hn, scaling * m);   
+    Hn =  traits.construct_sum_matrix_object()(Hn, scaling * m);   
   }
 
   return (Hn.inverse()).transform(pn);
@@ -90,8 +90,9 @@ sibson_gradient_fitting_nn_2(const Dt& dt,
   for(; vit != dt.vertices_end(); vit++){
     //test if vit is a convex hull vertex:
     if(dt.is_edge(vit, dt.infinite_vertex()))
-      *out++= std::make_pair(vit->point(), typename traits.
-			     construct_vector_object()(NULL_VECTOR));
+      *out++= std::make_pair(vit->point(), 
+			     traits.construct_vector_object()
+			     (NULL_VECTOR));
     else{
       norm = 
 	natural_neighbor_coordinates_2(dt, vit,
