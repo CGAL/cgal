@@ -4,24 +4,22 @@
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Largest_empty_iso_rectangle_2.h>
 #include <CGAL/Polygon_2.h>
-#include <CGAL/IO/leda_window.h>
-#include <CGAL/leda_real.h>
+#include <CGAL/IO/Window_stream.h>
 
 typedef double                                Number_Type;
 
-typedef CGAL::Cartesian<Number_Type>             Repr;
-typedef CGAL::Point_2<Repr>                      Point; 
-typedef CGAL::Vector_2<Repr>                     Vector; 
-typedef CGAL::Segment_2<Repr>                    Segment;
-typedef CGAL::Iso_rectangle_2<Repr>              Iso_rectangle_2;
+typedef CGAL::Cartesian<Number_Type>             K;
+typedef K::Point_2                      Point; 
+typedef K::Vector_2                     Vector; 
+typedef K::Segment_2                   Segment;
+typedef K::Iso_rectangle_2              Iso_rectangle_2;
 
-typedef CGAL::Polygon_traits_2<Repr> Traits;
-typedef std::list<Point> Container;
-typedef CGAL::Polygon_2<Traits,Container> Polygon;
-typedef CGAL::Largest_empty_iso_rectangle_2<Repr> Largest_empty_rect;
+typedef CGAL::Polygon_2<K> Polygon;
+typedef CGAL::Largest_empty_iso_rectangle_2<K> Largest_empty_rect;
 Polygon P;
 
-void display_points(Largest_empty_rect &empty_rectangle,CGAL::Window_stream &W)
+void display_points(Largest_empty_rect &empty_rectangle,
+		    CGAL::Window_stream &W)
 {
   W << CGAL::BLACK;
   for(Largest_empty_rect::const_iterator it = empty_rectangle.begin();
@@ -32,24 +30,27 @@ void display_points(Largest_empty_rect &empty_rectangle,CGAL::Window_stream &W)
   }
 }
 
-void display_bounding_box(Largest_empty_rect &empty_rectangle,CGAL::Window_stream &W)
+void display_bounding_box(Largest_empty_rect &empty_rectangle,
+			  CGAL::Window_stream &W)
 {
   W << CGAL::GREEN;
 
   W << empty_rectangle.get_bounding_box();
 }
 
-void clear(Largest_empty_rect &empty_rectangle,CGAL::Window_stream &W)
+void clear(Largest_empty_rect &empty_rectangle,
+	   CGAL::Window_stream &W)
 {
   empty_rectangle.clear();
 
   P = Polygon();
   W.clear();
 
-  display_bounding_box(empty_rectangle,W);
+  display_bounding_box(empty_rectangle, W);
 }
 
-void redraw(Largest_empty_rect &empty_rectangle,CGAL::Window_stream &W)
+void redraw(Largest_empty_rect &empty_rectangle,
+	    CGAL::Window_stream &W)
 {
   W.clear();
   W << CGAL::BLUE;
@@ -65,14 +66,16 @@ void redraw(Largest_empty_rect &empty_rectangle,CGAL::Window_stream &W)
 }
 
 
-void show_biggest_rec(Largest_empty_rect &empty_rectangle,CGAL::Window_stream &W)
+void display_largest_rec(Largest_empty_rect &empty_rectangle,
+			 CGAL::Window_stream &W)
 {
   Iso_rectangle_2 b = empty_rectangle.get_largest_empty_iso_rectangle();
+  //  CGAL::quadruple<Point,Point,Point,Point> points = empty_rectangle.get_left_bottom_right_top();
 
   W << CGAL::RED << b;
 
 
-  cout << "\nThe biggest rectangle is :\n   buttom-left point - (" << b.min().x() << ":" << b.min().y() << ")\n   top-right point   - (" << b.max().x() << ":" << b.max().y() << ")\n";
+  cout << "\nThe largest rectangle is :\n   buttom-left point - (" << b.min().x() << ":" << b.min().y() << ")\n   top-right point   - (" << b.max().x() << ":" << b.max().y() << ")\n";
   //cout << "Its size is " << abs((x2 - x1) * (y2 - y1)) << endl;
 }
 
@@ -106,7 +109,7 @@ int main(int argc,char *argv[])
   }
 
   // As bounding box we choose the bounding box of the polygon
-  Number_Type x1,y1,x2,y2;
+  Number_Type x1, y1, x2, y2;
   x1 = P.left_vertex()->x();
   y1 = P.bottom_vertex()->y();
 
@@ -121,23 +124,19 @@ int main(int argc,char *argv[])
   W.init(x1_double - 2,
 	 x2_double - x1_double > y2_double - y1_double ? x2_double + 2 : y2_double - y1_double + x1_double + 2,
 	 y1_double - 2);
-  W.set_mode(leda_src_mode);
+  W.set_mode(CGAL::src_mode);
   W.set_node_width(3);
   
   W << P;
   Iso_rectangle_2 b(Point(x1, y1), Point(x2, y2));
   Largest_empty_rect empty_rectangle(b);
 
-  for(Polygon::Vertex_const_iterator it = P.vertices_begin();
-      it  != P.vertices_end();
-      ++it){
-    empty_rectangle.insert(*it);
-  }
+  empty_rectangle.insert(P.vertices_begin(),P.vertices_end());
+  
+  display_bounding_box(empty_rectangle, W);
+  display_points(empty_rectangle, W);
 
-  display_bounding_box(empty_rectangle,W);
-  display_points(empty_rectangle,W);
-
-  show_biggest_rec(empty_rectangle,W);
+  display_largest_rec(empty_rectangle, W);
   double x,y;
   W.read_mouse(x,y);
   
