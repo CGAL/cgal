@@ -194,7 +194,7 @@ public:
 	}
 
   template <class OutputIterator>
-	OutputIterator search(OutputIterator it, Item& center, NT radius, NT eps=NT(0)) {
+	OutputIterator search_within_a_radius(OutputIterator it, Item& center, NT radius, NT eps=NT(0)) {
 		Kd_tree_rectangle<NT>* b = new Kd_tree_rectangle<NT>(*bbox);
 		it=tree_root->tree_items_in_sphere(it, center,
 		(radius-eps)*(radius-eps), radius*radius,
