@@ -86,10 +86,10 @@ int main()
    // construction ...
    Point_set_2<K,Tds> PSet2;
    Point_set_2<K,Tds> PSet3(Lr.begin(),Lr.end());
-   Point_set_2<K,Tds> PSet4(Lr);
+   Point_set_2<K,Tds> PSet4(Lr.begin(),Lr.end());
    
    // init ...
-   PSet2.init(Lr);
+   PSet2.init(Lr.begin(),Lr.end());
    
    //get points/segments ...
    std::list<Point_2<K> >    ptlist;
@@ -98,7 +98,6 @@ int main()
    PSet3.points(std::back_inserter(ptlist));
    PSet3.segments(std::back_inserter(seglist));
    
-   std::cout << PSet3.is_empty() << "\n";
    PSet3.clear();
    
    PSet4.lookup(actual);
