@@ -1,2 +1,7 @@
+25 March 2004 Radu Ursu
+- made the doc work with the current implementation of the manual tools
+  added doc_tex/ExternalMemoryStructures_ref to the repository
+  moved doc_tex/ExternalMemoryStructures/reference.tex to doc_tex/ExternalMemoryStructures_ref/main.tex
+
 Version 0.7 (29 September 2003)
 - New file headers.
