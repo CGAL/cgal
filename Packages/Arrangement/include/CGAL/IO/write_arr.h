@@ -213,7 +213,7 @@ void write_arr(const Arrangement& arr,
 	    "begin and past end indices of children edge nodes");
             
             Edge_const_iterator last_child = sc_iter->edges_end();
-            
+
             writer.write_value(en_index[sc_iter->edges_begin()], ' ');
             writer.write_value(en_index[--last_child] + 1);
           }
@@ -246,15 +246,18 @@ void write_arr(const Arrangement& arr,
         // printing next overlapping edge node.
         writer.write_comment("pair indices (curve node and its edge node) "
 			     "for next overlapping edge node :");
+        
+        //cout<<"edge_iter->curve()"<<edge_iter->curve()<<endl;
+        
         Edge_const_iterator edge_past_end_child = 
           Edge_const_iterator(edge_iter->children_end());
-        
+               
         std::size_t j = cn_index[edge_past_end_child->curve_node()];
         std::size_t k = (en_index_table[j])[edge_past_end_child];
         
         writer.write_value(j, ' ');
         writer.write_value(k);
-        //writer.skip_line();
+        
 
         //cout<<edge_iter->children_begin()->curve();
         //writer.write_index(en_index[edge_iter->children_begin()]);
