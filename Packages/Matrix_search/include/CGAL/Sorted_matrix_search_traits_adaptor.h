@@ -28,17 +28,17 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class _FeasibilityTest, class _Matrix >
+template < class FeasibilityTest_, class Matrix_ >
 class Sorted_matrix_search_traits_adaptor {
 public:
-  typedef _FeasibilityTest         FeasibilityTest;
-  typedef _Matrix                  Matrix;
-  typedef typename _Matrix::Value  Value;
+  typedef FeasibilityTest_         FeasibilityTest;
+  typedef Matrix_                  Matrix;
+  typedef typename Matrix::Value   Value;
   typedef std::less< Value >       Compare_strictly;
   typedef std::less_equal< Value > Compare_non_strictly;
 
   Sorted_matrix_search_traits_adaptor(FeasibilityTest ft)
-  : _ft( ft)
+  : ft_( ft)
   {}
 
   Compare_strictly
@@ -51,10 +51,10 @@ public:
 
   bool
   is_feasible(Value a)
-  { return _ft( a); }
+  { return ft_( a); }
 
 protected:
-  FeasibilityTest _ft;
+  FeasibilityTest ft_;
 };
 
 //!!! with iterator traits we replace const Matrix&

@@ -183,7 +183,7 @@ template < class RandomAccessIC,
 template < class RandomAccessIC,
            class Outputiterator,
            class Traits,
-           class _FT >
+           class FT_ >
 #endif
 Outputiterator
 CGAL_maximum_inscribed_rooted_k_gon(
@@ -193,7 +193,7 @@ CGAL_maximum_inscribed_rooted_k_gon(
 #ifndef CGAL_CFG_MATCHING_BUG_1
   typename Traits::FT& max_area,
 #else
-  _FT& max_area,
+  FT_& max_area,
 #endif
   Outputiterator o,
   const Traits& t)
@@ -282,7 +282,7 @@ template < class RandomAccessIC_point,
            class RandomAccessIC_int,
            class OutputIterator,
            class Traits,
-           class _FT >
+           class FT_ >
 #endif
 OutputIterator
 CGAL_maximum_inscribed_rooted_k_gon(
@@ -296,7 +296,7 @@ CGAL_maximum_inscribed_rooted_k_gon(
 #ifndef CGAL_CFG_MATCHING_BUG_1
   typename Traits::FT& max_area,
 #else
-  _FT& max_area,
+  FT_& max_area,
 #endif
   OutputIterator o,
   const Traits& t)
@@ -373,7 +373,7 @@ CGAL_maximum_inscribed_rooted_k_gon(
   #ifndef CGAL_CFG_MATCHING_BUG_1
   typedef typename Traits::FT               FT;
   #else
-  typedef _FT                               FT;
+  typedef FT_                               FT;
   #endif
   typedef std::vector< FT >                 FT_cont;
   typedef std::vector< int >                Index_cont;
@@ -654,7 +654,7 @@ template < class RandomAccessIC_point,
            class RandomAccessIC_int,
            class OutputIterator,
            class Traits,
-           class _FT >
+           class FT_ >
 #endif
 OutputIterator
 CGAL_maximum_inscribed_k_gon(
@@ -670,7 +670,7 @@ CGAL_maximum_inscribed_k_gon(
 #ifndef CGAL_CFG_MATCHING_BUG_1
   typename Traits::FT& max_area,
 #else
-  _FT& max_area,
+  FT_& max_area,
 #endif
   OutputIterator o,
   const Traits& t)
@@ -710,7 +710,7 @@ CGAL_maximum_inscribed_k_gon(
 #ifndef CGAL_CFG_MATCHING_BUG_1
   typedef typename Traits::FT               FT;
 #else
-  typedef _FT                               FT;
+  typedef FT_                               FT;
 #endif
   typedef std::vector< int >        Index_cont;
 

@@ -40,10 +40,10 @@ struct Transform_iterator {
 
   Transform_iterator( const OutputIterator& o,
                       const Operation& op)
-    : _o( o), _op( op)
+    : o_( o), op_( op)
   {}
 
-  operator OutputIterator() { return _o; }
+  operator OutputIterator() { return o_; }
 
   self& operator*() { return *this; }
 
@@ -52,13 +52,13 @@ struct Transform_iterator {
   self& operator++( int) { return *this; }
 
   self& operator=( const argument_type& a) {
-    *(_o++) = _op( a);
+    *(o_++) = op_( a);
     return *this;
   }
 
 private:
-  OutputIterator _o;
-  Operation      _op;
+  OutputIterator o_;
+  Operation      op_;
 };
 
 template < class OutputIterator, class Operation > inline
