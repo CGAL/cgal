@@ -99,12 +99,12 @@ CGAL_END_NAMESPACE
 CGAL_BEGIN_NAMESPACE
 
 template < class FT, class RT >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 PointHd<FT,RT>::PointHd()
 { PTR = new _d_tuple<RT>(); }
 
 template < class FT, class RT >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 PointHd<FT,RT>::PointHd(int dim, const Origin &)
 {
   CGAL_kernel_precondition( dim >= 0);
@@ -116,7 +116,7 @@ PointHd<FT,RT>::PointHd(int dim, const Origin &)
 }
 
 template < class FT, class RT >
-CGAL_KERNEL_CTOR_INLINE
+CGAL_KERNEL_INLINE
 PointHd<FT,RT>::PointHd(const PointHd<FT,RT> &p)
   : Handle((Handle&)p)
 {}

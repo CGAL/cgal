@@ -1,3 +1,6 @@
+2.7     (23 Oct 2001)
+- replaced KERNEL_CTOR_* macros with KERNEL_* macros
+
 2.6     (17 May 2001)
 - Remove PointSd.h
 - Fix BCC warning in PointHd.h
