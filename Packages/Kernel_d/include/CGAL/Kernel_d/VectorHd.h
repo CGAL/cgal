@@ -119,8 +119,6 @@ homogeneous coordinates $|H = set [first,last)| = (\pm h_0, \pm h_1, \ldots,
 \precond |d| is nonnegative, |[first,last)| has |d| or |d+1| elements where the
 last has to be non-zero, and the value type of |InputIterator| is |RT|.}*/
 { RT D = entry(d);
-  CGAL_assertion_msg(first!=last || D!=RT(0),
-    "VectorHd::constructor: denominator must be nonzero.");
   if ( D == RT(0) ) entry(d) = 1;
   if ( D < RT(0) ) invert_rep();
 }

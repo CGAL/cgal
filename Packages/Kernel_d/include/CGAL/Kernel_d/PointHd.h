@@ -116,8 +116,6 @@ chosen is the sign of $h_d$.  \precond |d| is nonnegative,
 non-zero, and the value type of |InputIterator| is |RT|.}*/
   : Base( Tuple(d+1,first,last) )
 { RT D = entry(d);
-  CGAL_assertion_msg(first!=last || D!=RT(0),
-    "PointHd::constructor: denominator must be nonzero.");
   if ( D == RT(0) ) entry(d) = 1;
   if ( D < RT(0) ) invert_rep();
 }
