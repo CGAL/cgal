@@ -130,6 +130,7 @@ GLOB: Make blank after EXE_OPT, except for msvc and borland.
 GLOB: Fixed test_gmp for sunpro 5.3.
 GLOB: Updated sunpro_version detection for 5.3.
 GLOB: Update CGAL version to 2.4.
+DOCS: Fixed typo in \texttt.
 DOCS: Remove CGALWin.
 DOCS: Document standard header replacements.
 DOCS: - Remove \clnpage obsolete command.
