@@ -1284,7 +1284,7 @@ void Convex_hull_d<R>::clear_visited_marks(Simplex_handle S) const
 }
 
 template <class R>
-std::list< CGAL_TYPENAME_MSVC_NULL Convex_hull_d<R>::Simplex_handle > 
+std::list< typename Convex_hull_d<R>::Simplex_handle > 
 Convex_hull_d<R>::facets_visible_from(const Point_d& x)
 { 
   std::list<Simplex_handle> visible_simplices;

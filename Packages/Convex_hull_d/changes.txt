@@ -1,3 +1,6 @@
+0.3 (18/01/2004)
+- Remove CGAL_TYPENAME_MSVC_NULL
+
 0.2 (27/11/2003) [rursu]
 ------------------------
 test directory of Convex_hull_d should contain Convex_hull_d directory and the other test files
