@@ -177,14 +177,10 @@ class Comparable_iterator_tag{};
 
 // This macro added to workaround the fact that MSC does not support
 // defaut  template parameter
-#ifdef _MSC_VER
-#  ifdef CGAL_NO_CONCEPT_CHECKING 
-#    define CGAL_COMPARABLE_ITERATOR_CHECKER_POINTER(X) X*
-#  else
-#    define CGAL_COMPARABLE_ITERATOR_CHECKER_POINTER(X) \
-            CGAL::Comparable_iterator<X*, X&, X*, X, std::ptrdiff_t, \
-                                      CGAL::Comparable_iterator_tag>
-#  endif
+#if defined _MSC_VER && !defined CGAL_NO_CONCEPT_CHECKING
+#  define CGAL_COMPARABLE_ITERATOR_CHECKER_POINTER(X) \
+          CGAL::Comparable_iterator<X*, X&, X*, X, std::ptrdiff_t, \
+                                    CGAL::Comparable_iterator_tag>
 #else
 #  define CGAL_COMPARABLE_ITERATOR_CHECKER_POINTER(X) \
           CGAL_COMPARABLE_ITERATOR_CHECKER(X*)
