@@ -41,7 +41,6 @@
 
 // The following are now obsolete, they used to depend on config macros.
 #define CGAL_TYPENAME_MSVC_NULL typename
-#define CGAL_NULL_TMPL_ARGS <>
 
 
 #ifdef CGAL_CFG_NO_NAMESPACE
