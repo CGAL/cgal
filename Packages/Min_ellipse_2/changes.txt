@@ -1,5 +1,8 @@
 Changes done to the `Min_ellipse_2' package.
 
+Version 3.2.5 on 14-Jul-1999
+- prefix `CGAL_' added to `CONIC_MISC_H'.
+
 Version 3.2.4 on 14-Jul-1999
 - includes added in `include/CGAL/Conic_misc.h'.
 - functions 'solve_cubic' and `best_value' templatized by number type.
