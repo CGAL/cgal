@@ -24,11 +24,7 @@
 
 #include <CGAL/Cartesian/redefine_names_3.h>
 
-#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_3_H
-#define CGAL_CTAG
-#endif
-
-#ifdef _MSC_VER
+#ifdef CGAL_CFG_TYPENAME_BUG
 #define typename
 #endif
 
