@@ -45,18 +45,21 @@ test:
 
 clean:
 	$(MAKE) -C doc_tex/basic/Triangulation3 clean
+	$(MAKE) -C examples/Triangulation3 clean
 	$(MAKE) -C test/$(Package) clean
 	rm -f $(Package).tar.gz
 
 $(Package).tar.gz:
 	tar -zcvf $(Package).tar.gz \
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
+	--exclude=Oriented_side_power_test_3.h \
+	--exclude=Regular_triangulation_3.h \
+	--exclude=Regular_triangulation_geom_traits_3.h \
+	--exclude=Weighted_point_3.h \
 	--exclude=TODO \
 	version description.txt changes.txt \
 	src demo include doc_tex doc_ps test examples
 
-doc: doc_ps/$(Package).ps
-
-doc_ps/$(Package).ps:
+doc:
 	$(MAKE) -C doc_tex/basic/Triangulation3
 	cp doc_tex/basic/Triangulation3/$(Package).ps doc_ps/
