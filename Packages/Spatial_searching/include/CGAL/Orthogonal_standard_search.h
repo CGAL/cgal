@@ -172,18 +172,18 @@ Distance* distance_instance;
                         NT new_off =
                         (*query_object)[new_cut_dim] - 
 						N->separator()->cutting_value();
-                        if ( ((new_off < 0.0) && (search_nearest)) ||
-                        (( new_off >= 0.0) && (!search_nearest))  ) {
+                        if ( ((new_off < NT(0.0)) && (search_nearest)) ||
+                        (( new_off >= NT(0.0)) && (!search_nearest))  ) {
 				compute_neighbours_orthogonally(N->lower(),rd);
                                 if (search_nearest) {
                                 	old_off= (*query_object)[new_cut_dim]-
 								N->low_value();
-                                	if (old_off>0.0) old_off=0.0;
+                                	if (old_off>NT(0.0)) old_off=NT(0.0);
                                 }
 				else 
 				{	
                                 	old_off= (*query_object)[new_cut_dim] - N->high_value();
-					if (old_off<0.0) old_off=0.0;
+					if (old_off<NT(0.0)) old_off=NT(0.0);
                                 }
                                 new_rd=
                                 distance_instance->
@@ -194,12 +194,12 @@ Distance* distance_instance;
                                 compute_neighbours_orthogonally(N->upper(),rd); 
 				if (search_nearest) {
                                 	old_off= N->high_value() - (*query_object)[new_cut_dim];
-                                	// if (old_off>0.0) old_off=0.0;
+                                	// if (old_off>NT(0.0)) old_off=NT(0.0);
 				}
                                 else 
                                 {       
                                 	old_off= N->low_value() - (*query_object)[new_cut_dim];
-					// if (old_off<0.0) old_off=0.0;
+					// if (old_off<NT(0.0)) old_off=NT(0.0);
 				}  
                                 new_rd=distance_instance->
                                 new_distance(rd,old_off,new_off,new_cut_dim);

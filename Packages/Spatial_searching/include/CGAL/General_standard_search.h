@@ -120,7 +120,7 @@ Distance* distance_instance;
 	distance_instance=&d;
 
 	multiplication_factor=
-	distance_instance->transformed_distance(1.0+Eps);
+	distance_instance->transformed_distance(NT(1.0)+Eps);
         
 	max_k=k;
 	actual_k=0;

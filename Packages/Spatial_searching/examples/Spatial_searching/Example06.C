@@ -15,29 +15,32 @@
 #include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Kd_tree_traits_point.h>
-#include <CGAL/Random.h>
+#include <CGAL/point_generators_3.h>
+#include <CGAL/algorithm.h>
 #include <CGAL/Splitting_rules.h>
 #include <CGAL/General_priority_search.h>
-#include <CGAL/Cartesian_d.h>
+#include <CGAL/Homogeneous.h>
 #include <CGAL/L1_distance_rectangle_point.h>
 
-typedef CGAL::Cartesian_d<double> R;
-typedef CGAL::Point_d<R> Point;
-typedef Point::R::FT NT;
+typedef CGAL::Homogeneous<int> R;
+typedef CGAL::Point_3<R> Point;
+typedef Point::R::FT FT;
+typedef Point::R::RT RT;
 
-typedef CGAL::Kd_tree_rectangle<NT> Rectangle;
-typedef CGAL::Plane_separator<NT> Separator;
+typedef CGAL::Kd_tree_rectangle<FT> Rectangle;
+typedef CGAL::Plane_separator<FT> Separator;
 
 typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
 typedef CGAL::L1_distance_rectangle_point<Rectangle,Point> L1_distance;
 typedef CGAL::General_priority_search<Traits, Rectangle, L1_distance> 
 NN_priority_search;
-  
+
+typedef CGAL::Creator_uniform_3<RT,Point> Creator;
 
 int test_range_searching(CGAL::Split_rule_enumeration::Split_rule s) {
 
   int bucket_size=1;
-  const int dim=4;
+  const int dim=3;
   
   const int data_point_number=100;
   const int nearest_neighbour_number=10;
@@ -45,15 +48,9 @@ int test_range_searching(CGAL::Split_rule_enumeration::Split_rule s) {
   typedef std::list<Point> point_list;
   point_list data_points;
   
-  // add random points of dimension dim to data_points
-  CGAL::Random Rnd;
-  // std::cout << "started tstrandom()" << std::endl;
-  for (int i1=0; i1<data_point_number; i1++) {
-	    NT v[dim];
-		for (int i2=0; i2<dim; i2++) v[i2]=Rnd.get_double(-1.0,1.0);
-        Point Random_point(dim,v,v+dim);
-        data_points.push_front(Random_point);
-  }
+  CGAL::Random_points_in_cube_3<Point,Creator> g( 1000.0);
+  CGAL::copy_n( g, data_point_number, std::back_inserter(data_points));
+  
   
   Traits tr(bucket_size, s, 3.0, false);
   L1_distance tr_dist(dim);
@@ -64,7 +61,7 @@ int test_range_searching(CGAL::Split_rule_enumeration::Split_rule s) {
   Rectangle query_rectangle(dim);
   for (int i=0; i<dim; i++) {
   	query_rectangle.set_lower_bound(i,0.0);
-        query_rectangle.set_upper_bound(i,1.0);
+        query_rectangle.set_upper_bound(i,200.0);
   }
 
   std::vector<NN_priority_search::Item_with_distance> nearest_neighbours;
@@ -79,9 +76,9 @@ int test_range_searching(CGAL::Split_rule_enumeration::Split_rule s) {
 
   CGAL::copy_n(NN.begin(), nearest_neighbour_number, it);
  
-  for (int i=0; i < nearest_neighbour_number; ++i) { 
-     std::cout << " d(q,nn)= " << nearest_neighbours[i].second << 
-     " nn= " << *(nearest_neighbours[i].first) << std::endl; 
+  for (int j=0; j < nearest_neighbour_number; ++j) { 
+     std::cout << " d(q,nn)= " << nearest_neighbours[j].second << 
+     " nn= " << *(nearest_neighbours[j].first) << std::endl; 
   }
 
   NN.statistics();

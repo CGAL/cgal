@@ -51,7 +51,7 @@ public:
   typedef typename Item::R::FT NT;
   Plane_separator<NT>* rule(Point_container<Item>& c) {
         Plane_separator<NT>* sep =
-        new Plane_separator<NT>(c.max_tight_span_coord(),0.0);
+        new Plane_separator<NT>(c.max_tight_span_coord(),NT(0.0));
         sep->set_cutting_val(c.median(sep->cutting_dimension()));
         return sep;
   }
@@ -65,7 +65,7 @@ public:
 		// find legal cut with max spread
 	    Plane_separator<NT>* sep = 
         new Plane_separator<NT>(c.max_tight_span_coord_balanced(Aspect_ratio),
-				0.0);
+				NT(0.0));
         sep->set_cutting_val(c.balanced_fair(sep->cutting_dimension(),
 				Aspect_ratio));
         return sep;
@@ -80,7 +80,7 @@ public:
     // find legal cut with max spread
     Plane_separator<NT>* sep = 
     new Plane_separator<NT>(c.max_tight_span_coord_balanced(Aspect_ratio),
-			    0.0);
+			    NT(0.0));
     sep->set_cutting_val(c.balanced_sliding_fair(sep->cutting_dimension(),
 			 Aspect_ratio));
     return sep;
@@ -94,7 +94,7 @@ public:
   Plane_separator<NT>* rule(Point_container<Item>& c)
   {
     Plane_separator<NT>* sep = new Plane_separator<NT>(c.max_span_coord(),
-              (c.max_span_upper() + c.max_span_lower())/2.0);
+              (c.max_span_upper() + c.max_span_lower())/NT(2.0));
 	NT max_span_lower = c.tight_bounding_box().lower(c.max_span_coord());
 	NT max_span_upper = c.tight_bounding_box().upper(c.max_span_coord());
 	if (max_span_upper <= sep->cutting_value()) {
@@ -114,7 +114,7 @@ public:
   Plane_separator<NT>* rule(Point_container<Item>& c)
   {
     Plane_separator<NT>* sep = 
-    new Plane_separator<NT>(c.max_span_coord(),0.0);
+    new Plane_separator<NT>(c.max_span_coord(),NT(0.0));
     sep->set_cutting_val(c.median(sep->cutting_dimension()));
 	return sep;
   }
@@ -128,7 +128,7 @@ public:
   {
     Plane_separator<NT>* sep = 
     new Plane_separator<NT>(c.max_tight_span_coord(),
-    (c.max_tight_span_upper() + c.max_tight_span_lower())/2.0);
+    (c.max_tight_span_upper() + c.max_tight_span_lower())/NT(2.0));
 	return sep;
   }
 };
@@ -140,7 +140,7 @@ public:
   Plane_separator<NT>* rule(Point_container<Item>& c)
   {
     Plane_separator<NT>* sep = new Plane_separator<NT>(c.max_span_coord(),
-              (c.max_span_upper() + c.max_span_lower())/2.0);
+              (c.max_span_upper() + c.max_span_lower())/NT(2.0));
 	return sep;
   }
 };

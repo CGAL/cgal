@@ -106,9 +106,9 @@ int positive_nearest_neighbour_searching(CGAL::Split_rule_enumeration::Split_rul
   "The first " << n << " positive nearest neighbours are: " 
   << std::endl;
 
-  for (int i=0; i < n; ++i) { 
+  for (int j=0; j < n; ++j) { 
      std::cout <<    
-     *(elements_in_query[i].first)
+     *(elements_in_query[j].first)
      << std::endl; 
   }
   

@@ -149,7 +149,7 @@ namespace CGAL {
 		if (empty) { // no points
 		  for (int i=0; i < dim; ++i)
 		  {
-			lower_[i]= 1.0; upper_[i]=-1.0;
+			lower_[i]= NT(1.0); upper_[i]= NT(-1.0);
 		  }
 		} else {
           // initialize with values of first point

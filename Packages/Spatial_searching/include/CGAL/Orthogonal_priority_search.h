@@ -65,7 +65,7 @@ class iterator;
 
     // constructor
     Orthogonal_priority_search(Tree& tree,  
-	Query_item& q, Distance& tr, NT Eps = 0.0, 
+	Query_item& q, Distance& tr, NT Eps = NT(0.0), 
         bool search_nearest=true)
     {
 	
@@ -114,7 +114,7 @@ class iterator;
     }
 
     // constructor
-    iterator(Tree& tree, Query_item& q, Distance& tr, NT eps=0.0, 
+    iterator(Tree& tree, Query_item& q, Distance& tr, NT eps=NT(0.0), 
     bool search_nearest=true){
         Ptr_implementation =
         new Iterator_implementation(tree, q, tr, eps, search_nearest);
@@ -252,7 +252,7 @@ class iterator;
 
     // constructor
     Iterator_implementation(Tree& tree, Query_item& q, Distance& tr,
-        NT Eps=0.0, bool search_nearest=true)
+        NT Eps=NT(0.0), bool search_nearest=true)
     {
         PriorityQueue= new std::priority_queue<Node_with_distance*, 
 	Node_with_distance_vector,
@@ -268,7 +268,7 @@ class iterator;
 	reference_count=1;
         Orthogonal_Distance_instance=&tr;
         multiplication_factor=
-	Orthogonal_Distance_instance->transformed_distance(1.0+Eps);
+	Orthogonal_Distance_instance->transformed_distance(NT(1.0)+Eps);
 
         if (search_nearest) distance_to_root=
 	Orthogonal_Distance_instance->min_distance_to_queryitem(q,
@@ -383,11 +383,11 @@ class iterator;
                         NT new_off =
                         (*query_point)[new_cut_dim] -
                         N->separator()->cutting_value();
-                        if ( ((new_off < 0.0) && (search_nearest_neighbour)) ||
-                        (( new_off >= 0.0) && (!search_nearest_neighbour))  ) {
+                        if ( ((new_off < NT(0.0)) && (search_nearest_neighbour)) ||
+                        (( new_off >= NT(0.0)) && (!search_nearest_neighbour))  ) {
 				old_off=
                                 (*query_point)[new_cut_dim]-N->low_value();
-                                if (old_off>0.0) old_off=0.0;
+                                if (old_off>NT(0.0)) old_off=NT(0.0);
                                 new_rd=
                                 Orthogonal_Distance_instance->
                                 new_distance(rd,old_off,new_off,new_cut_dim);
@@ -400,7 +400,7 @@ class iterator;
                         else { // compute new distance
 				old_off= N->high_value() -
                                 (*query_point)[new_cut_dim];
-                                if (old_off>0.0) old_off=0.0;
+                                if (old_off>NT(0.0)) old_off=NT(0.0);
                                 new_rd=Orthogonal_Distance_instance->
                                 new_distance(rd,old_off,new_off,new_cut_dim);
                                 Node_with_distance *Lower_Child =

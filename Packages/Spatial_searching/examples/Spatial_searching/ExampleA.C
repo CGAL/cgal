@@ -228,9 +228,9 @@ int neighbour_search(CGAL::Split_rule_enumeration::Split_rule s) {
   
   std::cout << "results neighbour searching:" << std::endl;
 
-  for (int i=0; i < query_point_number; i++) { 
-     std::cout << " d(q, nearest neighbour)=  " << nearest_neighbour[i].second << 
-     "    d(q, farthest neighbour)= " << farthest_neighbour[i].second << std::endl; 
+  for (int j=0; j < query_point_number; j++) { 
+     std::cout << " d(q, nearest neighbour)=  " << nearest_neighbour[j].second << 
+     "    d(q, farthest neighbour)= " << farthest_neighbour[j].second << std::endl; 
   } 
 
   return 0;

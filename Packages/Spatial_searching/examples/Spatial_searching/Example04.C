@@ -251,9 +251,9 @@ int generate_kd_tree(CGAL::Split_rule_enumeration::Split_rule s) {
   
   std::cout << "results neighbour searching:" << std::endl;
 
-  for (int i=0; i < query_point_number; ++i) { 
-     std::cout << " d(q,nearest neighbour)=" << nearest_neighbours1[i].second << 
-     " d(q,furthest neighbour)=" << nearest_neighbours2[i].second << std::endl; 
+  for (int j=0; j < query_point_number; ++j) { 
+     std::cout << " d(q,nearest neighbour)=" << nearest_neighbours1[j].second << 
+     " d(q,furthest neighbour)=" << nearest_neighbours2[j].second << std::endl; 
   } 
 
   return 0;

@@ -97,9 +97,9 @@ int range_searching(CGAL::Split_rule_enumeration::Split_rule s) {
   "The " << n << " items in the range [0.0,1.0] x [0.0,1.0] x [0.0,1.0] x [0.0,1.0] are: " 
   << std::endl;
 
-  for (int i=0; i < n; ++i) { 
+  for (int j=0; j < n; ++j) { 
      std::cout <<    
-     *(elements_in_query[i].first)
+     *(elements_in_query[j].first)
      << std::endl; 
   }
   

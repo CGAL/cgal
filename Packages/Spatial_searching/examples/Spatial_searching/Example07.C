@@ -81,9 +81,9 @@ int test_range_searching(CGAL::Split_rule_enumeration::Split_rule s) {
   NN.statistics();
   NN.the_k_neighbours(std::back_inserter(nearest_neighbours));
 
-  for (int i=0; i < nearest_neighbour_number; ++i) { 
-     std::cout << " d(q,nn)= " << nearest_neighbours[i].second << 
-     " nn= " << *(nearest_neighbours[i].first) << std::endl; 
+  for (int j=0; j < nearest_neighbour_number; ++j) { 
+     std::cout << " d(q,nn)= " << nearest_neighbours[j].second << 
+     " nn= " << *(nearest_neighbours[j].first) << std::endl; 
   }
   
   return 0;

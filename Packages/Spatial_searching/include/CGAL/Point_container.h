@@ -63,6 +63,8 @@ namespace CGAL {
     Kd_tree_rectangle<NT> tbox;       // tight bounding box, 
 				      // i.e. minimal enclosing bounding
 	                	      // box of points
+    
+
   public:
     std::ostream& print(std::ostream& s) {
       s << "Points container of size " << size() << "\n cell:";
@@ -105,12 +107,12 @@ namespace CGAL {
 
 	int max_tight_span_coord_balanced(NT Aspect_ratio) const {
 		int cut_dim(-1);
-		NT max_spread_points(-1.0);
+		NT max_spread_points(NT(-1.0));
 		NT max_length=max_spread();  // length of longest side of box
 		int dim=dimension();
 		for (int d=0; d<dim; d++) {
 			NT length=bbox.upper(d)-bbox.lower(d);
-		        if (2.0*max_length/length <= Aspect_ratio) {
+		        if (NT(2.0)*max_length/length <= Aspect_ratio) {
 			        NT spread=tbox.upper(d)-tbox.lower(d);
 			        if (spread > max_spread_points) {
 				        max_spread_points = spread;
@@ -123,7 +125,7 @@ namespace CGAL {
 	}
 
 	NT max_span_upper_without_dim(int d) const {
-		NT max_span(0.0);
+		NT max_span(NT(0.0));
         	int dim=dimension();
 		for (int i=0; i<dim; i++) {
 			NT span = bbox.upper(i)-bbox.lower(i);
@@ -172,7 +174,7 @@ namespace CGAL {
     Point_container(const int d, Iter begin, Iter end) :
       bbox(d), tbox(d) {
 
-      
+        
 
       bbox = Kd_tree_rectangle<NT>(d, begin, end);
       tbox = bbox;
@@ -340,10 +342,12 @@ template <class Item_, class Value>
       median_point_ptr=p_list.begin();
       for (unsigned int i = 0; i < p_list.size()/2-1; i++, 
 		   median_point_ptr++) {}
+      
       NT val1=(*(*median_point_ptr))[split_coord];
       median_point_ptr++;
       NT val2=(*(*median_point_ptr))[split_coord];
-      return (val1+val2)/2;
+      
+      return (val1+val2)/2; 
     };
 
 

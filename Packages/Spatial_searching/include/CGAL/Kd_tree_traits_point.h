@@ -52,7 +52,7 @@ namespace CGAL {
         
 	Kd_tree_traits_point(unsigned int bucket_size=1, 
 			     split_rule My_split_rule=Split_rule_enumeration::SLIDING_MIDPOINT,
-			     NT aspect_ratio=3.0, 
+			     NT aspect_ratio=NT(3.0), 
 			     bool use_extended_nodes=true) {
 		the_bucket_size = bucket_size;
 		the_selected_split_rule = My_split_rule;
