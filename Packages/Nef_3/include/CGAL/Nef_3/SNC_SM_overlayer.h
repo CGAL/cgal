@@ -132,7 +132,7 @@ void SNC_SM_overlayer<Map>::simplify()
     SHalfedge_around_sface_circulator hfc(e),hend(hfc);
     SFace_handle f = *(UF.find( Pitem[face(e)]));
     CGAL_For_all(hfc,hend) {  set_face(hfc,f); linked[hfc]=true; }
-    store_boundary_object(e,f);
+    store_sm_boundary_object(e,f);
   }
 
   SVertex_iterator v,vn;
@@ -155,7 +155,7 @@ void SNC_SM_overlayer<Map>::simplify()
         delete_vertex_only(v);  
       } 
       else 
-        store_boundary_object(v,face(v)); // isolated, but should stay
+        store_sm_boundary_object(v,face(v)); // isolated, but should stay
     } else { // v not isolated
       SHalfedge_handle e2 = first_out_edge(v), e1 = previous(e2);
       if ( has_outdeg_two(v) &&

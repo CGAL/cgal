@@ -71,14 +71,13 @@ class SNC_items {
     Point_3            point_at_center_;
     Mark               mark_;
     // local view (surface graph):
+  public:
     Refs*              sncp_;
     SVertex_iterator   svertices_begin_, svertices_last_;
     SHalfedge_iterator shalfedges_begin_, shalfedges_last_;
     SFace_iterator     sfaces_begin_, sfaces_last_;
     SHalfloop_iterator shalfloop_;
     GenPtr             info_;
-
-    //    Sphere_map         sm_;
 
   public:
 
@@ -127,7 +126,6 @@ class SNC_items {
       sfaces_begin_ = v.sfaces_begin_;
       sfaces_last_ = v.sfaces_last_;
       shalfloop_ = v.shalfloop_;
-      //      sm_ = v.sm_;
       return *this;
     }
 

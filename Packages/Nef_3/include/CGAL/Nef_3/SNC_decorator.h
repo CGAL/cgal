@@ -1083,7 +1083,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     Intersection_call_back<Selection> call_back1 
       ( snc1i, *sncp(), BOP, result, true);
     // choose between intersection algorithms
-#if 0
+#if 1
     Halfedge_iterator e0, e1;
     TRACEN("=> finding edge-edge intersections...");
     CGAL_forall_edges( e0, *sncp()) {
@@ -1331,6 +1331,14 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   Halffacet_iterator halffacets_end()  { return sncp()->halffacets_end(); }
   Volume_iterator   volumes_begin()    { return sncp()->volumes_begin(); }
   Volume_iterator   volumes_end()      { return sncp()->volumes_end(); }
+  SVertex_iterator   svertices_begin() { return sncp()->svertices_begin(); }
+  SVertex_iterator   svertices_end()   { return sncp()->svertices_end(); }
+  SHalfedge_iterator shalfedges_begin(){ return sncp()->shalfedges_begin(); }
+  SHalfedge_iterator shalfedges_end()  { return sncp()->shalfedges_end(); }
+  SHalfloop_iterator shalfloops_begin(){ return sncp()->shalfloops_begin(); }
+  SHalfloop_iterator shalfloops_end()  { return sncp()->shalfloops_end(); }
+  SFace_iterator   sfaces_begin() { return sncp()->sfaces_begin(); }
+  SFace_iterator   sfaces_end()   { return sncp()->sfaces_end(); }
 
   Shell_entry_iterator shells_begin(Volume_handle c) {
     return c->shells_begin();
@@ -1475,6 +1483,7 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
     }
   }
 }
+
 
 
 CGAL_END_NAMESPACE

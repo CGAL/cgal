@@ -4,13 +4,16 @@
 #include <CGAL/basic.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
 #include <CGAL/Nef_S2/SM_decorator.h>
-#include <CGAL/Nef_3/SNC_io_parser.h>
 
 #undef _DEBUG
 #define _DEBUG 41
 #include <CGAL/Nef_3/debug.h>
 
 CGAL_BEGIN_NAMESPACE
+
+#ifdef _DEBUG
+template <typename S> class SNC_io_parser;
+#endif
 
 template<typename SNC_structure>
 class SNC_simplify : public SNC_decorator<SNC_structure> {
@@ -20,8 +23,9 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
   typedef SNC_decorator                           Base;
   typedef typename SNC_structure::Sphere_map      Sphere_map;
   typedef SM_decorator<Sphere_map>            SM_decorator;
+#ifdef _DEBUG
   typedef SNC_io_parser<SNC_structure>            SNC_io_parser;
-
+#endif
   typedef typename SNC_structure::Vertex_handle Vertex_handle;
   typedef typename SNC_structure::Halfedge_handle Halfedge_handle;
   typedef typename SNC_structure::Halffacet_handle Halffacet_handle;
@@ -58,7 +62,9 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
   typedef typename Base::Sphere_circle Sphere_circle;
   typedef typename Base::Sphere_direction Sphere_direction;
 
+#ifdef _DEBUG
   SNC_io_parser *IO;
+#endif
 
  public:
   SNC_simplify(SNC_structure& sncs) : Base(sncs), IO(NULL) {}
@@ -534,7 +540,7 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
 	SD.set_face(c, sf);
 	linked[c] = true;
       }
-      SD.store_boundary_object( e, sf);
+      SD.store_sm_boundary_object( e, sf);
     }
 
     SVertex_handle sv;
@@ -544,14 +550,14 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
 	SFace_handle sf = *(uf.find(hash[SD.face(sv)])); 
 	CGAL_assertion( sf != SFace_handle());
 	SD.set_face( sv, sf);
-	SD.store_boundary_object( sv, sf);
+	SD.store_sm_boundary_object( sv, sf);
       }
     }
 
     SHalfloop_handle sl;
     CGAL_forall_shalfloops(sl, *sncp()) {
       SM_decorator SD(&*D.vertex(sl));
-      SD.store_boundary_object( sl, SD.face(sl));
+      SD.store_sm_boundary_object( sl, SD.face(sl));
     }
   }
 

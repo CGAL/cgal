@@ -1101,11 +1101,11 @@ clone_SM( typename SNC_::Vertex_handle vin) {
     SFace_cycle_iterator sfc;
     for(sfc = sf->sface_cycles_begin(); sfc != sf->sface_cycles_end(); ++sfc) {
       if ( assign(sv,sfc) )
-	D.store_boundary_object(VM[sv],FM[sf]);
+	D.store_sm_boundary_object(VM[sv],FM[sf]);
       else if ( assign(se,sfc) )
-	D.store_boundary_object(EM[se],FM[sf]);
+	D.store_sm_boundary_object(EM[se],FM[sf]);
       else if ( assign(sl,sfc) )
-	D.store_boundary_object(LM[sl],FM[sf]);
+	D.store_sm_boundary_object(LM[sl],FM[sf]);
       else CGAL_assertion_msg(0,"damn wrong handle.");
     }
   }
