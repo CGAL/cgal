@@ -30,7 +30,7 @@ rtag:
 
 submit: package
 	cp $(Package).tar.gz doc_ps/$(Package).ps version maintainer description.txt \
-	long_description.txt $(WWW_dir)
+	long_description.txt changes.txt $(WWW_dir)
 	rm -f $(WWW_dir)/$(Package).ps.gz
 	gzip -9 $(WWW_dir)/$(Package).ps
 	echo > $(TMP_file)
