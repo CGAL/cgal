@@ -1,3 +1,20 @@
+// TESTR 
+//   - odd: Cartesian, even: Homogeneous
+//   - 1   : double (Not checked, uses unexisting Pm_segment_epsilon_traits)
+//   - 2   : leda_integer
+//   - 3/4 : Gmpz
+//   - 5/6 : leda_rational
+//   - 7   : TestfieldC
+//   - 8   : TestrepH
+
+// tests 01-04 use Pm_segment_traits_2
+// test  05    uses Pm_straight_exact_traits_2
+
+// A default TESTR is was not set yet
+#ifndef TESTR
+#define TESTR 2
+#endif
+
 // Including headers for testing
 #if TESTR == 1 || TESTR == 3 || TESTR == 5 || TESTR == 7 
 #include <CGAL/Cartesian.h>
