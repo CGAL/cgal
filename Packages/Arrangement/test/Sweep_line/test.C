@@ -57,6 +57,7 @@
 //#define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_LEDA_TRAITS
 //#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_TRAITS
 //#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_LEDA_TRAITS
+#define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_CIRCLE_TRAITS
 #endif
 
 // Making sure test doesn't fail if LEDA is not installed
@@ -86,12 +87,16 @@ int main(int argc, char* argv[])
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
 #include <CGAL/Arr_polyline_traits.h>
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
-#error Currently not supported (July 2000)
+//#error Currently not supported (July 2000)
 #include <CGAL/leda_rational.h>
 #include <CGAL/Arr_leda_polyline_traits.h>
+#elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS
+#include <CGAL/leda_real.h>
+#include <CGAL/Arr_segment_circle_traits.h>
 #else
 #error No traits defined for test
 #endif
+
 
 // Picking a default  point location strategy
 // See comment above.
@@ -154,7 +159,11 @@ int main(int argc, char* argv[])
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
   typedef leda_rational                        NT;
   typedef CGAL::Arr_leda_polyline_traits<>     Traits;
-
+#elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS
+  typedef leda_real                            NT;
+  typedef CGAL::Arr_segment_circle_traits<NT>  Traits;
+  typedef Traits::Segment                      Segment;
+  typedef Traits::Circle                       Circle;
 #endif
 
 typedef Traits::Point                          Point;
@@ -387,37 +396,87 @@ private:
     }
 
   NT get_next_num(std::ifstream& file)
+  {
+    CGAL::Quotient<int> num = 0;
+    NT            result(INT_MAX);
+    std::string   s;
+    char          c = 0;
+    
+    //file.set_ascii_mode();
+    while ( file && (result == NT(INT_MAX) ))
+      {
+        // try to convert next token to integer
+        file >> c;
+        
+        if (c=='#') // comment
+          {
+            std::getline(file, s);
+          }
+        else
+          {
+            file.putback(c);
+#if CGAL_ARR_TEST_TRAITS != CGAL_SEGMENT_CIRCLE_TRAITS
+            file >> num;
+            result = NT(num.numerator(), num.denominator());
+#else
+            num = num;
+            file >> result;
+#endif
+          }
+      }
+    
+    // convertion failed, data file format error
+    CGAL_assertion(result != NT(INT_MAX));
+    
+    return result;
+  }
+  
+  /*NT get_next_num(std::ifstream& file)
     {
-      CGAL::Quotient<int> num;
-      NT            result(INT_MAX);
-      std::string   s;
-      char          c = 0;
+    CGAL::Quotient<int> num;
+    NT            result(INT_MAX);
+    std::string   s;
+    char          c = 0;
 
-      //file.set_ascii_mode();
+    //file.set_ascii_mode();
       while ( file && (result == NT(INT_MAX) ))
-	{
-	  // try to convert next token to integer
-	  file >> c;
-
-	  if (c=='#') // comment
-	    {
-	      std::getline(file, s);
-	    }
-	  else
-	    {
-	      file.putback(c);
-	      file >> num;
-              result = NT(num.numerator(), num.denominator());
-	    }
-	}
-
+      {
+      // try to convert next token to integer
+      file >> c;
+      
+      if (c=='#') // comment
+      {
+      std::getline(file, s);
+      }
+      else
+      {
+      file.putback(c);
+      file >> num;
+      result = NT(num.numerator(), num.denominator());
+      }
+      }
+      
       // convertion failed, data file format error
       CGAL_assertion(result != NT(INT_MAX));
-
+      
       return result;
+      }*/
+  
+    int get_next_int(std::ifstream& file)
+    {
+
+#if CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
+      // The to_long precondition is that number is indeed long
+      // is supplied here since input numbers are small.
+      return get_next_num(file).numerator().to_long();
+#elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS
+      return (int) CGAL::to_double(get_next_num(file));
+#else
+      return get_next_num(file).numerator();
+#endif
     }
 
-  int get_next_int(std::ifstream& file)
+  /*  int get_next_int(std::ifstream& file)
     {
 
 #if CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
@@ -427,7 +486,7 @@ private:
 #else
       return get_next_num(file).numerator();
 #endif
-    }
+}*/
 
 #if CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_TRAITS || \
     CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
@@ -487,6 +546,87 @@ Curve read_polyline_curve(std::ifstream& file, bool reverse_order = false)
     return polyline;
 }
 
+#elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS
+
+Curve read_seg_circ_curve(std::ifstream& file, bool reverse_order=false)
+{
+  Curve cv;
+  
+  // Get the arc type.
+  char type;
+
+  // Currently expects no comments in input file
+  // Should be changed?
+  file >> type;
+  
+  // A full circle (c) or a circular arc (a):
+  if (type == 'c' || type == 'C' || type == 'a' || type == 'A')
+  {  
+    // Read the circle, using the format "x0 y0 r^2"
+    NT     x0, y0, r2;
+    
+    file >> x0 >> y0 >> r2;
+//     x0 = get_next_num(file);
+//     y0 = get_next_num(file);
+//     r2 = get_next_num(file);
+    
+    Circle circle (Point (x0, y0), r2, CGAL::CLOCKWISE);
+
+    if (type == 'c' || type == 'C')
+    {
+      // Create a full circle.
+      cv = Curve(circle);  
+    }
+    else
+    {
+      // Read the end points of the circular arc.
+      NT    x1, y1, x2, y2;
+
+      file >> x1 >> y1 >> x2 >> y2;
+//       x1 = get_next_num(file);
+//       y1 = get_next_num(file);
+//       x2 = get_next_num(file);
+//       y2 = get_next_num(file);
+
+      if ((x1 - x0)*(x1 - x0) + (y1 - y0)*(y1 - y0) != r2)
+	y1 = CGAL::sqrt(r2 - (x1 - x0)*(x1 - x0)) + y0;
+
+      if ((x2 - x0)*(x2 - x0) + (y2 - y0)*(y2 - y0) != r2)
+	y2 = CGAL::sqrt(r2 - (x2 - x0)*(x2 - x0)) + y0;
+
+      Point source (x1, y1);
+      Point target (x2, y2);
+
+      // Create the circular arc.
+      cv = Curve (circle, source, target);
+    }
+  }
+  else if (type == 's' || type == 'S')
+  {
+    // Read the end points of the segment.
+    NT    x1, y1, x2, y2;
+
+    file >> x1 >> y1 >> x2 >> y2;
+//     x1 = get_next_num(file);
+//     y1 = get_next_num(file);
+//     x2 = get_next_num(file);
+//     y2 = get_next_num(file);
+    
+    Point source (x1, y1);
+    Point target (x2, y2);
+   
+    cv = Curve (Segment (source, target));
+  }
+  else
+  {
+    // Illegal type!
+    std::cout << "Failed to read curve." << std::endl;
+  }
+
+  std::cout << "The read curve: " << cv << std::endl;
+  return cv;
+}
+
 #else
   #error No curve read function defined
 #endif
@@ -514,6 +654,13 @@ Curve read_polyline_curve(std::ifstream& file, bool reverse_order = false)
       CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
       
       curr_curve = read_polyline_curve(file);
+#elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS
+      
+      curr_curve = read_seg_circ_curve(file);
+#else
+
+#error No reading function defined for traits.
+
 #endif
       
       //cout<<curr_curve<<endl;
@@ -568,69 +715,6 @@ Curve read_polyline_curve(std::ifstream& file, bool reverse_order = false)
     //expected_num_overlaps = get_next_int(file);
     
   }
-
-  /*#else
-  void read_file_build_pm(std::ifstream& file, bool reverse_order)
-  {
-      NT    x,y; 
-      Curve curr_curve;
-
-      // 1. read polylines and build arrangement
-
-      // read number of polylines
-      num_curves = get_next_int(file);
-
-      // read curves (test specific)
-      while (num_curves--) {
-#if CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_TRAITS || \
-    CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
-
-        curr_curve = read_segment_curve(file, reverse_order);
-
-#elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS || \
-      CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
-
-        curr_curve = read_polyline_curve(file, reverse_order);
-#endif
-
-	pm.insert(curr_curve);
-      }
-
-      // 2. read test vertices
-      int num_test_points, exp_type;
-
-      // read no. of test vertices
-      num_test_points = get_next_int(file);
-
-      while (num_test_points--) {
-	x = get_next_num(file); y = get_next_num(file);
-	std::cout << x << "," << y << std::endl;
-	Point s(x,y);
-	test_point_list.push_back(s);
-	
-	exp_type = get_next_int(file);
-	exp_type_list.push_back( (typename PM::Locate_type) exp_type);
-      }
-
-      // 3. read expected arrangement properties
-      //      std::getline(file, s); // skip
-      //      std::getline(file, s, ':'); // skip
-      expected_num_vertices = get_next_int(file);
-
-      //      std::getline(file, s); // skip
-      //      std::getline(file, s, ':'); // skip
-      expected_num_edges = get_next_int(file);
-
-      //      std::getline(file, s); // skip
-      //      std::getline(file, s, ':'); // skip
-      expected_num_faces = get_next_int(file);
-
-      //      std::getline(file, s); // skip
-      //      std::getline(file, s, ':'); // skip
-      //expected_num_overlaps = get_next_int(file);
-      
-    }
-    #endif*/
 
   /****************************
    * Class Interface
