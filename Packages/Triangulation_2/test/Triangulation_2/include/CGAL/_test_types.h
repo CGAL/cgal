@@ -19,6 +19,9 @@
 typedef CGAL_Cartesian<CGAL_Gmpz> Test_rep_cartesian;
 typedef CGAL_Homogeneous<CGAL_Gmpz> Test_rep_homogeneous;
 
-class CGAL__Test_triangulation_test_traits;
+//the following define shorter names to make the (g++/egcs) linker work 
+#define CGAL__Triangulation_test_traits CGAL_Ttt
+
+ class CGAL__Triangulation_test_traits;
 
 #endif
