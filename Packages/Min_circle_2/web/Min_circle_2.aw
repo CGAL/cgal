@@ -895,6 +895,8 @@ with interfaces of other classes.
     bool
     is_valid( bool verbose = false, int level = 0) const
     {
+        using std::endl;
+        
         CGAL::Verbose_ostream verr( verbose);
         verr << endl;
         verr << "CGAL::Min_circle_2<Traits>::" << endl;
@@ -1100,7 +1102,10 @@ traits class object.
     operator << ( std::ostream& os,
                   const Min_circle_2<_Traits>& min_circle)
     {
-        typedef typename  Min_circle_2<_Traits>::Point  Point;
+        using namespace std;
+
+        typedef  Min_circle_2<_Traits>::Point  Point;
+        typedef  ostream_iterator<Point>       Os_it;
 
         switch ( CGAL::get_mode( os)) {
 
@@ -1110,27 +1115,27 @@ traits class object.
                << ", |S| = " << min_circle.number_of_support_points() << endl;
             os << "  P = {" << endl;
             os << "    ";
-            std::copy( min_circle.points_begin(), min_circle.points_end(),
-                       std::ostream_iterator<Point>( os, ",\n    "));
+            copy( min_circle.points_begin(), min_circle.points_end(),
+                  Os_it( os, ",\n    "));
             os << "}" << endl;
             os << "  S = {" << endl;
             os << "    ";
-            std::copy( min_circle.support_points_begin(),
-                       min_circle.support_points_end(),
-                       std::ostream_iterator<Point>( os, ",\n    "));
+            copy( min_circle.support_points_begin(),
+                  min_circle.support_points_end(),
+                  Os_it( os, ",\n    "));
             os << "}" << endl;
             os << "  circle = " << min_circle.circle() << endl;
             os << ")" << endl;
             break;
 
           case CGAL::IO::ASCII:
-            std::copy( min_circle.points_begin(), min_circle.points_end(),
-                       std::ostream_iterator<Point>( os, "\n"));
+            copy( min_circle.points_begin(), min_circle.points_end(),
+                  Os_it( os, "\n"));
             break;
 
           case CGAL::IO::BINARY:
-            std::copy( min_circle.points_begin(), min_circle.points_end(),
-                       std::ostream_iterator<Point>( os));
+            copy( min_circle.points_begin(), min_circle.points_end(),
+                  Os_it( os));
             break;
 
           default:
@@ -1145,6 +1150,8 @@ traits class object.
     std::istream&
     operator >> ( std::istream& is, CGAL::Min_circle_2<Traits>& min_circle)
     {
+        using namespace std;
+        
         switch ( CGAL::get_mode( is)) {
 
           case CGAL::IO::PRETTY:
@@ -1154,8 +1161,8 @@ traits class object.
 
           case CGAL::IO::ASCII:
           case CGAL::IO::BINARY:
-            typedef typename  CGAL::Min_circle_2<Traits>::Point        Point;
-            typedef      std::istream_iterator<Point,std::ptrdiff_t>  Is_it;
+            typedef  CGAL::Min_circle_2<Traits>::Point  Point;
+            typedef  istream_iterator<Point>            Is_it;
             min_circle.clear();
             min_circle.insert( Is_it( is), Is_it());
             break;
@@ -1181,7 +1188,7 @@ traits class object.
     operator << ( CGAL::Window_stream &ws,
                   const CGAL::Min_circle_2<R>& min_circle)
     {
-        typedef  typename CGAL::Min_circle_2<R>::Point_iterator  Point_iterator;
+        typedef  CGAL::Min_circle_2<R>::Point_iterator  Point_iterator;
 
         Point_iterator  first( min_circle.points_begin());
         Point_iterator  last ( min_circle.points_end());
@@ -1329,9 +1336,9 @@ section, so we do not comment on it here.
 
 @macro <Optimisation_circle_2 public interface> = @begin
     // types
-    typedef           _R               R;
+    typedef           _R                R;
     typedef           CGAL::Point_2<R>  Point;
-    typedef typename  _R::FT           Distance;
+    typedef typename  _R::FT            Distance;
 
     /**************************************************************************
     WORKAROUND: The GNU compiler (g++ 2.7.2[.x]) does not accept types
@@ -1562,14 +1569,14 @@ emptiness and degeneracy, resp.
     std::istream&
     operator >> ( std::istream& is, CGAL::Optimisation_circle_2<_R>& c)
     {
-        typedef typename  CGAL::Optimisation_circle_2<_R>::Point     Point;
-        typedef typename  CGAL::Optimisation_circle_2<_R>::Distance  Distance;
+        typedef  CGAL::Optimisation_circle_2<_R>::Point     Point;
+        typedef  CGAL::Optimisation_circle_2<_R>::Distance  Distance;
 
         switch ( CGAL::get_mode( is)) {
 
           case CGAL::IO::PRETTY:
-            cerr << endl;
-            cerr << "Stream must be in ascii or binary mode" << endl;
+            cerr << std::endl;
+            cerr << "Stream must be in ascii or binary mode" << std::endl;
             break;
 
           case CGAL::IO::ASCII: {
@@ -1653,7 +1660,7 @@ it is declared \ccc{friend}.
     class Min_circle_2_traits_2 {
       public:
         // types
-        typedef  _R                             R;
+        typedef  _R                              R;
         typedef  CGAL::Point_2<R>                Point;
         typedef  CGAL::Optimisation_circle_2<R>  Circle;
 
@@ -1981,7 +1988,7 @@ it is declared \ccc{friend}.
 
           default:
             CGAL_optimisation_assertion_msg( false,
-                                            "CGAL::get_mode( os) invalid!");
+                                             "CGAL::get_mode( os) invalid!");
             break; }
 
         return( os);
@@ -1995,8 +2002,8 @@ it is declared \ccc{friend}.
         switch ( CGAL::get_mode( is)) {
 
           case CGAL::IO::PRETTY:
-            cerr << endl;
-            cerr << "Stream must be in ascii or binary mode" << endl;
+            cerr << std::endl;
+            cerr << "Stream must be in ascii or binary mode" << std::endl;
             break;
 
           case CGAL::IO::ASCII:
@@ -2133,7 +2140,7 @@ it is declared \ccc{friend}.
         typedef  _PT  PT;
         typedef  _DA  DA;
 
-        typedef  typename _DA::RT            RT;
+        typedef  typename _DA::RT             RT;
         typedef           CGAL::Quotient<RT>  FT;
 
       private:
@@ -2373,8 +2380,8 @@ it is declared \ccc{friend}.
         switch ( CGAL::get_mode( is)) {
 
           case CGAL::IO::PRETTY:
-            cerr << endl;
-            cerr << "Stream must be in ascii or binary mode" << endl;
+            cerr << std::endl;
+            cerr << "Stream must be in ascii or binary mode" << std::endl;
             break;
 
           case CGAL::IO::ASCII:
@@ -2421,24 +2428,23 @@ homogeneous representation with number type \ccc{Gmpz}.
     #include <cstring>
     #include <fstream>
 
-    using std::ofstream;
-    using std::ifstream;
-    using std::cerr;
+    using namespace std;
+    using namespace CGAL;
 
     #ifdef CGAL_USE_LEDA_FOR_OPTIMISATION_TEST
     #  include <CGAL/leda_integer.h>
-       typedef  leda_integer                      Rt;
-       typedef  CGAL::Quotient< leda_integer >    Ft;
+       typedef  leda_integer                Rt;
+       typedef  Quotient< leda_integer >    Ft;
     #else
     #  include <CGAL/Gmpz.h>
-       typedef  CGAL::Gmpz                        Rt;
-       typedef  CGAL::Quotient< CGAL::Gmpz >      Ft;
+       typedef  Gmpz                        Rt;
+       typedef  Quotient< Gmpz >            Ft;
     #endif
 
-    typedef  CGAL::Cartesian< Ft >                RepC;
-    typedef  CGAL::Homogeneous< Rt >              RepH;
-    typedef  CGAL::Min_circle_2_traits_2< RepC >  TraitsC;
-    typedef  CGAL::Min_circle_2_traits_2< RepH >  TraitsH;
+    typedef  Cartesian< Ft >                RepC;
+    typedef  Homogeneous< Rt >              RepH;
+    typedef  Min_circle_2_traits_2< RepC >  TraitsC;
+    typedef  Min_circle_2_traits_2< RepH >  TraitsH;
 @end
 
 The command line option \ccc{-verbose} enables verbose output.
@@ -2470,24 +2476,23 @@ once to ensure code coverage.
     void
     cover_Min_circle_2( bool verbose, const Traits&, const RT&)
     {
-        typedef  CGAL::Min_circle_2< Traits >  Min_circle;
-        typedef  Min_circle::Point             Point;
-        typedef  Min_circle::Circle            Circle;
+        typedef  Min_circle_2< Traits >  Min_circle;
+        typedef  Min_circle::Point       Point;
+        typedef  Min_circle::Circle      Circle;
 
-        CGAL::Verbose_ostream verr( verbose);
+        Verbose_ostream verr( verbose);
 
         // generate `n' points at random
-        const int     n = 20;
-        CGAL::Random  random_x, random_y;
-        Point         random_points[ n];
-        int           i;
+        const int  n = 20;
+        Random     random_x, random_y;
+        Point      random_points[ n];
+        int        i;
         verr << n << " random points from [0,128)^2:" << endl;
-        for ( i = 0; i < n; ++i)
+        for ( i = 0; i < n; ++i) {
             random_points[ i] = Point( RT( random_x( 128)),
                                        RT( random_y( 128)));
-        if ( verbose)
-            for ( i = 0; i < n; ++i)
-                cerr << i << ": " << random_points[ i] << endl;
+            verr << i << ": " << random_points[ i] << endl;
+        }
 
         // cover code
         verr << endl << "default constructor...";
@@ -2576,7 +2581,7 @@ once to ensure code coverage.
         verr << endl << "in-circle predicates...";
         {
             Point              p;
-            CGAL::Bounded_side  bounded_side;
+            Bounded_side  bounded_side;
             bool               has_on_bounded_side;
             bool               has_on_boundary;
             bool               has_on_unbounded_side;
@@ -2586,7 +2591,7 @@ once to ensure code coverage.
                 has_on_bounded_side   = mc.has_on_bounded_side( p);
                 has_on_boundary       = mc.has_on_boundary( p);
                 has_on_unbounded_side = mc.has_on_unbounded_side( p);
-            assert( bounded_side != CGAL::ON_UNBOUNDED_SIDE);
+            assert( bounded_side != ON_UNBOUNDED_SIDE);
             assert( has_on_bounded_side || has_on_boundary);
             assert( ! has_on_unbounded_side); }
         }
@@ -2636,26 +2641,26 @@ once to ensure code coverage.
         {
             verr << endl << "  writing `test_Min_circle_2.ascii'...";
             ofstream os( "test_Min_circle_2.ascii");
-            CGAL::set_ascii_mode( os);
+            set_ascii_mode( os);
             os << mc;
         }
         {
             verr << endl << "  writing `test_Min_circle_2.pretty'...";
             ofstream os( "test_Min_circle_2.pretty");
-            CGAL::set_pretty_mode( os);
+            set_pretty_mode( os);
             os << mc;
         }
         {
             verr << endl << "  writing `test_Min_circle_2.binary'...";
             ofstream os( "test_Min_circle_2.binary");
-            CGAL::set_binary_mode( os);
+            set_binary_mode( os);
             os << mc;
         }
         {
             verr << endl << "  reading `test_Min_circle_2.ascii'...";
             Min_circle mc_in;
             ifstream is( "test_Min_circle_2.ascii");
-            CGAL::set_ascii_mode( is);
+            set_ascii_mode( is);
             is >> mc_in;
             bool    is_valid = mc_in.is_valid( verbose);
             assert( is_valid);
@@ -2697,15 +2702,15 @@ representation) and corresponding data accessors.
         }
 
         friend
-        std::ostream&
-        operator << ( std::ostream& os, const MyPointC2& p)
+        ostream&
+        operator << ( ostream& os, const MyPointC2& p)
         {
             return( os << p._x << ' ' << p._y);
         }
 
         friend
-        std::istream&
-        operator >> ( std::istream& is, MyPointC2& p)
+        istream&
+        operator >> ( istream& is, MyPointC2& p)
         {
             return( is >> p._x >> p._y);
         }
@@ -2758,15 +2763,15 @@ representation) and corresponding data accessors.
         }
 
         friend
-        std::ostream&
-        operator << ( std::ostream& os, const MyPointH2& p)
+        ostream&
+        operator << ( ostream& os, const MyPointH2& p)
         {
             return( os << p._hx << ' ' << p._hy << ' ' << p._hw);
         }
 
         friend
-        std::istream&
-        operator >> ( std::istream& is, MyPointH2& p)
+        istream&
+        operator >> ( istream& is, MyPointH2& p)
         {
             return( is >> p._hx >> p._hy >> p._hw);
         }
@@ -2800,8 +2805,8 @@ representation) and corresponding data accessors.
 To test the traits class adapters we use the code coverage test function.
 
 @macro <Min_circle_2 test (adapters test)> = @begin
-    typedef  CGAL::Min_circle_2_adapterC2< MyPointC2, MyPointC2DA >  AdapterC2;
-    typedef  CGAL::Min_circle_2_adapterH2< MyPointH2, MyPointH2DA >  AdapterH2;
+    typedef  Min_circle_2_adapterC2< MyPointC2, MyPointC2DA >  AdapterC2;
+    typedef  Min_circle_2_adapterH2< MyPointH2, MyPointH2DA >  AdapterH2;
     cover_Min_circle_2( verbose, AdapterC2(), Rt());
     cover_Min_circle_2( verbose, AdapterH2(), Rt());
 @end
@@ -2821,18 +2826,18 @@ end of each file.
 @macro <Min_circle_2 test (external test sets)> = @begin
     while ( argc > 1) {
 
-        typedef  CGAL::Min_circle_2< TraitsH >  Min_circle;
-        typedef  Min_circle::Point             Point;
-        typedef  Min_circle::Circle            Circle;
+        typedef  Min_circle_2< TraitsH >  Min_circle;
+        typedef  Min_circle::Point        Point;
+        typedef  Min_circle::Circle       Circle;
 
-        CGAL::Verbose_ostream verr( verbose);
+        Verbose_ostream verr( verbose);
 
         // read points from file
         verr << endl << "input file: `" << argv[ 1] << "'" << flush;
 
-        std::list<Point>  points;
-        int               n, x, y;
-        ifstream          in( argv[ 1]);
+        list<Point>  points;
+        int          n, x, y;
+        ifstream     in( argv[ 1]);
         in >> n;
         assert( in);
         for ( int i = 0; i < n; ++i) {
