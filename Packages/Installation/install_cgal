@@ -621,7 +621,7 @@ set_compiler_flags()
 	    CGAL_LIB_CREATE="ar cr"
 	    CGAL_SHARED_LIB_CXXFLAGS=
 	    CGAL_SHARED_LIB_LDFLAGS="-lm"
-	    CGAL_SHARED_LIB_CREATE="\${CGAL_CXX} -shared"
+	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
 	    WINDOW_DIR="/usr/lib/X11"
 	    RUNTIME_LINKER_FLAG="-rpath "
 	    ;;
@@ -633,7 +633,7 @@ set_compiler_flags()
 	    CGAL_LIB_CREATE="ar cr"
 	    CGAL_SHARED_LIB_CXXFLAGS=
 	    CGAL_SHARED_LIB_LDFLAGS=
-	    CGAL_SHARED_LIB_CREATE="\${CGAL_CXX} -shared"
+	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
 	    WINDOW_DIR="/usr/lib/X11"
 	    RUNTIME_LINKER_FLAG="-rpath "
 	    ;;
@@ -645,7 +645,7 @@ set_compiler_flags()
 	    CGAL_LIB_CREATE="ar cr"
 	    CGAL_SHARED_LIB_CXXFLAGS="-fpic"
 	    CGAL_SHARED_LIB_LDFLAGS="-lm"
-	    CGAL_SHARED_LIB_CREATE="\${CGAL_CXX} -shared"
+	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
 	    WINDOW_DIR="/usr/lib/X11"
 	    RUNTIME_LINKER_FLAG=''
 	    ;;
@@ -657,7 +657,7 @@ set_compiler_flags()
 	    CGAL_LIB_CREATE="\${CGAL_CXX} -xar -o"
 	    CGAL_SHARED_LIB_CXXFLAGS="-pic"
 	    CGAL_SHARED_LIB_LDFLAGS=""
-	    CGAL_SHARED_LIB_CREATE="\${CGAL_CXX} -G"
+	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
 	    WINDOW_DIR="/usr/openwin/lib"
 	    RUNTIME_LINKER_FLAG="-R "
 	    ;;
@@ -669,7 +669,7 @@ set_compiler_flags()
 	    CGAL_LIB_CREATE="ar cr"
 	    CGAL_SHARED_LIB_CXXFLAGS="-fpic"
 	    CGAL_SHARED_LIB_LDFLAGS=""
-	    CGAL_SHARED_LIB_CREATE="\${CGAL_CXX} -G"
+	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
 	    WINDOW_DIR="/usr/openwin/lib"
 	    RUNTIME_LINKER_FLAG="-R "
 	    ;;
@@ -681,7 +681,7 @@ set_compiler_flags()
 	    CGAL_LIB_CREATE="ar cr"
 	    CGAL_SHARED_LIB_CXXFLAGS="-fpic"
 	    CGAL_SHARED_LIB_LDFLAGS=""
-	    CGAL_SHARED_LIB_CREATE="\${CGAL_CXX} -Xlinker -shared"
+	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -Xlinker -shared"
 	    WINDOW_DIR="/usr/lib/X11"
 	    RUNTIME_LINKER_FLAG=''
 	    ;;
@@ -1074,7 +1074,7 @@ compiler_absolute()
     ${_printf} "@"
     get_compiler_description "${_args}"
     printf "@no-c-compiler@${_args}@"
-    get_compiler_version "${_tmp}"
+    get_compiler_version "${_args}"
 }
 
 
@@ -2062,7 +2062,8 @@ test_stl_general()
 # CGAL_STL_UNKNOWN
 set_stl_version()
 {
-    if [ "`compiler_basename`" = "g++" ]; then
+    if [ "`compiler_basename`" = "g++" -a \
+	 "`compiler_version`" = "2.7.2" ]; then
 	CGAL_STL_VERSION='CGAL_STL_GCC'
     elif _test_sgi_3_0_stl $1; then
 	CGAL_STL_VERSION='CGAL_STL_SGI_3_0'
@@ -3082,6 +3083,15 @@ makefile_header()
     "#---------------------------------------------------------------------#\n\n"
 }
 
+# print args, if string is not empty
+# (empty strings on a line give problems with SGI make :()
+makefile_print_line()
+{
+    if [ -n "${*}" ]; then
+	${_printf} "\t${*} \\\\\n" 
+    fi
+}
+
 # write compiler flags for a CGAL include makefile
 write_compiler_flags()
 {
@@ -3097,9 +3107,7 @@ write_compiler_flags()
   print_as_shell_comment \
     "compiler specific configuration dir" \
     >> ${FILE}
-  ${_printf} \
-    "CGAL_INCL_CONF_DIR = \\\\\n" \
-    >> ${FILE}
+  ${_printf} "CGAL_INCL_CONF_DIR = \\\\\n" >> ${FILE}
   ${_printf} \
     "\t\$(CGAL_INCL_DIR)/CGAL/config/${CGAL_OS_COMPILER}\n\n" \
     >> ${FILE}
@@ -3130,9 +3138,7 @@ write_compiler_flags()
     print_as_shell_comment \
       "(e.g. /usr/local/include)" \
       >> ${FILE}
-    ${_printf} \
-      "LEDA_INCL_DIR = \\\\\n" \
-      >> ${FILE}
+    ${_printf} "LEDA_INCL_DIR = \\\\\n" >> ${FILE}
     ${_printf} \
       "\t`_where_is 'LEDA_INCL_DIR'`\n\n" \
       >> ${FILE}
@@ -3158,9 +3164,7 @@ write_compiler_flags()
 	print_as_shell_comment \
 	  "*** Fill in your GMP include directory ***" \
 	  >> ${FILE}
-	${_printf} \
-	  "GMP_INCL_DIR = \\\\\n" \
-	  >> ${FILE}
+	${_printf} "GMP_INCL_DIR = \\\\\n" >> ${FILE}
 	${_printf} \
 	  "\t`_where_is 'GMP_INCL_DIR'`\n\n" \
 	  >> ${FILE}
@@ -3170,36 +3174,20 @@ write_compiler_flags()
   #
   # CGAL_CXXFLAGS
   #
-  ${_printf} \
-    "CGAL_CXXFLAGS = \\\\\n" \
-    >> ${FILE}
-  ${_printf} \
-    "\t\$(CUSTOM_CXXFLAGS) \\\\\n" \
-    >> ${FILE}
-  if [ -n "${ADDITIONAL_CXXFLAGS}" ]; then
-    ${_printf} \
-      "\t${ADDITIONAL_CXXFLAGS} \\\\\n" \
-      >> ${FILE}
-  fi
-  ${_printf} \
-    "\t\$(CGAL_STL_INCLUDE_DIRECTIVE) \\\\\n" \
-    >> ${FILE}
+  ${_printf} "CGAL_CXXFLAGS = \\\\\n" >> ${FILE}
+  makefile_print_line "\$(CUSTOM_CXXFLAGS)" >> ${FILE}
+  makefile_print_line "${ADDITIONAL_CXXFLAGS}" >> ${FILE}
+  makefile_print_line "\$(CGAL_STL_INCLUDE_DIRECTIVE)" >> ${FILE}
   if [ -n "${GMP_SUPPORT}" ]; then
     if [ "${GMP_INSTALLATION}" = 'x' -o \
 	 "${GMP_INSTALLATION}" = 'z' -o \
 	 "${GMP_INSTALLATION}" = 'e' ]; then
-	${_printf} \
-	  "\t-I\$(GMP_INCL_DIR) \\\\\n" \
-	  >> ${FILE}
+	makefile_print_line "-I\$(GMP_INCL_DIR)" >> ${FILE}
     fi
   fi
-  ${_printf} \
-    "\t-I\$(CGAL_INCL_CONF_DIR) \\\\\n" \
-    >> ${FILE}
+  makefile_print_line "-I\$(CGAL_INCL_CONF_DIR)" >> ${FILE}
   if [ -n "${LEDA_SUPPORT}" -a -n "${NEED_EXTRA_LEDA_IDIR}" ] ; then
-    ${_printf} \
-      "\t-I\$(CGAL_INCL_DIR) \\\\\n" \
-      >> ${FILE}
+    makefile_print_line "-I\$(CGAL_INCL_DIR)" >> ${FILE}
     ${_printf} \
       "\t-I\$(LEDA_INCL_DIR)\n\n" \
       >> ${FILE}
@@ -3226,9 +3214,7 @@ write_linker_flags()
     print_as_shell_comment \
       "(e.g. /usr/local/lib)" \
       >> ${FILE}
-    ${_printf} \
-      "LEDA_LIB_DIR = \\\\\n" \
-      >> ${FILE}
+    ${_printf} "LEDA_LIB_DIR = \\\\\n" >> ${FILE}
     ${_printf} \
       "\t`_where_is 'LEDA_LIB_DIR'`\n\n" \
       >> ${FILE}
@@ -3247,9 +3233,7 @@ write_linker_flags()
 	print_as_shell_comment \
 	  "(e.g. /usr/local/lib)" \
 	  >> ${FILE}
-	${_printf} \
-	  "GMP_LIB_DIR = \\\\\n" \
-	  >> ${FILE}
+	${_printf} "GMP_LIB_DIR = \\\\\n" >> ${FILE}
 	${_printf} \
 	  "\t`_where_is 'GMP_LIB_DIR'`\n\n" \
 	  >> ${FILE}
@@ -3296,23 +3280,15 @@ write_linker_flags()
   #
   # CGAL_LDFLAGS
   #
-  ${_printf} \
-    "CGAL_LDFLAGS = \\\\\n" \
-    >> ${FILE}
-  ${_printf} \
-    "\t\$(CUSTOM_LDFLAGS) \\\\\n" \
-    >> ${FILE}
-  ${_printf} \
-    "\t${LIB_PATH} \\\\\n" \
-    >> ${FILE}
+  ${_printf} "CGAL_LDFLAGS = \\\\\n" >> ${FILE}
+  makefile_print_line "\$(CUSTOM_LDFLAGS)" >> ${FILE}
+  makefile_print_line "${LIB_PATH}" >> ${FILE}
   if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
-    ${_printf} \
-      "\t${RUNTIME_LINKER_FLAG}${RUNTIME_LIB_PATH} \\\\\n" \
+    makefile_print_line \
+      "${RUNTIME_LINKER_FLAG}${RUNTIME_LIB_PATH}" \
       >> ${FILE}
   fi
-  ${_printf} \
-    "\t${LIBS}\n\n" \
-    >> ${FILE}
+  ${_printf} "\t${LIBS}\n\n" >> ${FILE}
 
   #
   # CGAL_WINDOW_LDFLAGS
@@ -3320,23 +3296,14 @@ write_linker_flags()
   if [ -n "${LEDA_SUPPORT}" ]; then
     LIB_PATH="${LIB_PATH} -L${WINDOW_DIR}"
     RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:${WINDOW_DIR}"
-    ${_printf} \
-      "CGAL_WINDOW_LDFLAGS = \\\\\n" \
-      >> ${FILE}
-    ${_printf} \
-      "\t${CUSTOM_LDFLAGS} \\\\\n" \
-      >> ${FILE}
-    ${_printf} \
-      "\t${LIB_PATH} \\\\\n" \
-      >> ${FILE}
+    ${_printf} "CGAL_WINDOW_LDFLAGS = \\\\\n" >> ${FILE}
+    makefile_print_line "${CUSTOM_LDFLAGS}" >> ${FILE}
+    makefile_print_line "${LIB_PATH}" >> ${FILE}
     if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
-      ${_printf} \
-	"\t${RUNTIME_LINKER_FLAG}${RUNTIME_LIB_PATH} \\\\\n" \
+      makefile_print_line "${RUNTIME_LINKER_FLAG}${RUNTIME_LIB_PATH}" \
 	>> ${FILE}
     fi
-    ${_printf} \
-      "\t${WLIBS}\n\n" \
-      >> ${FILE}
+    ${_printf} "\t${WLIBS}\n\n" >> ${FILE}
   fi
 }
 
@@ -3356,12 +3323,9 @@ create_include_makefile()
   # 
   makefile_header "include directory settings" \
     >> ${FILE}
-  ${_printf} "CGAL_DIRECTORIES = \\\\\n" \
-    >> ${FILE}
-  ${_printf} "\t${CGAL_DIRFILE}\n" \
-    >> ${FILE}
-  ${_printf} "include \$(CGAL_DIRECTORIES)\n" \
-    >> ${FILE}
+  ${_printf} "CGAL_DIRECTORIES = \\\\\n" >> ${FILE}
+  ${_printf} "\t${CGAL_DIRFILE}\n" >> ${FILE}
+  ${_printf} "include \$(CGAL_DIRECTORIES)\n" >> ${FILE}
 
   # 
   # CGAL_OS_COMPILER
@@ -3374,10 +3338,8 @@ create_include_makefile()
   # 
   # CGAL_CXX
   # 
-  makefile_header "compiler" \
-    >> ${FILE}
-  ${_printf} "CGAL_CXX = ${CGAL_CXX}\n" \
-    >> ${FILE}
+  makefile_header "compiler" >> ${FILE}
+  ${_printf} "CGAL_CXX = ${CGAL_CXX}\n" >> ${FILE}
 
   write_compiler_flags
   write_linker_flags
@@ -3388,110 +3350,54 @@ create_include_makefile()
   # 
   # CGAL_LIB
   # 
-  ${_printf} \
-    "CGAL_LIB = libCGAL.a\n" \
-    >> ${FILE}
+  ${_printf} "CGAL_LIB = libCGAL.a\n" >> ${FILE}
 
   # 
   # CGAL_LIB_CXXFLAGS
   # 
-  ${_printf} \
-    "CGAL_LIB_CXXFLAGS = \\\\\n" \
-    >> ${FILE}
-  if [ -n "${CGAL_LIB_CXXFLAGS}" ]; then
-    ${_printf} \
-      "\t${CGAL_LIB_CXXFLAGS} \\\\\n" \
-      >> ${FILE}
-  fi
-  ${_printf} \
-    "\t\$(CGAL_CXXFLAGS)\n" \
-    >> ${FILE}
+  ${_printf} "CGAL_LIB_CXXFLAGS = \\\\\n" >> ${FILE}
+  makefile_print_line "${CGAL_LIB_CXXFLAGS}" >> ${FILE}
+  ${_printf} "\t\$(CGAL_CXXFLAGS)\n" >> ${FILE}
 
   # 
   # CGAL_LIB_LDFLAGS
   # 
-  ${_printf} \
-    "CGAL_LIB_LDFLAGS = \\\\\n" \
-    >> ${FILE}
-  if [ -n "${CGAL_LIB_LDFLAGS}" ]; then
-    ${_printf} \
-      "\t${CGAL_LIB_LDFLAGS} \\\\\n" \
-      >> ${FILE}
-  fi
-  ${_printf} \
-    "\t\$(CUSTOM_LDFLAGS)\n" \
-    >> ${FILE}
+  ${_printf} "CGAL_LIB_LDFLAGS = \\\\\n" >> ${FILE}
+  makefile_print_line "${CGAL_LIB_LDFLAGS}" >> ${FILE}
+  ${_printf} "\t\$(CUSTOM_LDFLAGS)\n" >> ${FILE}
 
   # 
   # CGAL_LIB_CREATE
   # 
-  ${_printf} \
-    "CGAL_LIB_CREATE = ${CGAL_LIB_CREATE}\n\n" \
-    >> ${FILE}
+  ${_printf} "CGAL_LIB_CREATE = ${CGAL_LIB_CREATE}\n\n" >> ${FILE}
 
   # 
   # CGAL_SHARED_LIB
   # 
-  ${_printf} \
-    "CGAL_SHARED_LIB = libCGAL.so\n" \
-    >> ${FILE}
+  ${_printf} "CGAL_SHARED_LIB = libCGAL.so\n" >> ${FILE}
 
   # 
   # CGAL_SHARED_LIB_CXXFLAGS
   # 
-  ${_printf} \
-    "CGAL_SHARED_LIB_CXXFLAGS = \\\\\n" \
-    >> ${FILE}
-  if [ -n "${CGAL_SHARED_LIB_CXXFLAGS}" ]; then
-    ${_printf} \
-      "\t${CGAL_SHARED_LIB_CXXFLAGS} \\\\\n" \
-      >> ${FILE}
-  fi
-  ${_printf} \
-    "\t\$(CGAL_CXXFLAGS)\n" \
-    >> ${FILE}
+  ${_printf} "CGAL_SHARED_LIB_CXXFLAGS = \\\\\n" >> ${FILE}
+  makefile_print_line "${CGAL_SHARED_LIB_CXXFLAGS}" >> ${FILE}
+  ${_printf} "\t\$(CGAL_CXXFLAGS)\n" >> ${FILE}
 
   # 
   # CGAL_SHARED_LIB_LDFLAGS
   # 
-  if [ -z "${LEDA_SUPPORT}" -o -z "${NEED_EXTRA_LEDA_LDIR}" ] ; then
-    # without LEDA
-    ${_printf} \
-      "CGAL_SHARED_LIB_LDFLAGS = \\\\\n" \
-      >> ${FILE}
-    ${_printf} \
-      "\t\$(CUSTOM_LDFLAGS) \\\\\n" \
-      >> ${FILE}
-    ${_printf} \
-      "\t${CGAL_SHARED_LIB_LDFLAGS}\n" \
-      >> ${FILE}
-  else
-    # with LEDA
-    if [ -n "${RUNTIME_LINKER_FLAG}" ] ; then
-      ${_printf} \
-	"CGAL_SHARED_LIB_LDFLAGS = \\\\\n" \
-      >> ${FILE}
-    ${_printf} \
-      "\t-L\$(LEDA_LIB_DIR) \\\\\n" \
-      >> ${FILE}
-    ${_printf} \
-      "\t${RUNTIME_LINKER_FLAG}\$(LEDA_LIB_DIR) -lL \\\\\n" \
-      >> ${FILE}
-    ${_printf} \
-      "\t${CGAL_SHARED_LIB_LDFLAGS}\n" \
+  ${_printf} "CGAL_SHARED_LIB_LDFLAGS = \\\\\n" >> ${FILE}
+  if [ -n "${LEDA_SUPPORT}" -a -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
+    if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
+      makefile_print_line "-L\$(LEDA_LIB_DIR)" >> ${FILE}
+      makefile_print_line "${RUNTIME_LINKER_FLAG}\$(LEDA_LIB_DIR) -lL" \
 	>> ${FILE}
     else
-      ${_printf} \
-	"CGAL_SHARED_LIB_LDFLAGS = \\\\\n" \
-      >> ${FILE}
-    ${_printf} \
-      "\t-L\$(LEDA_LIB_DIR) -lL \\\\\n" \
-      >> ${FILE}
-    ${_printf} \
-      "\t${CGAL_SHARED_LIB_LDFLAGS}\n" \
-	>> ${FILE}
+      makefile_print_line "-L\$(LEDA_LIB_DIR) -lL" >> ${FILE}
     fi
   fi
+  makefile_print_line "${CGAL_SHARED_LIB_LDFLAGS}" >> ${FILE}
+  ${_printf} "\t\$(CUSTOM_LDFLAGS)\n" >> ${FILE}
   
   # 
   # CGAL_SHARED_LIB_CREATE
