@@ -399,8 +399,4 @@ struct converter<ET, Lazy_exact_nt<ET> >
 
 CGAL_END_NAMESPACE
 
-#ifdef CGAL_INTERVAL_ARITHMETIC_H
-#include <CGAL/Interval_arithmetic/IA_Lazy_exact_nt.h>
-#endif
-
 #endif // CGAL_LAZY_EXACT_NT_H
