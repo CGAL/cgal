@@ -37,7 +37,7 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all:	demo voronoi
+all:	demo$(EXE_EXT) voronoi$(EXE_EXT)
 
 demo$(EXE_EXT): demo$(OBJ_EXT) draw_map$(OBJ_EXT) 
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo demo$(OBJ_EXT) draw_map$(OBJ_EXT) $(LDFLAGS)
