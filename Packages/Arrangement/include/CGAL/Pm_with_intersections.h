@@ -24,7 +24,9 @@
 
 #include <CGAL/Planar_map_2.h>
 #include <CGAL/Pm_with_intersections_misc.h>
+#ifndef CGAL_NO_PM_DEFAULT_POINT_LOCATION
 #include <CGAL/Pm_walk_along_line_point_location.h>
+#endif
 #include <CGAL/Planar_map_2/Pm_change_notification.h>
 
 #include <CGAL/Sweep_line_2/Pmwx_aggregate_insert_tight.h>
@@ -68,10 +70,14 @@ public:
 
   // Constructors
   // ------------
-  
-  Planar_map_with_intersections_2() 
-    : Planar_map(new Pmwx_traits_wrap,
+
+  Planar_map_with_intersections_2() :
+#ifndef CGAL_NO_PM_DEFAULT_POINT_LOCATION
+    Planar_map(new Pmwx_traits_wrap,
                  new Pm_walk_along_line_point_location<Planar_map>, NULL),
+#else
+    Planar_map(new Pmwx_traits_wrap, NULL, NULL),
+#endif
       pmwx_use_delete_traits(true), 
       pmwx_use_delete_pl(true)
   { 
