@@ -351,8 +351,11 @@ collinear_order(typename K::Point_2 const &pt1, typename K::Point_2 const & pt2)
 // the first point, the result is 1.
 // Other results are -1 (other side) and 0 (coincidence).
 {
+  typename K::Construct_cartesian_const_iterator_2 construct_cccit;
+  typename K::Cartesian_const_iterator_2 ccit1 = construct_cccit(pt1) + main_dir_;
+  typename K::Cartesian_const_iterator_2 ccit2 = construct_cccit(pt2) + main_dir_;
     int diffsign;
-    diffsign = CGAL_NTS sign(pt2.cartesian(main_dir_)-pt1.cartesian(main_dir_));
+    diffsign = CGAL_NTS sign(*ccit2 - *ccit1);
     if (diffsign == 0)
         return 0;
     return (diffsign == dir_sign_) ? 1 : -1;

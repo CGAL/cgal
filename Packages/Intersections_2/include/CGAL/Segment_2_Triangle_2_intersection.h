@@ -150,21 +150,23 @@ Segment_2_Triangle_2_pair<K>::intersection_type() const
 // The non const this pointer is used to cast away const.
     _known = true;
     Straight_2_<K> straight(*_seg);
-Line_2<K> l(_trian->vertex(0), _trian->vertex(1));
+    typedef typename K::Line_2 Line_2;
+
+Line_2 l(_trian->vertex(0), _trian->vertex(1));
 if (l.oriented_side(_trian->vertex(2)) == ON_POSITIVE_SIDE) {
         straight.cut_right_off(
-            Line_2<K>(_trian->vertex(0), _trian->vertex(1)));
+            Line_2(_trian->vertex(0), _trian->vertex(1)));
         straight.cut_right_off(
-            Line_2<K>(_trian->vertex(1), _trian->vertex(2)));
+            Line_2(_trian->vertex(1), _trian->vertex(2)));
         straight.cut_right_off(
-            Line_2<K>(_trian->vertex(2), _trian->vertex(0)));
+            Line_2(_trian->vertex(2), _trian->vertex(0)));
     } else {
         straight.cut_right_off(
-            Line_2<K>(_trian->vertex(2), _trian->vertex(1)));
+            Line_2(_trian->vertex(2), _trian->vertex(1)));
         straight.cut_right_off(
-            Line_2<K>(_trian->vertex(1), _trian->vertex(0)));
+            Line_2(_trian->vertex(1), _trian->vertex(0)));
         straight.cut_right_off(
-            Line_2<K>(_trian->vertex(0), _trian->vertex(2)));
+            Line_2(_trian->vertex(0), _trian->vertex(2)));
     }
     switch (straight.current_state()) {
     case Straight_2_<K>::EMPTY:

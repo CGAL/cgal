@@ -1,3 +1,6 @@
+2.23 (23 September 2003) [af]
+- Made the code independent from K::Point.x()/y()/dimension()
+
 2.22 (10 September 2003)
 - Specialised construct_if_finite for Cartesian and homogeneous kernels [af]
 

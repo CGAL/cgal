@@ -47,7 +47,7 @@ public:
 #else
   Intersection_results intersection_type() const
 {
-    typedef K::Line_2 line_t;
+    typedef typename K::Line_2 line_t;
     if (_known)
         return _result;
 // The non const this pointer is used to cast away const.
@@ -55,28 +55,35 @@ public:
     typedef typename K::FT FT;
     typedef typename K::RT RT;
     bool all_values = true;
-    int i;
-    for (i=0; i< _ref_point.dimension(); i++) {
+
+    typename K::Construct_cartesian_const_iterator_2 construct_cccit;
+    typename K::Cartesian_const_iterator_2 ref_point_it = construct_cccit(_ref_point);
+    typename K::Cartesian_const_iterator_2 end = construct_cccit(_ref_point, 0);
+    typename K::Cartesian_const_iterator_2 isomin_it = construct_cccit(_isomin);
+    typename K::Cartesian_const_iterator_2 isomax_it = construct_cccit(_isomax);
+
+    for (unsigned int i=0; ref_point_it != end; ++i, ++ref_point_it, ++isomin_it, ++isomax_it) {
+
         if (_dir.homogeneous(i) == RT(0)) {
-            if (_ref_point.cartesian(i) < _isomin.cartesian(i)) {
+            if (*ref_point_it < *isomin_it) {
                 _result = NO;
                 return NO;
             }
-            if (_ref_point.cartesian(i) > _isomax.cartesian(i)) {
+            if (*ref_point_it > *isomax_it) {
                 _result = NO;
                 return NO;
             }
         } else {
             FT newmin, newmax;
             if (_dir.homogeneous(i) > RT(0)) {
-                newmin = (_isomin.cartesian(i) - _ref_point.cartesian(i)) /
+                newmin = (*isomin_it - *ref_point_it) /
                     _dir.cartesian(i);
-                newmax = (_isomax.cartesian(i) - _ref_point.cartesian(i)) /
+                newmax = (*isomax_it - *ref_point_it) /
                     _dir.cartesian(i);
             } else {
-                newmin = (_isomax.cartesian(i) - _ref_point.cartesian(i)) /
+                newmin = (*isomax_it - *ref_point_it) /
                     _dir.cartesian(i);
-                newmax = (_isomin.cartesian(i) - _ref_point.cartesian(i)) /
+                newmax = (*isomin_it - *ref_point_it) /
                     _dir.cartesian(i);
             }
             if (all_values) {
@@ -103,6 +110,9 @@ public:
     _result = SEGMENT;
     return SEGMENT;
 }
+
+
+
 
 #endif // CGAL_CFG_RETURN_TYPE_BUG_2
     bool                intersection(typename K::Point_2 &result) const;
@@ -167,28 +177,35 @@ Line_2_Iso_rectangle_2_pair<K>::intersection_type() const
     typedef typename K::FT FT;
     typedef typename K::RT RT;
     bool all_values = true;
-    int i;
-    for (i=0; i< _ref_point.dimension(); i++) {
+
+    typename K::Construct_cartesian_const_iterator_2 construct_cccit;
+    typename K::Cartesian_const_iterator_2 ref_point_it = construct_cccit(_ref_point);
+    typename K::Cartesian_const_iterator_2 end = construct_cccit(_ref_point, 0);
+    typename K::Cartesian_const_iterator_2 isomin_it = construct_cccit(_isomin);
+    typename K::Cartesian_const_iterator_2 isomax_it = construct_cccit(_isomax);
+
+    for (unsigned int i=0; ref_point_it != end; ++i, ++ref_point_it, ++isomin_it, ++isomax_it) {
+
         if (_dir.homogeneous(i) == RT(0)) {
-            if (_ref_point.cartesian(i) < _isomin.cartesian(i)) {
+            if (*ref_point_it < *isomin_it) {
                 _result = NO;
                 return NO;
             }
-            if (_ref_point.cartesian(i) > _isomax.cartesian(i)) {
+            if (*ref_point_it > *isomax_it) {
                 _result = NO;
                 return NO;
             }
         } else {
             FT newmin, newmax;
             if (_dir.homogeneous(i) > RT(0)) {
-                newmin = (_isomin.cartesian(i) - _ref_point.cartesian(i)) /
+                newmin = (*isomin_it - *ref_point_it) /
                     _dir.cartesian(i);
-                newmax = (_isomax.cartesian(i) - _ref_point.cartesian(i)) /
+                newmax = (*isomax_it - *ref_point_it) /
                     _dir.cartesian(i);
             } else {
-                newmin = (_isomax.cartesian(i) - _ref_point.cartesian(i)) /
+                newmin = (*isomax_it - *ref_point_it) /
                     _dir.cartesian(i);
-                newmax = (_isomin.cartesian(i) - _ref_point.cartesian(i)) /
+                newmax = (*isomin_it - *ref_point_it) /
                     _dir.cartesian(i);
             }
             if (all_values) {
