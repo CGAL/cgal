@@ -163,7 +163,7 @@ OutputIterator operator()(ForwardIterator first, ForwardIterator last,
   typename LA::Matrix M(d+1,V.size());
   typename LA::Vector b(d+1), x;
   int i;
-  for (register i=0; i<d; ++i) {
+  for (register int i=0; i<d; ++i) {
     for (register int j=0; j<V.size(); ++j) 
       M(i,j)=V[j].cartesian(i);
     b[i] = p.cartesian(i);

@@ -1,6 +1,9 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
 
+0.9.58 (24 March 2002)
+   added missing "int" in for loop declaration
+
 0.9.57 (22 March 2002)
    moved declaration of loop counter out of for loop to avoid errors from some
    g++ about multiple declarations of loop variable.
