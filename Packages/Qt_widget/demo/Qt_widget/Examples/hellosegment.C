@@ -1,5 +1,9 @@
 //demo/Qt_widget/Examples/hellosegment.C
-
+#ifndef CGAL_USE_QT
+#include <iostream>
+int main(int, char*){
+  std::cout << "Sorry, this demo needs QT..." << std::endl; return 0;}
+#else
 #include <CGAL/Cartesian.h>
 #include <CGAL/IO/Qt_widget.h>
 
@@ -11,15 +15,16 @@ typedef CGAL::Segment_2<Rep> Segment;
 
 int main( int argc, char **argv )
 {
-    QApplication app( argc, argv );
-    CGAL::Qt_widget *W = new CGAL::Qt_widget();
-    app.setMainWidget( W );
-    W->resize(600, 600);
-    W->set_window(0, 600, 0, 600);
-    W->show();
-    W->lock();
-    *W << CGAL::BackgroundColor(CGAL::ORANGE) << CGAL::RED;
-    *W << Segment(Point(100,100), Point(400,400));
-    W->unlock();
-    return app.exec();
+  QApplication app( argc, argv );
+  CGAL::Qt_widget *W = new CGAL::Qt_widget();
+  app.setMainWidget( W );
+  W->resize(600, 600);
+  W->set_window(0, 600, 0, 600);
+  W->show();
+  W->lock();
+  *W << CGAL::BackgroundColor(CGAL::ORANGE) << CGAL::RED;
+  *W << Segment(Point(100,100), Point(400,400));
+  W->unlock();
+  return app.exec();
 }
+#endif

@@ -1,5 +1,9 @@
 //demo/Qt_widget/Examples/layer.C
-
+#ifndef CGAL_USE_QT
+#include <iostream>
+int main(int, char*){
+  std::cout << "Sorry, this demo needs QT..." << std::endl; return 0;}
+#else
 #include <CGAL/Cartesian.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/IO/Qt_widget_Delaunay_triangulation_2.h>
@@ -59,3 +63,4 @@ int main( int argc, char **argv )
     W->show();
     return app.exec();
 }
+#endif
