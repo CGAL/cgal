@@ -118,23 +118,51 @@ public:
     return p_[0];
   }
 
-  const Point_2& point(unsigned int i) const { 
-    CGAL_precondition ( i < 2 );
-    if ( i == 0 ) { return p_[0]; }
-    else { CGAL_precondition( is_segment() ); return p_[1]; }
+  const Point_2& source_of_supporting_site() const {
+    CGAL_precondition( is_segment() );
+    return p_[0];
   }
+
+  const Point_2& target_of_supporting_site() const {
+    CGAL_precondition( is_segment() );
+    return p_[1];
+  }
+
+  // the following four methods do not really make any sense but have
+  // been added in order for this class to be a model of the
+  // SegmentVoronoiDiagramSite_2 concept.
+  const Point_2& source_of_supporting_site(unsigned int i) const {
+    CGAL_precondition( is_point() && !is_input() );
+    return p_[0];
+  }
+
+  const Point_2& target_of_supporting_site(unsigned int i) const {
+    CGAL_precondition( is_point() && !is_input() );
+    return p_[0];
+  }
+
+  const Point_2& source_of_crossing_site(unsigned int i) const {
+    CGAL_precondition( is_segment() && !is_input(i) );
+    return p_[0];
+  }
+
+  const Point_2& target_of_crossing_site(unsigned int i) const {
+    CGAL_precondition( is_segment() && !is_input(i) );
+    return p_[0];
+  }
+
 
   Segment_2 segment() const {
     CGAL_precondition ( is_segment() ); 
     return Segment_2( p_[0], p_[1] );
   }
 
-  Point_2 source() const {
+  const Point_2& source() const {
     CGAL_precondition ( is_segment() ); 
     return p_[0];
   }
 
-  Point_2 target() const {
+  const Point_2& target() const {
     CGAL_precondition ( is_segment() ); 
     return p_[1];
   }
@@ -149,11 +177,14 @@ public:
     return Self::construct_site_2(p_[1]);
   }
 
-  Self supporting_site() const {
+  const Self& supporting_site() const {
     CGAL_precondition( is_segment() );
     return *this;
   }
 
+  // the following two methods make no sense, but have been added in
+  // order for this class to be a model of the
+  // SegmentVoronoiDiagramSite_2 concept.
   Self supporting_site(unsigned int i) const {
     CGAL_precondition( is_point() && i < 2 );
     CGAL_precondition( !is_input() );

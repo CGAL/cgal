@@ -47,50 +47,64 @@ protected:
   typedef Segment_Voronoi_diagram_storage_site_2<Geom_traits>  Self;
 
 public:
-  Segment_Voronoi_diagram_storage_site_2() : type_(0) {}
-
   // constructs point site using input point
-  Segment_Voronoi_diagram_storage_site_2(const Handle& hp) {
-    initialize_site(hp);
+  static Self construct_storage_site_2(const Handle& hp) {
+    Self t;
+    t.initialize_site(hp);
+    return t;
   }
 
   // constructs segment site corresponding to the segment (*hp1,*hp2)
-  Segment_Voronoi_diagram_storage_site_2(const Handle& hp1,
-					 const Handle& hp2) {
-    initialize_site(hp1, hp2);
+  static Self construct_storage_site_2(const Handle& hp1,
+				       const Handle& hp2) {
+    Self t;
+    t.initialize_site(hp1, hp2);
+    return t;
   }
 
   // constructs point site using the point of intersection of the
   // segments (*hp1,*hp2) and (*hq1,*hq2)
-  Segment_Voronoi_diagram_storage_site_2(const Handle& hp1,
-					 const Handle& hp2,
-					 const Handle& hq1,
-					 const Handle& hq2) {
-    initialize_site(hp1, hp2, hq1, hq2);
+  static Self construct_storage_site_2(const Handle& hp1,
+				       const Handle& hp2,
+				       const Handle& hq1,
+				       const Handle& hq2) {
+    Self t;
+    t.initialize_site(hp1, hp2, hq1, hq2);
+    return t;
   }
 
   // constructs segment site whose endpoints are the points of
   // intersection of the pairs of segments (*hp1,*hp2), (*hq1,*hq2)
   // and (*hp1,*hp2), (*hr1,*hr2)
-  Segment_Voronoi_diagram_storage_site_2(const Handle& hp1,
-					 const Handle& hp2,
-					 const Handle& hq1,
-					 const Handle& hq2,
-					 const Handle& hr1,
-					 const Handle& hr2) {
-    initialize_site(hp1, hp2, hq1, hq2, hr1, hr2);
+  static Self construct_storage_site_2(const Handle& hp1,
+				       const Handle& hp2,
+				       const Handle& hq1,
+				       const Handle& hq2,
+				       const Handle& hr1,
+				       const Handle& hr2) {
+    Self t;
+    t.initialize_site(hp1, hp2, hq1, hq2, hr1, hr2);
+    return t;
   }
 
   // constructs segment site using either the source or the target of
   // (*hp1,*hp2) (that depends on the boolean is_first_exact) and the
   // intersection of (*hp1,*hp2) with (*hq1,*hq2) as the other endpoint
-  Segment_Voronoi_diagram_storage_site_2(const Handle& hp1,
-					 const Handle& hp2,
-					 const Handle& hq1,
-					 const Handle& hq2,
-					 bool is_first_exact) {
-    initialize_site(hp1, hp2, hq1, hq2, is_first_exact);
+  static Self construct_storage_site_2(const Handle& hp1,
+				       const Handle& hp2,
+				       const Handle& hq1,
+				       const Handle& hq2,
+				       bool is_first_exact) {
+    Self t;
+    t.initialize_site(hp1, hp2, hq1, hq2, is_first_exact);
+    return t;
   }
+
+
+public:
+  // DEFAULT CONSTRUCTOR
+  //--------------------
+  Segment_Voronoi_diagram_storage_site_2() : type_(0) {}
 
   // COPY CONSTRUCTOR
   //-----------------
@@ -120,40 +134,70 @@ public:
 
   // ACCESS METHODS
   //---------------
-  const Handle& handle(unsigned int i) const {
-    CGAL_precondition( i < 6 );
-    return h_[i];
+  const Handle& point() const {
+    CGAL_precondition( is_point() && is_input() );
+    return h_[0];
+  }
+
+  const Handle& source_of_supporting_site() const {
+    CGAL_precondition( is_segment() );
+    return h_[0];
+  }
+
+  const Handle& target_of_supporting_site() const {
+    CGAL_precondition( is_segment() );
+    return h_[1];
+  }
+
+  const Handle& source_of_supporting_site(unsigned int i) const {
+    CGAL_precondition( is_point() && !is_input() );
+    return (i == 0) ? h_[2] : h_[4];
+  }
+
+  const Handle& target_of_supporting_site(unsigned int i) const {
+    CGAL_precondition( is_point() && !is_input() );
+    return (i == 0) ? h_[3] : h_[5];
+  }
+
+  const Handle& source_of_crossing_site(unsigned int i) const {
+    CGAL_precondition( is_segment() && !is_input(i) );
+    return (i == 0) ? h_[2] : h_[4];
+  }
+
+  const Handle& target_of_crossing_site(unsigned int i) const {
+    CGAL_precondition( is_segment() && !is_input(i) );
+    return (i == 0) ? h_[3] : h_[5];
   }
 
   Self source_site() const {
     CGAL_precondition( is_segment() );
     if ( is_input() || is_input(0) ) {
-      return Self(h_[0]);
+      return construct_storage_site_2(h_[0]);
     } else {
-      return Self(h_[0], h_[1], h_[2], h_[3]);
+      return construct_storage_site_2(h_[0], h_[1], h_[2], h_[3]);
     }
   }
 
   Self target_site() const {
     CGAL_precondition( is_segment() );
     if ( is_input() || is_input(1) ) {
-      return Self(h_[1]);
+      return construct_storage_site_2(h_[1]);
     } else {
-      return Self(h_[0], h_[1], h_[4], h_[5]);
+      return construct_storage_site_2(h_[0], h_[1], h_[4], h_[5]);
     }
   }
 
   Self supporting_site() const {
     CGAL_precondition( is_segment() );
-    return Self(h_[0], h_[1]);
+    return construct_storage_site_2(h_[0], h_[1]);
   }
 
   Self supporting_site(unsigned int i) const {
     CGAL_precondition( is_point() && !is_input() && i < 2 );
     if ( i == 0 ) {
-      return Self(h_[2], h_[3]);
+      return construct_storage_site_2(h_[2], h_[3]);
     } else {
-      return Self(h_[4], h_[5]);
+      return construct_storage_site_2(h_[4], h_[5]);
     }
   }
 
@@ -161,9 +205,9 @@ public:
     CGAL_precondition( is_segment() && !is_input() );
     CGAL_precondition( i < 2 && !is_input(i) );
     if ( i == 0 ) {
-      return Self(h_[2], h_[3]);
+      return construct_storage_site_2(h_[2], h_[3]);
     } else {
-      return Self(h_[4], h_[5]);
+      return construct_storage_site_2(h_[4], h_[5]);
     }
   }
 

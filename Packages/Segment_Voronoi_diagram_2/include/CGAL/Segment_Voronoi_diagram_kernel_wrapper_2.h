@@ -116,43 +116,42 @@ private:
       if ( t.is_input() ) {
 	return K2_Site_2::construct_site_2( Base::operator()(t.point()) );
       } else {
-	K1_Site_2 s1 = t.supporting_site(0);
-	K1_Site_2 s2 = t.supporting_site(1);
-	return K2_Site_2::construct_site_2( Base::operator()(s1.point(0)),
-					    Base::operator()(s1.point(1)),
-					    Base::operator()(s2.point(0)),
-					    Base::operator()(s2.point(1)) );
+	return K2_Site_2::construct_site_2
+	  ( Base::operator()(t.source_of_supporting_site(0)),
+	    Base::operator()(t.target_of_supporting_site(0)),
+	    Base::operator()(t.source_of_supporting_site(1)),
+	    Base::operator()(t.target_of_supporting_site(1)) );
       }
     }
 
     if ( t.is_input() ) {
-      return K2_Site_2::construct_site_2( Base::operator()(t.point(0)),
-					  Base::operator()(t.point(1)) );
+      return K2_Site_2::construct_site_2
+	( Base::operator()(t.source_of_supporting_site()),
+	  Base::operator()(t.target_of_supporting_site()) );
     } else {
       K1_Site_2 supp = t.supporting_site();
       if ( t.is_input(0) ) {
-	K1_Site_2 cs = t.crossing_site(1);
-	return K2_Site_2::construct_site_2(Base::operator()(supp.point(0)),
-					   Base::operator()(supp.point(1)),
-					   Base::operator()(cs.point(0)),
-					   Base::operator()(cs.point(1)),
-					   true);
+	return K2_Site_2::construct_site_2
+	  ( Base::operator()(t.source_of_supporting_site()),
+	    Base::operator()(t.target_of_supporting_site()),
+	    Base::operator()(t.source_of_crossing_site(1)),
+	    Base::operator()(t.target_of_crossing_site(1)),
+	    true );
       } else if ( t.is_input(1) ) {
-	K1_Site_2 cs = t.crossing_site(0);
-	return K2_Site_2::construct_site_2(Base::operator()(supp.point(0)),
-					   Base::operator()(supp.point(1)),
-					   Base::operator()(cs.point(0)),
-					   Base::operator()(cs.point(1)),
-					   false);
+	return K2_Site_2::construct_site_2
+	  ( Base::operator()(t.source_of_supporting_site()),
+	    Base::operator()(t.target_of_supporting_site()),
+	    Base::operator()(t.source_of_crossing_site(0)),
+	    Base::operator()(t.target_of_crossing_site(0)),
+	    false );
       } else {
-	K1_Site_2 cs1 = t.crossing_site(0);
-	K1_Site_2 cs2 = t.crossing_site(1);
-	return K2_Site_2::construct_site_2(Base::operator()(supp.point(0)),
-					   Base::operator()(supp.point(1)),
-					   Base::operator()(cs1.point(0)),
-					   Base::operator()(cs1.point(1)),
-					   Base::operator()(cs2.point(0)),
-					   Base::operator()(cs2.point(1)));
+	return K2_Site_2::construct_site_2
+	  ( Base::operator()(t.source_of_supporting_site()),
+	    Base::operator()(t.target_of_supporting_site()),
+	    Base::operator()(t.source_of_crossing_site(0)),
+	    Base::operator()(t.target_of_crossing_site(0)),
+	    Base::operator()(t.source_of_crossing_site(1)),
+	    Base::operator()(t.target_of_crossing_site(1)) );
       }
     }
   }
@@ -165,8 +164,9 @@ private:
     }
 
     // t is a segment
-    return K2_Site_2::construct_site_2( Base::operator()(t.point(0)),
-					Base::operator()(t.point(1)) );    
+    return K2_Site_2::construct_site_2
+      ( Base::operator()(t.source_of_supporting_site()),
+	Base::operator()(t.target_of_supporting_site()) );    
   }
 
 public:

@@ -550,9 +550,10 @@ protected:
   {
     CGAL_precondition( t.is_input() );
     if ( t.is_point() ) {
-      register_input_site( t.point(0) );
+      register_input_site( t.point() );
     } else {
-      register_input_site( t.point(0), t.point(1) );
+      register_input_site( t.source_of_supporting_site(),
+			   t.target_of_supporting_site() );
     }
   }
 
@@ -796,13 +797,13 @@ protected:
   //------------------------------------------
   inline Storage_site_2 create_storage_site(const Point_2& p) {
     Point_handle ph = pc_.insert(p);
-    return Storage_site_2(ph);
+    return Storage_site_2::construct_storage_site_2(ph);
   }
 
   inline Storage_site_2 create_storage_site(Vertex_handle v0,
 					    Vertex_handle v1) {
-    return Storage_site_2( v0->storage_site().handle(0),
-			   v1->storage_site().handle(0) );
+    return Storage_site_2::construct_storage_site_2
+      ( v0->storage_site().point(), v1->storage_site().point() );
   }
 
   inline
@@ -818,9 +819,11 @@ protected:
     CGAL_precondition( i < 2 );
 
     if ( i == 0 ) {
-      return Storage_site_2(ss0.handle(0), ss1.handle(0));
+      return Storage_site_2::construct_storage_site_2
+	(ss0.source_of_supporting_site(), ss1.point());
     } else {
-      return Storage_site_2(ss1.handle(0), ss0.handle(1));
+      return Storage_site_2::construct_storage_site_2
+	(ss1.point(), ss0.target_of_supporting_site());
     }
   }
 
@@ -838,7 +841,8 @@ protected:
     if ( i == 0 ) {
       if ( ss0.is_input(0) ) {
 	if ( ss1.is_input() ) {
-	  return Storage_site_2(ss0.handle(0), ss1.handle(0));
+	  return Storage_site_2::construct_storage_site_2
+	    (ss0.source_of_supporting_site(), ss1.point());
 	} else {
 	  Storage_site_2 supp0 = ss0.supporting_site();
 	  Storage_site_2 supp1 = ss1.supporting_site(0);
@@ -846,16 +850,19 @@ protected:
 	  if ( are_parallel(supp0.site(), supp1.site()) ) {
 	    supp1 = ss1.supporting_site(1);
 	  }
-	  return Storage_site_2(supp0.handle(0),
-				supp0.handle(1),
-				supp1.handle(0),
-				supp1.handle(1), true);
+	  return Storage_site_2::construct_storage_site_2
+	    ( supp0.source_of_supporting_site(),
+	      supp0.target_of_supporting_site(),
+	      supp1.source_of_supporting_site(),
+	      supp1.target_of_supporting_site(),
+	      true );
 	}
       } else {
 	if ( ss1.is_input() ) {
-	  return Storage_site_2(ss0.handle(0), ss1.handle(0),
-				ss0.handle(2), ss0.handle(3),
-				false);
+	  return Storage_site_2::construct_storage_site_2
+	    ( ss0.source_of_supporting_site(), ss1.point(),
+	      ss0.source_of_crossing_site(0), ss0.target_of_crossing_site(0),
+	      false );
 	} else {
 	  Storage_site_2 supp0 = ss0.supporting_site();
 	  Storage_site_2 supp1 = ss1.supporting_site(0);
@@ -863,18 +870,20 @@ protected:
 	  if ( are_parallel(supp0.site(), supp1.site()) ) {
 	    supp1 = ss1.supporting_site(1);
 	  }
-	  return Storage_site_2(supp0.handle(0),
-				supp0.handle(1),
-				ss0.handle(2),
-				ss0.handle(3),
-				supp1.handle(0),
-				supp1.handle(1) );
+	  return Storage_site_2::construct_storage_site_2
+	    ( supp0.source_of_supporting_site(),
+	      supp0.target_of_supporting_site(),
+	      ss0.source_of_crossing_site(0),
+	      ss0.target_of_crossing_site(0),
+	      supp1.source_of_supporting_site(),
+	      supp1.target_of_supporting_site() );
 	}
       }
     } else { // i == 1
       if ( ss0.is_input(1) ) {
 	if ( ss1.is_input() ) {
-	  return Storage_site_2(ss1.handle(0), ss0.handle(1));
+	  return Storage_site_2::construct_storage_site_2
+	    ( ss1.point(), ss0.target_of_supporting_site() );
 	} else {
 	  Storage_site_2 supp0 = ss0.supporting_site();
 	  Storage_site_2 supp1 = ss1.supporting_site(0);
@@ -882,16 +891,20 @@ protected:
 	  if ( are_parallel(supp0.site(), supp1.site()) ) {
 	    supp1 = ss1.supporting_site(1);
 	  }
-	  return Storage_site_2(supp0.handle(0),
-				supp0.handle(1),
-				supp1.handle(0),
-				supp1.handle(1), false);
+	  return Storage_site_2::construct_storage_site_2
+	    ( supp0.source_of_supporting_site(),
+	      supp0.target_of_supporting_site(),
+	      supp1.source_of_supporting_site(),
+	      supp1.target_of_supporting_site(),
+	      false );
 	}
       } else {
 	if ( ss1.is_input() ) {
-	  return Storage_site_2(ss1.handle(0), ss0.handle(1),
-				ss0.handle(4), ss0.handle(5),
-				true);
+	  return Storage_site_2::construct_storage_site_2
+	    ( ss1.point(), ss0.target_of_supporting_site(),
+	      ss0.source_of_crossing_site(1),
+	      ss0.target_of_crossing_site(1),
+	      true );
 	} else {
 	  Storage_site_2 supp0 = ss0.supporting_site();
 	  Storage_site_2 supp1 = ss1.supporting_site(0);
@@ -899,12 +912,13 @@ protected:
 	  if ( are_parallel(supp0.site(), supp1.site()) ) {
 	    supp1 = ss1.supporting_site(1);
 	  }
-	  return Storage_site_2(supp0.handle(0),
-				supp0.handle(1),
-				supp1.handle(0),
-				supp1.handle(1),
-				ss0.handle(4),
-				ss0.handle(5) );
+	  return Storage_site_2::construct_storage_site_2
+	    ( supp0.source_of_supporting_site(),
+	      supp0.target_of_supporting_site(),
+	      supp1.source_of_supporting_site(),
+	      supp1.target_of_supporting_site(),
+	      ss0.source_of_crossing_site(1),
+	      ss0.target_of_crossing_site(1) );
 	}
       }
     }
@@ -913,35 +927,48 @@ protected:
   inline
   Storage_site_2 create_storage_site(const Storage_site_2& ss0,
 				     const Storage_site_2& ss1) {
-    return Storage_site_2( ss0.handle(0), ss0.handle(1),
-			   ss1.handle(0), ss1.handle(1) );
+    return Storage_site_2::construct_storage_site_2
+      ( ss0.source_of_supporting_site(),
+	ss0.target_of_supporting_site(),
+	ss1.source_of_supporting_site(),
+	ss1.target_of_supporting_site() );
   }
 
   inline
   Storage_site_2 create_storage_site(const Storage_site_2& ss0,
 				     const Storage_site_2& ss1,
 				     bool is_first_exact) {
-    return Storage_site_2( ss0.handle(0), ss0.handle(1),
-			   ss1.handle(0), ss1.handle(1),
-			   is_first_exact);
+    return Storage_site_2::construct_storage_site_2
+      ( ss0.source_of_supporting_site(),
+	ss0.target_of_supporting_site(),
+	ss1.source_of_supporting_site(),
+	ss1.target_of_supporting_site(), is_first_exact );
   }
 
   inline
   Storage_site_2 create_storage_site_type1(const Storage_site_2& ss0,
 					   const Storage_site_2& ss1,
 					   const Storage_site_2& ss2) {
-    return Storage_site_2( ss0.handle(0), ss0.handle(1),
-			   ss1.handle(2), ss1.handle(3),
-			   ss2.handle(0), ss2.handle(1));
+    return Storage_site_2::construct_storage_site_2
+      ( ss0.source_of_supporting_site(),
+	ss0.target_of_supporting_site(),
+	ss1.source_of_crossing_site(0),
+	ss1.target_of_crossing_site(0),
+	ss2.source_of_supporting_site(),
+	ss2.target_of_supporting_site() );
   }
 
   inline
   Storage_site_2 create_storage_site_type2(const Storage_site_2& ss0,
 					   const Storage_site_2& ss1,
 					   const Storage_site_2& ss2) {
-    return Storage_site_2( ss0.handle(0), ss0.handle(1),
-			   ss1.handle(0), ss1.handle(1),
-			   ss2.handle(4), ss2.handle(5));
+    return Storage_site_2::construct_storage_site_2
+      ( ss0.source_of_supporting_site(),
+	ss0.target_of_supporting_site(),
+	ss1.source_of_supporting_site(),
+	ss1.target_of_supporting_site(),
+	ss2.source_of_crossing_site(1),
+	ss2.target_of_crossing_site(1) );
   }
 
 public:

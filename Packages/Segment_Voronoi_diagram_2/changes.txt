@@ -1,3 +1,7 @@
+17 august 2004:  Menelaos Karavelas
+- changed the API for the storage site classes; changed the classes that
+  were using them accordingly
+
 14 August 2004:  Menelaos Karavelas
 - fixed bugs in the demo files that were introduced by the changes of
   August 13

@@ -49,18 +49,25 @@ protected:
   Self;
 
 public:
-  Segment_Voronoi_diagram_simple_storage_site_2() : type_(0) {}
-
   // constructs point site using input point
-  Segment_Voronoi_diagram_simple_storage_site_2(const Handle& hp) {
-    initialize_site(hp);
+  static Self construct_storage_site_2(const Handle& hp) {
+    Self t;
+    t.initialize_site(hp);
+    return t;
   }
 
   // constructs segment site using input segment
-  Segment_Voronoi_diagram_simple_storage_site_2(const Handle& hp1,
-						const Handle& hp2) {
-    initialize_site(hp1, hp2);
+  static Self construct_storage_site_2(const Handle& hp1,
+				       const Handle& hp2) {
+    Self t;
+    t.initialize_site(hp1, hp2);
+    return t;
   }
+
+public:
+  // DEFAULT CONSTRUCTOR
+  //--------------------
+  Segment_Voronoi_diagram_simple_storage_site_2() : type_(0) {}
 
   // COPY CONSTRUCTOR
   //-----------------
@@ -86,9 +93,42 @@ public:
 
   // ACCESS METHODS
   //---------------
-  const Handle& handle(unsigned int i) const {
-    CGAL_precondition( i < 6 );
-    return h_[i];
+  const Handle& point() const {
+    CGAL_precondition( is_point() && is_input() );
+    return h_[0];
+  }
+
+  const Handle& source_of_supporting_site() const {
+    CGAL_precondition( is_segment() );
+    return h_[0];
+  }
+
+  const Handle& target_of_supporting_site() const {
+    CGAL_precondition( is_segment() );
+    return h_[1];
+  }
+
+  // the following methods should never be called; they have been
+  // defined in order for this class to be a model of the
+  // SegmentVoronoiDiagramStorageSite_2 concept.
+  const Handle& source_of_supporting_site(unsigned int i) const {
+    CGAL_precondition( is_point() && !is_input() );
+    return h_[0];
+  }
+
+  const Handle& target_of_supporting_site(unsigned int i) const {
+    CGAL_precondition( is_point() && !is_input() );
+    return h_[0];
+  }
+
+  const Handle& source_of_crossing_site(unsigned int i) const {
+    CGAL_precondition( is_segment() && !is_input(i) );
+    return h_[0];
+  }
+
+  const Handle& target_of_crossing_site(unsigned int i) const {
+    CGAL_precondition( is_segment() && !is_input(i) );
+    return h_[0];
   }
 
   Site_2 site() const {

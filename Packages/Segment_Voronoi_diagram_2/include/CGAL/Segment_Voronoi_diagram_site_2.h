@@ -106,32 +106,35 @@ public:
     return !(type_ & 8);
   }
 
-  const Point_2& point(unsigned int i) const
-  {
-    CGAL_precondition( i < 6 );
-    if ( i == 0 ) { return p_[0]; }
-    else if ( i == 1 ) {
-      CGAL_precondition( is_segment() || !is_input() );
-      return p_[1];
-    } else if ( i == 2 ) {
-      CGAL_precondition( (is_point() && !is_input()) ||
-			 (is_segment() && !is_input(0)) );
-      return p_[2];
-    } else if ( i == 3 ) {
-      CGAL_precondition( (is_point() && !is_input()) ||
-			 (is_segment() && !is_input(0)) );
-      return p_[3];
-    } else if ( i == 4 ) {
-      CGAL_precondition( (is_point() && !is_input()) ||
-			 (is_segment() && !is_input(1)) );
-      return p_[4];
-    } else {  // i == 5
-      CGAL_precondition( (is_point() && !is_input()) ||
-			 (is_segment() && !is_input(1)) );
-      return p_[5];
-    }
+  const Point_2& source_of_supporting_site() const {
+    CGAL_precondition( is_segment() );
+    return p_[0];
   }
 
+  const Point_2& target_of_supporting_site() const {
+    CGAL_precondition( is_segment() );
+    return p_[1];
+  }
+
+  const Point_2& source_of_supporting_site(unsigned int i) const {
+    CGAL_precondition( is_point() && !is_input() );
+    return (i == 0) ? p_[2] : p_[4];
+  }
+
+  const Point_2& target_of_supporting_site(unsigned int i) const {
+    CGAL_precondition( is_point() && !is_input() );
+    return (i == 0) ? p_[3] : p_[5];
+  }
+
+  const Point_2& source_of_crossing_site(unsigned int i) const {
+    CGAL_precondition( is_segment() && !is_input(i) );
+    return (i == 0) ? p_[2] : p_[4];
+  }
+
+  const Point_2& target_of_crossing_site(unsigned int i) const {
+    CGAL_precondition( is_segment() && !is_input(i) );
+    return (i == 0) ? p_[3] : p_[5];
+  }
 
   Point_2 point() const { 
     CGAL_precondition ( is_point() );
