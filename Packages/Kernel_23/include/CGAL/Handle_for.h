@@ -27,8 +27,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-struct Ref_counted {}; // For backward compatibility.  It's obsolete.
-
 // There are basically 2 ways of constructing an object deriving from
 // Handle_for :
 // - call the default constructor of Handle_for<T>, then eventually use
@@ -63,14 +61,9 @@ class Handle_for
         unsigned int count;
     };
 
-#ifndef CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD
     typedef typename Alloc::template rebind<RefCounted>::other  Allocator;
+
   public:
-#else
-  public:
-    // For VC++, we must hardcode the default allocator.
-    typedef CGAL_ALLOCATOR(RefCounted)                          Allocator;
-#endif
 
     typedef T element_type;
 

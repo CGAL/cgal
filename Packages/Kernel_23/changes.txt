@@ -1,3 +1,7 @@
+1.19 (23 January 2003)
+- Remove empty obsolete class Ref_counted.
+- Cleanup Handle_for.h wrt VC++ 6.
+
 1.18 (22 January 2003)
 - Added coordinate iterator
 - Add new constructors Iso_rectangle_2(left, right, bottom, top) and
