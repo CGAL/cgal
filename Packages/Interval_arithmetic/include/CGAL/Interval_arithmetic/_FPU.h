@@ -42,8 +42,7 @@
 #if (	!defined(__i386)  && \
 	!defined(__sparc) && \
 	!defined(__alpha) && \
-	!defined(__mips) \
-	)
+	!defined(__mips) )
 #error "Architecture not supported."
 #endif
 
@@ -58,8 +57,8 @@
 // Does it need passing some options ? (like -Wa,... on Sun ?)
 
 #ifndef CGAL_IA_DONT_USE_ASSEMBLY
-#if ( defined(__GNUC__) && \
-    ( defined(__i386)   || \
+#if (defined(__GNUC__) && \
+     (defined(__i386)   || \
       defined(__sparc)  || \
       defined(__mips)   || \
       defined(__alpha)  ) )
@@ -79,6 +78,9 @@
 #include <float.h>
 #endif
 #ifdef __sgi
+    // The 3 C functions do not work on IRIX 6.5 !!!!!
+    // So we use precompiled (by gcc) binaries linked into libCGAL.
+#if 0
   // This #define is forced for backward compatibility with Irix 5.x.
   // I think it slows down Irix 6.x...
 #define __SGI_ieeefph__
@@ -86,8 +88,14 @@
 #include <ieeefp.h>
 #else
 #include <sys/fpu.h>
-#endif
-#endif
+#endif // __SGI_ieeefph__
+#else
+extern "C" {
+  void CGAL_workaround_IRIX_set_FPU_cw (int);
+  int  CGAL_workaround_IRIX_get_FPU_cw (void);
+}
+#endif // 0
+#endif // __sgi
 #endif // CGAL_IA_USE_ASSEMBLY
 
 CGAL_BEGIN_NAMESPACE
@@ -140,7 +148,8 @@ enum {
     FPU_cw_down = 0x3
 };
 #else
-#ifdef __SGI_ieeefph__ // 2 cases for C... I love IRIX !!!
+#if 0
+#ifdef __SGI_ieeefph__ // 3 cases for C... and none that works (I love IRIX) !
 typedef unsigned int FPU_CW_t; // fp_rnd
 enum {
     FPU_cw_near = FP_RN,
@@ -149,6 +158,7 @@ enum {
     FPU_cw_down = FP_RM
 };
 #else
+#if 0
 typedef unsigned int FPU_CW_t;
 enum {
     FPU_cw_near = ROUND_TO_NEAREST,
@@ -156,8 +166,27 @@ enum {
     FPU_cw_up   = ROUND_TO_PLUS_INFINITY,
     FPU_cw_down = ROUND_TO_MINUS_INFINITY
 };
-#endif
-#endif
+#else
+extern "C" { int swapRM(int x); }
+typedef unsigned int FPU_CW_t;
+enum {
+    FPU_cw_near = ROUND_TO_NEAREST,
+    FPU_cw_zero = ROUND_TO_ZERO,
+    FPU_cw_up   = ROUND_TO_PLUS_INFINITY,
+    FPU_cw_down = ROUND_TO_MINUS_INFINITY
+};
+#endif // 0
+#endif // __SGI_ieeefph__
+#else
+typedef unsigned int FPU_CW_t;
+enum {
+    FPU_cw_near = 0x0,
+    FPU_cw_zero = 0x1,
+    FPU_cw_up   = 0x2,
+    FPU_cw_down = 0x3
+};
+#endif // 0
+#endif // CGAL_IA_USE_ASSEMBLY
 #endif // __mips
 
 #ifdef __alpha // This one is not really supported.
@@ -194,28 +223,37 @@ inline FPU_CW_t FPU_get_cw (void)
 #else
 
 #ifdef __linux
-#error  // It seems there's no C function in libc5 !!!
-#endif
+#error "It seems there's no C function in libc5 !!!"
+#endif // __linux
 
 #ifdef __osf
     cw = read_rnd();
-#endif
+#endif // __osf
 
 #ifdef __sun
     cw = fpgetround();
-#endif
+#endif // __sun
 
 #ifdef __sgi
+#if 0
 #ifdef __SGI_ieeefph__
     cw = fpgetround();
 #else
+#if 0
     union fpc_csr fpu_ctl;
     fpu_ctl.fc_word = get_fpc_csr();
     cw = fpu_ctl.fc_struct.rounding_mode;
-#endif
-#endif
+#else
+    cw = swapRM(ROUND_TO_NEAREST);
+    swapRM(cw);
+#endif // 0
+#endif // __SGI_ieeefph__
+#else
+    cw = CGAL_workaround_IRIX_get_FPU_cw();
+#endif // 0
+#endif // __sgi
 
-#endif
+#endif // CGAL_IA_USE_ASSEMBLY
     return cw;
 }
 
@@ -227,28 +265,36 @@ inline void FPU_set_cw (FPU_CW_t cw)
 
 #ifdef __linux
     __setfpucw(cw);
-#endif
+#endif // __linux
 
 #ifdef __osf
     write_rnd(cw);
-#endif
+#endif // __osf
 
 #ifdef __sun
     fpsetround(fp_rnd(cw));
-#endif
+#endif // __sun
 
 #ifdef __sgi
+#if 0
 #ifdef __SGI_ieeefph__
     fpsetround(fp_rnd(cw));
 #else
+#if 0
     union fpc_csr fpu_ctl;
     fpu_ctl.fc_word = get_fpc_csr();
     fpu_ctl.fc_struct.rounding_mode = cw;
     set_fpc_csr (fpu_ctl.fc_word);
-#endif
-#endif
+#else
+    swapRM(cw);
+#endif // 0
+#endif // __SGI_ieeefph__
+#else
+    CGAL_workaround_IRIX_set_FPU_cw(cw);
+#endif // 0
+#endif // __sgi
 
-#endif
+#endif // CGAL_IA_USE_ASSEMBLY
 }
 
 // Obscolete: wrappers for the old interface.
