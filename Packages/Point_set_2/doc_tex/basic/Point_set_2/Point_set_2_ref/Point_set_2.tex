@@ -52,38 +52,7 @@ Point_set_2(InputIterator first, InputIterator last);}
 \ccOperations
 
 
-\ccMethod{template<class InputIterator>
-void init(InputIterator first, InputIterator last);}
-{ makes \ccVar\ a \ccRefName\ for the points in the range
-[$first$,$last$).}
-
-\ccMethod{template<class OutputIterator>
-OutputIterator points(OutputIterator out);}
-{ places all points of \ccVar as a sequence of objects of type
-$Point$ in a container of value type of  $out$,
-which points to the first object in the sequence. The function
-returns an output iterator pointing to the position beyond the end
-of the sequence.} 
-
-\ccMethod{template<class OutputIterator>
-OutputIterator segments(OutputIterator out);}
-{ places all segments (that means the segments constructed by the edges of the underlying
-Delaunay triangulation)
-of \ccVar\ as a sequence of objects of type
-$Segment$ in a container of value type of $out$,
-which points to the first object in the sequence. The function
-returns an output iterator pointing to the position beyond the end
-of the sequence.} 
-
 \ccHtmlLinksOff
-
-\ccMethod{template<class OutputIterator>
-OutputIterator vertices(OutputIterator out);}
-{ places all handles to vertices of \ccVar\ as a sequence of objects of type
-Vertex\_handle in a container of value type of $out$,
-which points to the first object in the sequence. The function
-returns an output iterator pointing to the position beyond the end
-of the sequence.} 
 
 
 \ccMethod{Vertex\_handle  lookup(Point p);}
@@ -152,19 +121,6 @@ returns an output iterator pointing to the position beyond the end
 of the sequence.
 }
 
-\ccMethod{Point pos(Vertex_handle v);} 
-{ returns the position of $v$ in \ccVar.}
-    
-\ccMethod{Point pos_source(Edge e);}
-{ returns the position of the source of $e$ in \ccVar.}
-   
-\ccMethod{Point pos_target(Edge e);} 
-{ returns the position of the target of $e$ in \ccVar.}
-    
-\ccMethod{Segment seg(Edge e);}
-{ returns the line segment corresponding to edge $e$ starting
-at $pos\_source(e)$.}
-   
 
 \ccHtmlLinksOn
 
