@@ -1,12 +1,44 @@
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_layer.h>
 
-class show_segments_layer :
-  public CGAL::Qt_widget_layer{
+#include "grid.xpm"
+
+class show_segments_layer : public CGAL::Qt_widget_layer {
 public:
-  bool show_output, show_hp;
+  bool show_hp;
+  bool show_output;
   bool show_input;
-  void draw(){
+  bool show_grid;
+
+  /*! draw_grid - draw the grid
+   */
+  void draw_grid()
+  {
+    *widget << CGAL::WHITE << CGAL::LineWidth(1);
+
+    // get the edge coordinate
+    int min_x = static_cast<int>(widget->x_min());
+    int min_y = static_cast<int>(widget->y_min());
+    int max_x = static_cast<int>(widget->x_max());
+    int max_y = static_cast<int>(widget->y_max());
+
+    int i;
+    for (i = min_x; i <= max_x; i++) {
+      Segment_2 seg(Point_2(i, min_y), Point_2(i, max_y));
+      *widget << seg;
+    }
+    for (i = min_y; i <= max_y; i++) {
+      Segment_2 seg(Point_2(min_x, i), Point_2(max_x, i));
+      *widget << seg;
+    }
+  }
+
+  /*!
+   */
+  void draw()
+  {
+    if (show_grid) draw_grid();
+    
     widget->lock();
     widget->setRasterOp(CopyROP);
     if(show_input) {
@@ -26,14 +58,15 @@ public:
       bool seg_painted = false;
 
       if(show_hp)
-        *widget << CGAL::GREEN << Iso_rectangle_2(Point_2(i2->x() -
-                                                    prec / Number_type(2.0),
-					            i2->y() -
-                                                    prec / Number_type(2.0)),
-                                            Point_2(i2->x() +
-                                                    prec / Number_type(2.0),
-					            i2->y() +
-                                                    prec / Number_type(2.0)));
+        *widget << CGAL::GREEN
+                << Iso_rectangle_2(Point_2(i2->x() -
+                                           prec / Number_type(2.0),
+                                           i2->y() -
+                                           prec / Number_type(2.0)),
+                                   Point_2(i2->x() +
+                                           prec / Number_type(2.0),
+                                           i2->y() +
+                                           prec / Number_type(2.0)));
       for(++i2; i2 != i->end(); ++i2) {
         seg_painted = true;
         if(show_output)
@@ -41,9 +74,9 @@ public:
         if(show_hp)
           *widget << CGAL::GREEN << 
             Iso_rectangle_2(Point_2(i2->x() - prec / Number_type(2.0),
-					              i2->y() - prec / Number_type(2.0)),
+                                    i2->y() - prec / Number_type(2.0)),
                         Point_2(i2->x() + prec / Number_type(2.0),
-					              i2->y() + prec / Number_type(2.0)));
+                                i2->y() + prec / Number_type(2.0)));
         prev = i2;
       }
 
