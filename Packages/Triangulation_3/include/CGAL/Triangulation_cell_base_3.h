@@ -255,6 +255,10 @@ ostream& operator<<
 (ostream& os, const CGAL_Triangulation_cell_base_3<GT> & c)
   // non combinatorial information. Default = nothing
 {
+  // ADD THE FOLLOWING WHEN ADDING INFORMATION : 
+//   if(CGAL_is_ascii(os)) {
+//     os << endl;
+//   }
   return os;
 }
 
