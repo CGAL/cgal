@@ -20,6 +20,8 @@
 #makefile_i686_Linux-2.2.7_g++-2.95.1_LEDA
 #makefile_i686_Linux-2.2.10_g++-2.95.2_LEDA
 
+#CGAL_MAKEFILE=d:/cgal/CGAL-2.4-I-71/make/makefile_i686_CYGWINNT-5.0-1.3.3_bcc32.exe-5.51
+
 include $(CGAL_MAKEFILE)
 
 # ---------------------------------------------------------------------#
@@ -28,7 +30,7 @@ include $(CGAL_MAKEFILE)
 # rajouter CGAL_LOCAL_CXXFLAGS si on veut les packages de Local
 
 CXXFLAGS =  -I../../include \
-	    $(CGAL_CXXFLAGS) -g
+	    $(CGAL_CXXFLAGS)
 
 # -mcpu=ultrasparc -mtune=ultrasparc \
 # -B /u/alcor/0/prisme_util/Binutils/SunOS/bin/
