@@ -1,4 +1,7 @@
 29 Feb 2004 Sylvain Pion
+- Replace SegmentH2 by Cartesian's SegmentC2 !
+
+29 Feb 2004 Sylvain Pion
 - SegmentH2 : get rid of undocumented and unused :
   - ctor from 6 RTs.
   - .other_vertex(Point_2) member function.

@@ -300,6 +300,9 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Segment_2             Segment_2;
     typedef typename K::Construct_point_on_2  Construct_point_on_2;
     typedef typename K::Compare_xy_2          Compare_xy_2;
+    typedef typename K::Collinear_are_ordered_along_line_2
+                                             Collinear_are_ordered_along_line_2;
+    Collinear_are_ordered_along_line_2 co;
     Construct_point_on_2 cp;
     Compare_xy_2 cxy;
   public:
@@ -315,14 +318,14 @@ namespace HomogeneousKernelFunctors {
     bool
     operator()( const Ray_2& r, const Point_2& p) const
     {
-      Point_2 source = cp(r,0);      
+      const Point_2 & source = cp(r,0);      
       return p == source || Direction_2(p - source) == r.direction();
     } // FIXME
   
     bool
     operator()( const Segment_2& s, const Point_2& p) const
     { 
-      return cxy(p, cp(s,1)) != LARGER && cxy(cp(s,0), p) != LARGER;
+      return co(cp(s,0), p, cp(s,1));
     }
   };
 

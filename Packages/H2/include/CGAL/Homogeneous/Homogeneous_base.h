@@ -36,7 +36,7 @@
 #include <CGAL/Homogeneous/LineH2.h>
 #include <CGAL/Homogeneous/PointH2.h>
 #include <CGAL/Homogeneous/RayH2.h>
-#include <CGAL/Homogeneous/SegmentH2.h>
+#include <CGAL/Cartesian/Segment_2.h>
 #include <CGAL/Homogeneous/TriangleH2.h>
 #include <CGAL/Homogeneous/VectorH2.h>
 #include <CGAL/Homogeneous/Data_accessorH2.h>
@@ -86,7 +86,7 @@ struct Homogeneous_base
     typedef PointH2<Kernel>                         Point_2;
     typedef VectorH2<Kernel>                        Vector_2;
     typedef DirectionH2<Kernel>                     Direction_2;
-    typedef SegmentH2<Kernel>                       Segment_2;
+    typedef SegmentC2<Kernel>                       Segment_2;
     typedef LineH2<Kernel>                          Line_2;
     typedef RayH2<Kernel>                           Ray_2;
     typedef CircleH2<Kernel>                        Circle_2;
