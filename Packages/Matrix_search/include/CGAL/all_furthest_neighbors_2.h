@@ -78,7 +78,7 @@ public:
 };
 
 
-#if !defined(CGAL_CFG_NO_ITERATOR_TRAITS) && !defined(CGAL_CFG_MATCHING_BUG_2)
+#if !defined(CGAL_CFG_MATCHING_BUG_2)
 
 CGAL_END_NAMESPACE
 #include <iterator>
@@ -105,21 +105,13 @@ all_furthest_neighbors_2( RandomAccessIC points_begin,
                           const Traits& t)
 #endif
 {
-#ifndef CGAL_CFG_NO_NAMESPACE
   using std::vector;
   using std::transform;
   using std::modulus;
-#endif
 
-#ifndef CGAL_CFG_TYPENAME_BUG
   typedef All_furthest_neighbor_matrix<
     typename Traits::Compute_squared_distance_2, RandomAccessIC >
   Afn_matrix;
-#else
-  typedef All_furthest_neighbor_matrix<
-    Traits::Compute_squared_distance_2, RandomAccessIC >
-    Afn_matrix;
-#endif // CGAL_CFG_TYPENAME_BUG
 
  // check preconditions:
   int number_of_points(
@@ -149,8 +141,7 @@ all_furthest_neighbors_2( RandomAccessIC points_begin,
                     bind_2( modulus< int >(), number_of_points));
 } // all_furthest_neighbors_2( ... )
 
-#if !defined(CGAL_CFG_NO_ITERATOR_TRAITS) && \
-!defined(CGAL_CFG_MATCHING_BUG_2)
+#if !defined(CGAL_CFG_MATCHING_BUG_2)
 
 template < class RandomAccessIC, class OutputIterator, class Traits >
 OutputIterator
@@ -161,15 +152,9 @@ all_furthest_neighbors_2( RandomAccessIC points_begin,
                           CGAL_optimisation_expensive_precondition_code(t),
                           std::random_access_iterator_tag)
 {
-#ifndef CGAL_CFG_TYPENAME_BUG
   typedef All_furthest_neighbor_matrix<
     typename Traits::Compute_squared_distance_2, RandomAccessIC >
   Afn_matrix;
-#else
-  typedef All_furthest_neighbor_matrix<
-    Traits::Compute_squared_distance_2, RandomAccessIC >
-    Afn_matrix;
-#endif // CGAL_CFG_TYPENAME_BUG
 
   // check preconditions:
   int number_of_points(
@@ -203,7 +188,7 @@ all_furthest_neighbors_2( RandomAccessIC points_begin,
     points_begin, points_end, o, t, iterator_category());
 } // all_furthest_neighbors_2( ... )
 
-#endif // !CGAL_CFG_NO_ITERATOR_TRAITS && !CGAL_CFG_MATCHING_BUG_2
+#endif // !CGAL_CFG_MATCHING_BUG_2
 
 template < class RandomAccessIC, class OutputIterator >
 inline

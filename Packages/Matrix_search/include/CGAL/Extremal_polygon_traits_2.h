@@ -74,14 +74,7 @@ struct Extremal_polygon_area_traits_2 {
   operation( const Point_2& p) const
   { return bind_3(Baseop(k), p); }
 
-#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
   template < class RandomAccessIC, class OutputIterator >
-#else
-  typedef typename std::vector< Point_2 >::iterator
-    RandomAccessIC;
-  typedef typename std::vector< int >::reverse_iterator
-    OutputIterator;
-#endif
   OutputIterator
   compute_min_k_gon( RandomAccessIC points_begin,
                      RandomAccessIC points_end,
@@ -206,14 +199,7 @@ struct Extremal_polygon_perimeter_traits_2 {
   operation( const Point_2& p) const
   { return bind_3( Baseop(k), p); }
 
-#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
   template < class RandomAccessIC, class OutputIterator >
-#else
-  typedef typename std::vector< Point_2 >::iterator
-    RandomAccessIC;
-  typedef typename std::vector< int >::reverse_iterator
-    OutputIterator;
-#endif
   OutputIterator
   compute_min_k_gon( RandomAccessIC points_begin,
                      RandomAccessIC points_end,
@@ -233,10 +219,8 @@ struct Extremal_polygon_perimeter_traits_2 {
   //  to twice this perimeter and return the past-the-end iterator
   //  for the range (== o + min_k()).
   {
-#ifndef CGAL_CFG_NO_NAMESPACE
     using std::less;
     using std::max_element;
-#endif
 
     CGAL_optimisation_precondition_code(
       int number_of_points(

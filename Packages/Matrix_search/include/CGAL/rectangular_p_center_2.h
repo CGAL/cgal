@@ -141,25 +141,14 @@ rectangular_p_center_2_binary_search(
       Rectangular_p_center_matrix_search_traits_2< PiercingFunction >, 0));
 } // rectangular_p_center_2_binary_search( ... )
 
-template < class ForwardIterator,
-           class OutputIterator,
-#ifdef CGAL_CFG_MATCHING_BUG_1
-           class PiercingFunction,
-           class FT,
-#endif
-           class Traits >
+template < class ForwardIterator, class OutputIterator, class Traits >
 OutputIterator
 rectangular_p_center_2_binary_search(
   ForwardIterator f,
   ForwardIterator l,
   OutputIterator o,
-#ifndef CGAL_CFG_MATCHING_BUG_1
   typename Traits::FT& r,
   const typename Traits::PiercingFunction& pf,
-#else
-  FT& r,
-  PiercingFunction& pf,
-#endif
   Traits*)
 //
 // preconditions:
@@ -176,9 +165,7 @@ rectangular_p_center_2_binary_search(
   CGAL_optimisation_precondition( f != l);
 
   // typedefs:
-#ifndef CGAL_CFG_MATCHING_BUG_1
   typedef typename Traits::FT    FT;
-#endif
   typedef typename Traits::X     X;
   typedef typename Traits::Y     Y;
 
@@ -237,9 +224,6 @@ rectangular_p_center_2_binary_search(
 */
 template < class RandomAccessIC,
            class OutputIterator,
-#ifdef CGAL_CFG_MATCHING_BUG_1
-           class FT,
-#endif
            class PiercingFunction,
            class Traits,
            class MatrixOperator >
@@ -248,11 +232,7 @@ rectangular_p_center_2_matrix_search(
   RandomAccessIC f,
   RandomAccessIC l,
   OutputIterator o,
-#ifndef CGAL_CFG_MATCHING_BUG_1
   typename Traits::FT& r,
-#else
-  FT& r,
-#endif
   PiercingFunction pf,
   const Traits& t,
   const MatrixOperator& mop)
@@ -260,15 +240,11 @@ rectangular_p_center_2_matrix_search(
   int number_of_points( iterator_distance( f, l));
   CGAL_optimisation_precondition( number_of_points > 0);
 
-#ifndef CGAL_CFG_NO_NAMESPACE
   using std::minus;
   using std::sort;
-#endif
 
   // typedefs:
-#ifndef CGAL_CFG_MATCHING_BUG_1
   typedef typename Traits::FT        FT;
-#endif
   typedef std::vector< FT >          FT_cont;
   typedef typename FT_cont::iterator FT_iterator;
   typedef Cartesian_matrix_horizontally_flipped<
@@ -344,9 +320,6 @@ rectangular_p_center_2_matrix_search(
 
 template < class RandomAccessIC,
            class OutputIterator,
-#ifdef CGAL_CFG_MATCHING_BUG_1
-           class FT,
-#endif
            class PiercingFunction,
            class Traits >
 inline
@@ -355,20 +328,12 @@ rectangular_p_center_2_matrix_search(
   RandomAccessIC f,
   RandomAccessIC l,
   OutputIterator o,
-#ifndef CGAL_CFG_MATCHING_BUG_1
   typename Traits::FT& r,
-#else
-  FT& r,
-#endif
   const PiercingFunction& pf,
   const Traits& t)
 {
-#ifndef CGAL_CFG_MATCHING_BUG_1
   typedef typename Traits::FT FT;
-#endif
-#ifndef CGAL_CFG_NO_NAMESPACE
   using std::minus;
-#endif
 
   return rectangular_p_center_2_matrix_search(
     f,
@@ -404,21 +369,12 @@ rectangular_p_center_matrix_search_2(
     f, l, o, r, Four_covering_algorithm(), t);
 } // rectangular_p_center_matrix_search_2(f, l, o, r, p)
 
-template < class ForwardIterator,
-           class OutputIterator,
-#ifdef CGAL_CFG_MATCHING_BUG_1
-           class FT,
-#endif
-           class Traits >
+template < class ForwardIterator, class OutputIterator, class Traits >
 inline OutputIterator
 rectangular_p_center_2(ForwardIterator f,
                        ForwardIterator l,
                        OutputIterator o,
-#ifndef CGAL_CFG_MATCHING_BUG_1
                        typename Traits::FT& r,
-#else
-                       FT& r,
-#endif
                        int p,
                        Traits& t)
 {

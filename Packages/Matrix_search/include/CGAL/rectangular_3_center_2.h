@@ -50,11 +50,10 @@ rectangular_2_center_2(
   FT& r,
   Traits& t)
 {
-#ifndef CGAL_CFG_NO_NAMESPACE
   using std::pair;
   using std::greater;
   using std::less;
-#endif
+
   typedef typename Traits::Iso_rectangle_2        Rectangle;
   typedef typename Traits::Point_2                Point;
   typedef typename Traits::Infinity_distance_2    Dist;
@@ -121,11 +120,10 @@ rectangular_3_center_2_type1(
   typename Traits::FT& rad,
   Traits& t)
 {
-#ifndef CGAL_CFG_NO_NAMESPACE
   using std::max;
   using std::less;
   using std::nth_element;
-#endif
+
   typedef typename Traits::FT                         FT;
   typedef typename Traits::Iso_rectangle_2            Rectangle;
   typedef typename Traits::Point_2                    Point;
@@ -908,7 +906,6 @@ rectangular_3_center_2_type2(
   FT& rad,
   Operations op)
 {
-#ifndef CGAL_CFG_NO_NAMESPACE
   using std::max;
   using std::less;
   using std::greater;
@@ -921,7 +918,6 @@ rectangular_3_center_2_type2(
   using std::sort;
   using std::partition;
   using std::pair;
-#endif
 
   typedef typename Operations::Point                       Point;
   typedef typename Operations::Distance                 Distance;
@@ -1320,10 +1316,6 @@ rectangular_3_center_2_type2(
       break;
     }
 
-    // still a covering, but now there must be enough points in G
-    std::cerr << b1 << " - " << b3 << " - " << b3-b1 << std::endl;
-    std::cerr << cutoff << std::endl;
-    std::cerr << e-s << std::endl;
 
     CGAL_optimisation_assertion(b3 - b1 >= cutoff);
     e = b1;

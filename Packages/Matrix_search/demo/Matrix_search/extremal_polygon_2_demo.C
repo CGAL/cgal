@@ -224,19 +224,11 @@ main()
       Timer t;
       t.start();
 #endif // EXTREMAL_POLYGON_MEASURE
-#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
       maximum_perimeter_inscribed_k_gon_2(
         Vertex_circulator( &p),
         Vertex_circulator( &p),
         k,
         back_inserter( k_gon));
-#else
-      maximum_perimeter_inscribed_k_gon_2(
-        p.begin(),
-        p.end(),
-        k,
-        back_inserter( k_gon));
-#endif
 #ifdef EXTREMAL_POLYGON_MEASURE
       t.stop();
       cout << "[time: " << t.time() << " msec]" << endl;

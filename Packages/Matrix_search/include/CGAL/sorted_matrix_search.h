@@ -152,7 +152,6 @@ template < class InputIterator, class Traits >
 typename Traits::Value
 sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
 {
-  #ifndef CGAL_CFG_NO_NAMESPACE
   using std::max;
   using std::nth_element;
   using std::iter_swap;
@@ -160,7 +159,6 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
   using std::remove_if;
   using std::logical_or;
   using std::equal_to;
-  #endif
   
   typedef typename Traits::Matrix                   Matrix;
   typedef typename Traits::Value                    Value;

@@ -234,10 +234,8 @@ struct Staircases : public Loc_domain< Traits_ > {
     // does not seem to suffice :-(
     { Base bb(b, e, t); }
 #endif // defined(__sun) && defined(__SUNPRO_CC)
-#ifndef CGAL_CFG_NO_NAMESPACE
     using std::sort;
     using std::find_if;
-#endif // ! CGAL_CFG_NO_NAMESPACE
 
     Container& xsort = xgy ? sorted : this->pts;
     Container& ysort = xgy ? this->pts : sorted;
@@ -375,7 +373,7 @@ struct Staircases : public Loc_domain< Traits_ > {
         this->traits.less_y_2_object(),
         compose_shared(std::logical_and< bool >(),
                        bind_2(this->traits.less_x_2_object(), q),
-                       bind_2(this->raits.less_y_2_object(), q)));
+                       bind_2(this->traits.less_y_2_object(), q)));
     return Intervall(i == this->pts.end() ? this->maxy : *i,
                      j == this->pts.end() ? this->miny : *j);
   } // left_intervall()
@@ -501,10 +499,9 @@ two_cover_points(
   OutputIterator o,
   bool& ok)
 {
-#ifndef CGAL_CFG_NO_NAMESPACE
   using std::find_if;
   using std::less;
-#endif
+
 
   typedef typename Traits::FT           FT;
   typedef typename Traits::Point_2      Point_2;
@@ -565,11 +562,10 @@ three_cover_points(
   OutputIterator o,
   bool& ok)
 {
-#ifndef CGAL_CFG_NO_NAMESPACE
   using std::find_if;
   using std::less;
   using std::iter_swap;
-#endif
+
   CGAL_optimisation_precondition(!d.empty());
 
   // typedefs:
@@ -668,12 +664,10 @@ OutputIterator
 four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
 {
 
-  #ifndef CGAL_CFG_NO_NAMESPACE
   using std::less;
   using std::iter_swap;
   using std::find_if;
   using std::back_inserter;
-  #endif
   
   typedef typename Traits::Point_2                  Point_2;
   typedef typename Traits::FT                       FT;

@@ -111,9 +111,6 @@ main()
                            neighbors2.begin()));
   } // for ( int i( 0); i < 5; ++i)
 
-#if !defined(CGAL_CFG_NO_ITERATOR_TRAITS) && \
-  !defined(CGAL_CFG_NO_MEMBER_TEMPLATES)
-
   // try also once with a random-acccess iterator:
   int number_of_points( 222);
   // generate random convex polygon:
@@ -126,7 +123,6 @@ main()
     p.vertices_begin(),
     p.vertices_end(),
     neighbors.begin());
-#endif
 
   return 0;
 } // int main()
