@@ -61,6 +61,7 @@
 #ifdef CGAL_CFG_NO_NAMESPACE
 #  define CGAL_USING_NAMESPACE_STD
 #  define CGAL_STD
+#  define CGAL
 #else
 #  define CGAL_USING_NAMESPACE_STD using namespace std;
 #  define CGAL_STD std
@@ -70,11 +71,11 @@
 #endif
 
 #if CGAL_USE_NAMESPACE
-#  define CGAL_NAMESPACE_BEGIN namespace CGAL {
-#  define CGAL_NAMESPACE_END }
+#  define CGAL_BEGIN_NAMESPACE namespace CGAL {
+#  define CGAL_END_NAMESPACE }
 #else
-#  define CGAL_NAMESPACE_BEGIN
-#  define CGAL_NAMESPACE_END
+#  define CGAL_BEGIN_NAMESPACE
+#  define CGAL_END_NAMESPACE
 #endif
 
 #ifdef CGAL_CFG_NO_MUTABLE
