@@ -1,5 +1,9 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
+2.57 (23 Apr 2002)
+   - added cast to Creator argument type to get rid of warnings for 
+     Solaris + g++ 3.0.1
+
 2.56 (17 Apr 2002)
    - added correct demo for manual
 

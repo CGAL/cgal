@@ -60,11 +60,12 @@ template < class P, class Creator >
 void
 Random_points_in_disc_2<P,Creator>::
 generate_point() {
+    typedef typename Creator::argument_type T;
     double alpha = _rnd.get_double() * 2.0 * CGAL_PI;
     double r     = d_range * CGAL_CLIB_STD::sqrt( _rnd.get_double());
     Creator creator;
-    d_item = creator( r * CGAL_CLIB_STD::cos(alpha), 
-                      r * CGAL_CLIB_STD::sin(alpha));
+    d_item = creator( T(r * CGAL_CLIB_STD::cos(alpha)), 
+                      T(r * CGAL_CLIB_STD::sin(alpha)));
 }
 
 
@@ -97,10 +98,11 @@ template < class P, class Creator >
 void
 Random_points_on_circle_2<P,Creator>::
 generate_point() {
+    typedef typename Creator::argument_type T;
     double a = _rnd.get_double() * 2.0 * CGAL_PI;
     Creator creator;
-    d_item = creator( d_range * CGAL_CLIB_STD::cos(a), 
-                      d_range * CGAL_CLIB_STD::sin(a));
+    d_item = creator( T(d_range * CGAL_CLIB_STD::cos(a)), 
+                      T(d_range * CGAL_CLIB_STD::sin(a)));
 }
 
 
@@ -135,9 +137,10 @@ template < class P, class Creator >
 void
 Random_points_in_square_2<P,Creator>::
 generate_point() {
+    typedef typename Creator::argument_type  T;
     Creator creator;
-    d_item = creator( d_range * (2 * _rnd.get_double() - 1.0),
-                      d_range * (2 * _rnd.get_double() - 1.0));
+    d_item = creator( T(d_range * (2 * _rnd.get_double() - 1.0)),
+                      T(d_range * (2 * _rnd.get_double() - 1.0)));
 }
 
 
@@ -173,6 +176,7 @@ template < class P, class Creator >
 void
 Random_points_on_square_2<P,Creator>::
 generate_point() {
+    typedef typename Creator::argument_type  T;
     double d = _rnd.get_double() * 4.0;
     int    k = int(d);
     d = d_range * (2 * (d - k) - 1.0);
@@ -180,16 +184,16 @@ generate_point() {
     Creator creator;
     switch (k) {
     case 0:
-        d_item = creator(        d, -d_range);
+        d_item = creator(        T(d), T(-d_range));
         break;
     case 1:
-        d_item = creator(        d,  d_range);
+        d_item = creator(        T(d),  T(d_range));
         break;
     case 2:
-        d_item = creator( -d_range,        d);
+        d_item = creator( T(-d_range),        T(d));
         break;
     case 3:
-        d_item = creator(  d_range,        d);
+        d_item = creator( T( d_range),        T(d));
         break;
     }
 }
@@ -236,11 +240,12 @@ template < class P, class Creator >
 void
 Random_points_on_segment_2<P,Creator>::
 generate_point() {
+    typedef typename Creator::argument_type  T;
     double la = _rnd.get_double();
     double mu = 1.0 - la;
     Creator creator;
-    d_item = creator( mu * to_double(_p.x()) + la * to_double(_q.x()),
-                      mu * to_double(_p.y()) + la * to_double(_q.y()));
+    d_item = creator( T(mu * to_double(_p.x()) + la * to_double(_q.x())),
+                      T(mu * to_double(_p.y()) + la * to_double(_q.y())));
 }
 
 template < class P >

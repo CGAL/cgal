@@ -60,11 +60,12 @@ template < class P, class Creator >
 void
 Random_points_in_sphere_3<P,Creator>::
 generate_point() {
+   typedef typename Creator::argument_type T;
    do {
        Creator creator;
-       d_item = creator( d_range * ( 2 * _rnd.get_double() - 1.0),
-                         d_range * ( 2 * _rnd.get_double() - 1.0),
-                         d_range * ( 2 * _rnd.get_double() - 1.0));
+       d_item = creator( T(d_range * ( 2 * _rnd.get_double() - 1.0)),
+                         T(d_range * ( 2 * _rnd.get_double() - 1.0)),
+                         T(d_range * ( 2 * _rnd.get_double() - 1.0)));
    } 
    while (CGAL::to_double(d_item.x() * d_item.x() + d_item.y() * d_item.y() +
                           d_item.z() * d_item.z()) >= d_range * d_range);
@@ -100,13 +101,14 @@ template < class P, class Creator >
 void
 Random_points_on_sphere_3<P,Creator>::
 generate_point() {
+    typedef typename Creator::argument_type T;
     double alpha = _rnd.get_double() * 2.0 * CGAL_PI;
     double z     = 2 * _rnd.get_double() - 1.0;
     double r     = std::sqrt( 1 - z * z);
     Creator creator;
-    d_item = creator( d_range * r * CGAL_CLIB_STD::cos(alpha),
-                      d_range * r * CGAL_CLIB_STD::sin(alpha),
-                      d_range * z);
+    d_item = creator( T(d_range * r * CGAL_CLIB_STD::cos(alpha)),
+                      T(d_range * r * CGAL_CLIB_STD::sin(alpha)),
+                      T(d_range * z));
 }
 
 
@@ -136,10 +138,11 @@ template < class P, class Creator >
 void
 Random_points_in_cube_3<P,Creator>::
 generate_point() {
+    typedef typename Creator::argument_type T;
     Creator creator;
-    d_item = creator( d_range * ( 2 * _rnd.get_double() - 1.0),
-                      d_range * ( 2 * _rnd.get_double() - 1.0),
-                      d_range * ( 2 * _rnd.get_double() - 1.0));
+    d_item = creator( T(d_range * ( 2 * _rnd.get_double() - 1.0)),
+                      T(d_range * ( 2 * _rnd.get_double() - 1.0)),
+                      T(d_range * ( 2 * _rnd.get_double() - 1.0)));
 }
 
 
