@@ -243,6 +243,13 @@ NEED_EXTRA_QTDIR='y'
 QT_MOC_TEST_PASSED=''
 QT_TEST_PASSED=''
 
+#WINDOWS ONLY:
+#The second library used with qtmain.lib
+QT_SECOND_LIB='qt'
+QT_T_SUPPORT='n'
+QT_DLL='not_defined'
+#END WINDOWS ONLY
+
 # indicate whether there is a "long name problem" on 
 # the current platform
 LONG_NAME_PROBLEM=''
@@ -809,7 +816,7 @@ set_compiler_flags()
 	    ADDITIONAL_CXXFLAGS="-TP -GR -GX -Zm900 -nologo"
 	    ADDITIONAL_LDFLAGS="-nologo"
 #	    CGAL_LIB_CXXFLAGS="-TP"
-	    CGAL_QT_CXXFLAGS="-DQT_DLL -DQT_THREAD_SUPPORT"
+#	    CGAL_QT_CXXFLAGS="-DQT_DLL -DQT_THREAD_SUPPORT"
 	    CGAL_LIB_CREATE="LIB /OUT:"
 	    CGAL_SHARED_LIB_CXXFLAGS=
 	    CGAL_SHARED_LIB_CREATE=
@@ -842,7 +849,7 @@ set_compiler_flags()
 	    ADDITIONAL_CXXFLAGS="-TP -GR -GX -Zm900 -nologo"
 	    ADDITIONAL_LDFLAGS="-nologo"
 #	    CGAL_LIB_CXXFLAGS="-TP"
-	    CGAL_QT_CXXFLAGS="-DQT_DLL -DQT_THREAD_SUPPORT"
+#	    CGAL_QT_CXXFLAGS="-DQT_DLL -DQT_THREAD_SUPPORT"
 	    CGAL_LIB_CREATE="LIB /OUT:"
 	    CGAL_SHARED_LIB_CXXFLAGS=
 	    CGAL_SHARED_LIB_CREATE=
@@ -1689,7 +1696,14 @@ qt_ldflags()
 	    lib_option "qt"
 	else
 	    lib_option "qtmain"
-	    lib_option "qt-mt230nc"
+	    lib_option "imm32"
+	    lib_option "wsock32"
+	    lib_option "gdi32"
+	    lib_option "user32"
+	    lib_option "ole32"
+	    lib_option "winspool"
+	    lib_option "comdlg32"
+	    lib_option "${QT_SECOND_LIB}"
 	fi
     fi
 }
@@ -2624,6 +2638,16 @@ check_QT_SUPPORT()
     fi
     return 1
 }
+check_QT_T_SUPPORT()
+{
+}
+check_QT_DLL()
+{
+}
+check_QT_SECOND_LIB()
+{
+}
+
 
 check_NEED_EXTRA_QT_IDIR()
 {
@@ -3816,6 +3840,10 @@ retrieve_compiler_settings()
     # Qt specific stuff:
     if try_to_get_var_from_file QT_SUPPORT "${_file}"; then
 	QT_SUPPORT=''
+    else
+	try_to_get_var_from_file QT_SECOND_LIB "${_file}"
+	try_to_get_var_from_file QT_T_SUPPORT "${_file}"
+	try_to_get_var_from_file QT_DLL "${_file}"
     fi
     if try_to_get_var_from_file QT_ADVANCED_MODE "${_file}"; then
         QT_ADVANCED_MODE=''
@@ -3931,6 +3959,9 @@ store_compiler_settings()
     _store_install_config_variable CLN_INCL_DIR >>${_file}
     _store_install_config_variable CLN_LIB_DIR >>${_file}
     _store_install_config_variable QT_SUPPORT >>${_file}
+    _store_install_config_variable QT_SECOND_LIB >>${_file}
+    _store_install_config_variable QT_T_SUPPORT >>${_file}
+    _store_install_config_variable QT_DLL >>${_file}
     _store_install_config_variable QT_ADVANCED_MODE >>${_file}
     _store_install_config_variable NEED_EXTRA_QTDIR >>${_file}
     _store_install_config_variable QT_DIR >>${_file}
@@ -4601,6 +4632,258 @@ gmp_menu()
 # qt_menu to setup Qt
 #
 
+qt_windows_menu()
+{
+    while [ 0 ]; do
+	menu_header 'Qt'
+	print_line     "${_bold_on}<K>${_bold_off}  Toggle Qt support"
+	if [ -n "${QT_SUPPORT}" ]; then
+	    if [ -z "${QT_ADVANCED_MODE}" ]; then
+		print_line     "${_bold_on}<A>${_bold_off}  Advanced mode" 
+		print_line \
+		"${_bold_on}<D>${_bold_off}  Qt directory" 
+		if [ -n "${NEED_EXTRA_QTDIR}" ]; then
+		    if [ -z "${QT_DIR}" ]; then
+			_tmp1='<undefined>'
+		    else
+			_tmp1="`posix_path ${QT_DIR}`"
+		    fi
+		    print_line  "     ${_tmp1}" 
+		    if [ "${NEED_EXTRA_QTDIR}" = "x" ]; then
+			print_line "${_bold_on}<E>${_bold_off}  Use \$QTDIR as Qt directory."
+		    fi
+		else
+		    _tmp1="`posix_path ${QT_DIR}`"
+		    print_line     "     ${_tmp1} <defined in \$QTDIR>"
+		fi
+	    else
+		print_line     "${_bold_on}<B>${_bold_off}  Basic mode"
+		print_line "${_bold_on}<I>${_bold_off}  Qt include directory" 
+		if [ -n "${NEED_EXTRA_QT_IDIR}" ]; then
+		    print_line  "      `posix_path ${QT_INCL_DIR:-<undefined>}`" 
+		    if [ "${NEED_EXTRA_QT_IDIR}" = "x" ]; then
+			print_line "${_bold_on}<J>${_bold_off}  Use Qt headers from system include."
+		    fi
+		else
+		    print_line     "     <system include directory>"
+		fi
+		print_line     "${_bold_on}<L>${_bold_off}  Qt lib directory" 
+		if [ -n "${NEED_EXTRA_QT_LDIR}" ]; then
+		    print_line "      `posix_path ${QT_LIB_DIR:-<undefined>}`" 
+		    if [ "${NEED_EXTRA_QT_LDIR}" = "x" ]; then
+			print_line "${_bold_on}<M>${_bold_off}  Use Qt libs from system libdir."
+		    fi
+		else
+		    print_line     "     <system lib directory>"
+		fi
+		print_line     "${_bold_on}<O>${_bold_off}  Qt moc executable"
+		if [ -n "${NEED_EXTRA_QTMOC}" ]; then
+		    print_line "      `posix_path ${QT_MOC:-<undefined>}`" 
+		    if [ "${NEED_EXTRA_QTMOC}" = "x" ]; then
+			print_line "${_bold_on}<P>${_bold_off}  Use Qt moc from path."
+		    fi
+		else
+		    print_line     "     <in path>"
+		fi
+	    fi
+	    print_line     "${_bold_on}<R>${_bold_off}  Set the second lib used along with qtmain.lib"
+	    if [ "${QT_SECOND_LIB}" = 'qt' ]; then
+		print_line "      The default one is qt.lib"
+	    else
+		print_line "      Qt second lib is ${QT_SECOND_LIB}.lib"
+	    fi
+	    print_line     "${_bold_on}<S>${_bold_off} Toggle THREAD_SUPPORT"
+	    if [ "${QT_T_SUPPORT}" = 'y' ]; then
+		print_line "      Thread support is currently ON"
+	    else
+		print_line "      Thread support is currently OFF"
+	    fi
+	    print_line     "${_bold_on}<F>${_bold_off} Toggle QT_DLL macro (used when Qt is built shared)"
+	    if [ "${QT_DLL}" = 'not_defined' ]; then
+		print_line "      QT_DLL macro is not defined"
+	    else
+		print_line "      QT_DLL macro is defined"
+	    fi
+	fi
+	print_line     "${_bold_on}<T>${_bold_off}  Test (and save) setup" 
+	menu_tailer 'Main Menu'
+	case ${KEY} in
+	    k|K)
+		if [ -z "${QT_SUPPORT}" ]; then 
+		    SETUP_COMPLETE=''
+		    QT_SUPPORT='_QT'
+		    go_down_lines 3
+		    flush_buffer
+		    # test QTDIR if this was not done before
+		    if [ "${NEED_EXTRA_QTDIR}" = 'n' ]; then
+			test_for_qt_dir "${INSTALL_VERBOSE}"
+		    fi
+		    if [ -z "${NEED_EXTRA_QT_DIR}"]; then
+		      # test for QT sysincl/-lib and moc, if this was not
+		      # done before
+		      if [ "${NEED_EXTRA_QT_IDIR}" = 'n' -o \
+			 "${NEED_EXTRA_QT_LDIR}" = 'n' -o \
+			 "${NEED_EXTRA_QTMOC}" = 'n' ]; then
+			  test_for_qt_moc_in_path "${INSTALL_VERBOSE}"
+			  NEED_EXTRA_QTMOC='yes'
+		      fi
+		    fi
+		else
+		    QT_SUPPORT=''
+		    QT_ADVANCED_MODE=''
+		fi
+		;;
+	    r|R)
+		change_value QT_SECOND_LIB;;
+	    s|S)
+		if [ "${QT_T_SUPPORT}" = 'y' ]; then
+		    QT_T_SUPPORT='n'
+		    if [ "${QT_DLL}" = 'not_defined' ]; then
+			CGAL_QT_CXXFLAGS=''
+		    else
+			CGAL_QT_CXXFLAGS='-DQT_DLL'
+		    fi
+		    
+		else
+		    QT_T_SUPPORT='y'
+		    if [ "${QT_DLL}" = 'not_defined' ]; then
+			CGAL_QT_CXXFLAGS='-DQT_THREAD_SUPPORT'
+		    else
+			CGAL_QT_CXXFLAGS='-DQT_DLL -DQT_THREAD_SUPPORT'
+		    fi
+		    
+		fi
+		;;
+	    f|F)
+		if [ "${QT_DLL}" = 'not_defined' ]; then
+		    QT_DLL='y'
+		else
+		    QT_DLL='not_defined'
+		fi
+		;;
+	    a|A)
+	        if [ -n "${QT_SUPPORT}" -a -z "${QT_ADVANCED_MODE}" ]; then 
+		    QT_ADVANCED_MODE='y'
+		    QT_TEST_PASSED=''
+		    QT_MOC_TEST_PASSED=''
+		    SETUP_COMPLETE=''
+		fi
+		;;  
+	    b|B)
+	        if [ -n "${QT_SUPPORT}" -a -n "${QT_ADVANCED_MODE}" ]; then 
+		    QT_ADVANCED_MODE=''
+		    QT_TEST_PASSED=''
+		    QT_MOC_TEST_PASSED=''
+		    SETUP_COMPLETE=''
+		    # test QTDIR if this was not done before
+		    if [ "${NEED_EXTRA_QTDIR}" = 'n' ]; then
+			go_down_lines 3
+			flush_buffer
+			test_for_qt_dir "${INSTALL_VERBOSE}"
+		    fi
+		    if [ -n "${QT_DIR}" ]; then
+			qt_dir_has_changed
+		    fi
+		fi
+		;; 
+	    d|D)
+		if [ -n "${QT_SUPPORT}" -a -z "${QT_ADVANCED_MODE}" ]; then
+		    if [ -z "${NEED_EXTRA_QTDIR}" ]; then
+			NEED_EXTRA_QTDIR='x'
+		    fi
+		    if change_dir QT_DIR dir; then
+			if [ -z "${NEED_EXTRA_QTDIR}" ]; then
+			    NEED_EXTRA_QTDIR='x'
+			fi
+			QT_TEST_PASSED=''
+			QT_MOC_TEST_PASSED=''
+			SETUP_COMPLETE=''
+			qt_dir_has_changed
+ 		    fi
+		fi
+		;;
+	    e|E)
+		if [ "${NEED_EXTRA_QTDIR}" = "x" ]; then
+		    NEED_EXTRA_QTDIR=''
+		    QT_TEST_PASSED=''
+		    QT_MOC_TEST_PASSED=''
+		    SETUP_COMPLETE=''
+		fi
+		;;
+	    i|I)
+		if [ -n "${QT_SUPPORT}" ]; then 
+			if [ -z "${NEED_EXTRA_QT_IDIR}" ]; then
+			    NEED_EXTRA_QT_IDIR='x'
+			fi
+		    if change_dir QT_INCL_DIR dir; then
+			if [ -z "${NEED_EXTRA_QT_IDIR}" ]; then
+			    NEED_EXTRA_QT_IDIR='x'
+			fi
+			QT_TEST_PASSED=''
+			QT_MOC_TEST_PASSED=''
+			SETUP_COMPLETE=''
+ 		    fi
+		fi
+		;;
+	    j|J)
+		if [ "${NEED_EXTRA_QT_IDIR}" = "x" ]; then
+		    NEED_EXTRA_QT_IDIR=''
+		    QT_TEST_PASSED=''
+		    QT_MOC_TEST_PASSED=''
+		    SETUP_COMPLETE=''
+		fi
+		;;
+	    l|L)
+		if [ -n "${QT_SUPPORT}" ]; then 
+		    if change_dir QT_LIB_DIR dir; then
+			if [ -z "${NEED_EXTRA_QT_LDIR}" ]; then
+			    NEED_EXTRA_QT_LDIR='x'
+			fi
+			QT_TEST_PASSED=''
+			QT_MOC_TEST_PASSED=''
+			SETUP_COMPLETE=''
+		    fi
+		fi
+		;;
+	    m|M)
+		if [ "${NEED_EXTRA_QT_LDIR}" = "x" ]; then
+		    NEED_EXTRA_QT_LDIR=''
+		    QT_TEST_PASSED=''
+		    QT_MOC_TEST_PASSED=''
+		    SETUP_COMPLETE=''
+		fi
+		;;
+	    o|O)
+		if [ -n "${QT_SUPPORT}" ]; then 
+		    if change_dir QT_MOC exe; then
+			if [ -z "${NEED_EXTRA_QTMOC}" ]; then
+			    NEED_EXTRA_QTMOC='x'
+			fi
+			QT_TEST_PASSED=''
+			QT_MOC_TEST_PASSED=''
+			SETUP_COMPLETE=''
+		    fi
+		fi
+		;;
+	    p|P)
+		if [ "${NEED_EXTRA_QTMOC}" = "x" ]; then
+		    NEED_EXTRA_QTMOC=''
+		    QT_TEST_PASSED=''
+		    QT_MOC_TEST_PASSED=''
+		    SETUP_COMPLETE=''
+		fi
+		;;
+	    t|T)
+		go_down_lines 3
+		flush_buffer
+		test_setup;;
+	    q|Q|b|B)
+		return;;
+	    *);;
+	esac    done
+}
+
+
 qt_menu()
 {
     while [ 0 ]; do
@@ -5205,11 +5488,9 @@ write_compiler_flags()
   fi
   if [ -n "${QT_SUPPORT}" ]; then
     makefile_print_line "-DCGAL_USE_QT ${CGAL_QT_CXXFLAGS}" >> ${FILE}
-    if [ -n "${NEED_EXTRA_QT_IDIR}" ]; then
-	makefile_print_line "'-I\$(QT_INCL_DIR)'" >> ${FILE}
-    fi
   fi
   makefile_print_line "'-I\$(CGAL_INCL_CONF_DIR)'" >> ${FILE}
+  makefile_print_line "'-I\$(CGAL_INCL_DIR)'" >> ${FILE}
   if [ -n "${LEDA_SUPPORT}" ]; then
     case ${CGAL_OS_COMPILER} in
 	*g++-2.8*)
@@ -5219,14 +5500,15 @@ write_compiler_flags()
 	    makefile_print_line "-DCGAL_USE_LEDA -DLEDA_PREFIX" >> ${FILE};;
     esac
     if [ -n "${NEED_EXTRA_LEDA_IDIR}" ]; then
-	makefile_print_line "'-I\$(CGAL_INCL_DIR)'" >> ${FILE}
-	${_printf} "\t%s\n\n" "'-I\$(LEDA_INCL_DIR)'" >> ${FILE}
-    else
-	${_printf} "\t%s\n\n" "'-I\$(CGAL_INCL_DIR)'" >> ${FILE}
+	${_printf} "\t%s" "'-I\$(LEDA_INCL_DIR)'" >> ${FILE}
     fi
-  else
-    ${_printf} "\t%s\n\n" "'-I\$(CGAL_INCL_DIR)'" >> ${FILE}
   fi
+  if [ -n "${QT_SUPPORT}" ]; then
+    if [ -n "${NEED_EXTRA_QT_IDIR}" ]; then
+	${_printf} "\t%s" "'-I\$(QT_INCL_DIR)'" >> ${FILE}
+    fi
+  fi
+  ${_printf} "\n\n" >> ${FILE}
 
   #
   # CGAL_WINLIB_CXXFLAGS
@@ -5389,7 +5671,8 @@ write_linker_flags()
     fi
     # QLIBS = LIBS + special qt libs
     if [ -n "${WINDOWS_COMPILER}" ]; then
-	QLIBS="${LIBS} `lib_option CGALQt` `lib_option qtmain` `lib_option qt-mt230nc`"
+	SECOND_LIB=`lib_option "${QT_SECOND_LIB}"`
+	QLIBS="${LIBS} `lib_option CGALQt` `lib_option qtmain` `lib_option imm32` `lib_option wsock32` `lib_option gdi32` `lib_option user32` `lib_option ole_32` `lib_option winspool` `lib_option commdlg32` ${SECOND_LIB}"
     else
 	QLIBS="${LIBS} `lib_option qt` `lib_option CGALQt`"
     fi
@@ -6118,7 +6401,13 @@ main_menu()
 	    l|L) leda_menu;;
 	    g|G) gmp_menu;;
 	    m|M) cln_menu;;
-	    k|K) qt_menu;;
+	    k|K) 
+		if [ -z "${WINDOWS_COMPILER}" ]; then
+		    qt_menu
+		else
+		    qt_windows_menu
+		fi
+		;;
 	    b|B)
 		if [ -z "${SETUP_COMPLETE}" ]; then
 		    test_setup
