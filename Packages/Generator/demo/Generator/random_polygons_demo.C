@@ -74,7 +74,8 @@ OutputIterator input_point_set(OutputIterator result)
 
 
 template <class ForwardIterator>
-void draw_points(ForwardIterator first, ForwardIterator beyond, CGAL::Color color)
+void draw_points(ForwardIterator first, ForwardIterator beyond, 
+                 CGAL::Color color)
 {
    int i = 0;
    W << color;

@@ -24,7 +24,8 @@ int main() {
   W.init(-0.55, 0.55, -0.55);
   W.display();
   CGAL::cgalize(W);
-  CGAL::random_polygon_2(50, std::back_inserter(polygon), Point_generator(0.5));
+  CGAL::random_polygon_2(50, std::back_inserter(polygon), 
+                         Point_generator(0.5));
   W << polygon;
 
   W.read_mouse();         // wait for mouse-click

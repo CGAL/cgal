@@ -31,7 +31,7 @@ int main() {
 
     // Create 20 triangles.
     typedef CGAL::Creator_uniform_3< Point, Triangle> T_creator;
-    typedef CGAL::Join_input_iterator_3< RP, RP, RP, T_creator> Triang_iterator;
+    typedef CGAL::Join_input_iterator_3<RP, RP, RP, T_creator> Triang_iterator;
     Triang_iterator ti( p1, p2, p3);
     CGAL::copy_n( ti, 20, std::back_inserter(triang));
 
