@@ -1,3 +1,5 @@
+2.3.11 Added #include <CGAL/squared_distance_2_1.h> to Point_set_2.h  [af]
+
 2.3.10 modified the demos to compile if the LEDA is not present
 
 2.3.9  bug fix
