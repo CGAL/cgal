@@ -233,7 +233,7 @@ public:
       double Cn = 5.0/8.0 - std::sqrt(3+2*std::cos(6.283/n))/64.0;
       double Sw = n*(1-Cn)/Cn;
       double W = n/Cn;
-      pt = Point((Sw*S[0]+R[0])/W, (Sw*S[1]+R[1])/W, (Sw*S[2]+R[2])/W);
+      pt = Point((FT)((Sw*S[0]+R[0])/W), (FT)((Sw*S[1]+R[1])/W), (FT)((Sw*S[2]+R[2])/W));
     }
   }
 
@@ -500,7 +500,7 @@ public:
   void point_rule(Halfedge_around_facet_circulator cir, FT* xyz) {
     int n =  CGAL::circulator_size(cir); 
 
-    FT x = 0, y = 0, z = 0;
+    double x = 0, y = 0, z = 0;
     if (n == 4) {
       Point fp = cir->vertex()->point(); ++cir;
       x = 9*fp.x(); y = 9*fp.y(); z = 9*fp.z();
@@ -514,14 +514,14 @@ public:
     } else {
       double a;
       for (int k = 0; k < n; ++k) {
-	if (k == 0) a = ((double)5/n) + 1;
-	else a = (3+2*std::cos(2*k*3.141593/n))/n;
-	Point& fp = cir->vertex()->point(); ++cir;
-	x += a*fp.x(); y += a*fp.y(); z += a*fp.z();
+		if (k == 0) a = ((double)5/n) + 1;
+		else a = (3+2*std::cos(2*k*3.141593/n))/n;
+		Point& fp = cir->vertex()->point(); ++cir;
+		x += a*fp.x(); y += a*fp.y(); z += a*fp.z();
       }
       x /= 4; y /= 4; z /= 4;
     }
-    xyz[0] = x;    xyz[1] = y;    xyz[2] = z;
+    xyz[0] = (FT) x;    xyz[1] = (FT) y;    xyz[2] = (FT) z;
   }
 };
 
