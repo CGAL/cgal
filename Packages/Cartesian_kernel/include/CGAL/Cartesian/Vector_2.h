@@ -193,7 +193,7 @@ inline
 bool
 VectorC2<R CGAL_CTAG>::operator==(const Null_vector &) const
 {
-  return x() == FT(0) && y() == FT(0);
+  return CGAL_NTS is_zero(x()) && CGAL_NTS is_zero(y());
 }
 
 template < class R >

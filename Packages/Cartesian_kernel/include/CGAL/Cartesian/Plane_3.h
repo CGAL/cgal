@@ -287,13 +287,13 @@ template < class R >
 typename PlaneC3<R CGAL_CTAG>::Vector_3
 PlaneC3<R CGAL_CTAG>::base1() const
 {
-  if( a() == FT(0) )  // parallel to x-axis
+  if ( CGAL_NTS is_zero(a()) )  // parallel to x-axis
       return Vector_3(FT(1), FT(0), FT(0));
 
-  if( b() == FT(0) )  // parallel to y-axis
+  if ( CGAL_NTS is_zero(b()) )  // parallel to y-axis
       return Vector_3(FT(0), FT(1), FT(0));
 
-  if (c() == FT(0) )  // parallel to z-axis
+  if ( CGAL_NTS is_zero(c()) )  // parallel to z-axis
       return Vector_3(FT(0), FT(0), FT(1));
 
   return Vector_3(-b(), a(), FT(0));
@@ -303,20 +303,20 @@ template < class R >
 typename PlaneC3<R CGAL_CTAG>::Vector_3
 PlaneC3<R CGAL_CTAG>::base2() const
 {
-  if ( a() == FT(0) ) // parallel to x-axis  x-axis already returned in base1
+  if ( CGAL_NTS is_zero(a()) ) // parallel to x-axis  x-axis already returned in base1
     {
-      if (b() == FT(0) )  // parallel to y-axis
+      if ( CGAL_NTS is_zero(b()) )  // parallel to y-axis
           return Vector_3(FT(0), FT(1), FT(0));
 
-      if (c() == FT(0) ) // parallel to z-axis
+      if ( CGAL_NTS is_zero(c()) ) // parallel to z-axis
           return Vector_3(FT(0), FT(0), FT(1));
 
       return Vector_3(FT(0), -b(), c());
     }
-  if (b() == FT(0) )
+  if ( CGAL_NTS is_zero(b()) )
       return Vector_3(c(), FT(0), -a());
 
-  if (c() == FT(0) )
+  if ( CGAL_NTS is_zero(c()) )
       return Vector_3(-b(), a(), FT(0));
 
   return Vector_3(FT(0), -c(), b());
@@ -446,7 +446,8 @@ bool
 PlaneC3<R CGAL_CTAG>::
 is_degenerate() const
 {
-  return a() == FT(0) && b() == FT(0) && c() == FT(0);
+  return CGAL_NTS is_zero(a()) && CGAL_NTS is_zero(b()) &&
+         CGAL_NTS is_zero(c());
 }
 
 #ifndef CGAL_NO_OSTREAM_INSERT_PLANEC3

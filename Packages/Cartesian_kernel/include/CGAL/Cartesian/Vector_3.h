@@ -195,7 +195,8 @@ inline
 bool
 VectorC3<R CGAL_CTAG>::operator==(const Null_vector &) const
 {
-  return x() == FT(0) && y() == FT(0) && z() == FT(0);
+  return CGAL_NTS is_zero(x()) && CGAL_NTS is_zero(y()) &&
+         CGAL_NTS is_zero(z());
 }
 
 template < class R >
