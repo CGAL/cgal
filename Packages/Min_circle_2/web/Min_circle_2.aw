@@ -616,10 +616,9 @@ orientation of the current circle and reverse it, if necessary
     Circle
     circle( ) const
     {
-	Circle c;
-
-	if ( is_empty())
-	    return( c);
+	if ( is_empty()) {
+	    Circle c;			// WORKAROUND: needed by g++
+	    return( c); }
 	else
 	    return( Circle( center, squared_radius));
     }
