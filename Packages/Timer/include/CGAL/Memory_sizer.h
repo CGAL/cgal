@@ -25,12 +25,22 @@
 #define CGAL_MEMORY_SIZER_H
 
 #include <CGAL/basic.h>
+
+#ifdef _MSC_VER
+
+#include <windows.h>
+#include "psapi.h"
+
+#else 
+
 #include <cstddef>
 #include <cstdio>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+
+#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -39,16 +49,35 @@ CGAL_BEGIN_NAMESPACE
 // I put it in a class instead of free functions for similarity with Timer,
 // and in case we want to store some state.
 
+
+
 struct Memory_sizer {
-    typedef std::size_t   size_type;
+  typedef std::size_t   size_type;
 
     size_type virtual_size()  const { return get(true); };
     size_type resident_size() const { return get(false); };
 
 private:
 
-    size_type get(bool virtual_size) const
+  size_type get (bool virtual_size)  const 
+  { 
+#ifdef _MSC_VER
+    DWORD pid = GetCurrentProcessId();
+    size_type result;
+    HANDLE hProcess;
+    PROCESS_MEMORY_COUNTERS pmc;
+    hProcess = OpenProcess(  PROCESS_QUERY_INFORMATION |
+                                    PROCESS_VM_READ,
+                                    FALSE, pid );
+    if ( GetProcessMemoryInfo( hProcess, &pmc, sizeof(pmc)) )
     {
+      result = (virtual_size)? pmc.PagefileUsage : pmc.WorkingSetSize;
+    }
+
+    CloseHandle( hProcess );
+    return result;
+
+#else
         // Extract of "man proc" under Linux :
         //
         //            vsize %u Virtual memory size
@@ -84,9 +113,15 @@ private:
         fclose(f);
 
         return virtual_size ? vsize : rss * getpagesize();
+
+#endif
     }
 };
 
 CGAL_END_NAMESPACE
 
 #endif
+
+
+
+
