@@ -1,0 +1,58 @@
+CGAL_HOME/README
+-------------------------------------------------------------------------------
+
+This distribution of CGAL includes:
+
+   auxiliary/         - directory containing additional things distributed 
+                        with CGAL but not part of the library (in particular,
+                        the GNU multi-precision number type). The gmp library
+                        has its own license.
+   cgal_config.bat    - configuration file for the Windows platforms
+   CHANGES            - file recording the history of changes for the library
+   config/            - directory containing several test programs used in
+                        installation and configuration and into which 
+                        configuration files will be written during installation
+   demo/              - a directory containing many demo programs for the
+                        library's various packages.  These programs produce
+                        visual output.  Thus, for most you must have either 
+                        LEDA or libCGALwin installed (see the INSTALLATION 
+                        file).  Others programs require geomview, which is 
+                        available from www.geomview.org
+                        Makefiles are provided for all programs and project 
+                        files for MSVC 6.0 IDE (experimental) are provided 
+                        for many.
+   doc_html/          - a directory containing the installation manual in
+                        HTML format
+   doc_ps/            - a directory containing the installation manual in
+                        compressed postscript format
+   examples/          - a directory containing programs illustrating the 
+                        library's functionality.  These programs do not produce
+                        visual output.
+                        Makefiles and project files for MSVC 6.0 IDE 
+                        (experimental) are provided for all programs.
+   include/           - the include files for the library
+   install.txt        - instructions for insalling CGAL on the Windows 
+                        platform.
+   install_cgal       - the script with which you can install CGAL
+   INSTALLATION       - file containing information about the installation
+                        process
+   lib/               - directory in which the CGAL libraries will be 
+                        installed
+   list_cgal_includes - ???
+   make/              - directory containing CGAL include makefiles, which
+                        are generated during installation
+   makefile           - a makefile that can be used for instaling the CGAL
+                        libraries (to be used only if you know what you are
+                        doing; normally one should use install_cgal)
+   README             - this file
+   scripts/           - directory containing some useful scripts for CGAL
+                        programmers
+   src/               - the library source code
+   stlport/           - adapted version of the STLPort required for use
+                        of CGAL with Microsoft VC++ 6.0.  This library
+                        has its own license.
+   winutils/          - various Windows-specific installation stuff used by
+                        cgal_config.bat
+
+-------------------------------------------------------------------------------
+EOF

@@ -1,0 +1,48 @@
+$(CGAL_HOME)/INSTALL
+-------------------------------------------------------------------------------
+This file describes how to install CGAL on Unix or Unix-like systems
+such as Linux, Solaris, Irix, and Cygwin on Windows. For installation
+under Windows using native tools, see INSTALL.win32.
+
+The documentation of CGAL is available in various formats (HTML, PostScript,
+PDF). It is not bundled with the software but can be downloaded separately.
+
+For more information about CGAL, see the URL http://www.cgal.org/.
+
+To install CGAL, you should:
+
+  - download the compressed archive file from the CGAL web site www.cgal.org
+
+  - unpack the file in the place in which you wish to install it
+
+  - follow the directions in the Installation notes. 
+    These are available in several formats. A PostScript file named
+    installation.ps.gz can be found in the directory doc_ps. 
+    The HTML version is in doc_html/installation/main.html.
+
+The programs in the demos directory provide visual output.  Most of these
+use the CGAL::Window_stream, which is currently provided via the LEDA library. 
+If you have LEDA installed you need do nothing more than compile CGAL with LEDA
+support to be able to use the Window_stream and thus run these demo programs.
+
+Because LEDA is no longer available for free for academic use, we have made 
+arrangements with Algorithmic Solutions Software, GmbH, the distributors of 
+LEDA, to provide a separate CGALwin library for those who do not have LEDA 
+installed. This library is based on the LEDA window but is available for 
+download independently of LEDA from the CGAL download page.  It is available 
+in binary form only and only for academic research and teaching use. 
+
+This binary should be installed in the directory containing the CGAL library,
+which is created when the library is installed. 
+This directory will be called $(CGAL_HOME)/lib/<os_compiler> 
+(e.g., /usr/local/CGAL-2.3/lib/sparc_SunOS-5.8_g++-2.95.3 or
+/cygdrive/D/CGAL-2.3/lib/i686_CYGWINNT-5.0-1.3.2_bcc32.exe-5.5.1).  
+
+If you do not find a binary form there that works on your system, contact 
+us at contact@cgal.org, and we will try to accommodate your needs.
+
+Demo programs for 3D structures require the geomview program for visualisation.
+This is available from www.geomview.org.
+
+-------------------------------------------------------------------------------
+EOF
