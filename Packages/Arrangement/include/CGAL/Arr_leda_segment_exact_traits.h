@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: CGAL-2.4-I-62 $
 // release_date  : $CGAL_Date: 2002/03/12 $
 //
-// file          : include/CGAL/Arr_leda_segment_exact_traits.h
+// file          : include/CGAL/Arr_leda_segment_traits_2.h
 // package       : Arrangement (2.37)
 // maintainer    : Eyal Flato <flato@math.tau.ac.il>
 // author(s)     : Iddo Hanniel
@@ -27,7 +27,7 @@
 #include <CGAL/LEDA_basic.h>
 #include <CGAL/Pm_segment_traits_2.h>
 #include <CEP/Leda_rat_kernel/leda_rat_kernel_traits.h>
-#include <CGAL/Arr_intersection_tags.h>
+#include <CGAL/tags.h>
 
 #include <list>
 
@@ -44,14 +44,14 @@ CGAL_BEGIN_NAMESPACE
 #define CGAL_XT_SINGLE_POINT 1
 #define	CGAL_XT_ORIGINAL_POINT 2
 
-class Arr_leda_segment_exact_traits
+class Arr_leda_segment_traits_2
   : public Pm_segment_traits_2<leda_rat_kernel_traits>
 {
 public:
-  Arr_leda_segment_exact_traits() {}
+  Arr_leda_segment_traits_2() {}
 
 public:
-  typedef Lazy_intersection_tag                 Intersection_category;
+  typedef Tag_false                             Has_left_category;
     
   typedef leda_rat_kernel_traits                Kernel;
   typedef Pm_segment_traits_2<Kernel>           Base;
