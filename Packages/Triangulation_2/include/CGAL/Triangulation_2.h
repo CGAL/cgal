@@ -50,7 +50,7 @@
 
 
 CGAL_BEGIN_NAMESPACE
-template < class Gt, class Tds > Triangulation_2;
+template < class Gt, class Tds > class Triangulation_2;
 template < class Gt, class Tds > std::istream& operator>>
     (std::istream& is, Triangulation_2<Gt,Tds> &tr);
 template < class Gt, class Tds >  std::ostream& operator<<
