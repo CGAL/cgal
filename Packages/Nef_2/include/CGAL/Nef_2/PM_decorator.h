@@ -32,8 +32,6 @@
 #include <CGAL/Unique_hash_map.h>
 #include <vector>
 
-#define USING(t) typedef typename Base::t t
-#define HDSUSING(t) typedef typename HDS::t t
 CGAL_BEGIN_NAMESPACE
 
 /*{\Moptions outfile=PMDecorator.man }*/
@@ -56,22 +54,31 @@ public:
 /*{\Mtypes 3}*/
   typedef PM_decorator<HDS>        Self;
   typedef PM_const_decorator<HDS>  Base;
-  typedef HDS                      Plane_map;
-  HDSUSING(Vertex_base); HDSUSING(Halfedge_base); HDSUSING(Face_base);
-  HDSUSING(Vertex); HDSUSING(Halfedge); HDSUSING(Face); 
-  HDSUSING(Vertex_handle);    HDSUSING(Vertex_iterator);
-  HDSUSING(Halfedge_handle);  HDSUSING(Halfedge_iterator);
-  HDSUSING(Face_handle);      HDSUSING(Face_iterator);
-  HDSUSING(Vertex_const_handle);
-  HDSUSING(Halfedge_const_handle); 
-  HDSUSING(Face_const_handle); 
-  HDSUSING(Vertex_const_iterator); 
-  HDSUSING(Halfedge_const_iterator); 
-  HDSUSING(Face_const_iterator); 
-  USING(Hole_const_iterator); 
-  USING(Isolated_vertex_const_iterator); 
-  USING(Point_const_iterator);
-  USING(Mark); USING(Point); USING(GenPtr);
+  typedef HDS                       Plane_map;
+  typedef typename HDS::Vertex_base Vertex_base; 
+  typedef typename HDS::Halfedge_base Halfedge_base; 
+  typedef typename HDS::Face_base Face_base;
+  typedef typename HDS::Vertex Vertex; 
+  typedef typename HDS::Halfedge Halfedge; 
+  typedef typename HDS::Face Face; 
+  typedef typename HDS::Vertex_handle Vertex_handle;    
+  typedef typename HDS::Vertex_iterator Vertex_iterator;
+  typedef typename HDS::Halfedge_handle Halfedge_handle;  
+  typedef typename HDS::Halfedge_iterator Halfedge_iterator;
+  typedef typename HDS::Face_handle Face_handle;      
+  typedef typename HDS::Face_iterator Face_iterator;
+  typedef typename HDS::Vertex_const_handle Vertex_const_handle;
+  typedef typename HDS::Halfedge_const_handle Halfedge_const_handle; 
+  typedef typename HDS::Face_const_handle Face_const_handle; 
+  typedef typename HDS::Vertex_const_iterator Vertex_const_iterator; 
+  typedef typename HDS::Halfedge_const_iterator Halfedge_const_iterator; 
+  typedef typename HDS::Face_const_iterator Face_const_iterator; 
+  typedef typename Base::Hole_const_iterator Hole_const_iterator ; 
+  typedef typename Base::Isolated_vertex_const_iterator Isolated_vertex_const_iterator; 
+  typedef typename Base::Point_const_iterator Point_const_iterator;
+  typedef typename Base::Mark Mark; 
+typedef typename Base::Point Point; 
+typedef typename Base::GenPtr GenPtr;
 
 /*{\Mtext Local types are handles, iterators and circulators of the following
 kind: |Vertex_handle|, |Vertex_iterator|, |Halfedge_handle|,
@@ -956,7 +963,5 @@ clone_skeleton(const HDS& H, const LINKDA& L) const
 
 
 CGAL_END_NAMESPACE
-#undef USING
-#undef HDSUSING
 #endif //CGAL_PM_DECORATOR_H
 

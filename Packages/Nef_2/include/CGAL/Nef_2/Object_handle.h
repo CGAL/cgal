@@ -62,21 +62,13 @@ public:
   template <class T>
   bool assign(T &t) const
   {
-#if (defined(_MSC_VER) && (_MSC_VER <= 1200))
-    try {
-#endif
+
       const Handle_wrapper<T> *wp = 
       	dynamic_cast<const Handle_wrapper<T> *>(Ptr());
       if ( wp == static_cast<Handle_wrapper<T> *>(0) )
       	return false;
       t = *(wp);
-#if (defined(_MSC_VER) && (_MSC_VER <= 1200))
-    }
-    catch (...) {
-      std::cerr << "ERROR : YOUR COMPILER MUST SUPPORT RTTI" << std::endl;
-      abort();
-    }
-#endif
+
     return true;
   }
 

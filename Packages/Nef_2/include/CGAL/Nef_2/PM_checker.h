@@ -32,7 +32,6 @@
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Nef_2/PM_const_decorator.h>
 
-#define USING(t) typedef typename Base::t t
 CGAL_BEGIN_NAMESPACE
 
 /*{\Moptions outfile=PM_checker.man }*/
@@ -63,12 +62,12 @@ typedef GEOM Geometry;
 typedef typename GEOM::Point_2     Point;
 typedef typename GEOM::Direction_2 Direction;
 
-USING(Vertex_const_handle);
-USING(Halfedge_const_handle);
-USING(Vertex_const_iterator);
-USING(Halfedge_const_iterator);
-USING(Halfedge_around_vertex_const_circulator);
-USING(Halfedge_around_face_const_circulator);
+  typedef typename Base::Vertex_const_handle  Vertex_const_handle;
+  typedef typename Base::Halfedge_const_handle Halfedge_const_handle;
+typedef typename Base::Vertex_const_iterator Vertex_const_iterator;
+typedef typename Base::Halfedge_const_iterator Halfedge_const_iterator;
+typedef typename Base::Halfedge_around_vertex_const_circulator Halfedge_around_vertex_const_circulator;
+typedef typename Base::Halfedge_around_face_const_circulator Halfedge_around_face_const_circulator;
 /*{\Mtext Iterators, handles, and circulators are inherited from 
 |PM_const_decorator|.}*/
 
@@ -275,6 +274,6 @@ check_is_triangulation() const
 
 CGAL_END_NAMESPACE
 
-#undef USING
+
 #endif // CGAL_PM_CHECKER_H
 

@@ -104,24 +104,22 @@ public:
   |bool assign(Face_const_handle& h, Object_handle o)|\\ where each 
   function returns |true| iff the assignment of |o| to |h| was valid.}*/
 
-  #define USING(t) typedef typename PM_decorator_::t t
-  USING(Vertex_handle);   
-  USING(Halfedge_handle);   
-  USING(Face_handle);     
-  USING(Vertex_const_handle); 
-  USING(Halfedge_const_handle); 
-  USING(Face_const_handle); 
-  USING(Vertex_iterator);
-  USING(Halfedge_iterator);
-  USING(Face_iterator);
-  USING(Vertex_const_iterator);
-  USING(Halfedge_const_iterator);
-  USING(Face_const_iterator);
-  USING(Halfedge_around_vertex_circulator);
-  USING(Halfedge_around_vertex_const_circulator);
-  USING(Halfedge_around_face_circulator);
-  USING(Halfedge_around_face_const_circulator);
-  #undef USING
+   typedef typename PM_decorator_::Vertex_handle Vertex_handle;   
+   typedef typename PM_decorator_::Halfedge_handle Halfedge_handle;   
+   typedef typename PM_decorator_::Face_handle Face_handle;     
+   typedef typename PM_decorator_::Vertex_const_handle Vertex_const_handle; 
+   typedef typename PM_decorator_::Halfedge_const_handle Halfedge_const_handle; 
+   typedef typename PM_decorator_::Face_const_handle Face_const_handle; 
+   typedef typename PM_decorator_::Vertex_iterator Vertex_iterator;
+   typedef typename PM_decorator_::Halfedge_iterator Halfedge_iterator;
+   typedef typename PM_decorator_::Face_iterator Face_iterator;
+   typedef typename PM_decorator_::Vertex_const_iterator Vertex_const_iterator;
+   typedef typename PM_decorator_::Halfedge_const_iterator Halfedge_const_iterator;
+   typedef typename PM_decorator_::Face_const_iterator Face_const_iterator;
+   typedef typename PM_decorator_::Halfedge_around_vertex_circulator Halfedge_around_vertex_circulator;
+   typedef typename PM_decorator_::Halfedge_around_vertex_const_circulator Halfedge_around_vertex_const_circulator;
+   typedef typename PM_decorator_::Halfedge_around_face_circulator Halfedge_around_face_circulator;
+   typedef typename PM_decorator_::Halfedge_around_face_const_circulator Halfedge_around_face_const_circulator;
 
   Halfedge_const_handle out_wedge(Vertex_const_handle v, 
     const Direction& d, bool& collinear) const
@@ -386,32 +384,32 @@ protected:
   #endif
 
 public:
-  #define USING(t) typedef typename Base::t t
-  USING(Decorator);
-  USING(Plane_map);
-  USING(Mark);
-  USING(Geometry);
-  USING(Point);
-  USING(Segment);
-  USING(Direction);
-  USING(Object_handle);
-  USING(Vertex_handle);   
-  USING(Halfedge_handle);   
-  USING(Face_handle);     
-  USING(Vertex_const_handle); 
-  USING(Halfedge_const_handle); 
-  USING(Face_const_handle); 
-  USING(Vertex_iterator);
-  USING(Halfedge_iterator);
-  USING(Face_iterator);
-  USING(Vertex_const_iterator);
-  USING(Halfedge_const_iterator);
-  USING(Face_const_iterator);
-  USING(Halfedge_around_vertex_circulator);
-  USING(Halfedge_around_vertex_const_circulator);
-  USING(Halfedge_around_face_circulator);
-  USING(Halfedge_around_face_const_circulator);
-  #undef USING
+
+  typedef typename Base::Decorator Decorator;
+  typedef typename Base::Plane_map Plane_map;
+  typedef typename Base::Mark Mark;
+  typedef typename Base::Geometry Geometry;
+  typedef typename Base::Point Point;
+  typedef typename Base::Segment Segment;
+  typedef typename Base::Direction Direction;
+  typedef typename Base::Object_handle Object_handle;
+  typedef typename Base::Vertex_handle Vertex_handle;   
+  typedef typename Base::Halfedge_handle Halfedge_handle;   
+  typedef typename Base::Face_handle Face_handle;     
+  typedef typename Base::Vertex_const_handle Vertex_const_handle; 
+  typedef typename Base::Halfedge_const_handle Halfedge_const_handle; 
+  typedef typename Base::Face_const_handle Face_const_handle; 
+  typedef typename Base::Vertex_iterator Vertex_iterator;
+  typedef typename Base::Halfedge_iterator Halfedge_iterator;
+  typedef typename Base::Face_iterator Face_iterator;
+  typedef typename Base::Vertex_const_iterator Vertex_const_iterator;
+  typedef typename Base::Halfedge_const_iterator Halfedge_const_iterator;
+  typedef typename Base::Face_const_iterator Face_const_iterator;
+  typedef typename Base::Halfedge_around_vertex_circulator Halfedge_around_vertex_circulator;
+  typedef typename Base::Halfedge_around_vertex_const_circulator Halfedge_around_vertex_const_circulator;
+  typedef typename Base::Halfedge_around_face_circulator Halfedge_around_face_circulator;
+  typedef typename Base::Halfedge_around_face_const_circulator Halfedge_around_face_const_circulator;
+
 
   /*{\Mtypes 2}*/
   /*{\Mtext All local types of |PM_naive_point_locator| are inherited.}*/

@@ -29,20 +29,14 @@
 #ifndef CGAL_NEF_POLYHEDRON_2_H
 #define CGAL_NEF_POLYHEDRON_2_H
 
-#if (defined(_MSC_VER) && (_MSC_VER <= 1200) && ! defined(__INTEL_COMPILER)) \
-     || defined(__BORLANDC__)
-#define CGAL_SIMPLE_HDS
-#endif
+
 
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
 #include <CGAL/Random.h>
-#ifndef CGAL_SIMPLE_HDS
 #include <CGAL/Nef_2/HDS_items.h>
 #include <CGAL/HalfedgeDS_default.h>
-#else
-#include <CGAL/Nef_2/HalfedgeDS_default_MSC.h>
-#endif
+
 #include <CGAL/Nef_2/PM_explorer.h>
 #include <CGAL/Nef_2/PM_decorator.h>
 #include <CGAL/Nef_2/PM_io_parser.h>
@@ -69,7 +63,7 @@ template <typename T>
 class Nef_polyhedron_2_rep 
 { typedef Nef_polyhedron_2_rep<T> Self;
   friend class Nef_polyhedron_2<T>;
-#ifndef CGAL_SIMPLE_HDS
+
   struct HDS_traits {
     typedef typename T::Point_2 Point;
     typedef bool                Mark;
@@ -81,19 +75,7 @@ class Nef_polyhedron_2_rep
   typedef CGAL::PM_point_locator<Decorator,T>           Locator;
   typedef CGAL::PM_overlayer<Decorator,T>               Overlayer;
 
-#else
-  struct HDS_traits {
-    typedef typename T::Point_2 Point;
-    typedef bool                Mark;
-  };
-  typedef CGAL::HalfedgeDS_default_MSC<HDS_traits>  Plane_map;
-  typedef CGAL::PM_const_decorator<Plane_map>       Const_decorator;
-  typedef CGAL::PM_decorator<Plane_map>             Decorator;
-  typedef CGAL::PM_naive_point_locator<Decorator,T> Slocator;
-  typedef CGAL::PM_point_locator<Decorator,T>       Locator;
-  typedef CGAL::PM_overlayer<Decorator,T>           Overlayer;
 
-#endif
   //typedef CGAL::PM_transformer<Decorator,T> Transformer;
   Plane_map pm_; Locator* pl_;
   
@@ -344,7 +326,7 @@ public:
   { Base::operator=(N1); return (*this); }
   ~Nef_polyhedron_2() {}
 
-  #if ! defined(_MSC_VER) || (_MSC_VER >= 1300) || defined(__INTEL_COMPILER)
+
 
   template <class Forward_iterator>
   Nef_polyhedron_2(Forward_iterator first, Forward_iterator beyond, 
@@ -375,7 +357,7 @@ public:
     clear_outer_face_cycle_marks(); 
   }
 
-  #endif
+
 
   protected:
   Nef_polyhedron_2(const Plane_map& H, bool clone=true) : Base(Nef_rep()) 
@@ -418,7 +400,9 @@ public:
 
   void extract_complement()
   { TRACEN("extract complement");
-    if ( is_shared() ) clone_rep();
+  if ( is_shared() ) {
+	  clone_rep();
+  }
     Overlayer D(pm());
     Vertex_iterator v, vend = D.vertices_end();
     for(v = D.vertices_begin(); v != vend; ++v)      D.mark(v) = !D.mark(v);
@@ -877,7 +861,6 @@ std::istream& operator>>
 
 CGAL_END_NAMESPACE
 
-#undef CGAL_SIMPLE_HDS
 #endif //CGAL_NEF_POLYHEDRON_2_H
 
 

@@ -41,14 +41,11 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#if ! defined(_MSC_VER) || _MSC_VER >= 1300 || defined(__INTEL_COMPILER)
-
 template <typename Iter, typename Move>
 inline CGAL::Circulator_tag  
 query_circulator_or_iterator(const CircFromIt<Iter,Move>& )
 { return CGAL::Circulator_tag(); }
 
-#endif
 
 template <typename HE>
 class move_halfedge_around_vertex {
@@ -145,23 +142,23 @@ typedef size_t Size_type;
 /*{\Mtypemember The size type.}*/
 typedef void*  GenPtr;
 
-#define USING(t) typedef typename HDS::t t
-USING(Vertex); 
-USING(Vertex_base);
-USING(Vertex_handle);
-USING(Vertex_const_handle);
-USING(Vertex_const_iterator);
-USING(Halfedge); 
-USING(Halfedge_base);
-USING(Halfedge_handle); 
-USING(Halfedge_const_handle);
-USING(Halfedge_const_iterator);
-USING(Face);
-USING(Face_base);
-USING(Face_handle);
-USING(Face_const_handle);
-USING(Face_const_iterator);
-#undef USING
+
+typedef typename HDS::Vertex                  Vertex; 
+typedef typename HDS::Vertex_base             Vertex_base;
+typedef typename HDS::Vertex_handle           Vertex_handle;
+typedef typename HDS::Vertex_const_handle     Vertex_const_handle;
+typedef typename HDS::Vertex_const_iterator   Vertex_const_iterator;
+typedef typename HDS::Halfedge                Halfedge ; 
+typedef typename HDS::Halfedge_base           Halfedge_base ;
+typedef typename HDS::Halfedge_handle         Halfedge_handle; 
+typedef typename HDS::Halfedge_const_handle   Halfedge_const_handle;
+typedef typename HDS::Halfedge_const_iterator Halfedge_const_iterator;
+typedef typename HDS::Face                    Face;
+typedef typename HDS::Face_base               Face_base;
+typedef typename HDS::Face_handle             Face_handle;;
+typedef typename HDS::Face_const_handle       Face_const_handle;
+typedef typename HDS::Face_const_iterator     Face_const_iterator;
+
 
 /*{\Mtext Local types are handles, iterators and circulators of the
 following kind: |Vertex_const_handle|,

@@ -31,7 +31,7 @@
 /*{\Moptions print_title=yes}*/
 /*{\Moptions section=subsection}*/
 
-#if ! defined( _MSC_VER) || (_MSC_VER >= 1300) || defined(__INTEL_COMPILER)
+
 #include <CGAL/sweep_observer.h>
 
 namespace CGAL {
@@ -206,45 +206,6 @@ program:
 }; // generic_sweep<T>
 } // namespace CGAL
 
-#else // _MSC_VER
 
-namespace CGAL {
-
-template <typename T>
-class generic_sweep {
-  typedef generic_sweep<T>  Self;
-  T traits;
-public :
-
-typedef T TRAITS;
-typedef typename TRAITS::INPUT  INPUT;
-typedef typename TRAITS::OUTPUT OUTPUT;
-typedef typename TRAITS::GEOMETRY GEOMETRY;
-
-generic_sweep(const INPUT& input, OUTPUT& output, 
-  const GEOMETRY& geometry = GEOMETRY()) : 
-  traits(input,output,geometry) {}
-
-generic_sweep(OUTPUT& output, const GEOMETRY& geometry = GEOMETRY()) : 
-  traits(output,geometry) {}
-
-void sweep()
-{
-  traits.initialize_structures();
-  traits.check_invariants();
-  while ( traits.event_exists() ) {
-    traits.process_event();
-    traits.check_invariants();
-    traits.procede_to_next_event();
-  }
-  traits.complete_structures();
-  traits.check_final();
-}
-
-}; // generic_sweep<T>
-
-} // namespace CGAL
-
-#endif // _MSC_VER
 
 #endif // CGAL_GENERIC_SWEEP_H
