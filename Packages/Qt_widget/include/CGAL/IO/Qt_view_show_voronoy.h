@@ -8,8 +8,8 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/IO/Qt_view_show_voronoi.h
-// package       : QT_window
+// file          : include/CGAL/IO/Qt_view_show_voronoy.h
+// package       : Qt_widget
 // author(s)     : Radu Ursu
 // release       : 
 // release_date  : 
