@@ -22,9 +22,15 @@
 #ifndef CGAL_PLANAR_MAP_WITH_INTERSECTIONS_H
 #define CGAL_PLANAR_MAP_WITH_INTERSECTIONS_H
 
+#ifndef CGAL_PLANAR_MAP_2_H
 #include <CGAL/Planar_map_2.h>
+#endif // CGAL_PLANAR_MAP_2_H
+#ifndef CGAL_PM_WITH_INTERSECTIONS_MISC_H
 #include <CGAL/Pm_with_intersections_misc.h>
+#endif // CGAL_PM_WITH_INTERSECTIONS_MISC_H
+#ifndef CGAL_PM_WALK_ALONG_LINE_POINT_LOCATION_H
 #include <CGAL/Pm_walk_along_line_point_location.h>
+#endif // CGAL_PM_WALK_ALONG_LINE_POINT_LOCATION_H
 
 #ifndef CGAL_PM_COUNT_OPERATIONS_TIMES
 #define CGAL_PM_START_OP(x) 
