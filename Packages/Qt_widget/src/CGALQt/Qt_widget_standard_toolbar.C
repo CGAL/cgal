@@ -51,7 +51,8 @@ namespace CGAL {
 
 #if QT_VERSION < 300
   // for Qt 2.3 and before
-  maintoolbar = new QToolBar("Qt_widget standard toolbar", mw, QMainWindow::Top, TRUE, "std_toolbar");
+  maintoolbar = new QToolBar("Qt_widget standard toolbar", mw,
+	                    QMainWindow::Top, TRUE, "std_toolbar");
 #else
   // from Qt 3.0
   maintoolbar = new QToolBar(mw, "std_toolbar");
