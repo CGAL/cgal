@@ -69,5 +69,7 @@ if [ $# -ne 0 ] ; then
   done
 else
   compile_and_run in_place_list_prog
+  compile_and_run min_element_if_example_noheader
+  compile_and_run min_max_element_example_noheader
 fi
 
