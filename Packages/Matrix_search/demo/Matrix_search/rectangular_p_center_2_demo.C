@@ -97,24 +97,24 @@ class Random_p_clusters_2 : public CGAL::Random_generator_base< P > {
 #endif // CGAL_CFG_NO_NAMESPACE
   void generate_point() {
     typedef typename P::R::FT FT;
-    double p = _rnd.get_double();
+    double p = this->_rnd.get_double();
     Creator creator;
     if (p <= 1.0 / n)
-      d_item =
-        creator(FT(p0.x() + c_size * (2 * _rnd.get_double() - 1.0)),
-                FT(p0.y() + c_size * (2 * _rnd.get_double() - 1.0)));
+      this->d_item =
+        creator(FT(p0.x() + c_size * (2 * this->_rnd.get_double() - 1.0)),
+                FT(p0.y() + c_size * (2 * this->_rnd.get_double() - 1.0)));
     else if (p <= 2.0 / n)
-      d_item =
-        creator(FT(p1.x() + c_size * (2 * _rnd.get_double() - 1.0)),
-                FT(p1.y() + c_size * (2 * _rnd.get_double() - 1.0)));
+      this->d_item =
+        creator(FT(p1.x() + c_size * (2 * this->_rnd.get_double() - 1.0)),
+                FT(p1.y() + c_size * (2 * this->_rnd.get_double() - 1.0)));
     else if (p <= 3.0 / n)
-      d_item =
-        creator(FT(p2.x() + c_size * (2 * _rnd.get_double() - 1.0)),
-                FT(p2.y() + c_size * (2 * _rnd.get_double() - 1.0)));
+      this->d_item =
+        creator(FT(p2.x() + c_size * (2 * this->_rnd.get_double() - 1.0)),
+                FT(p2.y() + c_size * (2 * this->_rnd.get_double() - 1.0)));
     else
-      d_item =
-        creator(FT(p3.x() + c_size * (2 * _rnd.get_double() - 1.0)),
-                FT(p3.y() + c_size * (2 * _rnd.get_double() - 1.0)));
+      this->d_item =
+        creator(FT(p3.x() + c_size * (2 * this->_rnd.get_double() - 1.0)),
+                FT(p3.y() + c_size * (2 * this->_rnd.get_double() - 1.0)));
   }
 public:
   typedef Random_p_clusters_2< P, Creator > This;
@@ -126,14 +126,14 @@ public:
   : Base(r - c_size_, rnd),
     n(n_),
     c_size(c_size_),
-    p0(Creator()(d_range * (2 * _rnd.get_double() - 1.0),
-                 d_range * (2 * _rnd.get_double() - 1.0))),
-    p1(Creator()(d_range * (2 * _rnd.get_double() - 1.0),
-                 d_range * (2 * _rnd.get_double() - 1.0))),
-    p2(Creator()(d_range * (2 * _rnd.get_double() - 1.0),
-                 d_range * (2 * _rnd.get_double() - 1.0))),
-    p3(Creator()(d_range * (2 * _rnd.get_double() - 1.0),
-                 d_range * (2 * _rnd.get_double() - 1.0)))
+    p0(Creator()(this->d_range * (2 * this->_rnd.get_double() - 1.0),
+                 this->d_range * (2 * this->_rnd.get_double() - 1.0))),
+    p1(Creator()(this->d_range * (2 * this->_rnd.get_double() - 1.0),
+                 this->d_range * (2 * this->_rnd.get_double() - 1.0))),
+    p2(Creator()(this->d_range * (2 * this->_rnd.get_double() - 1.0),
+                 this->d_range * (2 * this->_rnd.get_double() - 1.0))),
+    p3(Creator()(this->d_range * (2 * this->_rnd.get_double() - 1.0),
+                 this->d_range * (2 * this->_rnd.get_double() - 1.0)))
   {
     CGAL_precondition(n >= 1 && n <= 4);
     CGAL_precondition(c_size >= 0 && c_size <= r);

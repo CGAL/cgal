@@ -403,6 +403,7 @@ rectangular_p_center_matrix_search_2(
   int p)
 {
   CGAL_optimisation_precondition(p >= 2 && p < 5);
+  typename std::iterator_traits<ForwardIterator>::value_type::R t;
   if (p == 2)
     return rectangular_p_center_2_matrix_search(
       f, l, o, r, Two_covering_algorithm(), t);

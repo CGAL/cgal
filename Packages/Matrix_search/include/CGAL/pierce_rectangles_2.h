@@ -225,9 +225,9 @@ struct Staircases : public Loc_domain< Traits_ > {
   template < class InputIC >
   Staircases(InputIC b, InputIC e, Traits t)
   : Base(b, e, t),
-    sorted(pts),
-    xgy(t.signed_x_distance_2_object()(maxx, minx) >
-        t.signed_y_distance_2_object()(maxy, miny))
+    sorted(this->pts),
+    xgy(t.signed_x_distance_2_object()(this->maxx, this->minx) >
+        t.signed_y_distance_2_object()(this->maxy, this->miny))
   {
 #if defined(__sun) && defined(__SUNPRO_CC)
     // I get linker errors otherweise,  the call from above
@@ -239,54 +239,55 @@ struct Staircases : public Loc_domain< Traits_ > {
     using std::find_if;
 #endif // ! CGAL_CFG_NO_NAMESPACE
 
-    Container& xsort = xgy ? sorted : pts;
-    Container& ysort = xgy ? pts : sorted;
+    Container& xsort = xgy ? sorted : this->pts;
+    Container& ysort = xgy ? this->pts : sorted;
 
     // build top-left and bottom-right staircases
-    sort(ysort.begin(), ysort.end(), traits.less_y_2_object());
+    sort(ysort.begin(), ysort.end(), this->traits.less_y_2_object());
     // bottom-right
     Iterator i = ysort.begin();
     do {
       brstc.push_back(*i++);
       i = find_if(i, ysort.end(),
-                  bind_1(traits.less_x_2_object(), brstc.back()));
+                  bind_1(this->traits.less_x_2_object(), brstc.back()));
     } while (i != ysort.end());
     // top-left
     Riterator j = ysort.rbegin();
     do {
       tlstc.push_back(*j++);
       j = find_if(j, ysort.rend(),
-                  bind_2(traits.less_x_2_object(), tlstc.back()));
+                  bind_2(this->traits.less_x_2_object(), tlstc.back()));
     } while (j != ysort.rend());
 
     // build left-bottom and right-top staircases
-    sort(xsort.begin(), xsort.end(), traits.less_x_2_object());
+    sort(xsort.begin(), xsort.end(), this->traits.less_x_2_object());
     // left-bottom
     i = xsort.begin();
     do {
       lbstc.push_back(*i++);
       i = find_if(i, xsort.end(),
-                  bind_2(traits.less_y_2_object(), lbstc.back()));
+                  bind_2(this->traits.less_y_2_object(), lbstc.back()));
     } while (i != xsort.end());
     // right-top
     j = xsort.rbegin();
     do {
       rtstc.push_back(*j++);
       j = find_if(j, xsort.rend(),
-                  bind_1(traits.less_y_2_object(), rtstc.back()));
+                  bind_1(this->traits.less_y_2_object(), rtstc.back()));
     } while (j != xsort.rend());
   } // Staircases(b, e, t)
 
   bool is_middle_empty() const {
     //!!! the "middle" point could be precomputed in advance
-    Citerator i = pts.begin();
+    Citerator i = this->pts.begin();
+    FT rr = FT(2) * this->r;
     do
-      if (traits.signed_x_distance_2_object()(maxx, *i) > FT(2) * r &&
-          traits.signed_x_distance_2_object()(*i, minx) > FT(2) * r &&
-          traits.signed_y_distance_2_object()(*i, miny) > FT(2) * r &&
-          traits.signed_y_distance_2_object()(maxy, *i) > FT(2) * r)
+      if (this->traits.signed_x_distance_2_object()(this->maxx, *i) > rr &&
+          this->traits.signed_x_distance_2_object()(*i, this->minx) > rr &&
+          this->traits.signed_y_distance_2_object()(*i, this->miny) > rr &&
+          this->traits.signed_y_distance_2_object()(this->maxy, *i) > rr)
         return false;
-    while (++i != pts.end());
+    while (++i != this->pts.end());
     return true;
   } // is_middle()
 
@@ -303,141 +304,143 @@ struct Staircases : public Loc_domain< Traits_ > {
 
   Intervall top_intervall() const {
     Point_2 p =
-      traits.construct_point_2_above_right_implicit_point_2_object()(
-        minx, miny, FT(2) * r);
+      this->traits.construct_point_2_above_right_implicit_point_2_object()(
+        this->minx, this->miny, FT(2) * this->r);
     Point_2 q =
-      traits.construct_point_2_above_left_implicit_point_2_object()(
-        maxx, miny, FT(2) * r);
+      this->traits.construct_point_2_above_left_implicit_point_2_object()(
+        this->maxx, this->miny, FT(2) * this->r);
 
     Citerator i =
       min_element_if(
-        pts.begin(), pts.end(),
-        traits.less_x_2_object(),
+        this->pts.begin(), this->pts.end(),
+        this->traits.less_x_2_object(),
         compose_shared(std::logical_and< bool >(),
-                       bind_1(traits.less_x_2_object(), p),
-                       bind_1(traits.less_y_2_object(), p)));
+                       bind_1(this->traits.less_x_2_object(), p),
+                       bind_1(this->traits.less_y_2_object(), p)));
     Citerator j =
       max_element_if(
-        pts.begin(), pts.end(),
-        traits.less_x_2_object(),
+        this->pts.begin(), this->pts.end(),
+        this->traits.less_x_2_object(),
         compose_shared(std::logical_and< bool >(),
-                       bind_2(traits.less_x_2_object(), q),
-                       bind_1(traits.less_y_2_object(), q)));
-    return Intervall(i == pts.end() ? maxx : *i,
-                     j == pts.end() ? minx : *j);
+                       bind_2(this->traits.less_x_2_object(), q),
+                       bind_1(this->traits.less_y_2_object(), q)));
+    return Intervall(i == this->pts.end() ? this->maxx : *i,
+                     j == this->pts.end() ? this->minx : *j);
   } // top_intervall()
 
   Intervall bottom_intervall() const {
     Point_2 p =
-      traits.construct_point_2_below_right_implicit_point_2_object()(
-        minx, maxy, FT(2) * r);
+      this->traits.construct_point_2_below_right_implicit_point_2_object()(
+        this->minx, this->maxy, FT(2) * this->r);
     Point_2 q =
-      traits.construct_point_2_below_left_implicit_point_2_object()(
-        maxx, maxy, FT(2) * r);
+      this->traits.construct_point_2_below_left_implicit_point_2_object()(
+        this->maxx, this->maxy, FT(2) * this->r);
 
     Citerator i =
       min_element_if(
-        pts.begin(), pts.end(),
-        traits.less_x_2_object(),
+        this->pts.begin(), this->pts.end(),
+        this->traits.less_x_2_object(),
         compose_shared(std::logical_and< bool >(),
-                       bind_1(traits.less_x_2_object(), p),
-                       bind_2(traits.less_y_2_object(), p)));
+                       bind_1(this->traits.less_x_2_object(), p),
+                       bind_2(this->traits.less_y_2_object(), p)));
     Citerator j =
       max_element_if(
-        pts.begin(), pts.end(),
-        traits.less_x_2_object(),
+        this->pts.begin(), this->pts.end(),
+        this->traits.less_x_2_object(),
         compose_shared(std::logical_and< bool >(),
-                       bind_2(traits.less_x_2_object(), q),
-                       bind_2(traits.less_y_2_object(), q)));
-    return Intervall(i == pts.end() ? maxx : *i,
-                     j == pts.end() ? minx : *j);
+                       bind_2(this->traits.less_x_2_object(), q),
+                       bind_2(this->traits.less_y_2_object(), q)));
+    return Intervall(i == this->pts.end() ? this->maxx : *i,
+                     j == this->pts.end() ? this->minx : *j);
   } // bottom_intervall()
 
   Intervall left_intervall() const {
     Point_2 p =
-      traits.construct_point_2_above_left_implicit_point_2_object()(
-        maxx, miny, FT(2) * r);
+      this->traits.construct_point_2_above_left_implicit_point_2_object()(
+        this->maxx, this->miny, FT(2) * this->r);
     Point_2 q =
-      traits.construct_point_2_below_left_implicit_point_2_object()(
-        maxx, maxy, FT(2) * r);
+      this->traits.construct_point_2_below_left_implicit_point_2_object()(
+        this->maxx, this->maxy, FT(2) * this->r);
 
     Citerator i =
       min_element_if(
-        pts.begin(), pts.end(),
-        traits.less_y_2_object(),
+        this->pts.begin(), this->pts.end(),
+        this->traits.less_y_2_object(),
         compose_shared(std::logical_and< bool >(),
-                       bind_2(traits.less_x_2_object(), p),
-                       bind_1(traits.less_y_2_object(), p)));
+                       bind_2(this->traits.less_x_2_object(), p),
+                       bind_1(this->traits.less_y_2_object(), p)));
     Citerator j =
       max_element_if(
-        pts.begin(), pts.end(),
-        traits.less_y_2_object(),
+        this->pts.begin(), this->pts.end(),
+        this->traits.less_y_2_object(),
         compose_shared(std::logical_and< bool >(),
-                       bind_2(traits.less_x_2_object(), q),
-                       bind_2(traits.less_y_2_object(), q)));
-    return Intervall(i == pts.end() ? maxy : *i,
-                     j == pts.end() ? miny : *j);
+                       bind_2(this->traits.less_x_2_object(), q),
+                       bind_2(this->traits.less_y_2_object(), q)));
+    return Intervall(i == this->pts.end() ? this->maxy : *i,
+                     j == this->pts.end() ? this->miny : *j);
   } // left_intervall()
 
   Intervall right_intervall() const {
     Point_2 p =
-      traits.construct_point_2_above_right_implicit_point_2_object()(
-        minx, miny, FT(2) * r);
+      this->traits.construct_point_2_above_right_implicit_point_2_object()(
+        this->minx, this->miny, FT(2) * this->r);
     Point_2 q =
-      traits.construct_point_2_below_right_implicit_point_2_object()(
-        minx, maxy, FT(2) * r);
+      this->traits.construct_point_2_below_right_implicit_point_2_object()(
+        this->minx, this->maxy, FT(2) * this->r);
 
     Citerator i =
       min_element_if(
-        pts.begin(), pts.end(),
-        traits.less_y_2_object(),
+        this->pts.begin(), this->pts.end(),
+        this->traits.less_y_2_object(),
         compose_shared(std::logical_and< bool >(),
-                       bind_1(traits.less_x_2_object(), p),
-                       bind_1(traits.less_y_2_object(), p)));
+                       bind_1(this->traits.less_x_2_object(), p),
+                       bind_1(this->traits.less_y_2_object(), p)));
     Citerator j =
       max_element_if(
-        pts.begin(), pts.end(),
-        traits.less_y_2_object(),
+        this->pts.begin(), this->pts.end(),
+        this->traits.less_y_2_object(),
         compose_shared(std::logical_and< bool >(),
-                       bind_1(traits.less_x_2_object(), q),
-                       bind_2(traits.less_y_2_object(), q)));
-    return Intervall(i == pts.end() ? maxy : *i,
-                     j == pts.end() ? miny : *j);
+                       bind_1(this->traits.less_x_2_object(), q),
+                       bind_2(this->traits.less_y_2_object(), q)));
+    return Intervall(i == this->pts.end() ? this->maxy : *i,
+                     j == this->pts.end() ? this->miny : *j);
   } // right_intervall()
 
   template < class OutputIterator >
   OutputIterator shared_intervall(OutputIterator o) const {
     if (xgy) {
-      if (traits.signed_y_distance_2_object()(maxy, miny) > FT(4) * r)
+      if (this->traits.signed_y_distance_2_object()(this->maxy, this->miny)
+	  > FT(4) * this->r)
         return o;
       Point_2 p =
-        traits.construct_point_2_below_right_implicit_point_2_object()(
-          minx, maxy, FT(2) * r);
+        this->traits.construct_point_2_below_right_implicit_point_2_object()(
+          this->minx, this->maxy, FT(2) * this->r);
       Point_2 q =
-        traits.construct_point_2_above_left_implicit_point_2_object()(
-          maxx, miny, FT(2) * r);
+        this->traits.construct_point_2_above_left_implicit_point_2_object()(
+          this->maxx, this->miny, FT(2) * this->r);
       //!!! start with binary search
       for (Citerator i = sorted.begin(); i != sorted.end(); ++i)
-        if (traits.less_x_2_object()(p, *i) &&
-            traits.less_x_2_object()(*i, q) &&
-            !traits.less_y_2_object()(*i, p) &&
-            !traits.less_y_2_object()(q, *i))
+        if (this->traits.less_x_2_object()(p, *i) &&
+            this->traits.less_x_2_object()(*i, q) &&
+            !this->traits.less_y_2_object()(*i, p) &&
+            !this->traits.less_y_2_object()(q, *i))
           *o++ = *i;
     } else {
-      if (traits.signed_x_distance_2_object()(maxx, minx) > FT(4) * r)
+      if (this->traits.signed_x_distance_2_object()(this->maxx, this->minx)
+          > FT(4) * this->r)
         return o;
       Point_2 p =
-        traits.construct_point_2_above_left_implicit_point_2_object()(
-          maxx, miny, FT(2) * r);
+        this->traits.construct_point_2_above_left_implicit_point_2_object()(
+          this->maxx, this->miny, FT(2) * this->r);
       Point_2 q =
-        traits.construct_point_2_below_right_implicit_point_2_object()(
-          minx, maxy, FT(2) * r);
+        this->traits.construct_point_2_below_right_implicit_point_2_object()(
+          this->minx, this->maxy, FT(2) * this->r);
       //!!! start with binary search
       for (Citerator i = sorted.begin(); i != sorted.end(); ++i)
-        if (!traits.less_x_2_object()(*i, p) &&
-            !traits.less_x_2_object()(q, *i) &&
-            traits.less_y_2_object()(p, *i) &&
-            traits.less_y_2_object()(*i, q))
+        if (!this->traits.less_x_2_object()(*i, p) &&
+            !this->traits.less_x_2_object()(q, *i) &&
+            this->traits.less_y_2_object()(p, *i) &&
+            this->traits.less_y_2_object()(*i, q))
           *o++ = *i;
     }
     return o;

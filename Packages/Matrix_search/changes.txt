@@ -7,6 +7,7 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+ALL : G++ 3.4 fixes.
 ALL : Rename has_smaller_dist_to_point to has_smaller_distance_to_point
 ALL : Removed Sqrt.
 ALL : Fixed demos for LEDA namespace (as suggested by Matthias).
