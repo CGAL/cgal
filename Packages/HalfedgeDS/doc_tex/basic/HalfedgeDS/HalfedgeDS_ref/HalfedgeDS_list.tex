@@ -14,7 +14,8 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{HalfedgeDS_list<Traits,HalfedgeDSItems>}
+\begin{ccRefClass}{HalfedgeDS_list<Traits,HalfedgeDSItems,Alloc>}
+\ccRefLabel{CGAL::HalfedgeDS_list}
 
 \ccDefinition
   
@@ -26,7 +27,7 @@ iterators that supports removal.
 
 \ccIsModel
 
-\ccRefIdfierPage{HalfedgeDS}
+\ccRefConceptPage{HalfedgeDS<Traits,Items,Alloc>}
 
 \ccTypes
 \ccThree{typedef bidirectional_iterator_tag;}{Supports_removal;;}{}
@@ -39,7 +40,7 @@ iterators that supports removal.
 
 \ccRefIdfierPage{CGAL::HalfedgeDS_default}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_vector}\\
-\ccRefIdfierPage{HalfedgeDSItems}\\
+\ccRefConceptPage{HalfedgeDSItems}\\
 \ccRefIdfierPage{CGAL::Polyhedron_3}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_items_decorator<HDS>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_decorator<HDS>}\\
@@ -49,15 +50,18 @@ iterators that supports removal.
 \ccImplementation
 
 \ccRefName\ uses internally the \ccc{CGAL::In_place_list} container class.
-The copy constructor and the assignment operator are implemented
-sub-optimally in $O(n \log n)$ for the list representation with $n$ the
-number of vertices plus halfedges plus faces.
+The copy constructor and the assignment operator need $O(n)$ time with
+$n$ the total number of vertices, halfedges, and faces. The former 
+suboptimal implementation with an $O(n \log n)$ runtime has been replaced
+with a faster implementation based on hashing for the pointer lookup.
 
-\end{ccRefClass}
+\ccc{CGAL_ALLOCATOR(int)} is used as default argument for the
+\ccc{Alloc} template parameter.  
+
+\end{ccRefClass} %
 
 % +------------------------------------------------------------------------+
 %%RefPage: end of main body, begin of footer
 \ccRefPageEnd
 % EOF
 % +------------------------------------------------------------------------+
-

@@ -75,7 +75,7 @@ but a useful set of tests is defined with the following levels:
   For all faces $f$: the incident face of the incident halfedge of $f$
   is equal to $f$. The halfedges around $f$ starting with the incident
   halfedge of $f$ form a cycle.  Redundancies among internal variables
-  are tested, e.g. that iterators enumerate as many items as the
+  are tested, e.g., that iterators enumerate as many items as the
   related size value indicates.
 \item[Level 1] 
   All tests of level 0. For all halfedges $h$: The
@@ -85,12 +85,12 @@ but a useful set of tests is defined with the following levels:
 \item[Level 2]
   All tests of level 1. The sum of all halfedges that can
   be reached through the vertices must be equal to the number of all
-  halfedges, i.e.~all halfedges incident to a vertex must form a single
+  halfedges, i.e., all halfedges incident to a vertex must form a single
   cycle.
 \item[Level 3]
   All tests of level 2. The sum of all halfedges that can
   be reached through the faces must be equal to the number of all
-  halfedges, i.e.~all halfedges surrounding a face must form a single
+  halfedges, i.e., all halfedges surrounding a face must form a single
   cycle (no holes in faces).
 \item[Level 4]
   All tests of level 3 and \ccc{normalized_border_is_valid}.
@@ -129,18 +129,18 @@ for polyhedral surfaces.
 namespace CGAL {
     template <class Traits>
     class Polyhedron {
-	typedef HalfedgeDS_default<Traits> HDS;
-	HDS hds;
+        typedef HalfedgeDS_default<Traits> HDS;
+        HDS hds;
     public:
-	// ...
-	bool is_valid( bool verb = false, int level = 0) const {
-	    Verbose_ostream verr(verb);
-	    verr << "begin Polyhedron::is_valid( verb=true, level = " << level 
-		 << "):" << std::endl;
-	    HalfedgeDS_const_decorator<HDS> decorator(hds);
-	    bool valid = decorator.is_valid( verb, level + 3);
-	    // further checks ...
-	}
+        // ...
+        bool is_valid( bool verb = false, int level = 0) const {
+            Verbose_ostream verr(verb);
+            verr << "begin Polyhedron::is_valid( verb=true, level = " << level 
+                 << "):" << std::endl;
+            HalfedgeDS_const_decorator<HDS> decorator(hds);
+            bool valid = decorator.is_valid( verb, level + 3);
+            // further checks ...
+        }
     };
 }
 \end{ccExampleCode}

@@ -406,9 +406,12 @@ public:
 #define CGAL__HalfedgeDS_vector HalfedgeDS_vector::HDS
 #endif
 
-#define CGAL__V_UPDATE(v) (v_new + ( Vertex_CI   (v.iterator()) - v_old))
-#define CGAL__H_UPDATE(h) (h_new + ( Halfedge_CI (h.iterator()) - h_old))
-#define CGAL__F_UPDATE(f) (f_new + ( Face_CI     (f.iterator()) - f_old))
+#define CGAL__V_UPDATE(v) (((v) == Vertex_handle()) ? (v) : \
+                           (v_new + ( Vertex_CI   ((v).iterator()) - v_old)))
+#define CGAL__H_UPDATE(h) (((h) == Halfedge_handle()) ? (h) : \
+                           (h_new + ( Halfedge_CI ((h).iterator()) - h_old)))
+#define CGAL__F_UPDATE(f) (((f) == Face_handle()) ? (f) : \
+                           (f_new + ( Face_CI     ((f).iterator()) - f_old)))
 
 template < class Traits_, class HalfedgeDSItems, class Alloc>
 void
@@ -424,22 +427,21 @@ pointer_update(  Vertex_CI v_old, Halfedge_CI h_old, Face_CI f_old) {
     for ( Halfedge_iterator h = halfedges_begin(); h != halfedges_end(); ++h) {
         h->HBase::set_next( CGAL__H_UPDATE( h->next()));
         h->HBase_base::set_opposite( CGAL__H_UPDATE( h->opposite()));
-        D.set_prev( h, CGAL__H_UPDATE( D.get_prev(h)));
-        if ( D.get_vertex(h) != Vertex_handle()) {
-            D.set_vertex( h, CGAL__V_UPDATE( D.get_vertex(h)));
-            D.set_vertex_halfedge(h);
-        } else {
-            D.set_vertex( h, Vertex_handle());
-	}
-        if ( D.get_face(h) != Face_handle()) {
-            D.set_face( h, CGAL__F_UPDATE( D.get_face(h)));
-            if ( ! h->is_border())
-                D.set_face_halfedge(h);
-        } else {
-            D.set_face( h, Face_handle());
-        }
+        D.set_prev(   h, CGAL__H_UPDATE( D.get_prev(h)));
+        D.set_vertex( h, CGAL__V_UPDATE( D.get_vertex(h)));
+        D.set_face(   h, CGAL__F_UPDATE( D.get_face(h)));
     }
     border_halfedges = CGAL__H_UPDATE( border_halfedges);
+    if (check_tag( Supports_vertex_halfedge())) {
+        for ( Vertex_iterator v = vertices_begin(); v != vertices_end(); ++v) {
+            D.set_vertex_halfedge(v, CGAL__H_UPDATE(D.get_vertex_halfedge(v)));
+        }
+    }
+    if (check_tag( Supports_face_halfedge())) {
+        for ( Face_iterator f = faces_begin(); f != faces_end(); ++f) {
+            D.set_face_halfedge(f, CGAL__H_UPDATE( D.get_face_halfedge(f)));
+        }
+    }
 }
 #undef CGAL__V_UPDATE
 #undef CGAL__H_UPDATE

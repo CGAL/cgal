@@ -1,6 +1,14 @@
 HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
 
+3.15 (10 Jul 2001)
+
+     - Documented the allocator template parameter.
+     - Improved the pointer update when copying HalfedgeDS_vector.
+     - Changed pointer update in HalfedgeDS_list from std::map to
+       CGAL::Unique_hash_map improving speed.
+     - Proof read and formatted the documentation. 
+
 3.14 (05 Jul 2001)
 
      - Fixed bug with 'typename A::template B<..>' syntax.

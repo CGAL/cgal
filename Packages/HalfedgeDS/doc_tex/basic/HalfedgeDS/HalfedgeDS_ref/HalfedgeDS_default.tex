@@ -14,27 +14,34 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{HalfedgeDS_default<Traits,HalfedgeDSItems>}
+\begin{ccRefClass}{HalfedgeDS_default<Traits,HalfedgeDSItems,Alloc>}
+\ccRefLabel{CGAL::HalfedgeDS_default}
+\ccRefLabel{CGAL_HALFEDGEDS_DEFAULT}
 
 \ccHtmlCrossLink{CGAL_HALFEDGEDS_DEFAULT}
 \ccHtmlIndexC[macro]{CGAL_HALFEDGEDS_DEFAULT}
 
 \ccDefinition
 
-~~~~~~\ccc{template <class Traits, class HalfedgeDSItems
-             = CGAL::HalfedgeDS_items_2>}\\
-\mbox{}~~~~~~\ccc{class HalfedgeDS_default;}
+\begin{tabbing}
+\ccc{template <} \=\ccc{class Traits,}\\
+                 \>\ccc{class HalfedgeDSItems = CGAL::HalfedgeDS_items_2,}\\
+                 \>\ccc{class Alloc           = CGAL_ALLOCATOR(int)>}\\
+     \ccc{class HalfedgeDS_default;}
+\end{tabbing}
 
 The class \ccRefName\ is a model for the \ccc{HalfedgeDS} concept. The
 second template parameter \ccc{HalfedgeDSItems} has a default argument
-\ccc{CGAL::HalfedgeDS_items_2}. \ccRefName\ is a list-based representation
-with bidirectional iterators that supports removal.
+\ccc{CGAL::HalfedgeDS_items_2}. The third template parameter \ccc{Alloc}
+uses the \cgal\ default allocator as default setting. \ccRefName\ is a
+list-based representation with bidirectional iterators that supports
+removal.
 
 \ccInclude{CGAL/HalfedgeDS_default.h}
 
 \ccIsModel
 
-\ccRefIdfierPage{HalfedgeDS}
+\ccRefConceptPage{HalfedgeDS<Traits,Items,Alloc>}
 
 \ccTypes
 \ccThree{typedef bidirectional_iterator_tag;}{Supports_removal;;}{}
@@ -47,7 +54,7 @@ with bidirectional iterators that supports removal.
 
 \ccRefIdfierPage{CGAL::HalfedgeDS_list}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_vector}\\
-\ccRefIdfierPage{HalfedgeDSItems}\\
+\ccRefConceptPage{HalfedgeDSItems}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_items_2}\\
 \ccRefIdfierPage{CGAL::Polyhedron_3}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_items_decorator<HDS>}\\
@@ -57,17 +64,18 @@ with bidirectional iterators that supports removal.
 
 \ccImplementation
 
-Currently, \ccRefName\ is equivalent to
-\ccc{CGAL::HalfedgeDS_list<Traits>}. 
-The copy constructor and the assignment operator are implemented
-sub-optimally in $O(n \log n)$ for the list representation with $n$ the
-total number of vertices, halfedges, and faces.
+Currently, \ccRefName\ is derived from \ccc{CGAL::HalfedgeDS_list<Traits>}.
+The copy constructor and the assignment operator need $O(n)$ time with
+$n$ the total number of vertices, halfedges, and faces. The former 
+suboptimal implementation with an $O(n \log n)$ runtime has been replaced
+with a faster implementation based on hashing for the pointer lookup.
 
 Due to a workaround for the flag \ccc{CGAL_CFG_NO_TMPL_IN_TMPL_PARAM},
 a halfedge data structure cannot be instantiated directly. For the
 \ccRefName\ a macro simplifies its direct use. However, when using a
 halfedge data structure as an argument for another class template,
-the class template name \ccRefName\ must be used, not the macro.
+the class template name \ccc{HalfedgeDS_default} must be used, not 
+the macro.
 
 \begin{ccExampleCode}
 // The macro definition.

@@ -14,7 +14,8 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{HalfedgeDS_vector<Traits,HalfedgeDSItems>}
+\begin{ccRefClass}{HalfedgeDS_vector<Traits,HalfedgeDSItems,Alloc>}
+\ccRefLabel{CGAL::HalfedgeDS_vector}
 
 \ccDefinition
   
@@ -26,7 +27,7 @@ access iterators that does not support removal.
 
 \ccIsModel
 
-\ccRefIdfierPage{HalfedgeDS}
+\ccRefConceptPage{HalfedgeDS<Traits,Items,Alloc>}
 
 \ccTypes
 \ccThree{typedef random_access_iterator_tag;}{Supports_removal;;}{}
@@ -39,7 +40,7 @@ access iterators that does not support removal.
 
 \ccRefIdfierPage{CGAL::HalfedgeDS_default}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_list}\\
-\ccRefIdfierPage{HalfedgeDSItems}\\
+\ccRefConceptPage{HalfedgeDSItems}\\
 \ccRefIdfierPage{CGAL::Polyhedron_3}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_items_decorator<HDS>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_decorator<HDS>}\\
@@ -57,6 +58,9 @@ The capacity is restricted to the reserved size. Allocations
 are not possible beyond the capacity without calling reserve again.
 All handles and iterators are invalidated upon a reserve call that
 increases the capacity.
+
+\ccc{CGAL_ALLOCATOR(int)} is used as default argument for the
+\ccc{Alloc} template parameter.  
 
 \end{ccRefClass}
 

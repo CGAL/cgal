@@ -30,7 +30,7 @@
 #include <CGAL/In_place_list.h>
 #include <CGAL/HalfedgeDS_items_decorator.h>
 #include <CGAL/memory.h>
-#include <map>
+#include <CGAL/Unique_hash_map.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -550,28 +550,22 @@ public:
 // init static member allocator objects
 template < class Traits_, class HalfedgeDSItems, class Alloc>
 typename CGAL__HDS_IP_List<Traits_, HalfedgeDSItems, Alloc>::Vertex_allocator
-CGAL__HDS_IP_List<Traits_, HalfedgeDSItems, Alloc>::vertex_allocator =
-    typename CGAL__HDS_IP_List<Traits_, HalfedgeDSItems, Alloc>::
-        Vertex_allocator();
+CGAL__HDS_IP_List<Traits_, HalfedgeDSItems, Alloc>::vertex_allocator;
 
 template < class Traits_, class HalfedgeDSItems, class Alloc>
 typename CGAL__HDS_IP_List<Traits_, HalfedgeDSItems, Alloc>::Edge_allocator
-CGAL__HDS_IP_List<Traits_, HalfedgeDSItems, Alloc>::edge_allocator =
-    typename CGAL__HDS_IP_List<Traits_, HalfedgeDSItems, Alloc>::
-        Edge_allocator();
+CGAL__HDS_IP_List<Traits_, HalfedgeDSItems, Alloc>::edge_allocator;
 
 template < class Traits_, class HalfedgeDSItems, class Alloc>
 typename CGAL__HDS_IP_List<Traits_, HalfedgeDSItems, Alloc>::Face_allocator
-CGAL__HDS_IP_List<Traits_, HalfedgeDSItems, Alloc>::face_allocator =
-    typename CGAL__HDS_IP_List<Traits_, HalfedgeDSItems, Alloc>::
-        Face_allocator();
+CGAL__HDS_IP_List<Traits_, HalfedgeDSItems, Alloc>::face_allocator;
 
 
 // A class for comparing handles, used in the maps below.
-template < class Handle>
-struct CGAL__HDS_Cmp_handle {
-    bool operator()( Handle a, Handle b) const { return &*a < &*b; }
-};
+//template < class Handle>
+//struct CGAL__HDS_Cmp_handle {
+//    bool operator()( Handle a, Handle b) const { return &*a < &*b; }
+//};
 
 template < class Traits_, class HalfedgeDSItems, class Alloc>
 void
@@ -579,44 +573,41 @@ CGAL__HDS_IP_List<Traits_, HalfedgeDSItems, Alloc>::
 pointer_update( const CGAL__HDS_IP_List<Traits_,HalfedgeDSItems,Alloc>& hds) {
     // Update own pointers assuming that they lived previously
     // in a halfedge data structure `hds' with lists.
-    typedef std::map< Vertex_const_handle,
-                      Vertex_handle,
-                      CGAL__HDS_Cmp_handle< Vertex_const_handle> >    V_map;
-    typedef std::map< Halfedge_const_handle,
-                      Halfedge_handle,
-                      CGAL__HDS_Cmp_handle< Halfedge_const_handle > > H_map;
-    typedef std::map< Face_const_handle,
-                      Face_handle,
-                      CGAL__HDS_Cmp_handle< Face_const_handle > >     F_map;
-    V_map v_map;
-    H_map h_map;
-    F_map f_map;
-    h_map[Halfedge_const_iterator()] = Halfedge_iterator();
-    v_map[Vertex_const_iterator()]   = Vertex_iterator();
-    f_map[Face_const_iterator()]     = Face_iterator();
+    typedef Unique_hash_map< Vertex_const_iterator, Vertex_iterator>     V_map;
+    typedef Unique_hash_map< Halfedge_const_iterator, Halfedge_iterator> H_map;
+    typedef Unique_hash_map< Face_const_iterator, Face_iterator>         F_map;
+
+
+//      typedef std::map< Vertex_const_handle,
+//                        Vertex_handle,
+//                        CGAL__HDS_Cmp_handle< Vertex_const_handle> >    V_map;
+//      typedef std::map< Halfedge_const_handle,
+//                        Halfedge_handle,
+//                        CGAL__HDS_Cmp_handle< Halfedge_const_handle > > H_map;
+//      typedef std::map< Face_const_handle,
+//                        Face_handle,
+//                        CGAL__HDS_Cmp_handle< Face_const_handle > >     F_map;
     // initialize maps.
-    Halfedge_iterator ii = halfedges_begin();
-    Halfedge_const_iterator i = hds.halfedges_begin();
-    for ( ; i != hds.halfedges_end(); ++i) {
-        h_map[i] = ii;
-        ++ii;
-    }
-    h_map[i] = ii;
+    H_map h_map( hds.halfedges_begin(), hds.halfedges_end(),
+                 halfedges_begin(), Halfedge_iterator(), 
+                 3 * hds.size_of_halfedges() / 2);
+    Vertex_iterator vii;
+    V_map v_map( vii, 3 * hds.size_of_vertices() / 2);
+    Face_iterator fii;
+    F_map f_map( fii, 3 * hds.size_of_faces() / 2);
+    // some special values
+    h_map[Halfedge_const_iterator()] = Halfedge_iterator();
+    h_map[hds.halfedges_end()]       = halfedges_end();
+    v_map[Vertex_const_iterator()]   = Vertex_iterator();
+    v_map[hds.vertices_end()]        = vertices_end();
+    f_map[Face_const_iterator()]     = Face_iterator();
+    f_map[hds.faces_end()]           = faces_end();
+    // vertices and faces are optional
     if ( check_tag( Supports_halfedge_vertex())) {
-        Vertex_iterator vv = vertices_begin();
-        for ( Vertex_const_iterator v = hds.vertices_begin();
-              v != hds.vertices_end(); ++v) {
-            v_map[v] = vv;
-            ++vv;
-        }
+        v_map.insert(hds.vertices_begin(),hds.vertices_end(),vertices_begin());
     }
     if ( check_tag( Supports_halfedge_face())) {
-        Face_iterator ff = faces_begin();
-        for ( Face_const_iterator f = hds.faces_begin();
-              f != hds.faces_end(); ++f) {
-            f_map[f] = ff;
-            ++ff;
-        }
+        f_map.insert( hds.faces_begin(), hds.faces_end(), faces_begin());
     }
     HalfedgeDS_items_decorator<Self> D;
     for ( Halfedge_iterator h = halfedges_begin(); h != halfedges_end(); ++h) {
@@ -625,18 +616,25 @@ pointer_update( const CGAL__HDS_IP_List<Traits_,HalfedgeDSItems,Alloc>& hds) {
         // h->HBase_base::set_opposite( h_map[ h->opposite()]);
         if ( check_tag( Supports_halfedge_prev()))
             D.set_prev( h, h_map[ D.get_prev(h)]);
-        if ( check_tag( Supports_halfedge_vertex())) {
+        if ( check_tag( Supports_halfedge_vertex()))
             D.set_vertex( h, v_map[ D.get_vertex(h)]);
-            D.set_vertex_halfedge( h);
-        }
-        if ( h->is_border())
-            D.set_face( h, Face_handle());
-        else if ( check_tag( Supports_halfedge_face())) {
+        if ( check_tag( Supports_halfedge_face()))
             D.set_face( h, f_map[ D.get_face(h)]);
-            D.set_face_halfedge( h);
-        }
     }
     border_halfedges = h_map[ border_halfedges];
+    if (check_tag( Supports_vertex_halfedge())) {
+        for ( Vertex_iterator v = vertices_begin(); v != vertices_end(); ++v) {
+            D.set_vertex_halfedge(v, h_map[ D.get_vertex_halfedge(v)]);
+        }
+    }
+    if (check_tag( Supports_face_halfedge())) {
+        for ( Face_iterator f = faces_begin(); f != faces_end(); ++f) {
+            D.set_face_halfedge(f, h_map[ D.get_face_halfedge(f)]);
+        }
+    }
+    h_map.statistics();
+    v_map.statistics();
+    f_map.statistics();
 }
 
 template < class Traits_, class HalfedgeDSItems, class Alloc>

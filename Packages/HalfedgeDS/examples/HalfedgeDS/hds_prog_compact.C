@@ -50,22 +50,22 @@ public:
         return HDS::halfedge_handle( &* h - 1);
     }
     Halfedge_handle next() {
-	return HDS::halfedge_handle((Halfedge*)(nxt & (~ std::ptrdiff_t(1))));
+        return HDS::halfedge_handle((Halfedge*)(nxt & (~ std::ptrdiff_t(1))));
     }
     Halfedge_const_handle next() const {
-	return HDS::halfedge_handle((const Halfedge*)
+        return HDS::halfedge_handle((const Halfedge*)
                                     (nxt & (~ std::ptrdiff_t(1))));
     }
     void  set_opposite( Halfedge_handle h) {
         CGAL_precondition(( &* h - 1 == &* HDS::halfedge_handle(this)) || 
-			  ( &* h + 1 == &* HDS::halfedge_handle(this)));
+                          ( &* h + 1 == &* HDS::halfedge_handle(this)));
         if ( &* h - 1 == &* HDS::halfedge_handle(this))
             nxt |= 1;
         else
             nxt &= (~ std::ptrdiff_t(1));
     }
     void  set_next( Halfedge_handle h) {
-	CGAL_precondition( ((std::ptrdiff_t)(&*h) & 1) == 0);
+        CGAL_precondition( ((std::ptrdiff_t)(&*h) & 1) == 0);
         nxt = ((std::ptrdiff_t)(&*h)) | (nxt & 1);
     }
 private:    // Support for the Vertex_handle.

@@ -90,34 +90,39 @@ incidence relations except if mentioned otherwise.
 
 \ccMethod{void vertices_pop_front();}{
     removes the first vertex if vertices are supported.
-    \ccPrecond \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
+    \ccCommentHeading{Requirement} \ccc{Supports_removal} $\equiv$ 
+    \ccc{CGAL::Tag_true}.}
 \ccGlue
 \ccMethod{void vertices_pop_back();}{
     removes the last vertex if vertices are supported.}
 \ccGlue
 \ccMethod{void vertices_erase( Vertex_handle v);}{
     removes the vertex $v$ if vertices are supported.
-    \ccPrecond \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
+    \ccCommentHeading{Requirement} \ccc{Supports_removal} $\equiv$ 
+    \ccc{CGAL::Tag_true}.}
 \ccGlue
 \ccMethod{void vertices_erase( Vertex_handle first, Vertex_handle last);}{
-    removes the range of vertices $[\ccc{first},\ccc{last})$ if vertices 
-    are supported. \ccPrecond \ccc{Supports_removal} 
+    removes the range $[\ccc{first},\ccc{last})$ if vertices 
+    are supported. \ccCommentHeading{Requirement} \ccc{Supports_removal} 
     $\equiv$ \ccc{CGAL::Tag_true}.}
 
 \ccMethod{void faces_pop_front();}{
     removes the first face if faces are supported.
-    \ccPrecond \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
+    \ccCommentHeading{Requirement} \ccc{Supports_removal} $\equiv$ 
+    \ccc{CGAL::Tag_true}.}
 \ccGlue
 \ccMethod{void faces_pop_back();}{
     removes the last face if faces are supported.}
 \ccGlue
 \ccMethod{void faces_erase( Face_handle f);}{
     removes the face $f$ if faces are supported.
-    \ccPrecond \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
+    \ccCommentHeading{Requirement} \ccc{Supports_removal} $\equiv$
+    \ccc{CGAL::Tag_true}.}
 \ccGlue
 \ccMethod{void faces_erase( Face_handle first, Face_handle last);}{
-    removes the range of faces $[\ccc{first},\ccc{last})$ if faces are 
-    supported. \ccPrecond \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
+    removes the range $[\ccc{first},\ccc{last})$ if faces are 
+    supported. \ccCommentHeading{Requirement} \ccc{Supports_removal}
+    $\equiv$ \ccc{CGAL::Tag_true}.}
 
 \ccMethod{void erase_face( Halfedge_handle h);} {removes the
    face incident to \ccc{h} from \ccc{hds} and changes all halfedges
@@ -125,14 +130,16 @@ incidence relations except if mentioned otherwise.
    halfedge data structure if they were already border edges. If this
    creates isolated vertices they get removed as well. See
    \ccc{make_hole(h)} for a more specialized variant.  
-   \ccPrecond \ccc{h->is_border() == false}. If faces are supported,
+   \ccPrecond \ccc{h->is_border() == false}. 
+   \ccCommentHeading{Requirement} If faces are supported,
    \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
 
 \ccMethod{void erase_connected_component( Halfedge_handle h);}
     {removes the  vertices, halfedges, and faces that belong to the 
-     connected component of $h$. \ccPrecond \ccc{Supports_removal} $\equiv$
-     \ccc{CGAL::Tag_true}. For all halfedges $g$ in the 
-     connected component \ccc{g.next() != Halfedge_handle()}.}
+     connected component of $h$. \ccPrecond For all halfedges $g$ in the 
+     connected component \ccc{g.next() != Halfedge_handle()}.
+     \ccCommentHeading{Requirement}  \ccc{Supports_removal} $\equiv$
+     \ccc{CGAL::Tag_true}.}
 
 % -----------------------------------------
 \ccHeading{Modifying Functions (For Border Halfedges)}
@@ -142,8 +149,8 @@ incidence relations except if mentioned otherwise.
 \ccMethod{Halfedge_handle make_hole( Halfedge_handle h);}
    {removes the face incident to \ccc{h} from \ccc{hds} and creates a hole.
     \ccPrecond \ccc{h != Halfedge_handle()} and \ccc{!(h->is_border())}. 
-    If faces are supported, \ccc{Supports_removal} $\equiv$ 
-    \ccc{CGAL::Tag_true}.}
+    \ccCommentHeading{Requirement} If faces are supported,  
+    \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
 
 \ccMethod{Halfedge_handle fill_hole( Halfedge_handle h);}
    {fills the hole incident to \ccc{h} with a new face from \ccc{hds}.
@@ -192,9 +199,8 @@ Euler operators, for example an edge contraction is equal to a
 Given a halfedge data structure \ccc{hds} and a halfedge handle $h$
 four special applications of the Euler operators are worth mentioning:
 \ccc{split_vertex(h,h)} results in an antenna emanating from the tip
-of \ccc{h};
-\ccc{split_vertex(h,h->next()->opposite())} results in an edge split
-of the halfedge \ccc{h->next} with a new vertex in-between;
+of \ccc{h}; \ccc{split_vertex(h,h->next()->opposite())} results in an edge 
+split of the halfedge \ccc{h->next} with a new vertex in-between;
 \ccc{split_face(h,h)} results in a loop directly following \ccc{h};
 and \ccc{split_face(h,h->next())} results in a bridge parallel to
 the halfedge \ccc{h->next} with a new face in-between.
@@ -229,7 +235,8 @@ the halfedge \ccc{h->next} with a new face in-between.
     \ccc{join_face( split_face( h, g))} returns $h$ and keeps
     the data structure unchanged. The time is proportional to the size
     of the face removed and the time to compute \ccc{h->prev()}.
-    \ccPrecond \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
+    \ccCommentHeading{Requirement} \ccc{Supports_removal} $\equiv$
+    \ccc{CGAL::Tag_true}.}
 
 
 \begin{ccHtmlOnly}
@@ -254,7 +261,8 @@ the halfedge \ccc{h->next} with a new face in-between.
      and keeps the polyhedron unchanged. 
      The time is proportional to the degree of the vertex removed and 
      the time to compute \ccc{h->prev()} and \ccc{h->opposite()->prev()}.
-     \ccPrecond \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
+     \ccCommentHeading{Requirement} \ccc{Supports_removal} $\equiv$
+     \ccc{CGAL::Tag_true}.}
 
 \begin{ccTexOnly}
     \begin{center}
@@ -295,7 +303,8 @@ the halfedge \ccc{h->next} with a new face in-between.
      prevents the operation from collapsing a volume into two faces
      glued together with opposite orientations, such as would
      happen with any vertex of a tetrahedron.)
-     \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
+     \ccCommentHeading{Requirement} \ccc{Supports_removal} $\equiv$ 
+     \ccc{CGAL::Tag_true}.}
 
 \newpage
 
@@ -323,7 +332,7 @@ the halfedge \ccc{h->next} with a new face in-between.
     The return value will be the halfedge incident to the second new triangle 
     which is the copy of \ccc{h-opposite()}.
     \ccPrecond $h,i,j$ denote distinct, consecutive vertices of the
-    halfedge data structure and form a cycle: i.e.~\ccc{h->vertex() ==
+    halfedge data structure and form a cycle: i.e., \ccc{h->vertex() ==
     i->opposite()->vertex()}, \ldots, \ccc{j->vertex() ==
     h->opposite()->vertex()}.}
 
@@ -333,9 +342,10 @@ the halfedge \ccc{h->next} with a new face in-between.
     by $g$ gets removed. Both faces may be holes. The invariant 
     \ccc{join_loop( h, split_loop( h, i, j))} returns $h$ and keeps the 
     data structure unchanged.
-    \ccPrecond \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.
-    The faces denoted by $h$ and $g$ are different and have
-    equal degree (i.e.~number of edges).} 
+    \ccPrecond The faces denoted by $h$ and $g$ are different and have
+    equal degree (i.e., number of edges).
+    \ccCommentHeading{Requirement} \ccc{Supports_removal} $\equiv$ 
+    \ccc{CGAL::Tag_true}.} 
 
 
 % -----------------------------------------
@@ -362,9 +372,8 @@ These operations are the same as for
 % -----------------------------------------
 \ccSeeAlso
 
-\ccc{CGAL::HalfedgeDS_items_decorator<HDS>},
-\ccc{CGAL::HalfedgeDS_const_decorator<HDS>}.
-
+\ccRefIdfierPage{CGAL::HalfedgeDS_items_decorator<HDS>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_const_decorator<HDS>}
 
 % -----------------------------------------
 \ccExample

@@ -306,7 +306,7 @@ public:
     }
 
     Halfedge_handle flip_edge( Halfedge_handle h) const {
-        // performs an edge flip, i.e. a Delaunay flip. It returns h after
+        // performs an edge flip. It returns h after
         // rotating the edge h one vertex in the direction of the face
         // orientation. Precondition: `h != Halfedge_handle()' and both
         // incident faces of h are triangles.

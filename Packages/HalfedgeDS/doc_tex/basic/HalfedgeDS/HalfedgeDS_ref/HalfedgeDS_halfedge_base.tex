@@ -20,7 +20,7 @@
   
 The class \ccRefName\ is a model of the \ccc{HalfedgeDSHalfedge}
 concept. \ccc{Refs} is an instantiation of a \ccc{HalfedgeDS}. 
-The full declaration states three parameters:
+The full declaration states four template parameters:
 
 \begin{tabbing}
 \mbox{}~~~~~~ \= \ccc{template <} \=\ccc{class Refs,}\\
@@ -46,7 +46,7 @@ halfedge is supported.
 
 \ccIsModel
 
-\ccRefIdfierPage{HalfedgeDSHalfedge}
+\ccRefConceptPage{HalfedgeDSHalfedge}
 
 \ccCreation
 \ccCreationVariable{h}
@@ -55,9 +55,9 @@ halfedge is supported.
 
 \ccSeeAlso
 
-\ccRefIdfierPage{HalfedgeDS}\\
-\ccRefIdfierPage{HalfedgeDSItems}\\
-\ccRefIdfierPage{PolyhedronItems_3}\\
+\ccRefConceptPage{HalfedgeDS<Traits,Items,Alloc>}\\
+\ccRefConceptPage{HalfedgeDSItems}\\
+\ccRefConceptPage{PolyhedronItems_3}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_items_2}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_vertex_base<Refs>}\\
 \ccRefIdfierPage{CGAL::HalfedgeDS_face_base<Refs>}\\

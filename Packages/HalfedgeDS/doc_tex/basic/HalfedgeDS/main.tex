@@ -66,8 +66,7 @@ geometric interpretation is added by classes built on top of the
 halfedge data structure.  These classes might be more convenient to
 use than the halfedge data structure directly, since the halfedge data
 structure is meant as an implementation layer.  See for example the
-\ccc{CGAL::Polyhedron_3} class in Chapter~\ref{chapterPolyhedron}
-and Chapter~\ref{chapterPolyhedronRef}.
+\ccc{CGAL::Polyhedron_3} class in Chapter~\ref{chapterPolyhedron}.
 
 The data structure provided here is also known as the
 FE-structure~\cite{w-ebdss-85}, as
@@ -126,15 +125,15 @@ Figure~\ccTexHtml{\ref{figureHalfedgeDSDesign}}{}\begin{ccHtmlOnly}
 illustrates the responsibilities of the three layers of the software
 design, with the \ccc{CGAL::Polyhedron_3} as an example for the top
 layer.  The items provide the space for the information that is
-actually stored, i.e.~with member variables and access member
+actually stored, i.e., with member variables and access member
 functions in \ccc{Vertex}, \ccc{Halfedge}, and \ccc{Face}
 respectively. Halfedges are required to provide a reference to the
 next halfedge and to the opposite halfedge.  Optionally they may
-provide a reference to the previous halfedge, to the incident vertex
+provide a reference to the previous halfedge, to the incident vertex,
 and to the incident face. Vertices and faces may be empty. Optionally
 they may provide a reference to the incident halfedge. The options
 mentioned are supported in the halfedge data structure and the
-polyhedron, for example Euler operations update the optional
+polyhedron, for example, Euler operations update the optional
 references if they are present. Furthermore, the item classes can be
 extended with arbitrary attributes and member functions, which will be
 promoted by inheritance to the actual classes used for the polyhedron.
@@ -157,8 +156,7 @@ the items themselves and are used there to provide the references to
 the incident items. This promotion of types is done with a template
 parameter \ccc{Refs} of the item types.  The halfedge data structure
 provides member functions to insert and delete items, to traverse all
-items, and it gives access to the items in order to manipulate the
-items.
+items, and it gives access to the items.
 
 There are two different models for the \ccc{HalfedgeDS} concept available,
 \ccc{HalfedgeDS_list} and \ccc{HalfedgeDS_vector}, and more might come.
@@ -171,15 +169,15 @@ HREF="Chapter_main.html#figureHalfedgeDSDesign"><IMG
 SRC="cc_ref_up_arrow.gif" ALT="reference arrow" WIDTH="10"
 HEIGHT="10"></A>
 \end{ccHtmlOnly}, but would be placed at the side of the \ccc{HalfedgeDS}
-since they broaden that interface but do not hide it.  This helper
-class contains operations that are useful to implement the operations
-in the next layer, for example, the polyhedron. It adds, for example,
+since they broaden that interface but do not hide it.  These helper
+classes contain operations that are useful to implement the operations
+in the next layer, for example, the polyhedron. They add, for example,
 the Euler operations and partial operations from which further Euler
 operations can be built, such as inserting an edge into the ring of
-edges at a vertex.  Furthermore, the helper class contains adaptive
+edges at a vertex.  Furthermore, the helper classes contain adaptive
 functionality.  For example, if the \ccc{prev()} member function is
 not provided for halfedges, the \ccc{find_prev()} member function of
-the helper class searches in the positive direction along the face for
+a helper class searches in the positive direction along the face for
 the previous halfedge. But if the \ccc{prev()} member function is
 provided, the \ccc{find_prev()} member function simply calls it. This
 distinction is resolved at compile time with a technique called {\em
@@ -192,9 +190,9 @@ provided underneath.  It renames face to facet, which is more common
 for three-dimensional surfaces.  The interface is designed to protect
 the integrity of the internal representation, the handles stored in
 the items can no longer directly be written by the user.  The
-polyhedron adds the convenient and efficient circulators, see
-Chapter~\ref{chapterCirculators}, for accessing the circular sequence
-of edges around a vertex or around a facet. To achieve this, the
+polyhedron adds the convenient and efficient circulators, see the
+Support Library Manuals, for accessing the circular sequence of edges
+around a vertex or around a facet. To achieve this, the
 \ccc{Polyhedron_3} derives new vertices, halfedges and facets from those
 provided in \ccc{Items}.  These new items are those actually used in
 the \ccc{HalfedgeDS}, which gives us the coherent type
@@ -203,7 +201,6 @@ design.
 
 
 % +========================================================================+
-\clearpage
 \section{Example Programs}
 % +========================================================================+
 \label{sectionHdsExamples}
@@ -260,14 +257,15 @@ here. Again, a trivial traits class provides the type used for the
 point.  Note that for the vector storage the size of the halfedge data
 structure should be reserved beforehand, either with the constructor
 as shown in the example or with the \ccc{reserve()} member function.
-One can later resize the data structure with further class to the
+One can later resize the data structure with further calls to the
 \ccc{reserve()} member function, but only if the data structure is 
 in a consistent, i.e., {\em valid}, state.
 
 Unfortunately this example has also to expose the workaround necessary
 for compilers that do not support templates as template parameters.
 The workaround is necessary if the symbolic constant
-\verb|CGAL_CFG_NO_TMPL_IN_TMPL_PARAM| is set.
+\verb|CGAL_CFG_NO_TMPL_IN_TMPL_PARAM| is set. It uses a member 
+template instead of the class template.
 
 \ccIncludeExampleCode{HalfedgeDS/hds_prog_vector.C}
 
@@ -293,7 +291,7 @@ it does not require any search operations during traversals. A
 comparison can be found in~\cite{k-ugpdd-99}.
 
 The following example trades traversal time for a compact storage
-representation using traditional C techniques (i.e.~type casting and
+representation using traditional C techniques (i.e., type casting and
 the assumption that pointers, especially those from {\tt malloc} or
 {\tt new}, point to even addresses). The idea goes as follows: The
 halfedge data structure allocates halfedges pairwise.  Concerning the
@@ -320,6 +318,7 @@ example for the vector-based data structure.
 
 Two edges are created in the default halfedge data structure.
 The halfedge iterator is used to count the halfedges.
+\newpage
 
 \ccIncludeExampleCode{HalfedgeDS/hds_prog_halfedge_iterator.C}
 
