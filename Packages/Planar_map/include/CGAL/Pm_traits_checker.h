@@ -137,10 +137,10 @@ public:
     CGAL_assertion(t.compare_x(p1,p2)==b.compare_x(P(p1),P(p2)));
     return t.compare_x(p1,p2);
   }
-  Comparison_result compare_y(const Point &p1, const Point &p2) const
+  Comparison_result compare_xy(const Point &p1, const Point &p2) const
   {
-    CGAL_assertion(t.compare_y(p1,p2)==b.compare_y(P(p1),P(p2)));
-    return t.compare_y(p1,p2);
+    CGAL_assertion(t.compare_xy(p1,p2)==b.compare_xy(P(p1),P(p2)));
+    return t.compare_xy(p1,p2);
   }
   bool curve_is_same(const X_curve &cv1, const X_curve &cv2) const
     {

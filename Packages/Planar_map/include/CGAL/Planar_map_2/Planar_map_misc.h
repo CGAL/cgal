@@ -19,8 +19,9 @@
 // revision_date :
 // author(s)     : Iddo Hanniel         <hanniel@math.tau.ac.il>
 //                 Eyal Flato           <flato@post.tau.ac.il>
-//                 Oren Nechushtan      <theoren@math.tau.ac.il
-//                 Efi Fogel            <efif@post.tau.ac.il>>
+//                 Oren Nechushtan      <theoren@math.tau.ac.il>
+//                 Efi Fogel            <efif@post.tau.ac.il>
+//                 Ron Wein             <wein@post.tau.ac.il>
 //
 // coordinator   : Tel-Aviv University (Dan Halperin)
 //
@@ -62,10 +63,6 @@ public:
 
   // Predicates:
   // -----------
-  /*! \todo introduce less_x and less_y into traits. If possible, remove
-   * compare_x and compare_y. Otherwise, leave both (even though the formers
-   * can be implemented by the laters).
-   */
   bool point_is_left(const Point_2 & p1, const Point_2 & p2) const
   { return (compare_x(p1, p2) == SMALLER); }
   
@@ -75,21 +72,9 @@ public:
   bool point_is_same_x(const Point_2 & p1, const Point_2 & p2) const
   { return (compare_x(p1, p2) == EQUAL); }
   
-  bool point_is_lower(const Point_2 & p1, const Point_2 & p2) const
-  { return (compare_y(p1, p2) == SMALLER); }
-  
-  bool point_is_higher(const Point_2 & p1, const Point_2 & p2) const
-  { return (compare_y(p1, p2) == LARGER); }
-  
-  bool point_is_same_y(const Point_2 & p1, const Point_2 & p2) const
-  { return (compare_y(p1, p2) == EQUAL); }
-
   bool point_is_left_low(const Point_2 & p1, const Point_2 & p2) const
-  { 
-    Comparison_result k = compare_x(p1, p2);
-    if (k == SMALLER) return true;
-    if ((k == EQUAL) && (point_is_lower(p1, p2))) return true;
-    return false;
+  {
+    return (compare_xy(p1, p2) == SMALLER);
   }
     
   bool point_is_right_top(const Point_2 & p1, const Point_2 & p2) const
@@ -101,18 +86,10 @@ public:
   const Point_2 & point_rightmost(const Point_2 & p1, const Point_2 & p2) const
   { return (point_is_right(p1, p2) ? p1 : p2); }
     
-  const Point_2 & point_lowest(const Point_2 & p1, const Point_2 & p2) const
-  { return (point_is_lower(p1, p2) ? p1 : p2); }
-    
-  const Point_2 & point_highest(const Point_2 & p1, const Point_2 & p2) const
-  { return (point_is_higher(p1, p2) ? p1 : p2); }
-    
-  const Point_2 & point_leftlow_most(const Point_2 & p1, const Point_2 & p2)
-    const
+  const Point_2 & point_leftlow_most(const Point_2 & p1, const Point_2 & p2) const
   { return (point_is_left_low(p1, p2) ? p1 : p2); }
     
-  const Point_2 & point_righttop_most(const Point_2 & p1, const Point_2 & p2)
-    const
+  const Point_2 & point_righttop_most(const Point_2 & p1, const Point_2 & p2) const
   { return (point_is_right_top(p1, p2) ? p1 : p2); }
     
   Point_2 curve_leftmost(const X_curve_2 & cv) const 
@@ -120,36 +97,64 @@ public:
     
   Point_2 curve_rightmost(const X_curve_2 & cv) const
   { return point_rightmost(curve_source(cv),curve_target(cv)); }
-    
-  Point_2 curve_lowest(const X_curve_2 & cv) const
-  { return point_lowest(curve_source(cv),curve_target(cv)); }
-    
-  Point_2 curve_highest(const X_curve_2 & cv) const
-  { return point_highest(curve_source(cv),curve_target(cv)); }
-    
+      
   Point_2 curve_leftlow_most(const X_curve_2 & cv) const 
   {
-    if (!curve_is_vertical(cv)) return curve_leftmost(cv);
-    return curve_lowest(cv);
+    if (!curve_is_vertical(cv)) 
+      return curve_leftmost(cv);
+    else
+      return point_leftlow_most(curve_source(cv), curve_target(cv));
   }
     
   Point_2 curve_righttop_most(const X_curve_2 & cv) const
   {
-    if (!curve_is_vertical(cv)) return curve_rightmost(cv);
-    return curve_highest(cv);
+    if (!curve_is_vertical(cv)) 
+      return curve_rightmost(cv);
+    else
+      return point_righttop_most(curve_source(cv), curve_target(cv));
   }
     
   bool curve_merge_condition(const X_curve_2 & whole,
 			     const X_curve_2 & part1,
 			     const X_curve_2 & part2) const
   {
-    return 
-      point_is_same(curve_leftlow_most(whole),curve_leftlow_most(part1))&&
-      point_is_same(curve_righttop_most(part1),curve_leftlow_most(part2))&&
-      point_is_same(curve_righttop_most(whole),curve_righttop_most(part2))||
-      point_is_same(curve_leftlow_most(whole),curve_leftlow_most(part2))&&
-      point_is_same(curve_righttop_most(part2),curve_leftlow_most(part1))&&
-      point_is_same(curve_righttop_most(whole),curve_righttop_most(part1));
+    // The function simply checks whether it is possible to merge
+    // the curves part1 and part2 such that whole is the result.
+    if (point_is_same(curve_source(whole), curve_source(part1)))
+      if (point_is_same(curve_target(part1), curve_source(part2)))
+	if (point_is_same(curve_target(part2), curve_target(whole)))
+	  return (true);
+	else
+	  return (false);
+      else
+	if (point_is_same(curve_target(part1), curve_target(part2)))
+	  if (point_is_same(curve_source(part2), curve_target(whole)))
+	    return(true);
+	  else
+	    return (false);
+	else
+	  return (false);
+    else
+      if (point_is_same(curve_source(whole), curve_target(part1)))
+	if (point_is_same(curve_source(part1), curve_source(part2)))
+	  if (point_is_same(curve_target(part2), curve_target(whole)))
+	    return (true);
+	  else
+	    return (false);
+	else
+	  if (point_is_same(curve_source(part1), curve_target(part2)))
+	    if (point_is_same(curve_source(part2), curve_target(whole)))
+	      return (true);
+	    else
+	      return (false);
+	  else
+	    return (false);
+      else
+	if (point_is_same(curve_source(whole), curve_source(part2)) ||
+	    point_is_same(curve_source(whole), curve_target(part2)))
+	  return (curve_merge_condition (whole, part2, part1));
+	else
+	  return (false);
   }
     
   inline bool curve_is_degenerate(const X_curve_2 & cv) const
@@ -197,15 +202,15 @@ public:
       } else {
         // cv2 is vertical, cv1 is not vertical 
         if (point_is_same(curve_rightmost(cv1),q) && 
-          point_is_same(curve_lowest(cv2),   q))
+          point_is_same(curve_leftlow_most(cv2),   q))
           return SMALLER;
         else
           return LARGER;
       }
     } else {
       // cv1 is vertical
-      if (point_is_same(curve_highest(cv1),q))
-        if (!curve_is_vertical(cv2) || point_is_same(curve_lowest(cv2),q))
+      if (point_is_same(curve_righttop_most(cv1),q))
+        if (!curve_is_vertical(cv2) || point_is_same(curve_leftlow_most(cv2),q))
           return SMALLER;
         else
           return EQUAL; // both curves extend downwards
@@ -257,15 +262,15 @@ public:
       else // cv2 is vertical, cv1 is not vertical 
       {
         if (point_is_same(curve_leftmost(cv1),q) &&
-          point_is_same(curve_highest(cv2), q))
+          point_is_same(curve_righttop_most(cv2), q))
           return SMALLER;
         else
           return LARGER;
       }
     else // cv1 is vertical
     {
-      if (point_is_same(curve_lowest(cv1),q))
-        if (!curve_is_vertical(cv2) || point_is_same(curve_highest(cv2),q))
+      if (point_is_same(curve_leftlow_most(cv1),q))
+        if (!curve_is_vertical(cv2) || point_is_same(curve_righttop_most(cv2),q))
           return SMALLER;
         else
           return EQUAL; // both curves extend upwards
@@ -286,14 +291,6 @@ public:
     return 
       curve_is_source_unbounded(cv)||
       curve_is_target_unbounded(cv);
-  }
-
-  /*!
-   */
-  Comparison_result compare_xy(const Point_2 & p, const Point_2 & q)
-  {
-    Comparison_result c = compare_x(p,q);
-    return (c != EQUAL) ? c : compare_y(p,q);
   }
     
   /*! curve_compare_at_x_left() is implemented based on the Has_left category

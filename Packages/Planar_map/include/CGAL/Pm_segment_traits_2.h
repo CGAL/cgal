@@ -102,15 +102,15 @@ public:
   Comparison_result compare_x(const Point_2 & p1, const Point_2 & p2) const
   { return compare_x_2_object()(p1, p2); }
 
-  /*! compare_y() compares the y-coordinates of two given points
+  /*! compare_xy() compares lexigoraphically the two points by x, then by y.
    * \param p1 the first point
    * \param p2 the second point
-   * \return LARGER if y(p1) > y(p2), SMALLER if y(p1) < y(p2), or else EQUAL
-   *
-   * \todo replace indirect use compare_y() with compare_y_2()
+   * \return LARGER if x(p1) > x(p2), or if x(p1) = x(p2) and y(p1) > y(p2); 
+   *         SMALLER if x(p1) < x(p2), or if x(p1) = x(p2) and y(p1) < y(p2);
+   *         or else EQUAL
    */
-  Comparison_result compare_y(const Point_2 & p1, const Point_2 & p2) const
-  { return compare_y_2_object()(p1, p2); }
+  Comparison_result compare_xy(const Point_2 & p1, const Point_2 & p2) const
+  { return compare_xy_2_object()(p1, p2); }
 
   /*! curve_is_vertical()
    * \param cv the curve

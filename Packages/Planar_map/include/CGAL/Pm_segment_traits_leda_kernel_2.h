@@ -155,11 +155,16 @@ public:
 
   /*! Functor
    */
-  class Compare_y_2 {
+  class Compare_xy_2 {
   public:
     Comparison_result operator()(const Point_2 & p1, const Point_2 & p2) const
     {
-      int res = Self::Point_2::cmp_y(p1, p2);
+      int res = Self::Point_2::cmp_x(p1, p2);
+
+      if (res != 0)
+	return ((res < 0) ? SMALLER : LARGER);
+
+      res = Self::Point_2::cmp_y(p1, p2);
       return ((res < 0) ? SMALLER : ((res > 0) ? LARGER : EQUAL));
     }
   };
@@ -341,7 +346,7 @@ public:
   Is_vertical_2 is_vertical_2_object() const { return Is_vertical_2(); }
   Equal_2 equal_2_object() const { return Equal_2(); }
   Compare_x_2 compare_x_2_object() const { return Compare_x_2(); }
-  Compare_y_2 compare_y_2_object() const { return Compare_y_2(); }
+  Compare_xy_2 compare_xy_2_object() const { return Compare_xy_2(); }
   Construct_vertex_2 construct_vertex_2_object() const
     { return Construct_vertex_2(); }
   Compare_y_at_x_2 compare_y_at_x_2_object() const

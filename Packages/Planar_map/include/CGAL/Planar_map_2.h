@@ -63,7 +63,6 @@
 
 #include <CGAL/Pm_insert_utils.h>
 #include <list>
-#include <map>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -1384,7 +1383,7 @@ prev1_inside_hole(
     else
       if (traits->point_is_same(curr->source()->point(),left)) {
         if (traits->curve_is_vertical(curr->curve()) &&
-            traits->point_is_lower(curr->target()->point(),left) )
+            traits->point_is_left_low(curr->target()->point(),left) )
           b=true;
         else
           if (traits->curve_compare_at_x_right(curr->curve(),
@@ -1404,7 +1403,7 @@ prev1_inside_hole(
       b=true;
     if (traits->point_is_same(curr->target()->point(),left)) {
       if (traits->curve_is_vertical(curr->curve()) &&
-          traits->point_is_lower(curr->source()->point(),left) )
+          traits->point_is_left_low(curr->source()->point(),left) )
         b=true;
       else
         if (traits->curve_compare_at_x_right(curr->curve(),
@@ -1431,8 +1430,9 @@ prev1_inside_hole(
   if (traits->point_is_same(traits->curve_target(cv),left)||
       traits->point_is_same(traits->curve_source(cv),left)) {
     if (traits->curve_is_vertical(cv)) {
-      return (traits->point_is_lower(prev2->target()->point(),
-                                     prev1->target()->point()));
+      // RWRW - Used to be point_is_lower()
+      return (traits->point_is_left_low(prev2->target()->point(),
+					prev1->target()->point()));
     }
     else
       if (traits->curve_compare_at_x_right(cv,left_edge->curve(), 
@@ -1444,8 +1444,8 @@ prev1_inside_hole(
 
   //check if left_edge is from left to right
   if (traits->curve_is_vertical(left_edge->curve())) {
-    if (traits->point_is_lower(left_edge->source()->point(),
-                               left_edge->target()->point()))
+    if (traits->point_is_left_low(left_edge->source()->point(),
+				  left_edge->target()->point()))
       return false;
     else
       return true;

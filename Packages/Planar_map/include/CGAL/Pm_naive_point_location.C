@@ -146,16 +146,18 @@ vertical_ray_shoot(const Point & p, Locate_type & lt, bool up) const
       // Remark: This treatment was originally written in the walk PL.
       //
       if (up && 
-          traits->point_is_higher(traits->curve_highest(it->curve()), p) ||
-          ! up &&
-          traits->point_is_lower(traits->curve_lowest(it->curve()), p))
-        /*
-          x       x
-          |       |
-          p=x  or  p
-          |
-          x
-        */
+	  traits->point_is_right_top
+	      (traits->curve_righttop_most(it->curve()), p) ||
+	  ! up &&
+	  traits->point_is_left_low
+              (traits->curve_leftlow_most(it->curve()), p))
+	/*
+	  x       x
+	  |       |
+	  p=x  or  p
+	  |
+	  x
+	*/
       {
         lt = Planar_map::EDGE;
         if (up == traits->point_is_left_low(it->target()->point(),
@@ -185,23 +187,23 @@ vertical_ray_shoot(const Point & p, Locate_type & lt, bool up) const
   }
 
   if ( traits->point_is_same_x( closest_edge->source()->point(), p) ) 
-  {
-    if (!maybe_vertical || 
-        traits->point_is_higher(closest_edge->target()->point(),
-                                closest_edge->source()->point())==up) 
-        // BUG fix (Oren)
-      v = closest_edge->source();
-    /*
-       special care for the vertical cases:
-  
-        x             p
-        |
-        x     and     x
-        |
-        p             x
-    */
-  }
-
+    {
+      if (!maybe_vertical || 
+	  traits->point_is_right_top(closest_edge->target()->point(),
+				     closest_edge->source()->point())==up) 
+                                  // BUG fix (Oren)
+	v = closest_edge->source();
+      /*
+	special care for the vertical cases:
+		  
+	x             p
+	|
+	x     and     x
+	|
+	p             x
+      */
+    }
+	
   //if (closest_is_vertex)
   if (v != pm->vertices_end()) {
     lt = Planar_map::VERTEX;
@@ -265,10 +267,6 @@ find_lowest(typename Pm_naive_point_location<Planar_map>::Vertex_handle v,
                                                lowest_left->curve(), 
                                                v->point()) == SMALLER)
         lowest_left = curr;
-      std::cout << "naive "
-                << traits->curve_source(lowest_left->curve()) << ","
-                << traits->curve_target(lowest_left->curve()) << " "
-                << v->point() << std::endl;
     }
 
     if (traits->point_is_right(curr->source()->point(), v->point())) {
@@ -280,12 +278,15 @@ find_lowest(typename Pm_naive_point_location<Planar_map>::Vertex_handle v,
         lowest_right = curr;
     }
 
-    if (traits->curve_is_vertical(curr->curve())) {
-      if (traits->compare_y(v->point(), curr->source()->point()) == LARGER)
-        vertical_up = curr; 
-                        
-      if (traits->compare_y(v->point(), curr->source()->point()) == SMALLER)
-        vertical_down = curr;
+    if (traits->curve_is_vertical(curr->curve())) 
+    {
+      if (traits->compare_xy(v->point(),
+			     curr->source()->point()) == LARGER)
+	vertical_up=curr; 
+			
+      if (traits->compare_xy(v->point(),
+			     curr->source()->point()) == SMALLER)
+	vertical_down=curr;			
     }        
         
   } while (++curr != first);

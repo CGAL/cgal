@@ -433,7 +433,7 @@ bool Pm_walk_along_line_point_location<Planar_map>::find_closest(
               
               if (traits->curve_is_vertical(cv))
                 {
-                  if (traits->point_is_lower(traits->curve_lowest(cv), q))
+                  if (traits->point_is_left_low(traits->curve_leftlow_most(cv), q))
                     // special treatment for this special case:
                     // vertical segment downward - here we should take
                     // the opposite direction
@@ -474,7 +474,7 @@ bool Pm_walk_along_line_point_location<Planar_map>::find_closest(
 	  */
 	    {
 	      if (traits->curve_is_vertical(cv) && 
-		  traits->point_is_higher(traits->curve_highest(cv),p))
+		  traits->point_is_right_top(traits->curve_righttop_most(cv),p))
 
 		/*
 		  x       x

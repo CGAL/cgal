@@ -96,15 +96,15 @@ public:
   Comparison_result compare_x(const Point_2 & p1, const Point_2 & p2) const
   { return compare_x_2_object()(p1, p2); }
 
-  /*! compare_y() compares the y-coordinates of two given points
+  /*! compare_xy() compares lexigoraphically the two points by x, then by y.
    * \param p1 the first point
    * \param p2 the second point
-   * \return LARGER if y(p1) > y(p2), SMALLER if y(p1) < y(p2), or else EQUAL
-   *
-   * \todo replace indirect use compare_y() with compare_y_2()
+   * \return LARGER if x(p1) > x(p2), or if x(p1) = x(p2) and y(p1) > y(p2); 
+   *         SMALLER if x(p1) < x(p2), or if x(p1) = x(p2) and y(p1) < y(p2);
+   *         or else EQUAL
    */
-  Comparison_result compare_y(const Point_2 & p1, const Point_2 & p2) const
-  { return compare_y_2_object()(p1, p2); }
+  Comparison_result compare_xy(const Point_2 & p1, const Point_2 & p2) const
+  { return compare_xy_2_object()(p1, p2); }
 
   /*! curve_is_vertical()
    * \param cv the curve
@@ -153,23 +153,6 @@ public:
     return compare_y_at_x_2_object()(q, cv1, cv2);
   }
 
-
-  /*! curve_compare_at_x_left() compares the y value of two curves in an
-   * epsilon environment to the left of the x value of the input point
-   */
-  Comparison_result curve_compare_at_x_left(const X_curve_2 & cv1,
-                                            const X_curve_2 & cv2, 
-                                            const Point_2 & q) const 
-  {
-    // since the curve is continous 
-    Comparison_result r = compare_y_at_x_2_object()(q, cv1, cv2);
-    if (r != EQUAL) return r;     
-    
-    // <cv2> and <cv1> meet at a point with the same x-coordinate as q
-    // compare their derivatives
-    return compare_slope_2_object()(cv2, cv1);
-  }
-
   /*! curve_compare_at_x_right() compares the y value of two curves in an
    * epsilon environment to the right of the x value of the input point
    */
@@ -177,7 +160,6 @@ public:
                                              const X_curve_2 & cv2, 
                                              const Point_2 & q) const 
   {
-    
     // since the curve is continous (?)
     Comparison_result r = curve_compare_at_x(cv1, cv2, q);
     if (r != EQUAL) return r;     

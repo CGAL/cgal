@@ -282,10 +282,10 @@ private:
       &target=h->target()->point();
     return !(!traits->point_is_same_x(target,p)||
              traits->point_is_same_x(source,p)&&
-             (traits->point_is_higher(p,target)&&
-              traits->point_is_lower(target,source)||
-              traits->point_is_lower(p,target)&&
-              traits->point_is_higher(target,source)
+             (traits->point_is_right_top(p,target)&&
+              traits->point_is_left_low(target,source)||
+              traits->point_is_left_low(p,target)&&
+              traits->point_is_right_top(target,source)
               ));
   }
   /* 

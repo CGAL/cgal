@@ -36,8 +36,6 @@
 #include <CGAL/Planar_map_2/Planar_map_misc.h>
 #endif
 
-#include <list>
-
 CGAL_BEGIN_NAMESPACE
 
 template <class Planar_map_>
@@ -235,9 +233,11 @@ public:
           // In this case the Locate type is always EDGE
           // Remark: This treatment was originally written in the walk PL.
           if (up && 
-              traits->point_is_higher(traits->curve_highest(it->curve()), p) ||
+              traits->point_is_right_top(traits->curve_righttop_most
+					 (it->curve()), p) ||
               ! up &&
-              traits->point_is_lower(traits->curve_lowest(it->curve()), p))
+              traits->point_is_left_low(traits->curve_leftlow_most
+					(it->curve()), p))
             /*
               x       x
               |       |
@@ -277,8 +277,8 @@ public:
     if ( traits->point_is_same_x( closest_edge->source()->point(), p) ) 
       {
 	if (!maybe_vertical || 
-	    traits->point_is_higher(closest_edge->target()->point(),
-				    closest_edge->source()->point())==up) 
+	    traits->point_is_right_top(closest_edge->target()->point(),
+				       closest_edge->source()->point())==up) 
                                     // BUG fix (Oren)
 	  v = closest_edge->source();
 				/*
@@ -426,8 +426,8 @@ protected:
 			
 			
       if (traits->curve_is_vertical(curr->curve())) {
-	if (traits->compare_y(v->point(),
-			      curr->source()->point())==LARGER)
+	if (traits->compare_xy(v->point(),
+			       curr->source()->point())==LARGER)
 	  //debug
 	  //{ std::cout << "vertical up = " << curr->curve() << std::endl;
 					
@@ -435,8 +435,8 @@ protected:
 				
 				//}//enddebug
 				
-	if (traits->compare_y(v->point(),
-			      curr->source()->point())==SMALLER)
+	if (traits->compare_xy(v->point(),
+			       curr->source()->point())==SMALLER)
 	  //debug
 	  //{ std::cout << "vertical down = " << curr->curve() << std::endl;
 					

@@ -426,7 +426,7 @@ protected:
         CGAL_precondition( 
 	  traits->curve_get_status(cv)==Traits::CURVE_VERTICAL_UP || 
 	  traits->curve_get_status(cv)==Traits::CURVE_VERTICAL_DOWN);
-        return (traits->point_is_higher(t,s) ==
+        return (traits->point_is_right_top(t,s) ==
 		(traits->curve_get_status(cv)==Traits::CURVE_VERTICAL_UP));
       }
     else

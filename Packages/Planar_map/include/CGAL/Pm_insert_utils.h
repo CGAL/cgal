@@ -145,20 +145,9 @@ class Pm_less_point_xy
     
   Pm_less_point_xy(Traits *traits_) : m_traits(traits_) {}
     
-  inline  bool operator()(const Point& p1, const Point& p2) const { 
-    Comparison_result rx = m_traits->compare_x(p1,p2);
-    if (rx == SMALLER)
-      return true;
-    else if (rx == LARGER)
-      return false;
-    else {  // EQUAL
-      Comparison_result ry = m_traits->compare_y(p1,p2);
-      if (ry == SMALLER)
-	return true;
-      else if (ry == LARGER)
-	return false;
-    }
-    return false;  // get here only if p1 == p2.
+  inline  bool operator()(const Point& p1, const Point& p2) const 
+  {
+    return (m_traits->compare_xy(p1,p2) == SMALLER);
   }
  private:
   Traits *m_traits;
