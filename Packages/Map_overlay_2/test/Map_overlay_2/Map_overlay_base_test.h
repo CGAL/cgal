@@ -27,7 +27,7 @@
 // data files. Quotient can read both integers and fractions.
 // leda rational will only read fractions.
 //#include <CGAL/Quotient.h> 
-
+#include <iostream>
 #include <list>
 #include <string>
 #include <fstream>
@@ -175,12 +175,16 @@ protected:
   {
     Traits  traits;
     
-    Point p = leftmost(leftmost(traits.curve_source(cv1),traits.curve_target(cv1)), 
-                       leftmost(traits.curve_source(cv2),traits.curve_target(cv2)));
+    Point p = leftmost(leftmost(traits.curve_source(cv1),
+                                traits.curve_target(cv1)), 
+                       leftmost(traits.curve_source(cv2),
+                                traits.curve_target(cv2)));
     
     Point xp1, xp2;
-    while (traits.nearest_intersection_to_right(cv1, cv2, p, xp1, xp2))
+    while (traits.do_intersect_to_right(cv1, cv2, p))
       {
+        traits.nearest_intersection_to_right(cv1, cv2, p, xp1, xp2);
+        
         points.push_back(xp1);
         if (xp1 != xp2)
           points.push_back(xp2);
@@ -534,7 +538,8 @@ public:
     //Subdivision pmwx1(pm1), pmwx2(pm2);
     
     //if (ovl_alg)
-    MapOverlay map_overlay(first_creator, second_creator, &pl_walk_ovl, ovl_alg);
+    MapOverlay map_overlay(first_creator, second_creator, 
+                           &pl_walk_ovl, ovl_alg);
     
     //else
       //map_overlay = MapOverlay(pmwx1, pmwx2);
