@@ -18,29 +18,28 @@
 
 \ccDefinition
 The class \ccRefName\ stores a 3D-triangulation data structure
-(see Section~\ref{TDS3-sec-concept}) and provides the optional
+and provides the optional
 geometric functionalities to be used as a parameter for a 
 3D-geometric triangulation (see Chapter~\ref{chapter-Triangulation3}. 
-It is templated by base classes for
-vertices and cells (see Section~\ref{TDS3-sec-concept-Base}).
-
-\ccInheritsFrom{\ccc{Triangulation_utils_3}}
-
-\ccc{Triangulation_utils_3} class defines basic computations on
-indices of vertices and neighbors of cells. (See
-Section~\ref{Triangulation3-sec-class-Utils} of
-Chapter~\ref{chapter-Triangulation3}.)
-
-\ccInclude{CGAL/Triangulation_data_structure_3.h}
+It is templated by base classes for vertices and cells.
+(See \ccRefPage{Triangulation_vb_3} 
+and \ccRefPage{Triangulation_cb_3}.) 
 
 \ccIsModel
 
 \ccc{Tds_3}
 
+\ccInheritsFrom{\ccc{Triangulation_utils_3}}
+
+This class \ccc{Triangulation_utils_3} defines basic computations on
+indices of vertices and neighbors of cells. 
+
+\ccInclude{CGAL/Triangulation_data_structure_3.h}
+
 \ccSeeAlso
 
-\ccc{Some_other_class},
-\ccc{some_other_function}.
+\ccc{CGAL::Triangulation_ds_vertex_3},
+\ccc{CGAL::Triangulation_ds_cell_3}
 
 %% \ccExample
 

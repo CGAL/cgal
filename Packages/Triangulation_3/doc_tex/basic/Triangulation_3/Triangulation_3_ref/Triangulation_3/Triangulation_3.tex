@@ -25,7 +25,6 @@ structure} as its second argument.
 \ccInclude{CGAL/Triangulation_3.h}
 
 \ccInheritsFrom{\ccc{Triangulation_utils_3}}
-(see Section~\ref{Triangulation3-sec-class-Utils})
 
 \ccTypes
 The class \ccClassTemplateName\ defines the following types:
@@ -41,14 +40,11 @@ The class \ccClassTemplateName\ defines the following types:
 \ccGlue
 \ccTypedef{typedef Triangulation_traits_3::Tetrahedron Tetrahedron;}{}
 
-The following types represent $k$-faces for $k\in\{0,1,2,3\}$. Edges
+Only vertices ($0$-faces) and cells ($3$-faces) are stored. Edges
 ($1$-faces) and facets ($2$-faces) are not explicitly represented and
 thus there are no corresponding classes (see
 Sections~\ref{Triangulation3-sec-degen_dim} and
-~\ref{Triangulation3-sec-def}). The 
-vertex and cell classes ($0$- and $3$-faces) are introduced in
-Sections~\ref{Triangulation3-sec-class-Vertex}
-and~\ref{Triangulation3-sec-class-Cell}.
+~\ref{Triangulation3-sec-def}). 
 
 \ccNestedType{Vertex}{Vertex type}
 \ccGlue
@@ -851,7 +847,10 @@ cells.
 
 \ccSeeAlso
 
-\ccExample
+\ccc{CGAL::Triangulation_vertex_3<Triangulation_traits_3,Tds_3>},\\
+\ccc{CGAL::Triangulation_cell_3<Triangulation_traits_3,Tds_3>}.
+
+%\ccExample
 
 %%\ccIncludeExampleCode{examples/Triangulation3/example1.C}
 

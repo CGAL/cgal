@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefConcept}{Weight_pt}
+\begin{ccRefConcept}{Weighted_pt}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
@@ -33,7 +33,7 @@ It must fulfill the following requirements:
 \ccCreation
 \ccCreationVariable{wp}
 
-\ccConstructor{Weight_pt(const Point &p=Point(), const Weight &w
+\ccConstructor{Weighted_pt(const Point &p=Point(), const Weight &w
 = Weight(0))}{}
 
 \ccAccessFunctions
@@ -42,28 +42,12 @@ It must fulfill the following requirements:
 
 \ccHasModels
 
-\ccc{Weighted_point}
+\ccc{Weighted_point}.
 
 \ccSeeAlso
 
-\ccc{Some_other_concept},
-\ccc{some_other_function}.
-
-\ccExample
-
-A short example program.
-Instead of a short program fragment, a full running program can be
-included using the 
-\verb|\ccIncludeExampleCode{examples/Triangulation3/Weighted_point_prog.C}| 
-macro. The program example would be part of the source code distribution and
-also part of the automatic test suite.
-
-\begin{ccExampleCode}
-void your_example_code() {
-}
-\end{ccExampleCode}
-
-%% \ccIncludeExampleCode{examples/Triangulation3/Weighted_point_prog.C}
+\ccc{CGAL::Regular_triangulation_euclidean_traits_3<R,Weight>}\\
+\ccc{CGAL::Regular_triangulation_3<Triangulation_traits_3,Tds_3>}.
 
 \end{ccRefConcept}
 

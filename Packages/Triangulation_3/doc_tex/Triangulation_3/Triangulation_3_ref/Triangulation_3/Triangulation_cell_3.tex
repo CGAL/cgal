@@ -36,8 +36,10 @@ dimension: (Section~\ref{Triangulation3-sec-degen_dim}).
 The class \ccClassTemplateName\ defines the same types as the
 \ccc{Triangulation_vertex_3<Triangulation_traits_3,Tds_3>} class.
 
+\ccCreationVariable{c}  %% choose variable name
 \begin{ccAdvanced}
 \ccCreation
+
 The user needs to construct cells explicitly only when implementing his
 own triangulation algorithms. The constructors of a cell do not insert
 it into any triangulation. To add a cell to a given triangulation,
@@ -147,6 +149,8 @@ computes the index \ccc{i} of the neighbor.}
 {Returns a handle to the cell.}
 
 \ccSeeAlso
+
+\ccc{CGAL::Triangulation_vertex_3<Triangulation_traits_3,Tds_3>}.
 
 %% \ccExample
 

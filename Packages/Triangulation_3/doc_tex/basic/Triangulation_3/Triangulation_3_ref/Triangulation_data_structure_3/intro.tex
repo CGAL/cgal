@@ -1,2 +1,53 @@
 \clearpage
 \section{Reference pages for 3D-Triangulation data structures}
+
+The triangulation data structure must be able to represent a
+triangulation of a topological sphere $S^d$ of $\R^{d+1}$, for 
+$d \in \{-1,0,1,2,3\}$. (See~\ref{TDS3-sec-intro}.)
+
+The vertex class of a 3D-triangulation data structure must define
+a number of types and operations. Some of these
+requirements are of geometric nature, they are \textit{optional}
+when using the triangulation data structure class alone. They become
+compulsory when the triangulation data structure is used as a layer
+for the geometric triangulation class. (See Section~\ref{TDS3-sec-design}.)
+
+The cell class \ccClassName\ of a triangulation data structure stores
+four pointers to its four vertices and four pointers to its four
+neighbors The vertices are indexed 0, 1, 2, and 3 in positive order.
+The neighbor indexed $i$ lies opposite to vertex \ccc{i}.
+
+In degenerate dimensions, cells are used to store faces of maximal
+dimension: in dimension~2, each cell represents only one
+facet of index 3, and 3 edges $(0,1)$, $(1,2)$ and $(2,0)$; in
+dimension~1, each cell represents one edge $(0,1)$. (See 
+Section~\ref{TDS3-sec-degen_dim}.) 
+
+\subsection*{Concepts}
+
+\ccRefIdfierPage{Tds_3<Vb,Cb>}
+
+\ccRefIdfierPage{Tds_vertex_3}\\
+\ccRefIdfierPage{Tds_cell_3}
+
+\ccRefIdfierPage{Triangulation_vb_3}\\
+\ccRefIdfierPage{Triangulation_cb_3}
+
+\subsection*{Classes}
+
+\ccRefIdfierPage{CGAL::Triangulation_data_structure_3<Vb,Cb>}
+
+This class is a model for the concept of the 3D-triangulation data structure
+\ccc{Tds_3<Vb,Cb>} and provides the optional
+geometric functionalities. It is templated by base classes for
+vertices and cells.
+
+\ccRefIdfierPage{CGAL::Triangulation_ds_vertex_3}\\
+\ccRefIdfierPage{CGAL::Triangulation_ds_cell_3}
+
+\cgal\ provides two base vertex classes and one base cell class:
+
+\ccRefIdfierPage{CGAL::Triangulation_vertex_base_3<Triangulation_traits_3>}\\
+\ccRefIdfierPage{CGAL::Triangulation_vertex_base_pointer_3<Triangulation_traits_3>}\\
+\ccRefIdfierPage{CGAL::Triangulation_cell_base_3<Triangulation_traits_3>}
+

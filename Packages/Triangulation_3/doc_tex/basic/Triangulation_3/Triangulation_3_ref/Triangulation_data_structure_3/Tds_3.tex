@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefConcept}{Tds_3<Vb,Fb>}
+\begin{ccRefConcept}{Tds_3<Vb,Cb>}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
@@ -53,8 +53,7 @@ topological sphere $S^d$ of $\R^{d+1}$, for any $d \in \{-1,0,1,2,3\}$.
 
 The second template parameter of the basic triangulation class
 \ccc{Triangulation_3<Triangulation_traits_3,Tds_3>} is a triangulation 
-data structure class (see Section~\ref{TDS3-sec-concept} of
-Chapter~\ref{chapter-TDS3}).  
+data structure class. (See Chapter~\ref{chapter-TDS3}.)  
 Its optional arguments related to geometry are compulsory for this use as a
 template parameter of \ccc{Triangulation_3<Triangulation_traits_3,Tds_3>}.
 
@@ -74,8 +73,7 @@ operations.
 \ccGlue
 \ccNestedType{Cell}{Cell type}
 Requirements for \ccc{Vertex} and \ccc{Cell} are described in
-Sections~\ref{TDS3-sec-concept-Tds_Vertex}
-and~\ref{TDS3-sec-concept-Tds_Cell}.
+\ccRefPage{Tds_vertex_3} and \ccRefPage{Tds_cell_3}.
 
 \ccTypedef{typedef triple<Cell*, int, int> Edge;}{\ccc{(c,i,j)} is the
 edge of cell \ccc{c} whose vertices indices are \ccc{i} and
@@ -107,15 +105,15 @@ incident to a given edge. They are bidirectional and non-mutable.
 
 \ccCreation
 \ccCreationVariable{tds}  %% choose variable name
-\ccThree{Tds_3<Vb,Fb>}{tds.set_number_of_vertices()}{}
+\ccThree{Tds_3<Vb,Cb>}{tds.set_number_of_vertices()}{}
 
-\ccConstructor{Tds_3<Vb,Fb>();}
+\ccConstructor{Tds_3<Vb,Cb>();}
 {A default constructor.}
 
-\ccConstructor{Tds_3<Vb,Fb>(const Tds_3 & tds1);}
+\ccConstructor{Tds_3<Vb,Cb>(const Tds_3 & tds1);}
 {Copy constructor. All the vertices and cells are duplicated.}
 
-\ccMethod{Tds_3<Vb,Fb> operator = (const Tds_3 & tds1);}
+\ccMethod{Tds_3<Vb,Cb> operator = (const Tds_3 & tds1);}
 {Assignment. All the vertices and cells are duplicated.}
 
 The previous two methods are equivalent.
@@ -517,11 +515,11 @@ for faces of maximal dimension instead of cells.
 
 \ccHasModels
 
-\ccc{Triangulation_data_structure_3}
+\ccc{CGAL::Triangulation_data_structure_3<Vb,Cb>}.
 
 \ccSeeAlso
 
-\ccc{Tds_vertex_3},
+\ccc{Tds_vertex_3},\\
 \ccc{Tds_cell_3}.
 
 \end{ccRefConcept}
