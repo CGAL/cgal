@@ -250,7 +250,13 @@ public:
       }
   }
 
-  bool remove(Vertex_handle v );
+  bool remove(Vertex_handle v);
+private:
+  typedef Facet Edge_2D;
+  void remove_2D(Vertex_handle v);
+  void make_hole_2D(Vertex_handle v, std::list<Edge_2D> & hole);
+  void fill_hole_delaunay_2D(std::list<Edge_2D> & hole);
+public:
 
   Bounded_side
   side_of_sphere( Cell_handle c, const Point & p) const;
@@ -413,6 +419,185 @@ insert(const Point & p, Cell_handle start, Vertex_handle v)
 }// insert(p)
 
 template < class Gt, class Tds >
+void
+Delaunay_triangulation_3<Gt,Tds>::
+remove_2D(Vertex_handle v)
+{
+    std::list<Edge_2D> hole;
+    make_hole_2D(v, hole);
+    fill_hole_delaunay_2D(hole);
+    _tds.delete_vertex(v);
+}
+
+template <class Gt, class Tds >
+void
+Delaunay_triangulation_3<Gt, Tds>::
+fill_hole_delaunay_2D(std::list<Edge_2D> & first_hole)
+{
+  typedef std::list<Edge_2D> Hole;
+
+  std::vector<Hole> hole_list;
+
+  Cell_handle  f, ff, fn;
+  int i, ii, in;
+
+  hole_list.push_back(first_hole);
+
+  while( ! hole_list.empty())
+    {
+      Hole hole = hole_list.back();
+      hole_list.pop_back();
+
+      // if the hole has only three edges, create the triangle
+      if (hole.size() == 3) {
+	typename Hole::iterator hit = hole.begin();
+	f = (*hit).first;        i = (*hit).second;
+	ff = (* ++hit).first;    ii = (*hit).second;
+	fn = (* ++hit).first;    in = (*hit).second;
+	_tds.create_face(f, i, ff, ii, fn, in);
+	continue;
+      }
+
+      // else find an edge with two finite vertices
+      // on the hole boundary
+      // and the new triangle adjacent to that edge
+      //  cut the hole and push it back
+
+      // first, ensure that a neighboring face
+      // whose vertices on the hole boundary are finite
+      // is the first of the hole
+      while (1) {
+	ff = (hole.front()).first;
+	ii = (hole.front()).second;
+	if ( is_infinite(ff->vertex(cw(ii))) ||
+	     is_infinite(ff->vertex(ccw(ii)))) {
+          hole.push_back(hole.front());
+          hole.pop_front();
+	}
+	else
+	    break;
+      }
+
+      // take the first neighboring face and pop it;
+      ff = (hole.front()).first;
+      ii = (hole.front()).second;
+      hole.pop_front();
+
+      Vertex_handle v0 = ff->vertex(cw(ii));
+      Vertex_handle v1 = ff->vertex(ccw(ii));
+      Vertex_handle v2 = infinite_vertex();
+      const Point &p0 = v0->point();
+      const Point &p1 = v1->point();
+      const Point *p2;
+      Vertex_handle vv;
+  
+      typename Hole::iterator hdone = hole.end();
+      typename Hole::iterator hit = hole.begin();
+      typename Hole::iterator cut_after(hit);
+  
+      // if tested vertex is c with respect to the vertex opposite
+      // to NULL neighbor,
+      // stop at the before last face;
+      hdone--;
+      for (; hit != hdone; ++hit) {
+	fn = hit->first;
+	in = hit->second;
+	vv = fn->vertex(ccw(in));
+	if (is_infinite(vv)) {
+	  if (is_infinite(v2))
+	      cut_after = hit;
+	}
+	else {     // vv is a finite vertex
+	  const Point &p = vv->point();
+	  if (coplanar_orientation(p0, p1, p) == COUNTERCLOCKWISE) {
+	    if (is_infinite(v2) ||
+	      ((Oriented_side) coplanar_side_of_bounded_circle(p0, p1, *p2, p))
+		      == ON_POSITIVE_SIDE){
+		v2 = vv;
+		p2 = &p;
+		cut_after = hit;
+	    }
+	  }
+	}
+      }
+ 
+      // create new triangle and update adjacency relations
+      Cell_handle newf;
+    
+      //update the hole and push back in the Hole_List stack
+      // if v2 belongs to the neighbor following or preceding *f
+      // the hole remain a single hole
+      // otherwise it is split in two holes
+  
+      fn = (hole.front()).first;
+      in = (hole.front()).second;
+      if (fn->has_vertex(v2, i) && i == ccw(in)) {
+	newf = _tds.create_face(ff, ii, fn, in);
+	hole.pop_front();
+	hole.push_front(Edge_2D(newf, 1));
+	hole_list.push_back(hole);
+      }
+      else{
+	fn = (hole.back()).first;
+	in = (hole.back()).second;
+	if (fn->has_vertex(v2, i) && i == cw(in)) {
+	  newf = _tds.create_face(fn, in, ff, ii);
+	  hole.pop_back();
+	  hole.push_back(Edge_2D(newf, 1));
+	  hole_list.push_back(hole);
+	}
+	else{
+	  // split the hole in two holes
+	  newf = _tds.create_face(ff, ii, v2);
+	  Hole new_hole;
+	  ++cut_after;
+	  while( hole.begin() != cut_after )
+            {
+              new_hole.push_back(hole.front());
+              hole.pop_front();
+            }
+  
+	  hole.push_front(Edge_2D(newf, 1));
+	  new_hole.push_front(Edge_2D(newf, 0));
+	  hole_list.push_back(hole);
+	  hole_list.push_back(new_hole);
+	}
+      }
+    }
+}
+
+template <class Gt, class Tds >
+void
+Delaunay_triangulation_3<Gt, Tds>::
+make_hole_2D(Vertex_handle v, std::list<Edge_2D> & hole)
+{
+  std::vector<Cell_handle> to_delete;
+
+  typename Tds::Face_circulator fc = _tds.incident_faces(v);
+  typename Tds::Face_circulator done(fc);
+
+  // We prepare for deleting all interior cells.
+  // We ->set_cell() pointers to cells outside the hole.
+  // We push the Edges_2D of the boundary (seen from outside) in "hole".
+  do {
+    Cell_handle f = fc->handle();
+    int i = f->index(v);
+    Cell_handle fn = f->neighbor(i);
+    int in = fn->index(f);
+
+    f->vertex(cw(i))->set_cell(fn);
+    fn->set_neighbor(in, NULL);
+
+    hole.push_back(Edge_2D(fn, in));
+    to_delete.push_back(f);
+
+    ++fc;
+  } while (fc != done);
+
+  _tds.delete_cells(to_delete.begin(), to_delete.end());
+}
+
+template < class Gt, class Tds >
 bool
 Delaunay_triangulation_3<Gt,Tds>::
 remove(Vertex_handle v)
@@ -443,8 +628,10 @@ remove(Vertex_handle v)
 
   if (dimension() < 3) {
     CGAL_triangulation_precondition(dimension() == 2);
-    // TODO : This needs to be replaced by a proper remove_2D.
 
+#if 1
+    remove_2D(v);
+#else
     // the triangulation is rebuilt...
 
     Vertex_handle inf = infinite_vertex();
@@ -463,6 +650,7 @@ remove(Vertex_handle v)
 	insert( vit->point(), NULL, vit->handle() );
 
     _tds.delete_vertex(v);
+#endif
 
     CGAL_triangulation_postcondition(is_valid());
     return true;

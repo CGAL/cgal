@@ -1,3 +1,7 @@
+Version 1.95 (? October 01)
+- TDS::Face_circulator in 2D.
+- Delaunay remove now uses a proper algorithm in 2D.
+
 Version 1.94 (1 October 01)
 - New functions : degree(v), _reorient(), remove_decrease_dimension(),
   remove_from_simplex().
