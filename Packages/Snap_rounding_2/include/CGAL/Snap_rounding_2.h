@@ -735,6 +735,7 @@ void Snap_rounding_2<Rep_>::iterate()
     int number_of_intersections;
     Hot_Pixel<Rep_> *hp;
 
+    segments_output_list.clear();
     for(typename std::list<Segment_data<Rep_> >::iterator iter =
         seg_list.begin();iter != seg_list.end();++iter) {
       seg_output.clear();
@@ -1001,21 +1002,19 @@ void Snap_rounding_2<Rep_>::window_output(Window_stream &w,bool wait_for_click)
         w << Segment_2(Point_2(iter->get_x1(),iter->get_y1()),
                        Point_2(iter->get_x2(),iter->get_y2()));
     }
-    std::cerr << "r222222\n";
+
     // draw isr polylines
     w << CGAL::RED;
     typename std::list<Point_2>::iterator iter2,iter3;
-  std::cerr << "r33333\n";
+
     for(typename std::list<std::list<Point_2> >::iterator iter1 =
         segments_output_list.begin();iter1 != segments_output_list.end();
         ++iter1) {
-    std::cerr << "r44444\n";
       if(wait_for_click)
         w.read_mouse(x,y);
       iter2 = iter3 = iter1->begin();
       seg_painted = false;
       for(++iter2;iter2 != iter1->end();++iter2) {
-    std::cerr << "r5555\n";
         seg_painted = true;
         w << Segment_2(*iter2,*iter3);
         ++iter3;
