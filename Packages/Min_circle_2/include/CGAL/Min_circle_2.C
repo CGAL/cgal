@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1997-2000 The CGAL Consortium
+// Copyright (c) 1997-2001 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -12,7 +12,7 @@
 // release_date  : $CGAL_Date$
 //
 // file          : include/CGAL/Min_circle_2.C
-// package       : Min_circle_2 3.10.1 (18 Sep 2000)
+// package       : $CGAL_Package: Min_circle_2 WIP $
 // chapter       : Geometric Optimisation
 //
 // source        : web/Min_circle_2.aw
