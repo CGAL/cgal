@@ -1,3 +1,8 @@
+28/03/2003 (rursu) 1.184
+----------
+fixed install_cgal syntax error
+
+
 28/03/2003 (rursu) 1.183
 removed stlport from README
 
