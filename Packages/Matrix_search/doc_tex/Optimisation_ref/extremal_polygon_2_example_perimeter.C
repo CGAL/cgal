@@ -22,7 +22,7 @@ int main() {
 
   // generate random convex polygon:
   Polygon p;
-  CGAL::random_convex_set_2(n, back_inserter(p), Generator(1));
+  CGAL::random_convex_set_2(n, std::back_inserter(p), Generator(1));
   std::cout << "Generated Polygon:\n" << p << std::endl;
 
   // compute maximum perimeter incribed k-gon of p:

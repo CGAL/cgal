@@ -21,7 +21,7 @@ int main()
 {
   // generate random convex polygon:
   Polygon p;
-  CGAL::random_convex_set_2(10, back_inserter(p), Generator(1));
+  CGAL::random_convex_set_2(10, std::back_inserter(p), Generator(1));
 
   // compute all furthest neighbors:
   CGAL::all_furthest_neighbors_2(p.vertices_begin(), p.vertices_end(),

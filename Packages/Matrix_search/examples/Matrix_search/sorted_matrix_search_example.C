@@ -25,13 +25,13 @@
 #include <algorithm>
 #include <iterator>
 
-typedef int                  Value;
-typedef std::vector<Value>   Vector;
-typedef Vector::iterator     Value_iterator;
-typedef std::vector<Vector>  Vector_cont;
-using CGAL::Cartesian_matrix;
-typedef Cartesian_matrix<std::plus<int>, Value_iterator, Value_iterator>
-  Matrix;
+typedef int                                     Value;
+typedef std::vector<Value>                      Vector;
+typedef Vector::iterator                        Value_iterator;
+typedef std::vector<Vector>                     Vector_cont;
+typedef CGAL::Cartesian_matrix<std::plus<int>,
+                               Value_iterator,
+                               Value_iterator>  Matrix;
 
 int main()
 {
@@ -54,7 +54,7 @@ int main()
   // search for an upper bound for max(a):
   Value bound = a[n-1];
   Value upper_bound =
-  sorted_matrix_search(
+  CGAL::sorted_matrix_search(
     &M, &M + 1,
     CGAL::sorted_matrix_search_traits_adaptor(
       CGAL::bind_2(std::greater_equal<Value>(), bound), M));
