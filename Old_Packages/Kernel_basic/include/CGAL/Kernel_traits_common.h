@@ -71,7 +71,8 @@ typedef CGALi::p_Circumcenter<Point_2>             Construct_circumcenter_2;
 typedef CGALi::pl_Bisector<Point_2, Line_2>        Construct_bisector_2;
 
 CGAL_Kernel_obj(Construct_point_on_2, construct_point_on_2_object)
-CGAL_Kernel_obj(Construct_second_point_on_2, construct_second_point_on_2_object)
+CGAL_Kernel_obj(Construct_second_point_on_2,
+	        construct_second_point_on_2_object)
 CGAL_Kernel_obj(Construct_source_point_2, construct_source_point_2_object)
 CGAL_Kernel_obj(Construct_target_point_2, construct_target_point_2_object)
 CGAL_Kernel_obj(Construct_min_point_2, construct_min_point_2_object)
@@ -109,7 +110,8 @@ CGAL_Kernel_obj(Construct_opposite_ray_2, construct_opposite_ray_2_object)
 CGAL_Kernel_obj(Construct_opposite_line_2, construct_opposite_line_2_object)
 CGAL_Kernel_obj(Construct_opposite_triangle_2,
 	        construct_opposite_triangle_2_object)
-CGAL_Kernel_obj(Construct_opposite_circle_2, construct_opposite_circle_2_object)
+CGAL_Kernel_obj(Construct_opposite_circle_2,
+	        construct_opposite_circle_2_object)
 CGAL_Kernel_obj(Assign_2, assign_2_object)
 CGAL_Kernel_obj(Transform_2, transform_2_object)
 CGAL_Kernel_obj(Intersect_2, intersect_2_object)
@@ -267,7 +269,8 @@ typedef CGALi::Call_source_to_get<Point_3>        Construct_source_point_3;
 typedef CGALi::Call_target_to_get<Point_3>        Construct_target_point_3;
 typedef CGALi::Call_min_to_get<Point_3>           Construct_min_point_3;
 typedef CGALi::Call_max_to_get<Point_3>           Construct_max_point_3;
-typedef CGALi::Call_direction_to_get<Direction_3> Construct_direction_of_line_3;
+typedef CGALi::Call_direction_to_get<Direction_3>
+                                               Construct_direction_of_line_3;
 typedef CGALi::Call_direction_to_get<Direction_3> Construct_direction_of_ray_3;
 typedef CGALi::Call_supporting_line_to_get<Line_3> Construct_supporting_line_3;
 typedef CGALi::Call_perpendicular_plane_to_get<Plane_3> 
@@ -276,7 +279,7 @@ typedef CGALi::Call_perpendicular_line_to_get<Line_3>
                                                Construct_perpendicular_line_3;
 typedef CGALi::p_Midpoint<Point_3>             Construct_midpoint_3;
 typedef CGALi::p_Circumcenter<Point_3>         Construct_circumcenter_3;
-typedef CGALi::v_Cross_product<Vector_3>       Construct_cross_product_vector_3;
+typedef CGALi::v_Cross_product<Vector_3>      Construct_cross_product_vector_3;
 typedef CGALi::Call_opposite_to_get<Segment_3> Construct_opposite_segment_3;
 typedef CGALi::Call_opposite_to_get<Ray_3>     Construct_opposite_ray_3;
 typedef CGALi::Call_opposite_to_get<Line_3>    Construct_opposite_line_3;
@@ -289,7 +292,8 @@ typedef CGALi::Intersect                       Intersect_3;
 typedef CGALi::Do_intersect                    Do_intersect_3;
 
 CGAL_Kernel_obj(Construct_point_on_3, construct_point_on_3_object)
-CGAL_Kernel_obj(Construct_second_point_on_3, construct_second_point_on_3_object)
+CGAL_Kernel_obj(Construct_second_point_on_3,
+	        construct_second_point_on_3_object)
 CGAL_Kernel_obj(Construct_source_point_3, construct_source_point_3_object)
 CGAL_Kernel_obj(Construct_target_point_3, construct_target_point_3_object)
 CGAL_Kernel_obj(Construct_min_point_3, construct_min_point_3_object)
@@ -298,7 +302,8 @@ CGAL_Kernel_obj(Construct_direction_of_line_3,
                 construct_direction_of_line_3_object)
 CGAL_Kernel_obj(Construct_direction_of_ray_3,
                 construct_direction_of_ray_3_object)
-CGAL_Kernel_obj(Construct_supporting_line_3, construct_supporting_line_3_object)
+CGAL_Kernel_obj(Construct_supporting_line_3,
+	        construct_supporting_line_3_object)
 CGAL_Kernel_obj(Construct_perpendicular_plane_3,
 	        construct_perpendicular_plane_3_object)
 CGAL_Kernel_obj(Construct_perpendicular_line_3,

@@ -89,13 +89,13 @@ rational_rotation_approximation( const NT &  dirx,     // dir.x()
           sin = NT(2)*p*q;
           den = p*p + q*q;
 
-          // sanity check for approximation
-          //        sin/den < dy/sqrt(hypotenuse) + n/d
-          //    &&  sin/den > dy/sqrt(hypotenuse) - n/d
-          // ===    sin/den - n/d  <   dy/sqrt(sq_hypotenuse)
-          //    &&  sin/den + n/d  >   dy/sqrt(sq_hypotenuse)
-          // ===    (sin^2 d^2 + n^2 den^2)sq_hypotenuse - 2... < dy^2 d^2 den^2
-          //    &&  (sin^2 d^2 + n^2 den^2)sq_hypotenuse + 2... > dy^2 d^2 den^2
+      // sanity check for approximation
+      //        sin/den < dy/sqrt(hypotenuse) + n/d
+      //    &&  sin/den > dy/sqrt(hypotenuse) - n/d
+      // ===    sin/den - n/d  <   dy/sqrt(sq_hypotenuse)
+      //    &&  sin/den + n/d  >   dy/sqrt(sq_hypotenuse)
+      // ===    (sin^2 d^2 + n^2 den^2)sq_hypotenuse - 2... < dy^2 d^2 den^2
+      //    &&  (sin^2 d^2 + n^2 den^2)sq_hypotenuse + 2... > dy^2 d^2 den^2
 
           common_part = (sin*sin*d*d + n*n*den*den)*sq_hypotenuse;
           diff_part   = NT(2)*n*sin*d*den*sq_hypotenuse;
@@ -270,8 +270,6 @@ rational_rotation_approximation( const double& angle,
   denom   = iden;
 }
 
-
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_RATIONAL_ROTATION_H

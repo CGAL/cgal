@@ -57,7 +57,8 @@ class Construct
 
     template <class A1, class A2, class A3, class A4, class A5> 
     ToBeConstructed
-    operator()( const A1& a1, const A2& a2, const A3& a3, const A4& a4, const A5& a5) const
+    operator()( const A1& a1, const A2& a2, const A3& a3, const A4& a4,
+	    const A5& a5) const
     { return ToBeConstructed(a1,a2,a3,a4,a5); }
 
     template <class A> 
@@ -442,7 +443,8 @@ class Side_of_oriented_sphere
 
     template <class T>
     Oriented_side
-    operator()(const T& p, const T& q, const T& r, const T& s, const T& t) const
+    operator()(const T& p, const T& q, const T& r, const T& s,
+	    const T& t) const
     { return side_of_oriented_sphere(p,q,r,s,t); }
 };
 
@@ -463,7 +465,8 @@ class Side_of_bounded_sphere
 
     template <class T>
     Bounded_side
-    operator()(const T& p, const T& q, const T& r, const T& s, const T& t) const
+    operator()(const T& p, const T& q, const T& r, const T& s,
+	    const T& t) const
     { return side_of_bounded_sphere(p,q,r,s,t); }
 };
 
