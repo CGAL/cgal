@@ -47,7 +47,8 @@ struct NT_converter
 };
 
 template < class K1, class K2,
-           class Converter = NT_converter<typename K1::FT, typename K2::FT> >
+           class Converter = NT_converter<CGAL_TYPENAME_MSVC_NULL K1::FT,
+	                                  CGAL_TYPENAME_MSVC_NULL K2::FT> >
 class Cartesian_converter
 {
 public:

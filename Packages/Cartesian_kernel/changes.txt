@@ -1,3 +1,6 @@
+Version 6.8 (?? February 2001)
+- Use CGAL_TYPENAME_MSVC_NULL in Cartesian_converter<>.
+
 Version 6.7 (19 February 2001)
 - Use the function object Less_xyz_3 instead of Less_xyzC3<>.
 
