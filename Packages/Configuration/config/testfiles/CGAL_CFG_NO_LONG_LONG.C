@@ -33,10 +33,13 @@
 //| C standard.
 //| The following definition is set if it is supported.
 
+template < typename T >
+void kill_unused_warning(const T&) {}
+
 int main()
 {
     long long int i = 1;
-    (void) i;
+    kill_unused_warning(i);
     return 0;
 }
 

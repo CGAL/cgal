@@ -1,3 +1,6 @@
+8 Apr 2004 Sylvain Pion
+- Kill "unused variable" warning with PGCC.
+
 26 Feb 2004 Radu Ursu
 - removed CGAL_VERSION and CGAL_VERSION_NR from config.h
 - those will be created by the create_internal_release script
