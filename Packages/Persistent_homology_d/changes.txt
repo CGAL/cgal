@@ -1,2 +1,5 @@
+12 August 2004 Andreas Fabri
+- Added '>' in ext_chain.h
+
 10 August 2004 Andreas Fabri
 - in ext_chain.h: Removed  = std::less< PivotHandle> from variable initialisations 
