@@ -100,7 +100,7 @@ void apply_to_range(const Tr &t,
       }
       l3++;
     }while(!t.is_infinite(l3) && 
-	   t.triangle(*l3).has_on_unbounded_side(POINT(xr_right, yr_top)));
+	   t.triangle(l3).has_on_unbounded_side(POINT(xr_right, yr_top)));
   }
   if(l4 != (CGAL_NULL_TYPE) NULL) //found at least one face that intersect the LEFT segment
   {
