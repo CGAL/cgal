@@ -4,6 +4,7 @@ Stuff to look at, as time permits:
 *** Before submitting : check the test-suite on M$, especially for
   CGAL_TYPENAME_BUG stuff...
 
+- What's this new_rep() ?
 - Finish merging .C files in corresponding .h files.
 - Write a Checker for full kernels, like Pm_traits_checker.h ?
 - SphereC3 should be tested...  Sphere_3<R> is missing right now, so...
@@ -111,7 +112,7 @@ Stuff to look at, as time permits:
   but mainly they are the simple ones, just needing to compute an opposite or
   something.  I need to think about what to do with these, it's painful to have
   a 3-stage calling sequence for not that much...
-- Merge Intersection package ?
+- Merge Intersection package ?  What about Conic ?
 - line_get_pointC2() could take "i" as "const FT&" directly, not "int", it
   will avoid several constructions.  Also, propagating that to the higher
   level will also bring more functionality at the top level...

@@ -1,11 +1,14 @@
 Version 6.0 (?? ????? 00)
 - Merged C2, C3 and Cartesian_basic in Cartesian_kernel.
-- Replaced `x == FT(0)' by `CGAL_NTS is_zero(x)'.
 - Merged all .C files into their corresponding .h, except Aff_*.
 - Changed constructions_on_*.h to *_constructions_[23].h, gathering
   constructions which _return_ type is the same.
 - Moved distance_computations_[23].h to the more general
   ft_constructions_[23].h.
+- Replaced `x == FT(0)' by `CGAL_NTS is_zero(x)'.
+- Use identical() instead of comparing "ptr".
+- Call identical() in all operator==() in order to be consistent.
+- Various cleanups.
 
 --- CGAL 2.2 is out ---
 
