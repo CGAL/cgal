@@ -66,7 +66,7 @@ void show_biggest_rec(Largest_empty_rect &empty_rectangle,
   W << CGAL::RED << b;
 
   std::cout
-    << "\nThe largest rectangle is :\n   buttom-left point - ("
+    << "\nThe largest empty iso rectangle is :\n   buttom-left point - ("
     << b.min().x() << ":" << b.min().y()
     << ")\n   top-right point   - (" << b.max().x() << ":"
     << b.max().y() << ")\n";

@@ -23,7 +23,7 @@ int main()
 
   Iso_rectangle_2 b = ler.get_largest_empty_iso_rectangle();
 
-  std::cout << "The largest rectangle is (" << b.min().x() << "," << b.min().y() << "),(" << b.max().x() << "," << b.max().y() << ")\n";
+  std::cout << "The largest empty iso rectangle is (" << b.min().x() << "," << b.min().y() << "),(" << b.max().x() << "," << b.max().y() << ")\n";
   std::cout << "Its size is " << CGAL_NTS abs((b.max().x() - b.min().x()) * (b.max().y() - b.min().y())) << std::endl;
 
   return 0;
