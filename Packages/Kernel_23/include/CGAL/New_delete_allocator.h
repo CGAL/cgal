@@ -17,13 +17,15 @@
 // revision_date : $Date$
 // author(s)     : Sylvain Pion
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
  
 #ifndef CGAL_NEW_DELETE_ALLOCATOR_H
 #define CGAL_NEW_DELETE_ALLOCATOR_H
 
 #include <cstddef> 
+
+CGAL_BEGIN_NAMESPACE
 
 template <class T>
 class New_delete_allocator
@@ -41,36 +43,40 @@ class New_delete_allocator
 
   New_delete_allocator() {}
 
+  // Uses the default constructor of T.
   pointer
-  allocate(size_type, const_pointer = 0)
-  { return static_cast<pointer>(0); }
+  allocate(size_type n, const_pointer = 0) const
+  { return new T[n]; }
 
-  void
-  deallocate(pointer, size_type) {}
-
-  pointer
-  address(reference)
-  { return static_cast<pointer>(0); }
-
-  const_pointer
-  address(const_reference)
-  { return static_cast<const_pointer>(0); }
-
-  template <class U>
-  void
-  construct(U*& ptr, const U& ref)
-  { ptr = new U(ref); }
-
-  void
-  destroy(pointer p)
-  { delete p; }
   // p should have an appropriate type
   // That's why we need the parameterization
   // T should have a virtual destructor
+  void
+  deallocate(pointer p, size_type) const
+  { delete[] p; }
+
+  pointer
+  address(reference) const
+  { return static_cast<pointer>(0); }
+
+  const_pointer
+  address(const_reference) const
+  { return static_cast<const_pointer>(0); }
+
+  void
+  construct(pointer ptr, const_reference ref) const
+  { *ptr = ref; }
+
+  // We can't do anything here.
+  void
+  destroy(pointer) const
+  { }
 
   size_type
   max_size() const
   { return 0; }
 };
+
+CGAL_END_NAMESPACE
 
 #endif // CGAL_NEW_DELETE_ALLOCATOR_H
