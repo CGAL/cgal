@@ -145,6 +145,13 @@ public:
 			      q.x(), q.y(), q.z(), q.weight(),
 			      r.x(), r.y(), r.z(), r.weight());
   }
+
+  Sign operator() ( const Weighted_point_3 & p,
+		    const Weighted_point_3 & q) const
+  {
+    return CGAL_NTS sign( p.weight() - q.weight());
+  }
+
 };
 
 template < typename K >
@@ -180,6 +187,7 @@ public :
   {
     return Bounded_side ( (-1) * In_sphere()(p,q,r) );
   }
+
 };
 
 
