@@ -1,0 +1,22 @@
+#!/bin/sh
+
+lockfile=/private/cgal_testannounce.lock
+annoucements=/private/cgal_testannouncements
+notify=/projects/CGAL/admin_scripts/send_cgal_mail
+
+
+if /sw/bin/lockfile -60 -r 100 -l 600 $lockfile
+then
+    if files=`ls /private/CGAL/testannouncements/* 2>/dev/null`
+    then
+        for file in $files
+        do
+            base=`basename $file`
+            if $notify -s "New test results for release ${base}" 'geert@cs.uu.nl' < $file
+	    then
+	        rm -f $file
+	    fi
+        done
+    fi
+    rm -f $lockfile
+fi
