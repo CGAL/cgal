@@ -31,6 +31,9 @@ ALL : Update for CGAL-2.0.
 GLOB: Show whether compiler is supported.
 GLOB: Create redirection header files in correct dir.
 GLOB: New Upgrade option.
+DOCS: added documentation of scripts (use_cgal_namespace,
+DOCS: create_cgal_makefile and replace_headers).
+DOCS: some minor corrections/clarifications.
 DOCS: sample installation now with egcs
 DOCS: removed support for "external" STL
 DOCS: removed obsolete paragraph about LEDA/STL problems
