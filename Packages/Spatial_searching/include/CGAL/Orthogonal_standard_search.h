@@ -76,7 +76,7 @@ Distance* distance_instance;
 		if (actual_k<max_k) return true;
 		else 
 		  if (search_nearest) return 
-		  ( distance < l.rbegin()->second * multiplication_factor ); 
+		  ( distance < l.rbegin()->second * multiplication_factor );
 		  else return 
 		  ( multiplication_factor * distance > l.begin()->second );
 	};
@@ -184,7 +184,7 @@ Distance* distance_instance;
 				compute_neighbours_orthogonally(N->lower(),rd);
                                 if (search_nearest) {
                                 	old_off= (*query_object)[new_cut_dim]-
-								N->low_value();
+							N->low_value();
                                 	if (old_off>NT(0.0)) old_off=NT(0.0);
                                 }
 				else 
@@ -205,13 +205,13 @@ Distance* distance_instance;
 				if (search_nearest) {
                                 	old_off= N->high_value() - 
 					(*query_object)[new_cut_dim];
-                                	// if (old_off>NT(0.0)) old_off=NT(0.0);
+                                	//if (old_off>NT(0.0)) old_off=NT(0.0);
 				}
                                 else 
                                 {       
                                 	old_off= N->low_value() - 
 					(*query_object)[new_cut_dim];
-					// if (old_off<NT(0.0)) old_off=NT(0.0);
+					//if (old_off<NT(0.0)) old_off=NT(0.0);
 				}  
                                 new_rd=distance_instance->
                                 new_distance(rd,old_off,new_off,new_cut_dim);

@@ -1,6 +1,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian_d.h>
-// #include <CGAL/Constructions_d.h>
+#include <CGAL/constructions_d.h>
 #include <CGAL/Iso_rectangle_d.h>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Kd_tree_traits_point.h>
@@ -21,9 +21,11 @@ typedef CGAL::Kd_tree_traits_point<Separator,Point> Traits;
 
 // after CGAL/Kernel/function_objectsHd.h
 
+/*
 NT squared_distance(const Point& p, const Point& q) 
 { Vector v = p-q; return v.squared_length(); };
-  
+*/  
+
 int main() {
 
   int bucket_size=1;
@@ -70,7 +72,7 @@ int main() {
   std::cout << "all points are:" << std::endl;
   
   for (int j1=0; j1 < points_in_tree.size(); ++j1) { 
-     std::cout << points_in_tree[j1] << "d(C,p)=" << sqrt(squared_distance(points_in_tree[j1],C)) << std::endl; 
+     std::cout << points_in_tree[j1] << "d(C,p)=" << sqrt(CGAL::squared_distance(points_in_tree[j1],C)) << std::endl; 
   }
   
   

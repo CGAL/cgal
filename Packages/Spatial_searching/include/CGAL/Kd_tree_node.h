@@ -80,7 +80,8 @@ namespace CGAL {
 		}
   	};
 	// constructor for internal node or extended internal node;
-	Kd_tree_node(Point_container<Item>& c, Traits& t, bool use_extension) {
+	Kd_tree_node(Point_container<Item>& c, Traits& t, 
+		     bool use_extension) {
 		
 		
 		if (use_extension) 
@@ -207,7 +208,7 @@ namespace CGAL {
 			     upper_ch->tree_items(it);
 			else
 			    if (b_upper->intersects_eroded_rectangle(r,eps)) 
-			    upper_ch->tree_items_in_rectangle(it,r,b_upper,eps);	
+			    upper_ch->tree_items_in_rectangle(it,r,b_upper,eps);
 
 		        delete b_upper;
 		}
