@@ -721,7 +721,9 @@ Packages/Auxiliary/auxiliary/wingmp/gmp-2.0.2/bcc/gmp.lib -text svneol=unset#uns
 Packages/Auxiliary/auxiliary/wingmp/gmp-2.0.2/gcc/libgmp.a -text svneol=unset#unset
 Packages/Auxiliary/auxiliary/wingmp/gmp-2.0.2/msvc/gmp.lib -text svneol=unset#unset
 Packages/Auxiliary/auxiliary/wingmp/gmp-2.0.2/msvc/src/msvcgmp.tar.gz -text svneol=unset#unset
+Packages/Auxiliary/auxiliary/wingmp/gmp-4.0.1/bcc/gmp.lib svneol=native#unset
 Packages/Auxiliary/auxiliary/wingmp/gmp-4.0.1/gmp.dll svneol=native#unset
+Packages/Auxiliary/auxiliary/wingmp/gmp-4.0.1/msvc/gmp.lib svneol=native#unset
 Packages/Convex_hull_2/doc_tex/Convex_hull_2/saarhull.eps -text
 Packages/Convex_hull_2/doc_tex/Convex_hull_2/saarhull.gif -text svneol=unset#unset
 Packages/Convex_hull_2/doc_tex/basic/Convex_hull_2/saarhull.eps -text
