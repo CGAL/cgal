@@ -41,7 +41,7 @@ LA_matrixCd<LA>::LA_matrixCd(const std::pair<int,int> &d)
 template < class LA >
 inline
 LA_matrixCd<LA>::LA_matrixCd(const LA_matrixCd<LA> &v)
-  : Handle(v)
+  : Handle(v), _rdim(v.row_dimension()), _cdim(v.column_dimension())
 {}
 
 template < class LA >
@@ -55,6 +55,8 @@ LA_matrixCd<LA> &
 LA_matrixCd<LA>::operator=(const LA_matrixCd<LA> &v)
 {
   Handle::operator=((const Handle &)v);
+  _rdim = v.row_dimension();
+  _cdim = v.column_dimension();
   return *this;
 }
 
@@ -170,24 +172,35 @@ LA_matrixCd<LA>::operator*(const LA_matrixCd<LA> &M) const
   int i, j, k;
   for (i=0; i<row_dimension(); ++i)
     for (j=0; j<M.column_dimension(); ++j) {
-      w[i][k] = FT(0);
-      for (k=0; k<M.row_dimension(); ++k)
-        w[i][k] += (operator[](i))[k] * M[k][j];
+      w[i][j] = FT(0);
+      for (k=0; k<column_dimension(); ++k)
+        w[i][j] += (*this)[i][k] * M[k][j];
     }
   return w;
 }
 
 template < class LA >
 typename LA_matrixCd<LA>::Vector
-LA_matrixCd<LA>::operator*(const Vector &v) const
+LA_matrixCd<LA>::operator*(const typename LA_matrixCd<LA>::Vector &v) const
 {
   CGAL_kernel_precondition( column_dimension() == v.dimension() );
   Vector w( row_dimension() ); 
   const_iterator i;
   typename Vector::iterator j;
   for (j=w.begin(), i=begin(); j!=w.end(); ++j,i+=column_dimension())
-    *j = std::inner_product(row_begin(i), row_end(i), v.begin());
-  return v;
+    *j = std::inner_product(i, i+column_dimension(), v.begin(), FT(0));
+  return w;
+}
+
+template < class LA >
+void
+LA_matrixCd<LA>::swap_columns(int j, int k)
+{
+  iterator jit, kit;
+  for (jit=column_begin(j),kit=column_begin(k);
+       jit != column_end(j);
+       jit+=column_dimension(),kit+=column_dimension())
+    std::swap(*jit,*kit);
 }
 
 #ifndef CGAL_CARTESIAN_NO_OSTREAM_INSERT_LA_VECTORCD
@@ -200,7 +213,7 @@ operator<<(std::ostream &os, const LA_matrixCd<LA> &M)
   if (os.iword(IO::mode)==IO::PRETTY) os << "LA_Matrix(";
   prt(M.row_dimension());
   prt(M.column_dimension());
-  if (os.iword(IO::mode)==IO::PRETTY) os << ", ("; prt.reset();
+  if (os.iword(IO::mode)==IO::PRETTY) { os << ", ("; prt.reset(); }
   std::for_each(M.begin(),M.end(),prt);
   if (os.iword(IO::mode)==IO::PRETTY) os << "))";
   return os;

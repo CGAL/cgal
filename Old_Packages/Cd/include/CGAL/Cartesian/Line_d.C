@@ -201,7 +201,6 @@ LineCd<R CGAL_CTAG>::is_degenerate() const
   return direction().is_degenerate();
 }
 
-/*
 template < class R >
 inline
 LineCd<R CGAL_CTAG>
@@ -210,7 +209,6 @@ transform(const typename LineCd<R CGAL_CTAG>::Aff_transformation_d &t) const
 {
   return LineCd<R CGAL_CTAG>( t.transform(point()), t.transform(direction()));
 }
-*/
 
 #ifndef CGAL_CARTESIAN_NO_OSTREAM_INSERT_LINECD
 template < class R >

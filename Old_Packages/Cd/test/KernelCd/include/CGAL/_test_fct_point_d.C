@@ -61,7 +61,7 @@ _test_fct_point_d(const R& )
  CGAL::Point_d<R> p6 (3, RT(6), RT(4), RT(7) );
  CGAL::Point_d<R> h1[4] = { p1, p2, p3, p6 };
  assert( CGAL::coplanar( h1+0, h1+4 ) );
- CGAL::Point_d<R> h2[4] = { p1, p2, p3, p4 };
+ CGAL::Point_d<R> h2[4] = { p1, p1, p3, p4 };
  assert( CGAL::coplanar( h2+0, h2+4 ) );
  CGAL::Point_d<R> h3[4] = { p4, p1, p5, p5 + (p4-p1) };
  assert( CGAL::coplanar( h3+0, h3+4 ) );
@@ -137,8 +137,8 @@ _test_fct_point_d(const R& )
  assert( CGAL::side_of_bounded_sphere(h11+0,h11+4,p1)==CGAL::ON_UNBOUNDED_SIDE);
  CGAL::Point_d<R> h12[4] = { p7,p9,p8,p10 };
  assert( CGAL::side_of_bounded_sphere(h12+0,h12+4,p1)==CGAL::ON_UNBOUNDED_SIDE);
- CGAL::Point_d<R> p0(CGAL::ORIGIN);
- assert( CGAL::side_of_bounded_sphere(ph11+0,h11+4,p0)==CGAL::ON_BOUNDED_SIDE);
+ CGAL::Point_d<R> p0(3, CGAL::ORIGIN);
+ assert( CGAL::side_of_bounded_sphere(h11+0,h11+4,p0)==CGAL::ON_BOUNDED_SIDE);
  CGAL::Vector_d<R> v001(3, RT(0), RT(0), RT(1) );
  CGAL::Vector_d<R> v010(3, RT(0), RT(1), RT(0) );
  CGAL::Vector_d<R> v100(3, RT(1), RT(0), RT(0) );

@@ -1,6 +1,6 @@
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Andreas Fabri, Herve Bronnimann
+// author(s)     : Herve Bronnimann
 
 #ifndef CGAL_CARTESIAN_GLOBAL_OPERATORS_D_C
 #define CGAL_CARTESIAN_GLOBAL_OPERATORS_D_C

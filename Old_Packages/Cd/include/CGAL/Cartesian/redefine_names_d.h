@@ -1,3 +1,7 @@
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Hervé Brönnimann
+
 #ifndef CGAL_CARTESIAN_REDEFINE_NAMES_D_H
 #define CGAL_CARTESIAN_REDEFINE_NAMES_D_H
 
@@ -21,6 +25,7 @@
 #define SegmentCd Segment_d
 #define TriangleCd Triangle_d
 #define TetrahedronCd Tetrahedron_d
+#define SimplexCd Simplex_d
 #define Aff_transformationCd Aff_transformation_d
 #define Data_accessorCd Data_accessor_d
 

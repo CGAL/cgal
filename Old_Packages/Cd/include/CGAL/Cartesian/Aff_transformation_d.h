@@ -151,8 +151,8 @@ public:
                                               { return ptr()->transform(d); }
   Direction_d operator()(const Direction_d &d) const { return transform(d); }
 
-  Plane_d     transform(const Plane_d& p) const { return p.transform(*this); }
-  Plane_d     operator()(const Plane_d& p) const { return transform(p); }
+  Plane_d     transform(const Plane_d& h) const { return ptr()->transform(h); }
+  Plane_d     operator()(const Plane_d& h) const { return transform(p); }
 
   Self        inverse() const { return ptr()->inverse(); }
   

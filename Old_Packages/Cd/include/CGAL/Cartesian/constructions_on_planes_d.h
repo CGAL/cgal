@@ -13,15 +13,15 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class R, class InputIterator >
+template < class R, class PointIterator >
 CGAL_KERNEL_LARGE_INLINE
 PlaneCd<R CGAL_CTAG>
 plane_from_points(int dim,
-                  const InputIterator &first, const InputIterator &last,
+                  const PointIterator &first, const PointIterator &last,
 		  const R &r = R())
 {
   CGAL_kernel_precondition(last-first == dim);
-  InputIterator i;
+  PointIterator i;
   for (i=first; i!=last; ++i)
     CGAL_kernel_precondition( (*i).dimension() == dim );
   PlaneCd<R CGAL_CTAG> h(dim);
@@ -29,11 +29,11 @@ plane_from_points(int dim,
   return h;
 }
 
-template < class R, class InputIterator >
+template < class R, class PointIterator >
 CGAL_KERNEL_LARGE_INLINE
 PlaneCd<R CGAL_CTAG>
 plane_from_points(int dim,
-                  const InputIterator &first, const InputIterator &last,
+                  const PointIterator &first, const PointIterator &last,
 		  const PlaneCd<R CGAL_CTAG>::Point_d &p, Oriented_side o,
 		  const R &r = R())
 {

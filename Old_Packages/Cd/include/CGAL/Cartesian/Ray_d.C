@@ -147,7 +147,6 @@ RayCd<R CGAL_CTAG>::opposite() const
   return RayCd<R CGAL_CTAG>( source(), - direction() );
 }
 
-/*
 template < class R >
 inline
 RayCd<R CGAL_CTAG>
@@ -157,7 +156,6 @@ transform(const typename RayCd<R CGAL_CTAG>::Aff_transformation_d &t) const
   return RayCd<R CGAL_CTAG>(t.transform(source()),
                             t.transform(second_point()));
 }
-*/
 
 template < class R >
 bool

@@ -1,6 +1,6 @@
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Herve.Bronnimann@sophia.inria.fr
+// author(s)     : Hervé Brönnimann
 
 #ifndef CGAL_CARTESIAN_PREDICATES_ON_POINTS_D_H
 #define CGAL_CARTESIAN_PREDICATES_ON_POINTS_D_H
@@ -21,7 +21,8 @@ compare_lexicographically_d(const PointCd<R CGAL_CTAG> &p,
                             const PointCd<R CGAL_CTAG> &q)
 {
   CGAL_kernel_precondition( p.dimension()==q.dimension() );
-  return std::lexicographical_compare_3way(p.begin(),p.end(),q.begin(),q.end());
+  return Comparison_result( CGAL::sign(
+     std::lexicographical_compare_3way(p.begin(),p.end(),q.begin(),q.end()) ));
 }
 
 template < class R >
@@ -46,21 +47,21 @@ template < class R >
 bool
 x_equal(const PointCd<R CGAL_CTAG> &p,
         const PointCd<R CGAL_CTAG> &q,
-	unsigned int i = 0)
+	int i = 0)
 {
   CGAL_kernel_precondition( p.dimension()==q.dimension() );
-  CGAL_kernel_precondition( i<p.dimension() );
+  CGAL_kernel_precondition( 0<=i && i<p.dimension() );
   return p[i] == q[i];
 }
 
-template < class R, int i >
-bool
+template < class R >
+Comparison_result
 compare_x(const PointCd<R CGAL_CTAG> &p,
           const PointCd<R CGAL_CTAG> &q,
-	  unsigned int i)
+	  int i)
 {
   CGAL_kernel_precondition( p.dimension()==q.dimension() );
-  CGAL_kernel_precondition( i<p.dimension() );
+  CGAL_kernel_precondition( 0<=i && i<p.dimension() );
   return CGAL::compare(p[i], q[i]);
 }
 
@@ -91,7 +92,7 @@ collinear(const PointCd<R CGAL_CTAG> &p,
 {
   const VectorCd<R CGAL_CTAG> pq( q-p ); // verifies precondition on dimension
   const VectorCd<R CGAL_CTAG> pr( r-p );
-  return q-p == NULL_VECTOR
+  return pq == NULL_VECTOR
       || is_proportionalCd(pq.begin(), pq.end(), pr.begin());
 }
 
@@ -105,22 +106,23 @@ orientation(const PointIterator &first, const PointIterator &last,
   return orientationCd(first, last, R());
 }
 
-template < class ForwardIterator >
+template < class PointIterator >
 inline
 bool
-coplanar(const ForwardIterator &first, const ForwardIterator &last,
+coplanar(const PointIterator &first, const PointIterator &last,
          const Cartesian_tag &) // the latter need to distinguish
 {
-  return orientation(first,last) == COPLANAR;
+  return orientation(first,last,Cartesian_tag()) == COPLANAR;
 }
 
-template < class R, class ForwardIterator >
+template < class R, class PointIterator >
 inline
 Orientation
 coplanar_orientation(const PointCd<R CGAL_CTAG> &p,
-   const ForwardIterator &first, const ForwardIterator &last,
+   const PointIterator &first, const PointIterator &last,
    const PointCd<R CGAL_CTAG> &s)
 {
+  // TODO ????????????????????????????????????????????????????????????????
   // p,s and [first,last) supposed to be coplanar
   // s and [first,last) supposed to be affinely independent
   // tests whether p is on the same side of [first,last) as s
@@ -132,18 +134,18 @@ coplanar_orientation(const PointCd<R CGAL_CTAG> &p,
   return POSITIVE;
 }
 
-template <class ForwardIterator>
+template <class PointIterator>
 inline
 bool
-are_positive_oriented(const ForwardIterator &first, const ForwardIterator &last)
+are_positive_oriented(const PointIterator &first, const PointIterator &last)
 {
   return orientation(first, last) == POSITIVE;
 }
 
-template <class ForwardIterator>
+template <class PointIterator>
 inline
 bool
-are_negative_oriented(const ForwardIterator &first, const ForwardIterator &last)
+are_negative_oriented(const PointIterator &first, const PointIterator &last)
 {
   return orientation(first,last) == NEGATIVE;
 }
@@ -195,20 +197,30 @@ collinear_are_strictly_ordered_along_line(const PointCd<R CGAL_CTAG> &p,
                                                      q.begin(), r.begin());
 }
 
-template <class R, class ForwardIterator>
+template < class R, class PointIterator >
+inline
+Bounded_side
+side_of_bounded_simplex(const PointIterator &first, const PointIterator &last,
+                        const PointCd<R CGAL_CTAG> &test)
+{
+  return side_of_bounded_simplexCd(first, last,
+                                   test.begin(), test.end(), R());
+}
+
+template <class R, class PointIterator>
 Oriented_side
-side_of_oriented_sphere(const ForwardIterator &first,
-                        const ForwardIterator &last,
+side_of_oriented_sphere(const PointIterator &first,
+                        const PointIterator &last,
                         const PointCd<R CGAL_CTAG> &test)
 {
   return side_of_oriented_sphereCd(first, last,
                                    test.begin(),test.end(), R());
 }
 
-template <class R, class ForwardIterator>
+template <class R, class PointIterator>
 Bounded_side
-side_of_bounded_sphere(const ForwardIterator &first,
-                       const ForwardIterator &last,
+side_of_bounded_sphere(const PointIterator &first,
+                       const PointIterator &last,
                        const PointCd<R CGAL_CTAG> &test)
 {
   return side_of_bounded_sphereCd(first, last,

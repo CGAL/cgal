@@ -47,12 +47,6 @@ public:
       CGAL_kernel_precondition( dim == 3);
       const Point_d e[3] = { Point_d(3,p), q, r }; *this = RPlane_d(e+0,e+3);
     }
-  Plane_d(int dim, const Origin &p, const Origin &q, const Point_d &r)
-    {
-      CGAL_kernel_precondition( dim == 3);
-      const Point_d e[3] = { Point_d(3,p), Point_d(3,q), r };
-      *this = RPlane_d(e+0,e+3);
-    }
   Plane_d(int dim, const RT &a, const RT &b, const RT &c, const RT &d)
     {
       CGAL_kernel_precondition( dim == 3);

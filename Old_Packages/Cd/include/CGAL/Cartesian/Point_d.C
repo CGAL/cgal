@@ -132,6 +132,15 @@ PointCd<R CGAL_CTAG>::operator[](int i) const
   return cartesian(i);
 }
 
+template < class R >
+inline
+PointCd<R CGAL_CTAG>
+PointCd<R CGAL_CTAG>::
+transform(const PointCd<R CGAL_CTAG>::Aff_transformation_d &t) const
+{
+  return t.transform(*this);
+}
+
 #ifndef NO_OSTREAM_INSERT_POINTCD
 template < class R >
 std::ostream& 

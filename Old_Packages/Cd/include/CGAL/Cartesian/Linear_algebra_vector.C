@@ -25,6 +25,12 @@ LA_vectorCd(int d)
 
 template < class R >
 LA_vectorCd<R CGAL_CTAG>::
+LA_vectorCd(const Handle &v)
+  : Handle(v)
+{}
+
+template < class R >
+LA_vectorCd<R CGAL_CTAG>::
 LA_vectorCd(const LA_vectorCd<R CGAL_CTAG> &v)
   : Handle(v)
 {}
@@ -130,8 +136,8 @@ operator<<(std::ostream &os, const LA_vectorCd<R CGAL_CTAG> &v)
   print_d<FT> prt(&os);
   if (os.iword(IO::mode)==IO::PRETTY) os << "LA_Vector(";
   prt(v.dimension());
-  if (os.iword(IO::mode)==IO::PRETTY) os << ", ("; prt.reset();
-  std::for_each(v.begin(),v.end(),print_d<FT>(os));
+  if (os.iword(IO::mode)==IO::PRETTY) { os << ", ("; prt.reset(); }
+  std::for_each(v.begin(),v.end(),prt);
   if (os.iword(IO::mode)==IO::PRETTY) os << "))";
   return os;
 }

@@ -6,6 +6,7 @@
 #define CGAL_CARTESIAN_AFF_TRANSFORMATION_REP_D_H
 
 #include <CGAL/Cartesian/redefine_names_d.h>
+#include <iostream>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -66,6 +67,8 @@ public:
   virtual int                  dimension() const = 0;
   virtual bool                 is_even() const = 0;
   virtual FT                   cartesian(int i, int j) const = 0;
+
+  virtual void print(std::ostream &os) const = 0;
 };
 
 
@@ -108,7 +111,7 @@ public:
                            const InputIterator &first,
                            const InputIterator &last, const FT &w)
   {
-    CGAL_kernel_precondition( last-first==d );
+    CGAL_kernel_precondition( last-first==d*d );
     _translation_vector = Vector(d);
     std::fill(_translation_vector.begin(), _translation_vector.end(), FT(0));
     _linear_transformation = Matrix(d, d, first, last) / w;
@@ -121,7 +124,7 @@ public:
      const InputIterator2 &translation_last,
      const FT &w)
   {
-    CGAL_kernel_precondition( last-first==d );
+    CGAL_kernel_precondition( last-first==d*d );
     CGAL_kernel_precondition( translation_last-translation_first==d );
     _translation_vector = Vector(translation_first, translation_last) / w;
     _linear_transformation = Matrix(d, d, first, last) / w;
@@ -148,22 +151,30 @@ public:
   }
 
   // note that a direction is not translated
-  virtual Direction_d transform(const Direction_d& dir) const
+  virtual Direction_d transform(const Direction_d& d) const
   {
-    CGAL_kernel_precondition( dir.dimension()==dimension() );
-    Vector w( dir.begin(), dir.end() );
+    CGAL_kernel_precondition( d.dimension()==dimension() );
+    Vector w( d.begin(), d.end() );
     w = _linear_transformation * w;
     return Direction_d(dimension(), w.begin(), w.end());
   }
 
-  virtual Plane_d transform(const Plane_d &p) const
+  virtual Plane_d transform(const Plane_d &h) const
   {
-    CGAL_kernel_precondition( p.dimension()==dimension() );
-    Vector w( p.begin(), p.end() );
-    w = _linear_transformation * w;
-    w[p.dimension()] += std::inner_product(p.begin(),p.end(),
-                                           _translation_vector.begin(),FT(0));
-    return Plane_d(dimension(), w.begin(), w.end());
+    CGAL_kernel_precondition( h.dimension()==dimension() );
+    CGAL_assertion( h.has_on( h.point() ) );
+    return Plane_d( transform(h.point()), is_even()
+              ? transpose().inverse().transform(h.orthogonal_direction())
+	      : - transpose().inverse().transform(h.orthogonal_direction()) );
+    /*
+    Point_d *p = new Point_d[dimension()];
+    int i;
+    for (i=0; i<dimension(); ++i) p[i] = transform( h.point(i) );
+    Plane_d m( p+0, p+dimension() );
+    cerr << m << endl;
+    delete[] p;
+    return m;
+    */
   }
 
   // Note that the return type Aff_transformation is not defined yet,
@@ -184,7 +195,7 @@ public:
 
   virtual bool is_even() const
   {
-    return LA().sign_of_determinant(_linear_transformation);
+    return LA().sign_of_determinant(_linear_transformation) == POSITIVE;
   }
 
   virtual FT cartesian(int i, int j) const
@@ -196,6 +207,12 @@ public:
       return _translation_vector[i];
     return _linear_transformation[i][j];
   }
+
+  virtual void print(std::ostream &os) const
+    {
+      os << _linear_transformation;
+      os << _translation_vector;
+    }
 
 private:
   Matrix _linear_transformation;

@@ -93,7 +93,6 @@ DirectionCd<R CGAL_CTAG>::is_degenerate() const
   return to_vector() == Vector_d(dimension(), NULL_VECTOR);
 }
 
-/*
 template < class R >
 inline
 DirectionCd<R CGAL_CTAG>
@@ -103,7 +102,6 @@ transform
 {
   return t.transform(*this);
 }
-*/
 
 template < class R >
 inline

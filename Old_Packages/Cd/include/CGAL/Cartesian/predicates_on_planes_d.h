@@ -1,6 +1,6 @@
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Andreas Fabri, Herve Bronnimann
+// author(s)     : Herve Bronnimann
 
 #ifndef CGAL_CARTESIAN_PREDICATES_ON_PLANES_D_H
 #define CGAL_CARTESIAN_PREDICATES_ON_PLANES_D_H

@@ -1,3 +1,7 @@
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Herve Bronnimann
+
 #ifndef CGAL_PREDICATES_ON_DIRECTIONS_D_H
 #define CGAL_PREDICATES_ON_DIRECTIONS_D_H
 
@@ -16,6 +20,5 @@ equal_direction(const DirectionCd<R CGAL_CTAG>& d1,
 }
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_PREDICATES_ON_DIRECTIONS_D_H

@@ -39,7 +39,7 @@ public:
   
   // Uninitialized constructors
   LA_matrixCd(int n = 0);
-  LA_matrixCd(int n, int m = n);
+  LA_matrixCd(int n, int m);
   LA_matrixCd(const std::pair<int,int> &d);
   // Copy constructor
   LA_matrixCd(const Self &v);
@@ -89,11 +89,11 @@ public:
 
   std::pair<int,int> dimension() const; // (row,column)
 
-  // Row and column manipulation
+  // Row and column
   int            row_dimension()    const { return _rdim; } // number of lines
   int            column_dimension() const { return _cdim; } // number of columns
 
-  // Row and column access
+  // Row and column copy access
   Vector         row(int i) const;
   Vector         column(int j) const;
 
@@ -112,6 +112,8 @@ public:
   // so we must step manually by column_dimension()
   const_iterator column_begin(int j) const { return begin() + j; }
   const_iterator column_end(int j)   const { return end() + j ; }
+
+  void swap_columns(int j, int k);
 
 // protected:
   iterator       begin()                   { return ptr()->e; }

@@ -1,8 +1,8 @@
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Andreas.Fabri@sophia.inria.fr
+// author(s)     : Hervé Brönnimann
 
-#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_3_H
+#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_D_H
 #define CGAL_CTAG
 #endif
 
@@ -10,46 +10,48 @@
 #define typename
 #endif
 
-#ifndef CGAL_CARTESIAN_TRIANGLE_3_C
-#define CGAL_CARTESIAN_TRIANGLE_3_C
+#ifndef CGAL_CARTESIAN_TRIANGLE_D_C
+#define CGAL_CARTESIAN_TRIANGLE_D_C
 
 CGAL_BEGIN_NAMESPACE
 
 template < class R >
-inline _Threetuple< typename TriangleC3<R CGAL_CTAG>::Point_3 > *
-TriangleC3<R CGAL_CTAG>::ptr() const
+inline _Threetuple< typename TriangleCd<R CGAL_CTAG>::Point_d > *
+TriangleCd<R CGAL_CTAG>::ptr() const
 {
-  return (_Threetuple< Point_3 >*)PTR;
+  return (_Threetuple< Point_d >*)PTR;
 }
 
 template < class R >
-TriangleC3<R CGAL_CTAG>::TriangleC3()
+TriangleCd<R CGAL_CTAG>::TriangleCd()
 {
-  PTR = new _Threetuple< Point_3 >;
+  PTR = new _Threetuple< Point_d >;
 }
 
 template < class R >
-TriangleC3<R CGAL_CTAG>::
-TriangleC3(const TriangleC3<R CGAL_CTAG> &t) :
+TriangleCd<R CGAL_CTAG>::
+TriangleCd(const TriangleCd<R CGAL_CTAG> &t) :
   Handle(t)
 {}
 
 template < class R >
-TriangleC3<R CGAL_CTAG>::
-TriangleC3(const typename TriangleC3<R CGAL_CTAG>::Point_3 &p,
-           const typename TriangleC3<R CGAL_CTAG>::Point_3 &q,
-           const typename TriangleC3<R CGAL_CTAG>::Point_3 &r)
+TriangleCd<R CGAL_CTAG>::
+TriangleCd(const typename TriangleCd<R CGAL_CTAG>::Point_d &p,
+           const typename TriangleCd<R CGAL_CTAG>::Point_d &q,
+           const typename TriangleCd<R CGAL_CTAG>::Point_d &r)
 {
-  PTR = new _Threetuple<Point_3>(p, q, r);
+  CGAL_kernel_precondition( p.dimension()==q.dimension() );
+  CGAL_kernel_precondition( p.dimension()==r.dimension() );
+  PTR = new _Threetuple<Point_d>(p, q, r);
 }
 
 template < class R >
-inline TriangleC3<R CGAL_CTAG>::~TriangleC3()
+inline TriangleCd<R CGAL_CTAG>::~TriangleCd()
 {}
 
 template < class R >
-TriangleC3<R CGAL_CTAG> &
-TriangleC3<R CGAL_CTAG>::operator=(const TriangleC3<R CGAL_CTAG> &t)
+TriangleCd<R CGAL_CTAG> &
+TriangleCd<R CGAL_CTAG>::operator=(const TriangleCd<R CGAL_CTAG> &t)
 {
   Handle::operator=(t);
   return *this;
@@ -57,7 +59,7 @@ TriangleC3<R CGAL_CTAG>::operator=(const TriangleC3<R CGAL_CTAG> &t)
 
 template < class R >
 bool
-TriangleC3<R CGAL_CTAG>::operator==(const TriangleC3<R CGAL_CTAG> &t) const
+TriangleCd<R CGAL_CTAG>::operator==(const TriangleCd<R CGAL_CTAG> &t) const
 {
   int i;
   if (ptr() == t.ptr()) return true; // identical
@@ -70,22 +72,30 @@ TriangleC3<R CGAL_CTAG>::operator==(const TriangleC3<R CGAL_CTAG> &t) const
 template < class R >
 inline
 bool
-TriangleC3<R CGAL_CTAG>::operator!=(const TriangleC3<R CGAL_CTAG> &t) const
+TriangleCd<R CGAL_CTAG>::operator!=(const TriangleCd<R CGAL_CTAG> &t) const
 {
   return !(*this == t);
 }
 
 template < class R >
 inline
+int
+TriangleCd<R CGAL_CTAG>::dimension() const
+{
+  return vertex(0).dimension();
+}
+
+template < class R >
+inline
 long
-TriangleC3<R CGAL_CTAG>::id() const
+TriangleCd<R CGAL_CTAG>::id() const
 {
   return (long) PTR;
 }
 
 template < class R >
-typename TriangleC3<R CGAL_CTAG>::Point_3
-TriangleC3<R CGAL_CTAG>::vertex(int i) const
+typename TriangleCd<R CGAL_CTAG>::Point_d
+TriangleCd<R CGAL_CTAG>::vertex(int i) const
 {
   if (i<0) i=(i%3)+3;
   else if (i>3) i=i%3;
@@ -96,46 +106,52 @@ TriangleC3<R CGAL_CTAG>::vertex(int i) const
 
 template < class R >
 inline
-typename TriangleC3<R CGAL_CTAG>::Point_3
-TriangleC3<R CGAL_CTAG>::operator[](int i) const
+typename TriangleCd<R CGAL_CTAG>::Point_d
+TriangleCd<R CGAL_CTAG>::operator[](int i) const
 {
   return vertex(i);
 }
 
 template < class R >
 inline
-typename TriangleC3<R CGAL_CTAG>::Plane_3
-TriangleC3<R CGAL_CTAG>::supporting_plane() const
+typename TriangleCd<R CGAL_CTAG>::Plane_d
+TriangleCd<R CGAL_CTAG>::supporting_plane() const
 {
-  return Plane_3(vertex(0), vertex(1), vertex(2));
+  CGAL_kernel_precondition( dimension()==3 );
+  Point_d v[3] = { vertex(0), vertex(1), vertex(2) };;
+  return Plane_d(v+0, v+3); 
 }
 
+/*
 template < class R >
-Bbox_3
-TriangleC3<R CGAL_CTAG>::bbox() const
+Bbox_d
+TriangleCd<R CGAL_CTAG>::bbox() const
 {
   return vertex(0).bbox() + vertex(1).bbox() + vertex(2).bbox();
 }
+*/
 
 template < class R >
 inline
-TriangleC3<R CGAL_CTAG>
-TriangleC3<R CGAL_CTAG>::
+TriangleCd<R CGAL_CTAG>
+TriangleCd<R CGAL_CTAG>::
 transform
-  (const typename TriangleC3<R CGAL_CTAG>::Aff_transformation_3 &t) const
+  (const typename TriangleCd<R CGAL_CTAG>::Aff_transformation_d &t) const
 {
-  return TriangleC3<R CGAL_CTAG>(t.transform(vertex(0)),
+  return TriangleCd<R CGAL_CTAG>(t.transform(vertex(0)),
                         t.transform(vertex(1)),
                         t.transform(vertex(2)));
 }
 
 template < class R >
 bool
-TriangleC3<R CGAL_CTAG>::
-has_on(const typename TriangleC3<R CGAL_CTAG>::Point_3 &p) const
+TriangleCd<R CGAL_CTAG>::
+has_on(const typename TriangleCd<R CGAL_CTAG>::Point_d &p) const
 {
-  Point_3  o  = vertex(0) + supporting_plane().orthogonal_vector();
-  Vector_3 v0 = vertex(0)-o,
+  // Can't check coplanar in any dimension (only 3), so this assumes
+  // that the kernel is 3 dimensional
+  Point_d  o  = vertex(0) + supporting_plane().orthogonal_vector();
+  Vector_d v0 = vertex(0)-o,
            v1 = vertex(1)-o,
            v2 = vertex(2)-o;
 
@@ -147,14 +163,14 @@ has_on(const typename TriangleC3<R CGAL_CTAG>::Point_3 &p) const
 
 template < class R >
 bool
-TriangleC3<R CGAL_CTAG>::is_degenerate() const
+TriangleCd<R CGAL_CTAG>::is_degenerate() const
 {
   return collinear(vertex(0),vertex(1),vertex(2));
 }
 
-#ifndef CGAL_NO_OSTREAM_INSERT_TRIANGLEC3
+#ifndef CGAL_NO_OSTREAM_INSERT_TRIANGLECD
 template < class R >
-std::ostream &operator<<(std::ostream &os, const TriangleC3<R CGAL_CTAG> &t)
+std::ostream &operator<<(std::ostream &os, const TriangleCd<R CGAL_CTAG> &t)
 {
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -162,24 +178,24 @@ std::ostream &operator<<(std::ostream &os, const TriangleC3<R CGAL_CTAG> &t)
     case IO::BINARY :
         return os << t[0]  << t[1]  << t[2];
     default:
-        os << "TriangleC3(" << t[0] <<  ", " << t[1] <<   ", " << t[2] <<")";
+        os << "TriangleCd(" << t[0] <<  ", " << t[1] <<   ", " << t[2] <<")";
         return os;
     }
 }
-#endif // CGAL_NO_OSTREAM_INSERT_TRIANGLEC3
+#endif // CGAL_NO_OSTREAM_INSERT_TRIANGLECD
 
-#ifndef CGAL_NO_ISTREAM_EXTRACT_TRIANGLEC3
+#ifndef CGAL_NO_ISTREAM_EXTRACT_TRIANGLECD
 template < class R >
-std::istream &operator>>(std::istream &is, TriangleC3<R CGAL_CTAG> &t)
+std::istream &operator>>(std::istream &is, TriangleCd<R CGAL_CTAG> &t)
 {
-    typename TriangleC3<R CGAL_CTAG>::Point_3 p, q, r;
+    typename TriangleCd<R CGAL_CTAG>::Point_d p, q, r;
 
     is >> p >> q >> r;
 
-    t = TriangleC3<R CGAL_CTAG>(p, q, r);
+    t = TriangleCd<R CGAL_CTAG>(p, q, r);
     return is;
 }
-#endif // CGAL_NO_ISTREAM_EXTRACT_TRIANGLEC3
+#endif // CGAL_NO_ISTREAM_EXTRACT_TRIANGLECD
 
 CGAL_END_NAMESPACE
 
@@ -187,4 +203,4 @@ CGAL_END_NAMESPACE
 #undef typename
 #endif
 
-#endif // CGAL_CARTESIAN_TRIANGLE_3_C
+#endif // CGAL_CARTESIAN_TRIANGLE_D_C

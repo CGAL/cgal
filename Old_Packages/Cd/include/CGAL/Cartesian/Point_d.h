@@ -31,10 +31,12 @@ public:
   typedef PointCd<R,Cartesian_tag>              Self;
   typedef typename R::Vector_d                  Vector_d;
   typedef typename R::Direction_d               Direction_d;
+  typedef typename R::Aff_transformation_d      Aff_transformation_d;
 #else
   typedef PointCd<R>                            Self;
   typedef typename R::Vector_d_base             Vector_d;
   typedef typename R::Direction_d_base          Direction_d;
+  typedef typename R::Aff_transformation_d_base Aff_transformation_d;
 #endif
 
   friend class DACd<FT>;
@@ -76,6 +78,8 @@ public:
   FT             cartesian (int i) const;
   FT             operator[] (int i) const;
 
+  Self           transform(const Aff_transformation_d &t) const;
+
   const int      dimension() const { return ptr()->d; }
   const_iterator begin()     const { return ptr()->e; }
   const_iterator end()       const { return ptr()->e + dimension(); }
@@ -90,5 +94,9 @@ private:
 };
 
 CGAL_END_NAMESPACE
+
+#ifndef CGAL_CARTESIAN_CLASS_DEFINED
+#include <CGAL/Cartesian/Point_d.C>
+#endif 
 
 #endif // CGAL_CARTESIAN_POINT_D_H

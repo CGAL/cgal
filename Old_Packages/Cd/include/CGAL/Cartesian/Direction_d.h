@@ -28,11 +28,11 @@ public:
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
   typedef DirectionCd<R CGAL_CTAG>              Self;
   typedef typename R::Vector_d                  Vector_d;
-  // typedef typename R::Aff_transformation_d      Aff_transformation_d;
+  typedef typename R::Aff_transformation_d      Aff_transformation_d;
 #else
   typedef DirectionCd<R>                        Self;
   typedef typename R::Vector_d_base             Vector_d;
-  // typedef typename R::Aff_transformation_d_base Aff_transformation_d;
+  typedef typename R::Aff_transformation_d_base Aff_transformation_d;
 #endif
 
   DirectionCd(int d = 0);
@@ -59,7 +59,7 @@ public:
   bool           is_degenerate() const;
   Vector_d       to_vector() const;
   Self           operator-() const;
-  // Self           transform(const Aff_transformation_d &t) const;
+  Self           transform(const Aff_transformation_d &t) const;
 
   RT             delta(int i) const;
 

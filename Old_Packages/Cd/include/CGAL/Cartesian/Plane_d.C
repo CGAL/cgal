@@ -178,7 +178,6 @@ PlaneCd<R CGAL_CTAG>::base(int i) const
   return point(i+1)-point(0);
 }
 
-/*
 template < class R >
 inline
 typename PlaneCd<R CGAL_CTAG>::Line_d
@@ -187,7 +186,6 @@ perpendicular_line(const typename PlaneCd<R CGAL_CTAG>::Point_d &p) const
 {
   return Line_d(p, orthogonal_direction());
 }
-*/
 
 template < class R >
 inline
@@ -199,17 +197,13 @@ PlaneCd<R CGAL_CTAG>::opposite() const
   return h;
 }
 
-/*
 template < class R >
 PlaneCd<R CGAL_CTAG>
 PlaneCd<R CGAL_CTAG>::
 transform(const typename PlaneCd<R CGAL_CTAG>::Aff_transformation_d& t) const
 {
-  return PlaneCd<R CGAL_CTAG>( t.transform(point()), (t.is_even())
-           ?   t.transpose().inverse().transform(orthogonal_direction())
-           : - t.transpose().inverse().transform(orthogonal_direction()) );
+  return t.transform(*this);
 }
-*/
 
 template < class R >
 inline
@@ -270,11 +264,16 @@ template < class R >
 std::ostream &operator<<(std::ostream &os, const PlaneCd<R CGAL_CTAG> &h)
 {
   typedef typename R::FT FT;
+  // normalize but do it with a copy in order to keep h as const
+  PlaneCd<R CGAL_CTAG> m( h );
+  FT norm = std::inner_product(m.begin(),m.end()-1,m.begin(),FT(0));
+  std::transform(m.begin(),m.end(),m.begin(),
+                 std::bind2nd(std::divides<FT>(),CGAL::sqrt(norm)));
   print_d<FT> prt(&os);
   if (os.iword(IO::mode)==IO::PRETTY) os << "PlaneCd(";
-  prt(h.dimension());
-  if (os.iword(IO::mode)==IO::PRETTY) os << ", ("; prt.reset();
-  std::for_each(h.begin(),h.end(),prt);
+  prt(m.dimension());
+  if (os.iword(IO::mode)==IO::PRETTY) { os << ", ("; prt.reset(); }
+  std::for_each(m.begin(),m.end(),prt);
   if (os.iword(IO::mode)==IO::PRETTY) os << "))";
   return os;
 }

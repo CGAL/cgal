@@ -33,12 +33,12 @@ public:
   typedef VectorCd<R CGAL_CTAG>            Self;
   typedef typename R::Point_d              Point_d;
   typedef typename R::Direction_d          Direction_d;
-  // typedef typename R::Aff_transformation_d Aff_transformation_d;
+  typedef typename R::Aff_transformation_d Aff_transformation_d;
 #else
   typedef VectorCd<R>                           Self;
   typedef typename R::Point_d_base              Point_d;
   typedef typename R::Direction_d_base          Direction_d;
-  // typedef typename R::Aff_transformation_d_base Aff_transformation_d;
+  typedef typename R::Aff_transformation_d_base Aff_transformation_d;
 #endif
   
   friend CGAL_FRIEND_INLINE
@@ -68,13 +68,12 @@ public:
 
   Self&          operator=(const Self &v);
 
-  bool           operator==(const Self &p) const;
-  bool           operator!=(const Self &p) const;
+  bool           operator==(const Self &v) const;
+  bool           operator!=(const Self &v) const;
 
   bool           operator==(const Null_vector &) const;
   bool           operator!=(const Null_vector &) const;
 
-  long           id() const;
 
   FT             cartesian(int i) const;
   FT             operator[](int i) const;
@@ -89,9 +88,9 @@ public:
   Self           operator/(const FT &c) const;
 
   Direction_d    direction() const;
-  // Self           transform(const Aff_transformation_d &) const;
+  Self           transform(const Aff_transformation_d &) const;
 
-public:
+  long           id()        const { return (long) ptr(); }
   int            dimension() const { return ptr()->d; }
   const_iterator begin()     const { return ptr()->e; }
   const_iterator end()       const { return ptr()->e + dimension(); }

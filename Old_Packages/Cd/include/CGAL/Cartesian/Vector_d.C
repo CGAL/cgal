@@ -38,8 +38,8 @@ VectorCd(const VectorCd<R CGAL_CTAG> &v)
 template < class R >
 inline
 VectorCd<R CGAL_CTAG>::
-VectorCd(const typename VectorCd<R CGAL_CTAG>::Point_d &v)
-  : Handle((const Handle&)v)
+VectorCd(const typename VectorCd<R CGAL_CTAG>::Point_d &p)
+  : Handle((const Handle&)p)
 {
 }
 
@@ -100,13 +100,6 @@ template < class R >
 inline bool VectorCd<R CGAL_CTAG>::operator!=(const Null_vector &v) const
 {
   return !(*this == v);
-}
-
-template < class R >
-inline
-long VectorCd<R CGAL_CTAG>::id() const
-{
-  return (long) PTR;
 }
 
 template < class R >
@@ -205,7 +198,6 @@ VectorCd<R CGAL_CTAG>::direction() const
   return Direction_d(*this);
 }
 
-/*
 template < class R >
 VectorCd<R CGAL_CTAG>
 VectorCd<R CGAL_CTAG>::
@@ -213,7 +205,6 @@ transform(const typename VectorCd<R CGAL_CTAG>::Aff_transformation_d &t) const
 {
   return t.transform(*this);
 }
-*/
 
 #ifndef CGAL_CARTESIAN_NO_OSTREAM_INSERT_VECTORCD
 template < class R >
@@ -221,16 +212,12 @@ std::ostream &
 operator<<(std::ostream &os, const VectorCd<R CGAL_CTAG> &v)
 {
   typedef typename VectorCd<R CGAL_CTAG>::FT FT;
-  switch(os.iword(IO::mode)) {
-    case IO::ASCII :
-    case IO::BINARY :
-      std::for_each(v.begin(),v.end(),print_d<FT>(os));
-      break;
-    default:
-      os << "VectorCd(" << v.dimension() << ", ";
-      std::for_each(v.begin(),v.end(),print_d<FT>(os));
-      os << ")";
-  }
+  print_d<FT> prt(os);
+  if (os.iword(IO::mode) == IO::PRETTY) os << "VectorCd(";
+  prt(v.dimension());
+  if (os.iword(IO::mode) == IO::PRETTY) { os << ", ("; prt.reset(); }
+  std::for_each(v.begin(),v.end(),prt(os));
+  if (os.iword(IO::mode) == IO::PRETTY) os << "))";
   return os;
 }
 #endif // CGAL_CARTESIAN_NO_OSTREAM_INSERT_VECTORCD

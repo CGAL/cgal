@@ -20,4 +20,86 @@
 #include <CGAL/Point_d.h>
 #include <CGAL/Plane_d.h>
 
+CGAL_BEGIN_NAMESPACE
+
+template < class R >
+inline
+Comparison_result
+cmp_dist_to_point( const Point_d<R> &p,
+                   const Point_d<R> &q,
+                   const Point_d<R> &r)
+{
+  typedef typename  R::Point_d_base  RPoint_d;
+  return cmp_dist_to_point((const RPoint_d& )p,
+                           (const RPoint_d& )q,
+                           (const RPoint_d& )r);
+}
+
+template < class R >
+inline
+bool
+has_larger_dist_to_point( const Point_d<R> &p,
+                          const Point_d<R> &q,
+                          const Point_d<R> &r)
+{
+  typedef typename  R::Point_d_base  RPoint_d;
+  return has_larger_dist_to_point((const RPoint_d& )p,
+                                  (const RPoint_d& )q,
+                                  (const RPoint_d& )r);
+}
+
+template < class R >
+inline
+bool
+has_smaller_dist_to_point( const Point_d<R> &p,
+                           const Point_d<R> &q,
+                           const Point_d<R> &r)
+{
+  typedef typename  R::Point_d_base  RPoint_d;
+  return has_smaller_dist_to_point((const RPoint_d& )p,
+                                   (const RPoint_d& )q,
+                                   (const RPoint_d& )r);
+}
+
+template < class R >
+inline
+Comparison_result
+cmp_signed_dist_to_plane( const Point_d<R> &p,
+                          const Point_d<R> &q,
+                          const Point_d<R> &r)
+{
+  typedef typename  R::Point_d_base  RPoint_d;
+  return cmp_signed_dist_to_plane((const RPoint_d& )p,
+                                  (const RPoint_d& )q,
+                                  (const RPoint_d& )r);
+}
+
+template < class R >
+inline
+bool
+has_larger_signed_dist_to_plane( const Point_d<R> &p,
+                                 const Point_d<R> &q,
+                                 const Point_d<R> &r)
+{
+  typedef typename  R::Point_d_base  RPoint_d;
+  return has_larger_signed_dist_to_plane((const RPoint_d& )p,
+                                         (const RPoint_d& )q,
+                                         (const RPoint_d& )r);
+}
+
+template < class R >
+inline
+bool
+has_smaller_signed_dist_to_plane( const Point_d<R> &p,
+                                  const Point_d<R> &q,
+                                  const Point_d<R> &r)
+{
+  typedef typename  R::Point_d_base  RPoint_d;
+  return has_smaller_signed_dist_to_plane((const RPoint_d& )p,
+                                          (const RPoint_d& )q,
+                                          (const RPoint_d& )r);
+}
+
+CGAL_END_NAMESPACE
+
 #endif //CGAL_DISTANCE_PREDICATES_D_H

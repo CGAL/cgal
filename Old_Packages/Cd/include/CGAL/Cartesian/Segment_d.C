@@ -184,7 +184,6 @@ SegmentCd<R CGAL_CTAG>::opposite() const
   return SegmentCd<R CGAL_CTAG>(target(), source());
 }
 
-/*
 template < class R >
 inline
 SegmentCd<R CGAL_CTAG>
@@ -193,7 +192,6 @@ transform(const typename SegmentCd<R CGAL_CTAG>::Aff_transformation_d &t) const
 {
   return SegmentCd<R CGAL_CTAG>(t.transform(source()), t.transform(target()));
 }
-*/
 
 template < class R >
 inline

@@ -2,17 +2,11 @@
 // revision_date : $Date$
 // author(s)     : Herve.Bronnimann@sophia.inria.fr
 
-
 #ifndef CGAL_CARTESIAN_TRIANGLE_D_H
 #define CGAL_CARTESIAN_TRIANGLE_D_H
 
-#ifndef CGAL_CARTESIAN_REDEFINE_NAMES_D_H
 #include <CGAL/Cartesian/redefine_names_d.h>
-#endif
-
-#ifndef CGAL_CARTESIAN_THREETUPLE_H
 #include <CGAL/Threetuple.h>
-#endif // CGAL_CARTESIAN_THREETUPLE_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -42,7 +36,7 @@ public:
   typedef typename R::Aff_transformation_d_base Aff_transformation_d;
 #endif
 
-  TriangleCd(int d = 0);
+  TriangleCd();
   TriangleCd(const Self &t);
   TriangleCd(const Point_d &p, const Point_d &q, const Point_d &r);
   ~TriangleCd();
@@ -55,24 +49,24 @@ public:
   bool       operator==(const Self &t) const;
   bool       operator!=(const Self &t) const;
   long       id() const;
+  int        dimension() const;
+
+  // Bbox_d     bbox() const;
 
   Self       transform(const Aff_transformation_d &t) const;
 
+  // Only makes sense for 3D
+  Plane_d    supporting_plane() const;
+  // Makes sense for any dimension, but only implemented in 3D
   bool       has_on(const Point_d &p) const;
-  bool       is_degenerate() const;
+  // End of 3D section
 
-  Bbox_d     bbox() const;
+  bool       is_degenerate() const;
 
 private:
   _Threetuple< Point_d >*   ptr() const;
 };
 
 CGAL_END_NAMESPACE
-
-#ifndef CGAL_CARTESIAN_CLASS_DEFINED
-#ifndef CGAL_CARTESIAN_TRIANGLE_D_C
-#include <CGAL/Cartesian/Triangle_d.C>
-#endif // CGAL_CARTESIAN_TRIANGLE_D_C
-#endif 
 
 #endif // CGAL_CARTESIAN_TRIANGLE_D_H

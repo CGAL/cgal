@@ -27,11 +27,20 @@ public:
   
   Linear_algebraCd() {}
 
-  // Major routine for Linear_algebra_d
+protected:
+  // Major routines for Linear_algebra_d
   void   Gaussian_elimination(const Matrix &M,
-            Matrix &L, Matrix &U, FT &det, int &rank,
-            std::vector<int> &q, Vector &c) const;
+            Matrix &L, Matrix &U,
+            std::vector<int> &row_permutation,
+            std::vector<int> &column_permutation,
+	    FT &det, int &rank, Vector &c) const;
+  void   Triangular_system_solver(const Matrix &U, const Vector &x,
+            Vector &x, FT &det) const;
+  void   Triangular_left_inverse(const Matrix &U,
+            Matrix &Uinv) const;
 
+public:
+  std::pair<int,int> transpose(std::pair<int,int> dim) const;
   Matrix transpose(const Matrix &M) const;
 
   bool   inverse(const Matrix &M, Matrix &I, FT &D, Vector &c) const;

@@ -11,7 +11,9 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class NT >
+// Small object utility for printing objects
+// with separators depending on the ostream mode
+template < class Object >
 struct print_d
 {
   char *       _separator;
@@ -28,8 +30,7 @@ struct print_d
   {
     _print_sep = false;
   }
-
-  void operator()(const NT &x) {
+  void operator()(const Object &x) {
     if (_print_sep && _os->iword(IO::mode) != IO::BINARY)
       (*_os) << _separator;
     (*_os) << x;
@@ -44,4 +45,5 @@ struct print_d
 };
 
 CGAL_END_NAMESPACE
+
 #endif // CGAL_CARTESIAN_D_UTILS_H

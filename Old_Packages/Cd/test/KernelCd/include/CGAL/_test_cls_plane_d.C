@@ -87,10 +87,10 @@ _test_cls_plane_d(const gnuR& )
 
  assert( plc.has_on_boundary(plc.point()) );
  assert( plc.orthogonal_direction() == pla.orthogonal_direction() );
- // assert( plc.perpendicular_line( plc.point() )
- // == CGAL::Line_d<gnuR>( plc.point(), plc.orthogonal_direction()) );
- // assert( CGAL::Line_d<gnuR>( pl1.point(), pl1.point()+pl1.orthogonal_vector() )
- // == CGAL::Line_d<gnuR>( pl1.point(), pl1.orthogonal_direction()) );
+ assert( plc.perpendicular_line( plc.point() )
+  == CGAL::Line_d<gnuR>( plc.point(), plc.orthogonal_direction()) );
+ assert( CGAL::Line_d<gnuR>( pl1.point(), pl1.point()+pl1.orthogonal_vector() )
+  == CGAL::Line_d<gnuR>( pl1.point(), pl1.orthogonal_direction()) );
  CGAL::Point_d<gnuR>  gnup(3,RT(345),RT(23),RT(0));
  assert( xy_pl.has_on_boundary( gnup ) );
 

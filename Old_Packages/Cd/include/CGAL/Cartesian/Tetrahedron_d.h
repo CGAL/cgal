@@ -1,17 +1,6 @@
-
-// release       :
-// release_date  :
-//
-// file          : include/CGAL/Cartesian/Tetrahedron_d.h
-// source        : include/CGAL/Cartesian/Tetrahedron_d.h
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Herve.Bronnimann@sophia.inria.fr
-//
-// coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
-//
-// ==========================================================================
-
 
 #ifndef CGAL_CARTESIAN_TETRAHEDRON_D_H
 #define CGAL_CARTESIAN_TETRAHEDRON_D_H
@@ -50,7 +39,7 @@ public:
   typedef typename R::Aff_transformation_d_base Aff_transformation_d;
 #endif
 
-  TetrahedronCd(int d = 0);
+  TetrahedronCd();
   TetrahedronCd(const Self &t);
   TetrahedronCd(const Point_d &p,
                 const Point_d &q,
@@ -66,13 +55,27 @@ public:
   bool       operator==(const Self &t) const;
   bool       operator!=(const Self &t) const;
   long       id() const;
+  int        dimension() const;
 
-  Bbox_d     bbox() const;
-
+  // Bbox_d     bbox() const;
   Self       transform(const Aff_transformation_d &t) const;
 
-  bool       has_on(const Point_d &p) const;
+  // Only makes sense for 3D
+  Orientation   orientation() const;
+
+  Oriented_side oriented_side(const Point_d &p) const;
+  Bounded_side  bounded_side(const Point_d &p) const;
+
+  bool          has_on_positive_side(const Point_d &p) const;
+  bool          has_on_negative_side(const Point_d &p) const;
+  bool          has_on_bounded_side(const Point_d &p) const;
+  bool          has_on_unbounded_side(const Point_d &p) const;
+  bool          has_on_boundary(const Point_d &p) const;
+  bool          has_on(const Point_d &p) const;
+
+  // Makes sense for any dimension, but only implemented in 3D
   bool       is_degenerate() const;
+  // End of 3D section
 
 private:
   _Fourtuple< Point_d >*   ptr() const;

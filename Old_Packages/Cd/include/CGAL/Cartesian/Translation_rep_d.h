@@ -20,6 +20,8 @@ public:
   typedef Aff_transformation_repCd<R>                   Transformation_d;
   typedef Translation_repCd<R>                          Translation_d;
   typedef Scaling_repCd<R>                              Scaling_d;
+  typedef Homothecy_repCd<R>                            Homothecy_d;
+  typedef Reflexion_repCd<R>                            Reflexion_d;
   typedef typename Transformation_base_d::Point_d       Point_d;
   typedef typename Transformation_base_d::Vector_d      Vector_d;
   typedef typename Transformation_base_d::Direction_d   Direction_d;
@@ -82,15 +84,6 @@ public:
     if (j==i) return FT(1);
     if (j==dimension()) return _translationvector[i];
     return FT(0);
-  }
-
-  virtual std::ostream &print(std::ostream &os) const
-  {
-    FT ft0(0), ft1(1);
-    os << "Aff_transformationCd(VectorCd("<< _translationvector.x() << ","
-       << _translationvector.y() << ","
-       << _translationvector.z() << "))\n";
-    return os;
   }
 
 private:

@@ -27,13 +27,13 @@ public:
   typedef typename R::Point_d                   Point_d;
   typedef typename R::Direction_d               Direction_d;
   typedef typename R::Line_d                    Line_d;
-  // typedef typename R::Aff_transformation_d      Aff_transformation_d;
+  typedef typename R::Aff_transformation_d      Aff_transformation_d;
 #else
   typedef RayCd<R>                              Self;
   typedef typename R::Point_d_base              Point_d;
   typedef typename R::Direction_d_base          Direction_d;
   typedef typename R::Line_d_base               Line_d;
-  // typedef typename R::Aff_transformation_d_base Aff_transformation_d;
+  typedef typename R::Aff_transformation_d_base Aff_transformation_d;
 #endif
 
   RayCd();
@@ -57,7 +57,7 @@ public:
   Line_d      supporting_line() const;
   Self        opposite() const;
 
-  // Self        transform(const Aff_transformation_d &t) const;
+  Self        transform(const Aff_transformation_d &t) const;
 
   bool        is_degenerate() const;
   bool        has_on(const Point_d &p) const;

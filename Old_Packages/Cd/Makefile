@@ -23,9 +23,6 @@ package: clean $(Package).tar.gz
 
 	@echo "----------------------------------"
 
-symlinks:
-	cd include/CGAL/Cartesian ; sh ./create_symlinks_3
-
 test:
 	cd test/KernelCd ; ./cgal_test
 
@@ -52,8 +49,7 @@ submit: package
 
 clean:
 	rm -f $(Package).tar.gz
-	cd include/CGAL/Cartesian ; sh ./remove_symlinks_3
-	cd test/Kernel ; make distclean
+	cd test/KernelCd ; make distclean
 
 $(Package).tar.gz:
 	./check_headers.pl -u include/CGAL/*/*.[Ch]

@@ -60,15 +60,6 @@ lexicographically_d_smaller(const Point_d<R> &p,
 
 template < class R >
 inline
-Comparison_result
-compare_x(const Point_d<R> &p, const Point_d<R> &q, int i = 0)
-{
-  typedef typename  R::Point_d_base  RPoint_d;
-  return compare_x((const RPoint_d& )p, (const RPoint_d& )q, i);
-}
-
-template < class R >
-inline
 bool
 x_equal(const Point_d<R> &p,
         const Point_d<R> &q,
@@ -76,6 +67,15 @@ x_equal(const Point_d<R> &p,
 {
   typedef typename  R::Point_d_base  RPoint_d;
   return x_equal((const RPoint_d& )p, (const RPoint_d& )q, i);
+}
+
+template < class R >
+inline
+Comparison_result
+compare_x(const Point_d<R> &p, const Point_d<R> &q, int i = 0)
+{
+  typedef typename  R::Point_d_base  RPoint_d;
+  return compare_x((const RPoint_d& )p, (const RPoint_d& )q, i);
 }
 
 template < class InputIterator >
@@ -190,6 +190,5 @@ side_of_oriented_sphere( const PointIterator &first,
 }
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_PREDICATES_ON_POINTS_d_H

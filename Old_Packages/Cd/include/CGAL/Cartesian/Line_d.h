@@ -33,7 +33,7 @@ public:
   typedef typename R::Plane_d              Plane_d;
   typedef typename R::Ray_d                Ray_d;
   typedef typename R::Segment_d            Segment_d;
-  // typedef typename R::Aff_transformation_d Aff_transformation_d;
+  typedef typename R::Aff_transformation_d Aff_transformation_d;
 #else
   typedef LineCd<R>                             Self;
   typedef typename R::Point_d_base              Point_d;
@@ -42,7 +42,7 @@ public:
   typedef typename R::Plane_d_base              Plane_d;
   typedef typename R::Ray_d_base                Ray_d;
   typedef typename R::Segment_d_base            Segment_d;
-  // typedef typename R::Aff_transformation_d_base Aff_transformation_d;
+  typedef typename R::Aff_transformation_d_base Aff_transformation_d;
 #endif
 
   LineCd();
@@ -73,7 +73,7 @@ public:
   bool        has_on(const Point_d &p) const;
   bool        is_degenerate() const;
 
-  // Self        transform(const Aff_transformation_d &t) const;
+  Self        transform(const Aff_transformation_d &t) const;
 
 private:
   _Twotuple< Point_d >* ptr() const;

@@ -26,14 +26,18 @@ struct Cartesian_base_dynamic_d
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
     // Because of partial specialization, CGAL::Point_d<R> is selected as
     // CGAL::Point_d<Cartesian_d<FT>,Cartesian_tag>
-    typedef CGAL::Linear_algebra_d<FT,Cartesian_tag>  LA;
-    typedef CGAL::Point_d<R,Cartesian_tag>      Point_d;
+    typedef CGAL::Linear_algebra_d<FT,Rep_tag>  LA;
+    typedef CGAL::Point_d<R,Rep_tag>            Point_d;
     typedef CGAL::Vector_d<R,Rep_tag>           Vector_d;
     typedef CGAL::Direction_d<R,Rep_tag>        Direction_d;
     typedef CGAL::Plane_d<R,Rep_tag>            Plane_d;
     typedef CGAL::Line_d<R,Rep_tag>             Line_d;
     typedef CGAL::Ray_d<R,Rep_tag>              Ray_d;
     typedef CGAL::Segment_d<R,Rep_tag>          Segment_d;
+    typedef CGAL::Triangle_d<R,Rep_tag>         Triangle_d;
+    typedef CGAL::Tetrahedron_d<R,Rep_tag>      Tetrahedron_d;
+    typedef CGAL::Simplex_d<R,Rep_tag>          Simplex_d;
+    typedef CGAL::Aff_transformation_d<R,Rep_tag> Aff_transformation_d;
 #else
     typedef Linear_algebraCd<FT>                LA;
     typedef PointCd<R>                          Point_d;
@@ -43,13 +47,16 @@ struct Cartesian_base_dynamic_d
     typedef LineCd<R>                           Line_d;
     typedef RayCd<R>                            Ray_d;
     typedef SegmentCd<R>                        Segment_d;
+    typedef TriangleCd<R>                       Triangle_d;
+    typedef TetrahedronCd<R>                    Tetrahedron_d;
+    typedef SimplexCd<R>                        Simplex_d;
+    typedef Aff_transformationCd<R>             Aff_transformation_d;
 #endif // CGAL_CFG_NO_ADVANCED_KERNEL
 };
 
 CGAL_END_NAMESPACE
 
 #include <CGAL/Cartesian/Linear_algebra_d.h>
-
 #include <CGAL/Cartesian/Point_d.h>
 #include <CGAL/Cartesian/Vector_d.h>
 #include <CGAL/Cartesian/Direction_d.h>
@@ -57,6 +64,10 @@ CGAL_END_NAMESPACE
 #include <CGAL/Cartesian/Line_d.h>
 #include <CGAL/Cartesian/Ray_d.h>
 #include <CGAL/Cartesian/Segment_d.h>
+#include <CGAL/Cartesian/Triangle_d.h>
+#include <CGAL/Cartesian/Tetrahedron_d.h>
+#include <CGAL/Cartesian/Simplex_d.h>
+#include <CGAL/Cartesian/Aff_transformation_d.h>
 
 #include <CGAL/Cartesian/global_operators_d.h>
 #include <CGAL/Cartesian/constructions_on_planes_d.h>
@@ -64,9 +75,9 @@ CGAL_END_NAMESPACE
 #include <CGAL/Cartesian/predicates_on_points_d.h>
 #include <CGAL/Cartesian/predicates_on_directions_d.h>
 #include <CGAL/Cartesian/predicates_on_planes_d.h>
+#include <CGAL/Cartesian/distance_predicates_d.h>
 
 #include <CGAL/Cartesian/Linear_algebra_d.C>
-
 #include <CGAL/Cartesian/Point_d.C>
 #include <CGAL/Cartesian/Vector_d.C>
 #include <CGAL/Cartesian/Direction_d.C>
@@ -74,6 +85,10 @@ CGAL_END_NAMESPACE
 #include <CGAL/Cartesian/Line_d.C>
 #include <CGAL/Cartesian/Ray_d.C>
 #include <CGAL/Cartesian/Segment_d.C>
+#include <CGAL/Cartesian/Triangle_d.C>
+#include <CGAL/Cartesian/Tetrahedron_d.C>
+#include <CGAL/Cartesian/Simplex_d.C>
+#include <CGAL/Cartesian/Aff_transformation_d.C>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -105,6 +120,11 @@ struct Cartesian_dynamic_d
     typedef typename Kernel_base::Line_d        Line_d;
     typedef typename Kernel_base::Ray_d         Ray_d;
     typedef typename Kernel_base::Segment_d     Segment_d;
+    typedef typename Kernel_base::Triangle_d    Triangle_d;
+    typedef typename Kernel_base::Tetrahedron_d Tetrahedron_d;
+    typedef typename Kernel_base::Simplex_d     Simplex_d;
+    typedef typename Kernel_base::Aff_transformation_d
+	                                        Aff_transformation_d;
 
 #else
     // Now CGAL::Point_d<R> is only a wrapper around CGAL::PointCd<R>
@@ -121,6 +141,11 @@ struct Cartesian_dynamic_d
     typedef typename Kernel_base::Line_d        Line_d_base;
     typedef typename Kernel_base::Ray_d         Ray_d_base;
     typedef typename Kernel_base::Segment_d     Segment_d_base;
+    typedef typename Kernel_base::Triangle_d    Triangle_d_base;
+    typedef typename Kernel_base::Tetrahedron_d Tetrahedron_d_base;
+    typedef typename Kernel_base::Simplex_d     Simplex_d_base;
+    typedef typename Kernel_base::Aff_transformation_d
+	                                        Aff_transformation_d_base;
 
     // Note: necessary to qualify Point_d by ::CGAL:: to disambiguate between
     // Point_d in the current namespace (nested within CGAL) and
@@ -133,6 +158,10 @@ struct Cartesian_dynamic_d
     typedef Line_d<Self>                        Line_d;
     typedef Ray_d<Self>                         Ray_d;
     typedef Segment_d<Self>                     Segment_d;
+    typedef Triangle_d<Self>                    Triangle_d;
+    typedef Tetrahedron_d<Self>                 Tetrahedron_d;
+    typedef Simplex_d<Self>                     Simplex_d;
+    typedef Aff_transformation_d<Self>          Aff_transformation_d;
 
     // TODO: cleanup
     static   FT make_FT(const RT & num, const RT& denom) { return num/denom;}

@@ -39,6 +39,7 @@ public:
   LA_vectorCd(const FT &a, const FT &b);
   LA_vectorCd(const FT &a, const FT &b, const FT &c);
   LA_vectorCd(const FT &a, const FT &b, const FT &c, const FT &d);
+  LA_vectorCd(const Handle &v);
   LA_vectorCd(const Self &v);
   template < class InputIterator >
   LA_vectorCd(InputIterator first, InputIterator last)
@@ -64,7 +65,9 @@ public:
   Self           operator/(const FT &c) const;
 
   // Component access
+  long           id()              const { return (long) ptr(); }
   int            dimension()       const { return ptr()->d; }
+
   const_iterator begin()           const { return ptr()->e; }
   const_iterator end()             const { return ptr()->e + dimension(); }
   const FT      &operator[](int i) const { return *(begin()+i); }

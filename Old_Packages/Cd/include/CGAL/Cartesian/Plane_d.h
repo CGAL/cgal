@@ -33,19 +33,15 @@ public:
   typedef typename R::Point_d                   Point_d;
   typedef typename R::Vector_d                  Vector_d;
   typedef typename R::Direction_d               Direction_d;
-  // typedef typename R::Line_d                    Line_d;
-  // typedef typename R::Ray_d                     Ray_d;
-  // typedef typename R::Segment_d                 Segment_d;
-  // typedef typename R::Aff_transformation_d      Aff_transformation_d;
+  typedef typename R::Line_d                    Line_d;
+  typedef typename R::Aff_transformation_d      Aff_transformation_d;
 #else
   typedef PlaneCd<R>                            Self;
   typedef typename R::Point_d_base              Point_d;
   typedef typename R::Vector_d_base             Vector_d;
   typedef typename R::Direction_d_base          Direction_d;
-  // typedef typename R::Line_d_base               Line_d;
-  // typedef typename R::Ray_d_base                Ray_d;
-  // typedef typename R::Segment_d_base            Segment_d;
-  // typedef typename R::Aff_transformation_d_base Aff_transformation_d;
+  typedef typename R::Line_d_base               Line_d;
+  typedef typename R::Aff_transformation_d_base Aff_transformation_d;
 #endif
 
   PlaneCd(int d = 0);
@@ -66,14 +62,14 @@ public:
       CGAL_kernel_assertion( last-first == d);
       new_rep(first,last,w);
     }
-  template < class InputIterator >
-  PlaneCd(const InputIterator &first, const InputIterator &last)
+  template < class PointIterator >
+  PlaneCd(const PointIterator &first, const PointIterator &last)
     { 
       Self h = plane_from_points(first->dimension(),first,last,R());
       new_rep(h.begin(),h.end());
     }
-  template < class InputIterator >
-  PlaneCd(const InputIterator &first, const InputIterator &last,
+  template < class PointIterator >
+  PlaneCd(const PointIterator &first, const PointIterator &last,
           const Point_d &o, Oriented_side side = POSITIVE)
     {
       Self h = plane_from_points(first->dimension(),first,last,o,side,R());
@@ -93,12 +89,12 @@ public:
   Vector_d       orthogonal_vector() const;
   Direction_d    orthogonal_direction() const;
   Vector_d       base(const int i) const;
-  // Line_d         perpendicular_line(const Point_d &p) const;
+  Line_d         perpendicular_line(const Point_d &p) const;
   Self           opposite() const;
 
   Point_d        to_plane_basis(const Point_d &p) const;
 
-  // Self           transform(const Aff_transformation_d &t) const;
+  Self           transform(const Aff_transformation_d &t) const;
 
   Oriented_side  oriented_side(const Point_d &p) const;
   bool           has_on_boundary(const Point_d &p) const;
