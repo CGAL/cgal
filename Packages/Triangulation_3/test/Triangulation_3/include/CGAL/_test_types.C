@@ -206,17 +206,17 @@ CGAL::Comparison_result compare() const
 
 class _Triangulation_test_traits_3 {
 public :
-  typedef Triangulation_test_point                Point;
+  typedef Triangulation_test_point                Point_3;
 
   typedef CGAL::Point_2<CGAL::Cartesian<double> >        Point2;
   typedef CGAL::Point_3<CGAL::Cartesian<double> >     Point3;
 
-  typedef Triangulation_test_segment              Segment;
-  typedef Triangulation_test_line                 Line;
-  typedef Triangulation_test_ray                  Ray;
-  typedef Triangulation_test_direction            Direction;
-  typedef Triangulation_test_triangle             Triangle;
-  typedef Triangulation_test_tetrahedron          Tetrahedron;
+  typedef Triangulation_test_segment              Segment_3;
+  typedef Triangulation_test_line                 Line_3;
+  typedef Triangulation_test_ray                  Ray_3;
+  typedef Triangulation_test_direction            Direction_3;
+  typedef Triangulation_test_triangle             Triangle_3;
+  typedef Triangulation_test_tetrahedron          Tetrahedron_3;
   typedef Triangulation_test_distance             Distance;
  
 
@@ -226,25 +226,25 @@ public :
 _Triangulation_test_traits_3 &operator=
 (const _Triangulation_test_traits_3 &) { return *this; }
 
-static
-CGAL::Comparison_result compare_x(const Point &p, const Point &q)
+  //static
+CGAL::Comparison_result compare_x(const Point_3 &p, const Point_3 &q) const
 { return CGAL_NTS compare(p.test_x(),q.test_x()); }
 
-static
-CGAL::Comparison_result compare_y(const Point &p, const Point &q)
+  //static
+CGAL::Comparison_result compare_y(const Point_3 &p, const Point_3 &q) const
 { return CGAL_NTS compare(p.test_y(), q.test_y()); }
 
-static
-CGAL::Comparison_result compare_z(const Point &p, const Point &q)
+//static
+CGAL::Comparison_result compare_z(const Point_3 &p, const Point_3 &q) const
 { return CGAL_NTS compare(p.test_z(), q.test_z()); }
 
-static
-bool equal(const Point &p, const Point &q)
+//static
+bool equal(const Point_3 &p, const Point_3 &q) const
 { return p.compare(q); }
 
-static
-CGAL::Orientation orientation(const Point & p, const Point & q, const
-			      Point & r,const Point & s) 
+//static
+CGAL::Orientation orientation(const Point_3 & p, const Point_3 & q, const
+			      Point_3 & r,const Point_3 & s)  const
 {
   Point3 p1(p.test_x(),p.test_y(),p.test_z());
   Point3 p2(q.test_x(),q.test_y(),q.test_z());
@@ -253,9 +253,9 @@ CGAL::Orientation orientation(const Point & p, const Point & q, const
   return CGAL::orientation(p1,p2,p3,p4);
 }
 
-static      
-CGAL::Orientation orientation_in_plane(const Point &q, const Point &r, 
-				       const Point &s, const Point &p)
+//static      
+CGAL::Orientation orientation_in_plane(const Point_3 &q, const Point_3 &r, 
+				       const Point_3 &s, const Point_3 &p) const
 {
 
   Point2 pxy(p.test_x(), p.test_y());
@@ -316,9 +316,9 @@ CGAL::Orientation orientation_in_plane(const Point &q, const Point &r,
   }
 }
 
-bool collinear(const Point & p,
-	       const Point & q,
-	       const Point & r) const
+bool collinear(const Point_3 & p,
+	       const Point_3 & q,
+	       const Point_3 & r) const
 {
   Point3 p1(p.test_x(),p.test_y(),p.test_z());
   Point3 p2(q.test_x(),q.test_y(),q.test_z());
