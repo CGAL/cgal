@@ -193,12 +193,12 @@ public:
     Locate_type lt;
     Face_handle fh = locate(p,lt,li, start);
     switch(lt) {
-    case Triangulation::OUTSIDE_AFFINE_HULL:
-    case Triangulation::VERTEX:
+    case Ctr::OUTSIDE_AFFINE_HULL:
+    case Ctr::VERTEX:
       return std::make_pair(fit,eit);
-    case Triangulation::FACE:
-    case Triangulation::EDGE:
-    case Triangulation::OUTSIDE_CONVEX_HULL:
+    case Ctr::FACE:
+    case Ctr::EDGE:
+    case Ctr::OUTSIDE_CONVEX_HULL:
       *fit++ = fh; //put fh in OutputItFaces
       std::pair<OutputItFaces,OutputItBoundaryEdges>
 	pit = std::make_pair(fit,eit);
