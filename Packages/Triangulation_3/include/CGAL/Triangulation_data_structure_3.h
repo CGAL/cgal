@@ -2749,15 +2749,17 @@ clear()
   CGAL_triangulation_assertion(_list_of_temporary_free_cells._previous_cell
 	  == &_list_of_temporary_free_cells);
 
+  Cell *it;
+
   // Delete the cells in the free_list.
-  for (Cell* it = _list_of_free_cells._next_cell; it != &_list_of_free_cells;
+  for (it = _list_of_free_cells._next_cell; it != &_list_of_free_cells;
        it = _list_of_free_cells._next_cell)
       delete it;
 
   if (number_of_vertices() == 0) {
     // the list of cells must be cleared even in this case
-    for (Cell* it = _list_of_cells._next_cell; it != past_end_cell();
-         it=_list_of_cells._next_cell)
+    for (it = _list_of_cells._next_cell; it != past_end_cell();
+         it = _list_of_cells._next_cell)
       delete it; // The ds_cell destructor removes it from the list.
 
     // then _list_of_cells points on itself, nothing more to do
@@ -2771,7 +2773,7 @@ clear()
 
   // deletion of the cells
   // does not use the cell iterator to work in any dimension
-  for (Cell* it = _list_of_cells._next_cell; it != past_end_cell();
+  for (it = _list_of_cells._next_cell; it != past_end_cell();
        it = _list_of_cells._next_cell)
   {
     // We save the vertices to delete them after.
@@ -2787,9 +2789,9 @@ clear()
   CGAL_triangulation_assertion(_list_of_cells._previous_cell==&_list_of_cells);
 
   // deletion of the vertices
-  for (typename std::vector<Vertex*>::iterator it = Vertices.begin();
-       it != Vertices.end(); ++it)
-    delete *it;
+  for (typename std::vector<Vertex*>::iterator vit = Vertices.begin();
+       vit != Vertices.end(); ++vit)
+    delete *vit;
 
   set_number_of_vertices(0);
   set_dimension(-2);
