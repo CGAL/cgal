@@ -1,0 +1,56 @@
+#!/sw/bin/perl5 -w
+
+use strict;
+my (
+    $last_version_file,
+    $Version_A,
+    $Version_B,
+    $Version_C,
+    $New_C,
+    $Version,
+    $VersionsDir,
+ ); 
+
+$ENV{PATH} = '/projects/CGAL/admin_scripts:/projects/CGAL/bin:/users/geert/bin:/sw/bin:/usr/bin:/usr/ucb:/usr/ccs/bin:/usr/openwin/bin:/ust/dt/bin:/users/geert/PUBLIC/bin';
+
+$last_version_file = '/projects/CGAL/lib/last_internal_release';
+$VersionsDir = '/projects/CGAL/Releases/Versions';
+
+# get current version
+
+open (VERSIONS, "$last_version_file") || die;
+$_ = <VERSIONS>;
+($Version_A,$Version_B,$Version_C)=($_ =~ /^\s*(\d+)\s+(\d+)\s+(\d+)\s*$/);
+close VERSIONS;
+
+
+if (! -d '/tmp/CGAL') {
+    mkdir('/tmp/CGAL',0775);
+}
+
+chdir '/tmp/CGAL';
+
+$New_C = $Version_C +1;
+$Version = "CGAL-${Version_A}.${Version_B}-I-${New_C}";
+
+system('create_release',"${Version_A}-${Version_B}-${New_C}");
+chdir $VersionsDir;
+
+system('finish_release',
+       "versions_CGAL-${Version_A}.${Version_B}-I-${Version_C}",
+       "versions_${Version}");
+
+#chdir '/private/CGAL';
+
+#system('xterm','-display','0:0','-e','autotest',"$Version");
+
+sub start_local_testsuite($)
+{
+    my $host = shift;
+    open (START_LOCAL_TEST,">/users/geert/tmp/start_cgal_testsuite_${host}");
+    print START_LOCAL_TEST "${Version}\n";
+    close(START_LOCAL_TEST);
+}
+
+start_local_testsuite("leros");
+start_local_testsuite("liguria");
