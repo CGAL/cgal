@@ -1,5 +1,8 @@
 Polyhedron Package: Release changes:
 ---------------------------------------------------------------------
+3.35 (27 Nov 2003) [rursu]
+- Moved Polyhedron_iterator_3.h in HalfedgeDS package
+
 
 3.34 (17 Nov 2003)
 - Fixed wrong include files for output support. Added easy example.

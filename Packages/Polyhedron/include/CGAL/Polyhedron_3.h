@@ -24,7 +24,7 @@
 #include <algorithm>
 #include <cstddef>
 
-#include <CGAL/Polyhedron_iterator_3.h>
+#include <CGAL/HalfedgeDS_iterator.h>
 #include <CGAL/Iterator_project.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/N_step_adaptor_derived.h>
@@ -74,21 +74,21 @@ public:
 
 public:
     // Circulator category.
-    typedef Polyhedron_circulator_traits<Supports_prev> Ctr;
+    typedef HalfedgeDS_circulator_traits<Supports_prev> Ctr;
     typedef typename Ctr::iterator_category circulator_category;
 
     // Circulators around a vertex and around a facet.
-    typedef I_Polyhedron_facet_circ< Halfedge_handle, circulator_category>
+    typedef I_HalfedgeDS_facet_circ< Halfedge_handle, circulator_category>
                                          Halfedge_around_facet_circulator;
 
-    typedef I_Polyhedron_vertex_circ< Halfedge_handle, circulator_category>
+    typedef I_HalfedgeDS_vertex_circ< Halfedge_handle, circulator_category>
                                         Halfedge_around_vertex_circulator;
 
-    typedef I_Polyhedron_facet_circ<
+    typedef I_HalfedgeDS_facet_circ<
         Halfedge_const_handle,
         circulator_category>       Halfedge_around_facet_const_circulator;
 
-    typedef I_Polyhedron_vertex_circ<
+    typedef I_HalfedgeDS_vertex_circ<
         Halfedge_const_handle,
         circulator_category>      Halfedge_around_vertex_const_circulator;
 
@@ -182,21 +182,21 @@ public:
 
 public:
     // Circulator category.
-    typedef Polyhedron_circulator_traits<Supports_prev> Ctr;
+    typedef HalfedgeDS_circulator_traits<Supports_prev> Ctr;
     typedef typename Ctr::iterator_category circulator_category;
 
     // Circulators around a vertex and around a facet.
-    typedef I_Polyhedron_facet_circ< Halfedge_handle, circulator_category>
+    typedef I_HalfedgeDS_facet_circ< Halfedge_handle, circulator_category>
                                          Halfedge_around_facet_circulator;
 
-    typedef I_Polyhedron_vertex_circ< Halfedge_handle, circulator_category>
+    typedef I_HalfedgeDS_vertex_circ< Halfedge_handle, circulator_category>
                                         Halfedge_around_vertex_circulator;
 
-    typedef I_Polyhedron_facet_circ<
+    typedef I_HalfedgeDS_facet_circ<
         Halfedge_const_handle,
         circulator_category>       Halfedge_around_facet_const_circulator;
 
-    typedef I_Polyhedron_vertex_circ<
+    typedef I_HalfedgeDS_vertex_circ<
         Halfedge_const_handle,
         circulator_category>      Halfedge_around_vertex_const_circulator;
 
@@ -325,21 +325,21 @@ public:
 
 public:
     // Circulator category.
-    typedef Polyhedron_circulator_traits<Supports_prev> Ctr;
+    typedef HalfedgeDS_circulator_traits<Supports_prev> Ctr;
     typedef typename Ctr::iterator_category circulator_category;
 
     // Circulators around a vertex and around a facet.
-    typedef I_Polyhedron_facet_circ< Halfedge_handle, circulator_category>
+    typedef I_HalfedgeDS_facet_circ< Halfedge_handle, circulator_category>
                                          Halfedge_around_facet_circulator;
 
-    typedef I_Polyhedron_vertex_circ< Halfedge_handle, circulator_category>
+    typedef I_HalfedgeDS_vertex_circ< Halfedge_handle, circulator_category>
                                         Halfedge_around_vertex_circulator;
 
-    typedef I_Polyhedron_facet_circ<
+    typedef I_HalfedgeDS_facet_circ<
         Halfedge_const_handle,
         circulator_category>       Halfedge_around_facet_const_circulator;
 
-    typedef I_Polyhedron_vertex_circ<
+    typedef I_HalfedgeDS_vertex_circ<
         Halfedge_const_handle,
         circulator_category>      Halfedge_around_vertex_const_circulator;
 
@@ -539,21 +539,21 @@ public:
 
 public:
     // Circulator category.
-    typedef Polyhedron_circulator_traits<Supports_prev> Ctr;
+    typedef HalfedgeDS_circulator_traits<Supports_prev> Ctr;
     typedef typename Ctr::iterator_category circulator_category;
 
     // Circulators around a vertex and around a facet.
-    typedef I_Polyhedron_facet_circ< Halfedge_handle, circulator_category>
+    typedef I_HalfedgeDS_facet_circ< Halfedge_handle, circulator_category>
                                          Halfedge_around_facet_circulator;
 
-    typedef I_Polyhedron_vertex_circ< Halfedge_handle, circulator_category>
+    typedef I_HalfedgeDS_vertex_circ< Halfedge_handle, circulator_category>
                                         Halfedge_around_vertex_circulator;
 
-    typedef I_Polyhedron_facet_circ<
+    typedef I_HalfedgeDS_facet_circ<
         Halfedge_const_handle,
         circulator_category>       Halfedge_around_facet_const_circulator;
 
-    typedef I_Polyhedron_vertex_circ<
+    typedef I_HalfedgeDS_vertex_circ<
         Halfedge_const_handle,
         circulator_category>      Halfedge_around_vertex_const_circulator;
 
