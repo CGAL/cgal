@@ -39,6 +39,7 @@ TDS
 - set_number_of_vertices(number_of_vertices()+1);  devrait etre dans la TDS ?
 
 T3
+- Utiliser Coplanar_orientation_3 qui prend 3 points au lieu de 4.
 - nettoyer flips/is_flippable (code duplique)
 - incident_facets, incident_cells (vieille demande de Frank a
   rediscuter) 
