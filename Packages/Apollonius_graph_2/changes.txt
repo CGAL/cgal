@@ -1,3 +1,18 @@
+25 April 2004  Menelaos Karavelas <mkaravel@cse.nd.edu>
+- changes in the traits: moved the various functors from
+  predicates/Apollonius_graph_predicates_C2.h to separate files named
+  predicates/Ag2_*.h; the two traits classes have been appropriately modified
+- the Apollonius_graph_face_base_2.h file no longer exists; changed the data
+  structures so that the requirement is now Triangulation_gace_base_2<Gt>;
+  this reduces the memory requirements
+- the version before these (major) changes can be recovered using the tag
+  before_design_changes_April_2004
+- the doc has been appropriately modified to reflect the changes in the
+  requirements of the face base class
+- the doc for the Apollonius_graph_2 class has been modified to define
+  size_type; also the types that are typedefs from the data structure are now
+  defined as typedefs instead of nested types
+
 13 April 2004 Menelaos Karavelas 
 - split the apollonius graph test suite into three separate parts;
   this will hopefully decrease compilation time and memory requirements
