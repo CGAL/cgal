@@ -1,6 +1,16 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 5.01 (20/6/01)
+- changed find_conflicts to get_conflicts
+to avoid VCC and BCC confusion with the
+deprecated (non templated version) of find_conflicts
+-changed  void insert(const Point & a, const Point & b);
+ to  void insert(const Point a, const Point b);
+in Constrained_Delaunay_triangulation_2.h.
+The first one is confused by VCC and BCC with the templated insert
+
+
 Ver 5.00 (19/6/01)
 - changed the package name and the files name from Triangulation to
 Triangulation_2
