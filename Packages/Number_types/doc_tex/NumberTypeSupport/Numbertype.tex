@@ -75,23 +75,21 @@ that even signed 8 bit number types can fulfill this condition.  }
 \ccSetThreeColumns{XXXXXX}{}{\hspace*{8.5cm}}
 \ccOperations
 \ccMethod{NT & operator=(const NT &ntval);}
-        {Assignment. 
-}
+        {Assignment.  }
 
 
 \ccFunction{bool is_valid(const NT &ntval);}
 {Not all values of a number type need be valid. The routine
 \ccStyle{is_valid} checks this. For example, an expression like
-\ccStyle{nt(0)/nt(0)} can result in an invalid number. Routines often
+\ccStyle{NT(0)/NT(0)} can result in an invalid number. Routines often
 have as a precondition that all numerical values are valid.}
 
 \ccFunction{bool is_finite(const NT &ntval);}
-{ When two large doubles are multiplied, the result may not fit in a
+{ When two large values are multiplied, the result may not fit in a
   \ccStyle{NT}. 
   Some number types (the standard \ccc{float} and \ccc{double} type
   when they conform to standards) have a way to represent a too big
-  value as infinity.  \ccStyle{is_finite} implies
-  \ccStyle{is_valid}.}
+  value as infinity.  \ccStyle{is_finite} implies \ccStyle{is_valid}.}
 
 \ccMethod{bool operator==(const NT &n) const;}
        {}
@@ -200,11 +198,10 @@ Those routines are implemented using the required operations from the
 previous section. They are defined by means of templates, so you do not
 have to supply all those operations when you write  a new number type.
 But if you have a better implementation for any of them, you can provide a 
-corresponding non-template function with the same name for your number types. 
-According to the rules for function name overloading, the non-template function
-gets preference over the template functions listed above. 
+corresponding overloading function with the same name for your number types,
+which will get preference over the template functions listed above.
 
-For the number types \ccc{bool}, \ccc{int}, and \ccc{double} there is
+For the number types \ccc{int}, and \ccc{double} there is
 the random numbers generator \ccc{Random}.
 
 %\ccInclude{CGAL/basic.h}
@@ -249,7 +246,7 @@ routines though which are automatically included by \cgal.
 All built-in number types of \CC\ can represent a discrete (bounded)
 subset of the rational numbers only.  We assume that the
 floating-point arithmetic of your machine follows {\sc Ieee}
-floating-point-standard.  Since the floating-point culture has much
+floating-point standard.  Since the floating-point culture has much
 more infrastructural support (hardware, language definition and
 compiler) than exact computation, it is very efficient.
 Like with all number types with finite precision representation
@@ -268,48 +265,9 @@ With the built-in integer types overflow might occur.
 %\newpage
 \section{Number Types Provided by \cgal}
 
-%% Currently, \cgal\ has no proper number types of its own.
-%% 
-%% In the future
-%% \cgal\ will provide a number type {\tt CGAL\_Integral\_double} 
-%% that stores integer values in variables of the type {\tt double}.  
-%% This has three advantages. First, according to {\sc Ieee} 
-%% standard the type {\tt
-%% double} uses 53 bits for the mantissa of the number (one of them
-%% implicitly by the normalization assumption), 1 bit for the sign, and
-%% 11 bits for the exponent.  This allows to store integers between
-%% $-2^{53}$ and $2^{53}$ which gives us a larger range than what you can
-%% get with the built-in type {\tt int}, which uses 32 bit on most platforms.
-%% 
-%% Secondly, most computers have floating-point units for fast {\tt
-%% double} arithmetic. The gain in speed carries through to integers
-%% stored in double variables.  Some machines even do not have special
-%% hardware for integers anymore.  The floating-point unit is used e.g.\
-%% for integer multiplication anyhow.
-%% 
-%% Finally, if a result of an arithmetic operation exceeds the range
-%% $[-2^{53},2^{53}]$, the 
-%% {\tt CGAL\_Integral\_double}s overflow nicely, the
-%% result approximates the correct value.  This is not true in the {\tt
-%% int} arithmetic.  On the other hand computations with {\tt int} are
-%% modulo $2^{32}$, which also has some nice effects.  If you have two
-%% expressions over the integers involving $+,-,*$ only, that give the
-%% same result, a test will report equality even if an overflow
-%% occurs. However the test falsely reports equality if the results
-%% differ by $2^{32}$.
-%% 
-%% The main advantage however is, that fast computation of the sign of
-%% the determinant of a matrix with entries of type 
-%% {\tt CGAL\_Integral\_double}
-%% according to \cite{ABDPY} is used in the geometric predicates of
-%% \cgal.
-%% 
-%% There will also be a number type {\tt CGAL\_Filtered\_integer}.  If this
-%% number type is used (with homogeneous representation) floating-point
-%% filters make exact computation in the geometric predicates of \cgal\
-%% more efficient.
-
 \input{Quotient}
+
+\input{MP_Float}
 
 \input{Fixedprecision}
 
