@@ -115,7 +115,7 @@ set_up_basis( )
 
     // initialize basis (with artificial variables)
     if ( B.size() > 0) B.erase( B.begin(), B.end());
-    B.insert( B.end(), qp_m, 0);
+    B.insert( B.end(), std::vector<int>::size_type(qp_m), 0);
     for ( ii = 0; ii < qp_m; ++ii) B[ ii] = qp_n+ii;
     art_basic = qp_m;
 
@@ -137,7 +137,7 @@ set_up_basis( )
     // initialize positions in basis
     if ( in_B.size() > 0) in_B.erase( in_B.begin(), in_B.end());
     in_B.reserve( qp_n+qp_m);
-    in_B.insert( in_B.end(), qp_n, -1);
+    in_B.insert( in_B.end(), std::vector<int>::size_type(qp_n), -1);
     for ( ii = 0; ii < qp_m; ++ii) in_B.push_back( ii);
 
     // initialize basis inverse
