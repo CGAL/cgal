@@ -7,8 +7,10 @@
 #ifndef CGAL_AFF_TRANSFORMATIONHD_H
 #define CGAL_AFF_TRANSFORMATIONHD_H
 
+#ifndef NOCGALINCL
 #include <CGAL/basic.h>
-#include <CGAL/Handle.h>
+#include <CGAL/Handle_for.h>
+#endif
 #include <CGAL/Kernel_d/PointHd.h>
 #include <CGAL/Kernel_d/VectorHd.h>
 #include <CGAL/Kernel_d/DirectionHd.h>

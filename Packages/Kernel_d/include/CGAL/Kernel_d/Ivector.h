@@ -261,27 +261,33 @@ NT operator[](int i) const
   return v[i];
 }
 
-Ivector<_NT,_ALLOC>& operator+=(const Ivector<_NT,_ALLOC>& v1);
+inline Ivector<_NT,_ALLOC>& operator+=(const Ivector<_NT,_ALLOC>& v1);
 /*{\Mbinop Addition plus assignment. \precond\\
-           |v.dimension() == v1.dimension()|.}*/
+|v.dimension() == v1.dimension()|.}*/
 
-Ivector<_NT,_ALLOC>& operator-=(const Ivector<_NT,_ALLOC>& v1);
+inline Ivector<_NT,_ALLOC>& operator-=(const Ivector<_NT,_ALLOC>& v1);
 /*{\Mbinop Subtraction plus assignment. \precond\\ 
-           |v.dimension() == v1.dimension()|.}*/
+|v.dimension() == v1.dimension()|.}*/
+
+inline Ivector<_NT,_ALLOC>& operator*=(const NT& s);
+/*{\Mbinop Scalar multiplication plus assignment.}*/
+
+inline Ivector<_NT,_ALLOC>& operator/=(const NT& s);
+/*{\Mbinop Scalar division plus assignment.}*/
  
 Ivector<_NT,_ALLOC>  operator+(const Ivector<_NT,_ALLOC>& v1) const;
 /*{\Mbinop Addition. \precond\\ 
-           |v.dimension() == v1.dimension()|.}*/
+|v.dimension() == v1.dimension()|.}*/
 
 Ivector<_NT,_ALLOC>  operator-(const Ivector<_NT,_ALLOC>& v1) const;
 /*{\Mbinop Subtraction. \precond\\ 
-           |v.dimension() = v1.dimension()|.}*/
+|v.dimension() = v1.dimension()|.}*/
 
 NT operator*(const Ivector<_NT,_ALLOC>& v1) const;
 /*{\Mbinop Inner Product. \precond\\ 
-           |v.dimension() = v1.dimension()|.}*/
+|v.dimension() = v1.dimension()|.}*/
 
-Ivector<_NT,_ALLOC>  compmul(const NT& r) const;
+Ivector<_NT,_ALLOC> compmul(const NT& r) const;
 
 Ivector<_NT,_ALLOC>  operator-() const;
 /*{\Munopfunc Negation.}*/
@@ -313,7 +319,7 @@ requirement is $O(|v.dimension()|)$. }*/
 template <class NT, class A> 
 Ivector<NT,A> operator*(const NT& r, const Ivector<NT,A>& v)
 /*{\Mbinopfunc Componentwise multiplication with number $r$.}*/
-{ return v.compmul(r); } 
+{ return v.compmul(r); }
 
 template <class NT, class A> 
 Ivector<NT,A> operator*(const Ivector<NT,A>& v, const NT& r)
@@ -345,6 +351,22 @@ operator-=(const Ivector<NT,A>& vec)
   check_dimensions(vec);
   register int n = dim;
   while (n--) v[n] -= vec.v[n];
+  return *this;
+}
+
+template <class NT, class A> 
+Ivector<NT,A>& Ivector<NT,A>::
+operator*=(const NT& s)
+{ register int n = dim;
+  while (n--) v[n] *= s;
+  return *this;
+}
+
+template <class NT, class A>
+Ivector<NT,A>& Ivector<NT,A>::
+operator/=(const NT& s)
+{ register int n = dim;
+  while (n--) v[n] /= s;
   return *this;
 }
 
@@ -449,7 +471,7 @@ std::istream& operator>>(std::istream& is, Ivector<_NT,_ALLOC>& v)
     case IO::BINARY :
       is >> dim;
       v = Ivector<_NT,_ALLOC>(dim);
-      std::copy_n(std::istream_iterator<_NT>(is),dim,v.begin());
+      copy_n(std::istream_iterator<_NT>(is),dim,v.begin());
       break;
     default:
       std::cerr<<"\nStream must be in ascii or binary mode"<<std::endl;

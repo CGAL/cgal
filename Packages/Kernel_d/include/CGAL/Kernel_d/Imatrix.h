@@ -38,6 +38,7 @@
 
 #include <math.h>
 #include <CGAL/Kernel_d/Ivector.h>
+#include <new>
 
 CGAL_BEGIN_NAMESPACE
 

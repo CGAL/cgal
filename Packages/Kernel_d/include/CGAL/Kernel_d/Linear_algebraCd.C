@@ -9,7 +9,7 @@
 // ----------------------------------------------------------------------
 //
 // release       : 1.1
-// release_date  : Jan 2001
+// release_date  : %-e Dec 1999
 //
 // file          : include/CGAL/Linear_algebraCd.C
 // package       : Kernel_d
@@ -67,9 +67,7 @@ Gaussian_elimination(const Matrix &M,
   // where M' is M whose rows and columns are permuted
   // Picked up on the way:
   // det, rank, non-trivial solution c if system is degenerate (c^t M = 0)
-  // Preconditions:
-  CGAL_kernel_precondition( M.row_dimension() <= M.column_dimension() );
-  // Temporaries
+
   int i, j, k;
   int dim  = M.row_dimension(), cdim = M.column_dimension();
   // All the parameters are already initialized (as in C++)
@@ -81,25 +79,25 @@ Gaussian_elimination(const Matrix &M,
   for (i=0; i<cdim; ++i) column_permutation.push_back(i);
   // Main loop : invariant is that L * M[q] = U
   // M[q] stands for M with row i permuted with row q[i]
-  //DEBUG: std::cerr << "START GAUSS ELIMINATION" << std::endl;
+    TRACEN("START GAUSS ELIMINATION");
   det = 1;
   for (k=0; k<dim; ++k) {
     // Total pivoting, without looking for the maximum entry
     for (i=k,j=k;
          j<cdim && U[i][j] == FT(0);
          (++i==dim)? ++j,i=k : 0 ) ;
-    //DEBUG: std::cerr << "before swap [k="<<k<<"] :";
-    //std::cerr << " found i="<<i<<" and j="<<j<<std::endl;
-    //DEBUG: std::cerr << U << std::endl;
+      TRACEN("before swap [k="<<k<<"] :");
+      TRACEN(" found i="<<i<<" and j="<<j);
+      TRACEV(U);
     if (j==cdim) break;
     if (i!=k) {
-      //DEBUG: std::cerr << "swap row i="<<i<<" and k="<<k<<std::endl;
+      TRACEN("swap row i="<<i<<" and k="<<k);
       U.swap_rows(i,k); L.swap_rows(i,k);
       std::swap(row_permutation[k], row_permutation[i]);
       sign = -sign;
     }
     if (j!=k) {
-      //DEBUG: std::cerr << "swap column j="<<j<<" and k="<<k<<std::endl;
+      TRACEN("swap column j="<<j<<" and k="<<k);
       U.swap_columns(j,k);  
       std::swap(column_permutation[j],column_permutation[k]);
       sign = -sign;
@@ -117,8 +115,8 @@ Gaussian_elimination(const Matrix &M,
         U[i][j] -= U[k][j] * temp;
     }
   }
-    TRACEN("END GAUSS ELIMINATION");
-    TRACEV(L);TRACEV(U);
+
+    TRACEN("END GAUSS ELIMINATION"); TRACEV(L);TRACEV(U);
     // By invariant, L * M[q] = U and det(M) = det
   rank = k;
   if (rank == dim) {
@@ -134,18 +132,16 @@ template < class FT >
 bool
 Linear_algebraCd<FT>::
 Triangular_system_solver(const Matrix &U, const Matrix& L, const Vector &b, 
-                         int rank,
-                         // return parameters
-                         Vector &x, FT &D)
+                         int rank, Vector &x, FT &D)
 { 
   // METHOD: solve system Ux=b, returning solution (x/D)
   // back substitution of x[rdim], x[rdim-1], etc.
   // depends on "free" variables x[rdim+1], etc. x[cdim]
   CGAL_kernel_assertion( U.row_dimension() == b.dimension());
+    TRACEN("Triangular_system_solver");TRACEV(U);TRACEV(b);
   D = FT(1);
-  for (int i = rank; i < U.column_dimension(); ++i) 
-    if ( b[i] != FT(0) ) 
-    { x = L.row(i); return false; }
+  for (int i = rank; i < U.row_dimension(); ++i) 
+    if ( b[i] != FT(0) ) { x = L.row(i); return false; }
 
   x = Vector(U.column_dimension());
   for (int i = rank-1; i>=0; --i) {
@@ -161,14 +157,11 @@ template < class FT >
 inline // in order to facilitate the optimization with unused variables
 void
 Linear_algebraCd<FT>::
-Triangular_left_inverse(const Linear_algebraCd<FT>::Matrix &U,
-                        // return parameters
-                        Linear_algebraCd<FT>::Matrix &Uinv)
+Triangular_left_inverse(const Matrix &U, Matrix &Uinv)
 {
   int i, j, k;
-  CGAL_kernel_precondition( U.dimension() == transpose(Uinv.dimension()) );
-  //DEBUG: std::cerr << "system : " << U << std::endl;
-  // std::fill(Uinv.begin(), Uinv.end(), FT(0));
+  CGAL_kernel_precondition(U.dimension() == transpose(Uinv.dimension()));
+    TRACEN("system : " << U);
   for (i=U.row_dimension()-1; i>=0; --i) {
     Uinv[i][i] = FT(1)/U[i][i];
     for (j=i+1; j<U.column_dimension(); ++j) {
@@ -177,8 +170,7 @@ Triangular_left_inverse(const Linear_algebraCd<FT>::Matrix &U,
       Uinv[i][j] /= U[j][j];
     }
   }
-  //DEBUG: std::cerr << "finally : " << Uinv << std::endl;
-  // std::cerr << "sanity check : " << U*Uinv << std::endl;
+    TRACEN("finally : " << Uinv);
 }
 
 template < class FT >
@@ -186,19 +178,20 @@ bool
 Linear_algebraCd<FT>::
 inverse(const Matrix &M, Matrix &I, FT &D, Vector &c)
 {
-  Matrix L(M.dimension());
-  Matrix U(M.dimension());
-  Matrix Uinv(M.column_dimension(),M.row_dimension());
+  CGAL_kernel_precondition(M.row_dimension()==M.column_dimension());
   int rank;
+  Matrix L,U;
   std::vector<int> rq, cq;
   Gaussian_elimination(M, L, U, rq, cq, D, rank, c);
   if (D == FT(0)) return false; // c holds the witness
   // Otherwise, compute the inverse of U
+  Matrix Uinv(M.column_dimension(),M.row_dimension());
   Triangular_left_inverse(U,Uinv);
   Uinv = Uinv * L;
   // Don't forget to permute the rows of M back
 
-  //DEBUG: std::cerr << "inverse before permutation : " << I << std::endl;
+    TRACEN("inverse before permutation : "<<I);
+  I = Matrix(M.column_dimension(),M.row_dimension());
   for (rank=0; rank<I.column_dimension(); ++rank)
     std::copy(Uinv.row_begin(cq[rank]), Uinv.row_end(cq[rank]),
               I.row_begin(rank));
@@ -212,9 +205,8 @@ typename Linear_algebraCd<FT>::Matrix
 Linear_algebraCd<FT>::
 inverse(const Matrix &M, FT &D)
 {
-  CGAL_kernel_precondition( M.row_dimension() == M.column_dimension() );
-  Matrix I(M.column_dimension(),M.row_dimension());
-  Vector c(M.row_dimension());
+  CGAL_kernel_precondition(M.row_dimension()==M.column_dimension());
+  Matrix I; Vector c;
   bool result = inverse(M,I,D,c);
   CGAL_kernel_precondition( result );
   return I;
@@ -238,10 +230,8 @@ typename Linear_algebraCd<FT>::FT
 Linear_algebraCd<FT>::
 determinant(const Matrix &M)
 {
-  Matrix L(M.dimension());
-  Matrix U(M.dimension());
+  Matrix L,U; Vector c;
   std::vector<int> q;
-  Vector c(M.column_dimension());
   return determinant(M,L,U,q,c);
 }
 
@@ -274,16 +264,13 @@ Linear_algebraCd<FT>::
 linear_solver(const Matrix &M, const Vector &b,
               Vector &x, FT &D, Vector &c)
 {
-  CGAL_kernel_precondition( M.row_dimension() <= M.column_dimension() );
   CGAL_kernel_precondition( b.dimension() == M.row_dimension() );
-  Matrix L(M.dimension());
-  Matrix U(M.dimension());
+  Matrix L,U;
   int rank;
-  std::vector<int> rq, cq;
+  std::vector<int> dummy, var;
 
-    TRACEV(M); TRACEV(b);
-  Gaussian_elimination(M, L, U, rq, cq, D, rank, c);
-    TRACEV(U); TRACEV(L);
+    TRACEN("linear_solver");TRACEV(M); TRACEV(b);
+  Gaussian_elimination(M, L, U, dummy, var, D, rank, c);
   // Compute a solution by solving triangular system
   // Since LM=U, and x is a solution of Mx=b, then Ux=Lb
   // Temporary store the solution in c
@@ -292,12 +279,15 @@ linear_solver(const Matrix &M, const Vector &b,
 
   // Don't forget to permute the rows of M back
   x = Vector(M.column_dimension());
-  for (rank=0; rank<U.row_dimension(); ++rank)
-    x[ cq[rank] ] = c[rank];
+  for (int i=0; i<U.column_dimension(); ++i)
+    x[ var[i] ] = c[i];
+#ifdef CGAL_LA_SELFTEST
+  CGAL_assertion( (M*x) == b );
+#endif
+
   return true;
 }
 
-#define CGAL_LA_SELFTEST
 
 template < class FT >
 bool
@@ -306,15 +296,13 @@ linear_solver(const Matrix &M, const Vector &b,
               Vector &x, FT &D, Matrix &spanning_vectors,
               Vector &c)
 {
-  CGAL_kernel_precondition( M.row_dimension() <= M.column_dimension() );
   CGAL_kernel_precondition( b.dimension() == M.row_dimension() );
   Matrix L,U;
   int rank;
   std::vector<int> dummy, var;
 
-    TRACEV(M); TRACEV(b);
+    TRACEN("linear_solver");TRACEV(M); TRACEV(b);
   Gaussian_elimination(M, L, U, dummy, var, D, rank, c);
-    TRACEV(U); TRACEV(L);
   // Compute a solution by solving triangular system
   // Since LM=U, and x is a solution of Mx=b, then Ux=Lb
   // Temporary store the solution in c
@@ -323,14 +311,14 @@ linear_solver(const Matrix &M, const Vector &b,
 
   // Don't forget to permute the rows of M back:
   x = Vector(M.column_dimension());
-  for (rank=0; rank<U.row_dimension(); ++rank)
-    x[ var[rank] ] = c[rank];
+  for (int i=0; i<U.column_dimension(); ++i)
+    x[ var[i] ] = c[i];
 
 #ifdef CGAL_LA_SELFTEST
   CGAL_assertion( (M*x) == b );
 #endif
 
-  int defect = M.column_dimension() - rank; 
+  int defect = M.column_dimension() - rank;
   spanning_vectors = Matrix(M.column_dimension(),defect); 
  
   if (defect > 0) { 
@@ -444,7 +432,7 @@ template < class FT >
 int
 Linear_algebraCd<FT>::
 independent_columns(const Matrix &M, std::vector<int> &q)
-{ CGAL_kernel_precondition( M.row_dimension() <= M.column_dimension() );
+{ 
   int rank;
   std::vector<int> dummy;
   Matrix Dummy1,Dummy2; Vector Dummy3; FT null(0);
@@ -457,9 +445,7 @@ int
 Linear_algebraCd<FT>::
 rank(const Matrix &M)
 { std::vector<int> q; 
-  if ( M.row_dimension() > M.column_dimension() )
-    return independent_columns(transpose(M),q);
-  return independent_columns(M,q); 
+  return independent_columns(M,q);
 }
 
 CGAL_END_NAMESPACE

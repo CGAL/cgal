@@ -130,9 +130,9 @@ static int sign_of_determinant (const Matrix& M);
         \precond  |M| is square. }*/
 
 static bool linear_solver(const Matrix& M, const Vector& b,
-                   Vector& x, RT& D, 
-                   Matrix& spanning_vectors, 
-                   Vector& c);
+                          Vector& x, RT& D, 
+                          Matrix& spanning_vectors, 
+                          Vector& c);
 /*{\Mstatic determines the complete solution space of the linear system 
             $M\cdot x = b$. If the system is unsolvable then 
             $c^T \cdot M = 0$ and $c^T \cdot b \not= 0$. 
@@ -142,8 +142,8 @@ static bool linear_solver(const Matrix& M, const Vector& b,
             \precond |M.row_dimension() = b.dimension()|. }*/
 
 static bool linear_solver(const Matrix& M, const Vector& b, 
-                   Vector& x, RT& D, 
-                   Vector& c) 
+                          Vector& x, RT& D, 
+                          Vector& c) 
 /*{\Mstatic determines whether the linear system $M\cdot x = b$ is 
            solvable. If yes, then $(1/D) x$ is a solution, if not then 
            $c^T \cdot M = 0$ and $c^T \cdot b \not= 0$.
@@ -154,7 +154,7 @@ static bool linear_solver(const Matrix& M, const Vector& b,
 }
 
 static bool linear_solver(const Matrix& M, const Vector& b,
-                   Vector& x, RT& D) 
+                          Vector& x, RT& D) 
 /*{\Mstatic as above, but without the witness $c$ 
            \precond |M.row_dimension() = b.dimension()|. }*/
 { 

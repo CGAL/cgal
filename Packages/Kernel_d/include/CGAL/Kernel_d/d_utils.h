@@ -23,6 +23,7 @@
 #ifndef CGAL_CARTESIAN_D_UTILS_H
 #define CGAL_CARTESIAN_D_UTILS_H
 
+#include <CGAL/copy_n.h>
 #include <iterator>
 #include <algorithm>
 #include <functional>

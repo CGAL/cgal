@@ -28,6 +28,8 @@ typedef double FT;
 
 int main(int argc, char* argv[])
 {
+  SETDTHREAD(131);
+  CGAL::set_pretty_mode ( std::cerr );
   CGAL_TEST_START;
   {
     typedef RT NT;
@@ -67,9 +69,13 @@ int main(int argc, char* argv[])
       NT res2 = ((v1-v2)*(v1+v2));
       CGAL_TEST(res1==res2);
       /* we test the third binomial formula */
+      Vector v21(v13),v22(v13);
+      v21 *= 13;
+      CGAL_TEST(v21 == 13*v22);
+      v21 /= 13;
+      CGAL_TEST(v21 == v22);
 
       if (IOTEST) CGAL_IO_TEST(v1,v2);
-      CGAL::set_pretty_mode ( cerr );
     }
 
     { 
@@ -154,8 +160,8 @@ int main(int argc, char* argv[])
       NT denom; 
       for (i = 0; i < mat_dim; i++) { 
         for (j = 0; j < mat_dim; j++) 
-          C(i,j) = CGAL::default_random.get_int( - mat_dim,mat_dim); 
-        b[i] = CGAL::default_random.get_int( - mat_dim,mat_dim); 
+          C(i,j) = CGAL::default_random.get_int(-mat_dim,mat_dim); 
+        b[i] = CGAL::default_random.get_int(-mat_dim,mat_dim); 
       }
 
       for (double f = 1.0; f > 0.0; f = f-=0.1) {
@@ -193,6 +199,22 @@ int main(int argc, char* argv[])
         }
         LA::independent_columns(E,q);
       }
+
+      if (mat_dim > 1) { // ueberbestimmt:
+        Matrix N(mat_dim,mat_dim-1);
+        for (i = 0; i < mat_dim; i++) { 
+          for (j = 0; j < mat_dim-1; j++) 
+            N(i,j) = CGAL::default_random.get_int(-mat_dim,mat_dim); 
+          b[i] = CGAL::default_random.get_int(-mat_dim,mat_dim); 
+        }
+        if (LA::linear_solver(N,b,x,denom,e)) {
+          CGAL_TEST(N*x == b*denom);
+        } else {
+          Vector null(mat_dim-1);
+          CGAL_TEST(LA::transpose(N)*e==null && b*e!=0);
+        }
+      }
+
     }
 
 
@@ -235,9 +257,13 @@ int main(int argc, char* argv[])
       NT res2 = ((v1-v2)*(v1+v2));
       CGAL_TEST(res1==res2);
       /* we test the third binomial formula */
+      Vector v21(v13),v22(v13);
+      v21 *= 13;
+      CGAL_TEST(v21 == 13*v22);
+      v21 /= 13;
+      CGAL_TEST(v21 == v22);
 
       if (IOTEST) CGAL_IO_TEST(v1,v2);
-      CGAL::set_pretty_mode ( cerr );
     }
 
     { 
@@ -322,8 +348,8 @@ int main(int argc, char* argv[])
       NT denom; 
       for (i = 0; i < mat_dim; i++) { 
         for (j = 0; j < mat_dim; j++) 
-          C(i,j) = CGAL::default_random.get_int( - mat_dim,mat_dim); 
-        b[i] = CGAL::default_random.get_int( - mat_dim,mat_dim); 
+          C(i,j) = CGAL::default_random.get_int(-mat_dim,mat_dim); 
+        b[i] = CGAL::default_random.get_int(-mat_dim,mat_dim); 
       }
 
       for (double f = 1.0; f > 0.0; f = f-=0.1) {
@@ -361,6 +387,22 @@ int main(int argc, char* argv[])
         }
         LA::independent_columns(E,q);
       }
+
+      if (mat_dim > 1) { // ueberbestimmt:
+        Matrix N(mat_dim,mat_dim-1);
+        for (i = 0; i < mat_dim; i++) { 
+          for (j = 0; j < mat_dim-1; j++) 
+            N(i,j) = CGAL::default_random.get_int(-mat_dim,mat_dim); 
+          b[i] = CGAL::default_random.get_int(-mat_dim,mat_dim); 
+        }
+        if (LA::linear_solver(N,b,x,denom,e)) {
+          CGAL_TEST(N*x == b*denom);
+        } else {
+          Vector null(mat_dim-1);
+          CGAL_TEST(LA::transpose(N)*e==null && b*e!=0);
+        }
+      }
+
     }
 
 

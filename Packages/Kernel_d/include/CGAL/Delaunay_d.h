@@ -73,10 +73,11 @@ indexed from $0$ to |dcur|.  For any simplex $s$ and any index $i$,
 |DT.vertex_of(s,i)| returns the $i$-th vertex of $s$. There may or may
 not be a simplex $t$ opposite to the vertex of $s$ with index $i$.
 The function |DT.opposite_simplex(s,i)| returns $t$ if it exists and
-returns |nil| otherwise. If $t$ exists then $s$ and $t$ share |dcur|
-vertices, namely all but the vertex with index $i$ of $s$ and the
-vertex with index |DT.index_of_vertex_in_opposite_simplex(s,i)| of
-$t$.  Assume that $t = |DT.opposite_simplex(s,i)|$ exists and let $j =
+returns |Simplex_handle()| otherwise. If $t$ exists then $s$ and $t$
+share |dcur| vertices, namely all but the vertex with index $i$ of $s$
+and the vertex with index
+|DT.index_of_vertex_in_opposite_simplex(s,i)| of $t$.  Assume that $t
+= |DT.opposite_simplex(s,i)|$ exists and let $j =
 |DT.index_of_vertex_in_opposite_simplex(s,i)|$. Then |s =
 DT.opposite_simplex(t,j)| and |i =
 DT.index_of_vertex_in_opposite_simplex(t,j)|.  In general, a vertex
@@ -822,7 +823,7 @@ Delaunay_d<R,Lifted_R>::
 locate(const Point_d& x) const
 { 
   int d = current_dimension();
-  if (d < 0) return nil;
+  if (d < 0) return Simplex_handle();
   if ( d == 0 ) {
     if ( x == point_of_simplex(origin_simplex_,0) )
       return origin_simplex_;

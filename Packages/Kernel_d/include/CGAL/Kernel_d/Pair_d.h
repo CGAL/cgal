@@ -28,24 +28,23 @@ respectively. There exists an orientation from _p1 to _p2. */
 public: 
 Pair_d(int d = 0) { _p[0]=_p[1]=Point_d(d); }
 
-Pair_d(const Point_d& p, const Point_d& q) 
+Pair_d(const Point_d& p, const Point_d& q)
 { CGAL_assertion_msg((p.dimension() == q.dimension()), 
   "Pair_d::constructor: source and target must have the same dimension."); 
   _p[0]=p; _p[1]=q;
 }
 
-Pair_d(const Self& p) 
-{ _p[0]=p._p[0]; _p[1]=p._p[1]; }
-Self& operator=(const Self& p) 
-{ _p[0]=p._p[0]; _p[1]=p._p[1]; return *this; }
+//Pair_d(const Self& p) { _p[0]=p._p[0]; _p[1]=p._p[1]; }
+//Self& operator=(const Self& p) 
+//{ _p[0]=p._p[0]; _p[1]=p._p[1]; return *this; }
 
-bool  is_degenerate() const
+bool is_degenerate() const
 { return (_p[0] == _p[1]); }
 
 Vector_d vector() const 
 { return (_p[1] - _p[0]); }
 
-Direction_d direction() const 
+Direction_d direction() const
 { return vector().direction(); }
 
 void read(std::istream& is)

@@ -30,39 +30,6 @@ transform(const Aff_transformationHd<RT,LA>& t) const
 }
 
 template <class RT, class LA>
-VectorHd<RT,LA> VectorHd<RT,LA>::scale(const RT& m, const RT& n) const
-{ int d = dimension(); 
-  VectorHd<RT,LA> result(d); 
-  result.entry(d) = entry(d) * n; 
-  for (int i = 0; i < d; i++) 
-    result.entry(i) = entry(i) * m; 
-  return result; 
-}
-
-template <class RT, class LA>
-void VectorHd<RT,LA>::self_scale(const RT& m, const RT& n)
-{ int d = dimension(); 
-  copy_on_write();
-  entry(d) *= n; 
-  for (int i = 0; i < d; i++) entry(i) *= m; 
-}
-
-template <class RT, class LA>
-VectorHd<RT,LA> operator*(int n, const VectorHd<RT,LA>& v) 
-{ return v.scale(n,1); }
-
-template <class RT, class LA>
-VectorHd<RT,LA> operator*(const RT& n, const VectorHd<RT,LA>& v) 
-/*{\Mbinopfunc returns the vector with Cartesian coordinates $n v_i$.}*/
-{ return v.scale(n,1); }
-
-template <class RT, class LA>
-VectorHd<RT,LA> operator*(const Quotient<RT>& r, const VectorHd<RT,LA>& v)
-/*{\Mbinopfunc returns the vector with Cartesian coordinates 
-$r v_i, 0 \leq i < d$.}*/
-{ return v.scale(r.numerator(),r.denominator()); }
-
-template <class RT, class LA>
 std::istream& operator>>(std::istream& I, VectorHd<RT,LA>& v)
 { v.copy_on_write(); v.ptr->read(I); 
   CGAL_assertion_msg((v.homogeneous(v.dimension()) > 0),

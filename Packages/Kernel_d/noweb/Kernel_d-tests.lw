@@ -5,54 +5,86 @@
 // coding: M. Seel
 //---------------------------------------------------------------------
 
-#include <CGAL/test_macros.h>
 #include <CGAL/basic.h>
 #include <CGAL/Homogeneous_d.h>
+#include <CGAL/Cartesian_d.h>
 #include <CGAL/constructions_d.h>
 #include <CGAL/predicates_d.h>
+#include <CGAL/double.h>
+#include <CGAL/test_macros.h>
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
+#include <CGAL/leda_real.h>
 typedef leda_integer RT;
+typedef leda_real FT;
 #else
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
 typedef CGAL::Gmpz RT;
+typedef double FT;
 #else
-#include <CGAL/double.h>
 typedef double RT;
+typedef double FT;
 #endif
 #endif
 
-typedef CGAL::Homogeneous_d<RT> HKernel;
-typedef HKernel::FT             FT;
-typedef HKernel::LA             LA;
-typedef CGAL::Point_d<HKernel>      Point;
-typedef CGAL::Vector_d<HKernel>     Vector;
-typedef CGAL::Direction_d<HKernel>  Direction;
-typedef CGAL::Hyperplane_d<HKernel> Hyperplane;
-typedef CGAL::Sphere_d<HKernel>     Sphere;
-typedef CGAL::Segment_d<HKernel>    Segment;
-typedef CGAL::Ray_d<HKernel>        Ray;
-typedef CGAL::Line_d<HKernel>       Line;
-typedef LA::Vector                  IVector;
-
-#define CGAL_TESTX(t) 
 
 int main()
-{ 
+{ SETDTHREAD(2);
+  CGAL::set_pretty_mode ( std::cerr );
   CGAL_TEST_START;
-  <<2d point tests>>
-  <<3d point tests>>
-  <<3d vector tests>>
-  <<3d direction tests>>
-  <<3d hyperplane tests>>
-  <<3d sphere tests>>
-  <<2d segment tests>>
-  <<2d ray tests>>
-  <<2d line tests>>
+{ // Homogeneous Kernel
+  <<homogeneous typedefs>>
+  <<test suite>>
+}
+{ // Cartesian Kernel
+  <<cartesian typedefs>>
+  <<test suite>>
+}
   CGAL_TEST_END;
 }
+
+<<homogeneous typedefs>>=
+typedef CGAL::Homogeneous_d<RT> Kernel;
+typedef Kernel::FT             NT;
+typedef Kernel::LA             LA;
+typedef CGAL::Point_d<Kernel>      Point;
+typedef CGAL::Vector_d<Kernel>     Vector;
+typedef CGAL::Direction_d<Kernel>  Direction;
+typedef CGAL::Hyperplane_d<Kernel> Hyperplane;
+typedef CGAL::Sphere_d<Kernel>     Sphere;
+typedef CGAL::Segment_d<Kernel>    Segment;
+typedef CGAL::Ray_d<Kernel>        Ray;
+typedef CGAL::Line_d<Kernel>       Line;
+typedef LA::Vector                 IVector;
+bool DOIO=true;
+
+<<cartesian typedefs>>=
+typedef CGAL::Cartesian_d<FT> Kernel;
+typedef Kernel::FT             NT;
+typedef Kernel::LA             LA;
+typedef CGAL::Point_d<Kernel>      Point;
+typedef CGAL::Vector_d<Kernel>     Vector;
+typedef CGAL::Direction_d<Kernel>  Direction;
+typedef CGAL::Hyperplane_d<Kernel> Hyperplane;
+typedef CGAL::Sphere_d<Kernel>     Sphere;
+typedef CGAL::Segment_d<Kernel>    Segment;
+typedef CGAL::Ray_d<Kernel>        Ray;
+typedef CGAL::Line_d<Kernel>       Line;
+typedef LA::Vector                 IVector;
+bool DOIO=false;
+
+<<test suite>>=
+<<2d point tests>>
+<<3d point tests>>
+<<3d vector tests>>
+<<3d direction tests>>
+<<3d hyperplane tests>>
+<<3d sphere tests>>
+<<2d segment tests>>
+<<2d ray tests>>
+<<2d line tests>>
 
 @ In this chunk we test in 2d geometry.
 <<2d point tests>>=
@@ -66,7 +98,7 @@ int main()
   CGAL_TEST(p0 != p1 && p0 != p2); // op!=
   CGAL_TEST(p0 == CGAL::ORIGIN);
 
-  CGAL_IO_TEST(p1,p4); // IO operations
+  if (DOIO) CGAL_IO_TEST(p1,p4); p4 = p1;
 
   CGAL_TEST(p4.dimension()==p1.dimension()); // dimension()
   CGAL_TEST(p4.dimension()!=Point(3).dimension()); // dimension()
@@ -76,13 +108,13 @@ int main()
   CGAL_TEST(p1.hx()==p1.homogeneous(0) && 
             p1.hy()==p1.homogeneous(1) && 
             p1.hw()==p1.homogeneous(2)); // hx,hy,hw
-  CGAL_TEST(p1.x()==FT(1) && p1.y()==FT(0)); // x(),y()
+  CGAL_TEST(p1.x()==NT(1) && p1.y()==NT(0)); // x(),y()
   CGAL_TEST(p1.x()==p1[0] && p1.y()==p1[1]); // x(),y()
   CGAL_TEST(p1.x()==p1.cartesian(0) && p1.y()==p1.cartesian(1)); // x(),y()
   IVector iv3(p1.homogeneous_begin(),p1.homogeneous_end());
   CGAL_TEST(iv1==iv3);
 
-  Point::Homogeneous_const_iterator hit; 
+  Point::Homogeneous_const_iterator hit;
   Point::Cartesian_const_iterator cit; int i;
   for (i=0,hit=p1.homogeneous_begin(),cit=p1.cartesian_begin(); 
        i<p1.dimension(); ++hit,++cit,++i) {
@@ -159,11 +191,11 @@ components.
   CGAL_TEST(CGAL::compare_lexicographically(p0,p1)==CGAL::SMALLER);
   CGAL_TEST(CGAL::compare_lexicographically(p3,p0)==CGAL::LARGER);
 
-  CGAL_TEST(p1.cartesian(0)==(FT)1);
-  CGAL_TEST(p1[1]==(FT)0);
+  CGAL_TEST(p1.cartesian(0)==(NT)1);
+  CGAL_TEST(p1[1]==(NT)0);
   CGAL_TEST(p1.homogeneous(0)==(RT)1);
   CGAL_TEST( (p1 - CGAL::ORIGIN) == e1);
-  CGAL_TEST(CGAL::squared_distance(Point(1,1,1,1),p0)==FT(3));
+  CGAL_TEST(CGAL::squared_distance(Point(1,1,1,1),p0)==NT(3));
 
   CGAL_TEST(p1-p0==e1);
   CGAL_TEST(p1+e1==Point(2,0,0,1));
@@ -242,16 +274,16 @@ components.
   CGAL_TEST((a1==a6 && a3==a2));
   CGAL_TEST((a0!=a1 && a0!=a4));
 
-  CGAL_IO_TEST(a1,a6);
+  if (DOIO) CGAL_IO_TEST(a1,a6); a6 = a1;
 
   CGAL_TEST(a2.dimension()==a3.dimension());
   CGAL_TEST(a3.dimension()!=a4.dimension());
 
   CGAL_TEST(a4.hx()==1 && a4.hy()==0 && a4.hw()!=0);
-  CGAL_TEST(a4.x()==FT(1) && a4.y()==FT(0));
-  CGAL_TEST(a3.homogeneous(1)==RT(4));
-  CGAL_TEST(a3.cartesian(1)==FT(2));
-  CGAL_TEST(a3[0]==FT(3));
+  CGAL_TEST(a4.x()==NT(1) && a4.y()==NT(0));
+  CGAL_TEST(Kernel::make_FT(a3.homogeneous(1),a3.homogeneous(3))==NT(2));
+  CGAL_TEST(a3.cartesian(1)==NT(2));
+  CGAL_TEST(a3[0]==NT(3));
   CGAL_TEST(a3.direction()==Direction(3,2,1));
 
   Vector::Homogeneous_const_iterator hit; 
@@ -271,21 +303,21 @@ components.
   CGAL_TEST(Vector::cmp(a1,Vector(-1,0,0,1))==CGAL::LARGER);
 
   CGAL_TEST(2*a1==Vector(2,4,6,1));
-  CGAL_TEST(FT(2,3)*a4==Vector(2,0,3));
+  CGAL_TEST(Kernel::make_FT(2,3)*a4==Vector(2,0,3));
   
   CGAL_TEST(a3/2==Vector(3,2,1,2));
-  CGAL_TEST(a3/FT(2,3)==Vector(9,6,3,2));
+  CGAL_TEST(a3/Kernel::make_FT(2,3)==Vector(9,6,3,2));
 
   Vector a7(a1);
   a7*=2;
-  a7*=FT(3,2);
+  a7*=Kernel::make_FT(3,2);
   CGAL_TEST(3*a1==a7);
-  a7/=FT(3,4);
+  a7/=Kernel::make_FT(3,4);
   a7/=4;
   CGAL_TEST(a1==a7);
   
-  CGAL_TEST(a4*a4==FT(1));
-  CGAL_TEST(a4.squared_length()==FT(1));
+  CGAL_TEST(a4*a4==NT(1));
+  CGAL_TEST(a4.squared_length()==NT(1));
   CGAL_TEST(a1+a2==Vector(4,4,4,1));
   CGAL_TEST(a1-a2==Vector(-2,0,2,1));
 
@@ -330,7 +362,7 @@ components.
   CGAL_TEST(d2==Direction(2,2,0));
   CGAL_TEST(d31!=d32 && d2!=d1)
 
-  CGAL_IO_TEST(d1,d5);
+  if (DOIO) CGAL_IO_TEST(d1,d5); d5=d1;
   CGAL_TEST(d2.dimension()==d1.dimension());
   CGAL_TEST(d31.dimension()!=d32.dimension());
   CGAL_TEST(d1.dx()==d1.delta(0));
@@ -381,7 +413,7 @@ components.
              h2.dimension()!=h6.dimension()));
   CGAL_TEST((h5.coefficient(1)==2 && h5[2]==3));
   CGAL_TEST((vi1 == h0.coefficient_vector()));
-  CGAL_TEST(h2.orthogonal_vector()*(p2-p1) == FT(0) );
+  CGAL_TEST(h2.orthogonal_vector()*(p2-p1) == NT(0) );
   CGAL_TEST(h2.orthogonal_direction()==dir);
   CGAL_TEST(h2.value_at(o)<0);
   CGAL_TEST(h2.value_at(p3)==0);
@@ -395,7 +427,7 @@ components.
   CGAL_TEST(!h5.has_on(p1));
   CGAL_TEST(h3.has_on_positive_side(o));
   
-  CGAL_IO_TEST(h0,h8);
+  if (DOIO) CGAL_IO_TEST(h0,h8); h8=h0;
 
   Hyperplane::Coefficient_const_iterator it; int i;
   for (i=0,it=h5.coefficients_begin(); 
@@ -454,7 +486,7 @@ components.
   std::vector< Point > B = make_vector(p+v,q+v,r+v,s+v);
   CGAL_TEST( (S1+v) == Sphere(3,B.begin(),B.end()) ); 
   CGAL_TEST( CGAL::weak_equality(S1.opposite(),S1) );
-  CGAL_IO_TEST(S1,S3);
+  if (DOIO) CGAL_IO_TEST(S1,S3); S3 = S1;
 }
 
 <<2d segment tests>>=
@@ -482,13 +514,13 @@ components.
 
   s6 = Segment(Point(0,0),Point(10,10));
   Point p3(10,0);
-  CGAL_TEST(s6.squared_length()==FT(200));
+  CGAL_TEST(s6.squared_length()==NT(200));
   CGAL_TEST(s6.has_on(Point(5,5)));
   CGAL_TEST(Segment(Point(1,1),Point(1,1)).is_degenerate());
   CGAL_TEST(CGAL::weak_equality(s1,s1.opposite()));
   CGAL_TEST(CGAL::parallel(s6,s6+v));
   CGAL_TEST(CGAL::common_endpoint(s1,s2,p3)&&p3==p1);
-  CGAL_IO_TEST(s1,s6);
+  if (DOIO) CGAL_IO_TEST(s1,s6); s6 = s1;
 }
 
 <<2d ray tests>>=
@@ -512,7 +544,7 @@ components.
   CGAL_TEST(r1+Vector(1,-1) == r7);
   CGAL_TEST(r1.has_on(Point(10,0))&&!r1.has_on(Point(-10,0)));
   CGAL_TEST(CGAL::parallel(r1,(r2+Vector(0,1)).opposite()));
-  CGAL_IO_TEST(r1,r5);
+  if (DOIO) CGAL_IO_TEST(r1,r5); r5 = r1;
 }
 
 <<2d line tests>>=
@@ -535,7 +567,7 @@ components.
   CGAL_TEST(l1.has_on(Point(3,0))&&!l1.has_on(p2));
   CGAL_TEST(CGAL::weak_equality(l1,l1.opposite())&&l1!=l1.opposite());
   CGAL_TEST(CGAL::parallel(l2,Line(p2,dir)));
-  CGAL_IO_TEST(l1,l5);
+  if (DOIO) CGAL_IO_TEST(l1,l5); l5 = l1;
 }
 
 
@@ -547,10 +579,10 @@ components.
 // coding: M. Seel
 //---------------------------------------------------------------------
 
-#include <CGAL/test_macros.h>
 #include <CGAL/basic.h>
 #include <CGAL/Homogeneous_d.h>
 #include <CGAL/simple_transformations_d.h>
+#include <CGAL/test_macros.h>
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
@@ -743,44 +775,66 @@ int main()
 // coding: M. Seel
 //---------------------------------------------------------------------
 
-#include <CGAL/test_macros.h>
 #include <CGAL/basic.h>
 #include <CGAL/Homogeneous_d.h>
+#include <CGAL/Cartesian_d.h>
 #include <CGAL/intersections_d.h>
+#include <CGAL/double.h>
+#include <CGAL/test_macros.h>
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
+#include <CGAL/leda_real.h>
 typedef leda_integer RT;
+typedef leda_real FT;
 #else
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
 typedef CGAL::Gmpz RT;
+typedef double FT;
 #else
-#include <CGAL/double.h>
 typedef double RT;
+typedef double FT;
 #endif
 #endif
-
-typedef CGAL::Homogeneous_d<RT> HKernel;
-typedef HKernel::FT             FT;
-typedef HKernel::LA             LA;
-typedef CGAL::Point_d<HKernel>      Point;
-typedef CGAL::Vector_d<HKernel>     Vector;
-typedef CGAL::Direction_d<HKernel>  Direction;
-typedef CGAL::Hyperplane_d<HKernel> Hyperplane;
-typedef CGAL::Sphere_d<HKernel>     Sphere;
-typedef CGAL::Segment_d<HKernel>    Segment;
-typedef CGAL::Ray_d<HKernel>        Ray;
-typedef CGAL::Line_d<HKernel>       Line;
-typedef LA::Vector                  IVector;
 
 int main()
 { CGAL::set_pretty_mode ( std::cerr );
   CGAL_TEST_START;
+{
+  <<homogeneous types>>
   <<hyperplane intersections>>
   <<line intersections>>
+}
+{
+  <<cartesian types>>
+  <<hyperplane intersections>>
+  <<line intersections>>
+}
   CGAL_TEST_END;
 }
+
+<<homogeneous types>>=
+typedef CGAL::Homogeneous_d<RT> Kernel;
+typedef CGAL::Point_d<Kernel>      Point;
+typedef CGAL::Vector_d<Kernel>     Vector;
+typedef CGAL::Direction_d<Kernel>  Direction;
+typedef CGAL::Hyperplane_d<Kernel> Hyperplane;
+typedef CGAL::Sphere_d<Kernel>     Sphere;
+typedef CGAL::Segment_d<Kernel>    Segment;
+typedef CGAL::Ray_d<Kernel>        Ray;
+typedef CGAL::Line_d<Kernel>       Line;
+
+<<cartesian types>>=
+typedef CGAL::Cartesian_d<FT>  Kernel;
+typedef CGAL::Point_d<Kernel>      Point;
+typedef CGAL::Vector_d<Kernel>     Vector;
+typedef CGAL::Direction_d<Kernel>  Direction;
+typedef CGAL::Hyperplane_d<Kernel> Hyperplane;
+typedef CGAL::Sphere_d<Kernel>     Sphere;
+typedef CGAL::Segment_d<Kernel>    Segment;
+typedef CGAL::Ray_d<Kernel>        Ray;
+typedef CGAL::Line_d<Kernel>       Line;
 
 <<hyperplane intersections>>=
 {

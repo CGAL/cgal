@@ -1,8 +1,9 @@
 HYPERPLANE = HyperplaneHd.h HyperplaneHd.C
 AFFTRAFO = Aff_transformationHd.h Aff_transformationHd.C
 PREDS = 
-INTERSECTIONOBJS = intersection_objectsHd.h
-FUNCTIONOBJS = function_objectsHd.h
+INTERSECTIONOBJS = intersection_objectsHd.h intersection_objectsCd.h \
+	intersection_objects_d.h 
+FUNCTIONOBJS = function_objectsHd.h function_objectsCd.h 
 KERNELTESTS = interface-test.C intersection-test.C afftrafo-test.C
 
 KERNELSUB = ../include/CGAL/Kernel_d/
@@ -16,7 +17,7 @@ tests : $(KERNELTESTS)
 hyperplane : $(HYPERPLANE)
 	cp $(HYPERPLANE) $(KERNELSUB)
 
-interobjs : $(INTERSECTIONOBJS)
+intobjs : $(INTERSECTIONOBJS)
 	cp $(INTERSECTIONOBJS) $(KERNELSUB)
 
 funcobjs : $(FUNCTIONOBJS)
@@ -28,10 +29,13 @@ afftrafo : $(AFFTRAFO)
 $(KERNELTESTS) : Kernel_d-tests.lw 
 	notangle -R$@ $< > $@
 
-$(INTERSECTIONOBJS) : IntersectionsHd.lw
+$(INTERSECTIONOBJS) : intersection_objects_d.lw
 	notangle -R$@ $< > $@
 
-$(FUNCTIONOBJS) : function_objectsHD.lw
+function_objectsHd.h : function_objectsHd.lw
+	notangle -R$@ $< > $@
+
+function_objectsCd.h : function_objectsCd.lw
 	notangle -R$@ $< > $@
 
 $(HYPERPLANE) : HyperplaneHd.lw

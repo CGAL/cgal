@@ -164,6 +164,8 @@ and false otherwise. }*/
 template <class R>
 std::istream& operator>>(std::istream& I, Line_d<R>& l) 
 { l.copy_on_write(); l.ptr->read(I); 
+  CGAL_assertion_msg(l.point(0)!=l.point(1),
+    "Line_d::operator>>: trivial line.");
   CGAL_assertion_msg(l.point(0).dimension()==l.point(1).dimension(),
     "Line_d::operator>>: dimensions disagree.");
   return I; 

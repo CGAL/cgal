@@ -1,47 +1,47 @@
-#ifndef HOMOGENEOUS_D_H
-#define HOMOGENEOUS_D_H
+#ifndef CARTESIAN_D_H
+#define CARTESIAN_D_H
 
 #ifndef NOCGALINCL
 #include <CGAL/basic.h>
-#include <CGAL/Quotient.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/Kernel/function_objects.h>
-#include <CGAL/Linear_algebraHd.h>
+#include <CGAL/Linear_algebraCd.h>
 #include <vector>
 #endif
-#include <CGAL/Kernel_d/Kernel_classesHd.h>
-#include <CGAL/Kernel_d/PointHd.h>
-#include <CGAL/Kernel_d/VectorHd.h>
-#include <CGAL/Kernel_d/DirectionHd.h>
-#include <CGAL/Kernel_d/HyperplaneHd.h>
-#include <CGAL/Kernel_d/Aff_transformationHd.h>
-#include <CGAL/Kernel_d/PointHd.C>
-#include <CGAL/Kernel_d/VectorHd.C>
-#include <CGAL/Kernel_d/DirectionHd.C>
-#include <CGAL/Kernel_d/HyperplaneHd.C>
-#include <CGAL/Kernel_d/Aff_transformationHd.C>
-#include <CGAL/Kernel_d/function_objectsHd.h>
-#include <CGAL/Kernel_d/intersection_objectsHd.h>
+#include <CGAL/Kernel_d/Kernel_classesCd.h>
+#include <CGAL/Kernel_d/PointCd.h>
+#include <CGAL/Kernel_d/VectorCd.h>
+#include <CGAL/Kernel_d/DirectionCd.h>
+#include <CGAL/Kernel_d/HyperplaneCd.h>
+#include <CGAL/Kernel_d/Aff_transformationCd.h>
+#include <CGAL/Kernel_d/PointCd.C>
+#include <CGAL/Kernel_d/VectorCd.C>
+#include <CGAL/Kernel_d/DirectionCd.C>
+#include <CGAL/Kernel_d/HyperplaneCd.C>
+#include <CGAL/Kernel_d/Aff_transformationCd.C>
+#include <CGAL/Kernel_d/function_objectsCd.h>
+#include <CGAL/Kernel_d/intersection_objectsCd.h>
 #include <CGAL/Kernel_d/Interface_classes.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template <class pRT, class pLA = Linear_algebraHd<pRT> >
-class Homogeneous_d 
+template <class pFT, class pLA = Linear_algebraCd<pFT> >
+class Cartesian_d
 {
 public:
-  typedef Homogeneous_d<pRT,pLA> Self;
-  typedef pRT                    RT;
-  typedef Quotient<RT>           FT;
+  typedef Cartesian_d<pFT,pLA> Self;
+  typedef pFT                    RT;
+  typedef pFT                    FT;
   typedef pLA                    LA;
 
-  typedef Homogeneous_tag        Rep_tag;
+  typedef Cartesian_tag        Rep_tag;
 
-  typedef PointHd<RT,LA>              Point_d_base;
-  typedef VectorHd<RT,LA>             Vector_d_base;
-  typedef DirectionHd<RT,LA>          Direction_d_base;
-  typedef HyperplaneHd<RT,LA>         Hyperplane_d_base;
-  typedef Aff_transformationHd<RT,LA> Aff_transformation_d_base;
+  typedef PointCd2<RT,LA>             Point_d_base; 
+  // renamed because of clash with Cartesian...
+  typedef VectorCd<RT,LA>             Vector_d_base;
+  typedef DirectionCd<RT,LA>          Direction_d_base;
+  typedef HyperplaneCd<RT,LA>         Hyperplane_d_base;
+  typedef Aff_transformationCd<RT,LA> Aff_transformation_d_base;
 
   typedef CGAL::Point_d<Self>              Point_d;
   typedef CGAL::Vector_d<Self>             Vector_d;
@@ -56,25 +56,25 @@ public:
   typedef CGAL::Line_d<Self>     Line_d;
 
   // function objects:
-  typedef Lift_to_paraboloidHd<Self> Lift_to_paraboloid_d;
-  typedef Project_along_d_axisHd<Self> Project_along_d_axis_d;
-  typedef MidpointHd<Self> Midpoint_d;
-  typedef Squared_distanceHd<Self> Squared_distance_d;
-  typedef Position_on_lineHd<Self> Position_on_line_d;
-  typedef Barycentric_coordinatesHd<Self> Barycentric_coordinates_d;
-  typedef OrientationHd<Self> Orientation_d;
-  typedef Side_of_oriented_sphereHd<Self> Side_of_oriented_sphere_d;
-  typedef Side_of_bounded_sphereHd<Self> Side_of_bounded_sphere_d;
-  typedef Contained_in_simplexHd<Self> Contained_in_simplex_d;
-  typedef Contained_in_affine_hullHd<Self> Contained_in_affine_hull_d;
-  typedef Affine_rankHd<Self> Affine_rank_d;
-  typedef Affinely_independentHd<Self> Affinely_independent_d;
-  typedef Compare_lexicographicallyHd<Self> Compare_lexicographically_d; 
-  typedef Center_of_circleHd<Self> Center_of_circle_d;
-  typedef Contained_in_linear_hullHd<Self> Contained_in_linear_hull_d;  
-  typedef Linear_rankHd<Self> Linear_rank_d;
-  typedef Linearly_independentHd<Self> Linearly_independent_d;
-  typedef Linear_baseHd<Self> Linear_base_d;
+  typedef Lift_to_paraboloidCd<Self> Lift_to_paraboloid_d;
+  typedef Project_along_d_axisCd<Self> Project_along_d_axis_d;
+  typedef MidpointCd<Self> Midpoint_d;
+  typedef Squared_distanceCd<Self> Squared_distance_d;
+  typedef Position_on_lineCd<Self> Position_on_line_d;
+  typedef Barycentric_coordinatesCd<Self> Barycentric_coordinates_d;
+  typedef OrientationCd<Self> Orientation_d;
+  typedef Side_of_oriented_sphereCd<Self> Side_of_oriented_sphere_d;
+  typedef Side_of_bounded_sphereCd<Self> Side_of_bounded_sphere_d;
+  typedef Contained_in_simplexCd<Self> Contained_in_simplex_d;
+  typedef Contained_in_affine_hullCd<Self> Contained_in_affine_hull_d;
+  typedef Affine_rankCd<Self> Affine_rank_d;
+  typedef Affinely_independentCd<Self> Affinely_independent_d;
+  typedef Compare_lexicographicallyCd<Self> Compare_lexicographically_d; 
+  typedef Center_of_circleCd<Self> Center_of_circle_d;
+  typedef Contained_in_linear_hullCd<Self> Contained_in_linear_hull_d;  
+  typedef Linear_rankCd<Self> Linear_rank_d;
+  typedef Linearly_independentCd<Self> Linearly_independent_d;
+  typedef Linear_baseCd<Self> Linear_base_d;
 
   Lift_to_paraboloid_d lift_to_paraboloid_d_object() const
   { return Lift_to_paraboloid_d(); }
@@ -116,8 +116,8 @@ public:
   { return Linear_base_d(); }
 
   // Intersection objects:
-  typedef Line_line_intersectionHd<Self> Line_line_intersection_d;
-  typedef Line_hyperplane_intersectionHd<Self> Line_hyperplane_intersection_d;
+  typedef Line_line_intersectionCd<Self> Line_line_intersection_d;
+  typedef Line_hyperplane_intersectionCd<Self> Line_hyperplane_intersection_d;
   typedef Line_d_Line_d_pair<Self> Line_d_Line_d_pair;
   typedef Ray_d_Ray_d_pair<Self> Ray_d_Ray_d_pair;
   typedef Segment_d_Segment_d_pair<Self> Segment_d_Segment_d_pair;
@@ -134,17 +134,17 @@ public:
 
   // FT - RT conversion and access :
 
-  static  FT  make_FT(const RT & num, const RT& denom)
-  { return FT(num, denom); }
+  static  FT make_FT(const RT & num, const RT& denom)
+  { return num/denom; }
   
-  static  FT  make_FT(const RT & num)
+  static  FT make_FT(const RT & num)
   { return FT(num); }
   
   static  RT FT_numerator(const FT &r)
-  { return r.numerator(); }
+  { return r; }
   
   static  RT FT_denominator(const FT &r)
-  { return r.denominator(); }
+  { return RT(1); }
 
   // special stuff for traits class character :
 
@@ -211,7 +211,7 @@ public:
   Point_of_sphere_d point_of_sphere_d_object() const
   { return Point_of_sphere_d(); }
 
-}; // Homogeneous_d<R>
+}; // Cartesian_d<R>
  
  
 CGAL_END_NAMESPACE
@@ -228,5 +228,5 @@ CGAL_END_NAMESPACE
 #include <CGAL/Kernel_d/Line_d.C>
 #include <CGAL/intersections_d.h>
 
-#endif // HOMOGENEOUS_D_H
+#endif // CARTESIAN_D_H
 

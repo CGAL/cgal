@@ -4,10 +4,10 @@
 // coding: M. Seel
 //---------------------------------------------------------------------
 
-#include <CGAL/test_macros.h>
 #include <CGAL/basic.h>
 #include <CGAL/Homogeneous_d.h>
 #include <CGAL/simple_transformations_d.h>
+#include <CGAL/test_macros.h>
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>

@@ -48,11 +48,10 @@ linear_solver(const Matrix& A, const Vector& b,
   int cols = A.column_dimension(); 
 
   /* at this point one might want to check whether the computation can
-     be carried out with doubles, see section \ref{ optimization }.
-  */
+     be carried out with doubles, see section \ref{ optimization }. */
 
-  if (b.dimension() != rows) 
-    ERROR_HANDLER(1,"linear_solver: b has wrong dimension"); 
+  CGAL_assertion_msg(b.dimension() == rows, 
+    "linear_solver: b has wrong dimension");
 
   Matrix C(rows,cols + 1); 
   // the matrix in which we will calculate ($C = (A \vert b)$)
@@ -195,11 +194,10 @@ determinant(const Matrix& A)
   int cols = A.column_dimension(); 
 
   /* at this point one might want to check whether the computation can
-     be carried out with doubles, see section \ref{ optimization }.
-  */
+     be carried out with doubles, see section \ref{ optimization }. */
 
-  if (b.dimension() != rows) 
-    ERROR_HANDLER(1,"linear_solver: b has wrong dimension"); 
+  CGAL_assertion_msg(b.dimension() == rows, 
+    "linear_solver: b has wrong dimension");
 
   Matrix C(rows,cols + 1); 
   // the matrix in which we will calculate ($C = (A \vert b)$)
@@ -310,11 +308,10 @@ determinant(const Matrix& A,
   int cols = A.column_dimension(); 
 
   /* at this point one might want to check whether the computation can
-     be carried out with doubles, see section \ref{ optimization }.
-  */
+     be carried out with doubles, see section \ref{ optimization }. */
 
-  if (b.dimension() != rows) 
-    ERROR_HANDLER(1,"linear_solver: b has wrong dimension"); 
+  CGAL_assertion_msg(b.dimension() == rows, 
+    "linear_solver: b has wrong dimension");
 
   Matrix C(rows,cols + 1); 
   // the matrix in which we will calculate ($C = (A \vert b)$)
@@ -508,11 +505,10 @@ independent_columns(const Matrix& A,
   int cols = A.column_dimension(); 
 
   /* at this point one might want to check whether the computation can
-     be carried out with doubles, see section \ref{ optimization }.
-  */
+     be carried out with doubles, see section \ref{ optimization }. */
 
-  if (b.dimension() != rows) 
-    ERROR_HANDLER(1,"linear_solver: b has wrong dimension"); 
+  CGAL_assertion_msg(b.dimension() == rows, 
+    "linear_solver: b has wrong dimension");
 
   Matrix C(rows,cols + 1); 
   // the matrix in which we will calculate ($C = (A \vert b)$)
@@ -624,11 +620,10 @@ rank(const Matrix& A)
   int cols = A.column_dimension(); 
 
   /* at this point one might want to check whether the computation can
-     be carried out with doubles, see section \ref{ optimization }.
-  */
+     be carried out with doubles, see section \ref{ optimization }. */
 
-  if (b.dimension() != rows) 
-    ERROR_HANDLER(1,"linear_solver: b has wrong dimension"); 
+  CGAL_assertion_msg(b.dimension() == rows, 
+    "linear_solver: b has wrong dimension");
 
   Matrix C(rows,cols + 1); 
   // the matrix in which we will calculate ($C = (A \vert b)$)
@@ -733,11 +728,10 @@ inverse(const Matrix& A, Matrix& inverse,
   int cols = A.column_dimension(); 
 
   /* at this point one might want to check whether the computation can
-     be carried out with doubles, see section \ref{ optimization }.
-  */
+     be carried out with doubles, see section \ref{ optimization }. */
 
-  if (b.dimension() != rows) 
-    ERROR_HANDLER(1,"linear_solver: b has wrong dimension"); 
+  CGAL_assertion_msg(b.dimension() == rows, 
+    "linear_solver: b has wrong dimension");
 
   Matrix C(rows,cols + 1); 
   // the matrix in which we will calculate ($C = (A \vert b)$)
@@ -868,11 +862,10 @@ homogeneous_linear_solver(const Matrix &A,
   int cols = A.column_dimension(); 
 
   /* at this point one might want to check whether the computation can
-     be carried out with doubles, see section \ref{ optimization }.
-  */
+     be carried out with doubles, see section \ref{ optimization }. */
 
-  if (b.dimension() != rows) 
-    ERROR_HANDLER(1,"linear_solver: b has wrong dimension"); 
+  CGAL_assertion_msg(b.dimension() == rows, 
+    "linear_solver: b has wrong dimension");
 
   Matrix C(rows,cols + 1); 
   // the matrix in which we will calculate ($C = (A \vert b)$)

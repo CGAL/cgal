@@ -1,16 +1,18 @@
-#ifndef CGAL_INTERSECTION_OBJECTSHD_H
-#define CGAL_INTERSECTION_OBJECTSHD_H
+#ifndef CGAL_INTERSECTION_OBJECTSCD_H
+#define CGAL_INTERSECTION_OBJECTSCD_H
 
 #include <CGAL/basic.h>
+#undef _DEBUG
+#define _DEBUG 11
+#include <CGAL/Kernel_d/debug.h>
 
 CGAL_BEGIN_NAMESPACE
 
-/*{\Manpage{Line_line_intersectionHd}{R}{intersecting two lines}}*/
+/*{\Manpage{Line_line_intersectionCd}{R}{intersecting two lines}}*/
 
 template <class R> 
-class Line_line_intersectionHd {
+class Line_line_intersectionCd {
 
-typedef typename R::RT RT;
 typedef typename R::FT FT;
 typedef typename R::LA LA;
 typedef typename R::Point_d Point_d;
@@ -34,44 +36,34 @@ is degenerate.}*/
     "intersection: dimensions disagree!"); 
   typename LA::Matrix M(d,2),S; 
   typename LA::Vector b(d), lambda(2), c; 
-  RT D; 
-  
-  RT s1w = s1.homogeneous(d); 
-  RT t1w = t1.homogeneous(d); 
-  RT s2w = s2.homogeneous(d); 
-  RT t2w = t2.homogeneous(d); 
-  RT g1w = s1w*t1w; 
-  RT g2w = s2w*t2w; 
-  RT t12w = t1w*t2w; 
+  FT D; 
 
   /* init $d \times 2$ - matrix |M| and $d$ - vector |b| */
   for (int i = 0; i < d; i++) { 
-    M(i,0) = g2w * (t1.homogeneous(i) * s1w - s1.homogeneous(i) * t1w); 
-    M(i,1) = g1w * (s2.homogeneous(i) * t2w - t2.homogeneous(i) * s2w); 
-    b[i]   = t12w * (s2.homogeneous(i) * s1w - s1.homogeneous(i) * s2w); 
+    M(i,0) = t1.cartesian(i) - s1.cartesian(i); 
+    M(i,1) = s2.cartesian(i) - t2.cartesian(i); 
+    b[i]   = s2.cartesian(i) - s1.cartesian(i); 
   }
 
-  if (LA::linear_solver(M,b,lambda,D,S,c)) { 
-    if (S.column_dimension()>0) return LINE;
-    l1 = R::make_FT(lambda[0],D);
-    l2 = R::make_FT(lambda[1],D);
+  if (LA::linear_solver(M,b,lambda,D,S,c)) {
+    if ( S.column_dimension()>0 ) return LINE;
+    l1 = lambda[0]; l2 = lambda[1];
     p = s1 + l1 * (t1 - s1); 
     return POINT; 
   }
   return NO; 
 }
-
 };
 
-/*{\Manpage {Line_hyperplane_intersectionHd}{R} 
+/*{\Manpage {Line_hyperplane_intersectionCd}{R} 
 {intersecting a line and a hyperplane}}*/
 
 template <class R> 
-class Line_hyperplane_intersectionHd {
-typedef typename R::RT RT;
+class Line_hyperplane_intersectionCd {
+
 typedef typename R::FT FT;
 typedef typename R::LA LA;
-typedef typename R::Point_d      Point_d;
+typedef typename R::Point_d Point_d;
 typedef typename R::Hyperplane_d Hyperplane_d;
 
 public:
@@ -91,36 +83,36 @@ not degenerate.}*/
   "Line_hyperplane_intersection_d: dimensions do not agree.");
 
   int d = h.dimension();
-  RT S(0),T(0);
-  for (int i=0; i<=d; ++i) {
-    S += h[i]*s.homogeneous(i);
-    T += h[i]*t.homogeneous(i);
-  }
-  bool s_contained = CGAL_NTS is_zero(S), 
+  FT S = h.value_at(s), T = h.value_at(t);
+
+  bool s_contained = CGAL_NTS is_zero(S),
        t_contained = CGAL_NTS is_zero(T);
   if (s_contained && t_contained) { p = s; return LINE; }
   if (s_contained) { p = s; return POINT; }
   if (t_contained) { p = t; return POINT; }
   // now the simple cases are done 
 
-  RT D = S * t.homogeneous(d) - T * s.homogeneous(d);
-  if (CGAL_NTS is_zero(D)) return NO;
+  FT D = S - T;
+  if ( CGAL_NTS is_zero(D) ) return NO;
 
-  typename LA::Vector homog(d + 1);
+  typename LA::Vector v(d);
   for (int i = 0; i < d; ++i)
-    homog[i] = S * t.homogeneous(i) - T * s.homogeneous(i); 
-  homog[d] = D;
-  p = Point_d(d,homog.begin(),homog.end());
-  lambda = R::make_FT(S * t.homogeneous(d), D);
+    v[i] = (S * t.cartesian(i) - T * s.cartesian(i))/D;
+  p = Point_d(d,v.begin(),v.end()); lambda = S/D;
+
+  CGAL_assertion(h.has_on(p));
   return POINT;
 }
 
 };
 
 
+
 CGAL_END_NAMESPACE
 
 #include <CGAL/Kernel_d/intersection_objects_d.h>
 
-#endif //CGAL_INTERSECTION_OBJECTSHD_H
+#endif //CGAL_INTERSECTION_OBJECTSCD_H
+
+
 

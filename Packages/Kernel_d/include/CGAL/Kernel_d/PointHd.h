@@ -60,7 +60,7 @@ typedef _LA LA;
 /*{\Mtypemember the linear algebra layer.}*/
 typedef typename Tuple::Cartesian_const_iterator Cartesian_const_iterator;
 /*{\Mtypemember a read-only iterator for the cartesian coordinates.}*/
-typedef typename Tuple::Homogeneous_const_iterator Homogeneous_const_iterator;
+typedef typename Tuple::const_iterator Homogeneous_const_iterator;
 /*{\Mtypemember a read-only iterator for the homogeneous coordinates.}*/
 
 friend class VectorHd<RT,LA>;
@@ -263,10 +263,8 @@ output on a point $p$ take time $O(|p.dimension()|)$. |dimension()|,
 coordinate access and conversions take constant time.  The space
 requirement for points is $O(|p.dimension()|)$.}*/
 
-//----------------------- end of file ----------------------------------
-
-
 
 CGAL_END_NAMESPACE
 #endif // CGAL_POINTHD_H 
+//----------------------- end of file ----------------------------------
 

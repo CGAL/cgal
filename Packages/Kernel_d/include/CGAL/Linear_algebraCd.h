@@ -9,7 +9,7 @@
 // ----------------------------------------------------------------------
 //
 // release       : 1.1
-// release_date  : Jan 2001
+// release_date  : %-e Dec 1999
 //
 // file          : include/CGAL/Linear_algebra_c.h
 // package       : Kernel_d
@@ -31,6 +31,8 @@
 #undef _DEBUG
 #define _DEBUG 13
 #include <CGAL/Kernel_d/debug.h>
+
+//#define CGAL_LA_SELFTEST
 
 CGAL_BEGIN_NAMESPACE
 
@@ -60,8 +62,7 @@ protected:
   bool Triangular_system_solver(const Matrix &U, const Matrix &L, 
             const Vector &b, int rank, Vector &x, FT &det);
   static 
-  void   Triangular_left_inverse(const Matrix &U,
-            Matrix &Uinv);
+  void   Triangular_left_inverse(const Matrix &U, Matrix &Uinv);
 
 public:
   static

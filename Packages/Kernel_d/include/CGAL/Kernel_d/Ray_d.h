@@ -151,6 +151,8 @@ are parallel and false otherwise. }*/
 template <class R>
 std::istream& operator>>(std::istream& I, Ray_d<R>& r) 
 { r.copy_on_write(); r.ptr->read(I); 
+  CGAL_assertion_msg(r.point(0)!=r.point(1),
+    "Line_d::operator>>: trivial ray.");
   CGAL_assertion_msg(r.point(0).dimension()==r.point(1).dimension(),
   "Ray_d::operator>>: dimensions disagree.");
   return I; 

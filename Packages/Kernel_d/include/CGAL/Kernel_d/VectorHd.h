@@ -62,7 +62,7 @@ typedef _LA LA;
 /*{\Mtypemember the linear algebra layer.}*/
 typedef typename Tuple::Cartesian_const_iterator Cartesian_const_iterator;
 /*{\Mtypemember a read-only iterator for the Cartesian coordinates.}*/
-typedef typename Tuple::Homogeneous_const_iterator Homogeneous_const_iterator;
+typedef typename Tuple::const_iterator Homogeneous_const_iterator;
 /*{\Mtypemember a read-only iterator for the homogeneous coordinates.}*/
 
 class Base_vector {};
@@ -181,8 +181,8 @@ Quotient<RT> squared_length() const
 /*{\Mop returns the square of the length of |\Mvar|. }*/
 { RT nom = 0; 
   for (int i = 0; i < dimension(); i++) 
-    nom += sqr(homogeneous(i));
-  RT denom = sqr(homogeneous(dimension()));
+    nom += CGAL_NTS square(homogeneous(i));
+  RT denom = CGAL_NTS square(homogeneous(dimension()));
   return Quotient<RT>(nom,denom); 
 }
 
@@ -215,19 +215,32 @@ VectorHd<RT,LA> transform(const Aff_transformationHd<RT,LA>& t) const;
 /*{\Mop returns $t(v)$. }*/
 /*{\Mtext \headerline{Arithmetic Operators, Tests and IO}}*/
 
-VectorHd<RT,LA> scale(const RT& m, const RT& n) const; 
-void            self_scale(const RT& m, const RT& n); 
+VectorHd<RT,LA> scale(const RT& m, const RT& n) const 
+{ int d = dimension(); 
+  VectorHd<RT,LA> result(d); 
+  result.entry(d) = entry(d) * n; 
+  for (int i = 0; i < d; i++) 
+    result.entry(i) = entry(i) * m; 
+  return result; 
+}
+
+void self_scale(const RT& m, const RT& n) 
+{ int d = dimension(); 
+  copy_on_write();
+  entry(d) *= n; 
+  for (int i = 0; i < d; i++) entry(i) *= m; 
+}
 
 VectorHd<RT,LA>& operator*=(const RT& n) 
-{ self_scale(n,1); return *this; }
 /*{\Mbinop  multiplies all Cartesian coordinates by |n|.}*/
+{ self_scale(n,1); return *this; }
 
 VectorHd<RT,LA>& operator*=(int n) 
 { self_scale(n,1); return *this; }
 
 VectorHd<RT,LA>& operator*=(const Quotient<RT>& r) 
-{ self_scale(r.numerator(),r.denominator()); return *this; }
 /*{\Mbinop  multiplies all Cartesian coordinates by |r|.}*/
+{ self_scale(r.numerator(),r.denominator()); return *this; }
 
 VectorHd<RT,LA> operator/(int n) const
 { return scale(1,n); }
@@ -350,6 +363,23 @@ friend std::ostream& operator<< <>
 
 }; // end of class VectorHd
 
+
+template <class RT, class LA>
+VectorHd<RT,LA> operator*(int n, const VectorHd<RT,LA>& v) 
+{ return v.scale(n,1); }
+
+template <class RT, class LA>
+VectorHd<RT,LA> operator*(const RT& n, const VectorHd<RT,LA>& v) 
+/*{\Mbinopfunc returns the vector with Cartesian coordinates $n v_i$.}*/
+{ return v.scale(n,1); }
+
+template <class RT, class LA>
+VectorHd<RT,LA> operator*(const Quotient<RT>& r, const VectorHd<RT,LA>& v)
+/*{\Mbinopfunc returns the vector with Cartesian coordinates 
+$r v_i, 0 \leq i < d$.}*/
+{ return v.scale(r.numerator(),r.denominator()); }
+
+
 /*{\Mimplementation 
 Vectors are implemented by arrays of variables of type |RT|.  All
 operations like creation, initialization, tests, vector arithmetic,
@@ -358,10 +388,9 @@ coordinate access, |dimension()| and conversions
 take constant time.  The space requirement of a vector is
 $O(|v.dimension()|)$.}*/
 
-//----------------------- end of file ----------------------------------
 
 
 
 CGAL_END_NAMESPACE
 #endif // CGAL_VECTORHD_H 
-
+//----------------------- end of file ----------------------------------
