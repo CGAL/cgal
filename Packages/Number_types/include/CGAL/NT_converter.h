@@ -23,6 +23,8 @@
 #ifndef CGAL_NT_CONVERTER_H
 #define CGAL_NT_CONVERTER_H
 
+CGAL_BEGIN_NAMESPACE
+
 // A number type converter usable as default, using the conversion operator.
 
 template < class NT1, class NT2 >
@@ -47,5 +49,7 @@ struct Interval_converter
         return to_interval(a);
     }
 };
+
+CGAL_END_NAMESPACE
 
 #endif // CGAL_NT_CONVERTER_H
