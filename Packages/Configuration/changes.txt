@@ -1,4 +1,10 @@
 //-----------------------------------------------------------------------//
+// Changes in 1.31
+
+Added file MSVC_standard_header_fixes.h, which puts things that are lacking
+in namespace std in there on the MS VC++ platform.
+The file config.h was chnged to include this header file.
+//-----------------------------------------------------------------------//
 // Changes in 1.30
 
 Adapted CGAL_CFG_CCTYPE_MACRO_BUG.C (added assertion).
