@@ -36,7 +36,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
 #ifndef CGAL_SIMPLE_HDS
-#undef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
 #include <CGAL/Nef_2/HDS_items.h>
 #include <CGAL/Nef_2/HalfedgeDS_default.h>
 #else
@@ -88,7 +87,7 @@ class Nef_polyhedron_2_rep : public Ref_counted
   typedef CGAL::HalfedgeDS_default_MSC<HDS_traits>  Plane_map;
   typedef CGAL::PM_const_decorator<Plane_map>       Const_decorator;
   typedef CGAL::PM_decorator<Plane_map>             Decorator;
-  typedef CGAL::PM_naive_point_locator<Decorator,T  Slocator;
+  typedef CGAL::PM_naive_point_locator<Decorator,T> Slocator;
   typedef CGAL::PM_point_locator<Decorator,T>       Locator;
   typedef CGAL::PM_overlayer<Decorator,T>           Overlayer;
 
@@ -215,11 +214,11 @@ protected:
     { if ( it == _it ) _e = e; D.mark(e) = _m; }
     void trivial_segment(Vertex_handle v, ES_iterator it) 
     { if ( it == _it ) _v = v; D.mark(v) = _m; }
-    void starting_segment(Vertex_handle v, ES_iterator it) 
+    void starting_segment(Vertex_handle v, ES_iterator) 
     { D.mark(v) = _m; }
-    void passing_segment(Vertex_handle v, ES_iterator it) 
+    void passing_segment(Vertex_handle v, ES_iterator) 
     { D.mark(v) = _m; }
-    void ending_segment(Vertex_handle v, ES_iterator it) 
+    void ending_segment(Vertex_handle v, ES_iterator) 
     { D.mark(v) = _m; }
 
   };

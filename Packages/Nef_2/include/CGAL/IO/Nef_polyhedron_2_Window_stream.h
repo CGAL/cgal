@@ -42,24 +42,24 @@ CGAL::Window_stream& operator<<(CGAL::Window_stream& ws,
 const Nef_polyhedron_2<T>& P)
 {
   typedef Nef_polyhedron_2<T> NefPoly;
-  typedef typename NefPoly::PM_const_decorator  PMCDec;
-  typedef typename NefPoly::Point               Point;
-  typedef typename NefPoly::Line                Line;
+  typedef typename NefPoly::Const_decorator  Const_decorator;
+  typedef typename NefPoly::Point            Point;
+  typedef typename NefPoly::Line             Line;
   typedef typename T::RT  RT;
   typedef typename T::sRT sRT;
+  typedef CGAL::PM_BooleColor<Const_decorator> BooleColor;
+  typedef CGAL::PM_visualizor<Const_decorator,T,BooleColor> Visualizor;
 
-  PMCDec D = P.explorer(); 
+  Const_decorator D = P.explorer();
   const T& E = Nef_polyhedron_2<T>::EPD;
 
   sRT frame_radius = frame_default;
   E.determine_frame_radius(D.points_begin(),D.points_end(),frame_radius);
   RT::set_R(frame_radius);
-  CGAL::PM_visualizor<PMCDec,T,CGAL::PM_BooleColor<PMCDec> > PMV(ws,D);
-  PMV.draw_map();
+  Visualizor PMV(ws,D); PMV.draw_map();
   if (show_triangulation) {
     P.init_locator();
-    CGAL::PM_visualizor<PMCDec,T,CGAL::PM_BooleColor<PMCDec> > 
-      V(ws,P.locator().triangulation());
+    Visualizor V(ws,P.locator().triangulation());
     V.draw_skeleton(CGAL::BLUE);
   }  
 

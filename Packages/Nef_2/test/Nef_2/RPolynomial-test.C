@@ -129,11 +129,10 @@ int main()
 
       q3 = RP::gcd(q1,q2);
       CGAL_TEST(q3 == MSCCAST(1));
-      to_double(p6);
-      is_finite(p6);
-      is_valid(p6);
       CGAL_IO_TEST(p4,p1);
-
+      CGAL::to_double(p6);
+      CGAL::is_finite(p6);
+      CGAL::is_valid(p6);
 
   }
   { PRT(int,Integer);
@@ -216,11 +215,10 @@ int main()
 
       q3 = RP::gcd(q1,q2);
       CGAL_TEST(q3 == MSCCAST(1));
-      to_double(p6);
-      is_finite(p6);
-      is_valid(p6);
       CGAL_IO_TEST(p4,p1);
-
+      CGAL::to_double(p6);
+      CGAL::is_finite(p6);
+      CGAL::is_valid(p6);
 
   }
   { PRT(double,Integer);
@@ -303,11 +301,10 @@ int main()
 
       q3 = RP::gcd(q1,q2);
       CGAL_TEST(q3 == MSCCAST(1));
-      to_double(p6);
-      is_finite(p6);
-      is_valid(p6);
       CGAL_IO_TEST(p4,p1);
-
+      CGAL::to_double(p6);
+      CGAL::is_finite(p6);
+      CGAL::is_valid(p6);
 
   }
   { PRT(int,int);
@@ -390,11 +387,10 @@ int main()
 
       q3 = RP::gcd(q1,q2);
       CGAL_TEST(q3 == MSCCAST(1));
-      to_double(p6);
-      is_finite(p6);
-      is_valid(p6);
       CGAL_IO_TEST(p4,p1);
-
+      CGAL::to_double(p6);
+      CGAL::is_finite(p6);
+      CGAL::is_valid(p6);
 
   }
   { PRT(double,int);
@@ -477,11 +473,10 @@ int main()
 
       q3 = RP::gcd(q1,q2);
       CGAL_TEST(q3 == MSCCAST(1));
-      to_double(p6);
-      is_finite(p6);
-      is_valid(p6);
       CGAL_IO_TEST(p4,p1);
-
+      CGAL::to_double(p6);
+      CGAL::is_finite(p6);
+      CGAL::is_valid(p6);
 
   }
 

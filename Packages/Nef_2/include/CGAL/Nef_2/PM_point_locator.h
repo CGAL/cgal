@@ -47,42 +47,47 @@
 CGAL_BEGIN_NAMESPACE
 
 /*{\Moptions print_title=yes }*/ 
-/*{\Manpage {PM_naive_point_locator}{PMDEC,GEOM}
+/*{\Msubst 
+PM_decorator_#PMD
+Geometry_#GEO
+}*/
+/*{\Manpage {PM_naive_point_locator}{PMD,GEO}
 {Naive point location in plane maps}{PL}}*/
 /*{\Mdefinition An instance |\Mvar| of data type |\Mname|
 encapsulates naive point location queries within a plane map |P|.  The
-two template parameters are specified via concepts. |PMDEC| must be a
-model of the concept |PM_decorator| as described in the appendix.  |GEOM|
-must be a model of the concept |Affine_geometry| as described in
-the appendix. For a specification of plane maps see also the concept of
-|PM_const_decorator|.}*/
+two template parameters are specified via concepts. |PM_decorator_|
+must be a model of the concept |PMDecorator| as described in the
+appendix.  |Geometry_| must be a model of the concept |AffineGeometry| as
+described in the appendix. For a specification of plane maps see also
+the concept of |PMConstDecorator|.}*/
 
 /*{\Mgeneralization PM_decorator}*/
 
-template <typename PMDEC, typename GEOM>
-class PM_naive_point_locator : public PMDEC {
+template <typename PM_decorator_, typename Geometry_>
+class PM_naive_point_locator : public PM_decorator_ {
 protected:
-  typedef PM_naive_point_locator<PMDEC,GEOM> Self;
-  typedef PMDEC                              Base;
-  const GEOM& K;
+  typedef PM_decorator_ Base;
+  typedef PM_naive_point_locator<PM_decorator_,Geometry_> Self;
+
+  const Geometry_& K;
 public:
   /*{\Mtypes 3}*/
-  typedef PMDEC PM_decorator;
-  /*{\Mtypemember equals |PMDEC|.}*/
-  typedef typename PMDEC::Plane_map    Plane_map;
-  /*{\Mtypemember the plane map type decorated by |PMDEC|.}*/
-  typedef typename PMDEC::Mark         Mark;
+  typedef PM_decorator_                 Decorator;
+  /*{\Mtypemember equals |PM_decorator_|.}*/
+  typedef typename Decorator::Plane_map Plane_map;
+  /*{\Mtypemember the plane map type decorated by |Decorator|.}*/
+  typedef typename Decorator::Mark      Mark;
   /*{\Mtypemember the attribute of all objects (vertices, edges, 
   faces).}*/
 
-  typedef GEOM                         Geometry;
-  /*{\Mtypemember equals |GEOM|.}*/
-  typedef typename GEOM::Point_2       Point;
+  typedef Geometry_                       Geometry;
+  /*{\Mtypemember equals |Geometry_|.}*/
+  typedef typename Geometry_::Point_2     Point;
   /*{\Mtypemember the point type of the geometry kernel,
   \precond |Point| equals |Plane_map::Point_2|.}*/
-  typedef typename GEOM::Segment_2     Segment;
+  typedef typename Geometry_::Segment_2   Segment;
   /*{\Mtypemember the segment type of the geometry kernel.}*/
-  typedef typename GEOM::Direction_2   Direction;
+  typedef typename Geometry_::Direction_2 Direction;
 
   /*{\Mtext Local types are handles, iterators and circulators of the 
   following kind: |Vertex_const_handle|, |Vertex_const_iterator|, 
@@ -109,7 +114,7 @@ public:
     { assert(n == 0); return Base::is_empty(); }
   }; // Object_handle
 
-  #define USING(t) typedef typename PMDEC::t t
+  #define USING(t) typedef typename PM_decorator_::t t
   USING(Vertex_handle);   
   USING(Halfedge_handle);   
   USING(Face_handle);     
@@ -186,17 +191,88 @@ public:
     if ( assign(f,h) ) return mark(f);
     CGAL_assertion_msg(0,
     "PM_point_locator::mark: Object_handle holds no object.");
+  #if !defined(__BORLANDC__)
     return mark(v); // never reached
+  #endif
   }
 
-  Object_handle locate(const Segment& s) const;
+  
+  Object_handle locate(const Segment& s) const
   /*{\Mop returns a generic handle |h| to an object (vertex, halfedge,
   face) of the underlying plane map |P| which contains the point |p =
   s.source()| in its relative interior. |s.target()| must be a point
   such that |s| intersects the $1$-skeleton of |P|.}*/
+  { TRACEN("locate naivly "<<s);
+    if (number_of_vertices() == 0) 
+      CGAL_assertion_msg(0,"PM_naive_point_locator: plane map is empty.");
+    Point p = K.source(s);
+    Vertex_const_iterator vit;
+    for(vit = vertices_begin(); vit != vertices_end(); ++vit) {
+      if ( p == point(vit) ) return make_object(vit);
+    }
+    Halfedge_const_iterator eit;
+    for(eit = halfedges_begin(); eit != halfedges_end(); ++(++eit)) {
+      // we only have to check each second halfedge
+      if ( K.contains(segment(eit),p) ) 
+        return make_object(eit);
+    }
+    Vertex_const_handle v_res;
+    Halfedge_const_handle e_res;
+    Segment ss = s; // we shorten the segment iteratively
+    Direction dso = K.construct_direction(K.target(s),p), d_res;
+    CGAL::Hash_map<Halfedge_const_handle,bool> visited(false);
+    for(vit = vertices_begin(); vit != vertices_end(); ++vit) {
+      Point p_res, vp = point(vit);
+      if ( K.contains(ss,vp) ) {
+        TRACEN(" location via vertex at "<<vp);
+        ss = K.construct_segment(p,vp); // we shrink the segment
+        if ( is_isolated(vit) ) {
+          v_res = vit; e_res = Halfedge_const_handle();
+        } else { // not isolated
+          bool dummy;
+          e_res = out_wedge(vit,dso,dummy);
+          Halfedge_around_vertex_const_circulator el(e_res),ee(el);
+          CGAL_For_all(el,ee) 
+            visited[el] = visited[twin(el)] = true;
+          /* e_res is now the counterclockwise maximal halfedge out
+             of v just before s */
+          if ( K.orientation(p,vp,point(target(e_res))) < 0 ) // right turn
+            e_res = previous(e_res);
+          // correction to make e_res visible from p
+          TRACEN("  determined "<<PE(e_res));
+        }
+      }
+    }
+
+    for (eit = halfedges_begin(); eit != halfedges_end(); ++eit) {
+      if ( visited[eit] ) continue;
+      Point se = point(source(eit)),
+            te = point(target(eit));
+      int o1 = K.orientation(ss,se);
+      int o2 = K.orientation(ss,te);
+      if ( o1 == -o2 && // internal intersection
+           K.orientation(se,te,K.source(ss)) != 
+           K.orientation(se,te,K.target(ss)) ) { 
+          TRACEN(" location via halfedge "<<segment(eit));
+        Point p_res = K.intersection(s,segment(eit));
+        ss = K.construct_segment(p,p_res); 
+        e_res = (o2 > 0 ? eit : twin(eit));
+        // o2>0 => te left of s and se right of s => p left of e
+        visited[eit] = visited[twin(eit)] = true;
+        TRACEN("  determined "<<PE(e_res)<<" "<<mark(e_res));
+        TRACEN("             "<<mark(face(e_res)));
+      }
+    }
+
+    if ( e_res != Halfedge_const_handle() )
+      return make_object((Face_const_handle)(face(e_res)));
+    else
+      return make_object((Face_const_handle)(face(v_res)));
+  }
 
   template <typename Object_predicate>
-  Object_handle ray_shoot(const Segment& s, const Object_predicate& M) const;
+  Object_handle ray_shoot(const Segment& s, 
+                          const Object_predicate& M) const
   /*{\Mop returns an |Object_handle o| which can be converted to a
   |Vertex_const_handle|, |Halfedge_const_handle|, |Face_const_handle|
   |h| as described above.  The object predicate |M| has to have function
@@ -206,6 +282,71 @@ public:
   minimal distance to |s.source()| and |M(h)| holds on the converted
   object. The operation returns the null handle |NULL| if the ray shoot
   along |s| does not hit any object |h| of |P| with |M(h)|.}*/
+  { TRACEN("naive ray_shoot "<<s);
+    assert( !K.is_degenerate(s) );
+    Point p = K.source(s);
+    Segment ss(s);
+    Direction d = K.construct_direction(K.source(s),K.target(s));
+    Object_handle h = locate(s);
+    Vertex_const_handle v; 
+    Halfedge_const_handle e; 
+    Face_const_handle f;
+    if ( assign(v,h) && M(v) ||
+         assign(e,h) && M(e) ||
+         assign(f,h) && M(f) ) return h;
+    h = Object_handle(); 
+    TRACEN("not contained");
+    for (v = vertices_begin(); v != vertices_end(); ++v) {
+      Point pv = point(v);
+      if ( !K.contains(ss,pv) ) continue;
+      TRACEN("candidate "<<pv);
+      if ( M(v) ) {
+        h = make_object(v);     // store vertex
+        ss = K.construct_segment(p,pv); // shorten
+        continue;
+      }
+      // now we know that v is not marked but on s
+      bool collinear;
+      Halfedge_const_handle e = out_wedge(v,d,collinear);
+      if ( collinear ) { 
+        if ( M(e) ) {
+          h = make_object(e);
+          ss = K.construct_segment(p,pv);
+        }
+        continue;
+      }
+      if ( M(face(e)) ) {
+        h = make_object(face(e));
+        ss = K.construct_segment(p,pv);
+      }
+    } // all vertices
+
+    Halfedge_const_iterator e_res;
+    for(e = halfedges_begin(); e != halfedges_end(); ++(++e)) {
+      Segment es = segment(e);
+      int o1 = K.orientation(ss,K.source(es));
+      int o2 = K.orientation(ss,K.target(es));
+      if ( o1 == -o2 && o1 != 0 &&
+           K.orientation(es, K.source(ss)) ==
+           - K.orientation(es, K.target(ss)) ) {
+        // internal intersection
+        TRACEN("candidate "<<es);
+        Point p_res = K.intersection(s,es);
+        e_res = (o2 > 0 ? e : twin(e));
+        // o2 > 0 => te left of s and se right of s => p left of e
+        if ( M(e_res) ) {
+          h = make_object(e_res);
+          ss = K.construct_segment(p,p_res);  
+        } else if ( M(face(twin(e_res))) ) {
+          h = make_object(face(twin(e_res)));
+          ss = K.construct_segment(p,p_res);  
+        }
+      }
+    }
+
+    return h;
+  }
+
 
   // C++ is really friendly:
   #define USECMARK(t) const Mark& mark(t h) const { return Base::mark(h); }
@@ -222,153 +363,15 @@ public:
   the intersection points of the $1$-skeleton of the plane map |P| with
   the query segments $s$. This method takes time linear in the size $n$
   of the underlying plane map without any preprocessing.}*/
-}; // PM_naive_point_locator<PMDEC,GEOM>
-
-
-template <typename PMDEC, typename GEOM>
-typename PM_naive_point_locator<PMDEC,GEOM>::Object_handle  
-PM_naive_point_locator<PMDEC,GEOM>::locate(const Segment& s) const
-{ TRACEN("locate naivly "<<s);
-  if (number_of_vertices() == 0) 
-    CGAL_assertion_msg(0,"PM_naive_point_locator: plane map is empty.");
-  Point p = K.source(s);
-  Vertex_const_iterator vit;
-  for(vit = vertices_begin(); vit != vertices_end(); ++vit) {
-    if ( p == point(vit) ) return make_object(vit);
-  }
-  Halfedge_const_iterator eit;
-  for(eit = halfedges_begin(); eit != halfedges_end(); ++(++eit)) {
-    // we only have to check each second halfedge
-    if ( K.contains(segment(eit),p) ) 
-      return make_object(eit);
-  }
-  Vertex_const_handle v_res;
-  Halfedge_const_handle e_res;
-  Segment ss = s; // we shorten the segment iteratively
-  Direction dso = K.construct_direction(K.target(s),p), d_res;
-  CGAL::Hash_map<Halfedge_const_handle,bool> visited(false);
-  for(vit = vertices_begin(); vit != vertices_end(); ++vit) {
-    Point p_res, vp = point(vit);
-    if ( K.contains(ss,vp) ) {
-      TRACEN(" location via vertex at "<<vp);
-      ss = K.construct_segment(p,vp); // we shrink the segment
-      if ( is_isolated(vit) ) {
-        v_res = vit; e_res = Halfedge_const_handle();
-      } else { // not isolated
-        bool dummy;
-        e_res = out_wedge(vit,dso,dummy);
-        Halfedge_around_vertex_const_circulator el(e_res),ee(el);
-        CGAL_For_all(el,ee) 
-          visited[el] = visited[twin(el)] = true;
-        /* e_res is now the counterclockwise maximal halfedge out
-           of v just before s */
-        if ( K.orientation(p,vp,point(target(e_res))) < 0 ) // right turn
-          e_res = previous(e_res);
-        // correction to make e_res visible from p
-        TRACEN("  determined "<<PE(e_res));
-      }
-    }
-  }
-
-  for (eit = halfedges_begin(); eit != halfedges_end(); ++eit) {
-    if ( visited[eit] ) continue;
-    Point se = point(source(eit)),
-          te = point(target(eit));
-    int o1 = K.orientation(ss,se);
-    int o2 = K.orientation(ss,te);
-    if ( o1 == -o2 && // internal intersection
-         K.orientation(se,te,K.source(ss)) != 
-         K.orientation(se,te,K.target(ss)) ) { 
-        TRACEN(" location via halfedge "<<segment(eit));
-      Point p_res = K.intersection(s,segment(eit));
-      ss = K.construct_segment(p,p_res); 
-      e_res = (o2 > 0 ? eit : twin(eit));
-      // o2>0 => te left of s and se right of s => p left of e
-      visited[eit] = visited[twin(eit)] = true;
-      TRACEN("  determined "<<PE(e_res)<<" "<<mark(e_res));
-      TRACEN("             "<<mark(face(e_res)));
-    }
-  }
-
-  if ( e_res != Halfedge_const_handle() )
-    return make_object((Face_const_handle)(face(e_res)));
-  else
-    return make_object((Face_const_handle)(face(v_res)));
-}
-
-template <typename PMDEC, typename GEOM>
-template <typename Object_predicate>
-typename PM_naive_point_locator<PMDEC,GEOM>::Object_handle  
-PM_naive_point_locator<PMDEC,GEOM>::ray_shoot(
-  const Segment& s, const Object_predicate& M) const
-{ TRACEN("naive ray_shoot "<<s);
-  assert( !K.is_degenerate(s) );
-  Point p = K.source(s);
-  Segment ss(s);
-  Direction d = K.construct_direction(K.source(s),K.target(s));
-  Object_handle h = locate(s);
-  Vertex_const_handle v; 
-  Halfedge_const_handle e; 
-  Face_const_handle f;
-  if ( assign(v,h) && M(v) ||
-       assign(e,h) && M(e) ||
-       assign(f,h) && M(f) ) return h;
-  h = Object_handle(); 
-  TRACEN("not contained");
-  for (v = vertices_begin(); v != vertices_end(); ++v) {
-    Point pv = point(v);
-    if ( !K.contains(ss,pv) ) continue;
-    TRACEN("candidate "<<pv);
-    if ( M(v) ) {
-      h = make_object(v);     // store vertex
-      ss = K.construct_segment(p,pv); // shorten
-      continue;
-    }
-    // now we know that v is not marked but on s
-    bool collinear;
-    Halfedge_const_handle e = out_wedge(v,d,collinear);
-    if ( collinear ) { 
-      if ( M(e) ) {
-        h = make_object(e);
-        ss = K.construct_segment(p,pv);
-      }
-      continue;
-    }
-    if ( M(face(e)) ) {
-      h = make_object(face(e));
-      ss = K.construct_segment(p,pv);
-    }
-  } // all vertices
-
-  Halfedge_const_iterator e_res;
-  for(e = halfedges_begin(); e != halfedges_end(); ++(++e)) {
-    Segment es = segment(e);
-    int o1 = K.orientation(ss,K.source(es));
-    int o2 = K.orientation(ss,K.target(es));
-    if ( o1 == -o2 && o1 != 0 &&
-         K.orientation(es, K.source(ss)) ==
-         - K.orientation(es, K.target(ss)) ) {
-      // internal intersection
-      TRACEN("candidate "<<es);
-      Point p_res = K.intersection(s,es);
-      e_res = (o2 > 0 ? e : twin(e));
-      // o2 > 0 => te left of s and se right of s => p left of e
-      if ( M(e_res) ) {
-        h = make_object(e_res);
-        ss = K.construct_segment(p,p_res);  
-      } else if ( M(face(twin(e_res))) ) {
-        h = make_object(face(twin(e_res)));
-        ss = K.construct_segment(p,p_res);  
-      }
-    }
-  }
-
-  return h;
-}
+}; // PM_naive_point_locator<PM_decorator_,Geometry_>
 
 
 /*{\Moptions print_title=yes }*/ 
-/*{\Manpage {PM_point_locator}{PMDEC,GEOM} 
+/*{\Msubst 
+PM_decorator_#PMD
+Geometry_#GEO
+}*/
+/*{\Manpage {PM_point_locator}{PMD,GEO} 
 {Point location in plane maps via LMWT}{PL}}*/ 
 /*{\Mdefinition An instance |\Mvar| of data type |\Mname| encapsulates
 point location queries within a plane map |P|. The two template
@@ -380,12 +383,12 @@ appendix. For a specification of plane maps see also the concept of
 
 /*{\Mgeneralization PM_decorator^#PM_naive_point_locator<PMDEC,GEOM>}*/
 
-template <typename PMDEC, typename GEOM>
+template <typename PM_decorator_, typename Geometry_>
 class PM_point_locator : public 
-  PM_naive_point_locator<PMDEC,GEOM> {
+  PM_naive_point_locator<PM_decorator_,Geometry_> {
 protected:
-  typedef PM_point_locator<PMDEC,GEOM>       Self;
-  typedef PM_naive_point_locator<PMDEC,GEOM> Base;
+  typedef PM_naive_point_locator<PM_decorator_,Geometry_> Base;
+  typedef PM_point_locator<PM_decorator_,Geometry_> Self;
   Base CT;
   #ifdef USING_PPL
   typedef PM_persistent_PL_traits<Base>  PMPPLT; 
@@ -398,7 +401,7 @@ protected:
 
 public:
   #define USING(t) typedef typename Base::t t
-  USING(PM_decorator);
+  USING(Decorator);
   USING(Plane_map);
   USING(Mark);
   USING(Geometry);
@@ -429,10 +432,10 @@ public:
   typedef std::pair<Vertex_const_handle,Face_const_handle>   VF_pair;
   typedef std::pair<Halfedge_const_handle,Face_const_handle> EF_pair;
 
-  struct CT_link_to_original : PM_decorator { // CT decorator
-    const PM_decorator& Po;
-    CT_link_to_original(const PM_decorator& P, const PM_decorator& Poi) 
-      : PM_decorator(P), Po(Poi) {}
+  struct CT_link_to_original : Decorator { // CT decorator
+    const Decorator& Po;
+    CT_link_to_original(const Decorator& P, const Decorator& Poi) 
+      : Decorator(P), Po(Poi) {}
     void operator()(Vertex_handle vn, Vertex_const_handle vo) const
     { Face_const_handle f;
       if ( Po.is_isolated(vo) ) f = Po.face(vo);
@@ -494,10 +497,10 @@ protected:
   edges crossed until an obstacle edge is hit.} for a random direction
   of the ray shot is expected to be $O( \sqrt{n} )$.}*/
 
-  struct CT_new_edge : PM_decorator { 
-    const PM_decorator& _DP;
-    CT_new_edge(const PM_decorator& CT, const PM_decorator& DP) : 
-      PM_decorator(CT), _DP(DP) {}
+  struct CT_new_edge : Decorator { 
+    const Decorator& _DP;
+    CT_new_edge(const Decorator& CT, const Decorator& DP) : 
+      Decorator(CT), _DP(DP) {}
     void operator()(Halfedge_handle& e) const
     { Halfedge_handle e_from = previous(e);
       Face_const_handle f;
@@ -523,7 +526,7 @@ protected:
   {
     TRACEN("triangulate_CT");
     typedef CGAL::PM_constr_triang_traits<
-      PM_decorator,Geometry,CT_new_edge> NCTT;
+      Decorator,Geometry,CT_new_edge> NCTT;
     typedef gen_plane_sweep<NCTT> PM_constr_triang_sweep;
     CT_new_edge NE(CT,*this);
     PM_constr_triang_sweep T(NE,CT.plane_map(),K);
@@ -599,19 +602,38 @@ public:
 
   /*{\Moperations 2.5 0.5}*/
 
-  const PM_decorator& triangulation() const { return CT; }
+  const Decorator& triangulation() const { return CT; }
   /*{\Mop access to the constrained triangulation structure that
   is superimposed to |P|.}*/
   /*{\Moptions constref=no}*/
 
-  Object_handle locate(const Point& p) const;
+  
+  Object_handle locate(const Point& p) const
   /*{\Mop returns a generic handle |h| to an object (vertex, halfedge,
   face) of |P| which contains the point |p| in its relative
   interior.}*/
+  { 
+    Object_handle h = LOCATE_IN_TRIANGULATION(p); 
+    Vertex_const_handle v_triang;
+    if ( assign(v_triang,h) ) {
+      return input_object(v_triang);
+    } 
+    Halfedge_const_handle e_triang;
+    if ( assign(e_triang,h) ) {
+      Halfedge_const_handle e = input_halfedge(e_triang);
+      if ( e == Halfedge_const_handle() ) // inserted during triangulation
+        return make_object(input_face(e_triang)); 
+      int or = K.orientation(segment(e),p);
+      if ( or == 0 ) return make_object(e);
+      if ( or < 0 )  return make_object(face(twin(e)));
+      if ( or > 0 )  return make_object(face(e));
+    }
+    assert(0); return h; // compiler warning
+  }
 
   template <typename Object_predicate>
   Object_handle ray_shoot(const Segment& s, 
-                          const Object_predicate& M) const;
+                          const Object_predicate& M) const
   /*{\Mop returns an |Object_handle o| which can be converted to a
   |Vertex_const_handle|, |Halfedge_const_handle|, |Face_const_handle|
   |h| as described above.  The object predicate |M| has to have 
@@ -621,12 +643,133 @@ public:
   distance to |s.source()| and |M(h)| holds on the converted object. The
   operation returns the null handle |NULL| if the ray shoot along |s|
   does not hit any object |h| of |P| with |M(h)|.}*/
+  { TRACEN("ray_shoot "<<s);
+    CGAL_assertion( !K.is_degenerate(s) );
+    Point p = K.source(s), q = K.target(s);
+    Direction d = K.construct_direction(p,q); 
+    Vertex_const_handle v;
+    Halfedge_const_handle e;
+    object_kind current;
+    Object_handle h = LOCATE_IN_TRIANGULATION(p);
+    if ( assign(v,h) ) {
+      TRACEN("located vertex "<<PV(v));
+      current = VERTEX;
+    }  
+
+    if ( assign(e,h) ) {
+      TRACEN("located edge "<<PE(e));
+      int or = K.orientation( segment(e), p);
+      if ( or == 0 ) { // p on segment
+        TRACEN("on edge "<<PE(e));
+        if ( d == CT.direction(e) ) 
+        { current = EDGE_COLLINEAR; }
+        else if ( d == CT.direction(CT.twin(e)) ) 
+        { e = CT.twin(e); current = EDGE_COLLINEAR; }
+        else { // crossing
+          current = EDGE_CROSSING;
+          if ( !(K.orientation(CT.segment(e),q)>0) ) // not leftturn
+            e = CT.twin(e); 
+        }
+
+      } else { // p not on segment, thus in triangle
+        if ( or < 0  ) e = CT.twin(e);
+        // now p left of e
+        TRACEN("in face at "<<PE(e));
+        if ( M(input_face(e)) ) // face mark
+          return make_object(input_face(e));
+
+        Point p1 = CT.point(CT.source(e)), 
+              p2 = CT.point(CT.target(e)), 
+              p3 = CT.point(CT.target(next(e)));
+        int or1 = K.orientation(p,q,p1);
+        int or2 = K.orientation(p,q,p2);
+        int or3 = K.orientation(p,q,p3);
+        if ( or1 == 0 && !K.leftturn(p1,p2,q) )
+        { v = CT.source(e); current = VERTEX; }
+        else if ( or2 == 0 && !K.leftturn(p2,p3,q) )
+        { v = CT.target(e); current = VERTEX; }
+        else if ( or3 == 0 && !K.leftturn(p3,p1,q) )
+        { v = CT.target(CT.next(e)); current = VERTEX; }
+        else if ( or2 > 0 && or1 < 0 && !K.leftturn(p1,p2,q) )
+        { e = CT.twin(e); current = EDGE_CROSSING; }
+        else if ( or3 > 0 && or2 < 0 && !K.leftturn(p2,p3,q) )
+        { e = CT.twin(CT.next(e)); current = EDGE_CROSSING; }
+        else if ( or1 > 0 && or3 < 0 && !K.leftturn(p3,p1,q) )
+        { e = CT.twin(CT.previous(e)); current = EDGE_CROSSING; }
+        else return Object_handle();
+
+      }
+    }
+
+    while (true) switch ( current ) {
+      case VERTEX:
+        { TRACEN("vertex "<<CT.point(v));
+          Vertex_const_handle v_org = input_vertex(v);
+          if ( M(v_org) ) return make_object(v_org);
+          if ( CT.point(v) == q ) return Object_handle();
+          // stop walking at q, or determine next object on s:
+          bool collinear;
+          Halfedge_const_handle e_out = CT.out_wedge(v,d,collinear);
+          if (collinear) // ray shoot via e_out
+          { e = e_out; current = EDGE_COLLINEAR; }
+          else { // ray shoot in wedge left of e_out
+            if ( M(input_face(e_out)) )
+              return make_object(input_face(e_out));
+            e = CT.twin(CT.next(e_out)); current = EDGE_CROSSING;
+          }
+        }
+
+        break;
+      case EDGE_CROSSING:
+        { TRACEN("crossing edge "<<segment(e));
+          if ( K.orientation(CT.segment(e),q) == 0 ) 
+            return Object_handle();
+          Halfedge_const_handle e_org = input_halfedge(e);
+          if ( e_org != Halfedge_const_handle() ) { // not a CT edge
+            if ( M(e_org) ) return make_object(e_org);
+            if ( M(face(e_org)) ) return make_object(face(e_org));
+          }
+          Vertex_const_handle v_cand = CT.target(CT.next(e));
+          TRACEN("v_cand "<<PV(v_cand));
+          int or = K.orientation(p,q,CT.point(v_cand));
+          switch( or ) {
+            case 0: 
+              v = v_cand; current = VERTEX; break;
+            case +1: 
+              e = CT.twin(CT.next(e)); current = EDGE_CROSSING; break;
+            case -1: 
+              e = CT.twin(CT.previous(e)); current = EDGE_CROSSING; break;
+          }
+        }
+
+        break;
+      case EDGE_COLLINEAR:
+        { TRACEN("collinear edge "<<CT.segment(e));
+          Halfedge_const_handle e_org = input_halfedge(e);
+          if ( e_org == Halfedge_const_handle() ) { // a CT edge
+            if ( M(input_face(e)) ) 
+              return make_object(input_face(e));
+          } else { // e_org is not a CT edge
+            if ( M(e_org) )
+              return make_object(e_org);
+          }
+          if ( K.strictly_ordered_along_line(
+                 CT.point(CT.source(e)),q,CT.point(CT.target(e))) ) 
+            return Object_handle();
+          v = CT.target(e); current = VERTEX;
+        }
+
+        break;
+    } 
+    // assert(0); return h; // compiler warning
+  }
+
 
   Object_handle walk_in_triangulation(const Point& p) const;
 
 
   enum object_kind { VERTEX, EDGE_CROSSING, EDGE_COLLINEAR };
-}; // PM_point_locator<PMDEC,GEOM>
+}; // PM_point_locator<PM_decorator_,Geometry_>
 
 
 #ifdef USING_PPL
@@ -635,8 +778,8 @@ static const char* pointlocationversion = "point location via pers dicts";
 static const char* pointlocationversion = "point location via seg walks";
 #endif
 
-template <typename PMDEC, typename GEOM>
-PM_point_locator<PMDEC,GEOM>::
+template <typename PMD, typename GEO>
+PM_point_locator<PMD,GEO>::
 PM_point_locator(const Plane_map& P, const Geometry& k) :
   Base(P,k), CT(*(new Plane_map),k)
 
@@ -650,8 +793,8 @@ PM_point_locator(const Plane_map& P, const Geometry& k) :
 
 }
 
-template <typename PMDEC, typename GEOM>
-PM_point_locator<PMDEC,GEOM>::
+template <typename PMD, typename GEO>
+PM_point_locator<PMD,GEO>::
 ~PM_point_locator()
 { TRACEN("clear_static_point_locator");
   Vertex_iterator vit, vend = CT.vertices_end();
@@ -669,9 +812,9 @@ PM_point_locator<PMDEC,GEOM>::
   #endif
 }
 
-template <typename PMDEC, typename GEOM>
-typename PM_point_locator<PMDEC,GEOM>::Object_handle  
-PM_point_locator<PMDEC,GEOM>::walk_in_triangulation(const Point& q) const
+template <typename PMD, typename GEO>
+CGAL_TYPENAME_MSVC_NULL PM_point_locator<PMD,GEO>::Object_handle  
+PM_point_locator<PMD,GEO>::walk_in_triangulation(const Point& q) const
 { 
   TRACEN("walk in triangulation "<<q);
   Vertex_const_handle v = CT.vertices_begin();
@@ -725,155 +868,9 @@ PM_point_locator<PMDEC,GEOM>::walk_in_triangulation(const Point& q) const
 
       break;
   }
+#if !defined(__BORLANDC__)
   return Object_handle(); // never reached warning acceptable
-}
-
-template <typename PMDEC, typename GEOM>
-typename PM_point_locator<PMDEC,GEOM>::Object_handle  
-PM_point_locator<PMDEC,GEOM>::locate(const Point& p) const
-{ 
-  Object_handle h = LOCATE_IN_TRIANGULATION(p); 
-  Vertex_const_handle v_triang;
-  if ( assign(v_triang,h) ) {
-    return input_object(v_triang);
-  } 
-  Halfedge_const_handle e_triang;
-  if ( assign(e_triang,h) ) {
-    Halfedge_const_handle e = input_halfedge(e_triang);
-    if ( e == Halfedge_const_handle() ) // inserted during triangulation
-      return make_object(input_face(e_triang)); 
-    int or = K.orientation(segment(e),p);
-    if ( or == 0 ) return make_object(e);
-    if ( or < 0 )  return make_object(face(twin(e)));
-    if ( or > 0 )  return make_object(face(e));
-  }
-  assert(0); return h; // compiler warning
-}
-
-template <typename PMDEC, typename GEOM>
-template <typename Object_predicate>
-typename PM_point_locator<PMDEC,GEOM>::Object_handle  
-PM_point_locator<PMDEC,GEOM>::ray_shoot(
-  const Segment& s, const Object_predicate& M) const
-{ TRACEN("ray_shoot "<<s);
-  CGAL_assertion( !K.is_degenerate(s) );
-  Point p = K.source(s), q = K.target(s);
-  Direction d = K.construct_direction(p,q); 
-  Vertex_const_handle v;
-  Halfedge_const_handle e;
-  object_kind current;
-  Object_handle h = LOCATE_IN_TRIANGULATION(p);
-  if ( assign(v,h) ) {
-    TRACEN("located vertex "<<PV(v));
-    current = VERTEX;
-  }  
-
-  if ( assign(e,h) ) {
-    TRACEN("located edge "<<PE(e));
-    int or = K.orientation( segment(e), p);
-    if ( or == 0 ) { // p on segment
-      TRACEN("on edge "<<PE(e));
-      if ( d == CT.direction(e) ) 
-      { current = EDGE_COLLINEAR; }
-      else if ( d == CT.direction(CT.twin(e)) ) 
-      { e = CT.twin(e); current = EDGE_COLLINEAR; }
-      else { // crossing
-        current = EDGE_CROSSING;
-        if ( !(K.orientation(CT.segment(e),q)>0) ) // not leftturn
-          e = CT.twin(e); 
-      }
-
-    } else { // p not on segment, thus in triangle
-      if ( or < 0  ) e = CT.twin(e);
-      // now p left of e
-      TRACEN("in face at "<<PE(e));
-      if ( M(input_face(e)) ) // face mark
-        return make_object(input_face(e));
-
-      Point p1 = CT.point(CT.source(e)), 
-            p2 = CT.point(CT.target(e)), 
-            p3 = CT.point(CT.target(next(e)));
-      int or1 = K.orientation(p,q,p1);
-      int or2 = K.orientation(p,q,p2);
-      int or3 = K.orientation(p,q,p3);
-      if ( or1 == 0 && !K.leftturn(p1,p2,q) )
-      { v = CT.source(e); current = VERTEX; }
-      else if ( or2 == 0 && !K.leftturn(p2,p3,q) )
-      { v = CT.target(e); current = VERTEX; }
-      else if ( or3 == 0 && !K.leftturn(p3,p1,q) )
-      { v = CT.target(CT.next(e)); current = VERTEX; }
-      else if ( or2 > 0 && or1 < 0 && !K.leftturn(p1,p2,q) )
-      { e = CT.twin(e); current = EDGE_CROSSING; }
-      else if ( or3 > 0 && or2 < 0 && !K.leftturn(p2,p3,q) )
-      { e = CT.twin(CT.next(e)); current = EDGE_CROSSING; }
-      else if ( or1 > 0 && or3 < 0 && !K.leftturn(p3,p1,q) )
-      { e = CT.twin(CT.previous(e)); current = EDGE_CROSSING; }
-      else return Object_handle();
-
-    }
-  }
-
-  while (true) switch ( current ) {
-    case VERTEX:
-      { TRACEN("vertex "<<CT.point(v));
-        Vertex_const_handle v_org = input_vertex(v);
-        if ( M(v_org) ) return make_object(v_org);
-        if ( CT.point(v) == q ) return Object_handle();
-        // stop walking at q, or determine next object on s:
-        bool collinear;
-        Halfedge_const_handle e_out = CT.out_wedge(v,d,collinear);
-        if (collinear) // ray shoot via e_out
-        { e = e_out; current = EDGE_COLLINEAR; }
-        else { // ray shoot in wedge left of e_out
-          if ( M(input_face(e_out)) )
-            return make_object(input_face(e_out));
-          e = CT.twin(CT.next(e_out)); current = EDGE_CROSSING;
-        }
-      }
-
-      break;
-    case EDGE_CROSSING:
-      { TRACEN("crossing edge "<<segment(e));
-        if ( K.orientation(CT.segment(e),q) == 0 ) 
-          return Object_handle();
-        Halfedge_const_handle e_org = input_halfedge(e);
-        if ( e_org != Halfedge_const_handle() ) { // not a CT edge
-          if ( M(e_org) ) return make_object(e_org);
-          if ( M(face(e_org)) ) return make_object(face(e_org));
-        }
-        Vertex_const_handle v_cand = CT.target(CT.next(e));
-        TRACEN("v_cand "<<PV(v_cand));
-        int or = K.orientation(p,q,CT.point(v_cand));
-        switch( or ) {
-          case 0: 
-            v = v_cand; current = VERTEX; break;
-          case +1: 
-            e = CT.twin(CT.next(e)); current = EDGE_CROSSING; break;
-          case -1: 
-            e = CT.twin(CT.previous(e)); current = EDGE_CROSSING; break;
-        }
-      }
-
-      break;
-    case EDGE_COLLINEAR:
-      { TRACEN("collinear edge "<<CT.segment(e));
-        Halfedge_const_handle e_org = input_halfedge(e);
-        if ( e_org == Halfedge_const_handle() ) { // a CT edge
-          if ( M(input_face(e)) ) 
-            return make_object(input_face(e));
-        } else { // e_org is not a CT edge
-          if ( M(e_org) )
-            return make_object(e_org);
-        }
-        if ( K.strictly_ordered_along_line(
-               CT.point(CT.source(e)),q,CT.point(CT.target(e))) ) 
-          return Object_handle();
-        v = CT.target(e); current = VERTEX;
-      }
-
-      break;
-  } 
-  // assert(0); return h; // compiler warning
+#endif
 }
 
 

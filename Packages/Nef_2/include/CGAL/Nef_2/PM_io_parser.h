@@ -155,7 +155,7 @@ template <typename PMDEC>
 bool PM_io_parser<PMDEC>::check_sep(char* sep)
 {
   char c; 
-  do in.get(c); while (isspace(c));
+  do in.get(c); while (std::isspace(c));
   while (*sep != '\0') { 
     if (*sep != c) {
       in.putback(c);

@@ -100,9 +100,9 @@ public:
   typedef HalfedgeDS_ipl_MSC_base<Traits_> Self;
   typedef Traits_  Traits;
 
-  typedef CGALMSC::Vertex<Self,Traits>   Vertex_base;
-  typedef CGALMSC::Halfedge<Self,Traits> Halfedge_base;
-  typedef CGALMSC::Face<Self,Traits>     Face_base;
+  typedef CGALMSC::Vertex_<Self,Traits>   Vertex_base;
+  typedef CGALMSC::Halfedge_<Self,Traits> Halfedge_base;
+  typedef CGALMSC::Face_<Self,Traits>     Face_base;
 
   typedef HalfedgeDS_in_place_list_vertex<Vertex_base> Vertex;
   typedef CGAL::In_place_list<Vertex,false>            Vertex_list;
@@ -225,11 +225,6 @@ public:
     }
 
 protected:
-    typedef typename Vertex::Base                      VBase;
-    typedef typename Halfedge::Base                    HBase;
-    typedef typename Halfedge::Base_base               HBase_base;
-    typedef typename Face::Base                        FBase;
-
     Vertex_list        vertices;
     Halfedge_list      halfedges;
     Face_list          faces;
@@ -335,8 +330,8 @@ public:
         Halfedge* g2 = &(hpair->second);
         CGAL_assertion( h2 == (Halfedge*)hpair);
         CGAL_assertion( g2 == h2 + 1);
-        h2->HBase_base::set_opposite(g2);
-        g2->HBase_base::set_opposite(h2);
+        h2->set_opposite(g2);
+        g2->set_opposite(h2);
         halfedges.push_back( *h2);
         Halfedge_handle hh = halfedges.end();
         --hh;
@@ -523,8 +518,8 @@ pointer_update( const HalfedgeDS_ipl_MSC<p_Traits>& hds) {
     }
     HalfedgeDS_items_decorator<Self> D;
     for ( Halfedge_iterator h = halfedges_begin(); h != halfedges_end(); ++h) {
-        h->HBase::set_next( h_map[ h->next()]);
-        h->HBase_base::set_opposite( h_map[ h->opposite()]);
+        h->set_next( h_map[ h->next()]);
+        h->set_opposite( h_map[ h->opposite()]);
         if ( CGAL::check_tag( Supports_halfedge_prev()))
             D.set_prev( h, h_map[ D.get_prev(h)]);
         if ( CGAL::check_tag( Supports_halfedge_vertex())) {

@@ -40,15 +40,13 @@ namespace CGALMSC {
 #define LEDA_MEMORY(t) 
 #endif
 
-template <typename Refs, typename Traits> class Vertex;
-template <typename Refs, typename Traits> class Halfedge;
-template <typename Refs, typename Traits> class Face;
+template <typename Refs, typename Traits> class Vertex_;
+template <typename Refs, typename Traits> class Halfedge_;
+template <typename Refs, typename Traits> class Face_;
 
 template <typename Refs, typename Traits>
-class Vertex  { public:
-
-      typedef Refs    HalfedgeDS;
-      typedef Vertex  Base;
+class Vertex_  { public:
+      typedef Vertex_<Refs,Traits> Base;
       typedef CGAL::Tag_true Supports_vertex_halfedge;
       typedef CGAL::Tag_true Supports_vertex_point;
       typedef typename Refs::Vertex_handle         Vertex_handle;
@@ -73,8 +71,8 @@ class Vertex  { public:
       GenPtr          _i;
     public:
 
-Vertex() : _h(),_f(),_ivit(nil_),_m(),_i((GenPtr)0xABCD) {}
-Vertex(const Point& p) : 
+Vertex_() : _h(),_f(),_ivit(nil_),_m(),_i((GenPtr)0xABCD) {}
+Vertex_(const Point& p) : 
   _h(),_f(),_p(p),_ivit(nil_),_m(),_i((GenPtr)0xABCD) {}
      
 bool is_isolated() const { return _h == Halfedge_handle(); }
@@ -101,18 +99,16 @@ void set_ivit(iv_iterator it) { _ivit = it; }
 
 static iv_iterator nil_;
 
-LEDA_MEMORY(Vertex)
+LEDA_MEMORY(Vertex_)
 
 }; // Vertex
 
 
 
 template <typename Refs, typename Traits>
-class Halfedge { public:
-
-      typedef Refs                HalfedgeDS;
-      typedef Halfedge            Base;
-      typedef Halfedge            Base_base;
+class Halfedge_ { public:
+      typedef Halfedge_<Refs,Traits> Base;
+      typedef Halfedge_<Refs,Traits> Base_base;
       typedef CGAL::Tag_true      Supports_halfedge_prev;
       typedef CGAL::Tag_true      Supports_halfedge_vertex;
       typedef CGAL::Tag_true      Supports_halfedge_face;
@@ -139,7 +135,7 @@ class Halfedge { public:
       GenPtr           _i;
     public:
        
-Halfedge() : 
+Halfedge_() : 
   opp(),prv(),nxt(),_v(),_f(),_fcit(nil_),_m(),_i((GenPtr)0xABCD) {}
 
 Halfedge_handle       opposite()                        { return opp; }
@@ -184,12 +180,9 @@ LEDA_MEMORY(Halfedge)
 };
 
 template <typename Refs, typename Traits>
-class Face { public:
-
+class Face_ { public:
+      typedef Face_<Refs,Traits> Base;
       typedef CGAL::Tag_true                       Supports_face_halfedge;
-      typedef Refs  HalfedgeDS;
-      typedef Face  Base;
-
       typedef typename Refs::Vertex_handle         Vertex_handle;
       typedef typename Refs::Vertex_const_handle   Vertex_const_handle;
       typedef typename Refs::Halfedge_handle       Halfedge_handle;
@@ -264,8 +257,8 @@ class Face { public:
       GenPtr                     _i;
     public:
 
-      Face() : _e(),_m(),_i((GenPtr)0xABCD) {}
-      ~Face() { FC.clear(); IV.clear(); }
+      Face_() : _e(),_m(),_i((GenPtr)0xABCD) {}
+      ~Face_() { FC.clear(); IV.clear(); }
 
       void store_fc(Halfedge_handle h) 
       { FC.push_back(h); h->set_fcit(--FC.end());  
@@ -312,16 +305,16 @@ class Face { public:
       GenPtr&       info()       { return _i; }
       const GenPtr& info() const { return _i; }
 
-  LEDA_MEMORY(Face)
+  LEDA_MEMORY(Face_)
 
 };
 
 
 template <typename R,class T> 
-typename Vertex<R,T>::iv_iterator Vertex<R,T>::nil_;
+typename Vertex_<R,T>::iv_iterator Vertex_<R,T>::nil_;
 
 template <typename R,class T> 
-typename Halfedge<R,T>::fc_iterator Halfedge<R,T>::nil_;
+typename Halfedge_<R,T>::fc_iterator Halfedge_<R,T>::nil_;
 
 } // namespace CGALMSC
 

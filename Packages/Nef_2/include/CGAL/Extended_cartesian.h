@@ -51,13 +51,13 @@ template <class T> class Extended_cartesian;
 
 template <class pFT>
 class Extended_cartesian : public 
-  CGAL::Cartesian< CGAL::RPolynomial<pFT> > {
+  CGAL::Cartesian< CGAL::RPolynomial<pFT> > { public:
 typedef CGAL::Cartesian< CGAL::RPolynomial<pFT> > Base;
 typedef Extended_cartesian<pFT> Self;
 
 /*{\Xdefinition |\Mname| is a kernel model realizing the concept
   extended geometry. }*/
-public:
+
 /*{\Xtypes 6.5}*/
 /*{\Xtext \headerline{Affine kernel and types}}*/
 

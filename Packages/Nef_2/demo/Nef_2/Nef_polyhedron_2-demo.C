@@ -18,6 +18,9 @@
 template <>
 struct ring_or_field<leda_integer> {
   typedef ring_with_gcd kind;
+  typedef leda_integer RT;
+  static RT gcd(const RT& r1, const RT& r2) 
+  { return ::gcd(r1,r2); }  
 };
 //typedef CGAL::Extended_homogeneous<leda_integer> EKernel;
 typedef CGAL::Filtered_extended_homogeneous<leda_integer> EKernel;
@@ -27,10 +30,10 @@ typedef  Nef_polyhedron::Point     Point;
 typedef  Nef_polyhedron::Line      Line;
 typedef  Nef_polyhedron::Direction Direction;
 typedef  Nef_polyhedron::Object_handle Object_handle;
-typedef  Nef_polyhedron::PM_const_decorator PM_const_decorator;
-typedef  PM_const_decorator::Vertex_const_handle Vertex_const_handle;
-typedef  PM_const_decorator::Halfedge_const_handle Halfedge_const_handle;
-typedef  PM_const_decorator::Face_const_handle Face_const_handle;
+typedef  Nef_polyhedron::Const_decorator Const_decorator;
+typedef  Const_decorator::Vertex_const_handle Vertex_const_handle;
+typedef  Const_decorator::Halfedge_const_handle Halfedge_const_handle;
+typedef  Const_decorator::Face_const_handle Face_const_handle;
 
 #include <LEDA/panel.h>
 #include <LEDA/list.h>
@@ -252,9 +255,9 @@ void unop(int i)
 }
 
 void draw(Object_handle h)
-{ CGAL::PM_visualizor<PM_const_decorator,EKernel> 
+{ CGAL::PM_visualizor<Const_decorator,EKernel> 
     PMV(W,N_display.explorer(),N_display.EPD,
-        CGAL::PM_DefColor<PM_const_decorator>(CGAL::RED,CGAL::RED,6,6) );
+        CGAL::PM_DefColor<Const_decorator>(CGAL::RED,CGAL::RED,6,6) );
   leda_drawing_mode prev = W.set_mode(leda_xor_mode);
   Vertex_const_handle vh; Halfedge_const_handle eh; Face_const_handle fh; 
   if ( assign(vh,h) ) PMV.draw(vh); 

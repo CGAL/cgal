@@ -108,7 +108,7 @@ template <>
 struct ring_or_field<double> {
   typedef field_with_div kind;
   typedef double RT;
-  static RT gcd(const RT& a, const RT& b) 
+  static RT gcd(const RT&, const RT&) 
   { return 1.0; }
 };
 
@@ -319,7 +319,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   RPolynomial(Size_type s) : Base( RPolynomial_rep<NT>(s) ) {}
   // creates a polynomial of degree s-1
 
-  static NT _R; // for visualization only
+  static NT R_; // for visualization only
 
   /*{\Mcreation 3}*/
   public:
@@ -461,7 +461,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
 
   #endif
 
-  static void set_R(const NT& R) { _R = R; }
+  static void set_R(const NT& R) { R_ = R; }
 
   /*{\Mtext Additionally |\Mname| offers standard arithmetic ring
   opertions like |+,-,*,+=,-=,*=|. By means of the sign operation we can
@@ -671,7 +671,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   RPolynomial(Size_type s) : Base( RPolynomial_rep<int>(s) ) {}
   // creates a polynomial of degree s-1
 
-  static int _R; // for visualization only
+  static int R_; // for visualization only
 
   /*{\Xcreation 3}*/
   public:
@@ -804,7 +804,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
 
   #endif
 
-  static void set_R(const int& R) { _R = R; }
+  static void set_R(const int& R) { R_ = R; }
 
   /*{\Xtext Additionally |\Mname| offers standard arithmetic ring
   opertions like |+,-,*,+=,-=,*=|. By means of the sign operation we can
@@ -995,7 +995,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   RPolynomial(Size_type s) : Base( RPolynomial_rep<double>(s) ) {}
   // creates a polynomial of degree s-1
 
-  static double _R; // for visualization only
+  static double R_; // for visualization only
 
   /*{\Xcreation 3}*/
   public:
@@ -1128,7 +1128,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
 
   #endif
 
-  static void set_R(const double& R) { _R = R; }
+  static void set_R(const double& R) { R_ = R; }
 
   /*{\Xtext Additionally |\Mname| offers standard arithmetic ring
   opertions like |+,-,*,+=,-=,*=|. By means of the sign operation we can
@@ -1279,13 +1279,13 @@ operation on two instances of the ring type.}*/
 
 // SPECIALIZE_CLASS(NT,int double) END
 
-template <class NT> NT RPolynomial<NT>::_R;
-int    RPolynomial<int>::_R;
-double RPolynomial<double>::_R;
+template <class NT> NT RPolynomial<NT>::R_;
+int    RPolynomial<int>::R_;
+double RPolynomial<double>::R_;
 
 template <class NT> /*CGAL_KERNEL_INLINE*/ double to_double 
   (const RPolynomial<NT>& p) 
-  { return (CGAL::to_double(p.eval_at(RPolynomial<NT>::_R))); }
+  { return (CGAL::to_double(p.eval_at(RPolynomial<NT>::R_))); }
 
 template <class NT>  /*CGAL_KERNEL_INLINE*/ bool is_valid 
   (const RPolynomial<NT>& p) 
@@ -1818,6 +1818,7 @@ void print_monomial(std::ostream& os, const NT& n, int i)
   if (i>1)  os << n << "R^" << i;
 }
 
+#define RPOLYNOMIAL_EXPLICIT_OUTPUT
 
 // I/O 
 template <class NT>

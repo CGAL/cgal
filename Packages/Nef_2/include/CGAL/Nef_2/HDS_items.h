@@ -23,7 +23,7 @@
 // maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
 // coordinator   : Michael Seel <seel@mpi-sb.mpg.de>
 //
-// implementation: Plane map decorator classes
+// implementation: Extended item classes
 // ============================================================================
 
 #ifndef CGAL_HDS_ITEMS_H
@@ -93,12 +93,12 @@ struct HDS_items {
 
   /*{\Mcreation 3}*/ 
       Vertex() : 
-        _h(),_f(),_ivit(_nil),_m(),_i((GenPtr)0xABCD) {}
+        _h(),_f(),_ivit(nil_),_m(),_i((GenPtr)0xABCD) {}
       /*{\Mcreate constructs an uninitialized vertex concerning embedding 
       and mark. All links are initialized by their default value.}*/   
 
       Vertex(const Point& p) : 
-        _h(),_f(),_p(p),_ivit(_nil),_m(),_i((GenPtr)0xABCD) {}
+        _h(),_f(),_p(p),_ivit(nil_),_m(),_i((GenPtr)0xABCD) {}
       /*{\Mcreate constructs a vertex with embedding |p| and mark |m|.
          All links are initialized by their default value.}*/   
 
@@ -137,7 +137,7 @@ struct HDS_items {
 
       iv_iterator ivit() const { return _ivit; }
       void set_ivit(iv_iterator it) { _ivit = it; }
-      static iv_iterator _nil;
+      static iv_iterator nil_;
       /* stl iterators have default construction but are only equal 
       comparable when copy constructed, what a mess in the specification */
 
@@ -188,7 +188,7 @@ struct HDS_items {
        
   /*{\Mcreation 3}*/ 
       Halfedge() : 
-        opp(),prv(),nxt(),_v(),_f(),_fcit(_nil),_m(),_i((GenPtr)0xABCD) {}
+        opp(),prv(),nxt(),_v(),_f(),_fcit(nil_),_m(),_i((GenPtr)0xABCD) {}
       /*{\Mcreate constructs an uninitialized halfedge concerning embedding 
       and mark. All links are initialized by their default value.}*/   
 
@@ -245,9 +245,9 @@ struct HDS_items {
       bool is_hole_entry() const 
       /*{\Mop returns true iff |\Mvar| is entry point into a hole face
          cycle of |\Mvar.face()|.}*/
-      { return _fcit != _nil; }
+      { return _fcit != nil_; }
 
-      static fc_iterator _nil;
+      static fc_iterator nil_;
       /* stl iterators have default construction but are only equal comparable
          when copy constructed, what a mess in the specification */
       
@@ -368,7 +368,7 @@ struct HDS_items {
           face cycle list of |\Mvar|.
           Postcondition: |!h->is_hole_entry()|.}*/
       { CGAL_assertion(h->is_hole_entry());
-        FC.erase(h->fcit()); h->set_fcit(Halfedge::_nil); }
+        FC.erase(h->fcit()); h->set_fcit(Halfedge::nil_); }
 
       void store_iv(Vertex_handle v)
       /*{\Mop stores vertex |v| as an isolated vertex of |\Mvar|.}*/
@@ -380,7 +380,7 @@ struct HDS_items {
           isolated vertices list of |\Mvar|. 
           Postcondition: |!v->is_isolated()|.}*/
       { CGAL_assertion(v->is_isolated()); 
-        IV.erase(v->ivit()); v->set_ivit(Vertex::_nil); }
+        IV.erase(v->ivit()); v->set_ivit(Vertex::nil_); }
       
       /*{\Mtext\setopdims{4cm}{0cm}}*/
 
@@ -401,10 +401,10 @@ struct HDS_items {
       void clear_all_entries()
       { Hole_iterator hit;
         for (hit = fc_begin(); hit!=fc_end(); ++hit) 
-          hit->set_fcit(Halfedge::_nil);
+          hit->set_fcit(Halfedge::nil_);
         Isolated_vertex_iterator vit;
         for (vit = iv_begin(); vit!=iv_end(); ++vit) 
-          vit->set_ivit(Vertex::_nil);
+          vit->set_ivit(Vertex::nil_);
         FC.clear(); IV.clear(); }
 
   /*{\Mtext There are the same iterator ranges defined for the const
@@ -440,12 +440,11 @@ struct HDS_items {
 
 template <typename R,class T> 
 typename HDS_items::Vertex_wrapper<R,T>::Vertex::iv_iterator
-HDS_items::Vertex_wrapper<R,T>::Vertex::_nil;
+HDS_items::Vertex_wrapper<R,T>::Vertex::nil_;
 
 template <typename R,class T> 
 typename HDS_items::Halfedge_wrapper<R,T>::Halfedge::fc_iterator
-HDS_items::Halfedge_wrapper<R,T>::Halfedge::_nil;
+HDS_items::Halfedge_wrapper<R,T>::Halfedge::nil_;
 
 #endif // CGAL_HDS_ITEMS_H
-
 

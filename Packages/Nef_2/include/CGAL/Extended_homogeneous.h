@@ -53,8 +53,8 @@ template <class T> class Extended_homogeneous;
 /*{\Manpage {Extended_geometry}{}{An extended geometric kernel} {K}}*/
 
 template <class pRT>
-struct Extended_homogeneous : public 
-  CGAL::Homogeneous< CGAL::RPolynomial<pRT> > {
+class Extended_homogeneous : public 
+  CGAL::Homogeneous< CGAL::RPolynomial<pRT> > { public:
 
 /*{\Mdefinition |\Mname| is a kernel concept providing extended
 geometry. Let |\Mvar| be an instance of the data type |\Mname|.  The

@@ -199,9 +199,12 @@ public:
 /*{\Mtypes 6}*/
 typedef HDS Plane_map;
 /*{\Mtypemember The underlying plane map type}*/
-typedef typename HDS::Traits::Point  Point;
+
+typedef typename HDS::Traits Traits;
+
+typedef typename Traits::Point  Point;
 /*{\Mtypemember The point type of vertices.}*/
-typedef typename HDS::Traits::Mark   Mark;
+typedef typename Traits::Mark   Mark;
 /*{\Mtypemember All objects (vertices, edges, faces) are attributed by a 
 |Mark| object.}*/
 typedef size_t Size_type;
