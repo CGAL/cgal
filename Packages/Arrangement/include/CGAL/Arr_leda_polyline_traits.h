@@ -354,11 +354,11 @@ public:
     int orient1=CGAL_LEDA_SCOPE::orientation(p1,p,px);
     int orient=orient0*orient1;
       
-    if (orient < 0) { //one is a leftturn the other rightturn
-      return (orient0 == LEFTTURN); //leftturn
+    if (orient < 0) { //one is a left_turn the other right_turn
+      return (orient0 == LEFT_TURN); //left_turn
     }
     else { //both are either left or right turns (or one is colinear)
-      return (CGAL_LEDA_SCOPE::orientation(p0,p,p1)==RIGHTTURN); //rightturn
+      return (CGAL_LEDA_SCOPE::orientation(p0,p,p1)==RIGHT_TURN); //right_turn
     }
   }
 

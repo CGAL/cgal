@@ -323,11 +323,11 @@ public:
     // 'or' is a keyword in C++, changed to 'orient'
     int orient=or0*or1;
     
-    if (orient < 0) { //one is a leftturn the other rightturn
-      return (or0 == LEFTTURN); //leftturn
+    if (orient < 0) { //one is a left_turn the other right_turn
+      return (or0 == LEFT_TURN); //left_turn
     }
     else { //both are either left or right turns (or one is colinear)
-      return (orientation(p0,p,p1)==RIGHTTURN); //rightturn
+      return (orientation(p0,p,p1)==RIGHT_TURN); //right_turn
     }
   }
   

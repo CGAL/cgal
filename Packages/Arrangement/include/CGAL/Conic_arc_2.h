@@ -1599,9 +1599,9 @@ class Conic_arc_2
       // In case of a conic of degree 2, make a decision based on the conic's
       // orientation and whether (source,p,target) is a right or a left turn.
       if (_conic.orientation() == 1)
-        return (leftturn<R>(_source, p, _target));
+        return (left_turn<R>(_source, p, _target));
       else
-        return (rightturn<R>(_source, p, _target));
+        return (right_turn<R>(_source, p, _target));
     }
   }
 

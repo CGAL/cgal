@@ -866,9 +866,9 @@ class Segment_circle_2
     // Otherwise, make a decision based on the conic's orientation and whether
     // (source,p,target) is a right or a left turn.
     if (_conic.orientation() == 1)
-      return (leftturn<R>(_source, p, _target));
+      return (left_turn<R>(_source, p, _target));
     else
-      return (rightturn<R>(_source, p, _target));
+      return (right_turn<R>(_source, p, _target));
   }
 
   // Find the y-coordinates of the conic at a given x-coordinate.
