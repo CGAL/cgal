@@ -160,8 +160,8 @@ public:
   //template member functions
 public:
   template < class InputIterator >
-#ifdef _MSC_VER
-  #if _MSC_VER>1200
+#ifdef _MSC_VER || __SUNPRO_CC
+  #if _MSC_VER>1200 || __SUNPRO_CC
    int insert(InputIterator first, InputIterator last, int i = 0)
   #else
    int insert(InputIterator first, InputIterator last) 
