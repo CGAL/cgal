@@ -61,22 +61,6 @@ public:
     out() << v->point() <<"  ";
     out() << v->get_color()<< std::endl;
   }
-   
-  void write_vertices(Vertex_iterator Vertices_begin, 
-		      Vertex_iterator Vertices_end) {
-    for (Vertex_iterator v_iter = Vertices_begin; 
-	 v_iter != Vertices_end;
-	 v_iter++)
-      write_vertex(v_iter);
-  }
-  
-  void write_vertices(Vertex_const_iterator Vertices_begin, 
-		      Vertex_const_iterator Vertices_end) {
-    for (Vertex_const_iterator v_iter = Vertices_begin;
-	 v_iter !=  Vertices_end; 
-	 v_iter++)
-      write_vertex(v_iter);
-  }
 };
 
 typedef CGAL::Quotient<int>                NT;
