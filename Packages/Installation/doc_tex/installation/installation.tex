@@ -1228,8 +1228,8 @@ If \leda\ is used, don't forget to add
 \texttt{\$(LEDAROOT)\bslsh incl}
 to {\em Additional include directories}.
 
-Add \texttt{CGAL\_USE\_GMP} to {\em Preprocessor definitions}.
-If \leda\ is used, also add \texttt{CGAL\_USE\_LEDA} and 
+Add \texttt{CGAL\_USE\_GMP} to {\em Preprocessor definitions}.\\
+If \leda\ is used, also add \texttt{CGAL\_USE\_LEDA} and
 \texttt{LEDA\_PREFIX} there.
 
 
@@ -1269,15 +1269,17 @@ static object library \texttt{gmp.lib} is located in
 and the corresponding header file \texttt{gmp.h} in
 \texttt{CGALROOT\bslsh auxiliary\bslsh wingmp\bslsh gmp-2.0.2}.
 
-It was created using M.Khan's Cygwin-specific patches to  \gmp-2.0.2,
-that are available from\\
-\texttt{http://www.xraylith.wisc.edu/~khan/software/gnu-win32/} and then
-slightly modified (by adding a few routines, like 
-\texttt{random}, and creating a
-separate \msvc{6.0}-compiled library that does I/O of the GMP numbers.)  It
-was checked that all tests that come with \gmp\ distribution pass.
-See \texttt{CGALROOT\bslsh auxiliary\bslsh wingmp\bslsh
-  gmp-2.0.2\bslsh msvc\bslsh src} for details.
+It was created using M.Khan's Cygwin-specific patches to \gmp-2.0.2,
+that are available from
+
+\path'http://www.xraylith.wisc.edu/~khan/software/gnu-win32/'
+
+and then slightly modified (by adding a few routines, like
+\texttt{random}, and creating a separate \msvc{6.0}-compiled library
+that does I/O of the GMP numbers.)  It was checked that all tests that
+come with \gmp\ distribution pass.  See \texttt{CGALROOT\bslsh
+  auxiliary\bslsh wingmp\bslsh gmp-2.0.2\bslsh msvc\bslsh src} for
+details.
 
 Subject to time constraints, we might provide a smoother \gmp\ support
 for \msvc\ in the future. A new major release of \gmp\ is expected in
@@ -1293,7 +1295,7 @@ March 2000, probably \cgal\ will be upgraded to use it then.
   \texttt{big\_float}, \texttt{integer}, \texttt{rational} and
   \texttt{real} (see the files \texttt{<CGAL/leda\_*>}).
 \item For all two-dimensional geometric objects there are input/output
-  operators from/to a \texttt{leda\_window}.
+  operators for a \texttt{leda\_window}.
 \item For all two-dimensional geometric objects there are output
   operators to a \texttt{leda\_ps\_file}.
 \item The registration functions needed to interact with a
@@ -1403,7 +1405,9 @@ If you cannot (or do not want to) install \gnu -binutils, there is a
 workaround that lets you compile, link and run your programs, but it
 prevents debugging, since the executables have to be stripped. In
 short the workaround is to compile with \texttt{-g} and to link with
-\texttt{-z nodefs -s}. In order to still have portable makefiles (see
+\texttt{-z nodefs -s}. 
+
+In order to still have portable makefiles (see
 section\ref{sec:makefiles}), we define flags
 \texttt{LONG\_NAME\_PROBLEM\_CXXFLAGS} and
 \texttt{LONG\_NAME\_PROBLEM\_LDFLAGS} in the include makefiles which
@@ -1458,8 +1462,10 @@ options controlling the use of debugging and multithreading.
 If a binary release of \leda{4.0} is used, make sure that it is one of
 them that uses new-style headers. Namely, among the self-extracting
 executables on
-\texttt{http://www.mpi-sb.mpg.de/LEDA/download/windows/}, choose one of
-these that have the name ending with \texttt{-std.exe}.
+
+\path'http://www.mpi-sb.mpg.de/LEDA/download/windows/'
+
+choose one of these that have the name ending with \texttt{-std.exe}.
 
 
 \subsection{\msvc{6.0}-specific C++ problems}
@@ -1508,11 +1514,11 @@ Note that this macro does not have any effect when other than
 \msvc{6.0} compiler is used, so it can be safely left in the source code. 
 \medskip
 
-\paragraph{Other problems.} Here goes an incomplete list
-of problems encountered, and \cgal-specific workarounds, if
-available. 
-Compiler error messages are meant to be
-hints only, and do not pretend to be complete, as well.
+\textbf{Other problems.}
+
+Here goes an incomplete list of problems encountered, and
+\cgal-specific workarounds, if available.  Compiler error messages are
+meant to be hints only, and do not pretend to be complete, as well.
 \begin{enumerate}
 %
 \item Partial specialization of template parameters is not
@@ -1617,8 +1623,8 @@ convert as arguments, e.g.
 \end{alltt}
 The original files are kept with the suffix \texttt{.bck}.
 
-In order to use it, you first have to set the perl path in the first
-line correctly, i.e. replace \texttt{/net/bin/perl5} by the path to
+In order to use it, you first have to set the perl path correctly,
+i.e. replace \texttt{/net/bin/perl5} in the first line by the path to
 perl on your system (try \texttt{which perl}(5), if you do not know).
 Alternatively, you can type
 \begin{alltt}
@@ -1645,8 +1651,8 @@ convert as arguments, e.g.
 \end{alltt}
 The original files are kept with the suffix \texttt{.hrbck}.
 
-In order to use it, you first have to set the perl path in the first
-line correctly, i.e. replace \texttt{/net/bin/perl5} by the path to
+In order to use it, you first have to set the perl path correctly,
+i.e. replace \texttt{/net/bin/perl5} in the first line by the path to
 perl on your system (try \texttt{which perl}(5), if you do not know).
 Alternatively, you can type
 \begin{alltt}
