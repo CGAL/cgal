@@ -57,12 +57,13 @@ public:
   typedef typename Traits::X_curve                          X_curve_2;
   typedef typename Traits::Curve                            Curve_2;
   typedef typename Traits::Point                            Point_2;
-  typedef Pm_change_notification<Planar_map> Pmwx_change_notification; 
+  typedef typename Planar_map::Change_notification      Change_notification;
 	
   // Obsolete, for backward compatability
   typedef Point_2                               Point;
   typedef X_curve_2                             X_curve;
   typedef Curve_2                               Curve;
+  typedef Change_notification                   Pmwx_change_notification;
 
   CGAL_DEFINE_COUNT_OP_TIMES_OBJECT
 
@@ -116,7 +117,7 @@ public:
   // Operations
   // ----------
 
-  const X_curve_2& curve(Halfedge_handle he, Pmwx_change_notification *en )
+  const X_curve_2& curve(Halfedge_handle he, Change_notification *en )
   { 
     if( en == NULL ) 
       return he->curve();
@@ -137,7 +138,7 @@ public:
 					      bool direction_right,
 					      Point_2 &xp1,
 					      Point_2 &xp2,
-					      Pmwx_change_notification *en)
+					      Change_notification *en)
   {
     bool intersection_exists;
     if (direction_right)
@@ -217,7 +218,7 @@ public:
 					Halfedge_handle &prev_halfedge,
 					Point_2& overlap_end_pt,
 					bool &is_overlap,
-					Pmwx_change_notification *en)
+					Change_notification *en)
   {
     CGAL_PM_START_OP(1)
      
@@ -308,7 +309,7 @@ public:
 				       Halfedge_handle &halfedge,
 				       Point_2 &best_xpnt1,
 				       Point_2 &best_xpnt2,
-				       Pmwx_change_notification *en)
+				       Change_notification *en)
   {
     CGAL_PM_START_OP(2)
       Halfedge_handle best_halfedge_x;
@@ -424,7 +425,7 @@ public:
     Halfedge_handle &vertex_of_point_prev_halfedge,
     // true if vertex_of_point_prev_halfedge is set :
     bool &vertex_of_point_prev_halfedge_set,
-    Pmwx_change_notification *en)
+    Change_notification *en)
   {
     CGAL_PM_START_OP(3)
       if (pmwx_traits->point_is_same(point, halfedge->source()->point()))
@@ -507,7 +508,7 @@ public:
     Halfedge_handle &remaining_curve_prev_halfedge,
     // true if remaining_curve_face is set :
     bool &remaining_curve_prev_halfedge_set,  
-    Pmwx_change_notification *en)
+    Change_notification *en)
   {
     CGAL_PM_START_OP(4)
       remaining_curve_trivial = false;
@@ -625,7 +626,7 @@ public:
    Halfedge_handle &remaining_curve_prev_halfedge, 
    // true if remaining_curve_face is set :
    bool &remaining_curve_prev_halfedge_set,  
-   Pmwx_change_notification *en)
+   Change_notification *en)
   {
     CGAL_PM_START_OP(5)
       remaining_curve_trivial = false;
@@ -747,7 +748,7 @@ public:
 			     // to be set by the function :  
 			     Vertex_handle &target_vertex, 
 			     bool source_vertex_valid,
-			     Pmwx_change_notification *en = NULL)
+			     Change_notification *en = NULL)
   {
     CGAL_PM_START_OP(6)
       //if a vertex on which an endpoint of cv_ is known then set cv to 
@@ -1041,7 +1042,7 @@ public:
 			    // to be set by the function :  
 			    Vertex_handle            & target_vertex, 
 			    bool                       source_vertex_valid,
-			    Pmwx_change_notification * en = NULL)
+			    Change_notification      * en = NULL)
   {
     if (traits->is_x_monotone(c))
     {
@@ -1076,7 +1077,7 @@ public:
   // point of the inserted xcurve
   Halfedge_handle insert_from_vertex(const Curve_2                & c, 
 				     Vertex_handle                  src, 
-				     Pmwx_change_notification     * en = NULL)
+				     Change_notification          * en = NULL)
   {
     CGAL_precondition( ! traits->point_is_same( traits->curve_source(c),
 						traits->curve_target(c)));
@@ -1087,7 +1088,7 @@ public:
   // return the last inserted halfedge whose target points to the last 
   // point of the inserted xcurve
   Halfedge_handle insert(const Curve_2            & c, 
-			 Pmwx_change_notification * en = NULL)
+			 Change_notification      * en = NULL)
   {
     // If curve is x-monotone then its source is different from its target.
     // (which is not true for non x-monotone curves, e.g, triangles.)
