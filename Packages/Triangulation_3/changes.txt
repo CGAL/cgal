@@ -1,3 +1,6 @@
+Version 1.39 (1 aug 00)
+added missing CGAL_NTS in the test_suite
+
 Version 1.38 (31 jul 00)
 has_vertex and are_equal for Facet documented
 fixes in scopes of classes in the doc
