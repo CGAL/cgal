@@ -414,7 +414,7 @@ locate(const Point& p,
       nearest = position->vertex(0);
      else if ( closer(p,
 		      position->vertex(0)->point(),
-		      position->vertex(1)->point()))
+		      position->vertex(1)->point()) == SMALLER)
       nearest = position->vertex(0);
     else
       nearest = position->vertex(1);
@@ -422,7 +422,7 @@ locate(const Point& p,
     if ( !  hierarchy[level]->is_infinite(position->vertex(2)))
       if ( closer( p, 
 		   position->vertex(2)->point(),
-		   nearest->point()))
+		   nearest->point()) == SMALLER)
 	nearest = position->vertex(2);
     // go at the same vertex on level below
     nearest = (Vertex*)( nearest->down() );

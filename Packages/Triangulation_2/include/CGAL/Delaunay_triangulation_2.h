@@ -314,15 +314,15 @@ nearest_vertex_2D(const Point& p, Face_handle f) const
     CGAL_triangulation_precondition(oriented_side(f,p)!=ON_NEGATIVE_SIDE);
 
   typename Geom_traits::Compare_distance_2 
-    closer =  geom_traits().compare_distance_2_object(p);
+    closer =  geom_traits().compare_distance_2_object();
   Vertex_handle nn =  !is_infinite(f->vertex(0)) ? f->vertex(0):f->vertex(1);
   if ( !is_infinite(f->vertex(1)) && closer(p,
 					    f->vertex(1)->point(),
-					    nn->point())) 
+					    nn->point()) == SMALLER) 
     nn=f->vertex(1);
   if ( !is_infinite(f->vertex(2)) && closer(p,
 					    f->vertex(2)->point(), 
-					    nn->point())) 
+					    nn->point()) == SMALLER) 
     nn=f->vertex(2);
        
   look_nearest_neighbor(p,f,0,nn);
@@ -363,7 +363,9 @@ look_nearest_neighbor(const Point& p,
     closer =  geom_traits().compare_distance_2_object();
   i = ni->index(f);
   if ( !is_infinite(ni->vertex(i)) &&
-       closer(p, ni->vertex(i)->point(), nn->point()) )  nn=ni->vertex(i);
+       closer(p, 
+	      ni->vertex(i)->point(),
+	      nn->point())  == SMALLER)  nn=ni->vertex(i);
     
   // recursive exploration of triangles whose circumcircle contains p
   look_nearest_neighbor(p, ni, ccw(i), nn);

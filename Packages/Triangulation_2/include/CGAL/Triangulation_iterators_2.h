@@ -243,7 +243,7 @@ public:
   class To_tds_edge_iterator : public It {
   public:
     typedef TdsEdge  Tds_Edge;
-    typedef typename iterator_traits<It>::value_type Edge;
+    typedef typename std::iterator_traits<It>::value_type Edge;
     To_tds_edge_iterator() {}
     To_tds_edge_iterator(It i) : It(i) {} 
     Tds_Edge  operator*() {

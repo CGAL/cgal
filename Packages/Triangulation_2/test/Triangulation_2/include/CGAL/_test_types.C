@@ -23,6 +23,7 @@
 
 #include <CGAL/determinant.h>
 #include <CGAL/_test_types.h>
+#include <CGAL/enum.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -315,27 +316,26 @@ class Triangulation_test_Construct_ray_2
 };
 
 
-class Triangulation_test_Less_distance_to_point_2
+class Triangulation_test_Compare_distance_2
 {
 public:
   typedef Triangulation_test_point     Point;
-  typedef Triangulation_test_Less_distance_to_point_2
-                                       Less_distance_to_point_2;
-private:
-  Point _p;
+  typedef Triangulation_test_Compare_distance_2 Compare_distance_2;
 
 public:
-  Triangulation_test_Less_distance_to_point_2() {}
-  Triangulation_test_Less_distance_to_point_2(const Point& p) 
-    : _p(p) {}  
+  Triangulation_test_Compare_distance_2() {}
+
   Point::TESTFT sqr(const Point::TESTFT x) const { return x*x; }
-  bool operator() ( const Point& q, const Point& r) const
+  CGAL::Comparison_result  
+  operator() ( const Point& p, const Point& q, const Point& r) const
     {
-      Point::TESTFT dq = sqr(_p.test_x()-q.test_x()) 
-	               + sqr(_p.test_y()-q.test_y());
-      Point::TESTFT dr = sqr(_p.test_x()-r.test_x()) 
-	               + sqr(_p.test_y()-r.test_y());
-      return dq < dr ;
+      Point::TESTFT dq = sqr(p.test_x()-q.test_x()) 
+	               + sqr(p.test_y()-q.test_y());
+      Point::TESTFT dr = sqr(p.test_x()-r.test_x()) 
+	               + sqr(p.test_y()-r.test_y());
+      if( dq < dr) return CGAL::SMALLER ;
+      else if (dq == dr) return CGAL::EQUAL;
+      return CGAL::LARGER;
     }
 };
 
@@ -368,8 +368,8 @@ public:
                                              Construct_bisector_2;
   typedef Triangulation_test_Construct_midpoint
                                              Construct_midpoint;
-  typedef Triangulation_test_Less_distance_to_point_2
-                                             Less_distance_to_point_2;
+  typedef Triangulation_test_Compare_distance_2 
+                                             Compare_distance_2;
   typedef Triangulation_test_Construct_direction_of_line_2
                                       Construct_direction_of_line_2;
   typedef Triangulation_test_Construct_segment_2   Construct_segment_2;
@@ -413,9 +413,9 @@ public:
   construct_midpoint_object() const
     {return Construct_midpoint();}
 
-  Less_distance_to_point_2
-  less_distance_to_point_2_object(const Point_2& p) const
-    {return Less_distance_to_point_2(p);}
+  Compare_distance_2
+  compare_distance_2_object() const
+    {return Compare_distance_2();}
 
   Construct_direction_of_line_2
   construct_direction_of_line_2_object() const

@@ -110,7 +110,7 @@ public:
 
 
   Compare_distance_2
-  Compare_distance_2_object() const
+  compare_distance_2_object() const
     {return Compare_distance_2();}
 
   Construct_direction_of_line_2

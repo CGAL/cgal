@@ -61,9 +61,9 @@ and $r$.}
 \ccGlue
 \ccNestedType{Compare_distance_2} {Predicate type. Must provide
  the operator
-\ccc{bool operator()(Point_2 p, Point_2 q, Point_2 r)}
-which returns \ccc{true}
-iff the distance between p and q is smaller
+\ccc{Comparison_result operator()(Point_2 p, Point_2 q, Point_2 r)}
+which returns \ccc{SMALLER}, \ccc{EQUAL} or \ccc{LARGER}
+iff the distance between p and q is smaller, equal or larger
 than the distance between p and r.  This type is only require if
 \ccc{nearest_vertex} queries are issued.}
 

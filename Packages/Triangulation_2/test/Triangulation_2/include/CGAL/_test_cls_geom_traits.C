@@ -87,12 +87,12 @@ _test_cls_delaunay_geom_traits(Point p[34], const Traits & )
   Traits gt;
 
   // Distance
-  typedef typename Traits::Less_distance_to_point_2 Less_distance_to_point_2;
-  Less_distance_to_point_2 closer = gt.less_distance_to_point_2_object(p[0]);
-  assert( closer(p[1],p[2]));
-  assert( !closer(p[2],p[1]));
-  assert( !closer(p[1],p[1]));
-  assert( !closer(p[0],p[0]));
+  typedef typename Traits::Compare_distance_2 Compare_distance_2;
+  Compare_distance_2 closer = gt.compare_distance_2_object();
+  assert( closer(p[0],p[1],p[2]) == CGAL::SMALLER);
+  assert( closer(p[0],p[2],p[1]) == CGAL::LARGER);
+  assert( closer(p[0],p[1],p[1]) == CGAL::EQUAL);
+  assert( closer(p[0],p[0],p[0]) == CGAL::EQUAL);
   
 
   // Test circumcenter()
