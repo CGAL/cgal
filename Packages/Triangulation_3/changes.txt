@@ -4,6 +4,7 @@ Version 1.46 (?? ??? 01)
 - rand4() can now be inline (locate() speed up). [syl]
 - New internal typedef Conflict_set to allow later testing of hash_set<>. [syl]
 - Various cleanups.
+- Point_2 include and typedef removed from Triangulation_geom_traits_3.h 
 
 Version 1.45 (22 dec 00)
 - point() of vertex_base returns a const ref instead of a Point. [syl]
@@ -14,6 +15,7 @@ Version 1.45 (22 dec 00)
 - function objects are created and applied directly. This means one less redirection [andreas]
 - reintroduced the type Point in the traits class for backward compatibility [andreas]
 - undo added so that the remove fails gracefully, instead of invalidating the triangulation [andreas]
+
 
 Version 1.44 (11 dec 00)
 - typdefs _3 fixed in demo and example
