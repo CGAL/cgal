@@ -1,4 +1,4 @@
-Version 1.85 (?? August 01)
+Version 1.85 (31 August 01)
 - Remove non default constructors in [ds_]vertex and [ds_]cell.
 - Move find_conflict() and insert_conflict() from the TDS to Triangulation.
 - Rewrite TDS::create_star to TDS::star_hole_[23].
