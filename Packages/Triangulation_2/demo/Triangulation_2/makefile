@@ -45,11 +45,12 @@ demo$(EXE_EXT): demo$(OBJ_EXT) parse$(OBJ_EXT)
 regular_demo$(EXE_EXT): regular_demo$(OBJ_EXT) 
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)regular_demo regular_demo$(OBJ_EXT) $(LDFLAGS)
 
-clean: \
-	regular_demo.clean \
+clean: 	
+	rm -f regular_demo$(EXE_EXT) regular_demo$(OBJ_EXT) \
 	demo.clean \
 	parse.clean 
 
+#  regular_demo.clean
 #- rm -f regular_demo$(EXE_EXT) regular_demo$(OBJ_EXT) \
 #---------------------------------------------------------------------#
 #                    suffix rules
