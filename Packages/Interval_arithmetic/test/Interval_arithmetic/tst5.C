@@ -14,7 +14,7 @@
 #elif defined CGAL_USE_GMP
 #  define CGAL_IA_ET CGAL::Quotient<CGAL::Gmpz>
 #else
-#  define CGAL_IA_ET double
+#  define CGAL_IA_ET CGAL::MP_Float
 #endif
 #endif
 
@@ -25,6 +25,7 @@
 #include <CGAL/double.h>
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Quotient.h>
+#include <CGAL/MP_Float.h>
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_real.h>
@@ -45,10 +46,10 @@
 // PLEASE PAY ATTENTION TO THE WORKAROUND AT THE TOP OF THE FILE !!!
 #ifdef CGAL_USE_LEDA
 typedef CGAL::Filtered_exact<double, leda_real> NT;
-#elif defined CGAL_USE_GMP
-typedef CGAL::Filtered_exact<double, CGAL::Quotient<CGAL::Gmpz> > NT;
+// #elif defined CGAL_USE_GMP
+// typedef CGAL::Filtered_exact<double, CGAL::Quotient<CGAL::Gmpz> > NT;
 #else
-typedef CGAL::Filtered_exact<double, double> NT; // Need to be exact rationnals
+typedef CGAL::Filtered_exact<double, CGAL::Quotient<CGAL::MP_Float> > NT;
 #endif
 
 
