@@ -11,6 +11,7 @@ DOCS: now joind into stl_extension.tex.
 ALL : Added file algorithm.h.
 ALL : New functions min_max_element and min/max_element_if.
 DOCS: Joined with compose.tex.
+SRC : Removed superfluous template parameter D in operator+(D,*).
 SRC : Introduced CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT for MSVC.
 SRC : Don't use iterator_category(...), if iterator traits are there.
 SRC : Added N_step_adaptor_derived.
