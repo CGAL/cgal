@@ -5,8 +5,14 @@ NAME
 
 
 OPTIONS
+     -in fname      : reads points from file ./fname
+     -out fname     : writes points to file ./fname
+     -out_format -of: choose file format for output (wrl, oogl, medit,
+                                                     ply, all, none)
+     -xyz           : input is (x y z)* without leading nimber_of_points
      -contours      : display contours
      -no_border -nb : set K = infinity
+
      -delta x       : set the delta angle constant
      -ki x y        : set the K interval (default : [1.1  5])
      -ks x          : set the K step (default : .1)
@@ -15,11 +21,8 @@ OPTIONS
      -max_of_connected_components x     : set the max of connected components
                                           (default : non-active)
      -post x        : set a maximum contour size for the post process
-     -in fname      : reads points from file ./fname
      -sect_in fname : reads points from sections file ./fname
-     -out fname     : writes points to file ./fname
-     -out_format -of: choose file format for output (vrml, oogl, medit,
-                                                     ply, all, none)
+
      All options can be abbreviated by their first character
 
 -------------------------------------------------------------------------------
