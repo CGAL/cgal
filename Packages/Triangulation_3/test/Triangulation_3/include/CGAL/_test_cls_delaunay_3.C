@@ -32,6 +32,69 @@
 
 #include <CGAL/Random.h>
 
+// Accessory set of functions to differentiate between
+// Delaunay::nearest_vertex[_in_cell] and
+//  Regular::nearest_power_vertex[_in_cell].
+
+template < typename T, typename P >
+typename T::Vertex_handle
+nearest_vertex(const T&t, const P&p, CGAL::Tag_true)
+{
+  return t.nearest_power_vertex(p);
+}
+
+template < typename T, typename P >
+typename T::Vertex_handle
+nearest_vertex(const T&t, const P&p, CGAL::Tag_false)
+{
+  return t.nearest_vertex(p);
+}
+
+template < typename T, typename P >
+typename T::Vertex_handle
+nearest_vertex(const T&t, const P&p)
+{
+  return nearest_vertex(t, p, typename T::Weighted_tag());
+}
+
+template < typename T, typename P >
+typename T::Vertex_handle
+nearest_vertex_in_cell(const T&t, const P&p, const typename T::Cell_handle c, CGAL::Tag_true)
+{
+  return t.nearest_power_vertex_in_cell(p, c);
+}
+
+template < typename T, typename P >
+typename T::Vertex_handle
+nearest_vertex_in_cell(const T&t, const P&p, const typename T::Cell_handle c, CGAL::Tag_false)
+{
+  return t.nearest_vertex_in_cell(p, c);
+}
+
+template < typename T, typename P >
+typename T::Vertex_handle
+nearest_vertex_in_cell(const T&t, const P&p, const typename T::Cell_handle c)
+{
+  return nearest_vertex_in_cell(t, p, c, typename T::Weighted_tag());
+}
+
+// Template meta programming if.
+template < typename Cond, typename Then, typename Else >
+struct If;
+
+template < typename Then, typename Else >
+struct If <CGAL::Tag_true, Then, Else>
+{
+  typedef Then type;
+};
+
+template < typename Then, typename Else >
+struct If <CGAL::Tag_false, Then, Else>
+{
+  typedef Else type;
+};
+
+
 template <class Triangulation>
 void
 _test_cls_delaunay_3(const Triangulation &)
@@ -41,7 +104,11 @@ _test_cls_delaunay_3(const Triangulation &)
   // We assume the traits class has been tested already
   // actually, any traits is good if it has been tested
 
-  typedef typename Cls::Point                Point;
+  // typedef typename Cls::Point          Point; // Delaunay
+  // typedef typename Cls::Point::Point   Point; // Regular
+  typedef typename If<typename Cls::Weighted_tag,
+                      typename Cls::Point, Cls>::type::Point   Point; 
+
   typedef typename Cls::Segment              Segment;
   typedef typename Cls::Triangle             Triangle;
   typedef typename Cls::Tetrahedron          Tetrahedron;
@@ -515,31 +582,30 @@ _test_cls_delaunay_3(const Triangulation &)
 
   {
     std::cout << "    Testing nearest_vertex()" << std::endl;
-    // We do a nearest_vertex() and two  neares__vertex_in_cell()
-    // queries  on all points with integer coordinate
-    // in the cube [-1;6]^3. In each case  we check explicitely that the
-    // output is correct
-    // by comparing distance to other  vertices.
+    // We do a nearest_vertex() and two nearest_vertex_in_cell()
+    // queries on all points with integer coordinate
+    // in the cube [-1;6]^3. In each case we check explicitely that the
+    // output is correct by comparing distance to other vertices.
     Cell_handle c1 = T3_13.finite_cells_begin();
     Cell_handle c2 = T3_13.infinite_vertex()->cell();
     for (int x = -1; x < 7; ++x)
       for (int y = -1; y < 7; ++y)
 	for (int z = -1; z < 7; ++z) {
 	  Point p(x, y, z);
-	  Vertex_handle v = T3_13.nearest_vertex(p);
+	  Vertex_handle v = nearest_vertex(T3_13, p);
 	  for (typename Cls::Finite_vertices_iterator
 	         fvit = T3_13.finite_vertices_begin();
 	       fvit != T3_13.finite_vertices_end(); ++fvit)
 	    assert(CGAL::squared_distance(p, v->point()) <=
 		   CGAL::squared_distance(p, fvit->point()));
-	  Vertex_handle v1 = T3_13.nearest_vertex_in_cell(p,c1);
+	  Vertex_handle v1 = nearest_vertex_in_cell(T3_13, p, c1);
 	  int i1 = c1->index(v1);
  	  for(int i=0; i<4; ++i) {
 	    if (i != i1) 
 	      assert(CGAL::squared_distance(p, v1->point()) <=
 		     CGAL::squared_distance(p, c1->vertex(i)->point()));
 	  }
-	  Vertex_handle v2 = T3_13.nearest_vertex_in_cell(p,c2);
+	  Vertex_handle v2 = nearest_vertex_in_cell(T3_13, p, c2);
 	  int i2 = c2->index(v2);
 	  for(int i=0; i<4; ++i) { 
 	    if (i != i2 && c2->vertex(i) != T3_13.infinite_vertex())
