@@ -87,9 +87,9 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
         if (machine && (strlen(machine)>0)) {
             std::ostrstream os;
             os << " rgeomview " << machine << ":0.0" << std::ends;
-            execlp("rsh", "rsh", machine, "-l", login, os.str(), (char *)0);
+            execlp("rsh", "rsh", machine, "-l", login, os.str(), NULL);
         } else {
-            execlp("geomview", "geomview", "-c", "-", (char *)0);
+            execlp("geomview", "geomview", "-c", "-", NULL);
         }
 
         // if we get to this point something went wrong.
@@ -117,10 +117,11 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
         in = pipe_in[0];
         out = pipe_out[1];
 
-        // The following code blocks, at least on Linux.
-        // What was its purpose ?
-        // char inbuf[10];
-        // ::read(in, inbuf, 7);
+        // Reads the result of the command (echo "started") that must be
+	// placed in the file .geomview (cf the doc).  It helps for
+	// synchronizing.  Probably not the best method.
+        char inbuf[10];
+        ::read(in, inbuf, 7);
 
         std::cout << "done." << std::endl;
 
