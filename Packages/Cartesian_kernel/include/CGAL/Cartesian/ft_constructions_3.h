@@ -65,9 +65,19 @@ scaled_distance_to_plane(const PointC3<R> &hp,
 template < class R >
 inline
 typename R::FT
-squared_radius(const PointC3<R> &p,
-                     const PointC3<R> &q,
-                     const PointC3<R> &r)
+squared_radius(const PointC3<R> &p, const PointC3<R> &q,
+	       const PointC3<R> &r, const PointC3<R> &s)
+{
+  return squared_radiusC3(p.x(), p.y(), p.z(),
+	                  q.x(), q.y(), q.z(),
+			  r.x(), r.y(), r.z(),
+			  s.x(), s.y(), s.z());
+}
+
+template < class R >
+inline
+typename R::FT
+squared_radius(const PointC3<R> &p, const PointC3<R> &q, const PointC3<R> &r)
 {
   return squared_radiusC3(p.x(), p.y(), p.z(),
 	                  q.x(), q.y(), q.z(),
@@ -77,15 +87,10 @@ squared_radius(const PointC3<R> &p,
 template < class R >
 inline
 typename R::FT
-squared_radius(const PointC3<R> &p,
-                     const PointC3<R> &q,
-                     const PointC3<R> &r,
-                     const PointC3<R> &s)
+squared_radius(const PointC3<R> &p, const PointC3<R> &q)
 {
   return squared_radiusC3(p.x(), p.y(), p.z(),
-	                  q.x(), q.y(), q.z(),
-			  r.x(), r.y(), r.z(),
-			  s.x(), s.y(), s.z());
+	                  q.x(), q.y(), q.z());
 }
 
 CGAL_END_NAMESPACE

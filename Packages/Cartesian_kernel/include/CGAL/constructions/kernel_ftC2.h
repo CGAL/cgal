@@ -219,9 +219,9 @@ template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
 FT
 squared_radiusC2(const FT &px, const FT &py,
-                       const FT &qx, const FT &qy,
-                       const FT &rx, const FT &ry,
-                       FT &x, FT &y )
+                 const FT &qx, const FT &qy,
+                 const FT &rx, const FT &ry,
+                 FT &x, FT &y )
 {
   circumcenter_translateC2(qx-px, qy-py, rx-px, ry-py, x, y);
   FT r2 = CGAL_NTS square(x) + CGAL_NTS square(y);
@@ -234,8 +234,8 @@ template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
 FT
 squared_radiusC2(const FT &px, const FT &py,
-                       const FT &qx, const FT &qy,
-                       const FT &rx, const FT &ry)
+                 const FT &qx, const FT &qy,
+                 const FT &rx, const FT &ry)
 {
   FT x, y;
   circumcenter_translateC2<FT>(qx-px, qy-py, rx-px, ry-py, x, y);
@@ -243,12 +243,21 @@ squared_radiusC2(const FT &px, const FT &py,
 }
 
 template < class FT >
-CGAL_KERNEL_INLINE
+inline
 FT
 squared_distanceC2( const FT &px, const FT &py,
                     const FT &qx, const FT &qy)
 {
   return CGAL_NTS square<FT>(px-qx) + CGAL_NTS square<FT>(py-qy);
+}
+
+template < class FT >
+inline
+FT
+squared_radiusC2(const FT &px, const FT &py,
+                 const FT &qx, const FT &qy)
+{
+  return squared_distanceC2(px, py,qx, qy)/FT(4);
 }
 
 template < class FT >

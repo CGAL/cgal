@@ -343,6 +343,15 @@ squared_distanceC3( const FT &px, const FT &py, const FT &pz,
 template < class FT >
 CGAL_KERNEL_INLINE
 FT
+squared_radiusC3( const FT &px, const FT &py, const FT &pz,
+                  const FT &qx, const FT &qy, const FT &qz)
+{
+  return squared_distanceC3(px, py, pz, qx, qy, qz)/FT(4);
+}
+
+template < class FT >
+CGAL_KERNEL_INLINE
+FT
 scaled_distance_to_directionC3(const FT &pa, const FT &pb, const FT &pc,
                                const FT &px, const FT &py, const FT &pz)
 {

@@ -71,11 +71,17 @@ line_x_at_y(const LineC2<R> &l, const typename R::FT &y)
 template < class R >
 inline
 typename R::FT
-squared_radius(const PointC2<R> &p,
-                     const PointC2<R> &q,
-                     const PointC2<R> &r)
+squared_radius(const PointC2<R> &p, const PointC2<R> &q, const PointC2<R> &r)
 {
   return squared_radiusC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
+}
+
+template < class R >
+inline
+typename R::FT
+squared_radius(const PointC2<R> &p, const PointC2<R> &q)
+{
+  return squared_radiusC2(p.x(), p.y(), q.x(), q.y());
 }
 
 CGAL_END_NAMESPACE
