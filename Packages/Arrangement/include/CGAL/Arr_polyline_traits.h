@@ -8,11 +8,12 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : 
-// release_date  : 1999, October 13
+// release       : $CGAL_Revision: CGAL-2.3-I-44 $
+// release_date  : $CGAL_Date: 2001/03/09 $
 //
 // file          : include/CGAL/Arr_polyline_traits.h
-// package       : arr (1.03)
+// package       : Arrangement (1.77)
+// maintainer    : Eyal Flato <flato@math.tau.ac.il>
 // author(s)     : Iddo Hanniel
 // coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
 //
@@ -709,8 +710,18 @@ public:
 	  if (lexicographically_xy_larger (i_seg.source(),pt)) {
 	    p1=i_seg.source();}
 	  else {
-	    p1=pt;}
-          
+	    // p1=pt;
+            // Modified by Eug
+            // Performing vertical ray shooting from pt.
+	    // Finding the intersection point. We know by now
+	    // that there is exactly ONE point. Assinging this
+	    // point to p1.
+            Point ap1( pt.x(), i_seg.source().y() );
+            Point ap2( pt.x(), i_seg.target().y() );
+            Segment_2<R> vertical_pt_x_base( ap1, ap2 );
+            Object i_obj = intersection( vertical_pt_x_base, i_seg );
+            assign( p1, i_obj );
+          }         
 	  found = true;
 	}
       }
@@ -762,8 +773,18 @@ public:
 	  if (lexicographically_xy_larger (i_seg.source(),pt)) {
 	    p1=i_seg.source();}
 	  else {
-	    p1=pt;}
-            
+	    // p1=pt;
+            // Modified by Eug
+            // Performing vertical ray shooting from pt.
+	    // Finding the intersection point. We know by now
+	    // that there is exactly ONE point. Assinging this
+	    // point to p1.
+            Point ap1( pt.x(), i_seg.source().y() );
+            Point ap2( pt.x(), i_seg.target().y() );
+            Segment_2<R> vertical_pt_x_base( ap1, ap2 );
+            Object i_obj = intersection( vertical_pt_x_base, i_seg );
+            assign( p1, i_obj );
+	  }    
 	  found = true;
 	}
       }
