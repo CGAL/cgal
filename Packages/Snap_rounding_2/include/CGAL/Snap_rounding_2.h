@@ -680,10 +680,10 @@ void Snap_rounding_2<Rep_>::iterate(
     }
   }
 
-template<class Rep_>
+template<class Rep_,class InputIterator>
 void snap_rounding_2(
-  typename std::list<typename Rep_::Segment_2>::const_iterator begin,
-  typename std::list<typename Rep_::Segment_2>::const_iterator end,
+  InputIterator begin,
+  InputIterator end,
   std::list<std::list<typename Rep_::Point_2> >& output_container,
   typename Rep_::FT pixel_size,
   bool do_isr,

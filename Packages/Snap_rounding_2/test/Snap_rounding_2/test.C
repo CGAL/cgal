@@ -86,8 +86,9 @@ int main(int argc,char *argv[])
 
   read_data(argc,argv,prec,seg_list);
 
-  CGAL::snap_rounding_2<Sr_traits>(seg_list.begin(),seg_list.end(),output_list,
-                     prec,true,false,3);
+  CGAL::snap_rounding_2<Sr_traits,std::list<Segment_2>::const_iterator>(
+      seg_list.begin(),seg_list.end(),output_list,
+      prec,true,false,3);
 
   std::cout << "input segments\n";
   for(std::list<Segment_2>::iterator i1 = seg_list.begin();
