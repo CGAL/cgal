@@ -1,7 +1,14 @@
-
+Version 3.6.1 
 - Various predicates and constructions cleanups and speedups [Sylvain].
 
-Version 3.3.5 (September 22 i1999)
+Version 3.6 (September 28 1999)
+- Changed printing of Aff_transformations to look like C2
+- Changed composition of Aff_transformations to better scheme, at
+  representation level : before, each transformation was converted to its
+  general_form and composed; now two translations composed yield a
+  translation.
+
+Version 3.3.5 (September 22 1999)
 - Corrected class Identity to class Identity_transformation
 
 Version 3.3.4 (September 16 1999)
