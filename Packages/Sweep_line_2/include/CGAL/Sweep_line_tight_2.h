@@ -145,6 +145,7 @@ public:
   typedef typename SubCurveList::iterator SubCurveListIter;
 
   typedef Status_line_curve_less_functor<Traits, Subcurve> StatusLineCurveLess;
+  typedef typename StatusLineCurveLess::Compare_param CompareParams;
   typedef std::set<Subcurve*, StatusLineCurveLess> StatusLine;
   typedef typename StatusLine::iterator StatusLineIter;
 
@@ -744,6 +745,9 @@ protected:
   /*! The status line */
   StatusLine *m_statusLine;
 
+  /*! a struct that holds params associated with the curve compare functor */
+  CompareParams *m_comp_param;
+
   /*! A reference point that is used for comapring curves. It is used
       when inserting/erasing curves from the status line. */
   Point_2 m_currentPos;
@@ -798,6 +802,7 @@ Sweep_line_tight_2<CurveInputIterator,SweepLineTraits_2,SweepEvent,CurveWrap>::
   }
   delete m_queue;
   delete m_statusLine;
+  delete m_comp_param;
 }
 
 
@@ -816,8 +821,10 @@ Init(CurveInputIterator begin, CurveInputIterator end)
 {
   PointLess pred(m_traits);
   m_queue = new EventQueue(pred);
-  StatusLineCurveLess slcurveless(m_traits);
+  m_comp_param = new CompareParams(m_traits);
+  StatusLineCurveLess slcurveless(m_comp_param);
   m_statusLine = new StatusLine(slcurveless);
+
 #ifndef NDEBUG
   m_eventId = 0;
 #endif
@@ -926,7 +933,7 @@ FirstPass()
   EventCurveIter rightIter = m_currentEvent->rightCurvesBegin();
   m_currentPos = m_sweepLinePos;
 
-  g_compare_func = 0;
+  m_comp_param->m_compare_func = 0;
   while ( rightIter != m_currentEvent->rightCurvesEnd())
   {
     // if the point is not an end point, skip it
@@ -989,7 +996,7 @@ FirstPass()
 #endif // 1
     ++rightIter;
   }
-  g_compare_func = 1;
+  m_comp_param->m_compare_func = 1;
 
   SL_DEBUG(m_currentEvent->Print();)
   SL_DEBUG(std::cout << "First pass - done\n" ;)

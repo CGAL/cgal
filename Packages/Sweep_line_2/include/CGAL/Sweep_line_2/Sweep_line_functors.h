@@ -29,8 +29,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-int g_compare_func = 1;
-
 template <class Point, class SweepLineTraits_2>
 class Point_less_functor 
 {
@@ -49,48 +47,6 @@ private:
   /*! a pointer to a trits class */
   Traits *m_traits;
 };
-#if 0
-template <class SweepLineTraits_2, class Subcurve>
-class Curve_less_functor 
-{
-public:
-  typedef SweepLineTraits_2 Traits;
-  typedef typename Traits::Point_2 Point_2;
-  typedef typename Traits::X_curve_2 X_curve_2;
-  //typedef Sweep_line_subcurve<Traits> Subcurve;
-
-  Curve_less_functor(Traits *traits) : m_traits(traits) {}
-  
-  bool operator()(const Subcurve* c1, const Subcurve* c2) const { 
-    const Point_2 *p = c1->getReferencePoint();
-
-    if ( !m_traits->curve_is_in_x_range(c1->getCurve(), *p))
-      p = &(c1->getLastPoint());
-    if ( !m_traits->curve_is_in_x_range(c2->getCurve(), *p))
-      p = &(c2->getLastPoint());
-
-   Comparison_result r = m_traits->curve_compare_at_x (c1->getCurve(), 
-						       c2->getCurve(), 
-						       *p);
-
-   if (r == EQUAL)
-     r = m_traits->curve_compare_at_x_right(c1->getCurve(), 
-					    c2->getCurve(), 
-					    *p);
-
-    return (r == SMALLER);
-  }
-
-  void setReference(Point_2 point) {
-    m_point = point;
-  }
-
-private:
-
-  /*! a pointer to a traits class */
-  Traits *m_traits;
-};
-#endif
 
 
 template <class SweepLineTraits_2, class Subcurve>
@@ -103,22 +59,27 @@ public:
   typedef bool (Status_line_curve_less_functor::*func)
                       (const Subcurve*, const Subcurve*) const;
 
-  Status_line_curve_less_functor(Traits *traits) : m_traits(traits) {
+  struct Compare_param {
+    Compare_param(Traits *t) : m_compare_func(1), m_traits(t)  {}
+    int m_compare_func;
+    Traits *m_traits;
+  };
+
+  Status_line_curve_less_functor(Compare_param *p) : m_compare_param(p) {
     m_compare[0] = &Status_line_curve_less_functor::compare_at;
     m_compare[1] = &Status_line_curve_less_functor::compare_right;
   }
-  
+
   bool operator()(const Subcurve* c1, const Subcurve* c2) const {
-    return (this->*m_compare[g_compare_func])(c1, c2);
+    return (this->*m_compare[m_compare_param->m_compare_func])(c1, c2);
   }
 
-  func m_compare[2];
 
   bool compare_at(const Subcurve* c1, const Subcurve* c2)  const 
   {
     const Point_2 *p = c1->getReferencePoint();
     Comparison_result r = 
-      m_traits->curve_compare_at_x(c1->getCurve(), 
+      m_compare_param->m_traits->curve_compare_at_x(c1->getCurve(), 
 				   c2->getCurve(), 
 				   *p);
     if ( r == SMALLER) {
@@ -137,23 +98,24 @@ public:
     
     const X_curve_2 &cv1 = c1->getCurve();
     const X_curve_2 &cv2 = c2->getCurve();
-    if ( m_traits->curve_is_vertical(cv1) )
+    Traits *t = m_compare_param->m_traits;
+    if ( t->curve_is_vertical(cv1) )
     {
-      if (m_traits->curve_is_in_x_range(cv2, c1->getSource()) &&
-	  m_traits->curve_get_point_status(cv2, c1->getSource()) == LARGER &&
-	  m_traits->curve_is_in_x_range(cv2, c1->getTarget()) &&
-	  m_traits->curve_get_point_status(cv2, c1->getTarget()) == LARGER)
+      if (t->curve_is_in_x_range(cv2, c1->getSource()) &&
+	  t->curve_get_point_status(cv2, c1->getSource()) == LARGER &&
+	  t->curve_is_in_x_range(cv2, c1->getTarget()) &&
+	  t->curve_get_point_status(cv2, c1->getTarget()) == LARGER)
       {
 	return true;
       }
       return false;
     }
-    if ( m_traits->curve_is_vertical(cv2))
+    if ( t->curve_is_vertical(cv2))
     {
-      if (m_traits->curve_is_in_x_range(cv1, c2->getSource()) &&
-	  m_traits->curve_get_point_status(cv1, c2->getSource()) == SMALLER &&
-	  m_traits->curve_is_in_x_range(cv1, c2->getTarget()) &&
-	  m_traits->curve_get_point_status(cv1, c2->getTarget()) == SMALLER)
+      if (t->curve_is_in_x_range(cv1, c2->getSource()) &&
+	  t->curve_get_point_status(cv1, c2->getSource()) == SMALLER &&
+	  t->curve_is_in_x_range(cv1, c2->getTarget()) &&
+	  t->curve_get_point_status(cv1, c2->getTarget()) == SMALLER)
       {
 	return true;
       }
@@ -161,12 +123,12 @@ public:
     }
 
     // non of the curves is vertical... 
-    Comparison_result r =  m_traits->curve_compare_at_x (c1->getCurve(), 
-							 c2->getCurve(), 
-							 *p);
+    Comparison_result r =  t->curve_compare_at_x (c1->getCurve(), 
+						  c2->getCurve(), 
+						  *p);
 
     if (r == EQUAL)
-      r = m_traits->curve_compare_at_x_right(c1->getCurve(), 
+      r = t->curve_compare_at_x_right(c1->getCurve(), 
 					     c2->getCurve(), 
 					     *p);
 
@@ -185,10 +147,12 @@ public:
     m_point = point;
   }
 
-private:
+  Compare_param *m_compare_param;
 
-  /*! a pointer to a traits class */
-  Traits *m_traits;
+private:
+  func m_compare[2];
+
+
 };
 
 CGAL_END_NAMESPACE
