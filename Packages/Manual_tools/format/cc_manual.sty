@@ -1106,9 +1106,9 @@
 \newcommand{\ccRefIdfierPage}{\begingroup\ccCatcode\ccRefIdfierPageX}
 \def\ccRefIdfierPageX #1{\endgroup%
    \ifnum\ccRefPageNumAtMargin=\ccTrue
-      \ccc{#1}\ccRefPageFill \ccRefPage{#1}
+      \ccc{#1}\ccRefPageFill \ccRefPage{#1}%
    \else
-      \ccc{#1} (pg. \pageref{ccRef_#1})
+      \ccc{#1} (pg. \pageref{ccRef_#1})%
    \fi
 }
 
