@@ -47,6 +47,8 @@ The following example defines an efficient and exact version of the
 orientation predicate over three points using the Cartesian representation
 with double coordinates and without reference counting
 (\ccc{Simple_cartesian<double>::Point_2}).
+Of course, the orientation predicate can already be found in the kernel, but
+you can follow this example to filter your own predicates.
 It uses the fast but inexact predicate based on interval arithmetic for
 filtering and the slow but exact predicate based on multi-precision floats
 when the filtering predicate fails.
@@ -62,8 +64,27 @@ typedef CGAL::Simple_cartesian<CGAL::Interval_nt_advanced> FK;
 typedef CGAL::Simple_cartesian<CGAL::MP_Float> EK;
 typedef CGAL::Cartesian_converter<K, EK> C2E;
 typedef CGAL::Cartesian_converter<K, FK> C2F;
-typedef CGAL::Filtered_predicate<EK::Orientation_2, FK::Orientation_2, C2E, C2F>
-        Orientation_2;
+
+// Define my predicate, parameterized by a kernel.
+template < typename K >
+struct My_orientation_2
+{
+  typedef typename K::RT       RT;
+  typedef typename K::Point_2  Point_2;
+
+  CGAL::Orientation
+  operator()(const Point_2 &p, const Point_2 &q, const Point_2 &r) const
+  {
+    RT prx = p.x() - r.x();
+    RT pry = p.y() - r.y();
+    RT qrx = q.x() - r.x();
+    RT qry = q.y() - r.y();
+    return static_cast<CGAL::Orientation> ( CGAL::sign( prx*qry - qrx*pqy ) );
+  }
+};
+
+typedef CGAL::Filtered_predicate<My_orientation_2<EK>,
+                                 My_orientation_2<FK>, C2E, C2F> Orientation_2;
 
 int main()
 {

@@ -1,4 +1,3 @@
-
 \begin{ccRefClass}{Filtered_kernel_without_type_equality<CK>}
 
 \KernelRefLayout\gdef\ccTagOperatorLayout{\ccFalse}
@@ -35,13 +34,12 @@ typedef CGAL::Filtered_kernel_without_type_equality<CK> K;
 
 typedef K::Point_2 p(0,0), q(1,1), r(1,5);
 
-CGAL::orientation_2(p,q,r);                // not exact
+CGAL::orientation(p,q,r);                // not exact
 
-typedef K::Orientation_2 orientation_2;
-orientation(p,q,r);                        // exact
+typedef K::Orientation_2 orientation;
+orientation(p,q,r);                      // exact
 
 \end{verbatim}
-
 
 
 \end{ccRefClass}
