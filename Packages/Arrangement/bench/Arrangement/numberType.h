@@ -24,6 +24,9 @@
 #elif defined(USE_QUOTIENT_MP_FLOAT_NT)
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
+#elif defined(USE_QUOTIENT_GMPZ_NT)
+#include <CGAL/Gmpz.h>
+#include <CGAL/Quotient.h>
 #elif defined(USE_LAZY_QUOTIENT_MP_FLOAT_NT)
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
@@ -60,6 +63,10 @@ typedef CGAL::Lazy_exact_nt<NT>                         WNT;
 typedef CGAL::Quotient<CGAL::MP_Float>                  NT;
 typedef NT                                              WNT;
 #define NUMBER_TYPE "Quotient MP Float"
+#elif defined(USE_QUOTIENT_GMPZ_NT)
+typedef CGAL::Quotient<CGAL::Gmpz>                      NT;
+typedef NT                                              WNT;
+#define NUMBER_TYPE "Quotient Gmpz"
 #elif defined(USE_LAZY_QUOTIENT_MP_FLOAT_NT)
 typedef CGAL::Quotient<CGAL::MP_Float>                  NT;
 typedef CGAL::Lazy_exact_nt<NT>                         WNT;
