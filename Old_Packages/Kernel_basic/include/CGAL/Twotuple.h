@@ -17,7 +17,7 @@
 // revision_date : $Date$
 // author(s)     : Andreas Fabri
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
  
 
@@ -45,7 +45,7 @@ public:
 };
 
 template < class T >
-class Twotuple : public Ref_counted
+class Twotuple
 {
 public:
   T  e0;
@@ -55,20 +55,6 @@ public:
   {}
 
   Twotuple(const T & a0, const T &a1) : e0(a0), e1(a1)
-  {}
-};
-
-template < class T >
-class Simple_Twotuple
-{
-public:
-  T  e0, e1;
-
-  Simple_Twotuple()
-  {}
-
-  Simple_Twotuple(const T & a0, const T &a1)
-  : e0(a0), e1(a1)
   {}
 };
 

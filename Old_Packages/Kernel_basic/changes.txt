@@ -2,6 +2,11 @@
 - Delete No_op_allocator.h.
 - removed KERNEL_CTOR* macros and KERNEL_FRIEND_INLINE macros
 - Cleanup Object.h.
+- New Handle_for_virtual<> and Ref_counted_virtual.
+- Ref_counted is not required anymore.
+- Remove all Simple_* rep classes as deriving from Ref_counted is not
+  necessary anymore.
+- basic.h cleanup.
 
 3.58   (5 October 2001)
 - [Simple_]Handle_for<> protection cleanup, non-const Ptr() added.

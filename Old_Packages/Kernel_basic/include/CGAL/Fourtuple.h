@@ -17,7 +17,7 @@
 // revision_date : $Date$
 // author(s)     : Andreas Fabri
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
 
 #ifndef CGAL__FOURTUPLE_H
@@ -45,7 +45,7 @@ public:
 };
 
 template < class T >
-class Fourtuple : public Ref_counted
+class Fourtuple
 {
 public:
   T  e0;
@@ -57,23 +57,6 @@ public:
   {}
 
   Fourtuple(const T & a0, const T & a1, const T & a2, const T & a3)
-    : e0(a0), e1(a1), e2(a2), e3(a3)
-  {}
-};
-
-template < class T >
-class Simple_Fourtuple
-{
-public:
-  T  e0;
-  T  e1;
-  T  e2;
-  T  e3;
-
-  Simple_Fourtuple()
-  {}
-
-  Simple_Fourtuple(const T & a0, const T & a1, const T & a2, const T & a3)
     : e0(a0), e1(a1), e2(a2), e3(a3)
   {}
 };

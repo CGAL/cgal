@@ -18,23 +18,51 @@
 // author(s)     : Stefan Schirra
 //
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
  
 
 #ifndef CGAL_TAGS_H
 #define CGAL_TAGS_H
 
-#ifndef CGAL_AFF_TRANSFORMATION_TAGS_H
 #include <CGAL/aff_transformation_tags.h>
-#endif // CGAL_AFF_TRANSFORMATION_TAGS_H
-#ifndef CGAL_NUMBER_TYPE_TAGS_H
 #include <CGAL/number_type_tags.h>
-#endif // CGAL_NUMBER_TYPE_TAGS_H
-#ifndef CGAL_IO_IO_TAGS_H
 #include <CGAL/IO/io_tags.h>
-#endif // CGAL_IO_IO_TAGS_H
 
-// compile time assertion tags are in <CGAL/basic.h>
+// Two struct's to denote boolean compile time decisions.
+
+struct Tag_true  {};
+struct Tag_false {};
+
+inline bool check_tag( Tag_true)  {return true;}
+inline bool check_tag( Tag_false) {return false;}
+
+
+// A function that asserts a specific compile time tag
+// forcing its two arguments to have equal type.
+// It is encapsulated with #ifdef since it will be defined also elsewhere.
+// ======================================================
+#ifndef CGAL_ASSERT_COMPILE_TIME_TAG
+#define CGAL_ASSERT_COMPILE_TIME_TAG 1
+template <class Base>
+struct Assert_tag_class
+{
+    void match_compile_time_tag( const Base&) const {}
+};
+
+template <class Tag, class Derived>
+inline
+void
+Assert_compile_time_tag( const Tag&, const Derived& b)
+{
+  Assert_tag_class<Tag> x;
+  x.match_compile_time_tag(b);
+}
+#endif // CGAL_ASSERT_COMPILE_TIME_TAG
+
+template < class T>
+inline
+void
+assert_equal_types( const T&, const T&) {}
 
 #endif // CGAL_TAGS_H

@@ -28,12 +28,11 @@
 #ifndef CGAL_OBJECT_H
 #define CGAL_OBJECT_H
 
-#include <CGAL/Handle_for.h>
-#include <CGAL/New_delete_allocator.h>
+#include <CGAL/Handle_for_virtual.h>
 
 CGAL_BEGIN_NAMESPACE
 
-class Object_base : public Ref_counted  
+class Object_base : public Ref_counted_virtual
 {
   public:
     virtual   ~Object_base() {}
@@ -58,10 +57,10 @@ class Wrapper : public Object_base
 
 
 class Object
-  : public Handle_for<Object_base, New_delete_allocator<Object_base> >
+  : public Handle_for_virtual<Object_base>
 {
     struct empty{};
-    typedef Handle_for<Object_base, New_delete_allocator<Object_base> > base;
+    typedef Handle_for_virtual<Object_base> base;
 
   public:
 

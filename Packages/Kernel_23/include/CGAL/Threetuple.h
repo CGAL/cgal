@@ -17,7 +17,7 @@
 // revision_date : $Date$
 // author(s)     : Andreas Fabri
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ======================================================================
  
 
@@ -47,7 +47,7 @@ public:
 };
 
 template < class T >
-struct Threetuple : public Ref_counted
+struct Threetuple
 {
   T  e0;
   T  e1;
@@ -57,22 +57,6 @@ struct Threetuple : public Ref_counted
   {}
 
   Threetuple(const T & a0, const T & a1, const T & a2)
-    : e0(a0), e1(a1), e2(a2)
-  {}
-};
-
-template < class T >
-class Simple_Threetuple
-{
-public:
-  T  e0;
-  T  e1;
-  T  e2;
-
-  Simple_Threetuple()
-  {}
-
-  Simple_Threetuple(const T & a0, const T & a1, const T & a2)
     : e0(a0), e1(a1), e2(a2)
   {}
 };

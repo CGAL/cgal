@@ -57,6 +57,12 @@ public:
     Stored * Ptr()
     { return &_s; }
 
+    bool
+    is_shared() const
+    {
+	return false;
+    }
+
 private:
     void
     copy_on_write()
