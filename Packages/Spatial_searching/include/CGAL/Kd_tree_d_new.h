@@ -14,8 +14,8 @@
 // file          : include/CGAL/Kd_tree_d_new.h
 // package       : ASPAS (3.12)
 // maintainer    : Hans Tangelder <hanst@cs.uu.nl>
-// revision      : 2.4 
-// revision_date : 2003/02/01 
+// revision      : 3.0 
+// revision_date : 2003/07/10 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // coordinator   : Utrecht University
 //
@@ -29,21 +29,22 @@
 #include <CGAL/Iso_cuboid_3.h>
 #include <CGAL/Iso_rectangle_d.h>
 
+
 namespace CGAL {
 
   // implementing backward compability to old kdtree
 
-  template <class Traits>
+  template <class TreeTraits>
   class Kdtree_d {
 
   public:
-  typedef typename Traits::Iso_box_d Box;
+  typedef typename TreeTraits::Iso_box_d Box;
   private:
 
-  typedef typename Traits::Item Item;
-  typedef std::list<Item> Item_list; 
+  typedef typename TreeTraits::Point Point;
+  typedef std::list<Point> Point_list; 
 
-  Kd_tree<Traits>* t;
+  Kd_tree<TreeTraits>* t;
 
   public:
   
@@ -51,8 +52,8 @@ namespace CGAL {
 
   Kdtree_d(int k = 2) {}
 
-  void build(Item_list &l) {
-	t = new Kd_tree<Traits>(l.begin(), l.end());}
+  void build(Point_list &l) {
+	t = new Kd_tree<TreeTraits>(l.begin(), l.end());}
 
   void delete_all() {delete t;}
 
@@ -78,17 +79,17 @@ namespace CGAL {
 
   };
 
-  template <class Item,
-	    class Splitter=Sliding_midpoint<Item> > 
+  template <class Point,
+	    class Splitter=Sliding_midpoint<Point> > 
   class Kdtree_interface_2d : 
-	public Kd_tree_traits_point<Item,Splitter> {
+	public Kd_tree_traits_point<Point,Splitter> {
 
   public:
 
-  typedef typename Item::R R;
-  typedef typename Item::R::FT NT;
+  typedef typename Kernel_traits<Point>::Kernel K;
+  typedef typename K::FT NT;
 
-  typedef Fuzzy_iso_box_d<Item,Iso_rectangle_2<R> > Iso_box_2;
+  typedef Fuzzy_iso_box_d<Point,Iso_rectangle_2<K> > Iso_box_2;
   // work around, because old kd-tree constructor requires unneeded specification of dim
   class Iso_box_d {
 
@@ -99,11 +100,11 @@ namespace CGAL {
   public:
 
   //constuctor 
-  Iso_box_d(const Item& p, const Item&q, int dim) {
+  Iso_box_d(const Point& p, const Point&q, int dim) {
 	b=new Iso_box_2(p,q);
   }
  
-  bool contains(const Item& p) const {	 
+  bool contains(const Point& p) const {	 
 	return b->contains(p);
   }
 
@@ -123,7 +124,7 @@ namespace CGAL {
   Kdtree_interface_2d(unsigned int bucket_size=1, 
 			     NT aspect_ratio=NT(3), 
 			     bool use_extended_nodes=true) {
-		Kd_tree_traits_point<Item>(bucket_size,aspect_ratio,use_extended_nodes);
+		Kd_tree_traits_point<Point>(bucket_size,aspect_ratio,use_extended_nodes);
   }
 
     	
@@ -132,17 +133,23 @@ namespace CGAL {
 
 };
 
-template <class Item,
-	    class Splitter=Sliding_midpoint<Item> > 
+/*
+template <class Point,
+	    class Splitter=Sliding_midpoint<Point> > 
   class Kdtree_interface_3d : 
-	public Kd_tree_traits_point<Item,Splitter> {
+	public Kd_tree_traits_point<Point,Splitter> { */
+
+template <class Point,
+	    class Splitter=Sliding_midpoint<Point> > 
+  class Kdtree_interface_3d : 
+	public Kd_tree_traits_point<Point,Splitter> {
 
   public:
 
-  typedef typename Item::R R;
-  typedef typename Item::R::FT NT;
+  typedef typename Kernel_traits<Point>::Kernel K;
+  typedef typename K::FT NT;
 
-  typedef Fuzzy_iso_box_d<Item,Iso_cuboid_3<R> > Iso_box_3;
+  typedef Fuzzy_iso_box_d<Point,Iso_cuboid_3<K> > Iso_box_3;
   // work around, because old kd-tree constructor requires unneeded specification of dim
   class Iso_box_d {
 
@@ -153,11 +160,11 @@ template <class Item,
   public:
 
   //constuctor 
-  Iso_box_d(const Item& p, const Item&q, int dim) {
+  Iso_box_d(const Point& p, const Point&q, int dim) {
 	b=new Iso_box_3(p,q);
   }
  
-  bool contains(const Item& p) const {	 
+  bool contains(const Point& p) const {	 
 	return b->contains(p);
   }
 
@@ -177,7 +184,7 @@ template <class Item,
   Kdtree_interface_3d(unsigned int bucket_size=1, 
 			     NT aspect_ratio=NT(3), 
 			     bool use_extended_nodes=true) {
-		Kd_tree_traits_point<Item>(bucket_size,aspect_ratio,use_extended_nodes);
+		Kd_tree_traits_point<Point>(bucket_size,aspect_ratio,use_extended_nodes);
   }
 
     	
@@ -186,17 +193,17 @@ template <class Item,
 
 };
 
-template <class Item,
-	  class Splitter=Sliding_midpoint<Item> > 
+template <class Point,
+	  class Splitter=Sliding_midpoint<Point> > 
   class Kdtree_interface : 
-	public Kd_tree_traits_point<Item,Splitter> {
+	public Kd_tree_traits_point<Point,Splitter> {
 
   public:
 
-  typedef typename Item::R R;
-  typedef typename Item::R::FT NT;
+  typedef typename Kernel_traits<Point>::Kernel K;
+  typedef typename K::FT NT;
 
-  typedef Fuzzy_iso_box_d<Item,Iso_rectangle_d<R> > Iso_box;
+  typedef Fuzzy_iso_box_d<Point,Iso_rectangle_d<K> > Iso_box;
   // work around, because old kd-tree constructor requires unneeded specification of dim
   class Iso_box_d {
 
@@ -207,11 +214,11 @@ template <class Item,
   public:
 
   //constuctor 
-  Iso_box_d(const Item& p, const Item&q, int dim) {
+  Iso_box_d(const Point& p, const Point&q, int dim) {
 	b=new Iso_box(p,q);
   }
  
-  bool contains(const Item& p) const {	 
+  bool contains(const Point& p) const {	 
 	return b->contains(p);
   }
 
@@ -231,7 +238,7 @@ template <class Item,
   Kdtree_interface(unsigned int bucket_size=1, 
 			     NT aspect_ratio=NT(3), 
 			     bool use_extended_nodes=true) {
-		Kd_tree_traits_point<Item>(bucket_size,aspect_ratio,use_extended_nodes);
+		Kd_tree_traits_point<Point>(bucket_size,aspect_ratio,use_extended_nodes);
   }
 
     	

@@ -14,8 +14,8 @@
 // file          : include/CGAL/Kd_tree_node.h
 // package       : ASPAS (3.12)
 // maintainer    : Hans Tangelder <hanst@cs.uu.nl>
-// revision      : 2.4 
-// revision_date : 2003/02/01 
+// revision      : 3.0
+// revision_date : 2003/07/10 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // coordinator   : Utrecht University
 //
@@ -28,21 +28,21 @@
 #include <CGAL/Compact_container.h>
 namespace CGAL {
 
-  template < class Traits > 
+  template < class TreeTraits > 
   class Kd_tree;
 
-	template < class Traits > 
+	template < class TreeTraits > 
 	class Kd_tree_node {
 
-	  friend class Kd_tree<Traits>;
+	  friend class Kd_tree<TreeTraits>;
 
-	  typedef typename Kd_tree<Traits>::Node_handle Node_handle;
+	  typedef typename Kd_tree<TreeTraits>::Node_handle Node_handle;
 	enum Node_type {LEAF, INTERNAL, EXTENDED_INTERNAL};
-	typedef typename Traits::Item Item;
+	typedef typename TreeTraits::Point Point;
 
-	typedef typename Traits::NT NT;
-	typedef typename Traits::Separator Separator;
-	typedef   typename Kd_tree<Traits>::Item_iterator Item_iterator;
+	typedef typename TreeTraits::NT NT;
+	typedef typename TreeTraits::Separator Separator;
+	typedef   typename Kd_tree<TreeTraits>::Point_iterator Point_iterator;
 
         private:
 
@@ -51,7 +51,7 @@ namespace CGAL {
 
      	// private variables for leaf nodes
 	unsigned int n; // denotes number of items in a leaf node
-	Item_iterator data; // iterator to data in leaf node
+	Point_iterator data; // iterator to data in leaf node
 
     	// private variables for internal nodes
 
@@ -77,8 +77,8 @@ namespace CGAL {
 	// members for leaf nodes only
   	inline unsigned int size() const { return n;}
   
-  	inline Item_iterator begin() const  {return data;}
-  	inline Item_iterator end() const {return data + n;}
+  	inline Point_iterator begin() const  {return data;}
+  	inline Point_iterator end() const {return data + n;}
 
 	// members for internal node and extended internal node
 
@@ -121,7 +121,7 @@ namespace CGAL {
             	if (is_leaf()) 
                         { 
 		          if (n>0) 
-			  for (Item_iterator i=begin(); i != end(); i++) 
+			  for (Point_iterator i=begin(); i != end(); i++) 
 				{*it=**i; ++it;} 
 			}
 		else {
@@ -136,7 +136,7 @@ namespace CGAL {
 			      Kd_tree_rectangle<NT>* b) {
 		if (is_leaf()) { 
 			if (n>0) 
-			for (Item_iterator i=begin(); i != end(); i++) 
+			for (Point_iterator i=begin(); i != end(); i++) 
 				if (q.contains(**i)) 
                                 {*it=**i; ++it;}
                 }

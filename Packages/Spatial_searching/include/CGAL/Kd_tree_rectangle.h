@@ -14,8 +14,8 @@
 // file          : include/CGAL/Kd_tree_rectangle.h
 // package       : ASPAS (3.12)
 // maintainer    : Hans Tangelder <hanst@cs.uu.nl>
-// revision      : 2.4 
-// revision_date : 2003/02/01 
+// revision      : 3.0
+// revision_date : 2003/07/10 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // coordinator   : Utrecht University
 //
@@ -78,14 +78,14 @@ namespace CGAL {
 
   public:
 
-    inline void set_upper_bound(const int i, const NT& x) {
+    inline void set_upper_bound(const int i, const NT x) {
       // assert(i >= 0 && i < dim);
       // assert(x >= lower_[i]);
       upper_[i] = x;
       set_max_span();
     }
 
-    inline void set_lower_bound(const int i, const NT& x) {
+    inline void set_lower_bound(const int i, const NT x) {
       // assert(i >= 0 && i < dim);
       // assert(x <= upper_[i]);
       lower_[i] = x;
@@ -114,6 +114,7 @@ namespace CGAL {
 
     Kd_tree_rectangle() : dim(0), lower_(0), upper_(0) {}
 
+    /*
     template <class Iter>
     Kd_tree_rectangle(const int d, Iter begin_lower, Iter end_lower,
 	Iter begin_upper, Iter end_upper)
@@ -124,7 +125,7 @@ namespace CGAL {
       std::copy(begin_lower, end_lower, lower_);
       std::copy(begin_upper, end_upper, upper_);
       set_max_span();
-    }
+    }*/
 
     explicit Kd_tree_rectangle(const Kd_tree_rectangle<NT>& r) : dim(r.dim),
       lower_(new NT[dim]), upper_(new NT[dim]) {
@@ -234,6 +235,7 @@ namespace CGAL {
     return 1;
   } */
 
+  /*
   // checks whether the an epsilon eroded iso rectangle r
   // including the boundaries
   // intersects the kd_tree rectangle   
@@ -261,7 +263,7 @@ namespace CGAL {
     }
     return 1;
   } 
-
+*/
     Kd_tree_rectangle<NT>& operator= (const Kd_tree_rectangle<NT>& r) {
       
       if (this != &r) {

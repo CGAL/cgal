@@ -14,8 +14,8 @@
 // file          : include/CGAL/General_priority_search.h
 // package       : ASPAS (3.12)
 // maintainer    : Hans Tangelder <hanst@cs.uu.nl>
-// revision      : 2.4 
-// revision_date : 2002/16/08 
+// revision      : 3.0
+// revision_date : 2003/07/10
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // coordinator   : Utrecht University
 //
@@ -33,17 +33,17 @@
 #include <CGAL/Euclidean_distance.h>
 namespace CGAL {
 
-template <class Traits, 
-          class Distance=Euclidean_distance<typename Traits::Item>, 
-	  class Query_item=typename Traits::Item, 
-	  class Tree=Kd_tree<Traits> >
+template <class TreeTraits, 
+          class Distance=Euclidean_distance<typename TreeTraits::Point>, 
+	  class QueryItem=typename TreeTraits::Point, 
+	  class Tree=Kd_tree<TreeTraits> >
 class General_priority_search { 
 
 public:
 
-typedef typename Traits::Item Item;
-typedef typename Traits::NT NT;
-typedef typename Tree::Item_iterator Item_iterator;
+typedef typename TreeTraits::Point Point;
+typedef typename TreeTraits::NT NT;
+typedef typename Tree::Point_iterator Point_iterator;
 typedef typename Tree::Node_handle Node_handle;
 
 typedef Kd_tree_rectangle<NT> Node_box;   
@@ -73,8 +73,8 @@ class Cell
     };
 
     
-// using NT* instead of NT is needed to support homogeneous coordinates ???
-typedef std::pair<Item*,NT> Item_with_distance;
+
+typedef std::pair<Point*,NT> Point_with_distance;
 typedef std::pair<Cell*,NT> Cell_with_distance;
 
 // this forward declaration may problems for g++ 
@@ -83,7 +83,7 @@ class iterator;
 
     typedef std::vector<Cell_with_distance*> Cell_with_distance_vector;
 
-    typedef std::vector<Item_with_distance*> Item_with_distance_vector;
+    typedef std::vector<Point_with_distance*> Point_with_distance_vector;
 
     typedef std::vector<NT> Distance_vector;
 
@@ -93,8 +93,8 @@ class iterator;
     public:
 
     // constructor
-    General_priority_search(Tree& tree, Query_item& q, const Distance& tr=Distance(),
-    NT Eps=NT(0), bool search_nearest=true)
+    General_priority_search(Tree& tree, QueryItem& q, const Distance& tr=Distance(),
+    NT Eps=NT(0.0), bool search_nearest=true)
     {
         start = new iterator(tree,q,tr,Eps,search_nearest);
         past_the_end = new iterator();
@@ -123,7 +123,7 @@ class iterator;
     public:
 
     typedef std::input_iterator_tag iterator_category;
-    typedef Item_with_distance value_type;
+    typedef Point_with_distance value_type;
     typedef int distance_type;
 
     class Iterator_implementation;
@@ -139,7 +139,7 @@ class iterator;
     }
 
     // constructor
-    iterator(Tree& tree, Query_item& q, const Distance& tr, NT eps, 
+    iterator(Tree& tree, QueryItem& q, const Distance& tr, NT eps, 
 	     bool search_nearest) {
         Ptr_implementation =
         new Iterator_implementation(tree, q, tr, eps, search_nearest);
@@ -151,7 +151,7 @@ class iterator;
         if (Ptr_implementation != 0) Ptr_implementation->reference_count++;
     }
 
-    Item_with_distance& operator* () {
+    Point_with_distance& operator* () {
                 return *(*Ptr_implementation);
     }
 
@@ -162,8 +162,8 @@ class iterator;
     }
 
     // postfix operator
-    std::auto_ptr<Item_with_distance> operator++(int) {
-        std::auto_ptr<Item_with_distance> result = (*Ptr_implementation)++;
+    std::auto_ptr<Point_with_distance> operator++(int) {
+        std::auto_ptr<Point_with_distance> result = (*Ptr_implementation)++;
         return result;
     }
 
@@ -209,7 +209,7 @@ class iterator;
 
     NT multiplication_factor;
 
-    Query_item* query_point;
+    QueryItem* query_point;
 
     int total_item_number;
 
@@ -250,7 +250,7 @@ class Distance_smaller
         }
 
         //highest priority is smallest distance
-        bool operator() (Item_with_distance* p1, Item_with_distance* p2) const 
+        bool operator() (Point_with_distance* p1, Point_with_distance* p2) const 
         {
 		if (search_nearest) {return (p1->second > p2->second);}
                 else {return (p2->second > p1->second);}
@@ -260,7 +260,7 @@ class Distance_smaller
     std::priority_queue<Cell_with_distance*, Cell_with_distance_vector,
     Priority_higher>* PriorityQueue;
 
-    std::priority_queue<Item_with_distance*, Item_with_distance_vector,
+    std::priority_queue<Point_with_distance*, Point_with_distance_vector,
     Distance_smaller>* Item_PriorityQueue;
     
 
@@ -276,7 +276,7 @@ class Distance_smaller
     int number_of_neighbours_computed;
 
     // constructor
-    Iterator_implementation(Tree& tree, Query_item& q,const Distance& tr,
+    Iterator_implementation(Tree& tree, QueryItem& q,const Distance& tr,
         NT Eps, bool search_nearest)
     {
         
@@ -285,8 +285,8 @@ class Distance_smaller
 	Cell_with_distance_vector, Priority_higher> 
         (Priority_higher(search_nearest));
 
-        Item_PriorityQueue= new std::priority_queue<Item_with_distance*, 
-	Item_with_distance_vector,
+        Item_PriorityQueue= new std::priority_queue<Point_with_distance*, 
+	Point_with_distance_vector,
     	Distance_smaller>
 	(Distance_smaller(search_nearest));
 
@@ -329,7 +329,7 @@ class Distance_smaller
     }
 
     // * operator
-    Item_with_distance& operator* () {    
+    Point_with_distance& operator* () {    
 			return *(Item_PriorityQueue->top());
     }
 
@@ -342,11 +342,11 @@ class Distance_smaller
     }
 
     // postfix operator
-    std::auto_ptr<Item_with_distance> operator++(int) {     
+    std::auto_ptr<Point_with_distance> operator++(int) {     
         
-        Item_with_distance Value = *(Item_PriorityQueue->top());        
-        std::auto_ptr<Item_with_distance>
-        result(new Item_with_distance(Value));
+        Point_with_distance Value = *(Item_PriorityQueue->top());        
+        std::auto_ptr<Point_with_distance>
+        result(new Point_with_distance(Value));
         ++*this;        
         
         return result;
@@ -360,7 +360,7 @@ class Distance_smaller
 		      number_of_internal_nodes_visited << std::endl;
     	std::cout << "Number of leaf nodes visited:" << 
 	number_of_leaf_nodes_visited << std::endl;
-    	std::cout << "Number of items visited:" << 
+    	std::cout << "Number of points visited:" << 
 	number_of_items_visited << std::endl;
         std::cout << "Number of neighbours computed:" << 
 	number_of_neighbours_computed << std::endl;
@@ -378,7 +378,7 @@ class Distance_smaller
                 delete The_top;
 	};
 	while (Item_PriorityQueue->size()>0) {
-                Item_with_distance* The_top=Item_PriorityQueue->top();
+                Point_with_distance* The_top=Item_PriorityQueue->top();
                 Item_PriorityQueue->pop();
                 delete The_top;
         };
@@ -388,7 +388,7 @@ class Distance_smaller
     private:
 
     void Delete_the_current_item_top() {
-        Item_with_distance* The_item_top=Item_PriorityQueue->top();
+        Point_with_distance* The_item_top=Item_PriorityQueue->top();
         Item_PriorityQueue->pop();
         delete The_item_top;
     }
@@ -474,13 +474,13 @@ else {
                 delete B;
                 number_of_leaf_nodes_visited++;
                 if (N->size() > 0) {
-                  for (Item_iterator it=N->begin(); it != N->end(); it++) {
+                  for (Point_iterator it=N->begin(); it != N->end(); it++) {
                         number_of_items_visited++;
                         NT distance_to_query_point=
                         Distance_instance->
                         distance(*query_point,**it);
-                        Item_with_distance *NN_Candidate=
-                        new Item_with_distance(*it,distance_to_query_point);
+                        Point_with_distance *NN_Candidate=
+                        new Point_with_distance(*it,distance_to_query_point);
                         Item_PriorityQueue->push(NN_Candidate);
                   }
                   // old top of PriorityQueue has been processed,
@@ -503,24 +503,12 @@ else {
                   number_of_neighbours_computed++;
           }
         }   // next_neighbour_found or priority queue is empty
-        // in the latter case also the item priority quee is empty
+        // in the latter case also the item priority queue is empty
         
     }
 }; // class Iterator_implementation
 }; // class iterator
 }; // class 
-
-template <class Traits, class Query_item, class Distance>
-void swap (typename General_priority_search<Traits, 
-				Query_item, Distance>::iterator& x,
-        typename General_priority_search<Traits, 
-				Query_item, Distance>::iterator& y) {
-        typename General_priority_search<Traits, 
-		Query_item, Distance>::iterator::Iterator_implementation
-        *tmp = x.Ptr_implementation;
-        x.Ptr_implementation  = y.Ptr_implementation;
-        y.Ptr_implementation = tmp;
-}
 
 } // namespace CGAL
 

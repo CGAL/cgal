@@ -14,8 +14,8 @@
 // file          : include/CGAL/Fuzzy_iso_box_d.h
 // package       : ASPAS (3.12)
 // maintainer    : Hans Tangelder <hanst@cs.uu.nl>
-// revision      : 2.4 
-// revision_date : 2002/16/08 
+// revision      : 3.0
+// revision_date : 2003/07/10 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // coordinator   : Utrecht University
 //
@@ -29,12 +29,12 @@
 
 namespace CGAL {
 
-  template <class Item, class Iso_box_d>
+  template <class Point, class Iso_box_d>
   class Fuzzy_iso_box_d{
 
     public:
 
-    typedef typename Item::R::FT NT;
+    typedef typename Kernel_traits<Point>::Kernel::FT NT;
     
     private:
 
@@ -48,22 +48,14 @@ namespace CGAL {
     	Fuzzy_iso_box_d() {}
 		
 
-	// constructor
-        /*
-	Fuzzy_iso_box_d(Iso_box_d b, NT epsilon=NT(0)) : 
-	box(b), eps(epsilon), dim(b.min().dimension())
-	{
-         for (unsigned int i = 0; i < dim; ++i) {
-		std::cout << box.min_coord(i) << " " << box.max_coord(i) << std::endl;
-         }
-	}*/
+	
 
         // constructor
-	Fuzzy_iso_box_d(const Item& p, const Item& q, NT epsilon=NT(0)) :
+	Fuzzy_iso_box_d(const Point& p, const Point& q, NT epsilon=NT(0)) :
         eps(epsilon), dim(p.dimension())
         {box= new Iso_box_d(p,q);}
         	
-        bool contains(const Item& p) const {	 
+        bool contains(const Point& p) const {	 
 		for (unsigned int i = 0; i < dim; ++i) {
 			if ( (p[i] < box->min_coord(i)) || (p[i] >= box->max_coord(i)) ) return false;
 		}

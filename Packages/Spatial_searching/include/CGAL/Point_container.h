@@ -14,8 +14,8 @@
 // file          : include/CGAL/Point_container.h
 // package       : ASPAS (3.12)
 // maintainer    : Hans Tangelder <hanst@cs.uu.nl>
-// revision      : 2.4 
-// revision_date : 2002/16/08 
+// revision      : 3.0
+// revision_date : 2003/07/10 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // coordinator   : Utrecht University
 //
@@ -32,30 +32,15 @@
 #include <CGAL/Kd_tree_rectangle.h>
 namespace CGAL {
 
-  template <class Item> class Point_container;
+  template <class Point> class Point_container {
 
-  /* problem with platform sparc_SunOS-5.6_CC-5.30
-  template <class Item> struct comp_coord_val {
-    int coord; 
-    comp_coord_val(const int i) : coord(i) {}
-    bool operator() (const Item *a, const Item *b) {
-      return (*a)[coord] < (*b)[coord];
-    }
-  }; */
+  private:
+    typedef std::vector<Point*> Point_vector;
+    typedef Point_container<Point> Self;
 
-  template <class Item>
-    std::ostream& operator<< (std::ostream& s, Point_container<Item>& c) {
-    return c.print(s);
-  }
-
-  template <class Item> class Point_container {
   public:
-    typedef std::list<Item*> Point_list; 
-    typedef std::vector<Item*> Point_vector;
-    typedef typename Item::R::FT NT;
-    typedef Point_container<Item> Self;
-
-    
+   typedef typename Kernel_traits<Point>::Kernel::FT NT;
+   typedef std::list<Point*> Point_list; 
 
   private:
     Point_list p_list; // list of pointers to points
@@ -66,15 +51,7 @@ namespace CGAL {
 				      // i.e. minimal enclosing bounding
 	                	      // box of points
 	                	    
-    
-
   public:
-    std::ostream& print(std::ostream& s) {
-      s << "Points container of size " << the_size << "\n cell:";
-      s << bbox; // bbox.print(s);
-      s << "\n minimal box enclosing points:"; s << tbox; // tbox.print(s);
-      return s;
-    };
 
     inline const Kd_tree_rectangle<NT>& bounding_box() const { return bbox; }
 
@@ -187,8 +164,8 @@ namespace CGAL {
     }
     
     // building the container from a sequence of points
-    template <class Iter>
-    Point_container(const int d, Iter begin, Iter end) :
+    template <class InputIterator>
+    Point_container(const int d, InputIterator begin, InputIterator end) :
        bbox(d), tbox(d)  {
 
         
@@ -197,19 +174,18 @@ namespace CGAL {
       tbox = bbox;
 
       // build list 
-      Iter it;
+      InputIterator it;
       for (it=begin; it != end; ++it) p_list.push_back(&(*it));
 
-      // p_list[max_span_coord()].sort(comp_coord_val<Item>(max_span_coord()));
       built_coord = max_span_coord();
       set_size();
     }
 
 	// building an empty container 
-	Point_container(int d) :
+	Point_container(const int d) :
 	the_size(0), bbox(d), tbox(d)  {}
 
-	void swap(Point_container<Item>& c) {
+	void swap(Point_container<Point>& c) {
 
 		swap(p_list,c.p_list);
 
@@ -241,12 +217,7 @@ namespace CGAL {
                 
 	}
 
-        /* not used
-	void add_points_from_container(Point_container<Item>& c) {
-	  // assert(built_coord==c.built_coord);
-	  merge(p_list, c.p_list); 
-		// Less_lexicographically_d());
-	} */
+       
 
     void recompute_tight_bounding_box() {
 		tbox.update_from_point_pointers(p_list.begin(),
@@ -256,10 +227,10 @@ namespace CGAL {
 
       // note that splitting is restricted to the built coordinate
       template <class Separator>
-      void split_container(Point_container<Item>& c, Separator& sep,  
+      void split_container(Point_container<Point>& c, Separator& sep,  
 	bool sliding=false) {
 
-	//assert(dimension()==c.dimension());
+	assert(dimension()==c.dimension());
 		
         Point_list l_lower, l_upper;
 
@@ -327,21 +298,10 @@ namespace CGAL {
         c.set_size();
         set_size();
         
-        // assert(is_valid()); 
-        // assert(c.is_valid());
+       
     }
 
-/*
-template <class Item_>
-	struct comp_coord_val {
-    		int coord; 
-    		comp_coord_val(const int i) : coord(i) {}
-    		bool operator() (const Item_ *a, const Item_ *b) {
-      		return (*a)[coord] < (*b)[coord];
-    		}
-  	};
-*/ 
-// replaced by
+
 
 template <class Item_, class Value>
 	struct comp_coord_val {
@@ -363,11 +323,11 @@ template <class Item_, class Value>
     #ifdef CGAL_CFG_RWSTD_NO_MEMBER_TEMPLATES
         Point_vector p_vector;
     	std::copy(p_list.begin(), p_list.end(), std::back_inserter(p_vector));
-    	std::sort(p_vector.begin(),p_vector.end(),comp_coord_val<Item,int>(split_coord));
+    	std::sort(p_vector.begin(),p_vector.end(),comp_coord_val<Point,int>(split_coord));
     	p_list.clear();
     	std::copy(p_vector.begin(), p_vector.end(), std::back_inserter(p_list));
     #else
-        p_list.sort(comp_coord_val<Item,int>(split_coord));
+        p_list.sort(comp_coord_val<Point,int>(split_coord));
     #endif 
       
       typename Point_list::iterator 
@@ -396,6 +356,14 @@ template <class Item_, class Value>
     explicit Point_container() {} // disable default constructor
   
   };
+
+template <class Point>
+    std::ostream& operator<< (std::ostream& s, Point_container<Point>& c) {
+    s << "Points container of size " << the_size << "\n cell:";
+    s << bbox; // bbox.print(s);
+    s << "\n minimal box enclosing points:"; s << tbox; 
+    return s;
+  }
 
 } // namespace CGAL
 

@@ -13,8 +13,8 @@
 //
 // file          : include/CGAL/Plane_separator.h
 // package       : ASPAS
-// revision      : 2.4 
-// revision_date : 2002/16/08 
+// revision      : 3.0
+// revision_date : 2003/07/10 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
 // coordinator   : Utrecht University
@@ -33,26 +33,16 @@ template < class NT> class Plane_separator {
   inline int cutting_dimension() const { return cutting_dim;}
   inline NT cutting_value() const { return cutting_val;}
 
-  void set_cutting_dim(int d) {
+  void set_cutting_dimension(int d) {
 	  cutting_dim=d;
   }
 
-  void set_cutting_val(NT val) {
+  void set_cutting_value(NT val) {
 	  cutting_val=val;
-  }
+  }  
 
-  /*
-  template <class Item> 
-  inline Oriented_side side(const Item& it) const {
-	if (it[cutting_dim] < cutting_val)
-		{return ON_NEGATIVE_SIDE;}
-	// else if (i[cutting_dim] == cutting_val)
-	//	{return ON_ORIENTED_BOUNDARY;} 
-	else  {return ON_POSITIVE_SIDE;}
-  } */
-
-  template <class Item>  
-  inline bool has_on_negative_side(const Item& i) {
+  template <class Point>  
+  inline bool has_on_negative_side(const Point& i) {
     return i[cutting_dimension()] < cutting_value();
   }
 
@@ -69,10 +59,6 @@ template < class NT> class Plane_separator {
   }
 
   ~Plane_separator() {}
-
-  //  template <class P>
-  //  Separator_d(void (*s)(Points_container<P>&, Separator_d<NT>*), 
-  //	      Points_container<P>& c) { s(c, this);  }
 
 };
 

@@ -14,8 +14,8 @@
 // file          : include/CGAL/Kd_tree.h
 // package       : ASPAS (3.12)
 // maintainer    : Hans Tangelder <hanst@cs.uu.nl>
-// revision      : 2.4 
-// revision_date : 2003/02/01 
+// revision      : 3.0
+// revision_date : 2003/07/10
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // coordinator   : Utrecht University
 //
@@ -37,19 +37,19 @@
 namespace CGAL {
 
 
-template <class Traits> 
+template <class TreeTraits> 
 class Kd_tree {
 public:
   
-  typedef typename Traits::Item Item;
-  typedef typename Traits::Item_container Item_container;
-  typedef typename std::list<Item>::iterator input_iterator;
-  typedef typename Traits::NT NT;
-  typedef Kd_tree_node<Traits> Node;
-  typedef Kd_tree<Traits> Tree;
+  typedef typename TreeTraits::Point Point;
+  typedef typename TreeTraits::Container Point_container;
+  typedef typename std::list<Point>::iterator input_iterator;
+  typedef typename TreeTraits::NT NT;
+  typedef Kd_tree_node<TreeTraits> Node;
+  typedef Kd_tree<TreeTraits> Tree;
 
   typedef typename Compact_container<Node>::iterator Node_handle;
-  typedef typename std::vector<Item*>::iterator Item_iterator;
+  typedef typename std::vector<Point*>::iterator Point_iterator;
 
 
 private:
@@ -59,15 +59,15 @@ private:
   Node_handle tree_root;
 
   Kd_tree_rectangle<NT>* bbox;
-  std::list<Item> pts;
+  std::list<Point> pts;
 
   // Instead of storing the points in arrays in the Kd_tree_node
   // we put all the data in a vector in the Kd_tree.
   // and we only store an iterator range in the Kd_tree_node.
   // 
-  std::vector<Item*> data;
-  Item_iterator data_iterator;
-  Traits tr;
+  std::vector<Point*> data;
+  Point_iterator data_iterator;
+  TreeTraits tr;
   int the_item_number;
 
   // protected copy constructor
@@ -80,7 +80,7 @@ private:
 
   // The leaf node
   Node_handle 
-  create_leaf_node(Item_container& c)
+  create_leaf_node(Point_container& c)
   {
     Node n;
     Node_handle nh = nodes.insert(n);
@@ -101,15 +101,15 @@ private:
   //       It is not proper yet, but the goal was to see if there is
   //       a potential performance gain through the Compact_container
   Node_handle 
-  create_internal_node_use_extension(Item_container& c, Traits& t) 
+  create_internal_node_use_extension(Point_container& c, TreeTraits& t) 
   {
     Node n;
     Node_handle nh = nodes.insert(n);
     
     nh->the_node_type = Node::EXTENDED_INTERNAL;
 
-    Item_container
-      c_low = Item_container(c.dimension());
+    Point_container
+      c_low = Point_container(c.dimension());
     
     t.split(nh->sep, c, c_low);
 	        
@@ -145,15 +145,15 @@ private:
   // Note also that I duplicated the code to get rid if the if's for
   // the boolean use_extension which was constant over the construction
   Node_handle 
-  create_internal_node(Item_container& c, Traits& t) 
+  create_internal_node(Point_container& c, TreeTraits& t) 
   {
     Node n;
     Node_handle nh = nodes.insert(n);
     
     nh->the_node_type = Node::INTERNAL;
 
-    Item_container
-    c_low = Item_container(c.dimension());
+    Point_container
+    c_low = Point_container(c.dimension());
     
     t.split(nh->sep, c, c_low);
 	        
@@ -180,16 +180,16 @@ public:
   Kd_tree() {}
   
   Kd_tree(input_iterator first, input_iterator beyond,
-	    Traits t = Traits()) : tr(t) {
+	    TreeTraits t = TreeTraits()) : tr(t) {
     assert(first != beyond);
     int dim = first->dimension();
     
     std::copy(first, beyond, std::back_inserter(pts));
  
-    data = std::vector<Item*>(pts.size()); // guarantees that iterators we store in Kd_tree_nodes stay valid
+    data = std::vector<Point*>(pts.size()); // guarantees that iterators we store in Kd_tree_nodes stay valid
     data_iterator = data.begin();
 
-    Item_container c(dim, pts.begin(), pts.end());
+    Point_container c(dim, pts.begin(), pts.end());
 
     bbox = new Kd_tree_rectangle<NT>(c.bounding_box());
     
@@ -223,7 +223,7 @@ public:
 	};
 
 
-  Traits traits() const {return tr;} // Returns the traits class;
+  TreeTraits traits() const {return tr;} // Returns the traits class;
 
   Node_handle root() { return tree_root; }
 

@@ -14,8 +14,8 @@
 // file          : include/CGAL/Splitters.h
 // package       : ASPAS (3.12)
 // maintainer    : Hans Tangelder <hanst@cs.uu.nl>
-// revision      : 2.4 
-// revision_date : 2002/16/08 
+// revision      : 3.0
+// revision_date : 2003/07/10 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // coordinator   : Utrecht University
 //
@@ -31,31 +31,29 @@
 #include <CGAL/Plane_separator.h>
 namespace CGAL {
 
-template <class Item, class Item_container=Point_container<Item>, 
-          class Separator_=Plane_separator<typename Item::R::FT>  >
+template <class Point, class Container_=Point_container<Point>, 
+          class Separator_=Plane_separator<typename Kernel_traits<Point>::Kernel::FT>  >
 class Median_of_max_spread {
-private:
-  typedef typename Item::R::FT NT;
 public:
-  typedef Item_container Container;
+  typedef typename Kernel_traits<Point>::Kernel::FT NT;
+  typedef Container_ Container;
   typedef Separator_ Separator;
  
   void operator() (Separator& sep, Container& c0,
   			     Container& c1, 
   			     NT Aspect_ratio=NT(3)) {        
         sep=Separator(c0.max_tight_span_coord(),NT(0));
-        sep.set_cutting_val(c0.median(sep.cutting_dimension()));
+        sep.set_cutting_value(c0.median(sep.cutting_dimension()));
         c0.split_container(c1,sep,true);
   }
 };
 
-template <class Item, class Item_container=Point_container<Item>,
-	  class Separator_=Plane_separator<typename Item::R::FT>  > 
+template <class Point, class Container_=Point_container<Point>,
+	  class Separator_=Plane_separator<typename Kernel_traits<Point>::Kernel::FT>  > 
 class Fair {
-private:
-  typedef typename Item::R::FT NT; 
 public:
-  typedef Item_container Container;
+  typedef typename Kernel_traits<Point>::Kernel::FT NT;
+  typedef Container_ Container;
   typedef Separator_ Separator;
 
   void operator() (Separator& sep, Container& c0,
@@ -64,19 +62,18 @@ public:
 	// find legal cut with max spread
         sep=Separator(c0.max_tight_span_coord_balanced(Aspect_ratio),
 				NT(0));
-        sep.set_cutting_val(c0.balanced_fair(sep.cutting_dimension(),
+        sep.set_cutting_value(c0.balanced_fair(sep.cutting_dimension(),
 				Aspect_ratio));
         c0.split_container(c1,sep);
   }
 };
 
-template <class Item,  class Item_container=Point_container<Item>,
-	  class Separator_=Plane_separator<typename Item::R::FT>  >
+template <class Point,  class Container_=Point_container<Point>,
+	  class Separator_=Plane_separator<typename Kernel_traits<Point>::Kernel::FT>  >
 class Sliding_fair {
-private:
-  typedef typename Item::R::FT NT;
 public:
-  typedef Item_container Container;
+  typedef typename Kernel_traits<Point>::Kernel::FT NT;
+  typedef Container_ Container;
   typedef Separator_ Separator;
 
   void operator() (Separator& sep, Container& c0,
@@ -87,20 +84,19 @@ public:
     sep=Separator(c0.max_tight_span_coord_balanced(Aspect_ratio),
 			    NT(0));
     
-    sep.set_cutting_val(c0.balanced_sliding_fair(sep.cutting_dimension(),
+    sep.set_cutting_value(c0.balanced_sliding_fair(sep.cutting_dimension(),
 			 Aspect_ratio));
     c0.split_container(c1,sep,true);
   }
 };
 
 
-template <class Item,  class Item_container=Point_container<Item>,
-	  class Separator_=Plane_separator<typename Item::R::FT>  >
+template <class Point,  class Container_=Point_container<Point>,
+	  class Separator_=Plane_separator<typename Kernel_traits<Point>::Kernel::FT>  >
 class Sliding_midpoint {
-private:
-  typedef typename Item::R::FT NT;
 public:
-  typedef Item_container Container;
+  typedef typename Kernel_traits<Point>::Kernel::FT NT;
+  typedef Container_ Container;
   typedef Separator_ Separator;
 
   void operator() (Separator& sep, Container& c0,
@@ -114,22 +110,21 @@ public:
 	NT max_span_upper = 
 	c0.tight_bounding_box().max_coord(c0.max_span_coord());
 	if (max_span_upper <= sep.cutting_value()) {
-		sep.set_cutting_val(max_span_upper); 
+		sep.set_cutting_value(max_span_upper); 
 	};
 	if (max_span_lower >= sep.cutting_value()) {
-		sep.set_cutting_val(max_span_lower); 
+		sep.set_cutting_value(max_span_lower); 
 	};
 	c0.split_container(c1,sep,true);
   }
 };
 
-template <class Item,  class Item_container=Point_container<Item>,
-	  class Separator_=Plane_separator<typename Item::R::FT>  >
+template <class Point,  class Container_=Point_container<Point>,
+	  class Separator_=Plane_separator<typename Kernel_traits<Point>::Kernel::FT>  >
 class Median_of_rectangle {
-private:
-  typedef typename Item::R::FT NT;
 public:
-  typedef Item_container Container;
+  typedef typename Kernel_traits<Point>::Kernel::FT NT;
+  typedef Container_ Container;
   typedef Separator_ Separator;
 
   void operator() (Separator& sep, Container& c0,
@@ -137,18 +132,17 @@ public:
   			     NT Aspect_ratio=NT(3))
   {
     sep=Separator(c0.max_span_coord(),NT(0));
-    sep.set_cutting_val(c0.median(sep.cutting_dimension()));
+    sep.set_cutting_value(c0.median(sep.cutting_dimension()));
     c0.split_container(c1,sep,true);
   }
 };
 
-template <class Item,  class Item_container=Point_container<Item>,
-	  class Separator_=Plane_separator<typename Item::R::FT>  >
+template <class Point,  class Container_=Point_container<Point>,
+	  class Separator_=Plane_separator<typename Kernel_traits<Point>::Kernel::FT>  >
 class Midpoint_of_max_spread {
-private:
-  typedef typename Item::R::FT NT;
 public:
-  typedef Item_container Container;
+  typedef typename Kernel_traits<Point>::Kernel::FT NT;
+  typedef Container_ Container;
   typedef Separator_ Separator;
 
   void operator() (Separator& sep, Container& c0,
@@ -161,14 +155,12 @@ public:
   }
 };
 
-template <class Item, class Item_container=Point_container<Item>,
-	  class Separator_=Plane_separator<typename Item::R::FT>  >
+template <class Point, class Container_=Point_container<Point>,
+	  class Separator_=Plane_separator<typename Kernel_traits<Point>::Kernel::FT>  >
 class Midpoint_of_rectangle {
-private:
-  typedef typename Item::R::FT NT;
-
 public:
-  typedef Item_container Container;
+  typedef typename Kernel_traits<Point>::Kernel::FT NT;
+  typedef Container_ Container;
   typedef Separator_ Separator;
   void operator() (Separator& sep, Container& c0,
   			     Container& c1, 

@@ -14,8 +14,8 @@
 // file          : include/CGAL/Orthogonal_standard_search.h
 // package       : ASPAS (3.12)
 // maintainer    : Hans Tangelder <hanst@cs.uu.nl>
-// revision      : 2.4 
-// revision_date : 2002/16/08 
+// revision      : 3.0
+// revision_date : 2003/07/10 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // coordinator   : Utrecht University
 //
@@ -32,23 +32,21 @@
 
 namespace CGAL {
 
-template <class Traits, 
-	  class Distance=Euclidean_distance<typename Traits::Item>, 
-	  class Tree=Kd_tree<Traits> >
+template <class TreeTraits, 
+	  class Distance=Euclidean_distance<typename TreeTraits::Point>, 
+	  class Tree=Kd_tree<TreeTraits> >
 class Orthogonal_standard_search {
 
 public:
 
-typedef typename Traits::Item Item;
-typedef typename Traits::Item Query_item;
-typedef typename Traits::NT NT;
-typedef std::pair<Item*,NT> Item_with_distance;
+typedef typename TreeTraits::Point Point;
+typedef typename TreeTraits::Point Query_item;
+typedef typename TreeTraits::NT NT;
+typedef std::pair<Point*,NT> Point_with_distance;
 
 typedef typename Tree::Node_handle Node_handle;
 
-//private:
-
-typedef typename Kd_tree<Traits>::Item_iterator Item_iterator;
+typedef typename Kd_tree<TreeTraits>::Point_iterator Point_iterator;
 typedef Kd_tree_rectangle<NT> Rectangle; 
 
 private:
@@ -63,9 +61,8 @@ NT multiplication_factor;
 Query_item* query_object;
 int total_item_number;
 NT distance_to_root;   
-int dim;
 
-typedef std::list<Item_with_distance> NN_list;
+typedef std::list<Point_with_distance> NN_list;
 
 NN_list l;
 int max_k;
@@ -84,7 +81,7 @@ Distance* distance_instance;
 		    l.begin()->second * multiplication_factor);
 	};
 
-	inline void insert(Item* I, NT dist) {
+	inline void insert(Point* I, NT dist) {
 		bool insert;
 		if (actual_k<max_k) insert=true;
 		else 
@@ -96,7 +93,7 @@ Distance* distance_instance;
 			typename NN_list::iterator it=l.begin();
 			for (; (it != l.end()); ++it) 
 			{ if (dist < it->second) break;}
-        		Item_with_distance NN_Candidate(I,dist);
+        		Point_with_distance NN_Candidate(I,dist);
         		l.insert(it,NN_Candidate);
         		if (actual_k > max_k) {
 				actual_k--;
@@ -142,7 +139,6 @@ Distance* distance_instance;
 	//					*(tree.bounding_box()));
 
         query_object = &q;
-        dim=query_object->dimension();
 
         total_item_number=tree.item_number();
 
@@ -156,14 +152,15 @@ Distance* distance_instance;
 
     
     // Print statistics of the standard search process.
-    void statistics () {
-    	std::cout << "Standard search statistics:" << std::endl;
-    	std::cout << "Number of internal nodes visited:" 
+    std::ostream& statistics (std::ostream& s) {
+    	s << "Standard search statistics:" << std::endl;
+    	s << "Number of internal nodes visited:" 
 	<< number_of_internal_nodes_visited << std::endl;
-    	std::cout << "Number of leaf nodes visited:" 
+    	s << "Number of leaf nodes visited:" 
 	<< number_of_leaf_nodes_visited << std::endl;
-    	std::cout << "Number of items visited:" 
+    	s << "Number of items visited:" 
 	<< number_of_items_visited << std::endl;
+        return s;
     }
 
     // destructor
@@ -230,7 +227,7 @@ Distance* distance_instance;
                   // n is a leaf
                   number_of_leaf_nodes_visited++;
                   if (N->size() > 0)
-                  for (Item_iterator it=N->begin(); it != N->end(); it++) {
+                  for (Point_iterator it=N->begin(); it != N->end(); it++) {
                         number_of_items_visited++;
 			NT distance_to_query_object=
                         distance_instance->

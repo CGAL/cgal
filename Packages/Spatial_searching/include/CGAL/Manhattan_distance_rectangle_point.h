@@ -11,64 +11,57 @@
 // release       : $CGAL_Revision: CGAL-2.5-I-99 $
 // release_date  : $CGAL_Date: 2003/05/23 $
 //
-// file          : include/CGAL/L1_distance_rectangle_point.h
+// file          : include/CGAL/Manhattan_distance_rectangle_point.h
 // package       : ASPAS (3.12)
 // maintainer    : Hans Tangelder <hanst@cs.uu.nl>
-// revision      : 2.4 
-// revision_date : 2002/16/08 
+// revision      : 3.0
+// revision_date : 2003/07/10 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // coordinator   : Utrecht University
 //
 // ======================================================================
 
-// Note: this implementation is based on a weight vector,
-// another traits class for weighted Minkowski distances based on a 
-// weight matrix will be added to ASPAS in the future
 
-// Note: Use p=0 to denote the weighted Linf-distance 
-// For 0<p<1 Lp is not a metric
-
-#ifndef CGAL_L1_DISTANCE_RECTANGLE_POINT_H
-#define CGAL_L1_DISTANCE_RECTANGLE_POINT_H
+#ifndef CGAL_MANHATTAN_DISTANCE_RECTANGLE_POINT_H
+#define CGAL_MANHATTAN_DISTANCE_RECTANGLE_POINT_H
 
 #include <CGAL/Kd_tree_rectangle.h>
 
 namespace CGAL {
 
-  template <class Query_item, class Item>
-  class L1_distance_rectangle_point {
+  template <class QueryItem, class Point>
+  class Manhattan_distance_rectangle_point {
 
     public:
 
-
-    typedef typename Item::R::FT NT;
+    typedef typename Kernel_traits<Point>::Kernel::FT NT;
 
     private:
 
-    unsigned int The_dimension;
+    unsigned int the_dimension;
 
     public:
 
     
     // default constructor
-    L1_distance_rectangle_point() {
-		Item P;
-		The_dimension=P.dimension();
-		assert(The_dimension>0);
+    Manhattan_distance_rectangle_point() {
+		Point p;
+		the_dimension=p.dimension();
+		assert(the_dimension>0);
     }
     
-    L1_distance_rectangle_point(const int d) : The_dimension(d) {}
+    Manhattan_distance_rectangle_point(const int d) : the_dimension(d) {}
 
     //copy constructor
-    L1_distance_rectangle_point(const L1_distance_rectangle_point& d) : 
-    The_dimension(d.The_dimension) {}
+    Manhattan_distance_rectangle_point(const Manhattan_distance_rectangle_point& d) : 
+    the_dimension(d.the_dimension) {}
 
-    ~L1_distance_rectangle_point() {
+    ~Manhattan_distance_rectangle_point() {
     };
 
-    inline NT distance(const Query_item& q, const Item& p) {
+    inline NT distance(const QueryItem& q, const Point& p) {
 		NT distance = NT(0);
-		for (unsigned int i = 0; i < The_dimension; ++i) {
+		for (unsigned int i = 0; i < the_dimension; ++i) {
 			if (p[i]>q.max_coord(i)) distance += 
 			(p[i]-q.max_coord(i)); 
 			if (p[i]<q.min_coord(i)) distance += 
@@ -78,10 +71,10 @@ namespace CGAL {
     }
 
 
-    inline NT min_distance_to_queryitem(const Query_item& q,
+    inline NT min_distance_to_queryitem(const QueryItem& q,
 					      const Kd_tree_rectangle<NT>& r) {
 		NT distance = NT(0);
-		for (unsigned int i = 0; i < The_dimension; ++i)  {
+		for (unsigned int i = 0; i < the_dimension; ++i)  {
 			if (r.min_coord(i)>q.max_coord(i)) distance += 
 			(r.min_coord(i)-q.max_coord(i)); 
 			if (r.max_coord(i)<q.min_coord(i)) distance += 
@@ -90,10 +83,10 @@ namespace CGAL {
 		return distance;
 	}
 
-    inline NT max_distance_to_queryitem(const Query_item& q,
+    inline NT max_distance_to_queryitem(const QueryItem& q,
 					      const Kd_tree_rectangle<NT>& r) {
 		NT distance=NT(0);
-		for (unsigned int i = 0; i < The_dimension; ++i)
+		for (unsigned int i = 0; i < the_dimension; ++i)
 			if ( r.max_coord(i)-q.min_coord(i) > 
 			     q.max_coord(i)-r.min_coord(i) )  
 				distance += (r.max_coord(i)-q.min_coord(i));
@@ -115,7 +108,7 @@ namespace CGAL {
 
 	}
 
-  }; // class L1_distance_rectangle_point
+  }; // class Manhattan_distance_rectangle_point
 
 } // namespace CGAL
-#endif // L1_DISTANCE_RECTANGLE_POINT_H
+#endif // MANHATTAN_DISTANCE_RECTANGLE_POINT_H

@@ -13,8 +13,8 @@
 //
 // file          : include/CGAL/Kd_tree_traits_point.h
 // package       : ASPAS
-// revision      : 2.4 
-// revision_date : 2002/16/08 
+// revision      : 3.0
+// revision_date : 2003/07/10 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
 // coordinator   : Utrecht University
@@ -28,15 +28,15 @@
 
 namespace CGAL {
 
-  template <class Item_, 
-            class Splitter=Sliding_midpoint<Item_> >
+  template <class Point_, 
+            class Splitter=Sliding_midpoint<Point_> >
   class Kd_tree_traits_point {
 
   public:
-    typedef Item_ Item;
-    typedef Item** Item_iterator;
-    typedef typename Item::R::FT NT;
-    typedef typename Splitter::Container Item_container;
+    typedef Point_ Point;
+    typedef Point** Point_iterator;
+    typedef typename Kernel_traits<Point>::Kernel::FT NT;
+    typedef typename Splitter::Container Container;
     typedef typename Splitter::Separator Separator;
     
   private:
@@ -70,7 +70,7 @@ namespace CGAL {
 
 	// split c0 in c0 and c1
     	void split(Separator& sep,
-    	           Point_container<Item>& c0, Point_container<Item>& c1) 
+    	           Container& c0, Container& c1) 
 	{
 		Splitter S;
 		S(sep,c0,c1,the_aspect_ratio);

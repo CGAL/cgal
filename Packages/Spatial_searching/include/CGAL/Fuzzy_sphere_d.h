@@ -14,8 +14,8 @@
 // file          : include/CGAL/Fuzzy_sphere_d.h
 // package       : ASPAS (3.12)
 // maintainer    : Hans Tangelder <hanst@cs.uu.nl>
-// revision      : 2.4 
-// revision_date : 2002/16/08 
+// revision      : 3.0 
+// revision_date : 2003/07/10 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // coordinator   : Utrecht University
 //
@@ -29,16 +29,16 @@
 
 namespace CGAL {
 
-  template <class Item>
+  template <class Point>
   class Fuzzy_sphere_d{
 
     public:
 
-    typedef typename Item::R::FT NT;
+    typedef typename Kernel_traits<Point>::Kernel::FT NT;
     
     private:
 
-    Item c;
+    Point c;
     NT r;
     NT eps;
     unsigned int dim;
@@ -50,13 +50,13 @@ namespace CGAL {
 		
 
 	// constructor
-	Fuzzy_sphere_d(Item center, NT radius, NT epsilon=NT(0)) : 
+	Fuzzy_sphere_d(Point center, NT radius, NT epsilon=NT(0)) : 
 	c(center), r(radius), eps(epsilon), dim(c.dimension()) 
 	{ 	// avoid problems if eps > r
 		if (eps>r) eps=r; 
 	} 
         	
-        bool contains(const Item& p) const {
+        bool contains(const Point& p) const {
 		// test whether the squared distance 
 		// between P and c 
 		// is at most the squared_radius

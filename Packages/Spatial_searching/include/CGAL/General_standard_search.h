@@ -14,8 +14,8 @@
 // file          : include/CGAL/General_standard_search.h
 // package       : ASPAS (3.12)
 // maintainer    : Hans Tangelder <hanst@cs.uu.nl>
-// revision      : 2.4 
-// revision_date : 2002/16/08 
+// revision      : 3.0
+// revision_date : 2003/07/10 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 // coordinator   : Utrecht University
 //
@@ -33,24 +33,22 @@
 
 namespace CGAL {
 
-template <class Traits, 
-	  class Distance=Euclidean_distance<typename Traits::Item>, 
-	  class Query_item=typename Traits::Item, 
-	  class Tree=Kd_tree<Traits> >
+template <class TreeTraits, 
+	  class Distance=Euclidean_distance<typename TreeTraits::Point>, 
+	  class QueryItem=typename TreeTraits::Point, 
+	  class Tree=Kd_tree<TreeTraits> >
 
 class General_standard_search {
 
 public:
 
-typedef typename Traits::Item Item;
-typedef typename Traits::NT NT;
-typedef std::pair<Item*,NT> Item_with_distance;
+typedef typename TreeTraits::Point Point;
+typedef typename TreeTraits::NT NT;
+typedef std::pair<Point*,NT> Point_with_distance;
 
 typedef typename Tree::Node_handle Node_handle;
 
-// private:
-
-typedef typename Tree::Item_iterator Item_iterator;
+typedef typename Tree::Point_iterator Point_iterator;
 typedef Kd_tree_rectangle<NT> Rectangle; 
 
 private:
@@ -62,12 +60,11 @@ int number_of_items_visited;
 bool search_nearest;
 
 NT multiplication_factor;
-Query_item* query_object;
+QueryItem* query_object;
 int total_item_number;
 NT distance_to_root;   
-int dim;
 
-typedef std::list<Item_with_distance> NN_list;
+typedef std::list<Point_with_distance> NN_list;
 
 NN_list l;
 int max_k;
@@ -85,7 +82,7 @@ Distance* distance_instance;
 		    
 	};
 
-	inline void insert(Item* I, NT dist) {
+	inline void insert(Point* I, NT dist) {
 		bool insert;
 		if (actual_k<max_k) insert=true;
 		else 
@@ -97,7 +94,7 @@ Distance* distance_instance;
 			typename NN_list::iterator it=l.begin();
 			for (; (it != l.end()); ++it) 
 			{ if (dist < it->second) break;}
-        		Item_with_distance NN_Candidate(I,dist);
+        		Point_with_distance NN_Candidate(I,dist);
         		l.insert(it,NN_Candidate);
         		if (actual_k > max_k) {
 				actual_k--;
@@ -121,7 +118,7 @@ Distance* distance_instance;
 
 
     // constructor
-    General_standard_search(Tree& tree, Query_item& q, 
+    General_standard_search(Tree& tree, QueryItem& q, 
     const Distance& d=Distance(), int k=1, NT Eps=NT(0.0), bool Search_nearest=true) {
 
 	distance_instance=new Distance(d);
@@ -137,7 +134,6 @@ Distance* distance_instance;
 
        
         query_object = &q;
-        dim=query_object->dimension();
 
         total_item_number=tree.item_number();
 
@@ -151,15 +147,17 @@ Distance* distance_instance;
     }
 
     // Print statistics of the general standard search process.
-    void statistics () {
-    	std::cout << "General standard search statistics:" << std::endl;
-    	std::cout << "Number of internal nodes visited:" << 
-	number_of_internal_nodes_visited << std::endl;
-    	std::cout << "Number of leaf nodes visited:" << 
-	number_of_leaf_nodes_visited << std::endl;
-    	std::cout << "Number of items visited:" << 
-	number_of_items_visited << std::endl;
+    std::ostream& statistics (std::ostream& s) {
+    	s << "General search statistics:" << std::endl;
+    	s << "Number of internal nodes visited:" 
+	<< number_of_internal_nodes_visited << std::endl;
+    	s << "Number of leaf nodes visited:" 
+	<< number_of_leaf_nodes_visited << std::endl;
+    	s << "Number of items visited:" 
+	<< number_of_items_visited << std::endl;
+        return s;
     }
+
 
     // destructor
     ~General_standard_search() { 
@@ -241,7 +239,7 @@ Distance* distance_instance;
                   // n is a leaf
                   number_of_leaf_nodes_visited++;
                   if (N->size() > 0)
-                  for (Item_iterator it=N->begin(); it != N->end(); it++) {
+                  for (Point_iterator it=N->begin(); it != N->end(); it++) {
                         number_of_items_visited++;
 			NT distance_to_query_object=
                         distance_instance->
