@@ -34,12 +34,12 @@
   <file name="random_segments_500.dat" format="int" curves="500"
     vertices="33589" halfedges="131356" faces="32091"></file>
 
-  <bench samples="10" enable="true">
+  <bench samples="3" enable="true">
     <benchSweepLDSegments file="eurcut.dat" header="true"></benchSweepLDSegments>
     <benchSweepLDSegments_fast file="eurcut.dat"></benchSweepLDSegments_fast>
   </bench>
   
-  <bench samples="5" enable="true">
+  <bench samples="2" enable="true">
     <benchSweepLDSegments file="fork0505_mc.seg.rand.dat"></benchSweepLDSegments>
     <benchSweepLDSegments_fast file="fork0505_mc.seg.rand.dat"></benchSweepLDSegments_fast>
   </bench>
@@ -54,22 +54,22 @@
     <benchSweepLDSegments_fast file="world.seg.cut.rand.dat"></benchSweepLDSegments_fast>
   </bench>
   
-  <bench samples="10" enable="true">
+  <bench samples="3" enable="true">
     <benchSweepLDSegments file="onebig_100.dat"></benchSweepLDSegments>
     <benchSweepLDSegments_fast file="onebig_100.dat"></benchSweepLDSegments_fast>
   </bench>
     
-  <bench samples="10" enable="true">
+  <bench samples="3" enable="true">
     <benchSweepLDSegments file="random_segments_100.dat"></benchSweepLDSegments>
     <benchSweepLDSegments_fast file="random_segments_100.dat"></benchSweepLDSegments_fast>
   </bench>
     
-  <bench samples="10" enable="true">
+  <bench samples="3" enable="true">
     <benchSweepLDSegments file="onebig_100_x.dat"></benchSweepLDSegments>
     <benchSweepLDSegments_fast file="onebig_100_x.dat"></benchSweepLDSegments_fast>
   </bench>
   
-  <bench samples="10" enable="true">
+  <bench samples="3" enable="true">
     <benchSweepLDSegments file="random_segments_100_x.dat"></benchSweepLDSegments>
     <benchSweepLDSegments_fast file="random_segments_100_x.dat"></benchSweepLDSegments_fast>
   </bench>
