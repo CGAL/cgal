@@ -27,11 +27,11 @@
 #ifndef CGAL_PM_SEGMENT_TRAITS_LEDA_KERNEL
 #define CGAL_PM_SEGMENT_TRAITS_LEDA_KERNEL
 
+#include <CGAL/leda_rational.h>
 #include <CGAL/rat_leda_in_CGAL_2.h>
 #include <CGAL/Planar_map_2/Pm_segment_utilities_2.h>
 
-// if we use a LEDA version without namespaces
-// we have to define a few macros
+// if we use a LEDA version without namespaces we have to define a few macros
 #if !defined(LEDA_NAMESPACE)
 #define LEDA_BEGIN_NAMESPACE
 #define LEDA_END_NAMESPACE
@@ -42,12 +42,11 @@ CGAL_BEGIN_NAMESPACE
 
 /*!
  */
-template< class FT_ >
 class my_rat_direction : public leda_rat_point {
 public:
 public:
-  typedef FT_                                   RT;
-  typedef FT_                                   FT;
+  typedef leda_rational                         RT;
+  typedef leda_rational                         FT;
 
   my_rat_direction(const leda_rat_point & p) : leda_rat_point(p) {}
   my_rat_direction(const FT x, const FT y) : leda_rat_point(x,y) {}
@@ -108,17 +107,16 @@ public:
   }
 };
 
-template< class FT_ >
 class Pm_segment_traits_leda_kernel_2 {
 private:
-  typedef Pm_segment_traits_leda_kernel_2<FT_>  Self;
+  typedef Pm_segment_traits_leda_kernel_2       Self;
     
 public:
-  typedef FT_                                   RT;
-  typedef FT_                                   FT;
+  typedef leda_rational                         RT;
+  typedef leda_rational                         FT;
   typedef leda_rat_point                        Point_2;
   typedef leda_rat_segment                      Segment_2;
-  typedef my_rat_direction<FT>                  Direction_2;
+  typedef my_rat_direction                      Direction_2;
 
   /*! Functor
    */
