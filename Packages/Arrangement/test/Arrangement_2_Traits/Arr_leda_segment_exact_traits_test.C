@@ -20,7 +20,7 @@ int main()
 #include "include/Segment_traits_test.h"
 
 typedef leda_rational                                  NT;
-typedef CGAL::Arr_leda_segment_exact_traits<NT>        Traits;
+typedef CGAL::Arr_leda_segment_exact_traits            Traits;
 
 int main( int argc, char** argv ){
   Segment_traits_test< Traits, leda_rational >  test_obj( argc, argv );

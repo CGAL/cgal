@@ -28,7 +28,7 @@
 
 #include <CGAL/LEDA_basic.h>
 #include <CGAL/Pm_segment_traits_2.h>
-#include <CGAL/Pm_segment_traits_leda_kernel_2.h>
+#include <CEP/Leda_rat_kernel/leda_rat_kernel_traits.h>
 #include <CGAL/Arr_intersection_tags.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -36,9 +36,8 @@ CGAL_BEGIN_NAMESPACE
 #define CGAL_XT_SINGLE_POINT 1
 #define	CGAL_XT_ORIGINAL_POINT 2
 
-template< class FT_ >
 class Arr_leda_segment_exact_traits
-  : public Pm_segment_traits_2<Pm_segment_traits_leda_kernel_2<FT_> >
+  : public Pm_segment_traits_2<leda_rat_kernel_traits>
 {
 public:
   Arr_leda_segment_exact_traits() {}
@@ -46,14 +45,14 @@ public:
 public:
   typedef Lazy_intersection_tag                 Intersection_category;
     
-  typedef Pm_segment_traits_leda_kernel_2<FT_>  Kernel;
+  typedef leda_rat_kernel_traits                Kernel;
   typedef Pm_segment_traits_2<Kernel>           Base;
   
-  typedef typename Base::Point_2                Point_2;
-  typedef typename Base::X_curve_2              X_curve_2;
+  typedef Base::Point_2                         Point_2;
+  typedef Base::X_curve_2                       X_curve_2;
   typedef X_curve_2                             Curve_2;
 
-  typedef typename Base::Curve_point_status     Curve_point_status;
+  typedef Base::Curve_point_status              Curve_point_status;
 
   // Obsolete, for backward compatibility
   typedef Point_2                               Point;
@@ -189,11 +188,12 @@ public:
     bool res = c1.intersection(c2, xcv);
     if (!res) return false;
 
-    if (lexicographically_xy_smaller(xcv.source(),xcv.target()))
+    Compare_xy_2 compare_xy = compare_xy_2_object();
+    if (compare_xy(xcv.source(),xcv.target()) == SMALLER)
       xcv=curve_flip(xcv);
-    if (lexicographically_xy_smaller(xcv.target(),pt)) {
+    if (compare_xy(xcv.target(),pt) == SMALLER) {
       p2=point_normalize(xcv.target());
-      if (lexicographically_xy_smaller(xcv.source(),pt))
+      if (compare_xy(xcv.source(),pt) == SMALLER)
         p1=point_normalize(xcv.source());
       else
         p1=pt;
@@ -223,11 +223,12 @@ public:
                          int & xsect_type) const 
   {
     xsect_type = 0;
+    Compare_xy_2 compare_xy = compare_xy_2_object();
     if ( c1.is_trivial())
     { 
       if (c2.contains(c1.source())) { 
         if (right) {
-          if (lexicographically_xy_larger(c1.source(),pt)) {
+          if (compare_xy(c1.source(),pt) == LARGER) {
             // intersection is c1.source()
             xsect_type = CGAL_XT_SINGLE_POINT | CGAL_XT_ORIGINAL_POINT;
             if (return_intersection) {
@@ -237,7 +238,7 @@ public:
             return true; 
           }
         } else {
-          if (lexicographically_xy_smaller(c1.source(),pt)) {
+          if (compare_xy(c1.source(),pt) == SMALLER) {
             // intersection is c1.source()
             xsect_type = CGAL_XT_SINGLE_POINT | CGAL_XT_ORIGINAL_POINT;
             if (return_intersection) {
@@ -255,7 +256,7 @@ public:
     if (c2.is_trivial()) { 
       if (c1.contains(c2.source())) { 
         if (right) {
-          if (lexicographically_xy_larger(c2.source(), pt)) {
+          if (compare_xy(c2.source(), pt) == LARGER) {
             // intersection is c2.source()
             xsect_type = CGAL_XT_SINGLE_POINT | CGAL_XT_ORIGINAL_POINT;
             if (return_intersection) {
@@ -265,7 +266,7 @@ public:
             return true; 
           }
         } else {
-          if (lexicographically_xy_smaller(c2.source(),pt)) {
+          if (compare_xy(c2.source(),pt) == SMALLER) {
             // intersection is c2.source()
               xsect_type = CGAL_XT_SINGLE_POINT | CGAL_XT_ORIGINAL_POINT;
               if (return_intersection) {
@@ -313,12 +314,12 @@ public:
         // a is left-low to b
         if (right) {
           //intersection (not to the right) is rat_segment(a, b);
-          if (lexicographically_xy_larger(b, pt)) {
+          if (compare_xy(b, pt) == LARGER) {
             xsect_type = 0;
             if (return_intersection) {
               //if (b_right) 
               p2 = point_normalize(b);
-              if (lexicographically_xy_larger(a, pt))
+              if (compare_xy(a, pt) == LARGER)
                 p1 = point_normalize(a);
               else
                 p1 = pt;
@@ -327,11 +328,11 @@ public:
           }
         } else {
           //intersection (not to the right) is rat_segment(a, b);
-          if (lexicographically_xy_smaller(a, pt)) {
+          if (compare_xy(a, pt) == SMALLER) {
             xsect_type = 0;
             if (return_intersection) {
               p2 = point_normalize(a);
-              if (lexicographically_xy_smaller(b, pt))
+              if (compare_xy(b, pt) == SMALLER)
                 p1 = point_normalize(b);
               else
                 p1 = pt;
@@ -353,7 +354,7 @@ public:
 		  
       leda_rat_point p(m2*c1.dx() - m1*c2.dx(), m2*c1.dy() - m1*c2.dy(), w);
       if (right) {
-        if (lexicographically_xy_larger(p, pt)) {
+        if (compare_xy(p, pt) == LARGER) {
           //intersection is rat_segment(p, p);
           if (return_intersection) {
             xsect_type = CGAL_XT_SINGLE_POINT;
@@ -363,7 +364,7 @@ public:
           return true;
         }
       } else {
-        if (lexicographically_xy_smaller(p, pt)) {
+        if (compare_xy(p, pt) == SMALLER) {
           //intersection is rat_segment(p, p);
           if (return_intersection) {
             xsect_type = CGAL_XT_SINGLE_POINT;

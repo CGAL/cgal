@@ -103,7 +103,7 @@ public:
   {
     //split curve at split point (x coordinate) into c1 and c2
     CGAL_precondition(curve_get_point_status(cv, split_pt) == ON_CURVE);
-    CGAL_precondition(Compare_xy_2 compare_xy = compare_xy_2_object());
+    CGAL_precondition_code(Compare_xy_2 compare_xy = compare_xy_2_object());
     CGAL_precondition(compare_xy(curve_source(cv), split_pt) != EQUAL);
     CGAL_precondition(compare_xy(curve_target(cv), split_pt) != EQUAL);
     
