@@ -30,7 +30,6 @@ private:
   VERTEX_HANDLE m_begin;
   VERTEX_HANDLE m_end;
   std::list<HALFEDGE_HANDLE> m_halfedges;
-  //std::list<unsigned int> m_index_samples; // index of samples
 
 public:
 
@@ -56,7 +55,6 @@ public:
   void clear()
   {
     m_halfedges.clear();
-    //m_index_samples.clear();
     m_begin = NULL;
     m_end = NULL;
   }
@@ -81,8 +79,6 @@ public:
   // data access
   std::list<HALFEDGE_HANDLE>* halfedges() { return &m_halfedges; }
   const std::list<HALFEDGE_HANDLE>* halfedges() const { return &m_halfedges; }
-  //std::list<unsigned int>* index_samples() { return &m_index_samples; }
-  //const std::list<unsigned int>* index_samples() const { return &m_index_samples; }
 
   // misc
   bool is_closed() const { return (m_begin == m_end); }

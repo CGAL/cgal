@@ -39,16 +39,10 @@ private:
 public: 
 
 	// main functions	
-	//int extract_features();
 	int extract_boundaries(bool open_backbones = false,
 	                       bool sort = true);
 	
 private:
-
-  //bool add_feature_backbone_from_corner(int tag_free,int tag_processed);
-  //bool add_feature_backbone(int tag_free,int tag_processed);
-
-  //bool add_boundary_backbone_from_corner(int tag_free,int tag_processed);
   bool add_boundary_backbone(int tag_free,int tag_processed);
 };
 

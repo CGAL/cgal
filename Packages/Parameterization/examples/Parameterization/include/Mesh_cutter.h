@@ -46,7 +46,6 @@ public:
 	
 	void cut(backbone *pBackbone);
 	void cut_genus(backbone *pBackbone);
-  //void convert_to_seaming(backbone *pBackbone);
   void keep_one_connected_component();
 	
 private:
@@ -57,10 +56,6 @@ private:
   bool extend();
   void precompute_distances();
   Polyhedron_ex::Halfedge_handle pick_best_halfedge(list<Polyhedron_ex::Halfedge_handle>::iterator &pos);
-
-  //void flag_seaming();
-  //void update_multiplicity();
-
   void recursive_tag(Polyhedron_ex::Facet_handle pFacet,int index);
 };
 

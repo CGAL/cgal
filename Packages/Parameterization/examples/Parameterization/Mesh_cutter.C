@@ -36,8 +36,6 @@ void Mesh_cutter::cut(backbone *pBackbone)
   std::cerr << "    cutting...";
   while(extend()) {}
   std::cerr << "done" << std::endl;
-  //flag_seaming();
-  //update_multiplicity();
 }
 
 /////////////////////////////////////////////////////
@@ -61,56 +59,7 @@ void Mesh_cutter::cut_genus(backbone *pBackbone)
   std::cerr << "    cutting...";
   while(extend()) {}
   std::cerr << "done" << std::endl;
-  //flag_seaming();
-  //update_multiplicity();
 }
-
-////***************************************************
-//// convert_to_seaming
-////***************************************************
-//void Mesh_cutter::convert_to_seaming(backbone *pBackbone)
-//{
-//  std::cerr << "  convert to seaming backbone";
-//  m_pBackbone = pBackbone;
-//  CGAL_assertion(pBackbone != NULL);
-//  pBackbone->type(backbone::SEAMING);
-//  flag_seaming();
-//  std::cerr << std::endl;
-//}
-
-////***************************************************
-//// flag_seaming
-////***************************************************
-//void Mesh_cutter::flag_seaming()
-//{
-//  list<Polyhedron_ex::Halfedge_handle>::iterator ppHalfedge;
-//  for(ppHalfedge  = m_pBackbone->halfedges()->begin();
-//      ppHalfedge != m_pBackbone->halfedges()->end();
-//      ppHalfedge++)
-//  {
-//    Polyhedron_ex::Halfedge_handle pHalfedge = (*ppHalfedge);
-//    pHalfedge->is_seaming(true);
-//    pHalfedge->opposite()->is_seaming(true);
-//  }
-//}
-
-////***************************************************
-//// update multiplicity
-////***************************************************
-//void Mesh_cutter::update_multiplicity()
-//{
-//	m_pPolyhedron->init_vertex_multiplicity(0);
-//	
-//  list<Polyhedron_ex::Halfedge_handle>::iterator ppHalfedge;
-//  for(ppHalfedge  = m_pBackbone->halfedges()->begin();
-//      ppHalfedge != m_pBackbone->halfedges()->end();
-//      ppHalfedge++)
-//  {
-//    Polyhedron_ex::Halfedge_handle pHalfedge = (*ppHalfedge);
-//    pHalfedge->vertex()->increase_multiplicity();
-//  }
-//  m_pPolyhedron->trace_vertex_multiplicity();
-//}
 
 //***************************************************
 // init
