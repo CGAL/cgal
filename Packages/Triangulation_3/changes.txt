@@ -1,7 +1,10 @@
-1 Mars 2005 Mariette
+8 March 2005 Sylvain Pion
+- Weighted_converter : allow operators on other kernel objects too.
+
+1 March 2005 Mariette Yvinec
 - fixed  operator() for two points in In_smallest_orthogonal_sphere
 
-1 Mars 2005 Mariette
+1 March 2005 Mariette Yvinec
 - added operator() for two points in In_smallest_orthogonal_sphere
 
 9 February 2005 Sylvain Pion
@@ -15,6 +18,8 @@
 
 07 January 2005 Sylvain Pion
 - Doc : missing \\
+
+================================ CGAL 3.1 =========================
 
 19 December 2004 Sylvain Pion
 - Fix example_tds when -DNDEBUG.

@@ -24,7 +24,7 @@
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/Filtered_predicate.h>
 
-CGAL_BEGIN_NAMESPACE 
+CGAL_BEGIN_NAMESPACE
 
 // The Weighted_converter is parametrized by a usual kernel converter,
 // and adds the conversions for the Weighted_point.
@@ -40,6 +40,8 @@ struct Weighted_converter_3
 
   typedef typename Regular_triangulation_euclidean_traits_base_3<Target_kernel>
                    ::Weighted_point_3  Target_wp;
+
+  using Converter::operator();
 
   Target_wp
   operator()(const Source_wp &wp) const
@@ -102,7 +104,7 @@ public:
   Compare_power_distance_3 compare_power_distance_3_object() const
   { return Compare_power_distance_3();}
 
-  In_smallest_orthogonal_sphere_3 
+  In_smallest_orthogonal_sphere_3
   in_smallest_orthogonal_sphere_3_object() const
   { return In_smallest_orthogonal_sphere_3(); }
 
@@ -110,7 +112,7 @@ public:
   side_of_bounded_orthogonal_sphere_3_object() const
   { return Side_of_bounded_orthogonal_sphere_3(); }
 
-  Does_simplex_intersect_dual_support_3 
+  Does_simplex_intersect_dual_support_3
   does_simplex_intersect_dual_support_3_object() const
   { return Does_simplex_intersect_dual_support_3(); }
 
