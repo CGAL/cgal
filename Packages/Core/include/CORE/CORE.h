@@ -70,10 +70,10 @@ typedef long machine_long;
 // automaticall link necessary static library under visual c++
 #ifdef _MSC_VER
   #ifdef _DEBUG
-    #pragma comment(lib, "coreDebug.lib")
+    #pragma comment(lib, "core++Debug.lib")
     #pragma comment(lib, "gmpDebug.lib")
   #else
-    #pragma comment(lib, "core.lib")
+    #pragma comment(lib, "core++.lib")
     #pragma comment(lib, "gmp.lib")
   #endif
 #endif
