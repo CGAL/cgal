@@ -118,7 +118,57 @@ whenever necessary. This is the topic of the next example.
 This example is slightly more involved. The user can enter points and
 the application draws the Delaunay triangulation of the point set. 
 
-\ccIncludeExampleCode{Qt_widget/basic/tutorial2/tutorial2.C}
+\ccExample
+\begin{ccExampleCode}
+#include <CGAL/Cartesian.h>
+#include <CGAL/Delaunay_triangulation_2.h>
+#include <CGAL/IO/Qt_widget_Triangulation_2.h>
+#include <CGAL/IO/Qt_widget.h>
+#include <qapplication.h>
+
+typedef CGAL::Cartesian<double>		    Rep;
+typedef CGAL::Point_2<Rep>		    Point;
+typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
+
+Delaunay dt;
+typedef CGAL::Qt_widget Qt_widget;
+class My_window : public Qt_widget {
+  Q_OBJECT
+public:
+  My_window(int x, int y){
+    resize(x,y);
+    connect(this, SIGNAL(redraw_on_back()),
+	   this, SLOT(redraw_win()));
+  };
+private slots:  
+  void redraw_win()
+  {
+    *this << dt;
+  }
+private:
+  //this event is called only when the user presses the mouse
+  void mousePressEvent(QMouseEvent *e)
+  {
+    Qt_widget::mousePressEvent(e);
+    dt.insert(Point(x_real(e->x()), y_real(e->y())));
+    redraw();
+  }
+};
+
+//moc_source_file : tutorial2.C
+#include "tutorial2.moc"
+
+int main( int argc, char **argv )
+{
+    QApplication app( argc, argv );
+    My_window *W = new My_window(400,400);
+    app.setMainWidget( W );
+    W->show();
+    W->set_window(0, 400, 0, 400);
+    return app.exec();
+}
+
+\end{ccExampleCode}
 
 As most {\sc Gui} toolkits Qt is event driven.  In the last line
 of function \ccc{main}, the program enters an event dispatch loop.
@@ -171,11 +221,22 @@ are not using makefiles you should not be concerned about this line.
 
 The control flow in the last example is now as follows. When you press the
 mouse button, a point is inserted in the triangulation.  The widget's
-method \ccc{redraw} is called. At the end it emits a signal, which is
-connected to the slot of \ccc{My_window::redraw_win()}. In this
-function the drawing if the Delaunay triangulation then finally
+method \ccc{redraw} is called. This method implemented in
+\ccc{Qt_widget} emits a signal, which is connected to the slot 
+\ccc{My_window::redraw_win()} in this example. In this
+function the drawing of the Delaunay triangulation then finally
 happens.  Note that the very same happens automatically when you
 resize the window.
+
+\begin{ccAdvanced}
+There are a couple ways to draw something with \ccc{Qt_widget}. One way
+is to use the signals \ccc{redraw_on_back()}, \ccc{redraw_on_front()}.
+This way you can bring your drawings before all or after all the
+other drawings. The other option is to use the \ccc{QPainter} instance 
+of \ccc{Qt_widget} that you can get calling \ccc{get_painter()}
+method. The most recommended way is to use layers, that are described
+in the next section.
+\end{ccAdvanced}
 
 \section{Layers}
 \label{Qt_widget_layers}
@@ -210,7 +271,57 @@ layers. All the layers derived from this base class
 
 
 \subsection{Example: Using a Layer to Draw}
-\ccIncludeExampleCode{Qt_widget/basic/tutorial3/tutorial3.C}
+
+\ccExample
+\begin{ccExampleCode}
+#include <CGAL/Cartesian.h>
+#include <CGAL/Point_2.h>
+#include <CGAL/Delaunay_triangulation_2.h>
+#include <CGAL/IO/Qt_widget_Delaunay_triangulation_2.h>
+#include <CGAL/IO/Qt_widget.h>
+#include <CGAL/IO/Qt_widget_layer.h>
+#include <qapplication.h>
+
+typedef CGAL::Cartesian<double>		    Rep;
+typedef CGAL::Point_2<Rep>		    Point;
+typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
+
+Delaunay dt;
+
+class My_layer : public CGAL::Qt_widget_layer{
+  void draw(){
+    *widget << dt;
+  }
+};
+
+class My_window : public CGAL::Qt_widget {
+public:
+  My_window(int x, int y)
+  {
+    resize(x,y);
+    attach(&layer);
+  };
+private:
+  //this method is called when the user presses the mouse
+  void mousePressEvent(QMouseEvent *e)
+  {
+    Qt_widget::mousePressEvent(e);
+    dt.insert(Point(x_real(e->x()), y_real(e->y())));
+    redraw();
+  }
+  My_layer layer;
+};
+
+int main( int argc, char **argv )
+{
+    QApplication app( argc, argv );
+    My_window *W = new My_window(400,400);
+    app.setMainWidget(W);
+    W->show();
+    W->set_window(0, 400, 0, 400);
+    return app.exec();
+}
+\end{ccExampleCode}
 
 This example defines a class derived from
 \ccStyle{Qt_widget_layer}. In the member function \ccStyle{draw()}
