@@ -1,5 +1,9 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.63 on 24 January 2001
+- to_interval() for the built-in types are now defined here because of a
+  circular dependency of the #include otherwise.
+
 Version 4.62 on 23 January 2001
 - New predicate side_of_bounded_circle.
 - First submission by tag.
