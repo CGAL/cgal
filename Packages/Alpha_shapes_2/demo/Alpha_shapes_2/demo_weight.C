@@ -82,7 +82,7 @@ typedef K::Circle_2 Circle;
 typedef CGAL::Weighted_alpha_shape_euclidean_traits_2<K> Gt;
 typedef CGAL::Regular_triangulation_vertex_base_2<Gt>    Rvb;
 typedef CGAL::Alpha_shape_vertex_base_2<Gt,Rvb>          Vb;
-typedef CGAL::Regular_triangulation_face_base_2<>        Rf;
+typedef CGAL::Regular_triangulation_face_base_2<Gt>        Rf;
 typedef CGAL::Alpha_shape_face_base_2<Gt, Rf>            Fb;
 
 typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;

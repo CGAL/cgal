@@ -1,3 +1,6 @@
+version 11.33 (07/05/03) my
+- fixed template parameters in instanciations of Regular_face_base_2
+
 version 11.22 (06/05/03) MY
 - fixed for new design of Triangulations
 
