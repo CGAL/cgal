@@ -1,6 +1,10 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.87 (7/5/01)
+- default template parameters for Delaunay_triangulation_2.h
+- added forgotten file Dummy_output_iterator.h
+
 Ver 4.86 (2/5/01)
 - unify find_conflics()t member functions of Delaunay and constrained Delaunay
 triangulations

@@ -70,10 +70,10 @@ int main()
 
   std::cout << "Testing Delaunay Triangulation_2 " <<  std::endl;
   std::cout << " with Triangulation_data_structure_using_list_2 : " 
-	    << std::endl;
+    	    << std::endl;
+  std::cout << "this tests defaults setting" << std::endl;
   typedef CGAL::_Triangulation_test_traits                       Gt;
-  typedef CGAL::Triangulation_data_structure_using_list_2<Vb,Fb> Tds3;
-  typedef CGAL::Delaunay_triangulation_2<Gt,Tds3>                Cls3;
+   typedef CGAL::Delaunay_triangulation_2<Gt>                    Cls3;
 
   _test_cls_delaunay_triangulation_2( Cls3() );
 
