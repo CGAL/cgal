@@ -191,7 +191,7 @@ SegmentH2<R>::operator[](int i) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename R::FT
+typename SegmentH2<R>::FT
 SegmentH2<R>::squared_length() const
 { return  (Ptr()->end - Ptr()->start) * (Ptr()->end - Ptr()->start); }
 

@@ -31,6 +31,7 @@
 #include <CGAL/homogeneous_classes.h>
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_3.h>
+#include <CGAL/misc.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -354,67 +355,67 @@ PointH3<R>::PointH3(const RT& x, const RT& y, const RT& z,
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename R::FT
+typename PointH3<R>::FT
 PointH3<R>::x()  const
 { return ( FT(Ptr()->hx() ) / FT(Ptr()->hw() )); }
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename R::FT
+typename PointH3<R>::FT
 PointH3<R>::y()  const
 { return ( FT(Ptr()->hy() ) / FT(Ptr()->hw() )); }
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename R::FT
+typename PointH3<R>::FT
 PointH3<R>::z()  const
 { return ( FT(Ptr()->hz() ) / FT(Ptr()->hw() )); }
 
 template < class R >
 inline
-typename R::RT
+typename PointH3<R>::RT
 PointH3<R>::hx() const
 { return  Ptr()->hx() ; }
 
 template < class R >
 inline
-typename R::RT
+typename PointH3<R>::RT
 PointH3<R>::hy() const
 { return  Ptr()->hy() ; }
 
 template < class R >
 inline
-typename R::RT
+typename PointH3<R>::RT
 PointH3<R>::hz() const
 { return  Ptr()->hz() ; }
 
 template < class R >
 inline
-typename R::RT
+typename PointH3<R>::RT
 PointH3<R>::hw() const
 { return  Ptr()->hw(); }
 
 template < class R >
 inline
-const typename R::RT&
+const typename PointH3<R>::RT&
 PointH3<R>::hx_ref() const
 { return  Ptr()->e0 ; }
 
 template < class R >
 inline
-const typename R::RT&
+const typename PointH3<R>::RT&
 PointH3<R>::hy_ref() const
 { return  Ptr()->e1 ; }
 
 template < class R >
 inline
-const typename R::RT&
+const typename PointH3<R>::RT&
 PointH3<R>::hz_ref() const
 { return  Ptr()->e2 ; }
 
 template < class R >
 inline
-const typename R::RT&
+const typename PointH3<R>::RT&
 PointH3<R>::hw_ref() const
 { return  Ptr()->e3; }
 
@@ -426,7 +427,7 @@ PointH3<R>::dimension() const
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename R::FT
+typename PointH3<R>::FT
 PointH3<R>::cartesian(int i) const
 {
   CGAL_kernel_precondition(i == 0 || i == 1 || i == 2);
@@ -440,7 +441,7 @@ PointH3<R>::cartesian(int i) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename R::RT
+typename PointH3<R>::RT
 PointH3<R>::homogeneous(int i) const
 {
   CGAL_kernel_precondition(i == 0 || i == 1 || i == 2 || i == 3);
@@ -455,7 +456,7 @@ PointH3<R>::homogeneous(int i) const
 
 template < class R >
 inline
-typename R::FT
+typename PointH3<R>::FT
 PointH3<R>::operator[](int i) const
 { return cartesian(i); }
 
@@ -464,6 +465,7 @@ inline
 DirectionH3<R>
 PointH3<R>::direction() const
 { return DirectionH3<R>(*this); }
+
 template < class R >
 CGAL_KERNEL_INLINE
 bool
@@ -539,43 +541,43 @@ VectorH3<R>::VectorH3(const RT& x, const RT& y, const RT& z, const RT& w)
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename R::FT
+typename VectorH3<R>::FT
 VectorH3<R>::x()  const
 { return FT(Ptr()->hx() )/FT(Ptr()->hw() ) ; }
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename R::FT
+typename VectorH3<R>::FT
 VectorH3<R>::y()  const
 { return FT(Ptr()->hy() )/FT(Ptr()->hw() ) ; }
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename R::FT
+typename VectorH3<R>::FT
 VectorH3<R>::z()  const
 { return FT(Ptr()->hz() )/FT(Ptr()->hw() ) ; }
 
 template < class R >
 inline
-typename R::RT
+typename VectorH3<R>::RT
 VectorH3<R>::hx() const
 { return  Ptr()->hx() ; }
 
 template < class R >
 inline
-typename R::RT
+typename VectorH3<R>::RT
 VectorH3<R>::hy() const
 { return  Ptr()->hy() ; }
 
 template < class R >
 inline
-typename R::RT
+typename VectorH3<R>::RT
 VectorH3<R>::hz() const
 { return  Ptr()->hz() ; }
 
 template < class R >
 inline
-typename R::RT
+typename VectorH3<R>::RT
 VectorH3<R>::hw() const
 { return  Ptr()->hw() ; }
 
@@ -587,7 +589,7 @@ VectorH3<R>::dimension() const
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename R::FT
+typename VectorH3<R>::FT
 VectorH3<R>::cartesian(int i) const
 {
   CGAL_kernel_precondition(i == 0 || i == 1 || i == 2);
@@ -601,7 +603,7 @@ VectorH3<R>::cartesian(int i) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename R::RT
+typename VectorH3<R>::RT
 VectorH3<R>::homogeneous(int i) const
 {
   CGAL_kernel_precondition(i == 0 || i == 1 || i == 2 || i == 3);
@@ -638,7 +640,7 @@ VectorH3<R>::operator!=( const VectorH3<R>& v) const
 
 template < class R >
 inline
-typename R::FT
+typename VectorH3<R>::FT
 VectorH3<R>::operator[](int i) const
 { return cartesian(i); }
 
@@ -661,7 +663,7 @@ DirectionH3<R>::DirectionH3(const RT& x, const RT& y, const RT& z,
 
 template <class R >
 CGAL_KERNEL_INLINE
-typename R::RT
+typename DirectionH3<R>::RT
 DirectionH3<R>::delta(int i) const
 {
   switch (i)
@@ -675,55 +677,55 @@ DirectionH3<R>::delta(int i) const
 
 template <class R >
 inline
-typename R::RT
+typename DirectionH3<R>::RT
 DirectionH3<R>::dx() const
 { return Ptr()->e0; }
 
 template <class R >
 inline
-typename R::RT
+typename DirectionH3<R>::RT
 DirectionH3<R>::x() const
 { return Ptr()->e0; }
 
 template <class R >
 inline
-typename R::RT
+typename DirectionH3<R>::RT
 DirectionH3<R>::hx() const
 { return Ptr()->e0; }
 
 template <class R >
 inline
-typename R::RT
+typename DirectionH3<R>::RT
 DirectionH3<R>::dy() const
 { return Ptr()->e1; }
 
 template <class R >
 inline
-typename R::RT
+typename DirectionH3<R>::RT
 DirectionH3<R>::y() const
 { return Ptr()->e1; }
 
 template <class R >
 inline
-typename R::RT
+typename DirectionH3<R>::RT
 DirectionH3<R>::hy() const
 { return Ptr()->e1; }
 
 template <class R >
 inline
-typename R::RT
+typename DirectionH3<R>::RT
 DirectionH3<R>::dz() const
 { return Ptr()->e2; }
 
 template <class R >
 inline
-typename R::RT
+typename DirectionH3<R>::RT
 DirectionH3<R>::z() const
 { return Ptr()->e2; }
 
 template <class R >
 inline
-typename R::RT
+typename DirectionH3<R>::RT
 DirectionH3<R>::hz() const
 { return Ptr()->e2; }
 
@@ -899,8 +901,6 @@ cross_product( const DirectionH3<R>& d1,
 CGAL_END_NAMESPACE
 
 #include <CGAL/Aff_transformationH3.h>
-#include <CGAL/Bbox_3.h>
-#include <CGAL/misc.h>
 
 CGAL_BEGIN_NAMESPACE
 

@@ -32,6 +32,7 @@
 #include <CGAL/homogeneous_classes.h>
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_2.h>
+#include <CGAL/misc.h>
 
 #include <CGAL/point_vector_declarationsH2.h>
 
@@ -283,7 +284,7 @@ PointH2<R>::operator!=( const PointH2<R>& p) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename R::FT
+typename PointH2<R>::FT
 PointH2<R>::cartesian(int i) const
 {
   CGAL_kernel_precondition( (i==0 || i==1) );
@@ -294,7 +295,7 @@ PointH2<R>::cartesian(int i) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename R::RT
+typename PointH2<R>::RT
 PointH2<R>::homogeneous(int i) const
 {
   CGAL_kernel_precondition( (i>=0) && (i<=2) );
@@ -307,7 +308,7 @@ PointH2<R>::homogeneous(int i) const
 
 template < class R >
 inline
-typename R::FT
+typename PointH2<R>::FT
 PointH2<R>::operator[](int i) const
 { return cartesian(i); }
 
@@ -394,7 +395,7 @@ VectorH2<R>::operator!=( const VectorH2<R>& v) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename R::FT
+typename VectorH2<R>::FT
 VectorH2<R>::cartesian(int i) const
 {
   CGAL_kernel_precondition( (i==0 || i==1) );
@@ -405,7 +406,7 @@ VectorH2<R>::cartesian(int i) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename R::RT
+typename VectorH2<R>::RT
 VectorH2<R>::homogeneous(int i) const
 {
   CGAL_kernel_precondition( (i>=0) && (i<=2) );
@@ -418,7 +419,7 @@ VectorH2<R>::homogeneous(int i) const
 
 template < class R >
 inline
-typename R::FT
+typename VectorH2<R>::FT
 VectorH2<R>::operator[](int i) const
 { return cartesian(i); }
 
@@ -505,7 +506,7 @@ DirectionH2<R>::operator-() const
 
 template <class R >
 CGAL_KERNEL_INLINE
-typename R::RT
+typename DirectionH2<R>::RT
 DirectionH2<R>::delta(int i) const
 {
   CGAL_kernel_precondition( ( i == 0 ) || ( i == 1 ) );
@@ -697,8 +698,6 @@ counterclockwise_in_between( const DirectionH2<R>& d1,
 CGAL_END_NAMESPACE
 
 #include <CGAL/Aff_transformationH2.h>
-#include <CGAL/Bbox_2.h>
-#include <CGAL/misc.h>
 
 CGAL_BEGIN_NAMESPACE
 

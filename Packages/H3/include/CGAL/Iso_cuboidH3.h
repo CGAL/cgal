@@ -187,43 +187,43 @@ Iso_cuboidH3<R>::max() const
 
 template < class R >
 inline
-typename R::FT
+typename Iso_cuboidH3<R>::FT
 Iso_cuboidH3<R>::xmin() const
 { return  FT( min().hx() ) / FT( min().hw() ); }
 
 template < class R >
 inline
-typename R::FT
+typename Iso_cuboidH3<R>::FT
 Iso_cuboidH3<R>::ymin() const
 { return  FT( min().hy() ) / FT( min().hw() ); }
 
 template < class R >
 inline
-typename R::FT
+typename Iso_cuboidH3<R>::FT
 Iso_cuboidH3<R>::zmin() const
 { return  FT( min().hz() ) / FT( min().hw() ); }
 
 template < class R >
 inline
-typename R::FT
+typename Iso_cuboidH3<R>::FT
 Iso_cuboidH3<R>::xmax() const
 { return  FT( max().hx() ) / FT( max().hw() ); }
 
 template < class R >
 inline
-typename R::FT
+typename Iso_cuboidH3<R>::FT
 Iso_cuboidH3<R>::ymax() const
 { return  FT( max().hy() ) / FT( max().hw() ); }
 
 template < class R >
 inline
-typename R::FT
+typename Iso_cuboidH3<R>::FT
 Iso_cuboidH3<R>::zmax() const
 { return  FT( max().hz() ) / FT( max().hw() ); }
 
 template < class R >
 inline
-typename R::FT
+typename Iso_cuboidH3<R>::FT
 Iso_cuboidH3<R>::min_coord(int i) const
 { 
    CGAL_kernel_precondition(i == 0 || i == 1 || i == 2);
@@ -236,7 +236,7 @@ Iso_cuboidH3<R>::min_coord(int i) const
 
 template < class R >
 inline
-typename R::FT
+typename Iso_cuboidH3<R>::FT
 Iso_cuboidH3<R>::max_coord(int i) const
 { 
    CGAL_kernel_precondition(i == 0 || i == 1 || i == 2);
@@ -249,7 +249,7 @@ Iso_cuboidH3<R>::max_coord(int i) const
 
 template < class R >
 inline
-typename R::FT
+typename Iso_cuboidH3<R>::FT
 Iso_cuboidH3<R>::volume() const
 { return  (xmax() - xmin()) * (ymax() - ymin()) * (zmax() - zmin()); }
 
@@ -346,6 +346,7 @@ Iso_cuboidH3<R>::is_degenerate() const
          || ( min().hy() == max().hy() )
          || ( min().hz() == max().hz() ) );
 }
+
 template < class R >
 inline
 Bbox_2

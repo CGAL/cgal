@@ -166,7 +166,7 @@ CircleH2<R>::center() const
 
 template <class R>
 inline
-typename R::FT
+typename CircleH2<R>::FT
 CircleH2<R>::squared_radius() const
 { return Ptr()->squared_radius; }
 

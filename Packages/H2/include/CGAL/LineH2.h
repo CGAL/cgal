@@ -148,26 +148,26 @@ LineH2<R>::LineH2(const PointH2<R>& p,
 
 template < class R >
 inline
-typename R::RT
+typename LineH2<R>::RT
 LineH2<R>::a() const
 { return Ptr()->e0; }
 
 template < class R >
 inline
-typename R::RT
+typename LineH2<R>::RT
 LineH2<R>::b() const
 { return Ptr()->e1; }
 
 template < class R >
 inline
-typename R::RT
+typename LineH2<R>::RT
 LineH2<R>::c() const
 { return Ptr()->e2; }
 
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename R::FT
+typename LineH2<R>::FT
 LineH2<R>::x_at_y(FT y) const
 {
   CGAL_kernel_precondition( !is_degenerate() );
@@ -176,7 +176,7 @@ LineH2<R>::x_at_y(FT y) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-typename R::FT
+typename LineH2<R>::FT
 LineH2<R>::y_at_x(FT x) const
 {
   CGAL_kernel_precondition( !is_degenerate() );

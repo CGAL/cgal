@@ -748,14 +748,14 @@ is_odd() const
 
 template < class R >
 inline
-typename R::FT
+typename Aff_transformationH2<R>::FT
 Aff_transformationH2<R>::
 cartesian(int i, int j) const
 { return ptr->cartesian(i,j); }
 
 template < class R >
 inline
-typename R::RT
+typename Aff_transformationH2<R>::RT
 Aff_transformationH2<R>::
 homogeneous(int i, int j) const
 { return ptr->homogeneous(i,j); }
@@ -790,7 +790,7 @@ return Aff_transformationH2<R>(
 }
 
 template < class R >
-typename R::RT
+typename Aff_transformation_repH2<R>::RT
 Aff_transformation_repH2<R>::homogeneous(int i, int j) const
 {
   CGAL_kernel_precondition( (i >= 0) && (i <= 2) && (j >= 0) && (j <= 2) );
@@ -819,7 +819,7 @@ Aff_transformation_repH2<R>::homogeneous(int i, int j) const
 }
 
 template < class R >
-typename R::FT
+typename Aff_transformation_repH2<R>::FT
 Aff_transformation_repH2<R>::cartesian(int i, int j) const
 {
   CGAL_kernel_precondition( (i >= 0) && (i <= 2) && (j >= 0) && (j <= 2) );
@@ -828,7 +828,7 @@ Aff_transformation_repH2<R>::cartesian(int i, int j) const
 }
 
 template < class R >
-typename R::RT
+typename Translation_repH2<R>::RT
 Translation_repH2<R>::homogeneous(int i, int j) const
 {
   CGAL_kernel_precondition( (i >= 0) && (i <= 2) && (j >= 0) && (j <= 2) );
@@ -857,7 +857,7 @@ Translation_repH2<R>::homogeneous(int i, int j) const
 }
 
 template < class R >
-typename R::FT
+typename Translation_repH2<R>::FT
 Translation_repH2<R>::cartesian(int i, int j) const
 {
   CGAL_kernel_precondition( (i >= 0) && (i <= 2) && (j >= 0) && (j <= 2) );
@@ -886,7 +886,7 @@ Translation_repH2<R>::cartesian(int i, int j) const
 }
 
 template < class R >
-typename R::RT
+typename Rotation_repH2<R>::RT
 Rotation_repH2<R>::
 homogeneous(int i, int j) const
 {
@@ -916,7 +916,7 @@ homogeneous(int i, int j) const
 }
 
 template < class R >
-typename R::FT
+typename Rotation_repH2<R>::FT
 Rotation_repH2<R>::
 cartesian(int i, int j) const
 {
@@ -946,7 +946,7 @@ cartesian(int i, int j) const
 }
 
 template < class R >
-typename R::RT
+typename Scaling_repH2<R>::RT
 Scaling_repH2<R>::
 homogeneous(int i, int j) const
 {
@@ -976,7 +976,7 @@ homogeneous(int i, int j) const
 }
 
 template <class R>
-typename R::FT
+typename Scaling_repH2<R>::FT
 Scaling_repH2<R>::
 cartesian(int i, int j) const
 {
@@ -1006,7 +1006,7 @@ cartesian(int i, int j) const
 }
 
 template < class R >
-typename R::RT
+typename Reflection_repH2<R>::RT
 Reflection_repH2<R>::
 homogeneous(int i, int j) const
 {
@@ -1037,7 +1037,7 @@ homogeneous(int i, int j) const
 }
 
 template <class R>
-typename R::FT
+typename Reflection_repH2<R>::FT
 Reflection_repH2<R>::
 cartesian(int i, int j) const
 {
