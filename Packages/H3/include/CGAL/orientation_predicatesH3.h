@@ -43,7 +43,7 @@ orientation( const PointH3<R>& p,
   return (Orientation) sign_of_determinant4x4( p.hx(), p.hy(), p.hz(), p.hw(),
                                                r.hx(), r.hy(), r.hz(), r.hw(),
                                                q.hx(), q.hy(), q.hz(), q.hw(),
-                                               s.hx(), s.hy(), s.hz(), s.hw() );
+                                               s.hx(), s.hy(), s.hz(), s.hw());
 }
 
 template < class R>
