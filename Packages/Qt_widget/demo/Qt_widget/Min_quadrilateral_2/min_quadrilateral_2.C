@@ -100,7 +100,7 @@ public:
     help->insertItem("About &Qt", this, SLOT(aboutQt()) );
 
     //the new tools toolbar
-    setUsesBigPixmaps(TRUE);
+    //setUsesBigPixmaps(TRUE);
     newtoolbar = new CGAL::Tools_toolbar(widget, this, &list_of_points);	
     //the layers toolbar
     vtoolbar = new CGAL::Layers_toolbar(widget, this, &list_of_points);

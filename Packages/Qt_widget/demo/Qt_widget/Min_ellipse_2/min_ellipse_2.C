@@ -130,7 +130,7 @@ public:
     help->insertItem("About &Qt", this, SLOT(aboutQt()) );
 
     //the new tools toolbar
-    setUsesBigPixmaps(TRUE);
+    //setUsesBigPixmaps(TRUE);
     newtoolbar = new CGAL::Tools_toolbar(widget, this, &list_of_points);	
     //the standard toolbar
     stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this);
