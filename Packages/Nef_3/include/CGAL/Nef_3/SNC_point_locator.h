@@ -420,6 +420,11 @@ public:
         /* do nothing */
       }
       else if( CGAL::assign( e, *o)) {
+
+#ifdef CGAL_NEF3_DUMP_STATISTICS
+      ++number_of_intersection_candidates;
+#endif
+
         Point_3 q;
         if( is.does_intersect_internally( s, Segment_3(e->source()->point(),
 	                                               e->twin()->source()->point()), q)) {
@@ -430,6 +435,10 @@ public:
         }
       }
       else if( CGAL::assign( f, *o)) {
+#ifdef CGAL_NEF3_DUMP_STATISTICS
+      ++number_of_intersection_candidates;
+#endif
+
         Point_3 q;
         if( is.does_intersect_internally( s, f, q) ) {
           q = normalized(q);
@@ -479,6 +488,11 @@ public:
         /* do nothing */
       }
       else if( CGAL::assign( e, *o)) {
+
+#ifdef CGAL_NEF3_DUMP_STATISTICS
+      ++number_of_intersection_candidates;
+#endif
+
         Point_3 q;
         if( is.does_intersect_internally( s, Segment_3(e->source()->point(),
 	                                               e->twin()->source()->point()), q)) {
@@ -524,6 +538,11 @@ public:
         /* do nothing */
       }
       else if( CGAL::assign( f, *o)) {
+
+#ifdef CGAL_NEF3_DUMP_STATISTICS
+      ++number_of_intersection_candidates;
+#endif
+
         Point_3 q;
         if( is.does_intersect_internally( s, f, q) ) {
           q = normalized(q);
@@ -679,6 +698,11 @@ public:
     Segment_3 s(Segment_3(e0->source()->point(),e0->twin()->source()->point()));
     Halfedge_iterator e;
     CGAL_forall_edges( e, *this->sncp()) {
+
+#ifdef CGAL_NEF3_DUMP_STATISTICS
+      ++number_of_intersection_candidates;
+#endif
+
       Point_3 q;
       if( is.does_intersect_internally( s, Segment_3(e->source()->point(),
                                                      e->twin()->source()->point()), q)) {
@@ -702,6 +726,11 @@ public:
                           e0->twin()->source()->point()));
     Halffacet_iterator f;
     CGAL_forall_facets( f, *this->sncp()) {
+
+#ifdef CGAL_NEF3_DUMP_STATISTICS
+      ++number_of_intersection_candidates;
+#endif
+
       Point_3 q;
       if( is.does_intersect_internally( s, f, q) ) {
         q = normalized(q);

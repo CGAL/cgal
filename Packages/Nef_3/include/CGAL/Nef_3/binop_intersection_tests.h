@@ -133,6 +133,11 @@ struct binop_intersection_test_segment_tree {
     {}
 
     void operator()( Nef_box& box0, Nef_box& box1 ) {
+
+#ifdef CGAL_NEF3_DUMP_STATISTICS
+      ++number_of_intersection_candidates;
+#endif
+
       Halfedge_const_iterator  e0 = box0.get_halfedge();
       Halffacet_const_iterator f1 = box1.get_halffacet();
       if( Infi_box::degree( f1->plane().d() ) > 0 )
@@ -155,6 +160,11 @@ struct binop_intersection_test_segment_tree {
     {}
 
     void operator()( Nef_box& box0, Nef_box& box1 ) {
+
+#ifdef CGAL_NEF3_DUMP_STATISTICS
+      ++number_of_intersection_candidates;
+#endif
+
       Halfedge_const_iterator  e1 = box0.get_halfedge();
       Halffacet_const_iterator f0 = box1.get_halffacet();
       if( Infi_box::degree( f0->plane().d() ) > 0 )
@@ -176,6 +186,11 @@ struct binop_intersection_test_segment_tree {
     {}
 
     void operator()( Nef_box& box0, Nef_box& box1 ) {
+
+#ifdef CGAL_NEF3_DUMP_STATISTICS
+      ++number_of_intersection_candidates;
+#endif
+
       Halfedge_const_iterator e0 = box0.get_halfedge();
       Halfedge_const_iterator e1 = box1.get_halfedge();
       Point_3 ip;

@@ -77,6 +77,7 @@ CGAL::Timer timer_plane_sweeps;
 
 #ifdef CGAL_NEF3_DUMP_STATISTICS
 int number_of_intersections;
+int number_of_intersection_candidates;
 #endif
 
 template <typename Map>
@@ -1327,7 +1328,9 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       std::cout << "Vertices_in_object_B: "
 		<< snc2.number_of_vertices() << std::endl;
       std::cout << "Number_of_intersections: "
-		<< number_of_intersections << std::endl;    
+		<< number_of_intersections << std::endl;
+      std::cout << "Number_of_intersection_candidates: "
+		<< number_of_intersection_candidates << std::endl;    
       std::cout << "Vertices_in_Result: "
 		<< sncp()->number_of_vertices() << std::endl;
     }
