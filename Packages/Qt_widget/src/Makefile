@@ -42,7 +42,7 @@ LDFLAGS = \
 Qt_Window.o: Qt_Window.C Qt_Window.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_Window.C
 
-Qt_Window.moc: ../include/CGAL/Qt_Window.h
+Qt_Window.moc: ../include/CGAL/IO/Qt_Window.h
 	$(MOC) -o Qt_Window.moc $<
 
 clean:

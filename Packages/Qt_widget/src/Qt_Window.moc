@@ -1,7 +1,7 @@
 /****************************************************************************
 ** CGAL::Qt_widget meta object code from reading C++ file 'Qt_Window.h'
 **
-** Created: Thu Jun 7 10:45:42 2001
+** Created: Thu Jun 7 17:14:13 2001
 **      by: The Qt MOC ($Id$)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -13,7 +13,7 @@
 #error "Moc format conflict - please regenerate all moc files"
 #endif
 
-#include "../include/CGAL/Qt_Window.h"
+#include "../include/CGAL/IO/Qt_Window.h"
 #include <qmetaobject.h>
 #include <qapplication.h>
 

@@ -8,7 +8,7 @@
 //
 // ----------------------------------------------------------------------------
 //
-// file          : include/CGAL/Qt_Window.h
+// file          : include/CGAL/IO/Qt_Window.h
 // package       : QT_window
 // author(s)     : Laurent Rineau
 // release       : 
