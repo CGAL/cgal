@@ -33,6 +33,7 @@
 
 #include <CGAL/Circulator_project.h>
 #include <CGAL/normal_vector_newell_3.h>
+#include <CGAL/Nef_3/SNC_SM_point_locator.h>
 
 #undef _DEBUG
 #define _DEBUG 29
@@ -96,6 +97,7 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
   typedef typename SNC_structure::Sphere_point       Sphere_point;
   typedef typename SNC_structure::Sphere_segment     Sphere_segment;
   typedef typename SNC_structure::Sphere_circle      Sphere_circle;
+  typedef typename SNC_constructor::SM_point_locator SM_point_locator;
                                   
   TRACEN("  calculating facet's planes...");
   std::transform( P.facets_begin(), P.facets_end(),
@@ -202,7 +204,10 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
     // mark facets properly...
     SM.mark(fint) = true;
     SM.mark(fext) = false;
-    SM.check_integrity_and_topological_planarity();    
+    SM.check_integrity_and_topological_planarity();   
+
+    SM_point_locator L(nv);
+    L.init_marks_of_halfspheres(); 
   }
 }
 

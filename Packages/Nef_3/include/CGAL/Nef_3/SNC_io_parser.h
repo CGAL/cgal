@@ -329,16 +329,17 @@ void SNC_io_parser<EW>::read()
 
 template <typename EW>
 void SNC_io_parser<EW>::print_vertex(Vertex_handle v) const
-{ // syntax: index { svs sve ses see sfs sfe sl, mark, point }
+{ // syntax: index { svs sve, ses see, sfs sfe, sl | point } mark
   out << index(v) << " { " 
       << index(v->svertices_begin()) << " "
-      << index(v->svertices_last()) << " "
+      << index(v->svertices_last()) << ", "
       << index(v->shalfedges_begin()) << " "
-      << index(v->shalfedges_last()) << " "
+      << index(v->shalfedges_last()) << ", "
       << index(v->sfaces_begin()) << " "
-      << index(v->sfaces_last()) << " "
-      << index(v->shalfloop()) << ", "
-      << mark(v) << ", " << point(v) << " }" << std::endl;
+      << index(v->sfaces_last()) << ", "
+      << index(v->shalfloop()) << " | "
+      << point(v) << " } "  
+      << mark(v) << std::endl;
 }
 
 template <typename EW>
@@ -375,13 +376,14 @@ read_vertex(Vertex_handle v) const
 
 template <typename EW>
 void SNC_io_parser<EW>::print_edge(Halfedge_handle e) const
-{ // syntax: index { twin, source, isolated incident_object, mark }
+{ // syntax: index { twin, source, isolated incident_object | spoint } mark
   SM_decorator D(vertex(e));
   out << index(e) << " { " << index(twin(e)) << ", "
       << index(source(e)) << ", ";
   if ( D.is_isolated(e) ) out << "1 " << index(D.face(e));
   else out << "0 " << index(D.first_out_edge(e));
-  out << ", " << mark(e) << " }"<< std::endl;
+  out << " | " << tmp_point(e);
+  out << " } "<< mark(e) << std::endl;
 }
 
 template <typename EW>
@@ -413,15 +415,17 @@ read_edge(Halfedge_handle e) const
 
 template <typename EW>
 void SNC_io_parser<EW>::print_facet(Halffacet_handle f) const
-{ // syntax: index { fclist, ivlist, mark, plane }
+{ // syntax: index { twin, fclist, ivlist, volume | plane } mark
   out << index(f) << " { "; 
+  out << index(twin(f)) << ", ";
   Halffacet_cycle_iterator it; 
   CGAL_nef3_forall_facet_cycles_of(it,f)
     if ( it.is_shalfedge() ) out << index(SHalfedge_handle(it)) << ' ';
   out << ", ";
   CGAL_nef3_forall_facet_cycles_of(it,f)
     if ( it.is_shalfloop() ) out << index(SHalfloop_handle(it));
-  out << ", " << mark(f) << ", " << plane(f) << " }\n";
+  out << ", " << index(volume(f)) << " | " 
+      << plane(f) << " } " << mark(f) << std::endl;
 }
 
 template <typename EW>
@@ -449,12 +453,12 @@ read_facet(Halffacet_handle f) const
 
 template <typename EW>
 void SNC_io_parser<EW>::print_volume(Volume_handle c) const
-{ // syntax: index { shlist, mark }
+{ // syntax: index { shlist } mark
   out << index(c) << " { "; 
   Shell_entry_iterator it;
   CGAL_nef3_forall_shells_of(it,c)
     out << index(SFace_handle(it)) << ' ';
-  out << ", " << mark(c) << " }\n";
+  out << "} " << mark(c) << std::endl;
 }
 
 template <typename EW>
@@ -478,14 +482,15 @@ read_volume(Volume_handle c) const
 template <typename EW>
 void SNC_io_parser<EW>::
 print_sedge(SHalfedge_handle e) const
-{ // syntax: index { twin, sprev, snext, source, sface, prev, next, facet }
+{ // syntax: index { twin, sprev, snext, source, sface, prev, next, facet | circle } mark
   SM_decorator D(vertex(e));
   out << index(e) << " { "
       << index(D.twin(e)) << ", " 
       << index(D.previous(e)) << ", " << index(D.next(e)) << ", "
       << index(D.source(e)) << ", " << index(D.face(e)) << ", "
       << index(previous(e)) << ", " << index(next(e)) << ", "
-      << index(facet(e)) << " } " << D.mark(e) << "\n";
+      << index(facet(e)) 
+      << " | " << D.circle(e) << " } " << D.mark(e) << "\n";
 }
 
 template <typename EW>
@@ -526,11 +531,12 @@ read_sedge(SHalfedge_handle e) const
 template <typename EW>
 void SNC_io_parser<EW>::
 print_sloop(SHalfloop_handle l) const
-{ // syntax: index { twin, sface, facet }
+{ // syntax: index { twin, sface, facet | circle } mark
   SM_decorator D(vertex(l));
   out << index(l) << " { "
       << index(D.twin(l)) << ", " << index(D.face(l)) << ", "
-      << index(facet(l)) << " }\n";
+      << index(facet(l)) 
+      << " | " << D.circle(l) << " } " << D.mark(l) << "\n";
 }
 
 template <typename EW>

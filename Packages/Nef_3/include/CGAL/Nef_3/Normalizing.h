@@ -53,9 +53,59 @@ CGAL::Point_3<R> normalized(CGAL::Point_3<R>& p)
 }
 
 template <typename R>
+CGAL::Sphere_point<R> normalized(CGAL::Sphere_point<R>& p)
+{
+  typedef typename R::RT     RT;
+
+  RT g = (p.hx()==0) ? ((p.hy()==0) ? ((p.hz()==0) ? 1: p.hz()): p.hy()): p.hx();
+  
+  if(p.hy() != 0) g = gcd(g,p.hy());
+  if(p.hz() != 0) g = gcd(g,p.hz());
+	  
+  if(g<0) g = -g;
+
+  RT x = p.hx()/g;
+  RT y = p.hy()/g;
+  RT z = p.hz()/g;
+
+  return CGAL::Sphere_point<R>(x,y,z);
+}
+
+template <typename R>
+CGAL::Sphere_direction<R> normalized(CGAL::Sphere_direction<R>& c)
+{
+  CGAL::Plane_3<R> h = c.plane();
+  CGAL_nef3_assertion(!(h.a()==0 && h.b()==0 && h.c()==0 && h.d()==0));
+  
+  typedef typename R::RT     RT;
+
+  RT x = (h.a()==0) ? ((h.b()==0) ? ((h.c()==0) ? ((h.d()==0) ? 1 
+						              : h.d())
+                                                : h.c())
+                                  : h.b())
+                    : h.a();
+
+  
+  if(h.b() != 0)
+    x = gcd(x,h.b());
+  if(h.c() != 0)
+    x = gcd(x,h.c());
+  if(h.d() !=0)
+    x = gcd(x,h.d());
+ 
+  x = CGAL_NTS abs(x);
+
+  RT pa = h.a()/x;
+  RT pb = h.b()/x;
+  RT pc = h.c()/x;
+  RT pd = h.d()/x;
+  
+  return CGAL::Sphere_direction<R>(CGAL::Plane_3<R>(pa,pb,pc,pd));
+}
+
+template <typename R>
 CGAL::Plane_3<R> normalized(CGAL::Plane_3<R>& h)
 { 
-
   CGAL_nef3_assertion(!(h.a()==0 && h.b()==0 && h.c()==0 && h.d()==0));
   
   typedef typename R::RT     RT;
@@ -91,45 +141,36 @@ CGAL::Plane_3<R> normalized(CGAL::Plane_3<R>& h)
 }
 
 
-/*
 template <typename R>
-CGAL::Plane_3<R> normalized_old(CGAL::Plane_3<R>& h)
+CGAL::Sphere_circle<R> normalized(CGAL::Sphere_circle<R>& c)
 { 
-  //  TRACEN("  before normalizing "<<h);
-  CGAL_nef3_assertion(Infi_box::degree(h.a())==0 && 
-		      Infi_box::degree(h.b())==0 && 
-		      Infi_box::degree(h.c())==0 && 
-		      Infi_box::degree(h.d())<2);
+  CGAL::Plane_3<R> h = c.plane();
+  CGAL_nef3_assertion(!(h.a()==0 && h.b()==0 && h.c()==0 && h.d()==0));
   
-  typedef typename R::RT::NT NT;
   typedef typename R::RT     RT;
-  NT a(h.a()[0]),b(h.b()[0]),c(h.c()[0]),d(h.d()[0]);
-  if(h.d().degree()==1)
-    if(d==0)
-      d=h.d()[1];
-    else
-      d=CGAL_NTS gcd(d,h.d()[1]);
 
-  NT x = (a==0) ? ((b==0) ? ((c==0) ? ((d==0) ? 1: d): c): b): a;
-  TRACE("gcd... i"<<x<<' ');
-  x = ( a != 0 ? a : x);
-  TRACE(x<<' ');
-  x = ( b != 0 ? CGAL_NTS gcd(x,b) : x );
-  TRACE(x<<' ');
-  x = ( c != 0 ? CGAL_NTS gcd(x,c) : x );
-  TRACE(x<<' ');
-  x = ( d != 0 ? CGAL_NTS gcd(x,d) : x );
-  TRACEN(x);
-  CGAL_nef3_assertion( h == CGAL::Plane_3<R>(a/x,b/x,c/x,d/x));
+  RT x = (h.a()==0) ? ((h.b()==0) ? ((h.c()==0) ? ((h.d()==0) ? 1 
+						              : h.d())
+                                                : h.c())
+                                  : h.b())
+                    : h.a();
 
+  
+  if(h.b() != 0)
+    x = gcd(x,h.b());
+  if(h.c() != 0)
+    x = gcd(x,h.c());
+  if(h.d() !=0)
+    x = gcd(x,h.d());
  
-  RT pa = a/x;
-  RT pb = b/x;
-  RT pc = c/x;
+  x = CGAL_NTS abs(x);
+
+  RT pa = h.a()/x;
+  RT pb = h.b()/x;
+  RT pc = h.c()/x;
   RT pd = h.d()/x;
   
-  return CGAL::Plane_3<R>(pa,pb,pc,pd);
+  return CGAL::Sphere_circle<R>(CGAL::Plane_3<R>(pa,pb,pc,pd));
 }
-*/
 
 #endif // CGAL_NORMALIZING_H

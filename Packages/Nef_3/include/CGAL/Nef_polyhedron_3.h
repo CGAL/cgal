@@ -46,6 +46,9 @@
 #include <CGAL/Nef_3/SNC_SM_overlayer.h>
 #include <CGAL/Nef_3/SNC_SM_point_locator.h>
 #include <CGAL/Nef_3/SNC_SM_io_parser.h>
+#include <CGAL/Nef_3/SNC_explorer.h>
+#include <CGAL/Nef_3/SNC_SM_explorer.h>
+
 #ifdef CGAL_NEF3_CGAL_NEF3_SM_VISUALIZOR
 #include <CGAL/Nef_3/SNC_SM_visualizor.h>
 #endif // CGAL_NEF3_SM_VISUALIZOR
@@ -81,6 +84,7 @@ class Nef_polyhedron_3_rep : public Ref_counted
   friend class Nef_polyhedron_3<T>;
   typedef CGAL::SNC_structure<T>                       SNC_structure;
   typedef CGAL::SNC_decorator<SNC_structure>           SNC_decorator;
+  typedef CGAL::SNC_const_decorator<SNC_structure>     SNC_const_decorator;
   typedef CGAL::SNC_constructor<SNC_structure>         SNC_constructor;
   typedef CGAL::SNC_ray_shooter<SNC_structure>         SNC_ray_shooter;
   typedef CGAL::SNC_io_parser<SNC_structure>           SNC_io_parser;
@@ -122,15 +126,14 @@ public:
 typedef T Extended_kernel; 
 static  T EK; // static extended kernel
 
-  /*{\Mtypes 7}*/
+  /*{\Mtypes 7}*/  
   typedef Nef_polyhedron_3<T>                   Self;
   typedef Handle_for< Nef_polyhedron_3_rep<T> > Base;
   typedef typename T::Kernel                    Kernel;
   typedef typename T::Point_3                   Point_3;
   typedef typename T::Plane_3                   Plane_3;
   typedef typename T::Vector_3                  Vector_3;
-  typedef typename Kernel::Aff_transformation_3 Aff_transformation_3;
-
+  typedef typename Kernel::Aff_transformation_3      Aff_transformation_3;
 
   typedef bool Mark;
   /*{\Xtypemember marking set membership or exclusion.}*/
@@ -140,6 +143,9 @@ static  T EK; // static extended kernel
 
   enum Content { EMPTY=0, COMPLETE=1 };
   /*{\Menum construction selection}*/
+
+  enum Location_mode { DEFAULT, NAIVE  };
+  /*{\Menum selection flag for the point location mode.}*/
 
 protected:
   struct AND { bool operator()(bool b1, bool b2) const { return b1&&b2; } };
@@ -194,6 +200,7 @@ protected:
   USING(SHalfedge_around_facet_const_circulator);
   USING(Halffacet_cycle_iterator);
   USING(Infi_box);
+# undef USING
 
   typedef typename Kernel::RT                       RT;
 
@@ -235,17 +242,10 @@ protected:
   typedef typename SM_decorator::SFace_const_iterator     
                                                    SFace_const_iterator;
 
-
-  void initialize_extended_cube_vertices(Content space) {
+  
+  void initialize_infibox_vertices(Content space) {
     SNC_constructor C(snc());
-    C.create_extended_box_corner( 1, 1, 1, space );
-    C.create_extended_box_corner(-1, 1, 1, space );
-    C.create_extended_box_corner( 1,-1, 1, space );
-    C.create_extended_box_corner(-1,-1, 1, space );
-    C.create_extended_box_corner( 1, 1,-1, space );
-    C.create_extended_box_corner(-1, 1,-1, space );
-    C.create_extended_box_corner( 1,-1,-1, space );
-    C.create_extended_box_corner(-1,-1,-1, space ); 
+    Infi_box::initialize_infibox_vertices(C, space==COMPLETE);
   }
 
   void initialize_simple_cube_vertices(Content space) {
@@ -316,7 +316,6 @@ protected:
   void build_external_structure() {
     SNC_constructor C(snc());
     C.pair_up_halfedges();
-
     C.link_shalfedges_to_facet_cycles();
     C.categorize_facet_cycles_and_create_facets();
     C.create_volumes();
@@ -351,13 +350,23 @@ public:
   
   typedef Polyhedron_3< Kernel> Polyhedron;
   Nef_polyhedron_3( Polyhedron& P) {
-    initialize_extended_cube_vertices(EMPTY);
+    //    SETDTHREAD(43*19*131*47);
+    initialize_infibox_vertices(EMPTY);
     polyhedron_3_to_nef_3< Polyhedron, SNC_structure, SNC_constructor>
       ( P, snc() );
     build_external_structure();
     simplify();
   }
   
+  Nef_polyhedron_3(const char* filename) {
+    bool OK = true;
+    std::ifstream in(filename);
+    OK = OK && in;
+    OK = OK && snc().load(in);
+    if(!OK)
+      cerr << "Failure while loading data" << std::endl;
+  }
+
   template <class HDS>
   class Build_polyhedron : public CGAL::Modifier_base<HDS> {
     
@@ -657,7 +666,6 @@ public:
   /*{\Mop returns |\Mvar| $\cup$ |N1|. }*/ { 
     TRACEN(" join between nef3 "<<&*this<<" and "<<&N1);
     OR _or;
-    //    SETDTHREAD(131*19*43);
     SNC_structure rsnc;
     SNC_decorator D(snc());
     D.binary_operation( N1.snc(), _or, rsnc);
@@ -750,6 +758,7 @@ public:
 
     void transform( const Aff_transformation_3& aff) {
 
+      //      SETDTHREAD(11*23);
         // precondition: the polyhedron as a bounded boundary
         // (needs to be explicitly tested at some time)
         if( is_shared())
@@ -764,14 +773,16 @@ public:
 
         Vertex_iterator vi;
         CGAL_nef3_forall_vertices( vi, snc()) {
-            //Vertex_iterator vi = deco.vertices_begin();
-            //for ( ; vi != deco.vertices_end(); ++vi) {
+	  
+	  TRACEN("transform vertex ");
             if ( ! deco.is_infbox_vertex(vi)) {
                 vi->point() = vi->point().transform( aff);
                 SM_decorator sdeco(vi);
                 sdeco.transform( linear);
             }
         }
+	deco.compute_all_marks_of_halfspheres();
+
         Halffacet_iterator fi;
         CGAL_nef3_forall_halffacets(fi,snc()) {
             if ( ! deco.is_infbox_facet( fi))
@@ -788,12 +799,21 @@ public:
   types and operations allow exploration access to this structure.}*/
 
   /*{\Mtypes 3}*/
-  //typedef typename Nef_rep::SNC_decorator SNC_decorator; // defined above
+    
+    typedef typename Nef_rep::SNC_const_decorator      SNC_const_decorator;
+    typedef CGAL::SNC_explorer<SNC_const_decorator>    SNC_explorer;
+    typedef typename Nef_rep::SM_const_decorator       SM_const_decorator;
+    typedef CGAL::SNC_SM_explorer<SM_const_decorator>  SM_explorer;
 
-    // HACK
-  typedef SNC_decorator       Explorer;
-    Explorer explorer() { return Explorer( snc()); }
+    SNC_explorer SNCexplorer() const { 
+      SNC_const_decorator SCD(snc());
+      return SNC_explorer(SCD); 
+    }
 
+    SM_explorer SMexplorer(Vertex_const_handle v) const { 
+      SM_const_decorator SMCD(v);
+      return SM_explorer(SMCD); 
+    }
 
   //typedef CGAL::SNC_explorer<SNC_decorator,T> SNC_explorer; //not implemented
   /*{\Mtypemember a decorator to examine the underlying plane map. 
@@ -828,11 +848,20 @@ public:
     return  ( assign(v,h) || assign(e,h) || assign(f,h) );
   }
 
-  Object_handle locate(const Point_3& p) const;
+  Object_handle locate(const Point_3& p, Location_mode m = NAIVE)
   /*{\Mop  returns a generic handle |h| to an object (vertex, edge, facet,
   volume) of the underlying SNC which contains the point |p| in its relative 
   interior. The point |p| is contained in the set represented by |\Mvar| if 
-  |\Mvar.contains(h)| is true.}*/
+  |\Mvar.contains(h)| is true.}The location mode flag |m| allows one to choose
+  between different point location strategies.}*/
+  { 
+    if (m == NAIVE) {
+      SNC_ray_shooter RS(snc());
+      return RS.locate(p); 
+    }
+    CGAL_assertion_msg(0,"location mode not implemented.");
+    return Object_handle();
+  }
 
   //EW_explorer explorer() const // not implemented, replaced by decorator?
   /*{\Mop returns a decorator object which allows read-only access of
@@ -881,6 +910,16 @@ public:
   \end{Mverb}
   After line (*) |N3| is the intersection of |N1| and |N2|.}*/
 
+  std::size_t bytes() {
+    // bytes used for the Nef_polyhedron_3.
+    return sizeof(Self) + (snc().bytes() - sizeof(SNC_structure));
+  }
+
+  std::size_t bytes_reduced() {
+    // bytes used for the Nef_polyhedron_3.
+    cout << sizeof(Self) + (snc().bytes_reduced2() - sizeof(SNC_structure)) << std::endl;
+    return sizeof(Self) + (snc().bytes_reduced() - sizeof(SNC_structure));
+  }
 
 }; // end of Nef_polyhedron_3
 
@@ -926,11 +965,16 @@ void Nef_polyhedron_3<T>::extract_complement() {
     D.mark(v) = !D.mark(v); 
     SM_decorator SM(v);
     SM.extract_complement();
+    SM.mark_of_halfsphere(-1) = !SM.mark_of_halfsphere(-1);    
+    SM.mark_of_halfsphere(+1) = !SM.mark_of_halfsphere(+1);    
   }
   Halffacet_iterator f;
   CGAL_nef3_forall_facets(f,D) D.mark(f) = !D.mark(f); 
+ 
   Volume_iterator c;
-  CGAL_nef3_forall_volumes(c,D) D.mark(c) = !D.mark(c);
+  CGAL_nef3_forall_volumes(c,D) 
+    //    if(!(Infi_box::extended_Kernel && c==D.volumes_begin()))
+      D.mark(c) = !D.mark(c);
 }
 
 
@@ -941,20 +985,24 @@ void Nef_polyhedron_3<T>::extract_interior() {
   SNC_decorator D(snc());
   Vertex_iterator v;
   CGAL_nef3_forall_vertices(v,D){
-    if(Infi_box::is_standard(v->point())) {
+    //    if(Infi_box::is_standard(v->point())) {
       D.mark(v) = false;
       SM_decorator SM(v);
       SM.extract_interior();
-    }
+      //    }
   }
   Halffacet_iterator f;
   CGAL_nef3_forall_facets(f,D) D.mark(f) = false;
+
+  /*
   int count = 0;
   Volume_iterator c;
   CGAL_nef3_forall_volumes(c,D) {
     count++;
     if(count > 2) D.mark(c) = true;
   }
+  */
+
   simplify();
 }
 
@@ -968,12 +1016,13 @@ void Nef_polyhedron_3<T>::extract_boundary() {
     D.mark(v) = true;
     SM_decorator SM(v);
     SM.extract_boundary();
+    SM.mark_of_halfsphere(-1) = SM.mark_of_halfsphere(+1) = false;
   }
   Halffacet_iterator f;
   CGAL_nef3_forall_facets(f,D) D.mark(f) = true;
   Volume_iterator c;
   CGAL_nef3_forall_volumes(c,D) D.mark(c) = false;
-  clear_box_marks();
+  //  clear_box_marks();
   simplify();
 }
 
@@ -997,27 +1046,6 @@ std::istream& operator>>
   I.check_integrity();
   return is;
 }
-
-
-/*
-template<class T, class SNC_items_>
-class NP_3 : public Nef_polyhedron_3<SNC_items_> {
-  
-  
-};
-
-template<class SNC_items_>
-class NP_3<Tag_true, SNC_items_> : public Nef_polyhedron_3<SNC_items_>{
-  
-  
-};
-
-template<class SNC_items_>
-class NPX : public NP_3<typename Is_extended_kernel<typename SNC_items_::Kernel>::value_type, SNC_items_> {
-  
-};
-*/
-
 
 CGAL_END_NAMESPACE
 

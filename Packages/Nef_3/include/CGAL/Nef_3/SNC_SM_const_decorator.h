@@ -57,6 +57,9 @@ public:
 /*{\Mdefinition ...}*/
 
 /*{\Mtypes 5}*/
+
+ typedef Refs_   SNC_structure;                 
+
 typedef typename Refs_::Sphere_kernel Sphere_kernel;
 /*{\Mtypemember spherical geometry.}*/
 
@@ -120,7 +123,7 @@ handles |SVertex_const_handle|, |SHalfedge_const_handle|, or
 |SHalfloop_const_handle|.}*/
 
 protected: 
-  Vertex_handle psm_;
+  Vertex_const_handle psm_;
   friend class SNC_SM_decorator<Refs_>;
 public:
 
@@ -129,7 +132,7 @@ SNC_SM_const_decorator() : psm_(0) {}
 SNC_SM_const_decorator(const Self& D) : psm_(D.psm_) {}
 Self& operator=(const Self& D) { psm_=D.psm_; return *this; }
 
-SNC_SM_const_decorator(Vertex_handle v) : psm_(v) {}
+SNC_SM_const_decorator(Vertex_const_handle v) : psm_(v) {}
 /*{\Mcreate constructs a plane map decorator exploring the local graph
 of |v|.}*/
 

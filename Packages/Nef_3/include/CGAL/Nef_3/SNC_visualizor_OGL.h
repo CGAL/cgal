@@ -53,7 +53,7 @@
 #define CGAL_NEF3_MARKED_EDGE_COLOR 221,221,255
 #define CGAL_NEF3_UNMARKED_EDGE_COLOR 180,180,214
 #define CGAL_NEF3_MARKED_FACET_COLOR 221,255,255
-#define CGAL_NEF3_UNMARKED_FACET_COLOR 214,248,248
+#define CGAL_NEF3_UNMARKED_FACET_COLOR 154,188,188
 
 CGAL_BEGIN_NAMESPACE
 namespace OGL {
@@ -479,7 +479,7 @@ namespace OGL {
   const double znear = 4.0;
   const double zfar  = 4.0;
   const double eye   = 6.0;
-  const double wsize = 2.0;
+  const double wsize = 3.0;
 
   int window_width  = 600;           // Breite und
   int window_height = 600;           // Hoehe des Fensters
@@ -494,7 +494,7 @@ namespace OGL {
   double dx = 0;                     // Translation
   double dy = 0;                     // Translation
   double dz = 0;                     // Translation in Z
-  double s  = 0.5;                   // Skalierung
+  double s  = 0.4;                   // Skalierung
   Affine_3    rotation( IDENTITY);   // Rotation
                        
   long double factor_s;              // Umrechnungsfaktor fuer Skalierung
@@ -520,7 +520,7 @@ static void show (int mode)
       break;
     case RESET_CONTROL:
       dx = dy = dz = 0.0;
-      s = 0.5;
+      s = 0.4;
       rotation = Affine_3( IDENTITY);
       motion_mode = ROTATE;
       CGAL_nef3_forall_iterators(it,polyhedra_) it->initialize();
@@ -647,37 +647,32 @@ static void motion (int x, int y)
     glutPostRedisplay();
 }
 
-static void initialize_olg()
+static void init()
 {
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
-  GLfloat light_ambient[4] = { 1.0, 1.0, 1.0, 1.0 };
-  GLfloat light_diffuse[] =  { 1.0, 1.0, 1.0, 1.0 };    // white diffuse light 
-  GLfloat light_position[] = { 2.0, 3.0, -4.0, 0.0 }; // infinite location
-  //GLfloat light_position[] = { 3.0, 5.0, 4.5, 1.0};
-
-  glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, 1);
-  glLightModelfv(GL_LIGHT_MODEL_AMBIENT, light_ambient);
+  GLfloat light_diffuse[] =  { 0.5, 0.5, 0.5, 0.7 };    // white diffuse light 
+  GLfloat light_position[] = { -4.0, -4.0, 10.0, 0.0 }; // infinite location
+ 
+  glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
   glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
   glLightfv(GL_LIGHT0, GL_POSITION, light_position);
   glEnable(GL_LIGHT0);
 
-
-  GLfloat mat_ambient[4] = { 0.1, 0.1, 0.1, 1.0 };
-  //GLfloat mat_back_ambient[4] = { 0.2, 0.0, 0.0, 1.0 };
-  GLfloat mat_diffuse[4] = { 0.7, 0.7, 0.7, 1.0 };
-  //GLfloat mat_specular[4] = { 1.0, 1.0, 1.0, 1.0 };
-  GLfloat mat_specular[4] = { 0.3, 0.3, 0.3, 1.0 };
-  GLfloat mat_shininess[] = { 100.0 };
+  GLfloat mat_diffuse[4] = { 0.3, 0.3, 0.3, 1.0 };
+  // GLfloat mat_specular[4] = { 1.0, 1.0, 1.0, 1.0 };
+  GLfloat mat_shininess[] = { 50.0 };
+  GLfloat ambient_light[] = { 1.0, 1.0, 1.0, 1.0 };
+  GLfloat mat_emission[] = { 0.2, 0.2, 0.4, 1.0 };
   
-  glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mat_ambient );
-  //glMaterialfv(GL_BACK,  GL_AMBIENT, mat_back_ambient );
+  glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambient_light);
   glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mat_diffuse );
-  glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular );
+  //  glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular );
   glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, mat_shininess );
+  glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, mat_emission);
 
   glDepthFunc( GL_LEQUAL);
   glShadeModel( GL_FLAT);
@@ -686,8 +681,8 @@ static void initialize_olg()
   glEnable(GL_POINT_SMOOTH);
   glEnable(GL_NORMALIZE);
 
-  //glColorMaterial(GL_FRONT_AND_BACK,GL_DIFFUSE);
-  //glEnable(GL_COLOR_MATERIAL);
+  glColorMaterial(GL_FRONT_AND_BACK,GL_DIFFUSE);
+  glEnable(GL_COLOR_MATERIAL);
 }
 
 static void enter_leave(int state)
@@ -697,27 +692,29 @@ static void draw()
 {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
   glPushMatrix();
+ 
   if (window_width > window_height) {
     double w = double( window_width) / double( window_height);
     if ( perspective) {
-        double s = (eye - znear) / eye;
-        glFrustum( -wsize*w*s, wsize*w*s, -wsize*s, wsize*s, 
-                   eye-znear, eye+zfar);
-        glTranslated( 0.0, 0.0, -eye);
+      double s = (eye - znear) / eye;
+      glFrustum( -wsize*w*s, wsize*w*s, -wsize*s, wsize*s, 
+		 eye-znear, eye+zfar);
+      glTranslated( 0.0, 0.0, -eye);
     } else {
-        glOrtho( -wsize*w, wsize*w, -wsize, wsize, -znear, zfar );
+      glOrtho( -wsize*w, wsize*w, -wsize, wsize, -znear, zfar );
     }
   } else {
     double h = double( window_height) / double( window_width);
     if ( perspective) {
-        double s = (eye - znear) / eye;
-        glFrustum( -wsize*s, wsize*s, -wsize*h*s, wsize*h*s, 
-                   eye-znear, eye+zfar);
-        glTranslated( 0.0, 0.0, -eye);
+      double s = (eye - znear) / eye;
+      glFrustum( -wsize*s, wsize*s, -wsize*h*s, wsize*h*s, 
+		 eye-znear, eye+zfar);
+      glTranslated( 0.0, 0.0, -eye);
     } else {
-        glOrtho( -wsize, wsize, -wsize*h, wsize*h, -znear, zfar );
+      glOrtho( -wsize, wsize, -wsize*h, wsize*h, -znear, zfar );
     }
   }
+
   glTranslated(dx,dy,dz);
   glTranslated(0,0,1);
   GLdouble M[16] = { rotation.m(0,0), rotation.m(1,0), rotation.m(2,0), 0.0,
@@ -728,10 +725,12 @@ static void draw()
   
   glScaled(s,s,s);
 
+ 
   GLdouble z_vec[3] = { rotation.m(2,0) / s,
                         rotation.m(2,1) / s,
                         rotation.m(2,2) / s};
-
+ 
+  //  GLdouble z_vec[3] = {1.0, 1.0, 1.0};
   int win = glutGetWindow();
   polyhedra_[win-1].draw( z_vec);
   glPopMatrix();
@@ -776,7 +775,7 @@ static void start_viewer()
     if ( i < titles_.size() ) glutCreateWindow(titles_[i].c_str());
     else                      glutCreateWindow(" Polyhedron ");
     glutEntryFunc(enter_leave);
-    initialize_olg();
+    init();
     glutDisplayFunc(draw);
     glutReshapeFunc(reshape);
     glutMouseFunc(mouse);

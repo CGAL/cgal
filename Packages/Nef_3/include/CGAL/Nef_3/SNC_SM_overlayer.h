@@ -40,6 +40,7 @@
 #include <CGAL/Nef_S2/Sphere_geometry.h>
 #include <CGAL/Nef_3/SNC_SM_decorator.h>
 #include <CGAL/Nef_3/SNC_SM_io_parser.h>
+#include <CGAL/Nef_3/Normalizing.h>
 #undef _DEBUG
 #define _DEBUG 131
 #include <CGAL/Nef_3/debug.h>
@@ -297,6 +298,7 @@ public:
   USING(SHalfedge_iterator);
   USING(SFace_iterator);
   USING(SObject_handle);
+  USING(Infi_box);
 #undef USING
 #define DECUSING(t) typedef typename Decorator::t t
   DECUSING(SHalfedge_around_svertex_circulator);
@@ -841,12 +843,11 @@ subdivide(Vertex_handle v0, Vertex_handle v1)
     Sphere_segment s(point(source(u)),point(target(u)));
     circle(u) = s.sphere_circle(); 
     circle(twin(u)) = s.sphere_circle().opposite();
+    TRACEN(PH(u) << " with circle " << circle(u));
   }
 
   complete_face_support(svertices_begin(), v, O, +1);
   complete_face_support(v, svertices_end(), O, -1);
-
-
 
   /* DEBUG CODE: to do: have all svertices a halfedge below associated? */
   TRACEN("Vertex info after swep");
@@ -974,7 +975,7 @@ create_face_objects(SHalfedge_iterator e_start, SHalfedge_iterator e_end,
     CGAL_For_all(hfc,hend) {
       FaceCycle[hfc]=i; // assign face cycle number
       if ( SG.compare_xy(point(target(hfc)), point(target(e_min))) < 0 )
-        e_min = hfc;
+        e_min = hfc;      
       TRACEN(PH(hfc));
     } TRACEN("");
     MinimalHalfedge.push_back(e_min);
@@ -1046,6 +1047,7 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
 	  m_buffer[i] = PI[i].mark_of_halfsphere(-pos);
 	  TRACEN("no initial support");
 	}
+	//	m_buffer[i] = PI[i].mark_of_halfsphere(-pos);
       }
     } else if ( e_below != SHalfedge_handle() ) {
       for (int i=0; i<2; ++i) {
@@ -1259,10 +1261,15 @@ select(const Selection& SP) const
     mark(f) = SP(mark(f,0),mark(f,1));
     discard_info(f);
   }
+
   mark_of_halfsphere(-1) = SP(PI[0].mark_of_halfsphere(-1),
                               PI[1].mark_of_halfsphere(-1));
   mark_of_halfsphere(+1) = SP(PI[0].mark_of_halfsphere(+1),
                               PI[1].mark_of_halfsphere(+1));
+
+  TRACEN(PI[0].mark_of_halfsphere(-1) << "," << PI[1].mark_of_halfsphere(-1) << "=>" << mark_of_halfsphere(-1));
+  TRACEN(PI[0].mark_of_halfsphere(+1) << "," << PI[1].mark_of_halfsphere(+1) << "=>" << mark_of_halfsphere(+1));
+
 }
 
 template <typename Refs_>
@@ -1273,13 +1280,14 @@ void SNC_SM_overlayer<Refs_>::simplify() const
 
   SVertex_handle vy;
   CGAL_nef3_forall_svertices(vy,*this)
-    TRACEN(PH(vy)); // << " " << mark(vy,0) << " " << mark(vy,1));
+    TRACEN(PH(vy)  << " " << mark(vy));
   TRACEN(" ");
 
   SHalfedge_handle ey;
   CGAL_nef3_forall_shalfedges(ey,*this)
-    TRACEN(PH(ey) << " " << mark(face(ey))); //  << " " << mark(ey,1));
+    TRACEN(PH(ey) << " " << mark(face(ey))<< " circle " << circle(ey)); //  << " " << mark(ey,1));
   TRACEN(" ");
+
 
   /* typedef typename CGAL::Partition<SFace_handle>::item partition_item;
      CGAL::Unique_hash_map<SFace_handle,partition_item> Pitem;
@@ -1301,7 +1309,7 @@ void SNC_SM_overlayer<Refs_>::simplify() const
     en = e; ++en; if ( en==twin(e) ) ++en;
     SNC_decorator<Refs_> D;
     TRACEN("can simplify ? " << PH(e));
-    if(!D.is_sedge_on_infibox(e)) {
+    if(!Infi_box::is_sedge_on_infibox(e,D)) {
       TRACEN(mark(e) << " " << mark(face(e)) << " " << mark(face(twin(e))));
       if (( mark(e) == mark(face(e)) && mark(e) == mark(face(twin(e))))){
 	TRACEN("deleting "<<PH(e));
@@ -1343,13 +1351,6 @@ void SNC_SM_overlayer<Refs_>::simplify() const
     CGAL_For_all(hfc,hend) {  set_face(hfc,f); linked[hfc]=true; }
     store_boundary_object(e,f);
   }
-  if ( has_loop() ) {
-    SHalfloop_handle l = shalfloop();
-    SFace_handle f = *(UF.find(Pitem[face(l)]));
-    link_as_loop(l,f);
-    f = *(UF.find(Pitem[face(twin(l))]));
-    link_as_loop(twin(l),f);
-  }
 
   SVertex_iterator v,vn;
   for(v = svertices_begin(); v != svertices_end(); v=vn) {
@@ -1378,11 +1379,22 @@ void SNC_SM_overlayer<Refs_>::simplify() const
            mark(v) == mark(e1) && mark(v) == mark(e2) &&
            circle(e1) == circle(e2) ) {
         TRACEN("collinear at "<<PH(v)<<PH(e1)<<PH(e2));
-        if ( e1 == e2 ) convert_edge_to_loop(e1);
-        else  merge_edge_pairs_at_target(e1); 
+        if ( e1 == e2 ){ TRACEN("edge_to_loop"); convert_edge_to_loop(e1);}
+        else {TRACEN("merge_edge_pairs"); merge_edge_pairs_at_target(e1); } 
       }
     }
   }
+
+  /*
+  if ( has_loop() ) {
+    cerr << "here !!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+    SHalfloop_handle l = shalfloop();
+    SFace_handle f = *(UF.find(Pitem[face(l)]));
+    link_as_loop(l,f);
+    f = *(UF.find(Pitem[face(twin(l))]));
+    link_as_loop(twin(l),f);
+  }
+  */
 
   SFace_iterator fn;
   for (f = fn = sfaces_begin(); f != sfaces_end(); f=fn) { 
@@ -1394,15 +1406,22 @@ void SNC_SM_overlayer<Refs_>::simplify() const
     }
   }
 
+  CGAL_nef3_forall_svertices(v,*this)
+    v->tmp_point() = normalized(v->tmp_point());
+
+  CGAL_nef3_forall_shalfedges(e,*this)
+    circle(e) = normalized(circle(e));
+
   SVertex_handle vx;
   CGAL_nef3_forall_svertices(vx,*this)
-    TRACEN(PH(vx)); // << " " << mark(vx,0) << " " << mark(vx,1));
+    TRACEN(PH(vx) << " " << mark(vx));
   TRACEN(" ");
 
   SHalfedge_handle ex;
   CGAL_nef3_forall_shalfedges(ex,*this)
-    TRACEN(PH(ex)); // << " " << mark(ex,0) << " " << mark(ex,1));
+    TRACEN(PH(ex)<< " circle " << circle(ex) << " " << mark(ex));
   TRACEN(" ");
+
 }
 
 

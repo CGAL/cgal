@@ -40,6 +40,7 @@
 #include <CGAL/Nef_3/SNC_SM_overlayer.h>
 #include <CGAL/Nef_3/SNC_SM_io_parser.h>
 #include <CGAL/Nef_3/SNC_ray_shooter.h>
+// #include <CGAL/Nef_3/SegRay.h>
 #include <CGAL/IO/Verbose_ostream.h>
 #ifdef  CGAL_NEF3_SM_VISUALIZOR
 #include <CGAL/Nef_3/SNC_SM_visualizor.h>
@@ -61,6 +62,7 @@ class SNC_decorator {
   typedef SNC_SM_overlayer<SNC_structure>     SM_overlayer;
   typedef SNC_SM_point_locator<SNC_structure> SM_point_locator;
   SNC_structure* sncp_;
+
 public:
 #define USING(t) typedef typename SNC_structure_::t t
   USING(Vertex_iterator);
@@ -106,6 +108,7 @@ public:
   USING(Plane_3);
   USING(Segment_3);
   USING(Line_3);
+  USING(Ray_3);
   USING(Vector_3);
   USING(Direction_3);
   USING(Sphere_point);
@@ -121,6 +124,13 @@ public:
   DECUSING(SHalfedge_around_svertex_circulator);
 #undef DECUSING
 
+  struct points_lt {
+    bool operator()(Point_3& p1, Point_3& p2) const {
+      return CGAL::lexicographically_xyz_smaller(p1,p2);
+    }
+  };
+
+ public:
   typedef void* GenPtr;
 
   SNC_decorator() : sncp_() {}
@@ -331,18 +341,22 @@ public:
   struct Shell_volume_setter {
     const SNC_decorator D;
     Volume_handle c;
-    Shell_volume_setter(const SNC_decorator& Di, Volume_handle ci)
-      : D(Di), c(ci) {}
-    void visit(SFace_handle h) { D.set_volume(h, c); }
+    typedef Unique_hash_map< SFace_handle, bool> SFace_map;
+    SFace_map linked;
+    Shell_volume_setter(const SNC_decorator& Di)
+      : D(Di), linked(false) {}
+    void visit(SFace_handle h) { TRACEN(D.point(D.vertex(h))); D.set_volume(h, c); linked[h] = true;}
     void visit(Vertex_handle h) { /* empty */ }
     void visit(Halfedge_handle h) { /* empty */ }
     void visit(Halffacet_handle h ) { D.set_volume(h, c); }
     void set_volume(Volume_handle ci) { c = ci; }
+    bool is_linked(SFace_handle(h)) {return linked[h];}
   };
 
   void link_as_outer_shell( SFace_handle f, Volume_handle c ) const {
-    CGAL_nef3_assertion(c->shell_entry_objects_.size() == 0);
-    Shell_volume_setter Setter(*this, c);
+    //    CGAL_nef3_assertion(c->shell_entry_objects_.size() == 0);
+    Shell_volume_setter Setter(*this);
+    Setter.set_volume(c);
     visit_shell_objects( f, Setter );
     TRACEN("Volume "<<&*c<<", outer shell "<<&*f);
     store_boundary_object( f, c );
@@ -350,7 +364,8 @@ public:
 
   void link_as_inner_shell( SFace_handle f, Volume_handle c ) const {
     // CGAL_nef3_assertion(c->shell_entry_objects_.size() > 0);
-    Shell_volume_setter Setter(*this, c);
+    Shell_volume_setter Setter(*this);
+    Setter.set_volume(c);
     visit_shell_objects( f, Setter );
     TRACEN("Volume "<<&*c<<", inner shell "<<&*f);
     store_boundary_object( f, c );
@@ -378,60 +393,10 @@ public:
     visit_shell_objects( sf, Setter );
   }
 
-  bool is_sedge_on_infibox(SHalfedge_handle sh) {
-    Point_3 p = point(vertex(sh));
-    TRACEN("Point " << p);
-    if(Infi_box::degree(p.hx())==0 && 
-       Infi_box::degree(p.hy())==0 && 
-       Infi_box::degree(p.hz())==0)
-      return false;
-    Sphere_circle c(sh->tmp_circle());
-    TRACEN("Circle " << c << " has signum " << sign_of(c));
-    RT R(0,CGAL_NTS abs(p.hw()[0]));
-    CGAL_assertion(Infi_box::degree(p.hw()) == 0);
-
-    SM_decorator SD(vertex(sh));
-    if((c.a() == 0 && c.b() == 0 && CGAL_NTS abs(p.hz())== R) || 
-       (c.a() == 0 && c.c() == 0 && CGAL_NTS abs(p.hy())== R) ||
-       (c.b() == 0 && c.c() == 0 && CGAL_NTS abs(p.hx())== R))
-      if(is_edge_on_infibox(SD.source(sh)) && 
-	 is_edge_on_infibox(SD.target(sh)))
-	return true;
-
-    return false;
-  }
-
-  bool is_edge_on_infibox(Halfedge_handle e) {
-
-    Point_3 p  = point(vertex(e));
-
-    if(Infi_box::degree(p.hx())==0 && 
-       Infi_box::degree(p.hy())==0 && 
-       Infi_box::degree(p.hz())==0)
-      return false;
-
-    Vector_3 v(tmp_point(e));
-    RT Outer(0,CGAL_NTS abs(p.hw()[0]));
-    CGAL_assertion(Infi_box::degree(p.hw()) ==0);
-
-    if(CGAL_NTS abs(p.hx()) == Outer && 
-       ((p.hx() > 0 && v.hx() > 0)||(p.hx() < 0 && v.hx() < 0))) return false;
-    if(CGAL_NTS abs(p.hy()) == Outer && 
-       ((p.hy() > 0 && v.hy() > 0)||(p.hy() < 0 && v.hy() < 0))) return false;
-    if(CGAL_NTS abs(p.hz()) == Outer && 
-       ((p.hz() > 0 && v.hz() > 0)||(p.hz() < 0 && v.hz() < 0))) return false;
-
-    if(CGAL_NTS abs(p.hx()) == Outer && v.hx() == 0) return true;
-    if(CGAL_NTS abs(p.hy()) == Outer && v.hy() == 0) return true;
-    if(CGAL_NTS abs(p.hz()) == Outer && v.hz() == 0) return true;
-
-    return false; 
-  }
-
   template <class H> void set_facet(H h, Halffacet_handle f) const 
     { h->incident_facet_ = f; }
   void set_volume(Halffacet_handle h, Volume_handle c) const
-    { TRACEN("VOLUME dec"); h->volume_ = c; }
+    { h->volume_ = c; }
   void set_volume(SFace_handle h, Volume_handle c) const 
     { h->incident_volume_ = c; }
 
@@ -456,8 +421,7 @@ public:
 
   /* returns true if |f| is part of the infinimaximal box.*/
   bool is_infbox_facet(Halffacet_handle f) const {
-    return (volume(f) == sncp()->volumes_begin() ||
-	    volume(twin(f)) == sncp()->volumes_begin());
+    return !Infi_box::is_standard(f->plane());
   }
 
   /* returns true when |v| has outdegree two.*/
@@ -471,7 +435,7 @@ public:
   }
 
   Halffacet_handle get_visible_facet( const Vertex_handle v, 
-				      const Segment_3& ray) const 
+				      const Ray_3& ray) const
     /*{\Mop when one shoot a ray |ray| in order to find the facet below to
       an object, and vertex |v| is hit, we need to choose one of the facets
       in the adjacency list of |v| such that it could be 'seen' from the
@@ -482,7 +446,7 @@ public:
       |ray| and the 2-skeleton incident to v is empty. }*/ {
 
     Halffacet_handle f_visible;
-    CGAL_nef3_assertion( ray.target() == point(v));
+    //    CGAL_nef3_assertion( ray.target() == point(v));
     Sphere_point sp(ray.source() - point(v));
     TRACEN( "Locating " << sp <<" in " << point(v));
     CGAL_assertion(Infi_box::degree(sp.hx()) < 2 && 
@@ -517,6 +481,135 @@ public:
       if ( assign( se, fc)) {
 	TRACEN( "adjacent facet found (SEdges cycle).");
 	TRACEN("se" << PH(se));
+	SM_decorator SD;
+	TRACEN(plane(facet(se)) << "/" << plane(facet(SD.next(se))) << "/" << plane(facet(SD.next(SD.next(se)))));
+	f_visible = facet(twin(se));
+	TRACEN("f_visible" << plane(f_visible));
+      }
+      else if ( assign( sl, fc)) {
+	SM_decorator SD;
+	TRACEN( "adjacent facet found (SHalfloop cycle)." << SD.circle(sl) << " with facet " << plane(facet(sl)));
+	f_visible = facet(twin(sl));
+	TRACEN("f_visible" << plane(f_visible));
+      }
+      else 
+	return Halffacet_handle();
+      //      CGAL_nef3_assertion_msg(0,"Damn wrong handle");
+    }
+    return f_visible;
+  }
+ 
+  Halffacet_handle get_visible_facet( const Halfedge_handle e,
+                                      const Ray_3& ray) const {
+    //{\Mop when one shoot a ray |ray| in order to find the facet below to
+    //  an object, and an edge |e| is hit, we need to choose one of the two 
+   //   facets in the adjacency list of |e| that could be 'seen'  from the
+   //   piercing point of the |ray| on the local (virtual) view  of |e|
+   //   \precondition |ray| target belongs to |e|. } 
+
+    SM_decorator SD;
+    if( SD.is_isolated(e))
+      return Halffacet_handle();
+
+    Vector_3 ev(segment(e).direction()), rv(ray.direction());
+    SHalfedge_around_svertex_circulator sh(SD.first_out_edge(e)), send(sh);
+    Halffacet_handle res = facet(sh);    
+    Vector_3 vec0(cross_product(ev,plane(res).orthogonal_vector()));
+    TRACEN("initial face candidate "<< plane(res) << " with vector  " << vec0);
+    
+    CGAL_For_all(sh,send) {
+      Vector_3 vec1(cross_product(ev,plane(facet(sh)).orthogonal_vector()));
+      TRACEN("test face candidate "<< plane(facet(sh)) << " with vector  " << vec1);
+    }
+ 
+    sh++;
+    CGAL_For_all(sh,send) {
+      Vector_3 vec1(cross_product(ev,plane(facet(sh)).orthogonal_vector()));
+      TRACEN("test face candidate "<< plane(facet(sh)) << " with vector  " << vec1);
+      FT sk0(rv*vec0),  sk1(rv*vec1);
+      if(sk0<FT(0) && sk1>FT(0))
+        continue;
+      if(sk0>FT(0) && sk1<FT(0)) {
+        res = facet(sh);
+	continue;
+      }
+
+      FT len0 = vec0.x()*vec0.x()+vec0.y()*vec0.y()+vec0.z()*vec0.z();
+      FT len1 = vec1.x()*vec1.x()+vec1.y()*vec1.y()+vec1.z()*vec1.z();
+      FT sq0 = sk0 * sk0;
+      FT sq1 = sk1 * sk1;     
+      FT diff = len0*sq1 - len1*sq0;
+
+      if((sk0>FT(0) && diff<FT(0)) || (sk0 < FT(0) && diff>FT(0)))
+        res= facet(sh);
+    }
+ 
+    if(rv*plane(res).orthogonal_vector() > FT(0))
+      res = twin(res);
+
+    TRACEN("return " << plane(res));
+    return res; // never reached
+  }
+
+  Halffacet_handle get_visible_facet( const Halffacet_handle f,
+				      const Ray_3& ray) const 
+    /*{\Mop when one shoot a ray |ray| in order to find the facet below to
+      an object, and a facet |f| is hit, we need to choose the right facet
+      from the halffacet pair |f| that  could be 'seen'  from the
+      piercing point of the |ray| on the local (virtual) view  of |f|.
+      \precondition |ray| target belongs to |f| and the intersection between
+      |ray| and is not coplanar with |f|. }*/ {
+
+    Halffacet_handle f_visible = f;
+    //    CGAL_nef3_assertion( !plane(f_visible).has_on(ray.source()));
+    if( plane(f_visible).has_on_negative_side(ray.source()))
+      f_visible = twin(f);
+    CGAL_nef3_assertion( plane(f_visible).has_on_positive_side(ray.source()));
+    return f_visible;
+  }
+
+  Halffacet_handle get_visible_facet( const Vertex_handle v, 
+				      const Segment_3& ray) const 
+    /*{\Mop when one shoot a ray |ray| in order to find the facet below to
+      an object, and vertex |v| is hit, we need to choose one of the facets
+      in the adjacency list of |v| such that it could be 'seen' from the
+      piercing point of the |ray| on the sphere map on |v|.  We make it just
+      locating the sphere facet |sf| pierced by |ray| and taking the adjacent 
+      facet to one of the sphere segments on the boundary of |sf|.
+      \precondition |ray| target is on |v| and the intersection between
+      |ray| and the 2-skeleton incident to v is empty. }*/ {
+
+    Halffacet_handle f_visible;
+    CGAL_nef3_assertion( ray.target() == point(v));
+    Sphere_point sp(ray.source() - point(v));
+    TRACEN( "Locating " << sp <<" in " << point(v));
+    CGAL_assertion(Infi_box::degree(sp.hx()) < 2 && 
+		   Infi_box::degree(sp.hy()) < 2 && 
+		   Infi_box::degree(sp.hz()) < 2 && 
+		   Infi_box::degree(sp.hw()) == 0);
+    sp = Infi_box::simplify(sp);
+    TRACEN( "Locating " << sp <<" in " << point(v));
+    SM_point_locator L(v);
+    SObject_handle o = L.locate(sp);
+
+    SFace_const_handle sf;
+    //    CGAL_nef3_assertion(assign(sf,o));
+    //    assign(sf,o);
+    CGAL_nef3_assertion(assign(sf,o));
+    assign( sf, o);
+
+    SFace_cycle_const_iterator fc = sf->sface_cycles_begin(),
+      fce = sf->sface_cycles_end();
+    if( is_empty_range( fc, fce)) {
+	TRACEN( "no adjacent facet found.");
+	f_visible =  Halffacet_handle();
+    }
+    else {
+      SHalfedge_handle se; 
+      SHalfloop_handle sl;
+      if ( assign( se, fc)) {
+	TRACEN( "adjacent facet found (SEdges cycle).");
+	TRACEN("se" << PH(se));
 	f_visible = facet(twin(se));
 	TRACEN("f_visible" << &f_visible);
       }
@@ -530,57 +623,69 @@ public:
     }
     return f_visible;
   }
-  
+
   Halffacet_handle get_visible_facet( const Halfedge_handle e,
-				      const Segment_3& ray) const
-    /*{\Mop when one shoot a ray |ray| in order to find the facet below to
-      an object, and an edge |e| is hit, we need to choose one of the two 
-      facets in the adjacency list of |e| that could be 'seen'  from the
-      piercing point of the |ray| on the local (virtual) view  of |e|
-      \precondition |ray| target belongs to |e|. }*/ {
-    CGAL_nef3_assertion( segment(e).has_on( ray.target()));
+                                      const Segment_3& ray) const {
+    //{\Mop when one shoot a ray |ray| in order to find the facet below to
+    //  an object, and an edge |e| is hit, we need to choose one of the two 
+   //   facets in the adjacency list of |e| that could be 'seen'  from the
+   //   piercing point of the |ray| on the local (virtual) view  of |e|
+   //   \precondition |ray| target belongs to |e|. } 
+
+    CGAL_nef3_assertion(false);
+
     SM_decorator SD;
     if( SD.is_isolated(e))
       return Halffacet_handle();
+
+    Halffacet_handle res = facet(sh);    
+
     Direction_3 ed(segment(e).direction());
-    Vector_3 ev(ed), rv(ed);
-    SHalfedge_around_svertex_circulator sh(SD.first_out_edge(e)), sg(sh);
-    Vector_3 h(plane(facet(twin(sh))).orthogonal_vector());
-    TRACEN("initial face candidate "<<&*facet(twin(sh)));
-    sg++;
-    while ( true ) {
-      Vector_3 g(plane(facet(twin(sg))).orthogonal_vector());
-      if( CGAL_NTS is_positive( cross_product(g, ev) * h)) {
-	if( CGAL_NTS is_negative( rv * g))
-	  return facet(twin(sh));
-	else {
-	  sh = sg;
-	  h = g;
-	  TRACEN("new candidate "<<&*facet(twin(sh)));
-	}
+    Vector_3 ev(segment(e).direction()), rv(ray.direction());
+    SHalfedge_around_svertex_circulator sh(SD.first_out_edge(e)), send(sh);
+    Vector_3 vec0(cross_product(ev,plane(res).orthogonal_vector()));
+    TRACEN("initial face candidate "<< plane(res));
+   
+    sh++;
+    CGAL_For_all(sh,send) {
+    Vector_3 vec1(cross_product(ev,plane(sh).orthogonal_vector()));
+      RT sk0(rv*vec0),  sk1(rv*vec1);
+      if(sk0<0 && sk1>0)
+        continue;
+      if(sk0>0 && sk1<0) {
+        res = facet(sh);
+	continue;
       }
-      else
-	return facet(twin(sh));
+
+      RT len0 = vec0.x()*vec0.x()+vec0.y()*vec0.y()+vec0.z()*vec0.z();
+      RT len1 = vec1.x()*vec1.x()+vec1.y()*vec1.y()+vec1.z()*vec1.z();
+      RT sq0 = sk0 * sk0;
+      RT sq1 = sk1 * sk1;     
+      RT diff = len0*sq1 - len1*sq0;
+
+      if((sk0 > 0 && diff<0) || (sk0 < 0 && diff>0))
+        res = facet(sh);
     }
+
     return Halffacet_handle(); // never reached
   }
-  
+
   Halffacet_handle get_visible_facet( const Halffacet_handle f,
 				      const Segment_3& ray) const 
-    /*{\Mop when one shoot a ray |ray| in order to find the facet below to
-      an object, and a facet |f| is hit, we need to choose the right facet
-      from the halffacet pair |f| that  could be 'seen'  from the
-      piercing point of the |ray| on the local (virtual) view  of |f|.
-      \precondition |ray| target belongs to |f| and the intersection between
-      |ray| and is not coplanar with |f|. }*/ {
-
-    Halffacet_handle f_visible = f;
-    CGAL_nef3_assertion( !plane(f_visible).has_on(ray.source()));
-    if( plane(f_visible).has_on_negative_side(ray.source()))
-      f_visible = twin(f);
-    CGAL_nef3_assertion( plane(f_visible).has_on_positive_side(ray.source()));
-    return f_visible;
-  }
+    //{\Mop when one shoot a ray |ray| in order to find the facet below to
+    //  an object, and a facet |f| is hit, we need to choose the right facet
+    //  from the halffacet pair |f| that  could be 'seen'  from the
+    //  piercing point of the |ray| on the local (virtual) view  of |f|.
+    //  \precondition |ray| target belongs to |f| and the intersection between
+    //  |ray| and is not coplanar with |f|. } 
+    {
+      Halffacet_handle f_visible = f;
+      CGAL_nef3_assertion( !plane(f_visible).has_on(ray.source()));
+      if( plane(f_visible).has_on_negative_side(ray.source()))
+	f_visible = twin(f);
+      CGAL_nef3_assertion( plane(f_visible).has_on_positive_side(ray.source()));
+      return f_visible;
+    }
 
   template <typename Selection>
     Vertex_handle binop_local_views( Vertex_handle v0, Vertex_handle v1,
@@ -648,6 +753,7 @@ public:
     SM_decorator SD(v);
     SFace_handle f = SD.new_face();
     SD.mark(f) = mark(c);
+    TRACEN("volume " << &*c << " marked as " << mark(c)); 
     SM_point_locator PL(v);
     PL.init_marks_of_halfspheres(); // necessary to init default marks
     return v;
@@ -657,6 +763,7 @@ public:
 				      SNC_structure& P1i,
 				      SNC_structure& result)
     /*{\op }*/ {
+
     SNC_ray_shooter rs(P1i);
     Vertex_handle v;
     Halfedge_handle e;
@@ -709,8 +816,7 @@ public:
     O1.print();
 #endif // CGAL_NEF3_DUMP_SNC_OPERATORS
 
-    // SETDTHREAD(43*19*131);
-
+    //    SETDTHREAD(43*19*131*37);
     TRACEN("=> for all v0 in snc0, qualify v0 with respect snc1");
 
     TRACEN("vertices on snc0:");
@@ -840,7 +946,7 @@ public:
       }
     }
 
-    //    SETDTHREAD(19*37);
+    //        SETDTHREAD(19*37);
 
     TRACEN("start edge0 edge1");
     TRACEN("=> edge edge intersection");
@@ -863,13 +969,14 @@ public:
     TRACEN("=> resultant vertices: ");
     CGAL_nef3_forall_vertices( v0, result) {
       TRACEN(&*v0<<" "<<point(v0)<<&*(v0->sncp_));
+
     }
 #ifdef CGAL_NEF3_DUMP_SNC_OPERATORS
     TRACEN("=> pre-construction result");
     SNC_io_parser<SNC_structure> O(std::cout, result);
     O.print();
 #endif // CGAL_NEF3_DUMP_SNC_OPERATORS
-    
+
     // remove vertices whose local view is not that of a vertex
     Vertex_iterator vi, vin;
     for( vi = result.vertices_begin(); vi != result.vertices_end(); vi = vin) {
@@ -887,11 +994,11 @@ public:
 	result.delete_vertex(vi);
     }
     
+    //    compute_all_marks_of_halfspaces();
+
     // synthesis of spatial structure
 
-    //    SETDTHREAD(19*43*41);
-    // SNC_io_parser<SNC_structure> Op(std::cout, result);
-    // Op.print();
+    // SETDTHREAD(19*37*41*43);
 
     SNC_constructor C(result);
     C.pair_up_halfedges();
@@ -909,17 +1016,37 @@ public:
     TRACEN("=> end binary operation. ");
   }
 
+  void compute_all_marks_of_halfspheres() {
+    
+    Vertex_handle v;
+    CGAL_nef3_forall_vertices(v,*this) {
+      SM_point_locator L(v);
+      L.init_marks_of_halfspheres();
+    }    
+  }
+
   bool is_valid( bool verb = false, int level = 0) {
     
     Verbose_ostream verr(verb);
     verr << "begin CGAL::SNC_decorator<...>::is_valid( verb=true, "
       "level = " << level << "):" << std::endl;
     
+    int max = number_of_vertices() 
+      + number_of_halfedges() 
+      + number_of_halffacets() 
+      + number_of_volumes()
+      + 2 * sncp()->number_of_shalfedges()
+      + sncp()->number_of_shalfloops()
+      + sncp()->number_of_sfaces();
+    int count = 0;
+
     bool valid = true;
 
     Vertex_iterator vi;
+    std::list<Point_3> Points(false);   // durch hashmap ersetzen    
     CGAL_nef3_forall_vertices(vi,*this) {
-
+      if(!valid) break;
+      
       valid = valid && vi->is_valid(verb, level);
       valid = valid && (vi->sncp()==sncp());
 
@@ -929,9 +1056,34 @@ public:
       Unique_hash_map<SFace_handle, bool> SFvisited(false);
 
       valid = valid && SD.is_valid(SVvisited,SEvisited,SFvisited, verb, level);
+
+      Points.push_back(point(vi));
+
+      Mark m1 = SD.mark_of_halfsphere(-1);  
+      Mark m2 = SD.mark_of_halfsphere(+1);
+      SM_point_locator PL(vi);
+      PL.init_marks_of_halfspheres();
+      valid = valid && (SD.mark_of_halfsphere(-1) == m1);
+      valid = valid && (SD.mark_of_halfsphere(+1) == m2);
+     
+      TRACEN(m1 << "," << m2 << " should have been " << 
+	     SD.mark_of_halfsphere(-1) << "," << SD.mark_of_halfsphere(+1));
+
+      valid = valid && (++count <= max);
     }
  
-  
+    Points.sort(points_lt());
+    typename std::list<Point_3>::const_iterator li1, li2;
+    li2 = li1 = Points.begin();
+    if(Points.empty())
+      valid = false;
+    else {
+      li2++;
+      while(valid && li2 != Points.end()) {
+	valid = valid && (*li1++ != *li2++);
+      }
+    }
+
     Halfedge_iterator he;
     CGAL_nef3_forall_halfedges(he,*this) {
       valid = valid && he->is_valid(verb, level);
@@ -957,9 +1109,12 @@ public:
 	  } while(se1 != start1);
 	  valid = valid && (se2 == start2);
 	}
-      }
-    }
 
+	//	Line_3 supporting_line(point(source(he)), tmp_point(he));
+	//	valid = valid && supporting_line.has_on(point(source(twin(he))));
+      }
+      valid = valid && (++count <= max);
+    }
 
     Halffacet_iterator hfi;
     CGAL_nef3_forall_halffacets(hfi,*this) {
@@ -969,13 +1124,25 @@ public:
       valid = valid && (plane(hfi).opposite() == plane(twin(hfi))); 
 
       Halffacet_cycle_iterator hfci;
-      CGAL_nef3_forall_facet_cycles_of(hfci,hfi) 
-	if(hfci.is_shalfedge())
-	  valid = valid && (SHalfedge_handle(hfci) != SHalfedge_handle());
+      CGAL_nef3_forall_facet_cycles_of(hfci,hfi) { 
+	if(hfci.is_shalfedge()) {
+	  SHalfedge_handle sheh = SHalfedge_handle(hfci);
+	  valid = valid && (sheh != SHalfedge_handle());
+	  SHalfedge_around_facet_circulator shec1(sheh), shec2(shec1);
+	  CGAL_For_all(shec1, shec2) {
+	    SM_decorator SD(vertex(shec1));
+	    Plane_3 p_ref(point(vertex(shec1)),SD.circle(shec1).opposite().orthogonal_vector());
+	    valid = valid && (normalized(plane(hfi)) == normalized(p_ref));
+	  }
+	}
 	else if(hfci.is_shalfloop())
 	  valid = valid && (SHalfloop_handle(hfci) != SHalfloop_handle()); 
 	else
 	  valid = false;
+	valid = valid && (++count <= max);	
+      }
+      
+      valid = valid && (++count <= max);
     }
 
     Volume_iterator voli;
@@ -984,13 +1151,15 @@ public:
       valid = valid && (voli->is_valid(verb, level));
 
       Shell_entry_iterator si;
-      CGAL_nef3_forall_shells_of(si,voli)
+      CGAL_nef3_forall_shells_of(si,voli) {
 	valid = valid && (si != NULL && 
 			  SFace_handle(si) != SFace_handle() && 
 			  SFace_handle(si) != NULL);
-
+	valid = valid && (++count <= max);
+      }
+      valid = valid && (++count <= max);
     }
-
+    
     SHalfedge_iterator she;
     CGAL_nef3_forall_shalfedges(she,*sncp()) {
       valid = valid && (next(she) != she);
@@ -1000,15 +1169,29 @@ public:
       valid = valid && (next(twin(next(she))) == twin(she));
       valid = valid && (previous(twin(previous(she))) == twin(she)); 
       valid = valid && (twin(facet(she)) == facet(twin(she))); 
+      valid = valid && (mark(facet(she)) == mark(she));
+      valid = valid && (++count <= max);
     }
 
+    SHalfloop_iterator shl;
+    CGAL_nef3_forall_shalfloops(shl,*sncp()){
+      SM_decorator SD;
+      valid = valid && (mark(facet(shl)) == SD.mark(shl));
+      //      valid = valid && (plane(facet(twin(shl))) == SD.circle(shl)); 
+      //      valid = valid && (volume(facet(twin(shl))) == volume(sface(shl)));
+    }
+
+    SFace_iterator sf;
+    CGAL_nef3_forall_sfaces(sf,*sncp()) {
+      SM_decorator SD;
+      valid = valid && (mark(volume(sf)) == SD.mark(sf));
+    }
 
     verr << "end of CGAL::SNC_decorator<...>::is_valid(): structure is "
 	 << ( valid ? "valid." : "NOT VALID.") << std::endl;
 
     return valid;
   }
-
 
   template <typename Visitor>
   void visit_shell_objects(SFace_handle f, Visitor& V) const;
@@ -1112,12 +1295,15 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
       V.visit(sf);
       if ( !Done[vertex(sf)] )
         V.visit(vertex(sf)); // report vertex
-      SVertex_handle sv;
-      SM_decorator SD(vertex(sf));      
+      Done[vertex(sf)] = true;
+      //      SVertex_handle sv;
+      SM_decorator SD(vertex(sf));
+      /*      
       CGAL_nef3_forall_svertices(sv,SD){
 	if(SD.is_isolated(sv) && !Done[sv])
 	  V.visit(sv);
       }
+      */
       SFace_cycle_iterator fc;
       CGAL_nef3_forall_sface_cycles_of(fc,sf) {
         SVertex_handle v; SHalfedge_handle e; SHalfloop_handle l;
@@ -1125,7 +1311,7 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
 	  SHalfedge_around_sface_circulator ec(e),ee(e);
           CGAL_For_all(ec,ee) { 
             v = starget(ec);
-            if ( !Done[v] ) {
+            if ( !SD.is_isolated(v) && !Done[v] ) {
               V.visit(v); // report edge
               Done[v] = Done[twin(v)] = true;
             }
@@ -1136,7 +1322,11 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
         } else if ( assign(v,fc) ) {
           if ( Done[v] ) continue; 
           V.visit(v); // report edge
+	  V.visit(twin(v));
           Done[v] = Done[twin(v)] = true;
+	  CGAL_assertion(SD.is_isolated(v));
+	  SFaceCandidates.push_back(sface(twin(v)));
+	  Done[sface(twin(v))]=true;
           // note that v is isolated, thus twin(v) is isolated too
 	  //	  SM_decorator SD;
 	  //	  SFace_handle fo;
@@ -1148,7 +1338,7 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
 	    fo = sface(twin(v));
 	  */
 	  //	  if ( Done[fo] ) continue;
-	  //          SFaceCandidates.push_back(fo); Done[fo] = true;
+	  //	  SFaceCandidates.push_back(fo); Done[fo] = true;
         } else if ( assign(l,fc) ) {
           Halffacet_handle f = facet(twin(l));
           if ( Done[f] ) continue;

@@ -47,9 +47,11 @@ CGAL_BEGIN_NAMESPACE
 template <typename K, typename M> class SNC_items;
 template <typename I> class SNC_structure;
 template <typename R> class SNC_decorator;
+template <typename R> class SNC_const_decorator;
 template <typename R> class SNC_constructor;
 template <typename R> class SNC_io_parser;
 template <typename R> class SNC_SM_decorator;
+template <typename R> class SNC_SM_base_decorator;
 template <typename R> class SNC_SM_const_decorator;
 template <typename R> class SNC_FM_decorator;
 template <typename EH>
@@ -84,9 +86,11 @@ public:
     typedef typename Refs::Items Items;
     friend class SNC_structure<Items>;
     friend class SNC_decorator<Refs>;
+    friend class SNC_const_decorator<Refs>;
     friend class SNC_io_parser<Refs>;
     friend class SNC_constructor<Refs>;
     friend class SNC_SM_decorator<Refs>;
+    friend class SNC_SM_base_decorator<Refs>;
     friend class SNC_SM_const_decorator<Refs>;
     typedef typename Refs::SVertex_iterator SVertex_iterator;
     typedef typename Refs::SHalfedge_iterator SHalfedge_iterator;
@@ -294,6 +298,7 @@ public:
     Point_3& point() { return point_at_center_; }
     const Point_3& point() const { return point_at_center_; }
     Mark& mark() { return mark_; }
+    Mark mark() const { return mark_;}
     GenPtr& info() { return info_; }
 
     ~Vertex() {
@@ -341,23 +346,14 @@ public:
       valid = valid && (sfaces_last_  != NULL && sfaces_last_  != SFace_iterator());
       valid = valid && (shalfloop_ != NULL && shalfloop_ != SHalfloop_iterator());
 
-      if(svertices_begin_ == svertices_last_)             
-	valid = valid && (shalfedges_begin_ == sncp()->shalfedges_end());   
-      else
-	valid = valid && (shalfedges_begin_ != sncp()->shalfedges_end());
-      
-
       if(shalfedges_begin_ == sncp()->shalfedges_end()) {         // point in volume or on plane, which is either isolated or has one outgoing edge
-	valid = valid && (svertices_begin_ == svertices_last_);       // zero or one svertex 
 	if(shalfloop_ != sncp()->shalfloops_end())
 	  valid = valid && (++SFace_const_iterator(sfaces_begin_) == sfaces_last_);
 	else 
 	  valid = valid && (sfaces_begin_ == sfaces_last_);
       }
-      else {
-	valid = valid && (svertices_begin_ != svertices_last_);
+      else
 	valid = valid && (shalfedges_begin_ != sncp()->shalfedges_end());
-      }
       
       valid = valid && (sfaces_begin_ != sncp()->sfaces_end());
       if(sfaces_begin_ == sfaces_last_) {
@@ -385,9 +381,11 @@ public:
     typedef typename Refs::Items Items;
     friend class SNC_structure<Items>;
     friend class SNC_decorator<Refs>;
+    friend class SNC_const_decorator<Refs>;
     friend class SNC_io_parser<Refs>;
     friend class SNC_constructor<Refs>;
     friend class SNC_SM_decorator<Refs>;
+    friend class SNC_SM_base_decorator<Refs>;
     friend class SNC_SM_const_decorator<Refs>;
     typedef typename Refs::Vertex_handle    Vertex_handle;
     typedef typename Refs::Halfedge_handle  Halfedge_handle;
@@ -397,12 +395,12 @@ public:
 
     Vertex_handle      center_vertex_;
     Mark               mark_;
-    SVertex_handle     twin_;
-    SHalfedge_handle   out_sedge_; 
-    SFace_handle       incident_sface_;
-    GenPtr             info_;
+    SVertex_handle     twin_;              
+    SHalfedge_handle   out_sedge_;           
+    SFace_handle       incident_sface_;    
+    GenPtr             info_;                 
     // temporary information:
-    Sphere_point       point_on_surface_;
+    Sphere_point       point_on_surface_;   
 
   public:
 
@@ -440,9 +438,8 @@ public:
     }
 
 
-    Mark& mark() 
-    { TRACEN("  taking "<<mark_<<" for "<<&*this);
-      return mark_; }
+    Mark& mark() { return mark_; }
+    Mark mark() const { return mark_; }
 
     Sphere_point& tmp_point()
     { return point_on_surface_; }
@@ -491,9 +488,11 @@ public:
     typedef typename Refs::Items Items;
     friend class SNC_structure<Items>;
     friend class SNC_decorator<Refs>;
+    friend class SNC_const_decorator<Refs>;
     friend class SNC_io_parser<Refs>;
     friend class SNC_constructor<Refs>;
     friend class SNC_SM_decorator<Refs>;
+    friend class SNC_SM_base_decorator<Refs>;
     friend class SNC_SM_const_decorator<Refs>;
     friend class SNC_FM_decorator<Refs>;
     typedef typename Refs::Halffacet_handle   Halffacet_handle;
@@ -549,8 +548,13 @@ public:
     Mark& mark()  
     { if ( this < &*twin_ ) return mark_; 
       else return twin_->mark_; }
+    Mark mark() const  
+    { if ( this < &*twin_ ) return mark_; 
+      else return twin_->mark_; }
 
     Plane_3& plane()
+    { return supporting_plane_; }
+    Plane_3 plane() const
     { return supporting_plane_; }
 
     Halffacet_cycle_iterator facet_cycles_begin()
@@ -596,9 +600,11 @@ public:
     typedef typename Refs::Items Items;
     friend class SNC_structure<Items>;
     friend class SNC_decorator<Refs>;
+    friend class SNC_const_decorator<Refs>;
     friend class SNC_io_parser<Refs>;
     friend class SNC_constructor<Refs>;
     friend class SNC_SM_decorator<Refs>;
+    friend class SNC_SM_base_decorator<Refs>;
     friend class SNC_SM_const_decorator<Refs>;
     typedef typename Refs::Object_handle  Object_handle;
     typedef typename Refs::Volume_handle  Volume_handle;
@@ -633,8 +639,8 @@ public:
       return *this;
     }
 
-    Mark& mark() 
-    { return mark_; }
+    Mark& mark() { return mark_; }
+    Mark mark() const { return mark_; }
 
     Shell_entry_iterator shells_begin()
     { return shell_entry_objects_.begin(); }
@@ -677,9 +683,11 @@ public:
     typedef typename Refs::Halffacet_handle Halffacet_handle;
     friend class SNC_structure<Items>;
     friend class SNC_decorator<Refs>;
+    friend class SNC_const_decorator<Refs>;
     friend class SNC_io_parser<Refs>;
     friend class SNC_constructor<Refs>;
     friend class SNC_SM_decorator<Refs>;
+    friend class SNC_SM_base_decorator<Refs>;
     friend class SNC_SM_const_decorator<Refs>;
     friend class move_shalfedge_around_svertex<SHalfedge_handle>;
     friend class move_shalfedge_around_sface<SHalfedge_handle>;
@@ -689,13 +697,13 @@ public:
     friend class move_shalfedge_around_facet<SHalfedge_const_handle>;
 
     // Role within local graph:
-    SVertex_handle     source_;
-    SHalfedge_handle   sprev_, snext_;
-    SFace_handle       incident_sface_;
-    SHalfedge_handle   twin_;
-    // Topology within global Nef structure:
-    SHalfedge_handle   prev_, next_; 
-    Halffacet_handle       incident_facet_;
+    SVertex_handle     source_;            
+    SHalfedge_handle   sprev_, snext_;      
+    SFace_handle       incident_sface_;     
+    SHalfedge_handle   twin_;              
+    // Topology within global Nef structure:  
+    SHalfedge_handle   prev_, next_;     
+    Halffacet_handle       incident_facet_;    
     GenPtr             info_;
     // temporary needed:
     Mark               mark_;
@@ -810,9 +818,11 @@ public:
     typedef typename Refs::Items Items;
     friend class SNC_structure<Items>;
     friend class SNC_decorator<Refs>;
+    friend class SNC_const_decorator<Refs>;
     friend class SNC_io_parser<Refs>;
     friend class SNC_constructor<Refs>;
     friend class SNC_SM_decorator<Refs>;
+    friend class SNC_SM_base_decorator<Refs>;
     friend class SNC_SM_const_decorator<Refs>;
     friend class Self::Vertex<Refs>;
 
@@ -902,9 +912,11 @@ public:
     typedef typename Refs::Items Items;
     friend class SNC_structure<Items>;
     friend class SNC_decorator<Refs>;
+    friend class SNC_const_decorator<Refs>;
     friend class SNC_io_parser<Refs>;
     friend class SNC_constructor<Refs>;
     friend class SNC_SM_decorator<Refs>;
+    friend class SNC_SM_base_decorator<Refs>;
     friend class SNC_SM_const_decorator<Refs>;
     typedef typename Refs::Vertex_handle  Vertex_handle;
     typedef typename Refs::SFace_handle   SFace_handle;
@@ -917,7 +929,7 @@ public:
                                           SFace_cycle_const_iterator;
     Vertex_handle  center_vertex_;
     Volume_handle  incident_volume_;
-    //SObject_list   boundary_entry_objects_; // SEdges, SLoops, SVertices
+    // SObject_list   boundary_entry_objects_; // SEdges, SLoops, SVertices
     GenPtr         info_;
     // temporary needed:
     Mark           mark_;

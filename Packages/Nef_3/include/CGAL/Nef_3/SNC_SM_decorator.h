@@ -32,7 +32,7 @@
 #define CGAL_SNC_SM_DECORATOR_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Nef_3/SNC_SM_const_decorator.h>
+#include <CGAL/Nef_3/SNC_SM_base_decorator.h>
 
 #undef _DEBUG
 #define _DEBUG  23
@@ -49,15 +49,21 @@ CGAL_BEGIN_NAMESPACE
 {Topological sphere map decorator}{D}}*/
 
 template <typename Refs_>
-class SNC_SM_decorator : public SNC_SM_const_decorator<Refs_>
+class SNC_SM_decorator : public SNC_SM_base_decorator<Refs_>
 { 
 public:
-typedef SNC_SM_const_decorator<Refs_> Base;
+typedef SNC_SM_base_decorator<Refs_> Base;
 typedef SNC_SM_decorator<Refs_> Self;
 
 /*{\Mdefinition ...}*/
 
 /*{\Mtypes 5}*/
+
+typedef typename Refs_::Kernel           Kernel;
+typedef typename Kernel::Plane_3         Plane_3;
+typedef typename Kernel::Point_3         Point_3;
+typedef typename Kernel::Vector_3        Vector_3;
+
 typedef typename Refs_::Sphere_kernel    Sphere_kernel;
 
 typedef typename Refs_::Sphere_point     Sphere_point;
@@ -112,6 +118,7 @@ USING(SObject_handle);
 USING(SHalfedge_around_svertex_const_circulator);
 USING(SHalfedge_around_sface_const_circulator);
 USING(SFace_cycle_const_iterator);
+USING(Infi_box); 
 #undef USING
 
 /*{\Mtext Local types are handles, iterators and circulators of the
@@ -151,7 +158,6 @@ the sphere map of |v|.}*/
 
 Vertex_handle center_vertex() const { return psm_; }
 
-/* This code chunk should be in SNC_SM_const_decorator */
 SVertex_const_handle source(SHalfedge_const_handle e) const
 { return e->source_; }
 SVertex_const_handle target(SHalfedge_const_handle e) const
@@ -612,7 +618,7 @@ bool has_outdeg_two(SVertex_handle v) const
 { if (is_isolated(v)) return false;
   SHalfedge_handle e1 = first_out_edge(v);
   SHalfedge_handle e2 = last_out_edge(v);
-  return (e1!=e2 && e2==cas(e1));
+  return (e1!=e2 && e2==cas(e1));  
 }
 
 void link_as_prev_next_pair(SHalfedge_handle e1, SHalfedge_handle e2) const 
@@ -629,17 +635,17 @@ void merge_edge_pairs_at_target(SHalfedge_handle e) const
   If |next(e)| was entry point of |face(e)| then |e| takes this role.
   The same holds for |twin(next(e))| and |face(twin(e))|.}*/
 {
-  TRACEN("merge_edge_pairs_at_target "<<PH(e));
-  SHalfedge_handle en = next(e), eno = twin(en), enn, enno,
+  TRACEN("merge_edge_pairs_at_target "<<PH(e));               // e  = (un,li), eo = (li,un)
+  SHalfedge_handle en = next(e), eno = twin(en), enn, enno,   // en = (li,ob), eno= (ob,li)
                eo = twin(e) ;
   if ( is_closed_at_target(en) ) { enn = eo; enno=e; }
-  else { enn = next(en), enno = previous(eno); }
-  SVertex_handle v = target(e), vn = target(en);
+  else { enn = next(en), enno = previous(eno); }              // enn= (ob,re), enno=(re,ob)
+  SVertex_handle v = target(e), vn = target(en);              // v = li,  vn = ob
   CGAL_nef3_assertion(has_outdeg_two(v));
   SFace_handle f1 = face(en), f2 = face(eno);
   // transfer the opposite face cycles e-en-enn to e-enn
-  if ( enn != eno ) {
-    link_as_prev_next_pair(e,enn);
+  if ( enn != eno ) {                    
+    link_as_prev_next_pair(e,enn);                          
     link_as_prev_next_pair(enno,eo);
   } else {
     link_as_prev_next_pair(e,eo);
@@ -916,20 +922,23 @@ The macros are then |CGAL_nef3_forall_svertices_of(v,V)|,
 |CGAL_nef3_forall_sfaces_of(f,V)|, |CGAL_nef3_forall_sface_cycles_of(fc,F)|.}*/
 
 void transform( const Aff_transformation_3& linear) {
+  TRACEN("transform sphere map of vertex" << center_vertex()->point());
     typedef typename Aff_transformation_3::RT RT;
     // The affine transformation is linear, i.e., no translation part.
     CGAL_precondition( linear.hm(0,3) == RT(0) && 
                        linear.hm(1,3) == RT(0) && 
                        linear.hm(2,3) == RT(0));
+
+    TRACEN(linear);
     for (SVertex_iterator i = svertices_begin(); i != svertices_end(); ++i)
-        point(i) = Sphere_point( point(i).transform( linear));
+      point(i) = Sphere_point( point(i).transform( linear));
     for (SHalfedge_iterator i = shalfedges_begin(); i !=shalfedges_end(); ++i)
-        circle(i) = Sphere_circle( circle(i).transform( linear));
+      circle(i) = Sphere_circle( circle(i).transform( linear));
     if ( has_loop()) {
-        circle(shalfloop()) = Sphere_circle(circle(shalfloop())
-                                            .transform( linear));
-        circle(twin(shalfloop()))
-            = Sphere_circle(circle(twin(shalfloop())).transform( linear));
+      circle(shalfloop()) = Sphere_circle(circle(shalfloop())
+					  .transform( linear));
+      circle(twin(shalfloop()))
+	= Sphere_circle(circle(twin(shalfloop())).transform( linear));
     }
 }
 
@@ -938,14 +947,16 @@ void extract_complement() {
   SVertex_handle sv;
   CGAL_nef3_forall_svertices_of(sv,this) mark(sv) = !mark(sv);
   SHalfedge_handle she;
-  CGAL_nef3_forall_shalfedges_of(she,this) mark(she) = !mark(she);
+  CGAL_nef3_forall_sedges_of(she,this) mark(she) = !mark(she);
   SHalfloop_handle shl;
   if(has_loop()) { 
     shl = shalfloop(); 
     mark(shl) = !mark(shl);
   }
   SFace_handle sf;
-  CGAL_nef3_forall_sfaces_of(sf,this) mark(sf) = !mark(sf);
+  CGAL_nef3_forall_sfaces_of(sf,this) 
+    //    if(!Infi_box::is_beyond_Infibox(sf,*sncp()))
+      mark(sf) = !mark(sf);
 }
 
 void extract_interior() {
@@ -990,15 +1001,26 @@ bool is_valid( Unique_hash_map<SVertex_handle,bool>& sv_hash,
     
   bool valid = true;
 
+  int count = 0;
+  int max = 2 * sncp()->number_of_svertices() 
+    + 2 * sncp()->number_of_shalfedges()
+    + sncp()->number_of_sfaces()
+    + 2;
+  
   SVertex_handle sv;
+  int isolated_vertices_found = 0;
   CGAL_nef3_forall_svertices_of(sv,this) {
     valid = valid && (!sv_hash[sv]);
     sv_hash[sv] = true;
+    if(is_isolated(sv)) 
+      isolated_vertices_found++;
+    valid = valid && (++count <= max);
   }
 
   SHalfedge_iterator she;
   CGAL_nef3_forall_shalfedges_of(she, this) {
     valid = valid && she->is_valid(verb, level);
+
     valid = valid && (twin(she) != she);
     valid = valid && (twin(twin(she)) == she);
     valid = valid && (previous(next(she)) == she);
@@ -1006,8 +1028,16 @@ bool is_valid( Unique_hash_map<SVertex_handle,bool>& sv_hash,
 		      (previous(she) == she && next(she) == she));
     valid = valid && (face(she) == face(next(she)));
     valid = valid && (face(she) == face(previous(she)));
+
     valid = valid && (!se_hash[she]);
+
+    //    Plane_3 pl(point(source(she)),point(target(she)),Point_3(0,0,0));
+    //    Sphere_point vct(pl.orthogonal_vector());
+    //    valid = valid && (normalized(Sphere_point(circle(she).orthogonal_vector())) == normalized(vct) || 
+    //	      normalized(Sphere_point(circle(she).opposite().orthogonal_vector())) == normalized(vct));
+
     se_hash[she] = true;
+    valid = valid && (++count <= max);
   }
 
   if(has_loop()) {
@@ -1015,15 +1045,43 @@ bool is_valid( Unique_hash_map<SVertex_handle,bool>& sv_hash,
     valid = valid && shl->is_valid();
     valid = valid && twin(shl)->is_valid();
     valid = valid && (twin(shl) != shl);
-    valid = valid && (twin(twin(shl)) == shl);
+    valid = valid && (twin(twin(shl)) == shl); 
   }
 
   SFace_iterator sf;
+  SFace_cycle_iterator sfc;  
+  int loop_entries_found = 0;
+  int edge_entries_found = 0;
+  int vertex_entries_found = 0;
   CGAL_nef3_forall_sfaces_of(sf, this) {
     valid = valid && sf->is_valid(verb, level);
     valid = valid && (!sf_hash[sf]);
     sf_hash[sf] = true;
+    
+    CGAL_nef3_forall_sface_cycles_of(sfc,sf) {
+      if (sfc.is_shalfloop()) 
+	loop_entries_found++;
+      else if(sfc.is_shalfedge())
+	edge_entries_found++;
+      else if(sfc.is_svertex())
+	vertex_entries_found++;
+      valid = valid && (++count <= max);
+    }
+    
+    valid = valid && (++count <= max);
   }
+
+  if(has_loop())
+    valid = valid && (loop_entries_found == 2);
+  else
+    valid = valid && (loop_entries_found == 0);
+
+  if(number_of_shalfedges() > 0)
+    valid = valid && (edge_entries_found > 0);
+  else
+    valid = valid && (edge_entries_found == 0);
+
+  valid = valid && (vertex_entries_found == isolated_vertices_found);
 
   verr << "end of CGAL::SNC_SM_decorator<...>::is_valid(): structure is "
        << ( valid ? "valid." : "NOT VALID.") << std::endl;

@@ -147,6 +147,7 @@ public:
   USING(Vector_3);
   USING(Direction_3);
   USING(Segment_3);
+  USING(Ray_3);
   USING(Line_3);
   USING(Plane_3);
 
@@ -169,52 +170,99 @@ public:
   SNC_ray_shooter(SNC_structure& W) : Base(W) {}
   /*{\Mcreate makes |\Mvar| a ray shooter on |W|.}*/
 
-  Object_handle shoot( Segment_3& ray) const 
+  Volume_handle determine_volume(Ray_3& ray) const {
+    
+    Object_handle o = shoot(ray);
+    Vertex_handle v;
+    Halfedge_handle e;
+    Halffacet_handle f, f_below;
+    TRACEN("get_facet_below");
+    if( assign(v, o)) {
+      TRACEN("facet below from from vertex...");
+      f_below = get_visible_facet(v, ray);
+      if(f_below != Halffacet_handle())
+	return volume(f_below);
+      SM_decorator SD(v);
+      CGAL_nef3_assertion( !is_empty_range( SD.sfaces_begin(), SD.sfaces_end()));
+      CGAL_nef3_assertion( is_empty_range( ++(SD.sfaces_begin()), SD.sfaces_end()));
+      return volume(SD.sfaces_begin());
+    }
+    else if( assign(e, o)) {
+      TRACEN("facet below from from edge...");
+      f_below = get_visible_facet(e, ray);
+      if(f_below != Halffacet_handle())
+	return volume(f_below);
+      SM_decorator SD(source(e));
+      CGAL_nef3_assertion(SD.is_isolated(e));
+      return volume(sface(e));
+    }
+    else if( assign(f, o)) {
+      TRACEN("facet below from from facet...");
+      f_below = get_visible_facet(f, ray);
+      CGAL_nef3_assertion( f_below != Halffacet_handle());
+      return volume(f_below);
+    }
+    
+    return Base(*this).volumes_begin();
+  }
+
+  Object_handle shoot( Ray_3& ray) const 
      /*{\Mop returns the nearest object hit by a ray |ray|. }*/ {
+    bool hit = false;
+    Point_3 end_of_seg;
+
     TRACEN( "Shooting ray " << ray);
     Object_handle o;
     Vertex_handle v;
     CGAL_nef3_forall_vertices( v, *sncp()) {
-      if ( ray.source() != point(v) && ray.has_on(point(v)) ) {
+      if ( ray.source() != point(v) && ray.has_on(point(v))) {
+	if(hit && !Segment_3(ray.source(), end_of_seg).has_on(point(v)))
+	  continue;
 	TRACEN("ray hit vertex case "<<point(v));
-	shorten( ray, point(v));
+	end_of_seg = point(v);
+	hit = true;
 	o = Object_handle(v);
       }
     }
+
     Halfedge_handle e;
     CGAL_nef3_forall_edges( e, *sncp()) {
       Point_3 q;
-      if ( does_contain_internally( segment(e), ray.target())) {
-	TRACEN("ray target on edge "<<segment(e));
-	o = Object_handle(e);
-      }
-      else if( does_intersect_internally( ray, e, q) ) { 
-	shorten( ray, q); 
-	o = Object_handle(e);
+      if( does_intersect_internally( ray, e, q)) {
+	if (!hit || has_smaller_distance_to_point(ray.source(),q, end_of_seg)) {
+	  TRACEN("ray hit edge case " << segment(e) << " in " << q);
+	  end_of_seg = q; 
+	  hit = true;
+	  o = Object_handle(e);
+	}
       }
     }
+
     Halffacet_handle f;
     CGAL_nef3_forall_halffacets( f, *sncp()) {
       Point_3 q;
-      if ( does_contain_internally( f, ray.target())) {
-	TRACEN("ray target on facet "<<plane(f));
-	o = Object_handle(f);
-      }
-      else if( does_intersect_internally( ray, f, q) ) {
+      if( does_intersect_internally( ray, f, q) ) {
+	if(!hit || has_smaller_distance_to_point(ray.source(), q, end_of_seg)) {
 	TRACEN("ray hit facet "<<plane(f)<<" on "<<q);
-	shorten( ray, q); 
+	end_of_seg = q;
+	hit = true; 
 	o = Object_handle(f);
+	}
       }
     }
+
     return o;
   }
 
   Object_handle locate( const Point_3& p) const
-    /*{\Mop returns the lowest dimension object on an SNC structure
-      which contais |p| in its interior. }*/{
+    //{\Mop returns the lowest dimension object on an SNC structure
+    //  which contais |p| in its interior. }
+    {
+      //            SETDTHREAD(37*19*47);
     TRACEN( "Point locator for " << p);
     Vertex_handle v;
     CGAL_nef3_forall_vertices( v, *sncp()) {
+      TRACEN("test vertex " << point(v));
       if ( p == point(v)) {
 	TRACEN("on vertex.");
 	return Object_handle(v);
@@ -235,30 +283,50 @@ public:
 	return Object_handle(f);
       }
     }
-    /* let |s| be the segment that connects |p| to any fixed vertex |va| */
-    //    Vertex_handle va = --(sncp()->vertices_end()); 
-    //    Segment_3 s( p, point(va));
-    Segment_3 s( p, Infi_box::target_for_ray_shot(this,p));
-    /* prune |s| by |o| if |o| intersects |s| in its relative interior */
+
+    // let |s| be the segment that connects |p| to any fixed vertex |va| 
+    Vertex_handle va = --(sncp()->vertices_end()); 
+    TRACEN("target of shooting is " << point(va));
+    Ray_3 s( p, point(va));
+    return Object_handle(determine_volume(s));
+
+    /*
+    // SNC_decorator D(*this);
+    //    Ray_3 s = Infi_box::get_ray(D ,p);
+    // prune |s| by |o| if |o| intersects |s| in its relative interior 
     Object_handle o = shoot(s);
-    /* determine the volume that contains |s| from the last pruning object */
+    // determine the volume that contains |s| from the last pruning object 
 
     Halffacet_handle hf;
-    if( assign( v, o))
+    if( assign( v, o)) {
       hf = get_visible_facet( v, s);
+      CGAL_nef3_assertion(hf != Halffacet_handle());
+      //      if(hf==Halffacet_handle()) {
+      //	SM_decorator SD(v);
+      //	CGAL_nef3_assertion( !is_empty_range( SD.sfaces_begin(), SD.sfaces_end()));
+      //	CGAL_nef3_assertion( is_empty_range( ++(SD.sfaces_begin()), SD.sfaces_end()));
+      //	return volume(SD.sfaces_begin());
+      //      }
+    }
     else if( assign( e, o))
       hf = get_visible_facet( e, s);
-    else if( assign( f, o))
+    else if( assign( f, o)) {
       hf = get_visible_facet( f, s);
+      CGAL_nef3_assertion(hf!=Halffacet_handle());
+    }
     else CGAL_nef3_assertion_msg(0, "where is our point, eh?");
-    if(hf==Halffacet_handle())
-      return ++(sncp()->volumes_begin());
-    return Object_handle(volume(hf));
-  }
+    
+    if(hf!=Halffacet_handle())
+      return Object_handle(volume(hf));
 
-  void shorten(Segment_3& s, const Point_3& p) const { 
-    s = Segment_3( s.source(), p); 
-    TRACEN("shooted ray "<<s);
+    if( assign( e, o))
+      v = source(e);
+
+    SM_decorator SD(v);
+    CGAL_nef3_assertion( !is_empty_range( SD.sfaces_begin(), SD.sfaces_end()));
+    CGAL_nef3_assertion( is_empty_range( ++(SD.sfaces_begin()), SD.sfaces_end()));
+    return volume(SD.sfaces_begin());
+    */
   }
 
   bool does_contain_internally(const Segment_3& s, const Point_3& p) const {
@@ -271,6 +339,12 @@ public:
   }
 
   bool does_intersect_internally( const Segment_3& s,
+				  const Halfedge_handle e,
+				  Point_3& p) const {
+    return does_intersect_internally( s, segment(e), p);
+  }
+
+  bool does_intersect_internally( const Ray_3& s,
 				  const Halfedge_handle e,
 				  Point_3& p) const {
     return does_intersect_internally( s, segment(e), p);
@@ -302,50 +376,103 @@ public:
 				  Point_3& p) const {
     TRACEN("does intersect internally without  LINE3_LINE3_INTERSECTION");
     if ( s1.is_degenerate() || s2.is_degenerate())
-      /* the segment is degenerate so there is not internal intersection */
+      // the segment is degenerate so there is not internal intersection 
       return false;
     if ( s1.has_on(s2.source()) || s1.has_on(s2.target()) ||
 	 s2.has_on(s1.source()) || s2.has_on(s1.target()))
-      /* the segments does intersect at one endpoint */
+      // the segments does intersect at one endpoint 
       return false;
     if ( orientation( s1.source(), s1.target(), s2.source(), s2.target()) 
 	 != COPLANAR)
-      /* the segments doesn't define a plane */
+      // the segments doesn't define a plane 
       return false;
     if ( collinear( s1.source(), s1.target(), s2.source()) &&
 	 collinear( s1.source(), s1.target(), s2.target()) )
-      /* the segments are collinear */
+      // the segments are collinear 
       return false;
     Line_3 ls1(s1), ls2(s2);
     if ( ls1.direction() ==  ls2.direction() ||
 	 ls1.direction() == -ls2.direction() )
-      /* the segments are parallel */
+      // the segments are parallel
       return false;
     Oriented_side os1, os2;
     Vector_3 vs1(s1.direction()), vs2(s2.direction()), 
       vt(cross_product( vs1, vs2)), 
       ws1(cross_product( vt, vs1)), ws2(cross_product( vt, vs2));
     Plane_3 hs1( s1.source(), ws1);
-    /* hs1 is a plane which contains line(s1) and is perpendicular to the
-       plane defined by the s1 and s2 */
+    // hs1 is a plane which contains line(s1) and is perpendicular to the
+    //   plane defined by the s1 and s2 
     os1 = hs1.oriented_side(s2.source());
     os2 = hs1.oriented_side(s2.target());
     if(os1 != opposite(os2))
       return false;
     Plane_3 hs2( s2.source(), ws2);
-    /* hs is a plane which contains line(s2) and is perpendicular to the
-       plane defined by the s1 and s */
+    // hs is a plane which contains line(s2) and is perpendicular to the
+    //   plane defined by the s1 and s
     os1 = hs2.oriented_side(s1.source());
     os2 = hs2.oriented_side(s1.target());
     if(os1 != opposite(os2))
       return false;
     Object o = intersection(hs1, ls2);
     CGAL_nef3_assertion(assign( p, o));
-    /* since line(s1) and line(s2) are not parallel they intersects in only
-       one point */
+    // since line(s1) and line(s2) are not parallel they intersects in only
+    //   one point
     assign( p ,o);
     return( does_contain_internally( s2, p));
   }
+
+
+  bool does_intersect_internally( const Ray_3& s1, 
+				  const Segment_3& s2, 
+				  Point_3& p) const {
+    TRACEN("does intersect internally without  LINE3_LINE3_INTERSECTION");
+    if ( s1.is_degenerate() || s2.is_degenerate())
+      // the segment is degenerate so there is not internal intersection 
+      return false;
+    if ( s1.has_on(s2.source()) || s1.has_on(s2.target()) ||
+	 s2.has_on(s1.source()))
+      // the segments does intersect at one endpoint 
+      return false;
+    if ( orientation( s1.source(), s1.point(1), s2.source(), s2.target()) 
+	 != COPLANAR)
+      // the segments doesn't define a plane
+      return false;
+    if ( collinear( s1.source(), s1.point(1), s2.source()) &&
+	 collinear( s1.source(), s1.point(1), s2.target()) )
+      // the segments are collinear 
+      return false;
+    Line_3 ls1(s1), ls2(s2);
+    if ( ls1.direction() ==  ls2.direction() ||
+	 ls1.direction() == -ls2.direction() )
+      // the segments are parallel 
+      return false;
+    Oriented_side os1, os2;
+    Vector_3 vs1(s1.direction()), vs2(s2.direction()), 
+      vt(cross_product( vs1, vs2)), 
+      ws1(cross_product( vt, vs1)), ws2(cross_product( vt, vs2));
+    Plane_3 hs1( s1.source(), ws1);
+    // hs1 is a plane which contains line(s1) and is perpendicular to the
+    //   plane defined by the s1 and s2 
+    os1 = hs1.oriented_side(s2.source());
+    os2 = hs1.oriented_side(s2.target());
+    if(os1 != opposite(os2))
+      return false;
+    Plane_3 hs2( s2.source(), ws2);
+    // hs is a plane which contains line(s2) and is perpendicular to the
+    //   plane defined by the s1 and s 
+    //    os1 = hs2.oriented_side(s1.source());
+    //    os2 = hs2.oriented_side(s1.target());
+    //    if(os1 != opposite(os2))
+    //      return false;
+    Object o = intersection(hs1, ls2);
+    CGAL_nef3_assertion(assign( p, o));
+    // since line(s1) and line(s2) are not parallel they intersects in only
+    //   one point 
+    assign( p ,o);
+    return( s1.has_on(p) && does_contain_internally( s2, p));
+  }
+
+
 #endif // LINE3_LINE3_INTERSECTION
 
   bool does_contain_internally( const Halffacet_handle f, 
@@ -353,6 +480,45 @@ public:
     if( !plane(f).has_on(p))
       return false;
     return (locate_point_in_halffacet( p, f) == CGAL::ON_BOUNDED_SIDE);
+  }
+
+  bool does_intersect_internally( const Ray_3& seg,
+				  const Halffacet_handle f,
+				  Point_3& p) const { 
+    TRACEN("-> Intersection face - ray");
+    Plane_3 h( plane(f));
+    TRACEN("-> facet plane " << h);
+    TRACEN("-> a point on " << h.point());
+    TRACEN("-> seg segment " << seg);
+    CGAL_nef3_assertion( !h.is_degenerate());
+    if( seg.is_degenerate())
+      /* no possible internal intersection */
+      return false;
+    if( h.has_on( seg.source()))
+      /* no possible internal intersection */
+	return false;
+#ifdef REDUNDANT_CODE
+    /* This optimization might be inside of |intersection()| code */
+    Oriented_side os1 = h.oriented_side(seg.source());
+    Oriented_side os2 = h.oriented_side(seg.target());
+    TRACEN( "-> endpoint plane side " << os1 << " " << os2);
+    CGAL_nef3_assertion( h.has_on(p));
+    CGAL_nef3_assertion( seg.has_on(p));
+    if (os1 == os2)
+      return false;
+#endif //REDUNDANT_CODE
+    Object o = intersection( h, seg);
+    Ray_3 s;
+    if ( assign( s, o) ) {
+      CGAL_nef3_assertion( s == seg );
+      TRACEN( "-> seg belongs to facet's plane." << p );
+      return false;
+    }
+    else if( !assign( p, o))
+      return false;
+    TRACEN( "-> intersection point " << p );
+    TRACEN( "-> point in facet? "<<locate_point_in_halffacet(p, f));
+    return does_contain_internally( f, p);
   }
 
   bool does_intersect_internally( const Segment_3& seg,

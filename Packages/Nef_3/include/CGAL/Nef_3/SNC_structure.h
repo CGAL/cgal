@@ -39,6 +39,8 @@
 #include <CGAL/Nef_3/SNC_items.h>
 #include <CGAL/Nef_3/nef3_assertions.h>
 #include <CGAL/Nef_3/Infimaximal_box.h>
+#include <CGAL/Nef_3/SNC_const_decorator.h>
+#include <CGAL/Nef_3/SNC_SM_point_locator.h>
 #include <CGAL/Nef_2/iterator_tools.h>
 #include <CGAL/Union_find.h>
 #include <list>
@@ -100,6 +102,8 @@ public:
 
   typedef SNC_SM_decorator<Self> SM_decorator;
   typedef SNC_decorator<Self>    SNC_decorator;
+  typedef SNC_const_decorator<Self> SNC_const_decorator;
+  typedef SNC_SM_point_locator<Self> SM_point_locator;
 
   typedef typename Items::Kernel        Kernel;
   typedef typename Kernel::FT           FT;
@@ -120,6 +124,9 @@ public:
   /*{\Mtypemember segments in space.}*/
   typedef typename Kernel::Line_3       Line_3;
   /*{\Mtypemember lines in space.}*/
+  typedef typename Kernel::Ray_3       Ray_3;
+  /*{\Mtypemember rays in space.}*/
+
   typedef typename Kernel::Aff_transformation_3 Aff_transformation_3;
 
   typedef typename Sphere_kernel::Sphere_point     Sphere_point;
@@ -207,12 +214,15 @@ public:
 
   typedef CGAL::Object_handle Object_handle;
   typedef CGAL::Object_handle SObject_handle;
+
   // a generic handle 
 
   typedef std::list<Object_handle>    Object_list;
   typedef std::list<Object_handle>    SObject_list;
   typedef Object_list::iterator       Object_iterator;
   typedef Object_list::const_iterator Object_const_iterator;
+  typedef Object_list::const_iterator Object_const_handle;
+  typedef Object_list::const_iterator SObject_const_handle;
 
   class Halffacet_cycle_iterator : public Object_iterator 
   /*{\Mtypemember a generic handle to an object in the boundary
@@ -444,7 +454,7 @@ public:
   }
 
   template <typename H>
-  bool is_boundary_object(H h) 
+  bool is_boundary_object(H h) const
   { return boundary_item_[h]!=undef_; }
   template <typename H>
   bool is_sm_boundary_object(H h) 
@@ -922,7 +932,7 @@ public:
 	SHalfedge_around_facet_circulator u(e), eend(e);
 	CGAL_For_all(u, eend) {
 	  SFace_handle fu = D.sface(u), ftu = D.sface(D.twin(u));
-	  TRACEN("UNION of "<<IO->index(fu)<<" & "<<IO->index(ftu));
+	  TRACEN("sfUNION of "<<IO->index(fu)<<" & "<<IO->index(ftu));
 	  merge_sets( fu, ftu, hash, uf);
 	  SM_decorator SD(D.vertex(u));
 	  TRACEN("removing "<<IO->index(u)<<" & "<<IO->index(SD.twin(u)));
@@ -935,9 +945,12 @@ public:
 	     if it is true, the svertex face update is not necesary. */
 	  SD.delete_edge_pair(u); 
 	  if( SD.is_isolated(src))
-	    SD.delete_vertex_only(src);
-	  if( SD.is_isolated(tgt))
-	    SD.delete_vertex_only(tgt);
+	    //	    SD.delete_vertex_only(src);
+	    SD.set_face(src,fu);
+	  SM_decorator SD2(D.vertex(tgt));
+	  if( SD2.is_isolated(tgt))
+	    // SD.delete_vertex_only(tgt);
+	    SD2.set_face(tgt,fu);
 	  /* TO VERIFY: can both svertices be isolated at the same time? */
       }
       }
@@ -1065,6 +1078,8 @@ public:
   
   void simplify() {
 
+    //    SETDTHREAD(41);
+
     TRACEN(">>> simplifying");
     SNC_decorator D(*this);
     SNC_io_parser<SNC_structure> IO_parser(std::cerr, *this);
@@ -1099,7 +1114,7 @@ public:
     /* 
      * Volumes simplification 
      */
-    
+
     Halffacet_handle f(D.halffacets_begin());
     while( f != D.halffacets_end() && f->is_twin())
       f++;
@@ -1110,8 +1125,6 @@ public:
 	f_next++;
       while( f_next != D.halffacets_end() && f_next->is_twin());
       CGAL_nef3_assertion( f != D.twin(f));
-      //    Halffacet_iterator f;
-      //    CGAL_nef3_forall_facets(f,D) {
       Volume_handle c1 = D.volume(f), c2 = D.volume(D.twin(f));
       TRACEN(" mark("<<IO->index(c1)<<")="<<D.mark(c1)<<
       	     " mark("<<IO->index(f) <<")="<<D.mark(f) <<
@@ -1126,7 +1139,7 @@ public:
       }
       f = f_next;
     }
-
+    
     CGAL_nef3_forall_halffacets( f, *this) {
       hash_facet[f] = uf_facet.make_set(f);
       reset_object_list(f->boundary_entry_objects_);
@@ -1220,6 +1233,8 @@ public:
     create_boundary_links_forall_volumes( hash_volume, uf_volume);
 
     TRACEN(">>> simplifying done");
+
+    SETDTHREAD(1);
   }
    
   void remove_edge_and_merge_facet_cycles( Halfedge_handle e) {
@@ -1287,12 +1302,18 @@ public:
       Union_find< SFace_handle>& uf_sface ) {
      SNC_decorator D(*this);
      SFace_iterator sf;
+     std::list<SFace_handle> sflist;
      CGAL_nef3_forall_sfaces( sf, *this) {
        if( uf_sface.find(hash_sface[sf]) != hash_sface[sf]) {
 	 TRACEN("no find object "<<IO->index(sf));
-	 SM_decorator SD(D.vertex(sf));
-	 SD.delete_face_only(sf);
+	 sflist.push_back(sf);
        }
+     }
+
+     typename std::list<SFace_handle>::const_iterator sfli;
+     for(sfli = sflist.begin(); sfli != sflist.end(); sfli++){     
+       SM_decorator SD(D.vertex(*sfli));
+       SD.delete_face_only(*sfli);
      }
 
      Halffacet_iterator f;
@@ -1305,16 +1326,22 @@ public:
        }
      }
      
-     typename std::list<Halffacet_handle>::const_iterator li;
-     for(li = flist.begin(); li != flist.end(); li++)
-       delete_halffacet_pair(*li);
+     typename std::list<Halffacet_handle>::const_iterator fli;
+     for(fli = flist.begin(); fli != flist.end(); fli++)
+       delete_halffacet_pair(*fli);
 
      Volume_iterator c;
+     std::list<Volume_handle> clist;
      CGAL_nef3_forall_volumes( c, *this) {
        if( uf_volume.find(hash_volume[c]) != hash_volume[c]) {
 	 TRACEN("no find object "<<IO->index(c));
-	 delete_volume(c);
+	 clist.push_back(c);
        }
+     }
+
+     typename std::list<Volume_handle>::const_iterator cli;
+     for(cli = clist.begin(); cli != clist.end(); cli++){     
+       delete_volume(*cli);
      }
    }
 
@@ -1337,15 +1364,22 @@ public:
       }
       SD.store_boundary_object( e, sf);
     }
+
     SVertex_handle sv;
     CGAL_nef3_forall_svertices(sv, *this) {
       SM_decorator SD(D.vertex(sv));
       if( SD.is_isolated(sv)) {
-	SFace_handle sf = *(uf.find(hash[D.source(sv)->sfaces_begin()])); 
+	SFace_handle sf = *(uf.find(hash[SD.face(sv)])); 
 	CGAL_nef3_assertion( sf != SFace_handle());
 	SD.set_face( sv, sf);
 	SD.store_boundary_object( sv, sf);
       }
+    }
+
+    SHalfloop_handle sl;
+    CGAL_nef3_forall_shalfloops(sl, *this) {
+      SM_decorator SD(D.vertex(sl));
+      SD.store_boundary_object( sl, SD.face(sl));
     }
   }
 
@@ -1381,10 +1415,11 @@ public:
 				     f->boundary_entry_objects_.front()));
 	assign( f_sedge, f->boundary_entry_objects_.front());
 	Point_3 p(D.point(D.vertex(f_sedge)));
-	if( lexicographically_xyz_smaller( D.point(D.vertex(u_min)), p))
-	  D.store_as_first_boundary_object( u_min, f);
-	else
-	  D.store_boundary_object( u_min, f);
+	CGAL_nef3_assertion(
+             !lexicographically_xyz_smaller(D.point(D.vertex(u_min)), p));
+	// D.store_as_first_boundary_object( u_min, f);
+	// else  // these lines are needed if the previous assertion is incorrect
+	D.store_boundary_object( u_min, f);
       }
     }
     SHalfloop_iterator l;
@@ -1399,15 +1434,22 @@ public:
       Unique_hash_map< Volume_handle, UFH_volume>& hash,
       Union_find< Volume_handle>& uf) {
     typedef typename SNC_decorator::Shell_volume_setter Volume_setter;
-    Unique_hash_map< Volume_handle, bool> linked(false);
+    //   typedef Unique_hash_map< SFace_handle, bool> SFace_map;
+    //  SFace_map linked(false);
+
+    SNC_io_parser<SNC_structure> IO_parser(std::cerr, *this);
+    IO = &IO_parser;
+
     SNC_decorator D(*this);
+    Volume_setter setter(D);
+
     SFace_iterator sf;
     CGAL_nef3_forall_sfaces(sf, *this) {
+      TRACEN("SFace " << IO->index(sf));
+      if( setter.is_linked(sf)) continue;
       Volume_handle c = *(uf.find(hash[D.volume(sf)]));
-      if( linked[c])
-	continue;
-      linked[c] = true;
-      Volume_setter setter(D, c);
+      TRACEN("Volume " << IO->index(c));
+      setter.set_volume(c);
       D.visit_shell_objects( sf, setter );
       D.store_boundary_object( sf, c);
     }
@@ -1415,9 +1457,9 @@ public:
   
     // Returns the bounding box of the finite vertices of the polyhedron.
     // Returns $[-1,+1]^3$ as bounding box if no finite vertex exists.
-    Bbox_3  bounded_bbox() {
-        SNC_decorator deco(*this);
-        Vertex_iterator vi = vertices_begin();
+    Bbox_3  bounded_bbox() const {
+        SNC_const_decorator deco(*this);
+        Vertex_const_iterator vi = vertices_begin();
         bool first_vertex = true;
         Bbox_3 bbox( -1.0, -1.0, -1.0, 1.0, 1.0, 1.0);
         for ( ; vi != vertices_end(); ++vi) {
@@ -1433,7 +1475,419 @@ public:
         return bbox;
     }
 
-  
+    std::size_t bytes() {
+      // bytes used for the SNC_structure
+
+      std::size_t result = sizeof(Self);
+      result += number_of_vertices()   * (sizeof(Vertex) 
+					  - sizeof(Point_3));
+      result += number_of_halfedges()  * (sizeof(Halfedge) 
+					  - sizeof(Sphere_point));
+      result += number_of_halffacets() * (sizeof(Halffacet)
+					  - sizeof(Plane_3));
+      result += number_of_volumes()    * sizeof(Volume);
+      result += number_of_shalfedges() * (sizeof(SHalfedge)
+					  - sizeof(Sphere_circle));
+      result += number_of_shalfloops() * sizeof(SHalfloop);
+      result += number_of_sfaces()     * sizeof(SFace);
+
+      Halffacet_iterator hf;
+      CGAL_nef3_forall_halffacets(hf, *this) {
+	Halffacet_cycle_iterator fc;
+	CGAL_nef3_forall_facet_cycles_of(fc, hf)
+	  result += sizeof(*fc) + 2 * sizeof(void*);
+      }
+
+      Volume_iterator c;
+      CGAL_nef3_forall_volumes(c, *this) {
+	Shell_entry_iterator sei;
+	CGAL_nef3_forall_shells_of(sei,c) 
+	  result += sizeof(*sei) + 2 * sizeof(void*);
+      }
+
+      SFace_iterator sf;
+      CGAL_nef3_forall_sfaces(sf, *this) {
+	SFace_cycle_iterator sfc;
+	CGAL_nef3_forall_sface_cycles_of(sfc,sf)
+	  result += sizeof(*sfc) + 2 * sizeof(void*);
+      }
+
+      return result;
+    }
+
+
+    std::size_t bytes_reduced() {
+      // bytes used for the SNC_structure
+
+      std::size_t result = sizeof(Self);
+      result += number_of_vertices()   * (sizeof(Vertex) 
+					  - sizeof(Point_3)
+					  - sizeof(SHalfloop_iterator)
+					  - 2 * sizeof(Mark)
+					  - sizeof(void*));
+      result += number_of_halfedges()  * (sizeof(Halfedge) 
+					  - sizeof(SHalfedge_handle)
+					  - sizeof(SFace_handle)
+					  - sizeof(void*)
+					  - sizeof(Sphere_point));
+      result += number_of_halffacets() * (sizeof(Halffacet)
+					  - sizeof(Plane_3));
+      result += number_of_volumes()    * sizeof(Volume);
+      result += number_of_shalfedges() * (sizeof(SHalfedge)
+					  - sizeof(SVertex_handle)
+					  - 3 * sizeof(SHalfedge_handle)
+					  - sizeof(SFace_handle)
+					  - sizeof(void*)
+					  - sizeof(Mark)
+					  - sizeof(Sphere_circle));
+      result += number_of_sfaces()     * (sizeof(SFace)
+					  - sizeof(void*)
+					  - sizeof(Mark)
+					  - sizeof(Object_list));
+
+      Halffacet_iterator hf;
+      CGAL_nef3_forall_halffacets(hf, *this) {
+	Halffacet_cycle_iterator fc;
+	CGAL_nef3_forall_facet_cycles_of(fc, hf)
+	  result += sizeof(*fc) + 2 * sizeof(void*);
+      }
+
+      Volume_iterator c;
+      CGAL_nef3_forall_volumes(c, *this) {
+	Shell_entry_iterator sei;
+	CGAL_nef3_forall_shells_of(sei,c) 
+	  result += sizeof(*sei) + 2 * sizeof(void*);
+      }
+
+      return result;
+    }
+
+    std::size_t bytes_reduced2() {
+      // bytes used for the SNC_structure
+
+      std::size_t result = sizeof(Self);
+      result += number_of_vertices()   * (sizeof(Mark) 
+					  + sizeof(SNC_structure*)
+					  + sizeof(Object_list)
+					  + 2 * sizeof(SFace_handle));
+      result += number_of_halfedges()  * (sizeof(Vertex_handle)
+					  + sizeof(SVertex_handle)
+					  + sizeof(Mark)
+					  + 2 * sizeof(Object_handle));
+      result += number_of_halffacets() * (sizeof(Halffacet)
+					  - sizeof(Plane_3));
+      result += number_of_volumes()    * sizeof(Volume);
+      result += number_of_shalfedges() * (2 * sizeof(SHalfedge_handle)
+					  + sizeof(Halffacet_handle));
+      result += number_of_shalfloops() * sizeof(SHalfloop);
+      result += number_of_sfaces()     * (sizeof(Vertex_handle)
+					  + sizeof(Volume_handle));
+
+      Halffacet_iterator hf;
+      CGAL_nef3_forall_halffacets(hf, *this) {
+	Halffacet_cycle_iterator fc;
+	CGAL_nef3_forall_facet_cycles_of(fc, hf)
+	  result += sizeof(*fc) + 2 * sizeof(void*);
+      }
+
+      Volume_iterator c;
+      CGAL_nef3_forall_volumes(c, *this) {
+	Shell_entry_iterator sei;
+	CGAL_nef3_forall_shells_of(sei,c) 
+	  result += sizeof(*sei) + 2 * sizeof(void*);
+      }
+
+      return result;
+    }
+
+    bool test_string(std::string s, std::ifstream& in) {
+      std::string s2;
+      in >> s2;
+      return (s==s2);
+    }
+
+    bool load(std::ifstream& in) {
+
+      int i;
+      char cc;
+      bool OK = true;
+      OK = OK && test_string("Selective", in);
+      OK = OK && test_string("Nef", in);
+      OK = OK && test_string("Complex", in);
+
+      int v;
+      OK = OK && test_string("vertices", in);
+      in >> v;
+      Vertex_handle* V = new Vertex_handle[v];
+      for(i = 0; i < v; i++)
+	V[i] = new_vertex_only();
+
+      int e;
+      OK = OK && test_string("halfedges", in);
+      in >> e;
+      Halfedge_handle* E = new Halfedge_handle[e];
+      for(i = 0; i < e; i++)
+	E[i] = new_halfedge_only();
+
+      int f;
+      OK = OK && test_string("facets", in);
+      in >> f;
+      Halffacet_handle* F = new Halffacet_handle[f];
+      for(i = 0; i < f; i++)
+	F[i] = new_halffacet_only();
+
+      int c;
+      OK = OK && test_string("volumes", in);
+      in >> c;
+      Volume_handle* C = new Volume_handle[c];
+      for(i = 0; i < c; i++)
+	C[i] = new_volume_only();
+
+      int se;
+      OK = OK && test_string("shalfedges", in);
+      in >> se;
+      SHalfedge_handle* SE = new SHalfedge_handle[se];
+      for(i = 0; i < se; i++)
+	SE[i] = new_shalfedge_only();
+      
+      int sl;
+      OK = OK && test_string("shalfloops", in);
+      in >> sl;
+      SHalfloop_handle* SL = new SHalfloop_handle[sl];
+      for(i = 0; i < sl; i++)
+	SL[i] = new_shalfloop_only();
+
+      int sf;
+      OK = OK && test_string("sfaces", in);
+      in >> sf;
+      SFace_handle* SF = new SFace_handle[sf];
+      for(i = 0; i < sf; i++)
+	SF[i] = new_sface_only();
+
+      int index;
+      RT hx, hy, hz, hw;
+      for(i = 0; i < v; i++) {
+	in >> index;
+	OK = OK && (index == i);
+	OK = OK && test_string("{",in);
+	Vertex_handle vh = V[i];
+	vh->sncp_ = this;
+
+	in >> index;
+	vh->svertices_begin_ = (index >= 0 ? E[index] : svertices_end());
+	in >> index;
+	vh->svertices_last_  = index >= 0 ? E[index] : svertices_end();
+	OK = OK && test_string(",",in);
+	in >> index;
+	vh->shalfedges_begin_ = index >= 0 ? SE[index] : shalfedges_end();
+	in >> index;
+	vh->shalfedges_last_  = index >= 0 ? SE[index] : shalfedges_end();
+	OK = OK && test_string(",",in);
+	in >> index;
+	vh->sfaces_begin_ = index >= 0 ? SF[index] : sfaces_end();
+	in >> index;
+	vh->sfaces_last_  = index >= 0 ? SF[index] : sfaces_end();
+	OK = OK && test_string(",",in);
+	in >> index;
+	vh->shalfloop_ = index >= 0 ? SL[index] : shalfloops_end();
+	OK = OK && test_string("|",in);
+	in >> hx >> hy >> hz >> hw;
+	vh->point_at_center_ = Point_3(hx, hy, hz, hw);
+	OK = OK && test_string("}",in);
+	in >> vh->mark_;
+      }
+
+      for(i = 0; i < e; i++) {
+	in >> index;
+	OK = OK && (index == i);
+	OK = OK && test_string("{",in);
+	Halfedge_handle eh = E[i];
+	
+	in >> index;
+	eh->twin_ = E[index];
+	OK = OK && test_string(",",in);
+        in >> index;
+	eh->center_vertex_ = V[index];
+	OK = OK && test_string(",",in);
+	in >> index;
+	if(index == 0) {
+	  in >> index;
+	  eh->out_sedge_ = SE[index];
+	} else { 
+	  in >> index;
+	  eh->incident_sface_ = SF[index];
+	}
+	OK = OK && test_string("|",in);
+	in >> hx >> hy >> hz >> hw;
+	eh->point_on_surface_ = Sphere_point(hx,hy,hz);
+	OK = OK && test_string("}",in);
+	in >> eh->mark_;
+      }
+      
+      for(i = 0; i < f; i++) {
+	in >> index;
+	OK = OK && (index == i);
+	OK = OK && test_string("{",in);
+	Halffacet_handle fh = F[i];
+      
+	in >> index;
+	fh->twin_ = F[index];
+	OK = OK && test_string(",",in);
+
+	in >> cc;
+	while(isdigit(cc)) {
+	  in.putback(cc);
+	  in >> index;
+	  fh->boundary_entry_objects_.push_back(SE[index]);
+	  in >> cc;
+	}
+	
+	in >> cc;
+	while(isdigit(cc)) {
+	  in.putback(cc);
+	  in >> index;
+	  fh->boundary_entry_objects_.push_back(SL[index]);
+	  in >> cc;
+	}
+
+	in >> index;
+	fh->volume_ = C[index];
+	OK = OK && test_string("|",in);
+	in >> hx >> hy >> hz >> hw;
+	fh->supporting_plane_ = Plane_3(hx,hy,hz,hw);
+	OK = OK && test_string("}",in);
+	in >> fh->mark_;
+      }
+
+      for(i = 0; i < c; i++) {
+	in >> index;
+	OK = OK && (index == i);
+	OK = OK && test_string("{",in);
+	Volume_handle ch = C[i];
+
+	in >> cc;
+	while(isdigit(cc)) {
+	  in.putback(cc);
+	  in >> index;
+	  ch->shell_entry_objects_.push_back(SF[index]);
+	  in >> cc;
+	}
+	in >> ch->mark_;
+      }	
+
+      for(i = 0; i < se; i++) {
+	in >> index;
+	OK = OK && (index == i);
+	OK = OK && test_string("{",in);
+	SHalfedge_handle seh = SE[i];
+	
+	in >> index;
+	seh->twin_ = SE[index];
+	OK = OK && test_string(",",in);
+	in >> index;
+	seh->sprev_ = SE[index];
+	OK = OK && test_string(",",in);
+	in >> index;
+	seh->snext_ = SE[index];
+	OK = OK && test_string(",",in);
+	in >> index;
+	seh->source_ = E[index];
+	OK = OK && test_string(",",in);
+	in >> index;
+	seh->incident_sface_ = SF[index];
+	OK = OK && test_string(",",in);
+	in >> index;
+	seh->prev_ = SE[index];
+	OK = OK && test_string(",",in);
+	in >> index;
+	seh->next_ = SE[index];
+	OK = OK && test_string(",",in);
+	in >> index;
+	seh->incident_facet_ = F[index];
+	OK = OK && test_string("|",in);
+	in >> hx >> hy >> hz >> hw;
+	seh->circle_ = Sphere_circle(Plane_3(hx,hy,hz,hw));
+	OK = OK && test_string("}",in);
+	in >> seh->mark_;
+      }
+
+      for(i = 0; i < sl; i++) {
+	in >> index;
+	OK = OK && (index == i);
+	OK = OK && test_string("{",in);
+	SHalfloop_handle slh = SL[i];
+	
+	in >> index;
+	slh->twin_ = SL[index];
+	OK = OK && test_string(",",in);
+	in >> index;
+	slh->incident_sface_ = SF[index];
+	OK = OK && test_string(",",in);
+	in >> index;
+	slh->incident_facet_ = F[index];
+	OK = OK && test_string("|",in);	
+	in >> hx >> hy >> hz >> hw;
+	slh->circle_ = Sphere_circle(Plane_3(hx,hy,hz,hw));	
+	OK = OK && test_string("}",in);	
+	in >> slh->mark_;
+      }
+
+      for(i = 0; i < sf; i++) {
+	in >> index;
+	OK = OK && (index == i);
+	OK = OK && test_string("{",in);
+	SFace_handle sfh = SF[i];
+	
+	in >> index;
+	sfh->center_vertex_ = V[index];
+	OK = OK && test_string(",",in);
+
+	in >> cc;
+	while(isdigit(cc)) {
+	  in.putback(cc);
+	  in >> index;
+	  sfh->boundary_entry_objects_.push_back(SE[index]);
+	  in >> cc;
+	}
+
+	in >> cc;
+	while(isdigit(cc)) {
+	  in.putback(cc);
+	  in >> index;
+	  sfh->boundary_entry_objects_.push_back(E[index]);
+	  in >> cc;
+	}
+
+	in >> cc;
+	while(isdigit(cc)) {
+	  in.putback(cc);
+	  in >> index;
+	  sfh->boundary_entry_objects_.push_back(SL[index]);
+	  in >> cc;
+	}
+
+	in >> index;
+	sfh->incident_volume_ = C[index];
+	OK = OK && test_string("}",in);	
+	in >> sfh->mark_;
+      }
+
+      for(i = 0; i<v; i++) {
+	SM_point_locator PL(V[i]);
+	PL.init_marks_of_halfspheres(); 
+      }
+
+      delete[] V;
+      delete[] E;
+      delete[] F;
+      delete[] C;
+      delete[] SE;
+      delete[] SL;
+      delete[] SF;
+
+      return OK;
+    }
+
 protected:
   void pointer_update(const Self& D);
   static Object_iterator              undef_;

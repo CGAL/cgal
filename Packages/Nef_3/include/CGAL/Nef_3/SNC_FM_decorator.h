@@ -342,11 +342,19 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
      directed from lexicographically smaller to larger vertices.  */
 
   for ( ; start != end; ++start ) {
-    if ( CGAL::assign(e,*start) ) 
-    { SHalfedges.push_back(e); TRACEN("  appending "<<debug(e));
-      Segments.push_back(segment(e)); From[--Segments.end()] = e; }
+    if ( CGAL::assign(e,*start) ) {
+      SHalfedges.push_back(e); 
+      TRACEN("  appending edge "<< debug(e));
+      if(compare_xy(point(source(e)),point(target(e))) < 0) {
+	Segments.push_front(segment(e)); From[Segments.begin()] = e; 
+      } 
+      else {
+	Segments.push_back(segment(e)); From[--Segments.end()] = e; 
+      }
+    }
     else if ( CGAL::assign(l,*start) ) 
-    { SHalfloops.push_back(l); Segments.push_back(segment(l)); }
+    { SHalfloops.push_back(l); TRACEN("  appending loop " << point(vertex(l))); 
+      Segments.push_back(segment(l)); }
     else CGAL_nef3_assertion_msg(0,"Damn wrong handle.");
   }
 
@@ -355,12 +363,25 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
   Halffacet_sweep FS(Halffacet_sweep::INPUT(
     Segments.begin(),Segments.end()), O, G); FS.sweep();
 
+  CGAL_nef3_forall_iterators(eit,SHalfedges) { 
+    e=*eit;
+    SHalfedge_handle e_below = Edge_of[geninfo<unsigned>::access(info(vertex(e)))];
+    TRACE(debug(e) << " has edge below ");
+    if(e_below != SHalfedge_handle())
+      TRACE(debug(e_below));
+    TRACEN("");
+  }
+  
+  CGAL_nef3_forall_iterators(lit,SHalfloops) { 
+    l=*lit;
+    SHalfedge_handle e_below = Edge_of[geninfo<unsigned>::access(info(vertex(l)))];  
+    TRACEN(point(vertex(l)) << " has edge below " << debug(e_below));
+  }
+  
   /* We iterate all shalfedges and assign a number for each facet
      cycle.  After that iteration for an edge |e| the number of its
      facet cycle is |FacetCycle[e]| and for a facet cycle |c| we know
      |MinimalEdge[c]|. */
-
-
 
   int i=0; 
   CGAL_nef3_forall_iterators(eit,SHalfedges) { e = *eit;
@@ -419,14 +440,22 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
     Halffacet_handle f = determine_facet(e,MinimalEdge,FacetCycle,Edge_of);
     link_as_facet_cycle(e,f); link_as_facet_cycle(twin(e),twin(f));
   }
+
   CGAL_nef3_forall_iterators(lit,SHalfloops) { l=*lit;
     SHalfedge_handle e_below = 
       Edge_of[geninfo<unsigned>::access(info(vertex(l)))];
-    TRACEN("vertex "<<&*vertex(l));
+    
+    TRACEN("link sloop at vertex "<< point(vertex(l)));
+    TRACEN("e_below "  << debug(e_below));
+    TRACEN("next    "  << debug(next(e_below)));
+    TRACEN("next    "  << debug(next(next(e_below))));
+    TRACEN("next    "  << debug(next(next(next(e_below)))));
+    TRACEN("next    "  << debug(next(next(next(next(e_below))))));
     CGAL_nef3_assertion( e_below != SHalfedge_handle() );
     link_as_interior_loop(l,facet(e_below));
     link_as_interior_loop(twin(l),twin(facet(e_below)));
   }
+  
   TRACEN("exit FM");
 }
 

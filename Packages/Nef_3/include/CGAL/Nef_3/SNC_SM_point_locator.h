@@ -32,6 +32,7 @@
 #include <CGAL/Nef_2/geninfo.h>
 #include <CGAL/Nef_2/Object_handle.h>
 #include <CGAL/Nef_3/SNC_SM_decorator.h>
+#include <CGAL/Nef_3/Normalizing.h>
 #undef _DEBUG
 #define _DEBUG 47
 #include <CGAL/Nef_3/debug.h>
@@ -139,16 +140,37 @@ public:
     SHalfedge_const_handle e_res = first_out_edge(v);
     Sphere_direction d_res = direction(e_res);
     SHalfedge_around_svertex_const_circulator el(e_res),ee(el);
-    CGAL_For_all(el,ee) {
-      if ( strictly_ordered_ccw_at(p,d_res, direction(el), d) )
-        e_res = el; d_res = direction(e_res);
+    if(direction(el) == d) {
+      collinear = true;
+      TRACEN("  determined "<<PH(e_res) << circle(e_res));
+      return e_res;
     }
-    TRACEN("  determined "<<PH(e_res)<<" "<<d_res);
-    if ( direction(cyclic_adj_succ(e_res)) == d ) {
+    CGAL_For_all(el,ee) {
+      if(direction(cyclic_adj_succ(el)) == d) {
+	collinear = true;
+	TRACEN("  determined "<<PH(cyclic_adj_succ(e_res)) << circle(cyclic_adj_succ(e_res)));
+	return cyclic_adj_succ(e_res);
+      }
+      else {
+	TRACEN("strictly_ordered_ccw " << direction(el) << " ? " << d << " ? " << direction(cyclic_adj_succ(el)));
+	//	if ( strictly_ordered_ccw_at(p,d_res, direction(el), d) ) {
+	if ( strictly_ordered_ccw_at(p,direction(el), d, direction(cyclic_adj_succ(el))) ) {
+	  TRACEN("strictly_ordered_ccw " << direction(el) << " - " << d << " - " << direction(cyclic_adj_succ(el)));
+	  e_res = el; d_res = direction(e_res); break;
+	}
+      }
+    }
+    TRACEN("  determined "<<PH(e_res) << circle(e_res));
+    /*
+    Sphere_direction d2 = direction(cyclic_adj_succ(e_res));
+    d2 = normalized(d2);
+    TRACEN(d2 << " =?= " << d);
+    if (d2 == d ) {
       e_res = cyclic_adj_succ(e_res);
       collinear=true;
     }
     TRACEN("  wedge = "<<PH(e_res)<<" "<<collinear);
+    */
     return e_res;
   }
 
@@ -198,6 +220,8 @@ public:
 	return SObject_handle(e);
       }
     }
+
+    //TODO: next line is probably fase - both loops have to be tested
     if ( has_loop() && circle(shalfloop()).has_on(p) ) {
       TRACEN( "  on loop"); 
       SHalfloop_const_handle l = shalfloop();
@@ -206,7 +230,8 @@ public:
 
     // now in face:
 
-    if ( number_of_svertices() == 0 && ! has_loop() ) {
+    //    if ( number_of_svertices() == 0 && ! has_loop() ) {
+    if(number_of_sfaces() == 1) {
       TRACEN("  on unique face");
       SFace_const_handle f = sfaces_begin();
       return SObject_handle(f);
@@ -226,12 +251,17 @@ public:
 	shalfloop() : twin(shalfloop());
       solution = is_loop_;
       TRACEN("has loop, initial ray "<<s);
+      TRACEN(circle(l_res));
     } else { // has vertices !
       CGAL_nef3_assertion( number_of_svertices()!=0 );
       SVertex_const_handle vt = svertices_begin();
       Sphere_point pvt = point(vt);
-      if ( p != pvt.antipode() ) s = Sphere_segment(p,pvt);
-      else s = Sphere_segment(p,pvt,Sphere_circle(p,pvt));
+      if ( p == pvt.antipode() ) {
+	vt = ++(svertices_begin());
+	pvt = point(vt);
+      }
+      s = Sphere_segment(p,pvt);
+      //     else s = Sphere_segment(p,pvt,Sphere_circle(p,pvt));
       /* to verify if it is necesary to determine exactly the sphere circle
 	 of (p, pvt) segment based on the Halffacet plane information 
 	 when they are antipodal */
@@ -250,6 +280,7 @@ public:
         TRACEN(" location via vertex at "<<vp);
         s = Sphere_segment(p,vp,s.sphere_circle()); // we shrink the segment
         if ( is_isolated(v) ) {
+	  TRACEN("is_vertex_");
           v_res = v; solution = is_vertex_;
         } else { // not isolated
           bool dummy;
@@ -279,7 +310,7 @@ public:
         visited[e] = visited[twin(e)] = true;
 	solution = is_edge_;
         TRACEN("  determined "<<PH(e_res)<<" "<<mark(face(e_res)));
-      }
+       }
     }
 
     switch ( solution ) {
@@ -291,6 +322,7 @@ public:
         return SObject_handle(SFace_const_handle(face(v_res)));
       default: CGAL_nef3_assertion_msg(0,"missing solution.");
     }
+    
     return SObject_handle(); // never reached!
   }
 
@@ -408,13 +440,14 @@ public:
 
 template <typename D>
 void SNC_SM_point_locator<D>::init_marks_of_halfspheres()
-{ TRACEN("init_marks_of_halfspheres");
+{ TRACEN("init_marks_of_halfspheres " << center_vertex()->point());
   Sphere_point y_minus(0,-1,0);
   SObject_handle h = locate(y_minus);
   SFace_const_handle f;
   if ( CGAL::assign(f,h) ) { 
-    TRACEN("on face ");
+    TRACEN("on face " << mark(f));
     mark_of_halfsphere(-1) = mark_of_halfsphere(+1) = mark(f);
+    TRACEN(mark_of_halfsphere(-1) << " " << mark_of_halfsphere(+1));
     return;
   }
 
@@ -427,6 +460,7 @@ void SNC_SM_point_locator<D>::init_marks_of_halfspheres()
     // if ( (op.z() < 0) || (op.z() == 0) && (op.x() > 0) ) e = twin(e);
     mark_of_halfsphere(+1) = mark(face(e));
     mark_of_halfsphere(-1) = mark(face(twin(e)));
+    TRACEN(mark_of_halfsphere(-1) << " " << mark_of_halfsphere(+1));
     return;
   }
 
@@ -435,10 +469,11 @@ void SNC_SM_point_locator<D>::init_marks_of_halfspheres()
     CGAL_nef3_assertion(circle(l).has_on(y_minus));
     Sphere_point op(CGAL::ORIGIN+circle(l).orthogonal_vector());
     TRACEN("on loop "<<op);
-    if ( (op.x() > 0) || (op.x() == 0) && (op.z() < 0) ) l = twin(l);
+    if ( (op.x() > 0) || ((op.x() == 0) && (op.z() < 0)) ) l = twin(l);
     // if ( (op.z() < 0) || (op.z() == 0) && (op.x() > 0) ) l = twin(l);
     mark_of_halfsphere(+1) = mark(face(l));
     mark_of_halfsphere(-1) = mark(face(twin(l)));
+    TRACEN(mark_of_halfsphere(-1) << " " << mark_of_halfsphere(+1));
     return;
   }
 
@@ -448,12 +483,17 @@ void SNC_SM_point_locator<D>::init_marks_of_halfspheres()
   SVertex_const_handle v;
   if ( CGAL::assign(v,h) ) {
     CGAL_nef3_assertion(point(v)==y_minus);
-    e = out_wedge(v,left,collinear); 
-    if ( collinear ) mark_of_halfsphere(+1) = mark(face(twin(e)));
-    else mark_of_halfsphere(+1) = mark(face(e));
-    e = out_wedge(v,right,collinear); 
-    if ( collinear ) mark_of_halfsphere(-1) = mark(face(twin(e)));
-    else mark_of_halfsphere(-1) = mark(face(e));
+    if(is_isolated(v))
+      mark_of_halfsphere(+1) = mark_of_halfsphere(-1) = mark(face(v));
+    else {
+      e = out_wedge(v,left,collinear); 
+      if ( collinear ) mark_of_halfsphere(+1) = mark(face(twin(e)));
+      else mark_of_halfsphere(+1) = mark(face(e));
+      e = out_wedge(v,right,collinear); 
+      if ( collinear ) mark_of_halfsphere(-1) = mark(face(twin(e)));
+      else mark_of_halfsphere(-1) = mark(face(e));
+    }
+    TRACEN(mark_of_halfsphere(-1) << " " << mark_of_halfsphere(+1));
     return;
   }
   /*

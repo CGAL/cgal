@@ -300,9 +300,9 @@ public:
 #endif
 
   /*{\Mcreation 6}*/
-  SNC_SM_triangulator(SNC_Vertex_handle v, Sphere_map& MT,
+  SNC_SM_triangulator(const SNC_SM_explorer& E, Sphere_map& MT,
 		      const Kernel& Kr = Kernel()) : 
-    Base(MT), E_(v), K(Kr) {}
+    Base(MT), E_(E), K(Kr) {}
   /*{\Mcreate |\Mvar| is a triangulator object for the map |M|, stores
      the triangulation in |MT|.}*/
 
