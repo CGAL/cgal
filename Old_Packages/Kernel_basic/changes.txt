@@ -1,3 +1,6 @@
+3.61   (29 October 2001)
+- Submission bug.
+
 3.60   (24 October 2001)
 - New Handle_for_virtual<> and Ref_counted_virtual.
 - Ref_counted is not required anymore.
