@@ -48,37 +48,37 @@ bool do_intersect( const Bitangent_2<D_>& b1, const Bitangent_2<D_>& b2 )
     if (b1.source() == b2.source()) {
 	if (b1.is_right_xx() == b2.is_right_xx()) return false;
 	return ((b1.is_right_xx() && 
-		 leftturn(b1.source(),b1.target(),b2.target())) || 
+		 D_().left_turn_2_object()(b1.source(),b1.target(),b2.target())) || 
 		(b2.is_right_xx() && 
-		 leftturn(b2.source(),b2.target(),b1.target())));
+		 D_().left_turn_2_object()(b2.source(),b2.target(),b1.target())));
     }
     // -------------------------------------------------------------------------
     if (b1.target() == b2.target()) {
 	if (b1.is_xx_right() == b2.is_xx_right()) return false;
 	return ((b1.is_xx_right() && 
-		 leftturn(b1.source(),b1.target(),b2.source())) || 
+		 D_().left_turn_2_object()(b1.source(),b1.target(),b2.source())) || 
 		(b2.is_xx_right() &&
-		 leftturn(b2.source(),b2.target(),b1.source())));
+		 D_().left_turn_2_object()(b2.source(),b2.target(),b1.source())));
     }
     // -------------------------------------------------------------------------
     if (b1.target() == b2.source()) {
 	if (b1.is_xx_right() != b2.is_right_xx()) return false;
 	return ((b1.is_xx_right() && 
-		 leftturn(b1.source(),b1.target(),b2.target())) || 
+		 D_().left_turn_2_object()(b1.source(),b1.target(),b2.target())) || 
 		(b1.is_xx_left()  && 
-		 rightturn(b1.source(),b1.target(),b2.target())));
+		 D_().left_turn_2_object()(b2.target(),b1.target(),b1.source())));
     }
     // -------------------------------------------------------------------------
     if (b1.source() == b2.target()) {
 	if (b1.is_right_xx() != b2.is_xx_right()) return false;
 	return ((b2.is_xx_right() && 
-		 leftturn(b2.source(),b2.target(),b1.target())) || 
+		 D_().left_turn_2_object()(b2.source(),b2.target(),b1.target())) || 
 		(b2.is_xx_left()  && 
-		 rightturn(b2.source(),b2.target(),b1.target())));
+		 D_().left_turn_2_object()(b1.target(),b2.target(),b2.source())));
     }
     // -------------------------------------------------------------------------
-    return do_intersect(Segment_2(b1.source(),b1.target()),
-			Segment_2(b2.source(),b2.target()));
+    return D_().do_intersect_2_object()(Segment_2(b1.source(),b1.target()),
+					Segment_2(b2.source(),b2.target()));
     // -------------------------------------------------------------------------
 }
 // -----------------------------------------------------------------------------
