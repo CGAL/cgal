@@ -76,7 +76,11 @@ public:
 
 				// Default copy constructor and operator =() are fine
 
-// Protected stuff
+// Protected types
+protected:
+				typedef typename OpenNL::LinearSolver<SparseLinearAlgebraTraits_d>		Solver ;
+								
+// Protected operations
 protected:
 				// compute wij = (i,j) coefficient of matrix A for j neighbor vertex of i 
 				virtual	NT  compute_wij(const MeshAdaptor_3& mesh, const Vertex& main_vertex_Vi, Vertex_around_vertex_const_circulator neighbor_vertex_Vj)

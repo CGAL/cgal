@@ -21,8 +21,8 @@ EXTRA_FLAGS = \
 CXXFLAGS = \
            -I../../include \
            -I../../../OpenNL/include \
-           $(TESTSUITE_CXXFLAGS) \
            $(CGAL_CXXFLAGS) \
+           $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            -Iinclude \
            $(LONG_NAME_PROBLEM_CXXFLAGS)
