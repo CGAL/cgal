@@ -1,0 +1,87 @@
+# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
+include $(CGAL_MAKEFILE)
+
+#---------------------------------------------------------------------#
+#                    compiler flags
+#---------------------------------------------------------------------#
+
+CXXFLAGS = \
+	   $(CGAL_CXXFLAGS) \
+           $(LONG_NAME_PROBLEM_CXXFLAGS) \
+           $(DEBUG_OPT) 
+
+#---------------------------------------------------------------------#
+#                    linker flags
+#---------------------------------------------------------------------#
+
+LIBPATH = \
+          $(CGAL_LIBPATH)
+
+LDFLAGS = \
+          $(LONG_NAME_PROBLEM_LDFLAGS) \
+          $(CGAL_QT_LDFLAGS) opengl32.lib
+
+#---------------------------------------------------------------------#
+#                    target entries
+#---------------------------------------------------------------------#
+
+all: 	subdivision$(EXE_EXT)
+
+
+Arcball$(OBJ_EXT): Arcball.cpp
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Arcball.cpp
+Camera$(OBJ_EXT): Camera.cpp
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Camera.cpp
+Matrix44$(OBJ_EXT): Matrix44.cpp
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Matrix44.cpp
+Quaternion$(OBJ_EXT): Quaternion.cpp
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Quaternion.cpp
+Vector2d$(OBJ_EXT): Vector2d.cpp
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Vector2d.cpp
+Vector3d$(OBJ_EXT): Vector3d.cpp
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Vector3d.cpp
+Viewport$(OBJ_EXT): Viewport.cpp
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Viewport.cpp
+glview.moc: glview.h
+	$(QT_MOC) -o glview.moc glview.h
+glview$(OBJ_EXT): glview.cpp glview.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) glview.cpp
+tool.moc: tool.h
+	$(QT_MOC) -o tool.moc tool.h
+tool$(OBJ_EXT): tool.cpp tool.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) tool.cpp
+tooldoc.moc: tooldoc.h
+	$(QT_MOC) -o tooldoc.moc tooldoc.h
+tooldoc$(OBJ_EXT): tooldoc.cpp tooldoc.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) tooldoc.cpp
+toolview.moc: toolview.h
+	$(QT_MOC) -o toolview.moc toolview.h
+toolview$(OBJ_EXT): toolview.cpp toolview.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) toolview.cpp
+main$(OBJ_EXT): main.cpp
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) main.cpp
+
+
+subdivision$(EXE_EXT): Arcball$(OBJ_EXT) Camera$(OBJ_EXT) Matrix44$(OBJ_EXT) \
+		Quaternion$(OBJ_EXT) Vector2d$(OBJ_EXT) Vector3d$(OBJ_EXT) \
+		Viewport$(OBJ_EXT) glview$(OBJ_EXT) tool$(OBJ_EXT) \
+		tooldoc$(OBJ_EXT) toolview$(OBJ_EXT) main$(OBJ_EXT)
+		$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)subdivision main$(OBJ_EXT)\
+		Arcball$(OBJ_EXT) Camera$(OBJ_EXT) Matrix44$(OBJ_EXT) \
+		Quaternion$(OBJ_EXT) Vector2d$(OBJ_EXT) Vector3d$(OBJ_EXT) \
+		Viewport$(OBJ_EXT) glview$(OBJ_EXT) tool$(OBJ_EXT) \
+		tooldoc$(OBJ_EXT) toolview$(OBJ_EXT) \
+		$(LDFLAGS)
+
+clean:
+	rm -rf *.moc *$(OBJ_EXT)
+
+#---------------------------------------------------------------------#
+#                    suffix rules
+#---------------------------------------------------------------------#
+
+.cpp$(OBJ_EXT):
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
+
+
+
