@@ -15,42 +15,45 @@
 % +========================================================================+
 %   Planar Map
 % +========================================================================+
-\begin{ccRefClass}{Sweep_line_2<CurveInputIterator, SweepLineTraits_2>}
-\label{SL_sec:sl}
+\begin{ccRefClass}{Sweep_2<CurveInputIterator, SweepLineTraits_2>}
+\label{SL_sec:sl2}
     
 \ccDefinition
-    \ccStyle{Sweep_line_2} is a utility class that calculates 
+    \ccStyle{Sweep_2} is a utility class that calculates 
     intersection
     points between given curves. The following operationas are supported:
 
 \begin{itemize}
 \item calculate the intersection points between the curves.
 \item calculate the interior-disjoint segments induced by $C$.
-\item calculate the intersection points and return a list of curves 
-participating at each intersection point.
 \item query for the existance of an intersection point between any two curves.
 \end{itemize}
 
-The \ccStyle{Sweep_line_2} class is implemented in such a way that no
+The \ccStyle{Sweep_2} class is implemented in such a way that no
 assumptions are made regarding the given curves. For example, the curves may
 be overlapping or vertical. There is also no assumtion that the curves are
 x-monotone.
 
-The \ccStyle{Sweep_line_2} is parametrized by two parameters. The input 
-iterator and  the traits parameter. The 
-\ccStyle{CurveInputIterator::type_value} is equivalent to 
+The \ccStyle{Sweep_2} is parametrized with four parameters. 
+\begin{itemize}
+\item CurveInputIterator - an iterator to a container which holds the input 
+      curves.
+\item \ccStyle{SweepLineTraits_2} - a traits class. Note that the 
+      \ccStyle{CurveInputIterator::type_value} is equivalent to 
 \ccStyle{Traits::Curve_2}.
+\end{itemize}
 
-\ccInclude{CGAL/Sweep_line_2.h}
+
+\ccInclude{CGAL/Sweep_2.h}
 
 \ccCreation
   \ccCreationVariable{sweepLine}
     
-  \ccConstructor{Sweep_line_2<CurveInputIterator, SweepLineTraits_2>();} 
-   {constructs an instance of the \ccStyle{Sweep_line_2} class.}
+  \ccConstructor{Sweep_2<CurveInputIterator, SweepLineTraits_2>();} 
+   {constructs an instance of the \ccStyle{Sweep_2} class.}
     
-  \ccConstructor{Sweep_line_2<CurveInputIterator, SweepLineTraits_2>(SweepLineTraits_2 *traits);}
-   {constructs an instance of the \ccStyle{Sweep_line_2} class.}
+  \ccConstructor{Sweep_2<CurveInputIterator, SweepLineTraits_2>(SweepLineTraits_2 *traits);}
+   {constructs an instance of the \ccStyle{Sweep_2} class given the specified traits.}
     
 
 \ccTypes

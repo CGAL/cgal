@@ -7,7 +7,7 @@ Given a collection $C$ of possibly intersecting
 We stress this fact because some implementation, such as, 
 \ccc{Planar_map_2<Dcel,Traits>} assume all curves are $x$-monotone 
 in order to gain simplicity and speed.}) 
-curves in a plane, the \ccStyle{Sweep_line_2} class provides the following 
+curves in a plane, the \ccStyle{Sweep_2} class provides the following 
 operations that can be performed on $C$:
 
 \begin{itemize}
@@ -19,7 +19,7 @@ participating at each intersection point.
 \end{itemize}
 
 
-The \ccStyle{Sweep_line_2} implementation supports not only line segments 
+The \ccStyle{Sweep_2} implementation supports not only line segments 
 but also 
 general curves. Hence users may define their own geometry and by providing a 
 suitable {\em Traits} class they can gain all sweep line functionality. 
@@ -29,10 +29,10 @@ vertical curves, tangency between two different curves and overlapping curves.
  
 % Put examples here
 
-\section{Example using \ccStyle{Sweep_Line_2}}
+\section{Example using \ccStyle{Sweep_2}}
 \label{ssec:example1_sweep}
 The following example demonstrates the usage of the 
-\ccc {Sweep_line_2} algorithm to find all subcurves created by 
+\ccc {Sweep_2} algorithm to find all subcurves created by 
 intersecting a set of curves.
 
 The input is a set of curves $(10,1)-(20,1)$, $(10,-4)-(20,6)$,
@@ -40,11 +40,11 @@ $(12,-4)-(12,3)$, $(20,6)-(20,1)$. These curves intersect at 3
 interior points ont he curves and 2 end points. A total of 10 
 segments are calculated after intersecting the curves.
 
-% \ccIncludeExampleCode{Sweep_line_2/example1.C}
+\ccIncludeExampleCode{Sweep_line_2/example7.C}
 
 The output of the program looks like this:
 
-\ccIncludeExampleCode{Sweep_line_2/example1.cout}
+\ccIncludeExampleCode{Sweep_line_2/example7.cout}
 
 % EOF ------------------------------------------------------------------------80
 
