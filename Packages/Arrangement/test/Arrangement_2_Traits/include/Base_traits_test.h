@@ -44,7 +44,7 @@ protected:
   bool point_to_lr_wrapper( std::istringstream & strLine,
                             std::string & strCommand );
   bool is_x_monotone_wrapper( std::istringstream& strLine );
-  virtual bool curve_make_x_monotone_wrapper( std::istringstream& strLine ) = 0;
+  virtual bool curve_make_x_monotone_wrapper(std::istringstream & strLine) = 0;
   virtual bool curve_split_wrapper( std::istringstream& strLine ) = 0;
 
   bool point_reflect_in_x_and_y_wrapper(std::istringstream& strLine);

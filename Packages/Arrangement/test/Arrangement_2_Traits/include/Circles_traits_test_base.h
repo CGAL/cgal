@@ -63,7 +63,8 @@ protected:
 
       if ( ! is_x_monotone ) {
 	x_monotone_parts.clear();
-	tr.curve_make_x_monotone(cit->cv, x_monotone_parts);
+	tr.curve_make_x_monotone(cit->cv,
+                                 std::back_inserter(x_monotone_parts));
       
 	if (x_monotone_parts.size() != cit->x_monotone_num) {
 	  std::cout << "  cut into wrong number of parts." << std::endl;

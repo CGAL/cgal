@@ -423,20 +423,23 @@ public:
     return cv.is_x_monotone();
   }
 
-  void curve_make_x_monotone(const Curve_2 & cv,
-                             std::list<X_monotone_curve_2>& l) const
+  /*! Cut the given curve into x-monotone subcurves and inserts them to the
+   * given output iterator. The order in which they are inserted defines their
+   * order in the hierarchy tree.
+   * \param cv the input curve
+   * \param o the output iterator
+   * \return the past-the-end iterator
+   */
+  template<class OutputIterator>
+  OutputIterator curve_make_x_monotone(const Curve_2 & cv,
+                                       OutputIterator o) const
   {
-    // Require:
-//    CGAL_precondition( ! is_x_monotone(cv) );
-
-    if (is_x_monotone(cv))
-    {
-      l.clear();
-      l.push_back(X_curve(cv));
-      return;
+    if (is_x_monotone(cv)) {
+      *o++ = cv;
+      return o;
     } 
 
-    bool   switch_orientation  = false;
+    bool switch_orientation = false;
     
     // is cv a closed circle ?
     if (cv.s==cv.t) {
@@ -453,10 +456,10 @@ public:
 				  cv.circle().orientation());
 
       Curve_2 top_arc(circ, src, trg);
-      l.push_back(top_arc);
+      *o++ = top_arc;
 
       Curve_2 bottom_arc(circ, trg, src);
-      l.push_back(bottom_arc);
+      *o++ = bottom_arc;
     }
     else { 
       //if we get a curve that is not a closed circle - for completeness
@@ -466,11 +469,11 @@ public:
       // MSVC doesn't like the copy constructor:
       // const Point_2 &center(cv.circle().center());
       const Point_2 & center = cv.circle().center();
-      Point_2  mid1, mid2;
-      NT     sq_radius(cv.c.squared_radius());
-      Curve_2  work_cv;
-      bool   two_cuts            = false,
-             left_cut_is_first   = false;
+      Point_2 mid1, mid2;
+      NT sq_radius(cv.c.squared_radius());
+      Curve_2 work_cv;
+      bool two_cuts = false,
+        left_cut_is_first = false;
       
       // for simplicity work on CCW curve
       if (cv.c.orientation() == CLOCKWISE) {
@@ -534,54 +537,56 @@ public:
       }
 
       // Third, we build the split curves
-      l.push_back(Curve_2(work_cv.circle(), src, mid1));
+      *o++ = (switch_orientation) ?
+        curve_opposite(Curve_2(work_cv.circle(), src, mid1)) :
+        Curve_2(work_cv.circle(), src, mid1);
       if ( two_cuts ) {
-	l.push_back(Curve_2(work_cv.circle(), mid1, mid2));
-	l.push_back(Curve_2(work_cv.circle(), mid2, trg));
+        if (switch_orientation) {
+          *o++ = curve_opposite(Curve_2(work_cv.circle(), mid1, mid2));
+          *o++ = curve_opposite(Curve_2(work_cv.circle(), mid2, trg));
+        } else {
+          *o++ = Curve_2(work_cv.circle(), mid1, mid2);
+          *o++ = Curve_2(work_cv.circle(), mid2, trg);
+        }
       }
       else {
-	l.push_back(Curve_2(work_cv.circle(), mid1, trg));
+	*o++ = (switch_orientation) ?
+          curve_opposite(Curve_2(work_cv.circle(), mid1, trg)) :
+          Curve_2(work_cv.circle(), mid1, trg);
       }
-
-      // If we switched the orientation, we have to switch back
-      if ( switch_orientation ) {
-	for (typename std::list<Curve_2>::iterator lit = l.begin(); 
-	     lit != l.end(); 
-	     lit++) {
- 	  *lit = curve_opposite(*lit);
-	}
-      } 
     }
 
     // Ensure:
     // There are indeed 2 or 3 split points
-    CGAL_postcondition(l.size() >= 2 && l.size() <= 3);
+    // CGAL_postcondition(l.size() >= 2 && l.size() <= 3);
     // The orientations of the split curves are the same as of cv
-    CGAL_postcondition_code(
-			    if ( switch_orientation ) l.reverse();
-			    Orientation cv_or = cv.circle().orientation();
-			    typename std::list<Curve_2>::iterator lit;
-			    typename std::list<Curve_2>::iterator next_it; );
+    // CGAL_postcondition_code(
+    // if ( switch_orientation ) l.reverse();
+    // Orientation cv_or = cv.circle().orientation();
+    // typename std::list<Curve_2>::iterator lit;
+    // typename std::list<Curve_2>::iterator next_it; );
     // Check consistency of end points
-    CGAL_postcondition( l.begin()->source() == cv.source() );
-    CGAL_postcondition_code( lit = l.end(); lit--; );
-    CGAL_postcondition( lit->target() == cv.target() );
+    // CGAL_postcondition( l.begin()->source() == cv.source() );
+    // CGAL_postcondition_code( lit = l.end(); lit--; );
+    // CGAL_postcondition( lit->target() == cv.target() );
 
-    CGAL_postcondition_code(//for all x-monotone parts
-			    for(lit = l.begin();
-				lit != l.end();
-				lit++) {
-			      next_it = lit; next_it++;  );
+    // CGAL_postcondition_code(//for all x-monotone parts
+    // for(lit = l.begin();
+    // lit != l.end();
+    // lit++) {
+    // next_it = lit; next_it++;  );
 
-    CGAL_postcondition( lit->circle().orientation()  == cv_or );
+    // CGAL_postcondition( lit->circle().orientation()  == cv_or );
     // Consistency of split points
-    CGAL_postcondition( next_it == l.end() || 
-			lit->target() == next_it->source() );
+    // CGAL_postcondition( next_it == l.end() || 
+    // lit->target() == next_it->source() );
     // Split points are on circle
-    CGAL_postcondition( cv.circle().has_on_boundary(lit->target()) );
+    // CGAL_postcondition( cv.circle().has_on_boundary(lit->target()) );
     // parts are indeed x-monotone
-    CGAL_postcondition( is_x_monotone(*lit) );
-    CGAL_postcondition_code( } ); // end of for
+    // CGAL_postcondition( is_x_monotone(*lit) );
+    // CGAL_postcondition_code( } ); // end of for
+
+    return o;
   }
 
     

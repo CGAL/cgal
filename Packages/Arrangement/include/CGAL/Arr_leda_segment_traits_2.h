@@ -66,13 +66,23 @@ public:
   typedef Curve_2                               Curve;
 
 public:
+  //! segments are x_monotone
   bool is_x_monotone(const Curve_2 & cv) {return true;}
-  //segments are x_monotone:
-  void curve_make_x_monotone(const Curve_2 & cv,
-                             std::list<X_monotone_curve_2>& l) const
+
+  /*! curve_make_x_monotone() cuts the given curve into x-monotone subcurves
+   * and inserts them to the given output iterator. The order in which they
+   * are inserted defines their order in the hierarchy tree.
+   * While segments are x_monotone, still need to pass them out.
+   * \param cv the input curve
+   * \param o the output iterator
+   * \return the past-the-end iterator
+   */
+  template<class OutputIterator>
+  OutputIterator curve_make_x_monotone(const Curve_2 & cv,
+                                       OutputIterator o) const
   {
-    l.clear();
-    l.push_back(cv);
+    *o++ = cv;
+    return o;
   } 
 
   X_monotone_curve_2 curve_opposite(const X_monotone_curve_2 & cv) const

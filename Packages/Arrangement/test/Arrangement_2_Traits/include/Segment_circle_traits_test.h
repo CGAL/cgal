@@ -135,7 +135,8 @@ curve_make_x_monotone_wrapper (std::istringstream& str_line)
   // Make x-monotone !
   std::list<X_curve> x_curves;
 
-  tr.curve_make_x_monotone (all_curves_vec[cv_index], x_curves);
+  tr.curve_make_x_monotone (all_curves_vec[cv_index],
+                            std::back_inserter(x_curves));
 
   int           n_act_curves = static_cast<int>(x_curves.size()); 
   if (n_act_curves == n_exp_curves)

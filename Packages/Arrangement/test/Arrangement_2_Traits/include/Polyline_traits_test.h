@@ -76,7 +76,7 @@ curve_make_x_monotone_wrapper( std::istringstream & strLine )
   typename std::list<X_curve>::iterator it;
   strLine >> index >> exp_number;
   
-  tr.curve_make_x_monotone( all_curves_vec[index], l );
+  tr.curve_make_x_monotone( all_curves_vec[index], std::back_inserter(l) );
   real_number = l.size();
   it = l.begin();
   Point prev_target_point = *( it->begin() );                   

@@ -443,15 +443,19 @@ public:
     return (true);
   }
   
-  /*! Cut the given curve into x-monotone subcurves and stores them in the
-   * given list. While segments are x_monotone, still need to cast their type.
-   * \param cv The curve.
-   * \param x_curves A list of the output x-monotone sub-curves.
+  /*! Cut the given curve into x-monotone subcurves and insert them to the
+   * given output iterator. While segments are x_monotone, still need to pass
+   * them out.
+   * \param cv the curve.
+   * \param o the output iterator
+   * \return the past-the-end iterator
    */
-  void curve_make_x_monotone(const Curve_2& cv, std::list<Curve_2>& l) const
+  template<class OutputIterator>
+  OutputIterator curve_make_x_monotone(const Curve_2& cv,
+                                       OutputIterator o) const
   {
-    l.clear();
-    l.push_back(cv);
+    *o++ = cv;
+    return o;
   } 
 
   /*!

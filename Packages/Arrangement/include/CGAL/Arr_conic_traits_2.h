@@ -561,15 +561,16 @@ class Arr_conic_traits_2
     return (curve.is_x_monotone());
   }
 
-  // Cut the curve to several x-monotone sub-curves.
-  void curve_make_x_monotone (const Curve_2& curve, 
-                              std::list<X_monotone_curve_2>& x_curves) const
+  /*! Cut the given curve into x-monotone subcurves and inserts them to the
+   * given output iterator. 
+   * \param cv the input curve
+   * \param o the output iterator
+   * \return the past-the-end iterator
+   */
+  template<class OutputIterator>
+  OutputIterator curve_make_x_monotone (const Curve_2& curve, 
+                                        OutputIterator o) const
   {
-    CGAL_precondition(!is_x_monotone(curve));
-
-    // Clear the output list.
-    x_curves.clear();
-
     // Find the points of vertical tangency and act accordingly.
     int    n;
     Point_2  ps[2];
@@ -586,8 +587,8 @@ class Arr_conic_traits_2
 
       // In case the curve is a full conic, split it to two x-monotone curves,
       // one going from ps[0] to ps[1], and the other from ps[1] to ps[0].
-      x_curves.push_back (X_monotone_curve_2 (curve, ps[0], ps[1], false));
-      x_curves.push_back (X_monotone_curve_2 (curve, ps[1], ps[0], false));
+      *o++ = X_monotone_curve_2 (curve, ps[0], ps[1], false);
+      *o++ = X_monotone_curve_2 (curve, ps[1], ps[0], false);
     }
     else
     {
@@ -603,8 +604,8 @@ class Arr_conic_traits_2
 	              sub_curve1, sub_curve2, 
                       ps[0]);
 
-	x_curves.push_back(sub_curve1);
-	x_curves.push_back(sub_curve2);
+	*o++ = sub_curve1;
+	*o++ = sub_curve2;
       }
       else if (n == 2)
       {
@@ -640,9 +641,9 @@ class Arr_conic_traits_2
 	  CGAL_assertion(false);
 	}
 
-	x_curves.push_back(sub_curve1);
-	x_curves.push_back(sub_curve2);
-	x_curves.push_back(sub_curve3);		    	
+	*o++ = sub_curve1;
+	*o++ = sub_curve2;
+	*o++ = sub_curve3;		    	
       }
       else
       {
@@ -651,7 +652,7 @@ class Arr_conic_traits_2
       }
     }
 
-    return;
+    return o;
   }
 
   // Split the given curve into two sub-curves at the given point.

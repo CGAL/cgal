@@ -47,10 +47,13 @@
 \ccMethod{bool is_x_monotone(const Curve_2& c);}{returns true if $c$ is
 an $x$-monotone curve.}
 
-\ccMethod{void curve_make_x_monotone(const Curve_2& cv, list<X_monotone_curve_2>& l);}{
-   cuts \ccc{cv} into $x$-monotone subcurves and stores them in $l$.
-   The order in which they are inserted into $l$ defines their order
-   in the hierarchy tree.}
+\ccMethod{template<class OutputIterator>
+          OutputIterator make_x_monotone(const Curve_2& cv,
+                                         OutputIterator res);}
+	 {cuts \ccc{cv} into $x$-monotone subcurves and stores them in a
+	 sequence starting at \ccc{res}. The order in which they are stored
+	 defines their order in the hierarchy tree. Returns past-the-end
+	 iterator of the sequence.}
 
 \ccMethod{Point_2 point_reflect_in_x_and_y(const Point_2& pt);}{returns the
 \ccc{Point_2}

@@ -759,19 +759,21 @@ class Arr_segment_circle_traits
     return (curve.is_x_monotone());
   }
 
-  // Cut the curve to several x-monotone sub-curves.
-  void curve_make_x_monotone (const Curve_2& curve, 
-			std::list<X_monotone_curve_2>& x_curves) const
+  /*! Cut the given curve into x-monotone subcurves and inserts them to the
+   * given output iterator. The order in which they are inserted defines their
+   * order in the hierarchy tree.
+   * \param cv the input curve
+   * \param o the output iterator
+   * \return the past-the-end iterator
+   */
+  template<class OutputIterator>
+  OutputIterator curve_make_x_monotone(const Curve_2 & curve, 
+                                       OutputIterator o) const
   {
-    if (is_x_monotone(curve))
-    {
-      x_curves.clear();
-      x_curves.push_back(X_curve(curve));
-      return;
+    if (is_x_monotone(curve)) {
+      *o++ = curve;
+      return o;
     } 
-
-    // Clear the output list.
-    x_curves.clear();
 
     // Find the points of vertical tangency and act accordingly.
     int    n;
@@ -789,8 +791,8 @@ class Arr_segment_circle_traits
 
       // In case the curve is a full conic, split it to two x-monotone curves,
       // one going from ps[0] to ps[1], and the other from ps[1] to ps[0].
-      x_curves.push_back (X_monotone_curve_2 (curve.conic(), ps[0], ps[1]));
-      x_curves.push_back (X_monotone_curve_2 (curve.conic(), ps[1], ps[0]));
+      *o++ = X_monotone_curve_2 (curve.conic(), ps[0], ps[1]);
+      *o++ = X_monotone_curve_2 (curve.conic(), ps[1], ps[0]);
     }
     else
     {
@@ -806,8 +808,8 @@ class Arr_segment_circle_traits
 	              sub_curve1, sub_curve2, 
                       ps[0]);
 
-	x_curves.push_back(sub_curve1);
-	x_curves.push_back(sub_curve2);
+	*o++ = sub_curve1;
+	*o++ = sub_curve2;
       }
       else if (n == 2)
       {
@@ -843,9 +845,9 @@ class Arr_segment_circle_traits
 	  CGAL_assertion(false);
 	}
 
-	x_curves.push_back(sub_curve1);
-	x_curves.push_back(sub_curve2);
-	x_curves.push_back(sub_curve3);		    	
+	*o++ = sub_curve1;
+	*o++ = sub_curve2;
+        *o++ = sub_curve3;		    	
       }
       else
       {
@@ -854,7 +856,7 @@ class Arr_segment_circle_traits
       }
     }
 
-    return;
+    return o;
   }
 
   // Split the given curve into two sub-curves at the given point.

@@ -353,17 +353,23 @@ public:
 
   }
 
-  //cuts into x-monotone curves, each vertical segment is 1 x-monotone curve
-  //and not part of a bigger x-monotone polyline
-  void curve_make_x_monotone(const Curve_2& cv, std::list<Curve_2>& l) 
+  /*! Cut the given curve into x-monotone subcurves and insert them to the
+   * given output iterator.
+   * \param cv the curve.
+   * \param o the output iterator
+   * \return the past-the-end iterator
+   */
+  template<class OutputIterator>
+  OutputIterator curve_make_x_monotone(const Curve_2 & cv,
+                                       OutputIterator o) 
   {
     CGAL_precondition(cv.size() >= 2); //one point is not a curve
     
     // If polyline is a segment
     if (cv.size() == 2) 
     { 
-      l.push_back(cv);
-      return;
+      *o++ = cv;
+      return o;
     }
 
     typename X_monotone_curve_2::const_iterator p0 = cv.begin();
@@ -381,23 +387,24 @@ public:
           //    o p0=lastcut (was p1 before)
           //    |
 
-          l.push_back(X_monotone_curve_2(last_cut,p1)); 
+          *o++ = X_monotone_curve_2(last_cut, p1); 
           //push_back the curve (last_cut...p0)
         }
-        l.push_back(X_monotone_curve_2(p0,p2)); //push_back the segment (p0,p1)
+        *o++ = X_monotone_curve_2(p0, p2); //push_back the segment (p0,p1)
         last_cut=p1;
       }
       else
         if ( compare_x(*p0,*p1) * compare_x(*p1,*p2) <= 0 ) {
-          l.push_back(X_monotone_curve_2(last_cut,p2));
+          *o++ = X_monotone_curve_2(last_cut, p2);
           last_cut=p1;
         }
     }
 
     //push the residue (last cut to end)
-    l.push_back(X_monotone_curve_2(last_cut,p2));
+    *o++ = X_monotone_curve_2(last_cut, p2);
 
-    CGAL_assertion(p2==cv.end()); 
+    CGAL_assertion(p2==cv.end());
+    return o;
   }
 
   void curve_split(const X_monotone_curve_2& cv,

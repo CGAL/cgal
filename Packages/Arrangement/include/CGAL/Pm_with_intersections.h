@@ -1150,7 +1150,7 @@ public:
     std::list<CGAL_TYPENAME_MSVC_NULL Traits::X_monotone_curve_2> x_list;
     typename std::list<
       CGAL_TYPENAME_MSVC_NULL Traits::X_monotone_curve_2>::const_iterator it;
-    traits->curve_make_x_monotone(c, x_list);
+    traits->curve_make_x_monotone(c, std::back_inserter(x_list));
     src = source_vertex;
     tgt = target_vertex;
     for (it = x_list.begin(); it != x_list.end(); it++)

@@ -1067,7 +1067,7 @@ public:
 
       //cut cv into x_monotone curves and insert them into l
       std::list<CGAL_TYPENAME_MSVC_NULL Traits::X_curve> x_list;
-      traits->curve_make_x_monotone(cv,x_list);
+      traits->curve_make_x_monotone(cv, std::back_inserter(x_list));
 
       typename std::list<CGAL_TYPENAME_MSVC_NULL Traits::X_curve>::iterator 
         lit=x_list.begin();
@@ -1141,7 +1141,7 @@ public:
 
       //cut cv into x_monotone curves and insert them into l
       std::list<CGAL_TYPENAME_MSVC_NULL Traits::X_curve> x_list;
-      traits->curve_make_x_monotone(cv,x_list);
+      traits->curve_make_x_monotone(cv, std::back_inserter(x_list));
 
       typename std::list<CGAL_TYPENAME_MSVC_NULL Traits::X_curve>::iterator 
         lit=x_list.begin();
