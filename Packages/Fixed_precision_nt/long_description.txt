@@ -11,6 +11,8 @@ predicates.
 Versions
 
 
+2.11 (15 Dec 1999)
+  Problem in makefiles demo and example
 
 2.10 (13 Dec 1999)
   Borland M$ VC++  demo
