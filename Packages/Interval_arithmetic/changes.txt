@@ -1,3 +1,6 @@
+5 June 2004 Sylvain Pion
+- test-suite : specificaly test for constant propagation.
+
 22 May 2004 Sylvain Pion
 - Filtered_exact : remove useles copy ctor (valgrind bogs on it).
 

@@ -112,6 +112,44 @@ bool spiral_test()
   return i == 396;
 }
 
+// Tests for constant propagation through intervals.
+// This must not be performed otherwise rounding modes are ignored.
+// Non-inlined operators usually stop cprop (*, /, sqrt).
+bool cprop_test()
+{
+  // Testing cprop through +.
+  IA_nt add = IA_nt(0.00001)+10.1;
+  bool good_add = !add.is_point();
+  if (!good_add)
+    std::cerr << "ERROR : Constant propagation through operator+." <<std::endl;
+
+  // Testing cprop through -.
+  IA_nt sub = IA_nt(0.00001)-10.1;
+  bool good_sub = !sub.is_point();
+  if (!good_sub)
+    std::cerr << "ERROR : Constant propagation through operator-." <<std::endl;
+
+  // Testing cprop through *.
+  IA_nt mul = IA_nt(0.00001)*10.1;
+  bool good_mul = !mul.is_point();
+  if (!good_mul)
+    std::cerr << "ERROR : Constant propagation through operator*." <<std::endl;
+
+  // Testing cprop through /.
+  IA_nt div = IA_nt(0.00001)/10.1;
+  bool good_div = !div.is_point();
+  if (!good_div)
+    std::cerr << "ERROR : Constant propagation through operator/." <<std::endl;
+
+  // Testing cprop through sqrt.
+  IA_nt sqrt2 = CGAL::sqrt(IA_nt(2));
+  bool good_sqrt = !sqrt2.is_point();
+  if (!good_sqrt)
+    std::cerr << "ERROR : Constant propagation through sqrt()." <<std::endl;
+
+  return good_add && good_sub && good_mul && good_div && good_sqrt;
+}
+
 // Here we iteratively compute sqrt(interval), where interval is [0.5;1.5]
 // at the beginning.  It must converge to the fixed point [1-2^-52 ; 1+2^-52].
 // NB: Note that 1-2^-52 is not the closest to 1 (which is 1-2^-53)... Funny.
@@ -316,24 +354,14 @@ bool utility_test()
 
 double zero = 0.0; // I put it here to avoid compiler warnings.
 
-// needed for making the testsuite pass for Intel7
-namespace CGAL {
-  namespace CGALi {
-    extern double zero();
-  }
-}
-
 bool is_valid_test()
 {
   CGAL::Failure_behaviour backup = CGAL::set_error_behaviour(CGAL::CONTINUE);
   CGAL::Failure_function prev    = CGAL::set_error_handler(empty_handler);
 
   bool tmpflag, flag = true;
-  // Why the zero() ??
-  // If we do not do this, the Intel 7 compiler optimizes
-  // and the nan is at a sudden 0
-  const double inf = 1.0/CGAL::CGALi::zero();
-  const double nan = CGAL::CGALi::zero() * inf;
+  const double inf = 1.0/zero;
+  const double nan = zero * inf;
   const IA_nt a(nan, nan), b(0,nan), c(nan, 0), d(1,0);
   const IA_nt e(0,1), f(0,0);
 
@@ -462,6 +490,7 @@ int main()
   print_res(tmpflag); \
   flag = tmpflag && flag;
 
+  TEST_MACRO(cprop_test);
   TEST_MACRO(square_root_test);
   TEST_MACRO(spiral_test);
   TEST_MACRO(overflow_test);
