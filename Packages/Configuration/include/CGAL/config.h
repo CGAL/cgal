@@ -147,4 +147,16 @@
 #define NOMINMAX 1
 #endif
 
+//-----------------------------------------------------------------------//
+// the MSVC 6.0 and 7.0 compilers cannot deal with function overloading
+// very well, so we have to use specific templating here with the CGAL
+// Polyhedron_3 type in its two different forms (one that is swallowed by
+// MSVC6 and the other by MSVC 7.0). 
+//----------------------------------------------------------------------//
+
+#if defined(_MSC_VER) && ! defined(__INTEL_COMPILER) && (_MSC_VER < 1310)
+#define CGAL_CFG_FUNCTION_OVERLOAD_BUG
+#endif
+
+
 #endif // CGAL_CONFIG_H

@@ -1,3 +1,6 @@
+2.57 (rursu)
+-added CGAL_CFG_FUNCTION_OVERLOAD_BUG in config.h
+
 2.56 (mh)
 - removed obsolete workaround files
 - set NOMINMAX in config.h if _MSC_VER is defined
