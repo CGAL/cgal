@@ -7,6 +7,7 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: Update CGAL version to 2.4.
 GLOB: Fixed makefile_Win adaption (do only if dir is there).
 GLOB: Updated license header.
 GLOB: Show again LEDA (not) supported.
@@ -35,6 +36,8 @@ GLOB: Recognize existing _LEDA config/install files.
 GLOB: The _LEDA suffix is now part of the config/install file as well.
 GLOB: Run the compiler tests when it becomes necessary only.
 ALL : Changed CGAL version to 2.3.
+DOCS: Updated CGAL version to 2.4.
+DOCS: Removed ftp paragraph.
 DOCS: updated to include handling of CGALWin with native tools.
 DOCS: renaming install.txt to INSTALL.win32
 DOCS: Replace CGALwin -> CGALWin.
