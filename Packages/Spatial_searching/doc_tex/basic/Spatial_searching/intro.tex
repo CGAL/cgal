@@ -498,6 +498,12 @@ and for the requirements on the definition of user defined $d$-dimensional point
 In contrast with the old $k$-$d$ tree implementation, the spatial searching package
 requires that the \ccc{Kdtree_d<Traits>::Box} is bounded.
 
+The user can move from the old $k$-$d$ tree implementation to the spatial searching package by
+replacing in his code \\
+#include <CGAL/Kd_tree_d.h>
+by
+#include <CGAL/Kd_tree_d_new.h>.
+ 
 Further, the spatial searching package requires that the user provides for a user defined point class \ccc{My_Point} 
 a nested representation
 class \ccc{My_Point::R} or specializes \ccc{CGAL::Kernel_traits} for \ccc{My_Point::R}.
