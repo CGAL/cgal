@@ -1010,9 +1010,14 @@ protected:
     mutable Point_2<R>            _intersection_point, _other_point;
 };
 
-@<do_intersect macro@>@(Segment_2@,Segment_2@)
+template <class R>
+inline bool
+do_intersect(const Segment_2<R> &seg1, const Segment_2<R> &seg2);
+
 
 CGAL_END_NAMESPACE
+
+@<Segment_2_Segment_2 do_intersect implementation@>
 
 @<Segment_2_Segment_2_pair implementation@>
 
@@ -1046,6 +1051,170 @@ intersection(const Segment_2<R> &seg1, const Segment_2<R>&seg2)
 CGAL_END_NAMESPACE
 
 #endif
+@}
+
+
+The segment segment intersection test implementation can best be understood
+as a line sweep algorithm. The endpoints of the segments are sorted
+(lexicographically, first along x then along y coordinate).
+In the sweep, the first two point that are inserted second should be from
+different segments (otherwise, the segments don't intersect because they
+can be separated by a vertical line).
+We check for the seond and third inserted point on which side of the line
+through the other segment they lie. (The other segment can be the same  for
+both points -the contained case- or different -the crossing case).
+
+@$@<Segment_2_Segment_2 do_intersect implementation@>==@{
+#include <cassert>
+#include <CGAL/predicates_on_points_2.h>
+
+namespace CGAL {
+@<seg_seg do_intersect case crossing@>
+@<seg_seg do_intersect case contained@>
+
+template <class R>
+bool
+do_intersect(const Segment_2<R> &seg1, const Segment_2<R> &seg2)
+{
+    typename R::Point_2 const & A1 = seg1.source();
+    typename R::Point_2 const & A2 = seg1.target();
+    typename R::Point_2 const & B1 = seg2.source();
+    typename R::Point_2 const & B2 = seg2.target();
+    @<seg_seg do_intersect y-test@>
+    if (lexicographically_xy_smaller(A1,A2)) {
+        @<seg seg do_intersect step 1@>@(A1@,A2@,B1@,B2@)
+    } else {
+        @<seg seg do_intersect step 1@>@(A2@,A1@,B1@,B2@)
+    }
+    assert(false);
+    return false;
+}
+
+} // end namespace CGAL
+
+@}
+
+At step 1 we know that argument 2 is not lexicograpically smaller than
+argument 1.
+@$@<seg seg do_intersect step 1@>@(@4@)@M==@{@-
+if (lexicographically_xy_smaller(@3,@4)) {
+    @<seg seg do_intersect step 2@>@(@1@,@2@,@3@,@4@)
+} else {
+    @<seg seg do_intersect step 2@>@(@1@,@2@,@4@,@3@)
+}@-
+@}
+
+At step 2 we know that argument 1 lexicograpically smaller than (or equal to)
+argument 2 and argument 3 is smaller than (or equal to) argument 4.
+@$@<seg seg do_intersect step 2@>@(@4@)@M==@{@-
+switch(compare_lexicographically_xy(@1,@3)) {
+case SMALLER:
+    @<seg seg do_intersect step 3@>@(@1@,@2@,@3@,@4@)
+    break;
+case EQUAL:
+    return true;
+case LARGER:
+    @<seg seg do_intersect step 3@>@(@3@,@4@,@1@,@2@)
+    break;
+}@-
+@}
+
+At step 3 we know that argument 1 lexicograpically smaller than
+argument 3.
+@$@<seg seg do_intersect step 3@>@(@4@)@M==@{@-
+switch(compare_lexicographically_xy(@2,@3)) {
+case SMALLER:
+    return false;
+    break;
+case EQUAL:
+    return true;
+case LARGER:
+    @<seg seg do_intersect step 4@>@(@1@,@2@,@3@,@4@)
+    break;
+}@-
+@}
+
+At step 4 we know that argument 1 < argument 3 < argument 2
+and that argument 3 <= argument 4
+@$@<seg seg do_intersect step 4@>@(@4@)@M==@{@-
+switch(compare_lexicographically_xy(@2,@4)) {
+case SMALLER:
+    return seg_seg_do_intersect_crossing(@1,@2,@3,@4);
+    break;
+case EQUAL:
+    return true;
+case LARGER:
+    return seg_seg_do_intersect_contained(@1,@2,@3,@4);
+    break;
+}@-
+@}
+
+// precondition: p1<p3<p2<p4
+@$@<seg_seg do_intersect case crossing@>==@{
+template <class PT>
+bool seg_seg_do_intersect_crossing(
+        PT const &p1, PT const &p2, PT const &p3, PT const &p4)
+{
+    switch (orientation(p1,p2,p3)) {
+    case LEFTTURN:
+        return !rightturn(p3,p4,p2);
+    case RIGHTTURN:
+        return !leftturn(p3,p4,p2);
+    case COLLINEAR:
+        return true;
+    }
+    assert(false);
+    return false;
+}
+@}
+// precondition: p1<p3<=p4<p2
+@$@<seg_seg do_intersect case contained@>==@{
+template <class PT>
+bool seg_seg_do_intersect_contained(
+        PT const &p1, PT const &p2, PT const &p3, PT const &p4)
+{
+    switch (orientation(p1,p2,p3)) {
+    case LEFTTURN:
+        return !leftturn(p1,p2,p4);
+    case RIGHTTURN:
+        return !rightturn(p1,p2,p4);
+    case COLLINEAR:
+        return true;
+    }
+    assert(false);
+    return false;
+}
+@}
+
+The y-test tests if the segments have an interval in common in the y-direction.
+This is not necessary for the correctness of the computation, but it leads to
+a similar computation time for symmetric cases. Together with the tests on
+x coordinates this is effictively a bounding box test.
+
+Comparing coordinates is usually cheaper than orientation tests, so I expect
+that this test will help efficiency on average.
+@$@<seg_seg do_intersect y-test@>==@{@-
+if (lexicographically_yx_smaller(A1,A2)) {
+    if (lexicographically_yx_smaller(B1,B2)) {
+        if (lexicographically_yx_smaller(A2,B1)
+         || lexicographically_yx_smaller(B2,A1))
+            return false;
+    } else {
+        if (lexicographically_yx_smaller(A2,B2)
+         || lexicographically_yx_smaller(B1,A1))
+            return false;
+    }
+} else {
+    if (lexicographically_yx_smaller(B1,B2)) {
+        if (lexicographically_yx_smaller(A1,B1)
+         || lexicographically_yx_smaller(B2,A2))
+            return false;
+    } else {
+        if (lexicographically_yx_smaller(A1,B2)
+         || lexicographically_yx_smaller(B1,A2))
+            return false;
+    }
+}@-
 @}
 
 @$@<Segment_2_Segment_2_pair implementation@>==@{
@@ -2195,7 +2364,7 @@ CGAL_END_NAMESPACE
 
 @O@<../include/CGAL/Bbox_2_intersection.h@>==@{@-
 @<cgal_heading@>@(@-
-include/CGAL/Bbox_2_intersections.h@,@-
+include/CGAL/Bbox_2_intersection.h@,@-
 intersection_2_1.fw@,@-
 Geert-Jan Giezeman@,@-
 Saarbruecken@)
