@@ -1,5 +1,8 @@
 Changes done to the `Polytope_distance_d' package
 
+Version 1.0.1 on 04-Oct-2000
+- fixed a bug in `is_zero'
+
 Version 1.0 on 28-Sep-2000
 - first full release
 
