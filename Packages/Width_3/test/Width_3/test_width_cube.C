@@ -55,7 +55,7 @@ typedef CGAL::Width_default_traits_3<Kernel>  Width_traits;
 typedef CGAL::Width_3<Width_traits>           Width;
 typedef CGAL::Polyhedron_3<Kernel>            Polyhedron;
 
-int main(int argc, char* argv[]) {
+int main() {
     // Create a cube using exact Cartesian coordinates
   std::vector<Point_3> points;
   points.push_back( Point_3( 1, 1, 4));

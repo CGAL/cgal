@@ -1,3 +1,6 @@
+1.12 (16 Jul 2001)
+- Removed unused argc and argv parameter from main().
+
 1.11 (13 Jul 2001)
 - fixed Width_3 to remove erroneous assertion
 - added missing function call to simple_test

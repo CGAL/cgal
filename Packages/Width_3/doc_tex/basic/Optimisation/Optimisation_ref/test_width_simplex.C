@@ -12,7 +12,7 @@ typedef Kernel::Plane_3                       Plane_3;
 typedef CGAL::Width_default_traits_3<Kernel>  Width_traits;
 typedef CGAL::Width_3<Width_traits>           Width;
 
-int main(int argc, char* argv[]) {
+int main() {
     // Create a simplex using homogeneous integer coordinates
     std::vector<Point_3> points;
     points.push_back( Point_3(2,0,0,1));
