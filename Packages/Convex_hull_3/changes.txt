@@ -1,3 +1,6 @@
+2.27    (31 July 2001)
+- moved _ref directories up one level 
+
 2.26    (26 July 2001)
 - minor formatting changes
 
