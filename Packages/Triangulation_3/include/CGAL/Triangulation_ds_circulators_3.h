@@ -44,6 +44,30 @@ class Triangulation_ds_cell_circulator_3
 
 public:
 
+  bool operator==(Cell_handle ch) const
+  {
+    return ch == pos;
+  }
+
+  bool operator!=(Cell_handle ch) const
+  {
+    return ch != pos;
+  }
+
+
+  bool operator==(CGAL_NULL_TYPE CGAL_triangulation_assertion_code(n)) const
+  {
+    CGAL_triangulation_assertion( n == NULL);
+    return pos == NULL;
+  }
+
+  bool operator!=(CGAL_NULL_TYPE CGAL_triangulation_assertion_code(n)) const
+  {
+    CGAL_triangulation_assertion( n == NULL);
+    return pos != NULL;
+  }
+
+
   Triangulation_ds_cell_circulator_3()
     : _s(NULL), _t(NULL), pos(NULL)
   {}
@@ -139,6 +163,7 @@ public:
   // For TDS's private use only.
   Cell_handle base() const { return pos; }
 
+  operator Cell_handle() const { return pos; }
 private:
   Vertex_handle _s;    // source vertex of the edge
   Vertex_handle _t;    // target vertex of the edge
@@ -149,6 +174,20 @@ private:
       return Triangulation_utils_3::next_around_edge(i,j);
   } 
 };
+
+template < class Tds_ >
+bool
+operator==(typename Tds_::Cell_handle ch, Triangulation_ds_cell_circulator_3<Tds_> cc)
+{
+  return (cc==ch);
+}
+
+template < class Tds_ >
+bool
+operator!=(typename Tds_::Cell_handle ch, Triangulation_ds_cell_circulator_3<Tds_> cc)
+{
+  return !(cc==ch);
+}
 
 template < class Tds_ >
 class Triangulation_ds_facet_circulator_3
@@ -409,6 +448,8 @@ public:
 
   // For TDS's private use only.
   Cell_handle base() const { return pos; }
+
+  operator Cell_handle()const { return pos; }
 
 private:
   Vertex_handle _s;    // source vertex

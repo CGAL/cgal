@@ -92,6 +92,9 @@ public:
 //private: // In 2D only :
   typedef Triangulation_ds_face_circulator_3<Tds>  Face_circulator;
 
+  typedef Vertex_iterator Vertex_handle;
+  typedef Cell_iterator Cell_handle;
+  /*
   // Defining nested classes for the handles instead of typedefs
   // considerably shortens the symbol names (and compile times).
   // It makes error messages more readable as well.
@@ -126,7 +129,7 @@ public:
     void * for_compact_container() const { return _v.for_compact_container(); }
     void * & for_compact_container()     { return _v.for_compact_container(); }
    };
-
+  
   class Cell_handle {
     Cell_iterator _c;
   public:
@@ -165,7 +168,7 @@ public:
     void * for_compact_container() const { return _c.for_compact_container(); }
     void * & for_compact_container()     { return _c.for_compact_container(); }
    };
-
+  */
   typedef std::pair<Cell_handle, int>              Facet;
   typedef Triple<Cell_handle, int, int>            Edge;
 
@@ -216,9 +219,14 @@ public:
 
   void set_dimension(int n) { _dimension = n; }
 
-  Vertex_handle create_vertex(const Vertex &v = Vertex())
+  Vertex_handle create_vertex(const Vertex &v)
   {
       return vertex_container().insert(v);
+  }
+
+  Vertex_handle create_vertex()
+  {
+      return vertex_container().construct_insert();
   }
 
   Vertex_handle create_vertex(Vertex_handle v)
@@ -226,9 +234,16 @@ public:
       return create_vertex(*v);
   }
 
-  Cell_handle create_cell(const Cell &c = Cell()) 
+  Cell_handle create_cell(const Cell &c) 
     { 
       Cell_handle r = cell_container().insert(c);
+      r->init();
+      return r;
+    }
+
+  Cell_handle create_cell() 
+    { 
+      Cell_handle r = cell_container().construct_insert();
       r->init();
       return r;
     }
@@ -241,7 +256,9 @@ public:
   Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1,
 	                  Vertex_handle v2, Vertex_handle v3)
     {
-      return create_cell(Cell(v0, v1, v2, v3));
+      Cell_handle r =cell_container().construct_insert(v0, v1, v2, v3);
+      r->init();
+      return r;
     }
 
   Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1,
@@ -249,7 +266,9 @@ public:
 		          Cell_handle n0, Cell_handle n1,
 			  Cell_handle n2, Cell_handle n3)
     {
-      return create_cell(Cell(v0, v1, v2, v3, n0, n1, n2, n3));
+      Cell_handle r =cell_container().construct_insert(v0, v1, v2, v3, n0, n1, n2, n3);
+      r->init();
+      return r;
     }
 
   Cell_handle create_face()
@@ -261,7 +280,10 @@ public:
   Cell_handle create_face(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2)
     {
       CGAL_triangulation_precondition(dimension()<3);
-      return create_cell(Cell(v0, v1, v2, Vertex_handle()));
+      Cell_handle r =cell_container().construct_insert(v0, v1, v2, Vertex_handle());
+      r->init();
+      return r;
+      //return cell_container().insert(Cell(v0, v1, v2, Vertex_handle()));
     }
 
   // The following functions come from TDS_2.
@@ -313,7 +335,7 @@ public:
   void delete_vertex( Vertex_handle v )
   {
       CGAL_triangulation_expensive_precondition( is_vertex(v) );
-      vertex_container().erase(v.base());
+      vertex_container().erase(v);
   }
 
   void delete_cell( Cell_handle c )
@@ -327,7 +349,7 @@ public:
       CGAL_triangulation_expensive_precondition( dimension() != 0 ||
                                                  is_vertex(c->vertex(0)) );
 
-      cell_container().erase(c.base());
+      cell_container().erase(c);
   }
 
   template <class InputIterator>

@@ -236,7 +236,7 @@ public:
 	    Cell_circulator ccir = _tds->incident_cells(edge);
 	    do {
 	      ++ccir;
-	    } while ( Cell_handle(pos) < Cell_handle(ccir) ); 
+	    } while ( pos < ccir );
 	    // loop terminates since it stops at least when ccir = pos
 	    if ( Cell_handle(ccir) == Cell_handle(pos) )
 		// pos is the cell with minimal pointer
