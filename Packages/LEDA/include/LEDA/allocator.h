@@ -17,6 +17,7 @@
 // $Name$
 //
 // Author(s)     : ?
+
 #ifndef LEDA_ALLOCATOR_H
 #define LEDA_ALLOCATOR_H
 
@@ -90,7 +91,7 @@ pointer allocate(size_type n, const_pointer = 0)
 /*{\Mop returns a pointer to a newly allocated memory range of size
         |n * sizeof(T)|.}*/
 { return 0 == n ? 0 : 
-         (T*) CGAL_LEDA_SCOPE::std_memory_mgr.allocate_bytes( n * sizeof(T) ); }
+        (T*) CGAL_LEDA_SCOPE::std_memory_mgr.allocate_bytes( n * sizeof(T) ); }
 
 void deallocate(pointer p, size_type n)
 /*{\Mop deallocates a memory range of |n * sizeof(T)| starting
@@ -113,9 +114,10 @@ void destroy(pointer p)
 /*{\Mop destroys the object referenced via |p| by calling |p->~T()|.}*/
 { p->~T(); }
 
-size_type max_size() const { return CGAL_LEDA_SCOPE::std_memory_mgr.max_size(); }
+size_type max_size() const
 /*{\Mop the largest value |n| for which the call |allocate(n,0)| 
     might succeed.}*/
+{ return CGAL_LEDA_SCOPE::std_memory_mgr.max_size(); }
 
 };
 
