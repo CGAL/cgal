@@ -72,6 +72,7 @@ class Nef_polyhedron_3_rep
 { 
   typedef Nef_polyhedron_3_rep<K,I>                     Self;
   friend class Nef_polyhedron_3<K,I>;
+ public:
   typedef CGAL::SNC_structure<K,I>                     SNC_structure;
   typedef CGAL::SNC_decorator<SNC_structure>           SNC_decorator;
   typedef CGAL::SNC_const_decorator<SNC_structure>     SNC_const_decorator;
