@@ -14,6 +14,7 @@
 #include <CGAL/Mesh_criteria_3.h>
 
 #include "implicit_function.h"
+#include "parameters.h"
 
 #include "debug.h"
 
@@ -45,7 +46,10 @@ int main(int argc, char **argv) {
   Func F;
 
   // Oracle (NB: parity oracle is toggled)
-  Oracle O (F, K::Point_3 (0,0,0), 6, 1e-3, true);  
+  Oracle O (F, K::Point_3 (0,0,0),
+	    enclosing_sphere_radius,
+	    precision,
+	    bipolar_oracle);
 
   // 2D-complex in 3D-Delaunay triangulation
   Del T;
@@ -60,8 +64,8 @@ int main(int argc, char **argv) {
     c_s_crit (curvature_bound);
 //   CGAL::Chew_4_surfaces::Uniform_size_criterion<Del>
 //     u_s_crit (size_bound);
-//   CGAL::Chew_4_surfaces::Aspect_ratio_criterion<Del>
-//     a_r_crit (aspect_ratio_bound);
+  CGAL::Chew_4_surfaces::Aspect_ratio_criterion<Del>
+    a_r_crit (aspect_ratio_bound);
 
   std::vector<Criterion*> crit_vect;
   crit_vect.push_back (&c_s_crit);
@@ -69,7 +73,7 @@ int main(int argc, char **argv) {
 //   crit_vect.push_back(&a_r_crit);
   Criteria C (crit_vect);
 
-  Tets_criteria tets_criteria(tets_size_bound);
+  Tets_criteria tets_criteria(0, tets_size_bound);
 
   std::cout << "Initial number of points: " << T.number_of_vertices() 
             << std::endl;

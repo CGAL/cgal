@@ -352,21 +352,19 @@ public:
     : Base(t, crit, oracle), Mesher(facets_level), f_level(facets_level)
   {}
 
-
-void do_before_insertion(const typename Base::Cell_handle& c,
-			 const typename Base::Point& p,
-			 typename Base::Zone& zone)
+/** BEURK \todo Put those functions into a visitor class. */
+void before_insertion_impl(const typename Base::Cell_handle& c,
+			      const typename Base::Point& p,
+			      typename Base::Zone& zone)
 {
-  f_level.do_before_insertion(typename Tr::Facet (),
-			      p,
-			      zone);
-  Base::do_before_insertion(c, p, zone);
+  f_level.before_insertion_impl(typename Tr::Facet (), p, zone);
+  Base::before_insertion_impl(c, p, zone);
 }
 
-void do_after_insertion(const typename Base::Vertex_handle& v)
+void after_insertion_impl(const typename Base::Vertex_handle& v)
 {
   f_level.restore_restricted_Delaunay(v);
-  Base::do_after_insertion(v);
+  Base::after_insertion_impl(v);
 }
 
 }; // end class Refine_tets

@@ -18,16 +18,6 @@
 
 int implicit_function (double, double, double);
 
-extern const int number_of_initial_points;
-
-extern const double curvature_bound;
-
-extern const double size_bound;
-
-extern const int aspect_ratio_bound;
-
-extern const double tets_size_bound;
-
 template <class FT> class Function {
 public:  
 

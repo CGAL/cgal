@@ -32,18 +32,8 @@ int knot3_function (double, double, double);  // (c=(0,0,0), r=4)
 
 ///////////////// Definition of the current surface /////////////////
 int implicit_function (double x, double y, double z) {
-  return tanglecube_function(x,y,z);
+  return sphere_function(x,y,z);
 }
-
-const int number_of_initial_points = 10;
-
-const double curvature_bound = 0.01;
-
-const double size_bound =  3.;
-
-const int aspect_ratio_bound = 0; // 30
-
-const double tets_size_bound = 0.05;
 
 ///////////////// Code for functions of famous surfaces /////////////////
 

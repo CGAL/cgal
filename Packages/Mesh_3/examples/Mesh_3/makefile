@@ -48,8 +48,8 @@ essai$(EXE_EXT): essai$(OBJ_EXT)
 
 implicit_surfaces_mesher_3$(OBJ_EXT): implicit_surfaces_mesher_3.C
 
-implicit_surfaces_mesher_3$(EXE_EXT): implicit_surfaces_mesher_3$(OBJ_EXT) implicit_function$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)implicit_surfaces_mesher_3 implicit_surfaces_mesher_3$(OBJ_EXT) implicit_function$(OBJ_EXT) $(LDFLAGS)
+implicit_surfaces_mesher_3$(EXE_EXT): implicit_surfaces_mesher_3$(OBJ_EXT) implicit_function$(OBJ_EXT) parameters$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)implicit_surfaces_mesher_3 implicit_surfaces_mesher_3$(OBJ_EXT) implicit_function$(OBJ_EXT) parameters$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
                    essai.clean \
