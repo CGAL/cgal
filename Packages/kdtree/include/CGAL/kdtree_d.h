@@ -9,10 +9,10 @@
 // ----------------------------------------------------------------------
 //
 // release       : 
-// release_date  : 2000, September 26
+// release_date  : 2001, December 4
 //
 // file          : include/CGAL/kdtree_d.h
-// package       : kdtree (2.2.14)
+// package       : kdtree (2.2.22)
 // maintainer    : Hans Tangelder <hanst@cs.uu.nl>
 // source        : 
 // revision      : 
@@ -819,7 +819,10 @@ private:
         }
     };
 
-
+    // SunPro requires this :
+    friend class Box;
+    friend class Node;
+ 
     typedef Point  * Point_ptr;
 
     int  size;
