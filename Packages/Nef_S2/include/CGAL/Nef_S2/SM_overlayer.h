@@ -155,24 +155,28 @@ void trivial_segment(Vertex_handle v, IT it) const
 { INFO& si = M[it];
   CGAL_assertion( si._o != NULL );
   G.supp_object(v,si._from) = si._o; 
+  TRACEN("trivial_segment " << si._from << " "<< v->point()); 
 }
 
 void starting_segment(Vertex_handle v, IT it) const
 { INFO& si = M[it];
   if ( si._from == -1 ) return;
   G.supp_object(v,si._from) = si._o;
+  TRACEN("starting_segment " << si._from << " "<< v->point()); 
 }
 
 void ending_segment(Vertex_handle v, IT it) const
 { INFO& si = M[it];
   if ( si._from == -1 ) return;
   G.supp_object(v,si._from) = si._o;
+  TRACEN("ending_segment " << si._from << " "<< v->point()); 
 }
 
 void passing_segment(Vertex_handle v, IT it) const
 { INFO& si = M[it];
   if ( si._from == -1 ) return;
   G.supp_object(v,si._from) = si._o; 
+  TRACEN("passing_segment " << si._from << " "<< v->point()); 
 }
 
 Halfedge_handle halfedge_below(Vertex_handle v) const
@@ -597,7 +601,7 @@ public:
 
   template <typename Below_accessor>
   void complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
-    const Below_accessor& D, std::vector<Mark>& mohs, int offset) const;
+    const Below_accessor& D, std::vector<Mark>& mohs, int offset, bool both=true) const;
 
   void set_outer_face_mark(int offset, const std::vector<Mark>& mohs);
 
@@ -754,6 +758,10 @@ check_sphere(const Seg_list& L, bool compute_halfsphere[3][2]) const {
   for(int i=0; i<6; i++)
     compute_halfsphere[i/2][i%2] = false;
 
+  TRACEN("compute_halfsphere (at begin)");
+  for(int i=0; i<6; ++i)
+    TRACEN("  " << i << " : " << compute_halfsphere[i/2][i%2]);
+
   typename Seg_list::const_iterator it;
   CGAL_forall_iterators(it,L) {
     if(!compute_halfsphere[0][0])
@@ -775,6 +783,10 @@ check_sphere(const Seg_list& L, bool compute_halfsphere[3][2]) const {
       if(it->source().hz()<0 || it->target().hz()<0)
 	compute_halfsphere[2][1] = true;    
   }
+
+  TRACEN("compute_halfsphere (after vertices)");
+  for(int i=0; i<6; ++i)
+    TRACEN("  " << i << " : " << compute_halfsphere[i/2][i%2]);
 
   if(!compute_halfsphere[2][0]) {
     CGAL_forall_iterators(it,L) {
@@ -931,6 +943,9 @@ subdivide(const Map* M0, const Map* M1)
   bool compute_halfsphere[3][2];
   int cs = check_sphere(L, compute_halfsphere);
 
+  TRACEN("compute_halfsphere\n  cs = " << cs);
+  for(int i=0; i<6; ++i)
+    TRACEN("  " << i << " : " << compute_halfsphere[i/2][i%2]);
   Seg_list L_pos,L_neg;
 
   switch(cs) {
@@ -1049,11 +1064,17 @@ subdivide(const Map* M0, const Map* M1)
   
   L0.marks_of_halfspheres(mohs, 0, cs);
   L1.marks_of_halfspheres(mohs, 2, cs);
+  
+  TRACEN("compute_halfsphrere\n  cs = " << cs << 
+	 "\n  [cs][0] = " << compute_halfsphere[cs][0] <<
+	 "\n  [cs][1] = " << compute_halfsphere[cs][1]);
 
   if(compute_halfsphere[cs][0])
-    complete_face_support(this->svertices_begin(), v, O, mohs, 0);
+    complete_face_support(this->svertices_begin(), v, O, mohs, 0, 
+			  compute_halfsphere[cs][1]);
   if(compute_halfsphere[cs][1])
-    complete_face_support(v, this->svertices_end(), O, mohs, 1);
+    complete_face_support(v, this->svertices_end(), O, mohs, 1,
+			  compute_halfsphere[cs][0]);
 
   // DEBUG CODE: to do: have all svertices a halfedge below associated?
   TRACEN("Vertex info after swep");
@@ -1265,7 +1286,7 @@ template <typename Map>
 template <typename Below_accessor>
 void SM_overlayer<Map>::
 complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
-  const Below_accessor& D, std::vector<Mark>& mohs, int offset) const
+  const Below_accessor& D, std::vector<Mark>& mohs, int offset, bool both) const
 { TRACEN("complete_face_support");
   for (SVertex_iterator v = v_start; v != v_end; ++v) { 
     TRACEN("VERTEX = "<<PH(v));
@@ -1278,15 +1299,22 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
     } else if ( e_below != SHalfedge_handle() ) {
       for (int i=0; i<2; ++i) {
 	TRACEN("edge below "<< PH(e_below) << " " << mark(e_below,i));
-        m_buffer[i] = incident_mark(e_below,i); 
+	m_buffer[i] = incident_mark(e_below,i);
       }
     } else { // e_below does not exist
       //      CGAL_assertion( point(v).hz() == 0 && 
       //		   ( offset == 0 ? (point(v).hx() >= 0) : (point(v).hx()<=0)) );
-      if(!is_isolated(v))
-	for (int i=0; i<2; ++i) 
-	  m_buffer[i] = incident_mark(previous(first_out_edge(v)),i);
-    } TRACEN(" faces right and below "<<m_buffer[0]<<" "<<m_buffer[1]);
+      if(!is_isolated(v)) {
+	if(!both) {
+	  for (int i=0; i<2; ++i)
+	    m_buffer[i] = mohs[offset+2*i];	
+	  TRACEN("no edge below ");
+	} else {
+	  for (int i=0; i<2; ++i) 
+	    m_buffer[i] = incident_mark(previous(first_out_edge(v)),i);
+	}
+      }
+    } TRACEN(" faces right-below "<<m_buffer[0]<<" "<<m_buffer[1]);
 
     for (int i=0; i<2; ++i) {
       Object_handle o = supp_object(v,i);
