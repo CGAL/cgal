@@ -156,9 +156,33 @@ private:
 
   Vertex_triple make_vertex_triple(const Facet& f) const;
 
+#ifndef CGAL_CFG_NET2003_MATCHING_BUG
   void make_hole_3D(Vertex_handle v, 
 		    std::map<Vertex_triple,Facet> &outer_map,
 		    std::vector<Cell_handle> &hole);
+#else
+  void make_hole_3D(Vertex_handle v, 
+		    std::map<Vertex_triple,Facet> &outer_map,
+		    std::vector<Cell_handle> &hole)
+  {
+    CGAL_triangulation_expensive_precondition( ! test_dim_down(v) );
+
+    incident_cells(v, std::back_inserter(hole));
+
+    for (typename std::vector<Cell_handle>::iterator cit = hole.begin();
+	 cit != hole.end(); ++cit) {
+      int indv = (*cit)->index(v);
+      Cell_handle opp_cit = (*cit)->neighbor( indv );
+      Facet f(opp_cit, opp_cit->index(*cit)); 
+      Vertex_triple vt = make_vertex_triple(f);
+      make_canonical(vt);
+      outer_map[vt] = f;
+      for (int i=0; i<4; i++)
+	if ( i != indv )
+	  (*cit)->vertex(i)->set_cell(opp_cit);
+    }
+  }
+#endif
 
   void remove_3D(Vertex_handle v);
 
@@ -846,6 +870,7 @@ remove_2D(Vertex_handle v)
   std::cerr << "WARNING: RT3::remove() in 2D not implemented" << std::endl;
 }
 
+#ifndef CGAL_CFG_NET2003_MATCHING_BUG
 template < class Gt, class Tds >
 void
 Regular_triangulation_3<Gt,Tds>::
@@ -870,6 +895,7 @@ make_hole_3D (Vertex_handle v,
 	(*cit)->vertex(i)->set_cell(opp_cit);
   }
 }
+#endif
 
 template < class Gt, class Tds >
 void
