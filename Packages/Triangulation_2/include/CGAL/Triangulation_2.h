@@ -259,6 +259,9 @@ public:
  Oriented_side
  oriented_side(const Face_handle& f, const Point &p) const;
 
+ Oriented_side
+ side_of_oriented_circle(Face_handle f, const Point & p) const; 
+
  bool 
  collinear_between(const Point& p, const Point& q, const Point& r) const;
 
@@ -266,7 +269,10 @@ protected:
   void remove_1D(Vertex_handle v);
   void remove_2D(Vertex_handle v);
   bool test_dim_down(Vertex_handle v);
-  void make_hole ( Vertex_handle v, std::list<Edge> & hole);
+  void make_hole(Vertex_handle v, std::list<Edge> & hole);
+  void fill_hole(Vertex_handle v, std::list<Edge> & hole);
+  void fill_hole_delaunay(Vertex_handle v, std::list<Edge> & hole);
+
   Face_handle add_face(Face_handle f1, int i1,
 		       Face_handle f2, int i2,
 		       Face_handle f3, int i3);
@@ -279,8 +285,7 @@ protected:
 private:
   Vertex_handle insert_outside_convex_hull_1(const Point& p, Face_handle f);
   Vertex_handle insert_outside_convex_hull_2(const Point& p, Face_handle f);
-  void   fill_hole ( Vertex_handle v, std::list<Edge> & hole);
-
+  
 public:
 template < class Stream >
 Stream&  draw_triangulation(Stream& os) const 
@@ -1149,6 +1154,152 @@ fill_hole ( Vertex_handle v, std::list< Edge > & hole )
   int i3 = (*hit).second;
   add_face(ff,ii,fn,in,f3,i3);
 }
+
+template <class Gt, class Tds >
+void
+Triangulation_2<Gt, Tds>::
+fill_hole_delaunay(Vertex_handle v, std::list<Edge> & first_hole)
+{
+  typedef std::list<Edge> Hole;
+  typedef std::list<Hole> Hole_list;
+  
+  Face_handle  f, ff, fn;
+  int i =0,ii =0, in =0;
+  Hole_list hole_list;
+  Hole hole;
+        
+  hole_list.push_front(first_hole);
+  
+  while( ! hole_list.empty())
+    {
+      hole = hole_list.front();
+      hole_list.pop_front();
+      Hole::iterator hit = hole.begin();
+  
+      // if the hole has only three edges, create the triangle
+      if (hole.size() == 3) {
+	hit = hole.begin();
+	f = (*hit).first;        i = (*hit).second;
+	ff = (* ++hit).first;    ii = (*hit).second;
+	fn = (* ++hit).first;    in = (*hit).second;
+	add_face(f,i,ff,ii,fn,in);
+	continue;
+      }
+  
+      // else find an edge with two finite vertices
+      // on the hole boundary
+      // and the new triangle adjacent to that edge
+      //  cut the hole and push it back
+  
+      // first, ensure that a neighboring face
+      // whose vertices on the hole boundary are finite
+      // is the first of the hole
+      bool finite= false;
+      while (!finite){
+	ff = (hole.front()).first;
+	ii = (hole.front()).second;
+	if ( is_infinite(ff->vertex(cw(ii))) ||
+	     is_infinite(ff->vertex(ccw(ii)))) {
+          hole.push_back(hole.front());
+          hole.pop_front();
+	}
+	else finite=true;
+      }
+  
+      // take the first neighboring face and pop it;
+      ff = (hole.front()).first;
+      ii =(hole.front()).second;
+      hole.pop_front();
+  
+  
+      Vertex_handle v0 = ff->vertex(ff->cw(ii)); Point p0 =v0->point();
+      Vertex_handle v1 = ff->vertex(ff->ccw(ii)); Point p1 =v1->point();
+      Vertex_handle v2 = infinite_vertex(); Point p2;
+      Vertex_handle vv; Point p;
+  
+      Hole::iterator hdone = hole.end();
+      hit =  hole.begin();
+      Hole::iterator cut_after(hit);
+  
+      // if tested vertex is c with respect to the vertex opposite
+      // to NULL neighbor,
+      // stop at the before last face;
+      hdone--;
+      while( hit != hdone) {
+	fn = (*hit).first;
+	in = (*hit).second;
+	vv = fn->vertex(ccw(in));
+	if (is_infinite(vv)) {
+	  if(is_infinite(v2)) cut_after = hit;
+	}
+	else {     // vv is a finite vertex
+	  p = vv->point();
+	  if (geom_traits().orientation(p0,p1,p) == COUNTERCLOCKWISE) {
+	    if(is_infinite(v2)) { v2=vv; p2=p; cut_after=hit;}
+	    else{
+	      if( geom_traits().side_of_oriented_circle (p0,p1,p2,p) ==
+		  ON_POSITIVE_SIDE){
+		v2=vv; p2=p; cut_after=hit;}
+	    }
+	  }
+	}
+	++hit;
+      }
+  
+  
+      // create new triangle and update adjacency relations
+      // Face_handle  newf = new Face(v0,v1,v2);
+//       newf->set_neighbor(2,ff);
+//       ff->set_neighbor(ii, newf);
+      Face_handle newf;
+  
+  
+      //update the hole and push back in the Hole_List stack
+      // if v2 belongs to the neighbor following or preceding *f
+      // the hole remain a single hole
+      // otherwise it is split in two holes
+  
+      fn = (hole.front()).first;
+      in = (hole.front()).second;
+      if (fn->has_vertex(v2, i) && i == fn->ccw(in)) {
+	//newf->set_neighbor(0,fn);
+	//fn->set_neighbor(in,newf);
+	newf = add_face(ff,ii,fn,in);
+	hole.pop_front();
+	hole.push_front(Edge( &(*newf),1));
+	hole_list.push_front(hole);
+      }
+      else{
+	fn = (hole.back()).first;
+	in = (hole.back()).second;
+	if (fn->has_vertex(v2, i) && i== fn->cw(in)) {
+	  //newf->set_neighbor(1,fn);
+	  //fn->set_neighbor(in,newf);
+	  newf = add_face(fn,in,ff,ii);
+	  hole.pop_back();
+	  //hole.push_back(Edge(&(*newf),0));
+	  hole.push_back(Edge(&(*newf),1));
+	  hole_list.push_front(hole);
+	}
+	else{
+	  // split the hole in two holes
+	  newf = add_face(ff,ii,v2);
+	  Hole new_hole;
+	  ++cut_after;
+	  while( hole.begin() != cut_after )
+            {
+              new_hole.push_back(hole.front());
+              hole.pop_front();
+            }
+  
+	  hole.push_front(Edge( &(*newf),1));
+	  new_hole.push_front(Edge( &(*newf),0));
+	  hole_list.push_front(hole);
+	  hole_list.push_front(new_hole);
+	}
+      }
+    }
+}
   
 template <class Gt, class Tds >    
 inline
@@ -1634,6 +1785,30 @@ oriented_side(const Face_handle& f, const Point &p) const
 		       f->vertex(2)->point(),
 		       p);
 }
+
+template < class Gt, class Tds >
+Oriented_side
+Triangulation_2<Gt,Tds>::
+side_of_oriented_circle(Face_handle f, const Point & p) const
+{
+  if ( ! is_infinite(f) ) {
+    return geom_traits().side_of_oriented_circle(f->vertex(0)->point(),
+						 f->vertex(1)->point(),
+						 f->vertex(2)->point(),p);
+  }
+
+  int i = f->index(infinite_vertex());
+  Orientation o =
+    geom_traits().orientation(f->vertex(ccw(i))->point(),
+			      f->vertex(cw(i))->point(),
+			      p);
+						     
+  return (o == NEGATIVE) ? ON_NEGATIVE_SIDE :
+                (o == POSITIVE) ? ON_POSITIVE_SIDE :
+                      ON_ORIENTED_BOUNDARY;
+}
+
+
 
 template <class Gt, class Tds >
 bool

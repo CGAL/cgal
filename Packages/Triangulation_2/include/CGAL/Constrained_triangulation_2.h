@@ -96,7 +96,7 @@ public:
   void insert(const Vertex_handle & va, const Vertex_handle & vb,
 	      Face_handle & fr, int & i, List_edges & new_edges);
   
-  void remove(const Vertex_handle & v);
+  void remove(Vertex_handle  v);
   void remove_constraint(Face_handle f, int i);
 
   void find_conflicts(Vertex_handle va, Vertex_handle & vb, List_edges & list_ab, 
@@ -121,12 +121,16 @@ public:
 
   void file_output(std::ostream& os) const;
 
-private:
-  void update_status_incident(Vertex_handle va, 
-			      Vertex_handle c1,
-			      Vertex_handle c2);
-  void update_status_incident(Vertex_handle va);
-  void update_status_opposite(Vertex_handle va);
+protected:
+  void update_constraints_incident(Vertex_handle va, 
+				   Vertex_handle c1,
+				   Vertex_handle c2);
+  void update_constraints_incident(Vertex_handle va);
+  void update_constraints_opposite(Vertex_handle va);
+  void update_constraints(const std::list<Edge> &hole);
+
+  void remove_1D(Vertex_handle v);
+  void remove_2D(Vertex_handle v);
 };
     
 
@@ -212,23 +216,23 @@ insert(Point a)
   }
   
   va = Triangulation::insert(a,lt,loc,li);
-  if (insert_in_constrained_edge) update_status_incident(va, c1,c2);
-  else update_status_incident(va);
-  if (dimension() == 2) update_status_opposite(va);
+  if (insert_in_constrained_edge) update_constraints_incident(va, c1,c2);
+  else update_constraints_incident(va);
+  if (dimension() == 2) update_constraints_opposite(va);
   return va;
 }
 
 template < class Gt, class Tds >
 void
 Constrained_triangulation_2<Gt,Tds>::
-update_status_incident(Vertex_handle va, 
-		       Vertex_handle c1,
-		       Vertex_handle c2)
+update_constraints_incident(Vertex_handle va, 
+			    Vertex_handle c1,
+			    Vertex_handle c2)
   // update status of edges incident to a 
   // after insertion in the  constrained edge c1c2
 {
   if (dimension() == 0) return;
-  if (dimension()==1) {
+  if (dimension()== 1) {
     Edge_circulator ec=va->incident_edges(), done(ec);
     do {
       ((*ec).first)->set_constraint(2,true);
@@ -259,7 +263,7 @@ update_status_incident(Vertex_handle va,
 template < class Gt, class Tds >
 void
 Constrained_triangulation_2<Gt,Tds>::
-update_status_incident(Vertex_handle va)
+update_constraints_incident(Vertex_handle va)
 // updates status of edges incident to a
 {
  Edge_circulator ec=va->incident_edges(), done(ec);
@@ -282,7 +286,7 @@ update_status_incident(Vertex_handle va)
 template < class Gt, class Tds >
 void
 Constrained_triangulation_2<Gt,Tds>::  
-update_status_opposite(Vertex_handle va)
+update_constraints_opposite(Vertex_handle va)
   // update status of edges opposite to a
   // after insertion of a
 {
@@ -302,6 +306,22 @@ update_status_opposite(Vertex_handle va)
   return;
 }
 
+template < class Gt, class Tds >
+void
+Constrained_triangulation_2<Gt,Tds>:: 
+update_constraints( const std::list<Edge> &hole)
+{
+  std::list<Edge>::iterator it = hole.begin();
+  Face_handle f;
+  int i;
+  for ( ; it != hole.end(); it ++) {
+    f =(*it).first;
+    i = (*it).second;
+    if ( is_constrained(f,i) ) 
+      (f->neighbor(i))->set_constraint(f->mirror_index(i),true);
+    else (f->neighbor(i))->set_constraint(f->mirror_index(i),false);
+  }
+}
 
 template < class Gt, class Tds >
 inline void
@@ -412,42 +432,54 @@ insert(const Vertex_handle & va, const Vertex_handle & vb,
   } while (vbb != vb);
 }
 
+template < class Gt, class Tds >
+void
+Constrained_triangulation_2<Gt,Tds>::
+remove(Vertex_handle  v)
+{
+  CGAL_triangulation_precondition( ! v.is_null() );
+  CGAL_triangulation_precondition( !is_infinite(v));
+    
+  if  (number_of_vertices() == 1)     remove_first(v);
+  else if (number_of_vertices() == 2) remove_second(v);
+  else   if ( dimension() == 1) remove_1D(v);
+  else  remove_2D(v);
+  return;
+}
+
 
 template < class Gt, class Tds >
 void
 Constrained_triangulation_2<Gt,Tds>::
-remove(const Vertex_handle & v)
+remove_1D(Vertex_handle  v)
+{
+  Edge_circulator ec = incident_edges(v), done(ec);
+  do {
+    (*ec).first.set_constraint(2,false);
+  } while (++ec != done);
+  Triangulation::remove(v);
+}
+
+template < class Gt, class Tds >
+void
+Constrained_triangulation_2<Gt,Tds>::
+remove_2D(Vertex_handle v)
   // remove a vertex and updates the constrained edges of the new faces
   // all constraints incident to the removed vertex are removed
 {
-  // finds the edges of the hole. 
-  // not optimal since this is done again in Triangulation::remove()
-  Face_circulator fc = v->incident_faces(), done(fc);
-  List_edges shell_of_v;
-  Face_handle nc;
-  int indv, indn;
-
-  indv = fc->index(v);
-  do {
-    nc = fc->neighbor(indv);
-    indn =  fc->mirror_index(indv);
-    if (nc->is_constrained(indn)) {
-      shell_of_v.push_back(Edge(nc,indn));
-    }
-    ++fc;
-  } while (fc != done);
-
-  Triangulation :: remove(v);
-
-  // marked constrained edges of the new triangles
-  List_edges::iterator it_shell=shell_of_v.begin();
-  do {
-    nc=(*(it_shell)).first;
-    indn = (*(it_shell)).second;
-    (nc->neighbor(indn))->set_constraint(nc->mirror_index(indn), true);
-    ++it_shell;
-  } while (it_shell != shell_of_v.end());
+  if (test_dim_down(v)) {  _tds.remove_dim_down(&(*v));  }
+  else {
+    std::list<Edge> hole;
+    make_hole(v, hole);
+    std::list<Edge> shell=hole; //because hole will be emptied by fill_hole
+    fill_hole(v, hole);
+    update_constraints(shell);
+    delete &(*v);
+    set_number_of_vertices(number_of_vertices()-1);
+  }
+  return;       
 }
+
 
 template < class Gt, class Tds >
 void
