@@ -1,6 +1,10 @@
 HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
 
+3.27 (03 Apr 2002)
+
+     - Resubmitted because of failure in Utrecht.
+
 3.26 (03 Apr 2002)
 
      - Fixed bug in HalfedgeDS_list.h and HalfedgeDS_vector.h on
