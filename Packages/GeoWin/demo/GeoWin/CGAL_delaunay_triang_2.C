@@ -51,7 +51,6 @@ int main(int argc, char *argv[])
 #else 
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/geowin_support.h>
@@ -67,12 +66,8 @@ typedef K::Segment_2                                           Segment;
 typedef K::Line_2                                              Line;
 typedef K::Triangle_2                                          Triangle;
 
-typedef CGAL::Triangulation_euclidean_traits_2<K>              Gt;
-typedef CGAL::Triangulation_vertex_base_2<Gt>                  Vb;
-typedef CGAL::Triangulation_face_base_2<Gt>                    Fb;
-typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
-typedef CGAL::Triangulation_2<Gt,Tds>                          Triang_2;
-typedef CGAL::Delaunay_triangulation_2<Gt,Tds>                 Delaunay_triang_2;
+typedef CGAL::Triangulation_2<K>                               Triang_2;
+typedef CGAL::Delaunay_triangulation_2<K>                      Delaunay_triang_2;
 typedef Delaunay_triang_2::Face::Face_handle                   Face_handle;
 typedef Delaunay_triang_2::Line_face_circulator                Line_face_circulator;
 
