@@ -51,10 +51,10 @@ private:
   typedef typename Traits::Point_2              Point_2;
 
 private:
- Point_2 p;
- Point_2 q;
+  Point_2 p;
+  Point_2 q;
 
- Traits m_gt;
+  Traits m_gt;
 
 public:
   Segment_data();
@@ -150,9 +150,9 @@ private:
   typedef std::set<Hot_pixel *, Hot_pixel_dir_cmp>      Hot_pixel_set;
   
 public:
-  friend class Segment_data<Traits>;
-  friend class Hot_pixel<Traits>;
-  friend struct Hot_pixel_dir_cmp<Traits>;
+  // friend class Segment_data<Traits>;
+  // friend class Hot_pixel<Traits>;
+  // friend struct Hot_pixel_dir_cmp<Traits>;
 
   typedef typename Traits::Segment_2                    Segment_2;
   typedef typename Traits::Point_2                      Point_2;
@@ -194,7 +194,7 @@ private:
                    Multiple_kd_tree * mul_kd_tree);
 };
 
-// ctor
+/*! Constructor */
 template<class Traits_>
 Segment_data<Traits_>::Segment_data() {}
 
@@ -204,7 +204,7 @@ Segment_data<Traits_>::Segment_data(const Point_2 & p_inp,
                                     const Point_2 & q_inp) :
   p(p_inp), q(q_inp) {}
 
-// cctor
+/*! Constructor */
 template<class Traits_>
 Segment_data<Traits_>::Segment_data(const Segment_data & other)
 {
