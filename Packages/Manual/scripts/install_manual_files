@@ -137,7 +137,7 @@ echo "***copying Union_find to Miscellaney***"
 \cp $TARGET_DIR/support/Union_find/* $TARGET_DIR/support/Miscellany
 \cp $TARGET_DIR/support/Union_find_ref/* $TARGET_DIR/support/Miscellany_ref
 echo "***copying Modifier to Miscellaney***"
-\cp -r $TARGET_DIR/support/Modifier/*.tex $TARGET_DIR/support/Miscellany
+\cp -r $TARGET_DIR/support/Modifier/* $TARGET_DIR/support/Miscellany
 \cp -r $TARGET_DIR/support/Modifier_ref/*.tex $TARGET_DIR/support/Miscellany_ref
 echo "***recopying Miscellany main.tex***"
 \cp doc_tex_skel/support/Miscellany/main.tex $TARGET_DIR/support/Miscellany
