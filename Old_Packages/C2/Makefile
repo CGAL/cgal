@@ -22,8 +22,10 @@ Package: clean $(Package).tar.gz
 	@echo "---- make Submit              ----"
 	@echo "----------------------------------"
 
-Test:
+symlinks: include/CGAL/PointC2.h
 	cd include/CGAL/Cartesian ; sh ./create_symlinks
+
+Test:
 	cd test/Kernel; ./cgal_test
 
 Version:

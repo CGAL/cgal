@@ -1,4 +1,12 @@
-Version 3.1 (August 31 1999)
+Version 3.2 (September 1 1999)
+- moved some constructions and predicates from classes to kernel_ftC2.h
+  TODO: finish it so that C2 is robust with filtered
+        constructions and predicates
+- fixed includes in Cartesian/*_2.h and Cartesian/*_2.C
+  TODO: extensive fix of includes, so that it works
+        even if you only include one single file (e.g. Point_2.h)
+
+Version 3.1 (August 31, 1999)
 - Added Identity into Aff_transformation
 
 Version 3.0 (August 26 1999)
