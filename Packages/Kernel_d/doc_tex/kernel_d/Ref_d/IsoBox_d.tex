@@ -1,0 +1,58 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: IsoBox_d.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSIsoBoxdRev}{$Revision$}
+\RCSdefDate{\RCSIsoBoxdDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{IsoBox_d}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ provides a model for $d$-dimensional iso-boxes.
+
+\ccParameters
+
+\ccc{Point} represents a $d$-dimensional point.
+
+\ccTypes
+
+\ccTypedef{Kernel_traits<Point>::Kernel::FT NT;}{Number type.} 
+
+\ccCreation
+\ccCreationVariable{b}  %% choose variable name
+
+\ccConstructor{IsoBox_d(Point p, Point q);}{introduces an iso-oriented box with diagonal opposite points 
+\ccc{p} and \ccc{}q.}
+
+\ccOperations
+
+\ccMethod{NT min_coord(int i);}
+{Returns the lower bound of the iso-oriented box in dimension \ccc{i}.
+}
+
+\ccMethod{NT max_coord(int i);}
+{Returns the upper bound of the iso-oriented box in dimension \ccc{i}.}
+
+
+\ccHasModels
+
+\ccc{CGAL::Iso_rectangle_2<Kernel>}, \ccc{CGAL::Iso_cuboid_3<Kernel>}, 
+\ccc{CGAL::Iso_box_d<Kernel>}.
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
