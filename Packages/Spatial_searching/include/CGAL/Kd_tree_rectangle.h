@@ -237,7 +237,7 @@ namespace CGAL {
   // intersects the kd_tree rectangle   
   template <class Rectangle>
   inline bool intersects_eroded_rectangle(
-	const Rectangle r, const NT eps) 
+	const Rectangle& r, const NT eps) 
   {
     for (int i = 0; i < dim; ++i) {
         if ( (r.max_coord(i)-eps < lower_[i]) 
@@ -250,7 +250,7 @@ namespace CGAL {
   // encloses the kd_tree rectangle
   template <class Rectangle>
   inline bool is_enclosed_by_dilated_rectangle(
-	const Rectangle r, const NT eps) 
+	const Rectangle& r, const NT eps) 
   {
     for (int i = 0; i < dim; ++i) {
         if (  (r.max_coord(i)+eps < upper_[i]) 
