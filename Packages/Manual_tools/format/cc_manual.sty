@@ -30,18 +30,19 @@
 % |     * Parameter list parsing                                            |
 % |     * Parameter Parsing                                                 |
 % |                                                                         |
+% |   o   Names for Portability                                             |
+% |                                                                         |
 % |                                                                         |
 % |#########################################################################|
 
-{ \catcode`\$=12
-  \def\cs #1$#2${\gdef#1{#2}}%
-  \cs\ccRevision$Revision$%
-  \cs\ccDate$Date$%
-}
+% Set this definition to \ccTrue to activate the old name definitions
+% which are still there for portability reasons.
+\newcommand{\ccPortability}{\ccFalse}
 
 % debug option, use only for small files!
 %\tracingmacros=1
 
+% \ccRevision and \ccDate can be found below of \RCSdef and \RCSdefDate
 
 % ___________________________________________________________________________
 % ###########################################################################
@@ -59,9 +60,11 @@
 \baselineskip 14pt
 \spaceskip  .4em plus .25em minus .25em
 \xspaceskip .65em
-\parskip 11pt plus 1pt minus 1pt
-\parindent 0pt
-
+\newcommand{\ccParDims}{%
+    \parskip 11pt plus 1pt minus 1pt
+    \parindent 0pt
+}
+\ccParDims
 
 % +--------------------------------------------------------------------------
 % | New Dimensions (for the CGAL Manual):
@@ -200,6 +203,9 @@
 \newcommand{\ccTagOperatorLayout}{}   % true -> format operators
 \newcommand{\ccTagRmTrailingConst}{}  % true -> trailing const declarat.
                                       % for member fct's are removed.
+\newcommand{\ccTagRmTemplate}{}       % true -> remove template declaration.
+\newcommand{\ccTagTemplateInline}{}   % true -> make template declaration
+                                      % in the same line, not in extra line.
 
 
 \newcommand{\ccTagDefaults}{%
@@ -212,6 +218,8 @@
     \def\ccTagRmEigenClassName{\ccTrue}%
     \def\ccTagRmConstRefPair{\ccTrue}%
     \def\ccTagOperatorLayout{\ccTrue}%
+    \def\ccTagRmTemplate{\ccFalse}%
+    \def\ccTagTemplateInline{\ccFalse}%
     % portability namings
     \def\CCalternateThreeColumn{\ccTrue}%
     \def\ccAlternateThreeColumn{\ccTrue}%
@@ -222,13 +230,14 @@
     \def\ccTagRmEigenClassName{\ccFalse}%
     \def\ccTagRmConstRefPair{\ccFalse}%
     \def\ccTagOperatorLayout{\ccFalse}%
+    \def\ccTagRmTemplate{\ccFalse}%
 }
 
-% portability namings
-\newcommand{\ccAlternateThreeColumn}{}% true -> function paramters are aligned
+% portability namings, no longer necessary
+%\newcommand{\ccAlternateThreeColumn}{}% true -> function paramters are aligned
                                       % below the opening paranthesis, else
                                       % they are aligned in a fixed column.
-\newcommand{\CCalternateThreeColumn}{}
+%\newcommand{\CCalternateThreeColumn}{}
 
 % activate defaults
 \ccTagDefaults
@@ -304,10 +313,6 @@
     \advance\ccwTmp \ccwBetween
     \ccSetOneOfTwoColumns{\ccwTmp}%
 }
-
-% portability namings
-\newcommand{\threecolumns}{\ccSetTwoOfThreeColumns}
-\newcommand{\constructorcolumn}{\ccSetOneOfTwoColumns}
 
 % +--------------------------------------------------------------------------
 % | \ccMakeAllVisible:
@@ -450,6 +455,20 @@
     \gdef\RCSdefSet #1#2{\RCSdefSetX{#1}#2\endgroup}%
 }
 
+%   #1  the macro name for the RCS entry
+%   #2  the RCS date entry
+\newcommand{\RCSdefDate}{}
+\def\RCSdefDate{\begingroup\catcode`\$=12 \RCSdefSetDate}
+{ \catcode`\$=12
+    % #1 = macro name, #2 = "Date:", #3 = year, #4 = month, #5 = day, #6 = time
+    \gdef\RCSdefSetDateX #1$#2 #3/#4/#5 #6${\gdef#1{#2 #3/#4/#5}}%
+    \gdef\RCSdefSetDate #1#2{\RCSdefSetDateX{#1}#2\endgroup}%
+}
+
+\RCSdef{\ccRevision}{$Revision$}
+\RCSdefDate{\ccDate}{$Date$}
+
+
 % +--------------------------------------------------------------------------
 % | Original LEDA Manual macros (shortcuts):
 % | Several new shortcuts for CGAL
@@ -491,7 +510,8 @@
 % | Structuring macros (similar to LEDA Manual):
 % |
 % | \ccSection, \definition, \constants, \types, \creation, \operations, 
-% | \implementation, \example, \precond, \postcond, \chapterauthor
+% | \implementation, \example, \precond, \postcond, 
+% | \ccChapterAuthor, \ccChapterSubTitle
 % +--------------------------------------------------------------------------
 
 \newcommand{\ccChapterAuthor}[1]{%
@@ -501,6 +521,12 @@
             \put(0,11){{\em #1}}%
         \end{picture}%
     \fi}
+\newcommand{\ccChapterSubTitle}[1]{%
+    \noindent\setlength{\unitlength}{1mm}%
+    \begin{picture}(0,0)% 
+        \put(0,11){{\em #1}}%
+    \end{picture}%
+    }
 
 \newcommand{\ccSection}[1]{%
                    \section[#1 (\protect\ccPrintSingleTokenSemi
@@ -527,22 +553,14 @@
 \newcommand{\ccImplementation }{\ccHeading{Implementation}}
 \newcommand{\ccExample        }{\ccHeading{Example}}
 
-\newcommand{\ccPrecond  }{\ccCommentHeading{Precondition}}
+\newcommand{\ccPrecond  }{
+    % make the precond as wide as the postcond
+    \par
+    {\setbox0=\hbox{\mbox{{\it Postcondition}: }}%
+      \parbox{\wd0}{{\it Precondition}: }%
+    }%
+}
 \newcommand{\ccPostcond }{\ccCommentHeading{Postcondition}}
-
-% portability namings
-\newcommand{\cgalheading}[1]{\ccHeading{#1}}
-\newcommand{\cgalcommentheading}[1]{\ccCommentHeading{#1}}
-\newcommand{\definition     }{\ccDefinition}
-\newcommand{\parameters     }{\ccParameters}
-\newcommand{\constants      }{\ccConstants}
-\newcommand{\types          }{\ccTypes}
-\newcommand{\creation       }{\ccCreation}
-\newcommand{\operations     }{\ccOperations}
-\newcommand{\implementation }{\ccImplementation}
-\newcommand{\example        }{\ccExample}
-\newcommand{\precond  }{\ccPrecond}
-\newcommand{\postcond }{\ccPostcond}
 
 % ___________________________________________________________________________
 % ###########################################################################
@@ -560,9 +578,6 @@
 \def\ccStyleX #1{%
                        {\ccFont \ccPrintTokens #1\end\ccEndFont}\endgroup
 }
-
-% portability namings
-\newcommand{\CCstyle}{\ccStyle}
 
 % +--------------------------------------------------------------------------
 % | \ccDeclaration, \ccHidden, \ccUnchecked
@@ -605,12 +620,6 @@
                        \gdef\ccGlobalDecl{\ccFalse}
                        \continuation
                      }
-
-% +--------------------------------------------------------------------------
-% portability namings
-\newcommand{\declaration}{\ccDeclaration}
-\newcommand{\hidden}{\ccHidden}
-\newcommand{\unchecked}{\ccUnchecked}
 
 % ___________________________________________________________________________
 % ###########################################################################
@@ -780,7 +789,7 @@
                        \setbox\callnamebox=\hbox{\ccClassTemplateName
                            \ccFont\ccPrintTokens ::\end}%
                        \setbox\functioncallbox=\hbox{\unhcopy\callnamebox
-                           \ \ccFont\ccPrintTokens #1\end}
+                           \ \ccFont\ccPrintTokens #1\end}%
                        \ccLayoutThreeColumns{}{}{}{#2}%
                      }
 % Enum's are formatted like constructors. There is exact one matching
@@ -815,33 +824,6 @@
                    \catcode`\}=12
                    \ccEnumX}
 
-% +--------------------------------------------------------------------------
-% portability namings
-\newcommand{\pureclassname}{\ccPureClassName}
-\newcommand{\puretemplatename}{\ccPureClassTemplateName}
-\newcommand{\pureclasstemplatename}{\ccPureClassTemplateName}
-\newcommand{\pureparameters}{\ccPureTemplateParameters}
-\newcommand{\puretemplateparameters}{\ccPureTemplateParameters}
-\newcommand{\classname}{\ccClassName}
-\newcommand{\classtemplatename}{\ccClassTemplateName}
-\newcommand{\purevar}{\ccPureVar}
-\newcommand{\var}{\ccVar}
-
-\newenvironment{class}{\begin{ccClass}}{\end{ccClass}}
-\newenvironment{classtemplate}{\begin{ccClassTemplate}}{\end{ccClassTemplate}}
-
-\newcommand{\creationvariable}{\ccCreationVariable}
-\newcommand{\constructor}{\ccConstructor}
-\newcommand{\method}{\ccMethod}
-\newcommand{\function}{\ccFunction}
-\newcommand{\functiontemplate}{\ccFunctionTemplate}
-\newcommand{\variable}{\ccVariable}
-\newcommand{\typedef}{\ccTypedef}
-\newcommand{\nestedtype}{\ccNestedType}
-\newcommand{\enum}{\ccEnum}
-\newcommand{\struct}{\ccStruct}
-
-
 % ___________________________________________________________________________
 % ###########################################################################
 % |
@@ -865,17 +847,6 @@
 \newcommand{\ccGlobalStruct  }{\gdef\ccGlobalDecl{\ccTrue}\ccStruct}
 \newcommand{\ccGlobalVariable}{\gdef\ccGlobalDecl{\ccTrue}\ccVariable}
 \newcommand{\ccGlobalTypedef }{\gdef\ccGlobalDecl{\ccTrue}\ccTypedef}
-
-
-% +--------------------------------------------------------------------------
-% portability namings
-\newcommand{\globalfunction}{\ccGlobalFunction}
-\newcommand{\globalfunctiontemplate}{\ccGlobalFunctionTemplate}
-\newcommand{\globalenum}{\ccGlobalEnum}
-\newcommand{\globalstruct}{\ccGlobalStruct}
-\newcommand{\globalvariable}{\ccGlobalVariable}
-\newcommand{\globaltypedef}{\ccGlobalTypedef}
-
 
 % ___________________________________________________________________________
 % ###########################################################################
@@ -920,24 +891,6 @@
   |if@ignore|global|@ignorefalse|ignorespaces|fi
 ]
 |endgroup
-
-
-% portability namings
-\newcommand{\LatexHtml}{\ccTexHtml}
-\newcommand{\Anchor}{\ccAnchor}
-\newenvironment{TexOnly}{\begin{ccTexOnly}}{\end{ccTexOnly}}
-\newenvironment{HtmlOnly}{\begingroup\ccHtmlCatcode \ParseHtmlOnlyBody}{
-                          \endgroup}
-%  Take care: catcodes changes a lot here!!
-\begingroup
-\ccHtmlDefCatcode
-|gdef|ParseHtmlOnlyBody #1\end{HtmlOnly}[%
-  |csname endHtmlOnly|endcsname|@checkend[HtmlOnly]%
-  |expandafter|endgroup|if@endpe|@doendpe|fi
-  |if@ignore|global|@ignorefalse|ignorespaces|fi
-]
-|endgroup
-
 
 % ___________________________________________________________________________
 % ###########################################################################
@@ -1130,6 +1083,7 @@
                        \else
                          \ccInitConstructorWidths
                          \setbox\callnamebox=\hbox{%
+                             \ccFont\unhbox\templatedeclbox
                              \ccClassTemplateName\ \ \ccFont\ccVar}%
                          \setbox\functioncallbox=\hbox{\unhcopy\callnamebox
                                    \isEmpty{#3}\ifnum\ccBool=\ccFalse
@@ -1189,6 +1143,10 @@
                        \fi
                        \ifnum\ccBool=\ccFalse
                            \ccSeparateFunction{}#3 #4::\end%
+                           \setbox\returntypebox=\hbox{{\ccFont
+                               \unhcopy\templatedeclbox
+                               \unhbox\returntypebox
+                           }}
                            \setbox\functioncallbox=\hbox{{\ccFont
                                \ifnum#1=0 \ccVar.\fi
                                \unhcopy\functionnamebox(% 
@@ -1241,23 +1199,33 @@
                       \global\setbox\functionnamebox=\hbox{\unhbox0}}%
                     }
 
-% Formats a enum declaration.
+% Formats a enum (or struct) declaration.
 %   o  The 1st parameter contains the comment text (maybe empty).
-%   o  The 2st parameter contains the `enum' keyword name.
+%   o  The 2st parameter contains the `enum' or `struct' keyword name.
 %   o  The 3rd parameter contains the parameter list (maybe empty).
 %   o  The 4th parameter contains an optional variable name.
 % The declaration has to be terminated with "\end".
 \def\ccEnumDeclaration #1#2\{#3\}#4\end {%
                        \ccInitConstructorWidths
+                       % check for template function
+                       \isTemplate{#2}\ifnum\ccBool=\ccTrue
+                           \ccSeparateTemplate{\ccTemplateLine}{%
+                               \ccEnumDeclaration{#1}}#2\{#3\}#4\end
+                       \else
                        \setbox\returntypebox=\hbox{}%
-                       \setbox\callnamebox=\hbox{\ccFont\ccPrintTokens #2\end}%
+                       \setbox\callnamebox=\hbox{\ccFont
+                           \unhcopy\templatedeclbox
+                           \ccPrintTokens #2\end}%
                        \setbox\functioncallbox=\hbox{\ccFont
-                                 \ccPrintTokens #2\end\{\
+                                 \unhbox\templatedeclbox
+                                 \ccPrintTokens #2\end\ \{%
                                  \isEmpty{#3}\ifnum\ccBool=\ccFalse
-                                     \ccPrintParamList{#3)}%
+                                     \ \ccPrintParamList{#3)}%
                                  \fi
-                                 \};}%
-                       \ccLayoutThreeColumns{\ccEndFont\{}{#3)}{\ccEndFont\}}{#1}%
+                                 \ccEndFont\};}%
+                       \ccLayoutThreeColumns{\ \{}{#3)}{%
+                                 \ccEndFont\}}{#1}%
+                       \fi
                      }
 
 % Manual layout: generalized three column format
@@ -1344,6 +1312,7 @@
                              %\hspace*{\ccwRightMargin}\hfill
                            \ccBottomSkip
                       \fi\fi
+                      \setbox\templatedeclbox=\hbox{}%
                      }
 
 
@@ -1353,12 +1322,24 @@
 % 
 %   #1   the template declaration, delimited with \end
 \def\ccTemplateLine #1\end{%
-    \ccTopSkip
-    \hspace*{\ccwIndent}%
-    \ccPrintTokens #1\end \nopagebreak[4]\par
-    \ccReverseTopSkip\vspace{-\parskip}%
+    % Note: The \templatedeclbox must also be deleted after each use
+    %       which is done in \ccLayoutThreeColumns.
+    \ifnum\ccTagRmTemplate=\ccTrue
+        \setbox\templatedeclbox=\hbox{}%
+    \else
+        \ifnum\ccTagTemplateInline=\ccTrue
+            \setbox\templatedeclbox=\hbox{\ccFont\ccPrintTokens #1\end\ }%
+        \else
+            \setbox\templatedeclbox=\hbox{}%
+            \ccTopSkip
+            \hspace*{\ccwIndent}%
+            \ccPrintTokens #1\end 
+            \nopagebreak[4]\par
+            \ccReverseTopSkip\vspace{-\parskip}%
+        \fi
+    \fi
 }
-
+\newbox\templatedeclbox
 
 % Set the two boxes, returntype and functionname, for an operator declaration.
 \def\ccSeparateOperator #1operator#2\end{%
@@ -2028,6 +2009,88 @@
         \fi
     \fi}
 \def\ccPrintReturnTypeXQ #1const.&.\end{\ccPrintTokens #1\end}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   Names for Portability
+% |
+% ###########################################################################
+
+\ifnum\ccPortability=\ccTrue
+    %  -  Advanced Customization of the Layout
+    \newcommand{\threecolumns}{\ccSetTwoOfThreeColumns}
+    \newcommand{\constructorcolumn}{\ccSetOneOfTwoColumns}
+
+    %  -  Structuring Macros
+    \newcommand{\cgalheading}[1]{\ccHeading{#1}}
+    \newcommand{\cgalcommentheading}[1]{\ccCommentHeading{#1}}
+    \newcommand{\definition     }{\ccDefinition}
+    \newcommand{\parameters     }{\ccParameters}
+    \newcommand{\constants      }{\ccConstants}
+    \newcommand{\types          }{\ccTypes}
+    \newcommand{\creation       }{\ccCreation}
+    \newcommand{\operations     }{\ccOperations}
+    \newcommand{\implementation }{\ccImplementation}
+    \newcommand{\example        }{\ccExample}
+    \newcommand{\precond  }{\ccPrecond}
+    \newcommand{\postcond }{\ccPostcond}
+
+    %  -  C++ Declarations
+    \newcommand{\CCstyle}{\ccStyle}
+    \newcommand{\declaration}{\ccDeclaration}
+    \newcommand{\hidden}{\ccHidden}
+    \newcommand{\unchecked}{\ccUnchecked}
+    \newcommand{\pureclassname}{\ccPureClassName}
+    \newcommand{\puretemplatename}{\ccPureClassTemplateName}
+    \newcommand{\pureclasstemplatename}{\ccPureClassTemplateName}
+    \newcommand{\pureparameters}{\ccPureTemplateParameters}
+    \newcommand{\puretemplateparameters}{\ccPureTemplateParameters}
+    \newcommand{\classname}{\ccClassName}
+    \newcommand{\classtemplatename}{\ccClassTemplateName}
+    \newcommand{\purevar}{\ccPureVar}
+    \newcommand{\var}{\ccVar}
+
+    \newenvironment{class}{\begin{ccClass}}{\end{ccClass}}
+    \newenvironment{classtemplate}{\begin{ccClassTemplate}}{%
+                                   \end{ccClassTemplate}}
+
+    \newcommand{\creationvariable}{\ccCreationVariable}
+    \newcommand{\constructor}{\ccConstructor}
+    \newcommand{\method}{\ccMethod}
+    \newcommand{\function}{\ccFunction}
+    \newcommand{\functiontemplate}{\ccFunctionTemplate}
+    \newcommand{\variable}{\ccVariable}
+    \newcommand{\typedef}{\ccTypedef}
+    \newcommand{\nestedtype}{\ccNestedType}
+    \newcommand{\enum}{\ccEnum}
+    \newcommand{\struct}{\ccStruct}
+
+    %  -  Global C++ Declarations
+    \newcommand{\globalfunction}{\ccGlobalFunction}
+    \newcommand{\globalfunctiontemplate}{\ccGlobalFunctionTemplate}
+    \newcommand{\globalenum}{\ccGlobalEnum}
+    \newcommand{\globalstruct}{\ccGlobalStruct}
+    \newcommand{\globalvariable}{\ccGlobalVariable}
+    \newcommand{\globaltypedef}{\ccGlobalTypedef}
+
+
+    %  -  HTML Language Support in the Style File
+    \newcommand{\LatexHtml}{\ccTexHtml}
+    \newcommand{\Anchor}{\ccAnchor}
+    \newenvironment{TexOnly}{\begin{ccTexOnly}}{\end{ccTexOnly}}
+    \newenvironment{HtmlOnly}{\begingroup\ccHtmlCatcode \ParseHtmlOnlyBody}{
+                              \endgroup}
+    %  Take care: catcodes changes a lot here!!
+    \begingroup
+    \ccHtmlDefCatcode
+    |gdef|ParseHtmlOnlyBody #1\end{HtmlOnly}[%
+      |csname endHtmlOnly|endcsname|@checkend[HtmlOnly]%
+      |expandafter|endgroup|if@endpe|@doendpe|fi
+      |if@ignore|global|@ignorefalse|ignorespaces|fi
+    ]
+    |endgroup
+\fi
 
 % ___________________________________________________________________________
 % ###########################################################################

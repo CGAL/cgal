@@ -953,8 +953,29 @@ Another check with the trouble making operator in a member function.
 % ----------------------------------------------------------------------
 \section{Font Changes within a Declaration}
 
+A global variable declaration.
+
+\ccSetThreeColumns{\tt k-th\ccFont -dim\ }{\tt k-th\ccFont -foo;}{}
 \ccVariable{\tt k-th\ccFont -dim \tt k-th\ccFont -foo;}{%
     a {\tt k-th}-dimensional variable.}
+
+A constructor and a member function within a class where the classname
+also uses font changing macros.
+
+\begin{ccClass}{\tt k-th\ccFont -dim-Class}
+  \ccCreationVariable{v}
+  \ccSetThreeColumns{\tt k-th\ccFont -dim-retvalue\ }{v.k-th\ccFont
+    -dim-foo( \tt k-th\ccFont -dim-param)\ ;}{}
+  \ccSetTwoColumns{\tt k-th\ccFont -dim-Class v( \tt k-th\ccFont
+    -dim-param) \ ;}{}
+\def\ccTagRmEigenClassName{\ccFalse}
+  \ccConstructor{\tt k-th\ccFont -dim-Class();}{The default constructor.}
+  \ccConstructor{\tt k-th\ccFont -dim-Class( \tt k-th\ccFont
+    -dim-param);}{The custom constructor.}  
+  \ccMemberFunction{\tt k-th\ccFont -dim-retvalue \tt k-th\ccFont
+    -dim-foo( \tt k-th\ccFont -dim-param);}{a function.}
+\def\ccTagRmEigenClassName{\ccTrue}
+\end{ccClass}
 
 % ----------------------------------------------------------------------
 \begin{ccClass}{Demo_Class}
@@ -981,9 +1002,43 @@ Third, back to the default.
 
 \end{ccClass}
 
+% ----------------------------------------------------------------------
+\section{Test the removal or inlining of template declarations}
+
+Inlining of template declarations. The default is to format the
+template declaration in an extra line. Here the default with a struct
+and a global function.
+
+\ccSetThreeColumns{template <class T> T*}{X}{}
+\ccSetTwoColumns{template <class T> struct circulator_base \{\};}{}
+\ccStruct{template <class T> 
+          struct circulator_base {};}{forward.}
+
+\ccGlobalFunction{template <class T> 
+  T* value_type( const circulator_base<T>&);}
+
+Here with the inlining on.
+
+\def\ccTagTemplateInline{\ccTrue}
+\ccStruct{template <class T> 
+          struct circulator_base {};}{forward.}
+
+\ccGlobalFunction{template <class T> 
+  T* value_type( const circulator_base<T>&);}
+\def\ccTagTemplateInline{\ccFalse}
+
+Here with the removal on.
+
+\def\ccTagRmTemplate{\ccTrue}
+\ccStruct{template <class T> 
+          struct circulator_base {};}{forward.}
+
+\ccGlobalFunction{template <class T> 
+  T* value_type( const circulator_base<T>&);}
+\def\ccTagRmTemplate{\ccFalse}
 
 
-
+% ----------------------------------------------------------------------
 \end{document}
 
 % EOF %
