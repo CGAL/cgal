@@ -222,7 +222,7 @@ the \ccc{Dcel} efficiently. The format is detailed below:
 The format of the list of the holes is first the number of holes followed by the connected components per each hole, the format of each connected components resembles the format of the outer boundary specified before.
 \end{enumerate}
 
-\ccIncludeExampleCode{Planar_map/triangle.txt}
+\ccIncludeExampleCode{Planar_map/example9.cin}
 
 The example above presents a Planar map containing one triangle with the coordinates {\em (0,0)}, {\em (1,1)} and {\em (2,0)}. 
 The Planar map is templated with \ccStyle{Pm_segment_exact_traits<R>} while \ccStyle{R} is \ccStyle{Cartesian<leda_rational>}.
@@ -250,7 +250,7 @@ parameterize the function \ccc{write_pm} with that object.
 \ccIncludeExampleCode{Planar_map/example10.C}
 
 The input of the program is a text file presenting the \ccc{Planar map}:
-\ccIncludeExampleCode{Planar_map/triangle.txt}
+\ccIncludeExampleCode{Planar_map/example10.cin}
 
 The output is the \ccc{Planar map} written in both formats, non verbose and verbose. In addition the two lists 
 (non verbose and verbose) of halfedges are written.
@@ -298,9 +298,13 @@ More details are given in sections
 \ccRefIdfierPage{CGAL::File_header}\\
 \ccRefIdfierPage{CGAL::Pm_file_scanner<Planar_map>}\\
 \ccRefIdfierPage{CGAL::Pm_file_writer<Planar_map>}\\
-\ccRefIdfierPage{CGAL::write_pm <Planar_map,Writer>(Planar_map pm, Writer& writer, ostream& o);}\\
-\ccRefIdfierPage{CGAL::Pm_drawer<Planar_map>}\\
-\ccRefIdfierPage{CGAL::draw_pm<Planar_map,Drawer,Window>(Planar_map pm, Drawer& drawer,Window& w);}
+\ccRefIdfierPage{CGAL::Pm_drawer<Planar_map, Window>}\\
+
+
+\subsection*{Functions}
+
+\ccRefIdfierPage{CGAL::write_pm<Planar_map,Writer>(Planar_map pm, Writer& writer, ostream& o);}\\
+\ccRefIdfierPage{CGAL::draw_pm<Planar_map,Drawer,Window>(Planar_map pm, Drawer& dr, Window& w);}\\
 
 
 %\ccc{Topological_map<Dcel>}\\
