@@ -300,7 +300,7 @@ struct Static_Filtered_compare_xC2_12
                                         h1a, FT0, h1b, h1c,
                                         h2a, FT0, h2b, h2c,
   		epsilon_2);
-    CGAL_kernel_assertion( (sign1 != 0) && (sign2 != 0) );
+    
     return Comparison_result (- sign1 * sign2 * sign3);
   }
 
@@ -345,7 +345,7 @@ struct Static_Filtered_compare_xC2_12
                                         h1a, FT0, h1b, h1c,
                                         h2a, FT0, h2b, h2c,
   		epsilon_2);
-    CGAL_kernel_assertion( (sign1 != 0) && (sign2 != 0) );
+    
     return Comparison_result (- sign1 * sign2 * sign3);
   }
 };
@@ -507,7 +507,7 @@ struct Static_Filtered_compare_y_at_xC2_5
   		epsilon_0);
     Sign sign2 = CGAL::Static_Filtered_sign_1::update_epsilon(la*px + lb*py + lc,
   		epsilon_1);
-    CGAL_kernel_assertion( sign1 != 0 );
+  
     return Comparison_result (sign1 * sign2);
   }
 
@@ -536,7 +536,7 @@ struct Static_Filtered_compare_y_at_xC2_5
   		epsilon_0);
     Sign sign2 = CGAL::Static_Filtered_sign_1::epsilon_variant(la*px + lb*py + lc,
   		epsilon_1);
-    CGAL_kernel_assertion( sign1 != 0 );
+  
     return Comparison_result (sign1 * sign2);
   }
 };
@@ -673,7 +673,7 @@ struct Static_Filtered_compare_y_at_xC2_7
   		epsilon_1);
     Sign sign3 = Static_Filtered_sign_of_determinant2x2_4::update_epsilon(l1a*px+l1c,l2a*px+l2c,l1b,l2b,
   		epsilon_2);
-    CGAL_kernel_assertion( (sign1 != 0) && (sign2 != 0) );
+    
     return Comparison_result (- sign1 * sign2 * sign3);
   }
 
@@ -707,7 +707,7 @@ struct Static_Filtered_compare_y_at_xC2_7
   		epsilon_1);
     Sign sign3 = Static_Filtered_sign_of_determinant2x2_4::epsilon_variant(l1a*px+l1c,l2a*px+l2c,l1b,l2b,
   		epsilon_2);
-    CGAL_kernel_assertion( (sign1 != 0) && (sign2 != 0) );
+    
     return Comparison_result (- sign1 * sign2 * sign3);
   }
 };
@@ -838,7 +838,7 @@ compare_y_at_xC2(
 struct Static_Filtered_compare_y_at_xC2_9
 {
   static double _bound;
-  static double _epsilon_0,_epsilon_1,_epsilon_2,_epsilon_3;
+  static double _epsilon_0,_epsilon_1,_epsilon_2;
   // static unsigned number_of_failures; // ?
 
   static Comparison_result update_epsilon(
@@ -853,8 +853,7 @@ struct Static_Filtered_compare_y_at_xC2_9
 	const Static_filter_error &hc,
 	double & epsilon_0,
 	double & epsilon_1,
-	double & epsilon_2,
-	double & epsilon_3)
+	double & epsilon_2)
   {
     typedef Static_filter_error FT;
   
@@ -862,10 +861,9 @@ struct Static_Filtered_compare_y_at_xC2_9
   		epsilon_0);
     Sign sign1 = Static_Filtered_sign_of_determinant3x3_9::update_epsilon(ha,hb,hc,l1a,l1b,l1c,l2a,l2b,l2c,
   		epsilon_1);
-    CGAL_kernel_assertion( (sign0 != ZERO) && (Static_Filtered_sign_1::update_epsilon(hb,
-  		epsilon_2) != ZERO) );
+    
     return Comparison_result (sign0 * CGAL::Static_Filtered_sign_1::update_epsilon(hb,
-  		epsilon_3) * sign1);
+  		epsilon_2) * sign1);
   }
 
   // Call this function from the outside to update the context.
@@ -874,7 +872,7 @@ struct Static_Filtered_compare_y_at_xC2_9
     _bound = b;
     // recompute the epsilons: "just" call it over Static_filter_error.
     // That's the tricky part that might not work for everything.
-    (void) update_epsilon(b,b,b,b,b,b,b,b,b,_epsilon_0,_epsilon_1,_epsilon_2,_epsilon_3);
+    (void) update_epsilon(b,b,b,b,b,b,b,b,b,_epsilon_0,_epsilon_1,_epsilon_2);
     // TODO: We should verify that all epsilons have really been updated.
   }
 
@@ -890,8 +888,7 @@ struct Static_Filtered_compare_y_at_xC2_9
 	const Restricted_double &hc,
 	const double & epsilon_0,
 	const double & epsilon_1,
-	const double & epsilon_2,
-	const double & epsilon_3)
+	const double & epsilon_2)
   {
     typedef Restricted_double FT;
   
@@ -899,10 +896,9 @@ struct Static_Filtered_compare_y_at_xC2_9
   		epsilon_0);
     Sign sign1 = Static_Filtered_sign_of_determinant3x3_9::epsilon_variant(ha,hb,hc,l1a,l1b,l1c,l2a,l2b,l2c,
   		epsilon_1);
-    CGAL_kernel_assertion( (sign0 != ZERO) && (Static_Filtered_sign_1::epsilon_variant(hb,
-  		epsilon_2) != ZERO) );
+    
     return Comparison_result (sign0 * CGAL::Static_Filtered_sign_1::epsilon_variant(hb,
-  		epsilon_3) * sign1);
+  		epsilon_2) * sign1);
   }
 };
 
@@ -967,8 +963,7 @@ re_adjust:
 		hc.dbl(),
 		Static_Filtered_compare_y_at_xC2_9::_epsilon_0,
 		Static_Filtered_compare_y_at_xC2_9::_epsilon_1,
-		Static_Filtered_compare_y_at_xC2_9::_epsilon_2,
-		Static_Filtered_compare_y_at_xC2_9::_epsilon_3);
+		Static_Filtered_compare_y_at_xC2_9::_epsilon_2);
   }
   catch (Restricted_double::unsafe_comparison)
   {
