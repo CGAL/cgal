@@ -140,17 +140,19 @@ checks, exactness checks, expensive checks, and expensive exactness checks.
 \subsubsection{Normal Checks}
 
 @macro<normal checks>(2) many = @begin
-    #if (    defined( CGAL_OPTIMISATION_NO_@1) \
-          || defined( CGAL_NO_@1) || defined( NDEBUG))
+    #if (    defined( CGAL_OPTIMISATION_NO_@1S) \
+          || defined( CGAL_NO_@1S) || defined( NDEBUG))
     #  define  CGAL_optimisation_@2(EX)         ((void)0)
     #  define  CGAL_optimisation_@2_msg(EX,MSG) ((void)0)
     #  define  CGAL_optimisation_@2_code(CODE)
+    #  undef   CGAL_OPTIMISATION_@1_TAG
     #else
     #  define  CGAL_optimisation_@2(EX) \
          ((EX)?((void)0): ::CGAL::@2_fail( # EX ,__FILE__,__LINE__,0))
     #  define  CGAL_optimisation_@2_msg(EX,MSG) \
          ((EX)?((void)0): ::CGAL::@2_fail( # EX ,__FILE__,__LINE__,MSG))
     #  define  CGAL_optimisation_@2_code(CODE) CODE
+    #  define  CGAL_OPTIMISATION_@1_TAG 1
     #endif // optimisation @2s
 @end
 
@@ -160,17 +162,19 @@ checks, exactness checks, expensive checks, and expensive exactness checks.
 @macro<exactness checks>(2) many = @begin
     #if (    ! (    defined( CGAL_OPTIMISATION_CHECK_EXACTNESS) \
                  || defined( CGAL_CHECK_EXACTNESS)              ) \
-          || defined( CGAL_OPTIMISATION_NO_@1) \
-          || defined( CGAL_NO_@1) || defined( NDEBUG))
+          || defined( CGAL_OPTIMISATION_NO_@1S) \
+          || defined( CGAL_NO_@1S) || defined( NDEBUG))
     #  define  CGAL_optimisation_exactness_@2(EX)         ((void)0)
     #  define  CGAL_optimisation_exactness_@2_msg(EX,MSG) ((void)0)
     #  define  CGAL_optimisation_exactness_@2_code(CODE)
+    #  undef   CGAL_OPTIMISATION_EXACTNESS_@1_TAG
     #else
     #  define  CGAL_optimisation_exactness_@2(EX) \
          ((EX)?((void)0): ::CGAL::@2_fail( # EX ,__FILE__,__LINE__,0))
     #  define  CGAL_optimisation_exactness_@2_msg(EX,MSG) \
          ((EX)?((void)0): ::CGAL::@2_fail( # EX ,__FILE__,__LINE__,MSG))
     #  define  CGAL_optimisation_exactness_@2_code(CODE) CODE
+    #  define  CGAL_OPTIMISATION_EXACTNESS_@1_TAG 1
     #endif // optimisation exactness @2s
 @end
 
@@ -180,17 +184,19 @@ checks, exactness checks, expensive checks, and expensive exactness checks.
 @macro<expensive checks>(2) many = @begin
     #if (    ! (    defined( CGAL_OPTIMISATION_CHECK_EXPENSIVE) \
                  || defined( CGAL_CHECK_EXPENSIVE)              ) \
-          || defined( CGAL_OPTIMISATION_NO_@1) \
-          || defined( CGAL_NO_@1) || defined( NDEBUG))
+          || defined( CGAL_OPTIMISATION_NO_@1S) \
+          || defined( CGAL_NO_@1S) || defined( NDEBUG))
     #  define  CGAL_optimisation_expensive_@2(EX)         ((void)0)
     #  define  CGAL_optimisation_expensive_@2_msg(EX,MSG) ((void)0)
     #  define  CGAL_optimisation_expensive_@2_code(CODE)
+    #  undef   CGAL_OPTIMISATION_EXPENSIVE_@1_TAG
     #else
     #  define  CGAL_optimisation_expensive_@2(EX) \
          ((EX)?((void)0): ::CGAL::@2_fail( # EX ,__FILE__,__LINE__,0))
     #  define  CGAL_optimisation_expensive_@2_msg(EX,MSG) \
          ((EX)?((void)0): ::CGAL::@2_fail( # EX ,__FILE__,__LINE__,MSG))
     #  define  CGAL_optimisation_expensive_@2_code(CODE) CODE
+    #  define  CGAL_OPTIMISATION_EXPENSIVE_@1_TAG 1
     #endif // optimisation expensive @2s
 @end
 
@@ -202,19 +208,21 @@ checks, exactness checks, expensive checks, and expensive exactness checks.
                  || defined( CGAL_OPTIMISATION_CHECK_EXPENSIVE) \
                  || defined( CGAL_CHECK_EXACTNESS)              \
                  || defined( CGAL_CHECK_EXPENSIVE)              ) \
-          || defined( CGAL_OPTIMISATION_NO_@1) \
-          || defined( CGAL_NO_@1) || defined( NDEBUG))
+          || defined( CGAL_OPTIMISATION_NO_@1S) \
+          || defined( CGAL_NO_@1S) || defined( NDEBUG))
     #  define  CGAL_optimisation_expensive_exactness_@2(EX) \
                                                                       ((void)0)
     #  define  CGAL_optimisation_expensive_exactness_@2_msg(EX,MSG) \
                                                                       ((void)0)
     #  define  CGAL_optimisation_expensive_exactness_@2_code(CODE)
+    #  undef   CGAL_OPTIMISATION_EXPENSIVE_EXACTNESS_@1_TAG
     #else
     #  define  CGAL_optimisation_expensive_exactness_@2(EX) \
          ((EX)?((void)0): ::CGAL::@2_fail( # EX ,__FILE__,__LINE__,0))
     #  define  CGAL_optimisation_expensive_exactness_@2_msg(EX,MSG) \
          ((EX)?((void)0): ::CGAL::@2_fail( # EX ,__FILE__,__LINE__,MSG))
     #  define  CGAL_optimisation_expensive_exactness_@2_code(CODE) CODE
+    #  define  CGAL_OPTIMISATION_EXPENSIVE_EXACTNESS_@1_TAG 1
     #endif // optimisation expensive exactness @2s
 @end
 
@@ -330,19 +338,19 @@ stream \ccc{verr}.
 
     // assertions
     // ----------
-    @<check macros>("ASSERTIONS","assertion")
+    @<check macros>("ASSERTION","assertion")
 
     // preconditions
     // -------------
-    @<check macros>("PRECONDITIONS","precondition")
+    @<check macros>("PRECONDITION","precondition")
 
     // postconditions
     // --------------
-    @<check macros>("POSTCONDITIONS","postcondition")
+    @<check macros>("POSTCONDITION","postcondition")
 
     // warnings
     // --------
-    @<check macros>("WARNINGS","warning")
+    @<check macros>("WARNING","warning")
 
     #endif // CGAL_OPTIMISATION_ASSERTIONS_H
 
@@ -455,7 +463,7 @@ stream \ccc{verr}.
 @file <include/CGAL/IO/optimisation_Window_stream.h> = @begin
     @<file header>(
         "include/CGAL/IO/optimisation_Window_stream.h",
-        "graphical output to `leda_window' for optimisation algorith.")
+        "graphical output to window stream for optimisation algorithms")
 
     #include <CGAL/IO/Min_circle_2_Window_stream.h>
     #include <CGAL/IO/Min_ellipse_2_Window_stream.h>
