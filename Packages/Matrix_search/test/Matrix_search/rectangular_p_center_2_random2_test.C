@@ -87,12 +87,12 @@ typedef Random_points_in_square_2< Point, Creator >
 template < class P,
            class Creator =
            CGAL_STD::Creator_uniform_2< typename P::FT, P > >
-class Random_p_clusters_2 : public CGAL_STD::_Random_generator_base< P > {
+class Random_p_clusters_2 : public CGAL_STD::Random_generator_base< P > {
 #else
 template < class P,
            class Creator =
            CGAL::Creator_uniform_2< CGAL_TYPENAME_MSVC_NULL P::FT, P > >
-class Random_p_clusters_2 : public CGAL::_Random_generator_base< P > {
+class Random_p_clusters_2 : public CGAL::Random_generator_base< P > {
 #endif // CGAL_CFG_NO_NAMESPACE
   void generate_point() {
     typedef typename P::FT FT;
@@ -117,7 +117,7 @@ class Random_p_clusters_2 : public CGAL::_Random_generator_base< P > {
   }
 public:
   typedef Random_p_clusters_2< P, Creator > This;
-  typedef CGAL::_Random_generator_base< P > Base;
+  typedef CGAL::Random_generator_base< P > Base;
   Random_p_clusters_2(int n_,
                       double c_size_,
                       double r = 1,
