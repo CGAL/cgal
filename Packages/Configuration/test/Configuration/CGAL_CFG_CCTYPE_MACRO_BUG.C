@@ -11,7 +11,7 @@
 // release       : $CGAL_Revision: CGAL-2.0-I-7 $
 // release_date  : $CGAL_Date: 1999/03/29 $
 //
-// file          : config/testfiles/CGAL_CFG_NO_STDC_NAMESPACE.C
+// file          : config/testfiles/CGAL_CFG_CCTYPE_MACRO_BUG.C
 // package       : Configuration (1.28)
 // source        :
 // revision      : 1.11
