@@ -44,7 +44,6 @@
 
 #include <CGAL/basic_constructionsH2.h>
 #include <CGAL/distance_predicatesH2.h>
-#include <CGAL/point_vector_declarationsH2.h>
 #include <CGAL/predicates_on_directionsH2.h>
 #include <CGAL/predicates_on_linesH2.h>
 #include <CGAL/predicates_on_pointsH2.h>
