@@ -1,5 +1,8 @@
 Changes done to the `Min_ellipse_2' package.
 
+Version 3.2.9 on 29-Sep-1999
+- removed friend declarations from 'Optimisation_ellipse_2'.
+
 Version 3.2.8 on 29-Sep-1999
 - added 'CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(...).'
 - changed order of constructors (moved member template to the end).
