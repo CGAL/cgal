@@ -119,7 +119,7 @@ private:
   void keyPressEvent(QKeyEvent *e)
   {
     switch ( e->key() ) {
-      case 0x1000:				// key_escape
+      case Key_Escape:			// key_escape
           if(poly.size() > 1){
             widget->lock();
               RasterOp old_rasterop=widget->rasterOp();
