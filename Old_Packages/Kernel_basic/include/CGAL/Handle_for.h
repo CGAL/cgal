@@ -24,14 +24,13 @@
 
 #ifndef CGAL_HANDLE_FOR_H
 #define CGAL_HANDLE_FOR_H
+
 #include <CGAL/memory.h>
 
-namespace CGAL {
-
+CGAL_BEGIN_NAMESPACE
 
 template <class RefCounted, class Allocator> class Handle_for;
 class Object;
-
 
 class Ref_counted
 {
@@ -145,5 +144,6 @@ class Handle_for
 template <class RefCounted, class Allocator>
 Allocator  Handle_for<RefCounted,Allocator>::allocator;
 
-} // namespace CGAL
+CGAL_END_NAMESPACE
+
 #endif // CGAL_HANDLE_FOR_H

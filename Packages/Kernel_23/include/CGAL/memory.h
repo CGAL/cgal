@@ -20,18 +20,23 @@
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
 
-
 #ifndef CGAL_MEMORY_H
 #define CGAL_MEMORY_H
+
 #include <memory>
 
 #ifdef CGAL_USE_LEDA
-#include <LEDA/allocator.h>
-#define CGAL_ALLOCATOR(t) leda_allocator< t >
-#define CGAL_ALLOC leda_allocator
+#  include <LEDA/allocator.h>
+#  define CGAL_ALLOCATOR(t) leda_allocator< t >
+#  define CGAL_ALLOC leda_allocator
+
+#elif defined __SUNPRO_CC
+#  define CGAL_ALLOCATOR(t) std::allocator_interface< std::allocator< t >, t >
+#  define CGAL_ALLOC not_possible
+
 #else
-#define CGAL_ALLOCATOR(t) std::allocator< t >
-#define CGAL_ALLOC std::allocator
+#  define CGAL_ALLOCATOR(t) std::allocator< t >
+#  define CGAL_ALLOC std::allocator
 #endif
 
 #endif // CGAL_MEMORY_H
