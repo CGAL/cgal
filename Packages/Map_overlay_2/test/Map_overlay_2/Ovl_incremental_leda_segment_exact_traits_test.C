@@ -17,6 +17,7 @@ int main(int argc, char* argv[])
 #else
 
 #include <CGAL/basic.h>
+#include <CGAL/leda_rational.h> 
 #include <CGAL/Map_overlay_default_dcel.h>
 #include <CGAL/Arr_leda_segment_exact_traits.h>
 #include <CGAL/Pm_with_intersections.h>
@@ -24,7 +25,9 @@ int main(int argc, char* argv[])
 #include <iostream>
 #include "Map_overlay_base_test.h"
 
-typedef CGAL::Arr_leda_segment_exact_traits  Traits;
+typedef leda_rational                                 NT;
+typedef CGAL::Arr_leda_segment_exact_traits<NT>       Traits;
+//typedef CGAL::Arr_leda_segment_exact_traits  Traits;
 
 typedef Traits::Point                                 Point;
 typedef Traits::X_curve                               X_curve;
