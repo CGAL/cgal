@@ -26,6 +26,7 @@
 #ifndef CGAL_TRIANGULATION_GEOM_TRAITS_3_H
 #define CGAL_TRIANGULATION_GEOM_TRAITS_3_H
 
+#include <CGAL/Quotient.h>
 #include <CGAL/Point_3.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Triangle_3.h>
