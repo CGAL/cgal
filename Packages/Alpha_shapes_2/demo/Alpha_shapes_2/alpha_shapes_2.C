@@ -209,8 +209,6 @@ public:
 
 private:
   void something_changed(){current_state++;};
-signals:
-  void was_repainted();
   
 public slots:
   void new_instance()
@@ -331,18 +329,18 @@ private slots:
 
   void change_alpha() {
     bool ok = FALSE;
-    double res = QInputDialog::getDouble( 
+    double result = QInputDialog::getDouble( 
 		 tr( "Please enter a decimal number" ),
-		 "alpha > 0:", alpha_index, 0, 1, 3, &ok, this );
+		 "alpha > 0:", alpha_index, 0, 2147483647, 4, &ok, this );
     if ( ok ){
-      alpha_index = res;
-      if(mult < res)
-        mult = res;
-      slider->setValue(res*10000/mult);	
+      alpha_index = result;
+      if(mult < result)
+        mult = result;
+      slider->setValue(result*10000/mult);	
       A.set_alpha(alpha_index);
       label->setText(QString("The current alpha value: ") +
 		   QString::number(alpha_index));
-      widget->redraw();      
+      widget->redraw();
     }
   }
 
