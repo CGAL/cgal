@@ -1262,7 +1262,7 @@ namespace CommonKernelFunctors {
     operator()( const Triangle_2& t, int i) const
     { return t.vertex(i); }
 
-    const Point_2 &
+    const Point_2
     operator()( const Iso_rectangle_2& r, int i) const
     { return r.vertex(i); }
   };
@@ -1287,7 +1287,7 @@ namespace CommonKernelFunctors {
     operator()( const Triangle_3& t, int i) const
     { return t.vertex(i); }
 
-    const Point_3 &
+    const Point_3
     operator()( const Iso_cuboid_3& r, int i) const
     { return r.vertex(i); }
 
