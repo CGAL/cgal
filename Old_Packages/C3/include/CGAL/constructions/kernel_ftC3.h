@@ -14,7 +14,7 @@
 // file          : include/CGAL/constructions/kernel_ftC3.h
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Herve.Bronnimann@sophia.inria.fr
+// author(s)     : Herve Bronnimann
 //
 // coordinator   : INRIA Sophia-Antipolis (Herve.Bronnimann@sophia.inria.fr)
 //
@@ -112,7 +112,6 @@ projection_lineC3(const FT &px, const FT &py, const FT &pz,
   y = lpy + lambda * ldy;
   z = lpz + lambda * ldz;
 }
-
 
 template <class FT> 
 CGAL_KERNEL_MEDIUM_INLINE
