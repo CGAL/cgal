@@ -72,7 +72,8 @@ typename std::iterator_traits<Forward_iterator>::value_type
 gcd_of_range(Forward_iterator its, Forward_iterator ite)
 {
   typedef typename std::iterator_traits<Forward_iterator>::value_type NT;
-  return gcd_of_range(its,ite,Number_type_traits<NT>::Has_gcd()); 
+  typedef typename Number_type_traits<NT>::Has_gcd Has_gcd;
+  return gcd_of_range(its,ite,Has_gcd());
 }
 
 template <class Forward_iterator>
