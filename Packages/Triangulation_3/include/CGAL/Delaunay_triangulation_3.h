@@ -60,7 +60,8 @@ public:
   typedef typename Gt::Side_of_oriented_sphere_3 Side_of_oriented_sphere;
   typedef typename Gt::Coplanar_side_of_oriented_circle_3
                                              Coplanar_side_of_oriented_circle;
-  typedef typename Gt::Cross_product Cross_product;
+  typedef typename Gt::Construct_cross_product_vector_3
+                                             Construct_cross_product_vector;
 
   typedef typename Triangulation_3<Gt,Tds>::Cell_handle   Cell_handle;
   typedef typename Triangulation_3<Gt,Tds>::Vertex_handle Vertex_handle;
@@ -79,9 +80,9 @@ public:
   typedef typename Triangulation_3<Gt,Tds>::Locate_type Locate_type;
 
 protected:
-  Side_of_oriented_sphere side_of_oriented_sphere;
+  Side_of_oriented_sphere          side_of_oriented_sphere;
   Coplanar_side_of_oriented_circle coplanar_side_of_oriented_circle;
-  Cross_product cross_product;
+  Construct_cross_product_vector   cross_product;
 
 public:
 
@@ -120,7 +121,7 @@ public:
 	geom_traits().side_of_oriented_sphere_3_object();
     coplanar_side_of_oriented_circle =
 	geom_traits().coplanar_side_of_oriented_circle_3_object();
-    cross_product = geom_traits().cross_product_object();
+    cross_product = geom_traits().construct_cross_product_vector_3_object();
   }
 
   template < class InputIterator >

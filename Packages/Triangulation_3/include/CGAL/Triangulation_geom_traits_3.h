@@ -93,18 +93,6 @@ class Local_Coplanar_side_of_oriented_circle
     }
 };
 
-template <class Vector>
-class Local_Cross_product
-{
-public:
-  typedef Vector result_type;
-
-  Vector
-  operator()(const Vector& v1, const Vector& v2) const {
-    return cross_product(v1, v2);
-  }
-};
-
 template < class Repres >
 class Triangulation_geom_traits_3 
 {
@@ -130,12 +118,12 @@ public:
   typedef typename Rep::Orientation_3              Orientation_3;
   typedef typename Rep::Coplanar_orientation_3     Coplanar_orientation_3;
   typedef typename Rep::Side_of_oriented_sphere_3  Side_of_oriented_sphere_3;
+  typedef typename Rep::Construct_cross_product_vector_3
+                                            Construct_cross_product_vector_3;
 
   // Uncomment the next line as soon as Kernels have this function
   // typedef typename Rep::Side_of_oriented_circle_3 Coplanar_side_of_oriented_circle_3;
-  // typedef typename Rep::Cross_product Cross_product;
   typedef Local_Coplanar_side_of_oriented_circle Coplanar_side_of_oriented_circle_3;
-  typedef Local_Cross_product<Vector_3> Cross_product;
 
   typedef typename Rep::Construct_segment_3        Construct_segment_3;
   typedef typename Rep::Construct_triangle_3       Construct_triangle_3;
@@ -174,9 +162,9 @@ public:
     return Equal_3();
   }
 
-  Cross_product
-  cross_product_object() const { 
-    return Cross_product();
+  Construct_cross_product_vector_3
+  construct_cross_product_vector_3_object() const { 
+    return Construct_cross_product_vector_3();
   }
 
   Collinear_3
