@@ -7,6 +7,8 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: Add workaround_4_ms.obj to CGAL_EXTRA_OBJECTS on CYGWIN.
+GLOB: Fixed newline problem in include makefile.
 GLOB: Fixed VC++ pattern problem (match for CL|cl without .exe).
 GLOB: Added setting of CGAL_OBJ_PREFIX (for Borland support).
 GLOB: Changed CGAL_LIB_CREATE for Borland to "tlib /C /P512".
