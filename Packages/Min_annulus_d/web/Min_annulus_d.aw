@@ -536,21 +536,23 @@ contained in the smallest enclosing annulus.
 @end
 
 To access the support points, we exploit the following fact. A point~$p_i$
-is a support point, iff its corresponding variable $x_i$ (of the QP solver)
-is basic. Thus the number of support points is equal to the number of basic
-variables, if the smallest enclosing annulus is not empty.
+is a support point, iff one of its corresponding variable $\lambda_i$ or
+$\mu_i$ (of the QP solver) is basic. Thus the number of support points is
+equal to the number of basic variables, if the smallest enclosing annulus
+is not empty.
 
 @macro <Min_annulus_d member functions> += @begin
 
     // access to support points
     int
     number_of_support_points( ) const
-        { return is_empty() ? 0 : solver.number_of_basic_variables(); }
+        { return number_of_points() < 2 ? number_of_points()
+                                        : solver.number_of_basic_variables(); }
 @end
 
-If $i$ is the index of the $k$-th basic variable, then $p_i$ is the $k$-th
-support point. To access a point given its index, we use the following
-function class.
+If $i$ is the index of the $k$-th basic variable, then $p_{i/2}$ is the
+$k$-th support point. To access a point given its index, we use the
+following function class.
 
 @macro <Min_annulus_d CGAL/QP_solver includes> += @begin
     #ifndef CGAL_FUNCTION_OBJECTS_ACCESS_BY_INDEX_H
@@ -564,6 +566,21 @@ function class.
                                         Point_by_index;
 @end
 
+Another function class is used to divide the index by 2.
+
+@macro <Min_annulus_d standard includes> += @begin
+    #ifndef CGAL_PROTECT_FUNCTIONAL_H
+    #  include <functional>
+    #  define CGAL_PROTECT_FUNCTIONAL_H
+    #endif
+@end
+
+@macro<Min_annulus_d private types> += @begin
+
+    typedef  std::binder2nd< std::divides<int> >
+                                        Divide;
+@end
+
 The indices of the basic variables can be accessed with the following
 iterator.
 
@@ -573,8 +590,14 @@ iterator.
                                         Basic_variable_index_iterator;
 @end
 
-Combining the function class with the index iterator gives the support
+Combining the function classes with the index iterator gives the support
 point iterator.
+
+@macro <Min_annulus_d CGAL includes> += @begin
+    #ifndef CGAL_FUNCTION_OBJECTS_H
+    #  include <CGAL/function_objects.h>
+    #endif
+@end
 
 @macro <Min_annulus_d CGAL/QP_solver includes> += @begin
     #ifndef CGAL_JOIN_RANDOM_ACCESS_ITERATOR_H
@@ -585,7 +608,8 @@ point iterator.
 @macro <Min_annulus_d types> += @begin
 
     typedef  CGAL::Join_random_access_iterator_1<
-                 Basic_variable_index_iterator, Point_by_index >
+                 Basic_variable_index_iterator,
+                 CGAL::Unary_compose_1<Point_by_index,Divide> >
                                         Support_point_iterator;
 @end
 
@@ -595,15 +619,81 @@ point iterator.
     support_points_begin() const
         { return Support_point_iterator(
                      solver.basic_variables_index_begin(),
-                     Point_by_index( points.begin())); }
+                     CGAL::compose1_1(
+                         Point_by_index( points.begin()),
+                         std::bind2nd( std::divides<int>(), 2)));}
 
     Support_point_iterator
     support_points_end() const
-        { return Support_point_iterator(
-                     is_empty() ? solver.basic_variables_index_begin()
-                                : solver.basic_variables_index_end(),
+        { return Support_point_iterator( number_of_points() < 2
+                     ? solver.basic_variables_index_begin()
+                     : solver.basic_variables_index_end(),
+                     CGAL::compose1_1(
+                         Point_by_index( points.begin()),
+                         std::bind2nd( std::divides<int>(), 2)));}
+@end
+
+Before we can access the inner and outer support points, we have to divide
+the set of basic variables into two sets corresponding to the inner and
+outer support points, respectively. The indices are stored in
+\ccc{inner_indices} and \ccc{outer_indices}, while the actual split-up is
+done in the private member function \ccc{compute_distance} described below
+in Section~\ref{sec:using_qp_solver}.
+
+@macro <Min_annulus_d private types> += @begin
+
+    typedef  std::vector<int>           Index_vector;
+@end
+
+@macro <Min_annulus_d data members> += @begin
+
+    Index_vector             inner_indices;
+    Index_vector             outer_indices;
+@end
+
+@macro <Min_annulus_d member functions> += @begin
+
+    int  number_of_inner_support_points() const { return inner_indices.size();}
+    int  number_of_outer_support_points() const { return outer_indices.size();}
+@end
+
+@macro <Min_annulus_d types> += @begin
+
+    typedef  CGAL::Join_random_access_iterator_1<
+                 typename Index_vector::const_iterator, Point_by_index >
+                                        Inner_support_point_iterator;
+    typedef  CGAL::Join_random_access_iterator_1<
+                 typename Index_vector::const_iterator, Point_by_index >
+                                        Outer_support_point_iterator;
+@end
+
+@macro <Min_annulus_d member functions> += @begin
+
+    Inner_support_point_iterator
+    inner_support_points_begin() const
+        { return Inner_support_point_iterator(
+                     inner_indices.begin(),
+                     Point_by_index( points.begin())); }
+
+    Inner_support_point_iterator
+    inner_support_points_end() const
+        { return Inner_support_point_iterator(
+                     inner_indices.end(),
+                     Point_by_index( points.begin())); }
+
+    Outer_support_point_iterator
+    outer_support_points_begin() const
+        { return Outer_support_point_iterator(
+                     outer_indices.begin(),
+                     Point_by_index( points.begin())); }
+
+    Outer_support_point_iterator
+    outer_support_points_end() const
+        { return Outer_support_point_iterator(
+                     outer_indices.end(),
                      Point_by_index( points.begin())); }
 @end
+
 
 The following types and member functions give access to the center and the
 squared radii of the smallest enclosing annulus.
@@ -611,16 +701,16 @@ squared radii of the smallest enclosing annulus.
 @macro <Min_annulus_d types> += @begin
 
     typedef  typename ET_vector::const_iterator
-                                        Center_coordinate_iterator;
+                                        Coordinate_iterator;
 @end
 
 @macro <Min_annulus_d member functions> += @begin
 
     // access to center (rational representation)
-    Center_coordinate_iterator
+    Coordinate_iterator
     center_coordinates_begin( ) const { return center_coords.begin(); }
 
-    Center_coordinate_iterator
+    Coordinate_iterator
     center_coordinates_end  ( ) const { return center_coords.end  (); }
 
     // access to squared radii (rational representation)
@@ -667,9 +757,6 @@ squared distance of a given point to the center of the smallest
 enclosing annulus.
 
 @macro <Min_annulus_d CGAL includes> += @begin
-    #ifndef CGAL_FUNCTION_OBJECTS_H
-    #  include <CGAL/function_objects.h>
-    #endif
     #ifndef CGAL_IDENTITY_H
     #  include <CGAL/_QP_solver/identity.h>
     #endif
@@ -883,24 +970,29 @@ points in $|P|$.
     verr << "passed." << endl;
 @end
 
-To validate the support set, we check whether all support points lie on the
-boundary of the smallest enclosing annulus, and if the center is strictly
-contained in the convex hull of the support set. Since the center is a
-linear combination of the support points, it suffice to check if the
-coefficients are positive and at most $1$.
+To validate the support set, we check whether all inner and outer support
+points lie on the inner and outer boundary of the smallest enclosing
+annulus, respectively.
 
 @macro <Min_annulus_d validity check: support set> = @begin
     verr << "  (b) support set check..." << flush;
 
-    /*
-    // all support points on boundary?
-    Support_point_iterator  support_point_it = support_points_begin();
-    for ( ; support_point_it != support_points_end(); ++support_point_it) {
-        if ( ! has_on_boundary( *support_point_it)) 
+    // all inner support points on inner boundary?
+    Inner_support_point_iterator  i_pt_it = inner_support_points_begin();
+    for ( ; i_pt_it != inner_support_points_end(); ++i_pt_it) {
+        if ( sqr_dist( *i_pt_it) != sqr_i_rad_numer)
             return CGAL::_optimisation_is_valid_fail( verr,
-                "annulus does not have all support points on its boundary");
+       "annulus does not have all inner support points on its inner boundary");
     }
 
+    // all outer support points on outer boundary?
+    Outer_support_point_iterator  o_pt_it = outer_support_points_begin();
+    for ( ; o_pt_it != outer_support_points_end(); ++o_pt_it) {
+        if ( sqr_dist( *o_pt_it) != sqr_o_rad_numer)
+            return CGAL::_optimisation_is_valid_fail( verr,
+       "annulus does not have all outer support points on its outer boundary");
+    }
+    /*
     // center strictly in convex hull of support points?
     typename Solver::Basic_variable_numerator_iterator
         num_it = solver.basic_variables_numerator_begin();
@@ -959,20 +1051,25 @@ traits class object.
 
           case CGAL::IO::PRETTY:
             os << "CGAL::Min_annulus_d( |P| = "
-               << min_annulus.number_of_points()
-               << ", |S| = " << min_annulus.number_of_support_points() << endl;
+               << min_annulus.number_of_points() << ", |S| = "
+               << min_annulus.number_of_inner_support_points() << '+'
+               << min_annulus.number_of_outer_support_points() << endl;
             os << "  P = {" << endl;
             os << "    ";
             copy( min_annulus.points_begin(), min_annulus.points_end(),
                   Os_it( os, ",\n    "));
             os << "}" << endl;
-            os << "  S = {" << endl;
+            os << "  S_i = {" << endl;
             os << "    ";
-            /*
-            copy( min_annulus.support_points_begin(),
-                  min_annulus.support_points_end(),
+            copy( min_annulus.inner_support_points_begin(),
+                  min_annulus.inner_support_points_end(),
                   Os_it( os, ",\n    "));
-            */
+            os << "}" << endl;
+            os << "  S_o = {" << endl;
+            os << "    ";
+            copy( min_annulus.outer_support_points_begin(),
+                  min_annulus.outer_support_points_end(),
+                  Os_it( os, ",\n    "));
             os << "}" << endl;
             os << "  center = ( ";
             copy( min_annulus.center_coordinates_begin(),
@@ -1152,6 +1249,10 @@ squared radii of the smallest enclosing annulus.
     void
     compute_min_annulus( )
     {
+        // clear inner and outer support points
+        inner_indices.erase( inner_indices.begin(), inner_indices.end());
+        outer_indices.erase( outer_indices.begin(), outer_indices.end());
+
         if ( is_empty()) {
             center_coords.resize( 1);
             sqr_i_rad_numer = -ET( 1);
@@ -1160,6 +1261,8 @@ squared radii of the smallest enclosing annulus.
         }
         
         if ( number_of_points() == 1) {
+            inner_indices.push_back( 0);
+            outer_indices.push_back( 0);
             center_coords.resize( d+1);
             std::copy( tco.access_coordinates_begin_d_object()( points[ 0]),
                        tco.access_coordinates_begin_d_object()( points[ 0])+d,
@@ -1212,7 +1315,7 @@ squared radii of the smallest enclosing annulus.
     }
     typedef  typename LP_rep::A_iterator  A_it;
     typedef  typename LP_rep::D_iterator  D_it;
-    solver.set( 2*points.size(), d+2,
+    solver.set( 2*points.size(), d+2, d+2,
                 A_it( a_matrix.begin()), b_vector.begin(),
                 c_vector.begin(), D_it());
     solver.init();
@@ -1232,6 +1335,16 @@ squared radii of the smallest enclosing annulus.
     sqr_o_rad_numer = sqr_sum
                       - solver.dual_variable( d+1)*center_coords[ d];
     sqr_rad_denom   = center_coords[ d] * center_coords[ d];
+
+    // split up support points
+    for ( i = 0; i < solver.number_of_basic_variables(); ++i) {
+        int index = solver.basic_variables_index_begin()[ i];
+        if ( index % 2 == 0) {
+            inner_indices.push_back( index/2);
+        } else {
+            outer_indices.push_back( index/2);
+        }
+    }
 @end
 
 @! ----------------------------------------------------------------------------
@@ -1260,13 +1373,14 @@ squared radii of the smallest enclosing annulus.
     
     template < class NT >
     void  set_pricing_strategy( NT)
-    { strategyP = new CGAL::Partial_filtered_pricing<LP_rep>;
-      solver.set_pricing_strategy( *strategyP); }
-  /*
+        { strategyP = new CGAL::Partial_filtered_pricing<LP_rep>;
+          solver.set_pricing_strategy( *strategyP); }
+    
+    #ifndef _MSC_VER
     void  set_pricing_strategy( ET)
-    { strategyP = new CGAL::Partial_exact_pricing<LP_rep>;
-      solver.set_pricing_strategy( *strategyP); }
-  */
+        { strategyP = new CGAL::Partial_exact_pricing<LP_rep>;
+          solver.set_pricing_strategy( *strategyP); }
+    #endif
 @end
 
 
@@ -1501,7 +1615,7 @@ error stream.
 
 @macro <Min_annulus_d test function> = @begin
     #define COVER(text,code) \
-                verr0.out().width( 26); verr0 << text << "..." << flush; \
+                verr0.out().width( 32); verr0 << text << "..." << flush; \
                 verrX.out().width(  0); verrX << "==> " << text << endl \
                   << "----------------------------------------" << endl; \
                 { code } verr0 << "ok."; verr << endl;
@@ -1553,7 +1667,6 @@ error stream.
                     == min_annulus.number_of_points());
         )
 
-        /*
         COVER( "(number of) support points",
             verrX << min_annulus.number_of_support_points() << endl;
             typename Min_annulus::Support_point_iterator
@@ -1568,7 +1681,7 @@ error stream.
 
         COVER( "(number of) inner support points",
             verrX << min_annulus.number_of_inner_support_points() << endl;
-            typename Min_annulus::Support_point_iterator
+            typename Min_annulus::Inner_support_point_iterator
                 point_it = min_annulus.inner_support_points_begin();
             for ( ; point_it != min_annulus.inner_support_points_end();
                   ++point_it) {
@@ -1581,7 +1694,7 @@ error stream.
 
         COVER( "(number of) outer support points",
             verrX << min_annulus.number_of_outer_support_points() << endl;
-            typename Min_annulus::Support_point_iterator
+            typename Min_annulus::Outer_support_point_iterator
                 point_it = min_annulus.outer_support_points_begin();
             for ( ; point_it != min_annulus.outer_support_points_end();
                   ++point_it) {
@@ -1591,11 +1704,10 @@ error stream.
                       - min_annulus.outer_support_points_begin())
                     == min_annulus.number_of_outer_support_points());
         )
-        */
 
         COVER( "center and squared radii",
             verrX << "center:";
-            typename Min_annulus::Center_coordinate_iterator  coord_it;
+            typename Min_annulus::Coordinate_iterator  coord_it;
             for ( coord_it  = min_annulus.center_coordinates_begin();
                   coord_it != min_annulus.center_coordinates_end();
                   ++coord_it) {
