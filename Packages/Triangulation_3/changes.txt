@@ -1,3 +1,6 @@
+Version 1.112 (12 April 02)
+- Split insert_conflict() in insert_conflict_2() and insert_conflict_3().
+
 Version 1.111 (12 April 02)
 - Fix link problem in DS_Container.
 - Remove include dependency order in Regular_euclidian_traits_3.h.

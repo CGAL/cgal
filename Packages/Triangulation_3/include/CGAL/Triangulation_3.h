@@ -612,9 +612,9 @@ protected:
   // conflict, then calls _tds._insert_in_hole().
   template < class Conflict_test >
   Vertex_handle
-  insert_conflict(Cell_handle c, const Conflict_test &tester)
+  insert_conflict_2(Cell_handle c, const Conflict_test &tester)
   {
-    CGAL_triangulation_precondition( dimension() >= 2 );
+    CGAL_triangulation_precondition( dimension() == 2 );
     CGAL_triangulation_precondition( c != NULL );
     CGAL_triangulation_precondition( tester(c) );
 
@@ -624,12 +624,32 @@ protected:
     Facet facet;
 
     // Find the cells in conflict
-    if (dimension() == 3)
-	find_conflicts_3(c, tester, Oneset_iterator<Facet>(facet),
+    find_conflicts_2(c, tester, Oneset_iterator<Facet>(facet),
 		                    std::back_inserter(cells),
 				    Emptyset_iterator());
-    else
-	find_conflicts_2(c, tester, Oneset_iterator<Facet>(facet),
+
+    // Create the new cells and delete the old.
+    return _tds._insert_in_hole(cells.begin(), cells.end(),
+	                        facet.first, facet.second);
+  }
+
+  // This one takes a function object to recursively determine the cells in
+  // conflict, then calls _tds._insert_in_hole().
+  template < class Conflict_test >
+  Vertex_handle
+  insert_conflict_3(Cell_handle c, const Conflict_test &tester)
+  {
+    CGAL_triangulation_precondition( dimension() == 3 );
+    CGAL_triangulation_precondition( c != NULL );
+    CGAL_triangulation_precondition( tester(c) );
+
+    std::vector<Cell_handle> cells;
+    cells.reserve(32);
+
+    Facet facet;
+
+    // Find the cells in conflict
+    find_conflicts_3(c, tester, Oneset_iterator<Facet>(facet),
 		                    std::back_inserter(cells),
 				    Emptyset_iterator());
 
@@ -640,7 +660,7 @@ protected:
 
 private:
   // Here are the conflit tester function objects passed to
-  // insert_conflict() by insert_outside_convex_hull().
+  // insert_conflict_[23]() by insert_outside_convex_hull().
   class Conflict_tester_outside_convex_hull_3
   {
       const Point &p;
@@ -2445,14 +2465,14 @@ insert_outside_convex_hull(const Point & p, Cell_handle c)
   case 2:
     {
       Conflict_tester_outside_convex_hull_2 tester(p, this);
-      Vertex_handle v = insert_conflict(c, tester);
+      Vertex_handle v = insert_conflict_2(c, tester);
       v->set_point(p);
       return v;
     }
   default: // case 3:
     {
       Conflict_tester_outside_convex_hull_3 tester(p, this);
-      Vertex_handle v = insert_conflict(c, tester);
+      Vertex_handle v = insert_conflict_3(c, tester);
       v->set_point(p);
       return v;
     }

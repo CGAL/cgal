@@ -394,7 +394,7 @@ insert(const Point & p, Locate_type lt, Cell_handle c, int li, int)
 	  return c->vertex(li);
 
       Conflict_tester_3 tester(p, this);
-      Vertex_handle v = insert_conflict(c, tester);
+      Vertex_handle v = insert_conflict_3(c, tester);
       v->set_point(p);
       return v;
     }// dim 3
@@ -407,7 +407,7 @@ insert(const Point & p, Locate_type lt, Cell_handle c, int li, int)
       case EDGE:
 	{
           Conflict_tester_2 tester(p, this);
-	  Vertex_handle v = insert_conflict(c, tester);
+	  Vertex_handle v = insert_conflict_2(c, tester);
 	  v->set_point(p);
 	  return v;
 	}
