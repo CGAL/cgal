@@ -392,7 +392,7 @@ public:
   // for Delaunay :
   void star_region(const Conflict_set & region, Vertex* v, Cell* c, int li);
     // region is a set of connected cells
-    // c belongs to region and has facet i on the boundary of region 
+    // c belongs to region and has facet li on the boundary of region 
     // replaces the cells in region  
     // by linking v to the boundary of region 
     
@@ -2093,7 +2093,7 @@ void
 Triangulation_data_structure_3<Vb,Cb>::
 star_region(const Conflict_set & region, Vertex* v, Cell* c, int li )
   // region is a set of connected cells
-  // c belongs to region and has facet i on the boundary of region 
+  // c belongs to region and has facet li on the boundary of region 
   // replaces the cells in region  
   // by linking v to the boundary of region
 {
@@ -2128,30 +2128,27 @@ create_star(const Conflict_set & region, Vertex* v, Cell* c, int li )
       i[1] = (li+1)&3;
       i[2] = (li+3)&3;
     }
+    Cell * c_li = c->neighbor(li);
     cnew = create_cell( c->vertex(i[0]), c->vertex(i[1]), c->vertex(i[2]), v,
-			NULL, NULL, NULL, c->neighbor(li) );
-    c->neighbor(li)->set_neighbor( c->neighbor(li)->index(c), cnew);
+			NULL, NULL, NULL, c_li );
+    c_li->set_neighbor( c_li->index(c), cnew);
 
     // look for the other three neighbors of cnew
-    int j1, j2;
-    Cell* cur;
-    Cell* n;
     for (int ii=0; ii<3; ii++) {
       cnew->vertex(ii)->set_cell(cnew);
       // indices of the vertices of cnew such that i[ii],j1,j2,li positive
-      j1 = next_around_edge(i[ii],li);
-      j2 = 6-i[ii]-li-j1;
+      int j1 = next_around_edge(i[ii],li);
+      int j2 = 6-i[ii]-li-j1;
       // turn around the oriented edge j1 j2
-      cur = c;
-      n = c->neighbor(i[ii]);
+      Cell *cur = c;
+      Cell *n = c->neighbor(i[ii]);
       CGAL_triangulation_assertion( next_around_edge(j1,j2)==i[ii] );//debug
       while (true) {
 	j1 = n->index( cur->vertex(j1) );
 	j2 = n->index( cur->vertex(j2) );
-	if ( region.find( (Conflict_set::key_type) n ) == region.end() ) { 
-	  //not in conflict
-	  break;
-	}
+	if ( region.find( (Conflict_set::key_type) n ) == region.end() )
+	// if (n->get_flags() == 0)
+	  break; //not in conflict
 	CGAL_triangulation_assertion( n != c );
 	cur = n;
 	n = n->neighbor( next_around_edge(j1,j2) );
