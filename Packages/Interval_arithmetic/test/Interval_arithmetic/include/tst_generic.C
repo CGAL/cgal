@@ -75,6 +75,11 @@ bool square_root_test()
 // Same thing for [-2;2]     -> [-inf;+inf].
 // Same thing for [-2.1;2.1] -> [-inf;+inf].
 
+IA_nt test_add(const IA_nt &a, const IA_nt &b)
+{
+  return a+b;
+}
+
 bool overflow_test()
 {
   int i=0;
@@ -92,8 +97,8 @@ bool overflow_test()
     b = b * b;
     c *= c;
     d = d * d;
-    DEBUG( std::cout << a << b << c << d << std::endl; )
-    // DEBUG( std::cout << a << std::endl; )
+    // DEBUG( std::cout << a << b << c << d << std::endl; )
+    DEBUG( std::cout << a << std::endl; )
   }
 
   for (i=0; i<10000; i++)
@@ -101,6 +106,7 @@ bool overflow_test()
     e += e;
     f = f+f;
     g += g;
+    DEBUG( std::cout << "f = " << f << std::endl; )
   }
 
   return a.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, HUGE_VAL)) &&
@@ -254,8 +260,20 @@ bool is_valid_test()
   const IA_nt a(nan, nan), b(0,nan), c(nan, 0), d(1,0);
   const IA_nt e(0,1), f(0,0);
 
-  tmpflag = CGAL::is_valid(a);
+  tmpflag = CGAL::is_valid(nan);
   DEBUG( std::cout << std::endl; )
+  DEBUG( std::cout << "is_valid( " << nan << " ) = " << tmpflag << std::endl; )
+  flag = flag && !tmpflag;
+
+  tmpflag = CGAL::is_valid(zero);
+  DEBUG( std::cout << "is_valid( " << zero << " ) = " << tmpflag << std::endl; )
+  flag = flag && tmpflag;
+
+  tmpflag = CGAL::is_valid(inf);
+  DEBUG( std::cout << "is_valid( " << inf << " ) = " << tmpflag << std::endl; )
+  flag = flag && tmpflag;
+
+  tmpflag = CGAL::is_valid(a);
   DEBUG( std::cout << "is_valid( " << a << " ) = " << tmpflag << std::endl; )
   flag = flag && !tmpflag;
 
