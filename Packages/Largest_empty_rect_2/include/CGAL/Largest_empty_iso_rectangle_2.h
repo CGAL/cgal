@@ -82,6 +82,8 @@ public:
     typedef typename kd_tree::Box Kd_box;
 #endif
 
+  class Point_data;
+
   class Less_yx
   {
   private:
@@ -136,8 +138,6 @@ public:
       return false;
     }
   };
-
-  class Point_data;
 
   template < class Node>
   struct Proj_point {
@@ -342,6 +342,7 @@ public:
       delete left_tent;
     }
   }; 
+
 
 private:
 
