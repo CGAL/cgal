@@ -29,360 +29,343 @@
 namespace CGAL {
 
 
-template <class SearchTraits, 
-          class Distance_=Euclidean_distance<SearchTraits>,
-          class Splitter_ = Sliding_midpoint<SearchTraits>,
-	  class Tree_=Kd_tree<SearchTraits, Splitter_, Tag_true> >
-class Orthogonal_incremental_neighbor_search {
+  template <class SearchTraits, 
+            class Distance_= Euclidean_distance<SearchTraits>,
+            class Splitter_ = Sliding_midpoint<SearchTraits>,
+            class Tree_= Kd_tree<SearchTraits, Splitter_, Tag_true> >
+  class Orthogonal_incremental_neighbor_search {
 
-public:
-  typedef Splitter_ Splitter;
-  typedef Tree_  Tree;
-  typedef Distance_ Distance;
-  typedef typename SearchTraits::Point_d Point_d;
-  typedef typename Distance::Query_item Query_item;
-  typedef typename SearchTraits::FT FT;
-  typedef typename Tree::Point_d_iterator Point_d_iterator;
-  typedef typename Tree::Node_handle Node_handle;
+  public:
+    typedef Splitter_ Splitter;
+    typedef Tree_  Tree;
+    typedef Distance_ Distance;
+    typedef typename SearchTraits::Point_d Point_d;
+    typedef typename Distance::Query_item Query_item;
+    typedef typename SearchTraits::FT FT;
+    typedef typename Tree::Point_d_iterator Point_d_iterator;
+    typedef typename Tree::Node_handle Node_handle;
 
-  typedef std::pair<Point_d,FT> Point_with_transformed_distance;
-  typedef std::pair<Node_handle,FT> Node_with_distance;
-  typedef std::vector<Node_with_distance*> Node_with_distance_vector;
-  typedef std::vector<Point_with_transformed_distance*> Point_with_transformed_distance_vector;
+    typedef std::pair<Point_d,FT> Point_with_transformed_distance;
+    typedef std::pair<Node_handle,FT> Node_with_distance;
+    typedef std::vector<Node_with_distance*> Node_with_distance_vector;
+    typedef std::vector<Point_with_transformed_distance*> Point_with_transformed_distance_vector;
 
 
 
-class Iterator_implementation {
+    class Iterator_implementation {
 
     public:
 
-    int number_of_neighbours_computed;
-    int number_of_internal_nodes_visited;
-    int number_of_leaf_nodes_visited;
-    int number_of_items_visited;
+      int number_of_neighbours_computed;
+      int number_of_internal_nodes_visited;
+      int number_of_leaf_nodes_visited;
+      int number_of_items_visited;
 
     private:
 
     
-    FT multiplication_factor;
+      FT multiplication_factor;
 
-    Query_item* query_point;
+      Query_item query_point;
 
-    int total_item_number;
+      int total_item_number;
 
-    FT distance_to_root;
+      FT distance_to_root;
 
-    bool search_nearest_neighbour;
+      bool search_nearest_neighbour;
 
-    FT rd;
+      FT rd;
 
-    class Priority_higher
-    {
-    public:
+      class Priority_higher
+      {
+      public:
 
         bool search_nearest;
 
-        Priority_higher(bool search_the_nearest_neighbour) {
-                search_nearest = search_the_nearest_neighbour;
-        } 
+        Priority_higher(bool search_the_nearest_neighbour) 
+	  : search_nearest(search_the_nearest_neighbour)
+	{} 
 
         //highest priority is smallest distance
-        bool operator() (Node_with_distance* n1, Node_with_distance* n2) const
+        bool 
+	operator() (Node_with_distance* n1, Node_with_distance* n2) const
 	{
-                if (search_nearest) { return (n1->second > n2->second);}
-                else {return (n2->second > n1->second);}
+	  return (search_nearest) ? (n1->second > n2->second) : (n2->second > n1->second);
         }
-    };
+      };
 
-    class Distance_smaller
-    {
+      class Distance_smaller
+      {
 
-    public:
+      public:
 
         bool search_nearest;
 
-        Distance_smaller(bool search_the_nearest_neighbour) {
-                // Search_traits s;
-                search_nearest = search_the_nearest_neighbour;
-        } 
+        Distance_smaller(bool search_the_nearest_neighbour) 
+	  : search_nearest(search_the_nearest_neighbour)
+	{}
 
         //highest priority is smallest distance
         bool operator() (Point_with_transformed_distance* p1, Point_with_transformed_distance* p2) const
 	{
-		if (search_nearest) {return (p1->second > p2->second);}
-                else {return (p2->second > p1->second);}
+	  return (search_nearest) ? (p1->second > p2->second) : (p2->second > p1->second);
         }
-    };
+      };
 
 
-    std::priority_queue<Node_with_distance*, Node_with_distance_vector,
-    Priority_higher>* PriorityQueue;
-
-    public:
-    std::priority_queue<Point_with_transformed_distance*, Point_with_transformed_distance_vector,
-    Distance_smaller>* Item_PriorityQueue;
-
-    Distance* Orthogonal_distance_instance;
+      std::priority_queue<Node_with_distance*, Node_with_distance_vector,
+	                  Priority_higher> PriorityQueue;
 
     public:
+      std::priority_queue<Point_with_transformed_distance*, Point_with_transformed_distance_vector,
+	                  Distance_smaller> Item_PriorityQueue;
 
-    int reference_count;
+      Distance Orthogonal_distance_instance;
+
+    public:
+
+      int reference_count;
 
     
 
-    // constructor
-    Iterator_implementation(Tree& tree, Query_item& q, const Distance& tr,
-        FT Eps=FT(0.0), bool search_nearest=true)
-    {
-        PriorityQueue= new std::priority_queue<Node_with_distance*, 
-	Node_with_distance_vector,
-    	Priority_higher> 
-        (Priority_higher(search_nearest));
-
-        Item_PriorityQueue = new std::priority_queue<Point_with_transformed_distance*, 
-	Point_with_transformed_distance_vector,
-    	Distance_smaller> 
-       (Distance_smaller(search_nearest));
-       
-        search_nearest_neighbour=search_nearest;
-	reference_count=1;
-        Orthogonal_distance_instance= new Distance(tr);
-        multiplication_factor=
-	Orthogonal_distance_instance->transformed_distance(FT(1.0)+Eps);
-
+      // constructor
+      Iterator_implementation(Tree& tree, Query_item& q, const Distance& tr,
+			      FT Eps=FT(0.0), bool search_nearest=true)
+	: PriorityQueue(Priority_higher(search_nearest)), Item_PriorityQueue(Distance_smaller(search_nearest)),
+	  search_nearest_neighbour(search_nearest), reference_count(1), Orthogonal_distance_instance(tr),
+	  multiplication_factor(Orthogonal_distance_instance.transformed_distance(FT(1.0)+Eps)),
+	  query_point(q), total_item_number(tree.size()), number_of_leaf_nodes_visited(0),
+        number_of_internal_nodes_visited(0), number_of_items_visited(0), number_of_neighbours_computed(0)
+      {
         // if (search_nearest) 
 	distance_to_root=
-	Orthogonal_distance_instance->min_distance_to_rectangle(q,
-						tree.bounding_box());
+	  Orthogonal_distance_instance.min_distance_to_rectangle(q,
+								  tree.bounding_box());
         // else distance_to_root=
    	// Orthogonal_Distance_instance->max_distance_to_rectangle(q,
 	//					tree.bounding_box());
 
-        
-        query_point = &q;
-
-        total_item_number=tree.size();
-
-        number_of_leaf_nodes_visited=0;
-        number_of_internal_nodes_visited=0;
-        number_of_items_visited=0;
-        number_of_neighbours_computed=0;
-
-
-
         Node_with_distance *The_Root = new Node_with_distance(tree.root(),
-						distance_to_root);
-        PriorityQueue->push(The_Root);
+							      distance_to_root);
+        PriorityQueue.push(The_Root);
 
         // rd is the distance of the top of the priority queue to q
         rd=The_Root->second;
         Compute_the_next_nearest_neighbour();
-    }
+      }
 
-    // * operator
-    Point_with_transformed_distance& operator* () const {
-			return *(Item_PriorityQueue->top());
-    }
+      // * operator
+      Point_with_transformed_distance& 
+      operator* () const 
+      {
+	return *(Item_PriorityQueue.top());
+      }
 
-    // prefix operator
-    Iterator_implementation& operator++() {
+      // prefix operator
+      Iterator_implementation& 
+      operator++() 
+      {
         Delete_the_current_item_top();
         Compute_the_next_nearest_neighbour();
         return *this;
-    }
+      }
 
-    // postfix operator
-    Point_with_transformed_distance operator++(int) {
-        Point_with_transformed_distance result = *(Item_PriorityQueue->top());
+      // postfix operator
+      Point_with_transformed_distance 
+      operator++(int) 
+      {
+        Point_with_transformed_distance result = *(Item_PriorityQueue.top());
         ++*this;
         return result;
-    }
+      }
 
-    // Print statistics of the general priority search process.
-    std::ostream& statistics (std::ostream& s) const {
+      // Print statistics of the general priority search process.
+      std::ostream& 
+      statistics (std::ostream& s) const {
     	s << "Orthogonal priority search statistics:" 
-	<< std::endl;
+	  << std::endl;
     	s << "Number of internal nodes visited:" 
-	<< number_of_internal_nodes_visited << std::endl;
+	  << number_of_internal_nodes_visited << std::endl;
     	s << "Number of leaf nodes visited:" 
-	<< number_of_leaf_nodes_visited << std::endl;
+	  << number_of_leaf_nodes_visited << std::endl;
     	s << "Number of items visited:" 
-	<< number_of_items_visited << std::endl;
+	  << number_of_items_visited << std::endl;
         s << "Number of neighbours computed:" 
-	<< number_of_neighbours_computed << std::endl;
+	  << number_of_neighbours_computed << std::endl;
         return s;
-    }
+      }
 
 
-    //destructor
-    ~Iterator_implementation() {
-
-        
-	while (PriorityQueue->size()>0) {
-                Node_with_distance* The_top=PriorityQueue->top();
-                PriorityQueue->pop();
-                delete The_top;
-	};
-	while (Item_PriorityQueue->size()>0) {
-                Point_with_transformed_distance* The_top=Item_PriorityQueue->top();
-                Item_PriorityQueue->pop();
-                delete The_top;
-        };
-        delete PriorityQueue;
-        delete Item_PriorityQueue;
-	delete Orthogonal_distance_instance;
-    }
+      //destructor
+      ~Iterator_implementation() 
+      {
+	while (PriorityQueue.size()>0) {
+	  Node_with_distance* The_top=PriorityQueue.top();
+	  PriorityQueue.pop();
+	  delete The_top;
+	}
+	while (Item_PriorityQueue.size()>0) {
+	  Point_with_transformed_distance* The_top=Item_PriorityQueue.top();
+	  Item_PriorityQueue.pop();
+	  delete The_top;
+        }
+      }
 
     private:
 
-    void Delete_the_current_item_top() {
-        Point_with_transformed_distance* The_item_top=Item_PriorityQueue->top();
-        Item_PriorityQueue->pop();
+      void 
+      Delete_the_current_item_top() 
+      {
+        Point_with_transformed_distance* The_item_top=Item_PriorityQueue.top();
+        Item_PriorityQueue.pop();
         delete The_item_top;
-    }
+      }
 
-    void Compute_the_next_nearest_neighbour() {
-
+      void 
+      Compute_the_next_nearest_neighbour() 
+      {
         // compute the next item
         bool next_neighbour_found=false;
-        if (!(Item_PriorityQueue->empty())) {
-        if (search_nearest_neighbour)
-        	next_neighbour_found=
-		(multiplication_factor*rd > Item_PriorityQueue->top()->second);
-        else
-		next_neighbour_found=
-		(rd < multiplication_factor*Item_PriorityQueue->top()->second);
+        if (!(Item_PriorityQueue.empty())) {
+	  if (search_nearest_neighbour)
+	    next_neighbour_found=
+	      (multiplication_factor*rd > Item_PriorityQueue.top()->second);
+	  else
+	    next_neighbour_found=
+	      (rd < multiplication_factor*Item_PriorityQueue.top()->second);
         }
-      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
-      typename SearchTraits::Cartesian_const_iterator_d query_point_it = construct_it(*query_point);
+	typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+	typename SearchTraits::Cartesian_const_iterator_d query_point_it = construct_it(query_point);
         // otherwise browse the tree further
-        while ((!next_neighbour_found) && (!PriorityQueue->empty())) {
-                Node_with_distance* The_node_top=PriorityQueue->top();
-                Node_handle N= The_node_top->first;
-                PriorityQueue->pop();
-                delete The_node_top;
-		FT copy_rd=rd;
-                while (!(N->is_leaf())) { // compute new distance
-                        number_of_internal_nodes_visited++;
-                        int new_cut_dim=N->cutting_dimension();
-                        FT old_off, new_rd;
-                        FT new_off =
-                        *(query_point_it + new_cut_dim) -
-                        N->cutting_value();
-                        if (new_off < FT(0.0)) {
-				old_off=
-                                *(query_point_it + new_cut_dim)-N->low_value();
-                                if (old_off>FT(0.0)) old_off=FT(0.0);
-                                new_rd=
-                                Orthogonal_distance_instance->
-                                new_distance(copy_rd,old_off,new_off,new_cut_dim);
-				assert(new_rd >= copy_rd);
-				if (search_nearest_neighbour) {
-                                	Node_with_distance *Upper_Child =
-                                	new Node_with_distance(N->upper(), new_rd);
-					PriorityQueue->push(Upper_Child);
-                                	N=N->lower();
-				}
-				else {
-                                	Node_with_distance *Lower_Child =
-                                	new Node_with_distance(N->lower(), copy_rd);
-					PriorityQueue->push(Lower_Child);
-                                	N=N->upper();
-					copy_rd=new_rd;
-				}
+        while ((!next_neighbour_found) && (!PriorityQueue.empty())) {
+	  Node_with_distance* The_node_top=PriorityQueue.top();
+	  Node_handle N= The_node_top->first;
+	  PriorityQueue.pop();
+	  delete The_node_top;
+	  FT copy_rd=rd;
+	  while (!(N->is_leaf())) { // compute new distance
+	    number_of_internal_nodes_visited++;
+	    int new_cut_dim=N->cutting_dimension();
+	    FT old_off, new_rd;
+	    FT new_off =
+	      *(query_point_it + new_cut_dim) -
+	      N->cutting_value();
+	    if (new_off < FT(0.0)) {
+	      old_off=
+		*(query_point_it + new_cut_dim)-N->low_value();
+	      if (old_off>FT(0.0)) old_off=FT(0.0);
+	      new_rd=
+		Orthogonal_distance_instance.new_distance(copy_rd,old_off,new_off,new_cut_dim);
+	      assert(new_rd >= copy_rd);
+	      if (search_nearest_neighbour) {
+		Node_with_distance *Upper_Child =
+		  new Node_with_distance(N->upper(), new_rd);
+		PriorityQueue.push(Upper_Child);
+		N=N->lower();
+	      }
+	      else {
+		Node_with_distance *Lower_Child =
+		  new Node_with_distance(N->lower(), copy_rd);
+		PriorityQueue.push(Lower_Child);
+		N=N->upper();
+		copy_rd=new_rd;
+	      }
 
-                        }
-                        else { // compute new distance
-				old_off= N->high_value() -
-                                *(query_point_it+new_cut_dim);
-                                if (old_off>FT(0.0)) old_off=FT(0.0);
-                                new_rd=Orthogonal_distance_instance->
-                                new_distance(copy_rd,old_off,new_off,new_cut_dim);  
-				assert(new_rd >= copy_rd);
-				if (search_nearest_neighbour) {
-                                	Node_with_distance *Lower_Child =
-                                	new Node_with_distance(N->lower(), new_rd);
-                                	PriorityQueue->push(Lower_Child);
-                                	N=N->upper();
-				}
-				else {
-                                	Node_with_distance *Upper_Child =
-                                	new Node_with_distance(N->upper(), copy_rd);
-                                	PriorityQueue->push(Upper_Child);
-                                	N=N->lower();
-					copy_rd=new_rd;
-				}
-                        }
-                }
-                // n is a leaf
-                number_of_leaf_nodes_visited++;
-                if (N->size() > 0) {
-                  for (Point_d_iterator it=N->begin(); it != N->end(); it++) {
-                        number_of_items_visited++;
-                        FT distance_to_query_point=
-                        Orthogonal_distance_instance->
-                        transformed_distance(*query_point,**it);
-                        Point_with_transformed_distance *NN_Candidate=
-                        new Point_with_transformed_distance(**it,distance_to_query_point);
-                        Item_PriorityQueue->push(NN_Candidate);
-                  };
-                  // old top of PriorityQueue has been processed,
-                  // hence update rd
+	    }
+	    else { // compute new distance
+	      old_off= N->high_value() -
+		*(query_point_it+new_cut_dim);
+	      if (old_off>FT(0.0)) old_off=FT(0.0);
+	      new_rd=Orthogonal_distance_instance.new_distance(copy_rd,old_off,new_off,new_cut_dim);  
+	      assert(new_rd >= copy_rd);
+	      if (search_nearest_neighbour) {
+		Node_with_distance *Lower_Child =
+		  new Node_with_distance(N->lower(), new_rd);
+		PriorityQueue.push(Lower_Child);
+		N=N->upper();
+	      }
+	      else {
+		Node_with_distance *Upper_Child =
+		  new Node_with_distance(N->upper(), copy_rd);
+		PriorityQueue.push(Upper_Child);
+		N=N->lower();
+		copy_rd=new_rd;
+	      }
+	    }
+	  }
+	  // n is a leaf
+	  number_of_leaf_nodes_visited++;
+	  if (N->size() > 0) {
+	    for (Point_d_iterator it=N->begin(); it != N->end(); it++) {
+	      number_of_items_visited++;
+	      FT distance_to_query_point=
+		Orthogonal_distance_instance.transformed_distance(query_point,**it);
+	      Point_with_transformed_distance *NN_Candidate=
+		new Point_with_transformed_distance(**it,distance_to_query_point);
+	      Item_PriorityQueue.push(NN_Candidate);
+	    }
+	    // old top of PriorityQueue has been processed,
+	    // hence update rd
                 
-                  if (!(PriorityQueue->empty()))  {
-                        rd = PriorityQueue->top()->second;
-                        if (search_nearest_neighbour)
-				next_neighbour_found =
+	    if (!(PriorityQueue.empty()))  {
+	      rd = PriorityQueue.top()->second;
+	      if (search_nearest_neighbour)
+		next_neighbour_found =
                   (multiplication_factor*rd > 
-		   Item_PriorityQueue->top()->second);
-                        else
-				next_neighbour_found =
+		   Item_PriorityQueue.top()->second);
+	      else
+		next_neighbour_found =
                   (multiplication_factor*rd < 
-		   Item_PriorityQueue->top()->second);
-                  }
-                  else // priority queue empty => last neighbour found
-                  {
-                        next_neighbour_found=true;
-                  };
+		   Item_PriorityQueue.top()->second);
+	    }
+	    else // priority queue empty => last neighbour found
+	      {
+		next_neighbour_found=true;
+	      }
 
-                  number_of_neighbours_computed++;
-           }
+	    number_of_neighbours_computed++;
+	  }
         }   // next_neighbour_found or priority queue is empty
         // in the latter case also the item priority quee is empty
-    }
-}; // class Iterator_implementaion
+      }
+    }; // class Iterator_implementaion
   
 
 
 
 
 
-class iterator;
+    class iterator;
 
     typedef std::vector<FT> Distance_vector;
 
-    public:
+  public:
 
     // constructor
     Orthogonal_incremental_neighbor_search(Tree& tree,  
-				  Query_item& q, FT Eps = FT(0.0), 
-				  bool search_nearest=true, const Distance& tr=Distance()) 
+					   Query_item& q, FT Eps = FT(0.0), 
+					   bool search_nearest=true, const Distance& tr=Distance()) 
       : start(tree,q,tr,Eps,search_nearest),
         past_the_end()
-        
     {}
 
-    iterator begin() {
+    iterator 
+    begin() 
+    {
       return start;
     }
 
-    iterator end() {
+    iterator 
+    end() 
+    {
       return past_the_end;
     }
 
-    std::ostream& statistics(std::ostream& s) {
-	start.statistics(s);
-	return s;
+    std::ostream& 
+    statistics(std::ostream& s) 
+    {
+      start.statistics(s);
+      return s;
     }
 
 
@@ -406,97 +389,114 @@ class iterator;
 
     public:
 
-    // default constructor
-    iterator() {Ptr_implementation=0;}
+      // default constructor
+      iterator() 
+      : Ptr_implementation(0)
+      {}
 
-    int the_number_of_items_visited() {
+      int 
+      the_number_of_items_visited() 
+      {
         return Ptr_implementation->number_of_items_visited;
-    }
+      }
 
-    // constructor
-    iterator(Tree& tree, Query_item& q, const Distance& tr=Distance(), FT eps=FT(0.0), 
-    bool search_nearest=true){
-        Ptr_implementation =
-        new Iterator_implementation(tree, q, tr, eps, search_nearest);
-    }
+      // constructor
+      iterator(Tree& tree, Query_item& q, const Distance& tr=Distance(), FT eps=FT(0.0), 
+	       bool search_nearest=true)
+	: Ptr_implementation(new Iterator_implementation(tree, q, tr, eps, search_nearest))
+	{}
 
-    // copy constructor
-    iterator(const iterator& Iter) {
+      // copy constructor
+      iterator(const iterator& Iter) 
+      {
         Ptr_implementation = Iter.Ptr_implementation;
         if (Ptr_implementation != 0) Ptr_implementation->reference_count++;
-    }
+      }
 
-      const Point_with_transformed_distance& operator* () const {
-                return *(*Ptr_implementation);
-    }
+      const Point_with_transformed_distance& 
+      operator* () const 
+      {
+	return *(*Ptr_implementation);
+      }
 
-    // prefix operator
-    iterator& operator++() {
+      // prefix operator
+      iterator& 
+      operator++() 
+      {
         ++(*Ptr_implementation);
         return *this;
-    }
+      }
 
-    // postfix operator
-    iterator operator++(int) {
-      iterator tmp(*this);
-      ++(*this);
-      return tmp;
-    }
+      // postfix operator
+      iterator 
+      operator++(int) 
+      {
+	iterator tmp(*this);
+	++(*this);
+	return tmp;
+      }
 
 
-    bool operator==(const iterator& It) const {
-
+      bool 
+      operator==(const iterator& It) const 
+      {
         if (
-                ((Ptr_implementation == 0) || 
-		  Ptr_implementation->Item_PriorityQueue->empty()) &&
-                ((It.Ptr_implementation == 0) ||  
-		  It.Ptr_implementation->Item_PriorityQueue->empty())
-        )
-        return true;
+	    ((Ptr_implementation == 0) || 
+	     Ptr_implementation->Item_PriorityQueue.empty()) &&
+	    ((It.Ptr_implementation == 0) ||  
+	     It.Ptr_implementation->Item_PriorityQueue.empty())
+	    )
+	  return true;
         // else
         return (Ptr_implementation == It.Ptr_implementation);
-    }
+      }
 
-    bool operator!=(const iterator& It) const {
+      bool 
+      operator!=(const iterator& It) const 
+      {
         return !(*this == It);
-    }
+      }
 
-    std::ostream& statistics (std::ostream& s) {
+      std::ostream& 
+      statistics (std::ostream& s) 
+      {
     	Ptr_implementation->statistics(s);
         return s;
-    }
+      }
 
-    ~iterator() {
+      ~iterator() 
+      {
         if (Ptr_implementation != 0) {
-                Ptr_implementation->reference_count--;
-                if (Ptr_implementation->reference_count==0) {
-                        delete Ptr_implementation;
-                        Ptr_implementation = 0;
-                }
+	  Ptr_implementation->reference_count--;
+	  if (Ptr_implementation->reference_count==0) {
+	    delete Ptr_implementation;
+	    Ptr_implementation = 0;
+	  }
         }
-    }
+      }
 
 
-}; // class iterator
+    }; // class iterator
 
 
     iterator start;
     iterator past_the_end;
 
 
-}; // class 
+  }; // class 
 
-template <class Traits, class Query_item, class Distance>
-void swap (typename Orthogonal_incremental_neighbor_search<Traits, 
-				Query_item, Distance>::iterator& x,
-        typename Orthogonal_incremental_neighbor_search<Traits, 
-				Query_item, Distance>::iterator& y) {
-        typename Orthogonal_incremental_neighbor_search<Traits, 
-		Query_item, Distance>::iterator::Iterator_implementation
-        *tmp = x.Ptr_implementation;
-        x.Ptr_implementation  = y.Ptr_implementation;
-        y.Ptr_implementation = tmp;
-}
+  template <class Traits, class Query_item, class Distance>
+  void swap (typename Orthogonal_incremental_neighbor_search<Traits, 
+	     Query_item, Distance>::iterator& x,
+	     typename Orthogonal_incremental_neighbor_search<Traits, 
+	     Query_item, Distance>::iterator& y) 
+  {
+    typename Orthogonal_incremental_neighbor_search<Traits, 
+      Query_item, Distance>::iterator::Iterator_implementation
+      *tmp = x.Ptr_implementation;
+    x.Ptr_implementation  = y.Ptr_implementation;
+    y.Ptr_implementation = tmp;
+  }
 
 
 
