@@ -1007,8 +1007,8 @@ Apollonius_graph_2<Gt,Agds>::
 retriangulate_conflict_region(const Site_2& p,	List& l, 
 			      Face_map& fm, Vertex_map& vm)
 {
-  int vmsize = vm.size();
-  int num_vert = number_of_vertices();
+  size_type vmsize = vm.size();
+  size_type num_vert = number_of_vertices();
 
   if ( num_vert - vmsize == 0 ) {
     // 1. copy all hidden sites to a temporary list
@@ -1158,7 +1158,7 @@ retriangulate_conflict_region(const Site_2& p,	List& l,
     this->_tds.delete_face( fh );
   }
 
-  CGAL_assertion( number_of_vertices() == num_vert - vmsize + 1 );
+  CGAL_assertion( number_of_vertices() + vmsize == num_vert + 1 );
 
   // 9. DONE!!!!
   return v;

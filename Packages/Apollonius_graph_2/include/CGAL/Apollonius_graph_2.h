@@ -140,6 +140,7 @@ public:
   typedef typename DG::All_edges_iterator        All_edges_iterator;
   typedef typename DG::Finite_edges_iterator     Finite_edges_iterator;
 
+  typedef typename DG::size_type                 size_type;
 
   // Auxiliary iterators for convenience
   // do not use default template argument to please VC++
@@ -257,15 +258,15 @@ public:
     return this->_tds.dimension();
   }
 
-  int number_of_faces() const {
+  size_type number_of_faces() const {
     return this->_tds.number_of_faces();
   }
 
-  int number_of_vertices() const {
+  size_type number_of_vertices() const {
     return DG::number_of_vertices();
   }
 
-  int number_of_hidden_vertices() const {
+  size_type number_of_hidden_vertices() const {
     //    if ( !Vertex::StoreHidden ) { return 0; }
 
     int n_hidden(0);

@@ -40,9 +40,9 @@ CGAL_BEGIN_NAMESPACE
 
 
 // parameterization of the  hierarchy
-const int ag_hierarchy_2__ratio    = 30;
-const int ag_hierarchy_2__minsize  = 20;
-const int ag_hierarchy_2__maxlevel = 5;
+const unsigned int ag_hierarchy_2__ratio    = 30;
+const unsigned int ag_hierarchy_2__minsize  = 20;
+const unsigned int ag_hierarchy_2__maxlevel = 5;
 // maximal number of points is 30^5 = 24 millions !
 
 template < class Gt,
@@ -87,6 +87,7 @@ public:
   typedef typename Ag_base::Visible_sites_iterator Visible_sites_iterator;
   typedef typename Ag_base::Hidden_sites_iterator  Hidden_sites_iterator;
 
+  typedef typename Ag_base::size_type              size_type;
 
 public:
   // CREATION

@@ -492,6 +492,8 @@ bool test_algo_generic(InputStream& is)
   typedef typename Apollonius_graph::Hidden_sites_iterator
     Hidden_sites_iterator;
 
+  typedef typename Apollonius_graph::size_type      size_type;
+
 
   Null_output_stream   nos;
 
@@ -608,7 +610,7 @@ bool test_algo_generic(InputStream& is)
     Vertex_handle v(avit);
     Vertex_circulator vc_start = ag.incident_vertices(v);
     Vertex_circulator vc = vc_start;
-    int deg = 0;
+    size_type deg = 0;
     do {
       deg++;
       vc++;
@@ -623,7 +625,7 @@ bool test_algo_generic(InputStream& is)
     Vertex_handle v(avit);
     Vertex_circulator vc_start = ag.incident_vertices(v, v->face());
     Vertex_circulator vc = vc_start;
-    int deg = 0;
+    size_type deg = 0;
     do {
       deg++;
       vc++;
@@ -639,7 +641,7 @@ bool test_algo_generic(InputStream& is)
     Vertex_handle v(avit);
     Face_circulator fc_start = ag.incident_faces(v);
     Face_circulator fc = fc_start;
-    int deg = 0;
+    size_type deg = 0;
     do {
       deg++;
       fc++;
@@ -654,7 +656,7 @@ bool test_algo_generic(InputStream& is)
     Vertex_handle v(avit);
     Face_circulator fc_start = ag.incident_faces(v, v->face());
     Face_circulator fc = fc_start;
-    int deg = 0;
+    size_type deg = 0;
     do {
       deg++;
       fc++;
@@ -670,7 +672,7 @@ bool test_algo_generic(InputStream& is)
     Vertex_handle v(avit);
     Edge_circulator ec_start = ag.incident_edges(v);
     Edge_circulator ec = ec_start;
-    int deg = 0;
+    size_type deg = 0;
     do {
       deg++;
       ec++;
@@ -685,7 +687,7 @@ bool test_algo_generic(InputStream& is)
     Vertex_handle v(avit);
     Edge_circulator ec_start = ag.incident_edges(v, v->face());
     Edge_circulator ec = ec_start;
-    int deg = 0;
+    size_type deg = 0;
     do {
       deg++;
       ec++;
@@ -764,8 +766,7 @@ bool test_algo_generic(InputStream& is)
   ag.clear();
   ag.swap(ag2);
   CGAL_assertion( ag.number_of_vertices() +
-		  ag.number_of_hidden_vertices() == 
-		  static_cast<int>(wp_list.size()) );
+		  ag.number_of_hidden_vertices() == wp_list.size() );
   CGAL_assertion( ag2.number_of_vertices() == 0 );
 
 

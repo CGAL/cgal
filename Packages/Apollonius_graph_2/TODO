@@ -1,8 +1,6 @@
 - restore the changes in the examples directory (example3.C and example4.C)
-- "number_of_hidden_weighted_points()" in vertex base should return size_t;
-  also add this in the spec. all number_of*() methods should now
-  return size_t;
 - rewrite the face base class so that the additional edges are provided
   by an adaptor.
 - to decrease memory usage remove the two arrays of pairs of Edges and
   integers from the face base class
+- add documentation for the type "size_type" in Apollonius_graph_2

@@ -32,7 +32,7 @@ Apollonius_graph_hierarchy_2<Gt,Agds>::
 init_hierarchy(const Geom_traits& gt)
 {
   hierarchy[0] = this; 
-  for(int i = 1; i < ag_hierarchy_2__maxlevel; ++i) {
+  for(unsigned int i = 1; i < ag_hierarchy_2__maxlevel; ++i) {
     hierarchy[i] = new Apollonius_graph_base(gt);
   }
 }
@@ -75,7 +75,7 @@ copy
 (const Apollonius_graph_hierarchy_2<Gt,Agds> &agh)
 {
   std::map< Vertex_handle, Vertex_handle > V;
-  for(int i = 0; i < ag_hierarchy_2__maxlevel; ++i) {
+  for(unsigned int i = 0; i < ag_hierarchy_2__maxlevel; ++i) {
     //      hierarchy[i]->copy_triangulation(*awvd.hierarchy[i]);
     *(hierarchy[i]) = *agh.hierarchy[i];
   }
@@ -87,7 +87,7 @@ copy
     if ( it->up() != NULL ) V[ it->up()->down() ] = it;
   }
 
-  for(int i = 1; i < ag_hierarchy_2__maxlevel; ++i) {
+  for(unsigned int i = 1; i < ag_hierarchy_2__maxlevel; ++i) {
     for( Finite_vertices_iterator it = hierarchy[i]->finite_vertices_begin(); 
 	 it != hierarchy[i]->finite_vertices_end(); ++it) {
       // down pointer goes in original instead in copied triangulation
@@ -105,7 +105,7 @@ Apollonius_graph_hierarchy_2<Gt,Agds>::
 ~Apollonius_graph_hierarchy_2()
 {
   clear();
-  for(int i = 1; i < ag_hierarchy_2__maxlevel; ++i) {
+  for(unsigned int i = 1; i < ag_hierarchy_2__maxlevel; ++i) {
     delete hierarchy[i];
   }
 }
@@ -115,7 +115,7 @@ void
 Apollonius_graph_hierarchy_2<Gt,Agds>:: 
 clear()
 {
-  for(int i = 0; i < ag_hierarchy_2__maxlevel; ++i) {
+  for(unsigned int i = 0; i < ag_hierarchy_2__maxlevel; ++i) {
     hierarchy[i]->clear();
   }
 }
@@ -128,7 +128,7 @@ is_valid(bool verbose, int level) const
   bool result(true);
 
   //verify correctness of triangulation at all levels
-  for(int i = 0; i < ag_hierarchy_2__maxlevel; ++i) {
+  for(unsigned int i = 0; i < ag_hierarchy_2__maxlevel; ++i) {
     if ( verbose ) {
       std::cerr << "Level " << i << ": " << std::flush;
     }
@@ -144,7 +144,7 @@ is_valid(bool verbose, int level) const
   }
 
   //verify that other levels has down pointer and reciprocal link is fine
-  for(int i = 1; i < ag_hierarchy_2__maxlevel; ++i) {
+  for(unsigned int i = 1; i < ag_hierarchy_2__maxlevel; ++i) {
     for( Finite_vertices_iterator it = hierarchy[i]->finite_vertices_begin(); 
 	 it != hierarchy[i]->finite_vertices_end(); ++it) {
 #ifdef CGAL_T2_USE_ITERATOR_AS_HANDLE 
@@ -165,7 +165,7 @@ insert(const Site_2 &p)
 {
   int vertex_level = random_level();
 
-  int n = number_of_vertices();
+  size_type n = number_of_vertices();
   Vertex_handle vertex;
   Vertex_handle vnear[ag_hierarchy_2__maxlevel];
 
@@ -274,7 +274,7 @@ insert(const Site_2 &p)
   if ( n_hidden != 0 ) {
     int n_non_hidden = number_of_vertices() - n_hidden;
     if ( n_non_hidden < 2 ) {
-      for(int i = 1; i < ag_hierarchy_2__maxlevel; ++i) {
+      for(unsigned int i = 1; i < ag_hierarchy_2__maxlevel; ++i) {
 	hierarchy[i]->clear();
       }
 
@@ -296,7 +296,7 @@ insert(const Site_2 &p)
 	if ( u != NULL ) {
 	  v = u;
 	  u = v->up();
-	  int l = 1;
+	  unsigned int l = 1;
 	  while ( true ) {
 	    hierarchy[l++]->remove(v);
 	    if (u == NULL) break; 
@@ -355,7 +355,7 @@ remove(Vertex_handle v)
 
   // do the actual removal
   Vertex_handle u = v->up();
-  int l = 0;
+  unsigned int l = 0;
   while ( true ) {
     hierarchy[l++]->remove(v);
     if (u == NULL) break; 
@@ -387,7 +387,7 @@ swap(Apollonius_graph_hierarchy_2<Gt,Agds>& agh)
 {
   Ag_base* temp;
   Ag_base::swap(agh);
-  for(int i = 1; i < ag_hierarchy_2__maxlevel; ++i){
+  for(unsigned int i = 1; i < ag_hierarchy_2__maxlevel; ++i){
     temp = hierarchy[i];
     hierarchy[i] = agh.hierarchy[i];
     agh.hierarchy[i]= temp;
@@ -405,14 +405,14 @@ nearest_neighbor(const Point_2& p,
   const
 {
   Vertex_handle nearest = 0;
-  int level  = ag_hierarchy_2__maxlevel;
+  unsigned int level  = ag_hierarchy_2__maxlevel;
 
   // find the highest level with enough vertices
   while ( hierarchy[--level]->number_of_vertices() 
 	  < ag_hierarchy_2__minsize ) {
     if ( !level ) break;  // do not go below 0
   }
-  for (int i = level+1; i < ag_hierarchy_2__maxlevel; ++i) {
+  for (unsigned int i = level+1; i < ag_hierarchy_2__maxlevel; ++i) {
     vnear[i] = 0;
   }
 
@@ -434,7 +434,7 @@ int
 Apollonius_graph_hierarchy_2<Gt,Agds>::
 random_level()
 {
-  int l = 0;
+  unsigned int l = 0;
   while (1) {
     if ( random(ag_hierarchy_2__ratio) ) break;
     ++l;
