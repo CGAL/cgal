@@ -335,18 +335,17 @@ chained_map<T>::next_item(chained_map_item it) const
 
 template <typename T>
 void chained_map<T>::statistics() const
-{ cout << "table_size: " << table_size <<"\n";
+{ std::cout << "table_size: " << table_size <<"\n";
   int n = 0;
   for (chained_map_item p = table + 1; p < table + table_size; p++)
      if (p ->k != NULLKEY) n++;
   int used_in_overflow = free - (table + table_size );
   n += used_in_overflow;
-  cout << "number of entries: " << n << "\n";
-  cout << "fraction of entries in first position: " << 
-          ((double) (n - used_in_overflow))/n <<"\n";
-  cout << "fraction of empty lists: " << 
-          ((double) (n - used_in_overflow))/table_size<<"\n";
-
+  std::cout << "number of entries: " << n << "\n";
+  std::cout << "fraction of entries in first position: " << 
+               ((double) (n - used_in_overflow))/n <<"\n";
+  std::cout << "fraction of empty lists: " << 
+               ((double) (n - used_in_overflow))/table_size<<"\n";
 }
 
 } // namespace CGALi

@@ -1,6 +1,12 @@
 Hash_map Package: Release changes
 ----------------------------------------------------------------------
 
+0.9.4 (16 Jul 2001)
+
+     - Added std:: to statistics output of Tools/chained_map.h.
+     - Incorporated corrections in doc from Susan.
+     - Added #include <cstddef> whereever std::size_t is used.
+
 0.9.3 (11 Jul 2001)
 
      - Fixed problems in test suite with g++-3.

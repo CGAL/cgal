@@ -30,6 +30,7 @@
 #define CGAL_HANDLE_HASH_FUNCTION_H
 
 #include <CGAL/basic.h>
+#include <cstddef>
 
 CGAL_BEGIN_NAMESPACE
 

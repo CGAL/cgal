@@ -32,6 +32,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Handle_hash_function.h>
 #include <CGAL/Tools/chained_map.h>
+#include <cstddef>
 
 CGAL_BEGIN_NAMESPACE
 
