@@ -1,3 +1,6 @@
+Version 6.9 (?? March 2001)
+- Added constructor Vector(Point, Point).
+
 Version 6.8 (21 February 2001)
 - Use CGAL_TYPENAME_MSVC_NULL in Cartesian_converter<>.
 - Added converters for Aff_transformation_[23] in Cartesian_converter<>.

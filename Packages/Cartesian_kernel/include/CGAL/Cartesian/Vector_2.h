@@ -71,6 +71,9 @@ public:
   VectorC2(const Point_2 &p)
     : Vector_handle_2_(p) {}
 
+  VectorC2(const Point_2 &a, const Point_2 &b)
+    : Vector_handle_2_(b-a) {}
+
   VectorC2(const Direction_2 &d)
     : Vector_handle_2_(d) {}
 

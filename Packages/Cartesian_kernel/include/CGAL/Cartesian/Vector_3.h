@@ -59,6 +59,9 @@ public:
   VectorC3(const Point_3 &p)
     : Vector_handle_3_(p) {}
 
+  VectorC3(const Point_3 &a, const Point_3 &b)
+    : Vector_handle_3_(b-a) {}
+
   VectorC3(const Direction_3 &d)
     : Vector_handle_3_(d) {}
 
@@ -118,7 +121,6 @@ public:
       return 3;
   }
 
-  // FIXME: why not like the other operators in global_operators_[23].h ?
   Self operator+(const Self &w) const;
   Self operator-(const Self &w) const;
   Self operator-() const;
