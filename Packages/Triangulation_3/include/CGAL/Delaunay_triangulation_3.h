@@ -413,15 +413,15 @@ fill_hole_3D( std::set<Facet> & boundhole,
   Vertex_handle v[3]; // current facet
   Vertex_handle vf1,vf2,vf3;
 
-  typename std::set<Vertex_handle> oppvert; // vertices of the hole
+  std::set<Vertex_handle> oppvert; // vertices of the hole
   // that are all copsherical with the current facet and whose sphere
   // is empty 
   typename std::set<Vertex_handle>::iterator bv;
 
-  typename std::list<Facet> cosph_bound; // facets of boundhole that
+  std::list<Facet> cosph_bound; // facets of boundhole that
   // are cospherical with the vertices of oppvert 
-  typename std::list<Facet> not_violate;
-  typename std::list<Facet> for_next; // facets created or not used by
+  std::list<Facet> not_violate;
+  std::list<Facet> for_next; // facets created or not used by
   // the current vertex 
 
   // the facets in these sets will always be given by the cell
