@@ -10,6 +10,9 @@ run: all
 test:
 	${MAKE} -C test/Mesh_2 run
 
+edit:
+	xemacs include/CGAL/Mesh_2.h demo/Mesh_2/mesh_demo.C&
+
 # clean all object files
 clean: 
 	${MAKE} -C demo/Mesh_2 clean
