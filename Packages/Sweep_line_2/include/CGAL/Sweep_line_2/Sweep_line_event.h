@@ -101,7 +101,7 @@ public:
     if (m_leftCurves.empty())
     {
       m_leftCurves.push_back(curve);
-      if(!traits()->curve_is_vertical(curve->get_curve()))
+      if(!traits()->curve_is_vertical(curve->get_last_curve()))
       {
         m_isInitialized = true;
         m_rightmostPointToLeft = curve->get_left_end();
@@ -110,7 +110,7 @@ public:
     }
 
     //update_rightmost_point(ref) if curve is not vertical
-    if(!traits()->curve_is_vertical(curve->get_curve()))
+    if(!traits()->curve_is_vertical(curve->get_last_curve()))
     {
       if(! m_isInitialized)
       {
@@ -124,7 +124,7 @@ public:
 
 
       SubCurveIter iter = m_leftCurves.begin();
-      const X_monotone_curve_2 &cv = curve->get_curve();
+      const X_monotone_curve_2 &cv = curve->get_last_curve();
     
       // look for the curve, and if exists, erase it.
       while ( iter != m_leftCurves.end() ) 
@@ -140,7 +140,7 @@ public:
       Comparison_result res = SMALLER;
       iter = m_leftCurves.begin();
       while(iter != m_leftCurves.end() &&
-            traits()->curve_is_vertical((*iter)->get_curve()))
+            traits()->curve_is_vertical((*iter)->get_last_curve()))
       {
         ++iter;
       }
@@ -148,13 +148,17 @@ public:
 
       while ( iter != m_leftCurves.end() )
       {
+        if(traits()->compare_x((*iter)->get_last_point(),
+          m_rightmostPointToLeft) == LARGER)
+          m_rightmostPointToLeft = (*iter)->get_last_point();
+
         res = traits()->curves_compare_y_at_x(cv, 
-                                             (*iter)->get_curve(),
+                                             (*iter)->get_last_curve(),
                                               m_rightmostPointToLeft);
         if (res == EQUAL)
         {
           res = traits()->curves_compare_y_at_x_right(cv, 
-                                                      (*iter)->get_curve(),
+                                                      (*iter)->get_last_curve(),
                                                       m_rightmostPointToLeft);
         }
         if ( res != LARGER )
@@ -173,7 +177,7 @@ public:
           break;
 
         res = traits()->curves_compare_y_at_x(cv, 
-                                             (*iter)->get_curve(),
+                                             (*iter)->get_last_curve(),
                                               m_rightmostPointToLeft);
       }
     
@@ -197,7 +201,7 @@ public:
         }
         iter = m_leftCurves.begin();
         while ( iter != m_leftCurves.end() &&
-                traits()->curve_is_vertical((*iter)->get_curve()))
+                traits()->curve_is_vertical((*iter)->get_last_curve()))
         {
           if((*iter)->is_parent(curve))
             return ++iter;
@@ -240,8 +244,8 @@ public:
 
     iter = m_rightCurves.begin();
     Comparison_result res;
-    while ((res = traits()->curves_compare_y_at_x_right(curve->get_curve(),
-                                                      (*iter)->get_curve(), 
+    while ((res = traits()->curves_compare_y_at_x_right(curve->get_last_curve(),
+                                                      (*iter)->get_last_curve(), 
                                                       m_point)) == LARGER)
     {
       ++iter;

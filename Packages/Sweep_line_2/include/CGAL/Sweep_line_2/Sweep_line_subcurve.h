@@ -90,7 +90,7 @@ public:
 
   void init(const X_monotone_curve_2 &curve)
   {
-    m_curve = curve;
+    m_lastCurve = curve;
 
     Comparison_result res = traits()->compare_xy(traits()->curve_source(curve),
                                                  traits()->curve_target(curve));
@@ -118,9 +118,9 @@ public:
   /*!
     @return a reference to the curve 
   */
-  const X_monotone_curve_2 &get_curve() const { 
+  /*const X_monotone_curve_2 &get_curve() const { 
     return m_curve;
-  }
+  }*/
 
   /*! 
     @return a reference to the rightmost intersection point 
@@ -203,14 +203,14 @@ public:
 
    Point_2 get_right_end() const {
     if ( is_source_left_to_target() )
-      return traits()->curve_target(m_curve);
-    return traits()->curve_source(m_curve);
+      return traits()->curve_target(m_lastCurve);
+    return traits()->curve_source(m_lastCurve);
   }
 
    Point_2 get_left_end() const {
     if ( is_source_left_to_target() )
-      return traits()->curve_source(m_curve);
-    return traits()->curve_target(m_curve);
+      return traits()->curve_source(m_lastCurve);
+    return traits()->curve_target(m_lastCurve);
   }
 
    Event* get_left_event() const
@@ -343,8 +343,8 @@ public:
 private:
 
   
-  /*! thecurve */
-  X_monotone_curve_2 m_curve;
+  ///*! thecurve */
+  //X_monotone_curve_2 m_curve;
 
   Event* m_left_event;
 
@@ -394,7 +394,7 @@ Sweep_line_subcurve( X_monotone_curve_2 &curve) : m_overlap_subcurve(NULL),
                                                   m_orig_subcurve1(NULL)  ,
                                                   m_orig_subcurve2(NULL)
 {
-  m_curve = curve;
+  //m_curve = curve;
  
   Comparison_result res = traits()->compare_xy(traits()->curve_source(curve),
                                                traits()->curve_target(curve));
@@ -418,7 +418,7 @@ void
 Sweep_line_subcurve<SweepLineTraits_2>::
 Print() const
 {
-  std::cout << "Curve " << this << "  (" << m_curve << ") "
+  std::cout << "Curve " << this << "  (" << m_lastCurve << ") "
             << "last P = (" << m_lastPoint << ")" << std::endl;
   
 }

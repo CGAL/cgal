@@ -306,22 +306,9 @@ public:
         leftCurve = (*leftCurveIter); 
       }
 
-      //const X_monotone_curve_2 &cv = leftCurve->get_curve();
-      //const Point_2 &lastPoint = leftCurve->get_last_point();
-
       if ( leftCurve->is_source(eventPoint))
       {  
         remove_for_good = true;
-        /*if ( !leftCurve->is_target(lastPoint) )
-        {
-          X_monotone_curve_2 a,b;
-          m_traits->curve_split(cv, a, b, lastPoint);
-          m_visitor->add_subcurve(a, leftCurve);
-        }
-        else 
-        {
-          m_visitor->add_subcurve(cv,leftCurve);
-        }*/
         m_visitor->add_subcurve(leftCurve->get_last_curve(), leftCurve);
 
         if(leftCurve->get_orig_subcurve1() != NULL)
@@ -348,16 +335,8 @@ public:
       else if ( leftCurve->is_target(eventPoint))
       {
         remove_for_good = true;
-        /*if ( !leftCurve->is_source(lastPoint))
-        {
-          X_monotone_curve_2 a,b;
-          m_traits->curve_split(cv, a, b, lastPoint);
-          m_visitor->add_subcurve(b, leftCurve);
-        } else
-        {
-          m_visitor->add_subcurve(cv, leftCurve);
-        }*/
         m_visitor->add_subcurve(leftCurve->get_last_curve(), leftCurve);
+
         if(leftCurve->get_orig_subcurve1() != NULL)
         {
           leftCurve->get_orig_subcurve1()->set_overlap_subcurve(NULL);
@@ -379,23 +358,6 @@ public:
         }
 
       } else { 
-       /* X_monotone_curve_2 a,b;
-        if ( leftCurve->is_source(lastPoint)) {
-          m_traits->curve_split(leftCurve->get_last_curve(), a, b, eventPoint);
-          m_visitor->add_subcurve(a, leftCurve);
-        } else if ( leftCurve->is_target(lastPoint)) {
-          m_traits->curve_split(leftCurve->get_last_curve(), b, a, eventPoint);
-          m_visitor->add_subcurve(b, leftCurve);
-        } else {
-          const X_monotone_curve_2 &lastCurve = leftCurve->get_last_curve();
-          if ( leftCurve->is_source_left_to_target() ) {
-            m_traits->curve_split(lastCurve, a, b, eventPoint);
-            m_visitor->add_subcurve(a, leftCurve);
-          } else {
-            m_traits->curve_split(lastCurve, b, a, eventPoint);
-            m_visitor->add_subcurve(a, leftCurve);
-          }*/
-
         X_monotone_curve_2 a,b;
         const X_monotone_curve_2 &lastCurve = leftCurve->get_last_curve();
         if ( leftCurve->is_source_left_to_target() ) 
@@ -612,8 +574,8 @@ public:
       
        X_monotone_curve_2 overlap_cv;
        Object cv_obj =
-        m_traits->nearest_intersection_to_right(curve->get_curve(),
-                                                (*iter)->get_curve(), 
+        m_traits->nearest_intersection_to_right(curve->get_last_curve(),
+                                                (*iter)->get_last_curve(), 
                                                 event->get_point());
       if (CGAL::assign(overlap_cv, cv_obj))
       {
@@ -747,11 +709,11 @@ protected:
   bool CurveStartsAtCurve(Subcurve *one, Subcurve *two)
   {
     SL_DEBUG(std::cout << "CurveStartsAtCurve: \n";);
-    SL_DEBUG(std::cout << one->get_curve() << "\n" << two->get_curve() 
+    SL_DEBUG(std::cout << one->get_last_curve() << "\n" << two->get_last_curve() 
                        << "\n";);
 
     if ( m_traits->curve_compare_y_at_x(one->get_left_end(), 
-                                        two->get_curve()) == EQUAL )
+                                        two->get_last_curve()) == EQUAL )
       return true;
     return false;
   }
@@ -964,8 +926,8 @@ intersect(Subcurve *c1, Subcurve *c2)
     return false;
   }
  
-  const X_monotone_curve_2 &cv1 = c1->get_curve();
-  const X_monotone_curve_2 &cv2 = c2->get_curve();
+  const X_monotone_curve_2 &cv1 = c1->get_last_curve();
+  const X_monotone_curve_2 &cv2 = c2->get_last_curve();
 
   bool isOverlap = false;
 

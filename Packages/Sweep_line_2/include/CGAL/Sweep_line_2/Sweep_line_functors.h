@@ -107,12 +107,13 @@ public:
 
   bool compare_right(const Subcurve * c1, const Subcurve * c2)  const 
   {
-    const X_monotone_curve_2 &cv1 = c1->get_curve();
-    const X_monotone_curve_2 &cv2 = c2->get_curve();
+    const X_monotone_curve_2 &cv1 = c1->get_last_curve();
+    const X_monotone_curve_2 &cv2 = c2->get_last_curve();
+
     Traits *t = m_compare_param->m_traits;
 
-    Comparison_result r =  t->curves_compare_y_at_x (c1->get_curve(), 
-                                                     c2->get_curve(), 
+    Comparison_result r =  t->curves_compare_y_at_x (c1->get_last_curve(), 
+                                                     c2->get_last_curve(), 
                                                      *m_sweep_pos);
     if (r == EQUAL)
     {
@@ -144,8 +145,8 @@ public:
         }
 
       // cv1 and cv2 are both not vertical
-      r = t->curves_compare_y_at_x_right(c1->get_curve(), 
-                                         c2->get_curve(), 
+        r = t->curves_compare_y_at_x_right(c1->get_last_curve(), 
+                                         c2->get_last_curve(), 
                                          *m_sweep_pos);
     }
     if ( r == SMALLER) {
