@@ -38,7 +38,7 @@ struct Input_traits<CGAL::MP_Float> {
 };
 #endif
 
-#ifdef __GMP_PLUSPLUS__
+#if defined(__GMP_PLUSPLUS__) && 0
 /*! ::mpz_class */
 template <>
 struct Input_traits<::mpz_class> {
@@ -48,6 +48,7 @@ struct Input_traits<::mpz_class> {
 };
 #endif
 
+#ifdef CGAL_GMPZ_H
 /*! CGAL::Gmpz */
 template <>
 struct Input_traits<CGAL::Gmpz> {
@@ -55,6 +56,7 @@ struct Input_traits<CGAL::Gmpz> {
   typedef CGAL::Gmpz                            Input_float_type;
   typedef CGAL::Gmpz                            Input_rat_type;
 };
+#endif
 
 #ifdef CGAL_LEDA_INTEGER_H
 /*! leda_integer */
@@ -86,7 +88,7 @@ struct Input_traits<CGAL::Quotient<CGAL::MP_Float> > {
 };
 #endif
 
-#ifdef __GMP_PLUSPLUS__
+#if defined(__GMP_PLUSPLUS__) && 0
 /*! CGAL::Quotient<::mpz_struct> */
 template <>
 struct Input_traits<CGAL::Quotient<::mpz_struct> > {
@@ -96,6 +98,7 @@ struct Input_traits<CGAL::Quotient<::mpz_struct> > {
 };
 #endif
 
+#ifdef CGAL_GMPZ_H
 /*! CGAL::Quotient<CGAL::Gmpz> */
 template <>
 struct Input_traits<CGAL::Quotient<CGAL::Gmpz> > {
@@ -103,8 +106,9 @@ struct Input_traits<CGAL::Quotient<CGAL::Gmpz> > {
   typedef CGAL::Gmpz                            Input_float_type;
   typedef CGAL::Gmpz                            Input_rat_type;
 };
+#endif
 
-#ifdef __GMP_PLUSPLUS__
+#if defined(__GMP_PLUSPLUS__) && 0
 /*! ::mpq_struct */
 template <>
 struct Input_traits<::mpq_struct> {
@@ -114,6 +118,7 @@ struct Input_traits<::mpq_struct> {
 };
 #endif
 
+#if defined(CGAL_GMPQ_H)
 /*! CGAL::Gmpq */
 template <>
 struct Input_traits<CGAL::Gmpq> {
@@ -121,6 +126,7 @@ struct Input_traits<CGAL::Gmpq> {
   typedef CGAL::Gmpz                            Input_float_type;
   typedef CGAL::Gmpq                            Input_rat_type;
 };
+#endif
 
 #ifdef CGAL_LEDA_RATIONAL_H
 /*! leda_rational */
@@ -149,6 +155,16 @@ struct Input_traits<CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::MP_Float> > > {
   typedef CGAL::Quotient<CGAL::MP_Float>        Input_rat_type;
 
   typedef CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::MP_Float> >  Output_type;
+};
+#endif
+
+#ifdef _CORE_EXPR_H_
+/*! CORE::Expr */
+template <>
+struct Input_traits<CORE::Expr> {
+  typedef CORE::BigInt                          Input_int_type;
+  typedef CORE::BigInt                          Input_float_type;
+  typedef CORE::BigInt                          Input_rat_type;
 };
 #endif
 
