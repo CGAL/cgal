@@ -92,7 +92,7 @@ latex_to_html
 -- Check if more stuff in the auxfile should be used, 
    should also the aux files of \include'd files be considered
 
--- Make index only if \makeindex is defined.
+-- Make index only if \makeindex is defined. Adapt header and footers.
 
 -- Make TOC only if \tableofcontents is defined.
 
