@@ -532,9 +532,10 @@ CGAL_number_type_tag(CGAL_Interval_nt_advanced)
 { return CGAL_Number_tag(); }
 
 
-// Finally we source the CGAL_to_Interval_nt_advanced() "cast" functions from
-// other NTs, when necessary.
-// CGAL_to_Interval_nt() is templated below, only specialized for double.
+// Finally we source the CGAL_convert_to<CGAL_Interval_nt_advanced>()
+// functions from other NTs, when necessary.
+// CGAL_convert_to<CGAL_Interval_nt>() is templated below, only specialized
+// for double.
 
 #ifdef CGAL_GMPZ_H
 #include <CGAL/Interval_arithmetic/IA_Gmpz.h>
@@ -561,18 +562,26 @@ CGAL_number_type_tag(CGAL_Interval_nt_advanced)
 #endif
 
 template <class FT>
-inline CGAL_Interval_nt CGAL_to_Interval_nt(const FT &z)
+inline CGAL_Interval_nt CGAL_convert_to<CGAL_Interval_nt>(const FT &z)
 {
     CGAL_FPU_set_rounding_to_infinity();
-    CGAL_Interval_nt tmp(CGAL_to_Interval_nt_advanced(z));
+    CGAL_Interval_nt tmp(CGAL_convert_to<CGAL_Interval_nt_advanced>(z));
     CGAL_FPU_set_rounding_to_nearest();
     return tmp;
 }
 
-inline CGAL_Interval_nt_advanced CGAL_to_Interval_nt_advanced(const double d)
+// These 2 could be replaced by the general (already present in
+// Arithmetic_filter.h):
+// template <class ET, class CT>
+// inline ET CGAL_convert_to (const CT & ct)
+// { return ET(ct); }
+
+inline CGAL_Interval_nt_advanced CGAL_convert_to<CGAL_Interval_nt_advanced>
+	(const double d)
 { return CGAL_Interval_nt_advanced(d); }
 
-inline CGAL_Interval_nt CGAL_to_Interval_nt(const double d)
+inline CGAL_Interval_nt CGAL_convert_to<CGAL_Interval_nt>
+	(const double d)
 { return CGAL_Interval_nt(d); }
 
 #endif // CGAL_INTERVAL_ARITHMETIC_H
