@@ -59,23 +59,21 @@ public:
     : Ctds()
   { }
 
-  inline
-  Triangulation_cell_3(Tds& tds)
-    : Ctds(tds)
-  { }
+//   inline
+//   Triangulation_cell_3(Tds& tds)
+//     : Ctds(tds)
+//   { }
 
   inline
-  Triangulation_cell_3(Tds & tds,
-		       Vertex_handle v0,
+  Triangulation_cell_3(Vertex_handle v0,
 		       Vertex_handle v1,
 		       Vertex_handle v2,
 		       Vertex_handle v3)
-    : Ctds(tds, &(*v0), &(*v1), &(*v2), &(*v3))
+    : Ctds(&(*v0), &(*v1), &(*v2), &(*v3))
   {}
     
   inline
-  Triangulation_cell_3(Tds & tds,
-		       Vertex_handle v0,
+  Triangulation_cell_3(Vertex_handle v0,
 		       Vertex_handle v1,
 		       Vertex_handle v2,
 		       Vertex_handle v3,
@@ -83,8 +81,7 @@ public:
 		       Cell_handle n1,
 		       Cell_handle n2,
 		       Cell_handle n3)
-    : Ctds(tds, 
-	   &(*v0), &(*v1), &(*v2), &(*v3), 
+    : Ctds(&(*v0), &(*v1), &(*v2), &(*v3), 
 	   &(*n0), &(*n1), &(*n2), &(*n3)) 
   {}
 

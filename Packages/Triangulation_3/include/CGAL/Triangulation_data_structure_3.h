@@ -74,7 +74,7 @@ class Triangulation_data_structure_3
 
   //  friend void Triangulation_ds_cell_3<Vb,Cb>::add_list
   //  (Triangulation_data_structure_3<Vb,Cb>&);
-  friend class Triangulation_ds_cell_3<Vb,Cb>;
+  //  friend class Triangulation_ds_cell_3<Vb,Cb>;
 
   friend class Triangulation_ds_cell_iterator_3
   <Triangulation_data_structure_3<Vb,Cb> >;
@@ -201,6 +201,67 @@ public:
   inline 
   void set_dimension(int n) { _dimension = n; }
 
+  inline 
+  Cell * create_cell() 
+    { 
+      Cell* c = new Cell();
+      add_cell( c );
+      return c; 
+    }
+
+  inline 
+  Cell* create_cell( Cell* c )
+    {
+      Cell* cnew = new Cell(c);
+      add_cell( cnew );
+      return cnew; 
+    }
+  
+  inline 
+  Cell* create_cell( Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3)
+    {
+      Cell* cnew = new Cell(v0,v1,v2,v3);
+      add_cell( cnew );
+      return cnew; 
+    }
+
+  inline 
+  Cell* create_cell( Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3,
+		     Cell* n0, Cell* n1, Cell* n2, Cell* n3)
+    {
+      Cell* cnew = new Cell(v0,v1,v2,v3,n0,n1,n2,n3);
+      add_cell( cnew );
+      return cnew; 
+    }
+
+  // not documented
+  // only used by copy_tds in the TDS class
+  inline 
+  Cell* create_cell( Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3,
+		     const Cell & old_cell )
+    {
+      Cell* cnew = new Cell( v0,v1,v2,v3,old_cell );
+      add_cell( cnew );
+      return cnew; 
+    }
+
+  inline 
+  void add_cell( Cell* c ) 
+    {
+      CGAL_triangulation_precondition( c != NULL );
+      c->_next_cell = list_of_cells()._next_cell;
+      list_of_cells()._next_cell = c;
+      c->_next_cell->_previous_cell = c;
+      c->_previous_cell = past_end_cell();
+    }
+
+  inline 
+  void delete_cell( Cell* c ) 
+    { 
+      CGAL_triangulation_expensive_precondition( is_cell(c) );
+      c.Delete; 
+    }
+    
   // QUERIES
 
   bool is_vertex(Vertex* v) const;
@@ -655,7 +716,7 @@ std::istream& read_cells
       int i0, i1, i2, i3;
       for(i = 0; i < m; i++) {
 	is >> i0 >> i1 >> i2 >> i3;
-	c = new Cell(tds, V[i0], V[i1], V[i2], V[i3]);
+	c = tds.create_cell(V[i0], V[i1], V[i2], V[i3]);
 	C[i] = c;
 	V[i0]->set_cell(c);
 	V[i1]->set_cell(c);
@@ -680,7 +741,7 @@ std::istream& read_cells
       int i0, i1, i2;
       for(i = 0; i < m; i++) {
 	is >> i0 >> i1 >> i2;
-	c = new Cell(tds, V[i0], V[i1], V[i2], NULL);
+	c = tds.create_cell(V[i0], V[i1], V[i2], NULL);
 	C[i] = c;
 	V[i0]->set_cell(c);
 	V[i1]->set_cell(c);
@@ -703,7 +764,7 @@ std::istream& read_cells
       int i0, i1;
       for(i = 0; i < m; i++) {
 	is >> i0 >> i1;
-	c = new Cell(tds, V[i0], V[i1], NULL, NULL);
+	c = tds.create_cell(V[i0], V[i1], NULL, NULL);
 	C[i] = c;
 	V[i0]->set_cell(c);
 	V[i1]->set_cell(c);
@@ -723,7 +784,7 @@ std::istream& read_cells
 
       CGAL_triangulation_assertion( (n == 2) );
       for (i=0; i < 2; i++) {
-	c = new Cell(tds, V[i], NULL, NULL, NULL);
+	c = tds.create_cell(V[i], NULL, NULL, NULL);
 	C[i] = c;
 	V[i]->set_cell(c);
       }
@@ -738,7 +799,7 @@ std::istream& read_cells
       m = 1;
       Cell* c;
       CGAL_triangulation_assertion( (n == 1) );
-      c = new Cell(tds, V[0], NULL, NULL, NULL);
+      c = tds.create_cell(V[0], NULL, NULL, NULL);
       C[0] = c;
       V[0]->set_cell(c);
       break;
@@ -928,9 +989,9 @@ Triangulation_data_structure_3<Vb,Cb>::insert_in_cell
   Cell* n3 = c->neighbor(3);
 
   // c will be modified to have v,v1,v2,v3 as vertices
-  Cell* c3 = new Cell(*this,v0,v1,v2,v,c,NULL,NULL,n3);
-  Cell* c2 = new Cell(*this,v0,v1,v,v3,c,NULL,n2,c3);
-  Cell* c1 = new Cell(*this,v0,v,v2,v3,c,n1,c2,c3);
+  Cell* c3 = create_cell(v0,v1,v2,v,c,NULL,NULL,n3);
+  Cell* c2 = create_cell(v0,v1,v,v3,c,NULL,n2,c3);
+  Cell* c1 = create_cell(v0,v,v2,v3,c,n1,c2,c3);
 
   c3->set_neighbor(1,c1);
   c3->set_neighbor(2,c2);
@@ -971,17 +1032,15 @@ Triangulation_data_structure_3<Vb,Cb>::insert_in_facet
     {
       CGAL_triangulation_precondition( i == 3 );
       Cell* n = c->neighbor(2);
-      Cell* cnew = new Cell(*this,
-			    c->vertex(0),c->vertex(1),v,NULL,
-			    c, NULL,n,NULL);
+      Cell* cnew = create_cell(c->vertex(0),c->vertex(1),v,NULL,
+			       c, NULL,n,NULL);
       n->set_neighbor(n->index(c),cnew);
       c->set_neighbor(2,cnew);
       c->vertex(0)->set_cell(cnew);
 
       n = c->neighbor(1);
-      Cell* dnew = new Cell(*this,
-			    c->vertex(0),v,c->vertex(2),NULL,
-			    c,n,cnew,NULL);
+      Cell* dnew = create_cell(c->vertex(0),v,c->vertex(2),NULL,
+			       c,n,cnew,NULL);
       n->set_neighbor(n->index(c),dnew);
       c->set_neighbor(1,dnew);
       cnew->set_neighbor(1,dnew);
@@ -1014,9 +1073,8 @@ Triangulation_data_structure_3<Vb,Cb>::insert_in_facet
 
       // new cell with v in place of i1
       Cell* nc = c->neighbor(i1);
-      Cell* cnew1 = new Cell(*this,
-			     vi,v,v2,v3,
-			     NULL,nc,NULL,c);
+      Cell* cnew1 = create_cell(vi,v,v2,v3,
+				NULL,nc,NULL,c);
       nc->set_neighbor(nc->index(c),cnew1);
       c->set_neighbor(i1,cnew1);
 
@@ -1024,9 +1082,8 @@ Triangulation_data_structure_3<Vb,Cb>::insert_in_facet
 
       // new cell with v in place of i2
       nc = c->neighbor(i2);
-      Cell* cnew2 = new Cell(*this,
-			     vi,v1,v,v3,
-			     NULL,cnew1,nc,c);
+      Cell* cnew2 = create_cell(vi,v1,v,v3,
+				NULL,cnew1,nc,c);
       nc->set_neighbor(nc->index(c),cnew2);
       c->set_neighbor(i2,cnew2);
       cnew1->set_neighbor(2,cnew2); // links to previous cell
@@ -1045,18 +1102,16 @@ Triangulation_data_structure_3<Vb,Cb>::insert_in_facet
 
       // new cell with v in place of j1
       Cell* nd = d->neighbor(j1);
-      Cell* dnew1 = new Cell(*this,
-			     d->vertex(j),v,v3,v2,
-			     cnew1,nd,d,NULL);
+      Cell* dnew1 = create_cell(d->vertex(j),v,v3,v2,
+				cnew1,nd,d,NULL);
       nd->set_neighbor(nd->index(d),dnew1);
       d->set_neighbor(j1,dnew1);
       cnew1->set_neighbor(0,dnew1);
 	  
       // new cell with v in place of j2
       nd = d->neighbor(j2);
-      Cell* dnew2 = new Cell(*this,
-			     d->vertex(j),v1,v3,v,
-			     cnew2,dnew1,d,nd);
+      Cell* dnew2 = create_cell(d->vertex(j),v1,v3,v,
+				cnew2,dnew1,d,nd);
       nd->set_neighbor(nd->index(d),dnew2);
       d->set_neighbor(j2,dnew2);
       cnew2->set_neighbor(0,dnew2);
@@ -1095,9 +1150,8 @@ Triangulation_data_structure_3<Vb,Cb>::insert_in_edge
   case 1:
     {
       CGAL_triangulation_precondition( (i==0 || i==1) && (j==0 || j==1) );
-      cnew = new Cell(*this,
-		      v,c->vertex(1),NULL,NULL,
-		      c->neighbor(0),c,NULL,NULL);
+      cnew = create_cell(v,c->vertex(1),NULL,NULL,
+			 c->neighbor(0),c,NULL,NULL);
       c->vertex(1)->set_cell(cnew);
       c->set_vertex(1,v);
       c->neighbor(0)->set_neighbor(1,cnew);
@@ -1116,14 +1170,14 @@ Triangulation_data_structure_3<Vb,Cb>::insert_in_edge
       int id = d->index(c->vertex(i));
       int jd = d->index(c->vertex(j));
 
-      cnew = new Cell(*this);
+      cnew = create_cell();
       cnew->set_vertex(i,c->vertex(i)); 
       c->vertex(i)->set_cell(cnew);
       cnew->set_vertex(j,v);
       cnew->set_vertex(k,c->vertex(k));
       c->set_vertex(i,v);
 
-      dnew = new Cell(*this);
+      dnew = create_cell();
       dnew->set_vertex(id,d->vertex(id));
       // d->vertex(id)->cell() is cnew OK
       dnew->set_vertex(jd,v);
@@ -1154,7 +1208,7 @@ Triangulation_data_structure_3<Vb,Cb>::insert_in_edge
       Vertex* vi=c->vertex(i);
       Vertex* vj=c->vertex(j);
 	
-      cnew = new Cell(*this, c);
+      cnew = create_cell(c);
       c->set_vertex(j,v);
       vj->set_cell(cnew);
       v->set_cell(c);
@@ -1179,7 +1233,7 @@ Triangulation_data_structure_3<Vb,Cb>::insert_in_edge
 	// uses the field prev of the circulator
 	i = ctmp->index(vi);
 	j = ctmp->index(vj);
-	cnew = new Cell(*this, ctmp);
+	cnew = create_cell(ctmp);
 	// v will become vertex j of c
 	// and vertex i of cnew
 	ctmp->set_vertex(j,v);
@@ -1246,9 +1300,8 @@ Triangulation_data_structure_3<Vb,Cb>::insert_increase_dimension
       set_number_of_vertices( number_of_vertices()+1 );
       set_dimension( dimension()+1 );
 
-      c = new Cell( *this,
-		    v, NULL, NULL, NULL,
-		    NULL, NULL, NULL, NULL );
+      c = create_cell( v, NULL, NULL, NULL,
+		       NULL, NULL, NULL, NULL );
       v->set_cell(c);
       break;
     }
@@ -1264,9 +1317,8 @@ Triangulation_data_structure_3<Vb,Cb>::insert_increase_dimension
       set_number_of_vertices( number_of_vertices()+1 );
       set_dimension( dimension()+1 );
 
-      d = new Cell( *this,
-		    v, NULL, NULL, NULL,
-		    star->cell(), NULL, NULL, NULL );
+      d = create_cell( v, NULL, NULL, NULL,
+		       star->cell(), NULL, NULL, NULL );
       v->set_cell(d);
       star->cell()->set_neighbor(0,d);
       break;
@@ -1295,9 +1347,8 @@ Triangulation_data_structure_3<Vb,Cb>::insert_increase_dimension
 	d->set_vertex(1,d->vertex(0));
 	d->set_vertex(0,v);
 	d->set_neighbor(0,c);
-	e = new Cell( *this,
-		      star, v, NULL, NULL,
-		      d, c, NULL, NULL );
+	e = create_cell( star, v, NULL, NULL,
+			 d, c, NULL, NULL );
 	c->set_neighbor(0,e);
 	d->set_neighbor(1,e);
       }
@@ -1305,9 +1356,8 @@ Triangulation_data_structure_3<Vb,Cb>::insert_increase_dimension
 	c->set_vertex(1,d->vertex(0));
 	d->set_vertex(1,v);
 	d->set_neighbor(1,c);
-	e = new Cell( *this,
-		      v, star, NULL, NULL,
-		      c, d, NULL, NULL );
+	e = create_cell( v, star, NULL, NULL,
+			 c, d, NULL, NULL );
 	c->set_neighbor(1,e);
 	d->set_neighbor(0,e);
       }
@@ -1341,7 +1391,7 @@ Triangulation_data_structure_3<Vb,Cb>::insert_increase_dimension
       Cell* enew=NULL;
 	
       while( e != d ){
-	enew = new Cell( *this );
+	enew = create_cell( );
 	enew->set_vertex(i,e->vertex(j));
 	enew->set_vertex(j,e->vertex(i));
 	enew->set_vertex(2,star);
@@ -1419,10 +1469,9 @@ Triangulation_data_structure_3<Vb,Cb>::insert_increase_dimension
       while (it != cells_end()) {
 	it->set_vertex(3,v);
 	if ( ! it->has_vertex(star) ) {
-	  cnew = new Cell( *this,
-			   it->vertex(0),it->vertex(2),
-			   it->vertex(1),star,
-			   NULL,NULL,NULL,&(*it));
+	  cnew = create_cell( it->vertex(0),it->vertex(2),
+			      it->vertex(1),star,
+			      NULL,NULL,NULL,&(*it));
 	  it->set_neighbor(3,cnew);
 	}
 	++it;
@@ -1520,9 +1569,8 @@ Triangulation_data_structure_3<Vb,Cb>::create_star
       i[1] = (li+1)&3;
       i[2] = (li+3)&3;
     }
-    cnew = new Cell( *this,
-		     c->vertex(i[0]), c->vertex(i[1]), c->vertex(i[2]), v,
-		     NULL, NULL, NULL, c->neighbor(li) );
+    cnew = create_cell( c->vertex(i[0]), c->vertex(i[1]), c->vertex(i[2]), v,
+			NULL, NULL, NULL, c->neighbor(li) );
     c->neighbor(li)->set_neighbor( c->neighbor(li)->index(c), cnew);
 
     // look for the other three neighbors of cnew
@@ -1583,9 +1631,8 @@ Triangulation_data_structure_3<Vb,Cb>::create_star
       i1 = cur->index( v1 );
     }
     // here cur has an edge on the boundary of region
-    cnew = new Cell( *this,
-		     v, v1, cur->vertex( ccw(i1) ), NULL,
-		     cur->neighbor(cw(i1)), NULL, pnew, NULL);
+    cnew = create_cell( v, v1, cur->vertex( ccw(i1) ), NULL,
+			cur->neighbor(cw(i1)), NULL, pnew, NULL);
     cur->neighbor(cw(i1))->set_neighbor
       ( cur->neighbor(cw(i1))->index(cur), cnew );
     // pnew is null at the first iteration
@@ -1829,12 +1876,11 @@ Triangulation_data_structure_3<Vb,Cb>::copy_tds
       // 			      (Vertex*) V[it->vertex(3)]);
       // modified to keep the possible additional non combinatorial
       // information 
-      F[&(*it)]=  new Cell( *this,
-			    (Vertex*) V[it->vertex(0)],
-			    (Vertex*) V[it->vertex(1)],
-			    (Vertex*) V[it->vertex(2)],
-			    (Vertex*) V[it->vertex(3)],
-			    *it);
+      F[&(*it)]=  create_cell( (Vertex*) V[it->vertex(0)],
+			       (Vertex*) V[it->vertex(1)],
+			       (Vertex*) V[it->vertex(2)],
+			       (Vertex*) V[it->vertex(3)],
+			       *it);
       it = it->_next_cell;
     }
   }

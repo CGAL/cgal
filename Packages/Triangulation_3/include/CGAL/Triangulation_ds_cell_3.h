@@ -82,41 +82,37 @@ public:
     : Cb(), _previous_cell(this), _next_cell(this)
   {}
 
-  inline
-  Triangulation_ds_cell_3(Tds & tds)
-    : Cb()
-    // builds a new cell of Triangulation_data_structure_3 and
-    // maintains the list of cells  
-  { add_list(tds); }
+//   inline
+//   Triangulation_ds_cell_3(Tds & tds)
+//     : Cb()
+//     // builds a new cell of Triangulation_data_structure_3 and
+//     // maintains the list of cells  
+//   { add_list(tds); }
 
-  Triangulation_ds_cell_3(Tds & tds, Cell* c)
+  Triangulation_ds_cell_3(Cell* c)
     : Cb(c->vertex(0),c->vertex(1),c->vertex(2),c->vertex(3),
 	 c->neighbor(0),c->neighbor(1),c->neighbor(2),c->neighbor(3))
-  { add_list(tds); }
+  { }
     
-  Triangulation_ds_cell_3(Tds & tds,
-			  Vertex* v0, Vertex* v1, 
+  Triangulation_ds_cell_3(Vertex* v0, Vertex* v1, 
 			  Vertex* v2, Vertex* v3)
     :  Cb(v0,v1,v2,v3)
-  { add_list(tds); }
+  { }
 
-  Triangulation_ds_cell_3(Tds & tds,
-			  Vertex* v0, Vertex* v1, 
+  Triangulation_ds_cell_3(Vertex* v0, Vertex* v1, 
 			  Vertex* v2, Vertex* v3,
 			  Cell* n0, Cell* n1, Cell* n2, Cell* n3)
     :  Cb(v0,v1,v2,v3,n0,n1,n2,n3)
-  { add_list(tds); }
+  {  }
 
   // not documented
   // only used by copy_tds in the TDS class
-  Triangulation_ds_cell_3(Tds & tds,
-			  Vertex* v0, Vertex* v1, 
+  Triangulation_ds_cell_3(Vertex* v0, Vertex* v1, 
 			  Vertex* v2, Vertex* v3,
 			  const Cell& old_cell)
     :  Cb(old_cell)
   {
     set_vertices(v0,v1,v2,v3);
-    add_list(tds);
   }
      
   // DESTRUCTOR
@@ -221,14 +217,14 @@ private:
   Cell* _previous_cell;
   Cell* _next_cell;
   
-  inline
-  void add_list(Tds & tds)
-  {
-    this->_next_cell = tds.list_of_cells()._next_cell;
-    tds.list_of_cells()._next_cell=this;
-    this->_next_cell->_previous_cell = this;
-    this->_previous_cell = tds.past_end_cell();
-  }
+//   inline
+//   void add_list(Tds & tds)
+//   {
+//     this->_next_cell = tds.list_of_cells()._next_cell;
+//     tds.list_of_cells()._next_cell=this;
+//     this->_next_cell->_previous_cell = this;
+//     this->_previous_cell = tds.past_end_cell();
+//   }
 
   void error_orient( Cell * n, int i) const
   {

@@ -270,6 +270,9 @@ public:
   // ASSIGNMENT
   void set_number_of_vertices(int n) 
     { _tds.set_number_of_vertices(n+1); }
+   
+  inline
+  void add_cell( Cell_handle c ) { _tds.add_cell( &(*c) ); }
 
   // GEOMETRIC ACCESS FUNCTIONS
   
@@ -719,6 +722,17 @@ private:
 			 std::set<Vertex*, less<Vertex*> > & vertices,
 			 std::set<Cell*, less<Cell*> > & cells,
 			 Cell_handle c ) const;
+  inline
+  Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1,
+			  Vertex_handle v2, Vertex_handle v3,
+			  Cell_handle c0, Cell_handle c1,
+			  Cell_handle c2, Cell_handle c3)
+    {
+      Cell_handle cnew = new Cell (v0,v1,v2,v3,c0,c1,c2,c3);
+      _tds.add_cell( &(*cnew) );
+      return cnew;
+    }
+
 public:
 
   // CHECKING
@@ -2559,10 +2573,10 @@ Triangulation_3<GT,Tds>::insert_outside_convex_hull
       // creation of an infinite facet "at the end" of the sequence
       // of infinite facets containing p
       Cell_handle cnew 
-	= new Cell( _tds,
-		    prev->vertex(ccw(prev->index(v))), v,  
-		    infinite_vertex(), NULL,
-		    NULL, cur, prev, NULL);
+	= create_cell( &(*( prev->vertex(ccw(prev->index(v))) )), 
+		       &(*v),  
+		       &(*infinite_vertex()), NULL,
+		       NULL, &(*cur), &(*prev), NULL);
       // neighbor 0 will be set to dnew later
       prev->set_neighbor(prev->index(cur), cnew);
       cur->set_neighbor(cur->index(prev),cnew);
@@ -2582,10 +2596,9 @@ Triangulation_3<GT,Tds>::insert_outside_convex_hull
       }
 	
       Cell_handle dnew 
-	= new Cell( _tds,
-		    v, prev->vertex(cw(prev->index(v))), 
-		    infinite_vertex(), NULL,
-		    cur, cnew, prev, NULL);
+	= create_cell( &(*v), &(*(prev->vertex(cw(prev->index(v))) )), 
+		       &(*infinite_vertex()), NULL,
+		       &(*cur), &(*cnew), &(*prev), NULL);
       prev->set_neighbor(prev->index(cur), dnew);
       cur->set_neighbor(cur->index(prev),dnew);
       cnew->set_neighbor(0,dnew); // correction for cnew
@@ -2649,10 +2662,9 @@ Triangulation_3<GT,Tds>::hat(Vertex_handle v, Cell_handle c)
 	  // convex hull that are visible from v
 	  i1 = nextposaround(i,inf);
 	  i2 = 6-i-i1-inf;
-	  cnew = new Cell( _tds,
-			   c->vertex(i1), c->vertex(i2), 
-			   v, infinite_vertex(),
-			   NULL, NULL, cni, c );
+	  cnew = create_cell( &(*(c->vertex(i1))), &(*(c->vertex(i2))), 
+			      &(*v), &(*infinite_vertex()),
+			      NULL, NULL, &(*cni), &(*c) );
 	  c->set_neighbor(i,cnew);
 	  cni->set_neighbor( cni->index(c), cnew );
 
