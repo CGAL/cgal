@@ -3,6 +3,7 @@ FILES = benchPmwxDb.xml
 FILES+= benchPmwxConics.xml
 FILES+= benchPmwxConics2.xml
 FILES+= benchPmwxConics3.xml
+FILES+= benchPmwxConics4.xml
 FILES+= benchPmwxSegments.xml
 FILES+= benchCompareSweep.xml
 FILES+= benchCompareSweepConics.xml
