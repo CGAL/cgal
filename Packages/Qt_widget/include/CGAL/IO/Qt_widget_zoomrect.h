@@ -22,7 +22,7 @@
 #define CGAL_QT_WIDGET_ZOOMRECT_H
 
 #include <CGAL/IO/Qt_widget.h>
-#include <CGAL/IO/Qt_widget_tool.h>
+#include <CGAL/IO/Qt_widget_standard_tool.h>
 #include <qrect.h>
 
 
@@ -34,7 +34,7 @@
 
 namespace CGAL {
 
-class Qt_widget_zoomrect : public Qt_widget_tool
+class Qt_widget_zoomrect : public Qt_widget_standard_tool
 {
 public:
   int first_x, first_y, x2, y2;

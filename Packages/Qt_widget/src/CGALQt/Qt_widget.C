@@ -20,16 +20,19 @@
 
 #ifdef CGAL_USE_QT
 
-#include <CGAL/IO/Qt_widget.h>
 #include <CGAL/Bbox_2.h>
+
+#include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_tool.h>
+#include <CGAL/IO/Qt_widget_standard_tool.h>
 #include <CGAL/IO/Qt_widget_layer.h>
 
 namespace CGAL {
 
 Qt_widget::Qt_widget(QWidget *parent, const char *name) :
   QWidget(parent, name),  Locked(0), _pointSize(4),
-  _pointStyle(DISC), _has_tool(false), current_tool(0)
+  _pointStyle(DISC), _has_tool(false), current_tool(0),
+  _has_standard_tool(false), current_standard_tool(0)
 {
   setCaption("CGAL::Qt_widget");
 
@@ -134,7 +137,9 @@ void Qt_widget::paintEvent(QPaintEvent *e)
 void Qt_widget::mousePressEvent(QMouseEvent *e)
 {
   emit(mousePressed(e));
-  if (has_tool())
+  if (has_standard_tool())
+    current_standard_tool->mousePressEvent(e);
+  if (has_tool() && !has_standard_tool())
     current_tool->mousePressEvent(e);
   std::list<togglelayer>::iterator it;
   for(it = qt_toggle_layers.begin(); it!= qt_toggle_layers.end(); it++)
@@ -145,7 +150,9 @@ void Qt_widget::mousePressEvent(QMouseEvent *e)
 void Qt_widget::mouseReleaseEvent(QMouseEvent *e)
 {
   emit(mouseReleased(e));
-  if (has_tool())
+  if (has_standard_tool())
+    current_standard_tool->mouseReleaseEvent(e);
+  if (has_tool() && !has_standard_tool())
     current_tool->mouseReleaseEvent(e);
   std::list<togglelayer>::iterator it;
   for(it = qt_toggle_layers.begin(); it!= qt_toggle_layers.end(); it++)
@@ -156,7 +163,9 @@ void Qt_widget::mouseReleaseEvent(QMouseEvent *e)
 void Qt_widget::mouseMoveEvent(QMouseEvent *e)
 {
   emit(mouseMoved(e));
-  if (has_tool())
+  if (has_standard_tool())
+    current_standard_tool->mouseMoveEvent(e);
+  if (has_tool() && !has_standard_tool())
     current_tool->mouseMoveEvent(e);
   std::list<togglelayer>::iterator it;
   for(it = qt_toggle_layers.begin(); it!= qt_toggle_layers.end(); it++)
@@ -166,7 +175,9 @@ void Qt_widget::mouseMoveEvent(QMouseEvent *e)
 
 void Qt_widget::wheelEvent(QMouseEvent *e)
 {
-  if (has_tool())
+  if (has_standard_tool())
+    current_standard_tool->wheelEvent(e);
+  if (has_tool() && !has_standard_tool())
     current_tool->wheelEvent(e);
   std::list<togglelayer>::iterator it;
   for(it = qt_toggle_layers.begin(); it!= qt_toggle_layers.end(); it++)
@@ -176,7 +187,9 @@ void Qt_widget::wheelEvent(QMouseEvent *e)
 
 void Qt_widget::mouseDoubleClickEvent(QMouseEvent *e)
 {
-  if (has_tool())
+  if (has_standard_tool())
+    current_standard_tool->mouseDoubleClickEvent(e);
+  if (has_tool() && !has_standard_tool())
     current_tool->mouseDoubleClickEvent(e);
   std::list<togglelayer>::iterator it;
   for(it = qt_toggle_layers.begin(); it!= qt_toggle_layers.end(); it++)
@@ -186,7 +199,9 @@ void Qt_widget::mouseDoubleClickEvent(QMouseEvent *e)
 
 void Qt_widget::keyPressEvent(QKeyEvent *e)
 {
-  if (has_tool())
+  if (has_standard_tool())
+    current_standard_tool->keyPressEvent(e);
+  if (has_tool() && !has_standard_tool())
     current_tool->keyPressEvent(e);
   std::list<togglelayer>::iterator it;
   for(it = qt_toggle_layers.begin(); it!= qt_toggle_layers.end(); it++)
@@ -196,7 +211,9 @@ void Qt_widget::keyPressEvent(QKeyEvent *e)
 
 void Qt_widget::keyReleaseEvent(QKeyEvent *e)
 {
-  if (has_tool())
+  if (has_standard_tool())
+    current_standard_tool->keyReleaseEvent(e);
+  if (has_tool() && !has_standard_tool())
     current_tool->keyReleaseEvent(e);
   std::list<togglelayer>::iterator it;
   for(it = qt_toggle_layers.begin(); it!= qt_toggle_layers.end(); it++)
@@ -206,7 +223,9 @@ void Qt_widget::keyReleaseEvent(QKeyEvent *e)
 
 void Qt_widget::enterEvent(QEvent *e)
 {
-  if (has_tool())
+  if (has_standard_tool())
+    current_standard_tool->enterEvent(e);
+  if (has_tool() && !has_standard_tool())
     current_tool->enterEvent(e);
   std::list<togglelayer>::iterator it;
   for(it = qt_toggle_layers.begin(); it!= qt_toggle_layers.end(); it++)
@@ -216,7 +235,9 @@ void Qt_widget::enterEvent(QEvent *e)
 
 void Qt_widget::leaveEvent(QEvent *e)
 {
-  if (has_tool())
+  if (has_standard_tool())
+    current_standard_tool->leaveEvent(e);
+  if (has_tool() && !has_standard_tool())
     current_tool->leaveEvent(e);
   std::list<togglelayer>::iterator it;
   for(it = qt_toggle_layers.begin(); it!= qt_toggle_layers.end(); it++)
@@ -341,6 +362,16 @@ Qt_widget& operator<<(Qt_widget& w, const Bbox_2& r)
 *Ursu Radu coding ....
 *
 *********************************************/
+void Qt_widget::attach_standard(Qt_widget_standard_tool* tool) {
+  if (has_standard_tool()) {
+    current_standard_tool->detach();
+    emit(detached_tool());
+  }
+  current_standard_tool=tool;
+  _has_standard_tool=true;
+  current_standard_tool->attach(this);
+}
+
 void Qt_widget::attach(Qt_widget_tool* tool) {
   if (has_tool()) {
     current_tool->detach();
@@ -350,6 +381,12 @@ void Qt_widget::attach(Qt_widget_tool* tool) {
   _has_tool=true;
   current_tool->attach(this);
 }
+void Qt_widget::detach_current_standard_tool()
+{
+  if (has_standard_tool())
+    current_standard_tool->detach();
+  _has_standard_tool = FALSE;
+};
 void Qt_widget::detach_current_tool()
 {
   if (has_tool()) {
@@ -376,6 +413,8 @@ void Qt_widget::redraw()
 	  (*it).layer->draw(*this);
       
       unlock();
+      if (has_standard_tool())
+	current_standard_tool->widget_repainted();
       if (has_tool())
 	current_tool->widget_repainted();
     }

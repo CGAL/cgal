@@ -49,9 +49,6 @@ public:
 
 
 private slots:
-
-  void toggle_button();
-
   void toolregion();
   void zoomin();
   void zoomout();

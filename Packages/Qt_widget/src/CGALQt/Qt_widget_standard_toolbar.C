@@ -102,45 +102,40 @@ namespace CGAL {
     but[4]->setToggleButton(TRUE);
     but[5]->setToggleButton(TRUE);
 
-    connect(w, SIGNAL(detached_tool()), this, SLOT(toggle_button()));
     nr_of_buttons = 6;
   };
 
-  void Standard_toolbar::toggle_button ()
-  {
-    if(is_active) {
-      but[activebutton]->toggle();
-      is_active = false;
-    }
-  }
-	
   void Standard_toolbar::toolregion()
   {
     if (but[3]->isOn())
     {
-	widget->attach(&zoombut);
-	activebutton = 3;
-	is_active = true;
+      if(is_active)
+	but[activebutton]->toggle();
+      widget->attach_standard(&zoombut);
+      activebutton = 3;
+      is_active = true;
     }
     else
     {
       is_active = false;
-      widget->detach_current_tool();
+      widget->detach_current_standard_tool();
     }
   }
 
   void Standard_toolbar::zoominrect()
   {
     if (but[4]->isOn())
-    {	
-      widget->attach(&zoomrectbut);
+    {
+      if(is_active)
+	but[activebutton]->toggle();
+      widget->attach_standard(&zoomrectbut);
       activebutton = 4;
       is_active = true;
     }
     else
     {
       is_active = false;
-      widget->detach_current_tool();
+      widget->detach_current_standard_tool();
     }
   }
 
@@ -157,7 +152,8 @@ namespace CGAL {
   void Standard_toolbar::notool()
   {
     if(is_active) {
-      widget->detach_current_tool();
+      but[activebutton]->toggle();
+      widget->detach_current_standard_tool();
       is_active = false;
     }
   }
@@ -166,14 +162,15 @@ namespace CGAL {
   void Standard_toolbar::handtool()
   {
     if (but[5]->isOn())
-    {
-      widget->detach_current_tool();
-      widget->attach(&handtoolbut);
+    {      
+      if(is_active)
+	but[activebutton]->toggle();
+      widget->attach_standard(&handtoolbut);
       activebutton = 5;
       is_active = true;
     } else {
       is_active = false;
-      widget->detach_current_tool();
+      widget->detach_current_standard_tool();
     }
   }
 

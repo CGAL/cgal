@@ -36,7 +36,9 @@
 namespace CGAL {
 
 class Qt_widget_tool;
+class Qt_widget_standard_tool;
 class Qt_widget_layer;
+
 typedef 
 struct togglelayer{
   CGAL::Qt_widget_layer  *layer;
@@ -153,9 +155,12 @@ public:
 
   // tool system
   // ~~~~~~~~~~~
+  void	      attach_standard(Qt_widget_standard_tool* tool);
   void	      attach(Qt_widget_tool* tool);
   inline bool has_tool() const { return _has_tool; };
-  void	      detach_current_tool(); 
+  inline bool has_standard_tool() const { return _has_standard_tool; };
+  void	      detach_current_tool();
+  void	      detach_current_standard_tool(); 
 
   void new_object(CGAL::Object obj) { emit(new_cgal_object(obj)); };
   
@@ -221,11 +226,13 @@ private:
 
   // current tool
   bool _has_tool;
-  Qt_widget_tool *current_tool;
+  bool _has_standard_tool;
+  Qt_widget_tool	    *current_tool;
+  Qt_widget_standard_tool   *current_standard_tool;
 
   //for layers
   std::list<Qt_widget_layer*>	qt_layers;
-  std::list<togglelayer>		qt_toggle_layers;
+  std::list<togglelayer>	qt_toggle_layers;
 };//end Qt_widget class
 
 // manipulators
