@@ -5491,6 +5491,7 @@ install_gmp_sub()
 	then
 	    _do_command "make install" "Installing"
 	    _do_command "make clean" "Cleaning"
+            _do_command "cp ${CGAL_DIR}/GMP/include/*.h ${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}"
 	    GMP_INSTALLATION='c'
 	fi
     fi
