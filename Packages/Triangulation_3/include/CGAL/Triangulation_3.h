@@ -231,7 +231,7 @@ public:
   CGAL_Triangulation_3 & operator=(const CGAL_Triangulation_3 & tr)
   {
     clear();
-    _tds = tr._Triangulation_data_structure_3;
+    _tds = tr._tds;
     _gt = tr._gt;
     infinite = tr.infinite;
     return *this;
@@ -243,7 +243,7 @@ public:
   {
     clear();
     _gt = tr._gt;
-    _Triangulation_data_structure_3.copy_Triangulation_data_structure_3(tr._Triangulation_data_structure_3);
+    _tds.copy_tds(tr._tds);
     infinite = tr.infinite;
   }
 
@@ -257,13 +257,13 @@ public:
     infinite = tr.infinite_vertex();
     tr.infinite = inf;
 
-    _Triangulation_data_structure_3.swap(tr._Triangulation_data_structure_3);
+    _tds.swap(tr._tds);
   }
 
   // CHECKING
   bool is_valid(bool verbose = false, int level = 0) const
   {
-    if ( ! _Triangulation_data_structure_3.is_valid(verbose,level) ) {
+    if ( ! _tds.is_valid(verbose,level) ) {
       if (verbose) { cerr << "invalid data structure" << endl; }
       CGAL_triangulation_assertion(false); return false;
     }
@@ -520,7 +520,7 @@ public:
 			     c->vertex(3)->point(),
 			     lt,i,j ) == CGAL_ON_BOUNDED_SIDE );
     Vertex_handle v = new Vertex(p);
-    _Triangulation_data_structure_3.insert_in_cell( &(*v), &(*c) );
+    _tds.insert_in_cell( &(*v), &(*c) );
     return v;
   }
 
@@ -558,7 +558,7 @@ public:
 			  lt,li,lj) == CGAL_ON_BOUNDED_SIDE)
 	);
     Vertex_handle v = new Vertex(p);
-    _Triangulation_data_structure_3.insert_in_facet(&(*v), &(*c), i);
+    _tds.insert_in_facet(&(*v), &(*c), i);
     return v;
   }
 
@@ -612,7 +612,7 @@ public:
 			lt,li ) == CGAL_ON_BOUNDED_SIDE )
       );
     Vertex_handle v = new Vertex(p);
-    _Triangulation_data_structure_3.insert_in_edge(&(*v), &(*c), i, j);
+    _tds.insert_in_edge(&(*v), &(*c), i, j);
     return v;
   }
   
@@ -674,7 +674,7 @@ public:
 	// creation of an infinite facet "at the end" of the sequence
 	// of infinite facets containing p
 	Cell_handle cnew 
-	  = new Cell( _Triangulation_data_structure_3,
+	  = new Cell( _tds,
 		      prev->vertex(ccw(prev->index(v))), v,  
 		      infinite_vertex(), NULL,
 		      NULL, cur, prev, NULL);
@@ -695,7 +695,7 @@ public:
 	}
 	
 	Cell_handle dnew 
-	  = new Cell( _Triangulation_data_structure_3,
+	  = new Cell( _tds,
 		      v, prev->vertex(cw(prev->index(v))), 
 		      infinite_vertex(), NULL,
 		      cur, cnew, prev, NULL);
@@ -759,7 +759,7 @@ hat(Vertex_handle v, Cell_handle c)
 	  // convex hull that are visible from v
 	  i1 = nextposaroundij(i,inf);
 	  i2 = 6-i-i1-inf;
-	  cnew = new Cell( _Triangulation_data_structure_3,
+	  cnew = new Cell( _tds,
 			   c->vertex(i1), c->vertex(i2), 
 			   v, infinite_vertex(),
 			   NULL, NULL, cni, c );
@@ -872,7 +872,7 @@ public:
       break;
     }
     Vertex_handle v = new Vertex(p);
-    _Triangulation_data_structure_3.insert_outside_affine_hull(&(*v), &(*infinite_vertex()), reorient);
+    _tds.insert_outside_affine_hull(&(*v), &(*infinite_vertex()), reorient);
     return v;
   }
 
@@ -1866,7 +1866,7 @@ public:
 // istream& operator>>
 // (istream& is, CGAL_Triangulation_3<GT, Tds> &tr)
 // {
-//   return operator>>(is, tr._Triangulation_data_structure_3);
+//   return operator>>(is, tr._tds);
 // }
     
 
