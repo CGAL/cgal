@@ -31,10 +31,10 @@ Iterators in the \stl\ were tailored for linear sequences. The
 specialization for circular data structures leads to slightly
 different requirements which we will summarize in the {\em
   circulators\/} concept. The main difference is that a circular data
-structure has no natural past-the-end value. In consequence, a
+structure has no natural past-the-end value. As a consequence, a
 container supporting circulators will not have an {\tt end()}-member
 function. The semantic of a circulator range differs from the semantic
-of an iterator range: For a circulator $c$ the range $\left[c,
+of an iterator range. For a circulator $c$ the range $\left[c,
   c\right)$ denotes the sequence of all elements in the data
 structure. For iterators, this range defines the empty sequence. A
 separate test for an empty sequence has been added to the circulator
@@ -53,11 +53,12 @@ present the changes, please refer to \cite[chapter 18]{ms-strg-96} or
 
 {\bf Past-the-end value:} There is no past-the-end value for circulators.
 
-{\bf Singular values:} There are no singular values for
-circulators\footnote{Since circulators must be implemented as classes
-  anyway, there is no need to allow singular values for them. An
-  un-initalized circulator does not have a singular value, but is
-  supposed to refer to an empty sequence.}.
+{\bf Singular values:} %There are no singular values for
+%circulators\footnote{Since circulators must be implemented as classes
+%  anyway, there is no need to allow singular values for them. An
+%  un-initalized circulator does not have a singular value, but is
+%  supposed to refer to an empty sequence.}
+A circulator with a singular value is supposed to refer to an empty sequence.
 
 {\bf Empty sequence:} The comparison $c ==$ {\tt NULL} (or $c == 0$)
 for a circulator $c$ is {\tt true} if $c$ denotes an empty sequence,
@@ -74,9 +75,11 @@ a valid range. If the circulator refers to an empty sequence, the range
 $\left[c, c\right)$ denotes the empty range. Otherwise the circulator
 is dereferenceable and the range $\left[c, c\right)$ denotes the
 sequence of all elements in the data structure. {\em Remark:} When a
-circulator is used in a place of an iterator, like with an \stl\ 
-algorithm, it will work as expected with the only exception that
-the range $\left[c, c\right)$ denotes always the empty range. This is
+circulator is used in a place of an iterator, as, for example, with an \stl\ 
+algorithm, it will work as expected with the only exception that,
+in STL algorithms,
+the range $\left[c, c\right)$ denotes always the empty range.
+This is
 not a requirement, but a consequence of the requirements
 stated here and the fact that the \stl\ requirements for iterator
 ranges are based on the {\tt operator++} and the {\tt operator==},
@@ -104,7 +107,7 @@ are required:
 
 In the following, we assume that {\tt a} and {\tt b} are circulators
 of type {\tt C}, {\tt r} is of type {\tt C\&} (is assignable), and
-{\tt T} denotes the the value type of {\tt C}.  Let {\tt D} be the
+{\tt T} denotes the value type of {\tt C}.  Let {\tt D} be the
 distance type of {\tt C}.  As for \CC, we recommend the use of 0
 instead of {\tt NULL}.
 
@@ -113,13 +116,12 @@ instead of {\tt NULL}.
     {\tt C()}         \> a circulator equal to \ccc{NULL} denoting an 
                          empty sequence.\\
     {\tt a == NULL}   \> Returns {\tt true} if {\tt a} denotes an empty
-                         sequence, {\tt false} otherwise\footnote{For 
-                           simplicity, {\tt NULL == a} is not required.}. The\\
+                         sequence, {\tt false} otherwise.For 
+                           simplicity, {\tt NULL == a} is not required. The\\
                       \> behavior for comparisons with pointer-like 
                          values different than {\tt NULL} \\
-                      \> is undefined%
-                         \footnote{A runtime assertion is 
-                         recommended.}.\\
+                      \> is undefined. A runtime assertion is 
+                         recommended.\\
     {\tt a != NULL}   \> Returns {\tt !(a == NULL)}. \\
     {\tt ++r}         \> Like for forward iterators, but a dereferenceable
                          circulator {\tt r} will always\\
@@ -151,7 +153,7 @@ category:
 The same requirements as for the bidirectional circulators hold for
 random access iterators with the following changes and extensions. 
 
-The idea of a random access extends naturally to circulators using
+The idea of random access extends naturally to circulators using
 equivalence classes modulus the length of the sequence. With this in
 mind, the additional requirements for random access iterators hold
 also for random access circulators. The only exception is that the

@@ -108,15 +108,20 @@ This winding number is zero for the \ccStyle{begin()}-iterator and one
 for the \ccStyle{end()}-iterator.  It is incremented whenever the
 internal circulator passes the \ccStyle{begin()} position. Two
 iterators are equal if their internally used circulators and winding
-numbers are equal. This is more general than necessary since the
-\ccStyle{end()}-iterator is not supposed to move any more, which is
-here still possible in a defined manner. However, for random access
-iterators it is not supported.
+numbers are equal. 
+%This is more general than necessary since 
+%the \ccStyle{end()}-iterator is not supposed to move any more, which is
+%here still possible in a defined manner. However, for random access
+%iterators it is not supported.
+This is more general than necessary since an iterator equals to
+\ccStyle{end()}-iterator is not supposed to be incremented 
+ any more, which is here still possible in a defined manner. 
 
+The implementation is different for random access iterators.
 The random access iterator has to be able to compute the size of the
 data structure in constant time. This is for example needed if the
 difference of the past-the-end iterator and the begin iterator is
-taken, which is exactly the the size of the data structure.
+taken, which is exactly the  size of the data structure.
 Therefore, if the circulator is of the random-access category, the
 adapter chooses the minimal circulator for the internal anchor
 position. The minimal circulator is part of the random access

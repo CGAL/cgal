@@ -42,9 +42,9 @@ structures. Examples are polyhedral surfaces and planar maps, where
 the edges emanating from a vertex or the edges around a facet form a
 circular sequence.
 
-Since circular sequences cannot provide efficient iterators, we have
+Since circular sequences do not allow for efficient iterators, we have
 introduced the new concept of {\em circulators}. They share most of
-the requirements with iterators, while the main difference is the lack
+the requirements of iterators, while the main difference is the lack
 of a past-the-end position in the sequence. Appropriate adaptors are
 provided between iterators and circulators to integrate circulators
 smoothly into the framework of \stl. An example of a generic {\tt
@@ -110,7 +110,7 @@ item, a current item, and a kind of winding-number that is zero for
 the {\tt begin()}-iterator and one for the past-the-end
 situation\footnote{This is currently implemented as the
   adaptor class which provides a pair of iterators for a given
-  circulator.}.  Though we have introduced the concept of circulators
+  circulator.}.  We have introduced the concept of circulators
 that allows light-weight implementations and the \cgal\ support
 library provides adaptor classes that convert between iterators and
 circulators (with the corresponding penalty in efficiency), so as to
@@ -265,8 +265,9 @@ in addition to the operations supported by a forward circulator.
 A class \ccClassName\ that satisfies the requirements of a random
 access Circulator for the value type \ccStyle{T}, supports the
 following operations in addition to the operations supported by a
-bidirectional Circulator.  In contrast to random access iterators, for
-random access circulators are no comparison operators available.
+bidirectional Circulator.  In contrast to random access iterators, 
+no comparison operators are available for
+random access circulators.
 
 \ccTypes
 \ccSetTwoColumns{Circulator:: iterator_category}{}
@@ -333,7 +334,7 @@ space and time penalty) to reestablish this generality.
 
 \begin{tabbing}
   \ccc{Container_from_circulator}\ \ \ \=
-      container-like class with iterators build from a circulator\\
+      container-like class with iterators built from a circulator\\
   \ccc{Circulator_from_iterator}  \>
       circulator over a range of two iterators\\
   \ccc{Circulator_from_container} \>
@@ -352,7 +353,7 @@ std::reverse( container.begin(), container.end());
 
 Another example defines a circulator \ccc{c} for a vector of
 \ccc{int}'s. However, since there are no elements in the vector, the
-circulator denotes an empty sequence. Would have been elements in the
+circulator denotes an empty sequence.  If there were elements in the
 vector, the circulator would implement a random access modulus the
 size of the sequence.
 
