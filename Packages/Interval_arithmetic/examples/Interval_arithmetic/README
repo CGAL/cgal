@@ -1,5 +1,4 @@
-Patch the first line of the PERL 5 script "filtered_predicate_converter"
-if necessary.  Then you can try:
+You can try:
 
 cd include/CGAL/Arithmetic_filter
 make clean all

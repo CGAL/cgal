@@ -15,7 +15,7 @@ OBJECTS = template_predicates_on_ft.h
 #### Don't touch below.
 
 % :: ../% $(SCRIPT)
-	$(SCRIPT) -p < $< > $@
+	perl $(SCRIPT) -p < $< > $@
 
 all: $(OBJECTS)
 
