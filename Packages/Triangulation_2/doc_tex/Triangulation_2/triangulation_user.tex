@@ -43,7 +43,7 @@ In this chapter we present a framework to represent
 orientable triangulations which  may  be embedded 
 in a plane or in a higher dimensional space.
 Examples of such triangulations 
-are triangulations of a simple polygons in the plane, the
+are triangulations of a simple polygon in the plane, the
 Delaunay triangulations of points in the plane, or triangulated
 irregular networks ({\sc Tin}s) which are used as terrain model in
 {\sc Gis}.  
@@ -165,8 +165,9 @@ class parametrized by the base classes for faces and vertices.
 \subsection*{Organization of this chapter}
 Section~\ref{I1_Sect_Triangulation_2} introduces the basic triangulation class of \cgal ,
  \ccc{Triangulation_2<Traits, Tds>},  and gives some examples for a simple use of this class.
- The \ccc{Triangulation_2<Traits, Tds>} class  is merely designed to represent 
-a triangulation for a set of points in the plane.
+ The \ccc{Triangulation_2<Traits, Tds>} class  is designed to represent 
+a triangulation for a set of points in the plane. It is merely used
+as a base class for more specialized triangulations.
 The next section~\ref{I1_Sect_Geom_traits}
 describes the requirements for the geometric
 traits class and presents some default implementations
@@ -208,7 +209,7 @@ of point location queries.
 The basic triangulation class 
  of \cgal\ is primarily designed to represent the  triangulations
  of a set of points ${  A}$ in the plane.
-Such a triangulation has as its vertices the points of ${  A}$
+Such a triangulation has vertices at the points of ${  A}$
 and its domain covers the convex hull of ${  A}$.
 It can be viewed as a planar partition of the plane
 whoses bounded faces are triangular. and cover
@@ -254,7 +255,7 @@ the \ccc{infinite vertex} has no significant
 coordinates and that no geometric predicate can be applied on it
 or on an infinite face.
 
-A triangulation is a collection of vertices and faces that
+A triangulation is represented as a collection of vertices and faces that
 are linked together through incidence and adjacency relations.
 Each face give access to its three incident vertices and to
 its 
@@ -263,13 +264,16 @@ faces.
 
 The three vertices of a face are indexed with 0, 1 and 2
 in counterclockwise order. The neighbor of a face are also 
-indexed with 0,1,2 in such a way that the neighbor indexed by $i$
+indexed with 0,1,2 in such a way that the neighbor indexed by \ccc{i}
 is opposite to the vertex with the same index.
 
-The edges of a face $f$ are implicitely represented
-through the adjacency relations between $f$ and its neifghbors.
-Each edge has two implicit representation, one for each of its
-incident face.
+The edges  are only implicitely represented
+through the adjacency relations betwwen their  two incident
+faces. Each edge has two implicit representations : the edge
+of a face \ccc{f}  which is opposed to the vertex indexed \ccc{i},
+can be represented as well as an edge of the \ccc{neighbor(i)} of 
+\ccc{f}.
+
 
 Many of the classes in the triangulation package
 offer  two functions \ccStyle{int cw(int i)} and 
@@ -316,13 +320,14 @@ The faces have a
 coherent orientation, that is, they index their common  vertices 
 in opposite order.
 \\
-{\bf (b)} All faces that are incident to a vertex \ccc{v} 
-must be linked with neighbor pointers. Vertex \ccc{v} points to an 
+{\bf (b)} The faces incident to a vertex \ccc{v} 
+form a circular list of neighboring faces.
+Each vertex  \ccc{v} points to an 
 arbitrary incident face. 
 
 Furthermore, it is said to be geometrically valid iff
 \\
-{\bf (c)} Any face has its vertices indexed according to
+{\bf (c)} Any face has its three vertices indexed according to
 counterclockwise order.
 
 \smallskip
@@ -344,8 +349,8 @@ counterclockwise order.
 
 \subsection{The class \protect \ccc{Triangulation_2<Traits,Tds}}
 
-The triangulations are represented in \cgal through the class
-\ccc{Triangulation_2<Traits,Tds}
+The triangulations are represented in \cgal\ through the class
+\ccc{Triangulation_2<Traits,Tds>}
 which  expects a model of  {geometric traits} class
 as first template argument and a model of {triangulation data structure}
 as second argument. The requirements  and defaults for these classes 
@@ -361,55 +366,55 @@ Handles are used whenever the accessed element( vertex or face)
 is not part of a sequence,
 iterators and circulators
 allow to traverse (completely or partially) the triangulation.
- In the following, we called {\it infinite} any face or edge 
-incident  to the infinite vertex and the infinite vertex itself.
- Any other feature (face, edge or vertex) of the triangulation is said 
+ In the following, we called {\it infinite}  the infinite vertex
+and any face or edge 
+incident  to the infinite vertex. Any face or edge non incident
+to the infinite vertex as well as any other vertex
+  is said 
 to be {\it finite}.
-Some iterators (the \ccc{All} iterators ) allows to visit all finite or 
-infinite feature while others (the \ccc{Finite} iterators) visit only
-all finite features. 
-Circulators are used to visit the vertices or faces 
-incident to a given vertex. 
-Circulators visit infinite features as well as finite 
-ones. Circulators around the infinite vertex
- allow to visit the vertices on the convex hull and
-the infinite edges and faces.
-The triangulation provide also a circluator type to visit all the
+The triangulation offers some iterators to visite all (finite or infinite)
+faces, edges or vertices and also iterators to visit all the finite
+faces, edges  or vertices.
+The triangulation offers circulators  
+ to visit the edges or faces 
+incident to a given vertex or the  vertices 
+adjacent to it. It also provides a circulator type
+to visit all the
 faces
 traversed by a given line.
+Circulators step through infinite features as well as 
+through finite ones. 
 The iterators and circulators
 are all bidirectional and non mutable.
 The circulators and iterators are assignable to the 
 corresponding handle types. Whenever a handle appear in the parameter 
 list of a function, an appropriate iterator or circulator can be used as well.
-The edges of the triangulation can also be visited through iterators
-and circulators,
-the edge circulators and iterators
-are also bidirectional and non mutable.
 
-The triangulation class provides method to test
-the finite or infinite caracter of any feature,
+
+The triangulation class provides methods to test
+the infinite caracter of any feature,
 and also methods to test the presence in the triangulation
-of a particular feature (edge or face).
+of a particular feature (edge or face) given by its vertices.
 
 
 
 The triangulation class    provides methods to locate
 a given point with respect to a triangulation. The location of a point 
 is described  by the locate type \ccc{lt}, a face handle \ccc{f} and
-an index \ccc{li}. The locate type is : \\
-\ccc{VERTEX} if the point coincides with a vertex \ccc{v} of the triangulation
+an index \ccc{li}. The locate type can be one of
+\ccc{VERTEX, EDGE, FACE, OUTSIDE_CONVEX_HULL, OUTSIDE_ AFFINE_HULL} : \\
+\ccc{VERTEX} means that the point coincides with a vertex \ccc{v} of the triangulation.
  In this case the face handle \ccc{f} points to a face incident to \ccc{v}
 and the index \ccc{li} is the index of \ccc{v}  in \ccc{f}.\\
-\ccc{EDGE} if the point lies on an edge \ccc{e}. In this case, the face
+\ccc{EDGE} mean that the point lies on an edge \ccc{e}. In this case, the face
 handle \ccc{f}
 points to a face incident to \ccc{e} and \ccc{li}  is the
 index of \ccc{e} in \ccc{f}. \\
-\ccc{FACE} if the point lies in the relative interior of a bounded
-face \ccc{f}. In this case the face handle point to \ccc{f} and the
+\ccc{FACE} mean that  the point lies in the relative interior of a bounded
+face \ccc{f}. In this case the face handle points to \ccc{f} and the
 index \ccc{li}
 has no meaning. \\
-\ccc{OUSIDE_CONVEX_HULL} if the point lies within the affine hull of
+\ccc{OUSIDE_CONVEX_HULL} mean that the point lies within the affine hull of
 the triangulation but outside its convex hull. In this case, 
 the face handle \ccc{f} points to any infinite face which is a {\em
 witness } of the
@@ -420,8 +425,9 @@ triangulation
 it means that the 
 finite vertex of \ccc{f}  separates
 the query point from the triangulation. \\
-\ccc{OUTSIDE_AFFINE_HULL} if the point lies outside the affine hull
-(in the case of a degenerate lower dimensional triangulation). In this 
+\ccc{OUTSIDE_AFFINE_HULL} means that  the point lies outside the
+affine hull of the triangulation which is possible
+in the case of a degenerate lower dimensional triangulation. In this 
 case, the face
 handle \ccc{f} and  the index \ccc{li} have no meaning.
 
@@ -471,51 +477,14 @@ flipping of an edge adjacent to two faces the union of which forms
 
 \ccExample
 
-The following code fragment creates a  triangulation of 2D points
+The following program  creates a  triangulation of 2D points
 for the  usual Euclidean metric. The points are read from {\tt cin},
-inserted in the triangulation 
-and finally points on the convex hull are written to {\tt cout}. 
+and inserted in the triangulation.
+Finally points on the convex hull are written to {\tt cout}. 
 
-
+//examples/Triangulation/triangulation\_prog1.C
 \ccIncludeExampleCode{Triangulation/triangulation_prog1.C}
-\begin{cprog}
-/* triangulation_prog1.C */
-/* --------------------- */
-#include <CGAL/basic.h>
-#include <iostream>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
-#include <CGAL/Triangulation_2.h>
-#include <CGAL/Triangulation_euclidean_traits_2.h>
 
-using namespace CGAL;
-
-typedef Cartesian<double> Rp;
-typedef Triangulation_euclidean_traits_2<Rp> Traits;
-typedef Triangulation_vertex_base_2<Traits> Vb;
-typedef Triangulation_face_base_2<Traits>  Fb;
-typedef Triangulation_default_data_structure_2<Traits,Vb,Fb> Tds;
-typedef Triangulation_2<Traits, Tds> Triangulation;
-typedef Triangulation::Vertex_circulator Vertex_circulator;
-typedef Traits::Point   Point;
-
-int main() {
-  Triangulation t;
-    
-  Point p;
-  while (std::cin >> p){
-    t.insert(p);
-  }
-  
-  Vertex_circulator vc = t.incident_vertices(t.infinite_vertex()),
-    done(vc);
-  if (vc != 0) {
-    do{
-      std::cout << vc->point() << std::endl;
-    }while(++vc != done);
-  }
-}
-\end{cprog} 
 
 \ccHeading{Implementation}
 
@@ -524,6 +493,9 @@ as optional parameter (or from a finite vertex of
 \ccStyle{infinite_face()} if no optional parameter is given). It takes
 time \ccTexHtml{$O(n)$}{O(n)} in the worst case, but only \ccTexHtml{$O(\sqrt{n})$}{O(sqrt(n))}
 on average if the vertices are distributed uniformly at random.
+The class \ccc{Triangulation_hierarchy_2<Trits,Tds>} 
+implements a data structure  designed to
+offer an alternative, more efficient point location algorithm
 
 Insertion of a point is done by locating a face that contains the
 point, and then splitting this face.
@@ -533,8 +505,9 @@ time \ccTexHtml{$O(1)$}{O(1)}. This bound is only an amortized bound
 for points located outside the convex hull.
 
 Removal of a vertex is done by removing all adjacent triangles, and
-retriangulating the hole. Removal takes time \ccTexHtml{$O(d^2)$}{O(d^2)} in the worst
-case, if \ccTexHtml{$d$}{d} is the degree of the removed vertex,
+retriangulating the hole. Removal takes a time  at most proportionnal to
+\ccTexHtml{$d^2$}{d^2} case, where
+ \ccTexHtml{$d$}{d} is the degree of the removed vertex,
 which is \ccTexHtml{$O(1)$}{O(1)} for a random vertex.
 
 The face, edge, and vertex iterators on finite features
@@ -546,46 +519,45 @@ of the triangulation data structure.
 \section{ The Geometric Traits Class}
 \label{I1_Sect_Geom_traits}
 
+\subsection{Requirements}
 The first template parameter of the triangulation classes of \cgal\ 
 is the geometric traits class. The traits class 
 is required to provide
 the geometric objects (points, segments and triangles)
 building up the triangulation
 together with the geometric predicates on those objects.
-The required predicate are: \\
-- comparison of two points \ccc{x} or \ccc{y} coordinates \\
+The required predicates are: \\
+- comparison of the \ccc{x} or \ccc{y} coordinates of two points.\\
 - orientation tests providing \ccc{CGAL_orientation}
   corresponding to the order type of three given point.
 
-
-
-
 \subsection{Predefined Geometric Traits Classes}
-
-The \cgal\  kernel classes \ccc{Homogeneous} and \ccc{Cartesian}
-can be used as traits class for the class \ccc{Triangulation_2<Traits, Tds>}
+First, the \cgal\  kernel classes \ccc{Homogeneous<Nt>} and
+\ccc{Cartesian<Nt>},
+templated by a  a number types \ccc{Nt} to be used for the coordinates,
+can be used as a traits class for the triangulations.
 
 The \cgal\  library provides also some predefined geometric traits classes
-for the triangulations (using the kernel geometric objects and predicates).
-These classes are themselves templated with a representation class.
-
-First, the \cgal\  kernel classes \ccc{Homogeneous} and \ccc{Cartesian}
-can be used as traits class for the class \ccc{Triangulation_2<Traits, Tds>}
+for triangulations (using the kernel geometric objects and predicates).
+These classes are themselves templated with a representation class. 
 
 The traits class \ccc{Triangulation_euclidean_traits_2<R>}
 is designed to deal with ordinary  two dimensional points.
 
 The class \ccc{Triangulation_euclidean_traits_xy_3<R>} 
-is a geometric traits class allowing to
-build a two dimensional triangulation of the projections
-on the $xy$ plane  of three dimensional points.
+is a geometric traits class to build the triangulation
+of a terrain. Such a triangulation is a two-dimensional
+triangulation embedded  three-dimensional space.
+The triangulation is 
+build according to  the projections of the points
+on the $xy$ plane  and then lifted up to the original
+three-dimensional data points.
 This is the usual case when dealing with GIS terrains.
-Instead of really projecting the 3D points and
+Instead of really projecting the  three-dimensional points and
 maintaining a mapping between each point and its projection
- (which costs space and is error prone)
-this class supplies geometric predicates that ignore the
-\ccc{z}-coordinate of the points.
-
+ (which costs space and is error prone),
+the traits class  supplies geometric predicates that ignore the
+\ccc{z}-coordinates of the points.
 \cgal\ provides also predefined geometric traits class
 \ccc{Triangulation_euclidean_traits_yz_3<R>} and
 \ccc{Triangulation_euclidean_traits_zx_3<R>} to
@@ -615,17 +587,21 @@ typedef Triangulation_2<Traits,Tds> Triangulation;
 The second template parameter of the basic triangulation class
 \ccc{Triangulation_2<Traits,Tds>} is a triangulation data structure class.
 This class can be seen has a container for the 
-faces and vertices maintaining incidence and adjacency relations.
-The triangulation data structure class 
- is responsible for  the combinatorial integrity of the triangulation
-(i. e. proper incidence and adjacency relations among vertices
-and faces) while 
-allowing  to perform combinatorial modifications
-such has 
-insertion of a new vertex in a face, or in an edge,
-suppression of a vertex of degree three,  flip of two edges.
-The term combinatorial means that those operation are purely topological
-and do not depend on the geometric embedding.
+faces and vertices of the triangulation.
+This class is also responsible for the combinatorial
+integrity of the triangulation. This means that
+the triangulation data strucure 
+maintains  proper incidence and adjacency relations among the vertices
+and faces of a triangulation while
+combinatorial modifications
+of the triangulation are performed. A combinatorial modification 
+is a  topological operation which do not 
+involve any knowledge about the geometric embedding of the triangulation.
+For example, the  
+insertion of a new vertex in a given face, or in a given edge,
+the suppression
+of a vertex of degree three,  the flip of two edge are 
+examples of combinatorial operation performed at the data structure level.
 
 
 
@@ -659,15 +635,16 @@ It provides function that gives the number of faces, edges and
 vertices
 of the triangulation.
 
-All the purely combinatorial transformation of the triangulation
-are performed at the triangulation data structure level.
-Here we call \ccc{combinatorial}
- a transformation 
-of the triangulation which does not involve any knowledge
-on the geometric embedding. Thus the flip of two
-adjacent given faces, the addition  of a new vertex splitting a given face,
-or a given edge, the removal of a vertex that has degree three 
-are combinatorial operations.
+The triangulation data structure provides member functions
+to perform the following  combinatorial transformation of the triangulation:\\
+flip of two adjacent faces, \\
+addition  of a new vertex splitting a given face,\\
+addition  of a new vertex splitting a given edge,\\
+addition of a new vertex raising by one the dimension of a degenerate
+lower dimensional triangulation, \\
+removal of a vertex incident to three faces,
+removal of a vertex lowering the dimension of the triangulation.\\
+
 
 \begin{figure}
 \begin{ccTexOnly}
@@ -703,12 +680,12 @@ are combinatorial operations.
 
 
 \subsection{Models of Triangulation Data Structure}
-\cgal offers currently two models of triangulation data structures.
-The first one \ccc{Triangulation_default_data_structure_2<Tds_gt,Vb,Fb
+\cgal\ currently offers  two models of triangulation data structures.
+The first one, called \ccc{Triangulation_default_data_structure_2<Tds_gt,Vb,Fb
 >}
 is highly economic with respect to memory space but its use is
 restricted
-to planar embedded triangulation. The second one
+to planar embedded triangulations. The second one, called
 \ccc{Triangulation_data_structure_using_list_2<Vb,Fb>} can be used for 
 the representation of any  orientable triangulations.
 
@@ -721,21 +698,21 @@ to be models for respectively the
 \ccc{Vertex_base} and \ccc{Face_base} concepts whose requirements are described in next 
 section~\ref{I1_Sect_Base_classes}. 
 
-In addition, the class \ccClassTemplateName\ has a first template parameter
+In addition, this model of triangulation data structure has a first template parameter
 which is a geometric traits class. This may be surprising because
 the triangulation data structure is supposed to deal only with the combinatorial
-aspect of the triangulation and not with any geometric embedding
+aspect of the triangulation and not with its geometric embedding.
 The reason for that is the following.
-The class \ccClassTemplateName\ does not use any additional data structure
+The class \ccc{Triangulation_default_data_structure_2<Tds_gt,Vb,Fb >}
+does not use any additional data structure
 such as a list or a vector to act as a container for faces and vertices.
 The iterators which allows to visit all faces and vertices of the
 triangulation
 data structure
 is implemented using  an implicit tree structure over the faces
 as described by
- de Berg, van Oostrum, and Overmars, 
-in Proc.\ 12th Annual Symp.\ on Comput.\ Geom.,
-1996, pages C5--C6. This tree structure is  based on the planar
+ de Berg et al. in  \cite{bkoo-stses-97}.
+ This tree structure is  based on the planar
 geometric embedding
 the triangulation. Each face 
  can find its parent 
@@ -749,21 +726,21 @@ The requirements concerning the geometric traits \ccc{Tds_gt} of
  are very light and form a subset of the requirements needed
 for the geometric traits of the triangulations. 
 This class is required  to provide a type \ccc{Point}
-and the coordinate comparison functions \ccc{compare_x(Point p0, Point p1)} and
-\ccc{compare_y(Point p0, Point p1)}
-described in section~\ref{I1_Sect_Geom_traits}. The point type
-defined by the geometric traits class of the triangulation data structure
-has to be the same 
-as the point type defined by the geometric traits of the triangulation.
-This is achieved if the same model is used for both traits classes
-which is recommended but not compulsory.
+and coordinate comparison predicates.
+The point type
+defined by the geometric traits class of the triangulation data
+structure
+and the point type defined by the geometric traits of the triangulation
+have to be the same.
+This is automatically achieved if the same model is used for both
+traits classes which is recommended but not compulsory.
 
 
 
 \subsubsection{A triangulation data structure using list}
 The class \ccc{Triangulation_data_structure_using_list_2<Vb,Fb>}
 can be used as a triangulation data structure for any
-orientable triangulation. It uses aa \stl list to store the
+orientable triangulation. It uses a \stl\ list to store the
 full dimensional faces of the triangulation.
 
 
@@ -773,24 +750,27 @@ full dimensional faces of the triangulation.
 
 \subsection{Requirements for the Base Classes}
 At the bottom layer,  
-a vertex stores a point and a  provides access to one of its incident
+a vertex is required to provide access to the embedding point
+and to one of its incident face
 face through a
 \ccc{void *} pointer.
 
 
 At the bottom layer, a 
-face stores \ccc{void *} pointers
- to its three vertices  and to its three neighboring faces.
+face provides access ti its three vertices and to its three
+neighboring faces through \ccc{void *} pointers
 The vertices and neighbors are indexed 0,1 and 2 in counterclockwise
-order around the face. Neighbor $i$ lies opposite to vertex $i$.
+order around the face. The neighbor indexed \ccc{i}
+ lies opposite to vertex with the same index.
 
 
 
 \subsection{The Default Base Classes}
-\cgal\ provides two default base classes 
-\ccc{Triangulation_face_base_2<Traits>} and \ccc{Triangulation_vertex_base_2<Traits>}
-which model respectively 
-the \ccc{Vertex_base} and the \ccc{Face_base} concept.
+\cgal\ provides the models
+\ccc{Triangulation_face_base_2<Traits>} and
+\ccc{Triangulation_vertex_base_2<Traits>} for 
+respectively 
+the \ccc{Vertex_base} and the \ccc{Face_base} concepts.
 Both of them are templated by a geometric traits class.
 Using for this traits class, the geometric traits class used for the triangulation class
 is strongly recommended. 
@@ -803,7 +783,7 @@ other base classes with some additional attribute (a color for example)
 tuned for a specific application.
 
 
-\ccExample
+\subsection{Using one's own \ccc{Face_base}}.
 The following example derives a new \ccc{Face_base} class from the default
 one and add a color to the faces of the triangulation. 
 The face of the triangulation data structure
@@ -814,6 +794,8 @@ as long as this functionality  does not involve additional pointers to vertices 
 (because the base classes use only void* pointer and have no knowledge
 of the vertex or face types.).
 
+\ccExample
+//examples/Triangulation/colored\_face.C
 \ccIncludeExampleCode{Triangulation/colored_face.C}
 
 
