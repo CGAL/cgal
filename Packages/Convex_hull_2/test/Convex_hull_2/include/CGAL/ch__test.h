@@ -19,8 +19,8 @@
 // ============================================================================
 
 
-#ifndef CH__TEST_H
-#define CH__TEST_H
+#ifndef CGAL_CH__TEST_H
+#define CGAL_CH__TEST_H
 
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/convexity_check_2.h>
@@ -73,5 +73,5 @@ CGAL_END_NAMESPACE
 #include <CGAL/ch__test.C>
 #endif // CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 
-#endif // CH__TEST_H
+#endif // CGAL_CH__TEST_H
 

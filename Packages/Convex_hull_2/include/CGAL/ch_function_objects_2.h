@@ -17,8 +17,8 @@
 //
 // Author(s)     : Susan Hert
 
-#ifndef CH_FUNCTION_OBJECTS_2_H
-#define CH_FUNCTION_OBJECTS_2_H
+#ifndef CGAL_CH_FUNCTION_OBJECTS_2_H
+#define CGAL_CH_FUNCTION_OBJECTS_2_H
 
 #include <CGAL/functional_base.h>
 
@@ -71,5 +71,5 @@ private:
 
 CGAL_END_NAMESPACE
 
-#endif // CH_FUNCTION_OBJECTS_2_H	
+#endif // CGAL_CH_FUNCTION_OBJECTS_2_H	
 

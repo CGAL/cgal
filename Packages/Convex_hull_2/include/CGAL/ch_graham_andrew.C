@@ -25,9 +25,9 @@
 #include <CGAL/ch_graham_andrew.h>
 #endif // CGAL_CH_GRAHAM_ANDREW_H
 
-#ifndef CH_NO_POSTCONDITIONS
+#ifndef CGAL_CH_NO_POSTCONDITIONS
 #include <CGAL/convexity_check_2.h>
-#endif // CH_NO_POSTCONDITIONS
+#endif // CGAL_CH_NO_POSTCONDITIONS
 
 #include <CGAL/ch_assertions.h>
 #include <CGAL/stl_extensions.h>

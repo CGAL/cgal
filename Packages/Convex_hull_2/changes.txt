@@ -1,3 +1,8 @@
+3.53 (18 Jan 2004)
+- Add missing CGAL_ prefix to some macros.
+
+============================== CGAL 3.0 ===========================
+
 3.52 (22 Sep 2003)
 - new headers
 
