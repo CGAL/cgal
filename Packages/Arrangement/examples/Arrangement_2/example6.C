@@ -4,35 +4,30 @@
 #define Arrangement_2 Ar
 #define _In_place_list_iterator IPLI
 #define Homogeneous Ho
-#define Arr_segment_exact_cached_traits ASECT
 #define Arr_segment_exact_traits ASET
 
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Arr_2_bases.h>
 #include <CGAL/Arr_2_default_dcel.h>
-#include <CGAL/Arr_segment_exact_cached_traits.h>
-//#include <CGAL/Arr_segment_exact_traits.h>
+#include <CGAL/Arr_segment_exact_traits.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Pm_walk_along_line_point_location.h>
 
 //#include <CGAL/leda_integer.h>
-//typedef leda_integer                              NT;
-typedef long                                        NT;
+//typedef leda_integer                                 NT;
+typedef long                                         NT;
  
-typedef CGAL::Homogeneous<NT>                            R;
+typedef CGAL::Homogeneous<NT>                        R;
 
-//typedef CGAL::Arr_segment_exact_cached_traits<R>      Traits;
-typedef CGAL::Arr_segment_exact_traits<R>      Traits;
+typedef CGAL::Arr_segment_exact_traits<R>            Traits;
 
-typedef Traits::Point                                 Point;
-typedef Traits::X_curve                               X_curve;
-typedef Traits::Curve                                 Curve;
+typedef Traits::Point                                Point;
+typedef Traits::X_curve                              X_curve;
+typedef Traits::Curve                                Curve;
 
-typedef CGAL::Arr_base_node<Curve>                     Base_node;
-typedef CGAL::Arr_2_default_dcel<Traits>               Dcel;
-typedef CGAL::Arrangement_2<Dcel,Traits,Base_node >    Arr_2;
-
-using namespace std;
+typedef CGAL::Arr_base_node<Curve>                   Base_node;
+typedef CGAL::Arr_2_default_dcel<Traits>             Dcel;
+typedef CGAL::Arrangement_2<Dcel,Traits,Base_node >  Arr_2;
 
 int main() {
   CGAL::Pm_walk_along_line_point_location<Arr_2::Planar_map> pl;
@@ -46,14 +41,13 @@ int main() {
 
   CGAL_assertion(arr.number_of_halfedges()==18);
   
-
   //traversal of the curves
   Arr_2::Edge_iterator eit;
   for (cit=arr.curve_node_begin(); cit!=arr.curve_node_end(); ++cit) {
-    cout << "\nCurve level:\n" << cit->curve() << endl ;
-    cout << "Edge level:\n";
+    std::cout << "\nCurve level:\n" << cit->curve() << std::endl ;
+    std::cout << "Edge level:\n";
     for (eit=cit->edges_begin(); eit!=cit->edges_end(); ++eit) {
-      cout << eit->curve() << endl ;
+      std::cout << eit->curve() << std::endl ;
     }
   }
   return 0;
