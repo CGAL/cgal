@@ -1,5 +1,8 @@
 Changes done to the `Random_numbers' package
 
+Version 2.3 on 02-Apr-2001
+- replaced accidentally submitted version without port to M$-VC++ by ported one
+
 Version 2.2.4 on 21-Mar-2001
 - removed 'maintainer' line from file header
 
