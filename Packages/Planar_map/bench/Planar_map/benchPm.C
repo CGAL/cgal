@@ -43,7 +43,7 @@ typedef Traits::Point_2                                 Point;
 typedef Traits::X_curve_2                               Curve;
 typedef std::list<Curve>                                CurveList;
 
-static char OptionStr[] = "hs:t:";
+static char OptionStr[] = "hs:t:v";
 
 /*
  */
@@ -51,7 +51,7 @@ class Construct_Pm {
 public:
   /*
    */
-  Construct_Pm() : m_filename(0) {}
+  Construct_Pm() : m_filename(0), m_verbose(false) {}
   
   /*
    */
@@ -100,10 +100,12 @@ public:
   void sync(){}
 
   void setFilename(const char * filename) { m_filename = filename; }
+  void setVerbose(const bool verbose) { m_verbose = verbose; }
 
 private:
   const char * m_filename;
   CurveList m_curveList;
+  bool m_verbose;
 };
 
 typedef CGAL::Bench<Construct_Pm> ConstructPmBench;
@@ -125,6 +127,7 @@ int main(int argc, char * argv[])
   char * progName = strrchr(argv[0], '\\');
   progName = (progName) ? progName+1 : argv[0];
 
+  bool verbose = false;
 #if (defined _MSC_VER)
   int samples = 10;
 #else
@@ -138,6 +141,7 @@ int main(int argc, char * argv[])
       case 'h': printHelp(); return 0;
       case 's': samples = atoi(optarg); break;
       case 't': seconds = atoi(optarg); break;
+      case 'v': verbose = !verbose; break;
       default:
         fprintf(stderr, "%s: invalid option -- %c\n", progName, c);
         fprintf(stderr, "Try `%s -h' for more information.\n", progName);
@@ -149,10 +153,13 @@ int main(int argc, char * argv[])
     std::cerr << "Data file missing!" << std::endl;
     return -1;
   }
+  const char * filename = argv[optind];
 
-  ConstructPmBench bench(std::string("Construct Planar Map"));
+  ConstructPmBench bench(std::string("Construct PM (") +
+                         std::string(filename) + std::string(")"));
   Construct_Pm & construct_pm = bench.getBenchUser();
-  construct_pm.setFilename(argv[optind]);
+  construct_pm.setFilename(filename);
+  construct_pm.setVerbose(verbose);
 
   if (samples > 0) bench.setSamples(samples);
   if (seconds > 0) bench.setSeconds(seconds);
