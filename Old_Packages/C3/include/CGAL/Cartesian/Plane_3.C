@@ -132,7 +132,7 @@ PlaneC3<R CGAL_CTAG>::
 PlaneC3(const typename PlaneC3<R CGAL_CTAG>::Line_3 &l,
         const typename PlaneC3<R CGAL_CTAG>::Point_3 &p)
 {
-  new_rep(l.point(), l.point(1), p);
+  new_rep(l.point(), l.point()+l.direction().to_vector(), p);
 }
 
 template < class R >

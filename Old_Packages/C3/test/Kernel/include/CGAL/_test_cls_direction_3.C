@@ -60,7 +60,7 @@ _test_cls_direction_3(const R& )
  assert( d3 != d2 );
 
  cout << '.';
- CGAL::Vector_3<R> vv = d2.vector();
+ CGAL::Vector_3<R> vv = d2.to_vector();
  assert( v == vv );
 
  d0 = -d3;

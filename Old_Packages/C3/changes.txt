@@ -1,3 +1,6 @@
+Version 3.6.2 (October 11 1999)
+- Fixed projection_lineC3 that led to bug of version 3.6.1
+
 Version 3.6.1 (October 7 1999)
 - Various predicates and constructions cleanups and speedups [Sylvain].
 - Added projection_lineC3 and point_on_line as constructions on lines

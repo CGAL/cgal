@@ -50,7 +50,7 @@ _test_cls_plane_3(const gnuR& )
 
  CGAL::Point_3<gnuR> p3(p1);
  CGAL::Direction_3<gnuR> d1( RT(5), RT(-5), RT(10) );
- CGAL::Vector_3<gnuR>    v1 = d1.vector();
+ CGAL::Vector_3<gnuR>    v1 = d1.to_vector();
 
  CGAL::Plane_3<gnuR> pld( p1, d1);
  CGAL::Plane_3<gnuR> plv( p1, v1);

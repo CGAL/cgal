@@ -91,9 +91,9 @@ point_on_lineC3(const FT &lpx, const FT &lpy, const FT &lpz,
 		int i,
                 FT &x, FT &y, FT &z)
 {
-  x = lpx + ldx*i;
-  y = lpy + ldy*i;
-  z = lpz + ldz*i;
+  x = lpx + ldx*FT(i);
+  y = lpy + ldy*FT(i);
+  z = lpz + ldz*FT(i);
 }
 
 template <class FT>
@@ -108,10 +108,10 @@ projection_lineC3(const FT &px, const FT &py, const FT &pz,
   FT dpx = px-lpx;
   FT dpy = py-lpy;
   FT dpz = pz-lpz;
-  FT lambda = (ldx*dpx+ldy*dpy+ldy*dpz) / (ldx*ldx+ldy*ldy+ldz*ldz);
-  x = lpx + lambda * dpx;
-  y = lpy + lambda * dpy;
-  z = lpz + lambda * dpz;
+  FT lambda = (ldx*dpx+ldy*dpy+ldz*dpz) / (ldx*ldx+ldy*ldy+ldz*ldz);
+  x = lpx + lambda * ldx;
+  y = lpy + lambda * ldy;
+  z = lpz + lambda * ldz;
 }
 
 
