@@ -247,13 +247,13 @@ template < class ET_, class Is_LP_ >                            // QP case
 void  QPE_basis_inverse<ET_,Is_LP_>::
 swap_constraint( unsigned int i, Tag_false)
 {
-    unsigned int  k = s-1;
-    if ( i == k) return;
+ 
+    if ( i == s-1) return;
 
     // swap rows and columns
     // ---------------------
     typename    Row::iterator   row_i_it = M[ i].begin();
-    typename    Row::iterator   row_k_it = M[ k].begin();
+    typename    Row::iterator   row_k_it = M[ s-1].begin();
     typename Matrix::iterator  matrix_it = M.begin()+i;
     unsigned int  count;
 
@@ -264,29 +264,31 @@ swap_constraint( unsigned int i, Tag_false)
 
     } else {
 
-	// swap entries 0..i (row <-> row) [in P]
+	// swap entries 0..i-1 (row <-> row) [in P]
 	for (   count =  0;
-		count <= i;
+		count < i;
 	      ++count,      ++row_i_it, ++row_k_it) {
 	    std::iter_swap( row_i_it, row_k_it);
 	}
 
-	// swap entries i+1..s-1 (column <-> row) [in P]
-	for (              ++matrix_it;
-		count < k;
+	// swap entries i+1..s-2 (column <-> row) [in P]
+	for ( count = i + 1, ++matrix_it, ++row_k_it;
+		count < s-1;
 	      ++count,     ++matrix_it, ++row_k_it) {
 	    std::swap( ( *matrix_it)[ i], *row_k_it);
 	}
+	// the remaining two entries to be swapped on the main diagonal
+	std::swap(M[i][i], M[s-1][s-1]);
 
 	// advance to Q
-	matrix_it += l-k;
+	matrix_it = M.begin() + l;
     }
 
     // swap entries l..l+b (column <-> column) [in Q]
     for (   count = 0;
             count < b;
           ++count,     ++matrix_it) {
-        std::swap( ( *matrix_it)[ i], ( *matrix_it)[ k]);
+        std::swap( ( *matrix_it)[ i], ( *matrix_it)[ s-1]);
     }
 }
 
