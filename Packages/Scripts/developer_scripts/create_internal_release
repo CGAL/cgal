@@ -536,65 +536,8 @@ sub CreateSrcQtTestDir()
     print "Creating $VERSION/test/src_Qt directory ...\n";
     chdir "$RELEASEDIR/$VERSION/" or die;
     system('cp', '-r', 'src/CGALQt', 'test/src_Qt');
-    open(CGAL_TEST,">test/src_Qt/cgal_test");
-    print CGAL_TEST <<'EOF';
-#! /bin/sh
-
-# This is a script for the CGAL test suite. Such a script must obey
-# the following rules:
-#
-# - the name of the script is cgal_test
-# - for every target two one line messages are written to the file 'error.txt'
-#     the first one indicates if the compilation was successful
-#     the second one indicates if the execution was successful
-#   if one of the two was not successful, the line should start with 'ERROR:'
-# - running the script should not require any user interaction
-# - the script should clean up object files and executables
-
-ERRORFILE=error.txt
-
-#---------------------------------------------------------------------#
-#                    compile_and_run <target>
-#---------------------------------------------------------------------#
-
-compile()
-{
-  echo "Compiling $1 ... "
-  SUCCES="y"
-  if eval 'make CGAL_MAKEFILE=$CGAL_MAKEFILE \
-           TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS" \
-           TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS" -k $1' ; then
-    echo "   compilation of $1 succeeded" >> $ERRORFILE
-  else
-    echo "   ERROR: compilation of $1 failed" >> $ERRORFILE
-    SUCCES=""
-  fi
-
-  eval "2>&1 make CGAL_MAKEFILE=$CGAL_MAKEFILE clean > /dev/null "
-}
-
-#---------------------------------------------------------------------#
-#                    remove the previous error file
-#---------------------------------------------------------------------#
-
-rm -f $ERRORFILE
-touch $ERRORFILE
-
-#---------------------------------------------------------------------#
-#                    compile and run the tests
-#---------------------------------------------------------------------#
-
-if [ $# -ne 0 ] ; then
-  for file in $* ; do
-    compile $file
-  done
-else
-  compile lib_no_install
-fi
-EOF
-
-    close(CGAL_TEST);
-    chmod 0755, 'test/src_Qt/cgal_test';
+    # Must be called after CreateSrcTestDir().
+    system('cp', 'test/src/cgal_test', 'test/src_Qt');
 }
 
 
@@ -607,65 +550,8 @@ sub CreateSrcCoreTestDir()
     print "Creating $VERSION/test/src_Core directory ...\n";
     chdir "$RELEASEDIR/$VERSION/" or die;
     system('cp', '-r', 'src/Core', 'test/src_Core');
-    open(CGAL_TEST,">test/src_Core/cgal_test");
-    print CGAL_TEST <<'EOF';
-#! /bin/sh
-
-# This is a script for the CGAL test suite. Such a script must obey
-# the following rules:
-#
-# - the name of the script is cgal_test
-# - for every target two one line messages are written to the file 'error.txt'
-#     the first one indicates if the compilation was successful
-#     the second one indicates if the execution was successful
-#   if one of the two was not successful, the line should start with 'ERROR:'
-# - running the script should not require any user interaction
-# - the script should clean up object files and executables
-
-ERRORFILE=error.txt
-
-#---------------------------------------------------------------------#
-#                    compile_and_run <target>
-#---------------------------------------------------------------------#
-
-compile()
-{
-  echo "Compiling $1 ... "
-  SUCCES="y"
-  if eval 'make CGAL_MAKEFILE=$CGAL_MAKEFILE \
-           TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS" \
-           TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS" -k $1' ; then
-    echo "   compilation of $1 succeeded" >> $ERRORFILE
-  else
-    echo "   ERROR: compilation of $1 failed" >> $ERRORFILE
-    SUCCES=""
-  fi
-
-  eval "2>&1 make CGAL_MAKEFILE=$CGAL_MAKEFILE clean > /dev/null "
-}
-
-#---------------------------------------------------------------------#
-#                    remove the previous error file
-#---------------------------------------------------------------------#
-
-rm -f $ERRORFILE
-touch $ERRORFILE
-
-#---------------------------------------------------------------------#
-#                    compile and run the tests
-#---------------------------------------------------------------------#
-
-if [ $# -ne 0 ] ; then
-  for file in $* ; do
-    compile $file
-  done
-else
-  compile lib_no_install
-fi
-EOF
-
-    close(CGAL_TEST);
-    chmod 0755, 'test/src_Core/cgal_test';
+    # Must be called after CreateSrcTestDir().
+    system('cp', 'test/src/cgal_test', 'test/src_Core');
 }
 
 #---------------------------------------------------------------#
@@ -1072,8 +958,8 @@ make_testscripts();
 set_file_headers();
 make_src_makefiles();
 CreateSrcTestDir();
-CreateSrcCoreTestDir();
-CreateSrcQtTestDir();
+CreateSrcCoreTestDir(); # Must be called after CreateSrcTestDir()
+CreateSrcQtTestDir();   # Must be called after CreateSrcTestDir()
 create_global_makefile();
 
 #Removing Modules directory from Installation package
