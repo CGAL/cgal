@@ -1,27 +1,27 @@
 % =============================================================================
 % The CGAL Reference Manual
-% Chapter: Generators
+% Chapter: Geometric Object Generators
 % Section: Random Numbers Generator
 % -----------------------------------------------------------------------------
-% file   : doc_tex/support/Generator/Random.tex
-% package: Random_numbers
-% author : Sven Schönherr <sven@inf.ethz.ch>
+% file  : doc_tex/support/Generator/Random.tex
+% author: Sven Schönherr <sven@inf.ethz.ch>
 % -----------------------------------------------------------------------------
+% $CGAL_Chapter: Geometric Object Generators $
+% $CGAL_Package: Random_numbers WIP $
 % $Revision$
 % $Date$
 % =============================================================================
 
-\begin{ccClass}{Random}
-\section{Random Numbers Generator}
+\begin{ccRefClass}{Random}
 \label{sec:random_numbers_generator}
 
 % -----------------------------------------------------------------------------
 \ccDefinition
 
-An instance of type \ccClassName\ is a random numbers generator. It
-allows to generate uniformly distributed random \ccc{bool}s,
-\ccc{int}s and \ccc{double}s. It can be used as the random number
-generating function object in the STL algorithm \ccc{random_shuffle}.
+The class \ccRefName is a random numbers generator. It generates
+uniformly distributed random \ccc{bool}s, \ccc{int}s and \ccc{double}s. 
+It can be used as the random number generating function object in the 
+\stl\ algorithm \ccc{random_shuffle}.
 
 Instances of \ccClassName\ can be seen as input streams. Different
 streams are \emph{independent} of each other, i.e.\ the sequence of
@@ -33,13 +33,6 @@ random numbers.  This can be done by either initialising
 deterministically or using the state functions as described below.
 
 \ccInclude{CGAL/Random.h}
-
-% -----------------------------------------------------------------------------
-\ccHeading{Global Variables}
-
-\ccVariable{ Random default_random;}{
-          This global variable is used as the
-          default random numbers generator.}
 
 % -----------------------------------------------------------------------------
 \ccTypes
@@ -102,9 +95,15 @@ deterministically or using the state functions as described below.
 \ccImplementation
 
 We use the C library function \ccc{erand48} to generate the random
-numbers, i.e.\ the sequence of numbers depends on the implementation
+numbers, \textit{i.e.}, the sequence of numbers depends on the implementation
 of \ccc{erand48} on your specific platform.
 
-\end{ccClass}
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::default_random}\\
+
+\end{ccRefClass}
 
 % ===== EOF ===================================================================

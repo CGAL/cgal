@@ -1,0 +1,70 @@
+\begin{ccRefClass}{Points_on_segment_2<Point_2>}
+
+\ccDefinition
+
+The class \ccRefName\ is a generator for points on a segment whose
+endpoints are specified upon construction.  The points are equally
+spaced
+
+\ccIsModel
+
+\ccRefConceptPage{PointGenerator}
+
+\ccTypes
+
+\ccThree{typedef std::input_iterator_tagxxx}{xxxiterator_category;}{}
+\ccTypedef{typedef std::input_iterator_tag iterator_category;}{}
+\ccGlue
+\ccTypedef{typedef Point_2                 value_type;}{}
+\ccGlue
+\ccTypedef{typedef std::ptrdiff_t          difference_type;}{}
+\ccGlue
+\ccTypedef{typedef const Point_2*          pointer;}{}
+\ccGlue
+\ccTypedef{typedef const Point_2&          reference;}{}
+%\ccTypedef{typedef Point_2::FT             FT;}{ ??? needed for concept but 
+%                                                not actually there.  
+%                                                Uses double instead}
+
+\ccCreationVariable{g}
+\ccCreation
+
+\ccConstructor{Points_on_segment_2( const Point_2& p, const Point_2& q, 
+                                    std::size_t n, std::size_t i = 0);}{%
+  $g$ is an input iterator creating points of type \ccc{P} equally 
+  spaced on the segment from $p$ to $q$. $n-i$ points are placed on the
+  segment defined by $p$ and $q$. Values of the index parameter $i$ larger 
+  than 0 indicate starting points for the sequence further from $p$.
+  Point $p$ has index value 0 and $q$ has index value $n-1$.
+  \ccRequire The expressions \ccc{to_double(p.x())} and
+    \ccc{to_double(p.y())} must  result in the respective
+    \ccc{double} representation of the coordinates of $p$, and similarly 
+    for $q$.}
+
+
+\ccOperations
+\ccThree{Point_2xxx}{xxxg.source();}{}
+\ccMethod{double range();}{returns the range in which the point
+  coordinates lie, i.e.~$\forall x: |x| \leq$ \ccc{range()} and
+  $\forall y: |y| \leq $\ccc{range()}}.
+
+\ccMethod{const Point_2& source();}{returns the source point of the segment.}%
+\ccGlue
+\ccMethod{const Point_2& target();}{returns the target point of the segment.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::copy_n} \\
+\ccRefIdfierPage{CGAL::Counting_iterator} \\
+\ccRefIdfierPage{CGAL::points_on_segment<Point_2>} \\
+\ccRefIdfierPage{CGAL::Random_points_in_disc_2<Point_2, Creator>} \\
+\ccRefIdfierPage{CGAL::Random_points_in_square_2<Point_2, Creator>} \\
+\ccRefIdfierPage{CGAL::Random_points_on_circle_2<Point_2, Creator>} \\
+\ccRefIdfierPage{CGAL::Random_points_on_segment_2<Point_2, Creator>} \\
+\ccRefIdfierPage{CGAL::Random_points_on_square_2<Point_2, Creator>} \\
+\ccRefIdfierPage{CGAL::random_selection} \\
+\ccc{std::random_shuffle} \\
+
+
+\end{ccRefClass}
+

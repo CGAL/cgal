@@ -1,0 +1,45 @@
+\begin{ccRefConcept}{RandomPolygonTraits_2}
+\ccCreationVariable{t}
+
+\ccDefinition
+
+The concept \ccRefName\ describes the requirements for the traits
+class used by the function \ccc{random_polygon_2}.
+\ccIndexSubitem[C]{random_polygon_2}{traits requirements}
+
+\ccHasModels
+
+The \cgal\ kernels.
+
+\ccTypes
+\ccNestedType{FT}{ The coordinate type of the points of the polygon 
+                   ({\em i.e.}, a field type)}
+\ccNestedType{Point_2}{The point type of the polygon.}
+\ccNestedType{Orientation_2}
+      {Predicate object type that determines the orientation of three points.
+       It must provide \ccc{Orientation operator()(Point_2 p, Point_2 q,
+                                                   Point_2 r)} that
+       returns \ccStyle{LEFT_TURN}, if $r$ lies to the left of the oriented
+       line $l$ defined by $p$ and $q$, returns \ccStyle{RIGHT_TURN} if $r$
+       lies to the right of $l$, and returns \ccStyle{COLLINEAR} if $r$ lies
+       on $l$.}
+\ccNestedType{Less_xy_2} 
+       {Binary predicate object type comparing \ccc{Point_2}s lexicographically.
+        It must provide \ccc{bool operator()(Point_2 p, Point_2 q)} that 
+        returns \ccc{true} iff $p <_{xy} q$.
+        We have $p<_{xy}q$, iff $p_x < q_x$ or $p_x = q_x$ and $p_y < q_y$,
+        where $p_x$ and $p_y$ denote the $x$ and $y$ coordinates of point $p$,
+        resp.
+       }
+                        
+
+\ccOperations
+
+The following two member functions returning instances of the above predicate
+object types are required.
+
+\ccMemberFunction{ Less_xy_2 less_xy_2_object();}{}
+\ccMemberFunction{ Orienation_2 orientation_2_object();}{}
+
+
+\end{ccRefConcept}

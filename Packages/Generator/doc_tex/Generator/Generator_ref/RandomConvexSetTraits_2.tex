@@ -1,0 +1,52 @@
+\renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
+\renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
+\begin{ccRefConcept}{RandomConvexSetTraits_2}
+\ccCreationVariable{t}
+\ccTagFullDeclarations
+\ccIndexSubitem[C]{random_convex_set}{traits requirements}
+    
+\ccDefinition 
+
+The concept \ccRefName describes the requirements of the traits
+class for the function \ccc{random_convex_set_2}.
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Random_convex_set_traits_2<Kernel>} \\
+    
+\ccTypes 
+    
+\ccNestedType{Point_2}{point class.}
+\ccNestedType{FT}{class used for doing computations on point and
+                  vector coordinates (has to fulfill field type requirements).}
+    
+\ccNestedType{Sum}{AdaptableBinaryFunction class:
+      \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$
+      \ccc{Point_2}. It returns the point that results from adding
+      the vectors corresponding to both arguments.}
+    
+\ccNestedType{Scale}{AdaptableBinaryFunction class:
+      \ccc{Point_2} $\times$ \ccc{FT} $\rightarrow$
+      \ccc{Point_2}. \ccc{Scale(p,k)} returns the point that
+      results from scaling the vector corresponding to \ccc{p} by a
+      factor of \ccc{k}.}
+    
+\ccNestedType{Max_coordinate}{AdaptableUnaryFunction class:
+      \ccc{Point_2} $\rightarrow$ \ccc{FT}. \ccc{Max_coordinate(p)}
+      returns the coordinate of \ccc{p} with largest absolute value.}
+
+\ccNestedType{Angle_less}{AdaptableBinaryFunction class:
+      \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$
+      \ccc{bool}. It returns \ccc{true}, iff the angle of the
+      direction corresponding to the first argument with respect to
+      the positive $x$-axis is less than the angle of the direction
+      corresponding to the second argument.}
+
+\ccOperations
+    
+\ccMemberFunction{Point_2 origin() const;}{return origin (neutral
+      element for the \ccc{Sum} operation).}
+      
+\end{ccRefConcept}
+\renewcommand{\ccRefPageBegin}{}
+\renewcommand{\ccRefPageEnd}{}
