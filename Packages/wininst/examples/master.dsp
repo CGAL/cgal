@@ -42,7 +42,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /TP /c
-# ADD CPP /nologo /W3 /GX /O2 /I "$(CGAL)\stlport" /I "$(CGAL)\include\cgal\config\msvc" /I "$(CGAL)\auxilary\wingmp\gmp-2.0.2" /I "$(CGAL)\include" /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "_MBCS" /D "CGAL_USE_GMP" /D "CGAL_USE_CGAL_HEADERS" /YX /FD /TP /c
+# ADD CPP /nologo /W3 /GX /O2 /I "$(CGALROOT)\stlport" /I "$(CGALROOT)\include\cgal\config\msvc" /I "$(CGALROOT)\auxilary\wingmp\gmp-4.0.1" /I "$(CGALROOT)\include" /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "_MBCS" /D "CGAL_USE_GMP" /D "CGAL_USE_CGAL_HEADERS" /YX /FD /TP /c
 # ADD BASE RSC /l 0x40c /d "NDEBUG"
 # ADD RSC /l 0x40c /d "NDEBUG"
 BSC32=bscmake.exe
@@ -50,7 +50,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
-# ADD LINK32 cgal.lib cgalwin.lib gmp.lib ws2_32.lib user32.lib gdi32.lib comdlg32.lib shell32.lib advapi32.lib /nologo /subsystem:console /machine:I386 /libpath:"$(CGAL)/lib/msvc/visual/Release" /libpath:"$CGAL/auxiliary/wingmp/gmp-2.0.2/msvc"
+# ADD LINK32 cgal.lib cgalwin.lib gmp.lib ws2_32.lib user32.lib gdi32.lib comdlg32.lib shell32.lib advapi32.lib /nologo /subsystem:console /machine:I386 /libpath:"$(CGALROOT)/lib/msvc/visual/Release" /libpath:"$CGAL/auxiliary/wingmp/gmp-4.0.1/msvc"
 
 !ELSEIF  "$(CFG)" == "master - Win32 Debug"
 
@@ -66,7 +66,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /TP /GZ /c
-# ADD CPP /nologo /W3 /Gm /GR /GX /ZI /Od /I "$(CGAL)\stlport" /I "$(CGAL)\include\cgal\config\msvc" /I "$(CGAL)\auxilary\wingmp\gmp-2.0.2" /I "$(CGAL)\include" /D "_DEBUG" /D "CGAL_USE_GMP" /D "CGAL_USE_CGAL_HEADERS" /D "WIN32" /D "_CONSOLE" /D "_MBCS" /FD /TP /GZ /TP /c
+# ADD CPP /nologo /W3 /Gm /GR /GX /ZI /Od /I "$(CGALROOT)\stlport" /I "$(CGALROOT)\include\cgal\config\msvc" /I "$(CGALROOT)\auxilary\wingmp\gmp-4.0.1" /I "$(CGALROOT)\include" /D "_DEBUG" /D "CGAL_USE_GMP" /D "CGAL_USE_CGAL_HEADERS" /D "WIN32" /D "_CONSOLE" /D "_MBCS" /FD /TP /GZ /TP /c
 # ADD BASE RSC /l 0x40c /d "_DEBUG"
 # ADD RSC /l 0x409 /d "_DEBUG"
 # SUBTRACT RSC /x
@@ -75,7 +75,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 cgal.lib cgalwin.lib gmp.lib ws2_32.lib user32.lib gdi32.lib comdlg32.lib shell32.lib advapi32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept /libpath:"$(CGAL)/lib/msvc/visual/Debug" /libpath:"$(CGAL)/auxiliary/wingmp/gmp-2.0.2/msvc"
+# ADD LINK32 cgal.lib cgalwin.lib gmp.lib ws2_32.lib user32.lib gdi32.lib comdlg32.lib shell32.lib advapi32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept /libpath:"$(CGALROOT)/lib/msvc/visual/Debug" /libpath:"$(CGALROOT)/auxiliary/wingmp/gmp-4.0.1/msvc"
 # SUBTRACT LINK32 /incremental:no /nodefaultlib
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
