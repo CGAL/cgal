@@ -26,6 +26,9 @@
 // This file contains the low level homogeneous predicates
 // used by the 3D regular triangulation.
 
+#include <CGAL/Quotient.h>
+#include <CGAL/predicates/Regular_triangulation_ftC3.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class RT>
@@ -74,47 +77,36 @@ power_testH3(
 	                                        dthx, dthy, dthz, dtz, dthw));
 }
 
-//#error This one is not yet ported to 3D.
+// The 2 following are not speed critical, and they are quite boring and error
+// prone to write, so we use the Cartesian version, using Quotient<RT>.
+
 template <class RT>
 Oriented_side
-power_testH3( const RT &phx, const RT &phy, const RT &phz, const RT &phw, const RT &pwt,
-              const RT &qhx, const RT &qhy, const RT &qhz, const RT &qhw, const RT &qwt,
-              const RT &rhx, const RT &rhy, const RT &rhz, const RT &rhw, const RT &rwt,
-	      const RT &thx, const RT &thy, const RT &thz, const RT &thw, const RT &twt)
+power_testH3(
+    const RT &phx, const RT &phy, const RT &phz, const RT &phw, const RT &pwt,
+    const RT &qhx, const RT &qhy, const RT &qhz, const RT &qhw, const RT &qwt,
+    const RT &rhx, const RT &rhy, const RT &rhz, const RT &rhw, const RT &rwt,
+    const RT &thx, const RT &thy, const RT &thz, const RT &thw, const RT &twt)
 {
-    // Test if we can project on the (x) axis.  If not, then on the
-    // (y) axis
-    RT pa, qa, ta;
-
-    if (phx * qhw != qhx * phw )
-    {
-	pa = phx*phw;
-	qa = qhx*qhw;
-	ta = thx*thw;
-    }
-    else
-    {   
-	pa = phy*phw;
-	qa = qhy*qhw;
-	ta = thy*thw;
-    }
-
-    RT dphw = square(phw);
-    RT dpz = square(phx) + square(phy) - pwt*dphw;
-
-    RT dqhw = square(qhw);
-    RT dqz = square(qhx) + square(qhy) - qwt*dqhw;
-
-    RT dthw = square(thw);
-    RT dtz = square(thx) + square(thy) - twt*dthw;
-
-    return Oriented_side(CGAL::compare(pa, qa) *
-	                 sign_of_determinant3x3(pa, dpz, dphw,
-				                qa, dqz, dqhw,
-				                ta, dtz, dthw));
+    typedef Quotient<RT> Q;
+    return power_testC3(Q(phx,phw), Q(phy,phw), Q(phz,phw), Q(pwt),
+			Q(qhx,qhw), Q(qhy,qhw), Q(qhz,qhw), Q(qwt),
+			Q(rhx,rhw), Q(rhy,rhw), Q(rhz,rhw), Q(rwt),
+			Q(thx,thw), Q(thy,thw), Q(thz,thw), Q(twt));
 }
 
-//#error one more predicate needed in 3D...
+template <class RT>
+Oriented_side
+power_testH3(
+    const RT &phx, const RT &phy, const RT &phz, const RT &phw, const RT &pwt,
+    const RT &qhx, const RT &qhy, const RT &qhz, const RT &qhw, const RT &qwt,
+    const RT &thx, const RT &thy, const RT &thz, const RT &thw, const RT &twt)
+{
+    typedef Quotient<RT> Q;
+    return power_testC3(Q(phx,phw), Q(phy,phw), Q(phz,phw), Q(pwt),
+			Q(qhx,qhw), Q(qhy,qhw), Q(qhz,qhw), Q(qwt),
+			Q(thx,thw), Q(thy,thw), Q(thz,thw), Q(twt));
+}
 
 CGAL_END_NAMESPACE
 
