@@ -68,8 +68,8 @@ public:
   typedef Point_handle<Traits>                       Point_handle_traits;
   typedef X_curve_plus_id<Traits>                    X_curve_plus;
   
-  typedef typename  Traits::X_curve                  X_curve;
-  typedef typename  Traits::Point                    Point;
+  typedef typename  Traits::X_curve_2                X_curve;
+  typedef typename  Traits::Point_2                  Point;
 
   typedef Sweep_curves_base_2<CurveInputIterator, Traits, 
     Point_handle_traits, X_curve_plus>               Base;
@@ -146,8 +146,11 @@ public:
       Curve_node_iterator ncv_iter;
       for (ncv_iter = point_node.curves_begin(); 
 	   ncv_iter != point_node.curves_end(); ++ncv_iter){
-	if (event_point != traits->curve_source(ncv_iter->get_curve()) && 
-	  event_point == ncv_iter->get_rightmost_point().point())
+	if (!traits->point_is_same(event_point,
+                                   traits->curve_source(ncv_iter->get_curve()))
+            && 
+            traits->point_is_same(event_point,
+                                  ncv_iter->get_rightmost_point().point()))
 	  ncv_iter->erase_rightmost_point();
       }
     
@@ -157,7 +160,8 @@ public:
       // participating within the event.
       for (ncv_iter = point_node.curves_begin(); 
 	   ncv_iter != point_node.curves_end(); ++ncv_iter){
-	if (event_point != ncv_iter->get_rightmost_point().point())
+	if (!traits->point_is_same(event_point,
+                                   ncv_iter->get_rightmost_point().point()))
 	  ncv_iter->push_event_point(point_node.get_point());
       }
     
@@ -191,9 +195,9 @@ public:
                                 bool overlapping = false)
   { 
     typename Base::Less_xy  event_queue_pred(traits);
-    Event_queue           event_queue(event_queue_pred);
+    Event_queue event_queue(event_queue_pred);
     typename Base::Less_yx  status_pred(traits);
-    Status_line           status(status_pred);
+    Status_line status(status_pred);
 
     init(curves_begin, curves_end, event_queue, status);
     
@@ -224,8 +228,11 @@ public:
       Curve_node_iterator cvn_iter;
       for (cvn_iter = point_node.curves_begin(); 
 	   cvn_iter != point_node.curves_end(); ++cvn_iter){
-	if (event_point != traits->curve_source(cvn_iter->get_curve()) && 
-	  event_point == cvn_iter->get_rightmost_point().point())
+	if (!traits->point_is_same(event_point,
+                                   traits->curve_source(cvn_iter->get_curve()))
+            && 
+            traits->point_is_same(event_point,
+                                  cvn_iter->get_rightmost_point().point()))
 	  cvn_iter->erase_rightmost_point();
       }
 
@@ -240,7 +247,8 @@ public:
       // participating within the event.
       for (cvn_iter = point_node.curves_begin(); 
 	   cvn_iter != point_node.curves_end(); ++cvn_iter){
-	if (event_point != cvn_iter->get_rightmost_point().point())
+	if (!traits->point_is_same(event_point,
+                                   cvn_iter->get_rightmost_point().point()))
 	  cvn_iter->push_event_point(point_node.get_point());
       }
       
@@ -319,8 +327,11 @@ public:
       Curve_node_iterator cvn_iter;
       for (cvn_iter = point_node.curves_begin(); 
 	   cvn_iter != point_node.curves_end(); ++cvn_iter){
-	if (event_point != traits->curve_source(cvn_iter->get_curve()) && 
-	  event_point == cvn_iter->get_rightmost_point().point())
+	if (!traits->point_is_same(event_point,
+                                   traits->curve_source(cvn_iter->get_curve()))
+            && 
+            traits->point_is_same(event_point,
+                                  cvn_iter->get_rightmost_point().point()))
 	  cvn_iter->erase_rightmost_point();
       }
     
@@ -328,7 +339,8 @@ public:
       // participating within the event.
       for (cvn_iter = point_node.curves_begin(); 
 	   cvn_iter != point_node.curves_end(); ++cvn_iter){
-	if (event_point != cvn_iter->get_rightmost_point().point())
+	if (!traits->point_is_same(event_point,
+                                   cvn_iter->get_rightmost_point().point()))
 	  cvn_iter->push_event_point(point_node.get_point());
       }
     
@@ -350,15 +362,16 @@ public:
             Status_line &status);
     
   // Checking whether the point of point_node is an edge point.
-  bool  is_endpoint(const Intersection_point_node& point_node)
+  bool is_endpoint(const Intersection_point_node& point_node)
   {
-    const Point& p = point_node.get_point().point();
+    const Point & p = point_node.get_point().point();
     
     for (typename Intersection_point_node::Curve_node_const_iterator 
            cv_iter = point_node.curves_begin();
-         cv_iter != point_node.curves_end(); ++cv_iter){
-      if (traits->curve_source(cv_iter->get_curve()) == p ||
-          traits->curve_target(cv_iter->get_curve()) == p )
+         cv_iter != point_node.curves_end(); ++cv_iter) {
+      if (traits->point_is_same(traits->curve_source(cv_iter->get_curve()), p)
+          ||
+          traits->point_is_same(traits->curve_target(cv_iter->get_curve()), p))
         return true;
     }
 
@@ -397,22 +410,23 @@ public:
 	  right_cv = cv;
 
 	// split the curve, if necessary      
-	if (traits->curve_source(cv) != 
-	  cv_iter->get_rightmost_point().point() 
-	  &&
-	  traits->curve_target(cv) != 
-	  cv_iter->get_rightmost_point().point()) 
+	if (!traits->point_is_same(traits->curve_source(cv), 
+                                   cv_iter->get_rightmost_point().point()) &&
+            !traits->point_is_same(traits->curve_target(cv),
+                                   cv_iter->get_rightmost_point().point()))
 	{
 	  traits->curve_split(cv, sub_cv, right_cv, 
-	    cv_iter->get_rightmost_point().point());
+                              cv_iter->get_rightmost_point().point());
 	  
 	  cv = right_cv;
 	}
       
-	if (traits->curve_source(cv) != point_node.get_point().point() &&
-	  traits->curve_target(cv) != point_node.get_point().point())
-	  traits->curve_split(cv, sub_cv, 
-	    right_cv, point_node.get_point().point());
+	if (!traits->point_is_same(traits->curve_source(cv),
+                                   point_node.get_point().point()) &&
+            !traits->point_is_same(traits->curve_target(cv),
+                                   point_node.get_point().point()))
+	  traits->curve_split(cv, sub_cv, right_cv,
+                              point_node.get_point().point());
 	else
 	  sub_cv = right_cv;
       
@@ -438,27 +452,28 @@ public:
 	X_curve cv = cv_iter->get_curve(), sub_cv = cv_iter->get_curve(), 
 	  right_cv = cv;
       
-	if (traits->curve_source(cv) != 
-	  cv_iter->get_rightmost_point().point() 
-	  &&
-	  traits->curve_target(cv) != 
-	  cv_iter->get_rightmost_point().point() ) 
+	if (!traits->point_is_same(traits->curve_source(cv),
+                                   cv_iter->get_rightmost_point().point()) &&
+            !traits->point_is_same(traits->curve_target(cv), 
+                                   cv_iter->get_rightmost_point().point()))
 	{
 	  traits->curve_split(cv, sub_cv, right_cv, 
-	    cv_iter->get_rightmost_point().point());
+                              cv_iter->get_rightmost_point().point());
           
 	  cv = right_cv;
 	}
       
-	if (traits->curve_source(cv) != point_node.get_point().point() &&
-	  traits->curve_target(cv) != point_node.get_point().point())
+	if (!traits->point_is_same(traits->curve_source(cv),
+                                   point_node.get_point().point()) &&
+            !traits->point_is_same(traits->curve_target(cv),
+                                   point_node.get_point().point()))
 	  traits->curve_split(cv, sub_cv, right_cv, 
-	    point_node.get_point().point());
+                              point_node.get_point().point());
 	else
 	  sub_cv = right_cv;
       
 	if (cv_iter != point_node.curves_begin()){
-	  if (traits->curves_overlap(sub_cv, prev_sub_cv)){
+	  if (traits->curves_overlap(sub_cv, prev_sub_cv)) {
 	    continue;
 	  }
 	}
@@ -707,39 +722,37 @@ public:
     
   Point_handle() : Handle_for_Point_rep() {
 #ifdef CGAL_MAKE_PROFILING
-    std::cout<<"allocating handle for DEFAULT Point_rep_traits"<<endl;
+    std::cout<<"allocating handle for DEFAULT Point_rep_traits" << endl;
 #endif
   }
   
-  Point_handle(const Point& p) : Handle_for_Point_rep(Point_rep_traits(p)) {  
+  Point_handle(const Point & p) : Handle_for_Point_rep(Point_rep_traits(p)) {  
 #ifdef CGAL_MAKE_PROFILING
     std::cout<<"allocating handle for Point_rep_traits(p)" << p << endl;
 #endif
   }
   
-  Point_handle(const Point_handle& p) : Handle_for_Point_rep(p) {}
+  Point_handle(const Point_handle & p) : Handle_for_Point_rep(p) {}
     
   ~Point_handle() {}
   
-  Point_handle& operator=(const Point_handle &p) {
+  Point_handle & operator=(const Point_handle & p) {
     Handle_for_Point_rep::operator=(p);
     return *this;
   }
   
-  bool operator==(const Point_handle &p) const {
+  bool operator==(const Point_handle & p) const {
     return ptr()->p_ == p.point(); 
   }
   
-  bool operator!=(const Point_handle &p) const { 
+  bool operator!=(const Point_handle & p) const { 
     return  !(operator==(p));
   }
   
   void set_point(const Point& p) { ptr()->p_ = p; }
-  const Point& point() const { return ptr()->p_; }
-    
+  const Point & point() const { return ptr()->p_; }
+
 };
-
-
 
 CGAL_END_NAMESPACE
 

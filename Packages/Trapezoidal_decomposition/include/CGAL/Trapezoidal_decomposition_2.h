@@ -1350,257 +1350,220 @@ output: trapezoid iterator
   /*static */
   Locate_type search_using_data_structure(Data_structure& curr,Traits* traits,
                                           const Point& p,const X_curve* cv,
-                                          Comparison_result up=EQUAL) const
+                                          Comparison_result up = EQUAL) const
   {
     const Point* pp;
     const X_curve* pc;
     
 #ifdef CGAL_TD_DEBUG
-    pointer old=NULL;
+    pointer old = NULL;
 #endif
     
     while(true)
-      {
-        
+    {
 #ifdef CGAL_TD_DEBUG
-        
-        // unbounded loop
-        CGAL_assertion(curr.operator->()!=old);
-        old=curr.operator->();
-        
+      // unbounded loop
+      CGAL_assertion(curr.operator->() != old);
+      old = curr.operator->();
 #endif
-        
-        if (traits->is_degenerate_point(*curr))
+
+      if (traits->is_degenerate_point(*curr))
         // point node conditional (separation)
+      {
+        // extract point from trapezoid
+        pp = &curr->left();
+        if (traits->point_is_left_low(p, *pp))
+        {
+          curr = curr.left();
+          continue;
+        }
+        else if (traits->point_is_left_low(*pp, p))
+        {
+          curr = curr.right();
+          continue;
+        }
+        else if (traits->point_is_same(*pp, p))
+        {
+          if (!cv)
           {
-            // extract point from trapezoid
-            pp=&curr->left();
-            if (traits->point_is_left_low(p,*pp))
-              {
-                curr=curr.left();
-                continue;
-              }
-            else if (traits->point_is_left_low(*pp,p))
-              {
-                curr=curr.right();
-                continue;
-              }
-            else if (traits->point_is_same(*pp,p))
-              {
-                if (!cv)
-                {
-                  if ( up == EQUAL ) { // point found!
-                    if (curr->is_active()) return POINT;
-                    curr=curr.left();
-                  }
-                  else if ( up == LARGER ) { // vertical ray shut up
-                    curr=curr.right();                      
-                  }
-                  else /*if ( up == SMALLER ) */ {
-                    curr=curr.left();     // vertical ray shut down
-                  }
-                  continue;
-                }
-                else
-                  {
-#ifndef CGAL_TD_DEBUG
-                    
-                    CGAL_warning(
-                      traits->point_is_same(
-                        traits->curve_leftlow_most(*cv),
-                        p
-                        )||
-                      traits->point_is_same(
-                        traits->curve_righttop_most(*cv),
-                        p
-                        ));
-                    
-#else
-                    
-                    CGAL_assertion(
-                      traits->point_is_same(
-                        traits->curve_leftlow_most(*cv),
-                        p
-                        )||
-                      traits->point_is_same(
-                        traits->curve_righttop_most(*cv),
-                        p
-                        ));
-                    
-#endif
-                    
-                    curr=traits->point_is_same(traits->curve_leftlow_most(*cv),
-                                               p) ? curr.right() : curr.left();
-                    // (Oren 14/4/02) ??
-                    
-                    continue;
-                  }
-              }
-            else
-              {
-                
-#ifndef CGAL_TD_DEBUG
-                
-                CGAL_warning(
-                             traits->point_is_left_low(p,*pp)||
-                             traits->point_is_left_low(*pp,p)||
-                             traits->point_is_same(*pp,p)
-                             );
-                
-#else
-                
-                CGAL_assertion(
-                               traits->point_is_left_low(p,*pp)||
-                               traits->point_is_left_low(*pp,p)||
-                               traits->point_is_same(*pp,p)
-                               );
-                
-#endif
-                
-                return Locate_type();
-              }
-          }
-        if (traits->is_degenerate_curve(*curr))
-        // CURVE SEPRATION
-          {
-            pc = &curr->top();
-            Comparison_result cres = traits->curve_get_point_status(*pc,p);
-            if (cres == LARGER)
-            {
-              curr=curr.left();
-              continue;
+            if ( up == EQUAL ) {                // point found!
+              if (curr->is_active()) return POINT;
+              curr = curr.left();
             }
-            else if (cres == SMALLER)
-            {
-              curr=curr.right();
-              continue;
+            else if ( up == LARGER ) {          // vertical ray shut up
+              curr = curr.right();                      
             }
-            else
-            {  
-	      // p on CURVE  
-#ifndef CGAL_TD_DEBUG
-                
-              CGAL_warning(cres == EQUAL &&
-                !traits->point_is_right(p,traits->curve_rightmost(*pc))&&
-                !traits->point_is_left(p,traits->curve_leftmost(*pc)));
-#else
-                
-              CGAL_postcondition(cres == EQUAL &&
-                !traits->point_is_right(p,traits->curve_rightmost(*pc))&&
-                !traits->point_is_left(p,traits->curve_leftmost(*pc)));
-#endif
-                if (!cv)
-                {
-                  // For a vertical curve, we always visit it after visiting
-                  // one of its endpoints.
-                  if ((up == EQUAL) || traits->is_vertical(*curr)) {
-                    //std::cout << "EQUAL or VERTICAL" << std::endl;
-                    if (curr->is_active()) return CURVE;
-                    curr=curr.left();
-                  }
-                  else if (up==LARGER) {
-                    curr=curr.right();
-                  }
-                  else /* if (up==SMALLER) */ {
-                    curr=curr.left();
-                  }
-                  continue;
-                }
-                else
-                {
-                    
-#ifndef CGAL_TD_DEBUG
-                    
-                  CGAL_warning(traits->point_is_same
-                               (traits->curve_leftlow_most(*cv),
-                                traits->curve_leftlow_most(*pc)) ||
-                               traits->point_is_same
-                               (traits->curve_righttop_most(*cv),
-                                traits->curve_righttop_most(*pc)));
-                    
-#else
-                    
-                  if (!(traits->point_is_same
-                        (traits->curve_leftlow_most(*cv),
-                         traits->curve_leftlow_most(*pc))||
-                        traits->point_is_same
-                        (traits->curve_righttop_most(*cv),
-                         traits->curve_righttop_most(*pc))))
-                  {
-                    std::cerr << "\npc " << *pc;
-                    std::cerr << "\ncv " << *cv << std::endl;
-                    CGAL_assertion(traits->point_is_same
-                                   (traits->curve_leftlow_most(*cv),
-                                    traits->curve_leftlow_most(*pc)) ||
-                                   traits->point_is_same
-                                   (traits->curve_righttop_most(*cv),
-                                    traits->curve_righttop_most(*pc)));
-                  }
-                    
-#endif
-                    
-                  Comparison_result res =
-                    traits->point_is_same(traits->curve_leftlow_most(*cv),
-                                          traits->curve_leftlow_most(*pc)
-                                          ) ?
-                      traits->curve_compare_at_x_from_top(*pc,*cv,p) :
-                      traits->curve_compare_at_x_from_bottom(*cv,*pc,p);
-                    
-                  switch(res)
-                  {
-                    case LARGER:
-                      curr=curr.right();
-                      break;
-                    case SMALLER:
-                      curr=curr.left();
-                      break;
-                    case EQUAL:
-                      switch(up)
-                      {
-                        case LARGER:
-                          curr=curr.right();
-                          break;
-                        case SMALLER:
-                          curr=curr.left();
-                          break;
-                        case EQUAL:
-                          if (curr->is_active()) return CURVE;
-                          curr=curr.left();
-                          break;
-                            
-#ifdef CGAL_TD_DEBUG
-                            
-                        default:
-                          CGAL_assertion(up==LARGER||up==SMALLER||up==EQUAL);
-                          return Locate_type();
-                            
-#endif
-
-                      }
-                      break;
-                        
-#ifdef CGAL_TD_DEBUG
-                        
-                    default:
-                      CGAL_assertion(res==LARGER||res==SMALLER||res==EQUAL);
-                      return Locate_type();
-                        
-#endif
-
-                  }
-                }
-            } 
-          }
-        else
-        // !is_degenerate()
-          {
-            if (curr->is_active()) return curr->is_unbounded() ? 
-                                       UNBOUNDED_TRAPEZOID : TRAPEZOID;
-            curr=curr.left();
+            else /*if ( up == SMALLER ) */ {
+              curr = curr.left();               // vertical ray shut down
+            }
             continue;
           }
+          else
+          {
+
+#ifndef CGAL_TD_DEBUG
+            CGAL_warning(
+              traits->point_is_same(traits->curve_leftlow_most(*cv), p) ||
+              traits->point_is_same(traits->curve_righttop_most(*cv), p));
+#else
+            CGAL_assertion(
+              traits->point_is_same(traits->curve_leftlow_most(*cv), p) ||
+              traits->point_is_same(traits->curve_righttop_most(*cv), p));
+#endif
+            curr = traits->point_is_same(traits->curve_leftlow_most(*cv), p) ?
+              curr.right() : curr.left();
+            // (Oren 14/4/02) ??
+                    
+            continue;
+          }
+        }
+        else
+        {
+                
+#ifndef CGAL_TD_DEBUG
+          CGAL_warning(traits->point_is_left_low(p,*pp) ||
+                       traits->point_is_left_low(*pp,p) ||
+                       traits->point_is_same(*pp,p));
+#else
+          CGAL_assertion(traits->point_is_left_low(p,*pp) ||
+                         traits->point_is_left_low(*pp,p) ||
+                         traits->point_is_same(*pp,p));
+#endif
+
+          return Locate_type();
+        }
       }
+      if (traits->is_degenerate_curve(*curr))
+      {
+        // CURVE SEPRATION
+        pc = &curr->top();
+        Comparison_result cres = traits->curve_get_point_status(*pc,p);
+        if (cres == LARGER)
+        {
+          curr = curr.left();
+          continue;
+        }
+        else if (cres == SMALLER)
+        {
+          curr = curr.right();
+          continue;
+        }
+        else
+        {  
+          // p on CURVE  
+#ifndef CGAL_TD_DEBUG      
+          CGAL_warning(cres == EQUAL &&
+            !traits->point_is_right(p,traits->curve_rightmost(*pc))&&
+            !traits->point_is_left(p,traits->curve_leftmost(*pc)));
+#else
+                
+          CGAL_postcondition(cres == EQUAL &&
+            !traits->point_is_right(p,traits->curve_rightmost(*pc))&&
+            !traits->point_is_left(p,traits->curve_leftmost(*pc)));
+#endif
+          if (!cv)
+          {
+            // For a vertical curve, we always visit it after visiting
+            // one of its endpoints.
+            if ((up == EQUAL) || traits->is_vertical(*curr)) {
+              //std::cout << "EQUAL or VERTICAL" << std::endl;
+              if (curr->is_active()) return CURVE;
+              curr = curr.left();
+            }
+            else if (up == LARGER) {
+              curr = curr.right();
+            }
+            else /* if (up==SMALLER) */ {
+              curr = curr.left();
+            }
+            continue;
+          }
+          else
+          {
+                    
+#ifndef CGAL_TD_DEBUG          
+            CGAL_warning(traits->point_is_same
+                         (traits->curve_leftlow_most(*cv),
+                          traits->curve_leftlow_most(*pc)) ||
+                         traits->point_is_same
+                         (traits->curve_righttop_most(*cv),
+                          traits->curve_righttop_most(*pc)));
+#else
+            if (!(traits->point_is_same
+                  (traits->curve_leftlow_most(*cv),
+                   traits->curve_leftlow_most(*pc))||
+                  traits->point_is_same
+                  (traits->curve_righttop_most(*cv),
+                   traits->curve_righttop_most(*pc))))
+            {
+              std::cerr << "\npc " << *pc;
+              std::cerr << "\ncv " << *cv << std::endl;
+              CGAL_assertion(traits->point_is_same
+                             (traits->curve_leftlow_most(*cv),
+                              traits->curve_leftlow_most(*pc)) ||
+                             traits->point_is_same
+                             (traits->curve_righttop_most(*cv),
+                              traits->curve_righttop_most(*pc)));
+            }       
+#endif
+
+            Comparison_result res =
+              traits->point_is_same(traits->curve_leftlow_most(*cv),
+                                    traits->curve_leftlow_most(*pc)) ?
+              traits->curve_compare_at_x_from_top(*pc,*cv,p) :
+              traits->curve_compare_at_x_from_bottom(*cv,*pc,p);
+                    
+            switch(res)
+            {
+             case LARGER:
+              curr = curr.right();
+              break;
+             case SMALLER:
+              curr = curr.left();
+              break;
+             case EQUAL:
+              switch(up)
+              {
+               case LARGER:
+                curr = curr.right();
+                break;
+               case SMALLER:
+                curr = curr.left();
+                break;
+               case EQUAL:
+                if (curr->is_active()) return CURVE;
+                curr = curr.left();
+                break;
+                            
+#ifdef CGAL_TD_DEBUG
+               default:
+                CGAL_assertion(up==LARGER||up==SMALLER||up==EQUAL);
+                return Locate_type();
+#endif
+              }
+              break;
+
+#ifdef CGAL_TD_DEBUG
+             default:
+              CGAL_assertion(res == LARGER || res == SMALLER || res == EQUAL);
+              return Locate_type();
+#endif
+
+            }
+          }
+        } 
+      }
+      else
+      {
+        // !is_degenerate()
+        if (curr->is_active())
+          return curr->is_unbounded() ? UNBOUNDED_TRAPEZOID : TRAPEZOID;
+        curr = curr.left();
+        continue;
+      }
+    }
   }
+
   Data_structure container2data_structure(map_nodes& ar, int left,
                                           int right) const
   {
@@ -2302,19 +2265,20 @@ public:
       return up_direction ?
           locate(tr.right(),t).top() : locate(tr.left(),t).bottom();
     }
-                curve_const_ref c = up_direction ? tr.top() : tr.bottom();
+
+    curve_const_ref c = up_direction ? tr.top() : tr.bottom();
     if (up_direction ? tr.is_top_unbounded() : tr.is_bottom_unbounded())
     {
       t=UNBOUNDED_TRAPEZOID;
     }
     else
-                {
-                  // Now we know that the trapezoid is bounded on in the
-                  // direction of the shoot.
-                  t = (traits->point_is_same(p,traits->curve_source(c)) || 
-                       traits->point_is_same(p,traits->curve_target(c))) ? 
-                    POINT : CURVE;
-                }
+    {
+      // Now we know that the trapezoid is bounded on in the
+      // direction of the shoot.
+      t = (traits->point_is_same(p,traits->curve_source(c)) || 
+           traits->point_is_same(p,traits->curve_target(c))) ? 
+        POINT : CURVE;
+    }
     return c;
   }
   

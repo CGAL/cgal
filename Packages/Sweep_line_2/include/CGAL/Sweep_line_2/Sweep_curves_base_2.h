@@ -1587,9 +1587,11 @@ protected:
         intersection_exist_ = true;
       
       if (curves_intersect && !curves_tangent)
-        return ((!xp2_cv1_in_queue || !xp2_cv2_in_queue) && xp2 == event_point);
+        return ((!xp2_cv1_in_queue || !xp2_cv2_in_queue) &&
+                traits->point_is_same(xp2, event_point));
       else if (curves_tangent)
-        return ((!xp1_cv1_in_queue || !xp1_cv2_in_queue) && xp1 == event_point);
+        return ((!xp1_cv1_in_queue || !xp1_cv2_in_queue) &&
+                traits->point_is_same(xp1, event_point));
     }
     
     return false;
@@ -1597,8 +1599,8 @@ protected:
 
   // defining a lexicographically compare function here in order to
   // make a usage in traits.
-  Comparison_result Compare_lexicographically_xy(const Point& p1, 
-                                                 const Point& p2) const
+  Comparison_result Compare_lexicographically_xy(const Point & p1, 
+                                                 const Point & p2) const
   {
     return (traits->compare_xy(p1,p2));
   }
@@ -1667,18 +1669,20 @@ protected:
                               traits->curve_target(*scv_iter2));
         if (!traits->point_is_same(ref_point1, ref_point2))
           ref_point1 = leftmost(ref_point1, ref_point2);
-        
+
         if (traits->nearest_intersection_to_right(*scv_iter1, *scv_iter2, 
-                                                 ref_point1, xp1, xp2)){
-          
+                                                 ref_point1, xp1, xp2)) {
           if (traits->point_is_same(xp1, ref_point1))
             xp1 = xp2;
           
-          if (!((traits->point_is_same(xp1, traits->curve_source(*scv_iter1)) ||
-                 traits->point_is_same(xp1, traits->curve_target(*scv_iter1)))
-                && 
-                (traits->point_is_same(xp1, traits->curve_source(*scv_iter2)) ||
-                 traits->point_is_same(xp1, traits->curve_target(*scv_iter2)))))
+          if (!((traits->point_is_same(xp1,
+                                       traits->curve_source(*scv_iter1)) ||
+                 traits->point_is_same(xp1,
+                                       traits->curve_target(*scv_iter1))) && 
+                (traits->point_is_same(xp1,
+                                       traits->curve_source(*scv_iter2)) ||
+                 traits->point_is_same(xp1,
+                                       traits->curve_target(*scv_iter2)))))
           {
             return true;
           }

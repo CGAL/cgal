@@ -96,7 +96,7 @@ inline bool trapezoid_top_curve_is_same(X_trapezoid_const_ref left,
   bool is_degenerate_curve(const_ref tr) const
   {
     return !tr.is_top_unbounded() && !tr.is_bottom_unbounded() && 
-      curve_is_same(tr.bottom(),tr.top())&&!is_degenerate_point(tr);
+      curve_is_same(tr.bottom(), tr.top()) && !is_degenerate_point(tr);
   }
   bool is_vertical(const_ref tr) const
   {
