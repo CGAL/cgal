@@ -32,9 +32,10 @@ int main(int, char*)
 #include "cgal_types.h"
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
-#include <CGAL/IO/Qt_widget_helpwindow.h>
+#include <CGAL/IO/Qt_help_window.h>
 #include "partition_2_toolbar.h"
 #include "partition_2_toolbar_layers.h"
+#include <CGAL/IO/pixmaps/demoicon.xpm> 
 
 #include <fstream>
 #include <iomanip>
@@ -163,7 +164,7 @@ private slots:
   void howto(){
     QString home;
     home = "help/index.html";
-    HelpWindow *help = new HelpWindow(home, ".", 0, "help viewer");
+    Qt_help_window *help = new Qt_help_window(home, ".", 0, "help viewer");
     help->resize(400, 400);
     help->setCaption("Demo HowTo");
     help->show();
@@ -228,7 +229,6 @@ private:
 int
 main(int argc, char **argv)
 {
-  
   QApplication app( argc, argv );
   current_state = -1;
   
@@ -236,6 +236,8 @@ main(int argc, char **argv)
   app.setMainWidget(&widget);
   widget.setCaption(my_title_string);
   widget.setMouseTracking(TRUE);
+  QPixmap cgal_icon = QPixmap((const char**)demoicon_xpm);
+  widget.setIcon(cgal_icon);
   widget.show();
   return app.exec();
   return 1;

@@ -1,3 +1,9 @@
+
+
+1.54 (07 Sep 2003) [rursu]
+- demo use now the new help class Qt_help_window instead of HelpWindow
+- demo use now the new demo icon demoicon
+
 1.53 (11 July 2003) [af]
 - Replaced wrong #ifdef
 
