@@ -22,7 +22,6 @@ CoreAux$(OBJ_EXT) \
 extLong$(OBJ_EXT) \
 CoreDefs$(OBJ_EXT) \
 CoreIO$(OBJ_EXT) \
-GmpIO$(OBJ_EXT) \
 BigInt$(OBJ_EXT) \
 BigFloat$(OBJ_EXT) \
 Real$(OBJ_EXT) \
