@@ -112,10 +112,10 @@ namespace CGAL {
     operator()(Separator& sep, Container& c0, Container& c1) 
     {
       // find legal cut with max spread
-      sep=Separator(c0.max_tight_span_coord_balanced(aspect_ratio()),
+      sep=Separator(c0.max_tight_span_coord_balanced(this->aspect_ratio()),
 		    FT(0));
       sep.set_cutting_value(c0.balanced_fair(sep.cutting_dimension(),
-					     aspect_ratio()));
+					     this->aspect_ratio()));
       c0.split(c1,sep);
     }
   };
@@ -147,11 +147,11 @@ namespace CGAL {
     {
       // find legal cut with max spread
       
-      sep = Separator(c0.max_tight_span_coord_balanced(aspect_ratio()),
+      sep = Separator(c0.max_tight_span_coord_balanced(this->aspect_ratio()),
 		      FT(0));
       
       sep.set_cutting_value(c0.balanced_sliding_fair(sep.cutting_dimension(),
-						     aspect_ratio()));
+						     this->aspect_ratio()));
       c0.split(c1,sep,true);
     }
   };
