@@ -1,3 +1,9 @@
+// Copyright (c) 2001  Max-Planck-Institute Saarbruecken (Germany).
+// All rights reserved.
+//
+// This file is part of an example program for CGAL.  This example
+// program may be used, distributed and modified without limitation.
+//
 // file: examples/Convex_hull_3/dynamic_hull_3_ex.C
 
 
