@@ -47,6 +47,10 @@ visibility_complex_polygon$(EXE_EXT): visibility_complex_polygon$(OBJ_EXT)
 visibility_complex_segment$(EXE_EXT): visibility_complex_segment$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)visibility_complex_segment visibility_complex_segment$(OBJ_EXT) $(LDFLAGS)
 
+run: shortest_path$(EXE_EXT) visibility_complex_polygon$(EXE_EXT) \
+     visibility_complex_segment$(EXE_EXT)
+	./shortest_path$(EXE_EXT); ./visibility_complex_polygon$(EXE_EXT); ./visibility_complex_segment$(EXE_EXT)
+
 clean: \
                    shortest_path.clean \
                    visibility_complex_polygon.clean \
