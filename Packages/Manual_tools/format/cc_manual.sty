@@ -211,7 +211,7 @@
         \par\bigskip
         \def\ccTagBottomBigSkipUsed{\ccTrue}%
     }
-    ~
+    \par\medskip
 }
 
 % abbreviations
@@ -395,6 +395,7 @@
 \newcommand{\ccHat       }{{\large $\;\,\hat{}\,\,$}}
 \newcommand{\ccTilde     }{{\lower.3ex \hbox{\large$\,\tilde{}\,$}}}
 \newcommand{\ccHash      }{{\rm \#}}
+\newcommand{\ccDollar    }{\$}
 
 % The sign for an empty parameter (i.e. of the type of the current class).
 \newcommand{\ccEmptyParameter}{$\diamondsuit$}
@@ -406,6 +407,7 @@
               \catcode`\^=12
               \catcode`\#=12
               \catcode`\%=12 
+              \catcode`\$=12 
 }
 
 % +--------------------------------------------------------------------------
@@ -1547,10 +1549,12 @@
                    \else\ifx\&#1\ccAmpersand
                    \else\if^#1\ccHat
                    \else\ifx\^#1\ccHat
+                   \else\if$#1\ccDollar
+                   \else\ifx\$#1\ccDollar
                    \else\if###1\ccHash
                    \else\ifx\##1\ccHash
                    \else #1%
-                   \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi}
+                   \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi}
 
 % Print a single C++ token (without spaces inbetween). Skip leading spaces.
 % The token has to be delimited by ";".
