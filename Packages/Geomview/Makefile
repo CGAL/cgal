@@ -4,7 +4,7 @@
 
 Package:=$(shell basename `cat CVS/Repository`)
 TAG_VERSION:=v$(shell echo $(VERSION) | sed -e "s/\./_/g")
-CGAL_VERSION:="$(VERSION) ($(shell date '+%e %b %Y'))"
+CGAL_VERSION:='$(VERSION) ($(shell date '+%e %b %Y'))'
 WWW_CGAL=/net/servers/www-sop/prisme/CGAL/DR:/Members
 WWW_dir=$(WWW_CGAL)/$(Package)
 TMP_file=/tmp/submit-mail
