@@ -1,3 +1,6 @@
+4.9 (2 July 2002)
++ Added fill color support for window
+
 4.8.1 (11 April 2002)
 + Corrected typo in Traits name in Edge_const_iterator
 
