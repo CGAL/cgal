@@ -1,3 +1,6 @@
+2.43    (22 Feb 2002)
+- fixed last parameter name in ConstructCentroid_[23]
+
 2.42    (9 Jan 2002)
 - update compare_y_at_x.
 
