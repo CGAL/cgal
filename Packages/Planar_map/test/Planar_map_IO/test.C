@@ -400,7 +400,7 @@ X_curve read_polyline_curve(std::ifstream& file, bool reverse_order)
   #error No curve read function defined
 #endif
 
-  void compare_files(std::ifstream& file1, std::fstream& file2)
+  void compare_files(std::ifstream& file1, std::ifstream& file2)
   {
     const int STR_LEN = 80;
     
@@ -427,7 +427,7 @@ X_curve read_polyline_curve(std::ifstream& file, bool reverse_order)
   {
       NT    x,y; 
       X_curve curr_curve;
-      std::fstream  pm_file("pm.txt", std::ios::in | std::ios::out);
+      std::ofstream  pm_file("pm.txt", /*std::ios::in |*/ std::ios::out);
     
       pm_file.clear();
       
@@ -457,6 +457,7 @@ X_curve read_polyline_curve(std::ifstream& file, bool reverse_order)
       
       //input_file >> pm;
       pm.read(input_file);
+      std::cout<<pm;
       pm_file << pm;
       
       // debugging!
@@ -466,7 +467,8 @@ X_curve read_polyline_curve(std::ifstream& file, bool reverse_order)
       //arr_file.open("temp", _IO_INPUT);
       //arr_file.flush();
       
-      compare_files(input_file, pm_file);
+      std::ifstream  pm_input_file("pm.txt", std::ios::in);
+      compare_files(input_file, pm_input_file);
       
       // 2. read test vertices
       int num_test_points, exp_type;
