@@ -49,7 +49,13 @@
 namespace CGAL {
   Qt_widget_standard_toolbar::
   Qt_widget_standard_toolbar(Qt_widget *w, QMainWindow *mw,
-			     ToolBarDock dock,
+#if QT_VERSION < 300
+			     // for Qt 2.3 and before
+			     QMainWindow::ToolBarDock dock,
+#else
+			     // from Qt 3.0
+			     Dock dock,
+#endif
 			     bool newLine,
 			     const char* name) :
     QToolBar("Qt_widget standard toolbar", mw)

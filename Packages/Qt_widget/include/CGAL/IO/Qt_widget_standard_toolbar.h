@@ -38,10 +38,11 @@ public:
 			     QMainWindow *mw,
 #if QT_VERSION < 300
 			     // for Qt 2.3 and before
-			     QMainWindow::ToolBarDock = QMainWindow::Top,
+			     QMainWindow::ToolBarDock dock =
+			     QMainWindow::Top,
 #else
 			     // from Qt 3.0
-			     Dock = DockTop,
+			     Dock dock = DockTop,
 #endif
 			     bool newLine = true,
 			     const char* name = 0);
