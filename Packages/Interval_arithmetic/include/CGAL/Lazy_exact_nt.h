@@ -27,7 +27,7 @@
 #include <CGAL/number_utils.h>
 #include <CGAL/number_utils_classes.h>
 #include <CGAL/Interval_arithmetic.h>
-#include <CGAL/Handle_for.h>
+#include <CGAL/Handle.h>
 
 /*
  * This file contains the definition of the number type Lazy_exact_nt<ET>,
@@ -44,7 +44,7 @@
  * From this class derives one class per operation, with one constructor.
  *
  * The DAG is managed by :
- * - Handle_for<RefCounted, Allocator> and RefCounted.
+ * - Handle and Rep.
  * - virtual functions to denote the various operators (instead of an enum).
  *
  * Other packages with vaguely similar design : APU, MetaCGAL, LOOK.
@@ -52,10 +52,6 @@
 
 /*
  * TODO (vaguely by decreasing priority):
- * - Handle_for<> currently doesn't work correctly with class hierarchies.
- *   The de-allocator won't work if it's not the standard one.
- *   Either it is fixed by Stefan, or I must use the usual Handle, or something
- *   else.
  * - Interval rafinement functionnality ?
  * - The next step will be to replace Cartesian<Lazy_exact_nt<ET> > by a kernel
  *   similar to LOOK in functionality : Lazy_exact_Cartesian<FT,ET>.
@@ -63,8 +59,7 @@
  *   [ done via Filtered_exact<Lazy_exact<X>, X>  :-) ]
  * - Geometric constructions could use the interval_advanced.
  *   [ will be done via the filtered Kernel ]
- * - Separate the handle and the representation in 2 files (?)
- * - Add an Allocator template argument ?
+ * - Separate the handle and the representation(s) in 2 files (?)
  * - Add a CT template parameter like Filtered_exact_nt<> ?
  * - Add a string constant to provide an expression string (a la MetaCGAL) ?
  *   // virtual ostream operator<<() const = 0; // or string, like Core ?
@@ -86,7 +81,7 @@ template <typename ET> class Lazy_exact_nt;
 
 // Abstract base representation class
 template <typename ET>
-struct Lazy_exact_rep : public Ref_counted
+struct Lazy_exact_rep : public Rep
 {
   Interval_base in; // could be const, except for rafinement ? or mutable ?
   ET *et;
@@ -208,27 +203,22 @@ struct Lazy_exact_Max : public Lazy_exact_binary<ET>
 
 // The real number type, handle class
 template <typename ET>
-struct Lazy_exact_nt : public Handle_for<Lazy_exact_rep<ET> >  // Buggy :
-  // Handle_for<> can't handle virtual hierarchies at the moment.
+struct Lazy_exact_nt : public Handle
 {
-  typedef Handle_for<Lazy_exact_rep<ET> > PTR;
   typedef Lazy_exact_nt<ET> Self;
   typedef Lazy_exact_rep<ET> Self_rep;
 
   Lazy_exact_nt () {}  // Note : this allocates 1 element
 
   Lazy_exact_nt (Self_rep *r)
-    : PTR(r) {}
-
-  Lazy_exact_nt (const Self & s)
-    : PTR(s) {}
+  { PTR = r; }
 
   // Operations
   Lazy_exact_nt (const double d)
-    : PTR (new Lazy_exact_Cst<ET>(d)) {}
+  { PTR = new Lazy_exact_Cst<ET>(d); }
 
   Lazy_exact_nt (const int i)
-    : PTR (new Lazy_exact_Cst<ET>(double(i))) {}
+  { PTR = new Lazy_exact_Cst<ET>(double(i)); }
 
   Self operator+ (const Self & a) const
   { return new Lazy_exact_Add<ET>(*this, a); }
@@ -243,13 +233,13 @@ struct Lazy_exact_nt : public Handle_for<Lazy_exact_rep<ET> >  // Buggy :
   { return new Lazy_exact_Div<ET>(*this, a); }
 
   Interval_nt<> approx() const  // throw() ?  Can help the compiler...
-  { return ptr->approx(); }
+  { return ptr()->approx(); }
 
   Interval_nt_advanced approx_adv() const
-  { return ptr->approx(); }
+  { return ptr()->approx(); }
 
   ET exact() const
-  { return ptr->exact(); }
+  { return ptr()->exact(); }
 
   // The other comparison operators are currently provided by STL.
   bool operator< (const Self & a) const
@@ -264,6 +254,8 @@ struct Lazy_exact_nt : public Handle_for<Lazy_exact_rep<ET> >  // Buggy :
       return exact() < a.exact();
     }
   }
+private:
+  Self_rep * ptr() const { return (Self_rep*) PTR; }
 };
 
 // Note:  GCC 2.95 completely and silently ignores the catch block
