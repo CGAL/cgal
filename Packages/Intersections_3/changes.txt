@@ -1,6 +1,10 @@
 -----
+* 2.3 *
++ Removed guards around include directives
+
+-----
 * 2.2.5 *
-+ cgal_test now wroies diff of output and expected output
++ cgal_test now writes diff of output and expected output
 
 -----
 * 2.2.4 *
