@@ -44,3 +44,10 @@ cells in conflict (those which would be destroyed by the insertion
 of a point) prior to deciding to do the actual insertion or not.
 
 --------------------------------------------------------------
+
+------- example_linking_2d_and_3d ----------------------------
+
+Illustrates how to setup a 2D and a 3D triangulation data structure
+whose vertices respectively store vertex handles of the other one.
+
+--------------------------------------------------------------

@@ -375,9 +375,17 @@ public:
 \end{ccExampleCode}
 
 
-\section{Example of incremental construction}
+\section{Examples}
 \label{TDS3-sec-examples}
+
+\subsection{Incremental construction}
 The following example shows how to construct a 3D triangulation data
 structure by inserting vertices.
 
 \ccIncludeExampleCode{Triangulation_3/example_tds.C}
+
+\subsection{Cross-linking between a 2D and a 3D data structures}
+This example program illustrates how to setup a 2D and a 3D triangulation data
+structures whose vertices respectively store vertex handles of the other one.
+
+\ccIncludeExampleCode{Triangulation_3/example_linking_2d_and_3d.C}
