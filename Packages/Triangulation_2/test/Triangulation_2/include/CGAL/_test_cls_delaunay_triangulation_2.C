@@ -95,10 +95,10 @@ _test_cls_delaunay_triangulation_2( const Del & )
   std:: cout << "    get conflicts and star_hole" << std::endl;
   std::list<Face_handle> conflicts;
   std::list<Edge>  hole_bd;
-  std::back_insert_iterator<list<Face_handle> > c_inserter(conflicts);
-  std::back_insert_iterator<list<Edge> > be_inserter(hole_bd);
-  std::pair<std::back_insert_iterator<list<Face_handle> >,
-            std::back_insert_iterator<list<Edge> > > 
+  std::back_insert_iterator<std::list<Face_handle> > c_inserter(conflicts);
+  std::back_insert_iterator<std::list<Edge> > be_inserter(hole_bd);
+  std::pair<std::back_insert_iterator<std::list<Face_handle> >,
+            std::back_insert_iterator<std::list<Edge> > > 
     pit(c_inserter,be_inserter);
   c_inserter = T2.get_conflicts(Point(1,1,2), std::back_inserter(conflicts));
   conflicts.clear();
