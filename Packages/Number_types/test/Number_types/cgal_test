@@ -73,6 +73,7 @@ if [ $# -ne 0 ] ; then
 else
   compile_and_run Gmpq
   compile_and_run MP_Float
+  compile_and_run NT_checker
   compile_and_run _test_valid_finite_double
   compile_and_run _test_valid_finite_float
   compile_and_run doubletst

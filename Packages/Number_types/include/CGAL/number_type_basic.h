@@ -121,6 +121,41 @@ bool is_valid(const Quotient<NT>&);
 template <class NT>
 bool is_finite(const Quotient<NT>&);
 
+// Number_type_checker
+
+template < typename NT1, typename NT2, typename Cmp >
+class Number_type_checker;
+
+template < typename NT1, typename NT2, typename Cmp >
+double
+to_double(const Number_type_checker<NT1, NT2, Cmp> &);
+
+template < typename NT1, typename NT2, typename Cmp >
+std::pair<double, double>
+to_interval(const Number_type_checker<NT1, NT2, Cmp> &);
+
+template < typename NT1, typename NT2, typename Cmp >
+Number_type_checker<NT1, NT2, Cmp>
+sqrt(const Number_type_checker<NT1, NT2, Cmp> &);
+
+template < typename NT1, typename NT2, typename Cmp >
+bool
+is_finite(const Number_type_checker<NT1, NT2, Cmp> &);
+
+template < typename NT1, typename NT2, typename Cmp >
+bool
+is_valid(const Number_type_checker<NT1, NT2, Cmp> &);
+
+template < typename NT1, typename NT2, typename Cmp >
+Sign
+sign(const Number_type_checker<NT1, NT2, Cmp> &);
+
+template < typename NT1, typename NT2, typename Cmp >
+Comparison_result
+compare(const Number_type_checker<NT1, NT2, Cmp> &,
+        const Number_type_checker<NT1, NT2, Cmp> &);
+
+
 // Lazy_exact_nt
 
 template <typename> class Lazy_exact_nt;

@@ -104,18 +104,24 @@ exact computation.  These include the \ccc{Quotient} class that can
 be used to create, for example, a number type that behaves like a rational
 number.  When used in conjunction with the number type \ccc{MP_Float} that
 is able to represent multi-precision floating point values, you achieve
-an exact rational number representation.  The templated number type
-\ccc{Lazy_exact_nt<NT>} is able to represent any number that \ccc{NT} is able
-to represent, but because it first tries to use an approximate value to
-perform computations it can be faster than the provided number type \ccc{NT}.
-\cgal\ also provides a fixed-precision number type,
+an exact rational number representation.
+
+The templated number type \ccc{Lazy_exact_nt<NT>} is able to represent any
+number that \ccc{NT} is able to represent, but because it first tries to use an
+approximate value to perform computations it can be faster than the provided
+number type \ccc{NT}.  \cgal\ also provides a fixed-precision number type,
+
 \ccc{Fixed_precision_nt} that provides 24-bit numbers in fixed point
 representation.  This number type provides some specialized predicates
 that are exact and efficient for numbers known to be representable using
 24 bits.
+
 Two number types for doing interval arithmetic, \ccc{Interval_nt} and
 \ccc{Interval_nt_advanced}, are also provided.  These number types
 help in doing filtering of predicates.
+
+A debugging helper \ccc{Number_type_checker<NT1,NT2,Comparator>} is also provided
+which allows to compare the behavior of operations over two number types.
 
 \section{Number Type Provided by {\sc Core}}
 \label{CORE}
@@ -123,7 +129,7 @@ help in doing filtering of predicates.
 \cgal\ defines the functions needed to use the number type \ccc{CORE::Expr}
 provided by {\sc Core}~\cite{klpy-clp-99}.  To use {\sc Core} with \cgal, just
 install \cgal\ with {\sc Core} support, and include the file
-\ccc{CGAL/CORE_Expr.h}.  {\sc Core} version 1.5 or later is required.
+\ccc{CGAL/CORE_Expr.h}.  {\sc Core} version 1.7 or later is required.
 
 \ccc{CORE::Expr}s are a subset of real algebraic numbers.  Any integer is a
 \ccc{CORE::Expr} and \ccc{CORE::Expr}s are closed under the operations

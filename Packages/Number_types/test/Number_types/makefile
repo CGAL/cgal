@@ -41,6 +41,7 @@ LDFLAGS = \
 all:            \
                 Gmpq$(EXE_EXT) \
                 MP_Float$(EXE_EXT) \
+                NT_checker$(EXE_EXT) \
                 _test_valid_finite_double$(EXE_EXT) \
                 _test_valid_finite_float$(EXE_EXT) \
                 doubletst$(EXE_EXT) \
@@ -55,6 +56,9 @@ Gmpq$(EXE_EXT): Gmpq$(OBJ_EXT)
 
 MP_Float$(EXE_EXT): MP_Float$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)MP_Float MP_Float$(OBJ_EXT) $(LDFLAGS)
+
+NT_checker$(EXE_EXT): NT_checker$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)NT_checker NT_checker$(OBJ_EXT) $(LDFLAGS)
 
 _test_valid_finite_double$(EXE_EXT): _test_valid_finite_double$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)_test_valid_finite_double _test_valid_finite_double$(OBJ_EXT) $(LDFLAGS)
@@ -83,6 +87,7 @@ utilities$(EXE_EXT): utilities$(OBJ_EXT)
 clean: \
                    Gmpq.clean \
                    MP_Float.clean \
+                   NT_checker.clean \
                    _test_valid_finite_double.clean \
                    _test_valid_finite_float.clean \
                    doubletst.clean \
