@@ -27,16 +27,9 @@
 #if ! (CGAL_RECTANGULAR_P_CENTER_2_TRAITS_H)
 #define CGAL_RECTANGULAR_P_CENTER_2_TRAITS_H 1
 
-#ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
-#endif // CGAL_OPTIMISATION_ASSERTIONS_H
-#ifndef CGAL_ISO_RECTANGLE_2_H
 #include <CGAL/Iso_rectangle_2.h>
-#endif // CGAL_ISO_RECTANGLE_2_H
-#ifndef CGAL_PROTECT_VECTOR_H
 #include <vector.h>
-#define CGAL_PROTECT_VECTOR_H
-#endif // CGAL_PROTECT_VECTOR_H
 
 #if !defined(CGAL_CFG_NO_ITERATOR_TRAITS) && \
   !defined(CGAL_CFG_MATCHING_BUG_2)

@@ -27,9 +27,7 @@
 #if ! (CGAL_DYNAMIC_MATRIX_H)
 #define CGAL_DYNAMIC_MATRIX_H 1
 
-#ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
-#endif // CGAL_OPTIMISATION_ASSERTIONS_H
 
 template < class Matrix >
 class CGAL_Dynamic_matrix

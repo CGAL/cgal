@@ -27,9 +27,7 @@
 #if ! (CGAL_EXTREMAL_POLYGON_TRAITS_2_H)
 #define CGAL_EXTREMAL_POLYGON_TRAITS_2_H 1
 
-#ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
-#endif // CGAL_OPTIMISATION_ASSERTIONS_H
 #ifndef CGAL_SQUARED_DISTANCE_2_H
 #include <CGAL/squared_distance_2.h>
 #endif // CGAL_SQUARED_DISTANCE_2_H
@@ -190,9 +188,7 @@ public:
 
 };
 
-#ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
-#endif // CGAL_OPTIMISATION_ASSERTIONS_H
 #ifndef CGAL_PROTECT_MATH_H
 #include <math.h>
 #define CGAL_PROTECT_MATH_H

@@ -27,9 +27,7 @@
 #if ! (CGAL_ALL_FURTHEST_NEIGHBORS_TRAITS_2_H)
 #define CGAL_ALL_FURTHEST_NEIGHBORS_TRAITS_2_H 1
 
-#ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
-#endif // CGAL_OPTIMISATION_ASSERTIONS_H
 //!!! this should go into function_objects.h
 #ifndef CGAL_PROTECT_FUNCTION_H
 #include <function.h>
