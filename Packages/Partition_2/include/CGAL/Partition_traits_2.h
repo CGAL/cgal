@@ -107,13 +107,6 @@ class Partition_traits_2  : public Partition_traits_2_base<R_>
     Is_y_monotone_2
     is_y_monotone_2_object(const Self& traits) const
     {  return Is_y_monotone_2(traits); }
-
-    // necessary for convexity postcondition checking
-    bool 
-    lexicographically_xy_smaller(const Point_2& p, const Point_2& q) const
-    {
-       return Less_xy_2()(p,q);
-    }
 };
 
 }
