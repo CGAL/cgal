@@ -19,6 +19,9 @@ based on the {\sc Gnu} Multiple Precision Arithmetic Library.
 
 \ccInclude{CGAL/Gmpz.h}
 
+\ccIsModel
+\ccRefConceptPage{EuclideanRingNumberType}
+
 \ccCreation
 \ccCreationVariable{q}
 
@@ -26,7 +29,7 @@ based on the {\sc Gnu} Multiple Precision Arithmetic Library.
              {creates an uninitialized multiple precision integer \ccVar.}
 
 \ccHidden \ccConstructor{Gmpz(const Gmpz& q);}
- 	    {copy constructor.}
+            {copy constructor.}
 
 \ccConstructor{Gmpz(int i)}
             {creates an multiple precision integer initialized with
@@ -38,28 +41,17 @@ based on the {\sc Gnu} Multiple Precision Arithmetic Library.
 
 \ccOperations
 
-The arithmetic operations $+,\ -,\ *,\ /,\ +=,\ -=,\ *=,\ /=,\ -$(unary),
-the comparison operations $<,\ <=,\ >,\  >=,\ ==,\ !=$ and the stream 
-operations are all available.
+The arithmetic operations 
+$+,\ -,\ *,\ /,\ %,\ +=,\ -=,\ *=,\ %=\ /=,\ -$(unary), \ccc{div}, 
+\ccc{gcd}, the comparison operations $<,\ <=,\ >,\ >=,\ ==,\ !=$ and
+the stream operations are all available.
 
-\ccSetThreeColumns{io_Operator }{}{\hspace*{8cm}}
-
-The following functions are added to fulfill the {\cgal} requirements
-on number types.
-
-\ccFunction{double to_double(const Gmpz& g);}
-       {returns some double approximation to \ccStyle{g}.}
-
-\ccFunction{bool  is_valid(const Gmpz& g);}
-       {returns true}
-
-\ccFunction{bool  is_finite(const Gmpz& g);}
-       {returns true}
-
-\ccFunction{io_Operator  io_tag(const Gmpz& g);}
-       {}
+Of course, also all the other operations required by the number type
+concept, like \ccc{to_double}, \ccc{is_finite}, etc., are defined for
+\ccClassName.
 
 \ccImplementation
 \ccc{Gmpz}s are reference counted.
+
 \end{ccClass} 
 
