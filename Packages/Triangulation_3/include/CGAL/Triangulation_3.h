@@ -104,6 +104,14 @@ public:
   typedef typename GT::Triangle_3 Triangle;
   typedef typename GT::Tetrahedron_3 Tetrahedron;
 
+  typedef typename GT::Compare_x_3 Compare_x_3;
+  typedef typename GT::Compare_y_3 Compare_y_3;
+  typedef typename GT::Compare_z_3 Compare_z_3;
+  typedef typename GT::Equal_3 Equal_3;
+  typedef typename GT::Collinear_3 Collinear_3;
+  typedef typename GT::Orientation_3 Orientation_3;
+  typedef typename GT::Coplanar_orientation_3 Coplanar_orientation_3;
+
   typedef Triangulation_cell_handle_3<GT,Tds> Cell_handle;
   typedef Triangulation_vertex_handle_3<GT,Tds> Vertex_handle;
 
@@ -133,6 +141,14 @@ protected:
   GT  _gt;
   Vertex_handle infinite; //infinite vertex
   
+  Compare_x_3 compare_x;
+  Compare_y_3 compare_y;
+  Compare_z_3 compare_z;
+  Equal_3 equal;
+  Collinear_3 collinear;
+  Orientation_3 orientation;
+  Coplanar_orientation_3 coplanar_orientation;
+
   void init_tds()
     {
       infinite = (Vertex*) 
@@ -153,6 +169,17 @@ protected:
       // ( forces the compiler to instanciate handle2pointer )
     }
   
+  void init_function_objects() 
+    {
+      compare_x = geom_traits().compare_x_3_object();
+      compare_y = geom_traits().compare_y_3_object();
+      compare_z = geom_traits().compare_z_3_object();
+      equal = geom_traits().equal_3_object();
+      collinear = geom_traits().collinear_3_object();
+      orientation = geom_traits().orientation_3_object();
+      coplanar_orientation = geom_traits().coplanar_orientation_3_object();
+    }
+
   // debug
   Triangulation_3(const Point & p0,
 		  const Point & p1, 
@@ -161,6 +188,7 @@ protected:
     : _tds(), _gt()
     {
       init_tds();
+      init_function_objects();
       insert_increase_dimension(p0);
       insert_increase_dimension(p1);
       insert_increase_dimension(p2);
@@ -176,12 +204,14 @@ public:
     : _tds(), _gt()
     {
       init_tds();
+      init_function_objects();
     }
 
   Triangulation_3(const GT & gt) 
     : _tds(), _gt(gt)
     {
       init_tds();
+      init_function_objects();
     }
 
   // copy constructor duplicates vertices and cells
@@ -189,6 +219,7 @@ public:
     : _gt(tr._gt)
     {
       infinite = (Vertex *) _tds.copy_tds(tr._tds, &(*(tr.infinite)) );
+      init_function_objects();
     }
 
   // DESTRUCTOR
@@ -613,17 +644,6 @@ private:
   // traversal is done counterclockwise as seen from v
 
  protected:
-
-  Comparison_result compare_x(const Point& p, const Point& q) const;
-  Comparison_result compare_y(const Point& p, const Point& q) const;  
-  Comparison_result compare_z(const Point& p, const Point& q) const;
-  Orientation orientation(const Point& p, const Point& q, const Point& r, const Point& s) const;
-  Orientation orientation_in_plane(const Point& p, 
-				   const Point& q, 
-				   const Point& r,
-				   const Point& s) const;
-  bool collinear(const Point& p, const Point& q, const Point& r) const;
-  bool equal(const Point& p, const Point& q) const;
 
 public:
 
@@ -1883,17 +1903,17 @@ locate(const Point & p,
 	const Point & p0 = c->vertex( i )->point();
 	const Point & p1 = c->vertex( ccw(i) )->point();
 	const Point & p2 = c->vertex( cw(i) )->point();
-	o[0] = orientation_in_plane(p0,p1,p2,p);
+	o[0] = coplanar_orientation(p0,p1,p2,p);
 	if ( o[0] == NEGATIVE ) {
 	  c = c->neighbor( cw(i) );
 	  continue;
 	}
-	o[1] = orientation_in_plane(p1,p2,p0,p);
+	o[1] = coplanar_orientation(p1,p2,p0,p);
 	if ( o[1] == NEGATIVE ) {
 	  c = c->neighbor( i );
 	  continue;
 	}
-	o[2] = orientation_in_plane(p2,p0,p1,p);
+	o[2] = coplanar_orientation(p2,p0,p1,p);
 	if ( o[2] == NEGATIVE ) {
 	  c = c->neighbor( ccw(i) );
 	  continue;
@@ -2316,11 +2336,11 @@ side_of_triangle(const Point & p,
     ( orientation(p,p0,p1,p2) == COPLANAR );
 
   // edge p0 p1 :
-  Orientation o0 = orientation_in_plane(p0,p1,p2,p);
+  Orientation o0 = coplanar_orientation(p0,p1,p2,p);
   // edge p1 p2 :
-  Orientation o1 = orientation_in_plane(p1,p2,p0,p);
+  Orientation o1 = coplanar_orientation(p1,p2,p0,p);
   // edge p2 p0 :
-  Orientation o2 = orientation_in_plane(p2,p0,p1,p);
+  Orientation o2 = coplanar_orientation(p2,p0,p1,p);
 
   if ( (o0 == NEGATIVE) ||
        (o1 == NEGATIVE) ||
@@ -2454,7 +2474,7 @@ side_of_facet(const Point & p,
   Cell_handle n = c->neighbor(inf);
   // n must be a finite cell
   Orientation o =
-    orientation_in_plane
+    coplanar_orientation
     ( v1->point(), 
       v2->point(), 
       n->vertex(n->index(c))->point(),
@@ -3585,85 +3605,6 @@ is_valid(Cell_handle c, bool verbose, int level) const
 } //end is_valid(cell)
 
 
-
-template <class Gt, class Tds >
-inline
-Comparison_result
-Triangulation_3<Gt, Tds>::
-compare_x(const Point& p, const Point& q) const
-{
-  return geom_traits().compare_x_3_object()(p,q);
-}
-
-
-template <class Gt, class Tds >
-inline
-Comparison_result
-Triangulation_3<Gt, Tds>::
-compare_y(const Point& p, const Point& q) const
-{
-  return geom_traits().compare_y_3_object()(p,q);
-}
-
-
-template <class Gt, class Tds >
-inline
-Comparison_result
-Triangulation_3<Gt, Tds>::
-compare_z(const Point& p, const Point& q) const
-{
-  return geom_traits().compare_z_3_object()(p,q);
-}
-
-
-template <class Gt, class Tds >
-inline
-Orientation
-Triangulation_3<Gt, Tds>::
-orientation(const Point& p, const Point& q, const Point& r, const Point& s) const
-{
-  return geom_traits().orientation_3_object()(p,q,r,s);
-}
-
-
-template <class Gt, class Tds >
-inline
-Orientation
-Triangulation_3<Gt, Tds>::
-orientation_in_plane(const Point& q, const Point& r, const Point& s, const Point& p ) const
-{
-  // We better generate the vector once the dimension changes
-  Vector v = geom_traits().cross_product_object()(r-q, s-q);
-
-  return geom_traits().coplanar_orientation_3_object()(q, r, p, v);
-  //  return geom_traits().orientation_in_plane(q, r, s, p);
-
-}
-
-
-
-
-template <class Gt, class Tds >
-inline
-bool
-Triangulation_3<Gt, Tds>::
-collinear(const Point& p, const Point& q, const Point& r) const
-{
-  return geom_traits().collinear_3_object()(p,q,r);
-}
-
-
-template <class Gt, class Tds >
-inline
-bool
-Triangulation_3<Gt, Tds>::
-equal(const Point& p, const Point& q) const
-{
-  return geom_traits().equal_3_object()(p,q);
-}
-
-
-
 template < class GT, class Tds >
 bool
 Triangulation_3<GT,Tds>::
@@ -3693,7 +3634,7 @@ is_valid_finite(Cell_handle c, bool verbose, int) const
 	if ( ( ! is_infinite
 	       ( c->neighbor(i)->vertex(c->neighbor(i)->index(c)) ) )
 	     && 
-	     orientation_in_plane
+	     coplanar_orientation
 	     ( c->vertex(cw(i))->point(),
 	       c->vertex(ccw(i))->point(),
 	       c->vertex(i)->point(),

@@ -51,6 +51,11 @@ public:
   typedef typename Gt::Triangle_3 Triangle;
   typedef typename Gt::Tetrahedron_3 Tetrahedron;
 
+  // Function objects
+  typedef typename Gt::Side_of_oriented_sphere_3 Side_of_oriented_sphere;
+  typedef typename Gt::Coplanar_side_of_oriented_circle_3 Coplanar_side_of_oriented_circle;
+  typedef typename Gt::Cross_product Cross_product;
+
   typedef typename Triangulation_3<Gt,Tds>::Cell_handle Cell_handle;
   typedef typename Triangulation_3<Gt,Tds>::Vertex_handle Vertex_handle;
 
@@ -67,23 +72,48 @@ public:
 
   typedef typename Triangulation_3<Gt,Tds>::Locate_type Locate_type;
 
+protected:
+  Side_of_oriented_sphere side_of_oriented_sphere;
+  Coplanar_side_of_oriented_circle coplanar_side_of_oriented_circle;
+  Cross_product cross_product;
+
+public:
+
   Delaunay_triangulation_3()
-    : Triangulation_3<Gt,Tds>() {}
+    : Triangulation_3<Gt,Tds>() {
+    init_function_objects();
+  }
   
   Delaunay_triangulation_3(const Gt & gt)
-    : Triangulation_3<Gt,Tds>(gt) {}
+    : Triangulation_3<Gt,Tds>(gt) {
+    init_function_objects();
+  }
   
   Delaunay_triangulation_3(const Point & p0,
 			   const Point & p1,
 			   const Point & p2,
 			   const Point & p3)
-    : Triangulation_3<Gt,Tds>(p0,p1,p2,p3){} // debug
+    : Triangulation_3<Gt,Tds>(p0,p1,p2,p3){
+  init_function_objects();
+  } // debug
 
   // copy constructor duplicates vertices and cells
   Delaunay_triangulation_3(const Delaunay_triangulation_3<Gt,Tds> & tr)
     : Triangulation_3<Gt,Tds>(tr)
-    { CGAL_triangulation_postcondition( is_valid() );  }
+    { 
+      init_function_objects();
+      CGAL_triangulation_postcondition( is_valid() );  
+    }
   
+
+  void init_function_objects() 
+    {
+      side_of_oriented_sphere = geom_traits().side_of_oriented_sphere_3_object();
+      coplanar_side_of_oriented_circle = geom_traits().coplanar_side_of_oriented_circle_3_object();
+      cross_product = geom_traits().cross_product_object();
+    }
+
+
   template < class InputIterator >
   int
   insert(InputIterator first, InputIterator last)
@@ -140,26 +170,18 @@ private:
   //  void make_hole_3D(Vertex_handle v,
   //		    std::list<Facet> & hole) const;		 
 
+  Oriented_side  
+  side_of_oriented_circle(const Point & p,
+			  const Point & q,
+			  const Point & r,
+			  const Point & test) const;
+
   Bounded_side
   side_of_sphere( Vertex_handle v0, 
 		  Vertex_handle v1, 
 		  Vertex_handle v2, 
 		  Vertex_handle v3, 
 		  const Point & p) const;
-
-  Oriented_side 
-  side_of_oriented_sphere(const Point & p,
-			  const Point & q,
-			  const Point & r,
-			  const Point & s,
-			  const Point & test) const;
-
-
-  Oriented_side 
-  side_of_oriented_circle(const Point & p,
-			  const Point & q,
-			  const Point & r,
-			  const Point & test) const;
 
 
 public:
@@ -966,15 +988,15 @@ violates( Vertex_handle u,
 	k = (i+2)%3;
 	if ( 
 	    ( (o[0] == COPLANAR) && (p[0] != pf[j]) && (p[0] != pf[k]) &&
-	      ( orientation_in_plane(pf[j],pf[k],pf[i],p[0])
+	      ( coplanar_orientation(pf[j],pf[k],pf[i],p[0])
 		== NEGATIVE ) ) 
 	    ||
 	    ( (o[1] == COPLANAR) && (p[1] != pf[j]) && (p[1] != pf[k]) &&
-	      ( orientation_in_plane(pf[j],pf[k],pf[i],p[1])
+	      ( coplanar_orientation(pf[j],pf[k],pf[i],p[1])
 		== NEGATIVE ) ) 
 	    ||
 	    ( (o[2] == COPLANAR) && (p[2] != pf[j]) && (p[2] != pf[k]) &&
-	      ( orientation_in_plane(pf[j],pf[k],pf[i],p[2])
+	      ( coplanar_orientation(pf[j],pf[k],pf[i],p[2])
 		== NEGATIVE ) ) 
 	    )
 	  return true;
@@ -992,13 +1014,13 @@ violates( Vertex_handle u,
 	    k = (l+2)%3;
 	    if ( p[i] == pf[l] ) {
 	      if ( (pu != pf[j]) && (pu != pf[k]) &&
-		   ( orientation_in_plane(pf[j],pf[k],pf[l],pu)
+		   ( coplanar_orientation(pf[j],pf[k],pf[l],pu)
 		     == NEGATIVE ) )
 		return true;
 	      else
 		continue;
 	    }
-	    if ( ( orientation_in_plane(pf[j],pf[k],pu,p[i])
+	    if ( ( coplanar_orientation(pf[j],pf[k],pu,p[i])
 		   != POSITIVE ) )
 	      return true;
 	  }
@@ -1040,23 +1062,6 @@ find_conflicts_2(std::set<void*, std::less<void*> > & conflicts,
 }// find_conflicts_2
 
 
-
-
-template < class Gt, class Tds >
-Oriented_side 
-Delaunay_triangulation_3<Gt,Tds>::
-side_of_oriented_sphere(const Point & p,
-			  const Point & q,
-			  const Point & r,
-			  const Point & s,
-			  const Point & test) const
-{
-  return geom_traits().side_of_oriented_sphere_3_object()(p, q, r, s, test);
-}
-
-
-
-
 template < class Gt, class Tds >
 Oriented_side 
 Delaunay_triangulation_3<Gt,Tds>::
@@ -1065,16 +1070,11 @@ side_of_oriented_circle(const Point & p,
 			  const Point & r,
 			  const Point & test) const
 {
-  Vector v = geom_traits().cross_product_object()(q-p, r-p);
 
-  return geom_traits().coplanar_side_of_oriented_circle_3_object()(p, q, r, test, v);
+  Vector v = cross_product(q-p, r-p);
 
-  //  return geom_traits().side_of_oriented_circle(p, q, r, test);
+  return coplanar_side_of_oriented_circle(p, q, r, test, v);
 }
-
-
-
-
 
 
 
@@ -1235,10 +1235,10 @@ side_of_circle(Cell_handle c, int i, const Point & p) const
     // to v1v2
     Cell_handle n = c->neighbor(i3);
     Orientation o =
-      orientation_in_plane( v1->point(), 
-					  v2->point(), 
-					  n->vertex(n->index(c))->point(),
-					  p );
+      coplanar_orientation( v1->point(), 
+			    v2->point(), 
+			    n->vertex(n->index(c))->point(),
+			    p );
     if ( o != ZERO ) return Bounded_side( -o );
     // because p is in f iff
     // is does not lie on the same side of v1v2 as vn
@@ -1316,10 +1316,10 @@ side_of_circle(Cell_handle c, int i, const Point & p) const
     v1 = c->vertex( next_around_edge(i3,i) ),
     v2 = c->vertex( next_around_edge(i,i3) );
   Orientation o =
-    orientation_in_plane( v1->point(),
-					v2->point(),
-					c->vertex(i)->point(),
-					p );
+    coplanar_orientation( v1->point(),
+			  v2->point(),
+			  c->vertex(i)->point(),
+			  p );
   // then the code is duplicated from 2d case
   if ( o != ZERO ) return Bounded_side( -o );
   // because p is in f iff 
