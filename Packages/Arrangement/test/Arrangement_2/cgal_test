@@ -45,13 +45,15 @@ compile_and_run()
     echo "   ERROR: compilation of $1 failed" >> $ERRORFILE
   fi
    
-  # running io test
-  if compile $1_io $2 $3 ; then
-    echo "   compilation of $1_io succeeded" >> $ERRORFILE  
-    run_io $1_io $2 $3
-  else
-    echo "   ERROR: compilation of $1_io failed" >> $ERRORFILE
-  fi 
+  # running io test (not for segment_circle_traits).
+  if [ $3 -ne $CGAL_SEGMENT_CIRCLE_TRAITS ]; then
+    if compile $1_io $2 $3 ; then
+	echo "   compilation of $1_io succeeded" >> $ERRORFILE  
+	run_io $1_io $2 $3
+    else
+	echo "   ERROR: compilation of $1_io failed" >> $ERRORFILE
+    fi 
+  fi
 
   eval "2>&1 make CGAL_MAKEFILE=$CGAL_MAKEFILE clean > /dev/null "
 
@@ -69,6 +71,8 @@ run()
     datafiles="DATA/segments/*"
   elif [ $3 -eq $CGAL_POLYLINE_TRAITS -o $3 -eq $CGAL_POLYLINE_LEDA_TRAITS ]; then
        datafiles="DATA/polylines/*"
+  elif [ $3 -eq $CGAL_SEGMENT_CIRCLE_TRAITS ]; then
+       datafiles="DATA/segment_circles/*"
   fi
 
   for DATAFILE in ${datafiles}
@@ -129,6 +133,9 @@ run_io()
     SUFFIO="leda_io"
     # Avoid running test_io with leda_polyline_traits 
     return
+  elif [ $3 -eq $CGAL_SEGMENT_CIRCLE_TRAITS ]; then
+    # Avoid running test_io with segment_circle_traits 
+    return
   fi
 
   for DATAFILE in ${datafiles}
@@ -188,6 +195,7 @@ else
   CGAL_SEGMENT_LEDA_TRAITS=2
   CGAL_POLYLINE_TRAITS=11
   CGAL_POLYLINE_LEDA_TRAITS=12
+  CGAL_SEGMENT_CIRCLE_TRAITS=21
 
   TRAP=1  # Trapezoidal decomposition
   NAIVE=2
@@ -213,8 +221,12 @@ else
   # Uncomment when leda polyline traits is fully debugged
   # run test with leda polyline traits
   #  (compile_and_run test $TRAP  $CGAL_POLYLINE_LEDA_TRAITS)
-     (compile_and_run test $NAIVE $CGAL_POLYLINE_LEDA_TRAITS)
-     (compile_and_run test $WALK  $CGAL_POLYLINE_LEDA_TRAITS)
+    (compile_and_run test $NAIVE $CGAL_POLYLINE_LEDA_TRAITS)
+    (compile_and_run test $WALK  $CGAL_POLYLINE_LEDA_TRAITS)
+
+  # run test with segment circle traits
+    (compile_and_run test $WALK  $CGAL_SEGMENT_CIRCLE_TRAITS)
+
 fi
 
 

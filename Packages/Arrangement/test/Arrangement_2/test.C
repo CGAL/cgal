@@ -17,7 +17,6 @@
 #define Td_traits Tdt
 #endif
 
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_2_bases.h>
 #include <CGAL/Arr_2_default_dcel.h>
@@ -27,20 +26,23 @@
 #define CGAL_SEGMENT_LEDA_TRAITS   2
 #define CGAL_POLYLINE_TRAITS      11
 #define CGAL_POLYLINE_LEDA_TRAITS 12
+#define CGAL_SEGMENT_CIRCLE_TRAITS 21
 
 // Picking a default Traits class (this, with the 
 // PL flag enables the running of the test independently of cgal_make.)
 #ifndef CGAL_ARR_TEST_TRAITS
   //#define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_TRAITS
   //#define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_LEDA_TRAITS
-  #define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_TRAITS
+  //#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_TRAITS
   //#define CGAL_ARR_TEST_TRAITS CGAL_POLYLINE_LEDA_TRAITS
+  #define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_CIRCLE_TRAITS
 #endif
 
 // Making sure test doesn't fail if LEDA is not installed
 #if ! defined(CGAL_USE_LEDA) && \
       (CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS || \
-       CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS)
+       CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS || \
+       CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS)
 
 int main(int argc, char* argv[])
 {
@@ -66,6 +68,9 @@ int main(int argc, char* argv[])
 //#error Currently not supported (July 2000)
   #include <CGAL/leda_rational.h>
   #include <CGAL/Arr_leda_polyline_traits.h>
+#elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS
+  #include <CGAL/leda_real.h>
+  #include <CGAL/Arr_segment_circle_traits.h>
 #else
   #error No traits defined for test
 #endif
@@ -73,8 +78,8 @@ int main(int argc, char* argv[])
 // Picking a default  point location strategy
 // See comment above.
 #ifndef CGAL_ARR_TEST_POINT_LOCATION
-  #define CGAL_ARR_TEST_POINT_LOCATION 1 // Trapezoidal Decomposition
-  //#define CGAL_ARR_TEST_POINT_LOCATION 2 // Naive
+  //#define CGAL_ARR_TEST_POINT_LOCATION 1 // Trapezoidal Decomposition
+  #define CGAL_ARR_TEST_POINT_LOCATION 2 // Naive
   //#define CGAL_ARR_TEST_POINT_LOCATION 3 // Walk
   //#define CGAL_ARR_TEST_POINT_LOCATION 4 // Simple 
 #endif
@@ -119,6 +124,12 @@ int main(int argc, char* argv[])
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
   typedef leda_rational                        NT;
   typedef CGAL::Arr_leda_polyline_traits<>     Traits;
+
+#elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS
+  typedef leda_real                            NT;
+  typedef CGAL::Arr_segment_circle_traits<NT>  Traits;
+  typedef Traits::Segment                      Segment;
+  typedef Traits::Circle                       Circle;
 
 #endif
 
@@ -179,28 +190,28 @@ private:
       Arr_2::Overlap_circulator oe;
       unsigned count, counted_overlaps = 0;
       
-      std::cout << "halfedge: overlapping edges" << std::endl;
+      //std::cout << "halfedge: overlapping edges" << std::endl;
       for (hit=arr.halfedges_begin(); hit!=arr.halfedges_end(); ++hit, ++hit) 
 	{
-	  std::cout << (*hit).vertex()->point();
-	  std::cout << (*hit).opposite()->vertex()->point() << ": " << std::endl;
+	  //std::cout << (*hit).vertex()->point();
+	  //std::cout << (*hit).opposite()->vertex()->point() << ": " << std::endl;
 	  oe=hit->overlap_edges();
 	  // we count how many edges refer to this halfedge
 	  // there is always at least one.
 	  // if there is more than one, there is an overlap
 	  count = 0;
 	  do {
-	    std::cout << "     ";
-	    std::cout << (*oe).halfedge()->vertex()->point();
-	    std::cout << (*oe).halfedge()->opposite()->vertex()->point() << std::endl;;
+	    //std::cout << "     ";
+	    //std::cout << (*oe).halfedge()->vertex()->point();
+	    //std::cout << (*oe).halfedge()->opposite()->vertex()->point() << std::endl;;
 	    count ++;
 	  } while (++oe != hit->overlap_edges());
 	  // we substract 1 from edges refering to this halfedge, see above
 	  counted_overlaps = counted_overlaps + (count - 1);
-	  std::cout << std::endl;
+	  //std::cout << std::endl;
 	}
       
-      return counted_overlaps;
+      return counted_overlaps; 
     }
  
   void print_vertices(Arr_2 & arr)
@@ -314,7 +325,7 @@ private:
 
   NT get_next_num(std::ifstream& file)
     {
-      CGAL::Quotient<int> num;
+      CGAL::Quotient<int> num = 0;
       NT            result(INT_MAX);
       std::string   s;
       char          c = 0;
@@ -332,8 +343,13 @@ private:
 	  else
 	    {
 	      file.putback(c);
+#if CGAL_ARR_TEST_TRAITS != CGAL_SEGMENT_CIRCLE_TRAITS
 	      file >> num;
               result = NT(num.numerator(), num.denominator());
+#else
+	      num = num;
+	      file >> result;
+#endif
 	    }
 	}
 
@@ -350,6 +366,8 @@ private:
       // The to_long precondition is that number is indeed long
       // is supplied here since input numbers are small.
       return get_next_num(file).numerator().to_long();
+#elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS
+      return (int) CGAL::to_double(get_next_num(file));
 #else
       return get_next_num(file).numerator();
 #endif
@@ -413,6 +431,87 @@ Curve read_polyline_curve(std::ifstream& file, bool reverse_order)
     return polyline;
 }
 
+#elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS
+
+Curve read_seg_circ_curve(std::ifstream& file, bool reverse_order)
+{
+  Curve cv;
+  
+  // Get the arc type.
+  char type;
+
+  // Currently expects no comments in input file
+  // Should be changed?
+  file >> type;
+  
+  // A full circle (c) or a circular arc (a):
+  if (type == 'c' || type == 'C' || type == 'a' || type == 'A')
+  {  
+    // Read the circle, using the format "x0 y0 r^2"
+    NT     x0, y0, r2;
+    
+    file >> x0 >> y0 >> r2;
+//     x0 = get_next_num(file);
+//     y0 = get_next_num(file);
+//     r2 = get_next_num(file);
+    
+    Circle circle (Point (x0, y0), r2);
+
+    if (type == 'c' || type == 'C')
+    {
+      // Create a full circle.
+      cv = Curve(circle);  
+    }
+    else
+    {
+      // Read the end points of the circular arc.
+      NT    x1, y1, x2, y2;
+
+      file >> x1 >> y1 >> x2 >> y2;
+//       x1 = get_next_num(file);
+//       y1 = get_next_num(file);
+//       x2 = get_next_num(file);
+//       y2 = get_next_num(file);
+
+      if ((x1 - x0)*(x1 - x0) + (y1 - y0)*(y1 - y0) != r2)
+	y1 = CGAL::sqrt(r2 - (x1 - x0)*(x1 - x0)) + y0;
+
+      if ((x2 - x0)*(x2 - x0) + (y2 - y0)*(y2 - y0) != r2)
+	y2 = CGAL::sqrt(r2 - (x2 - x0)*(x2 - x0)) + y0;
+
+      Point source (x1, y1);
+      Point target (x2, y2);
+
+      // Create the circular arc.
+      cv = Curve (circle, source, target);
+    }
+  }
+  else if (type == 's' || type == 'S')
+  {
+    // Read the end points of the segment.
+    NT    x1, y1, x2, y2;
+
+    file >> x1 >> y1 >> x2 >> y2;
+//     x1 = get_next_num(file);
+//     y1 = get_next_num(file);
+//     x2 = get_next_num(file);
+//     y2 = get_next_num(file);
+    
+    Point source (x1, y1);
+    Point target (x2, y2);
+   
+    cv = Curve (Segment (source, target));
+  }
+  else
+  {
+    // Illegal type!
+    std::cout << "Failed to read curve." << std::endl;
+  }
+
+  std::cout << "The read curve: " << cv << std::endl;
+  return cv;
+}
+
 #else
   #error No curve read function defined
 #endif
@@ -438,6 +537,15 @@ Curve read_polyline_curve(std::ifstream& file, bool reverse_order)
       CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
 
         curr_curve = read_polyline_curve(file, reverse_order);
+
+#elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_CIRCLE_TRAITS
+
+        curr_curve = read_seg_circ_curve(file, reverse_order);
+
+#else
+
+#error No reading function defined for traits.
+
 #endif
 
 	arr.insert(curr_curve);
