@@ -24,14 +24,14 @@ template <class Triangulation>
 void
 _test_line_face_circulator( const Triangulation & )
 {
- typedef Triangulation                      Cls;
- typedef typename Cls::Geom_traits          Gt;
- typedef typename Cls::Point                Point;
+ typedef Triangulation                      Tri;
+ typedef typename Tri::Geom_traits          Gt;
+ typedef typename Tri::Point                Point;
 
- typedef typename Cls::Vertex_handle        Vertex_handle;
- typedef typename Cls::Face_handle          Face_handle;
- typedef typename Cls::Line_face_circulator Line_face_circulator;
- typedef typename Cls::Locate_type          Locate_type;
+ typedef typename Tri::Vertex_handle        Vertex_handle;
+ typedef typename Tri::Face_handle          Face_handle;
+ typedef typename Tri::Line_face_circulator Line_face_circulator;
+ typedef typename Tri::Locate_type          Locate_type;
 
  // square - vertices of the triangulation
  Point p0(0,0,1);
@@ -84,7 +84,7 @@ _test_line_face_circulator( const Triangulation & )
  std::vector<Point> m;
  m.push_back(m1); m.push_back(m2); m.push_back(m3); m.push_back(m4);
 
- Cls tr;
+ Tri tr;
  typename std::vector<Point>::iterator pit;
  typename std::vector<Point>::iterator qit;
  typename std::vector<Point>::iterator mit;
@@ -126,29 +126,29 @@ _test_line_face_circulator( const Triangulation & )
 //locate vertices
  for(pit=p.begin() ; pit != p.end(); pit++) {
    tr.locate(*pit,lt,i);
-   assert(lt == Cls::VERTEX);
+   assert(lt == Tri::VERTEX);
  }
 
 // locate middle points
  for(mit=m.begin() ; mit != m.end(); mit++) {
    tr.locate(*mit, lt,i);
-   assert(lt == Cls::EDGE);
+   assert(lt == Tri::EDGE);
  }
 
  // locate outside
  for(qit=q.begin() ; qit != q.end(); qit++) {
    tr.locate(*qit, lt,i);
-   assert(lt == Cls::OUTSIDE_CONVEX_HULL);
+   assert(lt == Tri::OUTSIDE_CONVEX_HULL);
  }
 
  //locate middle of squares
  tit = t.begin();
  tr.locate(*tit, lt,i);
- assert(lt == Cls::EDGE);
+ assert(lt == Tri::EDGE);
  ++tit;
  for(; tit != t.end(); tit++) {
    tr.locate(*tit, lt,i);
-   assert(lt == Cls::OUTSIDE_CONVEX_HULL);
+   assert(lt == Tri::OUTSIDE_CONVEX_HULL);
  }
  
  // test creator from two point
