@@ -342,11 +342,11 @@ public:
       // not return true when overlap occurs, but it is needed
       // since it is not a defined behaviour (in specs).
       //// if (!traits->curves_overlap(cv, next->curve())) ----
-      
+      bool b1,b2;
       if (next != prev) 
       {
         if ((pmwx_traits->curve_is_between_cw(cv, prev->curve(), next->curve(),
-                                              vh->point())))
+                                              vh->point(), b1, b2)))
         {
           prev_halfedge = prev;
           is_overlap = false;

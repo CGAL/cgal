@@ -37,6 +37,7 @@
 #include <CGAL/Pm_walk_along_line_point_location.h>
 #include <CGAL/Pm_naive_point_location.h>
 #include <CGAL/Pm_triangle_point_location.h>
+#include <CGAL/Pm_landmarks_point_location.h>
 #include <CGAL/Pm_point_location_base.h>
 #endif // CGAL_NO_PM_DEFAULT_POINT_LOCATION
 
@@ -1185,9 +1186,10 @@ insert_from_vertex
       infinite_loop = prev;
   ++after;
 
+  bool b1,b2;
   if (after != prev) {
     while (!(traits->curve_is_between_cw(cv,prev->curve(),
-                                         after->curve(),v1->point()))) {
+                                         after->curve(),v1->point(),b1,b2))) {
       prev = after;
       ++after;
       if (prev == infinite_loop)  // infinite loop indication
@@ -1236,9 +1238,10 @@ insert_from_vertex
       infinite_loop = prev;
   ++after;
 
+  bool b1,b2;
   if (after != prev) {
     while (!(traits->curve_is_between_cw(cv,prev->curve(),
-                                         after->curve(),v1->point()))) {
+                                         after->curve(),v1->point(),b1,b2))) {
       prev = after;
       ++after;
       if (prev == infinite_loop)  // infinite loop indication
@@ -1398,9 +1401,10 @@ insert_at_vertices
     infinite_loop = prev1;
   ++after;
 
+  bool b1,b2;
   if (after != prev1) {
     while (!(traits->curve_is_between_cw(cv, prev1->curve(),
-                                         after->curve(), v1->point())))
+                                         after->curve(), v1->point(),b1,b2)))
     {
       prev1 = after;
       ++after;
@@ -1422,7 +1426,7 @@ insert_at_vertices
 
   if (after != prev2) {
     while (!(traits->curve_is_between_cw(cv, prev2->curve(),
-                                         after->curve(),v2->point())))
+                                         after->curve(),v2->point(),b1,b2)))
     {
       prev2 = after;
       ++after;

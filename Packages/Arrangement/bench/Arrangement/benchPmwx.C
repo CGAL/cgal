@@ -163,6 +163,8 @@ enum MaxFilesNumber {
 #include <CGAL/Pm_naive_point_location.h>
 #include <CGAL/Pm_dummy_point_location.h>
 #include <CGAL/Pm_simple_point_location.h>
+#include <CGAL/Pm_nearest_neighbor.h>
+#include <CGAL/Pm_landmarks_point_location.h>
 
 #if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
     BENCH_TRAITS != POLYLINE_TRAITS && BENCH_TRAITS != POLYLINE_CACHED_TRAITS
@@ -318,6 +320,8 @@ typedef Planar_map::Halfedge_iterator                   Pm_Halfedge_iterator;
 typedef CGAL::Pm_trapezoid_ric_point_location<Pm>       Trap_point_location;
 typedef CGAL::Pm_naive_point_location<Pm>               Naive_point_location;
 typedef CGAL::Pm_walk_along_line_point_location<Pm>     Walk_point_location;
+typedef CGAL::Pm_nearest_neighbor<Pm>               Nearest_neighbor;
+typedef CGAL::Pm_landmarks_point_location<Pm,Nearest_neighbor>  Landmarks_point_location;
 typedef CGAL::Pm_dummy_point_location<Pm>               Dummy_point_location;
 #if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
     BENCH_TRAITS != POLYLINE_TRAITS && BENCH_TRAITS != POLYLINE_CACHED_TRAITS
@@ -447,10 +451,10 @@ public:
     Curve_list::const_iterator i;
     //iterator on all the curves got from the input, 
     //insert each one - incrementally - to the pm.
-    for (i = m_curve_list.begin(); i != m_curve_list.end(); i++) 
-    {
-      pm.insert(*i);
-    }
+	for (i = m_curve_list.begin(); i != m_curve_list.end(); i++) 
+	{
+		pm.insert(*i);
+	}
     
     if (m_verbose) {      //print to cout
       if (!pm.is_valid()) std::cerr << "map invalid!" << std::endl;
@@ -475,6 +479,9 @@ typedef CGAL::Bench<Naive_inc_pm>               Naive_inc_pm_bench;
 
 typedef Increment_pm<Walk_point_location>       Walk_inc_pm;
 typedef CGAL::Bench<Walk_inc_pm>                Walk_inc_pm_bench;
+
+typedef Increment_pm<Landmarks_point_location>       Landmarks_inc_pm;
+typedef CGAL::Bench<Landmarks_inc_pm>                Landmarks_inc_pm_bench;
 
 #if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
     BENCH_TRAITS != POLYLINE_TRAITS && BENCH_TRAITS != POLYLINE_CACHED_TRAITS
@@ -501,6 +508,11 @@ public:
     pm.insert_old(m_curve_list.begin(), m_curve_list.end());
 #else
     pm.insert(m_curve_list.begin(), m_curve_list.end());
+	
+	//one fictive locate - to create the landmarks tree
+	Point_2 test_point(0,0); 
+	Locate_type		lt;
+	pm.locate(test_point, lt);    
 #endif
     if (m_verbose) {
       if (!pm.is_valid()) std::cerr << "map invalid!" << std::endl;
@@ -537,6 +549,9 @@ typedef CGAL::Bench<Trap_agg_pm>                Trap_agg_pm_bench;
 
 typedef Aggregate_pm<Walk_point_location>       Walk_agg_pm;
 typedef CGAL::Bench<Walk_agg_pm>                Walk_agg_pm_bench;
+
+typedef Aggregate_pm<Landmarks_point_location>       Landmarks_agg_pm;
+typedef CGAL::Bench<Landmarks_agg_pm>                Landmarks_agg_pm_bench;
 
 
 /*! */
@@ -678,6 +693,9 @@ typedef CGAL::Bench<Naive_dis_pm>               Naive_dis_pm_bench;
 typedef Display_pm<Walk_point_location>         Walk_dis_pm;
 typedef CGAL::Bench<Walk_dis_pm>                Walk_dis_pm_bench;
 
+typedef Display_pm<Landmarks_point_location>         Landmarks_dis_pm;
+typedef CGAL::Bench<Landmarks_dis_pm>                Landmarks_dis_pm_bench;
+
 typedef Display_pm<Dummy_point_location>        Dummy_dis_pm;
 typedef CGAL::Bench<Dummy_dis_pm>               Dummy_dis_pm_bench;
 
@@ -739,22 +757,42 @@ public:
     
     //iterator on all the points got from the input, 
     //go over each one and locate it in the pm .
-    for (i = m_point_list.begin(); i != m_point_list.end(); i++) 
-    {
-      e = m_pm.locate(*i,lt);
-      if (m_verbose) {
-	std::cout << "locate point"<< (*i) <<" at " ;
-	//print output
-	if (lt==Planar_map::UNBOUNDED_FACE) std::cout << "Unbounded face" << std::endl;
-	else if (lt==Planar_map::FACE) std::cout << "Face that is left of " 
-	 << e->source()->point()  <<" towards "<< e->target()->point() << std::endl;
-	else if (lt==Planar_map::EDGE) std::cout << "Edge :" 
-	 << e->source()->point()  <<" towards "<< e->target()->point() << std::endl;
-	else if (lt==Planar_map::VERTEX) std::cout << "vertex: "
-				  << e->target()->point() << std::endl;
-	else std::cout << "Unknown locate type" << std::endl;
-      }
-    }
+	for (i = m_point_list.begin(); i != m_point_list.end(); i++) 
+	{
+		e = m_pm.locate(*i,lt);
+		//if (m_verbose) {
+		//	std::cout << "locate point"<< (*i) <<" at " ;
+		//	//print output
+		//	if (lt==Planar_map::UNBOUNDED_FACE) std::cout << "Unbounded face" << std::endl;
+		//	else if (lt==Planar_map::FACE) std::cout << "Face that is left of " 
+		//		<< e->source()->point()  <<" towards "<< e->target()->point() << std::endl;
+		//	else if (lt==Planar_map::EDGE) std::cout << "Edge :" 
+		//		<< e->source()->point()  <<" towards "<< e->target()->point() << std::endl;
+		//	else if (lt==Planar_map::VERTEX) std::cout << "vertex: "
+		//		<< e->target()->point() << std::endl;
+		//	else std::cout << "Unknown locate type" << std::endl;
+		//}
+
+		////if we need to check it
+		//outfile <<  "-------- point number "<< point_index <<" is " << *i << std::endl;
+		//if (lt==Pm::UNBOUNDED_FACE) outfile << "Unbounded face" << std::endl;
+		//else if (lt==Pm::FACE) outfile << "Face that is left of :  ";
+		//else if (lt==Pm::EDGE) outfile << "EDGE : " ;
+		//else if (lt==Pm::VERTEX) outfile << "VERTEX : " ;
+		//else outfile << "Unknown locate type" << std::endl;
+		//if (lt == Pm::FACE) {
+		//	Face_handle f= e->face();
+		//	Ccb_halfedge_circulator  circ = f->outer_ccb () ;
+		//	Ccb_halfedge_circulator  circ_end = circ;
+		//	int num_edges_around_f = 0;
+		//	do {
+		//		num_edges_around_f ++;
+		//		circ++;
+		//	} while (circ != circ_end) ;
+		//	outfile << "num_edges_around_f = "<< num_edges_around_f << std::endl;
+		//}
+
+	}
   }
 
   /*! */
@@ -764,6 +802,7 @@ public:
       std::cout << "init Locate_Pm " << std::endl;
       std::cout << "file[0] = "<< m_filename[0] 
 		<< "file[1] = " << m_filename[1]  << std::endl;
+		std::cout << "m_format = "<<m_format <<std::endl;
     }
 
 //     //read the planar map a file written as a planar map (increment insert)
@@ -797,6 +836,11 @@ public:
 
     //insert (aggreagte) the curves into the planar_map (must be pmwx !)
     m_pm.insert(m_curve_list.begin(), m_curve_list.end());
+
+	//one fictive locate - to create the tree
+	Point_2 test_point(0,0); 
+	Locate_type		lt;
+	m_pm.locate(test_point, lt);
     
     //read points from file into list
     Point_reader<Traits> p_reader;
@@ -846,6 +890,9 @@ typedef CGAL::Bench<Naive_loc_pm>          Naive_loc_pm_bench;
 
 typedef Locate_Pm<Walk_point_location>     Walk_loc_pm;
 typedef CGAL::Bench<Walk_loc_pm>           Walk_loc_pm_bench;
+
+typedef Locate_Pm<Landmarks_point_location>     Landmarks_loc_pm;
+typedef CGAL::Bench<Landmarks_loc_pm>           Landmarks_loc_pm_bench;
 
 #if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
     BENCH_TRAITS != POLYLINE_TRAITS && BENCH_TRAITS != POLYLINE_CACHED_TRAITS
@@ -1008,6 +1055,24 @@ int main(int argc, char * argv[])
                                                samples, iterations,
                                                verbose, postscript);
     }
+
+    // Landmarks point location:
+    strategy_id = CGAL::Bench_parse_args::STRATEGY_LANDMARKS;
+    if (strategy_mask & (0x1 << strategy_id)) {
+      std::string name =
+        std::string(parse_args.get_type_name(type_id)) + " " +
+        std::string(parse_args.get_strategy_name(strategy_id)) + " " +
+        PLANAR_MAP_TYPE + " " + TRAITS_TYPE + " " + KERNEL_TYPE + " " +
+        NUMBER_TYPE + " " + INSERT_TYPE + 
+	" (" + std::string(filename[0]) + ")";
+      Landmarks_inc_pm_bench benchInst(name, seconds, false);
+      Landmarks_inc_pm & benchable = benchInst.get_benchable();
+      run_bench<Landmarks_inc_pm_bench,Landmarks_inc_pm>(benchInst, benchable,
+                                               fullname[0], format,
+                                               samples, iterations,
+                                               verbose, postscript);
+    }
+
      
 #if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
     BENCH_TRAITS != POLYLINE_TRAITS && BENCH_TRAITS != POLYLINE_CACHED_TRAITS
@@ -1127,6 +1192,23 @@ int main(int argc, char * argv[])
                                                verbose, postscript);
     }
 
+	    // Lenamrks point location:
+    strategy_id = CGAL::Bench_parse_args::STRATEGY_LANDMARKS;
+    if (strategy_mask & (0x1 << strategy_id)) {
+      std::string name =
+        std::string(parse_args.get_type_name(type_id)) + " " +
+        std::string(parse_args.get_strategy_name(strategy_id)) + " " +
+        PLANAR_MAP_TYPE + " " + TRAITS_TYPE + " " + KERNEL_TYPE + " " +
+        NUMBER_TYPE + " " + INSERT_TYPE + 
+	" (" + std::string(filename[0]) + ")";
+      Landmarks_agg_pm_bench benchInst(name, seconds, false);
+      Landmarks_agg_pm & benchable = benchInst.get_benchable();
+      run_bench< Landmarks_agg_pm_bench, Landmarks_agg_pm>(benchInst, benchable,
+                                               fullname[0], format,
+                                               samples, iterations,
+                                               verbose, postscript);
+    }
+
 #if BENCH_TRAITS != CONIC_TRAITS && BENCH_TRAITS != CORE_CONIC_TRAITS && \
     BENCH_TRAITS != POLYLINE_TRAITS && BENCH_TRAITS != POLYLINE_CACHED_TRAITS
     // Triangle point location:
@@ -1219,6 +1301,23 @@ int main(int argc, char * argv[])
       Walk_dis_pm_bench benchInst(name, seconds, false);
       Walk_dis_pm & benchable = benchInst.get_benchable();
       run_bench<Walk_dis_pm_bench,Walk_dis_pm>(benchInst, benchable,
+                                                   fullname[0], format,
+                                                   samples, iterations,
+                                                   verbose, postscript);
+    }
+
+    // Landmarks point location:
+    strategy_id = CGAL::Bench_parse_args::STRATEGY_LANDMARKS;
+    if (strategy_mask & (0x1 << strategy_id)) {
+      std::string name =
+          std::string(parse_args.get_type_name(type_id)) + " " +
+          std::string(parse_args.get_strategy_name(strategy_id)) + " " +
+          PLANAR_MAP_TYPE + " " + TRAITS_TYPE + " " + KERNEL_TYPE + " " + 
+	  NUMBER_TYPE + " " + INSERT_TYPE + 
+	" (" + std::string(filename[0]) + ")";
+      Landmarks_dis_pm_bench benchInst(name, seconds, false);
+      Landmarks_dis_pm & benchable = benchInst.get_benchable();
+      run_bench<Landmarks_dis_pm_bench,Landmarks_dis_pm>(benchInst, benchable,
                                                    fullname[0], format,
                                                    samples, iterations,
                                                    verbose, postscript);
@@ -1347,6 +1446,25 @@ int main(int argc, char * argv[])
       Walk_loc_pm_bench benchInst(name, seconds, false);
       Walk_loc_pm & benchable = benchInst.get_benchable();
       run_bench<Walk_loc_pm_bench,Walk_loc_pm>(benchInst, benchable,
+					       fullname[0], format,
+					       samples, iterations,
+					       verbose, postscript,
+					       fullname[1]);
+    }
+
+	 // Landmarks point location:
+    strategy_id = CGAL::Bench_parse_args::STRATEGY_LANDMARKS;
+    if (strategy_mask & (0x1 << strategy_id)) {
+      std::string name =
+	  std::string(parse_args.get_type_name(type_id)) + " " +
+	  std::string(parse_args.get_strategy_name(strategy_id)) + " " +
+	  PLANAR_MAP_TYPE + " " + TRAITS_TYPE + " " + KERNEL_TYPE + " " + 
+          NUMBER_TYPE + " " + INSERT_TYPE + 
+          " (" + std::string(filename[0]) + ")" +
+	  " (" + std::string(filename[1]) + ")";
+      Landmarks_loc_pm_bench benchInst(name, seconds, false);
+      Landmarks_loc_pm & benchable = benchInst.get_benchable();
+      run_bench<Landmarks_loc_pm_bench,Landmarks_loc_pm>(benchInst, benchable,
 					       fullname[0], format,
 					       samples, iterations,
 					       verbose, postscript,
