@@ -1,5 +1,8 @@
 Changes done to the `Polytope_distance_d' package
 
+Version 1.0 on 28-Sep-2000
+- first full release
+
 Version 0.6 on 26-Sep-2000
 - unified traits class models for dD optimisation algorithms
 
