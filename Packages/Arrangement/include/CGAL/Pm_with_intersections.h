@@ -640,7 +640,8 @@ public:
         pmwx_traits->point_leftlow_most(xpnt1, xpnt2) :
         pmwx_traits->point_righttop_most(xpnt1, xpnt2);
                         
-      CGAL_assertion(!point_equal(pmwx_traits->curve_source(cv), insert_point));
+      CGAL_assertion(!point_equal(pmwx_traits->curve_source(cv),
+                                  insert_point));
 
       remaining_curve_trivial = point_equal(pmwx_traits->curve_target(cv),
                                             insert_point);
@@ -759,8 +760,9 @@ public:
       insert_point = (direction_right) ?
         pmwx_traits->point_leftlow_most(xpnt1, xpnt2) :
         pmwx_traits->point_righttop_most(xpnt1, xpnt2);
-                        
-      CGAL_assertion(!point_equal(pmwx_traits->curve_source(cv), insert_point));
+      
+      CGAL_assertion(!point_equal(pmwx_traits->curve_source(cv),
+                                  insert_point));
 
       remaining_curve_trivial = point_equal(pmwx_traits->curve_target(cv),
                                             insert_point);
@@ -1010,7 +1012,8 @@ public:
               if (!remaining_curve_trivial)
               {
                 pmwx_traits->directed_curve_split(cv,
-                                                  pmwx_traits->curve_source(cv),
+                                                  pmwx_traits->
+                                                  curve_source(cv),
                                                   he_split->target()->point(),
                                                   split1, split2);
                 cv = split2;
@@ -1049,7 +1052,8 @@ public:
               if (!remaining_curve_trivial)
               {
                 pmwx_traits->directed_curve_split(cv,
-                                                  pmwx_traits->curve_source(cv),
+                                                  pmwx_traits->
+                                                  curve_source(cv),
                                                   he_split->next_halfedge()->
                                                   twin()->target()->point(),
                                                   split1, split2);
