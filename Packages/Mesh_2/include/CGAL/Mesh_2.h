@@ -188,7 +188,7 @@ private:
 	  vb = t.e1,
 	  vc = t.e2;
 	Face_handle f;
-	return( _m.is_face(va,vb,vc,f) and _m.is_bad(f));
+	return( _m.is_face(va,vb,vc,f) && _m.is_bad(f));
       }
   };
 
@@ -209,7 +209,7 @@ private:
       {
 	Face_handle fh;
 	int i;
-	return _m.is_edge(ce.first, ce.second, fh,i) and
+	return _m.is_edge(ce.first, ce.second, fh,i) &&
 	  fh->is_constrained(i);
       }
   };
@@ -390,7 +390,7 @@ fill_edge_queue()
     {
       Vertex_handle va = (*ei).first->vertex(cw((*ei).second));
       Vertex_handle vb = (*ei).first->vertex(ccw((*ei).second));
-      if((*ei).first->is_constrained((*ei).second) and 
+      if((*ei).first->is_constrained((*ei).second) && 
 	 is_encroached(va, vb))
 	{
 	  c_edge_queue.push_back(make_pair(va, vb));
@@ -496,15 +496,15 @@ refine_face(Face_handle f)
       const Vertex_handle&
 	va = fh->vertex(cw(i)),
 	vb = fh->vertex(ccw(i));
-      if(fh->is_constrained(i) and is_encroached(va,vb,pc))
+      if(fh->is_constrained(i) && is_encroached(va,vb,pc))
 	{
 	  split_the_face = false;
 	  Cluster c,c2;
 	  bool 
 	    is_cluster_at_va = get_cluster(va,vb,c),
 	    is_cluster_at_vb = get_cluster(vb,va,c2);
-	  if( ( is_cluster_at_va and  is_cluster_at_vb) or 
-	      (!is_cluster_at_va and !is_cluster_at_vb) )
+	  if( ( is_cluster_at_va &&  is_cluster_at_vb) || 
+	      (!is_cluster_at_va && !is_cluster_at_vb) )
 	    {
 	      // two clusters or no cluster
 	      c_edge_queue.push_back(Constrained_edge(va,vb));
@@ -523,7 +523,7 @@ refine_face(Face_handle f)
 // encroaches [va,vb] and let rg be the length of the shortest edge
 // of T. If rmin >= rg, then split the edge.
 
-	      if( !c.reduced() or 
+	      if( !c.reduced() || 
 		  c.rmin >= shortest_edge_squared_length(f) )
 		{
 		  c_edge_queue.push_back(Constrained_edge(va,vb));
@@ -668,7 +668,7 @@ construct_cluster(Vertex_handle v,
       c.minimum_squared_length = 
 	std::min(l,c.minimum_squared_length);
       
-      if(all_edges_in_cluster or begin!=end)
+      if(all_edges_in_cluster || begin!=end)
 	{
 	  FT cosine = 
 	    squared_cosine_of_angle_times_4(begin->point(),
@@ -777,8 +777,8 @@ update_c_edge_queue(Vertex_handle va, Vertex_handle vb, Vertex_handle vm)
     for(int i = 0; i<3; i++) {
       Vertex_handle v1 = fc->vertex(cw(i));
       Vertex_handle v2 = fc->vertex(ccw(i));
-      if( fc->is_constrained(i) and !is_infinite(v1) and
-	  !is_infinite(v2) and is_encroached(v1, v2) )
+      if( fc->is_constrained(i) && !is_infinite(v1) &&
+	  !is_infinite(v2) && is_encroached(v1, v2) )
 	c_edge_queue.push_back(Constrained_edge(v1, v2));
     }
     ++fc;
@@ -836,7 +836,7 @@ update_cluster(Cluster& c, Vertex_handle va,Vertex_handle vb,
   if(!c.reduced())
     {
       typename Cluster::Vertices_map::iterator it = c.vertices.begin();
-      while(it!=c.vertices.end() and c.reduced(it->first))
+      while(it!=c.vertices.end() && c.reduced(it->first))
 	++it; // TODO: use std::find and an object class
       if(it==c.vertices.end())
 	c.is_reduced = true;
@@ -866,8 +866,8 @@ is_encroached(const Vertex_handle va, const Vertex_handle vb) const
   Finite_vertices_iterator vi = finite_vertices_begin();
   while(vi!=finite_vertices_end())
     {
-      if(is_encroached(va, vb, vi->point()) and
-	 va!=Vertex_handle(vi) and
+      if(is_encroached(va, vb, vi->point()) &&
+	 va!=Vertex_handle(vi) &&
 	 vb!=Vertex_handle(vi))
 	{
 	  return true;
@@ -971,7 +971,7 @@ void Mesh_2<Tr>::
 refine()
 {
   init();
-  while(! (c_edge_queue.empty() and Bad_faces.empty()) )
+  while(! (c_edge_queue.empty() && Bad_faces.empty()) )
     {
       conform();
       if ( !Bad_faces.empty() )
