@@ -50,9 +50,11 @@ read_curve( std::ifstream & is, Curve & cv )
   strLine >> x1 >> y1; 
   skip_comments( is, one_line );
   std::string stringvalues2(one_line);
-  std::istringstream strLine2(stringvalues, std::istringstream::in);
+  std::istringstream strLine2(stringvalues2, std::istringstream::in);
   strLine2 >> x2 >> y2;
   cv = Curve( Point( x1,y1 ), Point( x2, y2 ) );
+
+  std::cout << " -------------------- " << cv << std::endl;
 }
 //------------------------------------------------------------------------------
 /*
