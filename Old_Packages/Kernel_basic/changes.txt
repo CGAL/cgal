@@ -1,3 +1,6 @@
+3.24   (20 Feb 2001)
+- Fix result_type of p_Orientation<>.
+
 3.23   (19 Feb 2001)
 - Removed useless operator() in Coplanar_orientation, which caused a problem
   with VC++.

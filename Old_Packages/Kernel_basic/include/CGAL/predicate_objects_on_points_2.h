@@ -477,7 +477,7 @@ struct p_Rightturn
 template <class Point>
 struct p_Orientation
 {
-  typedef bool    result_type;
+  typedef Orientation    result_type;
 
   Orientation  
         operator()(const Point& p, const Point& q, const Point& r) const
