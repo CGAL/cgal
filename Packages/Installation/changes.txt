@@ -1,3 +1,6 @@
+08 November 2004 Andreas Fabri
+- Removed gcc.lib again
+
 13 October 2004 Andreas Fabri
 - install_cgal: When using mpfr for Gmpq::to_interval() with MS or Intel compiler on Windows 
   we have to link against libgcc.a (or gcc.lib) from mingw
