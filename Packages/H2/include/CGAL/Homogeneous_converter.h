@@ -28,11 +28,6 @@
 // and *Homogeneous<C,D>, provided you give an RT converter from A to C,
 // and an FT converter from B to D.
 
-// TODO :
-// - Probably we should use data accessors everywhere !
-// - Aff_transformation_[23] converters loose the internal type
-//   (translation...), so we loose a bit here.
-
 #include <CGAL/basic.h>
 #include <CGAL/NT_converter.h>
 
@@ -108,15 +103,6 @@ public:
     {
 	return k.construct_iso_rectangle_2_object()(operator()(a.min()),
 		                                    operator()(a.max()));
-    }
-
-    typename K2::Aff_transformation_2
-    operator()(const typename K1::Aff_transformation_2 &a) const
-    {
-	return k.construct_aff_transformation_2_object()(
-	rc(a.homogeneous(0,0)), rc(a.homogeneous(0,1)), rc(a.homogeneous(0,2)),
-	rc(a.homogeneous(1,0)), rc(a.homogeneous(1,1)), rc(a.homogeneous(1,2)),
-	rc(a.homogeneous(2,2)));
     }
 
 
@@ -199,19 +185,6 @@ public:
     {
 	return k.construct_iso_cuboid_3_object()(operator()(a.min()),
 		                                 operator()(a.max()));
-    }
-
-    typename K2::Aff_transformation_3
-    operator()(const typename K1::Aff_transformation_3 &a) const
-    {
-	return k.construct_aff_transformation_3_object()(
-		c(a.homogeneous(0,0)), c(a.homogeneous(0,1)),
-		c(a.homogeneous(0,2)), c(a.homogeneous(0,3)),
-		c(a.homogeneous(1,0)), c(a.homogeneous(1,1)),
-		c(a.homogeneous(1,2)), c(a.homogeneous(1,3)),
-		c(a.homogeneous(2,0)), c(a.homogeneous(2,1)),
-		c(a.homogeneous(2,2)), c(a.homogeneous(2,3)),
-		c(a.homogeneous(3,3)));
     }
 
 private:

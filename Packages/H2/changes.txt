@@ -1,3 +1,6 @@
+2.37   (25 July 2001)
+- Remove Aff_transformation_[23] from Homogeneous_converter.
+
 2.36   (?? July 2001)
 - renamed cmp_* to compare_* and *_dist_* to *_distance_* and
   leftturn, Leftturn, LEFTTURN to left_turn, Left_turn, LEFT_TURN and
