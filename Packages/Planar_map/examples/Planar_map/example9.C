@@ -13,17 +13,9 @@
 #include <CGAL/IO/write_pm.h>
 #include <iostream.h>
 
-//uncomment if you have LEDA installed.
-//#include <CGAL/IO/Pm_Window_stream.h>
-//#include <CGAL/IO/leda_window.h>
-
-//uncomment if you have LEDA installed.
-//#include <CGAL/IO/Pm_Postscript_file_stream.h>
-
-//using std::cout;
-//using std::cin;
-//using std::endl;
-//using CGAL::write_pm;
+#ifdef CGAL_USE_LEDA
+#include <CGAL/IO/Pm_Postscript_file_stream.h>
+#endif
 
 //typedef leda_rational                    NT;
 typedef CGAL::Quotient<int>                NT;
@@ -56,21 +48,15 @@ int main()
   std::cout << "* * * Printing all halfedges in a verbose format" << std::endl << std::endl;
   verbose_writer.write_halfedges(pm.halfedges_begin(), pm.halfedges_end());
    
-  //uncomment if you have LEDA installed. 
-  //printing to leda window.
-  //CGAL::Window_stream W(800, 800);
-  //W.init(-5, +5, -5);
-  //W.set_mode(leda_src_mode);
-  //W.set_node_width(3);
-  //W.display();
-  //W << pm;
-  
-  //uncomment if you have LEDA installed.
+
+#ifdef CGAL_USE_LEDA
   // printing to Postscript file.
-  //CGAL::Postscript_file_stream  LPF(500, 500 ,"pm.ps");
-  //LPF.init(-3,3,-3);
-  //LPF.set_line_width( 1);
-  //LPF << pm;
-  
+  CGAL::Postscript_file_stream  LPF(500, 500 ,"pm.ps");
+  LPF.init(-3,3,-3);
+  LPF.set_line_width( 1);
+  LPF << pm;
+#endif
+
   return 0;
 }
+
