@@ -8106,6 +8106,7 @@ void test_Triple()
   typedef CGAL::Triple<T1,T2,bool>      T3;
 
   T1 x1;
+  x1 = CGAL::make_triple(1, 1.5, true);
   T2 x2;
   T3 x3;
   T1 y1(2, 2.2, true);
@@ -8129,6 +8130,7 @@ void test_Quadruple()
   typedef CGAL::Quadruple<T1,T2,T3,bool>         T4;
 
   T1 x1;
+  x1 = CGAL::make_quadruple(1, 2.5f, 1.5, true);
   T2 x2;
   T3 x3;
   T4 x4;
