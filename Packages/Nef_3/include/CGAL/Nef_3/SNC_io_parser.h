@@ -660,7 +660,7 @@ public:
 
 public:
   SNC_io_parser(std::istream& is, SNC_structure& W);
-  SNC_io_parser(std::ostream& os, SNC_structure& W, bool sort);
+  SNC_io_parser(std::ostream& os, SNC_structure& W, bool sort=false);
 
   std::string index(Vertex_iterator v) const
   { return VI(v,verbose); } 
@@ -753,7 +753,7 @@ SNC_io_parser<EW>::SNC_io_parser(std::istream& is, SNC_structure& W) :
 
 template <typename EW>
 SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W, 
-                                                   bool sort = false) : 
+                                                   bool sort) : 
   Base(W), in(std::cin), out(os),
   FI(W.halffacets_begin(),W.halffacets_end(),'F'),
   CI(W.volumes_begin(),W.volumes_end(),'C'),
