@@ -1,3 +1,6 @@
+Version 4.128 on 10 January 2002
+- std::abort -> CGAL_CLIB_STD::abort().
+
 Version 4.127 on 9 January 2002
 - Resubmit.
 
