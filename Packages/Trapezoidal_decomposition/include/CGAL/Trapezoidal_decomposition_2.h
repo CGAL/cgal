@@ -209,6 +209,7 @@ public:
 #endif
       if (!traits->is_degenerate(*curr))
       {
+#ifndef NDEBUG
         Data_structure* tt=curr->get_node();
           
 #ifndef CGAL_TD_DEBUG
@@ -219,7 +220,7 @@ public:
           
         CGAL_assertion(tt);
         CGAL_assertion(!tt->is_inner_node());
-          
+#endif
 #endif
           
         // handle degeneracies
@@ -273,7 +274,7 @@ public:
       }
       else // pass along degenerate X_curve.
       {
-          
+#ifndef NDEBUG          
 #ifndef CGAL_TD_DEBUG
           
         Data_structure* tt=curr->get_node();
@@ -285,7 +286,7 @@ public:
         Data_structure* tt=curr->get_node();
         CGAL_assertion(tt);
         CGAL_assertion(tt->is_inner_node());
-          
+#endif
 #endif
           
         curr=curr->right_bottom_neighbour();
