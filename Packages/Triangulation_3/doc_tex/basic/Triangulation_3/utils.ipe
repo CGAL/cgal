@@ -1,0 +1,389 @@
+%!PS-Adobe-2.0 EPSF-1.2
+%%Creator: Ipe 5.0
+%%BoundingBox: 120 324 479 475
+%%EndComments
+{\catcode37=9\def\IPEdummy{({{)}} pop
+%%}\makeatletter\let\@notdefinable\relax
+%%\def\IPEc#1[#2]#3{\newcommand{#1}[#2]{#3}\ignorespaces}\@ifundefined
+%%{selectfont}{\let\selectfont\relax\def\fontsize#1#2{}}{}\makeatother
+%%\IPEc\IPEput[4]{\put(0,0){\special{psfile=\IPEfile}}}
+%%\IPEc\IPEmp[2]{\minipage[t]{#1bp}#2\special{color pop}\endminipage}
+%%\IPEc\IPEtext[1]{\makebox(0,0)[lb]{#1\special{color pop}}}
+%%\IPEc\IPEfs[1]{\IPEcolfs{0 0 0}{#1}}
+%%\IPEc\IPEcolfs[2]{\dimen0=#2pt\fontsize{#2}{1.2\dimen0}\selectfont
+%%\special{color push rgb #1}}
+%%\IPEc\IPEsize[2]{\unitlength1bp\ignorespaces}
+%%\IPEsize{356.118}{148.56}
+%%\begin{picture}(356.118,148.56)(121.941,325.72)
+%%\IPEput{120}{324}{479}{475}
+%%\put(188.124,356.92){\IPEtext{\IPEfs{10}\rm vertex $i$}}
+%%\put(152.024,428.92){\IPEtext{\IPEfs{10}\rm vertex $j$}}
+%%\put(254.909,379.12){\IPEtext{\IPEfs{10}\rm vertex \textit{next\_around\_edge(i,j)}}}
+%%\put(261.527,435.52){\IPEtext{\IPEfs{10}\rm facet \textit{next\_around\_edge(i,j)}}}
+%%\put(246.486,464.32){\IPEtext{\IPEfs{10}\rm cell \textit{next\_around\_edge(i,j)}}}
+%%\put(121.941,373.12){\IPEtext{\IPEfs{10}\rm current cell}}
+%%\put(175.489,325.72){\IPEtext{\IPEfs{10}\rm dimension 3}}
+%%\put(358.997,358.72){\IPEtext{\IPEfs{10}\rm vertex $i$}}
+%%\put(420.969,358.12){\IPEtext{\IPEfs{10}\rm vertex \textit{ccw(i)}}}
+%%\put(393.292,452.32){\IPEtext{\IPEfs{10}\rm vertex \textit{cw(i)}}}
+%%\put(395.699,325.72){\IPEtext{\IPEfs{10}\rm dimension 2}}
+%%\end{picture}\endinput}
+%% Ipe postscript prologue
+
+/IpeDict 60 dict def
+IpeDict begin
+/origmatrix matrix currentmatrix def
+
+/sg {setgray} bind def
+/sc {setrgbcolor} bind def
+/ss {0 setdash setlinewidth} bind def
+/sk {stroke} bind def
+/fi {fill} bind def
+/sfi {gsave fill grestore} bind def
+/mt {moveto} bind def
+/lt {lineto} bind def
+/np {newpath} bind def
+/cl {closepath} bind def
+/N {moveto} bind def
+/L {lineto} bind def
+/E {lineto} bind def
+/C {lineto closepath} bind def
+%%%%
+%% x y size dx dy -> ar -> x y [ draws arrowhead, computes new vertex ]
+/smallarrow {gsave exch atan 4 2 roll translate rotate dup scale
+newpath 0 0 moveto -1 0.3 lineto -1 -0.3 lineto closepath fill
+-1 0 moveto currentpoint transform grestore itransform} bind def
+/ar {gsave exch atan 4 2 roll translate rotate dup scale
+newpath 0 0 moveto -1 0.3 lineto -1 -0.3 lineto closepath
+gsave origmatrix setmatrix [] 0 setdash stroke grestore fill
+0 0 moveto currentpoint transform grestore itransform} bind def
+%%%%
+/af {ar moveto} bind def
+/at {ar lineto} bind def
+%% x y size dx dy -> arw -> [ draws arrowhead ]
+/arw {ar pop pop} bind def
+%%%%
+/ci {0 360 arc} bind def
+/el {gsave concat 0 exch 0 exch 0 360 newpath arc origmatrix
+setmatrix} bind def
+/gs {gsave} bind def
+/gr {grestore} bind def
+/gsts {gsave translate scale } bind def
+%%
+/marker {gsave translate 0 setlinewidth [] 0 setdash newpath} bind def
+/m1 {marker 0 exch 0 exch 0 360 arc stroke grestore} bind def
+/m2 {marker 0 exch 0 exch 0 360 arc fill grestore} bind def
+/m3 {marker dup dup moveto dup dup neg lineto dup neg dup lineto dup
+neg exch lineto closepath stroke grestore} bind def 
+/m4 {marker dup dup moveto dup dup neg lineto dup neg dup lineto dup
+neg exch lineto closepath fill grestore} bind def
+/m5 {marker dup dup moveto dup neg dup lineto dup dup neg moveto dup
+neg exch lineto closepath stroke grestore} bind def
+
+%% splines
+systemdict /setpacking known {/savepacking currentpacking def false
+  setpacking} if
+/q0 {0 0} def
+/q1 {0 0} def
+/q2 {0 0} def
+/q3 {0 0} def
+/p0 {0 0} def
+/p1 {0 0} def
+/p2 {0 0} def
+/p3 {0 0} def
+systemdict /setpacking known {savepacking setpacking} if
+
+%% x y /qi -> defp -> [/qi [x y] def]
+/defp {dup 4 1 roll load astore def} bind def
+
+/midpoint { exch 4 3 roll add 2 div 3 1 roll add 2 div } bind def
+/thirdpoint { exch 4 3 roll 2 mul add 3 div 3 1 roll exch 2 mul add 3
+div } bind def
+
+/prespl {/p3 defp /p2 defp /p1 defp /p0 defp
+p1 p2 thirdpoint /q1 defp
+p2 p1 thirdpoint /q2 defp
+p1 p0 thirdpoint q1 midpoint /q0 defp
+p2 p3 thirdpoint q2 midpoint /q3 defp } bind def
+/postspl { q1 q2 q3 curveto p1 p2 p3 } bind def
+/fspl { prespl q0 moveto postspl } bind def
+/spl { prespl postspl } bind def
+/xspl { pop pop pop pop pop pop } bind def
+
+/qspl { /p2 defp /p1 defp /p0 defp
+p1 p0 midpoint /q0 defp
+p1 p2 midpoint /q3 defp
+p1 q0 thirdpoint /q1 defp
+p1 q3 thirdpoint /q2 defp q0 moveto q1 q2 q3 curveto } bind def
+
+/cqspl { /p2 defp /p1 defp /p0 defp
+p1 p0 midpoint /q0 defp
+p1 p2 midpoint /q3 defp
+p1 q0 thirdpoint /q1 defp
+p1 q3 thirdpoint /q2 defp q0 moveto q1 q2 q3 curveto
+p2 p1 midpoint /q0 defp
+p2 p0 midpoint /q3 defp
+p2 q0 thirdpoint /q1 defp
+p2 q3 thirdpoint /q2 defp q1 q2 q3 curveto
+p0 p2 midpoint /q0 defp
+p0 p1 midpoint /q3 defp
+p0 q0 thirdpoint /q1 defp
+p0 q3 thirdpoint /q2 defp q1 q2 q3 curveto } bind def
+
+%% bitmaps
+/pix { /picstr exch string def } def
+%% wd ht -> preimg -> ..stuff for image..
+/preimg { 8 [ 3 index 0 0 5 index neg 0 7 index ]
+ {currentfile picstr readhexstring pop} } def
+/img { preimg image } bind def
+/kimg { preimg false 3 colorimage } bind def
+%%
+end
+%% Ipe prologue end
+
+IpeDict begin 381.723 290.66 translate
+
+% Preamble 1
+%%\documentclass[a4paper]{article}
+% Group
+
+% Line
+% ss 4369
+0.4 [ 1 3 ] ss
+np % # 2
+-141.856 157.46 mt
+-174.947 77.6599 lt
+% sk
+0 sg sk
+% End
+
+% Line
+% ss 0
+0.4 [] ss
+% ar 2 7
+0.898039 sg np % # 4
+-174.947 77.6599 mt
+-126.212 129.86 lt
+-188.786 146.06 lt
+-174.947 77.6599 7 13.839 -68.4001 at
+% fi
+0.898039 sg fi
+% End
+
+% Arc
+% ss 0
+0.4 [] ss
+% ar 2 7
+0 sg -192.098 170.957 7 -0.706131 0.708081 arw
+% xy
+-197.811 165.26 % r
+8.06774 % ang
+153.498 404.921 np arc
+% sk
+0 sg sk
+% End
+
+% Line
+% ss 0
+0.4 [] ss
+np % # 4
+-174.947 77.6599 mt
+-188.786 146.06 lt
+-131.026 99.2599 lt
+-174.947 77.6599 lt
+% sk
+0 sg sk
+% End
+
+% Line
+% ss 0
+0.4 [] ss
+np % # 3
+-188.786 146.06 mt
+-126.212 129.86 lt
+-131.026 99.2599 lt
+% sk
+0 sg sk
+% End
+
+% Line
+% ss 4369
+0.4 [ 1 3 ] ss
+np % # 2
+-174.947 77.6599 mt
+-126.212 129.86 lt
+% sk
+0 sg sk
+% End
+
+% Line
+% ss 0
+0.4 [] ss
+% ar 2 7
+0 sg np % # 2
+-174.947 77.6599 mt
+-188.786 146.06 7 -13.839 68.4001 at
+% sk
+0 sg sk
+% End
+
+% Text
+% xy -193.599 66.2599
+% sk 0
+% f 0 10
+% s vertex $i$
+% End
+
+% Text
+% xy -229.699 138.26
+% sk 0
+% f 0 10
+% s vertex $j$
+% End
+
+% Text
+% xy -126.814 88.4599
+% sk 0
+% f 0 10
+% s vertex \textit{next\_around\_edge(i,j)}
+% End
+
+% Mark
+% sk
+0 sg
+% ty 2
+% sz
+2
+% xy
+-131.026 99.2599 m2
+% End
+
+% Text
+% xy -120.196 144.86
+% sk 0
+% f 0 10
+% s facet \textit{next\_around\_edge(i,j)}
+% End
+
+% Line
+% ss 3855
+0.4 [ 4 ] ss
+% ar 2 7
+0 sg np % # 2
+-122.602 143.66 mt
+-138.847 126.26 7 -16.245 -17.4 at
+% sk
+0 sg sk
+% End
+
+% Line
+% ss 0
+0.4 [] ss
+np % # 4
+-188.786 146.06 mt
+-126.212 129.86 lt
+-141.856 157.46 lt
+-188.786 146.06 lt
+% sk
+0 sg sk
+% End
+
+% Text
+% xy -135.237 173.66
+% sk 0
+% f 0 10
+% s cell \textit{next\_around\_edge(i,j)}
+% End
+
+% Line
+% ss 3855
+0.4 [ 4 ] ss
+% ar 2 7
+0 sg np % # 2
+-139.449 171.26 mt
+-151.482 149.66 7 -12.033 -21.6 at
+% sk
+0 sg sk
+% End
+
+% Line
+% ss 3855
+0.4 [ 4 ] ss
+% ar 2 7
+0 sg np % # 2
+-210.446 93.2599 mt
+-149.677 99.2599 7 60.769 6 at
+% sk
+0 sg sk
+% End
+
+% Text
+% xy -259.782 82.4599
+% sk 0
+% f 0 10
+% s current cell
+% End
+
+% Text
+% xy -206.234 35.0599
+% sk 0
+% f 0 10
+% s dimension 3
+% End
+
+% Line
+% ss 0
+0.4 [] ss
+np % # 4
+34.4326 153.26 mt
+-2.87072 79.4599 lt
+81.9643 89.0599 lt
+34.4326 153.26 lt
+% sk
+0 sg sk
+% End
+
+% Text
+% xy -22.7257 68.0599
+% sk 0
+% f 0 10
+% s vertex $i$
+% End
+
+% Arc
+% ss 0
+0.4 [] ss
+% ar 2 7
+0 sg 44.3569 112.157 7 -0.706131 0.708081 arw
+% xy
+38.6443 106.46 % r
+8.06774 % ang
+153.498 404.921 np arc
+% sk
+0 sg sk
+% End
+
+% Text
+% xy 39.2459 67.4599
+% sk 0
+% f 0 10
+% s vertex \textit{ccw(i)}
+% End
+
+% Text
+% xy 11.5693 161.66
+% sk 0
+% f 0 10
+% s vertex \textit{cw(i)}
+% End
+
+% Text
+% xy 13.976 35.0599
+% sk 0
+% f 0 10
+% s dimension 2
+% End
+
+% End
+
+end %% of Ipe figure
