@@ -69,18 +69,11 @@ void redraw(Largest_empty_rect &empty_rectangle,
 void display_largest_rec(Largest_empty_rect &empty_rectangle,
 			 CGAL::Window_stream &W)
 {
-<<<<<<< EmptyRect.C
   Iso_rectangle_2 b = empty_rectangle.get_largest_empty_iso_rectangle();
-  CGAL::quadruple<Point,Point,Point,Point> points = empty_rectangle.get_left_bottom_right_top();
-=======
-  Iso_rectangle_2 b = empty_rectangle.get_largest_empty_iso_rectangle();
-  //  CGAL::quadruple<Point,Point,Point,Point> points = empty_rectangle.get_left_bottom_right_top();
-
->>>>>>> 1.4
   W << CGAL::RED << b;
 
 
-  cout << "\nThe largest rectangle is :\n   buttom-left point - (" << b.min().x() << ":" << b.min().y() << ")\n   top-right point   - (" << b.max().x() << ":" << b.max().y() << ")\n";
+  std::cout << "\nThe largest rectangle is :\n   buttom-left point - (" << b.min().x() << ":" << b.min().y() << ")\n   top-right point   - (" << b.max().x() << ":" << b.max().y() << ")\n";
   //cout << "Its size is " << abs((x2 - x1) * (y2 - y1)) << endl;
 }
 
@@ -88,18 +81,18 @@ int main(int argc,char *argv[])
 {
 
   CGAL::Window_stream W(600, 600);
-  ifstream *is_ptr;
+  std::ifstream *is_ptr;
 
   if(argc == 2) {
     // initialize input file
-    is_ptr = new ifstream(argv[1]);
+    is_ptr = new std::ifstream(argv[1]);
     if(is_ptr->bad()) {
-      cerr << "Bad input file : " << argv[1] << endl;
+      std::cerr << "Bad input file : " << argv[1] << std::endl;
       return(1);
     }
     W.display();
   } else {
-    cerr << "Syntax : EmptyRect [input file name]\n";
+    std::cerr << "Syntax : EmptyRect [input file name]\n";
     return(1);
   }
 
