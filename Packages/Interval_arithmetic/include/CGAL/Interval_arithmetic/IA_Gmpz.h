@@ -70,7 +70,7 @@ struct converter<Interval_nt_advanced,Gmpz>
 // which ideally should be moved to double.h.
 // It tests if a double has an integral value.
 // Result is unspecified for NaNs or Infs.
-inline bool has_integral_value (const double d)
+inline bool is_integral (const double d)
 {
   return ceil(d) == d;
 }
@@ -84,7 +84,7 @@ convert_from_to (const Quotient<Gmpz>&, const double& d)
   // Note: it's not really optimized (it'll do 1000 iterations at worst).
   double num=d;
   double den=1.0;
-  while ( ! CGAL::has_integral_value(num) )
+  while ( ! CGAL::is_integral(num) )
   {
     den*=2.0;
     num*=2.0;
