@@ -1,0 +1,25 @@
+\begin{ccRefClass}{Mesh_default_traits_2<K>}
+
+\ccCreationVariable{traits}
+\ccDefinition
+  
+The class \ccRefName\ is a model for the \ccc{MeshTraits_2},
+\ccc{TriangulationTraits_2} and \ccc{DelaunayTriangulationTraits_2}
+concepts. It uses types defined in \cgal\ kernel as geometric
+primitives types. The shape contraint on triangle is given by a bound
+$B$ such that good triangles verify $\frac{r}{l} \le B$ where $l$ is
+the minumum lenght and $r$ is the circumradius of the triangle.
+
+\ccInclude{CGAL/Mesh_default_traits_2.h}
+
+\ccIsModel
+
+\ccc{MeshTraits_2} \\
+\ccc{TriangulationTraits_2} \\
+\ccc{DelaunayTriangulationTraits_2}
+
+\ccCreation
+\ccConstructor{Mesh_default_traits_2()}{Default constructor. $B=\sqrt{2}$.}
+\ccConstructor{Mesh_default_traits_2(double b = 0.125)}{Construct
+  a traits class with bound $B=\sqrt{\frac{1}{4 b}}$.}
+\end{ccRefClass}
