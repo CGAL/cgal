@@ -317,6 +317,7 @@ public:
 };
 
 
+#define USE_KERNEL_PREDICATES
 
 
 //-----------------------------------------------------------------------
@@ -364,9 +365,11 @@ public:
 
   // PREDICATES
   //-----------
+#ifdef USE_KERNEL_PREDICATES
   typedef typename Kernel::Compare_x_2                  Compare_x_2;
   typedef typename Kernel::Compare_y_2                  Compare_y_2;
   typedef typename Kernel::Orientation_2                Orientation_2;
+#endif
   typedef CGAL::Are_same_points_2<K>                    Are_same_points_2;
   typedef CGAL::Are_parallel_2<K>                       Are_parallel_2;
   typedef CGAL::Svd_oriented_side_of_bisector_2<K,MTag> 
@@ -402,7 +405,7 @@ public:
 
   // PREDICATES
   //-----------
-
+#ifdef USE_KERNEL_PREDICATES
   Compare_x_2
   compare_x_2_object() const {
     return Compare_x_2();
@@ -417,7 +420,7 @@ public:
   orientation_2_object() const {
     return Orientation_2();
   }
-
+#endif
   Are_same_points_2
   are_same_points_2_object() const {
     return Are_same_points_2();

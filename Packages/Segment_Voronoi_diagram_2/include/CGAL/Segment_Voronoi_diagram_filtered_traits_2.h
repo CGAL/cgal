@@ -40,6 +40,7 @@
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/number_utils_classes.h>
 
+
 CGAL_BEGIN_NAMESPACE
 
 
@@ -192,9 +193,11 @@ private:
 
   // Predicates for the filtering kernel
 
+#ifdef USE_KERNEL_PREDICATES
   typedef typename FK_traits::Compare_x_2        FK_Compare_x_2;
   typedef typename FK_traits::Compare_y_2        FK_Compare_y_2;
   typedef typename FK_traits::Orientation_2      FK_Orientation_2;
+#endif
   typedef typename FK_traits::Are_same_points_2  FK_Are_same_points_2;
   typedef typename FK_traits::Are_parallel_2     FK_Are_parallel_2;
 
@@ -216,9 +219,11 @@ private:
   typedef typename FK_traits::Oriented_side_2    FK_Oriented_side_2;
 
   // Predicates for the exact kernel
+#ifdef USE_KERNEL_PREDICATES
   typedef typename EK_traits::Compare_x_2        EK_Compare_x_2;
   typedef typename EK_traits::Compare_y_2        EK_Compare_y_2;
   typedef typename EK_traits::Orientation_2      EK_Orientation_2;
+#endif
   typedef typename EK_traits::Are_same_points_2  EK_Are_same_points_2;
   typedef typename EK_traits::Are_parallel_2     EK_Are_parallel_2;
 
@@ -244,7 +249,7 @@ private:
 public:
   // PREDICATES
   //-----------
-
+#ifdef USE_KERNEL_PREDICATES
   typedef
   Filtered_predicate<EK_Compare_x_2, FK_Compare_x_2, C2E, C2F>
   Compare_x_2;
@@ -256,7 +261,7 @@ public:
   typedef
   Filtered_predicate<EK_Orientation_2, FK_Orientation_2, C2E, C2F>
   Orientation_2;
-
+#endif
   typedef
   Filtered_predicate<EK_Are_same_points_2,
 		     FK_Are_same_points_2, C2E, C2F>
@@ -320,7 +325,7 @@ public:
 
   // PREDICATES
   //-----------
-
+#ifdef USE_KERNEL_PREDICATES
   Compare_x_2
   compare_x_2_object() const {
     return Compare_x_2();
@@ -335,7 +340,7 @@ public:
   orientation_2_object() const {
     return Orientation_2();
   }
-
+#endif
   Are_same_points_2
   are_same_points_2_object() const {
     return Are_same_points_2();
