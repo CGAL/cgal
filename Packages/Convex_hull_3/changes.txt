@@ -1,3 +1,7 @@
+2.22    (19 July 2001)
+- added some missing std:: and CGAL::
+- added some cout statemetns in degeneracy test
+
 2.21    (18 July 2001)
 - converted to non-constructive predicates
 - made Polyhedron a template of the traits class for Borland since
