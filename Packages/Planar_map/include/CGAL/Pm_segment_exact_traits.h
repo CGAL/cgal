@@ -43,11 +43,12 @@ class Pm_segment_exact_traits
 {
 public:
 
-  typedef Segment_2<R>	X_curve;
-  typedef Point_2<R>		Point;
-  typedef Point_2<R>		Point_2;
-  typedef Vector_2<R>		Vector;
-  typedef Vector_2<R>		Vector_2;
+  typedef typename R::Segment_2 X_curve;
+  typedef X_curve               X_curve_2;
+  typedef typename R::Point_2   Point;
+  typedef Point                 Point_2;
+  typedef typename R::Vector_2  Vector;
+  typedef Vector                Vector_2;
   
   typedef enum 
   {
