@@ -24,6 +24,10 @@
 #ifdef CGAL_USE_CLN
 
 #include <CGAL/basic.h>
+#include <CGAL/Quotient.h>
+#include <CGAL/CLN/cl_integer.h>
+#include <cl_integer_io.h>
+#include <cl_io.h>
 #include <cl_output.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -39,13 +43,75 @@ CGAL_BEGIN_NAMESPACE
 
 struct workaround_4_CLN
 {
-  workaround_4_CLN()
-  {
-    cl_default_print_flags.rational_base = 10;
-  }
+  workaround_4_CLN() { cl_default_print_flags.rational_base = 10; }
 };
 
-static workaround_4_CLN w;
+static workaround_4_CLN workaroung_4_CLN_object;
+
+
+// Another "workaround" to be able to read "a/b" as a Quotient<cl_I>.
+// CLN beleives (it's a "design issue") that "a/b" is a valid number,
+// so it reads it, but then it decides it's not a valid cl_I.
+// And there's no easy way to stop him parsing before "/" like for
+// the generic Quotient<>.
+
+// There are 2 possibilities:
+// - Parse the thing by hand...  (current solution)
+// - Read it as cl_RA, and convert to Quotient<cl_I>, but this is currently
+//   not possible since the access functions to numerator and denominator
+//   are not public (it should be fixed in the next (>1.0.1) release of CLN).
+
+std::istream&
+operator>> (std::istream& in, Quotient<cl_I>& z)
+{
+#if 1
+  // Dirty.  Copied from Gmpz.h and Quotient.C.
+  bool negative = false;
+  char c;
+  cl_I num = 0, den = 1;
+
+  while (in.get(c) && isspace(c));
+
+  if (c == '-')
+  {
+        negative = true;
+        while (in.get(c) && isspace(c));
+  }
+  if (isdigit(c))
+  {
+        num = c - '0';
+        while (in.get(c) && isdigit(c))
+            num = 10*num + (c-'0');
+  }
+  if (in)
+        in.putback(c);
+
+  if (negative)
+        num = -num;
+
+  // Now we try to see if there's a '/'.
+  while (in.get(c) && isspace(c));
+  if (( in ) && ( c == '/'))
+  {
+      while (in.get(c) && isspace(c));
+      CGAL_kernel_assertion( in );
+      in.putback(c);
+      in >> den;
+  }
+  else
+  {
+      in.putback(c);
+      if ( in.eof() ) in.clear();
+  }
+
+  z = Quotient<cl_I>(num, den);
+#else
+  cl_RA rat;
+  in >> rat;
+  z = Quotient<cl_I> (rat.numerator(), rat.denominator());
+#endif
+  return in;
+}
 
 CGAL_END_NAMESPACE
 
