@@ -747,6 +747,15 @@ operator>> (std::istream& is, Triangulation_3<GT, Tds> &tr)
   return is;
 }
     
+template < class VH>
+class Vertex_handle_compare_order_of_creation {
+public:
+  bool operator()(VH u, VH v){
+    return ( (&(*u))->get_order_of_creation()
+	     < (&(*v))->get_order_of_creation() );
+  }
+};
+
 template < class GT, class Tds >
 std::ostream & 
 operator<< (std::ostream& os, const Triangulation_3<GT, Tds> &tr)
@@ -761,6 +770,7 @@ operator<< (std::ostream& os, const Triangulation_3<GT, Tds> &tr)
   // when dimension < 3 : the same with faces of maximal dimension
 {
   typedef Triangulation_3<GT, Tds>                 Triangulation;
+  typedef typename Triangulation::Vertex_handle    Vertex_handle;
   typedef typename Triangulation::Vertex_iterator  Vertex_iterator;
   typedef typename Triangulation::Cell_iterator    Cell_iterator;
   typedef typename Triangulation::Edge_iterator    Edge_iterator;
@@ -776,22 +786,39 @@ operator<< (std::ostream& os, const Triangulation_3<GT, Tds> &tr)
   if (n == 0)
     return os;
  
-  std::map< void*, int > V;
+  std::vector<Vertex_handle> TV(n+1);
+  int i = 0;
 
   // write the vertices
-  V[&(*tr.infinite_vertex())] = 0;
-  // the infinite vertex is numbered 0
-  int i = 1;
 
-  for(Vertex_iterator it=tr.all_vertices_begin(); it!=tr.vertices_end(); ++it)
-    if ( (&(*it)) != &(*(tr.infinite_vertex())) ) {
-      V[&(*it)] = i++;
-      os << *it; // uses the << operator of Vertex
-      if (is_ascii(os))
-	os << std::endl;
+  for (Vertex_iterator it=tr.all_vertices_begin(); it!=tr.vertices_end(); ++it)
+    {
+//    if ( (&(*it)) != &(*(tr.infinite_vertex())) ) {
+      // the vertices must be indexed by their order of creation so
+      // that when reread from file, the orders of vertices are the
+      // same - important for remove - so the following is not good:
+//       V[&(*it)] = i++;
+//       os << *it; // uses the << operator of Vertex
+//       if (is_ascii(os))
+// 	os << std::endl;
+      TV[i++] = &(*it);
     }
 
-  CGAL_triangulation_assertion( i == (n+1) );
+  CGAL_triangulation_assertion( i == n+1 ); 
+
+  std::sort(TV.begin(), TV.end(), 
+	    Vertex_handle_compare_order_of_creation<Vertex_handle>()); 
+
+  CGAL_triangulation_assertion( tr.is_infinite(TV[0]) );
+  std::map< void*, int > V;
+
+  V[&(*tr.infinite_vertex())] = 0;
+  for (i=1; i <= n; i++) {// not i=0: infinite vertex
+    os << *TV[i];
+    V[&(*TV[i])] = i;
+    if (is_ascii(os))
+	os << std::endl;
+  }
 
   // write the non combinatorial information on the cells
   // using the << operator of Cell

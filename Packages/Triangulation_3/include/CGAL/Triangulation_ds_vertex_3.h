@@ -84,7 +84,7 @@ public:
   // undocumented
   void set_order_of_creation()
   {
-    static int nb=0;
+    static int nb=-1; 
     _order_of_creation = ++nb;
   }
 
