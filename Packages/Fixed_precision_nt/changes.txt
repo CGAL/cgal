@@ -1,3 +1,6 @@
+2.25 (1 August 2001)
+- Test with MP_Float when GMP is not there.
+
 2.24 (12 July 2001)
 - Undo last change as it produces run time failures (I don't know why).
 - Put the offending functions inline.

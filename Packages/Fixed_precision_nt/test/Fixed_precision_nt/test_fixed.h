@@ -6,15 +6,24 @@
 #include <strstream>
 
 #include <CGAL/Fixed_precision_nt.h>
-#include <CGAL/Gmpz.h>
+#ifdef CGAL_USE_GMP
+#  include <CGAL/Gmpz.h>
+#else
+#  include <CGAL/MP_Float.h>
+#endif
 #include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/point_generators_3.h>
 
 typedef CGAL::Cartesian<CGAL::Fixed_precision_nt>::Point_2 Point2;
-typedef CGAL::Cartesian<CGAL::Gmpz>::Point_2               Point2gmp;
 typedef CGAL::Cartesian<CGAL::Fixed_precision_nt>::Point_3 Point3;
+#ifdef CGAL_USE_GMP
+typedef CGAL::Cartesian<CGAL::Gmpz>::Point_2               Point2gmp;
 typedef CGAL::Cartesian<CGAL::Gmpz>::Point_3               Point3gmp;
+#else
+typedef CGAL::Cartesian<CGAL::MP_Float>::Point_2               Point2gmp;
+typedef CGAL::Cartesian<CGAL::MP_Float>::Point_3               Point3gmp;
+#endif
 
 Point2gmp convert(Point2 p)
 {return Point2gmp(
@@ -159,7 +168,7 @@ int main()
   CGAL::force_ieee_double_precision();
 
   std::cout <<"Test program for class CGAL::Fixed_precision_nt by"
-       << " comparison to CGAL::Gmpz"
+       << " comparison to Gmpz or MP_Float"
        <<std::endl<<std::endl;
 
 #ifdef FIXED_ARE_INTEGERS
