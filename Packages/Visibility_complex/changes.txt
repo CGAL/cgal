@@ -1,4 +1,7 @@
 22 April 2004 Radu Ursu
+- moved test_suite directory to test directory
+
+22 April 2004 Radu Ursu
 - changed files according to statement change from CEP to CGAL package
 
 Before 22 April 2004
