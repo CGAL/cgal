@@ -1,5 +1,8 @@
 Changes done to the Interval Arithmetic package.
 
+Version 4.70 on 21 February 2001
+- Fixes for Homogeneous filtering.
+
 Version 4.69 on 21 February 2001
 - Test-suite fixes.
 - Don't use STL's Rel Ops in MP_*.
