@@ -1,3 +1,6 @@
+17 November 2004 Andreas Fabri
+In doc_tex/Interpolation/interpolation.tex: Put back the equation after that Lutz implemented the $$ in the latex_to_html 
+
 1 October 2004 Andreas Fabri
 - When interpolating on a surface in 3D space on must not project the infinite vertex
 
