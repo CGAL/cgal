@@ -1,4 +1,9 @@
 -----
+* 2.5.2 *
++ Added CGAL:: prefix before do_intersect in test program; MSVC does not
+  have Koenig lookup and needs it.
+
+-----
 * 2.5.1 *
 + Removed a number of unneccessary break statements in
   Segment_2_Segment_2_intersection.h
