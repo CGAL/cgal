@@ -21,8 +21,8 @@ int main(int, char*)
 
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/convex_hull_2.h>
-#include <CGAL/Polygon_2_algorithms.h>
+#include <CGAL/Min_ellipse_2.h>
+#include <CGAL/Min_ellipse_2_traits_2.h>
 #include <CGAL/point_generators_2.h>
 
 
@@ -49,6 +49,10 @@ typedef CGAL::Cartesian<Coord_type>  Rep;
 
 typedef CGAL::Point_2<Rep>    Point;
 typedef CGAL::Segment_2<Rep>  Segment;
+typedef  CGAL::Min_ellipse_2_traits_2< Rep >   Traits;
+typedef  CGAL::Min_ellipse_2< Traits >       Min_ellipse;
+
+
 
 const QString my_title_string("Convex_Hull_2 Demo with"
 			      " CGAL Qt_widget");
@@ -67,7 +71,7 @@ public:
 
   void draw(CGAL::Qt_widget &win)
   {
-     win.lock();
+    win.lock();
     win << CGAL::PointSize(7) << CGAL::PointStyle(CGAL::CROSS);
     win << CGAL::GREEN;
     std::list<Point>::iterator itp = list_of_points.begin();
@@ -75,33 +79,12 @@ public:
     {
       win << (*itp++);
     }
+    win << CGAL::PointSize(1) << CGAL::PointStyle(CGAL::PIXEL);
+    win << CGAL::RED;
+    Min_ellipse min_ell;
+    min_ell.insert(list_of_points.begin(),list_of_points.end());
+    win << min_ell.ellipse();
 
-    std::list<Point>	out;
-    std::list<Segment>	Sl;
-    CGAL::convex_hull_points_2(list_of_points.begin(), list_of_points.end(), std::back_inserter(out));
-
-    if( out.size() > 1 ) {
-      Point pakt,prev,pstart;
-
-      std::list<Point>::const_iterator it;
-      it=out.begin();
-      prev= *it; pstart=prev;
-      it++;
-
-      for(; it != out.end(); ++it) {
-	pakt= *it;
-	Sl.push_back(Segment(prev,pakt));
-	prev=pakt;
-      }
-      Sl.push_back(Segment(pakt,pstart));
-
-      win << CGAL::RED;
-      std::list<Segment>::iterator its = Sl.begin();
-      while(its!=Sl.end())
-      {
-	win << (*its++);
-      }
-    }
     win.unlock();
   };	
   
@@ -114,7 +97,7 @@ public:
   MyWindow(int w, int h): win(this) {
   setCentralWidget(&win);
     
-	//create a timer for checking if somthing changed
+  //create a timer for checking if somthing changed
   QTimer *timer = new QTimer( this );
   connect( timer, SIGNAL(timeout()),
            this, SLOT(timer_done()) );
