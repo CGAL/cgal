@@ -9,13 +9,13 @@
 // ----------------------------------------------------------------------
 //
 // release       : 
-// release_date  : 2001, May 23
+// release_date  : 
 //
 // file          : include/CGAL/LEDA/sys/win32.h
-// package       : cgal_window (0.9.7)
+// package       : cgal_window (1.0)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 0.9.7
-// revision_date : 23 May 2001
+// revision      : 1.0
+// revision_date : 20 June 2001
 // author(s)     : Matthias Baesken, Algorithmic Solutions
 //
 // coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>) 
@@ -56,7 +56,7 @@
 
 
 #include <float.h>
-
+/*
 static int leda_init_fpu()
 { _control87(PC_53,MCW_PC);
   _control87(63U,MCW_EM);
@@ -64,7 +64,7 @@ static int leda_init_fpu()
 }
 
 static int setdouble_ieee_for_bcc = leda_init_fpu();
-
+*/
 #endif
 
 
@@ -97,14 +97,14 @@ static int setdouble_ieee_for_bcc = leda_init_fpu();
 
 
 #include <float.h>
-
+/*
 inline int leda_init_fpu() 
 { _control87(_PC_53,_MCW_PC);
   return 0; 
 }
 
 static int setdouble_ieee_for_msc = leda_init_fpu();
-
+*/
 #endif
 
 

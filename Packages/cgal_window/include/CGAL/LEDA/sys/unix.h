@@ -9,13 +9,13 @@
 // ----------------------------------------------------------------------
 //
 // release       : 
-// release_date  : 2001, May 23
+// release_date  : 
 //
 // file          : include/CGAL/LEDA/sys/unix.h
-// package       : cgal_window (0.9.7)
+// package       : cgal_window (1.0)
 // maintainer    : Matthias Baesken <baesken@informatik.uni-trier.de>
-// revision      : 0.9.7
-// revision_date : 23 May 2001
+// revision      : 1.0
+// revision_date : 20 June 2001
 // author(s)     : Matthias Baesken, Algorithmic Solutions
 //
 // coordinator   : Matthias Baesken, Trier  (<baesken@informatik.uni-trier.de>) 
@@ -134,6 +134,7 @@
 
 #if defined(__linux__) && (defined(i386) || defined(__i386))
 
+/*
 inline int leda_init_fpu()
 { // set internal rounding of FPU to double (not extended) format
   // and leave rounding to nearest as well as exceptions unchanged
@@ -143,6 +144,7 @@ inline int leda_init_fpu()
 }
 
 static int set_double_ieee_for_linux = leda_init_fpu();
+*/
 
 #endif
 
