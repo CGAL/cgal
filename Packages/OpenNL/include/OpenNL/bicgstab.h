@@ -119,11 +119,9 @@ public:
         Vector rT(n) ;											// Initial residue rT=Ax-b
         Vector d(n) ;
         Vector h(n) ;
-        Vector u(n) ;
         Vector Ad(n) ;
         Vector t(n) ;
-        Vector& s = h ;
-        CoeffType rTh, rTAd, rTr, alpha, beta, omega, st, tt;
+        CoeffType rTh, rTAd, rTr, alpha, beta=0, omega, ht, tt;
         unsigned int its=0;										// Loop counter
         CoeffType err=epsilon_*epsilon_*BLAS<Vector>::dot(b,b);	// Error to reach
 
@@ -138,6 +136,7 @@ public:
         assert( ! IsZero( BLAS<Vector>::dot(rT,rT) ) );
 
 		rTh=BLAS<Vector>::dot(rT,h);							// rTh = (rT|h)
+		assert( ! IsZero(rTh) );
         rTr=BLAS<Vector>::dot(r,r);								// Current error rTr = (r|r)
 
 		while ( rTr>err && its < max_iter) 
@@ -147,37 +146,40 @@ public:
 			assert( ! IsZero(rTAd) );
 			alpha=rTh/rTAd;										// alpha = rTh/rTAd
             BLAS<Vector>::axpy(-alpha,Ad,r);					// r = r - alpha*Ad
-            BLAS<Vector>::copy(h,s);
-            BLAS<Vector>::axpy(-alpha,Ad,s);					// h = h - alpha*Ad
-            mult(A,s,t);										// t = A*h
-            BLAS<Vector>::axpy(1,t,u);
-            BLAS<Vector>::scal(alpha,u);
-            st=BLAS<Vector>::dot(s,t);							// st = (h|t)
+            BLAS<Vector>::axpy(-alpha,Ad,h);					// h = h - alpha*Ad
+            mult(A,h,t);										// t = A*h
+            ht=BLAS<Vector>::dot(h,t);							// ht = (h|t)
             tt=BLAS<Vector>::dot(t,t);							// tt = (t|t)
-			if ( IsZero(st) || IsZero(tt) )
+			if ( IsZero(ht) || IsZero(tt) )
                 omega = 0 ;
 		    else
-	      		omega = st/tt;									// omega = st/tt
+	      		omega = ht/tt;									// omega = ht/tt
             BLAS<Vector>::axpy(-alpha,d,x);						// x = x - alpha*d
-            BLAS<Vector>::axpy(-omega,s,x);						// x = x - omega*h
-            BLAS<Vector>::copy(s,h);
+            BLAS<Vector>::axpy(-omega,h,x);						// x = x - omega*h
             BLAS<Vector>::axpy(-omega,t,r);						// r = r - omega*t
 	        rTr=BLAS<Vector>::dot(r,r);							// Current error rTr = (r|r)
             BLAS<Vector>::axpy(-omega,t,h);						// h = h - omega*t
+#ifndef NDEBUG 
+			// Debug trace
+			if (its < 10)
+				std::cerr << "solve: " << STREAM_TRACE(its) << STREAM_TRACE(rTr) << STREAM_TRACE(alpha) << STREAM_TRACE(beta) << STREAM_TRACE(omega) << STREAM_TRACE(rTh) << std::endl;
+#endif
 			if( IsZero(omega) )									// LS 03/2005: break to avoid division by zero (see Laspack implementation)
 				break;		
 			assert( ! IsZero(rTh) );							// LS 03/2005: don't know what do do if division by zero 
             beta=(alpha/omega)/rTh; 
 			rTh=BLAS<Vector>::dot(rT,h); 						// rTh = (rT|h)
 			beta*=rTh;											// beta = (rTh / previous rTh) * (alpha / omega)
-            BLAS<Vector>::scal(beta,d);
-            BLAS<Vector>::axpy(1,h,d);
-            BLAS<Vector>::axpy(-beta*omega,Ad,d);
+            BLAS<Vector>::scal(beta,d);							// d = beta*d
+            BLAS<Vector>::axpy(1,h,d);							// d = d + h
+            BLAS<Vector>::axpy(-beta*omega,Ad,d);				// d = d - beta*omega*Ad
             its++ ;
         }
 
 		bool success = (rTr <= err);
-		std::cerr << STREAM_TRACE(success) << "(" << STREAM_TRACE(its) << STREAM_TRACE(max_iter) << STREAM_TRACE(rTr) << STREAM_TRACE(err) << STREAM_TRACE(omega) << STREAM_TRACE(rTh) << ")" << std::endl;
+#ifndef NDEBUG 
+		std::cerr << "solve: " << STREAM_TRACE(success) << "(" << STREAM_TRACE(its) << STREAM_TRACE(max_iter) << STREAM_TRACE(rTr) << STREAM_TRACE(err) << STREAM_TRACE(omega) << STREAM_TRACE(rTh) << ")" << std::endl;
+#endif
 		return success;
     }
 
