@@ -144,7 +144,7 @@ Circulator_project<C,Fct,Ref,Ptr>
 operator+( Dist n, Circulator_project<C,Fct,Ref,Ptr> i) { return i += n; }
 
 #ifdef CGAL_CFG_NO_ITERATOR_TRAITS
-#ifdef CGAL_CFG_NO_ITERATOR_TRAITS
+#ifndef CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
 template < class C, class Fct, class Ref, class Ptr>
 inline  Circulator_tag
 query_circulator_or_iterator(

@@ -225,8 +225,29 @@ public:
   typedef CGALi::In_place_list_iterator<T>        iterator;
   typedef CGALi::In_place_list_const_iterator<T>  const_iterator;
 
+#if defined(__sun) && defined(__SUNPRO_CC)
+  typedef std::reverse_iterator< iterator,
+                                 typename iterator::iterator_category,
+                                 typename iterator::value_type,
+                                 typename iterator::reference,
+                                 typename iterator::pointer,
+                                 typename iterator::difference_type
+                                 > reverse_iterator;
+  typedef std::reverse_iterator< const_iterator,
+                                 typename const_iterator::iterator_category,
+                                 typename const_iterator::value_type,
+                                 typename const_iterator::reference,
+                                 typename const_iterator::pointer,
+                                 typename const_iterator::difference_type
+                                 > const_reverse_iterator;
+  /*
+  typedef iterator reverse_iterator;
+  typedef const_iterator const_reverse_iterator;
+                                 */
+#else
   typedef std::reverse_iterator< iterator >       reverse_iterator;
   typedef std::reverse_iterator< const_iterator > const_reverse_iterator;
+#endif // defined(__sun) && defined(__SUNPRO_CC)
 
   typedef In_place_list<T,managed,Alloc>          Self;
 
