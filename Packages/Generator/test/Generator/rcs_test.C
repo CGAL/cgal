@@ -43,7 +43,7 @@ using CGAL::random_convex_set_2;
 
 
 int
-main( int argc, char* argv[])
+main( )
 {
   typedef Cartesian< double >                            R;
   typedef CGAL::Point_2< R >                             Point_2;
@@ -71,7 +71,7 @@ main( int argc, char* argv[])
   }
 
   return 0;
-} // int main( argc, argv)
+} // int main( )
 
 // ----------------------------------------------------------------------------
 // ** EOF
