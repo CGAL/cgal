@@ -874,8 +874,8 @@ copy_tds(const Tds &tds, const Vertex* v)
 
   if(tds.number_of_vertices() == 0){return static_cast<Vertex*>(NULL);}
 
-  std::map< const void*, void*, less<const void*> > V;
-  std::map< const void*, void*, less<const void*> > F;
+  std::map< const void*, void*, std::less<const void*> > V;
+  std::map< const void*, void*, std::less<const void*> > F;
 
   Vertex*  v2,* v_inf;
   Face* f2;
@@ -1003,8 +1003,8 @@ file_output( std::ostream& os, Vertex* v, bool skip_first) const
   else     os << n << m << dimension();
   if (n==0) return;
 
-  std::map< void*, int, less<void*> > V;
-  std::map< void*, int, less<void*> > F;
+  std::map< void*, int, std::less<void*> > V;
+  std::map< void*, int, std::less<void*> > F;
 
   // first vertex 
   int inum = 0;

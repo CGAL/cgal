@@ -210,7 +210,7 @@ index(const Face* n) const
 template < class Vb, class Fb >
 bool
 Triangulation_ds_face_2<Vb,Fb>::  
-is_valid(bool verbose = false, int level = 0) const
+is_valid(bool verbose, int level) const
 {
   bool result = Fb::is_valid(verbose, level);
   for(int i = 0; i <= dimension(); i++) {

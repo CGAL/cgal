@@ -39,7 +39,7 @@ template < class R >
 class Triangulation_euclidean_traits_yz_3 {
 public:
     typedef Triangulation_euclidean_traits_yz_3<R> Traits;
-    typedef R Rep;
+    typedef R Rp;
     typedef Point_3<R>  Point;
     typedef Segment_3<R> Segment;
     typedef Triangle_3<R> Triangle;
@@ -53,8 +53,8 @@ public:
   Triangulation_euclidean_traits_yz_3 &operator=(
 		       const Triangulation_euclidean_traits_yz_3&  et){return *this;}
     
-  typename Rep::FT x(const Point &p) const { return p.y(); }
-  typename Rep::FT y(const Point &p) const { return p.z(); }
+  typename Rp::FT x(const Point &p) const { return p.y(); }
+  typename Rp::FT y(const Point &p) const { return p.z(); }
     
     Comparison_result compare_x(const Point &p, const Point &q) const
       {

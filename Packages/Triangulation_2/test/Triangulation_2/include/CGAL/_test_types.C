@@ -293,7 +293,7 @@ public:
     }
 };
 
-istream &operator>>(istream &is, Triangulation_test_point &p)
+std::istream &operator>>(std::istream &is, Triangulation_test_point &p)
 {
   Triangulation_test_point::TESTFT x,y;
   is >> x >> y;

@@ -145,7 +145,7 @@ incident_edges(const Face* f) const
 template <class Vb, class Fb >
 bool 
 Triangulation_ds_vertex_2<Vb,Fb> ::  
-is_valid(bool verbose = false, int level = 0) const
+is_valid(bool verbose, int level) const
 {
   bool result = Vb::is_valid(verbose, level);
   CGAL_triangulation_assertion(result);

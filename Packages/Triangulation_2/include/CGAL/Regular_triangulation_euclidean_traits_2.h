@@ -75,62 +75,145 @@ public:
   }
 };
 
-#ifdef CGAL_CARTESIAN_H
-template < class FT, class Weight >
+// #ifdef CGAL_CARTESIAN_H
+// template < class FT, class Weight >
+// inline
+// Oriented_side
+// power_test(const Weighted_point<Point_2<Cartesian<FT> >, Weight> &p,
+//            const Weighted_point<Point_2<Cartesian<FT> >, Weight> &q,
+//            const Weighted_point<Point_2<Cartesian<FT> >, Weight> &r,
+//            const Weighted_point<Point_2<Cartesian<FT> >, Weight> &t)
+// {
+//     return power_testC2(p.x(), p.y(), FT(p.weight()),
+//                         q.x(), q.y(), FT(q.weight()),
+//                         r.x(), r.y(), FT(r.weight()),
+//                         t.x(), t.y(), FT(t.weight()));
+// }
+
+// template < class FT, class Weight >
+// inline
+// Oriented_side
+// power_test(const Weighted_point<Point_2<Cartesian<FT> >, Weight> &p,
+//            const Weighted_point<Point_2<Cartesian<FT> >, Weight> &q,
+//            const Weighted_point<Point_2<Cartesian<FT> >, Weight> &t)
+// {
+//     return power_testC2(p.x(), p.y(), FT(p.weight()),
+//                         q.x(), q.y(), FT(q.weight()),
+//                         t.x(), t.y(), FT(t.weight()));
+// }
+// #endif // CGAL_CARTESIAN_H
+
+// #ifdef CGAL_HOMOGENEOUS_H
+// template < class RT, class Weight >
+// inline
+// Oriented_side
+// power_test(const Weighted_point<Point_2<Homogeneous<RT> >, Weight> &p,
+//            const Weighted_point<Point_2<Homogeneous<RT> >, Weight> &q,
+//            const Weighted_point<Point_2<Homogeneous<RT> >, Weight> &r,
+//            const Weighted_point<Point_2<Homogeneous<RT> >, Weight> &t)
+// {
+//     return power_testH2(p.hx(), p.hy(), p.hw(), RT(p.weight()),
+//                         q.hx(), q.hy(), q.hw(), RT(q.weight()),
+//                         r.hx(), r.hy(), r.hw(), RT(r.weight()),
+//                         t.hx(), t.hy(), t.hw(), RT(t.weight()));
+// }
+
+// template < class RT, class Weight >
+// inline
+// Oriented_side
+// power_test(const Weighted_point<Point_2<Homogeneous<RT> >, Weight> &p,
+//            const Weighted_point<Point_2<Homogeneous<RT> >, Weight> &q,
+//            const Weighted_point<Point_2<Homogeneous<RT> >, Weight> &t)
+// {
+//     return power_testH2(p.hx(), p.hy(), p.hw(), RT(p.weight()),
+//                         q.hx(), q.hy(), q.hw(), RT(q.weight()),
+//                         t.hx(), t.hy(), t.hw(), RT(t.weight()));
+// }
+// #endif // CGAL_HOMOGENEOUS_H
+
+template < class Point, class Weight >
 inline
 Oriented_side
-power_test(const Weighted_point<Point_2<Cartesian<FT> >, Weight> &p,
-           const Weighted_point<Point_2<Cartesian<FT> >, Weight> &q,
-           const Weighted_point<Point_2<Cartesian<FT> >, Weight> &r,
-           const Weighted_point<Point_2<Cartesian<FT> >, Weight> &t)
+power_test(const Weighted_point<Point, Weight> &p,
+           const Weighted_point<Point, Weight> &q,
+           const Weighted_point<Point, Weight> &r,
+           const Weighted_point<Point, Weight> &t,
+	   Cartesian_tag )
 {
+  typedef typename Point::FT  FT;
+  return power_testC2(p.x(), p.y(), FT(p.weight()),
+		      q.x(), q.y(), FT(q.weight()),
+		      r.x(), r.y(), FT(r.weight()),
+		      t.x(), t.y(), FT(t.weight()));
+}
+
+template < class Point, class Weight >
+inline
+Oriented_side
+power_test(const Weighted_point<Point, Weight> &p,
+           const Weighted_point<Point, Weight> &q,
+           const Weighted_point<Point, Weight> &r,
+           const Weighted_point<Point, Weight> &t,
+	   Homogeneous_tag )
+{
+  typedef typename Point::RT  RT;
+  return power_testH2(p.hx(), p.hy(), p.hw(), RT(p.weight()),
+		      q.hx(), q.hy(), q.hw(), RT(q.weight()),
+		      r.hx(), r.hy(), r.hw(), RT(r.weight()),
+		      t.hx(), t.hy(), t.hw(), RT(t.weight()));
+}
+
+template < class Point, class Weight >
+inline
+Oriented_side
+power_test(const Weighted_point<Point, Weight> &p,
+           const Weighted_point<Point, Weight> &q,
+           const Weighted_point<Point, Weight> &r,
+           const Weighted_point<Point, Weight> &t)
+{
+  typedef typename Point::R::Rep_tag Tag;
+  return power_test(p, q, r, t, Tag());
+}
+  
+template < class Point, class Weight >
+inline
+Oriented_side
+power_test(const Weighted_point<Point, Weight> &p,
+           const Weighted_point<Point, Weight> &q,
+           const Weighted_point<Point, Weight> &t,
+	   Cartesian_tag )
+{
+    typedef typename Point::FT  FT;
     return power_testC2(p.x(), p.y(), FT(p.weight()),
                         q.x(), q.y(), FT(q.weight()),
-                        r.x(), r.y(), FT(r.weight()),
                         t.x(), t.y(), FT(t.weight()));
 }
 
-template < class FT, class Weight >
-inline
-Oriented_side
-power_test(const Weighted_point<Point_2<Cartesian<FT> >, Weight> &p,
-           const Weighted_point<Point_2<Cartesian<FT> >, Weight> &q,
-           const Weighted_point<Point_2<Cartesian<FT> >, Weight> &t)
-{
-    return power_testC2(p.x(), p.y(), FT(p.weight()),
-                        q.x(), q.y(), FT(q.weight()),
-                        t.x(), t.y(), FT(t.weight()));
-}
-#endif // CGAL_CARTESIAN_H
 
-#ifdef CGAL_HOMOGENEOUS_H
-template < class RT, class Weight >
+template < class Point, class Weight >
 inline
 Oriented_side
-power_test(const Weighted_point<Point_2<Homogeneous<RT> >, Weight> &p,
-           const Weighted_point<Point_2<Homogeneous<RT> >, Weight> &q,
-           const Weighted_point<Point_2<Homogeneous<RT> >, Weight> &r,
-           const Weighted_point<Point_2<Homogeneous<RT> >, Weight> &t)
+power_test(const Weighted_point<Point, Weight> &p,
+           const Weighted_point<Point, Weight> &q,
+           const Weighted_point<Point, Weight> &t,
+	   Homogeneous_tag )
 {
-    return power_testH2(p.hx(), p.hy(), p.hw(), RT(p.weight()),
-                        q.hx(), q.hy(), q.hw(), RT(q.weight()),
-                        r.hx(), r.hy(), r.hw(), RT(r.weight()),
-                        t.hx(), t.hy(), t.hw(), RT(t.weight()));
-}
-
-template < class RT, class Weight >
-inline
-Oriented_side
-power_test(const Weighted_point<Point_2<Homogeneous<RT> >, Weight> &p,
-           const Weighted_point<Point_2<Homogeneous<RT> >, Weight> &q,
-           const Weighted_point<Point_2<Homogeneous<RT> >, Weight> &t)
-{
+   typedef typename Point::RT  RT;
     return power_testH2(p.hx(), p.hy(), p.hw(), RT(p.weight()),
                         q.hx(), q.hy(), q.hw(), RT(q.weight()),
                         t.hx(), t.hy(), t.hw(), RT(t.weight()));
 }
-#endif // CGAL_HOMOGENEOUS_H
 
+template < class Point, class Weight >
+inline
+Oriented_side
+power_test(const Weighted_point<Point, Weight> &p,
+           const Weighted_point<Point, Weight> &q,
+           const Weighted_point<Point, Weight> &t)
+{
+  typedef typename Point::R::Rep_tag Tag;
+  return power_test(p, q, t, Tag());
+}
 CGAL_END_NAMESPACE
 
 #endif // CGAL_REGULAR_TRIANGULATION_EUCLIDEAN_TRAITS_2_H
