@@ -1,0 +1,85 @@
+\subsubsection{Connectivity Operators}
+
+The polyhedron provides a series of atomic operators to modify the
+connectivity of the polyhedral surface:
+\begin{itemize}
+\item split or join of two facets,
+\item split or join of two vertices,
+\item split or join of two loops,
+\item split of an edge.
+\end{itemize}
+
+Furthermore, more operators are provided to work with surfaces with
+boundaries, to create or delete holes, add a facet to the border,
+etc. We refere to the references manual for precise definitions and
+illustratives figures\footnote{See
+\href{http://www.cgal.org/Manual/doc_html/basic_lib/Polyhedron/Chapter_main.html}{Euler 
+operators}}.
+
+\subsubsection{Incremental Builder}
+\label{sec:builder}
+
+The utility class \verb+Polyhedron_incremental_builder_3+ helps in
+creating polyhedral surfaces from a list of points followed by a list
+of facets that are represented as indices into the point list. This is
+particularly useful for implementing file reader for common file
+formats. In Section~\ref{sec:subdivision_builder}, we use the
+incremental builder to implement the quad-triangle subdivision
+scheme.\\
+
+In the following example, the incremental builder is used to create a
+simple triangle. \verb+Build_triangle+ is such a function object
+derived from \verb+Modifier_base<HalfedgeDS>+. The
+\verb+delegate()+ member function of the polyhedron accepts this function
+object and calls its \verb+operator()+ with a reference to its
+internally used halfedge data structure. Thus, this member function in
+\verb+Build_triangle+ can create the triangle in the 
+halfedge data structure.
+
+{ \scriptsize
+\begin{verbatim}
+// examples/Polyhedron/polyhedron_prog_incr_builder.C
+
+#include <CGAL/Cartesian.h>
+#include <CGAL/Polyhedron_incremental_builder_3.h>
+#include <CGAL/Polyhedron_3.h>
+
+// A modifier creating a triangle with 
+// the incremental builder.
+
+template <class HDS>
+class Build_triangle
+  : public CGAL::Modifier_base<HDS> 
+{
+public:
+  Build_triangle() {}
+
+  void operator()(HDS& hds) 
+  {
+    // Postcondition: `hds' is a valid polyhedral surface.
+    CGAL::Polyhedron_incremental_builder_3<HDS> B(hds, true);
+    B.begin_surface(3, 1, 6);
+    typedef typename HDS::Vertex   Vertex;
+    typedef typename Vertex::Point Point;
+    B.add_vertex(Point(0, 0, 0));
+    B.add_vertex(Point(1, 0, 0));
+    B.add_vertex(Point(0, 1, 0));
+    B.begin_facet();
+    B.add_vertex_to_facet(0);
+    B.add_vertex_to_facet(1);
+    B.add_vertex_to_facet(2);
+    B.end_facet();
+    B.end_surface();
+  }
+};
+
+typedef CGAL::Cartesian<double>     Kernel;
+typedef CGAL::Polyhedron_3<Kernel>  Polyhedron;
+typedef Polyhedron::HalfedgeDS      HalfedgeDS;
+
+Polyhedron P;
+Build_triangle<HalfedgeDS> triangle;
+P.delegate(triangle);
+CGAL_assertion(P.is_triangle(P.halfedges_begin()));
+
+\end{verbatim}}

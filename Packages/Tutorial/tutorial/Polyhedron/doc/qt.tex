@@ -1,0 +1,96 @@
+
+The quad-triangle subdivision scheme was introduced by
+Levin~\cite{l-pg-03}, then Stam and Loop~\cite{sl-qts-02}. It applies
+to polygon meshes and basically features Loop subdivision on triangles
+and Catmull-Clark subdivision on polygons of the control mesh (see
+Fig.\ref{fig:quad-triangle}). After one iteration of subdivision the
+subdivided model is only composed of triangles and quads. A simple
+solution for implementing such a scheme is to use the
+\italic{incremental builder} concept featured by CGAL 
+Polyhedron (see Section~\ref{sec:builder}).
+
+
+% quad-triangle subdivision scheme
+
+\begin{figure}[htb]
+    \centering{\includegraphics[width=10.0cm]{figs/quad-triangle}}
+    \caption{Quad-triangle subdivision scheme.}
+    \label{fig:quad-triangle}
+\end{figure}
+
+Subdivision engine
+
+{ \scriptsize
+\begin{verbatim}
+
+#include "enriched_polyhedron.h"
+#include "builder.h"
+
+template <class HDS,class Polyhedron,class kernel>
+class CModifierQuadTriangle : public CGAL::Modifier_base<HDS>
+{
+private:
+
+  typedef ...
+
+  Polyhedron *m_pMesh;
+
+public:
+
+  // life cycle
+  CModifierQuadTriangle(Polyhedron *pMesh)
+  {
+    CGAL_assertion(pMesh != NULL);
+    m_pMesh = pMesh;
+  }
+  ~CModifierQuadTriangle() {}
+
+  // subdivision
+  void operator()( HDS& hds)
+  {
+    builder B(hds,true);
+    B.begin_surface(3,1,6);
+      add_vertices(B);
+      add_facets(B);
+    B.end_surface();
+  }
+
+private:
+
+  // ... 
+  // for the complete implementation of the subdivision, 
+  // readers should refer to the accompanied source codes of 
+  // this tutorial.
+  
+};
+\end{verbatim}}
+
+{ \scriptsize
+\begin{verbatim}
+template <class Polyhedron,class kernel>
+class CSubdivider_quad_triangle
+{
+public:
+    typedef typename Polyhedron::HalfedgeDS HalfedgeDS;
+
+public:
+  // life cycle
+  CSubdivider_quad_triangle() {}
+  ~CSubdivider_quad_triangle() {}
+
+public:
+  void subdivide(Polyhedron &OriginalMesh,
+                 Polyhedron &NewMesh,
+                 bool smooth_boundary = true)
+  {
+    CModifierQuadTriangle<HalfedgeDS,Polyhedron,kernel> 
+      builder(&OriginalMesh);
+
+    // delegate construction 
+    NewMesh.delegate(builder);
+
+    // smooth
+    builder.smooth(&NewMesh,smooth_boundary);
+  }
+};
+\end{verbatim}}
