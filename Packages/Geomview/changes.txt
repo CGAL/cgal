@@ -1,5 +1,8 @@
 CHANGES to the Geomview package.
 
+Ver 3.6 (?? December 2000)
+- Factorized code between Point_[23], Segment_[23] and Triangle_[23].
+
 Ver 3.5 (1 December 2000)
 - New echo_flag boolean, that decides when a point Geomview gives us needs to
   be echoed to Geomview.

@@ -184,12 +184,10 @@ private:
     int pid;          // the geomview process identification
 };
 
-#if defined CGAL_POINT_2_H && \
-   !defined CGAL_GV_OUT_POINT_2_H
-#define CGAL_GV_OUT_POINT_2_H
-template < class R >
-Geomview_stream&
-operator<<(Geomview_stream &gv, const Point_2<R> &p)
+// Factorize code for Point_2 and Point_3.
+template < class FT >
+void
+output_point(Geomview_stream &gv, const FT &x, const FT &y, const FT &z)
 {
     bool ascii_bak = true; // the initialization value shuts up the compiler.
     if (!gv.get_raw()) {
@@ -199,15 +197,22 @@ operator<<(Geomview_stream &gv, const Point_2<R> &p)
            << gv.vcr() << gv.vcg() << gv.vcb() << "}}{SKEL 1 1 ";
     }
 
-    gv << CGAL::to_double(p.x())
-       << CGAL::to_double(p.y())
-       << 0.0;
+    gv << CGAL::to_double(x) << CGAL::to_double(y) << CGAL::to_double(z);
 
     if (!gv.get_raw()) {
         gv << "1 0\n}})";
     	gv.set_ascii_mode(ascii_bak);
     }
+}
 
+#if defined CGAL_POINT_2_H && \
+   !defined CGAL_GV_OUT_POINT_2_H
+#define CGAL_GV_OUT_POINT_2_H
+template < class R >
+Geomview_stream&
+operator<<(Geomview_stream &gv, const Point_2<R> &p)
+{
+    output_point(p.x(), p.y(), R::FT(0));
     return gv;
 }
 #endif
@@ -219,33 +224,15 @@ template < class R >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Point_3<R> &p)
 {
-    bool ascii_bak = true; // the initialization value shuts up the compiler.
-    if (!gv.get_raw()) {
-        ascii_bak = gv.set_ascii_mode();
-        gv << "(geometry P" << gv.point_count++
-           << " {appearance {linewidth 5 material {edgecolor "
-           << gv.vcr() << gv.vcg() << gv.vcb() << "}}{SKEL 1 1 ";
-    }
-
-    gv << CGAL::to_double(p.x())
-       << CGAL::to_double(p.y())
-       << CGAL::to_double(p.z());
-
-    if (!gv.get_raw()) {
-	gv << "1 0\n}})";
-    	gv.set_ascii_mode(ascii_bak);
-    }
-
+    output_point(p.x(), p.y(), p.z());
     return gv;
 }
 #endif
 
-#if defined CGAL_SEGMENT_2_H && \
-   !defined CGAL_GV_OUT_SEGMENT_2_H
-#define CGAL_GV_OUT_SEGMENT_2_H
-template < class R >
-Geomview_stream&
-operator<<(Geomview_stream &gv, const Segment_2<R> &segment)
+// The following code is the same for Segment_2 and Segment_3.
+template < class Segment >
+void
+output_segment(Geomview_stream &gv, const Segment &segment)
 {
     bool ascii_bak = gv.set_ascii_mode();
     gv << "(geometry Seg" << gv.segment_count++
@@ -263,7 +250,16 @@ operator<<(Geomview_stream &gv, const Segment_2<R> &segment)
     // and the color of the segment and its opaqueness
     gv << gv.ecr() << gv.ecg() << gv.ecb() << 1.0 << "}})";
     gv.set_ascii_mode(ascii_bak);
+}
 
+#if defined CGAL_SEGMENT_2_H && \
+   !defined CGAL_GV_OUT_SEGMENT_2_H
+#define CGAL_GV_OUT_SEGMENT_2_H
+template < class R >
+Geomview_stream&
+operator<<(Geomview_stream &gv, const Segment_2<R> &segment)
+{
+    output_segment(gv, segment);
     return gv;
 }
 #endif
@@ -275,34 +271,15 @@ template < class R >
 Geomview_stream&
 operator<<(Geomview_stream &gv, const Segment_3<R> &segment)
 {
-    bool ascii_bak = gv.set_ascii_mode();
-    gv << "(geometry Seg" << gv.segment_count++
-       << " {appearance {linewidth "
-       << gv.get_line_width()
-       << " }{VECT "
-       << 1 << 2 << 1   // 1 polyline, two vertices, 1 color
-       << 2             // the first polyline contains 2 vertices
-       << 1;            // and it has 1 color
-
-    // here are start and end points
-    bool raw_bak = gv.set_raw(true);
-    gv << segment.source() << segment.target();
-    gv.set_raw(raw_bak);
-
-    // and the color of the segment and its opaqueness
-    gv << gv.ecr() << gv.ecg() << gv.ecb() << 1.0 << "}})";
-    gv.set_ascii_mode(ascii_bak);
-
+    output_segment(gv, segment);
     return gv;
 }
 #endif
 
-#if defined CGAL_TRIANGLE_2_H && \
-   !defined CGAL_GV_OUT_TRIANGLE_2_H
-#define CGAL_GV_OUT_TRIANGLE_2_H
-template < class R >
-Geomview_stream&
-operator<<(Geomview_stream &gv, const Triangle_2<R> &t)
+// The following code is the same for Triangle_2 and Triangle_3.
+template < class Triangle >
+void
+output_triangle(Geomview_stream &gv, const Triangle &triangle)
 {
     bool ascii_bak = gv.set_ascii_mode();
     gv << "(geometry Tr" << gv.triangle_count++
@@ -317,14 +294,23 @@ operator<<(Geomview_stream &gv, const Triangle_2<R> &t)
 
     bool raw_bak = gv.set_raw(true);
     for(int i=0; i<3; i++)
-        gv << t[i];
+        gv << triangle[i];
     gv.set_raw(raw_bak);
 
     // the face
     gv << 3 << 0 << 1 << 2 << 4 << gv.fcr() << gv.fcg() << gv.fcb() << 1.0
        << "}})";
     gv.set_ascii_mode(ascii_bak);
+}
 
+#if defined CGAL_TRIANGLE_2_H && \
+   !defined CGAL_GV_OUT_TRIANGLE_2_H
+#define CGAL_GV_OUT_TRIANGLE_2_H
+template < class R >
+Geomview_stream&
+operator<<(Geomview_stream &gv, const Triangle_2<R> &triangle)
+{
+    output_triangle(gv, triangle);
     return gv;
 }
 #endif
@@ -334,29 +320,9 @@ operator<<(Geomview_stream &gv, const Triangle_2<R> &t)
 #define CGAL_GV_OUT_TRIANGLE_3_H
 template < class R >
 Geomview_stream&
-operator<<(Geomview_stream &gv, const Triangle_3<R> &t)
+operator<<(Geomview_stream &gv, const Triangle_3<R> &triangle)
 {
-    bool ascii_bak = gv.set_ascii_mode();
-    gv << "(geometry Tr" << gv.triangle_count++
-       << " {appearance {+edge material {edgecolor "
-       << gv.ecr()  << gv.ecg()  << gv.ecb() <<  "} shading constant}{ ";
-    gv.set_binary_mode();
-    // it's a planar polygon
-    gv << "OFF BINARY\n"
-
-    // it has 3 vertices, 1 face and 3 edges
-       << 3 << 1 << 3;
-
-    bool raw_bak = gv.set_raw(true);
-    for(int i=0; i<3; i++)
-        gv << t[i];
-    gv.set_raw(raw_bak);
-
-    // the face
-    gv << 3 << 0 << 1 << 2 << 4 << gv.fcr() << gv.fcg() << gv.fcb() << 1.0
-       << "}})";
-    gv.set_ascii_mode(ascii_bak);
-
+    output_triangle(gv, triangle);
     return gv;
 }
 #endif
