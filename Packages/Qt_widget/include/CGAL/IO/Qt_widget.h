@@ -24,7 +24,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Intersections.h>
-#include <CGAL/Triangle_2_Iso_rectangle_2_intersection.h> //temporary, should remove!!
+//temporary, should remove next line!!
+#include <CGAL/Triangle_2_Iso_rectangle_2_intersection.h>
 #include <CGAL/IO/Color.h>
 #ifdef CGAL_USE_GMP
   #include <CGAL/Gmpz.h>
@@ -660,7 +661,8 @@ Qt_widget&
 operator<<(Qt_widget& w, const Triangle_2<R>& t)
 {
   CGAL::Iso_rectangle_2<R> r( Point_2<R>(w.x_real(0), w.y_real(0)), 
-                              Point_2<R>(w.x_real(w.geometry().width()), w.y_real(w.geometry().height())));
+                              Point_2<R>(w.x_real(w.geometry().width()), 
+                              w.y_real(w.geometry().height())));
   CGAL::Object obj = CGAL::intersection(t, r);
   Point_2<R> pi;
   Segment_2<R> si;
@@ -674,9 +676,12 @@ operator<<(Qt_widget& w, const Triangle_2<R>& t)
   if(CGAL::assign(ti, obj))
   {
     QPointArray array(3);
-    array[0] = QPoint(w.x_pixel(to_double(t.vertex(0).x())), w.y_pixel(to_double(t.vertex(0).y())));
-    array[1] = QPoint(w.x_pixel(to_double(t.vertex(1).x())), w.y_pixel(to_double(t.vertex(1).y())));
-    array[2] = QPoint(w.x_pixel(to_double(t.vertex(2).x())), w.y_pixel(to_double(t.vertex(2).y())));
+    array[0] = QPoint(w.x_pixel(to_double(t.vertex(0).x())), 
+                                w.y_pixel(to_double(t.vertex(0).y())));
+    array[1] = QPoint(w.x_pixel(to_double(t.vertex(1).x())), 
+                                w.y_pixel(to_double(t.vertex(1).y())));
+    array[2] = QPoint(w.x_pixel(to_double(t.vertex(2).x())), 
+                                w.y_pixel(to_double(t.vertex(2).y())));
     w.get_painter().drawPolygon(array);
   }   
   if(CGAL::assign(vi, obj)){
@@ -684,7 +689,8 @@ operator<<(Qt_widget& w, const Triangle_2<R>& t)
     std::vector<Point>::const_iterator it = vi.begin();
     int pos = 0;
     while(it != vi.end()){
-      array[pos] = QPoint(w.x_pixel(to_double((*it).x())), w.y_pixel(to_double((*it).y())));
+      array[pos] = QPoint(w.x_pixel(to_double((*it).x())), 
+                          w.y_pixel(to_double((*it).y())));
       pos++;
       it++;
     }  
