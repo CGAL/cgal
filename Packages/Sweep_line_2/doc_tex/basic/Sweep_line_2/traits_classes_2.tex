@@ -7,23 +7,13 @@
 % +------------------------------------------------------------------------+
 
 \section{Traits Classes}
-Each of the functions used to sweep planar curves in order to construct 
-their planar map or in order to produce their intersections and 
-disjoint-interior subcurves 
+The \ccStyle{Sweep_line_2} class 
 is parameterized by a traits class, which specifies the types and geometric
-primitives to be used in the computation.
+primitives to be used in the computation. 
 The \ccc{PlanarMapWithIntersectionsTraits_2} concept is a refinement of the 
- \ccc{SweepLineTraits_2} concept. 
+ \ccc{SweepLineTraits_2} concept.
 Hence, all implementations of Planar Map With Intersections Traits 
 provided in \cgal are model of the \ccc{SweepLineTraits_2} concept. 
-
-%The traits provided are in a matter of fact the 
-%traits classes provided for the \ccc{Planar_map_with_intersections_2<Planar_map>} 
-%package, since the requirements of the \ccc{SweepLineTraits_2} 
-%concept are almost identical to those of the 
-%\ccc{PlanarMapWithIntersectionsTraits_2} concept. 
-%The latter contains an additional function which is not required 
-%in the former.
 
 %
 % EOF
