@@ -1,0 +1,4 @@
+The Boost module contains an import (in the CVS sense) of the Boost library.
+Currently only the include files are there.
+It also contains some test programs to evaluate the portability of some
+Boost libraries.
