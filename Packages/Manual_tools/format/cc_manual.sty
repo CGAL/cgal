@@ -43,6 +43,10 @@
 %\tracingmacros=1
 
 % \ccRevision and \ccDate can be found below of \RCSdef and \RCSdefDate
+% There is also the code to print the message during the typesetting.
+
+% used instead of \end to terminate pattern matching. 
+\newcommand{\ccEnd}{}\def\ccEnd{\ccNeverToEval}  
 
 % ___________________________________________________________________________
 % ###########################################################################
@@ -174,6 +178,8 @@
     \fi
 }
 
+% abbreviations
+\newcommand{\ccGlue}{\ccGlueDeclarations}
 
 % ___________________________________________________________________________
 % ###########################################################################
@@ -314,6 +320,11 @@
     \ccSetOneOfTwoColumns{\ccwTmp}%
 }
 
+% abbreviations
+\newcommand{\ccThree}{\ccSetThreeColumns}
+\newcommand{\ccTwo}{\ccSetTwoColumns}
+\newcommand{\ccThreeToTwo}{\ccPropagateThreeToTwoColumns}
+
 % +--------------------------------------------------------------------------
 % | \ccMakeAllVisible:
 % | The invisible declaratiniol parts in the manual that are written
@@ -369,7 +380,7 @@
 % | 
 % | \ccReplacePrefix #1#2  replaces all prefixes in #1 and applies #2 to
 % |                        the partial results that have to be terminated
-% |                        by \end.
+% |                        by \ccEnd.
 % +--------------------------------------------------------------------------
 \gdef\ccSrcPrefix{CGAL}
 \gdef\ccTargetPrefix{CGAL}
@@ -384,18 +395,18 @@
 %                        #3 the text to process
 %                        #4 the macro to be applied to the partial results
 \def\ccReplacePrefixX #1#2#3#4{%
-    \def\repminusone ##1##2\end{%
+    \def\repminusone ##1##2\ccEnd{%
         \isEmpty{##2}\ifnum\ccBool=\ccFalse
-            \rep ##2\end
+            \rep ##2\ccEnd
         \fi
     }%
     % local macro to do the parsing: ##1 is the text before the old prefix
     %                                ##2 is the text after the old prefix
-    \def\rep ##1#1##2\end{% set up a recursive loop
-           \def\repbody{\rep ##2\end}%
+    \def\rep ##1#1##2\ccEnd{% set up a recursive loop
+           \def\repbody{\rep ##2\ccEnd}%
            \isEmpty{##2}\ifnum\ccBool=\ccTrue
                \isEmpty{##1}\ifnum\ccBool=\ccFalse
-                   #4##1\end
+                   #4##1\ccEnd
                \fi
                \let\repnext=\relax
            \else
@@ -407,26 +418,26 @@
                \ifnum\ccBool=\ccTrue  % it is a real prefix
                    \isUnderscore{##2}\ifnum\ccBool=\ccTrue
                        \isEmpty{#2}\ifnum\ccBool=\ccTrue
-                           \def\repbody{\repminusone ##2\end}%
+                           \def\repbody{\repminusone ##2\ccEnd}%
                        \fi
                        \isEmpty{##1#2}\ifnum\ccBool=\ccFalse
-                           #4##1#2\end
+                           #4##1#2\ccEnd
                        \fi
                    \else
                        \ifnum\ccTagReplaceInclude=\ccTrue
                            \isEmpty{#2}\ifnum\ccBool=\ccTrue
-                               \def\repbody{\repminusone ##2\end}%
+                               \def\repbody{\repminusone ##2\ccEnd}%
                            \fi
                            \isEmpty{##1#2}\ifnum\ccBool=\ccFalse
-                               #4##1#2\end
+                               #4##1#2\ccEnd
                            \fi
                        \else
-                           #4##1#1\end
+                           #4##1#1\ccEnd
                        \fi
                    \fi
                \else
                    \isEmpty{##1#1}\ifnum\ccBool=\ccFalse
-                       #4##1#1\end
+                       #4##1#1\ccEnd
                    \fi
                \fi
                \let\repnext=\repbody
@@ -434,7 +445,7 @@
            \repnext
     }%
     % call the above definition with at least one old prefix
-    \rep #3#1\end
+    \rep #3#1\ccEnd
 }
 
 % ___________________________________________________________________________
@@ -453,14 +464,14 @@
 { \catcode`\$=12
     \gdef\RCSdefSetSpace #1$#2 ${\gdef#1{#2}}%
     \gdef\RCSdefSetNonSpace #1$#2${\gdef#1{#2}}%
-    \gdef\RCSdefSetTest #1#2$#3 $#4\end{%
+    \gdef\RCSdefSetTest #1#2$#3 $#4\ccEnd{%
         \def\xRCSparams{#4}\ifx\xRCSparams\empty
             \RCSdefSetNonSpace{#1}#2%
         \else
             \RCSdefSetSpace{#1}#2%
         \fi
     }%
-    \gdef\RCSdefSet #1#2{\RCSdefSetTest{#1}{#2}#2 $\end\endgroup}%
+    \gdef\RCSdefSet #1#2{\RCSdefSetTest{#1}{#2}#2 $\ccEnd\endgroup}%
 }
 
 %   #1  the macro name for the RCS entry
@@ -476,7 +487,7 @@
     \gdef\RCSdefSetDateNonSet #1$#2${\gdef#1{#2 -\,-/-\,-/-\,-}}%
     % Test whether the date is set or not.
     % #1 = macro name, #2 = full date string, #8 = empty if date is not set
-    \gdef\RCSdefSetDateTest #1#2$#3 #4/#5/#6 #7$#8\end{%
+    \gdef\RCSdefSetDateTest #1#2$#3 #4/#5/#6 #7$#8\ccEnd{%
         \def\xRCSparams{#8}\ifx\xRCSparams\empty
             \RCSdefSetDateNonSet{#1}#2%
         \else
@@ -484,12 +495,19 @@
         \fi
     }%
     \gdef\RCSdefSetDate #1#2{%
-        \RCSdefSetDateTest{#1}{#2}#2 1/2/3 4$\end\endgroup %$
+        \RCSdefSetDateTest{#1}{#2}#2 1/2/3 4$\ccEnd\endgroup %$
     }%
 }
 
 \RCSdef{\ccRevision}{$Revision$}
 \RCSdefDate{\ccDate}{$Date$}
+
+% Print a release note.
+\catcode`\@=11\relax
+\newwrite\@unused
+\def\typeout#1{{\let\protect\string\immediate\write\@unused{#1}}}
+\typeout{cc_manual.sty: \ccRevision. \ccDate.}
+\catcode`\@=12\relax
 
 
 % +--------------------------------------------------------------------------
@@ -599,8 +617,11 @@
                        \begingroup\ccCatcode\ccStyleX
 }
 \def\ccStyleX #1{%
-                       {\ccFont \ccPrintTokens #1\end\ccEndFont}\endgroup
+                       {\ccFont \ccPrintTokens #1\ccEnd\ccEndFont}\endgroup
 }
+
+% abbreviations
+\newcommand{\ccc}{\ccStyle}
 
 % +--------------------------------------------------------------------------
 % | \ccDeclaration, \ccHidden, \ccUnchecked
@@ -684,10 +705,10 @@
                    \endgroup
                    \def\ccPureClassName{#1}%
                    \def\ccPureClassTemplateName{#1}%
-                   \renewcommand{\ccClassName}{\hbox{{\ccFont 
-                           \ccPrintTokens #1\end\ccEndFont}}}%
-                   \renewcommand{\ccClassTemplateName}{\hbox{{\ccFont
-                           \ccPrintTokens #1\end\ccEndFont}}}%
+                   \renewcommand{\ccClassName}{{{\ccFont 
+                           \ccPrintTokens #1\ccEnd\ccEndFont}}}%
+                   \renewcommand{\ccClassTemplateName}{{{\ccFont
+                           \ccPrintTokens #1\ccEnd\ccEndFont}}}%
                }
 
 \newenvironment{ccClassTemplate}{%
@@ -706,27 +727,27 @@
 
 \def\ccClassTemplateX #1{%
                    \endgroup
-                   \ccClassTemplateXX {#1}#1<\end}
+                   \ccClassTemplateXX {#1}#1<\ccEnd}
 
-\def\ccClassTemplateXX #1#2<#3\end{%
+\def\ccClassTemplateXX #1#2<#3\ccEnd{%
                    \def\xparams{#3}\ifx\xparams\empty
                        \errmessage{Template parameters missing for
                          class template}>%
-                       \ccClassTemplateXXX{#1<???>}{#2}<???><\end%
+                       \ccClassTemplateXXX{#1<???>}{#2}<???><\ccEnd%
                    \else
-                       \ccClassTemplateXXX{#1}{#2}<#3\end%
+                       \ccClassTemplateXXX{#1}{#2}<#3\ccEnd%
                    \fi}
 
-\def\ccClassTemplateXXX #1#2#3<\end{%
+\def\ccClassTemplateXXX #1#2#3<\ccEnd{%
                    \def\ccPureClassName{#2}%
                    \def\ccPureClassTemplateName{#1}%
                    \def\ccPureTemplateParameters{#3}%
-                   \renewcommand{\ccClassName}{\hbox{{\ccFont
-                           \ccPrintTokens #2\end\ccEndFont}}}%
-                   \renewcommand{\ccClassTemplateName}{\hbox{{\ccFont
-                           \ccPrintTokens #1\end\ccEndFont}}}%
-                   \renewcommand{\ccTemplateParameters}{\hbox{{\ccFont
-                           \ccPrintTokens #3\end\ccEndFont}}}%
+                   \renewcommand{\ccClassName}{{{\ccFont
+                           \ccPrintTokens #2\ccEnd\ccEndFont}}}%
+                   \renewcommand{\ccClassTemplateName}{{{\ccFont
+                           \ccPrintTokens #1\ccEnd\ccEndFont}}}%
+                   \renewcommand{\ccTemplateParameters}{{{\ccFont
+                           \ccPrintTokens #3\ccEnd\ccEndFont}}}%
                }
 
 % +--------------------------------------------------------------------------
@@ -737,7 +758,7 @@
 
 \def\ccCreationVariableX #1{%
                    \endgroup
-                   \renewcommand{\ccVar}{{\ccFont\ccPrintTokens #1\end
+                   \renewcommand{\ccVar}{{\ccFont\ccPrintTokens #1\ccEnd
                                           \ccEndFont}}%
                    \def\ccPureVar{#1}}
 
@@ -749,7 +770,7 @@
                    \ccConstructorXX{#1}}
 
 \long\def\ccConstructorXX #1#2{%
-                   \ccConstructorCall {#2}#1\end}
+                   \ccConstructorCall {#2}#1\ccEnd}
 
 % +--------------------------------------------------------------------------
 % | \ccMemberFunction, \ccMethod, \ccFunction, \ccFunctionTemplate
@@ -771,7 +792,7 @@
                        \ccGlobalContinuation{\ccFunctionComment{#1}{#2}}}
 
 \long\def\ccFunctionComment #1#2#3{%
-                       \ccFunctionCall{#1}{#3}#2;\end}
+                       \ccFunctionCall{#1}{#3}#2;\ccEnd}
 
 % Is getting obsolete!
 % A three! parameter macro to format template functions
@@ -793,7 +814,7 @@
                        \ccGlobalContinuation{\ccVariableXX{#1}}%
 }
 \long\def\ccVariableXX #1#2{%
-                       \ccVariableDeclaration{#2}#1;\end
+                       \ccVariableDeclaration{#2}#1;\ccEnd
 }
 \newcommand{\ccTypedef}{\ccVariable}
 
@@ -810,9 +831,9 @@
                        \ccInitConstructorWidths
                        \setbox\returntypebox=\hbox{}%
                        \setbox\callnamebox=\hbox{\ccClassTemplateName
-                           \ccFont\ccPrintTokens ::\end}%
+                           \ccFont\ccPrintTokens ::\ccEnd}%
                        \setbox\functioncallbox=\hbox{\unhcopy\callnamebox
-                           \ \ccFont\ccPrintTokens #1\end}%
+                           \ \ccFont\ccPrintTokens #1\ccEnd}%
                        \ccLayoutThreeColumns{}{}{}{#2}%
                      }
 % Enum's are formatted like constructors. There is exact one matching
@@ -836,7 +857,7 @@
 \endgroup
 
 \long\def\ccEnumXX #1#2{%
-                   \ccEnumDeclaration {#2}#1\end}
+                   \ccEnumDeclaration {#2}#1\ccEnd}
 
 % a struct is formatted like an enum (needs the parantheses parsing)
 \newcommand{\ccStruct}{%
@@ -930,11 +951,12 @@
 % | All predicates uses pattern matching of TeX. The original predicate uses
 % | a single parameter that should be in braces like in LaTeX. Internally,
 % | they use a second, auxiliary macro with pattern matching where the
-% | parameter has to be terminated by an \end token.
+% | parameter has to be terminated by an \ccEnd token.
 % |
 % | Result is stored in the counter \ccBool. \ccFalse, \ccTrue are also
 % | counters that are used in the \ifnum statement to test the result.
 % +--------------------------------------------------------------------------
+
 
 % The counter \ccBool contains the result of a couple of predicates
 \newcount\ccBool              % either 0 for false or 1 for true.
@@ -947,8 +969,8 @@
 
 % This macro test wheather its argument is empty or contains only spaces.
 \def\isEmpty #1{%
-    \isEmptyX #1;\end}
-\def\isEmptyX #1#2\end{%
+    \isEmptyX #1;\ccEnd}
+\def\isEmptyX #1#2\ccEnd{%
    \def\xparams{#2}\ifx\xparams\empty \ccBool=\ccTrue
        \else \ccBool=\ccFalse \fi}
 
@@ -956,8 +978,8 @@
 % with a valid C++ letter.
 \def\isLetter #1{%
     \def\qparams{#1}\ifx\qparams\empty\ccBool=\ccFalse 
-        \else\isLetterX #1\end\fi}
-\def\isLetterX #1#2\end{%
+        \else\isLetterX #1\ccEnd\fi}
+\def\isLetterX #1#2\ccEnd{%
     \ccBool=\ccFalse
     \ifx#1\_\ccBool=\ccTrue\else
     \ifcat#1A\ccBool=\ccTrue
@@ -968,8 +990,8 @@
 % Test for a leading underscore, either _ with changed catcode, or \_
 \def\isUnderscore #1{%
     \def\qparams{#1}\ifx\qparams\empty\ccBool=\ccFalse 
-        \else\isUnderscoreX #1\end\fi}
-\def\isUnderscoreX #1#2\end{%
+        \else\isUnderscoreX #1\ccEnd\fi}
+\def\isUnderscoreX #1#2\ccEnd{%
     \ccBool=\ccFalse
     \ifx#1\_\ccBool=\ccTrue\else
         \if#1_\ccBool=\ccTrue \fi
@@ -979,8 +1001,8 @@
 % or the / character. Used to validate the character after a prefix.
 \def\isPrefixFollowChar #1{%
     \def\qparams{#1}\ifx\qparams\empty\ccBool=\ccFalse 
-        \else\isPrefixFollowCharX #1\end\fi}
-\def\isPrefixFollowCharX #1#2\end{%
+        \else\isPrefixFollowCharX #1\ccEnd\fi}
+\def\isPrefixFollowCharX #1#2\ccEnd{%
     \ccBool=\ccFalse
     \ifx#1\_\ccBool=\ccTrue\else
         \if#1_\ccBool=\ccTrue \else
@@ -996,22 +1018,22 @@
 % The space of the rest will be skipped automatically in the next round.
 \def\hasLeadingSpace #1{%
     \def\qparams{#1}\ifx\qparams\empty\ccBool=\ccFalse 
-        \else\compareSpace{#1}#1\end\fi}
-\def\compareSpace #1#2#3\end{%
+        \else\compareSpace{#1}#1\ccEnd\fi}
+\def\compareSpace #1#2#3\ccEnd{%
    \def\xxparams{#1}\def\xxxparams{#2#3}\ifx\xxparams\xxxparams\ccBool=\ccFalse
        \else\ccBool=\ccTrue \fi}
 \def\testAndCopySpace #1{%
-    \def\qparams{#1}\ifx\qparams\empty\else\compareAndCopySpace{#1}#1\end\fi}
-\def\compareAndCopySpace #1#2#3\end{%
+    \def\qparams{#1}\ifx\qparams\empty\else\compareAndCopySpace{#1}#1\ccEnd\fi}
+\def\compareAndCopySpace #1#2#3\ccEnd{%
     \def\xxparams{#1}\def\xxxparams{#2#3}\ifx\xxparams\xxxparams\else\ \fi}
 
 % This macro gets a complete C++ declaration and decides weather
 % it starts with a template declaration or not.
 \def\isTemplate #1{%
-    \isTemplateX #1template\end}
+    \isTemplateX #1template\ccEnd}
     % Note: these macros has to test for characters directly following
     % the template keyword, because it is allowed as an identifier substring.
-\def\isTemplateX #1template#2\end{%
+\def\isTemplateX #1template#2\ccEnd{%
     \isEmpty{#2}\ifnum\ccBool=\ccTrue \ccBool=\ccFalse
     \else\hasLeadingSpace{#2}\ifnum\ccBool=\ccFalse
             \isLetter{#2}\ccInvert
@@ -1024,10 +1046,10 @@
 % This macro gets a complete C++ declaration and decides weather
 % it is an operator declaration or not.
 \def\isOperator #1{%
-    \isOperatorX #1operator\end}
+    \isOperatorX #1operator\ccEnd}
     % Note: these macros has to test for characters directly surrounding
     % the operator keyword, because it is allowed as an identifier substring.
-\def\isOperatorX #1operator#2\end{%
+\def\isOperatorX #1operator#2\ccEnd{%
     \isEmpty{#2}\ifnum\ccBool=\ccTrue \ccBool=\ccFalse
     \else\hasLeadingSpace{#2}\ifnum\ccBool=\ccFalse
             \isLetter{#2}\ccInvert
@@ -1035,7 +1057,7 @@
     \fi
     \ifnum\ccBool=\ccTrue
         \isEmpty{#1}\ifnum\ccBool=\ccFalse
-            \isLastAlphaX #1\end \ccInvert
+            \isLastAlphaX #1\ccEnd \ccInvert
         \fi
     \fi}
 
@@ -1043,11 +1065,11 @@
 % return \ccTrue, else return \ccFalse. 
 \def\isLastAlpha #1{%
     \isEmpty{#1}\ifnum\ccBool=\ccTrue\ccInvert
-                \else\isLastAlphaX #1\end
+                \else\isLastAlphaX #1\ccEnd
     \fi}
-\def\isLastAlphaX #1#2\end{%
-    \def\xqqbody{\isLastAlphaX #2\end}%
-    \isLetterX #1\end 
+\def\isLastAlphaX #1#2\ccEnd{%
+    \def\xqqbody{\isLastAlphaX #2\ccEnd}%
+    \isLetterX #1\ccEnd 
     \def\qqparams{#2}\ifx\qqparams\empty\let\xqqnext=\relax
     \else\isEmpty{#2}\ifnum\ccBool=\ccTrue \ccInvert
             \let\xqqnext=\relax
@@ -1060,16 +1082,16 @@
 % This macro gets a complete C++ declaration for an operator and has to
 % decide weather it is the parenthesis () operator declaration or not.
 \def\isParenthesisOperator #1{%
-    \isParenthesisOperatorX #1 ()\end}
-\def\isParenthesisOperatorX #1operator#2(#3)#4(#5)#6\end{%
-    % if and only if #6 is non empty, we have the () operator.
-    \isEmpty{#6}\ccInvert}
+    \isParenthesisOperatorX #1\ccEnd}
+\def\isParenthesisOperatorX #1operator#2(#3)#4\ccEnd{%
+    % if and only if #2 is empty, we have the () operator.
+    \isEmpty{#2}}
     
 % This macro gets a complete C++ declaration for an operator and has to
 % decide weather it is the conversion operator declaration or not.
 \def\isConversionOperator #1{%
-    \isConversionOperatorX #1\end}
-\def\isConversionOperatorX #1operator#2\end{%
+    \isConversionOperatorX #1\ccEnd}
+\def\isConversionOperatorX #1operator#2\ccEnd{%
     % if and only if #1 is empty, we have the conversion operator.
     \isEmpty{#1}}
     
@@ -1097,12 +1119,12 @@
 %   o  The 2st parameter contains the name of the constructor
 %   o  The 3rd parameter contains the parameter list (maybe empty).
 %   o  The 4th parameter contains the optional const specifier for methods.
-% The declaration has to be terminated with "\end".
-\def\ccConstructorCall #1#2(#3)#4\end {%
+% The declaration has to be terminated with "\ccEnd".
+\def\ccConstructorCall #1#2(#3)#4\ccEnd {%
                        % check for template function
                        \isTemplate{#2}\ifnum\ccBool=\ccTrue
                            \ccSeparateTemplate{\ccTemplateLine}{%
-                               \ccConstructorCall{#1}}#2(#3)#4\end
+                               \ccConstructorCall{#1}}#2(#3)#4\ccEnd
                        \else
                          \ccInitConstructorWidths
                          \setbox\callnamebox=\hbox{%
@@ -1126,10 +1148,10 @@
 %   o  The 4th parameter contains the rest of the type and the function name.
 %   o  The 5th parameter contains the parameter list (maybe empty).
 %   o  The 6th parameter contains the optional const specifier for methods.
-% The declaration has to be terminated with ";;\end" where the first ";"
+% The declaration has to be terminated with ";;\ccEnd" where the first ";"
 % has to be from the original call notation. The 7th parameter is there
 % to check for this ";".
-\def\ccFunctionCall #1#2#3 #4(#5)#6;#7\end{%
+\def\ccFunctionCall #1#2#3 #4(#5)#6;#7\ccEnd{%
                        \ccInitFunctionWidths
                        \def\xparam{#7}\ifx\xparam\empty
                            \errmessage{Missing ";" at the end of the 
@@ -1140,24 +1162,24 @@
                        % check for template function
                        \isTemplate{#3 #4}\ifnum\ccBool=\ccTrue
                            \ccSeparateTemplate{\ccTemplateLine}{%
-                               \ccFunctionCall{#1}{#2}}#3 #4(#5)#6;#7\end
+                               \ccFunctionCall{#1}{#2}}#3 #4(#5)#6;#7\ccEnd
                        \else
                        \def\ccExtendedFormat{\ }% Switches ext. format OFF.
-                       \ccSeparateTrailingConst #6)\end
+                       \ccSeparateTrailingConst #6)\ccEnd
                        \ccBool=\ccTagOperatorLayout\ifnum\ccBool=\ccTrue
                          \isOperator{#3 #4(#5)#6}\ifnum\ccBool=\ccTrue
                            \isConversionOperator{#3 #4(#5)#6}
                            \ifnum\ccBool=\ccTrue
-                               \ccPrintConversionOperator #3 #4(#5)#6\end
+                               \ccPrintConversionOperator #3 #4(#5)#6\ccEnd
                            \else
-                               \ccSeparateOperator #3 #4\end%
+                               \ccSeparateOperator #3 #4\ccEnd%
                                \isParenthesisOperator{#3 #4(#5)#6}%
                                \ifnum\ccBool=\ccTrue
                                    \setbox\functioncallbox=\hbox{{\ccFont 
-                                       \ccPrintParOperator #1#3 #4(#5)#6\end}}
+                                       \ccPrintParOperator #1#3 #4(#5)#6\ccEnd}}
                                \else
                                    \setbox\functioncallbox=\hbox{{\ccFont 
-                                       \ccPrintOperator #1#3 #4(#5)#6\end}}
+                                       \ccPrintOperator #1#3 #4(#5)#6\ccEnd}}
                                \fi
    
                            \fi
@@ -1165,7 +1187,7 @@
                          \fi
                        \fi
                        \ifnum\ccBool=\ccFalse
-                           \ccSeparateFunction{}#3 #4::\end%
+                           \ccSeparateFunction{}#3 #4::\ccEnd%
                            \setbox\returntypebox=\hbox{{\ccFont
                                \unhcopy\templatedeclbox
                                \unhbox\returntypebox
@@ -1191,10 +1213,10 @@
 %   o  The 1st parameter contains the comment text (maybe empty).
 %   o  The 2nd parameter contains the beginning of the type declaration.
 %   o  The 3rd parameter contains the rest of the type and the function name.
-% The declaration has to be terminated with ";;\end" where the first ";"
+% The declaration has to be terminated with ";;\ccEnd" where the first ";"
 % has to be from the original call notation. The 4th parameter is there
 % to check for this ";".
-\def\ccVariableDeclaration #1#2 #3;#4\end{%
+\def\ccVariableDeclaration #1#2 #3;#4\ccEnd{%
                        \ccInitFunctionWidths
                        \def\xparam{#4}\ifx\xparam\empty
                            \errmessage{Missing ";" at the end of the 
@@ -1202,7 +1224,7 @@
                            declaration has to end with a ";". 
                            Go ahead, I've inserted one}%
                        \fi
-                       \ccSeparateVariable #2 #3=\end%
+                       \ccSeparateVariable #2 #3=\ccEnd%
                        \setbox\functioncallbox=\hbox{{\ccFont
                            \unhcopy\functionnamebox;}}
                        \setbox\callnamebox=\hbox{{\ccFont
@@ -1210,15 +1232,16 @@
                        \ccLayoutThreeColumns{}{}{}{#1}%
                      }
 
-\def\ccSeparateVariable #1 #2=#3\end{%
-                       \ccSeparateFunction{}#1 #2::\end%
+\def\ccSeparateVariable #1 #2=#3\ccEnd{%
+                       \ccSeparateFunction{}#1 #2::\ccEnd%
                        \def\xparam{#3}\ifx\xparam\empty
                        \else
-                           \ccSeparateVariableX #3\end
+                           \ccSeparateVariableX #3\ccEnd
                        \fi
                      }
-\def\ccSeparateVariableX #1=\end{%
-                     {\setbox0=\hbox{\unhbox\functionnamebox\ =#1}%
+\def\ccSeparateVariableX #1=\ccEnd{%
+                     {\setbox0=\hbox{\unhbox\functionnamebox\ \ccFont
+                           \ccPrintTokens =#1\ccEnd\ccEndFont}%
                       \global\setbox\functionnamebox=\hbox{\unhbox0}}%
                     }
 
@@ -1227,21 +1250,21 @@
 %   o  The 2st parameter contains the `enum' or `struct' keyword name.
 %   o  The 3rd parameter contains the parameter list (maybe empty).
 %   o  The 4th parameter contains an optional variable name.
-% The declaration has to be terminated with "\end".
-\def\ccEnumDeclaration #1#2\{#3\}#4\end {%
+% The declaration has to be terminated with "\ccEnd".
+\def\ccEnumDeclaration #1#2\{#3\}#4\ccEnd {%
                        \ccInitConstructorWidths
                        % check for template function
                        \isTemplate{#2}\ifnum\ccBool=\ccTrue
                            \ccSeparateTemplate{\ccTemplateLine}{%
-                               \ccEnumDeclaration{#1}}#2\{#3\}#4\end
+                               \ccEnumDeclaration{#1}}#2\{#3\}#4\ccEnd
                        \else
                        \setbox\returntypebox=\hbox{}%
                        \setbox\callnamebox=\hbox{\ccFont
                            \unhcopy\templatedeclbox
-                           \ccPrintTokens #2\end}%
+                           \ccPrintTokens #2\ccEnd}%
                        \setbox\functioncallbox=\hbox{\ccFont
                                  \unhbox\templatedeclbox
-                                 \ccPrintTokens #2\end\ \{%
+                                 \ccPrintTokens #2\ccEnd\ \{%
                                  \isEmpty{#3}\ifnum\ccBool=\ccFalse
                                      \ \ccPrintParamList{#3)}%
                                  \fi
@@ -1343,20 +1366,20 @@
 % line above the three columns that contains the template declaration
 % for functions or methods (if any)
 % 
-%   #1   the template declaration, delimited with \end
-\def\ccTemplateLine #1\end{%
+%   #1   the template declaration, delimited with \ccEnd
+\def\ccTemplateLine #1\ccEnd{%
     % Note: The \templatedeclbox must also be deleted after each use
     %       which is done in \ccLayoutThreeColumns.
     \ifnum\ccTagRmTemplate=\ccTrue
         \setbox\templatedeclbox=\hbox{}%
     \else
         \ifnum\ccTagTemplateInline=\ccTrue
-            \setbox\templatedeclbox=\hbox{\ccFont\ccPrintTokens #1\end\ }%
+            \setbox\templatedeclbox=\hbox{\ccFont\ccPrintTokens #1\ccEnd\ }%
         \else
             \setbox\templatedeclbox=\hbox{}%
             \ccTopSkip
             \hspace*{\ccwIndent}%
-            \ccPrintTokens #1\end 
+            {\ccFont\ccPrintTokens #1\ccEnd \ccEndFont}%
             \nopagebreak[4]\par
             \ccReverseTopSkip\vspace{-\parskip}%
         \fi
@@ -1365,23 +1388,23 @@
 \newbox\templatedeclbox
 
 % Set the two boxes, returntype and functionname, for an operator declaration.
-\def\ccSeparateOperator #1operator#2\end{%
+\def\ccSeparateOperator #1operator#2\ccEnd{%
                        \setbox\returntypebox=\hbox{{\ccFont
-                           \ccPrintReturnType #1const.&.\end}}%
+                           \ccPrintReturnType #1const.&.\ccEnd}}%
                        \setbox\functionnamebox=\hbox{{\ccFont
-                           \ccPrintTokens operator#2\end}}%
+                           \ccPrintTokens operator#2\ccEnd}}%
                      }
 
 % Set the two boxes, returntype and functionname, for a function declaration.
-% The part of the declaration has to be terminated with "::\end".
-\def\ccSeparateFunction #1#2::#3\end{%
+% The part of the declaration has to be terminated with "::\ccEnd".
+\def\ccSeparateFunction #1#2::#3\ccEnd{%
                        \isEmpty{#3}\ifnum\ccBool=\ccTrue
-                           \ccSeparateFunctionXX{#1}#2 .\end%
+                           \ccSeparateFunctionXX{#1}#2 .\ccEnd%
                        \else
                            \hasLeadingSpace{#3}\ifnum\ccBool=\ccTrue
-                               \ccSeparateFunction{#1#2:: }#3\end%
+                               \ccSeparateFunction{#1#2:: }#3\ccEnd%
                            \else
-                               \ccSeparateFunction{#1#2::}#3\end%
+                               \ccSeparateFunction{#1#2::}#3\ccEnd%
                            \fi
                        \fi}
 
@@ -1394,29 +1417,29 @@
 %   o  The 3rd and 4th parameter are the next part of the return type or
 %      the name, if #4 is empty. Then, the 3rd parameter is the first
 %      character of it.
-% The part of the declaration has to be terminated with " .\end".
-\def\ccSeparateFunctionXX #1#2 #3#4\end{%
+% The part of the declaration has to be terminated with " .\ccEnd".
+\def\ccSeparateFunctionXX #1#2 #3#4\ccEnd{%
                        \isEmpty{#4}\ifnum\ccBool=\ccTrue 
                            \setbox\returntypebox=\hbox{{\ccFont
-                               \ccPrintReturnType #1const.&.\end}}%
+                               \ccPrintReturnType #1const.&.\ccEnd}}%
                            \setbox\functionnamebox=\hbox{{\ccFont
-                               \ccPrintTokens #2\end}}%
+                               \ccPrintTokens #2\ccEnd}}%
                        \else
                            \def\xparams{#1}\ifx\xparams\empty
                                \ifx#3&%
-                                   \ccSeparateFunctionXX{#2#3}#4\end%
+                                   \ccSeparateFunctionXX{#2#3}#4\ccEnd%
                                \else\ifx#3*%
-                                   \ccSeparateFunctionXX{#2#3}#4\end%
+                                   \ccSeparateFunctionXX{#2#3}#4\ccEnd%
                                \else
-                                   \ccSeparateFunctionXX{#2 }#3#4\end%
+                                   \ccSeparateFunctionXX{#2 }#3#4\ccEnd%
                                \fi\fi
                            \else
                                \ifx#3&%
-                                   \ccSeparateFunctionXX{#1#2#3}#4\end%
+                                   \ccSeparateFunctionXX{#1#2#3}#4\ccEnd%
                                \else\ifx#3*%
-                                   \ccSeparateFunctionXX{#1#2#3}#4\end%
+                                   \ccSeparateFunctionXX{#1#2#3}#4\ccEnd%
                                \else
-                                   \ccSeparateFunctionXX{#1#2 }#3#4\end%
+                                   \ccSeparateFunctionXX{#1#2 }#3#4\ccEnd%
                                \fi\fi
                            \fi
                        \fi}
@@ -1425,7 +1448,7 @@
 % Set the \trailingconstbox appropriately to \ccTagRmTrailingConst.
 % If #2 is empty we have found the trailing part in #1,
 % else apply this recursivly.
-\def\ccSeparateTrailingConst #1)#2\end{%
+\def\ccSeparateTrailingConst #1)#2\ccEnd{%
     \ifnum\ccTagRmTrailingConst=\ccTrue
         \setbox\trailingconstbox=\hbox{}%
     \else
@@ -1434,9 +1457,9 @@
         \else
             \def\xparams{#2}\ifx\xparams\empty
                 \setbox\trailingconstbox=\hbox{{ % here is one space !
-                    \ccFont\ccPrintTokens #1\end}}%
+                    \ccFont\ccPrintTokens #1\ccEnd}}%
             \else
-                \ccSeparateFunctionXX #2\end
+                \ccSeparateFunctionXX #2\ccEnd
             \fi
         \fi
     \fi
@@ -1466,39 +1489,39 @@
 % Print a single C++ token (without spaces inbetween). Skip leading spaces.
 % The token has to be delimited by ";".
 \def\ccPrintSingleTokenSemi #1;{%
-    \ccPrintSingleToken #1\end
+    \ccPrintSingleToken #1\ccEnd
 }
 % Print a single C++ token (without spaces inbetween). Skip leading spaces.
-% The token has to be delimited by "\end".
-\def\ccPrintSingleToken #1\end{%
+% The token has to be delimited by "\ccEnd".
+\def\ccPrintSingleToken #1\ccEnd{%
     \ifnum\ccTagReplacePrefix=\ccTrue
         \ccReplacePrefix{#1}{\ccPrintSingleTokenX}%
-    \else\ccPrintSingleTokenX #1\end
+    \else\ccPrintSingleTokenX #1\ccEnd
     \fi
 }
 
-\def\ccPrintSingleTokenX #1#2\end{%CCtrue
+\def\ccPrintSingleTokenX #1#2\ccEnd{%CCtrue
                    \ccPrintChar #1%
-                   \def\xqabody{\ccPrintSingleTokenX #2\end}%
+                   \def\xqabody{\ccPrintSingleTokenX #2\ccEnd}%
                    \isEmpty{#2}\ifnum\ccBool=\ccTrue \let\xqanext=\relax
                    \else\let\xqanext=\xqabody\fi
                    \xqanext}
 
 % Print C++ tokens (separated with spaces). Skip leading spaces.
-% The tokens have to be delimited by "\end".
-\def\ccPrintTokens #1\end{%
+% The tokens have to be delimited by "\ccEnd".
+\def\ccPrintTokens #1\ccEnd{%
     \ifnum\ccTagReplacePrefix=\ccTrue
         \ccReplacePrefix{#1}{\ccPrintTokensX}%
-    \else\ccPrintTokensX #1\end
+    \else\ccPrintTokensX #1\ccEnd
     \fi
 }
-\def\ccPrintTokensX #1#2\end{%
+\def\ccPrintTokensX #1#2\ccEnd{%
                    \ccPrintChar #1%
-                   \def\xqbody{\ccPrintTokensX #2\end}%
+                   \def\xqbody{\ccPrintTokensX #2\ccEnd}%
                    \isEmpty{#2}\ifnum\ccBool=\ccTrue
                        \let\xqnext=\relax
                    \else
-                       \compareAndCopySpace{#2}#2\end
+                       \compareAndCopySpace{#2}#2\ccEnd
                        \let\xqnext=\xqbody
                    \fi
                    \xqnext}
@@ -1515,17 +1538,19 @@
 %   o  The second parameter contains the return type.
 %   o  The third parameter contains the operator name.
 %   o  The fourth parameter contains the parameter list (maybe empty).
-%   o  The fifth parameter contains the optional const specifier for methods.
-% The declaration has to be terminated with "\end".
-\def\ccPrintOperator #1#2operator#3(#4)#5\end{%
+%   o  The fifth parameter contains the optional const specifier for methods
+%      and the remaining part of the parameter list if the parameter list
+%      contains parantheses (e.g. for function pointer arguments).
+% The declaration has to be terminated with "\ccEnd".
+\def\ccPrintOperator #1#2operator#3(#4)#5\ccEnd{%
                        \ifnum#1=0
                            \isEmpty{#4}\ifnum\ccBool=\ccTrue
-                               \ccPrintOperatorOne{#1}{\ccVar}{#4}#3\end
+                              \ccPrintOperatorOne{#1}{\ccVar}{#4}{)#5}#3\ccEnd
                            \else
-                               \ccPrintOperatorOne{#1}{\ccVar,}{#4}#3\end
+                              \ccPrintOperatorOne{#1}{\ccVar,}{#4}{)#5}#3\ccEnd
                            \fi
                        \else
-                           \ccPrintOperatorOne{#1}{}{#4}#3\end
+                           \ccPrintOperatorOne{#1}{}{#4}{)#5}#3\ccEnd
                        \fi}
 
 % Formats a parenthesis () operator declaration:
@@ -1534,8 +1559,8 @@
 %   o  The #3, #4, #5 parameters have to be empty.
 %   o  The #6 parameter contains the parameter list (maybe empty).
 %   o  The #7 parameter contains the optional const specifier for methods.
-% The declaration has to be terminated with "\end".
-\def\ccPrintParOperator #1#2operator#3(#4)#5(#6)#7\end{%
+% The declaration has to be terminated with "\ccEnd".
+\def\ccPrintParOperator #1#2operator#3(#4)#5(#6)#7\ccEnd{%
                        \isEmpty{#3}\ifnum\ccBool=\ccFalse\errmessage{Malformed
                            parenthesis operator}\fi
                        \isEmpty{#4}\ifnum\ccBool=\ccFalse\errmessage{Malformed
@@ -1544,68 +1569,71 @@
                            parenthesis operator}\fi
                        \ifnum#1=0
                            \isEmpty{#6}\ifnum\ccBool=\ccTrue
-                               \ccPrintOperatorOne{#1}{\ccVar}{#6}()\end
+                              \ccPrintOperatorOne{#1}{\ccVar}{#6}{)#7}()\ccEnd
                            \else
-                               \ccPrintOperatorOne{#1}{\ccVar,}{#6}()\end
+                              \ccPrintOperatorOne{#1}{\ccVar,}{#6}{)#7}()\ccEnd
                            \fi
                        \else
-                           \ccPrintOperatorOne{#1}{}{#6}()\end
+                           \ccPrintOperatorOne{#1}{}{#6}{)#7}()\ccEnd
                        \fi}
 
 
 % Formats a conversion operator.
 % Uses the returntypebox and the functioncallbox.
-% The declaration ends with "\end".
-\def\ccPrintConversionOperator #1operator #2(#3)#4\end{%
+% The declaration ends with "\ccEnd".
+\def\ccPrintConversionOperator #1operator #2(#3)#4\ccEnd{%
                        \setbox\returntypebox=\hbox{{\ccFont
-                           \ccPrintTokens #2\end}}
+                           \ccPrintTokens #2\ccEnd}}
                        \setbox\functioncallbox=\hbox{{\ccFont 
-                           \ccPrintTokens #2(\ccVar)\end}}
+                           \ccPrintTokens #2(\ccVar)\ccEnd}}
                        }
 
 % An operator is detected and can be printed.
-%   o  The first parameter contains a 0 for a method call, a 1 for a function.
-%   o  The second parameter contains the \ccVar if it is a method.
-%   o  The third parameter contains the (maybe empty) parameter list.
-%   o  The fourth parameter is the first character of the operator.
-%   o  The fifth parameter contains the rest of the operator.
-% The declaration ends with "\end".
+%   #1  contains a 0 for a method call, a 1 for a function.
+%   #2  contains the \ccVar if it is a method.
+%   #3  contains the parameter list up to the first closing parenthesis. 
+%       It might be empty .
+%   #4  contains the remaining part of the parameter list including
+%       the closing paranthesis (and a possible trailing const). 
+%   #5  is the first character of the operator.
+%   #6  contains the rest of the operator.
+% The declaration ends with "\ccEnd".
 \newcount\operatorerror
 {
   \ccCatcode \catcode`\#=6 \catcode`\@=14
-  \gdef\ccPrintOperatorOne #1#2#3#4#5\end{@
-                       \ccExtractParamList{#2#3)}@
+  \gdef\ccPrintOperatorOne #1#2#3#4#5#6\ccEnd{@
+                       \ccExtractParamList{#2#3#4}@
                        \operatorerror=1
-                       \isEmpty{#5}\ifnum\ccBool=\ccTrue 
+                       \isEmpty{#6}\ifnum\ccBool=\ccTrue 
                            @ single character operations
                            \ifcase\NParameters         @ no parameter
                            \or                         @ 1 parameter
-                               \if~#4\ccOperatorpraefix{\mbox{\ccTilde}}\fi
-                               \if!#4\ccOperatorpraefix{#4\,}\fi
-                               \if-#4\ccOperatorpraefix{#4}\fi
-                               \if+#4\ccOperatorpraefix{#4}\fi
-                               \if&#4\ccOperatorpraefix{\mbox{{\ccFont
+                               \if~#5\ccOperatorpraefix{\mbox{\ccTilde}}\fi
+                               \if!#5\ccOperatorpraefix{#5\,}\fi
+                               \if-#5\ccOperatorpraefix{#5}\fi
+                               \if+#5\ccOperatorpraefix{#5}\fi
+                               \if&#5\ccOperatorpraefix{\mbox{{\ccFont
                                        \ccAmpersand}}}\fi
-                               \if*#4\ccOperatorpraefix{#4}\fi
+                               \if*#5\ccOperatorpraefix{#5}\fi
                            \or                         @ 2 parameters
-                               \if*#4\ccOperatorinfix{#4}\fi
-                               \if/#4\ccOperatorinfix{\,#4}\fi
-                               \if%#4\ccOperatorinfix{\,#4\,}\fi
-                               \if+#4\ccOperatorinfix{#4}\fi
-                               \if-#4\ccOperatorinfix{#4}\fi
-                               \if<#4\ccOperatorinfix{#4}\fi
-                               \if>#4\ccOperatorinfix{#4}\fi
-                               \if&#4\ccOperatorinfix{\mbox{{ \ccFont
+                               \if*#5\ccOperatorinfix{#5}\fi
+                               \if/#5\ccOperatorinfix{\,#5}\fi
+                               \if%#5\ccOperatorinfix{\,#5\,}\fi
+                               \if+#5\ccOperatorinfix{#5}\fi
+                               \if-#5\ccOperatorinfix{#5}\fi
+                               \if<#5\ccOperatorinfix{#5}\fi
+                               \if>#5\ccOperatorinfix{#5}\fi
+                               \if&#5\ccOperatorinfix{\mbox{{ \ccFont
                                        \ccAmpersand} }}\fi
-                               \if^#4\ccOperatorinfix{\mbox{\ccHat}}\fi
-                               \if|#4\ccOperatorinfix{\;#4\;}\fi
-                               \if=#4\ccOperatorinfix{#4}\fi
-                               \if,#4\ccOperatorinfix{#4}\fi
+                               \if^#5\ccOperatorinfix{\mbox{\ccHat}}\fi
+                               \if|#5\ccOperatorinfix{\;#5\;}\fi
+                               \if=#5\ccOperatorinfix{#5}\fi
+                               \if,#5\ccOperatorinfix{#5}\fi
                            \else                       @ 3 parameters
                            \fi
                        \else
                            @ two or more character operations
-                           \ccPrintOperatorTwo #4#5\end
+                           \ccPrintOperatorTwo #5#6\ccEnd
                        \fi
                        \ifnum\operatorerror=1 \errmessage{Unknown
                            operator detected. Look out for the legal
@@ -1614,9 +1642,9 @@
                            style, sorry.  Go ahead, and I format it as
                            a function}@
                            \ifnum#1=0 {\ccFont \ccVar.}\fi
-                           \ccPrintTokens operator #4#5\end@
+                           \ccPrintTokens operator #5#6\ccEnd@
                            (\isEmpty{#3}\ifnum\ccBool=\ccFalse
-                               \ccPrintParamList{#3)}\fi
+                               \ccPrintParamList{#3#4}\fi
                            )@
                        \fi
                      }
@@ -1625,8 +1653,8 @@
 @   o  The first parameter is the first character of the operator.
 @   o  The second parameter is the second character of the operator.
 @   o  The third parameter contains the rest of the operator.
-@ The declaration ends with "\end".
-\gdef\ccPrintOperatorTwo #1#2#3\end{@
+@ The declaration ends with "\ccEnd".
+\gdef\ccPrintOperatorTwo #1#2#3\ccEnd{@
                    \isEmpty{#3}\ifnum\ccBool=\ccTrue 
                        @ two character operations
                        \ifcase\NParameters         @ no parameter
@@ -1711,29 +1739,29 @@
 % +--------------------------------------------------------------------------
 % | The input starts with a template declaration. This and including
 % | its parameter list will be separated from the rest of the declaration. 
-% | The macro in argument #1 will be applied to them, delimited with \end. The 
+% | The macro in argument #1 will be applied to them, delimited with \ccEnd. The 
 % | rest will be handed over to the command in argument #2, also delimited
-% | with \end.
+% | with \ccEnd.
 % +--------------------------------------------------------------------------
 %   #1  macro to be applied to the template declaration
 %   #2  macro to be applied to the rest of the declaration
 %   #3  should be empty
-%   #4  the declaration, delimited by \end.
+%   #4  the declaration, delimited by \ccEnd.
 
-\def\ccSeparateTemplate #1#2#3template#4\end{%
+\def\ccSeparateTemplate #1#2#3template#4\ccEnd{%
         \nestinglevel=0
         \hasLeadingSpace{#4}\ifnum\ccBool=\ccTrue
-            \ccSeparateTemplateX{#1}{#2}{template }#4\end
+            \ccSeparateTemplateX{#1}{#2}{template }#4\ccEnd
         \else
-            \ccSeparateTemplateX{#1}{#2}{template}#4\end
+            \ccSeparateTemplateX{#1}{#2}{template}#4\ccEnd
         \fi}
 
 %   #1  macro to be applied to the template declaration
 %   #2  macro to be applied to the rest of the declaration
 %   #3  accumulator for the template declaration
 %   #4  first character of declaration
-%   #5  rest of declaration, delimited by \end.
-\def\ccSeparateTemplateX #1#2#3#4#5\end{%
+%   #5  rest of declaration, delimited by \ccEnd.
+\def\ccSeparateTemplateX #1#2#3#4#5\ccEnd{%
                    \if<#4\advance\nestinglevel by1 \fi
                    \if(#4\advance\nestinglevel by1 \fi
                    \if)#4\advance\nestinglevel by-1 \fi
@@ -1744,12 +1772,12 @@
                            template parameters of template
                            declaration. I'll try.}%
                        \fi
-                       #1#3#4\end #2#5\end
+                       #1#3#4\ccEnd #2#5\ccEnd
                    \fi
                    \hasLeadingSpace{#5}\ifnum\ccBool=\ccTrue
-                       \def\xxbody{\ccSeparateTemplateX{#1}{#2}{#3#4 }#5\end}%
+                       \def\xxbody{\ccSeparateTemplateX{#1}{#2}{#3#4 }#5\ccEnd}%
                    \else
-                       \def\xxbody{\ccSeparateTemplateX{#1}{#2}{#3#4}#5\end}%
+                       \def\xxbody{\ccSeparateTemplateX{#1}{#2}{#3#4}#5\ccEnd}%
                    \fi
                    \ifnum\nestinglevel<1 \let\xxnext=\relax
                    \else\let\xxnext=\xxbody\fi
@@ -1768,47 +1796,47 @@
 % with a space between commata and the parameter text.
 \def\ccPrintParamList #1{%
         \nestinglevel=0
-        \ccPrintParamListX{}#1\end}
+        \ccPrintParamListX{}#1\ccEnd}
 % Support function:
 %   o  The first parameter accumulates the so far parsed first parameter.
 %   o  The second parameter contains the next character.
 %   o  The third parameter contains the rest.
 % The parsing process iterates characterwise.
-% The parameter list has to be terminated with "\end".
-\def\ccPrintParamListX #1#2#3\end{%
+% The parameter list has to be terminated with "\ccEnd".
+\def\ccPrintParamListX #1#2#3\ccEnd{%
                    \if<#2\advance\nestinglevel by1 \fi
                    \if>#2\advance\nestinglevel by-1 \fi
                    \if(#2\advance\nestinglevel by1 \fi
                    \if)#2\advance\nestinglevel by-1 \fi
                    \if,#2%
                        \ifnum\nestinglevel=0 
-                           \ccPrintParameter #1const.&.\end,\ccExtendedFormat
-                           \def\xxbody{\ccPrintParamListX{}#3\end}%
+                           \ccPrintParameter #1const.&.\ccEnd,\ccExtendedFormat
+                           \def\xxbody{\ccPrintParamListX{}#3\ccEnd}%
                        \else\ifnum\nestinglevel<0
                            \errmessage{Unbalanced angles detected in
                            template types in the C++ parameter list}%
-                           \def\xxbody{\ccPrintParamListX{}#3\end}%
+                           \def\xxbody{\ccPrintParamListX{}#3\ccEnd}%
                        \else% comma within template parameter detected
                            \hasLeadingSpace{#3}\ifnum\ccBool=\ccTrue
-                               \def\xxbody{\ccPrintParamListX{#1#2 }#3\end}%
+                               \def\xxbody{\ccPrintParamListX{#1#2 }#3\ccEnd}%
                            \else
-                               \def\xxbody{\ccPrintParamListX{#1#2}#3\end}%
+                               \def\xxbody{\ccPrintParamListX{#1#2}#3\ccEnd}%
                            \fi
                        \fi\fi
                    \else%  old: \isEmpty{#3}\ifnum\ccBool=\ccTrue
                        \ifnum\nestinglevel<0
                        \ifnum\nestinglevel=-1
-                           \ccPrintParameter #1const.&.\end%
+                           \ccPrintParameter #1const.&.\ccEnd%
                        \else
                            \errmessage{Unbalanced angles detected in
                            template types in the C++ parameter list}%
                        \fi
-                       \def\xxbody{\ccPrintParamListX{}#3\end}%
+                       \def\xxbody{\ccPrintParamListX{}#3\ccEnd}%
                    \else
                        \hasLeadingSpace{#3}\ifnum\ccBool=\ccTrue
-                           \def\xxbody{\ccPrintParamListX{#1#2 }#3\end}%
+                           \def\xxbody{\ccPrintParamListX{#1#2 }#3\ccEnd}%
                        \else
-                           \def\xxbody{\ccPrintParamListX{#1#2}#3\end}%
+                           \def\xxbody{\ccPrintParamListX{#1#2}#3\ccEnd}%
                        \fi
                    \fi\fi
                    % old: \isEmpty{#3}\ifnum\ccBool=\ccTrue 
@@ -1832,14 +1860,14 @@
 \def\ccExtractParamList #1{%
         \nestinglevel=0
         \NParameters=0
-        \isEmpty{#1}\ifnum\ccBool=\ccFalse \ccExtractParamListX{}#1\end\fi}
+        \isEmpty{#1}\ifnum\ccBool=\ccFalse \ccExtractParamListX{}#1\ccEnd\fi}
 % Support function:
 %   o  The first parameter accumulates the so far parsed first parameter.
 %   o  The second parameter contains the next character.
 %   o  The third parameter contains the rest.
 % The parsing process iterates characterwise.
-% The parameter list has to be terminated with "\end".
-\def\ccExtractParamListX #1#2#3\end{%
+% The parameter list has to be terminated with "\ccEnd".
+\def\ccExtractParamListX #1#2#3\ccEnd{%
                    \if<#2\advance\nestinglevel by1 \fi
                    \if>#2\advance\nestinglevel by-1 \fi
                    \if(#2\advance\nestinglevel by1 \fi
@@ -1849,11 +1877,11 @@
                            \advance\NParameters by1
                            \ifnum\NParameters=1 %
                                \setbox\parameterX=%
-                                   \hbox{\ccPrintParameter #1const.&.\end}%
-                               \def\xxxbody{\ccExtractParamListX{}#3\end}%
+                                   \hbox{\ccPrintParameter #1const.&.\ccEnd}%
+                               \def\xxxbody{\ccExtractParamListX{}#3\ccEnd}%
                            \else\advance\NParameters by1
                                \setbox\parameterXX=%
-                                   \hbox{\ccPrintParameter #1const.&.\end}%
+                                   \hbox{\ccPrintParameter #1const.&.\ccEnd}%
                                \setbox\parameterXXX=%
                                    \hbox{\ccPrintParamList{#3}}%
                                \def\xxxbody{\relax}%
@@ -1862,35 +1890,35 @@
                            \errmessage{Unbalanced angles or parantheses
                            detected in
                            template types in the C++ parameter list}%
-                           \def\xxxbody{\ccExtractParamListX{}#3\end}%
+                           \def\xxxbody{\ccExtractParamListX{}#3\ccEnd}%
                        \else% comma within template parameter detected
                            \hasLeadingSpace{#3}\ifnum\ccBool=\ccTrue
-                               \def\xxxbody{\ccExtractParamListX{#1#2 }#3\end}%
+                               \def\xxxbody{\ccExtractParamListX{#1#2 }#3\ccEnd}%
                            \else
-                               \def\xxxbody{\ccExtractParamListX{#1#2}#3\end}%
+                               \def\xxxbody{\ccExtractParamListX{#1#2}#3\ccEnd}%
                            \fi
                        \fi\fi
                    \else\ifnum\nestinglevel<0
                        \ifnum\nestinglevel=-1
                            \advance\NParameters by1
                            \ifnum\NParameters=1 \setbox\parameterX=%
-                                   \hbox{\ccPrintParameter #1const.&.\end}%
+                                   \hbox{\ccPrintParameter #1const.&.\ccEnd}%
                            \else\ifnum\NParameters=2 \setbox\parameterXX=%
-                                   \hbox{\ccPrintParameter #1const.&.\end}%
+                                   \hbox{\ccPrintParameter #1const.&.\ccEnd}%
                            \else\setbox\parameterXXX=%
-                                   \hbox{\ccPrintParameter #1const.&.\end}%
+                                   \hbox{\ccPrintParameter #1const.&.\ccEnd}%
                            \fi\fi
                        \else
                            \errmessage{Unbalanced angles or
                            parantheses detected in
                            template types in the C++ parameter list}%
                        \fi
-                       \def\xxxbody{\ccExtractParamListX{}#3\end}%
+                       \def\xxxbody{\ccExtractParamListX{}#3\ccEnd}%
                    \else
                        \hasLeadingSpace{#3}\ifnum\ccBool=\ccTrue
-                           \def\xxxbody{\ccExtractParamListX{#1#2 }#3\end}%
+                           \def\xxxbody{\ccExtractParamListX{#1#2 }#3\ccEnd}%
                        \else
-                           \def\xxxbody{\ccExtractParamListX{#1#2}#3\end}%
+                           \def\xxxbody{\ccExtractParamListX{#1#2}#3\ccEnd}%
                        \fi
                    \fi\fi
                    \ifnum\nestinglevel<0 \let\xxxnext=\relax
@@ -1919,17 +1947,17 @@
 % pattern to detect a possible type name to be eliminated. Similar
 % solution as \ccReplacePrefix. 
 % If the function argument is empty, \ccEmptyParameter is printed.
-% The parameter has to be delimited with "<>\end".
+% The parameter has to be delimited with "<>\ccEnd".
 % Ignore leading spaces.
-\def\ccPrintOwnClassParameter #1#2<>\end{%
+\def\ccPrintOwnClassParameter #1#2<>\ccEnd{%
     \ifnum\ccTagRmEigenClassName=\ccFalse
-        \ccPrintTokens #1#2\end%
+        \ccPrintTokens #1#2\ccEnd%
     \else
         \ifx\ccPureClassTemplateName\empty
-            \ccPrintTokens #1#2\end%
+            \ccPrintTokens #1#2\ccEnd%
         \else
         \isEmpty{#2}\ifnum\ccBool=\ccTrue
-            \ccPrintTokens #1\end%  A complete hack. Necessary to work together
+            \ccPrintTokens #1\ccEnd%  A complete hack. Necessary to work together
             % with the operator example. Otherwise a def is not working
             % (totally obscure errormessage). However, I do not understand
             % what is going on, I assume that the special case of a member 
@@ -1951,91 +1979,91 @@
     % local macro to do the parsing: 
     %                  ##1 is the text before \ccPureClassTemplateName
     %                  ##2 is the text after \ccPureClassTemplateName
-    \def\ccRepOwnClass ##1#1##2\end{%
+    \def\ccRepOwnClass ##1#1##2\ccEnd{%
         \isEmpty{##2}\ifnum\ccBool=\ccTrue
             % normal case, \ccPureClassTemplateName is not in the argument.
-            \ccPrintTokens ##1\end%
+            \ccPrintTokens ##1\ccEnd%
         \else
             % \ccPureClassTemplateName is in the argument.
-            \ccRepOwnClassX ##1##2\end%
+            \ccRepOwnClassX ##1##2\ccEnd%
         \fi
     }%
     % local macro to remove the trailing \ccPureClassTemplateName.
     % If the function argument is empty, print \ccEmptyParameter.
     %     ##1 is the text before \ccPureClassTemplateName
-    \def\ccRepOwnClassX ##1#1\end{%
+    \def\ccRepOwnClassX ##1#1\ccEnd{%
         \isEmpty{##1}\ifnum\ccBool=\ccTrue
             \ccEmptyParameter
         \else
-            \ccPrintTokens ##1\end%  \ccRepOwnClassXX was superfluous here.
+            \ccPrintTokens ##1\ccEnd%  \ccRepOwnClassXX was superfluous here.
         \fi
     }%
     % local macro to remove leading spaces.
     %     ##1##2 is the (non empty) argument without leading spaces. 
-    %\def\ccRepOwnClassXX ##1##2\end{%
-    %    \ccPrintTokens ##1##2\end%
+    %\def\ccRepOwnClassXX ##1##2\ccEnd{%
+    %    \ccPrintTokens ##1##2\ccEnd%
     %}%
     % apply the local macro
-    \ccRepOwnClass #2\end%
+    \ccRepOwnClass #2\ccEnd%
 }
 
 
 % Print a C++ function or method parameter. Strips a matching
 % "const ...&" pair.
-% The parameter has to be delimited with "const.&.\end".
-\def\ccPrintParameter #1const#2&#3\end{%
+% The parameter has to be delimited with "const.&.\ccEnd".
+\def\ccPrintParameter #1const#2&#3\ccEnd{%
     \ifnum\ccTagRmConstRefPair=\ccFalse
-        \ccPrintParameterXQ #1const#2&#3\end%
+        \ccPrintParameterXQ #1const#2&#3\ccEnd%
     \else
         \if.#2\isEmpty{#1}\ifnum\ccBool=\ccFalse 
-            \ccPrintOwnClassParameter #1<>\end%
+            \ccPrintOwnClassParameter #1<>\ccEnd%
             \fi
         \else
-            \if&#2\ccPrintParameter #1&#3\end%
+            \if&#2\ccPrintParameter #1&#3\ccEnd%
             \else
-                \if.#3\ccPrintParameterXQ #1const#2&#3\end%
+                \if.#3\ccPrintParameterXQ #1const#2&#3\ccEnd%
                 \else\hasLeadingSpace{#2}\ifnum\ccBool=\ccFalse
                         \isLetter{#2}\ccInvert
                     \fi
                     \ifnum\ccBool=\ccTrue
-                        \ccPrintParameter #1#2 #3\end%
+                        \ccPrintParameter #1#2 #3\ccEnd%
                     \else
-                        \ccPrintParameterXQ #1const#2&#3\end%
+                        \ccPrintParameterXQ #1const#2&#3\ccEnd%
                     \fi
                 \fi
             \fi
         \fi
     \fi}
 
-\def\ccPrintParameterXQ #1const.&.\end{\ccPrintOwnClassParameter #1<>\end}
+\def\ccPrintParameterXQ #1const.&.\ccEnd{\ccPrintOwnClassParameter #1<>\ccEnd}
 
 % Print a C++ function or method return type. Strips a matching
 % "const ...&" pair.
-% The parameter has to be delimited with "const.&.\end".
-\def\ccPrintReturnType #1const#2&#3\end{%
+% The parameter has to be delimited with "const.&.\ccEnd".
+\def\ccPrintReturnType #1const#2&#3\ccEnd{%
     \ifnum\ccTagRmConstRefPair=\ccFalse
-        \ccPrintReturnTypeXQ #1const#2&#3\end%
+        \ccPrintReturnTypeXQ #1const#2&#3\ccEnd%
     \else
         \if.#2\isEmpty{#1}\ifnum\ccBool=\ccFalse 
-            \ccPrintTokens #1\end%
+            \ccPrintTokens #1\ccEnd%
             \fi
         \else
-            \if&#2\ccPrintReturnType #1&#3\end%
+            \if&#2\ccPrintReturnType #1&#3\ccEnd%
             \else
-                \if.#3\ccPrintReturnTypeXQ #1const#2&#3\end%
+                \if.#3\ccPrintReturnTypeXQ #1const#2&#3\ccEnd%
                 \else\hasLeadingSpace{#2}\ifnum\ccBool=\ccFalse
                         \isLetter{#2}\ccInvert
                     \fi
                     \ifnum\ccBool=\ccTrue
-                        \ccPrintReturnType #1#2 #3\end%
+                        \ccPrintReturnType #1#2 #3\ccEnd%
                     \else 
-                        \ccPrintReturnTypeXQ #1const#2&#3\end%
+                        \ccPrintReturnTypeXQ #1const#2&#3\ccEnd%
                     \fi
                 \fi
             \fi
         \fi
     \fi}
-\def\ccPrintReturnTypeXQ #1const.&.\end{\ccPrintTokens #1\end}
+\def\ccPrintReturnTypeXQ #1const.&.\ccEnd{\ccPrintTokens #1\ccEnd}
 
 % ___________________________________________________________________________
 % ###########################################################################
