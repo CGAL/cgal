@@ -323,7 +323,7 @@ public:
      // now starting the sweeping.
     unsigned int queue_size = 0;
     bool         event_terminated = true;
-    bool         event_overlap_terminated = true;
+    //bool         event_overlap_terminated = true;
     while ( !(event_queue.empty()) ){
       ++queue_size;
       // fetch the next event.
