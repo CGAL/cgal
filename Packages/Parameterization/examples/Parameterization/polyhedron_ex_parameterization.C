@@ -225,13 +225,26 @@ int main(int argc,char * argv[])
 			Mesh_adaptor_polyhedron_ex* mesh_adaptor = new Mesh_adaptor_polyhedron_ex(&mesh);
 			assert(mesh_adaptor != NULL);
 			
-			// switch parameterization
+			// Switch parameterization. Defaults are:
+			// - floater mean value coordinates
+			// - fixing border on a circle (for fixed parameterization)
+			// - OpenNL sparse linear solver
 			CGAL::Parametizer_3<Mesh_adaptor_polyhedron_ex>::ErrorCode err;
-			if ( (strcmp(type,"uniform") == 0) && (strcmp(boundary,"circle") == 0) )
+			if ( (strcmp(type,"floater") == 0) && (strcmp(boundary,"circle") == 0) )
+			{
+				// Floater/circle is the default parameterization algorithm
+				err = CGAL::parameterize(mesh_adaptor);
+			}
+			else if ( (strcmp(type,"floater") == 0) && (strcmp(boundary,"square") == 0) )
 			{
 				err = CGAL::parameterize(mesh_adaptor,
-										 CGAL::Barycentric_mapping_parametizer_3<Mesh_adaptor_polyhedron_ex, 
-										 CGAL::Circular_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
+										 CGAL::Mean_value_coordinates_parametizer_3<Mesh_adaptor_polyhedron_ex, 
+										 CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
+			}
+			else if ( (strcmp(type,"uniform") == 0) && (strcmp(boundary,"circle") == 0) )
+			{
+				err = CGAL::parameterize(mesh_adaptor,
+										 CGAL::Barycentric_mapping_parametizer_3<Mesh_adaptor_polyhedron_ex>());
 			}
 			else if ( (strcmp(type,"uniform") == 0) && (strcmp(boundary,"square") == 0) )
 			{
@@ -242,8 +255,7 @@ int main(int argc,char * argv[])
 			else if ( (strcmp(type,"conformal") == 0) && (strcmp(boundary,"circle") == 0) )
 			{
 				err = CGAL::parameterize(mesh_adaptor,
-										 CGAL::Discrete_conformal_map_parametizer_3<Mesh_adaptor_polyhedron_ex, 
-										 CGAL::Circular_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
+										 CGAL::Discrete_conformal_map_parametizer_3<Mesh_adaptor_polyhedron_ex >());
 			}
 			else if ( (strcmp(type,"conformal") == 0) && (strcmp(boundary,"square") == 0) )
 			{
@@ -254,24 +266,12 @@ int main(int argc,char * argv[])
 			else if ( (strcmp(type,"authalic") == 0) && (strcmp(boundary,"circle") == 0) )
 			{
 				err = CGAL::parameterize(mesh_adaptor,
-										 CGAL::Discrete_authalic_parametizer_3<Mesh_adaptor_polyhedron_ex, 
-										 CGAL::Circular_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
+										 CGAL::Discrete_authalic_parametizer_3<Mesh_adaptor_polyhedron_ex>());
 			}
 			else if ( (strcmp(type,"authalic") == 0) && (strcmp(boundary,"square") == 0) )
 			{
 				err = CGAL::parameterize(mesh_adaptor,
 										 CGAL::Discrete_authalic_parametizer_3<Mesh_adaptor_polyhedron_ex, 
-										 CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
-			}
-			else if ( (strcmp(type,"floater") == 0) && (strcmp(boundary,"circle") == 0) )
-			{
-				// Floater/circle is the default parameterization algorithm
-				err = CGAL::parameterize(mesh_adaptor);
-			}
-			else if ( (strcmp(type,"floater") == 0) && (strcmp(boundary,"square") == 0) )
-			{
-				err = CGAL::parameterize(mesh_adaptor,
-										 CGAL::Mean_value_coordinates_parametizer_3<Mesh_adaptor_polyhedron_ex, 
 										 CGAL::Square_border_parametizer_3<Mesh_adaptor_polyhedron_ex> >());
 			}
 			else if (strcmp(type,"lscm") == 0)
