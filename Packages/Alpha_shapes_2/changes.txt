@@ -1,3 +1,6 @@
+version 2.0 :
+new design more appropriated for weighted alpha shapes.
+
 Version 1.6 :
 MSVC supported. 
 

@@ -30,43 +30,30 @@
 #include <iostream>
 #include <fstream>
 #include <strstream>
-
-// #include <cassert>
+#include <list>
 #include <CGAL/triangulation_assertions.h>
 
-// #include <CGAL/Cartesian.h>
-// //#include <CGAL/Homogeneous.h>
-// //#include <CGAL/Integer.h>
-// //#include <CGAL/Rational.h>
-// //#include <CGAL/Fixed.h>
-// //#include <CGAL/Real.h>
-// #include <CGAL/squared_distance_2.h>   // to avoid a g++ problem
-// #include <CGAL/Point_2.h>
-// #include <CGAL/predicates_on_points_2.h>
-// #include <CGAL/Triangle_2.h>
-// #include <CGAL/Segment_2.h>
-
-//#include <CGAL/Weighted_alpha_shape_short_names_2.h>
-//#include <CGAL/Triangulation_short_names_2.h>
-
-#include <CGAL/Alpha_shape_vertex_base_2.h>
-
-#include <list>
-#include <CGAL/Triangulation_face_base_2.h>
-#include <CGAL/Weighted_alpha_shape_face_base_2.h>
-
-//#include <CGAL/IO/Window_stream.h>
-#define CGAL_WEIGHTED_ALPHA_WINDOW_STREAM
+#define CGAL_ALPHA_WINDOW_STREAM
 
 #ifndef CGAL_MYTRAITS
 #include <CGAL/Weighted_alpha_shape_euclidean_traits_2.h>
 #else
-#include <CGAL/Alpha_shape_euclidean_mytraits_2.h>
+//#include <CGAL/Alpha_shape_euclidean_mytraits_2.h>
 #endif
 
 #include <CGAL/Circle_2.h>
 #include <CGAL/Weighted_point.h>
+
+#include <CGAL/Alpha_shape_vertex_base_2.h>
+
+#include <CGAL/Triangulation_face_base_2.h>
+#include <CGAL/Regular_triangulation_face_base_2.h>
+#include <CGAL/Alpha_shape_face_base_2.h>
+
+#include <CGAL/Delaunay_triangulation_2.h>
+#include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/Weighted_alpha_shape_2.h>
+
 
 #include "Parse_weight.C"
 #include "Timing.C"
@@ -89,14 +76,15 @@ typedef CGAL::Triangle_2<CRep>  Triangle;
 
 typedef CGAL::Weighted_alpha_shape_euclidean_traits_2<CRep> Gt;
 
-
-
 typedef CGAL::Alpha_shape_vertex_base_2<Gt> Vb;
-typedef CGAL::Weighted_alpha_shape_face_base_2<Gt>  Fb;
-typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
-typedef CGAL::Regular_triangulation_2<Gt,Tds> Dtriangulation_2;
 
-typedef CGAL::Weighted_alpha_shape_2<Gt,Tds>  Alpha_shape_2;
+typedef CGAL::Regular_triangulation_face_base_2<Gt> Rf;
+typedef CGAL::Alpha_shape_face_base_2<Gt, Rf>  Fb;
+
+typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
+typedef CGAL::Regular_triangulation_2<Gt,Tds> Triangulation_2;
+
+typedef CGAL::Weighted_alpha_shape_2<Triangulation_2>  Alpha_shape_2;
 
 typedef Alpha_shape_2::Face  Face;
 typedef Alpha_shape_2::Vertex Vertex;
@@ -113,7 +101,7 @@ typedef Alpha_shape_2::Face_iterator  Face_iterator;
 typedef Alpha_shape_2::Vertex_iterator  Vertex_iterator;
 typedef Alpha_shape_2::Edge_iterator  Edge_iterator;
 typedef Alpha_shape_2::Edge_circulator  Edge_circulator;
-//typedef Alpha_shape_2::Line_face_circulator  Line_face_circulator;
+
 //typedef Alpha_shape_2::Coord_type Coord_type;
 typedef Alpha_shape_2::Alpha_iterator Alpha_iterator;
 
@@ -158,9 +146,12 @@ draw_vertices(const Alpha_shape_2& A,
     {
       Point p = vertex_it->point();
       if (option)
-	{ W << CGAL::Circle_2<CRep>(p.point(),max(p.weight(),DBL_MIN)); }
+	{ 
+	  W.draw_filled_node(p.x(), p.y());
+	  W << CGAL::Circle_2<CRep>(p.point(),max(p.weight(),DBL_MIN)); 
+	}
       else
-	{ W.draw_filled_node(p.x(), p.y()); }
+	W.draw_filled_node(p.x(), p.y());
     }
 }
 
@@ -255,11 +246,15 @@ random_input(Alpha_shape_2 &A,
       V.push_back(p);
      }
   start_timing();
+  std::vector<Point>::iterator first=V.begin(),
+    last=V.end();
   if (opt.init)
-    { VV=A.initialize_weighted_points_to_the_nearest_voronoi_vertex(V.begin(), V.end()); }
+    { A.initialize_weights_to_the_nearest_voronoi_vertex(first, last); }
   else
-    { VV=A.initialize_weighted_points_to_the_nearest_vertex(V.begin(), V.end()); }
-  n = A.make_Alpha_shape(VV.begin(), VV.end());
+    { A.initialize_weights_to_the_nearest_vertex(first, last); }
+  for ( ;first!=last;first++)
+    VV.push_back(*first);
+  n = A.make_alpha_shape(VV.begin(), VV.end());
   end_timing(1);
   std::cout << "Inserted " << n  << " points" << std::endl;
 }
@@ -301,12 +296,15 @@ window_input(Alpha_shape_2 &A,
     }
   std::cout << "You have entered " << V.size() << " points." << endl;
   start_timing();
-
+  std::vector<Point>::iterator first=V.begin(),
+    last=V.end();
   if (opt.init)
-    { VV=A.initialize_weighted_points_to_the_nearest_voronoi_vertex(V.begin(), V.end()); }
+    { A.initialize_weights_to_the_nearest_voronoi_vertex(first, last); }
   else
-    { VV=A.initialize_weighted_points_to_the_nearest_vertex(V.begin(), V.end()); }
-  n = A.make_Alpha_shape(VV.begin(), VV.end());
+    { A.initialize_weights_to_the_nearest_vertex(first, last); }
+  for ( ;first!=last;first++)
+    VV.push_back(*first);
+  n = A.make_alpha_shape(VV.begin(), VV.end());
   end_timing(1);
   std::cout << "Inserted " << n  << " points" << endl;
 
@@ -343,10 +341,14 @@ file_input(Alpha_shape_2& A,
       is >> p;
       V.push_back(Point(p));
     }
+  std::vector<Point>::iterator first=V.begin(),
+    last=V.end();
   if (opt.init)
-    { VV=A.initialize_weighted_points_to_the_nearest_voronoi_vertex(V.begin(), V.end()); }
+    { A.initialize_weights_to_the_nearest_voronoi_vertex(first, last); }
   else
-    { VV=A.initialize_weighted_points_to_the_nearest_vertex(V.begin(), V.end()); }
+    { A.initialize_weights_to_the_nearest_vertex(first, last); }
+  for ( ;first!=last;first++)
+    VV.push_back(*first);
   
   std::cout << "Points read" << endl;
   return true;
@@ -525,10 +527,10 @@ int main(int argc,  char* argv[])
 			  W << VERTEX_COLOR; 
 			  std::vector<Point>::const_iterator it;
 			  for (it = V.begin(); it != V.end(); ++it)
-			    W << *it;
+			    W << it->point();
 			  
 			  start_timing();
-			  nn = A.make_Alpha_shape(V.begin(), V.end());
+			  nn = A.make_alpha_shape(V.begin(), V.end());
 			  end_timing(1);
 			  std::cout << "Inserted " << nn  << " points" << std::endl;
 			  set_alpha(alpha_index);
@@ -649,7 +651,7 @@ int main(int argc,  char* argv[])
       if(opt.Delaunay)
 	{
 	  W << DELAUNAY_COLOR;
-	  W << ((const Dtriangulation_2&) A);
+	  W << ((const Triangulation_2&) A);
 	}
        
       if(opt.contour && !V.empty())

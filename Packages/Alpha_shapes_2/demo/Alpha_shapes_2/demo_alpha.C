@@ -31,28 +31,11 @@
 #include <fstream>
 #include <strstream>
 
-// #include <cassert>
 #include <CGAL/triangulation_assertions.h>
-
-// #include <CGAL/Cartesian.h>
-// //#include <CGAL/Homogeneous.h>
-// //#include <CGAL/Integer.h>
-// //#include <CGAL/Rational.h>
-// //#include <CGAL/Fixed.h>
-// //#include <CGAL/Real.h>
-// #include <CGAL/squared_distance_2.h>   // to avoid a g++ problem
-// #include <CGAL/Point_2.h>
-// #include <CGAL/predicates_on_points_2.h>
-// #include <CGAL/Triangle_2.h>
-// #include <CGAL/Segment_2.h>
-
-//#include <CGAL/Alpha_shape_short_names_2.h>
-
 
 #include <CGAL/Alpha_shape_vertex_base_2.h>
 #include <CGAL/Alpha_shape_face_base_2.h>
 
-//#include <CGAL/IO/Window_stream.h>
 #define CGAL_ALPHA_WINDOW_STREAM
 
 #ifndef CGAL_MYTRAITS
@@ -61,6 +44,12 @@
 #include <CGAL/Alpha_shape_euclidean_mytraits_2.h>
 #endif
 
+#include <CGAL/Alpha_shape_vertex_base_2.h>
+
+#include <CGAL/Triangulation_face_base_2.h>
+#include <CGAL/Alpha_shape_face_base_2.h>
+
+#include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Alpha_shape_2.h>
 
 #include "Parse.C"
@@ -91,11 +80,14 @@ typedef CGAL::Alpha_shape_euclidean_traits_2 Gt;
 #endif
 
 typedef CGAL::Alpha_shape_vertex_base_2<Gt> Vb;
-typedef CGAL::Alpha_shape_face_base_2<Gt>  Fb;
-typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
-typedef CGAL::Delaunay_triangulation_2<Gt,Tds> Dtriangulation_2;
 
-typedef CGAL::Alpha_shape_2<Gt,Tds>  Alpha_shape;
+typedef CGAL::Triangulation_face_base_2<Gt> Df;
+typedef CGAL::Alpha_shape_face_base_2<Gt, Df>  Fb;
+
+typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
+typedef CGAL::Delaunay_triangulation_2<Gt,Tds> Triangulation_2;
+
+typedef CGAL::Alpha_shape_2<Triangulation_2>  Alpha_shape;
 
 typedef Alpha_shape::Face  Face;
 typedef Alpha_shape::Vertex Vertex;
@@ -250,7 +242,7 @@ random_input(Alpha_shape &A,
       V.push_back(p);
      }
   start_timing();
-  n = A.make_Alpha_shape(V.begin(), V.end());
+  n = A.make_alpha_shape(V.begin(), V.end());
   end_timing(1);
   std::cout << "Inserted " << n  << " points" << std::endl;
 }
@@ -291,7 +283,7 @@ window_input(Alpha_shape &A,
     }
   std::cout << "You have entered " << V.size() << " points." << std::endl;
   start_timing();
-  n = A.make_Alpha_shape(V.begin(), V.end());
+  n = A.make_alpha_shape(V.begin(), V.end());
   end_timing(1);
   std::cout << "Inserted " << n  << " points" << std::endl;
 
@@ -502,7 +494,7 @@ int main(int argc,  char* argv[])
 			    W << *it;
 			  
 			  start_timing();
-			  nn = A.make_Alpha_shape(V.begin(), V.end());
+			  nn = A.make_alpha_shape(V.begin(), V.end());
 			  end_timing(1);
 			  std::cout << "Inserted " << nn  << " points" << std::endl;
 			  set_alpha(alpha_index);
@@ -615,7 +607,7 @@ int main(int argc,  char* argv[])
       if(opt.Delaunay)
 	{
 	  W << DELAUNAY_COLOR;
-	  W << ((const Dtriangulation_2&) A);
+	  W << ((const Triangulation_2&) A);
 	}
        
       if(opt.contour && !V.empty())

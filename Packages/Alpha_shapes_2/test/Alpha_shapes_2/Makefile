@@ -5,17 +5,19 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-CGAL_MAKEFILE =$(UTIL)/CGAL/CGAL-2.1-I-32/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.66_LEDA
+CGAL_MAKEFILE =$(UTIL)/CGAL/CGAL-2.1-I-35/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.66_LEDA
 
 # for cygwin
 #\prisme\CGAL\CGAL-2.1-I-30\make\makefile_i686_CYGWINNT-4.0-20.1_CL.EXE-12.00.8168
 
 # for others
-#$(UTIL)/CGAL/CGAL-2.1-I-28/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.66_LEDA
+#$(UTIL)/CGAL-I/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.66_LEDA
 #makefile_sparc_SunOS-5.6_eg++-egcs-2.91.66_LEDA
 #makefile_sparc_SunOS-5.6_g++-2.95.1_LEDA
+#makefile_sparc_SunOS-5.6_g++-2.95.2_LEDA
 #makefile_i686_Linux-2.2.7_eg++-egcs-2.91.66_LEDA
 #makefile_i686_Linux-2.2.7_g++-2.95.1_LEDA
+#makefile_i686_Linux-2.2.10_g++-2.95.2_LEDA
 
 include $(CGAL_MAKEFILE)
 

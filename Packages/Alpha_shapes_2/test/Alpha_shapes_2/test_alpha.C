@@ -17,11 +17,14 @@ correspondant a l'Alpha Shape.
 
 #include <list>
 
-#include <CGAL/Alpha_shape_vertex_base_2.h>
-#include <CGAL/Alpha_shape_face_base_2.h>
-
 #include <CGAL/Alpha_shape_euclidean_traits_2.h>
 
+#include <CGAL/Alpha_shape_vertex_base_2.h>
+
+#include <CGAL/Triangulation_face_base_2.h>
+#include <CGAL/Alpha_shape_face_base_2.h>
+
+#include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Alpha_shape_2.h>
 
 
@@ -39,11 +42,14 @@ typedef CGAL::Triangle_2<CRep>  Triangle;
 typedef CGAL::Alpha_shape_euclidean_traits_2<CRep> Gt;
 
 typedef CGAL::Alpha_shape_vertex_base_2<Gt> Vb;
-typedef CGAL::Alpha_shape_face_base_2<Gt>  Fb;
-typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
-typedef CGAL::Delaunay_triangulation_2<Gt,Tds> Dtriangulation_2;
 
-typedef CGAL::Alpha_shape_2<Gt,Tds>  Alpha_shape_2;
+typedef CGAL::Triangulation_face_base_2<Gt> Df;
+typedef CGAL::Alpha_shape_face_base_2<Gt, Df>  Fb;
+
+typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;
+typedef CGAL::Delaunay_triangulation_2<Gt,Tds> Triangulation_2;
+
+typedef CGAL::Alpha_shape_2<Triangulation_2>  Alpha_shape_2;
 
 typedef Alpha_shape_2::Face  Face;
 typedef Alpha_shape_2::Vertex Vertex;
@@ -75,7 +81,7 @@ Construst_Alpha_shape(const std::list<Point> &V_p,
   std::vector<Gt::Segment> V_seg;
   Alpha_shape_2 A;
   
-  int  n = A.make_Alpha_shape(V_p.begin(), V_p.end());
+  int  n = A.make_alpha_shape(V_p.begin(), V_p.end());
   std::cout << "Inserted " << n  << " points" << std::endl;
   
   if (mode) 

@@ -1,11 +1,11 @@
-# This is the makefile for compiling a CGAL application.
+# This is a makefile exemple for compiling a CGAL application.
 
 #---------------------------------------------------------------------#
 #                    include platform specific settings
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-CGAL_MAKEFILE = $(UTIL)/CGAL/CGAL-I/make/makefile_sparc_SunOS-5.6_eg++-egcs-2.91.66_LEDA
+CGAL_MAKEFILE = $(CGAL-2.1)/make/the_makefile_you_choice
 
 include $(CGAL_MAKEFILE)
 
@@ -15,13 +15,13 @@ include $(CGAL_MAKEFILE)
 # rajouter CGAL_LOCAL_CXXFLAGS si on veut les packages de Local
 
 CXXFLAGS = $(CGAL_CXXFLAGS) \
-	   -mcpu=ultrasparc -mtune=ultrasparc -DDEBUG \
 
-#-mcpu=ultrasparc -mtune=ultrasparc -O2 -DDEBUG
+# -DDEBUG for display additionnal info
+
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
-LDFLAGS = \
+LDFLAGS = $(CGAL_WINDOW_LIBPATH) \
           $(CGAL_WINDOW_LDFLAGS)
 
 #---------------------------------------------------------------------#

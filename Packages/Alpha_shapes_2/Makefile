@@ -9,7 +9,7 @@ WWW_base=/u/www/0/www/htdocs/files/equipes/prisme/CGAL/DR:/Members
 WWW_dir=$(WWW_base)/$(Package)
 TMP_file=/tmp/submit-mail
 
-package: doc clean $(Package).tar.gz
+package: mode doc clean $(Package).tar.gz
 	@echo "-----------------------------------"
 	@echo "------------ Penser à: ------------"
 	@echo "-----------------------------------"
@@ -21,6 +21,13 @@ package: doc clean $(Package).tar.gz
 	@echo "---- make package              ----"
 	@echo "---- make submit               ----"
 	@echo "-----------------------------------"
+
+mode:
+	chmod a+x include include/CGAL doc_tex doc_tex/basic \
+	doc_tex/basic/$(Package) doc_ps demo demo/$(Package) \
+	demo/$(Package)/Data examples examples/$(Package) \
+	examples/$(Package)/data test test/$(Package) test/$(Package)/data
+	chmod -R a+r *	
 
 version:
 	echo "$(VERSION) (`date '+%e %b %Y'`)" > version
@@ -50,7 +57,8 @@ example:
 clean:
 	$(MAKE) -C doc_tex/basic/$(Package) clean
 	$(MAKE) -C test/$(Package) clean
-	$(MAKE) -C examples/$(Package) clean	
+	$(MAKE) -C examples/$(Package) clean
+	$(MAKE) -C demo/$(Package) -f Makefile clean	
 	rm -f $(Package).tar.gz
 
 # --exclude=tstlink is here because I don't want to provide a makefile for

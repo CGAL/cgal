@@ -9,6 +9,8 @@ dvi: wrapper.dvi
 
 wrapper.dvi: alpha.tex
 	latex wrapper.tex
+	bibtex wrapper
+	latex wrapper.tex
 	latex wrapper.tex
 
 all: alpha.ps
