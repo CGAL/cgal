@@ -6,6 +6,11 @@
 
 #include <CGAL/Nested_iterator.h>
 
+template<class T>
+const T& dummy(const T& t) {
+  return t;
+}
+
 int main()
 {
   std::vector< std::vector<int> > v;
@@ -56,9 +61,114 @@ int main()
   {
     std::cout << "================================================"
 	      << std::endl << std::endl;
+    {
+      std::cout << "testing constructors..." << std::flush;
+      {
+	n_iterator ni;
+	n_iterator ni_begin(v.end(), v.begin());
+	n_iterator ni_end(v.end(), v.end());
+
+	dummy(ni);
+	dummy(ni_begin);
+	dummy(ni_end);
+      }
+
+      std::vector< std::vector<int> > v1;
+      {
+	n_iterator ni;
+	n_iterator ni_begin(v1.end(), v1.begin());
+	n_iterator ni_end(v1.end(), v1.end());
+
+	dummy(ni);
+	dummy(ni_begin);
+	dummy(ni_end);
+      }
+
+      v1.push_back(empty);
+      v1.push_back(empty);
+      {
+	n_iterator ni;
+	n_iterator ni_begin(v1.end(), v1.begin());
+	n_iterator ni_end(v1.end(), v1.end());
+
+	dummy(ni);
+	dummy(ni_begin);
+	dummy(ni_end);
+      }      
+
+      std::cout << " yes" << std::endl;
+    }
+    {
+      std::cout << "testing copy constructor..." << std::flush;
+      {
+	n_iterator ni_begin(v.end(), v.begin());
+	n_iterator ni(ni_begin);
+
+	dummy(ni);
+	dummy(ni_begin);
+      }
+
+      std::vector< std::vector<int> > v1;
+      {
+	n_iterator ni_begin(v1.end(), v1.begin());
+	n_iterator ni(ni_begin);
+
+	dummy(ni);
+	dummy(ni_begin);
+      }
+
+      v1.push_back(empty);
+      v1.push_back(empty);
+      {
+	n_iterator ni_begin(v1.end(), v1.begin());
+	n_iterator ni(ni_begin);
+
+	dummy(ni);
+	dummy(ni_begin);
+      }
+
+      std::cout << " yes" << std::endl;
+    }
+    {
+      std::cout << "testing assignment operator..." << std::flush;
+      {
+	n_iterator ni_begin(v.end(), v.begin());
+	n_iterator ni;
+	ni = ni_begin;
+
+	dummy(ni);
+	dummy(ni_begin);
+      }
+      std::vector< std::vector<int> > v1;
+      {
+	n_iterator ni_begin(v1.end(), v1.begin());
+	n_iterator ni;
+	ni = ni_begin;
+
+	dummy(ni);
+	dummy(ni_begin);
+      }
+
+      v1.push_back(empty);
+      v1.push_back(empty);
+      {
+	n_iterator ni_begin(v1.end(), v1.begin());
+	n_iterator ni;
+	ni = ni_begin;
+
+	dummy(ni);
+	dummy(ni_begin);
+      }
+      std::cout << " yes" << std::endl;
+    }
+  }
+
+  //------------------------------------------------------------------
+  {
+    std::cout << "================================================"
+	      << std::endl << std::endl;
     n_iterator ni_begin(v.end(), v.begin());
     n_iterator ni_end(v.end(), v.end());
-
 
     std::cout << "Nested iterator:" << std::endl;
     n_iterator ni_it;
@@ -66,7 +176,6 @@ int main()
       std::cout << " " << (*ni_it);
     }
     std::cout << std::endl << std::endl;
-
 
     std::cout << "Nested iterator in reverse order:" << std::endl;
     for (ni_it = --ni_end; ni_it != ni_begin; --ni_it) {
