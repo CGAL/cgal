@@ -102,6 +102,8 @@ public:
   typedef typename Planar_map::Halfedge_iterator Halfedge_iterator;
   typedef typename Planar_map::Ccb_halfedge_circulator Ccb_halfedge_circulator;
   typedef PL_X_curve_plus<Planar_map> X_curve_plus;
+  // SunPro gets confused (a bug) because of the two Td_traits in the same
+  // class scope. We add the CGAL namespace as a workaround.
   typedef CGAL::Td_traits<Pm_traits_wrap,X_curve_plus> Td_traits;
   typedef Trapezoidal_decomposition_2<Td_traits> Trapezoidal_decomposition;
   typedef Pm_bounding_box_base<Planar_map> Bounding_box;
