@@ -242,13 +242,16 @@ Notes:\\
 \item When optimizing, compilers usually propagate the value of variables when
       they know it's a constant.  This can break the interval routines because
       the compiler then does some floating point operations on these constants
-      with the default rounding mode, which is wrong.  This kind of problems
-      can be avoided globally by setting the flag
-      \ccc{CGAL_IA_STOP_CONSTANT_PROPAGATION}.  However, this slows down the
-      code noticeably and is usually not useful, thus the workaround is not
-      activated by default.  A simple way to stop this optimization in a
-      particular case is to put the constant in a global, non static,
-      variable, instead of a local one.
+      with the default rounding mode, which is wrong.  This kind of problem
+      is avoided by stopping constant propagation in the interval routines.
+      However, this solution slows down the code and is rarely useful, so you
+      can disable it by setting the flag
+      \ccc{CGAL_IA_DONT_STOP_CONSTANT_PROPAGATION}.
+      Note that GCC offers a feature (\ccc{__builtin_constant_p}) which allows
+      to stop constant propagation at no cost for the general case.
+      A simple way to stop this optimization in a particular case is to put
+      the constant in a global and non static variable, instead of a local
+      one.
 \end{itemize}
 
 \end{ccClass}
