@@ -247,7 +247,7 @@ public:
  void show_all();
  void show_face( Face_handle fh);
 
- //Predicates
+ //PREDICATES
  Oriented_side
  oriented_side(const Point &p0, const Point &p1,
 	       const Point &p2, const Point &p) const;
@@ -263,7 +263,11 @@ public:
  side_of_oriented_circle(Face_handle f, const Point & p) const; 
 
  bool 
- collinear_between(const Point& p, const Point& q, const Point& r) const;
+ collinear_between(const Point& p, const Point& q, const Point& r)
+   const;
+
+  // CONSTRUCTION
+ Point circumcenter(Face_handle  f) const; 
 
 protected:
   void remove_1D(Vertex_handle v);
@@ -1833,7 +1837,15 @@ collinear_between(const Point& p, const Point& q, const Point& r) const
     
 }
 
-
+template <class Gt, class Tds >
+Triangulation_2<Gt, Tds>::Point
+Triangulation_2<Gt, Tds>::
+circumcenter(Face_handle  f) const
+{
+  return geom_traits().circumcenter((f->vertex(0))->point(), 
+				    (f->vertex(1))->point(), 
+				    (f->vertex(2))->point());
+}
 
  
 template <class Gt, class Tds >

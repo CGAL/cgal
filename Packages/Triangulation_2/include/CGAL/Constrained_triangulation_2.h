@@ -457,7 +457,7 @@ remove_1D(Vertex_handle  v)
   do {
     (*ec).first.set_constraint(2,false);
   } while (++ec != done);
-  Triangulation::remove(v);
+  Triangulation::remove_1D(v);
 }
 
 template < class Gt, class Tds >
@@ -467,7 +467,7 @@ remove_2D(Vertex_handle v)
   // remove a vertex and updates the constrained edges of the new faces
   // all constraints incident to the removed vertex are removed
 {
-  if (test_dim_down(v)) {  _tds.remove_dim_down(&(*v));  }
+  if (test_dim_down(v)) {_tds.remove_dim_down(&(*v));}
   else {
     std::list<Edge> hole;
     make_hole(v, hole);
