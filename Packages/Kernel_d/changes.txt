@@ -1,6 +1,9 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
 
+0.112 (18 Jan 2004)
+- Remove CGAL_CFG_NESTED_CLASS_TEMPLATE_BUG workaround.
+
 0.111 (18 Jan 2004)
 - Rename CGAL_NULL_TMPL_ARGS to <>.
 

@@ -250,14 +250,6 @@ namespace CGAL {
       
     };
 
-#ifdef CGAL_CFG_NESTED_CLASS_TEMPLATE_BUG
-    template < typename Stupid, typename MS, typename VC >
-    struct Instantiator {
-      typedef typename Stupid::template Iterator<MS,VC>::type type;
-    };
-#endif // CGAL_CFG_NESTED_CLASS_TEMPLATE_BUG
-
-    
   } // namespace Kernel_d
 
   template < typename Kernel_ > 
@@ -277,15 +269,8 @@ namespace CGAL {
     typedef typename Kernel::Rep_tag  Rep_tag;
    
     typedef CGAL::Kernel_d::Coordinate_iterator<Rep_tag>           CIRT;
-#ifndef CGAL_CFG_NESTED_CLASS_TEMPLATE_BUG
     typedef typename CIRT::template Iterator<Point_d,Min<RT> >::type  MinIter;
     typedef typename CIRT::template Iterator<Point_d,Max<RT> >::type  MaxIter;
-#else
-    typedef Kernel_d::Instantiator<CIRT,Point_d,Min<RT> >  Minstant;
-    typedef Kernel_d::Instantiator<CIRT,Point_d,Max<RT> >  Maxstant;
-    typedef typename Minstant::type                        MinIter;
-    typedef typename Maxstant::type                        MaxIter;
-#endif // ! CGAL_CFG_NESTED_CLASS_TEMPLATE_BUG
 
     typedef Kernel_d::Begin            Begin; 
     typedef Kernel_d::End              End; 
