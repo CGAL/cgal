@@ -177,6 +177,30 @@ GMP_LIB_DIR=''
 # did GMP tests succeed ('' - no, 'y' - yep)
 GMP_TEST_PASSED=''
 
+# ---------------------------------------------
+# CLN specific:
+#
+
+# version of CLN shipped with CGAL:
+CLN_VERSION='cln-1.0.1'
+
+# toggles use of CLN ('' - no, '_CLN' - use it)
+CLN_SUPPORT=''
+
+# indicate whether CLN is installed 
+# ('' - didn't try, 
+# 's' - in sysdirs, no flags necessary, 
+# 'e' - we need compiler/linker flags and CLN_INCL_DIR/CLN_LIB_DIR for this,
+# 'x' - in sysdirs, but specify CLN_INCL_DIR/CLN_LIB_DIR anyway
+# 'c' - in the cgal tree,
+# 'z' - in the cgal tree, but specify CLN_INCL_DIR/CLN_LIB_DIR anyway)
+CLN_INSTALLATION=''
+CLN_INCL_DIR=''
+CLN_LIB_DIR=''
+
+# did CLN tests succeed ('' - no, 'y' - yep)
+CLN_TEST_PASSED=''
+
 # ---------------------------------------------------------------------
 # internal variables
 # ---------------------------------------------------------------------
@@ -243,13 +267,15 @@ print_usage_information()
       [--help | --version | -i | --interactive | -u <dir> | 
        --upgrade <dir> | --build-all | --rebuild-all |
        -ni <comp> | --non-interactive <comp> | -os <comp>]
-      [-leda] [-gmp] [--verbose]
+      [-leda] [-gmp] [-cln] [--verbose]
       [--CGAL_DIR <dir>] [--leda-sys-incl] [--leda-sys-lib]
       [--LEDA_INCL_DIR <dir>] [--LEDA_LIB_DIR <dir>]
       [--GMP_INCL_DIR <dir>] [--GMP_LIB_DIR <dir>]
+      [--CLN_INCL_DIR <dir>] [--CLN_LIB_DIR <dir>]
 
   -leda        enables LEDA support
   -gmp         enables support for GNU GMP
+  -cln         enables support for CLN
   --verbose    give report for each test that fails
                (not generally recommended)
   --help       gives this message
@@ -708,6 +734,7 @@ set_compiler_flags()
     LIB_SFX=""
     REMOVE_EXT_LIST=".o"
     LIB_OPT="-l"
+    LEDA_LIB_OPT='-l'
     LIBPATH_OPT="-L"
     DEBUG_OPT="-g"
     EXE_OPT="-o "
@@ -717,6 +744,7 @@ set_compiler_flags()
     SEPARATE_LIBPATH=
     START_LD_OPTIONS=
     CGAL_CXX="`compiler_bin`"
+    LIB_CREATION_COMMANDS=""
 
     case ${CGAL_OS_COMPILER} in
 	*bcc32.exe*|*BCC32*)
@@ -731,16 +759,18 @@ set_compiler_flags()
 	    LIB_SFX=".lib"
 	    REMOVE_EXT_LIST=".obj .tds"
 	    LIB_OPT=
+            LEDA_LIB_OPT="lib"
 	    DEBUG_OPT=
 	    EXE_OPT="-e"
 	    EXE_EXT=".exe"
 	    CGAL_LIBNAME="CGAL.lib"
 	    MATH_LIB=
 	    SEPARATE_LIBPATH="y"
+            LIB_CREATION_COMMANDS="tlib @borland_lib_creation"
 	    ;;
 	*CL.EXE*)
 	    #### settings Microsoft Visual C++ compiler 
-	    ADDITIONAL_CXXFLAGS="-TP -GX"
+	    ADDITIONAL_CXXFLAGS="-TP -GR -GX"
 	    CGAL_LIB_CXXFLAGS="-TP"
 	    CGAL_LIB_CREATE="LIB /OUT:"
 	    CGAL_SHARED_LIB_CXXFLAGS=
@@ -752,6 +782,7 @@ set_compiler_flags()
 	    LIB_SFX=".lib"
 	    REMOVE_EXT_LIST=".obj"
 	    LIB_OPT=
+            LEDA_LIB_OPT="lib"
 	    LIBPATH_OPT="-LIBPATH:"
 	    DEBUG_OPT="-Z7"
 	    EXE_OPT="-Fe"
@@ -1332,12 +1363,56 @@ gmp_test_ldflags()
 }
 
 #---------------------------------------------------------
+# flags for CLN
+
+cln_cxxflags()
+{
+    if [ -n "${CLN_SUPPORT}" -a \
+	"${CLN_INSTALLATION}" != 'c' -a \
+	"${CLN_INSTALLATION}" != 's' ]; then
+	tmp_dir_name=`_where_is 'CLN_INCL_DIR'`
+	${_printf} "%s" "`include_dir_option ${tmp_dir_name}` "
+    fi
+}
+
+cln_ldflags()
+{
+    if [ -n "${CLN_SUPPORT}" ]; then
+	if [ "${CLN_INSTALLATION}" != 'c' -a \
+             "${CLN_INSTALLATION}" != 's' ]; then
+	    ${_printf} "%s" "${LIBPATH_OPT}`_where_is 'CLN_LIB_DIR'` "
+	    ${_printf} "%s" "`rpath_directive 'CLN_LIB_DIR'` "
+	fi
+	${_printf} "%s" "-lcln "
+    fi
+}
+
+cln_test_cxxflags()
+{
+    ${_printf} "%s" "${CUSTOM_CXXFLAGS} "
+    if [ -n "${CLN_SUPPORT}" -a "${CLN_INSTALLATION}" = 'c' ]; then
+	cgal_cxxflags
+    fi
+    cln_cxxflags
+}
+
+cln_test_ldflags()
+{
+    ${_printf} "%s" "${CUSTOM_LDFLAGS} "
+    if [ -n "${CLN_SUPPORT}" -a "${CLN_INSTALLATION}" = 'c' ]; then
+	cgal_ldflags
+    fi
+    cln_ldflags
+}
+
+#---------------------------------------------------------
 # flags for LEDA
 leda_cxxflags()
 {
     if [ -n "${LEDA_SUPPORT}" -a -n "${NEED_EXTRA_LEDA_IDIR}" ]; then
-	tmp_dir_name=`_where_is 'LEDA_INCL_DIR'`
-	${_printf} "%s" "`include_dir_option ${tmp_dir_name}` "
+	pathname1=`_where_is 'LEDA_INCL_DIR'`
+	pathname2=`filename_for_compiler ${pathname1}`
+	${_printf} "%s" "`include_dir_option ${pathname2}` "
     fi
 }
 
@@ -1345,10 +1420,12 @@ leda_ldflags()
 {
     if [ -n "${LEDA_SUPPORT}" ]; then
 	if [ -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
-	    ${_printf} "%s" "${LIBPATH_OPT}`_where_is 'LEDA_LIB_DIR'` "
+	    pathname1=`_where_is 'LEDA_LIB_DIR'`
+	    pathname2=`filename_for_compiler ${pathname1}`
+	    ${_printf} "%s" "${START_LD_OPTIONS} '${LIBPATH_OPT}${pathname2}' "
 	    ${_printf} "%s" "`rpath_directive 'LEDA_LIB_DIR'` "
 	fi
-	${_printf} "%s" "-lP -lG -lL "
+	${_printf} "%s" "${LEDA_LIB_OPT}P${LIB_SFX} ${LEDA_LIB_OPT}G${LIB_SFX} ${LEDA_LIB_OPT}L${LIB_SFX} "
     fi
 }
 
@@ -1362,7 +1439,9 @@ leda_test_ldflags()
 {
     ${_printf} "%s" "`compiler_test_ldflags` "
     leda_ldflags
-    ${_printf} "%s" "-lm "
+    if [ -n "${MATH_LIB}" ] ; then
+        ${_printf} "%s" "${LIB_OPT}${MATH_LIB}${LIB_SFX} "
+    fi
 }
 
 #---------------------------------------------------------
@@ -1371,20 +1450,20 @@ leda_test_ldflags()
 # print cxxflags for current setting
 compiler_flags()
 {
-    ${_printf} "%s" "${CUSTOM_CXXFLAGS} `cgal_cxxflags``leda_cxxflags``gmp_cxxflags`"
+    ${_printf} "%s" "${CUSTOM_CXXFLAGS} `cgal_cxxflags``leda_cxxflags``gmp_cxxflags``cln_cxxflags`"
 }
 
 # print ldflags for current setting
 linker_flags()
 {
-    ${_printf} "%s" "${CUSTOM_LDFLAGS} `cgal_ldflags`-lCGAL `leda_ldflags``gmp_ldflags`-lm"
+    ${_printf} "%s" "${CUSTOM_LDFLAGS} `cgal_ldflags`-lCGAL `leda_ldflags``gmp_ldflags``cln_ldflags`-lm"
 }
 
 # print ldflags for current setting (do not link with cgal lib,
 # used for test before lib is compiled)
 linker_flags_no_cgal_lib()
 {
-    ${_printf} "%s" "${CUSTOM_LDFLAGS} `cgal_ldflags``leda_ldflags``gmp_ldflags`-lm"
+    ${_printf} "%s" "${CUSTOM_LDFLAGS} `cgal_ldflags``leda_ldflags``gmp_ldflags``cln_ldflags`-lm"
 }
 
 # print version number of compiler $1 
@@ -2007,6 +2086,57 @@ check_GMP_LIB_DIR()
     return 0
 }
 
+check_CLN_SUPPORT()
+{
+    if [ "${CLN_SUPPORT}" != "" -a "${CLN_SUPPORT}" != "_CLN" ]; then
+	$1 "WARNING: CLN_SUPPORT is not set correctly." 
+	return 0
+    fi
+    return 1
+}
+
+check_CLN_INSTALLATION()
+{
+    if [ -n "${CLN_INSTALLATION}" -a \
+	"${CLN_INSTALLATION}" != 'x' -a \
+	"${CLN_INSTALLATION}" != 'c' -a \
+	"${CLN_INSTALLATION}" != 'z' -a \
+	"${CLN_INSTALLATION}" != 'e' -a \
+	"${CLN_INSTALLATION}" != 's' ]; then
+	$1 "WARNING: CLN_INSTALLATION should be \"e\", \"z\","
+	$1 "   \"c\", \"x\", \"s\" or empty."
+	return 0
+    fi
+    return 1
+}
+
+check_CLN_INCL_DIR()
+{
+    if [ -n "${CLN_INCL_DIR}" ]; then
+	if [ ! -r ${CLN_INCL_DIR}/cln.h ]; then 
+	    $1 "WARNING: CLN_INCL_DIR should contain"
+	    $1 "         cln.h." 
+	else
+	    return 1
+	fi
+    fi
+    return 0
+}
+
+check_CLN_LIB_DIR()
+{
+    if [ -n "${CLN_LIB_DIR}" ]; then
+	if [ ! -r ${CLN_LIB_DIR}/libcln.a -a \
+	     ! -r ${CLN_LIB_DIR}/libcln.so ]; then 
+	    $1 "WARNING: CLN_LIB_DIR should contain"
+	    $1 "         libcln.a or libcln.so." 
+	else
+	    return 1
+	fi
+    fi
+    return 0
+}
+
 # user's business
 check_CUSTOM_CXXFLAGS()
 {
@@ -2060,8 +2190,8 @@ check_LEDA_INCL_DIR()
 check_LEDA_LIB_DIR()
 {
     if [ -n "${LEDA_LIB_DIR}" ]; then
-	if [ ! -r $LEDA_LIB_DIR/libL.a -a ! -r $LEDA_LIB_DIR/libL.so ]; then
-	    $1 "WARNING: LEDA_LIB_DIR should contain libL.a or libL.so." 
+	if [ ! -r $LEDA_LIB_DIR/libL${LIB_SFX} -a ! -r $LEDA_LIB_DIR/libL.so ]; then
+	    $1 "WARNING: LEDA_LIB_DIR should contain libL.${LIB_SFX} or libL.so." 
 	else
 	    return 1
 	fi
@@ -2432,8 +2562,8 @@ test_stl_general()
 	_compile_test "${2}" "`compiler_test_cxxflags` " '' && \
 	    _link_run_test "${2}" "`compiler_test_ldflags` " ''
     else
-	_compile_test "${2}" " " $1 && \
-	    _link_run_test "${2}" " " $1 
+	_compile_test "${2}" "`compiler_test_cxxflags` " $1 && \
+	    _link_run_test "${2}" "`compiler_test_ldflags` " $1 
     fi
     return $?
 }
@@ -2477,6 +2607,44 @@ test_gmp()
     fi
 }
 
+# ---------------------------------------------------------------------
+# CLN TEST:
+
+# cln test based on the GMP test.
+# (return 0, iff it works)
+# ($1 is either 'CLN' or 'CLN syslib')
+# ($2 nonzero indicates verbosity)
+test_cln()
+{
+    if [ -n "${CLN_SUPPORT}" ]; then
+	${_printf} "%s\n" '
+	#include <iostream>
+	#include "cl_integer.h"
+	#include "cl_io.h"
+	#include "cl_integer_io.h"
+	int
+	main ()
+	{
+	    cl_I b ("31");
+	    cl_I p = b * 75;
+	    std::cout << p << std::endl;
+	    return 0;
+	}' > ${TMP_CXX_FILE}.C
+
+	if _compile_test "$1" "`cln_test_cxxflags`" "$2" && \
+	    _link_run_test "$1" "`cln_test_ldflags`" "$2"
+	then
+	    CLN_TEST_PASSED='y'
+	    return 0
+	else
+	    CLN_TEST_PASSED=''
+	    return 1
+	fi
+    else
+	return 0
+    fi
+}
+
 # set variable CGAL_OS_COMPILER according to the current
 # compiler settings
 set_ostype()
@@ -2505,6 +2673,8 @@ print_os_setting()
     ${1} "LEDA:\t\t${_tmp}supported" 
     _set_tmp_to_not_or_not "${GMP_SUPPORT}"
     ${1} "GMP:\t\t${_tmp}supported" 
+    _set_tmp_to_not_or_not "${CLN_SUPPORT}"
+    ${1} "CLN:\t\t${_tmp}supported" 
 }
 
 set_lib_compiled_flag()
@@ -2535,6 +2705,30 @@ search_gmp()
 	else
 	    GMP_INSTALLATION='e'
 	    log_print "remark: GMP is not installed."
+	    return 1
+	fi
+    fi
+    return 0
+}
+
+# set CLN_INSTALLATION
+# first check for sysdir installation, then in CGAL tree,
+# finally an external installation
+# return 0, iff one of these test succeeded
+# ($1 non-empty indicates verbosity)
+search_cln()
+{
+    CLN_INSTALLATION='s'
+    if test_cln 'CLN syslib' "$1"; then
+	log_print "remark: CLN is installed in sysdirs."
+    else
+	make_lib_dir
+	CLN_INSTALLATION='c'
+	if test_cln 'CLN CGAL' "$1"; then
+	    log_print "remark: CLN is installed in CGAL tree."
+	else
+	    CLN_INSTALLATION='e'
+	    log_print "remark: CLN is not installed."
 	    return 1
 	fi
     fi
@@ -2623,7 +2817,33 @@ retrieve_compiler_settings()
 	    fi
 	fi
     fi
-   
+
+    # CLN specific stuff:
+    if try_to_get_var_from_file CLN_SUPPORT "${_file}" ||\
+	try_to_get_var_from_file CLN_INSTALLATION "${_file}"; then
+	CLN_INSTALLATION=''
+	CLN_SUPPORT=''
+	SETUP_COMPLETE=''
+    fi
+    if try_to_get_var_from_file CLN_INCL_DIR "${_file}"; then
+	if [ -n "${CLN_SUPPORT}" ]; then
+	    if [ "${CLN_INSTALLATION}" = 'x' -o \
+		 "${CLN_INSTALLATION}" = 'z' -o \
+		 "${CLN_INSTALLATION}" = 'e' ]; then
+		SETUP_COMPLETE=''
+	    fi
+	fi
+    fi
+    if try_to_get_var_from_file CLN_LIB_DIR "${_file}"; then
+	if [ -n "${CLN_SUPPORT}" ]; then
+	    if [ "${CLN_INSTALLATION}" = 'x' -o \
+		 "${CLN_INSTALLATION}" = 'z' -o \
+		 "${CLN_INSTALLATION}" = 'e' ]; then
+		SETUP_COMPLETE=''
+	    fi
+	fi
+    fi
+
     set_lib_compiled_flag
 }
 
@@ -2672,6 +2892,10 @@ store_compiler_settings()
     _store_install_config_variable GMP_INSTALLATION >>${_file}
     _store_install_config_variable GMP_INCL_DIR >>${_file}
     _store_install_config_variable GMP_LIB_DIR >>${_file}
+    _store_install_config_variable CLN_SUPPORT >>${_file}
+    _store_install_config_variable CLN_INSTALLATION >>${_file}
+    _store_install_config_variable CLN_INCL_DIR >>${_file}
+    _store_install_config_variable CLN_LIB_DIR >>${_file}
     _store_install_config_variable CUSTOM_CXXFLAGS  >>${_file}
     _store_install_config_variable CUSTOM_LDFLAGS >>${_file}
     ${_printf} "\n%s\n" \
@@ -2694,6 +2918,7 @@ test_setup()
     SETUP_COMPLETE=''
     make_lib_dir
     link_gmp
+#   link_cln
 
     # LEDA
     if [ -z "${LEDA_TEST_PASSED}" ]; then
@@ -2715,6 +2940,16 @@ test_setup()
 	_passed_message 'GMP'
     fi
 
+    # CLN
+    if [ -z "${CLN_TEST_PASSED}" ]; then
+	test_cln 'CLN' 'v'
+	if [ $? = 1 ]; then
+	    return 1
+	fi
+    else
+	_passed_message 'CLN'
+    fi
+
     SETUP_COMPLETE='y'
     ${_printf} "%s" "${_LEFTSPACE}Saving current setup ..."
     store_compiler_settings
@@ -2728,6 +2963,7 @@ reset_all_test_variables()
 {
     LEDA_TEST_PASSED=''
     GMP_TEST_PASSED=''
+    CLN_TEST_PASSED=''
 }
 
 # load the settings for ${COMPILER},
@@ -2755,6 +2991,11 @@ _choose_compiler()
 	    GMP_TEST_PASSED='y'
 	else
 	    GMP_TEST_PASSED=''
+	fi
+	if [ -n "${CLN_SUPPORT}" ]; then
+	    CLN_TEST_PASSED='y'
+	else
+	    CLN_TEST_PASSED=''
 	fi
     fi
 }
@@ -2813,6 +3054,8 @@ menu_header()
     print_line     "LEDA:                ${_tmp}supported." 
     _set_tmp_to_not_or_not "${GMP_SUPPORT}"
     print_line     "GMP:                 ${_tmp}supported." 
+    _set_tmp_to_not_or_not "${CLN_SUPPORT}"
+    print_line     "CLN:                 ${_tmp}supported." 
     print_empty_line
     if [ -n "${CGAL_SUPPORT_COMPILER}" ]; then
 	print_line     "Compiler is supported by CGAL."
@@ -3199,6 +3442,113 @@ gmp_menu()
     done
 }
 
+
+# ---------------------------------------------------------------------
+# cln_menu to setup CLN
+#
+
+cln_menu()
+{
+    while [ 0 ]; do
+	menu_header 'CLN'
+#	print_line "${_bold_on}<C>${_bold_off}  Install CLN in CGAL tree" 
+	print_line "${_bold_on}<G>${_bold_off}  Toggle CLN support" 
+	if [ -n "${CLN_SUPPORT}" ]; then
+	    print_line "${_bold_on}<I>${_bold_off}  CLN  include directory" 
+	    case ${CLN_INSTALLATION} in
+		c) _tmp='<CGAL include directory>';;
+		s) _tmp='<system include directory>';;
+		*) _tmp="${CLN_INCL_DIR}";;
+	    esac
+	    print_line "     ${_tmp:-<undefined>}" 
+	    print_line "${_bold_on}<L>${_bold_off}  CLN  lib directory" 
+	    case ${CLN_INSTALLATION} in
+		c) _tmp='<CGAL lib directory>';;
+		s) _tmp='<system lib directory>';;
+		*) _tmp="${CLN_LIB_DIR}";;
+	    esac
+	    print_line "     ${_tmp:-<undefined>}" 
+	    if [ "${CLN_INSTALLATION}" = 'z' ]; then
+		print_line \
+		    "${_bold_on}<C>${_bold_off}  Use CLN installation in CGAL tree" 
+	    fi
+	    if [ "${CLN_INSTALLATION}" = 'x' ]; then
+		print_line \
+		    "${_bold_on}<S>${_bold_off}  Use CLN installation in system dirs" 
+	    fi
+	fi
+	print_line     "${_bold_on}<T>${_bold_off}  Test (and save) setup" 
+	menu_tailer 'Main Menu'
+
+	case $KEY in
+	    c|C)
+		install_cln
+		;;
+	    g|G)
+		if [ -z "${CLN_SUPPORT}" ]; then 
+		    SETUP_COMPLETE=''
+		    CLN_SUPPORT='_CLN'
+		    if [ -z "${CLN_INSTALLATION}" ]; then
+			go_down_lines 3
+			flush_buffer
+			search_cln "${INSTALL_VERBOSE}"
+		    fi
+		else
+		    CLN_SUPPORT=''
+		fi
+		;;
+	    i|I)
+		if [ -n "${CLN_SUPPORT}" ]; then
+		    if change_dir CLN_INCL_DIR dir; then
+			CLN_TEST_PASSED=''
+			SETUP_COMPLETE=''
+			case ${CLN_INSTALLATION} in 
+			    c|z) CLN_INSTALLATION='z';;
+			    s|x) CLN_INSTALLATION='x';;
+			    *) CLN_INSTALLATION='e';;
+			esac
+		    fi
+		fi
+		;;
+	    l|L)
+		if [ -n "${CLN_SUPPORT}" ]; then 
+		    if change_dir CLN_LIB_DIR dir; then
+			CLN_TEST_PASSED=''
+			SETUP_COMPLETE=''
+			case ${CLN_INSTALLATION} in 
+			    c|z) CLN_INSTALLATION='z';;
+			    s|x) CLN_INSTALLATION='x';;
+			    *) CLN_INSTALLATION='e';;
+			esac
+		    fi
+		fi
+		;;
+	    c|C)
+		if [ -n "${CLN_SUPPORT}" -a \
+		     "${CLN_INSTALLATION}" = 'z' ]; then
+		    CLN_TEST_PASSED='y'
+		    CLN_INSTALLATION='c'
+		fi
+		;;
+	    t|T)
+		go_down_lines 3
+		flush_buffer
+		test_setup
+		;;
+	    s|S)
+		if [ "${CLN_SUPPORT}" -a \
+		     "${CLN_INSTALLATION}" = 'x' ]; then
+		    CLN_TEST_PASSED='y'
+		    CLN_INSTALLATION='s'
+		fi
+		;;
+	    q|Q|b|B)
+		return;;
+	    *);;
+	esac
+    done
+}
+
 # ---------------------------------------------------------------------
 # GNU GMP installation
 #
@@ -3453,6 +3803,23 @@ write_compiler_flags()
   fi
 
   #
+  # CLN_INCL_DIR
+  #
+  if [ -n "${CLN_SUPPORT}" ]; then
+    if [ "${CLN_INSTALLATION}" = 'x' -o \
+	 "${CLN_INSTALLATION}" = 'z' -o \
+	 "${CLN_INSTALLATION}" = 'e' ]; then
+	print_as_shell_comment \
+	  "*** Fill in your CLN include directory ***" \
+	  >> ${FILE}
+	${_printf} "%s\\\\\n" "CLN_INCL_DIR = " >> ${FILE}
+	${_printf} "\t%s\n\n" \
+	  "`_where_is 'CLN_INCL_DIR'`" \
+	  >> ${FILE}
+    fi
+  fi
+
+  #
   # LONG_NAME_PROBLEM_CXXFLAGS
   #
   print_as_shell_comment \
@@ -3475,6 +3842,14 @@ write_compiler_flags()
 	 "${GMP_INSTALLATION}" = 'z' -o \
 	 "${GMP_INSTALLATION}" = 'e' ]; then
 	makefile_print_line "'-I\$(GMP_INCL_DIR)'" >> ${FILE}
+    fi
+  fi
+  if [ -n "${CLN_SUPPORT}" ]; then
+    makefile_print_line "-DCGAL_USE_CLN" >> ${FILE}
+    if [ "${CLN_INSTALLATION}" = 'x' -o \
+	 "${CLN_INSTALLATION}" = 'z' -o \
+	 "${CLN_INSTALLATION}" = 'e' ]; then
+	makefile_print_line "'-I\$(CLN_INCL_DIR)'" >> ${FILE}
     fi
   fi
   makefile_print_line "'-I\$(CGAL_INCL_CONF_DIR)'" >> ${FILE}
@@ -3543,6 +3918,26 @@ write_linker_flags()
   fi
 
   #
+  # CLN_LIB_DIR
+  #
+  if [ -n "${CLN_SUPPORT}" ]; then
+    if [ "${CLN_INSTALLATION}" = 'x' -o \
+	 "${CLN_INSTALLATION}" = 'z' -o \
+	 "${CLN_INSTALLATION}" = 'e' ]; then
+	print_as_shell_comment \
+	  "*** Fill in your CLN lib directory ***" \
+	  >> ${FILE}
+	print_as_shell_comment \
+	  "(e.g. /usr/local/lib)" \
+	  >> ${FILE}
+	${_printf} "%s\\\\\n" "CLN_LIB_DIR = " >> ${FILE}
+	${_printf} "\t%s\n\n" \
+	  "`_where_is 'CLN_LIB_DIR'`" \
+	  >> ${FILE}
+    fi
+  fi
+
+  #
   # CUSTOM_LDFLAGS
   #
   print_as_shell_comment \
@@ -3570,7 +3965,7 @@ write_linker_flags()
 	LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}\$(LEDA_LIB_DIR)"
 	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:\$(LEDA_LIB_DIR)"
     fi
-    LIBS="${LIBS} -lP -lG -lL"
+    LIBS="${LIBS} ${LEDA_LIB_OPT}P${LIB_SFX} ${LEDA_LIB_OPT}G${LIB_SFX} ${LEDA_LIB_OPT}L${LIB_SFX}"
     WLIBS="${WLIBS} -lW -lP -lG -lL -lX11"
   fi
   if [ -n "${GMP_SUPPORT}" ]; then
@@ -3582,6 +3977,16 @@ write_linker_flags()
     fi
     LIBS="${LIBS} ${LIB_OPT}gmp${LIB_SFX}"
     WLIBS="${WLIBS} ${LIB_OPT}gmp${LIB_SFX}"
+  fi
+  if [ -n "${CLN_SUPPORT}" ]; then
+    if [ "${CLN_INSTALLATION}" = 'x' -o \
+	 "${CLN_INSTALLATION}" = 'z' -o \
+	 "${CLN_INSTALLATION}" = 'e' ]; then
+	LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}\$(CLN_LIB_DIR)"
+	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:\$(CLN_LIB_DIR)"
+    fi
+    LIBS="${LIBS} ${LIB_OPT}cln${LIB_SFX}"
+    WLIBS="${WLIBS} ${LIB_OPT}cln${LIB_SFX}"
   fi
   if [ -n "${MATH_LIB}" ]; then
     LIBS="${LIBS} ${LIB_OPT}${MATH_LIB}${LIB_SFX}"
@@ -3755,10 +4160,16 @@ create_include_makefile()
   # 
   # CGAL_LIB_CREATE
   # 
-  ${_printf} "%s\n\n" "CGAL_LIB_CREATE = ${CGAL_LIB_CREATE}" >> ${FILE}
   ${_printf} "%s" "CGAL_LIB_DESTINATION = " >> ${FILE}
   concat_path "\$(CGAL_LIB_DIR)" "\$(CGAL_OS_COMPILER)" >> ${FILE}
   ${_printf} "\n\n"  >> ${FILE}
+  ${_printf} "lib_platform_dependent:\n"  >> ${FILE}
+# This breaks everything
+#  if [ -n "$LIB_CREATION_COMMANDS" ]; then
+#    ${_printf} "\t%s\n\n" "$LIB_CREATION_COMMANDS" >> ${FILE}
+#  else
+#    ${_printf} "\t%s%s %s %s\n\n" "${CGAL_LIB_CREATE}" "${CGAL_LIBNAME}" "\$(CGAL_OBJECTS)" "${CGAL_LIB_LDFLAGS}" >> ${FILE}
+#  fi
 
   # 
   # CGAL_SHARED_LIB
@@ -3882,6 +4293,7 @@ _do_compile()
     if [ -f ${COMPILE_LOGFILE} -a ! -w ${COMPILE_LOGFILE} ]; then
 	${_rm} -f ${COMPILE_LOGFILE} 
     fi
+    ${_rm} -f *${OBJ_EXT}
     if make -k -f makefile_$1 >${COMPILE_LOGFILE} 2>&1; then
 	log_print "Compilation of $1 ${_libname} succeeded."
 	${_printf} "%s\n" " done."
@@ -4156,6 +4568,7 @@ main_menu()
 	print_line     "${_bold_on}<C>${_bold_off}  Compiler Menu" 
 	print_line     "${_bold_on}<L>${_bold_off}  LEDA Menu" 
 	print_line     "${_bold_on}<G>${_bold_off}  GMP Menu" 
+	print_line     "${_bold_on}<M>${_bold_off}  CLN Menu" 
 	print_line     "${_bold_on}<T>${_bold_off}  Test (and save) setup" 
 	print_line     "${_bold_on}<A>${_bold_off}  Run all setup tests (no cache)" 
 	print_empty_line 
@@ -4172,6 +4585,7 @@ main_menu()
 	    c|C) compiler_menu;;
 	    l|L) leda_menu;;
 	    g|G) gmp_menu;;
+	    m|M) cln_menu;;
 	    b|B) lib_menu;;
 	    u|U)
 		if [ -f ${CGAL_DIR}/.upgrade-tag ]; then
@@ -4188,6 +4602,9 @@ main_menu()
 		fi
 		if [ -n "${GMP_SUPPORT}" ]; then
 		    search_gmp "${INSTALL_VERBOSE}"
+		fi
+		if [ -n "${CLN_SUPPORT}" ]; then
+		    search_cln "${INSTALL_VERBOSE}"
 		fi
 		test_compiler_specifica "${INSTALL_VERBOSE}"
 		test_setup;;
@@ -4375,6 +4792,20 @@ while [ ${#} -gt 0 ]; do
 	    fi
 	    GMP_INSTALLATION='e'
 	    ;;
+	--cln_incl_dir*|--CLN_INCL_DIR*|-CLN_INCL_DIR*|-cln_incl_dir*)
+	    _ANY_OPT='y'
+	    if set_variable_from_command_line 'CLN_INCL_DIR' "$1" "$2"; then
+		shift
+	    fi
+	    CLN_INSTALLATION='e'
+	    ;;
+	--cln_lib_dir*|--CLN_LIB_DIR*|-CLN_LIB_DIR*|-cln_lib_dir*)
+	    _ANY_OPT='y'
+	    if set_variable_from_command_line 'CLN_LIB_DIR' "$1" "$2"; then
+		shift
+	    fi
+	    CLN_INSTALLATION='e'
+	    ;;
 	-LEDA*|-leda*|--leda*|--LEDA*)
 	    _ANY_OPT='y'
 	    LEDA_SUPPORT='_LEDA'
@@ -4384,6 +4815,11 @@ while [ ${#} -gt 0 ]; do
 	    _ANY_OPT='y'
 	    GMP_SUPPORT='_GMP'
 	    write_buffer "${_LEFTSPACE}Enable GMP support.\n"
+	    ;;
+	-cln*|-CLN*|--cln*|--CLN*)
+	    _ANY_OPT='y'
+	    CLN_SUPPORT='_CLN'
+	    write_buffer "${_LEFTSPACE}Enable CLN support.\n"
 	    ;;
 	-os*|-OS*)
 	    if [ -n "${_WHAT_TO_DO}" ]; then
