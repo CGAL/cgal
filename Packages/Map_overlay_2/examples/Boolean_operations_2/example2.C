@@ -7,6 +7,7 @@
 #include <CGAL/Boolean_operations_2.h>
 #include <CGAL/Arr_segment_exact_traits.h>
 #include <CGAL/Planar_map_2.h>
+#include <CGAL/sweep_to_construct_planar_map_2.h>
 #include <iostream>
 #include <vector>
 #include <list>
