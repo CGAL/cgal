@@ -135,7 +135,6 @@ public:
 
   virtual std::ostream &print(std::ostream &os) const
   {
-    FT ft0(0);
     os << "Aff_transformationC3(" << scalefactor_ << ")";
     return os;
   }

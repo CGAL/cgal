@@ -122,7 +122,6 @@ public:
 
   virtual Aff_transformation_3 transpose() const
   {
-    FT ft1(1), ft0(0);
     return Aff_transformation_3(TRANSLATION, translationvector_);
   }
   
@@ -140,7 +139,6 @@ public:
 
   virtual std::ostream &print(std::ostream &os) const
   {
-    FT ft0(0), ft1(1);
     os << "Aff_transformationC3(VectorC3("<< translationvector_.x() << ","
        << translationvector_.y() << ","
        << translationvector_.z() << "))\n";
