@@ -20,13 +20,6 @@
 // ============================================================================
 #include <CGAL/basic.h>
 
-#include <cstring>
-#include <iostream>
-#include <fstream>
-#include <strstream.h>
-
-#include <unistd.h>
-
 #include <list>
 
 #include <CGAL/Cartesian.h>
