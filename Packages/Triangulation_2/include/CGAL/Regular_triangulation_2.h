@@ -923,8 +923,8 @@ stack_flip_3_1(Face_handle f, int i, int j, Faces_around_stack & faces_around)
   }
 
   Vertex_handle vq= f->vertex(j);
-  remove_degree_3(vq,f);
   hide_vertex(f,vq->point());
+  remove_degree_3(vq,f);
   faces_around.push_front(f);
 }
 
