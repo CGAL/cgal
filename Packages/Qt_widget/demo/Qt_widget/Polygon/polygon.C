@@ -180,9 +180,10 @@ private slots:
     widget->set_window(-1.1, 1.1, -1.1, 1.1);
     // set the Visible Area to the Interval
     polygon.erase(polygon.vertices_begin(), polygon.vertices_end());
-    //    CGAL::random_polygon_2(100,
-    //			   std::back_inserter(polygon),
-    //			   Point_generator(1));
+        CGAL::random_polygon_2(100,
+    			   std::back_inserter(polygon),
+    			   Point_generator(1));
+    show_info();
     something_changed();
   }
 
@@ -274,16 +275,18 @@ void show_info()
   s2.setNum(float((*(polygon.left_vertex())).y()));
   s = s1 + ", " + s2;
   qte->append("P.left_vertex() = " + s);
-/*
-  s.setNum(polygon.left_vertex(), 10);
-
-  s.setNum(polygon.right_vertex(), 10);
+  s1.setNum(float((*(polygon.right_vertex())).x()));
+  s2.setNum(float((*(polygon.right_vertex())).y()));
+  s = s1 + ", " + s2;
   qte->append("P.right_vertex() = " + s);
-  s.setNum(polygon.top_vertex(), 10);
+  s1.setNum(float((*(polygon.top_vertex())).x()));
+  s2.setNum(float((*(polygon.top_vertex())).y()));
+  s = s1 + ", " + s2;
   qte->append("P.top_vertex() = " + s);
-  s.setNum(polygon.bottom_vertex(), 10);
-  qte->append("P.bottom_vertex() = " + s);*/
-
+  s1.setNum(float((*(polygon.bottom_vertex())).x()));
+  s2.setNum(float((*(polygon.bottom_vertex())).y()));
+  s = s1 + ", " + s2;
+  qte->append("P.bottom_vertex() = " + s);
 }
 
 

@@ -12,3 +12,5 @@ typedef CGAL::Point_2<Rep>                  Point;
 typedef CGAL::Polygon_traits_2<Rep>         Traits;
 typedef std::vector<Point>                  Container;
 typedef CGAL::Polygon_2<Traits, Container>  Cgal_Polygon;
+typedef CGAL::Random_points_in_square_2<Point>
+                                            Point_generator;
