@@ -1,4 +1,4 @@
-4.4      (?? Jan 01)
+4.4      (18 Jan 01)
 - known_bit_size_integers.h now defines CGAL_HAS_INTEGER64 when it defines
   Integer64 (see long_long.h too).
 
