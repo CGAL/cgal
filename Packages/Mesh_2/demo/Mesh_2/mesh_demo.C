@@ -28,8 +28,6 @@ int main(int, char*)
 #include <CGAL/Delaunay_mesh_local_size_traits_2.h>
 #include <CGAL/Delaunay_mesh_face_base_2.h>
 
-#include <CGAL/Read_write.h>
-
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 #include <CGAL/IO/Qt_widget_get_point.h>
@@ -95,6 +93,48 @@ typedef CGAL::Polygon_2<K> CGALPolygon;
 
 typedef CGAL::Delaunay_mesh_2<Tr> Mesh;
 typedef Mesh::Vertex Vertex;
+
+template <class CDT>
+void
+read_constraints(CDT& t, std::istream &f)
+{
+  typedef typename CDT::Point Point;
+
+  t.clear();
+
+  int nedges = 0;
+  f>>nedges;
+
+  for(int n = 0; n<nedges; n++) {
+    Point p1, p2;
+    f >> p1 >> p2;
+    t.insert_constraint(p1, p2);
+  }
+}
+
+template <class CDT>
+void
+write_constraints(const CDT& t, std::ostream &f)
+{
+  typedef typename CDT::Finite_edges_iterator Finite_edges_iterator;
+
+  int number_of_constrained_edges = 0;
+  for(Finite_edges_iterator it = t.finite_edges_begin();
+      it != t.finite_edges_end();
+      ++it)
+    if((*it).first->is_constrained((*it).second))
+      ++number_of_constrained_edges;
+
+  f << number_of_constrained_edges << std::endl;
+  for(Finite_edges_iterator eit = t.finite_edges_begin();
+      eit!=t.finite_edges_end();
+      ++eit)
+    if((*eit).first->is_constrained((*eit).second)) 
+      {
+	f << (*eit).first->vertex(t.cw((*eit).second))->point() << " "
+	  << (*eit).first->vertex(t.ccw((*eit).second))->point() <<std::endl;
+      }
+}
 
 template <class M>
 class Show_marked_faces : public CGAL::Qt_widget_layer
@@ -206,7 +246,7 @@ public:
 				AlignLeft | AlignTop );
 
       //   initialization status
-      numbers_layout->addWidget(new QLabel("init: ", infoframe),
+      numbers_layout->addWidget(new QLabel("init status: ", infoframe),
 				2, 0,
 				AlignRight | AlignTop );
 
@@ -591,6 +631,7 @@ private slots:
   void after_inserted_input()
   {
     mesh->set_initialized(Mesh::NONE);
+    emit initializedMesh();
     nb_of_clusters_has_to_be_updated = true;
     mesh->mark_facets();
   }
@@ -623,7 +664,7 @@ public slots:
 	      }
 	    mesh->set_geom_traits(traits);
 	    mesh->set_bad_faces(l.begin(), l.end());
-	    while( mesh->refine_step() );
+	    while( mesh->step_by_step_refine_mesh() );
 	  }
 	else
 	  if(get_seed->is_active())
@@ -695,7 +736,7 @@ public slots:
 
   void refineMesh()
     {
-      saveTriangulationUrgently("last_input.edg");
+      dumpTriangulation("last_input.edg");
       mesh->refine_mesh();
       emit initializedMesh();
       widget->redraw();
@@ -704,12 +745,9 @@ public slots:
   void conformMesh()
     {
       if(mesh->get_initialized() != Mesh::GABRIEL)
-	{
-	  saveTriangulationUrgently("last_input.edg");
-	  mesh->init();
-	  initializedMesh();
-	}
+	dumpTriangulation("last_input.edg");
       mesh->make_conforming_Gabriel();
+      initializedMesh();
       updatePointCounter();
       widget->redraw();
     }
@@ -722,12 +760,12 @@ public slots:
 	{
 	  mesh->init_Gabriel();
 	  initializedMesh();
-	  saveTriangulationUrgently("last_input.edg");
+	  dumpTriangulation("last_input.edg");
 	}
       while(counter>0)
 	{
 	  --counter;
-	  if(!mesh->refine_step())
+	  if(!mesh->step_by_step_refine_mesh())
 	    {
 	      pbMeshTimer->setOn(false);
 	      counter = 0;
@@ -796,7 +834,9 @@ public slots:
 
       if(s.right(5) == ".poly")
 	{
-	  read_poly(*mesh, f);
+	  Mesh::Seeds seeds;
+	  read_poly(*mesh, f, std::back_inserter(seeds));
+	  mesh->set_seeds(seeds.begin(), seeds.end(), false);
 	}
       else if(s.right(5) == ".data")
 	{
@@ -805,7 +845,7 @@ public slots:
 
 	  std::ifstream ins(s);
 	  ins >> nx >> ny >> niso >> use_threshold >> threshold;
-	  for(int i = 0; i < niso; i++) {
+	  for(int c = 0; c < niso; c++) {
 	    float f;
 	    ins >> f;
 	  }
@@ -817,11 +857,11 @@ public slots:
 	  double dx = (xmax-xmin)/(nx-1);
 	  double dy = (ymax-ymin)/(ny-1);
 
-	  int k=0;
-	  for (int i=0; i<nx; i++) {
+	  int k2=0;
+	  for (int i2=0; i2<nx; i2++) {
 	    for (int j=0; j<ny; j++) {
-	      points[k] = Point(xmin + i*dx,  ymin + j*dy);
-	      k++;
+	      points[k2] = Point(xmin + i2*dx,  ymin + j*dy);
+	      k2++;
 	    }
 	  }
 	  
@@ -835,8 +875,8 @@ public slots:
 	  int num_lines;
 	  ins2 >> num_lines;
 	  std::vector<int> num_vertex_per_line(num_lines);
-	  for(int i = 0; i < num_lines; i++){
-	    ins2 >> num_vertex_per_line[i];
+	  for(int n = 0; n < num_lines; n++){
+	    ins2 >> num_vertex_per_line[n];
 	  }
   
 	  CGAL::Bbox_2 b;
@@ -884,7 +924,7 @@ public slots:
 	}
       else
 	{
-	  read(*mesh, f);
+	  read_constraints(*mesh, f);
 	  clearSeeds();
 	}
 
@@ -916,13 +956,13 @@ public slots:
       if(s.right(5) == ".poly")
 	write_poly(*mesh, of);
       else
-	write(*mesh, of);
+	write_constraints(*mesh, of);
     }
 
-  void saveTriangulationUrgently(QString s=QString("dump.edg"))
+  void dumpTriangulation(QString s=QString("dump.edg"))
     {
       std::ofstream of(s);
-      write(*mesh, of);
+      write_constraints(*mesh, of);
     }
 
   inline
@@ -1052,11 +1092,11 @@ int main(int argc, char** argv)
   app.setMainWidget(W);
   W->show();
 
-  //  if( argc == 1 )
-  //W->openTriangulation(argv[1]);
+  if( argc == 2 )
+    W->openTriangulation(QString(argv[1]));
 
-  //  my_previous_failure_function = 
-  //CGAL::set_error_handler(cgal_with_exceptions_failure_handler);
+  my_previous_failure_function = 
+    CGAL::set_error_handler(cgal_with_exceptions_failure_handler);
 
   try {
     return app.exec();
@@ -1064,7 +1104,7 @@ int main(int argc, char** argv)
   catch(Cgal_exception e) {
     std::cerr << "catch(Cgal_exception e)" << std::endl;
     try {
-      W->saveTriangulationUrgently();
+      W->dumpTriangulation();
     }
     catch(...) {
       std::cerr << "PANIC !!" << std::endl;

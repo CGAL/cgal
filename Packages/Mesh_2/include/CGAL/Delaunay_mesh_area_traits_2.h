@@ -31,7 +31,7 @@ public:
   class Is_bad: public Private_base::Is_bad
   {
   public:
-    typedef Private_base::Is_bad Is_bad_base;
+    typedef typename Private_base::Is_bad Is_bad_base;
 
     typedef typename K::Point_2 Point_2;
     typedef typename K::Triangle_2 Triangle_2;

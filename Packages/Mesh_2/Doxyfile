@@ -4,7 +4,7 @@
 # General configuration options
 #---------------------------------------------------------------------------
 PROJECT_NAME           = Mesh_2
-PROJECT_NUMBER         = 0.9.3
+PROJECT_NUMBER         = 0.9.4alpha
 OUTPUT_DIRECTORY       = doxygen/
 OUTPUT_LANGUAGE        = English
 USE_WINDOWS_ENCODING   = NO
@@ -158,12 +158,15 @@ PERLMOD_MAKEVAR_PREFIX =
 # Configuration options related to the preprocessor   
 #---------------------------------------------------------------------------
 ENABLE_PREPROCESSING   = YES
-MACRO_EXPANSION        = NO
+MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = NO
 SEARCH_INCLUDES        = YES
-INCLUDE_PATH           = /users/algo2/gecoal/CGAL/CGAL-I/include/CGAL
+INCLUDE_PATH           = /users/algo2/gecoal/CGAL/CGAL-I/include/CGAL \
+                         /0/prisme_util/CGAL/CGAL-I/include/CGAL
 INCLUDE_FILE_PATTERNS  = 
-PREDEFINED             = "CGAL_USE_GMP CGAL_USE_QT"
+PREDEFINED             = "CGAL_USE_GMP CGAL_USE_QT" \
+                         "CGAL_BEGIN_NAMESPACE=namespace CGAL {" \
+                         CGAL_END_NAMESPACE=}
 EXPAND_AS_DEFINED      = 
 SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------
@@ -189,7 +192,7 @@ INCLUDED_BY_GRAPH      = YES
 CALL_GRAPH             = NO
 GRAPHICAL_HIERARCHY    = YES
 DOT_IMAGE_FORMAT       = gif
-DOT_PATH               = /usr/local/gecoal/bin/
+DOT_PATH               = 
 DOTFILE_DIRS           = 
 MAX_DOT_GRAPH_WIDTH    = 1024
 MAX_DOT_GRAPH_HEIGHT   = 1024

@@ -10,7 +10,6 @@
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 
 #include <CGAL/Conforming_Delaunay_triangulation_2.h>
-#include <CGAL/Read_write.h>
 
 typedef CGAL::Simple_cartesian<double> K1;
 typedef CGAL::Filtered_kernel<K1> K2;
@@ -21,11 +20,8 @@ typedef CGAL::Constrained_triangulation_face_base_2<K> Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb, Fb> Tds;
 typedef CGAL::Constrained_Delaunay_triangulation_2<K, Tds,
   CGAL::Exact_predicates_tag> Tr;
-typedef CGAL::Conforming_Delaunay_triangulation_2<Tr> Conform;
 
 typedef K::Point_2 Point;
-
-Conform conform;
 
 void usage(char** argv)
 {
@@ -79,9 +75,8 @@ int main(int argc, char** argv)
   std::ifstream input(argv[arg_count]);
   if(input)
     {
-      read_poly(conform, input);
       Tr t;
-      t.swap(conform);
+      CGAL::read_poly(t, input);
       if(delaunay)
 	{
 	  if(verbose)
@@ -94,7 +89,23 @@ int main(int argc, char** argv)
 	    std::cerr << "Make conforming Gabriel..." << std::endl;
 	  CGAL::make_conforming_Gabriel_2(t);
 	}
-      conform.swap(t);
+ 
+      if(argc==arg_count+1)
+	{
+	  if(terminal_output)
+	    CGAL::write_poly(t, std::cout);
+	}
+      else
+	{
+	  std::ofstream output(argv[arg_count+1]);
+	  write_poly(t, output);
+	}
+
+      if(terminal_output)
+	std::cerr 
+	  << "Number of points: " << t.number_of_vertices() << std::endl
+	  << "Number of triangles: " << t.number_of_faces () << std::endl;
+      
     }
   else
     {
@@ -102,21 +113,5 @@ int main(int argc, char** argv)
       usage(argv);
       return 1;
     }
-  
-  if(argc==arg_count+1)
-    {
-      if(terminal_output)
-	write_poly(conform, std::cout);
-    }
-  else
-    {
-      std::ofstream output(argv[arg_count+1]);
-      write_poly(conform, output);
-    }
-  if(terminal_output)
-    std::cerr 
-      << "Mesh points: " << conform.number_of_vertices() << std::endl
-      << "Mesh triangles: " << conform.number_of_faces () << std::endl;
-
   return 0;
 };

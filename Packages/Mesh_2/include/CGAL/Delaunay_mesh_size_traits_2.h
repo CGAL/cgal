@@ -3,6 +3,7 @@
 
 #include <CGAL/Delaunay_mesh_traits_2.h>
 #include <utility>
+#include <ostream>
 
 namespace CGAL {
 
@@ -41,8 +42,16 @@ public:
       {
 	if( size() > q.size() )
 	  return true;
-	else
+	else if( size() == q.size() )
 	  return( sine() < q.sine() );
+	else
+	  return false;
+      }
+
+    friend std::ostream& operator<<(std::ostream& out, const Quality& q)
+      {
+	return out << "(size=" << q.size() << ", sine=" << q.sine() <<
+	  ")";
       }
   };
 

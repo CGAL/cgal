@@ -60,8 +60,7 @@ mesh_demo$(OBJ_EXT): mesh_demo.moc Show_clusters.moc \
 	../../include/CGAL/Delaunay_mesh_traits_2.h \
 	../../include/CGAL/Delaunay_mesh_face_base_2.h \
 	../../include/CGAL/Delaunay_mesh_local_size_traits_2.h \
-	../../include/CGAL/Delaunay_mesh_size_traits_2.h \
-	../../include/CGAL/Read_write.h
+	../../include/CGAL/Delaunay_mesh_size_traits_2.h
 
 
 mesh_demo$(EXE_EXT): mesh_demo$(OBJ_EXT) icons$(OBJ_EXT)
@@ -75,7 +74,8 @@ run_mesh_demo: mesh_demo$(EXE_EXT)
 
 clean: \
                    icons.clean \
-                   mesh_demo.clean 
+                   mesh_demo.clean
+	${RM} -f Show_clusters.moc
 
 #---------------------------------------------------------------------#
 #                    suffix rules

@@ -104,6 +104,32 @@ public :
 	return p.second == k;
       }
   };
+
+  void dump_direct_func(std::ostream& out)
+    {
+      for(typename Direct_func::iterator it = direct_func.begin();
+	  it != direct_func.end();
+	  ++it)
+	std::cerr << it->second << " " 
+		  << "("
+		  << it->first->vertex(0)->point() << ", "
+		  << it->first->vertex(1)->point() << ", "
+		  << it->first->vertex(2)->point()
+		  << ")" << std::endl;
+    }
+
+  void dump_reverse_func(std::ostream& out)
+    {
+      for(typename Reverse_func::iterator it = reverse_func.begin();
+      it != reverse_func.end();
+	  ++it)
+	std::cerr << it->first << " " 
+		  << "("
+		  << it->second->vertex(0)->point() << ", "
+		  << it->second->vertex(1)->point() << ", "
+		  << it->second->vertex(2)->point()
+		  << ")" << std::endl;
+    }
 };
 
 template <class _Key, class _Data, class _Direct_order, 

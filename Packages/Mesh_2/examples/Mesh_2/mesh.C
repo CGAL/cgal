@@ -13,8 +13,6 @@
 #include <CGAL/Delaunay_mesh_face_base_2.h>
 #include <CGAL/Delaunay_mesh_area_traits_2.h>
 
-#include <CGAL/Read_write.h>
-
 typedef CGAL::Simple_cartesian<double> K1;
 typedef CGAL::Filtered_kernel<K1> K2;
 struct K : public K2 {};
@@ -26,11 +24,7 @@ typedef CGAL::Delaunay_mesh_area_traits_2<K> Meshtraits;
 typedef CGAL::Constrained_Delaunay_triangulation_2<Meshtraits, Tds,
   CGAL::Exact_predicates_tag> Tr;
 
-typedef CGAL::Delaunay_mesh_2<Tr> Mesh;
-
 typedef K::Point_2 Point;
-
-Mesh mesh;
 
 void usage(char** argv)
 {
@@ -43,6 +37,7 @@ int main(int argc, char** argv)
   int arg_count = 1;
   bool terminal_output = true;
   Meshtraits traits;
+  Tr t;
 
   if(argc < 2)
     {
@@ -61,7 +56,6 @@ int main(int argc, char** argv)
 		std::istringstream(argv[arg_count+1]) >> area_bound )
 	      {
 		traits.set_area_bound(area_bound);
-		mesh.set_geom_traits(traits);
 		++arg_count;
 	      }
 	    else
@@ -88,11 +82,28 @@ int main(int argc, char** argv)
       usage(argv);
       return 1;
     };
+
   std::ifstream input(argv[arg_count]);
   if(input)
     {
-      read_poly(mesh, input);
-      mesh.refine_mesh();
+      read_poly(t, input);
+      CGAL::refine_Delaunay_mesh_2(t, traits);
+
+      if(argc==arg_count+1)
+	{
+	  if(terminal_output)
+	    write_poly(t, std::cout);
+	}
+      else
+	{
+	  std::ofstream output(argv[arg_count+1]);
+	  write_poly(t, output);
+	}
+      if(terminal_output)
+	std::cerr 
+	  << "Mesh points: " << t.number_of_vertices() << std::endl
+	  << "Mesh triangles: " << t.number_of_faces () << std::endl;
+      
     }
   else
     {
@@ -101,20 +112,5 @@ int main(int argc, char** argv)
       return 1;
     }
   
-  if(argc==arg_count+1)
-    {
-      if(terminal_output)
-	write_poly(mesh, std::cout);
-    }
-  else
-    {
-      std::ofstream output(argv[arg_count+1]);
-      write_poly(mesh, output);
-    }
-  if(terminal_output)
-    std::cerr 
-      << "Mesh points: " << mesh.number_of_vertices() << std::endl
-      << "Mesh triangles: " << mesh.number_of_faces () << std::endl;
-
   return 0;
 };

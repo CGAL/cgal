@@ -8,7 +8,7 @@
 CGAL_BEGIN_NAMESPACE
 
 /**
-   Tr is a Delaunay constrained triangulation (with intersections or not)
+   Tr is a Delaunay con`strained triangulation (with intersections or not)
 */
 template <class Tr>
 class Delaunay_mesh_2: public Conforming_Delaunay_triangulation_2<Tr>
@@ -131,7 +131,7 @@ public:
 
   /** Execute one step of the algorithm.
       Needs init() see above */
-  bool refine_step();
+  bool step_by_step_refine_mesh();
 
 private:
   /** \name PRIVATE TYPES */
@@ -194,12 +194,12 @@ private:
   // take one face in the queue and call refine_face
   void process_one_face();
 
-  // handle one face; call split_face or put in the edges_to_be_conformed the
-  // list of edges that would be encroached by the circum_center of f
-  // This function uses Shewchuk's terminator criteria.
+  /** handle one face; call split_face or put in the edges_to_be_conformed the
+     list of edges that would be encroached by the circum_center of f
+     This function uses Shewchuk's terminator criteria. 
+     \todo This function calls get_conflicts_and_boundary and should
+     pass the result to split_face. */
   void refine_face(Face_handle f, const Quality& q);
-
-
 
   /** \name functions that really insert points */
 
@@ -225,7 +225,7 @@ private:
 
 }; // end of Delaunay_mesh_2
 
-/** \name ACCESS FUNCTIONS */
+// --- ACCESS FUNCTIONS ---
 
 // ?????????????
 // ->traits
@@ -250,7 +250,7 @@ bool Delaunay_mesh_2<Tr>::
 is_bad(const Face_handle f) const
 { 
   Quality q;
-  return is_bad(fh, q);
+  return is_bad(f, q);
 }
 
 template <class Tr>
@@ -359,7 +359,7 @@ init()
 template <class Tr>
 inline
 bool Delaunay_mesh_2<Tr>::
-refine_step()
+step_by_step_refine_mesh()
 {
   if( !step_by_step_conforming_Gabriel() )
     if ( !bad_faces.empty() )
@@ -453,6 +453,7 @@ process_one_face()
 {
   Face_handle f = bad_faces.front()->second;
   const Quality& q = bad_faces.front()->first;
+  is_bad_faces_valid();
   bad_faces.pop_front();
   refine_face(f, q);
 }
@@ -462,7 +463,7 @@ template <class Tr>
 void Delaunay_mesh_2<Tr>::
 refine_face(const Face_handle f, const Quality& q)
 {
-  Is_locally_conforming_Gabriel is_gabriel_conform;
+  typename Conform::Is_locally_conforming_Gabriel is_gabriel_conform;
 
   const Point& pc = circumcenter(f);
 
@@ -544,7 +545,7 @@ void Delaunay_mesh_2<Tr>::
 split_face(const Face_handle& f, const Point& circum_center)
 {
   bool marked = f->is_marked();
-  CGAL_assertion(marked); // TODO: remove this
+  CGAL_assertion(marked);
 
   List_of_face_handles zone_of_cc;
   List_of_edges zone_of_cc_boundary;
@@ -553,17 +554,23 @@ split_face(const Face_handle& f, const Point& circum_center)
 			     std::back_inserter(zone_of_cc),
 			     std::back_inserter(zone_of_cc_boundary),
 			     f);
+  is_bad_faces_valid();
   for(typename List_of_face_handles::iterator fh_it = zone_of_cc.begin();
       fh_it != zone_of_cc.end();
       ++fh_it)
     bad_faces.erase(*fh_it);
 
   // insert the point in the triangulation with star_hole
-  Vertex_handle v = Base::Triangulation::star_hole(circum_center,
+  Vertex_handle v = star_hole(circum_center,
 			      zone_of_cc_boundary.begin(),
 			      zone_of_cc_boundary.end(),
 			      zone_of_cc.begin(),
 			      zone_of_cc.end());
+
+  Face_circulator fc = incident_faces(v), fcbegin(fc); 	 
+  do { 	 
+    fc->set_marked(marked); 	 
+  } while (++fc != fcbegin); 	 
 
   compute_new_bad_faces(v);
 }
@@ -693,6 +700,22 @@ shortest_edge_squared_length(Face_handle f)
   b = squared_distance(pc, pa);
   c = squared_distance(pa, pb);
   return (min(a, min(b, c)));
+}
+
+// --- GLOBAL FUNCTIONS ---
+template <class Tr>
+void
+refine_Delaunay_mesh_2(Tr& t,
+		       const typename Tr::Geom_traits& gt =
+		       typename Tr::Geom_traits() )
+{
+  typedef Delaunay_mesh_2<Tr> Mesh;
+
+  Mesh mesh;
+  mesh.swap(t);
+  mesh.set_geom_traits(gt);
+  mesh.refine_mesh();
+  t.swap(mesh);
 }
 
 CGAL_END_NAMESPACE
