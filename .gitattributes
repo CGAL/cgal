@@ -1485,16 +1485,6 @@ Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/halfedge.gif -text svneol=unset
 Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/halfedge_small.gif -text svneol=unset#unset
 Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/poly_optional.gif -text svneol=unset#unset
 Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/poly_optional_small.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/add_facet1.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/add_facet2.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/euler_facet.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/euler_loop.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/euler_vertex.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/halfedge.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/halfedge_small.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/poly_optional.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/poly_optional_small.gif -text svneol=unset#unset
-Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/shark.gif -text svneol=unset#unset
 Packages/Polyhedron/examples/Polyhedron/corner.off -text
 Packages/Polyhedron/examples/Polyhedron/corner_with_hole.off -text
 Packages/Polyhedron/examples/Polyhedron/corner_with_sharp_edge.off -text
