@@ -326,7 +326,7 @@ sub move_packagedir($)
     rename($tempdir, "$packagedir/$package_name") or die;
 
     system 'chgrp', '-R', 'cgal', "$packagedir/$package_name";
-    system 'chmod', '-R', 'ug+w', "$packagedir/$package_name" ;
+    system 'chmod', '-R', 'ug+w,a+r', "$packagedir/$package_name" ;
 }
 
 sub install_submission($$)
