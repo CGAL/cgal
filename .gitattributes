@@ -13,6 +13,16 @@ Old_Packages/Doc23/doc_tex/kernel/compare1.gif svneol=native#unset
 Old_Packages/Doc23/doc_tex/kernel/compare2.gif svneol=native#unset
 Old_Packages/Doc23/doc_tex/kernel/transvecthree.gif svneol=native#unset
 Old_Packages/Doc23/doc_tex/kernel/transvectwo.gif svneol=native#unset
+Old_Packages/Halfedge_DS/doc_tex/basic/Halfedge_DS/euler_facet.gif svneol=native#unset
+Old_Packages/Halfedge_DS/doc_tex/basic/Halfedge_DS/euler_loop.gif svneol=native#unset
+Old_Packages/Halfedge_DS/doc_tex/basic/Halfedge_DS/euler_vertex.gif svneol=native#unset
+Old_Packages/Halfedge_DS/doc_tex/basic/Halfedge_DS/halfedge.gif svneol=native#unset
+Old_Packages/Halfedge_DS/doc_tex/basic/Halfedge_DS/halfedge_small.gif svneol=native#unset
+Old_Packages/Halfedge_DS/doc_tex/basic/Halfedge_DS/hds_bases_optional.gif svneol=native#unset
+Old_Packages/Halfedge_DS/doc_tex/basic/Halfedge_DS/hds_bases_optional_small.gif svneol=native#unset
+Old_Packages/Halfedge_DS/doc_tex/basic/Halfedge_DS/hds_optional.gif svneol=native#unset
+Old_Packages/Halfedge_DS/doc_tex/basic/Halfedge_DS/hds_optional_small.gif svneol=native#unset
+Old_Packages/Halfedge_DS/doc_tex/basic/Halfedge_DS/poly_design_color.gif svneol=native#unset
 Old_Packages/Stl_port/stlport/bug/algorithm svneol=native#unset
 Old_Packages/Stl_port/stlport/bug/bitset svneol=native#unset
 Old_Packages/Stl_port/stlport/bug/cassert svneol=native#unset
@@ -119,6 +129,16 @@ Packages/Generator/doc_tex/support/Generator/generators_prog1_small.gif -text sv
 Packages/Generator/doc_tex/support/Generator/generators_prog2.gif -text svneol=unset#unset
 Packages/Generator/doc_tex/support/Generator/generators_prog2.ps -text
 Packages/Generator/doc_tex/support/Generator/generators_prog2_small.gif -text svneol=unset#unset
+Packages/HalfedgeDS/doc_tex/HalfedgeDS/fig/halfedge.ips -text
+Packages/HalfedgeDS/doc_tex/HalfedgeDS/fig/hds_design.ips -text
+Packages/HalfedgeDS/doc_tex/HalfedgeDS/halfedge.gif -text svneol=unset#unset
+Packages/HalfedgeDS/doc_tex/HalfedgeDS/halfedge_small.gif -text svneol=unset#unset
+Packages/HalfedgeDS/doc_tex/HalfedgeDS/hds_design_col.gif -text svneol=unset#unset
+Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS/fig/halfedge.ips -text
+Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS/fig/hds_design.ips -text
+Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS/halfedge.gif -text svneol=unset#unset
+Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS/halfedge_small.gif -text svneol=unset#unset
+Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS/hds_design_col.gif -text svneol=unset#unset
 Packages/Installation/doc_tex/installation/Fig/a-simp.ipe -text
 Packages/Installation/doc_tex/installation/Fig/c-simp.ipe -text
 Packages/Installation/doc_tex/installation/Fig/g-simp.ipe -text
@@ -192,6 +212,42 @@ Packages/Planar_map/doc_tex/basic/Topological_map/dcel.gif -text svneol=unset#un
 Packages/Planar_map/doc_tex/basic/Topological_map/dcel.ipe -text
 Packages/Planar_map/doc_tex/basic/Topological_map/my_face.gif -text svneol=unset#unset
 Packages/Planar_map/doc_tex/basic/Topological_map/my_face.ipe -text
+Packages/Polyhedron/doc_tex/Polyhedron/add_facet1.gif svneol=native#unset
+Packages/Polyhedron/doc_tex/Polyhedron/add_facet2.gif svneol=native#unset
+Packages/Polyhedron/doc_tex/Polyhedron/euler_facet.gif svneol=native#unset
+Packages/Polyhedron/doc_tex/Polyhedron/euler_loop.gif svneol=native#unset
+Packages/Polyhedron/doc_tex/Polyhedron/euler_vertex.gif svneol=native#unset
+Packages/Polyhedron/doc_tex/Polyhedron/halfedge.gif -text svneol=unset#unset
+Packages/Polyhedron/doc_tex/Polyhedron/halfedge_small.gif -text svneol=unset#unset
+Packages/Polyhedron/doc_tex/Polyhedron/idraw/add_facet.ips -text
+Packages/Polyhedron/doc_tex/Polyhedron/idraw/euler.ips -text
+Packages/Polyhedron/doc_tex/Polyhedron/idraw/euler_loop.ips -text
+Packages/Polyhedron/doc_tex/Polyhedron/idraw/halfedge.ips -text
+Packages/Polyhedron/doc_tex/Polyhedron/idraw/halfedge_methods.ips -text
+Packages/Polyhedron/doc_tex/Polyhedron/idraw/poly_optional.ips -text
+Packages/Polyhedron/doc_tex/Polyhedron/idraw/polyhedron.ips -text
+Packages/Polyhedron/doc_tex/Polyhedron/idraw/shark.ps -text
+Packages/Polyhedron/doc_tex/Polyhedron/poly_optional.gif svneol=native#unset
+Packages/Polyhedron/doc_tex/Polyhedron/poly_optional_small.gif svneol=native#unset
+Packages/Polyhedron/doc_tex/Polyhedron/shark.gif -text svneol=unset#unset
+Packages/Polyhedron/doc_tex/basic/Polyhedron/add_facet1.gif svneol=native#unset
+Packages/Polyhedron/doc_tex/basic/Polyhedron/add_facet2.gif svneol=native#unset
+Packages/Polyhedron/doc_tex/basic/Polyhedron/euler_facet.gif svneol=native#unset
+Packages/Polyhedron/doc_tex/basic/Polyhedron/euler_loop.gif svneol=native#unset
+Packages/Polyhedron/doc_tex/basic/Polyhedron/euler_vertex.gif svneol=native#unset
+Packages/Polyhedron/doc_tex/basic/Polyhedron/halfedge.gif -text svneol=unset#unset
+Packages/Polyhedron/doc_tex/basic/Polyhedron/halfedge_small.gif -text svneol=unset#unset
+Packages/Polyhedron/doc_tex/basic/Polyhedron/idraw/add_facet.ips -text
+Packages/Polyhedron/doc_tex/basic/Polyhedron/idraw/euler.ips -text
+Packages/Polyhedron/doc_tex/basic/Polyhedron/idraw/euler_loop.ips -text
+Packages/Polyhedron/doc_tex/basic/Polyhedron/idraw/halfedge.ips -text
+Packages/Polyhedron/doc_tex/basic/Polyhedron/idraw/halfedge_methods.ips -text
+Packages/Polyhedron/doc_tex/basic/Polyhedron/idraw/poly_optional.ips -text
+Packages/Polyhedron/doc_tex/basic/Polyhedron/idraw/polyhedron.ips -text
+Packages/Polyhedron/doc_tex/basic/Polyhedron/idraw/shark.ps -text
+Packages/Polyhedron/doc_tex/basic/Polyhedron/poly_optional.gif svneol=native#unset
+Packages/Polyhedron/doc_tex/basic/Polyhedron/poly_optional_small.gif svneol=native#unset
+Packages/Polyhedron/doc_tex/basic/Polyhedron/shark.gif -text svneol=unset#unset
 Packages/Triangulation_2/doc_tex/Triangulation_2/Embedding.ipe -text
 Packages/Triangulation_2/doc_tex/Triangulation_2/Flip.gif -text svneol=unset#unset
 Packages/Triangulation_2/doc_tex/Triangulation_2/Flip.ipe -text

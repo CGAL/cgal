@@ -1,0 +1,115 @@
+Polyhedron Package: Release changes:
+---------------------------------------------------------------------
+2.9 (13 Sep 2000)
+
+     std::distance in examples/Polyhedron/polyhedron_prog_off.C changed.
+     Vertex, Halfedge, and Facet class prefixed with Polyhedron
+     in the doc.
+
+2.8 (25 Nov 1999)
+
+     Small fix in Polyhedron_incremental_builder_3.
+
+2.7 (25 Nov 1999)
+
+     Two small changes in Polyhedron_incremental_builder_3 for MSVC.
+     A couple of changes in Polyhedron_3 renaming local types for
+     MSVC (Halfedge to Halfedge_ etc.).
+
+2.6 (18 Nov 1999)
+
+     CGAL_TEMPLATE_NULL added to Polyhedron_circulator_traits definition.
+     Some std:: added for endl.
+
+2.5 (22 May 1999)
+
+     Typos before CGAL R2.0 fixed.
+
+2.4 (20 Apr 1999)
+
+     Bug in test-suite code fixed that caused the P.is_tetrahedron( g)
+     assertion to fail.
+
+2.3 (12 Apr 1999)
+
+     Example programs fixed.
+
+2.2 (07 Apr 1999)
+
+     iterator_test.any removed (not used anyway).
+
+2.1 (09 Mar 1999)
+
+     Standard headers, std namespace and CGAL namespace. Bug fix in
+     erase_facet. Minor cleanups. join_loop and join_facet accept holes.
+     Edge_iterator const assignable.
+
+1.14 (14 Jan 1999)
+
+     Make the default assignment operator return *this.
+
+1.13 (04 Jan 1999)
+
+     Made the default assignment operator explicit to help the EGCS
+     compiler to compile the convex hull demo program.
+
+1.12 (08 Oct 1998)
+     
+     A new example illustrates the easy computation of a plane equation
+     for polyhedral surface facets in the case of convex facets.
+        A false assertion has been corrected in the rollback functionality
+     of the polyhedron incremental builder. This false assertion could
+     have caused the builder to crash when the rollback was activated,
+     e.g. in the case of a file read error.
+
+1.11 (10 Jul 1998)
+
+     Iterators and circulators separated in own include file.
+     New methods: erase_facet, erase_connected_component, and
+     erase_all. Bug in join_vertex with respect to boundary
+     edges fixed. The is_tetrahedron test does no longer allow
+     border edges (empty facets) in the tetrahedron.
+     Makefile equipped with LONG_NAME workaround.
+
+1.10 (03 Jun 1998)
+
+     A few changes in the doc. Chapter entry in header.
+
+1.9 (09 Apr 1998)
+
+     Spell checker. Filenames in examples corrected.
+
+1.8 (24 Mar 1998)
+
+     Small fix in operator+ operations for iterators/circulators.
+
+1.7 (18 Mar 1998)
+
+     Two missing typenames added.
+
+1.6 (05 Mar 1998)
+
+     Shorter names for internal classes, programs
+     included for TeX manual. Small change in doc.
+
+1.5 (25 Feb 1998)
+
+     Major reorganisation. Renaming of Polyhedron_traits into
+     Halfedge_data_structure with its own package Halfedge_DS.
+     A new traits class for Polyhedrons with geometric issues.
+     The decorator belongs now to Halfedge_DS. It has additional
+     functionality like is_valid, normalize_border, fill_hole,
+     make_hole ...
+
+1.4 (10 Feb 1998)
+
+     New cgal_test script. typename's and redundant include guards 
+     added. Tested with egcs and g++ 2.8. Compiles but does not link.
+     Linker relocation error I cannot solve at the moment.
+     Renaming of traits class to halfedge data structure postponed
+     to next package release. Bug fixed in fill_hole.
+     Includes now the TeX documentation for the basic library manual. 
+     Includes new package field in the header. The dependency on Gnu
+     and SunPro C++ has been reduced.
+
+None of this package was available in CGAL 0.9.

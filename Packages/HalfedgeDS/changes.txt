@@ -1,0 +1,33 @@
+HalfedgeDS_2 Package: Release changes:
+---------------------------------------------------------------------
+3.3 (27 Sep 2000)
+
+     - Fixed warning for ill-formed main() declaration. 
+     - Fixed problems with Base_base:: in halfedge_base classes that
+       were reported with g++ -pedantic. 
+     - Fixed problems with point() and normal() access in the workaround
+       for missing partial specializations of the vertex_base and 
+       face_base classes.
+     - Changed the handling of iterators in HalfedgeDS_using_list.
+       The HalfedgeDS_iterator_adaptor relies now on a local static 
+       variable to create a unique std::list::iterator. The previous
+       solution was using an initializer with 0, which isn't standard
+       compliant, and it failed now with the std::list::iterator and KCC.
+       The new solution uses zero-initialization of static variables,
+       Section 3.6.2, 6.7, and 8.5 of the C++ Standard.
+
+3.2 (21 Sep 2000)
+
+     Converted to std:: and CGAL:: namespaces and using new std 
+     header file name convention. The manual pages are separated into 
+     user manual pages and reference manual pages, but still in one 
+     chapter. Tested with g++ and MipsPro 7.3.
+
+3.1 (26 Mar 1999)
+
+     Complete redesign. Incompatible to previous versions. The design
+     provides much more flexibility and can support planar maps and
+     other data structures more easily. The class interface has been
+     changed to be more in line with STL container classes and the 
+     few dependencies on the geometry (point type) are removed.
+

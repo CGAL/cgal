@@ -1,0 +1,34 @@
+Halfedge_DS Package
+---------------------------------------------------------------------
+
+-  CGAL/Halfedge_data_structure_using_list.h
+-  CGAL/Halfedge_data_structure_using_vector.h
+
+     Generic halfedge data structures based on an internal representation
+     with a list or a vector respectively.
+
+-  CGAL/Halfedge_data_structure_bases.h
+
+     Appropriate base classes for vertices, halfedges and facets 
+     for the generic halfedge data structures above.
+
+-  CGAL/Halfedge_data_structure_default.h
+
+     The list representation combined with the maximal base classes
+     still parameterized with a point type.
+
+-  CGAL/Halfedge_data_structure_polyhedron_default_3.h
+
+     The list representation combined with the maximal base classes
+     with a three-dimensional point for the vertices and a plane
+     equation for the facets. Still parameterized with a kernel
+     representation type.
+
+-  CGAL/Halfedge_data_structure_decorator.h
+
+     A helper class to implement high level operations and 
+     adaptive operations on top of a halfedge data structure.
+     Adaptive operations provide the flexibility to work with 
+     the optional features of the halfedge data structure design.
+
+Lutz Kettner

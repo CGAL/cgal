@@ -1,0 +1,6 @@
+/usr/bin/CC -n32 -DCGAL_USE_GMP -I. -I/home/kettner/topics/cgal/CGAL/include -I/home/kettner/topics/CGAL/include/CGAL/config/mips_IRIX-6.2_CC-n32-7.20 -DCGAL_USE_LEDA -DLEDA_PREFIX -I/home/kettner/topics/cgal/CGAL/include -I/home/kettner/topics/CGAL/include -I/pub/local/include -o test_polyhedron_io test_polyhedron_io.C   -L/home/kettner/topics/CGAL/lib/mips_IRIX-6.2_CC-n32-7.20_LEDA -L/pub/local/irix6/lib32 -rpath /home/kettner/topics/CGAL/lib/mips_IRIX-6.2_CC-n32-7.20_LEDA:/pub/local/irix6/lib32 -lCGAL -lP -lG -lL -lgmp -lm
+
+exit
+
+CC -n32 -DBLBL=1 -DsJHHKJHjkhk=1 -DCGAL_USE_GMP -I. -I/home/kettner/topics/cgal/CGAL/include -I/home/kettner/topics/CGAL/include/CGAL/config/mips_IRIX-6.2_CC-n32-7.20 -DCGAL_USE_LEDA -DLEDA_PREFIX -I/home/kettner/topics/cgal/CGAL/include -I/home/kettner/topics/CGAL/include -I/pub/local/include -g -L/home/kettner/topics/CGAL/lib/mips_IRIX-6.2_CC-n32-7.20_LEDA -L/pub/local/irix6/lib32 -rpath /home/kettner/topics/CGAL/lib/mips_IRIX-6.2_CC-n32-7.20_LEDA:/pub/local/irix6/lib32 -g -o test_polyhedron_io ./test_polyhedron_io.C -lCGAL -lP -lG -lL -lgmp -lm -lm
+
