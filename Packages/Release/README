@@ -56,6 +56,9 @@ Package the code:
            tar cf CGAL-M.m.tar CGAL-M.m
            gzip CGAL-M.m.tar
            zip -r CGAL-M.m.zip CGAL-M.m
+      3.  The .zip file for the code needs to be repackaged for use with
+          InstallShield.  Contact the person in charge of Windows support
+          (currently Radu.Ursu@sophia.inria.fr).
 
 For the web pages:
       1.  edit the following web pages (at least)
@@ -83,7 +86,9 @@ Install everything:
       3.  zip the individual .ps files for the documentation using
           make dest_zip_ps
       4.  install the new web pages
+      5.  tag all the packages included in the release with the new
+          release tag CGAL_M_m_release.
 
 Then finally ...
-      5.  announce the release (see announcement directory)
+      6.  announce the release (see announcement directory)
 
