@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.80 ()
+- added missing std:: in  test for new design
+
 Ver 4.79 (28/12/00)
 - fixed a typename in Regular_triangulation
 - add a test for new design
