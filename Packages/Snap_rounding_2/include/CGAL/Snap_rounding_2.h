@@ -348,18 +348,28 @@ template<class Rep_>
 Hot_Pixel<Rep_>::Hot_Pixel(NT inp_x,NT inp_y,NT inp_pixel_size) :
                            pixel_size(inp_pixel_size)
   {
-    x = NT(floor((inp_x / pixel_size).to_double())) * pixel_size + pixel_size / 2.0;
+    x = NT(floor((inp_x / pixel_size).to_double())) * pixel_size +
+        pixel_size / 2.0;
 
-    y = NT(floor((inp_y / pixel_size).to_double())) * pixel_size + pixel_size / 2.0;
+    y = NT(floor((inp_y / pixel_size).to_double())) * pixel_size +
+        pixel_size / 2.0;
 
-    right_seg = new Segment_2(Point_2(x + pixel_size / 2.0,y - pixel_size / 2.0),
-                              Point_2(x + pixel_size / 2.0,y + pixel_size / 2.0));
-    left_seg = new Segment_2(Point_2(x - pixel_size / 2.0,y - pixel_size / 2.0),
-                             Point_2(x - pixel_size / 2.0,y + pixel_size / 2.0));
-    top_seg = new Segment_2(Point_2(x - pixel_size / 2.0,y + pixel_size / 2.0),
-                            Point_2(x + pixel_size / 2.0,y + pixel_size / 2.0));
-    bot_seg = new Segment_2(Point_2(x - pixel_size / 2.0,y - pixel_size / 2.0),
-                            Point_2(x + pixel_size / 2.0,y - pixel_size / 2.0));
+    right_seg = new Segment_2(Point_2(x + pixel_size / 2.0,y -
+                              pixel_size / 2.0),
+                              Point_2(x + pixel_size / 2.0,y +
+                              pixel_size / 2.0));
+    left_seg = new Segment_2(Point_2(x - pixel_size / 2.0,y -
+                             pixel_size / 2.0),
+                             Point_2(x - pixel_size / 2.0,y +
+                             pixel_size / 2.0));
+    top_seg = new Segment_2(Point_2(x - pixel_size / 2.0,y +
+                            pixel_size / 2.0),
+                            Point_2(x + pixel_size / 2.0,y +
+                            pixel_size / 2.0));
+    bot_seg = new Segment_2(Point_2(x - pixel_size / 2.0,y -
+                            pixel_size / 2.0),
+                            Point_2(x + pixel_size / 2.0,y -
+                            pixel_size / 2.0));
   }
 
 template<class Rep_>
