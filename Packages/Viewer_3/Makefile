@@ -54,6 +54,7 @@ clean:
 $(Package).tar.gz:
 	tar -zcvf $(Package).tar.gz \
 	--exclude=CVS --exclude=manual.tex --exclude=Makefile \
+        --exclude=Viewer_3_ref \
 	--exclude=TODO \
 	--exclude=.pure --exclude=*.pv \
 	--exclude=.nfs*\
