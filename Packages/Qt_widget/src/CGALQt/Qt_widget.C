@@ -67,7 +67,7 @@ void Qt_widget::set_scales()
 {
   if(!constranges)
     {
-      double tempmin = min(width(), height());
+      double tempmin = min(geometry().width(), geometry().height());
 	    double tempmax = max(xmax-xmin, ymax-ymin);
       
       xscal=yscal=(tempmin - 1)/(tempmax);
@@ -75,17 +75,17 @@ void Qt_widget::set_scales()
     }
   else
     {
-      xscal=width()/(xmax-xmin);
-      yscal=height()/(ymax-ymin);
+      xscal=geometry().width()/(xmax-xmin);
+      yscal=geometry().height()/(ymax-ymin);
     }
 }
 
 void Qt_widget::set_scale_center(const double xc, const double yc)
 {
-  xmin = xc - (width()/xscal)/2;
-  xmax = xc + (width()/xscal)/2;
-  ymin = yc - (height()/yscal)/2;
-  ymax = yc + (height()/yscal)/2;
+  xmin = xc - (geometry().width()/xscal)/2;
+  xmax = xc + (geometry().width()/xscal)/2;
+  ymin = yc - (geometry().height()/yscal)/2;
+  ymax = yc + (geometry().height()/yscal)/2;
   redraw();
 }
 
@@ -500,7 +500,7 @@ void Qt_widget::clear() {
       QPainter *painter_for_printer = new QPainter(printer);
       painter = painter_for_printer;
       painter->setClipping(true);
-      painter->setClipRect(0, 0, width(), height());
+      painter->setClipRect(0, 0, geometry().width(), geometry().height());
       lock();
         std::list<Qt_widget_layer*>::iterator it;
 		    for(it = qt_layers.begin(); it!= qt_layers.end(); it++)
