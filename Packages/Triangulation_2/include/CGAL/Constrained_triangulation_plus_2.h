@@ -490,7 +490,7 @@ intersect(Face_handle f, int i,
 {
   std::cerr << " sorry, this triangulation does not deal " 
 	    <<    std::endl
-	    << " intersectind constrints" << std::endl;
+	    << " intersecting constraints" << std::endl;
   assert(false);
   return Vertex_handle();
 }

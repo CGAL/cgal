@@ -25,78 +25,36 @@
 #ifndef CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_2_H
 #define CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_2_H
 
-// #include cmath
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_2.h>
-#include <CGAL/Triangulation_2.h> 
 #include <CGAL/Constrained_triangulation_2.h>
 
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Ctr>
-class Constrained_Delaunay_triangulation_base_2;
+// template <class Ctr>
+// class Constrained_Delaunay_triangulation_base_2;
 
 template <class Gt, class Tds>
 class Constrained_Delaunay_triangulation_2
-  : public Constrained_Delaunay_triangulation_base_2<
-           Constrained_triangulation_2<Gt, Tds> >
+  : public  Constrained_triangulation_2<Gt, Tds> >
 {
 public:
   typedef Constrained_triangulation_2<Gt, Tds>             Ct;
-  typedef Constrained_Delaunay_triangulation_base_2<Ct>    Base;
   typedef Constrained_Delaunay_triangulation_2<Gt, Tds>    CDt;
-  typedef typename Base::Geom_traits   Geom_traits;
-  typedef typename Base::Constraint    Constraint;
-//   typedef typename Base::Vertex        Vertex;
-//   typedef typename Base::Vertex_handle Vertex_handle;
-//   typedef typename Base::Face_handle   Face_handle;
-//   typedef typename Base::Edge          Edge;
-//   typedef typename Base::Finite_faces_iterator Finite_faces_iterator;
-//   typedef typename Base::Face_circulator       Face_circulator;
-//   typedef typename Base::Less_edge less_edge;
-//   typedef typename Base::Edge_set Edge_set;
+  typedef typename Ct::Geom_traits   Geom_traits;
+  typedef typename Ct::Constraint    Constraint;
+//   typedef typename Ct::Vertex        Vertex;
+//   typedef typename Ct::Vertex_handle Vertex_handle;
+//   typedef typename Ct::Face_handle   Face_handle;
+//   typedef typename Ct::Edge          Edge;
+//   typedef typename Ct::Finite_faces_iterator Finite_faces_iterator;
+//   typedef typename Ct::Face_circulator       Face_circulator;
+//   typedef typename Ct::Less_edge less_edge;
+//   typedef typename Ct::Edge_set Edge_set;
 
-  Constrained_Delaunay_triangulation_2(const Geom_traits& gt=Geom_traits()) 
-    : Base(gt) { }
-
-  Constrained_Delaunay_triangulation_2(const CDt& cdt)
-    : Base(cdt) {}
-
-  Constrained_Delaunay_triangulation_2(std::list<Constraint>& lc, 
-				       const Geom_traits& gt=Geom_traits())
-    : Base(lc,gt) {}
-
-  template<class InputIterator>
-  Constrained_Delaunay_triangulation_2(InputIterator first,
-				       InputIterator last,
-				       const Geom_traits& gt=Geom_traits() )
-    : Base(first,last,gt) {}
-};
-
-template < class  Ctr >
-class Constrained_Delaunay_triangulation_base_2
-  : public Ctr
-{
-public:
-  typedef Ctr                                    Constrained_triangulation;
-  typedef Constrained_Delaunay_triangulation_base_2<Ctr>  
-                                                 CD_triangulation_base;
-  typedef typename Constrained_triangulation::Geom_traits   Geom_traits;
-  typedef typename Constrained_triangulation::Constraint    Constraint;
-  typedef typename Constrained_triangulation::Vertex        Vertex;
-  typedef typename Constrained_triangulation::Vertex_handle Vertex_handle;
-  typedef typename Constrained_triangulation::Face_handle   Face_handle;
-  typedef typename Constrained_triangulation::Edge          Edge;
-  typedef typename Constrained_triangulation::Finite_faces_iterator
-                                                 Finite_faces_iterator;
-  typedef typename Constrained_triangulation::Face_circulator
-                                                  Face_circulator;
-  typedef typename Constrained_triangulation::Less_edge less_edge;
-  typedef typename Constrained_triangulation::Edge_set Edge_set;
-  
-  //don't know why these typedef makes the compilation crash
+    //don't know why these typedef makes the compilation crash
   // typedef typename Constrained_triangulation::List_edges List_edges;  
   // typedef typename Constrained_triangulation::List_faces List_faces;
   // typedef typename Constrained_triangulation::List_vertices  List_vertices;
@@ -104,43 +62,26 @@ public:
   typedef std::list<Edge> List_edges;
   typedef std::list<Vertex_handle> List_vertices;  
   typedef std::list<Face_handle> List_faces;
-
   typedef typename Geom_traits::Point_2  Point;
 
-  Constrained_Delaunay_triangulation_base_2(
-			      const Geom_traits& gt=Geom_traits() )
-    : Constrained_triangulation(gt) { }
 
-  Constrained_Delaunay_triangulation_base_2(const CD_triangulation_base& cdt)
-    : Constrained_triangulation(cdt) {}
+  Constrained_Delaunay_triangulation_2(const Geom_traits& gt=Geom_traits()) 
+    : Ct(gt) { }
 
-  Constrained_Delaunay_triangulation_base_2(std::list<Constraint>& lc, 
-					 const Geom_traits& gt=Geom_traits())
-      : Constrained_triangulation(gt)
-  {
-    typename std::list<Constraint>::iterator itc;
-    itc=lc.begin();      
-      do{
-	insert((*itc).first, (*itc).second);
-	++itc;
-      } while (itc != lc.end());
-      CGAL_triangulation_postcondition( is_valid() );
-  }
+  Constrained_Delaunay_triangulation_2(const CDt& cdt)
+    : Ct(cdt) {}
+
+  Constrained_Delaunay_triangulation_2(std::list<Constraint>& lc, 
+				       const Geom_traits& gt=Geom_traits())
+    : Ct(lc,gt) {}
 
   template<class InputIterator>
-  Constrained_Delaunay_triangulation_base_2(InputIterator first,
-			      InputIterator last,
-			      const Geom_traits& gt=Geom_traits() )
-      : Constrained_triangulation(gt)
-  {
-    while(first != last){
-          insert((*first).first, (*first).second);
-	  first++;
-    }
-    CGAL_triangulation_postcondition( is_valid() );
-  }
+  Constrained_Delaunay_triangulation_2(InputIterator first,
+				       InputIterator last,
+				       const Geom_traits& gt=Geom_traits() )
+    : Ct(first,last,gt) {}
 
-
+  
 
   // FLIPS
   bool is_flipable(Face_handle f, int i) const;
@@ -156,11 +97,19 @@ public:
   
   // INSERTION-REMOVAL
   Vertex_handle insert(const Point & a);
+  Vertex_handle insert(const Point& p,
+		       Locate_type lt,
+		       Face_handle loc, int li );
   Vertex_handle special_insert_in_edge(const Point & a, Face_handle f, int i);
   void insert(const Point & a, const Point & b);
   void insert(Vertex_handle va, Vertex_handle & vb);
-  void insert(Vertex_handle va, Vertex_handle vb, Face_handle & fr,
-	      int & i);
+  Vertex_handle  insert(Vertex_handle va, 
+			Vertex_handle  vb,
+			Face_handle fr,
+			int i);
+  Vertex_handle push_back(const Point& a);
+  void          push_back(const Constraint& c);
+
   void remove(Vertex_handle v);
 
   // CHECK
@@ -201,9 +150,9 @@ public:
 };
 
 
-template < class Ctr >
+template < class Gt, class Tds >
 bool 
-Constrained_Delaunay_triangulation_base_2<Ctr>::
+Constrained_Delaunay_triangulation_2<Ctr>::
 is_flipable(Face_handle f, int i) const
   // determines if edge (f,i) can be flipped 
 {
@@ -214,9 +163,9 @@ is_flipable(Face_handle f, int i) const
                                         == ON_POSITIVE_SIDE);
 }
 
-template < class Ctr >
+template < class Gt, class Tds >
 void 
-Constrained_Delaunay_triangulation_base_2<Ctr>::
+Constrained_Delaunay_triangulation_2<Ctr>::
 flip(Face_handle& f, int i)
 {
   CGAL_triangulation_precondition(is_flipable(f,i));
@@ -247,9 +196,9 @@ flip(Face_handle& f, int i)
   else g->set_constraint(ccw(ig),false);
 }
 
-template < class Ctr >
+template < class Gt, class Tds >
 void 
-Constrained_Delaunay_triangulation_base_2<Ctr>::
+Constrained_Delaunay_triangulation_2<Ctr>::
 flip_around(Vertex_handle va)
   // makes the triangles incident to vertex va Delaunay using flips
 {
@@ -266,9 +215,9 @@ flip_around(Vertex_handle va)
   } while(next != start);
 }
 
-template < class Ctr >
+template < class Gt, class Tds >
 void 
-Constrained_Delaunay_triangulation_base_2<Ctr>::
+Constrained_Delaunay_triangulation_2<Ctr>::
 flip_around(List_vertices& new_vertices)
 {
   typename List_vertices::iterator itv=new_vertices.begin();
@@ -279,9 +228,9 @@ flip_around(List_vertices& new_vertices)
 }
 
 
-template < class Ctr >
+template < class Gt, class Tds >
 void 
-Constrained_Delaunay_triangulation_base_2<Ctr>::
+Constrained_Delaunay_triangulation_2<Ctr>::
 propagating_flip(Face_handle& f,int i)
   // similar to the corresponding function in Delaunay_triangulation_2.h 
 { 
@@ -294,9 +243,9 @@ propagating_flip(Face_handle& f,int i)
 } 
 
 
-template < class Ctr >
+template < class Gt, class Tds >
 void 
-Constrained_Delaunay_triangulation_base_2<Ctr>::
+Constrained_Delaunay_triangulation_2<Ctr>::
 propagating_flip(List_edges & edges)
   // makes the triangulation Delaunay by flipping 
   // List edges contains an initial list of edges to be flipped
@@ -307,13 +256,12 @@ propagating_flip(List_edges & edges)
   int i, ii, indf, indn;
   Face_handle ni, f,ff;
   Edge ei,eni; 
-  typename Constrained_triangulation::Edge_set edge_set;
-  typename Constrained_triangulation::Less_edge less_edge;
+  typename Ct::Edge_set edge_set;
+  typename Ct::Less_edge less_edge;
   Edge e[4];
   typename List_edges::iterator itedge=edges.begin();
 
   // initialization of the set of edges to be flip
-
   while (itedge != edges.end()) {
     f=(*itedge).first;
     i=(*itedge).second;
@@ -326,7 +274,6 @@ propagating_flip(List_edges & edges)
   }
 
   // flip edges and updates the set of edges to be flipped
-
   while (!(edge_set.empty())) {
     f=(*(edge_set.begin())).first;
     indf=(*(edge_set.begin())).second;
@@ -380,9 +327,9 @@ propagating_flip(List_edges & edges)
   }  
 }
 
-template < class Ctr >
+template < class Gt, class Tds >
 inline bool
-Constrained_Delaunay_triangulation_base_2<Ctr>::
+Constrained_Delaunay_triangulation_2<Ctr>::
 test_conflict(Face_handle fh, const Point& p) const
   // true if point P lies inside the circle circumscribing face fh
 {
@@ -390,9 +337,9 @@ test_conflict(Face_handle fh, const Point& p) const
 }
 
 
-template < class Ctr >    
+template < class Gt, class Tds >    
 void 
-Constrained_Delaunay_triangulation_base_2<Ctr>::
+Constrained_Delaunay_triangulation_2<Ctr>::
 find_conflicts(Point p, std::list<Edge>& le, Face_handle hint) const
 {
   // sets in le the counterclocwise list of the edges of the boundary of the 
@@ -422,22 +369,22 @@ find_conflicts(Point p, std::list<Edge>& le, Face_handle hint) const
   }
 }
   
-template < class Ctr >  
+template < class Gt, class Tds >  
 inline 
-Constrained_Delaunay_triangulation_base_2<Ctr>::Vertex_handle 
-Constrained_Delaunay_triangulation_base_2<Ctr>::
+Constrained_Delaunay_triangulation_2<Ctr>::Vertex_handle 
+Constrained_Delaunay_triangulation_2<Ctr>::
 insert(const Point & a)
   // inserts a in the triangulation
 {
-  Vertex_handle va= Constrained_triangulation::insert(a);
+  Vertex_handle va= Ct::insert(a);
   flip_around(va); 
   return va;
 }
 
 
-template < class Ctr >  
-Constrained_Delaunay_triangulation_base_2<Ctr>::Vertex_handle 
-Constrained_Delaunay_triangulation_base_2<Ctr>::
+template < class Gt, class Tds >  
+Constrained_Delaunay_triangulation_2<Ctr>::Vertex_handle 
+Constrained_Delaunay_triangulation_2<Ctr>::
 special_insert_in_edge(const Point & a, Face_handle f, int i)
   // insert  point p in edge(f,i)
   // bypass the precondition for point a to be in edge(f,i)
@@ -445,26 +392,15 @@ special_insert_in_edge(const Point & a, Face_handle f, int i)
   // and restore Delaunay constrained property
   // this function is intended to be use by refine
 {
-  Vertex_handle va;
-  Vertex_handle c1,c2;
-  c1 = f->vertex(cw(i));  //endpoint of edge
-  c2 = f->vertex(ccw(i)); //endpoint of edge
-  bool insert_in_constrained_edge = f->is_constrained(i);
- 
-  va = static_cast<Vertex*> (_tds.insert_in_edge(&(*f), i));
-  va->set_point(a);
-
-  if (insert_in_constrained_edge) update_constraints_incident(va, c1,c2);
-  else clear_constraints_incident(va);
-  if (dimension() == 2) update_constraints_opposite(va);
+  Vertex_handle va = Ct::special_insert_in_edge(a,f,i);
   flip_around(va); 
   return va;
 }
 
 
-template < class Ctr >  
+template < class Gt, class Tds >  
 inline void 
-Constrained_Delaunay_triangulation_base_2<Ctr>::
+Constrained_Delaunay_triangulation_2<Ctr>::
 insert(const Point & a, const Point & b)
  // inserts segment ab as a constraint and updates the 
  // constrained Delaunay triangulation
@@ -474,49 +410,97 @@ insert(const Point & a, const Point & b)
   insert(va, vb);
 }
 
-template < class Ctr >  
-inline void 
-Constrained_Delaunay_triangulation_base_2<Ctr>::
-insert(Vertex_handle va, Vertex_handle & vb)
-// inserts line segment ab as an edge in the triangulation 
+
+// template < class Ctr >  
+// inline void 
+// Constrained_Delaunay_triangulation_base_2<Ctr>::
+// insert(Vertex_handle va, Vertex_handle & vb)
+// // inserts line segment ab as an edge in the triangulation 
+// {
+//   List_edges new_edges;
+//   Face_handle fr;
+//   int i;
+//   Ct::insert(va,vb,fr,i,new_edges);
+//   propagating_flip(new_edges);
+// }
+
+// template < class Gt, class Tds >  
+// inline void 
+// Constrained_Delaunay_triangulation_2<Ctr>::
+// insert(Vertex_handle va, Vertex_handle vb,
+//        Face_handle & fr, int & i)
+//  // inserts line segment ab as an edge in the triangulation 
+//  // returns the triangle fr right to edge ab
+//  // edge ab=(fr,i)
+// {
+//   List_edges new_edges;
+//   Ct::insert(va,vb,fr,i,new_edges);
+//   propagating_flip(new_edges);
+// }
+
+template < class Gt, class Tds >
+inline void
+Constrained_triangulation_2<Gt,Tds>::
+insert(Vertex_handle  va, Vertex_handle vb)
+// Precondition va != vb
 {
-  List_edges new_edges;
+  Vertex_handle vaa = va;
   Face_handle fr;
   int i;
-  Constrained_triangulation::insert(va,vb,fr,i,new_edges);
-  propagating_flip(new_edges);
+  while (vaa != vb) {
+    insert(vaa, vb, vbb , fr, i);
+    vaa=vbb;
+  }    
+  return;
 }
 
-template < class Ctr >  
-inline void 
-Constrained_Delaunay_triangulation_base_2<Ctr>::
-insert(Vertex_handle va, Vertex_handle vb,
-       Face_handle & fr, int & i)
- // inserts line segment ab as an edge in the triangulation 
- // returns the triangle fr right to edge ab
- // edge ab=(fr,i)
+template < class Gt, class Tds >
+Constrained_triangulation_2<Gt,Tds>::Vertex_handle
+Constrained_triangulation_2<Gt,Tds>::
+insert(Vertex_handle  vaa, 
+       Vertex_handle  vb,
+       Face_hande fr,
+       int i)
 {
+  if(includes_edge(vaa,vb,vbb,fr,i)) {
+    mark_constraint(fr,i);
+    return vbb;
+  }
+      
+  List_faces intersected_faces;
+  List_edges conflict_boundary_ab, conflict_boundary_ba;
   List_edges new_edges;
-  Constrained_triangulation::insert(va,vb,fr,i,new_edges);
+  vbb = find_intersected_faces(vaa, vb, 
+			       intersected_faces,
+			       conflict_boundary_ab,
+			       conflict_boundary_ba);
+  triangulate(intersected_faces,
+	      conflict_boundary_ab,
+	      conflict_boundary_ba
+	      new_edges);
   propagating_flip(new_edges);
-}
+  return vbb;
+}       
 
-template < class Ctr >  
+
+
+
+template < class Gt, class Tds >  
 inline void 
-Constrained_Delaunay_triangulation_base_2<Ctr>::
+Constrained_Delaunay_triangulation_2<Ctr>::
 remove(Vertex_handle v)
 {
   CGAL_triangulation_precondition( ! v.is_null() );
   CGAL_triangulation_precondition( !is_infinite(v));
     
-  if  (dimension() <= 1)    Constrained_triangulation::remove(v);
+  if  (dimension() <= 1)    Ct::remove(v);
   else  remove_2D(v);
   return;
 }
 
-template < class Ctr >  
+template < class Gt, class Tds >  
 void 
-Constrained_Delaunay_triangulation_base_2<Ctr>::
+Constrained_Delaunay_triangulation_2<Ctr>::
 remove_2D(Vertex_handle v)
 {
  if (test_dim_down(v)) {  _tds.remove_dim_down(&(*v));  }
@@ -532,12 +516,12 @@ remove_2D(Vertex_handle v)
   return;
 }
 
-template < class Ctr >  
+template < class Gt, class Tds >  
 bool 
-Constrained_Delaunay_triangulation_base_2<Ctr>::
+Constrained_Delaunay_triangulation_2<Ctr>::
 is_valid(bool verbose, int level) const
 {
-  bool result = Constrained_triangulation::is_valid(verbose, level);
+  bool result = Ct::is_valid(verbose, level);
   CGAL_triangulation_assertion( result );
 
     Finite_faces_iterator fit= finite_faces_begin();
@@ -550,9 +534,9 @@ is_valid(bool verbose, int level) const
     return result;
 }
 
-template < class Ctr >  
+template < class Gt, class Tds >  
 double
-Constrained_Delaunay_triangulation_base_2<Ctr>::
+Constrained_Delaunay_triangulation_2<Ctr>::
 twice_area_of_triangle(const Point & p, const Point & q, const Point & r)
      // 2*area of  triangle pqr
      // !! le produit vectoriel de 2 vecteurs devrait exister
@@ -567,18 +551,18 @@ twice_area_of_triangle(const Point & p, const Point & q, const Point & r)
   else {return -pv;} 
 }
 
-template < class Ctr >  
+template < class Gt, class Tds >  
 double
-Constrained_Delaunay_triangulation_base_2<Ctr>::
+Constrained_Delaunay_triangulation_2<Ctr>::
 norm(const Point & p, const Point & q)
      // !!! in the kernel ???
 {
   return  sqrt ( (p - q) * (p - q) );
 }
 
-template < class Ctr >  
+template < class Gt, class Tds >  
 double
-Constrained_Delaunay_triangulation_base_2<Ctr>::
+Constrained_Delaunay_triangulation_2<Ctr>::
 aspect_ratio(const Point & p, const Point & q, const Point & r)
   // returns the sine of the smallest angle of triangle pqr 
   // to be defined in a traits class
@@ -593,9 +577,9 @@ aspect_ratio(const Point & p, const Point & q, const Point & r)
   return  min(min(sinp,sinq),min(sinp,sinr));
 }
 
-template < class Ctr >  
+template < class Gt, class Tds >  
 double
-Constrained_Delaunay_triangulation_base_2<Ctr>::
+Constrained_Delaunay_triangulation_2<Ctr>::
 size(const Point & p, const Point & q, const Point & r)
      // returns the length of the longest edge of triangle pqr
      // to be defined in a traits class
@@ -603,9 +587,9 @@ size(const Point & p, const Point & q, const Point & r)
   return  max(max(norm(r,p),norm(r,q)), max(norm(r,p),norm(p,q)));
 }
 
-template < class Ctr >  
+template < class Gt, class Tds >  
 bool
-Constrained_Delaunay_triangulation_base_2<Ctr>::
+Constrained_Delaunay_triangulation_2<Ctr>::
 is_bad(Face_handle  f,  double lmax, double lmin, double angmin)
      // returns true if f is bounded and its aspect ratio < 1
      // to be defined in a traits class
@@ -633,9 +617,9 @@ is_bad(Face_handle  f,  double lmax, double lmin, double angmin)
   return ( (aspect_ratio(p,q,r) < angmin) || (size(p,q,r) > lmax));
 }
 
-template < class Ctr >  
+template < class Gt, class Tds >  
 bool
-Constrained_Delaunay_triangulation_base_2<Ctr>::
+Constrained_Delaunay_triangulation_2<Ctr>::
 is_gabriel(Face_handle  f, int i)
   // returns true if the interior of the circle that has e=(f,i)
   // as a diameter contains a vertex
@@ -681,9 +665,9 @@ is_gabriel(Face_handle  f, int i)
   return(ok1 && ok2);
 }
 
-template < class Ctr >  
+template < class Gt, class Tds >  
 bool
-Constrained_Delaunay_triangulation_base_2<Ctr>::
+Constrained_Delaunay_triangulation_2<Ctr>::
 is_in_diametral_circle(Vertex_handle va, Vertex_handle vb, const Point & p)
      // true if p lies inside the circle whose diameter is ab
 {
@@ -698,9 +682,9 @@ is_in_diametral_circle(Vertex_handle va, Vertex_handle vb, const Point & p)
   }
 }
       
-template < class Ctr >  
-Constrained_Delaunay_triangulation_base_2<Ctr>::Vertex_handle
-Constrained_Delaunay_triangulation_base_2<Ctr>::
+template < class Gt, class Tds >  
+Constrained_Delaunay_triangulation_2<Ctr>::Vertex_handle
+Constrained_Delaunay_triangulation_2<Ctr>::
 refine_edge(Face_handle & f, int & i,
 	    List_edges & list_of_non_gabriel_constraints,
 	    List_faces & set_of_bad_faces,
@@ -754,9 +738,9 @@ refine_edge(Face_handle & f, int & i,
   return v;
 }
 
-template < class Ctr >  
+template < class Gt, class Tds >  
 void 
-Constrained_Delaunay_triangulation_base_2<Ctr>::
+Constrained_Delaunay_triangulation_2<Ctr>::
 refine_face(Face_handle & f,
 	    List_edges & list_of_non_gabriel_constraints,
 	    List_faces & set_of_bad_faces,
@@ -820,9 +804,9 @@ refine_face(Face_handle & f,
   }
 }
 
-template < class Ctr >  
+template < class Gt, class Tds >  
 inline void 
-Constrained_Delaunay_triangulation_base_2<Ctr>::
+Constrained_Delaunay_triangulation_2<Ctr>::
 conform(List_edges & list_of_non_gabriel_constraints,
 	double lmax, double lmin, double angmin)
 {
@@ -831,9 +815,9 @@ conform(List_edges & list_of_non_gabriel_constraints,
 			  lmax, lmin, angmin);
 }
 
-template < class Ctr >  
+template < class Gt, class Tds >  
 void 
-Constrained_Delaunay_triangulation_base_2<Ctr>::
+Constrained_Delaunay_triangulation_2<Ctr>::
 conform(List_edges & list_of_non_gabriel_constraints,
 	List_faces & set_of_bad_faces,
 	double lmax, double lmin, double angmin)
@@ -864,9 +848,9 @@ conform(List_edges & list_of_non_gabriel_constraints,
   }
 }
 
-template < class Ctr >  
+template < class Gt, class Tds >  
 void 
-Constrained_Delaunay_triangulation_base_2<Ctr>::
+Constrained_Delaunay_triangulation_2<Ctr>::
 refine(List_edges & list_of_constraints,
        double lmax, double lmin, double angmin)
      // makes all edges in list_of_constraints Gabriel edges and refine 
