@@ -19,7 +19,7 @@ typedef std::list<Polygon_2>                              Polygon_list;
 using CGAL::is_convex_2;
 
 const int WINDOW_SIZE = 500;
-const int EXIT = 4; // button number for window's "Exit" button
+enum Button_nums {EXIT = 4, REFRESH};  // button numbers for window's buttons
 
 void make_polygon(Polygon_2& polygon)
 {
@@ -63,6 +63,7 @@ int main( )
                          "Optimal Convex Partition");
 
    W.init(0, WINDOW_SIZE, 0);
+   W.button("Refresh", REFRESH);
    W.button("Exit", EXIT);
 
    W.display();
@@ -72,10 +73,11 @@ int main( )
                                     polygon.vertices_end(),
                                     std::back_inserter(partition_polys),
                                     partition_traits);
-   draw_polygons(polygon, partition_polys, W);
-
-   // wait for click on exit button
-   while (W.read_mouse() != EXIT) {}
-   return 0;
+   while (1) // wait for click on exit button
+   {
+      draw_polygons(polygon, partition_polys, W);
+      if (W.read_mouse() == EXIT)
+        return 0;
+   }
 }
 
