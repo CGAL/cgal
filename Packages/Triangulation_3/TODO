@@ -31,3 +31,8 @@
   deux Vertex * plutot que deux ints, ca permet de gagner une Cell *, et
   d'etre plus rapide, non ? 
 - chercher bug dans ds_edge_iterator, dim 2
+- insertion dans Delaunay : quand on est a l'interieur de l'enveloppe convexe,
+  mais une cellule en conflit est en contact avec le bord, on va tester sa
+  voisine infinie si elle est en conflit avec un test d'orientation, mais il
+  n'est pas necessaire.  Essayer de le zapper (voir avec un bench/profile si
+  la complexite en vaut le coup).
