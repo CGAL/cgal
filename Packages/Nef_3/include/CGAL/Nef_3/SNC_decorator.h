@@ -591,9 +591,9 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       Vector_3 vec1(cross_product(ev,plane(facet(sh)).orthogonal_vector()));
       TRACEN("test face candidate "<< plane(facet(sh))<<" with vector  "<<vec1);
       FT sk0(rv*vec0),  sk1(rv*vec1);
-      if(sk0<FT(0) && sk1>FT(0))
-        continue;
-      if(sk0>FT(0) && sk1<FT(0)) {
+      if(sk0<=FT(0) && sk1>=FT(0))
+	continue;
+      if(sk0>=FT(0) && sk1<=FT(0)) {
         res = facet(sh); 
 	vec0 = vec1;
 	continue;
@@ -607,6 +607,11 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       FT len0 = vec0.x()*vec0.x()+vec0.y()*vec0.y()+vec0.z()*vec0.z();
       FT len1 = vec1.x()*vec1.x()+vec1.y()*vec1.y()+vec1.z()*vec1.z();
       FT diff = len0*sk1*sk1 - len1*sk0*sk0;
+
+      // if sk0<0 (and therefore sk1<0) both vectors point in a good direction.
+      // Therefore we take the one pointing more in the good direction.
+      // if sk0>0 (and therefore sk1>0) both vectors point in a bad direction.
+      // Therefore we take the one pointing less in the bad direction.
 
       if((sk0>FT(0) && diff<FT(0)) || (sk0<FT(0) && diff>FT(0))) {
         res = facet(sh);
@@ -966,7 +971,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     Unique_hash_map<Vertex_const_handle, bool> ignore(false);
     Vertex_const_iterator v0;
 
-    //    SETDTHREAD(19*43*131);
+    //    SETDTHREAD(19*43*131*509);
     TRACEN("=> binary operation");
 #ifdef CGAL_NEF3_DUMP_SNC_OPERATORS
     TRACEN("=> first operand:");
@@ -1008,7 +1013,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 	sncp()->delete_vertex(v1);
       }
       else if( CGAL::assign( c, o)) {
-	TRACEN("p0 found on volume");
+	TRACEN("p0 found on volume with mark " << mark(c));
 	if( BOP( true, mark(c)) != BOP( false, mark(c))) {
 	  SNC_constructor C(*sncp());
 	  Vertex_handle v1 = C.clone_SM(v0);
@@ -1051,7 +1056,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 	sncp()->delete_vertex(v1);
       } 
       else if( CGAL::assign( c, o)) {
-	TRACEN("p1 found on volume");
+	TRACEN("p1 found on volume with mark " << mark(c));
 	if( BOP( mark(c), true) != BOP( mark(c), false)) {
 	  SNC_constructor C(*sncp());
 	  Vertex_handle v1 = C.clone_SM(v0);
@@ -1316,6 +1321,8 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       valid = valid && (previous(twin(previous(she))) == twin(she));
       valid = valid && (twin(facet(she)) == facet(twin(she)));
       valid = valid && (mark(facet(she)) == mark(she));
+      valid = valid && (she->twin()->incident_facet()->volume() == 
+			she->incident_sface()->incident_volume());     
       valid = valid && (++count <= max);
     }
 
@@ -1337,6 +1344,10 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     CGAL_forall_sfaces(sf,*sncp()) {
       SM_decorator SD;
       valid = valid && (mark(volume(sf)) == SD.mark(sf));
+      SFace_cycle_iterator sfc;
+      for(sfc=sf->sface_cycles_begin();sfc!=sf->sface_cycles_end();++sfc)
+	if(sfc.is_shalfedge())
+	  valid = valid && (sf==SHalfedge_handle(sfc)->incident_sface());
     }
 
     verr << "end of CGAL::SNC_decorator<...>::is_valid(): structure is "
