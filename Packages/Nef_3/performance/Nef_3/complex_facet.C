@@ -134,6 +134,9 @@ int main(int argc, char* argv[]) {
   Nef_polyhedron N3=N2;
   transform_big(N2,n,s);
 
+  std::cout << N1;
+  std::cout << N2;
+  
   cgal_nef3_timer_on = true;
 
   N1=N2.join(N1);
