@@ -1731,10 +1731,9 @@ undo_make_hole_3D_ear(std::list<Facet> & boundhole,
       fit++) {
     Cell_handle ch = (*fit).first;
     ch->set_neighbor((*fit).second, *cit);
-    for(int i = 0; i < 4; i++) {
-      ch->vertex(i)->set_cell(ch);
-    }
     cit++;
+    // the vertices on the boundary of the hole still
+    // point to the cells that form the boundary of the hole
   }
 }// undo_make_hole_3D_ear
 
@@ -1755,9 +1754,6 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
   std::list<Cell_handle> cells;
 
   Surface surface(boundhole);
-
-  int size = 5* boundhole.size();
-  int opcount = 0;
 
   Face_3_2 *f = &(* surface.faces_begin());
   Face_3_2 *last_op = NULL; // This is where the last ear was inserted
@@ -1785,33 +1781,34 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
       Face_3_2 *n = f->neighbor(k);
       int fi = n->index(f);
 
-      w0 = f->vertex(k);
       w1 = f->vertex(i);
       w2 = f->vertex(j);
+
+      v1 = w1->info();
+      v2 = w2->info();
+
+      if( is_infinite(Vertex_handle(v1)) || is_infinite(Vertex_handle(v2)) ){
+	// there will be another ear, so let's ignore this one,
+	// because it is complicated to treat
+	goto next_ear;
+      }       
+      w0 = f->vertex(k);
       w3 = n->vertex(fi);
 
       v0 = w0->info();
-      v1 = w1->info();
-      v2 = w2->info();
       v3 = w3->info();
+
+      bool inf_0 = is_infinite(Vertex_handle(v0));
+      bool inf_3 = is_infinite(Vertex_handle(v3));
 
       const Point & p0 = v0->point();
       const Point & p1 = v1->point();
       const Point & p2 = v2->point();
       const Point & p3 = v3->point();
 
-      bool inf_0 = is_infinite(Vertex_handle(v0));
-      bool inf_1 = is_infinite(Vertex_handle(v1));
-      bool inf_2 = is_infinite(Vertex_handle(v2));
-      bool inf_3 = is_infinite(Vertex_handle(v3));
-
-      if( inf_1 || inf_2 ){
-	// there will be another ear, so let's ignore this one,
-	// because it is complicated to treat
-      } else if( inf_0 || inf_3 || (orientation(p0, p1, p2, p3) == POSITIVE) ) {
+      if( inf_0 || inf_3 || (orientation(p0, p1, p2, p3) == POSITIVE) ) {
 	// the two faces form a concavity, in which we might plug a tetrahedron
 
-	int cospheric = 0;
 	std::set<Vertex_3_2*> cospheric_vertices;
 	bool on_unbounded_side = false;
 	// we now look at all vertices that are on the boundary of the hole
@@ -1836,7 +1833,6 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 	    if(bs == ON_BOUNDED_SIDE) { goto next_ear; }
 
 	    if((bs == ON_BOUNDARY)) {
-	      cospheric++;
 	      cospheric_vertices.insert(&(*vit));
 	    }
 
@@ -1844,27 +1840,29 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 	  }
 	}
 	// we looked at all vertices
-	// if there are cospheric points we have to test a little bit more
-	if( cospheric > 0 ) {
+	// if there are cospheric points we have to test more
+	if(! cospheric_vertices.empty() ) {
 	  std::set<Vertex_3_2*>::iterator co_it,
 	                                  not_found = cospheric_vertices.end();
 	  if(inf_0 || inf_3) {
 	    // the cospheric points are on the boundary of the convex hull 
-	    if(! on_unbounded_side) {
-	      //std::cout << "all points are coplanar" << std::endl;
-	    }
+	    //if(! on_unbounded_side) {
+	    // std::cerr << "\nall points are coplanar" << std::endl;
+	    //}
 	  }  else  {
+	    // all vertices are finite
 	    // for all edges that are incident to w2, check if the other vertex
 	    // is cospheric, and if the edge  is coplanar to plane(v0, v2, v3) 
 	    Vertex_circulator_3_2 vc = w2->incident_vertices();
 	    Vertex_circulator_3_2 done = vc;
 	    
 	    do {
-	      if( ! ((co_it = cospheric_vertices.find(&(*vc))) == not_found) ) {
-		const Point & pc = (*co_it)->info()->point();
+	      if( ! (cospheric_vertices.find(&(*vc)) == not_found) ) {
+		//if((&(*vc) != v0) && (&(*vc) != v3)) { // infinite loop
+		const Point & pc = vc->info()->point();
 
 		if(orientation(p0,p2,p3,pc) == COPLANAR) { goto next_ear; }
-	      }
+		}
 	    } while( ++vc != done );
 
 	    // for all edges that are incident to w1, check if the other vertex
@@ -1872,15 +1870,13 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 	    vc = w1->incident_vertices();
 	    done = vc;
 	    do {
-	      if( ! ((co_it = cospheric_vertices.find(&(*vc))) == not_found) ) {
-		const Point & pc = (*co_it)->info()->point();
+	      if( ! (cospheric_vertices.find(&(*vc)) == not_found) ) {
+	      //if((&(*vc) != v0) && (&(*vc) != v3)) {
+		const Point & pc = vc->info()->point();
 		if(orientation(p0,p1,p3,pc) == COPLANAR) { goto next_ear; }
 	      }
 	    } while( ++vc != done );
 	    
-	  }
-	  if( (! inf_0) && (! inf_1) && (! inf_2) && (! inf_3) ) {
-	    // all vertices are finite
 	    for(std::set<Vertex_3_2*>::iterator it = cospheric_vertices.begin();
 		it != cospheric_vertices.end();
 		it++) {
@@ -1888,8 +1884,8 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 	      Vertex_circulator_3_2 vc = (*it)->incident_vertices();
 	      Vertex_circulator_3_2 done = vc;
 	      do {
-		if(! ((co_it = cospheric_vertices.find(&(*vc))) == not_found) ){
-		  const Point & pc = (*co_it)->info()->point();
+		if(! (cospheric_vertices.find(&(*vc)) == not_found) ){
+		  const Point & pc = vc->info()->point();
 		  if((orientation(p0,p3,pc, pit) == COPLANAR) 
 		     && (coplanar_orientation(p0,p3,pc, pit) == NEGATIVE)) {
 		    goto next_ear;
@@ -1898,9 +1894,8 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 	      } while( ++vc != done);
 	    }
 	  }
-	} // test a little bit more
+	} // test more
 
-	// 
 	Face_3_2 *m_i = f->neighbor(i);
 	Face_3_2 *m_j = f->neighbor(j); 
 	bool neighbor_i = m_i == n->neighbor(cw(fi));
@@ -1922,31 +1917,26 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 				     Vertex_handle(v3),
 				     NULL, NULL, NULL, NULL);
 	cells.push_back(ch);
-	Cell* c = handle2pointer(ch);
-	v0->set_cell(c);
-	v1->set_cell(c);
-	v2->set_cell(c);
-	v3->set_cell(c);
 
 	// The new tetrahedron touches the faces that form the ear
 	Facet fac = n->info();
-	c->set_neighbor(0, fac.first);
-	fac.first->set_neighbor(fac.second, c);
+	ch->set_neighbor(0, fac.first);
+	fac.first->set_neighbor(fac.second, ch);
 	fac = f->info();
-	c->set_neighbor(3, fac.first);
-	fac.first->set_neighbor(fac.second, c);
+	ch->set_neighbor(3, fac.first);
+	fac.first->set_neighbor(fac.second, ch);
 
 	// It may touch another face, 
 	// or even two other faces if it is the last tetrahedron
 	if(neighbor_i) {
 	  fac = m_i->info();
-	  c->set_neighbor(1, fac.first);
-	  fac.first->set_neighbor(fac.second, c);
+	  ch->set_neighbor(1, fac.first);
+	  fac.first->set_neighbor(fac.second, ch);
 	}
 	if(neighbor_j) {
 	  fac = m_j->info();
-	  c->set_neighbor(2, fac.first);
-	  fac.first->set_neighbor(fac.second, c);
+	  ch->set_neighbor(2, fac.first);
+	  fac.first->set_neighbor(fac.second, ch);
 	}
 	
 	if((! neighbor_i) && (! neighbor_j)) {
@@ -1955,27 +1945,23 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 	  f->set_edge(ni, false);
 	  f->set_edge(cw(ni));
 	  f->set_edge(ccw(ni));
-	  last_op = f; k = -1;
 	  
 	  int fi = n->index(f);
 	  n->set_edge(fi, false);
 	  n->set_edge(cw(fi), f);
 	  n->set_edge(ccw(fi), f);
-
-	  f->set_info(std::make_pair(Cell_handle(c),2));
-	  n->set_info(std::make_pair(Cell_handle(c),1));
+	  f->set_info(std::make_pair(ch,2));
+	  n->set_info(std::make_pair(ch,1));
 	} else if (neighbor_i && (! neighbor_j)) {
 	  f->unlink(j);
 	  surface.remove_degree_3(f->vertex(j), f);
 	  f->set_edge();
-	  last_op = f; k = -1;
-	  f->set_info(std::make_pair(Cell_handle(c),2));
+	  f->set_info(std::make_pair(ch,2));
 	} else if ((! neighbor_i) && neighbor_j)  {
 	  f->unlink(i);
 	  surface.remove_degree_3(f->vertex(i), f);
 	  f->set_edge();
-	  last_op = f; k = -1;
-	  f->set_info(std::make_pair(Cell_handle(c),1));
+	  f->set_info(std::make_pair(ch,1));
 	} else {
 	  if(surface.number_of_vertices() != 4) {
 	    delete_cells(cells);
@@ -1986,6 +1972,7 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 	    return true;
 	  }
 	}
+	last_op = f; k = -1;
       } // else if (inf_0 ...
     }// if(f->edge(k))
   next_ear: ;
