@@ -16,37 +16,33 @@
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-//
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ============================================================================
  
-
-#include <CGAL/basic.h>
-#ifndef CGAL_USE_LEDA
-int main() { std::cout << "\nSorry, this demo needs LEDA\n"; return 0; }
-#else
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Cartesian.h>
 #include <cassert>
 #include <vector>
 #include <algorithm>
-#include <CGAL/Point_2.h>
-#include <CGAL/Segment_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/copy_n.h>
 #include <CGAL/IO/leda_window.h>
 #include <CGAL/IO/Ostream_iterator.h>
-#include <CGAL/leda_real.h>
+#ifdef CGAL_USE_LEDA
+#  include <CGAL/leda_real.h>
+#else
+#  include <CGAL/MP_Float.h>
+typedef CGAL::MP_Float   leda_real;
+#endif
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/kernel_to_kernel.h>
 #include <CGAL/orientation_test_statistics.h>
 
-typedef CGAL::Cartesian<double>           CartesianDouble;
-typedef CGAL::Point_2<CartesianDouble>    Point;
+typedef CGAL::Cartesian<double>                CartesianDouble;
+typedef CartesianDouble::Point_2               Point;
 typedef CGAL::Creator_uniform_2<double,Point>  Pt_creator;
-typedef std::vector<Point>                Vector;
-typedef CGAL::Cartesian<leda_real>        CartesianLedaReal;
-
+typedef std::vector<Point>                     Vector;
+typedef CGAL::Cartesian<leda_real>             CartesianLedaReal;
 
 int
 main(int argc, char** argv)
@@ -117,4 +113,3 @@ main(int argc, char** argv)
 
     return 0;
 }
-#endif // USE_LEDA

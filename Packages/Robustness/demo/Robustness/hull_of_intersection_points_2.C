@@ -16,23 +16,20 @@
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-//
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ============================================================================
  
-
-#include <CGAL/basic.h>
-#ifndef CGAL_USE_LEDA
-int main() { std::cout << "\nSorry, this demo needs LEDA\n"; return 0; }
-#else
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/leda_real.h>
-#include <CGAL/Point_2.h>
-#include <CGAL/Segment_2.h>
-#include <CGAL/Circle_2.h>
 #include <vector>
 #include <fstream>
+#ifdef CGAL_USE_LEDA
+#  include <CGAL/leda_real.h>
+#else
+#  include <CGAL/MP_Float.h>
+#  include <CGAL/Quotient.h>
+typedef CGAL::Quotient<CGAL::MP_Float> leda_real;
+#endif
 #include <CGAL/segment_intersection_points_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Join_input_iterator.h>
@@ -45,16 +42,15 @@ int main() { std::cout << "\nSorry, this demo needs LEDA\n"; return 0; }
 #include <CGAL/IO/polygonal_2.h>
 #include <CGAL/kernel_to_kernel.h>
 
-
 int
 main( int argc, char** argv)
 {
   typedef CGAL::Cartesian<double>       C_double;
-  typedef CGAL::Point_2< C_double>      double_Point;
-  typedef CGAL::Segment_2< C_double>    double_Segment;
+  typedef C_double::Point_2             double_Point;
+  typedef C_double::Segment_2           double_Segment;
   typedef CGAL::Cartesian<leda_real>    C_real;
-  typedef CGAL::Point_2< C_real>        real_Point;
-  typedef CGAL::Segment_2< C_real>      real_Segment;
+  typedef C_real::Point_2               real_Point;
+  typedef C_real::Segment_2             real_Segment;
   typedef CGAL::Creator_uniform_2<double, double_Point>
                                         Point_creator;
   typedef CGAL::Random_points_in_square_2<double_Point, Point_creator>
@@ -116,7 +112,7 @@ main( int argc, char** argv)
   W0 << double_Point(50,50);
   W0.set_fg_color(leda_red);
   W0 << double_Point(50,25);
-  W0 << CGAL::Circle_2< C_double>( double_Point(50,25), 40.0);
+  W0 << C_double::Circle_2( double_Point(50,25), 40.0);
   W0.set_fg_color(leda_black);
   W0.draw_text(65,58,
      leda_string("correct extreme point"));
@@ -170,7 +166,7 @@ main( int argc, char** argv)
                ) > 0.125 )
          )
       {
-        W << CGAL::Circle_2< C_double>( *dble_it, 80.0);
+        W << C_double::Circle_2( *dble_it, 80.0);
       }
       else
       {
@@ -183,4 +179,3 @@ main( int argc, char** argv)
 
   return 0;
 }
-#endif // USE_LEDA

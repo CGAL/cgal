@@ -21,28 +21,26 @@
 // ============================================================================
  
 
-#include <CGAL/basic.h>
-#ifndef CGAL_USE_LEDA
-int main() { std::cout << "\nSorry, this demo needs LEDA\n"; return 0; }
-#else
 #include <CGAL/Cartesian.h>
 #include <CGAL/Homogeneous.h>
 #include <cassert>
 #include <vector>
 #include <algorithm>
-#include <CGAL/Point_2.h>
-#include <CGAL/Segment_2.h>
 #include <CGAL/intersection_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/Join_input_iterator.h>
 #include <CGAL/copy_n.h>
 #include <CGAL/IO/leda_window.h>
-#include <CGAL/leda_real.h>
-
+#ifdef CGAL_USE_LEDA
+#  include <CGAL/leda_real.h>
+#else
+#  include <CGAL/MP_Float.h>
+#  include <CGAL/Quotient.h>
+typedef CGAL::Quotient<CGAL::MP_Float> leda_real;
+#endif
 #include <CGAL/kernel_to_kernel.h>
 #include <CGAL/intersection_test_statistics.h>
-
 
 #include <CGAL/further_point_generators_2.h>
 
@@ -53,11 +51,9 @@ typedef Cartesian<double>                CartesianDouble;
 typedef Homogeneous<float>               HomogeneousFloat;
 typedef Homogeneous<double>              HomogeneousDouble;
 
-typedef Point_2<CartesianDouble>         Point;
-typedef Segment_2<CartesianDouble>       Segment;
+typedef CartesianDouble::Point_2         Point;
+typedef CartesianDouble::Segment_2       Segment;
 typedef std::vector<Segment>             Vector;
-
-
 
 int
 main(int argc, char** argv)
@@ -193,5 +189,3 @@ main(int argc, char** argv)
   W.read_mouse();
   return 0;
 }
-
-#endif // USE_LEDA

@@ -1,3 +1,7 @@
+1.6     (20 June 2001)
+- Update to new header style, and simplify code.
+- Try to use Quotient<MP_Float> in place of leda_real.
+
 1.5     (20 Sep 2000)
 
 - workaround for VC++ added in triangulation_of_intersection_points_2:

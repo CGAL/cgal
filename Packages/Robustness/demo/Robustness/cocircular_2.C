@@ -16,22 +16,16 @@
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-//
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ============================================================================
  
-
-#include <CGAL/basic.h>
-#ifndef CGAL_USE_LEDA
-int main() { std::cout << "\nSorry, this demo needs LEDA\n"; return 0; }
-#else
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Cartesian.h>
+
 #include <cassert>
 #include <vector>
 #include <algorithm>
-#include <CGAL/Point_2.h>
-#include <CGAL/Segment_2.h>
+
 #include <CGAL/point_generators_2.h>
 #include <CGAL/copy_n.h>
 #include <CGAL/IO/leda_window.h>
@@ -45,11 +39,11 @@ int main() { std::cout << "\nSorry, this demo needs LEDA\n"; return 0; }
 #include <CGAL/Min_circle_2.h>
 #include <CGAL/Min_ellipse_2_traits_2.h>
 #include <CGAL/Min_ellipse_2.h>
-#include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/IO/Window_stream.h>
+
 typedef CGAL::Cartesian<double>                          CartesianDouble;
-typedef CGAL::Point_2<CartesianDouble>                   Point;
+typedef CartesianDouble::Point_2                         Point;
 typedef CGAL::Creator_uniform_2<double,Point>            Pt_creator;
 typedef std::vector<Point>                               Vector;
 typedef CGAL::Cartesian<leda_real>                       CartesianLedaReal;
@@ -59,12 +53,7 @@ typedef CGAL::Min_circle_2_traits_2<CartesianDouble>     Traits;
 typedef CGAL::Min_circle_2<Traits>                       Min_circle;
 typedef CGAL::Min_ellipse_2_traits_2<CartesianDouble>    ETraits;
 typedef CGAL::Min_ellipse_2<ETraits>                     Min_ellipse;
-typedef CGAL::Triangulation_euclidean_traits_2<CartesianDouble> Gtd;
-typedef CGAL::Triangulation_vertex_base_2<Gtd>           Vbd;
-typedef CGAL::Triangulation_face_base_2<Gtd>             Fbd;
-typedef CGAL::Triangulation_default_data_structure_2<Gtd,Vbd,Fbd> Tdsd;
-typedef CGAL::Delaunay_triangulation_2<Gtd,Tdsd>         DT_double;
-
+typedef CGAL::Delaunay_triangulation_2<CartesianDouble>  DT_double;
 
 int
 main(int argc, char** argv)
@@ -81,7 +70,6 @@ main(int argc, char** argv)
     W1.init(-0.12, 0.12, -0.12);
     W.display();
     W1.display(W,50,50);
-    
     
     Vector points1;
     typedef CGAL::Random_points_on_circle_2<Point,Pt_creator>   P_on_circle;
@@ -118,4 +106,3 @@ main(int argc, char** argv)
 
     return 0;
 }
-#endif // USE_LEDA

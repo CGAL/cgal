@@ -20,33 +20,29 @@
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ============================================================================
  
-
-#include <CGAL/basic.h>
-#ifndef CGAL_USE_LEDA
-int main() { std::cout << "\nSorry, this demo needs LEDA\n"; return 0; }
-#else
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Gmpz.h>
 #include <cmath>
 #include <vector>
 #include <algorithm>
-#include <CGAL/Point_2.h>
-#include <CGAL/Direction_2.h>
-#include <CGAL/Segment_2.h>
-#include <CGAL/Aff_transformation_2.h>
 #include <CGAL/IO/leda_window.h>
 #include <CGAL/IO/Ostream_iterator.h>
-#include <CGAL/leda_real.h>
+#ifdef CGAL_USE_LEDA
+#  include <CGAL/leda_real.h>
+#else
+#  include <CGAL/MP_Float.h>
+#  include <CGAL/Quotient.h>
+typedef CGAL::Quotient<CGAL::MP_Float> leda_real;
+#endif
 #include <CGAL/kernel_to_kernel.h>
 
 typedef CGAL::Cartesian<double>           CartesianDouble;
-typedef CGAL::Point_2<CartesianDouble>    Point;
-typedef CGAL::Direction_2<CartesianDouble>     Direction;
+typedef CartesianDouble::Point_2          Point;
+typedef CartesianDouble::Direction_2      Direction;
 typedef std::vector<Point>                Vector;
 typedef CGAL::Homogeneous<CGAL::Gmpz>     HomogeneousInteger;
 typedef CGAL::Cartesian<leda_real>        CartesianLedaReal;
-
 
 int
 main()
@@ -176,4 +172,3 @@ main()
 
   return 0;
 }
-#endif // USE_LEDA
