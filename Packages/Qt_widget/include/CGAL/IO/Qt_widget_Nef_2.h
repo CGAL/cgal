@@ -175,29 +175,28 @@ CGAL::Qt_widget& operator<<(CGAL::Qt_widget& ws, const Nef_polyhedron_2<T>& P)
     // we don't draw the first face outside the box:
     for ( ++fit; fit != fend; ++fit) {
       Qt::RasterOp old_raster = ws.rasterOp();
+      ws.setRasterOp(Qt::CopyROP);
       //save the initial raster mode
       if(D.mark(fit))
-      	ws.setFillColor(fillcolor);
-      else{  
-        ws.setFillColor(bgcolor);
-        ws.setRasterOp(Qt::CopyROP);
-      }
+      	ws.setFillColor(fillcolor);      
+      else
+        ws.setFillColor(bgcolor);        
 
-      std::list<Point> l;
-      Halfedge_around_face_const_circulator fcirc(D.halfedge(fit)), 
+        std::list<Point> l;
+        Halfedge_around_face_const_circulator fcirc(D.halfedge(fit)), 
                                             fend(fcirc);
-      CGAL_For_all(fcirc, fend){
-	      if(D.is_standard(D.target(fcirc)))
+        CGAL_For_all(fcirc, fend){
+	        if(D.is_standard(D.target(fcirc)))
 	        l.push_back(D.point(D.target(fcirc)));
-      }
-      QPointArray array(l.size());int i=0;
-      std::list<Point>::const_iterator it = l.begin();
-      while(it!=l.end()){
-        array.setPoint(i++, ws.x_pixel(to_double((*it).x())), 
+        }
+        QPointArray array(l.size());int i=0;
+        std::list<Point>::const_iterator it = l.begin();
+        while(it!=l.end()){
+          array.setPoint(i++, ws.x_pixel(to_double((*it).x())),
 		       ws.y_pixel(to_double((*it).y())));
-      it++;
-      }
-      ws.get_painter().drawPolygon(array);
+        it++;
+        }
+        ws.get_painter().drawPolygon(array);
       ws.setRasterOp(old_raster);
 /*
       Isolated_vertex_const_iterator iv_it;
@@ -243,8 +242,7 @@ CGAL::Qt_widget& operator<<(CGAL::Qt_widget& ws, const Nef_polyhedron_2<T>& P)
     }
     
     ws.setRasterOp(old_raster);
-    bitBlt(&widget_pixmap, 0, 0, &copy_of_pixmap,
-      0, 0, ws.width(), ws.height(), Qt::XorROP, true);
+    bitBlt(&widget_pixmap, 0, 0, &copy_of_pixmap, 0, 0, ws.width(), ws.height(), Qt::XorROP, true);
     return ws;
 }
 
