@@ -37,9 +37,11 @@ class All_furthest_neighbor_matrix
 {
 public:
   typedef
-    Cartesian_matrix< Operation, RandomAccessIC, RandomAccessIC >
-  Base;
+    Cartesian_matrix< Operation, RandomAccessIC, RandomAccessIC > Base;
+
   typedef typename Base::Value Value;
+
+  using Base::number_of_rows;
 
   All_furthest_neighbor_matrix(RandomAccessIC f, RandomAccessIC l)
   : Base(f, l, f, l)

@@ -96,6 +96,9 @@ class Random_p_clusters_2 : public CGAL::Random_generator_base< P > {
 public:
   typedef Random_p_clusters_2< P, Creator > This;
   typedef CGAL::Random_generator_base< P > Base;
+  using Base::d_item;
+  using Base::d_range;
+
   Random_p_clusters_2(int n_,
                       double c_size_,
                       double r = 1,

@@ -49,10 +49,12 @@ public:
   typedef
     Cartesian_matrix< Operation,
                            RandomAccessIC_row,
-                           RandomAccessIC_column >
-  Base;
+                           RandomAccessIC_column > Base;
+
   typedef typename Base::Value      Value;
 
+  using Base::number_of_rows;
+  using Base::number_of_columns;
 
   /*
   Cartesian_matrix_horizontally_flipped(

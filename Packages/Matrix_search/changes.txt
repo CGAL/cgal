@@ -2,6 +2,9 @@
 //	Revision History for package Matrix_search
 //=====================================================================
 
+22 June 2004  Sylvain Pion
+- Add some missing "using base::member;" to please g++ 3.4.
+
 Version 169 (09 February 2004) [rursu]
 - Updated headers in examples
 

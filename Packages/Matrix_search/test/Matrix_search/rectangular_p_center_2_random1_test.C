@@ -93,9 +93,15 @@ class Random_p_clusters_2 : public CGAL::Random_generator_base< P > {
         creator(FT(p3.x() + c_size * (2 * this->_rnd.get_double() - 1.0)),
                 FT(p3.y() + c_size * (2 * this->_rnd.get_double() - 1.0)));
   }
+
 public:
+
   typedef Random_p_clusters_2< P, Creator > This;
-  typedef CGAL::Random_generator_base< P > Base;
+  typedef CGAL::Random_generator_base< P >  Base;
+
+  using Base::d_item;
+  using Base::d_range;
+
   Random_p_clusters_2(int n_,
                       double c_size_,
                       double r = 1,
