@@ -1,5 +1,8 @@
 - Write acknowledgment section in the doc as discussed at the meeting.
 
+- regarder la question de David Bourguignon sur les IO
+  (cf mail de Mariette)
+
 General
 - mettre des locate_2D, locate_3D, insert idem, pour eviter les tests 
   redondants sur la dimension a chaque insertion.
