@@ -1,5 +1,8 @@
 Generator Package: Release changes:
 ---------------------------------------------------------------------
+2.55 (24 Mar 2002)
+   - fixed reference to renamed doc file.
+
 2.54 (21 Mar 2002)
    - converted to new manual style
 
