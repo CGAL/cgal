@@ -14,6 +14,8 @@ ALL : added std:: in a number of places where it was missing
 ALL : use namespace std and CGAL
 ALL : use standard header files
 ALL : Initial revision
+ALL : added some return 0;
+ALL : MSVBC workaround for TYPENAME_BUGs.
 DOCS: fixed "cal" problem with html converter
 DOCS: fixed preconditions in replace_column (reported by Mariette).
 SRC : New linear 2- and 3-center algorithm.
