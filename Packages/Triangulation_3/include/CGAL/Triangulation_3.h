@@ -233,7 +233,7 @@ public:
   CGAL_Triangulation_3 & operator=(const CGAL_Triangulation_3 & tr)
   {
     clear();
-    infinite = _tds.copy_tds( tr._tds, tr.infinite );
+    infinite = (Vertex *) _tds.copy_tds( tr._tds, &*tr.infinite );
     _gt = tr._gt;
     return *this;
   }
