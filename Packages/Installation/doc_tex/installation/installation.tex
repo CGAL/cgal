@@ -93,8 +93,9 @@ we could not work around all of them.
 
 On \mswin, one has two options for installing: one is specifically
 targeted for this OS and is described in
-section~\ref{sec:wininst}\footnote{see also {\tt wininstall.txt} in
-  the root directory of the installation}; the other is using
+section~\ref{sec:wininst}\footnote{see also the file
+  \texttt{wininstall.txt} in the root directory of the installation};
+the other is using
 Cygwin\footnote{\path~http://sourceware.cygnus.com/cygwin~} and the
 generic installation procedure for Unix-like environments described in
 section~\ref{sec:sample-inst} and subsequent sections.  If you are
@@ -1005,9 +1006,11 @@ section~\ref{sec:gettingcgal} above.
 
 In order to install and use \cgal\ with \msvc , you need \msvc\ 
 command line tools installed and working\footnote{To make sure that
-  certain environment variables are set correctly, one can execute
+  certain environment variables are set correctly, one should execute
   \texttt{VCVARS32.BAT} located in the same directory as the \msvc\ 
-  executables.}. Certain familiarity with using Windows command prompt
+  executables. A possible \mswin-9* - specific problem (and a
+  solution) is discussed in section \ref{subs::inicu}}. 
+Certain familiarity with using Windows command prompt
 and these tools is assumed. A reasonable amount of system resources,
 that is enough memory to run large compilations (64 Mb on NT4.0) and
 about 15MB of disk space, is required. Note, however, that 
@@ -1033,11 +1036,18 @@ In what follows \CGALR\ will refer to the full path to the
 directory \cgal-\cgalrelease , where the downloaded source is
 unpacked.
 
-\subsection{Initial customization}
+\subsection{Initial customization}\label{subs::inicu}
 
 Change to \CGALR\ and run the batch file \texttt{cgal\_config.bat} at the
 command prompt.  This script will set the appropriate makefiles for
-subsequent compilation.
+subsequent compilation.\footnote{
+{\bf \mswin-9*.} 
+The memory for environment variables might have to be increased.
+Select the MS-DOS icon from the Start-menu, press the right mouse
+button and choose \textit{Properties}. Go to \textit{Memory}, select
+\textit{Initial Environment}, set it to at least 2048 and
+\textit{apply} the changes. Then press \textit{OK} and kill the window.
+}
 
 \texttt{cgal\_config.bat} accepts 4 parameters.
 \begin{enumerate}
@@ -1445,6 +1455,13 @@ options controlling the use of debugging and multithreading.
 \footnote{\msvc\ compilation/linking options 
 \texttt{-ML, -MT, -MD, -MLD, -MTD, -MDD}}
 
+If a binary release of \leda{4.0} is used, make sure that it is one of
+them that uses new-style headers. Namely, among the self-extracting
+executables on
+\texttt{http://www.mpi-sb.mpg.de/LEDA/download/windows/}, choose one of
+these that have the name ending with \texttt{-std.exe}.
+
+
 \subsection{\msvc{6.0}-specific C++ problems}
 
 %Most of the following really belongs to, 
@@ -1481,7 +1498,7 @@ For other types the user must do this himself.
 This can be done by using the macro
 \texttt{CGAL\_DEFINE\_ITERATOR\_TRAITS\_POINTER\_SPEC(T)}.
 Note that the parameter of this macro cannot contain symbols $<$ and
-$>$. Thus the macro cannot on types that contain $<$ and $>$
+$>$. Thus the macro cannot be used with types that contain $<$ and $>$
 directly. However, one can be done by first define a new type using 
 \texttt{typedef} and then applying the macro to this new type.
 See e.g. \texttt{examples/Getting\_started/advanced\_hull.C}
