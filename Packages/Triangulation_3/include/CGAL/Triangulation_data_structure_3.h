@@ -588,7 +588,6 @@ std::istream& operator >>
 
   tds.clear();
 
-  int i;
   int n, d;
   is >> d >> n;
   tds.set_dimension(d);
@@ -604,7 +603,7 @@ std::istream& operator >>
   
   // creation of the vertices    
 
-  for (i=0; i < n; i++) {
+  for (int i=0; i < n; i++) {
     //    is >> p;
     //    V[i] = new Vertex(p);
     V[i] = new Vertex();
@@ -880,6 +879,7 @@ has_vertex(Cell* c, int i, Vertex* v, int & j) const
   CGAL_triangulation_precondition( dimension() == 3 ); 
   return ( c->has_vertex(v,j) && (j != i) );
 }
+
 template < class Vb, class Cb>
 bool
 Triangulation_data_structure_3<Vb,Cb>::
@@ -890,6 +890,7 @@ has_vertex(Cell* c, int i, Vertex* v) const
   int j;
   return ( c->has_vertex(v,j) && (j != i) );
 }
+
 template < class Vb, class Cb>
 bool
 Triangulation_data_structure_3<Vb,Cb>::
@@ -897,6 +898,7 @@ has_vertex(const Facet & f, Vertex* v, int & j) const
 {
   return( has_vertex( f.first, f.second, v, j ) );
 }
+
 template < class Vb, class Cb>
 bool
 Triangulation_data_structure_3<Vb,Cb>::
@@ -929,6 +931,7 @@ are_equal(Cell* c, int i, Cell* n, int j) const
 	  n->has_vertex( c->vertex((i+3)&3), j3 ) &&
 	  ( j1+j2+j3+j == 6 ) );
 }
+
 template < class Vb, class Cb>
 bool
 Triangulation_data_structure_3<Vb,Cb>::
@@ -936,6 +939,7 @@ are_equal(const Facet & f, const Facet & g) const
 {
   return( are_equal( f.first, f.second, g.first, g.second ) );
 }
+
 template < class Vb, class Cb>
 bool
 Triangulation_data_structure_3<Vb,Cb>::
@@ -1241,7 +1245,6 @@ read_cells(std::istream& is,
   typedef typename Tds::Facet Facet;
  
     // creation of the cells and neighbors
-  int i;
   switch (tds.dimension()) {
   case 3:
     {
@@ -1249,7 +1252,7 @@ read_cells(std::istream& is,
       Cell* c;
 
       int i0, i1, i2, i3;
-      for(i = 0; i < m; i++) {
+      for(int i = 0; i < m; i++) {
 	is >> i0 >> i1 >> i2 >> i3;
 	c = tds.create_cell(V[i0], V[i1], V[i2], V[i3]);
 	C[i] = c;
@@ -1258,7 +1261,7 @@ read_cells(std::istream& is,
 	V[i2]->set_cell(c);
 	V[i3]->set_cell(c);
       }
-      for(i = 0; i < m; i++) {
+      for(int i = 0; i < m; i++) {
         is >> i0 >> i1 >> i2 >> i3;
         c = C[i];
         c->set_neighbor(0, C[i0]);
@@ -1274,7 +1277,7 @@ read_cells(std::istream& is,
       Cell* c;
 
       int i0, i1, i2;
-      for(i = 0; i < m; i++) {
+      for(int i = 0; i < m; i++) {
 	is >> i0 >> i1 >> i2;
 	c = tds.create_cell(V[i0], V[i1], V[i2], NULL);
 	C[i] = c;
@@ -1282,7 +1285,7 @@ read_cells(std::istream& is,
 	V[i1]->set_cell(c);
 	V[i2]->set_cell(c);
       }
-      for(i = 0; i < m; i++) {
+      for(int i = 0; i < m; i++) {
         is >> i0 >> i1 >> i2;
 	c = C[i];
         c->set_neighbor(0, C[i0]);
@@ -1294,17 +1297,17 @@ read_cells(std::istream& is,
   case 1:
     {
       is >> m;
-     Cell* c;
+      Cell* c;
 
       int i0, i1;
-      for(i = 0; i < m; i++) {
+      for(int i = 0; i < m; i++) {
 	is >> i0 >> i1;
 	c = tds.create_cell(V[i0], V[i1], NULL, NULL);
 	C[i] = c;
 	V[i0]->set_cell(c);
 	V[i1]->set_cell(c);
       }
-      for(i = 0; i < m; i++) {
+      for(int i = 0; i < m; i++) {
         is >> i0 >> i1;
 	c = C[i];
         c->set_neighbor(0, C[i0]);
@@ -1318,12 +1321,12 @@ read_cells(std::istream& is,
       Cell* c;
 
       //      CGAL_triangulation_assertion( (n == 2) );
-      for (i=0; i < 2; i++) {
+      for (int i=0; i < 2; i++) {
 	c = tds.create_cell(V[i], NULL, NULL, NULL);
 	C[i] = c;
 	V[i]->set_cell(c);
       }
-      for (i=0; i < 2; i++) {
+      for (int i=0; i < 2; i++) {
 	c = C[i];
         c->set_neighbor(0, C[1-i]);
       }
@@ -1342,6 +1345,7 @@ read_cells(std::istream& is,
   }
   return is;
 }
+
 // not documented
 template < class Vb, class Cb>
 std::ostream& 
@@ -2651,4 +2655,5 @@ count_cells(int & i, bool verbose, int level) const
 }
 
 CGAL_END_NAMESPACE
+
 #endif // CGAL_TRIANGULATION_DATA_STRUCTURE_3_H
