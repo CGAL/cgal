@@ -21,16 +21,12 @@
 #define CGAL_PM_TRIANGLE_POINT_LOCATION_H
 
 #include <CGAL/Pm_point_location_base.h>
-#include <CGAL/Planar_map_2/Pm_traits_wrap_2.h>
+//#include <CGAL/Planar_map_2/Pm_traits_wrap_2.h>
 
 //#define CGAL_PM_WALK_DEBUG
 //#define CGAL_PM_DEBUG
 
-#ifdef CGAL_PM_DEBUG
-#ifndef CGAL_NAIVE_POINT_LOCATION_H
-#include <CGAL/Pm_naive_point_location.h>
-#endif
-#endif
+
 
 //----------------------------------------------------------
 // triangulation includes
@@ -51,10 +47,10 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
-#include <CGAL/Arr_segment_cached_traits_2.h>
+//#include <CGAL/Arr_segment_cached_traits_2.h>
 #include <CGAL/Pm_default_dcel.h>
-#include <CGAL/Planar_map_2.h>
-#include <CGAL/Pm_with_intersections.h>
+//#include <CGAL/Planar_map_2.h>
+//#include <CGAL/Pm_with_intersections.h>
 
 
 ////////////////////////////////////////////////////////
@@ -70,31 +66,34 @@ public:
   // Pm Types
   //----------------------------------------------------------
 
-  typedef Quotient<CGAL::MP_Float>                  Coord_type;
-  typedef Cartesian<Coord_type>                     Kernel;
-  typedef Arr_segment_cached_traits_2<Kernel>       Traits;
+  typedef typename Planar_map::Traits               Traits;
+  typedef typename Traits::FT                       FT;
+  typedef Cartesian<FT>                             Kernel;
+  //typedef Quotient<CGAL::MP_Float>                  Coord_type;
+  //typedef Cartesian<Coord_type>                     Kernel;
+  //  typedef Arr_segment_cached_traits_2<Kernel>       Traits;
 
   //----------------------------------------------------------
   // Pm Types
   //----------------------------------------------------------
 
-  typedef Kernel::Segment_2                               Segment;
-  typedef Traits::Point_2                                 Point_2;
-  typedef Traits::Curve_2                                 Curve_2;
-  typedef Traits::X_monotone_curve_2                      X_monotone_curve_2;
-  typedef Planar_map_                                     Planar_map;
+  typedef typename Kernel::Segment_2                        Segment;
+  typedef typename Traits::Point_2                          Point_2;
+  typedef typename Traits::Curve_2                          Curve_2;
+  typedef typename Traits::X_monotone_curve_2               X_monotone_curve_2;
+  typedef Planar_map_                                       Planar_map;
   //typedef Pm_default_dcel<Traits>                         Dcel;
   //typedef typename Planar_map_2<Dcel,Traits>              Planar_map;
   //typedef Planar_map_with_intersections_2<Planar_map>     Pmwx;
-  typedef Pm_point_location_base<Planar_map>              Base;
-  typedef Pm_triangle_point_location<Planar_map>              Self;
+  typedef Pm_point_location_base<Planar_map>       Base;
+  typedef Pm_triangle_point_location<Planar_map>   Self;
   typedef typename Planar_map::Face_iterator              Face_iterator;
   typedef typename Planar_map::Halfedge_iterator          Halfedge_iterator;
-  typedef typename Planar_map::Vertex_iterator                     Vertex_iterator;
-  typedef typename Planar_map::Edge_iterator                       Edge_iterator;
-  typedef typename Planar_map::Vertex_handle                       Vertex_handle;
-  typedef typename Planar_map::Halfedge_handle                     Halfedge_handle;
-  typedef typename Planar_map::Face_handle                         Face_handle;
+  typedef typename Planar_map::Vertex_iterator              Vertex_iterator;
+  typedef typename Planar_map::Edge_iterator                Edge_iterator;
+  typedef typename Planar_map::Vertex_handle                Vertex_handle;
+  typedef typename Planar_map::Halfedge_handle              Halfedge_handle;
+  typedef typename Planar_map::Face_handle                  Face_handle;
   typedef typename Planar_map::Halfedge_around_vertex_circulator 
                                          Halfedge_around_vertex_circulator;
   typedef typename Planar_map::Ccb_halfedge_circulator  Ccb_halfedge_circulator;
@@ -155,13 +154,13 @@ public:
   inline void insert(Halfedge_handle hh, const X_monotone_curve_2 & cv) 
   {insert_to_cdt(hh, cv); }
 
-  Halfedge_handle locate(const Point_2 & p, Locate_type & lt) const;
+  Halfedge_handle locate(const typename Planar_map::Traits::Point_2 & p, Locate_type & lt) const;
 
-  Halfedge_handle locate(const Point_2 & p, Locate_type & lt);
+  Halfedge_handle locate(const typename Planar_map::Traits::Point_2 & p, Locate_type & lt);
 
-  Halfedge_handle vertical_ray_shoot(const Point_2& p, Locate_type& lt, bool up)
+  Halfedge_handle vertical_ray_shoot(const typename Planar_map::Traits::Point_2& p, Locate_type& lt, bool up)
     const;
-  Halfedge_handle vertical_ray_shoot(const Point_2& p, Locate_type& lt, bool up);
+  Halfedge_handle vertical_ray_shoot(const typename Planar_map::Traits::Point_2& p, Locate_type& lt, bool up);
 
   inline void split_edge(const X_monotone_curve_2 &, Halfedge_handle, Halfedge_handle,
                          //additions by iddo for arrangement
@@ -190,7 +189,7 @@ public:
 
   //function that does the triangulation
   void triangulate_pm() ;
-  void insert_to_cdt(Halfedge_handle hh, const X_monotone_curve_2 &cv) ;
+  void insert_to_cdt(Halfedge_handle hh, const typename Planar_map::Traits::X_monotone_curve_2 &cv) ;
   
 private:
 

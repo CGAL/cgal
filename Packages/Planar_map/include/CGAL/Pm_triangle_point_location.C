@@ -22,10 +22,16 @@
 
 #include <CGAL/Pm_triangle_point_location.h>
 
-//#define CGAL_PM_WALK_DEBUG
 //#define CGAL_PM_DEBUG
 
 CGAL_BEGIN_NAMESPACE
+
+//debug
+#ifdef CGAL_PM_DEBUG
+  int point_number = 0;
+  int constr_number = 0;
+#endif
+
 
 //----------------------------------------------------
 /*!
@@ -34,10 +40,12 @@ CGAL_BEGIN_NAMESPACE
 //if its a vertex returns a halfedge pointing _at_ it
 template <class Planar_map>
 typename Pm_triangle_point_location<Planar_map>::Halfedge_handle
-Pm_triangle_point_location<Planar_map>::locate(const Point_2 & p, 
+Pm_triangle_point_location<Planar_map>::locate(const typename Planar_map::Traits::Point_2 & p, 
                                                       Locate_type & lt) const
 {
 #ifdef CGAL_PM_DEBUG
+  point_number++;
+  std::cout << std::endl << "LOCATE NUMBER "<< point_number << std::endl;
   std::cout << "------ locate point "<< p << std::endl;
 #endif
 
@@ -219,15 +227,17 @@ Pm_triangle_point_location<Planar_map>::locate(const Point_2 & p,
     } while ((++havc1 != havc1_done)&& !found );
   } while ((++havc0 != havc0_done)&& !found );
 
-  //debug new
-  //  if (!found && found_unbounded ) 
-  //  {
-  //std::cout<< "FOUND UNBOUNDED !!! " << std::endl;
-  //  }
   if (found_face == pm->unbounded_face())
   {
     if (! found_unbounded)
+    {
       std::cerr<< "NOT GOOD - face not found" << std::endl;
+      //debug - print some more info
+      std::cout << "p = "<< p <<std::endl;
+      std::cout << "v0 = "<< v0->point() 
+		<<", v1 = "<< v1->point()
+		<<", v2 = "<<v2->point() <<std::endl;
+    }
     lt = Planar_map::UNBOUNDED_FACE;
     e = pm->halfedges_end();
     return e;
@@ -255,7 +265,7 @@ Pm_triangle_point_location<Planar_map>::locate(const Point_2 & p,
  */
 template <class Planar_map>
 typename Pm_triangle_point_location<Planar_map>::Halfedge_handle
-Pm_triangle_point_location<Planar_map>::locate(const Point_2 & p, 
+Pm_triangle_point_location<Planar_map>::locate(const typename Planar_map::Traits::Point_2 & p, 
 						      Locate_type & lt) {
 
   //  if (! updated_cdt)
@@ -274,7 +284,7 @@ Pm_triangle_point_location<Planar_map>::locate(const Point_2 & p,
 template <class Planar_map>
 typename Pm_triangle_point_location<Planar_map>::Halfedge_handle
 Pm_triangle_point_location<Planar_map>::
-vertical_ray_shoot(const Point_2 & p, 
+vertical_ray_shoot(const typename Planar_map::Traits::Point_2 & p, 
                    Locate_type & lt, 
                    bool up) const
 {
@@ -294,7 +304,7 @@ vertical_ray_shoot(const Point_2 & p,
 template <class Planar_map>
 typename Pm_triangle_point_location<Planar_map>::Halfedge_handle
 Pm_triangle_point_location<Planar_map>::vertical_ray_shoot(
-                                                 const Point_2& p, 
+                                                 const typename Planar_map::Traits::Point_2& p, 
                                                  Locate_type& lt, bool up){
   Halfedge_handle h=((cPLp)this)->vertical_ray_shoot(p,lt,up);
   return h;
@@ -306,10 +316,11 @@ Pm_triangle_point_location<Planar_map>::vertical_ray_shoot(
  */
 template <class Planar_map>
 void Pm_triangle_point_location<Planar_map>::insert_to_cdt
-(Halfedge_handle hh, const X_monotone_curve_2 &cv)
+(Halfedge_handle hh, const typename Planar_map::Traits::X_monotone_curve_2 &cv)
 {
 #ifdef CGAL_PM_DEBUG
-  std::cout << "in insert_to_cdt" << std::endl ;
+  constr_number++; 
+  std::cout << "in insert_to_cdt, num = "<< constr_number << std::endl ;
   //std::cout << *pm << std::endl;
   std::cout << "cv = "<< cv << std::endl;
   std::cout << hh->source()->point()<<" towards "
@@ -320,8 +331,8 @@ void Pm_triangle_point_location<Planar_map>::insert_to_cdt
   Vertex_handle pm_vh2 = hh->target();
 
   //get points from vertices
-  Point_2 pm_p1 = (*pm_vh1).point() ;
-  Point_2 pm_p2 = (*pm_vh2).point() ;
+  typename Planar_map::Traits::Point_2 pm_p1 = (*pm_vh1).point() ;
+  typename Planar_map::Traits::Point_2 pm_p2 = (*pm_vh2).point() ;
 
   //cast the points to be CDT points
   CDT_Point cdt_p1 = static_cast <CDT_Point> (pm_p1);
@@ -335,8 +346,17 @@ void Pm_triangle_point_location<Planar_map>::insert_to_cdt
   cdt_vh1->info() = pm_vh1;
   cdt_vh2->info() = pm_vh2;
 
+#ifdef CGAL_PM_DEBUG
+  std::cout << "call to insert_constraint with "
+	    << cdt_vh1->point() << cdt_vh2->point() << std::endl ;
+#endif //CGAL_PM_DEBUG
+
   //add constraint from the two points
   cdt.insert_constraint(cdt_vh1, cdt_vh2);
+
+#ifdef CGAL_PM_DEBUG
+  std::cout << "finished insert_to_cdt" << std::endl ;
+#endif //CGAL_PM_DEBUG
 }
 
 //----------------------------------------------------
@@ -378,8 +398,8 @@ void Pm_triangle_point_location<Planar_map>::triangulate_pm()
     //    std::cout << "cv = "<< cv << std::endl;
 
     //get points from vertices
-    Point_2 pm_p1 = (*pm_vh1).point() ;
-    Point_2 pm_p2 = (*pm_vh2).point() ;
+    typename Planar_map::Traits::Point_2 pm_p1 = (*pm_vh1).point() ;
+    typename Planar_map::Traits::Point_2 pm_p2 = (*pm_vh2).point() ;
 
     //    std::cout << "3" << std::endl;
     //cast the points to be CDT points
