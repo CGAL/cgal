@@ -44,16 +44,6 @@ Number_tag
 number_type_tag(float)
 { return Number_tag(); }
 
-#ifdef OLD_FINITE_VALID
-extern
-bool
-is_finite(float d);
-
-extern
-bool
-is_valid(float d);
-
-#else
 #ifdef __sgi
 
 inline
@@ -96,9 +86,8 @@ bool is_valid(float d)
     return false; // NOT REACHED
 }
 
-#else
-#if defined(_MSC_VER) || defined(CGAL_MASK_FINITE_VALID) || \
-    defined(__BORLANDC__)
+#elif defined(_MSC_VER) || defined(__BORLANDC__) || \
+      defined(CGAL_MASK_FINITE_VALID)
 
 #define CGAL_EXPONENT_FLOAT_MASK   0x7f800000
 #define CGAL_MANTISSA_FLOAT_MASK   0x007fffff
@@ -150,10 +139,7 @@ bool
 is_finite(float d)
 { return (d == d) && (is_valid(d-d)); }
 
-#endif // MSC_VER || ...
-#endif // __sgi
-
-#endif // OLD_FINITE_VALID
+#endif
 
 inline
 io_Operator

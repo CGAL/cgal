@@ -21,7 +21,7 @@
 // ======================================================================
 
 #ifndef CGAL_DOUBLE_H
-#define CGAL_DOUBLE_H 1
+#define CGAL_DOUBLE_H
 
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
@@ -53,20 +53,8 @@ Number_tag
 number_type_tag(double)
 { return Number_tag(); }
 
-#ifdef OLD_FINITE_VALID
-extern
-bool
-is_finite(double d);
-
-extern
-bool
-is_valid(double d);
-
-#else
-
 #ifdef __sgi
 
-// double
 inline
 bool is_finite(double d)
 {
@@ -107,9 +95,8 @@ bool is_valid(double d)
     return false; // NOT REACHED
 }
 
-#else
-#if defined(_MSC_VER) || defined(CGAL_MASK_FINITE_VALID) || \
-    defined(__BORLANDC__)
+#elif defined(_MSC_VER) || defined(__BORLANDC__) || \
+      defined(CGAL_MASK_FINITE_VALID)
 
 #define CGAL_EXPONENT_DOUBLE_MASK   0x7ff00000
 #define CGAL_MANTISSA_DOUBLE_MASK   0x000fffff
@@ -149,7 +136,6 @@ is_valid( const double& dble)
   return ! ( is_nan_by_mask_double( p->c.H, p->c.L ));
 }
 
-
 #else
 
 inline
@@ -162,17 +148,13 @@ bool
 is_finite(double d)
 { return (d == d) && (is_valid(d-d)); }
 
-#endif // MSC_VER || ...
-#endif // __sgi
-
-#endif // OLD_FINITE_VALID
+#endif
 
 inline
 io_Operator
 io_tag(double)
 { return io_Operator(); }
 
-#ifndef CGAL_NO_NTS_NAMESPACE
 namespace NTS {
 #ifndef CGAL_NUMBER_UTILS_H
 template <class NT> NT abs(const NT &x);
@@ -184,20 +166,7 @@ double
 abs(const double& d)
 { return CGAL_CLIB_STD::fabs(d); }
 
-
 } // namespace NTS
-#else
-#ifndef CGAL_NUMBER_UTILS_H
-template <class NT> NT abs(const NT &x);
-#endif // CGAL_NUMBER_UTILS_H
-
-CGAL_TEMPLATE_NULL
-inline
-double
-abs(const double& d)
-{ return CGAL_CLIB_STD::fabs(d); }
-
-#endif // CGAL_NO_NTS_NAMESPACE
 
 CGAL_END_NAMESPACE
 

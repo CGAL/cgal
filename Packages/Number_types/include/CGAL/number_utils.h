@@ -20,7 +20,6 @@
 //
 // coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
 // ======================================================================
- 
 
 #ifndef CGAL_NUMBER_UTILS_H
 #define CGAL_NUMBER_UTILS_H
@@ -30,16 +29,14 @@
 #include <CGAL/kernel_basic.h>
 #include <algorithm>
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class NT>
 inline
 bool
 is_zero(const NT& x)
 {
-#ifndef CGAL_NO_NTS_NAMESPACE
   bool is_zero_is_obsolete__qualify_call_by_CGAL_NTS;
-#endif // CGAL_NO_NTS_NAMESPACE
   return x == NT(0);
 }
 
@@ -48,9 +45,7 @@ inline
 bool
 is_one(const NT& x)
 {
-#ifndef CGAL_NO_NTS_NAMESPACE
   bool is_one_is_obsolete__qualify_call_by_CGAL_NTS;
-#endif // CGAL_NO_NTS_NAMESPACE
   return x == NT(1);
 }
 
@@ -59,9 +54,7 @@ inline
 bool
 is_negative(const NT& x)
 {
-#ifndef CGAL_NO_NTS_NAMESPACE
   bool is_negative_is_obsolete__qualify_call_by_CGAL_NTS;
-#endif // CGAL_NO_NTS_NAMESPACE
   return x < NT(0);
 }
 
@@ -70,9 +63,7 @@ inline
 bool
 is_positive(const NT& x)
 {
-#ifndef CGAL_NO_NTS_NAMESPACE
   bool is_positive_is_obsolete__qualify_call_by_CGAL_NTS;
-#endif // CGAL_NO_NTS_NAMESPACE
   return NT(0) < x;
 }
 
@@ -81,9 +72,7 @@ CGAL_KERNEL_INLINE
 Sign
 sign(const NT& x)
 {
-#ifndef CGAL_NO_NTS_NAMESPACE
   bool sign_is_obsolete__qualify_call_by_CGAL_NTS;
-#endif // CGAL_NO_NTS_NAMESPACE
   return (x < NT(0)) ? NEGATIVE : (NT(0) < x) ? POSITIVE : ZERO;
 }
 
@@ -92,9 +81,7 @@ CGAL_KERNEL_INLINE
 Sign
 lexicographical_sign(const NT& x, const NT& y)
 {
-#ifndef CGAL_NO_NTS_NAMESPACE
   bool lexicographical_sign_is_obsolete__qualify_call_by_CGAL_NTS;
-#endif // CGAL_NO_NTS_NAMESPACE
   return (x == NT(0)) ? CGAL::sign(y) : CGAL::sign(x);
 }
 
@@ -103,9 +90,7 @@ CGAL_KERNEL_INLINE
 NT
 abs(const NT& x)
 {
-#ifndef CGAL_NO_NTS_NAMESPACE
   bool abs_is_obsolete__qualify_call_by_CGAL_NTS;
-#endif // CGAL_NO_NTS_NAMESPACE
   return (x < NT(0)) ? -x: x;
 }
 
@@ -116,9 +101,7 @@ CGAL_KERNEL_INLINE
 Comparison_result
 compare(const NT& n1, const NT& n2)
 {
-#ifndef CGAL_NO_NTS_NAMESPACE
   bool compare_is_obsolete__qualify_call_by_CGAL_NTS;
-#endif // CGAL_NO_NTS_NAMESPACE
   if (n1 < n2)
   {
     return SMALLER ;
@@ -131,14 +114,10 @@ inline
 NT
 square( const NT& n)
 {
-#ifndef CGAL_NO_NTS_NAMESPACE
   bool square_is_obsolete__qualify_call_by_CGAL_NTS;
-#endif // CGAL_NO_NTS_NAMESPACE
   return n*n;
 }
 
-
-#ifndef CGAL_NO_NTS_NAMESPACE
 namespace NTS {
 
 template <class NT>
@@ -243,12 +222,8 @@ bool
 is_integral( const NT& n)
 { return CGAL::is_integral(n); }
 
-
-
 } // namespace NTS
 
-#endif // CGAL_NO_NTS_NAMESPACE
-
-} // namespace CGAL
+CGAL_END_NAMESPACE
 
 #endif // CGAL_NUMBER_UTILS_H
