@@ -240,7 +240,7 @@ surface_neighbor_coordinates_3(const Dt& dt,
   //the Vertex_handle is, in fact, an iterator over vertex:
   typedef Project_vertex_iterator_to_point< Vertex_handle>   Proj_point;
   typedef Iterator_project<
-    typename std::vector< Vertex_handle >::iterator,
+    typename std::list< Vertex_handle >::iterator,
     Proj_point,
     const Point_3&,
     const Point_3*,
@@ -259,10 +259,20 @@ surface_neighbor_coordinates_3(const Dt& dt,
   }
 
   //the candidate points are the points of dt in conflict with p:
-  typename std::vector< Vertex_handle >  conflict_vertices;
+  typename std::list< Vertex_handle >  conflict_vertices;
   dt.vertices_in_conflict(p,c,
 			 std::back_inserter(conflict_vertices));
 
+  for (std::list< Vertex_handle >::iterator it = conflict_vertices.begin();
+       it != conflict_vertices.end();){
+    if(dt.is_infinite(*it)){
+      std::list< Vertex_handle >::iterator itp = it;
+      it++;
+      conflict_vertices.erase(itp);
+    } else {
+      it++;
+    }
+  }
   return surface_neighbor_coordinates_3
           (Point_iterator(conflict_vertices.begin()),
            Point_iterator(conflict_vertices.end()),
