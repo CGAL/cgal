@@ -1,4 +1,8 @@
 Changes done to the `Min_ellipse_2' package.
+
+Version 3.35 on 18-Jan-2004
+- Remove CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC.
+
 Version 3.34 on 15-Jan-2004 [rursu]
 - Removed Conic files from Min_ellipse_2. Went to Conic_2 package.
 

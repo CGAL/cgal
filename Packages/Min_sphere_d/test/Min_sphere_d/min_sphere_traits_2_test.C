@@ -45,7 +45,7 @@
 #include<CGAL/Min_circle_2.h>
 #include<CGAL/Min_circle_2_traits_2.h>  //why is this not in Min_circle_2.h
 #include<CGAL/leda_rational.h>
-CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( leda_rational);
+
 using namespace CGAL;
 
 typedef leda_rational                               NT;

@@ -2158,7 +2158,6 @@ compare the results and apply the remaining functions.
 
 @macro <Min_sphere_d test program - definitions> += @begin
     typedef leda_rational                       NT;
-    CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( leda_rational);
     typedef NT                                  FT;
     typedef NT                                  RT;
     typedef Cartesian<FT>                       C;
@@ -2472,7 +2471,7 @@ Here we basically aim at code coverage for the traits class -- the
     #include<CGAL/Min_circle_2.h>
     #include<CGAL/Min_circle_2_traits_2.h>  //why is this not in Min_circle_2.h
     #include<CGAL/leda_rational.h>
-    CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( leda_rational);
+
     using namespace CGAL;
 
     typedef leda_rational                               NT;
@@ -2608,7 +2607,7 @@ Here we basically aim at code coverage for the traits class -- the
     #include<CGAL/Optimisation_d_traits_3.h>
     #include<CGAL/Min_sphere_d.h>
     #include<CGAL/leda_rational.h>
-    CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( leda_rational);
+
     using namespace CGAL;
 
     typedef leda_rational                               NT;

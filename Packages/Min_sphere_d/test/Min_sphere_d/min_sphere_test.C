@@ -48,7 +48,6 @@
 using namespace CGAL;
 
 typedef leda_rational                       NT;
-CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( leda_rational);
 typedef NT                                  FT;
 typedef NT                                  RT;
 typedef Cartesian_d<FT>                     C;

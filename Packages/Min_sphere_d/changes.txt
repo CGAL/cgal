@@ -131,3 +131,5 @@ Changes from 2.34
 Changes from 2.35
    - New file headers.
 
+Changes from 2.36
+   - Remove CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC.
