@@ -528,7 +528,7 @@ side_of_bounded_sphere(const PointH3<R> &p,
                        const PointH3<R> &t)
 {
     PointH3<R> center = circumcenter(p, q, r);
-    return Bounded_side( cmp_dist_to_point(center, p, t) );
+    return Bounded_side( compare_distance_to_point(center, p, t) );
 }
 
 template < class R >

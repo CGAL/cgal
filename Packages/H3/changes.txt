@@ -1,3 +1,6 @@
+2.62 (2 June 2003)
+- Replace deprecated cmp_dist_to_point().
+
 2.61 (2 June 2003) [af]
 - bbox() now uses to_interval for PointH3 and SphereH3
  
