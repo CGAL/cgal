@@ -1,10 +1,9 @@
 demo/Nef_3/README
 =================
 
-These demo program does only work with OpenGL. To use it, the library path
-of glut has to be specified in the provided makefile. Use the variable
-CUSTOM_LIBPATH for this purpose.
-
+The visualization of these demo programs only work with QT and OpenGL. 
+If you have Qt and OpenGL install, but GL.h and GLU.h are not found,
+see http://doc.trolltech.com/3.3/opengl.html.
 
 nef_3:  This program maintains a stack of Nef_3 polyhedra and accepts
 ------  a little language to manipulate this stack, load files, apply
