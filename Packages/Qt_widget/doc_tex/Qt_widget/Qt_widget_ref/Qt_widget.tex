@@ -18,9 +18,6 @@ is a class that is designed to help \cgal\ users easily visualize \cgal\
 objects and for advanced users to interact with them. This widget is designed 
 only for 2D \cgal\ objects.
 
-
-
-
 \ccInclude{CGAL/Qt_widget.h}
 \ccGlue
 
@@ -189,6 +186,9 @@ the \ccc{QPixmap} object.
 \ccMethod{void new_cgal_object(CGAL::Object);}{Triggered when a new object 
 from a tool is received. The user should catch this signal if it's working with
 tools that provide \cgal\ objects as input.}
+\ccMethod{void custom_redraw();}{Emited in the redraw() function after 
+the layers are drawn. If the user wants to draw something after
+layers, should connect this signal to his own slot.}
 
 \input{Qt_widget_ref/Operators_for_output.tex}
 \input{Qt_widget_ref/Manipulators.tex}
