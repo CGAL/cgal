@@ -761,6 +761,7 @@ set_compiler_flags()
     SAVE_THE_BLANK="\$(SAVESTHEBLANK)"
     EXE_EXT=""
     CGAL_LIBNAME="libCGAL.a"
+    CGAL_OPENGL_LIBS="-lGL -lGLU"
     CGAL_QT_LIBNAME="libCGALQt.a"
     CORE_LIBNAME="libCore.a"
     CGAL_WIN_EXTRA_DIR=x11
@@ -795,6 +796,7 @@ set_compiler_flags()
 	    SAVE_THE_BLANK=""
 	    EXE_EXT=".exe"
 	    CGAL_LIBNAME="CGAL.lib"
+	    CGAL_OPENGL_LIBS="Opengl32.lib Glu32.lib"
 	    CGAL_QT_LIBNAME="CGALQt.lib"
 	    CORE_LIBNAME="libCore.lib"
 	    CGAL_WIN_EXTRA_DIR=mswin
@@ -828,7 +830,7 @@ set_compiler_flags()
 	    SAVE_THE_BLANK=""
 	    EXE_EXT=".exe"
 	    CGAL_LIBNAME="CGAL.lib"
-	    CGAL_QT_LIBNAME="CGALQt.lib"
+	    CGAL_OPENGL_LIBS="Opengl32.lib Glu32.lib"
 	    CORE_LIBNAME="Core.lib"
 	    CGAL_WIN_EXTRA_DIR=mswin
 	    GMP_LIBNAME="gmp.lib"
@@ -861,6 +863,7 @@ set_compiler_flags()
 	    SAVE_THE_BLANK=""
 	    EXE_EXT=".exe"
 	    CGAL_LIBNAME="CGAL.lib"
+	    CGAL_OPENGL_LIBS="Opengl32.lib Glu32.lib"
 	    CGAL_QT_LIBNAME="CGALQt.lib"
 	    CORE_LIBNAME="Core.lib"
 	    CGAL_WIN_EXTRA_DIR=mswin
