@@ -1,3 +1,6 @@
+10 Mars 2004 Radu Ursu
+- fixed bug in autotest_cgal concerning the location of .autocgalrc 
+
 06 Mars 2004 Radu Ursu
 - updated autotest_cgal script
 

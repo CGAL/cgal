@@ -43,10 +43,14 @@ ACTUAL_DIR=`pwd`
 FTP="ftp"
 LOGS_DIR="${CGAL_ROOT}/AUTOTEST_LOGS"
 RSH="rsh"
-if [ -f $HOME/.autocgalrc ] || [ -f .autocgalrc ]; then
-  . .autocgalrc
+if [ -f $HOME/.autocgalrc ]; then
+  . $HOME/.autocgalrc
 else
-  echo "CONFIGURATION FILE .autocgalrc NOT FOUND";
+  if [ -f .autocgalrc ]; then
+    . .autocgalrc
+  else
+    echo "CONFIGURATION FILE .autocgalrc NOT FOUND";
+  fi
 fi
 
 
