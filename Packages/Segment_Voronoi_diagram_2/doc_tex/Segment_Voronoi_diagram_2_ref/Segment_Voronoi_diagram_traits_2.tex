@@ -1,0 +1,81 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Apollonius_graph_euclidean_traits_2.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+%\RCSdef{\RCSRegulartriangulationtraitsRev}{$Revision$}
+%\RCSdefDate{\RCSRegulartriangulationtraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Segment_Voronoi_diagram_traits_2<K,Method_tag>}
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+{\sc The type of \ccc{Method_tag} must be consistent with whether
+  intersections are supported or not. If intersections are supported
+  we need \ccc{Field_tag}}
+
+\ccDefinition
+  
+The class \ccRefName\ provides a model for the
+\ccc{SegmentVoronoiDiagramTraits_2} concept.
+This class has two template parameters. The first template parameter
+must be a model of the \ccc{Kernel} concept. The second template
+parameter corresponds to how predicates are evaluated. There are two
+predefined possible values for \ccc{Method_tag}, namely
+\ccc{CGAL::Sqrt_field_tag} and \ccc{CGAL::Ring_tag}. The first one
+must be used when the number type used in the representation supports
+the exact evaluation of signs of expressions involving all four basic
+operations and square roots, whereas the second one requires the exact
+evaluation of signs of ring-type expressions, i.e., expressions
+involving only additions, subtractions and multiplications. The
+default value for \ccc{Method_tag} is \ccc{CGAL::Ring_tag}.
+%
+The way the predicates are evaluated is discussed in
+\cite{b-ecvdl-96,k-peasv-04}.
+
+
+\ccInclude{CGAL/Segment_Voronoi_diagram_traits_2.h}
+
+\ccIsModel
+\ccc{SegmentVoronoiDiagramTraits_2}
+
+\ccCreationVariable{traits}
+\ccCreation
+\ccThree{Segment_Voronoi_diagram_traits_2<K,Method_tag>}
+{traits = other}{}
+\ccThreeToTwo
+%
+\ccConstructor{Segment_Voronoi_diagram_traits_2<K,Method_tag>();}
+	      {Default constructor.}
+\ccGlue
+\ccConstructor{Segment_Voronoi_diagram_traits_2<K,Method_tag>(
+  Segment_Voronoi_diagram_traits_2<K,Method_tag> other);}
+{Copy constructor.}
+\ccGlue
+\ccMethod{Segment_Voronoi_diagram_traits_2<K,Method_tag>
+operator=(Segment_Voronoi_diagram_traits_2<K,Method_tag>
+other);}{Assignment operator.}
+
+
+\ccSeeAlso
+\ccc{Kernel}\\
+\ccc{SegmentVoronoiDiagramTraits_2} \\
+\ccc{CGAL::Ring_tag}\\
+\ccc{CGAL::Sqrt_field_tag}\\
+\ccc{CGAL::Segment_Voronoi_diagram_2<Gt,SC,DS>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_2<CK,CM,EK,EM,FK,FM>}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

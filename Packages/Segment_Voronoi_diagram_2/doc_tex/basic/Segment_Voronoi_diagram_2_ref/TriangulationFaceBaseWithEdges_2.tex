@@ -1,0 +1,122 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ApolloniusGraphFaceBase_2.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+%\RCSdef{\RCSRegulartriangulationtraitsRev}{$Revision$}
+%\RCSdefDate{\RCSRegulartriangulationtraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{TriangulationFaceBaseWithEdges_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+\ccDefinition
+The \ccc{SegmentVoronoiDiagramFaceBase_2} refines the
+\ccc{TriangulationFaceBase_2} concept by adding three edges (three
+face handles and three integers). These triplets are intended to
+support an in-place edge list. Since edges are not represented
+explicitly, but rather as pairs of a \ccc{Face_handle} and an integer,
+the only way to support this in-place edge list is by adding this
+functionality in the face base of the triangulation data structure.
+
+\ccRefines
+\ccc{TriangulationFaceBase_2}
+
+\ccTypes
+\ccTwo{TriangulationFaceBaseWithEdges_2::Vertex_handle+}{}
+\ccNestedType{Geom_traits}{A type for the geometric traits.}
+%
+\ccGlue
+\ccNestedType{Triangulation_data_structure_2}{A type for the
+  triangulation data structure, to which the face belongs to.}
+%
+\ccGlue
+\ccNestedType{Vertex_handle}{A type for the vertex handle of the
+  triangulation data structure.}
+%
+\ccGlue
+\ccNestedType{Face_handle}{A type for the face handle of the
+  triangulation data structure.}
+%
+\ccGlue
+\ccNestedType{Edge}{A type for the edge of the triangulation data
+  structure.}
+
+
+\ccCreation
+\ccCreationVariable{fbwe}
+\ccTwo{TriangulationFaceBaseWithEdge_2 fbwe()+}{}
+%
+\ccConstructor{TriangulationFaceBaseWithEdges_2();}{Default constructor.}
+%\ccGlue
+\ccConstructor{TriangulationFaceBaseWithEdges_2(Vertex_handle v0,
+  Vertex_handle v1, Vertex_handle  v2);}
+{Initializes the vertices of the face with \ccc{v0}, \ccc{v1} and
+\ccc{v2}. Neighbors are initialized to \ccc{Face_handle()}.}
+%\ccGlue
+\ccConstructor{TriangulationFaceBaseWithEdges_2(Vertex_handle v0,
+  Vertex_handle v1, Vertex_handle v2,
+  Face_handle n0, Face_handle n1, Face_handle n2);}
+	      {Initializes the vertices of the face with \ccc{v0},
+		\ccc{v1} and \ccc{v2}. Initializes the neighbors of
+		the face with \ccc{n0}, \ccc{n1} and \ccc{n2}.}
+
+
+\ccHeading{Operations}
+We only cite the additional operations with respect to those of the
+\ccc{TriangulationFaceBase_2} concept.
+
+%
+\ccThree{Edge}{fbwe.set_previous(int i, Edge prev)+}{}
+%
+\ccMethod{bool is_in_list(int i);}
+{Checks if the edge corresponding to the pair (\ccc{fbwe}, \ccc{i})
+is currently in the in-place edge list. Returns \ccc{true} if
+(\ccc{fbwe}, \ccc{i}) is in the list, \ccc{false} otherwise.
+\ccPrecond{\ccc{i} must be either \ccc{0}, \ccc{1} or \ccc{2}.}}
+%
+\ccGlue
+\ccMethod{void set_next(int i, Edge next);}
+{Sets the edge \ccc{next} as the successor of
+(\ccc{fbwe}, \ccc{i}) in the list.
+\ccPrecond \ccc{next} must correspond to a valid edge, and \ccc{i}
+must be either \ccc{0}, \ccc{1} or \ccc{2}.}
+%
+\ccGlue
+\ccMethod{void set_previous(int i, Edge prev);}
+{Sets the edge \ccc{prev} as the predecessor of
+(\ccc{fbwe}, \ccc{i}) in the list.
+\ccPrecond{\ccc{prev} must correspond to a valid edge, and \ccc{i}
+must be either \ccc{0}, \ccc{1} or \ccc{2}.}}
+%
+\ccGlue
+\ccMethod{Edge next(int i);}
+{Returns the successor of (\ccc{fbwe}, \ccc{i}) in the list.
+\ccPrecond{\ccc{i} must be either \ccc{0}, \ccc{1} or \ccc{2}.}}
+%
+\ccGlue
+\ccMethod{Edge previous(int i);}
+{Returns the predecessor of (\ccc{fbwe}, \ccc{i}) in the list.
+\ccPrecond{\ccc{i} must be either \ccc{0}, \ccc{1} or \ccc{2}.}}
+
+
+\ccHasModels
+\ccc{CGAL::Triangulation_face_base_with_edges_2<Fbb>}
+
+
+\ccSeeAlso
+\ccc{TriangulationFaceBase_2}\\
+\ccc{TriangulationDataStructure_2}\\
+\ccc{CGAL::Triangulation_face_base_2<Gt>}\\
+\ccc{CGAL::Triangulation_face_base_with_edges_2<Fbb>}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

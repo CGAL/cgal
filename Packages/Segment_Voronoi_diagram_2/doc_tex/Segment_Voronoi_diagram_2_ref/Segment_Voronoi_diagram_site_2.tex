@@ -1,0 +1,66 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Weighted_point.tex
+% +------------------------------------------------------------------------+
+% | 13.04.2000   Author
+% | Package: Package
+% | 
+% | \RCSdef{\RCSWeightedpointRev}{$Revision$}
+% | \RCSdefDate{\RCSWeightedpointDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Segment_Voronoi_diagram_site_2<K>}
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is a model for the concept
+\ccc{SegmentVoronoiDiagramSite_2}. It is parametrized by a template
+parameter \ccc{K} which must be a model of the \ccc{Kernel} concept.
+
+\ccInclude{CGAL/Segment_Voronoi_diagram_site_2.h}
+
+\ccIsModel
+\ccc{SegmentVoronoiDiagramSite_2}
+
+\ccTypes
+
+The class \ccRefName\ introduces the following type in addition to the
+types in the concept \ccc{SegmentVoronoiDiagramSite_2}.
+
+\ccTypedef
+{typedef K Kernel;}{A type for the template parameter \ccc{K}.}
+
+\ccTwo{Segment_Voronoi_diagram_site_2<K> s(Point_2 p)+}{}
+
+\ccCreation
+\ccCreationVariable{s}  %% choose variable name
+\ccConstructor{Segment_Voronoi_diagram_site_2<K>()}{Default constructor}
+\ccGlue
+\ccConstructor{Segment_Voronoi_diagram_site_2<K>(Point_2 p)}{}
+\ccGlue
+\ccConstructor{Segment_Voronoi_diagram_site_2<K>(Point_2 p1, Point_2 p2)}{}
+\ccGlue
+\ccConstructor{Segment_Voronoi_diagram_site_2<K>(Segment_Voronoi_diagram_site_2<K>
+  other)}{Copy constructor.}
+
+{\sc Add the remaining constructors}
+
+\ccSeeAlso
+\ccc{Kernel}\\
+\ccc{SegmentVoronoiDiagramSite_2}\\
+\ccc{CGAL::Segment_Voronoi_diagram_traits_2<K,Method_tag>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_2<CK,CM,EK,EM,FK,FM>}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,123 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ApolloniusGraphVertexBase_2.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+%\RCSdef{\RCSRegulartriangulationtraitsRev}{$Revision$}
+%\RCSdefDate{\RCSRegulartriangulationtraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{SegmentVoronoiDiagramVertexBase_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+\ccCreationVariable{vb}
+\ccDefinition
+
+The concept \ccc{SegmentVoronoiDiagramVertexBase_2} describes the
+requirements for the vertex base class of the
+\ccc{SegmentVoronoiDiagramDataStructure_2} concept. A vertex stores an
+site of the segment Voronoi diagram and provides access to one of its
+incident faces through a \ccc{Face_handle}.
+
+\ccTypes
+\ccTwo{SegmentVoronoiDiagramVertexBase_2::Point_container+}{}
+\ccNestedType{Geom_traits}{A type for the geometric traits that defines
+the site. \ccPrecond{The type \ccc{Geom_traits} must
+define the type \ccc{Site_2}.}}
+%
+\ccGlue
+\ccNestedType{Site_2}{A type for the site.
+\ccPrecond{This type must coincide with the type
+\ccc{Geom_traits::Site_2}.}}
+%
+\ccGlue
+\ccNestedType{Point_container}{A type for a container of points.
+  \ccPrecond{This type must satisfy the requirements of the concept
+    \ccc{SimpleContainer}.}}
+%
+\ccGlue
+\ccNestedType{Storage_site_2}{A type for the internal representation
+  of sites.
+\ccPrecond{This type must satisfy the requirements of the concept
+\ccc{SegmentVoronoiDiagramStorageSite_2}.}}
+%
+\ccGlue
+\ccNestedType{Segment_Voronoi_diagram_data_structure_2}{A type for the
+  segment Voronoi diagram data structure, to which the vertex belongs to.}
+%
+\ccGlue
+\ccNestedType{Vertex_handle}{A type for the vertex handle of the
+  segment Voronoi diagram data structure.}
+%
+\ccGlue
+\ccNestedType{Face_handle}{A type for the face handle of the
+  segment Voronoi diagram data structure.}
+%
+
+\ccCreation
+\ccCreationVariable{v}  %% choose variable name
+
+\ccTwo{SegmentVoronoiDiagramVertexBase_2 v(Storage_site_2 ss);++}{}
+%
+\ccConstructor{SegmentVoronoiDiagramVertexBase_2();}{Default constructor.}
+\ccGlue
+\ccConstructor{SegmentVoronoiDiagramVertexBase_2(Storage_site_2 ss);}
+{Constructs a vertex associated with the site represented by the
+  storage site \ccc{ss}.}
+\ccGlue
+\ccConstructor{SegmentVoronoiDiagramVertexBase_2(Storage_site_2 ss,
+  Face_handle f);}{Constructs a vertex associated with
+  the site represented by the storage site \ccc{ss},
+  and pointing to the face associated with the face handle \ccc{f}.}
+
+
+
+
+
+\ccAccessFunctions
+\ccThree{Storage_site_2}{v.storage_site()+}{}
+%
+\ccMethod{Storage_site_2 storage_site();}
+{Returns  the storage site representing the site.}
+\ccGlue
+\ccMethod{Site_2 site();}
+{Returns  the site.}
+\ccGlue
+\ccMethod{Face_handle face();}{Returns a handle to an incident face.}
+
+
+
+\ccHeading{Setting}
+\ccThree{void}{v.set_site(Storage_site_2 ss)+}{}
+\ccMethod{void set_site(Storage_site_2 ss);}
+{Sets the storage site.}
+\ccGlue
+\ccMethod{void set_face(Face_handle f);}{Sets the incident face.}
+
+\ccThree{bool}{v.is_valid(bool verbose, int level)+}{}
+\ccHeading{Checking}
+\ccMethod{bool is_valid(bool verbose, int level) const;}
+{Performs any required tests on a vertex.}
+
+
+\ccHasModels
+
+\ccc{CGAL::Segment_Voronoi_diagram_vertex_base_2<Gt,PointHandle>}.
+
+
+\ccSeeAlso
+
+\ccc{SegmentVoronoiDiagramDataStructure_2}\\
+\ccc{SegmentVoronoiDiagramTraits_2}\\
+\ccc{CGAL::Segment_Voronoi_diagram_vertex_base_2<Gt,PointHandle>}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

@@ -1,0 +1,76 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Apollonius_graph_data_structure_2.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+%\RCSdef{\RCSRegulartriangulationtraitsRev}{$Revision$}
+%\RCSdefDate{\RCSRegulartriangulationtraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}{Segment_Voronoi_diagram_data_structure_2<Vb,Fb>}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccCreationVariable{tds}
+
+\ccDefinition
+
+An implementation for the concept \ccc{SegmentVoronoiDiagramDataStructure_2}
+is provided. The class is templated by a face 
+base and vertex base class just like the
+\ccc{Triangulation_data_structure_2} (see
+\ccRefPage{Triangulation_data_structure_2}) and
+\ccc{Apollonius_graph_data_strcuture_2} class (see
+\ccRefPage{Apollonius_graph_data_structure_2}). This class
+inherits from \ccc{Apollonius_graph_data_structure_2<Vb,Fb>}. \ccc{Vb}
+must be a model of \ccc{SegmentVoronoiDiagramVertexBase_2}. \ccc{Fb}
+must be a model of \ccc{SegmentVoronoiDiagramFaceBase_2}.
+
+\ccInclude{CGAL/Segment_Voronoi_diagram_data_structure_2.h}
+
+\ccIsModel
+\ccc{SegmentVoronoiDiagramDataStructure_2}
+
+\ccInheritsFrom
+\ccc{CGAL::Apollonius_graph_data_structure_2<Vb,Fb>}
+
+\ccCreation
+\ccCreationVariable{svdds}
+\ccThree{Segment_Voronoi_diagram_data_structure_2<Vb,Fb>}{svdds = other}{}
+\ccThreeToTwo
+%
+\ccConstructor{Segment_Voronoi_diagram_data_structure_2<Vb,Fb>();}
+{Default constructor.}
+
+\ccConstructor{Segment_Voronoi_diagram_data_structure_2<Vb,Fb>(const
+Segment_Voronoi_diagram_data_structure_2<Vb,Fb>& other)}
+{Copy constructor. All the vertices and faces are duplicated.}
+
+\ccMethod{Segment_Voronoi_diagram_data_structure_2<Vb,Fb>
+operator=(Segment_Voronoi_diagram_data_structure_2<Vb,Fb> other);}
+{Assignment. All the vertices and faces are duplicated.}
+
+
+% MK:: copy constructors from TDS
+
+\ccSeeAlso
+\ccc{SegmentVoronoiDiagramDataStructure_2}\\
+\ccc{SegmentVoronoiDiagramVertexBase_2}\\
+\ccc{SegmentVoronoiDiagramFaceBase_2}\\
+\ccc{CGAL::Apollonius_graph_data_structure_2<Vb,Fb>}\\
+\ccc{CGAL::Triangulation_data_structure_2<Vb,Fb>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_2<Gt,SC,DS>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_vertex_base_2<Gt,PointHandle>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_face_base_2<Gt>}
+
+\end{ccRefClass}
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,74 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Apollonius_graph_vertex_base_2.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+%\RCSdef{\RCSRegulartriangulationtraitsRev}{$Revision$}
+%\RCSdefDate{\RCSRegulartriangulationtraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}{Segment_Voronoi_diagram_hierarchy_vertex_base_2<Vbb>}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccCreationVariable{vb}
+\ccDefinition
+
+The class \ccRefName\ provides a model for the
+\ccc{SegmentVoronoiDiagramHierarchyVertexBase_2} concept, which is the
+vertex base required by the
+\ccc{Segment_Voronoi_diagram_hierarchy_2<Gt,SC,DS>} class. The class
+\ccRefName\ is templated by a class \ccc{Vbb} which must be a model
+of the \ccc{SegmentVoronoiDiagramVertexBase_2} concept.
+
+\ccInclude{CGAL/Segment_Voronoi_diagram_hierarchy_vertex_base_2.h}
+
+\ccInheritsFrom
+\ccc{Vbb}
+
+\ccIsModel
+\ccc{SegmentVoronoiDiagramHierarchyVertexBase_2}
+
+\ccCreation
+\ccCreationVariable{hvb}  %% choose variable name
+\ccTwo{Segment_Voronoi_diagram_hierarchy_vertex_base_2<Vbb>
+hvb();}{}
+
+\ccConstructor{Segment_Voronoi_diagram_hierarchy_vertex_base_2();}
+{Default constructor.}
+\ccGlue
+\ccConstructor{Segment_Voronoi_diagram_hierarchy_vertex_base_2(Storage_site_2
+  ss);}
+{Constructs a vertex associated with the site represented by the
+  storage site \ccc{ss}.}
+%
+\ccGlue
+\ccConstructor{Segment_Voronoi_diagram_hierarchy_vertex_base_2(Storage_site_2
+  ss, Face_handle f);}
+	      {Constructs a vertex associated with
+		the site represented by the storage site \ccc{ss},
+		and pointing to the face associated with the face
+		handle \ccc{f}.}
+
+
+
+\ccSeeAlso
+\ccc{SegmentVoronoiDiagramVertexBase_2}\\
+\ccc{SegmentVoronoiDiagramHierarchyVertexBase_2}\\
+\ccc{SegmentVoronoiDiagramDataStructure_2}\\
+\ccc{CGAL::Segment_Voronoi_diagram_vertex_base_2<Gt>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_data_structure_2<Vb,Fb>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_hierarchy_2<Gt,SC,DS>}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,83 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Weighted_point.tex
+% +------------------------------------------------------------------------+
+% | 13.04.2000   Author
+% | Package: Package
+% | 
+% | \RCSdef{\RCSWeightedpointRev}{$Revision$}
+% |  \RCSdefDate{\RCSWeightedpointDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{SegmentVoronoiDiagramSite_2} 
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccc{SegmentVoronoiDiagramSite_2} provides the
+requirements for the sites of a segment Voronoi diagram.
+
+
+\ccTypes
+\ccNestedType{Point_2}{The point type.}
+\ccGlue
+\ccNestedType{Segment_2}{The segment type.}
+\ccGlue
+\ccNestedType{FT}{The field number type.}
+\ccGlue
+\ccNestedType{RT}{The ring number type.}
+
+
+
+
+\ccCreation
+\ccTwo{SegmentVoronoiDiagramSite_2 s(Point_2 p)++}{}
+
+
+\ccCreationVariable{s}  %% choose variable name
+\ccConstructor{SegmentVoronoiDiagramSite2 s()}{Default constructor}
+\ccGlue
+\ccConstructor{SegmentVoronoiSite2(Point_2 p)}{Constructor from a
+  point: the site represents the point \ccc{p}.}
+\ccGlue
+\ccConstructor{SegmentVoronoiSite2(Point_2 p1, Point_2
+  p2)}{Constructor from two points: the site represents the (open)
+  segment with endpoints \ccc{p1} and \ccc{p2}.}
+\ccGlue
+\ccConstructor{SegmentVoronoiDiagramSite_2(SegmentVoronoiDiagramSite_2
+  other)}{Copy constructor.}
+
+{\sc Add more constructors here}
+
+\ccAccessFunctions
+\ccMethod{Point_2 point() const;}{Returns the point represented by the
+  site \ccc{s}.
+  \ccPrecond{ \ccc{s.is_point()} must be \ccc{true}.}}
+\ccGlue
+\ccMethod{Segment_2 segment() const;}{Returns the segment represented
+  by the site \ccc{s}.
+  \ccPrecond{ \ccc{s.is_segment()} must be \ccc{true}.}}.
+
+{\sc Add the other methods here here}
+
+\ccHasModels
+\ccc{CGAL::Segment_Voronoi_diagram_site_2<K>}
+
+\ccSeeAlso
+\ccc{SegmentVoronoiDiagramTraits_2}\\
+\ccc{CGAL::Segment_Voronoi_diagram_site_2<K>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_traits_2<K,Method_tag>}\\
+\ccc{CGAL::Segment_Voronoi_diagram_filtered_traits_2<CK,CM,EK,EM,FK,FM>}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
