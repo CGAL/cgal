@@ -4,13 +4,24 @@
 
 
 //---------------------------------------------------------------------
-//	revision 1.116
+//	revision 1118
+//---------------------------------------------------------------------
+
+
+//---------------------------------------------------------------------
+//	revision 1117
+//---------------------------------------------------------------------
+
+GLOB: Changed STL include for VC7-beta.
+
+//---------------------------------------------------------------------
+//	revision 1116
 //---------------------------------------------------------------------
 
 GLOB: Set -ftemplate-depth25 for gcc 2.* only. (gcc 3 has a default of 50.)
 
 //---------------------------------------------------------------------
-//	revision 1.115
+//	revision 1115
 //---------------------------------------------------------------------
 
 GLOB: Fixed clocales -> clocale.
@@ -19,38 +30,38 @@ ALL : Added options for setting CUSTOM_CXX/LDFLAGS from command line.
 GLOB: Changed msvc matching from "CL" to "CL.".
 
 //---------------------------------------------------------------------
-//	revision 1.114
+//	revision 1114
 //---------------------------------------------------------------------
 
 GLOB: rm -rf ti_files in .clean target.
 
 //---------------------------------------------------------------------
-//	revision 1.113
+//	revision 1113
 //---------------------------------------------------------------------
 
 GLOB: Added settings for *CYGWIN*g++-2.95*.
 
 //---------------------------------------------------------------------
-//	revision 1.112
+//	revision 1112
 //---------------------------------------------------------------------
 
 GLOB: OOPS, fixed _LEDA config/install stuff.
 
 //---------------------------------------------------------------------
-//	revision 1.111
+//	revision 1111
 //---------------------------------------------------------------------
 
 GLOB: Recognize existing _LEDA config/install files.
 
 //---------------------------------------------------------------------
-//	revision 1.110
+//	revision 1110
 //---------------------------------------------------------------------
 
 GLOB: The _LEDA suffix is now part of the config/install file as well.
 GLOB: Run the compiler tests when it becomes necessary only.
 
 //---------------------------------------------------------------------
-//	revision 1.109
+//	revision 1109
 //---------------------------------------------------------------------
 
 ALL : Changed CGAL version to 2.3.
@@ -59,14 +70,14 @@ DOCS: Replaced path by nonlinkedpath.
 DOCS: moved here from former package Installation_doc.
 
 //---------------------------------------------------------------------
-//	revision 1.108
+//	revision 1108
 //---------------------------------------------------------------------
 
 GLOB: Show KCC support (fixed).
 DOCS: Fixed footnotes for HTML acc. to Susan's remarks.
 
 //---------------------------------------------------------------------
-//	revision 1.107
+//	revision 1107
 //---------------------------------------------------------------------
 
 GLOB: Show KCC and Borland 5.5 as supported.
@@ -77,7 +88,7 @@ DOCS: Added http references to compiler vendors.
 DOCS: Added section about long-name problem on Irix.
 
 //---------------------------------------------------------------------
-//	revision 1.106
+//	revision 1106
 //---------------------------------------------------------------------
 
 DOCS: Added indexing commands. (finally ... :-)
@@ -85,64 +96,63 @@ DOCS: Changed LEDA version to 4.1.
 DOCS: Removed description of the replace_header script.
 
 //---------------------------------------------------------------------
-//	revision 1.105
+//	revision 1105
 //---------------------------------------------------------------------
 
 GLOB: Added kcc version detection as by Stefan.
 
 //---------------------------------------------------------------------
-//	revision 1.104
+//	revision 1104
 //---------------------------------------------------------------------
 
-DOCS: updated.
 DOCS: Added remark, that CLN R1.0.3+ is required.
 
 //---------------------------------------------------------------------
-//	revision 1.103
+//	revision 1103
 //---------------------------------------------------------------------
 
 GLOB: Corrected SAVE_THE_BLANK fix for KCC.
 
 //---------------------------------------------------------------------
-//	revision 1.102
+//	revision 1102
 //---------------------------------------------------------------------
 
 GLOB: Fixed guess_os as suggested by Dima,
 GLOB: to remove '()/', needed for cygwin-1.1.
 
 //---------------------------------------------------------------------
-//	revision 1.101
+//	revision 1101
 //---------------------------------------------------------------------
 
 GLOB: Save the blank after -o in EXE_OPT for KCC.
 
 //---------------------------------------------------------------------
-//	revision 1.100
+//	revision 1100
 //---------------------------------------------------------------------
 
 GLOB: Fixed IFS bug reported by Jacques Beigbeder.
 
 //---------------------------------------------------------------------
-//	revision 1.99
+//	revision 199
 //---------------------------------------------------------------------
 
 GLOB: Added ws2_32.lib to XLIBS for msvc.
 DOCS: Changed CGAL_NO_LEDA_HANDLE passus.
 
 //---------------------------------------------------------------------
-//	revision 1.98
+//	revision 198
 //---------------------------------------------------------------------
 
 ALL : Added/Corrected LONG_NAME_PROBLEM_LDFLAGS for Irix.
 
 //---------------------------------------------------------------------
-//	revision 1.97
+//	revision 197
 //---------------------------------------------------------------------
 
 GLOB: Added flags for Solaris / KCC.
 
 //---------------------------------------------------------------------
-//	revision 1.96
+//	revision 196
 //---------------------------------------------------------------------
 
 GLOB: Fixed problem in _real_options.
@@ -150,70 +160,55 @@ ALL : Updated CGAL_VERSION to 2.2.
 DOCS: Some fixes by Stefan and Susan.
 
 //---------------------------------------------------------------------
-//	revision 1.95
+//	revision 195
 //---------------------------------------------------------------------
 
 DOCS: Removed overfull boxes.
 
 //---------------------------------------------------------------------
-//	revision 1.94
+//	revision 194
 //---------------------------------------------------------------------
 
 GLOB: Fixed some problems for "spaces in pathnames".
 GLOB: Updated help message for --upgrade.
-DOCS: Some additions/corrections due to Dima.
-DOCS: Updated ps-docs.
-DOCS: updated documentation acc.to Stefan's suggestions.
-DOCS: added documentation of scripts (use_cgal_namespace,
-DOCS: create_cgal_makefile and replace_headers).
-DOCS: some minor corrections/clarifications.
-DOCS: sample installation now with egcs
-DOCS: removed support for "external" STL
-DOCS: removed obsolete paragraph about LEDA/STL problems
-DOCS: updated upgrade section.
-DOCS: updated list of supported compilers.
-DOCS: updated titlepage to 1.1.
-DOCS: Updated to Rev 1.28.
-DOCS: moved from former package Installation_doc.
 DOCS: Updated CGAL version in --upgrade.
 
 //---------------------------------------------------------------------
-//	revision 1.93
+//	revision 193
 //---------------------------------------------------------------------
 
 GLOB: Initial revision
 GLOB: Updated sample include makefiles + README.
 
 //---------------------------------------------------------------------
-//	revision 1.91
+//	revision 191
 //---------------------------------------------------------------------
 
 GLOB: Removed #include <cassert> from test_leda.
 GLOB: Search only in OLD_CGAL_DIR/lib for gmp libs in --upgrade.
-DOCS: Updated.
 
 //---------------------------------------------------------------------
-//	revision 1.90
+//	revision 190
 //---------------------------------------------------------------------
 
 GLOB: Introduced variable GMP_LIBNAME (-> libgmp.a || gmp.lib).
 
 //---------------------------------------------------------------------
-//	revision 1.89
+//	revision 189
 //---------------------------------------------------------------------
 
 GLOB: Check for LEDA_STD_HEADERS on windows compilers.
 DOCS: Some minor changes due to Dima.
 
 //---------------------------------------------------------------------
-//	revision 1.88
+//	revision 188
 //---------------------------------------------------------------------
 
 DOCS: Fixed Y2K-problem in mydate.
 TEST: Updated makefile and removed superfluous include in example.C.
 
 //---------------------------------------------------------------------
-//	revision 1.87
+//	revision 187
 //---------------------------------------------------------------------
 
 GLOB: Updated makefile.
@@ -221,12 +216,12 @@ GLOB: Initial revision
 DOCS: Two changes due to Dima/Stefan.
 
 //---------------------------------------------------------------------
-//	revision 1.86
+//	revision 186
 //---------------------------------------------------------------------
 
 
 //---------------------------------------------------------------------
-//	revision 1.85
+//	revision 185
 //---------------------------------------------------------------------
 
 GLOB: Now also binary distribution of libgmp for cygwin/g++.
@@ -234,13 +229,13 @@ GLOB: Cleanup in gmp_menu and cln_menu.
 GLOB: Another try to fix libpath for test_gmp on Borland.
 
 //---------------------------------------------------------------------
-//	revision 1.84
+//	revision 184
 //---------------------------------------------------------------------
 
 GLOB: Changed order of ldflags for gmp test.
 
 //---------------------------------------------------------------------
-//	revision 1.83
+//	revision 183
 //---------------------------------------------------------------------
 
 GLOB: Changed test_gmp for Borland.
@@ -249,96 +244,95 @@ DOCS: Some updates due to Dima.
 DOCS: Replaced LEDA-4.1-beta by LEDA-4.0. :-)
 
 //---------------------------------------------------------------------
-//	revision 1.82
+//	revision 182
 //---------------------------------------------------------------------
 
 GLOB: Changed real_which to work with spaces in directory names.
 GLOB: Added gmp installation in CGAL tree for cygwin.
 GLOB: Removed -DCGAL_LIMITED_ITERATOR_TRAITS_SUPPORT for MSVC.
-DOCS: Updated.
 DOCS: Major additions about MS-stuff by Dima.
 DOCS: Reorganized section order moving some stuff into the appendix.
 DOCS: A number of minor changes/additions.
 
 //---------------------------------------------------------------------
-//	revision 1.81
+//	revision 181
 //---------------------------------------------------------------------
 
 GLOB: Introduced CGAL_WINDOW_LD_LIBPATH in analogy to CGAL_LD_LIBPATH.
 DOCS: Some additions/corrections due to Dima.
 
 //---------------------------------------------------------------------
-//	revision 1.80
+//	revision 180
 //---------------------------------------------------------------------
 
 DOCS: Added Dima to the list of authors.
 
 //---------------------------------------------------------------------
-//	revision 1.79
+//	revision 179
 //---------------------------------------------------------------------
 
 ALL : Updated ps-docs.
 
 //---------------------------------------------------------------------
-//	revision 1.78
+//	revision 178
 //---------------------------------------------------------------------
 
 GLOB: Remove ii_files in .C.clean target for mips-CC.
 DOCS: Updated LEDA version number.
 
 //---------------------------------------------------------------------
-//	revision 1.77
+//	revision 177
 //---------------------------------------------------------------------
 
 GLOB: No gmp installation on cygwin.
 DOCS: Added docs for cygwin installation.
 
 //---------------------------------------------------------------------
-//	revision 1.76
+//	revision 176
 //---------------------------------------------------------------------
 
 GLOB: Changed order of retrieve_compiler_settings and set_compiler_flags.
 
 //---------------------------------------------------------------------
-//	revision 1.75
+//	revision 175
 //---------------------------------------------------------------------
 
 GLOB: Another try to fix WINDOW_LDFLAGS for cygwin/gcc.
 
 //---------------------------------------------------------------------
-//	revision 1.74
+//	revision 174
 //---------------------------------------------------------------------
 
 GLOB: Fixed WINDOW_LDFLAGS for cygwin/gcc.
 GLOB: Make sharedlib with make -k.
 
 //---------------------------------------------------------------------
-//	revision 1.73
+//	revision 173
 //---------------------------------------------------------------------
 
 GLOB: Added -D__STL_NO_DRAND48 ADDITIONAL_CXXFLAGS for cygwin-g++.
 
 //---------------------------------------------------------------------
-//	revision 1.72
+//	revision 172
 //---------------------------------------------------------------------
 
 GLOB: Set -vi- (inlining off) flag for Borland.
 GLOB: Set CGAL_WINDOW/GEOWIN_LDFLAGS also without LEDA (-> CGAL_LDFLAGS).
 
 //---------------------------------------------------------------------
-//	revision 1.71
+//	revision 171
 //---------------------------------------------------------------------
 
 GLOB: Changed .C/.o rule in include makefile for cygwin-g++.
 
 //---------------------------------------------------------------------
-//	revision 1.70
+//	revision 170
 //---------------------------------------------------------------------
 
 GLOB: Added advapi32.lib to XLIBS for MSVC.
 
 //---------------------------------------------------------------------
-//	revision 1.69
+//	revision 169
 //---------------------------------------------------------------------
 
 GLOB: EXTRA_OBJECTS with .o suffix for cygwin/gcc.
@@ -346,7 +340,7 @@ GLOB: EXE_OPT=.exe for cygwin/gcc.
 GLOB: Changed order ob libpath and link directives to please Borland.
 
 //---------------------------------------------------------------------
-//	revision 1.68
+//	revision 168
 //---------------------------------------------------------------------
 
 GLOB: Added LIB_SUFFIX, START_LD_OPT, LIBPATH_OPT and LIB_OPT to include
@@ -355,7 +349,7 @@ GLOB: Added CGAL_GEOWIN_LDFLAGS.
 GLOB: No workaround_4_ms.obj in EXTRA_OBJECTS for Borland.
 
 //---------------------------------------------------------------------
-//	revision 1.67
+//	revision 167
 //---------------------------------------------------------------------
 
 SRC : Generated by the release script now.
@@ -369,14 +363,14 @@ SRC : Initial revision
 SRC : Installation
 
 //---------------------------------------------------------------------
-//	revision 1.66
+//	revision 166
 //---------------------------------------------------------------------
 
 GLOB: Add workaround_4_ms.obj to CGAL_EXTRA_OBJECTS on CYGWIN.
 GLOB: Fixed newline problem in include makefile.
 
 //---------------------------------------------------------------------
-//	revision 1.65
+//	revision 165
 //---------------------------------------------------------------------
 
 GLOB: Fixed VC++ pattern problem (match for CL|cl without .exe).
@@ -384,19 +378,19 @@ GLOB: Added setting of CGAL_OBJ_PREFIX (for Borland support).
 GLOB: Changed CGAL_LIB_CREATE for Borland to "tlib /C /P512".
 
 //---------------------------------------------------------------------
-//	revision 1.64
+//	revision 164
 //---------------------------------------------------------------------
 
 
 //---------------------------------------------------------------------
-//	revision 1.63
+//	revision 163
 //---------------------------------------------------------------------
 
 GLOB: Do "make -i" for the libs in internal releases.
 GLOB: Set LONG_NAME_PROBLEM flags only when really needed.
 
 //---------------------------------------------------------------------
-//	revision 1.62
+//	revision 162
 //---------------------------------------------------------------------
 
 GLOB: Changed -Zm400 to -Zm900 for msvc. // DVP
@@ -404,26 +398,26 @@ GLOB: Remove __STL_DEBUG from the list of options for msvc // DVP
 GLOB: Corrected CGAL_WINDOW_LDFLAGS for MSVC.
 
 //---------------------------------------------------------------------
-//	revision 1.61
+//	revision 161
 //---------------------------------------------------------------------
 
 GLOB: Changed EXE_OPT back to '-Fp" for MSVC.
 
 //---------------------------------------------------------------------
-//	revision 1.60
+//	revision 160
 //---------------------------------------------------------------------
 
 GLOB: Fixed leda_lib_options for UNIX-compilers.
 
 //---------------------------------------------------------------------
-//	revision 1.59
+//	revision 159
 //---------------------------------------------------------------------
 
 GLOB: Added leda_lib_option flag.
 GLOB: Added -Zm400 to ADDITIONAL_CXXFLAGS for msvc.
 
 //---------------------------------------------------------------------
-//	revision 1.58
+//	revision 158
 //---------------------------------------------------------------------
 
 GLOB: Added flags for patched STLport to ADDIOTIONAL_CXXFLAGS for MSVC.
@@ -434,20 +428,20 @@ GLOB: No object file specification in compiler call.
 TEST: Added return 0;
 
 //---------------------------------------------------------------------
-//	revision 1.57
+//	revision 157
 //---------------------------------------------------------------------
 
 GLOB: fixed EXE_OPT setting.
 
 //---------------------------------------------------------------------
-//	revision 1.56
+//	revision 156
 //---------------------------------------------------------------------
 
 GLOB: Added GMP support for MSVC.
 TEST: Converted to namespace CGAL.
 
 //---------------------------------------------------------------------
-//	revision 1.55
+//	revision 155
 //---------------------------------------------------------------------
 
 GLOB: Fixed "nospace" bug in LIB_CREATE commands introduced by VC support.
@@ -455,30 +449,30 @@ GLOB: Fixed LIBPATHs for VC (GJ).
 GLOB: Fixed test ldflags for VC.
 
 //---------------------------------------------------------------------
-//	revision 1.54
+//	revision 154
 //---------------------------------------------------------------------
 
 GLOB: Fixed test_gmp to work on M$ as well.
 
 //---------------------------------------------------------------------
-//	revision 1.53
+//	revision 153
 //---------------------------------------------------------------------
 
 GLOB: Corrected CGAL_WINDOW_LDFLAGS setting.
 GLOB: Get INSTALL_CONF_VERSION from CGAL_CFG_NO_ITERATOR_TRAITS.C.
 
 //---------------------------------------------------------------------
-//	revision 1.52
+//	revision 152
 //---------------------------------------------------------------------
 
 
 //---------------------------------------------------------------------
-//	revision 1.51
+//	revision 151
 //---------------------------------------------------------------------
 
 
 //---------------------------------------------------------------------
-//	revision 1.50
+//	revision 150
 //---------------------------------------------------------------------
 
 GLOB: joined CGAL_LIB_NAME and CGAL_LIBNAME.
@@ -493,13 +487,13 @@ DOCS: Added description of CLN support.
 DOCS: Some minor corrections.
 
 //---------------------------------------------------------------------
-//	revision 1.49
+//	revision 149
 //---------------------------------------------------------------------
 
 GLOB: commented lib_platform_dependent.
 
 //---------------------------------------------------------------------
-//	revision 1.48
+//	revision 148
 //---------------------------------------------------------------------
 
 GLOB: Some changes for MS-Borland support due to GJ.
@@ -507,7 +501,7 @@ GLOB: Added CLN support due to Sylvain.
 GLOB: Fixed verbose mode.
 
 //---------------------------------------------------------------------
-//	revision 1.47
+//	revision 147
 //---------------------------------------------------------------------
 
 GLOB: changed to support M$ compilers acc. to GJ's suggestions.
@@ -517,7 +511,7 @@ GLOB: no support for gcc prior to 2.8 anymore.
 GLOB: fixed little problem with install-script name - now $CGAL_INSTALL_CGAL.
 
 //---------------------------------------------------------------------
-//	revision 1.46
+//	revision 146
 //---------------------------------------------------------------------
 
 DOCS: added section "Compiler Optimisations"
@@ -525,13 +519,13 @@ DOCS: added long-name-problem remarks to Troubleshooting
 DOCS: moved leda-stl-conflict subsection to Troubleshooting
 
 //---------------------------------------------------------------------
-//	revision 1.45
+//	revision 145
 //---------------------------------------------------------------------
 
 GLOB: fixed EXTRA_OBJECTS bug (workaround_4_irix was addded ALWAYS).
 
 //---------------------------------------------------------------------
-//	revision 1.44
+//	revision 144
 //---------------------------------------------------------------------
 
 GLOB: changed EXTRA_OBJECTS for Intervall_arithmetic workaround on irix6.
@@ -539,7 +533,7 @@ DOCS: updated documentation acc.to Stefan's suggestions.
 SRC : fixed IA workaround_irix naming.
 
 //---------------------------------------------------------------------
-//	revision 1.43
+//	revision 143
 //---------------------------------------------------------------------
 
 DOCS: added documentation of scripts (use_cgal_namespace,
@@ -547,7 +541,7 @@ DOCS: create_cgal_makefile and replace_headers).
 DOCS: some minor corrections/clarifications.
 
 //---------------------------------------------------------------------
-//	revision 1.42
+//	revision 142
 //---------------------------------------------------------------------
 
 GLOB: define CGAL_CC in include makefiles.
@@ -555,7 +549,7 @@ GLOB: write CGAL_EXTRA_OBJECTS without path-prefix.
 SRC : added rule for compiling the intervall-arithmetic workaround_4_irix.
 
 //---------------------------------------------------------------------
-//	revision 1.41
+//	revision 141
 //---------------------------------------------------------------------
 
 GLOB: generate cctype replacement header, if CCTYPE_MACRO_BUG is encountered.
@@ -563,7 +557,7 @@ GLOB: add -DLEDA_NO_DEFAULT_COMPARE to cxxflags on gcc-2.8.
 GLOB: use "make -k" when building the libs.
 
 //---------------------------------------------------------------------
-//	revision 1.40
+//	revision 140
 //---------------------------------------------------------------------
 
 GLOB: added CGAL_EXTRA_OBJECTS to include makefile (Intervall_arithmetic fix
@@ -571,7 +565,7 @@ ALL : for irix)
 SRC : added CGAL_EXTRA_OBJECTS to lib makefiles (Intervall_arithmetic fix
 
 //---------------------------------------------------------------------
-//	revision 1.39
+//	revision 139
 //---------------------------------------------------------------------
 
 GLOB: added -DLEDA_STD_HEADERS if compiling with LEDA support
@@ -579,21 +573,21 @@ GLOB: undefine evt. existing cctype macros (see CGAL_CFG_CCTYPE_MACRO_BUG)
 GLOB: in cctype, use the functions instead
 
 //---------------------------------------------------------------------
-//	revision 1.38
+//	revision 138
 //---------------------------------------------------------------------
 
 GLOB: added strstream to the redirection headers
 GLOB: do not add the cctype symbols to namespace std (they are macros)
 
 //---------------------------------------------------------------------
-//	revision 1.37
+//	revision 137
 //---------------------------------------------------------------------
 
 GLOB: added using directives to replacement headers to put symbols into
 GLOB: namespace std that should be there.
 
 //---------------------------------------------------------------------
-//	revision 1.36
+//	revision 136
 //---------------------------------------------------------------------
 
 GLOB: changed order in compiler tests: first check standard headers
@@ -602,7 +596,7 @@ GLOB: changed to support Cygwin
 GLOB: corrected OS description on Linux
 
 //---------------------------------------------------------------------
-//	revision 1.35
+//	revision 135
 //---------------------------------------------------------------------
 
 GLOB: removed explicit support for "external" STL.
@@ -614,7 +608,7 @@ DOCS: updated upgrade section.
 DOCS: updated list of supported compilers.
 
 //---------------------------------------------------------------------
-//	revision 1.34
+//	revision 134
 //---------------------------------------------------------------------
 
 ALL : Update for CGAL-2.0.
@@ -624,12 +618,12 @@ GLOB: New Upgrade option.
 SRC : added Fixed_precision_nt.o.
 
 //---------------------------------------------------------------------
-//	revision 1.33
+//	revision 133
 //---------------------------------------------------------------------
 
 
 //---------------------------------------------------------------------
-//	revision 1.32
+//	revision 132
 //---------------------------------------------------------------------
 
 GLOB: added -Wall flag for gcc2.8/egcs.
@@ -637,20 +631,20 @@ GLOB: added standard header redirection by Geert-Jan.
 GLOB: added namespace disabling for SGI-7.2.1 in tests.
 
 //---------------------------------------------------------------------
-//	revision 1.31
+//	revision 131
 //---------------------------------------------------------------------
 
 SRC : added File_header_extended_OFF.o to CGAL_OBJECTS.
 
 //---------------------------------------------------------------------
-//	revision 1.30
+//	revision 130
 //---------------------------------------------------------------------
 
 GLOB: removed geomview support (now in geomview package).
 SRC : added Geomview_stream.o to CGAL_OBJECTS in makefiles.
 
 //---------------------------------------------------------------------
-//	revision 1.29
+//	revision 129
 //---------------------------------------------------------------------
 
 GLOB: added geomview support,
@@ -659,7 +653,7 @@ DOCS: adopted to new html-converter.
 GLOB: Updated sample include makefiles + README.
 
 //---------------------------------------------------------------------
-//	revision 1.28
+//	revision 128
 //---------------------------------------------------------------------
 
 GLOB: Added variable PRINT_STACKTRACE_PROGRAM to include makefiles. It can
@@ -668,33 +662,33 @@ GLOB: testsuite.
 DOCS: Made conformant to the new html coverter.
 
 //---------------------------------------------------------------------
-//	revision 1.27
+//	revision 127
 //---------------------------------------------------------------------
 
 GLOB: yet another printf "-" fix for Linux.
 DOCS: changed LEDA from 3.6.1 to 3.7.
 
 //---------------------------------------------------------------------
-//	revision 1.26
+//	revision 126
 //---------------------------------------------------------------------
 
 GLOB: removed some superfluous '\n's.
 
 //---------------------------------------------------------------------
-//	revision 1.25
+//	revision 125
 //---------------------------------------------------------------------
 
 GLOB: also fixed CGAL_SHARED_LIB_LDFLAGS for IRIX5 make. :)
 DOCS: updated titlepage to use the cgalrelease macro.
 
 //---------------------------------------------------------------------
-//	revision 1.24
+//	revision 124
 //---------------------------------------------------------------------
 
 GLOB: write CGAL_LIB_LDFLAGS on one line in order to not confuse IRIX5 make.
 
 //---------------------------------------------------------------------
-//	revision 1.23
+//	revision 123
 //---------------------------------------------------------------------
 
 GLOB: changed various printf statements to make them (hopefully)
@@ -704,7 +698,7 @@ GLOB: added LONG_NAME_PROBLEM_...FLAGS.
 DOCS: Updated for CGAL-1.1.
 
 //---------------------------------------------------------------------
-//	revision 1.22
+//	revision 122
 //---------------------------------------------------------------------
 
 GLOB: set -ftemplate-depth-25 for egcs-gcc2.8,
@@ -712,13 +706,13 @@ GLOB: CGAL_RELEASE : 0.9 --> 1.0
 GLOB: changed makefile replace_line for example dirs (acc. to Wieger).
 
 //---------------------------------------------------------------------
-//	revision 1.21
+//	revision 121
 //---------------------------------------------------------------------
 
 GLOB: fixed NO COMPILER DETECTED bug reported by Sven.
 
 //---------------------------------------------------------------------
-//	revision 1.20
+//	revision 120
 //---------------------------------------------------------------------
 
 GLOB: On GCC 2.7, stl version is only set to CGAL_STL_GCC,
@@ -728,7 +722,7 @@ GLOB: with correct COMPILER string,
 GLOB: compiler are also read from INSTALL_CONF_DIR.
 
 //---------------------------------------------------------------------
-//	revision 1.19
+//	revision 119
 //---------------------------------------------------------------------
 
 GLOB: enabled SGI MIPS64 compiler support (+GMP),
@@ -737,7 +731,7 @@ GLOB: divided usage and general information.
 GLOB: ,
 
 //---------------------------------------------------------------------
-//	revision 1.18
+//	revision 118
 //---------------------------------------------------------------------
 
 GLOB: added cmdline options --CGAL_DIR,
@@ -746,14 +740,14 @@ GLOB: if libgmp is found, set GMP_INSTALLATION to 'c' (but reset
 GLOB:  GMP_TEST_PASSED).
 
 //---------------------------------------------------------------------
-//	revision 1.17
+//	revision 117
 //---------------------------------------------------------------------
 
 GLOB: added setting for irix/gcc2.8 (is more like egcs than like gcc2.7),
 GLOB: corrected sgi_version generation (did not work in Linz/6.2 CC 7.1).
 
 //---------------------------------------------------------------------
-//	revision 1.16
+//	revision 116
 //---------------------------------------------------------------------
 
 GLOB: added entry for egcs on irix,
@@ -761,14 +755,14 @@ GLOB: made n32 default on irix6,
 GLOB: and fixed version grep on config.
 
 //---------------------------------------------------------------------
-//	revision 1.15
+//	revision 115
 //---------------------------------------------------------------------
 
 GLOB: fixed yet another GMP bug (ni-mode) reported by Stefan.
 GLOB: added CGAL_USE_LEDA and CGAL_USE_GMP flags.
 
 //---------------------------------------------------------------------
-//	revision 1.14
+//	revision 114
 //---------------------------------------------------------------------
 
 GLOB: fixed some makefile \\\\ bugs reported by Sven and Herve,
@@ -776,7 +770,7 @@ GLOB: fixed a compiler-path bug reported by Stefan and
 GLOB: sets CGAL_STL_GCC only for GCC 2.7.2 (not egcs).
 
 //---------------------------------------------------------------------
-//	revision 1.13
+//	revision 113
 //---------------------------------------------------------------------
 
 GLOB: support MIPSPRO CC 7.2
@@ -785,13 +779,13 @@ GLOB: handle new example dir structure correctly
 GLOB: one more link_gmp fix :)
 
 //---------------------------------------------------------------------
-//	revision 1.12
+//	revision 112
 //---------------------------------------------------------------------
 
 GLOB: added support for SGI STL 3.0
 
 //---------------------------------------------------------------------
-//	revision 1.11
+//	revision 111
 //---------------------------------------------------------------------
 
 GLOB: added support for n32 and 64 compilers on irix6,
@@ -801,7 +795,7 @@ GLOB: changed internal handling of compilers (..@..@..@..)
 GLOB: and some minor improvements and corrections.
 
 //---------------------------------------------------------------------
-//	revision 1.10
+//	revision 110
 //---------------------------------------------------------------------
 
 GLOB: corrected help message (2 x LEDA_INCL_DIR)
@@ -812,20 +806,20 @@ GLOB:  on
 GLOB: (until now it checked right away after compiler was chosen)
 
 //---------------------------------------------------------------------
-//	revision 1.9
+//	revision 19
 //---------------------------------------------------------------------
 
 GLOB: replaced echo by printf in some cases
 GLOB: changed to generate compiler specific include file (compiler_config.h)
 
 //---------------------------------------------------------------------
-//	revision 1.8
+//	revision 18
 //---------------------------------------------------------------------
 
 GLOB: changed order of syslib/cgal detection for gmp
 
 //---------------------------------------------------------------------
-//	revision 1.7
+//	revision 17
 //---------------------------------------------------------------------
 
 GLOB: moved LEDA sysincl/-lib tests to leda_menu
@@ -833,7 +827,7 @@ GLOB: added CUSTOM flags to sysincl/-lib and bultin stl tests
 GLOB: changed shared lib flags on Solaris/g++ to -G
 
 //---------------------------------------------------------------------
-//	revision 1.6
+//	revision 16
 //---------------------------------------------------------------------
 
 GLOB: numerous number of bugfixes
@@ -843,7 +837,7 @@ GLOB: testing is now more transparent and configurable
 GLOB: custom compiler and linker flags can be defined
 
 //---------------------------------------------------------------------
-//	revision 1.5
+//	revision 15
 //---------------------------------------------------------------------
 
 GLOB: added support for automated gmp installation. Since there is no difference
@@ -859,7 +853,7 @@ GLOB: -frtti for gnu is now only set in rtti-support settings.
 GLOB: some minor fixes.
 
 //---------------------------------------------------------------------
-//	revision 1.4
+//	revision 14
 //---------------------------------------------------------------------
 
 GLOB: Two minor changes suggested by Wieger.
@@ -867,7 +861,7 @@ GLOB: One COMPILER='' line added(to prevent from wrong auto-choosing).
 GLOB: replaced '_rtti' extension by '-rtti' as suggested by Sven.
 
 //---------------------------------------------------------------------
-//	revision 1.3
+//	revision 13
 //---------------------------------------------------------------------
 
 GLOB: STL test works for Moskow STL.
@@ -878,7 +872,7 @@ GLOB: changed include makefile generation due to Wieger.
 GLOB: changed cgal_test replacement due to Wieger.
 
 //---------------------------------------------------------------------
-//	revision 1.2
+//	revision 12
 //---------------------------------------------------------------------
 
 GLOB: fixed /bin/which bug (looks for non-existent aliases in ~/.cshrc) by

@@ -7,6 +7,7 @@
 //	actual revision
 //---------------------------------------------------------------------
 
+GLOB: Changed STL include for VC7-beta.
 GLOB: Set -ftemplate-depth25 for gcc 2.* only. (gcc 3 has a default of 50.)
 GLOB: Fixed clocales -> clocale.
 GLOB: Replace "/" by "-" in compiler name (non-interactive mode).
@@ -21,7 +22,7 @@ GLOB: Run the compiler tests when it becomes necessary only.
 ALL : Changed CGAL version to 2.3.
 
 //---------------------------------------------------------------------
-//	 CGAL-2.2
+//	 
 //---------------------------------------------------------------------
 
 GLOB: Show KCC support (fixed).
@@ -39,7 +40,6 @@ ALL : Added/Corrected LONG_NAME_PROBLEM_LDFLAGS for Irix.
 GLOB: Added flags for Solaris / KCC.
 GLOB: Fixed problem in _real_options.
 ALL : Updated CGAL_VERSION to 2.2.
-DOCS: updated.
 DOCS: Some minor corrections by Susan and Dima.
 DOCS: Fixed footnotes for HTML acc. to Susan's remarks.
 DOCS: Updated list of supported compilers: add borland and kcc.
@@ -54,7 +54,7 @@ DOCS: Replaced path by nonlinkedpath.
 DOCS: moved here from former package Installation_doc.
 
 //---------------------------------------------------------------------
-//	 CGAL-2.1
+//	 
 //---------------------------------------------------------------------
 
 GLOB: Updated makefile.
@@ -138,22 +138,6 @@ GLOB: removed CGAL_directories (contained only two variables).
 GLOB: no support for gcc prior to 2.8 anymore.
 GLOB: fixed little problem with install-script name - now $CGAL_INSTALL_CGAL.
 ALL : Initial revision
-DOCS: Updated.
-DOCS: Some additions/corrections due to Dima.
-DOCS: updated documentation acc.to Stefan's suggestions.
-DOCS: added documentation of scripts (use_cgal_namespace,
-DOCS: create_cgal_makefile and replace_headers).
-DOCS: some minor corrections/clarifications.
-DOCS: sample installation now with egcs
-DOCS: removed support for "external" STL
-DOCS: removed obsolete paragraph about LEDA/STL problems
-DOCS: updated upgrade section.
-DOCS: updated list of supported compilers.
-DOCS: updated titlepage to 1.1.
-DOCS: Updated to Rev 1.28.
-DOCS: moved from former package Installation_doc.
-DOCS: Added description of CLN support.
-DOCS: Some minor corrections.
 DOCS: Some fixes by Stefan and Susan.
 DOCS: Removed overfull boxes.
 DOCS: Updated CGAL version in --upgrade.
@@ -164,8 +148,11 @@ DOCS: Replaced LEDA-4.1-beta by LEDA-4.0. :-)
 DOCS: Major additions about MS-stuff by Dima.
 DOCS: Reorganized section order moving some stuff into the appendix.
 DOCS: A number of minor changes/additions.
+DOCS: Some additions/corrections due to Dima.
 DOCS: Updated LEDA version number.
 DOCS: Added docs for cygwin installation.
+DOCS: Added description of CLN support.
+DOCS: Some minor corrections.
 DOCS: Added Dima to the list of authors.
 DOCS: Fixed Y2K-problem in mydate.
 TEST: Updated makefile and removed superfluous include in example.C.
@@ -182,7 +169,7 @@ SRC : added Geomview_stream.o to CGAL_OBJECTS in makefiles.
 SRC : Installation
 
 //---------------------------------------------------------------------
-//	 CGAL-2.0
+//	 
 //---------------------------------------------------------------------
 
 GLOB: fixed EXTRA_OBJECTS bug (workaround_4_irix was addded ALWAYS).
@@ -211,6 +198,9 @@ ALL : Update for CGAL-2.0.
 GLOB: Show whether compiler is supported.
 GLOB: Create redirection header files in correct dir.
 GLOB: New Upgrade option.
+DOCS: added section "Compiler Optimisations"
+DOCS: added long-name-problem remarks to Troubleshooting
+DOCS: moved leda-stl-conflict subsection to Troubleshooting
 DOCS: updated documentation acc.to Stefan's suggestions.
 DOCS: added documentation of scripts (use_cgal_namespace,
 DOCS: create_cgal_makefile and replace_headers).
@@ -220,16 +210,13 @@ DOCS: removed support for "external" STL
 DOCS: removed obsolete paragraph about LEDA/STL problems
 DOCS: updated upgrade section.
 DOCS: updated list of supported compilers.
-DOCS: added section "Compiler Optimisations"
-DOCS: added long-name-problem remarks to Troubleshooting
-DOCS: moved leda-stl-conflict subsection to Troubleshooting
 SRC : fixed IA workaround_irix naming.
 SRC : added rule for compiling the intervall-arithmetic workaround_4_irix.
 SRC : added CGAL_EXTRA_OBJECTS to lib makefiles (Intervall_arithmetic fix
 SRC : added Fixed_precision_nt.o.
 
 //---------------------------------------------------------------------
-//	 CGAL-1.2
+//	 
 //---------------------------------------------------------------------
 
 GLOB: added -Wall flag for gcc2.8/egcs.
@@ -244,7 +231,7 @@ SRC : added File_header_extended_OFF.o to CGAL_OBJECTS.
 SRC : added Geomview_stream.o to CGAL_OBJECTS in makefiles.
 
 //---------------------------------------------------------------------
-//	 CGAL-1.1
+//	 
 //---------------------------------------------------------------------
 
 GLOB: Added variable PRINT_STACKTRACE_PROGRAM to include makefiles. It can
