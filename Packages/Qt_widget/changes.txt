@@ -1,3 +1,8 @@
+1.2.33
+----------------
+Some names from the demos were change because of Qt.3 and Windows. Especially for Rectangle and Polygon.
+The makefiles from the tutorials were patched in the clean section.
+
 1.2.32
 --------------------
 The demos are different. The demos involved are Trianguation_2 and Alpha_shapes_2.
