@@ -172,7 +172,8 @@ _test_cls_triangulation_3(const Triangulation &)
 
   std::cout << "    Constructor2 " << std::endl;
 
-  v0=T0.insert(Point(100,100,0));
+  Point p11(100,100,0);
+  v0=T0.insert(p11);
   assert(T0.dimension() == 1);
   assert(T0.number_of_vertices() == 2);
   assert(T0.is_valid());
@@ -192,7 +193,9 @@ _test_cls_triangulation_3(const Triangulation &)
     }
 
   std::cout << "    Constructor3 " << std::endl;
-  v0=T0.insert(Point(100,-100,0));
+
+  Point p12(100,-100,0);
+  v0=T0.insert(p12);
   assert(T0.dimension() == 2);
   assert(T0.number_of_vertices() == 3);
   assert(T0.is_valid());
@@ -213,7 +216,8 @@ _test_cls_triangulation_3(const Triangulation &)
 
   std::cout << "    Constructor4 " << std::endl;
 
-  v0=T0.insert(Point(50,0,100));
+  Point p13(50,0,100);
+  v0=T0.insert(p13);
   assert(T0.dimension() == 3);
   assert(T0.number_of_vertices() == 4);
   assert(T0.is_valid());
@@ -233,7 +237,9 @@ _test_cls_triangulation_3(const Triangulation &)
     }
 
   std::cout << "    Constructor5 " << std::endl;
-  v0=T0.insert(Point(50,0,100));
+
+  Point p14(50,0,100);
+  v0=T0.insert(p14);
   assert(T0.dimension() == 3);
   assert(T0.number_of_vertices() == 4);
   assert(T0.is_valid());
@@ -380,9 +386,13 @@ _test_cls_triangulation_3(const Triangulation &)
   int m;
   int px=1, py=1;
   int qx=-1, qy=2;
+  Point qq[400];
   for (m=0; m<20; m++)
     for (n=0; n<20; n++)
-      T2_1.insert( Point(m*px+n*qx, m*py+n*qy, 1) );
+      {
+	qq[m+20*n] = Point(m*px+n*qx, m*py+n*qy, 1);
+	T2_1.insert( qq[m+20*n] );
+      }
   assert( T2_1.number_of_vertices() == m*n );
   assert( T2_1.dimension()==2 );
   assert( T2_1.is_valid() );
@@ -392,10 +402,14 @@ _test_cls_triangulation_3(const Triangulation &)
   // This is a simple grid :
   int x,y,z;
   Cls T3_0;
+  Point r[225];
   for (z=0 ; z<5 ; z++)
     for (y=0 ; y<5 ; y++)
       for (x=0 ; x<5 ; x++) 
-	v0=T3_0.insert(Point(x,y,z));
+	{
+	  r[x+5*y+25*z] = Point(x,y,z);
+	  v0=T3_0.insert(r[x+5*y+25*z]);
+	}
   assert(T3_0.is_valid());
   assert(T3_0.number_of_vertices()==125);
   assert(T3_0.dimension()==3);
@@ -459,19 +473,19 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(T3_2.number_of_vertices()==1000);
  
 
-
-
+  Point p110(-5,5,0), p111(-2,-5,2), p112(-2,-9,6), p113(4,8,9), p114(5,-6,0),
+    p115(3,0,5), p116(-9,0,-10), p117(1,6,-2), p118(-3,2,-4), p119(3,-3,-1);
   Cls T3_5;
-  v0=T3_5.insert(Point(-5,5,0));
-  v0=T3_5.insert(Point(-2,-5,2));
-  v0=T3_5.insert(Point(-2,-9,6));
-  v0=T3_5.insert(Point(4,8,9));
-  v0=T3_5.insert(Point(5,-6,0));
-  v0=T3_5.insert(Point(3,0,5));
-  v0=T3_5.insert(Point(-9,0,-10));
-  v0=T3_5.insert(Point(1,6,-2));
-  v0=T3_5.insert(Point(-3,2,-4));
-  v0=T3_5.insert(Point(3,-3,-1));
+  v0=T3_5.insert(p110);
+  v0=T3_5.insert(p111);
+  v0=T3_5.insert(p112);
+  v0=T3_5.insert(p113);
+  v0=T3_5.insert(p114);
+  v0=T3_5.insert(p115);
+  v0=T3_5.insert(p116);
+  v0=T3_5.insert(p117);
+  v0=T3_5.insert(p118);
+  v0=T3_5.insert(p119);
   
   assert(T3_5.is_valid());
   assert(T3_5.number_of_vertices()==10);
@@ -502,15 +516,18 @@ _test_cls_triangulation_3(const Triangulation &)
   Locate_type lt;
   int li,lj,i1,i2;
   Cls Ti = T0;
-  v0=Ti.insert_in_cell(Point(50,0,50),Ti.locate(Point(50,0,50)));
+  Point p20(50,0,50);
+  v0=Ti.insert_in_cell(p20,Ti.locate(Point(50,0,50)));
   assert(Ti.is_valid());
   assert(Ti.number_of_vertices() == 5);
   Ti=T0;
-  v0=Ti.insert_in_facet(Point(50,0,0),Ti.locate(Point(50,0,1)),3);
+  Point p120(50,0,0);
+  v0=Ti.insert_in_facet(p120,Ti.locate(Point(50,0,1)),3);
   assert(Ti.is_valid());
   assert(Ti.number_of_vertices() == 5);
   Ti=T0;
-  v0=Ti.insert_in_facet(Point(50,0,0),Facet(Ti.locate(Point(50,0,1)),3));
+  Point p21(50,0,0);
+  v0=Ti.insert_in_facet(p21,Facet(Ti.locate(Point(50,0,1)),3));
   assert(Ti.is_valid());
   assert(Ti.number_of_vertices() == 5);
   Ti=T0;
@@ -521,7 +538,8 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(lt==Cls::VERTEX);
   i2=li;
 
-  v0=Ti.insert_in_edge(Point(50,50,0),Ti.locate(Point(50,40,1)),i1,i2);
+  Point p22(50,50,0);
+  v0=Ti.insert_in_edge(p22,Ti.locate(Point(50,40,1)),i1,i2);
   assert(Ti.is_valid());
   assert(Ti.number_of_vertices() == 5);
 
@@ -532,7 +550,8 @@ _test_cls_triangulation_3(const Triangulation &)
   c= Ti.locate(Point(100,100,0),lt,li,lj);
   assert(lt==Cls::VERTEX);
   i2=li;
-  v0=Ti.insert_in_edge(Point(50,50,0),Edge(Ti.locate(Point(50,50,0)),i1,i2));
+  Point p23(50,50,0);
+  v0=Ti.insert_in_edge(p23,Edge(Ti.locate(Point(50,50,0)),i1,i2));
   assert(Ti.is_valid());
   assert(Ti.number_of_vertices() == 5);
 
@@ -545,20 +564,24 @@ _test_cls_triangulation_3(const Triangulation &)
 
   c= Ti.locate(Point(50,50,50),lt,li,lj);
       
-  v0= Ti.insert_outside_convex_hull(Point(50,50,50),c);
+  Point p24(50,50,50);
+  v0= Ti.insert_outside_convex_hull(p24,c);
   assert(Ti.is_valid());
 
   assert(Ti.number_of_vertices() == 5);
 
   Cls T3_3=T1_0;
-  v0=T3_3.insert_outside_affine_hull(Point(2,0,0));
+  Point p25(2,0,0);
+  v0=T3_3.insert_outside_affine_hull(p25);
   assert(T3_3.is_valid());
   assert(T3_3.dimension()==2);
   c= T3_3.locate(Point(4,0,0),lt,li,lj);
-  v0=T3_3.insert_outside_convex_hull(Point(4,0,0),c);
+  Point p26(4,0,0);
+  v0=T3_3.insert_outside_convex_hull(p26,c);
   assert(T3_3.is_valid());
   assert(T3_3.dimension()==2);
-  v0=T3_3.insert_outside_affine_hull(Point(0,5,0));
+  Point p27(0,5,0);
+  v0=T3_3.insert_outside_affine_hull(p27);
   assert(T3_3.is_valid());
   assert(T3_3.dimension()==3);
 
@@ -659,7 +682,8 @@ _test_cls_triangulation_3(const Triangulation &)
        // Iterator and circulator test
 
   Cls T0_1;
-  v0=T0_1.insert(Point(1,3,5));
+  Point p28(1,3,5);
+  v0=T0_1.insert(p28);
   if (! del) // to avoid doing the following tests for both Delaunay
     // and non Delaunay triangulations 
     {

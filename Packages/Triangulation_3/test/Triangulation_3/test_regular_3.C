@@ -53,7 +53,7 @@ int main()
 // works with both geom_traits
 // typedef CGAL::_Triangulation_test_traits_3                         traits;
 
-  typedef CGAL::Triangulation_vertex_base_3<traits>                 Vb;
+  typedef CGAL::Triangulation_vertex_base_pointer_3<traits>                 Vb;
   typedef CGAL::Triangulation_cell_base_3<traits>                   Fb;
   typedef CGAL::Triangulation_data_structure_3<Vb,Fb>               Tds;
   typedef CGAL::Regular_triangulation_3<traits,Tds>                Cls;
@@ -145,9 +145,11 @@ int main()
   count = 0 ;
   int px=1, py=1;
   int qx=-1, qy=2;
+  Weighted_point s[400];
   for (m=0; m<10; m++)
     for (n=0; n<10; n++) {
-      T2.insert( Weighted_point( Point(m*px+n*qx, m*py+n*qy, 0), 1 ) );
+      s[m+20*n] = Weighted_point( Point(m*px+n*qx, m*py+n*qy, 0), 1 );
+      T2.insert( s[m+20*n] );
       count++;
       if (count <10)
 	std::cout << count << '\b' ;
@@ -160,7 +162,8 @@ int main()
     }
   for (m=10; m<20; m++)
     for (n=0; n<10; n++) {
-      T2.insert( Weighted_point( Point(m*px+n*qx, m*py+n*qy, 0), -1 ) );
+      s[m+20*n] = Weighted_point( Point(m*px+n*qx, m*py+n*qy, 0), -1 );
+      T2.insert( s[m+20*n] );
       count++;
       if (count <10)
 	std::cout << count << '\b' ;
@@ -173,7 +176,8 @@ int main()
     }
   for (m=0; m<10; m++)
     for (n=10; n<20; n++) {
-      T2.insert( Weighted_point( Point(m*px+n*qx, m*py+n*qy, 0), -2 ) );
+      s[m+20*n] = Weighted_point( Point(m*px+n*qx, m*py+n*qy, 0), -2 );
+      T2.insert( s[m+20*n] );
       count++;
       if (count <10)
 	std::cout << count << '\b' ;
@@ -186,7 +190,8 @@ int main()
     }
   for (m=10; m<20; m++)
     for (n=10; n<20; n++) {
-      T2.insert( Weighted_point( Point(m*px+n*qx, m*py+n*qy, 0), 5 ) );
+      s[m+20*n] = Weighted_point( Point(m*px+n*qx, m*py+n*qy, 0), 5 );
+      T2.insert( s[m+20*n] );
       count++;
       if (count <10)
 	std::cout << count << '\b' ;
