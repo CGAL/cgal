@@ -242,19 +242,21 @@ standard-compliant platforms there should be no flags at all.
 
 \InternalOnly{
 Which compilers passed which tests can be determined by looking at the 
-\ccAnchor{http://www.cs.uu.nl/CGAL/Members/Develop/testsuite/results.html}%
+\ccAnchor{http://www-sop.inria.fr/geometrica/CGAL/Members/testsuite/}%
 {test suite results page}\lcTex{ ( 
-\nonlinkedpath|http://www.cs.uu.nl/CGAL/Members/Develop/testsuite/results.html|)}
+\nonlinkedpath|http://www-sop.inria.fr/geometrica/CGAL/Members/testsuite/|)}
 for the package \texttt{Configuration}.
 }
 
-\noindent Currently (CGAL-2.4-I-8), we have the following configuration
+\noindent Currently (CGAL-3.1-I-33), we have the following configuration
 test files (and flags). The short descriptions that are given in the files are 
 included here. In some cases, it is probably necessary to have a look at the
 actual files to understand what the flag is for. This list is just to
 give an overview.  See the section on
 \ccAnchor{http://www.cgal.org/Manual/doc_html/installation/Chapter_installation.html#Section_17}{troubleshooting} in the installation guide
 for more explanation of some of these problems and known workarounds. 
+Be sure to have a look at \texttt{Configuration/config/testfiles/} to have an
+uptodate version of this list.
 
 \begin{description}
 \item[{\tt CGAL\_CFG\_CCTYPE\_MACRO\_BUG}]~\\
@@ -264,43 +266,11 @@ for more explanation of some of these problems and known workarounds.
  functions in {\tt cctype} ({\tt isdigit} \etc) as macros.  According
  to the standard they have to be functions.
  
-\item[{\tt CGAL\_CFG\_EARLY\_INSTANTIATION\_BUG}]~\\
-  \ccIndexMainItem{early instantiation} %
-  \ccIndexSubitem{compiler bugs}{early instantiation} %
-  This flag is set, if a compiler instantiates a class template
-  \ccc{A<>} too early, where \ccc{A<>} is declared in the scope of
-  another class template \ccc{B<>}, such that \ccc{B<>} is the
-  template parameter of \ccc{A<>}. This bug shows up on VC~7.0
-  (\ccc{cl1300}).
-
-\item[{\tt CGAL\_CFG\_ENUM\_BUG}]~\\
- \ccIndexMainItem{enumeration types} %
- \ccIndexSubitem{compiler bugs}{enumeration types} %
- This flag is set, if the compiler does not promote enumeration types
- (which depend on a template parameter) correctly when they are used
- as int template arguments (\eg, Borland 5.5).
-
-\item[{\tt CGAL\_CFG\_EXPLICIT\_SPECIALIZATION\_MEMBER\_DECLARATION\_BUG}]~\\
- \ccIndexMainItem{explicit specialization} %
- \ccIndexSubitem{compiler bugs}{specializations} %
- This flag is set, if a compiler does not support the declaration of
- the specialized member. This is useful when you need to put the
- definition in a \ccc{.C} file. The solution for VC~7.0 (\ccc{cl1300})
- is to remove the declaration and to make the member inline to avoid
- linker errors (more definitions in multiple units).
-
 \item[{\tt CGAL\_CFG\_LONGNAME\_BUG}]~\\
  \ccIndexMainItem{long-name problem} %
  \ccIndexSubitem{compiler bugs}{long symbol names} %
  This flag is set if a compiler (or assembler or linker) has problems 
  with long symbol names. 
-
-\item[{\tt CGAL\_CFG\_MATCHING\_BUG\_2}]~\\
- \ccIndexSubitem{matching}{function template arguments} %
- \ccIndexSubitem{compiler bugs}{function template overloading} %
- This flag is set if the compiler does not match the most specialized
- instance of a function template correctly, but complains about
- multiple matches (\eg, SGI 7.2).
 
 \item[{\tt CGAL\_CFG\_MATCHING\_BUG\_3}]~\\
  \ccIndexSubitem{matching}{pointer type arguments} %
@@ -316,15 +286,6 @@ for more explanation of some of these problems and known workarounds.
  overloaded function templates, which have arguments whose type
  depends on the template parameter.  This bug appears for example on
  Sunpro~5.3 and 5.4.
-
-\item[{\tt CGAL\_CFG\_NESTED\_CLASS\_TEMPLATE\_BUG}]~\\
- \ccIndexSubitem{compiler bugs}{nested class templates} %
- This flag ist set, if a compiler cannot parse an instantiation of a
- nested class template \ccc{B<>} which is defined in another class
- template \ccc{A<>}. This bug shows up on VC~7.0 (\ccc{cl1300}). A
- workaround is to pass the instantiation of \ccc{A<>} to a helper
- class which extracts \ccc{B<>}. (See the file
- \texttt{include/CGAL/Kernel\_d/Iso\_box\_d.h}.)
 
 \item[{\tt CGAL\_CFG\_NET2003\_MATCHING\_BUG}]~\\
  \ccIndexSubitem{matching}{member functions} %
@@ -419,27 +380,8 @@ for more explanation of some of these problems and known workarounds.
   \ccIndexSubitem{compiler bugs}{member definitions} %
   This flag is set, if a compiler does not support the definition of
   member templates out of line, \ie, outside class scope. The solution
-  is to put the definition inside the class. This is a feature of VC~6
-  (\ccc{cl1200}) and VC~7.0 (\ccc{cl1300}).
-
-\item[{\tt CGAL\_CFG\_RETURN\_TYPE\_BUG}]~\\
-  \ccIndexMainItem{overloading on return type} %
-  \ccIndexSubitem{compiler bugs}{function template overloading} %
-  This flag is set, if a compiler does not accept the overloading of a
-  template function, when the template returns a reference, while the
-  overloading does not. This bug shows up on VC~6 (\ccc{cl1200}) and
-  VC~7.0 (\ccc{cl1300}).
-
-\item[{\tt CGAL\_CFG\_USING\_NAMESPACE\_BUG}]~\\
-  \ccIndexSubitem{compiler bugs}{namespaces} %
-  This flag is set, if a compiler cannot handle using directives
-  (using namespace \ldots) across different namespaces. Created to
-  work around a VC~7.0 (\ccc{cl1300}) bug.
-
-\item[{\tt CGAL\_CFG\_VC7\_PRIVATE\_TYPE\_BUG}]~\\
-  \ccIndexSubitem{compiler bugs}{access control} %
-  This is a test-case for a bug in VC~7.0 (\ccc{cl1300}) beta2 that
-  occurs in the kernel. The flag is set, if the bug is present.
+  is to put the definition inside the class. This is a feature of
+  SunPRO 5.5.
 
 \end{description}
 \ccIndexMainItemEnd{workaround flags}
@@ -452,17 +394,6 @@ Some macros are defined according to certain workaround flags. This is
 done to avoid some \texttt{\#ifdef}s in our actual code.
 
 \begin{description}
-\item[\texttt{CGAL\_TYPENAME\_MSVC\_NULL}] set to \texttt{typename},
- \index{cgal_typename_msvc_null macro@\texttt{CGAL\_TYPENAME\_MSVC\_NULL} macro}
- \ccIndexSubitem{\tt typename}{and template parameter}
-  if {\texttt{CGAL\_CFG\_TYPENAME\_BUG}} is not set and
-  empty, otherwise.
-\item[\texttt{CGAL\_NULL\_TMPL\_ARGS}] set to \texttt{<>}, if
- \index{cgal_null_tmpl_args macro@\texttt{CGAL\_NULL\_TMPL\_ARGS} macro}
-  \ccIndexSubsubitem{template}{function}{friend declaration}
-  \ccIndexSubitem{friend declaration}{function template}
-  {\texttt{CGAL\_CFG\_NO\_TEMPLATE\_FRIEND\_DISTINCTION}}
-  is not set and empty, otherwise.
 \item[\texttt{CGAL\_CLIB\_STD}] 
  \index{cgal_clib_std macro@{\tt CGAL\_CLIB\_STD} macro}
   \index{C standard library!and namespace std@and namespace \ccStyle{std}} 
@@ -506,83 +437,10 @@ done to avoid some \texttt{\#ifdef}s in our actual code.
 %for an example of such a file.
 %
 
-%\subsection{Partial specialization}
-%
-%A new feature introduced by the \CC-standard is partial specialization.
-%It plays a crucial role in the design of some parts of \cgal. Unfortunately
-%the Microsoft compiler does not (yet?) support it. This puts some burden
-%on the \cgal\ user, see the section on iterators.
-
 \begin{description}
-\item[\textbf{Template Parameters}]
-\ 
-\begin{itemize}
-\item
-With Borland, if a class is declared with a template parameter T, say, then
-the same name of the template parameter must be used elsewhere in all
-the other definitions and declarations for this class.
-
-\item
-Borland does not like things like
-\begin{center}
-\verb|template <class T> class foo { ... T(blah) ... }|
-\end{center}
-
-the workaround is
-\begin{center}
-\verb|template <class T0> class foo { typedef T0 T; ... T(blah) ... }|
-\end{center}
-
-\item
-For V\CC\ 6.0, the matching of template instances is broken 
-\begin{verbatim}
-       template < class T >void foo( T, int){}
-       template < class T, class R >void foo( T, R){}
-\end{verbatim}
-would lead to ``multiple matches'' error. 
-
-\item
-The V\CC\ 6.0 compiler does not like more than one non-type template
-argument.  We had a case with two int parameters where it compiled and
-linked seamlessless, but it generated no code.
-
-\end{itemize}
-
-
-\item[\textbf{{\tt for} loop variables}]
-
-The Visual \CC complier places variables that are declared inside
-a \ccc{for} loop header into the surrounding scope, which can often
-cause ``multiple declaration'' errors.  The obvious solution is not
-to declare variables in the \ccc{for} loop header (or always use
-different names for your counters).
-
-
 \item[\textbf{Templated member functions}]
 
-For Visual \CC\, all the templated member functions must be inline. 
-
-\item[\textbf{namespace qualifier}]
-
-Sometimes one must remove the namespace qualifier from a function
-parameter in order to get the correct behavior with Visual \CC.
-
-\item[\textbf{{\tt typename} problem}]
-For Visual \CC, the keyword \ccc{typename} must be omitted, when
-a type dependent on a template parameter is passed as a template parameter. 
-You should use the macro \texttt{CGAL\_TYPENAME\_MSVC\_NULL} 
-(Section~\ref{sec:workaround_macros}) in place of the word \texttt{typename} 
-in this case.
-
-\item[\textbf{Friend operators}]
-
-For Borland, one must delcare a friend operator before defining it.
-This means that often one has to declare the class,
-then declare the operator that is meant to be a friend
-(since friend declaration of an operator (depending on a template) only 
-works for already-declared operators),
-then define the class and declare the friend operator there,
-and only then define the operator.
+For SunPRO \CC\, all the templated member functions must be inline. 
 
 \item[\textbf{Function parameter matching}]
 
@@ -597,21 +455,6 @@ VC++ fails to distinguish that these parameters have different types.
 A workaround is to add some dummy parameters that are defaulted to
 certain values, and this affects only the places where the functions
 are defined, not the places where they are called.
-
-
-%\item[\textbf{{\tt using} declaration}]
-%
-%Then, "using" is a bit broken. For instance, trying to import C-library
-%functions into the namespace std leads to rather strange error
-%messages. (VC++)
-\item[\textbf{default constructors}]
-%%
-%% see message from Geert-Jan Giezeman to cgal-develop on 6 July 2000
-%%
-
-Borland seems to have some problem with default contructors at times;
-adding the default constructors explicitly instead of relying on the
-compiler to deal with them seems to solve the problem.
 
 \item[\textbf{typedefs of derived classes}]
 Microsoft VC++ does not like the following sorts of typedefs that are 
@@ -628,41 +471,6 @@ enclosed by
 
 #endif
 \end{verbatim}
-
-\item[\textbf{{\tt std::stack} iterator traits}]
-The class \texttt{std::stack} is just a wrapper around a container.
-Is has a 2nd template parameter that defaults to \texttt{std::deque},
-which is semi-broken under VC++ 6.0 because it has naked pointers as 
-iterators, just as \texttt{std::vector} usually does.  You can avoid
-problems that arise by explicitly setting the second template parameter
-to something that has proper iterator (\eg, \texttt{std::list}).
-
-\item[\textbf{{\tt std::list} iterator inside item class}]
-
-The following program, which attempts to use an iterator over a list of
-items inside the item class, does not compile on the Borland compiler:
-
-\begin{verbatim}
-#include <vector>
-
-struct E {
- typedef std::list<E>::iterator T2; // compiles not
- typedef std::list<E> T3; // compiles
- typedef std::vector<E>::iterator T1; // compiles
-};
-
-int main() {
- E e;
- return 0;
-}
-\end{verbatim}
-
-This problem was reported to the Borland mailing list and the answer received
-indicates that they do not consider this a bug.  Their suggested solution
-is to store a list of \texttt{E*} instead of \texttt{E}. Alternatively, one
-can use \texttt{std::vector} instead of \texttt{std::list} (since their
-implementation of the STL uses pointers for vector iterators) or use 
-\texttt{CGAL::In\_place\_list}.
 
 \item[\textbf{parse error in constructions}]
 \ccIndexSubitem{parse error}{construction}
@@ -697,253 +505,8 @@ into, {\textit e.g.,} :
    Curve rude_curve(s);
 \end{verbatim}
 
-\item[\textbf{\texttt{std::strcpy} and \texttt{-O2} flag}]
-\ccIndexSubitem{optimization flag}{errors when using}
-
-Borland's compiler cannot compile this program when the optimization flag
-\texttt{-O2} is used during compilation:
-\begin{verbatim}
-#include <cstring>
-
-int main() {
-  char from[10], to[10];
-  std::strcpy(to, from);
-  return 0;
-}
-\end{verbatim}
-The following error is produced:
-\begin{verbatim}
-bcc32.exe -O2 -P bug.C
-Borland C++ 5.5.1 for Win32 Copyright (c) 1993, 2000 Borland
-bug.C:
-Error E2316 bug.C 7: '__strcpy__' is not a member of 'std' in function main()
-*** 1 errors in Compile ***
-\end{verbatim}
-
-It is believed that this comes from the compiler attempting to produce an
-inline version of \texttt{strcpy()} when the optimization is turned on.
-Putting \texttt{\#undef strcpy} before the \texttt{strcpy()} fixes it.
-
 \end{description}
 \ccIndexMainItemEnd{configuration}
-
-\subsection{Obsolete workarounds}
-\label{sec:obsolete_workarounds}
-\ccIndexSubitemBegin{workaround flags}{obsolete}
-
-\noindent 
-There are also a number of former testfiles that were removed 
-after all supported compilers passed them. At the developers' meeting
-in 4/1999 in Z\"urich it was decided that the features / bugs corresponding
-to removed workaround flags need not to be handled anymore. That is, we
-can assume these presence of the features and absence of these bugs in our
-code. Developers may remove the workarounds from existing code, though
-they are not forced to.
-
-\begin{description}
-\item[{\tt CGAL\_CFG\_DYNAMIC\_CAST\_BUG}]~\\
- When a dynamic cast involves a pointer to a not-yet-instantiated 
- template class, some compilers give an error.
-
-\item[{\tt CGAL\_CFG\_INCOMPLETE\_TYPE\_BUG\_1}]~\\
-  When a class (\ccc{Cls_P} / \ccc{Cls_Pl}) refers to a not-yet-defined class
-  (\ccc{Cls_At}), some compilers give an ``incomplete type error''.  This
-  program is used to detect a special case of this problem where
-  templates are involved.
-
-\item[{\tt CGAL\_CFG\_INCOMPLETE\_TYPE\_BUG\_3}]~\\
-  When a class (\ccc{A}) refers to a not-yet-defined class (\ccc{B}), some
-  compilers give an ``incomplete type error''.  This program is used
-  to detect a special case of this problem where virtual functions and
-  templates are involved.
-
-\item[{\tt CGAL\_CFG\_INCOMPLETE\_TYPE\_BUG\_4}]~\\
-  When a class (\ccc{A}) refers to a not-yet-defined class (\ccc{B}), some
-  compilers give an ``incomplete type error''.  This program is used
-  to detect a special case of this problem where typedefs are
-  involved.
-
-\item[{\tt CGAL\_CFG\_INCOMPLETE\_TYPE\_BUG\_5}]~\\
-  Some compilers issue an ``incomplete type error'' with some \stl\
-  versions if a template type, which has not been instantiated yet, is
-  put into an \stl\ vector (\eg, SunPro 4.2 with STLport-3.01). This
-  program is used to detect this bug.
-
-\item[{\tt CGAL\_CFG\_NO\_ITERATOR\_TRAITS}]~\\
-  \ccIndexMainItem{iterator traits}
-  The class \texttt{std::iterator\_traits} is part of the \texttt{std} library.
-  It is used to access certain properties of iterators, such as their value
-  type or iterator category (forward, bidirectional, \etc).
-  This flag is set if \texttt{std::iterator\_traits} is not fully supported 
-  including their use in a template class, as a default template
-  argument, and as a return type of global function.
-
-\item[{\tt CGAL\_CFG\_MATCHING\_BUG\_1}]~\\
- This flag is set if the compiler does not match a function
- argument of type {\tt typename T::A} correctly.
- (\eg, SGI 7.2)
-
-\item[{\tt CGAL\_CFG\_NO\_ARROW\_OPERATOR}]~\\
-  The arrow operator \ccc{operator->()} could not be overloaded by
-  some compilers within a class template (SunPro CC 4.2 complains if
-  the return value is not a struct). This flag is set
-  if it cannot be overloaded. Note that the arrow operator is
-  mandatory for iterators according to the Dec. 1996 \CC\ Standard
-  draft.
-
-\item[{\tt CGAL\_CFG\_NO\_BUILTIN\_BOOL}]~\\
-  This flag is set if a compiler does not know the keyword {\tt bool}.
-
-\item[{\tt CGAL\_CFG\_NO\_CONSTANTS\_IN\_FUNCTION\_TEMPLATES}]~\\
-  This flag is set if constants are not accepted in a template
-  argument list for template functions.
-
-\item[{\tt CGAL\_CFG\_NO\_CONST\_CAST}]~\\
-  This flag is set if the compiler does not support the operator
-  \ccc{const_cast}.
-
-\item[{\tt CGAL\_CFG\_NO\_CONST\_REFERENCE\_OVERLOADING}]~\\
-  The Gnu g++ 2.7.2.1 compiler is not able to distinguish cleanly between
-  overloading with a reference and a const reference parameter if it
-  looks for a match with a derived class and reports an ambigious
-  overloading resolution. One workaround could be to remove the const
-  reference declaration. {\tt g++} will warn of a conversion from \ccc{const
-    X\&} to \ccc{X\&} but compiles. Another workaround would be the
-  explicit cast to the base class (if known).  This flag 
-  is set if the compiler fails to distinguish those functions.
-
-\item[{\tt CGAL\_CFG\_NO\_DEFAULT\_PREVIOUS\_TEMPLATE\_ARGUMENTS}]~\\
-  Default template arguments that are dependant on previous template
-  arguments like in \ccc{template< class A, class C = vector<A> >}
-  are not supported by any compiler. The following definition is set
-  if they are not supported. Note that if {\tt
-    CGAL\_CFG\_NO\_DEFAULT\_TEMPLATE\_ARGUMENTS} is set, this
-  definition must also be set.
-
-\item[{\tt CGAL\_CFG\_NO\_DEFAULT\_TEMPLATE\_ARGUMENTS}]~\\
-  This flag is set if a compiler does not support default template
-  arguments like \ccc{template< class A = int >}.
- 
-\item[{\tt CGAL\_CFG\_NO\_DYNAMIC\_CAST}]~\\ 
-  This flag is set
-  if the compiler does not support the operator \texttt{dynamic\_cast}.
-
-\item[{\tt CGAL\_CFG\_NO\_EXPLICIT}]~\\
-  This flag is set if a compiler does not know the keyword
-  \ccc{explicit}.
-
-\item[{\tt CGAL\_CFG\_NO\_EXPLICIT\_CLASS\_TEMPLATE\_SPECIALISATION}]~\\
-  This flag is set if a compiler does not support full specialization
-  of class templates.
-
-\item[{\tt CGAL\_CFG\_NO\_EXPLICIT\_TEMPLATE\_FUNCTION\_ARGUMENT\_SPECIFICATION}]~\\
-  This flag is set if a compiler does not like explicit specification
-  of template arguments in template function calls.
-
-\item[{\tt CGAL\_CFG\_NO\_LAZY\_INSTANTIATION}]~\\
-  Implicit instantiation of a class template does only instantiate
-  member functions when needed (Dec. 1996 C++ Standard draft, 14.7.1).
-  This implies that member functions that are not instantiated in a
-  certain context are allowed to use functionality from the template
-  arguments that are not provided by the actual argument. For example,
-  the Gnu g++ 2.7.2 does not comply with this. The following definition
-  is set if the implicit instantiation does not work in this lazy
-  fashion.
-
-\item[{\tt CGAL\_CFG\_NO\_MEMBER\_TEMPLATES}]~\\
-  This flag is set if a compiler does not support member function
-  templates.
-
-\item[{\tt CGAL\_CFG\_NO\_MUTABLE}]~\\
-  This flag is set if a compiler does not know the keyword
-  \ccc{mutable}.
-
-\item[{\tt CGAL\_CFG\_NO\_NAMESPACE}]~\\
- This flag is set if a compiler does not know namespaces.
-
-\item[{\tt CGAL\_CFG\_NO\_PARTIAL\_TEMPLATE\_FUNCTION\_ARGUMENT\_SPECIFICATION}]~\\
- This flag is set if a compiler doesn't like explicit partial 
- specification of template arguments in template function calls.
-
-\item[{\tt CGAL\_CFG\_NO\_REINTERPRET\_CAST}]~\\
-  This flag is set if the compiler does not support the operator
-  \ccc{reinterpret_cast}.
-
-\item[{\tt CGAL\_CFG\_NO\_SCOPE\_MEMBER\_FUNCTION\_PARAMETERS}]~\\
-  \ccIndexSubitem{scope operator}{with parameters} %
-  \ccIndexSubitem{inlining}{member function} %
-  The parameter types of member functions might contain a scope
-  operator. This works as long as the member function is implemented
-  inline in the class. If the member function is implemented external
-  not all compilers are able to parse the scope operators correctly.
-  This flag is set if the compiler fails parsing.
- 
-\item[{\tt CGAL\_CFG\_NO\_STANDARD\_HEADERS}]~\\ 
-  \ccIndexSubitem{header files}{standard} %
-  This flag is set if a compiler does not support the new standard
-  headers (\ie, without the {\tt .h} suffix).
- 
-\item[{\tt CGAL\_CFG\_NO\_STATIC\_CAST}]~\\
-  This flag is set if the compiler does not support the operator
-  \ccc{static_cast}.
-
-\item[{\tt CGAL\_CFG\_NO\_STATIC\_MEMBERS\_IN\_CLASS\_TEMPLATES}]~\\
-  The following flag is set if a compiler does not accept static
-  members in a template class.
- 
-\item[{\tt CGAL\_CFG\_NO\_STDIO\_NAMESPACE}]~\\ 
-  \index{IO library@I/O library!and namespace std@and namespace \ccStyle{std}}
-  \ccIndexSubitem{namespace}{\ccFont std}
-  This flag is
-  set if a compiler does not put the IO standard library in namespace
-  {\ccFont std}.
- 
-\item[{\tt CGAL\_CFG\_NO\_STD\_NAMESPACE}]~\\ 
-  \ccIndexSubitem{namespace}{\ccFont std}
-  This flag is
-  set if a compiler does not know the namespace \ccStyle{std}.  Some
-  compilers know namespace \ccStyle{std} but do not implement namespaces in
-  general.
-
-\item[{\tt CGAL\_CFG\_NO\_TEMPLATE\_FRIEND\_DISTINCTION}]~\\ 
-  \ccIndexSubsubitem{template}{function}{friend declaration}
-  \ccIndexSubitem{friend declaration}{function template}
-  Checks whether the compiler wants to have a \texttt{<>} in friend
-  declarations of template functions.
-
-\item[{\tt CGAL\_CFG\_NO\_TEMPLATE\_FUNCTION\_MATCHING}]~\\
-  Some compilers (like g++ 2.7.2) follow the old rules for argument
-  matching stated in the ARM: template functions have to match
-  exactly. In particular, derived classes do not match to base class
-  parameters in a template function. The following flag is set if this
-  is the case.
-
-\item[{\tt CGAL\_CFG\_NO\_TYPENAME}]~\\
-  This flag is set if a compiler does not know the keyword
-  \ccc{typename}.
-
-\item[{\tt CGAL\_CFG\_RETURN\_TYPE\_BUG\_1}]~\\
-  The following flag is set, if a compiler does not allow the return
-  type \ccc{T::A} of a function or a class method.
-
-\item[{\tt CGAL\_CFG\_RETURN\_TYPE\_BUG\_2}]~\\
-  The following flag is set, if a compiler does not allow the return
-  type \ccc{A<T>::B} of a function or class method.
-
-\item[{\tt CGAL\_CFG\_TYPENAME\_BUG}]~\\
- \ccIndexSubitem{\tt typename}{and template parameter} %
- \index{template!argument!with typename@with \texttt{typename}} %
- This flag is set if a compiler complains about {\tt typename}, when
- passing a dependent type as template argument.
-
-\item[{\tt CGAL\_CFG\_USING\_USING\_BUG}]~\\
- \ccIndexSubitem{\tt using}{nested} %
- This flag is set if a compiler does not accept a \texttt{using}
- declaration referring to a symbol that is again declared by a using
- declaration.
-
-\end{description}
-\ccIndexSubitemEnd{workaround flags}{obsolete}
 
 
 \InternalOnly{
@@ -961,9 +524,6 @@ Recommendations:
 \item Avoid classes having friend functions and member functions with
       the same name. \texttt{g++ 2.95.*} does not like that. This holds also for
       operators, especially \ccc{operator-()}.
-\item Don't use variable declarations in a \texttt{for}-clause. It is a
-      feature of the Microsoft compiler not to support this feature of
-      the \CC-Standard.
 \end{itemize}
 }
 
