@@ -8,11 +8,12 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : 
-// release_date  : 1999, October 13
+// release       : $CGAL_Revision: CGAL-2.3-I-26 $
+// release_date  : $CGAL_Date: 2001/01/05 $
 //
 // file          : include/CGAL/Arr_leda_polyline_traits.h
-// package       : arr (1.03)
+// package       : arr (1.73)
+// maintainer    : Eyal Flato <flato@math.tau.ac.il>
 // author(s)     : Iddo Hanniel
 // coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
 //
@@ -29,7 +30,6 @@
 #include <algorithm>
 #include <CGAL/rat_leda_in_CGAL_2.h>
 #include <LEDA/rat_point.h>
-#include <CGAL/IO/Window_stream.h>
 
 //the following is for a type check (creates compiler problems,not implemented)
 //#include <typeinfo>
@@ -612,7 +612,12 @@ public:
  
     CGAL_assertion(is_x_monotone(cv1));
     CGAL_assertion(is_x_monotone(cv2));
-  
+
+    bool found( false);
+
+    if ( ! do_intersect_to_right(cv1,cv2,pt)) return false;
+    
+    // Makes x increase.
     X_curve c1(cv1),c2(cv2);
     if (::compare(curve_source(c1),curve_target(c1)) > 0)
       c1=curve_flip(cv1);
@@ -624,10 +629,10 @@ public:
     //to the right of pt, if not continue with a normal sweep until 
     //we find an intersection point or we reach the end.
     
-    typename X_curve::const_iterator i1s=c1.begin();
+    typename X_curve::const_iterator i1s=c1.begin(), i1e = c1.end();
     typename X_curve::const_iterator i1t=i1s; ++i1t;
 
-    typename X_curve::const_iterator i2s=c2.begin();
+    typename X_curve::const_iterator i2s=c2.begin(), i2e = c2.end();
     typename X_curve::const_iterator i2t=i2s; ++i2t;
 
     int number_to_left=0; //increment this variable if curve starts left of pt
@@ -635,103 +640,170 @@ public:
     if (::compare(*i1s,pt) <= 0) {
       //increment to nearest from the left of pt
       ++number_to_left;
-      for (; i1t!=c1.end(); ++i1s,++i1t) {
+      for (; i1t!=i1e; ++i1s,++i1t) {
 	if (::compare(*i1t,pt) > 0) break;
       }
       CGAL_assertion (i1t!=c1.end());
     }
 
-    //now i1s holds the source vertex and i1t holds the target
-
     if (::compare(*i2s,pt) <= 0) {
       ++number_to_left;
-      for (; i2t!=c2.end(); ++i2s,++i2t) {
+      for (; i2t!=i2e; ++i2s,++i2t) {
 	if (::compare(*i2t,pt) > 0) break;
       }
       CGAL_assertion(i2t!=c2.end())  ; //c2 ends to the left of pt
     }
-
+   
     if (number_to_left==2) {
       //check if intersection exists and is lex larger
       Segment s1(*i1s,*i1t),s2(*i2s,*i2t);
       Segment i_seg;
-      if (s1.intersection(s2,i_seg)) {
-        if (::compare(i_seg.target(),pt) > 0) {
-          p2=point_normalize(i_seg.target());
-          if (::compare(i_seg.source(),pt) > 0) {
-            p1=point_normalize(i_seg.source());
+      if( s1.intersection( s2,i_seg ) ){
+        if( ::compare( i_seg.target(),i_seg.source() ) == 0 ){
+          // Intersection is only one point
+          if( ::compare( i_seg.target(), pt ) > 0 ){
+            p1 = p2 = point_normalize(i_seg.target());
+            found = true;
           }
-          else {
-            p1=pt;
-          }
-          return true;
         }
-        
-        if (::compare(i_seg.source(),pt) > 0) {
-          //we know target is not right of pt because then we would have 
-	  //found it previously
-          p1=point_normalize(i_seg.source());
-          p2=pt;
-          return true;
+        if( ::compare( i_seg.target(),i_seg.source() ) != 0 &&
+            !found ){
+          // Intersection is a segment
+          if( ::compare( i_seg.target(),i_seg.source()) < 0 )
+            i_seg = i_seg.reverse();
+          if( ::compare( i_seg.target(),pt ) > 0 ) {
+	    p2=i_seg.target();
+	    if( ::compare( i_seg.source(),pt ) > 0 ){
+	      p1=i_seg.source();                           
+            }
+	    else {
+	      //p1=pt;
+              // Modified by Eug
+	      // Performing vertical ray shooting from pt.
+	      // Finding the intersection point. We know by now
+	      // that there is exactly ONE point. Assinging this 
+	      // point to p1.
+              Point ap1( pt.xcoord(), i_seg.source().ycoord() );
+              Point ap2( pt.xcoord(), i_seg.target().ycoord() );
+              Segment vertical_pt_x_base( ap1, ap2 );
+	      Segment i_vertical;
+              vertical_pt_x_base.intersection( i_seg, i_vertical );
+              p1 = i_vertical.source();
+            }
+            found = true;
+	  }
         }
-
+      }//endif intersection 
+      if ( ! found) {
+        //advance to the nearer point
+        if( ::compare( *i2t, *i1t ) > 0 ) {
+          ++i1s; ++i1t;
+          if( i1t == i1e ) 
+            return false;
+        }
+        else {
+          ++i2s; ++i2t;
+          if( i2t == i2e ) 
+            return false;
+        }
       }
-
-
-      //advance to the nearer point
-      if (::compare(*i2t,*i1t) > 0) {
-	++i1s; ++i1t;
-        CGAL_assertion(i1t!=c1.end());
-      }
-      else {
-	++i2s; ++i2t;
-        CGAL_assertion(i1t!=c1.end());
-      }
-
-    }
-
-    //NOW we can start sweeping the chains
-
-    while (1) {
+    }//endif number_to_left==2
+ 
+    while( !found ){
       //check intersection of the segments
       Segment s1(*i1s,*i1t),s2(*i2s,*i2t);
       Segment i_seg;
-      if (s1.intersection(s2,i_seg)) {
-        if (::compare(i_seg.target(),pt) > 0) {
-          p2=point_normalize(i_seg.target());
-          if (::compare(i_seg.source(),pt) > 0) {
-            p1=point_normalize(i_seg.source());
+       
+      if( s1.intersection( s2,i_seg ) ){
+        if( ::compare( i_seg.target(),i_seg.source() ) == 0 ){
+          // Intersection is only one point
+          if( ::compare( i_seg.target(), pt ) > 0 ){
+            p1 = p2 = point_normalize(i_seg.target());
+            found = true;
           }
-          else {
-            p1=pt;
-          }
-          return true;
         }
-        
-        if (::compare(i_seg.source(),pt) > 0) {
-          //we know target is not right of pt because then we would have 
-	  //found it previously
-          p1=point_normalize(i_seg.source());
-          p2=pt;
-          return true;
+        if( ::compare( i_seg.target(),i_seg.source() ) != 0  &&
+            !found ){
+	  //check if intersection seg to the right of pt
+	  if( ::compare( i_seg.source(), i_seg.target() ) > 0 )
+            i_seg=i_seg.reverse();
+
+	  if( ::compare( i_seg.target(), pt ) > 0 ){
+	    p2 = i_seg.target();
+	    if( ::compare( i_seg.source(), pt ) > 0 ){
+	      p1=i_seg.source();
+            }
+	    else {
+	      // p1=pt; 
+              // Modified by Eug
+	      // Performing vertical ray shooting from pt.
+	      // Finding the intersection point. We know by now
+	      // that there is exactly ONE point. Assinging this 
+	      // point to p1. 
+              Point ap1( pt.xcoord(), i_seg.source().ycoord() );
+              Point ap2( pt.xcoord(), i_seg.target().ycoord() );
+              Segment vertical_pt_x_base( ap1, ap2 );
+	      Segment i_vertical;
+              vertical_pt_x_base.intersection( i_seg, i_vertical );
+              p1 = i_vertical.source();
+            }           
+	    found = true;
+	  }
         }
-      
-      }
-    
-      
-      //advance to the nearer point
-      if (::compare(*i2t,*i1t) > 0) {
-	++i1s; ++i1t;
-        CGAL_assertion(i1t!=c1.end());
-      }
-      else {
-	++i2s; ++i2t;
-        CGAL_assertion(i2t!=c1.end());
-      }
+      } // endif s1.intersection  
+      if( !found ){
+        //advance to the nearer point
+        if( ::compare( *i2t, *i1t ) > 0 ){
+          ++i1s; ++i1t;
+          if( i1t == i1e ) 
+            return false;
+        }
+        else {
+          ++i2s; ++i2t;
+          if( i2t == i2e ) 
+            return false;
+        }
+      } 
+    } // end while ( ! found)
+       
+    // if the x point is at the end of a segment, then there might be 
+    // an overlap in the continious of the polyline
+    if ( found && ::compare( p1, p2 ) == 0 ){
+      typename X_curve::const_iterator s1=i1s, t1=i1t, s2=i2s, t2=i2t;
+      s1++; t1++; s2++; t2++;
+      if( t1 != i1e && t2 != i2e){
+
+	// check for overlap after x point
+	Segment i_seg;
+
+	if ( ::compare( p1, *i1t ) == 0  && 
+             ::compare( p1, *i2t ) == 0 ){
+          Segment tmp_seg1( *s1, *t1 );
+          Segment tmp_seg2( *s2, *t2 );
+	  if( !tmp_seg1.intersection( tmp_seg1, i_seg ) )
+            return false;
+	}
+	else if ( ::compare( p1, *i1t ) == 0 ){
+          Segment tmp_seg1( *s1, *t1 );
+          Segment tmp_seg2( *i2s, *i2t );
+	  if( !tmp_seg1.intersection( tmp_seg1, i_seg ) )
+            return false;
+	}
+	else if ( is_same( p1, *i2t)) {
+          Segment tmp_seg1( *i1s, *i1t );
+          Segment tmp_seg2( *s2, *t2 );
+	  if( !tmp_seg1.intersection( tmp_seg1, i_seg ) )
+            return false;
+	}
+	// no need to check whether intersection seg to the right of pt, 
+	// because we have already found an x point to the right of pt.
+	if( ::compare( i_seg.source(), i_seg.target() ) > 0 )
+	  i_seg=i_seg.reverse();
+	p1 = i_seg.source();
+	p2 = i_seg.target();
+      }        
     }
-
-    return false;
-
+    return found;
   }
 
 
@@ -794,6 +866,24 @@ public:
     
   }
 
+  X_curve curve_reflect_in_x_and_y( const X_curve& cv) const
+  {
+    X_curve reflected_cv;
+    typename Curve::const_iterator it  = cv.begin();
+    for  (; it != cv.end(); it++)
+      {
+        reflected_cv.push_back( point_reflect_in_x_and_y( *it)); 
+      }
+    return reflected_cv;
+  }
+
+
+  Point point_reflect_in_x_and_y (const Point& pt) const
+  {
+    // use hx(), hy(), hw() in order to support both Homogeneous and Cartesian
+    Point reflected_pt( -pt.X(), -pt.Y(), pt.W());
+    return reflected_pt;
+  }
 
   /////////////////////////////////////////////////////////////////
 private:
