@@ -56,6 +56,10 @@ CGAL_Kernel_cons(CGALi::Construct<Triangle_2>,
 CGAL_Kernel_cons(CGALi::Construct<Iso_rectangle_2>,
 	         Construct_iso_rectangle_2,
 		 construct_iso_rectangle_2_object)
+CGAL_Kernel_cons(CGALi::Call_make_object_to_get<Object_2>,
+                 Construct_object_2,
+                 construct_object_2_object)
+
 #ifndef CGAL_NO_DEPRECATED_CODE
 CGAL_Kernel_cons(CGALi::Construct<Aff_transformation_2>,
 	         Construct_aff_transformation_2,
@@ -65,6 +69,22 @@ CGAL_Kernel_cons(CGALi::Construct<Aff_transformation_2>,
 CGAL_Kernel_cons(CGALi::Call_point_to_get<Point_2>,
 	         Construct_point_on_2,
 		 construct_point_on_2_object)
+
+CGAL_Kernel_cons(CGALi::Call_projection_to_get<Point_2>,
+	         Construct_projected_point_2,
+		 construct_projected_point_2_object)
+
+CGAL_Kernel_cons(CGALi::Construct_projected_xy_point<Point_2>,
+	         Construct_projected_xy_point_2,
+		 construct_projected_xy_point_2_object)
+
+CGAL_Kernel_cons(CGALi::Construct_scaled_vector<Vector_2>,
+	         Construct_scaled_vector_2,
+		 construct_scaled_vector_2_object)
+
+CGAL_Kernel_cons(CGALi::Construct_translated_point<Point_2>,
+	         Construct_translated_point_2,
+		 construct_translated_point_2_object)
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 CGAL_Kernel_cons(CGALi::Call_second_point_to_get<Point_2>,
@@ -325,6 +345,10 @@ CGAL_Kernel_cons(CGALi::Construct<Tetrahedron_3>,
 CGAL_Kernel_cons(CGALi::Construct<Iso_cuboid_3>,
 	         Construct_iso_cuboid_3,
 		 construct_iso_cuboid_3_object)
+CGAL_Kernel_cons(CGALi::Call_make_object_to_get<Object_3>,
+                 Construct_object_3,
+                 construct_object_3_object)
+
 #ifndef CGAL_NO_DEPRECATED_CODE
 CGAL_Kernel_cons(CGALi::Construct<Aff_transformation_3>,
 	         Construct_aff_transformation_3,
@@ -333,6 +357,18 @@ CGAL_Kernel_cons(CGALi::Construct<Aff_transformation_3>,
 CGAL_Kernel_cons(CGALi::Call_point_to_get<Point_3>,
 	         Construct_point_on_3,
 		 construct_point_on_3_object)
+CGAL_Kernel_cons(CGALi::Call_projection_to_get<Point_3>,
+	         Construct_projected_point_3,
+		 construct_projected_point_3_object)
+CGAL_Kernel_cons(CGALi::p_Lifted<Point_3>,
+	         Construct_lifted_point_3,
+		 construct_lifted_point_3_object)
+CGAL_Kernel_cons(CGALi::Construct_scaled_vector<Vector_3>,
+	         Construct_scaled_vector_3,
+		 construct_scaled_vector_3_object)
+CGAL_Kernel_cons(CGALi::Construct_translated_point<Point_3>,
+	         Construct_translated_point_3,
+		 construct_translated_point_3_object)
 #ifndef CGAL_NO_DEPRECATED_CODE
 CGAL_Kernel_cons(CGALi::Call_second_point_to_get<Point_3>,
 	         Construct_second_point_on_3,
@@ -373,6 +409,9 @@ CGAL_Kernel_cons(CGALi::Call_perpendicular_line_to_get<Line_3>,
 CGAL_Kernel_cons(CGALi::Call_orthogonal_vector_to_get<Vector_3>,
 	         Construct_orthogonal_vector_3,
 		 construct_orthogonal_vector_3_object)
+CGAL_Kernel_cons(CGALi::v_Base<Vector_3>,
+	         Construct_base_vector_3,
+		 construct_base_vector_3_object)
 CGAL_Kernel_cons(CGALi::p_Midpoint<Point_3>,
 	         Construct_midpoint_3,
 		 construct_midpoint_3_object)
@@ -403,6 +442,9 @@ CGAL_Kernel_cons(CGALi::Call_opposite_to_get<Line_3>,
 CGAL_Kernel_cons(CGALi::Call_opposite_to_get<Plane_3>,
 	         Construct_opposite_plane_3,
 		 construct_opposite_plane_3_object)
+CGAL_Kernel_cons(CGALi::Call_opposite_to_get<Sphere_3>,
+	         Construct_opposite_sphere_3,
+		 construct_opposite_sphere_3_object)
 CGAL_Kernel_cons(CGALi::v_Opposite<Vector_3>,
 	         Construct_opposite_vector_3,
 		 construct_opposite_vector_3_object)

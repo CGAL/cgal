@@ -108,6 +108,53 @@ class Construct
 
 };
 
+template <class ToBeConstructed>
+class Call_make_object_to_get
+{
+  public:
+    typedef  ToBeConstructed  result_type;
+
+    template <class Cls>
+    ToBeConstructed
+    operator()( const Cls& c) const
+    { return make_object(c); }
+};
+
+template <class Vector>
+class Construct_scaled_vector
+{
+   public:
+     typedef Vector    result_type;
+
+     template <class NT>
+     Vector
+     operator()( const Vector& v, const NT& scale) const
+     {  return v * scale; }
+};
+
+template <class Point>
+class Construct_translated_point
+{
+   public:
+     typedef Point    result_type;
+
+     template <class Vector>
+     Point
+     operator()( const Point& p, const Vector& v) const
+     {  return p + v; }
+};
+
+template <class Point_2>
+class Construct_projected_xy_point
+{
+   public:
+     typedef Point_2    result_type;
+
+     template <class Plane_3, class Point_3>
+     Point_2
+     operator()( const Plane_3& h, const Point_3& p) const
+     {  return h.to_2d(p); }
+};
 
 template <class ReturnType>
 class Call_point_to_get
@@ -189,6 +236,18 @@ class Call_orthogonal_vector_to_get
     Vector
     operator()( const Cls& c ) const
     { return c.orthogonal_vector(); }
+};
+
+template <class Point>
+class Call_projection_to_get
+{
+  public:
+    typedef Point     result_type;
+
+    template <class Cls>
+    Point
+    operator()( const Cls& c, const Point& p ) const
+    { return c.projection(p); }
 };
 
 template <class ReturnType>
@@ -315,6 +374,23 @@ class v_Cross_product
     { return cross_product(v, w); }
 };
 
+template <class Vector>
+class v_Base
+{
+   public:
+     typedef Vector        result_type;
+
+     template <class Plane>
+     Vector
+     operator()( const Plane& pl, int index )
+     {
+       if (index == 1)
+         return pl.base1();
+       else 
+         return pl.base2();
+     }
+};
+
 class Intersect
 {
   public:
@@ -427,6 +503,18 @@ class p_Angle
     Angle
     operator()(const T& p, const T& q, const T& r) const
     { return angle(p, q, r); }
+};
+
+template <class Point_3>
+class p_Lifted
+{
+   public:
+     typedef Point_3        result_type;
+
+     template <class Plane, class Point_2>
+     Point_3
+     operator()(const Plane& p, const Point_2& pt) const
+     {  return p.to_3d(pt); }
 };
 
 class Counterclockwise_in_between
@@ -1102,6 +1190,7 @@ class Call_opposite_to_get
     { return c.opposite(); }
 };
 
+
 class Call_has_on
 {
   public:
@@ -1123,6 +1212,7 @@ class Call_collinear_has_on
     operator()( const Cls& c, const A1& a1) const
     { return c.collinear_has_on(a1); }
 };
+
 
 } // end namespace CGALi
 CGAL_END_NAMESPACE
