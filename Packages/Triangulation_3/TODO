@@ -1,11 +1,11 @@
-negocier la doc de Filtered_exact...
+a negocier 
+- "bug du remove"
+- mise a jour de la doc de Filtered_exact...
 
 penser a enlever -I../../include\ dans demo/Triangulation_3/makefile
 
 General
 - mettre a jour les noms d'auteurs
-- parametres template par defaut
-- virer geom_traits exemples - demos - testsuite
 - void a la place de GT dans cell_base
 - new Vertex/Cell
 	create_cell T3 pour remove
