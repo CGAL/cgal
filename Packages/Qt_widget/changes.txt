@@ -1,3 +1,11 @@
+1.3.26 - 25/03/2003 (rursu)
+-------------------
+	radu:
+	- added demo howto for Convex_hull_2, Partition_2, Minimum_ellipse_2, Largest_empty_rect_2, Max_k-gon, Minimum_quadrilateral
+	- restructured partition_2 demo
+	- made demos more uniform
+	- modified project files for Partition_2, Triangulation_2, Regular_triangulation_2
+
 1.3.25 - 17/03/2003 (rursu)
 -------------------
 	radu:
