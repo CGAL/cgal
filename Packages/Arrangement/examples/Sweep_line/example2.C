@@ -2,7 +2,7 @@
 
 #include <CGAL/basic.h> //CGAL definitions that need to be before anything else
 #include <iostream.h>
-#include <fstream.h>
+//#include <fstream.h>
 #include <vector>
 
 #include <CGAL/Cartesian.h>
@@ -45,24 +45,22 @@ typedef CGAL::Planar_map_2<Dcel, Traits>             PM;
 using namespace std;
 
 template <class Container>
-void read_polylines(const char* file_name, Container& curves)
+void read_polylines(Container& curves)
 {
-  std::ifstream file(file_name);
-
   int      num_polylines = 0;
   double   x,y; 
 
-  file >> num_polylines;
+  cin >> num_polylines;
   std::cout<<"number of polylines is : " << num_polylines<<std::endl;
 
   while (num_polylines--) {
     Curve      polyline;
     int        num_points;
     
-    file >> num_points;
+    cin >> num_points;
 
     while (num_points--) {
-      file >> x >> y;
+      cin >> x >> y;
       Point s(x, y);
       
       polyline.push_back(s);
@@ -72,8 +70,6 @@ void read_polylines(const char* file_name, Container& curves)
 
     polyline.clear();
   }
-
-  file.close();
 }
 
 int main(int argc, char* argv[])
@@ -81,12 +77,7 @@ int main(int argc, char* argv[])
   PM                 pm;
   vector<Curve>      polylines;
   
-  if (argc < 2) {
-    std::cerr << "usage:  <filename>" << std::endl;
-    exit(1);
-  }
-  
-  read_polylines(argv[1], polylines);
+  read_polylines(polylines);
 
   CGAL::sweep_to_construct_planar_map(polylines.begin(),polylines.end(), pm);
   
@@ -100,5 +91,10 @@ int main(int argc, char* argv[])
   //W.display();
   //W << pm;
 }
+
+
+
+
+
 
 

@@ -2,10 +2,10 @@
 
 #include <CGAL/basic.h> //CGAL definitions that need to be before anything else
 #include <iostream.h>
-#include <fstream.h>
+//#include <fstream.h>
 #include <vector>
 
-#include <CGAL/leda_rational.h>
+
 #include <CGAL/Quotient.h>
 #include <CGAL/Cartesian.h>
 
@@ -43,18 +43,12 @@ int main(int argc, char* argv[])
   int                num_segments;
   vector<Curve>     segments;
   
-  if (argc < 2) {
-    std::cerr << "usage:  <filename>" << std::endl;
-    exit(1);
-  }
-  
-  std::ifstream f_curves(argv[1]);
-  f_curves >> num_segments;
+  cin >> num_segments;
   
   double        x1, y1, x2, y2;
   
   while (num_segments--) {
-    f_curves >> x1 >> y1 >> x2 >> y2;
+    cin >> x1 >> y1 >> x2 >> y2;
     
     segments.push_back(Curve(Point(x1,y1), Point(x2,y2)));
   }    
