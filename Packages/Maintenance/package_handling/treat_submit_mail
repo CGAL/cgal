@@ -25,9 +25,12 @@ my @trusted_hosts = (
 	'inria.fr',
 	'informatik.uni-halle.de',
 	'inf.ethz.ch',
+	'math.ethz.ch',
 	'mpi-sb.mpg.de',
 	'inf.fu-berlin.de',
+	'uni-trier.de',
 	'cs.unc.edu',
+        'twi.tudelft.nl',
 	'math.tau.ac.il');
 #'risc.uni-linz.ac.at'
 sub get_url()
@@ -57,7 +60,7 @@ sub is_trusted_url($)
 {
     my $URL = shift;
     foreach (@trusted_hosts) {
-	if ($URL =~ m|^\s*http://[\w-]+\.$_/|) {
+	if ($URL =~ m|^\s*http://[\.\w-]+\.$_/|) {
 	    return 1;
 	}
     }
