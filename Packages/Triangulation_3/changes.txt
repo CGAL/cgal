@@ -1,5 +1,6 @@
 Version 1.74 (13 July 01)
 - copy_tds() cleanups.
+- replace delete Cell by delete_cell() in Regular.
 
 Version 1.73 (13 July 01)
 - print_cells and read_cells small cleanup.

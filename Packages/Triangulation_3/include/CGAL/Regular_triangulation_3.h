@@ -433,14 +433,14 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
 	  set_number_of_vertices(number_of_vertices()+1);
 	  Cell_handle bound[2];
 	  Cell_handle n;
-	  std::set<void*> conflicts;
+	  std::set<Cell*> conflicts;
 
 	  for (int j =0; j<2; j++ ) {
 	    n = c;
 	    while ( ( ! is_infinite(n->vertex(1-j)) ) && 
 		      in_conflict_1( p, n->neighbor(j) ) ) {
 	      if (n!=c)
-		  (void) conflicts.insert( (void *) &(*n) );
+		  (void) conflicts.insert( &(*n) );
 // 		P = new Weighted_point( n->vertex(1-j)->point() );
 // 		(void) deleted_points.insert((void*) P);
 	      _tds.delete_vertex( &(*(n->vertex(1-j))) );
@@ -451,7 +451,7 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
 	  }
 	  if ( bound[0] != bound[1] ) {
 	    if ( (c != bound[0]) && (c != bound[1]) )
-	      (void) conflicts.insert( (void *) &(*c) );
+	      (void) conflicts.insert( &(*c) );
 	    bound[0]->set_vertex(0,v);
 	    v->set_cell(bound[0]);
 	    bound[1]->set_vertex(1,v);
@@ -470,9 +470,9 @@ insert(const Weighted_point & p, Cell_handle start, Vertex_handle v)
 	    v->set_cell(bound[0]);
 	  }
 
-	  std::set<void*>::const_iterator it;
+	  typename std::set<Cell*>::const_iterator it;
 	  for ( it = conflicts.begin(); it != conflicts.end(); ++it)
-	    delete((Cell*)*it);
+	    _tds.delete_cell(*it);
 	  return v;
 	}
       case VERTEX:
