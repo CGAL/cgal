@@ -27,12 +27,12 @@ struct Cartesian_base_dynamic_d
     // Because of partial specialization, CGAL::Point_d<R> is selected as
     // CGAL::Point_d<Cartesian_d<FT>,Cartesian_tag>
     typedef CGAL::Point_d<R,Cartesian_tag>      Point_d;
-    typedef CGAL::Vector_d<R,Rep_tag>           Point_d;
-    typedef CGAL::Direction_d<R,Rep_tag>        Point_d;
+    typedef CGAL::Vector_d<R,Rep_tag>           Vector_d;
+    typedef CGAL::Direction_d<R,Rep_tag>        Direction_d;
 #else
     typedef PointCd<R>                          Point_d;
-    typedef VectorCd<R>                         Point_d;
-    typedef DirectionCd<R>                      Point_d;
+    typedef VectorCd<R>                         Vector_d;
+    typedef DirectionCd<R>                      Direction_d;
 #endif // CGAL_CFG_NO_ADVANCED_KERNEL
 };
 
