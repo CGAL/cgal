@@ -1,3 +1,6 @@
+version 11.14:
+- Resubmit under unix.
+
 version 11.12:
 - Use STL_extension's Triple.
 
