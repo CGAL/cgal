@@ -1,6 +1,6 @@
 Version 6.0 (?? ????? 00)
 - Merged C2, C3 and Cartesian_basic in Cartesian_kernel.
-- Merged all .C files into their corresponding .h, except Aff_*.
+- Merged all .C files into their corresponding .h.
 - Changed constructions_on_*.h to *_constructions_[23].h, gathering
   constructions which _return_ type is the same.
 - Moved distance_computations_[23].h to the more general
@@ -16,7 +16,7 @@ Version 6.0 (?? ????? 00)
 - Got rid of empty useless destructors.
 - Changed ptr-> access to Ptr()-> .
 - Removed Cartesian_2 and Cartesian_3.
-- Removed create_symlinks_[23] and remove_symlinks_[23].
+- Removed scripts create_symlinks_[23] and remove_symlinks_[23].
 - Handle and Representation specification come now from Cartesian<>,
   so that we can customize them easily.
 - A few fixes for the advanced kernel.

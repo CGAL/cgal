@@ -7,9 +7,16 @@ Stuff to look at, as time permits:
   - Write a Checker for full kernels, like Pm_traits_checker.h ?
 
 - Handles :
+  - Current scheme could be improved if Handle_for<T> defined :
+      typedef T element_type;   (or value_type ? or sthg else ?)
+      This way, no need for typedefs Point_ref_2 and co...
   - Having a proper Handle_for_virtual<> is becoming important...
     - It must have the same interface than Handle_for<>
     - Must use the allocator, see Stefan's mail.
+    - Ok, after reflexion : it can't use STL allocators, however we can do
+      something clean by looking at auto_ptr<>, I think.  It would also be
+      nice if we could remove the ref-counting mecanism easily, like for
+      Handle_for<>.
 
 - Aff_transformations :
   - Finish merging .C files in corresponding .h files.
@@ -37,8 +44,11 @@ diff -ru CGAL-2.3-I-6/include/CGAL/SimpleCartesian/CircleS2.h CGAL-2.3-I-6-new/i
 
  See his e-mails.
 
+- Finish Simple_Cartesian_v2 (Simple_Sphere_repC3...)
 - Remove include/CGAL/Kernel/* ?  It's used nowhere...
   Try to guess what it was supposed to be used for.
+- Move include/CGAL/Kernel_common_traits.h to
+  include/CGAL/Kernel/common_traits.h ?
 - Use CGAL_TYPENAME_MSVC_NULL instead of "#define typename".
   Only in the template parameters, right ?
 - Iso_rectangleC2 should store a twotuple of _non_ ref-counted points ?
