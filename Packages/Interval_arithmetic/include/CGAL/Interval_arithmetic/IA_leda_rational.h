@@ -28,7 +28,10 @@
 // conversion.  Since LEDA types (except real) don't give information on the
 // precision of to_double(), we can't do much...
 
-inline CGAL_Interval_nt_advanced CGAL_convert_to (const leda_rational &z)
+template <>
+inline
+CGAL_Interval_nt_advanced
+CGAL_convert_to <CGAL_Interval_nt_advanced> (const leda_rational &z)
 {
 #ifdef CGAL_IA_DEBUG
     CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);

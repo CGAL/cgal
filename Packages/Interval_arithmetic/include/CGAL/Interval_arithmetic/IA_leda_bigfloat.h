@@ -28,7 +28,10 @@
 // approximation, which is guaranted 1 bit error max(?), and return an
 // interval around this value (+/- ulp).
 
-inline CGAL_Interval_nt_advanced CGAL_convert_to (const leda_bigfloat &z)
+template<>
+inline
+CGAL_Interval_nt_advanced
+CGAL_convert_to <CGAL_Interval_nt_advanced> (const leda_bigfloat &z)
 {
 #ifdef CGAL_IA_DEBUG
     CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);

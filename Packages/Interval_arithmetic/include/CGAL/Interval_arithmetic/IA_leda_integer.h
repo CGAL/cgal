@@ -30,7 +30,10 @@
 // LEDA integer's internal representation, which is not possible without
 // modifying LEDA.
 
-inline CGAL_Interval_nt_advanced CGAL_convert_to (const leda_integer &z)
+template <>
+inline
+CGAL_Interval_nt_advanced
+CGAL_convert_to <CGAL_Interval_nt_advanced> (const leda_integer &z)
 {
 #ifdef CGAL_IA_DEBUG
     CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);

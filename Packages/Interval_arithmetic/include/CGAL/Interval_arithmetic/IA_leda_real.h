@@ -24,7 +24,10 @@
 #ifndef CGAL_IA_LEDA_REAL_H
 #define CGAL_IA_LEDA_REAL_H
 
-inline CGAL_Interval_nt_advanced CGAL_convert_to (const leda_real &z)
+template <>
+inline
+CGAL_Interval_nt_advanced
+CGAL_convert_to <CGAL_Interval_nt_advanced> (const leda_real &z)
 {
 #ifdef CGAL_IA_DEBUG
     CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);

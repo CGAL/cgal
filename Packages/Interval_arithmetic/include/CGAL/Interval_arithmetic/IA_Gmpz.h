@@ -30,7 +30,10 @@
 // It should be much faster to have a low level function especially designed
 // for that using rounding to infinity.
 
-inline CGAL_Interval_nt_advanced CGAL_convert_to (const CGAL_Gmpz &z)
+template <>
+inline
+CGAL_Interval_nt_advanced
+CGAL_convert_to <CGAL_Interval_nt_advanced> (const CGAL_Gmpz &z)
 {
 #ifdef CGAL_IA_DEBUG
     CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
