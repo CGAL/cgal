@@ -1,3 +1,6 @@
+12 May 2004 Sylvain Pion
+- Added boost-1.31.0.tar.gz.
+
 12 May 2004 Radu Ursu
 - added instructions on how to build GMP in auxiliary/how_to_build_gmp.txt
 
