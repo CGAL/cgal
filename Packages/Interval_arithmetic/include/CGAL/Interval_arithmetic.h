@@ -457,9 +457,7 @@ operator- (const Interval_nt<Protected> & a, int b)
 }
 
 template <bool Protected>
-#ifndef CGAL_IA_NO_INLINE
 inline
-#endif
 Interval_nt<Protected>
 operator* (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
 {
@@ -543,9 +541,7 @@ operator* (const Interval_nt<Protected> & a, int b)
 }
 
 template <bool Protected>
-#ifndef CGAL_IA_NO_INLINE
 inline
-#endif
 Interval_nt<Protected>
 operator/ (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
 {

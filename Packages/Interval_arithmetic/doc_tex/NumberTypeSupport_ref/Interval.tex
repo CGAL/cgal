@@ -249,18 +249,8 @@ Notes:\\
       However, this solution slows down the code and is rarely useful, so you
       can disable it by setting the flag
       \ccc{CGAL_IA_DONT_STOP_CONSTANT_PROPAGATION}.
-\item By default, all arithmetic operations over intervals are inline.  This
-      can slow down some large predicates, because the code of the
-      multiplication is large.  You can turn off inlining of the
-      multiplication and division with the flag \ccc{CGAL_IA_NO_INLINE}.
-      On the other hand, this slows down the small predicates, which is why
-      it is not enabled for all cases.
-      You might want to tune this for your particular application.
 \end{itemize}
 
 \end{ccRefClass}
 \renewcommand\ccRefPageBegin{}
 \renewcommand\ccRefPageEnd{}
-
-
-
