@@ -26,7 +26,7 @@
 #include <CGAL/Segment_2.h>
 #include <CGAL/Point_2.h>
 #include <iomanip>
-#include <CGAL/IO/PS_stream.h>
+#include <CGAL/PS_stream.h>
 
 namespace CGAL {
 

@@ -24,7 +24,7 @@
 #include <CGAL/Base_node.h>
 #include <CGAL/Cartesian.h>
 #include <iomanip>
-#include <CGAL/IO/PS_stream.h>
+#include <CGAL/PS_stream.h>
 
 namespace CGAL {
 

@@ -202,6 +202,17 @@ namespace CGAL {
       return s;
     }
 
+    // Splits box by modifying itself to lower half and returns upper half
+    Box* split(int d, NT value) {
+		assert(d >= 0 && d < dim);
+		assert(lower_[d] <= value && value <= upper_[d]);
+		Box* b = new Box(*this);
+		upper_[d]=value;
+                b->lower_[d]=value;
+		return b;
+    }
+                      
+
     ~Box() {
       if (dim) {
 	if (lower_) delete [] lower_;

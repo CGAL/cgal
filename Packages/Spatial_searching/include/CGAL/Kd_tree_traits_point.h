@@ -34,25 +34,20 @@ namespace CGAL {
     typedef Separator Separator;
     typedef Item Item;
     typedef Item::FT NT;
-	typedef Item** Item_iterator;
+    typedef Item** Item_iterator;
     typedef std::list<Item>::iterator InputIterator;
     typedef std::pair<Item*,NT> Item_with_distance;
 
   private:
 
-	int Bucket_size;
+    int Bucket_size;
     Split_rule Selected_split_rule;
-	NT Aspect_ratio;
+    NT Aspect_ratio;
     bool Use_extended_nodes;
 
   public:
 
-	Kd_tree_traits_point() {
-		Bucket_size = 1;
-		Selected_split_rule = SLIDING_MIDPOINT;
-		Aspect_Ratio = 3.0;
-		Use_extended_nodes = true;
-	}
+        
 
 	Kd_tree_traits_point(int bucket_size=1, Split_rule My_split_rule=SLIDING_MIDPOINT,
 						 NT aspect_ratio=3.0, bool use_extended_nodes=true) {
@@ -62,14 +57,15 @@ namespace CGAL {
 		Use_extended_nodes = use_extended_nodes;
 	}
 
-    NT aspect_ratio() {return Aspect_ratio;}
+    	NT aspect_ratio() {return Aspect_ratio;}
 	Split_rule  selected_split_rule() {return Selected_split_rule;}
 	Shrink_rule selected_shrink_rule() {return NONE;}
-    unsigned int bucket_size() {return Bucket_size;}
+    	unsigned int bucket_size() {return Bucket_size;}
 	bool use_extended_nodes() {return Use_extended_nodes;}
+        bool nearest_neighbour_search() {return Use_nearest_neighbour_search;}
 
 	// split c0 in c0 and c1
-    Separator* split(Points_container<Item>& c0, Points_container<Item>& c1) {
+    	Separator* split(Points_container<Item>& c0, Points_container<Item>& c1) {
 		Separator* sep;
 
 		switch (Selected_split_rule) {

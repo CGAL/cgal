@@ -24,7 +24,7 @@
 #include <CGAL/Kd_tree_traits_point.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Segment_2.h>
-#include <CGAL/IO/PS_stream.h>
+#include <CGAL/PS_stream.h>
 
 namespace CGAL {
 

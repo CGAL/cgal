@@ -34,18 +34,18 @@ using std::list; // to avoid compiler crash on MSVC++
 
 namespace CGAL {
 
-template <class Traits> //= Kd_tree_traits_2d>
+template <class Tree_traits, class Search_traits> //= Kd_tree_traits_2d>
 class Nearest_neighbour_Linf {
 
     private:
 
-    typedef Traits::Item Item;
+    typedef Tree_traits::Item Item;
     typedef Item::FT NT;
     typedef Item** Item_iterator;
-    typedef Base_node<Traits> Node;
-    typedef Binary_search_tree<Traits> Tree;
+    typedef Base_node<Tree_traits> Node;
+    typedef Binary_search_tree<Tree_traits> Tree;
 
-    typedef Traits::Item_with_distance Item_with_distance;
+    typedef Tree_traits::Item_with_distance Item_with_distance;
     typedef std::pair<Node*,NT> Node_with_distance;
 
     public:
@@ -53,23 +53,40 @@ class Nearest_neighbour_Linf {
     class iterator;
 
     private:
-    
+
     class Priority_higher
     {
     public:
+
+        bool search_nearest;
+
+        Priority_higher() {
+                Search_traits s;
+                search_nearest = s.Search_nearest();
+        }
         //highest priority is smallest distance
         bool operator() (Node_with_distance* n1, Node_with_distance* n2) const {
-                return (n1->second > n2->second);
+                if (search_nearest) { return (n1->second > n2->second);}
+                else {return (n2->second > n1->second);}
         }
     };
 
     class Distance_smaller
     {
+
     public:
-		//in contrast with k nearest neighbours
+
+        bool search_nearest;
+
+        Distance_smaller() {
+                Search_traits s;
+                search_nearest = s.Search_nearest();
+        }
+
         //highest priority is smallest distance
         bool operator() (Item_with_distance* p1, Item_with_distance* p2) const {
-                return (p1->second > p2->second);
+		if (search_nearest) {return (p1->second > p2->second);}
+                else {return (p2->second > p1->second);}
         }
     };
 
@@ -181,7 +198,7 @@ class Nearest_neighbour_Linf {
         // else std::cout << "Ptr_implementation is null" << std::endl;
     }
 
-   
+
 
     class Iterator_implementation {
 
@@ -194,6 +211,8 @@ class Nearest_neighbour_Linf {
 
     private:
 
+    bool search_nearest;
+
     NT multiplication_factor;
 
     Item* query_point;
@@ -201,9 +220,7 @@ class Nearest_neighbour_Linf {
     int total_item_number;
 
     NT distance_to_root;
-    NT max_distance;
 
-    NT nn_dist;
     NT rd;
 
     std::priority_queue<Node_with_distance*, Node_with_distance_vector,
@@ -223,13 +240,15 @@ class Nearest_neighbour_Linf {
 
         multiplication_factor=(1.0+Eps);
 
-        max_distance=
-        Max_distance_linf_to_box<NT,Item>(q,*(tree.bounding_box()));
-        distance_to_root=
-        Min_distance_linf_to_box<NT,Item>(q,*(tree.bounding_box()));
-        // std::cout << "squared_max_distance=" << squared_max_distance << std::endl;
-        ///std::cout << "distance_to_root=" << distance_to_root << std::endl;
+        Search_traits s;
+        search_nearest = s.Search_nearest();
 
+        if (search_nearest) distance_to_root=
+        Min_distance_linf_to_box<NT,Item>(q,*(tree.bounding_box()));
+        else distance_to_root=
+        Max_distance_linf_to_box<NT,Item>(q,*(tree.bounding_box()));
+       
+       
         query_point = &q;
 
         total_item_number=tree.item_number();
@@ -239,7 +258,7 @@ class Nearest_neighbour_Linf {
         number_of_items_visited=0;
         number_of_neighbours_computed=0;
 
-        nn_dist=max_distance;
+
 
         Node_with_distance *The_Root = new Node_with_distance(tree.root(),distance_to_root);
         PriorityQueue.push(The_Root);
@@ -300,9 +319,16 @@ class Nearest_neighbour_Linf {
 
         // compute the next item
         bool next_neighbour_found=false;
-        if (!(Item_PriorityQueue.empty()))
-        next_neighbour_found=(multiplication_factor*rd > Item_PriorityQueue.top()->second);
 
+        if (!(Item_PriorityQueue.empty())) {
+        if (search_nearest)
+        	next_neighbour_found=(multiplication_factor*rd > Item_PriorityQueue.top()->second);
+        else
+		next_neighbour_found=(multiplication_factor*rd < Item_PriorityQueue.top()->second);
+        }
+        
+
+       
         // otherwise browse the tree further
         while ((!next_neighbour_found) && (!PriorityQueue.empty())) {
                 Node_with_distance* The_node_top=PriorityQueue.top();
@@ -316,16 +342,17 @@ class Nearest_neighbour_Linf {
                         NT new_rd;
                         NT new_off =
                         (*query_point)[new_cut_dim] - N->separator()->cutting_value();
-                        if (new_off < 0.0) {
-								if (-new_off > rd) new_rd=-new_off;
-								else new_rd=rd;
+                        if ( ((new_off < 0.0) && (search_nearest)) ||
+                        (( new_off >= 0.0) && (!search_nearest))  ) {
+				if (-new_off > rd) new_rd=-new_off;
+				else new_rd=rd;
                                 Node_with_distance *Upper_Child =
                                 new Node_with_distance(N->upper(),new_rd);
                                 PriorityQueue.push(Upper_Child);
                                 N=N->lower();
                         }
                         else { // compute new distance
-							    if (new_off > rd) new_rd=new_off;
+				if (new_off > rd) new_rd=new_off;
                                 else new_rd=rd;
                                 Node_with_distance *Lower_Child =
                                 new Node_with_distance(N->lower(),new_rd);
@@ -350,9 +377,16 @@ class Nearest_neighbour_Linf {
                 // hence update rd
                 if (!PriorityQueue.empty()) {
                         rd = PriorityQueue.top()->second;
-                        next_neighbour_found =
-                        (multiplication_factor*rd >
-                        Item_PriorityQueue.top()->second);
+			if (!PriorityQueue.empty()) {
+                        rd = PriorityQueue.top()->second;
+			if (search_nearest)
+				next_neighbour_found =
+                		(multiplication_factor*rd > Item_PriorityQueue.top()->second);
+                        else
+				next_neighbour_found =
+                		(multiplication_factor*rd < Item_PriorityQueue.top()->second);
+                        
+                	}
                 }
                 else // priority queue empty => last neighbour found
                 {
@@ -366,10 +400,10 @@ class Nearest_neighbour_Linf {
 }; // class iterator
 }; // class Nearest neighbour_L2
 
-template <class Traits>
-void swap (Nearest_neighbour_Linf<Traits>::iterator& x,
-        Nearest_neighbour_Linf<Traits>::iterator& y) {
-        Nearest_neighbour_Linf<Traits>::iterator::Iterator_implementation
+template <class Tree_traits, class Search_traits>
+void swap (Nearest_neighbour_Linf<Tree_traits,Search_traits>::iterator& x,
+        Nearest_neighbour_Linf<Tree_traits,Search_traits>::iterator& y) {
+        Nearest_neighbour_Linf<Tree_traits,Search_traits>::iterator::Iterator_implementation
         *tmp = x.Ptr_implementation;
         x.Ptr_implementation  = y.Ptr_implementation;
         y.Ptr_implementation = tmp;
