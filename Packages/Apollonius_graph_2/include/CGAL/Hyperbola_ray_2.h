@@ -80,7 +80,7 @@ public:
   template<class QTWIDGET>
   void draw_qt(QTWIDGET& s)
   {
-    if ( CGAL::is_zero(r) ) {
+    if ( CGAL::is_zero(this->r) ) {
       draw_ray(s);
       return;
     }
@@ -89,16 +89,16 @@ public:
     double height = s.y_max() - s.y_min();
 
     if ( width > height ) {
-      STEP = height / 100.0;
+      this->STEP = height / 100.0;
     } else {
-      STEP = width / 100.0;
+      this->STEP = width / 100.0;
     }
 
     FT t1 = t(this->p1);
     if ( _dir == POSITIVE ) {
-      this->p2 = f(t1 + STEP * OFFSET);
+      this->p2 = f(t1 + this->STEP * OFFSET);
     } else {
-      this->p2 = f(t1 - STEP * OFFSET);
+      this->p2 = f(t1 - this->STEP * OFFSET);
     }
     
     Hyperbola_segment_2< Gt >::draw(s);

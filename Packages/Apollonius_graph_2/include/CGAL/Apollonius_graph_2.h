@@ -290,6 +290,10 @@ public:
     return DG::finite_vertex();
   }
 
+protected:
+  using Delaunay_graph::cw;
+  using Delaunay_graph::ccw;
+
 public:
   // TRAVERSAL OF THE APOLLONIUS GRAPH
   //----------------------------------

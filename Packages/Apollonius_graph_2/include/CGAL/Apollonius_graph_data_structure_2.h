@@ -73,13 +73,13 @@ public:
     Face_handle g = f->neighbor(i);
     int j = f->mirror_index(i);
 
-    Vertex_handle  v = create_vertex();
+    Vertex_handle  v = this->create_vertex();
 
-    Vertex_handle v0 = f->vertex(ccw(i));
-    Vertex_handle v1 = f->vertex( cw(i));
+    Vertex_handle v0 = f->vertex( this->ccw(i) );
+    Vertex_handle v1 = f->vertex( this->cw(i)  );
 
-    Face_handle f1 = create_face(v0, v, v1, NULL, f, NULL);
-    Face_handle f2 = create_face(v0, v1, v, NULL, NULL, g);
+    Face_handle f1 = this->create_face(v0, v, v1, NULL, f, NULL);
+    Face_handle f2 = this->create_face(v0, v1, v, NULL, NULL, g);
 
     f1->set_neighbor(0, f2);
     f1->set_neighbor(2, f2);
@@ -106,7 +106,7 @@ public:
     Face_handle f1 = v->face();
     int i = f1->index(v);
 
-    Face_handle f2 = f1->neighbor( ccw(i) );
+    Face_handle f2 = f1->neighbor( this->ccw(i) );
     int j = f2->index(v);
 
     Face_handle ff1 = f1->neighbor( i );
@@ -118,12 +118,12 @@ public:
     ff1->set_neighbor(id1, ff2);
     ff2->set_neighbor(id2, ff1);
 
-    Vertex_handle v1 = f1->vertex( ccw(i) );
+    Vertex_handle v1 = f1->vertex( this->ccw(i) );
     //    if ( v1->face() == f1 || v1->face() == f2 ) {
       v1->set_face(ff1);
       //    }
 
-    Vertex_handle v2 = f1->vertex(  cw(i) );
+    Vertex_handle v2 = f1->vertex(  this->cw(i) );
     //    if ( v2->face() == f1 || v2->face() == f2 ) {
       v2->set_face(ff2);
       //    }
@@ -146,8 +146,8 @@ public:
 
     std::cout << "inside join: just started..." << std::endl;
 
-    Vertex* v1 = f->vertex( ccw(i) );
-    Vertex* v2 = f->vertex(  cw(i) );
+    Vertex* v1 = f->vertex( this->ccw(i) );
+    Vertex* v2 = f->vertex( this->cw(i)  );
 
     CGAL_precondition( v == v1 || v == v2 );
 
@@ -212,17 +212,17 @@ public:
     Face* g = f->neighbor(i);
     int j = f->mirror_index(i);
 
-    Face* tl = f->neighbor(  cw(i) );
-    Face* tr = f->neighbor( ccw(i) );
+    Face* tl = f->neighbor( this->cw(i)  );
+    Face* tr = f->neighbor( this->ccw(i) );
 
-    int itl = f->mirror_index(  cw(i) );
-    int itr = f->mirror_index( ccw(i) );
+    int itl = f->mirror_index( this->cw(i)  );
+    int itr = f->mirror_index( this->ccw(i) );
 
-    Face* bl = g->neighbor( ccw(j) );
-    Face* br = g->neighbor(  cw(j) );
+    Face* bl = g->neighbor( this->ccw(j) );
+    Face* br = g->neighbor( this->cw(j)  );
 
-    int ibl = g->mirror_index( ccw(j) );
-    int ibr = g->mirror_index(  cw(j) );
+    int ibl = g->mirror_index( this->ccw(j) );
+    int ibr = g->mirror_index( this->cw(j)  );
 
     // we need to store the faces adjacent to v2 as well as the
     // indices of v2 w.r.t. these faces, so that afterwards we can set 
@@ -295,7 +295,7 @@ public:
   Vertex*
   join_vertices(Face* f, int i)
   {
-    return join_vertices(f, i, f->vertex( ccw(i) ));
+    return join_vertices(f, i, f->vertex( this->ccw(i) ));
   }
 #endif
 };

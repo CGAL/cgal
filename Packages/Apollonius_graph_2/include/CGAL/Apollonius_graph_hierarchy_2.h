@@ -132,7 +132,7 @@ public:
 
     // sort by decreasing weight
     typename Apollonius_graph_base::Site_less_than_comparator
-      less_than(geom_traits());
+      less_than(this->geom_traits());
     std::sort(wp_list.begin(), wp_list.end(), less_than);
 
     // now insert

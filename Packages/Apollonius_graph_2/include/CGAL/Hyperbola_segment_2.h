@@ -119,7 +119,7 @@ public:
 
       p.push_back( this->o );
       k = 1;
-      tt = FT(-STEP);
+      tt = FT(-this->STEP);
       while ( CGAL::compare(tt, s[0]) == LARGER ) {
 	p.insert( p.begin(), f(tt) );
 	k--;

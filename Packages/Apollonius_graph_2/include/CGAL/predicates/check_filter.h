@@ -34,7 +34,7 @@ void must_be_filtered(const T&)
 template < class CT, class ET, class Type, bool Protection, class Cache>
 void must_be_filtered(const Filtered_exact<CT, ET, Type, Protection,
 		      Cache> &)
-{ dont_compile(); }
+{ dont_compile(CT(), ET()); }
 #endif
 
 }

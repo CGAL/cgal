@@ -165,7 +165,7 @@ insert(const Site_2 &p)
 {
   int vertex_level = random_level();
 
-  size_type n = number_of_vertices();
+  size_type n = this->number_of_vertices();
   Vertex_handle vertex;
   Vertex_handle vnear[ag_hierarchy_2__maxlevel];
 
@@ -272,7 +272,7 @@ insert(const Site_2 &p)
   n_hidden = v_hidden.size();
 
   if ( n_hidden != 0 ) {
-    int n_non_hidden = number_of_vertices() - n_hidden;
+    int n_non_hidden = this->number_of_vertices() - n_hidden;
     if ( n_non_hidden < 2 ) {
       for(unsigned int i = 1; i < ag_hierarchy_2__maxlevel; ++i) {
 	hierarchy[i]->clear();
@@ -280,7 +280,7 @@ insert(const Site_2 &p)
 
       if ( n_non_hidden == 1 ) {
 	Vertex_handle non_hidden;
-	Finite_vertices_iterator vit = finite_vertices_begin();
+	Finite_vertices_iterator vit = this->finite_vertices_begin();
 	do {
 	  non_hidden = Vertex_handle(vit);
 	  ++vit;
