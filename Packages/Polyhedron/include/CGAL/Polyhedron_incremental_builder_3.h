@@ -43,6 +43,7 @@
 
 #include <CGAL/Random_access_adaptor.h>
 #include <CGAL/HalfedgeDS_decorator.h>
+#include <CGAL/Unique_hash_map.h>
 #include <CGAL/IO/Verbose_ostream.h>
 #include <vector>
 #include <cstddef>
@@ -69,6 +70,7 @@ protected:
     typedef typename HDS::Supports_vertex_halfedge  Supports_vertex_halfedge;
     typedef typename HDS::Supports_removal          Supports_removal;
     typedef typename HDS::Vertex_iterator           Vertex_iterator;
+    typedef typename HDS::Halfedge_iterator         Halfedge_iterator;
     typedef Random_access_adaptor<Vertex_iterator>  Random_access_index;
 
     bool                      m_error;
@@ -99,13 +101,32 @@ protected:
     // Implement the vertex_to_edge_map either with an array or
     // the halfedge pointer in the vertices (if supported).
     // ----------------------------------------------------
-    void initialize_vertex_to_edge_map( size_type  , Tag_true) {}
-    void initialize_vertex_to_edge_map( size_type n, Tag_false) {
+    void initialize_vertex_to_edge_map( size_type  , bool, Tag_true) {}
+    void initialize_vertex_to_edge_map( size_type n, bool mode, Tag_false){
         vertex_to_edge_map = std::vector< Halfedge_handle>();
         vertex_to_edge_map.reserve(n);
+        if ( mode) {
+            // go through all halfedges and keep a halfedge for each
+            // vertex found in a hashmap.
+            typedef Unique_hash_map< Vertex_iterator, Halfedge_handle> V_map;
+            Halfedge_handle hh;
+            V_map v_map( hh, hds.size_of_vertices());
+            for ( Halfedge_iterator hi = hds.halfedges_begin();
+                  hi != hds.halfedges_end();
+                  ++hi) {
+                v_map[ hi->vertex()] = hi;
+            }
+            size_type i = 0;
+            for ( Vertex_iterator vi = hds.vertices_begin();
+                  vi != hds.vertices_end();
+                  ++vi) {
+                set_vertex_to_edge_map( i, v_map[ index_to_vertex_map[i]]);
+                ++i;
+            }
+        }
     }
-    void initialize_vertex_to_edge_map( size_type n) {
-        initialize_vertex_to_edge_map( n, Supports_vertex_halfedge());
+    void initialize_vertex_to_edge_map( size_type n, bool mode) {
+        initialize_vertex_to_edge_map(n, mode, Supports_vertex_halfedge());
     }
     void push_back_vertex_to_edge_map( Halfedge_handle  , Tag_true) {}
     void push_back_vertex_to_edge_map( Halfedge_handle h, Tag_false) {
@@ -163,7 +184,8 @@ protected:
 public:
     bool error() const { return m_error; }
 
-    Polyhedron_incremental_builder_3(HDS& h, bool verbose = false)
+    Polyhedron_incremental_builder_3(HDS& h,
+                                     bool verbose = false)
         // stores a reference to the halfedge data structure `h' in the
         // internal state. The previous polyhedral surface in `h'
         // remains unchanged. The incremental builder adds the new
@@ -177,18 +199,25 @@ public:
     }
 
 // OPERATIONS
+    enum { RELATIVE = 0, ABSOLUTE = 1};
 
-    void begin_surface( size_type v, size_type f, size_type h = 0);
-        // starts the construction. v is the number of
-        // vertices to expect, f the number of facets, and h the number of
-        // halfedges. If h is unspecified (`== 0') it is estimated using
+
+    void begin_surface( size_type v, size_type f, size_type h = 0,
+                        int mode = RELATIVE);
+        // starts the construction. v is the number of new
+        // vertices to expect, f the number of new facets, and h the number of
+        // new halfedges. If h is unspecified (`== 0') it is estimated using
         // Euler equations (plus 5% for the so far unkown holes and genus
         // of the object). These values are used to reserve space in the
         // polyhedron representation `HDS'. If the representation
-        // supports insertion these
-        // values do not restrict the class of readable polyhedrons.
-        // If the representation does not support insertion the object
-        // must fit in the reserved sizes.
+        // supports insertion these values do not restrict the class of
+        // readable polyhedrons. If the representation does not support
+        // insertion the object must fit in the reserved sizes.
+        //    If `mode' is set to ABSOLUTE the incremental builder uses
+        // absolute indexing and the vertices of the old polyhedral surface
+        // can be used in new facets. Otherwise relative indexing is used 
+        // starting with new indices for the new construction.
+
 
     void add_vertex( const Point_3& p);
         // adds p to the vertex list.
@@ -267,7 +296,7 @@ find_vertex( Vertex_handle v) {
         ++n;
         ++it;
     }
-    n = n - ( hds.size_of_vertices() - new_vertices);
+    n = n - rollback_v;
     return n;
 }
 
@@ -284,7 +313,7 @@ find_facet( Face_handle f) {
         ++n;
         ++it;
     }
-    n = n - ( hds.size_of_faces() - new_faces);
+    n = n - rollback_f;
     return n;
 }
 
@@ -292,10 +321,8 @@ template < class HDS>  CGAL_LARGE_INLINE
 typename HDS::Halfedge_handle
 Polyhedron_incremental_builder_3<HDS>::
 lookup_halfedge( size_type w, size_type v) {
-    typedef typename HDS::Supports_halfedge_vertex
-        Supports_halfedge_vertex;
-    Assert_compile_time_tag( Supports_halfedge_vertex(),
-                                Tag_true());
+    typedef typename HDS::Supports_halfedge_vertex  Supports_halfedge_vertex;
+    Assert_compile_time_tag( Supports_halfedge_vertex(), Tag_true());
     CGAL_assertion( w < new_vertices);
     CGAL_assertion( v < new_vertices);
     CGAL_assertion( ! last_vertex);
@@ -446,13 +473,17 @@ rollback() {
     CGAL_assertion( rollback_v <= hds.size_of_vertices());
     CGAL_assertion( rollback_h <= hds.size_of_halfedges());
     CGAL_assertion( rollback_f <= hds.size_of_faces());
-    while ( rollback_v != hds.size_of_vertices())
-        hds.vertices_pop_back();
-    CGAL_assertion((( hds.size_of_halfedges() - rollback_h) & 1) == 0);
-    while ( rollback_h != hds.size_of_halfedges())
-        hds.edges_pop_back();
-    while ( rollback_f != hds.size_of_faces())
-        hds.faces_pop_back();
+    if ( rollback_v == 0 && rollback_h == 0 && rollback_f == 0) {
+        hds.clear();
+    } else {
+        while ( rollback_v != hds.size_of_vertices())
+            hds.vertices_pop_back();
+        CGAL_assertion((( hds.size_of_halfedges() - rollback_h) & 1) == 0);
+        while ( rollback_h != hds.size_of_halfedges())
+            hds.edges_pop_back();
+        while ( rollback_f != hds.size_of_faces())
+            hds.faces_pop_back();
+    }
     m_error = false;
     CGAL_assertion_code( check_protocoll = 0;)
 }
@@ -460,16 +491,25 @@ rollback() {
 template < class HDS>  CGAL_MEDIUM_INLINE
 void
 Polyhedron_incremental_builder_3<HDS>::
-begin_surface( size_type v, size_type f, size_type h) {
+begin_surface( size_type v, size_type f, size_type h, int mode) {
     CGAL_assertion( check_protocoll == 0);
     CGAL_assertion_code( check_protocoll = 1;)
     CGAL_assertion( ! m_error);
-    new_vertices  = 0;
-    new_faces     = 0;
-    new_halfedges = 0;
-    rollback_v = hds.size_of_vertices();
-    rollback_f = hds.size_of_faces();
-    rollback_h = hds.size_of_halfedges();
+    if ( mode == RELATIVE) {
+        new_vertices  = 0;
+        new_faces     = 0;
+        new_halfedges = 0;
+        rollback_v    = hds.size_of_vertices();
+        rollback_f    = hds.size_of_faces();
+        rollback_h    = hds.size_of_halfedges();
+    } else {
+        new_vertices  = hds.size_of_vertices();
+        new_faces     = hds.size_of_faces();
+        new_halfedges = hds.size_of_halfedges();
+        rollback_v    = 0;
+        rollback_f    = 0;
+        rollback_h    = 0;
+    }
     if ( h == 0) {
         // Use the Eulerian equation for connected planar graphs. We do
         // not know the number of facets that are holes and we do not
@@ -480,9 +520,16 @@ begin_surface( size_type v, size_type f, size_type h) {
     hds.reserve( hds.size_of_vertices()  + v,
                  hds.size_of_halfedges() + h,
                  hds.size_of_faces()     + f);
-    index_to_vertex_map = Random_access_index( hds.vertices_end());
-    index_to_vertex_map.reserve(v);
-    initialize_vertex_to_edge_map( v);
+    if ( mode == RELATIVE) {
+        index_to_vertex_map = Random_access_index( hds.vertices_end());
+        index_to_vertex_map.reserve(v);
+        initialize_vertex_to_edge_map( v, false);
+    } else {
+        index_to_vertex_map = Random_access_index( hds.vertices_begin(),
+                                                   hds.vertices_end());
+        index_to_vertex_map.reserve( hds.size_of_vertices() + v);
+        initialize_vertex_to_edge_map( hds.size_of_vertices() + v, true);
+    }
 }
 
 template < class HDS>  CGAL_MEDIUM_INLINE

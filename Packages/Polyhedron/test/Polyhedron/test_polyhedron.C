@@ -89,6 +89,62 @@ Build_tetrahedron<HDS>:: operator()( HDS& target) {
 }
 
 
+// A polyhedron modifier that creates a tetrahedron using the
+// incremental builder, but in two steps with a second incr. builder
+// continueing what the first one started.
+template < class HDS >
+class Build_tetrahedron_2 : public CGAL::Modifier_base<HDS> {
+public:
+    Build_tetrahedron_2() {}
+        // creates the modifier.
+    void operator()( HDS& target);
+        // builds a tetrahedron.
+        // Postcondition: `target' is a valid polyhedral surface.
+};
+
+template < class HDS >
+void
+Build_tetrahedron_2<HDS>:: operator()( HDS& target) {
+    typedef CGAL::Polyhedron_incremental_builder_3<HDS> Builder;
+    typedef typename HDS::Vertex Vertex;
+    typedef typename Vertex::Point Point;
+    {
+        Builder B( target, true);
+        B.begin_surface( 3, 1, 6);
+        // Point coordinates suitable for integer coordinates.
+        B.add_vertex( Point( 0, 0, 1));
+        B.add_vertex( Point( 1, 1, 1));
+        B.add_vertex( Point( 0, 1, 0));
+        B.begin_facet();
+        B.add_vertex_to_facet( 2);
+        B.add_vertex_to_facet( 1);
+        B.add_vertex_to_facet( 0);
+        B.end_facet();
+        B.end_surface();
+    }{
+        Builder B( target, true);
+        B.begin_surface( 1, 3, 6, Builder::ABSOLUTE);
+        B.add_vertex( Point( 1, 0, 0));
+        B.begin_facet();
+        B.add_vertex_to_facet( 1);
+        B.add_vertex_to_facet( 3);
+        B.add_vertex_to_facet( 0);
+        B.end_facet();
+        B.begin_facet();
+        B.add_vertex_to_facet( 3);
+        B.add_vertex_to_facet( 2);
+        B.add_vertex_to_facet( 0);
+        B.end_facet();
+        B.begin_facet();
+        B.add_vertex_to_facet( 2);
+        B.add_vertex_to_facet( 3);
+        B.add_vertex_to_facet( 1);
+        B.end_facet();
+        B.end_surface();
+    }
+}
+
+
 void test_Polyhedron() {
     typedef CGAL::Cartesian<double>                     Kernel;
     typedef CGAL::Cartesian<int>                        KernelI;
@@ -281,6 +337,14 @@ void test_Polyhedron() {
         Polyhedron P2;
         Build_tetrahedron<HDS> modifier;
         P2.delegate( modifier);
+        CGAL_assertion( P2.is_tetrahedron(P2.halfedges_begin()));
+        P2.normalize_border();
+        CGAL_assertion( P2.is_valid( false, 1));
+
+        P2.clear();
+        CGAL_assertion( P2.empty());
+        Build_tetrahedron_2<HDS> modifier2;
+        P2.delegate( modifier2);
         CGAL_assertion( P2.is_tetrahedron(P2.halfedges_begin()));
         P2.normalize_border();
         CGAL_assertion( P2.is_valid( false, 1));

@@ -56,6 +56,15 @@ already known.
                             end\_facet\/$))\:*$ end\_surface
 }
 
+The incremental builder can work in two modes: \ccc{RELATIVE} (the
+default), in which a polyhedral surface already contained in the
+halfedge data structure is ignored and all indices are relative to the
+newly added surface, or \ccc{ABSOLUTE}, in which all indices are
+absolute indices including an already existing polyhedral surface. The
+former mode allows to create easily independent connected components,
+while the latter mode allows to to continue the construction of an
+existing surface, the absolute indexing allows to address existing
+vertices when creating new facets.
 
 \ccInclude{CGAL/Polyhedron_incremental_builder_3.h}
 
@@ -68,6 +77,11 @@ already known.
 \ccNestedType{Point_3}{point type of the vertex.}
 \ccGlue
 \ccNestedType{size_type}{size type.}
+
+\ccConstants
+
+\ccEnum{enum { RELATIVE, ABSOLUTE};}{two different indexing modes.}
+
 
 \ccCreation
 \ccThree{void}{B.remove_unconnected_vertices();;;}{}
@@ -82,19 +96,24 @@ already known.
    diagnostic messages will be printed to \ccc{cerr} in case of
    malformed input data.}
 
-\newpage
 \ccOperations
 
-\ccMethod{void begin_surface( size_type v, size_type f, size_type h = 0);}
-{starts the construction. $v$ is the number of vertices
-    to expect, $f$ the number of facets, and $h$ the number of
-    halfedges. If $h$ is unspecified (\ccc{== 0}) it is estimated using
+\ccMethod{void begin_surface( size_type v, size_type f, size_type h = 0,
+                              int mode = RELATIVE);}
+{starts the construction. $v$ is the number of new vertices
+    to expect, $f$ the number of new facets, and $h$ the number of
+    new halfedges. If $h$ is unspecified (\ccc{== 0}) it is estimated using
     Euler's equation (plus 5\% for the so far unknown holes and genus of
     the object). These values are used to reserve space in the
     halfedge data structure \ccc{hds}. If the representation supports
     insertion these values do not restrict the class of constructible
     polyhedra. If the representation does not support insertion the
-    object must fit into the reserved sizes.}  
+    object must fit into the reserved sizes.\\
+    If \ccc{mode} is set to \ccc{ABSOLUTE} the incremental builder
+    uses absolute indexing and the vertices of the old polyhedral surface
+    can be used in new facets (needs preprocessing time linear in the
+    size of the old surface). Otherwise relative indexing is used 
+    starting with new indices for the new construction.}
 
 \ccMethod{void add_vertex( const Point_3& p);}{
     adds $p$ to the vertex list.}  
@@ -103,7 +122,8 @@ already known.
 \ccGlue
 \ccMethod{void add_vertex_to_facet( size_type i);}{adds a vertex with
   index $i$ to the current facet. The first point added with
-  \ccc{add_vertex()} has the index 0.}
+  \ccc{add_vertex()} has the index 0 if \ccc{mode} was set to \ccc{RELATIVE},
+  otherwise the first vertex in the referenced \ccc{hds} has the index 0.}
 \ccGlue
 \ccMethod{void end_facet();}{ends a facet.}
 \ccGlue
