@@ -71,7 +71,7 @@ created in Section~4.
 \renewcommand{\ccSection}{\ccSubsection}
 \renewcommand{\ccFont}{\tt}
 \renewcommand{\ccEndFont}{}
-\ccSetThreeColumns{CGAL_Random}{random.restore_seed( Seed seed)}{}
+\ccSetThreeColumns{CGAL_Random}{random.restore_state( State state)}{}
 \ccPropagateThreeToTwoColumns
 \input{../../doc_tex/support/Random/Random.tex}
 
@@ -84,9 +84,9 @@ created in Section~4.
 
 This section describes the implementation of the random numbers
 generator. We use the C library function \ccc{erand48} to generate the
-random numbers. It behaves like the well-known function \ccc{drand48} but
-operates on a user supplied storage for the 48-Bit seed. This makes different
-instances of the random number generator independent.
+random numbers. It behaves like the well-known function \ccc{drand48}
+but operates on a user supplied storage for the 48-Bit state. This
+makes different instances of the random number generator independent.
 
 First, we declare the class \ccc{CGAL_Random}.
 
@@ -113,12 +113,12 @@ section, so we do not comment on it here.
 
 @macro <Random public interface> = @begin
     // types
-    typedef  unsigned short  Seed[3];                   // 48 Bits
+    typedef  unsigned short  State[3];                  // 48 Bits
 
     // creation
     CGAL_Random( );
-    CGAL_Random( Seed seed);
-    CGAL_Random( long init);
+    CGAL_Random( long seed);
+    CGAL_Random( State state);
 
     // operations
     bool    get_bool  ( );
@@ -127,12 +127,12 @@ section, so we do not comment on it here.
 
     int     operator () ( int upper);
 
-    // seed functions
-    void       save_seed( Seed      & seed) const;
-    void    restore_seed( Seed const& seed);
+    // state functions
+    void       save_state(       State& state) const;
+    void    restore_state( const State& state);
 
     // equality test
-    bool  operator == ( CGAL_Random const& rnd) const;
+    bool  operator == ( const CGAL_Random& rnd) const;
 @end
 
 
@@ -154,53 +154,52 @@ generator.
 
 \subsection{Private Data Members}
 
-The seed is stored in an array of three \ccc{unsigned short}s.
+The state is stored in an array of three \ccc{unsigned short}s.
 
 @macro <Random private data members> = @begin
     // data members
-    unsigned short  _seed[3];                           // 48 Bits
+    unsigned short  _state[3];                          // 48 Bits
 @end
 
 
 \subsection{Constructors}
 
-In the default constructor the seed is initialized using the system
-time.
+In the default constructor the seed is set using the system time.
 
 @macro <Random constructors> = @begin
-    #ifndef CGAL_PROTECT_SYS_TIME_H
-    #  include <sys/time.h>
-    #  define CGAL_PROTECT_SYS_TIME_H
+    #ifndef CGAL_PROTECT_CTIME
+    #  include <ctime>
+    #  define CGAL_PROTECT_CTIME
     #endif
 
     CGAL_Random::
     CGAL_Random( )
     {
         // get system's microseconds
-        timeval tv;
-        gettimeofday( &tv, NULL);
+        std::timeval tv;
+        std::gettimeofday( &tv, NULL);
         unsigned long  ms = tv.tv_sec*1000000+tv.tv_usec;
 
         // initialize random numbers generator
-        _seed[ 0] = _seed[ 2] = CGAL_static_cast( unsigned short, ms >> 16);
-        _seed[ 1] =             CGAL_static_cast( unsigned short, ms & 65535);
+        _state[ 0] = _state[ 2] = CGAL_static_cast( unsigned short, ms >> 16);
+        _state[ 1] =            CGAL_static_cast( unsigned short, ms & 65535);
     }
 
     CGAL_Random::
-    CGAL_Random( Seed seed)
+    CGAL_Random( long seed)
     {
         // initialize random numbers generator
-        _seed[ 0] = seed[ 0];
-        _seed[ 1] = seed[ 1];
-        _seed[ 2] = seed[ 2];
+        _state[ 0] = _state[ 2] = CGAL_static_cast( unsigned short,seed >> 16);
+        _state[ 1] =            CGAL_static_cast( unsigned short,seed & 65535);
     }
 
     CGAL_Random::
-    CGAL_Random( long init)
+    CGAL_Random( State state)
     {
         // initialize random numbers generator
-        _seed[ 0] = _seed[ 2] = CGAL_static_cast( unsigned short,init >> 16);
-        _seed[ 1] =             CGAL_static_cast( unsigned short,init & 65535);
+        _state[ 0] = state[ 0];
+        _state[ 1] = state[ 1];
+        _state[ 2] = state[ 2];
     }
 
 @end
@@ -213,17 +212,19 @@ uniformly chosen from the interval $[\ccc{0.0},\ccc{1.0})$.
 The result is converted to a number in the given range.
 
 @macro <Random operations> = @begin
-    #ifndef CGAL_PROTECT_STDLIB_H
-    #  include <stdlib.h>
-    #  define CGAL_PROTECT_STDLIB_H
+    #ifndef CGAL_PROTECT_CSTDLIB
+    #  include <cstdlib>
+    #  define CGAL_PROTECT_CSTDLIB
     #endif
+
+    using std::erand48;
 
     inline
     bool
     CGAL_Random::
     get_bool( )
     {
-        return( CGAL_static_cast( bool, ( erand48( _seed) >= 0.5)));
+        return( CGAL_static_cast( bool, ( erand48( _state) >= 0.5)));
     }
 
     inline
@@ -232,7 +233,7 @@ The result is converted to a number in the given range.
     get_int( int lower, int upper)
     {
         return( lower + CGAL_static_cast( int,
-                  CGAL_static_cast( double, upper-lower) * erand48( _seed)));
+                  CGAL_static_cast( double, upper-lower) * erand48( _state)));
     }
 
     inline
@@ -240,7 +241,7 @@ The result is converted to a number in the given range.
     CGAL_Random::
     get_double( double lower, double upper)
     {
-        return( lower + ( upper-lower) * erand48( _seed));
+        return( lower + ( upper-lower) * erand48( _state));
     }
 
     inline
@@ -253,46 +254,46 @@ The result is converted to a number in the given range.
 @end
 
 
-\subsection{Seed Functions}
+\subsection{State Functions}
 
-The seed functions just copy the internal seed to or from the given
-seed variable, respectively.
+The state functions just copy the internal state to or from the given
+state variable, respectively.
 
-@macro <Random seed functions> = @begin
+@macro <Random state functions> = @begin
     void
     CGAL_Random::
-    save_seed( Seed& seed) const
+    save_state( State& state) const
     {
-        seed[ 0] = _seed[ 0];
-        seed[ 1] = _seed[ 1];
-        seed[ 2] = _seed[ 2];
+        state[ 0] = _state[ 0];
+        state[ 1] = _state[ 1];
+        state[ 2] = _state[ 2];
     }
 
     void
     CGAL_Random::
-    restore_seed( Seed const& seed)
+    restore_state( const State& state)
     {
-        _seed[ 0] = seed[ 0];
-        _seed[ 1] = seed[ 1];
-        _seed[ 2] = seed[ 2];
+        _state[ 0] = state[ 0];
+        _state[ 1] = state[ 1];
+        _state[ 2] = state[ 2];
     }
 @end
 
 
 \subsection{Equality Test}
 
-The equality test compares the internal seeds of the two operands.
+The equality test compares the internal states of the two operands.
 
 @macro <Random equality test> = @begin
     inline
     bool    
     CGAL_Random::
-    operator == ( CGAL_Random const& rnd) const
+    operator == ( const CGAL_Random& rnd) const
     {
         return( CGAL_static_cast( bool,
-                    ( _seed[ 0] == rnd._seed[ 0]) &&
-                    ( _seed[ 1] == rnd._seed[ 1]) &&
-                    ( _seed[ 2] == rnd._seed[ 2]) ) );
+                    ( _state[ 0] == rnd._state[ 0]) &&
+                    ( _state[ 1] == rnd._state[ 1]) &&
+                    ( _state[ 2] == rnd._state[ 2]) ) );
     }
 @end
 
@@ -310,8 +311,8 @@ initialized with the same seed generate the same sequence of random
 numbers.
 
 @macro <Random tests> = @begin
-    CGAL_Random::Seed  seed;
-    CGAL_random.save_seed( seed);
+    CGAL_Random::State  state;
+    CGAL_random.save_state( state);
 
     // test get_bool
     {
@@ -341,10 +342,10 @@ numbers.
         assert( ( 0 <= i) && ( i < 5555));
     }
 
-    // test seed functions
+    // test state functions
     {
-        CGAL_random.restore_seed( seed);        // `CGAL_Random' and `rnd'
-        CGAL_Random rnd( seed);                 // have the same seed now
+        CGAL_random.restore_state( state);      // `CGAL_Random' and `rnd'
+        CGAL_Random rnd( state);                // have the same state now
         assert( CGAL_random.get_bool()         == rnd.get_bool()        );
         assert( CGAL_random.get_int( -100,100) == rnd.get_int( -100,100));
         assert( CGAL_random.get_double()       == rnd.get_double()      );
@@ -421,8 +422,8 @@ numbers.
     // constructors
     @<Random constructors>
 
-    // seed functions
-    @<Random seed functions>
+    // state functions
+    @<Random state functions>
 
     // Global variables
     // ================
@@ -441,7 +442,7 @@ numbers.
         "test program for Random Numbers Generator")
 
     #include <CGAL/Random.h>
-    #include <assert.h>
+    #include <cassert>
 
     int
     main( int, char**)
