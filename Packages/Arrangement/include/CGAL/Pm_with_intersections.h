@@ -35,11 +35,11 @@
 CGAL_BEGIN_NAMESPACE
 
 
-template<class _Planar_map>
-class Planar_map_with_intersections_2 : public _Planar_map
+template<class Planar_map_>
+class Planar_map_with_intersections_2 : public Planar_map_
 {
 public:
-  typedef _Planar_map Planar_map;
+  typedef Planar_map_ Planar_map;
   typedef typename Planar_map::Traits Traits;
   typedef typename Planar_map::Traits_wrap Pm_traits_wrap;
   typedef Planar_map_with_intersections_traits_wrap<Traits> Pmwx_traits_wrap;
@@ -48,7 +48,7 @@ public:
   typedef typename Planar_map::Face_handle Face_handle;
   typedef typename Traits::X_curve X_curve;
   typedef typename Traits::Point Point;
-  typedef PMChangeNotification<Planar_map> PMWXChangeNotification; 
+  typedef Pm_change_notification<Planar_map> Pmwx_change_notification; 
 	
   CGAL_DEFINE_COUNT_OP_TIMES_OBJECT
 
@@ -92,7 +92,7 @@ public:
       delete pmwx_traits;
   }
 	
-  const X_curve &curve(Halfedge_handle he, PMWXChangeNotification *en)
+  const X_curve &curve(Halfedge_handle he, Pmwx_change_notification *en)
   {
     if (en == NULL) 
       return he->curve();
@@ -112,7 +112,7 @@ public:
 						   bool direction_right,
 						   Point &xp1,
 						   Point &xp2,
-						   PMWXChangeNotification *en)
+						   Pmwx_change_notification *en)
   {
 	bool intersection_exists;
 	if (direction_right)
@@ -161,9 +161,9 @@ public:
 	swap_done = true;
 	  }
 
-	  const Point &left_point = traits->point_leftlow_most
+	  Point left_point = traits->point_leftlow_most
 	( traits->curve_source(he_cv), traits->curve_target(he_cv));
-	  const Point &right_point = traits->point_righttop_most
+	  Point right_point = traits->point_righttop_most
 	( traits->curve_source(he_cv), traits->curve_target(he_cv));
   
 	  if ( traits->point_is_left_low( xp1, left_point)) {
@@ -192,7 +192,7 @@ public:
 					Halfedge_handle &prev_halfedge,
 					Point& overlap_end_pt,
 					bool &is_overlap,
-					PMWXChangeNotification *en)
+					Pmwx_change_notification *en)
   {
     CGAL_PM_START_OP(1)
      
@@ -215,14 +215,18 @@ public:
 	// cv overlapps prev->curve()
 	b = directed_nearest_intersection_with_halfedge
 	  (cv, orig_cv, prev, start_point, direction_right, xp1, xp2, en);
-	CGAL_assertion( b);
+	// Verify that there is indeed an intersection
+	CGAL_assertion( b );
+	// Verify that there is indeed an overlap
 	CGAL_assertion( !pmwx_traits->point_is_same(xp1, xp2));
 
 	// the overlapping part might not start from the source 
 	// vertex (in polyline for example), so if this is the case, 
 	// we ignore the overlap. 
-	if ( (pmwx_traits->point_is_same(xp1, pmwx_traits->curve_source(cv))) ||
-		 (pmwx_traits->point_is_same(xp2, pmwx_traits->curve_source(cv))) )
+	if ( (pmwx_traits->point_is_same(xp1, 
+					 pmwx_traits->curve_source(cv))) ||
+		 (pmwx_traits->point_is_same(xp2, 
+					     pmwx_traits->curve_source(cv))) )
 	{
 	  if ( traits->point_is_same( vh->point(), xp1)) {
 	    overlap_end_pt = xp2;
@@ -279,7 +283,7 @@ public:
 				       Halfedge_handle &halfedge,
 				       Point &best_xpnt1,
 				       Point &best_xpnt2,
-				       PMWXChangeNotification *en) 
+				       Pmwx_change_notification *en) 
   {
     CGAL_PM_START_OP(2)
       Halfedge_handle best_halfedge_x;
@@ -395,7 +399,7 @@ public:
     Halfedge_handle &vertex_of_point_prev_halfedge,
     // true if vertex_of_point_prev_halfedge is set :
     bool &vertex_of_point_prev_halfedge_set,
-    PMWXChangeNotification *en)  
+    Pmwx_change_notification *en)  
 
   {
     CGAL_PM_START_OP(3)
@@ -478,7 +482,7 @@ public:
     Halfedge_handle &remaining_curve_prev_halfedge,
     // true if remaining_curve_face is set :
     bool &remaining_curve_prev_halfedge_set,  
-    PMWXChangeNotification *en)
+    Pmwx_change_notification *en)
 
   {
     CGAL_PM_START_OP(4)
@@ -594,7 +598,7 @@ public:
    Halfedge_handle &remaining_curve_prev_halfedge, 
    // true if remaining_curve_face is set :
    bool &remaining_curve_prev_halfedge_set,  
-   PMWXChangeNotification *en)
+   Pmwx_change_notification *en)
   {
     CGAL_PM_START_OP(5)
       remaining_curve_trivial = false;
@@ -714,7 +718,7 @@ public:
 					     // to be set by the function :  
 					     Vertex_handle &target_vertex, 
 					     bool source_vertex_valid,
-					     PMWXChangeNotification *en = NULL)
+					     Pmwx_change_notification *en = NULL)
   {
     CGAL_PM_START_OP(6)
       //if a vertex on which an endpoint of cv_ is known then set cv to 
@@ -1003,7 +1007,7 @@ public:
   // return the last inserted halfedge whose target points to the last 
   // point of the inserted xcurve
   Halfedge_handle insert_from_vertex(const X_curve& c, Vertex_handle src, 
-				     PMWXChangeNotification *en = NULL)
+				     Pmwx_change_notification *en = NULL)
   {
     CGAL_precondition( ! traits->point_is_same( traits->curve_source( c),
 						traits->curve_target( c)));
@@ -1013,12 +1017,22 @@ public:
 
   // return the last inserted halfedge whose target points to the last 
   // point of the inserted xcurve
-  Halfedge_handle insert(const X_curve& c, PMWXChangeNotification *en = NULL)
+  Halfedge_handle insert(const X_curve& c, Pmwx_change_notification *en = NULL)
   {
     CGAL_precondition( ! traits->point_is_same( traits->curve_source( c),
 						traits->curve_target( c)));
     Vertex_handle src, tgt;
     return insert_intersecting_xcurve(c, src, tgt, false, en);
+  }
+
+  Halfedge_handle non_intersecting_insert_from_vertex(const X_curve& cv, Vertex_handle v1, bool source) 
+  {
+	return Planar_map::insert_from_vertex(cv, v1, source);
+  }
+
+  Halfedge_handle non_intersecting_insert(const X_curve& cv)
+  {
+	return Planar_map::insert(cv);
   }
 
 protected:
