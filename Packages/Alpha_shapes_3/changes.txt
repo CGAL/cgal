@@ -1,4 +1,4 @@
-Version 3.25 (22/09/03)
+Version 3.26 (22/09/03)
 - new headers
 
 Version 3.24 (20/07/03) [af]
