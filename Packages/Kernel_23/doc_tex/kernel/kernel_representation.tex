@@ -187,7 +187,7 @@ algorithm. In some other cases, the algorithms or data structures
 needs more than is provided by the kernel concept. In these cases, a
 kernel can not be used as a traits class.
 
-\section{Choosing a Kernel}
+\section{Choosing a Kernel and Predefined Kernels}
 If you start with integral \ccHtmlNoLinksFrom{Cartesian} coordinates,
 many geometric computations will involve integral numerical values
 only. Especially, this is true for geometric computations that
@@ -234,3 +234,31 @@ Still other people will prefer the built-in
 type {\tt double}, because they need speed and can live with
 approximate results, or even algorithms that, from time to time,
 crash or compute incorrect results due to accumulated rounding errors.
+
+\paragraph{Predefined kernels.}
+For the user's convenience, \cgal\ provides 3 typedefs to generally useful
+kernels.
+
+\begin{itemize}
+\item They are all Cartesian kernels.
+\item They all support constructions of points from \texttt{double} Cartesian
+      coordinates.
+\item All these 3 kernels provide exact geometric predicates.
+\item They handle geometric constructions differently:
+  \begin{itemize}
+  \item \ccc{Exact_predicates_exact_constructions_kernel}: provides exact
+        geometric constructions, in addition to exact geometric predicates.
+  \item \ccc{Exact_predicates_exact_constructions_kernel_with_sqrt}:
+        same as \ccc{Exact_predicates_exact_constructions_kernel}, but the
+        number type it provides
+        (\ccc{Exact_predicates_exact_constructions_kernel_with_sqrt::FT})
+        supports the square root operation exactly
+        \footnote{Currently it requires having either LEDA or CORE installed}.
+  \item \ccc{Exact_predicates_inexact_constructions_kernel}: provides exact
+	geometric predicates, but geometric constructions may be inexact due to
+	roundoff errors.  It is however enough for most \cgal\ algorithms, and
+        faster than both \ccc{Exact_predicates_exact_constructions_kernel} and
+        \ccc{Exact_predicates_exact_constructions_kernel_with_sqrt}.
+  \end{itemize}
+\end{itemize}
+

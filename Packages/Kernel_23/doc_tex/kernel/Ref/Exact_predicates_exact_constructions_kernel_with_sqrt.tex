@@ -1,0 +1,27 @@
+\begin{ccRefClass}{Exact_predicates_exact_constructions_kernel_with_sqrt}
+
+\ccDefinition
+A typedef to a kernel which has the following properties:
+
+\begin{itemize}
+\item It uses Cartesian representation.
+\item It supports constructions of points from \texttt{double} Cartesian
+      coordinates.
+\item It provides both exact geometric predicates and exact geometric
+      constructions.
+\item Its \ccc{FT} nested type supports the square root operation \ccc{sqrt()}.
+\end{itemize}
+
+Note that it requires CORE or LEDA installed.
+
+\ccInclude{CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h}
+
+\ccIsModel
+\ccc{Kernel}
+
+\ccSeeAlso
+\ccc{CGAL::Exact_predicates_exact_constructions_kernel} \\
+\ccc{CGAL::Exact_predicates_inexact_constructions_kernel} \\
+\ccc{CGAL::Cartesian}
+
+\end{ccRefClass}

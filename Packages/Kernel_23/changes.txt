@@ -1,3 +1,6 @@
+1.48 (24 July 2003)
+- Add the new "Exact_*_kernel*" typedefs.
+
 1.47 (24 July 2003)
 - Document the new "mixed operators with int" requirements of number types.
 
