@@ -1,4 +1,4 @@
-#include <CGAL/Box_intersection_d.h>
+#include <CGAL/box_intersection_d.h>
 
 #include <iostream>
 #include <vector>
@@ -53,7 +53,7 @@ int main() {
     std::vector<User_box> a, b;
     fill_boxes( 100, a );
     fill_boxes( 100, b );
-    CGAL::box_intersection_d_custom_traits(
+    CGAL::box_intersection_custom_d(
           a.begin(), a.end(),
           b.begin(), b.end(), callback, Box_traits() );
 }

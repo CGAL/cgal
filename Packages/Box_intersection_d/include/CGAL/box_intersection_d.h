@@ -43,7 +43,7 @@ void box_intersection_d(RandomAccessIter p_begin, RandomAccessIter p_end,
     typedef Box_intersection_d::Box_traits_d< Box_type >
             Box_traits;
 
-    box_intersection_d_custom_traits(p_begin, p_end, callback,
+    box_intersection_custom_d(p_begin, p_end, callback,
               Box_traits(), cutoff, topology );
 }
 
@@ -53,22 +53,22 @@ void box_intersection_d(RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
                         RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
                         Callback& callback,
                         unsigned int cutoff = 10,
-                        Box_intersection_d::Setting
-                                    setting  = Box_intersection_d::BIPARTITE,
                         Box_intersection_d::Topology
-                                    topology = Box_intersection_d::CLOSED)
-{
+                                    topology = Box_intersection_d::CLOSED,
+                        Box_intersection_d::Setting
+                                    setting  = Box_intersection_d::BIPARTITE)
+ {
     typedef typename std::iterator_traits<RandomAccessIter1>::value_type
             Box_type;
     typedef Box_intersection_d::Box_traits_d< Box_type >
             Box_traits;
 
-    box_intersection_d_custom_traits(p_begin, p_end, i_begin, i_end,
-                       callback, Box_traits(), cutoff, setting, topology);
+    box_intersection_custom_d(p_begin, p_end, i_begin, i_end,
+                       callback, Box_traits(), cutoff, topology, setting);
 }
 
 template< class RandomAccessIter, class Callback, class BoxTraits >
-void box_intersection_d_custom_traits(
+void box_intersection_custom_d(
      RandomAccessIter p_begin, RandomAccessIter p_end,
      Callback& callback,
      BoxTraits box_traits,
@@ -77,40 +77,40 @@ void box_intersection_d_custom_traits(
 {
     typedef typename std::iterator_traits<RandomAccessIter>::value_type
         Box_type;
-
-    std::vector< Box_type > i( p_begin, p_end);
-    box_intersection_d_custom_traits( p_begin, p_end, i.begin(), i.end(),
-      callback, box_traits, cutoff, Box_intersection_d::COMPLETE, topology );
+    std::vector< Box_type > i( p_begin, p_end );
+    
+    box_intersection_custom_d( p_begin, p_end, i.begin(), i.end(),
+      callback, box_traits, cutoff, topology, Box_intersection_d::COMPLETE );
 }
 
 
 template< class RandomAccessIter1, class RandomAccessIter2,
           class Callback, class BoxTraits >
-void box_intersection_d_custom_traits(
+void box_intersection_custom_d(
      RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
      RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
      Callback& callback,
      BoxTraits box_traits,
      unsigned int cutoff = 10,
-     Box_intersection_d::Setting  setting  = Box_intersection_d::BIPARTITE,
-     Box_intersection_d::Topology topology = Box_intersection_d::CLOSED)
-{
+     Box_intersection_d::Topology topology = Box_intersection_d::CLOSED,
+     Box_intersection_d::Setting  setting  = Box_intersection_d::BIPARTITE)
+ {
     if (topology == Box_intersection_d::CLOSED) {
         typedef Box_intersection_d::Box_predicate_traits_d< BoxTraits, true >
                 Traits;
-        box_intersection_d_custom_predicates(p_begin, p_end, i_begin, i_end,
+        box_intersection_custom_predicates_d(p_begin, p_end, i_begin, i_end,
                                         callback, Traits(), cutoff, setting);
     } else {
         typedef Box_intersection_d::Box_predicate_traits_d< BoxTraits, false >
                 Traits;
-        box_intersection_d_custom_predicates(p_begin, p_end, i_begin, i_end,
+        box_intersection_custom_predicates_d(p_begin, p_end, i_begin, i_end,
                                         callback, Traits(), cutoff, setting);
     }
 }
 
 template< class RandomAccessIter1, class RandomAccessIter2,
           class Callback, class BoxPredicateTraits >
-void box_intersection_d_custom_predicates(
+void box_intersection_custom_predicates_d(
       RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
       RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
       Callback& callback,

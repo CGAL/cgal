@@ -1,4 +1,4 @@
-#include <CGAL/Box_intersection_d.h>
+#include <CGAL/box_intersection_d.h>
 
 #include <iostream>
 #include <vector>

@@ -21,7 +21,7 @@
 
 // enable invariant checking
 #define SEGMENT_TREE_CHECK_INVARIANTS 1
-#include <CGAL/Box_intersection_d.h>
+#include <CGAL/box_intersection_d.h>
 #include <CGAL/Timer.h>
 #include <iostream>
 #include <iterator>
@@ -102,9 +102,9 @@ test_n( unsigned int n, std::ostream& outfile )
             CGAL::box_intersection_d( boxes1.begin(), boxes1.end(),
                                       boxes2.begin(), boxes2.end(),
                                       callback2, cutoff,
-                                      CGAL::Box_intersection_d::BIPARTITE,
-                                      CGAL::Box_intersection_d::CLOSED);
-        }
+                                      CGAL::Box_intersection_d::CLOSED,
+                                      CGAL::Box_intersection_d::BIPARTITE);
+         }
         timer.stop();
         time = timer.time() / repetitions;
         const unsigned int stream_counter = callback2.counter/repetitions;

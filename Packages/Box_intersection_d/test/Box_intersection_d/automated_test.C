@@ -21,7 +21,7 @@
 // enable invariant checking
 #define SEGMENT_TREE_CHECK_INVARIANTS 1
 
-#include <CGAL/Box_intersection_d.h>
+#include <CGAL/box_intersection_d.h>
 #include <CGAL/Timer.h>
 #include <iostream>
 #include <sstream>
@@ -85,7 +85,7 @@ operator()( const char* filename1, const char* filename2 )
     timer.start();
     const unsigned int n = boxes1.size();
     const unsigned int cutoff = n < 2000 ? 6 : n / 100;
-    CGAL::box_intersection_d_custom_predicates( boxes1.begin(), boxes1.end(),
+    CGAL::box_intersection_custom_predicates_d( boxes1.begin(), boxes1.end(),
                                                 boxes2.begin(), boxes2.end(),
                                                 callback2, Util::Traits(), cutoff );
     timer.stop();

@@ -22,7 +22,7 @@
 // enable invariant checking
 #define SEGMENT_TREE_CHECK_INVARIANTS 1
 
-#include <CGAL/Box_intersection_d.h>
+#include <CGAL/box_intersection_d.h>
 #include <CGAL/Timer.h>
 #include <iostream>
 #include <iterator>
@@ -31,7 +31,7 @@
 
 static unsigned int failed = 0;
 
-template< class NT, unsigned int DIM, bool CLOSED >
+template< class NT, std::size_t DIM, bool CLOSED >
 struct _test {
 typedef Util< NT, DIM, CLOSED > Util;
 
@@ -89,10 +89,10 @@ test_n( unsigned int n,
     timer.reset();
     timer.start();
     unsigned int cutoff = n < 200 ? 6 : n < 2000 ? 20 : n / 50;
-    CGAL::box_intersection_d_custom_predicates( boxes1.begin(), boxes1.end(),
-                                                boxes2.begin(), boxes2.end(),
-                                                callback2, Util::Traits(),
-                                                cutoff, setting );
+    CGAL::box_intersection_custom_predicates_d( boxes1.begin(), boxes1.end(),
+                                      boxes2.begin(), boxes2.end(),
+                                      callback2, Util::Traits(),
+                                      cutoff, setting );
     timer.stop();
     std::cout << "got " << callback2.counter << " intersections in "
               << timer.time() << " seconds." << std::endl;

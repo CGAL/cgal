@@ -40,13 +40,13 @@ struct Unique_numbers {
     Unique_numbers() : i(n++) {}
     unsigned int get_id() const { return i; }
 private:
-    static unsigned int n;
-    unsigned int i;
+    static std::size_t n;
+    std::size_t i;
 };
 
 unsigned int Unique_numbers::n = 0;
 
-template<class NT_, unsigned int N>
+template<class NT_, std::size_t N>
 struct Box_d : public Unique_numbers {
     typedef NT_ NT;
 
@@ -67,15 +67,15 @@ struct Box_d : public Unique_numbers {
     }
 
     void extend(NT p[N]) {
-        for( unsigned int dim = 0; dim < N; ++dim ) {
+        for( std::size_t dim = 0; dim < N; ++dim ) {
             lo[dim] = std::min( lo[dim], p[dim] );
             hi[dim] = std::max( hi[dim], p[dim] );
         }
     }
 
-    NT min(unsigned int dim) const { return lo[dim]; }
-    NT max(unsigned int dim) const { return hi[dim]; }
-    static unsigned int get_dim() { return N; }
+    NT min(std::size_t dim) const { return lo[dim]; }
+    NT max(std::size_t dim) const { return hi[dim]; }
+    static std::size_t get_dim() { return N; }
 protected:
     NT lo[N], hi[N];
 };
@@ -85,16 +85,16 @@ struct Box_traits_d {
     typedef const Box_&       Box;
     typedef typename Box_::NT NT;
 
-    static NT min(Box b, unsigned int dim)
+    static NT min(Box b, std::size_t dim)
     { return b.min( dim ); }
 
-    static NT max(Box b, unsigned int dim)
+    static NT max(Box b, std::size_t dim)
     { return b.max( dim ); }
 
-    static unsigned int get_id(Box b)
+    static std::size_t get_id(Box b)
     { return b.get_id();     }
 
-    static unsigned int get_dim() { return Box_::get_dim(); }
+    static std::size_t get_dim() { return Box_::get_dim(); }
 };
 
 // box pointer traits
@@ -103,16 +103,16 @@ struct Box_traits_d<Box_*> {
     typedef const Box_*       Box;
     typedef typename Box_::NT NT;
 
-    static NT min(Box b, unsigned int dim)
+    static NT min(Box b, std::size_t dim)
     { return b->min(dim); }
 
-    static NT max(Box b, unsigned int dim)
+    static NT max(Box b, std::size_t dim)
     { return b->max(dim); }
 
-    static unsigned int get_id(Box b)
+    static std::size_t get_id(Box b)
     { return b->get_id();   }
 
-    static unsigned int get_dim() { return Box_::get_dim(); }
+    static std::size_t get_dim() { return Box_::get_dim(); }
 };
 
 
@@ -133,9 +133,9 @@ struct Box_predicate_traits_d : public BoxTraits {
 
     // compare dim a b = islolesslo a b dim
     class Compare : public std::binary_function<Box,Box,bool> {
-        unsigned int dim;
+        std::size_t dim;
     public:
-        Compare(unsigned int dim) : dim(dim) {}
+        Compare(std::size_t dim) : dim(dim) {}
         bool operator()(Box a, Box b) const
         { return is_lo_less_lo(a,b,dim);  }
     };
@@ -143,18 +143,18 @@ struct Box_predicate_traits_d : public BoxTraits {
     // loless val dim box = getlo box dim < val
     class Lo_less : public std::unary_function<Box,bool> {
         NT value;
-        unsigned int dim;
+        std::size_t dim;
     public:
-        Lo_less(NT value, unsigned int dim) : value(value), dim(dim) {}
+        Lo_less(NT value, std::size_t dim) : value(value), dim(dim) {}
         bool operator() (Box box) const
         { return min(box, dim) < value; }
     };
 
     class Hi_greater : public std::unary_function<Box,bool> {
         NT value;
-        unsigned int dim;
+        std::size_t dim;
     public:
-        Hi_greater(NT value, unsigned int dim) : value(value), dim(dim) {}
+        Hi_greater(NT value, std::size_t dim) : value(value), dim(dim) {}
         bool operator() (Box box) const
         { return hi_greater( max(box, dim), value); }
     };
@@ -162,38 +162,38 @@ struct Box_predicate_traits_d : public BoxTraits {
     // spanning lo hi dim box = getlo box dim < lo && gethi box dim > hi
     class Spanning : public std::unary_function<Box,bool> {
         NT lo, hi;
-        unsigned int dim;
+        std::size_t dim;
     public:
-        Spanning(NT lo, NT hi, unsigned int dim) : lo(lo), hi(hi), dim(dim) {}
+        Spanning(NT lo, NT hi, std::size_t dim) : lo(lo), hi(hi), dim(dim) {}
         // returns true <=> box spans [lo,hi) in dimension dim
         bool operator() (Box box) const
         { return min(box,dim) < lo && max(box,dim) > hi; }
     };
 
-    static Compare    compare_object(unsigned int dim)
+    static Compare    compare_object(std::size_t dim)
     { return Compare(dim); }
 
-    static Lo_less    lo_less_object(NT value, unsigned int dim)
+    static Lo_less    lo_less_object(NT value, std::size_t dim)
     { return Lo_less(value, dim); }
 
-    static Hi_greater hi_greater_object(NT value, unsigned int dim)
+    static Hi_greater hi_greater_object(NT value, std::size_t dim)
     { return Hi_greater( value, dim ); }
 
-    static Spanning   spanning_object(NT lo, NT hi, unsigned int dim)
+    static Spanning   spanning_object(NT lo, NT hi, std::size_t dim)
     { return Spanning( lo, hi, dim ); }
 
-    static bool is_lo_less_lo(Box a, Box b, unsigned int dim) {
+    static bool is_lo_less_lo(Box a, Box b, std::size_t dim) {
         return min(a,dim)  < min(b,dim) ||
                min(a,dim) == min(b,dim) && get_id(a) < get_id(b);
     }
 
-    static bool is_lo_less_hi(Box a, Box b, unsigned int dim)
+    static bool is_lo_less_hi(Box a, Box b, std::size_t dim)
     { return hi_greater( max(b,dim), min(a,dim )); }
 
-    static bool does_intersect (Box a, Box b, unsigned int dim)
+    static bool does_intersect (Box a, Box b, std::size_t dim)
     { return is_lo_less_hi(a,b,dim) && is_lo_less_hi(b,a,dim); }
 
-    static bool contains_lo_point(Box a, Box b, unsigned int dim)
+    static bool contains_lo_point(Box a, Box b, std::size_t dim)
     { return is_lo_less_lo(a,b,dim) && is_lo_less_hi(b,a,dim);  }
 };
 
