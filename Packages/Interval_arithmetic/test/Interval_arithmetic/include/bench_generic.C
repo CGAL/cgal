@@ -18,6 +18,13 @@ using namespace CGAL;
 
 typedef TESTED_TYPE IA_nt;
 
+// Not called, only used to watch at the assembly code produced.
+
+IA_nt add (IA_nt a, IA_nt b)
+{
+  return a+b;
+}
+
 // Some simple operators benchmarks.
 
 void bench()
@@ -33,11 +40,15 @@ void bench()
   IA_nt c(1), d(-5.0/3), e(-6.0/7), f(7.0/9);
 
 // egcs-1.1 + -O + not advanced n'affiche pas pareil....
-// De même que le snapshot du 19 octobre...  inquiétant.
-// Quand j'aurai du temps: faire un bug report.
+// Bon, le problème est clair: il propage les constantes dans le constructeur,
+// du coup, c'est pas calculé avec le bon mode d'arrondi (-2.1 est précalculé).
+// Je fais un bug-report.
    c = a + b;
-   cout << a << b << endl;
-   cout << c <<  endl;
+   cout << a << endl;
+   cout << b << endl;
+   if (b.inf() == b.sup())
+     cout << "error" << endl;
+   cout << c << endl;
 
   cout << loops << " loops.\n";
 
@@ -150,7 +161,7 @@ int main()
   (int) sign(a);
   (int) compare(a,b);
 #if 0
-  // It's nice if it crashed, because c is not initialized.
+  // It would be nice if it emitted a warning, because c is not initialized.
   IA_nt c;
   a = c+c;
   cout << c << a << endl;
