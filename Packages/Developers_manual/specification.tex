@@ -75,7 +75,7 @@ module.  However, manuals can be created for individual packages,
 mostly for editing and reviewing, and also only reasonably if the
 package contributes a whole chapter.
 
-\textbf{The division into diferent manuals is currently under
+\textbf{The division into different manuals is currently under
   revision. We merge several manuals into one manual with different parts.}
 
 The official \cgal\ 
@@ -208,7 +208,7 @@ describe the details:
          {{\tt intro.tex}} file should start with the \verb|\chapter| command,
          contain a short introductory section, give an overview of the
          reference pages contained in this chapter, and mention
-         optionally with a nonnumbered section labeled \textbf{Assertions} 
+         optionally with a non-numbered section labeled \textbf{Assertions} 
          the string used in the package-specific assertion macros 
          (Section~\ref{sec:checks_controlling}).  See the current reference
          manual and the example provided in
@@ -298,7 +298,7 @@ directory \texttt{Package} that you develop.
 \subsection{Program \texttt{cgal\_manual} in the \texttt{Manual} package}
 \label{subsec:cgal_manual_program}
 
-The \texttt{cgal\_manual} pragram is a \texttt{bash} script residing
+The \texttt{cgal\_manual} program is a \texttt{bash} script residing
 in the \texttt{scripts/} directory. It is called in the
 \texttt{doc\_tex/} directory of a \cgal\ package or of an internal
 release.
@@ -319,14 +319,14 @@ script itself, these documentations need to be kept synchronized!
      Development unit in \cgal\ hosted on our CVS server. A package has a 
      fixed directory directory structure. Let's assume the package is 
      called \texttt{Geom}, then the documentation must reside in a directory
-     \texttt{doc\_tex/} withing the package \texttt{Geom}. Here,
+     \texttt{doc\_tex/} within the package \texttt{Geom}. Here,
      individual subdirectories, typically \texttt{Geom/} and
      \texttt{Geom\_ref/}, contain the users' and the reference 
      manual respectively. The individual subdirectories contain a 
      \texttt{main.tex} file that contains the manual chapter, possibly
      several and possibly using several other input files, but all
      included with relative paths from the \texttt{doc\_tex/}
-     directory, where the tools and this script wille run.
+     directory, where the tools and this script will run.
      
      In general, all individual subdirectories that contain a 
      \texttt{main.tex} file are processed. If they exist in pairs, we
@@ -345,7 +345,7 @@ script itself, these documentations need to be kept synchronized!
      that in the \texttt{doc\_tex/} directory  the necessary \LaTeX\
      driver file \texttt{Algo.tex} exists.
      This driver is a complete \LaTeX\ file including the
-     \verb|\begin{document}| comamnd and such. It includes the various
+     \verb|\begin{document}| command and such. It includes the various
      chapters from the packages.
 \end{description}
 
@@ -379,7 +379,7 @@ script itself, these documentations need to be kept synchronized!
      find them, for example through the search paths defined in the
      environment variables  \texttt{TEXINPUTS}, \texttt{BIBINPUTS},
      and \texttt{LATEX\_CONV\_INPUTS}. (Currently the program will
-     issue a warning for this case because it curently cannot check if
+     issue a warning for this case because it currently cannot check if
      the files are actually in the search paths, and this isn't the
      recommended environment anyway.)
 \end{enumerate}
@@ -414,7 +414,7 @@ the manuals and logfiles to
 \verb|${TestSuiteResultPath}/CGAL-${CgalVersion}/| and creates an HTML
 summary page \texttt{index.html} in that subdirectory. The latest
 result is also always accessible at
-\verb|${TestSuiteResultPath}/LAST/index.html| .  Futhermore, the
+\verb|${TestSuiteResultPath}/LAST/index.html| .  Furthermore, the
 script will cleanup old results. For the most recent number
 \verb|${TestSuiteFullHistory}| of test suites the full results
 including the manuals are kept. Older test suites will have their
@@ -704,7 +704,7 @@ The additional macros defined are:
     of all \verb|\package|\ldots macros, so that all packages are declared in
     the following passes. 
 
-    The next passes are taylored for the
+    The next passes are tailored for the
     idea in the HTML output to have a table-of-contents with two
     columns; one on the left for the user manual chapters, and one on
     the right for the reference manual chapters. This two-columns
@@ -821,10 +821,10 @@ As a rule, each chapter should include:
        represents the traits class and the second the data structure'', or 
        ``the function \ccc{flavor(b, e, r)} computes the value 42 
         from an iterator range \ccc{[b, e)} over a set of points.  The 
-        computed value is stored in the output iterator \ccc{r}");
+        computed value is stored in the output iterator \ccc{r}'');
 
-  \item one or more examples, which are included in the \texttt|examples|
-        or \texttt|demo| directory of the package and inserted into the
+  \item one or more examples, which are included in the \texttt{examples}
+        or \texttt{demo} directory of the package and inserted into the
         documentation using the \verb|\ccIncludeExampleCode| command.
         \ccIndexSubitem{example programs}{in manuals}
 
@@ -848,7 +848,7 @@ regarding the organization are provided:
    \item There should be an introductory section that actually introduces
          the chapter, perhaps providing definitions of relevant terms.  
          It should not be followed immediately by examples, as this implies 
-         that the entire description was contained in the introduciton.
+         that the entire description was contained in the introduction.
 
    \item The section describing software design should be labeled (you guessed 
          it) ``Software Design.'' 
@@ -953,7 +953,7 @@ If \verb|\ccNewRefManualStyle|%\ccIndexEntry{NewRefManualStyle}%
 \ccIndexSubitem{manuals}{new style} has been set to \verb|\ccTrue|, each
 new reference manual environment will also produce a new page and will
 decorate the first page of each environment with a tab in the side
-margin.   The macro \verb|\ccRefPageBreak| can be usd to turn off page
+margin.   The macro \verb|\ccRefPageBreak| can be used to turn off page
 breaks for very short reference pages (\textit{e.g.},  for constants).
 
 Below we briefly describe what should be documented in
@@ -1180,7 +1180,8 @@ Another possible section heading here is \verb|\ccSeeAlso|.
 When including pictures in your documentation, you must provide versions
 of the pictures for both the PostScript and HTML versions of the manuals.
 This generally means providing both a {\tt .ps}, {\tt .eps}, or {\tt .ipe} 
-file and a {\tt .gif} file.  You should take care that the figures are 
+file and a {\tt .gif}, {\tt .jpg}, or {\tt .png} file.  You should
+take care that the figures are  
 readable in both formats and that they are neither too large nor too small.  
 Also, all figures used in the HTML documentation should have transparent 
 backgrounds.  You can achieve this using the {\tt giftrans}\index{giftrans 
@@ -1194,9 +1195,10 @@ script@{\tt giftrans} script} program distributed with
 
 The program that converts to HTML does not currently support
 the commands that input PostScript figures into a document (since the figures
-for the HTML manual will be {\tt .gif} files).  Thus for each figure
-you must provide the raw HTML command that inserts the {\tt .gif} file
-in the document.\ccIndexSubsubitem{manuals}{HTML}{figures}  For example:
+for the HTML manual will be in a different format).  Thus for each figure
+you must provide the raw HTML command that inserts the {\tt .gif},
+{\tt .jpg}, or {\tt .png} file in the
+document.\ccIndexSubsubitem{manuals}{HTML}{figures}  For example: 
 
 \begin{verbatim}
 \begin{figure}[htbp]
@@ -1220,7 +1222,7 @@ in the document.\ccIndexSubsubitem{manuals}{HTML}{figures}  For example:
 Note above that only the parts that include the two different figure files
 are enclosed in the {\tt ccTexOnly} and {\tt ccHtmlOnly} environments.
 The {\tt figure}, {\tt caption}, and {\tt label} commands will be processed
-for both \ccTexHtml{\LaTeX\ }{LaTeX} and {\tt cc\_manual\_to\_html}.
+for both \LaTeX\  and {\tt latex\_to\_html}.
 Note also that the caption and label are placed {\bf above} the HTML picture.  
 This is done so references to this figure will go to the top of the picture
 instead of the bottom (and thus be visible in the browser).
@@ -1234,7 +1236,7 @@ instead of the bottom (and thus be visible in the browser).
 \ccIndexSubitemBegin{manuals}{index}
 
 In order to be truly useful, a manual needs to have an index.  The 
-{\tt cc\_manual\_to\_html} program produces an index for the HTML manual
+{\tt latex\_to\_html} program produces an index for the HTML manual
 automatically.  %
 \ccIndexSubitem{index}{HTML}\ccIndexSubsubitem{manuals}{HTML}{index} 
 The style file {\tt cc\_manual\_index.sty}%
@@ -1275,20 +1277,20 @@ should and should not be indexed.
 \ccIndexSubitemBegin{manuals}{test suite}
 \ccIndexSubitemBegin{test suite}{for manuals}
 
-With each internal release of the library, a test suite is run on the manuals 
-to make sure that the documentation submitted makes it through all the programs
-and scripts without a problem.  Each package is tested separately with both
-\ccTexHtml{\LaTeX\ }{LaTeX} (and its companion programs {\tt makeindex} and 
-{\tt bibtex}) and 
-{\tt cc\_manual\_to\_html}; those that make it through the programs are then
-included in the ``complete'' manuals for the internal release.
-It is a given, of course, that developers should {\bf test} that their packages'
-documentation works with {\bf both} \ccTexHtml{\LaTeX\ }{LaTeX} and 
-{\tt cc\_manual\_to\_html}
-{\bf before} submitting.  The test suite is meant simply to assure that all the
-parts fit together nicely and all references to other parts of the manual
-get resolved correctly.  The results of the test suite are currently
-available at \path|http://www.cgal.org/Members/Manual_test/|.
+With each internal release of the library, a test suite is run on the
+manuals to make sure that the documentation submitted makes it through
+all the programs and scripts without a problem.  Each package and each
+module manual is tested with both \LaTeX\ (and its companion programs
+{\tt makeindex} and {\tt bibtex}) and {\tt latex\_to\_html}. The
+results of the test suite are currently available at
+
+\hspace*{6mm}\path|http://www.cgal.org/Members/Manual_test/LAST/|
+
+It is a given, of course, that developers should {\bf test} that their
+packages' documentation works with {\bf both} \LaTeX\ and {\tt
+  latex\_to\_html} {\bf before} submitting.  The test suite is meant
+simply to assure that all the parts fit together nicely and all
+references to other parts of the manual get resolved correctly.  
 Each time you submit a package with modified documentation, you should
 check these test results to make sure your documentation did not cause
 any problems.
@@ -1307,7 +1309,7 @@ any problems.
 \begin{description}
   \item[{\bf Cause:}] This is caused by the use of the non-mnemonic name 
 ``Traits'' for a traits class that is described in a {\tt ccClass} 
-environment that is not preceeded by a \verb|\ccHtmlNoClassLinks| command.  
+environment that is not preceded by a \verb|\ccHtmlNoClassLinks| command.  
 
   \item[{\bf Solution:}] The preferred solution is to use a better name for the 
 traits class ({\em e.g.}, one that uses the package name as well such as
@@ -1376,53 +1378,7 @@ References to the label {\tt Triangulation3-fig-orient} will produce a
 link that refers to the top of this figure.  If you want the caption with
 the HTML figure as well, then simply move the \verb|\end{ccTexOnly}|
 command above the \verb|\caption| command and remove the \verb|\lcHtml|
-command.
-%Note that in order for the
-%figure numbers to be correct in the PostScript manual, the \verb|\label|
-%command must be included in the \verb|\caption| command, which means
-%the caption must appear in the HTML document.  Though this may not be ideal,
-%it is currently the best solution supported by the tools.  If you want
-%to avoid this, 
-
-It is also possible to provide the label as part of the raw
-HTML.  The following example is taken from the file {\tt hds.tex}, which
-results in an HTML file called {\tt Chapter\_hds.html}:
-
-\begin{verbatim}
-\begin{ccTexOnly}
-  \begin{figure}
-    \begin{center}
-      \parbox{0.7\textwidth}{%
-          \includegraphics[width=0.7\textwidth]{idraw/poly_design.ips}%
-      }
-    \end{center}
-    \caption{Responsibilities of the different layers in the
-             halfedge data-structure design.}
-    \label{figurePolyDesign}
-  \end{figure}
-\end{ccTexOnly}
-
-\begin{ccHtmlOnly}
-    <CENTER>
-    <A NAME="figurePolyDesign">
-        <IMG SRC="./poly_design_color.gif"
-         ALT="Halfedge Data-Structure Design"><BR>
-    Figure: Responsibilities of the different layers in the
-            halfedge data-structure design.
-    <P>
-    </CENTER>
-\end{ccHtmlOnly}
-\end{verbatim}
-
-Then, to refer to this figure, you would use something like:
-
-\begin{verbatim}
-Figure~\ccTexHtml{\ref{figurePolyDesign}}{}\begin{ccHtmlOnly}
-  <A HREF="Chapter_hds.html#figurePolyDesign"><IMG
-  SRC="cc_ref_up_arrow.gif" ALT="reference arrow" WIDTH="10" HEIGHT="10"></A>
-\end{ccHtmlOnly}
-\end{verbatim}
-Probably only and author of the tools would want to try something like this. 
+command. See also Section~\ref{sec:doc_figures}.
 \ccIndexSubsubitemEnd{manuals}{HTML}{figure references}
 
 \end{description}
@@ -1455,32 +1411,32 @@ both defined in {\tt latex\_converter.sty})\ccIndexMainItem[c]{\tt latex_convert
 given in the \verb|\input| command (or its derivative) or the absence of a 
 directory from the appropriate environment variable.
 
-\item[{\bf Solution:}] Paths to source files in other directories must 
-generally be provided relative to the place where the conversion program is 
-run, not relative to the place where the file containing the command is.  When 
-producing the manual, these programs are run in the \VarText{manual part} 
-directory ({\em i.e.}, {\tt doc\_tex/basic}, {\tt doc\_tex/support}, 
-{\em etc.}), so paths should be relative to these directories.  
+\item[{\bf Solution:}] Paths to source files in other directories must
+generally be provided relative to the place where \LaTeX\ and
+\texttt{latex\_to\_html} are run, not relative to the place where
+the file containing the command is.  When producing the manual,
+these programs are run in the \texttt{doc\_tex} directory, so paths
+should be relative to this directory.
 
 An exception is for example and demo programs included in the documentation.
 \ccIndexSubitem{example programs}{in manuals}.  These should always
 be programs that are in the distribution (and thus in the test suite)
-and should included using the command \texttt{ccIncludeExampleCode}.  For 
+and should be included using the command \texttt{ccIncludeExampleCode}.  For 
 programs you need only specify the path relative to the directory 
 \texttt{CGAL\_ROOT/examples} or \texttt{CGAL\_ROOT/demo} as the environment 
 variables \texttt{TEXINPUTS} and \texttt{LATEX\_CONV\_INPUTS} are set so these 
-directories are searched when the whole manual is created.  
+directories are searched when the manuals are created with the
+\texttt{cgal\_manual} program from Section~\ref{subsec:cgal_manual_program}.  
 (See
 \ccAnchor{./latex_to_html.ps.gz}{{\tt Manual\_tools/doc/latex\_to\_html.ps.gz}} 
 for more details.)
-For example,
-you would use the following command
+For example, you would use the following command
 \begin{verbatim}
    \ccIncludeExampleCode{Polygon/PolygonDemo.C}
 \end{verbatim}
 to include the source file \nonlinkedpath|CGAL_ROOT/demo/Polygon/PolygonDemo.C|.
 Obviously, you could have problems if you have an example program and a demo
-program with the same name in the same pacakge, so try to avoid this.
+program with the same name in the same package, so try to avoid this.
 \end{description}
 \index{input@$\backslash${\tt input}!files not found|)}
 \ccIndexSubitemEnd{source files}{documentation}
@@ -1504,7 +1460,7 @@ Requirements:
          in Section~~\ref{sec:doc_tex_subdirectory}.
    \item Indexing commands must be placed in the text to achieve the
          goals listed in Section~\ref{sec:indexing}.
-   \item Example programs incluced in the manual should also be distributed
+   \item Example programs included in the manual should also be distributed
          in the \texttt{examples} or \texttt{demo} directories and should
          be incorporated in the documentation  using the 
          \verb|\ccIncludeExampleCode| command.
@@ -1515,7 +1471,7 @@ Recommendations:
 \begin{itemize}
    \item Documentation of items in the reference manual should use as
          many of the headings listed in Section~\ref{sec:section_headings}
-         as approriate and in the indicated order.
+         as appropriate and in the indicated order.
    \item The users' manual should include illustrative examples of a package's
          functionality.
    \item Document each item in the reference manual in its own file.
