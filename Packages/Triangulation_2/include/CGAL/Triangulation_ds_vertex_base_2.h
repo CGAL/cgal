@@ -35,6 +35,8 @@ template < class TDS = void >
 class Triangulation_ds_vertex_base_2 
 {
   typedef typename TDS::Face_handle    Face_handle;
+  typedef typename TDS::Vertex_handle  Vertex_handle;
+
 public:
   typedef TDS                          Triangulation_data_structure;
 

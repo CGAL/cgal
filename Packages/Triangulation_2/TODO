@@ -1,4 +1,5 @@
-
+- remove the  Direction_2 from the requirements for the traits class
+  of Delaunay and Regular triangulations 
 - change the return of get_conflicts and find_conflict to
   an output iterator ?
 - doc de le triangulation reguliere a mettre a jour
