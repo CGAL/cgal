@@ -43,7 +43,8 @@ class Layers_toolbar : public QToolBar
 {
   Q_OBJECT
 public:
-  Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw, std::list<Point_2> *l_of_p);
+  Layers_toolbar(CGAL::Qt_widget *w, QMainWindow *mw,
+		 std::list<Point_2> *l_of_p);
   ~Layers_toolbar()
   {
     delete showP;
