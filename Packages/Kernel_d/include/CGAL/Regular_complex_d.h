@@ -160,7 +160,7 @@ public:
     typedef Point_const_iterator self;
     typedef std::random_access_iterator_tag iterator_category;
     typedef const Point_d&                  value_type;
-    typedef ptrdiff_t                       difference_type;
+    typedef std::ptrdiff_t                  difference_type;
     typedef const Point_d*                  pointer;
     typedef const Point_d&                  reference;
 
