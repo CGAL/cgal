@@ -1,3 +1,6 @@
+Version 6.46 (4 January 2002)
+- just resubmit...
+
 Version 6.45 (4 January 2002)
 - Replace the small helper *rep classes by std::pair and triple.
 
