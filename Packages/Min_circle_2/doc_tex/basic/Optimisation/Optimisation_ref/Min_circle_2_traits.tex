@@ -1,0 +1,212 @@
+% =============================================================================
+% The CGAL Reference Manual
+% Chapter: Optimisation
+% Section: Traits Class Requirements
+% Subsec.: Requirements of Traits Classes for 2D Smallest Enclosing Circles
+% -----------------------------------------------------------------------------
+% file  : spec/Optimisation/requirements_Min_circle_2.tex
+% author: Sven Schönherr (sven@inf.fu-berlin.de)
+% -----------------------------------------------------------------------------
+% $Revision$
+% $Date$
+% =============================================================================
+
+\begin{ccHtmlClassFile}{requirements_Min_circle_2.html}{%
+    Requirements of Traits Classes for 2D Smallest Enclosing Circles}
+\subsection{Requirements of Traits Classes for 2D Smallest Enclosing Circles}
+\label{sec:min_circle_2_traits_req}
+
+The class template \ccc{CGAL_Min_circle_2} is parameterized with a
+\ccc{Traits} class which defines the abstract interface between the
+optimisation algorithm and the primitives it uses. The following
+requirements catalog lists the primitives, i.e.\ types, member
+functions etc., that must be defined for a class that can be used to
+parameterize \ccc{CGAL_Min_circle_2}.  A traits class implementation
+using the \cgal\ 2D kernel is available and described in
+Section~\ref{sec:opt_traits_impl}. In addition, we provide traits
+class adapters to user supplied point classes, see
+Section~\ref{sec:opt_traits_adapt}. Both, the implementation and the
+adapters, can be used as a starting point for customizing own traits
+classes, e.g.\ through derivation and specialization.
+
+% =============================================================================
+
+\ccHtmlNoClassLinks
+\ccHtmlNoClassIndex
+\begin{ccClass}{Traits}
+\subsection*{Traits Class (\ccClassTemplateName)}
+
+% -----------------------------------------------------------------------------
+\ccDefinition
+
+A class that satisfies the requirements of a traits class for
+\ccc{CGAL_Min_circle_2} must provide the following primitives.
+
+% -----------------------------------------------------------------------------
+\ccTypes
+
+\ccNestedType{Point}{
+        The point type must provide default and copy constructor,
+        assignment and equality test.}
+
+\ccNestedType{Circle}{
+        The circle type must fulfill the requirements listed below
+        in the next section.}
+
+In addition, if I/O is used, the corresponding I/O operators for
+\ccc{Point} and \ccc{Circle} have to be provided, see topic
+\textbf{I/O} in Section~\ref{sec:min_circle_2_spec}.
+
+% -----------------------------------------------------------------------------
+\ccHeading{Variables}
+
+\ccVariable{ Circle  circle;}{
+        The actual circle. This variable is maintained by the algorithm,
+        the user should neither access nor modify it directly.}
+
+% -----------------------------------------------------------------------------
+\ccCreation
+\ccCreationVariable{traits}
+
+Only default and copy constructor are required. Note that further
+constructors can be provided.
+
+\ccConstructor{ Traits( );}{A default constructor.}
+
+\ccConstructor{ Traits( Traits const&);}{A copy constructor.}
+
+% -----------------------------------------------------------------------------
+\ccOperations
+
+The following predicate is only needed, if the member function
+\ccc{is_valid} of \ccc{CGAL_Min_circle_2} is used.
+
+\ccMemberFunction{ CGAL_Orientation  orientation( Point const& p,
+                                                  Point const& q,
+                                                  Point const& r) const;}{
+        returns constants \ccc{CGAL_LEFTTURN}, \ccc{CGAL_COLLINEAR},
+        or \ccc{CGAL_RIGHTTURN} iff \ccc{r} lies properly to the left,
+        on, or properly to the right of the oriented line through
+        \ccc{p} and \ccc{q}, resp.}
+
+\end{ccClass}
+
+% =============================================================================
+
+\ccHtmlNoClassLinks
+\ccHtmlNoClassIndex
+\begin{ccClass}{Circle}
+\subsection*{Circle Type (\ccClassTemplateName)}
+\label{sec:opt_circle_2_req}
+
+% -----------------------------------------------------------------------------
+\ccDefinition
+ 
+An object of the class \ccClassName\ is a circle in two-dimensional
+euclidean plane $\E_2$. Its boundary splits the plane into a bounded
+and an unbounded side. By definition, an empty \ccClassName\ has no
+boundary and no bounded side, i.e.\ its unbounded side equals the
+whole plane $\E_2$. A \ccClassName\ containing exactly one point~$p$
+has no bounded side, its boundary is $\{p\}$, and its unbounded side
+equals $\E_2\mbox{\ccTexHtml{$\setminus$}{-}}\{p\}$.
+
+% -----------------------------------------------------------------------------
+\ccTypes
+ 
+\ccNestedType{Point}{Point type.}
+
+The following type is only needed, if the member function \ccc{is_valid}
+of \ccc{CGAL_Min_circle_2} is used.
+
+\ccNestedType{Distance}{Distance type.}
+ 
+% -----------------------------------------------------------------------------
+\ccCreation
+\ccCreationVariable{circle}
+ 
+\ccMemberFunction{ void  set( );}{
+        sets \ccVar\ to the empty circle.}
+
+\ccMemberFunction{ void  set( Point const& p);}{
+        sets \ccVar\ to the circle containing exactly $\{\mbox{\ccc{p}}\}$.}
+
+\ccMemberFunction{ void  set( Point const& p,
+                              Point const& q);}{
+        sets \ccVar\ to the circle with diameter
+        $\overline{\mbox{\ccc{p}\ccc{q}}}$. The algorithm
+        guarantees that \ccc{set} is never called with two equal points.}
+
+\ccMemberFunction{ void  set( Point const& p,
+                              Point const& q,
+                              Point const& r);}{
+        sets \ccVar\ to the circle through \ccc{p},\ccc{q},\ccc{r}.
+        The algorithm guarantees that \ccc{set} is never called with
+        three collinear points.}
+
+% -----------------------------------------------------------------------------
+\ccPredicates
+
+\ccMemberFunction{ bool  has_on_unbounded_side( Point const& p) const;}{
+        returns \ccc{true}, iff \ccc{p} lies properly outside of \ccVar.}
+
+Each of the following predicates is only needed, if the corresponding
+predicate of \ccc{CGAL_Min_circle_2} is used.
+
+\ccMemberFunction{ CGAL_Bounded_side
+                   bounded_side( Point const& p) const;}{
+        returns \ccc{CGAL_ON_BOUNDED_SIDE},\ccTexHtml{$\:$}{ }%
+        \ccc{CGAL_ON_BOUNDARY}, or \ccc{CGAL_ON_UNBOUNDED_SIDE}
+        iff \ccc{p} lies properly inside, on the boundary, or properly
+        outside of \ccVar, resp.}
+
+\ccMemberFunction{ bool  has_on_bounded_side( Point const& p) const;}{
+        returns \ccc{true}, iff \ccc{p} lies properly inside \ccVar.}
+
+\ccMemberFunction{ bool  has_on_boundary( Point const& p) const;}{
+        returns \ccc{true}, iff \ccc{p} lies on the boundary
+        of \ccVar.}
+
+\ccMemberFunction{ bool  is_empty( ) const;}{
+        returns \ccc{true}, iff \ccVar\ is empty (this implies
+        degeneracy).}
+
+\ccMemberFunction{ bool  is_degenerate( ) const;}{
+        returns \ccc{true}, iff \ccVar\ is degenerate, i.e.\ if
+        \ccVar\ is empty or equal to a single point.}
+
+% -----------------------------------------------------------------------------
+\ccHeading{Additional Operations for Checking}
+
+The following operations are only needed, if the member function
+\ccc{is_valid} of \ccc{CGAL_Min_circle_2} is used.
+
+\ccMemberFunction{ bool  operator == ( Circle const& circle2) const;}{
+        returns \ccc{true}, iff \ccVar\ and \ccc{circle2} are equal.}
+
+\ccMemberFunction{ Point  center( ) const;}{
+        returns the center of \ccVar.}
+ 
+\ccMemberFunction{ Distance  squared_radius( ) const;}{
+        returns the squared radius of \ccVar.}
+ 
+% -----------------------------------------------------------------------------
+\ccHeading{I/O}
+
+The following I/O operators are only needed, if the corresponding I/O
+operators of \ccc{CGAL_Min_circle_2} are used.
+
+\ccFunction{ ostream& operator << ( ostream& os, Circle const& circle);}{
+        writes \ccVar\ to output stream \ccc{os}.}
+
+\ccFunction{ istream& operator >> ( istream& is, Circle &circle);}{
+        reads \ccVar\ from input stream \ccc{is}.}
+
+% -----------------------------------------------------------------------------
+
+\end{ccClass}
+
+% =============================================================================
+
+\end{ccHtmlClassFile}
+
+% ===== EOF ===================================================================
