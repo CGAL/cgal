@@ -554,23 +554,22 @@ public:
       if (curve_is_vertical(cv2))
         {
           // cv2 is vertical and cv1- not
-          /*        bug fix (Oren)
-                    if (is_lower(curve_target(cv2), p1) )
-                    return LARGER;
-                    if ( is_higher(curve_source(cv2), p1) )
-                    return SMALLER;
+          /*     bug fix (Oren)
+                 if (is_lower(curve_target(cv2), p1) )
+                 return LARGER;
+                 if ( is_higher(curve_source(cv2), p1) )
+                 return SMALLER;
                     
-                    if ( is_higher(curve_source(cv2), p1) ) // bug fix (Oren)
-                    The answer should be independent of the curve's orientation !!
+                 if ( is_higher(curve_source(cv2), p1) ) // bug fix (Oren)
+                 The answer should be independent of the curve's orientation !!
                     
-                    p1 x--x               p1 x--x
-                    |                     /\
-                    |           versus    |
-                    \/cv2                 |cv2
-                    x                     x
+                 p1 x--x               p1 x--x
+                 |                     /\
+                 |           versus    |
+                 \/cv2                 |cv2
+                 x                     x
                     
-                    p                     p
-                    
+                 p                     p   
           */
           if (is_lower(lowest(curve_source(cv2),curve_target(cv2)), p1) )
             return LARGER;
