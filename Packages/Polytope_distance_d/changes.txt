@@ -1,8 +1,8 @@
 Changes done to the `Polytope_distance_d' package
 
 Version 0.2 on 05-Sep-2000
-- data accessors moved to separate header files in package Optimisation_basic.
-- changed leading `_' to trailing `_' in template parameters.
+- data accessors moved to separate header files in package Optimisation_basic
+- changed leading `_' to trailing `_' in template parameters
 
 Version 0.1 on 05-Sep-2000
 - initial version
