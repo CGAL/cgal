@@ -128,7 +128,17 @@ Polynomial<NT>::Polynomial(int n, const char * s[]) {
 //Unary minus is treated as a basic term. Number is a BigInt, rest of the
 //cases are still not handled.
 template <class NT>
-Polynomial<NT>::Polynomial(string s, char myX) {
+Polynomial<NT>::Polynomial(const string & s, char myX) {
+   string ss(s);
+   constructFromString(ss, myX);
+}
+template <class NT>
+Polynomial<NT>::Polynomial(const char * s, char myX) {
+   string ss(s);
+   constructFromString(ss, myX);
+}
+template <class NT>
+void Polynomial<NT>::constructFromString(string & s, char myX) {
   if(myX != 'x' || myX != 'X'){
     //Replace myX with 'x'.
     unsigned int loc = s.find(myX, 0);
@@ -228,7 +238,7 @@ int Polynomial<NT>::matchparen(const char* cstr, int start){
 
 
 template <class NT>
-int Polynomial<NT>::getbasicterm(string s, Polynomial<NT> & P){
+int Polynomial<NT>::getbasicterm(string & s, Polynomial<NT> & P){
   const char * cstr = s.c_str();
   unsigned int len = s.length();
   int i=0;
@@ -261,11 +271,10 @@ int Polynomial<NT>::getbasicterm(string s, Polynomial<NT> & P){
 
 
 template <class NT>
-int Polynomial<NT>::getterm(string s, Polynomial<NT> & P){
+int Polynomial<NT>::getterm(string & s, Polynomial<NT> & P){
   unsigned int len = s.length();
   if(len == 0){// Zero Polynomial
-    Polynomial<NT> zero();
-    P = zero;
+    P=Polynomial<NT>();
     return 0;
   }
   unsigned int ind, oind;
@@ -284,7 +293,7 @@ int Polynomial<NT>::getterm(string s, Polynomial<NT> & P){
       oind = ind + 1;
     }
 
-    Polynomial<NT> R();
+    Polynomial<NT> R;
     ind = oind + getbasicterm(t, R);//Because the second term is the offset in
                                      //t
     P *= R;
@@ -294,7 +303,7 @@ int Polynomial<NT>::getterm(string s, Polynomial<NT> & P){
 }
 
 template <class NT>
-Polynomial<NT> Polynomial<NT>::getpoly(string s){
+Polynomial<NT> Polynomial<NT>::getpoly(string & s){
 
     //Remove white spaces from the string
     unsigned int cnt=s.find(' ',0);
@@ -323,16 +332,16 @@ Polynomial<NT> Polynomial<NT>::getpoly(string s){
 
     const char *cstr = s.c_str();
     string t;
-    Polynomial<NT> P();
+    Polynomial<NT> P;
     // P will be the polynomial in which we accumulate the
     //sum and difference of the different terms.
-    unsigned int ind = getterm(s, *P);
+    unsigned int ind = getterm(s, P);
     unsigned int oind =0;//the string between oind and ind is a term
     while(ind != len -1){
-      Polynomial<NT> R();
+      Polynomial<NT> R;
       t = s.substr(ind + 2, len -ind -2);
       oind = ind;
-      ind = oind + 2 + getterm(t, *R);
+      ind = oind + 2 + getterm(t, R);
       if(cstr[oind + 1] == '+')
 		P += R;
       else if(cstr[oind + 1] == '-')
@@ -800,7 +809,7 @@ BigFloat Polynomial<NT>::CauchyLowerBound() const {
   for (int i = 1; i <= deg; ++i) {
     mx = core_max(mx, abs(coeff[i]));
   }
-  Expr e = abs(coeff[0])/ Expr(abs(coeff[0]) + mx);
+  Expr e = Expr(abs(coeff[0]))/ Expr(abs(coeff[0]) + mx);
   e.approx(2, CORE_INFTY);
   // get an relative approximate value with error < 1/4
   return (e.BigFloatValue().makeExact().div2());
@@ -935,7 +944,8 @@ NT content(const Polynomial<NT>& p) {
 // Primitive Part:  (*this) is transformed to primPart and returned
 //	-- primPart(P) is just P/content(P)
 //	-- Should we return content(P) instead? [SHOULD IMPLEMENT THIS]
-// Note that since content(P)>0, the coefficients of primPart(P) does 
+// IMPORTANT: we require that content(P)>0, hence
+// 	the coefficients of primPart(P) does 
 // 	not change sign; this is vital for use in Sturm sequences
 template <class NT>
 Polynomial<NT> & Polynomial<NT>::primPart() {
@@ -1080,10 +1090,11 @@ int Polynomial<NT>::makeTailCoeffNonzero() {
 //            output line. 
 template <class NT>
 void Polynomial<NT>::filedump(std::ostream & os,
-                          std::string m1,
+                          std::string msg,
 			  std::string commentString,
                           std::string commentString2) const {
   int d= getTrueDegree();
+  if (msg != "") os << commentString << msg << std::endl;
   int i=0;
   if (d == -1) { // if zero polynomial
     os << commentString << "0";
@@ -1140,17 +1151,17 @@ void Polynomial<NT>::filedump(std::ostream & os,
 // dump(message, ofstream, commentString) -- dump to file
 template <class NT>
 void Polynomial<NT>::dump(std::ofstream & ofs,
-		std::string m1,
+		std::string msg,
 		std::string commentString,
                 std::string commentString2) const {
-  filedump(ofs, m1, commentString, commentString2);
+  filedump(ofs, msg, commentString, commentString2);
 }
 
 // dump(message) 	-- to std output
 template <class NT>
-void Polynomial<NT>::dump(std::string m, std::string com,
+void Polynomial<NT>::dump(std::string msg, std::string com,
 		std::string com2) const {
-  filedump(std::cout, m, com, com2);
+  filedump(std::cout, msg, com, com2);
 }
 
 // Dump of Maple Code for Polynomial

@@ -423,8 +423,12 @@ public:
     if (n < i)
       return BFInterval(1,0);  // ERROR CONDITION INDICATED
     //Now 0< i <= n
-    if (n == 1)
-      return BFInterval(x, y);
+    if (n == 1) {
+      if ((x>0) || (y<0)) return BFInterval(x, y);
+      if (seq[0].coeff[0] == NT(0)) return BFInterval(0,0);
+      if (numberOfRoots(0, y)==0) return BFInterval(x,0);
+      return BFInterval(0,y);
+    }
     BigFloat m = (x+y).div2();
     n = numberOfRoots(x, m);
     if (n >= i)
@@ -775,8 +779,10 @@ public:
     if(seq[0].eval(z) == 0)// Reached the exact root.
       return true;
 
+    BigFloat fprime = seq[1].eval(z);
+    if (fprime == 0) return false;  // z is a critical value!
     BigFloat temp =        // assume eval(z) return exact values!
-	    (seq[0].eval(z)/power(seq[1].eval(z),2)).makeCeilExact();
+	    (seq[0].eval(z)/power(fprime, 2)).makeCeilExact();
     temp = core_abs(temp)*seq[0].height();  // remains exact
     //Thus, temp >=  ||f||_{\infty} |\frac{f(z)}{f'(z)^2}|
 
@@ -882,8 +888,7 @@ std::cout << "In newtonRefine, input J=" << J.first
 	    (J.second - J.first) > yap &&
 	   (J.second - J.first).uMSB() >= -aprec) {
       x = newtonIterN(N, x, del, err);
-      if (del == 0) {  // either reached exact root or Divide-by-zero.  It is
-        // the user's responsibility to check which is the case.
+      if ((del == 0)&&(NEWTON_DIV_BY_ZERO == false)) {  // reached exact root!
         J.first = J.second = x;
         return J;
       }
@@ -895,8 +900,9 @@ std::cout << "In newtonRefine, input J=" << J.first
       	left += del; right -= del;
       }
       //left and right are exact, since x is exact.
-      if ( (J.first <= x && x <= J.second) &&
-	   (J.first < left || right < J.second )
+      if ((  (J.first <= x && x <= J.second) &&
+	       (J.first < left || right < J.second ))
+          && (NEWTON_DIV_BY_ZERO == false)
 	   ) {
                                   // we can get a better root:
         if (left > J.first) {
@@ -933,7 +939,8 @@ std::cout << "In newtonRefine, input J=" << J.first
         N ++;      // be more confident or aggressive
 	           //  (perhaps we should double N)
 		   //
-      } else {//Newton took us out of interval J, need to backup
+      } else {// Either NEWTON_DIV_BY_ZERO=true
+	      // Or Newton took us out of interval J: so we need to backup
 	x = (J.second + J.first).div2();//Reset x to midpoint since it was the
 	                                //value from a failed Newton step
 	xSign = sign(seq[0].eval(x));
