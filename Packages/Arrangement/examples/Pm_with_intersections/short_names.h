@@ -13,7 +13,7 @@
 #define Pm_vertex_base                  PVB
 #define Pm_face_base                    PFB
 #define Planar_map_2                    PMp
-#define _Nonconst_traits                NT
+// #define _Nonconst_traits                NTs
 #define Td_traits                       TT
 #define Pm_segment_traits_2             PST
 #define Planar_map_traits_wrap          PMTW
