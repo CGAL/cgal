@@ -147,70 +147,52 @@
 
     \ccTypedef{typedef typename Traits::Point_2 Point_2;}{the point type
        of the arrangement}
-    \ccTypedef{typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;}{
-       the x-monotone curve type of the arrangmenet}
+
     \ccTypedef{typedef typename Traits::Curve_2 Curve_2;}{the curve type
-      of the arrangement}
+      of the arrangement. Objects of this type are inserted to the
+      arrangement.}
+
+   \ccTypedef{typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;}{
+       the $x$-monotone curve type of the arrangement. The input curves of
+       type \ccc{Curve_2} are divided into $x$-monotone subcurves.}
     
 \ccCreation
     \ccCreationVariable{arr}
 
-    \ccConstructor{Arrangement_2<Dcel,Traits,Base_node>();}{create an empty arrangement with the default point location strategy.}
+    \ccConstructor{Arrangement_2<Dcel,Traits,Base_node>();}{
+       create an empty arrangement with the default point location strategy.}
 
-    \ccConstructor{Arrangement_2<Dcel,Traits,Base_node>(Pm_point_location_base<Planar_map> *pl);}{create an empty arrangement with \ccc{*pl} as the point location strategy.}
+    \ccConstructor{Arrangement_2<Dcel,Traits,Base_node>
+	(Pm_point_location_base<Planar_map> *pl);}{
+       create an empty arrangement with \ccc{*pl} as the point location 
+       strategy.}
 
-    \ccConstructor{Arrangement_2<Dcel,Traits,Base_node>(const Traits& tr, Pm_point_location_base<Planar_map> *pl);}{create an empty arrangement with \ccc{tr} as the traits class and \ccc{*pl} as the point location strategy.}
-
-    %\ccConstructor{Arrangement_2<Dcel,Traits,Base_node>( list<Traits::X_monotone_curve_2> &l );}
-    %{create the arrangement of the curves of \ccStyle{l}}
-
-    %\ccStyle{tempalte <class InputIterator>} \\
-    %\ccConstructor{Arrangement_2<Dcel,Traits,Base_node>( InputIterator begin, 
-     %                              InputIterator end );} 
-     %           {create the arrangement of the curves from a container iterated by
-     %           \ccStyle{InputIterator} from  \ccStyle{begin} to \ccStyle{end}
-     %           \ccPrecond{the container contains \ccStyle{Traits::X_monotone_curve_2} objects.}       
-     %           }
+    \ccConstructor{Arrangement_2<Dcel,Traits,Base_node>
+	(const Traits& tr, Pm_point_location_base<Planar_map> *pl);}{
+       create an empty arrangement with \ccc{tr} as the traits class and 
+       \ccc{*pl} as the point location strategy.}
     
 \ccOperations
 
     \ccMethod{void clear();}
      {clears the arrangement.}
 
-     \ccMethod{Curve_iterator insert(const Curve_2& cv);}{inserts the curve
-       \ccStyle{cv} into the arrangement. It uses the
-       \ccc{Traits::curve_make_x_monotone}
-       function to cut the curve into $x$-monotone curves and inserts
-       them in the hierarchy tree. If the arrangement is in {\em update}
-       mode (the default mode) then the curves are inserted into the
-       planar map.
+     \ccMethod{Curve_iterator insert(const Curve_2& cv);}{
+       inserts the curve \ccStyle{cv} into the arrangement. It uses the
+       \ccc{Traits::curve_make_x_monotone} function to cut the curve into 
+       $x$-monotone subcurves and inserts them to the hierarchy tree. \newline 
+       If the arrangement is in {\em update} mode (the default mode) 
+       then the curves are inserted into the planar map.
        \ccPrecond{\ccc{cv} is not equivalent to a point. }
        }
+
+    \ccStyle{template <class InputIterator>} \\
+    \ccMethod{void insert (InputIterator begin, InputIterator end );}{
+     insert the curves from a container iterated by \ccStyle{InputIterator} 
+     from \ccStyle{begin} to \ccStyle{end} into the arrangement. This function
+     uses the sweep-line algorithm to perform the aggregated insertion.}
     
-
-    \ccMethod{Curve_iterator insert_from_vertex( const X_monotone_curve_2 & cv,
-       Vertex_handle src);}{inserts  the curve
-       \ccStyle{cv}, for 
-       which the source point, \ccStyle{src}, is already in the
-       arrangement. 
-       The curve is cut into $x$-monotone curves, as explained for 
-       the \ccc{insert} function.
-       This function is more efficient than the \ccc{insert} function, 
-       since it does not invoke a point location query for the 
-       endpoint \ccc{src}. Therefore, 
-       whenever possible, it is recommended to use this one rather
-       than \ccc{insert}. 
-       \ccPrecond{\ccc{src} holds a point which is the same as \ccc{cv's} 
-       source.}
-       \ccPrecond{\ccc{cv} is not equivalent to a point. }
-       }
-
 \begin{ccAdvanced}
-
-        %\ccTypedef{typedef typename Traits::SPLIT_FUNC SPLIT_FUNC;}{the
-        %   splitting function to be defined by the user.}
-        %\comment{This is not implemented yet in this way, currently we
-        %   just use a pointer to function.}
         
         \ccMethod{template <class F_iterator>
            Curve_iterator insert(const Curve_2 &cv, 
@@ -243,31 +225,17 @@
 
 \ccMethod{bool read (istream &in);}
 {reading \ccRefName\ from a given input stream.
- The input stream should support the extractor operator (\ccc{>>}) for the \ccStyle{Point_2} 
- and \ccStyle{Curve_2} types of \ccc{Arrangement}. } 
+ The input stream should support the extractor operator (\ccc{>>}) for the 
+ \ccStyle{Point_2} and \ccStyle{Curve_2} types of \ccc{Arrangement}. } 
 
 \ccStyle{template <class Scanner>}
 \ccMethod{bool read (istream &in, Scanner& scanner);}
-{reading \ccRefName\ from a given input stream when taking the scanner class as a parameter.
- The input stream should support the extractor operator (\ccc{>>}) for the \ccStyle{Point_2}
- and \ccStyle{Curve_2} types of \ccc{Arrangement}. }
+{reading \ccRefName\ from a given input stream when taking the scanner class 
+ as a parameter.
+ The input stream should support the extractor operator (\ccc{>>}) for the 
+ \ccStyle{Point_2} and \ccStyle{Curve_2} types of \ccc{Arrangement}. }
 
 \end{ccAdvanced}    
-
-    %\ccMethod{void insert( list<Traits::X_monotone_curve_2> &l );} {insert the
-    %   curves of \ccStyle{l} into the arrangement \comment{iddo: use plane sweep?}}
-
-    %\ccStyle{tempalte <class InputIterator>} \\
-    %\ccMethod{void insert( InputIterator begin, InputIterator end );} 
-    %            {insert the curves from a container iterated by
-    %            \ccStyle{InputIterator} from  \ccStyle{begin} to \ccStyle{end}
-    %            into the arrangement.
-    %            \ccPrecond{the container contains \\ 
-    %               \ccStyle{Traits::X_monotone_curve_2} objects.}}
-
-%\comment{iddo: maybe add the function:} 
-%\ccMethod{insert_super_curve(list<Traits::X_monotone_curve_2> &l );}{}
-%\comment{iddo: which will insert the X_monotone_curve_2s with prev/next to the super-curve from which they originated.}
 
     \ccMethod{void set_update(bool u);}{sets update mode to \ccc{u}. If
        update mode is true then every curve inserted into the
@@ -280,15 +248,10 @@
        the arrangement since the last time update was true.}
 
 
-
-%    \ccMethod{Arrangement_2<Dcel,Traits,Base_node>::Curve_iterator 
-%curve_node_begin();}
     \ccMethod{Curve_iterator curve_node_begin();}
     { returns the begin iterator of the curves (i.e., the
        curves that were inserted to \ccVar).}
 
-%    \ccMethod{Arrangement_2 <Dcel,Traits,Base_node>::Curve_iterator 
-%curve_node_end();}
     \ccMethod{Curve_iterator curve_node_end();}
     { returns the past-the-end iterator of the curves.}
 
@@ -309,10 +272,12 @@
     \ccMethod{Face_iterator faces_end();}{}
     \ccMethod{Size number_of_faces();}{}
 
-    \ccMethod{Halfedge_handle split_edge(Halfedge_handle e, const X_monotone_curve_2& c1, 
-   const X_monotone_curve_2& c2);}{}
+    \ccMethod{Halfedge_handle split_edge(Halfedge_handle e, 
+                                         const X_monotone_curve_2& c1, 
+                                         const X_monotone_curve_2& c2);}{}
     \ccMethod{Halfedge_handle locate(const Point_2& p, Locate_type& lt);}{}
-    \ccMethod{Halfedge_handle vertical_ray_shoot(const Point_2& p, Locate_type& lt, bool up);}{}
+    \ccMethod{Halfedge_handle vertical_ray_shoot(const Point_2& p, 
+                                                 Locate_type& lt, bool up);}{}
 
     \ccMethod{Face_handle unbounded_face();}{}
 
@@ -322,7 +287,7 @@
       for the correctness of the hierarchy tree. Finally, some geometric
       properties are verified, e.g., each edge's end point is the start
       point of its next edge. if the \ccc{verbose}parameter
-      is \ccc{true} then a verbose description of the vallidity check
+      is \ccc{true} then a verbose description of the validity check
       is sent to the output.}
     
     The planar map operations: \ccc{merge_edge} and \ccc{remove_edge} are

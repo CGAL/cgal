@@ -17,13 +17,17 @@
 \begin{ccRefClass}{Arr_segment_traits_2<Kernel>}
 
 \ccDefinition
-   The class \ccRefName\ is
-   a traits class that uses the CGAL Kernel, that is, types and predicates.
-   The representation type \ccc{R} is recommended to be an
-   exact type such as \ccc{Cartesian<leda_rational>} or
-   \ccc{Homogeneous<Gmpz>} or any other
-   exact type, although other inexact representations can be used at
-   the user's own risk.
+   The class \ccRefName\ is a traits class for handling arrangements of line
+   segments that uses the geometric kernel intensively. 
+   The \ccc{Arr_segment_traits_2<Kernel>::Curve_2} type (as well
+   as the \ccc{Arr_segment_traits_2<Kernel>::X_monotone_curve_2} type) is
+   actually the \ccc{Kernel::Segment_2} type, while the various predicates
+   and constructions supported by the traits class actually wrap the
+   kernel implementations.
+
+   The \ccc{Kernel} must use a number type that supports exact computations
+   with rational numbers, such as \ccc{Quotient<Gmpz>} or \ccc{leda_rational}. 
+   Other inexact representations can be used at the user's own risk.
 
 \ccInclude{CGAL/Arr_segment_traits_2.h}
 

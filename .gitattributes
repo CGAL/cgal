@@ -760,11 +760,17 @@ Packages/Apollonius_graph_2/doc_tex/basic/Apollonius_graph_2/apollonius_graph.ep
 Packages/Apollonius_graph_2/doc_tex/basic/Apollonius_graph_2/apollonius_graph.gif -text svneol=unset#unset
 Packages/Arrangement/doc_tex/Arrangement_2/arr_circ.gif -text svneol=unset#unset
 Packages/Arrangement/doc_tex/Arrangement_2/arr_circ.ps -text
+Packages/Arrangement/doc_tex/Arrangement_2/arr_conics.fig -text
+Packages/Arrangement/doc_tex/Arrangement_2/arr_conics.gif -text svneol=unset#unset
+Packages/Arrangement/doc_tex/Arrangement_2/arr_conics.ps -text
 Packages/Arrangement/doc_tex/Arrangement_2/arr_hier.fig -text
 Packages/Arrangement/doc_tex/Arrangement_2/arr_hier.gif -text svneol=unset#unset
 Packages/Arrangement/doc_tex/Arrangement_2/arr_hier.ps -text
 Packages/Arrangement/doc_tex/basic/Arrangement_2/arr_circ.gif -text svneol=unset#unset
 Packages/Arrangement/doc_tex/basic/Arrangement_2/arr_circ.ps -text
+Packages/Arrangement/doc_tex/basic/Arrangement_2/arr_conics.fig -text
+Packages/Arrangement/doc_tex/basic/Arrangement_2/arr_conics.gif -text svneol=unset#unset
+Packages/Arrangement/doc_tex/basic/Arrangement_2/arr_conics.ps -text
 Packages/Arrangement/doc_tex/basic/Arrangement_2/arr_hier.fig -text
 Packages/Arrangement/doc_tex/basic/Arrangement_2/arr_hier.gif -text svneol=unset#unset
 Packages/Arrangement/doc_tex/basic/Arrangement_2/arr_hier.ps -text

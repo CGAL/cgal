@@ -16,20 +16,28 @@
 \begin{ccRefClass}{Arr_polyline_traits_2<Kernel, Container>}
 
 \ccDefinition
-    The class \ccRefName\ is a traits class for polyline curves.  The
-    representation type \ccc{R} is recommended to be an exact type
-    such as \ccc{Cartesian<leda_rational>} or \ccc{Homogeneous<Gmpz>}
-    or any other exact type, although other inexact representations
-    can be used at the user's own risk.  The template parameter
-    \ccc{Container} corresponds to the container type for holding the
-    polyline curve points. It must be a model of the \ccc{Reversible
-    Container} concept and it must be templated with
-    \ccc{Point_2_2<Kernel>}. \ccc{Container} has a default value which is
-    \ccc{std::vector<Point_2_2<Kernel> >}. The first point in the container
-    is considered as the source point of the polyline while the last
-    point is considered the target one.
+    The class \ccRefName\ is a traits class for polyline curves, which are
+    piecewise linear curves --- chains of segments, where each two neighboring
+    segments in the chain share a common endpoint. The traits class uses
+    functionality of the \ccc{Kernel} to handle the segments that comprise the
+    polyline curve.
 
-%See example ***SHOW WHERE.
+    The template parameter \ccc{Container} corresponds to the container type 
+    for holding the polyline curve points. It must be a model of the 
+    \ccc{Reversible Container} concept and it must be templated with
+    \ccc{Kernel::Point_2}. \ccc{Container} has a default value which is
+    \ccc{std::vector<Kernel::Point_2>}. A container that stores $n$ points 
+    labeled $p_{0},p_{1},\ldots,p_{n-1}$ represents a curve with $n-1$ 
+    segments, where the $k$th segment is defined by the endpoints
+    $[p_{k-1},p_{k}]$. The first point in the container is considered as the 
+    source point of the polyline while the last point is considered as its 
+    target.
+
+    The \ccc{Kernel} must use a number type that supports exact computations
+    with rational numbers, such as \ccc{Quotient<Gmpz>} or 
+    \ccc{leda_rational}. Other inexact representations can be used at the 
+    user's own risk.
+
 \ccInclude{CGAL/Arr_polyline_traits_2.h}
 
 \ccIsModel

@@ -34,16 +34,15 @@ concept, it must provide the types and operations listed below.
 {A default constructor.}
 
 \ccOperations
-\ccMethod{X_monotone_curve_2 curve_opposite(const X_monotone_curve_2& cv) const;}
+\ccMethod{X_monotone_curve_2 curve_opposite
+	                           (const X_monotone_curve_2& cv) const;}
          {flips the direction of the curve \ccc{cv}. The source and target
           points of \ccc{cv} interchange.}
 
 \ccHasModels
   \ccc{Arr_segment_traits_2<Kernel>}\\
   \ccc{Arr_segment_cached_traits_2<Kernel>}\\
-  \ccc{Arr_leda_segment_traits_2<Kernel>}\\
-  \ccc{Arr_polyline_traits<Kernel, Container>} \\
-  \ccc{Arr_leda_polyline_traits<Kernel, Container>} \\
+  \ccc{Arr_polyline_traits_2<Kernel, Container>} \\
   \ccc{Arr_conic_traits_2<Kernel>}
 
 \end{ccRefConcept}
