@@ -14,7 +14,7 @@
 // file          : src/Geomview_stream.C
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Andreas Fabri and Herve Bronnimann
+// author(s)     : Andreas Fabri, Herve Bronnimann, Sylvain Pion
 //
 // coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
 //
@@ -36,9 +36,13 @@ CGAL_BEGIN_NAMESPACE
 Geomview_stream::Geomview_stream(const Bbox_3 &bbox,
 				 const char *machine,
 				 const char *login)
-    : line_width_(1)
+    : bbox_count(0), triangle_count(0), sphere_count(0),
+      segment_count(0), point_count(0), tetrahedron_count(0),
+      vertex_color(BLACK), edge_color(BLACK), face_color(BLACK),
+      trace_flag(false), binary_flag(false),
+      line_width_(1)
 {
-    setup_geomview(machine,login);
+    setup_geomview(machine, login);
     frame(bbox);
     pickplane(bbox);
     set_vertex_radius((bbox.xmax() - bbox.xmin())/100.0);
@@ -51,8 +55,6 @@ Geomview_stream::~Geomview_stream()
 
 void Geomview_stream::setup_geomview(const char *machine, const char *login)
 {
-    bflag = trace_ = false;
-    vertex_color = edge_color = face_color = BLACK;
     int pipe_out[2], pipe_in[2];
 
     // Communication between CGAL and geomview should be possible
@@ -126,12 +128,6 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
 
         std::cout << "done." << std::endl;
 
-        bbox_count = 0;
-        triangle_count = 0;
-        segment_count = 0;
-        sphere_count = 0;
-        point_count = 0;
-        tetrahedron_count = 0;
         (*this) << "(normalization g* none)(bbox-draw g* no)";
     }
 }
@@ -158,69 +154,6 @@ Geomview_stream::operator<<(Geomview_stream&(*fct)(Geomview_stream&))
 {
   (*fct)(*this);
   return *this;
-}
-
-bool
-Geomview_stream::get_trace() const
-{
-    return trace_;
-}
-
-bool
-Geomview_stream::set_trace(bool b)
-{
-    bool old = trace_;
-    trace_ = b;
-    return old;
-}
-
-void
-Geomview_stream::trace(const std::string s) const
-{
-    if (trace_)
-        std::cerr << s;
-}
-
-void
-Geomview_stream::trace(double d) const
-{
-    if (trace_)
-        std::cerr << d << ' ';
-}
-
-void
-Geomview_stream::trace(int i) const
-{
-    if (trace_)
-        std::cerr << i << ' ';
-}
-
-double
-Geomview_stream::get_vertex_radius() const
-{
-    return radius_;
-}
-
-double
-Geomview_stream::set_vertex_radius(double r)
-{
-    double old = radius_;
-    radius_ = r;
-    return old;
-}
-
-int
-Geomview_stream::get_line_width() const
-{
-    return line_width_;
-}
-
-int
-Geomview_stream::set_line_width(int w)
-{
-    int old = line_width_;
-    line_width_ = w;
-    return old;
 }
 
 void

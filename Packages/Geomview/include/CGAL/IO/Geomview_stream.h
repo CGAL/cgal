@@ -8,7 +8,6 @@
 //
 // ----------------------------------------------------------------------------
 //
-
 // release       :
 // release_date  :
 //
@@ -16,7 +15,7 @@
 // package       : Geomview 
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Andreas Fabri
+// author(s)     : Andreas Fabri, Sylvain Pion
 //
 // coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
 //
@@ -39,8 +38,8 @@ CGAL_BEGIN_NAMESPACE
 class Geomview_stream {
 public:
     Geomview_stream(const Bbox_3 &bbox = Bbox_3(0,0,0, 1,1,1),
-		    const char *machine = (char*)NULL,
-		    const char *login = (char*)NULL);
+		    const char *machine = NULL,
+		    const char *login = NULL);
 
     ~Geomview_stream();
 
@@ -69,28 +68,64 @@ public:
     double fcg() const;
     double fcb() const;
 
-    double get_vertex_radius() const;
-    double set_vertex_radius(double r);
+    double get_vertex_radius() const
+    {
+	return radius_;
+    }
+    double set_vertex_radius(double r)
+    {
+	double old = radius_;
+	radius_ = r;
+	return old;
+    }
 
-    int get_line_width() const;
-    int set_line_width(int w);
+    int get_line_width() const
+    {
+	return line_width_;
+    }
+    int set_line_width(int w)
+    {
+        int old = line_width_;
+        line_width_ = w;
+        return old;
+    }
 
     Geomview_stream &operator<<(const Color &c);
     Geomview_stream &operator<<(const std::string s);
     Geomview_stream &operator<<(int i);
     Geomview_stream &operator<<(double d);
 
-    bool get_trace() const;
-    bool set_trace(bool b);
+    bool set_trace(bool b)
+    {
+	bool old = trace_flag;
+	trace_flag = b;
+	return old;
+    }
+    bool get_trace() const
+    {
+	return trace_flag;
+    }
 
-    void trace(const std::string s) const;
-    void trace(double d) const;
-    void trace(int i) const;
+    void trace(const std::string s) const
+    {
+        if (get_trace())
+            std::cerr << s;
+    }
+    void trace(double d) const
+    {
+        if (get_trace())
+            std::cerr << d << ' ';
+    }
+    void trace(int i) const
+    {
+        if (get_trace())
+            std::cerr << i << ' ';
+    }
 
-    void set_binary_mode()         { bflag = true; }
-    void set_ascii_mode()          { bflag = false; }
-    bool in_binary_mode() const    { return bflag; }
-    bool in_ascii_mode() const     { return ! bflag; }
+    void set_binary_mode()         { binary_flag = true; }
+    void set_ascii_mode()          { binary_flag = false; }
+    bool in_binary_mode() const    { return binary_flag; }
+    bool in_ascii_mode() const     { return ! binary_flag; }
 
     Geomview_stream &operator<<( Geomview_stream& (*fct)(Geomview_stream&));
 
@@ -109,10 +144,10 @@ private:
     void pickplane(const Bbox_3 &bbox);
 
     Color vertex_color, edge_color, face_color;
-    bool trace_;
     int in, out;  // file descriptors for input and output pipes
     int pid;      // the geomview process identification
-    bool bflag;    // bool that makes operator<< write binary format
+    bool trace_flag;  // bool that makes operator<<() write a trace on stdout.
+    bool binary_flag; // bool that makes operator<< write binary format
     double radius_;
     int line_width_;
 };
