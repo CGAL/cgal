@@ -154,7 +154,7 @@ std::ostream & operator<<(std::ostream & os, const Curve & cv)
   typedef Curve::const_iterator       Points_iterator;
   
 #if CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
-    os << (cv.size() + 1) << std::endl;
+    os << cv.points() << std::endl;
 #else
     os << cv.size() << std::endl;
 #endif
