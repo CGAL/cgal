@@ -29,7 +29,9 @@ namespace CGALi {
 
 template <class K>
 Object
-intersection(const typename CGAL_WRAP(K)::Plane_3 &plane1, const typename CGAL_WRAP(K)::Plane_3 &plane2, const K&)
+intersection(const typename CGAL_WRAP(K)::Plane_3 &plane1, 
+	     const typename CGAL_WRAP(K)::Plane_3 &plane2, 
+	     const K&)
 {
   typedef typename K::Point_3 Point_3;
   typedef typename K::Direction_3 Direction_3;
@@ -93,7 +95,9 @@ intersection(const typename CGAL_WRAP(K)::Plane_3 &plane1, const typename CGAL_W
 
 template <class K>
 Object
-intersection(const typename CGAL_WRAP(K)::Plane_3  &plane, const typename CGAL_WRAP(K)::Line_3 &line, const K&)
+intersection(const typename CGAL_WRAP(K)::Plane_3  &plane, 
+	     const typename CGAL_WRAP(K)::Line_3 &line, 
+	     const K&)
 {
     typedef typename K::Point_3 Point_3;
     typedef typename K::Direction_3 Direction_3;
@@ -124,7 +128,9 @@ intersection(const typename CGAL_WRAP(K)::Plane_3  &plane, const typename CGAL_W
 template <class K>
 inline
 Object
-intersection(const typename CGAL_WRAP(K)::Line_3 &line, const typename CGAL_WRAP(K)::Plane_3  &plane, const K& k)
+intersection(const typename CGAL_WRAP(K)::Line_3 &line, 
+	     const typename CGAL_WRAP(K)::Plane_3  &plane, 
+	     const K& k)
 {
   return intersection(plane, line, k);
 }
@@ -132,7 +138,9 @@ intersection(const typename CGAL_WRAP(K)::Line_3 &line, const typename CGAL_WRAP
 
 template <class K>
 bool
-do_intersect(const typename CGAL_WRAP(K)::Plane_3 &plane, const typename CGAL_WRAP(K)::Line_3 &line, const K&)
+do_intersect(const typename CGAL_WRAP(K)::Plane_3 &plane, 
+	     const typename CGAL_WRAP(K)::Line_3 &line,
+	     const K&)
 {
     typedef typename K::Point_3 Point_3;
     typedef typename K::Direction_3 Direction_3;
@@ -158,7 +166,9 @@ do_intersect(const typename CGAL_WRAP(K)::Plane_3 &plane, const typename CGAL_WR
 template <class K>
 inline
 bool
-do_intersect(const typename CGAL_WRAP(K)::Line_3 &line, const typename CGAL_WRAP(K)::Plane_3 &plane, const K& k)
+do_intersect(const typename CGAL_WRAP(K)::Line_3 &line, 
+	     const typename CGAL_WRAP(K)::Plane_3 &plane, 
+	     const K& k)
 {
   return do_intersect(plane, line, k);
 }
@@ -166,7 +176,9 @@ do_intersect(const typename CGAL_WRAP(K)::Line_3 &line, const typename CGAL_WRAP
 
 template <class K>
 Object
-intersection(const typename CGAL_WRAP(K)::Plane_3 &plane, const typename CGAL_WRAP(K)::Ray_3 &ray, const K& k)
+intersection(const typename CGAL_WRAP(K)::Plane_3 &plane, 
+	     const typename CGAL_WRAP(K)::Ray_3 &ray, 
+	     const K& k)
 {
     typedef typename K::Point_3 Point_3;
     const Object line_intersection =
@@ -187,7 +199,9 @@ intersection(const typename CGAL_WRAP(K)::Plane_3 &plane, const typename CGAL_WR
 template <class K>
 inline
 Object
-intersection(const typename CGAL_WRAP(K)::Ray_3 &ray, const typename CGAL_WRAP(K)::Plane_3 &plane, const K& k)
+intersection(const typename CGAL_WRAP(K)::Ray_3 &ray, 
+	     const typename CGAL_WRAP(K)::Plane_3 &plane, 
+	     const K& k)
 {
   return intersection(plane, ray, k);
 }
@@ -196,7 +210,9 @@ intersection(const typename CGAL_WRAP(K)::Ray_3 &ray, const typename CGAL_WRAP(K
 
 template <class K>
 bool
-do_intersect(const typename CGAL_WRAP(K)::Plane_3 &plane, const typename CGAL_WRAP(K)::Ray_3 &ray, const K& k)
+do_intersect(const typename CGAL_WRAP(K)::Plane_3 &plane, 
+	     const typename CGAL_WRAP(K)::Ray_3 &ray, 
+	     const K& k)
 {
     typedef typename K::Point_3 Point_3;
     const Object line_intersection =
@@ -217,7 +233,9 @@ do_intersect(const typename CGAL_WRAP(K)::Plane_3 &plane, const typename CGAL_WR
 template <class K>
 inline
 bool
-do_intersect(const typename CGAL_WRAP(K)::Ray_3 &ray, const typename CGAL_WRAP(K)::Plane_3 &plane, const K& k)
+do_intersect(const typename CGAL_WRAP(K)::Ray_3 &ray, 
+	     const typename CGAL_WRAP(K)::Plane_3 &plane, 
+	     const K& k)
 {
   return do_intersect(plane, ray, k);
 }
@@ -225,7 +243,9 @@ do_intersect(const typename CGAL_WRAP(K)::Ray_3 &ray, const typename CGAL_WRAP(K
 
 template <class K>
 Object
-intersection(const typename CGAL_WRAP(K)::Plane_3 &plane, const typename CGAL_WRAP(K)::Segment_3 &seg, const K& k)
+intersection(const typename CGAL_WRAP(K)::Plane_3 &plane, 
+	     const typename CGAL_WRAP(K)::Segment_3 &seg, 
+	     const K& k)
 {
     typedef typename K::Point_3 Point_3;
     const Point_3 &source = seg.source();
@@ -266,7 +286,9 @@ intersection(const typename CGAL_WRAP(K)::Plane_3 &plane, const typename CGAL_WR
 template <class K>
 inline
 Object
-intersection(const typename CGAL_WRAP(K)::Segment_3 &seg, const typename CGAL_WRAP(K)::Plane_3 &plane, const K& k)
+intersection(const typename CGAL_WRAP(K)::Segment_3 &seg, 
+	     const typename CGAL_WRAP(K)::Plane_3 &plane, 
+	     const K& k)
 {
   return intersection(plane, seg, k);
 }
@@ -274,7 +296,9 @@ intersection(const typename CGAL_WRAP(K)::Segment_3 &seg, const typename CGAL_WR
 
 template <class K>
 bool
-do_intersect(const typename CGAL_WRAP(K)::Plane_3  &plane, const typename CGAL_WRAP(K)::Segment_3 &seg, const K&)
+do_intersect(const typename CGAL_WRAP(K)::Plane_3  &plane, 
+	     const typename CGAL_WRAP(K)::Segment_3 &seg, 
+	     const K&)
 {
     typedef typename K::Point_3 Point_3;
     const Point_3 &source = seg.source();
@@ -293,7 +317,9 @@ do_intersect(const typename CGAL_WRAP(K)::Plane_3  &plane, const typename CGAL_W
 template <class K>
 inline
 bool
-do_intersect(const typename CGAL_WRAP(K)::Segment_3 &seg, const typename CGAL_WRAP(K)::Plane_3  &plane, const K& k)
+do_intersect(const typename CGAL_WRAP(K)::Segment_3 &seg, 
+	     const typename CGAL_WRAP(K)::Plane_3  &plane, 
+	     const K& k)
 {
   return do_intersect(plane, seg, k);
 }
@@ -302,7 +328,8 @@ do_intersect(const typename CGAL_WRAP(K)::Segment_3 &seg, const typename CGAL_WR
 template <class K>
 Object
 intersection(const typename CGAL_WRAP(K)::Line_3 &line,
-	     const Bbox_3 &box, const K&)
+	     const Bbox_3 &box, 
+	     const K&)
 {
     typedef typename K::Point_3 Point_3;
     typedef typename K::Direction_3 Direction_3;
@@ -323,7 +350,9 @@ intersection(const typename CGAL_WRAP(K)::Line_3 &line,
 template <class K>
 inline
 Object
-intersection(const Bbox_3 &box, const typename CGAL_WRAP(K)::Line_3 &line, const K& k)
+intersection(const Bbox_3 &box, 
+	     const typename CGAL_WRAP(K)::Line_3 &line, 
+	     const K& k)
 {
   return intersection(line, box, k);
 }
@@ -332,7 +361,8 @@ intersection(const Bbox_3 &box, const typename CGAL_WRAP(K)::Line_3 &line, const
 template <class K>
 Object
 intersection(const typename CGAL_WRAP(K)::Ray_3 &ray,
-	     const Bbox_3 &box, const K&)
+	     const Bbox_3 &box, 
+	     const K&)
 {
     typedef typename K::Point_3 Point_3;
     typedef typename K::Direction_3 Direction_3;
@@ -353,7 +383,9 @@ intersection(const typename CGAL_WRAP(K)::Ray_3 &ray,
 template <class K>
 inline
 Object
-intersection(const Bbox_3 &box, const typename CGAL_WRAP(K)::Ray_3 &ray, const K& k)
+intersection(const Bbox_3 &box, 
+	     const typename CGAL_WRAP(K)::Ray_3 &ray, 
+	     const K& k)
 {
   return intersection(ray, box, k);
 }
@@ -362,7 +394,9 @@ intersection(const Bbox_3 &box, const typename CGAL_WRAP(K)::Ray_3 &ray, const K
 
 template <class K>
 Object
-intersection(const typename CGAL_WRAP(K)::Segment_3 &seg, const Bbox_3 &box, const K&)
+intersection(const typename CGAL_WRAP(K)::Segment_3 &seg, 
+	     const Bbox_3 &box, 
+	     const K&)
 {
     typedef typename K::Point_3 Point_3;
     typedef typename K::Vector_3 Vector_3;
@@ -383,7 +417,9 @@ intersection(const typename CGAL_WRAP(K)::Segment_3 &seg, const Bbox_3 &box, con
 template <class K>
 inline
 Object
-intersection(const Bbox_3 &box, const typename CGAL_WRAP(K)::Segment_3 &seg, const K& k)
+intersection(const Bbox_3 &box, 
+	     const typename CGAL_WRAP(K)::Segment_3 &seg, 
+	     const K& k)
 {
   return intersection(seg, box, k);
 }
@@ -392,7 +428,8 @@ intersection(const Bbox_3 &box, const typename CGAL_WRAP(K)::Segment_3 &seg, con
 template <class K>
 Object
 intersection(const typename CGAL_WRAP(K)::Line_3 &line,
-	     const typename CGAL_WRAP(K)::Iso_cuboid_3 &box, const K&)
+	     const typename CGAL_WRAP(K)::Iso_cuboid_3 &box, 
+	     const K&)
 {
     typedef typename K::Point_3 Point_3;
     typedef typename K::Vector_3 Vector_3;
@@ -454,7 +491,9 @@ intersection(const typename CGAL_WRAP(K)::Line_3 &line,
 template <class K>
 inline
 Object
-intersection(const typename CGAL_WRAP(K)::Iso_cuboid_3 &box, const typename CGAL_WRAP(K)::Line_3 &line, const K&)
+intersection(const typename CGAL_WRAP(K)::Iso_cuboid_3 &box, 
+	     const typename CGAL_WRAP(K)::Line_3 &line, 
+	     const K&)
 {
   return intersection(line, box, k);
 }
@@ -464,7 +503,8 @@ intersection(const typename CGAL_WRAP(K)::Iso_cuboid_3 &box, const typename CGAL
 template <class K>
 Object
 intersection(const typename CGAL_WRAP(K)::Ray_3 &ray,
-	     const typename CGAL_WRAP(K)::Iso_cuboid_3 &box, const K&)
+	     const typename CGAL_WRAP(K)::Iso_cuboid_3 &box, 
+	     const K&)
 {
     typedef typename K::Point_3 Point_3;
     typedef typename K::Vector_3 Vector_3;
@@ -535,7 +575,8 @@ intersection(const typename CGAL_WRAP(K)::Iso_cuboid_3 &box,
 template <class K>
 Object
 intersection(const typename CGAL_WRAP(K)::Segment_3 &seg,
-	     const typename CGAL_WRAP(K)::Iso_cuboid_3 &box, const K&)
+	     const typename CGAL_WRAP(K)::Iso_cuboid_3 &box, 
+	     const K&)
 {
     typedef typename K::Point_3 Point_3;
     typedef typename K::Vector_3 Vector_3;
@@ -607,7 +648,8 @@ template <class K>
 Object
 intersection(
     const typename CGAL_WRAP(K)::Iso_cuboid_3 &icub1,
-    const typename CGAL_WRAP(K)::Iso_cuboid_3 &icub2, const K&)
+    const typename CGAL_WRAP(K)::Iso_cuboid_3 &icub2, 
+    const K&)
 {
     typedef typename K::Point_3 Point_3;
     typedef typename K::Iso_cuboid_3 Iso_cuboid_3;
