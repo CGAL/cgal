@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 4.37 (25 April 00)
+fixed bugs in the doc
+
 Ver 4.36 (14 April 00)
 add operator< in pointer.h
 

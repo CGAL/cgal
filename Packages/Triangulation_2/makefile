@@ -37,7 +37,7 @@ clean:
 	cd examples/Triangulation ; make realclean
 	cd demo/Triangulation ; make clean
 
-$(PACKAGE).tar.gz: 
+$(PACKAGE).tar.gz:
 	tar -zcvf $(PACKAGE).tar.gz \
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile* \
 	--exclude=Makefilevc \
