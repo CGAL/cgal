@@ -171,6 +171,7 @@ int main()
   W.init(xmin, xmax, xmin);         // logical window size
 
   W.set_show_coordinates(false);
+  W.display();
 
   PolygonDemo(W);
 
