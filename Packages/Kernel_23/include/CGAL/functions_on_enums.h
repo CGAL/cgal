@@ -35,22 +35,19 @@ T
 opposite(const T& t)
 { return -t; }
 
-CGAL_TEMPLATE_NULL
 inline
 Sign
-opposite(const Sign& o)
+opposite(Sign o)
 { return static_cast<Sign>( - static_cast<int>(o)); }
 
-CGAL_TEMPLATE_NULL
 inline
 Oriented_side
-opposite(const Oriented_side& os)
+opposite(Oriented_side os)
 { return static_cast<Oriented_side>( - static_cast<int>(os)); }
 
-CGAL_TEMPLATE_NULL
 inline
 Bounded_side
-opposite(const Bounded_side &bs)
+opposite(Bounded_side bs)
 { return static_cast<Bounded_side>( - static_cast<int>(bs)); }
 
 CGAL_END_NAMESPACE
