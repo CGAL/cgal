@@ -13,6 +13,7 @@ typedef Traits::Segment_2 Segment;
 using std::vector;
 using std::list;
 using std::cout;
+using std::endl;
 
 typedef CGAL::Polygon_2<Traits, list<Point> > ListPolygon;
 typedef CGAL::Polygon_2<Traits, vector<Point> > VectorPolygon;

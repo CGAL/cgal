@@ -7,6 +7,7 @@
 #include <cstdlib>
 
 using std::cout;
+using std::endl;
 
 //------------------------------------------------------------------------------//
 //      test the polygon algorithms for a specific choice of the
