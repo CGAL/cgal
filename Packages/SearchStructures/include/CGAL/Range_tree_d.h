@@ -13,7 +13,7 @@
 //
 // file          : include/CGAL/Range_tree_d.h
 // package       : SearchStructures (2.54)
-// maintainer    : Philipp Kramer <kramer@inf.ethz.ch>
+// maintainer    : Andreas.Fabri@geometryfactory.com
 // source        : include/CGAL/Range_tree_d.h
 // revision      : $Revision$
 // revision_date : $Date$
@@ -27,8 +27,8 @@
 // ======================================================================
 
 
-#ifndef CGAL_Range_tree_d__
-#define CGAL_Range_tree_d__
+#ifndef CGAL_RANGE_TREE_D_H
+#define CGAL_RANGE_TREE_D_H
 
 #include <algorithm>
 #include <iterator>
@@ -53,72 +53,72 @@ template <class C_Data, class C_Window, class C_Interface>
 class Range_tree_d;
 
 template <class C_Data, class C_Window, class C_Interface>
-struct range_tree_node: public tree_node_base
+struct Range_tree_node: public Tree_node_base
 {
-  private	:
+  private:
   typedef  C_Data Data;
   typedef  C_Window Window;
   typedef typename C_Interface::Key Key;
   typedef  C_Interface Interface;
-  typedef typename tree_base< C_Data,  C_Window>::tree_base_type tree_base_type;
-  protected:
-  typedef Range_tree_d< C_Data,  C_Window,  C_Interface> rT_d;
+  typedef typename Tree_base< C_Data,  C_Window>::Tree_base_type Tree_base_type;
+  //  protected:
+  //typedef Range_tree_d< C_Data,  C_Window,  C_Interface> rT_d;
 public:
   friend class Range_tree_d< C_Data,  C_Window,  C_Interface>;
   
-  range_tree_node()
-    : sublayer(0)  // (tree_base_type *)0; 
+  Range_tree_node()
+    : sublayer(0)
   {} 
   
   
-  range_tree_node( range_tree_node    * p_left,
-		   range_tree_node    * p_right,
+  Range_tree_node( Range_tree_node    * p_left,
+		   Range_tree_node    * p_right,
 		   const  Data & v_obj,
 		   const  Key  & v_key )
-    : tree_node_base(p_left, p_right), object( v_obj ), key( v_key ), sublayer(0)//(tree_base_type *)0; 
+    : Tree_node_base(p_left, p_right), object( v_obj ), key( v_key ), sublayer(0)
   {}
   
-  range_tree_node( range_tree_node    * p_left,
-		   range_tree_node    * p_right,
+  Range_tree_node( Range_tree_node    * p_left,
+		   Range_tree_node    * p_right,
 		   const  Key  & v_key )
-    : tree_node_base(p_left, p_right), key( v_key ), sublayer(0)//(tree_base_type *)0; 
+    : Tree_node_base(p_left, p_right), key( v_key ), sublayer(0)
   {}
 
-  virtual ~range_tree_node()
+  virtual ~Range_tree_node()
   {
-    if (sublayer != 0) //(tree_base_type *)
+    if (sublayer != 0)
       delete sublayer;
   }
   
   Data object;
   Key key;
-  tree_base_type *sublayer;
+  Tree_base_type *sublayer;
 };
 
+
 template <class C_Data, class C_Window, class C_Interface>
-class Range_tree_d: public tree_base< C_Data,  C_Window>
+class Range_tree_d: public Tree_base< C_Data,  C_Window>
 {
  private:
   typedef  C_Data Data;
   typedef  C_Window Window;
   typedef typename C_Interface::Key Key;
   typedef  C_Interface Interface;
-  typedef tree_base< C_Data,  C_Window>  tbt;
+  typedef Tree_base< C_Data,  C_Window>  tbt;
 protected:
-  typedef Range_tree_d< C_Data,  C_Window,  C_Interface> rT_d;
-  tree_base<C_Data, C_Window> *sublayer_tree;
-  //tree_base_type *sublayer_tree;
-   C_Interface interface;
+  //  typedef Range_tree_d< C_Data,  C_Window,  C_Interface> rT_d;
+  Tree_base<C_Data, C_Window> *sublayer_tree;
+  C_Interface interface;
   int is_build;
 
  
   // A vertex is of this type:
-  //  struct range_tree_node;
+  //  struct Range_tree_node;
 
-  friend class range_tree_node<C_Data,C_Window,C_Interface>;
+  friend class Range_tree_node<C_Data,C_Window,C_Interface>;
 
-  typedef range_tree_node<C_Data,C_Window,C_Interface> range_tree_node2;
-  typedef range_tree_node<C_Data,C_Window,C_Interface> *link_type;
+  typedef Range_tree_node<C_Data,C_Window,C_Interface> Range_tree_node2;
+  typedef Range_tree_node<C_Data,C_Window,C_Interface> *link_type;
 
   static link_type& left(link_type x) { 
     return CGAL__static_cast(link_type&, (*x).left_link);
@@ -136,11 +136,11 @@ protected:
   link_type rightmost(){return right(header);}
   link_type leftmost(){return left(header);}
   link_type root() const {
-    if(header!=0) //TREE_BASE_NULL
+    if(header!=0)
       return CGAL__static_cast(link_type&, header->parent_link);
     // return parent(header);
     else 
-      return 0; //TREE_BASE_NULL
+      return 0;
   }
 
   bool is_less_equal(const Key&  x, const Key&  y) const
@@ -222,7 +222,7 @@ protected:
 			link_type& prevchild, 
 			link_type& leftmostlink,
 			T& current, 
-			T& last,
+			const T& last,
 			T& sublevel_first,
 			T& sublevel_last)
   {
@@ -231,31 +231,31 @@ protected:
     {
       sublevel_first = current;
 
-      link_type  vleft = new range_tree_node2( 0, 0,
+      link_type  vleft = new Range_tree_node2( 0, 0,
                                   (*current), interface.get_key(*current) ); 
       //CGAL_NIL CGAL_NIL first two arguments
-      CGAL_Tree_assertion( vleft != 0); //TREE_BASE_NULL
+      CGAL_Tree_assertion( vleft != 0);
 
       ++current;
-      link_type  vright = new range_tree_node2( 0,0,
+      link_type  vright = new Range_tree_node2( 0,0,
                                   (*current), interface.get_key(*current) ); 
       //CGAL_NIL CGAL_NIL first two arguments
-      CGAL_Tree_assertion( vright != 0); //TREE_BASE_NULL
+      CGAL_Tree_assertion( vright != 0);
       current++;
       sublevel_last = current;
 
-      link_type  vparent = new range_tree_node2( vleft, vright, vleft->key );
-      CGAL_Tree_assertion( vparent != 0); //TREE_BASE_NULL
+      link_type  vparent = new Range_tree_node2( vleft, vright, vleft->key );
+      CGAL_Tree_assertion( vparent != 0);
 
       vleft->parent_link = vparent;
       vright->parent_link = vparent;
       leftchild = vleft;
       rightchild = vright;
       prevchild = vparent;
-      if ( leftmostlink == 0) //TREE_BASE_NULL
+      if ( leftmostlink == 0)
 	leftmostlink = leftchild;
 
-      tree_base<C_Data, C_Window> *g = sublayer_tree->clone();
+      Tree_base<C_Data, C_Window> *g = sublayer_tree->clone();
       
       T sub_first = sublevel_first;
       T sub_last = sublevel_last;
@@ -269,7 +269,7 @@ protected:
       if(n==1)
       {
 	sublevel_first = current;
-	link_type vright = new range_tree_node2( 0, 0,
+	link_type vright = new Range_tree_node2( 0, 0,
 	                           (*current), interface.get_key(*current) );
 	//CGAL_NIL CGAL_NIL first two arguments
         CGAL_Tree_assertion( vright != 0); //CGAL_NIL
@@ -285,10 +285,10 @@ protected:
 	build_range_tree(n - (int)n/2, leftchild, rightchild, 
 			 prevchild, leftmostlink, current, last, 
 			 sublevel_first, sublevel_left);
-	link_type vparent = new range_tree_node2( prevchild, 0,
+	link_type vparent = new Range_tree_node2( prevchild, 0,
                                         rightchild->key );
 	//CGAL_NIL argument
-        CGAL_Tree_assertion( vparent != 0); //TREE_BASE_NULL
+        CGAL_Tree_assertion( vparent != 0);
 
 	prevchild->parent_link = vparent;
 
@@ -298,7 +298,7 @@ protected:
 	vparent->right_link = prevchild;
 	prevchild->parent_link = vparent;
 	prevchild = vparent;
-	tree_base<C_Data, C_Window> *g = sublayer_tree->clone();
+	Tree_base<C_Data, C_Window> *g = sublayer_tree->clone();
 	T sub_first = sublevel_first;
 	T sub_last = sublevel_last;
 	g->make_tree(sub_first, sub_last);
@@ -310,7 +310,7 @@ protected:
 
   void delete_tree(link_type v)
   {
-    if (v->left_link != 0) //TREE_BASE_NULL
+    if (v->left_link != 0)
     { 
        delete_tree(left(v));
        delete_tree(right(v));
@@ -325,7 +325,7 @@ protected:
   {
     link_type v = root();
 
-    while(v->left_link!=0) //TREE_BASE_NULL
+    while(v->left_link!=0)
     {
 //      if(interface.comp(interface.get_right(key), v->key))
       if(is_less_equal(interface.get_right(key), v->key))
@@ -344,7 +344,7 @@ protected:
   void report_subtree(link_type v, 
 		      T result)
   {
-    if(left(v)!=0) //TREE_BASE_NULL
+    if(left(v)!=0)
     {
       report_subtree(left(v), result);
       report_subtree(right(v), result);
@@ -358,20 +358,20 @@ protected:
   {
     link_type leftmost_child_l, rightmost_child_l,  leftmost_child_r, 
       rightmost_child_r;
-    if (v->sublayer != 0) //(tree_base_type *)
+    if (v->sublayer != 0)
     {
-      tree_base<C_Data, C_Window> *T= v->sublayer;
-      if(!(*T).is_valid())
+      Tree_base<C_Data, C_Window> *T= v->sublayer;
+      if(! T->is_valid())
 	return false;
     }
-    if(left(v)!=0) //TREE_BASE_NULL
+    if(left(v)!=0)
     {
       if(!is_valid(left(v), leftmost_child_l, rightmost_child_l))
 	return false;
       if(!is_valid(right(v), leftmost_child_r, rightmost_child_r))
 	return false;
-      if(interface.comp((*v).key, (*rightmost_child_l).key) || 
-	 interface.comp((*rightmost_child_l).key, (*v).key))
+      if(interface.comp(v->key, rightmost_child_l->key) || 
+	 interface.comp(rightmost_child_l->key, v->key))
 	return false;
       rightmost_child = rightmost_child_r;
       leftmost_child = leftmost_child_l;
@@ -395,7 +395,7 @@ public:
   {}
 
   // construction of a tree
-  Range_tree_d(tree_base<C_Data, C_Window> const &fact):
+  Range_tree_d(Tree_base<C_Data, C_Window> const &fact):
     sublayer_tree(fact.clone()), is_build(false), header(0) 
   {}
 
@@ -414,7 +414,7 @@ public:
 
 
  // a prototype of the tree is returned
-  tree_base<C_Data, C_Window> *clone() const 
+  Tree_base<C_Data, C_Window> *clone() const 
   { 
     return new Range_tree_d(*this, true); 
   }
@@ -452,31 +452,30 @@ public:
     else
       return false;
 
-    int n = count_elements__C( first, last );
-    int n2 = std::distance(first, last);
-    assert(n == n2);
-    if(n==0)
-    {
+    int n = std::distance(first, last);
+
+    if(n==0) {
       is_build = false;
       return true;
     }
 
     dynamic_merge(first, last);
     
-    leftmostlink = 0; //TREE_BASE_NULL
+    leftmostlink = 0;
     T sublevel_first, sublevel_last;
     
     build_range_tree(n, leftchild, rightchild, prevchild, 
 		     leftmostlink, first, last, 
 		     sublevel_first, sublevel_last);
     
-    header = new range_tree_node2();
+    header = new Range_tree_node2();
     header->right_link = rightchild;
     header->parent_link = prevchild;
     header->left_link = leftmostlink;
 
     return true;
   }
+
 
   std::back_insert_iterator< std::list< C_Data> > window_query
           ( C_Window const &win, 
@@ -515,26 +514,26 @@ public:
   {
     if(is_less_equal(interface.get_right(win), interface.get_left(win)))
        return result;
-    if(root()==0) //TREE_BASE_NULL
+    if(root()==0)
       return result;
     link_type split_node = findSplitNode(win);
-    if(left(split_node)==0) //TREE_BASE_NULL
+    if(left(split_node)==0)
     {
       if(is_inside(win,split_node->object))
 	(*result++)=split_node->object;
     }	  
     else
     {
-      link_type v = (link_type)(*split_node).left_link;
+      link_type v = (link_type) split_node->left_link;
 
-      while(left(v)!=0) //TREE_BASE_NULL
+      while(left(v)!=0)
       {
 	if(is_less_equal(interface.get_left(win),v->key))
 	{
 	  link_type w = right(v);
-	  if(left(w)!=0) //TREE_BASE_NULL
+	  if(left(w)!=0)
 	  {
-	    tree_base<C_Data, C_Window> *T= (w)->sublayer;
+	    Tree_base<C_Data, C_Window> *T= (w)->sublayer;
 	    if(T->is_anchor())
 	      report_subtree(w,result);
 	    else
@@ -551,15 +550,15 @@ public:
       if(is_inside(win,v->object))
 	(*result++)=v->object;
       v = right(split_node);
-      while(right(v)!=0) //TREE_BASE_NULL
+      while(right(v)!=0)
       {
 //	if(is_less_equal(v->key, interface.get_right(win))) closed interval
 	if(interface.comp(v->key, interface.get_right(win))) 
 	  //half open interval
 	{
-	  if(left(left(v))!=0) //TREE_BASE_NULL
+	  if(left(left(v))!=0)
 	  {
-	    tree_base<C_Data, C_Window> *T= (left(v))->sublayer;
+	    Tree_base<C_Data, C_Window> *T= (left(v))->sublayer;
 	    if(T->is_anchor())
 	      report_subtree(left(v),result);
 	    else
@@ -622,14 +621,14 @@ public:
   {
     link_type u,v,w;
     u=v=w=root();
-    if(v!=0) //TREE_BASE_NULL
+    if(v!=0)
       return is_valid(u, v, w);
     return true;
   }
 };
 
 CGAL_END_NAMESPACE
-#endif /* RANGE_TREE_H */
+#endif // CGAL_RANGE_TREE_D_H
 
 
 
