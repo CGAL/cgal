@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998-1999 The CGAL Consortium
+// Copyright (c) 2003 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -70,11 +70,15 @@ typedef K::Vector_3                         Vector_3;
 typedef K::Segment_3                        Segment_3;
 typedef K::Triangle_3                       Triangle_3;
 
-typedef std::map<Point_2, Coord_type, K::Less_xy_2>     Point_value_map ;
-typedef std::map<Point_2, Vector_2, K::Less_xy_2 >      Point_vector_map;
+typedef std::map<Point_2, Coord_type, K::Less_xy_2>    Point_value_map ;
+typedef std::map<Point_2, Vector_2, K::Less_xy_2 >     Point_vector_map;
 
-typedef std::vector<Point_3>                            Point_vector_3;
-typedef std::vector<Point_2>                            Point_vector_2;
+typedef std::vector<Point_3>                           Point_vector_3;
+typedef std::vector<Point_2>                           Point_vector_2;
+
+typedef std::vector< std::pair< K::Point_2, K::FT  > >
+                                                       Point_coordinate_vector;
+
 
 ////////////////////// 
 // VISU GEOMVIEW
@@ -207,47 +211,51 @@ int main(int argc,  char* argv[])
   
 
   //INTERPOLATION:
+  Point_coordinate_vector     coords;
+  std::pair<Coord_type, bool> interpolation_result;
   Coord_type value;
-  std::pair<Coord_type, bool> res;
-  std::vector< std::pair< Point_2, Coord_type > > coords;
   int n = points.size();
   ITraits traits;
   
   std::cout << "Interpolation at  "<<n  <<" grid points " << std::endl;
   for(int i=0;i<n;i++){
-    Coord_type norm = 
-      CGAL::natural_neighbor_coordinates_2(T, points[i],
-					   std::back_inserter(coords)).second;
-    assert(norm>0);  
-    
-    switch(method){
+   CGAL::Triple<
+     std::back_insert_iterator<Point_coordinate_vector>, 
+    K::FT, bool> coordinate_result = 
+     CGAL::natural_neighbor_coordinates_2(T, points[i],
+					  std::back_inserter(coords));
+   K::FT norm = coordinate_result.second;
+   //test if the computation was successful
+   assert(coordinate_result.third && norm>0);  
+   
+   switch(method){
     case 0: 
       value = CGAL::linear_interpolation(coords.begin(),coords.end(),norm,
-				       CGAL::Data_access<Point_value_map>(values)); 
+					 CGAL::Data_access<Point_value_map>(values)); 
       break;
-    case 1: 
-      res = CGAL::quadratic_interpolation(coords.begin(),coords.end(),
+   case 1: 
+      interpolation_result = CGAL::quadratic_interpolation(coords.begin(),coords.end(),
 					  norm, points[i], 
 					  CGAL::Data_access< Point_value_map>
 					  (values),
 					  CGAL::Data_access< Point_vector_map>
 					  (gradients),traits); break;
     case 2:  
-      res = CGAL::sibson_c1_interpolation(coords.begin(),coords.end(),
+      interpolation_result = CGAL::sibson_c1_interpolation(coords.begin(),coords.end(),
        					  norm, points[i], 
        					  CGAL::Data_access<Point_value_map>
        					  (values),
        					  CGAL::Data_access<Point_vector_map>
        					  (gradients), traits); break;
     case 3:  
-      res = CGAL::sibson_c1_interpolation_square(coords.begin(),coords.end(),
+      interpolation_result = CGAL::sibson_c1_interpolation_square(coords.begin(),coords.end(),
 						 norm, points[i], 
 						 CGAL::Data_access<Point_value_map>
 						 (values),
 						 CGAL::Data_access<Point_vector_map>
 						 (gradients), traits); break;
     case 4:  
-      res = CGAL::farin_c1_interpolation(coords.begin(),coords.end(),
+      interpolation_result = CGAL::farin_c1_interpolation(coords.begin(),coords.end(),
 					 norm, points[i], 
 					 CGAL::Data_access<Point_value_map>
 					 (values),
@@ -259,8 +267,9 @@ int main(int argc,  char* argv[])
     }
     if(method==0)
       points_3.push_back(Point_3(points[i].x(), points[i].y(),value));
-    else if(res.second)
-      points_3.push_back(Point_3(points[i].x(), points[i].y(),res.first));
+    else if(interpolation_result.second)
+      points_3.push_back(Point_3(points[i].x(), points[i].y(),
+				 interpolation_result.first));
     else std::cout <<"Interpolation failed"<<std::endl;
     coords.clear();
   }
