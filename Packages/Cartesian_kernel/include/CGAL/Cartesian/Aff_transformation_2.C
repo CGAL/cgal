@@ -22,9 +22,6 @@
 #ifndef CGAL_CARTESIAN_AFF_TRANSFORMATION_2_C
 #define CGAL_CARTESIAN_AFF_TRANSFORMATION_2_C
 
-#include <CGAL/determinant.h>
-#include <CGAL/Cartesian/Aff_transformation_rep_2.C>
-
 #ifdef CGAL_CFG_TYPENAME_BUG
 #define typename
 #endif
