@@ -22,7 +22,7 @@
 #define CGAL_PM_WITH_INTERSECTIONS_MISC_H
 
 #include <CGAL/Planar_map_2/Planar_map_misc.h>
-#include <CGAL/Arr_intersection_tags.h>
+#include <CGAL/tags.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -31,11 +31,11 @@ class Planar_map_with_intersections_traits_wrap :
   public Planar_map_traits_wrap<I>
 {
 public:
-  typedef  Planar_map_traits_wrap<I> Base;
-  typedef  typename Base::X_curve_2  X_curve_2;
-  typedef  typename Base::Point_2    Point_2;
+  typedef  Planar_map_traits_wrap<I>    Base;
+  typedef  typename Base::X_curve_2     X_curve_2;
+  typedef  typename Base::Point_2       Point_2;
 
-  typedef typename I::Intersection_category  Intersection_category;
+  typedef typename I::Has_left_category Has_left_category;
   
   Planar_map_with_intersections_traits_wrap() : Base() {}
 
@@ -109,7 +109,7 @@ public:
                                     Point_2 & p1, Point_2 & p2) const 
   {
     return nearest_intersection_to_left_imp(cv1, cv2, pt, p1, p2,
-                                            Intersection_category());
+                                            Has_left_category());
   }
 
     
@@ -117,49 +117,40 @@ public:
                                         const X_curve_2 & cv2,
                                         const Point_2 & pt,
                                         Point_2 & p1, Point_2 & p2,
-                                        Efficient_intersection_tag) const
+                                        Tag_true) const
+  { return Base::nearest_intersection_to_left(cv1, cv2, pt, p1, p2); }
+    
+  bool nearest_intersection_to_left_imp(const X_curve_2 & cv1,
+                                        const X_curve_2 & cv2,
+                                        const Point_2 & pt,
+                                        Point_2 & p1, Point_2 & p2,
+                                        Tag_false) const 
   {
-    return Base::nearest_intersection_to_left(cv1, cv2, pt, p1, p2);
+    Point_2 rpt = point_reflect_in_x_and_y( pt);
+    X_curve_2 rcv1 = curve_reflect_in_x_and_y( cv1);
+    X_curve_2 rcv2 = curve_reflect_in_x_and_y( cv2);
+
+    Point_2 rp1, rp2;
+    bool result = nearest_intersection_to_right(rcv1, rcv2, rpt, rp1, rp2);
+
+    p1 = point_reflect_in_x_and_y( rp1);
+    p2 = point_reflect_in_x_and_y( rp2);
+
+    return result;
   }
-    
-  bool nearest_intersection_to_left_imp(const X_curve_2 & cv1,
-                                        const X_curve_2 & cv2,
-                                        const Point_2 & pt,
-                                        Point_2 & p1, Point_2 & p2,
-                                        Lazy_intersection_tag) const 
-    {
-      Point_2 rpt = point_reflect_in_x_and_y( pt);
-      X_curve_2 rcv1 = curve_reflect_in_x_and_y( cv1);
-      X_curve_2 rcv2 = curve_reflect_in_x_and_y( cv2);
-
-      Point_2 rp1, rp2;
-      bool result = nearest_intersection_to_right(rcv1, rcv2, rpt, rp1, rp2);
-
-      p1 = point_reflect_in_x_and_y( rp1);
-      p2 = point_reflect_in_x_and_y( rp2);
-
-      return result;
-    }
-
 
   // maps the curves to their mirror images over the y coordinate
   // and calls do_intersect_to_right (see there).
   bool do_intersect_to_left(const X_curve_2 & ca, const X_curve_2 & cb,
 			    const Point_2 & pt) const
-  {
-    return do_intersect_to_left_imp(ca, cb, pt, Intersection_category());
-  }
+  { return do_intersect_to_left_imp(ca, cb, pt, Has_left_category()); }
 
   bool do_intersect_to_left_imp(const X_curve_2 & ca, const X_curve_2 & cb,
-                                const Point_2 & pt,
-                                Efficient_intersection_tag) const
-  {
-    return Base::do_intersect_to_left(ca, cb, pt);
-  }
+                                const Point_2 & pt, Tag_true) const
+  { return Base::do_intersect_to_left(ca, cb, pt); }
     
   bool do_intersect_to_left_imp(const X_curve_2 & ca, const X_curve_2 & cb,
-                                const Point_2 & pt,
-                                Lazy_intersection_tag) const
+                                const Point_2 & pt, Tag_false) const
   {
       Point_2 rpt = point_reflect_in_x_and_y( pt);
       X_curve_2 rca = curve_reflect_in_x_and_y( ca);
