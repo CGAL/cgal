@@ -8,6 +8,10 @@
 template <class R>
 class Segment_input_layer : public CGAL::Qt_widget_get_segment<R>{
 private:
+  typedef CGAL::Qt_widget_get_segment<R>        Base;
+  typedef typename Base::Point                  Point;
+  typedef typename Base::RasterOp               RasterOp;
+  
   std::list<Segment_2>          *seg_list;
   //true if the user selected the first vertex
   Point                         old_point;
