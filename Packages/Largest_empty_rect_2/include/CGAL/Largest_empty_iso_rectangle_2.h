@@ -206,7 +206,7 @@ private:
 		       typename Point_data_set_of_y::iterator iter2);
   void calls_for_tents(typename Point_data_set_of_y::iterator iter1,
 		       typename Point_data_set_of_y::iterator iter2,
-		       Point_data_set_of_y::iterator iter3);
+		       typename Point_data_set_of_y::iterator iter3);
   void phase_2_update_y_sorted_list();
   void phase_3_check_for_larger(typename Point_data_set_of_y::iterator iter,
 				typename Point_data_set_of_y::iterator iter1,
@@ -234,7 +234,7 @@ public:
 
   // The following is an iterator adapter that allows us to enumerate 
   // the points in a set where they are stored
-  typedef Iterator_project<Point_data_set_of_x::const_iterator, 
+  typedef Iterator_project<typename Point_data_set_of_x::const_iterator, 
                            Proj_point<Point_data*>, 
                            const Point&,
                            const Point*> const_iterator;
@@ -353,7 +353,7 @@ void Largest_empty_iso_rectangle_2<T>::
   tr_p = ler.tr_p;
 
     // copy points
-  for(Point_data_set_of_x::const_iterator iter = ler.x_sorted.begin();
+  for(typename Point_data_set_of_x::const_iterator iter = ler.x_sorted.begin();
         iter != ler.x_sorted.end();
 	++iter) {
       if((*iter)->type == REG)
@@ -422,7 +422,7 @@ Largest_empty_iso_rectangle_2<T>::insert(const Point& _p)
 
   // check that the point is not already inserted
   Point_data *po = new Point_data(_p);
-  Point_data_set_of_x::iterator iter = x_sorted.find(po);
+  typename Point_data_set_of_x::iterator iter = x_sorted.find(po);
   delete(po);
 
   if(iter != x_sorted.end())
@@ -448,8 +448,8 @@ Largest_empty_iso_rectangle_2<T>::remove(const Point& _p)
 {
   cache_valid = false;
   Point_data *po = new Point_data(_p);
-  Point_data_set_of_x::iterator iter1 = x_sorted.find(po);
-  Point_data_set_of_y::iterator iter2 = y_sorted.find(po);
+  typename Point_data_set_of_x::iterator iter1 = x_sorted.find(po);
+  typename Point_data_set_of_y::iterator iter2 = y_sorted.find(po);
 
   // point does not exist or a corner point
   if(iter1 == x_sorted.end() || (*iter1)->type != REG)
@@ -490,7 +490,7 @@ template<class T>
 void
 Largest_empty_iso_rectangle_2<T>::phase_1_on_x()
 {
-  Point_data_set_of_x::const_iterator iter = x_sorted.begin(),
+  typename Point_data_set_of_x::const_iterator iter = x_sorted.begin(),
                                       last_iter = x_sorted.end(),
                                       prev_iter = iter;
   ++iter;
@@ -552,7 +552,7 @@ Largest_empty_iso_rectangle_2<T>::insert(const Point& _p,
 
   // check that the point is not already inserted
   Point_data *po = new Point_data(_p);
-  Point_data_set_of_x::iterator iter = x_sorted.find(po);
+  typename Point_data_set_of_x::iterator iter = x_sorted.find(po);
   delete(po);
 
   if(iter != x_sorted.end())
@@ -718,7 +718,7 @@ Largest_empty_iso_rectangle_2<T>::phase_2_on_bot()
 {
   std::list<Point_data *> Point_data_list;
   std::copy(x_sorted.begin(), x_sorted.end(), back_inserter(Point_data_list));
-  std::list<Point_data *>::iterator iter1 = Point_data_list.begin(),
+  typename std::list<Point_data *>::iterator iter1 = Point_data_list.begin(),
                                iter2,iter3,first_iter,
                                beyond = Point_data_list.end();
   int points_removed = 0, 
@@ -768,7 +768,7 @@ Largest_empty_iso_rectangle_2<T>::phase_2_on_top()
 	     x_sorted.end(),
 	     back_inserter(Point_data_list));
 
-  std::list<Point_data *>::iterator iter1 = Point_data_list.begin(),
+  typename std::list<Point_data *>::iterator iter1 = Point_data_list.begin(),
     iter2, iter3, first_iter,
     beyond = Point_data_list.end();
   int points_removed = 0,
@@ -812,7 +812,7 @@ Largest_empty_iso_rectangle_2<T>::phase_2_on_left()
 {
   std::list<Point_data *> Point_data_list;
   std::copy(y_sorted.begin(), y_sorted.end(), back_inserter(Point_data_list));
-  std::list<Point_data *>::iterator iter1 = Point_data_list.begin(),
+  typename std::list<Point_data *>::iterator iter1 = Point_data_list.begin(),
     iter2, iter3, first_iter,
     beyond = Point_data_list.end();
   int points_removed = 0,size = Point_data_list.size();
@@ -855,7 +855,7 @@ Largest_empty_iso_rectangle_2<T>::phase_2_on_right()
 {
   std::list<Point_data *> Point_data_list;
   std::copy(y_sorted.begin(), y_sorted.end(), back_inserter(Point_data_list));
-  std::list<Point_data *>::iterator iter1 = Point_data_list.begin(),
+  typename std::list<Point_data *>::iterator iter1 = Point_data_list.begin(),
     iter2, iter3, first_iter, 
     beyond = Point_data_list.end();
   int points_removed = 0,size = Point_data_list.size();
@@ -916,8 +916,8 @@ Largest_empty_iso_rectangle_2<T>::determine_next_iter(
   bool &iter_is_right,
   bool &exist)
 {
-  if((Point_data_set_of_y::const_iterator)right_iter != right_iter_end) {
-    if((Point_data_set_of_y::const_iterator)left_iter != left_iter_end) {
+  if((typename Point_data_set_of_y::const_iterator)right_iter != right_iter_end) {
+    if((typename Point_data_set_of_y::const_iterator)left_iter != left_iter_end) {
       if(less_yx(*right_iter, *left_iter)) {
         iter = right_iter;
         iter_is_right = true;
@@ -933,7 +933,7 @@ Largest_empty_iso_rectangle_2<T>::determine_next_iter(
       ++right_iter;
     }
   } else { 
-    if((Point_data_set_of_y::const_iterator)left_iter != left_iter_end) {
+    if((typename Point_data_set_of_y::const_iterator)left_iter != left_iter_end) {
       iter = left_iter;
       iter_is_right = false;
       ++left_iter;
@@ -1006,8 +1006,8 @@ Largest_empty_iso_rectangle_2<T>::phase_3()
 {
   bool first_iter_is_right, second_iter_is_right, third_iter_is_right,
     first_exist,second_exist,third_exist;
-  Point_data_set_of_y::iterator iter, last_iter = y_sorted.end();
-  Point_data_set_of_y::iterator iter1, iter2, iter3, 
+  typename Point_data_set_of_y::iterator iter, last_iter = y_sorted.end();
+  typename Point_data_set_of_y::iterator iter1, iter2, iter3, 
                                 right_iter, left_iter, last = last_iter;
 
   --last_iter;
@@ -1075,7 +1075,7 @@ template<class T>
 void 
 Largest_empty_iso_rectangle_2<T>::empty_tents()
 {
-  for(Point_data_set_of_x::const_iterator iter = x_sorted.begin();
+  for(typename Point_data_set_of_x::const_iterator iter = x_sorted.begin();
       iter != x_sorted.end();
       ++iter) {
     (*iter)->right_tent->clear();
@@ -1195,7 +1195,7 @@ template<class T>
 typename Largest_empty_iso_rectangle_2<T>::const_iterator 
 Largest_empty_iso_rectangle_2<T>::begin() const
 {
-  Point_data_set_of_x::const_iterator i = x_sorted.begin();
+  typename Point_data_set_of_x::const_iterator i = x_sorted.begin();
   while(i != x_sorted.end() && (*i)->type != REG) 
     ++i;
  
@@ -1206,7 +1206,7 @@ template<class T>
 typename Largest_empty_iso_rectangle_2<T>::const_iterator 
 Largest_empty_iso_rectangle_2<T>::end() const
 {
-   Point_data_set_of_x::const_iterator i = x_sorted.end();
+   typename Point_data_set_of_x::const_iterator i = x_sorted.end();
    while(--i != x_sorted.begin() && (*i)->type != REG);
    if((*i)->type != REG)
      // The points list is actually empty. Point to end() to make
@@ -1224,7 +1224,7 @@ void
 Largest_empty_iso_rectangle_2<T>::clear()
 {
   cache_valid = false;
-  for(Point_data_set_of_x::iterator iter = x_sorted.begin();
+  for(typename Point_data_set_of_x::iterator iter = x_sorted.begin();
       iter != x_sorted.end();
       ++iter)
     delete(*iter);
