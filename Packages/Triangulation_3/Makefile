@@ -24,6 +24,7 @@ package: doc clean $(Package).tar.gz
 
 version:
 	echo "$(VERSION) (`date '+%e %b %Y'`)" > version
+	echo "Maintainer : Monique.Teillaud@sophia.inria.fr" >> version
 
 rtag:
 	cvs rtag v`echo $(VERSION) | sed -e "s/\./_/g"` $(CVS_MODULE_NAME)
