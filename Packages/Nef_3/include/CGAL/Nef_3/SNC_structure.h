@@ -1481,25 +1481,37 @@ public:
     }
   }
   
-    // Returns the bounding box of the finite vertices of the polyhedron.
-    // Returns $[-1,+1]^3$ as bounding box if no finite vertex exists.
-    Bbox_3  bounded_bbox() const {
-        SNC_const_decorator deco(*this);
-        Vertex_const_iterator vi = vertices_begin();
-        bool first_vertex = true;
-        Bbox_3 bbox( -1.0, -1.0, -1.0, 1.0, 1.0, 1.0);
-        for ( ; vi != vertices_end(); ++vi) {
-            if ( ! deco.is_infbox_vertex(vi)) {
-                if ( first_vertex) {
-                    bbox = vi->point().bbox();
-                    first_vertex = false;
-                } else {
-                    bbox = bbox + vi->point().bbox();
-                }
-            }
-        }
-        return bbox;
+  // Returns the bounding box of the finite vertices of the polyhedron.
+  // Returns $[-1,+1]^3$ as bounding box if no finite vertex exists.
+  Bbox_3  bounded_bbox() const {
+    SNC_const_decorator deco(*this);
+    Vertex_const_iterator vi = vertices_begin();
+    bool first_vertex = true;
+    Bbox_3 bbox( -1.0, -1.0, -1.0, 1.0, 1.0, 1.0);
+    for ( ; vi != vertices_end(); ++vi) {
+      Point_3 p = vi->point();
+      if ( ! deco.is_infbox_vertex(vi)) {
+	if ( first_vertex) {
+	  bbox = Bbox_3(CGAL::to_double(Infi_box::eval_at(p.hx())), 
+			CGAL::to_double(Infi_box::eval_at(p.hy())), 
+			CGAL::to_double(Infi_box::eval_at(p.hz())), 
+			CGAL::to_double(Infi_box::eval_at(p.hx())), 
+			CGAL::to_double(Infi_box::eval_at(p.hy())), 
+			CGAL::to_double(Infi_box::eval_at(p.hz())));
+	  first_vertex = false;
+	} else {
+	  bbox = bbox + Bbox_3(CGAL::to_double(Infi_box::eval_at(p.hx())), 
+			CGAL::to_double(Infi_box::eval_at(p.hy())), 
+			CGAL::to_double(Infi_box::eval_at(p.hz())), 
+			CGAL::to_double(Infi_box::eval_at(p.hx())), 
+			CGAL::to_double(Infi_box::eval_at(p.hy())), 
+			CGAL::to_double(Infi_box::eval_at(p.hz())));
+	  first_vertex = false;
+	}
+      }
     }
+    return bbox;
+  }
 
     std::size_t bytes() {
       // bytes used for the SNC_structure
@@ -1643,7 +1655,7 @@ public:
       OK = OK && test_string("Nef", in);
       OK = OK && test_string("Complex", in);
 
-      CGAL_nef3_assertion(OK);
+      CGAL_nef3_assertion_msg(OK, "File is not a Selective Nef Complex");
 
       int v;
       OK = OK && test_string("vertices", in);
