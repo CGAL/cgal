@@ -219,7 +219,8 @@ protected:
 		   CGAL_NTS abs(y) == 
 		   CGAL_NTS abs(z) == 1);
     Vertex_handle v = ews().new_vertex();
-    ews().point(v) = Point_3(x, y, z);
+    ews().point(v) = Point_3(x*IMMN, y*IMMN, z*IMMN); 
+    // TODO: to replace the IMMN constant by a real infimaximal number
     SM_decorator D(v);
     Sphere_point sp[] = { Sphere_point(-x, 0, 0), 
 			  Sphere_point(0, -y, 0), 
@@ -311,8 +312,10 @@ public:
   
   typedef Polyhedron_3< Kernel> Polyhedron;
   Nef_polyhedron_3( Polyhedron& P) {
+    initialize_simple_cube_vertices(EMPTY);
     polyhedron_3_to_nef_3< Polyhedron, SNC_structure, SNC_constructor>
       ( P, ews() );
+    build_external_structure();
   }
   
   void dump() { SNC_io_parser::dump( ews()); }
@@ -663,6 +666,7 @@ template <typename T>
 Nef_polyhedron_3<T>::
 Nef_polyhedron_3(const Plane_3& h, Boundary b) : Base(Nef_rep()) {
   TRACEN("construction from plane "<<h);
+  initialize_simple_cube_vertices(space);
   //add_box_corners(h, b);
   build_external_structure();
 }

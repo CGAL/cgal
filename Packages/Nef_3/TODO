@@ -1,10 +1,6 @@
 Nef_3 Package: TODO
 ---------------------------------------------------------------------
 
-* Create testing models for volume synthesizing.
-* Synthesizing volumes from SM representation (finish tests)
-- Initializate all Nef_polyhedron structures with a bounding box of
-  fixed corners.
 - Simplification of the SNC structure
 - Simplify during the construction from polyhedral surfaces
   (based on the simplification of SM)

@@ -97,6 +97,8 @@ public:
   /*{\Mtypemember supporting facets.}*/
   typedef typename Kernel::Vector_3 Vector_3;
   /*{\Mtypemember normal vectors.}*/
+  typedef typename Kernel::Direction_3 Direction_3;
+  /*{\Mtypemember normal directions.}*/
   typedef typename Kernel::Segment_3 Segment_3;
   /*{\Mtypemember segments in space.}*/
   typedef typename Kernel::Line_3 Line_3;

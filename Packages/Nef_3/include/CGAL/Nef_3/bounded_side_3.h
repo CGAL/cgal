@@ -69,6 +69,7 @@ Bounded_side bounded_side_3(IteratorForward first,
   typedef typename R::Plane_3 Plane_3;
 
   if(plane == Plane_3()) {
+    // TO TEST: code never tested
     IteratorForward p(first);
     Point_3 p0(*(p++));
     CGAL_assertion(p != last);
@@ -80,15 +81,18 @@ Bounded_side bounded_side_3(IteratorForward first,
        we don't need to care about the plane orientation */
    }
   CGAL_assertion(!plane.is_degenerate());
+  TRACEN(plane);
   Point_2 (*t)(Point_3);
-  Vector_3 pv(plane.orthogonal_vector()), 
-    pxy(0,0,1), pyz(1,0,0), pxz(0,1,0);
+  Vector_3 pv(plane.orthogonal_vector()), pxy(0,0,1), pyz(1,0,0), pxz(0,1,0);
+  TRACEN("pv*pxz: "<<pv*pxz);
+  TRACEN("pv*pyz: "<<pv*pyz);
+  TRACEN("pv*pxy: "<<pv*pxy);
   if( !is_zero(pv*pxz) )
     /* the plane is not perpendicular to the XZ plane */
-    t = &point_3_get_y_z_point_2< Point_2, Point_3>;
+    t = &point_3_get_x_z_point_2< Point_2, Point_3>;
   else if( !is_zero(pv*pyz) )
     /* the plane is not perpendicular to the XZ plane */
-    t = &point_3_get_x_z_point_2< Point_2, Point_3>;
+    t = &point_3_get_y_z_point_2< Point_2, Point_3>;
   else {
     CGAL_assertion( !is_zero(pv*pxy) );
     /* the plane is not perpendicular to the XY plane */
@@ -103,7 +107,7 @@ Bounded_side bounded_side_3(IteratorForward first,
   }
   Bounded_side side = bounded_side_2( points.begin(), points.end(), t(point));
   points.clear();
-  return side;
+  return side;  
 }
 
 CGAL_END_NAMESPACE
@@ -147,9 +151,9 @@ struct Project_XZ {
   }
 };
 
-template <class ForwardIterator, class R>
-Bounded_side bounded_side_3(ForwardIterator first,
-			    ForwardIterator last,
+template <class IC, class R>
+Bounded_side bounded_side_3(IC first,
+			    IC last,
 			    const Point_3<R>& point,
 			    Plane_3<R> plane = Plane_3<R>()) {
 
@@ -159,21 +163,19 @@ Bounded_side bounded_side_3(ForwardIterator first,
   typedef typename R::Direction_3 Direction_3;
   typedef typename R::Plane_3 Plane_3;
 
+  CGAL_assertion( !CGAL::is_empty_range( first, last));
+
   if(plane == Plane_3()) {
-    // CGAL_assertion(last-first >= 3);
-    /* we need at least 3 points to discover the original plane */
-    ForwardIterator p(first);
-    Point_3 p0(*(p++)), p1(*(p++)), p2(*(p++));
-    plane = Plane_3(p0, p1, p2);
-    /* since we just need to project the points to a non-perpendicular plane
-       we don't need to care about the plane orientation */
+    Vector_3 hv;
+    normal_vector_newell_3( first, last, hv);
+    plane = Plane_3( *first, Direction_3(hv));
   }
   CGAL_assertion(!plane.is_degenerate());
   Direction_3 pd(plane.orthogonal_vector()), pyz(1,0,0), pxz(0,1,0);
   if(pd == pyz || pd == -pyz) {
     /* the plane is parallel to the YZ plane */
     typedef Project_YZ< Point_2, Point_3>                  Project_YZ;
-    typedef Iterator_project< ForwardIterator, Project_YZ> Iterator_YZ;
+    typedef Iterator_project< IC, Project_YZ> Iterator_YZ;
     Project_YZ project;
     Point_2 p = project(point);
     Iterator_YZ pfirst(first), plast(last);
@@ -182,7 +184,7 @@ Bounded_side bounded_side_3(ForwardIterator first,
   else if(pd == pxz || pd ==- pxz) {
     /* the plane is parallel to the XZ plane */
     typedef Project_XZ< Point_2, Point_3>                  Project_XZ;
-    typedef Iterator_project< ForwardIterator, Project_XZ> Iterator_XZ;
+    typedef Iterator_project< IC, Project_XZ> Iterator_XZ;
     Project_XZ project;
     Point_2 p = project(point);
     Iterator_XZ pfirst(first), plast(last);
@@ -192,7 +194,7 @@ Bounded_side bounded_side_3(ForwardIterator first,
     CGAL_assertion(cross_product(pd.vector(), Vector_3(0,0,1)) == NULL_VECTOR);
     /* the plane is not perpendicular to the XY plane */
     typedef Project_XY< Point_2, Point_3>                  Project_XY;
-    typedef Iterator_project< ForwardIterator, Project_XY> Iterator_XY;
+    typedef Iterator_project< IC, Project_XY> Iterator_XY;
     Project_XY project;
     Point_2 p = project(point);
     Iterator_XY pfirst(first), plast(last);

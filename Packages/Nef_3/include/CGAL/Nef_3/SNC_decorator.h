@@ -86,6 +86,7 @@ public:
   USING(Segment_3);
   USING(Line_3);
   USING(Vector_3);
+  USING(Direction_3);
   USING(Sphere_point);
   USING(Sphere_segment);
   USING(Sphere_circle);
@@ -101,6 +102,8 @@ public:
   SNC_structure* sncp() const { return sncp_; }
 
   Vertex_handle vertex( Halfedge_handle e) const
+  { return e->center_vertex_; }
+  Vertex_const_handle vertex( Halfedge_const_handle e) const
   { return e->center_vertex_; }
   Halfedge_handle twin( Halfedge_handle e) const
   { return e->twin_; }
@@ -176,6 +179,8 @@ public:
   { return f->twin_; }
   Volume_handle volume(Halffacet_handle f) const
     { return f->volume_; }
+  Volume_const_handle volume(Halffacet_const_handle f) const
+    { return f->volume_; }
   /* Halffacet queries */
 
   SFace_handle adjacent_sface(Halffacet_handle f) const {
@@ -196,6 +201,8 @@ public:
 
   // attributes::
   Point_3& point(Vertex_handle v) const
+  { return v->point(); }
+  const Point_3& point(Vertex_const_handle v) const
   { return v->point(); }
 
   Sphere_point tmp_point(Halfedge_handle e) const

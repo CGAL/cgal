@@ -267,17 +267,6 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
   //CGAL::OGL::start_viewer();
 #endif
 
-  // create nef faces from spheres
-  TRACEN("pair_up_halfedges()...");
-  C.pair_up_halfedges();
-  TRACEN("link_shalfedges()...");
-  C.link_shalfedges_to_facet_cycles();
-  TRACEN("categorize_facet_cycles_and_create_facets()...");
-  C.categorize_facet_cycles_and_create_facets();
-  TRACEN("create_volumes()");
-  C.create_volumes();
-  TRACEN("done");
-
   return;
 }
 
