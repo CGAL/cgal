@@ -1,3 +1,4 @@
+- suppress Filter_iterator_with_handle.h
 - check the behavior of regular triangulations on 
   degenerate cases
 - change the return of get_conflicts and find_conflict to
