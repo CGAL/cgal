@@ -54,7 +54,7 @@ Aff_transformationC3()
 
 template < class R >
 Aff_transformationC3<R CGAL_CTAG>::
-Aff_transformationC3(const Identity &)
+Aff_transformationC3(const Identity_transformation &)
 {
   FT ft1(1), ft0(0);
   PTR = new Aff_transformation_repC3<R>(ft1, ft0, ft0,

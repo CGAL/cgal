@@ -1,3 +1,6 @@
+Version 3.3.5 (September 22 i1999)
+- Corrected class Identity to class Identity_transformation
+
 Version 3.3.4 (September 16 1999)
 - Use the new CGAL_CFG_TYPENAME_BUG
 - Added Monique's predicate coplanar_orientation
