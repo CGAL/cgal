@@ -25,15 +25,13 @@
 
 #include <CGAL/Number_type_traits.h>
 
-
 CGAL_BEGIN_NAMESPACE
-
 
 template <class Rational>
 Rational
 to_rational(double x)
 { 
-    typename Rational_traits<Rational>::RT num = 0; 
+    typename Rational_traits<Rational>::RT num = 0;
     typename Rational_traits<Rational>::RT den = 1;
 
     if (x != 0.0)
@@ -43,14 +41,14 @@ to_rational(double x)
       const unsigned shift = 15;   // a safe shift per step
       const unsigned int shift_pow = 32768; // = 2^shift
       const double width = 32768;  // = 2^shift
-      const int maxiter = 20;      // ought not be necessary, but just in 
+      const int maxiter = 20;      // ought not be necessary, but just in
                                    // case, max 300 bits of precision
       int expt;
       double mantissa = frexp(x, &expt);
       long exponent = expt;
       double intpart;
       int k = 0;
-      
+
       while (mantissa != 0.0 && k++ < maxiter)
 
       { mantissa *= width; // shift double mantissa
@@ -81,4 +79,5 @@ to_rational(double x)
 }
 
 CGAL_END_NAMESPACE
+
 #endif // CGAL_TO_RATIONAL_H
