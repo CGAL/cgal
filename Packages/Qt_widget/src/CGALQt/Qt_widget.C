@@ -34,10 +34,10 @@ Qt_widget::Qt_widget(QWidget *parent, const char *name) :
   setCaption("CGAL::Qt_widget");
 
   // initialize ranges and scales
-  xmin=0;
-  xmax=width()-1;
-  ymin=0;
-  ymax=height()-1;
+  xmin = -1;
+  xmax = 1;
+  ymin = -1;
+  ymax = 1;
   xcentre = xmin + (xmax - xmin)/2;
   ycentre = ymin + (ymax - ymin)/2;
   constranges=false;
