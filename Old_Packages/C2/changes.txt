@@ -1,3 +1,6 @@
+Version 3.3.12 (8 february 2000)
+- fixed a multiplication by a scalar on the wrong side in Ray_2.C
+
 Version 3.3.11 (December 10 1999)
 - Proper implementation of compare_x(Line_2,Line_2,Line_2), to have
   correct degree (was using compare_x(l,h1,l,h2) before, now special
