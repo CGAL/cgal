@@ -60,6 +60,12 @@ inline bool fit_in_double(const float&) { return true; }
 
 inline bool fit_in_double(const int&) { return true; }
 
+template < typename ET >
+class Lazy_exact_nt;
+
+template < typename ET >
+inline bool fit_in_double(const Lazy_exact_nt<ET>&);
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_STATIC_FILTERS_TOOLS_H

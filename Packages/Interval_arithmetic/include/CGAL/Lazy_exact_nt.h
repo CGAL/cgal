@@ -318,6 +318,13 @@ public :
       relative_precision_of_to_double = d;
   }
 
+  bool fit_in_double() const
+  {
+    // Returns true if the value is representable by a double and to_double()
+    // would return it.  False means "don't know".
+    return approx().is_point();
+  }
+
 private:
   Self_rep * ptr() const { return (Self_rep*) PTR; }
 
@@ -719,6 +726,11 @@ struct converter<ET, Lazy_exact_nt<ET> >
         return z.exact();
     }
 };
+
+template < typename ET >
+inline bool
+fit_in_double(const Lazy_exact_nt<ET>& l)
+{ return l.fit_in_double(); }
 
 CGAL_END_NAMESPACE
 

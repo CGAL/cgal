@@ -1,3 +1,6 @@
+20 September 2004 Sylvain Pion
+- Add fit_in_double() for Lazy_exact_nt.
+
 14 September 2004 Sylvain Pion
 - Filtered_kernel : cleanup.
 
