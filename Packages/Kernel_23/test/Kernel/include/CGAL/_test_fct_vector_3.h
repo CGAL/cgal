@@ -76,11 +76,16 @@ _test_fct_vector_3(const R& )
 
  std::cout << '.';
 
- // no multiplication scalar * vector ( only from the right side )
  assert( v1 * v2 == FT(66) );
  assert( v1 * v0 == FT(0) );
  assert( CGAL::Vector_3<R>( n1, n2, n3) == v1 * RT(2));
  assert( CGAL::Vector_3<R>( n5, n6, n7) == v2 * RT(3));
+ assert( CGAL::Vector_3<R>( n1, n2, n3) == RT(2) * v1);
+ assert( CGAL::Vector_3<R>( n5, n6, n7) == RT(3) * v2);
+ assert( CGAL::Vector_3<R>( n1, n2, n3) == v1 * FT(2));
+ assert( CGAL::Vector_3<R>( n5, n6, n7) == v2 * FT(3));
+ assert( CGAL::Vector_3<R>( n1, n2, n3) == FT(2) * v1);
+ assert( CGAL::Vector_3<R>( n5, n6, n7) == FT(3) * v2);
  assert( v2 / RT(3) == CGAL::Vector_3<R>( RT(1), -n4, -n2) );
  assert( (v2 * RT(3)) / RT(3) == v2 );
  assert( (v2 / RT(3)) * RT(3) == v2 );

@@ -656,6 +656,38 @@ namespace CartesianKernelFunctors {
   };
 
   template <typename K>
+  class Compute_scalar_product_2
+  {
+    typedef typename K::FT                FT;
+    typedef typename K::Vector_2          Vector_2;
+  public:
+    typedef FT               result_type;
+    typedef Arity_tag< 2 >   Arity;
+
+    FT
+    operator()(const Vector_2& v, const Vector_2& w) const
+    {
+	return v.x() * w.x() + v.y() * w.y();
+    }
+  };
+
+  template <typename K>
+  class Compute_scalar_product_3
+  {
+    typedef typename K::FT                FT;
+    typedef typename K::Vector_3          Vector_3;
+  public:
+    typedef FT               result_type;
+    typedef Arity_tag< 2 >   Arity;
+
+    FT
+    operator()(const Vector_3& v, const Vector_3& w) const
+    {
+	return v.x() * w.x() + v.y() * w.y() + v.z() * w.z();
+    }
+  };
+
+  template <typename K>
   class Compute_squared_area_3
   {
     typedef typename K::FT                FT;

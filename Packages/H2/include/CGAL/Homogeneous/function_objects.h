@@ -1094,6 +1094,42 @@ namespace HomogeneousKernelFunctors {
     { return CGAL_NTS compare(p.hz() * q.hw(), q.hz() * p.hw() ); }
   };
 
+  template <typename K>
+  class Compute_scalar_product_2
+  {
+    typedef typename K::RT                RT;
+    typedef typename K::FT                FT;
+    typedef typename K::Vector_2          Vector_2;
+  public:
+    typedef FT               result_type;
+    typedef Arity_tag< 2 >   Arity;
+
+    FT
+    operator()(const Vector_2& v, const Vector_2& w) const
+    {
+        return FT( RT(v.hx()*w.hx() + v.hy()*w.hy()) ) /
+               FT( RT(v.hw()*w.hw() ) );
+    }
+  };
+
+  template <typename K>
+  class Compute_scalar_product_3
+  {
+    typedef typename K::RT                RT;
+    typedef typename K::FT                FT;
+    typedef typename K::Vector_3          Vector_3;
+  public:
+    typedef FT               result_type;
+    typedef Arity_tag< 2 >   Arity;
+
+    FT
+    operator()(const Vector_3& v, const Vector_3& w) const
+    {
+        return FT( RT(v.hx()*w.hx() + v.hy()*w.hy()) + v.hz()*w.hz() ) /
+               FT( RT(v.hw()*w.hw() ) );
+    }
+  };
+
   // TODO ...
   template <typename K>
   class Compute_squared_radius_2
@@ -1787,6 +1823,7 @@ namespace HomogeneousKernelFunctors {
   class Construct_scaled_vector_2
   {
     typedef typename K::RT         RT;
+    typedef typename K::FT         FT;
     typedef typename K::Vector_2   Vector_2;
   public:
     typedef Vector_2         result_type;
@@ -1797,12 +1834,19 @@ namespace HomogeneousKernelFunctors {
     {  
       return Vector_2(c * v.hx(), c * v.hy(), v.hw());
     }
+
+    Vector_2
+    operator()( const Vector_2& v, const FT& c) const
+    {
+      return Vector_2( v.hx()*c.numerator(), v.hy()*c.numerator(),
+	               v.hw()*c.denominator() ); }
   };
 
   template <typename K>
   class Construct_scaled_vector_3
   {
     typedef typename K::RT         RT;
+    typedef typename K::FT         FT;
     typedef typename K::Vector_3   Vector_3;
   public:
     typedef Vector_3         result_type;
@@ -1813,6 +1857,12 @@ namespace HomogeneousKernelFunctors {
     {  
       return Vector_3(c * v.hx(), c * v.hy(), c * v.hz(), v.hw());
     }
+
+    Vector_3
+    operator()( const Vector_3& v, const FT& c) const
+    {
+      return Vector_3( v.hx()*c.numerator(), v.hy()*c.numerator(),
+                       v.hz()*c.numerator(), v.hw()*c.denominator() ); }
   };
 
   template <typename K>

@@ -111,7 +111,6 @@ public:
   Vector_2 operator+(const VectorC2 &w) const;
   Vector_2 operator-(const VectorC2 &w) const;
   Vector_2 operator-() const;
-  FT operator*(const VectorC2 &w) const;
   FT squared_length() const;
   Vector_2 operator/(const FT &c) const;
   Direction_2 direction() const;
@@ -218,14 +217,6 @@ typename VectorC2<R>::Vector_2
 VectorC2<R>::operator-() const
 {
   return R().construct_opposite_vector_2_object()(*this);
-}
-
-template < class R >
-CGAL_KERNEL_INLINE
-typename VectorC2<R>::FT
-VectorC2<R>::operator*(const VectorC2<R> &w) const
-{
-  return x() * w.x() + y() * w.y();
 }
 
 template < class R >

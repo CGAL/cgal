@@ -120,7 +120,6 @@ public:
   Vector_3 operator-(const VectorC3 &w) const;
   Vector_3 operator-() const;
   Vector_3 operator/(const FT &c) const;
-  FT operator*(const VectorC3 &w) const;
   FT squared_length() const;
   Direction_3 direction() const;
   Vector_3 transform(const Aff_transformation_3 &t) const
@@ -228,14 +227,6 @@ typename VectorC3<R>::Vector_3
 VectorC3<R>::operator-() const
 {
   return R().construct_opposite_vector_3_object()(*this);
-}
-
-template < class R >
-inline
-typename VectorC3<R>::FT
-VectorC3<R>::operator*(const VectorC3<R> &w) const
-{
-  return x() * w.x() + y() * w.y() + z() * w.z();
 }
 
 template < class R >

@@ -124,20 +124,21 @@ The following operations can be applied on vectors:
 \ccMethod{Kernel::FT              operator*(const Vector_3<Kernel> &w) const;}
        {returns the scalar product (= inner product) of the two vectors.}
 
-
-\ccMethod{Vector_3<Kernel> operator*(const Kernel::RT &s) const;}
-       {Multiplication with a scalar from the right. Although it would
-        be more natural, \cgal\ does not offer a multiplication with a 
-        scalar from the left. (This is due to problems of some compilers.)}
-
-
-\ccMethod{Vector_3<Kernel> operator*(const Quotient<RT> &s) const;}
+\ccFunction{Vector_3<Kernel>
+            operator*(const Vector_3<Kernel> &v, const Kernel::RT &s);}
        {Multiplication with a scalar from the right.}
 
+\ccFunction{Vector_3<Kernel>
+            operator*(const Vector_3<Kernel> &v, const Kernel::FT &s);}
+       {Multiplication with a scalar from the right.}
 
-%\ccFunction{Vector_3<Kernel> operator*(const Kernel::RT &s, 
-%                                  const Vector_3<Kernel> &w);}
-%       {Multiplication with a scalar from the left.}
+\ccFunction{Vector_3<Kernel>
+            operator*(const Kernel::RT &s, const Vector_3<Kernel> &v);}
+       {Multiplication with a scalar from the left.}
+
+\ccFunction{Vector_3<Kernel>
+            operator*(const Kernel::FT &s, const Vector_3<Kernel> &v);}
+       {Multiplication with a scalar from the left.}
 
 \ccMethod{Vector_3<Kernel>        operator/(const Kernel::RT &s) const;}
        {Division by a scalar.}

@@ -95,9 +95,6 @@ public:
 
   Vector_3 operator+( const VectorH3 &v) const;
   Vector_3 operator-( const VectorH3 &v) const;
-  FT       operator*( const VectorH3 &v) const;
-  Vector_3 operator*( const RT &f) const;
-  Vector_3 operator*( const FT &f) const;
   FT squared_length() const;
   Vector_3 operator/( const RT &f) const;
   Vector_3 operator/( const FT &f) const;
@@ -202,19 +199,6 @@ VectorH3<R>::operator-(const VectorH3<R>& v) const
 template <class R>
 CGAL_KERNEL_INLINE
 typename VectorH3<R>::FT
-VectorH3<R>::operator*(const VectorH3<R>& v) const
-{
-  typedef typename R::RT RT;
-  typedef typename R::FT FT;
-  CGAL_kernel_assertion( hw() != RT(0) );
-  CGAL_kernel_assertion( hw() != RT(0) );
-  return ( FT( hx()*v.hx() + hy()*v.hy() + hz()*v.hz() ) /
-           FT( hw()*v.hw() ) );
-}
-
-template <class R>
-CGAL_KERNEL_INLINE
-typename VectorH3<R>::FT
 VectorH3<R>::squared_length() const
 {
   typedef typename R::FT FT;
@@ -237,25 +221,6 @@ typename R::Vector_3
 VectorH3<R>::operator/(const typename VectorH3<R>::FT& f) const
 { return typename R::Vector_3(hx()*f.denominator(), hy()*f.denominator(),
 		              hz()*f.denominator(), hw()*f.numerator() ); }
-
-template <class R>
-CGAL_KERNEL_INLINE
-typename R::Vector_3
-VectorH3<R>::operator*(const typename VectorH3<R>::RT& f) const
-{ return typename R::Vector_3( hx()*f, hy()*f, hz()*f, hw() ); }
-
-template <class R>
-CGAL_KERNEL_INLINE
-typename R::Vector_3
-VectorH3<R>::operator*(const typename VectorH3<R>::FT& f) const
-{ return typename R::Vector_3(hx()*f.numerator(), hy()*f.numerator(),
-		              hz()*f.numerator(), hw()*f.denominator() ); }
-
-template <class R>
-CGAL_KERNEL_INLINE
-typename R::Vector_3
-operator*(const typename R::RT& f, const VectorH3<R>& v)
-{ return typename R::Vector_3( v.hx()*f, v.hy()*f, v.hz()*f, v.hw() ); }
 
 template <class R>
 CGAL_KERNEL_INLINE

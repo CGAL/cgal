@@ -26,6 +26,7 @@
 
 #include <CGAL/user_classes.h>
 #include <CGAL/Kernel/global_functions_internal_3.h>
+#include <CGAL/Kernel/mpl.h>
 
 // Generic functions calling the kernel functor.
 // See comments in CGAL/Kernel/global_functions_2.h.
@@ -115,6 +116,50 @@ inline
 bool
 operator>=(const Point_3<K>& p, const Point_3<K>& q)
 { return ! K().less_xyz_3_object()(p, q); }
+
+template < class K >
+inline
+typename K::Vector_3
+operator*(const typename CGAL_WRAP(K)::FT &c, const Vector_3<K> &w)
+{
+  return K().construct_scaled_vector_3_object()(w, c);
+}
+
+template < class K >
+inline
+typename K::Vector_3
+operator*(const Vector_3<K> &w, const typename CGAL_WRAP(K)::FT &c)
+{
+  return K().construct_scaled_vector_3_object()(w, c);
+}
+
+template < class K >
+inline
+typename K::Vector_3
+operator*(const typename First_if_different<typename K::RT,
+                                            typename K::FT>::Type &c,
+          const Vector_3<K> &w)
+{
+  return K().construct_scaled_vector_3_object()(w, c);
+}
+
+template < class K >
+inline
+typename K::Vector_3
+operator*(const Vector_3<K> &w,
+          const typename First_if_different<typename K::RT,
+                                            typename K::FT>::Type &c)
+{
+  return K().construct_scaled_vector_3_object()(w, c);
+}
+
+template < class K >
+inline
+typename K::FT
+operator*(const Vector_3<K> &v, const Vector_3<K> &w)
+{
+  return K().compute_scalar_product_3_object()(v, w);
+}
 
 // parallel() functions are in Kernel/global_functions.h
 

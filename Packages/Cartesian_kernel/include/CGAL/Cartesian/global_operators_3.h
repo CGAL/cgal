@@ -83,22 +83,6 @@ operator-(const Origin &, const PointC3<K> &p)
   return VectorC3<K>(-p.x(), -p.y(), -p.z());
 }
 
-template < class K >
-inline
-typename K::Vector_3
-operator*(const typename K::FT &c, const VectorC3<K> &w)
-{
-  return K().construct_scaled_vector_3_object()(w, c);
-}
-
-template < class K >
-inline
-typename K::Vector_3
-operator*(const VectorC3<K> &w, const typename K::FT &c)
-{
-  return K().construct_scaled_vector_3_object()(w, c);
-}
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CARTESIAN_GLOBAL_OPERATORS_3_H

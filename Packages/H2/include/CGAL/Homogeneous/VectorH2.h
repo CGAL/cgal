@@ -102,11 +102,8 @@ public:
 
    Vector_2 operator+(const VectorH2 &v) const;
    Vector_2 operator-(const VectorH2 &v) const;
-   FT       operator*(const VectorH2 &v) const;
    Vector_2 operator-() const;
    Vector_2 opposite() const;
-   Vector_2 operator*(const RT &f) const;
-   Vector_2 operator*(const FT &f) const;
    FT squared_length() const;
    Vector_2 operator/(const RT &f) const;
    Vector_2 operator/(const FT &f) const;
@@ -223,16 +220,6 @@ VectorH2<R>::operator-(const VectorH2<R>& v) const
 template <class R>
 CGAL_KERNEL_INLINE
 typename VectorH2<R>::FT
-VectorH2<R>::operator*(const VectorH2<R>& v) const
-{
-  typedef typename R::RT RT;
-  typedef typename R::FT FT;
-  return FT( RT(hx()*v.hx() + hy()*v.hy()) ) / FT( RT(hw()*v.hw() ) );
-}
-
-template <class R>
-CGAL_KERNEL_INLINE
-typename VectorH2<R>::FT
 VectorH2<R>::squared_length() const
 {
   typedef typename R::FT FT;
@@ -253,25 +240,6 @@ typename VectorH2<R>::Vector_2
 VectorH2<R>::operator/(const typename VectorH2<R>::FT& f) const
 { return VectorH2<R>( hx()*f.denominator(), hy()*f.denominator(),
 	              hw()*f.numerator() ); }
-
-template <class R>
-CGAL_KERNEL_INLINE
-typename VectorH2<R>::Vector_2
-VectorH2<R>::operator*(const typename VectorH2<R>::RT& f) const
-{ return VectorH2<R>( hx()*f, hy()*f, hw() ); }
-
-template <class R>
-CGAL_KERNEL_INLINE
-typename VectorH2<R>::Vector_2
-VectorH2<R>::operator*(const typename VectorH2<R>::FT& f) const
-{ return VectorH2<R>( hx()*f.numerator(), hy()*f.numerator(),
-	              hw()*f.denominator() ); }
-
-template <class R>
-CGAL_KERNEL_INLINE
-typename R::Vector_2
-operator*(const typename R::RT& f, const VectorH2<R>& v)
-{ return VectorH2<R>( v.hx()*f, v.hy()*f, v.hw() ); }
 
 template <class R>
 inline

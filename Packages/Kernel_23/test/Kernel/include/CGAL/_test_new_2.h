@@ -200,6 +200,7 @@ test_new_2(const R& rep)
   typename R::Construct_scaled_vector_2 construct_scaled_vector
         = rep.construct_scaled_vector_2_object();
   Vector_2 v6 = construct_scaled_vector(v5, RT(5));
+           v6 = construct_scaled_vector(v5, FT(5));
 
   typename R::Construct_translated_point_2 construct_translated_point
         = rep.construct_translated_point_2_object();
@@ -325,8 +326,12 @@ test_new_2(const R& rep)
   typename R::Compute_area_2 compute_area_2
         = rep.compute_area_2_object();
   FT tmp22a = compute_area_2(tmp18);
-  FT tmp22b = compute_area_2(rec2);
-     tmp22b = compute_area_2(p3, p4, p5);
+     tmp22a = compute_area_2(rec2);
+     tmp22a = compute_area_2(p3, p4, p5);
+
+  typename R::Compute_scalar_product_2 Compute_scalar_product
+        = rep.compute_scalar_product_2_object();
+  FT tmp22b = Compute_scalar_product(v3, v4);
 
   typename R::Compute_squared_distance_2 Compute_squared_distance
         = rep.compute_squared_distance_2_object();

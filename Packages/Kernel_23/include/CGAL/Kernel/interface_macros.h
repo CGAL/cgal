@@ -1,4 +1,4 @@
-// Copyright (c) 2000,2001,2002  Utrecht University (The Netherlands),
+// Copyright (c) 2000-2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -99,6 +99,10 @@ CGAL_Kernel_cons(Compute_area_2,
 		 compute_area_2_object)
 CGAL_Kernel_cons(Compute_area_3,
 		 compute_area_3_object)
+CGAL_Kernel_cons(Compute_scalar_product_2,
+		 compute_scalar_product_2_object)
+CGAL_Kernel_cons(Compute_scalar_product_3,
+		 compute_scalar_product_3_object)
 CGAL_Kernel_cons(Compute_squared_area_3,
 		 compute_squared_area_3_object)
 CGAL_Kernel_cons(Compute_squared_distance_2,

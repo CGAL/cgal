@@ -198,6 +198,7 @@ test_new_3(const R& rep)
   typename R::Construct_scaled_vector_3 construct_scaled_vector
         = rep.construct_scaled_vector_3_object();
   Vector_3 v6 = construct_scaled_vector(v5, RT(5));
+           v6 = construct_scaled_vector(v5, FT(5));
 
   typename R::Construct_translated_point_3 construct_translated_point
         = rep.construct_translated_point_3_object();
@@ -333,6 +334,11 @@ test_new_3(const R& rep)
        tmp12b = assign(p1,tmp10b);
   (void) tmp12a;
   (void) tmp12b;
+
+  typename R::Compute_scalar_product_3 Compute_scalar_product
+        = rep.compute_scalar_product_3_object();
+  FT tmp12bb = Compute_scalar_product(v3, v4);
+  (void) tmp12bb;
 
   typename R::Compute_squared_distance_3 Compute_squared_distance
         = rep.compute_squared_distance_3_object();

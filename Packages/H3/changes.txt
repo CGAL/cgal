@@ -1,3 +1,8 @@
+29 Feb 2004 Sylvain Pion
+- Added ComputeScalarProduct_[23] functors.
+- Added [RT|FT] multiplication from left to Vector_[23]. [bug#194]
+- Moved the operator* of Vector_[23] to the new scheme.
+
 21 Feb 2004 Sylvain Pion
 - Move internal predicates(p,q,K) to CGALi.
 

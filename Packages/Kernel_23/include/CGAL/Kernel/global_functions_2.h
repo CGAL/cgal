@@ -31,6 +31,7 @@
 
 #include <CGAL/user_classes.h>
 #include <CGAL/Kernel/global_functions_internal_2.h>
+#include <CGAL/Kernel/mpl.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -543,6 +544,50 @@ inline
 bool
 operator>=(const Point_2<K>& p, const Point_2<K>& q)
 { return ! K().less_xy_2_object()(p, q); }
+
+template < class K >
+inline
+typename K::Vector_2
+operator*(const typename CGAL_WRAP(K)::FT &c, const Vector_2<K> &w)
+{
+  return K().construct_scaled_vector_2_object()(w, c);
+}
+
+template < class K >
+inline
+typename K::Vector_2
+operator*(const Vector_2<K> &w, const typename CGAL_WRAP(K)::FT &c)
+{
+  return K().construct_scaled_vector_2_object()(w, c);
+}
+
+template < class K >
+inline
+typename K::Vector_2
+operator*(const typename First_if_different<typename K::RT,
+                                            typename K::FT>::Type &c,
+          const Vector_2<K> &w)
+{
+  return K().construct_scaled_vector_2_object()(w, c);
+}
+
+template < class K >
+inline
+typename K::Vector_2
+operator*(const Vector_2<K> &w,
+          const typename First_if_different<typename K::RT,
+                                            typename K::FT>::Type &c)
+{
+  return K().construct_scaled_vector_2_object()(w, c);
+}
+
+template < class K >
+inline
+typename K::FT
+operator*(const Vector_2<K> &v, const Vector_2<K> &w)
+{
+  return K().compute_scalar_product_2_object()(v, w);
+}
 
 template <typename K>
 inline
