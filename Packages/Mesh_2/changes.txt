@@ -1,3 +1,7 @@
+version 0.9.5 (2003/11/28) [Laurent]
+--------------------------
+o fix the deprecated use of RIGHTTURN in conforming
+
 version 0.9.4 (2003/11/5) [Laurent]
 --------------------------
 o submitted to the testsuite
