@@ -1,3 +1,7 @@
+1.19 (28 Aug 2001)
+  - added use of exact number type in examples
+
+-------------------------------- Release 2.3 ----------------------------------
 1.18 (31 July 2001)
   - moved Partition_2_ref directory up one level
   - renamed intro.tex file to avoid conflicts with other packages

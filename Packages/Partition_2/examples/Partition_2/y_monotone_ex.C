@@ -9,8 +9,21 @@
 #include <CGAL/random_polygon_2.h>
 #include <cassert>
 #include <list>
+#ifdef CGAL_USE_LEDA
+#include <CGAL/leda_integer.h>
+typedef leda_integer NT;
+#else
+#ifdef CGAL_USE_GMP
+#include <CGAL/Gmpz.h>
+typedef CGAL::Gmpz NT;
+#else
+// NOTE: the choice of double here for a number type may cause problems
+//       for degenerate point sets
+#include <CGAL/double.h>
+typedef double NT;
+#endif
+#endif
 
-typedef double                                            NT;
 typedef CGAL::Cartesian<NT>                               K;
 typedef CGAL::Partition_traits_2<K>                       Traits;
 typedef Traits::Point_2                                   Point_2;
