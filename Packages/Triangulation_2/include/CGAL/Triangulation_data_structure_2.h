@@ -1032,7 +1032,9 @@ create_vertex()
 template <class Vb, class Fb>
 typename Triangulation_data_structure_2<Vb,Fb>::Face_handle
 Triangulation_data_structure_2<Vb,Fb>::
-create_face(Face_handle f1, int i1, Face_handle f2, int i2, Face_handle f3, int i3)
+create_face(Face_handle f1, int i1, 
+	    Face_handle f2, int i2, 
+	    Face_handle f3, int i3)
 {
   Face_handle newf = new Face(f1->vertex(cw(i1)),
 			f2->vertex(cw(i2)),
