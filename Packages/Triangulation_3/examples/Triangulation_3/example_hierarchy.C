@@ -46,7 +46,7 @@ int main()
   std::random_shuffle(V.begin(), V.end());
 
   for (i=0; i<125; ++i)
-    assert( T.remove(V[i]) );
+    T.remove(V[i]);
 
   assert( T.is_valid() );
   assert( T.number_of_vertices() == 0 );

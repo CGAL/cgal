@@ -141,7 +141,7 @@ int main()
   std::random_shuffle(V.begin(), V.end());
 
   for (i=0; i<125; ++i) {
-    assert( T.remove(V[i]) );
+    T.remove(V[i]);
     gv.clear();
     gv << T;
   }
@@ -150,7 +150,7 @@ int main()
   std::cout << "Enter any character to quit" << std::endl;
   std::cin >> ch;
 
-  return 1;
+  return 0;
 }
 
 #endif // if defined(__BORLANDC__) || defined(_MSC_VER)

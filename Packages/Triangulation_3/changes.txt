@@ -1,3 +1,6 @@
+Version 1.130 (29 Jan 03)
+- Fix demo/examples following the change of return type of remove().
+
 Version 1.129 (27 Jan 03)
 - Fix mistakes in Regular documentation.
 - Delaunay_3::remove() now returns void.
