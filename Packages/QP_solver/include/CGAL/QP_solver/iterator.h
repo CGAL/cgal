@@ -146,7 +146,10 @@ class QPE_transform_iterator_1 {
     typedef  value_type                         Val;
 
     // construction
-    QPE_transform_iterator_1( const Iterator&   it_ = Iterator(),
+    QPE_transform_iterator_1( )
+    { }
+
+    QPE_transform_iterator_1( const Iterator&   it_,
 			      const Operation&  op_ = Operation())
 	: it( it_), op( op_)
     { }
@@ -242,8 +245,8 @@ class QPE_transform_iterator_2 {
 
     // bidirectional operations
     // ------------------------
-    Self&  operator -- (    ) {                   --it; --it2; return *this; }
-    Self   operator -- ( int) { Self tmp = *this; --it; --it2; return tmp;   }
+    Self&  operator -- (    ) {                   --it1; --it2; return *this; }
+    Self   operator -- ( int) { Self tmp = *this; --it1; --it2; return tmp;   }
 
     // random access operations
     // ------------------------
@@ -251,7 +254,8 @@ class QPE_transform_iterator_2 {
     Val    operator [] ( Diff i) const { return op( it1[ i], it2[ i]); }
 
     // less operator
-    bool   operator <  ( const Self& x) const { return ( it < x.it); }
+    // following commented out by kf & fw. 04/08/2004
+    // bool   operator <  ( const Self& x) const { return ( it1 < x.it1); }
 
     // arithmetic operations
     Self&  operator += ( Diff n) { it1 += n; it2 += n; return *this; }
@@ -260,7 +264,8 @@ class QPE_transform_iterator_2 {
     Self   operator +  ( Diff n) const { Self tmp = *this; return tmp += n; }
     Self   operator -  ( Diff n) const { Self tmp = *this; return tmp -= n; }
 
-    Diff   operator -  ( const Self& x) const { return it1 - x.it1; }
+    // following commented out by kf & fw 04/08/2004
+    // Diff   operator -  ( const Self& x) const { return it1 - x.it1; }
 
   private:
 
