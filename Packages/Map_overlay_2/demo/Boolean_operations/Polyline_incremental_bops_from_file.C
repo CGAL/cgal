@@ -81,7 +81,7 @@ typedef CGAL::Pm_walk_along_line_point_location<PM>             PmWalkPL;
 //static PmWalkPL pm_walk1, pm_walk2;
 static Pmwx pmwx1; 
 static Pmwx pmwx2;
-static CGAL::Window_stream W(700, 700, "CGAL - Segment Boolean-Operations Demo");
+static CGAL::Window_stream W(500, 500, "CGAL - Segment Boolean-Operations Demo");
 
 leda_point to_leda_pnt(Point p)
 {
