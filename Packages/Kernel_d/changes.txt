@@ -1,5 +1,8 @@
 Kernel_d Package: Release changes
 ----------------------------------------------------------------------
+0.9.62 (17 April 2002)
+   removed more non-const macros for SIMPLE_INTERFACE to resolve more
+   ambiguities
 
 0.9.61 (12 April 2002)
    replaced Hash_map with Unique_hash_map

@@ -61,9 +61,9 @@ class Point_d : public pR::Point_d_base
 Point_d (int d, I first, I last) : Base (d, first, last) {} \
 Point_d(int d, I first, I last, const RT& D)  : Base (d, first, last, D) {}
 
-FIXPNTD(int*)
+//FIXPNTD(int*)
 FIXPNTD(const int*)
-FIXPNTD(RT*)
+//FIXPNTD(RT*)
 FIXPNTD(const RT*)
 #undef FIXPNTD
 #endif

@@ -196,9 +196,9 @@ Vector_(int d, const NT& x)
 
 #ifdef CGAL_SIMPLE_INTERFACE
 
-FIXIT(NT*)
+//FIXIT(NT*)
 FIXIT(const NT*)
-FIXIT(int*)
+//FIXIT(int*)
 FIXIT(const int*)
 //FIXIT(std::vector<NT>::interator)
 //FIXIT(std::vector<NT>::const_interator)
