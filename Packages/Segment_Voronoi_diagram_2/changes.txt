@@ -1,3 +1,7 @@
+12 August 2004:  Menelaos Karavelas
+- made some more code conforming to the spec
+- fixed bugs (due to yesterday's changes) that I forgot to fix
+
 11 August 2004:  Menelaos Karavelas
 - made code more conforming to the spec
 

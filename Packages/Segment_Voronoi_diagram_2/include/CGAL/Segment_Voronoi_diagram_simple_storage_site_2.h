@@ -86,7 +86,7 @@ public:
 
   // ACCESS METHODS
   //---------------
-  const Handle& point_handle(unsigned int i) const {
+  const Handle& handle(unsigned int i) const {
     CGAL_precondition( i < 6 );
     return h_[i];
   }

@@ -1696,12 +1696,12 @@ copy_storage_site(const Storage_site_2& ss_other, Handle_map& hm,
 		  const Tag_false&)
 {
   if ( ss_other.is_segment() ) {
-    Point_handle p0 = hm[ ss_other.point_handle(0) ];
-    Point_handle p1 = hm[ ss_other.point_handle(1) ];
+    Point_handle p0 = hm[ ss_other.handle(0) ];
+    Point_handle p1 = hm[ ss_other.handle(1) ];
 
     return Storage_site_2(p0, p1);
   } else {
-    Point_handle p0 = hm[ ss_other.point_handle(0) ];
+    Point_handle p0 = hm[ ss_other.handle(0) ];
 
     return Storage_site_2(p0);
   }
@@ -1715,43 +1715,43 @@ copy_storage_site(const Storage_site_2& ss_other, Handle_map& hm,
 {
   if ( ss_other.is_segment() ) {
     if ( ss_other.is_input() ) {
-      Point_handle p0 = hm[ ss_other.point_handle(0) ];
-      Point_handle p1 = hm[ ss_other.point_handle(1) ];
+      Point_handle p0 = hm[ ss_other.handle(0) ];
+      Point_handle p1 = hm[ ss_other.handle(1) ];
 
       return Storage_site_2(p0, p1);
     } else if ( ss_other.is_input(0) ) {
-      Point_handle p0 = hm[ ss_other.point_handle(0) ];
-      Point_handle p1 = hm[ ss_other.point_handle(1) ];
-      Point_handle p4 = hm[ ss_other.point_handle(4) ];
-      Point_handle p5 = hm[ ss_other.point_handle(5) ];
+      Point_handle p0 = hm[ ss_other.handle(0) ];
+      Point_handle p1 = hm[ ss_other.handle(1) ];
+      Point_handle p4 = hm[ ss_other.handle(4) ];
+      Point_handle p5 = hm[ ss_other.handle(5) ];
 
       return Storage_site_2(p0, p1, p4, p5, true);
     } else if ( ss_other.is_input(1) ) {
-      Point_handle p0 = hm[ ss_other.point_handle(0) ];
-      Point_handle p1 = hm[ ss_other.point_handle(1) ];
-      Point_handle p2 = hm[ ss_other.point_handle(2) ];
-      Point_handle p3 = hm[ ss_other.point_handle(3) ];
+      Point_handle p0 = hm[ ss_other.handle(0) ];
+      Point_handle p1 = hm[ ss_other.handle(1) ];
+      Point_handle p2 = hm[ ss_other.handle(2) ];
+      Point_handle p3 = hm[ ss_other.handle(3) ];
 
       return Storage_site_2(p0, p1, p2, p3, false);
     } else {
-      Point_handle p0 = hm[ ss_other.point_handle(0) ];
-      Point_handle p1 = hm[ ss_other.point_handle(1) ];
-      Point_handle p2 = hm[ ss_other.point_handle(2) ];
-      Point_handle p3 = hm[ ss_other.point_handle(3) ];
-      Point_handle p4 = hm[ ss_other.point_handle(4) ];
-      Point_handle p5 = hm[ ss_other.point_handle(5) ];
+      Point_handle p0 = hm[ ss_other.handle(0) ];
+      Point_handle p1 = hm[ ss_other.handle(1) ];
+      Point_handle p2 = hm[ ss_other.handle(2) ];
+      Point_handle p3 = hm[ ss_other.handle(3) ];
+      Point_handle p4 = hm[ ss_other.handle(4) ];
+      Point_handle p5 = hm[ ss_other.handle(5) ];
 
       return Storage_site_2(p0, p1, p2, p3, p4, p5);
     }
   } else {
     if ( ss_other.is_input() ) {
-      Point_handle p0 = hm[ ss_other.point_handle(0) ];
+      Point_handle p0 = hm[ ss_other.handle(0) ];
       return Storage_site_2(p0);
     } else {
-      Point_handle p2 = hm[ ss_other.point_handle(2) ];
-      Point_handle p3 = hm[ ss_other.point_handle(3) ];
-      Point_handle p4 = hm[ ss_other.point_handle(4) ];
-      Point_handle p5 = hm[ ss_other.point_handle(5) ];
+      Point_handle p2 = hm[ ss_other.handle(2) ];
+      Point_handle p3 = hm[ ss_other.handle(3) ];
+      Point_handle p4 = hm[ ss_other.handle(4) ];
+      Point_handle p5 = hm[ ss_other.handle(5) ];
       return Storage_site_2(p2, p3, p4, p5);
     }
   }
