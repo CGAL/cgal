@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+22 May 2004 Sylvain Pion
+- Workaround bug of g++ 3.3.0 with the conversion operators.
+
 17 May 2004 Menelaos Karavelas
 - replaced Point by Point_2 in the demo in order to resolve clash with
   the Mac version of Qt

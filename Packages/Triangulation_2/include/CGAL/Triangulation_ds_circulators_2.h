@@ -127,6 +127,12 @@ class Triangulation_ds_vertex_circulator_2 :
                                        CGAL_CLIB_STD::ptrdiff_t,
                                        CGAL_CLIB_STD::size_t>,
   public  Triangulation_cw_ccw_2
+#ifdef CGAL_CFG_CONVERSION_OPERATOR_BUG
+  // To work around the bug with the conversion operator,
+  // we replace it by storing a vertex_handle as a base class,
+  // so that we effectively get automatic conversion.
+  , public Tds::Vertex_handle
+#endif
 {
 public:
   typedef Triangulation_ds_vertex_circulator_2<Tds> Vertex_circulator;
@@ -140,6 +146,13 @@ private:
   Face_handle   pos;
   int _ri;
   
+  void update_base()
+  {
+#ifdef CGAL_CFG_CONVERSION_OPERATOR_BUG
+    static_cast<Vertex_handle&>(*this) = pos->vertex(_ri);
+#endif
+  }
+
 public:
   Triangulation_ds_vertex_circulator_2()
     :  _v(), pos()
@@ -180,7 +193,8 @@ public:
   }
 
    Vertex_handle base() const {return pos->vertex(_ri);}
-#ifdef CGAL_T2_USE_ITERATOR_AS_HANDLE
+#if defined CGAL_T2_USE_ITERATOR_AS_HANDLE && \
+    !defined CGAL_CFG_CONVERSION_OPERATOR_BUG
    operator Vertex_handle() const {return pos->vertex(_ri);}
 #endif
 };
@@ -387,6 +401,7 @@ Triangulation_ds_vertex_circulator_2 (Vertex_handle v,
   int i = pos->index(_v);
   if (pos->dimension() == 2) {_ri = ccw(i);}
   else {_ri = 1-i;}
+  update_base();
   return;
 }
 
@@ -409,6 +424,7 @@ operator++()
     i = pos->index(_v);
     _ri = ccw(i);
   }
+  update_base();
   return *this;
 }
         
@@ -439,6 +455,7 @@ operator--()
     i = pos->index(_v);
     _ri = ccw(i);
   }
+  update_base();
   return *this;
 }
         
