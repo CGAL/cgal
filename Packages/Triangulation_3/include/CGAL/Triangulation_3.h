@@ -211,7 +211,7 @@ public:
 
   void swap(CGAL_Triangulation_3 &tr)
   {
-    GT t = geom_traits();
+    GT t(geom_traits());
     _gt = tr.geom_traits();
     tr._gt = t; 
 
@@ -2652,7 +2652,7 @@ public:
 	  Point p0 = c->vertex(0)->point();
 	  Point p1 = c->vertex(1)->point();
 	    
-	  Point n1 = c->neighbor(1)->vertex(c->neighbor(1)->index(c))->point();
+	  //	  Point n1 = c->neighbor(1)->vertex(c->neighbor(1)->index(c))->point();
 	  if ( ! is_infinite( c->neighbor(0)->vertex(c->neighbor(0)->index(c)) ) ) {
 	    Point n0 = c->neighbor(0)->vertex(c->neighbor(0)->index(c))->point();  
 	    if ( ( geom_traits().compare_x( p0, p1 )

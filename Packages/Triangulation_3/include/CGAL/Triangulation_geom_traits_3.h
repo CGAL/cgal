@@ -47,12 +47,13 @@ public:
 
   CGAL_Triangulation_geom_traits_3()
     {}
-//   CGAL_Triangulation_geom_traits_3(const CGAL_Triangulation_geom_traits_3 & gt)
-//     {}
 
-//   CGAL_Triangulation_geom_traits_3 & 
-//   operator=(const CGAL_Triangulation_geom_traits_3 & gt)
-//     {return *this;}
+  CGAL_Triangulation_geom_traits_3(const CGAL_Triangulation_geom_traits_3 & gt)
+     {}
+
+  CGAL_Triangulation_geom_traits_3 & 
+  operator=(const CGAL_Triangulation_geom_traits_3 & gt)
+    {return *this;}
 
   // PREDICATES ON POINTS
 

@@ -54,7 +54,7 @@ public:
   typedef CGAL_Triangulation_cell_circulator_3<Gt,Tds> Cell_circulator;
 
   CGAL_Triangulation_cell_circulator_3()
-    : _cb(), _tr()
+    : _cb(), _tr(NULL)
     {}
 
   CGAL_Triangulation_cell_circulator_3(Triangulation_3 * tr, Edge e)
