@@ -388,38 +388,20 @@ void Qt_widget::y_real(int y, Gmpq& return_t) const
 }
 #endif
 
-template <class FT>
-void Qt_widget::x_real(int x, FT& return_t) const
+double Qt_widget::x_real(int x) const
 {
   if(xscal<1)
-    return_t = static_cast<FT>(xmin+(int)(x/xscal));
-  else{
-#ifdef CGAL_USE_GMP
-    CGAL_Rational r = simplest_rational_in_interval<CGAL_Rational>( 
-                            xmin+x/xscal-(x/xscal-(x-1)/xscal)/2, 
-                            xmin+x/xscal+((x+1)/xscal-x/xscal)/2);
-    return_t = static_cast<FT>(CGAL::to_double(r));
-#else
-    return_t = static_cast<FT>(xmin+x/xscal);
-#endif
-  }
+    return(xmin+(int)(x/xscal));
+  else
+    return (xmin+x/xscal);
 }
 
-template <class FT>
-void Qt_widget::y_real(int y, FT& return_t) const
+double Qt_widget::y_real(int y) const
 {
     if(yscal<1)
-      return_t = static_cast<FT>(ymax-(int)(y/yscal));
-    else{
-#ifdef CGAL_USE_GMP
-    CGAL_Rational r = simplest_rational_in_interval<CGAL_Rational>( 
-                            ymax - y/yscal-(y/yscal-(y-1)/yscal)/2, 
-                            ymax - y/xscal+((y+1)/yscal-y/yscal)/2);
-    return_t = static_cast<FT>(CGAL::to_double(r));
-#else
-    return_t = static_cast<FT>(ymax-y/xscal);
-#endif
-  }  
+      return(ymax-(int)(y/yscal));
+    else
+      return (ymax-y/xscal);
 }
 
 double Qt_widget::x_real_dist(double d) const
