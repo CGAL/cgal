@@ -1,4 +1,11 @@
 //-----------------------------------------------------------------------//
+// 1.40
++Adapted CGAL_CFG_NO_LOCALE.C to avoid strange runtime error under MSVC
++Adapted CGAL_CFG_NO_TEMPLATE_FRIEND_DISTINCTION.C to avoid linking error
+ under mips compiler. It tests for a bit different thing now.
++Reformatted CGAL_CFG_NO_ITERATOR_TRAITS.C
+
+//-----------------------------------------------------------------------//
 // 1.39
 +Small fixes in config.h and CGAL_CFG_NO_ITERATOR_TRAITS.C for MSVC
 
