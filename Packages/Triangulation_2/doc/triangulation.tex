@@ -541,7 +541,7 @@ on the right side of  \ccc{e} oriented from \ccc{va} to \ccc{vb}.}
 		     Face_handle& fr, int & i);}
 {\ccc{true} if the line segment from \ccc{va} to \ccc{vb} includes
 an edge \ccc{e} incident to \ccc{va}. If \ccc{true}, \ccc{vb} becomes
-the other vertex of \ccc{e}, \ccc{e} is the edge \ccc={(fr,i)} where
+the other vertex of \ccc{e}, \ccc{e} is the edge \ccc{(fr,i)} where
 \ccc{fr} is a handle to the face incident to \ccc{e} and 
 on the right side \ccc{e} oriented from \ccc{va} to \ccc{vb}.}
 \ccGlue
@@ -2042,10 +2042,10 @@ compute the index \ccc{i} of \ccc{n}.}
 
 \ccHeading{Other Access Functions}
 \ccMethod{int  mirror_index(int i) const;}
-{index of \ccVar as a neighbor of \ccc{\ccVar.neighbor(i)}}
+{index of \ccVar\ as a neighbor of \ccVar.\ccc{neighbor(i)}}
 \ccGlue
 \ccMethod{Vertex* mirror_vertex(int i) const;}
-{vertex opposite of \ccc{\ccVar.neighbor(i)} to \ccVar.}
+{vertex of \ccVar.\ccc{neighbor(i)}} opposite to  \ccVar.
 
 
 \begin{ccAdvanced}
