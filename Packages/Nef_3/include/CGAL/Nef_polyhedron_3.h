@@ -132,6 +132,7 @@ class Nef_polyhedron_3 : public CGAL::Handle_for< Nef_polyhedron_3_rep<Kernel_, 
   /*{\Mtypes 7}*/  
   
   typedef Kernel_                                     Kernel;
+  typedef Kernel_                                     Traits;
   typedef Items_                                      Items;
   typedef Mark_                                       Mark;
   typedef Nef_polyhedron_3<Kernel, Items, Mark>       Self;
@@ -187,7 +188,6 @@ protected:
  public:
  typedef Nef_polyhedron_S2<Kernel,Items,Mark,Sphere_map>  Nef_polyhedron_S2;
  protected:
- // typedef bool   Mark;
 
   SNC_structure& snc() { return this->ptr()->snc_; } 
   const SNC_structure& snc() const { return this->ptr()->snc_; } 
@@ -216,13 +216,19 @@ protected:
   typedef typename SNC_structure::Volume_const_handle          Volume_const_handle;
   typedef typename SNC_structure::SHalfedge_around_svertex_circulator 
                                   SHalfedge_around_svertex_circulator;
+  typedef typename SNC_structure::SHalfedge_around_svertex_const_circulator 
+                                  SHalfedge_around_svertex_const_circulator;
   typedef typename SNC_structure::SHalfedge_around_facet_circulator 
                                   SHalfedge_around_facet_circulator;
   typedef typename SNC_structure::SHalfedge_around_facet_const_circulator 
                                   SHalfedge_around_facet_const_circulator;
+  typedef typename SNC_structure::SHalfedge_around_sface_const_circulator 
+                                  SHalfedge_around_sface_const_circulator;
   typedef typename SNC_structure::Halffacet_cycle_const_iterator     
                                   Halffacet_cycle_const_iterator;
   typedef typename SNC_structure::Infi_box                     Infi_box;
+  typedef typename SNC_structure::Size_type Size_type;
+  typedef Size_type                         size_type;
 
   typedef typename Kernel::RT                       RT;
 
@@ -264,8 +270,12 @@ protected:
                                                    SVertex_const_iterator;
   typedef typename SM_decorator::SHalfedge_const_iterator 
                                                    SHalfedge_const_iterator;
+  typedef typename SM_decorator::SHalfloop_const_iterator 
+                                                   SHalfloop_const_iterator;
   typedef typename SM_decorator::SFace_const_iterator     
                                                    SFace_const_iterator;
+  typedef typename SNC_decorator::SFace_cycle_const_iterator     
+                                                   SFace_cycle_const_iterator;
 
  protected: 
   void initialize_infibox_vertices(Content space) {

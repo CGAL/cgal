@@ -96,7 +96,7 @@ public:
 
   Segment_3 construct_segment(const Point_3& p, const Point_3& q) const
   { typename Base::Construct_segment_3 _segment =
-      construct_segment_3_object();
+      this->construct_segment_3_object();
     return _segment(p,q); 
   }
 };
