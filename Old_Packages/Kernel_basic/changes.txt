@@ -1,3 +1,7 @@
+3.23   (?? Feb 2001)
+- Removed useless operator() in Coplanar_orientation, which caused a problem
+  with VC++.
+
 3.22   (14 Feb 2001)
 
 - moved Kernel_traits_common.h from Cartesian_kernel package

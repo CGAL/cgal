@@ -357,11 +357,6 @@ class Coplanar_orientation
   public:
     typedef Orientation  result_type;
 
-    template <class P>
-    Orientation
-    operator()(const P& p, const P& q, const P& r, const P& s) const
-    { return coplanar_orientation(p,q,r,s); }
-
     template <class P, class V>
     Orientation
     operator()(const P& p, const P& q, const P& r, const V& v) const
