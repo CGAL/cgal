@@ -71,6 +71,30 @@ public:
     using Base::operator();
 #endif
 
+    Bbox_2
+    operator()(const Bbox_2& b)
+    {
+        return b;
+    }
+
+    Bbox_3
+    operator()(const Bbox_3& b)
+    {
+        return b;
+    }
+
+    typename K2::RT
+    operator()(const typename K1::RT &a) const
+    {
+        return c(a);
+    }
+
+    typename K2::FT
+    operator()(const typename K1::FT &a) const
+    {
+        return c(a);
+    }
+
     typename K2::Point_2
     operator()(const typename K1::Point_2 &a) const
     {
