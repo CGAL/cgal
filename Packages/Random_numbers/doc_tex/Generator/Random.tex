@@ -61,7 +61,6 @@ deterministically or using the seed functions as described below.
         values for \ccc{init} result in equal sequences of random
         numbers.}
 
-
 % -----------------------------------------------------------------------------
 \ccOperations
 
@@ -70,12 +69,12 @@ deterministically or using the seed functions as described below.
 
 \ccMemberFunction{ int get_int( int lower, int upper);}{
         returns a random \ccc{int} from the interval
-        $[$\ccc{lower}$,$\ccc{upper}$)$.}
+        $[\mbox{\ccc{lower},\ccc{upper}})$.}
 
 \ccMemberFunction{ double get_double( double lower = 0.0,
                                       double upper = 1.0);}{
         returns a random \ccc{double} from the interval
-        $[$\ccc{lower}$,$\ccc{upper}$)$.}
+        $[\mbox{\ccc{lower},\ccc{upper}})$.}
 
 \ccMemberFunction{ int operator() ( int upper);}{
         returns \ccVar\ccc{.get_int( 0, upper)}.}
@@ -88,6 +87,13 @@ deterministically or using the seed functions as described below.
 
 \ccMemberFunction{ void restore_seed( Seed const& seed);}{
         restores the internal seed from \ccc{seed}.}
+
+% -----------------------------------------------------------------------------
+\ccHeading{Equality Test}
+
+\ccMemberFunction{ bool  operator == ( CGAL_Random const& random2) const;}{
+        returns \ccc{true}, iff \ccVar\ and \ccc{random2} have equal
+        internal seeds.}
 
 % -----------------------------------------------------------------------------
 \ccImplementation

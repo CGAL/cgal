@@ -19,6 +19,7 @@
 @article
 
 \setlength{\parskip}{1ex}
+\addtolength{\textheight}{5ex}
 
 @! ============================================================================
 @! Title
@@ -127,8 +128,12 @@ section, so we do not comment on it here.
 
     int     operator () ( int upper);
 
+    // seed functions
     void       save_seed( Seed      & seed) const;
     void    restore_seed( Seed const& seed);
+
+    // equality test
+    bool  operator == ( CGAL_Random const& rnd) const;
 @end
 
 
@@ -206,6 +211,8 @@ uniformly chosen from the interval $[\ccc{0.0},\ccc{1.0})$.
 The result is converted to a number in the given range.
 
 @macro <Random operations> = @begin
+    #include <stdlib.h>
+
     inline
     bool
     CGAL_Random::
@@ -266,6 +273,24 @@ seed variable, respectively.
     }
 @end
 
+
+\subsection{Equality Test}
+
+The equality test compares the internal seeds of the two operands.
+
+@macro <Random equality test> = @begin
+    inline
+    bool    
+    CGAL_Random::
+    operator == ( CGAL_Random const& rnd) const
+    {
+	return( CGAL_static_cast( bool,
+		    ( _seed[ 0] == rnd._seed[ 0]) &&
+		    ( _seed[ 1] == rnd._seed[ 1]) &&
+		    ( _seed[ 2] == rnd._seed[ 2]) ) );
+    }
+@end
+
 @! ============================================================================
 @! Test
 @! ============================================================================
@@ -315,15 +340,17 @@ numbers.
     {
 	CGAL_random.restore_seed( seed);	// `CGAL_Random' and `rnd'
 	CGAL_Random rnd( seed);			// have the same seed now
-	assert( CGAL_random.get_bool()         == rnd.get_bool());
+	assert( CGAL_random.get_bool()         == rnd.get_bool()        );
 	assert( CGAL_random.get_int( -100,100) == rnd.get_int( -100,100));
-	assert( CGAL_random.get_double()       == rnd.get_double());
+	assert( CGAL_random.get_double()       == rnd.get_double()      );
+	assert( CGAL_random                    == rnd                   );
 
 	long init = CGAL_random( 9999);
 	CGAL_Random rnd1( init), rnd2( init);
-	assert( rnd1.get_bool()         == rnd2.get_bool());
+	assert( rnd1.get_bool()         == rnd2.get_bool()        );
 	assert( rnd1.get_int( -100,100) == rnd2.get_int( -100,100));
-	assert( rnd1.get_double()       == rnd2.get_double());
+	assert( rnd1.get_double()       == rnd2.get_double()      );
+	assert( rnd1                    == rnd2                   );
     }
 @end
 
@@ -350,7 +377,6 @@ numbers.
     #ifndef CGAL_BASIC_H
     #  include <CGAL/basic.h>
     #endif
-    #include <stdlib.h>
 
     @<Random interface>
 
@@ -364,6 +390,8 @@ numbers.
     // =======================================
     // operations
     @<Random operations>
+
+    @<Random equality test>
 
     #endif // CGAL_RANDOM_H
 
