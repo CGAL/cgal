@@ -1,9 +1,15 @@
 /**************************************************************************
  
-  cgal_build_checker.cc
+  cc_build_checker.cc
   =============================================================
   Project   : CGAL tool that constructs the specification checker
-  Function  : main program, command line parameter parsing
+  Function  : Checks whether the C++ declarations from a TeX 
+              specification file written with the cc_manual.sty
+              really exists in a C++ header file. This program 
+              extracts a flex program from a TeX specification
+              that does the actual checking. This program is used
+              with a script `cc_check' that is provided for the user.
+              main program, command line parameter parsing
   System    : bison, flex, C++ (g++)
   Author    : (c) 1995 Lutz Kettner
   Revision  : $Revision$
@@ -15,6 +21,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stream.h>
+#include <ctype.h>
 #include <fstream.h>
 #include <database.h>
 #include <config.h>
@@ -45,6 +52,8 @@ void yyparse();
 void init_scanner( FILE* in);
 extern int line_number;
 extern int unchecked_tag;
+extern char*   global_classname;
+extern char*   global_template_params;
 
 /* Name the scanned file */
 /* ===================== */
@@ -56,10 +65,22 @@ const char* error_filename;
 /* Buffer to hold an appropriate error message */
 Buffer* errmessage = new Buffer;
 
+/* the n_class that counts the actual class */
+int n_class = 0;
+
+
 /* Buffer to hold the pattern to be scanned for */
 /* Only necessary for special patterns */
 Buffer* pattern  = new Buffer;
 Buffer* pattern2 = new Buffer;
+
+/* Buffer to hold a generalized function declaration where 
+   in the parameter lists variable names are substituted by the
+   special constant IDFIER_TAG
+   */
+Buffer* function_decl  = new Buffer;
+const char IDFIER_TAG = 254;
+const char INLINE_TAG = 253;
 
 /* Number of pattern's written */
 int n_pattern = 0;
@@ -75,6 +96,10 @@ char char_tricky_tmp[16] = "\"{ws}*\" \"{ws}*\"";
 
 const char* patternText( char c, char d = 'X') {
     switch ( c) {
+    case IDFIER_TAG:
+        return "\"{idfier}\"";
+    case INLINE_TAG:
+        return "\"{ws}*\">\"{ws}*(inline)?{ws}*\"";
     case ' ':
     case '\t':
     case '\r':
@@ -94,10 +119,10 @@ const char* patternText( char c, char d = 'X') {
     case '>':
     case '*':
     case '&':
-        if ( d != ' ') {
-	    char_tricky_tmp[7] = c;
-	    return char_tricky_tmp;
-	}
+          // if ( d != ' ') {
+	char_tricky_tmp[7] = c;
+        return char_tricky_tmp;
+	  // }
 	break;
     }
     char_tmp[0] = c;
@@ -107,7 +132,7 @@ const char* patternText( char c, char d = 'X') {
 void printProlog( ostream& out_pattern, ostream& out_errmessage) {
     int i;
     out_pattern << "/* =============================================" << endl;
-    out_pattern << "   CGAL checker program to verify consistency" << endl;
+    out_pattern << "   CC checker program to verify consistency" << endl;
     out_pattern << "   between specification and implementation." << endl;
     out_pattern << "   Generated for the specification:" << endl;
     out_pattern << "       `" << file_name;
@@ -116,12 +141,12 @@ void printProlog( ostream& out_pattern, ostream& out_errmessage) {
     }
     out_pattern << "'" << endl;
     out_pattern << endl;
-    out_pattern << "   R 1.1    28.10.1995   Lutz Kettner" << endl;
-    out_pattern << "            kettner@inf.fu-berlin.de" << endl;
-    out_pattern << "            FU Berlin, Germany." << endl;
+    out_pattern << "   R 1.2    03.12.1996   Lutz Kettner" << endl;
+    out_pattern << "            kettner@acm.org" << endl;
+    out_pattern << "            ETH Zurich, Switzerland" << endl;
     out_pattern << endl;
-    out_pattern << "   Compilation with `flex' and `cc'" << endl;
-    out_pattern << "============================================= */" << endl;
+    out_pattern << "   Compilation with `flex' and `cc' (or `gcc')" << endl;
+    out_pattern << "============================================== */" << endl;
     out_pattern << endl;
     out_pattern << "%{" << endl;
     out_pattern << "#include <stdlib.h>" << endl;
@@ -131,6 +156,9 @@ void printProlog( ostream& out_pattern, ostream& out_errmessage) {
     out_pattern << endl;
     out_pattern << "/* the tag array that collects correct matches */" << endl;
     out_pattern << "int *tags;" << endl;
+    out_pattern << endl;
+    out_pattern << "/* the n_class that counts the actual class */" << endl;
+    out_pattern << "int n_class = -1;" << endl;
     out_pattern << endl;
     out_pattern << "/* the name array that stores the filename */" << endl;
     out_pattern << "const char **name;" << endl;
@@ -179,8 +207,10 @@ void printProlog( ostream& out_pattern, ostream& out_errmessage) {
     out_pattern << "fwcomment            [@][!].*$" << endl;
     out_pattern << "ws                   [ \\t\\n\\r]|{cccommentnl}" << endl;
     out_pattern << "nol                  [^a-zA-Z0-9_]" << endl;
+    out_pattern << "classend             {ws}*(([:][^:])|([{]))" << endl;
     out_pattern << "optionalclass        {ws}*(class{ws}*)?" << endl;
     out_pattern << "optionalkeywords     ([a-z]+({ws}+[a-z]+)*)?" << endl;
+    out_pattern << "idfier               [a-zA-Z_][a-zA-Z0-9_]*" << endl;
     out_pattern << endl;
     out_pattern << "%%" << endl;
     out_pattern << "    /* The matching rules */" << endl;
@@ -219,7 +249,7 @@ void printProlog( ostream& out_pattern, ostream& out_errmessage) {
 
     out_errmessage << "/* =============================================" 
 		   << endl;
-    out_errmessage << "   CGAL checker program to verify consistency" << endl;
+    out_errmessage << "   CC checker program to verify consistency" << endl;
     out_errmessage << "   between specification and implementation." << endl;
     out_errmessage << "   Generated for the specification:" << endl;
     out_errmessage << "       `" << file_name;
@@ -228,9 +258,9 @@ void printProlog( ostream& out_pattern, ostream& out_errmessage) {
     }
     out_errmessage << "'" << endl;
     out_errmessage << endl;
-    out_errmessage << "   R 1.1    28.10.1995   Lutz Kettner" << endl;
-    out_errmessage << "            kettner@inf.fu-berlin.de" << endl;
-    out_errmessage << "            FU Berlin, Germany." << endl;
+    out_errmessage << "   R 1.2    03.12.1996   Lutz Kettner" << endl;
+    out_errmessage << "            kettner@acm.org" << endl;
+    out_errmessage << "            ETH Zurich, Switzerland" << endl;
     out_errmessage << endl;
     out_errmessage << "   Auxiliary file for the pattern texts." << endl;
     out_errmessage << "============================================= */" 
@@ -249,6 +279,8 @@ void printEpilog( ostream& out_pattern, ostream& out_errmessage) {
     out_pattern << "    int i;" << endl;
     out_pattern << "    int err = 0;" << endl;
     out_pattern << "    int flags = 1;" << endl;
+    out_pattern << "    int err_count = 0;" << endl;
+    out_pattern << "    int warn_count = 0;" << endl;
     out_pattern << "    tags = (int*)malloc( " << n_pattern 
 		<< " * sizeof( int));" << endl;
     out_pattern << "    name = (const char**)malloc( " << n_pattern 
@@ -323,15 +355,24 @@ void printEpilog( ostream& out_pattern, ostream& out_errmessage) {
     out_pattern << "    for ( i=0; i<" << n_pattern << "; i++) {" << endl;
     out_pattern << "        if ( tags[i] == 0) {" << endl;
     out_pattern << "            err = 2;" << endl;
+    out_pattern << "            err_count++;" << endl;
     out_pattern << "            fprintf( stderr, \"check error: %s cannot "
                    "be found in the implementation.\\n\", patternText( i));" 
 		<< endl;
     out_pattern << "        } else if ( tags[i] > 0) {" << endl;
     out_pattern << "            err = 3;" << endl;
+    out_pattern << "            warn_count++;" << endl;
     out_pattern << "            fprintf( stderr, \"check warning: %s only "
                    "recognized as prefix in `%s' line %d.\\n\", "
                    "patternText( i), name[i], tags[i]);" << endl;
     out_pattern << "        }" << endl;
+    out_pattern << "    }" << endl;
+    out_pattern << "    if ( err_count || warn_count) {" << endl;
+    out_pattern << "        fprintf( stderr, \"---------------------"
+                   "----------------------------------\\n\");  " << endl;
+    out_pattern << "        fprintf( stderr, \"%d error(s) and %d warning(s)"
+                   ".\\n\\n\", err_count, warn_count); " << endl;
+    out_pattern << "        " << endl;
     out_pattern << "    }" << endl;
     out_pattern << "    free( tags);" << endl;
     out_pattern << "    free( name);" << endl;
@@ -513,18 +554,167 @@ void printFunctionPattern( ostream& out_pattern,
     out_errmessage << "        return \"line " << line_number << " in `"
 		   << file_name << "': \\\"";
     for ( i=0; i<l; i++) {
-        if ( str[i] == '\\')
+        switch (str[i]) {
+	case '\\':
 	    out_errmessage << "\\\\";
-	else if ( str[i] == '"')
+	    break;
+	case '"':
 	    out_errmessage << "\\\"";
-	else 
+	    break;
+	case IDFIER_TAG:
+	    out_errmessage << "{idfier}";
+	    break;
+	case INLINE_TAG:
+	    out_errmessage << ">";
+	    break;
+	default:
 	    out_errmessage << str[i];
+	    break;
+	}
     }
     out_errmessage << "\\\"\";" << endl;
 
     n_pattern++;
 } 
 
+
+
+/* Translate argument names in function declarations to idfiers */
+/* ============================================================ */
+
+// Given a string interval, decide whether it contains a valid type name
+// or only declarative keywords and other symbols. This check is necessary
+// to distinguish between function arguments with and without argument
+// name.
+bool isTypeInFunctionArgument( const char* s, const char* end) {
+    while( s != end) {
+        // isolate identifier
+        while( s != end && ( !isalpha(*s) && *s != '_'))
+            s++;
+	const char* p = s;  // idfier start
+        while( s != end && ( isalpha(*s) || *s == '_'))
+            s++;
+	if ( s == p)
+	    return false;
+	bool is_keyword = false;
+	is_keyword = is_keyword || 0 ==  strncmp( p, "auto", 4);
+	is_keyword = is_keyword || 0 ==  strncmp( p, "class", 5);
+	is_keyword = is_keyword || 0 ==  strncmp( p, "const", 5);
+	is_keyword = is_keyword || 0 ==  strncmp( p, "enum", 4);
+	is_keyword = is_keyword || 0 ==  strncmp( p, "extern", 6);
+	is_keyword = is_keyword || 0 ==  strncmp( p, "register", 8);
+	is_keyword = is_keyword || 0 ==  strncmp( p, "signed", 6);
+	is_keyword = is_keyword || 0 ==  strncmp( p, "static", 6);
+	is_keyword = is_keyword || 0 ==  strncmp( p, "struct", 6);
+	is_keyword = is_keyword || 0 ==  strncmp( p, "template", 8);
+	is_keyword = is_keyword || 0 ==  strncmp( p, "union", 5);
+	is_keyword = is_keyword || 0 ==  strncmp( p, "unsigned", 8);
+	is_keyword = is_keyword || 0 ==  strncmp( p, "volatile", 8);
+	if (!is_keyword)
+	    return true;
+    }
+    return false;
+}
+
+// Scan a full C++ function declaration in decl. Return value in func.
+// Scans argument by argument and replaces the argument name by a symbol 
+// denoting an idfier. The output routine replaces this symbol with the 
+// actual regular expression for an identifier.
+void translateFunctionArgumentLists( const char* decl, Buffer *func) {
+    func->flush();
+    const char* current = decl;
+    while ( *current != '(') {
+        current++;
+        ADT_Assert( *current);
+    }
+    ADT_Assert( *current == '(');
+    current++;
+    ADT_Assert( *current);
+    func->add( decl, current - decl);
+
+    /* the parsing starts here. It counts parenthesis. */
+    int nesting = 1;
+    bool in_init = false;
+    const char* from = current;
+    const char* last_idfier = current - 1;
+    while ( nesting > 0) {
+        ADT_Assert( *current);
+	if ( nesting == 1 && *current == '=')
+	    in_init = true;
+	if (      nesting == 1 
+	       && !in_init 
+	       && (isalnum(*current) || *current == '_'))
+	    last_idfier = current;
+
+	if ( nesting == 1 && (*current == ',' || *current == ')')) {
+            if ( last_idfier - from < 0) { 
+                /* fail save behavior in case of errors */
+	        func->add( from, current-from+1);
+	    } else {
+		const char* p = last_idfier;
+		while( isalnum( *p) || *p == '_')
+		    p--;
+		p++;  /* points to idfier start */
+		ADT_Assert( p - from >= 0);
+		if ( isTypeInFunctionArgument( from, p)) {
+		    func->add( from, p - from);
+		    func->add( IDFIER_TAG);
+		    func->add( last_idfier + 1, current - last_idfier);
+		} else {
+		    /* fail save behavior in case of errors */
+		    func->add( from, current-from+1);
+		}
+	    }
+	    from = current + 1;
+	    if (*current == ')')
+	        nesting--;
+	    in_init = false;
+	} else {
+	    switch ( *current) {
+	    case '(':
+	    case '<':
+	        nesting++;
+		break;
+	    case ')':
+	    case '>':
+	        nesting--;
+		ADT_Assert( nesting >= 1);
+		break;
+	    }
+	}
+        current++;
+    }
+    func->add( from);
+}
+
+// Check whether the declaration starts with a template keyword, and
+// if so, use the INLINE_TAG to add the regular expression for an optional
+// inline keyword right after the template declaration.
+void checkTemplateKeyword( Buffer *decl){
+    if( 0 == strncmp( "template", decl->string(), 8)) {
+        const char* p = decl->string() + 8;
+	int nesting = 0;
+	while( *p != '\0') {
+	    switch( *p) {
+	    case '<':
+	    case '(':
+	        nesting ++;
+		break;
+	    case ')':
+	        nesting --;
+		break;
+	    case '>':
+	        nesting --;
+		if ( nesting == 0) {
+		    decl->set( p - decl->string(), INLINE_TAG);
+		    return;
+		}
+		break;
+	    }
+	    p++;
+	}
+    }
+}
 
 
 /* Taylored semantic functions used in syntax.y */
@@ -539,18 +729,33 @@ void handleComment( const Text& ) {
 }
 
 void handleClass( const char* classname) {
+    if ( global_classname)
+        free( global_classname);
+    global_classname = strdup( classname);
     errmessage->flush();
     errmessage->add( "class ");
     errmessage->add( classname);
     errmessage->add( " ");
-    printPattern( *p_out_pattern, *p_out_errmessage, errmessage);
+    pattern->flush();
+    pattern->add( "class{ws}+\"");
+    pattern->add( classname);
+    pattern->add( "\"{classend}");
+    printPattern( *p_out_pattern, *p_out_errmessage, errmessage, pattern);
 }
 
 void handleClassEnd( void) {
+    if ( global_classname)
+        free( global_classname);
     return;
 }
 
 void handleClassTemplate( const char* classname) {
+    if ( global_classname)
+        free( global_classname);
+    global_classname = strdup( classname);
+    global_template_params = global_classname;
+    while( *global_template_params && *global_template_params != '<')
+        ++global_template_params;
     errmessage->flush();
     pattern->flush();
     errmessage->add( "template < ...");
@@ -607,11 +812,14 @@ void handleClassTemplate( const char* classname) {
 	pattern->add(    *s);
 	s++;
     }
-    pattern->add(    "\"{nol}");
+    pattern->add(    "\"{classend}");
     printPattern( *p_out_pattern, *p_out_errmessage, errmessage, pattern);
 }
 
 void handleClassTemplateEnd( void) {
+    global_template_params = 0;
+    if ( global_classname)
+        free( global_classname);
     return;
 }
 
@@ -629,7 +837,42 @@ void handleDeclaration( const char* decl) {
     printPattern( *p_out_pattern, *p_out_errmessage, errmessage);
 }
 
+void handleNestedType( const char* decl) {
+    errmessage->flush();
+    int l = strlen( decl);
+    while ( l > 0 && decl[ l-1] == ' ') l--;
+    errmessage->add( decl, l);
+    pattern->flush();
+    pattern->add( "typedef{ws}*[^;]+");
+    pattern->add( decl, l);
+    pattern->add( "{ws}*;");
+    // Sorry, not working in full general.
+    // pattern->add( "{ws}*;)|(((struct)|(class)){ws}*");
+    // pattern->add( decl, l);
+    // pattern->add( "{ws}*[:\\{;])");
+    printPattern( *p_out_pattern, *p_out_errmessage, errmessage, pattern);
+}
+
+void handleMethodDeclaration( const char* decl) {
+    translateFunctionArgumentLists( decl, function_decl);
+    checkTemplateKeyword( function_decl);
+    decl = function_decl->string();
+    errmessage->flush();
+    int l = strlen( decl);
+    while ( l > 0 && decl[ l-1] == ' ') l--;
+    if ( decl[ l-1] != ';' )
+        printErrorMessage( SemicolonMissingError);
+    else 
+        l--;
+    while ( l > 0 && decl[ l-1] == ' ') l--;
+    errmessage->add( decl, l);
+    printFunctionPattern( *p_out_pattern, *p_out_errmessage, errmessage);
+}
+
 void handleFunctionDeclaration( const char* decl) {
+    translateFunctionArgumentLists( decl, function_decl);
+    checkTemplateKeyword( function_decl);
+    decl = function_decl->string();
     errmessage->flush();
     int l = strlen( decl);
     while ( l > 0 && decl[ l-1] == ' ') l--;
@@ -643,6 +886,8 @@ void handleFunctionDeclaration( const char* decl) {
 }
 
 void handleFunctionTemplateDeclaration( const char* templ, const char* decl) {
+    translateFunctionArgumentLists( decl, function_decl);
+    decl = function_decl->string();
     errmessage->flush();
     pattern->flush();
     pattern2->flush();
@@ -784,7 +1029,7 @@ main( int argc, char **argv) {
         (nParameters > MaxParameters) || (help_switch != NO_SWITCH)) {
         if (help_switch == NO_SWITCH)
             cerr << "Error: in parameter list" << endl;
-        cerr << "Usage: cgal_build_checker [<options>] "
+        cerr << "Usage: cc_build_checker [<options>] "
 	        "<scanner-outfile> <messages-header-file> [<infile>]" << endl;
         cerr << "       -trace       sets the `yydebug' variable of bison"
              << endl;

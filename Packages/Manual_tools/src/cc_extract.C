@@ -1,9 +1,11 @@
 /**************************************************************************
  
-  cgal_extract.cc
+  cc_extract.C
   =============================================================
   Project   : CGAL merger tool for the specification task
-  Function  : main program, command line parameter parsing
+  Function  : Extract C++ declarations from a TeX specification
+              file written with the cc_manual.sty.
+              Main program, command line parameter parsing.
   System    : bison, flex, C++ (g++)
   Author    : (c) 1995 Lutz Kettner
   Revision  : $Revision$
@@ -30,6 +32,7 @@ Switch  nomc_switch   = NO_SWITCH;
 Switch  nosc_switch   = NO_SWITCH;
 
 
+
 /* Declarations from syntax.y */
 /* ========================== */
 extern int yydebug;
@@ -38,6 +41,8 @@ void yyparse();
 /* Declarations from lex.yy   */
 /* ========================== */
 void init_scanner( FILE* in);
+extern char*   global_classname;
+extern char*   global_template_params;
 
 
 /* Name the scanned file */
@@ -69,6 +74,9 @@ void handleComment( const Text& T) {
 }
 
 void handleClass( const char* classname) {
+    if ( global_classname)
+        free( global_classname);
+    global_classname = strdup( classname);
     cout << indNewline;
     cout << "class " << classname << " {" << indNewline;
     cout << "public:" << indNewline;
@@ -76,12 +84,20 @@ void handleClass( const char* classname) {
 }
 
 void handleClassEnd( void) {
+    if ( global_classname)
+        free( global_classname);
     cout << outdent;
     cout << indNewline;
-    cout << "}" << indNewline;
+    cout << "};" << indNewline;
 }
 
 void handleClassTemplate( const char* classname) {
+    if ( global_classname)
+        free( global_classname);
+    global_classname = strdup( classname);
+    global_template_params = global_classname;
+    while( *global_template_params && *global_template_params != '<')
+        ++global_template_params;
     cout << indNewline;
     cout << "template < class ";
     const char* s = classname;
@@ -130,13 +146,26 @@ void handleClassTemplate( const char* classname) {
 }
 
 void handleClassTemplateEnd( void) {
+    global_template_params = 0;
+    if ( global_classname)
+        free( global_classname);
     cout << outdent;
     cout << indNewline;
-    cout << "}" << indNewline;
+    cout << "};" << indNewline;
 }
 
 
 void handleDeclaration( const char* decl) {
+    cout << endl << indNewline;
+    cout << decl;
+}
+
+void handleNestedType( const char* decl) {
+    cout << endl << indNewline;
+    cout << "Nested type required: " << global_classname << "::" << decl;
+}
+
+void handleMethodDeclaration( const char* decl) {
     cout << endl << indNewline;
     cout << decl;
 }
@@ -252,12 +281,13 @@ main( int argc, char **argv) {
         (nParameters > MaxParameters) || (help_switch != NO_SWITCH)) {
         if (help_switch == NO_SWITCH)
             cerr << "Error: in parameter list" << endl;
-        cerr << "Usage: cgal_extract [<options>] [<infile> ...]" << endl;
+        cerr << "Usage: cc_extract [<options>] [<infile> ...]" << endl;
         cerr << "       -nomc        no main comments"  << endl;
         cerr << "       -nosc        no sub comments"  << endl;
         cerr << "       -noc         no comments (main and sub)"  << endl;
         cerr << "       -trace       sets the `yydebug' variable of bison"
              << endl;
+        cerr << "       -h, -help    this help message"  << endl;
         exit(1);
     }
 
@@ -266,7 +296,7 @@ main( int argc, char **argv) {
 	    FILE* in;
             if ( (in = fopen( parameters[i], "r")) == NULL) {
 	        fprintf( stderr, 
-			 "\ncgal_extract: error: cannot open infile %s.\n",
+			 "\ncc_extract: error: cannot open infile %s.\n",
                          parameters[i]);
                 exit(1);
             }
