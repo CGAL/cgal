@@ -583,7 +583,7 @@ sub printEnv
   # CGAL version
   # ------------
   $cgalVersion = 'unknown';
-  $cgalFile = "$ENV{CGALROOT}/include/CGAL/config.h";
+  $cgalFile = "$ENV{CGALROOT}/include/CGAL/version.h";
   if (open CGALFILE, $cgalFile) {
     undef $/;			# input record separator
     $_ = <CGALFILE>;		# whole file
@@ -617,7 +617,7 @@ sub printEnv
   # Qt version
   # ----------
   $qtVersion = 'unknown';
-  $qtFile = "$ENV{QTROOT}/README";
+  $qtFile = "$ENV{QTDIR}/README";
   if (open QTFILE, $qtFile) { 
     undef $/;			# input record separator
     $_ = <QTFILE>;		# whole file
