@@ -86,9 +86,10 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
 	    std::cerr << "Connect pipe to stdout failed." << std::endl;
 
         if (machine && (::strlen(machine)>0)) {
-            std::ostrstream os;
-            os << " rgeomview " << machine << ":0.0" << std::ends;
-            execlp("rsh", "rsh", machine, "-l", login, os.str(), NULL);
+	    std::string s (" rgeomview ");
+	    s += machine;
+	    s += ":0.0";
+            execlp("rsh", "rsh", machine, "-l", login, s.data(), NULL);
         } else {
             execlp("geomview", "geomview", "-c", "-", NULL);
         }
