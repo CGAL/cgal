@@ -605,7 +605,8 @@ private slots:
     }
   }
   void  sl_symm_difference(){
-    if( list1->isSelected(list1->currentItem()) && list2->isSelected(list2->currentItem()) ){
+    if( list1->isSelected(list1->currentItem()) 
+        && list2->isSelected(list2->currentItem()) ){
       //if there is something selected
       Nef_polyhedron NT = Nef_visible.symmetric_difference(Nef_visible2);
       QString s = "SYM_DIF(" + list1->currentText() + ", " 
