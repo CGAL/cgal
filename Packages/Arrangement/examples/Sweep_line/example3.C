@@ -2,7 +2,6 @@
 
 #include <CGAL/basic.h> //CGAL definitions that need to be before anything else
 #include <iostream.h>
-//#include <fstream.h>
 #include <vector>
 
 #include <CGAL/Quotient.h>
@@ -10,8 +9,6 @@
 
 #include <CGAL/Arr_segment_exact_traits.h>
 #include <CGAL/sweep_to_produce_planar_map_subcurves.h>
-
-//#include <CGAL/IO/Pm_iostream.h>
 
 typedef CGAL::Quotient<int>              NT;
 typedef CGAL::Cartesian<NT>              R;
@@ -31,10 +28,9 @@ int main(int argc, char* argv[])
   int                num_segments;
   list<Curve>        segments;
   
-  std::ifstream f_curves(argv[1]);
   cin >> num_segments;
   
-  double        x1, y1, x2, y2;
+  NT        x1, y1, x2, y2;
   
   while (num_segments--) {
     cin >> x1 >> y1 >> x2 >> y2;
@@ -46,7 +42,7 @@ int main(int argc, char* argv[])
   list<Curve>  subcurves;
   CGAL::sweep_to_produce_planar_map_subcurves(segments.begin(),segments.end(), traits, subcurves);
   
-
+  cout<<"The number of disjoint interior sub segments is "<< subcurves.size() <<endl;
   for (list<Curve>::iterator scv_iter = subcurves.begin(); scv_iter != subcurves.end(); scv_iter++)
     cout<<*scv_iter<<endl;
 }
