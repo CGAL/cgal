@@ -135,19 +135,38 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc">
 			<File
+				RelativePath="edit_vertex_layer.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o edit_vertex_layer.moc edit_vertex_layer.h"
+						Outputs="edit_vertex_layer.moc"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="$(QTDIR)/bin/moc.exe -o edit_vertex_layer.moc edit_vertex_layer.h"
+						Outputs="edit_vertex_layer.moc"/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="qt_file_toolbar.h">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o qt_file_toolbar.moc qt_file_toolbar.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o qt_file_toolbar.moc qt_file_toolbar.h
+"
 						Outputs="qt_file_toolbar.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o qt_file_toolbar.moc qt_file_toolbar.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o qt_file_toolbar.moc qt_file_toolbar.h
+"
 						Outputs="qt_file_toolbar.moc"/>
 				</FileConfiguration>
 			</File>
@@ -160,14 +179,16 @@
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o qt_layers_toolbar.moc qt_layers_toolbar.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o qt_layers_toolbar.moc qt_layers_toolbar.h
+"
 						Outputs="qt_layers_toolbar.moc"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)/bin/moc.exe -o qt_layers_toolbar.moc qt_layers_toolbar.h"
+						CommandLine="$(QTDIR)/bin/moc.exe -o qt_layers_toolbar.moc qt_layers_toolbar.h
+"
 						Outputs="qt_layers_toolbar.moc"/>
 				</FileConfiguration>
 			</File>
