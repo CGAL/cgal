@@ -1,14 +1,16 @@
 
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Cartesian.h>
 #include <CGAL/Segment_tree_k.h>
 #include <CGAL/Range_segment_tree_traits.h>
 #include <CGAL/Timer.h>
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <list>
 
 
-typedef CGAL::Simple_cartesian<double> K;
+
+typedef CGAL::Cartesian<double> K;
 typedef CGAL::Range_segment_tree_set_traits_2<K> Traits;
 typedef CGAL::Segment_tree_2<Traits > Segment_tree_2_type;
 
@@ -24,7 +26,8 @@ int main()
 
   int ignore = 0;
   std::list<Iso_rectangle_2> rectangles;
-  std::copy(std::istream_iterator<Iso_rectangle_2>(std::cin),
+  std::ifstream ifs("./data.rect");
+  std::copy(std::istream_iterator<Iso_rectangle_2>(ifs),
 	    std::istream_iterator<Iso_rectangle_2>(),
 	    std::back_inserter(rectangles));
 
@@ -39,6 +42,7 @@ int main()
       intervals.push_back(Interval(it->vertex(0),it->vertex(2)));
     }
   }
+	std::cout << intervals.size() << std::endl;
 
   if(ignore > 0){
     std::cerr << "ignored " << ignore << " 1D rectangle" << std::endl;
@@ -86,13 +90,14 @@ int main()
     std::cout << Iso_rectangle_2(eit->first, eit->second) << std::endl; 
   }
 
-
+  
   if(segment_tree_2.segment_tree_2->is_valid())
     std::cout << "Tree is valid\n";
   else
     std::cout << "Tree is not valid\n";
-
   
+  
+  std::cout << "done" << std::endl;
   return 0;
 }
 
