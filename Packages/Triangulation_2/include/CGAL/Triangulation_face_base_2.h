@@ -1,3 +1,26 @@
+// ============================================================================
+//
+// Copyright (c) 1997 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// release       :
+// release_date  :
+//
+// file          : Triangulation_face_base_2
+// source        : $Source$
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Mariette Yvinec
+//
+// coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
+//
+// ============================================================================
+
 #ifndef CGAL_TRIANGULATION_FACE_BASE_2_H
 #define CGAL_TRIANGULATION_FACE_BASE_2_H
 
@@ -36,7 +59,7 @@ public:
 
 
   inline 
-  const void* vertex(int i) const
+  void* vertex(int i) const
   {
     CGAL_triangulation_precondition( i == 0 || i == 1 || i == 2);
     return V[i];
@@ -206,33 +229,6 @@ public:
   bool is_valid() const
   {return true;}
 
-  //is-valid has been moved to class Triangulation_ds_face_2
-//  bool is_valid(bool verbose = false, int level = 0) const
-//   {
-//     bool result = true;
-//     for(int i = 0; i < 3; i++) {
-//       Face_base* n = (Face_base *)neighbor(i);
-//             
-//       // The following seems natural, but it may fail if the faces
-//       // this and n are neighbors on two edges (1-dim triangulation,
-//       // with infinite faces
-//       // int ni = n->index(this);
-// 
-//       //  int ni = cw(n->index(vertex(cw(i))));
-//       // CGAL_triangulation_assertion( this == n->neighbor(ni) );
-//       // result = result && (vertex(cw(i)) == n->vertex(ccw(ni)));
-//       // result = result && (vertex(ccw(i)) == n->vertex(cw(ni)));
-// 
-//       int in;
-//       if (! n->has_vertex(vertex(cw(i)),in )) return false;
-//       in = cw(in); 
-//       result = result && ( this == n->neighbor(in) );
-//       result = result && (vertex(ccw(i)) == n->vertex(cw(in)));
-// 
-//     }
-//     return result;
-//   }
-//    
 
 private:
   void* V[3];

@@ -1,6 +1,23 @@
 // ============================================================================
 //
-// $Id$
+// Copyright (c) 1997 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// release       :
+// release_date  :
+//
+// file          : include/CGAL/Triangulation_2.h
+// source        : $RCSfile$
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Olivier Devillers, Mariette Yvinec
+//
+// coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
 //
 // ============================================================================
 
@@ -44,7 +61,7 @@ class CGAL_Triangulation_2
   friend istream& operator>> CGAL_NULL_TMPL_ARGS
                 (istream& is, CGAL_Triangulation_2<Gt,Tds> &tr);
   friend ostream& operator<< CGAL_NULL_TMPL_ARGS
-                (ostream& os, CGAL_Triangulation_2<Gt,Tds> &tr);
+                (ostream& os, const CGAL_Triangulation_2<Gt,Tds> &tr);
   friend CGAL_Triangulation_face_iterator_2<Gt,Tds>;
   friend CGAL_Triangulation_edge_iterator_2<Gt,Tds>;
   friend CGAL_Triangulation_vertex_iterator_2<Gt,Tds>;
@@ -202,10 +219,10 @@ public:
     switch(dimension()) {
     case 0 : 
       break;
-    case 1:
+    case 1 :
       // to be done
       break;
-    case 2:
+    case 2 :
       for(it=faces_begin(); it!=faces_end(); it++){
 	CGAL_triangulation_assertion( !is_infinite(it));
 	CGAL_Orientation s = geom_traits().orientation(it->vertex(0)->point(),
@@ -215,16 +232,16 @@ public:
 	result = result && ( s == CGAL_LEFTTURN );
       }
 
-      if (number_of_vertices() < 2) { return result;}
-      Vertex_circulator start = infinite_vertex()->incident_vertices(),
-	pc(start),
-	qc(start),
-	rc(start);
-      ++qc;
-      ++rc;
-      ++rc;
-      do{
-	CGAL_Orientation s = geom_traits().orientation(pc->point(),
+    if (number_of_vertices() <= 2) return result;
+    Vertex_circulator start = infinite_vertex()->incident_vertices(),
+      pc(start),
+      qc(start),
+      rc(start);
+    ++qc;
+    ++rc;
+    ++rc;
+    do{
+      CGAL_Orientation s = geom_traits().orientation(pc->point(),
 						     qc->point(),
 						     rc->point());
 	CGAL_triangulation_assertion( s != CGAL_LEFTTURN );
@@ -251,15 +268,15 @@ public:
       is_infinite(f->vertex(cw(i)));
   }
 
-  bool is_infinite(Edge e) const {
+  bool is_infinite(const Edge& e) const {
     return is_infinite(e.first,e.second);
   }
    
-  bool is_infinite(Edge_circulator& ec) const {
+  bool is_infinite(const Edge_circulator& ec) const {
     return is_infinite(*ec);
   }
 
-  bool is_infinite(Edge_iterator& ei) const {
+  bool is_infinite(const Edge_iterator& ei) const {
     return is_infinite(*ei);
   }
 
@@ -282,7 +299,7 @@ public:
 		   f->vertex(cw(i))->point());
   }
 
-  Segment segment(Edge e) const
+  Segment segment(const Edge& e) const
   {
     CGAL_triangulation_precondition(! is_infinite(e));
     return Segment(e.first->vertex(ccw(e.second))->point(),
@@ -306,8 +323,8 @@ public:
   void 
   flip(Face_handle& f, int i)
   {
-    CGAL_triangulation_precondition( f != NULL &
-				     i == 0 || i == 1 || i == 2);
+    CGAL_triangulation_precondition ( ! f.is_null() );
+    CGAL_triangulation_precondition (i == 0 || i == 1 || i == 2);
 
     Face_handle n = f->neighbor(i);
     CGAL_triangulation_precondition( !is_infinite(f) &&  !is_infinite(n) );
@@ -325,7 +342,7 @@ public:
   }
 
   void 
-  insert_first(Vertex_handle v)
+  insert_first(const Vertex_handle& v)
   {
     CGAL_triangulation_precondition(number_of_vertices() == 0 &&
 				    v != infinite_vertex());
@@ -334,7 +351,7 @@ public:
   }
 
   void 
-  insert_second(Vertex_handle v)
+  insert_second(const Vertex_handle& v)
   {
     CGAL_triangulation_precondition(number_of_vertices() == 1 &&
 				    v != infinite_vertex() &&
@@ -344,7 +361,7 @@ public:
   }
 
   void 
-  insert_in_face(Vertex_handle v, Face_handle f)
+  insert_in_face(const Vertex_handle&  v, const Face_handle& f)
   {
     CGAL_triangulation_precondition(oriented_side(f, v->point()) == 
 				    CGAL_ON_POSITIVE_SIDE);
@@ -353,7 +370,7 @@ public:
   }
 
   void 
-  insert_in_edge(Vertex_handle v, Face_handle f,int i)
+  insert_in_edge(const Vertex_handle& v, const Face_handle& f,int i)
   {
     CGAL_triangulation_precondition(
       geom_traits().orientation(f->vertex(cw(i))->point(),
@@ -379,6 +396,7 @@ public:
       insert_outside_convex_hull_2(v, f);
     }
   }
+
 
 private:
 void  insert_outside_convex_hull_1(Vertex_handle v, Face_handle f)
@@ -467,6 +485,7 @@ void  insert_outside_convex_hull_2(Vertex_handle v, Face_handle f)
   infinite_vertex()->set_face(&(*fc));
 
   } 
+<<<<<<< Triangulation_2.h
 
 public :
 void  insert_outside_affine_hull(Vertex_handle v)
@@ -653,10 +672,11 @@ void remove_second(Vertex_handle v)
     return;
   }
 
+<<<<<<< Triangulation_2.h
 void remove(Vertex_handle  v)
   {
-    CGAL_triangulation_precondition(v != NULL);
-    CGAL_triangulation_precondition( !is_infinite(v));
+      CGAL_triangulation_precondition( ! v.is_null() );
+      CGAL_triangulation_precondition( !is_infinite(v));
     
     if  (number_of_vertices() == 1) {
       remove_first(v);
@@ -780,7 +800,7 @@ void   fill_hole ( Vertex_handle v, list< Edge > & hole )
      //  v0, v1 and the next vertex v2 are all finite
      //   v0v1v2 is a left turn and
      //  triangle v0v1v2 does not contain the removed point
-    
+
      // if found create face v0v1v2
      // stop when no more faces can be created that way
                   
@@ -982,27 +1002,27 @@ Line_face_circulator(const Face_handle& face,
     CGAL_triangulation_precondition(t->dimension() ==2);
   }
             
-            
-            Line_face_circulator&
-            operator=(const Line_face_circulator& lfc)
-            {
-                ptr() = lfc.ptr();
-                i = lfc.i;
-                s = lfc.s;
-                _tr = lfc._tr;
-                p = lfc.p;
-                q = lfc.q;
-                return *this;
-            }
+ Line_face_circulator&
+   operator=(const Line_face_circulator& lfc)
+   {
+     ptr() = lfc.ptr();
+     i = lfc.i;
+     s = lfc.s;
+     _tr = lfc._tr;
+     p = lfc.p;
+     q = lfc.q;
+     return *this;
+   }
 
             Line_face_circulator(Vertex_handle v,
                                  CGAL_Triangulation_2<Gt,Tds>* tr,
                                  const Point& dir)
                 : _tr(tr)
             {
-                CGAL_triangulation_precondition((! _tr->is_infinite(v)) &&
-                                                (_tr->dimension() == 2) &&
-                                                (v->point() != dir));
+                CGAL_triangulation_precondition(
+			(! _tr->is_infinite(v)) &&
+                        (_tr->dimension() == 2) &&
+                        (! _tr->geom_traits().compare(v->point(),dir)));
 
 		p=v->point();
 		q=dir;
@@ -1047,9 +1067,7 @@ Line_face_circulator(const Face_handle& face,
 		    ptq = _tr->geom_traits().orientation(p,  vt->point(), q);
 		}
 		
-		//cerr << "t " << vt->point() << endl;
-
-
+	
 		// now vt is a finite vertex and ptq is COLLINEAR or LEFTTURN
 		Vertex_handle vr = fc-> vertex(cw(ic));
 		CGAL_Orientation prq;
@@ -1071,11 +1089,7 @@ Line_face_circulator(const Face_handle& face,
 		vt= fc->vertex(ccw(ic));
 		ptq = _tr->geom_traits().orientation(p,  vt->point(), q);
 
-		//cerr << "t " << vt->point() << endl;
-		//cerr << "r " << vr->point() << endl;
-		//cerr  << "face" << "(" << fc->vertex(0)->point() << ", "
-		//     <<fc->vertex(1)->point() << ", "
-		//      << fc->vertex(2)->point() << ")" << endl ;
+		
 
 		if (_tr->is_infinite(vr)) {		  
 		  s = vertex_vertex;
@@ -1134,7 +1148,8 @@ Line_face_circulator(const Face_handle& face,
                                                        p,
                                                        q);
                         return;
-                    } else if ( (pql == CGAL_LEFTTURN) && (pqr == CGAL_COLLINEAR) ){
+                    } else if ( (pql == CGAL_LEFTTURN) && 
+				(pqr == CGAL_COLLINEAR) ){
                         *this = ++Line_face_circulator( fc->handle() ,
                                                        ccw(i),
                                                        vertex_vertex,
@@ -1142,19 +1157,22 @@ Line_face_circulator(const Face_handle& face,
                                                        p,
                                                        q);
                         return;
-                    } else if( (pql == CGAL_COLLINEAR) && (pqr == CGAL_COLLINEAR) ){
+                    } else if( (pql == CGAL_COLLINEAR) && 
+				(pqr == CGAL_COLLINEAR) ){
                         Face_handle n = fc->neighbor(i);
                         int ni  = n->index( fc->handle() );
                         Vertex_handle vn = n->vertex(ni);
-                        if(_tr->geom_traits().orientation(p, q, vn->point()) == CGAL_LEFTTURN){
-                            // the entire triangulation is to the left of line (p,q).
-                            // There might be further collinear edges, so we might have
-                            // to walk back on the hull.
+                        if(_tr->geom_traits().orientation(p, q, vn->point()) ==
+							 CGAL_LEFTTURN){
+                   // the entire triangulation is to the left of line (p,q).
+                   // There might be further collinear edges, so we might have
+                    // to walk back on the hull.
                             while(1){
                                 ++fc;
                                 i = fc->index(inf);
                                 l = fc->vertex(cw(i))->point();
-                                if(_tr->geom_traits().orientation(p, q, l) == CGAL_COLLINEAR){
+                                if(_tr->geom_traits().orientation(p, q, l) == 
+					CGAL_COLLINEAR){
                                     continue;
                                 } else {
                                     // we went one step to far back
@@ -1167,9 +1185,9 @@ Line_face_circulator(const Face_handle& face,
                                 }
                             }
                         } else {
-                            // the entire triangulation is to the right of line (p,q).
-                            // here are no faces to traverse, so we give the circulator
-                            // a singular value
+                // the entire triangulation is to the right of line (p,q).
+                // here are no faces to traverse, so we give the circulator
+                // a singular value
                             return;
                         }
                     } else {
@@ -1202,6 +1220,7 @@ Line_face_circulator(const Face_handle& face,
                     return;
                 }
             
+		
                 // Test whether p lies on a vertex
                 for(j = 0; j < 3; j++){
                     if(ptr()->vertex(j)->point() == p){
@@ -1212,16 +1231,16 @@ Line_face_circulator(const Face_handle& face,
             
                 // Test whether p lies on an edge
                 for(j = 0; j < 3; j++){
-                    if(_tr->geom_traits().orientation(ptr()->vertex(j)->point(),
+                   if(_tr->geom_traits().orientation(ptr()->vertex(j)->point(),
                                              ptr()->vertex(ccw(j))->point(),
                                              p) == CGAL_COLLINEAR){
                         CGAL_Orientation jpq =
-                            _tr->geom_traits().orientation(ptr()->vertex(j)->point(),
+                   _tr->geom_traits().orientation(ptr()->vertex(j)->point(),
                                                   p,
                                                   q);
                         CGAL_Orientation p_cwj_q =
                             _tr->geom_traits().orientation(p,
-                                                  ptr()->vertex(cw(j))->point(),
+                                                ptr()->vertex(cw(j))->point(),
                                                   q);
                         switch(jpq){
                         case CGAL_COLLINEAR:
@@ -1229,7 +1248,8 @@ Line_face_circulator(const Face_handle& face,
                                 s = vertex_vertex;
                                 i = ccw(j);
                                 return;
-                            } else if(! _tr->is_infinite(ptr()->neighbor(cw(j)))){
+                            } 
+			else if(! _tr->is_infinite(ptr()->neighbor(cw(j)))){
                                 Face_handle n = ptr()->neighbor(cw(j));
                                 i = cw(n->index(ptr()->handle()));
                                 ptr() = &(*n);
@@ -1241,7 +1261,8 @@ Line_face_circulator(const Face_handle& face,
                             }
                         case CGAL_RIGHTTURN:
                             i = cw(j);
-                            s = (p_cwj_q == CGAL_COLLINEAR) ? vertex_edge :  edge_edge;
+                            s = (p_cwj_q == CGAL_COLLINEAR) ? vertex_edge :  
+								edge_edge;
                             break;
                         default: //  CGAL_LEFTTURN
                             switch(p_cwj_q){
@@ -1265,12 +1286,14 @@ Line_face_circulator(const Face_handle& face,
                 // p lies in the interior of the face
                 CGAL_Orientation or[3];
                 for(j=0; j<3; j++){
-                    or[j] = _tr->geom_traits().orientation(p,q,ptr()->vertex(j)->point());
+                    or[j] =
+                 _tr->geom_traits().orientation(p,q,ptr()->vertex(j)->point());
                 }
                 for(j=0; j<3; j++){
                     if(or[j] == CGAL_COLLINEAR){
                         i = j;
-                        s = (or[ccw(j)] == CGAL_LEFTTURN) ? edge_vertex : vertex_edge;
+                        s = (or[ccw(j)] == CGAL_LEFTTURN) ? edge_vertex : 
+							   vertex_edge;
                         return;
                     }
                 }
@@ -1300,7 +1323,8 @@ Line_face_circulator(const Face_handle& face,
                         }
                         r = n->vertex(i)->point();
                         i = cw(i);
-                    }while((o = _tr->geom_traits().orientation(p, q, r)) == CGAL_LEFTTURN);
+                    }while((o = _tr->geom_traits().orientation(p, q, r)) == 
+								CGAL_LEFTTURN);
             
                     if(o == CGAL_COLLINEAR){
                         s = vertex_vertex;
@@ -1314,7 +1338,7 @@ Line_face_circulator(const Face_handle& face,
                     ptr() = &(*n);
                     CGAL_Orientation o = _tr->is_infinite(ptr()->vertex(ni)) ?
                         CGAL_COLLINEAR :
-                        _tr->geom_traits().orientation(p, q, ptr()->vertex(ni)->point());
+               _tr->geom_traits().orientation(p,q,ptr()->vertex(ni)->point());
             
                     switch(o){
                     case CGAL_LEFTTURN:
@@ -1332,7 +1356,7 @@ Line_face_circulator(const Face_handle& face,
                 }
             }
             
-            
+
             void decrement()
             {
                 CGAL_triangulation_precondition(s != undefined);
@@ -1353,17 +1377,19 @@ Line_face_circulator(const Face_handle& face,
                         }
                         r = n->vertex(i)->point();
                         i = ccw(i);
-                    }while((o = _tr->geom_traits().orientation(p, q, r)) == CGAL_LEFTTURN);
+                    }while((o = _tr->geom_traits().orientation(p, q, r)) == 
+                       CGAL_LEFTTURN);
             
                     s = (o == CGAL_COLLINEAR) ? vertex_vertex : edge_vertex;
             
                 } else { // s == edge_edge  ||  s == edge_vertex
-                    // the following is not nice. A better solution is to say
-                    // that index i is at the vertex that is alone on one side of l(p,q)
+             // the following is not nice. A better solution is to say
+          // that index i is at the vertex that is alone on one side of l(p,q)
                     if(s == edge_edge){
                         i = (_tr->geom_traits().orientation
                                             (p, q,
-                                            ptr()->vertex(i)->point()) == CGAL_LEFTTURN)
+                                            ptr()->vertex(i)->point()) == 
+						CGAL_LEFTTURN)
                             ? cw(i) : ccw(i);
                     }
                     Face_handle n = ptr()->neighbor(i);
@@ -1371,7 +1397,7 @@ Line_face_circulator(const Face_handle& face,
                     ptr() = &(*n);
                     CGAL_Orientation o = _tr->is_infinite(ptr()->vertex(i)) ?
                         CGAL_COLLINEAR :
-                        _tr->geom_traits().orientation(p, q, ptr()->vertex(i)->point());
+               _tr->geom_traits().orientation(p, q, ptr()->vertex(i)->point());
             
                     s = (o == CGAL_COLLINEAR) ? vertex_edge : edge_edge;
                 }
@@ -1388,8 +1414,8 @@ Line_face_circulator(const Face_handle& face,
                 case vertex_edge:
                     {
                         CGAL_Orientation o =
-                            _tr->geom_traits().orientation(ptr()->vertex(ccw(i))->point(),
-                                                  ptr()->vertex(cw(i))->point(),
+                _tr->geom_traits().orientation(ptr()->vertex(ccw(i))->point(),
+                                                ptr()->vertex(cw(i))->point(),
                                                   t);
                         if(o == CGAL_RIGHTTURN){
                             return false;
@@ -1405,9 +1431,9 @@ Line_face_circulator(const Face_handle& face,
                 case vertex_vertex:
                     {
                         if(_tr->is_infinite(ptr()->vertex(i))){
-                            CGAL_triangulation_assertion(_tr->geom_traits().orientation(
-                                                         ptr()->vertex(cw(i))->point(),
-                                                         ptr()->vertex(ccw(i))->point(),
+                  CGAL_triangulation_assertion(_tr->geom_traits().orientation(
+                                                ptr()->vertex(cw(i))->point(),
+                                                ptr()->vertex(ccw(i))->point(),
                                                          t) != CGAL_LEFTTURN);
                             lt = OUTSIDE_CONVEX_HULL;
                             li = i;
@@ -1437,13 +1463,16 @@ Line_face_circulator(const Face_handle& face,
                             li = i;
                             return true;
 		       }
-		       if(_tr->geom_traits().compare_x(t,ptr()->vertex(i)->point())==CGAL_EQUAL &&
-			  _tr->geom_traits().compare_y(t,ptr()->vertex(i)->point())==CGAL_EQUAL ){
+		       if(_tr->geom_traits().compare_x(t,ptr()->vertex(i)
+						->point())==CGAL_EQUAL &&
+			  _tr->geom_traits().compare_y(t,ptr()->vertex(i)
+						->point())==CGAL_EQUAL ){
                             li = i;
                             lt = VERTEX;
                             return true;
 		       }
-		       if(_tr->collinear_between(p, t, ptr()->vertex(i)->point())){
+		       if(_tr->collinear_between(p, t, ptr()->vertex(i)
+								->point())){
                             lt = FACE;
                             return true;
 		       }
@@ -1460,11 +1489,16 @@ Line_face_circulator(const Face_handle& face,
                 }
                 //xfc while (_tr->is_infinite(ptr()->handle()))
                 //    increment();
-                //we are looking for a finite face but stop if back to the origin
-                Face_handle origin = ptr()->handle();
-                do
+                //we are looking for a finite face but stop 
+		//if back to the origin
+		// strange behavoiur
+		//why not simply increment and step through infinite faces
+		//as other circulators do !!!
+                //Face_handle origin = ptr()->handle();
+                //do
                  increment();
-                while ((_tr->is_infinite(ptr()->handle())) && (ptr()->handle() != origin));
+		//while ((_tr->is_infinite(ptr()->handle())) 
+                // && (ptr()->handle() != origin));
             
                 return *this;
             }
@@ -1476,7 +1510,7 @@ Line_face_circulator(const Face_handle& face,
                 if (ptr()==NULL) {
                    return *this; // circulator has singular value
                 }
-                while (_tr->is_infinite(ptr()->handle()))
+		//  while (_tr->is_infinite(ptr()->handle()))
                        decrement();
                 return *this;
             }
@@ -1515,6 +1549,12 @@ Line_face_circulator(const Face_handle& face,
                 return ptr() != lfc.ptr();
             }
             
+      inline bool
+      is_empty()
+      {
+	return s == undefined;
+      }
+
             
             inline bool
             operator==(CGAL_NULL_TYPE n) const
@@ -1668,7 +1708,7 @@ Line_face_circulator(const Face_handle& face,
     }
     
 
-    inline Face_handle
+    Face_handle
     locate(const Point& p,
            Locate_type& lt,
            int& li,
@@ -1678,7 +1718,8 @@ Line_face_circulator(const Face_handle& face,
             if(number_of_vertices() == 0) {
                 lt = OUTSIDE_AFFINE_HULL;
             } else { // number_of_vertices() == 1
-                lt = (p == finite_vertex()->point()) ? VERTEX : OUTSIDE_AFFINE_HULL;
+                lt = geom_traits().compare(p,finite_vertex()->point()) ? 
+							VERTEX : OUTSIDE;
             }
             return NULL;
         }
@@ -1686,7 +1727,7 @@ Line_face_circulator(const Face_handle& face,
             return march_locate_1D(p, lt, li);
         }
     
-        if(start == NULL){
+        if(start.is_null()){
             start = infinite_face()->
                         neighbor(infinite_face()->index(infinite_vertex()));
         }else if(is_infinite(start)){
@@ -1711,34 +1752,78 @@ Line_face_circulator(const Face_handle& face,
   //TRAVERSING : ITERATORS AND CIRCULATORS
  Face_iterator faces_begin() const
     {
-        CGAL_Triangulation_2<Gt, Tds>* ncthis = (CGAL_Triangulation_2<Gt, Tds> *)this;
+        CGAL_Triangulation_2<Gt, Tds>* 
+		ncthis = (CGAL_Triangulation_2<Gt, Tds> *)this;
         return Face_iterator(ncthis);
     }
     Face_iterator faces_end() const
     {
-        CGAL_Triangulation_2<Gt, Tds>* ncthis = (CGAL_Triangulation_2<Gt, Tds> *)this;
+        CGAL_Triangulation_2<Gt, Tds>* 
+		ncthis = (CGAL_Triangulation_2<Gt, Tds> *)this;
         return Face_iterator(ncthis, 1);
     }
     Vertex_iterator vertices_begin() const
     {
-        CGAL_Triangulation_2<Gt, Tds>* ncthis = (CGAL_Triangulation_2<Gt, Tds>*)this;
+        CGAL_Triangulation_2<Gt, Tds>* 
+		ncthis = (CGAL_Triangulation_2<Gt, Tds>*)this;
         return Vertex_iterator(ncthis);
     }
     Vertex_iterator vertices_end() const
     {
-        CGAL_Triangulation_2<Gt, Tds>* ncthis = (CGAL_Triangulation_2<Gt, Tds>*)this;
+        CGAL_Triangulation_2<Gt, Tds>* 
+		ncthis = (CGAL_Triangulation_2<Gt, Tds>*)this;
         return Vertex_iterator(ncthis,1);
     }
     Edge_iterator edges_begin() const
     {
-        CGAL_Triangulation_2<Gt, Tds>* ncthis = (CGAL_Triangulation_2<Gt, Tds>*)this;
+        CGAL_Triangulation_2<Gt, Tds>* 
+		ncthis = (CGAL_Triangulation_2<Gt, Tds>*)this;
         return Edge_iterator(ncthis);
     }
     Edge_iterator edges_end() const
     {
-        CGAL_Triangulation_2<Gt, Tds>* ncthis = (CGAL_Triangulation_2<Gt, Tds>*)this;
+        CGAL_Triangulation_2<Gt, Tds>* 
+		ncthis = (CGAL_Triangulation_2<Gt, Tds>*)this;
         return Edge_iterator(ncthis,1);
     }
+inline
+  Face_circulator incident_faces( const Vertex_handle& v) const
+  {
+    return v->incident_faces();
+  }
+
+  inline
+   Face_circulator incident_faces( 
+	const Vertex_handle& v, const Face_handle& f) const
+  {
+    return v->incident_faces(f);
+  }
+
+   inline 
+  Vertex_circulator incident_vertices(const Vertex_handle& v) const
+  {
+    return v->incident_vertices();
+  }
+
+  inline 
+  Vertex_circulator incident_vertices(const Vertex_handle& v,
+				      const Face_handle& f) const
+  {
+    return v->incident_vertices(f);
+  }
+
+ inline 
+  Edge_circulator incident_edgees(const Vertex_handle& v) const
+  {
+    return v->incident_edges();
+  }
+
+  inline 
+  Edge_circulator incident_edges(const Vertex_handle& v,
+				 const Face_handle& f) const
+  {
+    return v->incident_edges(f);
+  }
 
 
     Line_face_circulator
@@ -1748,11 +1833,11 @@ Line_face_circulator(const Face_handle& face,
     {
         CGAL_triangulation_precondition( (dimension() == 2) && (p != q) );
     
-        Line_face_circulator lfc = (f == NULL)
+        Line_face_circulator lfc = (f.is_null())
                                    ? Line_face_circulator(p, q, this)
                                    : Line_face_circulator(p, q, f, this);
     
-        if((! (lfc == NULL)) && is_infinite( lfc )){
+        if( (!lfc.is_empty()) && is_infinite( lfc )){
             return Line_face_circulator();
         }
         return lfc;
@@ -1862,7 +1947,8 @@ Line_face_circulator(const Face_handle& face,
   
     
   // NOT DOCUMENTED
-    bool collinear_between(const Point& p, const Point& q, const Point& r) const
+    bool 
+    collinear_between(const Point& p, const Point& q, const Point& r) const
     {
         CGAL_Comparison_result c_pr = geom_traits().compare_x(p, r);
         CGAL_Comparison_result c_pq;

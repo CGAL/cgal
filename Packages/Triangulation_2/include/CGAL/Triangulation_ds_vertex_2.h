@@ -1,21 +1,33 @@
+// ============================================================================
+//
+// Copyright (c) 1997 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// release       :
+// release_date  :
+//
+// file          : Triangulation/include/CGAL/Triangulation_ds_vertex_2.h
+// source        : $Source$
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Mariette Yvinec
+//
+// coordinator   : Mariette Yvinec  < Mariette Yvinec@sophia.inria.fr>
+//
+// ============================================================================
+
 #ifndef CGAL_TRIANGULATION_DS_VERTEX_2_H
 #define CGAL_TRIANGULATION_DS_VERTEX_2_H
 
 #include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/Triangulation_ds_circulators_2.h>
 
-// template <class Vb, class Fb >
-// class  CGAL_Triangulation_ds_face_2 ;
-// 
-// template <class Vertex, class Face>
-// class CGAL_Triangulation_ds_face_circulator_2;
-// 
-// template <class Vertex, class Face>
-// class CGAL_Triangulation_ds_vertex_circulator_2;
-// 
-// template <class Vertex, class Face>
-// class CGAL_Triangulation_ds_edge_circulator_2;
-// 
+
 template <class Vb, class Fb >
 class  CGAL_Triangulation_ds_vertex_2 
   : public Vb
@@ -66,17 +78,7 @@ public:
     return (i+2) % 3;
   }
 
-  // Next member function
-  //assume that if the vertex is on the boundary
-  //face() is the first face adjacent to the vertex
-  // in counterclockwise order
 
-//   bool is_on_boundary()
-//   {
-//     Face * f= face();
-//     int i= f->index(this);
-//     return (f->neighboor(cw(i)) == NULL);
-//   }
   
   int degree() const
   {
@@ -101,27 +103,27 @@ public:
     return count;
   }
   
-  inline Vertex_circulator incident_vertices()
+  inline Vertex_circulator incident_vertices() 
   {
     return Vertex_circulator(this, face());
   }
     
-  inline Face_circulator incident_faces()
+  inline Face_circulator incident_faces() 
   {
     return Face_circulator(this, face());
   }
     
-  inline Face_circulator incident_faces(const Face* f)
+  inline Face_circulator incident_faces(const Face* f) 
   {
     return Face_circulator(this, f);
   }
     
-  inline Edge_circulator incident_edges()
+  inline Edge_circulator incident_edges() 
   {
     return Edge_circulator(this, face());
   }
        
-  inline Edge_circulator incident_edges(const Face* f)
+  inline Edge_circulator incident_edges(const Face* f) 
   {
     return Edge_circulator(this, f);
   }
@@ -129,6 +131,8 @@ public:
    bool is_valid(bool verbose = false, int level = 0) const
   {
     bool result = Vb::is_valid();
+    CGAL_triangulation_assertion(result);
+    CGAL_triangulation_assertion(face() != NULL);
     result = result && face()->has_vertex(this);
     return result;
   }

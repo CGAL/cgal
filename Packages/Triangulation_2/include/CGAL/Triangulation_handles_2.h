@@ -1,3 +1,26 @@
+// ============================================================================
+//
+// Copyright (c) 1997 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// release       :
+// release_date  :
+//
+// file          : Triangulation/include/CGAL/Triangulation_handles_2.h
+// source        : $Source$
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Mariette Yvinec
+//
+// coordinator   : Mariette Yvinec  < Mariette Yvinec@sophia.inria.fr>
+//
+// ============================================================================
+
 #ifndef CGAL_TRIANGULATION_HANDLES_2_H
 #define CGAL_TRIANGULATION_HANDLES_2_H
 
@@ -63,8 +86,8 @@ public:
   
 
   inline  
-   CGAL_Triangulation_face_handle_2(const Face_circulator& fit)
-        : Pointer(&(*fit))
+   CGAL_Triangulation_face_handle_2(const Face_circulator& fc)
+        : Pointer(&(*fc))
     {}
 };
 
@@ -103,10 +126,15 @@ public:
     }
   
    inline  
-   CGAL_Triangulation_vertex_handle_2(const Vertex_iterator& fit)
-        : Pointer(&(*fit))
+   CGAL_Triangulation_vertex_handle_2(const Vertex_iterator& vit)
+        : Pointer(&(*vit))
     {}
 
+  
+  inline  
+   CGAL_Triangulation_vertex_handle_2(const Vertex_circulator& vc)
+        : Pointer(&(*vc))
+    {}
   
 };
 

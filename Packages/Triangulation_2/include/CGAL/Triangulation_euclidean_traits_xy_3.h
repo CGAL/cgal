@@ -11,15 +11,16 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/Triangulation_euclidean_traits_xy_3.h
-// source        : web/Triangulation_euclidean_traits_xy_3.fw
+// file          : Triangulation_euclidean_traits_xy_3.h
+// source        : $Source$
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Herve Bronnimann and Andreas Fabri
+// author(s)     : Mariette Yvinec
 //
-// coordinator   : Herve Bronnimann  <Herve.Bronnimann@sophia.inria.fr>
+// coordinator   : Mariette Yvinec  < Mariette Yvinec@sophia.inria.fr>
 //
 // ============================================================================
+
 
 
 #ifndef CGAL_TRIANGULATION_EUCLIDEAN_TRAITS_XY_3_H
@@ -27,11 +28,7 @@
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Distance_2.h>
-#include <CGAL/Triangulation_vertex.h>
-#include <CGAL/Triangulation_face.h>
-#include <CGAL/Triangulation_face_circulator.h>
-#include <CGAL/Triangulation_edge_circulator.h>
-#include <CGAL/Triangulation_vertex_circulator.h>
+
 
 #include <CGAL/Point_3.h>
 #include <CGAL/Segment_3.h>
@@ -50,10 +47,7 @@ public:
     typedef CGAL_Ray_3<R>    Ray;
     typedef CGAL_Direction_3<R> Direction;
     
-    typedef CGAL_Triangulation_vertex<Point> Vertex;
-    typedef CGAL_Triangulation_face<Vertex> Face;
-    typedef typename Vertex::Vertex_handle Vertex_handle;
-    typedef typename Face::Face_handle Face_handle;
+
     
       static typename Rep::FT x(const Point &p) { return p.x(); }
       static typename Rep::FT y(const Point &p) { return p.y(); }

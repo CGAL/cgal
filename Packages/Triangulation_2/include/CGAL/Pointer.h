@@ -8,16 +8,16 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL $
-// date          :
+// release       : 
+// release_date  :         :
 //
 // file          : include/CGAL/Pointer.h
-// source        : ~yvinec/Cgal/Triangulation/include/CGAL/RCS/Pointer.h,v
+// source        : $RCSfile$
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Olivier Devillers, Mariette Yvinec
 //
-// coordinator   : Mariette Yvinec  < Mariette Yvinec@sophia.inria.fr>
+// coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
 //
 // ======================================================================
 

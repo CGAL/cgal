@@ -1,3 +1,26 @@
+// ============================================================================
+//
+// Copyright (c) 1997 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// release       :
+// release_date  :
+//
+// file          : include/CGAL/Triangulation_face_2.h
+// source        : $Source$
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Mariette Yvinec
+//
+// coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
+//
+// ============================================================================
+
 #ifndef CGAL_TRIANGULATION_FACE_2_H
 #define CGAL_TRIANGULATION_FACE_2_H
 
@@ -42,11 +65,6 @@ public:
     : Fa()
   { }
 
-//   inline 
-//   CGAL_Triangulation_face_2(Fa f)
-//     : Fa(f)
-//   {}
-// 
   inline
   CGAL_Triangulation_face_2(const Vertex_handle& v0,
 			  const Vertex_handle& v1,
@@ -95,22 +113,22 @@ public:
 
   //ACCESS FUNCTIONS
   inline
-  Face_handle neighbor(int i)
+  Face_handle neighbor(int i) const
   {
     return (Face *)(Fa::neighbor(i));
   }
 
-   inline int index(Face_handle f) const
+   inline int index(const Face_handle& f) const
   {
     return Fa::index( &(*f));
   }
   
-  inline bool has_neighbor(Face_handle f)
+  inline bool has_neighbor(const Face_handle& f) const
   {
     return Fa::has_neighbor( &(*f));
   }
 
-  inline bool has_neighbor(Face_handle f, int i)
+  inline bool has_neighbor(const Face_handle& f, int &i) const
   {
     return Fa::has_neighbor( &(*f), i);
   }
@@ -122,72 +140,46 @@ public:
   }
 
  //Setting
-  void set_vertices(Vertex_handle v0,
-		    Vertex_handle v1,
-		    Vertex_handle v2)
+  inline
+  void set_vertices(const Vertex_handle& v0,
+		    const Vertex_handle& v1,
+		    const Vertex_handle& v2)
     {
         Fa::set_vertices(&(*v0), &(*v1), &(*v2));
     }
     
-    void set_neighbors(Face_handle n0,
-                       Face_handle n1,
-                       Face_handle n2)
+  inline
+    void set_neighbors(const Face_handle& n0,
+                       const Face_handle& n1,
+                       const Face_handle& n2)
     {
-        Fa::set_neighbor(&(*n0), &(*n1), &(*n2));
+        Fa::set_neighbors(&(*n0), &(*n1), &(*n2));
     }
-    
-  //void set_vertices() inherited
-  //void set_neighbors() inherited
 
-    void set_vertex(int i, Vertex_handle v)
+  inline  
+  void set_vertices() 
+  {
+    Fa::set_vertices();
+  }
+   
+ inline
+  void set_neighbors() 
+  {
+    Fa::set_neighbors();
+  }
+    
+  inline
+    void set_vertex(int i, const Vertex_handle& v)
     {
         Fa::set_vertex(i, &(*v));
     }
-    
-    void set_neighbor(int i, Face_handle n)
+
+    inline
+    void set_neighbor(int i, const Face_handle& n)
     {
         Fa::set_neighbor(i, &(*n));
     }
-    
-  
-  //MODIFIERS
-//   void insert_in_face(const Vertex_handle& v)
-//   {
-//     Fa::insert_in_face(&(*v));
-//   }
-// 
-//   void insert_on_edge(const Vertex* v, int i)
-//   {
-//     Fa::insert_on_edge(&(*v),i);
-//   }
-// 
-//   void insert_out(const Vertex* v, int i)
-//   {
-//     Fa::insert_out(&(*v),i);
-//   }
 
-//   // for compatibility with previous versions
-//   void insert(const Vertex_handle& v)
-//   {
-//     Fa::insert_in_face(&(*v));
-//   }
-// 
-//   // for compatibility with previous versions
-//   void insert(const Vertex* v, int i)
-//   {
-//     Fa::insert_out(&(*v),i);
-//   }
-// 
-//   bool remove(Vertex_handle v)
-//   {
-//     Fa::remove(&(*v));
-//   }
-// 
-//   //void flip(int i) inherited
-// 
-//   CHECKING
-//   bool is_valid(bool verbose = false, int level = 0) const inherited
-// 
 };
 
 #endif CGAL_TRIANGULATION_FACE_2_H

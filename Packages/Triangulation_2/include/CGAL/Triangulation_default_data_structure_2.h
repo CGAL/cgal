@@ -1,6 +1,23 @@
 // ============================================================================
 //
-// $Id$
+// Copyright (c) 1997 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// release       :
+// release_date  :
+//
+// file     : Triangulatin/include/CGAL/Triangulation_default_data_structure_2.h
+// source        : $RCSfile$
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Mariette Yvinec
+//
+// coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
 //
 // ============================================================================
 
@@ -11,6 +28,7 @@
 #include <pair.h>
 #include <list.h>
 #include <map.h>
+#include <vector.h>
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_2.h>
@@ -65,10 +83,14 @@ public:
   typedef CGAL_Triangulation_ds_vertex_iterator_2<Tds> Vertex_iterator;
   typedef CGAL_Triangulation_ds_edge_iterator_2<Tds> Edge_iterator;
 
-  typedef CGAL_Triangulation_ds_face_circulator_2<Vertex,Face> Face_circulator;
-  typedef CGAL_Triangulation_ds_vertex_circulator_2<Vertex,Face> Vertex_circulator;
-  typedef CGAL_Triangulation_ds_edge_circulator_2<Vertex,Face> Edge_circulator;
- 
+
+  typedef CGAL_Triangulation_ds_face_circulator_2<Vertex,Face> 
+							Face_circulator;
+  typedef CGAL_Triangulation_ds_vertex_circulator_2<Vertex,Face> 
+							Vertex_circulator;
+  typedef CGAL_Triangulation_ds_edge_circulator_2<Vertex,Face> 
+							Edge_circulator;
+
 
   //creators
   CGAL_Triangulation_default_data_structure_2() 
@@ -87,8 +109,11 @@ public:
     CGAL_triangulation_postcondition( is_valid() );
   }
 
-  CGAL_Triangulation_default_data_structure_2(Vertex * v, const Geom_traits& gt)
-    :  _geom_traits(gt) 
+
+  CGAL_Triangulation_default_data_structure_2(Vertex * v, 
+					      const Geom_traits& gt)
+    : _infinite_vertex(NULL), _finite_vertex(NULL),
+      _number_of_vertices(0), _geom_traits(gt)
   {
     init(v);
     CGAL_triangulation_postcondition( is_valid() );
@@ -194,15 +219,13 @@ public:
       Vertex*  v_cw = f->vertex(cw(i));
       Vertex*  v_ccw = f->vertex(ccw(i));
 
-      
       CGAL_triangulation_assertion( f->vertex(cw(i)) == n->vertex(ccw(ni)));
       CGAL_triangulation_assertion( f->vertex(ccw(i)) == n->vertex(cw(ni)));	
       CGAL_triangulation_assertion( f->vertex(i) != n->vertex(ni));
       CGAL_triangulation_assertion( f == n->neighbor(ni) );
     
      
-    
-       // bl == bottom left, tr == top right
+        // bl == bottom left, tr == top right
         Face* tr = f->neighbor(ccw(i));
 	Face* bl = n->neighbor(ccw(ni));
         int bli, tri;
@@ -693,7 +716,7 @@ public:
     Face* f2;
 
     int n = tds.number_of_vertices();
-    int m = tds.number_of_faces();
+    //non used?? int m = tds.number_of_faces();
     set_number_of_vertices(n);
     _geom_traits = tds.geom_traits();
     //the class Geom_traits is required to have a pertinent operator=
@@ -837,7 +860,7 @@ public:
             Faces.push_front(&(*fc));
         }while(++fc != fcdone);
     }
-    CGAL_triangulation_assertion( number_of_faces() == Faces.size());
+    CGAL_triangulation_assertion( number_of_faces() == (int) Faces.size());
      
     {
         list<Face*>::iterator
@@ -864,7 +887,8 @@ public:
 
 template < class Gt , class Vb, class Fb>
 istream&
-operator>>(istream& is,  CGAL_Triangulation_default_data_structure_2<Gt,Vb,Fb>& tds)
+operator>>(istream& is,  
+	   CGAL_Triangulation_default_data_structure_2<Gt,Vb,Fb>& tds)
 {
   typedef CGAL_Triangulation_ds_vertex_2<Vb,Fb>::Vertex Vertex;
   typedef CGAL_Triangulation_ds_face_2<Vb,Fb>::Face Face;
@@ -942,7 +966,8 @@ operator>>(istream& is,  CGAL_Triangulation_default_data_structure_2<Gt,Vb,Fb>& 
 
 template < class Gt, class Vb, class Fb>
 ostream&
-operator<<(ostream& os, const  CGAL_Triangulation_default_data_structure_2<Gt,Vb,Fb>  &tds)
+operator<<(ostream& os, 
+	   const  CGAL_Triangulation_default_data_structure_2<Gt,Vb,Fb>  &tds)
 {
   map< void*, int, less<void*> > V;
   map< void*, int, less<void*> > F;

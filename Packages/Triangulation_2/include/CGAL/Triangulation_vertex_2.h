@@ -1,3 +1,26 @@
+// ============================================================================
+//
+// Copyright (c) 1997 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// release       :
+// release_date  :
+//
+// file          : include/CGAL/Triangulation_vertex_2.h
+// source        : $Source$
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Mariette Yvinec
+//
+// coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
+//
+// ============================================================================
+
 #ifndef CGAL_TRIANGULATION_VERTEX_2_H
 #define CGAL_TRIANGULATION_VERTEX_2_H
 
@@ -62,7 +85,7 @@ public:
     :  Ve(p)
   {}
     
-  CGAL_Triangulation_vertex_2(const Point & p, Face_handle f)
+  CGAL_Triangulation_vertex_2(const Point & p, const Face_handle& f)
     :  Ve(p, &(*f))
   {}
 
@@ -86,28 +109,33 @@ public:
   // cw(i), ccw(i)
   // degree(), point(), is_on_boundary, set_point(p)
 
-  inline Vertex_circulator incident_vertices()
+  inline Vertex_circulator incident_vertices() const
   {
     return Vertex_circulator(handle(), face());
   }
-    
+
+  inline Vertex_circulator incident_vertices(const Face_handle& f) const
+  {
+    return Vertex_circulator(handle(), f);
+  } 
+
   inline 
-  Face_circulator incident_faces()
+  Face_circulator incident_faces() const
   {
     return Face_circulator(handle(), face());
   }
     
-  inline Face_circulator incident_faces(const Face_handle& f)
+  inline Face_circulator incident_faces(const Face_handle& f) const
   {
     return Face_circulator(handle(), f);
   }
     
-  inline Edge_circulator incident_edges()
+  inline Edge_circulator incident_edges() const
   {
     return Edge_circulator(handle(), face());
   }
  
-  inline Edge_circulator incident_edges(const Face_handle& f)
+  inline Edge_circulator incident_edges(const Face_handle& f) const
   {
     return Edge_circulator(handle(), f);
   }

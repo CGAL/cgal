@@ -1,3 +1,26 @@
+// ============================================================================
+//
+// Copyright (c) 1997 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// release       :
+// release_date  :
+//
+// file          : Triangulation/include/CGAL/Triangulation_circulators_2.h
+// source        : $RCSfile$
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Mariette Yvinec
+//
+// coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
+//
+// ============================================================================
+
 #ifndef CGAL_TRIANGULATION_CIRCULATORS_2_H
 #define CGAL_TRIANGULATION_CIRCULATORS_2_H
 
@@ -28,7 +51,9 @@ class CGAL_Triangulation_edge_circulator_2;
 
 template < class Gt, class Tds>
 class CGAL_Triangulation_face_circulator_2
-    : public CGAL_Bidirectional_circulator_base<CGAL_Triangulation_face_2<Gt,Tds>,ptrdiff_t,size_t>
+    : public 
+    CGAL_Bidirectional_circulator_base<CGAL_Triangulation_face_2<Gt,Tds>,
+					ptrdiff_t,size_t>
 {
 public:
   typedef typename Tds::Vertex Ve;
@@ -125,7 +150,13 @@ public:
   {
             return ! (*this == fc);
   }
-        
+   
+  bool is_empty() const
+  {
+    return( _bfc.is_empty());
+  }
+
+
   bool  operator==(CGAL_NULL_TYPE n) const
   {
     CGAL_triangulation_assertion( n == NULL);
@@ -138,6 +169,8 @@ public:
     CGAL_triangulation_assertion( n == NULL);
     return ! (*this == NULL);
   }
+
+  
         
   inline Face& operator*() const
   {
@@ -208,7 +241,8 @@ public:
     : _bvc(vc._bvc)
   {}
    
-  CGAL_Triangulation_vertex_circulator_2 &operator=(const Vertex_circulator &vc)
+  CGAL_Triangulation_vertex_circulator_2 &
+	operator=(const Vertex_circulator &vc)
   {
     _bvc = vc._bvc;
     return *this;
@@ -250,18 +284,25 @@ public:
   {
             return ! (*this == vc);
   }
-        
+  
+  bool is_empty() const
+  {
+    return( _bvc.is_empty());
+  }
+
+
+      
   bool  operator==(CGAL_NULL_TYPE n) const
   {
     CGAL_triangulation_assertion( n == NULL);
-    return (_bvc == NULL);
+    return (_bvc == (CGAL_NULL_TYPE) NULL);
   }
         
   bool
   operator!=(CGAL_NULL_TYPE n) const
   {
     CGAL_triangulation_assertion( n == NULL);
-    return ! (*this == NULL);
+    return ! (*this == (CGAL_NULL_TYPE) NULL);
   }
         
   inline Vertex& operator*() const
@@ -282,7 +323,9 @@ private:
 
 template < class Gt, class Tds>
 class CGAL_Triangulation_edge_circulator_2
-  : public CGAL_Bidirectional_circulator_base< typename CGAL_Triangulation_2<Gt, Tds>::Edge,ptrdiff_t,size_t>
+  : public 
+   CGAL_Bidirectional_circulator_base< 
+          typename CGAL_Triangulation_2<Gt, Tds>::Edge,ptrdiff_t,size_t>
 {
 public:
   typedef Tds Triangulation_data_structure;
@@ -300,7 +343,6 @@ public:
   typedef CGAL_Triangulation_face_circulator_2<Gt,Tds>      Face_circulator;
   typedef CGAL_Triangulation_edge_circulator_2<Gt,Tds>      Edge_circulator;
   typedef CGAL_Triangulation_vertex_circulator_2<Gt,Tds>    Vertex_circulator;
-
 
   static int ccw(int i)
   {
@@ -331,7 +373,7 @@ public:
         v->face()->dimension() == 0 )	 { _bec = Base_face_circulator();}
   }
    
-   CGAL_Triangulation_edge_circulator_2(const Vertex_circulator &ec)
+   CGAL_Triangulation_edge_circulator_2(const Edge_circulator &ec)
     : _bec(ec._bec)
   {}
    
@@ -349,7 +391,7 @@ public:
         
   Edge_circulator operator++(int)
   {
-    Vertex_circulator tmp(*this);
+    Edge_circulator tmp(*this);
     ++(*this);
     return tmp;
   }
@@ -362,7 +404,7 @@ public:
         
   Edge_circulator operator--(int)
   {
-    Vertex_circulator tmp(*this);
+    Edge_circulator tmp(*this);
     --(*this);
     return tmp;
   }
@@ -378,6 +420,11 @@ public:
             return ! (*this == ec);
   }
         
+   bool is_empty() const
+  {
+    return( _bec.is_empty());
+  }
+
   bool  operator==(CGAL_NULL_TYPE n) const
   {
     CGAL_triangulation_assertion( n == NULL);
@@ -391,10 +438,10 @@ public:
     return ! (*this == NULL);
   }
         
-  inline Edge& operator*() const
+  inline Edge operator*() const
   {
-    Face_handle fh = (Face *) ((*_bfc).first);
-    return make_pair( fh  , (*_bfc).second );
+    Face_handle fh = (Face *) ((*_bec).first);
+    return make_pair( fh  , (*_bec).second );
   }
 
     

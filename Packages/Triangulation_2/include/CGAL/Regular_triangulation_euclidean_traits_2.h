@@ -1,3 +1,26 @@
+// ============================================================================
+//
+// Copyright (c) 1997 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// release       :
+// release_date  :
+//
+// file          : include/CGAL/Regular_triangulation_euclidean_traits_2.h
+// source        : $RCSfile$
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Mariette Yvinec
+//
+// coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
+//
+// ============================================================================
+
 #ifndef CGAL_REGULAR_TRIANGULATION_EUCLIDEAN_TRAIS_2_H
 #define CGAL_REGULAR_TRIANGULATION_EUCLIDEAN_TRAIS_2_H
 
@@ -54,10 +77,14 @@ public:
 
 template <class FT,class Weight >
 CGAL_Oriented_side
-CGAL_power_test(const CGAL_Weighted_point_2<CGAL_Point_2<CGAL_Cartesian<FT> >, Weight> &p,
-                const CGAL_Weighted_point_2<CGAL_Point_2<CGAL_Cartesian<FT> >, Weight> &q,
-                const CGAL_Weighted_point_2<CGAL_Point_2<CGAL_Cartesian<FT> >, Weight> &r,
-                const CGAL_Weighted_point_2<CGAL_Point_2<CGAL_Cartesian<FT> >, Weight> &test)
+CGAL_power_test(const CGAL_Weighted_point_2<CGAL_Point_2<CGAL_Cartesian<FT> >, 
+                Weight> &p,
+                const CGAL_Weighted_point_2<CGAL_Point_2<CGAL_Cartesian<FT> >, 
+                Weight> &q,
+                const CGAL_Weighted_point_2<CGAL_Point_2<CGAL_Cartesian<FT> >, 
+                Weight> &r,
+                const CGAL_Weighted_point_2<CGAL_Point_2<CGAL_Cartesian<FT> >, 
+                Weight> &test)
 {
 	FT FT0(0);
 	FT FT1(1);
@@ -76,10 +103,10 @@ CGAL_power_test(const CGAL_Weighted_point_2<CGAL_Point_2<CGAL_Cartesian<FT> >, W
 
 	CGAL_kernel_precondition( ! CGAL_collinear(p,q,r) );
 
-	FT det = CGAL_det4x4_by_formula(px, py, px*px + py*py -pw*pw, FT1,
-	                                qx, qy, qx*qx + qy*qy -qw*qw, FT1,
-	                                rx, ry, rx*rx + ry*ry -rw*rw, FT1,
-	                                tx, ty, tx*tx + ty*ty -tw*tw, FT1);
+	FT det = CGAL_det4x4_by_formula(px, py, px*px + py*py -pw, FT1,
+	                                qx, qy, qx*qx + qy*qy -qw, FT1,
+	                                rx, ry, rx*rx + ry*ry -rw, FT1,
+	                                tx, ty, tx*tx + ty*ty -tw, FT1);
 
 	return (det<FT0) ? CGAL_ON_NEGATIVE_SIDE  : 
 	  ((det==FT0) ? CGAL_ON_ORIENTED_BOUNDARY : CGAL_ON_POSITIVE_SIDE);
@@ -125,22 +152,22 @@ const CGAL_Weighted_point_2<CGAL_Point_2<CGAL_Homogeneous<RT> >, Weight>& t)
 
 	RT a = qhx*qhw;
 	RT b = qhy*qhw;
-	RT c = qhx*qhx + qhy*qhy - qhwt*qhwt;
+	RT c = qhx*qhx + qhy*qhy - qhwt*qhw*qhw;
 	RT d = qhw*qhw;
 
 	RT e = rhx*rhw;
 	RT f = rhy*rhw;
-	RT g = rhx*rhx + rhy*rhy - rhwt*rhwt;
+	RT g = rhx*rhx + rhy*rhy - rhwt*rhw*rhw;
 	RT h = rhw*rhw;
 
 	RT i = shx*shw;
 	RT j = shy*shw;
-	RT k = shx*shx + shy*shy - shwt*shwt;
+	RT k = shx*shx + shy*shy - shwt*shw*shw;
 	RT l = shw*shw;
 
 	RT m = thx*thw;
 	RT n = thy*thw;
-	RT o = thx*thx + thy*thy - thwt*thwt;
+	RT o = thx*thx + thy*thy - thwt*thw*thw;
 	RT p = thw*thw;
 
 	RT det = CGAL_det4x4_by_formula(a,b,c,d,
@@ -150,7 +177,8 @@ const CGAL_Weighted_point_2<CGAL_Point_2<CGAL_Homogeneous<RT> >, Weight>& t)
 
 
 	return (det<RT0) ? CGAL_ON_NEGATIVE_SIDE
-	                 : ((det==RT0) ? CGAL_ON_ORIENTED_BOUNDARY : CGAL_ON_POSITIVE_SIDE);
+	                 : ((det==RT0) ? 
+                            CGAL_ON_ORIENTED_BOUNDARY : CGAL_ON_POSITIVE_SIDE);
 }
 
 
@@ -159,9 +187,12 @@ const CGAL_Weighted_point_2<CGAL_Point_2<CGAL_Homogeneous<RT> >, Weight>& t)
 
 template <class FT,class Weight >
 CGAL_Oriented_side
-CGAL_power_test(const CGAL_Weighted_point_2<CGAL_Point_2<CGAL_Cartesian<FT> >, Weight> &p,
-                const CGAL_Weighted_point_2<CGAL_Point_2<CGAL_Cartesian<FT> >, Weight> &q,
-                const CGAL_Weighted_point_2<CGAL_Point_2<CGAL_Cartesian<FT> >, Weight> &test)
+CGAL_power_test(const CGAL_Weighted_point_2<CGAL_Point_2<CGAL_Cartesian<FT> >, 
+                Weight> &p,
+                const CGAL_Weighted_point_2<CGAL_Point_2<CGAL_Cartesian<FT> >, 
+                Weight> &q,
+                const CGAL_Weighted_point_2<CGAL_Point_2<CGAL_Cartesian<FT> >, 
+                Weight> &test)
 {
 	FT FT0(0);
 	FT FT1(1);
@@ -180,31 +211,36 @@ CGAL_power_test(const CGAL_Weighted_point_2<CGAL_Point_2<CGAL_Cartesian<FT> >, W
 	CGAL_kernel_precondition( p.point() != q.point() );
 	if (px!=qx)
 	{	
-		det = CGAL_det3x3_by_formula(px, px*px + py*py -pw*pw, FT1,
-		                             qx, qx*qx + qy*qy -qw*qw, FT1,
-		                             tx, tx*tx + ty*ty -tw*tw, FT1);
+		det = CGAL_det3x3_by_formula(px, px*px + py*py -pw, FT1,
+		                             qx, qx*qx + qy*qy -qw, FT1,
+		                             tx, tx*tx + ty*ty -tw, FT1);
 		if (px<qx)
 			det=-det;
 	}
 	else
 	{
-		det = CGAL_det3x3_by_formula(py, px*px + py*py -pw*pw, FT1,
-		                             qy, qx*qx + qy*qy -qw*qw, FT1,
-		                             ty, tx*tx + ty*ty -tw*tw, FT1);
+		det = CGAL_det3x3_by_formula(py, px*px + py*py -pw, FT1,
+		                             qy, qx*qx + qy*qy -qw, FT1,
+		                             ty, tx*tx + ty*ty -tw, FT1);
 		if (py<qy)
 			det=-det;
 	}
 	return (det<FT0) ? CGAL_ON_NEGATIVE_SIDE
-	                 : ((det==FT0) ? CGAL_ON_ORIENTED_BOUNDARY : CGAL_ON_POSITIVE_SIDE);
+	                 : ((det==FT0) ? CGAL_ON_ORIENTED_BOUNDARY 
+				: CGAL_ON_POSITIVE_SIDE);
 };
 
 
 
 template < class RT,class Weight >
 CGAL_Oriented_side
-CGAL_power_test( const CGAL_Weighted_point_2<CGAL_Point_2<CGAL_Homogeneous<RT> >, Weight>& q,
-                 const CGAL_Weighted_point_2<CGAL_Point_2<CGAL_Homogeneous<RT> >, Weight>& r,
-                 const CGAL_Weighted_point_2<CGAL_Point_2<CGAL_Homogeneous<RT> >, Weight>& t)
+CGAL_power_test(
+	const CGAL_Weighted_point_2<CGAL_Point_2<CGAL_Homogeneous<RT> >,
+        Weight>& q,
+        const CGAL_Weighted_point_2<CGAL_Point_2<CGAL_Homogeneous<RT> >,
+        Weight>& r,
+        const CGAL_Weighted_point_2<CGAL_Point_2<CGAL_Homogeneous<RT> >,
+ 	Weight>& t)
 {
 	const RT& qhx = q.hx();
 	const RT& qhy = q.hy();
@@ -237,13 +273,13 @@ CGAL_power_test( const CGAL_Weighted_point_2<CGAL_Point_2<CGAL_Homogeneous<RT> >
 		RT i = thy*thw;
 	}
 
-	RT c = qhx*qhx + qhy*qhy - qhwt*qhwt;
+	RT c = qhx*qhx + qhy*qhy - qhwt*qhw*qhw;
 	RT d = qhw*qhw;
 
-	RT g = rhx*rhx + rhy*rhy - rhwt*rhwt;
+	RT g = rhx*rhx + rhy*rhy - rhwt*rhw*rhw;
 	RT h = rhw*rhw;
 
-	RT k = thx*thx + thy*thy - thwt*thwt;
+	RT k = thx*thx + thy*thy - thwt*thw*thw;
 	RT l = thw*thw;
 
 	RT det = CGAL_det4x4_by_formula(a,c,d,
@@ -254,7 +290,8 @@ CGAL_power_test( const CGAL_Weighted_point_2<CGAL_Point_2<CGAL_Homogeneous<RT> >
 		det=-det;
 
 	return (det<RT0) ? CGAL_ON_NEGATIVE_SIDE
-	                 : ((det==RT0) ? CGAL_ON_ORIENTED_BOUNDARY : CGAL_ON_POSITIVE_SIDE);
+	                 : ((det==RT0) ? CGAL_ON_ORIENTED_BOUNDARY 
+				: CGAL_ON_POSITIVE_SIDE);
 }
 
 #endif // CGAL_REGULAR_TRIANGULATION_EUCLIDEAN_TRAIS_2_H

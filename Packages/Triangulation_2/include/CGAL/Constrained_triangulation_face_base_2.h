@@ -1,9 +1,32 @@
+// ============================================================================
+//
+// Copyright (c) 1997 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// release       :
+// release_date  :
+//
+// file          : Triangulation/include/CGAL/Constrained_triangulation_face_base_2.h
+// source        : $Source$
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Mariette Yvinec
+//
+// coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
+//
+// ============================================================================
+
 #ifndef CGAL_CONSTRAINED_TRIANGULATION_FACE_BASE_2_H
 #define CGAL_CONSTRAINED_TRIANGULATION_FACE_BASE_2_H
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_2.h>
-#include <list.h>
+
 
 template <class Gt>
 class CGAL_Constrained_triangulation_face_base_2
@@ -12,13 +35,13 @@ class CGAL_Constrained_triangulation_face_base_2
 public:
   typedef Gt Geom_traits;
   typedef CGAL_Triangulation_face_base_2<Gt> Fb;
-  typedef CGAL_Regular_triangulation_face_base_2<Gt> Regular_face_base;
+  typedef CGAL_Constrained_triangulation_face_base_2<Gt> Constrained_face_base;
   typedef typename Gt::Point  Point;
-  typedef list<Point> Point_list;
 
-protected;
- Point_list* point_list;
-
+protected:
+  bool C[3];
+ 
+public:
   CGAL_Constrained_triangulation_face_base_2()
     : Fb()
   {

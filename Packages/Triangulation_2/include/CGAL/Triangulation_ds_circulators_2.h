@@ -1,3 +1,26 @@
+// ============================================================================
+//
+// Copyright (c) 1997 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// release       :
+// release_date  :
+//
+// file          : Triangulation/include/CGAL/Triangulation_ds_circulators_2.h
+// source        : $Source$
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Mariette Yvinec
+//
+// coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
+//
+// ============================================================================
+
 #ifndef CGAL_TRIANGULATION_DS_CIRCULATORS_2_H
 #define CGAL_TRIANGULATION_DS_CIRCULATORS_2_H
 
@@ -35,22 +58,24 @@ public :
 
 
   CGAL_Triangulation_ds_face_circulator_2()
-    : pos(NULL), _v(NULL)
+    : _v(NULL), pos(NULL)
   {}
         
   CGAL_Triangulation_ds_face_circulator_2(Vertex* v)
-    : pos(v->face()), _v(v)
-  {  }
+    :  _v(v), pos(v->face())
+  {}
+
 
   CGAL_Triangulation_ds_face_circulator_2(Vertex* v,    Face* f)
-          : pos(f),_v(v) 
+          :_v(v), pos(f)
   {
     CGAL_triangulation_precondition( f->has_vertex(v));
   }
+
         
         
   CGAL_Triangulation_ds_face_circulator_2(const Face_circulator &fc)
-    : pos(fc.pos),_v(fc._v)
+    : _v(fc._v), pos(fc.pos)
   {}
         
    
@@ -111,12 +136,17 @@ public :
   {
     return ! (*this == fc);
   }
-        
+   
+  bool is_empty() const
+  {
+    return ((_v == NULL) || (pos == NULL));
+  }
+
   bool
   operator==(CGAL_NULL_TYPE n) const
   {
     CGAL_triangulation_assertion( n == NULL);
-    return (pos == NULL);
+    return (_v == NULL || pos == NULL);
   }
         
   bool
@@ -161,7 +191,6 @@ public:
   {}
                 
   CGAL_Triangulation_ds_vertex_circulator_2(Vertex* v)
-				      
     : _v( v ), _f(v->face())
   {
     if( _f != NULL ) {
@@ -267,10 +296,16 @@ public:
     return ! (*this == vc);
   }
                
-  bool operator==(CGAL_NULL_TYPE n) const
+  bool is_empty() const
+  {
+    return ((_v == NULL) || (_f == NULL));
+  }
+
+
+ bool operator==(CGAL_NULL_TYPE n) const
   {
     CGAL_triangulation_assertion( n == NULL);
-    return (_f == NULL);
+    return (_v == NULL) || (_f == NULL);
   }
         
         
@@ -325,8 +360,7 @@ public:
     }
   }
 
-  CGAL_Triangulation_ds_edge_circulator_2( Vertex* v,
-				        Face*   f)
+  CGAL_Triangulation_ds_edge_circulator_2( Vertex* v, Face* f)
     : _v(v), _f(f)
   {
     if( _f != NULL ){
@@ -348,10 +382,14 @@ public:
     return *this;
   }
 
+
   Edge
-  operator*()
+  operator*() const
   {
-        return make_pair(_f, _ri);
+    if( _f == NULL) {
+      return make_pair(_f, 0);
+    }
+     return make_pair(_f, _ri);
   }
         
   Edge_circulator& operator++()
@@ -414,10 +452,15 @@ public:
     return ! (*this == vc);
   }
 
-  bool operator==(CGAL_NULL_TYPE n) const
+   bool is_empty() const
+  {
+    return ((_v == NULL) || (_f == NULL));
+  }
+
+bool operator==(CGAL_NULL_TYPE n) const
   {
     CGAL_triangulation_assertion( n == NULL);
-    return (_f == NULL);
+    return (_v == NULL) || (_f == NULL);
   }
                
   bool operator!=(CGAL_NULL_TYPE n) const

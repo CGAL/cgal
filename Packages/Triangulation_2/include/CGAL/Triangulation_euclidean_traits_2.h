@@ -1,3 +1,26 @@
+// ============================================================================
+//
+// Copyright (c) 1997 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// release       :
+// release_date  :
+//
+// file          : include/CGAL/Triangulation_euclidean_traits_2.h
+// source        : $Source$
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Mariette Yvinec
+//
+// coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
+//
+// ============================================================================
+
 #ifndef CGAL_TRIANGULATION_EUCLIDEAN_TRAITS_2_H
 #define CGAL_TRIANGULATION_EUCLIDEAN_TRAITS_2_H
 
@@ -7,6 +30,7 @@
 #include <CGAL/Line_2.h>
 #include <CGAL/Direction_2.h>
 #include <CGAL/Ray_2.h>
+#include <CGAL/basic_constructions_2.h>
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_2.h>
@@ -24,9 +48,11 @@ public:
   typedef CGAL_Direction_2<R> Direction;
   typedef CGAL_Ray_2<R> Ray;
 
-
-
   typedef CGAL_Distance_2<CGAL_Triangulation_euclidean_traits_2<R> > Distance;
+
+  CGAL_Triangulation_euclidean_traits_2(){}
+  CGAL_Triangulation_euclidean_traits_2(const CGAL_Triangulation_euclidean_traits_2& et){}
+  CGAL_Triangulation_euclidean_traits_2 &operator=(const CGAL_Triangulation_euclidean_traits_2&  et){return *this;}
 
     CGAL_Comparison_result compare_x(const Point &p, const Point &q) const
     {
@@ -80,6 +106,15 @@ public:
     {
         return CGAL_circumcenter(p, q, r);
     }
+
+  Line bisector(const Segment &s) const
+  {
+    typedef typename Point::FT FT;
+    Point p = s.source() + (s.target() - s.source()) * FT(0.5);
+    Line l(s.source(), s.target());
+    return l.perpendicular(p);
+  }
+
 
 };
 

@@ -1,48 +1,26 @@
 // ============================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1997 The CGAL Consortium
 //
-// This software and related documentation is part of the
-// Computational Geometry Algorithms Library (CGAL).
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
 //
-// Every use of CGAL requires a license. Licenses come in three ki '/u/alcor/0/prisme_util/CGAL/CGAL-1.0/make/makefile_sparc_SunOS-5.5_eg++-egcs-2.90.27_LEDA'
+// ----------------------------------------------------------------------------
 //
-// - For academic research and teaching purposes, permission to use and
-//   copy the software and its documentation is hereby granted free of  
-//   charge, provided that
-//   (1) it is not a component of a commercial product, and
-//   (2) this notice appears in all copies of the software and
-//       related documentation.
-// - Development licenses grant access to the source code of the library 
-//   to develop programs. These programs may be sold to other parties as 
-//   executable code. To obtain a development license, please contact
-//   the CGAL Consortium (at cgal@cs.uu.nl).
-// - Commercialization licenses grant access to the source code and the
-//   right to sell development licenses. To obtain a commercialization 
-//   license, please contact the CGAL Consortium (at cgal@cs.uu.nl).
+// release       :
+// release_date  :
 //
-// This software and documentation is provided "as-is" and without
-// warranty of any kind. In no event shall the CGAL Consortium be
-// liable for any damage of any kind.
+// file          : include/CGAL/Delaunay_triangulation_2.h
+// source        : $RCSfile$
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Mariette Yvinec
 //
-// The CGAL Consortium consists of Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Free University of Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Max-Planck-Institute Saarbrucken
-// (Germany), RISC Linz (Austria), and Tel-Aviv University (Israel).
+// coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
 //
 // ============================================================================
-//
-// release       : CGAL-1.0
-// date          : 21 Apr 1998
-//file          : include/CGAL/Delaunay_triangulation_2.h
-// author(s)     : Olivier Devillers
-//                 Andreas Fabri
-//                 Monique Teillaud
-//                 Mariette Yvinec
-//
-// email         : cgal@cs.uu.nl
-//
-// ============================================================================
+
 
 
 #ifndef CGAL_DELAUNAY_TRIANGULATION_2_H
@@ -58,6 +36,9 @@ friend istream& operator>> CGAL_NULL_TMPL_ARGS
 public:
   typedef Gt Geom_traits;
   typedef typename Geom_traits::Distance Distance;
+  typedef typename Geom_traits::Ray Ray;
+  typedef typename Geom_traits::Line Line;
+  typedef typename Geom_traits::Direction Direction;
 
   CGAL_Delaunay_triangulation_2()
     : CGAL_Triangulation_2<Gt,Tds>() {}
@@ -256,38 +237,10 @@ private:
   }
 
   public :
-//   void insert_in_face(Vertex_handle v, Face_handle f)
-//   {
-//     CGAL_triangulation_warning_msg( true, "call to insert_in_face is strange 
-//                    for a Delaunay triangulation. \n
-//                       The Delaunay property will be enforced.\n ");
-//     CGAL_Triangulation_2<Gt,Tds>::insert_in_face(v,f);
-//     restore_Delaunay(v);
-//     return;
-//   }
-// 
-//  void insert_in_edge(Vertex_handle v, Face_handle f,int i)
-//   {
-//     CGAL_triangulation_warning_msg( true, "call to insert_in_face is strange 
-//                    for a Delaunay triangulation. \n
-//                       The Delaunay property will be enforced.\n ");
-//     CGAL_Triangulation_2<Gt,Tds>::insert_in_edge(v,f);
-//     restore_Delaunay(v);
-//     return;
-//   }
-// 
-//    void insert_outside(Vertex_handle v, Face_handle f)
-//   {
-//    
-//     CGAL_Triangulation_2<Gt,Tds>::insert_outside(v,f);
-//     restore_Delaunay(v);
-//     return;
-//   }
-
-
   void  remove(Vertex_handle v )
   {
-     CGAL_triangulation_precondition(v != NULL);
+    //CGAL_triangulation_precondition(v != (CGAL_NULL_TYPE) NULL);
+    CGAL_triangulation_precondition(! v.is_null());
      CGAL_triangulation_precondition( !is_infinite(v));
   
        if  (number_of_vertices() == 1) {
@@ -348,6 +301,7 @@ private:
 	CGAL_triangulation_assertion( result );
       }
     }
+    return result;
   }
 
   
@@ -510,7 +464,7 @@ private:
           }
           else {     // vv is a finite vertex
             p = vv->point();
-            if (  geom_traits().orientation(p0,p1,p) == CGAL_COUNTERCLOCKWISE) {
+            if (geom_traits().orientation(p0,p1,p) == CGAL_COUNTERCLOCKWISE) {
               if(is_infinite(v2)) { v2=vv; p2=p; cut_after=hit;}
               else{
                 if( geom_traits().side_of_oriented_circle (p0,p1,p2,p) ==
@@ -570,6 +524,53 @@ private:
           }
         }
       }
+  }
+
+
+  public:
+  Point dual (const Face_handle &f) const
+  {
+    return geom_traits().circumcenter(f->vertex(0)->point(),
+                   f->vertex(1)->point(),
+                   f->vertex(2)->point());
+  }
+  
+  CGAL_Object dual(const Edge &e) const
+  {
+    if( (!is_infinite(e.first)) 
+	&& (!is_infinite(e.first->neighbor(e.second))) ) {
+      	Segment s(dual(e.first),dual(e.first->neighbor(e.second)));
+      	return CGAL_Object(new CGAL_Wrapper< Segment >(s));
+    } 
+    else {
+      Face_handle f; int i;
+      if (is_infinite(e.first)) {
+        f=e.first->neighbor(e.second); f->has_neighbor(e.first,i);
+      } 
+      else {
+        f=e.first; i=e.second;
+      }
+      Line l = geom_traits().bisector(segment(f,i)).opposite();
+      if (! is_infinite(f)) {
+	Ray r(dual(f),l.direction());
+	return CGAL_Object(new CGAL_Wrapper< Ray >(r));
+      } 
+      else {
+	return CGAL_Object(new CGAL_Wrapper< Line >(l));
+      }
+    }
+    CGAL_triangulation_assertion(false); // we should not get here
+    return CGAL_Object();
+  }
+  
+  CGAL_Object dual(const Edge_circulator& ec) const
+  {
+      return dual(*ec);
+  }
+  
+  CGAL_Object dual(const Edge_iterator& ei) const
+  {
+      return dual(*ei);
   }
   
 };

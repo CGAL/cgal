@@ -1,3 +1,26 @@
+// ============================================================================
+//
+// Copyright (c) 1997 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// release       :
+// release_date  :
+//
+// file          : Triangulation/include/CGAL/Regular_triangulation_2.h
+// source        : $RCSfile$
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Frederic Fichel, Mariette Yvinec
+//
+// coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
+//
+// ============================================================================
+
 #ifndef CGAL_REGULAR_TRIANGULATION_2_H
 #define CGAL_REGULAR_TRIANGULATION_2_H
 
@@ -160,7 +183,7 @@ public:
       }
 
     return (o == CGAL_NEGATIVE) ? CGAL_ON_NEGATIVE_SIDE :
-      (o == CGAL_POSITIVE) ? CGAL_ON_POSITIVE_SIDE :                                                     CGAL_ON_ORIENTED_BOUNDARY;
+      (o == CGAL_POSITIVE) ? CGAL_ON_POSITIVE_SIDE : CGAL_ON_ORIENTED_BOUNDARY;
   }
 
   private :
@@ -556,7 +579,7 @@ public:
 	return v;
       }
       v = new Vertex(p);
-      insert_on_edge(v,loc,li);
+      insert_in_edge(v,loc,li);
       break;
     
     case COLLINEAR_OUTSIDE:
@@ -592,10 +615,11 @@ void insert_in_face(Vertex_handle v, Face_handle f)
   return;
 }
 
-void insert_on_edge(Vertex_handle v, Face_handle f, int i)
+void insert_in_edge(Vertex_handle v, Face_handle f, int i)
 {
-  CGAL_Triangulation_2<Gt,Tds>::insert_on_edge(v,f,i);
-  Face_handle g = (v==f->vertex(cw(i)) ? f->neighbor(ccw(i)) : f->neighbor(cw(i)) );
+  CGAL_Triangulation_2<Gt,Tds>::insert_in_edge(v,f,i);
+  Face_handle g = 
+	(v==f->vertex(cw(i)) ? f->neighbor(ccw(i)) : f->neighbor(cw(i)) );
   update_hidden_points_2_2(f,g);
   update_hidden_points_2_2(f->neighbor(i), g->neighbor(i));
 }    
@@ -817,12 +841,7 @@ void remove_2D(Vertex_handle v)
 public:
       void  remove(Vertex_handle v )
     {
-/*cerr<<endl<<"REMOVE "<<v->point()<<endl;
-cerr<<"etat AVANT remove";
-affiche_tout();
-cerr<<endl;
-*/
-	  CGAL_triangulation_precondition(v != NULL);
+	  CGAL_triangulation_precondition(! v.is_null());
 	  CGAL_triangulation_precondition( !is_infinite(v));
 	  Weighted_point_list p_list;
 
@@ -864,9 +883,6 @@ cerr<<endl;
 	  v.Delete();
 	  set_number_of_vertices(number_of_vertices()-1);
 
-
-//cerr<<"etat PENDANT remove"<<endl;
-//affiche_tout();
 
 	  Weighted_point p;
 	  while ( ! p_list.empty() )
@@ -942,21 +958,25 @@ void affiche_tout()
 		fi=faces_begin();
 cerr<<"***"<<endl;
 		while(fi != fi_end)
-		{	cerr << "face : "<<(void*)&(*fi)<<" => "<<endl;
-			cerr <<"point :"<<(fi->vertex(0)->point())<<" / voisin "<<&(*(fi->neighbor(0)))
+		{	
+			cerr << "face : "<<(void*)&(*fi)<<" => "<<endl;
+			cerr <<"point :"<<(fi->vertex(0)->point())
+					<<" / voisin "<<&(*(fi->neighbor(0)))
 				<<"["<<(fi->neighbor(0))->vertex(0)->point()
 				<<"/"<<(fi->neighbor(0))->vertex(1)->point()
-				<<"/"<<(fi->neighbor(0))->vertex(2)->point()<<"]"
+			<<"/"<<(fi->neighbor(0))->vertex(2)->point()<<"]"
 					<<endl;
-			cerr <<"point :"<<(fi->vertex(1)->point())<<" / voisin "<<&(*(fi->neighbor(1)))
+			cerr <<"point :"<<(fi->vertex(1)->point())
+				<<" / voisin "<<&(*(fi->neighbor(1)))
 				<<"["<<(fi->neighbor(1))->vertex(0)->point()
 				<<"/"<<(fi->neighbor(1))->vertex(1)->point()
-				<<"/"<<(fi->neighbor(1))->vertex(2)->point()<<"]"
+			<<"/"<<(fi->neighbor(1))->vertex(2)->point()<<"]"
 				<<endl;
-			cerr <<"point :"<<(fi->vertex(2)->point())<<" / voisin "<<&(*(fi->neighbor(2)))
+			cerr <<"point :"<<(fi->vertex(2)->point())
+				<<" / voisin "<<&(*(fi->neighbor(2)))
 				<<"["<<(fi->neighbor(2))->vertex(0)->point()
 				<<"/"<<(fi->neighbor(2))->vertex(1)->point()
-				<<"/"<<(fi->neighbor(2))->vertex(2)->point()<<"]"
+			    <<"/"<<(fi->neighbor(2))->vertex(2)->point()<<"]"
 				<<endl;
 
 			Weighted_point_list::iterator current;

@@ -1,3 +1,26 @@
+// ============================================================================
+//
+// Copyright (c) 1997 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// release       :
+// release_date  :
+//
+// file          : Triangulation/include/CGAL/Triangulation_ds_iterators_2.h
+// source        : $Source$
+// revision      : $Revision$
+// revision_date : $Date$
+// author(s)     : Mariette Yvinec
+//
+// coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
+//
+// ============================================================================
+
 #ifndef CGAL_TRIANGULATION_DS_ITERATORS_2_H
 #define CGAL_TRIANGULATION_DS_ITERATORS_2_H
 
@@ -23,11 +46,11 @@ public:
   typedef typename Tds::Edge Edge;
 
   CGAL_Triangulation_ds_iterator_base_2()
-     : pos(NULL),  _tds(NULL)
+     : _tds(NULL), pos(NULL)
         {}
 
   CGAL_Triangulation_ds_iterator_base_2(Tds* tds)
-     : pos(NULL),  _tds(tds)
+     : _tds(tds), pos(NULL)
   {
     if(_tds->number_of_vertices() < 2) {
       return;
@@ -36,11 +59,11 @@ public:
   }
 
  CGAL_Triangulation_ds_iterator_base_2(Tds* tds, int i)
-     : pos(NULL),  _tds(tds)
+     :  _tds(tds), pos(NULL)
  {}
 
   CGAL_Triangulation_ds_iterator_base_2(Tds* tds, Face* f)
-    : pos(f), _tds(tds)
+    : _tds(tds), pos(f)
   {}
    
 protected:
@@ -232,7 +255,7 @@ public:
         
         
         bool
-        operator!=(const Face_iterator& fi)
+        operator!=(const Face_iterator& fi) const
         {
             return !(*this == fi);
         }
