@@ -1202,14 +1202,10 @@ public:
       valid = valid && (++count <= max);
     }
 
- 
-
     Points.sort(points_lt());
     typename std::list<Point_3>::const_iterator li1, li2;
     li2 = li1 = Points.begin();
-    if(Points.empty())
-      valid = false;
-    else {
+    if(!Points.empty()) {
       li2++;
       while(valid && li2 != Points.end()) {
 	valid = valid && (*li1++ != *li2++);
@@ -1286,7 +1282,8 @@ public:
     Volume_iterator voli;
     CGAL_nef3_forall_volumes(voli,*this) {
       
-      valid = valid && (voli->is_valid(verb, level));
+      if(number_of_vertices() > 0)
+	valid = valid && (voli->is_valid(verb, level));
 
       Shell_entry_iterator si;
       CGAL_nef3_forall_shells_of(si,voli) {

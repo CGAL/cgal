@@ -32,37 +32,56 @@
 #include <CGAL/Nef_3/Normalizing.h>
 #include <vector>
 
+#undef _DEBUG
+#define _DEBUG 293
+#include <CGAL/Nef_3/debug.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template<typename T>
-class moreLeft {
+class moreLeft : public T {
   
-  typedef typename T::Vector_3  Vector_3;
-  typedef typename T::FT        FT;
-  typedef typename T::RT        RT;
+  typedef typename T::SM_decorator      SM_decorator;
+  typedef typename T::SHalfedge_handle  SHalfedge_handle;
+  typedef typename T::Vector_3          Vector_3;
+  typedef typename T::FT                FT;
+  typedef typename T::RT                RT;
  
  public:
-  moreLeft() {}
+  moreLeft(T D) : T(D) {}
   
-  bool operator()(Vector_3 vec1, Vector_3 vec2) {
+  bool operator()(SHalfedge_handle se1, SHalfedge_handle se2) {
 
-    if(vec1.x() == RT(0) && vec2.x() == RT(0)) {
-      if(vec1.y() != vec2.y())
-	return vec1.y() < vec2.y();
-      return vec1.z() < vec2.z();
+    CGAL_nef3_assertion(se1 != SHalfedge_handle());
+    if(se2 == SHalfedge_handle())
+      return true;
+
+    SM_decorator SM(vertex(se1));
+    Vector_3 vec1 = SM.circle(se1).orthogonal_vector();
+    Vector_3 vec2 = SM.circle(se2).orthogonal_vector();
+
+    if(vec1 != vec2) {
+      if(vec1.x() == RT(0) && vec2.x() == RT(0)) {
+	if(vec1.y() != vec2.y())
+	  return vec1.y() < vec2.y();
+	return vec1.z() < vec2.z();
+      }
+      
+      Vector_3 minus(-1,0,0);
+      FT sk1(minus*vec1),  sk2(minus*vec2);
+      if((sk1 >= FT(0) && sk2 <= FT(0)) ||
+	 (sk1 <= FT(0) && sk2 >= FT(0)))
+	return (sk1 > FT(0) || sk2 < FT(0));
+      
+      FT len1 = vec1.x()*vec1.x()+vec1.y()*vec1.y()+vec1.z()*vec1.z();
+      FT len2 = vec2.x()*vec2.x()+vec2.y()*vec2.y()+vec2.z()*vec2.z();
+      FT diff = len1*sk2*sk2 - len2*sk1*sk1;
+      
+      return ((sk1>FT(0) && diff<FT(0)) || (sk1<FT(0) && diff>FT(0)));
     }
-
-    Vector_3 minus(-1,0,0);
-    FT sk1(minus*vec1),  sk2(minus*vec2);
-    if((sk1 >= FT(0) && sk2 <= FT(0)) ||
-       (sk1 <= FT(0) && sk2 >= FT(0)))
-      return (sk1 > FT(0) || sk2 < FT(0));
     
-    FT len1 = vec1.x()*vec1.x()+vec1.y()*vec1.y()+vec1.z()*vec1.z();
-    FT len2 = vec2.x()*vec2.x()+vec2.y()*vec2.y()+vec2.z()*vec2.z();
-    FT diff = len1*sk2*sk2 - len2*sk1*sk1;
-    
-    return ((sk1>FT(0) && diff<FT(0)) || (sk1<FT(0) && diff>FT(0)));
+    return lexicographically_xyz_smaller(ssource(se1)->tmp_point(), 
+                                         ssource(se2)->tmp_point());
   }
 };
 
@@ -213,63 +232,66 @@ class sort_sfaces : public SNC_decorator<T> {
 
   bool operator() (SFace_handle sf1, SFace_handle sf2) const {
 
+    TRACEN("");
+    TRACEN("sort sfaces");
+
     sort_vertices<T> SORT(*sncp());
     
     if(vertex(sf1) != vertex(sf2))
       return SORT(vertex(sf1), vertex(sf2));
     
     SM_decorator SD(vertex(sf1));
-    moreLeft<T> ml;
+    moreLeft<Base> ml((Base) *this);
     Vector_3 plus(1,0,0);
 
     SVertex_handle sv;
     SHalfedge_handle se;
     SFace_cycle_iterator fc;
+  
+    TRACEN("sface 1");
 
-    Vector_3 vec1 = plus;
-    Point_3 svc1;
+    SHalfedge_handle se1;
     SHalfloop_handle sl1;
     CGAL_nef3_forall_sface_cycles_of(fc,sf1) {
-      
       if(assign(se,fc)) {
 	SHalfedge_around_sface_circulator ec(se),ee(se);
-	CGAL_For_all(ec,ee) { 
-	  if(ml(SD.circle(ec).orthogonal_vector(), vec1)) {
-	    vec1 = SD.circle(ec).orthogonal_vector();
-	    svc1 = ssource(ec)->tmp_point();
-	  }
+	CGAL_For_all(ec,ee) {
+	  TRACEN("   " << ssource(ec)->tmp_point() << 
+		 " | " << SD.circle(ec).orthogonal_vector());
+	  if(ml(ec, se1))
+	    se1 = ec;
 	}
       }
       else if(!assign(sl1,fc))
 	CGAL_nef3_assertion(assign(sv,fc));
     }
 
-    Vector_3 vec2 = plus;
-    Point_3 svc2;
+    TRACEN("sface 2");
+  
+    SHalfedge_handle se2;
     SHalfloop_handle sl2;
     CGAL_nef3_forall_sface_cycles_of(fc,sf2) {
-      
       if(assign(se,fc)) {
 	SHalfedge_around_sface_circulator ec(se),ee(se);
 	CGAL_For_all(ec,ee) { 
-	  if(ml(SD.circle(ec).orthogonal_vector(), vec2)) {
-	    vec2 = SD.circle(ec).orthogonal_vector();
-	    svc2 = ssource(ec)->tmp_point();
-	  }
+	  TRACEN("   " << ssource(ec)->tmp_point() << 
+		 " | " << SD.circle(ec).orthogonal_vector());
+	  if(ml(ec, se2))
+	    se2 = ec;
 	}
       }
       else if(!assign(sl2,fc))
 	CGAL_nef3_assertion(assign(sv,fc));
     }
-    
-    if(vec1 != plus && vec2 == plus)
+  
+    if(se1 != SHalfedge_handle() && se2 == SHalfedge_handle())
       return true;
-    if(vec1 == plus && vec2 != plus)
+    if(se1 == SHalfedge_handle() && se2 != SHalfedge_handle())
       return false;  
-    
-    if(vec1 == plus && vec2 == plus) {
-      vec1 = SD.circle(sl1).orthogonal_vector();
-      vec2 = SD.circle(sl2).orthogonal_vector();
+  
+    if(se1 == SHalfedge_handle() && se2 == SHalfedge_handle()) {
+      Vector_3 vec1 = SD.circle(sl1).orthogonal_vector();
+      Vector_3 vec2 = SD.circle(sl2).orthogonal_vector();
       if(vec1.x() != vec2.x())
 	return vec1.x() < vec2.x();
       else if(vec1.y() != vec2.y())
@@ -277,25 +299,16 @@ class sort_sfaces : public SNC_decorator<T> {
       else if(vec1.z() != vec2.z())
 	return vec1.z() < vec2.z();     
     }
+    
+    CGAL_assertion(se1 != SHalfedge_handle() && se2 != SHalfedge_handle());
 
-    CGAL_assertion(vec1 != plus && vec2 != plus);
-
-    if(vec1 != vec2)
-      return ml(vec1, vec2);
-    return ml(Vector_3(svc1-Point_3(0,0,0)), 
-	      Vector_3(svc2-Point_3(0,0,0)));
-
-    /*
-    int rv;
-    if(rv = ml(vec1, vec2, Vector_3(-1,0,0)) != 0)
-      return rv < 0;
-    if(rv = ml(vec1, vec2, Vector_3(0,-1,0)) != 0)
-      return rv < 0;
-    if(rv = ml(vec1, vec2, Vector_3(0,0,-1)) != 0)
-      return rv < 0;   
-    */ 
+    TRACEN("minimal sedge in sface 1:" << ssource(se1)->tmp_point() << 
+	   " | " << SD.circle(se1).orthogonal_vector());
+    TRACEN("minimal sedge in sface 2:" << ssource(se2)->tmp_point() << 
+	   " | " << SD.circle(se2).orthogonal_vector());
+    return ml(se1, se2);
   }
-
+ 
 };
 
 template <typename T>

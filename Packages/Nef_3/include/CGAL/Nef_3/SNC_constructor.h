@@ -1420,6 +1420,7 @@ create_volumes()
 //   to another Shell. 
 
   sncp()->new_volume(); // outermost volume (nirvana)
+  if(MinimalSFace.size() == 0) return;
   Vertex_handle v_min = vertex(MinimalSFace[0]);
   for( unsigned int i = 0; i < MinimalSFace.size(); ++i) {
     //    progress2++;
