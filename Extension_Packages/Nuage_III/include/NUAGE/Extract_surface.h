@@ -377,7 +377,7 @@ public:
 
   //---------------------------------------------------------------------
 
-   void
+  void
   remove_border_elt(const Edge_like& ordered_key)
   {
     ordered_key.first->remove_border_edge(ordered_key.second);
@@ -399,6 +399,7 @@ public:
     return false;
   }
 
+  //---------------------------------------------------------------------
    void set_incidence_request(const Vertex_handle& v,
 				    const criteria& value,
 				    const Edge_like& e)

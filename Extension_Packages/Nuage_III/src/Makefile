@@ -4,13 +4,9 @@
 #                    include platform specific settings
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
-#CGAL_MAKEFILE = c:/cgal/CGAL-2.5-I-154/make/makefile_i686_CYGWINNT-5.1-1.5.5_ICL.EXE-7
 
-CGAL_MAKEFILE = /cygdrive/c/cgal/CGAL-2.5-I-154/make/makefile_i686_CYGWINNT-5.1-1.5.5_g++-3.3.1
-#CGAL_MAKEFILE = d:/cgal/CGAL-2.5-I-93/make/makefile_i686_CYGWINNT-5.0-1.3.12_g++-2.95
-#CGAL_MAKEFILE =/cygdrive/d/cgal/CGAL-2.5-I-93/make/makefile_i686_CYGWINNT-5.0-1.3.12_ICL.EXE-7
-#CGAL_MAKEFILE = d:/cgal/CGAL-2.5-I-36/make/makefile_i686_CYGWINNT-5.0-1.3.12_bcc32.exe-5.51
-#CGAL_MAKEFILE = d:/cgal/CGAL-2.5-I-36/make/makefile_i686_CYGWINNT-5.0-1.3.12_g++-2.95
+CGAL_MAKEFILE = d:/cgal/CGAL-3.0/make/makefile_i686_CYGWINNT-5.0-1.5.5_ICL.EXE-7
+
 include $(CGAL_MAKEFILE)
 
 # ---------------------------------------------------------------------#
@@ -23,7 +19,7 @@ MY_OPT_FLAGS =  -DNOLAZY -DBLIND -DDEBUG
 #pour desactiver le dump dans geomview -DBLIND
 #pour desactiver l'evaluation paresseuse -DNOLAZY
 
-CXXFLAGS =  -O3 -DNDEBUG  \
+CXXFLAGS =  -DNDEBUG  \
 	    $(CGAL_CXXFLAGS) -I../include $(MY_OPT_FLAGS) 
 
 
