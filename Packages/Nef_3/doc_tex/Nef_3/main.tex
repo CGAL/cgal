@@ -41,16 +41,16 @@ a planar Nef polyhedra embedded on a sphere.
 Looking at infinte point sets, the minimal elements of the incidence structure 
 does not have to be a vertex. To overcome this difference between finite and 
 infinite point sets, we intersect Nef polyhedra with
-bounding volume of size $[-R,R}^3$, where $R$ is a symbolical unspecified finte 
+bounding volume of size $[-R,R]^3$, where $R$ is a symbolical unspecified finte 
 value, which is larger than the value of any concrete real number. As a result,
 each 3D Nef polyhedron becomes finite although it might represent an infinite
 point set. We call the boundary of the bounding volume the infimaximal box
-~\cite{}.
+~\cite{cgal:sm-iftml-00}.
 
 Clipping lines and rays at the infimaximal box leads to non-standard points,
 i.e. points whose coordinates are $-R$ or $R$ for at least one axis, and
 linear functions $f(R)$ for the other coordinates. For this purpose, extended
-kernels - Extended_cartesian and Extended_homogeneous - are provided. Their
+kernels - \ccc{Extended_cartesian} and \ccc{Extended_homogeneous} - are provided. Their
 design is the same as for other \cgal kernels, but the coordinates are
 modeled by polynomials.
 
@@ -63,6 +63,12 @@ since its boundary includes unbounded/infinte large planes. Note, that
 there are bounded Nef polyhedra, which represent an infinite
 point set, e.g. the complete 3D space.
 
+% +========================================================================+%
+\section{Regularized Set Operations}
+% +========================================================================+
+
+
+
 % +========================================================================+
 \section{Example Programs}
 % +========================================================================+
@@ -70,7 +76,7 @@ point set, e.g. the complete 3D space.
 The following example gives a first impression of how to instantiate and use
 \ccc{Nef_polyhedron_3}. The \cgal kernel \ccc{Cartesian} is used as the traits
 class. The other \cgal kernels would also be appropriate as long as it uses an
-exact number_type like \ccc{Gmpz} or \ccc{leda_integer}. 
+exact number type like \ccc{Gmpz} or \ccc{leda_integer}. 
 
 The example creates two Nef polyhedra - \ccc{N0} is the empty set, while 
 \ccc{N1} is set of all points in the 3-dimensional space. The assertion assures
@@ -96,8 +102,10 @@ default value for this parameter is \ccc{Nef_polyhedron::INCLUDED}.
 % +------------------------------------------------------------------------+
 \subsection{Comparing Nef polyhedra}
 
-The point sets of two Nef polyhedra can be compared. The operators ==, !=,
-<=, >=, < and > are provided. The first two test whether the point sets 
+The point sets of two Nef polyhedra can be compared. The operators \ccc{==}, 
+\ccc{!=},
+\ccc{<=}, \ccc{>=}, \ccc{<} and \ccc{>} 
+are provided. The first two test whether the point sets 
 are equal or different, the others test whether one point set is a (proper) 
 subset of the other one. The usage is shown in the following example:
 
@@ -108,19 +116,15 @@ subset of the other one. The usage is shown in the following example:
 
 As explained in the introduction, Nef polyhedra are closed under all boolean 
 set operations. The class \ccc{Nef_polyhedron} provides functions and
-operators for the most common ones: complement (operator!), union (operator+), 
-difference (operator-), intersection (operator*) and 
-symmetric difference (operator^). Additionally, the operators 
-*=, -=, *= and ^= are defined.
+operators for the most common ones: complement (\ccc{operator!}), union (\ccc{operator+}), 
+difference (\ccc{operator-}), intersection (\ccc{operator*}) and 
+symmetric difference (\ccc{operator^}). Additionally, the operators 
+\ccc{*=}, \ccc{-=}, \ccc{*=} and \ccc{^=} are defined.
 
 \ccIncludeExampleCode{Nef_3/set_operations.C}
 
 % +------------------------------------------------------------------------+
-\subsection{Regularized Set Operations}
-
-
-% +------------------------------------------------------------------------+
-\subsection{Topological Operations}
+\subsection{Unary Operations}
 
 Additionally to boolean set operations, \ccc{Nef_polyhedron_3} provides
 the topological operations \ccc{interior()}, \ccc{closure()} and 
@@ -128,9 +132,8 @@ the topological operations \ccc{interior()}, \ccc{closure()} and
 \ccc{boundary()} deselects all volumes and \ccc{closure()} selects all
 boundary items. 
 
-\ccc{closure()} and \ccc{regularization()} are defined by means of other
-unary operations as shown by the following example.
-
+The following example shows the usage of unary operations and some relations 
+between them.
 
 \ccIncludeExampleCode{Nef_3/topological_operations.C}
 
@@ -168,11 +171,13 @@ usage is illustrated by the following example program:
 
 \ccIncludeExampleCode{Nef_3/offIO.C}
 
-Additionally, \ccc{Nef_polyhedron_3} provides input and output operators for
-a propriatary file format. Note that it is not possible to read an unbounded
+Additionally, \ccc{Nef_polyhedron_3} provides an input and an output operator 
+for a propriatary file format. Note, that it is not possible to read an unbounded
 Nef polyhedron, if no extended kernel is used. On the other side, it is
 possible to write a bounded Nef polyhedron using an extended kernel and 
-reading it afterwards using a simple kernel.
+reading it afterwards using a simple kernel. Furthermore, the output depends
+on whether one uses a homogeneous or a cartesian kernel. It is recommended 
+to use homogeneous kernels only if input and output is used.
 
 \ccIncludeExampleCode{Nef_3/nefIO.C}
 
@@ -207,9 +212,8 @@ vertex has been visited so far. After the first vertex has been visited
 \ccc{first} is changed to \ccc{true}.
 
 \ccc{Shell_explorer} provides to further member functions. After the exploration
-of a shell \ccc{minimal_vertex} retrieves the smallest vertex. 
-\ccc{reset_minimal_vertex} allows one to use the same instance of 
-\ccc{Shell_explorer} on multiple shells. In this case, \ccc{reset_minimal_vertex}
+of a shell \ccc{minimal_vertex} retrieves the smallest vertex. \ccc{reset_minimal_vertex} allows one to use the same instance of 
+ \ccc{Shell_explorer} on multiple shells. In this case, \ccc{reset_minimal_vertex}
 has to be called between the exploration of two shells.
 
 The example program uses the \ccc{Shell_explorer} for each shell of the given
@@ -235,10 +239,22 @@ the four casts work, something went wrong.
 % +------------------------------------------------------------------------+
 \subsection{Visualization}
 
+With the class \ccc{Nef_Visualizor_OpenGL_3} an interface to OpenGL 
+visualization is offered. The usage is rather easy as can be seen in the
+following example.
+
 \ccIncludeExampleCode{Nef_3/visualization_SNC.C}
 
 % +------------------------------------------------------------------------+
-\subsection{Interface between Nef_polyhedron_3 and Nef_polyhedron_S2}
+\subsection{Interface between \ccc{Nef_polyhedron_3} and \ccc{Nef_polyhedron_S2}}
+
+It can be interesting to perform algorithms written for instances of 
+\ccc{Nef_polyhedron_S2} on a sphere map of a \ccc{Nef_polyhedron_3}. For this
+purpose \ccc{Nef_polyhedron_3} provides the function 
+\ccc{get_sphere_map(Vertex_const_handle)} which returns the sphere map of
+the specified vertex as a \ccc{Nef_polyhedron_S2}. Note, that one has to use
+the type \ccc{Nef_polyhedron_S2} as specified in \ccc{Nef_polyhedron_3} as 
+is shown in the following example.
 
 \ccIncludeExampleCode{Nef_3/visualization_SM.C}
 
