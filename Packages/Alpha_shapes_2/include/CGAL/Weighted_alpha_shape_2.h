@@ -888,9 +888,11 @@ Weighted_alpha_shape_2<Gt,Tds>::Output ()
 		  // regular means incident to a higher-dimensional face
 		  // thus we would write to many vertices
 		  L.push_back(((*edge_alpha_it).second.first->
-			       vertex(cw((*edge_alpha_it).second.second)))->point());
+			       vertex(cw((*edge_alpha_it).second.second)))
+			      ->point());
 		  L.push_back(((*edge_alpha_it).second.first->
-			       vertex(ccw((*edge_alpha_it).second.second)))->point());
+			       vertex(ccw((*edge_alpha_it).second.second)))
+			      ->point());
 		}
 	    }
 	}
@@ -926,9 +928,11 @@ Weighted_alpha_shape_2<Gt,Tds>::Output ()
 					(*edge_alpha_it).second.second) ==
 			       REGULAR));
 		  L.push_back(((*edge_alpha_it).second.first->
-			       vertex(cw((*edge_alpha_it).second.second)))->point());
+			       vertex(cw((*edge_alpha_it).second.second)))
+			      ->point());
 		  L.push_back(((*edge_alpha_it).second.first->
-			       vertex(ccw((*edge_alpha_it).second.second)))->point());
+			       vertex(ccw((*edge_alpha_it).second.second)))
+			      ->point());
 		}
 	    }
 	  else 
@@ -948,9 +952,11 @@ Weighted_alpha_shape_2<Gt,Tds>::Output ()
 					 (*edge_alpha_it).second.second) ==
 				SINGULAR)));
 		  L.push_back(((*edge_alpha_it).second.first->
-			       vertex(cw((*edge_alpha_it).second.second)))->point());
+			       vertex(cw((*edge_alpha_it).second.second)))
+			      ->point());
 		  L.push_back(((*edge_alpha_it).second.first->
-			       vertex(ccw((*edge_alpha_it).second.second)))->point());
+			       vertex(ccw((*edge_alpha_it).second.second)))
+			      ->point());
 		}
 	    }
 
@@ -992,9 +998,9 @@ Weighted_alpha_shape_2<Gt,Tds>::initialize_weighted_points_to_the_nearest_vorono
 		  Point p=D.dual(f);
 		  // double
 		  // dd=(p.point().x()-(*point_it).point().x())*
-		  //                       (p.point().x()-(*point_it).point().x())
+		  //                   (p.point().x()-(*point_it).point().x())
 		  //+(p.point().y()-(*point_it).point().y())*
-		  //                       (p.point().y()-(*point_it).point().y());
+		  //                (p.point().y()-(*point_it).point().y());
 		  double dd=squared_distance(p,(*point_it));
 		  d=std::min(dd,d);
 		}
@@ -1232,11 +1238,13 @@ Weighted_alpha_shape_2<Gt,Tds>::initialize_interval_edge_map(void)
 
 	      if (!is_infinite(pNeighbor)) 
 		{
-		  interval =  (is_attached(pNeighbor, pNeighbor->index(&(*pFace)))) ?
+		  interval =  (is_attached(pNeighbor, 
+					   pNeighbor->index(&(*pFace)))) ?
 		    make_triple(UNDEFINED,
 				find_interval(pNeighbor), 
 				INFINITY):
-		    make_triple(smallest_power(pNeighbor, pNeighbor->index(&(*pFace))), 
+		    make_triple(smallest_power(pNeighbor,
+					       pNeighbor->index(&(*pFace))), 
 				find_interval(pNeighbor), 
 				INFINITY);
 		}
@@ -1244,7 +1252,8 @@ Weighted_alpha_shape_2<Gt,Tds>::initialize_interval_edge_map(void)
 		{
 		  // both faces are infinite by definition unattached
 		  // the edge is finite by construction
- CGAL_triangulation_precondition((is_infinite(pNeighbor) && is_infinite(pFace)));
+ CGAL_triangulation_precondition((is_infinite(pNeighbor) && 
+				  is_infinite(pFace)));
 		  interval = make_triple(smallest_power(pFace, i), 
 					 INFINITY,
 					 INFINITY);
@@ -1252,7 +1261,8 @@ Weighted_alpha_shape_2<Gt,Tds>::initialize_interval_edge_map(void)
 	    }
 	  else
 	    { // is_infinite(pNeighbor)
- CGAL_triangulation_precondition((is_infinite(pNeighbor) && !is_infinite(pFace)));
+ CGAL_triangulation_precondition((is_infinite(pNeighbor) && 
+				  !is_infinite(pFace)));
 	      if (is_attached(pFace, i))
 		interval = make_triple(UNDEFINED,
 				       find_interval(pFace),
@@ -1482,12 +1492,14 @@ Weighted_alpha_shape_2<Gt,Tds>::initialize_alpha_spectrum(void)
 //-----------------------------------------------------------------------
 
 template<class Gt, class Tds>
-std::back_insert_iterator<std::list< Weighted_alpha_shape_2<Gt,Tds>::Vertex_handle > >
+std::back_insert_iterator
+<std::list< Weighted_alpha_shape_2<Gt,Tds>::Vertex_handle > >
 Weighted_alpha_shape_2<Gt,Tds>::get_Alpha_shape_vertices(
-	           std::back_insert_iterator<std::list<Vertex_handle > > result) const 
+  std::back_insert_iterator<std::list<Vertex_handle > > result) const 
 {
 
-  //typedef typename Alpha_shape_2<Gt,Tds>::Interval_vertex_map Interval_vertex_map;
+  //typedef typename Alpha_shape_2<Gt,Tds>::Interval_vertex_map 
+  //                                               Interval_vertex_map;
   typename Interval_vertex_map::const_iterator vertex_alpha_it;
 
   //const typename Alpha_shape_2<Gt,Tds>::Interval2* pInterval2;
@@ -1538,10 +1550,10 @@ Weighted_alpha_shape_2<Gt,Tds>::get_Alpha_shape_vertices(
 //-----------------------------------------------------------------------
 
 template<class Gt, class Tds>
-std::back_insert_iterator
-<std::list<std::pair<typename Weighted_alpha_shape_2<Gt,Tds>::Face_handle, int > > >
-Weighted_alpha_shape_2<Gt,Tds>::get_Alpha_shape_edges
-(std::back_insert_iterator<std::list<std::pair< Face_handle, int > > > result) const 
+std::back_insert_iterator<std::list
+<std::pair<typename Weighted_alpha_shape_2<Gt,Tds>::Face_handle, int > > >
+Weighted_alpha_shape_2<Gt,Tds>::get_Alpha_shape_edges(std::back_insert_iterator
+                     <std::list<std::pair< Face_handle, int > > > result) const
 {
   // Writes the edges of the alpha shape `A' for the current $\alpha$-value
   // to the container where 'out' refers to. Returns an output iterator 
@@ -2112,8 +2124,8 @@ Weighted_alpha_shape_2<Gt,Tds>::op_ostream (std::ostream& os) const
 	      else 
 		{ // pInterval->second == A.INFINITY || 
 		  //            pInterval->second >= A.get_alpha())      
-		  // pInterval->second == A.INFINITY happens only for convex hull 
-		  // of dimension 1 thus singular
+		  // pInterval->second == A.INFINITY happens only for convex 
+		  // hull of dimension 1 thus singular
 	  
 		  // write the singular edges
 		  if (pInterval->first != A.UNDEFINED) 

@@ -34,10 +34,12 @@ Window_stream&
 Alpha_shape_2<Gt,Tds>::op_window(Window_stream& W) const
 {
 
-  typedef typename Alpha_shape_2<Gt,Tds>::Interval_vertex_map Interval_vertex_map;
+  typedef typename Alpha_shape_2<Gt,Tds>::Interval_vertex_map 
+    Interval_vertex_map;
   typename Interval_vertex_map::const_iterator vertex_alpha_it;
 
-  typedef  typename Alpha_shape_2<Gt,Tds>::Interval_edge_map Interval_edge_map;
+  typedef  typename Alpha_shape_2<Gt,Tds>::Interval_edge_map 
+    Interval_edge_map;
   typename Interval_edge_map::const_iterator edge_alpha_it;
 
   const typename Alpha_shape_2<Gt,Tds>::Interval3* pInterval;
@@ -181,12 +183,14 @@ Weighted_alpha_shape_2<Gt,Tds>::op_window(Window_stream& W) const
 {
 
   typedef 
-    typename Weighted_alpha_shape_2<Gt,Tds>::Interval_vertex_map Interval_vertex_map;
+    typename Weighted_alpha_shape_2<Gt,Tds>::Interval_vertex_map
+    Interval_vertex_map;
 
   typename Interval_vertex_map::const_iterator vertex_alpha_it;
 
   typedef  
-    typename Weighted_alpha_shape_2<Gt,Tds>::Interval_edge_map Interval_edge_map;
+    typename Weighted_alpha_shape_2<Gt,Tds>::Interval_edge_map 
+    Interval_edge_map;
 
   typename Interval_edge_map::const_iterator edge_alpha_it;
 

@@ -222,7 +222,9 @@ Returns an output iterator which is the end of the constructed range.}
 
 \ccMethod{Classification_type
            classify(Face* f, int i, const Coord_type& alpha = get_alpha()) const;}
-{Classifies the edge of the face \ccStyle{f} opposite to the vertex with index \ccStyle{i} of the underlying Delaunay triangulation with respect to \ccVar.}	
+{Classifies the edge of the face \ccStyle{f} opposite to the vertex with index
+\ccStyle{i} 
+of the underlying Delaunay triangulation with respect to \ccVar.}	
 
 \ccMethod{Classification_type
            classify(Vertex* v, const Coord_type& alpha = get_alpha()) const;}
@@ -260,7 +262,9 @@ greater than \ccStyle{alpha}.}
 \ccHeading{Operations}
 
 \ccMethod{int number_solid_components(const Coord_type& alpha = get_alpha()) const;}
-{Returns the number of solid components of \ccVar, that is, the number of components of its regularized version.}
+{Returns the number of solid components of \ccVar, that is, the number of
+components of its 
+regularized version.}
 
 \ccMethod{Alpha_iterator find_optimal_alpha(int nb_components) const;}
 {Returns an iterator pointing to the first element with $\alpha$-value
@@ -305,7 +309,8 @@ Delaunay triangulation are actually realized using
 \ccStyle{A.alpha find} uses linear search, while 
 \ccStyle{A.alpha lower bound} and \ccStyle{A.alpha upper bound} 
 use binary search.
-\ccStyle{A.number solid components} performs a graph traversal and takes time linear in the number of faces of the underlying Delaunay triangulation.
+\ccStyle{A.number solid components} performs a graph traversal and takes time
+linear in the number of faces of the underlying Delaunay triangulation.
 \ccStyle{A.find optimal alpha} uses binary search and takes time
 $O(\mbox{\em number of faces } \log{\mbox{\em number of faces}})$.
 
@@ -463,7 +468,9 @@ They are listed below as such.
 
 \ccHeading{Access Functions}
 \ccMethod{std::vector<Interval3> get_Range();}
-{returns a vector \ccc{V}, in which, for each edge $i$, \ccc{V[i]} contains three alpha values $\alpha_1 \leq \alpha_2 \leq \alpha_3$, such as for
+{returns a vector \ccc{V}, in which, for each edge $i$, \ccc{V[i]} contains
+three alpha values
+ $\alpha_1 \leq \alpha_2 \leq \alpha_3$, such as for
 $\alpha$ under $\alpha_3$, the edge is attached but singular,
 for $\alpha$ under $\alpha_2$, the face is regular, and for $\alpha$
 under $\alpha_1$, the edge is interior.}
@@ -473,7 +480,9 @@ face.}
 
 \ccModifiers
 \ccMethod{void Range(std::vector<Interval3> V);}
-{sets the vector \ccc{V}, in which, for each edge $i$, \ccc{V[i]} contains three alpha values $\alpha_1 \leq \alpha_2 \leq \alpha_3$, such as for
+{sets the vector \ccc{V}, in which, for each edge $i$, \ccc{V[i]} contains three
+alpha values
+ $\alpha_1 \leq \alpha_2 \leq \alpha_3$, such as for
 $\alpha$ under $\alpha_3$, the edge is attached but singular,
 for $\alpha$ under $\alpha_2$, the face is regular, and for $\alpha$
 under $\alpha_1$, the edge is interior.}
@@ -500,12 +509,12 @@ for the Alpha Shape. The class
 \ccDefinition
 The class \ccClassTemplateName\ represents the family of
 $\alpha$-shapes of weighted points in a plane for {\em all} positive
-$\alpha$. It maintains the underlying Regular triangulation which
+$\alpha$. It maintains the underlying regular triangulation which
 represents connectivity and order among its faces. Each
-$k$-dimensional face of the Regular triangulation is associated with
+$k$-dimensional face of the regular triangulation is associated with
 an interval that specifies for which values of $\alpha$ the face
 belongs to the $\alpha$-shape. There are links between the intervals
-and the $k$-dimensional faces of the Regular triangulation.
+and the $k$-dimensional faces of the regular triangulation.
 
 
 \ccInclude{CGAL/Weighted_alpha_shape_2.h}
@@ -523,7 +532,7 @@ the inherited functions. At the moment, only the static version is implemented.
 
 \ccNestedType{Gt}{the weighted alpha shape traits type.}
  
-It contains the Regular triangulation traits class.  For example
+It contains the regular triangulation traits class.  For example
 \ccStyle{Gt::Point} is a mapping on a weighted point class. Additionally,
 it defines a mapping on a coordinate type class.
 
@@ -536,7 +545,7 @@ is \ccStyle{Coord_type}}
 
 \ccEnum{enum Classification_type {EXTERIOR, SINGULAR, REGULAR, INTERIOR};}
 {Distinguishes the different cases for classifying a $k$-dimensional face
- of the underlying Regular triangulation of the $\alpha$-shape. \\
+ of the underlying regular triangulation of the $\alpha$-shape. \\
 \ccStyle{EXTERIOR} if the face does not belong to the $\alpha$-complex.\\
 \ccStyle{SINGULAR} if the face belongs to the boundary of the $\alpha$-shape,
  but is not incident to any 2-dimensional face of the $\alpha$-complex\\
@@ -617,14 +626,14 @@ before initialization.
 % 
 % \ccMethod{Vertex* insert(const Point& p);}
 % {Inserts point \ccStyle{p} in the alpha shape and returns the
-% corresponding vertex of the underlying Regular triangulation.\\ If
+% corresponding vertex of the underlying regular triangulation.\\ If
 % point \ccStyle{p} coincides with an already existing vertex, this
 % vertex is returned and the alpha shape remains unchanged.\\ Otherwise,
-% the vertex is inserted in the underlying Regular triangulation and
+% the vertex is inserted in the underlying regular triangulation and
 % the associated intervals are updated. }
 % 
 % \ccMethod{void remove(Vertex *v);}
-% {Removes the vertex from the underlying Regular triangulation. The
+% {Removes the vertex from the underlying regular triangulation. The
 % created hole is retriangulated and the associated intervals are
 % updated.}
 % 
@@ -665,19 +674,20 @@ Returns an output iterator which is the end of the constructed range.}
 
 \ccMethod{Classification_type
            classify(Face* f, const Coord_type& alpha = get_alpha()) const;}
-{Classifies the face \ccStyle{f} of the underlying Regular triangulation with respect to \ccVar.}
+{Classifies the face \ccStyle{f} of the underlying regular triangulation with respect to \ccVar.}
 
 \ccMethod{Classification_type
            classify(pair<Face*, int> e, const Coord_type& alpha = get_alpha()) const;}
-{Classifies the edge \ccStyle{e} of the underlying Regular triangulation with respect to \ccVar.}
+{Classifies the edge \ccStyle{e} of the underlying regular triangulation with respect to \ccVar.}
 
 \ccMethod{Classification_type
            classify(Face* f, int i, const Coord_type& alpha = get_alpha()) const;}
-{Classifies the edge of the face \ccStyle{f} opposite to the vertex with index \ccStyle{i} of the underlying Regular triangulation with respect to \ccVar.}	
+{Classifies the edge of the face \ccStyle{f} opposite to the vertex with index
+\ccStyle{i} of the underlying regular triangulation with respect to \ccVar.}	
 
 \ccMethod{Classification_type
            classify(Vertex* v, const Coord_type& alpha = get_alpha()) const;}
-{Classifies the vertex \ccStyle{v} of the underlying Regular triangulation with respect to \ccVar.}
+{Classifies the vertex \ccStyle{v} of the underlying regular triangulation with respect to \ccVar.}
 
 
 \ccHeading{Traversal of the $\alpha$-Values}
@@ -762,18 +772,19 @@ is an internal format.
 
 \ccImplementation
 In the first static version, the set of intervals associated with the
-$k$-dimensional faces of the underlying Regular triangulation are
+$k$-dimensional faces of the underlying regular triangulation are
 stored only as sorted \ccStyle{vectors}. By using an interval tree the
 alpha-shape could be constructed more efficiently. For the dynamic
 version, we need \ccStyle{multimaps} or dynamic interval trees. The
 cross links between the intervals and the $k$-dimensional faces of the
-Regular triangulation are actually realized using
+regular triangulation are actually realized using
 \ccStyle{multimaps} resp.\ \ccStyle{hash multimaps}.
 
 \ccStyle{A.alpha find} uses linear search, while 
 \ccStyle{A.alpha lower bound} and \ccStyle{A.alpha upper bound} 
 use binary search.
-\ccStyle{A.number solid components} performs a graph traversal and takes time linear in the number of faces of the underlying Regular triangulation.
+\ccStyle{A.number solid components} performs a graph traversal and takes time
+linear in the number of faces of the underlying regular triangulation.
 \ccStyle{A.find optimal alpha} uses binary search and takes time
 $O(\mbox{\em number of faces } \log{\mbox{\em number of faces}})$.
 
@@ -785,7 +796,7 @@ $O(\mbox{\em number of faces } \log{\mbox{\em number of faces}})$.
 \subsection{Requirements for the Alpha-Shape Traits Class} 
 
 The class \ccStyle{Weighted_alpha_shape_2<Gt,Tds>} parameterized with a
-traits class, that has the same requirements as the Regular
+traits class, that has the same requirements as the regular
 triangulation traits class.  The following requirement catalog lists
 the primitives that must be defined additionally.
 
@@ -797,7 +808,7 @@ the primitives that must be defined additionally.
 \ccDefinition
 A class \ccClassName\ that satisfies the requirements of a weighted alpha shape
 traits class must provide the following predicate and operations in
-addition to the requirements for the Regular triangulation traits
+addition to the requirements for the regular triangulation traits
 class.
 
 \ccTypes
@@ -847,7 +858,7 @@ p1}.}
 
 The class \ccStyle{Weighted_alpha_shape_2<Gt,Tds>} parameterized with a
 triangulation data structure class, that has exactly the same
-requirements as the Regular triangulation triangulation data
+requirements as the regular triangulation triangulation data
 structure class. 
 
 But, she requires to be templated by special \ccc{Vertex} and
@@ -883,7 +894,7 @@ type of a Weighted Alpha Shape offers additional functionalities to deal with th
 This additional functionalities related to the Weighted Alpha Shape
 are requirements which have to be fulfilled
 by the base face  an Weighted Alpha Shape
-in addition to the functionalities required by a Regular Triangulation Face
+in addition to the functionalities required by a regular Triangulation Face
 They are listed below as such.
 
 
@@ -893,14 +904,18 @@ They are listed below as such.
 \ccCreation
 \ccConstructor{Weighted_alpha_shape_face_base();}{default constructor.}
 \ccGlue
-\ccConstructor{Weighted_alpha_shape_face_base(void* v0, void* v1, void* v2);}{constructor setting the incident vertices.}
+\ccConstructor{Weighted_alpha_shape_face_base(void* v0, void* v1, void*
+v2);}{constructor setting the incident vertices.}
 \ccGlue
-\ccConstructor{Weighted_alpha_shape_face_base(void* v0, void* v1, void*  v2, void* n0, void* n1, void* n2);} 
+\ccConstructor{Weighted_alpha_shape_face_base(void* v0, void* v1, void*  v2, 
+void* n0, void* n1, void* n2);} 
 {constructor setting the incident vertices and the neighboring faces.}
 
 \ccHeading{Access Functions}
 \ccMethod{std::vector<Interval3> get_Range();}
-{returns a vector \ccc{V}, in which, for each edge $i$, \ccc{V[i]} contains three alpha values $\alpha_1 \leq \alpha_2 \leq \alpha_3$, such as for
+{returns a vector \ccc{V}, in which, for each edge $i$, \ccc{V[i]} contains
+three alpha values
+ $\alpha_1 \leq \alpha_2 \leq \alpha_3$, such as for
 $\alpha$ under $\alpha_3$, the edge is attached but singular,
 for $\alpha$ under $\alpha_2$, the face is regular, and for $\alpha$
 under $\alpha_1$, the edge is interior.}
@@ -910,7 +925,9 @@ face.}
 
 \ccModifiers
 \ccMethod{void Range(std::vector<Interval3> V);}
-{sets the vector \ccc{V}, in which, for each edge $i$, \ccc{V[i]} contains three alpha values $\alpha_1 \leq \alpha_2 \leq \alpha_3$, such as for
+{sets the vector \ccc{V}, in which, for each edge $i$, \ccc{V[i]} contains three
+alpha values
+ $\alpha_1 \leq \alpha_2 \leq \alpha_3$, such as for
 $\alpha$ under $\alpha_3$, the edge is attached but singular,
 for $\alpha$ under $\alpha_2$, the face is regular, and for $\alpha$
 under $\alpha_1$, the edge is interior.}

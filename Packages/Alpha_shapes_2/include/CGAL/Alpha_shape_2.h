@@ -862,9 +862,11 @@ Alpha_shape_2<Gt,Tds>::Output ()
 		  // regular means incident to a higher-dimensional face
 		  // thus we would write to many vertices
 		  L.push_back((segment((*edge_alpha_it).second.first,
-				       (*edge_alpha_it).second.second)).source());
+				       (*edge_alpha_it).second.second))
+			      .source());
 		  L.push_back((segment((*edge_alpha_it).second.first,
-				       (*edge_alpha_it).second.second)).target());
+				       (*edge_alpha_it).second.second))
+			      .target());
 		}
 	    }
 	}
@@ -900,9 +902,11 @@ Alpha_shape_2<Gt,Tds>::Output ()
 					(*edge_alpha_it).second.second) ==
 			       REGULAR));
 		  L.push_back((segment((*edge_alpha_it).second.first,
-				       (*edge_alpha_it).second.second)).source());
+				       (*edge_alpha_it).second.second))
+			      .source());
 		  L.push_back((segment((*edge_alpha_it).second.first,
-				       (*edge_alpha_it).second.second)).target());
+				       (*edge_alpha_it).second.second))
+			      .target());
 		}
 	    }
 	  else 
@@ -922,9 +926,11 @@ Alpha_shape_2<Gt,Tds>::Output ()
 					 (*edge_alpha_it).second.second) ==
 				SINGULAR)));
 		  L.push_back((segment((*edge_alpha_it).second.first,
-				       (*edge_alpha_it).second.second)).source());
+				       (*edge_alpha_it).second.second))
+			      .source());
 		  L.push_back((segment((*edge_alpha_it).second.first,
-				       (*edge_alpha_it).second.second)).target());
+				       (*edge_alpha_it).second.second))
+			      .target());
 		}
 	    }
 
@@ -1275,7 +1281,8 @@ std::back_insert_iterator<std::list<Alpha_shape_2<Gt,Tds>::Vertex_handle > >
 Alpha_shape_2<Gt,Tds>::get_Alpha_shape_vertices
 (std::back_insert_iterator<std::list<Vertex_handle > > result) const 
 {
-  //typedef typename Alpha_shape_2<Gt,Tds>::Interval_vertex_map Interval_vertex_map;
+  //typedef typename Alpha_shape_2<Gt,Tds>::Interval_vertex_map 
+  //                                              Interval_vertex_map;
   typename Interval_vertex_map::const_iterator vertex_alpha_it;
 
   //const typename Alpha_shape_2<Gt,Tds>::Interval2* pInterval2;
@@ -1325,8 +1332,8 @@ Alpha_shape_2<Gt,Tds>::get_Alpha_shape_vertices
 template < class Gt, class Tds >
 std::back_insert_iterator<std::list
                      <std::pair<Alpha_shape_2<Gt,Tds>::Face_handle, int > > >
-Alpha_shape_2<Gt,Tds>::get_Alpha_shape_edges(std::back_insert_iterator<std::list
-			      <std::pair<Face_handle, int > > > result) const 
+Alpha_shape_2<Gt,Tds>::get_Alpha_shape_edges(std::back_insert_iterator
+                    <std::list<std::pair<Face_handle, int > > > result) const 
 {
   // Writes the edges of the alpha shape `A' for the current $\alpha$-value
   // to the container where 'out' refers to. Returns an output iterator 
@@ -1498,7 +1505,7 @@ Alpha_shape_2<Gt,Tds>::classify( Vertex_handle v,
 
 template < class Gt, class Tds >
 int
-Alpha_shape_2<Gt,Tds>::number_solid_components(const Coord_type& alpha) const 
+Alpha_shape_2<Gt,Tds>::number_solid_components(const Coord_type& alpha) const
 {
   // Determine the number of connected solid components 
   // takes time O(#alpha_shape) amortized if STL_STD::HASH_TABLES
@@ -1877,8 +1884,9 @@ Alpha_shape_2<Gt,Tds>::op_ostream(std::ostream& os) const
 		  
 		}
 	      else 
-		{ // pInterval->second == INFINITY || pInterval->second >= get_alpha())      
-		  // pInterval->second == INFINITY happens only for convex hull 
+		{ // pInterval->second == INFINITY || 
+		  //                           pInterval->second >= get_alpha())  
+		  // pInterval->second == INFINITY happens only for convex hull
 		  // of dimension 1 thus singular
 
 		  // write the singular edges
