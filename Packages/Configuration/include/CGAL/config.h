@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2003  Utrecht University (The Netherlands),
+// Copyright (c) 1997-2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -21,6 +21,7 @@
 //
 // Author(s)     : Wieger Wesselink 
 //                 Michael Hoffmann <hoffmann@inf.ethz.ch>
+//                 Sylvain Pion
 
 #ifndef CGAL_CONFIG_H
 #define CGAL_CONFIG_H
@@ -40,7 +41,6 @@
 
 // The following are now obsolete, they used to depend on config macros.
 #define CGAL_TYPENAME_MSVC_NULL typename
-#define CGAL_TEMPLATE_NULL      template <>
 #define CGAL_NULL_TMPL_ARGS <>
 
 
