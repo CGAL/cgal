@@ -35,7 +35,7 @@ int main()
 
   std::vector<Vertex_handle> PV(7);
 
-  PV[0] = T.insert_increase_dimension(NULL);
+  PV[0] = T.insert_increase_dimension();
   assert( T.number_of_vertices() == 1 );
   assert( T.dimension() == -1 );
   assert( T.is_valid() );
@@ -43,7 +43,7 @@ int main()
   int i;
   // each of the following insertions of vertices increases the dimension
   for ( i=1; i<5; i++ ) {
-    PV[i] = T.insert_increase_dimension(NULL, PV[0]);
+    PV[i] = T.insert_increase_dimension(PV[0]);
     assert( T.number_of_vertices() == i+1 );
     assert( T.dimension() == i-1 );
     assert( T.is_valid() );
@@ -59,14 +59,14 @@ int main()
   // PV[0] is the vertex of index ind in c
 
   // insertion of a new vertex in the facet opposite to PV[0]
-  PV[5] = T.insert_in_facet(NULL, c, ind);
+  PV[5] = T.insert_in_facet(c, ind);
   
   assert( T.number_of_vertices() == 6 );
   assert( T.dimension() == 3 );
   assert( T.is_valid() );
 
   // insertion of a new vertex in c
-  PV[6] = T.insert_in_cell(NULL, c);
+  PV[6] = T.insert_in_cell(c);
 
   assert( T.number_of_vertices() == 7 );
   assert( T.dimension() == 3 );

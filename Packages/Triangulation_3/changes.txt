@@ -1,3 +1,6 @@
+Version 1.97 (31 October 01)
+- Fix example_tds.C.
+
 Version 1.96 (26 October 01)
 - TDS::insert*() doesn't support the first Vertex_handle superfluous argument.
 - Document this change, as well as remove_decrease_dimension(),
