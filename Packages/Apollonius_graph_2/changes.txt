@@ -1,3 +1,7 @@
+14 May 2004:  Menelaos Karavelas <mkaravel@cse.nd.edu>
+- warning of SunPro CC 5.30 for uninitialized variable in
+  Ag2_infinite_edge_test_C2.h
+
 13 May 2004:  Menelaos Karavelas <mkaravel@cse.nd.edu>
 - replaced Vertex_handle(NULL) by Vertex_handle()
 - replaced comparisons of vertex and face handles against NULL by

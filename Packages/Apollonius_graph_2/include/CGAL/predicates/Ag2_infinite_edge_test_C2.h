@@ -270,7 +270,7 @@ public:
   bool operator()(const Site_2& p2, const Site_2& p3,
 		  const Site_2& p4, const Site_2& q, bool b) const
   {
-    Method_tag tag;
+    Method_tag tag = Method_tag();
     
     Bitangent_line bl_32(p3, p2);
     Bitangent_line bl_24(p2, p4);
