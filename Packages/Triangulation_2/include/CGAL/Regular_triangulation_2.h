@@ -171,9 +171,46 @@ public:
  
   
   bool is_valid(bool verbose = false, int level = 0) const;
+  bool test_conflict(const Weighted_point  &p, Face_handle fh) const;
   void show_face(Face_handle fh) const;
   void show_all() const;	
-
+  
+   //  //template member functions, declared and defined at the end 
+  //  template <class OutputItFaces, class OutputItBoundaryEdges, class OutputItHiddenVertices> 
+  //   Triple<OutputItFaces,OutputItBoundaryEdges, OutputItHiddenVertices>
+  //   get_conflicts_and_boundary_and_hidden_vertices (const Weighted_point  &p, 
+  // 						  OutputItFaces fit, 
+  // 						  OutputItBoundaryEdges eit,
+  // 						  OutputItHiddenVertices vit,		
+  // 						  Face_handle start = Face_handle(NULL)) const;
+  // template <class OutputItFaces, class OutputItBoundaryEdges> 
+  // std::pair<OutputItFaces,OutputItBoundaryEdges>
+  // get_conflicts_and_boundary(const Point  &p, 
+  // 		                OutputItFaces fit, 
+  // 		                OutputItBoundaryEdges eit,
+  // 		                Face_handle start) const;
+  // template <class OutputItFaces>
+  // OutputItFaces
+  // get_conflicts (const Point  &p, 
+  //                OutputItFaces fit, 
+  // 		    Face_handle start ) const;
+  // template <class OutputItBoundaryEdges>
+  // OutputItBoundaryEdges
+  // get_boundary_of_conflicts(const Point  &p, 
+  // 			       OutputItBoundaryEdges eit, 
+  // 			       Face_handle start ) const;
+  //   template <class OutputItBoundaryEdges, class OutputItHiddenVertices> 
+  //   std::pair<OutputItBoundaryEdges, OutputItHiddenVertices> 
+  //   get_boundary_of_conflicts_and_hidden_vertices(const Weighted_point  &p, 
+  // 						OutputItBoundaryEdges eit, 
+  // 						OutputItHiddenVertices vit,
+  // 						Face_handle start= Face_handle(NULL)) const;
+  //   template <class OutputItHiddenVertices> 
+  //   OutputItHiddenVertices
+  //   get_hidden_vertices(const Weighted_point  &p, 
+  // 						OutputItHiddenVertices vit,
+  // 						Face_handle start= Face_handle(NULL)) const;
+  
   // DUAL
   Bare_point dual (Face_handle f) const;
   Object dual(const Edge &e) const ;
@@ -275,8 +312,191 @@ public:
       }
       return ps;
     }
-   
+   template <class OutputItFaces, class OutputItBoundaryEdges, class OutputItHiddenVertices> 
+  Triple<OutputItFaces,OutputItBoundaryEdges, OutputItHiddenVertices>
+  get_conflicts_and_boundary_and_hidden_vertices(const Weighted_point  &p, 
+						 OutputItFaces fit, 
+						 OutputItBoundaryEdges eit,
+						 OutputItHiddenVertices vit,		
+						 Face_handle start = Face_handle(NULL)) const
+    {
+      CGAL_triangulation_precondition( dimension() == 2);
+      int li;
+      Locate_type lt;
+      Face_handle fh = locate(p,lt,li, start);
+      switch(lt) {
+      case OUTSIDE_AFFINE_HULL:
+      case VERTEX:
+	return make_triple(fit, eit, vit);
+      case FACE:
+      case EDGE:
+      case OUTSIDE_CONVEX_HULL:
+	//test whether p is not in conflict 
+	// with the first face
+	if (!test_conflict(p,fh))
+	  return make_triple(fit, eit, vit);
+	
+	// region includes all faces so far treated
+	// stack includes the faces in the region whose neighbors
+	// have not yet been looked at
+	std::set<Face_handle> region;
+	std::stack<Edge> st; 
+	
+	//collection of all boundary_vertices:
+	std::set< Vertex_handle> boundary_vertices;
+	std::set< Vertex_handle> potential_intern_vertices;
+	
+
+	*fit++ = fh; //put fh in OutputItFaces
+	region.insert(fh);
+	st.push(Edge(fh,2));
+	st.push(Edge(fh,1));	
+	st.push(Edge(fh,0));
+
+	while (! st.empty()){
+	  Edge e = st.top();
+ 	  st.pop();
+	  Face_handle fh = e.first;
+	  Face_handle fn = fh->neighbor(e.second);
+	  int i = fn->index(fh);
+	  if( region.find(fn) == region.end() ){
+	    if (test_conflict(p,fn))
+	      {
+		region.insert(fn);
+		st.push(Edge(fn, cw(i)));
+		st.push(Edge(fn,ccw(i)));
+		*fit++ = fn;
+	      }
+	    else{ 
+	      e = Edge(fn,i);
+	      *eit++ = e;
+	      if(!is_infinite(fn->vertex(cw(i))))
+		boundary_vertices.insert(fn->vertex(cw(i)));
+	       if(!is_infinite(fn->vertex(ccw(i))))
+		 boundary_vertices.insert(fn->vertex(ccw(i)));
+	    }
+	  }
+	  else {
+	    //insert the vertices of the last edge into the set of 
+	    // potential intern vertices:
+	    potential_intern_vertices.insert(fn->vertex(ccw(i)));
+	    potential_intern_vertices.insert(fn->vertex(cw(i)));
+	  }
+	}
+	if(!potential_intern_vertices.empty()){
+	  //determine the hidden vertices:
+	  //set containing the boundary vertices
+	  set_difference (potential_intern_vertices.begin(), 
+			  potential_intern_vertices.end(),
+			  boundary_vertices.begin(),
+			  boundary_vertices.end(),
+			  vit); 
+	}
+	return  make_triple(fit, eit, vit);
+      }
+      CGAL_triangulation_assertion(false);
+      return make_triple(fit, eit, vit);
+    }
+  
+  template <class OutputItFaces, class OutputItBoundaryEdges> 
+  std::pair<OutputItFaces,OutputItBoundaryEdges>
+  get_conflicts_and_boundary (const Weighted_point  &p, 
+			      OutputItFaces fit, 
+			      OutputItBoundaryEdges eit,
+			      Face_handle start = Face_handle(NULL)) const
+    {
+      Triple<OutputItFaces,OutputItBoundaryEdges,Emptyset_iterator>
+	pp = 
+	get_conflicts_and_boundary_and_hidden_vertices(p, fit, eit,
+       						       Emptyset_iterator(), 
+       						       start);
+      return std::make_pair(pp.first, pp.second);
+    }
+  template <class OutputItFaces, class OutputItHiddenVertices> 
+  std::pair<OutputItFaces, OutputItHiddenVertices> 
+  get_conflicts_and_hidden_vertices(const Weighted_point  &p, 
+				    OutputItFaces fit, 
+				    OutputItHiddenVertices vit,
+				    Face_handle start= Face_handle(NULL)) const
+    {
+      Triple<OutputItFaces, Emptyset_iterator,OutputItHiddenVertices> 
+	pp = 
+	get_conflicts_and_boundary_and_hidden_vertices(p,fit,
+						       Emptyset_iterator(), 
+						       vit,
+						       start);
+      return std::make_pair(pp.first,pp.third);
+    }
+
+
+   template <class OutputItBoundaryEdges, class OutputItHiddenVertices> 
+  std::pair<OutputItBoundaryEdges, OutputItHiddenVertices> 
+  get_boundary_of_conflicts_and_hidden_vertices(const Weighted_point  &p, 
+						OutputItBoundaryEdges eit, 
+						OutputItHiddenVertices vit,
+						Face_handle start= Face_handle(NULL)) const
+    {
+      Triple<Emptyset_iterator,OutputItBoundaryEdges,
+	OutputItHiddenVertices> 
+	pp = 
+	get_conflicts_and_boundary_and_hidden_vertices(p,
+						       Emptyset_iterator(), 
+						       eit,vit,
+						       start);
+      return std::make_pair(pp.second,pp.third);
+    }
+
+  template <class OutputItFaces> 
+  OutputItFaces
+  get_conflicts (const Weighted_point  &p, 
+		 OutputItFaces fit, 
+		 Face_handle start= Face_handle(NULL)) const
+    {
+     Triple<OutputItFaces,Emptyset_iterator,Emptyset_iterator>
+	pp = 
+       get_conflicts_and_boundary_and_hidden_vertices(p, fit, Emptyset_iterator(),
+						      Emptyset_iterator(), 
+						      start);
+      return pp.first;
+    }
+
+  template <class OutputItBoundaryEdges> 
+  OutputItBoundaryEdges
+  get_boundary_of_conflicts(const Weighted_point  &p, 
+			    OutputItBoundaryEdges eit, 
+			    Face_handle start= Face_handle(NULL)) const
+    {    
+      Triple<Emptyset_iterator, OutputItBoundaryEdges,Emptyset_iterator>
+	pp = 
+	get_conflicts_and_boundary_and_hidden_vertices(p, Emptyset_iterator(),eit,
+						       Emptyset_iterator(), 
+						       start);
+      return pp.second;
+    }
+  template <class OutputItHiddenVertices> 
+  OutputItHiddenVertices 
+  get_hidden_vertices(const Weighted_point  &p, OutputItHiddenVertices vit,
+		      Face_handle start= Face_handle(NULL)) const
+    {
+      Triple<Emptyset_iterator,Emptyset_iterator,
+	OutputItHiddenVertices> 
+	pp = 
+	get_conflicts_and_boundary_and_hidden_vertices(p,Emptyset_iterator(), 
+						       Emptyset_iterator(),vit,
+						       start);
+      return pp.third;
+    }
+ 
+ 
 };
+
+template < class Gt, class Tds >
+inline bool
+Regular_triangulation_2<Gt,Tds>::
+test_conflict(const Weighted_point  &p, Face_handle fh) const
+{
+  return(power_test(fh,p) == ON_POSITIVE_SIDE);
+}   
 
 template < class Gt, class Tds >
 void
