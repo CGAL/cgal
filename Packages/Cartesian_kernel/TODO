@@ -8,10 +8,6 @@ Stuff to look at, as time permits:
   - G++ 2.97.
   - Write a Checker for full kernels, like Pm_traits_checker.h ?
 
-- Stuff is missing in Kernel_traits_common.h for Sphere3.
-  (idem for homogeneous and co)
-- Try to remove the default copy ctors (wait for some stabilization first).
-
 - Cd must come back to life somehow...  Currently, I've disabled it ~totally
   in Cartesian.h.  Same thing for Conics...
 

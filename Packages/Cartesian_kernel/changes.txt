@@ -19,6 +19,7 @@ Version 6.0 (?? ????? 00)
 - Handle and Representation specification come now from Cartesian<>,
   so that we can customize them easily.
 - A few fixes for the advanced kernel.
+- Removed the copy ctors, as they are provided by the handles.
 - Various cleanups.
 
 --- CGAL 2.2 is out ---
