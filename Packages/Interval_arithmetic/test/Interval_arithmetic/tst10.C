@@ -4,7 +4,10 @@
 #include <CGAL/basic.h>
 #include <iostream>
 
+// Select the kernel you want to benchmark :
+
 #include <CGAL/Cartesian.h>
+// #include <CGAL/Simple_Cartesian_v2.h>
 // #include <CGAL/Simple_cartesian.h>
 // #include <CGAL/Homogeneous.h>
 
@@ -32,6 +35,9 @@ typedef int FT;
 #elif defined CGAL_SIMPLE_CARTESIAN_H
   // typedef CGAL::Simple_cartesian<FT>::Point_2 Point2;
   typedef CGAL::PointS2<FT> Point2;
+#elif defined CGAL_SIMPLE_CARTESIAN_V2_H
+  typedef CGAL::Simple_Cartesian_v2<FT>::Point_2 Point2;
+  // typedef CGAL::PointC2<CGAL::Simple_Cartesian_v2<FT> > Point2;
 #elif defined CGAL_HOMOGENEOUS_H
   // typedef CGAL::Homogeneous<FT>::Point_2 Point2;
   typedef CGAL::PointH2<CGAL::Quotient<FT>, FT> Point2;
@@ -53,8 +59,8 @@ inline
 Point2
 midpoint2(const Point2 &p, const Point2 &q)
 {
-  return Point2((p.x_ref() + q.x_ref())/FT(2),(p.y_ref() + q.y_ref())/FT(2));
-  // return Point2((p.x() + q.x())/FT(2), (p.y() + q.y())/FT(2));
+  // return Point2((p.x_ref() + q.x_ref())/FT(2),(p.y_ref() + q.y_ref())/FT(2));
+  return Point2((p.x() + q.x())/FT(2), (p.y() + q.y())/FT(2));
 }
 
 inline
@@ -62,7 +68,7 @@ Point2
 midpoint3(const Point2 &p, const Point2 &q)
 {
   Point2 M;
-  midpointC2(p.x(),p.y(),q.x(),q.y(),M.x_ref_non_const(),M.y_ref_non_const());
+  // midpointC2(p.x(),p.y(),q.x(),q.y(),M.x_ref_non_const(),M.y_ref_non_const());
   return M;
 }
 #endif
@@ -78,7 +84,12 @@ int main()
   CGAL::Timer t;
   double dt;
 
-#if 1
+#if 0
+
+// Those timings were made on my laptop, which is now not mine anymore,
+// so I need to make them again to be able to make useful comparisons...
+// Maybe automazing the process would be useful to test on different
+// platforms...
 
   //                   mp   / mp1  / mp2  / mp3
 
@@ -90,7 +101,7 @@ int main()
 
   dt = t.time(); t.start();
   for (i=0; i<loops; i++)
-    Point2 C = CGAL::midpoint3(A,B);
+    Point2 C = CGAL::midpoint(A,B);
 
 #else
 
@@ -103,7 +114,7 @@ int main()
   Point2 C;
   dt = t.time(); t.start();
   for (i=0; i<loops; i++)
-    C = CGAL::midpoint3(A,B);
+    C = CGAL::midpoint(A,B);
 
 #endif
 
