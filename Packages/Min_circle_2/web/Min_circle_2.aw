@@ -1953,6 +1953,13 @@ it is declared \ccc{friend}.
                     ( sqr_rad  == c.sqr_rad ) );
         }
 
+        bool
+        operator != (
+            const CGAL::_Min_circle_2_adapterC2__Circle<_PT,_DA>& c) const
+        {
+            return( ! ( *this == c));
+        }
+
         Point
         center( ) const
         {
@@ -2452,9 +2459,6 @@ homogeneous representation with number type \ccc{Gmpz}.
     typedef  Homogeneous< Rt >              RepH;
     typedef  Min_circle_2_traits_2< RepC >  TraitsC;
     typedef  Min_circle_2_traits_2< RepH >  TraitsH;
-
-    CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( RepC::Point_2)
-    CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC( RepH::Point_2)
 @end
 
 The command line option \ccc{-verbose} enables verbose output.
