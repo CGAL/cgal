@@ -67,5 +67,5 @@ compile_and_run test_triangulation_tds
 compile_and_run test_triangulation_geom_traits
 compile_and_run test_triangulation_2
 compile_and_run test_delaunay_triangulation_2
-#compile_and_run test_constrained_triangulation_2
+compile_and_run test_constrained_triangulation_2
 
