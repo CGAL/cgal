@@ -1,3 +1,9 @@
+3.3   (27 Apr 2001)
+- Rename construct_tetrahedron_object to construct_tetrahedron_3_object and
+  construct_iso_cuboid_object to construct_iso_cuboid_3_object.
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 2   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
  3.2   (07 Apr 2000)
 
 - version numbering coupled to kernel test package

@@ -551,11 +551,11 @@ class Homogeneous : public Homogeneous_base< Homogeneous<RT_,FT_>, RT_, FT_ >
     { return Construct_triangle_3(); }
 
     Construct_tetrahedron_3
-    construct_tetrahedron_object() const 
+    construct_tetrahedron_3_object() const 
     { return Construct_tetrahedron_3(); }
 
     Construct_iso_cuboid_3
-    construct_iso_cuboid_object() const 
+    construct_iso_cuboid_3_object() const 
     { return Construct_iso_cuboid_3(); }
 
     Construct_aff_transformation_3
