@@ -3,9 +3,12 @@
 //
 // Compatibility: works with or without CGAL
 
+#include <CGAL/basic.h>
+#include <CGAL/Min_sphere_of_spheres_d.h>
+
 #include <iostream>
 #include <vector>
-#include <CGAL/Min_sphere_of_spheres_d.h>
+
 #include "Rational.h"
 
 // The program will work with numbers of type FieldType.

@@ -11,9 +11,13 @@
 //
 // Compatibility: works with or without CGAL
 
+#include <CGAL/basic.h>
+#include <CGAL/Min_sphere_of_spheres_d.h>
+
 #include <iostream>
 #include <ctime>
-#include <CGAL/Min_sphere_of_spheres_d.h>
+
+#include "Rational.h"
 
 class Sphere {
 private: // representation:

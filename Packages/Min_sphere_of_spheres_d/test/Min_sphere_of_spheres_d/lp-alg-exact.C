@@ -7,9 +7,12 @@
 //
 // Compatibility: works with or without CGAL
 
-#include <iostream>
-#include <ctime>
+#include <CGAL/basic.h>
 #include <CGAL/Min_sphere_of_spheres_d.h>
+
+#include <iostream>
+#include <vector>
+
 #include "Rational.h"
 
 // The program will work with numbers of type FT.
