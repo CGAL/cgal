@@ -1,4 +1,10 @@
 //-----------------------------------------------------------------------//
+// 2.1
++ removed macros
+   CGAL_static_cast, CGAL_const_cast, CGAL_reinterpret_cast
+   R_FT_return, R_RT_return
+
+//-----------------------------------------------------------------------//
 // 1.54
 + Added copy_n to Borland_fixes.h
 
