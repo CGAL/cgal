@@ -83,6 +83,8 @@ Saarbruecken@)
 #ifndef CGAL_WMULT_H
 #define CGAL_WMULT_H
 
+namespace CGAL {
+
 #ifdef CGAL_HOMOGENEOUS_H
 template <class RT>
 inline RT wmult(Homogeneous<RT>*, const RT &a, const RT & w)
@@ -141,6 +143,8 @@ inline RT wmult(Cartesian<RT> *, const RT &a,
 }
 #endif // CGAL_CARTESIAN_H
 
+} // close namespace CGAL
+
 #endif // CGAL_WMULT_H
 @}
 
@@ -174,6 +178,8 @@ Note the double occurrence of the factor@{wq@} in the latter definition.
 
 @$@<2D squared distance general utilities@>+=@{
 
+namespace CGAL {
+
 template <class R>
 R_RT_return(R)
 wdot(const Vector_2<R> &u,
@@ -203,6 +209,8 @@ FT wdot(const Point_2< Cartesian<FT> > &p,
             (p.hy() - q.hy())*(r.hy() - q.hy());
 }
 #endif // CGAL_CARTESIAN_H
+
+} // close namespace CGAL
 @}
 
 
@@ -225,6 +233,8 @@ definition of the wcross product for points.
 
 @$@<2D squared distance general utilities@>+=@{
 
+
+namespace CGAL {
 
 template <class R>
 R_RT_return(R)
@@ -255,6 +265,8 @@ FT wcross(const Point_2< Cartesian<FT> > &p,
     return (q.x()-p.x())*(r.y()-q.y()) - (q.y()-p.y())*(r.x()-q.x());
 }
 #endif // CGAL_CARTESIAN_H
+
+} // close namespace CGAL
 @}
 
 @C@<Routines that characterise angles@>
@@ -273,6 +285,9 @@ There should also be an enum with three values (@{ACUTE@},
 @{STRAIGHT@},@{OBTUSE@}) and a routine that returns such a value.
 
 @$@<2D squared distance general utilities@>+=@{
+
+namespace CGAL {
+
 template <class R>
 inline bool is_acute_angle(const Vector_2<R> &u,
     const Vector_2<R> &v)
@@ -320,6 +335,8 @@ inline bool is_obtuse_angle(const Point_2<R> &p,
     typedef typename R::RT RT;
     return RT(wdot(p, q, r)) < RT(0) ;
 }
+
+} // close namespace CGAL
 @}
 
 
@@ -334,6 +351,9 @@ more natural to think of making a left or right turn at @{q@} when going from
 @{p@} to @{r@}. Those routines are implemented elsewhere, though.
 
 @$@<2D squared distance general utilities@>+=@{
+
+namespace CGAL {
+
 template <class R>
 Orientation orientation(const Vector_2<R> &u,
     const Vector_2<R> &v)
@@ -390,6 +410,8 @@ the ordertype, rightturn, leftturn and collinear routines for points are
 defined elsewhere.
 */
 
+} // close namespace CGAL
+
 @}
 
 @B@<Point Point distance@>
@@ -398,6 +420,9 @@ The squared distance between two points is computed by taking the dot product
 of the difference vector.
 
 @$@<2D squared distance header declarations 1@>+=@{@-
+
+namespace CGAL {
+
 template <class R>
 inline R_FT_return(R)
 squared_distance(
@@ -408,6 +433,8 @@ squared_distance(
     return (R_FT_return(R))(vec*vec);
 }
 
+} // close namespace CGAL
+
 @}
 
 @B@<Point Line distance@>
@@ -415,6 +442,8 @@ squared_distance(
 @C@<Declarations@>
 
 @$@<2D squared distance header declarations 1@>+=@{@-
+
+namespace CGAL {
 
 template <class R>
 extern R_FT_return(R)
@@ -430,6 +459,8 @@ squared_distance(
 {
     return squared_distance(pt, line);
 }
+
+} // close namespace CGAL
 @}
 
 @C@<Implementation@>
@@ -465,6 +496,9 @@ squared_distance(
 @C@<Declarations@>
 
 @$@<2D squared distance header declarations 1@>+=@{@-
+
+namespace CGAL {
+
 template <class R>
 extern R_FT_return(R)
 squared_distance(
@@ -479,6 +513,8 @@ squared_distance(
 {
     return squared_distance(pt, ray);
 }
+
+} // close namespace CGAL
 @}
 
 @C@<Implementation@>
@@ -492,6 +528,9 @@ distance from @{pt@} to the start point of the ray, as this is the closest
 point.
 
 @$@<2D squared distance outline definitions 1@>+=@{
+
+namespace CGAL {
+
 template <class R>
 extern R_FT_return(R)
 squared_distance(
@@ -504,11 +543,16 @@ squared_distance(
         return (R_FT_return(R))(diff*diff);
     return squared_distance(pt, ray.supporting_line());
 }
+
+} // close namespace CGAL
 @}
 
 @B@<Point Ray distance discerners@>
 
 @$@<2D squared distance header declarations 1@>+=@{
+
+namespace CGAL {
+
 template <class R>
 extern void
 distance_index(
@@ -520,11 +564,15 @@ template <class R>
 extern R_FT_return(R)
 squared_distance_indexed(const Point_2<R> &pt,
     const Ray_2<R> &ray, int ind1, int ind2);
+
+} // close namespace CGAL
 @}
 
 @C@<Implementation@>
 
 @$@<2D squared distance outline definitions 1@>+=@{
+
+namespace CGAL {
 template <class R>
 extern void
 distance_index(
@@ -548,11 +596,15 @@ squared_distance_indexed(const Point_2<R> &pt,
         return squared_distance(pt, ray.source());
     return squared_distance(pt, ray.supporting_line());
 }
+
+} // close namespace CGAL
 @}
 
 @B@<Point Segment distance@>
 
 @$@<2D squared distance header declarations 1@>+=@{@-
+
+namespace CGAL {
 
 template <class R>
 extern R_FT_return(R)
@@ -569,6 +621,8 @@ squared_distance(
 {
     return squared_distance(pt, seg);
 }
+
+} // close namespace CGAL
 
 @}
 
@@ -587,6 +641,9 @@ If this product is negative, the distance from the point to the start of the
 segment is taken.
 
 @$@<2D squared distance outline definitions 1@>+=@{
+
+namespace CGAL {
+
 template <class R>
 R_FT_return(R)
 squared_distance(
@@ -605,11 +662,15 @@ squared_distance(
         return squared_distance(pt, seg.target());
     return squared_distance(pt, seg.supporting_line());
 }
+
+} // close namespace CGAL
 @}
 
 @B@<Point Segment distance discerners@>
 
 @$@<2D squared distance header declarations 1@>+=@{
+
+namespace CGAL {
 template <class R>
 extern void
 distance_index(
@@ -621,11 +682,16 @@ template <class R>
 extern R_FT_return(R)
 squared_distance_indexed(const Point_2<R> &pt,
     const Segment_2<R> &seg, int ind1, int ind2);
+
+} // close namespace CGAL
 @}
 
 @C@<Implementation@>
 
 @$@<2D squared distance outline definitions 1@>+=@{
+
+namespace CGAL {
+
 template <class R>
 extern void
 distance_index(
@@ -655,6 +721,8 @@ squared_distance_indexed(const Point_2<R> &pt,
         return squared_distance(pt, seg.target());
     return squared_distance(pt, seg.supporting_line());
 }
+
+} // close namespace CGAL
 @}
 
 @B@<Segment Segment distance@>
@@ -662,12 +730,16 @@ squared_distance_indexed(const Point_2<R> &pt,
 @C@<Declarations@>
 
 @$@<2D squared distance header declarations 1@>+=@{@-
+
+namespace CGAL {
+
 template <class R>
 extern R_FT_return(R)
 squared_distance(
     const Segment_2<R> &,
     const Segment_2<R> &);
 
+} // close namespace CGAL
 
 @}
 
@@ -699,6 +771,9 @@ A special case arises if both segments lie on the same supporting line.
 This is checked separately.
 
 @$@<2D segment segment squared distance main routine@>+=@{
+
+namespace CGAL {
+
 template <class R>
 R_FT_return(R)
 squared_distance(
@@ -760,6 +835,9 @@ case. This must still be solved, for instance by computing the squared
 distance from both endpoints to the other segment and taking the minimum.
 
 @$@<unused implementation@>@Z==@{
+
+namespace CGAL {
+
 template <class R, class RT>
 R_FT_return(R)
 _squared_distance_of_endpoint_exact(RT start_dm, RT end_dm,
@@ -801,6 +879,8 @@ _squared_distance_of_endpoint<false, R, RT>(RT start_dm, RT end_dm,
     else
         return _squared_distance_of_endpoint_inexact(start, end, seg);
 }
+
+} // close namespace CGAL
 @}
 
 @$@<2D segment segment squared distance main routine@>+=@{
@@ -865,6 +945,8 @@ segment and take the minimum.
     }
 }
 
+} // close namespace CGAL
+
 @}
 
 We need a small helper function to compare the distance from a point to the
@@ -872,6 +954,9 @@ intersection point of the supporting lines of the two segments. With the help
 of the cross product (that is known), this can be computed cheaply.
 
 @$@<2D segment segment squared distance helper routine@>==@{
+
+namespace CGAL {
+
 template <class RT, class R>
 RT _distance_measure_sub(RT startwcross, RT endwcross,
 const Point_2<R> &start, const Point_2<R> &end
@@ -880,6 +965,8 @@ const Point_2<R> &start, const Point_2<R> &end
     return  abs(wmult((R*)0, startwcross, end.hw())) -
             abs(wmult((R*)0, endwcross, start.hw()));
 }
+
+} // close namespace CGAL
 @}
 
 We still need to deal with the case where both segments are parallel. The
@@ -897,6 +984,8 @@ of explaining, they are not actually done. The sign of the dot product is used
 to make the necessary decisions.
 
 @$@<2D segment segment squared distance parallel case@>+=@{
+
+namespace CGAL {
 
 template <class R>
 R_FT_return(R)
@@ -925,6 +1014,8 @@ squared_distance_parallel(
     }
     return squared_distance(seg2.source(), seg1.supporting_line());
 }
+
+} // close namespace CGAL
 @}
 
 @$@<2D squared distance outline definitions 1@>+=@{
@@ -938,6 +1029,8 @@ squared_distance_parallel(
 @C@<Declarations@>
 
 @$@<2D squared distance header declarations 1@>+=@{@-
+
+namespace CGAL {
 
 template <class R>
 extern R_FT_return(R)
@@ -954,6 +1047,8 @@ squared_distance(
 {
     return squared_distance(seg, ray);
 }
+
+} // close namespace CGAL
 
 @}
 
@@ -975,6 +1070,9 @@ For the ray we look at the direction and on which side its starting point
 lies.
 
 @$@<2D ray segment squared distance computation@>+=@{
+
+namespace CGAL {
+
 template <class R>
 R_FT_return(R)
 squared_distance(
@@ -1078,9 +1176,13 @@ segment and take the minimum.
         }
     }
 }
+
+} // close namespace CGAL
 @}
 
 @$@<2D ray segment squared distance parallel case@>==@{
+
+namespace CGAL {
 template <class R>
 R_FT_return(R)
 squared_distance_parallel(
@@ -1115,6 +1217,8 @@ const Vector_2<R> &start, const Vector_2<R> &end
     return  abs(wmult((R*)0, startwcross, end.hw())) -
             abs(wmult((R*)0, endwcross, start.hw()));
 }
+
+} // close namespace CGAL
 @}
 
 
@@ -1129,6 +1233,8 @@ const Vector_2<R> &start, const Vector_2<R> &end
 @C@<Declarations@>
 
 @$@<2D squared distance header declarations 1@>+=@{@-
+
+namespace CGAL {
 
 template <class R>
 extern R_FT_return(R)
@@ -1146,6 +1252,8 @@ squared_distance(
     return squared_distance(seg, line);
 }
 
+} // close namespace CGAL
+
 @}
 
 @C@<Implementation@>
@@ -1160,6 +1268,9 @@ Then we decide if the segment crosses the line.
 The boolean @{crossing1@} tells whether the segment crosses the line.
 
 @$@<2D line segment squared distance computation@>+=@{
+
+namespace CGAL {
+
 template <class R>
 R_FT_return(R)
 squared_distance(
@@ -1214,6 +1325,8 @@ factors).
         }
     }
 }
+
+} // close namespace CGAL
 @}
 
 The following routine returns the square distance from a point to a line.
@@ -1227,6 +1340,9 @@ with hw factors. The hw factors of @{dir@} cancel.
 
 
 @$@<2D line segment squared distance helper routine@>==@{
+
+namespace CGAL {
+
 template <class RT, class R>
 R_FT_return(R)
 _sqd_to_line(const Vector_2<R> &diff,
@@ -1239,6 +1355,8 @@ _sqd_to_line(const Vector_2<R> &diff,
     FT result = R::make_FT(numerator, denominator);
     return (R_FT_return(R))(result);
 }
+
+} // close namespace CGAL
 @}
 
 
@@ -1251,11 +1369,15 @@ _sqd_to_line(const Vector_2<R> &diff,
 
 @$@<2D squared distance header declarations 1@>+=@{@-
 
+namespace CGAL {
+
 template <class R>
 extern R_FT_return(R)
 squared_distance(
     const Ray_2<R> &ray1,
     const Ray_2<R> &ray2);
+
+} // close namespace CGAL
 
 @}
 
@@ -1273,6 +1395,9 @@ supporting line of @{ray1@}.
 We look at the direction of the ray and on which side its starting point lies.
 
 @$@<2D ray ray squared distance computation@>+=@{
+
+namespace CGAL {
+
 template <class R>
 R_FT_return(R)
 squared_distance(
@@ -1337,6 +1462,8 @@ ray and take the minimum.
         }
     }
 }
+
+} // close namespace CGAL
 @}
 
 The following routine computes the squared distance between two rays if they
@@ -1388,6 +1515,8 @@ ray_ray_squared_distance_parallel(
 
 @$@<2D squared distance header declarations 1@>+=@{@-
 
+namespace CGAL {
+
 template <class R>
 extern R_FT_return(R)
 squared_distance(
@@ -1403,6 +1532,8 @@ squared_distance(
 {
     return squared_distance(line, ray);
 }
+
+} // close namespace CGAL
 
 @}
 
@@ -1423,6 +1554,9 @@ direction).
 
 
 @$@<2D squared distance outline definitions 1@>+=@{
+
+namespace CGAL {
+
 template <class R>
 extern R_FT_return(R)
 squared_distance(
@@ -1442,17 +1576,23 @@ squared_distance(
     }
     return (R_FT_return(R))((sign_dist*sign_dist)/(normalvec*normalvec));
 }
+
+} // close namespace CGAL
 @}
 
 @B@<Line Line distance@>
 
 @$@<2D squared distance header declarations 1@>+=@{@-
 
+namespace CGAL {
+
 template <class R>
 extern R_FT_return(R)
 squared_distance(
     const Line_2<R> &line1,
     const Line_2<R> &line2);
+
+} // close namespace CGAL
 
 @}
 
@@ -1463,6 +1603,9 @@ that case we can take the distance of an arbitrary point on the one line to
 the other line.
 
 @$@<2D squared distance outline definitions 1@>+=@{
+
+namespace CGAL {
+
 template <class R>
 bool
 _are_parallel(
@@ -1484,6 +1627,8 @@ squared_distance(
     else
         return (R_FT_return(R))((FT)0);
 }
+
+} // close namespace CGAL
 @}
 
 @B@<Point Triangle distance helper function@>
@@ -1498,6 +1643,9 @@ Otherwise, the point is closest to a vertex of the triangle. Then ind2 is
 set to -1 and vertex(ind1) is the closest vertex.
 
 @$@<2D squared distance header declarations 2@>+=@{
+
+namespace CGAL {
+
 template <class R>
 extern void
 distance_index(
@@ -1505,6 +1653,8 @@ distance_index(
     int &ind2,
     const Point_2<R> &pt,
     const Triangle_2<R> &triangle);
+
+} // close namespace CGAL
 @}
 
 @$@<2D squared distance header declarations 2@>+=@{
@@ -1532,6 +1682,9 @@ sharp.
 Otherwise the point lies closest to a vertex.
 
 @$@<2D squared distance outline definitions 2@>+=@{
+
+namespace CGAL {
+
 template <class R>
 extern void
 distance_index(
@@ -1701,9 +1854,14 @@ distance_index(
         }
     }
 }
+
+} // close namespace CGAL
 @}
 
 @$@<2D squared distance outline definitions 2@>+=@{
+
+namespace CGAL {
+
 template <class R>
 extern R_FT_return(R)
 squared_distance_indexed(const Point_2<R> &pt,
@@ -1717,12 +1875,17 @@ squared_distance_indexed(const Point_2<R> &pt,
     return squared_distance(pt,
         Line_2<R>(triangle.vertex(ind1), triangle.vertex(ind2)));
 }
+
+} // close namespace CGAL
 @}
 
 
 @B@<Point Triangle distance@>
 
 @$@<2D squared distance header declarations 2@>+=@{@-
+
+namespace CGAL {
+
 template <class R>
 extern R_FT_return(R)
 squared_distance(
@@ -1739,12 +1902,17 @@ squared_distance(
     return squared_distance(pt, triangle);
 }
 
+} // close namespace CGAL
+
 @}
 
 @C@<Implementation@>
 
 
 @$@<2D squared distance outline definitions 2@>+=@{
+
+namespace CGAL {
+
 template <class R>
 extern R_FT_return(R)
 squared_distance(
@@ -1755,11 +1923,16 @@ squared_distance(
     distance_index(ind1, ind2, pt, triangle);
     return squared_distance_indexed(pt, triangle, ind1, ind2);
 }
+
+} // close namespace CGAL
 @}
 
 @B@<Line Triangle distance@>
 
 @$@<2D squared distance header declarations 2@>+=@{@-
+
+namespace CGAL {
+
 template <class R>
 extern R_FT_return(R)
 squared_distance(
@@ -1776,12 +1949,17 @@ squared_distance(
     return squared_distance(line, triangle);
 }
 
+} // close namespace CGAL
+
 @}
 
 @C@<Implementation@>
 
 
 @$@<2D squared distance outline definitions 2@>+=@{
+
+namespace CGAL {
+
 template <class R>
 extern R_FT_return(R)
 squared_distance(
@@ -1805,11 +1983,16 @@ squared_distance(
     }
     return (R_FT_return(R))(mindist);
 }
+
+} // close namespace CGAL
 @}
 
 @B@<Ray Triangle distance@>
 
 @$@<2D squared distance header declarations 2@>+=@{@-
+
+namespace CGAL {
+
 template <class R>
 extern R_FT_return(R)
 squared_distance(
@@ -1826,12 +2009,17 @@ squared_distance(
     return squared_distance(ray, triangle);
 }
 
+} // close namespace CGAL
+
 @}
 
 @C@<Implementation@>
 
 
 @$@<2D squared distance outline definitions 2@>+=@{
+
+namespace CGAL {
+
 template <class R>
 extern R_FT_return(R)
 squared_distance(
@@ -1879,11 +2067,16 @@ squared_distance(
     }
     return (R_FT_return(R))(mindist);
 }
+
+} // close namespace CGAL
 @}
 
 @B@<Segment Triangle distance@>
 
 @$@<2D squared distance header declarations 2@>+=@{@-
+
+namespace CGAL {
+
 template <class R>
 extern R_FT_return(R)
 squared_distance(
@@ -1900,12 +2093,17 @@ squared_distance(
     return squared_distance(seg, triangle);
 }
 
+} // close namespace CGAL
+
 @}
 
 @C@<Implementation@>
 
 
 @$@<2D squared distance outline definitions 2@>+=@{
+
+namespace CGAL {
+
 template <class R>
 extern R_FT_return(R)
 squared_distance(
@@ -1964,22 +2162,32 @@ squared_distance(
     }
     return (R_FT_return(R))(mindist);
 }
+
+} // close namespace CGAL
 @}
 
 @B@<Triangle Triangle distance@>
 
 @$@<2D squared distance header declarations 2@>+=@{@-
+
+namespace CGAL {
+
 template <class R>
 extern R_FT_return(R)
 squared_distance(
     const Triangle_2<R> &triangle1,
     const Triangle_2<R> &triangle2);
+
+} // close namespace CGAL
 @}
 
 @C@<Implementation@>
 
 
 @$@<2D squared distance outline definitions 2@>+=@{
+
+namespace CGAL {
+
 template <class R>
 extern R_FT_return(R)
 squared_distance(
@@ -2040,6 +2248,8 @@ squared_distance(
     }
     return (R_FT_return(R))(mindist);
 }
+
+} // close namespace CGAL
 @}
 
 @B@<The header files@>
