@@ -54,13 +54,13 @@ void merge_sets( Object o1, Object o2, Hash_map& hash, Union_find& uf) {
     uf.unify_sets( hash[o1], hash[o2]);
 }
 
-template <typename K, typename I> class SNC_sphere_map;
+template <typename K, typename I, typename M> class SNC_sphere_map;
 template <typename S> class SM_decorator;
 template <typename S> class SNC_decorator;
 
 /*{\Manpage {SNC_structure}{Items}{Selective Nef Complex}{C}}*/
 
-template <typename Kernel_, typename Items_>
+template <typename Kernel_, typename Items_, typename Mark_>
 class SNC_structure {
 /*{\Mdefinition The extended Wuerzburg structure is the topological
 structure of Nef polyhedra. It is programmed around the local
@@ -71,18 +71,19 @@ the local graph or added for the comfort of the user.}*/
 public:
   /*{\Mtypes 7}*/
 
-  typedef Items_                        Items;
-  typedef Kernel_                       Kernel;
-  typedef SNC_structure<Kernel,Items>   Self;
+  typedef Items_                             Items;
+  typedef Kernel_                            Kernel;
+  typedef Mark_                              Mark;
+  typedef SNC_structure<Kernel,Items,Mark>   Self;
 
-  typedef bool                          Mark;
+  //  typedef bool                          Mark;
   typedef SNC_decorator<Self>           SNC_decorator;
 
   typedef typename Kernel::FT           FT;
   typedef typename Kernel::RT           RT;
   typedef CGAL::Sphere_geometry<Kernel> Sphere_kernel;
   
-  typedef SNC_sphere_map<Kernel, Items> Sphere_map;
+  typedef SNC_sphere_map<Kernel, Items, Mark> Sphere_map;
   typedef SM_decorator<Sphere_map>  SM_decorator;
 
   typedef typename Kernel::Point_3      Point_3;
@@ -1045,9 +1046,9 @@ protected:
 }; // SNC_structure
 
 
-template <typename Kernel, typename Items>
-void SNC_structure<Kernel,Items>::
-pointer_update(const SNC_structure<Kernel,Items>& D)
+template <typename Kernel, typename Items, typename Mark>
+void SNC_structure<Kernel,Items,Mark>::
+pointer_update(const SNC_structure<Kernel,Items,Mark>& D)
 {
   CGAL::Unique_hash_map<Vertex_const_handle,Vertex_handle>       VM;
   CGAL::Unique_hash_map<Halfedge_const_handle,Halfedge_handle>   EM;
@@ -1170,9 +1171,9 @@ pointer_update(const SNC_structure<Kernel,Items>& D)
   }
 }
 
-template <typename Kernel, typename Items> 
-typename SNC_structure<Kernel, Items>::Object_iterator
-SNC_structure<Kernel,Items>::undef_;
+template <typename Kernel, typename Items, typename Mark> 
+typename SNC_structure<Kernel, Items, Mark>::Object_iterator
+SNC_structure<Kernel,Items,Mark>::undef_;
 
 
 CGAL_END_NAMESPACE

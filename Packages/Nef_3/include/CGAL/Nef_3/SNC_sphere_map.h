@@ -37,7 +37,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <typename K, typename I> class SNC_structure;
+template <typename K, typename I, typename M> class SNC_structure;
 
 template <typename HE>
 struct move_shalfedge_around_svertex {
@@ -51,18 +51,19 @@ struct move_shalfedge_around_sface {
   void backward(HE& e) const { e = (e->sprev()); }
 };
 
-template <typename Kernel_, typename Items_>
-class SNC_sphere_map : public Items_::Vertex<SNC_structure<Kernel_, Items_> >
+template <typename Kernel_, typename Items_, typename Mark_>
+class SNC_sphere_map : public Items_::Vertex<SNC_structure<Kernel_, Items_, Mark_> >
 {
 
  public:
   /*{\Mtypes 7}*/
-  typedef SNC_sphere_map<Kernel_, Items_>           Self;
+  typedef SNC_sphere_map<Kernel_, Items_,Mark_>     Self;
   typedef Items_                                    Items;
   typedef Kernel_                                   Kernel;
-  typedef SNC_structure<Kernel,Items>               SNC_structure;
+  typedef Mark_                                     Mark;
+  typedef SNC_structure<Kernel,Items,Mark>          SNC_structure;
   typedef typename Items::Vertex<SNC_structure>     Base;
-  typedef bool                                      Mark;
+  //  typedef bool                                      Mark;
   typedef CGAL::Sphere_geometry<Kernel>             Sphere_kernel;
  
   typedef typename Sphere_kernel::Sphere_point     Sphere_point;

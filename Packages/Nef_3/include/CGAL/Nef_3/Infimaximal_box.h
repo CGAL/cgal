@@ -144,6 +144,10 @@ class Infimaximal_box {
     return false;
   }
 
+  static Point_3 normalize_transformed_vertex(const Point_3& p) {
+    return Point_3();
+  }
+
   template <typename SNC_constructor>
   static std::list<Point_3> find_points_of_box_with_plane(SNC_constructor& C, const Plane_3& h) {
     return std::list<Point_3>();
@@ -363,6 +367,58 @@ class Infimaximal_box<Tag_true, Kernel> {
   template <typename SNC_constructor>
   static void create_vertices_of_box_with_plane(SNC_constructor& C, const Plane_3& h, bool b) {
     C.create_vertices_of_box_with_plane(h, b);
+  }
+
+  static Point_3 normalize_transformed_vertex(const Point_3& p) {
+    int i=0;
+    if(CGAL_NTS abs(p.hx()) < CGAL_NTS abs(p.hy()))
+      if(CGAL_NTS abs(p.hy()) < CGAL_NTS abs(p.hz()))
+	i = 2;
+      else
+	i = 1;
+    else if(CGAL_NTS abs(p.hx()) < CGAL_NTS abs(p.hz()))
+      i = 2;
+
+    switch(i) {
+    case 0:
+      CGAL_assertion(p.hx().degree() == 1);
+      if(p.hx()[1] > 0)
+	return Point_3(RT(0,p.hx()[1]*p.hw()[0]),
+		       RT(p.hy()[0]*p.hx()[1]-p.hx()[0]*p.hy()(1),p.hy()[1]*p.hw()[0]),
+		       RT(p.hz()[0]*p.hx()[1]-p.hx()[0]*p.hz()(1),p.hz()[1]*p.hw()[0]),
+		       RT(p.hw()[0]*p.hx()[1]));
+      else
+	return Point_3(RT(0,-p.hx()[1]*p.hw()[0]),
+		       RT(p.hy()[0]*p.hx()[1]-p.hx()[0]*p.hy()[1],-p.hy()(1)*p.hw()[0]),
+		       RT(p.hz()[0]*p.hx()[1]-p.hx()[0]*p.hz()[1],-p.hz()(1)*p.hw()[0]),
+		       RT(p.hw()[0]*p.hx()[1]));
+    case 1:
+      CGAL_assertion(p.hy().degree() == 1);
+      if(p.hy()[1] > 0)
+	return Point_3(RT(p.hx()[0]*p.hy()[1]-p.hy()[0]*p.hx()[1],p.hx()(1)*p.hw()[0]),
+		       RT(0,p.hy()[1]*p.hw()[0]),
+		       RT(p.hz()[0]*p.hy()[1]-p.hy()[0]*p.hz()[1],p.hz()(1)*p.hw()[0]),
+		       RT(p.hw()[0]*p.hy()[1]));
+      else
+	return Point_3(RT(p.hx()[0]*p.hy()[1]-p.hy()[0]*p.hx()[1],-p.hx()(1)*p.hw()[0]),
+		       RT(0,-p.hy()[1]*p.hw()[0]),
+		       RT(p.hz()[0]*p.hy()[1]-p.hy()[0]*p.hz()[1],-p.hz()(1)*p.hw()[0]),
+		       RT(p.hw()[0]*p.hy()[1]));
+    case 2:
+      CGAL_assertion(p.hz().degree() == 1);
+      if(p.hz()[1] > 0)
+	return Point_3(RT(p.hx()[0]*p.hz()[1]-p.hz()[0]*p.hx()[1],p.hx()(1)*p.hw()[0]),
+		       RT(p.hy()[0]*p.hz()[1]-p.hz()[0]*p.hy()[1],p.hy()(1)*p.hw()[0]),
+		       RT(0,p.hz()[1]*p.hw()[0]),
+		       RT(p.hw()[0]*p.hz()[1]));
+      else
+	return Point_3(RT(p.hx()[0]*p.hz()[1]-p.hz()[0]*p.hx()[1],-p.hx()(1)*p.hw()[0]),
+		       RT(p.hy()[0]*p.hz()[1]-p.hz()[0]*p.hy()[1],-p.hy()(1)*p.hw()[0]),
+		       RT(0,-p.hz()[1]*p.hw()[0]),
+		       RT(p.hw()[0]*p.hz()[1]));
+    default: CGAL_assertion_msg(false, "wrong value");
+    }
+    return Point_3();
   }
 
   static typename std::list<Point_3>::const_iterator segment_on_side(int side_of_point, 

@@ -6,21 +6,21 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <typename Kernel, typename Items>
+template <typename Kernel, typename Items, typename Mark>
 std::ostream& operator<<
- (std::ostream& os, Nef_polyhedron_3<Kernel,Items>& NP)
+ (std::ostream& os, Nef_polyhedron_3<Kernel,Items, Mark>& NP)
 {
-  typedef typename Nef_polyhedron_3<Kernel,Items>::SNC_structure SNC_structure;
+  typedef typename Nef_polyhedron_3<Kernel,Items, Mark>::SNC_structure SNC_structure;
   CGAL::SNC_io_parser<SNC_structure> O(os, NP.snc(),true);
   O.print();
   return os;
 }
 
-template <typename Kernel, typename Items>
+template <typename Kernel, typename Items, typename Mark>
 std::istream& operator>>
-  (std::istream& is, Nef_polyhedron_3<Kernel,Items>& NP)
+  (std::istream& is, Nef_polyhedron_3<Kernel,Items, Mark>& NP)
 {
-  typedef typename Nef_polyhedron_3<Kernel,Items>::SNC_structure SNC_structure;
+  typedef typename Nef_polyhedron_3<Kernel,Items, Mark>::SNC_structure SNC_structure;
   CGAL::SNC_io_parser<SNC_structure> I(is, NP.snc());
   I.read();
   NP.pl()->initialize(&NP.snc());

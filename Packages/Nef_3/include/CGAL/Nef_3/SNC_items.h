@@ -36,7 +36,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <typename K, typename I> class SNC_sphere_map;
+template <typename K, typename I, typename M> class SNC_sphere_map;
 template <typename R> class SM_decorator;
 
 class SNC_items {
