@@ -54,15 +54,20 @@ CGAL_Window_stream&
 operator<<(CGAL_Window_stream& os,
            const CGAL_Delaunay_triangulation_2<Gt,Tds> &T)
 {
-  //return (os << (CGAL_Triangulation_2<Gt, Tds>) T);
+  return (os << (CGAL_Triangulation_2<Gt, Tds>) T);
+  // c'est pas une bonne idee parceque le cast
+  // utilise le createur 
+  //CGAL_Triangulation_2(const CGAL_Triangulation_2<Gt,Tds> &tr)
+  //qui recopie toute les faces 
 
-  CGAL_Delaunay_triangulation_2<Gt,Tds>::Edge_iterator it = T.edges_begin();
-
-    while(it != T.edges_end()){
-        os << T.segment(it);
-        ++it;
-    }
-    return os;
+//   CGAL_Delaunay_triangulation_2<Gt,Tds>::Edge_iterator it = T.edges_begin();
+// 
+//     while(it != T.edges_end()){
+//         os << T.segment(it);
+//         ++it;
+//     }
+//   
+//     return os;
 }
 #endif // CGAL_WINDOW_STREAM_DELAUNAY_TRIANGULATION_2_H
 #endif // CGAL_DELAUNAY_TRIANGULATION_2_H
@@ -76,15 +81,15 @@ operator<<(CGAL_Window_stream& os,
            const CGAL_Constrained_triangulation_2<Gt,Tds> &T)
 {
 
-  return (os << (CGAL_Triangulation_2<Gt, Tds>) T);
+  //return (os << (CGAL_Triangulation_2<Gt, Tds>) T);
   
-//    CGAL_Constrained_triangulation_2<Gt,Tds>::Edge_iterator it = T.edges_begin();
-// 
-//     while(it != T.edges_end()){
-//         os << T.segment(it);
-//         ++it;
-//     }
-//    return os;
+   CGAL_Constrained_triangulation_2<Gt,Tds>::Edge_iterator it = T.edges_begin();
+
+    while(it != T.edges_end()){
+        os << T.segment(it);
+        ++it;
+    }
+   return os;
 }
 
 #endif // CGAL_WINDOW_STREAM_CONSTRAINED_TRIANGULATION_2_H

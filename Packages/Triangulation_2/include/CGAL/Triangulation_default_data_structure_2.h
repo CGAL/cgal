@@ -604,6 +604,7 @@ public:
        v2 = new Vertex(tds.finite_vertex()->point());
        V[tds.finite_vertex()]=v2;
        set_finite_vertex(v2);
+       return;
     }
 
     // create the finite vertices
@@ -674,6 +675,7 @@ public:
         }while(++fc != done);
     }
     CGAL_triangulation_postcondition( is_valid() );
+    return;
 
   }
  
