@@ -50,6 +50,8 @@ typedef CGAL::Gmpz NT;
 template<typename Kernel>
 class test {
 
+  typedef CGAL::Nef_polyhedron_3<Kernel>                    Nef_polyhedron;
+  typedef typename Nef_polyhedron::Mark                     Mark;
   typedef typename Kernel::RT                               RT;
   typedef typename Kernel::Point_3                          Point_3;
   typedef typename Kernel::Plane_3                          Plane_3;
@@ -57,7 +59,7 @@ class test {
   typedef typename Kernel::Segment_3                        Segment_3;
   typedef typename Kernel::Aff_transformation_3             Aff_transformation_3;
   typedef CGAL::Polyhedron_3<Kernel>                        Polyhedron;
-  typedef CGAL::SNC_structure<Kernel,CGAL::SNC_items>       SNC_structure;
+  typedef CGAL::SNC_structure<Kernel,CGAL::SNC_items, Mark> SNC_structure;
   typedef typename SNC_structure::Vertex_const_iterator     Vertex_const_iterator;
   typedef typename SNC_structure::Vertex_const_handle       Vertex_const_handle;
   typedef typename SNC_structure::Halfedge_const_iterator   Halfedge_const_iterator;
@@ -78,9 +80,7 @@ class test {
                                   SHalfedge_around_facet_const_circulator;
 
   typedef typename SNC_structure::Infi_box                  Infi_box;
-  typedef typename SNC_structure::Mark                      Mark;
 
-  typedef CGAL::Nef_polyhedron_3<Kernel>                 Nef_polyhedron;
   typedef typename Nef_polyhedron::SM_explorer           SM_explorer;
   typedef CGAL::SNC_intersection<SNC_structure>          SNC_intersection;
   typedef typename SNC_structure::Sphere_map             Sphere_map;
