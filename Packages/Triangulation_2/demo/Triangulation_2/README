@@ -1,7 +1,5 @@
 DEMOS   :
 ---------
-try "make demo" 
-
 
 demo:
 Illustrates features of the  basic triangulation and of Delaunay Triangulation
@@ -12,5 +10,11 @@ It makes use of graphical IO and needs LEDA to be installed.
 regular_demo
 a demo for regular triangulations
 
-More demos about Constrained and Regular triangulation 
-will be provided soon.
+constrained
+A demo for the constrained triangulation.
+The constraints are read from a file and the constrained Delaunay triangulation is build. 
+When clicking left, a point is input and the connected component containing
+this point is shown.
+You can try several points. Click right to terminate.
+
+
