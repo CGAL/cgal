@@ -1,3 +1,6 @@
+2.51 (rursu)
+- Removed line too long warning from LONGNAME.C
+
 2.50 (rursu)
 - Removed test/Configuration/*.C and *.h
 - The release creation process will copy the config/testfiles directory in test/Configuration.
