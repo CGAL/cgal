@@ -312,11 +312,17 @@ will go into the module itself.
 Here is an example of using the script:
 \begin{verbatim}
 $ ./create_internal_module -a /cygdrive/d/CGALCVS -p modules 
--r Triangulation_module -s /cygdrive/d/CGALCVS/Scripts/scripts/
+-m Triangulation_module -s /cygdrive/d/CGALCVS/Scripts/scripts/
+-r CGAL-3.1-I-76 -n 1003001076 
 \end{verbatim}
 
 
-The {\tt -a} parameter is used to specify the directory that contains the packages. The {\tt -p} parameter is used to specify the file containing the packages list. The parameter {\tt -r} is used to specify the module name. For the moment, the module name is also the module version and will go in the version.h and version.tex as the CGAL\_VERSION macro. This will be probably changed in the future.  The {\tt -s} parameter is used to specify the directory containing the scripts create\_makefile, and all the other scripts that CGAL made public for users. This is not the package Scripts, but the scripts directory in the Scripts package.  
+The {\tt -a} parameter is used to specify the directory that contains the packages. 
+The {\tt -p} parameter is used to specify the file containing the packages list. 
+The {\tt -m} parameter is used to specify the name of the module. If there is no m parameter, the default module name is NEW\_MODULE.   
+The parameter {\tt -r} is used to specify the module version. 
+The parameter {\tt -n} is used to specify the module version number. If you don't use the {\tt -n parameter}, the version number will be taken from the module version. The module version and version number will be used in the files version.h and version.tex. 
+The {\tt -s} parameter is used to specify the directory containing the scripts create\_makefile, and all the other scripts that CGAL made public for users. This is not the package Scripts, but the scripts directory in the Scripts package.  
 
 You must have {\tt wininst} package in the same directory with {\tt Scripts} package because the script is looking for C2vcproj script used to generate the projects in examples for VC++.
 
