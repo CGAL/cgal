@@ -2190,6 +2190,14 @@ public:
 
     while(this->sncp()->halffacets_begin()!= this->sncp()->halffacets_end())
       this->sncp()->delete_halffacet_pair(this->sncp()->halffacets_begin());
+
+    SHalfedge_iterator se;
+    CGAL_forall_shalfedges(se,*this)
+      se->facet() = Halffacet_handle();
+
+    SFace_iterator sf;
+    CGAL_forall_sfaces(sf,*this)
+      sf->volume() = Volume_handle();
   }
 
   void correct_infibox_sface_marks() {
