@@ -128,10 +128,15 @@ public:
   static
   Line_2 compute_supporting_line(const Segment_2& s)
   {
+#if 1
+    RT a, b, c;
+    compute_supporting_line(s, a, b, c);
+#else
     RT a = s.source().y() - s.target().y();
     RT b = s.target().x() - s.source().x();
     RT c = s.source().x() * s.target().y()
       - s.target().x() * s.source().y();
+#endif
     return Line_2(a, b, c);
   }
 
