@@ -1,3 +1,5 @@
+#line 871 "fjsearch.aw"
+#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -24,9 +26,12 @@
 // Frederickson-Johnson matrix search
 // ============================================================================
 
+#line 875 "fjsearch.aw"
+#line 54 "code_formatting.awi"
 #if ! (SORTED_MATRIX_SEARCH_H)
 #define SORTED_MATRIX_SEARCH_H 1
 
+#line 843 "fjsearch.aw"
 #ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
 #endif // CGAL_BASIC_H
@@ -46,7 +51,10 @@
 #include <CGAL/Sorted_matrix_search_traits_adaptor.h>
 #endif // CGAL_SORTED_MATRIX_SEARCH_TRAITS_ADAPTOR_H
 
+#line 46 "code_formatting.awi"
 CGAL_BEGIN_NAMESPACE
+#line 863 "fjsearch.aw"
+#line 239 "fjsearch.aw"
 template < class Matrix >
 class _Padded_matrix {
 public:
@@ -84,6 +92,8 @@ public:
 private:
   const Matrix* matrix;
 };
+#line 864 "fjsearch.aw"
+#line 307 "fjsearch.aw"
 template < class PaddedMatrix >
 class _Matrix_cell {
 public:
@@ -129,6 +139,7 @@ private:
   int x;
   int y;
 };
+#line 363 "fjsearch.aw"
 template < class Cell >
 struct _Cell_min
 : public CGAL_STD::unary_function< Cell, typename Cell::Value >
@@ -152,7 +163,9 @@ private:
   int ofs;
 };
 
+#line 865 "fjsearch.aw"
 
+#line 165 "fjsearch.aw"
 #ifdef CGAL_CFG_RETURN_TYPE_BUG_1
 template < class T >
 struct Traits_value_bug_fix1
@@ -179,6 +192,7 @@ sorted_matrix_search( InputIterator f,
                            InputIterator l,
                            Traits t)
 {
+  #line 393 "fjsearch.aw"
   #ifndef CGAL_CFG_NO_NAMESPACE
   using std::max;
   using std::nth_element;
@@ -201,6 +215,8 @@ sorted_matrix_search( InputIterator f,
     Cell_reverse_iterator;
   
   Cell_container active_cells;
+#line 192 "fjsearch.aw"
+  #line 425 "fjsearch.aw"
   #ifdef CGAL_SORTED_MATRIX_SEARCH_TRACE
   cerr << "insert a cell for every matrix" << endl;
   #endif
@@ -245,6 +261,7 @@ sorted_matrix_search( InputIterator f,
   */
   
   
+#line 193 "fjsearch.aw"
 
   // now start the search:
   #ifdef CGAL_SORTED_MATRIX_SEARCH_TRACE
@@ -252,6 +269,7 @@ sorted_matrix_search( InputIterator f,
   #endif
 
   for (;;) {
+    #line 490 "fjsearch.aw"
     if ( ccd > 1) {
       // ------------------------------------------------------
       // divide cells:
@@ -319,6 +337,8 @@ sorted_matrix_search( InputIterator f,
     
     cerr << "\nccd is " << ccd << endl;
     #endif
+#line 201 "fjsearch.aw"
+    #line 568 "fjsearch.aw"
     // ------------------------------------------------------
     // compute medians of smallest and largest elements:
     
@@ -354,6 +374,8 @@ sorted_matrix_search( InputIterator f,
     Cell_iterator upper_median_cell =
       active_cells.begin() + lower_median_rank;
     Value upper_median = (*upper_median_cell).max( ccd);
+#line 202 "fjsearch.aw"
+    #line 639 "fjsearch.aw"
     // ------------------------------------------------------
     // test feasibility of medians and remove cells accordingly:
     Cell_iterator new_end;
@@ -471,6 +493,7 @@ sorted_matrix_search( InputIterator f,
       } // both upper_median and lower_median are infeasible
     
       active_cells.erase( new_end, active_cells.end());
+#line 203 "fjsearch.aw"
   } // for (;;)
 
   // there must be only one cell left:
@@ -479,10 +502,14 @@ sorted_matrix_search( InputIterator f,
 
   return (*active_cells.begin()).min();
 }
+#line 867 "fjsearch.aw"
+#line 50 "code_formatting.awi"
 CGAL_END_NAMESPACE
+#line 868 "fjsearch.aw"
 
 #endif // ! (SORTED_MATRIX_SEARCH_H)
 
+#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

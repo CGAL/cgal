@@ -1,3 +1,5 @@
+#line 206 "square.awi"
+#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -24,14 +26,19 @@
 // 2D Iso-squares with static radius
 // ============================================================================
 
+#line 210 "square.awi"
+#line 54 "code_formatting.awi"
 #if ! (ISO_SQUARE_STATIC_2_H)
 #define ISO_SQUARE_STATIC_2_H 1
 
+#line 26 "square.awi"
 #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
 #endif // CGAL_OPTIMISATION_ASSERTIONS_H
 
+#line 46 "code_formatting.awi"
 CGAL_BEGIN_NAMESPACE
+#line 29 "square.awi"
 
 // class Iso_square_static_2 represents a square with center and radius.
 // all objects have the same radius ==> radius is a static member
@@ -100,6 +107,7 @@ private:
   static FT    _radius;
 };
 
+#line 103 "square.awi"
 // for output to ostream:
 template< class R >
 ostream& operator<<( ostream& os,
@@ -190,17 +198,21 @@ operator>>( Window_stream& w,
 }
 
 #endif // CGAL_WINDOW_STREAM_H
+#line 196 "square.awi"
 
 // the static radius of all Iso_square_static_2< R >:
 template < class R >
 Iso_square_static_2< R >::FT
 Iso_square_static_2< R >::_radius;
 
+#line 50 "code_formatting.awi"
 CGAL_END_NAMESPACE
+#line 203 "square.awi"
 
 
 #endif // ! (ISO_SQUARE_STATIC_2_H)
 
+#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

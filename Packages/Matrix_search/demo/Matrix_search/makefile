@@ -32,7 +32,9 @@ LDFLAGS = \
 all:            \
                 all_furthest_neighbors_2_demo \
                 extremal_polygon_2_demo \
-                rectangular_p_center_2_demo 
+                extremal_polygon_2_vega_demo \
+                rectangular_p_center_2_demo \
+                rectangular_p_center_2_vega_demo 
 
 all_furthest_neighbors_2_demo: all_furthest_neighbors_2_demo.o
 	$(CGAL_CXX) -o all_furthest_neighbors_2_demo all_furthest_neighbors_2_demo.o $(LDFLAGS)
@@ -40,14 +42,22 @@ all_furthest_neighbors_2_demo: all_furthest_neighbors_2_demo.o
 extremal_polygon_2_demo: extremal_polygon_2_demo.o
 	$(CGAL_CXX) -o extremal_polygon_2_demo extremal_polygon_2_demo.o $(LDFLAGS)
 
+extremal_polygon_2_vega_demo: extremal_polygon_2_vega_demo.o
+	$(CGAL_CXX) -o extremal_polygon_2_vega_demo extremal_polygon_2_vega_demo.o $(LDFLAGS)
+
 rectangular_p_center_2_demo: rectangular_p_center_2_demo.o
 	$(CGAL_CXX) -o rectangular_p_center_2_demo rectangular_p_center_2_demo.o $(LDFLAGS)
+
+rectangular_p_center_2_vega_demo: rectangular_p_center_2_vega_demo.o
+	$(CGAL_CXX) -o rectangular_p_center_2_vega_demo rectangular_p_center_2_vega_demo.o $(LDFLAGS)
 
 clean:
 	rm -f *.o \
                    all_furthest_neighbors_2_demo \
                    extremal_polygon_2_demo \
+                   extremal_polygon_2_vega_demo \
                    rectangular_p_center_2_demo \
+                   rectangular_p_center_2_vega_demo \
                    core
 
 #---------------------------------------------------------------------#

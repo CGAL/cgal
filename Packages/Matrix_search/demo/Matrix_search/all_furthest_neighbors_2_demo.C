@@ -1,3 +1,5 @@
+#line 1491 "mon_search.aw"
+#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -24,6 +26,9 @@
 // Demo program: All Furthest Neighbors for a Convex Polygon
 // ============================================================================
 
+#line 1495 "mon_search.aw"
+#line 518 "afn.awi"
+#line 549 "afn.awi"
 #ifndef CGAL_CARTESIAN_H
 #include <CGAL/Cartesian.h>
 #endif // CGAL_CARTESIAN_H
@@ -43,6 +48,8 @@
 #include <CGAL/all_furthest_neighbors_2.h>
 #endif // CGAL_ALL_FURTHEST_NEIGHBORS_2_H
 #include <vector>
+#line 519 "afn.awi"
+#line 559 "afn.awi"
 #ifndef CGAL_SQUARED_DISTANCE_2_H
 #include <CGAL/squared_distance_2.h>
 #endif // CGAL_SQUARED_DISTANCE_2_H
@@ -54,7 +61,9 @@
 #define CGAL_PROTECT_LEDA_POINT_SET_H
 #endif // CGAL_PROTECT_LEDA_POINT_SET_H
 #include <iostream>
+#line 520 "afn.awi"
 
+#line 566 "afn.awi"
 using std::vector;
 using std::back_inserter;
 using CGAL::Cartesian;
@@ -63,10 +72,12 @@ using CGAL::Creator_uniform_2;
 using CGAL::Random_points_in_square_2;
 using CGAL::random_convex_set_2;
 using CGAL::all_furthest_neighbors;
+#line 522 "afn.awi"
 using CGAL::cgalize;
 using CGAL::RED;
 
 typedef double                                 FT;
+#line 577 "afn.awi"
 typedef Cartesian< FT >                              R;
 typedef CGAL::Point_2< R >                           Point;
 typedef Polygon_traits_2< R >                        P_traits;
@@ -75,10 +86,14 @@ typedef vector< int >                                Index_cont;
 typedef CGAL::Polygon_2< P_traits, Point_cont >      Polygon;
 typedef Creator_uniform_2< FT, Point >               Creator;
 typedef Random_points_in_square_2< Point, Creator >  Point_generator;
+#line 527 "afn.awi"
+#line 588 "afn.awi"
 #include <LEDA/REDEFINE_NAMES.h>
 typedef point                            LEDA_Point;
 typedef point_set< Point >               LEDA_Point_set_Point;
 #include <LEDA/UNDEFINE_NAMES.h>
+#line 528 "afn.awi"
+#line 671 "afn.awi"
 void
 wait_for_button_release( leda_window& W)
 {
@@ -88,6 +103,7 @@ wait_for_button_release( leda_window& W)
   do {}
   while ( W.read_event( v, x, y) != button_release_event);
 }
+#line 529 "afn.awi"
 
 int
 main()
@@ -97,6 +113,7 @@ main()
   W.init( -1.25, 1.25, -1.25);
   W.display();
 
+  #line 595 "afn.awi"
   // get points, last point with middle button:
   cout << "\nCGAL ALL FURTHEST NEIGHBORS DEMO\n"
        << "================================\n\n"
@@ -106,19 +123,25 @@ main()
        << " neighbor of a vertex >\n"
        << " < click any other mouse button to quit >\n"
        << endl;
+#line 539 "afn.awi"
   int number_of_points( 30);
+  #line 607 "afn.awi"
   // generate random convex polygon:
   Polygon p;
   random_convex_set_2( number_of_points,
                        back_inserter( p),
                        Point_generator( 1));
+#line 541 "afn.awi"
   W << RED << p;
+  #line 615 "afn.awi"
   // compute all furthest neighbors:
   Index_cont neighbors;
   all_furthest_neighbors(
     p.vertices_begin(),
     p.vertices_end(),
     back_inserter( neighbors));
+#line 543 "afn.awi"
+  #line 630 "afn.awi"
   // output solution:
   LEDA_Point_set_Point query_points;
   for ( int k( 0); k < p.size(); ++k)
@@ -153,8 +176,11 @@ main()
   }
   
   wait_for_button_release( W);
+#line 544 "afn.awi"
 
 } // int main()
+#line 1496 "mon_search.aw"
+#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

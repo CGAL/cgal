@@ -1,3 +1,5 @@
+#line 1382 "mon_search.aw"
+#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -24,9 +26,12 @@
 // Monotone Matrix Search
 // ============================================================================
 
+#line 1386 "mon_search.aw"
+#line 54 "code_formatting.awi"
 #if ! (MONOTONE_MATRIX_SEARCH_H)
 #define MONOTONE_MATRIX_SEARCH_H 1
 
+#line 1365 "mon_search.aw"
 #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
 #endif // CGAL_OPTIMISATION_ASSERTIONS_H
@@ -39,7 +44,10 @@
 #define CGAL_PROTECT_FUNCTIONAL
 #endif
 
+#line 46 "code_formatting.awi"
 CGAL_BEGIN_NAMESPACE
+#line 1376 "mon_search.aw"
+#line 48 "overview.awi"
 template < class Matrix, class RandomAccessIterator >
 inline
 void
@@ -50,6 +58,7 @@ monotone_matrix_search(
   typedef typename Matrix::Value V;
   monotone_matrix_search( M, t, std::less< V >());
 } // monotone_matrix_search( M, t)
+#line 81 "maxcompute.awi"
 template < class Matrix,
            class RandomAccessIterator,
            class Compare_strictly >
@@ -58,6 +67,7 @@ monotone_matrix_search(
   const Matrix& M,
   RandomAccessIterator t,
   const Compare_strictly& compare_strictly)
+#line 115 "maxcompute.awi"
 // Matrix has to define:
 //  o operator()( int, int) [access]
 //  o int number_of_columns(), int number_of_rows()
@@ -66,6 +76,7 @@ monotone_matrix_search(
 //  o Matrix* extract_all_even_rows()
 //
 // Precondition: M is totally monotone
+#line 90 "maxcompute.awi"
 //  M.number_of_rows() > 1 and
 // RandomAccessIterator has value type int
 //
@@ -74,6 +85,7 @@ monotone_matrix_search(
 {
   // divide
   // ------
+  #line 134 "maxcompute.awi"
   // get even rows of M:
   #ifdef CGAL_MON_SEARCH_TRACE
   cerr << "construct new matrix" << endl;
@@ -98,7 +110,9 @@ monotone_matrix_search(
     cout << "----------------------" << endl;
   }
   #endif
+#line 99 "maxcompute.awi"
 
+  #line 170 "maxcompute.awi"
   // reduce M_new to a quadratic matrix:
   #ifdef CGAL_MON_SEARCH_TRACE
   cerr << "reduce" << endl;
@@ -144,7 +158,9 @@ monotone_matrix_search(
   }
   
   
+#line 101 "maxcompute.awi"
 
+  #line 224 "maxcompute.awi"
   // recursion:
   
   CGAL_optimisation_assertion(
@@ -172,9 +188,11 @@ monotone_matrix_search(
     cerr << t_new[i++] << "  ";
   cerr << endl;
   #endif
+#line 103 "maxcompute.awi"
 
   // and conquer
   // -----------
+  #line 269 "maxcompute.awi"
   #ifdef CGAL_MON_SEARCH_TRACE
   {
     cerr << "find maxima in odd rows" << endl;
@@ -216,14 +234,19 @@ monotone_matrix_search(
         ++j_tmp;
     }
   } while ( ++j < M.number_of_rows());
+#line 107 "maxcompute.awi"
 
+  #line 315 "maxcompute.awi"
   delete M_new;
   delete[] t_new;
   delete[] reduction_table;
+#line 109 "maxcompute.awi"
 
 } // monotone_matrix_search( M, t)
 
 
+#line 1377 "mon_search.aw"
+#line 346 "maxcompute.awi"
 template < class Matrix,
            class RandomAccessIterator,
            class Compare_strictly >
@@ -232,6 +255,7 @@ _reduce_matrix(
   Matrix& M,
   RandomAccessIterator t,
   const Compare_strictly& compare_strictly)
+#line 115 "maxcompute.awi"
 // Matrix has to define:
 //  o operator()( int, int) [access]
 //  o int number_of_columns(), int number_of_rows()
@@ -240,6 +264,7 @@ _reduce_matrix(
 //  o Matrix* extract_all_even_rows()
 //
 // Precondition: M is totally monotone
+#line 355 "maxcompute.awi"
 // reduces M, i.e. deletes some columns that
 // do not contain the maximum value of any row
 // such that M becomes quadratic
@@ -248,6 +273,7 @@ _reduce_matrix(
 {
   CGAL_optimisation_precondition(
     M.number_of_columns() >= M.number_of_rows());
+  #line 430 "maxcompute.awi"
   // active columns are 0, ..., j1, j2, ..., M.x_dim()-1
   int j1( 0), j2( 1);
   *t = 0;
@@ -283,11 +309,16 @@ _reduce_matrix(
   }
   
   M.shrink_to_quadratic_size();
+#line 364 "maxcompute.awi"
 } // _reduce_matrix( M, t)
+#line 1378 "mon_search.aw"
+#line 50 "code_formatting.awi"
 CGAL_END_NAMESPACE
+#line 1379 "mon_search.aw"
 
 #endif // ! (MONOTONE_MATRIX_SEARCH_H)
 
+#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

@@ -1,3 +1,5 @@
+#line 1549 "mon_search.aw"
+#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -24,6 +26,8 @@
 // Example program: Compute extremal polygons of a convex polygon
 // ============================================================================
 
+#line 1553 "mon_search.aw"
+#line 781 "testprog.awi"
 #ifndef CGAL_CARTESIAN_H
 #include <CGAL/Cartesian.h>
 #endif // CGAL_CARTESIAN_H
@@ -79,6 +83,7 @@ int main() {
   cout << "Maximum area " << k << "-gon:\n" << k_gon << endl;
 
 } 
+#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

@@ -1,3 +1,5 @@
+#line 663 "pcenter.aw"
+#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -24,6 +26,9 @@
 // 2-4-Centering Axis-Parallel 2D-Rectangles - test program
 // ============================================================================
 
+#line 667 "pcenter.aw"
+#line 458 "pc_testprog.awi"
+#line 363 "pc_testprog.awi"
 #ifndef CGAL_CARTESIAN_H
 #include <CGAL/Cartesian.h>
 #endif // CGAL_CARTESIAN_H
@@ -69,6 +74,7 @@ using CGAL::default_random;
 using CGAL::rectangular_p_center_2;
 using CGAL::ORIGIN;
 
+#line 85 "pc_testprog.awi"
 // function class to construct a box
 // around a point p with radius r
 template < class Point, class FT, class Box >
@@ -82,6 +88,7 @@ struct Build_box
                 Point( p.x() + r, p.y() + r));
   }
 };
+#line 393 "pc_testprog.awi"
 
 typedef double                             FT;
 typedef Cartesian< FT >                    R;
@@ -144,6 +151,7 @@ main( int argc, char* argv[])
 #ifdef OUTPUT
   cerr << "random seed is " << random_seed << endl;
 #endif
+#line 459 "pc_testprog.awi"
   PCont points;
   CGAL::copy_n( Point_generator( 1, rnd),
                 number_of_points,
@@ -211,6 +219,8 @@ main( int argc, char* argv[])
 
   return 0;
 } 
+#line 668 "pcenter.aw"
+#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

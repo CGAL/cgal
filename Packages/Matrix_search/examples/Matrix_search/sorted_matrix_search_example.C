@@ -1,3 +1,5 @@
+#line 342 "fj_testprog.awi"
+#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -24,6 +26,8 @@
 // Sorted matrix search: Example Program
 // ============================================================================
 
+#line 346 "fj_testprog.awi"
+#line 290 "fj_testprog.awi"
 #ifndef CGAL_RANDOM_H
 #include <CGAL/Random.h>
 #endif // CGAL_RANDOM_H
@@ -81,6 +85,8 @@ int main() {
        << upper_bound << endl;
 
 } 
+#line 347 "fj_testprog.awi"
+#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

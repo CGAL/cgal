@@ -1,3 +1,5 @@
+#line 1448 "mon_search.aw"
+#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -24,9 +26,13 @@
 // Compute extremal polygons of a convex polygon
 // ============================================================================
 
+#line 1452 "mon_search.aw"
+#line 54 "code_formatting.awi"
 #if ! (EXTREMAL_POLYGON_2_H)
 #define EXTREMAL_POLYGON_2_H 1
 
+#line 113 "mon_search.aw"
+#line 1415 "mon_search.aw"
 #ifndef CGAL_MONOTONE_MATRIX_SEARCH_H
 #include <CGAL/monotone_matrix_search.h>
 #endif // CGAL_MONOTONE_MATRIX_SEARCH_H
@@ -53,9 +59,13 @@
 #include <CGAL/Extremal_polygon_traits_2.h>
 #endif // CGAL_EXTREMAL_POLYGON_TRAITS_2_H
 #endif // CGAL_REP_CLASS_DEFINED
+#line 114 "mon_search.aw"
 
+#line 46 "code_formatting.awi"
 CGAL_BEGIN_NAMESPACE
+#line 116 "mon_search.aw"
 //!!! This will eventually be integrated into function_objects.h
+#line 253 "mon_search.aw"
 template < class Array, class Index, class Element >
 struct Index_operator
 : public CGAL_STD::binary_function< Array, Index, Element >
@@ -69,7 +79,9 @@ public:
   operator()( const Array& a, const Index& i) const
   { return a[i]; }
 };
+#line 118 "mon_search.aw"
 
+#line 28 "exp_matrix.awi"
 #ifndef CGAL_CFG_NO_ITERATOR_TRAITS
 template < class _RandomAccessIC_object,
            class _RandomAccessIC_value,
@@ -165,6 +177,7 @@ private:
   int                    n_cols;
 };
 
+#line 131 "exp_matrix.awi"
 #ifndef CGAL_CFG_NO_ITERATOR_TRAITS
 template < class RandomAccessIC_object,
            class RandomAccessIC_value,
@@ -192,7 +205,9 @@ extremal_polygon_matrix(
 }
 #endif
 
+#line 120 "mon_search.aw"
 
+#line 418 "mon_search.aw"
 #ifndef CGAL_CFG_MATCHING_BUG_1
 template < class RandomAccessIC,
            class Outputiterator,
@@ -215,6 +230,7 @@ _CGAL_maximum_inscribed_rooted_k_gon(
 #endif
   Outputiterator o,
   const Traits& t)
+#line 168 "mon_search.aw"
 //
 // preconditions:
 // --------------
@@ -223,10 +239,14 @@ _CGAL_maximum_inscribed_rooted_k_gon(
 //  * the range [points_begin, points_end) of size n > 0
 //    describes the vertices of a convex polygon $P$
 //    enumerated clock- or counterclockwise
+#line 441 "mon_search.aw"
 // n > k,
+#line 179 "mon_search.aw"
 //  * k >= t.min_k()
 //  * value_type of RandomAccessIC is Traits::Point_2
 //  * OutputIterator accepts Traits::Point_2 as value_type 
+#line 443 "mon_search.aw"
+#line 185 "mon_search.aw"
 //
 // functionality:
 // --------------
@@ -234,9 +254,11 @@ _CGAL_maximum_inscribed_rooted_k_gon(
 // of the polygon $P$,
 // that is rooted at points_begin[0],
 // sets max_area to its associated value (as specified by t)
+#line 193 "mon_search.aw"
 // writes the indices (relative to points_begin)
 // of $P_k$'s vertices to o and
 // returns the past-the-end iterator of that sequence.
+#line 447 "mon_search.aw"
 {
   // check preconditions:
   CGAL_precondition( k >= t.min_k());
@@ -246,14 +268,17 @@ _CGAL_maximum_inscribed_rooted_k_gon(
 
   typedef vector< int > Index_cont;
 
+  #line 470 "mon_search.aw"
   if ( k == t.min_k())
     // compute min_k gon:
     return t.compute_min_k_gon(
       points_begin, points_end, max_area, o);
+#line 457 "mon_search.aw"
 
   // current i-gon (i = 2/3...k)
   Index_cont gon( k + 1);
 
+  #line 499 "mon_search.aw"
   // compute initial min_k-gon:
   int i( t.min_k());
   t.compute_min_k_gon(
@@ -294,8 +319,10 @@ _CGAL_maximum_inscribed_rooted_k_gon(
     max_area,
     o,
     t);
+#line 462 "mon_search.aw"
 
 } // _CGAL_maximum_inscribed_rooted_k_gon( ... )
+#line 551 "mon_search.aw"
 #ifndef CGAL_CFG_MATCHING_BUG_1
 template < class RandomAccessIC_point,
            class RandomAccessIC_int,
@@ -324,6 +351,7 @@ _CGAL_maximum_inscribed_rooted_k_gon(
 #endif
   OutputIterator o,
   const Traits& t)
+#line 168 "mon_search.aw"
 //
 // preconditions:
 // --------------
@@ -332,6 +360,7 @@ _CGAL_maximum_inscribed_rooted_k_gon(
 //  * the range [points_begin, points_end) of size n > 0
 //    describes the vertices of a convex polygon $P$
 //    enumerated clock- or counterclockwise
+#line 580 "mon_search.aw"
 //  * value_type of RandomAccessIC_point is Traits::Point
 //  * value_type of RandomAccessIC_int is int
 //  * OutputIterator accepts int as value type
@@ -344,6 +373,7 @@ _CGAL_maximum_inscribed_rooted_k_gon(
 //  * for any 0 <= i < length: o + i must not be contained in
 //    the range [right_c_begin, right_c_begin + length - i - 2].
 //    (NOT checked!)
+#line 185 "mon_search.aw"
 //
 // functionality:
 // --------------
@@ -353,9 +383,11 @@ _CGAL_maximum_inscribed_rooted_k_gon(
 // such that for any 0 <= i < length:
 //    left_c_begin[i] <= vertex i of $P_k$ <= right_c_begin[i],
 // sets max_area to its associated value (as specified by t),
+#line 193 "mon_search.aw"
 // writes the indices (relative to points_begin)
 // of $P_k$'s vertices to o and
 // returns the past-the-end iterator of that sequence.
+#line 598 "mon_search.aw"
 {
 #ifndef CGAL_CFG_NO_NAMESPACE
   using std::max_element;
@@ -389,6 +421,7 @@ _CGAL_maximum_inscribed_rooted_k_gon(
       CGAL_expensive_precondition( left_c_begin[i] <= right_c_begin[i]);
     })
 
+  #line 898 "mon_search.aw"
   #ifndef CGAL_CFG_MATCHING_BUG_1
   typedef typename Traits::FT               FT;
   #else
@@ -397,6 +430,8 @@ _CGAL_maximum_inscribed_rooted_k_gon(
   typedef vector< FT >                      FT_cont;
   typedef vector< int >                     Index_cont;
   typedef typename Traits::Operation        Operation;
+#line 632 "mon_search.aw"
+  #line 707 "mon_search.aw"
   //!!! static ???
   // area container:
   FT_cont area( number_of_points);
@@ -406,12 +441,16 @@ _CGAL_maximum_inscribed_rooted_k_gon(
   
   // matrix operation:
   Operation op( t.operation( points_begin[root]));
+  #line 724 "mon_search.aw"
   // initialize area and last vertex containers:
   for ( i = left_c_begin[0]; i <= right_c_begin[0]; ++i) {
     area[i] = t.init( points_begin[i], points_begin[root]);
     last_vertex[i] = root;
   }
   
+#line 633 "mon_search.aw"
+  #line 734 "mon_search.aw"
+  #line 765 "mon_search.aw"
   #ifdef CGAL_EXTREMAL_POLYGONS_TRACE
   {
     int oo;
@@ -486,7 +525,9 @@ _CGAL_maximum_inscribed_rooted_k_gon(
     }
   
   } // for ( i = 1; i < size_of_gon; ++i)
+  #line 735 "mon_search.aw"
   
+  #line 846 "mon_search.aw"
   // find maximum in last range:
   int maxi =
     iterator_distance(
@@ -496,6 +537,7 @@ _CGAL_maximum_inscribed_rooted_k_gon(
   // set max_area:
   max_area = area[maxi];
   
+  #line 864 "mon_search.aw"
   // construct gon:
   #ifdef CGAL_EXTREMAL_POLYGONS_TRACE
   cerr << "MAXGON(" << size_of_gon << "): ";
@@ -528,10 +570,14 @@ _CGAL_maximum_inscribed_rooted_k_gon(
   *o++ = root;
   return o;
   
+  #line 737 "mon_search.aw"
+#line 634 "mon_search.aw"
 
 } // _CGAL_maximum_inscribed_rooted_k_gon( p, k, result)
 
 
+#line 122 "mon_search.aw"
+#line 126 "mon_search.aw"
 template < class RandomAccessIC,
            class OutputIterator,
            class Traits >
@@ -543,6 +589,7 @@ extremal_polygon(
   int k,
   OutputIterator o,
   const Traits& t)
+#line 168 "mon_search.aw"
 //
 // preconditions:
 // --------------
@@ -551,17 +598,23 @@ extremal_polygon(
 //  * the range [points_begin, points_end) of size n > 0
 //    describes the vertices of a convex polygon $P$
 //    enumerated clock- or counterclockwise
+#line 138 "mon_search.aw"
+#line 179 "mon_search.aw"
 //  * k >= t.min_k()
 //  * value_type of RandomAccessIC is Traits::Point_2
 //  * OutputIterator accepts Traits::Point_2 as value_type 
+#line 139 "mon_search.aw"
+#line 185 "mon_search.aw"
 //
 // functionality:
 // --------------
 // computes maximum (as specified by t) inscribed k-gon $P_k$
 // of the polygon $P$,
+#line 193 "mon_search.aw"
 // writes the indices (relative to points_begin)
 // of $P_k$'s vertices to o and
 // returns the past-the-end iterator of that sequence.
+#line 141 "mon_search.aw"
 {
 #ifndef CGAL_CFG_NO_NAMESPACE
   using std::bind1st;
@@ -586,6 +639,7 @@ extremal_polygon(
         points_begin)),
     t);
 }
+#line 969 "mon_search.aw"
 template < class RandomAccessIC,
            class OutputIterator,
            class Traits >
@@ -596,6 +650,7 @@ _CGAL_maximum_inscribed_k_gon(
   int k,
   OutputIterator o,
   const Traits& t)
+#line 168 "mon_search.aw"
 //
 // preconditions:
 // --------------
@@ -604,17 +659,23 @@ _CGAL_maximum_inscribed_k_gon(
 //  * the range [points_begin, points_end) of size n > 0
 //    describes the vertices of a convex polygon $P$
 //    enumerated clock- or counterclockwise
+#line 980 "mon_search.aw"
+#line 179 "mon_search.aw"
 //  * k >= t.min_k()
 //  * value_type of RandomAccessIC is Traits::Point_2
 //  * OutputIterator accepts Traits::Point_2 as value_type 
+#line 981 "mon_search.aw"
+#line 185 "mon_search.aw"
 //
 // functionality:
 // --------------
 // computes maximum (as specified by t) inscribed k-gon $P_k$
 // of the polygon $P$,
+#line 193 "mon_search.aw"
 // writes the indices (relative to points_begin)
 // of $P_k$'s vertices to o and
 // returns the past-the-end iterator of that sequence.
+#line 983 "mon_search.aw"
 {
   // check preconditions:
   CGAL_precondition( k >= t.min_k());
@@ -630,11 +691,14 @@ _CGAL_maximum_inscribed_k_gon(
   typedef typename Traits::FT   FT;
   typedef vector< int >         Index_cont;
 
+  #line 1011 "mon_search.aw"
   if ( number_of_points <= k) {
     for ( int j( k - 1); j >= 0; --j)
       *o++ = min( j, number_of_points - 1);
     return o;
   }
+#line 999 "mon_search.aw"
+  #line 1022 "mon_search.aw"
   // compute k-gon rooted at points_begin[0]
   #ifdef CGAL_EXTREMAL_POLYGONS_TRACE
   cerr << "compute " << k << "-gon at 0:" << endl;
@@ -650,6 +714,7 @@ _CGAL_maximum_inscribed_k_gon(
     t);
   P_0[k] = number_of_points - 1;
   CGAL_assertion( P_0[0] == 0);
+  #line 1061 "mon_search.aw"
   // compute k-gon rooted at points_begin[P_0[1]]
   #ifdef CGAL_EXTREMAL_POLYGONS_TRACE
   cerr << "compute " << k << "-gon at 1:" << endl;
@@ -671,6 +736,8 @@ _CGAL_maximum_inscribed_k_gon(
   
   CGAL_assertion( P_1[0] == P_0[1]);
   
+#line 1000 "mon_search.aw"
+  #line 1084 "mon_search.aw"
   #ifdef CGAL_EXTREMAL_POLYGONS_TRACE
   {
     cerr << "start recursion\n"
@@ -704,6 +771,8 @@ _CGAL_maximum_inscribed_k_gon(
   #ifdef CGAL_EXTREMAL_POLYGONS_TRACE
   cerr << "end recursion" << endl;
   #endif
+#line 1001 "mon_search.aw"
+  #line 1120 "mon_search.aw"
   if ( area_r > area_0)
     if ( area_r > area_1)
       // recursive is maximum
@@ -717,9 +786,11 @@ _CGAL_maximum_inscribed_k_gon(
   else
     // P_1 is maximum
     copy( P_1.begin(), P_1.end(), o);
+#line 1002 "mon_search.aw"
 
   return o;
 } // _CGAL_maximum_inscribed_k_gon( ... )
+#line 1136 "mon_search.aw"
 #ifndef CGAL_CFG_MATCHING_BUG_1
 template < class RandomAccessIC_point,
            class RandomAccessIC_int,
@@ -750,6 +821,7 @@ _CGAL_maximum_inscribed_k_gon(
 #endif
   OutputIterator o,
   const Traits& t)
+#line 168 "mon_search.aw"
 //
 // preconditions:
 // --------------
@@ -758,6 +830,7 @@ _CGAL_maximum_inscribed_k_gon(
 //  * the range [points_begin, points_end) of size n > 0
 //    describes the vertices of a convex polygon $P$
 //    enumerated clock- or counterclockwise
+#line 1167 "mon_search.aw"
 //  * value_type of RandomAccessIC_point is Traits::Point
 //  * value_type of RandomAccessIC_int is int
 //  * OutputIterator accepts int as value type
@@ -769,6 +842,7 @@ _CGAL_maximum_inscribed_k_gon(
 //    for any 0 <= i < k:
 //      left_c_begin[i] <= right_c_begin[i]
 //  * k >= t.min_k()
+#line 185 "mon_search.aw"
 //
 // functionality:
 // --------------
@@ -778,9 +852,11 @@ _CGAL_maximum_inscribed_k_gon(
 //    points_begin[right_index]] and
 //  * interleaves with both $P_l$ and $P_r$,
 // sets max_area to its associated value (as specified by t),
+#line 193 "mon_search.aw"
 // writes the indices (relative to points_begin)
 // of $P_k$'s vertices to o and
 // returns the past-the-end iterator of that sequence.
+#line 1184 "mon_search.aw"
 {
   // typedefs
 #ifndef CGAL_CFG_MATCHING_BUG_1
@@ -822,6 +898,7 @@ _CGAL_maximum_inscribed_k_gon(
     right_index << "]" << endl;
   #endif
 
+  #line 1236 "mon_search.aw"
   int middle_index( (left_index + right_index) >> 1);
   Index_cont P_m( k);
   FT area_middle;
@@ -837,6 +914,8 @@ _CGAL_maximum_inscribed_k_gon(
     P_m.rbegin(),
     t);
   CGAL_assertion( P_m[0] == middle_index);
+#line 1226 "mon_search.aw"
+  #line 1254 "mon_search.aw"
   // left recursive branch:
   FT area_left( 0);
   Index_cont P_l( k);
@@ -857,6 +936,8 @@ _CGAL_maximum_inscribed_k_gon(
   } // if ( left_index < middle_index)
   
   
+#line 1227 "mon_search.aw"
+  #line 1276 "mon_search.aw"
   // right recursive branch:
   FT area_right( 0);
   Index_cont P_r( k);
@@ -877,7 +958,9 @@ _CGAL_maximum_inscribed_k_gon(
   } // if ( right_index > middle_index)
   
   
+#line 1228 "mon_search.aw"
 
+  #line 1298 "mon_search.aw"
   if ( area_left > area_right)
     if ( area_left > area_middle) {
       // left is maximum
@@ -899,15 +982,21 @@ _CGAL_maximum_inscribed_k_gon(
     max_area = area_middle;
     copy( P_m.begin(), P_m.end(), o);
   }
+#line 1230 "mon_search.aw"
 
   return o;
 } // _CGAL_maximum_inscribed_k_gon( ... )
 
+#line 123 "mon_search.aw"
+#line 1444 "mon_search.aw"
+#line 50 "code_formatting.awi"
 CGAL_END_NAMESPACE
+#line 1445 "mon_search.aw"
 
 
 #endif // ! (EXTREMAL_POLYGON_2_H)
 
+#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

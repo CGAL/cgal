@@ -1,3 +1,5 @@
+#line 200 "pierce.awi"
+#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -24,9 +26,13 @@
 // 2-4-Piercing Axis-Parallel 2D-Rectangles
 // ============================================================================
 
+#line 204 "pierce.awi"
+#line 54 "code_formatting.awi"
 #if ! (PIERCE_RECTANGLES_2_H)
 #define PIERCE_RECTANGLES_2_H 1
 
+#line 164 "pierce.awi"
+#line 151 "pierce.awi"
 #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #include <CGAL/optimisation_assertions.h>
 #endif // CGAL_OPTIMISATION_ASSERTIONS_H
@@ -49,10 +55,14 @@
 #include <CGAL/IO/Ostream_iterator.h>
 #endif // CGAL_IO_OSTREAM_ITERATOR_H
 #endif // CGAL_PCENTER_WINDOW_TRACE
+#line 165 "pierce.awi"
 
+#line 46 "code_formatting.awi"
 CGAL_BEGIN_NAMESPACE
+#line 167 "pierce.awi"
 
 //!!! to function_objects.h
+#line 130 "pierce.awi"
 template < class T1, class T2 >
 struct Has_on_unbounded_side
 : public CGAL_STD::binary_function< T1, T2, bool >
@@ -61,6 +71,7 @@ struct Has_on_unbounded_side
   operator()( const T1& a, const T2& b) const
   { return a.has_on_unbounded_side( b); }
 };
+#line 130 "pierce.awi"
 template < class T1, class T2 >
 struct Has_on_bounded_side
 : public CGAL_STD::binary_function< T1, T2, bool >
@@ -69,6 +80,7 @@ struct Has_on_bounded_side
   operator()( const T1& a, const T2& b) const
   { return a.has_on_bounded_side( b); }
 };
+#line 130 "pierce.awi"
 template < class T1, class T2 >
 struct Has_on_boundary
 : public CGAL_STD::binary_function< T1, T2, bool >
@@ -78,6 +90,7 @@ struct Has_on_boundary
   { return a.has_on_boundary( b); }
 };
 
+#line 66 "pierce.awi"
 //!!! STL-extensions
 template < class T >
 struct Wastebasket : public CGAL_STD::output_iterator
@@ -100,6 +113,8 @@ struct Wastebasket : public CGAL_STD::output_iterator
   operator++( int)
   { return *this; }
 };
+#line 174 "pierce.awi"
+#line 477 "pierce_4.awi"
 template < class ForwardIterator, class OutputIterator, class Predicate >
 OutputIterator
 remove_copy_if_adjacent( ForwardIterator first,
@@ -153,6 +168,8 @@ remove_if_adjacent( ForwardIterator first,
                 bind1st( pred, *save_first)));
   return remove_copy_if_adjacent( next, last, ++save_first, pred);
 }
+#line 175 "pierce.awi"
+#line 91 "pierce.awi"
 template < class ForwardIterator >
 std::pair< ForwardIterator, ForwardIterator >
 min_max_element( ForwardIterator first, ForwardIterator last)
@@ -189,7 +206,9 @@ min_max_element( ForwardIterator first,
   }
   return result;
 }
+#line 176 "pierce.awi"
 
+#line 90 "pc_intro.awi"
 template < class _Traits, class _RandomAccessIC >
 class _Loc_domain {
 public:
@@ -210,6 +229,7 @@ public:
   // creation:
 
   _Loc_domain( RandomAccessIC b, RandomAccessIC e)
+  #line 238 "pc_intro.awi"
   {
     CGAL_optimisation_precondition( b != e);
   
@@ -235,6 +255,7 @@ public:
       !(*r[3]).has_on_bounded_side( vertex( 3)) &&
       !(*r[0]).has_on_bounded_side( vertex( 3)));
   }
+#line 111 "pc_intro.awi"
 
   // ---------------------------------------------
   // access operations:
@@ -303,6 +324,7 @@ public:
   // (in analogy to Iso_rectangle)
   { return vertex( 2); }
 
+  #line 196 "pc_intro.awi"
   // ---------------------------------------------
   // update operations:
   
@@ -342,11 +364,14 @@ public:
       break;
     }
   }
+#line 180 "pc_intro.awi"
 
 private:
   // pointer to defining rectangles:
   RandomAccessIC r[4];
 }; // class _Loc_domain
+#line 178 "pierce.awi"
+#line 57 "pierce_4.awi"
 template < class _Traits, class _RandomAccessIC >
 class _Rectangle_partition {
 public:
@@ -385,6 +410,7 @@ public:
     RandomAccessIC l,
     const _Loc_domain< _Traits, RandomAccessIC >& d);
 
+  #line 123 "pierce_4.awi"
   // ---------------------------------------------------
   // access functions to the partition sets:
   
@@ -417,6 +443,8 @@ public:
     CGAL_optimisation_assertion( begin( i) <= end( i));
     return begin( i) == end( i);
   }
+#line 96 "pierce_4.awi"
+  #line 207 "pierce_4.awi"
   const_iterator
   first_right_of( set_id i, FT v, const_iterator p) const
   // PRE: i == BL or i == BT, p in [ begin(i), end(i) ] and
@@ -604,8 +632,10 @@ public:
     CGAL_optimisation_postcondition( p == end(i) || Ymin()( *p) > v);
     return p;
   }
+#line 97 "pierce_4.awi"
 
 private:
+  #line 166 "pierce_4.awi"
   void
   sort_set( set_id i)
   {
@@ -635,6 +665,8 @@ private:
             s[i].end(),
             compose2_2( less< FT >(), Ymax(), Ymax()));
   } // sort_set( set_id i)
+#line 100 "pierce_4.awi"
+  #line 416 "pierce_4.awi"
   void
   remove_containing_rectangles()
   // make sure that in any partition set there are no
@@ -656,6 +688,7 @@ private:
     // sorted according to their right sides (increasing):
   
     // s[BL]: discard second, if its top side is above
+    #line 464 "pierce_4.awi"
     CGAL_optimisation_assertion( s[BL].begin() + 1 == begin( BL));
     new_end =
       remove_if_adjacent(
@@ -665,6 +698,7 @@ private:
     s[BL].erase( new_end, s[BL].end());
   
     // s[TL]: discard second, if its bottom side is below
+    #line 464 "pierce_4.awi"
     CGAL_optimisation_assertion( s[TL].begin() + 1 == begin( TL));
     new_end =
       remove_if_adjacent(
@@ -677,6 +711,7 @@ private:
     // sorted according to their left sides (decreasing):
   
     // s[BT]: discard second, if its right side is right
+    #line 464 "pierce_4.awi"
     CGAL_optimisation_assertion( s[BT].begin() + 1 == begin( BT));
     new_end =
       remove_if_adjacent(
@@ -686,6 +721,7 @@ private:
     s[BT].erase( new_end, s[BT].end());
   
     // s[BR]: discard second, if its top side is above
+    #line 464 "pierce_4.awi"
     CGAL_optimisation_assertion( s[BR].begin() + 1 == begin( BR));
     new_end =
       remove_if_adjacent(
@@ -695,6 +731,7 @@ private:
     s[BR].erase( new_end, s[BR].end());
   
     // s[TR]: discard second, if its bottom side is below
+    #line 464 "pierce_4.awi"
     CGAL_optimisation_assertion( s[TR].begin() + 1 == begin( TR));
     new_end =
       remove_if_adjacent(
@@ -707,6 +744,7 @@ private:
     // sorted according to their top sides (increasing):
   
     // s[LR]: discard second, if its bottom side is below
+    #line 464 "pierce_4.awi"
     CGAL_optimisation_assertion( s[LR].begin() + 1 == begin( LR));
     new_end =
       remove_if_adjacent(
@@ -716,6 +754,7 @@ private:
     s[LR].erase( new_end, s[LR].end());
   
   } // remove_containing_rectangles()
+#line 101 "pierce_4.awi"
 
   // the partition sets:
   Container s[11];
@@ -732,6 +771,8 @@ private:
   // rectangle builder:
   Build_rectangle  build_rectangle;
 };
+#line 179 "pierce.awi"
+#line 536 "pierce_4.awi"
 template < class _Traits, class _RandomAccessIC >
 _Rectangle_partition< _Traits, _RandomAccessIC>::
 _Rectangle_partition(
@@ -836,15 +877,21 @@ _Rectangle_partition(
   s[LR].push_back( s3);
 
 } // Rectangle_partition( f, l, d)
+#line 180 "pierce.awi"
 
+#line 50 "code_formatting.awi"
 CGAL_END_NAMESPACE
+#line 182 "pierce.awi"
 #ifdef CGAL_REP_CLASS_DEFINED
 #ifndef CGAL_PIERCE_RECTANGLES_2_TRAITS_H
 #include <CGAL/Pierce_rectangles_2_traits.h>
 #endif // CGAL_PIERCE_RECTANGLES_2_TRAITS_H
 #endif // CGAL_REP_CLASS_DEFINED
+#line 46 "code_formatting.awi"
 CGAL_BEGIN_NAMESPACE
+#line 186 "pierce.awi"
 
+#line 11 "pierce_2.awi"
 template < class RandomAccessIC,
            class OutputIterator,
            class Traits >
@@ -864,6 +911,7 @@ two_pierce_rectangles(
 
   return two_pierce_rectangles( f, l, d, o, ok);
 } // two_pierce_rectangles( f, l, o, ok, i)
+#line 11 "pierce_2.awi"
 template < class RandomAccessIC,
            class OutputIterator,
            class Traits >
@@ -883,6 +931,7 @@ three_pierce_rectangles(
 
   return three_pierce_rectangles( f, l, d, o, ok);
 } // three_pierce_rectangles( f, l, o, ok, i)
+#line 11 "pierce_2.awi"
 template < class RandomAccessIC,
            class OutputIterator,
            class Traits >
@@ -902,6 +951,7 @@ four_pierce_rectangles(
 
   return four_pierce_rectangles( f, l, d, o, ok);
 } // four_pierce_rectangles( f, l, o, ok, i)
+#line 48 "pierce_2.awi"
 template < class RandomAccessIC,
            class OutputIterator,
            class Traits >
@@ -948,6 +998,7 @@ two_pierce_rectangles(
   */
   #endif
 
+  #line 109 "pierce_2.awi"
   if ( !(*d[0]).has_on_unbounded_side( d.vertex( 0)) &&
        !(*d[1]).has_on_unbounded_side( d.vertex( 0)) &&
        !(*d[2]).has_on_unbounded_side( d.vertex( 0)) &&
@@ -958,6 +1009,8 @@ two_pierce_rectangles(
     ok = true;
     return o;
   }
+#line 95 "pierce_2.awi"
+  #line 126 "pierce_2.awi"
   // check, if {d.vertex( 0), d.vertex( 2)}
   // form a piercing set
   if ( l == find_if(
@@ -975,6 +1028,7 @@ two_pierce_rectangles(
     ok = true;
     return o;
   }
+  #line 126 "pierce_2.awi"
   // check, if {d.vertex( 1), d.vertex( 3)}
   // form a piercing set
   if ( l == find_if(
@@ -997,6 +1051,8 @@ two_pierce_rectangles(
   ok = false;
   return o;
 } // two_pierce_rectangles( f, l, d, o, ok)
+#line 191 "pierce.awi"
+#line 12 "pierce_3.awi"
 template < class RandomAccessIC,
            class OutputIterator,
            class Traits >
@@ -1034,6 +1090,7 @@ three_pierce_rectangles(
        << d.vertex( 2) << endl;
 #endif
 
+  #line 67 "pierce_3.awi"
   // define container to store disjoint rectangles:
   // typedef vector< Iso_rectangle_2 >  Rectangle_cont;
   typedef vector< Iso_rectangle_2 >   Rectangle_cont;
@@ -1047,6 +1104,7 @@ three_pierce_rectangles(
   // test the four corners:
   for ( int k( 0); k < 4; ++k) {
     disjoint.erase( disjoint.begin(), disjoint.end());
+    #line 102 "pierce_3.awi"
     #if defined(CGAL_PCENTER_TRACE) && CGAL_PCENTER_TRACE <= 3
     cerr << "check corner nr. " << k << " ("
          << d.vertex(k) << ")" << endl;
@@ -1119,6 +1177,8 @@ three_pierce_rectangles(
   return o;
 
 } // three_pierce_rectangles( f, l, d, o, ok)
+#line 192 "pierce.awi"
+#line 660 "pierce_4.awi"
 template < class RandomAccessIC,
            class OutputIterator,
            class Traits >
@@ -1137,6 +1197,7 @@ four_pierce_rectangles(
 
   return four_pierce_rectangles( f, l, d, p, o, ok);
 } // four_pierce_rectangles( f, l, d, o, ok)
+#line 686 "pierce_4.awi"
 template < class RandomAccessIC,
            class OutputIterator,
            class Traits >
@@ -1160,6 +1221,7 @@ four_pierce_rectangles(
        << d.vertex( 2) << endl;
 #endif
 
+  #line 720 "pierce_4.awi"
   #ifndef CGAL_CFG_NO_NAMESPACE
   using std::pair;
   using std::min;
@@ -1191,6 +1253,8 @@ four_pierce_rectangles(
   Xmax xmax;
   Ymin ymin;
   Ymax ymax;
+#line 710 "pierce_4.awi"
+  #line 67 "pierce_3.awi"
   // define container to store disjoint rectangles:
   // typedef vector< Iso_rectangle_2 >  Rectangle_cont;
   typedef vector< Iso_rectangle_2 >   Rectangle_cont;
@@ -1204,6 +1268,7 @@ four_pierce_rectangles(
   // test the four corners:
   for ( int k( 0); k < 4; ++k) {
     disjoint.erase( disjoint.begin(), disjoint.end());
+    #line 102 "pierce_3.awi"
     #if defined(CGAL_PCENTER_TRACE) && CGAL_PCENTER_TRACE <= 3
     cerr << "check corner nr. " << k << " ("
          << d.vertex(k) << ")" << endl;
@@ -1270,6 +1335,7 @@ four_pierce_rectangles(
       return o;
     } // if ( ok)
   } // for ( int k( 0); k < 4; ++k)
+  #line 782 "pierce_4.awi"
   #if defined(CGAL_PCENTER_TRACE) && CGAL_PCENTER_TRACE <= 4
   cerr << "traversing boundary ..." << endl;
   #endif
@@ -1290,11 +1356,13 @@ four_pierce_rectangles(
     Witer wout;
   #endif
   
+    #line 817 "pierce_4.awi"
     #if defined(CGAL_PCENTER_TRACE) && CGAL_PCENTER_TRACE <= 4
     cerr << "compute one-piercing intervalls ..." << endl;
     #endif
     
     iterator_pair ip;
+    #line 856 "pierce_4.awi"
     // compute the intervall I_B where s[B] is (potentially)
     // one-pierced:
     // I_B is defined by the smallest maxpoint and the
@@ -1318,6 +1386,7 @@ four_pierce_rectangles(
     }
     
     
+    #line 856 "pierce_4.awi"
     // compute the intervall I_L where s[L] is (potentially)
     // one-pierced:
     // I_L is defined by the smallest maxpoint and the
@@ -1341,6 +1410,7 @@ four_pierce_rectangles(
     }
     
     
+    #line 856 "pierce_4.awi"
     // compute the intervall I_T where s[T] is (potentially)
     // one-pierced:
     // I_T is defined by the smallest maxpoint and the
@@ -1364,6 +1434,7 @@ four_pierce_rectangles(
     }
     
     
+    #line 856 "pierce_4.awi"
     // compute the intervall I_R where s[R] is (potentially)
     // one-pierced:
     // I_R is defined by the smallest maxpoint and the
@@ -1409,16 +1480,19 @@ four_pierce_rectangles(
        << build_point( d.xmax(), I_R.second);
     while ( Wd.read_mouse( dummy_x, dummy_y) != -1) {}
     #endif
+  #line 803 "pierce_4.awi"
   
     // now try to position the bottom piercing point in each
     // of the intervalls formed by S_bt and S_br
     // (no need to consider S_bl, since we move from left
     // to right and leaving a rectangle won't make piercing easier)
   
+    #line 903 "pierce_4.awi"
     #if defined(CGAL_PCENTER_TRACE) && CGAL_PCENTER_TRACE <= 4
     cerr << "round trip ..." << endl;
     #endif
     
+    #line 1074 "pierce_4.awi"
     // x coordinate of bottom piercing point:
     FT bot( I_B.first);
     
@@ -1455,6 +1529,7 @@ four_pierce_rectangles(
     // ( ==> gives a lower bound for top):
     iterator first_unpierced_in_TR( p.first_above( RP::TR, rig));
     
+    #line 1147 "pierce_4.awi"
     // first rectangle in s[LR] not pierced by lef:
     iterator first_unpierced_by_lef_in_LR( p.first_above( RP::LR, lef));
     
@@ -1473,6 +1548,7 @@ four_pierce_rectangles(
                      min( ymax( *first_unpierced_by_rig_in_LR),
                           d.ymax())));
     
+    #line 1172 "pierce_4.awi"
     // top side of the first rectangle in s[LR]
     // ( > d.ymax, iff s[LR] is empty)
     FT top_side_of_lr( ymax( *(p.begin( RP::LR))));
@@ -1508,6 +1584,7 @@ four_pierce_rectangles(
     CGAL_optimisation_assertion( top_side_above_top_side_of_lr >= d.ymin());
     
     
+    #line 1111 "pierce_4.awi"
     
     // one-piercing intervall of s[BT]:
     Intervall I_BT;
@@ -1518,8 +1595,10 @@ four_pierce_rectangles(
     // make sure, lef and rig are in I_L (I_R resp.):
     if ( lef < I_L.first || rig < I_R.first)
       goto next_iteration;
+    #line 908 "pierce_4.awi"
     
     for (;;) {
+      #line 1006 "pierce_4.awi"
       #if defined(CGAL_PCENTER_WINDOW_TRACE)
       Wd << RED;
       copy( f, l, wout);
@@ -1535,6 +1614,7 @@ four_pierce_rectangles(
       // compute subintervall I_BT of top side where s[BT] is pierced
       // (this is determined by the choice of bot)
       
+      #line 1286 "pierce_4.awi"
       if ( p.begin( RP::BT) == first_pierced_in_BT) {
       
         // bot pierces the first rectangle from s[BT]
@@ -1594,14 +1674,17 @@ four_pierce_rectangles(
                      min( xmax( *(first_pierced_in_BT - 1)),
                           xmax( *(p.begin( RP::BT)))));
       }
+      #line 1022 "pierce_4.awi"
       
       // ----------------------------------------------------------
       // test if the intersection of I_T and I_BT is not empty
       // and contains a point that pierces the remaining rectangles
       // from s[TL] and s[TR]:
       
+      #line 779 "pcenter.aw"
       I_BT.first = max( I_T.first, I_BT.first);
       I_BT.second = min( I_T.second, I_BT.second);
+      #line 1221 "pierce_4.awi"
       #if defined(CGAL_PCENTER_TRACE) && CGAL_PCENTER_TRACE <= 4
       cerr << "update bounds for top" << endl;
       #endif
@@ -1611,10 +1694,12 @@ four_pierce_rectangles(
       
       first_unpierced_in_TR =
         p.first_above_upwards( RP::TR, rig, first_unpierced_in_TR);
+      #line 1030 "pierce_4.awi"
       
       I_TLR = Intervall( xmin( *first_unpierced_in_TR),
                          xmax( *first_unpierced_in_TL));
       
+      #line 779 "pcenter.aw"
       I_TLR.first = max( I_BT.first, I_TLR.first);
       I_TLR.second = min( I_BT.second, I_TLR.second);
       if ( I_TLR.first > I_TLR.second)
@@ -1627,6 +1712,7 @@ four_pierce_rectangles(
       // so we just try both:
       
       if ( !p.is_empty( RP::LR)) {
+        #line 1233 "pierce_4.awi"
         #if defined(CGAL_PCENTER_TRACE) && CGAL_PCENTER_TRACE <= 4
         cerr << "update bounds for s[LR]" << endl;
         #endif
@@ -1648,6 +1734,8 @@ four_pierce_rectangles(
                                  top_lower_bound_by_rig_in_LR);
         
         
+      #line 1046 "pierce_4.awi"
+        #line 1361 "pierce_4.awi"
         // ------------------------------------------------------
         // try to pierce the first rectangle from s[LR] with lef:
         
@@ -1658,6 +1746,7 @@ four_pierce_rectangles(
           FT rig_save( rig);
         
           for (;;) {
+            #line 1411 "pierce_4.awi"
             // top side of the first rectangle in s[LR] not pierced by lef:
             FT first_unpierced;
             // its bound for top:
@@ -1685,6 +1774,7 @@ four_pierce_rectangles(
               top_bound_first_unpierced =
                 Xmax()( *top_upper_bound_by_lef_in_LR);
             }
+            #line 1448 "pierce_4.awi"
             // try to position rig:
             
             if ( rig > first_unpierced) {
@@ -1705,6 +1795,7 @@ four_pierce_rectangles(
                  ymin( *(p.end( RP::LR) - 1)) > rig)
               break;
             top = I_TLR.second;
+            #line 1472 "pierce_4.awi"
             // ----------------------------------------------------------
             // We finally found a piercing set!
             
@@ -1729,6 +1820,7 @@ four_pierce_rectangles(
             
             ok = true;
             return o;
+        #line 1375 "pierce_4.awi"
           } // for (;;)
         
           lef = lef_save;
@@ -1742,6 +1834,7 @@ four_pierce_rectangles(
         if ( rig >= ymin( *p.begin( RP::LR)) &&
              I_R.first <= ymax( *p.begin( RP::LR))) {
         
+          #line 1411 "pierce_4.awi"
           // top side of the first rectangle in s[LR] not pierced by rig:
           FT first_unpierced;
           // its bound for top:
@@ -1769,6 +1862,7 @@ four_pierce_rectangles(
             top_bound_first_unpierced =
               Xmin()( *top_lower_bound_by_rig_in_LR);
           }
+          #line 1448 "pierce_4.awi"
           // try to position lef:
           
           if ( lef > first_unpierced) {
@@ -1793,10 +1887,12 @@ four_pierce_rectangles(
         } // if ( rig >= ymin( *p.begin( RP::LR)) && ... )
         
         
+      #line 1047 "pierce_4.awi"
       } // if ( !p.is_empty( RP::LR))
       else
         top = I_TLR.first;
       
+      #line 1472 "pierce_4.awi"
       // ----------------------------------------------------------
       // We finally found a piercing set!
       
@@ -1821,6 +1917,8 @@ four_pierce_rectangles(
       
       ok = true;
       return o;
+      #line 1052 "pierce_4.awi"
+    #line 911 "pierce_4.awi"
     
       // ----------------------------------------------------------
       // test the next intervall:
@@ -1843,6 +1941,8 @@ four_pierce_rectangles(
         first_pierced_in_BR >= p.begin( RP::BR) &&
         first_pierced_in_BT >= p.begin( RP::BT));
     
+      #line 954 "pierce_4.awi"
+      #line 972 "pierce_4.awi"
       #if defined(CGAL_PCENTER_TRACE) && CGAL_PCENTER_TRACE <= 4
       cerr << "compute rig" << endl;
       #endif
@@ -1860,6 +1960,7 @@ four_pierce_rectangles(
       first_pierced_in_BL =
         p.first_right_of( RP::BL, bot, first_pierced_in_BL);
       
+      #line 972 "pierce_4.awi"
       #if defined(CGAL_PCENTER_TRACE) && CGAL_PCENTER_TRACE <= 4
       cerr << "compute lef" << endl;
       #endif
@@ -1880,22 +1981,29 @@ four_pierce_rectangles(
       cerr << "** show lef and rig" << endl;
       while ( Wd.read_mouse( dummy_x, dummy_y) != -1) {}
       #endif
+    #line 934 "pierce_4.awi"
+      #line 1212 "pierce_4.awi"
       #if defined(CGAL_PCENTER_TRACE) && CGAL_PCENTER_TRACE <= 4
       cerr << "update bounds for s[BT]" << endl;
       #endif
       
       first_unpierced_in_BT =
         p.first_right_of( RP::BT, bot, first_unpierced_in_BT);
+    #line 935 "pierce_4.awi"
     
     } // for (;;)
+  #line 810 "pierce_4.awi"
   
   } // if ( p.is_empty( RP::NO))
+#line 712 "pierce_4.awi"
 
   ok = false;
   return o;
 
 } // four_pierce_rectangles( f, l, d, p, o, ok)
 
+#line 193 "pierce.awi"
+#line 188 "pierce_traits.awi"
 template < class _Traits >
 class Two_piercing_algorithm {
 public:
@@ -1922,6 +2030,7 @@ public:
   typedef back_insert_iterator< vector< Point_2 > >
     OutputIterator;
 
+  #line 243 "pierce_traits.awi"
   Wastebasket< Point_2 >
   operator()(
     RandomAccessIC f,
@@ -1932,9 +2041,11 @@ public:
   {
     return two_pierce_rectangles( f, l, o, ok, Traits());
   }
+#line 217 "pierce_traits.awi"
 
 #endif // CGAL_CFG_NO_MEMBER_TEMPLATES
 
+  #line 243 "pierce_traits.awi"
   OutputIterator
   operator()(
     RandomAccessIC f,
@@ -1945,6 +2056,7 @@ public:
   {
     return two_pierce_rectangles( f, l, o, ok, Traits());
   }
+#line 223 "pierce_traits.awi"
 
 #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
   template < class RandomAccessIC, class OutputIterator >
@@ -1959,6 +2071,7 @@ public:
   { return two_pierce_rectangles( f, l, d, o, ok); }
 
 }; // class Two_piercing_algorithm
+#line 188 "pierce_traits.awi"
 template < class _Traits >
 class Three_piercing_algorithm {
 public:
@@ -1985,6 +2098,7 @@ public:
   typedef back_insert_iterator< vector< Point_2 > >
     OutputIterator;
 
+  #line 243 "pierce_traits.awi"
   Wastebasket< Point_2 >
   operator()(
     RandomAccessIC f,
@@ -1995,9 +2109,11 @@ public:
   {
     return three_pierce_rectangles( f, l, o, ok, Traits());
   }
+#line 217 "pierce_traits.awi"
 
 #endif // CGAL_CFG_NO_MEMBER_TEMPLATES
 
+  #line 243 "pierce_traits.awi"
   OutputIterator
   operator()(
     RandomAccessIC f,
@@ -2008,6 +2124,7 @@ public:
   {
     return three_pierce_rectangles( f, l, o, ok, Traits());
   }
+#line 223 "pierce_traits.awi"
 
 #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
   template < class RandomAccessIC, class OutputIterator >
@@ -2022,6 +2139,7 @@ public:
   { return three_pierce_rectangles( f, l, d, o, ok); }
 
 }; // class Three_piercing_algorithm
+#line 188 "pierce_traits.awi"
 template < class _Traits >
 class Four_piercing_algorithm {
 public:
@@ -2048,6 +2166,7 @@ public:
   typedef back_insert_iterator< vector< Point_2 > >
     OutputIterator;
 
+  #line 243 "pierce_traits.awi"
   Wastebasket< Point_2 >
   operator()(
     RandomAccessIC f,
@@ -2058,9 +2177,11 @@ public:
   {
     return four_pierce_rectangles( f, l, o, ok, Traits());
   }
+#line 217 "pierce_traits.awi"
 
 #endif // CGAL_CFG_NO_MEMBER_TEMPLATES
 
+  #line 243 "pierce_traits.awi"
   OutputIterator
   operator()(
     RandomAccessIC f,
@@ -2071,6 +2192,7 @@ public:
   {
     return four_pierce_rectangles( f, l, o, ok, Traits());
   }
+#line 223 "pierce_traits.awi"
 
 #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
   template < class RandomAccessIC, class OutputIterator >
@@ -2085,10 +2207,13 @@ public:
   { return four_pierce_rectangles( f, l, d, o, ok); }
 
 }; // class Four_piercing_algorithm
+#line 50 "code_formatting.awi"
 CGAL_END_NAMESPACE
+#line 197 "pierce.awi"
 
 #endif // ! (PIERCE_RECTANGLES_2_H)
 
+#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

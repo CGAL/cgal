@@ -1,3 +1,5 @@
+#line 1500 "mon_search.aw"
+#line 18 "code_formatting.awi"
 // ============================================================================
 //
 // Copyright (c) 1998 The CGAL Consortium
@@ -24,6 +26,8 @@
 // Example program: All Furthest Neighbors for a Convex Polygon
 // ============================================================================
 
+#line 1504 "mon_search.aw"
+#line 780 "afn.awi"
 #ifndef CGAL_CARTESIAN_H
 #include <CGAL/Cartesian.h>
 #endif // CGAL_CARTESIAN_H
@@ -77,6 +81,8 @@ main()
     Oiterator( cout));
   cout << endl;
 } 
+#line 1505 "mon_search.aw"
+#line 12 "code_formatting.awi"
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------
