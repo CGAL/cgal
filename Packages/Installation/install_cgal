@@ -2047,8 +2047,9 @@ EOF4
 	${_printf} "\n\n%s\n" "Execution:" >>${TMP_LOGFILE}
 	${_printf} "%s\n" \
 	    "---------------------------------" >>${TMP_LOGFILE}
-	_tmp3=`eval "${TMP_CXX_FILE} 2>&1 | ${_tee} -a ${TMP_LOGFILE}"`
+	${TMP_CXX_FILE} >>${TMP_LOGFILE} 2>&1 
 	if [ $? = 0 ]; then 	
+	    _tmp3=`eval "${TMP_CXX_FILE} 2>&1"`
 	    cleanup_after_compile
 	    cleanup_after_link_run
 	    return 0
