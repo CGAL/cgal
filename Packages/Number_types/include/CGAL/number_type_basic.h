@@ -25,6 +25,8 @@
 #ifndef CGAL_NUMBER_TYPE_BASIC_H
 #define CGAL_NUMBER_TYPE_BASIC_H
 
+#define CGAL_PI 3.14159265358979323846
+
 #define CGAL_NTS CGAL::NTS::
 
 #if ((__GNUC__ == 2) && (__GNUC_MINOR__ == 95))

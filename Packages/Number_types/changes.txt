@@ -1,3 +1,6 @@
+4.39	 (19 December 01)
+- Define CGAL_PI, since there's no standard macro for Pi (M_PI is not).
+
 4.38	 (19 December 01)
 - Added Geert-Jan's Counted_number.h.
 
