@@ -1,3 +1,6 @@
+11 August 2004 Andreas Fabri
+- In example13: Made New_segment_2 a template class: A nested class does not know the types from the enclosing scope
+
 17 May 2004 Menelaos Karavelas
 - replaced Point by Point_2 in the demo in order to resolve clash with
   the Mac version of Qt
