@@ -430,34 +430,10 @@ X_curve read_polyline_curve(std::ifstream& file, bool reverse_order)
       std::ofstream  pm_file("pm.txt", /*std::ios::in |*/ std::ios::out);
     
       pm_file.clear();
-      
-      // 1. read polylines and build arrangement
 
-      /*
-        // read number of polylines
-        num_polylines = get_next_int(file);
-        
-        // read curves (test specific)
-        while (num_polylines--) {
-        #if CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_TRAITS || \
-        CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
-        
-        curr_curve = read_segment_curve(file, reverse_order);
-
-        #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS || \
-        CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
-        
-        curr_curve = read_polyline_curve(file, reverse_order);
-        #endif
-        
-	arr.insert(curr_curve);
-        }*/
-
-      //cin>>pm;
-      
+      //read planar map.
       //input_file >> pm;
       pm.read(input_file);
-      std::cout<<pm;
       pm_file << pm;
       
       // debugging!
