@@ -1,7 +1,7 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
-Ver 5.22 (??)
+Ver 5.22 (3/12/01)
 - replace "assert" by "CGAL_triangulation_assertion"
 - in Regular_triangulation_euclidean_traits_2<R,W>
  changed the default for W from R::FT to R::FT
