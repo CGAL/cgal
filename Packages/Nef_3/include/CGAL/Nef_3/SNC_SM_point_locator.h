@@ -445,7 +445,7 @@ marks_of_halfspheres(std::vector<Mark>& mohs, int offset, int axis) {
 template <typename D>
 void SNC_SM_point_locator<D>::
 marks_of_halfspheres(Mark& lower, Mark& upper, int axis) {
-  
+
   TRACEN("marks_of_halfspheres " << center_vertex()->point());
   
   Sphere_point y_minus;

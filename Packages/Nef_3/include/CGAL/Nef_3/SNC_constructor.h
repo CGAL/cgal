@@ -1010,7 +1010,8 @@ create_from_edge(Halfedge_handle e,
 
   if(E.is_isolated(e)) {
     SFace_handle f = D.new_face();
-    D.link_as_isolated_vertex(e,f);
+    D.link_as_isolated_vertex(v1,f);
+    D.link_as_isolated_vertex(v2,f);
     D.mark(f) = E.mark(E.face(e));
   }
 

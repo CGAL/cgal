@@ -1131,6 +1131,12 @@ set_outer_face_mark(int offset, const std::vector<Mark>& mohs) {
     if ( face(e) != SFace_handle() ) continue;
     link_as_face_cycle(e,sf); 
   }
+  
+  SVertex_handle v;
+  CGAL_nef3_forall_svertices(v, *this) {
+    if(!is_isolated(v) || face(v) != SFace_handle()) continue;
+    link_as_isolated_vertex(v,sf);
+  }
 }
 
 template <typename Refs_>
@@ -1309,55 +1315,59 @@ create_face_objects(SHalfedge_iterator e_start, SHalfedge_iterator e_end,
   const Halfsphere_geometry& SG) const
 {
   TRACEN("create_face_objects()");
-  CGAL::Unique_hash_map<SHalfedge_handle,int> FaceCycle(-1);
-  std::vector<SHalfedge_handle>  MinimalHalfedge;
-  SHalfedge_around_sface_circulator hfc(last_out_edge(v_start)),hend(hfc);
-  TRACEN("equator cycle "<<PH(hfc));
-  CGAL_For_all(hfc,hend) FaceCycle[hfc]=0; // outer face cycle = 0
-  MinimalHalfedge.push_back(twin(first_out_edge(v_start)));
-  int i=1; 
-  for (SHalfedge_iterator e = e_start; e != e_end; ++e) {
-    if ( FaceCycle[e] >= 0 ) continue; // already assigned
-    SHalfedge_around_sface_circulator hfc(e),hend(hfc);
-    SHalfedge_handle e_min = e;
-    TRACEN(""); 
-    TRACEN("  face cycle numbering "<<i);
-    CGAL_For_all(hfc,hend) {
-      FaceCycle[hfc]=i; // assign face cycle number
-      if ( SG.compare_xy(point(target(hfc)), point(target(e_min))) < 0 )
-        e_min = hfc;      
-      TRACEN(PH(hfc));
-    } TRACEN("");
-    MinimalHalfedge.push_back(e_min);
-    ++i;
-  }
-
-  for (int j=1; j<i; ++j) {
-    SHalfedge_handle e = MinimalHalfedge[j];
-    TRACEN("  face cycle "<<j<<" minimal halfedge "<<PH(e));
-    Sphere_point p1 = point(source(e)), 
-                 p2 = point(target(e)), 
-                 p3 = point(target(next(e)));
-    if ( SG.orientation(p1,p2,p3) > 0 ) { // left_turn => outer face cycle
-      SFace_handle f = new_face();
-      link_as_face_cycle(e,f);
-      TRACEN("  creating new face object "<<&*f<<" bd "<<&*e);
+  if(e_start != e_end) {
+    CGAL::Unique_hash_map<SHalfedge_handle,int> FaceCycle(-1);
+    std::vector<SHalfedge_handle>  MinimalHalfedge;
+    SHalfedge_around_sface_circulator hfc(last_out_edge(v_start)),hend(hfc);
+    TRACEN("equator cycle "<<PH(hfc));
+    CGAL_For_all(hfc,hend) FaceCycle[hfc]=0; // outer face cycle = 0
+    MinimalHalfedge.push_back(twin(first_out_edge(v_start)));
+    int i=1; 
+    for (SHalfedge_iterator e = e_start; e != e_end; ++e) {
+      if ( FaceCycle[e] >= 0 ) continue; // already assigned
+      SHalfedge_around_sface_circulator hfc(e),hend(hfc);
+      SHalfedge_handle e_min = e;
+      TRACEN(""); 
+      TRACEN("  face cycle numbering "<<i);
+      CGAL_For_all(hfc,hend) {
+	FaceCycle[hfc]=i; // assign face cycle number
+	if ( SG.compare_xy(point(target(hfc)), point(target(e_min))) < 0 )
+	  e_min = hfc;      
+	TRACEN(PH(hfc));
+      } TRACEN("");
+      MinimalHalfedge.push_back(e_min);
+      ++i;
     }
-  }
+    
+    for (int j=1; j<i; ++j) {
+      SHalfedge_handle e = MinimalHalfedge[j];
+      TRACEN("  face cycle "<<j<<" minimal halfedge "<<PH(e));
+      Sphere_point p1 = point(source(e)), 
+	p2 = point(target(e)), 
+	p3 = point(target(next(e)));
+      if ( SG.orientation(p1,p2,p3) > 0 ) { // left_turn => outer face cycle
+	SFace_handle f = new_face();
+	link_as_face_cycle(e,f);
+	TRACEN("  creating new face object "<<&*f<<" bd "<<&*e);
+      }
+    }
+    
+    for (SHalfedge_iterator e = e_start; e != e_end; ++e) {
+      if ( face(e) != SFace_handle() ) continue;
+      if ( FaceCycle[e] == 0 ) continue;
+      TRACEN("linking hole "<<PH(e));
+      SFace_handle f = determine_face(e,MinimalHalfedge,FaceCycle,D);
+      if(f != SFace_handle())
+	link_as_face_cycle(e,f);
+    }
+  }    
 
-  for (SHalfedge_iterator e = e_start; e != e_end; ++e) {
-    if ( face(e) != SFace_handle() ) continue;
-    if ( FaceCycle[e] == 0 ) continue;
-    TRACEN("linking hole "<<PH(e));
-    SFace_handle f = determine_face(e,MinimalHalfedge,FaceCycle,D);
-    if(f != SFace_handle())
-      link_as_face_cycle(e,f);
-  }
   for (SVertex_iterator v = v_start; v != v_end; ++v) {
     if ( !is_isolated(v) ) continue;
     SHalfedge_handle e_below = D.halfedge_below(v);
-    CGAL_nef3_assertion( e_below != SHalfedge_handle() );
-    link_as_isolated_vertex(v,face(e_below));
+    CGAL_nef3_assertion( e_below != SHalfedge_handle() || e_start == e_end );
+    if(e_below != SHalfedge_handle())
+      link_as_isolated_vertex(v,face(e_below));
   }
 
 }
@@ -1384,8 +1394,9 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
     } else { // e_below does not exist
       //      CGAL_nef3_assertion( point(v).hz() == 0 && 
       //		   ( offset == 0 ? (point(v).hx() >= 0) : (point(v).hx()<=0)) );
-      for (int i=0; i<2; ++i) 
-        m_buffer[i] = incident_mark(previous(first_out_edge(v)),i);
+      if(!is_isolated(v))
+	for (int i=0; i<2; ++i) 
+	  m_buffer[i] = incident_mark(previous(first_out_edge(v)),i);
     } TRACEN(" faces right and below "<<m_buffer[0]<<" "<<m_buffer[1]);
 
     for (int i=0; i<2; ++i) {
