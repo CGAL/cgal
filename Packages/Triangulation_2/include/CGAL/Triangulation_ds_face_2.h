@@ -59,9 +59,9 @@ public:
   //   void set_neighbors() inherited
      
   inline
-  void set_neighbors(Vertex* n0,
-		     Vertex* n1,
-		     Vertex* n2)
+  void set_neighbors(Face* n0,
+		     Face* n1,
+		     Face* n2)
   {
     Fb::set_neighbors(n0,n1,n2);
   }
