@@ -1,5 +1,9 @@
 Changes done to the Interval Arithmetic package.
 
+Version 3.4 on 26 March 1999
+- Fix for IRIX.
+- More std compliance.
+
 Version 3.3 on 19 March 1999
 - Forgot the src/ directory in the package :(
 

@@ -48,12 +48,15 @@ clean:
 	$(MAKE) -C test/$(Package) clean
 	rm -f $(Package).tar.gz
 
+# The --exclude=tstlink is here because I don't want to provide a makefile for
+# the test-suite.
+
 $(Package).tar.gz:
 	tar -zcvf $(Package).tar.gz \
 	--exclude=CVS --exclude=wrapper.tex --exclude=Makefile \
-	--exclude=TODO \
+	--exclude=TODO --exclude=tstlink \
 	version description.txt changes.txt \
-	include src doc_tex doc_ps test examples
+	src include doc_tex doc_ps test examples
 
 doc: doc_ps/$(Package).ps
 

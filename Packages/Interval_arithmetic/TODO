@@ -1,5 +1,5 @@
 - CLN: finish the wrapper(s) [and add the converters]. (+doc)
-- Real/Expr: idem.
+- Real/Expr: idem.  See also http://www.cs.nyu.edu/exact/core/.
 - Implanter les optimisations suivantes compatibles IEEE 754 dans egcs:
   - (-a)*(-b) => a*b  (idem pour /)
   - (-a)>0    => a<0
@@ -41,6 +41,9 @@ Concerning the code itself:
 
 Concerning the script:
 
+- Add the option to produce a complete specialization (for Mips, Visual...):
+  remove the template, and instantiate for the given type, e.g.
+  Filter<double,leda_real>.
 - Add determinant_signs.h to the list of filtered files ?  And send the 3
   lines to Stefan to add to the end of the original determinant.h.
 - Produire un fichier avec juste les déclarations, et un autre avec les
@@ -49,11 +52,7 @@ Concerning the script:
   predicates don't need to be filtered (compare_x, lexico,..)..
   Or try to guess when parsing ?  Anyway for the filtered constructions, the
   scheme will have to be rethought.
-- fix the "line too long".
-  include/CGAL/Arithmetic_filter/predicates_on_ftC2.h has 3 lines over 80
-  +characters.
-? Clean it up, and comment it... I won't maintain it, but users might want to
-  change it a little bit...
+? Clean it up, and comment it...
 
 Concerning the doc:
 
