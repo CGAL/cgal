@@ -12,8 +12,12 @@ my $unpack_dir;
 my $testresult_dir = "/users/www/CGAL/Members/Develop/testsuite";
 #my $testresult_dir = "/users/geert/tmp/tr";
 my $result_url;
+my $lockfile="/private/cgal_testannounce.lock";
+my $announcements_dir="/private/CGAL/testannouncements";
+my $lock_cmd= "/sw/bin/lockfile -r 10 -l 600 $lockfile";
  
 my ($cgal_version,$tarname,@results);
+
 sub usage()
 {
     print STDERR "usage: $0 URL\n";
@@ -49,6 +53,50 @@ sub unpack_results()
 	or die "to_zipped_format failed. Test collection not installed.\n";
 }
 
+sub notify()
+{
+    my $resultfile;
+    open NOTICE,
+    "|$mail_prog \"New test results ($cgal_version)\" 'cgal-develop-l\@postino.mpi-sb.mpg.de'";
+    print NOTICE <<"TOTHIER";
+Results for the following platforms have been installed on
+http://www.cs.uu.nl/CGAL/Members/Develop/testsuite/results.html 
+
+TOTHIER
+
+    for $resultfile (@results) {
+        $resultfile =~ s/\.tar//;
+        $resultfile =~ s/^results_//;
+        print NOTICE $resultfile, "\n";
+    }
+    close NOTICE;
+
+# new notification method
+
+    if (system($lock_cmd)==0) {
+        my $announcement_file;
+        $announcement_file = "$announcements_dir/$cgal_version";
+	if ( -w $announcement_file ) {
+	    open NOTICE, ">> $announcement_file";
+	} else {
+	    open NOTICE, "> $announcement_file";
+            print NOTICE <<"TOTHIER";
+Results for the following platforms have been installed on
+http://www.cs.uu.nl/CGAL/Members/Develop/testsuite/results.html 
+
+TOTHIER
+	}
+        for $resultfile (@results) {
+            $resultfile =~ s/\.tar//;
+            $resultfile =~ s/^results_//;
+            print NOTICE $resultfile, "\n";
+        }
+        close NOTICE;
+        unlink $lockfile;
+    }
+
+}
+
 sub install_results()
 {
     chdir $testresult_dir;
@@ -66,21 +114,8 @@ sub install_results()
 
     chdir $unpack_dir;
     unlink $tarname;
+    notify();
 
-    open NOTICE,
-    "|$mail_prog \"New test results ($cgal_version)\" 'cgal-develop-l\@postino.mpi-sb.mpg.de'";
-    print NOTICE <<"TOTHIER";
-Results for the following platforms have been installed on
-http://www.cs.uu.nl/CGAL/Members/Develop/testsuite/results.html 
-
-TOTHIER
-
-    for $resultfile (@results) {
-        $resultfile =~ s/\.tar//;
-        $resultfile =~ s/^results_//;
-        print NOTICE $resultfile, "\n";
-    }
-    close NOTICE
 }
 
 # check if there is one param
