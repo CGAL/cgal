@@ -7,7 +7,7 @@ WWW_dir=$(WWW_CGAL)/Triangulation_2
 TMP_file=/tmp/submit-mail
 CGAL_MAKEFILE=/u/alcor/0/prisme_util/CGAL/CGAL-I/make/makefile_i686_Linux-2.2.14_g++-2.95.2_LEDA
 TEXINPUTS=.:../../../examples:/0/prisme_util/latex:/u/procyon/0/prisme/yvinec/tex/inputs:
-LATEX_CONV_INPUTS=.:../../examples
+LATEX_CONV_INPUTS=.:../../../examples
 MAINTAINER=Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 
 package: 
@@ -16,7 +16,7 @@ package:
 	@echo "----------------------------------"
 	@echo "---- cvs update; -----------------"
 	@echo "---- make Test                ----"
-	@echo "---- make Doc --------------------"
+	@echo "---- make VERSION=4.45 Doc -------"
 	@echo "---- editer changes.txt       ----"
 	@echo "---- make VERSION=4.45 Version ---"
 	@echo "---- cvs commit ------------------"
