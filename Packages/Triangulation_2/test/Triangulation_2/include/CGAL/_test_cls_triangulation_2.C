@@ -27,7 +27,6 @@
 
 #include <utility>
 #include <list>
-//#include <vector>
 
 #include <CGAL/_test_cls_triangulation_vertex.C>
 #include <CGAL/_test_cls_triangulation_face.C>
@@ -375,7 +374,7 @@ _test_cls_triangulation_2( const Triangulation & )
   _test_fct_is_infinite( T2_5 );
   _test_fct_is_infinite( T2_6 );
 
-  std::cout << "    is_edge, is_face" << std::endl;
+  std::cout << "    is_edge, is_face, includes_edge" << std::endl;
   assert(  T1_5.is_edge(v1_5_1,v1_5_3));
   assert( !T1_5.is_edge(v1_5_1,v1_5_2));
   assert(  T1_5.is_edge(v1_5_1,v1_5_3,f,li));
@@ -393,7 +392,10 @@ _test_cls_triangulation_2( const Triangulation & )
   assert(T2_1.is_face(v0,v2,v1));
   assert(T2_1.is_face(v1,v2,v3,ff) && ff == f->neighbor(0));
   assert(! T2_1.is_face(v0,v3,v1));
-  
+  assert(T1_5.includes_edge(v1_5_1,v1_5_2,v0,f,li));
+  assert(v0 == v1_5_3);
+  assert(T2_1.includes_edge(v2_1_1,v2_1_2,v0,f,li));
+  assert(v0 == v2_1_3);
 
   /*************************************/
   /******** POINT LOCATIONS ************/
