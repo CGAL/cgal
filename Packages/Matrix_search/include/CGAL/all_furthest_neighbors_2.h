@@ -56,6 +56,12 @@
 #endif
 
 CGAL_BEGIN_NAMESPACE
+#ifdef _MSC_VER
+// that compiler cannot even distinguish between global
+// and class scope, so ...
+#define Base B_B_Base
+#endif // _MSC_VER
+
 template < class Operation, class RandomAccessIC >
 class All_furthest_neighbor_matrix
 : public Cartesian_matrix< Operation, RandomAccessIC, RandomAccessIC >
@@ -65,18 +71,18 @@ class All_furthest_neighbor_matrix
 public:
   typedef
     Cartesian_matrix< Operation, RandomAccessIC, RandomAccessIC >
-  BaseClass;
+  Base;
 
   All_furthest_neighbor_matrix( RandomAccessIC f,
                                 RandomAccessIC l)
-  : BaseClass( f, l, f, l)
+  : Base( f, l, f, l)
   {}
 
   int
   number_of_columns() const
   { return 2 * number_of_rows() - 1; }
 
-  typename BaseClass::Value
+  typename Base::Value
   operator()( int r, int c) const
   {
     CGAL_optimisation_precondition( r >= 0 && r < number_of_rows());
@@ -86,11 +92,15 @@ public:
     else if ( c >= r + number_of_rows())
       return Value( 0);
     else if ( c >= number_of_rows())
-      return BaseClass::operator()( r, c - number_of_rows());
+      return Base::operator()( r, c - number_of_rows());
     else
-      return BaseClass::operator()( r, c);
+      return Base::operator()( r, c);
   }
 };
+
+#ifdef _MSC_VER
+#undef Base
+#endif // _MSC_VER
 
 #if !defined(CGAL_CFG_NO_ITERATOR_TRAITS) && \
 !defined(CGAL_CFG_MATCHING_BUG_2)

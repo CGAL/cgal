@@ -206,18 +206,6 @@ CGAL_END_NAMESPACE
 #endif
 CGAL_BEGIN_NAMESPACE
 
-#ifndef CGAL_CFG_NO_NAMESPACE
-inline double
-sqrt( double x)
-{ return ::sqrt( x); }
-
-#ifdef CGAL_USE_LEDA
-inline leda_real
-sqrt( const leda_real& x)
-{ return ::sqrt( x); }
-#endif
-#endif
-
 template < class _FT >
 struct Sqrt
 : public CGAL_STD::binary_function< _FT, _FT, _FT >

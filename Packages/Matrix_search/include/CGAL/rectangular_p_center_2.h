@@ -55,6 +55,12 @@ CGAL_END_NAMESPACE
 
 CGAL_BEGIN_NAMESPACE
 
+#ifdef _MSC_VER
+// that compiler cannot even distinguish between global
+// and class scope, so ...
+#define Base B_B_Base
+#endif // _MSC_VER
+
 template < class Operation,
            class RandomAccessIC_row,
            class RandomAccessIC_column >
@@ -104,6 +110,10 @@ public:
     return Base::operator()( r, number_of_columns() - 1 - c);
   }
 };
+
+#ifdef _MSC_VER
+#undef Base
+#endif // _MSC_VER
 
 template < class Operation,
            class RandomAccessIC_row,
@@ -199,7 +209,7 @@ rectangular_p_center_2_binary_search(
 
   // check, if input data is trivial
   bool ok;
-  OutputIterator oi( pierce_it( FT( 0), o, ok));
+  OutputIterator oi = pierce_it(FT(0), o, ok);
   if ( ok)
     return oi;
   // create vector with absolute coordinate differences:
@@ -357,7 +367,7 @@ rectangular_p_center_2_matrix_search(
 
   // check, if input data is trivial
   bool ok;
-  OutputIterator oi( pierce_it( FT( 0), o, ok));
+  OutputIterator oi = pierce_it(FT(0), o, ok);
   if ( ok)
     return oi;
 

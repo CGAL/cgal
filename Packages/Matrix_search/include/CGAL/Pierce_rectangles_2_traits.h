@@ -168,6 +168,11 @@ struct Piercing_traits_homogeneous {
     { return Iso_rectangle_2( p, p); }
   };
 }; // Piercing_traits_homogeneous
+#ifdef _MSC_VER
+// that compiler cannot even distinguish between global
+// and class scope, so ...
+#define Base B_B_Base
+#endif // _MSC_VER
 template < class _R >
 struct Piercing_squares_traits_cartesian
 : public Piercing_traits_cartesian< _R >
@@ -256,6 +261,9 @@ struct Piercing_squares_traits_homogeneous
     { return Iso_rectangle_2( p); }
   };
 };
+#ifdef _MSC_VER
+#undef Base
+#endif // _MSC_VER
 CGAL_END_NAMESPACE
 
 
