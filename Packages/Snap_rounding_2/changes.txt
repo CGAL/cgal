@@ -1,3 +1,6 @@
+21 April 2004 Radu Ursu
+-converted Leda based demo to Qt based demo
+
 26 March 2004 Radu Ursu
 -made doc work with the current implementation of the Manual tools
 

@@ -1,4 +1,3 @@
-# Created by the script create_makefile
 # This is the makefile for compiling a CGAL application.
 
 #---------------------------------------------------------------------#
@@ -14,7 +13,8 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-           $(CGAL_CXXFLAGS) \
+	   -I../../include \
+	   $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            $(DEBUG_OPT)
 
@@ -23,29 +23,36 @@ CXXFLAGS = \
 #---------------------------------------------------------------------#
 
 LIBPATH = \
-          $(CGAL_WINDOW_LIBPATH)
+          $(CGAL_LIBPATH)
 
 LDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_WINDOW_LDFLAGS)
+          $(CGAL_QT_LDFLAGS) \
 
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
-all:            \
-                demo$(EXE_EXT)
+all: snap_rounding_2$(EXE_EXT)
 
-demo$(EXE_EXT): demo$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo demo$(OBJ_EXT) $(LDFLAGS)
+snap_rounding_2_toolbar$(OBJ_EXT): snap_rounding_2_toolbar.cpp snap_rounding_2_toolbar.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) snap_rounding_2_toolbar.cpp
 
-clean: \
-                   demo.clean
+snap_rounding_2_toolbar.moc: snap_rounding_2_toolbar.h
+	$(QT_MOC) -o snap_rounding_2_toolbar.moc snap_rounding_2_toolbar.h
 
-#---------------------------------------------------------------------#
-#                    suffix rules
-#---------------------------------------------------------------------#
+snap_rounding_2$(OBJ_EXT): snap_rounding_2.cpp snap_rounding_2.moc
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) snap_rounding_2.cpp
 
-.C$(OBJ_EXT):
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
+snap_rounding_2.moc: snap_rounding_2.cpp
+	${QT_MOC} -o snap_rounding_2.moc snap_rounding_2.cpp
+
+snap_rounding_2$(EXE_EXT): snap_rounding_2_toolbar$(OBJ_EXT) snap_rounding_2$(OBJ_EXT)
+	$(CGAL_CXX) $(EXE_OPT)snap_rounding_2 \
+	snap_rounding_2$(OBJ_EXT) \
+	snap_rounding_2_toolbar$(OBJ_EXT) \
+	$(LDFLAGS)
+
+clean: 
+	rm -rf *$(OBJ_EXT) *.moc
 
