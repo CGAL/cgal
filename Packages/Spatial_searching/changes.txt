@@ -1,5 +1,5 @@
-
-- Fixed typo in Weighted_Minkowski_distance.h: The_distance -> the_distance [af]
+Version 3.37 (31 July 2003) [af]
+- Fixed typo in Weighted_Minkowski_distance.h: The_distance -> the_distance 
 
 Version 3.36 (30 July 2003)
 rursu:
