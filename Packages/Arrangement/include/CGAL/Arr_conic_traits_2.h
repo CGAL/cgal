@@ -79,10 +79,22 @@ class Arr_conic_traits_2
 
  public:
 
-  // Constructor.
+  /*!
+   * Constructor.
+   */
   Arr_conic_traits_2()
   {}
 
+  /*!
+   * Destructor.
+   */
+  ~Arr_conic_traits_2()
+  {
+#ifdef CGAL_CONIC_ARC_USE_CACHING
+    inter_list.clear();
+#endif    
+  }
+  
   ////////// Planar Map methods: //////////
 
   // Compare the co-ordinates of two given points.
