@@ -811,8 +811,8 @@ public:
     Event_queue           event_queue;
     Status_line           status;
     
-    int c_sweep_t;
-    c_sweep_t = clock();
+    //int c_sweep_t;
+    //c_sweep_t = clock();
     
 #ifdef  CGAL_SWEEP_LINE_DEBUG
     unsigned int n = 0;
