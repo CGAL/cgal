@@ -10,14 +10,16 @@ if [ -d $h ]; then
   mkdir text; 
 
   for i in *.C ; do
-    jp=`echo $i|sed -e "s/\.C/\.vcproj/"`;
-    ofn=`echo $i|sed -e "s/\.C/\.exe/"`;
-    k=`echo $i|sed -e "s/\.C//"`;
-    sed -e"s/master/$k/g" ../master.vcproj > ./text/temp.txt;
-    sed -e"s/test_msvc7.exe/$ofn/g" ./text/temp.txt > ./text/temp2.txt;
-    sed -e"s/test_msvc7/$k/g" ./text/temp2.txt > ./text/$jp;
-    mv ./text/$jp ./; 
-    rm -rf ./text/temp.txt ./text/temp2.txt
+    if [ ! $i = "*.C" ]; then
+      jp=`echo $i|sed -e "s/\.C/\.vcproj/"`;
+      ofn=`echo $i|sed -e "s/\.C/\.exe/"`;
+      k=`echo $i|sed -e "s/\.C//"`;
+      sed -e"s/master/$k/g" ../master.vcproj > ./text/temp.txt;
+      sed -e"s/test_msvc7.exe/$ofn/g" ./text/temp.txt > ./text/temp2.txt;
+      sed -e"s/test_msvc7/$k/g" ./text/temp2.txt > ./text/$jp;
+      mv ./text/$jp ./; 
+      rm -rf ./text/temp.txt ./text/temp2.txt
+    fi
   done
 
   rm -r text
