@@ -42,13 +42,13 @@ int main()
   Delaunay T;
   CGAL::copy_n( gen, 250, std::back_inserter(T) );
 
-  std::set<Vertex_handle>  vertices;
-  T.incident_vertices(T.infinite_vertex(), vertices);
+  std::list<Vertex_handle>  vertices;
+  T.incident_vertices(T.infinite_vertex(), std::back_inserter(vertices));
   std::cout << "This convex hull of the 250 points has " 
             << vertices.size() << " points on it." << std::endl;
 
   // remove 25 of the input points 
-  std::set<Vertex_handle>::iterator v_set_it = vertices.begin();
+  std::list<Vertex_handle>::iterator v_set_it = vertices.begin();
   for (int i = 0; i < 25; i++)
   {
      T.remove(*v_set_it);
@@ -56,7 +56,7 @@ int main()
   }
 
   vertices.clear();
-  T.incident_vertices(T.infinite_vertex(), vertices);
+  T.incident_vertices(T.infinite_vertex(), std::back_inserter(vertices));
   std::cout << "After removal of 25 points, there are "
             << vertices.size() << " points on the convex hull." << std::endl;
   return 0;
