@@ -23,7 +23,6 @@
 #include <cstring>
 #include <iostream>
 #include <fstream>
-#include <strstream.h>
 
 #include <list>
 
