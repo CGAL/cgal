@@ -1,3 +1,6 @@
+2.57    (9 December 2002)
+- Fix Iso_Cuboid documentation (4<->5 in the picture of .vertex()).
+
 2.56    (6 November 2002)
 - Add and document arity for all functors.
 
