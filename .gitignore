@@ -1,5 +1,9 @@
 Packages/Distance_2/web/lis
 Packages/Distance_3/include
+Packages/Mesh_2/demo/Mesh_2/*.moc
+Packages/Mesh_2/demo/Mesh_2/mesh_demo
+Packages/Mesh_2/examples/Mesh_2/mesh
+Packages/Mesh_2/test/Mesh_2/test_filtred_container
 Packages/Min_annulus_d/*.aux
 Packages/Min_annulus_d/*.bbl
 Packages/Min_annulus_d/*.blg
