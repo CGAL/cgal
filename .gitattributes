@@ -1252,6 +1252,26 @@ Packages/Nef_2/doc_tex/basic/Nef_2/halfplane.gif -text svneol=unset#unset
 Packages/Nef_2/doc_tex/basic/Nef_2/halfplane.ps -text
 Packages/Nef_2/doc_tex/basic/Nef_2_ref/extsegs.eps -text
 Packages/Nef_2/doc_tex/basic/Nef_2_ref/extsegs.gif -text svneol=unset#unset
+Packages/Optimisation_doc/doc_tex/Optimisation/annulus.eps -text
+Packages/Optimisation_doc/doc_tex/Optimisation/annulus.gif -text svneol=unset#unset
+Packages/Optimisation_doc/doc_tex/Optimisation/ball.eps -text
+Packages/Optimisation_doc/doc_tex/Optimisation/ball.gif -text svneol=unset#unset
+Packages/Optimisation_doc/doc_tex/Optimisation/max_triangle.eps -text
+Packages/Optimisation_doc/doc_tex/Optimisation/max_triangle.gif -text svneol=unset#unset
+Packages/Optimisation_doc/doc_tex/Optimisation/pcenter.eps -text
+Packages/Optimisation_doc/doc_tex/Optimisation/pcenter.gif -text svneol=unset#unset
+Packages/Optimisation_doc/doc_tex/Optimisation/polydist.eps -text
+Packages/Optimisation_doc/doc_tex/Optimisation/polydist.gif -text svneol=unset#unset
+Packages/Optimisation_doc/doc_tex/basic/Optimisation/annulus.eps -text
+Packages/Optimisation_doc/doc_tex/basic/Optimisation/annulus.gif -text svneol=unset#unset
+Packages/Optimisation_doc/doc_tex/basic/Optimisation/ball.eps -text
+Packages/Optimisation_doc/doc_tex/basic/Optimisation/ball.gif -text svneol=unset#unset
+Packages/Optimisation_doc/doc_tex/basic/Optimisation/max_triangle.eps -text
+Packages/Optimisation_doc/doc_tex/basic/Optimisation/max_triangle.gif -text svneol=unset#unset
+Packages/Optimisation_doc/doc_tex/basic/Optimisation/pcenter.eps -text
+Packages/Optimisation_doc/doc_tex/basic/Optimisation/pcenter.gif -text svneol=unset#unset
+Packages/Optimisation_doc/doc_tex/basic/Optimisation/polydist.eps -text
+Packages/Optimisation_doc/doc_tex/basic/Optimisation/polydist.gif -text svneol=unset#unset
 Packages/PS_Stream/doc_tex/PS_Stream/exemple.ps -text
 Packages/PS_Stream/doc_tex/PS_Stream/style.ps -text
 Packages/PS_Stream/doc_tex/support/PS_Stream/exemple.ps -text

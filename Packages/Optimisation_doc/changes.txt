@@ -1,5 +1,8 @@
 Changes done to the `Optimisation_doc' package
 
+Version 1.0.8 on 29-Nov-2001
+- Fleshed it out just a little bit.
+
 Version 1.0.7 on 31-Jul-2001
 - Susan moved Optimisation_ref directory up one level
 

@@ -1,0 +1,98 @@
+%!PS-Adobe-2.0 EPSF-1.2
+%%Creator: rectangular_p_center_2_demo
+%%BoundingBox: 0 0 500 500
+%%Pages: 1
+%%EndComments
+
+%% global scaling factor:
+1 1 scale
+
+%% Procedures:
+
+% square takes three arguments a b c from stack and draws
+% a square of radius c centered at point (a,b)
+/square
+{ newpath 3 1 roll moveto 
+  dup 2 div neg dup rmoveto 
+  dup 0 rlineto 
+  dup 0 exch rlineto 
+  neg 0 rlineto 
+  closepath stroke} def
+
+% circle takes three arguments a b c from stack and draws
+% a filled circle of radius c centered at point (a,b)
+/circle {
+newpath 0 360 arc closepath gsave fill grestore stroke
+} def
+
+% input points
+0 0 0 setrgbcolor
+154 333 2 circle
+396 60 2 circle
+210 70 2 circle
+122 188 2 circle
+436 215 2 circle
+474 331 2 circle
+20 299 2 circle
+155 212 2 circle
+197 211 2 circle
+388 21 2 circle
+454 43 2 circle
+259 277 2 circle
+211 36 2 circle
+290 93 2 circle
+213 434 2 circle
+257 245 2 circle
+412 96 2 circle
+244 35 2 circle
+266 274 2 circle
+480 269 2 circle
+227 446 2 circle
+276 319 2 circle
+281 101 2 circle
+324 252 2 circle
+366 20 2 circle
+356 97 2 circle
+430 71 2 circle
+337 28 2 circle
+97 216 2 circle
+272 264 2 circle
+202 245 2 circle
+442 111 2 circle
+435 282 2 circle
+391 252 2 circle
+371 91 2 circle
+325 56 2 circle
+387 236 2 circle
+417 132 2 circle
+407 40 2 circle
+297 408 2 circle
+173 191 2 circle
+125 186 2 circle
+288 291 2 circle
+343 151 2 circle
+37 339 2 circle
+261 311 2 circle
+403 324 2 circle
+426 67 2 circle
+45 191 2 circle
+217 170 2 circle
+
+% covering squares:
+1 0 0 setrgbcolor
+354 319 2 circle
+0 0 1 setrgbcolor
+354 319 253 square
+1 0 0 setrgbcolor
+328 146 2 circle
+0 0 1 setrgbcolor
+328 146 253 square
+1 0 0 setrgbcolor
+146 307 2 circle
+0 0 1 setrgbcolor
+146 307 253 square
+
+showpage
+
+%% EOF
+
