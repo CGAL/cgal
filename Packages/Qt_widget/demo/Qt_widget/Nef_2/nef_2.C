@@ -197,11 +197,13 @@ public:
     //the new tools toolbar
     newtoolbar = new CGAL::Tools_toolbar(widget, this);	
     //the layers toolbar
-    ltoolbar = new CGAL::Layers_toolbar(widget, this, &Nef_visible, &Nef_visible2);
+    ltoolbar = new CGAL::Layers_toolbar(widget, this, 
+                                        &Nef_visible, &Nef_visible2);
 
     //boolean operations toolbar
-    QToolBar *optoolbar = new QToolBar("operations", this, QMainWindow::Right, true, "Operations");
-    QToolButton *but_intersection = new QToolButton(QPixmap( (const char**)intersection_xpm ), 
+    QToolBar *optoolbar = new QToolBar("operations", this, 
+                                        QMainWindow::Right, true,"Operations");
+    QToolButton *but_intersection = new QToolButton(QPixmap( (const char**)intersection_xpm ),
       "INTERSECTION", "BOOLEAN OPERATIONS", this, SLOT(sl_intersect()), optoolbar, "intersection");
     QToolButton *but_union = new QToolButton(QPixmap( (const char**)union_xpm ), 
       "UNION", "BOOLEAN OPERATIONS", this, SLOT(sl_join()), optoolbar, "union");
