@@ -28,7 +28,7 @@
 
 // TODO: check if some of those includes shouldn't be in the .C file
 #include <CGAL/IO/Qt_widget.h>
-#include <CGAL/IO/Qt_widget_zoom.h>
+#include <CGAL/IO/Qt_widget_focus.h>
 #include <CGAL/IO/Qt_widget_zoomrect.h>
 #include <CGAL/IO/Qt_widget_handtool.h>
 
@@ -66,7 +66,7 @@ private:
   void			setActiveButton(int i);
   int			nr_of_buttons;
 	
-  CGAL::Qt_widget_zoom		    zoombut;
+  CGAL::Qt_widget_focus		    zoombut;
   CGAL::Qt_widget_zoomrect	    zoomrectbut;
   CGAL::Qt_widget_handtool	    handtoolbut;
 };//end class

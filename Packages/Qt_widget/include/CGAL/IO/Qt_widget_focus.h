@@ -18,8 +18,8 @@
 //
 // ============================================================================
 
-#ifndef CGAL_QT_WIDGET_ZOOM_H
-#define CGAL_QT_WIDGET_ZOOM_H
+#ifndef CGAL_QT_WIDGET_FOCUS_H
+#define CGAL_QT_WIDGET_FOCUS_H
 
 
 #include <CGAL/IO/pixmaps/focus1.xpm>
@@ -39,7 +39,7 @@
 
 namespace CGAL {
 
-class Qt_widget_zoom : public Qt_widget_tool
+class Qt_widget_focus : public Qt_widget_tool
 {
 private:
   int	x2, y2;
@@ -120,4 +120,4 @@ private:
 
 } // namespace CGAL
 
-#endif // CGAL_QT_WIDGET_ZOOM_H
+#endif // CGAL_QT_WIDGET_FOCUS_H
