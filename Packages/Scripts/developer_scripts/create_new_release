@@ -42,71 +42,72 @@ CVS_TAG=""
 #CVS_TAG="-A"
 
 cd ${TMPDIR} || return
-if [ -r $VERSION_FILE ]; then
-    # The internal release number is considered only in non-public mode.
-    if [ $IS_PUBLIC == "n" ]; then
-        i=$(( `cat $VERSION_FILE` + 1 ))
-        rm -rf $VERSION_FILE
-        printf "%d\n" "${i}" >> $VERSION_FILE
-        INTERNAL_STRING="-I-${i}"
-        internal_nr=`printf "%4s" "${i}" | sed "y/ /0/"`
-    else
-        INTERNAL_STRING=""
-        internal_nr="1000"
-    fi
-    # Do not show the bugfix number if it is 0.
-    if [ $BUGFIX_NUMBER == "0" ]; then 
-        BUGFIX_STRING=".$BUGFIX_NUMBER"
-    else
-        BUGFIX_STRING=""
-    fi
-    release_name="CGAL-${MAJOR_NUMBER}.${MINOR_NUMBER}${BUGFIX_STRING}${INTERNAL_STRING}"
-    LOGFILE="`pwd`/${LOGFILEBASE}.${release_name}"
-    echo "${release_name}" >> ${LOGFILE} 2>&1
-    major_nr=`printf "%2s" "${MAJOR_NUMBER}" | sed "y/ /0/"`
-    minor_nr=`printf "%2s" "${MINOR_NUMBER}" | sed "y/ /0/"`
-    bugfix_nr=`printf "%1s" "${BUGFIX_NUMBER}" | sed "y/ /0/"`
-    release_number="1${major_nr}${minor_nr}${bugfix_nr}${internal_nr}"
-    echo "${release_number}" >> ${LOGFILE} 2>&1
-    cd All
-    cvs -q update -P ${CVS_TAG} >> ${LOGFILE} 2>&1
 
-    cd ..
-    ./create_internal_release -r ${release_name} -n ${release_number} -d ${TMPDIR} >> ${LOGFILE} 2>&1
-    cd ${TMPDIR}
-    # Make the diff with the previous release
-    ${DIFF} -urN previous_release "${release_name}" > ${release_name}.diff
-    ${GZIP} "${release_name}.diff" >> ${LOGFILE} 2>&1
-    rm -rf previous_release >> ${LOGFILE} 2>&1
-    # Make the release tarball
-    ${TAR} -cf "${release_name}.tar" "${release_name}" >> ${LOGFILE} 2>&1
-    ${GZIP} "${release_name}.tar" >> ${LOGFILE} 2>&1
-    mv "${release_name}" previous_release >> ${LOGFILE} 2>&1
-    mv "${release_name}.diff.gz" "${release_name}.tar.gz" "${HTML_DIR}" >> ${LOGFILE} 2>&1
-    echo "${release_name}.tar.gz" > "${HTML_DIR}/LATEST"
-    mail -s "[automatic] ${release_name} is released" ${MAILTO} <<EOF
+# The internal release number is considered only in non-public mode.
+if [ $IS_PUBLIC == "n" ]; then
+    [ -r $VERSION_FILE ] || return
+    i=$(( `cat $VERSION_FILE` + 1 ))
+    rm -rf $VERSION_FILE
+    printf "%d\n" "${i}" >> $VERSION_FILE
+    INTERNAL_STRING="-I-${i}"
+    internal_nr=`printf "%4s" "${i}" | sed "y/ /0/"`
+else
+    INTERNAL_STRING=""
+    internal_nr="1000"
+fi
+
+# Do not show the bugfix number if it is 0.
+if [ $BUGFIX_NUMBER == "0" ]; then 
+    BUGFIX_STRING=".$BUGFIX_NUMBER"
+else
+    BUGFIX_STRING=""
+fi
+release_name="CGAL-${MAJOR_NUMBER}.${MINOR_NUMBER}${BUGFIX_STRING}${INTERNAL_STRING}"
+LOGFILE="`pwd`/${LOGFILEBASE}.${release_name}"
+echo "${release_name}" >> ${LOGFILE} 2>&1
+major_nr=`printf "%2s" "${MAJOR_NUMBER}" | sed "y/ /0/"`
+minor_nr=`printf "%2s" "${MINOR_NUMBER}" | sed "y/ /0/"`
+bugfix_nr=`printf "%1s" "${BUGFIX_NUMBER}" | sed "y/ /0/"`
+release_number="1${major_nr}${minor_nr}${bugfix_nr}${internal_nr}"
+echo "${release_number}" >> ${LOGFILE} 2>&1
+
+cd All
+cvs -q update -P ${CVS_TAG} >> ${LOGFILE} 2>&1
+
+cd ..
+./create_internal_release -r ${release_name} -n ${release_number} -d ${TMPDIR} >> ${LOGFILE} 2>&1
+cd ${TMPDIR}
+# Make the diff with the previous release
+${DIFF} -urN previous_release "${release_name}" > ${release_name}.diff
+${GZIP} "${release_name}.diff" >> ${LOGFILE} 2>&1
+rm -rf previous_release >> ${LOGFILE} 2>&1
+# Make the release tarball
+${TAR} -cf "${release_name}.tar" "${release_name}" >> ${LOGFILE} 2>&1
+${GZIP} "${release_name}.tar" >> ${LOGFILE} 2>&1
+mv "${release_name}" previous_release >> ${LOGFILE} 2>&1
+mv "${release_name}.diff.gz" "${release_name}.tar.gz" "${HTML_DIR}" >> ${LOGFILE} 2>&1
+echo "${release_name}.tar.gz" > "${HTML_DIR}/LATEST"
+mail -s "[automatic] ${release_name} is released" ${MAILTO} <<EOF
 
 You can fetch it at :
 ${URL}/${release_name}.tar.gz
 
 EOF
 
-    # Now we tag.
-    cd All
-    NEW_TAG=`echo $release_name | sed -e "s/[-.]/_/g"`
-    echo "Tagging All with $NEW_TAG" >> ${LOGFILE} 2>&1
-    # One directory at a time otherwise the repository
-    # gets locked for an hour...
-    # cvs -q tag $NEW_TAG >> ${LOGFILE} 2>&1
-    for dir in *
-    do
-      [ "$dir" != "CVS" ] && cvs -q tag $NEW_TAG $dir >> ${LOGFILE} 2>&1
-    done
+# Now we tag.
+cd All
+NEW_TAG=`echo $release_name | sed -e "s/[-.]/_/g"`
+echo "Tagging All with $NEW_TAG" >> ${LOGFILE} 2>&1
+# One directory at a time otherwise the repository
+# gets locked for an hour...
+# cvs -q tag $NEW_TAG >> ${LOGFILE} 2>&1
+for dir in *
+do
+  [ "$dir" != "CVS" ] && cvs -q tag $NEW_TAG $dir >> ${LOGFILE} 2>&1
+done
 
-    # We now call the create_modules script
-    # The All directory is the CVSDIR directory
+# We now call the create_modules script
+# The All directory is the CVSDIR directory
 
-    cd ${TMPDIR}
-    ./create_modules -u n -c n -r ${release_name} -n ${release_number} -d "${TMPDIR}/All" -i "${HTML_DIR}" >> ${LOGFILE} 2>&1
-
-fi
+cd ${TMPDIR}
+./create_modules -u n -c n -r ${release_name} -n ${release_number} -d "${TMPDIR}/All" -i "${HTML_DIR}" >> ${LOGFILE} 2>&1
