@@ -15,3 +15,8 @@ Rineau roadmap 2001/12/17:
  6) review the whole code
  7) work with Qt Designer
  8) change filenames to follow the CGAL naming convention	[done]
+
+
+RADU URSU
+--------------
+1) A move point tool for min_ellipse_2 and convex_hull_2
