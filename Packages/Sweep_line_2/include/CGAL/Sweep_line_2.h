@@ -73,9 +73,9 @@ public:
   /*!
    *  Given a container of curves, this function returns a list of curves
    *  that are created by intersecting the input curves.
-   *  \param curves_begin the input iterator that points to the first curve 
+   *  \param begin the input iterator that points to the first curve 
    *                      in the range.
-   *  \param curves_end the input past-the-end iterator of the range.
+   *  \param end the input past-the-end iterator of the range.
    *  \param subcurves an iterator to the first curve in the range
    *                   of curves created by intersecting the input curves.
    *  \param overlapping indicates whether overlapping curves should be 
@@ -93,15 +93,13 @@ public:
    *  Given a range of curves, this function returns a list of points 
    *  that are the intersection points of the curves.
    *  The intersections are calculated using the sweep algorithm.
-   *  \param curves_begin the input iterator that points to the first curve 
-   *                      in the range.
-   *  \param curves_end the input past-the-end iterator of the range.
-   *  \param subcurves an iterator to the first curve in the range
-   *                   of curves created by intersecting the input curves.
-   *  \param endpoints if true, the end points of the curves are reported
-   *                   as intersection points. Defaults to true.
-   *  \param overlapping indicates whether there are overlapping curves
-   *                     in the input range. Defaults to false.
+   *  \param begin the input iterator that points to the first curve 
+   *                   in the range.
+   *  \param end the input past-the-end iterator of the range.
+   *  \param points an iterator to the first point in the range
+   *                   of points created by intersecting the input curves.
+   *  \param includeEndPoints if true, the end points of the curves are 
+   *                   reported as intersection points. Defaults to true.
    */
   template <class OutpoutIterator>
   void  get_intersection_points(CurveInputIterator begin, 
@@ -118,9 +116,9 @@ public:
   *  for each intersection point between any two curves in the 
   *  specified range.
   *  The intersections are calculated using the sweep algorithm.
-  *  \param curves_begin the input iterator that points to the first curve 
+  *  \param begin the input iterator that points to the first curve 
   *                      in the range.
-  *  \param curves_end the input past-the-end iterator of the range.
+  *  \param end the input past-the-end iterator of the range.
   *  \param intersecting_curves an iterator to the output
   *  \param endpoints if true, the end points of the curves are reported
   *                   as intersection points. Defaults to true.
