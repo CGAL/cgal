@@ -46,7 +46,9 @@ struct Interval_base
   Interval_base (const double i, const double s)
     : inf_(i), sup_(s)
   {
-    CGAL_assertion_msg(i<=s,
+      // VC++ should use instead : (i<=s) || !is_valid(i) || !is_valid(s)
+      // Or should I use is_valid() ? or is_valid_or_nan() ?
+    CGAL_assertion_msg(!(i>s),
 	      " Variable used before being initialized (or CGAL bug)");
   }
 
@@ -106,6 +108,13 @@ struct Interval_base
 // protected:
   double inf_, sup_;	// "inf_" stores the lower bound, "sup_" the upper.
 };
+
+inline
+Interval_base
+to_interval (const Interval_base & d)
+{
+  return d;
+}
 
 inline
 double
