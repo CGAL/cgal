@@ -24,25 +24,7 @@
 
 #include <CGAL/Segment_Voronoi_diagram_short_names_2.h>
 
-//#define USE_UNFILTERED_TRAITS
-
-#ifdef USE_UNFILTERED_TRAITS
-#  include <CGAL/Segment_Voronoi_diagram_traits_base_2.h>
-
-#else
-
-#ifndef CGAL_REP_CLASS_DEFINED
-#error  no representation class defined
-#endif  // CGAL_REP_CLASS_DEFINED
-
-#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
-#include <CGAL/predicates/Segment_Voronoi_diagram_predicates_C2.h>
-#include <CGAL/predicates/Segment_Voronoi_diagram_predicates_ftC2.h>
-#include <CGAL/Segment_Voronoi_diagram_constructions_C2.h>
-#endif
-
-#endif
-
+#include <CGAL/Segment_Voronoi_diagram_traits_base_2.h>
 
 #include <CGAL/Number_type_traits.h>
 #include <CGAL/Segment_Voronoi_diagram_kernel_wrapper_2.h>
@@ -74,7 +56,8 @@ template<class CK_t, class CK_MTag, class EK_t, class EK_MTag,
 class Segment_Voronoi_diagram_filtered_traits_base_2
 {
 private:
-#if defined (__GNUC__) && (__GNUC__ >= 3)
+#if defined (__GNUC__) && (__GNUC__ < 3)
+#else
   typedef Segment_Voronoi_diagram_traits_base_2<CK_t,CK_MTag,ITag> CK_traits;
   typedef Segment_Voronoi_diagram_traits_base_2<FK_t,FK_MTag,ITag> FK_traits;
   typedef Segment_Voronoi_diagram_traits_base_2<EK_t,EK_MTag,ITag> EK_traits;
@@ -143,7 +126,8 @@ public:
   typedef FK_t                          Filtering_kernel;
   typedef EK_t                          Exact_kernel;
 
-#if defined (__GNUC__) && (__GNUC__ >= 3)
+#if defined (__GNUC__) && (__GNUC__ < 3)
+#else
   typedef CK_traits                     Construction_traits;
   typedef FK_traits                     Filtering_traits;
   typedef EK_traits                     Exact_traits;
@@ -169,7 +153,11 @@ public:
 
 
 private:
-#if defined (__GNUC__) && (__GNUC__ >= 3)
+#if defined (__GNUC__) && (__GNUC__ < 3)
+  typedef Construct_svd_vertex_2<CK,CK_MTag>  CK_Construct_svd_vertex_2;
+  typedef Construct_svd_vertex_2<FK,FK_MTag>  FK_Construct_svd_vertex_2;
+  typedef Construct_svd_vertex_2<EK,EK_MTag>  EK_Construct_svd_vertex_2;
+#else
   typedef typename CK_traits::Construct_svd_vertex_2
   CK_Construct_svd_vertex_2;
 
@@ -178,10 +166,6 @@ private:
 
   typedef typename EK_traits::Construct_svd_vertex_2
   EK_Construct_svd_vertex_2;
-#else
-  typedef Construct_svd_vertex_2<CK,CK_MTag>  CK_Construct_svd_vertex_2;
-  typedef Construct_svd_vertex_2<FK,FK_MTag>  FK_Construct_svd_vertex_2;
-  typedef Construct_svd_vertex_2<EK,EK_MTag>  EK_Construct_svd_vertex_2;
 #endif
 
 public:
