@@ -15,7 +15,8 @@
 // package       : arr (1.73)
 // maintainer    : Eli Packer <elip@post.tau.ac.il>
 // author(s)     : Eli Packer
-// coordinator   : Dna Halperin Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
+// coordinator   : ana Halperin Tel-Aviv University
+//                 (Dan Halperin <danha@post.tau.ac.il>)
 //
 // ======================================================================
 #ifndef CGAL_SR_KD_2_H
@@ -175,7 +176,8 @@ public:
                                Segment inp_s,
                                NT unit_squere)
   {
-    Comparison_result cy = _gt.compare_y_2_object()(inp_s.source(),inp_s.target());
+    Comparison_result cy = _gt.compare_y_2_object()(
+           inp_s.source(),inp_s.target());
     Segment s(cy == SMALLER ?
               inp_s.source() : inp_s.target(),
               cy == SMALLER ?

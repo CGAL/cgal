@@ -15,7 +15,7 @@
 // package       : arr (1.73)
 // maintainer    : Eli Packer <elip@post.tau.ac.il>
 // author(s)     : Eli Packer
-// coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
+// coordinator   : Tel-Aviv University (Dan Halperin <danha@post.tau.ac.il>)
 //
 // ======================================================================
 #ifndef CGAL_SR_2_H
@@ -809,8 +809,10 @@ template<class Rep_>
 bool hot_pixel_auclidian_cmp<Rep_>::operator()(const Hot_Pixel<Rep_> *h1,
      const Hot_Pixel<Rep_> *h2) const
   {
-    Comparison_result cx = _gt.compare_x_2_object()(h1.get_center(),h2.get_center());
-    Comparison_result cy = _gt.compare_y_2_object()(h1.get_center(),h2.get_center());
+    Comparison_result cx = _gt.compare_x_2_object()(
+        h1.get_center(),h2.get_center());
+    Comparison_result cy = _gt.compare_y_2_object()(
+        h1.get_center(),h2.get_center());
 
     return(cx == SMALLER ||
          cx == EQUAL && cy == SMALLER);
@@ -822,8 +824,10 @@ template<class Rep_>
 bool hot_pixel_dir_cmp<Rep_>::operator ()(const Hot_Pixel<Rep_> *h1,
      const Hot_Pixel<Rep_> *h2) 
 {
-  Comparison_result cx = _gt.compare_x_2_object()(h1->get_center(),h2->get_center());
-  Comparison_result cy = _gt.compare_y_2_object()(h1->get_center(),h2->get_center());
+  Comparison_result cx = _gt.compare_x_2_object()(
+      h1->get_center(),h2->get_center());
+  Comparison_result cy = _gt.compare_y_2_object()(
+      h1->get_center(),h2->get_center());
 
   return(
      // Point segment intersects only one pixel, thus ignored
@@ -1059,7 +1063,8 @@ Snap_rounding_2<Rep_>::Snap_rounding_2(Segment_const_iterator
       ++number_of_segments;
 
       // @@@@ insert to planar map
-      //std:: cout << "1st : " << begin->source() << " snd : " << begin->target() << endl;
+      //std:: cout << "1st : " << begin->source() <<
+      // " snd : " << begin->target() << endl;
       X_curve2 c(begin->source(),begin->target());
       //std::cout << "bbb\n";
       pm.insert(c);
