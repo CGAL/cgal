@@ -1,3 +1,6 @@
+4.33 (18 Jan 2004)
+- Remove obsolete workaround for CGAL_CFG_NO_ITERATOR_TRAITS.
+
 4.32 (1 Dec 2003)
 - Better documentation of the required Compute_area_2.
 
@@ -6,6 +9,8 @@
 
 4.30 (17 Nov 2003) [lk]
 - Removed CGAL_CFG_NO_SCOPE_MEMBER_FUNCTION_PARAMETERS workaround.
+
+=========================== CGAL 3.0 =====================
 
 4.29 (22 October 2003) [af]
 - new headers

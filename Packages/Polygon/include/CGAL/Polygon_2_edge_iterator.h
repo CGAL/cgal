@@ -194,23 +194,6 @@ value_type(const Polygon_2_edge_iterator<Traits_,Container_>&)
 //-----------------------------------------------------------------------//
 
 //--------------------------------------------------------------------//
-// Comment: the iterator category of a Polygon_2_edge_iterator should
-// be equal to the iterator category of the corresponding container, but this
-// cannot be implemented (???).
-//--------------------------------------------------------------------//
-
-#ifdef CGAL_CFG_NO_ITERATOR_TRAITS 
-template <class Traits_, class Container_>
-inline
-bidirectional_iterator_tag
-iterator_category(const Polygon_2_edge_iterator<Traits_, Container_>&)
-{
-  return bidirectional_iterator_tag();
-}
-
-#endif // CGAL_CFG_NO_ITERATOR_TRAITS
-
-//--------------------------------------------------------------------//
 // I don't know how to implement the following function:
 //
 // template <class Traits_, class Container_>

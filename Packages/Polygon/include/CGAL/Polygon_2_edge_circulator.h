@@ -219,22 +219,6 @@ value_type(const Polygon_2_const_edge_circulator<_Traits,_Container>&)
 //-----------------------------------------------------------------------//
 
 //--------------------------------------------------------------------//
-// Comment: the iterator category of a Polygon_2_const_edge_circulator
-// should be equal to the iterator category of the corresponding container,
-// but this cannot be implemented (???).
-//--------------------------------------------------------------------//
-#ifdef CGAL_CFG_NO_ITERATOR_TRAITS
-template <class _Traits, class _Container>
-inline
-Bidirectional_circulator_tag
-iterator_category(
-  const Polygon_2_const_edge_circulator<_Traits, _Container>&)
-{
-  return Bidirectional_circulator_tag();
-}
-#endif // CGAL_CFG_NO_ITERATOR_TRAITS
-
-//--------------------------------------------------------------------//
 // I don't know how to implement the following function:
 //
 // template <class _Traits, class _Container>
