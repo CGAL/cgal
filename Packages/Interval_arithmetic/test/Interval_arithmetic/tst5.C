@@ -1,10 +1,7 @@
-// #define CGAL_NO_PRECONDITIONS
-// #define CGAL_NO_POSTCONDITIONS
-// #define CGAL_IA_DEBUG
-
 #include <CGAL/config.h>
 #include <CGAL/basic.h>
 
+// Workaround for MipsPro.
 #ifdef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
 #define CGAL_IA_CT double
 #define CGAL_IA_ET leda_real
@@ -21,13 +18,16 @@
 
 #include <CGAL/predicates_on_ftC2.h>
 // #include <CGAL/predicates_on_ftC3.h>
-// #include <CGAL/predicates_on_rtH2.h>
 
 #include <CGAL/double.h>
+
+#ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
+#endif
+
+#ifdef CGAL_USE_LEDA
 // #include <CGAL/leda_bigfloat.h>
 // #include <CGAL/leda_rational.h>
-#ifdef CGAL_USE_LEDA
 #include <CGAL/leda_real.h>
 #include <CGAL/leda_integer.h>
 #endif // CGAL_USE_LEDA
