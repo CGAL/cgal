@@ -786,6 +786,56 @@ int_to_alpha_upper( const string&, string param[], size_t n, size_t opt) {
 
 // Some special characters hard to print otherwise
 // ======================================================================
+
+string 
+format_chapter_author( const string&, string param[], size_t n, size_t opt) {
+    NParamCheck( 1, 0);
+    // count if none, one, or several \and's are used
+    std::string::size_type idx = param[0].find("\\and");
+    // make sure it was not a macro that just starts with '\and...'
+    while ( idx != std::string::npos && idx + 4 < param[0].size() && 
+            std::isalpha( param[0][idx+4]))
+        idx = param[0].find("\\and", idx+4);
+    if ( idx == std::string::npos) // no \and's used, do nothing
+        return param[0];
+    std::string::size_type idx2 = param[0].find("\\and", idx+1);
+    // make sure it was not a macro that just starts with '\and...'
+    while ( idx2 != std::string::npos && idx2 + 4 < param[0].size() && 
+            std::isalpha( param[0][idx2+4]))
+        idx2 = param[0].find("\\and", idx2+4);
+    if ( idx2 == std::string::npos) { // one \and used, replace with " and "
+        param[0].replace( idx, 4, " and ");
+        return param[0];
+    }
+    // else replace each idx position with ", " and wait for last \and
+    do {
+        param[0].replace( idx, 4, ", ");
+        // eliminate whitespaces left of the comma
+        while ( idx > 0 && param[0][idx-1] <= ' ') {
+            --idx;
+            --idx2;
+            param[0].replace( idx, 1, "");
+        }
+        idx = idx2 - 2;
+        idx2 = param[0].find("\\and", idx+1);
+        // make sure it was not a macro that just starts with '\and...'
+        while ( idx2 != std::string::npos && idx2 + 4 < param[0].size() && 
+                std::isalpha( param[0][idx2+4]))
+            idx2 = param[0].find("\\and", idx2+4);
+    } while (idx2 != std::string::npos);
+    // finish with replacing last \and with ", and "
+    param[0].replace( idx, 4, ", and ");
+    // eliminate whitespaces left of the comma
+    while ( idx > 0 && param[0][idx-1] <= ' ') {
+        --idx;
+        param[0].replace( idx, 1, "");
+    }
+    return param[0];
+}
+
+
+// Some special characters hard to print otherwise
+// ======================================================================
 string 
 backslash_char( const string&, string param[], size_t n, size_t opt) {
     NParamCheck( 0, 0);
@@ -1147,6 +1197,9 @@ void init_internal_macros() {
     insertInternalGlobalMacro( "\\lciToRomanUpper", int_to_roman_upper, 1);
     insertInternalGlobalMacro( "\\lciToAlpha",      int_to_alpha, 1);
     insertInternalGlobalMacro( "\\lciToAlphaUpper", int_to_alpha_upper, 1);
+
+    insertInternalGlobalMacro( "\\lciFormatChapterAuthor", 
+                                                   format_chapter_author, 1);
 
     insertInternalGlobalMacro( "\\lciBackslash",   backslash_char, 0);
     insertInternalGlobalMacro( "\\lciOpenBrace",   open_brace_char, 0);

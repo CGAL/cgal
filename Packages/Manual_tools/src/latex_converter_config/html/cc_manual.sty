@@ -307,9 +307,9 @@
 
 \newcommand{\ccMultiplePartsToc}{\gdef{\lciIfMultipleParts}{\lcTrue}}
 
-\newcommand{\ccChapterSubTitle}[1]{\lcRawHtml{<EM>}#1\lcRawHtml{</EM>}}
+\newcommand{\ccChapterSubTitle}[1]{\lcRawHtml{<EM>}#1\lcRawHtml{</EM><br>}}
 \newcommand{\ccChapterAuthor}[1]{\lciIf{\ccTagChapterAuthor}
-    {\ccChapterSubTitle{#1}}{}}
+    {\ccChapterSubTitle{\lciFormatChapterAuthor{#1}}}{}}
 \newcommand{\ccChapterRelease}[1]{\lciIf{\ccTagChapterRelease}
     {\ccChapterSubTitle{#1}}{}}
 
