@@ -90,6 +90,12 @@ Install everything:
       5.  tag all the packages included in the release with the new
           release tag CGAL_M_m_release and create a branch tag with
           the name CGAL_M_m_branch.
+	  cvs -z9 co All -rcurrent_submission
+	  cd All
+	  cvs tag CGAL_M_m_release
+	  cvs tag -b CGAL_M_m_branch
+	  Notes : (1) it takes a while,
+	          (2) you need write access to all packages.
 
 Then finally ...
       6.  announce the release (see announcement directory)
