@@ -69,7 +69,8 @@ public:
   typedef Triangulation_all_faces_iterator_2<Gt,Tds>    All_faces_iterator;
   typedef Triangulation_finite_faces_iterator_2<Gt,Tds> Finite_faces_iterator;
   typedef Triangulation_face_circulator_2<Gt,Tds>       Face_circulator;
-  
+  typedef Triangulation_line_face_circulator_2<Gt,Tds> Line_face_circulator;
+
   Triangulation_face_handle_2()
     : Pointer_(NULL)
     {}
