@@ -33,10 +33,6 @@ CGAL_BEGIN_NAMESPACE
 template < class Gt, class Tds>
 class Delaunay_triangulation_2 : public Triangulation_2<Gt,Tds>
 {
-  friend std::istream& operator>> CGAL_NULL_TMPL_ARGS
-           (std::istream& is, Delaunay_triangulation_2<Gt,Tds> &dt);
-  friend std::ostream& operator<< CGAL_NULL_TMPL_ARGS
-           (std::ostream& os, const Delaunay_triangulation_2<Gt,Tds> &dt);
 public:
   typedef Gt Geom_traits;
   typedef typename Geom_traits::Point Point;
@@ -46,12 +42,12 @@ public:
   typedef typename Geom_traits::Direction Direction;
 
   typedef Triangulation_2<Gt,Tds>              Triangulation;
-  typedef Triangulation::Locate_type           Locate_type;
-  typedef Triangulation::Face_handle           Face_handle;
-  typedef Triangulation::Vertex_handle         Vertex_handle;
-  typedef Triangulation::Edge                  Edge;
-  typedef Triangulation::Edge_circulator       Edge_circulator;
-  typedef Triangulation::Finite_edges_iterator Finite_edges_iterator;
+  typedef typename Triangulation::Locate_type           Locate_type;
+  typedef typename Triangulation::Face_handle           Face_handle;
+  typedef typename Triangulation::Vertex_handle         Vertex_handle;
+  typedef typename Triangulation::Edge                  Edge;
+  typedef typename Triangulation::Edge_circulator       Edge_circulator;
+  typedef typename Triangulation::Finite_edges_iterator Finite_edges_iterator;
   
   Delaunay_triangulation_2(const Gt& gt = Gt())
   : Triangulation_2<Gt,Tds>(gt) {}
@@ -647,25 +643,6 @@ fill_hole(Vertex_handle v, std::list<Edge> & first_hole)
 	}
       }
     }
-}
-
-
-template < class Gt, class Tds >
-std::ostream&
-operator<<(std::ostream& os, const Delaunay_triangulation_2<Gt,Tds> &dt)
-{
-  dt.file_output(os);
-  return (os); 
-}
-
-
-template < class Gt, class Tds >
-std::istream&
-operator>>(std::istream& is, Delaunay_triangulation_2<Gt,Tds> &dt)
-{
-  dt.file_input(is);
-  CGAL_triangulation_assertion(dt.is_valid());
-  return is;
 }
 
 CGAL_END_NAMESPACE

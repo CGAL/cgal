@@ -80,7 +80,6 @@ public:
   int opposite_index(int i) const;
 
   //Miscelleanous
-  int dimension() const;
   bool is_valid(bool verbose = false, int level = 0) const;
 };
 
@@ -205,16 +204,7 @@ index(const Face* n) const
   return(Fb::face_index(n));
 }
     
-//Miscelleanoustemplate < class Vb, class Fb >
-template < class Vb, class Fb >
-inline  int 
-Triangulation_ds_face_2<Vb,Fb>::   
-dimension() const
-{
-  if (vertex(2) != NULL) {return 2;}
-  else return( vertex(1) != NULL ? 1 : 0);
-}
-
+//Miscelleanous
 template < class Vb, class Fb >
 bool
 Triangulation_ds_face_2<Vb,Fb>::  

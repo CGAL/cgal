@@ -11,10 +11,10 @@
 // release       :
 // release_date  :
 // 
-// source        : test_constrained_triangulation.C
-// file          : test_constrained_triangulation.C
-// revision      : 
-// revision_date : 
+// file          : test/Triangulation/test_constrained_triangulation.C
+// source        : $RCSfile$
+// revision      : $Revision$
+// revision_date : $Date$
 // author(s)     : Francois Rebufat (Francois.Rebufat@sophia.inria.fr)
 //
 // coordinator   : INRIA Sophia-Antipolis
@@ -24,10 +24,9 @@
 #include <CGAL/_test_types.h>
 
 #include <CGAL/Triangulation_vertex_base_2.h>
-#include <CGAL/Triangulation_default_data_structure_2.h>
-
-#include <CGAL/Constrained_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_face_base_2.h>
+#include <CGAL/Triangulation_default_data_structure_2.h>
+#include <CGAL/Constrained_triangulation_2.h>
 
 #include <CGAL/_test_types.C>
 #include <CGAL/_test_cls_constrained_triangulation_2.C>

@@ -38,8 +38,9 @@ int main()
     cout << "Testing Delaunay Triangulation_2 "; 
   cout << " with Euclidean cartesian points : " << endl;
   
-  //typedef double coord_type;
-  //typedef CGAL::Cartesian<coord_type>  Test_rep_cartesian;
+ // typedef double coord_type;
+//   typedef CGAL::Cartesian<coord_type>  Rep;
+//   typedef CGAL::Triangulation_euclidean_traits_2<Rep> Gt1;
   typedef CGAL::Triangulation_euclidean_traits_2<Test_rep_cartesian> Gt1;
   typedef CGAL::Triangulation_vertex_base_2<Gt1>                  Vb1;
   typedef CGAL::Triangulation_face_base_2<Gt1>                    Fb1;

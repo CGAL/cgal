@@ -9,11 +9,11 @@
 #include <iostream>
 #include <cassert>
 
-#ifdef CGAL_USE_CLN
-#include <CGAL/CLN/cl_integer.h>
-#include <cl_io.h>
-typedef cl_I Rtype;
-#else
+// #ifdef CGAL_USE_CLN
+// #include <CGAL/CLN/cl_integer.h>
+// #include <cl_io.h>
+// typedef cl_I Rtype;
+// #else
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
 typedef CGAL::Gmpz Rtype;
@@ -26,7 +26,7 @@ typedef leda_integer Rtype;
 typedef double Rtype;
 #endif // CGAL_USE_LEDA
 #endif // CGAL_USE_GMP
-#endif // CGAL_USE_CLN
+//#endif // CGAL_USE_CLN
 
 #include <CGAL/Quotient.h>
 typedef CGAL::Quotient<Rtype>   Ftype;

@@ -39,8 +39,8 @@ public:
   typedef typename Gt::Weight         Weight;
   
   // the following typedef to satisfy MIPS CC 7.3
-  typedef Triangulation::Face_handle    Face_handle;
-  typedef Triangulation::Vertex_handle  Vertex_handle;
+  typedef typename Triangulation::Face_handle    Face_handle;
+  typedef typename Triangulation::Vertex_handle  Vertex_handle;
 
   // a list to memorise temporary the faces around a point
   typedef std::list<Face_handle>      Faces_around_stack; 

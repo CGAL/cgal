@@ -65,11 +65,13 @@ public:
   void set_neighbors();
   void set_neighbors(void* n0, void* n1, void* n2);
   
+  int dimension() const;
   //the following trivial is_valid to allow
   // the user of derived face base classes 
   // to add their own purpose checking
   bool is_valid(bool /* verbose */ = false, int /* level */ = 0) const
   {return true;}
+  
 
 };
 
@@ -253,6 +255,17 @@ set_neighbors(void* n0,void* n1, void* n2)
   N[2] = n2;
 }
  
+template < class Gt>
+inline  int 
+Triangulation_face_base_2<Gt> ::
+dimension() const
+{
+  if (V[2] != NULL) {return 2;}
+  else return( V[1] != NULL ? 1 : 0);
+}
+
+
+
 
 CGAL_END_NAMESPACE 
 

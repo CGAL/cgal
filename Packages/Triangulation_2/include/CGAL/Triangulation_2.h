@@ -136,6 +136,7 @@ public:
   //SETTING
   void set_number_of_vertices(int n) {_tds.set_number_of_vertices(n+1);}
   void set_infinite_vertex(const Vertex_handle& v) {_infinite_vertex=v;}
+  void set_dimension(int n) {_tds.set_dimension(n);}
 
   // CHECKING
   bool is_valid(bool verbose = false, int level = 0) const;
@@ -251,7 +252,7 @@ protected:
   bool test_dim_down(Vertex_handle v);
   void make_hole ( Vertex_handle v, std::list<Edge> & hole);
   Vertex_handle file_input(std::istream& is);
-  void   file_output(std::ostream& os) const;
+  void file_output(std::ostream& os) const;
 
 private:
   Vertex_handle insert_outside_convex_hull_1(const Point& p, Face_handle f);
@@ -1164,7 +1165,6 @@ fill_hole ( Vertex_handle v, std::list< Edge > & hole )
   }
 }
   
-
 
 
 // POINT LOCATION

@@ -142,12 +142,6 @@ public:
 
 };
 
-template < class Gt, class Tds >
-std::ostream &
-operator<<(std::ostream& os, const Constrained_triangulation_2<Gt,Tds> &ct)
-{
-  return ct.draw_triangulation(os);
-}
 
 CGAL_END_NAMESPACE
 

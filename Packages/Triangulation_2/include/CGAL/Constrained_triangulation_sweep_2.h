@@ -41,28 +41,22 @@ template < class Gt, class Tds>
 class Constrained_triangulation_2;
 
 template < class Gt, class Tds>
-class Constrained_triangulation_sweep_2;
+class Constrained_triangulation_sweep_2
 {
 public:
-    typedef Gt  Geom_traits;
-    typedef typename Gt::Point Point;
-    typedef typename Gt::Segment Segment;
+  typedef Gt  Geom_traits;
+  typedef typename Gt::Point Point;
+  typedef typename Gt::Segment Segment;
     
-  // je rajoute ca
-  typedef Triangulation_2<Gt,Tds> Triangulation
-  typedef Constrained_triangulation_2<Gt,Tds> Ctriangulation
+  typedef Triangulation_2<Gt,Tds> Triangulation;
+  typedef Constrained_triangulation_2<Gt,Tds> Ctriangulation;
   
-  typedef Triangulation_face_2<Gt,Tds> Face;
-  typedef Triangulation_vertex_2<Gt,Tds> Vertex;
-  typedef Triangulation_face_handle_2<Gt,Tds> Face_handle;
-  typedef Triangulation_vertex_handle_2<Gt,Tds> Vertex_handle;
-  typedef std::pair<Face_handle, int>                Edge;
-
-  //typedef typename Ctriangulation::Face_handle Face_handle; 
-  //typedef typename Ctriangulation::Vertex_handle Vertex_handle;
-  //typedef typename Ctriangulation::Edge Edge;
-  //typedef typename Ctriangulation::Vertex Vertex;
-  //typedef typename Ctriangulation::Face Face;
+  typedef typename Ctriangulation::Face_handle Face_handle; 
+  typedef typename Ctriangulation::Vertex_handle Vertex_handle;
+  typedef typename Ctriangulation::Edge Edge;
+  typedef typename Ctriangulation::Vertex Vertex;
+  typedef typename Ctriangulation::Face Face;
+  typedef typename Ctriangulation::Constraint Constraint;
 
   class Neighbor_list;
   class Chain;
@@ -156,7 +150,7 @@ public:
           }
         }
 	// shouldn't get there
-	CGAL_triangulation_assertion(false);
+	// CGAL_triangulation_assertion( false );
 	return false;
       }
       
@@ -288,19 +282,16 @@ public:
     Status_comp status_comp;
     Sweep_status status;
     Chain upper_chain;
-    //Vertex_handle the_vertex;
-
+ 
  public:
-    Constrained_triangulation_sweep_2( const Gt& t = Gt())
-      : _t(t), _lc(NULL)
+    Constrained_triangulation_sweep_2()
+      : _tr(NULL), _lc(NULL)
     {
     }
     
-    Constrained_triangulation_sweep_2( Constrained_Triangulation* ct,
-  				     std::list<Constraint>& lc)
-    //Constrained_triangulation_sweep_2( std::list<Constraint>& lc,
-    //                                       const  Gt& t = Gt())
-      : _tr(ct), _lc(&lc), 
+    Constrained_triangulation_sweep_2( Ctriangulation* ct,
+				       std::list<Constraint>& lc)
+       : _tr(ct), _lc(&lc), 
       event_less(ct->geom_traits()), queue(event_less), 
       status_comp(ct->geom_traits()), status(status_comp),
       upper_chain()
@@ -309,10 +300,9 @@ public:
       build_triangulation();
     }
     
-    Geom_traits  traits() { return _tr->geom_traits(); }
+    Geom_traits  geom_traits() { return _tr->geom_traits(); }
     Event_less  xy_less() { return event_less;}
-    //Vertex_handle vertex() { return the_vertex; }
-    
+     
     friend class Neighbor_list;
 
 public:
@@ -393,6 +383,7 @@ build_triangulation()
     Sweep_status::iterator loc=status.lower_bound(Constraint(p,p));
     // deal with the contraints finishing at p
     v = treat_in_edges(event,loc);
+    _tr->set_number_of_vertices( _tr->number_of_vertices() +1);
     // insert constraint beginning at p
     treat_out_edges(event,loc);
 
@@ -574,7 +565,7 @@ set_infinite_faces()
   Vertex_handle infinite= _tr->infinite_vertex();
 
   // Triangulation may be empty;
-  if (upper_chain.right_most().is_null()) {return(infinite);}
+  if (upper_chain.right_most().is_null()) {return;}
 
   Neighbor_list* upper_list= upper_chain.up_list();
   Neighbor_list* lower_list= upper_chain.down_list();
@@ -582,19 +573,54 @@ set_infinite_faces()
   if (upper_list->empty() || lower_list->empty()) 
     //	{return upper_chain.right_most();}
     {
+      _tr->set_number_of_vertices(0);
       _tr->insert_first(upper_chain.right_most()->point());
-       delete  &(*upper_chain.right_most);
+      delete  &(*upper_chain.right_most());
+       return;
     }
-  //ca m'etonnerait que ca marche pour des triangulations degenerees
-  //de dimension 1
-
-//Triangulation has now at least two vertices
-  lower_list->splice(lower_list->end(), *upper_list);
-  // * lower_list now describes the convex-hull ccw
+ 
+  //Triangulation has now at least two vertices
   Face_handle first, last;
   Face_handle newf, fn;
   int in;
 
+  // Solve the One dimensional case
+  first = (lower_list->front()).first;
+  last = (upper_list->back()).first;
+  if (first->vertex(1) == first->vertex(2) &&
+      last->vertex(1)  == last ->vertex(2) ) { 
+    //dimension 1
+    //both test are necessary because it may remain some  flat faces
+    //in the upper chain.
+    _tr->set_dimension(1);
+    newf = new Face(infinite, first->vertex(1), NULL);
+    first = last = newf;
+    infinite->set_face(first);
+    Neighbor_list::iterator it = lower_list->begin();
+    for( ; it != lower_list->end(); it++) {
+      fn = (*it).first;
+      //turn the vertex [vww] into [wvNULL]
+      fn->set_vertex(1, fn->vertex(0));
+      fn->set_vertex(0, fn->vertex(2));
+      fn->set_vertex(2, Vertex_handle());
+      fn->vertex(0)->set_face(fn);
+      fn->set_neighbor(1,last);
+      last->set_neighbor(0,fn);
+      last = fn;
+    }
+    fn = new Face(last->vertex(1), infinite,NULL);
+    fn->vertex(0)->set_face(fn);
+    fn->set_neighbor(1,last);
+    last->set_neighbor(0,fn);
+    fn->set_neighbor(0,first);
+    first->set_neighbor(1,fn);
+    return;
+  }
+  
+    // good 2d triangulation
+  _tr->set_dimension(2);
+  lower_list->splice(lower_list->end(), *upper_list);
+  // * lower_list now describes the convex-hull ccw
   fn = (*(lower_list->begin())).first;
   in = (*(lower_list->begin())).second;
   lower_list->pop_front();
@@ -638,13 +664,13 @@ do_intersect(const Constraint& c1, const Constraint& c2 )
    if ( (!event_less(c1.second, c2.second)) &&
         (!event_less(c2.second, c1.second)) ) {return false;}
    else{
-   Orientation t1 = _t.orientation(c1.first,c1.second,c2.first);
-   Orientation t2 = _t.orientation(c1.first,c1.second,c2.second);
+   Orientation t1 = geom_traits().orientation(c1.first,c1.second,c2.first);
+   Orientation t2 = geom_traits().orientation(c1.first,c1.second,c2.second);
    if (t1 == COLLINEAR && t2 == COLLINEAR) {return true;}
 
     return ( t1 != t2 &&
-             (_t.orientation(c2.first,c2.second,c1.first) !=
-              _t.orientation(c2.first,c2.second,c1.second)));
+             (geom_traits().orientation(c2.first,c2.second,c1.first) !=
+              geom_traits().orientation(c2.first,c2.second,c1.second)));
   }
    // return false;
 }

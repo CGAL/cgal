@@ -81,7 +81,7 @@ public:
 
 template <class Gt>
 inline void
-class Constrained_triangulation_face_base_2::
+Constrained_triangulation_face_base_2<Gt>::
 set_constraints(bool c0, bool c1, bool c2)
 {
   C[0]=c0;
@@ -91,7 +91,7 @@ set_constraints(bool c0, bool c1, bool c2)
 
 template <class Gt>
 inline void
-class Constrained_triangulation_face_base_2::
+Constrained_triangulation_face_base_2<Gt>::
 set_constraint(int i, bool b)
 {
   CGAL_triangulation_precondition( i == 0 || i == 1 || i == 2);
@@ -100,7 +100,7 @@ set_constraint(int i, bool b)
     
 template <class Gt>
 inline bool
-class Constrained_triangulation_face_base_2::
+Constrained_triangulation_face_base_2<Gt>::
 is_constrained(int i) const
 {
   return(C[i]);
@@ -108,16 +108,18 @@ is_constrained(int i) const
   
 template <class Gt>
 inline bool
-class Constrained_triangulation_face_base_2::
+Constrained_triangulation_face_base_2<Gt>::
 is_valid(bool verbose = false, int level = 0) const
 {
   bool result = Fab::is_valid(verbose, level);
   CGAL_triangulation_assertion(result);
-  for(int i = 0; i < 3; i++) {
-    Constrained_face_base*  n=static_cast<Constrained_face_base*>(neighbor(i));
-    if(n != NULL){
-      int ni = n->index(this);
-      result = result && ( is_constrained(i) == n->is_constrained(ni));
+  if (dimension() == 2) {
+    for(int i = 0; i < 3; i++) {
+      Constrained_face_base*  n=static_cast<Constrained_face_base*>(neighbor(i));
+      if(n != NULL){
+	int ni = n->face_index(this);
+	result = result && ( is_constrained(i) == n->is_constrained(ni));
+      }
     }
   }
   return (result);
