@@ -220,8 +220,8 @@ template < class R >
 std::istream &
 operator>>(std::istream &is, RayC2<R CGAL_CTAG> &r)
 {
-    typename RayC2<R CGAL_CTAG>::Point_2 p;
-    typename RayC2<R CGAL_CTAG>::Direction_2 d;
+    typename R::Point_2 p;
+    typename R::Direction_2 d;
 
     is >> p >> d;
 

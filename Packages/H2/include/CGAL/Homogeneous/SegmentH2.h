@@ -229,7 +229,7 @@ template < class R >
 std::istream &
 operator>>(std::istream &is, SegmentH2<R> &s)
 {
-  typename SegmentH2<R>::Point_2 p, q;
+  typename R::Point_2 p, q;
   is >> p >> q;
   s = SegmentH2<R>(p, q);
   return is;

@@ -380,7 +380,7 @@ std::ostream &operator<<(std::ostream &os, const CircleH2<R> &c)
 template < class R >
 std::istream& operator>>(std::istream &is, CircleH2<R> &c)
 {
-  typename CircleH2<R>::Point_2 center;
+  typename R::Point_2 center;
   typename R::FT squared_radius;
   int o;
   switch(is.iword(IO::mode))

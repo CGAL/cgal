@@ -1,3 +1,6 @@
+Version 6.38 (1 December 2001)
+- operator<< of various kernel object required more than R to be public.
+
 Version 6.37 (25 November 2001)
 - Make FT public in Data_accessor_2 for Min_ellipse_2.
 

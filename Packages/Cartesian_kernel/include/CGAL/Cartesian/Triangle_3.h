@@ -187,7 +187,7 @@ template < class R >
 std::istream &
 operator>>(std::istream &is, TriangleC3<R CGAL_CTAG> &t)
 {
-    typename TriangleC3<R CGAL_CTAG>::Point_3 p, q, r;
+    typename R::Point_3 p, q, r;
 
     is >> p >> q >> r;
 

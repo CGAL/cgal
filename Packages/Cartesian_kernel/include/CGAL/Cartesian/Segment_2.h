@@ -271,7 +271,7 @@ template < class R >
 std::istream &
 operator>>(std::istream &is, SegmentC2<R CGAL_CTAG> &s)
 {
-    typename SegmentC2<R CGAL_CTAG>::Point_2 p, q;
+    typename R::Point_2 p, q;
 
     is >> p >> q;
 

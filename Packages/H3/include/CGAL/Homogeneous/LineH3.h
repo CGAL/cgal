@@ -192,8 +192,8 @@ std::ostream &operator<<(std::ostream &os, const LineH3<R> &l)
 template < class R >
 std::istream &operator>>(std::istream &is, LineH3<R> &l)
 {
-  typename LineH3<R>::Point_3 p;
-  typename LineH3<R>::Direction_3 d;
+  typename R::Point_3 p;
+  typename R::Direction_3 d;
   is >> p >> d;
   l = LineH3<R>(p, d);
   return is;

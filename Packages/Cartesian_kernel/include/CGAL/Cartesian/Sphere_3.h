@@ -344,7 +344,7 @@ CGAL_KERNEL_INLINE
 std::istream &
 operator>>(std::istream &is, SphereC3<R CGAL_CTAG> &c)
 {
-    typename SphereC3<R CGAL_CTAG>::Point_3 center;
+    typename R::Point_3 center;
     typename R::FT squared_radius;
     int o;
     switch(is.iword(IO::mode)) {

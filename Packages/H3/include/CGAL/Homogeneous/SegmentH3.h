@@ -201,7 +201,7 @@ std::ostream &operator<<(std::ostream &os, const SegmentH3<R> &s)
 template < class R >
 std::istream &operator>>(std::istream &is, SegmentH3<R> &s)
 {
-  typename SegmentH3<R>::Point_3 p, q;
+  typename R::Point_3 p, q;
   is >> p >> q;
   s = SegmentH3<R>(p, q);
   return is;

@@ -336,7 +336,7 @@ std::ostream& operator<<(std::ostream& os, const Iso_rectangleH2<R>& r)
 template < class R >
 std::istream& operator>>(std::istream& is, Iso_rectangleH2<R>& r)
 {
-  typename Iso_rectangleH2<R>::Point_2 p, q;
+  typename R::Point_2 p, q;
   is >> p >> q;
   r = Iso_rectangleH2<R>(p, q);
   return is;

@@ -342,7 +342,7 @@ template < class R >
 std::istream &
 operator>>(std::istream &is, TriangleH2<R> &t)
 {
-  typename TriangleH2<R>::Point_2 p, q, r;
+  typename R::Point_2 p, q, r;
   is >> p >> q >> r;
   t = TriangleH2<R>(p, q, r);
   return is;

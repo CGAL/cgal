@@ -1,3 +1,6 @@
+2.50   (1 December 2001)
+- operator<< of various kernel object required more than R to be public.        
+
 2.49   (27 November 2001)
 - Make BCC happier.
 

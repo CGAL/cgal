@@ -286,7 +286,7 @@ template < class R >
 std::istream &
 operator>>(std::istream &is, TetrahedronC3<R CGAL_CTAG> &t)
 {
-    typename TetrahedronC3<R CGAL_CTAG>::Point_3 p, q, r, s;
+    typename R::Point_3 p, q, r, s;
 
     is >> p >> q >> r >> s;
 

@@ -384,7 +384,7 @@ std::ostream& operator<<(std::ostream& os, const Iso_cuboidH3<R>& r)
 template < class R >
 std::istream& operator>>(std::istream& is, Iso_cuboidH3<R>& r)
 {
-  typename Iso_cuboidH3<R>::Point_3 p, q;
+  typename R::Point_3 p, q;
   is >> p >> q;
   r = Iso_cuboidH3<R>(p, q);
   return is;

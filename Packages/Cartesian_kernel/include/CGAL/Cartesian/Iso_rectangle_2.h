@@ -309,7 +309,7 @@ CGAL_KERNEL_MEDIUM_INLINE
 std::istream &
 operator>>(std::istream &is, Iso_rectangleC2<R CGAL_CTAG> &r)
 {
-    typename Iso_rectangleC2<R CGAL_CTAG>::Point_2 p, q;
+    typename R::Point_2 p, q;
 
     is >> p >> q;
 

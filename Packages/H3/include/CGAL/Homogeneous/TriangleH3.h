@@ -165,7 +165,7 @@ std::ostream &operator<<(std::ostream &os, const TriangleH3<R> &t)
 template < class R >
 std::istream &operator>>(std::istream &is, TriangleH3<R> &t)
 {
-  typename TriangleH3<R>::Point_3 p, q, r;
+  typename R::Point_3 p, q, r;
   is >> p >> q >> r;
   t = TriangleH3<R>(p, q, r);
   return is;

@@ -379,7 +379,7 @@ std::ostream &operator<<(std::ostream &os, const TetrahedronH3<R> &t)
 template < class R >
 std::istream &operator>>(std::istream &is, TetrahedronH3<R> &t)
 {
-  typename TetrahedronH3<R>::Point_3 p, q, r, s;
+  typename R::Point_3 p, q, r, s;
   is >> p >> q >> r >> s;
   t = TetrahedronH3<R>(p, q, r, s);
   return is;

@@ -183,7 +183,7 @@ template < class R >
 std::istream &
 operator>>(std::istream &is, LineC3<R CGAL_CTAG> &l)
 {
-    typename LineC3<R CGAL_CTAG>::Point_3 p, q;
+    typename R::Point_3 p, q;
     is >> p >> q;
     if (is)
 	l = LineC3<R CGAL_CTAG>(p, q);

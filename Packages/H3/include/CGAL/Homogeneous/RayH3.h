@@ -167,8 +167,8 @@ std::ostream &operator<<(std::ostream &os, const RayH3<R> &r)
 template < class R  >
 std::istream &operator>>(std::istream &is, RayH3<R> &r)
 {
-  typename RayH3<R>::Point_3 p;
-  typename RayH3<R>::Direction_3 d;
+  typename R::Point_3 p;
+  typename R::Direction_3 d;
   is >> p >> d;
   r = RayH3<R>(p, d);
   return is;
