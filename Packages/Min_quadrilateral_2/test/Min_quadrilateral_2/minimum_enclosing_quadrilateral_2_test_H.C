@@ -61,7 +61,9 @@ int main()
 
   // build a random convex 20-gon p
   Polygon_2 p;
-  random_convex_set_2(20, back_inserter(p), Point_generator(1.0));
+  p.push_back(Point_2(1,2,3));
+  p.push_back(Point_2(3,5,2));
+  p.push_back(Point_2(-1,10,4));
   cout << "Input:\n" << p << endl;
 
   // compute the minimal enclosing rectangle p_m of p
