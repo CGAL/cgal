@@ -23,13 +23,16 @@
 
 % +------------------------------------------------------------------------+
 \section{Introduction}
-Snap rounding is a well known method for converting
+Snap Rounding (SR, for short) is a well known method for converting
 arbitrary-precision arrangements of segments into a fixed-precision
-representation \cite{gght-srlse-97, gm-rad-98, h-psifp-99}. It is classified
-as a finite precision approximation technique. Iterated Snap Rounding is
-a modification of Snap Rounding in which each vertex is at least
+representation \cite{gght-srlse-97, gm-rad-98, h-psifp-99}. In the study of robust
+geometric computing, it can be classified
+as a finite precision approximation technique. Iterated Snap Rounding
+(ISR, for short) is
+a modification of SR in which each vertex is at least
 half-the-width-of-a-pixel away from any non-incident edge \cite{isr-2002}.
-This package provides supports both methods.
+This package supports both methods. Algorithmic details and experimental results are
+given in \cite{isr-2002}.
 
 \begin{figure}
 \begin{center}
@@ -37,10 +40,9 @@ This package provides supports both methods.
 \end{center}
 \vspace{-2ex}
 \caption{An arrangement of segments before (a) and after (b)
-Snap Rounding (hot pixels are shaded)}
+SR (hot pixels are shaded)}
 \label{fig:sr1}
 \end{figure}
-
 
 \section{What is Snap Rounding/Iterated Snap Rounding}
 Given a finite collection $\S$ of segments in the plane, the
@@ -49,30 +51,31 @@ into vertices, edges, and faces induced by $\S$. %\cite{arrg-surveys}.
 A {\it vertex\/} of the arrangement is either a segment endpoint or
 the intersection of two segments. Given an arrangement of segments
 whose vertices are represented with arbitrary-precision coordinates,
-the snap\_rounding\_2 $<$ traits,InputIterator,OutputContainer $>$
-(SR, for short) proceeds as follows.  We tile the plane
+the SR procedure
+(snap\_rounding\_2 $<$ traits,InputIterator,OutputContainer $>$)
+proceeds as follows.  We tile the plane
 with a grid of unit squares, {\it pixels}, each centered at a point
 with integer coordinates. A pixel is {\it hot\/} if it contains a
 vertex of the arrangement. Each vertex of the arrangement is replaced
 by the center of the hot pixel containing it and each edge $e$ is
 replaced by the polygonal chain through the centers of the hot pixels
 met by $e$, in the same order as they are met by $e$. 
-Figure~\ref{fig:sr1} demonstrates a snap rounding output. 
+Figure~\ref{fig:sr1} demonstrates the results of SR.
 
 In a snap-rounded arrangement, the distance between a vertex and
 a non-incident edge can be extremely small compared with the width of a
-pixel in the grid used for rounding. Iterated Snap Rounding is a modification
-of Snap Rounding which makes the a vertex and a non-incident edge well separated
-(the distance between each is at least half-the-width-of-a-pixel).
-However, the guaranteed quality of the approximation in Iterated Snap Rounding
-degrades. Figure~\ref{fig:isr_vs_sr} demonstrates the differences between Iterated
-Snap Rounding and Snap Rounding.
+pixel in the grid used for rounding. ISR
+is a modification of SR which makes a vertex and a
+non-incident edge well separated (the distance between each is at least
+half-the-width-of-a-pixel). However, the guaranteed quality of the
+approximation in ISR degrades. Figure~\ref{fig:isr_vs_sr} depicts
+the results of SR and ISR on the same input.
 
 \section{Terms and Software Design}
 
-We provide both schemes which follow the algorithm described in \cite{isr-2002}.
-Although the paper only describes an algorithm to Iterated Snap Rounding,
-it is easy to derive an algorithm to Snap Rounding. The way is to perform only
+Our package supports both schemes,implementing the algorithm described in \cite{isr-2002}.
+Although the paper only describes an algorithm for ISR,
+it is easy to derive an algorithm for SR, by performing only
 the first rounding level for each segment.
 %Theoretical bounds for the algorithm
 %are $O(n\log n +I+L^{2/3}N^{2/3+\varepsilon}+L)$
@@ -85,7 +88,7 @@ the first rounding level for each segment.
 %structure consisting of several kd-trees instead. Hence, the above bounds
 %degrade but nor significantly.
 
-There are three template parameters: \ccc{Traits} is the underlying geometry, i.e. the number type used
+There are three template parameters: \ccc{Traits} is the underlying geometry, i.e., the number type used
 and the coordinate representation. \ccc{InputIterator} is the type of the iterators that point to the first
 and after-the-last elements of the input. Finally, \ccc{OutputContainer} is the type of the output container.
 
@@ -95,17 +98,17 @@ concept SnapRoundingTraits\_2. The class Snap\_rounding\_traits\_2 is a model of
 
 \begin{figure}
 \begin{center}
-\ \psfig{figure=isr_vs_sr.ps,width=13cm} \
+\ \psfig{figure=isr_vs_sr.ps,width=15cm} \
 \end{center}
 \vspace{-2ex}
 \caption{An arrangement of segments before (a), after SR (b)
-and ISR (c) (hot pixels are shaded)}
+and ISR (c) (hot pixels are shaded).}
 \label{fig:isr_vs_sr}
 \end{figure}
 
 \section{Four Line Segment Example}
 
-The following example generates an Iterated Snap Rounding representation
+The following example generates an ISR representation
 of an arrangement of four line segments
 and a list of points which are the vertices of the resulting polylines.
 

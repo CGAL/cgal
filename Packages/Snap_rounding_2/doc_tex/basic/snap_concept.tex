@@ -10,7 +10,6 @@
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
-
 \begin{ccRefConcept}{SnapRoundingTraits_2}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
@@ -27,27 +26,24 @@ predicates on those primitives.
 
 The Snap Rounding traits we provide is templated by another traits.
 This traits must provide an arbitrary-precision number type (\ccc{FT}), \ccc{Point_2},
-\ccc{Segment_2} and \ccc{Iso_rectangle_2}. Another requirement is that FT must have
-the method \ccc{to_double()} which converts the value of a variable of type FT to
-the built-in number type \ccc{double}. The assumption is that although the Snap Rounding
-algorithm requires exact computation, the \ccc{double} number type should be sufficient
-for representing the output such that no overflows occur.
+\ccc{Segment_2} and \ccc{Iso_rectangle_2}. The number type, FT, must be a valid parameter
+for the function \ccc{to_double}.
 
 \ccTypes
 \ccNestedType{Point_2}{The point type.}
 \ccGlue
 \ccNestedType{Segment_2}{The segment type.}
 \ccGlue
-\ccNestedType{X_curve}{X-monotone curve used for a sweep line on the input segments.}
+\ccNestedType{X_curve}{The x-monotone curve type.}
 \ccGlue
-\ccNestedType{Iso_rectangle_2}{The iso rectangle  type.}
+\ccNestedType{Iso_rectangle_2}{The iso-rectangle type.}
 
 \ccNestedType{Compare_x_2}{Predicate object. Must provide
 the operator
 \ccc{Comparison_result operator()(Point_2 p, Point_2 q)}
 which returns 
 \ccc{SMALLER, EQUAL} or \ccc{ LARGER}
- according ding to the
+ according to the
 $x$-ordering of points \ccc{p} and \ccc{q}.}
 \ccGlue
 \ccNestedType{Compare_y_2}{Predicate object. Must provide
@@ -62,7 +58,7 @@ $y$-ordering of points \ccc{p} and \ccc{q}.}
 \ccNestedType{Snap_2}{Rounds a point to a center of a pixel (unit square)
 in the grid used by the Snap Rounding algorithm. Note that no conversion
 to an integer grid is done yet. Must have the syntax
-\ccc{void operator()(Point_2 p,NT pixel_size,NT &x,NT &y)} where $p$ is the
+\ccc{void operator()(Point_2 p,FT pixel_size,FT &x,FT &y)} where $p$ is the
 input point, \ccc{pixel_size} is the size of the pixel of the grid,
 and $x$ and $y$ are the $x$ and $y$-coordinates of the rounded point
 respectively.}
@@ -78,18 +74,18 @@ Must have the syntax \ccc{Point_2 operator()(Point_2 p,NT pixel_size)}
 where $p$ is the converted point and \ccc{pixel_size} is the size of the pixel of the grid.
 }
 
-\ccNestedType{Minkowski_sum_with_pixel_2}{Returns the points of a polygon which is
-a minkowski sum of a segment and a square centered at the origin with edge size
-\ccc{0.6 * pixel edge}.
-Must have the syntax \ccc{void operator()(std::list<Point_2>& points_list,
-Segment_2 s,NT unit_squere)}
-where {\ccc points\_list} is the list of the points of the minkowski sum polygon,
-$s$ is the input segment and {\ccc unit\_square} is the edge size of the pixel}
+\ccNestedType{Minkowski_sum_with_pixel_2}{Returns the vertices of a polygon which is the
+Minkowski sum of a segment and a square centered at the origin with edge size
+\ccc{pixel edge}.
+Must have the syntax \ccc{void operator()(std::list<Point_2>& vertices_list,
+Segment_2 s,NT unit_square)}
+where {\ccc vertices\_list} is the list of the vertices of the Minkowski sum polygon,
+$s$ is the input segment and {\ccc unit\_square} is the edge size of the pixel.}
 
 \ccCreation
 \ccCreationVariable{traits}  %% choose variable name
 Only a default constructor, copy constructor
- and an assignement operator are required. 
+ and an assignment operator are required. 
 Note that further constructors
 can be provided. 
 
