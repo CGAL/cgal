@@ -1197,6 +1197,10 @@ The class interface looks as follows.
     // ====================
 
       public:
+        // Constructor
+        // -----------
+        @<Optimisation_circle_2 constructor>
+        
         // Set functions
         // -------------
         @<Optimisation_circle_2 set functions>
@@ -1233,6 +1237,8 @@ section, so we do not comment on it here.
     in the class interface.
 
     // creation
+    Optimisation_circle_2( );
+
     void  set( );
     void  set( const Point& p);
     void  set( const Point& p, const Point& q);
@@ -1268,6 +1274,17 @@ The circle is represented by its center and squared radius.
     Distance  _squared_radius;
 @end
 
+@! ----------------------------------------------------------------------------
+\subsubsection{Constructor}
+
+Only a default constructor is needed.
+
+@macro <Optimisation_circle_2 constructor> = @begin
+    inline
+    Optimisation_circle_2( )
+    { }
+@end
+    
 @! ----------------------------------------------------------------------------
 \subsubsection{Set Functions}
 
