@@ -1,3 +1,6 @@
+3.45   (20 March 2002)
+- moved LedaKernel test to LEDA package.
+
 3.44   (6 February 2002)
 - Add code to test that we can derive from Object.
 
