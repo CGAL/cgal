@@ -9,7 +9,7 @@
 // accordance with the commercial license agreement provided with the software.
 //
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// WARRANTY OF DESISGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $Source$
 // $Revision$ $Date$
@@ -912,9 +912,9 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 
       TRACEN("Intersection_call_back: intersection reported on " << p << " (normalized: " << normalized(p) << " )");
 #ifdef _DEBUG
-      TRACEN("edge 0 has source " << point(source(e0)) << " and direction " << vector(e0));
+      TRACEN("edge 0 has source " << e0->source()->point() << " and direction " << e0->vector());
       if( assign( e, o1)) {
-	TRACEN("edge 1 has source " << point(source(e)) << " and direction " << vector(e));
+	TRACEN("edge 1 has source " << e->source()->point() << " and direction " << e->vector());
       }
       else if( assign( f, o1)) {
 	TRACEN("face 1 has plane equation " << plane(f));
