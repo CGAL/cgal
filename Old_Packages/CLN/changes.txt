@@ -1,5 +1,8 @@
 Changes done to the CLN package.
 
+Version 1.8 on ?? ?? 2000.
+- New maintainer file.
+
 Version 1.7 on 27 October 1999.
 - Added IO include files by default.
 
