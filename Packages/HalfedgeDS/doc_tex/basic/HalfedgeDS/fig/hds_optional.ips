@@ -2,22 +2,23 @@
 %%Creator: idraw
 %%DocumentFonts: Times-Roman Helvetica-Bold Helvetica
 %%Pages: 1
-%%BoundingBox: 55 639 565 750
+%%BoundingBox: 55 639 566 750
 %%EndComments
 
 %%BeginIdrawPrologue
 /arrowhead {
 0 begin
-/dieMatrix matrix currentmatrix def %ajk+od 
+transform originalCTM itransform
 /taily exch def
 /tailx exch def
+transform originalCTM itransform
 /tipy exch def
 /tipx exch def
 /dy tipy taily sub def
 /dx tipx tailx sub def
 /angle dx 0 ne dy 0 ne or { dy dx atan } { 90 } ifelse def
 gsave
-dieMatrix setmatrix %ajk+od 
+originalCTM setmatrix
 tipx tipy translate
 angle rotate
 newpath
@@ -25,7 +26,7 @@ arrowHeight neg arrowWidth 2 div moveto
 0 0 lineto
 arrowHeight neg arrowWidth 2 div neg lineto
 patternNone not {
-dieMatrix setmatrix %ajk+od 
+originalCTM setmatrix
 /padtip arrowHeight 2 exp 0.25 arrowWidth 2 exp mul add sqrt brushWidth mul
 arrowWidth div def
 /padtail brushWidth 2 div def
@@ -37,7 +38,7 @@ arrowheadpath
 ifill
 } if
 brushNone not {
-dieMatrix setmatrix %ajk+od 
+originalCTM setmatrix
 tipx tipy translate
 angle rotate
 arrowheadpath
@@ -45,7 +46,7 @@ istroke
 } if
 grestore
 end
-} dup 0 10 dict put def %ajk+od
+} dup 0 9 dict put def
 
 /arrowheadpath {
 newpath
@@ -76,8 +77,8 @@ end
 
 %%EndIdrawPrologue
 
-/arrowHeight 10 def
-/arrowWidth 5 def
+/arrowHeight 8 def
+/arrowWidth 4 def
 
 /IdrawDict 53 dict def
 IdrawDict begin
@@ -211,6 +212,7 @@ end
 /Circ {
 newpath
 0 360 arc
+closepath
 patternNone not { ifill } if
 brushNone not { istroke } if
 } def
@@ -242,6 +244,7 @@ newpath
 translate
 scale
 0 0 1 0 360 arc
+closepath
 patternNone not { ifill } if
 brushNone not { istroke } if
 end
@@ -491,7 +494,7 @@ exch dup 3 1 roll 1 0 0 -1 0 6 -1 roll matrix astore
 
 %%EndProlog
 
-%I Idraw 10 Grid 8 8 
+%I Idraw 12 Grid 8 8 
 
 %%Page: 1 1
 
@@ -642,21 +645,6 @@ Times-Roman 18 SetF
 [
 (previous halfedge)
 ] Text
-End
-
-Begin %I Elli
-%I b 65535
-0 0 0 [] 0 SetB
-%I cfg Black
-0 0 0 SetCFg
-%I cbg White
-1 1 1 SetCBg
-%I p
-0 SetP
-%I t
-[ 0.25 0 0 0.25 249.742 741.519 ] concat
-%I
-183 297 23 23 Elli
 End
 
 Begin %I Poly
@@ -931,21 +919,6 @@ Begin %I Poly
 3 Poly
 End
 
-Begin %I Elli
-%I b 65535
-0 0 0 [] 0 SetB
-%I cfg Black
-0 0 0 SetCFg
-%I cbg White
-1 1 1 SetCBg
-%I p
-0 SetP
-%I t
-[ 0.25 0 0 0.25 41.242 747.769 ] concat
-%I
-183 297 23 23 Elli
-End
-
 Begin %I Line
 %I b 65535
 0 0 0 [] 0 SetB
@@ -1037,21 +1010,6 @@ Begin %I Elli
 0 SetP
 %I t
 [ 0.25 0 0 0.25 95.742 807.019 ] concat
-%I
-183 297 23 23 Elli
-End
-
-Begin %I Elli
-%I b 65535
-0 0 0 [] 0 SetB
-%I cfg Black
-0 0 0 SetCFg
-%I cbg White
-1 1 1 SetCBg
-%I p
-0 SetP
-%I t
-[ 0.25 0 0 0.25 213.242 819.769 ] concat
 %I
 183 297 23 23 Elli
 End
@@ -1360,6 +1318,51 @@ Times-Roman 18 SetF
 [
 (incident face)
 ] Text
+End
+
+Begin %I Elli
+%I b 65535
+2 0 0 [] 0 SetB
+%I cfg Black
+0 0 0 SetCFg
+%I cbg White
+1 1 1 SetCBg
+%I p
+1 SetP
+%I t
+[ 0.25 0 0 0.25 249.742 741.519 ] concat
+%I
+183 297 23 23 Elli
+End
+
+Begin %I Elli
+%I b 65535
+2 0 0 [] 0 SetB
+%I cfg Black
+0 0 0 SetCFg
+%I cbg White
+1 1 1 SetCBg
+%I p
+1 SetP
+%I t
+[ 0.25 0 0 0.25 41.242 747.769 ] concat
+%I
+183 297 23 23 Elli
+End
+
+Begin %I Elli
+%I b 65535
+2 0 0 [] 0 SetB
+%I cfg Black
+0 0 0 SetCFg
+%I cbg White
+1 1 1 SetCBg
+%I p
+1 SetP
+%I t
+[ 0.25 0 0 0.25 213.242 819.769 ] concat
+%I
+183 297 23 23 Elli
 End
 
 End %I eop

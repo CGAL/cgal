@@ -85,6 +85,9 @@ all halfedge data structures and will not appear here again.
 
 \ccThree{void}{D.vertices_erase( Vertex_handle v);}{}
 
+The following member functions do {\em not\/} update affected
+incidence relations except if mentioned otherwise.
+
 \ccMethod{void vertices_pop_front();}{
     removes the first vertex if vertices are supported.
     \ccPrecond \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
@@ -119,9 +122,10 @@ all halfedge data structures and will not appear here again.
 \ccMethod{void erase_face( Halfedge_handle h);} {removes the
    face incident to \ccc{h} from \ccc{hds} and changes all halfedges
    incident to the face into border edges or removes them from the
-   halfedge data structure if they were already border edges.  See
-   \ccc{make_hole(h)} for a more specialized variant.
-   \ccPrecond \ccc{h != Halfedge_handle()}. If faces are supported, 
+   halfedge data structure if they were already border edges. If this
+   creates isolated vertices they get removed as well. See
+   \ccc{make_hole(h)} for a more specialized variant.  
+   \ccPrecond \ccc{h != Halfedge_handle()}. If faces are supported,
    \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
 
 \ccMethod{void erase_connected_component( Halfedge_handle h);}
@@ -138,23 +142,26 @@ all halfedge data structures and will not appear here again.
 \ccMethod{Halfedge_handle make_hole( Halfedge_handle h);}
    {removes the face incident to \ccc{h} from \ccc{hds} and creates a hole.
     \ccPrecond \ccc{h != Halfedge_handle()} and \ccc{!(h->is_border())}. 
-    If faces are supported, \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
+    If faces are supported, \ccc{Supports_removal} $\equiv$ 
+    \ccc{CGAL::Tag_true}.}
 
 \ccMethod{Halfedge_handle fill_hole( Halfedge_handle h);}
    {fills the hole incident to \ccc{h} with a new face from \ccc{hds}.
+    Returns \ccc{h}.
     \ccPrecond \ccc{h != Halfedge_handle()} and \ccc{h->is_border()}.}
 
 \ccMethod{Halfedge_handle fill_hole( Halfedge_handle h, const Face& f);}
    {fills the hole incident to \ccc{h} with a copy of face $f$.
+    Returns \ccc{h}.
     \ccPrecond \ccc{h != Halfedge_handle()} and \ccc{h->is_border()}.}
 
 \ccMethod{Halfedge_handle add_face_to_border( Halfedge_handle h, 
                                               Halfedge_handle g);}
    {extends the surface with a new face from \ccc{hds} into the hole 
-    incident to $h$ and $g$. It creates a new edge connecting the tip 
-    of $g$ with the tip of $h$ and fills this separated part of the hole 
-    with a new face, such that the new face is incident to $g$. Returns 
-    the new halfedge that is incident to the new face.
+    incident to $h$ and $g$. It creates a new edge connecting the vertex
+    denoted by $g$ with the vertex denoted by $h$ and fills this separated 
+    part of the hole with a new face, such that the new face is incident 
+    to $g$. Returns the new halfedge that is incident to the new face.
     \ccPrecond \ccc{h != Halfedge_handle()}, \ccc{g != Halfedge_handle()},
     \ccc{h->is_border()}, \ccc{g->is_border()} and $g$ can be reached 
     along the hole starting with $h$.}
@@ -210,10 +217,10 @@ the halfedge \ccc{h->next} with a new face in-between.
     {splits the face incident to \ccc{h} and \ccc{g} into two faces
      with a new diagonal between the two vertices denoted by \ccc{h} and
      \ccc{g} respectively. The second (new) face obtained from
-     \ccc{hds} is a copy of the first face. The new diagonal is
-     returned. The new face is to the right of the new diagonal, 
-     the old face is to the left. The time is proportional to the 
-     distance from \ccc{h} to \ccc{g} around the face.} 
+     \ccc{hds} is a copy of the first face. Return \ccc{h->next()} after the
+     operation, i.e., the new diagonal. The new face is to the right of the 
+     new diagonal, the old face is to the left. The time is proportional 
+     to the distance from \ccc{h} to \ccc{g} around the face.} 
 
 \ccMethod{Halfedge_handle join_face( Halfedge_handle h);}
     {joins the two faces incident to $h$. The face incident to
@@ -234,18 +241,20 @@ the halfedge \ccc{h->next} with a new face in-between.
 \ccMethod{Halfedge_handle split_vertex( Halfedge_handle h, Halfedge_handle g);}
     {splits the vertex incident to \ccc{h} and \ccc{g} into two vertices
      and connects them with a new edge. The second (new) vertex
-     obtained from \ccc{hds} is a copy of the first vertex. The
-     new edge is returned. The time is proportional to the distance
+     obtained from \ccc{hds} is a copy of the first vertex. Returns
+     \ccc{h->next()->opposite()} after the operation, i.e., the new edge
+     in the orientation towards the new vertex.
+     The time is proportional to the distance
      from \ccc{h} to \ccc{g} around the vertex.} 
 
 \ccMethod{Halfedge_handle join_vertex( Halfedge_handle h);}
     {joins the two vertices incident to $h$. The vertex denoted by
      \ccc{h->opposite()} gets removed by \ccc{hds}. Returns the predecessor of
-     $h$ around the vertex. The invariant 
+     $h$ around the vertex, i.e., \ccc{h->opposite()->prev()}. The invariant 
      \ccc{join_vertex( split_vertex( h, g))} returns $h$
      and keeps the polyhedron unchanged. 
      The time is proportional to the degree of the vertex removed and 
-     the time to compute \ccc{h->prev()}.
+     the time to compute \ccc{h->prev()} and \ccc{h->opposite()->prev()}.
      \ccPrecond \ccc{Supports_removal} $\equiv$ \ccc{CGAL::Tag_true}.}
 
 \begin{ccTexOnly}
@@ -267,9 +276,9 @@ the halfedge \ccc{h->next} with a new face in-between.
      a copy of \ccc{h->vertex()}, and connects it to each vertex incident 
      to \ccc{h->face()} splitting \ccc{h->face()} into triangles. 
      \ccc{h} remains incident to the original face, all other triangles 
-     are copies of this face. Returns the halfedge next to \ccc{h}
-     that is pointing to the new vertex. The time is proportional
-     to the size of the face.
+     are copies of this face. Returns the halfedge \ccc{h->next()}
+     after the operation, i.e., a halfedge pointing to the new vertex. 
+     The time is proportional to the size of the face.
      \ccPrecond \ccc{h} is not a border halfedge.}
 
 \ccMethod{Halfedge_handle erase_center_vertex( Halfedge_handle g);}

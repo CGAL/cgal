@@ -1,5 +1,9 @@
 HalfedgeDS Package: Release changes:
 ---------------------------------------------------------------------
+3.8 (19 Jun 2001)
+
+     - Changes in the doc.
+
 3.7 (18 Jun 2001)
 
      - Fixed example code inclusion in the doc.

@@ -197,8 +197,25 @@ design.
 The following example program uses the default halfedge data structure
 and the decorator class. The default halfedge data structure uses a
 list based representation. All incidences of the items and a point
-type for vertices are defined. The program creates a loop, consisting
+type for vertices are defined. The trivial traits class provides the
+type used for the point. The program creates a loop, consisting
 of two halfedges, one vertex and two faces, and checks its validity.
+
+\begin{ccTexOnly}
+    \vspace{-4mm}
+    \begin{center}
+      \parbox{0.3\textwidth}{%
+          \includegraphics[width=0.3\textwidth]{fig/loop.ips}%
+      }
+    \end{center}
+    \vspace{-3mm}
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+    <CENTER>
+      <img src="./loop.gif" alt="Loop Example"><P>
+    </CENTER>
+\end{ccHtmlOnly}
 
 \ccIncludeExampleCode{HalfedgeDS/hds_prog_default.C}
 
@@ -220,12 +237,19 @@ vertices or faces are stored. The data structure represents an {\em
 \subsection{The Default with a Vector Instead of a List}
 
 The default halfedge data structure uses a list internally and the
-maximal base classes. Assuming we have a point type {\tt Point} we
-define a halfedge data structure using the same items class but the
-vector-based representation.  Note that for the vector storage the
-size of the halfedge data structure must be reserved beforehand,
-either with the constructor as shown in the example or with the {\tt
-  reserve()} member function.
+maximal base classes. We change the list to a vector representation
+here. Again, a trivial traits class provides the type used for the
+point.  Note that for the vector storage the size of the halfedge data
+structure should be reserved beforehand, either with the constructor
+as shown in the example or with the \ccc{reserve()} member function.
+One can later resize the data structure with further class to the
+\ccc{reserve()} member function, but only if the data structure is 
+in a consistent, i.e., {\em valid}, state.
+
+Unfortunately this example has also to expose the workaround necessary
+for compilers that do not support templates as template parameters.
+The workaround is necessary if the symbolic constant
+\verb|CGAL_CFG_NO_TMPL_IN_TMPL_PARAM| is set.
 
 \ccIncludeExampleCode{HalfedgeDS/hds_prog_vector.C}
 

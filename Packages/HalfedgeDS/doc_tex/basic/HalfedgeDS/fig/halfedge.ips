@@ -8,16 +8,17 @@
 %%BeginIdrawPrologue
 /arrowhead {
 0 begin
-/dieMatrix matrix currentmatrix def %ajk+od 
+transform originalCTM itransform
 /taily exch def
 /tailx exch def
+transform originalCTM itransform
 /tipy exch def
 /tipx exch def
 /dy tipy taily sub def
 /dx tipx tailx sub def
 /angle dx 0 ne dy 0 ne or { dy dx atan } { 90 } ifelse def
 gsave
-dieMatrix setmatrix %ajk+od 
+originalCTM setmatrix
 tipx tipy translate
 angle rotate
 newpath
@@ -25,7 +26,7 @@ arrowHeight neg arrowWidth 2 div moveto
 0 0 lineto
 arrowHeight neg arrowWidth 2 div neg lineto
 patternNone not {
-dieMatrix setmatrix %ajk+od 
+originalCTM setmatrix
 /padtip arrowHeight 2 exp 0.25 arrowWidth 2 exp mul add sqrt brushWidth mul
 arrowWidth div def
 /padtail brushWidth 2 div def
@@ -37,7 +38,7 @@ arrowheadpath
 ifill
 } if
 brushNone not {
-dieMatrix setmatrix %ajk+od 
+originalCTM setmatrix
 tipx tipy translate
 angle rotate
 arrowheadpath
@@ -45,7 +46,7 @@ istroke
 } if
 grestore
 end
-} dup 0 10 dict put def %ajk+od
+} dup 0 9 dict put def
 
 /arrowheadpath {
 newpath
@@ -76,8 +77,8 @@ end
 
 %%EndIdrawPrologue
 
-/arrowHeight 10 def
-/arrowWidth 5 def
+/arrowHeight 8 def
+/arrowWidth 4 def
 
 /IdrawDict 51 dict def
 IdrawDict begin
@@ -209,6 +210,7 @@ end
 /Circ {
 newpath
 0 360 arc
+closepath
 patternNone not { ifill } if
 brushNone not { istroke } if
 } def
@@ -240,6 +242,7 @@ newpath
 translate
 scale
 0 0 1 0 360 arc
+closepath
 patternNone not { ifill } if
 brushNone not { istroke } if
 end
@@ -489,7 +492,7 @@ exch dup 3 1 roll 1 0 0 -1 0 6 -1 roll matrix astore
 
 %%EndProlog
 
-%I Idraw 10 Grid 8 8 
+%I Idraw 12 Grid 8 8 
 
 %%Page: 1 1
 
@@ -639,19 +642,6 @@ Times-Roman 18 SetF
 %I
 [
 (previous halfedge)
-] Text
-End
-
-Begin %I Text
-%I cfg Black
-0 0 0 SetCFg
-%I f *-times-medium-r-*-18-*
-Times-Roman 18 SetF
-%I t
-[ 0.514446 -0.00196524 0.00196524 0.514446 163.945 853.063 ] concat
-%I
-[
-(incident facet)
 ] Text
 End
 
@@ -1081,6 +1071,19 @@ Begin %I Elli
 [ 0.25 0 0 0.25 207.427 836.246 ] concat
 %I
 183 297 23 23 Elli
+End
+
+Begin %I Text
+%I cfg Black
+0 0 0 SetCFg
+%I f *-times-medium-r-*-18-*
+Times-Roman 18 SetF
+%I t
+[ 0.514446 -0.00196524 0.00196524 0.514446 163.945 853.063 ] concat
+%I
+[
+(incident face)
+] Text
 End
 
 End %I eop

@@ -373,12 +373,13 @@ and the face-related member functions may not be provided for a
 
 \begin{ccAdvanced}
   
-The following notion of border halfedges is particular useful where
-the halfedge data structure is used to model surfaces with open
-regions.  Halfedges incident to an open region are called {\em
-  border halfedges}. A halfedge is a {\em border edge\/} if the
-halfedge itself or its opposite halfedge is a border halfedge. The
-only requirement to work with border halfedges is that the
+The following notion of {\em border halfedges\/} is particular useful
+where the halfedge data structure is used to model surfaces with
+boundary, i.e., surfaces with missing faces or open regions. Halfedges
+incident to an open region are called {\em border halfedges}. A
+halfedge is a {\em border edge\/} if the halfedge itself or its
+opposite halfedge is a border halfedge. The only requirement to work
+with border halfedges is that the
 \ccc{Halfedge} class provides a member function \ccc{is_border()}
 returning a \ccc{bool}. Usually, the halfedge data structure
 supports faces and the value of the default constructor of the face
