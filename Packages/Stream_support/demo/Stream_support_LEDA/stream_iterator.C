@@ -9,14 +9,14 @@
 #include <CGAL/IO/Istream_iterator.h>
 #include <CGAL/IO/Ostream_iterator.h>
 #include <CGAL/IO/leda_window.h>
-#include <algo>
+#include <algorithm>
 
 using namespace CGAL;
 
-typedef Cartesian<double>                         TutorialR;
-typedef Point_2<TutorialR>                        Point;
-typedef Creator_uniform_2<double,Point_2>         Creator;
-typedef Random_points_in_disc_2<Point_2,Creator>  Random_points_in_disc;
+typedef Cartesian<double>                       TutorialR;
+typedef Point_2<TutorialR>                      Point;
+typedef Creator_uniform_2<double,Point>         Creator;
+typedef Random_points_in_disc_2<Point,Creator>  Random_points_in_disc;
 
 void init_window( leda_window& W) {
     cgalize( W);
@@ -33,7 +33,7 @@ int main()
     // Use deterministic initialization for the random number generator.
     Random rnd(1);
     Random_points_in_disc  rnd_points( 1.0, rnd);
-    copy_n( rnd_points, 100, points);
+    CGAL::copy_n( rnd_points, 100, points);
 
     // Display points in a 512x512 pixel window.
     leda_window W(512, 512);
