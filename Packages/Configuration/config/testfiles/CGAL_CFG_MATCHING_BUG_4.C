@@ -25,7 +25,7 @@
 //| This flag is set, if a compiler cannot distinguish the signature
 //| of overloaded function templates, which have arguments whose type
 //| depends on the template parameter.
-//| This bug apopears for example on Sunpro 5.3 and 5.4.
+//| This bug appears for example on Sunpro 5.3 and 5.4.
 
 template <class K> void foo(typename K::P, typename K::L, K) {}
 
