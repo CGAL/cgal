@@ -1,3 +1,8 @@
+Version 3.33 (30 July 2003)
+rursu:
+ - fixed Kdtree_example3.C for cl_1300 by providing the full spec of Kernel_traits
+
+
 Version 3.32 (20 July 2003) [af]
 - fixed makefile problem on Irix
 - fixed typo Item -> Point, Item_list > Point_list
