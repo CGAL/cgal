@@ -1,3 +1,6 @@
+3.42   (24 January 2002)
+- Remove testing code for predicate_classes_2.h, since it has been removed.
+
 3.41   (21 January 2002)
 - Remove #ifdefs concerning EGCS.
 - Remove implicit conversion for constructor Plane(Origin, Point_3, Point_3).

@@ -78,6 +78,5 @@ else
   compile_and_run test_new_kernelS3
   compile_and_run test_new_partsS_
   compile_and_run test_planeS3_to_2d
-  compile_and_run test_predicate_classes_2S
 fi
 

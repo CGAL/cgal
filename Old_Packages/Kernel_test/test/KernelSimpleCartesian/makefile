@@ -14,7 +14,7 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-           -I../../../Cd/include \
+           -I../../../_d/include \
            -I../../../_2/include \
            -I../../../_3/include \
            -I../../../Cd/include \
@@ -54,8 +54,7 @@ all:            \
                 test_new_kernelS2$(EXE_EXT) \
                 test_new_kernelS3$(EXE_EXT) \
                 test_new_partsS_$(EXE_EXT) \
-                test_planeS3_to_2d$(EXE_EXT) \
-                test_predicate_classes_2S$(EXE_EXT) 
+                test_planeS3_to_2d$(EXE_EXT) 
 
 test_io$(EXE_EXT): test_io$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_io test_io$(OBJ_EXT) $(LDFLAGS)
@@ -81,9 +80,6 @@ test_new_partsS_$(EXE_EXT): test_new_partsS_$(OBJ_EXT)
 test_planeS3_to_2d$(EXE_EXT): test_planeS3_to_2d$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_planeS3_to_2d test_planeS3_to_2d$(OBJ_EXT) $(LDFLAGS)
 
-test_predicate_classes_2S$(EXE_EXT): test_predicate_classes_2S$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_predicate_classes_2S test_predicate_classes_2S$(OBJ_EXT) $(LDFLAGS)
-
 clean: \
                    test_io.clean \
                    test_kernelS2.clean \
@@ -92,8 +88,7 @@ clean: \
                    test_new_kernelS2.clean \
                    test_new_kernelS3.clean \
                    test_new_partsS_.clean \
-                   test_planeS3_to_2d.clean \
-                   test_predicate_classes_2S.clean 
+                   test_planeS3_to_2d.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
