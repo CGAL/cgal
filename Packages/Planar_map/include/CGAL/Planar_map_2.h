@@ -131,18 +131,18 @@ protected:
   // sweep related types
   typedef Pm_less_point_xy<Point, Traits>      PointLessFunctor;
   typedef typename X_curve_2_container::iterator X_curve_2_container_iterator;
-  typedef Point_plus_handle<Traits, Vertex_handle>   Point_plus;
+  typedef Point_plus_handle<Traits, Vertex_handle>
+                                               Point_plus;
   typedef typename std::map<Point_2, Point_plus, PointLessFunctor>
                                                PointContainer;
   typedef typename PointContainer::value_type  PointContainer_value_type; 
   typedef typename PointContainer::iterator    PointContainer_iterator;
-  typedef Pm_point_node<Traits, Point_plus, X_curve_2>   
-                                               Point_node;
+  typedef Pm_point_node<Traits, Point_plus>    Point_node;
   typedef typename std::map<Point_2,Point_node, PointLessFunctor >
                                                Event_queue;
   typedef typename Event_queue::value_type     Event_queue_value_type;
   typedef typename Event_queue::iterator       Event_queue_iterator;  
-  typedef Pm_curve_node<Traits, Point_plus, X_curve> Curve_node_;
+  typedef Pm_curve_node<Traits, Point_plus>    Curve_node_;
   typedef typename Point_node::Curve_node_iterator 
                                                Curve_node_iterator;
 

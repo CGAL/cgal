@@ -31,19 +31,19 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class SweepLineTraits_2, 
-          class Point_plus_, 
-          class X_curve_plus_>
-class Pm_curve_node : public Handle_for< X_curve_plus_ > 
+          class Point_plus_>
+class Pm_curve_node : public Handle_for< typename SweepLineTraits_2::X_curve > 
 {
-  typedef Handle_for<X_curve_plus_> Handle_for_curve;
-  typedef Pm_curve_node                Self;
   typedef SweepLineTraits_2         Traits;
-  typedef X_curve_plus_             X_curve_plus;
+  typedef typename Traits::X_curve  X_curve; 
+  typedef Handle_for<X_curve>       Handle_for_curve;
+  typedef Pm_curve_node             Self;
+
   typedef Point_plus_               Point_plus;
 
  public:
 
-  Pm_curve_node(const X_curve_plus& cv, const Point_plus& p, Traits* traits_) : 
+  Pm_curve_node(const X_curve& cv, const Point_plus& p, Traits* traits_) : 
     Handle_for_curve(cv), m_point(p), m_traits(traits_)
     {}
 
@@ -57,8 +57,7 @@ class Pm_curve_node : public Handle_for< X_curve_plus_ >
   bool operator!=(const Pm_curve_node& cv_node) const {
     return !operator==(cv_node);
   }
-
-  const X_curve_plus& get_curve() const { 
+  const X_curve& get_curve() const { 
     return  *ptr(); 
   }
   
@@ -84,8 +83,7 @@ class Pm_curve_node : public Handle_for< X_curve_plus_ >
     compare_at_x and compare_at_x_right of the traits.
   */
 template <class SweepLineTraits_2, 
-          class Point_plus_, 
-          class X_curve_plus_>
+          class Point_plus_> 
 class Pm_point_node
 {
 
@@ -97,9 +95,8 @@ class Pm_point_node
   typedef  typename Traits::Point                    Point;
 
   typedef  Point_plus_                               Point_plus;
-  typedef  X_curve_plus_                             X_curve_plus;
 
-  typedef  Pm_curve_node<SweepLineTraits_2,Point_plus_,X_curve_plus_>
+  typedef  Pm_curve_node<SweepLineTraits_2,Point_plus_>
                                                      Curve_node_;
   typedef  std::vector<Curve_node_>                  Curve_node_container;
   typedef  typename Curve_node_container::iterator   Curve_node_iterator;
