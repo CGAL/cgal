@@ -56,20 +56,25 @@ enum
 //
 
 static int _conics_count = 0;
-template <class _NT> class Arr_conic_traits;
+template <class _NT> class Arr_conic_traits_2;
 
-template <class NT>
+template <class Kernel_>
 class Conic_arc_2
 {
-  friend class Arr_conic_traits<NT>;
+private:
+  typedef Conic_arc_2<Kernel_>  Self;
+        
+public:
+  typedef Kernel_               Kernel;
+  typedef typename Kernel::FT   NT;
+    
+  friend class Arr_conic_traits_2<Kernel>;
 
- public:
-
-  typedef Cartesian<NT>        Kernel;
   typedef Point_2_ex<Kernel>   Point_2;
   typedef Conic_2<Kernel>      Conic_2;
-  typedef Circle_2<Kernel>     Circle_2;
-  typedef Segment_2<Kernel>    Segment_2;
+
+  typedef typename Kernel::Circle_2     Circle_2;
+  typedef typename Kernel::Segment_2    Segment_2;
 
   typedef Point_2_ex<Kernel>   My_point_2;
     
@@ -153,8 +158,8 @@ class Conic_arc_2
   }
 
   // Private constructor.
-  Conic_arc_2 (const Conic_arc_2& arc,
-	       const My_point_2& source, const My_point_2& target,
+  Conic_arc_2 (const Self & arc,
+	       const My_point_2& source, const My_point_2 & target,
 	       const bool& is_full) :
     _conic(arc._conic),
     _conic_id(arc._conic_id),
@@ -218,7 +223,7 @@ class Conic_arc_2
   }
 
   // Copy constructor.
-  Conic_arc_2 (const Conic_arc_2<NT>& arc) :
+  Conic_arc_2 (const Self & arc) :
     _conic(arc._conic),
     _conic_id(arc._conic_id),
     _source(arc._source),
@@ -448,8 +453,8 @@ class Conic_arc_2
     // Create fictitious arcs for the source and target computation.
     Conic_2     conic_s (r_1, s_1, t_1, u_1, v_1, w_1);
     Conic_2     conic_t (r_2, s_2, t_2, u_2, v_2, w_2);
-    Conic_arc_2 arc_s;
-    Conic_arc_2 arc_t;
+    Self arc_s;
+    Self arc_t;
 
     arc_s._conic = conic_s;
     if (r_1 == 0 && s_1 == 0 && t_1 == 0)
@@ -466,7 +471,7 @@ class Conic_arc_2
     // Compute the source and the target.
     My_point_2  source;
     My_point_2  target;
-    Conic_arc_2 *arc_P;
+    Self *arc_P;
     const My_point_2 *app_P;
     My_point_2  *end_P;
     int         i, j;
@@ -564,7 +569,7 @@ class Conic_arc_2
   }
 
   // Assignment operator.
-  const Conic_arc_2<NT>& operator= (const Conic_arc_2<NT>& arc)
+  const Self& operator= (const Self& arc)
   {
     if (this == &arc)
       return (*this);
@@ -619,7 +624,7 @@ class Conic_arc_2
   }
 
   // Check whether the two arcs have the same base conic.
-  bool has_same_base_conic (const Conic_arc_2<NT>& arc) const
+  bool has_same_base_conic (const Self& arc) const
   {
     if (_conic_id == arc._conic_id)
       return (true);
@@ -632,6 +637,14 @@ class Conic_arc_2
   {
     return ((_info & FULL_CONIC) != 0);
   }
+
+  // shai begin
+  bool is_circle() const
+  {
+    // WARNING: This is not true
+    return _conic.is_ellipse();
+  }
+  // shai end
 
   // Check whether the curve is a sgement.
   bool is_segment () const
@@ -872,7 +885,7 @@ class Conic_arc_2
   }
   
   // Return a flipped conic arc.
-  Conic_arc_2 flip () const
+  Self flip () const
   {
     // Create an identical conic with an opposite orientation.
     Conic_2         opp_conic (-_conic.r(), -_conic.s(), -_conic.t(),
@@ -880,7 +893,7 @@ class Conic_arc_2
 
 
     // Create the reflected curve (exchange the source and the target):
-    Conic_arc_2     opp_arc;
+    Self     opp_arc;
 
     opp_arc._conic = opp_conic;    
     opp_arc._conic_id = _conic_id; 
@@ -909,7 +922,7 @@ class Conic_arc_2
   }
 
   // Reflect the curve in the y axis.
-  Conic_arc_2 reflect_in_y () const
+  Self reflect_in_y () const
   {
     // Reflect the base conic in y:
     Conic_2 ref_conic (  _conic.r(),
@@ -920,7 +933,7 @@ class Conic_arc_2
 		         _conic.w());
 
     // Create the reflected curve:
-    Conic_arc_2 ref_arc;
+    Self ref_arc;
 
     ref_arc._conic = ref_conic;    
     ref_arc._conic_id = _conic_id ^ REFLECT_IN_Y; 
@@ -951,7 +964,7 @@ class Conic_arc_2
   }
 
   // Reflect the curve in the x and y axes.
-  Conic_arc_2 reflect_in_x_and_y () const
+  Self reflect_in_x_and_y () const
   {
     // Reflect the base conic in x and y:
     Conic_2 ref_conic (  _conic.r(),
@@ -962,7 +975,7 @@ class Conic_arc_2
 		         _conic.w());
 
     // Create the reflected curve:
-    Conic_arc_2 ref_arc;
+    Self ref_arc;
 
     ref_arc._conic = ref_conic;    
     ref_arc._conic_id = _conic_id ^ (REFLECT_IN_X | REFLECT_IN_Y);
@@ -1126,7 +1139,7 @@ class Conic_arc_2
   // Calculate the intersection points between the arc and the given arc.
   // ps must be allocated at the size of 4.
   // The function returns the number of the actual intersection points.
-  int intersections_with (const Conic_arc_2<NT>& arc,
+  int intersections_with (const Self& arc,
 			  My_point_2* ps
 #ifdef CGAL_CONIC_ARC_USE_CACHING
 			  ,std::list<Intersections> *inter_list_P = NULL
@@ -1377,8 +1390,8 @@ class Conic_arc_2
   // Check whether the two arcs overlap.
   // The function computes the number of overlapping arcs (2 at most), and
   // return their number (0 means there is no overlap).
-  int overlaps (const Conic_arc_2<NT>& arc,
-		Conic_arc_2<NT>* ovlp_arcs) const
+  int overlaps (const Self& arc,
+		Self* ovlp_arcs) const
   {
     // Two arcs can overlap only if their base conics are identical.
     if (_conic != arc._conic)
@@ -1462,25 +1475,25 @@ class Conic_arc_2
 	if (arc._is_strictly_between_endpoints(_source) &&
             arc._is_strictly_between_endpoints(_target))
 	{
-	  ovlp_arcs[0] = Conic_arc_2<NT>(*this,_source, *arc_targetP, false);
-	  ovlp_arcs[1] = Conic_arc_2<NT>(*this, *arc_sourceP, _target, false);
-	  //ovlp_arcs[0] = Conic_arc_2<NT>(_conic, _source, *arc_targetP);
-	  //ovlp_arcs[1] = Conic_arc_2<NT>(_conic, *arc_sourceP, _target);
+	  ovlp_arcs[0] = Self(*this,_source, *arc_targetP, false);
+	  ovlp_arcs[1] = Self(*this, *arc_sourceP, _target, false);
+	  //ovlp_arcs[0] = Self(_conic, _source, *arc_targetP);
+	  //ovlp_arcs[1] = Self(_conic, *arc_sourceP, _target);
 	  return (2);
 	}
 
 	// Case 1 - *this:     +----------->     
         //            arc:       +=====>
-	ovlp_arcs[0] = Conic_arc_2<NT>(*this, *arc_sourceP,*arc_targetP, false);
-	//ovlp_arcs[0] = Conic_arc_2<NT>(_conic, *arc_sourceP,*arc_targetP);
+	ovlp_arcs[0] = Self(*this, *arc_sourceP,*arc_targetP, false);
+	//ovlp_arcs[0] = Self(_conic, *arc_sourceP,*arc_targetP);
 	return (1);
       }
       else
       {
 	// Case 2 - *this:     +----------->     
         //            arc:               +=====>
-	ovlp_arcs[0] = Conic_arc_2<NT>(*this, *arc_sourceP, _target, false);
-	//ovlp_arcs[0] = Conic_arc_2<NT>(_conic, *arc_sourceP, _target);
+	ovlp_arcs[0] = Self(*this, *arc_sourceP, _target, false);
+	//ovlp_arcs[0] = Self(_conic, *arc_sourceP, _target);
 	return (1);
       }
     }
@@ -1488,8 +1501,8 @@ class Conic_arc_2
     {
       // Case 3 - *this:     +----------->     
       //            arc:   +=====>
-      ovlp_arcs[0] = Conic_arc_2<NT>(*this, _source, *arc_targetP, false);
-      //ovlp_arcs[0] = Conic_arc_2<NT>(_conic, _source, *arc_targetP);
+      ovlp_arcs[0] = Self(*this, _source, *arc_targetP, false);
+      //ovlp_arcs[0] = Self(_conic, _source, *arc_targetP);
       return (1);
     }
     else if (arc._is_between_endpoints(_source) &&
@@ -2137,7 +2150,7 @@ class Conic_arc_2
 
   // Calculate all x co-ordinates of intersection points between the two
   // base curves of (*this) and the given arc.
-  int _x_coordinates_of_intersections_with (const Conic_arc_2<NT>& arc,
+  int _x_coordinates_of_intersections_with (const Self& arc,
 					    NT* xs, int* x_mults, 
 					    int& n_approx,
 					    int& x_deg,
@@ -2441,7 +2454,7 @@ class Conic_arc_2
 
   // Calculate all y co-ordinates of intersection points between the two
   // base curves of (*this) and the given arc.
-  int _y_coordinates_of_intersections_with (const Conic_arc_2<NT>& arc,
+  int _y_coordinates_of_intersections_with (const Self& arc,
 					    NT* ys, int* y_mults,
 					    int& n_approx,
 					    int& y_deg,
@@ -2746,7 +2759,7 @@ class Conic_arc_2
 
   // Pair the x coordinates and the y coordinates of the intersection point
   // of (*this) and arc and return a vector of intersection points. 
-  int _pair_intersection_points (const Conic_arc_2<NT>& arc,
+  int _pair_intersection_points (const Self& arc,
 				 const int& n_xs,
 				 const NT* xs, const int* x_mults,
 				 const int& n_approx_xs,
@@ -2850,14 +2863,57 @@ class Conic_arc_2
     
     return (n_ipts);
   }
+
+  // shai begin
+public:
+
+  // Get a segment if the arc is indeed one.
+  Segment_2 segment() const
+  {
+    CGAL_precondition(is_segment());
+
+    return (Segment_2 (_source, _target));
+  }
+
+  // Get a circle if the arc is indeed a circular arc.
+  Circle_2 circle() const
+  {
+    CGAL_precondition(is_circle());
+
+    // Create the appropriate circle.
+    static const NT _zero = 0;
+    static const NT _two = 2;
+    NT              x0, y0, r2;
+
+    if (_conic.r() > _zero)
+    {
+      // Positive orientation. The conic has the form:
+      //  x^2 + y^2 - (2*x0)*x - (2*y0)*y + (x0^2 + y0^2 - r^2) = 0 
+      x0 = -(_conic.u() / _two);
+      y0 = -(_conic.v() / _two);
+      r2 = x0*x0 + y0*y0 - _conic.w();
+    }
+    else
+    {
+      // Negative orientation:
+      //  - x^2 - y^2 + (2*x0)*x + (2*y0)*y + (r^2 - x0^2 - y0^2) = 0 
+      x0 = _conic.u() / _two;
+      y0 = _conic.v() / _two;
+      r2 = x0*x0 + y0*y0 + _conic.w();
+    }
+
+    return (Circle_2 (Point_2(x0, y0), r2));
+  }
+
+  // shai end
 };
 
 #ifndef NO_OSTREAM_INSERT_CONIC_ARC_2
-template <class NT>
-std::ostream& operator<< (std::ostream& os, const Conic_arc_2<NT>& arc)
+template <class Kernel>
+std::ostream& operator<< (std::ostream& os, const Conic_arc_2<Kernel> & arc)
 {
-  typename Conic_arc_2<NT>::Conic_2 conic = arc.conic();
-  typename Conic_arc_2<NT>::Point_2 source = arc.source(),
+  typename Conic_arc_2<Kernel>::Conic_2 conic = arc.conic();
+  typename Conic_arc_2<Kernel>::Point_2 source = arc.source(),
       target = arc.target();
 
   os << "{" << CGAL::to_double(conic.r()) << "*x^2 + "
