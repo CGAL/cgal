@@ -78,7 +78,7 @@ void Qt_widget::set_scales()
 	    double tempmax = max(xmax-xmin, ymax-ymin);
       
       xscal=yscal=(tempmin - 1)/(tempmax);
-      set_scale_center(xcentre, ycentre);
+      set_ranges_const_center();
     }
   else
     {
@@ -89,25 +89,25 @@ void Qt_widget::set_scales()
   configure_history_buttons();
 }
 
-void Qt_widget::set_scale_center(const double xc, const double yc)
+void Qt_widget::set_ranges_const_center()
 {
   if (set_scales_to_be_done) return;
 
   if(xscal<1) {
-    xmin = xc - (int)(contentsRect().width()/xscal)/2;
-    xmax = xc + (int)(contentsRect().width()/xscal)/2;
-    ymin = yc - (int)(contentsRect().height()/yscal)/2;
-    ymax = yc + (int)(contentsRect().height()/yscal)/2;
+    xmin = xcentre - (int)(contentsRect().width()/xscal)/2;
+    xmax = xcentre + (int)(contentsRect().width()/xscal)/2;
+    ymin = ycentre - (int)(contentsRect().height()/yscal)/2;
+    ymax = ycentre + (int)(contentsRect().height()/yscal)/2;
   } else {
-    xmin = xc - (contentsRect().width()/xscal)/2;
-    xmax = xc + (contentsRect().width()/xscal)/2;
-    ymin = yc - (contentsRect().height()/yscal)/2;
-    ymax = yc + (contentsRect().height()/yscal)/2;
+    xmin = xcentre - (contentsRect().width()/xscal)/2;
+    xmax = xcentre + (contentsRect().width()/xscal)/2;
+    ymin = ycentre - (contentsRect().height()/yscal)/2;
+    ymax = ycentre + (contentsRect().height()/yscal)/2;
   }
   redraw();
 }
 
-void Qt_widget::resizeEvent(QResizeEvent *e)
+void Qt_widget::resize_pixmap()
 {
   // save paint state
   QFont f=painter->font();
@@ -120,21 +120,27 @@ void Qt_widget::resizeEvent(QResizeEvent *e)
   pixmap->resize(contentsRect().size());
   painter->begin(pixmap); // begin again painting on pixmap
   clear();
-  painter->setWorldMatrix(bm);
 
   // restore paint state
   painter->setFont(f);
   painter->setBrush(b);
   painter->setPen(p);
   painter->setBackgroundColor(bc);
+  painter->setWorldMatrix(bm);
+}
 
+void Qt_widget::resizeEvent(QResizeEvent *e)
+{
+  resize_pixmap();
   clear_history();
+  set_scales();
+  redraw();
+}
 
-  if (constranges)
-    set_scales();
-  else
-    set_scale_center(xcentre, ycentre);
-  //  emit(resized());
+void Qt_widget::frameChanged()
+{
+  resize_pixmap();
+  set_scales();
   redraw();
 }
 
@@ -143,10 +149,10 @@ void Qt_widget::showEvent(QShowEvent* e)
   if( set_scales_to_be_done )
     set_scales();
 
-  return QWidget::showEvent(e);
+  return QFrame::showEvent(e);
 }
 
-void Qt_widget::paintEvent(QPaintEvent *e)
+void Qt_widget::drawContents(QPainter*)
 {
   // save paint state
   QFont f=painter->font();
@@ -154,7 +160,6 @@ void Qt_widget::paintEvent(QPaintEvent *e)
   QPen p=painter->pen();
   QColor bc=painter->backgroundColor();
   QWMatrix bm = painter->worldMatrix();
-
 
   painter->end();  // end painting on pixmap
   bitBlt(this, contentsRect().topLeft(),
@@ -334,7 +339,7 @@ void Qt_widget::leaveEvent(QEvent *e)
 bool Qt_widget::event(QEvent *e)
 {
   emit(s_event(e));
-  QWidget::event(e);
+  QFrame::event(e);
   if(!does_standard_eat_events()) {
     std::list<Qt_widget_layer*>::iterator it;
     for(it = qt_layers.begin(); it!= qt_layers.end(); it++)
@@ -362,7 +367,7 @@ void Qt_widget::set_window(const double x_min, const double x_max,
   constranges = const_ranges;
   xcentre = xmin + (xmax - xmin)/2;
   ycentre = ymin + (ymax - ymin)/2;  
-  set_scales(); 
+  set_scales();
 }
 
 
@@ -390,7 +395,7 @@ void Qt_widget::zoom(double ratio, double xc, double yc)
   xscal = xscal*ratio; yscal = yscal*ratio;
   xcentre = xc;
   ycentre = yc;
-  set_scale_center(xcentre, ycentre);
+  set_ranges_const_center();
   add_to_history(); //add the current viewport to history
   configure_history_buttons();
 }
@@ -568,9 +573,7 @@ void Qt_widget::clear() {
       QPainter *painter_for_printer = new QPainter(printer);
       painter = painter_for_printer;
       painter->setClipping(true);
-      painter->setClipRect(0, 0, 
-			   contentsRect().width(),
-			   contentsRect().height());
+      painter->setClipRect(contentsRect());
       lock();
         std::list<Qt_widget_layer*>::iterator it;
 		    for(it = qt_layers.begin(); it!= qt_layers.end(); it++)

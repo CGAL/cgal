@@ -83,14 +83,14 @@ public:
   {    
     xcentre += distx;
     ycentre += disty;
-    set_scale_center(xcentre, ycentre);
+    set_ranges_const_center();
     add_to_history(); //add the current viewport to history
     configure_history_buttons();
   }
   inline void set_center(const double x, const double y) 
   {
     xcentre = x; ycentre = y;
-    set_scale_center(xcentre, ycentre);
+    set_ranges_const_center();
   };
 
   // painting system
@@ -99,7 +99,7 @@ public:
   inline QWMatrix& get_matrix() { return (*matrix); };
   void lock() { ++Locked; };
   void unlock() { if (Locked>0) --Locked; do_paint(); };
-  void do_paint() { if (Locked==0) repaint( FALSE ); };
+  void do_paint() { if (Locked==0) repaint(FALSE); };
 
   virtual QSize sizeHint() const {return QSize(geometry().width(),
 					geometry().height());} 
@@ -220,7 +220,7 @@ public slots:
   bool forth();
   
 protected:
-  void paintEvent(QPaintEvent *e);
+  void drawContents(QPainter*); // protected method of QFrame
   void resizeEvent(QResizeEvent *e);
   void showEvent(QShowEvent *e);
   void mousePressEvent(QMouseEvent *e);
@@ -236,21 +236,45 @@ protected:
 
 
 private:
-  void	  set_scales(); // set xscal and yscal
-  void	  set_scale_center(const double xc, const double yc);
+  // private functions
+  // ~~~~~~~~~~~~~~~~~
 
-  bool    set_scales_to_be_done; //this flag is set when the widget is
-            //not visible and should postpone the set_scales(),
-            //add_to_history() and configure_history_buttons() calls
-  double  xcentre, ycentre; //the center of the axes
-  
-  Qt_widget_history history;//this instance manage the viewports
-  void configure_history_buttons(); //change the enabled state of
-                                    //the history buttons
+  void frameChanged(); 
+  // redraw the widget contents, called by QFrame::paintEvent
+
+  void resize_pixmap();
+  // resize properly the pixmap size, saving then restoring the
+  // painter properties
+
+  void	  set_scales(); 
+  // set xscal and yscal. Update ranges if const_ranges is false.
+
+  void	  set_ranges_const_center();
+  // set ranges without changing the center 
+
+  void configure_history_buttons();
+  //change the enabled state of the history buttons
 
   // color types convertors
   static QColor CGAL2Qt_Color(Color c);
   static Color Qt2CGAL_color(QColor c);
+
+  void attach_standard(Qt_widget_layer *layer);
+  bool is_standard_active();
+  bool does_standard_eat_events();
+  friend class Qt_widget_standard_toolbar;
+
+
+  // private member datas
+  // ~~~~~~~~~~~~~~~~~~~~
+  bool    set_scales_to_be_done;
+  // this flag is set when the widget is not visible and should
+  // postpone the set_scales(), add_to_history() and
+  // configure_history_buttons() calls
+
+  double  xcentre, ycentre; //the center of the axes
+  
+  Qt_widget_history history;//this instance manage the viewports
 
   unsigned int Locked;
   // point style and size
@@ -273,10 +297,6 @@ private:
   //for layers
   std::list<Qt_widget_layer*>	qt_layers;
   std::list<Qt_widget_layer*> qt_standard_layers;
-  void attach_standard(Qt_widget_layer *layer);
-  bool is_standard_active();
-  bool does_standard_eat_events();
-  friend class Qt_widget_standard_toolbar;
 };//end Qt_widget class
 
 // manipulators
