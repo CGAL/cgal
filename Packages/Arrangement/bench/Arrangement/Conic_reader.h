@@ -45,6 +45,7 @@ public:
       if (i == 0) bbox = curve_bbox;
       else bbox = bbox + curve_bbox;      
     }
+    inp.close();
     return 0;
   }
   
