@@ -1,3 +1,6 @@
+Version 6.54 (28 January 2002)
+- VectorC3<R>::Vector_3 is private => R::Vector_3.
+
 Version 6.53 (24 January 2002)
 - removed obsolete include of predicate_objects_on_points_2.h 
 
