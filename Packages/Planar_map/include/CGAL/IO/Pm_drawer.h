@@ -90,23 +90,35 @@ public:
   
   void draw_face(Face_const_handle f) {}
   
-  void draw_vertices(Vertex_iterator Vertices_begin, Vertex_iterator Vertices_end) {
-    for (Vertex_iterator v_iter = Vertices_begin; v_iter !=  Vertices_end; v_iter++)
+  void draw_vertices(Vertex_iterator Vertices_begin,
+                     Vertex_iterator Vertices_end)
+  {
+    for (Vertex_iterator v_iter = Vertices_begin; v_iter !=  Vertices_end;
+         v_iter++)
       draw_vertex(v_iter);
   }
 
-  void draw_vertices(Vertex_const_iterator Vertices_begin, Vertex_const_iterator Vertices_end) {
-    for (Vertex_const_iterator v_iter = Vertices_begin; v_iter !=  Vertices_end; v_iter++)
+  void draw_vertices(Vertex_const_iterator Vertices_begin,
+                     Vertex_const_iterator Vertices_end)
+  {
+    for (Vertex_const_iterator v_iter = Vertices_begin; v_iter != Vertices_end;
+         v_iter++)
       draw_vertex(v_iter);
   }
    
-  void draw_halfedges(Halfedge_iterator Halfedges_begin, Halfedge_iterator Halfedges_end) {
-    for (Halfedge_iterator h_iter = Halfedges_begin; h_iter != Halfedges_end; h_iter++)
+  void draw_halfedges(Halfedge_iterator Halfedges_begin,
+                      Halfedge_iterator Halfedges_end)
+  {
+    for (Halfedge_iterator h_iter = Halfedges_begin; h_iter != Halfedges_end;
+         h_iter++)
       draw_halfedge(h_iter);
   }
 
-  void draw_halfedges(Halfedge_const_iterator Halfedges_begin, Halfedge_const_iterator Halfedges_end) {
-    for (Halfedge_const_iterator h_iter = Halfedges_begin; h_iter != Halfedges_end; h_iter++)
+  void draw_halfedges(Halfedge_const_iterator Halfedges_begin,
+                      Halfedge_const_iterator Halfedges_end)
+  {
+    for (Halfedge_const_iterator h_iter = Halfedges_begin;
+         h_iter != Halfedges_end; h_iter++)
       draw_halfedge(h_iter);
   }
   
@@ -115,8 +127,11 @@ public:
       draw_face(f_iter);
   }
 
-  void draw_faces(Face_const_iterator Faces_begin, Face_const_iterator Faces_end) {
-    for (Face_const_iterator f_iter = Faces_begin; f_iter != Faces_end; f_iter++)
+  void draw_faces(Face_const_iterator Faces_begin,
+                  Face_const_iterator Faces_end)
+  {
+    for (Face_const_iterator f_iter = Faces_begin; f_iter != Faces_end;
+         f_iter++)
       draw_face(f_iter);
   }
 
@@ -125,13 +140,5 @@ protected:
 };
 
 CGAL_END_NAMESPACE
+
 #endif  // CGAL_IO_PM_DRAWER_H 
-// EOF //
-
-
-
-
-
-
-
-

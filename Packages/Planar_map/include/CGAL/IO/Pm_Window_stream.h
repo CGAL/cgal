@@ -45,7 +45,8 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class Dcel,class Traits>
-Window_stream& operator << (Window_stream& os, const Planar_map_2<Dcel,Traits> &pm)
+Window_stream& operator << (Window_stream & os, const Planar_map_2<Dcel,
+                            Traits> & pm)
 {
   Pm_drawer< Planar_map_2<Dcel,Traits>, Window_stream>  drawer(os);
   
@@ -62,12 +63,11 @@ Window_stream& operator << (Window_stream& os, const Planar_map_2<Dcel,Traits> &
   Halfedge_iterator it = m.halfedges_begin(), end = m.halfedges_end();
   const Traits& traits=m.get_traits();
   while(it != end){
-	write(os,it->curve(),traits);
-        ++it;++it;
-        }
-        return os;
-        } */ 
-
+  write(os,it->curve(),traits);
+  ++it;++it;
+  }
+  return os;
+  } */ 
 
 CGAL_END_NAMESPACE
 

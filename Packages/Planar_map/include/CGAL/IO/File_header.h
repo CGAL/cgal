@@ -111,7 +111,7 @@ public:
   void set_colors( bool b)        { m_colors      = b; }
   void set_dimension( int i)      { m_dim         = i; }
 
-  //--------------------------------------------------- io functions for header file ------------------------------------------
+  // ---- io functions for header file ----
   // istream modifier skips chars until end of line.
   inline std::istream& skip_until_EOL( std::istream& in) {
     char c;
@@ -130,7 +130,6 @@ public:
   }
 };
 
-
-
 CGAL_END_NAMESPACE
+
 #endif // CGAL_IO_FILE_HEADER_PM_H //

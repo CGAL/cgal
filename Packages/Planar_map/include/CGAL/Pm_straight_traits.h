@@ -11,7 +11,7 @@
 // release       : 
 // release_date  : 
 //
-// file          : include/CGAL/Pm_straight_exact_traits.h
+// file          : include/CGAL/Pm_straight_traits.h
 // source        : 
 // revision      : 
 // revision_date : 

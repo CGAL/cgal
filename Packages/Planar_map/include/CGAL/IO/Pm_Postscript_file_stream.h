@@ -56,7 +56,8 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class Dcel,class Traits>
-Postscript_file_stream& operator << (Postscript_file_stream & ps, Planar_map_2<Dcel,Traits> &pm)
+Postscript_file_stream & operator << (Postscript_file_stream & ps,
+                                      Planar_map_2<Dcel,Traits> & pm)
 {
   Pm_drawer< Planar_map_2<Dcel,Traits> , Postscript_file_stream>  drawer(ps);
   
