@@ -968,7 +968,6 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
       if( inf_0 || inf_3 || (orientation(p0, p1, p2, p3) == POSITIVE) ) {
 	// the two faces form a concavity, in which we might plug a cell
 
-	bool on_unbounded_side = false;
 	// we now look at all vertices that are on the boundary of the hole
 	for(typename Surface::Vertex_iterator vit = surface.vertices_begin();
 	    vit != surface.vertices_end();
@@ -989,7 +988,6 @@ fill_hole_3D_ear( std::list<Facet> & boundhole)
 
 	    if(bs == ON_BOUNDED_SIDE) { goto next_edge; }
 
-	    on_unbounded_side |= (bs == ON_UNBOUNDED_SIDE);
 	  }
 	}
 
