@@ -531,7 +531,7 @@ Qt_widget& operator<<(Qt_widget& w, const Segment_2<R>& s)
   //next condition true if the segment is inside
   if(s.source().x() >= xr1 && s.source().x() <= xr2 &&
      s.target().x() >= xr1 && s.target().x() <= xr2 && 
-     s.source().y() >= yr1 && s.source().x() <= yr2 &&
+     s.source().y() >= yr1 && s.source().y() <= yr2 &&
      s.target().y() >= yr1 && s.target().y() <= yr2)
     sr = s;
   else{
