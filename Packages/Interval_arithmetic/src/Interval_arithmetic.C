@@ -21,9 +21,22 @@
 //
 // ======================================================================
  
-#include <CGAL/Interval_arithmetic.h>
+#include <CGAL/basic.h>
+
+#include <CGAL/predicates_on_ftC2.h>
+#include <CGAL/predicates_on_ftC3.h>
+#include <CGAL/predicates/sign_of_determinant.h>
+#include <CGAL/predicates/Regular_triangulation_ftC2.h>
+#include <CGAL/predicates/Regular_triangulation_ftC3.h>
+#include <CGAL/predicates/Regular_triangulation_rtH2.h>
+#include <CGAL/predicates/Regular_triangulation_rtH3.h>
+
+#include <CGAL/Arithmetic_filter.h>
 
 CGAL_BEGIN_NAMESPACE
+
+// Static variables:
+#include <CGAL/Arithmetic_filter/static_infos/dispatch.h>
 
 unsigned Interval_nt_advanced::number_of_failures = 0;
 bool     Interval_nt_advanced::want_exceptions    = true;
