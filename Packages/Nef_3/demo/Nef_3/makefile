@@ -14,7 +14,6 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-           -I/KM/usr/hachenb/CGAL2/Nef_S2/include \
            $(CGAL_CXXFLAGS) \
            -Iinclude \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
@@ -38,15 +37,32 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                nef_3$(EXE_EXT) 
+                nef_3$(EXE_EXT) \
+                visualization_SNC$(EXE_EXT) \
+                visualization_SM$(EXE_EXT) \
+
 nef_3.clean:
 	rm -f nef_3 nef_3.o
 
 nef_3$(EXE_EXT): nef_3$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)nef_3 nef_3$(OBJ_EXT) $(LDFLAGS)
 
+visualization_SNC.clean:
+	rm -f visualization_SNC visualization_SNC.o
+
+visualization_SNC$(EXE_EXT): visualization_SNC$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)visualization_SNC visualization_SNC$(OBJ_EXT) $(LDFLAGS)
+
+visualization_SM.clean:
+	rm -f visualization_SM visualization_SM.o
+
+visualization_SM$(EXE_EXT): visualization_SM$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)visualization_SM visualization_SM$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
-                   nef_3.clean  
+                   nef_3.clean \
+                   visualization_SNC.clean \
+                   visualization_SM.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
