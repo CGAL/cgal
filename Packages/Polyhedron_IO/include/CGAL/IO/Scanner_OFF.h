@@ -47,9 +47,14 @@ CGAL_BEGIN_NAMESPACE
 // that contains the vertex indices.
 
 template <class Pt>
-class _Scanner_OFF_vertex_iterator : public std::input_iterator<Pt, int> {
+class I_Scanner_OFF_vertex_iterator
+    : public std::iterator< std::input_iterator_tag,
+                            Pt,
+                            std::ptrdiff_t,
+                            const Pt&, const Pt&>
+{
     File_scanner_OFF*  m_scan;
-    int                m_cnt;
+    std::ptrdiff_t     m_cnt;
     Pt                 m_point;
 
     void next_vertex() {
@@ -62,17 +67,17 @@ class _Scanner_OFF_vertex_iterator : public std::input_iterator<Pt, int> {
             m_cnt = m_scan->size_of_vertices() + 1;
     }
 public:
-    typedef Pt                                Point;
-    typedef File_scanner_OFF                  Scanner;
-    typedef _Scanner_OFF_vertex_iterator<Pt>  Self;
+    typedef Pt                                 Point;
+    typedef File_scanner_OFF                   Scanner;
+    typedef I_Scanner_OFF_vertex_iterator<Pt>  Self;
 
-    _Scanner_OFF_vertex_iterator( int cnt) : m_scan(0), m_cnt(cnt+1) {}
-    _Scanner_OFF_vertex_iterator( Scanner& s, int cnt)
+    I_Scanner_OFF_vertex_iterator( int cnt) : m_scan(0), m_cnt(cnt+1) {}
+    I_Scanner_OFF_vertex_iterator( Scanner& s, int cnt)
         : m_scan(&s), m_cnt(cnt)
     {
         next_vertex();
     }
-    int    count()                    const { return m_cnt; }
+    std::ptrdiff_t  count()           const { return m_cnt; }
     bool   operator==( const Self& i) const { return m_cnt == i.m_cnt; }
     bool   operator!=( const Self& i) const { return m_cnt != i.m_cnt; }
     Self&  operator++() {
@@ -92,12 +97,12 @@ public:
     const Point* operator->() const { return & operator*(); }
 };
 
-class _Scanner_OFF_facet_iterator
-    : public std::input_iterator< vector< Integer32>,
-                                  vector< Integer32>::difference_type >
+class I_Scanner_OFF_facet_iterator
+    : public std::iterator< std::input_iterator_tag,
+                            std::vector< Integer32> >
 {
     File_scanner_OFF*  m_scan;
-    int                m_cnt;
+    std::ptrdiff_t     m_cnt;
     value_type         m_indices;
 
     void next_facet() {
@@ -118,17 +123,17 @@ class _Scanner_OFF_facet_iterator
             m_cnt = m_scan->size_of_facets() + 1;
     }
 public:
-    typedef File_scanner_OFF             Scanner;
-    typedef _Scanner_OFF_facet_iterator  Self;
-    typedef value_type::iterator         iterator;
+    typedef File_scanner_OFF              Scanner;
+    typedef I_Scanner_OFF_facet_iterator  Self;
+    typedef value_type::iterator          iterator;
 
-    _Scanner_OFF_facet_iterator( int cnt) : m_scan(0), m_cnt(cnt+1) {}
-    _Scanner_OFF_facet_iterator( Scanner& s, int cnt)
+    I_Scanner_OFF_facet_iterator( int cnt) : m_scan(0), m_cnt(cnt+1) {}
+    I_Scanner_OFF_facet_iterator( Scanner& s, int cnt)
         : m_scan(&s), m_cnt(cnt)
     {
         next_facet();
     }
-    int   count()                    const { return m_cnt; }
+    std::ptrdiff_t  count()          const { return m_cnt; }
     bool  operator==( const Self& i) const { return m_cnt == i.m_cnt; }
     bool  operator!=( const Self& i) const { return m_cnt != i.m_cnt; }
     Self& operator++() {
@@ -156,29 +161,27 @@ public:
 // The distance function is implemented to work in
 // constant time for both iterators.
 
-#ifdef CGAL_PARTIAL_SPECIALISATION
 template <class Pt, class Distance> inline
-void distance( const _Scanner_OFF_vertex_iterator<Pt>& first,
-               const _Scanner_OFF_vertex_iterator<Pt>& last,
+void distance( const I_Scanner_OFF_vertex_iterator<Pt>& first,
+               const I_Scanner_OFF_vertex_iterator<Pt>& last,
                Distance& n) {
     n = Distance( last.count() - first.count());
 }
 template <class Distance> inline
-void distance( const _Scanner_OFF_facet_iterator& first,
-               const _Scanner_OFF_facet_iterator& last,
+void distance( const I_Scanner_OFF_facet_iterator& first,
+               const I_Scanner_OFF_facet_iterator& last,
                Distance& n) {
     n = Distance( last.count() - first.count());
 }
 template <class Pt> inline
-int distance( const _Scanner_OFF_vertex_iterator<Pt>& first,
-              const _Scanner_OFF_vertex_iterator<Pt>& last) {
+std::ptrdiff_t distance( const I_Scanner_OFF_vertex_iterator<Pt>& first,
+                         const I_Scanner_OFF_vertex_iterator<Pt>& last) {
     return last.count() - first.count();
 }
-#endif // CGAL_PARTIAL_SPECIALISATION //
 
 inline
-int distance( const _Scanner_OFF_facet_iterator& first,
-              const _Scanner_OFF_facet_iterator& last) {
+std::ptrdiff_t  distance( const I_Scanner_OFF_facet_iterator& first,
+                          const I_Scanner_OFF_facet_iterator& last) {
     return last.count() - first.count();
 }
 
@@ -187,11 +190,11 @@ template <class Pt>
 class Scanner_OFF {
     File_scanner_OFF  m_scan;
 public:
-    typedef Pt                                     Point;
-    typedef Scanner_OFF<Pt>                        Self;
-    typedef _Scanner_OFF_vertex_iterator<Pt>       Vertex_iterator;
-    typedef _Scanner_OFF_facet_iterator            Facet_iterator;
-    typedef _Scanner_OFF_facet_iterator::iterator  Index_iterator;
+    typedef Pt                                      Point;
+    typedef Scanner_OFF<Pt>                         Self;
+    typedef I_Scanner_OFF_vertex_iterator<Pt>       Vertex_iterator;
+    typedef I_Scanner_OFF_facet_iterator            Facet_iterator;
+    typedef I_Scanner_OFF_facet_iterator::iterator  Index_iterator;
 
     Scanner_OFF( std::istream& in, bool verbose = false)
         : m_scan( in, verbose) {}

@@ -40,25 +40,25 @@
 CGAL_BEGIN_NAMESPACE
 
 inline void
-_Binary_write_integer32(std::ostream& out, Integer32 i) {
+I_Binary_write_integer32(std::ostream& out, Integer32 i) {
     out.write( (char*)(&i), 4);
 }
 inline void
-_Binary_write_float32(std::ostream& out, float f) {
+I_Binary_write_float32(std::ostream& out, float f) {
     out.write( (char*)(&f), 4);
 }
 
 inline void
-_Binary_read_integer32(std::istream& in, Integer32& i) {
+I_Binary_read_integer32(std::istream& in, Integer32& i) {
     in.read( (char*)(&i), 4);
 }
 inline void
-_Binary_read_float32(std::istream& in, float& f) {
+I_Binary_read_float32(std::istream& in, float& f) {
     in.read( (char*)(&f), 4);
 }
 
 inline void
-_swap_to_big_endian( UInteger32& u) {
+I_swap_to_big_endian( UInteger32& u) {
     (void)u;
 #ifdef CGAL_LITTLE_ENDIAN
 u = ((u >> 24) | (u << 24) | ((u >> 8) & 0xff00) | ((u << 8) & 0xff0000));
@@ -66,37 +66,37 @@ u = ((u >> 24) | (u << 24) | ((u >> 8) & 0xff00) | ((u << 8) & 0xff0000));
 }
 
 inline void
-_swap_to_big_endian( Integer32& i) {
+I_swap_to_big_endian( Integer32& i) {
     UInteger32& u = (UInteger32&)i;
-    _swap_to_big_endian( u);
+    I_swap_to_big_endian( u);
 }
 
 inline void
-_swap_to_big_endian( float& f) {
+I_swap_to_big_endian( float& f) {
     UInteger32& u = (UInteger32&)f;
-    _swap_to_big_endian( u);
+    I_swap_to_big_endian( u);
 }
 
 inline void
-_Binary_write_big_endian_integer32(std::ostream& out, Integer32 i) {
-    _swap_to_big_endian( i);
+I_Binary_write_big_endian_integer32(std::ostream& out, Integer32 i) {
+    I_swap_to_big_endian( i);
     out.write( (char*)(&i), 4);
 }
 inline void
-_Binary_write_big_endian_float32(std::ostream& out, float f) {
-    _swap_to_big_endian( f);
+I_Binary_write_big_endian_float32(std::ostream& out, float f) {
+    I_swap_to_big_endian( f);
     out.write( (char*)(&f), 4);
 }
 
 inline void
-_Binary_read_big_endian_integer32(std::istream& in, Integer32& i) {
+I_Binary_read_big_endian_integer32(std::istream& in, Integer32& i) {
     in.read( (char*)(&i), 4);
-    _swap_to_big_endian( i);
+    I_swap_to_big_endian( i);
 }
 inline void
-_Binary_read_big_endian_float32(std::istream& in, float& f) {
+I_Binary_read_big_endian_float32(std::istream& in, float& f) {
     in.read( (char*)(&f), 4);
-    _swap_to_big_endian( f);
+    I_swap_to_big_endian( f);
 }
 
 CGAL_END_NAMESPACE

@@ -213,10 +213,10 @@ std::ostream& operator<<( std::ostream& out, const File_header_OFF& h) {
         out << "OFF";
     if ( h.binary()) {
         out << " BINARY\n";
-        _Binary_write_integer32( out, h.size_of_vertices());
-        _Binary_write_integer32( out, h.size_of_facets());
+        I_Binary_write_integer32( out, h.size_of_vertices());
+        I_Binary_write_integer32( out, h.size_of_facets());
         if ( h.off())
-            _Binary_write_integer32( out, 0);
+            I_Binary_write_integer32( out, 0);
     } else {
         out << '\n';
         out << h.size_of_vertices() << ' '<< h.size_of_facets();
@@ -337,14 +337,14 @@ std::istream& operator>>( std::istream& in, File_header_OFF& h) {
     int n_h;
     if ( h.binary()) {
         Integer32 a, b, c;
-        _Binary_read_integer32( in, a);
+        I_Binary_read_integer32( in, a);
         if ( h.n_dimensional()) {
             h.set_dimension( a);
-            _Binary_read_integer32( in, a);
+            I_Binary_read_integer32( in, a);
         }
-        _Binary_read_integer32( in, b);
+        I_Binary_read_integer32( in, b);
         if ( h.off())
-            _Binary_read_integer32( in, c);
+            I_Binary_read_integer32( in, c);
         else
             c = 0;
         h.set_vertices( a);

@@ -32,9 +32,20 @@
 
 CGAL_BEGIN_NAMESPACE
 
+#ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
 template <class Traits, class HDS>
 void
 print_VRML_1( std::ostream& out, const Polyhedron_3<Traits,HDS>& P) {
+#else // CGAL_USE_POLYHEDRON_DESIGN_ONE //
+template < class Traits,
+           class Items,
+#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
+           template < class T, class I>
+#endif
+           class HDS>
+void
+print_VRML_1( std::ostream& out, const Polyhedron_3<Traits,Items,HDS>& P) {
+#endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
     VRML_1_ostream os( out);
     os << P;
 }

@@ -67,12 +67,12 @@ public:
     // coordinate types to support parameterized polytopes.
     void scan_vertex( float&  x, float&  y, float&  z) {
         if ( binary()) {
-            _Binary_read_float32( m_in, x);
-            _Binary_read_float32( m_in, y);
-            _Binary_read_float32( m_in, z);
+            I_Binary_read_float32( m_in, x);
+            I_Binary_read_float32( m_in, y);
+            I_Binary_read_float32( m_in, z);
             if ( is_homogeneous()) {
                 float w;
-                _Binary_read_float32( m_in, w);
+                I_Binary_read_float32( m_in, w);
                 x /= w;
                 y /= w;
                 z /= w;
@@ -92,14 +92,14 @@ public:
     void scan_vertex( double& x, double& y, double& z) {
         if ( binary()) {
             float f;
-            _Binary_read_float32( m_in, f);
+            I_Binary_read_float32( m_in, f);
             x = f;
-            _Binary_read_float32( m_in, f);
+            I_Binary_read_float32( m_in, f);
             y = f;
-            _Binary_read_float32( m_in, f);
+            I_Binary_read_float32( m_in, f);
             z = f;
             if ( is_homogeneous()) {
-                _Binary_read_float32( m_in, f);
+                I_Binary_read_float32( m_in, f);
                 x /= f;
                 y /= f;
                 z /= f;
@@ -119,12 +119,12 @@ public:
     void scan_vertex( int& x, int& y, int& z) {
         if ( binary()) {
             float fx, fy, fz;
-            _Binary_read_float32( m_in, fx);
-            _Binary_read_float32( m_in, fy);
-            _Binary_read_float32( m_in, fz);
+            I_Binary_read_float32( m_in, fx);
+            I_Binary_read_float32( m_in, fy);
+            I_Binary_read_float32( m_in, fz);
             if ( is_homogeneous()) {
                 float fw;
-                _Binary_read_float32( m_in, fw);
+                I_Binary_read_float32( m_in, fw);
                 x = int( fx / fw);
                 y = int( fy / fw);
                 y = int( fz / fw);
@@ -156,11 +156,11 @@ public:
     void scan_vertex( float&  x, float&  y, float&  z, float&  w) {
         w = 1;
         if ( binary()) {
-            _Binary_read_float32( m_in, x);
-            _Binary_read_float32( m_in, y);
-            _Binary_read_float32( m_in, z);
+            I_Binary_read_float32( m_in, x);
+            I_Binary_read_float32( m_in, y);
+            I_Binary_read_float32( m_in, z);
             if ( is_homogeneous())
-                _Binary_read_float32( m_in, w);
+                I_Binary_read_float32( m_in, w);
         } else {
             skip_comment();
             m_in >> x >> y >> z;
@@ -172,14 +172,14 @@ public:
         w = 1;
         if ( binary()) {
             float f;
-            _Binary_read_float32( m_in, f);
+            I_Binary_read_float32( m_in, f);
             x = f;
-            _Binary_read_float32( m_in, f);
+            I_Binary_read_float32( m_in, f);
             y = f;
-            _Binary_read_float32( m_in, f);
+            I_Binary_read_float32( m_in, f);
             z = f;
             if ( is_homogeneous()) {
-                _Binary_read_float32( m_in, f);
+                I_Binary_read_float32( m_in, f);
                 w = f;
             }
         } else {
@@ -193,14 +193,14 @@ public:
         w = 1;
         if ( binary()) {
             float f;
-            _Binary_read_float32( m_in, f);
+            I_Binary_read_float32( m_in, f);
             x = int(f);
-            _Binary_read_float32( m_in, f);
+            I_Binary_read_float32( m_in, f);
             y = int(f);
-            _Binary_read_float32( m_in, f);
+            I_Binary_read_float32( m_in, f);
             z = int(f);
             if ( is_homogeneous()) {
-                _Binary_read_float32( m_in, f);
+                I_Binary_read_float32( m_in, f);
                 w = int(f);
             }
         } else {
@@ -223,12 +223,12 @@ public:
         if ( has_normals()) {
             normals_read = true;
             if ( binary()) {
-                _Binary_read_float32( m_in, x);
-                _Binary_read_float32( m_in, y);
-                _Binary_read_float32( m_in, z);
+                I_Binary_read_float32( m_in, x);
+                I_Binary_read_float32( m_in, y);
+                I_Binary_read_float32( m_in, z);
                 if ( is_homogeneous()) {
                     float w;
-                    _Binary_read_float32( m_in, w);
+                    I_Binary_read_float32( m_in, w);
                     x /= w;
                     y /= w;
                     z /= w;
@@ -250,12 +250,12 @@ public:
             normals_read = true;
             if ( binary()) {
                 float fx, fy, fz;
-                _Binary_read_float32( m_in, fx);
-                _Binary_read_float32( m_in, fy);
-                _Binary_read_float32( m_in, fz);
+                I_Binary_read_float32( m_in, fx);
+                I_Binary_read_float32( m_in, fy);
+                I_Binary_read_float32( m_in, fz);
                 if ( is_homogeneous()) {
                     float fw;
-                    _Binary_read_float32( m_in, fw);
+                    I_Binary_read_float32( m_in, fw);
                     x = fx / fw;
                     y = fy / fw;
                     y = fz / fw;
@@ -281,12 +281,12 @@ public:
             normals_read = true;
             if ( binary()) {
                 float fx, fy, fz;
-                _Binary_read_float32( m_in, fx);
-                _Binary_read_float32( m_in, fy);
-                _Binary_read_float32( m_in, fz);
+                I_Binary_read_float32( m_in, fx);
+                I_Binary_read_float32( m_in, fy);
+                I_Binary_read_float32( m_in, fz);
                 if ( is_homogeneous()) {
                     float fw;
-                    _Binary_read_float32( m_in, fw);
+                    I_Binary_read_float32( m_in, fw);
                     x = int( fx / fw);
                     y = int( fy / fw);
                     y = int( fz / fw);
@@ -320,11 +320,11 @@ public:
         if ( has_normals()) {
             normals_read = true;
             if ( binary()) {
-                _Binary_read_float32( m_in, x);
-                _Binary_read_float32( m_in, y);
-                _Binary_read_float32( m_in, z);
+                I_Binary_read_float32( m_in, x);
+                I_Binary_read_float32( m_in, y);
+                I_Binary_read_float32( m_in, z);
                 if ( is_homogeneous())
-                    _Binary_read_float32( m_in, w);
+                    I_Binary_read_float32( m_in, w);
             } else {
                 m_in >> x >> y >> z;
                 if ( is_homogeneous())
@@ -338,14 +338,14 @@ public:
             normals_read = true;
             if ( binary()) {
                 float f;
-                _Binary_read_float32( m_in, f);
+                I_Binary_read_float32( m_in, f);
                 x = f;
-                _Binary_read_float32( m_in, f);
+                I_Binary_read_float32( m_in, f);
                 y = f;
-                _Binary_read_float32( m_in, f);
+                I_Binary_read_float32( m_in, f);
                 z = f;
                 if ( is_homogeneous()) {
-                    _Binary_read_float32( m_in, f);
+                    I_Binary_read_float32( m_in, f);
                     w = f;
                 }
             } else {
@@ -361,14 +361,14 @@ public:
             normals_read = true;
             if ( binary()) {
                 float f;
-                _Binary_read_float32( m_in, f);
+                I_Binary_read_float32( m_in, f);
                 x = int(f);
-                _Binary_read_float32( m_in, f);
+                I_Binary_read_float32( m_in, f);
                 y = int(f);
-                _Binary_read_float32( m_in, f);
+                I_Binary_read_float32( m_in, f);
                 z = int(f);
                 if ( is_homogeneous()) {
-                    _Binary_read_float32( m_in, f);
+                    I_Binary_read_float32( m_in, f);
                     w = int(f);
                 }
             } else {
@@ -392,7 +392,7 @@ public:
     void scan_facet( Integer32& size, int current_facet) {
         CGAL_assertion( current_facet < size_of_facets());
         if ( binary())
-            _Binary_read_integer32( m_in, size);
+            I_Binary_read_integer32( m_in, size);
         else {
             skip_comment();
             m_in >> size;
@@ -402,7 +402,7 @@ public:
     void scan_facet_vertex_index( Integer32& index,
                                   int current_facet) {
         if ( binary())
-            _Binary_read_integer32( m_in, index);
+            I_Binary_read_integer32( m_in, index);
         else
             m_in >> index;
         if( ! m_in) {

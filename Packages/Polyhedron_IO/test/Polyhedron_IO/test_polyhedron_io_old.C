@@ -24,6 +24,7 @@
 // Polyhedral Surface File IO: Scanner and Writer
 // ============================================================================
 
+#define CGAL_USE_POLYHEDRON_DESIGN_ONE 1
 
 #include <CGAL/basic.h>
 #include <cstddef>
@@ -37,6 +38,7 @@
 #include <CGAL/Plane_3.h>
 
 #include <CGAL/Polyhedron_default_traits_3.h>
+#include <CGAL/Halfedge_data_structure_polyhedron_default_3.h>
 #include <CGAL/Polyhedron_3.h>
 
 #include <CGAL/IO/Polyhedron_iostream.h>
@@ -71,8 +73,9 @@ void test_file_IO_OFF() {
     typedef Cartesian<int>                    RepI;
     typedef Point_3<Rep>                      Point;
     typedef Plane_3<Rep>                      Plane;
+    typedef Halfedge_data_structure_polyhedron_default_3<Rep>  HDS;
     typedef Polyhedron_default_traits_3<Rep>  Traits;
-    typedef Polyhedron_3<Traits>              Polyhedron;
+    typedef Polyhedron_3<Traits,HDS>          Polyhedron;
     {
         Polyhedron P;
         std::istrstream in( triangle, CGAL_CLIB_STD::strlen( triangle));

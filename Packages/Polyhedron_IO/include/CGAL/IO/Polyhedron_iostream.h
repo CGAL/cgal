@@ -43,18 +43,39 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Traits, class HDS> inline
-std::ostream& operator<<( std::ostream& out,
-                          const Polyhedron_3<Traits,HDS>& P) {
+#ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
+template <class Traits, class HDS>
+std::ostream& 
+operator<<( std::ostream& out, const Polyhedron_3<Traits,HDS>& P) {
+#else // CGAL_USE_POLYHEDRON_DESIGN_ONE //
+template < class Traits,
+           class Items,
+#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
+           template < class T, class I>
+#endif
+           class HDS>
+std::ostream&
+operator<<( std::ostream& out, const Polyhedron_3<Traits,Items,HDS>& P) {
+#endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
     // writes P to `out' in PRETTY, ASCII or BINARY format
     // as the stream indicates.
-    File_header_OFF header( is_binary( out));
+    File_header_OFF header( is_binary( out), ! is_pretty( out), false);
     print_OFF( out, P, header);
     return out;
 }
 
+#ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
 template <class Traits, class HDS> inline
 std::istream& operator>>( std::istream& in, Polyhedron_3<Traits,HDS>& P) {
+#else // CGAL_USE_POLYHEDRON_DESIGN_ONE //
+template < class Traits,
+           class Items,
+#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
+           template < class T, class I>
+#endif
+           class HDS>
+std::istream& operator>>(std::istream& in, Polyhedron_3<Traits,Items,HDS>& P) {
+#endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
     // reads a polyhedron from `in' and appends it to P.
     scan_OFF( in, P);
     return in;

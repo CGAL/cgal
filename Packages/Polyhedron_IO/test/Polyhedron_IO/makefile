@@ -38,18 +38,26 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                test_polyhedron_io 
+                test_polyhedron_io \
+                test_polyhedron_io_old 
 
 test_polyhedron_io$(EXE_EXT): test_polyhedron_io$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_polyhedron_io test_polyhedron_io$(OBJ_EXT) $(LDFLAGS)
 
+test_polyhedron_io_old$(EXE_EXT): test_polyhedron_io_old$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_polyhedron_io_old test_polyhedron_io_old$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
-                   test_polyhedron_io.clean 
+                   test_polyhedron_io.clean \
+                   test_polyhedron_io_old.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#
 
 .C$(OBJ_EXT):
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
+
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 

@@ -41,10 +41,21 @@
 
 CGAL_BEGIN_NAMESPACE
 
+#ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
 template <class Traits, class HDS>
 Inventor_ostream_base&
-operator<< ( Inventor_ostream_base& out,
-             const Polyhedron_3<Traits,HDS>& P) {
+operator<<( Inventor_ostream_base& out, const Polyhedron_3<Traits,HDS>& P) {
+#else // CGAL_USE_POLYHEDRON_DESIGN_ONE //
+template < class Traits,
+           class Items,
+#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
+           template < class T, class I>
+#endif
+           class HDS>
+Inventor_ostream_base&
+operator<<( Inventor_ostream_base& out, 
+            const Polyhedron_3<Traits,Items,HDS>& P) {
+#endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
     File_writer_inventor  writer;
     generic_print_polyhedron( out.os(), P, writer);
     return out;
@@ -53,3 +64,4 @@ operator<< ( Inventor_ostream_base& out,
 CGAL_END_NAMESPACE
 #endif // CGAL_IO_POLYHEDRON_INVENTOR_OSTREAM_H //
 // EOF //
+

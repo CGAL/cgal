@@ -1,1 +1,1 @@
-File IO for CGAL_Polyhedron_3<Traits,HDS>.
+File IO for CGAL::Polyhedron_3.

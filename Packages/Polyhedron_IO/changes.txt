@@ -1,5 +1,22 @@
 Polyhedron_IO Package: Release changes:
 ---------------------------------------------------------------------
+3.2 (18 Jun 2001)
+
+     - Merged old design files and new design files into one package.
+       First internal release of new design. Old design disabled by 
+       default. Can be enabled using #define CGAL_USE_POLYHEDRON_DESIGN_ONE
+     - File in the demo and example directory are not yet converted
+       to the new design.
+
+3.1 (21 Sep 2000)
+
+     Complete redesign of the HalfedgeDS. Incompatible to previous 
+     versions. The design provides much more flexibility and can 
+     support planar maps and other data structures more easily. 
+     The class interface for CGAL::Polyhedron_3 is pretty much the 
+     same, basically only the template parameters have changed. Thus,
+     only minor changes in this package. Tested with g++ and MipsPro 7.3.
+
 2.11 (04 Feb 2000)
 
      Changing CGAL_static_cast to static_cast<> in File_header_OFF.C.

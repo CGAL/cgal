@@ -37,43 +37,48 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class Writer>
-class _Generic_writer_vertex_proxy {
+class I_Generic_writer_vertex_proxy {
     Writer&  m_writer;
 public:
     typedef typename Writer::Point Point;
-    _Generic_writer_vertex_proxy( Writer& w) : m_writer(w) {}
+    I_Generic_writer_vertex_proxy( Writer& w) : m_writer(w) {}
     void operator= ( const Point& p) { m_writer.write_vertex(p); }
 };
 
 template <class Writer>
-class _Generic_writer_vertex_iterator : public std::output_iterator {
+class I_Generic_writer_vertex_iterator
+    : public std::iterator< output_iterator_tag,
+                            typedef typename Writer::Point >
+{
     Writer&  m_writer;
 public:
-    typedef _Generic_writer_vertex_proxy< Writer>    Proxy;
-    typedef _Generic_writer_vertex_iterator< Writer> Self;
+    typedef I_Generic_writer_vertex_proxy< Writer>    Proxy;
+    typedef I_Generic_writer_vertex_iterator< Writer> Self;
 
-    _Generic_writer_vertex_iterator( Writer& w) : m_writer(w) {}
+    I_Generic_writer_vertex_iterator( Writer& w) : m_writer(w) {}
     Self& operator++()      { return *this; }
     Self& operator++(int)   { return *this; }
     Proxy operator*() const { return Proxy( m_writer); }
 };
 
 template <class Writer>
-class _Generic_writer_facet_proxy {
+class I_Generic_writer_facet_proxy {
     Writer&  m_writer;
 public:
-    _Generic_writer_facet_proxy( Writer& w) : m_writer(w) {}
+    I_Generic_writer_facet_proxy( Writer& w) : m_writer(w) {}
     void operator= ( std::size_t i) { m_writer.write_facet_index(i); }
 };
 
 template <class Writer>
-class _Generic_writer_facet_iterator : public std::output_iterator {
+class I_Generic_writer_facet_iterator
+    : public std::iterator< output_iterator_tag, std::size_t>
+{
     Writer& m_writer;
 public:
-    typedef  _Generic_writer_facet_proxy<Writer>    Proxy;
-    typedef  _Generic_writer_facet_iterator<Writer> Self;
+    typedef  I_Generic_writer_facet_proxy<Writer>    Proxy;
+    typedef  I_Generic_writer_facet_iterator<Writer> Self;
 
-    _Generic_writer_facet_iterator( Writer& w) : m_writer(w) {}
+    I_Generic_writer_facet_iterator( Writer& w) : m_writer(w) {}
     Self& operator++()      { return *this; }
     Self& operator++(int)   { return *this; }
     Proxy operator*() const { return Proxy( m_writer); }
@@ -96,10 +101,10 @@ class Generic_writer {
     std::size_t  m_fcnt;
     std::size_t  m_icnt;
 public:
-    typedef Pt                                     Point;
-    typedef Generic_writer< Writer, Pt>            Self;
-    typedef _Generic_writer_vertex_iterator<Self>  Vertex_iterator;
-    typedef _Generic_writer_facet_iterator<Self>   Facet_iterator;
+    typedef Pt                                      Point;
+    typedef Generic_writer< Writer, Pt>             Self;
+    typedef I_Generic_writer_vertex_iterator<Self>  Vertex_iterator;
+    typedef I_Generic_writer_facet_iterator<Self>   Facet_iterator;
 
     Generic_writer( const Writer& writer, std::ostream& out,
                     std::size_t v, std::size_t h, std::size_t f)

@@ -36,6 +36,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
+#ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
+
 template <class Traits, class HDS> inline
 void scan_OFF( std::istream& in, Polyhedron_3<Traits,HDS>& P,
                bool verbose = false) {
@@ -56,6 +58,46 @@ void scan_OFF( std::istream& in,
     P.delegate(scanner);
     header = scanner.header();
 }
+
+#else // CGAL_USE_POLYHEDRON_DESIGN_ONE //
+
+template < class Traits,
+           class Items,
+#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
+           template < class T, class I>
+#endif
+           class HDS>
+void scan_OFF( std::istream& in, Polyhedron_3<Traits,Items,HDS>& P,
+               bool verbose = false) {
+    // reads a polyhedron from `in' and appends it to P.
+    typedef Polyhedron_3<Traits,Items,HDS> Polyhedron;
+    typedef typename Polyhedron::HalfedgeDS HalfedgeDS;
+    typedef Polyhedron_scan_OFF<HalfedgeDS> Scanner;
+    Scanner scanner( in, verbose);
+    P.delegate(scanner);
+}
+
+template < class Traits,
+           class Items,
+#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
+           template < class T, class I>
+#endif
+           class HDS>
+void scan_OFF( std::istream& in,
+               Polyhedron_3<Traits,Items,HDS>& P,
+               File_header_OFF& header) {
+    // reads a polyhedron from `in' and appends it to P.
+    // Returns also the File_header_OFF structure of the object.
+    typedef Polyhedron_3<Traits,Items,HDS> Polyhedron;
+    typedef typename Polyhedron::HalfedgeDS HalfedgeDS;
+    typedef Polyhedron_scan_OFF<HalfedgeDS> Scanner;
+    Scanner scanner( in, header.verbose());
+    P.delegate(scanner);
+    header = scanner.header();
+}
+
+#endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
+
 
 CGAL_END_NAMESPACE
 #endif // CGAL_IO_SCAN_OFF_H //

@@ -66,18 +66,18 @@ public:
     }
     void write_vertex( const double& x, const double& y, const double& z) {
         if ( m_header.binary()) {
-            _Binary_write_float32( out(), x);
-            _Binary_write_float32( out(), y);
-            _Binary_write_float32( out(), z);
+            I_Binary_write_float32( out(), x);
+            I_Binary_write_float32( out(), y);
+            I_Binary_write_float32( out(), z);
         } else {
             out() << '\n' << x << ' ' << y << ' ' << z;
         }
     }
     void write_normal( const double& x, const double& y, const double& z) {
         if ( m_header.binary()) {
-            _Binary_write_float32( out(), x);
-            _Binary_write_float32( out(), y);
-            _Binary_write_float32( out(), z);
+            I_Binary_write_float32( out(), x);
+            I_Binary_write_float32( out(), y);
+            I_Binary_write_float32( out(), z);
         } else {
             out() << ' ' << ' ' << x << ' ' << y << ' ' << z;
         }
@@ -96,19 +96,19 @@ public:
     }
     void write_facet_begin( std::size_t no) {
         if ( m_header.binary())
-            _Binary_write_integer32( out(), no);
+            I_Binary_write_integer32( out(), no);
         else
             out() << no << ' ';
     }
     void write_facet_vertex_index( std::size_t index) {
         if ( m_header.binary())
-            _Binary_write_integer32( out(), index);
+            I_Binary_write_integer32( out(), index);
         else
             out() << ' ' << index;
     }
     void write_facet_end() {
         if ( m_header.binary())
-            _Binary_write_integer32( out(), 0);
+            I_Binary_write_integer32( out(), 0);
         else
             out() << '\n';
     }

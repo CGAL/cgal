@@ -2,10 +2,9 @@ Polyhedron_IO Package
 ---------------------------------------------------------------------
 File IO for CGAL_Polyhedron_3<Traits,HDS>.
 
-Note that the accompanying documentation is mainly for internal
-purposes. I assume that it gets integrated in a more general
-documentation about the different supported streams in CGAL.
-I can sent the TeX file on request.
+The documentation to this package can be found in the corresponding 
+input/output stream packages and some of the functions are mentioned 
+in the reference pages of the Polyhedron package.
 
 I hesitate at the moment to include the stream IO operators
 in CGAL_Polyhedron_3 by default, since this couples two non
