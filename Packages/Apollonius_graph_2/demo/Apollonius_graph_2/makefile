@@ -7,22 +7,17 @@
 # Choose the right include file from the <cgalroot>/make directory.
 
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
-#MYCGAL_I = $(HOME)/CGAL/internal_releases/CGAL-I
-#CGAL_MAKEFILE = $(MYCGAL_I)/make/makefile_i686_Linux-2.4.18-14_g++-3.2.0
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
-# the following directory is needed with CGAL 2.4 (public version) 
-# because some patches where needed in that version to make the demo work
-#
-# CGAL 2.5 has the needed functionality and so the following directory is not
-# needed with 2.5
 
 CXXFLAGS = \
+           -I../../include \
            $(CGAL_CXXFLAGS) \
-           $(LONG_NAME_PROBLEM_CXXFLAGS) 
+           -Iinclude \
+           $(LONG_NAME_PROBLEM_CXXFLAGS)
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -33,16 +28,17 @@ LIBPATH = \
 
 LDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_QT_LDFLAGS) 
+          $(CGAL_QT_LDFLAGS)
 
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: apollonius_graph_2$(EXE_EXT) 
+all:            \
+                apollonius_graph_2$(EXE_EXT) 
 
 apollonius_graph_2.moc:  apollonius_graph_2.C
-	$(QT_MOC) -o apollonius_graph_2.moc apollonius_graph_2.C
+	$(QT_MOC) -o apollonius_graph_2.moc  apollonius_graph_2.C
 
 qt_file_toolbar.moc:  qt_file_toolbar.h
 	$(QT_MOC) -o qt_file_toolbar.moc qt_file_toolbar.h
@@ -62,7 +58,7 @@ apollonius_graph_2$(EXE_EXT): apollonius_graph_2$(OBJ_EXT)
 	apollonius_graph_2$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-	apollonius_graph_2.clean ; rm -f *.moc 
+                   apollonius_graph_2.clean ; rm -f *.moc
 
 #---------------------------------------------------------------------#
 #                    suffix rules

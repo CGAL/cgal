@@ -2,6 +2,7 @@
 - replaced Vertex_handle(NULL) by Vertex_handle()
 - replaced comparisons of vertex and face handles against NULL by
   comparisons against {Vertex,Face}_handle()
+- updated the makefile for the demo (removed the -g flag and old comments)
 
 2 May 2004:  Menelaos Karavelas <mkaravel@cse.nd.edu>
 - bug fix for VC 7.1 in test suite
