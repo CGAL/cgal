@@ -1504,6 +1504,7 @@ Packages/Qt_widget/doc_tex/support/Qt_widget/voronoi_but.gif -text svneol=unset#
 Packages/Qt_widget/doc_tex/support/Qt_widget/ymonotone_but.gif -text svneol=unset#unset
 Packages/Qt_widget/doc_tex/support/Qt_widget/zoom_in_but.gif -text svneol=unset#unset
 Packages/Qt_widget/doc_tex/support/Qt_widget/zoom_out_but.gif -text svneol=unset#unset
+Packages/Qt_widget/include/CGAL/IO/pixmaps/alpha_shape.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/arrow.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/back.xpm -text
 Packages/Qt_widget/include/CGAL/IO/pixmaps/circle.xpm -text
