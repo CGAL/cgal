@@ -73,7 +73,7 @@ public:
     }
 
   // used to initialize the past-the end iterator
-  Triangulation_ds_cell_iterator_3(Tds* tds, int i)
+  Triangulation_ds_cell_iterator_3(Tds* tds, int)
     : _tds(tds)
     {
 //       if ( _tds->dimension() <3 ) { pos = NULL; } // there is no cell yet
@@ -212,7 +212,7 @@ public:
     }
   
   // used to initialize the past-the end iterator
-  Triangulation_ds_vertex_iterator_3(Tds* tds, int i)
+  Triangulation_ds_vertex_iterator_3(Tds* tds, int)
     : _tds(tds), index(0)
     {
       //      if ( _tds->number_of_vertices() == 0 ) { pos = NULL; }
@@ -353,7 +353,7 @@ public:
     }
   
   // used to initialize the past-the end iterator
-  Triangulation_ds_facet_iterator_3(Tds* tds, int i)
+  Triangulation_ds_facet_iterator_3(Tds* tds, int)
     : _tds(tds), index(0)
     {
       //      if ( _tds->dimension() < 2 ) { pos = NULL; }
@@ -536,7 +536,7 @@ public:
     }
   
   // used to initialize the past-the end iterator
-  Triangulation_ds_edge_iterator_3(Tds* tds, int i)
+  Triangulation_ds_edge_iterator_3(Tds* tds, int)
     : _tds(tds), b(0), e(1)
     {
       //      if ( _tds->dimension() < 1 ) { pos = NULL; }
