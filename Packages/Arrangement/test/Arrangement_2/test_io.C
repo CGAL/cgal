@@ -464,37 +464,18 @@ Curve read_polyline_curve(std::ifstream& file, bool reverse_order)
   {
       NT    x,y; 
       Curve curr_curve;
-      std::fstream  arr_file("arr.txt", 
-			     _IO_OUTPUT + 
-			     _IO_INPUT + 
-			     _IO_ATEND);
+      std::fstream  arr_file("arr.txt" , ios::in | ios::out);
+ 
+      //                             _IO_OUTPUT + 
+      //                     _IO_INPUT + 
+      //                     _IO_ATEND);
       
       arr_file.clear();
       // 1. read polylines and build arrangement
-
-      /*
-        // read number of polylines
-        num_polylines = get_next_int(file);
-        
-        // read curves (test specific)
-        while (num_polylines--) {
-        #if CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_TRAITS || \
-        CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
-        
-        curr_curve = read_segment_curve(file, reverse_order);
- 
-        #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS || \
-        CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
-        
-        curr_curve = read_polyline_curve(file, reverse_order);
-        #endif
-        
-	arr.insert(curr_curve);
-        }*/
-
+      
       input_file >> arr;
       arr_file << arr;
-
+      
       //input_file.close();
       //arr_file.close();
       //arr_file.open("temp", _IO_INPUT);
