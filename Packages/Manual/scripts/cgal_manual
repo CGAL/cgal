@@ -460,7 +460,9 @@ EOF
 
 \begin{document}
 
-\cgalTitlePage{$1 Package}
+EOF
+    echo "\\cgalTitlePage{$1 Package}" | sed 's/_/\\_/g'
+    cat <<EOF
 
 \cgalchapters{
 EOF
