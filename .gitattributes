@@ -2286,4 +2286,7 @@ Packages/cgal_window/src/CGALWin/mswin/leda1_sm.ico -text svneol=unset#unset
 Packages/cgal_window/src/CGALWin/mswin/leda2.ico -text svneol=unset#unset
 Packages/wininst/demo/Alpha_shapes_3/VC7/demo_alpha.vcproj -text
 Packages/wininst/demo/Alpha_shapes_3/VC7/demo_weight.vcproj -text
+Packages/wininst/include/CGAL/config/msvc7/gmp.h -text
+Packages/wininst/include/CGAL/config/msvc7/mpf2mpfr.h -text
+Packages/wininst/include/CGAL/config/msvc7/mpfr.h -text
 Packages/wininst/src/cgallib.vcproj -text
