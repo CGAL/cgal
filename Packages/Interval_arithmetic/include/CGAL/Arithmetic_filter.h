@@ -30,12 +30,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/Interval_arithmetic.h>
 
-// Check that the filtering stuff will work...
-// It will go away when the overlap_action() will be definable dynamically.
-#ifdef CGAL_IA_NO_EXCEPTION
-#  warning CGAL_IA_NO_EXCEPTION is defined !
-#endif
-
 CGAL_BEGIN_NAMESPACE
 
 // CT = construction type
