@@ -1,0 +1,66 @@
+2.0   - LEDA independent version of the package
+
+--------------------------------------------------------------------------------------------
+
+1.2.4 - HTML Manual changes
+
+1.2.3 - added some \ccHtmlNoLinksFrom in the documentation to prevent linking of Vertex/Line
+        in the HTML Manual version
+
+1.2.2 - some manual changes
+
+1.2.1 - small changes to Point_set_2.h to please MSVC
+      - LEDA check added to program files
+
+1.2   - manual split (into user - and reference manual)
+      - Point_set_2.h reorganized
+
+1.1.8 - no more usage of LEDA/rat_window.h
+        (is not available on LEDA 3.7.1)
+
+1.1.6 - demo makefile changed 
+      - a typename added for g++ in Point_set_2.h to please g++ -pedantic
+
+1.1.5 - changed demo makefile
+      - renaming of traits in manual
+      - additions in testsuite
+
+1.1.4 - 2x std::std removed from Point_set_2.h
+
+1.1.3 - demos changed (no using any more, some other small changes)
+      - cerr -> std::cerr in Point_set_2.h
+
+1.1.2 - test and examples makefile changed for BC
+
+1.1.1 - function save_state and inclusion of fstream-headers
+        removed
+
+1.1   - Pointset_2 -> Point_set_2
+      - Traits classes changed
+      - lots of changes in the manual
+
+1.0.9 - makefiles changed
+
+1.0.8 - removed some endl without the std:: prefix 
+
+1.0.7 - GeoWin demos changed
+      - some demo - Makefiles changed
+      - lookup crash on empty pointset fixed
+
+1.0.6 - demos changed; some typename stuff in
+        pointset_cgaltraits_2.h changed for MSVC
+
+1.0.5 - changes in Pointset_2.h for compatibility with older LEDA versions
+
+1.0.4 - small change in Pointset_2.h
+
+1.0.3 - some demos were changed
+
+1.0.2 - changes in Makefiles
+      - added inclusion of CGAL/config.h at the beginning of programs
+      - small change for better VC - compatibility
+
+1.0.1 - some demo programs changed
+      - 2 errors in the file headers fixed
+
+1.0 First released version of the Pointset_2 for CGAL
