@@ -15,7 +15,7 @@
 // file          : include/CGAL/_test_cls_tds_3.C
 // revision      : 
 // revision_date : 
-// author(s)     : Francois Rebufat <Francois Rebufat@sophia.inria.fr>
+// author(s)     : Francois Rebufat
 //                 Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //
 // coordinator   : INRIA Sophia-Antipolis
@@ -41,6 +41,7 @@ _test_cls_tds_3( const Tds &)
   typedef typename Tds::Vertex_iterator   Vertex_iterator;
   typedef typename Tds::Facet_iterator    Facet_iterator;
   typedef typename Tds::Edge_iterator     Edge_iterator;
+  typedef typename Tds::Cell_handle       Cell_handle;
   typedef typename Tds::Cell_iterator     Cell_iterator;
 
   // test Vertex and cell :
@@ -129,20 +130,26 @@ _test_cls_tds_3( const Tds &)
   assert(tds6.number_of_vertices()==8);
 //   std::cout << tds6.number_of_cells()<< " cells" << std::endl;
 
-  cdone = tds6.cells_end();
+  // We can't use the Cell_iterator while we modify the TDS.
+  // However, we can store all Cell_handles beforehand,
+  // since 2-3 flips do not affect the validity of existing cells.
+  std::vector<Cell_handle> Cell_v;
+  for (cit = tds6.cells_begin(); cit != tds6.cells_end(); ++cit)
+      Cell_v.push_back(cit);
   
-  for ( cit = tds6.cells_begin(); cit != cdone; cit++ ) {
-    // NOTE : the triangulation is modified during loop
-    // --> the cell_iterator does not mean a lot
+  for (typename std::vector<Cell_handle>::const_iterator ccit = Cell_v.begin();
+       ccit != Cell_v.end(); ++ccit) {
     for ( i=0; i<4; i++ ) {
+      assert(tds6.is_valid());
+      assert(tds6.is_cell(*ccit));
       std::set< Vertex_handle > set_of_vertices;
-      tds6.incident_vertices( cit->vertex(i), std::inserter(set_of_vertices,
-			                      set_of_vertices.begin() ) );
-      if ( set_of_vertices.find ( cit->neighbor(i)->vertex
-	     ( cit->neighbor(i)->index( cit ) ) ) 
+      tds6.incident_vertices( (*ccit)->vertex(i),
+                              std::inserter(set_of_vertices,
+                                            set_of_vertices.begin() ) );
+      if ( set_of_vertices.find((*ccit)->mirror_vertex(i)) 
 	   == set_of_vertices.end() ) {
 	nbflips++;
-	tds6.flip_flippable( cit, i );
+	tds6.flip_flippable( *ccit, i );
 	assert(tds6.is_valid());
 // 	if ( tds6.flip( cit, i ) ) {
 // 	  tds6.is_valid(true);
