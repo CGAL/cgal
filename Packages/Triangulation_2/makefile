@@ -52,7 +52,7 @@ clean:
 	cd test/Triangulation2_Delaunay; make -f Makefile realclean
 	cd test/Triangulation2_constrained; make -f Makefile realclean
 	cd examples/Triangulation ; make realclean
-	cd demo/Triangulation ; make clean
+	cd demo/Triangulation ; make realclean
 
 
 $(PACKAGE).tar.gz:
