@@ -387,10 +387,10 @@ In the directories \ccc{demo/Qt_widget/basic/tutorial*} we provide some examples
 
 \subsection*{Tutorial 1}
 
-In this tutorial you can see how can you use Qt\_widget like a stream,
-for outputing \cgal\ objects.  Of course I recomend to read the tutorial
-from Trolltech, that is the original Qt tutorial, but I think that you
-can pass this tutorials without having strong skills of Qt
+In this tutorial you can see how can you use \ccStyle{Qt\_widget} like
+a stream, for outputing \cgal\ objects.  Of course I recomend to read
+the tutorial from Trolltech, that is the original Qt tutorial, but I
+think that you can pass this tutorials without having strong skills of Qt
 programming. Anyway, the code that belongs to Qt it is explained in
 this tutorials.
 
@@ -486,8 +486,8 @@ private:
 There is another line in the redraw():\\
 Qt\_widget::redraw();
 
-This line is meant to call the redraw() from the Qt\_widget base class,
-used to draw the attached layers as you'll see later. This function
+This line is meant to call the redraw() from the \ccStyle{Qt\_widget}
+base class, used to draw the attached layers as you'll see later. This function
 also clears the screen. If you remove this line it's necessary to add
 clear() instead.
 
@@ -528,13 +528,13 @@ class My_Layer : public CGAL::Qt_widget_layer{
 };
 \end{ccExampleCode}
 As you see you have to provide a draw() function in your layer, in
-order to create output on the screen. The Qt_widget will call this
+order to create output on the screen. The \ccStyle{Qt\_widget} will call this
 draw() function for every attached and active layer. A layer is active
 in the moment of attaching by default.
 
-In the code of the constructor of My_Window the layer is attached to
+In the code of the constructor of My\_Window the layer is attached to
 the widget:\\
-attach(&v);\\
+attach(\&v);\\
 Because the layer is attached, the triangulation will appear on the
 screen every time you call redraw(), as the widget redraws all the
 layers. This means that in this tutorial every time you press the mouse
