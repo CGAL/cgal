@@ -1,17 +1,22 @@
-3.32 (24 January 2001)
+3.33 (? November 2002)
+- Fix buglet : class Origin was declared outside namespace CGAL.
+
+======================== CGAL 2.4 ======================
+
+3.32 (24 January 2002)
 - Remove useless predicate_classes_2.h.
 
-3.31 (23 January 2001)
+3.31 (23 January 2002)
 - Remove Point_2_base and such typedefs.
 
-3.30 (22 January 2001)
+3.30 (22 January 2002)
 - Remove global functions and member functions, these are obtained by
   derivation.
 
-3.29 (9 January 2001)
+3.29 (9 January 2002)
 - Resubmit.
 
-3.28 (7 January 2001)
+3.28 (7 January 2002)
 - Comment the now useless member functions of Iso_rectangle_2.
 
 3.27 (29 October 2001)
