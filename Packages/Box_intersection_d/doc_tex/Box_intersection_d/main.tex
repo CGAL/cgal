@@ -1,7 +1,7 @@
 \chapter*{Bounding Box Intersection}
 
 \section*{Introduction}
-This chapter describes the functions provided in \cgal{} 
+This chapter describes the functions provided in \cgal{}
 to test large numbers of bounding boxes for intersection.
 
 Computing information about complex geometric primitives is often
@@ -43,89 +43,112 @@ class.
 
 There has to be an arbitrary fixed order between boxes, for example by
 assigning unique numbers to each box. If boxes are allocated on the
-heap, also the memory location could define such an order. 
+heap, also the memory location could define such an order.
 
-The default bounding box 
-\begin{itemize} 
-  \item implements a standard bounding box 
+The default bounding box
+\begin{itemize}
+  \item implements a standard bounding box
   \item is generic in terms of number type and dimension: \\
-  \texttt{template< class T, unsigned int DIM > struct Default\_box\_d} 
+  \texttt{template< class T, unsigned int DIM > struct Default\_box\_d}
   \item provides unique numbering
   \item can be used as a base class to derive a user defined box with
   additional information, for example, an exact geometric primitive
   that was approximated with the bounding box.
 \end{itemize}
 
-\subsection*{Box Adapter}
-Bounding box access is exclusively done using a box adapter. This adapter hides the specific interface a box may have. A model of a box adapter may look as follows:
+All boxes need to be assignable.
+
+\subsection*{Box Traits}
+Bounding box access is exclusively done using a box traits class, which serves as an adapter. This adapter hides the specific interface a box may have. A model of a box adapter may look as follows:
 \begin{ccExampleCode}
 template< class Box_ >
-struct Default_box_d_adapter {
-    typedef Box_ Box;
-    typedef typename Box::Number_type Number_type;
+struct Default_box_traits_d {
+    typedef const Box_&       Box;
+    typedef typename Box_::NT NT;
 
-    static Number_type get_lo( const Box& b, unsigned int dim )
-    { return b.get_lo( dim ); }
+    static NT get_lo(Box b, unsigned int dim)
+    { return b.get_lo(dim); }
 
-    static Number_type get_hi( const Box& b, unsigned int dim )
-    { return b.get_hi( dim ); }
+    static NT get_hi(Box b, unsigned int dim)
+    { return b.get_hi(dim); }
 
-    static unsigned int get_num( const Box& b )
-    { return b.get_num();     }
+    static unsigned int get_id(Box b)
+    { return b.get_id();     }
 
-    static unsigned int get_dim() 
-    { return Box::get_dim(); }
+    static unsigned int get_dim() { return Box_::get_dim(); }
 };
 \end{ccExampleCode}
 
-This specific example of a box adapter is tailored for box classes that implement the default bounding box given above. If another implementation of box classes is used that (for example) does not allow access via dimension indices directly, a custom box adapter has to be written that translates dimension indices to whatever method invocations needed.
+This example of a box adapter is tailored for box classes that implement the default bounding box mentioned above. If another implementation of box classes is used that (for example) does not allow access via dimension indices directly, a custom box adapter has to be written that translates dimension indices to whatever method invocations needed.
 
 Box adapter requirements:
 \begin{itemize}
- \item The type of \texttt{Box} can be either a pointer or a plain structure.
- \item \texttt{Number\_type} must be the same type as for the \texttt{BoundingBox}. In the example above, \texttt{Number\_type} is just propagated.
+ \item \texttt{Box} specifies the argument type: box objects are passed to functions using exactly this type.
+ \item \texttt{NT} must be the same type as for the provided box class. In the example above, \texttt{NT} is just propagated.
  \item \texttt{get\_lo} and \texttt{get\_hi} return the vector components of dimension \texttt{dim}, where the first  dimension has the index zero.
  \item \texttt{get\_num} returns the unique number of that box. Note that the return type is not constrained to \texttt{unsigned int}. Instead, it can be anything for which both \texttt{==} and \texttt{<} operators are defined.
+ \item \texttt{get\_dim} returns the number of dimensions, starting with dimension one.
 \end{itemize}
 
-\subsection*{Box Traits}
-The box traits class specifies predicates between boxes. It propagates number type, box type, dimension and all other fields from the box adapter to the actual implementation of bounding box intersection. Some of the predicates it defines are:
+\subsection*{Box Predicate Traits}
+The box predicate traits class specifies predicates between boxes. It propagates number type, box type, dimension and all other fields from the box adapter to the actual implementation of bounding box intersection. Some of the predicates it defines are:
+\begin{ccExampleCode}
+    static bool is_lo_less_lo(Box a, Box b, unsigned int dim) {
+        return get_lo(a,dim)  < get_lo(b,dim) ||
+               get_lo(a,dim) == get_lo(b,dim) && get_id(a) < get_id(b);
+    }
+
+    static bool contains_lo_point(Box a, Box b, unsigned int dim)
+    { return is_lo_less_lo(a,b,dim) && is_lo_less_hi(b,a,dim);  }
+
+    class Compare : public std::binary_function<Box,Box,bool> { ... };
+    ...
+\end{ccExampleCode}
 
 \begin{itemize}
- \item \texttt{bool contains\_lo\_point(Box interval, Box point, int dim)}: regard the first box in dimension \texttt{dim} as an interval, and the second as a point being the low point of an interval. Returns true iff \texttt{interval} contains \texttt{point}.
- \item \texttt{bool is\_lo\_less\_lo(Box a, Box b, int dim)}: interval starting point less than another intervals starting point (wrt. dimension \texttt{dim})
+ \item \texttt{bool contains\_lo\_point(Box interval, Box point, int dim)}: regard the first box in dimension \texttt{dim} as an interval, and the second as a point being the low point of an interval. Returns true iff \texttt{interval} contains \texttt{point}. One important special case here is that \texttt{point} may coincide with the endpoint of \texttt{interval}. Clearly, the answer depends on the choice between halfopen or closed intervals.
+ \item \texttt{bool is\_lo\_less\_lo(Box a, Box b, int dim)}: interval starting point less than another intervals starting point (wrt. dimension \texttt{dim}). If both intervals share the same starting point in that dimension, the box IDs are compared.
  \item a binary predicate object \texttt{class Compare} that compares two boxes using the predicate \texttt{is\_lo\_less\_lo}.
 \end{itemize}
 
 Usually, the default predicates need not be changed. Detailed requirements for box traits can be found in the reference. The default implementation of box predicates is a template with two parameters:
 
-\texttt{template< class BoxAdapter, bool closed > struct Default\_Box\_Traits}
+\texttt{template< class BoxTraits, bool closed > struct Default\_Box\_Predicate\_Traits\_d}
 
-Box access is required inside the predefined predicates, therefore a box adapter has to be given to the traits class. The boolean constant \texttt{closed} chooses between closed and half open box interpretation. 
+Box access is required inside the predefined predicates, therefore a box traits class (which models an adapter) has to be given to the predicate traits class. The boolean constant \texttt{closed} chooses between closed and half open box interpretation.
 
 
 \subsection*{Usage}
-First, for each geometric primitive, a bounding box has to be computed. Any bounding box class can be used, as long as a box adapter exists for it. The bounding box sets have to be supplied to the algorithm by pairs of \ccc{Random Access Iterators}. While checking, each bounding box intersection is written to an output iterator as two box references.
+First, for each geometric primitive, a bounding box has to be computed. Any bounding box class can be used, as long as a box adapter exists for it. The bounding box sets have to be supplied to the algorithm by pairs of \ccc{Random Access Iterators}. While checking, each bounding box intersection is written to an output iterator as two boxes. The input box sets need not be sorted in any order.
 
-If the used box class is derived from the default bounding box (or at least has the same fields), there is no need to specify a box adapter. When no box adapter is given, it is assumed that the default box adapter can be used to access the supplied boxes.
+If the used box class is derived from the default bounding box (or at least has the same fields), there is no need to specify a box adapter. When no box adapter is given, it is assumed that the default box adapter can be used to access the supplied boxes. A minimal example using just the defaults demonstrates the invocation:
 
+\ccIncludeExampleCode{../../examples/Box_intersection_d/minimal.cc}
 
+Here, the box type is exactly the default box using three dimensions and \texttt{double} as the underlying number type. A number of boxes is filled with random data and all box intersections are reported as pairs of numbers. The callback has to accept two boxes of type similar to the iterator's value type.
+
+Notice that the default box adapter is a template with a box type argument. The box type needed for the adapter is infered from the iterator's value type. It may be a class type or a pointer to a class. Default box traits templates exist for both kinds of types.
+
+\subsubsection*{Performance Parameters}
+Internally, the bounding box check uses a streamed segment tree. A cutoff threshold parameter specifies the minimum amount of boxes so that the segment tree is used. Below this minimum, a simpler algorithm is used that has less overhead and performs well only for low number of boxes and dimension. The choice of a cutoff parameter can have a significant effect on runtime. If the cutoff value is near to the overall number of boxes, the runtime may in extreme cases equal that of the simpler algorithm because it is invoked too early. Threshold values that are too low invoke the simpler algorithm too late and add some unneccessary overhead to the overall runtime.
+
+Unfortunately, there is no general method to automatically determine an optimal cutoff parameter, since it depends on the used hardware, the callback runtime/segment tree runtime ratio and of course the number of boxes to be checked. In cases where the callback runtime is dominant, it may be best to set the threshold parameter to values near zero. Otherwise a formula like $cutoff=\sqrt{n}$ can lead to acceptable results. However, for optimal runtime some experiments to compare different cutoff parameters are required.
+
+In general:
 \begin{itemize}
-  \item runtime $O(n\log^{d-1}n+k)$ where n is the number of boxes, d is dimension (starting with one) and k is number of intersections
-  \item space requirement $O(n)$ where n is number of boxes. no new space is allocated. instead, user provided box iterators are reused.
-  \item some fine-tuning required for last percent of performance (cutoff parameter) 
-  \item segment tree has some overhead. if callback runtime is low, better use scanning for lower numbers of boxes. \cgal uses exact arithmetic. may slow down the computation inside the callbacks. segment tree faster even for low numbers of boxes.  
+  \item When using a reasonable cutoff parameter, the runtime is $O((n+m)\log^{d}(n+m)+k)$, where $n$ and $m$ are the number of boxes, $d$ is number of dimensions (starting with one) and $k$ is number of box intersections.
+  \item In cases of a badly chosen cutoff parameter, the runtime drops to $O(n\log n+m\log m+k`)$ where $k`$ is the number of intersections of a one dimensional interval set in which for each box in the box set, only the interval in dimension $d$ is considered. If all boxes are arranged in a row, so that in dimension $d$ all intervals overlap, $k`=n*m$ which is much higher than the usual $k=O(n+m)$.
+  \item Space requirement is $O(n+m)$ for the user provided boxes. No new space is allocated while computing.
 \end{itemize}
 
- 
 \section*{Examples}
 All examples use closed boxes and the bipartite setting. \texttt{fill\_boxes}, \texttt{callback} and \texttt{main} are almost identical.
 \subsection*{Minimal Example}
-Minimal example using random boxes. Boxes are default boxes without any geometric primitives inside. Each intersection is directly reported as a pair of numbers. 
+Minimal example using random boxes. Boxes are default boxes without any geometric primitives inside. Each intersection is directly reported as a pair of numbers.
 \ccIncludeExampleCode{../../examples/Box_intersection_d/minimal.cc}
 
 \subsection*{Custom Box}
-box containing some nondeterministic primitive. 
+box containing some nondeterministic primitive.
 \ccIncludeExampleCode{../../examples/Box_intersection_d/custombox.cc}
 
 \subsection*{Custom BoxAdapter }
