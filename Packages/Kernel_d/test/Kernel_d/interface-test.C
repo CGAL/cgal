@@ -83,9 +83,9 @@ int main()
     Point::Cartesian_const_iterator cit; 
 
     Kernel::Cartesian_const_iterator_d cit_begin = 
-      Kernel().construct_Cartesian_const_iterator_d_object()(p1);
+      Kernel().construct_cartesian_const_iterator_d_object()(p1);
     Kernel::Cartesian_const_iterator_d cit_end = 
-      Kernel().construct_Cartesian_const_iterator_d_object()(p1, 1);
+      Kernel().construct_cartesian_const_iterator_d_object()(p1, 1);
 
     for (i=0,hit=p1.homogeneous_begin(),cit=p1.cartesian_begin(); 
          i<p1.dimension(); ++hit,++cit,++i) {
@@ -597,10 +597,9 @@ int main()
     Point::Cartesian_const_iterator cit; 
 
     Kernel::Cartesian_const_iterator_d cit_begin = 
-      Kernel().construct_Cartesian_const_iterator_d_object()(p1);
+      Kernel().construct_cartesian_const_iterator_d_object()(p1);
     Kernel::Cartesian_const_iterator_d cit_end = 
-      Kernel().construct_Cartesian_const_iterator_d_object()(p1, 1);
-
+      Kernel().construct_cartesian_const_iterator_d_object()(p1, 1);
   
     for (i=0,hit=p1.homogeneous_begin(),cit=p1.cartesian_begin(); 
          i<p1.dimension(); ++hit,++cit,++i) {
