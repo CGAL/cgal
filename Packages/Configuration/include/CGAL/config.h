@@ -40,11 +40,6 @@
 #   if ! defined(__INTEL_COMPILER)
 #     define CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT 1
 #   endif
-#   if ( _MSC_VER < 1300 ) && ! defined(__INTEL_COMPILER)
-            // we do not get here with Intel
-#           include <stl_config.h>
-#           include <stl_iterator_base.h>
-#	endif
 #else
 #   define CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(a)
 #endif // _MSC_VER
