@@ -78,6 +78,7 @@ if [ $# -ne 0 ] ; then
 else
   #               NAME OF EXECUTABLE                   DATA DIRECTORY
   compile_and_run Arr_segment_exact_traits_test        segments
+#  compile_and_run Arr_segment_cached_traits_test       segments
   compile_and_run Arr_leda_segment_exact_traits_test   segments
   compile_and_run Arr_polyline_traits_test             polylines
   compile_and_run Arr_leda_polyline_traits_test        polylines
