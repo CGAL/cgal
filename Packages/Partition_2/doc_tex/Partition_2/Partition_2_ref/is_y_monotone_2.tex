@@ -11,17 +11,17 @@ Function for testing the $y$-monotonicity of a sequence of points.
 \ccFunction{
 template<class InputIterator, class Traits>
 bool
-is_y_monotone_2(InputIterator first, InputIterator last,
+is_y_monotone_2(InputIterator first, InputIterator beyond,
                 const Traits& traits);
 }
 {
 Determines if the sequence of points in the range 
-[\ccc{first}, \ccc{last}) define a $y$-monotone 
+[\ccc{first}, \ccc{beyond}) define a $y$-monotone 
 polygon or not. If so, the function returns \ccc{true}, otherwise it
 returns \ccc{false}. 
 }
 
-\ccHeading{Preconditions}
+\ccHeading{Requirements}
 \ccIndexSubitem[C]{is_y_monotone_2}{preconditions}
 \begin{enumerate}
     \item \ccc{Traits} is a model of the concept IsYMonotoneTraits\_2.%
@@ -29,57 +29,31 @@ returns \ccc{false}.
     \item \ccc{InputIterator::value_type} should be \ccc{Traits::Point_2}.
 \end{enumerate}
 
-The default traits class \ccc{Default_traits} is the \cgal\ \ccc{Kernel_traits_2}
-class, 
+The default traits class \ccc{Default_traits} is the kernel in which the
+type \ccc{InputIterator::value_type} is defined.%
 \ccIndexTraitsClassDefault{is_y_monotone_2}
-with the representation type determined by \ccc{InputIterator::value_type}.
 
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::Is_y_monotone_2<Traits>} \\
 \ccRefIdfierPage{CGAL::y_monotone_partition_2} \\
 \ccRefIdfierPage{CGAL::y_monotone_partition_is_valid_2}
 
+\ccImplementation
+
+This function requires $O(n)$ time for a polygon with $n$ vertices.
+
 \ccExample
 
-The following code fragment computes a $y$-monotone partitioning
-of the simple polygon \ccc{P} using the default
+The following program computes a $y$-monotone partitioning
+of a polygon using the default
 traits class and stores the partition polygons in the list 
 \ccc{partition_polys}.  It then asserts that each of the partition 
-polygons is, in fact, a $y$-monotone polygon.  (Note that this
-assertion is superfluous unless the postcondition checking done
+polygons is, in fact, a $y$-monotone polygon and that the partition
+is valid.  (Note that the
+assertions are superfluous unless the postcondition checking done
 by \ccc{y_monotone_partition_2} has been turned off during compilation.)
 
-\begin{verbatim}
-   #include <CGAL/basic.h>
-   #include <CGAL/Cartesian.h>
-   #include <CGAL/Partition_traits_2.h>
-   #include <CGAL/partition_2.h>
-   #include <CGAL/is_y_monotone_2.h>
-   #include <list>
-
-   typedef CGAL::Cartesian<double>                           R;
-   typedef CGAL::Polygon_traits_2<R>                         Traits;
-   typedef Traits::Point_2                                   Point_2;
-   typedef Traits::Polygon_2                                 Polygon_2
-
-   Polygon_2            P;
-   std::list<Polygon_2> partition_polys;
-
-   // ...
-   // insert vertices into P to create a simple CCW-oriented polygon
-   // ...
-   CGAL::y_monotone_partition_2(P.vertices_begin(),
-                                P.vertices_end(),
-                                std::back_inserter(partition_polys));
-
-   std::list<Polygon_2>::const_iterator   poly_it;
-   for (poly_it = partition_polys.begin(); poly_it != partition_polys.end();
-        poly_it++)
-   {
-      assert(CGAL::is_y_monotone_2((*poly_it).vertices_begin(), 
-                                   (*poly_it).vertices_end()));
-   }
-\end{verbatim}
+\ccIncludeExampleCode{Partition_2/y_monotone_ex.C}
 
 
 
