@@ -1,6 +1,6 @@
 version 10.0:
 using multimaps.
-new design for 2D/3D compatibility.
+small design changes for 2D/3D compatibility.
 
 version 9.0:
 new iterators added to describe the alpha shape for a certain value alpha.
