@@ -1,5 +1,8 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
+1.46 (15. September 2003) [af]
+- Added intro.tex to the reference manual
+
 1.45 (10. September 2003) [rursu]
 - Qt_help_window is in the CGAL namespace now.
 
