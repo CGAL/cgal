@@ -66,7 +66,7 @@ int main()
 //   typedef CGAL::Triangulation_face_base_2<Gt5>                       Fb5;
 //   typedef CGAL::Triangulation_default_data_structure_2<Gt5,Vb5,Fb5>  Tds5;
 //   typedef CGAL::Triangulation_2<Gt5,Tds5>    Cls5;
-//   _test_cls_triangulation_short_2( Cls5() );
+ //   _test_cls_triangulation_short_2( Cls5() );
 
   std::cout << std::endl << "Testing Triangulation_2" <<std::endl;
   std::cout << " using Homogeneous  Kernel traits : " << std::endl;
