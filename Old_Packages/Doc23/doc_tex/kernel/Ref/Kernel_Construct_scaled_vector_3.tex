@@ -5,15 +5,15 @@ A model for this must provide:
 
 
 \ccMemberFunction{
-template <class RT>
+template <class Kernel::RT>
 Kernel::Vector_3 operator()(const Kernel::Vector_3 &v,
-                            const RT& scale);}
+                            const Kernel::RT& scale);}
             {produces the vector \ccc{v} scaled by a factor \ccc{scale}.}
 
 \ccMemberFunction{
-template <class RT>
+template <class Kernel::RT>
 Kernel::Vector_3 operator()(const Kernel::Vector_3 &v,
-                            const Quotient<RT>& scale);}
+                            const Quotient<Kernel::RT>& scale);}
             {produces the vector \ccc{v} scaled by a factor \ccc{scale}.}
 
 
