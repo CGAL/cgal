@@ -1,3 +1,7 @@
+Version 6.33 (? October 2001)
+- Use Handle_for/Ref_counted in Aff_[23].
+- Bring Simple_cartesian in sync with Cartesian.
+
 Version 6.32 (8 October 2001)
 - Make BCC happy.
 

@@ -28,7 +28,7 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R >
 class Aff_transformation_rep_baseC2
-  : public Rep
+  : public Ref_counted
 {
 public:
   typedef typename R::FT                        FT;

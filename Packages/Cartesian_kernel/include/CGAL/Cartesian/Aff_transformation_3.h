@@ -61,30 +61,30 @@ public:
   Aff_transformationC3()
   {
     FT ft1(1), ft0(0);
-    PTR = new Aff_transformation_repC3<R>(ft1, ft0, ft0,
+    initialize_with(Aff_transformation_repC3<R>(ft1, ft0, ft0,
                                           ft0, ft1, ft0,
-                                          ft0, ft0, ft1);
+                                          ft0, ft0, ft1));
   }
 
   Aff_transformationC3(const Identity_transformation)
   {
     FT ft1(1), ft0(0);
-    PTR = new Aff_transformation_repC3<R>(ft1, ft0, ft0,
+    initialize_with(Aff_transformation_repC3<R>(ft1, ft0, ft0,
                                           ft0, ft1, ft0,
-                                          ft0, ft0, ft1);
+                                          ft0, ft0, ft1));
   }
 
   Aff_transformationC3(const Translation, const Vector_3 &v)
   {
-    PTR = new Translation_repC3<R>(v);
+    initialize_with(Translation_repC3<R>(v));
   }
 
   Aff_transformationC3(const Scaling, const FT &s, const FT &w = FT(1))
   {
     if (w != FT(1))
-      PTR = new Scaling_repC3<R>(s/w);
+      initialize_with(Scaling_repC3<R>(s/w));
     else
-      PTR = new Scaling_repC3<R>(s);
+      initialize_with(Scaling_repC3<R>(s));
   }
 
   // General form: without translation
@@ -94,13 +94,13 @@ public:
                        const FT& w = FT(1))
   {
     if (w != FT(1))
-      PTR = new Aff_transformation_repC3<R>(m11/w, m12/w, m13/w,
+      initialize_with(Aff_transformation_repC3<R>(m11/w, m12/w, m13/w,
                                             m21/w, m22/w, m23/w,
-                                            m31/w, m32/w, m33/w);
+                                            m31/w, m32/w, m33/w));
     else
-      PTR = new Aff_transformation_repC3<R>(m11, m12, m13,
+      initialize_with(Aff_transformation_repC3<R>(m11, m12, m13,
                                             m21, m22, m23,
-                                            m31, m32, m33);
+                                            m31, m32, m33));
   }
 
   // General form: with translation
@@ -111,18 +111,18 @@ public:
               const FT& w = FT(1))
   {
     if (w != FT(1))
-      PTR = new Aff_transformation_repC3<R>(m11/w, m12/w, m13/w, m14/w,
+      initialize_with(Aff_transformation_repC3<R>(m11/w, m12/w, m13/w, m14/w,
                                             m21/w, m22/w, m23/w, m24/w,
-                                            m31/w, m32/w, m33/w, m34/w);
+                                            m31/w, m32/w, m33/w, m34/w));
     else
-      PTR = new Aff_transformation_repC3<R>(m11, m12, m13, m14,
+      initialize_with(Aff_transformation_repC3<R>(m11, m12, m13, m14,
                                             m21, m22, m23, m24,
-                                            m31, m32, m33, m34);
+                                            m31, m32, m33, m34));
   }
 
   Point_3
   transform(const Point_3 &p) const
-  { return ptr()->transform(p); }
+  { return Ptr()->transform(p); }
 
   Point_3
   operator()(const Point_3 &p) const
@@ -130,7 +130,7 @@ public:
 
   Vector_3
   transform(const Vector_3 &v) const
-  { return ptr()->transform(v); }
+  { return Ptr()->transform(v); }
 
   Vector_3
   operator()(const Vector_3 &v) const
@@ -138,7 +138,7 @@ public:
 
   Direction_3
   transform(const Direction_3 &d) const
-  { return ptr()->transform(d); }
+  { return Ptr()->transform(d); }
 
   Direction_3
   operator()(const Direction_3 &d) const
@@ -152,24 +152,21 @@ public:
   operator()(const Plane_3& p) const
   { return transform(p); } // FIXME : not compiled by the test-suite !
 
-  Aff_transformationC3 inverse() const { return ptr()->inverse(); }
+  Aff_transformationC3 inverse() const { return Ptr()->inverse(); }
   
-  bool is_even() const { return ptr()->is_even(); }
-  bool is_odd() const { return  ! (ptr()->is_even()); }
+  bool is_even() const { return Ptr()->is_even(); }
+  bool is_odd() const { return  ! (Ptr()->is_even()); }
   
-  FT cartesian(int i, int j) const { return ptr()->cartesian(i,j); }
+  FT cartesian(int i, int j) const { return Ptr()->cartesian(i,j); }
   FT homogeneous(int i, int j) const { return cartesian(i,j); }
   FT m(int i, int j) const { return cartesian(i,j); }
   FT hm(int i, int j) const { return cartesian(i,j); }
 
   Aff_transformationC3 operator*(const Aff_transformationC3 &t) const
-  { return (*ptr()) * (*t.ptr()); }
+  { return (*Ptr()) * (*t.Ptr()); }
 
 protected:
-  Aff_transformationC3        transpose() const { return ptr()->transpose(); }
-
-private:
-  Aff_t_base* ptr() const { return static_cast<Aff_t_base*>(PTR); }
+  Aff_transformationC3        transpose() const { return Ptr()->transpose(); }
 };
 
 
@@ -182,9 +179,6 @@ std::ostream &operator<<(std::ostream &os,
     return os;
 }
 #endif // CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATIONC3
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_AFF_TRANSFORMATIONC3
-#endif // CGAL_NO_ISTREAM_EXTRACT_AFF_TRANSFORMATIONC3
 
 CGAL_END_NAMESPACE
 
