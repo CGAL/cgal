@@ -44,7 +44,6 @@ CGAL_BEGIN_NAMESPACE
 template < class Gt, class Tds >
 PS_Stream& operator << (PS_Stream& ps, Regular_triangulation_2<Gt,Tds> &t)
 {
-  ps << border_color(CGAL::Color(0,255,0));
   t.draw_triangulation(ps);
   return ps;
 }
