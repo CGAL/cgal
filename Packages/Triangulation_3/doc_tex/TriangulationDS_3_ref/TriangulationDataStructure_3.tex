@@ -570,8 +570,9 @@ adjacent vertices of a given vertex}
 \ccMethod{template <class OutputIterator>
           OutputIterator
           incident_cells(Vertex_handle v, OutputIterator cells) const;}
-{Copies the \ccc{Cell_handle}s of all cells incident to \ccc{v} to the output
-iterator \ccc{cells}.  If \ccVar.\ccc{dimension()} $<3$, then do nothing.
+{Copies the \ccc{Cell_handle}s of all cells (resp. facets in dimension 2)
+incident to \ccc{v} to the output iterator \ccc{cells}.
+If \ccVar.\ccc{dimension()} $<2$, then do nothing.
 Returns the resulting output iterator.
 \ccPrecond{\ccc{v} $\neq$ \ccc{Vertex_handle()}, \ccVar.\ccc{is_vertex(v)}.}}
 

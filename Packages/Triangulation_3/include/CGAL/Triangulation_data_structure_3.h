@@ -698,12 +698,15 @@ public:
       CGAL_triangulation_precondition( v != Vertex_handle() );
       CGAL_triangulation_expensive_precondition( is_vertex(v) );
 
-      if ( dimension() < 3 )
+      if ( dimension() < 2 )
           return cells;
 
       std::vector<Cell_handle> tmp_cells;
       tmp_cells.reserve(64);
-      incident_cells_3(v, v->cell(), std::back_inserter(tmp_cells));
+      if ( dimension() == 3 )
+          incident_cells_3(v, v->cell(), std::back_inserter(tmp_cells));
+      else
+          incident_cells_2(v, v->cell(), std::back_inserter(tmp_cells));
 
       for(typename std::vector<Cell_handle>::iterator cit = tmp_cells.begin();
 	      cit != tmp_cells.end(); ++cit) {
@@ -740,19 +743,14 @@ public:
       }
 
       // Get the incident cells.
-
       std::vector<Cell_handle> tmp_cells;
       tmp_cells.reserve(64);
-      if (dimension() == 3)
-	  incident_cells_3(v, v->cell(), std::back_inserter(tmp_cells));
-      else
-	  incident_cells_2(v, v->cell(), std::back_inserter(tmp_cells));
+      incident_cells(v, std::back_inserter(tmp_cells));
 
       std::set<Vertex_handle> tmp_vertices;
 
       for(typename std::vector<Cell_handle>::iterator cit = tmp_cells.begin();
 	      cit != tmp_cells.end(); ++cit) {
-	  (*cit)->set_in_conflict_flag(0);
 	  // Put all incident vertices in tmp_vertices.
 	  for (int j=0; j<=dimension(); ++j)
 	      if ((*cit)->vertex(j) != v)

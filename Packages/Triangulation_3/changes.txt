@@ -1,4 +1,8 @@
 22 May 2004 Sylvain Pion
+- Make TDS::incident_cells(Vertex, OutputIterator) useful in dimension 2.
+  operator==() of Triangulation_3 was relying on it.
+
+22 May 2004 Sylvain Pion
 - Use CGAL_CFG_USING_BASE_MEMBER_BUG_2 workaround for SunPRO.
 
 20 May 2004 Sylvain Pion
