@@ -383,11 +383,12 @@ template <class K>
 bool
 Ray_2_Segment_2_pair<K>::intersection(typename K::Segment_2 &result) const
 {
+  typedef typename K::Segment_2 Segment_2;
     if (!_known)
         intersection_type();
     if (_result != SEGMENT)
         return false;
-    result = typename K::Segment_2(_intersection_point, _other_point);
+    result = Segment_2(_intersection_point, _other_point);
     return true;
 }
 
