@@ -1,0 +1,6 @@
+Parameterization Package: Release changes:
+---------------------------------------------------------------------
+
+0.1 (30 march 2005)
+
+    - initial develop version
