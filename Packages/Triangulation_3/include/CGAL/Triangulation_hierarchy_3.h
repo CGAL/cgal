@@ -28,17 +28,16 @@
 
 CGAL_BEGIN_NAMESPACE
 
-// parameterization of the  hierarchy
-//const float Triangulation_hierarchy_3__ratio    = 30.0;
-const int Triangulation_hierarchy_3__ratio    = 30;
-const int Triangulation_hierarchy_3__minsize  = 20;
-const int Triangulation_hierarchy_3__maxlevel = 5;
-// maximal number of points is 30^5 = 24 millions !
-
 template < class Tr >
 class Triangulation_hierarchy_3
   : public Tr
 {
+  // parameterization of the hierarchy
+  // maximal number of points is 30^5 = 24 millions !
+  enum { ratio = 30 };
+  enum { minsize = 20};
+  enum { maxlevel = 5};
+
 public:
   typedef Tr                                   Tr_Base;
   typedef typename Tr_Base::Geom_traits        Geom_traits;
@@ -55,7 +54,7 @@ public:
 
 private:
   // here is the stack of triangulations which form the hierarchy
-  Tr_Base*   hierarchy[Triangulation_hierarchy_3__maxlevel];
+  Tr_Base*   hierarchy[maxlevel];
   Random     random; // random generator
 
 public:
@@ -68,7 +67,7 @@ public:
     : Tr_Base(traits), random((long)0)
   {
       hierarchy[0] = this; 
-      for(int i=1; i<Triangulation_hierarchy_3__maxlevel; ++i)
+      for(int i=1; i<maxlevel; ++i)
           hierarchy[i] = new Tr_Base(traits);
       insert(first, last);
   }
@@ -134,7 +133,7 @@ private:
   };
 
   void locate(const Point& p, Locate_type& lt, int& li, int& lj,
-	      locs pos[Triangulation_hierarchy_3__maxlevel]) const;
+	      locs pos[maxlevel]) const;
   int random_level();
 
   // added to make the test program of usual triangulations work
@@ -166,7 +165,7 @@ Triangulation_hierarchy_3(const Geom_traits& traits)
   : Tr_Base(traits), random((long)0)
 { 
   hierarchy[0] = this; 
-  for(int i=1;i<Triangulation_hierarchy_3__maxlevel;++i)
+  for(int i=1;i<maxlevel;++i)
     hierarchy[i] = new Tr_Base(traits);
 }
 
@@ -177,7 +176,7 @@ Triangulation_hierarchy_3(const Triangulation_hierarchy_3<Tr> &tr)
     : Tr_Base(tr), random((long)0)
 { 
   hierarchy[0] = this;
-  for(int i=1; i<Triangulation_hierarchy_3__maxlevel; ++i)
+  for(int i=1; i<maxlevel; ++i)
     hierarchy[i] = new Tr_Base(*tr.hierarchy[i]);
 
   // up and down have been copied in straightforward way
@@ -190,7 +189,7 @@ Triangulation_hierarchy_3(const Triangulation_hierarchy_3<Tr> &tr)
     if (it->up() != NULL)
       V[ it->up()->down() ] = it;
 
-  for(int j=1; j<Triangulation_hierarchy_3__maxlevel; ++j) {
+  for(int j=1; j<maxlevel; ++j) {
     for( Finite_vertices_iterator it=hierarchy[j]->finite_vertices_begin();
 	 it != hierarchy[j]->finite_vertices_end(); ++it) {
 	// down pointer goes in original instead in copied triangulation
@@ -210,7 +209,7 @@ Triangulation_hierarchy_3<Tr>::
 swap(Triangulation_hierarchy_3<Tr> &tr)
 {
   Tr_Base::swap(tr);
-  for(int i=1; i<Triangulation_hierarchy_3__maxlevel; ++i)
+  for(int i=1; i<maxlevel; ++i)
       std::swap(hierarchy[i], tr.hierarchy[i]);
 }
 
@@ -219,7 +218,7 @@ Triangulation_hierarchy_3<Tr>::
 ~Triangulation_hierarchy_3()
 {
   clear();
-  for(int i=1; i<Triangulation_hierarchy_3__maxlevel; ++i)
+  for(int i=1; i<maxlevel; ++i)
     delete hierarchy[i];
 }
 
@@ -228,7 +227,7 @@ void
 Triangulation_hierarchy_3<Tr>:: 
 clear()
 {
-        for(int i=0;i<Triangulation_hierarchy_3__maxlevel;++i)
+        for(int i=0;i<maxlevel;++i)
 	hierarchy[i]->clear();
 }
 
@@ -240,7 +239,7 @@ is_valid(bool verbose, int level) const
   bool result = true;
   
   // verify correctness of triangulation at all levels
-  for(int i=0; i<Triangulation_hierarchy_3__maxlevel; ++i)
+  for(int i=0; i<maxlevel; ++i)
 	result = result && hierarchy[i]->is_valid(verbose, level);
 
   // verify that lower level has no down pointers
@@ -249,13 +248,13 @@ is_valid(bool verbose, int level) const
     result = result && (it->down() == NULL);
 
   // verify that other levels has down pointer and reciprocal link is fine
-  for(int j=1; j<Triangulation_hierarchy_3__maxlevel; ++j)
+  for(int j=1; j<maxlevel; ++j)
     for( Finite_vertices_iterator it = hierarchy[j]->finite_vertices_begin(); 
 	 it != hierarchy[j]->finite_vertices_end(); ++it) 
       result = result && &*(it) == &*(it->down()->up());
 
   // verify that other levels has down pointer and reciprocal link is fine
-  for(int k=0; k<Triangulation_hierarchy_3__maxlevel-1; ++k)
+  for(int k=0; k<maxlevel-1; ++k)
     for( Finite_vertices_iterator it = hierarchy[k]->finite_vertices_begin(); 
 	 it != hierarchy[k]->finite_vertices_end(); ++it) 
       result = result && ( it->up() == NULL ||
@@ -273,7 +272,7 @@ insert(const Point &p)
   Locate_type lt;
   int i, j;
   // locate using hierarchy
-  locs positions[Triangulation_hierarchy_3__maxlevel];
+  locs positions[maxlevel];
   locate(p, lt, i, j, positions);
   // insert at level 0
   Vertex_handle vertex = hierarchy[0]->insert(p,
@@ -312,7 +311,7 @@ remove(Vertex_handle v)
   int l = 0;
   while (1) {
     hierarchy[l++]->remove(v);
-    if (u == NULL || l > Triangulation_hierarchy_3__maxlevel)
+    if (u == NULL || l > maxlevel)
 	break;
     v = u;
     u = v->up();
@@ -338,7 +337,7 @@ move_point(Vertex_handle v, const Point & p)
 	w->set_down(old);
     }
     old = w;
-    if (u == NULL || l > Triangulation_hierarchy_3__maxlevel)
+    if (u == NULL || l > maxlevel)
 	break;
     v = u;
     u = v->up();
@@ -352,7 +351,7 @@ typename Triangulation_hierarchy_3<Tr>::Cell_handle
 Triangulation_hierarchy_3<Tr>::
 locate(const Point& p, Locate_type& lt, int& li, int& lj) const
 {
-  locs positions[Triangulation_hierarchy_3__maxlevel];
+  locs positions[maxlevel];
   locate(p, lt, li, lj, positions);
   return positions[0].pos;
 }
@@ -372,18 +371,17 @@ template <class Tr>
 void
 Triangulation_hierarchy_3<Tr>::
 locate(const Point& p, Locate_type& lt, int& li, int& lj,
-       locs pos[Triangulation_hierarchy_3__maxlevel]) const
+       locs pos[maxlevel]) const
 {
-  int level = Triangulation_hierarchy_3__maxlevel;
+  int level = maxlevel;
 
   // find the highest level with enough vertices
-  while (hierarchy[--level]->number_of_vertices() 
-	 < Triangulation_hierarchy_3__minsize) {
+  while (hierarchy[--level]->number_of_vertices() < minsize) {
     if ( ! level)
 	break;  // do not go below 0
   }
 
-  for (int i=level+1; i<Triangulation_hierarchy_3__maxlevel; ++i)
+  for (int i=level+1; i<maxlevel; ++i)
       pos[i].pos = NULL;
 
   Cell_handle position = NULL;
@@ -424,11 +422,11 @@ Triangulation_hierarchy_3<Tr>::
 random_level()
 {
   int l = 0;
-  while ( ! random(Triangulation_hierarchy_3__ratio) )
+  while ( ! random(ratio) )
     ++l;
 
-  if (l >= Triangulation_hierarchy_3__maxlevel)
-    l = Triangulation_hierarchy_3__maxlevel - 1;
+  if (l >= maxlevel)
+    l = maxlevel - 1;
 
   return l;
 }

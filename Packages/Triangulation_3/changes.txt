@@ -1,3 +1,7 @@
+Version 1.185 (? December 03)
+- Triangulation_hierarchy_3 : move the global "const int" parameters to
+  nested enums (equivalent to static const int).
+
 Version 1.184 (4 December 03)
 - Get rid of CGAL_NULL_TMPL_ARGS.
 
