@@ -51,7 +51,6 @@ class Infimaximal_box {
   typedef typename Kernel::Vector_3         Vector_3;
   typedef typename Kernel::Plane_3          Plane_3;
   typedef typename Kernel::Ray_3            Ray_3;
-  typedef typename Kernel::Direction_3      Direction_3;
   typedef Plane_3                           Standard_plane;
   typedef Vector_3                          Standard_vector;
   typedef Point_3                           Standard_point;
@@ -131,7 +130,7 @@ class Infimaximal_box {
   template <typename SNC_decorator, typename Point>
     static Ray_3 get_ray(SNC_decorator& D, Point& p) {
     //    return D.point(D.vertex(D.shells_begin(D.volumes_begin())));
-    return Ray_3(p, Direction_3(-1,0,0));
+    return Ray_3(p, Vector_3(-1,0,0));
   }
 
   template <typename SNC_constructor_>
@@ -203,7 +202,10 @@ class Infimaximal_box<Tag_true, Kernel> {
     deg = p.hz().degree() > deg 
       ? p.hz().degree() 
       : deg;
-    return Point_3(p.hx()(deg),p.hy()(deg),p.hz()(deg),p.hw()[0]);
+    return Point_3(p.hx().degree() == deg ? p.hx()[deg] : 0,
+		   p.hy().degree() == deg ? p.hy()[deg] : 0,
+		   p.hz().degree() == deg ? p.hz()[deg] : 0,
+		   p.hw()[0]);
   }
 
   static int degree(const RT& p) {
