@@ -244,14 +244,12 @@ compare_x_y_wrapper( std::istringstream& strLine, std::string& strCommand )
          <<", "<< all_points_vec[index2] << " ) ? " << exp_answer << std::endl;
     return print_was_successful_or_not( exp_answer, real_answer );
   }
-  else{
-    real_answer = tr.compare_xy
-      (all_points_vec[index1], all_points_vec[index2]);
-    std::cout << "Test: compare_xy( " << all_points_vec[index1] 
-         <<", "<< all_points_vec[index2] << " ) ? " << exp_answer << std::endl;
-    return print_was_successful_or_not( exp_answer, real_answer );
-  }
-  return true;
+  real_answer = tr.compare_xy
+    (all_points_vec[index1], all_points_vec[index2]);
+  std::cout << "Test: compare_xy( " << all_points_vec[index1] 
+            <<", "<< all_points_vec[index2] << " ) ? " << exp_answer
+            << std::endl;
+  return print_was_successful_or_not( exp_answer, real_answer );
 }
 
 /*!
@@ -502,7 +500,7 @@ point_reflect_in_x_and_y_wrapper( std::istringstream& strLine )
 
 template< class Traits_class, class Number_type >
 bool Base_traits_test< Traits_class, Number_type >::
-point_reflect_in_x_and_y_wrapper_imp(std::istringstream& strLine,
+point_reflect_in_x_and_y_wrapper_imp(std::istringstream& /* strLine */,
                                      CGAL::Tag_true)
 { return true; }
 
@@ -536,7 +534,8 @@ curve_reflect_in_x_and_y_wrapper( std::istringstream& strLine )
 
 template< class Traits_class, class Number_type >
 bool Base_traits_test< Traits_class, Number_type >::
-curve_reflect_in_x_and_y_wrapper_imp(std::istringstream& strLine, CGAL::Tag_true)
+curve_reflect_in_x_and_y_wrapper_imp(std::istringstream& /* strLine */,
+                                     CGAL::Tag_true)
 { return true; }
 
 template< class Traits_class, class Number_type >
