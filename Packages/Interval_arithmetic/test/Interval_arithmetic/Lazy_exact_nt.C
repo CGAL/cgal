@@ -33,7 +33,7 @@ typedef CGAL::Filtered_exact<CGAL::Lazy_exact_nt<leda_real>, leda_real> NT;
 // typedef leda_real NT;
 
 typedef CGAL::Cartesian<NT> Kernel;
-typedef CGAL::Point_2<Kernel> Point;
+typedef Kernel::Point_2     Point;
 
 using std::cout;
 using std::endl;
