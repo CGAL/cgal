@@ -1700,28 +1700,6 @@ by the location of the include makefile.
 
 Finally type \texttt{make} to compile the application programs.
 
-\subsection{\texttt{use\_cgal\_namespace}}\label{sec:use_cgal_namespace}
-\TTindex{use\_cgal\_namespace}\index{scripts!\texttt{use\_cgal\_namespace}}
-
-The perl script \texttt{use\_cgal\_namespace} is contained in the
-\cgaldir\texttt{/scripts} directory. It can be used to convert
-\cgal\texttt{-1.*} application sourcecode to the \cgal\texttt{-2.*}
-format.  Basically, it replaces \texttt{CGAL\_} prefixes by
-\texttt{CGAL::} namespace qualifiers. You have to give the files to
-convert as arguments, e.g.
-\begin{alltt}
-  use_cgal_namespace my_great_file1.C *.h
-\end{alltt}
-The original files are kept with the suffix \texttt{.bck}.
-
-In order to use it, you first have to set the perl path correctly,
-i.e. replace \texttt{/net/bin/perl5} in the first line by the path to
-perl on your system (try \texttt{which perl}(5), if you do not know).
-Alternatively, you can type
-\begin{alltt}
-  perl -wi.bck -- use_cgal_namespace <FILES>
-\end{alltt}
-
 \lcTex{\end{appendix}}
 
 %%
