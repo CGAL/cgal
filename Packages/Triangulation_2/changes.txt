@@ -1,6 +1,9 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+Ver 6.05 ()
+- fixed makefile in test/Triangulation_2_constrained
+
 Ver 6.04 (28/1/02)
 - fixed include in constructions_on_weighted_points_cartesian_2.h
 

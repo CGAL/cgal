@@ -66,10 +66,11 @@ public:
   typedef Constraint_hierarchy_2<Vertex_handle, bool> Constraint_hierarchy;
 
   // for user interface with the constraint hierarchy
-  typedef Constraint_hierarchy::H_vertex_it   Vertices_in_constraint;
-  typedef Constraint_hierarchy::H_context     Context;
-  typedef Constraint_hierarchy::H_context_iterator
-                                              Context_iterator;
+  typedef Constraint_hierarchy::H_vertex_it         Vertices_in_constraint;
+  typedef Constraint_hierarchy::H_context           Context;
+  typedef Constraint_hierarchy::H_context_iterator  Context_iterator;
+  typedef Constraint_hierarchy::H_c_iterator        Constraint_iterator;
+  typedef Constraint_hierarchy::H_sc_iterator       Subconstraint_iterator;
  
 
 protected:
@@ -127,7 +128,11 @@ public:
   // to be done next
 
   // Query of the constraint hierarchy
-  Context   context(Vertex_handle va, Vertex_handle vb);
+  Constraint_iterator constraints_begin() const;
+  Constraint_iterator constraints_end()   const;
+  Subconstraint_iterator subconstraints_begin() const;
+  Subconstraint_iterator subconstraints_end() const;
+  Context   context(Vertex_handle va, Vertex_handle vb); 
   int number_of_enclosing_constraints(Vertex_handle va, 
 				      Vertex_handle vb);
   Context_iterator   contexts_begin(Vertex_handle va, 
@@ -507,6 +512,48 @@ operator<<(std::ostream& os,
 }
 
 // Constraint Hierarchy Queries
+
+template <class Tr, class I_tag >
+inline
+typename
+Constrained_triangulation_plus_2<Tr,I_tag>::Constraint_iterator
+Constrained_triangulation_plus_2<Tr,I_tag>::
+constraints_begin() const
+{
+  return hierarchy.c_begin();
+}
+
+template <class Tr, class I_tag >
+inline
+typename
+Constrained_triangulation_plus_2<Tr,I_tag>::Constraint_iterator
+Constrained_triangulation_plus_2<Tr,I_tag>::
+constraints_end() const
+{
+  return hierarchy.c_end();
+}
+
+template <class Tr, class I_tag >
+inline
+typename
+Constrained_triangulation_plus_2<Tr,I_tag>::Subconstraint_iterator
+Constrained_triangulation_plus_2<Tr,I_tag>::
+subconstraints_begin() const
+{
+  return hierarchy.sc_begin();
+}
+
+template <class Tr, class I_tag >
+inline
+typename
+Constrained_triangulation_plus_2<Tr,I_tag>::Subconstraint_iterator
+Constrained_triangulation_plus_2<Tr,I_tag>::
+subconstraints_end() const
+{
+  return hierarchy.sc_end();
+}
+
+
 template <class Tr, class I_tag >
 inline
 Constrained_triangulation_plus_2<Tr,I_tag>::Context

@@ -160,16 +160,19 @@ public:
 						edge_end, 
 						face_begin,
 						face_end);
-    EdgeIt eit;
+    // restore constraint status for new faces.
+    int vindex;
     Face_handle fh;
     int ih;
-    for(eit=edge_begin; eit != edge_end; eit++) {
-      fh = (*eit).first;
-      ih = (*eit).second;
-      if(fh->is_constrained(ih))
-	fh->neighbor(ih)->set_constraint(fh->neighbor(ih)->index(fh),
-					 true);
-    }
+    Face_circulator fc = incident_faces(v), done(fc);
+    do {
+      vindex = fc->index(v);
+      fc->set_constraint(cw(vindex), false);
+      fc->set_constraint(ccw(vindex), false);
+      fh = fc->neighbor(vindex);
+      ih = fc->mirror_index(vindex);
+      fc->set_constraint(vindex, fh->is_constrained(ih));
+    } while (++fc != done);
     return v;
 }
 
