@@ -1,3 +1,7 @@
+3.21    (31 Jul 2001)
+- moved _ref directories up one level and fixed some broken references to
+  Polyhedron ref pages
+
 3.20    (26 Jul 2001)
 - minor formatting changes
 
