@@ -88,8 +88,8 @@ CGAL_BEGIN_NAMESPACE
 // Should this be a nested class ?
 class Free_elt {
     struct magic_key { unsigned i0, i1; };
-    static const unsigned magic0 = 0xc9a1c9al;
-    static const unsigned magic1 = 0xdeadbeef;
+    static const unsigned magic0;
+    static const unsigned magic1;
 
     magic_key key;
     Free_elt * ptr;
@@ -118,6 +118,9 @@ public:
 	       key.i1 == magic1;
     }
 };
+
+const unsigned Free_elt::magic0 = 0xc9a1c9a1;
+const unsigned Free_elt::magic1 = 0xdeadbeef;
 
 // const int DS_Container_allocation_size = 1024;
 const int DS_Container_allocation_size = 8192;
