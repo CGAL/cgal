@@ -152,9 +152,11 @@ slow -- random shuffling gives these orders a very small probability.
 \emph{Note:} Below some references are undefined, they refer to sections
 in the \cgal\ Reference Manual.
 
-\renewcommand{\ccSection}{\ccSubsection}
 \renewcommand{\ccFont}{\tt}
 \renewcommand{\ccEndFont}{}
+\newcommand{\cgalColumnLayout}{\ccTexHtml{%
+  \ccSetThreeColumns{CGAL_Oriented_side}{}{\hspace*{8.5cm}}
+  \ccPropagateThreeToTwoColumns}{}}
 \newcommand{\cgalSetMinEllipseLayout}{%
   \ccSetThreeColumns{Support_point_iterator}{}{creates a variable
     \ccc{min_ellipse} of type \ccc{CGAL_Min_ellipse_2<Traits>}.}
@@ -165,6 +167,7 @@ in the \cgal\ Reference Manual.
     \ccPropagateThreeToTwoColumns}{}}
 \input{../../doc_tex/basic/Optimisation/Min_ellipse_2.tex}
 \input{../../doc_tex/basic/Optimisation/Optimisation_ellipse_2.tex}
+\input{../../doc_tex/basic/Optimisation/Min_ellipse_2_traits_2.tex}
 \input{../../doc_tex/basic/Optimisation/Min_ellipse_2_adapterC2.tex}
 \input{../../doc_tex/basic/Optimisation/Min_ellipse_2_adapterH2.tex}
 
@@ -864,7 +867,7 @@ each point \ccc{p} in the range $[\mbox{\ccc{first}},\mbox{\ccc{last}})$.
 @macro <Min_ellipse_2 modifiers> += @begin
 #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
 
-    template < class InputIterator > inline
+    template < class InputIterator >
     void
     insert( InputIterator first, InputIterator last)
     {
@@ -908,7 +911,8 @@ The member function \ccc{clear} deletes all points from a
 empty ellipse.
 
 @macro <Min_ellipse_2 modifiers> += @begin
-    void  clear( )
+    void
+    clear( )
     {
         points.erase( points.begin(), points.end());
         n_support_points = 0;
@@ -1645,6 +1649,54 @@ one.
         return( is);
     }
 @end
+
+@! ----------------------------------------------------------------------------
+@! Class template CGAL_Min_ellipse_2_traits_2<R>
+@! ----------------------------------------------------------------------------
+
+\subsection{Class template \ccFont CGAL\_Min\_ellipse\_2\_traits\_2<R>}
+
+First, we declare the class templates \ccc{CGAL_Min_ellipse_2} and
+\ccc{CGAL_Min_ellipse_2_traits_2}.
+
+@macro<Min_ellipse_2_traits_2 declarations> = @begin
+    template < class _Traits >
+    class CGAL_Min_ellipse_2;
+
+    template < class _R >
+    class CGAL_Min_ellipse_2_traits_2;
+@end
+
+Since the actual work of the traits class is done in the nested type
+\ccc{Ellipse}, we implement the whole class template in its interface.
+
+The variable \ccc{ellipse} containing the current ellipse is declared
+\ccc{private} to disallow the user from directly accessing or modifying
+it. Since the algorithm needs to access and modify the current ellipse,
+it is declared \ccc{friend}.
+
+@macro <Min_ellipse_2_traits_2 interface and implementation> = @begin
+    template < class _R >
+    class CGAL_Min_ellipse_2_traits_2 {
+      public:
+        // types
+        typedef  _R                              R;
+        typedef  CGAL_Point_2<R>                 Point;
+        typedef  CGAL_Optimisation_ellipse_2<R>  Ellipse;
+
+    private:
+        // data members
+        Ellipse  ellipse;                                // current ellipse
+
+        // friends
+        friend  class CGAL_Min_ellipse_2< CGAL_Min_ellipse_2_traits_2< R > >;
+
+      public:
+        // creation (use default implementations)
+        // CGAL_Min_ellipse_2_traits_2( );
+        // CGAL_Min_ellipse_2_traits_2( CGAL_Min_ellipse_2_traits_2<R> const&);
+    };
+@end   
 
 @! ----------------------------------------------------------------------------
 @! Class template CGAL_Min_ellipse_2_adapterC2<PT,DA>
@@ -2414,8 +2466,8 @@ number type \ccc{CGAL_Gmpz} or \ccc{integer}.
 @macro <Min_ellipse_2 test (includes and typedefs)> = @begin
     #include <CGAL/Cartesian.h>
     #include <CGAL/Homogeneous.h>
-    #include <CGAL/Optimisation_traits_2.h>
     #include <CGAL/Min_ellipse_2.h>
+    #include <CGAL/Min_ellipse_2_traits_2.h>
     #include <CGAL/Min_ellipse_2_adapterC2.h>
     #include <CGAL/Min_ellipse_2_adapterH2.h>
     #include <CGAL/IO/Verbose_ostream.h>
@@ -2425,18 +2477,18 @@ number type \ccc{CGAL_Gmpz} or \ccc{integer}.
 
     #ifdef CGAL_USE_LEDA_FOR_OPTIMISATION_TEST
     #  include <CGAL/leda_integer.h>
-       typedef  leda_integer                     Rt;
-       typedef  CGAL_Quotient< leda_integer >    Ft;
+       typedef  leda_integer                      Rt;
+       typedef  CGAL_Quotient< leda_integer >     Ft;
     #else
     #  include <CGAL/Gmpz.h>
-       typedef  CGAL_Gmpz                        Rt;
-       typedef  CGAL_Quotient< CGAL_Gmpz >       Ft;
+       typedef  CGAL_Gmpz                         Rt;
+       typedef  CGAL_Quotient< CGAL_Gmpz >        Ft;
     #endif
 
-    typedef  CGAL_Cartesian< Ft >                RepC;
-    typedef  CGAL_Homogeneous< Rt >              RepH;
-    typedef  CGAL_Optimisation_traits_2< RepC >  TraitsC;
-    typedef  CGAL_Optimisation_traits_2< RepH >  TraitsH;
+    typedef  CGAL_Cartesian< Ft >                 RepC;
+    typedef  CGAL_Homogeneous< Rt >               RepH;
+    typedef  CGAL_Min_ellipse_2_traits_2< RepC >  TraitsC;
+    typedef  CGAL_Min_ellipse_2_traits_2< RepH >  TraitsH;
 @end
 
 The command line option \ccc{-verbose} enables verbose output.
@@ -3024,6 +3076,39 @@ end of each file.
 @end
 
 @! ----------------------------------------------------------------------------
+@! Min_ellipse_2_traits_2.h
+@! ----------------------------------------------------------------------------
+
+\subsection{Min\_ellipse\_2\_traits\_2.h}
+
+@file <include/CGAL/Min_ellipse_2_traits_2.h> = @begin
+    @<Min_ellipse_2 header>("include/CGAL/Min_ellipse_2_traits_2.h")
+
+    #ifndef CGAL_MIN_ELLIPSE_2_TRAITS_2_H
+    #define CGAL_MIN_ELLIPSE_2_TRAITS_2_H
+
+    // Class declarations
+    // ==================
+    @<Min_ellipse_2_traits_2 declarations>
+
+    // Class interface and implementation
+    // ==================================
+    // includes
+    #ifndef CGAL_POINT_2_H
+    #  include <CGAL/Point_2.h>
+    #endif
+    #ifndef CGAL_OPTIMISATION_ELLIPSE_2_H
+    #  include <CGAL/Optimisation_ellipse_2.h>
+    #endif
+
+    @<Min_ellipse_2_traits_2 interface and implementation>
+
+    #endif // CGAL_MIN_ELLIPSE_2_TRAITS_2_H
+
+    @<end of file line>
+@end
+
+@! ----------------------------------------------------------------------------
 @! Min_ellipse_2_adapterC2.h
 @! ----------------------------------------------------------------------------
 
@@ -3218,7 +3303,7 @@ end of each file.
  
 @macro <Min_ellipse_2 header>(1) many = @begin
     @<file header>("2D Smallest Enclosing Ellipse",@1,
-                   "Optimisation/Min_ellipse_2",
+                   "Optimisation","Optimisation/Min_ellipse_2",
                    "Sven Schönherr <sven@@inf.fu-berlin.de>",
                    "Bernd Gärtner",
                    "ETH Zurich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
@@ -3227,7 +3312,7 @@ end of each file.
 
 @macro <Optimisation_ellipse_2 header>(1) many = @begin
     @<file header>("2D Optimisation Ellipse",@1,
-                   "Optimisation/Min_ellipse_2",
+                   "Optimisation","Optimisation/Min_ellipse_2",
                    "Sven Schönherr <sven@@inf.fu-berlin.de>",
                    "Bernd Gärtner",
                    "ETH Zurich (Bernd Gärtner <gaertner@@inf.ethz.ch>)",
