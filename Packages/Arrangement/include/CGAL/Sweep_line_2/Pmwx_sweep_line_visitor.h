@@ -102,6 +102,7 @@ public:
     int jump = lastEvent->get_halfedge_jump_count(sc);
     Point_2 p1 ( lastEvent->get_point() );
     Point_2 p2 ( m_currentEvent->get_point() );
+
     // if the previous event on the curve is not in the planar map yet
     if ( insertInfo->get_halfedge_handle() == Halfedge_handle(NULL) ) 
     {
