@@ -2,6 +2,9 @@ Package triangulation: provides triangulations Delaunay triangulations,
 constrained and regular triangulations with  tests and examples.
 
 Ver 7.01 (1/03/02)
+- fixed a detail in vrml_output
+
+Ver 7.01 (1/03/02)
 - fixed missing std::
 
 Ver 7.00 (1/03/02)
