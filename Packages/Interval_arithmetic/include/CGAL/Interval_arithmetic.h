@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 //
-// file          : $RCSfile$
+// file          : $Name$
 // revision      : $Revision$
 // revision_date : $Date$
 // package       : Interval Arithmetic
