@@ -35,8 +35,19 @@
 
 CGAL_BEGIN_NAMESPACE
 
+// Guess which compiler needs this work around ?
+namespace CGALi {
+template < typename K1, typename K2 >
+struct Default_converter {
+  typedef typename K1::FT FT1;
+  typedef typename K2::FT FT2;
+  typedef ::CGAL::NT_converter<FT1, FT2> Type;
+};
+} // namespace CGALi
+
 template < class K1, class K2,
-           class Converter = NT_converter<typename K1::FT, typename K2::FT> >
+//          class Converter = NT_converter<typename K1::FT, typename K2::FT> >
+           class Converter = typename CGALi::Default_converter<K1, K2>::Type >
 class Cartesian_converter : public Enum_converter
 {
 public:

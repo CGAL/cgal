@@ -1,3 +1,6 @@
+Version 6.93 (25 July 2003) 
+- VC++ workaround in Cartesian_converter.
+
 Version 6.92 (30 June 2003) 
 - Remove the last 2, as they prooved to not bring much.
   (more work on Arr_traits is needed)
