@@ -1,3 +1,10 @@
+Version 4.3 (29 March 2000) [my]
+- fixed bugs in Iso_cuboid_3.C :
+ #include <CGAL/Cartesian/predicates_on_points_3.h> 
+instead of
+#include <CGAL/predicates_on_points_3.h> 
+-fixed  has_on_unbounded_side
+
 Version 4.2 (28 March 2000) [my]
 - fixed bugs in Iso_cuboid_3.C concerning
   min(), max() and bounded_side()
