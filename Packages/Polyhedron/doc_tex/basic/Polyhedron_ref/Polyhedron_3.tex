@@ -703,8 +703,7 @@ automatically updated.
     a triangle and that the two incident facets of a non-border edge are
     distinct.}
 
-\ccMethod{bool normalized_border_is_valid( const HDS& hds, 
-  bool verbose = false) const;}{%
+\ccMethod{bool normalized_border_is_valid( bool verbose = false) const;}{%
     returns \ccc{true} if the border halfedges are in normalized 
     representation, which is when enumerating all halfedges with the
     iterator: The non-border edges precede the border edges and for
