@@ -207,8 +207,10 @@ public:
     ITERATOR it_s;  
     for ( it_s=its; it_s != ite; ++it_s ) {
       Segment_2 s = *it_s;
-      CGAL_LEDA_SCOPE::seq_item it1 = XS.insert( K.source(s), CGAL_LEDA_SCOPE::seq_item(nil));
-      CGAL_LEDA_SCOPE::seq_item it2 = XS.insert( K.target(s), CGAL_LEDA_SCOPE::seq_item(nil));
+      CGAL_LEDA_SCOPE::seq_item it1 = 
+            XS.insert( K.source(s), CGAL_LEDA_SCOPE::seq_item(nil));
+      CGAL_LEDA_SCOPE::seq_item it2 = 
+            XS.insert( K.target(s), CGAL_LEDA_SCOPE::seq_item(nil));
       if (it1 == it2) {
         if ( Isos_of[it1] == 0 ) Isos_of[it1] = new IsoList;
         Isos_of[it1]->push(it_s);
@@ -255,7 +257,8 @@ public:
     Vertex_handle v = GO.new_vertex(p_sweep);
     CGAL_LEDA_SCOPE::seq_item sit = XS.inf(event);
         
-      CGAL_LEDA_SCOPE::seq_item sit_succ(0), sit_pred(0), sit_pred_succ(0), sit_first(0);
+      CGAL_LEDA_SCOPE::seq_item sit_succ(0), sit_pred(0), 
+                                sit_pred_succ(0), sit_first(0);
       if (sit == nil) 
         {
           Segment_2 s_sweep = K.construct_segment(p_sweep,p_sweep);
