@@ -1,5 +1,11 @@
 Changes done to the `Optimisation_doc' package
 
+Version 1.0.3 on 11-Jul-2001
+- changed all concept names. 
+
+Version 1.0.2 on 19-Jun-2001
+- changed concept names of Michael's pkgs. 
+
 Version 1.0.1 on 20-Mar-2001
 - no changes (moved to cvs-server)
 
