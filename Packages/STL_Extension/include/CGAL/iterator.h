@@ -42,7 +42,11 @@ CGAL_BEGIN_NAMESPACE
 // +----------------------------------------------------------------+
 
 struct Emptyset_iterator
+#if defined(__GNUC__) && (__GNUC__ < 3)
+  : public std::output_iterator
+#else
   : public std::iterator< std::output_iterator_tag, void, void, void*, void >
+#endif // defined(__GNUC__) && (__GNUC__ < 3)
 {
   Emptyset_iterator() {}
   Emptyset_iterator(const Emptyset_iterator&) {}
@@ -65,7 +69,11 @@ struct Emptyset_iterator
 
 template < class T >
 class Oneset_iterator
+#if defined(__GNUC__) && (__GNUC__ < 3)
+  : public std::output_iterator
+#else
   : public std::iterator< std::output_iterator_tag, void, void, void*, void >
+#endif // defined(__GNUC__) && (__GNUC__ < 3)
 {
   T& t;
 public:
