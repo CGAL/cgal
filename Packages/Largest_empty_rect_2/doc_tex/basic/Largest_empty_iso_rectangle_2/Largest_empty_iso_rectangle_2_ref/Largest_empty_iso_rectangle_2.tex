@@ -24,9 +24,7 @@ all iso-rectangles that are in the bounding box of the point set, and
 that do not contain any point of the point set.
 
 The class \ccRefName\ expects a model of a \ccc{geometric traits
-class} as its template argument.  Todo: We have to enumerate which
-functions and types have to provided by the traits class: \ccc{Less_x_2, 
-Less_yx_2, Less_yx_2, Compare_x_2, Compare_y_2, Comparison_result}
+class} as its template argument.  
 
 \ccInclude{CGAL/Largest_empty_iso_rectangle_2.h}
 
@@ -61,7 +59,7 @@ It is invalidated by any insertion or removal of a point.
 
 \ccConstructor{Largest_empty_iso_rectangle_2<Traits>
 (const Iso_rectangle_2 &b);}
-{.} 
+{Constructor.} 
 
 \ccFunction{void ~Largest_empty_iso_rectangle_2<Traits>();}
 {Destructor.}
@@ -87,7 +85,7 @@ duplication does not modify the other copy.}
 \ccMethod{const_iterator begin() const;}
 {Returns an iterator to the beginning of the point set.}
 \ccMethod{const_iterator end() const;}
-{Returns .}
+{Returns a past-the-end iterator for the point set.}
 
 
 \ccHeading{Queries}
@@ -110,13 +108,11 @@ A word to degeneracies.
 
 \ccMethod{void 
   insert(const Point_2& p);}
-{Inserts point \ccc{p} in the .\\
-If point \ccc{p} coincides with an already existing vertex, .}
+{Inserts point \ccc{p} in the point set, if it not already contained.}
 
 \ccMethod{void 
   push_back(const Point_2& p);}
-{Inserts point \ccc{p} in the .\\
-If point \ccc{p} coincides with an already existing vertex, .}
+{Inserts point \ccc{p} in the point set, if it not already contained.}
 
 
 \ccMethod{template < class InputIterator >
@@ -130,17 +126,27 @@ If point \ccc{p} coincides with an already existing vertex, .}
 \ccHeading{Removal}
 
 \ccMethod{bool remove(const Point_2& p);}{Removes point \ccc{p}.
-Returns false, iff \ccc{p} is not in the point set or one of the 
-four auxiliary points. }
+Returns false, iff \ccc{p} is not in the point set. }
 
 \ccMethod{void clear();}
 {Removes all points of \ccVar.}
 
-\ccSeeAlso
+%\ccSeeAlso
+
+\ccImplementation
+
+The algorithm is an implementation of \cite{}. The runtime of an
+insertion and a removal is $O(\log n)$. A query takes $O(n^2)$ worst
+case time and $O(n \log n)$ expected time. The working storage is $
+O(n)$.
 
 
 
-\ccExample
+
+
+
+
+%\ccExample
 
 %%\ccIncludeExampleCode{examples/Triangulation3/example1.C}
 
