@@ -436,6 +436,7 @@ install_test_ps:
 
 install_html_extras:
 	mkdir -p $(DOC_HTML_DESTINATION)
+	cp -r $(HTML_EXTRA_SOURCE)/index.html $(DOC_HTML_DESTINATION)
 	cp -r $(HTML_EXTRA_SOURCE)/doc_html $(DOC_HTML_DESTINATION)
 	cp -r $(HTML_EXTRA_SOURCE)/doc_pdf $(DOC_HTML_DESTINATION)
 	cp -r $(HTML_EXTRA_SOURCE)/doc_ps $(DOC_HTML_DESTINATION)
