@@ -33,3 +33,5 @@
 - "number_of_hidden_weighted_points()" in vertex base should return size_t
 - see email to cgal-editor with answers to Sylvain's questions
 - ask Mariette to add access functions to the TDS of Triangulation_2.
+- change the name of the file Kernel_wrapper_2.h to something more
+  relevant to Apollonius graphs.
