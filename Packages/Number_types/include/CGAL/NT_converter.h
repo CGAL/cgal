@@ -23,30 +23,18 @@
 #ifndef CGAL_NT_CONVERTER_H
 #define CGAL_NT_CONVERTER_H
 
+#include <CGAL/functional_base.h>
+
 CGAL_BEGIN_NAMESPACE
 
 // A number type converter usable as default, using the conversion operator.
 
 template < class NT1, class NT2 >
-struct NT_converter
-{
+struct NT_converter : public CGAL_STD::unary_function< NT1, NT2 > {
     NT2
     operator()(const NT1 &a) const
     {
         return NT2(a);
-    }
-};
-
-
-// A number type converter to std::pair<double,double>, using to_interval().
-
-template < class NT >
-struct Interval_converter
-{
-    std::pair<double,double>
-    operator()(const NT &a) const
-    {
-        return to_interval(a);
     }
 };
 
