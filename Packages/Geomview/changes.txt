@@ -2,8 +2,9 @@ CHANGES to the Geomview package.
 
 Ver 3.1 ???
 - Removed obsolete constructor.
-- Commented code in setup_geomview() (called from the ctor) that blocked on
-  Linux and whose purpose was unknown to me.
+- Added a sleep(1) at initialization, to wait for Geomview to be ready
+  (internally), because otherwise this prevents operator>>(Point) from working
+  later (even if display is fine).
 - Fix non-std compliant names beginning with underscore.
 - Replaced close()+dup() by dup2() at initialization.
 

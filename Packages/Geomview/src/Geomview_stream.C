@@ -118,11 +118,13 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
         in = pipe_in[0];
         out = pipe_out[1];
 
-        // Reads the result of the command (echo "started") that must be
-	// placed in the file .geomview (cf the doc).  It helps for
-	// synchronizing.  Probably not the best method.
         char inbuf[10];
+        // Waits for "started" from the .geomview file.
         ::read(in, inbuf, ::strlen("started"));
+
+	// Necessary to wait a little bit for Geomview, otherwise you won't be
+	// able to ask for points...
+        sleep(1);
 
         std::cout << "done." << std::endl;
 
@@ -132,8 +134,6 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
         point_count = 0;
         tetrahedron_count = 0;
         (*this) << "(normalization g* none)(bbox-draw g* no)";
-
-        break;
     }
 }
 
@@ -492,11 +492,11 @@ Geomview_stream::frame(const Bbox_3 &bbox)
 Geomview_stream&
 Geomview_stream::operator>>(char *expr)
 {
-    // skip whitespace
-    ::read(in, expr, 1);
-    while(expr[0] != '('){
-        ::read(in, expr, 1);
-    }
+    // Skip whitespaces
+    do {
+      ::read(in, expr, 1);
+    } while (expr[0] != '(');
+
     int pcount = 1;
     int i = 1;
     while (1) {

@@ -1,7 +1,9 @@
 - Remove the requirement to have a ./.geomview file with (echo "started")
   inside.  Synchronization can probably be done with select() ?
-- Reading a Point from Geomview should be possible.  It works, but not all the
-  time, there's some non-deterministic bug somewhere, either geomview or CGAL.
-- Write operator<<(Triangulation), 2D and 3D.  Use "(progn" ... ")" from GCL
-  for that ?
-- Use the OOGL library coming with Geomview to parse stuff ?
+  There are other problems (sleep(1) is needed), so maybe don't touch...
+- Write operator<<(Triangulation), 2D and 3D.  Partly done.
+- Why not use the OOGL library coming with Geomview to parse stuff ?
+- The remote geomview (with rsh) facility probably doesn't work.
+  But is it useful ?
+- Add operator<< (Sphere), as it's known to geomview, cf :
+  http://www.geomview.org/docs/html/geomview_44.html#SEC47
