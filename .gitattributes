@@ -1424,6 +1424,15 @@ Packages/Nef_3/doc_tex/Nef_3/fig/visualization_SNC.gif -text svneol=unset#unset
 Packages/Nef_3/doc_tex/Nef_3/fig/visualization_SNC.pdf -text svneol=unset#unset
 Packages/Nef_3/doc_tex/Nef_3/fig/visualization_SNC.png -text svneol=unset#unset
 Packages/Nef_3/doc_tex/Nef_3/fig/visualization_SNC.ps -text
+Packages/Nef_3/doc_tex/Nef_3_ref/fig/shalfedge.eps -text
+Packages/Nef_3/doc_tex/Nef_3_ref/fig/shalfedge.gif -text svneol=unset#unset
+Packages/Nef_3/doc_tex/Nef_3_ref/fig/shalfedge.pdf -text svneol=unset#unset
+Packages/Nef_3/doc_tex/Nef_3_ref/fig/shalfloopB.eps -text svneol=unset#unset
+Packages/Nef_3/doc_tex/Nef_3_ref/fig/shalfloopB.gif -text svneol=unset#unset
+Packages/Nef_3/doc_tex/Nef_3_ref/fig/shalfloopB.pdf -text svneol=unset#unset
+Packages/Nef_3/doc_tex/Nef_3_ref/fig/snc.eps -text
+Packages/Nef_3/doc_tex/Nef_3_ref/fig/snc.gif -text svneol=unset#unset
+Packages/Nef_3/doc_tex/Nef_3_ref/fig/snc.pdf -text svneol=unset#unset
 Packages/Nef_3/test/Nef_3/data/2_cycles_on_halfsphere.off -text
 Packages/Nef_3/test/Nef_3/data/2_cycles_on_halfsphere2.off -text
 Packages/Nef_3/test/Nef_3/data/centered_cube.off -text
