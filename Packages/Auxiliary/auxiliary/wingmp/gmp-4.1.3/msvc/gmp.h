@@ -1,3 +1,6 @@
+#ifndef  __GMP_LIBGMP_DLL
+#define __GMP_LIBGMP_DLL 1
+#endif
 /* Definitions for GNU multiple precision functions.   -*- mode: c -*-
 
 Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1999, 2000, 2001, 2002, 2003,
