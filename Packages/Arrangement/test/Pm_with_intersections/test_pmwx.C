@@ -123,10 +123,10 @@ int main(int argc, char* argv[])
 
 #endif
 
-typedef Traits::Point                        Point;
-typedef Traits::X_curve                      X_curve;
-typedef Traits::Curve                        Curve;
-typedef CGAL::Arr_base_node<X_curve>         Base_node;
+typedef Traits::Point_2                      Point_2;
+typedef Traits::X_curve_2                    X_curve_2;
+typedef Traits::Curve_2                      Curve_2;
+typedef CGAL::Arr_base_node<X_curve_2>         Base_node;
 //typedef CGAL::Arr_2_default_dcel<Traits>     Dcel;
 typedef CGAL::Pm_default_dcel<Traits>        Dcel;
 
@@ -136,7 +136,7 @@ typedef CGAL::Planar_map_with_intersections_2<Planar_map>  Subdivision;
  
 
 // we use the namespace std for compatability with MSVC
-typedef std::list<Point>                     Point_list;
+typedef std::list<Point_2>                     Point_list;
 
 class Arr_polyline_traits_test
 {
@@ -215,7 +215,7 @@ private:
       std::cout << std::endl;
     }
   
-  bool point_is_in_expected_place(Subdivision & subd, Point &pnt, Subdivision::Locate_type exp_lt)
+  bool point_is_in_expected_place(Subdivision & subd, Point_2 &pnt, Subdivision::Locate_type exp_lt)
     {
       Subdivision::Locate_type location_of_vertex;
       
@@ -330,24 +330,24 @@ private:
 #if CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_TRAITS || \
     CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
 
-  Curve read_segment_curve(std::ifstream& file, bool reverse_order)
+  Curve_2 read_segment_curve(std::ifstream& file, bool reverse_order)
   {
-    Curve segment;
-    NT    x,y; 
+    Curve_2 segment;
+    NT      x,y; 
 
     // read two segment points
     x = get_next_num(file); y = get_next_num(file);
-    Point p1(x,y);
+    Point_2 p1(x,y);
     x = get_next_num(file); y = get_next_num(file);
-    Point p2(x,y);
+    Point_2 p2(x,y);
     
     all_points_list.push_back(p1);
     all_points_list.push_back(p2);
     
     if (reverse_order)
-      segment = Curve(p1,p2);
+      segment = Curve_2(p1,p2);
     else
-      segment = Curve(p2,p1);
+      segment = Curve_2(p2,p1);
 
     return segment;
   }
@@ -355,9 +355,9 @@ private:
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS || \
       CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_LEDA_TRAITS
 
-Curve read_polyline_curve(std::ifstream& file, bool reverse_order)
+Curve_2 read_polyline_curve(std::ifstream& file, bool reverse_order)
   {
-    Curve                 polyline;
+    Curve_2               polyline;
     NT                    x,y; 
     int                   num_x_curves ;
     Point_list            point_list;
@@ -367,7 +367,7 @@ Curve read_polyline_curve(std::ifstream& file, bool reverse_order)
     
     while (num_x_curves--) {
       x = get_next_num(file); y = get_next_num(file);
-      Point s(x,y);
+      Point_2 s(x,y);
       if (reverse_order)
 	point_list.push_front(s);
       else
@@ -391,8 +391,8 @@ Curve read_polyline_curve(std::ifstream& file, bool reverse_order)
 
   void read_file_build_arrangement(std::ifstream& file, bool reverse_order)
   {
-      NT    x,y; 
-      Curve curr_curve;
+      NT      x,y; 
+      Curve_2 curr_curve;
 
       // 1. read polylines and build arrangement
 
@@ -424,7 +424,7 @@ Curve read_polyline_curve(std::ifstream& file, bool reverse_order)
       while (num_test_points--) {
 	x = get_next_num(file); y = get_next_num(file);
 	std::cout << x << "," << y << std::endl;
-	Point s(x,y);
+	Point_2 s(x,y);
 	test_point_list.push_back(s);
 	
 	exp_type = get_next_int(file);
@@ -472,7 +472,7 @@ public:
       // {
       //	std::cout << "Curve " << num << std::endl;
       //	std::copy(it->curve().begin(), it->curve().end(), 
-      //		  std::ostream_iterator<Point>(std::cout, " "));
+      //		  std::ostream_iterator<Point_2>(std::cout, " "));
       //	std::cout << std::endl << std::endl;
       //	++it; ++num;
       // }
@@ -484,7 +484,7 @@ public:
 //       Subdivision::Face_handle    f  = subd->unbounded_face();
 //       Subdivision::Holes_iterator it = f->holes_begin(),end=f->holes_end();
 //       Subdivision::Ccb            c  = *it;
-      //const X_curve& cv = curr->curve();
+      //const X_curve_2_2& cv = curr->curve();
 
       // Check validity of arrangement after insertion
       CGAL_assertion(subd.is_valid());
