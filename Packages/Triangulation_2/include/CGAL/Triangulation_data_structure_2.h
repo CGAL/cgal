@@ -1498,11 +1498,11 @@ vrml_output( std::ostream& os, Vertex_handle v, bool skip_infinite) const
   // if skip_inf is true, the point in the first vertex is not output
   // and the faces incident to v are not output
   // (it may be for instance the infinite vertex of the terrain)
-  os << "#VRML V2.0 utf8" << endl;
-  os << "Shape {" << endl;
-  os << "\tgeometry IndexedFaceSet {" << endl;
-  os << "\t\tcoord Coordinate {" << endl;
-  os << "\t\t\tpoint [" << endl;
+  os << "#VRML V2.0 utf8" << std::endl;
+  os << "Shape {" << std::endl;
+  os << "\tgeometry IndexedFaceSet {" << std::endl;
+  os << "\t\tcoord Coordinate {" << std::endl;
+  os << "\t\t\tpoint [" << std::endl;
 
   std::map<Vertex_handle,int> vmap;
   Vertex_iterator vit;
@@ -1523,9 +1523,9 @@ vrml_output( std::ostream& os, Vertex_handle v, bool skip_infinite) const
     }
   }
 
-   os << "\t\t\t]" << endl;
-   os << "\t\t}" << endl;
-   os << "\t\tcoordIndex [" << endl;
+   os << "\t\t\t]" << std::endl;
+   os << "\t\t}" << std::endl;
+   os << "\t\tcoordIndex [" << std::endl;
 
    // faces
    for(fit= faces_begin(); fit != faces_end(); ++fit) {
@@ -1534,12 +1534,12 @@ vrml_output( std::ostream& os, Vertex_handle v, bool skip_infinite) const
 	os << vmap[(*fit).vertex(0)] << ", ";
 	os << vmap[(*fit).vertex(1)] << ", ";
 	os << vmap[(*fit).vertex(2)] << ", ";
-	os << "-1, " << endl;  
+	os << "-1, " << std::endl;  
      }
    }
-   os << "\t\t]" << endl;
-   os << "\t}" << endl;
-   os << "}" << endl;
+   os << "\t\t]" << std::endl;
+   os << "\t}" << std::endl;
+   os << "}" << std::endl;
    return;
 }
 
