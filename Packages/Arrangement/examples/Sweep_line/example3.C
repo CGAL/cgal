@@ -1,14 +1,13 @@
 //example3
 
-#include <CGAL/basic.h> //CGAL definitions that need to be before anything else
-#include <iostream.h>
-#include <vector>
-
 #include <CGAL/Quotient.h>
 #include <CGAL/Cartesian.h>
 
 #include <CGAL/Arr_segment_exact_traits.h>
 #include <CGAL/sweep_to_produce_planar_map_subcurves.h>
+
+#include <iostream.h>
+#include <vector>
 
 typedef CGAL::Quotient<int>              NT;
 typedef CGAL::Cartesian<NT>              R;

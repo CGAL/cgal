@@ -1,21 +1,18 @@
 //example4
 
-#include <CGAL/basic.h> //CGAL definitions that need to be before anything else
-#include <iostream.h>
-#include <vector>
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/Quotient.h> 
 
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Planar_map_2.h>
 
-
 #include <CGAL/sweep_to_produce_planar_map_subcurves.h>
 
 #include <CGAL/Arr_polyline_traits.h>
 //#include <CGAL/IO/Arr_polyline_traits_iostream.h>
 
+#include <iostream.h>
+#include <vector>
 
 typedef CGAL::Quotient<int>                  NT;
 typedef CGAL::Cartesian<NT>                  R;

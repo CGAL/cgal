@@ -1,12 +1,7 @@
 //example2
 
-#include <CGAL/basic.h> //CGAL definitions that need to be before anything else
-#include <iostream.h>
-#include <vector>
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/Quotient.h> 
-
 
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Planar_map_2.h>
@@ -17,6 +12,8 @@
 
 #include <CGAL/IO/Pm_iostream.h>
 
+#include <iostream.h>
+#include <vector>
 
 //uncomment if you have LEDA installed.
 //#ifndef CGAL_IO_PM_WINDOW_STREAM_H
