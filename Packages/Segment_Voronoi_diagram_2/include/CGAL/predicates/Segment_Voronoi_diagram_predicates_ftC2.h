@@ -402,6 +402,20 @@ bool svd_are_same_points_C2(const typename K::Site_2& p,
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+template<class K>
+inline
+Orientation svd_orientation_C2(const typename K::Site_2& p,
+			       const typename K::Site_2& q,
+			       const typename K::Site_2& r)
+{
+  typename K::Site_2 site_vec[] = {p, q, r};
+  return svd_predicate_C2<Svd_orientation_C2,Orientation,K,3>(site_vec);
+}
+
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+
 template<class K, class Method_tag>
 inline
 Oriented_side

@@ -123,7 +123,7 @@ public:
 			 const Site_2& r) const
   {
     CGAL_precondition( p.is_point() && q.is_point() && r.is_point() );
-    return orientation_2()( p.point(), q.point(), r.point() );
+    return svd_orientation_C2<K>( p, q, r );
   }
 };
 
