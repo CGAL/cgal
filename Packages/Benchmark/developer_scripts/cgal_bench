@@ -91,6 +91,7 @@ my $curSvr = $maxSvr;
 
 my @Attrs;
 my %Files;
+my %Clos = ();
 my $elementRoot;
 
 my $subform = '      @<<<<<<<<<<<<<<<<<<<<<<<  @>>>>';
@@ -159,6 +160,11 @@ sub start_handler
     $attrTable->{$id} = $val;
   }
 
+  if ($currentElement eq 'clo') {
+    processStartClo($attrTable);
+    return;
+  }
+  
   if ($currentElement eq 'file') {
     processStartFile($attrTable);
     return;
@@ -195,6 +201,7 @@ sub end_handler
   $parentAttrTable = $Attrs[$#Attrs] if (defined($xp->current_element));
 
   return if ($currentElement eq 'file');
+  return if ($currentElement eq 'clo');
   return if ($attrTable->{'enable'} ne 'true');
 
   # Process 'bench':
@@ -328,6 +335,15 @@ sub printInfo
 }
 
 #
+sub processStartClo
+{
+  my ($attrTable) = @_;
+  printInfo("Adding comman line option $attrTable->{'name'}", 1)
+    if ($verboseLevel > 1);
+  $Clos{$attrTable->{'name'}} = $attrTable;
+}
+
+#
 sub processStartFile
 {
   my ($attrTable) = @_;
@@ -366,16 +382,19 @@ sub processStartCmd
     if exists($attrTable->{'type_mask'});
   my $strategy_mask = $attrTable->{'strategy_mask'}
     if exists($attrTable->{'strategy_mask'});
-  
+
   my $command = $currentElement;
   @args = ();
   push @args, $command;
+
   push @args, '-If=' . $format;
-  push @args, '-s' . $samples if defined($samples);
-  push @args, '-bh=' . $header if defined($header);
-  push @args, '-bnl=' . $nameLength if defined($nameLength);
-  push @args, '-btype_mask=' . $type_mask if defined($type_mask);
-  push @args, '-bstrategy_mask=' . $strategy_mask if defined($strategy_mask);
+
+  foreach $clo (keys %Clos) {
+    $cmd = $Clos{$clo}->{'command'};
+    push @args, $cmd . $fileAttrTable->{$clo} if exists($fileAttrTable->{$clo});
+    push @args, $cmd . $attrTable->{$clo} if exists($attrTable->{$clo});
+  }
+
   push @args, $extraArgs if defined($extraArgs);
   push @args, $filename;
 
@@ -383,8 +402,9 @@ sub processStartCmd
   printInfo("@args", 1) if ($verboseLevel > 1);
 
   printInfo('.', 0);
-  
-  if (1) {
+
+  printInfo("@args", 1);
+  if (0) {
   $rc = 0xffff & system @args;
   print("system(%s) returned %#04x: ", "@args", $rc) if ($verboseLevel > 1);
   if ($rc == 0) {
