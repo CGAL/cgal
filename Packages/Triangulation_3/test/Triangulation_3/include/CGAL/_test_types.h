@@ -22,6 +22,8 @@
 #ifndef CGAL_TEST_TYPES_H
 #define CGAL_TEST_TYPES_H
 
+#define Simple_cartesian Sc
+
 #include <CGAL/basic.h>
 #include <iostream>
 #include <cassert>
