@@ -14,7 +14,7 @@ package: clean $(Package).tar.gz
 	@echo "------------ Penser à: -----------"
 	@echo "----------------------------------"
 	@echo "---- changes.txt              ----"
-	@echo "---- make Test                ----"
+	@echo "---- make test                ----"
 	@echo "---- make VERSION=3.1 Version ----"
 	@echo "---- make Commit               ----"
 	@echo "---- make VERSION=3.1 Rtag    ----"
