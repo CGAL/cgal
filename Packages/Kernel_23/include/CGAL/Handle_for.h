@@ -87,9 +87,10 @@ public:
     }
 
     Handle_for&
-    operator=(Handle_for h)
+    operator=(const Handle_for& h)
     {
-        swap(h);
+        Handle_for tmp = h;
+        swap(tmp);
         return *this;
     }
 
@@ -99,7 +100,7 @@ public:
         if (is_shared())
             *this = Handle_for(t);
         else
-            *ptr() = t;
+            ptr_->t = t;
 
         return *this;
     }

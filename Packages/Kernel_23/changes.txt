@@ -1,3 +1,6 @@
+1.61 (25 August 2003)
+- Try to help VC++ in Handle_for.
+
 1.60 (25 August 2003)
 - Fix bug in Handle_for::copy_on_write (used by Polynomial).
 - Comment out the unfinished documentation of Weighted_point_[23].
