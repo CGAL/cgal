@@ -1352,7 +1352,8 @@ Packages/Min_sphere_of_spheres_d/web/figs/pivot/cex1.eps -text
 Packages/Min_sphere_of_spheres_d/web/figs/ss/basis.eps -text
 Packages/Min_sphere_of_spheres_d/web/figs/ss/notbasis.eps -text
 Packages/Min_sphere_of_spheres_d/web/figs/ss/ss_basis.eps -text
-Packages/Modifier/doc_tex/Modifier/idraw/modifier.ips -text
+Packages/Modifier/doc_tex/Modifier/idraw/modifier.eps -text
+Packages/Modifier/doc_tex/Modifier/idraw/modifier.pdf -text svneol=unset#unset
 Packages/Modifier/doc_tex/Modifier/modifier.gif -text svneol=unset#unset
 Packages/Modifier/doc_tex/Modifier/modifier_small.gif -text svneol=unset#unset
 Packages/Nef_2/demo/Nef_2/nef_2.vcproj -text
