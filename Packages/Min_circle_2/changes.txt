@@ -1,3 +1,6 @@
+22 June 2004 Sylvain Pion
+- Add some missing "std::".
+
 25 Feb 2004 Sylvain Pion
 - Fix typo.
 

@@ -314,8 +314,8 @@ operator >> ( std::istream& is,
     switch ( CGAL::get_mode( is)) {
 
       case CGAL::IO::PRETTY:
-        cerr << std::endl;
-        cerr << "Stream must be in ascii or binary mode" << std::endl;
+	std::cerr << std::endl;
+	std::cerr << "Stream must be in ascii or binary mode" << std::endl;
         break;
 
       case CGAL::IO::ASCII:
