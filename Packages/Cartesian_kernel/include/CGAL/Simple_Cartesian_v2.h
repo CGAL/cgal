@@ -1,6 +1,6 @@
 // ======================================================================
 //
-// Copyright (c) 2000 The CGAL Consortium
+// Copyright (c) 2000,2001 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -329,6 +329,34 @@ struct Simple_Cartesian_v2
     typedef CGAL::Point_d<Self>                           Point_d;
 
 #endif // CGAL_CFG_NO_ADVANCED_KERNEL
+
+    typedef typename Kernel_base::Point_handle_2	Point_handle_2;
+    typedef typename Kernel_base::Vector_handle_2	Vector_handle_2;
+    typedef typename Kernel_base::Direction_handle_2	Direction_handle_2;
+    typedef typename Kernel_base::Line_handle_2		Line_handle_2;
+    typedef typename Kernel_base::Ray_handle_2		Ray_handle_2;
+    typedef typename Kernel_base::Segment_handle_2	Segment_handle_2;
+    typedef typename Kernel_base::Circle_handle_2	Circle_handle_2;
+    typedef typename Kernel_base::Triangle_handle_2	Triangle_handle_2;
+    typedef typename Kernel_base::Iso_rectangle_handle_2
+	                                                Iso_rectangle_handle_2;
+    typedef typename Kernel_base::Aff_transformation_handle_2
+	                                           Aff_transformation_handle_2;
+
+    typedef typename Kernel_base::Point_handle_3	Point_handle_3;
+    typedef typename Kernel_base::Vector_handle_3	Vector_handle_3;
+    typedef typename Kernel_base::Direction_handle_3	Direction_handle_3;
+    typedef typename Kernel_base::Line_handle_3		Line_handle_3;
+    typedef typename Kernel_base::Plane_handle_3	Plane_handle_3;
+    typedef typename Kernel_base::Ray_handle_3		Ray_handle_3;
+    typedef typename Kernel_base::Segment_handle_3	Segment_handle_3;
+    typedef typename Kernel_base::Sphere_handle_3	Sphere_handle_3;
+    typedef typename Kernel_base::Triangle_handle_3	Triangle_handle_3;
+    typedef typename Kernel_base::Tetrahedron_handle_3	Tetrahedron_handle_3;
+    typedef typename Kernel_base::Iso_cuboid_handle_3
+	                                                Iso_cuboid_handle_3;
+    typedef typename Kernel_base::Aff_transformation_handle_3
+	                                           Aff_transformation_handle_3;
 
     // TODO: cleanup
     static   FT make_FT(const RT & num, const RT& denom) { return num/denom;}

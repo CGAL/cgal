@@ -1,5 +1,6 @@
 Version 6.1 (?? January 2001)
 - Borland fixes.
+- MipsPro fixes : forward the handle typedefs in derived class.
 
 Version 6.0 (12 January 2001)
 - Merged C2, C3 and Cartesian_basic in Cartesian_kernel.
