@@ -349,12 +349,16 @@ Geomview_stream::draw_triangles(InputIterator begin, InputIterator end)
     typedef typename Kernel::Point_3                                  Point;
     typedef typename Kernel::Less_xyz_3                               Comp;
 
+    // We first copy everything in a vector to only require an InputIterator.
+    std::vector<Triangle> triangles(begin, end);
+    typedef typename std::vector<Triangle>::const_iterator            Tit;
+
     // Put the points in a map and a vector.
     // The index of a point in the vector is the value associated
     // to it in the map.
     std::map<Point, int, Comp> point_map(Kernel().less_xyz_3_object());
     std::vector<Point> points;
-    for (InputIterator i = begin; i != end; ++i)
+    for (Tit i = triangles.begin(); i != triangles.end(); ++i)
         for (int j = 0; j < 3; ++j)
 	    if (point_map.insert(std::make_pair(i->vertex(j),
 					        points.size())).second)
@@ -367,14 +371,14 @@ Geomview_stream::draw_triangles(InputIterator begin, InputIterator end)
     set_binary_mode();
     (*this) << "(geometry " << get_new_id("triangles")
             << " {appearance {}{ OFF BINARY\n"
-            << points.size() << std::distance(begin, end) << 0;
+            << points.size() << triangles.size() << 0;
 
     // Points coordinates.
     std::copy(points.begin(), points.end(),
               Ostream_iterator<Point, Geomview_stream>(*this));
 
     // Triangles vertices indices.
-    for (InputIterator tit = begin; tit != end; ++tit) {
+    for (Tit tit = triangles.begin(); tit != triangles.end(); ++tit) {
         (*this) << 3;
 	for (int j = 0; j < 3; ++j)
 	    (*this) << point_map[tit->vertex(j)];

@@ -1,5 +1,8 @@
 CHANGES to the Geomview package.
 
+Ver 3.35 (20 December 2002)
+- Make draw_triangles() only require an InputIterator, not a ForwardIterator.
+
 Ver 3.34 (20 December 2002)
 - Add operator<<(long) and operator<<(unsigned long) (needed for MipsPro 64).
 
