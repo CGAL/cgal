@@ -63,6 +63,17 @@ public:
    : RIso_cuboid_3(p,q)
   {}
 
+  Iso_cuboid_3(const RT& min_hx, const RT& min_hy, const RT& min_hz,
+               const RT& max_hx, const RT& max_hy, const RT& max_hz, 
+               const RT& hw)
+   : RIso_cuboid_3(min_hx, min_hy, min_hz, max_hx, max_hy, max_hz, hw)
+  {}
+
+  Iso_cuboid_3(const RT& min_hx, const RT& min_hy, const RT& min_hz,
+               const RT& max_hx, const RT& max_hy, const RT& max_hz)
+   : RIso_cuboid_3(min_hx, min_hy, min_hz, max_hx, max_hy, max_hz)
+  {}
+
 /*
   bool     operator==(const CGAL::Iso_cuboid_3<R>& r) const
            { return (const RIso_cuboid_3& )*this == (const RIso_cuboid_3& )r ;}
@@ -86,6 +97,10 @@ public:
            { return RIso_cuboid_3::ymax(); }
   FT       zmax() const
            { return RIso_cuboid_3::zmax(); }
+  FT       min_coord(int i) const
+           { return RIso_cuboid_3::min_coord(i); }
+  FT       max_coord(int i) const
+           { return RIso_cuboid_3::max_coord(i); }
   CGAL::Point_3<R>
            vertex(int i) const
            { return RIso_cuboid_3::vertex(i); }
