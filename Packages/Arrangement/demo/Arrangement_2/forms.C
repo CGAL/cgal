@@ -316,6 +316,8 @@ OptionsForm::OptionsForm( QWidget* parent ,int number_of_tabs ,
   arrComboBox1->insertItem( "Circle" );
   arrComboBox1->insertItem( "Segment" );
   arrComboBox1->insertItem( "Ellipse" );
+  arrComboBox1->insertItem( "Parabula" );
+  arrComboBox1->insertItem( "Hyperbula" );
   
   arrLayout1->addWidget( arrComboBox1 );
   optionsFormLayout->addLayout( arrLayout1 );

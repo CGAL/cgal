@@ -35,7 +35,7 @@
 enum TraitsType { SEGMENT_TRAITS, POLYLINE_TRAITS , CONIC_TRAITS};
 enum SnapMode   { NONE , GRID , POINT};
 enum Mode       { INSERT , DELETE , POINT_LOCATION , RAY_SHOOTING , DRAG };
-enum ConicType  { CIRCLE , SEGMENT ,ELLIPSE};
+enum ConicType  { CIRCLE , SEGMENT ,ELLIPSE , PARABULA , HYPERBULA};
 
 // Coordinate related typedef - using inexact number type
 typedef float                                              Coord_type;
@@ -104,7 +104,6 @@ typedef CGAL::Arr_curve_data_traits_2<Base_pol_traits,
 typedef Pol_traits::Curve_2                                Pm_pol_2;
 typedef Pol_traits::X_monotone_curve_2                     Pm_xpol_2;
 typedef Pol_traits::Point_2                                Pm_pol_point_2;
-typedef Pol_traits::Segment_2                              Pm_pol_segment_2;
 typedef CGAL::Pm_default_dcel<Pol_traits>                  Pol_dcel;
 typedef CGAL::Planar_map_2<Pol_dcel, Pol_traits>           Pol_pm;
 typedef CGAL::Planar_map_with_intersections_2<Pol_pm>      Pol_arr;

@@ -111,6 +111,8 @@ private slots:
 	void zoomout();
 	/*! open a file */
 	void fileOpen( bool clear_flag = false);
+	/*! open a file and add a segment tab */
+	void fileOpenSegment();
 	/*! open a file and add a polyline tab */
 	void fileOpenPolyline();
 	/*! open a file and add a conic tab */
@@ -139,6 +141,10 @@ private slots:
 	void backGroundColor();
 	/*! choose the ray shoot diraction */
 	void rayShootingDirection();
+	/*! change the conic type of current tab */
+   	void updateConicType( QAction *action );
+	/*! update the window buttons according to change in conic type */
+	void setConicType( ConicType t );
 
 private:
 	/*! myBar - hold the tab widgets */
@@ -203,4 +209,17 @@ private:
 	double m_scailing_factor;
 	/*! different colors mode */
 	bool colors_flag;
+	/*! circle conic type action */
+	QAction *setCircle;
+	/*! segment conic type action */
+	QAction *setSegment;
+	/*! ellipse conic type action */
+	QAction *setEllipse;
+	/*! parabula conic type action */
+	QAction *setParabula;
+	/*! hyperbula conic type action */
+	QAction *setHyperbula;
+	/*! conic type tool bar */
+	QToolBar *conicTypeTool;
 };
+

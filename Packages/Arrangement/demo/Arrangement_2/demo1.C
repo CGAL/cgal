@@ -32,7 +32,7 @@ int main(int, char*)
 #include "icons/ray_shooting2.xpm"
 #include "icons/draw.xpm"
 #include "icons/snap.xpm"
-
+#include "icons/conic_types.xpm"
 
 const QString my_title_string("Arrangement Demo with CGAL Qt_widget");
 
@@ -138,6 +138,38 @@ MyWindow::MyWindow(int w, int h)
   zoomoutBt = new QAction("Zoom out", QPixmap( (const char**)zoomout_xpm ),
                           "&Zoom out", 0 , this, "Zoom out" );
   
+  // Conic Type Group
+  QActionGroup *conicTypeGroup = new QActionGroup( this ); // Connected later
+  conicTypeGroup->setExclusive( TRUE );
+  
+  setCircle = new QAction("Circle",
+                                 QPixmap( (const char**)mycircle_xpm ),
+                                 "&Circle", 0 ,conicTypeGroup,
+                                 "Circle" );
+  setCircle->setToggleAction( TRUE );
+  setSegment = new QAction("Segment",
+                                 QPixmap( (const char**)segment_xpm ),
+                                 "&Segment", 0 ,conicTypeGroup,
+                                 "Segment" );
+  setSegment->setToggleAction( TRUE );
+  setEllipse = new QAction("Ellipse",
+                                 QPixmap( (const char**)ellipse_xpm ),
+                                 "&Ellipse", 0 ,conicTypeGroup,
+                                 "Ellipse" );
+  setEllipse->setToggleAction( TRUE );
+  setParabula = new QAction("Parabula",
+                                 QPixmap( (const char**)parabula_xpm ),
+                                 "&Parabula", 0 ,conicTypeGroup,
+                                 "Parabula" );
+  setParabula->setToggleAction( TRUE );
+  setHyperbula = new QAction("Hyperbula",
+                                 QPixmap( (const char**)hyperbula_xpm ),
+                                 "&Hyperbula", 0 ,conicTypeGroup,
+                                 "Hyperbula" );
+  setHyperbula->setToggleAction( TRUE );
+  
+  
+
   //create a timer for checking if somthing changed
   QTimer *timer = new QTimer( this );
   connect( timer, SIGNAL(timeout()),
@@ -147,8 +179,9 @@ MyWindow::MyWindow(int w, int h)
   // file menu
   QPopupMenu * file = new QPopupMenu( this );
   menuBar()->insertItem( "&File", file );
-  file->insertItem("&Open Conic File", this, SLOT(fileOpenConic()));
+  file->insertItem("&Open Segment File", this, SLOT(fileOpenSegment()));
   file->insertItem("&Open Polyline File", this, SLOT(fileOpenPolyline()));
+  file->insertItem("&Open Conic File", this, SLOT(fileOpenConic()));
   file->insertItem("&Save", this, SLOT(fileSave()));
   file->insertItem("&Save As", this, SLOT(fileSaveAs()));
   file->insertItem("&Save to ps", this, SLOT(fileSave_ps()));
@@ -244,7 +277,17 @@ MyWindow::MyWindow(int w, int h)
   zoomTool->addSeparator();
   zoomoutBt->addTo( zoomTool );
   zoominBt->addTo( zoomTool );
-  
+  zoomTool->addSeparator();
+
+  conicTypeTool = new QToolBar( this, "conic type" );
+  conicTypeTool->setLabel( "Conic Type" );
+  conicTypeTool->addSeparator();
+  setSegment->addTo( conicTypeTool );
+  setCircle->addTo( conicTypeTool );
+  setEllipse->addTo( conicTypeTool );
+  setParabula->addTo( conicTypeTool );
+  setHyperbula->addTo( conicTypeTool );
+
   
   connect( zoomoutBt, SIGNAL( activated () ) , 
        this, SLOT( zoomout() ) );
@@ -260,6 +303,10 @@ MyWindow::MyWindow(int w, int h)
   connect( traitsGroup, SIGNAL( selected(QAction*) ),
            this, SLOT( updateTraitsType(QAction*) ) );
   
+  // connect Conic Type Group
+  connect( conicTypeGroup, SIGNAL( selected(QAction*) ),
+           this, SLOT( updateConicType(QAction*) ) );
+
   // connect Snap Mode 
   
   connect( setSnapMode, SIGNAL( toggled( bool ) ) , 
@@ -452,17 +499,20 @@ void MyWindow::updateTraitsType( QAction *action )
       (CONIC_TRAITS , this);
   }
   
-  switch( QMessageBox::warning( this, "Update Traits Type",
+  if( !old_widget->empty ) // pm is not empty
+  {
+    switch( QMessageBox::warning( this, "Update Traits Type",
         "This action will destroy the current planar map.\n"
         "Do you want to continue ?",
         "Yes",
         "No", 0, 0, 1 ) ) {
-    case 0: 
-        // continue
-        break;
-    case 1: // The user clicked the Quit or pressed Escape
-        return;
-        break;
+      case 0: 
+          // continue
+          break;
+      case 1: // The user clicked the Quit or pressed Escape
+          return;
+          break;
+    }
   }
 
   int old_index = old_widget->index;
@@ -491,10 +541,7 @@ void MyWindow::updateTraitsType( QAction *action )
   myBar->setCurrentPage(index);
   
   resize(m_width,m_height);
-  
-  //if (action == setConicTraits)
-  //    fileOpen();
-  
+    
   update();
   something_changed();
   
@@ -506,15 +553,59 @@ void MyWindow::setTraits( TraitsType t )
   switch ( t ) {
    case SEGMENT_TRAITS:
     setSegmentTraits->setOn( TRUE );
-    //deleteMode->setEnabled( TRUE );
+	conicTypeTool->hide();
     break;
    case POLYLINE_TRAITS:
     setPolylineTraits->setOn( TRUE );
-    //deleteMode->setEnabled( TRUE );
+	conicTypeTool->hide();
     break;
    case CONIC_TRAITS:
     setConicTraits->setOn( TRUE );
-    //deleteMode->setEnabled( FALSE );
+	conicTypeTool->show();
+    break;
+  }
+}
+
+/*! update widget conic type
+ * \param action - the new conic type 
+ */
+void MyWindow::updateConicType( QAction *action )
+{
+  // We peform downcasting from QWigdet* to Qt_widget_base_tab*,
+  // as we know that only
+  // Qt_widget_base_tab objects are stored in the tab pages.
+  Qt_widget_base_tab    *w_demo_p = 
+    static_cast<Qt_widget_base_tab *> (myBar->currentPage());
+  if ( action == setCircle ) 
+    w_demo_p->conic_type = CIRCLE;
+  else if ( action == setSegment ) 
+    w_demo_p->conic_type = SEGMENT;
+  else if ( action == setEllipse ) 
+    w_demo_p->conic_type = ELLIPSE;
+  else if ( action == setParabula ) 
+    w_demo_p->conic_type = PARABULA;
+  else if ( action == setHyperbula ) 
+    w_demo_p->conic_type = HYPERBULA;
+}
+
+/*! change the buttons stste according to the traits type */
+void MyWindow::setConicType( ConicType t )
+{
+  switch ( t ) {
+   case CIRCLE:
+    setCircle->setOn( TRUE );
+    break;
+   case SEGMENT:
+    setSegment->setOn( TRUE );
+    break;
+   case ELLIPSE:
+    setEllipse->setOn( TRUE );
+    break;
+   case PARABULA:
+    setParabula->setOn( TRUE );
+    break;
+   case HYPERBULA:
+    setHyperbula->setOn( TRUE );
     break;
   }
 }
@@ -650,6 +741,7 @@ void MyWindow::update()
   setMode( w_demo_p->mode );
   updateSnapMode( false );
   setTraits( w_demo_p->traits_type );
+  setConicType( w_demo_p->conic_type );
 }
 
 /*! zoom in - enlarge the picture */
@@ -701,6 +793,46 @@ void MyWindow::properties()
   }
   delete optionsForm;
 }
+/*! open a segment file and add new tab */
+void MyWindow::fileOpenSegment()
+{
+  Qt_widget_base_tab *w_demo_p = 
+    static_cast<Qt_widget_base_tab *> (myBar->currentPage());
+  bool flag = (w_demo_p->traits_type == SEGMENT_TRAITS);
+  if( w_demo_p->empty ) // pm is empty
+  {
+    if (flag)
+	  fileOpen();
+	else
+	{
+	  updateTraitsType( setSegmentTraits );
+      fileOpen(true);
+	}
+  }
+  else
+  {
+    FileOpenOptionsForm
+         *form = new FileOpenOptionsForm(flag);
+    if ( form->exec() ) 
+    {
+        int id = form->buttonGroup->id(form->buttonGroup->selected());
+		switch ( id ) 
+		{
+          case 0: // open file in a new tab
+            add_segment_tab();
+            fileOpen();      
+            break;
+          case 1: // open file in current tab (delete current Pm)
+            updateTraitsType( setSegmentTraits );
+            fileOpen(true);
+          break;
+          case 2: // merge file into current tab
+            fileOpen();
+          break;
+		}// switch
+	}// if
+  }
+}// fileOpenSegment
 
 /*! open a polyline file and add new tab */
 void MyWindow::fileOpenPolyline()
@@ -708,13 +840,25 @@ void MyWindow::fileOpenPolyline()
   Qt_widget_base_tab *w_demo_p = 
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
   bool flag = (w_demo_p->traits_type == POLYLINE_TRAITS);
-  FileOpenOptionsForm
-       *form = new FileOpenOptionsForm(flag);
-  if ( form->exec() ) 
+  if( w_demo_p->empty ) // pm is empty
   {
-      int id = form->buttonGroup->id(form->buttonGroup->selected());
-      switch ( id ) 
-      {
+    if (flag)
+	  fileOpen();
+	else
+	{
+	  updateTraitsType( setSegmentTraits );
+      fileOpen(true);
+	}
+  }
+  else
+  {
+    FileOpenOptionsForm
+         *form = new FileOpenOptionsForm(flag);
+    if ( form->exec() ) 
+    {
+        int id = form->buttonGroup->id(form->buttonGroup->selected());
+		switch ( id ) 
+		{
           case 0: // open file in a new tab
             add_polyline_tab();
             fileOpen();      
@@ -726,8 +870,9 @@ void MyWindow::fileOpenPolyline()
           case 2: // merge file into current tab
             fileOpen();
           break;
-      }// switch
-  }// if 
+		}// switch
+	}// if
+  } 
 }// fileOpenPolyline
 
 /*! open a polyline file and add new tab */
@@ -736,13 +881,25 @@ void MyWindow::fileOpenConic()
   Qt_widget_base_tab *w_demo_p = 
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
   bool flag = (w_demo_p->traits_type == CONIC_TRAITS);
-  FileOpenOptionsForm
-       *form = new FileOpenOptionsForm(flag);
-  if ( form->exec() ) 
+  if( w_demo_p->empty ) // pm is empty
   {
-      int id = form->buttonGroup->id(form->buttonGroup->selected());
-      switch ( id ) 
-      {
+    if (flag)
+	  fileOpen();
+	else
+	{
+	  updateTraitsType( setSegmentTraits );
+      fileOpen(true);
+	}
+  }
+  else
+  {
+    FileOpenOptionsForm
+         *form = new FileOpenOptionsForm(flag);
+    if ( form->exec() ) 
+    {
+        int id = form->buttonGroup->id(form->buttonGroup->selected());
+		switch ( id ) 
+		{
           case 0: // open file in a new tab
             add_conic_tab();
             fileOpen();      
@@ -754,8 +911,9 @@ void MyWindow::fileOpenConic()
           case 2: // merge file into current tab
             fileOpen();
           break;
-      }// switch
-  }// if
+		}// switch
+	}// if
+  }// else  
 }// fileOpenConic
 
 /*! open a file */
@@ -786,7 +944,10 @@ void MyWindow::load( const QString& filename , bool clear_flag )
   
   Qt_widget_base_tab    *w_demo = 
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
-  
+
+  QCursor old = w_demo->cursor();
+  w_demo->setCursor(Qt::WaitCursor);
+   
   if (w_demo->traits_type == CONIC_TRAITS)
   {
     Qt_widget_demo_tab<Conic_tab_traits>    *w_demo_p = 
@@ -862,10 +1023,50 @@ void MyWindow::load( const QString& filename , bool clear_flag )
     }
   }
   
+  else if (w_demo->traits_type == SEGMENT_TRAITS)
+  {
+    Qt_widget_demo_tab<Segment_tab_traits>    *w_demo_p = 
+      static_cast<Qt_widget_demo_tab<Segment_tab_traits> *> 
+      (myBar->currentPage());
+    if (clear_flag)
+        w_demo_p->m_curves_arr.clear();
+    
+    int count;
+    inputFile >> count;
+    
+    int i;
+    for (i = 0; i < count; i++) {
+      NT x0, y0, x1, y1;
+      inputFile >> x0 >> y0 >> x1 >> y1;
+    
+      Pm_seg_point_2 p1(x0, y0);
+      Pm_seg_point_2 p2(x1, y1);
+
+	  Pm_base_seg_2 *base_seg =
+		  new Pm_base_seg_2(p1, p2);
+	
+      CGAL::Bbox_2 curve_bbox = base_seg->bbox();
+      if (i == 0)
+        w_demo->bbox = curve_bbox;
+      else
+        w_demo->bbox = w_demo->bbox + curve_bbox;
+      
+      Curve_data cd;
+      cd.m_type = Curve_data::LEAF;
+      cd.m_index = w_demo_p->index;
+      cd.m_ptr.m_curve = base_seg;
+      
+      w_demo_p->m_curves_arr.insert(Pm_seg_2( *base_seg , cd));
+
+    }
+      
+  }
   w_demo->set_window(w_demo->bbox.xmin() , w_demo->bbox.xmax() , 
                      w_demo->bbox.ymin() , w_demo->bbox.ymax());
   
   inputFile.close();
+  w_demo->setCursor(old);
+  
   something_changed();
 }
 
@@ -1493,6 +1694,10 @@ void MyWindow::conicType()
       w_demo_p->conic_type = SEGMENT;
 	else if (strcmp(type,"Ellipse") == 0)
       w_demo_p->conic_type = ELLIPSE;
+	else if (strcmp(type,"Parabula") == 0)
+      w_demo_p->conic_type = PARABULA;
+	else if (strcmp(type,"Hyperbula") == 0)
+      w_demo_p->conic_type = HYPERBULA;
   }
 }
 

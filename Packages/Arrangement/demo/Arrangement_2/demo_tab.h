@@ -34,10 +34,11 @@ public:
     on_first(false),
     snap(false),
     grid(false),
-    conic_type(CIRCLE),
+    conic_type(SEGMENT),
     cube_size(1),
 	ray_shooting_direction(true),
-	remove_org_curve(true)
+	remove_org_curve(true),
+	empty(true)
   {
     *this << CGAL::LineWidth(2) << CGAL::BackgroundColor (CGAL::WHITE);
     set_window(-10, 10, -10, 10);
@@ -99,6 +100,8 @@ public:
   bool ray_shooting_direction; // true for up
   /*! remove all original curve or only a part */
   bool remove_org_curve;
+  /*! true if pm is empty */
+  bool empty;
 };
 
 /*! template class Qt_widget_demo_tab gets a Tab_traits class as 
@@ -345,7 +348,6 @@ public:
     // calculate cube size (minimum of 1)
     //int cube_size_x = std::max(1, abs(max_x - min_x)/20);
     //int cube_size_y = std::max(1, abs(max_y - min_y)/20);
-    // calculate cube size (minimum of 1)
     int cube_size_x = cube_size;
     int cube_size_y = cube_size;
     // draw the grid lines
@@ -370,7 +372,9 @@ public:
     if (mode == DELETE)
     {
       remove_curve( e );
-      return;
+	  if( m_curves_arr.number_of_vertices() == 0 )
+	    empty = true;
+	  return;
     }
     if (mode == INSERT)
     {
@@ -389,7 +393,8 @@ public:
       setRasterOp(old_rasterop);
       setColor(old_color);
       unlock();
-      
+      if( m_curves_arr.number_of_vertices() > 0 )
+	    empty = false;
       return;
     }
     if (mode == DRAG)
@@ -505,7 +510,6 @@ public:
     {
       Xcurve & xcurve = hei->curve();
       Coord_type dist = m_tab_traits.xcurve_point_distance( p, xcurve , this);
-      
       if (is_first || dist < min_dist)
       {
         min_dist = dist;
@@ -1317,6 +1321,7 @@ public:
   void first_point( Coord_point p )
   {
     m_p1 = m_p2 = p;
+	first_time_hyperbula = true;
   }
   
   /*! middle_point - the last point of a segment */
@@ -1325,7 +1330,7 @@ public:
     if(m_p1.x() != p.x() || m_p1.y() != p.y()) 
     {
       CONIC_NT r, s, t, u, v, ww;  // The conic coefficients.
-      CONIC_NT a, b, a_sq, b_sq, x, y, x1, y1, x0, y0;
+      CONIC_NT a, b, c, a_sq, b_sq, x, y, x1, y1, x0, y0, temp;
       x = m_p1.x();
       y = m_p1.y();
       x1 = p.x();
@@ -1360,6 +1365,81 @@ public:
 
 		cv = new Pm_base_conic_2(r, s, t, u, v, ww);
 	    break;
+	  case PARABULA:
+	    if (x > x1)
+		{
+		  temp = x1;
+		  x1 = x;
+		  x = temp;
+		}		  
+	    x0 = (x + x1)/2;
+		y0 = y;
+		a = (y1 - y0)/((x1 - x0)*(x1 - x0));
+		b = -2*x0*a;
+		c = y0 + x0*x0*a;
+        
+		r = a;
+        s = 0;
+        t = 0;
+        u = b;
+        v = -1;
+        ww = c;
+
+		cv = new Pm_base_conic_2(r, s, t, u, v, ww, Pm_conic_point_2(x1,y1), 
+			Pm_conic_point_2(x,y1));
+	    break;
+	  case HYPERBULA:
+	    if (first_time_hyperbula)
+		{
+		  *w << CGAL::RED;
+		  *w << Coord_segment( Coord_point(m_p1.x(),(m_p1.y() + p.y())/2) ,
+			                   Coord_point(p.x()   ,(m_p1.y() + p.y())/2) );   
+		  first_time_hyperbula = false;
+		  m_p3 = m_p2;
+
+		  *w << CGAL::DISC;
+		  *w << m_p1;
+		  *w << m_p2;
+		  return;
+		}
+		else
+		{                        /*  x,y             */
+		  x1 = m_p3.x();         /*     \    /       */
+		  y1 = m_p3.y();         /*      \  /        */
+		                         /*  x0,y0\/         */
+		  x0 = (x + x1)/2;       /*       /\         */
+		  y0 = (y + y1)/2;       /*      /  \        */
+                                 /*     /    \       */
+		  a = abs(x0 - p.x());   /*           x1,y1  */
+		  b = ((y - y1)/(x - x1))*a;
+		  
+		  r = b*b;
+		  s = -1*a*a;
+		  t = 0;
+		  u = -2*b*b*x0;
+		  v = 2*a*a*y0;
+		  ww = b*b*x0*x0 - a*a*y0*y0 - a*a*b*b;
+
+		  CONIC_NT y2, y3 ,root;
+		  //std::cout << "p1 " << m_p1 << std::endl;
+		  //std::cout << "p3 " << m_p3 << std::endl;
+
+		  //std::cout << "s " << s << std::endl;
+		  //std::cout << "ww " << ww << std::endl;
+		  //std::cout << "u " << u << std::endl;
+		  //std::cout << "r " << r << std::endl;
+    //      std::cout << "root " << root << std::endl;
+
+		  root = sqrt(v*v - 4*s*(ww + u*x1 + r*x1*x1));
+		  y2 = (-1*v + root)/(2*s);
+		  y3 = (-1*v - root)/(2*s);
+
+		  cv = new Pm_base_conic_2(r, s, t, u, v, ww, Pm_conic_point_2(x1,y2), 
+			Pm_conic_point_2(x1,y3));	
+		  //cv = new Pm_base_conic_2(r, s, t, u, v, ww, Pm_conic_point_2(x,y2), 
+			//Pm_conic_point_2(x,y3));
+		}		
+		break;	
 	  }
 
       Curve_conic_data cd;
@@ -1376,8 +1456,8 @@ public:
   
   /*! last_point - meaningless for conics - at least for now */
   void last_point( Coord_point p , Qt_widget_demo_tab<Conic_tab_traits> * w )
-  {
-    return;
+  {   
+      return;
   }
   /*! draw_last_segment - call from mouse move event */
   void draw_last_segment( Qt_widget_demo_tab<Conic_tab_traits> * w)
@@ -1399,6 +1479,27 @@ public:
 		*w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p1 );
 		break;
 	  }		
+	  case PARABULA:
+	  {
+ 		*w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p2 );
+		*w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p1 );
+		*w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p2 );
+		*w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p1 );
+		break;
+	  }		
+	  case HYPERBULA:
+	  {
+	    if (first_time_hyperbula)
+		{
+ 		  *w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p2 );
+		  *w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p1 );
+		  *w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p2 );
+		  *w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p1 );
+		  *w << Coord_segment( m_p1 , m_p2 );
+		  *w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , Coord_point(m_p1.x(),m_p2.y()) );
+		}
+		break;
+	  }		
 	  
 	}
   }
@@ -1408,27 +1509,49 @@ public:
                              Qt_widget_demo_tab<Conic_tab_traits> * w)
   {
     m_p2 = p;
-	switch (w->conic_type)
-	{
-	  case CIRCLE:
-	  *w << Coord_circle(m_p1,
-		  pow(m_p1.x() - p.x(), 2) + pow(m_p1.y() - p.y(), 2));
-	  break;
-	  case SEGMENT:
-	  *w << Coord_segment( m_p1 , p) ;
-	  break;
-	  case ELLIPSE:
-	  {
- 		*w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p2 );
-		*w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p1 );
-		*w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p2 );
-		*w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p1 );
-		break;
-	  }
-	  
-	}       
+	draw_last_segment(w);
   }
-  
+	//switch (w->conic_type)
+	//{
+	//  case CIRCLE:
+	//  *w << Coord_circle(m_p1,
+	//	  pow(m_p1.x() - p.x(), 2) + pow(m_p1.y() - p.y(), 2));
+	//  break;
+	//  case SEGMENT:
+	//  *w << Coord_segment( m_p1 , p) ;
+	//  break;
+	//  case ELLIPSE:
+	//  {
+ //		*w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p2 );
+	//	*w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p1 );
+	//	*w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p2 );
+	//	*w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p1 );
+	//	break;
+	//  }
+	//  case PARABULA:
+	//  {
+ //		*w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p2 );
+	//	*w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p1 );
+	//	*w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p2 );
+	//	*w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p1 );
+	//	break;
+	//  }		
+	//  case HYPERBULA:
+	//  {
+	//    if (first_time_hyperbula)
+	//	{
+ //		  *w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p2 );
+	//	  *w << Coord_segment( Coord_point(m_p1.x(),m_p2.y()) , m_p1 );
+	//	  *w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p2 );
+	//	  *w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , m_p1 );
+	//	  *w << Coord_segment( m_p1 , m_p2 );
+	//	  *w << Coord_segment( Coord_point(m_p2.x(),m_p1.y()) , Coord_point(m_p1.x(),m_p2.y()) );
+	//	}
+	//	break;
+	//  }		
+	//}       
+ // }
+ // 
   /*! closest_point - find the closest point in the planar map
       to a clicked point
   */
@@ -1568,8 +1691,6 @@ public:
           (*w).x_pixel(sx);
         double   prev_x = is_source_left ? sx : tx;
         double   prev_y = is_source_left ? sy : ty;
-        //double   end_x = is_source_left ? tx : sx;
-        //double   end_y = is_source_left ? ty : sy;
         double   curr_x, curr_y;
         int      x;
         
@@ -1577,7 +1698,7 @@ public:
         int nps;
         
         bool first = true;
-        Coord_type min_dist = 0;
+        Coord_type min_dist = 100000000;
         
         
         for (x = x_min + 1; x < x_max; x++)
@@ -1628,7 +1749,9 @@ public:
   
   Traits m_traits;
   /*! temporary points of the created conic */
-  Coord_point m_p1,m_p2;
+  Coord_point m_p1,m_p2,m_p3;
+  /*! bool flag for hyperbula insertion */
+  bool first_time_hyperbula;
 };
 
 typedef Qt_widget_demo_tab<Segment_tab_traits> Qt_widget_segment_tab;
