@@ -1815,6 +1815,36 @@ and  decreases by one the dimension of the triangulation.
 3,
 if the dimension is 1, the number of vertices is 2.} }
 
+\begin{ccAdvanced}
+The following modifiers are required for convenience of the advanced
+user.
+They do not guarantee the combinatorial validity 
+of the resulting triangulation.
+\ccMethod{Face* create_face(Face* f1, int i1, Face* f2, int i2, Face*
+f3, int i3);}{adds a face which is the neighbor \ccc{i1} of \ccc{f1}, 
+\ccc{i2} of ccc{f2} and \ccc{i3} of \ccc{f3}.}
+\ccGlue
+\ccMethod{Face* create_face(Face* f1, int i1, Face* f2, int i2);}
+{adds a face which is the neighbor \ccc{i1} of \ccc{f1}, 
+and the neighbor \ccc{i2} of ccc{f2}.}
+\ccGlue
+\ccMethod{Face* create_face(Face* f1, int i1, Vertex* v);}
+{adds a face which is the neighbor \ccc{i1} of \ccc{f1},
+and has \ccc{v} as vertex.}
+\ccGlue
+\ccMethod{ Face* create_face(Vertex* v1, Vertex* v2, Vertex* v3);}
+{adds a face with vertices \ccc{v1}, \ccc{v2} and \ccc{v3}.}
+\ccGlue
+\ccMethod{Face* create_face(Vertex* v1, Vertex* v2, Vertex* v3,
+		    Face* f1, Face* f2, Face* f3);}
+{adds a face with vertices \ccc{v1}, \ccc{v2} and \ccc{v3},
+and neighbors \ccc{f1}, \ccc{f2}, \ccc{f3}.}
+\ccGlue
+\ccMethod{Face* create_face();}
+{adds a face whose vertices and neighbors are set to NULL.}
+ \ccGlue
+\ccMethod{void  delete_face(Face*);}{deletes a face.}
+\end{ccAdvanced}
 
 
 \ccHeading{Traversing the triangulation}
@@ -3390,9 +3420,13 @@ and the index \ccc{i}  of the vertex of \ccc{fr} opposite to
 \ccc{e}, i.e.  \ccc{e}=\ccc{(fr,i)}.}	    
 
 \ccMethod{void insert(const Vertex_handle & va, const Vertex_handle & vb,
-	    Face_handle & fr, int & i, List_edges & new_edges);}
+	    Face_handle & fr, int & i, List_edges & new_edges,
+	List_vertices & new_vertices);}
 {Same as above. In addition,  the edges that are created are put in
-the list \ccc{new\_edges}.}
+the list \ccc{new\_edges} and the new vertices
+\(resulting from the intersection of two constraints\) are put in the
+list
+\ccc{new\_vertices}.}
 
 \ccMethod{void remove(const Vertex_handle & v);}
 { Removes a vertex v. All constraints incident to the removed vertex are removed. }
