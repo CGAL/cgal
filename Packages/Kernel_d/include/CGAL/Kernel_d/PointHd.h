@@ -20,19 +20,20 @@
 // coordinator   : MPI Saarbruecken (Susan.Hert@mpi-sb.mpg.de)
 //
 // ======================================================================
-#ifndef CGAL_POINTHD_H
-#define CGAL_POINTHD_H 
-
+#ifndef CGAL_POINTHDXXX_H
+#define CGAL_POINTHDXXX_H 
 #ifndef NOCGALINCL
 #include <CGAL/basic.h>
 #include <CGAL/Origin.h>
 #include <CGAL/Quotient.h>
 #endif
-#include <CGAL/Kernel_d/Tuple_d.h> 
+#include <CGAL/Kernel_d/Tuple_d.h>
 #include <CGAL/Kernel_d/VectorHd.h> 
 #include <CGAL/Kernel_d/Aff_transformationHd.h>
 
+
 CGAL_BEGIN_NAMESPACE
+#define PointHd PointHd2
 
 template <class RT, class LA> class PointHd;
 template <class RT, class LA>
@@ -311,7 +312,7 @@ output on a point $p$ take time $O(|p.dimension()|)$. |dimension()|,
 coordinate access and conversions take constant time.  The space
 requirement for points is $O(|p.dimension()|)$.}*/
 
-
+#undef PointHd 
 CGAL_END_NAMESPACE
 #endif // CGAL_POINTHD_H 
 //----------------------- end of file ----------------------------------

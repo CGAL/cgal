@@ -33,6 +33,7 @@
 #include <CGAL/Kernel_d/Aff_transformationHd.h>
 
 CGAL_BEGIN_NAMESPACE
+#define PointHd PointHd2
 
 template <class RT, class LA>
 std::istream& operator>>(std::istream&, HyperplaneHd<RT,LA>&);
@@ -393,6 +394,7 @@ arithmetic, input and output on a hyperplane $h$ take time
 $O(|h.dimension()|)$. coordinate access and |dimension()| take
 constant time.  The space requirement is $O(|h.dimension()|)$.  }*/
 
+#undef PointHd
 CGAL_END_NAMESPACE
 #endif // CGAL_HYPERPLANEHD_H
 

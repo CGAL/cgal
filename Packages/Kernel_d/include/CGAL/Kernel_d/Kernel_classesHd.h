@@ -30,7 +30,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <typename RT, typename LA> class PointHd;
+template <typename RT, typename LA> class PointHd2;
 template <typename RT, typename LA> class VectorHd;
 template <typename RT, typename LA> class DirectionHd;
 template <typename RT, typename LA> class HyperplaneHd;

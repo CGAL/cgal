@@ -31,6 +31,7 @@
 
 CGAL_BEGIN_NAMESPACE
 #define PointCd PointCd2
+#define PointHd PointHd2
 
 template <typename NT, typename LA> class PointHd;
 template <typename NT, typename LA> class VectorHd;
@@ -327,6 +328,7 @@ int copy_and_count(InputIterator first, InputIterator last,
 }
 
 #undef PointCd
+#undef PointHd
 CGAL_END_NAMESPACE
 #endif //CGAL_TUPLE_D_H
 

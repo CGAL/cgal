@@ -60,7 +60,7 @@ public:
 
   typedef Homogeneous_tag        Rep_tag;
 
-  typedef PointHd<RT,LA>              Point_d_base;
+  typedef PointHd2<RT,LA>             Point_d_base;
   typedef VectorHd<RT,LA>             Vector_d_base;
   typedef DirectionHd<RT,LA>          Direction_d_base;
   typedef HyperplaneHd<RT,LA>         Hyperplane_d_base;

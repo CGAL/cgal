@@ -22,6 +22,7 @@
 #ifndef CGAL_POINTHD_C
 #define CGAL_POINTHD_C
 CGAL_BEGIN_NAMESPACE
+#define PointHd PointHd2
 
 template <class RT, class LA>
 PointHd<RT,LA> PointHd<RT,LA>::
@@ -82,7 +83,7 @@ inline CGAL::io_Operator io_tag(const PointHd<RT,LA>&)
 { return CGAL::io_Operator(); }
 
 
-
+#undef PointHd 
 CGAL_END_NAMESPACE
 #endif // CGAL_POINTHD_C
 

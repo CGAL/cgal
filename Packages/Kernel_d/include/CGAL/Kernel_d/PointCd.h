@@ -203,7 +203,7 @@ FT z()  const { return cartesian(2); }
 
 }; // PointCd
 
-#undef PointCd2
+#undef PointCd
 CGAL_END_NAMESPACE
 #endif // CGAL_POINTCDXXX_H 
 //----------------------- end of file ----------------------------------

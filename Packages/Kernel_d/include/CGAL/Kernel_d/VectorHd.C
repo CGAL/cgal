@@ -22,6 +22,7 @@
 #ifndef CGAL_VECTORHD_C
 #define CGAL_VECTORHD_C
 CGAL_BEGIN_NAMESPACE
+#define PointHd PointHd2
 
 template <class RT,class LA>
 PointHd<RT,LA> VectorHd<RT,LA>::to_point() const
@@ -66,7 +67,7 @@ template <class RT, class LA>
 inline CGAL::io_Operator io_tag(const VectorHd<RT,LA>&) 
 { return CGAL::io_Operator(); }
 
-
+#undef PointHd
 CGAL_END_NAMESPACE
 #endif // CGAL_VECTORHD_C
 
