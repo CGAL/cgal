@@ -210,5 +210,8 @@ int main(int argc,char *argv[])
     mouse_input = W.read_mouse(x,y);
   }
 
+  if(argc == 2)
+    delete(is_ptr);
+
   return(0);
 }
