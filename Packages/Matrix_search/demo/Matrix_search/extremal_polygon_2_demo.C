@@ -268,7 +268,7 @@ main()
         // test for snapping:
         if ( squared_distance( *nearest, Point( x, y)) < FT( 0.05)) {
           int v( 0);
-          drawing_mode old_drawing_mode( W.set_mode( leda_xor_mode));
+          leda_drawing_mode old_drawing_mode( W.set_mode( leda_xor_mode));
           leda_color old_color( W.set_color( leda_grey1));
           x = (*nearest).x();
           y = (*nearest).y();

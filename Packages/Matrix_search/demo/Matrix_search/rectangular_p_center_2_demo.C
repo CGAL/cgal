@@ -90,6 +90,12 @@ using CGAL::RED;
 using CGAL::ORANGE;
 using CGAL::GREEN;
 
+#ifdef _MSC_VER
+// that compiler cannot even distinguish between global
+// and class scope, so ...
+#define Base B_B_Base
+#endif // _MSC_VER
+
 #ifdef CGAL_CFG_NO_NAMESPACE
 template < class P,
            class Creator =
@@ -159,6 +165,10 @@ private:
   double c_size;
   P p0, p1, p2, p3;
 };
+
+#ifdef _MSC_VER
+#undef Base
+#endif // _MSC_VER
 
 // typedefs
 typedef Filtered_exact< double, leda_real > FT;
