@@ -26,17 +26,8 @@
 
 #ifndef CGAL_HALFEDGE_DATA_STRUCTURE_BASES_H
 #define CGAL_HALFEDGE_DATA_STRUCTURE_BASES_H 1
-#ifndef CGAL_BASIC_H
+
 #include <CGAL/basic.h>
-#endif
-#ifdef CGAL_REP_CLASS_DEFINED
-#ifndef CGAL_VECTOR_3_H
-#include <CGAL/Vector_3.h>
-#endif
-#ifndef CGAL_PLANE_3_H
-#include <CGAL/Plane_3.h>
-#endif
-#endif  // CGAL_REP_CLASS_DEFINED
 
 CGAL_BEGIN_NAMESPACE
 
@@ -166,25 +157,24 @@ public:
     void set_halfedge( void* h)  { hdg = h;}
 };
 
-#ifdef CGAL_REP_CLASS_DEFINED
-template < class _R >
+template < class Kernel_>
 class Polyhedron_facet_base_3 : public Facet_max_base {
     // defines the maximal facet functionality including halfedge pointer,
     // plane equation and normal vector.
 public:
-    typedef Tag_true     Supports_facet_plane;
-    typedef Tag_true     Supports_facet_normal;
-    typedef _R           R;
-    typedef Vector_3<R>  Normal;
-    typedef Plane_3<R>   Plane;
+    typedef Kernel_                    Kernel;
+    // typedef Kernel            R;  // maybe for backwards compatibility
+    typedef typename Kernel::Vector_3  Vector_3;
+    typedef typename Kernel::Plane_3   Plane_3;
+    typedef Tag_true                   Supports_facet_plane;
+    typedef Tag_true                   Supports_facet_normal;
 protected:
-    Plane   pln;
+    Plane_3 pln;
 public:
-    Normal        normal() const { return pln.orthogonal_vector();}
-    Plane&        plane()        { return pln;}
-    const Plane&  plane() const  { return pln;}
+    Vector_3        normal() const { return pln.orthogonal_vector();}
+    Plane_3&        plane()        { return pln;}
+    const Plane_3&  plane() const  { return pln;}
 };
-#endif  // CGAL_REP_CLASS_DEFINED
 
 CGAL_END_NAMESPACE
 #endif // CGAL_HALFEDGE_DATA_STRUCTURE_BASES_H //

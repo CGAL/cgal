@@ -1,6 +1,10 @@
 Halfedge_DS Package: Release changes:
 ---------------------------------------------------------------------
 
+2.15 (05 Jul 2001)
+
+     - New kernel traits introduced in old design.
+
 2.14 (02 Jul 2001)
 
      - Added release note about old/new design to documentation.

@@ -44,26 +44,27 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class T>
+template <class Traits_>
 class Halfedge_data_structure_polyhedron_default_3
     : public Halfedge_data_structure_using_list<
-          Vertex_max_base< Point_3<T> >,
+          Vertex_max_base< CGAL_TYPENAME_MSVC_NULL Traits_::Point_3 >,
           Halfedge_max_base,
-          Polyhedron_facet_base_3<T>
+          Polyhedron_facet_base_3<Traits_>
       > {
   public:  // CREATION
-    typedef typename   Halfedge_data_structure_using_list<
-          Vertex_max_base< Point_3<T> >,
+    typedef Traits_                   Traits;
+    typedef typename Traits::Point_3  Point_3;
+    typedef typename Halfedge_data_structure_using_list<
+          Vertex_max_base< Point_3>,
           Halfedge_max_base,
-          Polyhedron_facet_base_3<T>
+          Polyhedron_facet_base_3<Traits>
       >::Size Size;
     Halfedge_data_structure_polyhedron_default_3() {}
-    Halfedge_data_structure_polyhedron_default_3(
-        Size v, Size h, Size f)
+    Halfedge_data_structure_polyhedron_default_3( Size v, Size h, Size f)
         : Halfedge_data_structure_using_list<
-              Vertex_max_base< Point_3<T> >,
+              Vertex_max_base< Point_3>,
               Halfedge_max_base,
-              Polyhedron_facet_base_3<T>
+              Polyhedron_facet_base_3<Traits>
           > (v,h,f) {}
 };
 

@@ -165,8 +165,6 @@ public:
 
     // Point needed for Vertex constructor for efficiency reasons.
     typedef typename Vertex::Point          Point;
-    typedef typename Facet::Normal          Normal;
-    typedef typename Facet::Plane           Plane;
 
 protected:
     // Three in-place lists for the elements. They are unmanaged.
