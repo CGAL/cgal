@@ -256,23 +256,23 @@ public:
 public:
   // ACCESS METHODS
   // --------------
-  inline const Geom_traits& geom_traits() const {
+  const Geom_traits& geom_traits() const {
     return DG::geom_traits();
   }
 
-  inline int dimension() const {
+  int dimension() const {
     return this->_tds.dimension();
   }
 
-  inline int number_of_faces() const {
+  int number_of_faces() const {
     return this->_tds.number_of_faces();
   }
 
-  inline int number_of_vertices() const {
+  int number_of_vertices() const {
     return DG::number_of_vertices();
   }
 
-  inline int number_of_hidden_vertices() const {
+  int number_of_hidden_vertices() const {
     //    if ( !Vertex::StoreHidden ) { return 0; }
 
     int n_hidden(0);
@@ -284,15 +284,15 @@ public:
     return n_hidden;
   }
 
-  inline Vertex_handle infinite_vertex() const {
+  Vertex_handle infinite_vertex() const {
     return DG::infinite_vertex();
   }
 
-  inline Face_handle infinite_face() const {
+  Face_handle infinite_face() const {
     return DG::infinite_face();
   }
 
-  inline Vertex_handle finite_vertex() const {
+  Vertex_handle finite_vertex() const {
     return DG::finite_vertex();
   }
 
@@ -385,19 +385,19 @@ public:
   //------------
   // I had to add the initialization of Face_handle to NULL because
   // CGAL-2.5-I-82 was not working with Face_handle()
-  inline Face_circulator
+  Face_circulator
   incident_faces(Vertex_handle v,
 		 Face_handle f = Face_handle(NULL)) const {
     return DG::incident_faces(v, f);
   }
 
-  inline Vertex_circulator
+  Vertex_circulator
   incident_vertices(Vertex_handle v,
 		    Face_handle f = Face_handle(NULL)) const { 
     return DG::incident_vertices(v, f);
   }
 
-  inline Edge_circulator
+  Edge_circulator
   incident_edges(Vertex_handle v,
 		 Face_handle f = Face_handle(NULL)) const {
     return DG::incident_edges(v, f);
@@ -406,23 +406,23 @@ public:
 public:
   // PREDICATES
   //-----------
-  inline bool is_infinite(const Vertex_handle& v) const {
+  bool is_infinite(const Vertex_handle& v) const {
     return DG::is_infinite(v);
   }
 
-  inline bool is_infinite(const Face_handle& f) const {
+  bool is_infinite(const Face_handle& f) const {
     return DG::is_infinite(f);
   }
 
-  inline bool is_infinite(const Face_handle& f, int i) const {
+  bool is_infinite(const Face_handle& f, int i) const {
     return DG::is_infinite(f, i);
   }
 
-  inline bool is_infinite(const Edge& e) const {
+  bool is_infinite(const Edge& e) const {
     return is_infinite(e.first, e.second);
   }
 
-  inline bool is_infinite(const Edge_circulator& ec) const {
+  bool is_infinite(const Edge_circulator& ec) const {
     return DG::is_infinite(ec);
   }
 
@@ -638,7 +638,6 @@ public:
   }
 
   template< class Stream >
-  inline
   Stream& draw_primal_face(All_faces_iterator fit, Stream &str) const
   {
     for (int i = 0; i < 3; i++) {
@@ -649,7 +648,6 @@ public:
 
 
   template< class Stream >
-  inline
   Stream& draw_dual_face(const All_vertices_iterator& vit,
 			 Stream &str) const
   {
@@ -699,11 +697,11 @@ public:
 public:
   // MISCELLANEOUS
   //--------------
-  inline void clear() {
+  void clear() {
     DG::clear();
   }
 
-  inline void swap(Apollonius_graph_2& ag) {
+  void swap(Apollonius_graph_2& ag) {
     DG::swap(ag);
   }
 
@@ -819,7 +817,7 @@ protected:
 		     const Site_2& p, bool b) const;
 
 
-  inline bool edge_interior(const Edge& e,
+  bool edge_interior(const Edge& e,
 			    const Site_2& p, bool b) const {
     return edge_interior(e.first, e.second, p, b);
   }
@@ -831,7 +829,7 @@ protected:
 		     const Vertex_handle& v,
 		     bool endpoints_in_conflict) const;
 
-  inline bool is_degenerate_edge(const Site_2& p1,
+  bool is_degenerate_edge(const Site_2& p1,
 				 const Site_2& p2,
 				 const Site_2& p3,
 				 const Site_2& p4) const {
@@ -839,7 +837,7 @@ protected:
       (p1, p2, p3, p4);
   }
 
-  inline bool is_degenerate_edge(const Vertex_handle& v1,
+  bool is_degenerate_edge(const Vertex_handle& v1,
 				 const Vertex_handle& v2,
 				 const Vertex_handle& v3,
 				 const Vertex_handle& v4) const {
@@ -850,7 +848,7 @@ protected:
 			      v3->site(), v4->site());
   }
 
-  inline bool is_degenerate_edge(const Face_handle& f, int i) const {
+  bool is_degenerate_edge(const Face_handle& f, int i) const {
     Vertex_handle v1 = f->vertex( ccw(i) );
     Vertex_handle v2 = f->vertex(  cw(i) );
     Vertex_handle v3 = f->vertex(     i  );
@@ -859,7 +857,7 @@ protected:
     return is_degenerate_edge(v1, v2, v3, v4);
   }
 
-  inline bool is_degenerate_edge(const Edge& e) const {
+  bool is_degenerate_edge(const Edge& e) const {
     return is_degenerate_edge(e.first, e.second);
   }
 
@@ -883,11 +881,11 @@ protected:
   // wrappers for combinatorial operations on the data structure
 
   // getting the symmetric edge
-  inline Edge sym_edge(const Edge e) const {
+  Edge sym_edge(const Edge e) const {
     return sym_edge(e.first, e.second);
   }
 
-  inline Edge sym_edge(const Face_handle& f, int i) const {
+  Edge sym_edge(const Face_handle& f, int i) const {
     Face_handle f_sym = f->neighbor(i);
     return Edge(  f_sym, f_sym->index( f->mirror_vertex(i) )  );
   }
@@ -906,7 +904,7 @@ protected:
   void          remove_degree_3(Vertex_handle v, Face* f);
 
   // this was defined because the hierarchy needs it
-  inline Vertex_handle create_vertex() {
+  Vertex_handle create_vertex() {
     return this->_tds.create_vertex();
   }
 
@@ -932,7 +930,7 @@ protected:
   void move_hidden_sites(Vertex_handle& vold, Vertex_handle& vnew);
 
   // MK: this is not currently used
-  inline  std::vector<Face*> get_faces_for_recycling(Face_map& fm,
+  std::vector<Face*> get_faces_for_recycling(Face_map& fm,
 					     unsigned int n_wanted);
   void remove_hidden_vertices(Vertex_handle&v, Vertex_map& vm,
 			      Face_map& fm);

@@ -103,7 +103,6 @@ is_valid(bool verbose, int level) const
 
 // circumcenter
 template< class Gt, class Agds >
-inline
 typename Apollonius_graph_2<Gt,Agds>::Point_2
 Apollonius_graph_2<Gt,Agds>::
 circumcenter(const Face_handle& f) const
@@ -115,7 +114,6 @@ circumcenter(const Face_handle& f) const
 }
 
 template< class Gt, class Agds >
-inline
 typename Apollonius_graph_2<Gt,Agds>::Point_2
 Apollonius_graph_2<Gt,Agds>::
 circumcenter(const Site_2& p0, const Site_2& p1, 
@@ -127,7 +125,6 @@ circumcenter(const Site_2& p0, const Site_2& p1,
 
 // circumcircle
 template< class Gt, class Agds >
-inline
 typename Apollonius_graph_2<Gt,Agds>::Site_2
 Apollonius_graph_2<Gt,Agds>::
 circumcircle(const Face_handle& f) const
@@ -139,7 +136,6 @@ circumcircle(const Face_handle& f) const
 }
 
 template< class Gt, class Agds >
-inline
 typename Apollonius_graph_2<Gt,Agds>::Site_2
 Apollonius_graph_2<Gt,Agds>::
 circumcircle(const Site_2& p0, const Site_2& p1, 
@@ -151,7 +147,6 @@ circumcircle(const Site_2& p0, const Site_2& p1,
 
 
 template< class Gt, class Agds >
-inline
 typename Gt::Line_2
 Apollonius_graph_2<Gt,Agds>::
 circumcircle(const Site_2& p0, const Site_2& p1) const
@@ -186,7 +181,6 @@ dual(const Face_handle& f) const
 
 
 template< class Gt, class Agds >
-inline
 typename Gt::Object_2
 Apollonius_graph_2<Gt,Agds>::
 dual(const Edge e) const
@@ -248,7 +242,6 @@ dual(const Edge e) const
 
 // primal
 template< class Gt, class Agds >
-inline
 typename Gt::Object_2
 Apollonius_graph_2<Gt,Agds>::
 primal(const Edge e) const
@@ -343,7 +336,6 @@ flip(Face_handle& f, int i)
 }
 
 template< class Gt, class Agds >
-inline
 typename Apollonius_graph_2<Gt,Agds>::Edge
 Apollonius_graph_2<Gt,Agds>::
 flip(Edge e)
@@ -352,7 +344,6 @@ flip(Edge e)
 }
 
 template< class Gt, class Agds >
-inline
 typename Apollonius_graph_2<Gt,Agds>::Vertex_handle
 Apollonius_graph_2<Gt,Agds>::
 insert_in_face(Face_handle& f, const Site_2& p)
@@ -364,7 +355,6 @@ insert_in_face(Face_handle& f, const Site_2& p)
 }
 
 template< class Gt, class Agds >
-inline
 bool
 Apollonius_graph_2<Gt,Agds>::
 is_degree_2(const Vertex_handle& v) const
@@ -376,7 +366,6 @@ is_degree_2(const Vertex_handle& v) const
 }
 
 template< class Gt, class Agds >
-inline
 typename Apollonius_graph_2<Gt,Agds>::Vertex_handle
 Apollonius_graph_2<Gt,Agds>::
 insert_degree_2(Edge e)
@@ -385,7 +374,6 @@ insert_degree_2(Edge e)
 }
 
 template< class Gt, class Agds >
-inline
 typename Apollonius_graph_2<Gt,Agds>::Vertex_handle
 Apollonius_graph_2<Gt,Agds>::
 insert_degree_2(Edge e, const Site_2& p)
@@ -398,7 +386,6 @@ insert_degree_2(Edge e, const Site_2& p)
 
 
 template< class Gt, class Agds >
-inline
 void
 Apollonius_graph_2<Gt,Agds>::
 remove_degree_2(Vertex_handle v)
@@ -410,7 +397,6 @@ remove_degree_2(Vertex_handle v)
 
 
 template< class Gt, class Agds >
-inline
 void
 Apollonius_graph_2<Gt,Agds>::
 remove_degree_3(Vertex_handle v)
@@ -420,7 +406,6 @@ remove_degree_3(Vertex_handle v)
 
 
 template< class Gt, class Agds >
-inline
 void
 Apollonius_graph_2<Gt,Agds>::
 remove_degree_3(Vertex_handle v, Face* f)
@@ -434,7 +419,6 @@ remove_degree_3(Vertex_handle v, Face* f)
 //--------------------------------------------------------------------
 
 template< class Gt, class Agds >
-inline
 typename Apollonius_graph_2<Gt,Agds>::Vertex_handle
 Apollonius_graph_2<Gt,Agds>::
 insert_first(const Site_2& p)
@@ -875,7 +859,6 @@ expand_conflict_region(const Face_handle& f, const Site_2& p,
 //--------------------------------------------------------------------
 
 template< class Gt, class Agds >
-inline
 typename Apollonius_graph_2<Gt,Agds>::Vertex_handle
 Apollonius_graph_2<Gt,Agds>::
 add_bogus_vertex(Edge e, List& l)
@@ -910,7 +893,6 @@ add_bogus_vertex(Edge e, List& l)
 }
 
 template< class Gt, class Agds >
-inline
 typename Apollonius_graph_2<Gt,Agds>::Vertex_list
 Apollonius_graph_2<Gt,Agds>::
 add_bogus_vertices(List& l)
@@ -948,7 +930,6 @@ add_bogus_vertices(List& l)
 }
 
 template< class Gt, class Agds >
-inline
 void
 Apollonius_graph_2<Gt,Agds>::
 remove_bogus_vertices(Vertex_list& vl)
@@ -962,7 +943,6 @@ remove_bogus_vertices(Vertex_list& vl)
 
 
 template< class Gt, class Agds >
-inline
 void
 Apollonius_graph_2<Gt,Agds>::
 move_hidden_sites(Vertex_handle& vold, Vertex_handle& vnew)
@@ -1191,7 +1171,6 @@ retriangulate_conflict_region(const Site_2& p,	List& l,
 // point location
 //--------------------------------------------------------------------
 template< class Gt, class Agds >
-inline
 typename Apollonius_graph_2<Gt,Agds>::Vertex_handle
 Apollonius_graph_2<Gt,Agds>::
 nearest_neighbor(const Point_2& p) const
@@ -1262,7 +1241,6 @@ nearest_neighbor(const Point_2& p,
 //----------------------------------------------------------------------
 
 template< class Gt, class Agds >
-inline
 bool
 Apollonius_graph_2<Gt,Agds>::
 is_hidden(const Site_2 &p, const Site_2 &q) const
@@ -1271,7 +1249,6 @@ is_hidden(const Site_2 &p, const Site_2 &q) const
 }
 
 template< class Gt, class Agds >
-inline
 Oriented_side
 Apollonius_graph_2<Gt,Agds>::
 side_of_bisector(const Site_2 &p1,
@@ -1283,7 +1260,6 @@ side_of_bisector(const Site_2 &p1,
 
 
 template< class Gt, class Agds >
-inline
 Sign
 Apollonius_graph_2<Gt,Agds>::
 incircle(const Site_2 &p1, const Site_2 &p2,
@@ -1293,7 +1269,6 @@ incircle(const Site_2 &p1, const Site_2 &p2,
 }
 
 template< class Gt, class Agds >
-inline
 Sign
 Apollonius_graph_2<Gt,Agds>::
 incircle(const Site_2 &p1, const Site_2 &p2,
@@ -1305,7 +1280,6 @@ incircle(const Site_2 &p1, const Site_2 &p2,
 
 
 template< class Gt, class Agds >
-inline
 Sign
 Apollonius_graph_2<Gt,Agds>::
 incircle(const Face_handle& f, const Site_2& q) const
@@ -1329,7 +1303,6 @@ incircle(const Face_handle& f, const Site_2& q) const
 
 
 template< class Gt, class Agds >
-inline
 Sign
 Apollonius_graph_2<Gt,Agds>::
 incircle(const Vertex_handle& v0, const Vertex_handle& v1,
@@ -1342,7 +1315,6 @@ incircle(const Vertex_handle& v0, const Vertex_handle& v1,
 }
 
 template< class Gt, class Agds >
-inline
 Sign
 Apollonius_graph_2<Gt,Agds>::
 incircle(const Vertex_handle& v0, const Vertex_handle& v1,
@@ -1372,7 +1344,6 @@ incircle(const Vertex_handle& v0, const Vertex_handle& v1,
 
 
 template< class Gt, class Agds >
-inline
 bool
 Apollonius_graph_2<Gt,Agds>::
 finite_edge_interior(const Site_2& p1,
@@ -1388,7 +1359,6 @@ finite_edge_interior(const Site_2& p1,
 }
 
 template< class Gt, class Agds >
-inline
 bool
 Apollonius_graph_2<Gt,Agds>::
 finite_edge_interior(const Face_handle& f, int i,
@@ -1403,7 +1373,6 @@ finite_edge_interior(const Face_handle& f, int i,
 }
 
 template< class Gt, class Agds >
-inline
 bool
 Apollonius_graph_2<Gt,Agds>::
 finite_edge_interior(const Vertex_handle& v1,
@@ -1421,7 +1390,6 @@ finite_edge_interior(const Vertex_handle& v1,
 }
 
 template< class Gt, class Agds >
-inline
 bool
 Apollonius_graph_2<Gt,Agds>::
 finite_edge_interior_degenerated(const Site_2& p1,
@@ -1437,7 +1405,6 @@ finite_edge_interior_degenerated(const Site_2& p1,
 }
 
 template< class Gt, class Agds >
-inline
 bool
 Apollonius_graph_2<Gt,Agds>::
 finite_edge_interior_degenerated(const Site_2& p1,
@@ -1481,7 +1448,6 @@ finite_edge_interior_degenerated(const Face_handle& f, int i,
 }
 
 template< class Gt, class Agds >
-inline
 bool
 Apollonius_graph_2<Gt,Agds>::
 finite_edge_interior_degenerated(const Vertex_handle& v1,
@@ -1679,7 +1645,6 @@ finite_edge_conflict_type_degenerated(const Site_2& p1,
 
 
 template< class Gt, class Agds >
-inline
 void
 Apollonius_graph_2<Gt,Agds>::
 remove_first(Vertex_handle v)
@@ -1688,7 +1653,6 @@ remove_first(Vertex_handle v)
 }
 
 template< class Gt, class Agds >
-inline
 void
 Apollonius_graph_2<Gt,Agds>::
 remove_second(Vertex_handle v)
@@ -1697,7 +1661,6 @@ remove_second(Vertex_handle v)
 }
 
 template< class Gt, class Agds >
-inline
 void
 Apollonius_graph_2<Gt,Agds>::
 remove_third(Vertex_handle v)
