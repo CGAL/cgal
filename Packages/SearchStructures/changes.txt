@@ -1,3 +1,6 @@
+Version 2.74 (20 June 2003)
+- Remove commented \index commands in the doc (they don't work with HTML).
+
 Version 2.73 (17 May 2003) [af]
 Added missing initialisation of static data member
 
