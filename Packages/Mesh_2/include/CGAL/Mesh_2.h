@@ -1,5 +1,5 @@
-#ifndef CGAL_MESH_H
-#define CGAL_MESH_H
+#ifndef CGAL_MESH_2_H
+#define CGAL_MESH_2_H
 #include <CGAL/basic.h>
 #include <list>
 #include <map>
