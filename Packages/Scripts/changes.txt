@@ -1,3 +1,6 @@
+15 March 2004 Radu Ursu
+- introduced lock file in autotest_cgal
+
 12 March 2004 Radu Ursu
 - fixed bug in autotest_cgal ... it changes dir to CGAL_ROOT first.
 - .autocgalrc is not searched in the current_dir at all
