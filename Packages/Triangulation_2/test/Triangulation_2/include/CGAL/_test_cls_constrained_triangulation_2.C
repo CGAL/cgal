@@ -44,6 +44,7 @@ _test_cls_constrained_triangulation(const Triangulation &)
   typedef typename Cls::Locate_type           Locate_type;
 
   typedef std::pair<Point,Point>                   Constraint ;
+  typedef std::list<Edge>                          List_edges;
   typedef std::list<Constraint>                    list_constraints;
   typedef typename list_constraints::iterator list_iterator;
 
@@ -191,13 +192,20 @@ _test_cls_constrained_triangulation(const Triangulation &)
   assert(T1_2.is_edge(vha,vhb, fh, ih));
   assert(fh->is_constrained(ih));
   T1_2.remove_constraint(fh,ih);
+  assert(T1_2.is_valid());
   T1_2.insert(Point(0,0),Point(3,2));
   fh  =  T1_2.locate(Point(3,2),lt,li); assert( lt == Cls::VERTEX );
   vhb =  fh->vertex(li);
+  assert(T1_2.are_there_incident_constraints(vhb));
+  T1_2.remove_incident_constraints(vhb);
   T1_2.remove(vhb);
-  fh  =  T1_2.locate(Point(0,0),lt,li); assert( lt == Cls::VERTEX );
+  fh  =  T1_2.locate(Point(6,4),lt,li); assert( lt == Cls::VERTEX );
   vha = fh->vertex(li);
+  List_edges edges;
+  assert(T1_2.are_there_incident_constraints(vha, std::back_inserter(edges)));
+  T1_2.remove_incident_constraints(vha);
   T1_2.remove(vha);
+  assert(T1_2.is_valid());
 
    // remove_constraint and remove 2 dim
   std::cout << "remove_constraint and remove 2-dim " << std::endl;
@@ -210,11 +218,18 @@ _test_cls_constrained_triangulation(const Triangulation &)
   assert(fh->is_constrained(ih));
   T2_2.remove_constraint(fh,ih);
   T2_2.insert(lpt[m], lpt[m+1]);
+  assert(T2_2.is_valid());
   fh  =  T2_2.locate(lpt[m+1],lt,li); assert( lt == Cls::VERTEX );
-  vhb =  fh->vertex(li);
+  vhb =  fh->vertex(li);  
+  assert(T2_2.are_there_incident_constraints(vhb));
+  T2_2.remove_incident_constraints(vhb);
   T2_2.remove(vhb);
   fh  =  T2_2.locate(lpt[m],lt,li); assert( lt == Cls::VERTEX );
   vha = fh->vertex(li);
+   edges.clear();
+  assert(T2_2.are_there_incident_constraints(vha));
+  T2_2.remove_incident_constraints(vha);
   T2_2.remove(vha);
+  assert(T2_2.is_valid());
 
 }

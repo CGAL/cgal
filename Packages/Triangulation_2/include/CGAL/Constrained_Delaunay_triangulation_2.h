@@ -137,10 +137,12 @@ public:
   void          push_back(const Constraint& c);
 
   void remove(Vertex_handle v);
+  void remove_incident_constraints(Vertex_handle v);
+  void remove_constraint(Face_handle f, int i);
  
   // CHECK
   bool is_valid(bool verbose = false, int level = 0) const;
-
+ 
 protected:
   void remove_2D(Vertex_handle v );
  // to be called from Constrained_triangulation_plus
@@ -231,7 +233,7 @@ public:
     }
 
   template <class Out_it2> 
-  bool 
+  inline bool 
   boundary_of_conflict_zone (const Point  &p, 
 			      Out_it2 eit, 
 			      Face_handle start= Face_handle()) const
@@ -559,10 +561,12 @@ template < class Gt, class Tds >
 inline void 
 Constrained_Delaunay_triangulation_2<Gt,Tds>::
 remove(Vertex_handle v)
+  // remove a vertex and updates the constrained edges of the new faces
+  // precondition : there is no incident constraints
 {
   CGAL_triangulation_precondition( ! v.is_null() );
-  CGAL_triangulation_precondition( !is_infinite(v));
-    
+  CGAL_triangulation_precondition( ! is_infinite(v));
+  CGAL_triangulation_precondition( ! are_there_incident_constraints(v));
   if  (dimension() <= 1)    Ctr::remove(v);
   else  remove_2D(v);
   return;
@@ -575,7 +579,7 @@ remove_2D(Vertex_handle v)
 {
  if (test_dim_down(v)) {  _tds.remove_dim_down(&(*v));  }
   else {
-    std::list<Edge> hole;
+     std::list<Edge> hole;
     make_hole(v, hole);
     std::list<Edge> shell=hole; //because hole will be emptied by fill_hole
     fill_hole_delaunay(hole);
@@ -585,6 +589,35 @@ remove_2D(Vertex_handle v)
   }
   return;
 }
+
+template < class Gt, class Tds >
+void
+Constrained_Delaunay_triangulation_2<Gt,Tds>::
+remove_incident_constraints(Vertex_handle v)
+{
+   List_edges iconstraints;
+   if (are_there_incident_constraints(v,
+				      std::back_inserter(iconstraints))) {
+     Ctr::remove_incident_constraints(v);
+     if (dimension()==2) propagating_flip(iconstraints);
+   }
+   return;
+}
+
+template < class Gt, class Tds >
+void
+Constrained_Delaunay_triangulation_2<Gt,Tds>::
+remove_constraint(Face_handle f, int i)
+{
+  Ctr::remove_constraint(f,i);
+  if(dimension() == 2) {
+    List_edges le;
+    le.push_back(Edge(f,i));
+    propagating_flip(le);
+  }
+  return;  
+}
+
 
 template < class Gt, class Tds >  
 bool 

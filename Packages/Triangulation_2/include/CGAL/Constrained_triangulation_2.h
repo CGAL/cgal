@@ -32,7 +32,8 @@
 #include <CGAL/Triangulation_2.h> 
 #include <CGAL/Constrained_triangulation_face_base_2.h>
 #include <CGAL/Constrained_triangulation_sweep_2.h>
-
+#include <CGAL/Dummy_output_iterator.h>
+	
 CGAL_BEGIN_NAMESPACE
 template < class Gt, class Tds>
 class Constrained_triangulation_2  : public Triangulation_2<Gt,Tds>
@@ -125,7 +126,14 @@ public:
 
   void remove(Vertex_handle  v);
   void remove_constraint(Face_handle f, int i);
-  
+  void remove_incident_constraints(Vertex_handle  v);
+ 
+  // QUERY
+  bool is_constrained(Edge e) const;
+  bool are_there_incident_constraints(Vertex_handle v) const;
+  // template<class OutputIterator>
+  // bool are_there_incident_constraints(Vertex_handle v, 
+  //                                     OutputIterator out) const;
 
   class Less_edge 
     :  public std::binary_function<Edge, Edge, bool>
@@ -187,6 +195,24 @@ public:
       }
       return number_of_vertices() - n;
     }
+
+  template<class OutputIterator>
+  bool are_there_incident_constraints(Vertex_handle v, 
+				      OutputIterator out) const
+    {
+      Edge_circulator ec=incident_edges(v), done(ec);
+      bool are_there = false;
+      if (ec == 0) return are_there;
+      do {
+	if(is_constrained(*ec)) {
+	  *out++ = *ec;
+	  are_there = true;
+	}
+	ec++;
+      } while (ec != done);
+      return are_there;
+    }
+  
 };
     
 template < class Gt, class Tds >
@@ -513,9 +539,12 @@ template < class Gt, class Tds >
 void
 Constrained_triangulation_2<Gt,Tds>::
 remove(Vertex_handle  v)
+  // remove a vertex and updates the constrained edges of the new faces
+  // precondition : there is no incident constraints
 {
   CGAL_triangulation_precondition( ! v.is_null() );
-  CGAL_triangulation_precondition( !is_infinite(v));
+  CGAL_triangulation_precondition( ! is_infinite(v));
+  CGAL_triangulation_precondition( ! are_there_incident_constraints(v));
     
   if  (number_of_vertices() == 1)     remove_first(v);
   else if (number_of_vertices() == 2) remove_second(v);
@@ -541,8 +570,6 @@ template < class Gt, class Tds >
 void
 Constrained_triangulation_2<Gt,Tds>::
 remove_2D(Vertex_handle v)
-  // remove a vertex and updates the constrained edges of the new faces
-  // all constraints incident to the removed vertex are removed
 {
   if (test_dim_down(v)) {_tds.remove_dim_down(&(*v));}
   else {
@@ -567,6 +594,38 @@ remove_constraint(Face_handle f, int i)
   if (dimension() == 2)
     (f->neighbor(i))->set_constraint(f->mirror_index(i), false);
   return;
+}
+
+template < class Gt, class Tds >
+void
+Constrained_triangulation_2<Gt,Tds>::
+remove_incident_constraints(Vertex_handle v)
+{
+   Edge_circulator ec=incident_edges(v), done(ec);
+   if (ec == 0) return;
+   do {
+	if(is_constrained(*ec)) { remove_constraint((*ec).first,
+						   (*ec).second);}
+	ec++;
+   } while (ec != done);
+   return;	
+}
+
+template < class Gt, class Tds >
+inline  bool 
+Constrained_triangulation_2<Gt,Tds>::
+are_there_incident_constraints(Vertex_handle v) const
+{
+  Dummy_output_iterator out;
+  return are_there_incident_constraints(v, out);
+}
+
+template < class Gt, class Tds >
+inline  bool 
+Constrained_triangulation_2<Gt,Tds>::
+is_constrained(Edge e) const
+{
+  return (e.first)->is_constrained(e.second);
 }
     
 template < class Gt, class Tds >
