@@ -197,7 +197,7 @@ EOF
 	#     close VERSION;
 	# }
 	print OUTPUT "\n<TR>\n";
-	print OUTPUT "<TD>$test_directory</TD>\n";
+	print OUTPUT "<TD><a NAME=\"$test_directory\">$test_directory</TD>\n";
 	# if ( $version ) {
 	#     print OUTPUT "<TD ALIGN=CENTER>$version</TD>\n";
 	# } else {

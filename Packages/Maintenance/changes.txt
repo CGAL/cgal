@@ -1,3 +1,7 @@
+29 September 2004 Sylvain Pion
+- create_testresult_page : add a <a NAME="$package"> for easy access to a
+  particular line.
+
 17 September 2004 Sylvain Pion
 - Store test-results success messages in a log file instead of sdterr.
 
