@@ -19,8 +19,8 @@
 #ifndef CGAL_INFIMAXIMAL_BOX_H
 #define CGAL_INFIMAXIMAL_BOX_H
 
-#undef _DEBUG
-#define _DEBUG 191
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 191
 #include <CGAL/Nef_3/debug.h>
 
 #include <CGAL/Extended_cartesian.h>

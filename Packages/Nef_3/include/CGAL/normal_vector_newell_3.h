@@ -24,8 +24,8 @@
 
 #include <CGAL/iterator.h>
 
-#undef _DEBUG
-#define _DEBUG 79
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 79
 #include <CGAL/Nef_3/debug.h>
 
 CGAL_BEGIN_NAMESPACE

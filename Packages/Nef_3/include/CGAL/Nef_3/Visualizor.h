@@ -35,8 +35,8 @@
 #include <CGAL/Nef_3/SNC_decorator.h>
 #include <CGAL/Nef_3/SNC_FM_decorator.h>
 
-#undef _DEBUG
-#define _DEBUG 157
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 157
 #include <CGAL/Nef_3/debug.h>
 
 #define CGAL_NEF3_MARKED_VERTEX_COLOR 183,232,92

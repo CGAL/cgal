@@ -43,8 +43,8 @@
 #endif // SM_VISUALIZOR
 #include <map>
 #include <list>
-#undef _DEBUG
-#define _DEBUG 43
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 43
 #include <CGAL/Nef_3/debug.h>
 #include <CGAL/Nef_3/Progress_indicator.h>
 

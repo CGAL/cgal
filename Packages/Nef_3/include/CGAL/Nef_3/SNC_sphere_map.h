@@ -30,8 +30,8 @@
 #include <CGAL/Nef_3/Infimaximal_box.h>
 #include <CGAL/Nef_S2/Sphere_geometry.h>
 #include <list>
-#undef _DEBUG
-#define _DEBUG 109
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 109
 #include <CGAL/Nef_S2/debug.h>
 
 

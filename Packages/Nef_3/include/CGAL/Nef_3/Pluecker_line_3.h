@@ -25,8 +25,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/Homogeneous.h>
 #include <algorithm>
-#undef _DEBUG
-#define _DEBUG 61
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 61
 #include <CGAL/Nef_3/debug.h>
 
 CGAL_BEGIN_NAMESPACE

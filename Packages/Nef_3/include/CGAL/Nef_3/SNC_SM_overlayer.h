@@ -29,8 +29,8 @@
 #include <CGAL/Nef_S2/SM_const_decorator.h>
 #include <CGAL/Nef_S2/SM_overlayer.h>
 #include <CGAL/Nef_3/SNC_structure.h>
-#undef _DEBUG
-#define _DEBUG 131
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 131
 #include <CGAL/Nef_S2/debug.h>
 
 #ifndef CGAL_USE_LEDA

@@ -4,12 +4,12 @@
 #include <CGAL/basic.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
 #include <CGAL/Nef_S2/SM_decorator.h>
-#ifdef _DEBUG
+#ifdef CGAL_NEF_DEBUG
 #include <CGAL/Nef_3/SNC_io_parser.h>
 #endif
 
-#undef _DEBUG
-#define _DEBUG 41
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 41
 #include <CGAL/Nef_3/debug.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -22,7 +22,7 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
   typedef SNC_decorator                                 Base;
   typedef typename SNC_structure::Sphere_map            Sphere_map;
   typedef CGAL::SM_decorator<Sphere_map>                SM_decorator;
-#ifdef _DEBUG
+#ifdef CGAL_NEF_DEBUG
   typedef CGAL::SNC_io_parser<SNC_structure>            SNC_io_parser;
 #endif
   typedef typename SNC_structure::Vertex_handle Vertex_handle;
@@ -61,7 +61,7 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
   typedef typename Base::Sphere_circle Sphere_circle;
   typedef typename Base::Sphere_direction Sphere_direction;
 
-#ifdef _DEBUG
+#ifdef CGAL_NEF_DEBUG
   SNC_io_parser *IO;
 #endif
 
@@ -232,7 +232,7 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
   bool vertex_simplification(bool snc_computed = true) {
     bool simplified = false;
 
-#ifdef _DEBUG
+#ifdef CGAL_NEF_DEBUG
     delete IO;
     IO = new SNC_io_parser(std::cerr, *this->sncp());
 #endif
@@ -290,7 +290,7 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
     TRACEN(">>> simplifying");
     SNC_decorator D(*this->sncp());
 
-#ifdef _DEBUG
+#ifdef CGAL_NEF_DEBUG
     delete IO;
     IO = new SNC_io_parser(std::cerr, *this->sncp());
 #endif
@@ -614,7 +614,7 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
     //   typedef Unique_hash_map< SFace_handle, bool> SFace_map;
     //  SFace_map linked(false);
 
-#ifdef _DEBUG
+#ifdef CGAL_NEF_DEBUG
     delete IO;
     IO = new SNC_io_parser(std::cerr, *this->sncp());
 #endif

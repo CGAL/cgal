@@ -46,8 +46,8 @@
 #ifdef  CGAL_NEF3_SM_VISUALIZOR
 #include <CGAL/Nef_3/SNC_SM_visualizor.h>
 #endif // CGAL_NEF3_SM_VISUALIZOR
-#undef _DEBUG
-#define _DEBUG 19
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 19
 #include <CGAL/Nef_3/debug.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -565,7 +565,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 	TRACEN("f_visible"<<plane(f_visible));
       }
       else if(fc.is_svertex()) {
-#ifdef _DEBUG
+#ifdef CGAL_NEF_DEBUG
 	// TODO: is there any warranty that the outter facet cycle enty point is always at first
 	// in the cycles list?
 	++fc; while( fc != fce)  { CGAL_assertion( fc.is_svertex()); ++fc; }
@@ -949,7 +949,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       Point_3 p(normalized(ip));
 
       TRACEN("Intersection_call_back: intersection reported on " << p << " (normalized: " << normalized(p) << " )");
-#ifdef _DEBUG
+#ifdef CGAL_NEF_DEBUG
       TRACEN("edge 0 has source " << e0->source()->point() << " and direction " << e0->vector());
       if( CGAL::assign( e, o1)) {
 	TRACEN("edge 1 has source " << e->source()->point() << " and direction " << e->vector());

@@ -32,8 +32,8 @@
 #include <CGAL/Nef_S2/Sphere_geometry.h>
 #include <list>
 
-#undef _DEBUG
-#define _DEBUG 41
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 41
 #include <CGAL/Nef_3/debug.h>
 #include <CGAL/Nef_2/Object_index.h>
 

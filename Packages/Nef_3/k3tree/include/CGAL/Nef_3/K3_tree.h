@@ -10,8 +10,8 @@
 #include <sstream>
 #include <string>
 
-#undef _DEBUG
-#define _DEBUG 503
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 503
 #include <CGAL/Nef_2/debug.h>
 
 CGAL_BEGIN_NAMESPACE

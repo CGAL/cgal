@@ -31,8 +31,8 @@
 #include <CGAL/Nef_S2/SM_point_locator.h>
 #include <list>
 
-#undef _DEBUG
-#define _DEBUG 191
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 191
 #include <CGAL/Nef_3/debug.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -370,7 +370,7 @@ public:
       }
       else if(fc.is_svertex()) {
 	sv = SVertex_const_handle(fc);
-#ifdef _DEBUG
+#ifdef CGAL_NEF_DEBUG
 	// TODO: is there any warranty that the outter facet cycle enty point is always at first
 	// in the cycles list?
 	++fc; while( fc != fce)  { CGAL_assertion( fc.is_svertex()); ++fc; }

@@ -14,8 +14,8 @@
 // #include <CGAL/Polygon_triangulation_traits_2.h>
 // #include <CGAL/Nef_3/triangulate_nef3_facet.h>
 
-#undef _DEBUG
-#define _DEBUG 509
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 509
 #include <CGAL/Nef_3/debug.h>
 
 #undef _TRACEN

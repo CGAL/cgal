@@ -26,8 +26,8 @@
 #include <CGAL/normal_vector_newell_3.h>
 #include <CGAL/Nef_S2/SM_point_locator.h>
 
-#undef _DEBUG
-#define _DEBUG 29
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 29
 #include <CGAL/Nef_3/debug.h>
 
 CGAL_BEGIN_NAMESPACE

@@ -54,8 +54,8 @@
 
 #include <list> // || (circulator_size(c) != 2 && !result));
 
-#undef _DEBUG
-#define _DEBUG 11
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 11
 #include <CGAL/Nef_3/debug.h>
 
 CGAL_BEGIN_NAMESPACE

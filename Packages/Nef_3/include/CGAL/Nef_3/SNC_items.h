@@ -30,8 +30,8 @@
 #include <CGAL/Nef_3/SNC_iteration.h>
 #include <CGAL/Nef_3/SNC_list.h>
 
-#undef _DEBUG
-#define _DEBUG 83
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 83
 #include <CGAL/Nef_3/debug.h>
 
 CGAL_BEGIN_NAMESPACE
