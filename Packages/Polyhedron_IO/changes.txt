@@ -1,5 +1,9 @@
 Polyhedron_IO Package: Release changes:
 ---------------------------------------------------------------------
+
+19 December 2004 Andreas Fabri
+- Updated file headers in the demos
+
 10 February 2004 Radu Ursu
 -Updated headers in examples
 
