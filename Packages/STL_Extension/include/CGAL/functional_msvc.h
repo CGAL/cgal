@@ -144,9 +144,6 @@ namespace CGALi {
   };
 
 #else
-#ifdef CGAL_CFG_ENUM_BUG
-#error "Too many compiler bugs, sorry ..."
-#endif // CGAL_CFG_ENUM_BUG
 
   // msvc6 needs this, whysoever ...
   template < class T1, class T2 >
