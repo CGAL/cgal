@@ -45,6 +45,7 @@ LDFLAGS = Interval_arithmetic.o \
 #---------------------------------------------------------------------#
 
 .PRECIOUS: %.o
+.PHONY: %.test
 
 % : %.C
 
@@ -56,15 +57,18 @@ LDFLAGS = Interval_arithmetic.o \
 
 % : %.o
 	$(CGAL_CXX) $+ $(LDFLAGS) -o $@
-	./$@
+
+%.test : %
+	./$<
 
 EXE_EXT  =
 OBJ_EXT  = .o
 SOURCES  := $(wildcard  *.C)
 OBJECTS  := $(SOURCES:.C=$(OBJ_EXT))
 PROGRAMS := $(SOURCES:.C=$(EXE_EXT))
+TEST_RUN := $(SOURCES:.C=.test)
 
-all: ../../src/Interval_arithmetic.o $(PROGRAMS)
+all: ../../src/Interval_arithmetic.o $(TEST_RUN)
 
 clean:
 	rm -f *$(OBJ_EXT) $(PROGRAMS) *.bb *.bbg *.da *.gcov core *.rpo .pure
