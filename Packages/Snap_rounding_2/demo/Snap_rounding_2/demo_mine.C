@@ -89,30 +89,31 @@ void show_results(Snap_rounding_2 &s,
     Point_const_iterator i2 = prev;
     bool seg_painted = false;
 
-    std::cout << "!!!!!!!!!!!!!!!!!!!!!!\n";
-
-    if(show_hp)
+    /*    if(show_hp)
       w << CGAL::GREEN << Iso_rectangle_2(Point_2(i2->x() - prec / 2.0,
 					          i2->y() - prec / 2.0),
                                           Point_2(i2->x() + prec / 2.0,
-					          i2->y() + prec / 2.0));
+					  i2->y() + prec / 2.0));*/
     for(++i2;
         i2 != i->end();
         ++i2) {
       seg_painted = true;
       if(show_output)
         w << CGAL::RED << Segment_2(*prev,*i2);
-      if(show_hp)
+      /*      if(show_hp)
         w << CGAL::GREEN << Iso_rectangle_2(Point_2(i2->x() - prec / 2.0,
 					            i2->y() - prec / 2.0),
                                             Point_2(i2->x() + prec / 2.0,
-					            i2->y() + prec / 2.0));
+					    i2->y() + prec / 2.0));*/
       prev = i2;
     }
 
     if(!seg_painted && show_output) // segment entirely inside hot pixel
       w << CGAL::RED << *(i->begin());
   }
+
+  if(show_hp)
+    s.draw_hp(w);
 }
 
 void display_bounding_box(CGAL::Window_stream &W,
@@ -261,7 +262,8 @@ int main(int argc,char *argv[])
 
   if(argc == 1 || argc == 3) {
     // initialize window
-    W.init(MIN_X - 3,MAX_X + 60,MIN_Y - 45);
+    // W.init(MIN_X - 3,MAX_X + 60,MIN_Y - 45); // for example
+    W.init(MIN_X - 3,MAX_X + 100,MIN_Y - 3);
     W.set_mode(leda_src_mode);
     W.set_node_width(3);
     W.buttons_per_line(4);

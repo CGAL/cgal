@@ -21,7 +21,7 @@
 #ifndef CGAL_SR_2_H
 #define CGAL_SR_2_H
 
-//#define DEBUG
+//efine DEBUG
 
 #include <CGAL/leda_rational.h> 
 
@@ -44,6 +44,7 @@
 #include <CGAL/Random.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/intersection_2.h>
+#include <CGAL/Iso_rectangle_2.h>
 
 //#endif
 
@@ -110,11 +111,13 @@ private:
   Segment_2 *left_seg;
   Segment_2 *top_seg;
   Segment_2 *bot_seg;
+  bool is_of_isrs;
 
 public:
+  void draw_hp(CGAL::Window_stream &w);
   template<class Out>
   void draw(Out &o) const;
-  Hot_Pixel(Point_2 inp_point,NT inp_pixel_size);
+  Hot_Pixel(Point_2 inp_point,NT inp_pixel_size,bool inp_isrs);
   ~Hot_Pixel();
   inline Point_2 get_center() const;
   inline Point_2 get_center(bool int_output) const;
@@ -123,6 +126,7 @@ public:
   bool intersect_bot(Segment_2 &seg) const;
   bool intersect_top(Segment_2 &seg) const;
   bool intersect(Segment_data<Rep> &seg) const;
+  bool belong_to_isrs() {return(is_of_isrs);}
 
   // @@@@ next function for isrs
   Point_2 get_ll() {return(Point_2(p_left.x(),p_down.y()));}
@@ -174,6 +178,7 @@ typedef typename Traits::X_curve                     X_curve;
 typedef typename Traits::Curve                       Curve;
 typedef std::list<X_curve>                           CurveContainer;
 typedef typename CurveContainer::iterator            CurveContainerIter;
+typedef CGAL::Iso_rectangle_2<Rep>                     Iso_rectangle_2;
 
 public:
   friend class Segment_data<Rep>;
@@ -282,12 +287,14 @@ public:
 
   template<class Out>
   void output(Out &o);
+  void draw_hp(CGAL::Window_stream &w);
 
 private:
   Rep _gt;
   enum Direction {UP_RIGHT,UP_LEFT,DOWN_RIGHT,DOWN_LEFT,UP,DOWN,LEFT,
                   RIGHT,POINT_SEG};
 
+  std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> > hot_pixels_list;
   static Direction seg_dir;
   // the next variable is for lazy evaluation:
   // it determines whether an isr/sr work has
@@ -433,8 +440,8 @@ template<class Out> void Hot_Pixel<Rep_>::draw(Out &o) const
 
 // intersection pixel
 template<class Rep_>
-Hot_Pixel<Rep_>::Hot_Pixel(Point_2 inp_point,NT inp_pixel_size) :
-                           pixel_size(inp_pixel_size)
+Hot_Pixel<Rep_>::Hot_Pixel(Point_2 inp_point,NT inp_pixel_size,bool is_isrs) :
+                           pixel_size(inp_pixel_size),is_of_isrs(is_isrs)
   {
     NT x,y;
     _gt.snap_2_object()(inp_point,pixel_size,x,y);
@@ -705,6 +712,25 @@ bool Snap_rounding_2<Rep_>::to_the_right(const Point_2& query_point,const Segmen
   #endif
 
   return(right_turn(so,query_point,ta));
+}
+
+// @@@@ a function for ISRS
+template<class Rep_>
+void Snap_rounding_2<Rep_>::draw_hp(CGAL::Window_stream &w)
+{
+  for(typename std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >::iterator i = hot_pixels_list.begin();
+      i != hot_pixels_list.end();++i) {
+    Point_2 p(i->first);
+    if(i->second->belong_to_isrs())
+      w << CGAL::BLUE;
+    else
+      w << CGAL::GREEN;
+ 
+    w << Iso_rectangle_2(Point_2(p.x() - pixel_size / 2.0,
+		                 p.y() - pixel_size / 2.0),
+                         Point_2(p.x() + pixel_size / 2.0,
+				 p.y() + pixel_size / 2.0));
+  }
 }
 
 // @@@@ a function for ISRS
@@ -1107,12 +1133,17 @@ bool Snap_rounding_2<Rep_>::not_hot_pixel(Hot_Pixel<Rep_> *hp,std::list<std::pai
   return(true);
 }
 
-// @@@@ a function for ISRS
+/*// @@@@ a function for ISRS
 template<class Rep_>
 void Snap_rounding_2<Rep_>::heat_pixel_up_right(const Point_2& p,const Segment_2& s,std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list)
 {
   Object result;
   Point_2 inter_p;  
+
+  #ifdef DEBUG
+    std::cout << "** p = " << p << std::endl;
+    std::cout << "** s = " << s << std::endl;
+  #endif
 
   // find the intersction to the right on s
   Segment_2 t(p,Point_2(s.max().x(),p.y()));
@@ -1136,7 +1167,7 @@ void Snap_rounding_2<Rep_>::heat_pixel_up_right(const Point_2& p,const Segment_2
         std::cout << "2) inter_p = " << inter_p << std::endl;
       #endif
       // heat the resective pixel and insert it to hot_pixels_list
-      Hot_Pixel<Rep_> *hp = new Hot_Pixel<Rep_>(inter_p,pixel_size);
+      Hot_Pixel<Rep_> *hp = new Hot_Pixel<Rep_>(inter_p,pixel_size,true);
       if(not_hot_pixel(hp,hot_pixels_list)) {
         hot_pixels_list.push_back(std::pair<Point_2,Hot_Pixel<Rep_> *>(
  	  			hp->get_center(),hp));
@@ -1144,16 +1175,50 @@ void Snap_rounding_2<Rep_>::heat_pixel_up_right(const Point_2& p,const Segment_2
       } else
         delete hp;
     } else {
-      std::cout << "error 31\n";
-      //exit(-1);
+      std::cout << "error 312\n";
+      exit(-1);
     }
+  } else {
+    std::cout << "error 4\n";
+    exit(-1);
+  }
+}*/
+
+// @@@@ a function for ISRS
+template<class Rep_>
+void Snap_rounding_2<Rep_>::heat_pixel_up_right(const Point_2& p,const Segment_2& s,std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list)
+{
+  Object result;
+  Point_2 inter_p;  
+
+  #ifdef DEBUG
+    std::cout << "** p = " << p << std::endl;
+    std::cout << "** s = " << s << std::endl;
+  #endif
+
+  // find the intersction to the right on s
+  Segment_2 t(p,Point_2(s.max().x(),p.y()));
+  result = intersection(t,s);
+  if(assign(inter_p,result)) {
+    #ifdef DEBUG
+      std::cout << "1) inter_p = " << inter_p << std::endl;
+    #endif
+
+    // heat the resective pixel and insert it to hot_pixels_list
+    Hot_Pixel<Rep_> *hp = new Hot_Pixel<Rep_>(inter_p,pixel_size,true);
+    if(not_hot_pixel(hp,hot_pixels_list)) {
+      hot_pixels_list.push_back(std::pair<Point_2,Hot_Pixel<Rep_> *>(
+  			hp->get_center(),hp));
+        ++NUMBER_OF_HP;
+    } else
+      delete hp;
   } else {
     std::cout << "error 4\n";
     exit(-1);
   }
 }
 
-// @@@@ a function for ISRS
+/*// @@@@ a function for ISRS
 template<class Rep_>
 void Snap_rounding_2<Rep_>::heat_pixel_down_right(const Point_2& p,const Segment_2& s,std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list)
 {
@@ -1182,7 +1247,7 @@ void Snap_rounding_2<Rep_>::heat_pixel_down_right(const Point_2& p,const Segment
         std::cout << "2) inter_p = " << inter_p << std::endl;
       #endif
       // heat the resective pixel and insert it to hot_pixels_list
-      Hot_Pixel<Rep_> *hp = new Hot_Pixel<Rep_>(inter_p,pixel_size);
+      Hot_Pixel<Rep_> *hp = new Hot_Pixel<Rep_>(inter_p,pixel_size,true);
       if(not_hot_pixel(hp,hot_pixels_list)) {
         hot_pixels_list.push_back(std::pair<Point_2,Hot_Pixel<Rep_> *>(
  	  			hp->get_center(),hp));
@@ -1190,16 +1255,45 @@ void Snap_rounding_2<Rep_>::heat_pixel_down_right(const Point_2& p,const Segment
       } else
         delete hp;
     } else {
-      std::cout << "error 31\n";
-      //exit(-1);
+      std::cout << "error 311\n";
+      exit(-1);
     }
   } else {
     std::cout << "error 4\n";
     exit(-1);
   }
-}
+}*/
 
 // @@@@ a function for ISRS
+template<class Rep_>
+void Snap_rounding_2<Rep_>::heat_pixel_down_right(const Point_2& p,const Segment_2& s,std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list)
+{
+  Object result;
+  Point_2 inter_p;  
+
+  // find the intersction to the right on s
+  Segment_2 t(p,Point_2(s.max().x(),p.y()));
+  result = intersection(t,s);
+  if(assign(inter_p,result)) {
+    #ifdef DEBUG
+      std::cout << "1) inter_p = " << inter_p << std::endl;
+    #endif
+
+    // heat the resective pixel and insert it to hot_pixels_list
+    Hot_Pixel<Rep_> *hp = new Hot_Pixel<Rep_>(inter_p,pixel_size,true);
+    if(not_hot_pixel(hp,hot_pixels_list)) {
+      hot_pixels_list.push_back(std::pair<Point_2,Hot_Pixel<Rep_> *>(
+  			hp->get_center(),hp));
+      ++NUMBER_OF_HP;
+    } else
+      delete hp;
+  } else {
+    std::cout << "error 311\n";
+    exit(-1);
+  }
+}
+
+/* @@@@ a function for ISRS
 template<class Rep_>
 void Snap_rounding_2<Rep_>::heat_pixel_up_left(const Point_2& p,const Segment_2& s,std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list)
 {
@@ -1228,7 +1322,7 @@ void Snap_rounding_2<Rep_>::heat_pixel_up_left(const Point_2& p,const Segment_2&
         std::cout << "2) inter_p = " << inter_p << std::endl;
       #endif
       // heat the resective pixel and insert it to hot_pixels_list
-      Hot_Pixel<Rep_> *hp = new Hot_Pixel<Rep_>(inter_p,pixel_size);
+      Hot_Pixel<Rep_> *hp = new Hot_Pixel<Rep_>(inter_p,pixel_size,true);
       if(not_hot_pixel(hp,hot_pixels_list)) {
         hot_pixels_list.push_back(std::pair<Point_2,Hot_Pixel<Rep_> *>(
  				hp->get_center(),hp));
@@ -1238,15 +1332,45 @@ void Snap_rounding_2<Rep_>::heat_pixel_up_left(const Point_2& p,const Segment_2&
 
     } else {
       std::cout << "error 321\n";
-      //exit(-1);
+      exit(-1);
     }
+  } else {
+    std::cout << "error 4\n";
+    exit(-1);
+  }
+}*/
+
+// @@@@ a function for ISRS
+template<class Rep_>
+void Snap_rounding_2<Rep_>::heat_pixel_up_left(const Point_2& p,const Segment_2& s,std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list)
+{
+  Object result;
+  Point_2 inter_p;  
+
+  // find the intersction to the right on s
+  Segment_2 t(p,Point_2(s.min().x(),p.y()));
+  result = intersection(t,s);
+  if(assign(inter_p,result)) {
+    #ifdef DEBUG
+      std::cout << "1) inter_p = " << inter_p << std::endl;
+      std::cout << "t = " << t << std::endl;
+    #endif
+
+    // heat the resective pixel and insert it to hot_pixels_list
+    Hot_Pixel<Rep_> *hp = new Hot_Pixel<Rep_>(inter_p,pixel_size,true);
+    if(not_hot_pixel(hp,hot_pixels_list)) {
+      hot_pixels_list.push_back(std::pair<Point_2,Hot_Pixel<Rep_> *>(
+			hp->get_center(),hp));
+      ++NUMBER_OF_HP;
+    } else
+      delete hp;
   } else {
     std::cout << "error 4\n";
     exit(-1);
   }
 }
 
-// @@@@ a function for ISRS
+/* @@@@ a function for ISRS
 template<class Rep_>
 void Snap_rounding_2<Rep_>::heat_pixel_down_left(const Point_2& p,const Segment_2& s,std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list)
 {
@@ -1275,7 +1399,7 @@ void Snap_rounding_2<Rep_>::heat_pixel_down_left(const Point_2& p,const Segment_
         std::cout << "2) inter_p = " << inter_p << std::endl;
       #endif
       // heat the resective pixel and insert it to hot_pixels_list
-      Hot_Pixel<Rep_> *hp = new Hot_Pixel<Rep_>(inter_p,pixel_size);
+      Hot_Pixel<Rep_> *hp = new Hot_Pixel<Rep_>(inter_p,pixel_size,true);
       if(not_hot_pixel(hp,hot_pixels_list)) {
         hot_pixels_list.push_back(std::pair<Point_2,Hot_Pixel<Rep_> *>(
  				hp->get_center(),hp));
@@ -1285,8 +1409,38 @@ void Snap_rounding_2<Rep_>::heat_pixel_down_left(const Point_2& p,const Segment_
 
     } else {
       std::cout << "error 322\n";
-      //exit(-1);
+      exit(-1);
     }
+  } else {
+    std::cout << "error 4\n";
+    exit(-1);
+  }
+}*/
+
+// @@@@ a function for ISRS
+template<class Rep_>
+void Snap_rounding_2<Rep_>::heat_pixel_down_left(const Point_2& p,const Segment_2& s,std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> >& hot_pixels_list)
+{
+  Object result;
+  Point_2 inter_p;  
+
+  // find the intersction to the left on s
+  Segment_2 t(p,Point_2(s.min().x(),p.y()));
+  result = intersection(t,s);
+  if(assign(inter_p,result)) {
+    #ifdef DEBUG
+      std::cout << "1) inter_p = " << inter_p << std::endl;
+      std::cout << "t = " << t << std::endl;
+    #endif
+
+    // heat the resective pixel and insert it to hot_pixels_list
+    Hot_Pixel<Rep_> *hp = new Hot_Pixel<Rep_>(inter_p,pixel_size,true);
+    if(not_hot_pixel(hp,hot_pixels_list)) {
+      hot_pixels_list.push_back(std::pair<Point_2,Hot_Pixel<Rep_> *>(
+			hp->get_center(),hp));
+      ++NUMBER_OF_HP;
+    } else
+      delete hp;
   } else {
     std::cout << "error 4\n";
     exit(-1);
@@ -1483,7 +1637,6 @@ void Snap_rounding_2<Rep_>::find_hot_pixels_and_create_kd_trees()
     typename std::list<Segment_data<Rep_> >::iterator iter1;
     Object result;
     Point_2 p;
-    std::list<std::pair<Point_2,Hot_Pixel<Rep_> *> > hot_pixels_list;
 
     list<X_curve> segments;
     for(iter1 = seg_list.begin();iter1 != seg_list.end();++iter1)
@@ -1515,7 +1668,7 @@ void Snap_rounding_2<Rep_>::find_hot_pixels_and_create_kd_trees()
     for(typename std::list<Point_2>::const_iterator
             v_iter = mypointlist.begin();
 	v_iter != mypointlist.end();++v_iter) {
-      hp = new Hot_Pixel<Rep_>(*v_iter,pixel_size);
+      hp = new Hot_Pixel<Rep_>(*v_iter,pixel_size,false);
       hot_pixels_list.push_back(std::pair<Point_2,Hot_Pixel<Rep_> *>(
 				hp->get_center(),hp));
     }
@@ -1638,7 +1791,7 @@ void Snap_rounding_2<Rep_>::iterate()
       hot_pixel_iter = hot_pixels_intersected_set.begin();
       if(hot_pixel_iter == hot_pixels_intersected_set.end()) {
         // segment entirely inside a pixel
-        hp = new Hot_Pixel<Rep_>(iter->source(),pixel_size);
+        hp = new Hot_Pixel<Rep_>(iter->source(),pixel_size,false);
         seg_output.push_back(hp->get_center(int_output));
         erase_hp = true;
         delete(hp);
