@@ -6,15 +6,12 @@
 #include <fstream>
 #include <cassert>
 
-// example that uses the Filtered_kernel
+// example that uses the filtered traits
 
 #include <CGAL/MP_Float.h>
-#include <CGAL/Filtered_kernel.h>
-
-// choose the kernel
 #include <CGAL/Simple_cartesian.h>
 
-// inexact kernel
+// constructions kernel (inexact)
 typedef CGAL::Simple_cartesian<double> CK;
 
 // exact kernel
@@ -27,15 +24,21 @@ typedef CGAL::Simple_cartesian<CGAL::MP_Float> EK;
 #include <CGAL/Apollonius_graph_traits_2.h>
 
 
-// using filtered traits with two different methods for computing the
-// predicates
-typedef
-CGAL::Apollonius_graph_filtered_traits_2<CK, CGAL::Sqrt_field_tag,
-					 EK, CGAL::Ring_tag>
-Traits;
+// Type definition for the traits class.
+// In this example we explicitly define the exact kernel. We also
+// explicitly define what operations to use for the evaluation of the
+// predicates and constructions, when the filtering and the exact
+// kernels are used respectively.
+// Note that the operations allowed for the filtering and the
+// constructions (field operations plus square roots) are different
+// from the operations allowed when the exact kernel is used (ring
+// operations).
+typedef CGAL::Sqrt_field_tag  CM;
+typedef CGAL::Ring_tag        EM;
+typedef CGAL::Apollonius_graph_filtered_traits_2<CK,CM,EK,EM> Traits;
 
-// now we use the Apollonius graph hierarchy.
-// the hierarchy is faster for inputs consisting of about more than
+// Now we use the Apollonius graph hierarchy.
+// The hierarchy is faster for inputs consisting of about more than
 // 1,000 sites
 typedef CGAL::Apollonius_graph_hierarchy_2<Traits> Apollonius_graph;
 

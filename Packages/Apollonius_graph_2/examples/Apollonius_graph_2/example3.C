@@ -8,18 +8,12 @@
 
 #include <CGAL/basic.h>
 
-// example that uses the Filtered_kernel
+// example that uses the filtered traits
 
-#include <CGAL/MP_Float.h>
-#include <CGAL/Filtered_kernel.h>
-
-// choose the kernel
+// choose the representation
 #include <CGAL/Simple_cartesian.h>
 
-// inexact kernel
-typedef CGAL::Simple_cartesian<double> Kernel;
-
-// typedefs for the traits and the algorithm
+typedef CGAL::Simple_cartesian<double> Rep;
 
 #include <CGAL/Apollonius_graph_2.h>
 #include <CGAL/Apollonius_graph_data_structure_2.h>
@@ -27,19 +21,19 @@ typedef CGAL::Simple_cartesian<double> Kernel;
 #include <CGAL/Apollonius_graph_face_base_2.h>
 #include <CGAL/Apollonius_graph_traits_2.h>
 
-// using filtered traits
-typedef CGAL::Apollonius_graph_filtered_traits_2<Kernel> Traits;
+// typedef for the traits; the filtered traits class is used
+typedef CGAL::Apollonius_graph_filtered_traits_2<Rep> Traits;
 
-// with the second template argument in the vertex base class being
-// false, we indicate that there is no need to store the hidden
-// sites;
-// one case where this is indeed not needed is when we only do
+// typedefs for the algorithm
+
+// With the second template argument in the vertex base class being
+// false, we indicate that there is no need to store the hidden sites.
+// One case where this is indeed not needed is when we only do
 // insertions, like in the main program below.
 typedef CGAL::Apollonius_graph_vertex_base_2<Traits,false>   Vb;
 typedef CGAL::Apollonius_graph_face_base_2<Traits>           Fb;
 typedef CGAL::Apollonius_graph_data_structure_2<Vb,Fb>       Agds;
-typedef CGAL::Apollonius_graph_2<Traits,Agds>         Apollonius_graph;
-
+typedef CGAL::Apollonius_graph_2<Traits,Agds>    Apollonius_graph;
 
 
 int main()
@@ -58,6 +52,13 @@ int main()
   // validate the Apollonius graph
   assert( ag.is_valid(true, 1) );
   std::cout << std::endl;
+
+  // now remove all sites
+  std::cout << "Removing all sites... " << std::flush;
+  while ( ag.number_of_vertices() > 0 ) {
+    ag.remove( ag.finite_vertex() );
+  }
+  std::cout << "done!" << std::endl << std::endl;
 
   return 0;
 }
