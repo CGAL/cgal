@@ -2,7 +2,6 @@
 #define CGAL_PM_SEGMENT_TRAITS_2_H
 
 #include <CGAL/Planar_map_2/Pm_segment_utilities_2.h>
-// #include <CGAL/Planar_map_2/Pm_point_utilities_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -185,15 +184,10 @@ public:
   Curve_point_status 
   curve_get_point_status(const X_curve_2 & cv, const Point_2 & p) const
   {
-    if (!curve_is_in_x_range(cv, p))
-      return CURVE_NOT_IN_RANGE;
-    
+    if (!curve_is_in_x_range(cv, p)) return CURVE_NOT_IN_RANGE;
     Comparison_result res = compare_y_at_x_2_object()(p, cv);
-    
-    if ( res == LARGER ) return ABOVE_CURVE;
-    else if ( res == SMALLER ) return UNDER_CURVE;
-    
-    return ON_CURVE;
+    return ((res == LARGER) ? ABOVE_CURVE :
+            ((res == SMALLER) ? UNDER_CURVE : ON_CURVE));
   }
 
   /*! \todo Degenerate cases may not work! Talk with Eyal to fix the actual
