@@ -35,7 +35,7 @@ inline
 bool
 equal_line(const LineC2<R CGAL_CTAG> &l1, const LineC2<R CGAL_CTAG> &l2)
 {
-  return equal_lineC2(l1.a(),l1.b(),l1.c(),l2.a(),l2.b(),l2.c());
+  return equal_lineC2(l1.a(), l1.b(), l1.c(), l2.a(), l2.b(), l2.c());
 }
 
 template < class R >
@@ -45,7 +45,7 @@ compare_x(const PointC2<R CGAL_CTAG> &p,
           const LineC2<R CGAL_CTAG> &l,
           const LineC2<R CGAL_CTAG> &h)
 {
-  return compare_xC2(p.x(), l.a(),l.b(),l.c(),h.a(),h.b(),h.c());
+  return compare_xC2(p.x(), l.a(), l.b(), l.c(), h.a(), h.b(), h.c());
 }
 
 template < class R >
@@ -55,8 +55,8 @@ compare_x(const LineC2<R CGAL_CTAG> &l,
           const LineC2<R CGAL_CTAG> &h1,
           const LineC2<R CGAL_CTAG> &h2)
 {
-  return compare_xC2(l.a(),l.b(),l.c(),h1.a(),h1.b(),h1.c(),
-                                       h2.a(),h2.b(),h2.c());
+  return compare_xC2(l.a(), l.b(), l.c(), h1.a(), h1.b(), h1.c(),
+                                          h2.a(), h2.b(), h2.c());
 }
 
 template < class R >
@@ -67,8 +67,8 @@ compare_x(const LineC2<R CGAL_CTAG> &l1,
           const LineC2<R CGAL_CTAG> &l2,
           const LineC2<R CGAL_CTAG> &h2)
 {
-  return compare_xC2(l1.a(),l1.b(),l1.c(),h1.a(),h1.b(),h1.c(),
-                     l2.a(),l2.b(),l2.c(),h2.a(),h2.b(),h2.c());
+  return compare_xC2(l1.a(), l1.b(), l1.c(), h1.a(), h1.b(), h1.c(),
+                     l2.a(), l2.b(), l2.c(), h2.a(), h2.b(), h2.c());
 }
 
 template < class R >
@@ -78,7 +78,7 @@ compare_y(const PointC2<R CGAL_CTAG> &p,
           const LineC2<R CGAL_CTAG> &l1,
           const LineC2<R CGAL_CTAG> &l2)
 {
-  return compare_xC2(p.y(), l1.b(),l1.a(),l1.c(),l2.b(),l2.a(),l2.c());
+  return compare_xC2(p.y(), l1.b(), l1.a(), l1.c(), l2.b(), l2.a(), l2.c());
 }
 
 template < class R >
@@ -89,8 +89,8 @@ compare_y(const LineC2<R CGAL_CTAG> &l1,
           const LineC2<R CGAL_CTAG> &h1,
           const LineC2<R CGAL_CTAG> &h2)
 {
-  return compare_xC2(l1.b(),l1.a(),l1.c(),l2.b(),l2.a(),l2.c(),
-                     h1.b(),h1.a(),h1.c(),h2.b(),h2.a(),h2.c());
+  return compare_xC2(l1.b(), l1.a(), l1.c(), l2.b(), l2.a(), l2.c(),
+                     h1.b(), h1.a(), h1.c(), h2.b(), h2.a(), h2.c());
 }
 
 template < class R >
@@ -100,8 +100,8 @@ compare_y(const LineC2<R CGAL_CTAG> &l,
           const LineC2<R CGAL_CTAG> &h1,
           const LineC2<R CGAL_CTAG> &h2)
 {
-  return compare_xC2(l.b(),l.a(),l.c(),h1.b(),h1.a(),h1.c(),
-                     l.b(),l.a(),l.c(),h2.b(),h2.a(),h2.c());
+  return compare_xC2(l.b(), l.a(), l.c(), h1.b(), h1.a(), h1.c(),
+                     l.b(), l.a(), l.c(), h2.b(), h2.a(), h2.c());
 }
 
 template < class R >
@@ -109,7 +109,7 @@ inline
 Comparison_result
 compare_y_at_x(const PointC2<R CGAL_CTAG> &p, const LineC2<R CGAL_CTAG> &h)
 {
-  return compare_y_at_xC2(p.x(),p.y(),h.a(),h.b(),h.c());
+  return compare_y_at_xC2(p.x(), p.y(), h.a(), h.b(), h.c());
 }
 
 template < class R >
@@ -119,7 +119,8 @@ compare_y_at_x(const PointC2<R CGAL_CTAG> &p,
                const LineC2<R CGAL_CTAG> &h1,
                const LineC2<R CGAL_CTAG> &h2)
 {
-  return compare_y_at_xC2(p.x(), h1.a(),h1.b(),h1.c(),h2.a(),h2.b(),h2.c());
+  return compare_y_at_xC2(p.x(), h1.a(), h1.b(), h1.c(),
+	                         h2.a(), h2.b(), h2.c());
 }
 
 template < class R >
@@ -129,8 +130,8 @@ compare_y_at_x(const LineC2<R CGAL_CTAG> &l1,
                const LineC2<R CGAL_CTAG> &l2,
                const LineC2<R CGAL_CTAG> &h)
 {
-  return compare_y_at_xC2(l1.a(),l1.b(),l1.c(),l2.a(),l2.b(),l2.c(),
-                          h.a(),h.b(),h.c());
+  return compare_y_at_xC2(l1.a(), l1.b(), l1.c(), l2.a(), l2.b(), l2.c(),
+                          h.a(), h.b(), h.c());
 }
 
 template < class R >
@@ -141,8 +142,8 @@ compare_y_at_x(const LineC2<R CGAL_CTAG> &l1,
                const LineC2<R CGAL_CTAG> &h1,
                const LineC2<R CGAL_CTAG> &h2)
 {
-  return compare_y_at_xC2(l1.a(),l1.b(),l1.c(),l2.a(),l2.b(),l2.c(),
-                          h1.a(),h1.b(),h1.c(),h2.a(),h2.b(),h2.c());
+  return compare_y_at_xC2(l1.a(), l1.b(), l1.c(), l2.a(), l2.b(), l2.c(),
+                          h1.a(), h1.b(), h1.c(), h2.a(), h2.b(), h2.c());
 }
 
 template < class R >

@@ -121,7 +121,7 @@ Comparison_result
 compare_xy(const PointC3<R CGAL_CTAG> &p, 
 	   const PointC3<R CGAL_CTAG> &q)
 {
-  return compare_lexicographically_xy(p.x(),p.y(),q.x(),q.y()); 
+  return compare_lexicographically_xy(p.x(), p.y(), q.x(), q.y()); 
 }
 
 template < class R >
@@ -130,7 +130,7 @@ Comparison_result
 compare_lexicographically_xy(const PointC3<R CGAL_CTAG> &p, 
 			     const PointC3<R CGAL_CTAG> &q)
 {
-  return compare_lexicographically_xyC2(p.x(),p.y(),q.x(),q.y()); 
+  return compare_lexicographically_xyC2(p.x(), p.y(), q.x(), q.y()); 
 }
 
 template < class R >
@@ -139,7 +139,7 @@ bool
 lexicographically_xy_smaller_or_equal(const PointC3<R CGAL_CTAG> &p, 
 				      const PointC3<R CGAL_CTAG> &q)
 { 
-  return compare_lexicographically_xy(p,q) != LARGER;
+  return compare_lexicographically_xy(p, q) != LARGER;
 }
 
 template < class R >
@@ -148,7 +148,7 @@ bool
 lexicographically_xy_smaller(const PointC3<R CGAL_CTAG> &p, 
 			     const PointC3<R CGAL_CTAG> &q)
 { 
-  return compare_lexicographically_xy(p,q) == SMALLER;
+  return compare_lexicographically_xy(p, q) == SMALLER;
 }
 
 template < class R >
@@ -156,8 +156,8 @@ Comparison_result
 compare_lexicographically_xyz(const PointC3<R CGAL_CTAG> &p,
                               const PointC3<R CGAL_CTAG> &q)
 {
-  return compare_lexicographically_xyzC3(p.x(),p.y(),p.z(),
-                                         q.x(),q.y(),q.z());
+  return compare_lexicographically_xyzC3(p.x(), p.y(), p.z(),
+                                         q.x(), q.y(), q.z());
 }
 
 template < class R >
@@ -165,7 +165,7 @@ bool
 lexicographically_xyz_smaller_or_equal(const PointC3<R CGAL_CTAG> &p,
                                        const PointC3<R CGAL_CTAG> &q)
 {
-  return compare_lexicographically_xyz(p,q) != LARGER;
+  return compare_lexicographically_xyz(p, q) != LARGER;
 }
 
 template < class R >
@@ -173,7 +173,7 @@ bool
 lexicographically_xyz_smaller(const PointC3<R CGAL_CTAG> &p,
                               const PointC3<R CGAL_CTAG> &q)
 {
-  return compare_lexicographically_xyz(p,q) == SMALLER;
+  return compare_lexicographically_xyz(p, q) == SMALLER;
 }
 
 template < class R >
@@ -264,7 +264,7 @@ are_positive_oriented(const PointC3<R CGAL_CTAG>& p,
                       const PointC3<R CGAL_CTAG>& r,
                       const PointC3<R CGAL_CTAG>& s)
 {
-  return orientation(p,q,r,s) == POSITIVE;
+  return orientation(p, q, r, s) == POSITIVE;
 }
 
 template < class R>
@@ -275,7 +275,7 @@ are_negative_oriented(const PointC3<R CGAL_CTAG>& p,
                       const PointC3<R CGAL_CTAG>& r,
                       const PointC3<R CGAL_CTAG>& s)
 {
-  return orientation(p,q,r,s) == NEGATIVE;
+  return orientation(p, q, r, s) == NEGATIVE;
 }
 
 template < class R >
@@ -297,9 +297,9 @@ collinear_are_ordered_along_line(const PointC3<R CGAL_CTAG> &p,
                                  const PointC3<R CGAL_CTAG> &r)
 {
   CGAL_kernel_exactness_precondition( collinear(p, q, r) );
-  return collinear_are_ordered_along_lineC3(p.x(),p.y(),p.z(),
-                                            q.x(),q.y(),q.z(),
-                                            r.x(),r.y(),r.z());
+  return collinear_are_ordered_along_lineC3(p.x(), p.y(), p.z(),
+                                            q.x(), q.y(), q.z(),
+                                            r.x(), r.y(), r.z());
 }
 
 template < class R >
@@ -322,9 +322,9 @@ collinear_are_strictly_ordered_along_line(const PointC3<R CGAL_CTAG> &p,
                                           const PointC3<R CGAL_CTAG> &r)
 {
   CGAL_kernel_exactness_precondition( collinear(p, q, r) );
-  return collinear_are_strictly_ordered_along_lineC3(p.x(),p.y(),p.z(),
-                                                     q.x(),q.y(),q.z(),
-                                                     r.x(),r.y(),r.z());
+  return collinear_are_strictly_ordered_along_lineC3(p.x(), p.y(), p.z(),
+                                                     q.x(), q.y(), q.z(),
+                                                     r.x(), r.y(), r.z());
 }
 
 template <class R >
@@ -335,11 +335,11 @@ side_of_oriented_sphere(const PointC3<R CGAL_CTAG> &p,
                         const PointC3<R CGAL_CTAG> &s,
                         const PointC3<R CGAL_CTAG> &test)
 {
-  return side_of_oriented_sphereC3(p.x(),p.y(),p.z(),
-                                   q.x(),q.y(),q.z(),
-                                   r.x(),r.y(),r.z(),
-                                   s.x(),s.y(),s.z(),
-                                   test.x(),test.y(),test.z());
+  return side_of_oriented_sphereC3(p.x(), p.y(), p.z(),
+                                   q.x(), q.y(), q.z(),
+                                   r.x(), r.y(), r.z(),
+                                   s.x(), s.y(), s.z(),
+                                   test.x(), test.y(), test.z());
 }
 
 template <class R >
@@ -350,11 +350,11 @@ side_of_bounded_sphere(const PointC3<R CGAL_CTAG> &p,
                        const PointC3<R CGAL_CTAG> &s,
                        const PointC3<R CGAL_CTAG> &test)
 {
-  return side_of_bounded_sphereC3(p.x(),p.y(),p.z(),
-                                  q.x(),q.y(),q.z(),
-                                  r.x(),r.y(),r.z(),
-                                  s.x(),s.y(),s.z(),
-                                  test.x(),test.y(),test.z());
+  return side_of_bounded_sphereC3(p.x(), p.y(), p.z(),
+                                  q.x(), q.y(), q.z(),
+                                  r.x(), r.y(), r.z(),
+                                  s.x(), s.y(), s.z(),
+                                  test.x(), test.y(), test.z());
 }
 
 CGAL_END_NAMESPACE

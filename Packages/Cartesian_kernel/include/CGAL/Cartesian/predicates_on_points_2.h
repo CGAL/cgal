@@ -89,7 +89,7 @@ inline
 Comparison_result
 compare_xy(const PointC2<R CGAL_CTAG> &p, const PointC2<R CGAL_CTAG> &q)
 {
-    return compare_lexicographically_xy(p,q);
+    return compare_lexicographically_xy(p, q);
 }
 
 template < class R >
@@ -109,7 +109,7 @@ Comparison_result
 compare_lexicographically_xy(const PointC2<R CGAL_CTAG> &p,
                              const PointC2<R CGAL_CTAG> &q)
 {
-    return compare_lexicographically_xyC2(p.x(),p.y(),q.x(),q.y());
+    return compare_lexicographically_xyC2(p.x(), p.y(), q.x(), q.y());
 }
 
 template < class R >
@@ -118,7 +118,7 @@ bool
 lexicographically_xy_smaller_or_equal(const PointC2<R CGAL_CTAG> &p,
                                       const PointC2<R CGAL_CTAG> &q)
 {
-    return compare_lexicographically_xy(p,q) != LARGER;
+    return compare_lexicographically_xy(p, q) != LARGER;
 }
 
 template < class R >
@@ -127,7 +127,7 @@ bool
 lexicographically_xy_larger_or_equal(const PointC2<R CGAL_CTAG> &p,
                                      const PointC2<R CGAL_CTAG> &q)
 {
-    return compare_lexicographically_xy(p,q) != SMALLER;
+    return compare_lexicographically_xy(p, q) != SMALLER;
 }
 
 template < class R >
@@ -136,7 +136,7 @@ bool
 lexicographically_xy_smaller(const PointC2<R CGAL_CTAG> &p,
                              const PointC2<R CGAL_CTAG> &q)
 {
-    return compare_lexicographically_xy(p,q) == SMALLER;
+    return compare_lexicographically_xy(p, q) == SMALLER;
 }
 
 template < class R >
@@ -145,7 +145,7 @@ bool
 lexicographically_xy_larger(const PointC2<R CGAL_CTAG> &p,
                             const PointC2<R CGAL_CTAG> &q)
 {
-    return compare_lexicographically_xy(p,q) == LARGER;
+    return compare_lexicographically_xy(p, q) == LARGER;
 }
 
 template < class R >
@@ -154,7 +154,7 @@ Comparison_result
 compare_lexicographically_yx(const PointC2<R CGAL_CTAG> &p,
                              const PointC2<R CGAL_CTAG> &q)
 {
-    return compare_lexicographically_xyC2(p.y(),p.x(),q.y(),q.x());
+    return compare_lexicographically_xyC2(p.y(), p.x(), q.y(), q.x());
 }
 
 template < class R >
@@ -163,7 +163,7 @@ bool
 lexicographically_yx_smaller_or_equal(const PointC2<R CGAL_CTAG> &p,
                                       const PointC2<R CGAL_CTAG> &q)
 {
-    return compare_lexicographically_yx(p,q) != LARGER;
+    return compare_lexicographically_yx(p, q) != LARGER;
 }
 
 template < class R >
@@ -172,7 +172,7 @@ bool
 lexicographically_yx_larger_or_equal(const PointC2<R CGAL_CTAG> &p,
                                      const PointC2<R CGAL_CTAG> &q)
 {
-    return compare_lexicographically_yx(p,q) != SMALLER;
+    return compare_lexicographically_yx(p, q) != SMALLER;
 }
 
 template < class R >
@@ -181,7 +181,7 @@ bool
 lexicographically_yx_smaller(const PointC2<R CGAL_CTAG> &p,
                              const PointC2<R CGAL_CTAG> &q)
 {
-    return compare_lexicographically_yx(p,q) == SMALLER;
+    return compare_lexicographically_yx(p, q) == SMALLER;
 }
 
 template < class R >
@@ -190,7 +190,7 @@ bool
 lexicographically_yx_larger(const PointC2<R CGAL_CTAG> &p,
                             const PointC2<R CGAL_CTAG> &q)
 {
-    return compare_lexicographically_yx(p,q) == LARGER;
+    return compare_lexicographically_yx(p, q) == LARGER;
 }
 
 template < class R >
@@ -210,7 +210,7 @@ collinear(const PointC2<R CGAL_CTAG> &p,
           const PointC2<R CGAL_CTAG> &q,
           const PointC2<R CGAL_CTAG> &r)
 {
-    return orientation(p,q,r) == COLLINEAR;
+    return orientation(p, q, r) == COLLINEAR;
 }
 
 template < class R >
@@ -221,7 +221,7 @@ collinear_are_ordered_along_line(const PointC2<R CGAL_CTAG> &p,
                                  const PointC2<R CGAL_CTAG> &r)
 {
     return collinear_are_ordered_along_lineC2
-             (p.x(),p.y(),q.x(),q.y(),r.x(),r.y());
+             (p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
 }
 
 template < class R >
@@ -242,7 +242,7 @@ collinear_are_strictly_ordered_along_line(const PointC2<R CGAL_CTAG> &p,
                                           const PointC2<R CGAL_CTAG> &r)
 {
   return collinear_are_strictly_ordered_along_lineC2
-               (p.x(),p.y(),q.x(),q.y(),r.x(),r.y());
+               (p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
 }
 
 template < class R >
@@ -304,8 +304,8 @@ side_of_oriented_circle(const PointC2<R CGAL_CTAG> &p,
                         const PointC2<R CGAL_CTAG> &r,
                         const PointC2<R CGAL_CTAG> &test)
 {
-  return side_of_oriented_circleC2
-             (p.x(),p.y(),q.x(),q.y(),r.x(),r.y(),test.x(),test.y());
+  return side_of_oriented_circleC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y(),
+	                           test.x(), test.y());
 }
 
 template <class R >
@@ -316,8 +316,8 @@ side_of_bounded_circle(const PointC2<R CGAL_CTAG> &p,
                        const PointC2<R CGAL_CTAG> &r,
                        const PointC2<R CGAL_CTAG> &test)
 {
-  return side_of_bounded_circleC2
-             (p.x(),p.y(),q.x(),q.y(),r.x(),r.y(),test.x(),test.y());
+  return side_of_bounded_circleC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y(),
+	                          test.x(), test.y());
 }
 
 CGAL_END_NAMESPACE

@@ -33,7 +33,8 @@ Oriented_side
 side_of_oriented_plane(const PlaneC3<R CGAL_CTAG> &h,
                        const PointC3<R CGAL_CTAG> &p)
 { 
-  return side_of_oriented_planeC3(h.a(),h.b(),h.c(),h.d(),p.x(),p.y(),p.z());
+  return side_of_oriented_planeC3(h.a(), h.b(), h.c(), h.d(),
+	                          p.x(), p.y(), p.z());
 }
 
 CGAL_END_NAMESPACE
