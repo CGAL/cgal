@@ -46,6 +46,12 @@ public:
 
   Iso_rectangleH2(const PointH2<R>& p, const PointH2<R>& q);
 
+  Iso_rectangleH2(const RT& min_hx, const RT& min_hy, 
+                  const RT& max_hx, const RT& max_hy);
+
+  Iso_rectangleH2(const RT& min_hx, const RT& min_hy, 
+                  const RT& max_hx, const RT& max_hy, const RT& hw);
+
   bool      operator==(const Iso_rectangleH2<R>& s) const;
   bool      operator!=(const Iso_rectangleH2<R>& s) const;
 
@@ -71,6 +77,8 @@ public:
   FT        ymin() const;
   FT        xmax() const;
   FT        ymax() const;
+  FT        min_coord(int i) const;
+  FT        max_coord(int i) const;
 
   FT        area() const;
 };
@@ -107,6 +115,25 @@ Iso_rectangleH2<R>::Iso_rectangleH2(const PointH2<R>& p, const PointH2<R>& q)
   {
       initialize_with( Iso_rectangle_ref_2(p,q) );
   }
+}
+
+template < class R >
+inline
+Iso_rectangleH2<R>::Iso_rectangleH2(const RT& min_hx, const RT& min_hy, 
+                                    const RT& max_hx, const RT& max_hy)
+{
+  initialize_with( Iso_rectangle_ref_2( PointH2<R>(min_hx, min_hy), 
+                                        PointH2<R>(max_hx, max_hy)) );
+}
+
+template < class R >
+inline
+Iso_rectangleH2<R>::Iso_rectangleH2(const RT& min_hx, const RT& min_hy, 
+                                    const RT& max_hx, const RT& max_hy,
+                                    const RT& hw)
+{
+  initialize_with( Iso_rectangle_ref_2( PointH2<R>(min_hx, min_hy, hw), 
+                                        PointH2<R>(max_hx, max_hy, hw)) );
 }
 
 template < class R >
@@ -160,6 +187,30 @@ Iso_rectangleH2<R>::ymax() const
 template < class R >
 inline
 typename R::FT
+Iso_rectangleH2<R>::min_coord(int i) const
+{ 
+   CGAL_kernel_precondition ( i == 0 || i == 1 );
+   if (i == 0)
+      return xmin();
+   else
+      return ymin();
+}
+
+template < class R >
+inline
+typename R::FT
+Iso_rectangleH2<R>::max_coord(int i) const
+{ 
+   CGAL_kernel_precondition ( i == 0 || i == 1 );
+   if (i == 0)
+      return xmax();
+   else
+      return ymax();
+}
+
+template < class R >
+inline
+typename R::FT
 Iso_rectangleH2<R>::area() const
 { return  (xmax() - xmin()) * (ymax() - ymin()); }
 
@@ -174,14 +225,14 @@ Iso_rectangleH2<R>::vertex(int i) const
         return min();
     case 1:
         return PointH2<R>( max().hx()*min().hw(),
-                                    min().hy()*max().hw(),
-                                    min().hw()*max().hw() );
+                           min().hy()*max().hw(),
+                           min().hw()*max().hw() );
     case 2:
         return max();
     case 3:
         return PointH2<R>( min().hx()*max().hw(),
-                                    max().hy()*min().hw(),
-                                    min().hw()*max().hw() );
+                           max().hy()*min().hw(),
+                           min().hw()*max().hw() );
   }
   return PointH2<R>();
 }

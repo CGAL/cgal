@@ -61,11 +61,19 @@ public:
     : RIso_rectangle_2(r)
   {}
 
-  Iso_rectangle_2(const CGAL::Point_2<R> &p,
-                       const CGAL::Point_2<R> &q)
+  Iso_rectangle_2(const CGAL::Point_2<R> &p, const CGAL::Point_2<R> &q)
     : RIso_rectangle_2(p,q)
   {}
 
+  Iso_rectangle_2(const RT& min_hx, const RT& min_hy, 
+                  const RT& max_hx, const RT& max_hy)
+    : RIso_rectangle_2(min_hx, min_hy, max_hx, max_hy)
+  {}
+
+  Iso_rectangle_2(const RT& min_hx, const RT& min_hy, 
+                  const RT& max_hx, const RT& max_hy, const RT& hw)
+    : RIso_rectangle_2(min_hx, min_hy, max_hx, max_hy, hw)
+  {}
 
   bool
   operator==(const CGAL::Iso_rectangle_2<R> &r) const
@@ -99,6 +107,14 @@ public:
   FT
   ymax() const
   { return RIso_rectangle_2::ymax(); }
+
+  FT
+  min_coord(int i) const
+  { return RIso_rectangle_2::min_coord(i); }
+
+  FT
+  max_coord(int i) const
+  { return RIso_rectangle_2::max_coord(i); }
 
   CGAL::Point_2<R>
   vertex(int i) const
