@@ -48,7 +48,7 @@ private:
 	
   CGAL::Qt_widget_get_simple_polygon<Cgal_Polygon> getsimplepoly;
   CGAL::Qt_widget_get_polygon<Cgal_Polygon>        getpoly;
-  CGAL::Qt_widget_get_point<Rep>                   getpoint;
+  CGAL::Qt_widget_get_point<K>                     getpoint;
 };//end class
 
 #endif

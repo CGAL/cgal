@@ -1,10 +1,9 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>
 
-typedef CGAL::Cartesian<double> R;
-typedef CGAL::Polygon_traits_2<R> Traits;
-typedef Traits::Point_2 Point;
-typedef Traits::Segment_2 Segment;
+typedef CGAL::Cartesian<double> K;
+typedef K::Point_2 Point;
+typedef K::Segment_2 Segment;
 
 #include <list>
 #include <vector>
@@ -14,8 +13,8 @@ using std::list;
 using std::cout;
 using std::endl;
 
-typedef CGAL::Polygon_2<Traits, list<Point> > ListPolygon;
-typedef CGAL::Polygon_2<Traits, vector<Point> > VectorPolygon;
+typedef CGAL::Polygon_2<K, list<Point> > ListPolygon;
+typedef CGAL::Polygon_2<K, vector<Point> > VectorPolygon;
 
 #include <fstream>
 #include <algorithm>
@@ -31,38 +30,38 @@ void test_default_methods(      vector<Point>& pvec0,
                           const list<Point>&   plist1)
 {
   {
-    CGAL::Polygon_2<Traits, list<Point> >   x;
-    CGAL::Polygon_2<Traits, list<Point> >   p0(pvec0.begin(), pvec0.end());
-    // CGAL::Polygon_2<Traits, list<Point> >   p1(pvec0.rbegin(), pvec0.rend());
-    CGAL::Polygon_2<Traits, list<Point> >   p2(plist0.begin(), plist0.end());
-    // CGAL::Polygon_2<Traits, list<Point> >   p3(plist0.rbegin(), plist0.rend());
-    CGAL::Polygon_2<Traits, list<Point> >   p0_copy(p0);
+    CGAL::Polygon_2<K, list<Point> >   x;
+    CGAL::Polygon_2<K, list<Point> >   p0(pvec0.begin(), pvec0.end());
+    // CGAL::Polygon_2<K, list<Point> >   p1(pvec0.rbegin(), pvec0.rend());
+    CGAL::Polygon_2<K, list<Point> >   p2(plist0.begin(), plist0.end());
+    // CGAL::Polygon_2<K, list<Point> >   p3(plist0.rbegin(), plist0.rend());
+    CGAL::Polygon_2<K, list<Point> >   p0_copy(p0);
 
-    CGAL::Polygon_2<Traits, vector<Point> > y;
-    CGAL::Polygon_2<Traits, vector<Point> > p4(pvec0.begin(), pvec0.end());
-    // CGAL::Polygon_2<Traits, vector<Point> > p5(pvec0.rbegin(), pvec0.rend());
-    // CGAL::Polygon_2<Traits, vector<Point> > p6(plist0.begin(), plist0.end());
-    // CGAL::Polygon_2<Traits, vector<Point> > p7(plist0.rbegin(), plist0.rend());
-    CGAL::Polygon_2<Traits, vector<Point> > p4_copy(p4);
+    CGAL::Polygon_2<K, vector<Point> > y;
+    CGAL::Polygon_2<K, vector<Point> > p4(pvec0.begin(), pvec0.end());
+    // CGAL::Polygon_2<K, vector<Point> > p5(pvec0.rbegin(), pvec0.rend());
+    // CGAL::Polygon_2<K, vector<Point> > p6(plist0.begin(), plist0.end());
+    // CGAL::Polygon_2<K, vector<Point> > p7(plist0.rbegin(), plist0.rend());
+    CGAL::Polygon_2<K, vector<Point> > p4_copy(p4);
 
     x=p0;
     assert(x == p0);
   }
 
   {
-    CGAL::Polygon_2<Traits, list<Point> >   x;
-    CGAL::Polygon_2<Traits, list<Point> >   p0(pvec1.begin(), pvec1.end());
-    // CGAL::Polygon_2<Traits, list<Point> >   p1(pvec1.rbegin(), pvec1.rend());
-    CGAL::Polygon_2<Traits, list<Point> >   p2(plist1.begin(), plist1.end());
-    // CGAL::Polygon_2<Traits, list<Point> >   p3(plist1.rbegin(), plist1.rend());
-    CGAL::Polygon_2<Traits, list<Point> >   p0_copy(p0);
+    CGAL::Polygon_2<K, list<Point> >   x;
+    CGAL::Polygon_2<K, list<Point> >   p0(pvec1.begin(), pvec1.end());
+    // CGAL::Polygon_2<K, list<Point> >   p1(pvec1.rbegin(), pvec1.rend());
+    CGAL::Polygon_2<K, list<Point> >   p2(plist1.begin(), plist1.end());
+    // CGAL::Polygon_2<K, list<Point> >   p3(plist1.rbegin(), plist1.rend());
+    CGAL::Polygon_2<K, list<Point> >   p0_copy(p0);
 
-    CGAL::Polygon_2<Traits, vector<Point> > y;
-    CGAL::Polygon_2<Traits, vector<Point> > p4(pvec1.begin(), pvec1.end());
-    // CGAL::Polygon_2<Traits, vector<Point> > p5(pvec1.rbegin(), pvec1.rend());
-    // CGAL::Polygon_2<Traits, vector<Point> > p6(plist1.begin(), plist1.end());
-    // CGAL::Polygon_2<Traits, vector<Point> > p7(plist1.rbegin(), plist1.rend());
-    CGAL::Polygon_2<Traits, vector<Point> > p4_copy(p4);
+    CGAL::Polygon_2<K, vector<Point> > y;
+    CGAL::Polygon_2<K, vector<Point> > p4(pvec1.begin(), pvec1.end());
+    // CGAL::Polygon_2<K, vector<Point> > p5(pvec1.rbegin(), pvec1.rend());
+    // CGAL::Polygon_2<K, vector<Point> > p6(plist1.begin(), plist1.end());
+    // CGAL::Polygon_2<K, vector<Point> > p7(plist1.rbegin(), plist1.rend());
+    CGAL::Polygon_2<K, vector<Point> > p4_copy(p4);
 
     x=p0;
     assert(x == p0);
@@ -201,7 +200,7 @@ void test_access_functions(VectorPolygon& p)
     cout << "edge   " << i << " = " << p.edge(i) << endl;
   }
 
-  typedef CGAL::Polygon_2<Traits, vector<Point> >::Edge_const_iterator EI;
+  typedef CGAL::Polygon_2<K, vector<Point> >::Edge_const_iterator EI;
   EI edges_begin = p.edges_begin();
   EI edges_end   = p.edges_end();
   assert(edges_begin < edges_end);

@@ -38,7 +38,6 @@
 #include <CGAL/enum.h>
 
 #ifdef CGAL_REP_CLASS_DEFINED
-#include <CGAL/Polygon_traits_2.h>
 #include <CGAL/Aff_transformation_2.h>
 #endif // CGAL_REP_CLASS_DEFINED
 
@@ -572,11 +571,7 @@ operator!=(const Polygon_2<Traits_P,Container1_P> &x,
 
 #ifdef CGAL_REP_CLASS_DEFINED
 
-CGAL_END_NAMESPACE
 
-#    include <CGAL/Polygon_traits_2.h>
-
-CGAL_BEGIN_NAMESPACE
 
 template <class Transformation, class Traits_P, class Container_P>
 Polygon_2<Traits_P,Container_P>

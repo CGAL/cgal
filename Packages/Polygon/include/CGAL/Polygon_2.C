@@ -148,7 +148,6 @@ CGAL_END_NAMESPACE
 //-----------------------------------------------------------------------//
 
 #ifdef CGAL_REP_CLASS_DEFINED
-#include <CGAL/Polygon_traits_2.h>
 
 CGAL_BEGIN_NAMESPACE
 

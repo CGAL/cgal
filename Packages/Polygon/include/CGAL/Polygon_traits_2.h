@@ -1,3 +1,5 @@
+#error "FILE IS OBSOLETE AND SHOULD NOT GET INCLUDED"
+
 // ======================================================================
 //
 // Copyright (c) 1997 The CGAL Consortium

@@ -22,7 +22,7 @@
 #ifndef CGAL_SIMPLICITY_TEST_H
 #define CGAL_SIMPLICITY_TEST_H
 
-
+#error "FILE IS OBSOLETE AND SHOULD NOT GET INCLUDED"
 // ====  This file is now OBSOLETE ===== 
 // ====  The functionality has been placed in Polygon_2_simplicity.h ====
 

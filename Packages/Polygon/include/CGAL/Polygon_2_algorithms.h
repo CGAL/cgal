@@ -31,9 +31,6 @@
 
 #include <CGAL/polygon_assertions.h>
 
-#ifdef CGAL_REP_CLASS_DEFINED
- #include <CGAL/Polygon_traits_2.h>
-#endif // CGAL_REP_CLASS_DEFINED
 
 CGAL_BEGIN_NAMESPACE
 
@@ -173,7 +170,7 @@ ForwardIterator right_vertex_2_aux(ForwardIterator first,
                                         ForwardIterator last,
                                         const Point_2<R>&)
 {
-  return right_vertex_2(first, last, Polygon_traits_2<R>());
+  return right_vertex_2(first, last, R());
 }
 
 template <class ForwardIterator>
@@ -190,7 +187,7 @@ ForwardIterator top_vertex_2_aux(ForwardIterator first,
                                       ForwardIterator last,
                                       const Point_2<R>&)
 {
-  return top_vertex_2(first, last, Polygon_traits_2<R>());
+  return top_vertex_2(first, last, R());
 }
 
 template <class ForwardIterator>
@@ -207,7 +204,7 @@ ForwardIterator bottom_vertex_2_aux(ForwardIterator first,
                                          ForwardIterator last,
                                          const Point_2<R>&)
 {
-  return bottom_vertex_2(first, last, Polygon_traits_2<R>());
+  return bottom_vertex_2(first, last, R());
 }
 
 template <class ForwardIterator>
@@ -225,7 +222,7 @@ void area_2_aux(ForwardIterator first,
                      Numbertype& result,
                      const Point_2<R>&)
 {
-  area_2(first, last, result, Polygon_traits_2<R>());
+  area_2(first, last, result, R());
 }
 
 template <class ForwardIterator, class Numbertype>
@@ -243,7 +240,7 @@ bool is_convex_2_aux(ForwardIterator first,
                           ForwardIterator last,
                           const Point_2<R>&)
 {
-  return is_convex_2(first, last, Polygon_traits_2<R>());
+  return is_convex_2(first, last, R());
 }
 
 template <class ForwardIterator>
@@ -277,7 +274,7 @@ Oriented_side oriented_side_2(ForwardIterator first,
                                         ForwardIterator last,
                                         const Point_2<R>& point)
 {
-  return oriented_side_2(first, last, point, Polygon_traits_2<R>());
+  return oriented_side_2(first, last, point, R());
 }
 
 template <class ForwardIterator, class R>
@@ -286,7 +283,7 @@ Bounded_side bounded_side_2(ForwardIterator first,
                                       ForwardIterator last,
                                       const Point_2<R>& point)
 {
-  return bounded_side_2(first, last, point, Polygon_traits_2<R>());
+  return bounded_side_2(first, last, point, R());
 }
 
 template <class ForwardIterator, class R>
@@ -295,7 +292,7 @@ Orientation orientation_2_aux(ForwardIterator first,
                                         ForwardIterator last,
                                         const Point_2<R>&)
 {
-  return orientation_2(first, last, Polygon_traits_2<R>());
+  return orientation_2(first, last, R());
 }
 
 template <class ForwardIterator>
