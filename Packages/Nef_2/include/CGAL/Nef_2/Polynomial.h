@@ -43,16 +43,6 @@
 
 
 
-#  if (!defined(_MSC_VER))
-#    
-#      define SNIHACK
-#      define SNIINST
-#  else
-#    define SNIHACK ,char,char
-#    define SNIINST ,'c','c'
-#  endif
-
-
 CGAL_BEGIN_NAMESPACE
 
 template <class NT> class Polynomial_rep;
@@ -65,6 +55,10 @@ CGAL_TEMPLATE_NULL class Polynomial<int> ;
 // CLASS TEMPLATE double: 
 CGAL_TEMPLATE_NULL class Polynomial<double> ;
 // SPECIALIZE_CLASS(NT,int double) END
+
+
+Polynomial<int> operator - (const Polynomial<int>& p);
+Polynomial<double> operator - (const Polynomial<double>& p);
 
 /*{\Mtext \headerline{Range template}}*/
 
@@ -218,8 +212,8 @@ template <class pNT> class Polynomial_rep {
 
 
   template <class Forward_iterator>
-  Polynomial_rep(Forward_iterator first, Forward_iterator last SNIHACK) 
-    : coeff(first,last) {}
+  Polynomial_rep(std::pair<Forward_iterator,Forward_iterator> poly) 
+    : coeff(poly.first,poly.second) {}
 
 
   void reduce() 
@@ -270,14 +264,13 @@ template <class pNT> class Polynomial :
   /*{\Mtypemember a random access iterator for read-only access to the
   coefficient vector.}*/
 
-  protected:
+  //protected:
   void reduce() { ptr()->reduce(); }
   Vector& coeffs() { return ptr()->coeff; }
   const Vector& coeffs() const { return ptr()->coeff; }
   Polynomial(size_type s) : Base( Polynomial_rep<NT>(s) ) {}
   // creates a polynomial of degree s-1
 
-  static NT R_; // for visualization only
 
   /*{\Mcreation 3}*/
   public:
@@ -292,7 +285,7 @@ template <class pNT> class Polynomial :
   the constant polynomial $a_0$.}*/
     : Base(Polynomial_rep<NT>(a0)) { reduce(); }
 
-  Polynomial(NT a0, NT a1) //af 
+  Polynomial(NT a0, NT a1) 
   /*{\Mcreate introduces a variable |\Mvar| of type |\Mname| representing
   the polynomial $a_0 + a_1 x$. }*/
     : Base(Polynomial_rep<NT>(a0,a1)) { reduce(); }
@@ -303,13 +296,13 @@ template <class pNT> class Polynomial :
     : Base(Polynomial_rep<NT>(a0,a1,a2)) { reduce(); }
 
   template <class Forward_iterator>
-  Polynomial(Forward_iterator first, Forward_iterator last) 
+  Polynomial(std::pair<Forward_iterator, Forward_iterator> poly) 
   /*{\Mcreate introduces a variable |\Mvar| of type |\Mname| representing
   the polynomial whose coefficients are determined by the iterator range,
   i.e. let $(a_0 = |*first|, a_1 = |*++first|, \ldots a_d = |*it|)$, 
   where |++it == last| then |\Mvar| stores the polynomial $a_1 + a_2 x + 
   \ldots a_d x^d$.}*/
-    : Base(Polynomial_rep<NT>(first,last SNIINST)) { reduce(); }
+    : Base(Polynomial_rep<NT>(poly)) { reduce(); }
 
 
   // KILL double START
@@ -326,7 +319,7 @@ template <class pNT> class Polynomial :
 
   Polynomial(const Polynomial<NT>& p) : Base(p) {}
 
-  protected: // accessing coefficients internally:
+  //protected: // accessing coefficients internally:
   NT& coeff(unsigned int i) 
   { CGAL_assertion(!is_shared() && i<(ptr()->coeff.size()));
     return ptr()->coeff[i]; 
@@ -393,8 +386,6 @@ template <class pNT> class Polynomial :
     return gcd_of_range(ptr()->coeff.begin(),ptr()->coeff.end());
   }
 
-
-  static void set_R(const NT& R) { R_ = R; }
 
   /*{\Mtext Additionally |\Mname| offers standard arithmetic ring
   opertions like |+,-,*,+=,-=,*=|. By means of the sign operation we can
@@ -580,7 +571,7 @@ $O(d*T(NT))$, multiplication is quadratic in the maximal degree of the
 arguments times $T(NT)$, where $T(NT)$ is the time for a corresponding
 operation on two instances of the ring type.}*/
 
-
+//############ POLYNOMIAL< INT > ###################################
 // CLASS TEMPLATE int: 
 /*{\Xsubst 
  iterator_traits<Forward_iterator>::value_type#int
@@ -618,14 +609,13 @@ CGAL_TEMPLATE_NULL class Polynomial<int> :
   /*{\Xtypemember a random access iterator for read-only access to the
   coefficient vector.}*/
 
-  protected:
+  //  protected:
   void reduce() { ptr()->reduce(); }
   Vector& coeffs() { return ptr()->coeff; }
   const Vector& coeffs() const { return ptr()->coeff; }
   Polynomial(size_type s) : Base( Polynomial_rep<int>(s) ) {}
   // creates a polynomial of degree s-1
 
-  static int R_; // for visualization only
 
   /*{\Xcreation 3}*/
   public:
@@ -640,7 +630,8 @@ CGAL_TEMPLATE_NULL class Polynomial<int> :
   the constant polynomial $a_0$.}*/
     : Base(Polynomial_rep<int>(a0)) { reduce(); }
 
-  Polynomial(int a0, int a1) // af: was const&
+
+  Polynomial(int a0, int a1) 
   /*{\Xcreate introduces a variable |\Mvar| of type |\Mname| representing
   the polynomial $a_0 + a_1 x$. }*/
     : Base(Polynomial_rep<int>(a0,a1)) { reduce(); }
@@ -652,13 +643,13 @@ CGAL_TEMPLATE_NULL class Polynomial<int> :
 
 
   template <class Forward_iterator>
-  Polynomial(Forward_iterator first, Forward_iterator last ) 
+  Polynomial(std::pair<Forward_iterator, Forward_iterator> poly) 
   /*{\Xcreate introduces a variable |\Mvar| of type |\Mname| representing
   the polynomial whose coefficients are determined by the iterator range,
   i.e. let $(a_0 = |*first|, a_1 = |*++first|, \ldots a_d = |*it|)$, 
   where |++it == last| then |\Mvar| stores the polynomial $a_1 + a_2 x + 
   \ldots a_d x^d$.}*/
-    : Base(Polynomial_rep<int>(first,last SNIINST)) { reduce(); }
+    : Base(Polynomial_rep<int>(poly)) { reduce(); }
 
 
 
@@ -670,7 +661,7 @@ CGAL_TEMPLATE_NULL class Polynomial<int> :
 
   Polynomial(const Polynomial<int>& p) : Base(p) {}
 
-  protected: // accessing coefficients internally:
+  //protected: // accessing coefficients internally:
   int& coeff(unsigned int i) 
   { CGAL_assertion(!is_shared() && i<(ptr()->coeff.size()));
     return ptr()->coeff[i]; 
@@ -731,7 +722,6 @@ CGAL_TEMPLATE_NULL class Polynomial<int> :
   }
 
 
-  static void set_R(const int& R) { R_ = R; }
 
   /*{\Xtext Additionally |\Mname| offers standard arithmetic ring
   opertions like |+,-,*,+=,-=,*=|. By means of the sign operation we can
@@ -739,6 +729,9 @@ CGAL_TEMPLATE_NULL class Polynomial<int> :
   holds iff $|sign|(p_1 - p_2) < 0$. This data type is fully compliant
   to the requirements of CGAL number types. \setopdims{3cm}{2cm}}*/
 
+  friend  Polynomial<double> // af: new
+  operator - CGAL_NULL_TMPL_ARGS  (const Polynomial<double>&);   
+                   
   friend  Polynomial<int>
     operator - CGAL_NULL_TMPL_ARGS  (const Polynomial<int>&);   
                           
@@ -894,6 +887,11 @@ arguments times $T(int)$, where $T(int)$ is the time for a corresponding
 operation on two instances of the ring type.}*/
 
 
+//############ POLYNOMIAL< INT > ###################################
+
+//############ POLYNOMIAL< DOUBLE > ################################
+
+
 // CLASS TEMPLATE double: 
 /*{\Xsubst 
  iterator_traits<Forward_iterator>::value_type#double
@@ -931,14 +929,13 @@ determines the sign for the limit process $x \rightarrow \infty$.
   /*{\Xtypemember a random access iterator for read-only access to the
   coefficient vector.}*/
 
-  protected:
+  //af: protected:
   void reduce() { ptr()->reduce(); }
   Vector& coeffs() { return ptr()->coeff; }
   const Vector& coeffs() const { return ptr()->coeff; }
   Polynomial(size_type s) : Base( Polynomial_rep<double>(s) ) {}
   // creates a polynomial of degree s-1
 
-  static double R_; // for visualization only
 
   /*{\Xcreation 3}*/
   public:
@@ -953,7 +950,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   the constant polynomial $a_0$.}*/
     : Base(Polynomial_rep<double>(a0)) { reduce(); }
 
-  Polynomial(const double& a0, const double& a1)
+  Polynomial(const double a0, const double a1)
   /*{\Xcreate introduces a variable |\Mvar| of type |\Mname| representing
   the polynomial $a_0 + a_1 x$. }*/
     : Base(Polynomial_rep<double>(a0,a1)) { reduce(); }
@@ -964,13 +961,13 @@ determines the sign for the limit process $x \rightarrow \infty$.
     : Base(Polynomial_rep<double>(a0,a1,a2)) { reduce(); }
 
   template <class Forward_iterator>
-  Polynomial(Forward_iterator first, Forward_iterator last ) 
+  Polynomial(std::pair<Forward_iterator, Forward_iterator> poly) 
   /*{\Xcreate introduces a variable |\Mvar| of type |\Mname| representing
   the polynomial whose coefficients are determined by the iterator range,
   i.e. let $(a_0 = |*first|, a_1 = |*++first|, \ldots a_d = |*it|)$, 
   where |++it == last| then |\Mvar| stores the polynomial $a_1 + a_2 x + 
   \ldots a_d x^d$.}*/
-    : Base(Polynomial_rep<double>(first,last SNIINST)) { reduce(); }
+    : Base(Polynomial_rep<double>(poly)) { reduce(); }
 
 
 
@@ -982,7 +979,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
 
   Polynomial(const Polynomial<double>& p) : Base(p) {}
 
-  protected: // accessing coefficients internally:
+  //protected: // accessing coefficients internally:
   double& coeff(unsigned int i) 
   { CGAL_assertion(!is_shared() && i<(ptr()->coeff.size()));
     return ptr()->coeff[i]; 
@@ -1044,7 +1041,6 @@ determines the sign for the limit process $x \rightarrow \infty$.
   }
 
 
-  static void set_R(const double& R) { R_ = R; }
 
   /*{\Xtext Additionally |\Mname| offers standard arithmetic ring
   opertions like |+,-,*,+=,-=,*=|. By means of the sign operation we can
@@ -1052,8 +1048,8 @@ determines the sign for the limit process $x \rightarrow \infty$.
   holds iff $|sign|(p_1 - p_2) < 0$. This data type is fully compliant
   to the requirements of CGAL number types. \setopdims{3cm}{2cm}}*/
 
-  friend  Polynomial<double>
-    operator - CGAL_NULL_TMPL_ARGS  (const Polynomial<double>&);   
+//  friend  Polynomial<double>
+//    operator - CGAL_NULL_TMPL_ARGS  (const Polynomial<double>&);   
                           
   friend Polynomial<double>
     operator + CGAL_NULL_TMPL_ARGS (const Polynomial<double>&, 
@@ -1211,16 +1207,15 @@ arguments times $T(double)$, where $T(double)$ is the time for a corresponding
 operation on two instances of the ring type.}*/
 
 
-// SPECIALIZE_CLASS(NT,int double) END
+//############ POLYNOMIAL< DOUBLE > ################################
 
-template <class NT> NT Polynomial<NT>::R_;
-//int    Polynomial<int>::R_;
-//double Polynomial<double>::R_;
-//those 2 moved in src/Polynomial.C
+
+
+// SPECIALIZE_CLASS(NT,int double) END
 
 template <class NT> double to_double 
   (const Polynomial<NT>& p) 
-  { return (CGAL::to_double(p.eval_at(Polynomial<NT>::R_))); }
+  { return 0; } // AF THIS USED R_  STRANGE!!!
 
 template <class NT> bool is_valid 
   (const Polynomial<NT>& p) 
@@ -1239,7 +1234,7 @@ template <class NT>
 Polynomial<NT> operator - (const Polynomial<NT>& p)
 {
   CGAL_assertion(p.degree()>=0);
-  Polynomial<NT> res(p.coeffs().begin(),p.coeffs().end()); 
+  Polynomial<NT> res(std::make_pair(p.coeffs().begin(),p.coeffs().end())); 
   typename Polynomial<NT>::iterator it, ite=res.coeffs().end();
   for(it=res.coeffs().begin(); it!=ite; ++it) *it = -*it;
   return res;
@@ -1900,7 +1895,7 @@ std::istream& operator >> (std::istream& is, Polynomial<NT>& p) {
                 }
             }
             if ( is)
-                p = Polynomial<NT>( coeffs.begin(), coeffs.end());
+                p = Polynomial<NT>(std::make_pair( coeffs.begin(), coeffs.end()));
         }
         break;
     case CGAL::IO::BINARY :
@@ -1913,7 +1908,7 @@ std::istream& operator >> (std::istream& is, Polynomial<NT>& p) {
                 CGAL::read(is,c);
                 coeffs[i]=c;
             }
-            p = Polynomial<NT>( coeffs.begin(), coeffs.end());
+            p = Polynomial<NT>(std::make_pair( coeffs.begin(), coeffs.end()));
         }
         break;
     }
