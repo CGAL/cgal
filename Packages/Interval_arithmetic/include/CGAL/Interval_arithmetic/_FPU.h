@@ -259,22 +259,6 @@ inline void FPU_set_cw (FPU_CW_t cw)
 #endif // CGAL_IA_USE_ASSEMBLY
 }
 
-// Obscolete: wrappers for the old interface.  Will be removed after 2.0.
-
-#if 1
-inline void FPU_set_rounding_to_zero (void)
-{ FPU_set_cw(FPU_cw_zero); }
-
-inline void FPU_set_rounding_to_nearest (void)
-{ FPU_set_cw(FPU_cw_near); }
-
-inline void FPU_set_rounding_to_infinity (void)
-{ FPU_set_cw(FPU_cw_up); }
-
-inline void FPU_set_rounding_to_minus_infinity (void)
-{ FPU_set_cw(FPU_cw_down); }
-#endif
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_FPU_H
