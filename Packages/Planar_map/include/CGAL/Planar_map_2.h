@@ -33,7 +33,7 @@
 #include <CGAL/Topological_map.h>
 
 #ifndef CGAL_NO_PM_DEFAULT_POINT_LOCATION
-#include <CGAL/Pm_trapezoid_dag_point_location.h>
+#include <CGAL/Pm_trapezoid_ric_point_location.h>
 #include <CGAL/Pm_walk_along_line_point_location.h>
 #include <CGAL/Pm_naive_point_location.h>
 #include <CGAL/Pm_triangle_point_location.h>
@@ -43,7 +43,7 @@
 // for solving the dynamic cast in the copy constructor, 
 // these lines will be removed after writing 
 // copy construtor for point location.
-#include <CGAL/Pm_trapezoid_dag_point_location.h>
+#include <CGAL/Pm_trapezoid_ric_point_location.h>
 #include <CGAL/Pm_walk_along_line_point_location.h>
 #include <CGAL/Pm_naive_point_location.h>
 #include <CGAL/Pm_simple_point_location.h>
@@ -855,7 +855,7 @@ Planar_map_2< Dcel, Traits >::Planar_map_2()
   use_delete_traits = true;
 
 #ifndef CGAL_NO_PM_DEFAULT_POINT_LOCATION
-  pl = new Pm_trapezoid_dag_point_location<Self>;
+  pl = new Pm_trapezoid_ric_point_location<Self>;
   use_delete_pl = true;
   pl->init(*this,*traits);
 #else
@@ -902,7 +902,7 @@ Planar_map_2(
   if (pl_ptr == NULL)
   {
 #ifndef CGAL_NO_PM_DEFAULT_POINT_LOCATION
-    pl = new Pm_trapezoid_dag_point_location<Self>;
+    pl = new Pm_trapezoid_ric_point_location<Self>;
     use_delete_pl = true;
     pl->init(*this,*traits);
 #else
@@ -955,7 +955,7 @@ Planar_map_2(
   if (pl_ptr == NULL)
   {
 #ifndef CGAL_NO_PM_DEFAULT_POINT_LOCATION
-    pl = new Pm_trapezoid_dag_point_location<Self>;
+    pl = new Pm_trapezoid_ric_point_location<Self>;
     use_delete_pl = true;
     pl->init(*this,*traits);
 #else
@@ -992,8 +992,8 @@ template < class Dcel, class Traits >
 Planar_map_2< Dcel, Traits >::
 Planar_map_2(const Planar_map_2<Dcel, Traits> & pm)
 {
-  typedef Pm_trapezoid_dag_point_location<Self>
-    Pm_trapezoid_dag_point_location;
+  typedef Pm_trapezoid_ric_point_location<Self>
+    Pm_trapezoid_ric_point_location;
   
   // doing the same as Planar_map_2(pm.get_traits(),pm.get_point_location(),
   //                                pm.get_point_bbox());
@@ -1020,10 +1020,10 @@ Planar_map_2(const Planar_map_2<Dcel, Traits> & pm)
     //cout<<"Default"<<std::endl;
 #ifndef CGAL_NO_PM_DEFAULT_POINT_LOCATION
     pl =
-      new Pm_trapezoid_dag_point_location(*(Pm_trapezoid_dag_point_location*)
+      new Pm_trapezoid_ric_point_location(*(Pm_trapezoid_ric_point_location*)
                                           pm.pl);
     //! \todo Unify the different point location copy constructors;
-    ((Pm_trapezoid_dag_point_location*)pl) -> set_planar_map(this);
+    ((Pm_trapezoid_ric_point_location*)pl) -> set_planar_map(this);
     use_delete_pl = true;
     bb=init_default_bounding_box((Traits*)traits);
     use_delete_bb=true;
