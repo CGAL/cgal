@@ -115,11 +115,11 @@ erase(Key& k)
   else
     {
       const Data& d = pos->second;
-      direct_func.erase(pos);
 
       reverse_iterator lb = reverse_func.lower_bound(d);
       reverse_iterator ub = reverse_func.upper_bound(d);
 
+      direct_func.erase(pos);
       reverse_func.erase(std::find_if(lb, ub, Second_is(k)));
     }
 }
