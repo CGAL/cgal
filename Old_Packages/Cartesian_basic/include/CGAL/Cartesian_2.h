@@ -12,26 +12,19 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian_2.h
-// source        : include/CGAL/Cartesian_2.h
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Herve.Bronnimann@sophia.inria.fr
+// author(s)     : Herve Bronnimann
 //
 // coordinator   : INRIA Sophia-Antipolis
 //
 // ============================================================================
 
-
 #ifndef CGAL_CARTESIAN_2_H
 #define CGAL_CARTESIAN_2_H
 
-#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
-#endif // CGAL_BASIC_H
-
-#ifndef CGAL_CARTESIAN_CLASSES_H
 #include <CGAL/cartesian_classes.h>
-#endif // CGAL_CARTESIAN_CLASSES_H
 
 #ifdef CGAL_CFG_NO_ADVANCED_KERNEL
   // Because we cannot use Michael's scheme, we need the wrapper classes

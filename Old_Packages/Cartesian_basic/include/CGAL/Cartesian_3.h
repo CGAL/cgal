@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1998, 1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -12,33 +12,24 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian_3.h
-// source        : include/CGAL/Cartesian_3.h
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Herve.Bronnimann@sophia.inria.fr
+// author(s)     : Herve Bronnimann
 //
 // coordinator   : INRIA Sophia-Antipolis
 //
 // ============================================================================
 
-
 #ifndef CGAL_CARTESIAN_3_H
 #define CGAL_CARTESIAN_3_H
 
-#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
-#endif // CGAL_BASIC_H
-
-#ifndef CGAL_CARTESIAN_CLASSES_H
 #include <CGAL/cartesian_classes.h>
-#endif // CGAL_CARTESIAN_CLASSES_H
 
 #ifdef CGAL_CFG_NO_ADVANCED_KERNEL
   // Because we cannot use Michael's scheme, we need the wrapper classes
   // We include them (they are common to Cartesian and Homogeneous)
-  #ifndef CGAL_USER_CLASSES_H
   #include <CGAL/user_classes.h>
-  #endif // CGAL_USER_CLASSES_H
 #endif // CGAL_CFG_NO_ADVANCED_KERNEL
 
 #define CGAL_REP_CLASS_DEFINED

@@ -1,11 +1,9 @@
 // ============================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1998, 1999 The CGAL Consortium
 //
-// This software and related documentation is part of an INTERNAL
-// release
-// of the Computational Geometry Algorithms Library (CGAL). It is
-// not
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
 // intended for general use.
 //
 // ----------------------------------------------------------------------------
@@ -14,22 +12,18 @@
 // release_date  :
 //
 // file          : include/CGAL/cartesian_classes.h
-// source        : include/CGAL/cartesian_classes.h
 // revision      : $Revision$
 // revision_date : $Date$
-// authors       : Herve.Bronnimann@sophia.inria.fr
+// authors       : Herve Bronnimann
 //
 // coordinator   : INRIA Sophia-Antipolis
 //
 // ============================================================================
 
-
 #ifndef CGAL_CARTESIAN_CLASSES_H
 #define CGAL_CARTESIAN_CLASSES_H
 
-#ifndef CGAL_BASIC_CLASSES_H
 #include <CGAL/basic_classes.h>
-#endif // CGAL_BASIC_CLASSES_H
 
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
 
@@ -110,11 +104,8 @@ CGAL_END_NAMESPACE
 
 // We also need the wrapper classes Point_2<R> etc.
 // We include them (they are common to Cartesian and Homogeneous)
-#ifndef CGAL_USER_CLASSES_H
 #include <CGAL/user_classes.h>
-#endif // CGAL_USER_CLASSES_H
 
 #endif // CGAL_CFG_NO_ADVANCED_KERNEL
-
 
 #endif // CGAL_CARTESIAN_CLASSES_H

@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1998, 1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -12,36 +12,22 @@
 // release_date  :
 //
 // file          : include/CGAL/Cartesian.h
-// source        : include/CGAL/Cartesian.h
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Herve.Bronnimann@sophia.inria.fr
+// author(s)     : Herve Bronnimann
 //
 // coordinator   : INRIA Sophia-Antipolis
 //
 // ============================================================================
 
-
 #ifndef CGAL_CARTESIAN_H
 #define CGAL_CARTESIAN_H
 
-#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
-#endif // CGAL_BASIC_H
-
-#ifndef CGAL_CARTESIAN_CLASSES_H
 #include <CGAL/cartesian_classes.h>
-#endif // CGAL_CARTESIAN_CLASSES_H
-
-#ifndef CGAL_CARTESIAN_2_H
 #include <CGAL/Cartesian_2.h>
-#endif // CGAL_CARTESIAN_2_H
-#ifndef CGAL_CARTESIAN_3_H
 #include <CGAL/Cartesian_3.h>
-#endif // CGAL_CARTESIAN_3_H
-#ifndef CGAL_CARTESIAN_DYNAMIC_D_H
 #include <CGAL/Cartesian_dynamic_d.h>
-#endif // CGAL_CARTESIAN_DYNAMIC_D_H
 
 #define CGAL_REP_CLASS_DEFINED
 #define CGAL_CARTESIAN_CLASS_DEFINED
