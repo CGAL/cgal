@@ -127,7 +127,7 @@ class Partial_filtered_pricing
         NT z;
         for ( j = 0; j < n; ++j, ++Aj) {
             for ( i = 0; i < m; ++i) {
-                z = CGAL::NTS::abs( (*Aj)[ i]);
+                z = CGAL_NTS abs( (*Aj)[ i]);
                 if ( z > row_max_A[ i]) row_max_A[ i] = z;
                 if ( z > col_max  [ j]) col_max  [ j] = z;
             }
@@ -153,13 +153,13 @@ class Partial_filtered_pricing
             }
         }
         N.erase( N.end()-m, N.end());
-        s = min( (int)(m*CGAL::NTS::sqrt<double>(n)), n-m);
+        s = min( (int)(m*CGAL_NTS sqrt<double>(n)), n-m);
     
         // update row/column maxima of `A'
         C_iterator  c_i = solve.c_begin();
         NT z;
         for ( i = 0; i < n; ++i, ++c_i) {
-            z = CGAL::NTS::abs( *c_i);
+            z = CGAL_NTS abs( *c_i);
             if ( z > col_max[ i]) col_max[ i] = z;
             if ( z > row_max_c  ) row_max_c   = z;
         }
@@ -406,9 +406,9 @@ class Partial_filtered_pricing
             NT max_2 = nt_d;
             NT z;
             for ( i = 0; i < m; ++i) {
-                z = CGAL::NTS::abs( lambda[ i]) * row_max_A[ i];
+                z = CGAL_NTS abs( lambda[ i]) * row_max_A[ i];
                 if ( z > max_1) max_1 = z;
-                z = CGAL::NTS::abs( lambda[ i]);
+                z = CGAL_NTS abs( lambda[ i]);
                 if ( z > max_2) max_2 = z;
             }
             if ( ! CGAL::check_tag( Is_lp())) {
@@ -419,15 +419,15 @@ class Partial_filtered_pricing
                     if ( ! row_valid[ k]) {
                         NT  max = nt_0;
                         for ( j = 0; j < n; ++j) {
-                            z = CGAL::NTS::abs( row_D[ j]);
+                            z = CGAL_NTS abs( row_D[ j]);
                             if ( z >     max    )     max     = z;
                             if ( z > col_max[ j]) col_max[ j] = z;
                         }
                         row_max_D[ k] = max;
                     }
-                    z = CGAL::NTS::abs( x_B[ i]) * row_max_D[ k];
+                    z = CGAL_NTS abs( x_B[ i]) * row_max_D[ k];
                     if ( z > max_1) max_1 = z;
-                    z = CGAL::NTS::abs( x_B[ i]);
+                    z = CGAL_NTS abs( x_B[ i]);
                     if ( z > max_2) max_2 = z;
                 }
             }

@@ -295,8 +295,8 @@ class Min_annulus_d {
               is_empty() || tco.access_dimension_d_object()( p) == d);
           ET sqr_d = sqr_dist( p);
           return CGAL::Bounded_side(
-                       CGAL::NTS::sign( sqr_d - sqr_i_rad_numer)
-                     * CGAL::NTS::sign( sqr_o_rad_numer - sqr_d)); }
+                       CGAL_NTS sign( sqr_d - sqr_i_rad_numer)
+                     * CGAL_NTS sign( sqr_o_rad_numer - sqr_d)); }
     
     bool
     has_on_bounded_side( const Point& p) const
@@ -617,7 +617,7 @@ is_valid( bool verbose, int level) const
     typename Solver::Basic_variable_numerator_iterator
         num_it = solver.basic_variables_numerator_begin();
     for ( ; num_it != solver.basic_variables_numerator_end(); ++num_it) {
-        if ( ! (    CGAL::NTS::is_positive( *num_it)
+        if ( ! (    CGAL_NTS is_positive( *num_it)
                  && *num_it <= solver.variables_common_denominator()))
             return CGAL::_optimisation_is_valid_fail( verr,
               "center does not lie strictly in convex hull of support points");
