@@ -6,9 +6,9 @@
 //#endif
 
 
-#ifndef CGAL_RAY_2_SEGMENT_2_INTERSECTION_H
-#include <CGAL/Ray_2_Segment_2_intersection.h>
-#endif
+//#ifndef CGAL_RAY_2_SEGMENT_2_INTERSECTION_H
+//#include <CGAL/Ray_2_Segment_2_intersection.h>
+//#endif
 
 #ifndef CGAL_ASSERTIONS_H
 #include <CGAL/assertions.h>
@@ -16,19 +16,22 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Planar_map_, class Notifier_>
+template <class Planar_map_, class Notifier_, class BopsTraits_2_ >
 class Holes_split {
   //typedef enum { EPSILON=0.01 }; 
   static const double EPSILON=0.01;  //change it to work on VC++.
   
   typedef  Planar_map_    Planar_map;
   typedef  Notifier_      Notifier;
+  typedef  BopsTraits_2_  BopsTraits_2;
   
   typedef typename Planar_map_::Traits        Traits;
   typedef typename Traits::Point              Point;
   typedef typename Traits::X_curve            X_curve;
   typedef typename Traits::Curve              Curve;
-
+  
+  typedef typename BopsTraits_2::Ray          Ray;
+  
   typedef typename Planar_map::Vertex                 Vertex;
   typedef typename Planar_map::Face                   Face;
   typedef typename Planar_map::Halfedge               Halfedge;
@@ -53,7 +56,7 @@ class Holes_split {
   typedef typename Planar_map::Traits_wrap             Traits_wrap;
   
   typedef typename Point::R                    Kernel;
-  typedef Ray_2<Kernel>                        Ray;
+  //typedef Ray_2<Kernel>                        Ray;
   //typedef leda_rat_ray                                      Ray;
   
   class less_xy_Vertex_handle {
@@ -120,9 +123,12 @@ class Holes_split {
     Ray ray(v->point(), pertrubed_p);
     Point hitting_point;
   
-    Object obj=intersection(h->curve(), ray);
-    if (!assign(hitting_point, obj))
+    if (!bops_traits_->intersection(h->curve(), ray, hitting_point))
       return;
+    
+    //Object obj=intersection(h->curve(), ray);
+    //if (!assign(hitting_point, obj))
+    //  return;
     
     //if (!ray.intersection(h->curve(), hitting_point)) // only for LEDA
     //  return;
@@ -159,6 +165,11 @@ class Holes_split {
   }
   
 public:
+  
+  Holes_split() {}
+  
+  Holes_split(BopsTraits_2* bops_traits) : bops_traits_(bops_traits) {}
+  
   // This function splits the holes in pm.
   // Here, pm has a special structure of one face with possibly many holes.
   void  split_holes(Planar_map& pm, 
@@ -242,14 +253,11 @@ public:
       }
     }
   } 
+  
+private:
+  BopsTraits_2* bops_traits_;
 };
 
 CGAL_END_NAMESPACE
 
 #endif
-
-
-
-
-
-
