@@ -6,6 +6,7 @@ Auxiliary
 Cartesian_kernel
 Circulator
 Configuration
+Conic_2
 Convex_hull_2
 Convex_hull_3
 Convex_hull_d
@@ -71,4 +72,3 @@ iostream
 kdtree
 window
 wininst
-
