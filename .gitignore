@@ -134,10 +134,6 @@ Packages/Qt_widget/demo/Qt_widget/Examples/*.moc
 Packages/Qt_widget/demo/Qt_widget/Examples/hellosegment
 Packages/Qt_widget/demo/Qt_widget/Examples/layer
 Packages/Qt_widget/demo/Qt_widget/Examples/standard_toolbar
-Packages/Qt_widget/demo/Qt_widget/Max_k-gon/*.moc
-Packages/Qt_widget/demo/Qt_widget/Max_k-gon/max_k-gon
-Packages/Qt_widget/demo/Qt_widget/Triangulation_2/*.moc
-Packages/Qt_widget/demo/Qt_widget/Triangulation_2/triangulation_2
 Packages/Qt_widget/src/CGALQt/*.moc
 Packages/Qt_widget/test/Qt_widget/test_qt_version
 Packages/Random_numbers/*.aux

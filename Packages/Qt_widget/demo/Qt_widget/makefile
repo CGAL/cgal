@@ -34,7 +34,6 @@ LDFLAGS = \
 
 DEMO_SUBDIRS= \
 ./Constrained_triangulation_2 \
-./Max_k-gon \
 ./Examples
 
 all:

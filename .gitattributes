@@ -1526,7 +1526,6 @@ Packages/Polyhedron/examples/Polyhedron/corner.off -text
 Packages/Polyhedron/examples/Polyhedron/corner_with_hole.off -text
 Packages/Polyhedron/examples/Polyhedron/corner_with_sharp_edge.off -text
 Packages/Polyhedron/examples/Polyhedron/cross.off -text
-Packages/Qt_widget/demo/Qt_widget/Max_k-gon/max_k-gon.vcproj -text
 Packages/Qt_widget/doc_tex/Qt_widget/standard_toolbar.eps -text
 Packages/Qt_widget/doc_tex/Qt_widget/standard_toolbar.gif -text svneol=unset#unset
 Packages/Qt_widget/doc_tex/Qt_widget/triangulation.eps -text
