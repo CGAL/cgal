@@ -461,7 +461,8 @@ Triangulation_dsul_vertex_iterator_2<Tds>&
 Triangulation_dsul_vertex_iterator_2<Tds> ::    
 operator--()
 {
-   CGAL_triangulation_assertion(pos != NULL &&  *this != Vertex_iterator(_tds));
+   CGAL_triangulation_assertion(pos != NULL &&  
+				*this != Vertex_iterator(_tds));
    do  decrement();
    while ( pos != _tds->past_end() && !associated_vertex()); 
    return *this;
