@@ -1,6 +1,6 @@
 CHANGES to the Geomview package.
 
-Ver 3.7 (? December 2000)
+Ver 3.7 (7 December 2000)
 - Added a member function get_new_id(string) to replace and generalize the
   per type counters used to get unique identifiers for geomview.
   It fixes the bug that you couldn't see several polyhedrons or triangulations
