@@ -81,8 +81,8 @@ CGAL_BEGIN_NAMESPACE
 
 #ifdef __i386__
 // The GNU libc version (cf powerpc) is nicer, but doesn't work on libc 5 :(
-#define CGAL_IA_SETFPCW(CW) asm volatile ("fldcw %0" : :"m" (CW))
-#define CGAL_IA_GETFPCW(CW) asm volatile ("fstcw %0" : "=m" (CW))
+#define CGAL_IA_SETFPCW(CW) __asm__ volatile ("fldcw %0" : :"m" (CW))
+#define CGAL_IA_GETFPCW(CW) __asm__ volatile ("fstcw %0" : "=m" (CW))
 typedef unsigned short FPU_CW_t;
 enum {  //               rounding | def. mask
     FPU_cw_near = _FPU_RC_NEAREST | 0x127f,
@@ -105,8 +105,8 @@ enum {         // rounding        | def.mask
 #endif // __powerpc__
 
 #ifdef __sparc__
-#define CGAL_IA_SETFPCW(CW) asm volatile ("ld %0,%%fsr" : :"m" (CW))
-#define CGAL_IA_GETFPCW(CW) asm volatile ("st %%fsr,%0" : "=m" (CW))
+#define CGAL_IA_SETFPCW(CW) __asm__ volatile ("ld %0,%%fsr" : :"m" (CW))
+#define CGAL_IA_GETFPCW(CW) __asm__ volatile ("st %%fsr,%0" : "=m" (CW))
 typedef unsigned int FPU_CW_t;
 enum {  //        rounding   | precision  | def.mask
     FPU_cw_near = 0x0        | 0x20000000 | 0x1f,
@@ -141,8 +141,8 @@ enum {
 #endif // __sgi
 
 #ifdef __mips__
-#define CGAL_IA_SETFPCW(CW) asm volatile ("ctc1 %0,$31" : :"r" (CW))
-#define CGAL_IA_GETFPCW(CW) asm volatile ("cfc1 %0,$31" : "=r" (CW))
+#define CGAL_IA_SETFPCW(CW) __asm__ volatile ("ctc1 %0,$31" : :"r" (CW))
+#define CGAL_IA_GETFPCW(CW) __asm__ volatile ("cfc1 %0,$31" : "=r" (CW))
 typedef unsigned int FPU_CW_t;
 enum {
     FPU_cw_near = 0x0,
@@ -153,8 +153,8 @@ enum {
 #endif // __mips__
 
 #ifdef __alpha__ // This one is not really supported [yet].
-#define CGAL_IA_SETFPCW(CW) asm volatile ("mt_fpcr %0; excb" : :"f" (CW))
-#define CGAL_IA_GETFPCW(CW) asm volatile ("excb; mf_fpcr %0" : "=f" (CW))
+#define CGAL_IA_SETFPCW(CW) __asm__ volatile ("mt_fpcr %0; excb" : :"f" (CW))
+#define CGAL_IA_GETFPCW(CW) __asm__ volatile ("excb; mf_fpcr %0" : "=f" (CW))
 typedef unsigned long FPU_CW_t;
 enum { //         rounding
     // I guess it won't work, because enum == int.
@@ -177,33 +177,21 @@ enum {
 };
 #endif // __osf || __osf__
 
-#ifdef _MSC_VER // Not yet supported.
-// Which header file ?
-// define the GET/SET macros.
-enum float_round_style {
-  round_indeterminate = -1,
-  round_toward_zero = 0,
-  round_to_nearest = 1,
-  round_toward_infinity = 2,
-  round_toward_neg_infinity = 3
+#ifdef _MSC_VER
+// Found in BIAS:
+// #define CGAL_IA_SETFPCW(CW) _asm {fldcw word ptr ds:OFFSET CW}
+// #define CGAL_IA_GETFPCW(CW) _asm {fstcw word ptr ds:OFFSET CW}
+//
+// Found in http://msdn.microsoft.com/library/sdkdoc/directx/imover_7410.htm :
+#define CGAL_IA_SETFPCW(CW) __asm fldcw CW
+#define CGAL_IA_GETFPCW(CW) __asm fstcw CW
+typedef unsigned short FPU_CW_t;
+enum {  //               rounding | def. mask
+    FPU_cw_near = _FPU_RC_NEAREST | 0x127f,
+    FPU_cw_zero = _FPU_RC_ZERO    | 0x127f,
+    FPU_cw_up   = _FPU_RC_UP      | 0x127f,
+    FPU_cw_down = _FPU_RC_DOWN    | 0x127f
 };
-typedef unsigned int FPU_CW_t;
-enum {
-  FPU_cw_zero = round_toward_zero,
-  FPU_cw_near = round_to_nearest,
-  FPU_cw_up   = round_toward_infinity,
-  FPU_cw_down = round_toward_neg_infinity
-};
-/*
- * The enumeration describes the various methods that an implementation can
- * choose for rounding a floating-point value to an integer value:
- * 
- * round_indeterminate -- rounding method cannot be determined
- * round_toward_zero -- round toward zero
- * round_to_nearest -- round to nearest integer
- * round_toward_infinity -- round away from zero
- * round_toward_neg_infinity -- round to more negative integer
- */
 #endif //_MSC_VER
 
 
