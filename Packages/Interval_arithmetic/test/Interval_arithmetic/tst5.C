@@ -2,7 +2,7 @@
 #include <CGAL/basic.h>
 
 // Workaround for crappy compilers.
-#ifdef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifdef CGAL_CFG_MATCHING_BUG_2
 #define CGAL_IA_CT double
 #ifdef CGAL_USE_LEDA
 #define CGAL_IA_ET leda_real
@@ -111,7 +111,7 @@ int test()
 {
   NT px, py, la, lb, lc;
   NT a (1);
-#ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#ifndef CGAL_CFG_MATCHING_BUG_2
 #ifdef CGAL_USE_GMP
   CGAL::Filtered_exact< CGAL::Quotient<CGAL::Gmpz>, CGAL::Quotient<CGAL::Gmpz> > qq (3,5);
   std::cout << (int) CGAL::compare_y_at_xC2(qq,qq,qq,qq,qq);
@@ -126,7 +126,7 @@ int test()
 
   std::cout << nt << std::endl;
 #endif // CGAL_USE_LEDA
-#endif // CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+#endif // CGAL_CFG_MATCHING_BUG_2
   px=1; py=2; la=3; lb=4; lc=5;
   std::cout << "Result 1st test: " << (int)CGAL::compare_y_at_xC2(px, py, la, lb, lc);
   std::cout << " ( == 1 )\n";
