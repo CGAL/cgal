@@ -2382,9 +2382,9 @@ Saarbruecken@)
 #ifndef CGAL_RAY_2_SEGMENT_2_INTERSECTION_H
 #include <CGAL/Ray_2_Segment_2_intersection.h>
 #endif // CGAL_RAY_2_SEGMENT_2_INTERSECTION_H
-#ifndef RAY_2_RAY_2_INTERSECTION_H
+#ifndef CGAL_RAY_2_RAY_2_INTERSECTION_H
 #include <CGAL/Ray_2_Ray_2_intersection.h>
-#endif // RAY_2_RAY_2_INTERSECTION_H
+#endif // CGAL_RAY_2_RAY_2_INTERSECTION_H
 #ifndef CGAL_POINT_2_LINE_2_INTERSECTION_H
 #include <CGAL/Point_2_Line_2_intersection.h>
 #endif // CGAL_POINT_2_LINE_2_INTERSECTION_H

@@ -1669,9 +1669,9 @@ include/CGAL/Iso_rectangle_2_Ray_2_intersection.h@,@-
 intersection_2_2.fw@,@-
 Geert-Jan Giezeman@,@-
 MPI, Saarbruecken@)
-#ifndef RAY_2_ISO_RECTANGLE_2_INTERSECTION_H
+#ifndef CGAL_RAY_2_ISO_RECTANGLE_2_INTERSECTION_H
 #include <CGAL/Ray_2_Iso_rectangle_2_intersection.h>
-#endif // RAY_2_ISO_RECTANGLE_2_INTERSECTION_H
+#endif // CGAL_RAY_2_ISO_RECTANGLE_2_INTERSECTION_H
 @}
 
 
@@ -1932,9 +1932,9 @@ include/CGAL/Iso_rectangle_2_Segment_2_intersection.h@,@-
 intersection_2_2.fw@,@-
 Geert-Jan Giezeman@,@-
 MPI, Saarbruecken@)
-#ifndef SEGMENT_2_ISO_RECTANGLE_2_INTERSECTION_H
+#ifndef CGAL_SEGMENT_2_ISO_RECTANGLE_2_INTERSECTION_H
 #include <CGAL/Segment_2_Iso_rectangle_2_intersection.h>
-#endif // SEGMENT_2_ISO_RECTANGLE_2_INTERSECTION_H
+#endif // CGAL_SEGMENT_2_ISO_RECTANGLE_2_INTERSECTION_H
 @}
 
 
@@ -2360,24 +2360,24 @@ Saarbruecken@)
 #ifndef CGAL_TRIANGLE_2_TRIANGLE_2_INTERSECTION_H
 #include <CGAL/Triangle_2_Triangle_2_intersection.h>
 #endif // CGAL_TRIANGLE_2_TRIANGLE_2_INTERSECTION_H
-#ifndef TRIANGLE_2_LINE_2_INTERSECTION_H
+#ifndef CGAL_TRIANGLE_2_LINE_2_INTERSECTION_H
 #include <CGAL/Triangle_2_Line_2_intersection.h>
-#endif // TRIANGLE_2_LINE_2_INTERSECTION_H
-#ifndef TRIANGLE_2_RAY_2_INTERSECTION_H
+#endif // CGAL_TRIANGLE_2_LINE_2_INTERSECTION_H
+#ifndef CGAL_TRIANGLE_2_RAY_2_INTERSECTION_H
 #include <CGAL/Triangle_2_Ray_2_intersection.h>
-#endif // TRIANGLE_2_RAY_2_INTERSECTION_H
-#ifndef TRIANGLE_2_SEGMENT_2_INTERSECTION_H
+#endif // CGAL_TRIANGLE_2_RAY_2_INTERSECTION_H
+#ifndef CGAL_TRIANGLE_2_SEGMENT_2_INTERSECTION_H
 #include <CGAL/Triangle_2_Segment_2_intersection.h>
-#endif // TRIANGLE_2_SEGMENT_2_INTERSECTION_H
+#endif // CGAL_TRIANGLE_2_SEGMENT_2_INTERSECTION_H
 #ifndef CGAL_LINE_2_ISO_RECTANGLE_2_INTERSECTION_H
 #include <CGAL/Line_2_Iso_rectangle_2_intersection.h>
 #endif // CGAL_LINE_2_ISO_RECTANGLE_2_INTERSECTION_H
-#ifndef RAY_2_ISO_RECTANGLE_2_INTERSECTION_H
+#ifndef CGAL_RAY_2_ISO_RECTANGLE_2_INTERSECTION_H
 #include <CGAL/Ray_2_Iso_rectangle_2_intersection.h>
-#endif // RAY_2_ISO_RECTANGLE_2_INTERSECTION_H
-#ifndef SEGMENT_2_ISO_RECTANGLE_2_INTERSECTION_H
+#endif // CGAL_RAY_2_ISO_RECTANGLE_2_INTERSECTION_H
+#ifndef CGAL_SEGMENT_2_ISO_RECTANGLE_2_INTERSECTION_H
 #include <CGAL/Segment_2_Iso_rectangle_2_intersection.h>
-#endif // SEGMENT_2_ISO_RECTANGLE_2_INTERSECTION_H
+#endif // CGAL_SEGMENT_2_ISO_RECTANGLE_2_INTERSECTION_H
 #ifndef CGAL_POINT_2_ISO_RECTANGLE_2_INTERSECTION_H
 #include <CGAL/Point_2_Iso_rectangle_2_intersection.h>
 #endif // CGAL_POINT_2_ISO_RECTANGLE_2_INTERSECTION_H
