@@ -310,9 +310,10 @@ protected:
       }
       else { //equal: if one of the curve is to left of ref_point - 
         // this curve will be pushed first.
-        if (rightmost(traits->curve_source(cv1.get_curve()), 
-                      traits->curve_target(cv1.get_curve())) == 
-            ref_point.point()){
+        if (traits->point_is_same(
+              rightmost(traits->curve_source(cv1.get_curve()), 
+                        traits->curve_target(cv1.get_curve())),
+              ref_point.point())) {
           curves.push_back(cv1);
           curves.push_back(cv2);
         }
@@ -365,7 +366,7 @@ protected:
                                           intersect_p.point(), 
                                           p1, p2);
             
-            if (p1 == intersect_p.point()){
+            if (traits->point_is_same(p1, intersect_p.point())) {
               merged_left_curves.push_back(*cv_iter);
               cv_iter++;
               merged_left_curves.push_back(*point_node_cv_iter);
@@ -409,21 +410,23 @@ protected:
         
         // if the curves are defined only to the right of the intersection 
         // point.
-        else if (traits->curve_source(cv_iter->get_curve()) == 
-                 intersect_p.point() && 
-                 traits->curve_source(point_node_cv_iter->get_curve()) ==  
-                 intersect_p.point() ) {
+        else if (traits->point_is_same(
+                   traits->curve_source(cv_iter->get_curve()),
+                   intersect_p.point()) && 
+                 traits->point_is_same(
+                   traits->curve_source(point_node_cv_iter->get_curve()),  
+                   intersect_p.point())) {
           // first handle with overlappings.
           if (traits->curves_overlap(cv_iter->get_curve(), 
-                                    point_node_cv_iter->get_curve())){
+                                     point_node_cv_iter->get_curve())){
             Point p1, p2;
             
-            traits->nearest_intersection_to_right(
-                                   cv_iter->get_curve(), 
-                                   point_node_cv_iter->get_curve(), 
-                                   intersect_p.point(), p1, p2);
+            traits->
+              nearest_intersection_to_right(cv_iter->get_curve(), 
+                                            point_node_cv_iter->get_curve(), 
+                                            intersect_p.point(), p1, p2);
             
-            if (p2 == intersect_p.point()){
+            if (traits->point_is_same(p2, intersect_p.point())) {
               merged_right_curves.push_back(*cv_iter);
               cv_iter++;
               merged_right_curves.push_back(*point_node_cv_iter);
@@ -475,8 +478,9 @@ protected:
 	    merged_left_curves.push_back(*cv_iter);
             cv_iter++;
           }
-          else  if (traits->curve_source(cv_iter->get_curve()) == 
-                    intersect_p.point() ){
+          else if (traits->point_is_same(
+                     traits->curve_source(cv_iter->get_curve()),
+                     intersect_p.point())) {
             merged_right_curves.push_back(*cv_iter);
             cv_iter++;
           }
@@ -486,8 +490,9 @@ protected:
             merged_left_curves.push_back(*point_node_cv_iter);
             point_node_cv_iter++;
           }
-          else  if (traits->curve_source(point_node_cv_iter->get_curve()) == 
-                    intersect_p.point() ){
+          else if (traits->point_is_same(
+                     traits->curve_source(point_node_cv_iter->get_curve()),
+                     intersect_p.point())) {
             merged_right_curves.push_back(*point_node_cv_iter);
             point_node_cv_iter++;
           }
@@ -495,7 +500,8 @@ protected:
       }
       
       for (; cv_iter != curves.end(); cv_iter++){
-        if (traits->curve_target(cv_iter->get_curve()) == intersect_p.point())
+        if (traits->point_is_same(traits->curve_target(cv_iter->get_curve()),
+                                  intersect_p.point()))
           merged_left_curves.push_back(*cv_iter);
         else if (is_right(traits->curve_target(cv_iter->get_curve()), 
                           intersect_p.point()) )
@@ -504,8 +510,9 @@ protected:
       
       for (; point_node_cv_iter != point_node.curves_end(); 
            point_node_cv_iter++){
-        if (traits->curve_target(point_node_cv_iter->get_curve()) == 
-            intersect_p.point())
+        if (traits->point_is_same(
+              traits->curve_target(point_node_cv_iter->get_curve()),
+              intersect_p.point()))
           merged_left_curves.push_back(*point_node_cv_iter);
         else  if (is_right(traits->curve_target(
                                          point_node_cv_iter->get_curve()), 
@@ -768,8 +775,8 @@ protected:
         
         // if the curve is vertical and the point is its target we
         // refer that curve as a point.
-        if (traits->curve_target(cv1.get_curve()) == 
-	    cv1.get_rightmost_point().point()) 
+        if (traits->point_is_same(traits->curve_target(cv1.get_curve()), 
+                                  cv1.get_rightmost_point().point()))
 	{
 	  if (! traits->curve_is_in_x_range
 	      (cv2.get_curve(), 
@@ -789,7 +796,7 @@ protected:
         }
           
         X_curve tmp_cv;
-        if (traits->curve_source(cv1.get_curve()) != q) {
+        if (!traits->point_is_same(traits->curve_source(cv1.get_curve()), q)) {
           traits->curve_split(cv1.get_curve(), tmp_cv, first_cv, q);
 
           update_first_cv = true;
@@ -800,8 +807,8 @@ protected:
         
         // if the curve is vertical and the point is its target we
         // refer that curve as a point.
-        if (traits->curve_target(cv2.get_curve()) == 
-	    cv2.get_rightmost_point().point())
+        if (traits->point_is_same(traits->curve_target(cv2.get_curve()),
+                                  cv2.get_rightmost_point().point()))
 	{
 	  if (! traits->curve_is_in_x_range
 	      (cv1.get_curve(), 
@@ -821,7 +828,7 @@ protected:
         }
         
         X_curve tmp_cv;
-        if (traits->curve_source(cv2.get_curve()) != q) {
+        if (!traits->point_is_same(traits->curve_source(cv2.get_curve()), q)) {
           traits->curve_split(cv2.get_curve(), tmp_cv, second_cv, q);
 
           update_second_cv = true;
@@ -1042,10 +1049,10 @@ protected:
   void reset() { intersection_exist_ = false; }
 
   // change it back to the original one.
-  bool  handle_one_event (Event_queue& event_queue, 
-                          Status_line& status, 
-                          const Point& event_point, 
-                          Intersection_point_node& point_node)
+  bool  handle_one_event (Event_queue & event_queue, 
+                          Status_line & status, 
+                          const Point & event_point, 
+                          Intersection_point_node & point_node)
   {
     bool event_terminated = true;
     bool point_node_first_on_status = false, point_node_last_on_status = false;
@@ -1081,7 +1088,7 @@ protected:
     while (hint != status.end()){
       for (cv_iter = point_node.curves_begin() ; 
            cv_iter != point_node.curves_end(); ++cv_iter)
-        if (*hint == *cv_iter){
+        if (*hint == *cv_iter) {
 	  break;
 	}
     
@@ -1115,7 +1122,8 @@ protected:
       CGAL_expensive_postcondition_code(is_valid(status));
       
       // reinserting curve only if it's still on status.
-      if (event_point != cv_iter->get_rightmost_point().point())
+      if (!traits->point_is_same(event_point,
+                                 cv_iter->get_rightmost_point().point()))
         cv_iter->push_event_point(point_node.get_point());
       
       if (local_status_hint != local_status.end()){
@@ -1397,8 +1405,9 @@ protected:
   }
   
   
-  bool  point_is_on_curve_interior(const Point& p, const X_curve& cv) {
-    return (p != traits->curve_source(cv) || p != traits->curve_target(cv) );
+  bool  point_is_on_curve_interior(const Point & p, const X_curve & cv) {
+    return (!traits->point_is_same(p, traits->curve_source(cv)) ||
+            !traits->point_is_same(p, traits->curve_target(cv)));
   }
   
   // check whether two curves are tangent on a given point.
@@ -1450,7 +1459,7 @@ protected:
       // function will return true.
      
       // handling overlapping.
-      if ( curves_intersect && (xp2 != xp3)) {
+      if (curves_intersect && (!traits->point_is_same(xp2, xp3))) {
         
         Event_queue_iterator  xp_event = event_queue.find(xp3);
         bool xp3_cv1_in_queue = false,  xp3_cv2_in_queue = false;
@@ -1578,9 +1587,9 @@ protected:
         intersection_exist_ = true;
       
       if (curves_intersect && !curves_tangent)
-        return ((!xp2_cv1_in_queue || !xp2_cv2_in_queue) && xp2==event_point);
+        return ((!xp2_cv1_in_queue || !xp2_cv2_in_queue) && xp2 == event_point);
       else if (curves_tangent)
-        return ((!xp1_cv1_in_queue || !xp1_cv2_in_queue) && xp1==event_point);
+        return ((!xp1_cv1_in_queue || !xp1_cv2_in_queue) && xp1 == event_point);
     }
     
     return false;
@@ -1625,9 +1634,11 @@ protected:
         if (points_iter == cv_iter->points_begin())  
           continue;
         
-        if (*points_iter==rightmost(
-                                 traits->curve_source(cv_iter->get_curve()),
-                                 traits->curve_target(cv_iter->get_curve())))
+        if (traits->
+            point_is_same(*points_iter,
+                          rightmost(
+                            traits->curve_source(cv_iter->get_curve()),
+                            traits->curve_target(cv_iter->get_curve()))))
           left_cv = right_cv;
         else
           traits->curve_split(cv, left_cv, right_cv, points_iter->point());
@@ -1654,20 +1665,21 @@ protected:
                               traits->curve_target(*scv_iter1));
         ref_point2 = leftmost(traits->curve_source(*scv_iter2), 
                               traits->curve_target(*scv_iter2));
-        if (ref_point1 != ref_point2)
+        if (!traits->point_is_same(ref_point1, ref_point2))
           ref_point1 = leftmost(ref_point1, ref_point2);
         
         if (traits->nearest_intersection_to_right(*scv_iter1, *scv_iter2, 
                                                  ref_point1, xp1, xp2)){
           
-          if (xp1 ==  ref_point1)
+          if (traits->point_is_same(xp1, ref_point1))
             xp1 = xp2;
           
-          if ( !( (xp1 == traits->curve_source(*scv_iter1) || 
-                   xp1 == traits->curve_target(*scv_iter1) ) && 
-                  (xp1 == traits->curve_source(*scv_iter2) || 
-                   xp1 == traits->curve_target(*scv_iter2) )) ){
-
+          if (!((traits->point_is_same(xp1, traits->curve_source(*scv_iter1)) ||
+                 traits->point_is_same(xp1, traits->curve_target(*scv_iter1)))
+                && 
+                (traits->point_is_same(xp1, traits->curve_source(*scv_iter2)) ||
+                 traits->point_is_same(xp1, traits->curve_target(*scv_iter2)))))
+          {
             return true;
           }
         }
