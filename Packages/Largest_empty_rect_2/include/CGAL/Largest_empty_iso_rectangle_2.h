@@ -55,19 +55,19 @@ private:
 
     Point p;
 
-    set<Point_data *,Less_yx> *right_tent;
-    set<Point_data *,Less_yx> *left_tent;
+    std::set<Point_data *,Less_yx> *right_tent;
+    std::set<Point_data *,Less_yx> *left_tent;
     Point_type type;
 
     Point_data(const Point& p);
 
     Point_data(const Point& p,
-	       set<Point_data *,Less_yx> *r_tent,
-	       set<Point_data *,Less_yx> *l_tent);
+	       std::set<Point_data *,Less_yx> *r_tent,
+	       std::set<Point_data *,Less_yx> *l_tent);
 
     Point_data(const Point& p,
-	       set<Point_data *,Less_yx> *r_tent,
-	       set<Point_data *,Less_yx> *l_tent,
+	       std::set<Point_data *,Less_yx> *r_tent,
+	       std::set<Point_data *,Less_yx> *l_tent,
 	       Point_type i_type);
 
     Point_data (const Point_data &other) : 
@@ -143,8 +143,8 @@ private:
     }
   };
 
-  typedef set<Point_data *,Less_xy> Point_data_set_of_x;
-  typedef set<Point_data *,Less_yx> Point_data_set_of_y;
+  typedef std::set<Point_data *,Less_xy> Point_data_set_of_x;
+  typedef std::set<Point_data *,Less_yx> Point_data_set_of_y;
 
   Point_data_set_of_x x_sorted;
   Point_data_set_of_y y_sorted;
