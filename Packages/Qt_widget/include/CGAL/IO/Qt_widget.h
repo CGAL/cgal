@@ -153,7 +153,7 @@ public:
 
   // tool system
   // ~~~~~~~~~~~
-  void	      attach(Qt_widget_tool& tool);
+  void	      attach(Qt_widget_tool* tool);
   inline bool has_tool() const { return _has_tool; };
   void	      detach_current_tool(); 
 

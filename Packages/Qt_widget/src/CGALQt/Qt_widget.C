@@ -341,12 +341,12 @@ Qt_widget& operator<<(Qt_widget& w, const Bbox_2& r)
 *Ursu Radu coding ....
 *
 *********************************************/
-void Qt_widget::attach(Qt_widget_tool& tool) {
+void Qt_widget::attach(Qt_widget_tool* tool) {
   if (has_tool()) {
     current_tool->detach();
     emit(detached_tool());
   }
-  current_tool=&tool;
+  current_tool=tool;
   _has_tool=true;
   current_tool->attach(this);
 }

@@ -118,7 +118,7 @@ namespace CGAL {
   {
     if (but[3]->isOn())
     {
-	widget->attach(zoombut);
+	widget->attach(&zoombut);
 	activebutton = 3;
 	is_active = true;
     }
@@ -133,7 +133,7 @@ namespace CGAL {
   {
     if (but[4]->isOn())
     {	
-      widget->attach(zoomrectbut);
+      widget->attach(&zoomrectbut);
       activebutton = 4;
       is_active = true;
     }
@@ -168,7 +168,7 @@ namespace CGAL {
     if (but[5]->isOn())
     {
       widget->detach_current_tool();
-      widget->attach(handtoolbut);
+      widget->attach(&handtoolbut);
       activebutton = 5;
       is_active = true;
     } else {
