@@ -988,6 +988,19 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
 				     const Site_2& t, Vertex_handle v,
 				     Tag_false)
 {
+  static int i = 0;
+  if ( i == 0 ) {
+    i = 1;
+    std::cerr << std::endl;
+    std::cerr << "WARNING:" << std::endl;
+    std::cerr << "A segment-segment intersection was found."
+	      << std::endl;
+    std::cerr << "The segment Voronoi diagram class is not configured"
+	      << " to handle this situation." << std::endl;
+    std::cerr << "Please look at the documentation on how to handle"
+	      << " this behavior." << std::endl;
+    std::cerr << std::endl;
+  }
   return Vertex_handle();
 }
 
