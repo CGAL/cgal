@@ -32,7 +32,7 @@
 #include <CGAL/ch_assertions.h>
 #include <CGAL/ch_selected_extreme_points_2.h>
 #include <CGAL/ch_graham_andrew.h>
-#include <CGAL/stl_extensions.h>
+#include <CGAL/algorithm.h>
 #include <CGAL/functional.h>
 
 CGAL_BEGIN_NAMESPACE

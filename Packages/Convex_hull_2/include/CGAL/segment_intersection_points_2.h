@@ -16,11 +16,12 @@
 // $Name$
 //
 // Author(s)     : Stefan Schirra 
-#ifndef SEGMENT_INTERSECTION_POINTS_2_H
-#define SEGMENT_INTERSECTION_POINTS_2_H
+
+#ifndef CGAL_SEGMENT_INTERSECTION_POINTS_2_H
+#define CGAL_SEGMENT_INTERSECTION_POINTS_2_H
 
 #include <CGAL/basic.h>
-#include <CGAL/stl_extensions.h>
+#include <CGAL/algorithm.h>
 #include <iterator>
 
 namespace CGAL {
@@ -100,4 +101,4 @@ segment_intersection_points_2(ForwardIterator first, ForwardIterator last,
 
 } // namespace CGAL
 
-#endif // SEGMENT_INTERSECTION_POINTS_2_H
+#endif // CGAL_SEGMENT_INTERSECTION_POINTS_2_H

@@ -13,9 +13,45 @@
 %% +=========================================================================+
 
 %% +---------------------------------------------+
+\begin{ccRefFunction}{predecessor}
+  \label{sectionPredecessor}
+  \label{sectionGenericFunctions}
+
+  \ccDefinition The function \ccRefName\ returns the previous iterator,
+  i.e. the result of \ccc{operator--} on a bidirectional iterator.
+  
+  \ccInclude{CGAL/algorithm.h}
+  
+  \ccThree{BidirectionalIterator}{predecessor}{}
+  \ccFunction{template <class BidirectionalIterator>
+              BidirectionalIterator predecessor(BidirectionalIterator it);}
+    {returns \ccc{--it}.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::successor}
+\end{ccRefFunction}
+
+%% +---------------------------------------------+
+\begin{ccRefFunction}{successor}
+  \label{sectionSuccessor}
+
+  \ccDefinition The function \ccRefName\ returns the next iterator, i.e.
+  the result of \ccc{operator++} on a forward iterator.
+  
+  \ccInclude{CGAL/algorithm.h}
+  
+  \ccThree{ForwardIterator}{successor}{}
+  \ccFunction{template <class ForwardIterator>
+              ForwardIterator successor(ForwardIterator it);}
+    {returns \ccc{++it}.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::predecessor}
+\end{ccRefFunction}
+
+%% +---------------------------------------------+
 \begin{ccRefFunction}{copy_n}
   \label{sectionCopyN}
-  \label{sectionGenericFunctions}
 
   \ccDefinition The function \ccRefName\ copies $n$ items from an
   input iterator to an output iterator which is useful for possibly

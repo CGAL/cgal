@@ -21,7 +21,7 @@
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 //                 Lutz Kettner <kettner@mpi-sb.mpg.de>
-//                 Sylvain Pion <Sylvain.Pion@mpi-sb.mpg.de>
+//                 Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 
 #ifndef CGAL_ALGORITHM_H
 #define CGAL_ALGORITHM_H 1
@@ -31,6 +31,22 @@
 #include <algorithm>
 
 CGAL_BEGIN_NAMESPACE
+
+template <class ForwardIterator>
+inline
+ForwardIterator
+successor( ForwardIterator it )
+{
+  return ++it;
+}
+
+template <class BidirectionalIterator>
+inline
+BidirectionalIterator
+predecessor( BidirectionalIterator it )
+{
+  return --it;
+}
 
 template < class ForwardIterator >
 std::pair< ForwardIterator, ForwardIterator >

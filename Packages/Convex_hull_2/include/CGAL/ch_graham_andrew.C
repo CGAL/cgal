@@ -30,7 +30,8 @@
 #endif // CGAL_CH_NO_POSTCONDITIONS
 
 #include <CGAL/ch_assertions.h>
-#include <CGAL/stl_extensions.h>
+#include <CGAL/algorithm.h>
+#include <CGAL/IO/Tee_for_output_iterator.h>
 #include <vector>
 #include <algorithm>
 

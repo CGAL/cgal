@@ -34,6 +34,7 @@
 #include <vector>
 #include <CGAL/utility.h>
 #include <CGAL/iterator.h>
+#include <CGAL/algorithm.h>
 #include <CGAL/In_place_list.h>
 #include <CGAL/Iterator_identity.h>
 #include <CGAL/Circulator_identity.h>
@@ -8129,6 +8130,7 @@ void test_Triple()
   CGAL_assertion(x2 == y2);
   if (x2 == y2) x3 = z3;
 }
+
 void test_Quadruple()
 {
   typedef CGAL::Quadruple<int,float,double,bool>                         T1;
@@ -8166,7 +8168,16 @@ void test_Quadruple()
   if (z4 < y4) x2 = make_quadruple(x1, 2.5f , 2.2, true);
   CGAL_assertion(x2 == y2);
   if (x2 == y2) x4.third = x3;
+}
 
+void test_predecessor_successor()
+{
+  std::vector<int> V;
+  V.push_back(1);
+  V.push_back(2);
+  V.push_back(3);
+
+  CGAL_assertion(successor(successor(V.begin())) == predecessor(V.end()));
 }
 
 
@@ -8186,6 +8197,7 @@ int main() {
   test_Oneset_iterator();
   test_Triple();
   test_Quadruple();
+  test_predecessor_successor();
   clean_global_data();
   return 0;
 }
