@@ -623,7 +623,6 @@ check_for_utils()
     _check_for_sysutil ls y
     _check_for_sysutil chmod y
     _check_for_sysutil mkdir y
-    _check_for_sysutil fgrep y
     _check_for_sysutil sed y
     _check_for_sysutil awk y
     _check_for_sysutil tee y
@@ -2445,26 +2444,35 @@ print_center_line()
     eval "$_EXPR $_MENU_WIDTH \* 10"
     eval "$_EXPR $_result - $l"
     eval "$_EXPR $_result / 2"
-    write_buffer "$_MENU_LINE_EMPTY\r${_LEFTSPACE}**"
+    write_buffer "${_LEFTSPACE}**"
     string_n_print " " $_result
-    write_buffer "$1\n"
+    write_buffer "$1"
+    lb=$_result
+    eval "$_EXPR $_MENU_WIDTH \* 10"
+    eval "$_EXPR $_result - $l"
+    eval "$_EXPR $_result - $lb"
+    string_n_print " " $_result
+    write_buffer "**\n"
 }
 
 # print a headline with text $1
 print_headline()
 {
+    print_center_line "$1"
     length "`echo "$1"`"
     l=$?
     eval "$_EXPR $_MENU_WIDTH \* 10"
     eval "$_EXPR $_result - $l"
     eval "$_EXPR $_result / 2"
-    write_buffer "$_MENU_LINE_EMPTY\r${_LEFTSPACE}**"
-    string_n_print " " $_result
-    write_buffer "$1\n"
-    write_buffer "$_MENU_LINE_EMPTY\r${_LEFTSPACE}**"
+    write_buffer "${_LEFTSPACE}**"
     string_n_print " " $_result
     string_n_print "=" $l
-    write_buffer "\n"
+    lb=$_result
+    eval "$_EXPR $_MENU_WIDTH \* 10"
+    eval "$_EXPR $_result - $l"
+    eval "$_EXPR $_result - $lb"
+    string_n_print " " $_result
+    write_buffer "**\n"
     print_empty_line
 }
 
@@ -3130,10 +3138,6 @@ _link_run_test()
 # test if leda header files are in some sys include dir
 # and sets NEED_EXTRA_LEDA_IDIR correspondingly
 # ($1 nonzero indicates verbosity)
-# [ checks for the existence of <LEDA/bool.h>, since this
-#   is a file where no LEDA lib has to be linked in order to 
-#   produce an executable; <LEDA/basic.h> needs some
-#   mem_manager stuff ... ]
 test_for_leda_incl_in_sys_incl()
 {
     ${_printf} "%s\n" "
@@ -3172,34 +3176,7 @@ test_for_leda_lib_in_sys_lib()
 test_leda()
 {
     if [ -n "${LEDA_SUPPORT}" ]; then
-	${_printf} "%s\n" '
-	    #include <LEDA/integer.h>
-	    #if defined(_MSC_VER) || defined(__BORLANDC__)
-	    #ifndef LEDA_STD_HEADERS
-	    #error "LEDA_STD_HEADERS is not defined. Please consult the troubleshooting section of the installation manual."
-	    #endif // ! LEDA_STD_HEADERS
-	    #endif // MSVC || BORLAND
-	    
-	    #if defined(LEDA_NAMESPACE)
-	    using namespace leda;
-	    #endif
-
-	    #include <LEDA/REDEFINE_NAMES.h>
-	    typedef integer I;
-	    #include <LEDA/UNDEFINE_NAMES.h>
-
-	    int main() {
-	    I a(123456); 
-	    I b(456789);
-	    
-	    if (a + b != I(580245))
-	      return 1;
-	    if (a - b != I(-333333))
-	      return 1;
-
-	    return 0;
-	  }' > ${TMP_CXX_FILE}.C
-
+        ${_cp} ${CGAL_TEST_CONF_DIR}/CGAL_CFG_NO_LEDA.C ${TMP_CXX_FILE}.C
 	if _compile_test LEDA "`leda_test_cxxflags`" $1 && \
 	    _link_run_test LEDA \
 		"`leda_libpathflags`" "`leda_test_ldflags`" $1
@@ -3269,30 +3246,7 @@ test_stl_general()
 test_gmp()
 {
     if [ -n "${GMP_SUPPORT}" ]; then
-	${_printf} "%s\n" '
-	#include <cstdio>
-	#ifdef __SUNPRO_CC
-	using std::printf;
-	#endif
-	#ifdef __BORLANDC__
-	#include <cstddef>
-	using std::size_t;
-	using std::printf;
-	#endif 
-	#include "gmp.h"
-	int main()
-	{
-	    mpz_t b, p;
-	    mpz_init (p);
-	    mpz_init_set_str (b, "31", 0);
-	    mpz_mul_ui (p, b, 75);          /* generate product */
-	    char *str = new char[mpz_sizeinbase(p, 10) + 2];
-	    str = mpz_get_str(str, 10, p);
-	    printf("%s\n", str);
-	    delete[] str;
-	    return 0;
-	}' > ${TMP_CXX_FILE}.C
-
+        ${_cp} ${CGAL_TEST_CONF_DIR}/CGAL_CFG_NO_GMP.C ${TMP_CXX_FILE}.C
 	if _compile_test "$1" "`gmp_test_cxxflags`" "$2" && \
 	    _link_run_test "$1" \
 		"`gmp_test_libpathflags`" "`gmp_test_ldflags`" "$2"
@@ -3312,14 +3266,7 @@ test_gmp()
 test_gmpxx()
 {
     if [ -n "${GMPXX_SUPPORT}" ]; then
-	${_printf} "%s\n" '
-        #include <gmpxx.h>
-        int main() {
-            mpz_class a = 1;
-            mpq_class b = 2/a;
-	    return 0;
-	}' > ${TMP_CXX_FILE}.C
-
+        ${_cp} ${CGAL_TEST_CONF_DIR}/CGAL_CFG_NO_GMPXX.C ${TMP_CXX_FILE}.C
 	if _compile_test "$1" "`gmp_test_cxxflags`" "$2" && \
 	    _link_run_test "$1" \
 		"`gmp_test_libpathflags`" "`gmp_test_ldflags`" "$2"
@@ -3343,16 +3290,7 @@ test_gmpxx()
 test_core()
 {
     if [ -n "${CORE_SUPPORT}" -a "${CORE_INSTALLATION}" != 'c' ]; then
-	${_printf} "%s\n" '
-	#include "CORE.h"
-        #include <iostream>
-	int main()
-	{
-          Expr x = 2, y = 3;
-          std::cout << x << " * " << y  << " = " << x*y << std::endl;
-	  return 0;
-	}' > ${TMP_CXX_FILE}.C
-
+        ${_cp} ${CGAL_TEST_CONF_DIR}/CGAL_CFG_NO_CORE.C ${TMP_CXX_FILE}.C
 	if _compile_test "CORE" "`core_test_cxxflags`" "$1" && \
 	    _link_run_test "CORE" \
 		"`core_test_libpathflags`" "`core_test_ldflags`" "$1"
@@ -3604,29 +3542,7 @@ int main( int argc, char **argv )
 test_qt()
 {
     if [ -n "${QT_SUPPORT}" ]; then
-	${_printf} "%s\n" '
-#include <qarray.h>
-
-QArray<int> fib( int num )                  // returns fibonacci array
-{
-    ASSERT( num > 2 );
-    QArray<int> f( num );                   // array of ints
-
-    f[0] = f[1] = 1;                        // initialize first two numbers
-    for ( int i=2; i<num; i++ )
-        f[i] = f[i-1] + f[i-2];     
-
-    return f;
-}
-
-int main()
-{
-    QArray<int> a = fib( 6 );               // get 6 first fibonaccis
-
-    if(4==a.find(5))
-	return 0;
-    return 1;
-}' > ${TMP_CXX_FILE}.C
+        ${_cp} ${CGAL_TEST_CONF_DIR}/CGAL_CFG_NO_QT.C ${TMP_CXX_FILE}.C
 	if _compile_test Qt "`qt_test_cxxflags`" $1 && \
            _link_run_test Qt \
 		"`qt_libpathflags`" "`qt_test_ldflags`" $1
@@ -6588,8 +6504,10 @@ startup_interactive()
     ${_printf} "."
     set_menu_lines
     ${_printf} "."
-    set_terminal_variables
-    ${_printf} "."
+    if [ -n "${INSTALL_INTERACTIVE}" ]; then
+        set_terminal_variables
+        ${_printf} "."
+    fi
 }
 
 finish_interactive()
@@ -6950,8 +6868,8 @@ case ${_WHAT_TO_DO} in
 	cgal_install_header
 	# start interactive part
 	${_printf} "%s" "starting interactive mode -"
-	startup_interactive
 	INSTALL_INTERACTIVE='y'
+	startup_interactive
 	search_for_compilers
 	main_menu
 	finish_interactive
@@ -6961,7 +6879,6 @@ case ${_WHAT_TO_DO} in
 	_uname=uname
 	_basename=basename
 	_dirname=dirname
-	_fgrep=fgrep
 	_which=real_which
 	_sed=sed
 	_cat=cat

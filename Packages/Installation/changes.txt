@@ -1,3 +1,12 @@
+29 August 2004 Sylvain Pion
+- install_cgal :
+  - Use the CGAL_CFG_NO_GMP.C and co files from config/testfiles directly.
+  - Remove obsolete comment about LEDA/bool.h.
+  - Don't skrew up the terminal in non-interactive mode.
+  - Don't use carriage return in print_center_line()/print_head_line() since
+    it's not nice when redirecting output in a file.
+  - remove unused _fgrep.
+
 28 August 2004 Sylvain Pion
 - Do not hard code LONG_NAME_PROBLEM_CXXFLAGS to "-g" as it's wrong at least
   on VC++ (causes warnings).  Make it platform specific.
