@@ -27,13 +27,13 @@
 #include <CGAL/Convex_hull_d_to_polyhedron_3.h>
 
 CGAL_BEGIN_NAMESPACE
-template <class InputIterator, class Polyhedron_3>
+template <class InputIterator, class Polyhedron>
 void
 convex_hull_incremental_3(InputIterator first, InputIterator beyond, 
-                                     Polyhedron_3& P, 
+                                     Polyhedron& P, 
                                      bool test_correctness = false)
 {
-  typedef typename Polyhedron_3::Traits       PolyTraits;
+  typedef typename Polyhedron::Traits       PolyTraits;
   typedef typename PolyTraits::Kernel         K;
   typedef Convex_hull_d_traits_3<K>           ChullTraits;
   typedef Convex_hull_d< ChullTraits >        ChullType;

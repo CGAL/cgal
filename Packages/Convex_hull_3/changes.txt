@@ -1,3 +1,8 @@
+2.41    (6 May 2002)
+- added missing CGAL:: for SunPRO
+- changed name of Polyhedron template parameter for incremental hull example
+  in hopes of making VC6 happy
+
 2.40    (3 May 2002)
 - more patches for M$VC 6 -- adding unnecessary templates...
 

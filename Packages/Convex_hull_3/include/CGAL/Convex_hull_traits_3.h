@@ -100,7 +100,7 @@ class Convex_hull_traits_3
   typedef Convex_hull_projective_xy_traits_2<Point_3>  Traits_xy;
   typedef Convex_hull_projective_xz_traits_2<Point_3>  Traits_xz;
   typedef Convex_hull_projective_yz_traits_2<Point_3>  Traits_yz;
-  typedef Max_coordinate_3<Vector_3>                   Max_coordinate_3;
+  typedef CGAL::Max_coordinate_3<Vector_3>             Max_coordinate_3;
 
   // for postcondition checking 
   typedef typename R::Ray_3                      Ray_3; 
