@@ -11,54 +11,64 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Triangulation_face_base_with_info_2<Info,Traits,Fb>}  %% add template arg's if necessary
+\begin{ccRefClass}{Triangulation_face_base_with_info_2<Info,Traits,Fb>} 
+
+%% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
 \ccDefinition
   
-The class \ccRefName\ does this and that.
+The class \ccRefName\ is a model of face base to be plugged into the
+triangulation data structure of a triangulation class.
+It provides an easy way to add some user defined information
+in the faces of a triangulation.
 
 \ccInclude{Triangulation_face_base_with_info_2.h}
 
-\ccIsModel
+\ccParameters
 
-Concept
+The first template argument is the information the user would like to add
+to a face.  It has to be \ccc{DefaultConstructible} and \ccc{Assignable}.
+
+The second template argument is a geometric traits class
+and  is actually not used in \ccRefName\ .
+
+The third parameter is a face base class from which
+\ccRefName\ derives. 
+
+\ccInheritsFrom \ccc{Fb}
+
+\ccIsModel
+Because \ccRefName\ derives from the class instantiating its third
+parameter, it will be a model of the same face base concept
+as its parameter~:
+\ccc{TriangulationFaceBase_2},\\
+\ccc{ConstrainedTriangulationFaceBase_2} ,\\
+or \ccc{RegularTriangulationFaceBase_2}
+
 
 \ccTypes
+\ccTypedef{typedef Info Info;}{}
 
-\ccNestedType{TYPE}{some nested types}
+\ccCreationVariable{f}
 
-\ccCreation
-\ccCreationVariable{a}  %% choose variable name
+\ccAccessFunctions
+\ccThree{const Info&}{Facetxxxxxxxx}{}
+\ccTagFullDeclarations
 
-\ccConstructor{Triangulation_face_base_with_info_2();}{default constructor.}
-
-\ccOperations
-
-\ccMethod{void foo();}{some member functions}
+\ccMethod{const Info& info() const;}
+{Returns a const reference to the object of type \ccc{Info} stored in the face.}
+\ccGlue
+\ccMethod{Info & info();}
+{Returns a reference to the object of type \ccc{Info} stored in the cell.}
 
 \ccSeeAlso
+\ccc{CGAL::Triangulation_face_base_2<Traits,Fb>} \\
+\ccc{CGAL::Constrained_triangulation_face_base_2<Traits,Fb>} \\
+\ccc{CGAL::Regular_triangulation_face_base_2<Traits,Fb>} 
 
-\ccc{Some_other_class},
-\ccc{some_other_function}.
-
-\ccExample
-
-A short example program.
-Instead of a short program fragment, a full running program can be
-included using the 
-\verb|\ccIncludeExampleCode{examples/Package/Triangulation_face_base_with_info_2_prog.C}| 
-macro. The program example would be part of the source code distribution and
-also part of the automatic test suite.
-
-\begin{ccExampleCode}
-void your_example_code() {
-}
-\end{ccExampleCode}
-
-%% \ccIncludeExampleCode{examples/Package/Triangulation_face_base_with_info_2_prog.C}
 
 \end{ccRefClass}
 

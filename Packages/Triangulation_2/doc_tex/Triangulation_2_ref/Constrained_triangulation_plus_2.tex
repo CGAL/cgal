@@ -22,9 +22,11 @@ with an additional data
 structure called the  constraint hierarchy 
 that keeps track of  the input constraints and of their refinement
 in the triangulation.
+
 The class \ccc{Constrained_triangulation_plus_2<Tr>}
 inherits from its template parameter Tr, which has to be instantiated
 by a constrained or constrained Delaunay  triangulation.
+
 According to its intersection tag, the base class
 will support intersecting input constraints or not.
 When intersections of input constraints are supported,
@@ -72,18 +74,19 @@ vertices of the chain of triangulation edges representing a
 constraint. The value type of this iterator is \ccc{Vertex_handle}.}
 
 \ccTypedef{typedef Context;}{This type is intended to describe
-a constraint including a subconstraint and the position of the
+a constraint enclosing  a subconstraint  and the position of the
 subconstraint in this constraint.
-It provides three member functions \ccc{Vertices_begin()}, \ccc{Vertices_end()}
+It provides three member functions \ccc{vertices_begin()}, \ccc{vertices_end()}
 and \ccc{current()} returning 
-iterators  on the sequence of vertices of the enclosing constraint.
-\ccc{Vertices_begin()} returns a  \ccc{Vertices_in_constraint_iterator} 
+iterators of the type \ccc{Vertices_in_constraint_iterator}
+\ccc{vertices_begin()} returns an
 iterator pointing 
 on the first vertex of the enclosing constraint,
-\ccc{last()} returns a  \ccc{Vertices_in_constraint_iterator}  
+\ccc{vertices_end()} returns an iterator
 pointing past the last vertex on  the enclosing constraint, and 
-\ccc{current()} returns a \ccc{Vertices_in_constraint_iterator}  pointing
-on the first vertex of the subconstraint.}
+\ccc{current()} returns an iterator pointing
+on the first vertex of the subconstraint in the sequence of vertices
+of the enclosing constraint.}
 
 
 \ccTypedef{typedef Context_iterator;}{An iterator on 

@@ -18,47 +18,61 @@
 
 \ccDefinition
   
-The class \ccRefName\ does this and that.
+The class \ccRefName\ is designed to be used as a base vertex class
+of a triangulation. It provides an easy way to add some user defined information in vertices.
 
 \ccInclude{Triangulation_vertex_base_with_info_2.h}
 
-\ccIsModel
+\ccParameters
 
-Concept
+The first template parameter is the information the user would like to add
+to a vertex.  It has to be \ccc{DefaultConstructible} and \ccc{Assignable}.
+
+The second template parameter is the geometric traits class
+which provides the \ccc{Point_2}. It is strongly 
+recommanded to instantiate this parameter
+with the traits class used for   the triangulation.
+This ensures that the point type defined by \ccRefName\
+matches  the point type defined by 
+the triangulation.
+
+The third template parameter is a vertex base class from which
+\ccc{Triangulation_vertex_base_with_info_3} derives.  By default
+this parameter is instantiated by
+\ccc{CGAL::Triangulation_vertex_base_2<Traits>}.
+
+\ccIsModel
+The parameter \ccc{Vb} is a model of some vertex base concept.
+\ccRefName\ derives from \ccc{Vb} and will be a model of the
+same vertex base concept :
+\ccc{TriangulationVertexBase_2}, or \\
+\ccc{RegularTriangulationVertexBase_2}.
 
 \ccTypes
+\ccTypedef{typedef Info Info;}{}
 
-\ccNestedType{TYPE}{some nested types}
 
-\ccCreation
-\ccCreationVariable{a}  %% choose variable name
+\ccCreationVariable{v}  %% choose variable name
 
-\ccConstructor{Triangulation_vertex_base_with_info_2();}{default constructor.}
+\ccAccessFunctions
+\ccThree{const Info&}{Facetxxxxxxxxxx}{}
 
-\ccOperations
+\ccTagFullDeclarations
 
-\ccMethod{void foo();}{some member functions}
+\ccMethod{const Info& info() const;}
+{Returns a const reference to the object of type \ccc{Info} stored in the
+vertex.}
+\ccGlue
+\ccMethod{Info& info();}
+{Returns a reference to the object of type \ccc{Info} stored in the vertex.}
+
 
 \ccSeeAlso
 
-\ccc{Some_other_class},
-\ccc{some_other_function}.
+\ccc{CGAL::Triangulation_face_base_with_info_2<Info,Traits,Fb>}\\
+\ccc{CGAL::Triangulation_vertex_base_2<Traits,Vb>} \\
+\ccc{CGAL::Regular_triangulation_vertex_base_2<Traits,Vb>} \\
 
-\ccExample
-
-A short example program.
-Instead of a short program fragment, a full running program can be
-included using the 
-\verb|\ccIncludeExampleCode{examples/Package/Triangulation_vertex_base_with_info_2_prog.C}| 
-macro. The program example would be part of the source code distribution and
-also part of the automatic test suite.
-
-\begin{ccExampleCode}
-void your_example_code() {
-}
-\end{ccExampleCode}
-
-%% \ccIncludeExampleCode{examples/Package/Triangulation_vertex_base_with_info_2_prog.C}
 
 \end{ccRefClass}
 

@@ -19,8 +19,16 @@
 
 \ccDefinition
   
-The class \ccRefName\ is a model of the concept
-\ccc{TriangulationHierarchyVertexBase_2}.
+The class \ccRefName\ is designed to be used as a vertex base class
+of a triangulation plugged into a
+\ccc{Triangulation_hierarchy_2<Tr>}.
+
+It is 
+a model of the concept
+\ccc{TriangulationHierarchyVertexBase_2} which refines
+the concept
+\ccc{TriangulationVertexBase_2}.
+
 This class is templated by a parameter \ccc{Vb}
 which is to be instantiated by a model of  the concept
 \ccc{TriangulationVertexBase_2}.
@@ -38,8 +46,6 @@ vertex base with additionnal functionalities.
 \ccInheritsFrom
 \ccc{Vb}
 
-\ccTypes
-\ccTypedef{Vb::Point Point;}{The point type.}
 
 \ccSeeAlso
 \ccc{TriangulationVertexBase_2} \\

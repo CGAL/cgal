@@ -24,8 +24,9 @@ described \ccRefPage{TriangulationTraits_2},
 the concept \ccRefName\
 has to  provide a predicate type  \ccc{Side_of_oriented_circle_2} 
 to implement the \ccc{side_of_oriented_circle} test.
-This test test is the basic test used to maintain the
-empty circle property and actually defines the triangulation.
+This test  is the basic test used to maintain the
+empty circle property.
+
 The additional types \ccc{Line_2},
 \ccc{Ray_2} and the constructor objects
 \ccc{Construct_ray_2}
@@ -39,26 +40,30 @@ required if calls to
 
 
 \ccTypes
-\ccThree{Oriented_side}{xxxxxx}{}
+\ccThree{DelaunayTriangulationTraits_2}{traits(dt)xxx}{}
 \ccThreeToTwo
-\ccNestedType{Line_2}{The line type.}
+\ccNestedType{Line_2}{The line type. This type is  required only if
+some dual
+functions are called.}
 \ccGlue
-\ccNestedType{Ray_2}{The type for ray.}
+\ccNestedType{Ray_2}{The type for ray.This type is  required only if
+some dual
+functions are called.}
 
 
 
 
-\ccNestedType{Side_of_oriented_circle_2}{Predicate object. Must
-provide the operator
+\ccNestedType{Side_of_oriented_circle_2}{Predicate type. 
+Provides the operator : \\
 \ccc{Oriented_side operator()(Point p, Point q, Point r, Point s)}
 which takes four points $p, q, r, s$ as arguments and returns
 \ccc{ON_POSITIVE_SIDE}, \ccc{ON_NEGATIVE_SIDE} or, 
 \ccc{ON_ORIENTED_BOUNDARY} according to the position of points \ccc{s}
-with respect to the oriented circle through  through $p,q$
+with respect to the oriented circle through $p,q$
 and $r$.}
 \ccGlue
-\ccNestedType{Compare_distance_2} {Predicate type. Must provide
- the operator
+\ccNestedType{Compare_distance_2} {Predicate type. Provides
+ the operator : \\
 \ccc{Comparison_result operator()(Point_2 p, Point_2 q, Point_2 r)}
 which returns \ccc{SMALLER}, \ccc{EQUAL} or \ccc{LARGER}
 iff the distance between p and q is smaller, equal or larger
@@ -66,21 +71,21 @@ than the distance between p and r.  This type is only require if
 \ccc{nearest_vertex} queries are issued.}
 
 \ccNestedType{Construct_circumcenter_2}{Constructor object. Provides
-the operator 
+the operator : \\
 \ccc{ Point_2 operator()(Point_2 p, Point_2 q, Point_2 r)} which returns
 the  circumcenter of the three points  \ccc{p, q} anf \ccc{r}.
 This type is required only if  functions
 relative to the dual Voronoi diagram are called.}
 \ccGlue
 \ccNestedType{Construct_bisector_2}{Constructor object. Provides
-the operator 
+the operator : \\
 \ccc{ Line_2 operator()(Point_2 p, Point_2 q)} which constructs the
 bisector line of points \ccc{p} and \ccc{q}.
 This type is required only if  functions
 relative to the dual Voronoi diagram are called.}
 \ccGlue
 \ccNestedType{Construct_ray_2}{A constructor object  to build
-a ray from a point and a line. Must provide
+a ray from a point and a line. Provides : \\
 \ccc{Ray_2 operator() ( Point_2 p, Line_2 l);}}
    
 
@@ -93,10 +98,11 @@ a ray from a point and a line. Must provide
 dtt);}{copy constructor}
 \ccGlue
 \ccMethod{DelaunayTriangulationTraits_2 
-operator=(DelaunayTriangulationTraits_2);}{Assignment operator.}
+operator=(traits2);}{Assignment operator.}
 
 
 \ccHeading{Access to predicate and constructor objects}
+\ccThree{Construct_circumcenter_2}{traits.construct_circumcenter_2_object();}{}
 \ccMethod{Side_of_oriented_circle_2
 side_of_oriented_circle_2_object();}{}
 \ccGlue

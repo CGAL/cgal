@@ -25,6 +25,16 @@ which given the index of a vertex in a face
 compute the index of the next vertex  of the same face
 in clockwise
 or counterclockwise order.
+This works also for neighbor indexes.
+ Thus, for example the neighbor 
+\ccc{neighbor(cw(i))} of a face \ccc{f} is
+ the
+neighbor  which is next to \ccc{neighbor(i)} turning clockwise
+around \ccc{f}. The face \ccc{neighbor(cw(i))}
+is also the first face encountered after \ccc{f} when
+turning clockwise around vertex \ccc{i}
+of~\ccc{f}.
+
 Many of the classes in the triangulation package
 inherit from \ccRefName. This is for instance the case for
 \ccc{CGAL::Triangulation_2<Traits,Tds>::Face}.
@@ -65,19 +75,18 @@ of~\ccc{f}.
 
 \ccOperations
 \ccMethod{int ccw(const int i) const;}
-{returns the index of the  neigbor or vertex that is  next to 
+{returns the index of the  neighbor or vertex that is  next to 
 the neighbor or vertex with index \ccc{i}
 in counterclockwise order around a face.}
 \ccGlue
 \ccMethod{int cw(const int i) const;}
-{returns the index of the  neigbor or vertex that is  next to 
+{returns the index of the  neighbor or vertex that is  next to 
 the neighbor or vertex with index \ccc{i}
 in counterclockwise order around a face.}
 
 \ccSeeAlso
 \ccc{CGAL::Triangulation_2<Traits,Tds>} \\
-\ccc{CGAL::Triangulation_2<Traits,Tds>::Face} \\
-\ccc{CGAL::Triangulation_2<Traits,Tds>::Vertex}
+\ccc{CGAL::TriangulationDSFace_2} \\
 
 \end{ccRefClass}
 

@@ -19,19 +19,24 @@
 \ccDefinition  
 A constrained triangulation is a triangulation of a set of points
 which has to include among its edges 
-a given set of segments joining the points. The corresponding 
-edges are called {\em constrained edges}. 
+a given set of segments
+joining the points. The given segments are
+called {\em constraints}  and the corresponding 
+edges in the triangulation are called {\em constrained edges}. 
 
 The endpoints of constrained edges are of course vertices of the
 triangulation. However the triangulation may include
 include other vertices as well.
-There are three versions of  constrained triangulations.
+There are three versions of  constrained triangulations
+\begin{itemize}
+\item
 In the basic version, the constrained triangulation 
 do not handle intersecting constraints, and the set of input 
 constraints is required to be a set of segments that do not intersect
 except possibly at their endpoints. Any number of constrained edges
 are allowed to share the same endpoint.  Vertical constrained edges or
 constrained edges with null length are allowed.
+\item
 The two other versions support intersecting input constraints.
 In those versions, input constraints are allowed to be
 intersecting, overlapping or partially
@@ -39,19 +44,27 @@ overlapping segments.
 The triangulation introduce  additional  vertices at each point which
 is a proper intersection points of  two 
 constraints. A single constraint intersecting other
-constraints will then appear as several edges in the triangulation.
+constraints will then appear as the union of several 
+constrained edges of  the triangulation.
 The two versions dealing with intersecting constraints, slightly differ
-in the way intersecting constraints are dealt with. One of them is
+in the way intersecting constraints are dealt with.
+\begin{itemize}
+\item  One of them is
 designed to be robust when predicates are evaluated exactly but
 constructions (i. e.  intersection computations) are
 approximative.
+\item
 The other one is designed to be used 
 with an exact arithmetic (meaning exact
 evaluation of predicates and exact computation of intersections.)
 This last version finds its full efficiency  when used in conjunction
 with a constraint hierarchy data structure 
 as provided in the class
-\ccc{Constrained_triangulation_plus_2}. See section~\ref{Section_2D_Triangulations_Constrained_Plus}.
+\ccc{Constrained_triangulation_plus_2}. See
+section~\ref{Section_2D_Triangulations_Constrained_Plus}.
+\end{itemize}
+\end{itemize}
+
 
 
 \begin{ccTexOnly}
@@ -81,8 +94,8 @@ stands for
 a triangulation data structure class that has to be a model
 of the concept \ccc{TriangulationDataStructure_2}.
 The third parameter \ccc{Itag} is the intersection tag
-which serves  to choose different
-strategies to deal with constraint intersections. 
+which serves  to choose between the different
+strategies to deal with constraints intersections. 
 \cgal\ provides three valid types for this parameter : \\
 \ccc{CGAL::No_intersection_tag} disallows intersections of
  input constraints,\\
@@ -97,17 +110,15 @@ with an exact arithmetic type.
 faces of the triangulation. Thus the nested \ccc{Face}
 type of a constrained triangulation offers
 additonnal functionalities to deal with this information.
-Within the design of a triangulation data structure
-models templated by the base face class and the base vertex class,
-these additional functionalities related to the constraints
-are requirements which have to be fulfilled
-by the base face.
-The base face of a constrained triangulation
+These additional functionalities 
+induce additionnal requirements on the base face class
+plugged into the triangulation data structure of 
+ a constrained Delaunay triangulation.
+The base face of a constrained Delaunay triangulation
 has to be a model of the concept
 \ccc{ConstrainedTriangulationFaceBase_2}.
 
-
-\cgal\ provides a defaults for the template parameters
+\cgal\ provides  default instantiations for the template parameters
 \ccc{Tds} and \ccc{Itag}, and for the \ccc{ConstrainedTriangulationFaceBase_2}.
  If \ccc{Gt} is the geometric traits
 parameter,
@@ -167,11 +178,14 @@ $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
 \ccMethod{bool are_there_incident_constraints(Vertex_handle v);}
 {Returns true if at least one of the edges incident to vertex \ccc{v}
 is constrained.}
-\ccMethod{template<class OutputIterator>
-  bool are_there_incident_constraints(Vertex_handle v, 
- OutputIterator out) const;}
-{Same as above. In addition the constrained edges incident to \ccc{v}
-are inserted in the sequence pointed to by the output iterator \ccc{out}.}
+\ccMethod{template<class OutputItEdges>
+  OutputItEdges incident_constraints(Vertex_handle v, 
+    OutputItEdges out) const;}
+{OutputItEdges is an ouput iterator with \ccc{Edge} as value
+type.
+Outputs the constrained edges incident to \ccc{v}
+in the sequence pointed to by \ccc{out} and returns the resulting
+output iterator.}
 
 
 \ccHeading{Insertion and removal}
@@ -218,23 +232,8 @@ intersect the relative interior of another constrained edge.}
 { Inserts the line segment \ccc{s} whose endpoints are the vertices 
 \ccc{va} and
 \ccc{vb}  as a constrained edge \ccc{e}. The triangles intersected by s
-are removed and new ones are created. 
-\ccPrecond The relative interior of \ccc{s} does not
-intersect the relative interior of another constrained edge.  
-\ccPrecond  va and vb are distinct vertices of t.  }
+are removed and new ones are created.}
 
-\ccMethod{ void insert(Vertex_handle va, Vertex_handle vb,
-	    Face_handle & fr, int & i);}
-{Same as above. In addition,  sets the face \ccc{fr} incident to the
-egde \ccc{e} 
-and on the right of \ccc{e} oriented from  \ccc{va} to \ccc{vb}
-and the index \ccc{i}  of the vertex of \ccc{fr} opposite to
-\ccc{e}, i.e.  \ccc{e}=\ccc{(fr,i)}.}	    
-
-\ccMethod{void insert(Vertex_handle va, Vertex_handle vb,
-	    Face_handle & fr, int & i, List_edges & new_edges );}
-{Same as above. In addition,  the edges that are created are put in
-the list \ccc{new\_edges}.} 
 
 \ccMethod{void remove(Vertex_handle v);}
 { Removes a vertex v. 
@@ -244,7 +243,16 @@ the list \ccc{new\_edges}.}
 {Make the edges incident to vertex \ccc{v} unconstrained edges.}
 
 \ccMethod{void remove_constrained_edge(Face_handle f, int i);}
-{ Edge \ccc{e}=\ccc{(f,i)}=\ccc{(g,j)} is no longer constrained.}
+{ Make edge \ccc{(f,i)}  no longer constrained.}
+
+\begin{ccAdvanced}
+\ccMethod{bool
+          is_valid(bool verbose = false, int level = 0) const;}
+{Checks the validity of the triangulation and
+the consistency of the constrained marks in edges.}
+
+\end{ccAdvanced}
+
 
 \ccHeading{I/O}
 

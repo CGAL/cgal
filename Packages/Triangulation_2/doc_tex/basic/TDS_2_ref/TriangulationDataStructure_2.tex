@@ -454,14 +454,22 @@ between numbers of vertices, faces and edges.}
 \ccHeading{I/O}
 
 The information ouput  in the \ccc{iostream} is: 
-the dimension, the number of vertices, the number of faces,
-the vertices, 
-the indices of the vertices in  each face and
- the indices of the neighbors of each face. 
+the dimension, the number of (finite) vertices, 
+the number of (finite) faces.
+Then comes 
+for each vertex, the non combinatorial information stored in  that vertex
+if any.
+Then comes 
+for each faces,  the indices of its vertices and 
+the non combinatorial information (if any) stored in  this face.
+Then comes 
+for each face again 
+ the indices of the neighboring faces. 
 The  index of an item  (vertex of face)
-is simply the rank of this item in the ouput order.
+the rank of this item in the ouput order.
 When dimension $<$ 2, the same information is ouput
 for faces of maximal dimension instead of faces.
+
 
 \ccThree{Vertex_handle}{tds.file_output( ostream& os)}{}
 \ccFunction{void tds.file_output( ostream& os,

@@ -22,55 +22,40 @@ included in a  triangulation hierarchy has to provide
 some pointers to the corresponding vertices in the
 triangulations of the next and preceeding levels.
 Therefore, the concept \ccc{TriangulationHierarchyVertexBase_2}
-extends the concept \ccc{TriangulationVertexBase_2},
-adding two \ccc{void*} pointers to the correponding vertices in the
+refines the concept \ccc{TriangulationVertexBase_2},
+adding handles to the correponding vertices in the
 next and previous level triangulations.
 
 
 
-\ccGeneralizes
+\ccRefines
 \ccc{TriangulationVertexBase_2}
 
 
-\ccTypes
-\ccc{TriangulationHierarchyVertexBase_2} does not introduce other
-types than those of \ccc{TriangulationVertexBase_2}.
 
-
-\ccCreation
 \ccCreationVariable{v}  %% choose variable name
 
-\ccConstructor{TriangulationHierarchyVertexBase_2();}{default
-constructor.}
-\ccGlue
-\ccConstructor{TriangulationHierarchyVertexBase_2(const
-Point & p).}{constructs a vertex embedding the point \ccc{p}.}
-\ccGlue
-\ccConstructor{TriangulationHierarchyVertexBase_2(const
-Point & p, void* f).}{constructs a vertex embedding the point \ccc{p}
-and pointing to face \ccc{f}.}
-
 \ccOperations
-\ccMethod{void* up();}{returns a pointer to the corresponding vertex
+\ccThree{Vertex_handle}{v.set_down(Vertex_handle d);}{}
+\ccMethod{Vertex_handle  up();}{returns the corresponding vertex
 (if any) of the next level triangulation;}
 \ccGlue
-\ccMethod{void* down();}{returns a pointer to the corresponding vertex
+\ccMethod{Vertex_handle  down();}{returns the corresponding vertex
  of the previous level triangulation;}
 \ccGlue
-\ccMethod{void set_up(void *u);}{sets the pointer to the corresponding vertex
+\ccMethod{void set_up(Vertex_handle u);}
+{sets the handle pointing to  to the corresponding vertex
 of the next level triangulation;} 
 \ccGlue 
-\ccMethod{void set_down(void *d);}{sets the pointer to the corresponding vertex
+\ccMethod{void set_down(Vertex_handle d);}
+{sets the handle pointing  to the corresponding vertex
 of the previous level triangulation;}
 
 \ccHasModels
-
 \ccc{CGAL::Triangulation_hierarchy_vertex_base_2<Vb>}
 
 \ccSeeAlso
-\ccc{TriangulationVertexBase_2} \\
-\ccc{TriangulationHierarchyVertexBase_2<Vb>}\\
-\ccc{Triangulation_hierarchy_2<Tr>}. 
+\ccc{Triangulation_hierarchy_2<Tr>} 
 
 \ccExample
 

@@ -39,7 +39,7 @@ constrained Delaunay triangulations.
 
 As in the case of constrained triangulations, three different versions
 of Delaunay constrained triangulations are offered
-depending on wetherthe user wishes to handle
+depending on wether the user wishes to handle
 intersecting input constraints or not.
 The desired version can  be selected through the instantation of the
 third template parameter \ccc{Itag} which can be one of the
@@ -84,12 +84,11 @@ in the faces.
 Thus the nested \ccc{Face}
 type of a constrained triangulation offers
 additonnal functionalities to deal with this information.
-Within the design of a triangulation data structure
-models templated by the base face class and the base vertex class,
-these additional functionalities related to the constraints
-are requirements which have to be fulfilled
-by the base face.
-The base face of a constrained triangulation
+These additional functionalities 
+induce additionnal requirements on the base face class
+plugged into the triangulation data structure of 
+ a constrained Delaunay triangulation.
+The base face of a constrained Delaunay triangulation
 has to be a model of the concept
 \ccc{ConstrainedTriangulationFaceBase_2}.
 
@@ -127,7 +126,7 @@ All types used in this class are inherited from the base class
 Constrained_Delaunay_triangulation_2& cdt1)}
  {Copy constructor, all faces and vertices
 are duplicated and  the constrained status of edges
-is copied. This last feature is not yet implemented.}
+is copied.}
 
 \ccConstructor{Constrained_Delaunay_triangulation_2(list<Constrained>& lc,const Traits& t = Traits());}
 {Introduces a constrained triangulation, the constrained edges of which
@@ -177,32 +176,27 @@ for the location of \ccc{p}.}
  \ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
  is \ccc{Point}.}
 
-\ccMethod{ void insert(Point a, Point b);}
+\ccMethod{ void insert_constraint(Point a, Point b);}
 { Inserts segment ab as a constrained edge in the triangulation. }
 
 \ccMethod{ void push_back(const Constraint& c);}
 {Inserts constraints \ccc{c} as above.}
 
 
-\ccMethod{ void insert(Vertex_handle va, Vertex_handle vb);}
+\ccMethod{ void insert_constraint(Vertex_handle va, Vertex_handle vb);}
 { Inserts the line segment whose endpoints are the vertices va and vb
-as an edge e in the triangulation. }
-
-\ccMethod{void insert(Vertex_handle va, Vertex_handle vb,
-		   Face_handle & fr, int & i);}
-{Same as the previous procedure. In addition, returns f and i such that
-e=(f,i) and f is the face lying to the right of the oriented edge (va,vb). }
+as a constrained  edge e in the triangulation. }
 
 
 \ccMethod{void remove(Vertex_handle & v);}
 { Removes vertex v. 
-}\ccPrecond Vertex \ccc{v}  is not incident to a constrained edge.
+\ccPrecond Vertex \ccc{v}  is not incident to a constrained edge.}
 
 \ccMethod{ void remove_incident_constraints(Vertex_handle  v);}
 {Make the edges incident to vertex \ccc{v} unconstrained edges.}
 
 \ccMethod{void remove_constraint(const Face_handle & f, int i);}
-{ Edge \ccc{e}=\ccc{(f,i)}=\ccc{(g,j)} is no longer constrained.}
+{ Edge \ccc{(f,i)}  is no longer constrained.}
 
 
 \ccHeading{Queries}
@@ -232,8 +226,6 @@ The boundary edges
 of the conflict  zone are ouput in counterclockwise order
 and each edge is described  through its incident face
 which is not in conflict with \ccc{p}.
-The ouput boolean is \ccc{true} if some conflicts has been found and 
-\ccc{false}
 The function returns in a std::pair the resulting output iterators.
 }
 
@@ -265,7 +257,7 @@ The function returns the resulting output iterator.}
 
 \ccMethod{bool is_valid();}
 { Checks if the triangulation is valid and if each constrained edge is
-a constraint for its two incident faces.}
+ consistently marked constrained in its two incident faces.}
 
 \begin{ccAdvanced}
 \ccHeading{Flips}
@@ -273,7 +265,7 @@ a constraint for its two incident faces.}
 \ccMethod{bool is_flipable(Face_handle f, int i);}
 { Determines if edge \ccc{(f,i)} can be flipped. Returns true if
 edge \ccc{(f,i)} is not constrained and  the circle circumscribing f
-does not contain the vertex of \ccc{f->neighbor(i)}
+contains  the vertex of \ccc{f->neighbor(i)}
 opposite to edge \ccc{(f,i)}. }
 
 \ccMethod{void flip(Face_handle& f, int i);}
@@ -285,8 +277,10 @@ opposite to edge \ccc{(f,i)}. }
 List edges contains an
 initial list of edges to be flipped. The returned
 triangulation is constrained Delaunay 
-if the list edges contains all edges of the
-input triangulation that need to be flipped (plus possibly others). }
+if the initial list contains at least all the edges of the
+input triangulation that failed to be 
+constrained Delaunay (i. e. either constrained or
+locally Delaunay. }
 \end{ccAdvanced}
 
 

@@ -11,54 +11,111 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Triangulation_euclidean_traits_xy_3<R>}  %% add template arg's if necessary
+\begin{ccRefClass}{Triangulation_euclidean_traits_xy_3<K>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 \ccCreationVariable{traits}
 \ccDefinition
   
-The class \ccRefName\ is a geometric traits class allowing to
-build a two dimensional triangulation of the projections
-on the $xy$ plane  of three dimensional points.
-This is the usual case when dealing with GIS terrains.
+The class \ccRefName\ is a geometric traits class which alows to
+triangulate
+a terrain. It builds 
+a two dimensional triangulation  embedded in 3D space
+whose projection 
+on the $xy$ plane  is a Delaunay triangulation.
+This is a usual construction for GIS terrains.
 Instead of really projecting the 3D points and
 maintaining a mapping between each point and its projection
  (which costs space and is error prone)
 this class supplies geometric predicates that ignore the
 \ccc{z}-coordinate of the points.
 
+The class is a model of the concept \ccc{DelaunayTriangulationTraits_2} 
+except that it dooesnot provide the type and constructors
+required to build the dual Voronoi diagram.
+The class \ccRefName\ has  templated by a parameter which has to
+be instantiated by a \ccc{Kernel} and it uses types 
+and predicates defined in this  kernel.
+
 \ccInclude{CGAL/Triangulation_euclidean_traits_xy_3.h}
 
-\ccIsModel
-\ccc{TriangulationTraits_2} \\
-\ccc{DelaunayTriangulationTraits_2} 
-
-
 \ccTypes
-\ccTypedef{typedef Point_3<R>   Point_2;}{}
+\ccTwo{typedef Triangle_3<K> }{}
+\ccTypedef{typedef Point_3<K>   Point_2;}{}
 \ccGlue
-\ccTypedef{typedef Segment_3<R>   Segment_2;}{}
+\ccTypedef{typedef Segment_3<K>   Segment_2;}{}
 \ccGlue
-\ccTypedef{typedef Triangle_3<R>   Triangle_2;}{}
+\ccTypedef{typedef Triangle_3<K>   Triangle_2;}{}
 
 The following predicates and constructor types are provided
 
 \ccNestedType{Construct_segment_2}
+{A constructor object for
+\ccc{Segment_2}. Provides~: \\
+\ccc{Segment_2 operator()(Point_2 p,Point_2 q)}, \\ 
+which constructs a  segment from two points.}
 \ccGlue
-\ccNestedType{Construct_triangle_2}
+\ccNestedType{Construct_triangle_2}{A constructor object for
+\ccc{Triangle_2}. Provides~: \\
+\ccc{Triangle_2 operator()(Point_2 p,Point_2 q,Point_2 r )}, \\
+which constructs a triangle from three points.}
 \ccGlue
-\ccNestedType{Compare_x_2}{}
+\ccNestedType{Compare_x_2}{Predicate object. Provides
+the operator~: \\
+\ccc{Comparison_result operator()(Point p, Point q)} \\
+which returns 
+\ccc{SMALLER, EQUAL} or \ccc{ LARGER}
+ accordingto the
+$x$-ordering of points \ccc{p} and \ccc{q}.}
 \ccGlue
-\ccNestedType{Compare_y_2}{}
+\ccNestedType{Compare_y_2}{Predicate object. Provides
+the operator~: \\ 
+\ccc{Comparison_result operator()(Point p, Point q)}\\
+which returns 
+(\ccc{SMALLER, EQUAL} or \ccc{ LARGER})
+according to the
+$y$-ordering of points \ccc{p} and \ccc{q}.}
 \ccGlue
-\ccNestedType{Orientation_2}{}
+\ccNestedType{Orientation_2}{Predicate object. Provides
+the  operator~: \\
+\ccc{Orientation operator()(Point p, Point q, Point r)}\\
+which returns
+\ccc{LEFT_TURN} (resp. \ccc{RIGHT_TURN}) is $r$ is on the left 
+(resp. on the right) of the oriented line \ccc{pq}
+and \ccc{COLLINEAR} is the three points are colinear.}
 \ccGlue
-\ccNestedType{Side_of_oriented_circle_2}{}
+\ccNestedType{Side_of_oriented_circle_2}{Predicate object. Must
+provide the operator
+\ccc{Oriented_side operator()(Point p, Point q, Point r, Point s)}
+which takes four points $p, q, r, s$ as arguments and returns
+\ccc{ON_POSITIVE_SIDE}, \ccc{ON_NEGATIVE_SIDE} or, 
+\ccc{ON_ORIENTED_BOUNDARY} according to the position of points \ccc{s}
+with respect to the oriented circle through  through $p,q$
+and $r$.}
+
+\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+Only a default constructor, copy constructor
+ and an assignement operator are required. 
+Note that further constructors
+can be provided. 
+\ccThree{Triangulation_euclidean_traits_xy_3()}{traits=tr  }{}
+
+\ccConstructor{Triangulation_euclidean_traits_xy_3();}{
+default constructor.}
+\ccGlue
+\ccConstructor{Triangulation_euclidean_traits_xy_3(
+                      Triangulation_euclidean_traits_xy_3 tr);}
+{Copy constructor}
+\ccMethod{Triangulation_euclidean_traits_xy_3 operator=
+              (Triangulation_euclidean_traits_xy_3  tr);}
+{Assignment operator.}
+
 
 \ccHeading{Access to predicate objects}
 The following access functions are provided
-
+\ccThree{Side_of_oriented_circle_2}{side_of_oriented_circle_2_object();}{}
 \ccMethod{Construct_segment_2 construct_segment_2_object();}
 \ccGlue
 \ccMethod{Construct_triangle_2 construct_triangle_2_object();}
@@ -78,24 +135,9 @@ side_of_oriented_circle_2_object();}{}
 \ccc{CGAL::Delaunay_triangulation_2<Traits,Tds>} 
 
 
-\ccExample
-The following code builds a triangulated terrain
-using a Delaunay triangulation with the traits class for 
-terrains.
-%\ccIncludeExampleCode{../../../examples/Triangulation_2/terrain.C} 
-%\ccIncludeExampleCode{examples/Triangulation_2/terrain.C}
-\ccIncludeExampleCode{Triangulation_2/terrain.C}
-%\lcTex{
-%\ccIncludeExampleCode{Triangulation_2/terrain.C}
-%}
-%\lcHtml{
-%\ccIncludeExampleCode{../../../examples/Triangulation_2/terrain.C}
-%}
-
-
 \cgal\ provides also predefined geometric traits class
-\ccc{Triangulation_euclidean_traits_yz_3<R>} and
-\ccc{Triangulation_euclidean_traits_zx_3<R>} to
+\ccc{Triangulation_euclidean_traits_yz_3<K>} and
+\ccc{Triangulation_euclidean_traits_zx_3<K>} to
 deal with projections on the
  \ccc{xz}- or  the \ccc{yz}-plane,
 respectively.

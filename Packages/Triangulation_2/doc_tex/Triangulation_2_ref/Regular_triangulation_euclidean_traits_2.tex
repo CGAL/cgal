@@ -11,16 +11,16 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Regular_triangulation_euclidean_traits_2<Rep,Weight>}  %% add template arg's if necessary
+\begin{ccRefClass}{Regular_triangulation_euclidean_traits_2<K,Weight>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 \ccCreationVariable{traits}
 \ccDefinition
   
-\cgal\ provides the predefined geometric traits
- \ccRefName\ 
-This traits class is templated by a representation class \ccc{Rep}
+
+ \ccRefName\  is a  model for the concept \ccc{RegularTriangulationTraits_2}
+This traits class is templated by a kernel class \ccc{K}
 and a weight type \ccc{Weight}.
 This class inherits from
 \ccc{Triangulation_euclidean_traits_2 <Rep >}
@@ -33,59 +33,9 @@ derived from the type \ccc{Point} of
 \ccIsModel
 \ccc{RegularTriangulationTraits_2}
 
-\ccTypes
-\ccTypedef{typedef Triangulation_euclidean_traits_2<Rep>::Point_2
-Point_2;}{}
-\ccGlue
-\ccTypedef{typedef Point_2  Bare_point;}{}
-\ccGlue
-\ccTypedef{typedef Weighted_point<Point_2,Weight> Weighted_point;}{}
+\ccInheritsFrom
+\ccc{Triangulation_euclidean_traits_2 <K>}
 
-\ccNestedType{Power_test_2}{}
-\ccGlue
-\ccNestedType{Power_test_degenerated_2}{}
-
-The following types are required if member functions  relative to the
-dual power diagram are called 
-\ccNestedType{Line_2}{The line type.}
-\ccGlue
-\ccNestedType{Ray_2}{The type for ray.}
-\ccGlue
-\ccNestedType{Construct_weighted_circumcenter_2}{Constructor object. Provides
-the operator 
-\ccc{ Point_2 operator()(Weigthed_point_2 p, Weigthed_point_2 q, Weigthed_point_2 r)} which returns
-the center of the circle orthogonal to the three weighted points  \ccc{p, q} anf \ccc{r}.}
-\ccGlue
-\ccNestedType{Construct_radical_axis_2}{Constructor object. Provides
-the operator 
-\ccc{ Line_2 operator()(Weigthed_point_2 p, Weigthed_point_2 q)} which 
-construct the radical axis of the two weighted points  \ccc{p} and
-\ccc{q}}
-\ccGlue
-\ccNestedType{Construct_ray_2}{A constructor object  to build
-a ray from a point and a line. Must provide
-\ccc{Ray_2 operator() ( Point_2 p, Line_2 d);}}
-
-\ccHeading{Access to predicate objects}
-\ccMethod{Power_test_2 power_test_2_object();}{}
-\ccGlue
-\ccMethod{Power_test_degenerated_2
-  power_test_degenerated_2_object();}{}
-
-
-
-\ccHeading{Access to constructor objects}
-These member functions are required if functions  relative to the
-dual power diagram are called 
-\ccMethod{Construct_weighted_circumcenter_2
-  construct_weighted_circumcenter_2_object();}{}
-\ccGlue
-\ccMethod{Construct_radical_axis_2
-  construct_radical_axis_2_object();}
-\ccGlue
-\ccMethod{Construct_direction_2 construct_2_object();} {}
-\ccGlue
-\ccMethod{Construct_ray_2 construct_ray_2_object();} {}
 
 \ccSeeAlso
 \ccc{RegularTriangulationTraits_2} \\

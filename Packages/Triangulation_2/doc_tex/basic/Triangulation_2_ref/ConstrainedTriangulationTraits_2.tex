@@ -44,18 +44,22 @@ computes the intersection of two segments : \\
 \ccc{Object_2 operator()(Segment_2 s1, Segment_2 s2);}
 Returns the intersection of \ccc{s1} and \ccc{s2}.}
 
-The geometric traits of a  constrained triangulation instantiated with
-the intersection tag \ccc{Exact_predicates_tag}
-is also required to provide the following types~:
+When the constrained triangulation is instantiated with 
+the intersection tag \ccc{Exact_predicates_tag},
+the used agorithms needs to be able to compare some
+distances between points and lines and the following
+types are further required.
+\ccNestedType{RT}{A number type supporting the comparison operator
+\ccc{<}.}
 \ccNestedType{Line_2}{The line type.}
 \ccGlue
 \ccNestedType{Construct_line_2} {A function object whose operator()
-constructs a line from two points
+constructs a line from two points : \\
 \ccc{Line_2 operator()(Point_2 p1, Point_2 p2)}.}
 \ccGlue
 \ccNestedType{Compute_squared_distance_2}{A function object with an
 operator() designed to compute the squared distance between
-a line  and a point. 
+a line  and a point : 
 \ccc{RT operator()(Point_2 p1, Line_2);} Return the squared distance
 betwen \ccc{p} and \ccc{l}.}
 
@@ -91,8 +95,8 @@ The kernels of \cgal\ are models for this traits class.
 
 \ccSeeAlso
 \ccc{TriangulationTraits_2} \\
-\ccc{ConstrainedTriangulationTraits_2}
-
+\ccc{ConstrainedDelaunayTriangulationTraits_2}
+\ccc{CGAL:Constrained_Triangulation_2<Traits,Tds,Itag>}
 
 %\ccExample
 

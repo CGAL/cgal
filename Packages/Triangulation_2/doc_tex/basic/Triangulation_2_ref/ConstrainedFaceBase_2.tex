@@ -17,29 +17,19 @@
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 
 \ccDefinition
-The concept \ccRefName\ is  an extension of the concept
-\ccc{TriangulationFaceBase_2} 
-providing functionalities to deal with
-constraints.  
+  
 In a constrained triangulation,
 the information about constrained edges is store in the 
 faces of the triangulation.
-Thus the nested \ccc{Face}
-type of a constrained triangulation offers
-additonnal functionalities to deal with this information.
-Within the design of a triangulation data structure
-model templated by the base face class and the base vertex class,
-these additional functionalities related to the constraints
-are requirements which have to be fulfilled
-by the base face of  a constrained triangulation.
-The base face of a constrained triangulation
+Thus, the base face of a constrained triangulation
 has to be a model of the concept
-\ccRefName\ which provides the
-required functionalities.
+\ccRefName\ which  refines the concept
+\ccc{TriangulationFaceBase_2} 
+providing functionalities to deal with
+constraints.
 
-The concept \ccRefName\ is  an extension of 
-\ccc{TriangulationFaceBase_2}. Only additionnal
-requirements are listed below.
+\ccRefines
+\ccc{TriangulationFaceBase_2}
 
 \ccTypes
 Defines the same types as the \ccc{TriangulationFaceBase_2} concept
@@ -48,18 +38,6 @@ Defines the same types as the \ccc{TriangulationFaceBase_2} concept
 \ccCreation
 \ccCreationVariable{f}  %% choose variable name
 
-\ccConstructor{ConstrainedTriangulationFaceBase_2();}{default constructor.}
-\ccGlue
-\ccConstructor{ConstrainedTriangulationFaceBase_2(void* v0, void* v1, void* v2)}{constructor setting the incident vertices.}
-\ccGlue
-\ccConstructor{ConstrainedTriangulationFaceBase_2(void* v0, void* v1, void*  v2, void* n0, void* n1, void* n2)} 
-{constructor setting the incident vertices and the neighboring faces.}
-\ccGlue
-\ccConstructor{ConstrainedTriangulationFaceBase_2(void* v0, void* v1, void*  v2,
-void* n0, void* n1, void* n2, bool c0, bool c1, bool c2)}
- {constructor setting the incident vertices, the neighboring faces and 
-the status (constrained or not constrained) of the edges of the face}
-                   
 
 \ccThree{bool}{f.is_constrained(int i)}{}
 \ccHeading{Access Functions}

@@ -11,29 +11,40 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Regular_triangulation_face_base_2<Traits>}  %% add template arg's if necessary
+\begin{ccRefClass}{Regular_triangulation_face_base_2<Traits,Fb>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
 \ccDefinition  
-The class \ccRefName\ is a model of
-\ccc{RegularTriangulationFaceBase_2}.
+The class \ccRefName\ is a model of the concept
+\ccc{RegularTriangulationFaceBase_2}. It is the default base class
+of regular triangulations.
+
+\ccInclude{CGAL/Regular_triangulation_face_base_2.h}
+
+
+\ccParameters
 The template parameters \ccc{Traits} has to be a model
 of \ccc{RegularTriangulationTraits_2}.
 
-\ccInclude{CGAL/Regular_triangulation_face_base_2.h}
+The template parameter \ccc{Fb} has to be a model
+of \ccc{TriangulationFaceBase_2}. By default, this parameter is
+instantiated by
+\ccc{CGAL::Triangulation_face_base_2<Traits>}.
+
 
 \ccIsModel
 \ccc{RegularTriangulationFaceBase_2}
 
 \ccInheritsFrom
-\ccc{Triangulation_face_base_2<Traits,Tds>}
+\ccc{Fb}
 
 \ccSeeAlso
 \ccc{RegularTriangulationFaceBase_2} \\
-\ccc{RegularTriangulationTraits_2}.
-
+\ccc{RegularTriangulationTraits_2} \\
+\ccc{CGAL::Regular_triangulation_2<Traits,Tds>} \\
+\ccc{CGAL::Regular_triangulation_vertex_base_2<Traits>}
 
 
 \end{ccRefClass}

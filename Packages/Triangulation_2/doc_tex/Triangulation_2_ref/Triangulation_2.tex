@@ -22,6 +22,7 @@
 The class \ccRefName\ is the basic class 
 designed to handle triangulations
 of set of points ${  A}$ in the plane.
+
 Such a triangulation has as its vertices the points of ${  A}$
 and its domain covers the convex hull of ${  A}$.
 It can be viewed as a planar partition of the plane
@@ -40,9 +41,7 @@ face having as third vertex  the \ccc{infinite vertex}.
 and special cases at the
 boundary of the convex hull are simpler to deal with.
 
-
-
-\begin{figure}
+\begin{figure}[h]
 \begin{ccTexOnly}
 \begin{center} \IpeScale{50} \Ipe{infinite_vertex.ipe} \end{center}
 \end{ccTexOnly}
@@ -79,7 +78,7 @@ in counterclockwise order. The neighbor of a face are also
 indexed with 0,1,2 in such a way that the neighbor indexed by $i$
 is opposite to the vertex with the same index.
 
-Many of the classes in the triangulation package
+The triangulation classes
 offer  two functions \ccStyle{int cw(int i)} and 
 \ccStyle{int ccw(int i)} 
 which given the index of a vertex in a face
@@ -117,13 +116,13 @@ of~\ccc{f} (see Figure~\ref{Triangulation_ref_Fig_neighbors}).
 \ccInclude{CGAL/Triangulation_2.h}
 
 \ccParameters
-The class \ccRefName\ depends on  two template parameters. The first one
-\ccc{Traits} expects a model of the \ccc{TriangulationTraits_2}
-concept described on page~\ccRefPage{TriangulationTraits_2}.
-The second parameter expects a model of the
-\ccc{TriangulationDataStructure_2} described
- on page~\ccRefPage{TriangulationDataStructure_2}.
-By befault, the second template parameter is instanciated by
+The class \ccRefName\ has  two template parameters. The first one
+\ccc{Traits} is the geometric traits, it is to be instantiated by
+ a model of the concept \ccc{TriangulationTraits_2}.
+The second parameter is the triangulation data structure,
+it has to be instantiated by a model of the concept
+\ccc{TriangulationDataStructure_2}.
+By befault, the triangulation data structure  is instanciated by
 \ccc{CGAL::Triangulation_data_structure_2 <
                        CGAL::Triangulation_vertex_base_2<Gt>,
 		       CGAL::Triangulation_face_base_2<Gt> > >}.
@@ -133,6 +132,7 @@ By befault, the second template parameter is instanciated by
 This class provides the functions \ccc{cw(i)} et \ccc{ccw(i)}.
 
 \ccTypes
+\ccThree{typedef Traits::Triangle}{Triangulation_data_structure;}{}
 \ccTypedef{typedef Traits Geom_traits;}{the traits class.}
 \ccGlue
 \ccTypedef{typedef Tds Triangulation_data_structure;}{the triangulation data structure type.}
@@ -158,11 +158,14 @@ The iterators and circulators
 are all bidirectional and non mutable.
 The circulators and iterators are assignable to the 
 corresponding handle types. Whenever a handle appear in the parameter 
-list of a function, an appropriate iterator or circulator can be used as well.
+list of a function, an appropriate iterator or circulator can be used
+as well.
+
 The edges of the triangulation can also be visited through iterators
 and circulators,
 the edge circulators and iterators
 are also bidirectional and non mutable.
+
 In the following, we called {\it infinite} any face or edge 
 incident  to the infinite vertex and the infinite vertex itself.
  Any other feature (face, edge or vertex) of the triangulation is said 
@@ -224,8 +227,8 @@ of the current triangulation.}
 
 \ccConstructor{Triangulation_2();}{default constructor.}
 
-\ccThree{Triangulation_2<Traits,Tds>}{t = tr}{}
-\ccThreeToTwo
+%\ccThree{Triangulation_2<Traits,Tds>}{t = tr}{}
+%\ccThreeToTwo
 
 \ccConstructor{Triangulation_2<Traits,Tds>(
                    const Traits& gt = Traits() );}
@@ -248,7 +251,7 @@ refer to different triangulations~:
 \ccThree{Vertex_handle}{t.number_of_vertices()x}{}
 \ccMethod{void swap(Triangulation_2<Traits,Tds>& tr);}
 {The triangulations \ccc{tr} and \ccVar\ are swapped.
-\ccVar. \ccc{swap(tr)} should be preferred to \ccc{t} = \ccc{tr} or to
+\ccc{t.swap(tr)} should be preferred to \ccc{t} = \ccc{tr} or to
 \ccc{t(tr)} if \ccc{tr} is deleted after that.}
 
 \ccMethod{void clear();}{Deletes all faces and finite vertices
@@ -256,7 +259,7 @@ resulting
  in an
 empty triangulation.}
 
-\ccFunction{void ~Triangulation_2<Traits,Tds> ();}
+\ccFunction{void ~t();}
 {Destructor. All vertices and faces are deleted.}
 
 
@@ -303,8 +306,8 @@ algorithms.
 
 
 \ccPredicates
-The class \ccRefName\ provides method to test
-the finite or infinite caracter of any feature,
+The class \ccRefName\ provides methods to test
+the finite or infinite character of any feature,
 and also methods to test the presence in the triangulation
 of a particular feature (edge or face).
 
@@ -364,12 +367,12 @@ as vertices.}
 
 \ccHeading{Queries}
 
-The class \ccRefName  provides methods to locate
+The class \ccRefName\  provides methods to locate
 a given point with respect to a triangulation. It also provides
 methods to locate a point with respect to
 a given  finite face of the triangulation.
 
-
+\ccThree{Vertex_handle}{t.locate(Point query,}{}
 \ccMethod{Face_handle
           locate(const Point& query,
                  Face_handle f = Face_handle()) const;}
@@ -379,12 +382,12 @@ that contains the query in its interior or on its
 If the point \ccc{query} lies outside the convex hull of the
 triangulation but in the affine hull,
 the returned face is an infinite face which is a proof of the point's
-location :
-for a two dimensional triangulation, it is a face $(\infty, p, q)$ 
+location : \\
+- for a two dimensional triangulation, it is a face $(\infty, p, q)$ 
 such that
 \ccc{query} lies to the left  of the oriented line $pq$ 
-(the rest of the triangulation lying to the right of this line),
-for a degenerate one dimensional triangulation it is the (degenarate
+(the rest of the triangulation lying to the right of this line).\\
+- for a degenerate one dimensional triangulation it is the (degenarate
 one dimensional) face $(\infty, p, NULL)$ such that \ccc{query}
 and the triangulation lie on either side of \ccc{p}. \\
 If the point \ccc{query} lies outside the affine hull,
@@ -422,7 +425,7 @@ the point \ccc{p}. \ccPrecond \ccc{f} is finite.}
 \ccMethod{Oriented_side
  side_of_oriented_circle(Face_handle f, const Point & p);}
 {Returns on which side of the circumcircle  of face \ccc{f} lies 
-the point \ccc{p}. The circle is assumed to be counterclokwisely
+the point \ccc{p}. The circle is assumed to be counterclockwisely
 oriented, so its positive
 side correspond to its bounded side.
 This predicate is available only if the corresponding predicates on
@@ -480,7 +483,7 @@ algorithm of where to start.
 {Inserts the points in the range
  $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
  Returns the number of inserted points.
- \ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
+ \ccPrecond The \ccc{value_type} of \ccc{InputIterator}
  is \ccc{Point}.}
 
 \ccMethod{void    remove(Vertex_handle v);}
@@ -560,7 +563,7 @@ convex hull">
 
 \begin{ccAdvanced}
 The following member functions offer more specialized versions of the
-insertion or removal operation to be used when one knows to be in the
+insertion or removal operations to be used when one knows to be in the
 corresponding case.
 
 \ccMethod{Vertex_handle insert_first(const Point& p);} 
@@ -578,12 +581,10 @@ the vertex \ccc{i} of face \ccc{f}.}}
 \ccMethod{Vertex_handle insert_outside_convex_hull(const Point& p, Face_handle f);}
 {Inserts 
  a point which is outside the convex hull  but in the affine hull.
-Face handle \ccc{f} is assumed to point to a an infinite face
-which is a witness of the point's location (see the description of the
-\ccc{locate} method above.)
 \ccPrecond{
- \ccc{f} point to a face which is a proof  of the location
-of\ccc{f}.}}
+The handle \ccc{f} points to a face which is a proof  of the location
+of\ccc{p}, see the description of the
+\ccc{locate} method above.} }
 \ccMethod{Vertex_handle insert_outside_affine_hull(const Point& p);}
 {Inserts 
  a point which is outside the affine hull.}
@@ -598,7 +599,7 @@ the third one is modified.
 
 The following fonctions are mainly intended to be used in conjunction
 with the \ccc{find_conflicts()} member fonctions of Delaunay and constrained 
-Delaunay triangulations to perfoem insertions.
+Delaunay triangulations to perform insertions.
 
 \ccMethod{   template<class EdgeIt>
    Vertex_handle star_hole( Point p, 
@@ -756,10 +757,10 @@ to is changed.
 The triangulation also provides circulators that allows to visit 
 respectively all faces or edges incident to a given vertex
 or all vertices adjacent to a given vertex.
-These circulator are
+These circulators are
 non-mutable
 and bidirectional.
- The operator \ccc{operator++} moves the circulator
+ The \ccc{operator++} moves the circulator
 counterclockwise around the vertex while
 the \ccc{operator--} moves clockwise.
 A face circulator is invalidated by any modification of the face pointed to.
@@ -819,7 +820,7 @@ a clockwise traversal of the convex hull.
 
 \ccHeading{Miscellaneous}
 
-\ccThree{Segment}{t.segment(Face_handle f, int i)}{}
+\ccThree{Segment}{t.segment(Face_handle f, int i); }{}
 \ccMethod{int ccw(int i) const;}
 {Returns $i+1$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
 \ccGlue
@@ -889,8 +890,8 @@ for the users of advanced features.
 \ccHeading{I/O}
 
 
-The I/O operators are defined for \ccc{iostream}, and for
-the window stream provided by \cgal. The format for the iostream
+The I/O operators are defined for \ccc{iostream}.
+The format for the iostream
 is an internal format. 
 
 %\ccInclude{CGAL/IO/ostream_2.h}
@@ -906,13 +907,38 @@ is an internal format.
 {Reads a triangulation from stream \ccc{is} and assigns it
 to \ccVar. \ccPrecond The extract operator must be defined for \ccc{Point}.}
 
-\ccInclude{CGAL/IO/Window_stream.h}
+The information ouput  in the \ccc{iostream} is: 
+the dimension, the number of vertices (including the infinite one), 
+and the number of faces (including infinite ones).
+Then comes 
+for each vertex (except the infinite vertex), 
+the non combinatorial information stored in  that vertex
+(point, etc.).
+Then comes 
+for each faces,  the indices of its vertices and 
+the non combinatorial information (if any) in  this face.
+Then comes 
+for each face again 
+ the indices of the neighboring faces. 
+The  index of an item  (vertex of face)
+the rank of this item in the ouput order.
+When dimension $<$ 2, the same information is ouput
+for faces of maximal dimension instead of faces.
 
-\ccFunction{Window_stream& operator<<(Window_stream& W,
-                         const Triangulation_2<Traits,Tds>& T);}
-{Inserts the triangulation \ccVar\ into the window stream \ccc{W}.
-The insert operator must be defined for \ccc{Point}
-and \ccc{Segment}.}
+
+%\ccInclude{CGAL/IO/Window_stream.h}
+
+%\ccFunction{Window_stream& operator<<(Window_stream& W,
+%                         const Triangulation_2<Traits,Tds>& T);}
+%{Inserts the triangulation \ccVar\ into the window stream \ccc{W}.
+%The insert operator must be defined for \ccc{Point}
+%and \ccc{Segment}.}
+CGAL also provides  stram operators \ccc{ <<}  to draw triangulations
+on \ccc{CGAL::Window_stream}, the LEDA based graphic package,
+and on \ccc{CGAL::Qt_widget},the Qt based graphic package.
+See the chapters on \ccc{Window_stream} and on \ccc{Qt_widget} in
+the Support Library manual.
+
 
 
 \ccHeading{Implementation}
