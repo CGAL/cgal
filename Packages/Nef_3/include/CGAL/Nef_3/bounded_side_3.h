@@ -56,7 +56,6 @@ Bounded_side bounded_side_3(IteratorForward first,
   typedef typename R::Point_2 Point_2;
   typedef typename R::Point_3 Point_3;
   typedef typename R::Vector_3 Vector_3;
-  typedef typename R::Direction_3 Direction_3;
   typedef typename R::Plane_3 Plane_3;
   
   if(plane == Plane_3(0,0,0,0)) {
@@ -154,7 +153,6 @@ Bounded_side bounded_side_3(IC first,
   typedef typename R::Point_2 Point_2;
   typedef typename R::Point_3 Point_3;
   typedef typename R::Vector_3 Vector_3;
-  typedef typename R::Direction_3 Direction_3;
   typedef typename R::Plane_3 Plane_3;
 
   CGAL_assertion( !CGAL::is_empty_range( first, last));
@@ -162,10 +160,10 @@ Bounded_side bounded_side_3(IC first,
   if(plane == Plane_3(0,0,0,0)) {
     Vector_3 hv;
     normal_vector_newell_3( first, last, hv);
-    plane = Plane_3( *first, Direction_3(hv));
+    plane = Plane_3( *first, Vector_3(hv));
   }
   CGAL_assertion(!plane.is_degenerate());
-  Direction_3 pd(plane.orthogonal_vector()), pyz(1,0,0), pxz(0,1,0);
+  Vector_3 pd(plane.orthogonal_vector()), pyz(1,0,0), pxz(0,1,0);
   if(pd == pyz || pd == -pyz) {
     /* the plane is parallel to the YZ plane */
     typedef Project_YZ< Point_2, Point_3>                  Project_YZ;

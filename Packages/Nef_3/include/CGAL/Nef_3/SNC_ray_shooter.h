@@ -122,7 +122,6 @@ public:
 
   USING(Point_3);
   USING(Vector_3);
-  USING(Direction_3);
   USING(Segment_3);
   USING(Ray_3);
   USING(Line_3);
@@ -268,7 +267,7 @@ public:
       }
     }
 
-    Ray_3 r( p, Direction_3( -1, 0, 0));
+    Ray_3 r( p, Vector_3( -1, 0, 0));
     return Object_handle(determine_volume(r));
   }   
 
