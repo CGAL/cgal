@@ -33,6 +33,7 @@
 #include <CGAL/Point_2.h> 
 #include <CGAL/Line_2_Line_2_intersection.h> 
 #include <CGAL/squared_distance_2.h> 
+#include <CGAL/number_utils.h>
 #if (defined( _MSC_VER) && (_MSC_VER <= 1200))
 #include <CGAL/Nef_2/Polynomial_MSC.h>
 #define Polynomial Polynomial_MSC
@@ -186,9 +187,9 @@ on the extended geometric objects.}*/
       Point_2 p = *start++;
       if ( is_standard(p) ) {
         R = CGAL_NTS max(CGAL_NTS abs(p.hx()[0])/p.hw()[0], 
-                CGAL_NTS abs(p.hy()[0])/p.hw()[0]);
+                         CGAL_NTS abs(p.hy()[0])/p.hw()[0]);
       } else {
-        RT rx = CGAL_NTS abs(p.hx()), ry = CGAL_NTS abs(p.hy());
+        Standard_RT rx = CGAL_NTS abs(p.hx()), ry = CGAL_NTS abs(p.hy());
         mx = ( rx.degree()>0 ? rx[1] : 0 ); nx = rx[0];
         my = ( ry.degree()>0 ? ry[1] : 0 ); ny = ry[0];
         if ( mx > my )      R = CGAL_NTS abs((ny-nx)/(mx-my));

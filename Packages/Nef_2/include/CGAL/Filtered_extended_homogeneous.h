@@ -32,6 +32,7 @@
 #include <CGAL/Handle_for.h>
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Homogeneous.h>
+#include <CGAL/number_utils.h>
 #undef _DEBUG
 #define _DEBUG 59
 #include <CGAL/Nef_2/debug.h>
@@ -725,10 +726,10 @@ Extended_point<RT> intersection(
   #ifdef REDUCE_INTERSECTION_POINTS
   RT xgcd,ygcd;
   if ( x.m() == RT(0) )  xgcd = ( x.n() == 0 ? RT(1) : x.n() ); 
-  else /* != 0 */    xgcd = ( x.n() == 0 ? x.m() : gcd(x.m(),x.n()) ); 
+  else /* != 0 */    xgcd = ( x.n() == 0 ? x.m() : CGAL_NTS gcd(x.m(),x.n()) ); 
   if ( y.m() == RT(0) )  ygcd = ( y.n() == 0 ? RT(1) : y.n() ); 
-  else /* != 0 */    ygcd = ( y.n() == 0 ? y.m() : gcd(y.m(),y.n()) ); 
-  RT d = gcd(w,gcd(xgcd,ygcd));
+  else /* != 0 */    ygcd = ( y.n() == 0 ? y.m() : CGAL_NTS gcd(y.m(),y.n()) ); 
+  RT d = CGAL_NTS gcd(w,CGAL_NTS gcd(xgcd,ygcd));
   x /= d;
   y /= d;
   w /= d;

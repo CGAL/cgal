@@ -1,4 +1,4 @@
-// ============================================================================
+// ======================================================================
 //
 // Copyright (c) 1997-2000 The CGAL Consortium
 //
@@ -6,24 +6,24 @@
 // of the Computational Geometry Algorithms Library (CGAL). It is not
 // intended for general use.
 //
-// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision$
-// release_date  : $CGAL_Date$
+// release       : $CGAL_Revision: CGAL-2.4-I-78 $
+// release_date  : $CGAL_Date: 2002/04/17 $
 //
-// file          : include/CGAL/Nef_2/Nef_2/Polynomial.h
-// package       : Nef_2 
+// file          : include/CGAL/Nef_2/Polynomial.h
+// package       : Nef_2 (1.8)
+// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
 // chapter       : Nef Polyhedra
 //
 // revision      : $Revision$
 // revision_date : $Date$
 //
 // author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
-// maintainer    : Michael Seel <seel@mpi-sb.mpg.de>
 // coordinator   : Michael Seel <seel@mpi-sb.mpg.de>
 //
 // implementation: Polynomials in one variable
-// ============================================================================
+// ======================================================================
 
 #ifndef CGAL_POLYNOMIAL_H
 #define CGAL_POLYNOMIAL_H
@@ -47,8 +47,13 @@
 #define SNIINST ,'c','c'
 #else
 #include <vector>
+#if (!defined(_MSC_VER))
 #define SNIHACK
 #define SNIINST
+#else
+#define SNIHACK ,char,char
+#define SNIINST ,'c','c'
+#endif
 #endif
 
 CGAL_BEGIN_NAMESPACE
@@ -307,13 +312,13 @@ determines the sign for the limit process $x \rightarrow \infty$.
 
   #ifndef CGAL_SIMPLE_NEF_INTERFACE
   template <class Forward_iterator>
-  Polynomial(Forward_iterator first, Forward_iterator last)
+  Polynomial(Forward_iterator first, Forward_iterator last SNIHACK)
   /*{\Mcreate introduces a variable |\Mvar| of type |\Mname| representing
   the polynomial whose coefficients are determined by the iterator range,
   i.e. let $(a_0 = |*first|, a_1 = |*++first|, \ldots a_d = |*it|)$, 
   where |++it == last| then |\Mvar| stores the polynomial $a_1 + a_2 x + 
   \ldots a_d x^d$.}*/
-    : Base(Polynomial_rep<NT>(first,last)) { reduce(); }
+    : Base(Polynomial_rep<NT>(first,last SNIINST)) { reduce(); }
 
   #else
   #define RPOL(I)\
@@ -655,13 +660,13 @@ determines the sign for the limit process $x \rightarrow \infty$.
 
   #ifndef CGAL_SIMPLE_NEF_INTERFACE
   template <class Forward_iterator>
-  Polynomial(Forward_iterator first, Forward_iterator last)
+  Polynomial(Forward_iterator first, Forward_iterator last SNIHACK)
   /*{\Xcreate introduces a variable |\Mvar| of type |\Mname| representing
   the polynomial whose coefficients are determined by the iterator range,
   i.e. let $(a_0 = |*first|, a_1 = |*++first|, \ldots a_d = |*it|)$, 
   where |++it == last| then |\Mvar| stores the polynomial $a_1 + a_2 x + 
   \ldots a_d x^d$.}*/
-    : Base(Polynomial_rep<int>(first,last)) { reduce(); }
+    : Base(Polynomial_rep<int>(first,last SNIINST)) { reduce(); }
 
   #else
   #define RPOL(I)\
@@ -976,13 +981,13 @@ determines the sign for the limit process $x \rightarrow \infty$.
 
   #ifndef CGAL_SIMPLE_NEF_INTERFACE
   template <class Forward_iterator>
-  Polynomial(Forward_iterator first, Forward_iterator last)
+  Polynomial(Forward_iterator first, Forward_iterator last SNIHACK)
   /*{\Xcreate introduces a variable |\Mvar| of type |\Mname| representing
   the polynomial whose coefficients are determined by the iterator range,
   i.e. let $(a_0 = |*first|, a_1 = |*++first|, \ldots a_d = |*it|)$, 
   where |++it == last| then |\Mvar| stores the polynomial $a_1 + a_2 x + 
   \ldots a_d x^d$.}*/
-    : Base(Polynomial_rep<double>(first,last)) { reduce(); }
+    : Base(Polynomial_rep<double>(first,last SNIINST)) { reduce(); }
 
   #else
   #define RPOL(I)\
@@ -1255,7 +1260,7 @@ template <class NT> /*CGAL_KERNEL_MEDIUM_INLINE*/
 Polynomial<NT> operator - (const Polynomial<NT>& p)
 {
   CGAL_assertion(p.degree()>=0);
-  Polynomial<NT> res(p.coeffs().begin(),p.coeffs().end());
+  Polynomial<NT> res(p.coeffs().begin(),p.coeffs().end() SNIINST);
   typename Polynomial<NT>::iterator it, ite=res.coeffs().end();
   for(it=res.coeffs().begin(); it!=ite; ++it) *it = -*it;
   return res;
@@ -1799,7 +1804,7 @@ std::istream& operator >> (std::istream& is, Polynomial<NT>& p)
       else {
         typename Polynomial<NT>::Vector coeffs(d+1);
         for(i=0; i<=d; ++i) is >> coeffs[i];
-        p = Polynomial<NT>(coeffs.begin(),coeffs.end());
+        p = Polynomial<NT>(coeffs.begin(),coeffs.end() SNIINST);
       }
       break;
     case CGAL::IO::BINARY :
@@ -1809,7 +1814,7 @@ std::istream& operator >> (std::istream& is, Polynomial<NT>& p)
         typename Polynomial<NT>::Vector coeffs(d+1);
         for(i=0; i<=d; ++i) 
         { CGAL::read(is,c); coeffs[i]=c; }
-        p = Polynomial<NT>(coeffs.begin(),coeffs.end());
+        p = Polynomial<NT>(coeffs.begin(),coeffs.end() SNIINST);
       }
       break;
     default:

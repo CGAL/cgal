@@ -1,6 +1,11 @@
 Nef_2 Package: Release changes
 ----------------------------------------------------------------------
 
+1.9 (19 Apr 2002)
+     - added some missing CGAL_NTS before gcd calls
+     - added missing include of number_utils.h
+     - added hacks for M$ to resolve ambiguities?
+
 1.8 (17 Apr 2002)
      - removed test for MSVC version around certain macros so the
        macros get defined for VC7 as well.
