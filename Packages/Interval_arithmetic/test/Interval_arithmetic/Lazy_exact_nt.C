@@ -8,6 +8,8 @@
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Filtered_exact.h> // To bring in the overloaded predicates
+                                 // for Lazy_exact_nt
 
 #ifdef CGAL_USE_LEDA
 #  include <CGAL/leda_real.h>

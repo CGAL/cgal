@@ -112,7 +112,11 @@ sub print_CGAL_header {
 #ifndef $new_protect_name
 #define $new_protect_name
 
-#include <CGAL/Profile_counter.h>\n\n";
+#include <CGAL/Profile_counter.h>
+
+CGAL_BEGIN_NAMESPACE
+template <class ET> class Lazy_exact_nt;
+CGAL_END_NAMESPACE\n\n";
 }
 
 # Print dynamic versions
@@ -120,7 +124,9 @@ sub print_dynamic {
   my ($CGAL, $t, $inline, $ret_type, $fct_name, $e, $b, $n, @args)=@_;
   my $type = "const ${CGAL}Filtered_exact <CGAL_IA_CT, CGAL_IA_ET, ${CGAL}Dynamic,"
              ." CGAL_IA_PROTECTED, CGAL_IA_CACHE>";
+  my $type2 = "const ${CGAL}Lazy_exact_nt<ET>";
   my $args_call  = join ",", map "\n    $type &$_", @args;
+  my $args_call2 = join ",", map "\n    $type2 &$_", @args;
   my $args_inter = join ",", map "\n\t\t$_.interval()", @args;
   my $args_exact = join ",", map "\n\t\t$_.exact()", @args;
 
@@ -153,7 +159,34 @@ $fct_name($args_call)
     ${CGAL}Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return $fct_name($args_exact);
   }
-}\n\n";
+}
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class ET >
+/* $inline */
+$ret_type
+$fct_name($args_call2)
+{
+  try
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls(\"Lazy IA $fct_name calls\");
+    ++calls;
+#endif
+    ${CGAL}Protect_FPU_rounding<false> Protection;
+    return $fct_name($args_inter);
+  } 
+  catch (${CGAL}Interval_nt_advanced::unsafe_comparison)
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures(\"Lazy IA $fct_name failures\");
+    ++failures;
+#endif
+    ${CGAL}Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    return $fct_name($args_exact);
+  }
+}
+#endif\n\n";
 }
 
 # Print static infos

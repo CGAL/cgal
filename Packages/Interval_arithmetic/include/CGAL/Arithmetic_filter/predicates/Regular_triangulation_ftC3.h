@@ -27,6 +27,10 @@
 #include <CGAL/Profile_counter.h>
 
 CGAL_BEGIN_NAMESPACE
+template <class ET> class Lazy_exact_nt;
+CGAL_END_NAMESPACE
+
+CGAL_BEGIN_NAMESPACE
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
@@ -119,6 +123,93 @@ power_testC3(
 }
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
+template < class ET >
+/*  */
+Oriented_side
+power_testC3(
+    const Lazy_exact_nt<ET> &px,
+    const Lazy_exact_nt<ET> &py,
+    const Lazy_exact_nt<ET> &pz,
+    const Lazy_exact_nt<ET> &pwt,
+    const Lazy_exact_nt<ET> &qx,
+    const Lazy_exact_nt<ET> &qy,
+    const Lazy_exact_nt<ET> &qz,
+    const Lazy_exact_nt<ET> &qwt,
+    const Lazy_exact_nt<ET> &rx,
+    const Lazy_exact_nt<ET> &ry,
+    const Lazy_exact_nt<ET> &rz,
+    const Lazy_exact_nt<ET> &rwt,
+    const Lazy_exact_nt<ET> &sx,
+    const Lazy_exact_nt<ET> &sy,
+    const Lazy_exact_nt<ET> &sz,
+    const Lazy_exact_nt<ET> &swt,
+    const Lazy_exact_nt<ET> &tx,
+    const Lazy_exact_nt<ET> &ty,
+    const Lazy_exact_nt<ET> &tz,
+    const Lazy_exact_nt<ET> &twt)
+{
+  try
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("Lazy IA power_testC3 calls");
+    ++calls;
+#endif
+    Protect_FPU_rounding<false> Protection;
+    return power_testC3(
+		px.interval(),
+		py.interval(),
+		pz.interval(),
+		pwt.interval(),
+		qx.interval(),
+		qy.interval(),
+		qz.interval(),
+		qwt.interval(),
+		rx.interval(),
+		ry.interval(),
+		rz.interval(),
+		rwt.interval(),
+		sx.interval(),
+		sy.interval(),
+		sz.interval(),
+		swt.interval(),
+		tx.interval(),
+		ty.interval(),
+		tz.interval(),
+		twt.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("Lazy IA power_testC3 failures");
+    ++failures;
+#endif
+    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    return power_testC3(
+		px.exact(),
+		py.exact(),
+		pz.exact(),
+		pwt.exact(),
+		qx.exact(),
+		qy.exact(),
+		qz.exact(),
+		qwt.exact(),
+		rx.exact(),
+		ry.exact(),
+		rz.exact(),
+		rwt.exact(),
+		sx.exact(),
+		sy.exact(),
+		sz.exact(),
+		swt.exact(),
+		tx.exact(),
+		ty.exact(),
+		tz.exact(),
+		twt.exact());
+  }
+}
+#endif
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
 #else
@@ -197,6 +288,81 @@ power_testC3(
 }
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
+template < class ET >
+/*  */
+Oriented_side
+power_testC3(
+    const Lazy_exact_nt<ET> &px,
+    const Lazy_exact_nt<ET> &py,
+    const Lazy_exact_nt<ET> &pz,
+    const Lazy_exact_nt<ET> &pwt,
+    const Lazy_exact_nt<ET> &qx,
+    const Lazy_exact_nt<ET> &qy,
+    const Lazy_exact_nt<ET> &qz,
+    const Lazy_exact_nt<ET> &qwt,
+    const Lazy_exact_nt<ET> &rx,
+    const Lazy_exact_nt<ET> &ry,
+    const Lazy_exact_nt<ET> &rz,
+    const Lazy_exact_nt<ET> &rwt,
+    const Lazy_exact_nt<ET> &tx,
+    const Lazy_exact_nt<ET> &ty,
+    const Lazy_exact_nt<ET> &tz,
+    const Lazy_exact_nt<ET> &twt)
+{
+  try
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("Lazy IA power_testC3 calls");
+    ++calls;
+#endif
+    Protect_FPU_rounding<false> Protection;
+    return power_testC3(
+		px.interval(),
+		py.interval(),
+		pz.interval(),
+		pwt.interval(),
+		qx.interval(),
+		qy.interval(),
+		qz.interval(),
+		qwt.interval(),
+		rx.interval(),
+		ry.interval(),
+		rz.interval(),
+		rwt.interval(),
+		tx.interval(),
+		ty.interval(),
+		tz.interval(),
+		twt.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("Lazy IA power_testC3 failures");
+    ++failures;
+#endif
+    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    return power_testC3(
+		px.exact(),
+		py.exact(),
+		pz.exact(),
+		pwt.exact(),
+		qx.exact(),
+		qy.exact(),
+		qz.exact(),
+		qwt.exact(),
+		rx.exact(),
+		ry.exact(),
+		rz.exact(),
+		rwt.exact(),
+		tx.exact(),
+		ty.exact(),
+		tz.exact(),
+		twt.exact());
+  }
+}
+#endif
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
 #else
@@ -261,6 +427,69 @@ power_testC3(
 		twt.exact());
   }
 }
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class ET >
+/*  */
+Oriented_side
+power_testC3(
+    const Lazy_exact_nt<ET> &px,
+    const Lazy_exact_nt<ET> &py,
+    const Lazy_exact_nt<ET> &pz,
+    const Lazy_exact_nt<ET> &pwt,
+    const Lazy_exact_nt<ET> &qx,
+    const Lazy_exact_nt<ET> &qy,
+    const Lazy_exact_nt<ET> &qz,
+    const Lazy_exact_nt<ET> &qwt,
+    const Lazy_exact_nt<ET> &tx,
+    const Lazy_exact_nt<ET> &ty,
+    const Lazy_exact_nt<ET> &tz,
+    const Lazy_exact_nt<ET> &twt)
+{
+  try
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("Lazy IA power_testC3 calls");
+    ++calls;
+#endif
+    Protect_FPU_rounding<false> Protection;
+    return power_testC3(
+		px.interval(),
+		py.interval(),
+		pz.interval(),
+		pwt.interval(),
+		qx.interval(),
+		qy.interval(),
+		qz.interval(),
+		qwt.interval(),
+		tx.interval(),
+		ty.interval(),
+		tz.interval(),
+		twt.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("Lazy IA power_testC3 failures");
+    ++failures;
+#endif
+    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    return power_testC3(
+		px.exact(),
+		py.exact(),
+		pz.exact(),
+		pwt.exact(),
+		qx.exact(),
+		qy.exact(),
+		qz.exact(),
+		qwt.exact(),
+		tx.exact(),
+		ty.exact(),
+		tz.exact(),
+		twt.exact());
+  }
+}
+#endif
 
 CGAL_END_NAMESPACE
 

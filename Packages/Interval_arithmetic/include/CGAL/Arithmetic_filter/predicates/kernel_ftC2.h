@@ -27,6 +27,10 @@
 #include <CGAL/Profile_counter.h>
 
 CGAL_BEGIN_NAMESPACE
+template <class ET> class Lazy_exact_nt;
+CGAL_END_NAMESPACE
+
+CGAL_BEGIN_NAMESPACE
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
@@ -77,6 +81,51 @@ equal_lineC2(
 }
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
+template < class ET >
+/* CGAL_KERNEL_MEDIUM_INLINE */
+bool
+equal_lineC2(
+    const Lazy_exact_nt<ET> &l1a,
+    const Lazy_exact_nt<ET> &l1b,
+    const Lazy_exact_nt<ET> &l1c,
+    const Lazy_exact_nt<ET> &l2a,
+    const Lazy_exact_nt<ET> &l2b,
+    const Lazy_exact_nt<ET> &l2c)
+{
+  try
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("Lazy IA equal_lineC2 calls");
+    ++calls;
+#endif
+    Protect_FPU_rounding<false> Protection;
+    return equal_lineC2(
+		l1a.interval(),
+		l1b.interval(),
+		l1c.interval(),
+		l2a.interval(),
+		l2b.interval(),
+		l2c.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("Lazy IA equal_lineC2 failures");
+    ++failures;
+#endif
+    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    return equal_lineC2(
+		l1a.exact(),
+		l1b.exact(),
+		l1c.exact(),
+		l2a.exact(),
+		l2b.exact(),
+		l2c.exact());
+  }
+}
+#endif
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
 #else
@@ -126,6 +175,54 @@ compare_xC2(
 		hc.exact());
   }
 }
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class ET >
+/* CGAL_KERNEL_MEDIUM_INLINE */
+Comparison_result
+compare_xC2(
+    const Lazy_exact_nt<ET> &px,
+    const Lazy_exact_nt<ET> &la,
+    const Lazy_exact_nt<ET> &lb,
+    const Lazy_exact_nt<ET> &lc,
+    const Lazy_exact_nt<ET> &ha,
+    const Lazy_exact_nt<ET> &hb,
+    const Lazy_exact_nt<ET> &hc)
+{
+  try
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("Lazy IA compare_xC2 calls");
+    ++calls;
+#endif
+    Protect_FPU_rounding<false> Protection;
+    return compare_xC2(
+		px.interval(),
+		la.interval(),
+		lb.interval(),
+		lc.interval(),
+		ha.interval(),
+		hb.interval(),
+		hc.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("Lazy IA compare_xC2 failures");
+    ++failures;
+#endif
+    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    return compare_xC2(
+		px.exact(),
+		la.exact(),
+		lb.exact(),
+		lc.exact(),
+		ha.exact(),
+		hb.exact(),
+		hc.exact());
+  }
+}
+#endif
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
@@ -183,6 +280,60 @@ compare_xC2(
 		h2c.exact());
   }
 }
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class ET >
+/* CGAL_KERNEL_MEDIUM_INLINE */
+Comparison_result
+compare_xC2(
+    const Lazy_exact_nt<ET> &la,
+    const Lazy_exact_nt<ET> &lb,
+    const Lazy_exact_nt<ET> &lc,
+    const Lazy_exact_nt<ET> &h1a,
+    const Lazy_exact_nt<ET> &h1b,
+    const Lazy_exact_nt<ET> &h1c,
+    const Lazy_exact_nt<ET> &h2a,
+    const Lazy_exact_nt<ET> &h2b,
+    const Lazy_exact_nt<ET> &h2c)
+{
+  try
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("Lazy IA compare_xC2 calls");
+    ++calls;
+#endif
+    Protect_FPU_rounding<false> Protection;
+    return compare_xC2(
+		la.interval(),
+		lb.interval(),
+		lc.interval(),
+		h1a.interval(),
+		h1b.interval(),
+		h1c.interval(),
+		h2a.interval(),
+		h2b.interval(),
+		h2c.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("Lazy IA compare_xC2 failures");
+    ++failures;
+#endif
+    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    return compare_xC2(
+		la.exact(),
+		lb.exact(),
+		lc.exact(),
+		h1a.exact(),
+		h1b.exact(),
+		h1c.exact(),
+		h2a.exact(),
+		h2b.exact(),
+		h2c.exact());
+  }
+}
+#endif
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
@@ -251,6 +402,69 @@ compare_xC2(
 }
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
+template < class ET >
+/* CGAL_KERNEL_MEDIUM_INLINE */
+Comparison_result
+compare_xC2(
+    const Lazy_exact_nt<ET> &l1a,
+    const Lazy_exact_nt<ET> &l1b,
+    const Lazy_exact_nt<ET> &l1c,
+    const Lazy_exact_nt<ET> &h1a,
+    const Lazy_exact_nt<ET> &h1b,
+    const Lazy_exact_nt<ET> &h1c,
+    const Lazy_exact_nt<ET> &l2a,
+    const Lazy_exact_nt<ET> &l2b,
+    const Lazy_exact_nt<ET> &l2c,
+    const Lazy_exact_nt<ET> &h2a,
+    const Lazy_exact_nt<ET> &h2b,
+    const Lazy_exact_nt<ET> &h2c)
+{
+  try
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("Lazy IA compare_xC2 calls");
+    ++calls;
+#endif
+    Protect_FPU_rounding<false> Protection;
+    return compare_xC2(
+		l1a.interval(),
+		l1b.interval(),
+		l1c.interval(),
+		h1a.interval(),
+		h1b.interval(),
+		h1c.interval(),
+		l2a.interval(),
+		l2b.interval(),
+		l2c.interval(),
+		h2a.interval(),
+		h2b.interval(),
+		h2c.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("Lazy IA compare_xC2 failures");
+    ++failures;
+#endif
+    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    return compare_xC2(
+		l1a.exact(),
+		l1b.exact(),
+		l1c.exact(),
+		h1a.exact(),
+		h1b.exact(),
+		h1c.exact(),
+		l2a.exact(),
+		l2b.exact(),
+		l2c.exact(),
+		h2a.exact(),
+		h2b.exact(),
+		h2c.exact());
+  }
+}
+#endif
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
 #else
@@ -294,6 +508,48 @@ compare_y_at_xC2(
 		lc.exact());
   }
 }
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class ET >
+/* CGAL_KERNEL_MEDIUM_INLINE */
+Comparison_result
+compare_y_at_xC2(
+    const Lazy_exact_nt<ET> &px,
+    const Lazy_exact_nt<ET> &py,
+    const Lazy_exact_nt<ET> &la,
+    const Lazy_exact_nt<ET> &lb,
+    const Lazy_exact_nt<ET> &lc)
+{
+  try
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("Lazy IA compare_y_at_xC2 calls");
+    ++calls;
+#endif
+    Protect_FPU_rounding<false> Protection;
+    return compare_y_at_xC2(
+		px.interval(),
+		py.interval(),
+		la.interval(),
+		lb.interval(),
+		lc.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("Lazy IA compare_y_at_xC2 failures");
+    ++failures;
+#endif
+    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    return compare_y_at_xC2(
+		px.exact(),
+		py.exact(),
+		la.exact(),
+		lb.exact(),
+		lc.exact());
+  }
+}
+#endif
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
@@ -347,6 +603,54 @@ compare_y_at_xC2(
 }
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
+template < class ET >
+/* CGAL_KERNEL_MEDIUM_INLINE */
+Comparison_result
+compare_y_at_xC2(
+    const Lazy_exact_nt<ET> &px,
+    const Lazy_exact_nt<ET> &l1a,
+    const Lazy_exact_nt<ET> &l1b,
+    const Lazy_exact_nt<ET> &l1c,
+    const Lazy_exact_nt<ET> &l2a,
+    const Lazy_exact_nt<ET> &l2b,
+    const Lazy_exact_nt<ET> &l2c)
+{
+  try
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("Lazy IA compare_y_at_xC2 calls");
+    ++calls;
+#endif
+    Protect_FPU_rounding<false> Protection;
+    return compare_y_at_xC2(
+		px.interval(),
+		l1a.interval(),
+		l1b.interval(),
+		l1c.interval(),
+		l2a.interval(),
+		l2b.interval(),
+		l2c.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("Lazy IA compare_y_at_xC2 failures");
+    ++failures;
+#endif
+    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    return compare_y_at_xC2(
+		px.exact(),
+		l1a.exact(),
+		l1b.exact(),
+		l1c.exact(),
+		l2a.exact(),
+		l2b.exact(),
+		l2c.exact());
+  }
+}
+#endif
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
 #else
@@ -402,6 +706,60 @@ compare_y_at_xC2(
 		hc.exact());
   }
 }
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class ET >
+/* CGAL_KERNEL_LARGE_INLINE */
+Comparison_result
+compare_y_at_xC2(
+    const Lazy_exact_nt<ET> &l1a,
+    const Lazy_exact_nt<ET> &l1b,
+    const Lazy_exact_nt<ET> &l1c,
+    const Lazy_exact_nt<ET> &l2a,
+    const Lazy_exact_nt<ET> &l2b,
+    const Lazy_exact_nt<ET> &l2c,
+    const Lazy_exact_nt<ET> &ha,
+    const Lazy_exact_nt<ET> &hb,
+    const Lazy_exact_nt<ET> &hc)
+{
+  try
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("Lazy IA compare_y_at_xC2 calls");
+    ++calls;
+#endif
+    Protect_FPU_rounding<false> Protection;
+    return compare_y_at_xC2(
+		l1a.interval(),
+		l1b.interval(),
+		l1c.interval(),
+		l2a.interval(),
+		l2b.interval(),
+		l2c.interval(),
+		ha.interval(),
+		hb.interval(),
+		hc.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("Lazy IA compare_y_at_xC2 failures");
+    ++failures;
+#endif
+    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    return compare_y_at_xC2(
+		l1a.exact(),
+		l1b.exact(),
+		l1c.exact(),
+		l2a.exact(),
+		l2b.exact(),
+		l2c.exact(),
+		ha.exact(),
+		hb.exact(),
+		hc.exact());
+  }
+}
+#endif
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
@@ -468,6 +826,69 @@ compare_y_at_xC2(
 		h2c.exact());
   }
 }
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class ET >
+/* CGAL_KERNEL_LARGE_INLINE */
+Comparison_result
+compare_y_at_xC2(
+    const Lazy_exact_nt<ET> &l1a,
+    const Lazy_exact_nt<ET> &l1b,
+    const Lazy_exact_nt<ET> &l1c,
+    const Lazy_exact_nt<ET> &l2a,
+    const Lazy_exact_nt<ET> &l2b,
+    const Lazy_exact_nt<ET> &l2c,
+    const Lazy_exact_nt<ET> &h1a,
+    const Lazy_exact_nt<ET> &h1b,
+    const Lazy_exact_nt<ET> &h1c,
+    const Lazy_exact_nt<ET> &h2a,
+    const Lazy_exact_nt<ET> &h2b,
+    const Lazy_exact_nt<ET> &h2c)
+{
+  try
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("Lazy IA compare_y_at_xC2 calls");
+    ++calls;
+#endif
+    Protect_FPU_rounding<false> Protection;
+    return compare_y_at_xC2(
+		l1a.interval(),
+		l1b.interval(),
+		l1c.interval(),
+		l2a.interval(),
+		l2b.interval(),
+		l2c.interval(),
+		h1a.interval(),
+		h1b.interval(),
+		h1c.interval(),
+		h2a.interval(),
+		h2b.interval(),
+		h2c.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("Lazy IA compare_y_at_xC2 failures");
+    ++failures;
+#endif
+    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    return compare_y_at_xC2(
+		l1a.exact(),
+		l1b.exact(),
+		l1c.exact(),
+		l2a.exact(),
+		l2b.exact(),
+		l2c.exact(),
+		h1a.exact(),
+		h1b.exact(),
+		h1c.exact(),
+		h2a.exact(),
+		h2b.exact(),
+		h2c.exact());
+  }
+}
+#endif
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
@@ -527,6 +948,60 @@ compare_y_at_x_segment_C2(
 }
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
+template < class ET >
+/* CGAL_KERNEL_LARGE_INLINE */
+Comparison_result
+compare_y_at_x_segment_C2(
+    const Lazy_exact_nt<ET> &px,
+    const Lazy_exact_nt<ET> &s1sx,
+    const Lazy_exact_nt<ET> &s1sy,
+    const Lazy_exact_nt<ET> &s1tx,
+    const Lazy_exact_nt<ET> &s1ty,
+    const Lazy_exact_nt<ET> &s2sx,
+    const Lazy_exact_nt<ET> &s2sy,
+    const Lazy_exact_nt<ET> &s2tx,
+    const Lazy_exact_nt<ET> &s2ty)
+{
+  try
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("Lazy IA compare_y_at_x_segment_C2 calls");
+    ++calls;
+#endif
+    Protect_FPU_rounding<false> Protection;
+    return compare_y_at_x_segment_C2(
+		px.interval(),
+		s1sx.interval(),
+		s1sy.interval(),
+		s1tx.interval(),
+		s1ty.interval(),
+		s2sx.interval(),
+		s2sy.interval(),
+		s2tx.interval(),
+		s2ty.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("Lazy IA compare_y_at_x_segment_C2 failures");
+    ++failures;
+#endif
+    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    return compare_y_at_x_segment_C2(
+		px.exact(),
+		s1sx.exact(),
+		s1sy.exact(),
+		s1tx.exact(),
+		s1ty.exact(),
+		s2sx.exact(),
+		s2sy.exact(),
+		s2tx.exact(),
+		s2ty.exact());
+  }
+}
+#endif
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
 #else
@@ -569,6 +1044,45 @@ equal_directionC2(
 }
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
+template < class ET >
+/* CGAL_KERNEL_MEDIUM_INLINE */
+bool
+equal_directionC2(
+    const Lazy_exact_nt<ET> &dx1,
+    const Lazy_exact_nt<ET> &dy1,
+    const Lazy_exact_nt<ET> &dx2,
+    const Lazy_exact_nt<ET> &dy2)
+{
+  try
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("Lazy IA equal_directionC2 calls");
+    ++calls;
+#endif
+    Protect_FPU_rounding<false> Protection;
+    return equal_directionC2(
+		dx1.interval(),
+		dy1.interval(),
+		dx2.interval(),
+		dy2.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("Lazy IA equal_directionC2 failures");
+    ++failures;
+#endif
+    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    return equal_directionC2(
+		dx1.exact(),
+		dy1.exact(),
+		dx2.exact(),
+		dy2.exact());
+  }
+}
+#endif
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
 #else
@@ -609,6 +1123,45 @@ compare_slopesC2(
 		l2b.exact());
   }
 }
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class ET >
+/* CGAL_KERNEL_MEDIUM_INLINE */
+Comparison_result
+compare_slopesC2(
+    const Lazy_exact_nt<ET> &l1a,
+    const Lazy_exact_nt<ET> &l1b,
+    const Lazy_exact_nt<ET> &l2a,
+    const Lazy_exact_nt<ET> &l2b)
+{
+  try
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("Lazy IA compare_slopesC2 calls");
+    ++calls;
+#endif
+    Protect_FPU_rounding<false> Protection;
+    return compare_slopesC2(
+		l1a.interval(),
+		l1b.interval(),
+		l2a.interval(),
+		l2b.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("Lazy IA compare_slopesC2 failures");
+    ++failures;
+#endif
+    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    return compare_slopesC2(
+		l1a.exact(),
+		l1b.exact(),
+		l2a.exact(),
+		l2b.exact());
+  }
+}
+#endif
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
@@ -665,6 +1218,57 @@ compare_slopesC2(
 }
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
+template < class ET >
+/* CGAL_KERNEL_MEDIUM_INLINE */
+Comparison_result
+compare_slopesC2(
+    const Lazy_exact_nt<ET> &s1_src_x,
+    const Lazy_exact_nt<ET> &s1_src_y,
+    const Lazy_exact_nt<ET> &s1_tgt_x,
+    const Lazy_exact_nt<ET> &s1_tgt_y,
+    const Lazy_exact_nt<ET> &s2_src_x,
+    const Lazy_exact_nt<ET> &s2_src_y,
+    const Lazy_exact_nt<ET> &s2_tgt_x,
+    const Lazy_exact_nt<ET> &s2_tgt_y)
+{
+  try
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("Lazy IA compare_slopesC2 calls");
+    ++calls;
+#endif
+    Protect_FPU_rounding<false> Protection;
+    return compare_slopesC2(
+		s1_src_x.interval(),
+		s1_src_y.interval(),
+		s1_tgt_x.interval(),
+		s1_tgt_y.interval(),
+		s2_src_x.interval(),
+		s2_src_y.interval(),
+		s2_tgt_x.interval(),
+		s2_tgt_y.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("Lazy IA compare_slopesC2 failures");
+    ++failures;
+#endif
+    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    return compare_slopesC2(
+		s1_src_x.exact(),
+		s1_src_y.exact(),
+		s1_tgt_x.exact(),
+		s1_tgt_y.exact(),
+		s2_src_x.exact(),
+		s2_src_y.exact(),
+		s2_tgt_x.exact(),
+		s2_tgt_y.exact());
+  }
+}
+#endif
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
 #else
@@ -705,6 +1309,45 @@ compare_deltax_deltayC2(
 		sy.exact());
   }
 }
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class ET >
+/* inline */
+Comparison_result
+compare_deltax_deltayC2(
+    const Lazy_exact_nt<ET> &px,
+    const Lazy_exact_nt<ET> &qx,
+    const Lazy_exact_nt<ET> &ry,
+    const Lazy_exact_nt<ET> &sy)
+{
+  try
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("Lazy IA compare_deltax_deltayC2 calls");
+    ++calls;
+#endif
+    Protect_FPU_rounding<false> Protection;
+    return compare_deltax_deltayC2(
+		px.interval(),
+		qx.interval(),
+		ry.interval(),
+		sy.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("Lazy IA compare_deltax_deltayC2 failures");
+    ++failures;
+#endif
+    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    return compare_deltax_deltayC2(
+		px.exact(),
+		qx.exact(),
+		ry.exact(),
+		sy.exact());
+  }
+}
+#endif
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
@@ -755,6 +1398,51 @@ orientationC2(
 }
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
+template < class ET >
+/* inline */
+Orientation
+orientationC2(
+    const Lazy_exact_nt<ET> &px,
+    const Lazy_exact_nt<ET> &py,
+    const Lazy_exact_nt<ET> &qx,
+    const Lazy_exact_nt<ET> &qy,
+    const Lazy_exact_nt<ET> &rx,
+    const Lazy_exact_nt<ET> &ry)
+{
+  try
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("Lazy IA orientationC2 calls");
+    ++calls;
+#endif
+    Protect_FPU_rounding<false> Protection;
+    return orientationC2(
+		px.interval(),
+		py.interval(),
+		qx.interval(),
+		qy.interval(),
+		rx.interval(),
+		ry.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("Lazy IA orientationC2 failures");
+    ++failures;
+#endif
+    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    return orientationC2(
+		px.exact(),
+		py.exact(),
+		qx.exact(),
+		qy.exact(),
+		rx.exact(),
+		ry.exact());
+  }
+}
+#endif
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
 #else
@@ -801,6 +1489,51 @@ angleC2(
 		ry.exact());
   }
 }
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class ET >
+/* inline */
+Angle
+angleC2(
+    const Lazy_exact_nt<ET> &px,
+    const Lazy_exact_nt<ET> &py,
+    const Lazy_exact_nt<ET> &qx,
+    const Lazy_exact_nt<ET> &qy,
+    const Lazy_exact_nt<ET> &rx,
+    const Lazy_exact_nt<ET> &ry)
+{
+  try
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("Lazy IA angleC2 calls");
+    ++calls;
+#endif
+    Protect_FPU_rounding<false> Protection;
+    return angleC2(
+		px.interval(),
+		py.interval(),
+		qx.interval(),
+		qy.interval(),
+		rx.interval(),
+		ry.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("Lazy IA angleC2 failures");
+    ++failures;
+#endif
+    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    return angleC2(
+		px.exact(),
+		py.exact(),
+		qx.exact(),
+		qy.exact(),
+		rx.exact(),
+		ry.exact());
+  }
+}
+#endif
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
@@ -857,6 +1590,57 @@ side_of_oriented_circleC2(
 }
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
+template < class ET >
+/* CGAL_KERNEL_LARGE_INLINE */
+Oriented_side
+side_of_oriented_circleC2(
+    const Lazy_exact_nt<ET> &px,
+    const Lazy_exact_nt<ET> &py,
+    const Lazy_exact_nt<ET> &qx,
+    const Lazy_exact_nt<ET> &qy,
+    const Lazy_exact_nt<ET> &rx,
+    const Lazy_exact_nt<ET> &ry,
+    const Lazy_exact_nt<ET> &tx,
+    const Lazy_exact_nt<ET> &ty)
+{
+  try
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("Lazy IA side_of_oriented_circleC2 calls");
+    ++calls;
+#endif
+    Protect_FPU_rounding<false> Protection;
+    return side_of_oriented_circleC2(
+		px.interval(),
+		py.interval(),
+		qx.interval(),
+		qy.interval(),
+		rx.interval(),
+		ry.interval(),
+		tx.interval(),
+		ty.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("Lazy IA side_of_oriented_circleC2 failures");
+    ++failures;
+#endif
+    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    return side_of_oriented_circleC2(
+		px.exact(),
+		py.exact(),
+		qx.exact(),
+		qy.exact(),
+		rx.exact(),
+		ry.exact(),
+		tx.exact(),
+		ty.exact());
+  }
+}
+#endif
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
 #else
@@ -911,6 +1695,57 @@ side_of_bounded_circleC2(
 }
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
+template < class ET >
+/* CGAL_KERNEL_LARGE_INLINE */
+Bounded_side
+side_of_bounded_circleC2(
+    const Lazy_exact_nt<ET> &px,
+    const Lazy_exact_nt<ET> &py,
+    const Lazy_exact_nt<ET> &qx,
+    const Lazy_exact_nt<ET> &qy,
+    const Lazy_exact_nt<ET> &rx,
+    const Lazy_exact_nt<ET> &ry,
+    const Lazy_exact_nt<ET> &tx,
+    const Lazy_exact_nt<ET> &ty)
+{
+  try
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("Lazy IA side_of_bounded_circleC2 calls");
+    ++calls;
+#endif
+    Protect_FPU_rounding<false> Protection;
+    return side_of_bounded_circleC2(
+		px.interval(),
+		py.interval(),
+		qx.interval(),
+		qy.interval(),
+		rx.interval(),
+		ry.interval(),
+		tx.interval(),
+		ty.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("Lazy IA side_of_bounded_circleC2 failures");
+    ++failures;
+#endif
+    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    return side_of_bounded_circleC2(
+		px.exact(),
+		py.exact(),
+		qx.exact(),
+		qy.exact(),
+		rx.exact(),
+		ry.exact(),
+		tx.exact(),
+		ty.exact());
+  }
+}
+#endif
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
 #else
@@ -957,6 +1792,51 @@ side_of_bounded_circleC2(
 		ty.exact());
   }
 }
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class ET >
+/* CGAL_KERNEL_LARGE_INLINE */
+Bounded_side
+side_of_bounded_circleC2(
+    const Lazy_exact_nt<ET> &px,
+    const Lazy_exact_nt<ET> &py,
+    const Lazy_exact_nt<ET> &qx,
+    const Lazy_exact_nt<ET> &qy,
+    const Lazy_exact_nt<ET> &tx,
+    const Lazy_exact_nt<ET> &ty)
+{
+  try
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("Lazy IA side_of_bounded_circleC2 calls");
+    ++calls;
+#endif
+    Protect_FPU_rounding<false> Protection;
+    return side_of_bounded_circleC2(
+		px.interval(),
+		py.interval(),
+		qx.interval(),
+		qy.interval(),
+		tx.interval(),
+		ty.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("Lazy IA side_of_bounded_circleC2 failures");
+    ++failures;
+#endif
+    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    return side_of_bounded_circleC2(
+		px.exact(),
+		py.exact(),
+		qx.exact(),
+		qy.exact(),
+		tx.exact(),
+		ty.exact());
+  }
+}
+#endif
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
@@ -1007,6 +1887,51 @@ cmp_dist_to_pointC2(
 }
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
+template < class ET >
+/* inline */
+Comparison_result
+cmp_dist_to_pointC2(
+    const Lazy_exact_nt<ET> &px,
+    const Lazy_exact_nt<ET> &py,
+    const Lazy_exact_nt<ET> &qx,
+    const Lazy_exact_nt<ET> &qy,
+    const Lazy_exact_nt<ET> &rx,
+    const Lazy_exact_nt<ET> &ry)
+{
+  try
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("Lazy IA cmp_dist_to_pointC2 calls");
+    ++calls;
+#endif
+    Protect_FPU_rounding<false> Protection;
+    return cmp_dist_to_pointC2(
+		px.interval(),
+		py.interval(),
+		qx.interval(),
+		qy.interval(),
+		rx.interval(),
+		ry.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("Lazy IA cmp_dist_to_pointC2 failures");
+    ++failures;
+#endif
+    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    return cmp_dist_to_pointC2(
+		px.exact(),
+		py.exact(),
+		qx.exact(),
+		qy.exact(),
+		rx.exact(),
+		ry.exact());
+  }
+}
+#endif
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
 #else
@@ -1053,6 +1978,51 @@ cmp_signed_dist_to_directionC2(
 		qy.exact());
   }
 }
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class ET >
+/* inline */
+Comparison_result
+cmp_signed_dist_to_directionC2(
+    const Lazy_exact_nt<ET> &la,
+    const Lazy_exact_nt<ET> &lb,
+    const Lazy_exact_nt<ET> &px,
+    const Lazy_exact_nt<ET> &py,
+    const Lazy_exact_nt<ET> &qx,
+    const Lazy_exact_nt<ET> &qy)
+{
+  try
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("Lazy IA cmp_signed_dist_to_directionC2 calls");
+    ++calls;
+#endif
+    Protect_FPU_rounding<false> Protection;
+    return cmp_signed_dist_to_directionC2(
+		la.interval(),
+		lb.interval(),
+		px.interval(),
+		py.interval(),
+		qx.interval(),
+		qy.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("Lazy IA cmp_signed_dist_to_directionC2 failures");
+    ++failures;
+#endif
+    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    return cmp_signed_dist_to_directionC2(
+		la.exact(),
+		lb.exact(),
+		px.exact(),
+		py.exact(),
+		qx.exact(),
+		qy.exact());
+  }
+}
+#endif
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
@@ -1109,6 +2079,57 @@ cmp_signed_dist_to_lineC2(
 }
 
 #ifndef CGAL_CFG_MATCHING_BUG_2
+template < class ET >
+/* inline */
+Comparison_result
+cmp_signed_dist_to_lineC2(
+    const Lazy_exact_nt<ET> &px,
+    const Lazy_exact_nt<ET> &py,
+    const Lazy_exact_nt<ET> &qx,
+    const Lazy_exact_nt<ET> &qy,
+    const Lazy_exact_nt<ET> &rx,
+    const Lazy_exact_nt<ET> &ry,
+    const Lazy_exact_nt<ET> &sx,
+    const Lazy_exact_nt<ET> &sy)
+{
+  try
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("Lazy IA cmp_signed_dist_to_lineC2 calls");
+    ++calls;
+#endif
+    Protect_FPU_rounding<false> Protection;
+    return cmp_signed_dist_to_lineC2(
+		px.interval(),
+		py.interval(),
+		qx.interval(),
+		qy.interval(),
+		rx.interval(),
+		ry.interval(),
+		sx.interval(),
+		sy.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("Lazy IA cmp_signed_dist_to_lineC2 failures");
+    ++failures;
+#endif
+    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    return cmp_signed_dist_to_lineC2(
+		px.exact(),
+		py.exact(),
+		qx.exact(),
+		qy.exact(),
+		rx.exact(),
+		ry.exact(),
+		sx.exact(),
+		sy.exact());
+  }
+}
+#endif
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
 template < class CGAL_IA_CT, class CGAL_IA_ET, bool CGAL_IA_PROTECTED,
            class CGAL_IA_CACHE >
 #else
@@ -1152,6 +2173,48 @@ side_of_oriented_lineC2(
 		y.exact());
   }
 }
+
+#ifndef CGAL_CFG_MATCHING_BUG_2
+template < class ET >
+/* inline */
+Oriented_side
+side_of_oriented_lineC2(
+    const Lazy_exact_nt<ET> &a,
+    const Lazy_exact_nt<ET> &b,
+    const Lazy_exact_nt<ET> &c,
+    const Lazy_exact_nt<ET> &x,
+    const Lazy_exact_nt<ET> &y)
+{
+  try
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter calls("Lazy IA side_of_oriented_lineC2 calls");
+    ++calls;
+#endif
+    Protect_FPU_rounding<false> Protection;
+    return side_of_oriented_lineC2(
+		a.interval(),
+		b.interval(),
+		c.interval(),
+		x.interval(),
+		y.interval());
+  } 
+  catch (Interval_nt_advanced::unsafe_comparison)
+  {
+#ifdef CGAL_PROFILE
+    static Profile_counter failures("Lazy IA side_of_oriented_lineC2 failures");
+    ++failures;
+#endif
+    Protect_FPU_rounding<true> Protection(CGAL_FE_TONEAREST);
+    return side_of_oriented_lineC2(
+		a.exact(),
+		b.exact(),
+		c.exact(),
+		x.exact(),
+		y.exact());
+  }
+}
+#endif
 
 CGAL_END_NAMESPACE
 

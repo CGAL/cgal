@@ -294,7 +294,10 @@ public :
   Self operator/ (const Self & a) const
   { return new Lazy_exact_Div<ET>(*this, a); }
 
-  Interval_nt<true> approx() const  // throw() ?
+  Interval_nt<true> approx() const
+  { return ptr()->approx(); }
+
+  Interval_nt<false> interval() const
   { return ptr()->approx(); }
 
   Interval_nt_advanced approx_adv() const

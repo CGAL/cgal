@@ -16,6 +16,15 @@ that it is faster because it tries to only compute an approximation of the
 value, and only refers to \ccc{NT} when needed.  The goal is to speed up exact
 computations done by any exact but slow number type \ccc{NT}.
 
+In addition to the filtering at each arithmetic operation, the predicates
+are overloaded in the same way as for \ccc{Filtered_exact}, so you get the
+additional speed up without requiring to encapsulate \ccc{Lazy_exact_nt<NT>}
+into \ccc{Filtered_exact}.  You still need to include
+\ccc{CGAL/Filtered_exact.h} in order to include the overloaded functions.
+These overloaded functions do not work if the compiler does not support
+partial overloading of function templates, e.g. Visual C++ (so you miss an
+additional speed up in this case).
+
 \ccInclude{CGAL/Lazy_exact_nt.h}
 
 \ccIsModel
@@ -47,6 +56,12 @@ constructor from a double too).}
 \ccOperations
 
 \ccMethod{NT exact();} {returns the corresponding NT value.}
+
+\ccMethod{Interval_nt<true> approx();} {returns an interval containing the
+exact value.}
+
+\ccMethod{Interval_nt<false> interval();} {returns an interval containing the 
+exact value.}
 
 \ccFunction{std::ostream& operator<<(std::ostream& out,
                                      const Lazy_exact_nt<NT>& m);}

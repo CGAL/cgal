@@ -1,3 +1,7 @@
+Version 4.152 on 13 November 2002
+- The Perl script now overloads predicates also for Lazy_exact_nt, so that you
+  don't have to wrap it in Filtered_exact to get the maximum performance.
+
 Version 4.151 on 13 November 2002
 - Fix Lazy_exact_nt test program.
 
