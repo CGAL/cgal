@@ -123,14 +123,6 @@ SOURCE=..\..\include\CGAL\IO\icons.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Qt_layer_show_greene_approximation.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\Qt_layer_show_polygon.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\..\include\CGAL\IO\Qt_widget.h
 
 !IF  "$(CFG)" == "demo - Win32 Release"
