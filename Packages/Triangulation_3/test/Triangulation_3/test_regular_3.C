@@ -39,7 +39,6 @@
 
 #include <CGAL/Regular_triangulation_3.h>
 
-#include <CGAL/_test_types.C>
 #include <CGAL/_test_cls_regular_3.C>
 
 bool del=true;

@@ -20,9 +20,6 @@
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
 
-
-
-
 #include <CGAL/basic.h>
 #include <cassert>
 
@@ -38,7 +35,6 @@
 
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/_test_types.C>
 #include <CGAL/_test_cls_delaunay_3.C>
 
 bool del=true;
