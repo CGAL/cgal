@@ -284,13 +284,13 @@ Geomview_stream::operator<<(int i)
     if (in_binary_mode()) {
         // we write raw binary data to the stream.
         ::write(out, (char*)&i, sizeof(i));
+        trace(i);
     } else {
         // transform the int in a character sequence and put whitespace around
         std::ostrstream str;
         str << i << ' ' << std::ends;
-        ::write(out, str.str(), ::strlen(str.str()));
+        *this << str.str();
     }
-    trace(i);
 
     return *this;
 }
@@ -299,16 +299,15 @@ Geomview_stream&
 Geomview_stream::operator<<(double d)
 {
     float f = d;
-
     if (in_binary_mode()) {
         ::write(out, (char*)&f, sizeof(f));
+        trace(f);
     } else {
         // 'copy' the float in a string and append a blank
         std::ostrstream str;
         str << f << ' ' << std::ends;
-        ::write(out, str.str(), ::strlen(str.str()));
+        *this << str.str();
     }
-    trace(f);
     return *this;
 }
 
