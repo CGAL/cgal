@@ -1,3 +1,5 @@
+3.22 rursu: forgot to add the makefile in demo.
+
 3.21 rursu: replaced Leda_window based demo with Qt_widget based demo.
 
 Changes done to the `Min_ellipse_2' package.
