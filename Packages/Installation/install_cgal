@@ -771,7 +771,7 @@ set_compiler_flags()
 	*CL.EXE*|*cl.exe*)
 	    #### settings Microsoft Visual C++ compiler 
 	    WINDOWS_COMPILER="y"
-	    ADDITIONAL_CXXFLAGS="-TP -GR -GX -nologo -DCGAL_LIMITED_ITERATOR_TRAITS_SUPPORT -D__STL_DEBUG `include_dir_option ${CGAL_DIR}/stlport`"
+	    ADDITIONAL_CXXFLAGS="-TP -GR -GX -Zm400 -nologo -DCGAL_LIMITED_ITERATOR_TRAITS_SUPPORT -D__STL_DEBUG `include_dir_option ${CGAL_DIR}/stlport`"
 	    ADDITIONAL_LDFLAGS="-nologo"
 #	    CGAL_LIB_CXXFLAGS="-TP"
 	    CGAL_LIB_CREATE="LIB /OUT:"
@@ -786,7 +786,7 @@ set_compiler_flags()
             LEDA_LIB_OPT="lib"
 	    LIBPATH_OPT="-LIBPATH:"
 	    DEBUG_OPT="-Z7"
-	    EXE_OPT="-Fe"
+	    EXE_OPT="/OUT:"
 	    EXE_EXT=".exe"
 	    CGAL_LIBNAME="CGAL.lib"
 	    MATH_LIB=
@@ -1283,13 +1283,14 @@ libpath_option()
     fi
 }
 
+leda_lib_option()
+{
+    ${_printf} "${LIB_OPT}lib%s${LIB_SFX} " "$*"
+}
+
 lib_option()
 {
-#    if [ -z "${WINDOWS_COMPILER}" ]; then
-	${_printf} "${LIB_OPT}%s${LIB_SFX} " "$*"
-#    else
-#	${_printf} "'${LIB_OPT}%s${LIB_SFX}' " "`${_cygpath} -w $*`"
-#    fi
+    ${_printf} "${LIB_OPT}%s${LIB_SFX} " "$*"
 }
 
 object_file_name()
@@ -1479,13 +1480,13 @@ leda_ldflags()
 {
     if [ -n "${LEDA_SUPPORT}" ]; then
 	if [ -n "${NEED_EXTRA_LEDA_LDIR}" ]; then
-	    ${_printf} "%s" "${START_LD_OPTIONS}"
+#	    ${_printf} "%s" "${START_LD_OPTIONS}"
 	    libpath_option "`_where_is 'LEDA_LIB_DIR'`"
 	    ${_printf} "%s" "`rpath_directive 'LEDA_LIB_DIR'` "
 	fi
-	lib_option "P"
-	lib_option "G"
-	lib_option "L"
+	leda_lib_option "P"
+	leda_lib_option "G"
+	leda_lib_option "L"
     fi
 }
 
@@ -2551,7 +2552,7 @@ test_for_leda_lib_in_sys_lib()
     }" > ${TMP_CXX_FILE}.C
     if _compile_test "LEDA syslibs" "${CUSTOM_CXXFLAGS} " "$1"; then
 	if _link_run_test "LEDA syslibs" \
-	    "${CUSTOM_LDFLAGS} `lib_option P``lib_option G``lib_option L``math_ldflags`" "$1"; then
+	    "${CUSTOM_LDFLAGS} `leda_lib_option P``leda_lib_option G``leda_lib_option L``math_ldflags`" "$1"; then
 	    NEED_EXTRA_LEDA_LDIR=''
 	    return 0
 	fi
@@ -4040,7 +4041,7 @@ write_linker_flags()
 	fi
 	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:\$(LEDA_LIB_DIR)"
     fi
-    LIBS="${LIBS} `lib_option P``lib_option G``lib_option L`"
+    LIBS="${LIBS} `leda_lib_option P``leda_lib_option G``leda_lib_option L`"
     WLIBS="${WLIBS} -lW -lP -lG -lL -lX11"
   fi
   if [ -n "${GMP_SUPPORT}" ]; then
@@ -4270,7 +4271,7 @@ create_include_makefile()
       makefile_print_line "${RUNTIME_LINKER_FLAG}\$(LEDA_LIB_DIR)" \
 	>> ${FILE}
     fi
-    ${_printf} "\t%s\n" "`lib_option L`${CGAL_SHARED_LIB_LDFLAGS}" >> ${FILE}
+    ${_printf} "\t%s\n" "`leda_lib_option L`${CGAL_SHARED_LIB_LDFLAGS}" >> ${FILE}
   else
     ${_printf} "%s\n" \
 	"CGAL_SHARED_LIB_LDFLAGS = ${CGAL_SHARED_LIB_LDFLAGS}" >> ${FILE}
