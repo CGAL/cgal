@@ -37,14 +37,14 @@ LDFLAGS = $(TESTSUITE_LDFLAGS) \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: test_triangulation_tds \
-     test_triangulation_3 test_delaunay_3 \
-     test_regular_3 test_delaunay_hierarchy_3
+all: test_triangulation_tds test_triangulation_3 test_delaunay_3 \
+     test_regular_3 test_delaunay_hierarchy_3 test_delaunay_3_old_remove
 	./test_triangulation_tds
 	./test_triangulation_3
 	./test_delaunay_3
+	./test_delaunay_3_old_remove
 	./test_delaunay_hierarchy_3
-	./test_regular_3 
+	./test_regular_3
 
 test_triangulation_tds: test_triangulation_tds$(OBJ_EXT)  
 	$(CGAL_CXX)  -o test_triangulation_tds test_triangulation_tds$(OBJ_EXT)  $(LDFLAGS)
@@ -55,6 +55,9 @@ test_triangulation_3: test_triangulation_3$(OBJ_EXT)
 test_delaunay_3: test_delaunay_3$(OBJ_EXT)  
 	$(CGAL_CXX) -o test_delaunay_3 test_delaunay_3$(OBJ_EXT)  $(LDFLAGS)
 
+test_delaunay_3_old_remove: test_delaunay_3_old_remove$(OBJ_EXT)  
+	$(CGAL_CXX) -o test_delaunay_3_old_remove test_delaunay_3_old_remove$(OBJ_EXT)  $(LDFLAGS)
+
 test_delaunay_hierarchy_3: test_delaunay_hierarchy_3$(OBJ_EXT)  
 	$(CGAL_CXX) -o test_delaunay_hierarchy_3 test_delaunay_hierarchy_3$(OBJ_EXT)  $(LDFLAGS)
 
@@ -63,7 +66,7 @@ test_regular_3: test_regular_3$(OBJ_EXT)
 
 clean:
 	- rm -f *$(OBJ_EXT)  test_triangulation_3 \
-	            test_triangulation_tds test_delaunay_3 \
+	            test_triangulation_tds test_delaunay_3 test_delaunay_3_old_remove \
 		    test_delaunay_hierarchy_3 test_regular_3 \
 	            Program* Error* Compiler* error* Test*_triangulation_IO_3 \
 	            Test_tds_IO_3 core *.da *.gcov *.bb *.bbg
