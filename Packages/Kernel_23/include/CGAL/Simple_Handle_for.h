@@ -57,6 +57,12 @@ public:
     Stored * Ptr()
     { return &_s; }
 
+    const Stored * ptr() const
+    { return &_s; }
+
+    Stored * ptr()
+    { return &_s; }
+
     bool
     is_shared() const
     {

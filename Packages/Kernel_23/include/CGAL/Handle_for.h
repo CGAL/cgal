@@ -119,6 +119,8 @@ class Handle_for
     id() const
     { return reinterpret_cast<long int>(&*ptr_); }
 
+    // Ptr() is the "public" access to the pointer.  Both const and non-const.
+    // non-const does copy-on-write.
     const T *
     Ptr() const
     { return ptr_->base_ptr(); }
@@ -152,8 +154,13 @@ protected:
       }
     }
 
+    // ptr() is the protected access to the pointer.  Both const and non-const.
     T *
     ptr()
+    { return ptr_->base_ptr(); }
+
+    const T *
+    ptr() const
     { return ptr_->base_ptr(); }
 
 private:
