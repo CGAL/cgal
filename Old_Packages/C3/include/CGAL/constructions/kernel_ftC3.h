@@ -12,8 +12,8 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/basic_constructions_ftC3.h
-// source        : web/basic_constructions_ftC3.fw
+// file          : include/CGAL/constructions/kernel_ftC3.h
+// source        : include/CGAL/constructions/kernel_ftC3.h
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Herve.Bronnimann@sophia.inria.fr

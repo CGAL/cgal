@@ -12,8 +12,8 @@
 // release       :
 // release_date  :
 //
-// file          : include/CGAL/predicates_on_ftC3.h
-// source        : web/predicates_on_ftC3.fw
+// file          : include/CGAL/predicates/kernel_ftC3.h
+// source        : include/CGAL/predicates/kernel_ftC3.h
 // revision      : $Revision$
 // revision_date : $Date$
 // author(s)     : Herve.Bronnimann@sophia.inria.fr
@@ -29,9 +29,9 @@
 #ifndef CGAL_DETERMINANT_H
 #include <CGAL/determinant.h>
 #endif // CGAL_DETERMINANT_H
-#ifndef CGAL_BASIC_CONSTRUCTIONS_FTC3_H
-#include <CGAL/basic_constructions_ftC3.h>
-#endif // CGAL_BASIC_CONSTRUCTIONS_FTC3_H
+#ifndef CGAL_CONSTRUCTIONS_KERNEL_FTC3_H
+#include <CGAL/constructions/kernel_ftC3.h>
+#endif // CGAL_CONSTRUCTIONS_KERNEL_FTC3_H
 
 CGAL_BEGIN_NAMESPACE
 

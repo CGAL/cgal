@@ -31,10 +31,10 @@
 #endif
 
 #ifndef CGAL_CARTESIAN_POINT_3_H
-#include <CGAL/Point_3.h>
+#include <CGAL/Cartesian/Point_3.h>
 #endif
 #ifndef CGAL_CARTESIAN_PLANE_3_H
-#include <CGAL/Plane_3.h>
+#include <CGAL/Cartesian/Plane_3.h>
 #endif
 #ifndef CGAL_PREDICATES_KERNEL_FTC3_H
 #include <CGAL/predicates/kernel_ftC3.h>
