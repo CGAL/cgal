@@ -38,15 +38,6 @@ equal_line(const LineC2<K> &l1, const LineC2<K> &l2)
   return equal_lineC2(l1.a(), l1.b(), l1.c(), l2.a(), l2.b(), l2.c());
 }
 
-template < class K >
-inline
-Oriented_side
-side_of_oriented_line(const LineC2<K> &l,
-                      const PointC2<K> &p)
-{
-  return side_of_oriented_lineC2(l.a(), l.b(), l.c(), p.x(), p.y());
-}
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CARTESIAN_PREDICATES_ON_LINES_2_H

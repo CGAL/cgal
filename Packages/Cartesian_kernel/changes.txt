@@ -1,6 +1,8 @@
 22 Feb 2004 Sylvain Pion
 - Move compare_slopes(Segment_2, Segment_2) to the new scheme.
 - Move compare_slopes(Line_2, Line_2) to the new scheme.
+- Remove side_of_oriented_line(Line_2, Point_2) : it's not documented,
+  only in Cartesian, and available as Line_2::oriented_side(Point_2).
 
 21 Feb 2004 Sylvain Pion
 - Move internal predicates(p,q,K) to CGALi.
