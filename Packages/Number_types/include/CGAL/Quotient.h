@@ -817,6 +817,23 @@ const NT&
 numerator(const Quotient<NT>& q)
 { return q.num ; }
 
+// The min/max are functions are needed since LEDA defines template
+// min/max functions which clash with std::min/max with ADL.
+template <class NT>
+inline
+const Quotient<NT>&
+min(const Quotient<NT>& p, const Quotient<NT>& q)
+{
+  return std::min(p, q);
+}
+template <class NT>
+inline
+const Quotient<NT>&
+max(const Quotient<NT>& p, const Quotient<NT>& q)
+{
+  return std::max(p, q);
+}
+
 /*
 template <class NT>
 NT

@@ -1,3 +1,7 @@
+22 September 2004 Sylvain Pion
+- Define CGAL::min/max() for Quotient, since LEDA defines template min/max
+  functions that clash with std::min/max through ADL.
+
 15 September 2004 Sylvain Pion
 - Add sqrt() for leda_integer and leda_bigfloat.
 
