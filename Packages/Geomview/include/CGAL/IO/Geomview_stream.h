@@ -223,21 +223,15 @@ operator<<(Geomview_stream &gv, const Segment_2<R> &segment)
        << gv.get_line_width() << "}{VECT "
        << 1 <<  2 << 1    // 1 polyline, two vertices, 1 color
        << 2               // the first polyline contains 2 vertices
-       << 1               // and it has 1 color
+       << 1;              // and it has 1 color
 
     // here are start and end points
-       << CGAL::to_double(segment.source().x())
-       << CGAL::to_double(segment.source().y())
-       << 0.0
-       << CGAL::to_double(segment.target().x())
-       << CGAL::to_double(segment.target().y())
-       << 0.0
+    bool raw_bak = gv.set_raw(true);
+    gv << segment.source() << segment.target();
+    gv.set_raw(raw_bak);
 
     // and the color of the segment and its opaqueness
-        << gv.ecr()  << gv.ecg() << gv.ecb()  << 1.0
-
-    // close the text bracket
-       << "}})" ;
+    gv << gv.ecr() << gv.ecg() << gv.ecb() << 1.0 << "}})";
 
     return gv;
 }
@@ -257,21 +251,15 @@ operator<<(Geomview_stream &gv, const Segment_3<R> &segment)
        << " }{VECT "
        << 1 << 2 << 1   // 1 polyline, two vertices, 1 color
        << 2             // the first polyline contains 2 vertices
-       << 1             // and it has 1 color
+       << 1;            // and it has 1 color
 
     // here are start and end points
-       << CGAL::to_double(segment.source().x())
-       << CGAL::to_double(segment.source().y())
-       << CGAL::to_double(segment.source().z())
-       << CGAL::to_double(segment.target().x())
-       << CGAL::to_double(segment.target().y())
-       << CGAL::to_double(segment.target().z())
+    bool raw_bak = gv.set_raw(true);
+    gv << segment.source() << segment.target();
+    gv.set_raw(raw_bak);
 
     // and the color of the segment and its opaqueness
-        << gv.ecr()  << gv.ecg()  << gv.ecb()  << 1.0
-
-    // close the text bracket
-       << "}})";
+    gv << gv.ecr() << gv.ecg() << gv.ecb() << 1.0 << "}})";
 
     return gv;
 }
@@ -295,11 +283,10 @@ operator<<(Geomview_stream &gv, const Triangle_2<R> &t)
     // it has 3 vertices, 1 face and 3 edges
        << 3 << 1 << 3;
 
-    for(int i=0; i<3; i++){
-        gv << CGAL::to_double(t[i].x())
-           << CGAL::to_double(t[i].y())
-           << 0.0;
-    }
+    bool raw_bak = gv.set_raw(true);
+    for(int i=0; i<3; i++)
+        gv << t[i];
+    gv.set_raw(raw_bak);
 
     // the face
     gv << 3 << 0 << 1 << 2 << 4 << gv.fcr() << gv.fcg() << gv.fcb() << 1.0
@@ -328,11 +315,10 @@ operator<<(Geomview_stream &gv, const Triangle_3<R> &t)
     // it has 3 vertices, 1 face and 3 edges
        << 3 << 1 << 3;
 
-    for(int i=0; i<3; i++){
-        gv << CGAL::to_double(t[i].x())
-           << CGAL::to_double(t[i].y())
-           << CGAL::to_double(t[i].z());
-    }
+    bool raw_bak = gv.set_raw(true);
+    for(int i=0; i<3; i++)
+        gv << t[i];
+    gv.set_raw(raw_bak);
 
     // the face
     gv << 3 << 0 << 1 << 2 << 4 << gv.fcr() << gv.fcg() << gv.fcb() << 1.0
@@ -360,11 +346,10 @@ operator<<(Geomview_stream &gv, const Tetrahedron_3<R> &t)
        << 4 << 4 << 6 ;
 
     // the vertices
-    for(int i=0; i<4; i++){
-        gv << CGAL::to_double(t[i].x())
-           << CGAL::to_double(t[i].y())
-           << CGAL::to_double(t[i].z());
-    }
+    bool raw_bak = gv.set_raw(true);
+    for(int i=0; i<4; i++)
+        gv << t[i];
+    gv.set_raw(raw_bak);
 
     // the faces
     double r = gv.fcr(),
@@ -392,10 +377,11 @@ operator<<(Geomview_stream &gv, const Sphere_3<R> &S)
        << " {appearance {+edge material {edgecolor "
        << gv.ecr()  << gv.ecg()  << gv.ecb() <<  "} shading constant}{ "
        << "SPHERE\n"
-       << CGAL_CLIB_STD::sqrt(CGAL::to_double(S.squared_radius())) << "\n"
-       << CGAL::to_double(S.center().x()) << " "
-       << CGAL::to_double(S.center().y()) << " "
-       << CGAL::to_double(S.center().z()) << "}})";
+       << CGAL_CLIB_STD::sqrt(CGAL::to_double(S.squared_radius())) << "\n";
+
+    bool raw_bak = gv.set_raw(true);
+    gv << Point_3<R>(S.center()) << "}})";
+    gv.set_raw(raw_bak);
 
     return gv;
 }
@@ -422,7 +408,7 @@ parse_point(const char* pickpoint, Point_3<R> &point)
     double x, y, z, w;
     char parenthesis;
     ss >> parenthesis >> x >> y >> z >> w;
-    point  = Point_3<R>(x, y, z, w);
+    point = Point_3<R>(x, y, z, w);
 }
 #endif
 
