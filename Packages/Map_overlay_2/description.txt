@@ -1,0 +1,2 @@
+The Map_overlay_2 package - overlaying subdivisions of general curves in the plane, 
+and computing boolean operations on such subdivisions.  
