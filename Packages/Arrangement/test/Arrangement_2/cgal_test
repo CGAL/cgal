@@ -203,38 +203,28 @@ else
 
   # run test with generic segment traits
    (compile_and_run test $TRAP   $CGAL_SEGMENT_TRAITS)
-  # (compile_and_run test $NAIVE  $CGAL_SEGMENT_TRAITS)
+   (compile_and_run test $NAIVE  $CGAL_SEGMENT_TRAITS)
    (compile_and_run test $WALK   $CGAL_SEGMENT_TRAITS)
    (compile_and_run test $SIMPLE $CGAL_SEGMENT_TRAITS)
   # run test with leda segment traits
    (compile_and_run test $TRAP  $CGAL_SEGMENT_LEDA_TRAITS)
    (compile_and_run test $NAIVE $CGAL_SEGMENT_LEDA_TRAITS)
    (compile_and_run test $WALK  $CGAL_SEGMENT_LEDA_TRAITS)
-  # (compile_and_run test $SIMPLE  $CGAL_SEGMENT_LEDA_TRAITS)
+   (compile_and_run test $SIMPLE  $CGAL_SEGMENT_LEDA_TRAITS)
   # run test with generic polyline traits
    (compile_and_run test $TRAP  $CGAL_POLYLINE_TRAITS)
- # (compile_and_run test $NAIVE $CGAL_POLYLINE_TRAITS)
+   (compile_and_run test $NAIVE $CGAL_POLYLINE_TRAITS)
    (compile_and_run test $WALK  $CGAL_POLYLINE_TRAITS)
    (compile_and_run test $SIMPLE  $CGAL_POLYLINE_TRAITS)
 
   # Uncomment when leda polyline traits is fully debugged
   # run test with leda polyline traits
-  #  (compile_and_run test $TRAP  $CGAL_POLYLINE_LEDA_TRAITS)
-    (compile_and_run test $NAIVE $CGAL_POLYLINE_LEDA_TRAITS)
-    (compile_and_run test $WALK  $CGAL_POLYLINE_LEDA_TRAITS)
+   (compile_and_run test $TRAP   $CGAL_POLYLINE_LEDA_TRAITS)
+   (compile_and_run test $NAIVE  $CGAL_POLYLINE_LEDA_TRAITS)
+   (compile_and_run test $WALK   $CGAL_POLYLINE_LEDA_TRAITS)
+   (compile_and_run test $SIMPLE $CGAL_POLYLINE_LEDA_TRAITS)
 
   # run test with segment circle traits
-    (compile_and_run test $WALK  $CGAL_SEGMENT_CIRCLE_TRAITS)
+   (compile_and_run test $WALK  $CGAL_SEGMENT_CIRCLE_TRAITS)
 
 fi
-
-
-
-
-
-
-
-
-
-
-
