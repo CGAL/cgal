@@ -1,4 +1,4 @@
-\// Copyright (c) 2003,2004  INRIA Sophia-Antipolis (France) and
+// Copyright (c) 2003,2004  INRIA Sophia-Antipolis (France) and
 // Notre Dame University (U.S.A.).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
