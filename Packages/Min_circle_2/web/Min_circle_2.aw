@@ -199,11 +199,6 @@ functions \ccc{mc} and \ccc{compute_circle}. The former directly
 realizes the pseudo-code of $\mc(P,B)$, the latter solves the basic
 case $\mc(\emptyset,B)$, see Section~\ref{sec:algo}.
 
-\emph{Workaround:} The GNU compiler (g++ 2.7.2[.x]) does not accept types
-with scope operator as argument type or return type in class template
-member functions. Therefore, all member functions are implemented in
-the class interface.
-
 The class interface looks as follows.
 
 @macro <Min_circle_2 interface> = @begin
@@ -247,8 +242,7 @@ The class interface looks as follows.
       public:
         // Constructors
         // ------------
-        @<Min_circle_2 constructors (2)>
-        @<Min_circle_2 constructors (1)>
+        @<Min_circle_2 constructors>
 
         // Destructor
         // ----------
@@ -283,27 +277,18 @@ section, so we do not comment on it here.
     typedef           const Point *                     Support_point_iterator;
 
     /**************************************************************************
-    WORKAROUND: The GNU compiler (g++ 2.7.2[.x]) does not accept types
-    with scope operator as argument type or return type in class template
-    member functions. Therefore, all member functions are implemented in
-    the class interface.
+    WORKAROUND: Some compilers are unable to match member functions defined
+    outside the class template. Therefore, all member functions are implemented
+    in the class interface.
 
     // creation
-    Min_circle_2( const Point*  first,
-                  const Point*  last,
+    template < class InputIterator >
+    Min_circle_2( InputIterator first,
+                  InputIterator last,
                   bool          randomize = false,
                   Random&       random    = default_random,
                   const Traits& traits    = Traits());
-    Min_circle_2( std::list<Point>::const_iterator first,
-                  std::list<Point>::const_iterator last,
-                  bool          randomize = false,
-                  Random&       random    = default_random,
-                  const Traits& traits    = Traits());
-    Min_circle_2( std::istream_iterator<Point,std::ptrdiff_t> first,
-                  std::istream_iterator<Point,std::ptrdiff_t> last,
-                  bool          randomize = false,
-                  Random&       random    = default_random,
-                  const Traits& traits    = Traits())
+    
     Min_circle_2( const Traits& traits = Traits());
     Min_circle_2( const Point&  p,
                   const Traits& traits = Traits());
@@ -396,15 +381,9 @@ appearing in the pseudo-code for $\mc(P,B)$, see Section~\ref{sec:algo}.
 
 We provide several different constructors, which can be put into two
 groups. The constructors in the first group, i.e. the more important
-ones, build the smallest enclosing circle $mc(P)$ from a point set $P$,
-given by a begin iterator and a past-the-end iterator. Usually, this is
-implemented as a single member template, but in case a compiler does not
-support member templates yet, we provide specialized constructors for
-C~arrays (using pointers as iterators), for STL sequence containers
-\ccc{vector<Point>} and \ccc{list<Point>} and for the STL input stream
-iterator \ccc{istream_iterator<Point>}. Actually, the constructors for a
-C~array and a \ccc{vector<point>} are the same, since the random access
-iterator of \ccc{vector<Point>} is implemented as \ccc{Point*}.
+ones, build the smallest enclosing circle $mc(P)$ from a point set
+$P$, given by a begin iterator and a past-the-end iterator, realized
+as a member template.
 
 All constructors of the first group copy the points into the internal
 list \ccc{points}. If randomization is demanded, the points are copied to
@@ -412,14 +391,16 @@ a vector and shuffled at random, before being copied to \ccc{points}.
 Finally the private member function $mc$ is called to compute
 $mc(P)=mc(P,\emptyset)$.
 
-@macro <Min_circle_2 constructors (1)> = @begin
-#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
-
+@macro <Min_circle_2 constructors> += @begin
     // STL-like constructor (member template)
     template < class InputIterator >
     Min_circle_2( InputIterator first,
                   InputIterator last,
-                  bool          randomize = false,
+                  bool          randomize
+#if !defined(_MSC_VER) || _MSC_VER > 1200
+                                          = false
+#endif
+                                                 ,
                   Random&       random    = default_random,
                   const Traits& traits    = Traits())
         : tco( traits)
@@ -444,102 +425,6 @@ $mc(P)=mc(P,\emptyset)$.
         // compute mc
         mc( points.end(), 0);
     }
-    
-#else
-    
-    // STL-like constructor for C array and vector<Point>
-    Min_circle_2( const Point*  first,
-                  const Point*  last,
-                  bool          randomize = false,
-                  Random&       random    = default_random,
-                  const Traits& traits    = Traits())
-        : tco( traits)
-    {
-        // allocate support points' array
-        support_points = new Point[ 3];
-
-        // range of points not empty?
-        if ( first != last) {
-
-            // store points
-            if ( randomize) {
-
-                // shuffle points at random
-                std::vector<Point> v( first, last);
-                std::random_shuffle( v.begin(), v.end(), random);
-                std::copy( v.begin(), v.end(),
-                           std::back_inserter( points)); }
-            else
-                std::copy( first, last, std::back_inserter( points)); }
-
-        // compute mc
-        mc( points.end(), 0);
-    }
-
-    // STL-like constructor for list<Point>
-    Min_circle_2( std::list<Point>::const_iterator first,
-                  std::list<Point>::const_iterator last,
-                  bool          randomize = false,
-                  Random&       random    = default_random,
-                  const Traits& traits    = Traits())
-        : tco( traits)
-    {
-        // allocate support points' array
-        support_points = new Point[ 3];
-
-        // range of points not empty?
-        if ( first != last) {
-
-            // store points
-            if ( randomize) {
-
-                // shuffle points at random
-                std::list<Point>::size_type n = 0;
-                distance( first, last, n);
-                std::vector<Point> v;
-                v.reserve( n);
-                std::copy( first, last, std::back_inserter( v));
-                std::random_shuffle( v.begin(), v.end(), random);
-                std::copy( v.begin(), v.end(),
-                           std::back_inserter( points)); }
-            else
-                std::copy( first, last, std::back_inserter( points)); }
-
-        // compute mc
-        mc( points.end(), 0);
-    }
-
-    // STL-like constructor for stream iterator istream_iterator<Point>
-    Min_circle_2( istream_iterator<Point,std::ptrdiff_t>  first,
-                  istream_iterator<Point,std::ptrdiff_t>  last,
-                  bool          randomize = false,
-                  Random&       random    = default_random,
-                  const Traits& traits    = Traits())
-        : tco( traits)
-    {
-        // allocate support points' array
-        support_points = new Point[ 3];
-
-        // range of points not empty?
-        if ( first != last) {
-
-            // store points
-            if ( randomize) {
-
-                // shuffle points at random
-                std::vector<Point> v;
-                std::copy( first, last, std::back_inserter( v));
-                std::random_shuffle( v.begin(), v.end(), random);
-                std::copy( v.begin(), v.end(),
-                           std::back_inserter( points)); }
-            else
-                std::copy( first, last, std::back_inserter( points)); }
-
-        // compute mc
-        mc( points.end(), 0);
-    }
-
-#endif // CGAL_CFG_NO_MEMBER_TEMPLATES
 @end
 
 The remaining constructors are actually specializations of the
@@ -553,7 +438,7 @@ more convenient, a constructor is available for each size of $|S|$,
 ranging from 0 to 3. For $|S|=0$, we get the default constructor,
 building $mc(\emptyset)$.
 
-@macro <Min_circle_2 constructors (2)> = @begin
+@macro <Min_circle_2 constructors> += @begin
 
     // default constructor
     inline
@@ -1294,11 +1179,6 @@ First, we declare the class template \ccc{Optimisation_circle_2},
     class Optimisation_circle_2;
 @end
 
-\emph{Workaround:} The GNU compiler (g++ 2.7.2[.x]) does not accept types
-with scope operator as argument type or return type in class template
-member functions. Therefore, all member functions are implemented in
-the class interface.
-
 The class interface looks as follows.
 
 @macro <Optimisation_circle_2 interface> = @begin
@@ -1348,10 +1228,9 @@ section, so we do not comment on it here.
     typedef typename  _R::FT            Distance;
 
     /**************************************************************************
-    WORKAROUND: The GNU compiler (g++ 2.7.2[.x]) does not accept types
-    with scope operator as argument type or return type in class template
-    member functions. Therefore, all member functions are implemented in
-    the class interface.
+    WORKAROUND: Some compilers are unable to match member functions defined
+    outside the class template. Therefore, all member functions are implemented
+    in the class interface.
 
     // creation
     void  set( );
@@ -2554,7 +2433,7 @@ once to ensure code coverage.
         }
 
         verr << endl << "Point* constructor...";
-        Min_circle  mc( random_points, random_points+9);
+        Min_circle  mc( random_points, random_points+9, false);
         {
             Min_circle  mc2( random_points, random_points+9, true);
             bool  is_valid  = mc .is_valid( verbose);
@@ -2568,7 +2447,7 @@ once to ensure code coverage.
 
         verr << endl << "list<Point>::const_iterator constructor...";
         {
-            Min_circle  mc1( mc.points_begin(), mc.points_end());
+            Min_circle  mc1( mc.points_begin(), mc.points_end(), false);
             Min_circle  mc2( mc.points_begin(), mc.points_end(), true);
             bool  is_valid1 = mc1.is_valid( verbose);
             bool  is_valid2 = mc2.is_valid( verbose);
@@ -2602,7 +2481,7 @@ once to ensure code coverage.
         verr << endl << "in-circle predicates...";
         {
             Point              p;
-            Bounded_side  bounded_side;
+            Bounded_side       bounded_side;
             bool               has_on_bounded_side;
             bool               has_on_boundary;
             bool               has_on_unbounded_side;
@@ -2882,7 +2761,7 @@ end of each file.
             points.push_back( Point( x, y)); }
 
         // compute and check min_circle
-        Min_circle  mc2( points.begin(), points.end());
+        Min_circle  mc2( points.begin(), points.end(), false);
         bool  is_valid = mc2.is_valid( verbose);
         assert( is_valid);
 

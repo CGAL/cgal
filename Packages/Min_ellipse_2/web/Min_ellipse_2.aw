@@ -203,11 +203,6 @@ functions \ccc{me} and \ccc{compute_ellipse}. The former directly
 realizes the pseudo-code of $\me(P,B)$, the latter solves the basic
 case $\me(\emptyset,B)$, see Section~\ref{sec:algo}.
 
-\emph{Workaround:} The GNU compiler (g++ 2.7.2[.?]) does not accept types
-with scope operator as argument type or return type in class template
-member functions. Therefore, all member functions are implemented in
-the class interface.
-
 The class interface looks as follows.
 
 @macro <Min_ellipse_2 interface> = @begin
@@ -250,8 +245,7 @@ The class interface looks as follows.
       public:
         // Constructors
         // ------------
-        @<Min_ellipse_2 constructors (2)>
-        @<Min_ellipse_2 constructors (1)>
+        @<Min_ellipse_2 constructors>
 
         // Destructor
         // ----------
@@ -286,27 +280,18 @@ section, so we do not comment on it here.
     typedef           const Point *                     Support_point_iterator;
 
     /**************************************************************************
-    WORKAROUND: The GNU compiler (g++ 2.7.2[.*]) does not accept types
-    with scope operator as argument type or return type in class template
-    member functions. Therefore, all member functions are implemented in
-    the class interface.
+    WORKAROUND: Some compilers are unable to match member functions defined
+    outside the class template. Therefore, all member functions are implemented
+    in the class interface.
 
     // creation
-    Min_ellipse_2( const Point*  first,
-                   const Point*  last,
+    template < class InputIterator >
+    Min_ellipse_2( InputIterator first,
+                   InputIterator last,
                    bool          randomize = false,
                    Random&       random    = default_random,
                    const Traits& traits    = Traits());
-    Min_ellipse_2( std::list<Point>::const_iterator first,
-                   std::list<Point>::const_iterator last,
-                   bool          randomize = false,
-                   Random&       random    = default_random,
-                   const Traits& traits    = Traits());
-    Min_ellipse_2( std::istream_iterator<Point,std::ptrdiff_t> first,
-                   std::istream_iterator<Point,std::ptrdiff_t> last,
-                   bool          randomize = false,
-                   Random&       random    = default_random,
-                   const Traits& traits    = Traits())
+    
     Min_ellipse_2( const Traits& traits = Traits());
     Min_ellipse_2( const Point&  p,
                    const Traits& traits = Traits());
@@ -413,15 +398,9 @@ appearing in the pseudo-code for $\me(P,B)$, see Section~\ref{sec:algo}.
 
 We provide several different constructors, which can be put into two
 groups. The constructors in the first group, i.e. the more important
-ones, build the smallest enclosing ellipse $me(P)$ from a point set $P$,
-given by a begin iterator and a past-the-end iterator. Usually this is
-implemented as a single member template, but in case a compiler does not
-support member templates yet, we provide specialized constructors for
-C~arrays (using pointers as iterators), for STL sequence containers
-\ccc{vector<Point>} and \ccc{list<Point>} and for the STL input stream
-iterator \ccc{istream_iterator<Point>}. Actually, the constructors for a
-C~array and a \ccc{vector<point>} are the same, since the random access
-iterator of \ccc{vector<Point>} is implemented as \ccc{Point*}.
+ones, build the smallest enclosing ellipse $me(P)$ from a point set
+$P$, given by a begin iterator and a past-the-end iterator, realized
+as a member template.
 
 All constructors of the first group copy the points into the internal
 list \ccc{points}. If randomization is demanded, the points are copied
@@ -429,14 +408,16 @@ to a vector and shuffled at random, before being copied to \ccc{points}.
 Finally the private member function $me$ is called to compute
 $me(P)=me(P,\emptyset)$.
 
-@macro <Min_ellipse_2 constructors (1)> = @begin
-#ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
-
+@macro <Min_ellipse_2 constructors> += @begin
     // STL-like constructor (member template)
     template < class InputIterator >
     Min_ellipse_2( InputIterator first,
                    InputIterator last,
-                   bool          randomize = false,
+                   bool          randomize
+#if !defined(_MSC_VER) || _MSC_VER > 1200
+                                           = false
+#endif
+                                                  ,
                    Random&       random    = default_random,
                    const Traits& traits    = Traits())
         : tco( traits)
@@ -461,102 +442,6 @@ $me(P)=me(P,\emptyset)$.
         // compute me
         me( points.end(), 0);
     }
-    
-#else
-
-    // STL-like constructor for C array and vector<Point>
-    Min_ellipse_2( const Point*  first,
-                   const Point*  last,
-                   bool          randomize = false,
-                   Random&       random    = default_random,
-                   const Traits& traits    = Traits())
-        : tco( traits)
-    {
-        // allocate support points' array
-        support_points = new Point[ 5];
-
-        // range of points not empty?
-        if ( first != last) {
-
-            // store points
-            if ( randomize) {
-
-                // shuffle points at random
-                std::vector<Point> v( first, last);
-                std::random_shuffle( v.begin(), v.end(), random);
-                std::copy( v.begin(), v.end(),
-                           std::back_inserter( points)); }
-            else
-                std::copy( first, last, std::back_inserter( points)); }
-
-        // compute me
-        me( points.end(), 0);
-    }
-
-    // STL-like constructor for list<Point>
-    Min_ellipse_2( std::list<Point>::const_iterator first,
-                   std::list<Point>::const_iterator last,
-                   bool          randomize = false,
-                   Random&       random    = default_random,
-                   const Traits& traits    = Traits())
-        : tco( traits)
-    {
-        // allocate support points' array
-        support_points = new Point[ 5];
-
-        // range of points not empty?
-        if ( first != last) {
-
-            // store points
-            if ( randomize) {
-
-                // shuffle points at random
-                std::list<Point>::size_type n = 0;
-                distance( first, last, n);
-                std::vector<Point> v;
-                v.reserve( n);
-                std::copy( first, last, std::back_inserter( v));
-                std::random_shuffle( v.begin(), v.end(), random);
-                std::copy( v.begin(), v.end(),
-                           std::back_inserter( points)); }
-            else
-                std::copy( first, last, std::back_inserter( points)); }
-
-        // compute me
-        me( points.end(), 0);
-    }
-
-    // STL-like constructor for stream iterator istream_iterator<Point>
-    Min_ellipse_2( std::istream_iterator<Point,std::ptrdiff_t>  first,
-                   std::istream_iterator<Point,std::ptrdiff_t>  last,
-                   bool          randomize = false,
-                   Random&       random    = default_random,
-                   const Traits& traits    = Traits())
-        : tco( traits)
-    {
-        // allocate support points' array
-        support_points = new Point[ 5];
-
-        // range of points not empty?
-        if ( first != last) {
-
-            // store points
-            if ( randomize) {
-
-                // shuffle points at random
-                std::vector<Point> v;
-                std::copy( first, last, std::back_inserter( v));
-                std::random_shuffle( v.begin(), v.end(), random);
-                std::copy( v.begin(), v.end(),
-                           std::back_inserter( points)); }
-            else
-                std::copy( first, last, std::back_inserter( points)); }
-
-        // compute me
-        me( points.end(), 0);
-    }
-
-#endif // CGAL_CFG_NO_MEMBER_TEMPLATES
 @end
 
 The remaining constructors are actually specializations of the previous
@@ -569,7 +454,7 @@ $S$ in constant time. To make this reconstruction more convenient, a
 constructor is available for each size of $|S|$, ranging from 0 to 5.
 For $|S|=0$, we get the default constructor, building $me(\emptyset)$.
 
-@macro <Min_ellipse_2 constructors (2)> = @begin
+@macro <Min_ellipse_2 constructors> += @begin
 
     // default constructor
     inline
@@ -1248,11 +1133,6 @@ First, we declare the class template \ccc{Optimisation_ellipse_2},
     class Optimisation_ellipse_2;
 @end
 
-\emph{Workaround:} The GNU compiler (g++ 2.7.2[.?]) does not accept types
-with scope operator as argument type or return type in class template
-member functions. Therefore, all member functions are implemented in
-the class interface.
-
 The class interface looks as follows.
 
 @macro <Optimisation_ellipse_2 interface> = @begin
@@ -1312,10 +1192,9 @@ section, so we do not comment on it here.
     typedef           CGAL::Conic_2<R>  Conic;
 
     /**************************************************************************
-    WORKAROUND: The GNU compiler (g++ 2.7.2[.*]) does not accept types
-    with scope operator as argument type or return type in class template
-    member functions. Therefore, all member functions are implemented in
-    the class interface.
+    WORKAROUND: Some compilers are unable to match member functions defined
+    outside the class template. Therefore, all member functions are implemented
+    in the class interface.
 
     // creation
     void  set( );
@@ -1616,7 +1495,6 @@ one.
 \subsubsection{I/O}
 
 @macro <Optimisation_ellipse_2 I/O operators declaration> = @begin
-    /*
     template < class _R >
     std::ostream&
     operator << ( std::ostream&, const CGAL::Optimisation_ellipse_2<_R>&);
@@ -1624,12 +1502,6 @@ one.
     template < class _R >
     std::istream&
     operator >> ( std::istream&, CGAL::Optimisation_ellipse_2<_R>&);
-
-    template < class _R >
-    CGAL::Window_stream&
-    operator << ( CGAL::Window_stream&,
-                  const CGAL::Optimisation_ellipse_2<_R>&);
-    */
 @end
 
 @macro <Optimisation_ellipse_2 I/O operators> = @begin
@@ -2773,7 +2645,7 @@ once to ensure code coverage.
         }
 
         verr << endl << "Point* constructor...";
-        Min_ellipse  me( random_points, random_points+9);
+        Min_ellipse  me( random_points, random_points+9, false);
         {
             Min_ellipse  me2( random_points, random_points+9, true);
             bool  is_valid  = me .is_valid( verbose);
@@ -2787,7 +2659,7 @@ once to ensure code coverage.
 
         verr << endl << "list<Point>::const_iterator constructor...";
         {
-            Min_ellipse  me1( me.points_begin(), me.points_end());
+            Min_ellipse  me1( me.points_begin(), me.points_end(), false);
             Min_ellipse  me2( me.points_begin(), me.points_end(), true);
             bool  is_valid1 = me1.is_valid( verbose);
             bool  is_valid2 = me2.is_valid( verbose);
@@ -3101,7 +2973,7 @@ end of each file.
             points.push_back( Point( x, y)); }
 
         // compute and check min_ellipse
-        Min_ellipse  me2( points.begin(), points.end());
+        Min_ellipse  me2( points.begin(), points.end(), false);
         bool  is_valid = me2.is_valid( verbose);
         assert( is_valid);
 
@@ -3247,19 +3119,15 @@ end of each file.
     // =================
     @<Optimisation_ellipse_2 declaration>
 
-    @<namespace end>("CGAL")
-    
+    // Class interface
+    // ===============
+    @<Optimisation_ellipse_2 interface>
+
     // Function declarations
     // =====================
     // I/O
     // ---
     @<Optimisation_ellipse_2 I/O operators declaration>
-
-    @<namespace begin>("CGAL")
-    
-    // Class interface
-    // ===============
-    @<Optimisation_ellipse_2 interface>
 
     @<namespace end>("CGAL")
     
