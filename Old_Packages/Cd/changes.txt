@@ -1,3 +1,6 @@
+Ver 1.8 (12 April 2001)
+- Fix off by one error in Triangle::vertex().
+
 Ver 1.7 (12 February 2001)
 - Fix thinko.
 

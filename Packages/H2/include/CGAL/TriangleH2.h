@@ -132,7 +132,11 @@ template <class R>
 CGAL_KERNEL_INLINE
 PointH2<R>
 TriangleH2<R>::vertex(int i) const
-{ return Ptr()->A[ i % 3 ]; }
+{
+  if (i>2) i = i%3;
+  else if (i<0) i = (i%3) + 3;
+  return Ptr()->A[i];
+}
 
 template <class R>
 inline

@@ -95,7 +95,7 @@ PointH3<R>
 TriangleH3<R>::vertex(int i) const
 {
   if (i<0) i=(i%3)+3;
-  else if (i>3) i=i%3;
+  else if (i>2) i=i%3;
   return (i==0) ? Ptr()->e0 :
          (i==1) ? Ptr()->e1 :
                   Ptr()->e2;

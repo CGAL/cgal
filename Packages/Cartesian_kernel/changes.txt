@@ -1,3 +1,6 @@
+Version 6.12 (12 April 2001)
+- Fix off by one error in Triangle::vertex().
+
 Version 6.11 (20 March 2001)
 - Remove Cartesian/circle_constructions_2.h.
 - Add squared_radius().

@@ -1,3 +1,6 @@
+2.25   (12 Apr 2001)
+- Fix off by one error in Triangle::vertex().
+
 2.24   (20 Mar 2001)
 - Added squared_radius().
 

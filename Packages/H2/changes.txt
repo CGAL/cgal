@@ -1,3 +1,6 @@
+2.26   (12  Apr 2001)
+- Fix off by one error in Triangle::vertex().
+
 2.25   (9  Apr 2001)
 - #include<CGAL/Homogeneous.h> and #include<CGAL/Arithmetic_filter.h> were not
   compatible together.

@@ -113,7 +113,7 @@ typename TriangleC3<R CGAL_CTAG>::Point_3
 TriangleC3<R CGAL_CTAG>::vertex(int i) const
 {
   if (i<0) i=(i%3)+3;
-  else if (i>3) i=i%3;
+  else if (i>2) i=i%3;
   return (i==0) ? Ptr()->e0 :
          (i==1) ? Ptr()->e1 :
                   Ptr()->e2;
