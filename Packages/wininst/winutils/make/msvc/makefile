@@ -25,8 +25,7 @@ CGAL_LIB_DIR = $(CGAL_ROOT)\lib
 #---------------------------------------------------------------------#
 
 OBJ_EXT = .obj
-EXE_EXT = .exe
-#EXE_EXT =
+EXE_EXT =
 LIB_SUFFIX = .lib
 
 #---------------------------------------------------------------------#
@@ -52,6 +51,7 @@ LIB_OPT =
 	if exist $*.exe $(RM_FORCE) $*.exe
 	if exist $*.obj $(RM_FORCE) $*.obj
 	if exist $*.pdb $(RM_FORCE) $*.pdb
+	if exist vc60.pdb $(RM_FORCE) vc60.pdb
 	if exist $*.ilk $(RM_FORCE) $*.ilk
 
 
@@ -116,22 +116,22 @@ CGAL_LIBPATH =
 
 CGAL_LD_LIBPATH = \
 	$(CUSTOM_LIBPATH) \
-	-LIBPATH:$(CGAL_LIB_DIR)\$(CGAL_OS_COMPILER) $(LE_LIB_DIR) -LIBPATH:$(GMP_LIB_DIR)
+	-LIBPATH:$(CGAL_LIB_DIR)\$(CGAL_OS_COMPILER) $(LE_LIB_DIR) -LIBPATH:$(GMP_LIB_DIR) $(CGALWIN_LIB_DIR_PATH)
 
 CGAL_LDFLAGS = $(CUSTOM1_LDFLAGS) \
 	-link $(CGAL_LD_LIBPATH) -nologo \
 	$(CUSTOM_LDFLAGS) \
-	CGAL.lib  $(LE_LIBS_LIST) CGALWin.lib  gmp.lib  
+	CGAL.lib  $(LE_LIBS_LIST) ws2_32.lib user32.lib gdi32.lib comdlg32.lib shell32.lib advapi32.lib gmp.lib
 
 CGAL_WINDOW_LIBPATH = 
 
 CGAL_LD_WINDOW_LIBPATH = \
-	-LIBPATH:$(CGAL_LIB_DIR)\$(CGAL_OS_COMPILER) $(LE_LIB_DIR) -LIBPATH:$(GMP_LIB_DIR)
+	-LIBPATH:$(CGAL_LIB_DIR)\$(CGAL_OS_COMPILER) $(LE_LIB_DIR) -LIBPATH:$(GMP_LIB_DIR) $(CGALWIN_LIB_DIR_PATH)
 
 CGAL_WINDOW_LDFLAGS = $(CUSTOM1_LDFLAGS) \
 	-link $(CGAL_LD_WINDOW_LIBPATH) -nologo \
 	$(CUSTOM_LDFLAGS) \
-	CGAL.lib  CGALWin.lib ws2_32.lib user32.lib gdi32.lib comdlg32.lib shell32.lib advapi32.lib gmp.lib  
+	CGAL.lib $(LE_LIBS_LIST) ws2_32.lib user32.lib gdi32.lib comdlg32.lib shell32.lib advapi32.lib gmp.lib  
 
 CGAL_GEOWIN_LDFLAGS = \
 	$(CGAL_WINDOW_LDFLAGS)

@@ -1,9 +1,6 @@
 # This file contains CGAL makefile settings for the following platform:
-# OS:		i686_CYGWINNT-4.0-20.1
-# COMPILER:	Borland 5.4
-# LEDA:		supported
-# GMP:		supported
-# CLN:		not supported
+# OS:		Win32
+# COMPILER:	Borland 5.[4,5]
 # 
 # Note - to run with MSVC make, 
 # replace "MAKE = make -N" by "MAKE = nmake"
@@ -36,7 +33,6 @@ CGAL_LIB_DIR = $(CGAL_ROOT)\lib
 #---------------------------------------------------------------------#
 
 OBJ_EXT = .obj
-#EXE_EXT = .exe
 EXE_EXT =
 LIB_SUFFIX = .lib
 
@@ -100,6 +96,8 @@ CGAL_CXXFLAGS = \
 	$(LE_CXXFLAGS) \
 	-I$(CGAL_INCL_DIR)
 
+CGAL_WINLIB_CXXFLAGS = \
+	$(CGAL_LIB_CXXFLAGS) 
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -123,7 +121,7 @@ CGAL_LD_LIBPATH =
 
 CGAL_LIBPATH = $(CUSTOM1_LDFLAGS) \
 	$(CUSTOM_LIBPATH)\
-	-L$(CGAL_LIB_DIR)\$(CGAL_OS_COMPILER) $(LE_LIB_DIR) -L$(GMP_LIB_DIR)
+	-L$(CGAL_LIB_DIR)\$(CGAL_OS_COMPILER) $(LE_LIB_DIR) -L$(GMP_LIB_DIR) $(CGALWIN_LIB_DIR_PATH)
 
 CGAL_LDFLAGS = \
 	$(CGAL_LD_LIBPATH)  \
@@ -131,17 +129,15 @@ CGAL_LDFLAGS = \
 	CGAL.lib  $(LE_LIBS_LIST)  gmp.lib  
 
 CGAL_WINDOW_LIBPATH = $(CUSTOM1_LDFLAGS) \
-	-L$(CGAL_LIB_DIR)\$(CGAL_OS_COMPILER) $(LE_LIB_DIR) -L$(GMP_LIB_DIR)
+	-L$(CGAL_LIB_DIR)\$(CGAL_OS_COMPILER) $(LE_LIB_DIR) -L$(GMP_LIB_DIR) $(CGALWIN_LIB_DIR_PATH)
 
 CGAL_WINDOW_LDFLAGS = \
 	$(CGAL_WINDOW_LIBPATH)  \
 	$(CUSTOM_LDFLAGS) \
-	CGAL.lib  libW.lib libP.lib libG.lib libL.lib gmp.lib  
+	CGAL.lib $(LE_LIBS_LIST) gmp.lib 
 
 CGAL_GEOWIN_LDFLAGS = \
-	$(CGAL_WINDOW_LIBPATH)  \
-	$(CUSTOM_LDFLAGS) \
-	CGAL.lib  libGeoW.lib libD3.lib libW.lib libP.lib libG.lib libL.lib gmp.lib
+	$(CGAL_WINDOW_LDFLAGS)
 
 #---------------------------------------------------------------------#
 #                    commands and flags for creating libraries
