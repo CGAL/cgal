@@ -17,9 +17,6 @@
 - remove the STORE_INPUT_SITES macro; use the input point container as
   the container for the point handles (this means that the input point
   container must be a list)
-- the insert_point_on_segment method in the Segment_Voronoi_diagram_2
-  class has a bug: it does not handle the case where ff1 or ff2 are
-  infinite faces.
 - make sure all types in the doc correspond to real types in the code
 - add swap method in hierarchy; verify that the swap method in the segment
   Voronoi diagram class works correctly (does it swap the point container
