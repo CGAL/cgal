@@ -12,7 +12,7 @@
 // release_date  :
 //
 // file          : include/CGAL/Interval_arithmetic.h
-// revision      : 1.3
+// revision      : 1.4
 // revision_date : 6 February 1998
 // author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //
@@ -268,36 +268,36 @@ public:
   inline CGAL_Interval_nt operator+(const CGAL_Interval_nt& d) const
   {
     CGAL_Interval_nt tmp;
-    _FPU_set_rounding_to_infinity();
+    CGAL_FPU_set_rounding_to_infinity();
     tmp = ((CGAL_Interval_nt_advanced) *this) + (CGAL_Interval_nt_advanced) d;
-    _FPU_set_rounding_to_nearest();
+    CGAL_FPU_set_rounding_to_nearest();
     return tmp;
   }
 
   inline CGAL_Interval_nt operator-(const CGAL_Interval_nt& d) const
   {
     CGAL_Interval_nt tmp;
-    _FPU_set_rounding_to_infinity();
+    CGAL_FPU_set_rounding_to_infinity();
     tmp = ((CGAL_Interval_nt_advanced) *this) - (CGAL_Interval_nt_advanced) d;
-    _FPU_set_rounding_to_nearest();
+    CGAL_FPU_set_rounding_to_nearest();
     return tmp;
   }
 
   inline CGAL_Interval_nt operator*(const CGAL_Interval_nt& d) const
   {
     CGAL_Interval_nt tmp;
-    _FPU_set_rounding_to_infinity();
+    CGAL_FPU_set_rounding_to_infinity();
     tmp = ((CGAL_Interval_nt_advanced) *this) * (CGAL_Interval_nt_advanced) d;
-    _FPU_set_rounding_to_nearest();
+    CGAL_FPU_set_rounding_to_nearest();
     return tmp;
   }
 
   inline CGAL_Interval_nt operator/(const CGAL_Interval_nt& d) const
   {
     CGAL_Interval_nt tmp;
-    _FPU_set_rounding_to_infinity();
+    CGAL_FPU_set_rounding_to_infinity();
     tmp = ((CGAL_Interval_nt_advanced) *this) / (CGAL_Interval_nt_advanced) d;
-    _FPU_set_rounding_to_nearest();
+    CGAL_FPU_set_rounding_to_nearest();
     return tmp;
   }
 };
@@ -306,9 +306,9 @@ public:
 inline CGAL_Interval_nt_advanced sqrt(const CGAL_Interval_nt_advanced& d)
 {
   CGAL_Interval_nt_advanced tmp;
-  _FPU_set_rounding_to_minus_infinity();
+  CGAL_FPU_set_rounding_to_minus_infinity();
   tmp.inf = -sqrt(-d.inf);
-  _FPU_set_rounding_to_infinity();
+  CGAL_FPU_set_rounding_to_infinity();
   tmp.sup = sqrt(d.sup);
   return tmp;
 }
@@ -316,7 +316,7 @@ inline CGAL_Interval_nt_advanced sqrt(const CGAL_Interval_nt_advanced& d)
 inline CGAL_Interval_nt sqrt(const CGAL_Interval_nt& d)
 {
   CGAL_Interval_nt tmp = sqrt( (CGAL_Interval_nt_advanced) d);
-  _FPU_set_rounding_to_nearest();
+  CGAL_FPU_set_rounding_to_nearest();
   return tmp;
 }
 

@@ -1,26 +1,3 @@
-%\documentclass{book}
-%\usepackage{cprog}
-%\usepackage{cc_manual}
-%\usepackage{amssymb}
-
-%\pagestyle{empty}
-%\textwidth 15.6cm 
-%\textheight 23 cm
-%\topmargin -14mm       
-%\evensidemargin 3mm 
-%\oddsidemargin 3mm
-%\headsep 1cm
-
-%\newcommand{\Section}[1]{Section~{\protect\ref{#1}}}
-%\newcommand{\Chapter}[1]{Chapter~{\protect\ref{#1}}}
-%\newcommand{\new}[1]{\marginpar{\sf #1}}
-
-%\parindent0em
-%\setlength{\parskip}{1ex minus 0.9ex}
-%\sloppy
-
-%\begin{document}
-
 \chapter{Interval Arithmetic}
 \ccChapterAuthor{Sylvain Pion}
 
@@ -29,9 +6,9 @@
 This chapter describes quickly what interval arithmetic is, its implementation
 in \cgal\ and its possible use by geometric programs.
 
-The main reason for having interval arithmetic in \cgal\ is its integration into
-the GPC (Geometric Predicate Compiler), but we also provide a class so that the
-users can use it separately if they find any use for it.
+The main reason for having interval arithmetic in \cgal\ is its integration
+into a geometric predicate pre-compiler, but we also provide a number type so
+that the users can use it separately if they find any use for it.
 
 The purpose of interval arithmetic is here to provide an efficient way to
 control the errors made by floating point computations.
@@ -127,14 +104,14 @@ The basic idea is to use the directed rounding modes specified by the {\it
 IEEE 754} standard, which are implemented by almost all processors nowadays.
 
 It states that you have the possibility, concerning the basic floating point
-operations ($+,-,*,/,\sqrt{}$) to specify the rounding of each operation
+operations ($+,-,*,/,\sqrt{}$) to specify the rounding mode of each operation
 instead of using the default which is usually to round to the nearest.
 
-This feature allows us to compute easily on intervals.  For example, to add the
-two intervals [a.i;a.s] and [b.i;b.s], compute $c.i=a.i+b.i$ rounded towards
-minus infinite, and $c.s=a.s+b.s$ rounded towards plus infinite, and the result
-is the interval [c.i;c.s].  It is easy to see that this can be done nearly the
-same way for the other operations.
+This feature allows us to compute easily on intervals.  For example, to add
+the two intervals [a.i;a.s] and [b.i;b.s], compute $c.i=a.i+b.i$ rounded
+towards minus infinite, and $c.s=a.s+b.s$ rounded towards plus infinite, and
+the result is the interval [c.i;c.s].  This method can be extended easily to
+the other operations.
 
 \smallskip
 
@@ -151,10 +128,6 @@ CGAL\_Interval\_nt\_advanced} assume that the rounding mode is set to positive
 infinite, and everything work with this correctly set.  The class {\it
 CGAL\_Interval\_nt} takes care of this, but is a bit slower.
 
-Assertions are going to be implemented to help you using the fastest class
-with less problems.
-
-
 \smallskip
 
 Note also that NaNs are not handled, so be careful with that
@@ -163,19 +136,13 @@ Note also that NaNs are not handled, so be careful with that
 
 \section{FPU rounding modes}
 
-We provide C functions to change the rounding mode, these are~:
+We provide functions (in C or assembly) to change the rounding mode, these are~:
 \begin{itemize}
-\item \_FPU\_set\_rounding\_to\_zero()
-\item \_FPU\_set\_rounding\_to\_nearest()
-\item \_FPU\_set\_rounding\_to\_infinity()
-\item \_FPU\_set\_rounding\_to\_minus\_infinity()
+\item CGAL\_FPU\_set\_rounding\_to\_zero()
+\item CGAL\_FPU\_set\_rounding\_to\_nearest()
+\item CGAL\_FPU\_set\_rounding\_to\_infinity()
+\item CGAL\_FPU\_set\_rounding\_to\_minus\_infinity()
 \end{itemize}
-
-They are assembly based whenever possible.
-
-Those functions also alter the FPU exceptions flags, so we think this should
-be common for all platforms, and initialized at the beginning of each \cgal\
-program (via the initialization of a static object in the library, for example).
 
 \section{Platform support state}
 
@@ -186,8 +153,7 @@ supported platforms~:
 \begin{itemize}
 \item Sparc
 \begin{itemize}
-\item g++ uses the assembly versions, independant of the OS (Solaris, SunOS,
-      Linux).
+\item g++ uses the assembly versions, independant of the OS.
 \item CC uses the C library functions to change the rounding modes.  Works
       under Solaris (SunOS doesn't use the same files, sorry).
 \end{itemize}
@@ -214,9 +180,9 @@ supported platforms~:
 \section{Example}
 
 I give here a simple example about how to make safe and fast predicates.
-This kind of problem is going to be resolved automatically by the GPC,
-but before it is available, you can do it by hand.
-Let's consider an easy predicate~: {\it which\_side}.
+This kind of problem is going to be resolved automatically by a predicate
+compiler, but before it is available, you can do it by hand.
+Let's consider the {\it which\_side} predicate~:
 
 \begin{verbatim}
 int which_side(Point<double> P, Point<double> Q, Point<double> R)
@@ -267,7 +233,4 @@ The files involved are~:
 
 \bigskip
 
-Note that symbols in \_FPU.h are all prefixed by {\it \_FPU\_}.  Maybe this
-should be corrected to avoid name clashes.
-
-%\end{document} 
+Note that symbols in \_FPU.h are all prefixed by {\it CGAL\_FPU\_}.

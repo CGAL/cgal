@@ -12,7 +12,7 @@
 // release_date  :
 //
 // file          : include/CGAL/_FPU.h
-// revision      : 1.3
+// revision      : 1.4
 // revision_date : 6 February 1998
 // author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //
@@ -20,8 +20,8 @@
 //
 // ============================================================================
 
-#ifndef _FPU_H
-#define _FPU_H
+#ifndef CGAL_FPU_H
+#define CGAL_FPU_H
 
 /*
  * Specify some *very* platform dependant functions, regarding the FPU
@@ -77,26 +77,26 @@
 #ifdef __i386
 #define SETFPCW(CW) asm volatile ("fldcw %0" : : "m" (*&CW))
 /* x86:                       rounding   | precision  | default mask */
-static unsigned int _FPU_cw_zero = 0xC00      | 0x200      | 0x107f; 
-static unsigned int _FPU_cw_near = 0x0        | 0x200      | 0x107f;
-static unsigned int _FPU_cw_up   = 0x800      | 0x200      | 0x107f; 
-static unsigned int _FPU_cw_down = 0x400      | 0x200      | 0x107f;
+static unsigned int CGAL_FPU_cw_zero = 0xC00      | 0x200      | 0x107f; 
+static unsigned int CGAL_FPU_cw_near = 0x0        | 0x200      | 0x107f;
+static unsigned int CGAL_FPU_cw_up   = 0x800      | 0x200      | 0x107f; 
+static unsigned int CGAL_FPU_cw_down = 0x400      | 0x200      | 0x107f;
 #endif
 #ifdef __sparc
 #define SETFPCW(CW) asm volatile ("ld %0,%%fsr" : "=m" (*&CW))
 /* Sparc:                     rounding   | precision  | default mask */
-static unsigned int _FPU_cw_zero = 0x40000000 | 0x20000000 | 0x1f;
-static unsigned int _FPU_cw_near = 0x0        | 0x20000000 | 0x1f;
-static unsigned int _FPU_cw_up   = 0x80000000 | 0x20000000 | 0x1f;
-static unsigned int _FPU_cw_down = 0xc0000000 | 0x20000000 | 0x1f;
+static unsigned int CGAL_FPU_cw_zero = 0x40000000 | 0x20000000 | 0x1f;
+static unsigned int CGAL_FPU_cw_near = 0x0        | 0x20000000 | 0x1f;
+static unsigned int CGAL_FPU_cw_up   = 0x80000000 | 0x20000000 | 0x1f;
+static unsigned int CGAL_FPU_cw_down = 0xc0000000 | 0x20000000 | 0x1f;
 #endif
 #ifdef __alpha
 #define SETFPCW(CW) asm volatile ("mt_fpcr %0; excb" : : "f"(CW))
 /* Alpha:                      rounding */
-static unsigned long _FPU_cw_zero = 0x0000000000000000UL;
-static unsigned long _FPU_cw_near = 0x0800000000000000UL;
-static unsigned long _FPU_cw_up   = 0x0c00000000000000UL;
-static unsigned long _FPU_cw_down = 0x0400000000000000UL;
+static unsigned long CGAL_FPU_cw_zero = 0x0000000000000000UL;
+static unsigned long CGAL_FPU_cw_near = 0x0800000000000000UL;
+static unsigned long CGAL_FPU_cw_up   = 0x0c00000000000000UL;
+static unsigned long CGAL_FPU_cw_down = 0x0400000000000000UL;
 #endif
 #endif
 
@@ -104,18 +104,18 @@ static unsigned long _FPU_cw_down = 0x0400000000000000UL;
 #define inline /* */
 #endif
 
-static inline void _FPU_set_rounding_to_zero (void);
-static inline void _FPU_set_rounding_to_nearest (void);
-static inline void _FPU_set_rounding_to_infinity (void);
-static inline void _FPU_set_rounding_to_minus_infinity (void);
+static inline void CGAL_FPU_set_rounding_to_zero (void);
+static inline void CGAL_FPU_set_rounding_to_nearest (void);
+static inline void CGAL_FPU_set_rounding_to_infinity (void);
+static inline void CGAL_FPU_set_rounding_to_minus_infinity (void);
 
 
 /* Code of those inline functions: */
 
-static inline void _FPU_set_rounding_to_zero (void)
+static inline void CGAL_FPU_set_rounding_to_zero (void)
 {
 #ifdef __USE_ASSEMBLY
-	SETFPCW(_FPU_cw_zero);
+	SETFPCW(CGAL_FPU_cw_zero);
 #else
 #ifdef __linux
 #ifdef __i386 
@@ -147,10 +147,10 @@ static inline void _FPU_set_rounding_to_zero (void)
 #endif
 }
 
-static inline void _FPU_set_rounding_to_nearest (void)
+static inline void CGAL_FPU_set_rounding_to_nearest (void)
 {
 #ifdef __USE_ASSEMBLY
-	SETFPCW(_FPU_cw_near);
+	SETFPCW(CGAL_FPU_cw_near);
 #else
 #ifdef __osf
 	write_rnd(FP_RND_RN);
@@ -182,10 +182,10 @@ static inline void _FPU_set_rounding_to_nearest (void)
 #endif
 }
 
-static inline void _FPU_set_rounding_to_infinity (void)
+static inline void CGAL_FPU_set_rounding_to_infinity (void)
 {
 #ifdef __USE_ASSEMBLY
-	SETFPCW(_FPU_cw_up);
+	SETFPCW(CGAL_FPU_cw_up);
 #else
 #ifdef __osf
 	write_rnd(FP_RND_RP);
@@ -217,10 +217,10 @@ static inline void _FPU_set_rounding_to_infinity (void)
 #endif
 }
 
-static inline void _FPU_set_rounding_to_minus_infinity (void)
+static inline void CGAL_FPU_set_rounding_to_minus_infinity (void)
 {
 #ifdef __USE_ASSEMBLY
-	SETFPCW(_FPU_cw_down);
+	SETFPCW(CGAL_FPU_cw_down);
 #else
 #ifdef __osf
 	write_rnd(FP_RND_RM);
@@ -252,4 +252,4 @@ static inline void _FPU_set_rounding_to_minus_infinity (void)
 #endif
 }
 
-#endif /* _FPU_H */
+#endif /* CGAL_FPU_H */

@@ -15,7 +15,7 @@ int main()
   IA x_i, y_i, x_ip1, y_ip1, length;
   IA a(0.,1.);
 
-  _FPU_set_rounding_to_infinity();
+  CGAL_FPU_set_rounding_to_infinity();
 
   x_i = 1;
   y_i = 0;
@@ -33,7 +33,7 @@ int main()
       break;
   };
 
-  _FPU_set_rounding_to_nearest();
+  CGAL_FPU_set_rounding_to_nearest();
 
   if (i != 396)
     return -1;
