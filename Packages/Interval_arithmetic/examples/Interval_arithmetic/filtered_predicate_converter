@@ -35,6 +35,13 @@ while (<>)
     $after_template=0;
     $in_decl=0;
     $in_def=1;
+    if (($result_type ne "CGAL_Sign") &&
+        ($result_type ne "bool") &&
+        ($result_type ne "CGAL_Comparison_result") &&
+        ($result_type ne "CGAL_Orientation") &&
+        ($result_type ne "CGAL_Oriented_side") &&
+        ($result_type ne "CGAL_Bounded_side"))
+      {print STDERR "Warning: $result_type is unknown\n"; }
     print
 "{ // This is the default filter (specialization).\n
   $result_type result;
