@@ -34,6 +34,7 @@ template<class Gt_base>
 class Apollonius_graph_gt_wrapper : public Gt_base
 {
 public:
+  struct Segment_2  {};
   struct Triangle_2 {};
 
   Apollonius_graph_gt_wrapper() {}

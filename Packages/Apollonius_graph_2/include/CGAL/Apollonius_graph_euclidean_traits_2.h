@@ -59,6 +59,9 @@
 
 #include <CGAL/Apollonius_graph_kernel_wrapper_2.h>
 
+#define KEEP_MOST_TYPES_IN_TRAITS 1
+
+
 CGAL_BEGIN_NAMESPACE
 
 //-----------------------------------------------------------------------
@@ -80,22 +83,26 @@ public:
   typedef MTag                                          Method_tag;
   typedef typename Kernel::Point_2                      Point_2;
   typedef typename Kernel::Site_2                       Site_2;
-  //
+
   typedef typename Kernel::Line_2                       Line_2;
+#if KEEP_MOST_TYPES_IN_TRAITS
   typedef typename Kernel::Ray_2                        Ray_2;
   typedef typename Kernel::Segment_2                    Segment_2;
+#endif
   typedef typename Kernel::Object_2                     Object_2;
 
 private:
   typedef typename Site_2::FT                           Weight;
 
 public:
+#if KEEP_MOST_TYPES_IN_TRAITS
   typedef CGAL::Parabola_segment_2<Point_2,Weight,Line_2>
   /*                                                 */ Parabola_segment_2;
   typedef CGAL::Hyperbola_2<Point_2,Weight>             Hyperbola_2;
   typedef CGAL::Hyperbola_ray_2<Point_2,Weight>         Hyperbola_ray_2;
   typedef CGAL::Hyperbola_segment_2<Point_2,Weight>
   /*                                                 */ Hyperbola_segment_2;
+#endif
 
 public:
   // ASSIGNMENT
@@ -107,9 +114,10 @@ public:
   // vertex and weighted point
   typedef CGAL::Construct_Apollonius_vertex_2<Kernel>
   /*                                      */ Construct_Apollonius_vertex_2;
-  typedef CGAL::Construct_Apollonius_weighted_point_2<Kernel>
-  /*                              */ Construct_Apollonius_weighted_point_2;
+  typedef CGAL::Construct_Apollonius_site_2<Kernel>
+  /*                                        */ Construct_Apollonius_site_2;
 
+#if KEEP_MOST_TYPES_IN_TRAITS
   // bisectors and subsets
   typedef CGAL::Construct_Apollonius_bisector_2<Kernel>
   /*                                    */ Construct_Apollonius_bisector_2;
@@ -123,7 +131,7 @@ public:
   /*                                   */ Construct_Apollonius_primal_ray_2;
   typedef CGAL::Construct_Apollonius_primal_segment_2<Kernel>
   /*                               */ Construct_Apollonius_primal_segment_2;
-
+#endif
 
   // PREDICATES
   //-----------
@@ -160,11 +168,12 @@ public:
     return Construct_Apollonius_vertex_2();
   }
 
-  inline Construct_Apollonius_weighted_point_2
-  construct_Apollonius_weighted_point_2_object() const {
-    return Construct_Apollonius_weighted_point_2();
+  inline Construct_Apollonius_site_2
+  construct_Apollonius_site_2_object() const {
+    return Construct_Apollonius_site_2();
   }
 
+#if KEEP_MOST_TYPES_IN_TRAITS
   inline Construct_Apollonius_bisector_2
   construct_Apollonius_bisector_2_object() const {
     return Construct_Apollonius_bisector_2();
@@ -189,6 +198,7 @@ public:
   construct_Apollonius_primal_segment_2_object() const { 
     return Construct_Apollonius_primal_segment_2();
   }
+#endif
 
   // PREDICATES
   //-----------

@@ -179,6 +179,10 @@ ad_left_bitangent_lineC2(const FT &x1, const FT &y1, const We &w1,
 }
 
 
+
+
+
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_APOLLONIUS_GRAPH_CONSTRUCTIONS_FTC2_H

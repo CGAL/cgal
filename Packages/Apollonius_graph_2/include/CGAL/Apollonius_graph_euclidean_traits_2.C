@@ -185,7 +185,7 @@ ad_left_bitangent_line_2(const typename K::Site_2& p,
 
 
 template < class K >
-class Construct_Apollonius_weighted_point_2
+class Construct_Apollonius_site_2
 {
 public:
   typedef typename K::Line_2             Line_2;
@@ -381,8 +381,8 @@ public:
   typedef typename K::RT                             RT;
   typedef typename K::Line_2                         Line_2;
   typedef typename K::Ray_2                          Ray_2;
-  typedef typename K::Site_2              Site_2;
-  typedef CGAL::Construct_Apollonius_weighted_point_2<K> Apollonius_circle_2;
+  typedef typename K::Site_2                         Site_2;
+  typedef CGAL::Construct_Apollonius_site_2<K>       Apollonius_circle_2;
 
   inline Ray_2 operator() (const Site_2& p,
 			   const Site_2& r,
@@ -415,13 +415,13 @@ public:
   typedef typename K::RT                              Weight;
   typedef typename K::Line_2                          Line_2;
   typedef typename K::Segment_2                       Segment_2;
-  typedef typename K::Site_2               Site_2;
+  typedef typename K::Site_2                          Site_2;
   typedef typename K::Object_2                        Object_2;
   typedef typename K::Construct_object_2              Construct_object_2;
-  typedef CGAL::Hyperbola_segment_2<Point_2,Weight>      Hyperbola_segment_2;
+  typedef CGAL::Hyperbola_segment_2<Point_2,Weight>   Hyperbola_segment_2;
   typedef CGAL::Parabola_segment_2<Point_2,Weight,Line_2> 
-  /*                                                   */ Parabola_segment_2;
-  typedef CGAL::Construct_Apollonius_weighted_point_2<K> Apollonius_circle_2;
+  /*                                               */ Parabola_segment_2;
+  typedef CGAL::Construct_Apollonius_site_2<K>        Apollonius_circle_2;
 
 
 private:

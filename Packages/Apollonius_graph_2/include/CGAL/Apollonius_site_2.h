@@ -26,6 +26,7 @@
 #define CGAL_APOLLONIUS_SITE_2_H
 
 #include <iostream>
+#include <CGAL/basic.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -83,6 +84,32 @@ operator>>(std::istream& is, Apollonius_site_2<K>& wp)
 
 
 CGAL_END_NAMESPACE
+
+#ifdef CGAL_USE_QT
+
+#include <CGAL/IO/Qt_widget.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class K>
+Qt_widget&
+operator<<(Qt_widget &qt_w, const Apollonius_site_2<K>& wp)
+{
+  typedef typename K::Circle_2    Circle_2;
+  typedef typename K::Point_2     Point_2;
+
+  Point_2 p(wp.point());
+  Circle_2 c(p, CGAL_NTS square(wp.weight()));
+  return qt_w << p << c;
+}
+
+CGAL_END_NAMESPACE
+
+
+#endif
+
+
+
 
 #endif // CGAL_APOLLONIUS_SITE_2_H
 

@@ -20,7 +20,7 @@
 #include <CGAL/IO/pixmaps/circle.xpm>
 #include <CGAL/IO/pixmaps/triangulation.xpm>
 #include <CGAL/IO/pixmaps/voronoi.xpm>
-#include <CGAL/IO/pixmaps/mouse_coord.xpm>
+//#include <CGAL/IO/pixmaps/mouse_coord.xpm>
 #include <CGAL/IO/pixmaps/notool.xpm>
 //#include "removecircle.xpm"
 

@@ -417,6 +417,25 @@ public:
   //-------------------
   typename Gt::Object_2 dual(const Face_handle& f) const;
 
+  typename Gt::Object_2 dual(const All_faces_iterator& it) const
+  {
+    return dual(*it);
+  }
+
+  Site_2 dual(const Finite_faces_iterator& it) const
+  {
+    typename Gt::Object_2 o = dual(*it);
+    Site_2 s;
+    if ( assign(s, o) ) {
+      return s;
+    } else {
+      bool the_assign_statement_must_always_work(false);
+      CGAL_assertion( the_assign_statement_must_always_work );
+    }
+    return s;
+  }
+
+
 private:
   typename Gt::Object_2 dual(const Edge e) const;
 
@@ -432,7 +451,6 @@ public:
   // I/O
   //----
   template< class Stream >
-  inline
   Stream& draw_primal(Stream &str) const
   {
     if ( number_of_vertices() < 2 ) {
@@ -442,6 +460,8 @@ public:
       Vertex_handle v2(++finite_vertices_begin());
       Site_2 p1 = v1->site();
       Site_2 p2 = v2->site();
+      
+
       typename Geom_traits::Segment_2 seg =
 	geom_traits().construct_Apollonius_primal_segment_2_object()(p1,p2);
       typename Geom_traits::Ray_2 ray1 =
@@ -482,6 +502,88 @@ public:
     }
     return str;
   }
+
+  template< class Stream >
+  Stream& draw_primal_vertex(const Finite_vertices_iterator& it,
+			     Stream &str) const
+  {
+    return str << it->site().point();
+  }
+
+
+  template< class Stream >
+  Stream& draw_dual_vertex(const Finite_vertices_iterator& it,
+			   Stream &str) const
+  {
+    return str << dual(it);
+  }
+
+  template< class Stream >
+  Stream& draw_primal_edge(Edge e, Stream &str) const
+  {
+    typename Gt::Object_2 o = primal(e);
+    //      typename Geom_traits::Line_2     l;
+    typename Geom_traits::Segment_2  s;
+    typename Geom_traits::Ray_2      r;
+    //      typename Geom_traits::Hyperbola_2          h;
+    typename Geom_traits::Hyperbola_segment_2  hs;
+    //      typename Geom_traits::Hyperbola_ray_2      hr;
+    typename Geom_traits::Parabola_segment_2   ps;
+    if (assign(hs, o))  str << hs;
+    if (assign(s, o))   str << s; 
+    if (assign(ps, o))  str << ps;
+    if (assign(r, o))   str << r;
+    //      if (assign(hr, o))  str << hr;
+    //      if (assign(h, o))   str << h;
+    //      if (assign(l, o))   str << l;
+    return str;
+  }
+
+  template < class Stream > 
+  Stream& draw_dual_edge(Edge e, Stream &str) const
+  {
+    if ( is_infinite(e) ) { return str; }
+    typename Gt::Object_2 o = dual(e);
+    typename Geom_traits::Line_2     l;
+    typename Geom_traits::Segment_2  s;
+    typename Geom_traits::Ray_2      r;
+    typename Geom_traits::Hyperbola_2          h;
+    typename Geom_traits::Hyperbola_segment_2  hs;
+    typename Geom_traits::Hyperbola_ray_2      hr;
+    if (assign(hs, o))  str << hs;
+    if (assign(s, o))   str << s; 
+    if (assign(hr, o))  str << hr;
+    if (assign(r, o))   str << r;
+    if (assign(h, o))   str << h;
+    if (assign(l, o))   str << l;
+
+    return str;
+  }
+
+  template< class Stream >
+  inline
+  Stream& draw_primal_face(const Face_handle& f, Stream &str) const
+  {
+    for (int i = 0; i < 3; i++) {
+      draw_primal_edge< Stream >(Edge(f, i), str);
+    }
+    return str;
+  }
+
+
+  template< class Stream >
+  inline
+  Stream& draw_dual_face(const Vertex_handle& v, Stream &str) const
+  {
+    Edge_circulator ec_start = incident_edges(v);
+    Edge_circulator ec = ec_start;
+    do {
+      draw_dual_edge< Stream >(*ec, str);
+      ++ec;
+    } while ( ec_start != ec );
+    return str;
+  }
+
 
 protected:
   template < class Stream > 
@@ -783,58 +885,6 @@ protected:
   bool assign(T& t2, const typename Gt::Object_2& o2) const
   {
     return geom_traits().assign_2_object()(t2, o2);
-  }
-
-  template< class Stream >
-  Stream& draw_primal_edge(Edge e, Stream &str) const
-  {
-    Object o = primal(e);
-    //      typename Geom_traits::Line_2     l;
-    typename Geom_traits::Segment_2  s;
-    typename Geom_traits::Ray_2      r;
-    //      typename Geom_traits::Hyperbola_2          h;
-    typename Geom_traits::Hyperbola_segment_2  hs;
-    //      typename Geom_traits::Hyperbola_ray_2      hr;
-    typename Geom_traits::Parabola_segment_2   ps;
-    if (assign(hs, o))  str << hs;
-    if (assign(s, o))   str << s; 
-    if (assign(ps, o))  str << ps;
-    if (assign(r, o))   str << r;
-    //      if (assign(hr, o))  str << hr;
-    //      if (assign(h, o))   str << h;
-    //      if (assign(l, o))   str << l;
-    return str;
-  }
-
-  template < class Stream > 
-  Stream& draw_dual_edge(Edge e, Stream &str) const
-  {
-    if ( is_infinite(e) ) { return str; }
-    Object o = dual(e);
-    typename Geom_traits::Line_2     l;
-    typename Geom_traits::Segment_2  s;
-    typename Geom_traits::Ray_2      r;
-    typename Geom_traits::Hyperbola_2          h;
-    typename Geom_traits::Hyperbola_segment_2  hs;
-    typename Geom_traits::Hyperbola_ray_2      hr;
-    if (assign(hs, o))  str << hs;
-    if (assign(s, o))   str << s; 
-    if (assign(hr, o))  str << hr;
-    if (assign(r, o))   str << r;
-    if (assign(h, o))   str << h;
-    if (assign(l, o))   str << l;
-
-    return str;
-  }
-
-  template< class Stream >
-  inline
-  Stream& draw_face(const Face_handle& f, Stream &str) const
-  {
-    for (int i = 0; i < 3; i++) {
-      draw_primal_edge< Stream >(Edge(f, i), str);
-    }
-    return str;
   }
 
 }; // Apollonius_graph_2

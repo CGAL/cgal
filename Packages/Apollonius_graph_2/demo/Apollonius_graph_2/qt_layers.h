@@ -46,8 +46,9 @@ public:
     typename T::Visible_sites_iterator it;
     for (it = ag.visible_sites_begin();
 	 it != ag.visible_sites_end(); it++) {
-      *widget << to_circle(*it);
-      *widget << it->point();
+      //      *widget << to_circle(*it);
+      //      *widget << it->point();
+      *widget << *it;
     }
   }
 };
@@ -66,8 +67,9 @@ public:
     typename T::Hidden_sites_iterator it;
     for (it = ag.hidden_sites_begin();
 	 it != ag.hidden_sites_end(); it++) {
-      *widget << to_circle(*it);
-      *widget << it->point();
+      //      *widget << to_circle(*it);
+      //      *widget << it->point();
+      *widget << *it;
     }
   }
 };

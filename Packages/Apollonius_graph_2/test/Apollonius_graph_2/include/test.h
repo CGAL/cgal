@@ -40,8 +40,8 @@ bool test_traits()
 
   typedef typename Traits::Construct_Apollonius_vertex_2
     Construct_Apollonius_vertex_2;
-  typedef typename Traits::Construct_Apollonius_weighted_point_2
-    Construct_Apollonius_weighted_point_2;
+  typedef typename Traits::Construct_Apollonius_site_2
+    Construct_Apollonius_site_2;
   typedef typename Traits::Construct_Apollonius_bisector_2
     Construct_Apollonius_bisector_2;
   typedef typename Traits::Construct_Apollonius_bisector_ray_2
@@ -98,8 +98,8 @@ bool test_traits()
   //--------------------------------------------------------------------
   Construct_Apollonius_vertex_2 apollonius_vertex =
     tr.construct_Apollonius_vertex_2_object();
-  Construct_Apollonius_weighted_point_2 apollonius_weighted_point =
-    tr.construct_Apollonius_weighted_point_2_object();
+  Construct_Apollonius_site_2 apollonius_site =
+    tr.construct_Apollonius_site_2_object();
   Construct_Apollonius_bisector_2 apollonius_bisector =
     tr.construct_Apollonius_bisector_2_object();
   Construct_Apollonius_bisector_ray_2 apollonius_bisector_ray =
