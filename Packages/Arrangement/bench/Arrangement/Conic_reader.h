@@ -437,14 +437,14 @@ public:
 #if BENCH_TRAITS == CORE_CONIC_TRAITS
       cv = Curve_2 (x0, y0, a, CGAL::CLOCKWISE, source, target);
 #else
-      cv = Curve_2 (circle, source, target);
+      cv = Curve_2 (circle, target, source);
 #endif
     }
     else
     {
 #if BENCH_TRAITS == CK_CONIC_TRAITS
       if (conic.is_ellipse()) {
-        cv = Curve_2 (conic, source, target);
+        cv = Curve_2 (conic, target, source);
       } else {
         std::cerr << "Skipping Non Ellipse" << std::endl;
         return false;
@@ -453,7 +453,7 @@ public:
       cv = Curve_2 (r, s, t, u, v, w, CGAL::CLOCKWISE, source, target);
 #elif BENCH_TRAITS == CONIC_TRAITS
       cv = Curve_2 (r, s, t, u, v, w, source, target);
-#elif BENCH_TRAITS != CK_CIRCLE_TRAITS
+#elif BENCH_TRAITS == CK_CIRCLE_TRAITS
       std::cerr << "Skipping Ellipse" << std::endl;
       return false;
 #endif
