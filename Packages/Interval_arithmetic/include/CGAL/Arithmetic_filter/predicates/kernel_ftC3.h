@@ -50,10 +50,7 @@ strict_dominanceC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("IA strict_dominanceC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("IA strict_dominanceC3 calls");
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return strict_dominanceC3(
 		px.interval(),
@@ -65,10 +62,7 @@ strict_dominanceC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("IA strict_dominanceC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("IA strict_dominanceC3 failures");
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return strict_dominanceC3(
 		px.exact(),
@@ -94,10 +88,7 @@ strict_dominanceC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("Lazy IA strict_dominanceC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("Lazy IA strict_dominanceC3 calls");
     Protect_FPU_rounding<true> Protection;
     return strict_dominanceC3(
 		px.interval(),
@@ -109,10 +100,7 @@ strict_dominanceC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("Lazy IA strict_dominanceC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("Lazy IA strict_dominanceC3 failures");
     Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return strict_dominanceC3(
 		px.exact(),
@@ -143,10 +131,7 @@ dominanceC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("IA dominanceC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("IA dominanceC3 calls");
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return dominanceC3(
 		px.interval(),
@@ -158,10 +143,7 @@ dominanceC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("IA dominanceC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("IA dominanceC3 failures");
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return dominanceC3(
 		px.exact(),
@@ -187,10 +169,7 @@ dominanceC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("Lazy IA dominanceC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("Lazy IA dominanceC3 calls");
     Protect_FPU_rounding<true> Protection;
     return dominanceC3(
 		px.interval(),
@@ -202,10 +181,7 @@ dominanceC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("Lazy IA dominanceC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("Lazy IA dominanceC3 failures");
     Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return dominanceC3(
 		px.exact(),
@@ -239,10 +215,7 @@ collinearC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("IA collinearC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("IA collinearC3 calls");
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return collinearC3(
 		px.interval(),
@@ -257,10 +230,7 @@ collinearC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("IA collinearC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("IA collinearC3 failures");
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return collinearC3(
 		px.exact(),
@@ -292,10 +262,7 @@ collinearC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("Lazy IA collinearC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("Lazy IA collinearC3 calls");
     Protect_FPU_rounding<true> Protection;
     return collinearC3(
 		px.interval(),
@@ -310,10 +277,7 @@ collinearC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("Lazy IA collinearC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("Lazy IA collinearC3 failures");
     Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return collinearC3(
 		px.exact(),
@@ -353,10 +317,7 @@ orientationC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("IA orientationC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("IA orientationC3 calls");
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return orientationC3(
 		px.interval(),
@@ -374,10 +335,7 @@ orientationC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("IA orientationC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("IA orientationC3 failures");
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return orientationC3(
 		px.exact(),
@@ -415,10 +373,7 @@ orientationC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("Lazy IA orientationC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("Lazy IA orientationC3 calls");
     Protect_FPU_rounding<true> Protection;
     return orientationC3(
 		px.interval(),
@@ -436,10 +391,7 @@ orientationC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("Lazy IA orientationC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("Lazy IA orientationC3 failures");
     Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return orientationC3(
 		px.exact(),
@@ -479,10 +431,7 @@ angleC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("IA angleC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("IA angleC3 calls");
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return angleC3(
 		px.interval(),
@@ -497,10 +446,7 @@ angleC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("IA angleC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("IA angleC3 failures");
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return angleC3(
 		px.exact(),
@@ -532,10 +478,7 @@ angleC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("Lazy IA angleC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("Lazy IA angleC3 calls");
     Protect_FPU_rounding<true> Protection;
     return angleC3(
 		px.interval(),
@@ -550,10 +493,7 @@ angleC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("Lazy IA angleC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("Lazy IA angleC3 failures");
     Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return angleC3(
 		px.exact(),
@@ -593,10 +533,7 @@ coplanar_side_of_bounded_circleC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("IA coplanar_side_of_bounded_circleC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("IA coplanar_side_of_bounded_circleC3 calls");
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return coplanar_side_of_bounded_circleC3(
 		px.interval(),
@@ -614,10 +551,7 @@ coplanar_side_of_bounded_circleC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("IA coplanar_side_of_bounded_circleC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("IA coplanar_side_of_bounded_circleC3 failures");
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return coplanar_side_of_bounded_circleC3(
 		px.exact(),
@@ -655,10 +589,7 @@ coplanar_side_of_bounded_circleC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("Lazy IA coplanar_side_of_bounded_circleC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("Lazy IA coplanar_side_of_bounded_circleC3 calls");
     Protect_FPU_rounding<true> Protection;
     return coplanar_side_of_bounded_circleC3(
 		px.interval(),
@@ -676,10 +607,7 @@ coplanar_side_of_bounded_circleC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("Lazy IA coplanar_side_of_bounded_circleC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("Lazy IA coplanar_side_of_bounded_circleC3 failures");
     Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return coplanar_side_of_bounded_circleC3(
 		px.exact(),
@@ -716,10 +644,7 @@ equal_directionC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("IA equal_directionC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("IA equal_directionC3 calls");
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return equal_directionC3(
 		dx1.interval(),
@@ -731,10 +656,7 @@ equal_directionC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("IA equal_directionC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("IA equal_directionC3 failures");
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return equal_directionC3(
 		dx1.exact(),
@@ -760,10 +682,7 @@ equal_directionC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("Lazy IA equal_directionC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("Lazy IA equal_directionC3 calls");
     Protect_FPU_rounding<true> Protection;
     return equal_directionC3(
 		dx1.interval(),
@@ -775,10 +694,7 @@ equal_directionC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("Lazy IA equal_directionC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("Lazy IA equal_directionC3 failures");
     Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return equal_directionC3(
 		dx1.exact(),
@@ -811,10 +727,7 @@ equal_planeC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("IA equal_planeC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("IA equal_planeC3 calls");
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return equal_planeC3(
 		ha.interval(),
@@ -828,10 +741,7 @@ equal_planeC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("IA equal_planeC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("IA equal_planeC3 failures");
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return equal_planeC3(
 		ha.exact(),
@@ -861,10 +771,7 @@ equal_planeC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("Lazy IA equal_planeC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("Lazy IA equal_planeC3 calls");
     Protect_FPU_rounding<true> Protection;
     return equal_planeC3(
 		ha.interval(),
@@ -878,10 +785,7 @@ equal_planeC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("Lazy IA equal_planeC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("Lazy IA equal_planeC3 failures");
     Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return equal_planeC3(
 		ha.exact(),
@@ -915,10 +819,7 @@ side_of_oriented_planeC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("IA side_of_oriented_planeC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("IA side_of_oriented_planeC3 calls");
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return side_of_oriented_planeC3(
 		a.interval(),
@@ -931,10 +832,7 @@ side_of_oriented_planeC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("IA side_of_oriented_planeC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("IA side_of_oriented_planeC3 failures");
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return side_of_oriented_planeC3(
 		a.exact(),
@@ -962,10 +860,7 @@ side_of_oriented_planeC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("Lazy IA side_of_oriented_planeC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("Lazy IA side_of_oriented_planeC3 calls");
     Protect_FPU_rounding<true> Protection;
     return side_of_oriented_planeC3(
 		a.interval(),
@@ -978,10 +873,7 @@ side_of_oriented_planeC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("Lazy IA side_of_oriented_planeC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("Lazy IA side_of_oriented_planeC3 failures");
     Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return side_of_oriented_planeC3(
 		a.exact(),
@@ -1022,10 +914,7 @@ side_of_oriented_sphereC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("IA side_of_oriented_sphereC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("IA side_of_oriented_sphereC3 calls");
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return side_of_oriented_sphereC3(
 		px.interval(),
@@ -1046,10 +935,7 @@ side_of_oriented_sphereC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("IA side_of_oriented_sphereC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("IA side_of_oriented_sphereC3 failures");
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return side_of_oriented_sphereC3(
 		px.exact(),
@@ -1093,10 +979,7 @@ side_of_oriented_sphereC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("Lazy IA side_of_oriented_sphereC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("Lazy IA side_of_oriented_sphereC3 calls");
     Protect_FPU_rounding<true> Protection;
     return side_of_oriented_sphereC3(
 		px.interval(),
@@ -1117,10 +1000,7 @@ side_of_oriented_sphereC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("Lazy IA side_of_oriented_sphereC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("Lazy IA side_of_oriented_sphereC3 failures");
     Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return side_of_oriented_sphereC3(
 		px.exact(),
@@ -1169,10 +1049,7 @@ side_of_bounded_sphereC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("IA side_of_bounded_sphereC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("IA side_of_bounded_sphereC3 calls");
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return side_of_bounded_sphereC3(
 		px.interval(),
@@ -1193,10 +1070,7 @@ side_of_bounded_sphereC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("IA side_of_bounded_sphereC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("IA side_of_bounded_sphereC3 failures");
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return side_of_bounded_sphereC3(
 		px.exact(),
@@ -1240,10 +1114,7 @@ side_of_bounded_sphereC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("Lazy IA side_of_bounded_sphereC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("Lazy IA side_of_bounded_sphereC3 calls");
     Protect_FPU_rounding<true> Protection;
     return side_of_bounded_sphereC3(
 		px.interval(),
@@ -1264,10 +1135,7 @@ side_of_bounded_sphereC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("Lazy IA side_of_bounded_sphereC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("Lazy IA side_of_bounded_sphereC3 failures");
     Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return side_of_bounded_sphereC3(
 		px.exact(),
@@ -1310,10 +1178,7 @@ side_of_bounded_sphereC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("IA side_of_bounded_sphereC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("IA side_of_bounded_sphereC3 calls");
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return side_of_bounded_sphereC3(
 		px.interval(),
@@ -1328,10 +1193,7 @@ side_of_bounded_sphereC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("IA side_of_bounded_sphereC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("IA side_of_bounded_sphereC3 failures");
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return side_of_bounded_sphereC3(
 		px.exact(),
@@ -1363,10 +1225,7 @@ side_of_bounded_sphereC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("Lazy IA side_of_bounded_sphereC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("Lazy IA side_of_bounded_sphereC3 calls");
     Protect_FPU_rounding<true> Protection;
     return side_of_bounded_sphereC3(
 		px.interval(),
@@ -1381,10 +1240,7 @@ side_of_bounded_sphereC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("Lazy IA side_of_bounded_sphereC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("Lazy IA side_of_bounded_sphereC3 failures");
     Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return side_of_bounded_sphereC3(
 		px.exact(),
@@ -1421,10 +1277,7 @@ cmp_dist_to_pointC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("IA cmp_dist_to_pointC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("IA cmp_dist_to_pointC3 calls");
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return cmp_dist_to_pointC3(
 		px.interval(),
@@ -1439,10 +1292,7 @@ cmp_dist_to_pointC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("IA cmp_dist_to_pointC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("IA cmp_dist_to_pointC3 failures");
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return cmp_dist_to_pointC3(
 		px.exact(),
@@ -1474,10 +1324,7 @@ cmp_dist_to_pointC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("Lazy IA cmp_dist_to_pointC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("Lazy IA cmp_dist_to_pointC3 calls");
     Protect_FPU_rounding<true> Protection;
     return cmp_dist_to_pointC3(
 		px.interval(),
@@ -1492,10 +1339,7 @@ cmp_dist_to_pointC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("Lazy IA cmp_dist_to_pointC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("Lazy IA cmp_dist_to_pointC3 failures");
     Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return cmp_dist_to_pointC3(
 		px.exact(),
@@ -1535,10 +1379,7 @@ side_of_bounded_sphereC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("IA side_of_bounded_sphereC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("IA side_of_bounded_sphereC3 calls");
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return side_of_bounded_sphereC3(
 		px.interval(),
@@ -1556,10 +1397,7 @@ side_of_bounded_sphereC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("IA side_of_bounded_sphereC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("IA side_of_bounded_sphereC3 failures");
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return side_of_bounded_sphereC3(
 		px.exact(),
@@ -1597,10 +1435,7 @@ side_of_bounded_sphereC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("Lazy IA side_of_bounded_sphereC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("Lazy IA side_of_bounded_sphereC3 calls");
     Protect_FPU_rounding<true> Protection;
     return side_of_bounded_sphereC3(
 		px.interval(),
@@ -1618,10 +1453,7 @@ side_of_bounded_sphereC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("Lazy IA side_of_bounded_sphereC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("Lazy IA side_of_bounded_sphereC3 failures");
     Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return side_of_bounded_sphereC3(
 		px.exact(),
@@ -1661,10 +1493,7 @@ cmp_signed_dist_to_directionC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("IA cmp_signed_dist_to_directionC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("IA cmp_signed_dist_to_directionC3 calls");
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return cmp_signed_dist_to_directionC3(
 		pa.interval(),
@@ -1679,10 +1508,7 @@ cmp_signed_dist_to_directionC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("IA cmp_signed_dist_to_directionC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("IA cmp_signed_dist_to_directionC3 failures");
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return cmp_signed_dist_to_directionC3(
 		pa.exact(),
@@ -1714,10 +1540,7 @@ cmp_signed_dist_to_directionC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("Lazy IA cmp_signed_dist_to_directionC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("Lazy IA cmp_signed_dist_to_directionC3 calls");
     Protect_FPU_rounding<true> Protection;
     return cmp_signed_dist_to_directionC3(
 		pa.interval(),
@@ -1732,10 +1555,7 @@ cmp_signed_dist_to_directionC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("Lazy IA cmp_signed_dist_to_directionC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("Lazy IA cmp_signed_dist_to_directionC3 failures");
     Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return cmp_signed_dist_to_directionC3(
 		pa.exact(),
@@ -1778,10 +1598,7 @@ cmp_signed_dist_to_planeC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("IA cmp_signed_dist_to_planeC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("IA cmp_signed_dist_to_planeC3 calls");
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return cmp_signed_dist_to_planeC3(
 		ppx.interval(),
@@ -1802,10 +1619,7 @@ cmp_signed_dist_to_planeC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("IA cmp_signed_dist_to_planeC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("IA cmp_signed_dist_to_planeC3 failures");
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return cmp_signed_dist_to_planeC3(
 		ppx.exact(),
@@ -1849,10 +1663,7 @@ cmp_signed_dist_to_planeC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("Lazy IA cmp_signed_dist_to_planeC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("Lazy IA cmp_signed_dist_to_planeC3 calls");
     Protect_FPU_rounding<true> Protection;
     return cmp_signed_dist_to_planeC3(
 		ppx.interval(),
@@ -1873,10 +1684,7 @@ cmp_signed_dist_to_planeC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("Lazy IA cmp_signed_dist_to_planeC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("Lazy IA cmp_signed_dist_to_planeC3 failures");
     Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return cmp_signed_dist_to_planeC3(
 		ppx.exact(),

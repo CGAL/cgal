@@ -49,9 +49,9 @@ private:
 };
 
 #ifdef CGAL_PROFILE
-#  define CGAL_PROFILER(X, Y) static CGAL::Profile_counter X(Y); ++X;
+#  define CGAL_PROFILER(Y) { static CGAL::Profile_counter tmp(Y); ++tmp; }
 #else
-#  define CGAL_PROFILER(X, Y)
+#  define CGAL_PROFILER(Y)
 #endif
 
 CGAL_END_NAMESPACE

@@ -1,3 +1,6 @@
+Version 4.171 on 24 July 2003
+- CGAL_PROFILER : make it a block scope, so that only one argument is needed.
+
 Version 4.170 on 16 July 2003
 - src/Interval_arithmetic.C : change <Filtered_exact.h> to <FPU.h>.
 

@@ -92,19 +92,19 @@ private:
                               double qx, double qy, double qz,
 		              double rx, double ry, double rz) const
   {
-      CGAL_PROFILER(calls, "Coplanar_orientation_3 #1 calls")
+      CGAL_PROFILER("Coplanar_orientation_3 #1 calls");
 
       Orientation oxy_pqr = oxy.opti_orientationC2(px,py,qx,qy,rx,ry);
       if (oxy_pqr != COLLINEAR)
           return oxy_pqr;
 
-      CGAL_PROFILER(step2, "Coplanar_orientation_3 #1 step2")
+      CGAL_PROFILER("Coplanar_orientation_3 #1 step2");
 
       Orientation oyz_pqr = oyz.opti_orientationC2(py,pz,qy,qz,ry,rz);
       if (oyz_pqr != COLLINEAR)
           return oyz_pqr;
 
-      CGAL_PROFILER(step3, "Coplanar_orientation_3 #1 step3")
+      CGAL_PROFILER("Coplanar_orientation_3 #1 step3");
 
       return oxz.opti_orientationC2(px,pz,qx,qz,rx,rz);
   }
@@ -115,21 +115,21 @@ private:
 		              double rx, double ry, double rz,
 		              double sx, double sy, double sz) const
   {
-      CGAL_PROFILER(calls, "Coplanar_orientation_3 #2 calls")
+      CGAL_PROFILER("Coplanar_orientation_3 #2 calls");
 
       Orientation oxy_pqr = oxy.opti_orientationC2(px,py,qx,qy,rx,ry);
       if (oxy_pqr != COLLINEAR)
           return Orientation( oxy_pqr *
 		              oxy.opti_orientationC2(px,py,qx,qy,sx,sy));
 
-      CGAL_PROFILER(step2, "Coplanar_orientation_3 #2 step2")
+      CGAL_PROFILER("Coplanar_orientation_3 #2 step2");
 
       Orientation oyz_pqr = oyz.opti_orientationC2(py,pz,qy,qz,ry,rz);
       if (oyz_pqr != COLLINEAR)
           return Orientation( oyz_pqr *
 		              oyz.opti_orientationC2(py,pz,qy,qz,sy,sz));
 
-      CGAL_PROFILER(step3, "Coplanar_orientation_3 #2 step3")
+      CGAL_PROFILER("Coplanar_orientation_3 #2 step3");
 
       Orientation oxz_pqr = oxz.opti_orientationC2(px,pz,qx,qz,rx,rz);
       CGAL_kernel_assertion(oxz_pqr != COLLINEAR);

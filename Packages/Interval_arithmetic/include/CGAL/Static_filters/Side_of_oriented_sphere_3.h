@@ -100,7 +100,7 @@ public:
 		   double sx, double sy, double sz,
 		   double tx, double ty, double tz) const
   {
-    CGAL_PROFILER(calls, "In_sphere_3 calls")
+    CGAL_PROFILER("In_sphere_3 calls");
 
     double ptx = px - tx;
     double pty = py - ty;
@@ -133,7 +133,7 @@ public:
     if (det < -_static_epsilon) return ON_NEGATIVE_SIDE;
 #endif
 
-    CGAL_PROFILER(st_fail, "In_sphere_3 static failures")
+    CGAL_PROFILER("In_sphere_3 static failures");
 
 #if 1
     // We compute the semi-static bound.
@@ -166,7 +166,7 @@ public:
     if (det >  eps) return ON_POSITIVE_SIDE;
     if (det < -eps) return ON_NEGATIVE_SIDE;
 
-    CGAL_PROFILER(fail, "In_sphere_3 semi-static failures")
+    CGAL_PROFILER("In_sphere_3 semi-static failures");
 #endif
 
 #if 1
@@ -187,7 +187,7 @@ public:
         diff_was_exact(sy, ty, sty) &&
         diff_was_exact(sz, tz, stz))
     {
-        CGAL_PROFILER(exact_diff, "In_sphere_3 exact diffs")
+        CGAL_PROFILER("In_sphere_3 exact diffs");
 
         double max2 = ptx*ptx + pty*pty + ptz*ptz;
         double qq = qtx*qtx + qty*qty + qtz*qtz;
@@ -213,10 +213,10 @@ public:
 
         if (det >  eps) return ON_POSITIVE_SIDE;
         if (det < -eps) return ON_NEGATIVE_SIDE;
-        CGAL_PROFILER(step2, "In_sphere_3 step2 failures")
+        CGAL_PROFILER("In_sphere_3 step2 failures");
     }
 #endif
-    CGAL_PROFILER(step3, "In_sphere_3 step3")
+    CGAL_PROFILER("In_sphere_3 step3");
 
     typedef Simple_cartesian<Filtered_exact<double, MP_Float> > K;
     typedef K::Point_3 P;
@@ -224,7 +224,7 @@ public:
     Oriented_side oooo = side_of_oriented_sphere(P(px,py,pz), P(qx,qy,qz),
 	                         P(rx,ry,rz), P(sx,sy,sz), P(tx,ty,tz));
     if (oooo == ON_ORIENTED_BOUNDARY) {
-        CGAL_PROFILER(is_null, "In_sphere_3 is_null")
+        CGAL_PROFILER("In_sphere_3 is_null");
     }
     return oooo;
   }

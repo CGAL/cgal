@@ -103,7 +103,7 @@ public:
 		            double rx, double ry, double rz,
 		            double tx, double ty, double tz) const
   {
-    CGAL_PROFILER(calls, "In_circle_3 calls")
+    CGAL_PROFILER("In_circle_3 calls");
 
     double ptx = px - tx;
     double pty = py - ty;
@@ -141,7 +141,7 @@ public:
     if (det >  _static_epsilon) return ON_BOUNDED_SIDE;
     if (det < -_static_epsilon) return ON_UNBOUNDED_SIDE;
 
-    CGAL_PROFILER(st_fail, "In_circle_3 static failures")
+    CGAL_PROFILER("In_circle_3 static failures");
 
     // Compute the semi-static bound.
     double maxx = fabs(px);
@@ -163,7 +163,7 @@ public:
     if (det >  eps) return ON_BOUNDED_SIDE;
     if (det < -eps) return ON_UNBOUNDED_SIDE;
 
-    CGAL_PROFILER(fail, "In_circle_3 semi-static failures")
+    CGAL_PROFILER("In_circle_3 semi-static failures");
 
     typedef Simple_cartesian<Filtered_exact<double, MP_Float> > K;
     typedef K::Point_3 P;

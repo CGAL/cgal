@@ -98,7 +98,7 @@ private:
 		     double rx, double ry, double rz,
 		     double sx, double sy, double sz) const
   {
-    CGAL_PROFILER(calls, "Orientation_3 calls")
+    CGAL_PROFILER("Orientation_3 calls");
 
     double pqx = qx-px;
     double pqy = qy-py;
@@ -120,7 +120,7 @@ private:
     if (det < -_static_epsilon) return NEGATIVE;
 #endif
 
-    CGAL_PROFILER(st_fail, "Orientation_3 static failures")
+    CGAL_PROFILER("Orientation_3 static failures");
 
 #if 1
     // Then semi-static filter.
@@ -141,7 +141,7 @@ private:
     if (det > eps)  return POSITIVE;
     if (det < -eps) return NEGATIVE;
 
-    CGAL_PROFILER(fail, "Orientation_3 semi-static failures")
+    CGAL_PROFILER("Orientation_3 semi-static failures");
 #endif
 
     // Experiments showed that there's practically no benefit for testing when
@@ -158,7 +158,7 @@ private:
     Orientation oooo = orientation(P(px,py,pz), P(qx,qy,qz),
 	                           P(rx,ry,rz), P(sx,sy,sz));
     if (oooo == ZERO) {
-        CGAL_PROFILER(det_is_null, "Orientation_3 det_is_null")
+        CGAL_PROFILER("Orientation_3 det_is_null");
     }
     return oooo;
   }

@@ -56,10 +56,7 @@ power_testC2(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("IA power_testC2 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("IA power_testC2 calls");
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return power_testC2(
 		px.interval(),
@@ -77,10 +74,7 @@ power_testC2(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("IA power_testC2 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("IA power_testC2 failures");
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return power_testC2(
 		px.exact(),
@@ -118,10 +112,7 @@ power_testC2(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("Lazy IA power_testC2 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("Lazy IA power_testC2 calls");
     Protect_FPU_rounding<true> Protection;
     return power_testC2(
 		px.interval(),
@@ -139,10 +130,7 @@ power_testC2(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("Lazy IA power_testC2 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("Lazy IA power_testC2 failures");
     Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return power_testC2(
 		px.exact(),
@@ -182,10 +170,7 @@ power_testC2(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("IA power_testC2 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("IA power_testC2 calls");
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return power_testC2(
 		px.interval(),
@@ -200,10 +185,7 @@ power_testC2(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("IA power_testC2 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("IA power_testC2 failures");
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return power_testC2(
 		px.exact(),
@@ -235,10 +217,7 @@ power_testC2(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("Lazy IA power_testC2 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("Lazy IA power_testC2 calls");
     Protect_FPU_rounding<true> Protection;
     return power_testC2(
 		px.interval(),
@@ -253,10 +232,7 @@ power_testC2(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("Lazy IA power_testC2 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("Lazy IA power_testC2 failures");
     Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return power_testC2(
 		px.exact(),

@@ -53,10 +53,7 @@ in_smallest_orthogonalcircleC2(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("IA in_smallest_orthogonalcircleC2 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("IA in_smallest_orthogonalcircleC2 calls");
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return in_smallest_orthogonalcircleC2(
 		px.interval(),
@@ -71,10 +68,7 @@ in_smallest_orthogonalcircleC2(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("IA in_smallest_orthogonalcircleC2 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("IA in_smallest_orthogonalcircleC2 failures");
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return in_smallest_orthogonalcircleC2(
 		px.exact(),
@@ -106,10 +100,7 @@ in_smallest_orthogonalcircleC2(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("Lazy IA in_smallest_orthogonalcircleC2 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("Lazy IA in_smallest_orthogonalcircleC2 calls");
     Protect_FPU_rounding<true> Protection;
     return in_smallest_orthogonalcircleC2(
 		px.interval(),
@@ -124,10 +115,7 @@ in_smallest_orthogonalcircleC2(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("Lazy IA in_smallest_orthogonalcircleC2 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("Lazy IA in_smallest_orthogonalcircleC2 failures");
     Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return in_smallest_orthogonalcircleC2(
 		px.exact(),

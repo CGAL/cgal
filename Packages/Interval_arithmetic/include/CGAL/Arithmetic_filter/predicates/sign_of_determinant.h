@@ -48,10 +48,7 @@ sign_of_determinant2x2(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("IA sign_of_determinant2x2 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("IA sign_of_determinant2x2 calls");
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return sign_of_determinant2x2(
 		a00.interval(),
@@ -61,10 +58,7 @@ sign_of_determinant2x2(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("IA sign_of_determinant2x2 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("IA sign_of_determinant2x2 failures");
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return sign_of_determinant2x2(
 		a00.exact(),
@@ -86,10 +80,7 @@ sign_of_determinant2x2(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("Lazy IA sign_of_determinant2x2 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("Lazy IA sign_of_determinant2x2 calls");
     Protect_FPU_rounding<true> Protection;
     return sign_of_determinant2x2(
 		a00.interval(),
@@ -99,10 +90,7 @@ sign_of_determinant2x2(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("Lazy IA sign_of_determinant2x2 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("Lazy IA sign_of_determinant2x2 failures");
     Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return sign_of_determinant2x2(
 		a00.exact(),
@@ -134,10 +122,7 @@ sign_of_determinant3x3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("IA sign_of_determinant3x3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("IA sign_of_determinant3x3 calls");
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return sign_of_determinant3x3(
 		a00.interval(),
@@ -152,10 +137,7 @@ sign_of_determinant3x3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("IA sign_of_determinant3x3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("IA sign_of_determinant3x3 failures");
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return sign_of_determinant3x3(
 		a00.exact(),
@@ -187,10 +169,7 @@ sign_of_determinant3x3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("Lazy IA sign_of_determinant3x3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("Lazy IA sign_of_determinant3x3 calls");
     Protect_FPU_rounding<true> Protection;
     return sign_of_determinant3x3(
 		a00.interval(),
@@ -205,10 +184,7 @@ sign_of_determinant3x3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("Lazy IA sign_of_determinant3x3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("Lazy IA sign_of_determinant3x3 failures");
     Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return sign_of_determinant3x3(
 		a00.exact(),
@@ -252,10 +228,7 @@ sign_of_determinant4x4(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("IA sign_of_determinant4x4 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("IA sign_of_determinant4x4 calls");
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return sign_of_determinant4x4(
 		a00.interval(),
@@ -277,10 +250,7 @@ sign_of_determinant4x4(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("IA sign_of_determinant4x4 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("IA sign_of_determinant4x4 failures");
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return sign_of_determinant4x4(
 		a00.exact(),
@@ -326,10 +296,7 @@ sign_of_determinant4x4(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("Lazy IA sign_of_determinant4x4 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("Lazy IA sign_of_determinant4x4 calls");
     Protect_FPU_rounding<true> Protection;
     return sign_of_determinant4x4(
 		a00.interval(),
@@ -351,10 +318,7 @@ sign_of_determinant4x4(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("Lazy IA sign_of_determinant4x4 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("Lazy IA sign_of_determinant4x4 failures");
     Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return sign_of_determinant4x4(
 		a00.exact(),
@@ -414,10 +378,7 @@ sign_of_determinant5x5(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("IA sign_of_determinant5x5 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("IA sign_of_determinant5x5 calls");
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return sign_of_determinant5x5(
 		a00.interval(),
@@ -448,10 +409,7 @@ sign_of_determinant5x5(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("IA sign_of_determinant5x5 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("IA sign_of_determinant5x5 failures");
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return sign_of_determinant5x5(
 		a00.exact(),
@@ -515,10 +473,7 @@ sign_of_determinant5x5(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("Lazy IA sign_of_determinant5x5 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("Lazy IA sign_of_determinant5x5 calls");
     Protect_FPU_rounding<true> Protection;
     return sign_of_determinant5x5(
 		a00.interval(),
@@ -549,10 +504,7 @@ sign_of_determinant5x5(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("Lazy IA sign_of_determinant5x5 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("Lazy IA sign_of_determinant5x5 failures");
     Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return sign_of_determinant5x5(
 		a00.exact(),
@@ -632,10 +584,7 @@ sign_of_determinant6x6(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("IA sign_of_determinant6x6 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("IA sign_of_determinant6x6 calls");
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return sign_of_determinant6x6(
 		a00.interval(),
@@ -677,10 +626,7 @@ sign_of_determinant6x6(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("IA sign_of_determinant6x6 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("IA sign_of_determinant6x6 failures");
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return sign_of_determinant6x6(
 		a00.exact(),
@@ -766,10 +712,7 @@ sign_of_determinant6x6(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("Lazy IA sign_of_determinant6x6 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("Lazy IA sign_of_determinant6x6 calls");
     Protect_FPU_rounding<true> Protection;
     return sign_of_determinant6x6(
 		a00.interval(),
@@ -811,10 +754,7 @@ sign_of_determinant6x6(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("Lazy IA sign_of_determinant6x6 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("Lazy IA sign_of_determinant6x6 failures");
     Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return sign_of_determinant6x6(
 		a00.exact(),

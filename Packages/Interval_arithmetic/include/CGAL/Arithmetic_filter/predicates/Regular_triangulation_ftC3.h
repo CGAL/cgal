@@ -64,10 +64,7 @@ power_testC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("IA power_testC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("IA power_testC3 calls");
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return power_testC3(
 		px.interval(),
@@ -93,10 +90,7 @@ power_testC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("IA power_testC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("IA power_testC3 failures");
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return power_testC3(
 		px.exact(),
@@ -150,10 +144,7 @@ power_testC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("Lazy IA power_testC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("Lazy IA power_testC3 calls");
     Protect_FPU_rounding<true> Protection;
     return power_testC3(
 		px.interval(),
@@ -179,10 +170,7 @@ power_testC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("Lazy IA power_testC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("Lazy IA power_testC3 failures");
     Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return power_testC3(
 		px.exact(),
@@ -237,10 +225,7 @@ power_testC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("IA power_testC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("IA power_testC3 calls");
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return power_testC3(
 		px.interval(),
@@ -262,10 +247,7 @@ power_testC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("IA power_testC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("IA power_testC3 failures");
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return power_testC3(
 		px.exact(),
@@ -311,10 +293,7 @@ power_testC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("Lazy IA power_testC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("Lazy IA power_testC3 calls");
     Protect_FPU_rounding<true> Protection;
     return power_testC3(
 		px.interval(),
@@ -336,10 +315,7 @@ power_testC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("Lazy IA power_testC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("Lazy IA power_testC3 failures");
     Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return power_testC3(
 		px.exact(),
@@ -386,10 +362,7 @@ power_testC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("IA power_testC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("IA power_testC3 calls");
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return power_testC3(
 		px.interval(),
@@ -407,10 +380,7 @@ power_testC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("IA power_testC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("IA power_testC3 failures");
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return power_testC3(
 		px.exact(),
@@ -448,10 +418,7 @@ power_testC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("Lazy IA power_testC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("Lazy IA power_testC3 calls");
     Protect_FPU_rounding<true> Protection;
     return power_testC3(
 		px.interval(),
@@ -469,10 +436,7 @@ power_testC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("Lazy IA power_testC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("Lazy IA power_testC3 failures");
     Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return power_testC3(
 		px.exact(),
@@ -505,10 +469,7 @@ power_testC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("IA power_testC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("IA power_testC3 calls");
     Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return power_testC3(
 		pwt.interval(),
@@ -516,10 +477,7 @@ power_testC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("IA power_testC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("IA power_testC3 failures");
     Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return power_testC3(
 		pwt.exact(),
@@ -537,10 +495,7 @@ power_testC3(
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls("Lazy IA power_testC3 calls");
-    ++calls;
-#endif
+    CGAL_PROFILER("Lazy IA power_testC3 calls");
     Protect_FPU_rounding<true> Protection;
     return power_testC3(
 		pwt.interval(),
@@ -548,10 +503,7 @@ power_testC3(
   } 
   catch (Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures("Lazy IA power_testC3 failures");
-    ++failures;
-#endif
+    CGAL_PROFILER("Lazy IA power_testC3 failures");
     Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return power_testC3(
 		pwt.exact(),

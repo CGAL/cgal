@@ -143,19 +143,13 @@ $fct_name($args_call)
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls(\"IA $fct_name calls\");
-    ++calls;
-#endif
+    CGAL_PROFILER(\"IA $fct_name calls\");
     ${CGAL}Protect_FPU_rounding<CGAL_IA_PROTECTED> Protection;
     return $fct_name($args_inter);
   } 
   catch (${CGAL}Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures(\"IA $fct_name failures\");
-    ++failures;
-#endif
+    CGAL_PROFILER(\"IA $fct_name failures\");
     ${CGAL}Protect_FPU_rounding<!CGAL_IA_PROTECTED> Protection(CGAL_FE_TONEAREST);
     return $fct_name($args_exact);
   }
@@ -169,19 +163,13 @@ $fct_name($args_call2)
 {
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls(\"Lazy IA $fct_name calls\");
-    ++calls;
-#endif
+    CGAL_PROFILER(\"Lazy IA $fct_name calls\");
     ${CGAL}Protect_FPU_rounding<true> Protection;
     return $fct_name($args_inter);
   } 
   catch (${CGAL}Interval_nt_advanced::unsafe_comparison)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures(\"Lazy IA $fct_name failures\");
-    ++failures;
-#endif
+    CGAL_PROFILER(\"Lazy IA $fct_name failures\");
     ${CGAL}Protect_FPU_rounding<false> Protection(CGAL_FE_TONEAREST);
     return $fct_name($args_exact);
   }
@@ -282,18 +270,12 @@ $fct_name($args_call)
 
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls(\"ST $fct_name calls\");
-    ++calls;
-#endif
+    CGAL_PROFILER(\"ST $fct_name calls\");
     return $predicate_class_name\::epsilon_variant($args_dbl,$args_epsilons);
   }
   catch (...)
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter failures(\"ST $fct_name failures\");
-    ++failures;
-#endif
+    CGAL_PROFILER(\"ST $fct_name failures\");
     return $fct_name($args_exact);
   }";
   } else {
@@ -308,19 +290,13 @@ $fct_name($args_call)
     // Compute the new bound.
     double NEW_bound = 0.0;$compute_new_bound
     // Re-adjust the context.
-#ifdef CGAL_PROFILE
-    static Profile_counter updates(\"SA $fct_name updates\");
-    ++updates;
-#endif
+    CGAL_PROFILER(\"SA $fct_name updates\");
     $predicate_class_name\::new_bound(NEW_bound);
   }
 
   try
   {
-#ifdef CGAL_PROFILE
-    static Profile_counter calls(\"SA $fct_name calls\");
-    ++calls;
-#endif
+    CGAL_PROFILER(\"SA $fct_name calls\");
     return $predicate_class_name\::epsilon_variant($args_dbl,$args_epsilons);
   }
   catch (...)
@@ -329,10 +305,7 @@ $fct_name($args_call)
       // re_adjusted = true;
       // goto re_adjust;
     // }
-#ifdef CGAL_PROFILE
-    static Profile_counter failures(\"SA $fct_name failures\");
-    ++failures;
-#endif
+    CGAL_PROFILER(\"SA $fct_name failures\");
     return $fct_name($args_exact);
   }";
   }

@@ -91,7 +91,7 @@ public:
 		   double rx, double ry,
 		   double tx, double ty) const
   {
-    CGAL_PROFILER(calls, "In_circle_2 calls")
+    CGAL_PROFILER("In_circle_2 calls");
 
     double qpx = qx-px;
     double qpy = qy-py;
@@ -108,7 +108,7 @@ public:
     if (det >  _static_epsilon) return ON_POSITIVE_SIDE;
     if (det < -_static_epsilon) return ON_NEGATIVE_SIDE;
 
-    CGAL_PROFILER(st_fail, "In_circle_2 static failures")
+    CGAL_PROFILER("In_circle_2 static failures");
 
     // We compute the semi-static bound.
     double maxx = fabs(px);
@@ -131,7 +131,7 @@ public:
     if (det >  eps) return ON_POSITIVE_SIDE;
     if (det < -eps) return ON_NEGATIVE_SIDE;
 
-    CGAL_PROFILER(fail, "In_circle_2 semi-static failures")
+    CGAL_PROFILER("In_circle_2 semi-static failures");
 
     // This predicate is different from Orientation in that all arguments are
     // local.  Thus the differences have a big probability to have been exact,
@@ -144,7 +144,7 @@ public:
         diff_was_exact(tx, px, tpx) &&
         diff_was_exact(ty, py, tpy))
     {
-	CGAL_PROFILER(exact_diff, "In_circle_2 exact diffs")
+	CGAL_PROFILER("In_circle_2 exact diffs");
 
         double max2 = tpx*tpx + tpy*tpy;
         double qq = qpx*qpx + qpy*qpy;
@@ -163,10 +163,10 @@ public:
         if (det >  eps) return ON_POSITIVE_SIDE;
         if (det < -eps) return ON_NEGATIVE_SIDE;
 
-	CGAL_PROFILER(step2, "In_circle_2 step2 failures")
+	CGAL_PROFILER("In_circle_2 step2 failures");
     }
 
-    CGAL_PROFILER(step3, "In_circle_2 step3")
+    CGAL_PROFILER("In_circle_2 step3");
 
     typedef Simple_cartesian<Filtered_exact<double, MP_Float> > K;
     typedef K::Point_2 P;
@@ -174,7 +174,7 @@ public:
     Oriented_side oooo = side_of_oriented_circle(P(px,py), P(qx,qy),
 	                                         P(rx,ry), P(tx,ty));
     if (oooo == ON_ORIENTED_BOUNDARY) {
-	CGAL_PROFILER(is_null, "In_circle_2 is_null")
+	CGAL_PROFILER("In_circle_2 is_null");
     }
     return oooo;
   }
