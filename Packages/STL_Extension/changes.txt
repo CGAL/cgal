@@ -7,7 +7,7 @@
 //	actual revision
 //---------------------------------------------------------------------
 
-GLOB: Fix Compact_container for VC 7.1.
+GLOB: - Fix Compact_container for VC 7.1.
 GLOB: - Sun doesn't have operator!= for std::reverse_iterator
 GLOB: removed stlport/cgal_functional_base.h
 GLOB: Fix typo in iterator.h
@@ -22,6 +22,7 @@ ALL : TEST: Added vector test program in test/STL_Extension/test_vector.C
 GLOB: remove Susan as maintainer
 ALL : moved reference page directory up one level to effect split of support
 ALL :  manual
+ALL : Fixed equality operator problem in Filter_iterator.
 ALL : Removed a lot of obsolete workarounds.
 ALL : Updates for Filter_iterator by Menelaos.
 ALL : Include docs for Compact_container.
