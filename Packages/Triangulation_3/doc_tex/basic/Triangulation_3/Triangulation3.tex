@@ -1,0 +1,1509 @@
+% // ============================================================================
+%//
+%// Copyright (c) 1999 The CGAL Consortium
+%//
+%// This software and related documentation is part of an INTERNAL release
+%// of the Computational Geometry Algorithms Library (CGAL). It is not
+%// intended for general use.
+%//
+%// ----------------------------------------------------------------------------
+%//
+%// release       :
+%// release_date  :
+%//
+%// file          : /doc_tex/basic/Triangulation3/Triangulation3.tex
+%// revision      : 
+%//
+%// author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
+%//
+%// coordinator   : INRIA Sophia Antipolis (Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>)
+%//
+%//============================================================================
+\chapter{3D- Triangulation}
+\label{chapter-Triangulation3}\section{Introduction}
+\label{Triangulation3-sec-intro}
+
+\subsection{Definition}
+\label{Triangulation3-sec-def}
+A three-dimensional triangulation is a three-dimensional simplicial
+complex, pure connected and without singularities \cite{by-ag-98}. It
+is a set of cells ($3$-faces) such that two cells
+either do not intersect or share a common facet ($2$-face), edge 
+($1$-face) or vertex ($0$-face). 
+
+The basic 3D-triangulation class of \cgal\ is primarily designed to
+represent the triangulations of a set of points ${\cal A}$ in $\R^3$. 
+It can be viewed as a partition of the convex hull of ${\cal A}$
+with tetrahedra whose vertices are the points of ${\cal A}$.  Together
+with the unbounded cell having the convex hull boundary as frontier, the
+triangulation forms a partition of $\R^3$.
+
+In order to deal
+only with tetrahedra, which is convenient for many applications, the
+unbounded cell can be subdivided into tetrahedra by considering that
+each convex hull facet is incident to an \ccc{infinite cell} having as
+fourth vertex an auxiliary vertex called the \ccc{infinite vertex}.  In
+that way, each facet is incident to exactly two cells and special cases
+at the boundary of the convex hull are simple to deal with.
+
+The class \ccc{CGAL_Triangulation_3<Traits,Tds>} of \cgal\ implements this
+point of view and therefore considers the triangulation of the set
+of points as a set of finite and infinite tetrahedra.  Notice that the
+infinite vertex has no significant coordinates and that no
+geometric predicate can be applied on it.
+
+A triangulation is a collection of vertices and cells that are linked
+together through incidence and adjacency relations. Each cell gives
+access to its four incident vertices and to its four adjacent
+cells. Each vertex gives access to one of its incident cells.
+
+The four vertices of a cell are indexed with 0, 1, 2 and 3 in positive
+orientation.  The neighbors of a cell are also indexed with 0, 1, 2, 3
+in such a way that the neighbor indexed by $i$ is opposite to the vertex
+with the same index.
+
+Edges ($1$-faces) and facets ($2$-faces) are not explicitely represented: 
+a facet is given by a cell and an index (the facet
+\ccc{i} of a cell \ccc{c} is the facet of \ccc{c} that is opposite to
+the vertex of index \ccc{i}) and an edge is given by a cell and two
+indices (the edge \ccc{(i,j)} of a cell \ccc{c} is the edge
+whose endpoints are the vertices of indices \ccc{i} and \ccc{j} of
+\ccc{c}). 
+
+\subsection{Degenerate Dimensions}
+\label{Triangulation3-sec-degen_dim}
+
+The class \ccc{CGAL_Triangulation_3<Traits,Tds>} can deal with degenerate 
+dimensions:
+\begin{itemize}
+\item {} \emph{dimension 2:} when a triangulation only contains
+coplanar points (which is the case when there are only three points), 
+it consists of triangular faces.
+\item {} \emph{dimension 1:} the triangulation contains only collinear 
+points (which is the case when there are only two points), it consists
+of edges.
+\item {} \emph{dimension 0:} the triangulation contains only one
+finite point.
+\item {} \emph{dimension -1:} this is a convention to handle the case
+when the only vertex of the triangulation is the infinite one.
+\end{itemize} 
+
+We use the same cell class in all cases: triangular faces in
+2D can be considered as degenerate cells, having only three vertices
+(resp. neighbors)
+numbered $(0,1,2)$, and one $NULL$ vertex (resp. neighbor);
+edges in 1D have only two vertices (resp. neighbors) numbered $0$ and $1$. 
+
+The implicit representation of facets (resp. edges) still holds
+for degenerate ($< 3$) dimensions : in dimension~2, each cell has only one
+facet of index 3, and 3 edges $(0,1)$, $(1,2)$ and $(2,0)$; in
+dimension~1, each cell has one edge $(0,1)$. 
+
+\subsection{Validity}
+\label{Triangulation3-sec-Valid}
+
+A geometric 3D-triangulation is said to be \ccc{locally valid} iff
+
+{\bf (a)-(b)} Its underlying combinatorial graph is \ccc{locally valid} 
+(see Section~\ref{TDS3-sec-Valid} of Chapter~\ref{chapter-TDS3})
+{\bf (c)} Any cell has its vertices ordered according to positive
+orientation. See Figure~\ref{Triangulation3-fig-orient}.
+
+When the triangulation is degenerated into a planar triangulation, the 
+geometric validity reduces to:
+
+{\bf (c-2D)} For any two adjacent triangles $(u,v,w_1)$ and $(u,v,w_2)$ with
+common edge $(u,v)$, $w_1$ and $w_2$ lie on opposite sides of $(u,v)$
+in the plane.
+
+When all the points are collinear, this condition becomes:
+
+{\bf (c-1D)} For any two adjacent edges $(u,v)$ and $(v,w)$, $u$ and
+$w$ lie on opposite sides of the common vertex $v$.
+
+\begin{ccTexOnly}
+\begin{figure}[htbp]
+\begin{center} 
+\includegraphics{orient.eps} 
+\end{center}
+\caption{Orientation of a cell (3-dimensional case) 
+\label{Triangulation3-fig-orient}}
+\end{figure} 
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+<img border=0 src="./orient.gif" align=center alt="Orientation of a cell 
+(3-dimensional case)">
+\end{ccHtmlOnly}
+
+The \ccc{is_valid()} method provided by \cgal\ checks the local
+validity of a given triangulation. This does not always
+ensure global validity \cite{mnssssu-cgpvg-96,dlpt-ccpps-98} but it is 
+sufficient for practical cases.
+
+\section{Software Design}
+\label{Triangulation3-sec-design}
+
+The class \ccc{CGAL_Triangulation_3<Traits,Tds>} is designed to be used as 
+a layer upon a 3D-triangulation data structure as presented in 
+Section~\ref{TDS3-sec-design} of Chapter~\ref{chapter-TDS3}.
+It provides high level geometric operations such as location of a point
+in the  triangulation, insertion of a point, and is responsible for
+the geometric validity. This class is parameterized by two classes:
+\begin{itemize}
+\item {} the \textbf{geometric traits} class, where the user can
+specify the type of points he wants to use as well as the elementary
+operations on them (predicates,\ldots). The concept of such a class is
+described in Section~\ref{Triangulation3-sec-concept-Traits} and a
+model is proposed by \cgal\ (see
+Section~\ref{Triangulation3-sec-class-Traits}).
+\item {} the \textbf{triangulation data structure} class of the middle level, 
+described in Chapter~\ref{chapter-TDS3}.
+\end{itemize}	
+
+Delaunay triangulations as well as hierarchical Delaunay triangulations
+\cite{d-iirdt-98} are also implemented in the package: 
+\ccc{CGAL_Delaunay_triangulation_3<Traits,Tds>} inherits from 
+\ccc{CGAL_Triangulation_3<Traits,Tds>} and 
+\ccc{CGAL_Delaunay_hierarchic_triangulation_3<Traits,Tds>} inherits from 
+\ccc{CGAL_Delaunay_triangulation_3<Traits,Tds>}.
+
+\ccc{CGAL_Triangulation_3<Traits,Tds>} derives from
+\ccc{CGAL_Triangulation_utils_3<Traits,Tds>}, which defines tools on
+the indices of vertices in cells (see
+Section~\ref{Triangulation3-sec-class-Utils}). 
+
+\section{Examples}
+\label{Triangulation3-sec-examples}
+
+\clearpage
+
+\begin{ccClass}{CGAL_Triangulation_utils_3}
+\section{A Class of Tools \protect \ccClassTemplateName} 
+\label{Triangulation3-sec-class-Utils}
+
+This class defines operations on the indices of vertices and neighbors 
+within a cell. These operations are used in \ccc{Triangulation_3.h},
+\ccc{Triangulation_data_structure_3.h},
+\ccc{Triangulation_ds_cell_3.h},
+\ccc{Triangulation_ds_circulators_3.h}. These classes inherit from
+\ccClassTemplateName\ so that they can use its methods.
+
+\ccFunction{unsigned int nextposaround(unsigned int i, 
+				    unsigned int j) const;}
+{In dimension~3, index of the neighbor that is next to a given cell,
+when turning positively around an oriented edge whose endpoints are
+indexed \ccc{i} and \ccc{j}. According to the usual numbering of
+vertices and neighbors in a given cell, it is also the index of the vertex 
+opposite to the desired neighbor. (see Figure~\ref{Triangulation3-fig-utils}).
+\ccPrecond{\ccc{( i < 4 ) && ( j < 4 ) && ( i != j )}.}}
+
+\ccFunction{unsigned int ccw(unsigned int i) const;}
+{Has a meaning only in dimension~2.\\
+ Computes the index of the vertex that is next to the vertex numbered
+\ccc{i} in counterclockwise direction. (see
+Figure~\ref{Triangulation3-fig-utils}).  
+\ccPrecond{\ccc{i<3}.}}
+
+\ccFunction{unsigned int cw(unsigned int i) const;}
+{Same for clockwise.}
+
+\begin{ccTexOnly}
+\begin{figure}[htbp]
+\begin{center} 
+\includegraphics{utils.eps} 
+\end{center}
+\caption{Operations on indices.\label{Triangulation3-fig-utils}}
+\end{figure} 
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+<img border=0 src="./utils.gif" align=center alt="Operations on indices">
+\end{ccHtmlOnly}
+
+\end{ccClass}
+
+\begin{ccClassTemplate}{CGAL_Triangulation_3<Traits,Tds>}
+\section{The Triangulation Class \protect \ccClassTemplateName} 
+
+\ccDefinition
+
+The \ccClassTemplateName\ expects a model of \ccc{geometric traits
+class} as first template argument and a model of \ccc{triangulation data
+structure} as second argument. The requirements and defaults for these
+classes are described in Sections~\ref{Triangulation3-sec-concept-Traits} 
+and~\ref{Triangulation3-sec-class-Traits}.
+
+\ccInclude{CGAL/Triangulation_3.h}
+
+\ccInheritsFrom
+\ccc{CGAL_Triangulation_utils_3}
+(see Section~\ref{Triangulation3-sec-class-Utils})
+
+\ccTypes
+The class \ccClassTemplateName\ defines the following types:
+
+\ccTypedef{typedef Traits::Point Point;}{Point}
+\ccGlue
+\ccTypedef{typedef Traits::Segment Segment;}{Segment}
+\ccGlue
+\ccTypedef{typedef Traits::Triangle Triangle;}{Triangle}
+\ccGlue
+\ccTypedef{typedef Traits::Tetrahedron Tetrahedron;}{Tetrahedron}
+
+The following types represent $k$-faces for $k\in\{0,1,2,3\}$. Edges
+($1$-faces) and facets ($2$-faces) are not explicitely represented and
+thus there are no corresponding classes (see
+Sections~\ref{Triangulation3-sec-degen_dim} and
+~\ref{Triangulation3-sec-def}). The functionalities of the 
+vertex and cell classes ($0$- and $3$-faces) are described in
+Sections~\ref{Triangulation3-sec-class-Vertex}
+and~\ref{Triangulation3-sec-class-Cell}.
+
+\ccNestedType{Vertex}{Vertex type}
+\ccGlue
+\ccNestedType{Cell}{Cell type}
+
+\ccTypedef{typedef pair<Cell_handle, int> Facet;}{Facet type.
+The pair \ccc{(c,i)} denotes the facet number \ccc{i} of cell \ccc{c}.}
+\ccGlue
+\ccTypedef{typedef triple<Cell_handle, int, int> Edge;}{Edge type.
+The triple \ccc{Edge(c,i,j)} denotes the edge with vertices numbered
+\ccc{i} and \ccc{j} in cell \ccc{c}.}
+
+The vertices and faces of the triangulations are accessed through
+\ccc{handles}, \ccc{iterators} and \ccc{circulators}. 
+A handle is a type which supports the two dereference operators
+\ccc{operator*} and \ccc{operator->}. Iterator and circulators are
+bidirectionnel and non mutable.  Circulators and iterators are
+assignable to the corresponding handle types. Whenever a handle appears 
+in the parameter list of a function, an appropriate iterator or
+circulator can be used as well \textit{not yet implemented}.  The edges and facets of the
+triangulation can also be visited through iterators and circulators
+which are bidirectionnel and non mutable.
+
+\ccNestedType{Vertex_handle}{handle to a vertex}
+\ccGlue
+\ccNestedType{Cell_handle}{handle to a cell}
+
+\ccNestedType{Cell_iterator}{iterator over cells}
+\ccGlue
+\ccNestedType{Facet_iterator}{iterator over facets}
+\ccGlue
+\ccNestedType{Edge_iterator}{iterator over edges}
+\ccGlue
+\ccNestedType{Vertex_iterator}{iterator over vertices}
+
+\ccNestedType{Cell_circulator}{circulator over all cells incident to a
+given edge} 
+\ccGlue
+\ccNestedType{Facet_circulator}{circulator over all facets incident to a
+given edge}
+
+The triangulation class also defines the following enum type to specify
+which case occurs when locating a point in the triangulation. 
+
+\ccEnum{enum Locate_type {VERTEX=0, EDGE, FACET, CELL, OUTSIDE_CONVEX_HULL, 
+OUTSIDE_AFFINE_HULL};}
+{}
+
+\ccCreation
+\ccCreationVariable{t}
+
+\ccConstructor{\ccClassName(const Traits & traits );}
+{Introduces a triangulation \ccVar\ having only one vertex which is the
+infinite vertex.} 
+
+\ccConstructor{\ccClassName(const CGAL_Triangulation_3<Traits,Tds> & tr);}
+{Copy constructor. All the vertices and faces are duplicated.
+\ccVar\ and \ccc{tr}\ refer to different triangulations. After the copy,
+if \ccc{tr} is modified, \ccVar\ is not modified.}
+
+\ccFunction{void \ccTilde\ccVar();}
+{Destructor. All vertices (including the infinite vertex) and cells are
+deleted.}
+
+\ccHeading{Assignment}
+
+\ccMethod{CGAL_Triangulation_3<Traits,Tds>
+		operator=(const CGAL_Triangulation_3<Traits,Tds> & tr);}
+{The triangulation is duplicated, and modifying one after the
+copy does not modify the other.}
+
+\ccMethod{copy_triangulation
+		(const CGAL_Triangulation_3<Traits,Tds> & tr);}
+{The triangulation is duplicated.}
+
+\ccMethod{void swap(CGAL_Triangulation_3<Traits,Tds> & tr);}
+{The triangulations \ccc{tr} and \ccVar\ are swapped.
+\ccc{\ccVar.swap(tr)} should be preferred to \ccVar\ = \ccc{tr} or to
+\ccc{t(tr)} if \ccc{tr} is deleted after that.}
+
+\ccAccessFunctions
+\ccMethod{const Traits & geom_traits() const;}
+{Returns a const reference to the geometric traits object.}
+\ccGlue
+\ccMethod{const Tds & tds() const;}
+{Returns a const reference to the triangulation data structure.}
+
+\ccMethod{int dimension() const;}
+{Returns the dimension of the affine hull.}
+\ccGlue
+\ccMethod{int number_of_vertices() const;}
+{Returns the number of finite vertices.}
+
+\ccMethod{Vertex_handle infinite_vertex();}
+{Returns the infinite vertex.}
+\ccGlue
+\ccMethod{Cell_handle infinite_cell() const;}
+{Returns a cell incident to the infinite vertex.}
+
+\ccHeading{Non constant-time access functions}
+
+As previously said, the triangulation is a collection of cells which
+are either infinite or represent a finite tetrahedra, where an
+infinite cell is a 
+cell incident to the infinite vertex. Similarly we call \ccc{infinite}
+an edge (resp. facet) incident to the infinite vertex.
+
+\ccMethod{int number_of_cells() const;}
+{The number of cells.
+\ccPrecond{\ccVar.\ccc{dimension()}=3.}}
+\ccGlue
+\ccMethod{int number_of_facets() const;}
+{The number of facets.
+\ccPrecond{\ccVar.\ccc{dimension()}$\geq 2$.}}
+\ccGlue
+\ccMethod{int number_of_edges() const;}
+{The number of edges.
+\ccPrecond{\ccVar.\ccc{dimension()}$\geq 1$.}}
+
+\ccMethod{int number_of_finite_cells() const;}
+{The number of finite cells.
+\ccPrecond{\ccVar.\ccc{dimension()}=3.}}
+\ccGlue
+\ccMethod{int number_of_finite_facets() const;}
+{The number of finite facets.
+\ccPrecond{\ccVar.\ccc{dimension()}$\geq 2$.}}
+\ccGlue
+\ccMethod{int number_of_finite_edges() const;}
+{The number of finite edges.
+\ccPrecond{\ccVar.\ccc{dimension()}$\geq 1$.}}
+
+\ccHeading{Setting}
+\ccMethod{void set_number_of_vertices(int n);}{}
+
+\ccHeading{Geometric access functions}
+
+\ccMethod{Tetrahedron tetrahedron(const Cell_handle c) const;}
+{Returns the tetrahedron formed by the four vertices of \ccc{c}.
+\ccPrecond{\ccc{\ccVar.dimension()} $=3$ and the cell is finite.}}
+\ccGlue
+\ccMethod{Triangle triangle(const Facet & f) const;}
+{Returns the triangle formed by the three vertices of \ccc{f}. 
+\ccPrecond{\ccc{\ccVar.dimension()} $\geq 2$ and the facet is finite.}}
+\ccGlue
+\ccMethod{Triangle triangle(const Cell_handle c, int i) const;}
+{Same as the previous method for facet \ccc{(c,i)}.
+\ccPrecond{idem and $i \in \{0,1,2,3\}$ in dimension~3, $i = 3$ in
+dimension~2.}}
+\ccGlue
+\ccMethod{Segment segment(const Edge & e) const;}
+{Returns the line segment formed by the vertices of \ccc{e}.
+\ccPrecond{\ccc{\ccVar.dimension()} $\geq 1$ and \ccc{e} is finite.}}
+\ccGlue
+\ccMethod{Segment segment(const Cell_handle c, int i, int j) const;}
+{Same as the previous method for edge \ccc{(c,i,j)}.
+\ccPrecond{idem and $i\neq j$. Moreover $i,j \in \{0,1,2,3\}$ in
+dimension~3, $i,j \in \{0,1,2\}$ in dimension~2, $i,j \in \{0,1\}$ in 
+dimension~1.}}
+
+ \textit{not yet implemented : geometric access functions with iterators or
+circulators as arguments.}
+
+\ccHeading{Tests for Finite and Infinite Vertices and Faces}
+
+\ccMethod{bool is_infinite(const Vertex_handle v) const;}
+{\ccc{true}, iff vertex \ccc{v} is the infinite vertex.}
+\ccGlue
+\ccMethod{bool is_infinite(const Cell_handle c) const;}
+{\ccc{true}, iff \ccc{c} is incident to the infinite vertex.
+\ccPrecond{\ccc{\ccVar.dimension()} $=3$.}}
+\ccGlue
+\ccMethod{bool is_infinite(const Cell_handle c, int i) const;}
+{\ccc{true}, iff the facet \ccc{i} of cell \ccc{c} is incident to the
+infinite vertex.
+\ccPrecond{\ccc{\ccVar.dimension()} $\geq 2$ and $i\in\{0,1,2,3\}$ in
+dimension~3, $i=3$ in dimension~2.}} 
+\ccGlue
+\ccMethod{bool is_infinite(const Facet & f) const;}
+{\ccc{true} iff facet \ccc{f} is incident to the infinite vertex.
+\ccPrecond{\ccc{\ccVar.dimension()} $\geq 2$.}}
+\ccGlue
+\ccMethod{bool is_infinite(const Cell_handle c, int i, int j) const;}
+{\ccc{true}, iff the edge \ccc{i} \ccc{j} of cell \ccc{c} is incident to
+the infinite vertex.
+\ccPrecond{\ccc{\ccVar.dimension()} $\geq 1$ and $i\neq j$. Moreover
+$i,j \in \{0,1,2,3\}$ in dimension~3, $i,j \in \{0,1,2\}$ in dimension
+2, $i,j \in \{0,1\}$ in  dimension~1.}} 
+\ccGlue
+\ccMethod{bool is_infinite(const Edge & e) const;}
+{\ccc{true} iff edge \ccc{e} incident to the infinite vertex.
+\ccPrecond{\ccc{\ccVar.dimension()} $\geq 1$.}}
+
+\ccHeading{Queries}
+
+\ccMethod{bool is_vertex(const Point & p, Vertex_handle & v) const;}
+{Tests whether \ccc{p} is a vertex of \ccVar\ by locating \ccc{p} in
+the triangulation. If \ccc{p} is found, the associated vertex \ccc{v}
+is given.}
+\ccGlue
+\ccMethod{bool is_edge(Vertex_handle u, Vertex_handle v, 
+			Cell_handle & c, int & i, int & j) const;}
+{Tests whether \ccc{(u,v)} is an edge of \ccVar\ by locating the points 
+in the triangulation. If the edge is found,
+it computes a cell \ccc{c} having this edge and the indices \ccc{i}
+and \ccc{j} of the vertices \ccc{u} and \ccc{v}, in this order.  
+\ccPrecond{\ccc{u} and \ccc{v} are vertices of \ccVar.}\\
+\textit{not yet implemented}}
+\ccGlue
+\ccMethod{bool is_facet(Vertex_handle u, Vertex_handle v, Vertex_handle w, 
+			Cell_handle & c, int & i, int & j, int & k) const;}
+{Tests whether \ccc{(u,v,w)} is a facet of \ccVar\ by locating the points 
+in the triangulation. If the facet is found,
+it computes a cell \ccc{c} having this facet and the indices \ccc{i},
+\ccc{j} and \ccc{k} of the vertices \ccc{u}, \ccc{v} and \ccc{w}, in
+this order.  
+\ccPrecond{\ccc{u}, \ccc{v} and \ccc{w} are vertices of \ccVar.}\\
+\textit{not yet implemented}}
+\ccGlue
+\ccMethod{bool is_cell(Vertex_handle u, Vertex_handle v, 
+			Vertex_handle w, Vertex_handle t,
+			Cell_handle & c, 
+			int & i, int & j, int & k, int & l) const;}
+{Tests whether \ccc{(u,v,w,t)} is a cell of \ccVar\ by locating the points 
+in the triangulation. If the cell \ccc{c} is found, the method
+computes the indices \ccc{i}, \ccc{j}, \ccc{k} and \ccc{l} of the
+vertices \ccc{u}, \ccc{v}, \ccc{w} and \ccc{t} in \ccc{c}, in this
+order. 
+\ccPrecond{\ccc{u}, \ccc{v}, \ccc{w} and \ccc{t} are vertices of \ccVar.}\\
+\textit{not yet implemented}}
+
+\ccHeading{Location}
+The class \ccClassTemplateName\  provides two functions to locate
+a given point with respect to a triangulation. It provides
+also functions to test if a given point is inside a finite face
+or not.
+
+\ccMethod{Cell_handle
+          locate(const Point & query) const;}
+{
+%\ccPrecond{\ccc{\ccVar.dimension()} $= 3$ (otherwise there is no
+%cell yet).}\\
+If the point \ccc{query} lies inside the convex hull of the points, the cell 
+that contains the query in its interior or on its boundary is returned.\\
+If the point \ccc{query} lies outside the convex hull of the points,
+an infinite cell with vertices $\{ p, q, r, \infty\}$ is returned such that
+the tetrahedron $( p, q, r, query )$ is positively oriented
+(the rest of the triangulation lies on the other side of facet 
+$( p, q, r )$). \\
+Note that locate works even in degenerate dimensions: in dimension 2
+(resp. 1, 0) the \ccc{Cell_handle} returned is the one that represents
+the facet (resp. edge, vertex) containing the query point.
+}
+
+\ccMethod{Cell_handle
+          locate(const Point & query, Cell_handle start) const;}
+{Same as the previous method, but \ccc{start} is used as a starting
+place for the location.}
+
+\ccMethod{Cell_handle
+          locate(const Point & query,
+                 Locate_type & lt,
+                 int & li, int & lj ) const;}
+{If \ccc{query} lies inside the affine hull of the points, the $k$-face
+(finite or infinite) that contains \ccc{query} in its interior is
+returned, by means of the cell returned together with \ccc{lt}, which
+is set to the locate type of the query (\ccc{VERTEX, EDGE, FACET,
+CELL}, or \ccc{OUTSIDE_CONVEX_HULL} if the cell is infinite and \ccc{query}
+strictly lies in it) and two indices \ccc{li}, and \ccc{lj} that
+specify the $k$-face of the cell containing \ccc{query}:\\ 
+if the $k$-face is a cell, \ccc{li} and \ccc{lj} have no
+meaning; if it is a facet (resp. vertex), \ccc{li} gives the index of
+the facet (resp. vertex) and \ccc{lj} has no meaning; if it is and
+edge, \ccc{li} and \ccc{lj} give the indices of its vertices.\\ 
+%If the point \ccc{query} lies outside the convex hull of the points, but 
+%in their affine hull, then \ccc{lt} is set to \ccc{OUTSIDE_CONVEX_HULL}, 
+%and a $k$-face separating the triangulation from \ccc{query} is
+%specified by the cell containing \ccc{query}, which is returned, and
+%indices as previously.\\
+If the point \ccc{query} lies outside the affine hull of the points,
+which can happen in case of degenerate dimensions, \ccc{lt} is set to
+\ccc{OUTSIDE_AFFINE_HULL}, and the cell returned has no meaning.
+As a particular case, if there is no finite vertex yet in the
+triangulation, \ccc{lt} is set to \ccc{OUTSIDE_AFFINE_HULL} and
+\ccc{locate} returns \ccc{NULL}. 
+}
+
+\ccMethod{Cell_handle
+          locate(const Point & query,
+		 Cell_handle start,
+                 Locate_type & lt,
+                 int & li, int & lj ) const;}
+{Same as the previous method, but \ccc{start} is used as a starting
+place for the location.}
+
+\ccMethod{CGAL_Bounded_side
+          side_of_cell(const Point & p,
+			Cell_handle c,
+                        Locate_type & lt, int & li, int & lj) const;}
+{Returns on which side of the oriented boundary of \ccc{c} lies 
+the point \ccc{p}. More precisely, it returns:\\
+- \ccc{CGAL_ON_BOUNDED_SIDE} if \ccc{p} is inside the cell (for an infinite
+cell this means that \ccc{p} lies strictly in the half space limited by
+its finite facet) \\
+- \ccc{CGAL_ON_BOUNDARY} if p on the boundary of the cell (for an infinite
+cell this means that \ccc{p} lies on the *finite* facet). Then
+\ccc{lt} together with \ccc{li} and \ccc{lj} give the precise location
+on the boundary (see the descriptions of \ccc{locate} methods)\\ 
+- \ccc{CGAL_ON_UNBOUNDED_SIDE} if \ccc{p} lies outside the cell (for an
+infinite cell this means that \ccc{p} is not in the preceding two
+cases).
+\ccPrecond{\ccc{\ccVar.dimension()} $=3$}}
+
+\ccMethod{CGAL_Bounded_side
+          side_of_facet(const Point & p,
+			const Facet & f,
+			Locate_type & lt, int & li, int & lj) const;}
+{Returns on which side of the oriented boundary of \ccc{f} lies 
+the point \ccc{p}:\\
+- \ccc{CGAL_ON_BOUNDED_SIDE} if \ccc{p} is inside the facet (for an
+infinite facet this means that \ccc{p} lies strictly in the half plane
+limited by its finite edge) \\
+- \ccc{CGAL_ON_BOUNDARY} if \ccc{p} is on the boundary of the facet
+(for an infinite facet this means that \ccc{p} lies on the finite
+edge). \ccc{lt}, \ccc{li} and \ccc{lj} give the precise location of
+\ccc{p} on the boundary of the facet. \ccc{li} and \ccc{lj} refer to
+indices in the cell \ccc{c} storing \ccc{f}\\
+- \ccc{CGAL_ON_UNBOUNDED_SIDE} if \ccc{p} lies outside the facet (for
+an infinite facet this means that \ccc{p} is not in the preceding two
+cases)
+\ccPrecond{\ccc{\ccVar.dimension()} $=2$ and \ccc{p} lies in the
+plane containing the triangulation. \ccc{f.first} $=3$ (in dimension~2 
+there is only one facet per cell).}}
+\ccGlue
+\ccMethod{CGAL_Bounded_side
+          side_of_facet(const Point & p,
+			Cell_handle c, 
+                        Locate_type & lt, int & li, int & lj) const;}
+{Same as the previous method for the facet \ccc{(c,3)}.}
+
+\ccMethod{CGAL_Bounded_side
+          side_of_edge(const Point & p, 
+			const Edge & e,
+                        Locate_type & lt, int & li) const;}
+{Returns on which side of the oriented boundary of \ccc{e} lies 
+the point \ccc{p}:\\
+- \ccc{CGAL_ON_BOUNDED_SIDE} if \ccc{p} is inside the edge (for an
+infinite edge this means that \ccc{p} lies in the half line defined by
+the vertex)\\ 
+- \ccc{CGAL_ON_BOUNDARY} if \ccc{p} equals one of the vertices,
+\ccc{li} give the index of the vertex in the cell storing \ccc{e}\\
+- \ccc{CGAL_ON_UNBOUNDED_SIDE} if \ccc{p} lies outside the edge (for
+an infinite edge this means that \ccc{p} lies on the other half line)\\ 
+\ccPrecond{\ccc{\ccVar.dimension()} $=1$ and \ccc{p} is collinear
+with the points of the triangulation. \ccc{e.first} $=0$ and
+\ccc{e.second} $=1$ (in dimension~2 there is only one edge per cell).}}
+\ccGlue
+\ccMethod{CGAL_Bounded_side
+          side_of_edge(const Point & p,
+			Cell_handle c, 
+                        Locate_type & lt, int & li) const;}
+{Same as the previous method for edge $(c,0,1)$.}
+
+\ccHeading{Insertion}
+
+The following operations are guaranteed to lead to a valid triangulation 
+when they are applied on a valid triangulation.
+
+\ccMethod{Vertex_handle insert(const Point & p );}
+{Inserts point \ccc{p} in the triangulation and returns the corresponding
+ vertex.\\
+If point \ccc{p} coincides with an already existing vertex, this 
+vertex is returned and the triangulation remains unchanged.\\
+If point \ccc{p} lies in the convex hull of the points, it is added
+naturally: if it lies inside a cell, the cell is split into four
+cells, if it lies on a facet, the two incident cells are split into
+three cells, if it lies on an edge, all the cells incident to this
+edge are split into two cells.\\
+If point \ccc{p} is strictly outside the convex hull but in the affine
+hull, \ccc{p} is linked to all visible points on the convex hull to
+form the new triangulation. See
+Figure~\ref{Triangulation3-fig-insert_outside_convex_hull}.\\  
+If point \ccc{p} is outside the affine hull of the points, \ccc{p} is
+linked to all the points, and the dimension of the triangulation is
+incremented. The infinite vertex is linked to all the points to
+triangulate the new infinite face, so that all the points now belong to
+the boundary of the convex hull. See
+Figure~\ref{Triangulation3-fig-insert_outside_affine_hull}.}
+
+\ccMethod{Vertex_handle insert(const Point & p, Cell_handle start);}
+{Same as the previous method, but \ccc{start} is used as a starting
+place for the location done within the insertion.}
+
+\ccMethod{template < class InputIterator >
+          int
+          insert(InputIterator first, InputIterator last);}
+{Inserts the points in the range $\left[\right.$\ccc{first},
+\ccc{last}$\left.\right)$.  Returns the number of inserted points.
+\ccPrecond{The \ccc{value_type} of \ccc{first} and \ccc{last} is
+\ccc{Point}.}}
+\ccGlue
+\ccMethod{int insert(list<Point>::const_iterator first,
+	     list<Point>::const_iterator last);}
+{Same as the previous one.}
+\ccGlue
+\ccMethod{int insert(vector<Point>::const_iterator first,
+	     vector<Point>::const_iterator last);}
+{Same as the previous one.}
+\ccGlue
+\ccMethod{int insert(istream_iterator<Point, ptrdiff_t> first,
+	     istream_iterator<Point, ptrdiff_t> last);}
+{Same as the previous one.}
+\ccGlue
+\ccMethod{int insert(Point* first,
+	     Point* last);}
+{Same as the previous one.}
+
+The previous methods are sufficient to build a whole triangulation. We
+also provide some other methods that can be used instead of
+\ccc{insert(p)} when the place the new point \ccc{p} must be inserted
+is already known. They are also guaranteed to lead to a valid
+triangulation when they are applied on a valid triangulation.
+
+\ccMethod{Vertex_handle insert_in_cell(const Point & p, Cell_handle c);} 
+{Inserts point \ccc{p} in cell \ccc{c}. Cell \ccc{c} is split into 4
+tetrahedra.
+\ccPrecond{\ccc{\ccVar.dimension()} $=3$ and \ccc{p} lies strictly
+inside cell \ccc{c}.}} 
+
+\ccMethod{Vertex_handle insert_in_facet(const Point & p, const Facet & f);} 
+{Inserts point \ccc{p} in facet \ccc{f}. In dimension~3, the 2
+neighboring cells are split into 3 tetrahedra; in dimension~2, the facet 
+is split into 3 triangles.
+\ccPrecond{\ccc{\ccVar.dimension()} $\geq 2$ and \ccc{p} lies inside
+face \ccc{f}.}}
+\ccGlue
+\ccMethod{Vertex_handle insert_in_facet(const Point & p, 
+					Cell_handle c, int i);}
+{Idem, insertion in facet \ccc{(C,i)}.
+\ccPrecond{idem and $i \in \{0,1,2,3\}$ in dimension~3, $i = 3$ in
+dimension~2.}}
+
+\ccMethod{Vertex_handle insert_in_edge(const Point & p, const Edge & e);}
+{Inserts \ccc{p} in edge \ccc{e}. In dimension~3, 
+all the cells having this edge are split into 2 tetrahedra; in
+dimension~2, the 2 neighboring facets are split into 2 triangles; in
+dimension~1, the edge is split into 2 edges.
+\ccPrecond{\ccc{\ccVar.dimension()} $\geq 1$ and \ccc{p} lies on edge
+\ccc{e}.}}
+\ccGlue
+\ccMethod{Vertex_handle insert_in_edge(Point p, Cell_handle c, int i, int j);} 
+{Idem, inserts \ccc{p} in edge $(\ccc{i}, \ccc{j})$ of \ccc{c}.
+\ccPrecond{idem and $i\neq j$. Moreover $i,j \in \{0,1,2,3\}$ in
+dimension~3, $i,j \in \{0,1,2\}$ in dimension~2, $i,j \in \{0,1\}$ in 
+dimension~1.}} 
+
+\ccMethod{Vertex_handle insert_outside_convex_hull(const Point & p,
+					Cell_handle c,
+					int li, int lj=0);}
+{\ccc{c}, together with \ccc{li} and possibly \ccc{lj}, give a
+separator (facet, edge or vertex, depending on the dimension) for
+\ccc{p} from the triangulation (see the description of method
+\ccc{locate()} for more details on the way the separator is represented).\\
+Links \ccc{p} to all  points in the triangulation that are visible from
+\ccc{p}. Updates consequently the infinite faces. See
+Figure~\ref{Triangulation3-fig-insert_outside_convex_hull}.
+\ccPrecond{\ccc{\ccVar.dimension()} $>0$, \ccc{c}, and the $k$-face
+represented by \ccc{c} is infinite and contains \ccVar.}}
+
+\begin{ccTexOnly}
+\begin{figure}[htbp]
+\begin{center} 
+\includegraphics{insert_outside_convex_hull.eps} 
+\end{center}
+\caption{\protect\ccc{insert_outside_convex_hull} (2-dimensional case) 
+\label{Triangulation3-fig-insert_outside_convex_hull}}
+\end{figure} 
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+<img border=0 src="./insert_outside_convex_hull.gif" align=center alt="insert_outside_convex_hull} (2-dimensional case)">
+\end{ccHtmlOnly}
+
+\ccMethod{Vertex_handle insert_outside_affine_hull(const Point & p);}
+{\ccc{p} is linked to all the points, and the infinite vertex is linked
+to all the points (including \ccc{p}) to triangulate the new infinite
+face, so that all the points now belong to the boundary of the convex
+hull. See Figure~\ref{Triangulation3-fig-insert_outside_affine_hull}.\\
+This method can be used to insert the first point in an empty
+triangulation.
+\ccPrecond{\ccc{\ccVar.dimension()} $<3$ and \ccc{p} lies outside the
+affine hull of the points.}} 
+
+\begin{ccTexOnly}
+\begin{figure}[htbp]
+\begin{center} 
+\includegraphics{insert_outside_affine_hull.eps} 
+\end{center}
+\caption{\protect\ccc{insert_outside_affine_hull} (2-dimensional case) 
+\label{Triangulation3-fig-insert_outside_affine_hull}}
+\end{figure} 
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+<img border=0 src="./insert_outside_affine_hull.gif" align=center
+alt="insert_outside_affine_hull} (2-dimensional case)">
+\end{ccHtmlOnly}
+
+\ccHeading{Removal}
+
+\ccMethod{void remove(Point p);}
+{\ccPrecond{\ccc{p} is a vertex of the triangulation.}\\
+Removes the associated vertex. 
+\ccPrecond{\ccc{p} is a vertex of the triangulation.}\\
+\textit{not yet implemented}}
+
+\ccMethod{void clear();}
+{Removes all finite vertices and all cells of \ccVar.}
+
+\ccHeading{Traversal of the Triangulation}
+
+The triangulation provides several iterators and circulators
+that allow to traverse it (completely or partially).
+
+\ccHeading{Face, Edge and Vertex Iterators}
+
+The following iterators respectively allow the user to visit cells,
+facets, edges and vertices of the
+triangulation. These iterators are non mutable, bi-directionnal and
+their value types are respectively \ccc{Cell}, \ccc{Facet}, \ccc{Edge}
+and \ccc{Vertex}. They are all invalidated by any change in the
+triangulation. 
+
+\ccMethod{Vertex_iterator finite_vertices_begin() const;}
+{Starts at an arbitrary finite vertex. Then \ccc{$++$} and \ccc{$--$} will
+iterate on finite vertices. Returns \ccc{vertices_end()} when
+\ccc{\ccVar.number_of_vertices()} $<1$.} 
+\ccGlue
+\ccMethod{Vertex_iterator all_vertices_begin() const;}
+{Starts at an arbitrary vertex. Iterates on all vertices (even infinite
+ones). Returns \ccc{vertices_end()} when
+\ccc{\ccVar.number_of_vertices()} $<1$.}  
+\ccGlue
+\ccMethod{Vertex_iterator vertices_end() const;}
+{Past-the-end iterator}
+
+\ccMethod{Edge_iterator finite_edges_begin() const;}
+{Starts at an arbitrary finite edge. Then \ccc{$++$} and \ccc{$--$} will
+iterate on finite edges. Returns \ccc{edges_end()} when
+\ccc{\ccVar.dimension()} $<1$.} 
+\ccGlue
+\ccMethod{Edge_iterator all_edges_begin() const;}
+{Starts at an arbitrary edge. Iterates on all edges (even infinite
+ones). Returns \ccc{edges_end()} when \ccc{\ccVar.dimension()} $<1$.}
+\ccGlue
+\ccMethod{Edge_iterator edges_end() const;}
+{Past-the-end iterator}
+
+\ccMethod{Facet_iterator finite_facets_begin() const;}
+{Starts at an arbitrary finite facet. Then \ccc{$++$} and \ccc{$--$} will
+iterate on finite facets. Returns \ccc{facets_end()} when
+\ccc{\ccVar.dimension()} $<2$.}
+\ccGlue
+\ccMethod{Facet_iterator all_facets_begin() const;}
+{Starts at an arbitrary facet. Iterates on all facets (even infinite
+ones). Returns \ccc{facets_end()} when 
+\ccc{\ccVar.dimension()} $<2$.}
+\ccGlue
+\ccMethod{Facet_iterator facets_end() const;}
+{Past-the-end iterator}
+
+\ccMethod{Cell_iterator finite_cells_begin() const;}
+{Starts at an arbitrary finite cell. Then \ccc{$++$} and \ccc{$--$} will
+iterate on finite cells. Returns \ccc{cells_end()} when
+\ccc{\ccVar.dimension()} $<3$.}
+\ccGlue
+\ccMethod{Cell_iterator all_cells_begin() const;}
+{Starts at an arbitrary cell. Iterates on all cells (even infinite
+ones). Returns \ccc{cells_end()} when 
+\ccc{\ccVar.dimension()} $<3$.}
+\ccGlue
+\ccMethod{Cell_iterator cells_end() const;}
+{Past-the-end iterator}
+
+\ccHeading{Cell and facet circulators}
+
+The following circulators respectively visit all cells or all facets
+incident to a given edge. They are non-mutable and bidirectional. They
+are invalited by any modification of one of the cells traversed. 
+
+\ccMethod{Cell_circulator incident_cells(Edge e) const;}
+{Starts at an arbitrary cell incident to \ccc{e}.
+\ccPrecond{\ccc{\ccVar.dimension()} $=3$.}}
+\ccGlue
+\ccMethod{Cell_circulator incident_cells(Edge e, Cell_handle c) const;}
+{Starts at cell \ccc{c}.
+\ccPrecond{\ccc{\ccVar.dimension()} $=3$ and \ccc{c} is incident to
+\ccc{e}.}}
+
+\ccMethod{Facet_circulator incident_facets(Edge e) const;}
+{Starts at an arbitrary facet incident to \ccc{e}.}
+\ccGlue
+\ccMethod{Facet_circulator incident_facets(Edge e, Facet f) const;}
+{Starts at facet \ccc{f}. 
+\ccPrecond{\ccc{\ccVar.dimension()} $\geq 2$ and \ccc{f} is incident to
+\ccc{e}.}\\ 
+\textit{not yet implemented}}
+\ccGlue
+\ccMethod{Facet_circulator incident_facets(Edge e, Cell_handle c, int i) 
+const;}
+{Idem, starts at facet of index \ccc{i} in \ccc{c}.
+\ccPrecond{idem and $i \in \{0,1,2,3\}$ in dimension~3, $i = 3$ in
+dimension~2.}}
+
+\ccHeading{Traversal of the incident cells and the adjacent vertices
+of a given vertex} 
+
+\ccMethod{void incident_cells(Vertex_handle v, 
+		set<Cell*, less<Cell*> > & cells,
+		   Cell_handle c = NULL ) const;}
+{Computes the set \ccc{cells} of all cells incident to \ccc{v}. If
+\ccc{\ccVar.dimension()} $<3$ then the returned set is empty. \\
+\textit{This method computes a set of \ccc{Cell*}, whereas it should
+logically compute a set of \ccc{Cell_handle}. This is due to
+compilation problems with sets of \ccc{Cell_handle}. However, the user
+can recover a \ccc{Cell_handle} for each element of the set by using
+the method \ccc{handle()} defined for the \ccc{Cell} type.}
+\ccPrecond{\ccc{v} $\neq$ \ccc{NULL}, \ccc{v} is a vertex of \ccVar\ 
+and the optional argument \ccc{c} is a cell having \ccc{v} as vertex.}}
+
+\ccMethod{void incident_vertices(Vertex_handle v, 
+		set<Vertex*, less<Vertex*> > & vertices,
+		Cell_handle c = NULL ) const;}
+{Computes the set \ccc{vertices} of all vertices incident to \ccc{v}. If
+\ccc{\ccVar.number_of_vertices()} $<1$ then the set is empty.
+\textit{An analogous remark as for the previous method holds on the
+types within the set.}
+\ccPrecond{\ccc{v} $\neq$ \ccc{NULL}, \ccc{v} is a vertex of \ccVar\ and
+the optional argument \ccc{c} is a cell having \ccc{v} as vertex.}}
+
+\begin{ccAdvanced}
+\ccHeading{Checking}
+The responsability of keeping a valid triangulation belongs to the user
+when using advanced operations allowing a direct manipulation of cells
+and vertices. We provide the user with the following method to help
+debugging. 
+
+\ccMethod{bool
+          is_valid(bool verbose = false) const;}
+{Checks the combinatorial validity of the triangulation and also the
+validity of its geometric embedding (see
+Section~\ref{Triangulation3-sec-Valid}). When \ccc{verbose} is set to true, 
+messages describing the first invalidity encountered are printed.\\
+This method is  mainly a debugging help for the users of advanced features.
+}
+
+\ccMethod{bool
+          is_valid(Cell_handle c, bool verbose = false) const;}
+{Checks the combinatorial validity of the cell by calling the
+\ccc{is_valid} method of the \ccc{Tds} cell class. Also checks the
+geometric validity of \ccc{c}, if \ccc{c} is finite 
+(see Section~\pageref{Triangulation3-sec-Valid}).\\
+When \ccc{verbose} is set to \ccc{true}, messages are printed to give
+a precise indication on the kind of invalidity encountered.}
+
+\end{ccAdvanced}
+
+\ccHeading{I/O}
+
+\ccFunction{istream& operator>>
+(istream& is, Triangulation_3<Traits, Tds> &t);}
+{Reads the combinatorial underlying triangulation from \ccc{is} by
+calling the corresponding input operator of the triangulation data
+structure class, and the non combinatorial information by calling the
+corresponding input operators of the vertex and the cell
+classes. Assigns the resulting triangulation to \ccc{t}.}
+
+\ccFunction{ostream& operator<<
+(ostream& os, const CGAL_Triangulation_3<Traits, Tds> &t);}
+{Writes the triangulation \ccc{t} into \ccc{os}.}
+
+The information in the \ccc{iostream} is: the dimension, the number of
+finite vertices, the non combinatorial information on vertices (point,
+etc), the number of cells, the cells by the indices of their vertices
+in the preceding list of vertices, plus the non combinatorial
+information on each cell, the neighbors of each cell by their index in
+the preceding list of cells. (This holds when dimension < 3 with faces
+of maximal dimension.)
+
+\end{ccClassTemplate}
+
+\begin{ccClassTemplate}{CGAL_Triangulation_vertex_3<Traits,Tds>}
+\section{The Vertex Class of a Triangulation \protect \ccClassTemplateName} 
+\label{Triangulation3-sec-class-Vertex}
+
+\ccCreationVariable{v}
+
+\ccDefinition
+The vertex stores a point and gives access to an incident face of
+maximal dimension.
+
+\ccInclude{CGAL/Triangulation_vertex_3.h}
+
+\ccInheritsFrom{Tds::Vertex}
+
+\ccTypes
+The class \ccClassTemplateName\ defines the following types, also
+defined in the class \ccc{Triangulation_3<Traits,Tds>}:
+
+\ccTypedef{typedef typename Traits::Point Point;}{point type}
+\ccGlue
+\ccTypedef{typedef typename Tds::Vertex Vtds;}{vertex of the triangulation data structure}
+\ccGlue
+\ccTypedef{typedef typename Tds::Cell Ctds;}{cell of the triangulation data structure}
+\ccGlue
+\ccTypedef{typedef CGAL_Triangulation_vertex_handle_3<Traits,Tds> Vertex_handle;}{handle to a vertex}
+\ccGlue
+\ccTypedef{typedef CGAL_Triangulation_cell_handle_3<Traits,Tds> Cell_handle;}{handle to a cell}
+
+\begin{ccAdvanced}
+\ccCreation
+The user needs to construct explicitly vertices only when designing his
+own triangulation algorithms. 
+
+\ccConstructor{\ccClassName()}
+{Introduces a new vertex. The geometric information is initialized by
+the default constructor of the class \ccc{Point}. A test on the handle
+to the incident cell of \ccVar\ for equality with \ccc{NULL} will
+answer \ccc{true}.} 
+
+\ccConstructor{\ccClassName(const Point & p);}
+{Introduces vertex \ccVar, and initializes its geometric information.
+A test on the handle
+to the incident cell of \ccVar\ for equality with \ccc{NULL} will
+answer \ccc{true}.}
+
+\ccConstructor{\ccClassName(const Point & p,
+                      		Cell_handle c);}
+{Introduces vertex \ccVar, and initializes the geometric information and 
+the handle to the incident cell.}
+
+\ccConstructor{\ccClassName(Cell_handle c);}
+{Introduces vertex \ccVar, and initializes the handle to the incident cell.}
+
+\ccHeading{Setting}
+\ccMethod{void set_cell(Cell_handle c);}
+{Sets \ccVar's cell to \ccc{c}}
+\ccMethod{void set_point(const Point & p);}
+{Sets \ccVar's point to \ccc{p}}
+
+\end{ccAdvanced}
+
+\ccAccessFunctions
+
+\ccMethod{Point point() const;}
+{Returns the geometric information of \ccVar.}
+
+\ccMethod{Cell_handle cell() const;}
+{Returns a cell of the triangulation having \ccVar\ as
+vertex. Remember that in degenerate dimensions, a cell stores a face
+of maximal dimension (Section~\ref{Triangulation3-sec-degen_dim}).}
+
+\ccMethod{Vertex_handle handle() const;}
+{Returns an handle to the vertex.}
+
+%\begin{ccAdvanced}
+%\ccHeading{Checking}
+
+%\ccMethod{bool is_valid(bool verbose = false) const;} 
+%{Calls the \ccc{is_valid()} method of the \ccc{Tds} vertex class.\\
+%When \ccc{verbose} is set to \ccc{true}, messages are printed to give
+%a precise indication on the kind of invalidity encountered.} 
+%\end{ccAdvanced} 
+
+	\end{ccClassTemplate} 
+
+\begin{ccClassTemplate}{CGAL_Triangulation_cell_3<Traits,Tds>}
+\section{The Cell Class of a Triangulation \protect \ccClassTemplateName} 
+\label{Triangulation3-sec-class-Cell}
+
+\ccCreationVariable{c}
+
+\ccDefinition
+
+A cell of a triangulation gives access to its four vertices indexed 0,
+1, 2, and 3 in positive orientation and to its four adjacent cells, also
+called neighbors. The neighbors are indexed in such a way that neighbor
+$i$ lies opposite to vertex $i$.
+
+In degenerate dimensions, cells are used to store faces of maximal
+dimension: (Section~\ref{Triangulation3-sec-degen_dim}).
+
+\ccInclude{CGAL/Triangulation_cell_3.h}
+
+\ccInheritsFrom{Tds::Cell}
+
+\ccTypes
+The class \ccClassTemplateName\ defines the same types as the
+\ccc{CGAL_Triangulation_vertex_3<Traits,Tds>} class.
+
+\begin{ccAdvanced}
+\ccCreation
+The user needs to construct explicitly cells only when designing his
+own triangulation algorithms. 
+
+\ccConstructor{\ccClassName()}
+{Introduces a variable \ccVar\ and initializes all its vertices and
+neighbors in such a way that tests on the handles for equality with
+\ccc{NULL} will answer \ccc{true}.} 
+
+\ccConstructor{\ccClassName(Tds & tds);}
+{Introduces a variable \ccVar, initializes the triangulation data
+structure related, and initializes all its vertices and
+neighbors as the preceding constructor.}
+
+\ccConstructor{\ccClassName(Tds & tds,
+	                    Vertex_handle v0,	
+    	                    Vertex_handle v1,
+                            Vertex_handle v2,
+                            Vertex_handle v3);}
+{Introduces a variable \ccVar, and initializes its vertices. The 
+neighbors are initialized so that tests on the handles for equality with
+\ccc{NULL} will answer \ccc{true}.} 
+
+\ccConstructor{\ccClassName(Tds & tds,
+	                Vertex_handle v0,
+                    	Vertex_handle v1,
+                    	Vertex_handle v2,
+                    	Vertex_handle v3,
+                    	Cell_handle n0,
+                    	Cell_handle n1,
+                    	Cell_handle n2,
+                    	Cell_handle n3);}
+{Introduces a variable \ccVar, and initializes its vertices and neighbors.}
+
+\ccHeading{Setting}
+
+\ccMethod{void set_vertices();}
+{Sets all vertices so that tests on the handles for equality with
+\ccc{NULL} will answer \ccc{true}.}
+\ccGlue
+\ccMethod{void set_vertex(int i, Vertex_handle v);}
+{Sets vertex \ccc{i} of \ccVar\ to be \ccc{v}.
+\ccPrecond{$i \in \{0,1,2,3\}$}}
+\ccGlue
+\ccMethod{void set_vertices(
+	          Vertex_handle v0, 
+                  Vertex_handle v1, 
+                  Vertex_handle v2, 
+                  Vertex_handle v3);}
+{Sets vertices to the given vertices.}
+
+\ccMethod{void set_neighbors();}
+{Sets all neighbors so that tests on the handles for equality with
+\ccc{NULL} will answer \ccc{true}.}
+\ccGlue
+\ccMethod{void set_neighbor(int i, Cell_handle n);}
+{Sets neighbor \ccc{i} to be \ccc{n}.
+\ccPrecond{$i \in \{0,1,2,3\}$.}}
+\ccGlue
+\ccMethod{void set_neighbors(
+                  Cell_handle n0,
+                  Cell_handle n1,  
+                  Cell_handle n2,  
+                  Cell_handle n3);}
+{Sets neighbors to the given cells.}
+\end{ccAdvanced} 
+
+\ccAccessFunctions
+
+\ccMethod{Vertex_handle vertex(int i) const;}
+{Returns vertex \ccc{i} of \ccVar.
+\ccPrecond{$i \in \{0,1,2,3\}$.}}
+\ccGlue
+\ccMethod{int index(Vertex_handle v) const;}
+{Returns the index of vertex \ccc{v} in \ccVar.
+\ccPrecond{\ccc{v} is a vertex of \ccVar.}}
+\ccGlue
+\ccMethod{bool has_vertex(Vertex_handle v) const;}
+{Returns \ccc{true} if  \ccc{v} is a vertex of \ccVar.}
+\ccGlue
+\ccMethod{bool has_vertex(Vertex_handle v, int & i) const;}
+{Returns \ccc{true} if \ccc{v} is a vertex of \ccVar, and
+computes the index \ccc{i} of the vertex.}
+
+\ccMethod{Cell_handle neighbor(int i) const;}
+{Returns neighbor \ccc{i} of \ccVar.
+\ccPrecond{$i \in \{0,1,2,3\}$.}}
+\ccGlue
+\ccMethod{int index(Cell_handle n) const;}
+{Returns the index of cell \ccc{n} in \ccVar.
+\ccPrecond{\ccc{n} is a neighbor of \ccVar.}}
+\ccGlue
+\ccMethod{bool has_neighbor(Cell_handle n) const;}
+{Returns \ccc{true} if \ccc{n} is a neighbor of \ccVar.}
+\ccGlue
+\ccMethod{bool has_neighbor(Cell_handle n, int & i) const;}
+{Returns \ccc{true} if \ccc{n} is a neighbor of \ccVar, and
+computes the index \ccc{i} of the neighbor.}
+
+\ccMethod{Cell_handle handle() const;}
+{Returns a handle to the cell.}
+
+	\end{ccClassTemplate} 
+
+
+\section{The Geometric Traits}
+\label{Triangulation3-sec-Traits}
+
+The first template parameter of the triangulation class
+\ccc{CGAL_Triangulation_3<Traits,Tds>} of \cgal\ is the geometric traits class.
+
+The first subsection of this section describes the requirements
+that the geometric traits class must fulfill. The second subsection
+presents a predefined geometric traits class available in \cgal.
+
+	
+	\begin{ccClass}{Traits}
+	\subsection{Concept for the Geometric Traits Class 
+	\protect \ccClassName}
+	\label{Triangulation3-sec-concept-Traits}
+
+\subsubsection{To be used by \protect \ccc{CGAL_Triangulation_3<Traits, Tds>}}
+
+\ccCreationVariable{traits}
+
+The geometric traits class \ccClassName\ of the triangulation
+class \ccc{CGAL_Triangulation_3<Traits, Tds>} must define the geometric
+objects (points, segments, triangles and tetrahedra) forming the
+triangulation together with a few geometric predicates on these objects:
+equality, coordinates comparison, orientation in the space, orientation
+in case of coplanar points, and collinearity tests.
+
+\ccTypes
+
+\ccNestedType{Point}
+{The type must provide a copy constructor and assignement operator.}
+\ccGlue
+\ccNestedType{Segment}
+{The  type must provide a constructor that takes two points as arguments.}
+\ccGlue
+\ccNestedType{Triangle}
+{The type must provide a constructor that takes three points as
+arguments.}
+\ccGlue
+\ccNestedType{Tetrahedron}
+{The type must provide a constructor that takes four points as
+arguments.}
+
+\ccCreation
+
+Only a default constructor is required. Note that further constructors
+can be provided. 
+
+\ccConstructor{\ccClassName();} 
+{A default constructor.}
+%\ccGlue
+%\ccConstructor{\ccClassName(const Traits & traits1);}
+%{Copy constructor.}
+%\ccGlue
+%\ccMethod{Traits operator=(const Traits & traits1);}
+%{Assignment.}
+
+\ccHeading{Predicates}
+\ccMethod{bool equal(const Point & p, const Point & q) const;}
+{Equality test.}
+
+\ccMethod{CGAL_Comparison_result compare_x(const Point & p, const Point
+& q) const;}
+{Comparison of \ccc{x}-coordinates. Returns \ccc{CGAL_LARGER}
+(resp. \ccc{CGAL_EQUAL}, \ccc{CGAL_SMALLER}) when the \ccc{x}
+coordinate of \ccc{p} is larger than (resp. equal to, smaller than)
+the \ccc{x} coordinate of \ccc{q}.} 
+\ccGlue
+\ccMethod{CGAL_Comparison_result compare_y(const Point & p, const Point
+& q) const;}
+{Comparison of \ccc{y}-coordinates.}
+\ccGlue
+\ccMethod{CGAL_Comparison_result compare_z(const Point & p, const Point
+& q) const;}
+{Comparison of \ccc{z}-coordinates.}
+
+\ccMethod{CGAL_Orientation orientation(const Point& p0,
+                                       const Point& p1,
+                                       const Point& p2,
+                                       const Point& p3) const;}
+{Orientation test in three dimensions.}
+
+\ccMethod{CGAL_Orientation orientation_in_plane
+				(const Point & q,	
+				 const Point & r,
+				 const Point & s,
+				 const Point & test) const;}
+{When \ccc{test, q, r, s} are coplanar, tests whether \ccc{test} is on the
+same side of \ccc{(q, r)} as \ccc{s}. Returns \ccc{CGAL_COLLINEAR} if
+\ccc{test, q, r} are collinear, \ccc{CGAL_POSITIVE} if \ccc{(q, r, test)}
+and \ccc{(q, r, s)} have the same orientation, \ccc{CGAL_NEGATIVE} if
+\ccc{(q, r, test)} and \ccc{(q, r, s)} have opposite orientations. 
+\ccPrecond{\ccc{test,q,r,s} are coplanar and \ccc{q,r,s} are not collinear.}}
+
+\ccMethod{bool collinear(const Point & p,
+		 	 const Point & q,
+		 	 const Point & r) const;}
+{Collinearity test.}
+
+\subsubsection{To be used by \protect 
+\ccc{CGAL_Delaunay_triangulation_3<Traits, Tds>}}
+
+In addition to the requirements described before, the geometric traits
+class of a 
+Delaunay triangulation must fulfill the following requirements:
+
+\ccHeading{Predicates}
+
+\ccMethod{CGAL_Oriented_side 
+  	side_of_oriented_sphere(const Point & p,
+			  const Point & q,
+			  const Point & r,
+			  const Point & s,
+			  const Point & test) const;}
+{Computes the side of point \ccc{test} with respect to the oriented
+sphere circumscribing \ccc{p,q,r,s}.}
+
+\ccMethod{CGAL_Oriented_side 
+  side_of_oriented_circle(const Point & p,
+			  const Point & q,
+			  const Point & r,
+			  const Point & test) const;}
+{computes the side of \ccc{test} with respect to the oriented circle
+circumscribing \ccc{p,q,r}.
+\ccPrecond{\ccc{p,q,r,test} are coplanar.}}
+
+\subsubsection{To be used by \protect 
+\ccc{CGAL_Delaunay_hierarchic_triangulation_3<Traits, Tds>}}
+
+\textit{Not yet implemented}
+
+	\end{ccClass} 
+
+	\begin{ccClassTemplate}{CGAL_Triangulation_geom_traits_3<R>}
+	\subsection{The Class \protect \ccClassTemplateName}
+	\label{Triangulation3-sec-class-Traits}
+
+\cgal\ proposes a predefined geometric traits class using the kernel
+geometric objects and predicates. 
+This class is templated with a representation class.
+
+The traits class \ccClassTemplateName\ is designed to deal with \cgal\ three
+dimensional points. It supplies the user with all
+the functionalities described in
+Section~\ref{Triangulation3-sec-concept-Traits}.
+
+\ccInclude{CGAL/Triangulation_geom_traits_3.h}
+
+\ccTypes
+
+\ccTypedef{typedef CGAL_Point_3<R> Point;}{}
+\ccGlue
+\ccTypedef{typedef CGAL_Segment_3<R> Segment;}{}
+\ccGlue
+\ccTypedef{typedef CGAL_Triangle_3<R> Triangle;}{}
+\ccGlue
+\ccTypedef{typedef CGAL_Tetrahedron_3<R> Tetrahedron;}{}
+
+	\end{ccClassTemplate} 
+
+\section{The Triangulation Data Structure Parameter}
+\label{Triangulation3-sec-tds}
+
+The second template parameter of the basic triangulation class
+\ccc{CGAL_Triangulation_3<Traits,Tds>} is a triangulation data structure
+class.  This class can be seen as a container for the cells and
+vertices maintaining incidence and adjacency relations. 
+
+The concept for the triangulation data structure is described in
+Section~\ref{TDS3-sec-concept} of Chapter~\ref{chapter-TDS3}. Its optional 
+arguments related to geometry are compulsory for this use as a
+template parameter of \ccc{CGAL_Triangulation_3<Traits,Tds>}.
+A model of this triangulation data structure is
+\ccc{CGAL_Triangulation_data_structuree_3} presented in
+Section~\ref{TDS3-sec-class}. 
+
+\begin{ccClassTemplate}{CGAL_Delaunay_triangulation_3<Traits,Tds>}
+\section{The Delaunay Triangulation Class \protect
+\ccClassTemplateName}  
+
+\ccDefinition
+\ccInclude{CGAL/Delaunay_triangulation_3.h}
+
+\ccInheritsFrom{\ccc{CGAL_Triangulation_3<Traits,Tds>}}
+
+\ccCreationVariable{dt}
+
+\ccTypes
+
+Inherits the types of \ccc{CGAL_Triangulation_3<Traits,Tds>}.
+
+\ccCreation
+
+\ccConstructor{\ccClassName()}
+{Creates an empty Delaunay triangulation.}
+
+\ccConstructor{\ccClassName(const Traits & traits)}
+{Creates an empty Delaunay triangulation with traits class
+\ccc{traits}.}
+
+\ccConstructor{\ccClassName(const CGAL_Delaunay_triangulation_3<Traits,Tds> & dt1)}
+{Copy constructor.}
+
+\ccModifiers
+
+\ccHeading{Insertion}
+
+\ccMethod{Vertex_handle insert(const Point & p );}
+{Inserts point \ccc{p} in the triangulation and returns the corresponding
+ vertex. Similar to the insertion in a triangulation, but insures in
+addition the empty sphere property of all the created faces.}
+
+\ccMethod{Vertex_handle insert(const Point & p, Cell_handle start);}
+{Same as the previous method, \ccc{start} is used as a starting
+place for the location done within the insertion.}
+
+The following methods allow to insert several points. They return the
+number of inserted points. 
+\ccMethod{template < class InputIterator >
+          int
+          insert(InputIterator first, InputIterator last);}
+{Inserts the points in the range $\left[\right.$\ccc{first},
+\ccc{last}$\left.\right)$. 
+\ccPrecond{The \ccc{value_type} of \ccc{first} and \ccc{last} is
+\ccc{Point}.}}
+
+\ccMethod{int insert(list<Point>::const_iterator first,
+	     list<Point>::const_iterator last);}
+{}
+\ccGlue
+\ccMethod{int insert(vector<Point>::const_iterator first,
+	     vector<Point>::const_iterator last);}
+{}
+\ccGlue
+\ccMethod{int insert(istream_iterator<Point, ptrdiff_t> first,
+	     istream_iterator<Point, ptrdiff_t> last);}
+{}
+\ccGlue
+\ccMethod{int insert(Point* first,
+	     Point* last);}
+{}
+
+\ccHeading{Queries}
+
+\ccMethod{CGAL_Bounded_side
+          side_of_sphere(Cell_handle c, const Point & p) const;}
+{Returns on which side of the circumscribed sphere of \ccc{c} lies 
+the point \ccc{p}. More precisely, it returns:\\
+- \ccc{CGAL_ON_BOUNDED_SIDE} if \ccc{p} is inside the sphere (for an infinite
+cell this means that \ccc{p} lies strictly either in the half space
+limited by its finite facet, or in the interior of the disk
+circumscribing the *finite* facet) \\ 
+- \ccc{CGAL_ON_BOUNDARY} if p on the boundary of the sphere (for an infinite
+cell this means that \ccc{p} lies on the circle circumscribing
+the *finite* facet)\\ 
+- \ccc{CGAL_ON_UNBOUNDED_SIDE} if \ccc{p} lies outside the sphere (for an
+infinite cell this means that \ccc{p} is not in the preceding two
+cases).
+\ccPrecond{\ccc{\ccVar.dimension()} $=3$.}}
+\ccMethod{CGAL_Bounded_side
+	  side_of_circle(const Facet & f, const Point & p) const;}
+{Returns on which side of the circumscribed circle of \ccc{f} lies 
+the point \ccc{p}. More precisely, it returns:\\
+- in dimension~3:\\
+-- for a finite facet, \ccc{CGAL_ON_BOUNDARY} if \ccc{p} lies
+on the circle, \ccc{CGAL_ON_UNBOUNDED_SIDE} when it lies in the exterior of
+the disk, \ccc{CGAL_ON_BOUNDED_SIDE} when it lies in its interior.\\
+-- for an infinite facet, it considers the plane defined by the finite
+facet of the same cell, and does the same as in dimension~2 in this
+plane.\\
+- in dimension~2:\\
+-- for a finite facet, \ccc{CGAL_ON_BOUNDARY} if \ccc{p} lies
+on the circle, \ccc{CGAL_ON_UNBOUNDED_SIDE} when it lies in the exterior of
+the disk, \ccc{CGAL_ON_BOUNDED_SIDE} when it lies in its interior.\\
+-- for an infinite facet, \ccc{CGAL_ON_BOUNDARY} if the
+point lies on the finite edge of \ccc{f} (endpoints included),
+\ccc{CGAL_ON_BOUNDED_SIDE} for a point in the open half-plane defined
+by \ccc{f}, \ccc{CGAL_ON_UNBOUNDED_SIDE} elsewhere.
+\ccPrecond{\ccc{\ccVar.dimension()} $\geq 2$.}}
+
+\ccMethod{CGAL_Bounded_side
+	  side_of_circle(Cell_handle c, int i, const Point & p);}
+{Same as the previous method.}
+
+\begin{ccAdvanced}
+\ccHeading{Checking}
+\ccMethod{bool
+          is_valid(bool verbose = false) const;}
+{Checks the combinatorial validity of the triangulation and the
+validity of its geometric embedding (see
+Section~\ref{Triangulation3-sec-Valid}). Also checks that all the spheres
+(resp. circles in dimension~2) circumscribing cells (resp. facets in
+dimension~2) are empty. When \ccc{verbose} is set to true, 
+messages describing the first invalidity encountered are printed.\\
+This method is  mainly a debugging help for the users of advanced features.
+}
+\end{ccAdvanced}
+
+\end{ccClassTemplate}
+
+\begin{ccClassTemplate}{CGAL_Delaunay_hierarchic_triangulation_3<Traits,Tds>}
+\section{The Hierarchic Delaunay Triangulation Class \protect
+\ccClassTemplateName}  
+
+\textit{Not yet implemented}
+
+\end{ccClassTemplate}
+
+\section{Debugging}
+
+	\subsection{Pretty print}	
+ \textit{to be written}
+
+	\subsection{Debugging with handles} 
+Most debuggers cannot understand \ccc{handles} well. Under the
+debugger, an instruction such as
+
+\texttt{(dbx) print -r c->vertex(0)}
+
+where \ccc{c} is a \ccc{Cell_handle}, is answered by:
+
+\texttt{can't find field "vertex" in "c"}
+
+To work around this problem, two functions have been defined to transform 
+\ccc{handles} into usual $C^{++}$ pointers for debugging purposes.
+
+\ccFunction{template <class Traits, class Tds>
+	CGAL_Triangulation_vertex_3<Traits,Tds> * 
+CGAL_debug(const CGAL_Triangulation_vertex_handle_3<Traits,Tds> v);}
+{}
+
+\ccFunction{template <class Traits, class Tds>
+	CGAL_Triangulation_cell_3<Traits,Tds> * 
+	CGAL_debug(const CGAL_Triangulation_cell_handle_3<Traits,Tds>
+c);}
+{}
+
+This allows the following:\\
+\texttt{(dbx) print -r CGAL\_debug(c)->vertex(0)\\
+CGAL\_debug(c)->vertex(0) = \{\\\
+\ldots\\
+\} }
+
