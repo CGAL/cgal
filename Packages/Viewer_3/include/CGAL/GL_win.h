@@ -20,7 +20,7 @@
 //                 (Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>)
 //
 // ============================================================================
-#include <config.h> // fltk's config
+// #include <config.h> // fltk's config
 #include <FL/Fl.H>  // order of includes is important on Windows.
 #include <FL/gl.h>
 #include <FL/Fl_Gl_Window.H>

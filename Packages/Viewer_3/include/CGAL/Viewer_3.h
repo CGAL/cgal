@@ -1094,7 +1094,7 @@ pthread_t Viewer_3::get_window_thread()
 
 void Viewer_3::init_window_thread() 
 { 
-  pthread_create(&thr1, NULL, &mainloop, this); 
+  pthread_create(&thr1, NULL, reinterpret_cast<void *(*)(void *)>(&mainloop), this); 
 } 
 #endif
 
@@ -1107,7 +1107,9 @@ void Viewer_3::display()
 void Viewer_3::init_window()
 {
 #ifdef USE_THREAD
+#ifndef WIN32  // a temporary solution ?
   XInitThreads();
+#endif
 #endif
   form = new Fl_Window(size,size,"CGAL Viewer");
   
