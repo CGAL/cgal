@@ -224,66 +224,30 @@ has no additional needs can use
 \ccc{Triangulation_3<TriangulationTraits_3>} without specifying the 
 second argument.
 
-
-%\subsection{The Vertex of a Triangulation} 
-%\label{Triangulation3-sec-class-Vertex}
-
-%\begin{ccClassTemplate}{Triangulation_vertex_3<Triangulation_traits_3,Tds_3>}
-%\ccCreationVariable{v}
-
-%\ccDefinition
-%The vertex stores a point and gives access to an incident face of
-%maximal dimension.
-%	\end{ccClassTemplate} 
-
-%\subsection{The Cell of a Triangulation} 
-%\label{Triangulation3-sec-class-Cell}
-
-%\begin{ccClassTemplate}{Triangulation_cell_3<Triangulation_traits_3,Tds_3>}
-%\ccCreationVariable{c}
-
-%\ccDefinition
-
-%A cell of a triangulation gives access to its four vertices indexed 0,
-%1, 2, and 3 in positive orientation and to its four adjacent cells, also
-%called neighbors. The neighbors are indexed in such a way that neighbor
-%$i$ lies opposite to vertex $i$.
-
-%In degenerate dimensions, cells are used to store faces of maximal
-%dimension: (Section~\ref{Triangulation3-sec-degen_dim}).
-%	\end{ccClassTemplate} 
-
 \subsection{Delaunay Triangulation} 
 
 The class \ccc{Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>}
 represents a three-dimensional Delaunay triangulation. 
+This Delaunay triangulation is fully dynamic: it supports both
+insertions and vertex removal. 
 
 \subsection{Triangulation hierarchy} 
 
-The class \ccc{Triangulation_hierarchy_3<Tr>} implements a triangulation
-augmented with a data structure which allows fast point location queries.
-The data structure is a hierarchy of triangulations. The triangulation at the
-lowest level is the original triangulation where operations and point location
-are to be performed.  Then at each succedding level, the data structure stores
-a triangulation of a small random sample of the vertices of the triangulation
-at the preceeding level. Point location is done through a top-down nearest
-neighbor query.  The nearest neighbor query is first performed naively in the
-top level triangulation.  Then, at each following level, the nearest neighbor
-at that level is found through a linear walk performed from the nearest
-neighbor found at the preceeding level.  Because the number of vertices in
-each triangulation is only a small fraction of the number of vertices of the
-preceeding triangulation the data structure remains small and achieves fast
-point location queries on real data. As proved in~\cite{d-iirdt-98}, this
-structure has an optimal behaviour when it is built for Delaunay
-triangulations.  However it can be used as well for other triangulations and
-the \ccRefName\ class is templated by a parameter which is to be instantiated
-by one of the \cgal\ triangulation classes.
+The class \ccc{Triangulation_hierarchy_3<Tr>} implements a
+triangulation augmented with a data structure which allows fast point
+location queries, thus it allows fast construction of the
+triangulation. As proved in~\cite{d-iirdt-98}, this structure has an
+optimal behaviour when it is built for Delaunay triangulations.
+However it can be used as well for other triangulations and the
+\ccRefName\ class is templated by a parameter which is to be
+instantiated by one of the \cgal\ triangulation classes.  It offers
+the same functionalities as the \ccc{Tr} parameter class.
 
 \subsection{Regular Triangulation} 
 \label{Triangulation3-sec-class-Regulartriangulation}
 
-\ccc{Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3>} implements
-regular triangulations.
+\ccc{Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3>}
+implements incremental regular triangulations.
 
 Let ${S}^{(w)}$ be a set of weighted points in $\R^3$. Let
 ${p}^{(w)}=(p,w_p), p\in\R^3, w_p\in\R$ and 
@@ -343,23 +307,6 @@ two weighted points on the line defined by these two points.
 
 To simplify notation, $p$ will often denote in the sequel either the
 point $p\in\R^3$ or the weighted point ${p}^{(w)}=(p,w_p)$.
-
-%\section{A Class of Tools \protect\ccc{Triangulation_utils_3}} 
-%\section{A Class of Tools}
-%\label{Triangulation3-sec-class-Utils}
-
-%\begin{ccClass}{Triangulation_utils_3}
-%The class \ccClassName\ defines operations on the indices of vertices
-%and neighbors within a cell. These operations are used in
-%\ccc{Triangulation_3.h},
-%\ccc{Triangulation_data_structure_3.h},
-%\ccc{Triangulation_ds_cell_3.h},
-%\ccc{Triangulation_ds_circulators_3.h}. These classes inherit from
-%\ccClassName\ so that they can use its methods.
-%\end{ccClass}
-
-
-
 
 %\section{Debugging}
 
