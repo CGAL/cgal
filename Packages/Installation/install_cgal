@@ -64,7 +64,7 @@ TEST_LOGFILE=${CGAL_TEST_DIR}/error.txt
 # ALL failed tests
 INSTALL_VERBOSE=''
 # prefix of CGAL compiler specific configuration flags
-CGAL_CONFIG_PREFIX='CGAL_CFG_NO_'
+CGAL_CONFIG_PREFIX='CGAL_CFG_'
 # set to empty string, if you want to disable testsuite 
 CGAL_TESTSUITE='y'
 
@@ -135,7 +135,7 @@ GMP_VERSION='gmp-2.0.2'
 GMP_SUPPORT=''
 
 # indicate whether GMP is installed 
-# ('' - no, 
+# ('' - didn't try, 
 # 's' - in sysdirs, no flags necessary, 
 # 'e' - we need compiler/linker flags and GMP_INCL_DIR/GMP_LIB_DIR for this,
 # 'x' - in sysdirs, but specify GMP_INCL_DIR/GMP_LIB_DIR anyway
@@ -463,8 +463,14 @@ _gpp_version()
 # give version numbers for SUNPRO CC
 _sunpro_version()
 {
-    ${_printf} "`\`compiler_bin\` -V 2>&1 | $_fgrep \"C++\" | \
-	${_awk} '{print $NF}'`"
+    _tmp="`\`compiler_bin\` -V 2>&1 | ${_fgrep} \"C++\" | ${_awk} '{print $9}'`"
+    if [ -n "${_tmp}" ]; then
+	# sunpro 4.2
+	${_printf} "${_tmp}" 
+    else
+	# sunpro 4.1
+	`compiler_bin` -V 2>&1 | ${_fgrep} "C++" | ${_awk} '{print $NF}'
+    fi
 }
 
 # give version numbers for IRIX MIPSPRO CC
@@ -932,7 +938,7 @@ print_line()
 print_multi_line()
 {
     _tmp=`${_printf} "$1" | \
-	eval "${_awk} \`${_printf} \"${_MULTILINE_LAYOUT_AWK_PROG}\"\`"`
+	eval "${_awk} \`${_printf} \"${_MULTILINE_LAYOUT_AWK_PROG}\" dummy\`"`
     write_buffer "${_tmp}"
 }
 
@@ -1457,16 +1463,17 @@ test_compiler_specifica()
     ${_printf} " */\n\n" >> ${_file}
     set_stl_version "${INSTALL_VERBOSE}"
     ${_printf} "#define ${CGAL_STL_VERSION} 1\n\n" >> ${_file}
-    for i in ${CGAL_TEST_CONF_DIR}/*.C; do
+    for i in ${CGAL_TEST_CONF_DIR}/CGAL*.C; do
 	${_cat} ${i} > ${TMP_CXX_FILE}.C
 	${_printf} '//+--------------------------------------------------------------------------\n' >> ${_file}
 	${_cat} ${i} | ${_awk} '/\/\/\|/ {print $0}' >> ${_file}
 	${_printf} '//+--------------------------------------------------------------------------\n' >> ${_file}
 	_test_name="`value_of_without \"${i}\" \"${CGAL_CONFIG_PREFIX}\" \"\.C\"`"
 	_test_name=`${_basename} "${_test_name}"`
-	if _compile_test "${_test_name}" \
+	_tmp_name="`value_of_without \"_test_name\" \"NO_\"`"
+	if _compile_test "${_tmp_name}" \
 	  "${CUSTOM_CXXFLAGS} `stl_cxxflags`" "$1" && \
-	  _link_run_test "${_test_name}" "${CUSTOM_LDFLAGS}" "$1"; then
+	  _link_run_test "${_tmp_name}" "${CUSTOM_LDFLAGS}" "$1"; then
 	    ${_printf} "//" >> ${_file}
 	fi
 	${_printf} \
@@ -2011,13 +2018,8 @@ search_gmp()
 	    log_print "remark: GMP is installed in CGAL tree."
 	else
 	    GMP_INSTALLATION='e'
-	    if test_gmp 'GMP' "$1"; then
-		log_print "remark: GMP is installed in extra dir."
-	    else
-		GMP_INSTALLATION=''
-		log_print "remark: GMP is not installed."
-		return 1
-	    fi
+	    log_print "remark: GMP is not installed."
+	    return 1
 	fi
     fi
     return 0
@@ -2110,8 +2112,7 @@ retrieve_compiler_settings()
     # GMP specific stuff:
     if try_to_get_var_from_file GMP_SUPPORT "${_file}" ||\
 	try_to_get_var_from_file GMP_INSTALLATION "${_file}"; then
-        GMP_SUPPORT='_GMP'
-	search_gmp "${INSTALL_VERBOSE}"
+	GMP_INSTALLATION=''
 	GMP_SUPPORT=''
 	SETUP_COMPLETE=''
     fi
@@ -2703,6 +2704,11 @@ gmp_menu()
 		if [ -z "${GMP_SUPPORT}" ]; then 
 		    SETUP_COMPLETE=''
 		    GMP_SUPPORT='_GMP'
+		    if [ -z "${GMP_INSTALLATION}" ]; then
+			go_down_lines 3
+			flush_buffer
+			search_gmp "${INSTALL_VERBOSE}"
+		    fi
 		else
 		    GMP_SUPPORT=''
 		fi
@@ -2973,7 +2979,6 @@ write_compiler_flags()
     ${_printf} "	-DCGAL_USE_LEDA_BOOL \\\\\n" >> $FILE
   fi
   if [ ! -z "$USE_RTTI_PATCH" ] ; then
-    ${_printf} "	-frtti \\\\\n" >> $FILE
     ${_printf} "	-DRTTI_PATCH \\\\\n" >> $FILE
   fi
   if [ ! -z "$USE_STDEXCEPT" ] ; then
@@ -3200,7 +3205,7 @@ set_compiler_flags()
 	    #### settings for GNU compiler on irix
 	    OPERATING_SYSTEM="IRIX ?.?"
 	    CGAL_COMPILER="CGAL_GNU_GCC_272"
-	    ADDITIONAL_CXXFLAGS=
+	    ADDITIONAL_CXXFLAGS="-frtti"
 	    CGAL_LIB_CXXFLAGS=
 	    CGAL_LIB_LDFLAGS=
 	    CGAL_LIB_CREATE="ar cr"
@@ -3228,7 +3233,7 @@ set_compiler_flags()
 	    #### settings for GNU compiler on solaris
 	    OPERATING_SYSTEM="Sun Solaris 2.5"
 	    CGAL_COMPILER="CGAL_GNU_GCC_272"
-	    ADDITIONAL_CXXFLAGS=
+	    ADDITIONAL_CXXFLAGS="-frtti"
 	    CGAL_LIB_CXXFLAGS=
 	    CGAL_LIB_LDFLAGS=
 	    CGAL_LIB_CREATE="ar cr"
@@ -3242,7 +3247,7 @@ set_compiler_flags()
 	    #### settings for GNU compiler on linux
 	    OPERATING_SYSTEM="Linux"
 	    CGAL_COMPILER="CGAL_GNU_GCC_272"
-	    ADDITIONAL_CXXFLAGS=
+	    ADDITIONAL_CXXFLAGS="-frtti"
 	    CGAL_LIB_CXXFLAGS=
 	    CGAL_LIB_LDFLAGS=
 	    CGAL_LIB_CREATE="ar cr"
@@ -3382,17 +3387,6 @@ _do_compile()
     fi
 }
 
-# used by make_lib_dir. ($1 is 'a' or 'so')
-check_for_gmp_links()
-{
-    if [ ! -r ${CGAL_LIB_DIR}/`full_ostype`/libgmp.$1 -a \
-	 -r ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libgmp.$1 ]; then
-	${_ln} -s ${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libgmp.$1 \
-	    ${CGAL_LIB_DIR}/`full_ostype`
-	log_print "remark: libgmp.$1 linked from ${CGAL_OS_COMPILER}."
-    fi 
-}
-
 # make lib dir 
 make_lib_dir()
 {
@@ -3401,8 +3395,7 @@ make_lib_dir()
 	${_mkdir} ${_libname}
 	# check, if GMP is installed for this os/compiler
 	# in the CGAL directory tree
-	check_for_gmp_links 'a'
-	check_for_gmp_links 'so'
+	link_gmp ''
     fi
     _check_dir_exists ${_libname}
     _check_write ${_libname}
@@ -3704,7 +3697,7 @@ while [ $# -gt 0 ]; do
 	    COMPILER=$2
 	    shift
 	    ;;
-	-ni*)
+	--non-interactive*|-ni*)
 	    if [ -n "${_WHAT_TO_DO}" ]; then
 		_CONFLICT='y'
 	    fi
@@ -3862,7 +3855,7 @@ case ${_WHAT_TO_DO} in
 	echo "usage: `basename $0`"' [-leda] [-gcc-rtti] [-gmp] [--verbose]' 
 	echo '      [--help | --version | -i | --interactive |'
 	echo '       -ni <comp> | --non-interactive <comp> | -os <comp>]'
-	echo '      [--LEDA_INCL_DIR <dir>] [--LEDA_INCL_DIR <dir>]'
+	echo '      [--LEDA_INCL_DIR <dir>] [--LEDA_LIB_DIR <dir>]'
 	echo '      [--leda-sys-incl] [--leda-sys-lib]'
 	echo '      [--STL_DIR <dir>] [--GCC_RTTI_PATCH_DIR <dir>]'
 	echo '      [--GMP_INCL_DIR <dir>] [--GMP_LIB_DIR <dir>]'
