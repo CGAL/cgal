@@ -1650,9 +1650,9 @@ void
 Triangulation_2<Gt, Tds>::
 show_all()
 {
-  cerr<< "AFFICHE TOUTE LA TRIANGULATION :"<<endl;
+  std::cerr<< "AFFICHE TOUTE LA TRIANGULATION :"<<std::endl;
   typename Tds::Face_iterator fi = _tds.faces_begin();
-  cerr<<"***"<<endl;
+  std::cerr<<"***"<<std::endl;
   while(fi != _tds.faces_end()) {
     show_face(fi);
     ++fi;
@@ -1664,40 +1664,40 @@ void
 Triangulation_2<Gt, Tds>::
 show_face( typename Tds::Face_iterator fi)
 {
-  cerr << "face : "<<(void*)&(*fi)<<" => "<<endl;
+  std::cerr << "face : "<<(void*)&(*fi)<<" => "<<std::endl;
   int i = fi->dimension(); 
   switch(i){
   case 0:
-    cerr <<"point :"<<(fi->vertex(0)->point())<<" / voisin "<<&(*(fi->neighbor(0)))
+    std::cerr <<"point :"<<(fi->vertex(0)->point())<<" / voisin "<<&(*(fi->neighbor(0)))
 	 <<"["<<(fi->neighbor(0))->vertex(0)->point()<<"]"
-      	<<endl;
+      	<<std::endl;
     break;
   case 1:
-     cerr <<"point :"<<(fi->vertex(0)->point())<<" / voisin "<<&(*(fi->neighbor(0)))
+     std::cerr <<"point :"<<(fi->vertex(0)->point())<<" / voisin "<<&(*(fi->neighbor(0)))
 				<<"["<<(fi->neighbor(0))->vertex(0)->point()
 				<<"/"<<(fi->neighbor(0))->vertex(1)->point()<<"]"
-  	<<endl;
-     cerr <<"point :"<<(fi->vertex(1)->point())<<" / voisin "<<&(*(fi->neighbor(1)))
+  	<<std::endl;
+     std::cerr <<"point :"<<(fi->vertex(1)->point())<<" / voisin "<<&(*(fi->neighbor(1)))
 				<<"["<<(fi->neighbor(1))->vertex(0)->point()
 				<<"/"<<(fi->neighbor(1))->vertex(1)->point()<<"]"
-				<<endl;
+				<<std::endl;
      break;
   case 2:
-  cerr <<"point :"<<(fi->vertex(0)->point())<<" / voisin "<<&(*(fi->neighbor(0)))
+  std::cerr <<"point :"<<(fi->vertex(0)->point())<<" / voisin "<<&(*(fi->neighbor(0)))
 				<<"["<<(fi->neighbor(0))->vertex(0)->point()
 				<<"/"<<(fi->neighbor(0))->vertex(1)->point()
 				<<"/"<<(fi->neighbor(0))->vertex(2)->point()<<"]"
-					<<endl;
-  cerr <<"point :"<<(fi->vertex(1)->point())<<" / voisin "<<&(*(fi->neighbor(1)))
+					<<std::endl;
+  std::cerr <<"point :"<<(fi->vertex(1)->point())<<" / voisin "<<&(*(fi->neighbor(1)))
 				<<"["<<(fi->neighbor(1))->vertex(0)->point()
 				<<"/"<<(fi->neighbor(1))->vertex(1)->point()
 				<<"/"<<(fi->neighbor(1))->vertex(2)->point()<<"]"
-				<<endl;
-  cerr <<"point :"<<(fi->vertex(2)->point())<<" / voisin "<<&(*(fi->neighbor(2)))
+				<<std::endl;
+  std::cerr <<"point :"<<(fi->vertex(2)->point())<<" / voisin "<<&(*(fi->neighbor(2)))
 				<<"["<<(fi->neighbor(2))->vertex(0)->point()
 				<<"/"<<(fi->neighbor(2))->vertex(1)->point()
 				<<"/"<<(fi->neighbor(2))->vertex(2)->point()<<"]"
-				<<endl;
+				<<std::endl;
   }
   return;
 }
