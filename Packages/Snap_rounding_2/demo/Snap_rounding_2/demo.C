@@ -270,8 +270,6 @@ int main(int argc,char *argv[])
   W.text_box(-1.5,-1,9.5,"add");
   W.text_box(-1.5,-1,9,"isr");
 
-  //Snap_rounding_2 s(prec,true,false,5); !!!!
-
   Iso_rectangle_2 b(Point_2(x1, y1), Point_2(x2, y2));
 
   display_bounding_box(W,b,argc == 1);
@@ -414,15 +412,24 @@ int main(int argc,char *argv[])
       if(prec == 2)
         W.disable_button(15);
       W.enable_button(16);
+      CGAL::snap_rounding_2<Sr_traits,std::list<Segment_2>::const_iterator,
+        std::list<std::list<Point_2> > >
+        (seg_list.begin(),seg_list.end(),output_list,prec,do_isr,false,5);
     } else if(mouse_input == 16) {
       prec = prec / 2;
       if(prec < 1.0 / 5)
         W.disable_button(16);
       W.enable_button(15);
+      CGAL::snap_rounding_2<Sr_traits,std::list<Segment_2>::const_iterator,
+        std::list<std::list<Point_2> > >
+        (seg_list.begin(),seg_list.end(),output_list,prec,do_isr,false,5);
     } else if(mouse_input == 17) {
       prec = PRECISION;
       W.enable_button(15);
       W.enable_button(16);
+      CGAL::snap_rounding_2<Sr_traits,std::list<Segment_2>::const_iterator,
+        std::list<std::list<Point_2> > >
+        (seg_list.begin(),seg_list.end(),output_list,prec,do_isr,false,5);
     } else if(mouse_input == 18) {
       // finish
       break;
