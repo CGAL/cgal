@@ -37,6 +37,8 @@ namespace CGAL {
     typedef typename SearchTraits::Point_d Point_d;
     typedef typename SearchTraits::Sphere_d Sphere_d;
     typedef typename SearchTraits::FT    FT;
+    typedef typename SearchTraits::Construct_center_d Construct_center_d;
+    typedef typename SearchTraits::Construct_squared_radius_d Construct_squared_radius_d;
     typedef Sphere_d Query_item;    
     public:
 
@@ -45,7 +47,7 @@ namespace CGAL {
 
 
 	inline FT transformed_distance(const Sphere_d& q, const Point_d& p) const {
-                Point_d c=q.center();
+                Point_d c= Construct_center_d()(q);
 		FT distance = FT(0);
 		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
                 typename SearchTraits::Cartesian_const_iterator_d cit = construct_it(c),
@@ -53,7 +55,7 @@ namespace CGAL {
 		for(; cit != ce; cit++, pit++){
 		  distance += ((*cit)-(*pit))*((*cit)-(*pit));
 		}
-                distance += -q.squared_radius();
+                distance += - Construct_squared_radius_d()(q);
                 if (distance<0) distance=FT(0);
         	return distance;
 	}
@@ -61,7 +63,7 @@ namespace CGAL {
 
 	inline FT min_distance_to_rectangle(const Sphere_d& q,
 					     const Kd_tree_rectangle<SearchTraits>& r) const {
-                Point_d c=q.center();
+                Point_d c= Construct_center_d(q);
 		FT distance = FT(0);
 		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
                 typename SearchTraits::Cartesian_const_iterator_d cit = construct_it(c),
@@ -75,7 +77,7 @@ namespace CGAL {
 				((*cit)-r.max_coord(i))*((*cit)-r.max_coord(i));
 			
 		};
-                distance += -q.squared_radius();
+                distance += - Construct_squared_radius_d()(q);
                 if (distance<0) distance=FT(0);
 		return distance;
 	}
@@ -93,7 +95,7 @@ namespace CGAL {
 				else
 					distance += ((*cit)-r.min_coord(i))*((*cit)-r.min_coord(i));
 		};
-		distance += -q.squared_radius();
+		distance += - Construct_squared_radius()(q);
                 if (distance<0) distance=FT(0);
 		return distance;
 	}
