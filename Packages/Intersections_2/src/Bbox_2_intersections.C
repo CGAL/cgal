@@ -256,43 +256,11 @@ Bbox_2_Ray_2_pair::operator=(Bbox_2_Ray_2_pair const &o)
     return *this;
 }
 
-/*
-Ray_2_Bbox_2_pair< Cartesian<double> >::
-Ray_2_Bbox_2_pair(
-            Ray_2< Cartesian<double> > const *ray,
-            Bbox_2 const *box)
-{
-    _known = false;
-    _box = box;
-    _ref_point = ray->start();
-    _dir = ray->direction().to_vector();
-    _min = 0;
-}
-*/
-
 CGAL_END_NAMESPACE
 
 
 
 CGAL_BEGIN_NAMESPACE
-/*
-template <class R>
-Ray_2_Bbox_2_pair<R>::
-Ray_2_Bbox_2_pair(Ray_2<R> const *ray, Bbox_2 const *box)
-{
-    _known = false;
-    _box = box;
-// convert the ray to a ray parametrised by doubles.
-    Point_2<R> const &start=ray->start();
-    Vector_2<R> const &dir=ray->direction().to_vector();
-    _ref_point = Point_2< Rcart >
-                ( to_double(start.x()), to_double(start.y()));
-    double dx = to_double(dir.x());
-    double dy = to_double(dir.y());
-    _dir = Vector_2< Rcart > (dx, dy);
-    _min = 0;
-}
-*/
 
 Bbox_2_Ray_2_pair::Intersection_results
 Bbox_2_Ray_2_pair::intersection_type() const
@@ -403,6 +371,14 @@ bool Bbox_2_Ray_2_pair::intersection(double &x, double &y) const
     x = pt.x();
     y = pt.y();
     return true;
+}
+
+
+bool do_intersect_ray_2(
+    const Bbox_2 &box, double x, double y, double dx, double dy)
+{
+    Bbox_2_Ray_2_pair pair(box, x, y, dx, dy);
+    return pair.intersection_type() != Bbox_2_Ray_2_pair::NO;
 }
 
 CGAL_END_NAMESPACE

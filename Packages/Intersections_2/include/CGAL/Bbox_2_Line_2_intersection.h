@@ -54,19 +54,34 @@ protected:
 };
 
 template <class Line>
-Bbox_2_Line_2_pair intersection_computer(Bbox_2 const &bbox, Line const &line)
+Bbox_2_Line_2_pair intersection_computer_line_2(
+    Bbox_2 const &bbox, Line const &line)
 {
     return Bbox_2_Line_2_pair(bbox, to_double(line->a()),
         to_double(line->b()), to_double(line->c()));
 }
 
-template <class R>
-inline bool do_intersect(
-    const Bbox_2 &box,
-    const Line_2<R> &line)
+inline bool do_intersect_line_2(
+    const Bbox_2 &box, double line_a, double line_b, double line_c);
 {
-    Bbox_2_Line_2_pair pair = intersection_computer(box, line);
+    Bbox_2_Line_2_pair pair(box, line_a, line_b, line_c);
     return pair.intersection_type() != Bbox_2_Line_2_pair::NO;
+}
+
+template <class Line>
+bool do_intersect_line_2(
+    Bbox_2 const &bbox, Line const &line)
+{
+    return do_intersect_line_2(bbox, to_double(line->a()),
+        to_double(line->b()), to_double(line->c()));
+}
+
+template <class Line>
+bool do_intersect_line_2(
+    Line const &line, Bbox_2 const &bbox)
+{
+    return do_intersect_line_2(bbox, to_double(line->a()),
+        to_double(line->b()), to_double(line->c()));
 }
 
 template <class R>

@@ -26,8 +26,6 @@
 
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Ray_2.h>
-// #include <CGAL/Segment_2.h>
-// #include <CGAL/Point_2.h>
 #include <CGAL/utils.h>
 #include <CGAL/number_utils.h>
 
@@ -51,40 +49,30 @@ protected:
     Bbox_2_Ray_2_pair_impl *pimpl;
 };
 
-/*
-template <class R>
-inline bool do_intersect(
-    const Ray_2<R> &ray,
+bool do_intersect_ray_2(
+    const Bbox_2 &box, double x, double y, double dx, double dy);
+
+template <class Ray>
+bool do_intersect_ray_2(
+    const Bbox_2 &box,
+    const Ray &ray)
+{
+    double startx = to_double(ray->start().x());
+    double starty = to_double(ray->start().y());
+    double dx = to_double(ray->direction().to_vector().x());
+    double dy = to_double(ray->direction().to_vector().y());
+    return do_intersect_ray_2(box, startx, starty, dx, dy);
+}
+
+template <class Ray>
+inline bool do_intersect_ray_2(
+    const Ray &ray,
     const Bbox_2 &box)
 {
-    typedef Ray_2_Bbox_2_pair<R> pair_t;
-    pair_t pair(&ray, &box);
-    return pair.intersection_type() != pair_t::NO;
+    return do_intersect_ray_2(box, ray);
 }
-*/
 CGAL_END_NAMESPACE
 
 
-CGAL_BEGIN_NAMESPACE
-/*
-template <class R>
-class Bbox_2_Ray_2_pair: public Ray_2_Bbox_2_pair<R> {
-public:
-    Bbox_2_Ray_2_pair() {}
-    Bbox_2_Ray_2_pair(Bbox_2 const *box, Ray_2<R> const *ray)
-                :Ray_2_Bbox_2_pair<R> (ray, box){}
-};
-
-template <class R>
-inline bool do_intersect(
-    const Bbox_2 &box,
-    const Ray_2<R> &ray)
-{
-    typedef Bbox_2_Ray_2_pair<R> pair_t;
-    pair_t pair(&box, &ray);
-    return pair.intersection_type() != pair_t::NO;
-}
-*/
-CGAL_END_NAMESPACE
 
 #endif
