@@ -179,7 +179,8 @@ signals:
   void mousePressed(QMouseEvent *e);
   void mouseReleased(QMouseEvent *e);
   void mouseMoved(QMouseEvent *e);
-  void resized();
+  //  void resized();
+  void custom_redraw(); // if user want to draw something after layers
   void new_cgal_object(CGAL::Object);	//this signal is emited every time an
 					//attached tool constructed an object
   void detached_tool();

@@ -106,7 +106,7 @@ void Qt_widget::resizeEvent(QResizeEvent *e)
     set_scales();
   else
     set_scale_center(xcentre, ycentre);
-  emit(resized());
+  //  emit(resized());
   redraw();
 }
 
@@ -379,6 +379,7 @@ void Qt_widget::redraw()
       if (has_tool())
 	current_tool->widget_repainted();
     }
+  emit(custom_redraw());
   };
   
   // add a scene in the list of displayable scenes

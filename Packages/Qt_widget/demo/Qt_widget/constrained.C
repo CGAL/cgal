@@ -133,7 +133,7 @@ public:
     connect(&win, SIGNAL(mousePressed(QMouseEvent*)), this,
 	    SLOT(mousePressedOnWin(QMouseEvent*)));
 
-    connect(&win, SIGNAL(resized()), this, SLOT(redrawWin()));
+    connect(&win, SIGNAL(custom_redraw()), this, SLOT(redrawWin()));
     statusBar();
     
     // file menu
