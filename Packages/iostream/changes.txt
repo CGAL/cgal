@@ -1,3 +1,7 @@
+Version 2.10 (26 july 2001)
+- moved doc files
+- make doc of colors no longer a separate chapter
+
 Version 2.9 (12 February 2001)
 - use static_cast<>.
 
