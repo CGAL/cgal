@@ -41,7 +41,7 @@ int main()
   std::cin  >> pm;
   std::cout << pm;
   
-  std::cout << endl;
+  std::cout << std::endl;
   std::cout << "* * * Presenting the use of verbose format" << std::endl;
   std::cout << std::endl;
   Pm_writer verbose_writer(std::cout, pm, true);
@@ -50,7 +50,7 @@ int main()
   std::cout << std::endl;
   std::cout << "* * * Demonstrating the use of the writer class interface." << std::endl;
   std::cout << "* * * Printing all halfedges in non verbose format" << std::endl << std::endl;
-  Pm_writer writer(cout, pm);
+  Pm_writer writer(std::cout, pm);
   writer.write_halfedges(pm.halfedges_begin(), pm.halfedges_end());
   std::cout << std::endl;
   std::cout << "* * * Printing all halfedges in a verbose format" << std::endl << std::endl;
