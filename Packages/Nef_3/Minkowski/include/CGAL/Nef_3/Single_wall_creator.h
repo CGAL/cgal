@@ -162,14 +162,15 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
     Vertex_handle opposite[2];
     origin[0] = ein->source();
     origin[1] = ein->target();
+    SVertex_handle lateral_sv_tgt[2];
 
     for(int i=0; i<2; ++i) {
 
       int tmp = (ntcw & (i+1));
       std::cerr << "ntcw " << ntcw << "&" << (i+1) << "=" << tmp << std::endl;
 
-      if((ntcw & (i+1)) != 0)
-	continue;
+      //      if((ntcw & (i+1)) != 0)
+      //	continue;
 
       Vertex_handle v;
       Halfedge_handle e;
@@ -196,10 +197,10 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
 	
 	SVertex_handle lateral_svertex(i==0?ein:ein->twin());
 	Sphere_segment sphere_ray(Sphere_point(CGAL::ORIGIN - dir), lateral_svertex->point());
-	SVertex_handle lateral_sv_tgt = SMW_tgt.add_lateral_svertex(sphere_ray);
+	lateral_sv_tgt[i] = SMW_tgt.add_lateral_svertex(sphere_ray);
 
 	SMW_src.add_sedge_between(ray_sv_src, lateral_svertex);
-	SMW_tgt.add_sedge_between(ray_sv_tgt, lateral_sv_tgt);
+	SMW_tgt.add_sedge_between(ray_sv_tgt, lateral_sv_tgt[i]);
 
       } else if(assign(e,o2)) {
 	std::cerr << "Found edge " << std::endl;
@@ -237,10 +238,10 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
 
 	SVertex_handle lateral_svertex(i==0?ein:ein->twin());
 	Sphere_segment sphere_ray(Sphere_point(CGAL::ORIGIN - dir), lateral_svertex->point());
-	SVertex_handle lateral_sv_tgt = SMW_tgt.add_lateral_svertex(sphere_ray);
+	lateral_sv_tgt[i] = SMW_tgt.add_lateral_svertex(sphere_ray);
 
 	SMW_src.add_sedge_between(ray_sv_src, lateral_svertex);
-	SMW_tgt.add_sedge_between(ray_sv_tgt, lateral_sv_tgt);
+	SMW_tgt.add_sedge_between(ray_sv_tgt, lateral_sv_tgt[i]);
 
       } else if(assign(v,o2)) {
 	
@@ -256,10 +257,10 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
 	
 	SVertex_handle lateral_svertex(i==0?ein:ein->twin());
 	Sphere_segment sphere_ray(Sphere_point(CGAL::ORIGIN - dir), lateral_svertex->point());
-	SVertex_handle lateral_sv_tgt = SMW_tgt.add_lateral_svertex(sphere_ray);
+	lateral_sv_tgt[i] = SMW_tgt.add_lateral_svertex(sphere_ray);
 	
 	SMW_src.add_sedge_between(ray_sv_src, lateral_svertex);
-	SMW_tgt.add_sedge_between(ray_sv_tgt, lateral_sv_tgt);
+	SMW_tgt.add_sedge_between(ray_sv_tgt, lateral_sv_tgt[i]);
 	
       } else {
 	std::cerr << "Found nothing " << std::endl;
@@ -277,41 +278,42 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
       SVertex_handle src(i==0?ein:ein->twin());
       Sphere_circle c(Sphere_point(CGAL::ORIGIN - dir), src->point());
       Sphere_segment sphere_ray(src->point(), Sphere_point(CGAL::ORIGIN - dir), c);
-      SVertex_handle tgt = SMW.add_lateral_svertex(sphere_ray);
-      SMW.add_sedge_between(src, tgt);    
+      lateral_sv_tgt[i] = SMW.add_lateral_svertex(sphere_ray);
+      SMW.add_sedge_between(src, lateral_sv_tgt[i]);    
     }
+
+    Sphere_circle c(Sphere_point(CGAL::ORIGIN - dir), lateral_sv_tgt[0]->point());
+    do {
+      Object_handle o2 = pl->shoot(Ray_3(lateral_sv_tgt[0]->source()->point(),
+					 lateral_sv_tgt[0]->point()));
+      
+      Halffacet_handle f;
+      Halfedge_handle e;
+      Vertex_handle v;
+      if(assign(f,o2))
+	CGAL_assertion_msg(false, "wrong handle");
+      else if(assign(e,o2)) {
+	CGAL_assertion_msg(false, "not implemented yet");
+      } else if(assign(v,o2)) {
+	if(v == lateral_sv_tgt[1]->source()) {
+	  lateral_sv_tgt[0]->twin() = lateral_sv_tgt[1];
+	  lateral_sv_tgt[1]->twin() = lateral_sv_tgt[0];
+	  return;
+	}
+	SM_walls SMW(&*lateral_sv_tgt[0]->source());
+	SVertex_handle opp = SMW.add_ray_svertex(lateral_sv_tgt[0]->point().antipode());	
+	opp->twin() = lateral_sv_tgt[0];
+	lateral_sv_tgt[0]->twin() = opp;
+
+	lateral_sv_tgt[0] = 
+	  SMW.add_lateral_svertex(Sphere_segment(lateral_sv_tgt[0]->point().antipode(),
+						 lateral_sv_tgt[0]->point(), c));
+      }
+    } while(true);
     
     //    CGAL::SNC_io_parser<SNC_structure> O(std::cerr, *sncp, false);
     //    O.print();
 
-    /*
-    int ii=0;
-    typename Base::SVertex_const_handle sv;
-    CGAL_forall_svertices(sv, *sncp) {
-      std::cerr << ii++ << std::endl;
-      typename Base::SHalfedge_around_svertex_const_circulator sav(sv->out_sedge()), send(sav);
-      CGAL_For_all(sav,send) {
-	typename Base::SHalfedge_around_svertex_const_circulator snext(sav), snn(sav);
-	++snext; ++snn; ++snn;
-	typename Base::SVertex_const_handle stwin1(sav->twin()->source());
-	typename Base::SVertex_const_handle stwin2(snext->twin()->source());
-	typename Base::SVertex_const_handle stwin3(snn->twin()->source());
-	CGAL_assertion(spherical_orientation(stwin1->point(),
-					     stwin2->point(),
-					     stwin3->point()) >= 0);
-      }
-    }
-    */
-
-   /*
-    SNC_point_locator* old_pl = pl;
-    pl = pl->clone();
-    sncpl.pl = pl;
-    delete old_pl;
-    C=SNC_constructor(*sncp,pl);
-    C.clear_external_structure();
-    C.build_external_structure();
-    */
   }
 };
 

@@ -18,6 +18,7 @@ typedef CGAL::Homogeneous<NT> Kernel;
 typedef CGAL::Nef_polyhedron_3<Kernel>     Nef_polyhedron;
 typedef Nef_polyhedron::SNC_structure  SNC_structure;
 typedef CGAL::SNC_decorator<SNC_structure>  SNC_decorator;
+typedef SNC_structure::Halfedge_handle  Halfedge_handle;
 typedef Nef_polyhedron::Halfedge_iterator  Halfedge_iterator;
 typedef Nef_polyhedron::Vector_3           Vector_3;
 
@@ -37,9 +38,10 @@ int main(int argc, char* argv[]) {
   int i=0;
   Halfedge_iterator e = D.halfedges_begin();
   for(;e!=D.halfedges_end();++e) {
-    if(e->is_twin()) {
-    std::cerr << "edge: " << e->source()->point() << "->" 
-	      << e->twin()->source()->point() << std::endl;
+    if(e->is_twin() && e->twin() != Halfedge_handle()) {
+      std::cerr << "edge: " << e->source()->point();
+      std::cerr << "->" 
+		<< e->twin()->source()->point() << std::endl;
     
     Single_wall W(e,Vector_3(-1,0,0));
     N.delegate(W);
