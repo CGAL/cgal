@@ -30,12 +30,14 @@
 //       kernel level.
 
 #include <CGAL/basic.h>
+#include <CGAL/tags.h>
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Static_filter_error.h>
 #include <CGAL/Restricted_double.h>
 #include <CGAL/misc.h>
 
 CGAL_BEGIN_NAMESPACE
+
 
 // CT = construction type
 // ET = exact type (used for exact predicate evaluation)
@@ -70,6 +72,12 @@ template < class CT, class ET, class Type = Dynamic,
            bool Protection = true, class Cache = No_Filter_Cache >
 class Filtered_exact
 {
+public:
+  typedef Tag_false  Has_gcd_tag;
+  typedef Tag_true   Has_division_tag;
+  typedef Tag_true   Has_sqrt_tag;
+
+private:
   typedef Filtered_exact<CT, ET, Type, Protection, Cache> Fil;
   typedef Interval_nt_advanced IA;
 
