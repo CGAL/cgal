@@ -1,9 +1,8 @@
 - For Delaunay, we can use the visibility (non stochastic) walk.  How to
   choose ?  Is it worth the complexity (benchmark first) ?
 - Why are the iterators friend in the ds_cell ?
-- remove() : ca plante dans le prog de test de la hierarchie... a investiguer.
-  refaire marcher le vieux remove pour pouvoir tester (voire garder les deux
-  versions si c'est mieux).
+- remove() : ca plante dans le prog de test de la hierarchie, quand un des
+  etages passe en dimension < 3, parce que les vertex* sont invalides.
 - hierarchie : verifier que l'interface est bonne (ie tous les insert(*) sont
   interceptes...).  Documenter (+ traits).
 - ameliorer user manual
