@@ -10,7 +10,7 @@ int main(int, char*){
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Nef_polyhedron_S2.h>
 #include <CGAL/Nef_S2/SM_items.h>
-#include "NefS2Widget.h"
+#include <CGAL/IO/Qt_widget_Nef_S2.h>
 #include <fstream>
 
 typedef CGAL::Gmpz NT;

@@ -52,15 +52,15 @@ LDFLAGS = \
 all:            \
                 Nef_polyhedron_S2-demo2$(EXE_EXT)
 
-moc_NefS2Widget.C:  NefS2Widget.h
-	$(QT_MOC) -o moc_NefS2Widget.C NefS2Widget.h
+moc_Qt_widget_Nef_S2.C:  Qt_widget_Nef_S2.h
+	$(QT_MOC) -o moc_Qt_widget_Nef_S2.C Qt_widget_Nef_S2.h
 
-moc_NefS2Widget$(OBJ_EXT): moc_NefS2Widget.C
+moc_Qt_widget_Nef_S2$(OBJ_EXT): moc_Qt_widget_Nef_S2.C
 
-NefS2Widget$(OBJ_EXT): NefS2Widget.C
+Qt_widget_Nef_S2$(OBJ_EXT): Qt_widget_Nef_S2.C
 
-Nef_polyhedron_S2-demo2$(EXE_EXT): Nef_polyhedron_S2-demo2$(OBJ_EXT) NefS2Widget$(OBJ_EXT) moc_NefS2Widget$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Nef_polyhedron_S2-demo2 NefS2Widget$(OBJ_EXT) moc_NefS2Widget$(OBJ_EXT) $(LDFLAGS)
+Nef_polyhedron_S2-demo2$(EXE_EXT): Nef_polyhedron_S2-demo2$(OBJ_EXT) Qt_widget_Nef_S2$(OBJ_EXT) moc_Qt_widget_Nef_S2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Nef_polyhedron_S2-demo2 Nef_polyhedron_S2-demo2$(OBJ_EXT) Qt_widget_Nef_S2$(OBJ_EXT) moc_Qt_widget_Nef_S2$(OBJ_EXT) $(LDFLAGS)
 
 Nef_polyhedron_S2-demo2.clean:
 	rm -f Nef_polyhedron_S2-demo2.o moc_Nef3Widget.C moc_Nef3Widget.o Nef3Widget.o
