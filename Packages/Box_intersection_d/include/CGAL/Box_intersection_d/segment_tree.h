@@ -273,7 +273,7 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
                    RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
                    T lo, T hi,
                    Callback& callback, Predicate_traits traits,
-                   unsigned int cutoff, std::size_t dim, bool in_order )
+                   std::size_t cutoff, std::size_t dim, bool in_order )
 {
     typedef typename Predicate_traits::Spanning   Spanning;
     typedef typename Predicate_traits::Lo_less    Lo_less;

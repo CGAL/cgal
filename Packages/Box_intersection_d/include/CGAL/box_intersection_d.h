@@ -34,7 +34,7 @@ CGAL_BEGIN_NAMESPACE
 template< class RandomAccessIter, class Callback >
 void box_intersection_d(RandomAccessIter p_begin, RandomAccessIter p_end,
                         Callback& callback,
-                        unsigned int cutoff = 10,
+                        std::size_t cutoff = 10,
                         Box_intersection_d::Topology
                                     topology = Box_intersection_d::CLOSED)
 {
@@ -52,7 +52,7 @@ template< class RandomAccessIter1, class RandomAccessIter2, class Callback >
 void box_intersection_d(RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
                         RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
                         Callback& callback,
-                        unsigned int cutoff = 10,
+                        std::size_t cutoff = 10,
                         Box_intersection_d::Topology
                                     topology = Box_intersection_d::CLOSED,
                         Box_intersection_d::Setting
@@ -72,7 +72,7 @@ void box_intersection_custom_d(
      RandomAccessIter p_begin, RandomAccessIter p_end,
      Callback& callback,
      BoxTraits box_traits,
-     unsigned int cutoff = 10,
+     std::size_t cutoff = 10,
      Box_intersection_d::Topology topology = Box_intersection_d::CLOSED)
 {
     typedef typename std::iterator_traits<RandomAccessIter>::value_type
@@ -91,7 +91,7 @@ void box_intersection_custom_d(
      RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
      Callback& callback,
      BoxTraits box_traits,
-     unsigned int cutoff = 10,
+     std::size_t cutoff = 10,
      Box_intersection_d::Topology topology = Box_intersection_d::CLOSED,
      Box_intersection_d::Setting  setting  = Box_intersection_d::BIPARTITE)
  {
@@ -115,13 +115,13 @@ void box_intersection_custom_predicates_d(
       RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
       Callback& callback,
       BoxPredicateTraits traits,
-      unsigned int cutoff = 10,
+      std::size_t cutoff = 10,
       Box_intersection_d::Setting setting = Box_intersection_d::BIPARTITE)
 {
     typedef BoxPredicateTraits Traits;
     typedef typename Traits::NT NT;
     assert( Traits::get_dim() > 0 );
-    const unsigned int dim = Traits::get_dim() - 1;
+    const std::size_t dim = Traits::get_dim() - 1;
     const NT inf = Box_intersection_d::box_limits<NT>::inf();
     const NT sup = Box_intersection_d::box_limits<NT>::sup();
     Box_intersection_d::segment_tree(p_begin, p_end, i_begin, i_end,
