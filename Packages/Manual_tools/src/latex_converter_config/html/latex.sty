@@ -1630,12 +1630,13 @@
 \newcommand{\pageref}[1]{\lcAsciiToHtml{[ref:#1]}}
 
 \newcommand{\label}[1]{\lcRawHtml{<A NAME="#C1"></A>}%
-    \edef\lciOut{\lciOutputFilename}%
+    \edef\lciOut{\lciOutputBasename}%
+    \edef\lciOutPath{\lciReplaceWithCurrentPathToken}%
     \lciPushOutput{anchor}%
-    \lciLabel{#1}{\lciOut}{\lciReferenceIcon}\lciPopOutput}
+    \lciLabel{#1}{\lciOutPath}{\lciOut}{\lciReferenceIcon}\lciPopOutput}
 
-%% Args: labelsymbol, output filename, reference icon in HTML formatted
-\newcommand{\lciLabel}[3]{\lciRawOutput{[\[]ref[:]"#C1"[\]]    { fputs( "<A HREF=\"#XC2###C1\">#X3</A>", stdout);}
+%% Args: labelsymbol, output path, output filename, reference icon in HTML
+\newcommand{\lciLabel}[4]{\lciRawOutput{[\[]ref[:]"#C1"[\]]    { fputs( "<A HREF=\"#XC2#XC3###C1\">#X4</A>", stdout);}
 }}
 
 % +--------------------------------------------------------------------------
