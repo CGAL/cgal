@@ -43,7 +43,7 @@ public:
   typedef typename R::Aff_transformation_d_base Aff_transformation_d;
 #endif
 
-  RayCd();
+  RayCd(int d = 0);
   RayCd(const Self &r);
   RayCd(const Point_d &sp, const Point_d &secondp);
   RayCd(const Point_d &sp, const Direction_d &d);

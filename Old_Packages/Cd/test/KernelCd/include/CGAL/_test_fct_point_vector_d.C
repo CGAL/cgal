@@ -23,21 +23,21 @@ _test_fct_point_vector_d(const R& )
  RT  n9( 15 );
  RT n10( -8 );
 
- CGAL::Vector_d<R>  v0(CGAL::NULL_VECTOR);
- CGAL::Vector_d<R>  v1(n1, n2, n3, n4);
- CGAL::Vector_d<R>  v2(n5, n6, n7, n8);
- CGAL::Vector_d<R>  v3(n5, n10, n9);
- CGAL::Vector_d<R>  v4(n8, -n2, -n5);
+ CGAL::Vector_d<R>  v0(3, CGAL::NULL_VECTOR);
+ CGAL::Vector_d<R>  v1(3, n1, n2, n3, n4);
+ CGAL::Vector_d<R>  v2(3, n5, n6, n7, n8);
+ CGAL::Vector_d<R>  v3(3, n5, n10, n9);
+ CGAL::Vector_d<R>  v4(3, n8, -n2, -n5);
 
  std::cout << '.';
 
- CGAL::Point_d<R> p0(CGAL::ORIGIN);
+ CGAL::Point_d<R> p0(3, CGAL::ORIGIN);
  CGAL::Point_d<R> p1 = CGAL::ORIGIN + v1;
  CGAL::Point_d<R> p2 = CGAL::ORIGIN + v2;
  CGAL::Point_d<R> p3 = CGAL::ORIGIN + v3;
 
- assert( CGAL::ORIGIN + v2 == CGAL::Point_d<R>( n5, n6, n7, n8) );
- assert( CGAL::ORIGIN - v2 == CGAL::Point_d<R>( -n5, -n6, -n7, n8) );
+ assert( CGAL::ORIGIN + v2 == CGAL::Point_d<R>(3, n5, n6, n7, n8) );
+ assert( CGAL::ORIGIN - v2 == CGAL::Point_d<R>(3, -n5, -n6, -n7, n8) );
  assert( p1 - p1 == v0 );
  assert( p1 - p0 == p1 - CGAL::ORIGIN);
  assert( p1 - p2 == v4 );

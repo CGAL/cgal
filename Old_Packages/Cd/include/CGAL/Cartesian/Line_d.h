@@ -48,7 +48,7 @@ public:
   typedef typename R::Aff_transformation_d_base Aff_transformation_d;
 #endif
 
-  LineCd();
+  LineCd(int d = 0);
   LineCd(const Self  &l);
   LineCd(const Point_d &p, const Point_d &q);
   LineCd(const Segment_d &s);

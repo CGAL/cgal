@@ -16,19 +16,19 @@ _test_cls_vector_d(const R& )
 
  CGAL::Vector_d<R>  v1;
  CGAL::Vector_d<R>  v2(iv);
- CGAL::Vector_d<R>  v0(CGAL::NULL_VECTOR);
+ CGAL::Vector_d<R>  v0(3, CGAL::NULL_VECTOR);
 
  RT  n1( 12 );
  RT  n2( -4 );
  RT  n3(  6 );
  RT  n4(  2 );
 
- CGAL::Vector_d<R>  v3(n1, n2, n3);
- CGAL::Vector_d<R>  v4(n1, n2, n3, n4);
- CGAL::Vector_d<R>  v5(n1, n2, n3, n4);
+ CGAL::Vector_d<R>  v3(3, n1, n2, n3);
+ CGAL::Vector_d<R>  v4(3, n1, n2, n3, n4);
+ CGAL::Vector_d<R>  v5(3, n1, n2, n3, n4);
  CGAL::Vector_d<R>  v6( v5 );
                    v1 = v4;
- CGAL::Vector_d<R>  v7(-n1, -n2, -n3, -n4);
+ CGAL::Vector_d<R>  v7(3, -n1, -n2, -n3, -n4);
 
  std::cout << '.';
 

@@ -64,4 +64,3 @@ touch $ERRORFILE
 
 
 compile_and_run test_kernelCd
-compile_and_run test_kernel_d

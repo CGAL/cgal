@@ -22,7 +22,6 @@ class DirectionCd
 {
 public:
   typedef _R                                    R;
-  typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
   typedef const RT*                             const_iterator;
   typedef RT*                                   iterator;
@@ -36,17 +35,17 @@ public:
   // typedef typename R::Aff_transformation_d_base Aff_transformation_d;
 #endif
 
-  DirectionCd();
+  DirectionCd(int d = 0);
   DirectionCd(const Self &d);
   DirectionCd(const Vector_d &v);
   ~DirectionCd();
 
   template < class InputIterator >
-  DirectionCd(InputIterator begin, InputIterator end)
+  DirectionCd(int dim, const InputIterator &first, const InputIterator &last)
   {
-    CGAL_kernel_precondition( dim >= 0);
+    CGAL_kernel_precondition( dim > 0);
     CGAL_kernel_precondition( last-first == dim );
-    PTR = new _d_tuple<FT>(dim);
+    PTR = new _d_tuple<RT>(dim);
     std::copy_n(first,dim,begin());
   }
 
@@ -61,7 +60,7 @@ public:
   // Self           transform(const Aff_transformation_d &t) const;
   Self           operator-() const;
 
-  FT             delta(int i) const;
+  RT             delta(int i) const;
 
 public:
   int            dimension() const { return ptr()->d; }
@@ -73,8 +72,8 @@ protected:
   iterator       end()             { return ptr()->e + dimension(); }
 
 private:
-  const _d_tuple<FT>* ptr()  const { return (const _d_tuple<FT>*)PTR; }
-  _d_tuple<FT>*       ptr()        { return (_d_tuple<FT>*)PTR; }
+  const _d_tuple<RT>* ptr()  const { return (const _d_tuple<RT>*)PTR; }
+  _d_tuple<RT>*       ptr()        { return (_d_tuple<RT>*)PTR; }
 };
 
 CGAL_END_NAMESPACE

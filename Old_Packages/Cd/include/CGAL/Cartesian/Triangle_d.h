@@ -42,7 +42,7 @@ public:
   typedef typename R::Aff_transformation_d_base Aff_transformation_d;
 #endif
 
-  TriangleCd();
+  TriangleCd(int d = 0);
   TriangleCd(const Self &t);
   TriangleCd(const Point_d &p, const Point_d &q, const Point_d &r);
   ~TriangleCd();

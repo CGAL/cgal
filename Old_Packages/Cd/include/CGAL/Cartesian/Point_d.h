@@ -39,7 +39,13 @@ public:
 
   friend class DACd<FT>;
 
-  PointCd (const int dim= 2);
+  friend CGAL_FRIEND_INLINE
+  Self operator- CGAL_NULL_TMPL_ARGS (const Self &p, const Vector_d &v);
+
+  friend CGAL_FRIEND_INLINE
+  Self operator+ CGAL_NULL_TMPL_ARGS (const Self &p, const Vector_d &v);
+
+  PointCd (int dim= 0);
   PointCd (const Self &p);
   PointCd (const Vector_d &);
   PointCd (int dim, const Origin&);
@@ -54,7 +60,7 @@ public:
     std::copy_n(first,dim,begin());
     if (last-first == dim+1)
       std::transform(begin(),end(),begin(),
-                     bind2nd(divides<FT>(*(first+dim))));
+                     bind2nd(divides<FT>(),*(first+dim)));
   }
 
   Self&          operator=(const Self &p);
@@ -64,14 +70,14 @@ public:
   bool           operator==(const Origin&) const;
   bool           operator!=(const Origin&) const;
 
-  int            id() const;
+  long           id() const;
 
   FT             homogeneous (int i) const;
   FT             cartesian (int i) const;
   FT             operator[] (int i) const;
 
 public:
-  int            dimension() const { return ptr()->d; }
+  const int      dimension() const { return ptr()->d; }
   const_iterator begin()     const { return ptr()->e; }
   const_iterator end()       const { return ptr()->e + dimension(); }
 

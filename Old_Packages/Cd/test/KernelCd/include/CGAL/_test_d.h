@@ -9,8 +9,9 @@
 #include <CGAL/_test_fct_vector_d.C>
 #include <CGAL/_test_cls_point_d.C>
 #include <CGAL/_test_fct_point_vector_d.C>
+// #include <CGAL/_test_fct_point_d.C>
 #include <CGAL/_test_cls_direction_d.C>
-// #include <CGAL/_test_cls_plane_d.C>
+#include <CGAL/_test_cls_plane_d.C>
 // #include <CGAL/_test_cls_line_d.C>
 // #include <CGAL/_test_cls_segment_d.C>
 // #include <CGAL/_test_cls_ray_d.C>
@@ -27,9 +28,9 @@ _test_d(const R& r)
  && _test_fct_vector_d(r)
  && _test_cls_point_d(r)
  && _test_fct_point_vector_d(r)
- && _test_fct_point_d(r)
+ // && _test_fct_point_d(r)
  && _test_cls_direction_d(r)
- // && _test_cls_plane_d( r )
+ && _test_cls_plane_d( r )
  // && _test_cls_line_d( r )
  // && _test_cls_segment_d( r )
  // && _test_cls_ray_d( r )

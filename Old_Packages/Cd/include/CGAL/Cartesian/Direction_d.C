@@ -21,21 +21,21 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R >
 DirectionCd<R CGAL_CTAG>::
-DirectionCd()
+DirectionCd(int d)
 {
-  PTR = new _d_tuple<FT>();
+  PTR = new _d_tuple<RT>(d);
 }
 
 template < class R >
 DirectionCd<R CGAL_CTAG>::
 DirectionCd(const DirectionCd<R CGAL_CTAG> &d)
-  : Handle(d)
+  : Handle((const Handle&)d)
 {}
 
 template < class R >
 DirectionCd<R CGAL_CTAG>::
 DirectionCd(const typename DirectionCd<R CGAL_CTAG>::Vector_d &v)
-  : Handle(v)
+  : Handle((const Handle&)v)
 {}
 
 template < class R >
@@ -47,7 +47,7 @@ template < class R >
 DirectionCd<R CGAL_CTAG> &
 DirectionCd<R CGAL_CTAG>::operator=(const DirectionCd<R CGAL_CTAG> &d)
 {
-  Handle::operator=(d);
+  Handle::operator=((const Handle &)d);
   return *this;
 }
 
@@ -100,13 +100,13 @@ inline
 DirectionCd<R CGAL_CTAG> 
 DirectionCd<R CGAL_CTAG>::operator-() const
 {
-  Self v;
-  std::transform(begin(),end(),v.begin(),std::negate<FT>());
+  Self v(dimension());
+  std::transform(begin(),end(),v.begin(),std::negate<RT>());
   return v;
 }
 
 template < class R >
-typename DirectionCd<R CGAL_CTAG>::FT 
+typename DirectionCd<R CGAL_CTAG>::RT 
 DirectionCd<R CGAL_CTAG>::delta(int i) const
 {
   CGAL_kernel_precondition( i >= 0 && i < dimension() );
@@ -117,16 +117,16 @@ DirectionCd<R CGAL_CTAG>::delta(int i) const
 template < class R >
 std::ostream &operator<<(std::ostream &os, const DirectionCd<R CGAL_CTAG> &d)
 {
-  typedef typename DirectionCd<R CGAL_CTAG>::FT FT;
+  typedef typename DirectionCd<R CGAL_CTAG>::RT RT;
   typename DirectionCd<R CGAL_CTAG>::Vector_d v = d.to_vector();
   switch(os.iword(IO::mode)) {
     case IO::ASCII :
     case IO::BINARY :
-      std::for_each(d.begin(),d.end(),print_d<FT>(os));
+      std::for_each(d.begin(),d.end(),print_d<RT>(os));
       break;
     default:
       os << "DirectionCd(" << d.dimension() << ", ";
-      std::for_each(v.begin(),d.end(),print_d<FT>(os));
+      std::for_each(v.begin(),d.end(),print_d<RT>(os));
       os << ")";
   }
   return os;
@@ -137,15 +137,15 @@ std::ostream &operator<<(std::ostream &os, const DirectionCd<R CGAL_CTAG> &d)
 template < class R >
 std::istream &operator>>(std::istream &is, DirectionCd<R CGAL_CTAG> &d)
 {
-  typedef typename DirectionCd<R CGAL_CTAG>::FT FT;
+  typedef typename DirectionCd<R CGAL_CTAG>::RT RT;
   int dim;
-  FT *v;
+  RT *v;
   switch(is.iword(IO::mode)) {
     case IO::ASCII :
     case IO::BINARY :
       is >> dim;
-      v = new FT[dim];
-      std::copy_n(istream_iterator<FT>(is),dim, v);
+      v = new RT[dim];
+      std::copy_n(istream_iterator<RT>(is),dim, v);
       break;
     default:
       std::cerr << "" << std::endl;

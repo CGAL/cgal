@@ -23,9 +23,9 @@ _test_cls_direction_d(const R& )
  RT  n2 = 4;
  RT  n3 = 2;
 
- CGAL::Vector_d<R>  v( n1, n2, n3);
+ CGAL::Vector_d<R>  v(3, n1, n2, n3);
  CGAL::Direction_d<R> d2(v);
- CGAL::Direction_d<R> d3( n0, n1, n2);
+ CGAL::Direction_d<R> d3(3, n0, n1, n2);
  CGAL::Direction_d<R> d4( d3 );
  CGAL::Direction_d<R> d5 = d3;
 
@@ -36,7 +36,7 @@ _test_cls_direction_d(const R& )
  assert( d3 != d2 );
 
  std::cout << '.';
- CGAL::Vector_d<R> vv = d2.vector();
+ CGAL::Vector_d<R> vv = d2.to_vector();
  assert( v == vv );
 
  d0 = -d3;

@@ -9,6 +9,8 @@
 #include <CGAL/Cartesian/Direction_d.h>
 #include <CGAL/Cartesian/d_utils.h>
 #include <iterator>
+#include <algorithm>
+#include <numeric>
 
 #ifndef CGAL_CTAG
 #define CGAL_CTAG
@@ -22,9 +24,9 @@ CGAL_BEGIN_NAMESPACE
 
 template < class R >
 VectorCd<R CGAL_CTAG>::
-VectorCd(int dim)
+VectorCd(int d)
 {
-  PTR = new _d_tuple<FT>(dim);
+  PTR = new _d_tuple<FT>(d);
 }
 
 template < class R >
@@ -50,9 +52,9 @@ VectorCd(const typename VectorCd<R CGAL_CTAG>::Direction_d &d)
 
 template < class R >
 VectorCd<R CGAL_CTAG>::
-VectorCd(int dim, const Null_vector  &)
+VectorCd(int dim, const Null_vector &)
 {
-  CGAL_kernel_precondition( dim >= 0);
+  CGAL_kernel_precondition( dim > 0);
   PTR = new _d_tuple<FT>(dim);
   std::fill(begin(), end(), FT(0));
 }
@@ -65,14 +67,13 @@ template < class R >
 VectorCd<R CGAL_CTAG> &
 VectorCd<R CGAL_CTAG>::operator=(const VectorCd<R CGAL_CTAG> &v)
 {
-  Handle::operator=(v);
+  Handle::operator=((const Handle &)v);
   return *this;
 }
 
 template < class R >
 bool
-VectorCd<R CGAL_CTAG>::
-operator==(const VectorCd<R CGAL_CTAG> &v) const
+VectorCd<R CGAL_CTAG>::operator==(const VectorCd<R CGAL_CTAG> &v) const
 {
   if (dimension() != v.dimension()) return false;
   return std::equal(begin(),end(),v.begin());
@@ -81,8 +82,7 @@ operator==(const VectorCd<R CGAL_CTAG> &v) const
 template < class R >
 inline
 bool
-VectorCd<R CGAL_CTAG>::
-operator!=(const VectorCd<R CGAL_CTAG> &v) const
+VectorCd<R CGAL_CTAG>::operator!=(const VectorCd<R CGAL_CTAG> &v) const
 {
   return !(*this == v);
 }
@@ -90,8 +90,8 @@ operator!=(const VectorCd<R CGAL_CTAG> &v) const
 template < class R >
 bool VectorCd<R CGAL_CTAG>::operator==(const Null_vector &) const
 {
-  const_iterator non_zero = find_if(begin(),end(),
-                                    bind1st(not_equal_to<FT>(),FT(0)));
+  const_iterator non_zero;
+  non_zero = find_if(begin(),end(),bind1st(not_equal_to<FT>(),FT(0)));
   return non_zero == end();
 }
 
@@ -136,20 +136,18 @@ VectorCd<R CGAL_CTAG>::homogeneous(int i) const
 template < class R >
 inline
 VectorCd<R CGAL_CTAG>
-VectorCd<R CGAL_CTAG>::
-operator+(const VectorCd<R CGAL_CTAG> &v) const
+VectorCd<R CGAL_CTAG>::operator+(const VectorCd<R CGAL_CTAG> &v) const
 {
   CGAL_kernel_precondition( dimension() == v.dimension() );
   Self w(dimension());
-  std::transform(begin(),end(),w.begin(),std::plus<FT>());
+  std::transform(begin(),end(),v.begin(),w.begin(),std::plus<FT>());
   return w;
 }
 
 template < class R >
 inline
 VectorCd<R CGAL_CTAG>
-VectorCd<R CGAL_CTAG>::
-operator-(const VectorCd<R CGAL_CTAG> &v) const
+VectorCd<R CGAL_CTAG>::operator-(const VectorCd<R CGAL_CTAG> &v) const
 {
   CGAL_kernel_precondition( dimension() == v.dimension() );
   Self w(dimension());
@@ -160,10 +158,9 @@ operator-(const VectorCd<R CGAL_CTAG> &v) const
 template < class R >
 inline
 VectorCd<R CGAL_CTAG>
-VectorCd<R CGAL_CTAG>::
-operator-() const
+VectorCd<R CGAL_CTAG>::operator-() const
 {
-  Self v;
+  Self v(dimension());
   std::transform(begin(),end(),v.begin(),std::negate<FT>());
   return v;
 }
@@ -171,13 +168,21 @@ operator-() const
 template < class R >
 inline
 typename VectorCd<R CGAL_CTAG>::FT
-VectorCd<R CGAL_CTAG>::
-operator*(const VectorCd<R CGAL_CTAG> &v) const
+VectorCd<R CGAL_CTAG>::operator*(const VectorCd<R CGAL_CTAG> &v) const
 {
   CGAL_kernel_precondition( dimension() == v.dimension() );
-  Self w(dimension());
-  std::transform(begin(),end(),v.begin(),w.begin(),std::multiplies<FT>());
-  return w;
+  return std::inner_product(begin(),end(),v.begin(),FT(0));
+}
+
+template < class R >
+inline
+VectorCd<R CGAL_CTAG>
+VectorCd<R CGAL_CTAG>::
+operator*(const typename VectorCd<R CGAL_CTAG>::FT &c) const
+{
+  Self v(dimension());
+  std::transform(begin(),end(),v.begin(),std::bind2nd(std::multiplies<FT>(),c));
+  return v;
 }
 
 template < class R >
@@ -186,8 +191,8 @@ VectorCd<R CGAL_CTAG>
 VectorCd<R CGAL_CTAG>::
 operator/(const typename VectorCd<R CGAL_CTAG>::FT &c) const
 {
-  Self v;
-  std::transform(begin(),end(),std::bind1st(std::multiplies<FT>(),c));
+  Self v(dimension());
+  std::transform(begin(),end(),v.begin(),std::bind2nd(std::divides<FT>(),c));
   return v;
 }
 
@@ -211,7 +216,8 @@ transform(const typename VectorCd<R CGAL_CTAG>::Aff_transformation_d &t) const
 
 #ifndef CGAL_CARTESIAN_NO_OSTREAM_INSERT_VECTORCD
 template < class R >
-std::ostream &operator<<(std::ostream &os, const VectorCd<R CGAL_CTAG> &v)
+std::ostream &
+operator<<(std::ostream &os, const VectorCd<R CGAL_CTAG> &v)
 {
   typedef typename VectorCd<R CGAL_CTAG>::FT FT;
   switch(os.iword(IO::mode)) {
@@ -230,7 +236,8 @@ std::ostream &operator<<(std::ostream &os, const VectorCd<R CGAL_CTAG> &v)
 
 #ifndef CGAL_CARTESIAN_NO_ISTREAM_EXTRACT_VECTORCD
 template < class R >
-std::istream &operator>>(std::istream &is, VectorCd<R CGAL_CTAG> &v)
+std::istream &
+operator>>(std::istream &is, VectorCd<R CGAL_CTAG> &v)
 {
   typedef typename VectorCd<R CGAL_CTAG>::FT FT;
   int dim;

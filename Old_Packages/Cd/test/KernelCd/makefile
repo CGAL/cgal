@@ -43,11 +43,12 @@ all: test_kernelCd
 test_kernelCd$(EXE_EXT): test_kernelCd$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_kernelCd test_kernelCd$(OBJ_EXT) $(LDFLAGS)
 
-clean: \
-                   test_kernelCd.clean 
+clean:
+	- rm -f *.o *.ii *.s
 
-distclean: clean
-	rm -rf error* Program* Compiler* 
+distclean:
+	- rm core error* Program* Compiler* 
+	- rm test_kernelCd
 
 #---------------------------------------------------------------------#
 #                    suffix rules

@@ -20,7 +20,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class R >
-PointCd<R CGAL_CTAG>::PointCd(const int dim = 2)
+PointCd<R CGAL_CTAG>::PointCd(int dim)
 {
   PTR = new _d_tuple<FT>(dim);
 }
@@ -100,9 +100,9 @@ PointCd<R CGAL_CTAG>::operator!=(const Origin&) const
 
 template < class R >
 inline
-int PointCd<R CGAL_CTAG>::id() const
+long PointCd<R CGAL_CTAG>::id() const
 {
-  return (int)PTR;
+  return (long)PTR;
 }
 
 template < class R >

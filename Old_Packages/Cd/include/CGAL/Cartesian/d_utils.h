@@ -33,4 +33,5 @@ struct print_d
   }
 };
 
+CGAL_END_NAMESPACE
 #endif // CGAL_CARTESIAN_D_UTILS_H

@@ -26,21 +26,35 @@ struct Cartesian_base_dynamic_d
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
     // Because of partial specialization, CGAL::Point_d<R> is selected as
     // CGAL::Point_d<Cartesian_d<FT>,Cartesian_tag>
+    typedef CGAL::Linear_algebra_d<FT,Cartesian_tag>  LA;
     typedef CGAL::Point_d<R,Cartesian_tag>      Point_d;
     typedef CGAL::Vector_d<R,Rep_tag>           Vector_d;
     typedef CGAL::Direction_d<R,Rep_tag>        Direction_d;
+    typedef CGAL::Plane_d<R,Rep_tag>            Plane_d;
 #else
+    typedef Linear_algebraCd<FT>                LA;
     typedef PointCd<R>                          Point_d;
     typedef VectorCd<R>                         Vector_d;
     typedef DirectionCd<R>                      Direction_d;
+    typedef Plane_d<R>                          Plane_d;
 #endif // CGAL_CFG_NO_ADVANCED_KERNEL
 };
 
 CGAL_END_NAMESPACE
 
+#include <CGAL/Cartesian/Linear_algebra_d.h>
+
 #include <CGAL/Cartesian/Point_d.h>
 #include <CGAL/Cartesian/Vector_d.h>
 #include <CGAL/Cartesian/Direction_d.h>
+
+#include <CGAL/Cartesian/global_operators_d.h>
+#include <CGAL/Cartesian/constructions_on_planes_d.h>
+#include <CGAL/Cartesian/predicates_on_points_d.h>
+#include <CGAL/Cartesian/predicates_on_directions_d.h>
+#include <CGAL/Cartesian/predicates_on_planes_d.h>
+
+#include <CGAL/Cartesian/Linear_algebra_d.C>
 
 #include <CGAL/Cartesian/Point_d.C>
 #include <CGAL/Cartesian/Vector_d.C>
@@ -89,9 +103,9 @@ struct Cartesian_dynamic_d
     // Point_d in the current namespace (nested within CGAL) and
     // CGAL::Point_d< Cartesian_d<FT> > (which is in the CGAL namespace)
 
-    typedef CGAL::Point_d<Self>                 Point_d;
-    typedef CGAL::Vector_d<Self>                Vector_d;
-    typedef CGAL::Direction_d<Self>             Direction_d;
+    typedef Point_d<Self>                 Point_d;
+    typedef Vector_d<Self>                Vector_d;
+    typedef Direction_d<Self>             Direction_d;
 
     // TODO: cleanup
     static   FT make_FT(const RT & num, const RT& denom) { return num/denom;}

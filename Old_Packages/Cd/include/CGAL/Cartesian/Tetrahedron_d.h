@@ -50,7 +50,7 @@ public:
   typedef typename R::Aff_transformation_d_base Aff_transformation_d;
 #endif
 
-  TetrahedronCd();
+  TetrahedronCd(int d = 0);
   TetrahedronCd(const Self &t);
   TetrahedronCd(const Point_d &p,
                 const Point_d &q,

@@ -16,7 +16,7 @@ public:
   typedef          _R                       R;
   typedef typename R::RT                    RT;
   typedef typename R::FT                    FT;
-  typedef CGAL::Direction_3<R>              Self;
+  typedef Direction_d<R>                    Self;
   typedef typename R::Direction_d_base      RDirection_d;
   typedef typename R::Vector_d              Vector_d;
   typedef const FT*                         const_iterator;
@@ -31,6 +31,21 @@ public:
   Direction_d (int dim, InputIterator first, InputIterator last)
       : RDirection_d (dim, first, last)
     {}
+  Direction_d(int dim, const RT &x, const RT &y)
+    {
+      CGAL_kernel_assertion( dim == 2);
+      RT e[2] = { x, y }; *this = RDirection_d(2,e+0,e+2);
+    }
+  Direction_d(int dim, const RT &x, const RT &y, const FT &z)
+    {
+      CGAL_kernel_assertion( dim == 3);
+      RT e[3] = { x, y, z }; *this = RDirection_d(3,e+0,e+3);
+    }
+  Direction_d(int dim, const RT &x, const RT &y, const RT &z, const RT &t)
+    {
+      CGAL_kernel_assertion( dim == 4);
+      RT e[4] = { x, y, z, t }; *this = RDirection_d(3,e+0,e+4);
+    }
   Self& operator=(const Self& v)
     { RDirection_d::operator=(v); return *this; }
   bool operator==(const Self& v) const
@@ -43,14 +58,17 @@ public:
     { return !(*this == v); }
   FT delta(int i) const
     { return RDirection_d::delta(i); }
+  FT dx() { return delta(0); }
+  FT dy() { return delta(1); }
+  FT dz() { return delta(2); }
   FT operator[](int i) const
     { return delta(i); }
   int dimension() const
     { return RDirection_d::dimension(); }
   Vector_d to_vector() const
     { return RDirection_d::to_vector(); }
-  Self transform(const CGAL::Aff_transformation_d<R>& t) const
-    { return RDirection_d::transform(t); }
+  // Self transform(const CGAL::Aff_transformation_d<R>& t) const
+  // { return RDirection_d::transform(t); }
 };
 
 #ifndef NO_OSTREAM_INSERT_DIRECTION_D

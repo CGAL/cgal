@@ -70,36 +70,44 @@ class Aff_transformation_3;
 template < class R >
 class Plane_3;
 
-template < class FT >
+template < class R >
 class Point_3;
 
-template < class FT >
+template < class R >
 class Vector_3;
 
-template < class FT >
+template < class R >
 class Direction_3;
 
 template < class R >
 class Line_3;
 
-template < class FT >
+template < class R >
 class Ray_3;
 
-template < class FT >
+template < class R >
 class Segment_3;
 
-template < class FT >
+template < class R >
 class Triangle_3;
 
-template < class FT >
+template < class R >
 class Tetrahedron_3;
-
 
 // template < class R >
 // class _Vector_2_rft_wrapper;
 // 
 // template < class R >
 // class _Vector_3_rft_wrapper;
+
+template < class FT >
+class Linear_algebraCd;
+
+template < class FT >
+class LA_vectorCd;
+
+template < class FT >
+class LA_matrixCd;
 
 template < class R>
 class Point_d;
@@ -109,6 +117,9 @@ class Vector_d;
 
 template < class R>
 class Direction_d;
+
+template < class R>
+class Plane_d;
 
 CGAL_END_NAMESPACE
 

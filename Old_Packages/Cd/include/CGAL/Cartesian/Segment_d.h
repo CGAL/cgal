@@ -52,7 +52,7 @@ public:
   typedef typename R::Aff_transformation_d_base Aff_transformation_d;
 #endif
 
-  SegmentCd();
+  SegmentCd(int d = 0);
   SegmentCd(const Self  &s);
   SegmentCd(const Point_d &sp, const Point_d &ep);
   ~SegmentCd();

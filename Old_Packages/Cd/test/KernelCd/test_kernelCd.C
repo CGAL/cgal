@@ -24,14 +24,13 @@
 #include <iostream>
 #include <strstream>
 #include <cassert>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Quotient.h>
+#include <CGAL/Cartesian_dynamic_d.h>
 #include <CGAL/_test_d.h>
 
 int
 main()
 {
-  typedef   CGAL::Cartesian<double>     Cls;
+  typedef   CGAL::Cartesian_dynamic_d<double>     Cls;
   std::cout << "Testing dD with Cartesian<double> :" << std::endl;
   _test_d( Cls() );
   return 0;

@@ -40,8 +40,14 @@ public:
   typedef typename R::Direction_d_base          Direction_d;
   // typedef typename R::Aff_transformation_d_base Aff_transformation_d;
 #endif
+  
+  friend CGAL_FRIEND_INLINE
+  Self operator- CGAL_NULL_TMPL_ARGS (const Point_d &p, const Point_d &q);
 
-  VectorCd(int dim = 2);
+  friend CGAL_FRIEND_INLINE
+  Self operator- CGAL_NULL_TMPL_ARGS (const Point_d &p, const Point_d &q);
+
+  VectorCd(int dim = 0);
   VectorCd(const Self &v);
   VectorCd(const Point_d &p);
   VectorCd(const Direction_d &p);
@@ -49,7 +55,7 @@ public:
   ~VectorCd();
 
   template < class InputIterator >
-  VectorCd(int dim, InputIterator begin, InputIterator end)
+  VectorCd(int dim, InputIterator first, InputIterator last)
   {
     CGAL_kernel_precondition( dim >= 0);
     CGAL_kernel_precondition( last-first == dim || last-first == dim+1 );
@@ -57,7 +63,7 @@ public:
     std::copy_n(first,dim,begin());
     if (last-first == dim+1)
       std::transform(begin(),end(),begin(),
-	             std::bind2nd(std::divides<FT>(*(first+dim))));
+	             std::bind2nd(std::divides<FT>(),*(first+dim)));
   }
 
   Self&          operator=(const Self &v);
@@ -79,6 +85,7 @@ public:
   Self           operator-(const Self &w) const;
   Self           operator-() const;
   FT             operator*(const Self &w) const;
+  Self           operator*(const FT &c) const;
   Self           operator/(const FT &c) const;
 
   Direction_d    direction() const;
