@@ -2005,13 +2005,7 @@ coordinate of the center @prg{c}.
         RT hD = c[d];
         It i(tco.access_coordinates_begin_d_object()(p)); RT *o;
 
-#ifndef CGAL_CFG_NO_MUTABLE
-
         for ( o=v; o<v+d; *(o++)=hD*(*(i++)));
-#else
-        for (o=(RT*)v; o<(RT*)v+d; *(o++)=hD*(*(i++)));
-
-#endif // CGAL_CFG_NO_MUTABLE
 
         // get h_p
         RT h_p = *(i++);
@@ -3157,13 +3151,6 @@ int main ()
     #ifndef CGAL_PROTECT_IOSTREAM
     #  include <iostream>
     #  define CGAL_PROTECT_IOSTREAM
-    #endif
-
-    #ifdef _MSC_VER
-    #ifdef _VIRTUAL
-    #pragma message("Min_sphere_d.h: this code may not compile due to a problem")
-    #pragma message("in xlocnum. Please consult the installation guide for a fix.")
-    #endif
     #endif
 
     CGAL_BEGIN_NAMESPACE

@@ -54,13 +54,6 @@
 #  define CGAL_PROTECT_IOSTREAM
 #endif
 
-#ifdef _MSC_VER
-#ifdef _VIRTUAL
-#pragma message("Min_sphere_d.h: this code may not compile due to a problem")
-#pragma message("in xlocnum. Please consult the installation guide for a fix.")
-#endif
-#endif
-
 CGAL_BEGIN_NAMESPACE
 
 

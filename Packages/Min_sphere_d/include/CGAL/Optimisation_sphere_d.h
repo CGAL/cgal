@@ -528,13 +528,7 @@ class Optimisation_sphere_d;
             RT hD = c[d];
             It i(tco.access_coordinates_begin_d_object()(p)); RT *o;
         
-        #ifndef CGAL_CFG_NO_MUTABLE
-        
                 for ( o=v; o<v+d; *(o++)=hD*(*(i++)));
-        #else
-                for (o=(RT*)v; o<(RT*)v+d; *(o++)=hD*(*(i++)));
-        
-        #endif // CGAL_CFG_NO_MUTABLE
         
                 // get h_p
                 RT h_p = *(i++);
@@ -1106,13 +1100,7 @@ class Optimisation_sphere_d;
             RT hD = c[d];
             It i(tco.access_coordinates_begin_d_object()(p)); RT *o;
         
-        #ifndef CGAL_CFG_NO_MUTABLE
-        
                 for ( o=v; o<v+d; *(o++)=hD*(*(i++)));
-        #else
-                for (o=(RT*)v; o<(RT*)v+d; *(o++)=hD*(*(i++)));
-        
-        #endif // CGAL_CFG_NO_MUTABLE
         
                 // get h_p
                 RT h_p = *(i++);
