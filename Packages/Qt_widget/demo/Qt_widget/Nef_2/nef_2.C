@@ -468,7 +468,7 @@ private slots:
     MyWindow *ed = new MyWindow(500, 500);
     ed->setCaption("Layer");
     ed->widget->clear_history();
-    ed->widget->sl_set_window(-1.1, 1.1, -1.1, 1.1);
+    ed->widget->set_window(-1.1, 1.1, -1.1, 1.1);
     ed->show();
     something_changed();
   }
