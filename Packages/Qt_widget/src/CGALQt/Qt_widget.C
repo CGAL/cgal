@@ -138,8 +138,6 @@ void Qt_widget::showEvent(QShowEvent* e)
 {
   if( set_scales_to_be_done ){
     set_scales();
-    add_to_history(); // add the current viewport
-    configure_history_buttons();
   }
 
   return QWidget::showEvent(e);
