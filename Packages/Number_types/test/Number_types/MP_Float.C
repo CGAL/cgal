@@ -99,6 +99,13 @@ void test_overflow_to_interval()
 
 int main(int argc, char **argv)
 {
+  std::cout << "sizeof(long) = " << sizeof(long) << std::endl;
+  std::cout << "sizeof(int) = " << sizeof(int) << std::endl;
+  std::cout << "sizeof(short) = " << sizeof(short) << std::endl;
+  std::cout << "sizeof(char) = " << sizeof(char) << std::endl;
+  MPF z = int(65536);
+  assert(z != 0);
+
   QMPF q1(1), q2(2);
   assert(q1+q1 == q2);
 
@@ -128,6 +135,7 @@ int main(int argc, char **argv)
   {
 #if 0
     std::cout << i << std::endl;
+    std::cout << j << std::endl;
     std::cout << a << std::endl;
     std::cout << "exp = " << a.exp << "    v[" << a.v.size()<< "] = ";
     if (!a.is_zero())
@@ -137,6 +145,18 @@ int main(int argc, char **argv)
 #endif
     a = a + MPF(i);
     j += i;
+    assert(i == MPF(i));
+#if 0
+    std::cout << " array = "; print(std::cout, a); std::cout << std::endl;
+    std::cout << i << std::endl;
+    std::cout << j << std::endl;
+    std::cout << a << std::endl;
+    std::cout << "exp = " << a.exp << "    v[" << a.v.size()<< "] = ";
+    if (!a.is_zero())
+      for (unsigned int j=0; j<a.v.size(); j++)
+        std::cout << " " << a.v[j];
+    std::cout << std::endl;
+#endif
     CGAL_assertion(a == MPF(j));
     // std::cout << "a=" << a << std::endl << "MPF(j)=" << MPF(j) << std::endl;
   }
