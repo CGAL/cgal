@@ -115,13 +115,12 @@ public:
     
     mpq_canonicalize(mpQ);
   }
-  
 
   Gmpq_rep(double d)
   { 
     mpq_init(mpQ);
     mpq_set_d(mpQ, d); 
-}
+  }
 
   Gmpq_rep(const char * const str)
   { 
@@ -141,7 +140,7 @@ public:
   { mpq_clear(mpQ); }
 };
 
-//__________________________________________________
+
 class Gmpq
   : public Handle_for<Gmpq_rep>
 {
@@ -152,12 +151,11 @@ public:
   typedef Tag_false  Has_sqrt;
 
 
-  Gmpq()
+  Gmpq() // {} we can't do that since the non-const mpq() is called.
     : Base(Gmpq_rep()) {}
 
   Gmpq(const mpq_t z)
     : Base(Gmpq_rep(z)) {}
-
 
   Gmpq(int n)
     : Base(Gmpq_rep(n)) {}

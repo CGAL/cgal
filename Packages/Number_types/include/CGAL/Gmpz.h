@@ -94,7 +94,7 @@ public:
   typedef Tag_false Has_division;
   typedef Tag_true  Has_sqrt;
 
-  Gmpz()
+  Gmpz() // {} we can't do that since the non-const mpz() is called.
     : Base(Gmpz_rep()) {}
 
   Gmpz(const mpz_t z)
