@@ -1,3 +1,7 @@
+1.2.44
+-------
+	patched couple files that were not tested under Linux for the previous modifs 1.2.43
+
 1.2.43
 --------
 	set_window was setting ranges and added to history even when the geometry of the widget wasn't yet known. Now, set_scaled and add_to_history is delayed in showEvent(...)	 
