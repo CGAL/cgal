@@ -412,12 +412,10 @@ re_adjust:
   }
   catch (Restricted_double::unsafe_comparison)
   {
-    // It failed, we re-adjust once.
-    if (!re_adjusted) {
+    if (!re_adjusted) {  // It failed, we re-adjust once.
       re_adjusted = true;
       goto re_adjust;
     }
-    // This scheme definitely fails => exact computation (filtered_exact<> ?).
     return power_testC3(
 		px.exact(),
 		py.exact(),
@@ -937,12 +935,10 @@ re_adjust:
   }
   catch (Restricted_double::unsafe_comparison)
   {
-    // It failed, we re-adjust once.
-    if (!re_adjusted) {
+    if (!re_adjusted) {  // It failed, we re-adjust once.
       re_adjusted = true;
       goto re_adjust;
     }
-    // This scheme definitely fails => exact computation (filtered_exact<> ?).
     return power_testC3(
 		px.exact(),
 		py.exact(),
@@ -1373,12 +1369,10 @@ re_adjust:
   }
   catch (Restricted_double::unsafe_comparison)
   {
-    // It failed, we re-adjust once.
-    if (!re_adjusted) {
+    if (!re_adjusted) {  // It failed, we re-adjust once.
       re_adjusted = true;
       goto re_adjust;
     }
-    // This scheme definitely fails => exact computation (filtered_exact<> ?).
     return power_testC3(
 		px.exact(),
 		py.exact(),

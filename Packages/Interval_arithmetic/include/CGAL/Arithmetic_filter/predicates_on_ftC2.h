@@ -229,12 +229,10 @@ re_adjust:
   }
   catch (Restricted_double::unsafe_comparison)
   {
-    // It failed, we re-adjust once.
-    if (!re_adjusted) {
+    if (!re_adjusted) {  // It failed, we re-adjust once.
       re_adjusted = true;
       goto re_adjust;
     }
-    // This scheme definitely fails => exact computation (filtered_exact<> ?).
     return compare_xC2(
 		px.exact(),
 		l1a.exact(),
@@ -575,12 +573,10 @@ re_adjust:
   }
   catch (Restricted_double::unsafe_comparison)
   {
-    // It failed, we re-adjust once.
-    if (!re_adjusted) {
+    if (!re_adjusted) {  // It failed, we re-adjust once.
       re_adjusted = true;
       goto re_adjust;
     }
-    // This scheme definitely fails => exact computation (filtered_exact<> ?).
     return compare_xC2(
 		l1a.exact(),
 		l1b.exact(),
@@ -844,12 +840,10 @@ re_adjust:
   }
   catch (Restricted_double::unsafe_comparison)
   {
-    // It failed, we re-adjust once.
-    if (!re_adjusted) {
+    if (!re_adjusted) {  // It failed, we re-adjust once.
       re_adjusted = true;
       goto re_adjust;
     }
-    // This scheme definitely fails => exact computation (filtered_exact<> ?).
     return compare_y_at_xC2(
 		px.exact(),
 		py.exact(),
@@ -1108,12 +1102,10 @@ re_adjust:
   }
   catch (Restricted_double::unsafe_comparison)
   {
-    // It failed, we re-adjust once.
-    if (!re_adjusted) {
+    if (!re_adjusted) {  // It failed, we re-adjust once.
       re_adjusted = true;
       goto re_adjust;
     }
-    // This scheme definitely fails => exact computation (filtered_exact<> ?).
     return compare_y_at_xC2(
 		px.exact(),
 		l1a.exact(),
@@ -1405,12 +1397,10 @@ re_adjust:
   }
   catch (Restricted_double::unsafe_comparison)
   {
-    // It failed, we re-adjust once.
-    if (!re_adjusted) {
+    if (!re_adjusted) {  // It failed, we re-adjust once.
       re_adjusted = true;
       goto re_adjust;
     }
-    // This scheme definitely fails => exact computation (filtered_exact<> ?).
     return compare_y_at_xC2(
 		l1a.exact(),
 		l1b.exact(),
@@ -1763,12 +1753,10 @@ re_adjust:
   }
   catch (Restricted_double::unsafe_comparison)
   {
-    // It failed, we re-adjust once.
-    if (!re_adjusted) {
+    if (!re_adjusted) {  // It failed, we re-adjust once.
       re_adjusted = true;
       goto re_adjust;
     }
-    // This scheme definitely fails => exact computation (filtered_exact<> ?).
     return compare_y_at_xC2(
 		l1a.exact(),
 		l1b.exact(),
@@ -2010,12 +1998,10 @@ re_adjust:
   }
   catch (Restricted_double::unsafe_comparison)
   {
-    // It failed, we re-adjust once.
-    if (!re_adjusted) {
+    if (!re_adjusted) {  // It failed, we re-adjust once.
       re_adjusted = true;
       goto re_adjust;
     }
-    // This scheme definitely fails => exact computation (filtered_exact<> ?).
     return compare_deltax_deltayC2(
 		px.exact(),
 		qx.exact(),
@@ -2238,12 +2224,10 @@ re_adjust:
   }
   catch (Restricted_double::unsafe_comparison)
   {
-    // It failed, we re-adjust once.
-    if (!re_adjusted) {
+    if (!re_adjusted) {  // It failed, we re-adjust once.
       re_adjusted = true;
       goto re_adjust;
     }
-    // This scheme definitely fails => exact computation (filtered_exact<> ?).
     return orientationC2(
 		px.exact(),
 		py.exact(),
@@ -2530,12 +2514,10 @@ re_adjust:
   }
   catch (Restricted_double::unsafe_comparison)
   {
-    // It failed, we re-adjust once.
-    if (!re_adjusted) {
+    if (!re_adjusted) {  // It failed, we re-adjust once.
       re_adjusted = true;
       goto re_adjust;
     }
-    // This scheme definitely fails => exact computation (filtered_exact<> ?).
     return side_of_oriented_circleC2(
 		px.exact(),
 		py.exact(),
@@ -2813,12 +2795,10 @@ re_adjust:
   }
   catch (Restricted_double::unsafe_comparison)
   {
-    // It failed, we re-adjust once.
-    if (!re_adjusted) {
+    if (!re_adjusted) {  // It failed, we re-adjust once.
       re_adjusted = true;
       goto re_adjust;
     }
-    // This scheme definitely fails => exact computation (filtered_exact<> ?).
     return side_of_bounded_circleC2(
 		px.exact(),
 		py.exact(),
@@ -3064,12 +3044,10 @@ re_adjust:
   }
   catch (Restricted_double::unsafe_comparison)
   {
-    // It failed, we re-adjust once.
-    if (!re_adjusted) {
+    if (!re_adjusted) {  // It failed, we re-adjust once.
       re_adjusted = true;
       goto re_adjust;
     }
-    // This scheme definitely fails => exact computation (filtered_exact<> ?).
     return cmp_dist_to_pointC2(
 		px.exact(),
 		py.exact(),
@@ -3316,12 +3294,10 @@ re_adjust:
   }
   catch (Restricted_double::unsafe_comparison)
   {
-    // It failed, we re-adjust once.
-    if (!re_adjusted) {
+    if (!re_adjusted) {  // It failed, we re-adjust once.
       re_adjusted = true;
       goto re_adjust;
     }
-    // This scheme definitely fails => exact computation (filtered_exact<> ?).
     return cmp_signed_dist_to_lineC2(
 		la.exact(),
 		lb.exact(),
@@ -3585,12 +3561,10 @@ re_adjust:
   }
   catch (Restricted_double::unsafe_comparison)
   {
-    // It failed, we re-adjust once.
-    if (!re_adjusted) {
+    if (!re_adjusted) {  // It failed, we re-adjust once.
       re_adjusted = true;
       goto re_adjust;
     }
-    // This scheme definitely fails => exact computation (filtered_exact<> ?).
     return cmp_signed_dist_to_lineC2(
 		px.exact(),
 		py.exact(),
