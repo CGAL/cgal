@@ -19,6 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				FavorSizeOrSpeed="0"
 				AdditionalIncludeDirectories=".\include;..\..\include;..\..\..\OpenNL\include;&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;CGAL_PARAMETERIZATION_CHECK_EXPENSIVE;CGAL_USE_GMP;_CONSOLE"
 				MinimalRebuild="TRUE"
@@ -75,8 +76,12 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="3"
+				GlobalOptimizations="TRUE"
+				InlineFunctionExpansion="2"
+				EnableIntrinsicFunctions="TRUE"
+				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories=".\include;..\..\include;..\..\..\OpenNL\include;&quot;$(CGALROOT)\include\CGAL\config\msvc7&quot;;&quot;$(CGALROOT)\include&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;CGAL_USE_GMP;_CONSOLE"
+				PreprocessorDefinitions="WIN32;CGAL_PARAMETERIZATION_CHECK_EXPENSIVE;CGAL_USE_GMP;_CONSOLE"
 				RuntimeLibrary="4"
 				DisableLanguageExtensions="FALSE"
 				RuntimeTypeInfo="TRUE"
