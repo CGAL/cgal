@@ -161,6 +161,7 @@ public:
             BLAS<Vector>::axpy(-omega,t,h);
 			if( fabs(rTh)<=1e-40 )								// LS 03/2005: avoid division by zero 
 			{
+				// Stop solver (TO BE CHECKED BY Bruno Levy)
 				std::cerr << "Solver_BICGSTAB<>::solve: unexpected error: rTh=" << rTh << std::endl;
 				return false;
 			}
@@ -173,7 +174,6 @@ public:
             its++ ;
         }
 
-		// TO BE CHECKED BY Bruno Levy
 		bool success = (its < max_iter);
 		if ( ! success )
 			std::cerr << "Solver_BICGSTAB<>::solve: failure: rTr(=" << rTr << ") > err(=" << err << ")" << std::endl;

@@ -134,8 +134,9 @@ public:
             its++;
         }
 
-		// TO BE CHECKED BY Bruno Levy
 		bool success = (its < max_iter);
+		if ( ! success )
+			std::cerr << "Solver_CG<>::solve: failure: BLAS<Vector>::dot(g,g)(=" << BLAS<Vector>::dot(g,g) << ") > err(=" << err << ")" << std::endl;
 		return success;
     } 
 
