@@ -1,6 +1,11 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 7.75 (20/05/03) [mk]
+- added operator= for Triangulation_ds_circulator_2 and
+  Triangulation_iterator_adaptor; this was done in order to avoid
+  warning of the mips CC 7.40 compiler
+
 ver 7.74 (7/05/03)
 - readded Gt as a template parameters of
   Regular_triangulation_face_base_2.h
