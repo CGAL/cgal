@@ -1,3 +1,6 @@
+12 July 2004 Andreas Fabri
+- Point_container now stores an iterator range instead of a real point list
+
 8 July 2004 Andreas Fabri
 - Use Compact_container::construct_insert instead of insert
 - Replaced list with vector in Kd_tree
