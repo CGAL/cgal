@@ -7,12 +7,10 @@
 #include <CGAL/Pm_default_dcel.h>
 #include <CGAL/Topological_map.h>
 
-using namespace CGAL;
-
-class Face_with_info : public Tpm_face_base {
+class Face_with_info : public CGAL::Tpm_face_base {
   int inf;
 public:
-  Face_with_info() : Tpm_face_base(), inf(0) {}
+  Face_with_info() : CGAL::Tpm_face_base(), inf(0) {}
 
   int info() {return inf;}
   void set_info(int i) {inf=i;}
@@ -20,11 +18,11 @@ public:
 
 
 
-typedef Pm_dcel<Tpm_vertex_base,
-                     Tpm_halfedge_base,
-                     Face_with_info > Dcel;  
+typedef CGAL::Pm_dcel<CGAL::Tpm_vertex_base,
+		      CGAL::Tpm_halfedge_base,
+		      Face_with_info > Dcel;  
 
-typedef Topological_map<Dcel> Tpm;
+typedef CGAL::Topological_map<Dcel> Tpm;
 
 typedef  Tpm::Halfedge_handle Halfedge_handle;
 typedef  Tpm::Vertex_handle   Vertex_handle;
