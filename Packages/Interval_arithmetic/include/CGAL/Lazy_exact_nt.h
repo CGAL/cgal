@@ -154,7 +154,7 @@ public:
 #endif
 
 
-// Unary operations: probably some factorization of code is welcome...
+// Unary operations: (probably some factorization of code is welcome...)
 // constant, abs, sqrt, square.
 
 // double Constant.
@@ -376,20 +376,25 @@ public:
   // Ctors:
   Lazy_exact_nt ()
     : rep(NULL) {};
-    // : rep(&lazy_null) {}; // Permet de se passer des tests "if (rep)".
+    // : rep(&lazy_null) {}; // Allows to suppress the tests "if (rep)".
 
   Lazy_exact_nt (const Self & s)
   {
-    rep = s.rep;
-    inc_count();
+    if (rep != s.rep)
+    {
+	rep = s.rep;
+	inc_count();
+    }
   }
 
-  // Need to test rep == s.rep before...
   Self operator= (const Self s)
   {
-    dec_count();
-    rep = s.rep;
-    inc_count();
+      if (rep != s.rep)
+      {
+	  dec_count();
+	  rep = s.rep;
+	  inc_count();
+      }
   }
 
   // Operations
