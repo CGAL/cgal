@@ -394,11 +394,6 @@ Equal_y_2
 equal_y_2_object() const 
 { return Equal_y_2(); }
 
-typedef CGALi::Equal_xy                            Equal_xy_2;
-Equal_xy_2
-equal_xy_2_object() const 
-{ return Equal_xy_2(); }
-
 typedef CGALi::Less_x                              Less_x_2;
 Less_x_2
 less_x_2_object() const 
@@ -433,11 +428,6 @@ typedef CGALi::Compare_y_at_x                      Compare_y_at_x_2;
 Compare_y_at_x_2
 compare_y_at_x_2_object() const 
 { return Compare_y_at_x_2(); }
-
-typedef CGAL ::p_Less_dist_to_point<Point_2>       Less_distance_to_point_2;
-Less_distance_to_point_2
-less_distance_to_point_2_object(const Point_2& p) const 
-{ return Less_distance_to_point_2(p); }
 
 typedef CGAL ::p_Less_dist_to_line_2p<Point_2>     Less_signed_distance_to_line_2;
 Less_signed_distance_to_line_2
@@ -685,11 +675,6 @@ Equal_xy_3
 equal_xy_3_object() const 
 { return Equal_xy_3(); }
 
-typedef CGALi::Equal_xyz                               Equal_xyz_3;
-Equal_xyz_3
-equal_xyz_3_object() const 
-{ return Equal_xyz_3(); }
-
 typedef CGALi::Less_x                                  Less_x_3;
 Less_x_3
 less_x_3_object() const 
@@ -739,11 +724,6 @@ typedef CGALi::Compare_xyz                             Compare_xyz_3;
 Compare_xyz_3
 compare_xyz_3_object() const 
 { return Compare_xyz_3(); }
-
-typedef CGAL ::p_Less_dist_to_point<Point_3>           Less_distance_to_point_3;
-Less_distance_to_point_3
-less_distance_to_point_3_object() const 
-{ return Less_distance_to_point_3(); }
 
 typedef CGALi::Collinear                               Collinear_3;
 Collinear_3

@@ -1,3 +1,7 @@
+Ver 1.14 (26 June 2001)
+- Remove references to obsolete Equal_xy_2 Equal_xyz_3,
+  Less_distance_to_point_[23].
+
 Ver 1.13 (20 June 2001)
 - Fixed a few buggy #includes
 - Use the macro CGAL_ADVANCED_KERNEL_PARTIAL_SPEC.
