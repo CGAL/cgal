@@ -5187,28 +5187,20 @@ link_gmp()
 # used by install_gmp
 install_gmp_sub()
 {
+    cd ${CGAL_AUX_DIR}
     if [ ! -d ${GMP_VERSION} ]; then
-	# unzip
-	gmpfile=${CGAL_AUX_DIR}/${GMP_VERSION}.tar.gz
+	# unzip/untar
+	gmpfile=${GMP_VERSION}.tar.gz
 	_check_read ${gmpfile}
 	_check_write ${CGAL_AUX_DIR}
 	_check_for_sysutil gunzip y
-	_do_command "${_gunzip} ${gmpfile}" "Unzip"
-
-	# untar
-	gmpfile=${CGAL_AUX_DIR}/${GMP_VERSION}.tar
-	_check_read ${gmpfile}
 	_check_for_sysutil tar y
-	_do_command "${_tar} xf ${gmpfile}" "Untar"
-
-	# re-zip
-	_check_for_sysutil gzip y
-	_do_command "${_gzip} -9 ${gmpfile}" "Re-zip"
+	_do_command "${_gunzip} -c ${gmpfile} | ${_tar} xf -" "Unzip/Untar"
     fi
     
     cd ${GMP_VERSION}
-    _opts="CC=`c_compiler_bin`"
-    _opts="${_opts} --prefix=${CGAL_DIR}/GMP"
+    _preopts="CC=\"`c_compiler_bin`\""
+    _opts="--prefix=${CGAL_DIR}/GMP"
     _opts="${_opts} --libdir=${CGAL_LIB_DIR}/`full_ostype`"
     _opts="${_opts} --includedir=${CGAL_INCL_DIR}"
     case ${SYST} in 
@@ -5217,14 +5209,21 @@ install_gmp_sub()
 	        _opts="${_opts} ABI=32"
 	    fi
             case `compiler_description` in
-	        *SUNPRO*) _opts="${_opts} CFLAGS=\"-xarch=v8plus\"" ;;
+	        *SUNPRO*) _preopts="${_preopts} CFLAGS=\"-xarch=v8plus\"";;
+            esac
+	;;
+        *IRIX*)
+            case `compiler_description` in
+		*MIPSPRO*n32*) _opts="${_opts} ABI=n32";;
+		*MIPSPRO*64*) _opts="${_opts} ABI=64";;
             esac
 	;;
     esac
     if [ -n "${GMPXX_SUPPORT}" ]; then
-        _opts="${_opts} --enable-cxx CXX=`compiler_bin`"
+        _preopts="${_preopts} CXX=\"`compiler_bin`\""
+        _opts="${_opts} --enable-cxx"
     fi
-    if _do_command_may_fail "./configure ${_opts}" Configuring; then
+    if _do_command_may_fail "${_preopts} ./configure ${_opts}" Configuring; then
 	if _do_command_may_fail "make" Building
 	then
 	    _do_command "make install" "Installing"
@@ -5232,7 +5231,7 @@ install_gmp_sub()
 	    GMP_INSTALLATION='c'
 	fi
     fi
-    cd ..
+    cd ../..
 }
 
 
