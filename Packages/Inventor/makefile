@@ -39,7 +39,7 @@ submit:
 	echo "submission::" >> $(TMP_file)
 	echo "http://www-sop.inria.fr/prisme/CGAL/DR:/Members" >> $(TMP_file)
 	echo "/Inventor/Inventor.tar.gz" >> $(TMP_file)
-	mail -s autohandle cgal-submit@cs.uu.nl yvinec < $(TMP_file)
+#	mail -s autohandle cgal-submit@cs.uu.nl yvinec < $(TMP_file)
 	rm -f $(TMP_file)
 
 
