@@ -3,6 +3,7 @@ Alpha_shapes_3
 Apollonius_graph_2
 Arrangement
 Auxiliary
+Box_intersection_d
 Cartesian_kernel
 Circulator
 Configuration
@@ -42,10 +43,13 @@ Min_sphere_d_new
 Min_sphere_of_spheres_d
 Modifier
 Nef_2
+Nef_S2
+Nef_3
 Number_types
 Optimisation_basic
 Optimisation_doc
 Partition_2
+Persistent_homology_d
 Planar_map
 Point_set_2
 Polygon
