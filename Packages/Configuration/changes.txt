@@ -1,3 +1,7 @@
+2.33
+- Added the CGAL_CFG_NOMINMAX_BUG.C. The file basic.h should
+ check if this bug is set and #define NOMINMAX 1
+
 2.32
 - Corected the code introduced in the previous version.
 
