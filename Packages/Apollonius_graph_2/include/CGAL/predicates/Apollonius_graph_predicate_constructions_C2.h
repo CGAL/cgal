@@ -253,7 +253,8 @@ public:
   typedef Bitangent_line<Point, Weight>            Bitangent_line;
   //  typedef Bitangent_line::Inverted_weighted_point  Inverted_weighted_point;
   typedef Voronoi_radius<Point, Weight>            Voronoi_radius;
-  //  typedef typename Point::R::FT                    FT;
+  typedef typename Bitangent_line::FT              FT;
+
 protected:
   FT _gamma;
 

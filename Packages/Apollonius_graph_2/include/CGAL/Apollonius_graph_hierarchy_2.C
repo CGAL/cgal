@@ -128,7 +128,7 @@ is_valid(bool verbose, int level) const
 
 
 template <class Gt, bool StoreHidden, class Agds>
-Apollonius_graph_hierarchy_2<Gt,StoreHidden,Agds>::Vertex_handle
+typename Apollonius_graph_hierarchy_2<Gt,StoreHidden,Agds>::Vertex_handle
 Apollonius_graph_hierarchy_2<Gt,StoreHidden,Agds>::
 insert(const Weighted_point &p)
 {
@@ -339,7 +339,7 @@ remove(Vertex_handle v)
 
 
 template <class Gt, bool StoreHidden, class Agds>
-Apollonius_graph_hierarchy_2<Gt,StoreHidden,Agds>::Vertex_handle 
+typename Apollonius_graph_hierarchy_2<Gt,StoreHidden,Agds>::Vertex_handle 
 Apollonius_graph_hierarchy_2<Gt,StoreHidden,Agds>::
 nearest_neighbor(const Point& p) const
 {

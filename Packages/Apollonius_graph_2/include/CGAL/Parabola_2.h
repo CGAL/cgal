@@ -71,7 +71,7 @@ protected:
   inline
   Point_2 lchain(const double &t) const
   {
-    vector< Point_2 > p = compute_points(t);
+    std::vector< Point_2 > p = compute_points(t);
     if ( right(p[0]) )  return p[1];
     return p[0];
   }
@@ -79,12 +79,12 @@ protected:
   inline
   Point_2 rchain(const double &t) const
   {
-    vector< Point_2 > p = compute_points(t);
+    std::vector< Point_2 > p = compute_points(t);
     if ( right(p[0]) )  return p[0];
     return p[1]; 
   }
 
-  vector< Point_2 > compute_points(const double &d) const
+  std::vector< Point_2 > compute_points(const double &d) const
   {
     assert(d >= 0);
     double d1 = distance(o, c) + d;
@@ -92,7 +92,7 @@ protected:
     d2 = d1;
     d1 *= d1;
 
-    vector< Point_2 > p;
+    std::vector< Point_2 > p;
 
     if ( l.a() == ZERO ) {
       double y = d2 * CGAL_NTS sign(l.b()) - l.c() / l.b();
@@ -222,8 +222,8 @@ public:
   template< class Stream >
   void draw(Stream& W) const
   {
-    vector< Point_2 > p;
-    vector< Point_2 > pleft, pright;
+    std::vector< Point_2 > p;
+    std::vector< Point_2 > pleft, pright;
 
     pleft.push_back(o);
     pright.push_back(o);

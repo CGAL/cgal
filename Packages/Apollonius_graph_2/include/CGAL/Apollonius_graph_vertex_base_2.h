@@ -25,7 +25,7 @@ public:
   // TYPES (continued)
   //------------------
   typedef Container                        Hidden_weighted_point_container;
-  typedef Container::iterator              Hidden_weighted_point_iterator;
+  typedef typename Container::iterator     Hidden_weighted_point_iterator;
 
 public:
   // CREATION

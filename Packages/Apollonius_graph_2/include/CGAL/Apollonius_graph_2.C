@@ -76,7 +76,7 @@ is_valid(bool verbose, int level) const
 // circumcenter
 template< class Gt, bool StoreHidden, class Agds >
 inline
-Apollonius_graph_2<Gt,StoreHidden,Agds>::Point
+typename Apollonius_graph_2<Gt,StoreHidden,Agds>::Point
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 circumcenter(const Face_handle& f) const
 {
@@ -88,7 +88,7 @@ circumcenter(const Face_handle& f) const
 
 template< class Gt, bool StoreHidden, class Agds >
 inline
-Apollonius_graph_2<Gt,StoreHidden,Agds>::Point
+typename Apollonius_graph_2<Gt,StoreHidden,Agds>::Point
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 circumcenter(const Weighted_point& p0, const Weighted_point& p1, 
 	     const Weighted_point& p2) const
@@ -100,7 +100,7 @@ circumcenter(const Weighted_point& p0, const Weighted_point& p1,
 // circumcircle
 template< class Gt, bool StoreHidden, class Agds >
 inline
-Apollonius_graph_2<Gt,StoreHidden,Agds>::Weighted_point
+typename Apollonius_graph_2<Gt,StoreHidden,Agds>::Weighted_point
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 circumcircle(const Face_handle& f) const
 {
@@ -112,7 +112,7 @@ circumcircle(const Face_handle& f) const
 
 template< class Gt, bool StoreHidden, class Agds >
 inline
-Apollonius_graph_2<Gt,StoreHidden,Agds>::Weighted_point
+typename Apollonius_graph_2<Gt,StoreHidden,Agds>::Weighted_point
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 circumcircle(const Weighted_point& p0, const Weighted_point& p1, 
 	     const Weighted_point& p2) const
@@ -136,7 +136,7 @@ circumcircle(const Weighted_point& p0, const Weighted_point& p1) const
 // dual
 template< class Gt, bool StoreHidden, class Agds >
 inline
-Apollonius_graph_2<Gt,StoreHidden,Agds>::Point
+typename Apollonius_graph_2<Gt,StoreHidden,Agds>::Point
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 dual(const Face_handle& f) const
 {
@@ -289,7 +289,7 @@ primal(const Edge e) const
 // combinatorial operations
 //--------------------------------------------------------------------
 template< class Gt, bool StoreHidden, class Agds >
-Apollonius_graph_2<Gt,StoreHidden,Agds>::Edge
+typename Apollonius_graph_2<Gt,StoreHidden,Agds>::Edge
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 flip(Face_handle& f, int i)
 {
@@ -306,7 +306,7 @@ flip(Face_handle& f, int i)
 
 template< class Gt, bool StoreHidden, class Agds >
 inline
-Apollonius_graph_2<Gt,StoreHidden,Agds>::Edge
+typename Apollonius_graph_2<Gt,StoreHidden,Agds>::Edge
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 flip(Edge e)
 {
@@ -315,7 +315,7 @@ flip(Edge e)
 
 template< class Gt, bool StoreHidden, class Agds >
 inline
-Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
+typename Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 insert_in_face(Face_handle& f, const Weighted_point& p)
 {
@@ -339,7 +339,7 @@ is_degree_2(const Vertex_handle& v) const
 
 template< class Gt, bool StoreHidden, class Agds >
 inline
-Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
+typename Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 insert_degree_2(Edge e)
 {
@@ -348,7 +348,7 @@ insert_degree_2(Edge e)
 
 template< class Gt, bool StoreHidden, class Agds >
 inline
-Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
+typename Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 insert_degree_2(Edge e, const Weighted_point& p)
 {
@@ -397,7 +397,7 @@ remove_degree_3(Vertex_handle v, Face* f)
 
 template< class Gt, bool StoreHidden, class Agds >
 inline
-Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
+typename Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 insert_first(const Weighted_point& p)
 {
@@ -405,7 +405,7 @@ insert_first(const Weighted_point& p)
 }
 
 template< class Gt, bool StoreHidden, class Agds >
-Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
+typename Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 insert_second(const Weighted_point& p)
 {
@@ -427,7 +427,7 @@ insert_second(const Weighted_point& p)
 }
 
 template< class Gt, bool StoreHidden, class Agds >
-Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
+typename Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 insert_third(const Weighted_point& p)
 {
@@ -554,7 +554,7 @@ insert_third(const Weighted_point& p)
 
 template< class Gt, bool StoreHidden, class Agds >
 inline
-Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
+typename Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 insert(const Weighted_point& p)
 {
@@ -564,7 +564,7 @@ insert(const Weighted_point& p)
 
 template< class Gt, bool StoreHidden, class Agds >
 inline
-Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
+typename Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 insert(const Weighted_point& p, Vertex_handle vnear)
 {
@@ -847,7 +847,7 @@ expand_conflict_region(const Face_handle& f, const Weighted_point& p,
 
 template< class Gt, bool StoreHidden, class Agds >
 inline
-Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
+typename Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 add_bogus_vertex(Edge e, List& l)
 {
@@ -882,7 +882,7 @@ add_bogus_vertex(Edge e, List& l)
 
 template< class Gt, bool StoreHidden, class Agds >
 inline
-Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_list
+typename Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_list
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 add_bogus_vertices(List& l)
 {
@@ -895,7 +895,7 @@ add_bogus_vertices(List& l)
     Edge esym = sym_edge(e);
     if ( l.is_in_list(esym) ) {
       bool found(false);
-      Edge_list::iterator it;
+      typename Edge_list::iterator it;
       for (it = edge_list.begin(); it != edge_list.end(); ++it) {
 	if ( *it == esym ) {
 	  found = true;
@@ -907,7 +907,7 @@ add_bogus_vertices(List& l)
     e = l.next(e);
   } while ( e != e_start );
 
-  Edge_list::iterator it;
+  typename Edge_list::iterator it;
 
   for (it = edge_list.begin();  it != edge_list.end(); ++it) {
     e = *it;
@@ -952,13 +952,13 @@ move_hidden_weighted_points(Vertex_handle& vold, Vertex_handle& vnew)
 
 
 template< class Gt, bool StoreHidden, class Agds >
-std::vector<Apollonius_graph_2<Gt,StoreHidden,Agds>::Face*>
+std::vector<typename Apollonius_graph_2<Gt,StoreHidden,Agds>::Face*>
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 get_faces_for_recycling(Face_map& fm, unsigned int n_wanted)
 {
   std::vector<Face*> vf;
 
-  Face_map::iterator fmit;
+  typename Face_map::iterator fmit;
   for (fmit = fm.begin(); fmit != fm.end(); ++fmit) {
     Face_handle f = (*fmit).first;
     if ( fm[f] == true ) { vf.push_back(f.ptr()); }
@@ -983,7 +983,7 @@ void
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 remove_hidden_vertices(Vertex_handle&v, Vertex_map& vm, Face_map& fm)
 {
-  Vertex_map::iterator it;
+  typename Vertex_map::iterator it;
 
   for (it = vm.begin(); it != vm.end(); ++it) {
     Vertex_handle vhidden = (*it).first;
@@ -994,7 +994,7 @@ remove_hidden_vertices(Vertex_handle&v, Vertex_map& vm, Face_map& fm)
 
 
 template< class Gt, bool StoreHidden, class Agds >
-Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
+typename Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 retriangulate_conflict_region(const Weighted_point& p,	List& l, 
 			      Face_map& fm, Vertex_map& vm)
@@ -1005,7 +1005,7 @@ retriangulate_conflict_region(const Weighted_point& p,	List& l,
   if ( num_vert - vmsize == 0 ) {
     // 1. copy all hidden sites to a temporary list
     Weighted_point_list wp_list;
-    Vertex_map::iterator vmit;
+    typename Vertex_map::iterator vmit;
     for (vmit = vm.begin(); vmit != vm.end(); ++vmit) {
       Vertex_handle vhidden = (*vmit).first;
 
@@ -1035,7 +1035,7 @@ retriangulate_conflict_region(const Weighted_point& p,	List& l,
   } else if ( num_vert - vmsize == 1 ) {
     // 1. copy all hidden sites to a temporary list
     Weighted_point_list wp_list;
-    Vertex_map::iterator vmit;
+    typename Vertex_map::iterator vmit;
     for (vmit = vm.begin(); vmit != vm.end(); ++vmit) {
       Vertex_handle vhidden = (*vmit).first;
 
@@ -1090,7 +1090,7 @@ retriangulate_conflict_region(const Weighted_point& p,	List& l,
   v->set_point(p);
 
   // 1. move all the hidden weighted points to the new one
-  Vertex_map::iterator vmit;
+  typename Vertex_map::iterator vmit;
   for (vmit = vm.begin(); vmit != vm.end(); ++vmit) {
     Vertex_handle vhidden = (*vmit).first;
     move_hidden_weighted_points(vhidden, v);
@@ -1144,7 +1144,7 @@ retriangulate_conflict_region(const Weighted_point& p,	List& l,
   remove_bogus_vertices(dummy_vertices);
 
   // 8. remove the unused faces
-  Face_map::iterator it;
+  typename Face_map::iterator it;
   for (it = fm.begin(); it != fm.end(); ++it) {
     Face_handle fh = (*it).first;
     _tds.delete_face(fh.ptr());
@@ -1163,7 +1163,7 @@ retriangulate_conflict_region(const Weighted_point& p,	List& l,
 //--------------------------------------------------------------------
 template< class Gt, bool StoreHidden, class Agds >
 inline
-Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
+typename Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 nearest_neighbor(const Point& p) const
 {
@@ -1172,7 +1172,7 @@ nearest_neighbor(const Point& p) const
 
 
 template< class Gt, bool StoreHidden, class Agds >
-Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
+typename Apollonius_graph_2<Gt,StoreHidden,Agds>::Vertex_handle
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 nearest_neighbor(const Point& p,
 		 Vertex_handle start_vertex) const
@@ -1287,7 +1287,7 @@ incircle(const Face_handle& f, const Weighted_point& q) const
 			 f->vertex(2)->point(), q);
   }
 
-  int inf_i;
+  int inf_i(-1); // to avoid compiler warning
   for (int i = 0; i < 3; i++) {
     if ( is_infinite(f->vertex(i)) ) {
       inf_i = i;
@@ -1614,7 +1614,7 @@ edge_interior(const Face_handle& f, int i,
 }
 
 template< class Gt, bool StoreHidden, class Agds >
-Apollonius_graph_2<Gt,StoreHidden,Agds>::Conflict_type
+typename Apollonius_graph_2<Gt,StoreHidden,Agds>::Conflict_type
 Apollonius_graph_2<Gt,StoreHidden,Agds>::
 finite_edge_conflict_type_degenerated(const Weighted_point& p1,
 				      const Weighted_point& p2,

@@ -45,7 +45,7 @@ public:
 	    prev_face_in_list[i] != NULL);
   }
 
-  inline void set_next(int i, const pair<void*,int>& next)
+  inline void set_next(int i, const std::pair<void*,int>& next)
   {
     CGAL_triangulation_precondition( i >= 0 && i <= 2 );
     CGAL_triangulation_precondition( next.first == NULL ||
@@ -55,7 +55,7 @@ public:
     next_indx_in_list[i] = next.second;
   }
 
-  inline void set_previous(int i, const pair<void*,int>& prev)
+  inline void set_previous(int i, const std::pair<void*,int>& prev)
   {
     CGAL_triangulation_precondition( i >= 0 && i <= 2 );
     CGAL_triangulation_precondition( prev.first == NULL ||

@@ -40,7 +40,7 @@ public:
   template< class Stream >
   void draw(Stream &W) const
   {
-    vector< Point_2 > p;
+    std::vector< Point_2 > p;
 
     double s[2];
 
@@ -48,7 +48,7 @@ public:
     s[1] = t(p2);
 
     if (CGAL_NTS compare(s[0], s[1]) == LARGER)
-      swap< double >(s[0], s[1]);
+      std::swap< double >(s[0], s[1]);
 
     p.clear();
 

@@ -32,17 +32,20 @@ class Apollonius_graph_hierarchy_2
 private:
   typedef Apollonius_graph_2<Gt,StoreHidden,Agds> Apollonius_graph_base;
   typedef Apollonius_graph_base                   Ag_base;
-  typedef typename Gt::Weighted_point             Weighted_point;
 
-#if 0
+  typedef typename Ag_base::Vertex                Vertex;
+  typedef typename Ag_base::Weighted_point_list   Weighted_point_list;
+
+public:
   typedef Agds                         Data_structure;
   typedef Gt                           Geom_traits;
+  typedef typename Gt::Weighted_point  Weighted_point;
   typedef typename Gt::Bare_point      Point;
   typedef typename Gt::Site            Site;
   typedef typename Gt::Weight          Weight;
 
-  typedef typename Ag_base::Face_handle      Face_handle;
   typedef typename Ag_base::Vertex_handle    Vertex_handle;
+  typedef typename Ag_base::Face_handle      Face_handle;
   typedef typename Ag_base::Edge             Edge;
 
   typedef typename Ag_base::Face_circulator       Face_circulator;
@@ -59,11 +62,10 @@ private:
   typedef typename Ag_base::All_edges_iterator    All_edges_iterator;
   typedef typename Ag_base::Finite_edges_iterator Finite_edges_iterator;
 
-  typedef Finite_vertices_iterator   Vertex_iterator;
-  typedef Finite_faces_iterator      Face_iterator;
-  typedef Finite_edges_iterator      Edge_iterator;
+  //  typedef Finite_vertices_iterator   Vertex_iterator;
+  //  typedef Finite_faces_iterator      Face_iterator;
+  //  typedef Finite_edges_iterator      Edge_iterator;
 
-#endif
 
 public:
   // CREATION

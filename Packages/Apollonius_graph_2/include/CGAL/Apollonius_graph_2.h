@@ -69,7 +69,7 @@ protected:
 
   // point lists
   typedef std::vector<Weighted_point>      Weighted_point_list;
-  typedef Weighted_point_list::iterator    Weighted_point_list_iterator;
+  typedef typename Weighted_point_list::iterator Weighted_point_list_iterator;
 
   typedef std::map<Face_handle,bool>           Face_map;
   typedef std::map<Face_handle, Face_handle>   Face_face_map;
@@ -77,7 +77,7 @@ protected:
   typedef std::vector<Edge>                    Edge_list;
 
   typedef std::list<Vertex_handle>         Vertex_list;
-  typedef Vertex_list::iterator            Vertex_list_iterator;
+  typedef typename Vertex_list::iterator   Vertex_list_iterator;
   typedef Vertex_handle                    Vh_triple[3];
 
   // the in place edge list

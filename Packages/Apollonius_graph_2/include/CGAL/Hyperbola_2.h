@@ -35,7 +35,7 @@ protected:
   inline
   Point_2 lchain(const FT &t) const
   {
-    vector< Point_2 > p = compute_points(t);
+    std::vector< Point_2 > p = compute_points(t);
     if ( right(p[0]) )  return p[1];
     return p[0];
   }
@@ -43,7 +43,7 @@ protected:
   inline
   Point_2 rchain(const FT &t) const
   {
-    vector< Point_2 > p = compute_points(t);
+    std::vector< Point_2 > p = compute_points(t);
     if ( right(p[0]) )  return p[0];
     return p[1]; 
   }
@@ -78,7 +78,7 @@ protected:
     o = Point_2(dx * t + f1.x(), dy * t + f1.y());
   }
 
-  vector< Point_2 > compute_points(const FT &d) const {
+  std::vector< Point_2 > compute_points(const FT &d) const {
       FT d1 = distance(o, f1) + d;
       FT d2 = distance(o, f2) + d;
       d1 *= d1;
@@ -86,7 +86,7 @@ protected:
 
       Point_2 df = Point_2(f2.x() - f1.x(), f2.y()-f1.y());
 
-      vector< Point_2 > p;
+      std::vector< Point_2 > p;
 
       if ( CGAL_NTS is_negative(d) ) return p;
 
@@ -193,8 +193,8 @@ public:
 #if defined CGAL_QT_WIDGET_H
   void draw_qt(Qt_widget& W) const
     {
-      vector< Point_2 > p;
-      vector< Point_2 > pleft, pright;
+      std::vector< Point_2 > p;
+      std::vector< Point_2 > pleft, pright;
 
       pleft.push_back(o);
       pright.push_back(o);
@@ -236,8 +236,8 @@ public:
   template< class Stream >
   void draw(Stream &W) const
   {
-    vector< Point_2 > p;
-    vector< Point_2 > pleft, pright;
+    std::vector< Point_2 > p;
+    std::vector< Point_2 > pleft, pright;
 
     pleft.push_back(o);
     pright.push_back(o);

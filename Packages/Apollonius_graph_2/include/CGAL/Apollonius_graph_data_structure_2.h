@@ -10,12 +10,16 @@ template <class Vb, class Fb>
 class Apollonius_graph_data_structure_2
   : public Triangulation_data_structure_2<Vb, Fb>
 {
+private:
   typedef Triangulation_data_structure_2<Vb, Fb>       Tds_base;
-  //  typedef typename Tds_base::Face                      Face;
-  //  typedef typename Tds_base::Vertex                    Vertex;
-  //  typedef typename Tds_base::Face_handle               Face_handle;
-  //  typedef typename Tds_base::Vertex_handle             Vertex_handle;
+  typedef typename Tds_base::Face                      Face;
+  typedef typename Tds_base::Vertex                    Vertex;
+
+public:
+  typedef typename Tds_base::Face_handle               Face_handle;
+  typedef typename Tds_base::Vertex_handle             Vertex_handle;
   typedef Apollonius_graph_data_structure_2<Vb, Fb>    Tds;
+
 
 public:
 #if 0
@@ -284,8 +288,8 @@ public:
     // v1 to be the vertex for these faces
     std::vector<Face*> star_faces_of_v2;
     std::vector<int> star_indices_of_v2;
-    Face_circulator fc_start(v2);
-    Face_circulator fc = fc_start;
+    typename Tds_base::Face_circulator fc_start(v2);
+    typename Tds_base::Face_circulator fc = fc_start;
 
     std::cout << "inside join..." << std::endl;
 
@@ -326,7 +330,7 @@ public:
     if ( v1->face() == f || v1->face() == g ) v1->set_face(tl);
 
 
-    Face_iterator fit = faces_begin();
+    typename Tds_base::Face_iterator fit = faces_begin();
     for (; fit != faces_end(); ++fit) {
       int id;
       CGAL_assertion( !fit->has_vertex(v2, id) );

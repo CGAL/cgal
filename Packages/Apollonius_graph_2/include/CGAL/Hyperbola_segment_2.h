@@ -73,7 +73,7 @@ public:
       return;
     }
 
-    vector< Point_2 > p;
+    std::vector< Point_2 > p;
 
     //    FT STEP = W.width() / 100.0;
 
@@ -83,7 +83,7 @@ public:
     s[1] = t(p2);
 
     if (CGAL_NTS compare(s[0], s[1]) == LARGER)
-      swap< FT >(s[0], s[1]);
+      std::swap< FT >(s[0], s[1]);
 
     p.clear();
 
