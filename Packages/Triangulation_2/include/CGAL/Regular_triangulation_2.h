@@ -47,12 +47,13 @@ template <class Iterator>
   };
 
 
-template < class Triangulation>
+template < class Triangulation_>
 class Regular_triangulation_hidden_vertices_iterator_2
- : public Filter_iterator< typename Triangulation::Finite_vertices_iterator, 
-                           typename Unhidden_filter<typename Triangulation::Finite_vertices_iterator>  >
+ : public Filter_iterator< typename Triangulation_::Finite_vertices_iterator, 
+                           typename Unhidden_filter<typename Triangulation_::Finite_vertices_iterator>  >
 {
 public:
+  typedef Triangulation_ Triangulation;
   typedef typename Triangulation::Finite_vertices_iterator Finite_vertices_iterator;
   typedef Unhidden_filter<Finite_vertices_iterator> Unhidden_filter;
   typedef Filter_iterator<Finite_vertices_iterator,Unhidden_filter>  Base;
@@ -1186,13 +1187,9 @@ update_hidden_points_1_3(const Face_handle& f1, const Face_handle& f2,
 				 f2->has_neighbor(f3) &&
 				 f3->has_neighbor(f1));
 
-<<<<<<< Regular_triangulation_2.h
+
     Vertex_list p_list;
     p_list.splice(p_list.begin(),f1->vertex_list());
-=======
-    Weighted_point_list p_list;
-    p_list.splice(p_list.begin(),f1->point_list());
->>>>>>> 1.42
     if (p_list.empty())
 	return;
 
