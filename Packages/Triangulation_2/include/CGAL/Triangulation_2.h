@@ -358,7 +358,7 @@ private:
   
 
  // This class is used to generate the Finite_*_iterators.
-private:
+protected:
   friend class Infinite_tester;
   class Infinite_tester
   {

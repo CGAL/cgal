@@ -20,11 +20,11 @@
 
 #include <vector>
 
-template <class Triangul>
+template <class Tri>
 void
-_test_line_face_circulator( const Triangul & )
+_test_line_face_circulator( const Tri & )
 {
- typedef Triangul                  Tri;
+  //typedef Triangul                  Tri;
  typedef typename Tri::Geom_traits          Gt;
  typedef typename Tri::Point                Point;
 

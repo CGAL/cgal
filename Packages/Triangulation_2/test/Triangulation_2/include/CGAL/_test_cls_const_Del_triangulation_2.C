@@ -24,23 +24,23 @@
 
 #include <CGAL/_test_cls_constrained_triangulation_2.C>
 
-template <class Triangulation>
+template <class Triangul>
 void 
-_test_cls_const_Del_triangulation(const Triangulation &)
+_test_cls_const_Del_triangulation(const Triangul&)
 {
-  typedef Triangulation                      Cls;
-  typedef typename Cls::Geom_traits          Gt;
+  //typedef Triangulation                      Cls;
+  typedef typename Triangul::Geom_traits          Gt;
 
 
-  typedef typename Cls::Point                Point;
-  typedef typename Cls::Segment              Segment;
-  typedef typename Cls::Triangle             Triangle;
+  typedef typename Triangul::Point                Point;
+  typedef typename Triangul::Segment              Segment;
+  typedef typename Triangul::Triangle             Triangle;
 
-  typedef typename Cls::Vertex_handle         Vertex_handle;
-  typedef typename Cls::Face_handle           Face_handle;
+  typedef typename Triangul::Vertex_handle         Vertex_handle;
+  typedef typename Triangul::Face_handle           Face_handle;
   typedef std::pair<Face_handle,int>          Edge;
 
-  typedef typename Cls::Locate_type           Locate_type;
+  typedef typename Triangul::Locate_type           Locate_type;
 
   typedef std::pair<Point,Point>              Constraint ;
   typedef std::list<Constraint>               list_constraints;
@@ -48,7 +48,7 @@ _test_cls_const_Del_triangulation(const Triangulation &)
 
   /***********************/
   /***** SUBCLASS ******/
-   _test_cls_constrained_triangulation( Cls() );
+   _test_cls_constrained_triangulation( Triangul() );
 
    // build triangulation T2
    list_constraints l;
@@ -61,7 +61,7 @@ _test_cls_const_Del_triangulation(const Triangulation &)
    };
    for (int m=0; m<19;  m++) 
      l.push_back(Constraint(lpt[m],lpt[m+1]));
-   Cls T2(l);
+   Triangul T2(l);
    assert( T2.dimension() == 2 );
    assert( T2.number_of_vertices() == 20);
    assert( T2.is_valid() );

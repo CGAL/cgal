@@ -1,10 +1,10 @@
 #include <CGAL/_test_cls_const_Del_triangulation_2.C>
 
-template <class TriangPlus>
+template <class TrP>
 void
-_test_cls_const_triang_plus_2( const TriangPlus & )
+_test_cls_const_triang_plus_2( const TrP & )
 {
-  typedef TriangPlus                           TrP;
+  //typedef TriangPlus                           TrP;
   typedef typename TrP::Geom_traits            Gt;
   typedef typename Gt::Point_2                 Point;
 
