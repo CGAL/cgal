@@ -58,10 +58,10 @@ struct Conforming_Delaunay_triangulation_2_default_extras
   template<class EdgeIt, class FaceIt>
   void signal_before_inserted_vertex_in_face(const Tr&,
 					     const Face_handle&,
-					     EdgeIt edge_begin,
-					     EdgeIt edge_end,
-					     FaceIt face_begin,
-					     FaceIt face_end,
+					     EdgeIt,
+					     EdgeIt,
+					     FaceIt,
+					     FaceIt,
 					     const Point&) const {};
 
   void signal_after_inserted_vertex_in_face(const Tr&,
@@ -362,6 +362,8 @@ public:
   //@{
 
   Extras& extras() { return extras_;}
+  const Extras& extras() const { return extras_;} 
+
   
   int number_of_constrained_edges() const;
 

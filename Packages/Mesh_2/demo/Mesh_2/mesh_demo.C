@@ -754,7 +754,7 @@ public slots:
 
   void refineMeshStep()
     {
-      mesh->is_valid(true); // TODO: remove this
+      CGAL_assertion(mesh->is_valid(true)); // TODO: remove this
       int counter = step_lenght;
       if(mesh->get_initialized() != Mesh::GABRIEL)
 	{
@@ -771,6 +771,7 @@ public slots:
 	      counter = 0;
 	    }
 	}
+      CGAL_assertion(mesh->is_valid(true)); // TODO: remove this
       updatePointCounter();
       widget->redraw();
     }

@@ -409,7 +409,7 @@ inline
 void Delaunay_mesh_2<Tr, Extras>::
 process_one_face()
 {
-  is_bad_faces_valid();
+  CGAL_assertion(is_bad_faces_valid());
 
   Face_handle f = bad_faces.front()->second;
   Quality q = bad_faces.front()->first;
@@ -516,7 +516,7 @@ split_face(const Face_handle& f, const Point& circum_center)
 			     std::back_inserter(zone_of_cc),
 			     std::back_inserter(zone_of_cc_boundary),
 			     f);
-  is_bad_faces_valid();
+  CGAL_assertion(is_bad_faces_valid());
   for(typename List_of_face_handles::iterator fh_it = zone_of_cc.begin();
       fh_it != zone_of_cc.end();
       ++fh_it)
