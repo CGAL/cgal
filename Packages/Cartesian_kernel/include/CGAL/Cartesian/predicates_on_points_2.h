@@ -296,28 +296,38 @@ rightturn(const Origin &o,
   return Orientation (sign_of_determinant2x2(qx, qy, rx, ry)) == RIGHTTURN;
 }
 
-template <class R >
+template <class R>
 inline
 Oriented_side
 side_of_oriented_circle(const PointC2<R CGAL_CTAG> &p,
                         const PointC2<R CGAL_CTAG> &q,
                         const PointC2<R CGAL_CTAG> &r,
-                        const PointC2<R CGAL_CTAG> &test)
+                        const PointC2<R CGAL_CTAG> &t)
 {
   return side_of_oriented_circleC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y(),
-	                           test.x(), test.y());
+	                           t.x(), t.y());
 }
 
-template <class R >
+template <class R>
 inline
 Bounded_side
 side_of_bounded_circle(const PointC2<R CGAL_CTAG> &p,
                        const PointC2<R CGAL_CTAG> &q,
                        const PointC2<R CGAL_CTAG> &r,
-                       const PointC2<R CGAL_CTAG> &test)
+                       const PointC2<R CGAL_CTAG> &t)
 {
   return side_of_bounded_circleC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y(),
-	                          test.x(), test.y());
+	                          t.x(), t.y());
+}
+
+template <class R>
+inline
+Bounded_side
+side_of_bounded_circle(const PointC2<R CGAL_CTAG> &p,
+                       const PointC2<R CGAL_CTAG> &q,
+                       const PointC2<R CGAL_CTAG> &t)
+{
+  return side_of_bounded_circleC2(p.x(), p.y(), q.x(), q.y(), t.x(), t.y());
 }
 
 CGAL_END_NAMESPACE
