@@ -48,7 +48,7 @@ CGAL_BEGIN_NAMESPACE
 template <class PM, class Writer>
 void write_pm( const PM& pm,
                Writer& writer, 
-               std::ostream& o) 
+               std::ostream&) 
 {
 
   //typedef Planar_map_2<Dcel,Traits>                     PM;
