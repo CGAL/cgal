@@ -15,15 +15,19 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = -I../../include \
            $(TESTSUITE_CXXFLAGS) \
            $(CGAL_CXXFLAGS) \
-	   -g -Wall
-	   # -O3 -mcpu=ultrasparc -mtune=ultrasparc -Wall -Winline
-           # -O2 -xtarget=ultra2
+	   -DNO_QUOTIENT_INT \
+	   -DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS \
+	   -O2 -mcpu=ultrasparc -mtune=ultrasparc
 	   # -Winline
-	   # -mcpu=pentiumpro
+	   # -mcpu=pentiumpro -march=pentiumpro
 	   # -mcpu=ultrasparc -mtune=ultrasparc
 	   # -fomit-frame-pointer
 	   # -fprofile-arcs -ftest-coverage
-	   # -DCGAL_IA_DEBUG -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS
+	   # -DCGAL_IA_DEBUG
+           # -O2 -xtarget=ultra2 # (SunPro)
+	   # -Wa,-xarch=v8plus   # g++ sans -m*=ultra*
+	   # -B$(UTIL)/Binutils/$(UNAME)/bin/
+	   # -fhonor-std
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -37,6 +41,8 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
+.PHONY: test bench bench4
+
 all: test bench
 
 test:  tst0 tst1 tst2 tst5
@@ -44,6 +50,12 @@ test:  tst0 tst1 tst2 tst5
 	./tst1
 	./tst2
 	./tst5
+
+bench_isolate:
+	./a.out
+
+bench4: tst4
+	./tst4
 
 bench: tst3 tst4
 	./tst3
@@ -87,3 +99,5 @@ clean:
 .C.o:
 	$(CGAL_CXX) $(CXXFLAGS) -c $<
 
+.C.s:
+	$(CGAL_CXX) $(CXXFLAGS) -S $<
