@@ -58,9 +58,12 @@ main( int, char**)
     Min_circle  mc;
 
     // open window
-    CGAL_Window_stream ws( 500, 500, 300, 200);
-    ws.set_frame_label( "CGAL Demo: Smallest Enclosing Circle in 2D");
+    CGAL_Window_stream ws( "CGAL Demo: Smallest Enclosing Circle in 2D");
+    ws.set_icon_label("CGAL");
+    ws.set_icon_pixrect( ws.create_pixrect( esprit_logo));
+    ws.set_node_width( 5);
     ws.init( -100.0, 100.0, -100.0);
+    ws.display();
 
     // main loop
     double  x, y;
@@ -82,7 +85,7 @@ main( int, char**)
 	    break;
 
 	  case MOUSE_BUTTON( 2):                        // middle button
-	    ws << CGAL_WHITE << mc;
+	    ws.clear();
 	    mc.clear();
 	    break; } }
 
