@@ -21,7 +21,6 @@ int main(int, char*)
 #include <fstream>
 
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Filtered_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Polygon_2.h>
 #define CGAL_MESH_2_USE_TIMERS
@@ -42,9 +41,7 @@ int main(int, char*)
 #include "Qt_layer_show_triangulation.h"
 #include "Qt_layer_show_triangulation_constraints.h"
 #include "Qt_layer_show_circles.h"
-#ifdef CGAL_USE_BOOST
-#  include "Show_clusters.h"
-#endif
+#include "Show_clusters.h"
 #include <CGAL/IO/Qt_layer_show_mouse_coordinates.h>
 
 
@@ -63,16 +60,25 @@ int main(int, char*)
 #include <qtoolbar.h>
 #include <qpushbutton.h>
 #include <qbuttongroup.h>
-#include <qradiobutton.h>
+
 #include <qlabel.h>
 #include <qlineedit.h>
+#include <qvalidator.h>
 #include <qtimer.h>
 #include <qcursor.h>
 #include <qslider.h>
 #include <qspinbox.h>
+#include <qcheckbox.h>
 
-typedef CGAL::Simple_cartesian<double>  K1;
-typedef CGAL::Filtered_kernel<K1>       Kernel;
+#ifdef TESTING
+#  include <CGAL/MP_Float.h>
+   typedef CGAL::Simple_cartesian<CGAL::MP_Float> Kernel;
+#else // !TESTING
+#  include <CGAL/Filtered_kernel.h>
+   typedef CGAL::Simple_cartesian<double>  K1;
+   typedef CGAL::Filtered_kernel<K1>       Kernel;
+#endif // #ifdef TESTING
+
 struct K : public Kernel {};
 typedef K::FT                           FT;
 
@@ -153,55 +159,109 @@ public:
     {
       mesh = new Mesh(traits);
 
+      // --- DEMO WINDOW'S LAYOUT ---
+      // a main frame, with a QHBoxLayout (border=0, space=0)
       QFrame* mainframe = new QFrame(this, "mainframe"); 
-      QHBoxLayout *hbox = new QHBoxLayout(mainframe, 0, 0,
-					  "mainlayout");
+      QHBoxLayout *mainlayout = new QHBoxLayout(mainframe, 0, 0,
+						"mainlayout");
 
+      // a Qt_widget at the left of the main frame
       widget = new CGAL::Qt_widget(mainframe, "Main widget");
       widget->setSizePolicy(QSizePolicy( QSizePolicy::Expanding,
 					 QSizePolicy::Expanding ));
-      hbox->addWidget(widget);
+      mainlayout->addWidget(widget);
 
+      // an other frame "infoframe" at the right of the main frame
+      // with a QVBoxLayout (border=10, space=5)
       QFrame* infoframe = new QFrame(mainframe, "infoframe");
       infoframe->setFrameStyle( QFrame::Box | QFrame::Raised );
       infoframe->setLineWidth(2);
+      QVBoxLayout *infoframelayout = new QVBoxLayout(infoframe, 10, 5,
+						     "infoframelayout");
+      mainlayout->addWidget(infoframe);
 
-      hbox->addWidget(infoframe);
+      // a 2x2 QGridLayout in the info frame (space=5)
+      QGridLayout *numbers_layout = new QGridLayout(infoframelayout,
+						    2, 2, 
+						    5, // space
+						    "infolayout");
+      //      numbers_layout->setMargin(10);
 
-      QGridLayout *vbox = new QGridLayout(infoframe, 2, 2, 10, 5, 
-					  "infolayout");
-      vbox->setMargin(10);
-
-      QLabel *nb_of_points_label = new QLabel(infoframe);
-      nb_of_points_label->setText("Number of points: ");
-      vbox->addWidget(nb_of_points_label, 0, 0,
-		      AlignRight | AlignTop );
-
+      //   number of points
+      numbers_layout->addWidget(new QLabel("Number of points: ",
+					   infoframe),
+				0, 0,
+				AlignRight | AlignTop );
 
       nb_of_points = new QLabel("0", infoframe);
-      vbox->addWidget(nb_of_points, 0, 1, AlignLeft | AlignTop );
+      numbers_layout->addWidget(nb_of_points, 0, 1,
+				AlignLeft | AlignTop );
+      
+      //   number of clusters
+      numbers_layout->addWidget(new QLabel("Number of clusters: ",
+					   infoframe),
+				1, 0,
+				AlignRight | AlignTop );
 
-#ifdef CGAL_USE_BOOST
-      QLabel *nb_of_clusters_label = new QLabel(infoframe);
-      nb_of_clusters_label->setText("Number of clusters: ");
-      vbox->addWidget(nb_of_clusters_label, 1, 0,
-		      AlignRight | AlignTop );
+      nb_of_clusters = new QLabel("", infoframe);
+      numbers_layout->addWidget(nb_of_clusters, 1, 1,
+				AlignLeft | AlignTop );
 
-      nb_of_clusters = new QLabel("0", infoframe);
-      vbox->addWidget(nb_of_clusters, 1, 1, AlignLeft | AlignTop );
-#endif
+      // a vertical spacer in the info frame
+      infoframelayout->addItem(new
+			       QSpacerItem( 0, 0,
+					    QSizePolicy::Minimum,
+					    QSizePolicy::Expanding ));
+
+      // another grid: a 2x3 QGridLayout (space=5)
+      QGridLayout *criteria_layout =
+	new QGridLayout(infoframelayout, 2, 3,
+			5, // space
+			"criteria_layout");
+
+      //    angle bound
+      criteria_layout->addWidget(new QLabel("Angle bound: ",
+					    infoframe),
+				 0, 0,
+				 AlignRight | AlignTop);
+      angle_bound = new QLineEdit("0.125", infoframe,
+				  "angle_bound");
+      angle_bound->setValidator(new QDoubleValidator(angle_bound));
+      criteria_layout->addWidget(angle_bound, 0, 1,
+				 AlignLeft | AlignTop );
+      connect(angle_bound, SIGNAL(textChanged(const QString&)),
+	      this, SLOT(setBound(const QString&)));
+      
+
+      //    size bound
+      criteria_layout->addWidget(new QLabel("Size bound: ",
+					    infoframe),
+				 1, 0,
+				 AlignRight | AlignTop);
+      size_bound = new QLineEdit("0", infoframe,
+				 "size_bound");
+      size_bound->setValidator(new QDoubleValidator(size_bound));
+      criteria_layout->addWidget(size_bound, 1, 1,
+				 AlignLeft | AlignTop );
+      connect(size_bound, SIGNAL(textChanged(const QString&)),
+	      this, SLOT(setSizeBound(const QString&)));
+
+      //    under mouse
+      under_mouse = new QCheckBox("Under mouse only", infoframe,
+				  "under_mouse");
+      criteria_layout->addMultiCellWidget(under_mouse,
+					  3, 3, 0, 1);
+      connect(under_mouse, SIGNAL(toggled(bool)),
+	      this, SLOT(setLocal(bool)));
       
       setCentralWidget(mainframe);
       resize(700,500);
       mainframe->show();
 
-      // STATUSBAR
+      // --- STATUSBAR ---
       statusBar();
 
-      //      aspect_ratio_label = new QLabel(statusBar(), "aspect_ratio");
-      //      statusBar()->addWidget(aspect_ratio_label, 0, true);
-
-      // LAYERS
+      // --- LAYERS ---
 
       show_points = 
 	new Show_points_from_triangulation(mesh,
@@ -227,11 +287,9 @@ public:
 	new CGAL::Qt_layer_show_circles<Mesh>(mesh, CGAL::GRAY, 1);
       show_mouse = new CGAL::Qt_layer_mouse_coordinates(*this);
 
-#ifdef CGAL_USE_BOOST
       show_clusters = new Show_clusters<Mesh>(*mesh,
 					      CGAL::BLACK,3,CGAL::RECT,
-					      CGAL::YELLOW,3);
-#endif
+					      CGAL::BLACK,2);
 
       // layers order, first attached are "under" last attached
       widget->attach(show_marked);
@@ -239,16 +297,12 @@ public:
       widget->attach(show_constraints);
       widget->attach(show_circles);
       widget->attach(show_points);
-#ifdef CGAL_USE_BOOST
       widget->attach(show_clusters);
-#endif
       widget->attach(show_seeds);
       widget->attach(show_mouse);
 
       show_circles->deactivate();
-#ifdef CGAL_USE_BOOST
       show_clusters->deactivate();
-#endif
 
       get_point = new CGAL::Qt_widget_get_point<K>();
       widget->attach(get_point);
@@ -270,7 +324,7 @@ public:
 	      this, SLOT(get_cgal_object(CGAL::Object)));
 
 
-      // TOOLBARS
+      // --- TOOLBARS ---
 
       // Actions: bouding box and mesh
       QToolBar *toolBarActions = new QToolBar("Actions", this);
@@ -287,6 +341,13 @@ public:
 	new QPushButton("Conform", toolBarActions);
       connect(pbConform, SIGNAL(clicked()), this,
 	      SLOT(conformMesh()));
+
+      QPushButton *pbAdvanced =
+	new QPushButton("Advanced", toolBarActions);
+      pbAdvanced->setToggleButton(true);
+      pbAdvanced->setOn(false);
+      connect(pbAdvanced, SIGNAL(stateChanged(int)),
+	      this, SLOT(advanced(int)));
 
       // Inputs: polygons or points
       QToolBar *toolbarInputs = new QToolBar("Inputs",this);
@@ -446,7 +507,6 @@ public:
       connect(sbTimerInterval, SIGNAL(valueChanged(int)),
 	      this, SLOT(updateTimerInterval(int)));
 
-#ifdef CGAL_USE_BOOST
       QPushButton* pbShowCluster = 
 	new QPushButton("Show clusters", toolBarAdvanced);
       pbShowCluster->setToggleButton(true);
@@ -454,11 +514,10 @@ public:
 	      show_clusters, SLOT(stateChanged(int)));
       connect(pbShowCluster, SIGNAL(stateChanged(int)),
 	      widget, SLOT(redraw()));
-#endif
 
       setUsesBigPixmaps(true);
 
-      // MENUS
+      // --- MENUS ---
       QPopupMenu *pmMesh = new QPopupMenu(this);
       menuBar()->insertItem("&File", pmMesh);
       pmMesh->insertItem("&Refine mesh", this, SLOT(refineMesh()),
@@ -475,27 +534,12 @@ public:
       pmMesh->insertItem("&Quit", qApp, SLOT(closeAllWindows()),
 			 CTRL+Key_Q );
 
-      pmCriteria = new QPopupMenu(this);
-      pmCriteria->setCheckable(true);
-      menuBar()->insertItem("&Criteria", pmCriteria);
-      pmCriteria->insertItem("Set &bound...", this, SLOT(setBound()),
-			     CTRL+Key_B );
-      pmCriteria->insertItem("Set &size bound...", this, SLOT(setSizeBound()),
-			     CTRL+Key_S );
-      menu_id = pmCriteria->insertItem("Size criteria only under &mouse",
-				       this, SLOT(setLocal()),
-				       CTRL+Key_L );
-
-      menuBar()->insertItem("&Advanced", this, SLOT(advanced()));
-
       connect(this, SIGNAL(insertedInput()),
 	      this, SLOT(after_inserted_input()));
-#ifdef CGAL_USE_BOOST
       connect(this, SIGNAL(insertedInput()),
 	      show_clusters, SLOT(reinitClusters()));
-#endif
       connect(this, SIGNAL(initializedMesh()),
-	      this, SLOT(set_initialized()));
+	      this, SLOT(after_initialized_mesh()));
 
       widget->set_window(-1.,1.,-1.,1.);
       widget->setMouseTracking(TRUE);
@@ -525,17 +569,17 @@ signals:
 
 public slots:
 
-  void set_initialized()
+  void after_initialized_mesh()
   {
     is_mesh_initialized = true;
+    updatePointCounter();
+    show_clusters->reinitClusters();
   }
 
   void after_inserted_input()
   {
     is_mesh_initialized = false;
-#ifdef CGAL_USE_BOOST
     nb_of_clusters_has_to_be_updated = true;
-#endif
     mesh->mark_facets();
   }
 
@@ -566,7 +610,6 @@ public slots:
 	    mesh->set_bad_faces(l.begin(), l.end());
 	    mesh->calculate_bad_faces();
 	    while( mesh->refine_step() );
-	    widget->redraw();
 	  }
 	else
 	  if(get_seed->is_active())
@@ -592,6 +635,8 @@ public slots:
 	      mesh->insert((*it).source(),(*it).target());
 	    emit( insertedInput() );
 	  }
+	else // obj should be a polygon of or point!
+	  CGAL_assertion(false);
       updatePointCounter();
       widget->redraw();
     }
@@ -607,10 +652,10 @@ public slots:
       FT xspan = (xmax-xmin)/2,
 	yspan = (ymax-ymin)/2;
 
-      Point bb1(xcenter - 1.5*xspan, ycenter - 1.5*yspan);
-      Point bb2(xcenter + 1.5*xspan, ycenter - 1.5*yspan);
-      Point bb3(xcenter + 1.5*xspan, ycenter + 1.5*yspan);
-      Point bb4(xcenter - 1.5*xspan, ycenter + 1.5*yspan);
+      Point bb1(xcenter - FT(1.5)*xspan, ycenter - FT(1.5)*yspan);
+      Point bb2(xcenter + FT(1.5)*xspan, ycenter - FT(1.5)*yspan);
+      Point bb3(xcenter + FT(1.5)*xspan, ycenter + FT(1.5)*yspan);
+      Point bb4(xcenter - FT(1.5)*xspan, ycenter + FT(1.5)*yspan);
       mesh->insert(bb1);
       mesh->insert(bb2);
       mesh->insert(bb3);
@@ -626,13 +671,11 @@ public slots:
   void updatePointCounter()
     {
       nb_of_points->setNum(mesh->number_of_vertices());
-#ifdef CGAL_USE_BOOST
-      if(nb_of_clusters_has_to_be_updated)
+      if(nb_of_clusters_has_to_be_updated && is_mesh_initialized)
 	{
 	  nb_of_clusters_has_to_be_updated = false;
 	  nb_of_clusters->setNum(mesh->number_of_clusters_vertices());
 	}
-#endif
     }
 
   void refineMesh()
@@ -829,10 +872,10 @@ public slots:
       FT xspan = (xmax-xmin)/2,
 	yspan = (ymax-ymin)/2;
 
-      widget->set_window(CGAL::to_double(xmin-1.1*xspan),
-			 CGAL::to_double(xmax+1.1*xspan), 
-			 CGAL::to_double(ymin-1.1*yspan), 
-			 CGAL::to_double(ymax+1.1*yspan));
+      widget->set_window(CGAL::to_double(xmin-FT(1.1)*xspan),
+			 CGAL::to_double(xmax+FT(1.1)*xspan), 
+			 CGAL::to_double(ymin-FT(1.1)*yspan), 
+			 CGAL::to_double(ymax+FT(1.1)*yspan));
       widget->clear_history();
 
       emit( insertedInput() );
@@ -864,37 +907,23 @@ public slots:
     {
     }
 
-  void setBound() 
+  void setBound(const QString& bound)
     {
-      double bound = QInputDialog::getDouble( "Set angle bound",
-					      "Please enter a new bound for squared minimum sine of triangles times 4",
-					      traits.bound(), // init
-					      -2147483647, // from
-					      2147483647, // to
-					      6); // decimals
-      traits.set_bound(bound);
+      traits.set_bound(bound.toDouble());
       if( mesh != 0 )
 	mesh->set_geom_traits(traits);
     }
 
-  void setSizeBound() 
+  void setSizeBound(const QString& size_bound) 
     {
-      double bound = 
-	QInputDialog::getDouble( "Set size bound",
-				 "Please enter a new bound for minimum lenght of the triangles edges",
-				 traits.size_bound(), // init
-				 -2147483647, // from
-				 2147483647, // to
-				 6); // decimals
-      traits.set_size_bound(bound);
+      traits.set_size_bound(size_bound.toDouble());
       if ( mesh != 0 )
 	mesh->set_geom_traits(traits);
     }
 
-  void setLocal()
+  void setLocal(bool checked)
     {
-      traits.set_local_size(!mesh->geom_traits().is_local_size());
-      pmCriteria->setItemChecked(menu_id, traits.is_local_size());
+      traits.set_local_size(checked);
       mesh->set_geom_traits(traits);
       if(traits.is_local_size())
 	follow_mouse->activate();
@@ -902,9 +931,9 @@ public slots:
 	follow_mouse->deactivate();
     }
 
-  void advanced()
+  void advanced(int state)
   {
-    if( toolBarAdvanced->isVisible() )
+    if( state == 0 )
       toolBarAdvanced->hide();
     else
       toolBarAdvanced->show();
@@ -940,14 +969,14 @@ private:
   CGAL::Qt_layer_mouse_coordinates* show_mouse;
   Show_marked_faces<Mesh>* show_marked;
 
-#ifdef CGAL_USE_BOOST
   bool nb_of_clusters_has_to_be_updated;
   QLabel *nb_of_clusters;
   Show_clusters<Mesh>* show_clusters;
-#endif
 
-  //  QLabel* aspect_ratio_label;
   QLabel *nb_of_points;
+  QLineEdit* angle_bound;
+  QLineEdit* size_bound;
+  QCheckBox* under_mouse;
   QTimer* timer;
   QPushButton *pbMeshTimer;
   QPushButton *pbMeshStep;
@@ -1023,9 +1052,7 @@ int main(int argc, char** argv)
 // moc_source_file: mesh_demo.C
 #include "mesh_demo.moc"
 
-#ifdef CGAL_USE_BOOST
 // moc_source_file: Show_clusters.h
 #include "Show_clusters.moc"
-#endif
 
-#endif
+#endif // CGAL_USE_QT

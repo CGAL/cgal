@@ -13,11 +13,16 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = -I../../../Qt_widget/include \
-           -I../../include \
+OPTIM_OPT = 
+
+OTHER_CXXFLAGS = 
+
+CXXFLAGS = -I../../include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
-           $(DEBUG_OPT)
+           $(OPTIM_OPT) \
+           $(DEBUG_OPT) \
+           $(OTHER_CXXFLAGS)
 
 #---------------------------------------------------------------------#
 #                    linker flags

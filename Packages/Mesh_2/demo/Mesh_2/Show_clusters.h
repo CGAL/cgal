@@ -9,7 +9,7 @@
 // ----------------------------------------------------------------------------
 //
 // file          : 
-// package       : 
+// package       : Mesh_2
 // author(s)     : Laurent Rineau
 // release       : 
 // release_date  : 
@@ -25,6 +25,8 @@
 #include <CGAL/IO/Qt_widget_layer.h>
 
 #include <CGAL/Delaunay_triangulation_2.h>
+
+#include <qpixmap.h>
 
 class Show_clusters_aux : public CGAL::Qt_widget_layer
 {
@@ -63,7 +65,7 @@ public:
 		CGAL::PointStyle pointstyle = CGAL::DISC,
 		CGAL::Color lc = CGAL::RED,
 		int linewidth = 2)
-    : c(conform), dt(), first_time(true), _color(color),
+    : c(conform), dt(), _color(color),
       size(pointsize), style(pointstyle), _line_color(lc),
       width(linewidth) 
     {
@@ -94,8 +96,6 @@ public:
 
   void draw()
   {
-    first_time = true;
-
     widget->lock();
 
     QColor oldColor = widget->color();
@@ -115,33 +115,31 @@ public:
     widget->setColor(oldColor);
 
     widget->unlock();
+    oldPixmap = widget->get_pixmap();
   }
 
   void mouseMoveEvent(QMouseEvent *e)
   {
-    if (dt.dimension()<1) return;
-
     FT x, y;
     widget->x_real(e->x(), x);
     widget->y_real(e->y(), y);
     Point p(x, y);
 
+    DT_vertex_handle v = dt.nearest_vertex(p);
+
+    if(v == NULL) return;
+    if(v == oldVertex) return;
+
+    oldVertex = v;
+
     QColor oldColor = widget->color();
     int oldWidth = widget->lineWidth();
     
-    RasterOp old = widget->rasterOp();	//save the initial raster mode
-    widget->setRasterOp(XorROP);
     widget->lock();
 
-    DT_vertex_handle v = dt.nearest_vertex(p);
-    *widget << _line_color << CGAL::LineWidth(width);
+    widget->get_painter().drawPixmap(0, 0, oldPixmap);
 
-    if(!first_time)
-      for(Point_iterator pIt = oldPoints.begin();
-	  pIt != oldPoints.end();
-	  ++pIt)
-	*widget << Segment(oldPoint, *pIt);
-    oldPoints.clear();
+    *widget << _line_color << CGAL::LineWidth(width);
 
     typename Conform::Locate_type lt;
     int i;
@@ -149,7 +147,6 @@ public:
     CGAL_assertion( lt == Conform::VERTEX );
 
     Vertex_handle v2 = fh->vertex(i);
-    oldPoint = v2->point();
 
     int n = c.number_of_clusters_at_vertex(v2);
 
@@ -159,32 +156,27 @@ public:
 	for(ViCIt it = seq.first;
 	    it != seq.second;
 	    ++it)
-	  {
-	    oldPoints.push_back((*it)->point());
-	    *widget << Segment(v2->point(), (*it)->point());
-	  }
+	  *widget << Segment(v2->point(), (*it)->point());
       }
 
     widget->setLineWidth(oldWidth);
     widget->setColor(oldColor);
 
     widget->unlock();
-    widget->setRasterOp(old);
-    first_time = false;
   }
 
   void leaveEvent(QEvent *)
   {
-    // TODO: implement a correct leaveEvent
-    first_time = true;
+    widget->get_painter().drawPixmap(0, 0, oldPixmap);
+    widget->update();
   }
 
 private:
   Conform& c;
   DT dt;
-  Point oldPoint;
-  List_of_points oldPoints;
-  bool  first_time;
+  DT_vertex_handle oldVertex;
+  QPixmap oldPixmap;
+  bool  should_restore_pixmap;
   CGAL::Color _color;
   int size;
   CGAL::PointStyle style;
