@@ -1,5 +1,8 @@
 Changes done to the `Min_annulus_d' package
 
+Version 0.8 on 15-Sep-2000
+- added indexing command.
+
 Version 0.7.1 on 13-Sep-2000
 - replaced '\ccPureGlobalScope' by 'CGAL::' in C++ arguments of '\cc...' macros
 
