@@ -49,7 +49,7 @@ public:
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
 #ifndef CGAL_CFG_NO_ADVANCED_KERNEL
-  typedef PlaneC3<R CGAL_CTAG>                  Self;
+  typedef PlaneC3<R,Cartesian_tag>              Self;
   typedef typename R::Point_2                   Point_2;
   typedef typename R::Point_3                   Point_3;
   typedef typename R::Vector_3                  Vector_3;
@@ -132,10 +132,10 @@ private:
 
 CGAL_END_NAMESPACE
 
-// #ifndef CGAL_CARTESIAN_CLASS_DEFINED
-// #ifndef CGAL_CARTESIAN_PLANE_3_C
-// #include <CGAL/Cartesian/Plane_3.C>
-// #endif // CGAL_CARTESIAN_PLANE_3_C
-// #endif 
+#ifndef CGAL_CARTESIAN_CLASS_DEFINED
+#ifndef CGAL_CARTESIAN_PLANE_3_C
+#include <CGAL/Cartesian/Plane_3.C>
+#endif // CGAL_CARTESIAN_PLANE_3_C
+#endif 
 
 #endif  // CGAL_CARTESIAN_PLANE_3_H
