@@ -134,12 +134,31 @@ public:
 	init_free_list();
     }
 
-    // would be push_back() but we don't want a copy and we want the pointer...
+    // The copy constructor and assignment operators preserve
+    // the iterator order.
+    DS_Container(const DS_Container &c)
+    {
+	std::copy(c.begin(), c.end(), std::back_inserter(*this));
+    }
+
+    DS_Container & operator=(const DS_Container &c)
+    {
+	clear();
+	std::copy(c.begin(), c.end(), std::back_inserter(*this));
+	return *this;
+    }
+
+    void push_back(const Elt &e)
+    {
+	*get_new_element() = e;
+    }
+
+    // Compared to push_back(), we avoid a copy, and get the pointer...
     Elt * get_new_element()
     {
         if (is_free_list_empty()) {
           array_vect.push_back(alloc.allocate(DS_Container_allocation_size));
-          for (int i=0; i<DS_Container_allocation_size; ++i)
+          for (int i=DS_Container_allocation_size-1; i>=0; --i)
               put_on_free_list((Free_elt *) &array_vect.back()[i]);
   	}
 
