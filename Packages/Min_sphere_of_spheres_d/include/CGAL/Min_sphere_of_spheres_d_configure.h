@@ -112,13 +112,13 @@
 // the global namespace, so we put them back into std:
 // (This fix is not necessary any more for CW 8 or higher.)
 #if defined __MWERKS__ && defined __MACH__ && (__MWERKS__ < 0x3000)
-#include <cstdlib>
-#include <cmath>
-namespace std {
-  int rand(void) { return ::rand(); }
-  double sqrt(const double x) { return ::sqrt(x); }
-  double abs(const double x) { return ::abs(x); }
-}
+  #include <cstdlib>
+  #include <cmath>
+  namespace std {
+    int rand(void) { return ::rand(); }
+    double sqrt(const double x) { return ::sqrt(x); }
+    double abs(const double x) { return ::abs(x); }
+  }
 #endif
 
 // Fixes for GCC series 2.95.  (This fix is necessary for 2.95.2 at
@@ -131,6 +131,21 @@ namespace std {
 #else
   #include <bitset>
   #include <sstream>
+#endif
+
+// Fixes for MIPSpro Compilers (Version 7.3.1.3m is where the problem
+// occurred): The library function std::rand() is not in namespace std
+// and so we put it there.  (This is only necessary when the package
+// is used without CGAL; if you include any CGAL header, then CGAL will
+// have fixed it already.)
+#if !defined(CGAL_VERSION) && defined(__sgi) && (__COMILER_VERSION <= 731)
+  #include <cstdlib>
+  #include <cmath>
+  namespace std {
+    int rand(void) { return ::rand(); }
+    double sqrt(const double x) { return ::sqrt(x); }
+    double abs(const double x) { return ::abs(x); }
+  }
 #endif
 
 #endif // CGAL_MINIBALL_CONFIGURE
