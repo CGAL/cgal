@@ -24,6 +24,9 @@ Version 6.0 (?? ????? 00)
 - Removed the copy ctors, as they are provided by the handles.
 - Added "if (is)" tests in all operator>>() (as per Pierre's request).
 - Various cleanups.
+- New predicates :
+  - coplanar_orientation(p, q, r, v) (3d)
+  - side_of_bounded_circle(p, q, t)  (2d)
 
 --- CGAL 2.2 is out ---
 
