@@ -1,6 +1,10 @@
 #ifndef BENCH_CONFIG_H
 #define BENCH_CONFIG_H
 
+#define PLANAR_MAP                      0
+#define PLANAR_MAP_WITH_INTERSECTIONS   1
+#define ARRANGEMENT                     2
+
 #define CARTESIAN_KERNEL                0
 #define SIMPLE_CARTESIAN_KERNEL         1
 #define LEDA_KERNEL                     2

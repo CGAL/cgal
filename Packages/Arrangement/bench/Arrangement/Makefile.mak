@@ -3,6 +3,11 @@ BASEDIR =.
 include $(ROOT)/include/make/cgaldef.mak
 
 # Initialize:
+
+PLANAR_MAP =                    0
+PLANAR_MAP_WITH_INTERSECTIONS = 1
+ARRANGEMENT =                   2
+
 CARTESIAN_KERNEL =              0
 SIMPLE_CARTESIAN_KERNEL =       1
 LEDA_KERNEL =                   2
@@ -64,6 +69,7 @@ endif
 BENCH_KERNEL ?= $(CARTESIAN_KERNEL)
 BENCH_NT ?= $(LEDA_RAT_NT)
 BENCH_TRAITS ?= $(SEGMENT_TRAITS)
+BENCH_PM ?= $(PLANAR_MAP_WITH_INTERSECTIONS)
 
 # illegal combinations:
 ifeq ($(BENCH_KERNEL), $(LEDA_KERNEL))
@@ -110,9 +116,10 @@ endif
 endif
 endif
 
-BASENAME = benchPmwx
+BASENAME = bench
 INSTALLDIR0 = $(BINDIR)
-CPPSOURCES = $(BASENAME).C
+# CPPSOURCES = $(BASENAME).C
+CPPSOURCES = benchPmwx.C
 TARGET0 = $(BASENAME)
 LCPPDEFS+= -DCGAL_NO_PM_DEFAULT_POINT_LOCATION
 # LCPPDEFS+= -DVERBOSE
@@ -143,10 +150,22 @@ endif
 
 endif
 
-ifeq ($(USE_CGAL_WINDOW), 1)
-LCPPDEFS+= -DUSE_CGAL_WINDOW
-TARGET0 := $(TARGET0)CgalWindow
-LOBJDIR :=$(LOBJDIR)_cgal_window
+# Planar map:
+LCPPDEFS+= -DBENCH_PM=$(BENCH_PM)
+
+ifeq ($(BENCH_PM), $(PLANAR_MAP))
+TARGET0 := $(TARGET0)Pm
+LOBJDIR :=$(LOBJDIR)_pm
+else
+ifeq ($(BENCH_PM), $(PLANAR_MAP_WITH_INTERSECTIONS))
+TARGET0 := $(TARGET0)Pmwx
+LOBJDIR :=$(LOBJDIR)_pmwx
+else
+ifeq ($(BENCH_PM), $(ARRANGEMENT))
+TARGET0 := $(TARGET0)Arr
+LOBJDIR :=$(LOBJDIR)_arr
+endif
+endif
 endif
 
 # Number Type:
@@ -314,6 +333,14 @@ TARGET0 :=$(TARGET0)Old
 LOBJDIR :=$(LOBJDIR)_old
 endif
 
+# Window system
+ifeq ($(USE_CGAL_WINDOW), 1)
+LCPPDEFS+= -DUSE_CGAL_WINDOW
+TARGET0 := $(TARGET0)CgalWindow
+LOBJDIR :=$(LOBJDIR)_cgal_window
+endif
+
+# Put is all together:
 TARGET0 := $(TARGET0)$(EXEFILESUFFIX)
 LOBJDIR := $(LOBJDIR)_$(COMPILER)$(COMPILER_VER)
 
@@ -373,389 +400,20 @@ LLDOPTS+= $(CGALLIBOPTS) $(CGALLIBDIRS)
 
 include $(ROOT)/include/make/cgalrul.mak
 
+# Dependencies:
 $(BASENAME).moc: $(BASENAME).C
 	${QT_MOC} -o $@ $<
 
-leda_rat_cartesian_seg:
-	$(MAKEF) "BENCH_NT=$(LEDA_RAT_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_TRAITS)"
-
-leda_rat_simple_cartesian_seg:
-	$(MAKEF) "BENCH_NT=$(LEDA_RAT_NT)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_TRAITS)"
-
-leda_kernel_seg:
-	$(MAKEF) "BENCH_NT=$(LEDA_RAT_NT)" "BENCH_KERNEL=$(LEDA_KERNEL)" "BENCH_TRAITS=$(SEGMENT_TRAITS)"
-
-my_kernel_seg:
-	$(MAKEF) "BENCH_NT=$(LEDA_RAT_NT)" "BENCH_KERNEL=$(MY_KERNEL)" "BENCH_TRAITS=$(LEDA_SEGMENT_TRAITS)"
-
-lazy_rat_seg:
-	$(MAKEF) "BENCH_NT=$(LAZY_LEDA_RAT_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_TRAITS)"
-
-quotient_mp_float_seg:
-	$(MAKEF) "BENCH_NT=$(QUOTIENT_MP_FLOAT_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_TRAITS)"
-
-quotient_cgal_qmpz:
-	$(MAKEF) "BENCH_NT=$(QUOTIENT_CGAL_GMPZ_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_TRAITS)"
-
-lazy_quotient_mp_float_seg:
-	$(MAKEF) "BENCH_NT=$(LAZY_QUOTIENT_MP_FLOAT_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_TRAITS)"
-
-cgal_gmpq_seg:
-	$(MAKEF) "BENCH_NT=$(CGAL_GMPQ_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_TRAITS)"
-
-lazy_cgal_gmpq_seg:
-	$(MAKEF) "BENCH_NT=$(LAZY_CGAL_GMPQ_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_TRAITS)"
-
-double_seg:
-	$(MAKEF) "BENCH_NT=$(DOUBLE_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_TRAITS)"
-
-# Cached:
-
-leda_rat_cartesian_cached_seg:
-	$(MAKEF) "BENCH_NT=$(LEDA_RAT_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_CACHED_TRAITS)"
-
-leda_rat_simple_cartesian_cached_seg:
-	$(MAKEF) "BENCH_NT=$(LEDA_RAT_NT)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_CACHED_TRAITS)"
-
-cached_seg_leda_kernel:
-	$(MAKEF) "BENCH_NT=$(LEDA_RAT_NT)" "BENCH_KERNEL=$(LEDA_KERNEL)" "BENCH_TRAITS=$(SEGMENT_CACHED_TRAITS)"
-
-lazy_rat_cached_seg:
-	$(MAKEF) "BENCH_NT=$(LAZY_LEDA_RAT_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_CACHED_TRAITS)"
-
-quotient_mp_float_cached_seg:
-	$(MAKEF) "BENCH_NT=$(QUOTIENT_MP_FLOAT_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_CACHED_TRAITS)"
-
-quotient_cgal_gmpz_cached_seg:
-	$(MAKEF) "BENCH_NT=$(QUOTIENT_CGAL_GMPZ_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_CACHED_TRAITS)"
-
-lazy_quotient_mp_float_cached_seg:
-	$(MAKEF) "BENCH_NT=$(LAZY_QUOTIENT_MP_FLOAT_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_CACHED_TRAITS)"
-
-cgal_gmpq_cached_seg:
-	$(MAKEF) "BENCH_NT=$(CGAL_GMPQ_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_CACHED_TRAITS)"
-
-lazy_cgal_gmpq_cached_seg:
-	$(MAKEF) "BENCH_NT=$(LAZY_CGAL_GMPQ_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_CACHED_TRAITS)"
-
-double_cached_seg:
-	$(MAKEF) "BENCH_NT=$(DOUBLE_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_CACHED_TRAITS)"
-
-all_non_cached: leda_rat_cartesian_seg \
-        leda_rat_simple_cartesian_seg \
-	leda_kernel_seg \
-	lazy_rat_seg \
-	quotient_mp_float_seg \
-	lazy_quotient_mp_float_seg \
-	cgal_gmpq_seg \
-	lazy_cgal_gmpq_seg \
-	double_seg
-
-all_cached: leda_rat_cartesian_cached_seg \
-	cached_seg_leda_kernel \
-	quotient_mp_float_cached_seg \
-	lazy_rat_cached_seg \
-	lazy_quotient_mp_float_cached_seg \
-	cgal_gmpq_cached_seg \
-	lazy_cgal_gmpq_cached_seg \
-	double_cached_seg
-
-# install:
-
-leda_rat_cartesian_seg_inst:
-	$(MAKEF) "BENCH_NT=$(LEDA_RAT_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_TRAITS)" install
-
-leda_rat_simple_cartesian_seg_inst:
-	$(MAKEF) "BENCH_NT=$(LEDA_RAT_NT)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_TRAITS)" install
-
-leda_kernel_seg_inst:
-	$(MAKEF) "BENCH_NT=$(LEDA_RAT_NT)" "BENCH_KERNEL=$(LEDA_KERNEL)" "BENCH_TRAITS=$(SEGMENT_TRAITS)" install
-
-my_kernel_seg_inst:
-	$(MAKEF) "BENCH_NT=$(LEDA_RAT_NT)" "BENCH_KERNEL=$(MY_KERNEL)" "BENCH_TRAITS=$(SEGMENT_TRAITS)" install
-
-lazy_rat_seg_inst:
-	$(MAKEF) "BENCH_NT=$(LAZY_LEDA_RAT_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_TRAITS)" install
-
-quotient_mp_float_seg_inst:
-	$(MAKEF) "BENCH_NT=$(QUOTIENT_MP_FLOAT_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_TRAITS)" install
-
-quotient_cgal_gmpz_seg_inst:
-	$(MAKEF) "BENCH_NT=$(QUOTIENT_CGAL_GMPZ_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_TRAITS)" install
-
-lazy_quotient_mp_float_seg_inst:
-	$(MAKEF) "BENCH_NT=$(LAZY_QUOTIENT_MP_FLOAT_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_TRAITS)" install
-
-cgal_gmpq_seg_inst:
-	$(MAKEF) "BENCH_NT=$(CGAL_GMPQ_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_TRAITS)" install
-
-lazy_cgal_gmpq_seg_inst:
-	$(MAKEF) "BENCH_NT=$(LAZY_CGAL_GMPQ_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_TRAITS)" install
-
-double_seg_inst:
-	$(MAKEF) "BENCH_NT=$(DOUBLE_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_TRAITS)" install
-
-# Cached:
-
-leda_rat_cartesian_cached_seg_inst:
-	$(MAKEF) "BENCH_NT=$(LEDA_RAT_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_CACHED_TRAITS)" install
-
-leda_rat_simple_cartesian_cached_seg_inst:
-	$(MAKEF) "BENCH_NT=$(LEDA_RAT_NT)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_CACHED_TRAITS)" install
-
-cached_seg_leda_kernel_inst:
-	$(MAKEF) "BENCH_NT=$(LEDA_RAT_NT)" "BENCH_KERNEL=$(LEDA_KERNEL)" "BENCH_TRAITS=$(SEGMENT_CACHED_TRAITS)" install
-
-lazy_rat_cached_seg_inst:
-	$(MAKEF) "BENCH_NT=$(LAZY_LEDA_RAT_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_CACHED_TRAITS)" install
-
-quotient_mp_float_cached_seg_inst:
-	$(MAKEF) "BENCH_NT=$(QUOTIENT_MP_FLOAT_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_CACHED_TRAITS)" install
-
-quotient_cgal_gmpz_cached_seg_inst:
-	$(MAKEF) "BENCH_NT=$(QUOTIENT_CGAL_GMPZ_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_CACHED_TRAITS)" install
-
-lazy_quotient_mp_float_cached_seg_inst:
-	$(MAKEF) "BENCH_NT=$(LAZY_QUOTIENT_MP_FLOAT_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_CACHED_TRAITS)" install
-
-cgal_gmpq_cached_seg_inst:
-	$(MAKEF) "BENCH_NT=$(CGAL_GMPQ_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_CACHED_TRAITS)" install
-
-lazy_cgal_gmpq_cached_seg_inst:
-	$(MAKEF) "BENCH_NT=$(LAZY_CGAL_GMPQ_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_CACHED_TRAITS)" install
-
-double_cached_seg_inst:
-	$(MAKEF) "BENCH_NT=$(DOUBLE_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_CACHED_TRAITS)" install
-
-#
-seg_std_inst: leda_rat_cartesian_seg_inst \
-        leda_rat_simple_cartesian_seg_inst \
-	quotient_mp_float_seg_inst \
-	quotient_cgal_gmpz_seg_inst \
-	lazy_rat_seg_inst \
-	lazy_quotient_mp_float_seg_inst \
-	cgal_gmpq_seg_inst \
-	lazy_cgal_gmpq_seg_inst \
-	double_seg_inst
-
-#	leda_kernel_seg_inst \
-
-seg_cached_inst: leda_rat_cartesian_cached_seg_inst \
-        leda_rat_simple_cartesian_cached_seg_inst \
-	quotient_mp_float_cached_seg_inst \
-	quotient_cgal_gmpz_cached_seg_inst \
-	lazy_rat_cached_seg_inst \
-	lazy_quotient_mp_float_cached_seg_inst \
-	cgal_gmpq_cached_seg_inst \
-	lazy_cgal_gmpq_cached_seg_inst \
-	double_cached_seg_inst
-
-#	cached_seg_leda_kernel_inst \
-
-# Polyline:
-leda_rat_cartesian_pol:
-	$(MAKEF) "BENCH_NT=$(LEDA_RAT_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(POLYLINE_TRAITS)"
-
-leda_kernel_pol:
-	$(MAKEF) "BENCH_NT=$(LEDA_RAT_NT)" "BENCH_KERNEL=$(LEDA_KERNEL)" "BENCH_TRAITS=$(POLYLINE_TRAITS)"
-
-leda_rat_cartesian_pol_inst:
-	$(MAKEF) "BENCH_NT=$(LEDA_RAT_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(POLYLINE_TRAITS)" install
-
-leda_kernel_pol_inst:
-	$(MAKEF) "BENCH_NT=$(LEDA_RAT_NT)" "BENCH_KERNEL=$(LEDA_KERNEL)" "BENCH_TRAITS=$(POLYLINE_TRAITS)" install
-
-leda_rat_cartesian_cached_pol_inst:
-	$(MAKEF) "BENCH_NT=$(LEDA_RAT_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(POLYLINE_CACHED_TRAITS)" install
-
-leda_kernel_cached_pol_inst:
-	$(MAKEF) "BENCH_NT=$(LEDA_RAT_NT)" "BENCH_KERNEL=$(LEDA_KERNEL)" "BENCH_TRAITS=$(POLYLINE_CACHED_TRAITS)" install
-
-pol_std_inst: leda_rat_cartesian_pol_inst \
-        leda_rat_simple_cartesian_pol_inst \
-	quotient_mp_float_pol_inst \
-	quotient_cgal_gmpz_pol_inst \
-	lazy_rat_pol_inst \
-	lazy_quotient_mp_float_pol_inst \
-	cgal_gmpq_pol_inst \
-	lazy_cgal_gmpq_pol_inst \
-	double_pol_inst
-
-#	leda_kernel_pol_inst \
-
-pol_cached_inst: leda_rat_cartesian_cached_pol_inst \
-        leda_rat_simple_cartesian_cached_pol_inst \
-	quotient_mp_float_cached_pol_inst \
-	quotient_cgal_gmpz_cached_pol_inst \
-	lazy_rat_cached_pol_inst \
-	lazy_quotient_mp_float_cached_pol_inst \
-	cgal_gmpq_cached_pol_inst \
-	lazy_cgal_gmpq_cached_pol_inst \
-	double_cached_pol_inst
-
-#	leda_kernel_cached_pol_inst \
-
-# Conics:
-cartesian_leda_conic:
-	$(MAKEF) "BENCH_NT=$(LEDA_REAL_NT)" "BENCH_TRAITS=$(CONIC_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)"
-
-simple_cartesian_leda_conic:
-	$(MAKEF) "BENCH_NT=$(LEDA_REAL_NT)" "BENCH_TRAITS=$(CONIC_TRAITS)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)"
-
-cartesian_core_conic:
-	$(MAKEF) "BENCH_NT=$(CORE_EXPR_NT)" "BENCH_TRAITS=$(CORE_CONIC_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "USE_CGAL_WINDOW=1"
-
-simple_cartesian_core_conic:
-	$(MAKEF) "BENCH_NT=$(CORE_EXPR_NT)" "BENCH_TRAITS=$(CORE_CONIC_TRAITS)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)" "USE_CGAL_WINDOW=1"
-
-leda_exacus_conic:
-	$(MAKEF) "BENCH_NT=$(NIX_LEDA_FIELD_WITH_SQRT_NT)" "BENCH_TRAITS=$(EXACUS_CONIC_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)"
-
-core_exacus_conic:
-	$(MAKEF) "BENCH_NT=$(NIX_CORE_FIELD_WITH_SQRT_NT)" "BENCH_TRAITS=$(EXACUS_CONIC_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)"
-
-lazy_cgal_gmpq_cartesian_ck_circle:
-	$(MAKEF) "BENCH_NT=$(LAZY_CGAL_GMPQ_NT)" "BENCH_TRAITS=$(CK_CIRCLE_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)"
-
-lazy_cgal_gmpq_simple_cartesian_ck_circle:
-	$(MAKEF) "BENCH_NT=$(LAZY_CGAL_GMPQ_NT)" "BENCH_TRAITS=$(CK_CIRCLE_TRAITS)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)"
-
-gmpq_cartesian_ck_conic:
-	$(MAKEF) "BENCH_NT=$(GMPQ_NT)" "BENCH_TRAITS=$(CK_CONIC_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)"
-
-gmpq_simple_cartesian_ck_conic:
-	$(MAKEF) "BENCH_NT=$(GMPQ_NT)" "BENCH_TRAITS=$(CK_CONIC_TRAITS)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)"
-
-conics: cartesian_leda_conic \
-        simple_cartesian_leda_conic \
-	cartesian_core_conic \
-	simple_cartesian_core_conic \
-	lazy_cgal_gmpq_cartesian_ck_circle \
-	lazy_cgal_gmpq_simple_cartesian_ck_circle \
-	gmpq_cartesian_ck_conic \
-	gmpq_simple_cartesian_ck_conic
-
-# With install:
-cartesian_leda_conic_inst:
-	$(MAKEF) "BENCH_NT=$(LEDA_REAL_NT)" "BENCH_TRAITS=$(CONIC_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" install
-
-simple_cartesian_leda_conic_inst:
-	$(MAKEF) "BENCH_NT=$(LEDA_REAL_NT)" "BENCH_TRAITS=$(CONIC_TRAITS)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)" install
-
-cartesian_core_conic_inst:
-	$(MAKEF) "BENCH_NT=$(CORE_EXPR_NT)" "BENCH_TRAITS=$(CORE_CONIC_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "USE_CGAL_WINDOW=1" install
-
-simple_cartesian_core_conic_inst:
-	$(MAKEF) "BENCH_NT=$(CORE_EXPR_NT)" "BENCH_TRAITS=$(CORE_CONIC_TRAITS)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)" "USE_CGAL_WINDOW=1" install
-
-cgal_conics_int: cartesian_leda_conic_inst \
-        simple_cartesian_leda_conic_inst \
-	cartesian_core_conic_inst \
-	simple_cartesian_core_conic_inst \
-
-leda_exacus_conic_inst:
-	$(MAKEF) "BENCH_NT=$(NIX_LEDA_FIELD_WITH_SQRT_NT)" "BENCH_TRAITS=$(EXACUS_CONIC_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" install
-
-core_exacus_conic_inst:
-	$(MAKEF) "BENCH_NT=$(NIX_CORE_FIELD_WITH_SQRT_NT)" "BENCH_TRAITS=$(EXACUS_CONIC_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" install
-
-exacus_conics_inst: leda_exacus_conic_inst \
-	core_exacus_conic_inst
-
-lazy_cgal_gmpq_cartesian_ck_circle_inst:
-	$(MAKEF) "BENCH_NT=$(LAZY_CGAL_GMPQ_NT)" "BENCH_TRAITS=$(CK_CIRCLE_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" install
-
-lazy_cgal_gmpq_simple_cartesian_ck_circle_inst:
-	$(MAKEF) "BENCH_NT=$(LAZY_CGAL_GMPQ_NT)" "BENCH_TRAITS=$(CK_CIRCLE_TRAITS)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)" install
-
-lazy_gmpz_cartesian_ck_circle_inst:
-	$(MAKEF) "BENCH_NT=$(LAZY_GMPZ_NT)" "BENCH_TRAITS=$(CK_CIRCLE_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" install
-
-lazy_gmpz_simple_cartesian_ck_circle_inst:
-	$(MAKEF) "BENCH_NT=$(LAZY_GMPZ_NT)" "BENCH_TRAITS=$(CK_CIRCLE_TRAITS)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)" install
-
-cgal_gmpq_cartesian_ck_circle_inst:
-	$(MAKEF) "BENCH_NT=$(CGAL_GMPQ_NT)" "BENCH_TRAITS=$(CK_CIRCLE_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" install
-
-cgal_gmpq_simple_cartesian_ck_circle_inst:
-	$(MAKEF) "BENCH_NT=$(CGAL_GMPQ_NT)" "BENCH_TRAITS=$(CK_CIRCLE_TRAITS)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)" install
-
-gmpz_cartesian_ck_circle_inst:
-	$(MAKEF) "BENCH_NT=$(GMPZ_NT)" "BENCH_TRAITS=$(CK_CIRCLE_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" install
-
-gmpz_simple_cartesian_ck_circle_inst:
-	$(MAKEF) "BENCH_NT=$(GMPZ_NT)" "BENCH_TRAITS=$(CK_CIRCLE_TRAITS)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)" install
-
-leda_real_cartesian_ck_circle_inst:
-	$(MAKEF) "BENCH_NT=$(LEDA_REAL_NT)" "BENCH_TRAITS=$(CK_CIRCLE_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" install
-
-leda_real_simple_cartesian_ck_circle_inst:
-	$(MAKEF) "BENCH_NT=$(LEDA_REAL_NT)" "BENCH_TRAITS=$(CK_CIRCLE_TRAITS)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)" install
-
-leda_rat_cartesian_ck_circle_inst:
-	$(MAKEF) "BENCH_NT=$(LEDA_RAT_NT)" "BENCH_TRAITS=$(CK_CIRCLE_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" install
-
-leda_rat_simple_cartesian_ck_circle_inst:
-	$(MAKEF) "BENCH_NT=$(LEDA_RAT_NT)" "BENCH_TRAITS=$(CK_CIRCLE_TRAITS)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)" install
-
-quotient_mp_float_cartesian_ck_circle_inst:
-	$(MAKEF) "BENCH_NT=$(QUOTIENT_MP_FLOAT_NT)" "BENCH_TRAITS=$(CK_CIRCLE_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" install
-
-quotient_mp_float_simple_cartesian_ck_circle_inst:
-	$(MAKEF) "BENCH_NT=$(QUOTIENT_MP_FLOAT_NT)" "BENCH_TRAITS=$(CK_CIRCLE_TRAITS)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)" install
-
-mp_float_cartesian_ck_circle_inst:
-	$(MAKEF) "BENCH_NT=$(MP_FLOAT_NT)" "BENCH_TRAITS=$(CK_CIRCLE_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" install
-
-mp_float_simple_cartesian_ck_circle_inst:
-	$(MAKEF) "BENCH_NT=$(MP_FLOAT_NT)" "BENCH_TRAITS=$(CK_CIRCLE_TRAITS)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)" install
-
-core_expr_cartesian_ck_circle_inst:
-	$(MAKEF) "BENCH_NT=$(CORE_EXPR_NT)" "BENCH_TRAITS=$(CK_CIRCLE_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" install
-
-core_expr_simple_cartesian_ck_circle_inst:
-	$(MAKEF) "BENCH_NT=$(CORE_EXPR_NT)" "BENCH_TRAITS=$(CK_CIRCLE_TRAITS)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)" install
-
-ck_circles_inst: mp_float_cartesian_ck_circle_inst \
-	mp_float_simple_cartesian_ck_circle_inst \
-	cgal_gmpq_cartesian_ck_circle_inst \
-	cgal_gmpq_simple_cartesian_ck_circle_inst \
-	gmpz_cartesian_ck_circle_inst \
-	gmpz_simple_cartesian_ck_circle_inst \
-	quotient_mp_float_cartesian_ck_circle_inst \
-	quotient_mp_float_simple_cartesian_ck_circle_inst \
-	leda_real_cartesian_ck_circle_inst \
-	leda_real_simple_cartesian_ck_circle_inst \
-	core_expr_cartesian_ck_circle_inst \
-	core_expr_simple_cartesian_ck_circle_inst \
-	lazy_gmpz_cartesian_ck_circle_inst \
-	lazy_gmpz_simple_cartesian_ck_circle_inst \
-	lazy_cgal_gmpq_cartesian_ck_circle_inst \
-	lazy_cgal_gmpq_simple_cartesian_ck_circle_inst
-
-#	leda_rat_cartesian_ck_circle_inst
-#	leda_rat_simple_cartesian_ck_circle_inst
-
-gmpq_cartesian_ck_conic_inst:
-	$(MAKEF) "BENCH_NT=$(GMPQ_NT)" "BENCH_TRAITS=$(CK_CONIC_TRAITS)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" install
-
-gmpq_simple_cartesian_ck_conic_inst:
-	$(MAKEF) "BENCH_NT=$(GMPQ_NT)" "BENCH_TRAITS=$(CK_CONIC_TRAITS)" "BENCH_KERNEL=$(SIMPLE_CARTESIAN_KERNEL)" install
-
-ck_conics_inst:	gmpq_cartesian_ck_conic_inst \
-	gmpq_simple_cartesian_ck_conic_inst
-
-conic_inst: cgal_conics_int \
-	exacus_conics_inst \
-	ck_circles_inst \
-	ck_conics_inst
+$(BASENAME).o: $(BASENAME).moc
 
 # Miscellaneous
 insert_old:
-	$(MAKEF) "BENCH_NT=$(LEDA_RAT_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_TRAITS)" "USE_INSERT_OLD=$(1)"
+	$(MAKEF) "BENCH_PM=$(PLANAR_MAP_WITH_INTERSECTIONS)" "BENCH_NT=$(LEDA_RAT_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_TRAITS)" "USE_INSERT_OLD=$(1)"
 
 insert_old_inst:
-	$(MAKEF) "USE_INSERT_OLD=$(1)" "BENCH_NT=$(LEDA_RAT_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_TRAITS)" install
+	$(MAKEF) "BENCH_PM=$(PLANAR_MAP_WITH_INTERSECTIONS)" "BENCH_NT=$(LEDA_RAT_NT)" "BENCH_KERNEL=$(CARTESIAN_KERNEL)" "BENCH_TRAITS=$(SEGMENT_TRAITS)" "USE_INSERT_OLD=$(1)" install
 
-# Dependencies:
-$(BASENAME).o: $(BASENAME).moc
+include $(BASEDIR)/segments.mak
+include $(BASEDIR)/polylines.mak
+include $(BASEDIR)/conics.mak
+

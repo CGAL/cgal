@@ -28,6 +28,7 @@ struct Input_traits<double> {
   typedef double                                Input_rat_type;
 };
 
+#ifdef CGAL_MP_FLOAT_H
 /*! CGAL::MP_Float */
 template <>
 struct Input_traits<CGAL::MP_Float> {
@@ -35,6 +36,7 @@ struct Input_traits<CGAL::MP_Float> {
   typedef CGAL::MP_Float                        Input_float_type;
   typedef CGAL::MP_Float                        Input_rat_type;
 };
+#endif
 
 #ifdef __GMP_PLUSPLUS__
 /*! ::mpz_class */
@@ -72,6 +74,7 @@ struct Input_traits<CORE::BigInt> {
 };
 #endif
 
+#ifdef CGAL_MP_FLOAT_H
 /*! CGAL::Quotient<CGAL::MP_Float> */
 template <>
 struct Input_traits<CGAL::Quotient<CGAL::MP_Float> > {
@@ -79,6 +82,7 @@ struct Input_traits<CGAL::Quotient<CGAL::MP_Float> > {
   typedef CGAL::MP_Float                        Input_float_type;
   typedef CGAL::Quotient<CGAL::MP_Float>        Input_rat_type;
 };
+#endif
 
 #ifdef __GMP_PLUSPLUS__
 /*! CGAL::Quotient<::mpz_struct> */
