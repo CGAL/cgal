@@ -1,3 +1,6 @@
+2.61 (2 June 2003) [af]
+- bbox() now uses to_interval for PointH3 and SphereH3
+ 
 2.60 (30 May 2003)
 - Fix infinite recursion in RayH3 (is_degenerate() <-> to_vector()).
 
