@@ -1717,8 +1717,8 @@ SimilarCurves(const X_curve_2 &a, const X_curve_2 &b)
 {
   if ( m_traits->curve_is_same(a, b))
     return true;
-  if ( m_traits->curve_is_same(m_traits->curve_flip(a), b))
-    return true;
+  //if ( m_traits->curve_is_same(m_traits->curve_flip(a), b))
+  //  return true;
   return false;
 }
 
