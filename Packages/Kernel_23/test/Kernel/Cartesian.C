@@ -64,7 +64,7 @@ main()
   std::cout << "Testing new 2d with Cartesian<Quotient<Precise_integer>> :";
   std::cout << std::endl;
   test_new_2( Cls() );
-  test_cls_new_2( Cls() );
+  _test_cls_new_2( Cls() );
 
   std::cout << "Testing new 3d with Cartesian<Quotient<Precise_integer>> :";
   std::cout << std::endl;
