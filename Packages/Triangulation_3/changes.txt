@@ -3,10 +3,10 @@ Version 1.45 (?? dec 00)
 - locate() improvements (remembering). [syl]
 - new typdefs Geom_traits and Triangulation_data_structure.
 - various cleanups.
-- the kernel can be used as geometric traits class
-- function objects are created and applied directly. This means one less redirection
-- reintroduced the type Point in the traits class for backward compatibility
-- undo added so that the remove fails gracefully, instead of invalidating the triangulation
+- the kernel can almost be used as geometric traits class [andreas]
+- function objects are created and applied directly. This means one less redirection [andreas]
+- reintroduced the type Point in the traits class for backward compatibility [andreas]
+- undo added so that the remove fails gracefully, instead of invalidating the triangulation [andreas]
 
 Version 1.44 (11 dec 00)
 - typdefs _3 fixed in demo and example
