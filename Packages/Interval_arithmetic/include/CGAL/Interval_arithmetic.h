@@ -62,7 +62,7 @@ struct Interval_nt_advanced
   friend inline Sign sign        (const IA &);
 
 private:
-  static void overlap_action() throw (unsafe_comparison)
+  static void overlap_action() // throw (unsafe_comparison)
   {
       number_of_failures++;
       throw unsafe_comparison();
