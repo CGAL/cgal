@@ -54,7 +54,8 @@ typedef Traits::X_curve                             X_curve;
 typedef CGAL::Map_overlay_default_dcel<Traits>      Dcel;
 typedef CGAL::Planar_map_2<Dcel, Traits>            PM;
 
-typedef CGAL::Map_overlay_default_notifier<PM>                Ovl_change_notification;
+typedef CGAL::Map_overlay_default_notifier<PM>
+                                                    Ovl_change_notification;
 typedef CGAL::Map_overlay_2<PM, Ovl_change_notification>      MapOverlay;
 
 typedef CGAL::Pm_walk_along_line_point_location<PM>           PmWalkPL;
@@ -64,7 +65,8 @@ typedef CGAL::Pm_walk_along_line_point_location<PM>           PmWalkPL;
 static PmWalkPL pm_walk1, pm_walk2;
 static PM pm1(&pm_walk1); 
 static PM pm2(&pm_walk2);
-static CGAL::Window_stream W(500, 500, "CGAL - Segment Map-Overlay Demo: Sweep Algorithm");
+static CGAL::Window_stream
+  W(500, 500,"CGAL - Segment Map-Overlay Demo: Sweep Algorithm");
 
 
 // redraw function for the LEDA window. 
@@ -120,11 +122,18 @@ int main(int argc, char* argv[])
   
   //MapOverlay map_overlay(pm1, pm2);  // makes problem with the pointer to the creators: the two contrsucted overlays of pm1 and pm2 are temporary variables, and hence the pointers to them are not valid.
   
-  std::cout<<"Locate Overlay Face:"<<endl;
-  std::cout<<"Purple Face - an overlay face laying under two bounded faces"<<std::endl;
-  std::cout<<"Blue Face - an overlay face laying under a bounded face of the first map and the unbounded face of the second"<<std::endl;
-  std::cout<<"Red Face - an overlay face laying under the unbounded face of the first map and a bounded face of the second"<<std::endl;
-  std::cout<<"Orange Face - an overlay face laying under the unbounded faces of both maps"<<endl;
+  std::cout << "Locate Overlay Face:"<<endl;
+  std::cout << "Purple Face - an overlay face laying under two bounded faces"
+            << std::endl;
+  std::cout << "Blue Face - an overlay face laying under a bounded face "
+            << " of the first map and the unbounded face of the second"
+            << std::endl;
+  std::cout << "Red Face - an overlay face laying under the unbounded face "
+            << "of the first map and a bounded face of the second"
+            << std::endl;
+  std::cout << "Orange Face - an overlay face laying under the unbounded faces"
+            << "of both maps"
+            << endl;
   
   // Point Location Queries
   W.set_status_string("Map Overlay. Enter a point with left button.");
@@ -133,7 +142,8 @@ int main(int argc, char* argv[])
   if (pm1.halfedges_begin() == pm1.halfedges_end()) 
     {
       std::cout << std::endl;
-      std::cout << "No edges were inserted to the first planar map. First Planar map is empty. Exiting.";
+      std::cout << "No edges were inserted to the first planar map. "
+                << "First Planar map is empty. Exiting.";
       std::cout << std::endl;
     }
   
@@ -141,7 +151,8 @@ int main(int argc, char* argv[])
   if (pm2.halfedges_begin() == pm2.halfedges_end()) 
     {
       std::cout << std::endl;
-      std::cout << "No edges were inserted to the first planar map. First Planar map is empty. Exiting.";
+      std::cout << "No edges were inserted to the first planar map. "
+                << "First Planar map is empty. Exiting.";
       std::cout << std::endl;
     }
   
