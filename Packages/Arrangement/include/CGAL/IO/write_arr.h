@@ -184,25 +184,42 @@ void write_arr(const Arrangement& arr,
            sc_iter != cv_iter->level_end(i); sc_iter++){
         
         if (i+1 < cv_iter->number_of_sc_levels()){
-          writer.write_comment("begin and past end indices of children subcurve nodes");
-
-          Subcurve_const_iterator last_child = sc_iter->children_end();
-        
-          writer.write_value((scv_index[i+1])[sc_iter->children_begin()], ' ');
-          writer.write_value((scv_index[i+1])[--last_child] + 1);
+          if (!writer.verbose()){
+            writer.write_comment("begin and past end indices of children subcurve nodes");
+            
+            Subcurve_const_iterator last_child = sc_iter->children_end();
+            
+            writer.write_value((scv_index[i+1])[sc_iter->children_begin()], ' ');
+            writer.write_value((scv_index[i+1])[--last_child] + 1);
+          }
+          else {
+            writer.write_comment("All children subcurve nodes");
+            
+            for (Subcurve_const_iterator child_iter = sc_iter->children_begin();
+                 child_iter != sc_iter->children_end(); child_iter++)
+              writer.write_subcurve (child_iter);
+          }
         }
-        
-        else{  // getting to the edge ndoes.
-          writer.write_comment("begin and past end indices of children edge nodes");
           
-          Edge_const_iterator last_child = sc_iter->edges_end();
-
-          writer.write_value(en_index[sc_iter->edges_begin()], ' ');
-          writer.write_value(en_index[--last_child] + 1);
+        else{  // getting to the edge nodes.
+          if (!writer.verbose()){
+            writer.write_comment("begin and past end indices of children edge nodes");
+            
+            Edge_const_iterator last_child = sc_iter->edges_end();
+            
+            writer.write_value(en_index[sc_iter->edges_begin()], ' ');
+            writer.write_value(en_index[--last_child] + 1);
+          }
+          else{
+            writer.write_comment("All children edge nodes");
+            for (Edge_const_iterator child_iter = sc_iter->edges_begin();
+                 child_iter != sc_iter->edges_end(); child_iter++)
+              writer.write_edge(child_iter);
+          }
         }
 
         //writer.skip_line();
-
+        
         writer.write_comment("subcurve of current level");
         writer.write_subcurve(sc_iter);
       }
@@ -218,24 +235,30 @@ void write_arr(const Arrangement& arr,
     writer.write_comment("----------------------- Edge nodes childrens:");
     for (Edge_const_iterator edge_iter = cv_iter->edges_begin(); 
          edge_iter != cv_iter->edges_end(); edge_iter++){
-      // printing next overlapping edge node.
-      writer.write_comment("pair indices (curve node and its edge node) for next overlapping edge node :");
-      Edge_const_iterator edge_past_end_child = 
-        Edge_const_iterator(edge_iter->children_end());
-      
-      std::size_t j = cn_index[edge_past_end_child->curve_node()];
-      std::size_t k = (en_index_table[j])[edge_past_end_child];
-      
-      writer.write_value(j, ' ');
-      writer.write_value(k);
-      //writer.skip_line();
+      if (!writer.verbose()){
+        // printing next overlapping edge node.
+        writer.write_comment("pair indices (curve node and its edge node) for next overlapping edge node :");
+        Edge_const_iterator edge_past_end_child = 
+          Edge_const_iterator(edge_iter->children_end());
+        
+        std::size_t j = cn_index[edge_past_end_child->curve_node()];
+        std::size_t k = (en_index_table[j])[edge_past_end_child];
+        
+        writer.write_value(j, ' ');
+        writer.write_value(k);
+        //writer.skip_line();
 
-      //cout<<edge_iter->children_begin()->curve();
-      //writer.write_index(en_index[edge_iter->children_begin()]);
-      //writer.write_index(en_index[edge_iter->children_end()]);
-
-      writer.write_comment("Halfedge's indices of edge nodes");
-      writer.write_value(h_index[Halfedge_const_iterator(edge_iter->halfedge())]);
+        //cout<<edge_iter->children_begin()->curve();
+        //writer.write_index(en_index[edge_iter->children_begin()]);
+        //writer.write_index(en_index[edge_iter->children_end()]);
+        
+        writer.write_comment("Halfedge indices associtaed with edge nodes");
+        writer.write_value(h_index[Halfedge_const_iterator(edge_iter->halfedge())]);
+      }
+      else{
+        writer.write_comment("Halfedge associated with edge nodes");
+        writer.write_halfedge(edge_iter->halfedge());
+      }
       
       //writer.skip_line();
       writer.write_comment("Edge node curve");
