@@ -1,3 +1,7 @@
+26 April 2004  Menelaos Karavelas <mkaravel@cse.nd.edu>
+- removed duplicate definition of one of the operator()'s in
+  the Construct_svd_site_2 functor.
+
 22 April 2004  Menelaos Karavelas <mkaravel@cse.nd.edu>
 - replaced the site constructors by static methods that create
   the sites
