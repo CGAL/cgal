@@ -15,12 +15,14 @@ int main()
 #else
 
 #include <CGAL/Arr_leda_segment_traits_2.h>
+#include <CGAL/Pm_segment_traits_leda_kernel_2.h>
 #include <CGAL/leda_rational.h>
 
 #include "include/Segment_traits_test.h"
 
 typedef leda_rational                                  NT;
-typedef CGAL::Arr_leda_segment_traits_2                Traits;
+typedef CGAL::Pm_segment_traits_leda_kernel_2          Kernel;
+typedef CGAL::Arr_leda_segment_traits_2<Kernel>        Traits;
 
 int main( int argc, char** argv ){
   Segment_traits_test< Traits, leda_rational >  test_obj( argc, argv );
