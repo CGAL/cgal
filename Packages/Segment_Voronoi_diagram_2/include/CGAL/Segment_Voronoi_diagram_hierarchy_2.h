@@ -142,7 +142,7 @@ public:
   //------------------
   template<class Input_iterator>
   size_type insert(Input_iterator first, Input_iterator beyond) {
-    return insert_with_tag(first, beyond, Tag_false());
+    return insert(first, beyond, Tag_false());
   }
 
   template<class Input_iterator>
@@ -188,6 +188,10 @@ public:
   }
 
   Vertex_handle  insert(const Site_2& t);
+
+  Vertex_handle  insert(const Site_2& t, Vertex_handle) {
+    return insert(t);
+  }
 
 protected:
   Vertex_handle insert_point(const Point_2& p, int level);
@@ -271,8 +275,9 @@ public:
   // MISCELLANEOUS
   //--------------
   void copy_triangulation
-  (const Segment_Voronoi_diagram_hierarchy_2 &svd);
+  (const Segment_Voronoi_diagram_hierarchy_2& svdh);
 
+  void swap(Segment_Voronoi_diagram_hierarchy_2& svdh);
   void clear();
 
 public:
