@@ -1,3 +1,16 @@
+1.13 (12 July 2001)
+    Simplified Partition_vertex_map so it does not have any circular type
+    references;  this makes the Borland compiler happy
+  
+    Converted Partition_vertex_map to be based on a vector instead of a list
+    to make the Borland compiler happy.
+
+    Shorted names of some predicate classes
+
+    introduced exact number types in some examples
+
+    changed test programs so they can use the default cgal_test now.
+
 1.12 (6 July 2001)
     Fixed many things in documentation (requirements vs. preconditions;
     added Implementation sections; included example programs instead of
