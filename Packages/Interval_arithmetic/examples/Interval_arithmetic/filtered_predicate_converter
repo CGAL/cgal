@@ -32,9 +32,14 @@ sub treat_CGAL_header {
     }
 
     # get $old_protect_name and exit.
-    if (/ifndef[\s]*CGAL_(.*_H)/) {
-      $old_protect_name = "CGAL_$1";
-      $new_protect_name = "CGAL_ARITHMETIC_FILTER_$1";
+    if (/ifndef[\s]*([\S]*_H)/) {
+      $old_protect_name = $1;
+      $_ = $old_protect_name;
+      if (not /CGAL_/) {
+        $_ = "CGAL_$_";
+      }
+      s/CGAL_/CGAL_ARITHMETIC_FILTER_/;
+      $new_protect_name = $_;
       last;
     }
   }
@@ -198,7 +203,7 @@ while (<>)
   }
 
   # Treat next template function.
-  if (/template/) {
+  if (/^template/) {
     ($inline_decl, $result_type, $function_name, @arguments)
                                 = parse_function_declaration();
     put_new_function_declaration($inline_decl, $result_type,
