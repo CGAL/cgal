@@ -728,9 +728,20 @@ void test_Polyhedron() {
         i = P.split_facet( g, g->next()->next());
         CGAL_assertion( i == g->next());
         CGAL_assertion( P.is_valid());
+        // Make diagonal flip four times until it reaches its original position
+        i = P.flip_edge( i);
+        CGAL_assertion( P.is_valid());
+        i = P.flip_edge( i);
+        CGAL_assertion( P.is_valid());
+        i = P.flip_edge( i);
+        CGAL_assertion( P.is_valid());
+        i = P.flip_edge( i);
+        CGAL_assertion( P.is_valid());
+        // remove diagonal
         Halfedge_handle j = P.join_facet( i);
         CGAL_assertion( j == g);
         CGAL_assertion( P.is_valid());
+        // collapse quadrilateral to triangle
         j = P.join_vertex( g);
         CGAL_assertion( j == h);
         CGAL_assertion( P.is_valid());

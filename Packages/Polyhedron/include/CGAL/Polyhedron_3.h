@@ -1200,6 +1200,11 @@ public:
         return split_vertex( h->prev(), h->opposite())->opposite();
     }
 
+    Halfedge_handle flip_edge( Halfedge_handle h) {
+        HalfedgeDS_items_decorator<HDS> D;
+        return D.flip_edge(h);
+    }
+
     Halfedge_handle create_center_vertex( Halfedge_handle h) {
         HalfedgeDS_decorator<HDS> D(hds);
         CGAL_assertion( circulator_size( h->facet_begin())

@@ -471,6 +471,12 @@ unchanged.
     inserted vertex. The new halfedge is followed by the old halfedge, i.e.,
     \ccc{hnew->next() == h}.}
 
+\ccMethod{Halfedge_handle flip_edge( Halfedge_handle h);}
+   {performs an edge flip. It returns $h$ after rotating the edge $h$ one
+    vertex in the direction of the face orientation. 
+    \ccPrecond \ccc{h != Halfedge_handle()} and both  facets incident
+    to $h$ are triangles.}
+
 \begin{ccTexOnly}
     \begin{center}
       \parbox{0.52\textwidth}{%
