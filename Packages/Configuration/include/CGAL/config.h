@@ -90,11 +90,7 @@
 #   define CGAL_MSVC_DUMMY_ARGUMENT
 #endif
 
-#ifdef CGAL_CFG_NO_TEMPLATE_FRIEND_DISTINCTION
-#  define CGAL_NULL_TMPL_ARGS
-#else
-#  define CGAL_NULL_TMPL_ARGS <>
-#endif
+#define CGAL_NULL_TMPL_ARGS <>
 
 #ifdef CGAL_CFG_NO_STDC_NAMESPACE
 #  define CGAL_CLIB_STD
