@@ -16,7 +16,7 @@
 // revision_date : $Date$
 // author(s)     : Sylvain Pion
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ============================================================================
  
 #ifndef CGAL_PRECISE_NUMBERS_H

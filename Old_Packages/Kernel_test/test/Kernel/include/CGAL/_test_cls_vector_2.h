@@ -17,19 +17,15 @@
 // author(s)     : Stefan Schirra
 //
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ============================================================================
  
 
 #ifndef CGAL__TEST_CLS_VECTOR_2_H
 #define CGAL__TEST_CLS_VECTOR_2_H
 
-#ifndef CGAL_USER_CLASSES_H
 #include <CGAL/user_classes.h>
-#endif // CGAL_USER_CLASSES_H
-#ifndef CGAL_VECTOR_2_H
 #include <CGAL/Vector_2.h>
-#endif // CGAL_VECTOR_2_H
 
 
 template <class R> bool _test_cls_vector_2(const R& );

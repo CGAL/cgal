@@ -17,7 +17,7 @@
 // author(s)     : Stefan Schirra
 //
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ============================================================================
  
 
@@ -42,7 +42,7 @@
 int
 main()
 {
-  std::cout << "Testing miscellanous" << std::endl;
+  std::cout << "Testing miscellaneous" << std::endl;
   typedef   CGAL::Homogeneous<Precise_integer>                 H_Cls;
   typedef   CGAL::Cartesian<CGAL::Quotient<Precise_integer> >  C_Cls;
   typedef   CGAL::Simple_cartesian<CGAL::Quotient<Precise_integer> >  S_Cls;

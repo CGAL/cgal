@@ -17,20 +17,15 @@
 // author(s)     : Stefan Schirra
 //
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ============================================================================
  
 
 #ifndef CGAL__TEST_CLS_CIRCLE_2_H
 #define CGAL__TEST_CLS_CIRCLE_2_H
 
-#ifndef CGAL_CIRCLE_2_H
 #include <CGAL/Circle_2.h>
-#endif // CGAL_CIRCLE_2_H
-#ifndef CGAL_AFF_TRANSFORMATION_2_H
 #include <CGAL/Aff_transformation_2.h>
-#endif // CGAL_AFF_TRANSFORMATION_2_H
-
 
 template <class R> bool _test_cls_circle_2(const R& );
 

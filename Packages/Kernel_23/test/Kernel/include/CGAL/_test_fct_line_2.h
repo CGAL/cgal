@@ -11,25 +11,20 @@
 // release       :
 // release_date  :
 // 
-// file          : _test_cls_point_2.h
+// file          : _test_fct_line_2.h
 // revision      : $Revision$
 // revision_date : $Date$
-// author(s)     : Stefan Schirra
+// author(s)     : Susan Hert
 //
 //
 // coordinator   : MPI, Saarbruecken
 // ============================================================================
  
 
-#ifndef CGAL__TEST_CLS_POINT_2_H
-#define CGAL__TEST_CLS_POINT_2_H
+#ifndef CGAL__TEST_FCT_LINE_2_H
+#define CGAL__TEST_FCT_LINE_2_H
 
-#ifndef CGAL_POINT_2_H
-#include <CGAL/Point_2.h>
-#endif // CGAL_POINT_2_H
+template <class R> bool _test_fct_line_2(const R& );
 
 
-template <class R> bool _test_cls_point_2(const R& );
-
-
-#endif // CGAL__TEST_CLS_POINT_2_H
+#endif // CGAL__TEST_FCT_LINE_2_H

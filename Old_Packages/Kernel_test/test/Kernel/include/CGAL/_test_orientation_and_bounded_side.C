@@ -18,17 +18,14 @@
 // author(s)     : Stefan Schirra
 //
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ============================================================================
  
 
 #ifndef CGAL__TEST_ORIENTATION_AND_BOUNDED_SIDE_C
 #define CGAL__TEST_ORIENTATION_AND_BOUNDED_SIDE_C
 
-#ifndef CGAL__TEST_ORIENTATION_AND_BOUNDED_SIDE_H
-#include <CGAL/_test_orientation_and_bounded_side.h>
-#endif // CGAL__TEST_ORIENTATION_AND_BOUNDED_SIDE_H
-
+#include "_test_orientation_and_bounded_side.h"
 
 template <class R>
 bool

@@ -17,16 +17,14 @@
 // author(s)     : Stefan Schirra
 //
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ============================================================================
  
 
 #ifndef CGAL__TEST_FCT_POINT_CONVERSION_C
 #define CGAL__TEST_FCT_POINT_CONVERSION_C
 
-#ifndef CGAL__TEST_FCT_POINT_CONVERSION_H
 #include <CGAL/_test_fct_point_conversion.h>
-#endif // CGAL__TEST_FCT_POINT_CONVERSION_H
 
 template <class NT>
 bool

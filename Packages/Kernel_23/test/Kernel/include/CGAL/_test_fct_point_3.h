@@ -17,19 +17,13 @@
 // author(s)     : Stefan Schirra
 //
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ============================================================================
  
 
-#ifndef CGAL_POINT_3_H
 #include <CGAL/Point_3.h>
-#endif // CGAL_POINT_3_H
-#ifndef CGAL_VECTOR_3_H
 #include <CGAL/Vector_3.h>
-#endif // CGAL_VECTOR_3_H
-#ifndef CGAL_PREDICATES_ON_POINTS_3_H
 #include <CGAL/predicates_on_points_3.h>
-#endif // CGAL_PREDICATES_ON_POINTS_3_H
 #include <CGAL/distance_predicates_3.h>
 
 

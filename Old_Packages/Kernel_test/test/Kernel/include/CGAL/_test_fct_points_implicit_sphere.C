@@ -17,7 +17,7 @@
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ============================================================================
  
 #ifndef CGAL__TEST_FCT_POINTS_IMPLICIT_SPHERE_C

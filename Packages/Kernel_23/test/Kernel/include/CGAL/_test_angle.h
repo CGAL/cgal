@@ -17,7 +17,7 @@
 // revision_date : $Date$
 // author(s)     : Sylvain Pion
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ============================================================================
  
 #ifndef CGAL__TEST_ANGLE_H

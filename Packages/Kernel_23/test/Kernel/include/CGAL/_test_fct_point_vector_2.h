@@ -17,20 +17,15 @@
 // author(s)     : Stefan Schirra
 //
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ============================================================================
  
 
 #ifndef CGAL__TEST_FCT_POINT_VECTOR_2_H
 #define CGAL__TEST_FCT_POINT_VECTOR_2_H
 
-#ifndef CGAL_POINT_2_H
 #include <CGAL/Point_2.h>
-#endif // CGAL_POINT_2_H
-#ifndef CGAL_VECTOR_2_H
 #include <CGAL/Vector_2.h>
-#endif // CGAL_VECTOR_2_H
-
 
 template <class R> bool _test_fct_point_vector_2(const R& );
 

@@ -17,23 +17,16 @@
 // author(s)     : Stefan Schirra
 //
 //
-// coordinator   : MPI, Saarbruecken  (<Stefan.Schirra@mpi-sb.mpg.de>)
+// coordinator   : MPI, Saarbruecken
 // ============================================================================
  
 
 #ifndef CGAL__TEST_FURTHER_FCT_POINT_2_LINE_2_H
 #define CGAL__TEST_FURTHER_FCT_POINT_2_LINE_2_H
 
-#ifndef CGAL_POINT_2_H
 #include <CGAL/Point_2.h>
-#endif // CGAL_POINT_2_H
-#ifndef CGAL_LINE_2_H
 #include <CGAL/Line_2.h>
-#endif // CGAL_LINE_2_H
-#ifndef CGAL_DISTANCE_PREDICATES_2_H
 #include <CGAL/distance_predicates_2.h>
-#endif // CGAL_DISTANCE_PREDICATES_2_H
-
 
 template <class R> bool _test_further_fct_point_line_2(const R& );
 

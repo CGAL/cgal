@@ -1,3 +1,6 @@
+3.39   (7 January 2002)
+- added compare_slopes and CompareSlope_2
+
 3.38   (21 December 2001)
 - Add tests for compare_y_at_x for segments.
 
