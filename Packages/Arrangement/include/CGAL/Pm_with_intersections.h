@@ -109,6 +109,9 @@ public:
   // ----------------
   Planar_map_with_intersections_2(const Self & rhs);
 
+  // Planar_map converter
+  Planar_map_with_intersections_2(const Planar_map& pm);
+  
   // Destructor
   //-----------
 
@@ -1302,6 +1305,16 @@ Planar_map_with_intersections_2(const Self & rhs)
   pmwx_traits = (Pmwx_traits_wrap*)traits;
 }
 
+//-----------------------------------------------------------------------------
+template<class Pm>
+Planar_map_with_intersections_2<Pm>::
+Planar_map_with_intersections_2(const Planar_map& pm) : 
+  Planar_map(pm),
+  pmwx_use_delete_traits(false),pmwx_use_delete_pl(false)
+{
+  pmwx_traits = (Pmwx_traits_wrap*)traits;
+  //use_delete_pmwx_traits = true;
+}
 //-----------------------------------------------------------------------------
 template<class Pm>
 Planar_map_with_intersections_2<Pm>::~Planar_map_with_intersections_2()
