@@ -1,3 +1,6 @@
+2.63 (6 June 2003)
+- Workaround SunPro for Intersections_3's test-suite.
+
 2.62 (2 June 2003)
 - Replace deprecated cmp_dist_to_point().
 

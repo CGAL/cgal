@@ -101,7 +101,7 @@ template < class R >
 CGAL_KERNEL_INLINE
 typename LineH3<R>::Point_3
 LineH3<R>::point(int i) const
-{ return point() + RT(i)*to_vector() ; }
+{ return point() + to_vector()*RT(i) ; }
 
 template < class R >
 inline
