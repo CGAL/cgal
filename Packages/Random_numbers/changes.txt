@@ -1,5 +1,10 @@
 Changes done to the `Random_numbers' package
 
+Version 2.3.1 on 04-Sep-2001
+- changed ccSection command to section command
+
+CGAL-2.3
+--------
 Version 2.3 on 02-Apr-2001
 - replaced accidentally submitted version without port to M$-VC++ by ported one
 
