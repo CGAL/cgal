@@ -5,7 +5,7 @@
 # $Id$
 # ---------------------------------------------------------------------
 # 
-# Copyright (c) 1998-2000 The CGAL Consortium
+# Copyright (c) 1998-2001 The CGAL Consortium
 #
 # This software and related documentation is part of the Computational
 # Geometry Algorithms Library (CGAL).
@@ -759,6 +759,8 @@ set_compiler_flags()
     SAVE_THE_BLANK=""
     EXE_EXT=""
     CGAL_LIBNAME="libCGAL.a"
+    CGAL_WIN_LIBNAME="libCGALWin.a"
+    CGAL_WIN_EXTRA_DIR=x11
     GMP_LIBNAME="libgmp.a"
     MATH_LIB="m"
     SEPARATE_LIBPATH=""
@@ -786,6 +788,8 @@ set_compiler_flags()
 	    EXE_OPT="-e"
 	    EXE_EXT=".exe"
 	    CGAL_LIBNAME="CGAL.lib"
+	    CGAL_WIN_LIBNAME="CGALWin.lib"
+	    CGAL_WIN_EXTRA_DIR=mswin
 	    GMP_LIBNAME="gmp.lib"
 	    MATH_LIB=""
 	    SEPARATE_LIBPATH="y"
@@ -813,6 +817,8 @@ set_compiler_flags()
 	    EXE_OPT="-Fp"
 	    EXE_EXT=".exe"
 	    CGAL_LIBNAME="CGAL.lib"
+	    CGAL_WIN_LIBNAME="CGALWin.lib"
+	    CGAL_WIN_EXTRA_DIR=mswin
 	    GMP_LIBNAME="gmp.lib"
 	    MATH_LIB=
 	    START_LD_OPT="-link "
@@ -3187,6 +3193,16 @@ test_setup()
 
     # COMPILER
     if [ -z "${CONFIG_TEST_PASSED}" ]; then
+	print_filled_line
+	print_line "The following lines show results of configuration tests."
+	print_line \
+	  "Some of the tests might fail, since many compilers are"
+	print_line "still not completely ANSI/ISO compliant."
+	print_line "Since we worked around the arising problems," 
+	print_center_line "${_bold_on}*** CGAL will work fine ***${_bold_off}"
+	print_line "regardless of the outcome of these tests."
+	print_filled_line
+	flush_buffer
 	test_compiler_specifica "${INSTALL_VERBOSE}"
     fi
 
@@ -4275,6 +4291,9 @@ write_linker_flags()
     LIBS="${LIBS} `leda_lib_option P``leda_lib_option G``leda_lib_option L`"
     GEOWLIBS="${WLIBS} `leda_lib_option GeoW``leda_lib_option D3``leda_lib_option W``leda_lib_option P``leda_lib_option G``leda_lib_option L` ${XLIBS}"
     WLIBS="${WLIBS} `leda_lib_option W``leda_lib_option P``leda_lib_option G``leda_lib_option L` ${XLIBS}"
+  else
+    # no LEDA --> use libCGALWin
+    WLIBS="${WLIBS} `lib_option CGALWin` ${XLIBS}"
   fi
   if [ -n "${GMP_SUPPORT}" ]; then
     if [ "${GMP_INSTALLATION}" = 'x' -o \
@@ -4348,38 +4367,36 @@ write_linker_flags()
   #
   # CGAL_WINDOW_LIBPATH
   #
-  if [ -n "${LEDA_SUPPORT}" ]; then
-    if [ -n "${WINDOW_DIR}" ]; then 
-	LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}${WINDOW_DIR}"
-	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:${WINDOW_DIR}"
-    fi
-    if [ -n "${SEPARATE_LIBPATH}" ]; then
-	${_printf}  "CGAL_WINDOW_LD_LIBPATH =\n\n" >> ${FILE}
-	${_printf}  "CGAL_WINDOW_LIBPATH =" >> ${FILE}
-    else
-	${_printf}  "CGAL_WINDOW_LIBPATH =\n\n" >> ${FILE}
-	${_printf}  "CGAL_WINDOW_LD_LIBPATH =" >> ${FILE}
-    fi
-    makefile_print_continuationline "${CUSTOM_LIBPATH}" >> ${FILE}
-    makefile_print_continuationline "${LIB_PATH}" >> ${FILE}
-    if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
-      makefile_print_continuationline "${RUNTIME_LINKER_FLAG}${RUNTIME_LIB_PATH}" \
-	>> ${FILE}
-    fi
-    ${_printf} "\n\n"  >> ${FILE}
+  if [ -n "${WINDOW_DIR}" ]; then 
+    LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}${WINDOW_DIR}"
+    RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:${WINDOW_DIR}"
   fi
+  if [ -n "${SEPARATE_LIBPATH}" ]; then
+    ${_printf}  "CGAL_WINDOW_LD_LIBPATH =\n\n" >> ${FILE}
+    ${_printf}  "CGAL_WINDOW_LIBPATH =" >> ${FILE}
+  else
+    ${_printf}  "CGAL_WINDOW_LIBPATH =\n\n" >> ${FILE}
+    ${_printf}  "CGAL_WINDOW_LD_LIBPATH =" >> ${FILE}
+  fi
+  makefile_print_continuationline "${CUSTOM_LIBPATH}" >> ${FILE}
+  makefile_print_continuationline "${LIB_PATH}" >> ${FILE}
+  if [ -n "${RUNTIME_LINKER_FLAG}" ]; then
+    makefile_print_continuationline "${RUNTIME_LINKER_FLAG}${RUNTIME_LIB_PATH}" \
+  	>> ${FILE}
+  fi
+  ${_printf} "\n\n"  >> ${FILE}
 
   #
   # CGAL_WINDOW_LDFLAGS
   #
   ${_printf} "%s\\\\\n" "CGAL_WINDOW_LDFLAGS = " >> ${FILE}
-  if [ -n "${LEDA_SUPPORT}" ]; then
-    makefile_print_line "${START_LD_OPT}\$(CGAL_WINDOW_LD_LIBPATH) ${ADDITIONAL_LDFLAGS}" >> ${FILE}
-    makefile_print_line "\$(CUSTOM_LDFLAGS)" >> ${FILE}
-    ${_printf} "\t%s\n\n" "${WLIBS}" >> ${FILE}
-  else
-    ${_printf} "\t%s\n\n" "\$(CGAL_LDFLAGS)" >> ${FILE}
-  fi
+  #if [ -n "${LEDA_SUPPORT}" ]; then
+  makefile_print_line "${START_LD_OPT}\$(CGAL_WINDOW_LD_LIBPATH) ${ADDITIONAL_LDFLAGS}" >> ${FILE}
+  makefile_print_line "\$(CUSTOM_LDFLAGS)" >> ${FILE}
+  ${_printf} "\t%s\n\n" "${WLIBS}" >> ${FILE}
+  #else
+  #  ${_printf} "\t%s\n\n" "\$(CGAL_LDFLAGS)" >> ${FILE}
+  #fi
 
   #
   # CGAL_GEOWIN_LDFLAGS
@@ -4513,9 +4530,11 @@ create_include_makefile()
   esac
 
   # 
-  # CGAL_LIB
+  # CGAL_(WIN)LIB
   # 
   ${_printf} "%s\n" "CGAL_LIB = ${CGAL_LIBNAME}" >> ${FILE}
+  ${_printf} "%s\n" "CGAL_WIN_LIB = ${CGAL_WIN_LIBNAME}" >> ${FILE}
+  ${_printf} "%s\n" "CGAL_WIN_EXTRA_DIR = ${CGAL_WIN_EXTRA_DIR}" >> ${FILE}
 
   # 
   # CGAL_LIB_CXXFLAGS
@@ -4611,6 +4630,7 @@ prepare_lib_makefiles()
 {
     for FILE in ${CGAL_SRC_DIR}/makefile_lib \
 	${CGAL_SRC_DIR}/makefile_sharedlib \
+	${CGAL_SRC_DIR}/CGALWin/makefile_Win \
 	${CGAL_EXAMPLE_DIR}/makefile
     do
 	replace_line ${FILE} CGAL_MAKEFILE \
@@ -4650,7 +4670,7 @@ generatemakefiles()
 
 }
 
-# compile $1 (= lib or sharedlib)
+# compile $1 (= lib, sharedlib, or Win)
 # return 0, iff success
 _do_compile()
 {
@@ -4735,6 +4755,10 @@ build_cgal()
 		fi
 		;;
 	esac
+	if [ -z "${LEDA_SUPPORT}" -a -d ${CGAL_SRC_DIR}/CGALWin ]; then
+	    cd ${CGAL_SRC_DIR}/CGALWin
+	    _do_compile Win
+	fi
     fi
     write_buffer "\n"
     print_filled_line
@@ -5092,11 +5116,11 @@ finish_interactive()
 	print_filled_line
 	print_center_line "${CGAL_INSTALL_CGAL} completed."
     fi
-    print_center_line \
-	"If something went wrong, (or maybe also, if not:)"
-    print_center_line \
-	"have a look at `${_basename} ${INSTALL_LOGFILE}`." 
+    print_center_line "If something went wrong, (or maybe also, if not:)"
+    print_center_line "have a look at `${_basename} ${INSTALL_LOGFILE}`." 
     print_filled_line
+    write_buffer "\nRemember to set the CGAL_MAKEFILE environment "
+    write_buffer "variable, e.g. to\n${CGAL_MAKEFILE}\n\n"
     flush_buffer
 }
 
