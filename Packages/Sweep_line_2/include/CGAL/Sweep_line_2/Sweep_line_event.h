@@ -27,14 +27,13 @@
 #ifndef CGAL_SWEEP_LINE_EVENT_H
 #define CGAL_SWEEP_LINE_EVENT_H
 
-#include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
 #include <CGAL/Sweep_line_2/Sweep_line_functors.h>
 #include <list>
 #include <set>
 
 CGAL_BEGIN_NAMESPACE
 
-template<class SweepLineTraits_2>
+template<class SweepLineTraits_2, class CurveWrap>
 class Sweep_line_event
 {
 public:
@@ -42,11 +41,12 @@ public:
   typedef typename Traits::X_curve_2 X_curve_2;
   typedef typename Traits::Point_2 Point_2;
 
-  typedef Sweep_line_subcurve<Traits> SubCurve;
+  //typedef Sweep_line_subcurve<Traits> SubCurve;
+  typedef CurveWrap SubCurve;
   typedef typename std::list<SubCurve *> SubcurveContainer;
   typedef typename SubcurveContainer::iterator SubCurveIter;
 
-  typedef Status_line_curve_less_functor<Traits> StatusLineCurveLess;
+  typedef Status_line_curve_less_functor<Traits, SubCurve> StatusLineCurveLess;
   typedef std::set<SubCurve*, StatusLineCurveLess> StatusLine;
   typedef typename StatusLine::iterator StatusLineIter;
 
@@ -68,7 +68,7 @@ public:
   /*! Destructor. Deletes the lists of curves, without deleting the 
       curves themselves. 
   */
-  ~Sweep_line_event() {
+  virtual ~Sweep_line_event() {
     delete m_leftCurves;
     delete m_rightCurves;
   }
@@ -444,9 +444,9 @@ public:
 
 
 #ifndef NDEBUG
-template<class SweepLineTraits_2>
+template<class SweepLineTraits_2, class CurveWrap>
 void 
-Sweep_line_event<SweepLineTraits_2>::
+Sweep_line_event<SweepLineTraits_2, CurveWrap>::
 Print() 
 {
   std::cout << "\tEvent id: " << id << "\n" ;
@@ -470,9 +470,9 @@ Print()
   std::cout << std::endl;
 }
 
-template<class SweepLineTraits_2>
+template<class SweepLineTraits_2, class CurveWrap>
 void 
-Sweep_line_event<SweepLineTraits_2>::
+Sweep_line_event<SweepLineTraits_2, CurveWrap>::
 PrintVerticalXPoints()
 {
   std::cout << "Vertical intersection points for " << m_point << ":\n";

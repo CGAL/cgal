@@ -58,15 +58,15 @@ private:
   /*! a pointer to a trits class */
   Traits *m_traits;
 };
-
-template <class SweepLineTraits_2>
+#if 0
+template <class SweepLineTraits_2, class Subcurve>
 class Curve_less_functor 
 {
 public:
   typedef SweepLineTraits_2 Traits;
   typedef typename Traits::Point_2 Point_2;
   typedef typename Traits::X_curve_2 X_curve_2;
-  typedef Sweep_line_subcurve<Traits> Subcurve;
+  //typedef Sweep_line_subcurve<Traits> Subcurve;
 
   Curve_less_functor(Traits *traits) : m_traits(traits) {}
   
@@ -98,15 +98,16 @@ private:
   /*! a pointer to a traits class */
   Traits *m_traits;
 };
+#endif
 
-template <class SweepLineTraits_2>
+template <class SweepLineTraits_2, class Subcurve>
 class Status_line_curve_less_functor 
 {
 public:
   typedef SweepLineTraits_2 Traits;
   typedef typename Traits::Point_2 Point_2;
   typedef typename Traits::X_curve_2 X_curve_2;
-  typedef Sweep_line_subcurve<Traits> Subcurve;
+  //typedef Sweep_line_subcurve<Traits> Subcurve;
 
   Status_line_curve_less_functor(Traits *traits) : m_traits(traits) {}
   
