@@ -45,20 +45,30 @@ types in the concept \ccc{SegmentVoronoiDiagramSite_2}.
 \ccTypedef
 {typedef K Kernel;}{A type for the template parameter \ccc{K}.}
 
-\ccTwo{Segment_Voronoi_diagram_site_2<K> s(Point_2 p)+}{}
+\ccTwo{Segment_Voronoi_diagram_site_2<K> s(Point_2 p1, Point_2 p2)+}{}
 
 \ccCreation
 \ccCreationVariable{s}  %% choose variable name
 \ccConstructor{Segment_Voronoi_diagram_site_2<K>()}{Default constructor}
-\ccGlue
+%\ccGlue
 \ccConstructor{Segment_Voronoi_diagram_site_2<K>(Point_2 p)}{}
-\ccGlue
+%\ccGlue
 \ccConstructor{Segment_Voronoi_diagram_site_2<K>(Point_2 p1, Point_2 p2)}{}
+%\ccGlue
+\ccConstructor{Segment_Voronoi_diagram_site_2<K>(Point_2 p1, Point_2
+  p2, Point_2 q1, Point_2 q2)}{}
+%\ccGlue
+\ccConstructor{Segment_Voronoi_diagram_site_2<K>(Point_2 p1, Point_2
+  p2, Point_2 q1, Point_2 q2, bool b)}{}
+%\ccGlue
+\ccConstructor{Segment_Voronoi_diagram_site_2<K>(Point_2 p1, Point_2
+  p2, Point_2 q1, Point_2 q2, Point_2 r1, Point_2 r2)}{}
+
+
+
 \ccGlue
 \ccConstructor{Segment_Voronoi_diagram_site_2<K>(Segment_Voronoi_diagram_site_2<K>
   other)}{Copy constructor.}
-
-{\sc Add the remaining constructors}
 
 \ccSeeAlso
 \ccc{Kernel}\\
