@@ -173,9 +173,9 @@ class Simple_homogeneous
     typedef CGAL::Simple_Handle_for< Fourtuple<RT> > Vector_handle_3;
     typedef CGAL::Simple_Handle_for< Fourtuple<RT> > Direction_handle_3;
     typedef CGAL::Simple_Handle_for< Fourtuple<RT> > Plane_handle_3;
-    typedef CGAL::Simple_Handle_for< std::pair<Point_3_base, Direction_3_base> >
+    typedef CGAL::Simple_Handle_for<std::pair<Point_3_base, Direction_3_base> >
 	                                              Ray_handle_3;
-    typedef CGAL::Simple_Handle_for< std::pair<Point_3_base, Direction_3_base> >
+    typedef CGAL::Simple_Handle_for<std::pair<Point_3_base, Direction_3_base> >
 	                                              Line_handle_3;
     typedef CGAL::Simple_Handle_for< triple<Point_3_base, FT, Orientation> >
 	                                              Sphere_handle_3;
