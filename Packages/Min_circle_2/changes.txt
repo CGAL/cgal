@@ -1,5 +1,8 @@
 Changes done to the `Min_circle_2' package
 
+Version 3.2.8 on 01-Oct-1999
+- inequality operator added to 'MyPoint[CH]2'.
+
 Version 3.2.7 on 29-Sep-1999
 - removed accidentally added ';'.
 
