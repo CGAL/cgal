@@ -507,7 +507,7 @@ std::ifstream iFileT8("Test8_triangulation_IO_3",ios::in);
 
        c= Ti.locate(Point(50,50,50),lt,li,lj);
       
-       v0= Ti.insert_outside_convex_hull(Point(50,50,50),c,0);
+       v0= Ti.insert_outside_convex_hull(Point(50,50,50),c);
        assert(Ti.is_valid());
 
        assert(Ti.number_of_vertices() == 5);
@@ -517,7 +517,7 @@ std::ifstream iFileT8("Test8_triangulation_IO_3",ios::in);
        assert(T3_3.is_valid());
        assert(T3_3.dimension()==2);
        c= T3_3.locate(Point(4,0,0),lt,li,lj);
-       v0=T3_3.insert_outside_convex_hull(Point(4,0,0),c,li,lj);
+       v0=T3_3.insert_outside_convex_hull(Point(4,0,0),c);
        assert(T3_3.is_valid());
        assert(T3_3.dimension()==2);
        v0=T3_3.insert_outside_affine_hull(Point(0,5,0));

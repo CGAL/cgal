@@ -84,7 +84,8 @@ public:
 				      e.second==2 || e.second==3 ) &&
 				     (e.third==0 || e.third==1 ||
 				      e.third==2 || e.third==3 ) );
-    int i, j;
+    CGAL_triangulation_precondition_code
+      ( int i; int j; )
     CGAL_triangulation_precondition
       ( c->has_vertex( e.first->vertex(e.second), i ) &&
 	c->has_vertex( e.first->vertex(e.third), j ) );
