@@ -29,6 +29,8 @@ my @trusted_hosts = (
 	'mpi-sb.mpg.de',
 	'inf.fu-berlin.de',
 	'uni-trier.de',
+	'clipper.ens.fr',
+	'eleves.ens.fr',
 	'cs.unc.edu',
         'twi.tudelft.nl',
 	'tau.ac.il');

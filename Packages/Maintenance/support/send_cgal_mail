@@ -4,6 +4,9 @@ use strict;
 
 $ENV{PATH}="$ENV{PATH}:/sw/bin";
 my $subject = shift;
+if ($subject eq "-s") {
+    $subject = shift;
+}
 my $recipients = join(' ',@ARGV);
 open NOTI, "| '/sw/sbin/sendmail' '-t'";
 #open NOTI, "| '/usr/bin/cat'";

@@ -21,6 +21,7 @@ my $WWWPAGE;
 my $release_name;
 my @platforms_to_do;
 my @known_platforms;
+my %platform_short_names;
 my @available_platforms;
 my @test_directories;
 my @testresults;
@@ -238,13 +239,16 @@ EOF
 sub choose_platforms()
 {
     my (%platform_index, $pf);
+# List all platforms for which there are results
     @available_platforms = list_platforms();
     my $index = 0;
+# Put all known platforms in a hash table.
     for ($index=0; $index < @known_platforms; $index += 1) {
 	$pf = $known_platforms[$index];
 	$platform_index{$pf} = 1;
     }
-
+# Check if there are platforms listed that are not known. Warn about this
+# and add those platforms at the end of the list of known platforms.
     foreach (@available_platforms) {
 	$pf = $_;
 	$pf =~ s/^[^_]*_//;
@@ -254,6 +258,7 @@ sub choose_platforms()
 		"Warning: Platform $_ is unknown!\n";
 	    $platform_index{$pf} = 1;
 	    push(@known_platforms,$pf); # ???
+    	    $platform_short_names{$pf} = $pf;
 	}
     }
 
@@ -272,7 +277,6 @@ sub choose_platforms()
 	    }
 	}
     }
-
 }
 
 sub print_platform_descriptions()
@@ -342,7 +346,7 @@ EOF
 	my $pf_short = $pf;
 	$pf_short =~ s/^[^_]*_//;
 	$pf_short =~ s/_LEDA$//;
-	print OUTPUT "<TD NOWRAP>$pf_short</TD>\n";
+	print OUTPUT "<TD NOWRAP>$platform_short_names{$pf_short}</TD>\n";
 	print OUTPUT "</TR>\n";
     }
     print OUTPUT "</TABLE>\n";
@@ -473,6 +477,7 @@ sub main()
     }
     undef($opt_p) if (defined ($opt_p) and $opt_p =~ /^\s*$/);
 
+    init_known_platforms();
     chdir $release_name or die;
     choose_platforms();
     chdir "..";
@@ -529,6 +534,10 @@ sub email_address_in_html_format($)
 	    return 
 		'<A HREF="mailto:geert@cs.uu.nl">'.
 		"Geert-Jan Giezeman</A>$qualification";
+	} elsif ($responsible eq 'rineau') {
+	    return 
+		'<a href="mailto:rineau@clipper.ens.fr">'.
+		"Laurent Rineau</A>$qualification";
 	} elsif ($responsible eq 'dima') {
 	    return 
 		'<A HREF="mailto:dima@cs.uu.nl">'.
@@ -551,43 +560,17 @@ sub email_address_in_html_format($)
 	}
 }
 
-@known_platforms = (
-    'i686_CYGWINNT-4.0-20.1_g++-egcs-2.91.57',
-    'sparc_SunOS-5.5.1_g++-egcs-2.91.66',
-    'sparc_SunOS-5.6_g++-egcs-2.91.66',
-    'sparc_SunOS-5.6_eg++-egcs-2.91.66',
-    'i686_Linux-2.2.7_eg++-egcs-2.91.66',
-    'i686_Linux-2.2.13_g++-egcs-2.91.66',
-    'ppc_Linux-2.2.7_g++-egcs-2.91.66',
-    'i686_Linux-2.2.7_g++-2.95.1',
-    'sparc_SunOS-5.6_g++-2.95.1',
-    'mips_IRIX64-6.5_g++-2.95.1',
-    'mips_IRIX-6.5_g++-2.95.1',
-    'i686_Linux-2.2.7_g++-2.95.2',
-    'i686_Linux-2.2.13_g++-2.95.2',
-    'i686_Linux-2.2.14_g++-2.95.2',
-    'sparc_SunOS-5.6_g++-2.95.2',
-    'sparc_SunOS-5.7_g++-2.95.2',
-    'sparc_SunOS-5.8_g++-2.95.2',
-    'mips_IRIX-6.5_g++-2.95.2',
-    'mips_IRIX-6.5_g++-fsquangle-2.95.2',
-    'i686_Linux-2.0.36_g++-2.8.1',
-    'sparc_SunOS-5.6_g++-2.8.1',
-    'mips_IRIX64-6.5_CC-n32-7.30',
-    'sparc_SunOS-5.6_CC-5.0',
-    'i586_CYGWIN95-4.0-21.0_CL.EXE-12.00.8168',
-    'i686_CYGWINNT-4.0-20.1_CL.EXE-12.00.8168',
-    'i686_CYGWINNT-4.0-21.0_CL.EXE-12.00.8168',
-    'i686_CYGWINNT-5.0-1.1.0-0.17-3-2_CL.EXE-12.00.8804',
-    'i686_CYGWINNT-5.0-1.1.4-0.26-3-2_CL.EXE-12.00.8804',
-    'i686_CYGWINNT-4.0-20.1_bcc32.exe-5.4',
-    'i686_CYGWINNT-4.0-21.0_bcc32.exe-5.4',
-    'i686_CYGWINNT-4.0-20.1_bcc32.exe-5.5',
-    'i686_CYGWINNT-4.0-21.0_bcc32.exe-5.5',
-    'i686_CYGWINNT-5.0-1.1.4-0.26-3-2_bcc32.exe-5.5.1',
-    'sparc_SunOS-5.7_KCC',
-    'sparc_SunOS-5.7_KCC-4.0a',
-    'sparc_SunOS-5.8_KCC-4.0a',
-);
+sub init_known_platforms()
+{
+    my ($short_name, $full_name);
+    open(PLATFORMS,'known_platforms') or die;
+    @known_platforms = ();
+    while(<PLATFORMS>) {
+        ($short_name, $full_name) =split;
+	push(@known_platforms,$full_name);
+    	$platform_short_names{$full_name} = $short_name;
+    }
+    close(PLATFORMS);
+}
 
 main();

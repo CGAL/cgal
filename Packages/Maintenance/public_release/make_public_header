@@ -159,7 +159,8 @@ sub check_and_update_2($$$)
 	print FILE_CHECKS "Header of $filename does not end.\n";
 	return 0;
     }
-    print TEMPFILE '// email         : cgal@cs.uu.nl',"\n//\n";
+    print TEMPFILE '// email         : contact@cgal.org',"\n";
+    print TEMPFILE '// www           : http://www.cgal.org',"\n//\n";
     print TEMPFILE "// ", '=' x 70,"\n";
 
 

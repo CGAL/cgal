@@ -43,12 +43,12 @@ sub remove_old_releases(@)
 sub remove_old_testresults(@)
 {
     chdir $TestresultDir;
-    my $old_versions;
+    my @old_versions;
     while ((${Version_A},${Version_B},${Version_C}) = splice(@_,0,3)) {
-        $old_versions .= " " . make_version(${Version_A},${Version_B},${Version_C});
+        push(@old_versions, make_version(${Version_A},${Version_B},${Version_C}));
     }
-    if ($old_versions) {
-        system("./empty_dir",$old_versions);
+    if (@old_versions) {
+        system("./empty_dir",@old_versions);
     }
 }
 

@@ -7,7 +7,7 @@ $ENV{PATH}=
 
 my $scriptsdir = "/projects/CGAL/admin_scripts";
 my $mail_prog="$scriptsdir/send_cgal_mail";
-my $unpack_dir_base= "/users/geert/CGAL/testresults";
+my $unpack_dir_base= "/tmp";
 my $unpack_dir;
 my $testresult_dir = "/users/www/CGAL/Members/Develop/testsuite";
 #my $testresult_dir = "/users/geert/tmp/tr";
