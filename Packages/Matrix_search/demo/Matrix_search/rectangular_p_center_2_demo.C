@@ -57,6 +57,9 @@
 #ifndef CGAL_ALGORITHM_H
 #include <CGAL/algorithm.h>
 #endif // CGAL_ALGORITHM_H
+#ifndef CGAL_TIMER_H
+#include <CGAL/Timer.h>
+#endif // CGAL_TIMER_H
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -85,6 +88,7 @@ using CGAL::Istream_iterator;
 using CGAL::Ostream_iterator;
 using CGAL::set_pretty_mode;
 using CGAL::cgalize;
+using CGAL::Timer;
 using CGAL::BLUE;
 using CGAL::RED;
 using CGAL::ORANGE;
@@ -191,21 +195,6 @@ typedef Istream_iterator< Point, leda_window>
   Istream_iterator_point;
 
 
-
-#include <ctime>
-static time_t Measure;
-static long long int measure;
-#define MEASURE(comm) \
-Measure = clock(); \
-  comm; \
-  measure = (long long int)((float)(clock() - Measure) \
-  * 1000 / CLOCKS_PER_SEC); \
-    cerr << "[time: " << measure << " msec]\n";
-#define MEASURE_NO_OUTPUT(comm) \
-Measure = clock(); \
-  comm; \
-  measure = (long long int)((float)(clock() - Measure) \
-  * 1000 / CLOCKS_PER_SEC);
 
 // function class to construct a box
 // around a point p with radius r
@@ -328,14 +317,16 @@ main(int argc, char* argv[])
       W << GREEN
         << CGAL::bounding_box_2(input_points.begin(), input_points.end());
 #endif // CGAL_PCENTER_NO_SHOW
-      MEASURE(
-        rectangular_p_center_2(
-          input_points.begin(),
-          input_points.end(),
-          back_inserter(centers),
-          result,
-          number_of_clusters);
-        )
+      Timer t;
+      t.start();
+      rectangular_p_center_2(
+        input_points.begin(),
+        input_points.end(),
+        back_inserter(centers),
+        result,
+        number_of_clusters);
+      t.stop();
+      cout << "[time: " << t.time() << " msec]" << endl;
       int number_of_piercing_points(centers.size());
       cerr << "Finished with diameter " << result
            << " and " << number_of_piercing_points

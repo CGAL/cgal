@@ -54,6 +54,9 @@
 #ifndef CGAL_RANDOM_CONVEX_SET_2_H
 #include <CGAL/random_convex_set_2.h>
 #endif // CGAL_RANDOM_CONVEX_SET_2_H
+#ifndef CGAL_TIMER_H
+#include <CGAL/Timer.h>
+#endif // CGAL_TIMER_H
 #ifndef CGAL_IO_LEDA_WINDOW_H
 #include <CGAL/IO/leda_window.h>
 #endif // CGAL_IO_LEDA_WINDOW_H
@@ -63,6 +66,7 @@
 #include <algorithm>
 
 using CGAL::cgalize;
+using CGAL::Timer;
 using CGAL::has_smaller_dist_to_point;
 using CGAL::RED;
 using std::back_inserter;
@@ -97,22 +101,7 @@ typedef PointCont::const_iterator                 Vertex_const_iterator;
 typedef vector< Vertex_iterator >                 Vertex_iteratorCont;
 typedef Vertex_iteratorCont::iterator             Vertex_iteratorIter;
 
-#ifdef EXTREMAL_POLYGON_MEASURE
-#ifndef CGAL_PROTECT_CTIME
-#include <ctime>
-#define CGAL_PROTECT_CTIME
-#endif
-static time_t Measure;
-static long long int measure;
-#define MEASURE(comm) \
-  Measure = clock(); \
-  comm; \
-  measure = \
-    (long long int)((float)(clock() - Measure) * 1000 / CLOCKS_PER_SEC); \
-    cout << "[time: " << measure << " msec]" << endl;
-#else
-#define MEASURE(comm) comm
-#endif
+
 void
 wait_for_button_release( leda_window& W)
 {
@@ -157,7 +146,7 @@ main()
 
   PointCont points;
   Polygon p;
-  bool polygon_changed( false);
+  bool polygon_changed(false);
 
   for (;;) {
     if (polygon_changed) {
@@ -205,17 +194,25 @@ main()
     
     
 
-    if ( compute_mode != 1) {
+    if (compute_mode != 1) {
       // compute maximum area inscribed k-gon:
-      k = max( 3, k);
+      k = max(3, k);
       PointCont k_gon;
-      if ( p.size() >= 3) {
-        MEASURE(maximum_area_inscribed_k_gon(
+      if (p.size() >= 3) {
+#ifdef EXTREMAL_POLYGON_MEASURE
+        Timer t;
+        t.start();
+#endif // EXTREMAL_POLYGON_MEASURE
+        maximum_area_inscribed_k_gon(
           p.begin(),
           p.end(),
           k,
-          back_inserter( k_gon));)
-        W.set_fg_color( leda_green);
+          back_inserter(k_gon));
+#ifdef EXTREMAL_POLYGON_MEASURE
+        t.stop();
+        cout << "[time: " << t.time() << " msec]" << endl;
+#endif // EXTREMAL_POLYGON_MEASURE
+        W.set_fg_color(leda_green);
         if ( !p.empty()) {
           PointIter i( k_gon.begin());
           while ( ++i != k_gon.end())
@@ -224,22 +221,30 @@ main()
         } // if ( !p.empty())
       } // if ( p.size() >= 3)
     } // if ( compute_mode != 1)
-    if ( compute_mode != 0) {
+    if (compute_mode != 0) {
       // compute maximum perimeter inscribed k-gon:
       PointCont k_gon;
+#ifdef EXTREMAL_POLYGON_MEASURE
+      Timer t;
+      t.start();
+#endif // EXTREMAL_POLYGON_MEASURE
 #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
-      MEASURE(maximum_perimeter_inscribed_k_gon(
+      maximum_perimeter_inscribed_k_gon(
         Vertex_circulator( &p),
         Vertex_circulator( &p),
         k,
-        back_inserter( k_gon));)
+        back_inserter( k_gon));
 #else
-      MEASURE(maximum_perimeter_inscribed_k_gon(
+      maximum_perimeter_inscribed_k_gon(
         p.begin(),
         p.end(),
         k,
-        back_inserter( k_gon));)
+        back_inserter( k_gon));
 #endif
+#ifdef EXTREMAL_POLYGON_MEASURE
+      t.stop();
+      cout << "[time: " << t.time() << " msec]" << endl;
+#endif // EXTREMAL_POLYGON_MEASURE
       W.set_fg_color( leda_orange);
       if ( !p.empty()) {
         PointIter i( k_gon.begin());
