@@ -579,7 +579,7 @@ min_rectangle_2(ForwardIterator f,
          ForwardIterator l,
          OutputIterator o)
 {
-  typedef std::iterator_traits< ForwardIterator >::value_type VT;
+  typedef typename std::iterator_traits< ForwardIterator >::value_type VT;
   typedef typename VT::R R;
   Min_quadrilateral_default_traits_2< R > t;
   return min_rectangle_2(f, l, o, t);
@@ -600,7 +600,7 @@ min_parallelogram_2(ForwardIterator f,
          ForwardIterator l,
          OutputIterator o)
 {
-  typedef std::iterator_traits< ForwardIterator >::value_type VT;
+  typedef typename std::iterator_traits< ForwardIterator >::value_type VT;
   typedef typename VT::R R;
   Min_quadrilateral_default_traits_2< R > t;
   return min_parallelogram_2(f, l, o, t);
@@ -621,7 +621,7 @@ min_strip_2(ForwardIterator f,
          ForwardIterator l,
          OutputIterator o)
 {
-  typedef std::iterator_traits< ForwardIterator >::value_type VT;
+  typedef typename std::iterator_traits< ForwardIterator >::value_type VT;
   typedef typename VT::R R;
   Min_quadrilateral_default_traits_2< R > t;
   return min_strip_2(f, l, o, t);
