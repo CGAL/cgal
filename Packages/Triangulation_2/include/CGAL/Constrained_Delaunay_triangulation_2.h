@@ -91,7 +91,7 @@ public:
   Constrained_Delaunay_triangulation_2(InputIterator first,
 			      InputIterator last,
 			      const Gt& gt=Gt() )
-     : Constrained_triangulation(gt)
+      : Constrained_triangulation(gt)
   {
     while(first != last){
           insert((*first).first, (*first).second);

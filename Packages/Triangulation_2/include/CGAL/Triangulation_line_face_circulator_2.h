@@ -318,7 +318,7 @@ Triangulation_line_face_circulator_2(const Point& pp,
   //begin the walk at face ff which has to contain pp
 {
   CGAL_triangulation_precondition(_tr->is_infinite(ff) ||
-				  _tr->oriented_side(ff,p) != ON_NEGATIVE_SIDE);
+			      _tr->oriented_side(ff,p) != ON_NEGATIVE_SIDE);
   int j;
   if(_tr->is_infinite(*this)){
     *this  = Line_face_circulator(p, q, t);

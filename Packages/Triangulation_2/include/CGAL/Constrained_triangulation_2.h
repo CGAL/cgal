@@ -124,13 +124,13 @@ public:
   Vertex_handle find_conflicts(Vertex_handle va, 
 			       Vertex_handle vb,
 			       Vertex_handle vaa,
+			       List_faces & conflicts,
 			       List_edges & list_ab, 
 			       List_edges & list_ba,
 			       List_edges & new_edges,
 			       List_vertices & new_vertices);
-  void triangulate(List_edges & list_edges, List_faces & faces_to_be_removed); 
+  void triangulate(List_edges & list_edges); 
   void triangulate(List_edges & list_edges, 
-		   List_faces & faces_to_be_removed, 
 		   List_edges & new_edges);
 
     class Less_edge 
@@ -432,22 +432,18 @@ insert(const Vertex_handle & va,
     else {
       // ab does not contain an edge of t incident to a
       // finds all triangles intersected by ab (in conflict)
-
+      List_faces conflicts;
       List_edges conflict_boundary_ab, conflict_boundary_ba;
       vbb = find_conflicts(va, vb, vaa,
+			   conflicts,
 			   conflict_boundary_ab,conflict_boundary_ba,
 			   new_edges, new_vertices);
 
       // skip if the lists are empty : the first crossed edge is a constraint
       if ( !conflict_boundary_ab.empty() ) {
-	// removes the triangles in conflict and creates the new ones
-	triangulate(conflict_boundary_ab, faces_to_be_removed, new_edges);
-	faces_to_be_removed.pop_back(); 
-	//to avoid repetitions in faces_to_be_removed
-	triangulate(conflict_boundary_ba, faces_to_be_removed, new_edges);
-	faces_to_be_removed.pop_back(); 
-	//to avoid repetitions in faces_to_be_removed
-
+	triangulate(conflict_boundary_ab, new_edges);
+	triangulate(conflict_boundary_ba, new_edges);
+	
 	// the two faces that share edge ab are neighbors
 	// their common edge ab is a constraint
 	fl=(*conflict_boundary_ab.begin()).first;
@@ -458,10 +454,10 @@ insert(const Vertex_handle & va,
 	fr->set_constraint(2, true);
 	i=2;
 
-	// delete faces to be removed
-	while( ! faces_to_be_removed.empty()){
-	  fl = faces_to_be_removed.front();
-	  faces_to_be_removed.pop_front();
+	while( ! conflicts.empty()) {
+	  fl = conflicts.front();
+	  std::cerr << "a detruire " << &(*fl) << std::endl;
+	  conflicts.pop_front();
 	  delete_face(fl);
 	}
       }
@@ -532,7 +528,9 @@ Constrained_triangulation_2<Gt,Tds>::Vertex_handle
 Constrained_triangulation_2<Gt,Tds>::
 find_conflicts(Vertex_handle va, Vertex_handle  vb,
 	       Vertex_handle vaa,
-	       List_edges & list_ab, List_edges & list_ba,
+	       List_faces & conflicts,
+	       List_edges & list_ab, 
+	       List_edges & list_ba,
 	       List_edges & new_edges,
 	       List_vertices & new_vertices)
   // finds all triangles intersected the current part of constraint ab
@@ -589,6 +587,7 @@ find_conflicts(Vertex_handle va, Vertex_handle  vb,
 
   list_ab.push_back(Edge(lf, lf->index(current_face)));
   list_ba.push_front(Edge(rf, rf->index(current_face)));
+  conflicts.push_front(current_face);
   
   // init
   previous_face=current_face; 
@@ -635,7 +634,8 @@ find_conflicts(Vertex_handle va, Vertex_handle  vb,
 //       }
 //       else {
       assert( !current_face->is_constrained(i1));
-      lf= current_face->neighbor(i2);	
+      lf= current_face->neighbor(i2);
+      conflicts.push_front(current_face);
       if (orient == LEFTTURN) 
 	list_ab.push_back(Edge(lf, lf->index(current_face)));
       else // orient == RIGHTTURN
@@ -650,6 +650,7 @@ find_conflicts(Vertex_handle va, Vertex_handle  vb,
   }
     
   // last triangle (having vbb as a vertex)
+  conflicts.push_front(current_face);
   lf= current_face->neighbor(cw(ind));
   list_ab.push_back(Edge(lf, lf->index(current_face))); 
   rf= current_face->neighbor(ccw(ind));
@@ -661,7 +662,7 @@ find_conflicts(Vertex_handle va, Vertex_handle  vb,
 template < class Gt, class Tds >
 void
 Constrained_triangulation_2<Gt,Tds>::
-triangulate(List_edges & list_edges, List_faces & faces_to_be_removed)
+triangulate(List_edges & list_edges)
   // triangulates the  polygon whose boundary consists of list_edges
   // plus the edge ab joining the two endpoints of list_edges
   // the orientation of the polygon (as provided by list_edges) must
@@ -672,21 +673,19 @@ triangulate(List_edges & list_edges, List_faces & faces_to_be_removed)
   // takes linear time
 {
   List_edges new_edges;
-  triangulate(list_edges, faces_to_be_removed, new_edges);
+  triangulate(list_edges, new_edges);
 }
 
 template < class Gt, class Tds >
 void
 Constrained_triangulation_2<Gt,Tds>::
-triangulate(List_edges & list_edges, List_faces &
-	    faces_to_be_removed, List_edges & new_edges)
+triangulate(List_edges & list_edges,  List_edges & new_edges)
   // triangulates the  polygon whose boundary consists of list_edges
   // plus the edge ab joining the two endpoints of list_edges
   // the orientation of the polygon (as provided by list_edges) must
   // be cw
   // the edges of list_edges are assumed to be edges of a
   // triangulation that will be updated by the procedure
-  // the faces intersecting ab are put in the list faces_to_be_removed
   // the edges that are created are put in list new_edges
   // takes linear time
 {
@@ -713,8 +712,9 @@ triangulate(List_edges & list_edges, List_faces &
       // in case n1 is no longer a triangle of the new triangulation
       if (!((n1->neighbor(ind1)).is_null())) {
 	n=n1->neighbor(ind1);
-	faces_to_be_removed.push_back(n);
-	ind=n1->mirror_index(ind1); 
+	//ind=n1->mirror_index(ind1); 
+	// mirror_index does not work in this case
+	ind = cw(n->index(n1->vertex(cw(ind1))));
 	n1=n->neighbor(ind); 
 	ind1= n->mirror_index(ind);
       }
@@ -723,8 +723,9 @@ triangulate(List_edges & list_edges, List_faces &
       // in case n2 is no longer a triangle of the new triangulation
       if (!((n2->neighbor(ind2)).is_null())) {
 	n=n2->neighbor(ind2); 
-	faces_to_be_removed.push_back(n);
-	ind=n2->mirror_index(ind2);
+	// ind=n2->mirror_index(ind2);
+	// mirror_index does not work in this case
+	ind = cw(n->index(n2->vertex(cw(ind2))));
 	n2=n->neighbor(ind); 
 	ind2= n->mirror_index(ind);
       }

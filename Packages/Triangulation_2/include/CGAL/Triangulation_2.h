@@ -1756,95 +1756,124 @@ Triangulation_2<Gt, Tds>::
 oriented_side(const Point &p0, const Point &p1,
 	      const Point &p2, const Point &p) const
 {
-  // return position of point p with respect to triangle p0p1p2
+  // return position of point p with respect to the oriented triangle p0p1p2
   // depends on the orientation of the vertices
-  Orientation o1 = orientation(p0, p1, p),
-              o2 = orientation(p1, p2, p),
-              o3 = orientation(p2, p0, p),
-              ot = orientation(p0, p1, p2);
+  Bounded_side bs=bounded_side(p0,p1,p2,p);
+  if (bs == ON_BOUNDARY) return ON_ORIENTED_BOUNDARY;
+  Orientation      ot = orientation(p0, p1, p2);
+  if (bs == ON_BOUNDED_SIDE)
+    return (ot == LEFTTURN) ? ON_POSITIVE_SIDE : ON_NEGATIVE_SIDE;
+  // bs == ON_UNBOUNDED_SIDE
+  return (ot == LEFTTURN) ? ON_NEGATIVE_SIDE : ON_POSITIVE_SIDE;
+}
 
-        if (o1 == COLLINEAR ||
-            o2 == COLLINEAR ||
-            o3 == COLLINEAR)  {
-            if ((o1 == COLLINEAR &&
-                 collinear_between(p0, p, p1)) ||
-                (o2 == COLLINEAR &&
-                 collinear_between(p1, p, p2)) ||
-                (o3 == COLLINEAR &&
-                 collinear_between(p2, p, p0)))
-                {
-                return  ON_ORIENTED_BOUNDARY;
-            }
-                // for ot == ON_ORIENTED_BOUNDARY the following also
-                // does the right thing:
-                return (ot == LEFTTURN) ? ON_POSITIVE_SIDE
-                                             : ON_NEGATIVE_SIDE;
-            }
-        if (ot == RIGHTTURN)
-            {
-                if (o1 == RIGHTTURN &&
-                    o2 == RIGHTTURN &&
-                    o3 == RIGHTTURN)
-                    {
-                        return ON_NEGATIVE_SIDE;
-                    }
-                return ON_POSITIVE_SIDE;
-            }
-        if (o1 == LEFTTURN &&
-            o2 == LEFTTURN &&
-            o3 == LEFTTURN)
-            {
-                return ON_POSITIVE_SIDE;
-            }
-        return ON_NEGATIVE_SIDE;
-    }
+
+
+//   if (o1 == COLLINEAR){
+//     if (o2 == COLLINEAR ||  o3 == COLLINEAR) return ON_ORIENTED_BOUNDARY;
+//     if (collinear_between(p0, p, p1))        return ON_ORIENTED_BOUNDARY;
+//     return (ot == LEFTTURN) ? ON_POSITIVE_SIDE : ON_NEGATIVE_SIDE; 
+//   }
+
+//   if (o2 == COLLINEAR){
+//     if (o3 == COLLINEAR)                     return ON_ORIENTED_BOUNDARY;
+//     if (collinear_between(p1, p, p2))        return ON_ORIENTED_BOUNDARY;
+//     return (ot == LEFTTURN) ? ON_NEGATIVE_SIDE : ON_POSITIVE_SIDE;
+//   }
+
+//   if (o3 == COLLINEAR){
+//     if (collinear_between(p2, p, p0))        return ON_ORIENTED_BOUNDARY;
+//     return (ot == LEFTTURN) ? ON_NEGATIVE_SIDE : ON_POSITIVE_SIDE;
+//   }
+
+//   // from here none o1, o2 and o3 are known to be non null
+//   if (o1== ot && o2==ot && o3==ot)  return ON_POSITIVE_SIDE;
+//   return ON_NEGATIVE_SIDE;
+// }
+
+
+//         if (o1 == COLLINEAR ||
+//             o2 == COLLINEAR ||
+//             o3 == COLLINEAR)  {
+//             if ((o1 == COLLINEAR &&
+//                  collinear_between(p0, p, p1)) ||
+//                 (o2 == COLLINEAR &&
+//                  collinear_between(p1, p, p2)) ||
+//                 (o3 == COLLINEAR &&
+//                  collinear_between(p2, p, p0)))
+//                 {
+//                 return  ON_ORIENTED_BOUNDARY;
+//             }
+//                 // for ot == ON_ORIENTED_BOUNDARY the following also
+//                 // does the right thing:
+//                 return (ot == LEFTTURN) ? ON_POSITIVE_SIDE
+//                                              : ON_NEGATIVE_SIDE;
+//             }
+//         if (ot == RIGHTTURN)
+//             {
+//                 if (o1 == RIGHTTURN &&
+//                     o2 == RIGHTTURN &&
+//                     o3 == RIGHTTURN)
+//                     {
+//                         return ON_NEGATIVE_SIDE;
+//                     }
+//                 return ON_POSITIVE_SIDE;
+//             }
+//         if (o1 == LEFTTURN &&
+//             o2 == LEFTTURN &&
+//             o3 == LEFTTURN)
+//             {
+//                 return ON_POSITIVE_SIDE;
+//             }
+//         return ON_NEGATIVE_SIDE;
+//    }
 
 template <class Gt, class Tds >
 Bounded_side
 Triangulation_2<Gt, Tds>::
 bounded_side(const Point &p0, const Point &p1,
-                 const Point &p2, const Point &p) const
+	     const Point &p2, const Point &p) const
 {
   // return position of point p with respect to triangle p0p1p2
   Orientation o1 = orientation(p0, p1, p),
-        o2 = orientation(p1, p2, p),
-        o3 = orientation(p2, p0, p),
-        ot = orientation(p0, p1, p2);
+    o2 = orientation(p1, p2, p),
+    o3 = orientation(p2, p0, p),
+    ot = orientation(p0, p1, p2);
+  CGAL_triangulation_precondition( ot != COLLINEAR);
 
-      if(o1 == COLLINEAR ||
-         o2 == COLLINEAR ||
-         o3 == COLLINEAR)
-        {
-          if ((o1 == COLLINEAR &&
-               collinear_between(p0, p, p1)) ||
-              (o2 == COLLINEAR &&
-               collinear_between(p1, p, p2)) ||
-              (o3 == COLLINEAR &&
-               collinear_between(p2, p, p0)))
-            {
-              return  ON_BOUNDARY;
-            }
-          return ON_UNBOUNDED_SIDE;
-        }
-      if (ot == RIGHTTURN)
-        {
-          if(o1==RIGHTTURN &&
-             o2==RIGHTTURN &&
-             o3==RIGHTTURN)
-            {
-              return ON_BOUNDED_SIDE;
-            }
-          return ON_UNBOUNDED_SIDE;
-        }
-      if (o1 == LEFTTURN &&
-          o2 == LEFTTURN &&
-          o3 == LEFTTURN)
-        {
-          return ON_BOUNDED_SIDE;
-        }
-      return ON_UNBOUNDED_SIDE;
-    }
+  if (o1 == COLLINEAR){
+    if (o2 == COLLINEAR ||  o3 == COLLINEAR) return ON_BOUNDARY;
+    if (collinear_between(p0, p, p1))        return ON_BOUNDARY;
+    return ON_UNBOUNDED_SIDE;
+  }
 
+  if (o2 == COLLINEAR){
+    if (o3 == COLLINEAR)                     return ON_BOUNDARY;
+    if (collinear_between(p1, p, p2))        return ON_BOUNDARY;
+    return ON_UNBOUNDED_SIDE;
+  }
+
+  if (o3 == COLLINEAR){
+    if (collinear_between(p2, p, p0))        return ON_BOUNDARY;
+    return ON_UNBOUNDED_SIDE;
+  }
+
+// if(o1 == COLLINEAR ||  o2 == COLLINEAR ||  o3 == COLLINEAR) {
+//     if ((o1 == COLLINEAR &&
+// 	 collinear_between(p0, p, p1)) ||
+// 	(o2 == COLLINEAR &&
+// 	 collinear_between(p1, p, p2)) ||
+// 	(o3 == COLLINEAR &&
+// 	 collinear_between(p2, p, p0))) {
+//       return  ON_BOUNDARY;
+//     }
+//     return ON_UNBOUNDED_SIDE;
+//   }
+
+  // from here none ot, o1, o2 and o3 are known to be non null
+    if (o1== ot && o2==ot && o3==ot)  return ON_BOUNDED_SIDE;
+    return ON_UNBOUNDED_SIDE;
+}
 
 
 template <class Gt, class Tds >
