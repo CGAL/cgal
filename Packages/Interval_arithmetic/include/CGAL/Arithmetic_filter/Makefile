@@ -15,6 +15,8 @@ OBJECTS = predicates_on_ftC2.h \
           predicates/sign_of_determinant.h \
           predicates/Regular_triangulation_ftC2.h \
           predicates/Regular_triangulation_rtH2.h \
+          predicates/Regular_triangulation_ftC3.h \
+          predicates/Regular_triangulation_rtH3.h \
           predicates/in_smallest_orthogonalcircle_ftC2.h
 
 #### Don't touch below.
