@@ -1,4 +1,3 @@
-#error Remove redundant calls
 // ======================================================================
 //
 // Copyright (c) 1999 The CGAL Consortium
