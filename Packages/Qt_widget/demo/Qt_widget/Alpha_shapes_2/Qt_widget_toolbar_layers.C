@@ -25,7 +25,6 @@
 
 // icons
 #include <CGAL/IO/pixmaps/points.xpm>
-#include <CGAL/IO/pixmaps/nearest_vertex.xpm>
 #include <CGAL/IO/pixmaps/voronoi.xpm>
 #include <CGAL/IO/pixmaps/triangulation.xpm>
 #include <CGAL/IO/pixmaps/mouse_coord.xpm>

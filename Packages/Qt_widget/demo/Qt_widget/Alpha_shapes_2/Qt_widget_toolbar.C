@@ -25,9 +25,7 @@
 
 // icons
 #include <CGAL/IO/pixmaps/point.xpm>
-#include <CGAL/IO/pixmaps/movepoint.xpm>
 #include <CGAL/IO/pixmaps/arrow.xpm>
-#include <CGAL/IO/pixmaps/line.xpm>
 
 
 namespace CGAL {
