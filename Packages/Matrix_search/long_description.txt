@@ -4,6 +4,12 @@
 
 
 //---------------------------------------------------------------------
+//	revision 151
+//---------------------------------------------------------------------
+
+ALL : Fixed sunpro problems.
+
+//---------------------------------------------------------------------
 //	revision 150
 //---------------------------------------------------------------------
 
@@ -13,35 +19,7 @@ ALL : Some fixes for sunpro 5.3.
 //	revision 149
 //---------------------------------------------------------------------
 
-ALL : moved Optimisation_ref directory up one level
-DOCS: Initial revision
-DOCS: Shorter filenames due to problems on the stupid platform.
-DOCS: Minimum_enclosing_* -> Min_*
-DOCS: maximum_*_inscribed_k_gon -> maximum_*_inscribed_k_gon_2
-DOCS: extremal_polygon -> extremal_polygon_2
-DOCS: all_furthest_neighbors -> all_furthest_neighbors_2
-DOCS: Changed everything acc. to the new manual structure.
-DOCS: Uniform traits classes documented.
-DOCS: added some return 0;
-DOCS: MSVBC workaround for TYPENAME_BUGs.
-DOCS: fixed "cal" problem with html converter
-DOCS: fixed preconditions in replace_column (reported by Mariette).
-DOCS: use namespace std and CGAL
-DOCS: use standard header files
-DOCS: Matrix_search
-DOCS: Use new functor adaptors.
-DOCS: Worked over traits classes -> Kernel Traits.
-DOCS: Changed concept names.
-DOCS: Added help button to pcenter demo.
-DOCS: Restricted options in pcenter demo to reasonable values.
-DOCS: Fixed warning on gcc3.
-DOCS: Added some indexing for terms.
-DOCS: Few minor fixes in documentation.
-DOCS: Fixed \ccPureGlobalScope.
-DOCS: Added distance_object() to afn-spec.
-DOCS: some minor changes to prevent warnings for gcc -Wall.
-DOCS: R1.7
-DOCS: noheader -> nohead.
+GLOB: moved Optimisation_ref directory up one level
 
 //---------------------------------------------------------------------
 //	revision 148
@@ -55,17 +33,6 @@ SRC : Added typedefs for Construct_iso_rectangle and Construct_vertex.
 
 ALL : Use new functor adaptors.
 ALL : Worked over traits classes -> Kernel Traits.
-DOCS: -> nohead, due to long filename problems on the stupid platform.
-DOCS: Uniform traits classes documented.
-ALL : added some return 0;
-ALL : MSVBC workaround for TYPENAME_BUGs.
-DOCS: fixed "cal" problem with html converter
-DOCS: fixed preconditions in replace_column (reported by Mariette).
-ALL : use namespace std and CGAL
-ALL : use standard header files
-ALL : Initial revision
-ALL : Matrix_search
-DOCS: noheader -> nohead.
 SRC : Fixed warning on gcc3.
 SRC : Minimum_enclosing_* -> Min_*
 SRC : maximum_*_inscribed_k_gon -> maximum_*_inscribed_k_gon_2
@@ -92,11 +59,17 @@ SRC : Unified traits classes.
 SRC : Worked around some MSVC using-bugs.
 SRC : Added std:: to vector in several places in extremal_polygon_2.h.
 SRC : Removed CGAL::sqrt (now in double.h/leda_real.h).
+SRC : added some return 0;
+SRC : MSVBC workaround for TYPENAME_BUGs.
 SRC : New linear 2- and 3-center algorithm.
 SRC : added std:: in a number of places where it was missing
+SRC : use namespace std and CGAL
+SRC : use standard header files
 SRC : fix signed <-> unsigned comparison warning on gcc.
 SRC : some minor changes to prevent warnings for gcc -Wall.
 SRC : fixed a bug in Rectangle_partition::first_left_of.
+SRC : Initial revision
+SRC : Matrix_search
 
 //---------------------------------------------------------------------
 //	revision 145
@@ -116,14 +89,11 @@ ALL : Fixed warning on gcc3.
 //	revision 143
 //---------------------------------------------------------------------
 
-DOCS: Added some indexing for terms.
-DOCS: Few minor fixes in documentation.
 
 //---------------------------------------------------------------------
 //	revision 142
 //---------------------------------------------------------------------
 
-DOCS: Fixed \ccPureGlobalScope.
 
 //---------------------------------------------------------------------
 //	revision 141
@@ -133,7 +103,6 @@ ALL : Minimum_enclosing_* -> Min_*
 ALL : maximum_*_inscribed_k_gon -> maximum_*_inscribed_k_gon_2
 ALL : extremal_polygon -> extremal_polygon_2
 ALL : all_furthest_neighbors -> all_furthest_neighbors_2
-DOCS: Changed everything acc. to the new manual structure.
 
 //---------------------------------------------------------------------
 //	revision 140
@@ -181,7 +150,6 @@ SRC : Fixed more ledaing underscores.
 //	revision 133
 //---------------------------------------------------------------------
 
-DOCS: Added distance_object() to afn-spec.
 SRC : Fixed leading underscore names.
 SRC : Fixed bug in maximum_perimeter k-gon::min_k_gon.
 
@@ -238,7 +206,6 @@ TEST: Fixed some MSVC #ifdefs.
 //---------------------------------------------------------------------
 
 DEMO: Fixed a few things for VC++.
-DOCS: Uniform traits classes documented.
 SRC : Completely new four-center implementation.
 
 //---------------------------------------------------------------------
@@ -322,13 +289,11 @@ DEMO: Now nearest neighbor queries are done brute-force.
 //	revision 116
 //---------------------------------------------------------------------
 
-DOCS: fixed "cal" problem with html converter
 
 //---------------------------------------------------------------------
 //	revision 115
 //---------------------------------------------------------------------
 
-DOCS: fixed preconditions in replace_column (reported by Mariette).
 
 //---------------------------------------------------------------------
 //	revision 114
@@ -353,21 +318,6 @@ TEST: Added LONG_NAME_PROBLEM flags to makefile
 
 ALL : use namespace std and CGAL
 ALL : use standard header files
-DOCS: -> nohead, due to long filename problems on the stupid platform.
-DOCS: Minimum_enclosing_* -> Min_*
-DOCS: maximum_*_inscribed_k_gon -> maximum_*_inscribed_k_gon_2
-DOCS: extremal_polygon -> extremal_polygon_2
-DOCS: all_furthest_neighbors -> all_furthest_neighbors_2
-DOCS: Changed everything acc. to the new manual structure.
-DOCS: Uniform traits classes documented.
-DOCS: added some return 0;
-DOCS: MSVBC workaround for TYPENAME_BUGs.
-DOCS: fixed "cal" problem with html converter
-DOCS: fixed preconditions in replace_column (reported by Mariette).
-DOCS: Initial revision
-DOCS: moved Optimisation_ref directory up one level
-DOCS: Use new functor adaptors.
-DOCS: Worked over traits classes -> Kernel Traits.
 
 //---------------------------------------------------------------------
 //	revision 111
