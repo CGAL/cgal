@@ -77,6 +77,33 @@ public:
     }
     bool operator!=( const This& rb) const { return ! operator==(rb); }
 };
+
+class Random_double_in_interval : public Random_generator_base<double> {
+
+ public:
+  typedef Random_double_in_interval This;
+  Random_double_in_interval(double a = 1, Random& rnd = default_random)
+    // g is an input iterator creating points of type `P' uniformly
+    // distributed in the half-open square with side length a,
+    // centered around the origin, i.e. \forall p = `*g': -\frac{a}{2}
+    // <= p.x() < \frac{a}{2} and -\frac{a}{2} <= p.y() < \frac{a}{2}
+    // . Two random numbers are needed from `rnd' for each point.
+    : Random_generator_base<double>( a, rnd)
+    { 
+      this->d_item = this->d_range * (2 * this->_rnd.get_double() - 1.0);
+    }
+  
+  This& operator++() {
+    this->d_item = this->d_range * (2 * this->_rnd.get_double() - 1.0);
+    return *this;
+  }
+  This  operator++(int) {
+    This tmp = *this;
+    ++(*this);
+    return tmp;
+  }
+};
+
 CGAL_END_NAMESPACE
 #endif // CGAL_GENERATORS_H //
 // EOF //
