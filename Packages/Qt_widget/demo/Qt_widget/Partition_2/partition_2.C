@@ -144,6 +144,8 @@ public slots:
 
 private slots:
   void gen_poly(){
+    widget->set_window(-1.1, 1.1, -1.1, 1.1); 
+	// set the Visible Area to the Interval
     polygon.erase(polygon.vertices_begin(), polygon.vertices_end());
     CGAL::random_polygon_2(100,
 			   std::back_inserter(polygon),
@@ -174,17 +176,18 @@ private slots:
   {
     QMessageBox::aboutQt( this, my_title_string );
   }
-
   void new_window(){
     MyWindow *ed = new MyWindow(500, 500);
-    ed->setCaption("Layer");
+    ed->setCaption("View");
     ed->show();
+    ed->set_window(-1.1, 1.1, -1.1, 1.1);
     something_changed();
   }
 
   void timerDone()
   {
     if(old_state!=current_state){
+      widget->redraw();
       old_state = current_state;
     }
   }	
@@ -195,7 +198,7 @@ private slots:
     QString fileName = QFileDialog::getSaveFileName( "polygon.cgal", "Cgal files (*.cgal)", this );
     if ( !fileName.isNull() ) {                 // got a file name
       std::ofstream out(fileName);
-      out << std::setprecision(15);
+      //out << std::setprecision(15);
       CGAL::set_ascii_mode(out);
       out << polygon << std::endl;
     }
