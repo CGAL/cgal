@@ -1,3 +1,7 @@
+1.18 (31 July 2001)
+  - moved Partition_2_ref directory up one level
+  - renamed intro.tex file to avoid conflicts with other packages
+
 1.17 (26 July 2001)
     minor formatting changes
 
