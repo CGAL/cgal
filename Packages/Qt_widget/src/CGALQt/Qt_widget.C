@@ -340,18 +340,31 @@ Qt_widget& operator<<(Qt_widget& w, const Bbox_2& r)
   return w;
 }
 
-/********************************************
-*Ursu Radu coding ....
-*
-*********************************************/
+//
+//Radu Ursu coding ....
+//
+//-----------------------------------------------------
 void Qt_widget::attach_standard(Qt_widget_tool* tool) {
   if (has_standard_tool()) {
-    current_tool->detach();
-    emit(detached_standard_tool());
+    if(has_tool()) {
+      current_tool->detach();
+      emit(detached_standard_tool());
+      current_tool = tool;
+    } else {
+      current_tool->detach();
+      emit(detached_standard_tool());
+      current_tool = tool;
+      temp_pointer = NULL;      
+    }
+  } else {
+    if(has_tool()) {
+      temp_pointer = current_tool;
+      current_tool = tool;
+    } else {
+      current_tool = tool;
+    }
+    _has_standard_tool=true;
   }
-  temp_pointer = current_tool;
-  current_tool = tool;
-  _has_standard_tool=true;
   current_tool->attach(this);
 }
 
@@ -359,30 +372,48 @@ void Qt_widget::attach(Qt_widget_tool* tool) {
   if (has_standard_tool()) {
     current_tool->detach();
     emit(detached_standard_tool());
-    _has_standard_tool=false;
-    current_tool = temp_pointer;
-  }
-  if (has_tool()) {
-    current_tool->detach();
-    emit(detached_tool());
-  }
-  current_tool=tool;
-  _has_tool=true;
-  current_tool->attach(this);
+    if (has_tool()){
+      temp_pointer = NULL;
+      emit(detached_tool());
+    } else
+      _has_tool = true;
+    current_tool = tool;
+    _has_standard_tool = false;
+    current_tool->attach(this);
+  } else {
+    if (has_tool()) {
+      current_tool->detach();
+      emit(detached_tool());
+    } else 
+      _has_tool = true;
+    current_tool = tool;
+    current_tool->attach(this);
+  }//endif
 }
 void Qt_widget::detach_current_standard_tool()
 {
   if (has_standard_tool())
+  {
     current_tool->detach();
-  if(has_tool())
-    current_tool = temp_pointer;
-  _has_standard_tool = false;
+    _has_standard_tool = false;
+    if (has_tool())
+      current_tool = temp_pointer;
+    else
+      current_tool = NULL;
+  }
 };
 void Qt_widget::detach_current_tool()
 {
-  if (has_tool()) {
-    current_tool->detach();
-    //emit(detached_tool());
+  if(has_standard_tool()){
+    if(has_tool()){
+      temp_pointer->detach();
+      temp_pointer = NULL;
+    }
+  } else {
+    if(has_tool()){
+      current_tool->detach();
+      current_tool = NULL;
+    }
   }
   _has_tool = false;
 };
