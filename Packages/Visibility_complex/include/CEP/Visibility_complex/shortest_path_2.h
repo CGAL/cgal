@@ -262,7 +262,7 @@ __recover_path(_Edge_handle s , _Edge_handle t ,
 	if (finish.vertex() != 0) path.push_back(*finish.vertex());
 	finish = finish.prev();
     }
-    if (finish == start) copy(path.begin(),path.end(),result);
+    if (finish == start) std::copy(path.begin(),path.end(),result);
     return result;
 }
 
@@ -354,14 +354,14 @@ shortest_path_2(typename Visibility_complex_2<_Gtr,_It>::Disk_handle s,
     // Shortest path from eps to t ---------------------------------------------
     __shortest_path_2(eps,V);
     std::list<Vertex> pathp;
-    Exact_NT minp_ft = __recover_path(eps,t,back_inserter(pathp),V);
+    Exact_NT minp_ft = __recover_path(eps,t,std::back_inserter(pathp),V);
     // Shortest path from ems to t ---------------------------------------------
     __shortest_path_2(ems,V);
     std::list<Vertex> pathm;
-    Exact_NT minm_ft = __recover_path(ems,t,back_inserter(pathm),V);
+    Exact_NT minm_ft = __recover_path(ems,t,std::back_inserter(pathm),V);
     // Compare the two paths and return the smallest ---------------------------
-    if (minm_ft < minp_ft) copy(pathm.begin(),pathm.end(),result);
-    else                   copy(pathp.begin(),pathp.end(),result);
+    if (minm_ft < minp_ft) std::copy(pathm.begin(),pathm.end(),result);
+    else                   std::copy(pathp.begin(),pathp.end(),result);
     return result;
 }
 
@@ -401,7 +401,7 @@ all_shortest_path_2(InputIterator first, InputIterator last,
     int i = 0;
     for (typename std::vector<Disk_handle>::iterator eh  = points.begin(); 
 					       eh != points.end() ; ++eh , ++i) 
-	pft.push_back(__recover_path(ep,*eh,back_inserter(pathp[i]),V));
+	pft.push_back(__recover_path(ep,*eh,std::back_inserter(pathp[i]),V));
     // Shortest path from em to all points -------------------------------------
     __shortest_path_2(em,V);
     std::vector<std::list<Vertex> > pathm(points.size());
@@ -409,11 +409,11 @@ all_shortest_path_2(InputIterator first, InputIterator last,
     i = 0;
     for (typename std::vector<Disk_handle>::iterator eh  = points.begin(); 
 					       eh != points.end() ; ++eh , ++i) 
-	mft.push_back(__recover_path(em,*eh,back_inserter(pathm[i]),V));
+	mft.push_back(__recover_path(em,*eh,std::back_inserter(pathm[i]),V));
     // Returning shortest path to all points -----------------------------------
     for (unsigned int i = 0 ; i < points.size() ; i++) {
-	if (mft[i] < pft[i]) copy(pathm[i].begin(),pathm[i].end(),result);
-	else                 copy(pathp[i].begin(),pathp[i].end(),result);
+	if (mft[i] < pft[i]) std::copy(pathm[i].begin(),pathm[i].end(),result);
+	else                 std::copy(pathp[i].begin(),pathp[i].end(),result);
     }
     return result;
 }
