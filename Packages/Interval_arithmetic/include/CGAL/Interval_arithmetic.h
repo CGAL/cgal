@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (c) 1998 The CGAL Consortium
+// Copyright (c) 1998,1999 The CGAL Consortium
 //
 // This software and related documentation is part of an INTERNAL release
 // of the Computational Geometry Algorithms Library (CGAL). It is not
@@ -291,28 +291,12 @@ CGAL_Interval_nt_advanced::operator/ (const CGAL_Interval_nt_advanced& d) const
 inline
 CGAL_Interval_nt_advanced &
 CGAL_Interval_nt_advanced::operator+= (const CGAL_Interval_nt_advanced& d)
-{
-#ifdef CGAL_IA_DEBUG
-      CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
-#endif
-  // A pity: this compact "one line" notation is not ok for speed.
-  // return *this = *this + d;
-  inf += d.inf;
-  sup += d.sup;
-  return *this;
-}
+{ return *this = *this + d; }
 
 inline
 CGAL_Interval_nt_advanced &
 CGAL_Interval_nt_advanced::operator-= (const CGAL_Interval_nt_advanced& d)
-{ // return *this = *this - d;
-#ifdef CGAL_IA_DEBUG
-      CGAL_assertion(CGAL_FPU_get_rounding_mode() == CGAL_FPU_PLUS_INFINITY);
-#endif
-  inf += d.sup;
-  sup += d.inf;
-  return *this;
-}
+{ return *this = *this - d; }
 
 inline
 CGAL_Interval_nt_advanced &
@@ -656,6 +640,10 @@ CGAL_number_type_tag (CGAL_Interval_nt_advanced)
 
 #ifdef CGAL_FIXED_PRECISION_NT_H
 #include <CGAL/Interval_arithmetic/IA_Fixed.h>
+#endif
+
+#ifdef CGAL_QUOTIENT_H
+#include <CGAL/Interval_arithmetic/IA_Quotient.h>
 #endif
 
 template <class FT>
