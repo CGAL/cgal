@@ -171,7 +171,7 @@ public:
     FT x=static_cast<FT>(widget->x_real(e->x()));
     FT y=static_cast<FT>(widget->y_real(e->y()));
 
-    widget->new_object(make_object(Point(x, y)));
+    widget->new_object(CGAL::make_object(Point(x, y)));
   }
 
   void activating()
@@ -835,7 +835,7 @@ public slots:
       if(s.right(5) == ".poly")
 	{
 	  Mesh::Seeds seeds;
-	  read_poly(*mesh, f, std::back_inserter(seeds));
+	  CGAL::read_poly(*mesh, f, std::back_inserter(seeds));
 	  mesh->set_seeds(seeds.begin(), seeds.end(), false);
 	}
       else if(s.right(5) == ".data")
@@ -954,7 +954,7 @@ public slots:
         return;
       std::ofstream of(s);
       if(s.right(5) == ".poly")
-	write_poly(*mesh, of);
+	CGAL::write_poly(*mesh, of);
       else
 	write_constraints(*mesh, of);
     }
