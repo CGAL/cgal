@@ -13,7 +13,7 @@
 //
 // file          : include/CGAL/Orthogonal_priority_search.h
 // package       : ASPAS (3.12)
-// maintainer    : Hans Tangelder <hanst@cs.uu.nl>
+// maintainer    : Hans Tangelder <hanst@cs.uu.nl> 
 // revision      : 2.4 
 // revision_date : 2002/16/08 
 // authors       : Hans Tangelder (<hanst@cs.uu.nl>)

@@ -12,7 +12,7 @@
 // release_date  : $CGAL_Date: 2003/05/23 $
 //
 // file          : include/CGAL/Kd_tree_d_new.h
-// package       : ASPAS (3.12)
+// package       : ASPAS (3.12) 
 // maintainer    : Hans Tangelder <hanst@cs.uu.nl>
 // revision      : 2.4 
 // revision_date : 2003/02/01 
