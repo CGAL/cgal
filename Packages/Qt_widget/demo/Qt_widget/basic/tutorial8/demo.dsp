@@ -99,15 +99,7 @@ SOURCE=..\..\..\..\src\CGALQt\Qt_widget_layer.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\src\CGALQt\Qt_widget_standard_tool.C
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\..\..\src\CGALQt\Qt_widget_standard_toolbar.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\..\src\CGALQt\Qt_widget_tool.C
 # End Source File
 # Begin Source File
 
@@ -143,10 +135,6 @@ InputPath=..\..\..\..\include\CGAL\IO\Qt_widget_standard_toolbar.h
 
 !ENDIF 
 
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\..\include\CGAL\IO\Qt_Widget_tool.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"

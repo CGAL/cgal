@@ -43,11 +43,11 @@ public:
     std_toolbar = new CGAL::Qt_widget_standard_toolbar(widget, this);
     this->addToolBar(std_toolbar->toolbar(), Top, FALSE);
     
-    QToolBar  *tools_toolbar;
+    QToolBar  *layers_toolbar;
     layers_toolbar = new QToolBar("Tools", this, 
 				QMainWindow::Top, TRUE, "Tools");
     addToolBar(layers_toolbar, Top, FALSE);
-    get_point_button = new QToolButton(tools_toolbar, "Get Point");
+    get_point_button = new QToolButton(layers_toolbar, "Get Point");
     get_point_button->setPixmap(QPixmap( (const char**)point_xpm ));
     get_point_button->setToggleButton(TRUE);
     widget->attach(&v);
