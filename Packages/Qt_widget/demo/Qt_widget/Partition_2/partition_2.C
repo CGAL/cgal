@@ -236,27 +236,6 @@ private:
 };
 
 
-class MyThread : public QThread {
-public:
-  MyThread(){};
-  virtual void run(){
-    int	temp = 0;
-    char  **str;
-    QApplication app(temp, str);
-    app.setStyle( new QPlatinumStyle );
-    QPalette p( QColor( 250, 215, 100 ) );
-    app.setPalette( p, TRUE );
-
-    MyWindow win(800,800); // physical window size
-    app.setMainWidget(&win);
-    win.setCaption(my_title_string);
-    win.setMouseTracking(TRUE);
-    win.show();
-    app.exec();
-  };  
-};
-
-
 #include "partition_2.moc"
 
 int
@@ -268,9 +247,6 @@ main(int argc, char **argv)
   QPalette p( QColor( 250, 215, 100 ) );
   app.setPalette( p, TRUE );
   current_state = -1;
-  //MyThread  a;
-  //a.start();
-  //a.wait();
   
   MyWindow win(800,800); // physical window size
   app.setMainWidget(&win);
