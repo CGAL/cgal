@@ -2,12 +2,14 @@
   choose ?  Is it worth the complexity (benchmark first) ?
 - Why are the iterators friend in the ds_cell ?
 - coplanar_orientation()... faire marche arriere et recuperer l'ancienne
-  interface (ie sans Vector) ?
+  interface (ie sans Vector) ? cf T2D
 - remove() : ca plante dans le prog de test de la hierarchie... a investiguer.
   refaire marcher le vieux remove pour pouvoir tester (voire garder les deux
   versions si c'est mieux).
 - hierarchie : verifier que l'interface est bonne (ie tous les insert(*) sont
   interceptes...).  Documenter.
+- ameliorer user manual
+- TEST SUITE
 - Traits : mettre a jour la doc.
 - locate() : verifier que l'interface est la meme que dans T2D concernant la
   cellule de depart.  Plutot que prendre une cellule sur le bord, on peut
@@ -22,8 +24,12 @@
   chainees.
   Le flag temporaire pourrait aller dans un des bits -> sizeof(cell) == 32 :)
   NB: Ca serait bien de factoriser ce probleme avec T2D !!!
+- new Vertex
+- Tds::insert conflict pourrait etre utilisee pour T3D insert_outside_CH
+  (link() hat()...) -> virer les new cell (create_cell)
+- idem regular
 - Facet_circulator a l'air bugue (et lent) d'apres F&D quand on specifie une
-  facet de depart.  Est-ce qu'il y a besoin de stocker un TDS * ?  Stocker
+  facet de depart.  Est-ce qu'il y A besoin de stocker un TDS * ?  Stocker
   deux Vertex * plutot que deux ints, ca permet de gagner une Cell *, et
   d'etre plus rapide, non ?  Voila le code que Frank utilise a la place :
 
