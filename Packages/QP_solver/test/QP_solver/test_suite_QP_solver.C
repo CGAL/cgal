@@ -71,6 +71,7 @@ template<typename ET_,
 struct Rep {
 	typedef typename CGAL::QPE_transform_iterator_1< typename Matrix<IT_>::const_iterator, Begin<IT_> > Vector_iterator;
 	typedef typename Vector<IT_>::const_iterator Entry_iterator;
+	typedef IT_ Input_type;
 
 
     typedef  Vector_iterator  A_iterator;
@@ -154,7 +155,7 @@ void init_tag_names_table();
 bool read_tags(std::ifstream& from, 
 	std::map<std::string, char>& read_names_table);	
 
-void map_tags(std::ifstream& from, int verbose,
+void map_tags(std::ifstream& from, int verbose, int pricing_strategy_index,
 	const std::map<std::string, char>& read_names_table);
 	
 bool insert_name(const std::string& name, const char& value,
@@ -164,7 +165,15 @@ void error(const std::string& msg);
 
 void message(const std::string& msg, bool mode);
 
+void init_pricing_strat_abrev_table();
+
+int map_pricing_strategy_abrev(const std::string& abbrev);
+
+template <typename Rep>
+void set_pricing_strategy(CGAL::QPE_pricing_strategy<Rep>*& strat, int index);
+
 std::vector<std::string> tag_names_table(0);
+std::vector<std::string> pricing_strat_abrev_table(0);
 
 const bool debug = false;
 
@@ -190,64 +199,35 @@ template<typename ET,
 	typename Is_linear,
  	typename Is_symmetric,
 	typename Has_no_inequalities>
-bool doIt(int verbose, std::ifstream& from) {
-	typedef typename Input_type_selector<ET>::Input_type Input_type;
-	typedef Rep<ET, Input_type, Is_linear, Is_symmetric, Has_no_inequalities> Repr;
-	Matrix<Input_type>  A;
-	typename Repr::Row_type* row_types;
-	Vector<Input_type>  b;
-	Vector<Input_type>  c;
-	Matrix<Input_type>  D;
-	std::vector<int> rel;
-	CGAL::QPE_solver< Repr >              solver;
-	bool instance_read, sol_solver_feasible, sol_solver_optimal;	
-
-	instance_read = read_instance<Input_type>(from, A, rel, b, c, D);
-	if (instance_read) {
-		init_row_types<Repr>(rel, row_types);
-		solver.set_verbosity( verbose);
-		solver.set( A.size(), rel.size(),
-			typename Repr::Vector_iterator( A.begin(), Begin<Input_type>()),
-			b.begin(), c.begin(),
-			typename Repr::Vector_iterator( D.begin(), Begin<Input_type>()),
-			row_types);
-		CGAL::QPE_full_exact_pricing<Repr>  strategy;
-		solver.set_pricing_strategy( strategy);
-		solver.init();
-		solver.solve();
-		sol_solver_feasible = solver.is_solution_feasible();
-		std::cout << "feasible: " << sol_solver_feasible << std::endl;
-		sol_solver_optimal = solver.is_solution_optimal();
-		std::cout << "optimal: " << sol_solver_optimal << std::endl;
-		delete[] row_types;
-		return true;
-	} else {
-		error("could not read problem instance");
-		return false;
-	}
-}
- 
+bool doIt(int verbose, int pricing_strategy_index, std::ifstream& from);  
  
 
 int main( int argc, char** argv) {
+	init_tag_names_table();
+	init_pricing_strat_abrev_table();
 	int verbose = 0;
+	int pricing_strategy_index = pricing_strat_abrev_table.size();
 
-	if ( argc > 2) {
+	if ( argc > 3) {
 		verbose = atoi( argv[ 1]);
+		pricing_strategy_index = map_pricing_strategy_abrev(argv[ 2]);
+		if (pricing_strategy_index==pricing_strat_abrev_table.size()) {
+			return 1;
+		}
 	} else {
 		return 1;
 	}
-	init_tag_names_table();
 	std::map<std::string, char> read_names_table;
 	
-	for (int i = 2; i < argc; ++i) {
+	for (int i = 3; i < argc; ++i) {
 		std::ifstream from(argv[i]);
 		if (!from) {
 			std::cout << "could not open file: " << argv[i] << "\n";
 		} else {
 			std::cout << "processing file: " << argv[i] << "\n";
 			read_tags(from, read_names_table);
-			map_tags(from, verbose, read_names_table);
+			map_tags(from, verbose, pricing_strategy_index,
+				read_names_table);
 			from.close();
 		}
 	}
@@ -295,6 +275,52 @@ int main( int argc, char** argv) {
     
     return 0;
 }
+
+
+template<typename ET,
+	typename Is_linear,
+ 	typename Is_symmetric,
+	typename Has_no_inequalities>
+bool doIt(int verbose, int pricing_strategy_index, std::ifstream& from) {
+	typedef typename Input_type_selector<ET>::Input_type Input_type;
+	typedef Rep<ET, Input_type, Is_linear, Is_symmetric, Has_no_inequalities> Repr;
+	Matrix<Input_type>  A;
+	typename Repr::Row_type* row_types;
+	Vector<Input_type>  b;
+	Vector<Input_type>  c;
+	Matrix<Input_type>  D;
+	std::vector<int> rel;
+	CGAL::QPE_solver< Repr >              solver;
+	CGAL::QPE_pricing_strategy<Repr>*
+		    strat(static_cast<CGAL::QPE_pricing_strategy<Repr>*>(0));
+	bool instance_read, sol_solver_valid;	
+
+	instance_read = read_instance<Input_type>(from, A, rel, b, c, D);
+	if (instance_read) {
+		init_row_types<Repr>(rel, row_types);
+		solver.set_verbosity( verbose);
+		solver.set( A.size(), rel.size(),
+			typename Repr::Vector_iterator( A.begin(), Begin<Input_type>()),
+			b.begin(), c.begin(),
+			typename Repr::Vector_iterator( D.begin(), Begin<Input_type>()),
+			row_types);
+		set_pricing_strategy<Repr>(strat, pricing_strategy_index);	
+		//CGAL::QPE_full_exact_pricing<Repr>  strategy;
+		solver.set_pricing_strategy( *strat);
+		solver.init();
+		solver.solve();
+		sol_solver_valid = solver.is_solution_valid();
+		std::cout << "valid: " << sol_solver_valid << std::endl;
+		delete strat;
+		delete[] row_types;
+		return true;
+	} else {
+		error("could not read problem instance");
+		return false;
+	}
+}
+ 
+
 
 template<typename Rep>
 void init_row_types(std::vector<int>& rel,typename Rep::Row_type*& row_types) {
@@ -412,7 +438,7 @@ bool read_matrix(std::ifstream& from, int m, int n,
 	Matrix<T>& mat) {
 	
 	std::ostringstream msgstr; 
-	bool entry_read;	
+	bool entry_read = true;	
 	mat.assign( m, Vector<T>(n));
   	for (int row = 0; row < m; ++row) {
    		for (int col = 0; col < n; ++col) {
@@ -436,7 +462,7 @@ bool read_matrix_transposed(std::ifstream& from, int m, int n,
 	Matrix<T>& mat) {
 	
 	std::ostringstream msgstr; 
-	bool entry_read;
+	bool entry_read = true;
 	mat.assign( n, Vector<T>(m));
 	for (int row = 0; row < m; ++row) {
 		for (int col = 0; col < n; ++col) {
@@ -457,7 +483,7 @@ template<typename T>
 bool read_vector(std::ifstream& from, int length, Vector<T>& vec) {
 	
 	std::ostringstream msgstr;
-	bool entry_read;
+	bool entry_read = true;
 	vec.assign(length, T());
 	for (int i = 0; i < length; ++i) {
 		entry_read = read_num_entry(from, vec[i]);
@@ -468,7 +494,7 @@ bool read_vector(std::ifstream& from, int length, Vector<T>& vec) {
 		msgstr << "row/col: " << i << " entry: " << vec[i];
 		message(msgstr.str(), debug);
 	}
-	return entry_read;
+	return true;
 }
 
 bool read_num_entry(std::ifstream& from, CGAL::Gmpq& entry) {
@@ -564,7 +590,7 @@ bool read_tags(std::ifstream& from,
 	}
 }
 
-void map_tags(std::ifstream& from, int verbose,
+void map_tags(std::ifstream& from, int verbose, int pricing_strategy_index,
 	const std::map<std::string, char>& read_names_table) {
 	int offset;
 	std::map<std::string, char>::const_iterator p;
@@ -595,84 +621,121 @@ void map_tags(std::ifstream& from, int verbose,
 			}
 		} else {
 			error("unspecified tags");
-			index = -1;
+			index = 24;
 		}
 	}
 	switch (index) {
 	/*
 	case  0: 	doIt<CGAL::Gmpq,CGAL::Tag_false,CGAL::Tag_false,
-				CGAL::Tag_false>(verbose, from);
+				CGAL::Tag_false>
+				(verbose, pricing_strategy_index, from);
 			break;
 	case  1:	doIt<CGAL::Gmpq,CGAL::Tag_false,CGAL::Tag_false,
-				CGAL::Tag_true>(verbose, from);
+				CGAL::Tag_true>
+				(verbose, pricing_strategy_index, from);
 			break;
-	*/
+	
 	case  2:	doIt<CGAL::Gmpq,CGAL::Tag_false,CGAL::Tag_true,
-				CGAL::Tag_false>(verbose, from);
+				CGAL::Tag_false>
+				(verbose, pricing_strategy_index, from);
 			break;
-	/*
+	
 	case  3:	doIt<CGAL::Gmpq,CGAL::Tag_false,CGAL::Tag_true,
-				CGAL::Tag_true>(verbose, from);
+				CGAL::Tag_true>
+				(verbose, pricing_strategy_index, from);
 			break;
+        
 	case  4:	doIt<CGAL::Gmpq,CGAL::Tag_true,CGAL::Tag_false,
-				CGAL::Tag_false>(verbose, from);
+				CGAL::Tag_false>
+				(verbose, pricing_strategy_index, from);
 			break;
 	case  5:	doIt<CGAL::Gmpq,CGAL::Tag_true,CGAL::Tag_false,
-				CGAL::Tag_true>(verbose, from);
+				CGAL::Tag_true>
+				(verbose, pricing_strategy_index, from);
 			break;
+	
 	case  6:	doIt<CGAL::Gmpq,CGAL::Tag_true,CGAL::Tag_true,
-				CGAL::Tag_false>(verbose, from);
+				CGAL::Tag_false>
+				(verbose, pricing_strategy_index, from);
 			break;
+	
 	case  7:	doIt<CGAL::Gmpq,CGAL::Tag_true,CGAL::Tag_true,
-				CGAL::Tag_true>(verbose, from);
+				CGAL::Tag_true>
+				(verbose, pricing_strategy_index, from);
 			break;
+        */
 	case  8:	doIt<GMP::Double,CGAL::Tag_false,CGAL::Tag_false,
-				CGAL::Tag_false>(verbose, from);
+				CGAL::Tag_false>
+				(verbose, pricing_strategy_index, from);
 			break;
+			
 	case  9:	doIt<GMP::Double,CGAL::Tag_false,CGAL::Tag_false,
-				CGAL::Tag_true>(verbose, from);
+				CGAL::Tag_true>
+				(verbose, pricing_strategy_index, from);
 			break;
 	case 10:	doIt<GMP::Double,CGAL::Tag_false,CGAL::Tag_true,
-				CGAL::Tag_false>(verbose, from);
+				CGAL::Tag_false>
+				(verbose, pricing_strategy_index, from);
 			break;
+	
 	case 11:	doIt<GMP::Double,CGAL::Tag_false,CGAL::Tag_true,
-				CGAL::Tag_true>(verbose, from);
+				CGAL::Tag_true>
+				(verbose, pricing_strategy_index, from);
 			break;
+	
 	case 12:	doIt<GMP::Double,CGAL::Tag_true,CGAL::Tag_false,
-				CGAL::Tag_false>(verbose, from);
+				CGAL::Tag_false>
+				(verbose, pricing_strategy_index, from);
 			break;
 	case 13:	doIt<GMP::Double,CGAL::Tag_true,CGAL::Tag_false,
-				CGAL::Tag_true>(verbose, from);
+				CGAL::Tag_true>
+				(verbose, pricing_strategy_index, from);
 			break;
+			
 	case 14:	doIt<GMP::Double,CGAL::Tag_true,CGAL::Tag_true,
-				CGAL::Tag_false>(verbose, from);
+				CGAL::Tag_false>
+				(verbose, pricing_strategy_index, from);
 			break;
+	
 	case 15:	doIt<GMP::Double,CGAL::Tag_true,CGAL::Tag_true,
-				CGAL::Tag_true>(verbose, from);
+				CGAL::Tag_true>
+				(verbose, pricing_strategy_index, from);
 			break;
+	/*
 	case 16:	doIt<CGAL::Gmpz,CGAL::Tag_false,CGAL::Tag_false,
-				CGAL::Tag_false>(verbose, from);
+				CGAL::Tag_false>
+				(verbose, pricing_strategy_index, from);
 			break;
+	
 	case 17:	doIt<CGAL::Gmpz,CGAL::Tag_false,CGAL::Tag_false,
-				CGAL::Tag_true>(verbose, from);
+				CGAL::Tag_true>
+				(verbose, pricing_strategy_index, from);
 			break;
 	case 18:	doIt<CGAL::Gmpz,CGAL::Tag_false,CGAL::Tag_true,
-				CGAL::Tag_false>(verbose, from);
+				CGAL::Tag_false>
+				(verbose, pricing_strategy_index, from);
 			break;
 	case 19:	doIt<CGAL::Gmpz,CGAL::Tag_false,CGAL::Tag_true,
-				CGAL::Tag_true>(verbose, from);
+				CGAL::Tag_true>
+				(verbose, pricing_strategy_index, from);
 			break;
 	case 20:	doIt<CGAL::Gmpz,CGAL::Tag_true,CGAL::Tag_false,
-				CGAL::Tag_false>(verbose, from);
+				CGAL::Tag_false>
+				(verbose, pricing_strategy_index, from);
 			break;
 	case 21:	doIt<CGAL::Gmpz,CGAL::Tag_true,CGAL::Tag_false,
-				CGAL::Tag_true>(verbose, from);
+				CGAL::Tag_true>
+				(verbose, pricing_strategy_index, from);
 			break;
+	
 	case 22:	doIt<CGAL::Gmpz,CGAL::Tag_true,CGAL::Tag_true,
-				CGAL::Tag_false>(verbose, from);
+				CGAL::Tag_false>
+				(verbose, pricing_strategy_index, from);
 			break;
+	
 	case 23:	doIt<CGAL::Gmpz,CGAL::Tag_true,CGAL::Tag_true,
-				CGAL::Tag_true>(verbose, from);
+				CGAL::Tag_true>
+				(verbose, pricing_strategy_index, from);
 			break;
 	*/
 	default:	;
@@ -728,6 +791,40 @@ void message(const std::string& msg, bool mode) {
 	if (mode) {
 		std::cout << msg << std::endl;
 	}
+}
+
+void init_pricing_strat_abrev_table() {
+	pricing_strat_abrev_table.clear();
+	pricing_strat_abrev_table.push_back("fe");
+	pricing_strat_abrev_table.push_back("ff");
+	pricing_strat_abrev_table.push_back("pe");
+	pricing_strat_abrev_table.push_back("pf");
 }	
+
+int map_pricing_strategy_abrev(const std::string& abrev) {
+	int ind = pricing_strat_abrev_table.size();
+	for (unsigned int i = 0; i < pricing_strat_abrev_table.size(); ++i) {
+		if (abrev == pricing_strat_abrev_table[i]) {
+			ind = i;
+		}
+	}
+	return ind;
+}
+template <typename Rep>
+void set_pricing_strategy(CGAL::QPE_pricing_strategy<Rep>*& strat, int index) {
+	switch (index) {
+	case 0	:	strat = new CGAL::QPE_full_exact_pricing<Rep>;
+			break;
+	case 1	:	strat = new CGAL::QPE_full_filtered_pricing<Rep,
+		typename Rep::Input_type>;
+			break;
+	case 2	:	strat = new CGAL::QPE_partial_exact_pricing<Rep>;
+			break;
+	case 3	:	strat = new CGAL::QPE_partial_filtered_pricing<Rep,
+		typename Rep::Input_type>;
+			break;
+	}
+}
+ 
 
 // ===== EOF ==================================================================
