@@ -67,7 +67,7 @@ public:
 	    this, SLOT(new_point(CGAL::Object)) );
     widget->attach(point_factory);
 
-    connect(widget, SIGNAL(custom_redraw()), this, SLOT(redrawWin()) );
+    connect(widget, SIGNAL(redraw_on_back()), this, SLOT(redrawWin()) );
 
     statusBar();
     

@@ -1,6 +1,11 @@
 Package triangulation: provides triangulations Delaunay triangulations, 
 constrained and regular triangulations with  tests and examples.
 
+ver 8.13 ()
+- remove deprecated "custom_redraw() from constrained.C demo
+- Fix destructor documentation,
+  so that the variable name doesn't appear in the index !
+
 ver 8.12 (29/08/03)
 - added missing eps files in doc_tex/basic/TDS_2
 - fixed caption
