@@ -328,7 +328,9 @@ cross_product CGAL_NULL_TMPL_ARGS (const DirectionH3<R>& d1,
 */
 };
 
-
+#ifdef CGAL_CFG_TYPENAME_BUG
+#define typename
+#endif
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
@@ -355,7 +357,6 @@ CGAL_KERNEL_INLINE
 typename R::FT
 PointH3<R>::x()  const
 { return ( FT(Ptr()->hx() ) / FT(Ptr()->hw() )); }
-
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -458,7 +459,6 @@ typename R::FT
 PointH3<R>::operator[](int i) const
 { return cartesian(i); }
 
-
 template < class R >
 inline
 DirectionH3<R>
@@ -479,7 +479,6 @@ inline
 bool
 PointH3<R>::operator!=( const PointH3<R> & p) const
 { return !(*this == p); }
-
 
 #ifndef CGAL_NO_OSTREAM_INSERT_POINTH3
 template < class R >
@@ -614,6 +613,7 @@ VectorH3<R>::homogeneous(int i) const
   }
   return hw() ;
 }
+
 template < class R >
 inline
 DirectionH3<R>
@@ -647,7 +647,6 @@ CGAL_KERNEL_INLINE
 VectorH3<R>
 VectorH3<R>::operator-() const
 { return VectorH3<R>( - hx(), - hy(), -hz(), hw() ); }
-
 
 template <class R >
 CGAL_KERNEL_CTOR_INLINE
@@ -727,6 +726,7 @@ inline
 typename R::RT
 DirectionH3<R>::hz() const
 { return Ptr()->e2; }
+
 template <class R >
 CGAL_KERNEL_INLINE
 bool
@@ -758,13 +758,11 @@ DirectionH3<R>
 DirectionH3<R>::operator-() const
 { return DirectionH3<R>(- Ptr()->hx(),- Ptr()->hy(),- Ptr()->hz() ); }
 
-
 template <class R >
 inline
 VectorH3<R>
 DirectionH3<R>::to_vector() const
 { return VectorH3<R>(*this); }
-
 
 template <class R>
 CGAL_KERNEL_INLINE
@@ -854,7 +852,6 @@ VectorH3<R>
 operator-(const Origin& , const PointH3<R>& p)
 { return  - VectorH3<R>( p ); }
 
-
 template <class R>
 CGAL_KERNEL_INLINE
 PointH3<R>
@@ -888,14 +885,16 @@ operator-(const PointH3<R>& p, const PointH3<R>& q)
                      p.hw()*q.hw() );
 }
 
-
-
 template <class R>
 CGAL_KERNEL_INLINE
 DirectionH3<R>
 cross_product( const DirectionH3<R>& d1,
                const DirectionH3<R>& d2)
 { return cross_product(d1.to_vector(),d2.to_vector()).direction(); }
+
+#ifdef CGAL_CFG_TYPENAME_BUG
+#undef typename
+#endif
 
 CGAL_END_NAMESPACE
 
@@ -957,7 +956,6 @@ VectorH3<R>
 VectorH3<R>::transform(const Aff_transformationH3<R>&t ) const
 { return t.transform(*this); }
 
-
 #ifndef CGAL_NO_OSTREAM_INSERT_VECTORH3
 template < class R >
 std::ostream& operator<<(std::ostream& os, const VectorH3<R>& v)
@@ -1014,7 +1012,6 @@ DirectionH3<R>::
 transform(const Aff_transformationH3<R>& t) const
 { return t.transform(*this); }
 
-
 #ifndef CGAL_NO_OSTREAM_INSERT_DIRECTIONH3
 template < class R >
 std::ostream &operator<<(std::ostream &os, const DirectionH3<R> &p)
@@ -1060,12 +1057,6 @@ std::istream &operator>>(std::istream &is, DirectionH3<R> &p)
   return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_DIRECTIONH3
-
-/*
-template <class R>
-VectorH3<R>
-operator/(const VectorH3<R>& v, const RT& f);
-*/
 
 CGAL_END_NAMESPACE
 

@@ -154,6 +154,9 @@ public:
     // bool  unoriented_equal( const CircleH2<R>& ) const;
 };
 
+#ifdef CGAL_CFG_TYPENAME_BUG
+#define typename
+#endif
 
 template <class R>
 inline
@@ -277,6 +280,7 @@ inline
 bool
 CircleH2<R>::is_degenerate() const
 { return ( squared_radius() == FT(0) ); }
+
 template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 Bbox_2
@@ -316,6 +320,7 @@ CircleH2<R>::bbox() const
   ymax += ymax*eps;
   return Bbox_2(xmin, ymin, xmax, ymax);
 }
+
 template <class R>
 CGAL_KERNEL_INLINE
 CircleH2<R>
@@ -339,6 +344,7 @@ orthogonal_transform(const Aff_transformationH2<R>& t) const
                              CGAL::opposite( orientation()) );
   }
 }
+
 template <class R>
 CGAL_KERNEL_INLINE
 bool
@@ -411,6 +417,10 @@ std::istream& operator>>(std::istream &is, CircleH2<R> &c)
   return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_CIRCLEH2
+
+#ifdef CGAL_CFG_TYPENAME_BUG
+#undef typename
+#endif
 
 CGAL_END_NAMESPACE
 

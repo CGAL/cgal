@@ -109,6 +109,9 @@ public:
     SegmentH2<R> transform( const Aff_transformationH2<R> & t) const;
 };
 
+#ifdef CGAL_CFG_TYPENAME_BUG
+#define typename
+#endif
 
 template < class R >
 inline
@@ -321,6 +324,10 @@ inline
 bool
 SegmentH2<R>::operator!=(const SegmentH2<R>& s) const
 { return ( !operator==(s) ); }
+
+#ifdef CGAL_CFG_TYPENAME_BUG
+#undef typename
+#endif
 
 CGAL_END_NAMESPACE
 

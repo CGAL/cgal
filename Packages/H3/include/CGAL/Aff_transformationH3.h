@@ -216,7 +216,6 @@ public:
            { return (i==j) ? FT(1) : FT(0); }
 };
 
-
 template < class R_ >
 class Translation_repH3 : public Aff_transformation_rep_baseH3<R_>
 {
@@ -269,7 +268,6 @@ friend class Aff_transformationH3<R>;
 private:
   VectorH3<R>  tv;
 };
-
 
 template < class R_ >
 class Aff_transformationH3 : public Handle
@@ -356,6 +354,10 @@ public:
 // protected:
   Aff_transformation_rep_baseH3<R>*   ptr() const;
 };
+
+#ifdef CGAL_CFG_TYPENAME_BUG
+#define typename
+#endif
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
@@ -924,6 +926,10 @@ operator<< ( std::ostream & out,
  << "| "<< r.t20 <<' '<< r.t21 <<' '<< r.t22 <<' '<< r.t23 << " |\n"
  << "| "<< RT0   <<' '<< RT0   <<' '<< RT0   <<' '<< r.t33 << " |\n";
 }
+
+#ifdef CGAL_CFG_TYPENAME_BUG
+#undef typename
+#endif
 
 CGAL_END_NAMESPACE
 

@@ -269,10 +269,10 @@ class Translation_repH2 : public Aff_transformation_rep_baseH2<R>
     virtual  RT   homogeneous(int i, int j) const;
     virtual  FT   cartesian(int i, int j) const;
 
-
   private:
     VectorH2<R> _tv;
 };
+
 template < class R >
 class Rotation_repH2 : public Aff_transformation_rep_baseH2<R>
 {
@@ -340,12 +340,12 @@ class Rotation_repH2 : public Aff_transformation_rep_baseH2<R>
     virtual  RT   homogeneous(int i, int j) const;
     virtual  FT   cartesian(int i, int j) const;
 
-
   private:
     RT  _sin;
     RT  _cos;
     RT  _den;
 };
+
 template < class R >
 class Scaling_repH2 : public Aff_transformation_rep_baseH2<R>
 {
@@ -413,6 +413,7 @@ class Scaling_repH2 : public Aff_transformation_rep_baseH2<R>
     RT  _sf_num;
     RT  _sf_den;
 };
+
 template < class R >
 class Reflection_repH2 : public Aff_transformation_rep_baseH2<R>
 {
@@ -587,6 +588,10 @@ class Aff_transformationH2
     operator*(const Aff_transformationH2<R>& right_argument ) const;
 
 };
+
+#ifdef CGAL_CFG_TYPENAME_BUG
+#define typename
+#endif
 
 template < class R >
 Aff_transformationH2<R>::Aff_transformationH2()
@@ -1061,6 +1066,10 @@ cartesian(int i, int j) const
   }
   return FT(0);
 }
+
+#ifdef CGAL_CFG_TYPENAME_BUG
+#undef typename
+#endif
 
 CGAL_END_NAMESPACE
 

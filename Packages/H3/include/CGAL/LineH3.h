@@ -120,6 +120,10 @@ CGAL_END_NAMESPACE
 
 CGAL_BEGIN_NAMESPACE
 
+#ifdef CGAL_CFG_TYPENAME_BUG
+#define typename
+#endif
+
 template < class R >
 inline
 PointH3<R>
@@ -232,6 +236,10 @@ LineH3<R>::operator==(const LineH3<R>& l) const
   return  (  (l.direction() ==   Ptr()->direction )
            &&(l.has_on( Ptr()->basepoint ) ) );
 }
+
+#ifdef CGAL_CFG_TYPENAME_BUG
+#undef typename
+#endif
 
 CGAL_END_NAMESPACE
 

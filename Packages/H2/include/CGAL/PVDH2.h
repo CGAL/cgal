@@ -225,6 +225,9 @@ public:
     DirectionH2<R> transform(const Aff_transformationH2<R> &) const;
 };
 
+#ifdef CGAL_CFG_TYPENAME_BUG
+#define typename
+#endif
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
@@ -639,6 +642,10 @@ operator-(const PointH2<R>& p, const PointH2<R>& q)
                           p.hy()*q.hw() - q.hy()*p.hw(),
                           p.hw()*q.hw() );
 }
+
+#ifdef CGAL_CFG_TYPENAME_BUG
+#undef typename
+#endif
 
 CGAL_END_NAMESPACE
 

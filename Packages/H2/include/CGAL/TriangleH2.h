@@ -124,6 +124,9 @@ public:
     FT                 area() const;
 };
 
+#ifdef CGAL_CFG_TYPENAME_BUG
+#define typename
+#endif
 
 template <class R>
 CGAL_KERNEL_INLINE
@@ -357,6 +360,10 @@ operator>>(std::istream &is, TriangleH2<R> &t)
   return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_TRIANGLEH2
+
+#ifdef CGAL_CFG_TYPENAME_BUG
+#undef typename
+#endif
 
 CGAL_END_NAMESPACE
 
