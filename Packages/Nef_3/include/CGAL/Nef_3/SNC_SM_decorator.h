@@ -399,19 +399,19 @@ void delete_loop_only() const
 
 template <typename H>
 bool is_boundary_object(H h) const
-{ return sncp()->is_boundary_object(h); }
+{ return sncp()->is_sm_boundary_object(h); }
 
 template <typename H>
 void store_boundary_object(H h, SFace_handle f) const
 { f->boundary_entry_objects_.push_back(SObject_handle(h));
-  sncp()->store_boundary_item(h, --(f->sface_cycles_end()));
+  sncp()->store_sm_boundary_item(h, --(f->sface_cycles_end()));
 }
 
 template <typename H>
 void undo_boundary_object(H h, SFace_handle f) const
-{ CGAL_nef3_assertion(sncp()->is_boundary_object(h));
-  SFace_cycle_iterator it = sncp()->boundary_item(h);
-  sncp()->undef_boundary_item(h);
+{ CGAL_nef3_assertion(sncp()->is_sm_boundary_object(h));
+  SFace_cycle_iterator it = sncp()->sm_boundary_item(h);
+  sncp()->undef_sm_boundary_item(h);
   f->boundary_entry_objects_.erase(it);
 }
 

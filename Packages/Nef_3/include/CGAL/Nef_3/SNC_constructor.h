@@ -844,8 +844,8 @@ pair_up_halfedges() const
       Halfedge_handle e1 = itl->e;
       ++itl; CGAL_nef3_assertion(itl != it->second.end());
       Halfedge_handle e2 = itl->e;
-      TRACEN("e1="<<tmp_point(e1)<<"@"<<point(vertex(e1))<<
-	     " & e2="<<tmp_point(e2)<<"@"<<point(vertex(e2)));
+      // TRACEN("e1="<<tmp_point(e1)<<"@"<<point(vertex(e1))<<
+      //     " & e2="<<tmp_point(e2)<<"@"<<point(vertex(e2)));
       CGAL_nef3_assertion(tmp_point(e1)==tmp_point(e2).antipode());
       make_twins(e1,e2);
       CGAL_nef3_assertion(mark(e1)==mark(e2));
@@ -874,7 +874,7 @@ link_shalfedges_to_facet_cycles() const
     CGAL_For_all(cet,cete) 
       if ( Dt.circle(cet) == D.circle(ce).opposite() ) break;
 
-    /* DEBUG BEGIN */
+    /* DEBUG 
     if( Dt.circle(cet) != D.circle(ce).opposite() )
       TRACEN("assertion failed!");
 
@@ -901,7 +901,7 @@ link_shalfedges_to_facet_cycles() const
       char c;
       cin >> c;
 #endif
-    /* DEBUG END */
+      DEBUG */
     CGAL_nef3_assertion( Dt.circle(cet) == D.circle(ce).opposite() ); 
     CGAL_For_all(ce,cee) { 
       CGAL_nef3_assertion(ce->tmp_mark()==cet->tmp_mark());

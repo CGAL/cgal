@@ -75,7 +75,7 @@ public:
   USING(SHalfedge_iterator); USING(SHalfedge_handle);
   USING(SFace_iterator); USING(SFace_handle);
   USING(SHalfloop_iterator); USING(SHalfloop_handle);
-  USING(Object_handle);
+  USING(Object_iterator); USING(Object_handle);
   USING(SObject_handle);
   USING(SFace_cycle_iterator);
   USING(Halffacet_cycle_iterator);
@@ -107,6 +107,32 @@ public:
   { return SLI(l,verbose); }
   std::string index(SFace_iterator f) const 
   { return SFI(f,verbose); }
+  std::string index(Object_iterator o) const
+  { if( o == 0 )
+      return string("undef");
+    Vertex_iterator v;
+    Halfedge_iterator e;
+    Halffacet_iterator f;
+    Volume_iterator c;
+    SHalfedge_iterator se;
+    SHalfloop_handle sl;
+    SFace_iterator sf;
+    if( assign( v, *o))
+      return index(v);
+    else if( assign( e, *o))
+      return index(e);
+    else if( assign( f, *o))
+      return index(f);
+    else if( assign( c, *o))
+      return index(c);
+    else if( assign( se, *o))
+      return index(se);
+    else if( assign( sl, *o))
+      return index(sl);
+    else if( assign( sf, *o))
+      return index(sf);
+    return string("unknown object");
+  }
 
   bool check_sep(char* sep) const;
   void print_vertex(Vertex_handle) const;

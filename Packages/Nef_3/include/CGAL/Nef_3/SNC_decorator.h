@@ -275,7 +275,16 @@ public:
   void link_as_prev_next_pair(SHalfedge_handle e1, SHalfedge_handle e2) const
   { e1->next_ = e2; e2->prev_ = e1; } 
 
-  void store_boundary_object(SFace_handle h, Volume_handle c) const
+  template <typename H>
+  void undo_boundary_object(H h, Volume_handle c) const
+  { CGAL_assertion(sncp()->is_boundary_object(h));
+    Shell_entry_iterator it = sncp()->boundary_item(h);
+    sncp()->undef_boundary_item(h);
+    c->shell_entry_objects_.erase(it);
+  }
+
+  template <typename H>
+    void store_boundary_object(H h, Volume_handle c) const
   { c->shell_entry_objects_.push_back(Object_handle(h));
     sncp()->store_boundary_item(h, --(c->shells_end()));
   }
@@ -312,6 +321,19 @@ public:
   { h->volume_ = c; CGAL_assertion(h->volume_ == c); }
   void set_volume(SFace_handle h, Volume_handle c) const 
   { h->incident_volume_ = c; CGAL_assertion(h->incident_volume_ == c); }
+
+  void set_facet(SHalfloop_handle l, Halffacet_handle f) const {
+    SM_decorator SD(vertex(l));
+    Sphere_circle facet_plane(plane(f));
+    if( facet_plane == SD.circle(l)) {
+      l->incident_facet_ = f;
+      SD.twin(l)->incident_facet_ = twin(f);
+    } else {
+      CGAL_assertion( facet_plane.opposite() == SD.circle(l));
+      l->incident_facet_ = twin(f);
+      SD.twin(l)->incident_facet_ = f;
+    }
+  }
 
   template <typename Visitor>
   void visit_shell_objects(SFace_handle f, Visitor& V) const;
