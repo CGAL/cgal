@@ -1,0 +1,90 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: HalfedgeDS_default.tex
+% +------------------------------------------------------------------------+
+% | 22.03.1999   Lutz Kettner
+% | Package: HalfedgeDS
+% | 
+\RCSdef{\RCSHalfedgeDSdefaultRev}{$Revision$}
+\RCSdefDate{\RCSHalfedgeDSdefaultDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{HalfedgeDS_default<Traits,Items>}
+
+\ccHtmlCrossLink{CGAL_HALFEDGEDS_DEFAULT}
+\ccHtmlIndexC[macro]{CGAL_HALFEDGEDS_DEFAULT}
+
+\ccDefinition
+
+~~~~~~\ccc{template <class Traits, class Items = CGAL::HalfedgeDS_items>}\\
+\mbox{}~~~~~~\ccc{class HalfedgeDS_default;}
+
+The class \ccRefName\ is a model for the \ccc{HalfedgeDS} concept. The
+second template parameter \ccc{Items} has a default argument
+\ccc{CGAL::HalfedgeDS_items}. \ccRefName\ is a list-based representation
+with bidirectional iterators that supports removal.
+
+\ccInclude{CGAL/HalfedgeDS_default.h}
+
+\ccIsModel
+
+\ccc{HalfedgeDS}
+
+\ccTypes
+\ccThree{typedef bidirectional_iterator_tag;}{Supports_removal;;}{}
+
+\ccTypedef{typedef bidirectional_iterator_tag iterator_category;}{}
+\ccGlue
+\ccTypedef{typedef CGAL::Tag_true Supports_removal;}{}
+
+\ccSeeAlso
+
+\ccc{CGAL::HalfedgeDS_using_in_place_list}, 
+\ccc{CGAL::HalfedgeDS_using_list}, \\
+\ccc{CGAL::HalfedgeDS_using_vector},
+\ccc{HalfedgeDS_Items},
+\ccc{CGAL::Polyhedron_3},\\
+\ccc{CGAL::HalfedgeDS_items_decorator<HDS>},
+\ccc{CGAL::HalfedgeDS_decorator<HDS>},\\
+\ccc{CGAL::HalfedgeDS_const_decorator<HDS>}.
+
+
+\ccImplementation
+
+Currently, \ccRefName\ is equivalent to
+\ccc{CGAL::HalfedgeDS_using_in_place_list<Traits>}. 
+The copy constructor and the assignment operator are implemented
+sub-optimally in $O(n \log n)$ for the list representation with $n$ the
+total number of vertices, halfedges, and faces.
+
+Due to a workaround for the flag \ccc{CGAL_CFG_NO_TMPL_IN_TMPL_PARAM},
+a halfedge data structure cannot be instantiated directly. For the
+\ccRefName\ a macro simplifies its direct use. However, when using a
+halfedge data structure as an argument for another class template,
+the class \ccRefName\ must be used, not the macro.
+
+\begin{ccExampleCode}
+// The macro definition.
+#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
+    #define CGAL_HALFEDGEDS_DEFAULT  ::CGAL::HalfedgeDS_default
+#else
+    #define CGAL_HALFEDGEDS_DEFAULT  ::CGAL::HalfedgeDS_default::HDS
+#endif
+
+// The direct instantiation of the default HalfedgeDS given a Traits class.
+typedef CGAL_HALFEDGEDS_DEFAULT<Traits> HDS;
+\end{ccExampleCode}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

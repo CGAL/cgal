@@ -1,0 +1,64 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: HalfedgeDS_using_list.tex
+% +------------------------------------------------------------------------+
+% | 22.03.1999   Lutz Kettner
+% | Package: HalfedgeDS
+% | 
+\RCSdef{\RCSHalfedgeDSusinglistRev}{$Revision$}
+\RCSdefDate{\RCSHalfedgeDSusinglistDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{HalfedgeDS_using_list<Traits,Items>}
+
+\ccDefinition
+
+The class \ccRefName\ is a model for the \ccc{HalfedgeDS} concept.
+\ccRefName\ is a list-based representation with bidirectional
+iterators that supports removal.
+
+\ccInclude{CGAL/HalfedgeDS_using_list.h}
+
+\ccIsModel
+
+\ccc{HalfedgeDS}
+
+\ccTypes
+\ccThree{typedef bidirectional_iterator_tag;}{Supports_removal;;}{}
+
+\ccTypedef{typedef bidirectional_iterator_tag iterator_category;}{}
+\ccGlue
+\ccTypedef{typedef CGAL::Tag_true Supports_removal;}{}
+
+\ccSeeAlso
+
+\ccc{CGAL::HalfedgeDS_default},
+\ccc{CGAL::HalfedgeDS_using_in_place_list},\\
+\ccc{CGAL::HalfedgeDS_using_vector},
+\ccc{HalfedgeDS_Items},
+\ccc{CGAL::Polyhedron_3},\\
+\ccc{CGAL::HalfedgeDS_items_decorator<HDS>},
+\ccc{CGAL::HalfedgeDS_decorator<HDS>},\\
+\ccc{CGAL::HalfedgeDS_const_decorator<HDS>}.
+
+
+\ccImplementation
+
+\ccRefName\ uses internally the \stl\ \ccc{std::list} container class.
+The copy constructor and the assignment operator are implemented
+sub-optimally in $O(n \log n)$ for the list representation with $n$ the
+number of vertices plus halfedges plus faces.
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+
