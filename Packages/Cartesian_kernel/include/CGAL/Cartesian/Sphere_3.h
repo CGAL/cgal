@@ -69,13 +69,20 @@ public:
   bool operator==(const Self &) const;
   bool operator!=(const Self &) const;
 
-  Point_3  center() const;
-  // Returns the center of c
-  FT     squared_radius() const;
-  // Returns the square of the radius (instead of the radius itself,
-  // which would require square roots)
-  Orientation orientation() const;
-  // Returns the orientation of c
+  Point_3 center() const
+  {
+      return ptr->center;
+  }
+  FT squared_radius() const
+  {
+      // Returns the square of the radius (instead of the radius itself,
+      // which would require square roots)
+      return ptr->squared_radius;
+  }
+  Orientation orientation() const
+  {
+      return ptr->orient;
+  }
 
   Self   orthogonal_transform(const Aff_transformation_3 &t) const;
   //! precond: t.is_orthogonal() (*UNDEFINED*)
@@ -103,16 +110,7 @@ public:
 
   Bbox_3 bbox() const;
 
-// protected:
-  Sphere_repC3<R> *ptr() const; // Hum ...
 };
-
-template < class R >
-inline
-Sphere_repC3<R> *SphereC3<R CGAL_CTAG>::ptr() const
-{
-  return ptr;
-}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
@@ -215,30 +213,6 @@ SphereC3<R CGAL_CTAG>::
 operator!=(const SphereC3<R CGAL_CTAG> &t) const
 {
   return !(*this == t);
-}
-
-template < class R >
-inline
-typename SphereC3<R CGAL_CTAG>::Point_3
-SphereC3<R CGAL_CTAG>::center() const
-{
-  return ptr()->center;
-}
-
-template < class R >
-inline
-typename R::FT
-SphereC3<R CGAL_CTAG>::squared_radius() const
-{
-  return ptr()->squared_radius;
-}
-
-template < class R >
-inline
-Orientation
-SphereC3<R CGAL_CTAG>::orientation() const
-{
-  return ptr()->orient;
 }
 
 template < class R >
