@@ -24,12 +24,11 @@
 #define CGAL_SNC_ITEMS_H
 
 #include <CGAL/basic.h>
-#include <CGAL/In_place_list.h>
 #include <string>
 #include <sstream>
 #include <CGAL/IO/Verbose_ostream.h>
-#include <CGAL/Nef_S2/Sphere_geometry.h>
 #include <CGAL/Nef_3/SNC_iteration.h>
+#include <CGAL/Nef_3/SNC_list.h>
 
 #undef _DEBUG
 #define _DEBUG 83
@@ -40,29 +39,17 @@ CGAL_BEGIN_NAMESPACE
 template <typename K, typename I> class SNC_sphere_map;
 template <typename R> class SM_decorator;
 
-template <typename Kernel_, typename Mark_>
 class SNC_items {
-public:
-  typedef Kernel_                                  Kernel;
-  typedef Mark_                                    Mark;
-  typedef SNC_items<Kernel_,Mark_>                 Self;
-  typedef typename Kernel::Point_3                 Point_3;
-  typedef typename Kernel::Plane_3                 Plane_3;
-  typedef typename Kernel::Vector_3                Vector_3;
-  typedef CGAL::Sphere_geometry<Kernel>            Sphere_kernel;
-  typedef typename Sphere_kernel::Sphere_point     Sphere_point;
-  typedef typename Sphere_kernel::Sphere_segment   Sphere_segment;
-  typedef typename Sphere_kernel::Sphere_circle    Sphere_circle;
-  typedef typename Sphere_kernel::Sphere_direction Sphere_direction;
-  typedef typename Sphere_kernel::Sphere_triangle  Sphere_triangle;
-  typedef void*                                    GenPtr;
+ public:
 
 //-----------------------------------------------------------------------------
 
   template <typename Refs>
-  class Vertex : public CGAL::In_place_list_base< Vertex<Refs> >
+  class Vertex
   {
-    typedef typename Refs::Items Items;
+    typedef void* GenPtr;
+    typedef typename Refs::Mark  Mark;
+    typedef typename Refs::Point_3 Point_3;
     typedef typename Refs::Sphere_map Sphere_map;
     typedef typename Refs::SVertex_iterator SVertex_iterator;
     typedef typename Refs::SHalfedge_iterator SHalfedge_iterator;
@@ -91,7 +78,7 @@ public:
     SHalfloop_iterator shalfloop_;
     GenPtr             info_;
 
-    Sphere_map         sm_;
+    //    Sphere_map         sm_;
 
   public:
 
@@ -99,17 +86,22 @@ public:
       svertices_begin_(), svertices_last_(),
       shalfedges_begin_(), shalfedges_last_(),
       sfaces_begin_(), sfaces_last_(), shalfloop_(),
-      info_(), sm_(Vertex_handle(this)) {}
+      info_() 
+      // , sm_(Vertex_handle((SNC_in_place_list_vertex<Vertex>*) this)) 
+      {}
 
     Vertex(const Point_3& p, Mark m) : 
       point_at_center_(p), mark_(m), sncp_(), 
       svertices_begin_(), svertices_last_(),
       shalfedges_begin_(), shalfedges_last_(),
       sfaces_begin_(), sfaces_last_(), shalfloop_(),
-      info_(), sm_(Vertex_handle(this)) {}
+      info_() 
+      //    , sm_(Vertex_handle((SNC_in_place_list_vertex<Vertex>*) this)) 
+      {}
 
-    Vertex(const Vertex<Refs>& v) : sm_(Vertex_handle(this))
-    { 
+    Vertex(const Vertex<Refs>& v) 
+      //      : sm_(Vertex_handle((SNC_in_place_list_vertex<Vertex>*)this)) 
+    {
       point_at_center_ = v.point_at_center_;
       mark_ = v.mark_;
       sncp_ = v.sncp_;
@@ -135,12 +127,10 @@ public:
       sfaces_begin_ = v.sfaces_begin_;
       sfaces_last_ = v.sfaces_last_;
       shalfloop_ = v.shalfloop_;
-      sm_ = v.sm_;
+      //      sm_ = v.sm_;
       return *this;
     }
 
-    Sphere_map* map() { return &sm_; }
-    const Sphere_map* map() const { return &sm_; }
     Refs* sncp() const { return sncp_; }
     Refs*& sncp() { return sncp_; }
 
@@ -285,7 +275,7 @@ public:
       sfaces_begin_ = sfaces_last_ = sncp()->sfaces_end();
 
       if ( shalfloop() != sncp()->shalfloops_end() ) {
-        sncp()->delete_shalfloop_only(shalfloop_->twin_);
+        sncp()->delete_shalfloop_only(shalfloop_->twin());
         sncp()->delete_shalfloop_only(shalfloop_);
         shalfloop_ = sncp()->shalfloops_end();
       }
@@ -385,8 +375,11 @@ public:
 //-----------------------------------------------------------------------------
 
   template <typename Refs>
-  class SVertex : public CGAL::In_place_list_base< SVertex<Refs> >
+  class SVertex
   { // == Halfedge
+    typedef void* GenPtr;
+    typedef typename Refs::Mark  Mark;
+    typedef typename Refs::Sphere_point  Sphere_point;
     typedef typename Refs::Sphere_map Sphere_map;
     friend class SM_decorator<Refs>;
     typedef typename Refs::Vertex_handle    Vertex_handle;
@@ -498,9 +491,11 @@ public:
 //-----------------------------------------------------------------------------
 
   template <typename Refs>
-  class Halffacet : public CGAL::In_place_list_base< Halffacet<Refs> >
-  {
-    typedef typename Refs::Items Items;
+  class Halffacet  {
+
+    typedef void* GenPtr;
+    typedef typename Refs::Mark  Mark;
+    typedef typename Refs::Plane_3   Plane_3;
     typedef typename Refs::Halffacet_handle   Halffacet_handle;
     typedef typename Refs::Volume_handle  Volume_handle;
     typedef typename Refs::SHalfedge_handle SHalfedge_handle;
@@ -607,9 +602,9 @@ public:
 //-----------------------------------------------------------------------------
 
   template <typename Refs>
-  class Volume : public CGAL::In_place_list_base< Volume<Refs> >
-  {
-    typedef typename Refs::Items Items;
+  class Volume  {
+    typedef void* GenPtr;
+    typedef typename Refs::Mark  Mark;
     typedef typename Refs::Object_handle  Object_handle;
     typedef typename Refs::Volume_handle  Volume_handle;
     typedef typename Refs::Object_list   Object_list;
@@ -684,9 +679,10 @@ public:
 //-----------------------------------------------------------------------------
 
   template <typename Refs>
-  class SHalfedge : public CGAL::In_place_list_base< SHalfedge<Refs> >
-  { 
-    typedef typename Refs::Items Items;
+  class SHalfedge  { 
+    typedef void* GenPtr;
+    typedef typename Refs::Mark  Mark;
+    typedef typename Refs::Sphere_circle  Sphere_circle;
     typedef typename Refs::Sphere_map Sphere_map;
     typedef typename Refs::Halfedge_handle Halfedge_handle;
     typedef typename Refs::SVertex_handle SVertex_handle;
@@ -830,16 +826,16 @@ public:
 
 
   template <typename Refs> 
-  class SHalfloop : public CGAL::In_place_list_base< SHalfloop<Refs> >
-  {
+  class SHalfloop {
+    typedef void* GenPtr;
+    typedef typename Refs::Mark  Mark;
+    typedef typename Refs::Sphere_circle  Sphere_circle;
     typedef typename Refs::Vertex_handle Vertex_handle;
     typedef typename Refs::SHalfloop_handle SHalfloop_handle;
     typedef typename Refs::SFace_handle SFace_handle;
     typedef typename Refs::Halffacet_handle Halffacet_handle;
-    typedef typename Refs::Items Items;
     typedef typename Refs::Sphere_map Sphere_map;
     friend class SM_decorator<Refs>;
-    friend class Self::Vertex<Refs>;
 
     SHalfloop_handle   twin_;
     SFace_handle       incident_sface_;
@@ -936,9 +932,9 @@ public:
 //-----------------------------------------------------------------------------
 
   template <typename Refs>
-  class SFace : public CGAL::In_place_list_base< SFace<Refs> >
-  { 
-    typedef typename Refs::Items Items;
+  class SFace { 
+    typedef void* GenPtr;
+    typedef typename Refs::Mark  Mark;
     typedef typename Refs::Sphere_map Sphere_map;
     friend class SM_decorator<Refs>;
     typedef typename Refs::Vertex_handle  Vertex_handle;

@@ -435,22 +435,6 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
   Halffacet_sweep FS(Halffacet_sweep::INPUT(
     Segments.begin(),Segments.end()), O, G); FS.sweep();
 
-  CGAL_forall_iterators(eit,SHalfedges) { 
-    e=*eit;
-    SHalfedge_handle e_below = Edge_of[geninfo<unsigned>::access(info(vertex(e)))];
-    TRACE(debug(e) << " has edge below ");
-    if(e_below != SHalfedge_handle())
-      TRACE(debug(e_below));
-    TRACEN("");
-  }
-  
-  CGAL_forall_iterators(lit,SHalfloops) { 
-    l=*lit;
-    SHalfedge_handle e_below = Edge_of[geninfo<unsigned>::access(info(vertex(l)))];  
-    TRACEN(point(vertex(l)) << " has edge below " << debug(e_below));
-  }
-
-  
   CGAL_forall_iterators(eit,SHalfedges) { e=*eit;
   if ( facet(e) != Halffacet_handle() ) continue;
     TRACEN("  linking hole "<<debug(e));

@@ -138,7 +138,7 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
 	  SFace_handle fu = D.sface(u), ftu = D.sface(D.twin(u));
 	  TRACEN("sfUNION of "<<IO->index(fu)<<" & "<<IO->index(ftu));
 	  merge_sets( fu, ftu, hash, uf);
-	  SM_decorator SD(D.vertex(u));
+	  SM_decorator SD(&*D.vertex(u));
 	  TRACEN("removing "<<IO->index(u)<<" & "<<IO->index(SD.twin(u)));
 	  Halfedge_handle src(SD.source(u)), tgt(SD.target(u));
 	  if ( SD.is_closed_at_source(u) ) 
@@ -151,7 +151,7 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
 	  if( SD.is_isolated(src))
 	    //	    SD.delete_vertex_only(src);
 	    SD.set_face(src,fu);
-	  SM_decorator SD2(D.vertex(tgt));
+	  SM_decorator SD2(&*D.vertex(tgt));
 	  if( SD2.is_isolated(tgt))
 	    // SD.delete_vertex_only(tgt);
 	    SD2.set_face(tgt,fu);
@@ -165,7 +165,7 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
 	SFace_handle fu = D.sface(l), ftu = D.sface(D.twin(l));
 	TRACEN("UNION of "<<IO->index(fu)<<" & "<<IO->index(ftu));
 	merge_sets( fu, ftu, hash, uf);
-	SM_decorator SD(D.vertex(l));
+	SM_decorator SD(&*D.vertex(l));
 	TRACEN("removing "<<IO->index(l)<<" & "<<IO->index(SD.twin(l)));
 	SD.delete_loop_only();
       }
@@ -178,7 +178,7 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
   bool is_part_of_volume(Vertex_handle v) 
     /* determines if a vertex v is part of a volume, cheking if its local
        graph is trivial (only one sface with no boundary). */  {
-    SM_decorator SD(v);
+    SM_decorator SD(&*v);
     CGAL_assertion( !is_empty_range( SD.sfaces_begin(), SD.sfaces_end()));
     if( is_empty_range( SD.svertices_begin(), SD.svertices_end()) &&
 	is_empty_range( SD.shalfedges_begin(), SD.shalfedges_end()) &&
@@ -191,7 +191,7 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
     /* determines if a vertex v is part of a the relative interior of a 
        facet, checking if its local graph consists just of a sloop and
        two incident sfaces. */ {
-    SM_decorator SD(v);
+    SM_decorator SD(&*v);
     CGAL_assertion( !is_empty_range( SD.svertices_begin(),
 					  SD.svertices_end()) ||
 			 is_empty_range( SD.shalfedges_begin(),
@@ -204,7 +204,7 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
     /* determines if a vertex v is part of a edge, checking at its local 
        graph for exactly two antipodal vertices  */
 
-    SM_decorator SD(v);
+    SM_decorator SD(&*v);
     if(SD.has_shalfloop())
       return false;
     if(SD.svertices_begin() == SD.svertices_end())
@@ -235,7 +235,7 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
 
     Vertex_iterator v = (*sncp()).vertices_begin();
     while( v != (*sncp()).vertices_end()) {
-      SM_decorator SD(v);
+      SM_decorator SD(&*v);
       Vertex_iterator v_next(v);
       v_next++;
       if( is_part_of_volume(v)) {
@@ -362,7 +362,7 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
       do 
 	e_next++;
       while( e_next != D.halfedges_end() && e_next->is_twin());
-      SM_decorator SD(D.source(e));
+      SM_decorator SD(&*D.source(e));
       if( SD.is_isolated(e)) {
 	if(D.mark(e) == D.mark(D.volume(D.sface(e)))) {
 	  TRACEN("removing pair "<<IO->index(e)<<' '<<IO->index(D.twin(e)));
@@ -410,8 +410,8 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
      CGAL_assertion( D.has_outdeg_two(e));
      Halfedge_handle et = D.twin(e);
      CGAL_assertion( D.has_outdeg_two(et));
-     SM_decorator SD1(D.vertex(e));
-     SM_decorator SD2(D.vertex(et));
+     SM_decorator SD1(&*D.vertex(e));
+     SM_decorator SD2(&*D.vertex(et));
      TRACEN("source " << IO->index(D.vertex(e)));
      TRACEN("target " << IO->index(D.vertex(et)));
      SHalfedge_handle e1 = SD1.first_out_edge(e);
@@ -423,7 +423,7 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
    void merge_sedges_at_target_and_remove_svertex( SHalfedge_handle s1,
 						   SVertex_handle v) {
      SNC_decorator D(*sncp());
-     SM_decorator SD(D.vertex(v));
+     SM_decorator SD(&*D.vertex(v));
      CGAL_assertion( SD.target(s1) == v);
      SHalfedge_handle s2(SD.next(s1));
      CGAL_assertion( SD.source(s2) == v);
@@ -453,7 +453,7 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
      CGAL_assertion( D.vertex(p) == D.vertex(q));
      Vertex_handle v(D.vertex(p)); 
      CGAL_assertion( is_part_of_edge(v));
-     SM_decorator SD(v);
+     SM_decorator SD(&*v);
      SHalfedge_around_svertex_circulator s(SD.first_out_edge(p)), se(s);
      CGAL_For_all( s, se) {
        D.link_as_prev_next_pair( D.previous(s), D.next(s));
@@ -484,7 +484,7 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
 
      typename std::list<SFace_handle>::const_iterator sfli;
      for(sfli = sflist.begin(); sfli != sflist.end(); sfli++){     
-       SM_decorator SD(D.vertex(*sfli));
+       SM_decorator SD(&*D.vertex(*sfli));
        SD.delete_face_only(*sfli);
      }
 
@@ -526,7 +526,7 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
     CGAL_forall_shalfedges(e, *sncp()) {
       if( linked[e])
 	continue;
-      SM_decorator SD(D.vertex(e));
+      SM_decorator SD(&*D.vertex(e));
       SFace_handle sf = *(uf.find(hash[D.sface(e)]));
       CGAL_assertion( sf != SFace_handle());
       SHalfedge_around_sface_circulator c(e), cend(c);
@@ -539,7 +539,7 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
 
     SVertex_handle sv;
     CGAL_forall_svertices(sv, *sncp()) {
-      SM_decorator SD(D.vertex(sv));
+      SM_decorator SD(&*D.vertex(sv));
       if( SD.is_isolated(sv)) {
 	SFace_handle sf = *(uf.find(hash[SD.face(sv)])); 
 	CGAL_assertion( sf != SFace_handle());
@@ -550,7 +550,7 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
 
     SHalfloop_handle sl;
     CGAL_forall_shalfloops(sl, *sncp()) {
-      SM_decorator SD(D.vertex(sl));
+      SM_decorator SD(&*D.vertex(sl));
       SD.store_boundary_object( sl, SD.face(sl));
     }
   }

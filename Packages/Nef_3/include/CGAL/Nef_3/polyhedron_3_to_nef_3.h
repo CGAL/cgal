@@ -86,6 +86,9 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
   typedef typename SNC_structure::Sphere_point       Sphere_point;
   typedef typename SNC_structure::Sphere_segment     Sphere_segment;
   typedef typename SNC_structure::Sphere_circle      Sphere_circle;
+
+  typedef typename Polyhedron::Halfedge_around_vertex_const_circulator
+                               Halfedge_around_vertex_const_circulator;
                                   
   TRACEN("  calculating facet's planes...");
   std::transform( P.facets_begin(), P.facets_end(),
@@ -105,9 +108,9 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
     D.mark(nv) = true;
     TRACEN("v "<<pv.point());
 
-    SM_decorator SM(nv);
-    typename Polyhedron::Halfedge_around_vertex_const_circulator
-      pe = pv.vertex_begin(), pe_prev(pe), pe_0(pe);
+    SM_decorator SM(&*nv);
+    Halfedge_around_vertex_const_circulator pe = pv.vertex_begin(), pe_prev(pe);
+    CGAL_assertion_code(Halfedge_around_vertex_const_circulator pe_0(pe));
     CGAL_assertion( pe != 0 );
 
     Point_3 pe_target_0(pe->opposite()->vertex()->point());

@@ -50,7 +50,7 @@ public:
   typedef SM_overlayer<SM_decorator_>           Base;
   typedef SNC_SM_overlayer<SM_decorator_>       Self;
 
-  typedef typename Base::Constructor_parameter Constructor_parameter;
+  //  typedef typename Base::Constructor_parameter Constructor_parameter;
   typedef typename Base::SVertex_handle SVertex_handle;
   typedef typename Base::SHalfedge_handle SHalfedge_handle;
   typedef typename Base::SHalfloop_handle SHalfloop_handle;
@@ -66,14 +66,14 @@ public:
   typedef typename Map::Infi_box Infi_box;
 
  public:
-  void simplify() const;
+  void simplify();
 
-  SNC_SM_overlayer(Constructor_parameter v, 
-    const Sphere_kernel& G = Sphere_kernel()) : Base(v,G) {}
+  SNC_SM_overlayer(Map* M, 
+    const Sphere_kernel& G = Sphere_kernel()) : Base(M,G) {}
 };
 
 template <typename Map>
-void SNC_SM_overlayer<Map>::simplify() const
+void SNC_SM_overlayer<Map>::simplify()
 {
   TRACEN("simplifying"); 
 

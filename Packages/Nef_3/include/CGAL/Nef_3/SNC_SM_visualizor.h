@@ -25,8 +25,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/Nef_S2/Sphere_map.h>
 #include <CGAL/Nef_S2/Sphere_geometry_OGL.h>
-#include <CGAL/Nef_3/SM_decorator.h>
-#include <CGAL/Nef_3/SNC_SM_triangulator.h>
+#include <CGAL/Nef_S2/SM_decorator.h>
+#include <CGAL/Nef_S2/SM_triangulator.h>
 
 #define LGREY CGAL::Color(170,170,200)
 #define DGREY CGAL::Color(30,30,50)

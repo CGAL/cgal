@@ -179,14 +179,13 @@ public:
   typedef CGAL::SNC_decorator<SNC_structure>              SNC_decorator;
   typedef CGAL::SNC_point_locator<SNC_structure>          SNC_point_locator;
   typedef CGAL::SNC_FM_decorator<SNC_structure>           FM_decorator;
-  typedef CGAL::SM_const_decorator<SNC_structure>     SM_const_decorator;
-  typedef CGAL::SM_point_locator<SM_const_decorator>  SM_point_locator;
-  typedef CGAL::SM_const_decorator<SNC_structure>     SM_const_decorator;
 
   typedef typename SNC_structure::Items                   Items;
-  typedef SNC_sphere_map<Kernel, Items>               Sphere_map;
+  typedef typename SNC_structure::Sphere_map              Sphere_map;
   typedef SM_decorator<Sphere_map>                    SM_decorator;  
   typedef CGAL::SNC_SM_overlayer<SM_decorator>           SM_overlayer;
+  typedef CGAL::SM_const_decorator<Sphere_map>     SM_const_decorator;
+  typedef CGAL::SM_point_locator<SM_const_decorator>  SM_point_locator;
 
   typedef typename SNC_structure::Vertex Vertex;
   typedef typename SNC_structure::Halfedge Halfedge;
@@ -356,8 +355,8 @@ public:
   Vertex_handle clone_SM( Vertex_handle vin);
 
   template<typename Selection>
-  Vertex_handle create_edge_facet_overlay( Halfedge_handle e, 
-					   Halffacet_handle f,
+  Sphere_map* create_edge_facet_overlay( Halfedge_handle e, 
+		                	   Halffacet_handle f,
 					   const Point_3& p,
 					   const Selection& BOP, bool inv);
 
@@ -740,7 +739,7 @@ create_SM_on_infibox(Point_3 center, Sphere_point* SP, int size,
 		     bool boundary, bool fmark0) const {
 
   Vertex_handle v=sncp()->new_vertex(center, boundary);
-  SM_decorator SD(v); 
+  SM_decorator SD(&*v); 
 
   TRACEN("create svertices");
   SVertex_handle sv[size];
@@ -820,7 +819,7 @@ create_box_corner(int x, int y, int z, bool space, bool boundary) const {
 		      CGAL_NTS abs(y) == CGAL_NTS abs(z));
   TRACEN("  constructing box corner on "<<Point_3(x,y,z)<<"...");
   Vertex_handle v = sncp()->new_vertex( Point_3(x, y, z), boundary);
-  SM_decorator SD(v);
+  SM_decorator SD(&*v);
   Sphere_point sp[] = { Sphere_point(-x, 0, 0), 
 			Sphere_point(0, -y, 0), 
 			Sphere_point(0, 0, -z) };
@@ -876,7 +875,7 @@ create_extended_box_corner(int x,int y,int z,bool space,bool boundary) const {
   Point_3 p = Infi_box::create_extended_point(x,y,z); 
   Vertex_handle v = sncp()->new_vertex(p , boundary);
   TRACEN( point(v));
-  SM_decorator SD(v);
+  SM_decorator SD(&*v);
   Sphere_point sp[] = { Sphere_point(-x, 0, 0), 
 			Sphere_point(0, -y, 0), 
 			Sphere_point(0, 0, -z) };
@@ -943,7 +942,7 @@ create_from_facet(Halffacet_handle f, const Point_3& p) const
   Vertex_handle v = sncp()->new_vertex( p, mark(f));
   point(v) = p;
   Sphere_circle c(plane(f)); // circle through origin parallel to h
-  SM_decorator D(v);
+  SM_decorator D(&*v);
   SHalfloop_handle l = D.new_shalfloop_pair();
   SFace_handle f1 = D.new_sface(), f2 = D.new_sface();
   D.link_as_loop(l,f1);
@@ -970,8 +969,8 @@ create_from_edge(Halfedge_handle e,
 		 const Point_3& p) const
 { CGAL_assertion(segment(e).has_on(p));
   Vertex_handle v = sncp()->new_vertex( p, mark(e));
-  SM_decorator D(v);
-  SM_const_decorator E(source(e));
+  SM_decorator D(&*v);
+  SM_const_decorator E(&*source(e));
   Sphere_point ps = E.point(e);
   SVertex_handle v1 = D.new_svertex(ps);
   SVertex_handle v2 = D.new_svertex(ps.antipode());
@@ -1054,9 +1053,9 @@ clone_SM( typename SNC_::Vertex_handle vin) {
   CGAL::Unique_hash_map<SHalfloop_handle, SHalfloop_handle>     LM;
   CGAL::Unique_hash_map<SFace_handle, SFace_handle>             FM;
   
-  SM_decorator E(vin);
+  SM_decorator E(&*vin);
   Vertex_handle vout = sncp()->new_vertex(point(vin), mark(vin));
-  SM_decorator D(vout);
+  SM_decorator D(&*vout);
   
   SVertex_handle sv;
   CGAL_forall_svertices(sv, E)
@@ -1116,7 +1115,7 @@ clone_SM( typename SNC_::Vertex_handle vin) {
 
 template <typename SNC_>
 template <typename Selection>
-typename SNC_::Vertex_handle
+typename SNC_::Sphere_map*
 SNC_constructor<SNC_>::
 create_edge_facet_overlay( typename SNC_::Halfedge_handle e, 
 			   typename SNC_::Halffacet_handle f,
@@ -1127,8 +1126,8 @@ create_edge_facet_overlay( typename SNC_::Halfedge_handle e,
 
   Unique_hash_map<SHalfedge_handle, Mark> mark_of_right_sface;
 
-  SM_decorator D(sncp()->new_vertex(p, BOP(mark(e), mark(f))));
-  SM_const_decorator E(source(e));
+  SM_decorator D(&*sncp()->new_vertex(p, BOP(mark(e), mark(f))));
+  SM_const_decorator E(&*source(e));
   
   Sphere_point ps = E.point(e);
   ps = normalized(ps);
@@ -1224,7 +1223,7 @@ create_edge_facet_overlay( typename SNC_::Halfedge_handle e,
     }   
   }
 
-  return D.center_vertex();
+  return D.sphere_map();
 }
 
 template <typename SNC_>
@@ -1433,7 +1432,7 @@ link_shalfedges_to_facet_cycles() const
     TRACEN("");
     TRACEN(PH(e));
     Halfedge_iterator et = twin(e);
-    SM_decorator D(vertex(e)), Dt(vertex(et));
+    SM_decorator D(&*vertex(e)), Dt(&*vertex(et));
     TRACEN(point(vertex(e)));
     if ( D.is_isolated(e) ) continue;
     SHalfedge_around_svertex_circulator ce(D.first_out_edge(e)),cee(ce);
@@ -1522,7 +1521,7 @@ categorize_facet_cycles_and_create_facets() const
     //    progress++;
     Sphere_circle c(circle(e));
     Plane_3 h = c.plane_through(point(vertex(e)));
-    SM_decorator SD(vertex(e));
+    SM_decorator SD(&*vertex(e));
     TRACEN(point(target(SD.source(e))) <<" - "<< point(vertex(e)) <<" - "<< 
            point(target(SD.target(e))) << 
 	   " has plane " << h << " has circle " << circle(e) << 
@@ -1623,7 +1622,7 @@ create_volumes()
     if(CGAL::lexicographically_xyz_smaller(point(v),point(v_min)))
        v_min=v;
     TRACEN( "Shell #" << i << " minimal vertex: " << point(v));
-    SM_point_locator D(v);
+    SM_point_locator D((Sphere_map*) &*v);
     Object_handle o = D.locate(Sphere_point(-1,0,0));
     SFace_const_handle sfc;
     if( !assign(sfc, o) || ShellSf[sfc] != i) {
@@ -1634,7 +1633,7 @@ create_volumes()
       CGAL_assertion( ShellSf[f] == i );
       if( Closed[i] ) {
 	TRACEN("Shell #" << i << " is closed");
-	SM_decorator SD(v);
+	SM_decorator SD(&*v);
 	Volume_handle c = sncp()->new_volume();
 	mark(c) = SD.mark(f);
 	link_as_inner_shell(f, c );

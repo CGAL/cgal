@@ -55,12 +55,12 @@ template <typename Map>
 class SNC_decorator : public SNC_const_decorator<Map> { 
  public:
   typedef Map SNC_structure;
-  typedef typename Map::Sphere_map Sphere_map;
+  typedef typename Map::Sphere_map                     Sphere_map;
   typedef SNC_decorator<SNC_structure>                 Self;
   typedef SNC_const_decorator<SNC_structure>           Base;
   typedef SNC_constructor<SNC_structure>               SNC_constructor;
-  typedef SM_decorator<Sphere_map>                 SM_decorator;
-  typedef SM_const_decorator<SNC_structure>            SM_const_decorator;
+  typedef SM_decorator<Sphere_map>                     SM_decorator;
+  typedef SM_const_decorator<Sphere_map>               SM_const_decorator;
   typedef SNC_SM_overlayer<SM_decorator>               SM_overlayer;
   typedef SM_point_locator<SM_const_decorator>         SM_point_locator;
   typedef SNC_intersection<SNC_structure>              SNC_intersection;
@@ -452,7 +452,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     { h->incident_volume() = c; }
 
   void add_sloop_to_facet(SHalfloop_handle l, Halffacet_handle f) const {
-    SM_decorator SD(vertex(l));
+    SM_decorator SD(&*vertex(l));
     Sphere_circle facet_plane(plane(f));
     if( facet_plane == SD.circle(l)) {
       l->incident_facet() = f;
@@ -496,7 +496,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 		   Infi_box::degree(sp.hw()) == 0);
     sp = Infi_box::simplify(sp);
     TRACEN( "Locating "<<sp <<" in "<<point(v));
-    SM_point_locator L(v);
+    SM_point_locator L(&*v);
     Object_handle o = L.locate(sp);
 
     SFace_const_handle sf;
@@ -560,7 +560,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
    //  piercing point of the |ray| on the local (virtual) view  of |e|
    //  \precondition |ray| target belongs to |e|. } 
 
-    SM_decorator SD(source(e));
+    SM_decorator SD(&*source(e));
     if( SD.is_isolated(e))
       return Halffacet_handle();
     
@@ -573,11 +573,13 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     SHalfedge_around_svertex_circulator sh(SD.first_out_edge(e));
     Halffacet_handle res = facet(sh); 
     Vector_3 vec0(cross_product(ev,plane(res).orthogonal_vector()));
+    /* // probably incorrect assertion
     CGAL_assertion_code
       (Sphere_segment _ess( SD.point(SD.source(sh)), 
 			    SD.point(SD.source(next(sh))),
 			    SD.circle(sh)));
     CGAL_assertion( _ess.has_on(vec0));
+    */
     SHalfedge_around_svertex_circulator send(sh);
     TRACEN("initial face candidate "<< plane(res)<<" with vector  "<<vec0);
 
@@ -781,8 +783,8 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     Vertex_handle v01 = rsnc.new_vertex( point(v0), BOP( mark(v0),mark(v1)));
     //    cerr<<"BOP Vertex "<<mark(v0)<<" "<<mark(v1)<<std::endl;
     TRACEN("  binop result on vertex "<<&*v01<<" on "<<&*(v01->sncp()));
-    SM_overlayer O(v01);
-    O.subdivide( v0, v1);
+    SM_overlayer O(&*v01);
+    O.subdivide( &*v0, &*v1);
     O.select( BOP);
     O.simplify();
 
@@ -927,8 +929,8 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       }
       else if( assign( f, o1)) {
 	SNC_constructor C(result);
-	Vertex_handle v0 = C.create_edge_facet_overlay(e0, f, p, bop, inverse_order);
-	SM_overlayer O(v0);
+	Sphere_map* M0 = C.create_edge_facet_overlay(e0, f, p, bop, inverse_order);
+	SM_overlayer O(M0);
 	O.simplify();
       }
       else 
@@ -1012,9 +1014,9 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 
 	  SNC_constructor C(result);
 	  v1 = C.clone_SM(v0);
-	  SM_decorator SM(v1);
+	  SM_decorator SM(&*v1);
 	  SM.change_marks(BOP, mark(c));
-	  SM_overlayer O(v1);
+	  SM_overlayer O(&*v1);
 	  O.simplify();
 	  TRACEN("p0 found on volume");
 	}
@@ -1028,12 +1030,12 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       //      v_qualifying++;
       if(ignore[v1]) continue;
       Point_3 p1(point(v1));
-      Vertex_handle v;
       Halfedge_handle e;
       Halffacet_handle f;
       Volume_handle c;
       TRACEN("Locating point " << p1);
       Object_handle o = pl()->locate(p1);
+      CGAL_assertion_code(Vertex_handle v);
       CGAL_assertion( !assign( v, o));
       if( assign( e, o)) {
 	v0 = D.create_local_view_on( p1, e);
@@ -1051,9 +1053,9 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 	if( BOP( mark(c), true) != BOP( mark(c), false)) {
 	  SNC_constructor C(result);
 	  v0 = C.clone_SM(v1);
-	  SM_decorator SM(v0);
+	  SM_decorator SM(&*v0);
 	  SM.change_marks(mark(c), BOP);
-	  SM_overlayer O(v0);
+	  SM_overlayer O(&*v0);
 	  O.simplify();
 	}
 	TRACEN("p1 found on volume");
@@ -1070,7 +1072,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     // local view on the intersection point on both SNC structures,
     // overlay them and add the resulting sphere map to the result.
 
-    //    SETDTHREAD(19*509*43);
+    //    SETDTHREAD(19*509*43*131);
 
     //    Progress_indicator_clog ee_intersections
     //      (sncp()->number_of_edges(),
@@ -1115,14 +1117,16 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     }
 #endif
     TRACEN("=> resultant vertices (before simplification): ");
-    CGAL_forall_vertices( v0, result) TRACEN(&*v0<<" "<<point(v0));
+    CGAL_assertion_code(CGAL_forall_vertices( v0, result) 
+			  TRACEN(&*v0<<" "<<point(v0)));
 
     SNC_simplify simp(result);
     simp.vertex_simplification(NO_SNC);
     TRACEN("\nnumber of vertices (so far...) = "<<result.number_of_vertices());
 
     TRACEN("=> resultant vertices (after simplification): ");
-    CGAL_forall_vertices( v0, result) TRACEN(&*v0<<" "<<point(v0));
+    CGAL_assertion_code(CGAL_forall_vertices( v0, result) 
+			  TRACEN(&*v0<<" "<<point(v0)));
 #ifdef CGAL_NEF3_DUMP_SNC_OPERATORS
     TRACEN("=> pre-construction result");
     SNC_io_parser<SNC_structure> O(std::cerr, result);
@@ -1168,7 +1172,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       valid = valid && (vi->sncp()==sncp());
       valid = valid && vi->is_valid(verb, level);
 
-      SM_decorator SD(vi);
+      SM_decorator SD(&*vi);
       Unique_hash_map<SVertex_handle, bool> SVvisited(false);
       Unique_hash_map<SHalfedge_handle, bool> SEvisited(false);
       Unique_hash_map<SFace_handle, bool> SFvisited(false);
@@ -1207,8 +1211,8 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       valid = valid && (twin(twin(he))==he);
 
       if(he->is_twin()) {
-	SM_decorator S1(source(he));
-	SM_decorator S2(target(he));
+	SM_decorator S1(&*source(he));
+	SM_decorator S2(&*target(he));
 	SHalfedge_handle se1(S1.first_out_edge(he));
 	SHalfedge_handle se2(S2.first_out_edge(twin(he)));
 	if(se1 != NULL && se2 != NULL) {
@@ -1247,7 +1251,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 	  valid = valid && (sheh != SHalfedge_handle());
 	  SHalfedge_around_facet_circulator shec1(sheh), shec2(shec1);
 	  CGAL_For_all(shec1, shec2) {
-	    SM_decorator SD(vertex(shec1));
+	    SM_decorator SD(&*vertex(shec1));
 	    if(SEinUniqueFC[shec1])
 	      TRACEN("redundant facet " << point(vertex(shec1)) << " | " << SD.circle(shec1));
 	    CGAL_assertion(!SEinUniqueFC[shec1]);
@@ -1420,7 +1424,7 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
         V.visit(vertex(sf)); // report vertex
       Done[vertex(sf)] = true;
       //      SVertex_handle sv;
-      SM_decorator SD(vertex(sf));
+      SM_decorator SD(&*vertex(sf));
       /*      
       CGAL_forall_svertices(sv,SD){
 	if(SD.is_isolated(sv) && !Done[sv])

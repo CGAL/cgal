@@ -29,6 +29,8 @@
 #include <CGAL/Nef_2/Object_handle.h>
 #include <CGAL/Nef_3/SNC_iteration.h>
 #include <CGAL/Nef_2/iterator_tools.h>
+#include <CGAL/Nef_S2/Sphere_geometry.h>
+#include <CGAL/Nef_3/SNC_list.h>
 #include <list>
 
 #undef _DEBUG
@@ -58,7 +60,7 @@ template <typename S> class SNC_decorator;
 
 /*{\Manpage {SNC_structure}{Items}{Selective Nef Complex}{C}}*/
 
-template <typename Items_>
+template <typename Kernel_, typename Items_>
 class SNC_structure {
 /*{\Mdefinition The extended Wuerzburg structure is the topological
 structure of Nef polyhedra. It is programmed around the local
@@ -69,14 +71,16 @@ the local graph or added for the comfort of the user.}*/
 public:
   /*{\Mtypes 7}*/
 
-  typedef Items_                             Items;
-  typedef SNC_structure<Items>               Self;
-  typedef SNC_decorator<Self>                SNC_decorator;
+  typedef Items_                        Items;
+  typedef Kernel_                       Kernel;
+  typedef SNC_structure<Kernel,Items>   Self;
 
-  typedef typename Items::Kernel        Kernel;
+  typedef bool                          Mark;
+  typedef SNC_decorator<Self>           SNC_decorator;
+
   typedef typename Kernel::FT           FT;
   typedef typename Kernel::RT           RT;
-  typedef typename Items::Sphere_kernel Sphere_kernel;
+  typedef CGAL::Sphere_geometry<Kernel> Sphere_kernel;
   
   /*
   typedef Infimaximal_box<typename Is_extended_kernel<Kernel>::value_type, Kernel> Infi_box;
@@ -86,9 +90,6 @@ public:
 
   typedef SNC_sphere_map<Kernel, Items> Sphere_map;
   typedef SM_decorator<Sphere_map>  SM_decorator;
-
-  typedef typename Sphere_map::Infi_box   Infi_box;
-  typedef typename Infi_box::Standard_kernel  Standard_kernel;
 
   typedef typename Kernel::Point_3      Point_3;
   /*{\Mtypemember embedding vertices.}*/
@@ -117,8 +118,6 @@ public:
   /*{\Mtypemember segments on the unit sphere.}*/
   typedef typename Sphere_kernel::Sphere_direction Sphere_direction;
   /*{\Mtypemember directions on the unit sphere.}*/
-  typedef typename Items::Mark Mark;
-  /*{\Mtypemember attributes of all objects.}*/
   typedef size_t Size_type;
   /*{\Mtypemember size type.}*/
 
@@ -134,7 +133,8 @@ public:
   at most one |SLoop| pair per vertex.}*/
 
  public:
-  typedef typename Items::template Vertex<SNC_structure>    Vertex;
+  typedef Sphere_map                                        Vertex_base;
+  typedef SNC_in_place_list_sm<Vertex_base>                 Vertex; 
   typedef CGAL::In_place_list<Vertex,false>                 Vertex_list;
   typedef CGAL_ALLOCATOR(Vertex)                            Vertex_alloc;
   typedef typename Vertex_list::iterator                    Vertex_handle;
@@ -142,111 +142,68 @@ public:
   typedef typename Vertex_list::iterator                    Vertex_iterator;
   typedef typename Vertex_list::const_iterator              Vertex_const_iterator;
 
-  /*
-  typedef typename Sphere_map::Vertex                  Vertex;
-  typedef typename Sphere_map::Vertex_list             Vertex_list;
-  typedef typename Sphere_map::Vertex_alloc            Vertex_alloc;
-  typedef typename Sphere_map::Vertex_handle           Vertex_handle;
-  typedef typename Sphere_map::Vertex_const_handle     Vertex_const_handle;
-  typedef typename Sphere_map::Vertex_iterator         Vertex_iterator;
-  typedef typename Sphere_map::Vertex_const_iterator   Vertex_const_iterator;
+  typedef typename Items::template Halffacet<SNC_structure> Halffacet_base;
+  typedef SNC_in_place_list_halffacet<Halffacet_base>       Halffacet;
+  typedef CGAL::In_place_list<Halffacet,false>              Halffacet_list;
+  typedef CGAL_ALLOCATOR(Halffacet)                         Halffacet_alloc;
+  typedef typename Halffacet_list::iterator                 Halffacet_handle;
+  typedef typename Halffacet_list::const_iterator           Halffacet_const_handle;
+  typedef typename Halffacet_list::iterator                 Halffacet_iterator;
+  typedef typename Halffacet_list::const_iterator           Halffacet_const_iterator;
 
-  typedef typename Sphere_map::SVertex                  Halfedge;
-  typedef typename Sphere_map::SVertex_list             Halfedge_list;
-  typedef typename Sphere_map::SVertex_alloc            Halfedge_alloc;
-  typedef typename Sphere_map::SVertex_handle           Halfedge_handle;
-  typedef typename Sphere_map::SVertex_const_handle     Halfedge_const_handle;
-  typedef typename Sphere_map::SVertex_iterator         Halfedge_iterator;
-  typedef typename Sphere_map::SVertex_const_iterator   Halfedge_const_iterator;
+  typedef typename Items::template Volume<SNC_structure>    Volume_base;
+  typedef SNC_in_place_list_volume<Volume_base>             Volume;
+  typedef CGAL::In_place_list<Volume,false>                 Volume_list;
+  typedef CGAL_ALLOCATOR(Volume)                            Volume_alloc;
+  typedef typename Volume_list::iterator                    Volume_handle;
+  typedef typename Volume_list::const_iterator              Volume_const_handle;
+  typedef typename Volume_list::iterator                    Volume_iterator;
+  typedef typename Volume_list::const_iterator              Volume_const_iterator;
 
-  typedef typename Sphere_map::SVertex                  SVertex;
-  typedef typename Sphere_map::SVertex_list             SVertex_list;
-  typedef typename Sphere_map::SVertex_alloc            SVertex_alloc;
-  typedef typename Sphere_map::SVertex_handle           SVertex_handle;
-  typedef typename Sphere_map::SVertex_const_handle     SVertex_const_handle;
-  typedef typename Sphere_map::SVertex_iterator         SVertex_iterator;
-  typedef typename Sphere_map::SVertex_const_iterator   SVertex_const_iterator;
+  typedef typename Items::template SVertex<SNC_structure>   SVertex_base;
+  typedef SNC_in_place_list_svertex<SVertex_base>           SVertex;
+  typedef CGAL::In_place_list<SVertex,false>                SVertex_list;
+  typedef CGAL_ALLOCATOR(SVertex)                           SVertex_alloc;
+  typedef typename SVertex_list::iterator                   SVertex_handle;
+  typedef typename SVertex_list::const_iterator             SVertex_const_handle;
+  typedef typename SVertex_list::iterator                   SVertex_iterator;
+  typedef typename SVertex_list::const_iterator             SVertex_const_iterator;
 
-  typedef typename Sphere_map::SHalfedge                  SHalfedge;
-  typedef typename Sphere_map::SHalfedge_list             SHalfedge_list;
-  typedef typename Sphere_map::SHalfedge_alloc            SHalfedge_alloc;
-  typedef typename Sphere_map::SHalfedge_handle           SHalfedge_handle;
-  typedef typename Sphere_map::SHalfedge_const_handle     SHalfedge_const_handle;
-  typedef typename Sphere_map::SHalfedge_iterator         SHalfedge_iterator;
-  typedef typename Sphere_map::SHalfedge_const_iterator   SHalfedge_const_iterator;
+  typedef typename Items::template SVertex<SNC_structure>   Halfedge_base;
+  typedef SNC_in_place_list_svertex<SVertex_base>           Halfedge;
+  typedef CGAL::In_place_list<SVertex,false>                Halfedge_list;
+  typedef CGAL_ALLOCATOR(SVertex)                           Halfedge_alloc;
+  typedef typename SVertex_list::iterator                   Halfedge_handle;
+  typedef typename SVertex_list::const_iterator             Halfedge_const_handle;
+  typedef typename SVertex_list::iterator                   Halfedge_iterator;
+  typedef typename SVertex_list::const_iterator             Halfedge_const_iterator;
 
-  typedef typename Sphere_map::SHalfloop                  SHalfloop;
-  typedef typename Sphere_map::SHalfloop_list             SHalfloop_list;
-  typedef typename Sphere_map::SHalfloop_alloc            SHalfloop_alloc;
-  typedef typename Sphere_map::SHalfloop_handle           SHalfloop_handle;
-  typedef typename Sphere_map::SHalfloop_const_handle     SHalfloop_const_handle;
-  typedef typename Sphere_map::SHalfloop_iterator         SHalfloop_iterator;
-  typedef typename Sphere_map::SHalfloop_const_iterator   SHalfloop_const_iterator;
+  typedef typename Items::template SHalfedge<SNC_structure> SHalfedge_base;
+  typedef SNC_in_place_list_shalfedge<SHalfedge_base>       SHalfedge;
+  typedef CGAL::In_place_list<SHalfedge,false>              SHalfedge_list;
+  typedef CGAL_ALLOCATOR(SHalfedge)                         SHalfedge_alloc;
+  typedef typename SHalfedge_list::iterator                 SHalfedge_handle;
+  typedef typename SHalfedge_list::const_iterator           SHalfedge_const_handle;
+  typedef typename SHalfedge_list::iterator                 SHalfedge_iterator;
+  typedef typename SHalfedge_list::const_iterator           SHalfedge_const_iterator;
 
-  typedef typename Sphere_map::SFace                  SFace;
-  typedef typename Sphere_map::SFace_list             SFace_list;
-  typedef typename Sphere_map::SFace_alloc            SFace_alloc;
-  typedef typename Sphere_map::SFace_handle           SFace_handle;
-  typedef typename Sphere_map::SFace_const_handle     SFace_const_handle;
-  typedef typename Sphere_map::SFace_iterator         SFace_iterator;
-  typedef typename Sphere_map::SFace_const_iterator   SFace_const_iterator;
-  */
+  typedef typename Items::template SHalfloop<SNC_structure> SHalfloop_base;
+  typedef SNC_in_place_list_shalfloop<SHalfloop_base>       SHalfloop;
+  typedef CGAL::In_place_list<SHalfloop,false>              SHalfloop_list;
+  typedef CGAL_ALLOCATOR(SHalfloop)                         SHalfloop_alloc;
+  typedef typename SHalfloop_list::iterator                 SHalfloop_handle;
+  typedef typename SHalfloop_list::const_iterator           SHalfloop_const_handle;
+  typedef typename SHalfloop_list::iterator                 SHalfloop_iterator;
+  typedef typename SHalfloop_list::const_iterator           SHalfloop_const_iterator;
 
-  typedef typename Items::template Halffacet<Self> Halffacet;
-  typedef CGAL::In_place_list<Halffacet,false>     Halffacet_list;
-  typedef CGAL_ALLOCATOR(Halffacet)                Halffacet_alloc;
-  typedef typename Halffacet_list::iterator        Halffacet_handle;
-  typedef typename Halffacet_list::const_iterator  Halffacet_const_handle;
-  typedef typename Halffacet_list::iterator        Halffacet_iterator;
-  typedef typename Halffacet_list::const_iterator  Halffacet_const_iterator;
-
-  typedef typename Items::template Volume<Self>    Volume;
-  typedef CGAL::In_place_list<Volume,false>        Volume_list;
-  typedef CGAL_ALLOCATOR(Volume)                   Volume_alloc;
-  typedef typename Volume_list::iterator           Volume_handle;
-  typedef typename Volume_list::const_iterator     Volume_const_handle;
-  typedef typename Volume_list::iterator           Volume_iterator;
-  typedef typename Volume_list::const_iterator     Volume_const_iterator;
-
-  typedef typename Items::template SVertex<Self>   SVertex;
-  typedef CGAL::In_place_list<SVertex,false>       SVertex_list;
-  typedef CGAL_ALLOCATOR(SVertex)                  SVertex_alloc;
-  typedef typename SVertex_list::iterator          SVertex_handle;
-  typedef typename SVertex_list::const_iterator    SVertex_const_handle;
-  typedef typename SVertex_list::iterator          SVertex_iterator;
-  typedef typename SVertex_list::const_iterator    SVertex_const_iterator;
-
-  typedef typename Items::template SVertex<Self>   Halfedge;
-  typedef CGAL::In_place_list<SVertex,false>       Halfedge_list;
-  typedef CGAL_ALLOCATOR(SVertex)                  Halfedge_alloc;
-  typedef typename SVertex_list::iterator          Halfedge_handle;
-  typedef typename SVertex_list::const_iterator    Halfedge_const_handle;
-  typedef typename SVertex_list::iterator          Halfedge_iterator;
-  typedef typename SVertex_list::const_iterator    Halfedge_const_iterator;
-
-  typedef typename Items::template SHalfedge<Self> SHalfedge;
-  typedef CGAL::In_place_list<SHalfedge,false>     SHalfedge_list;
-  typedef CGAL_ALLOCATOR(SHalfedge)                SHalfedge_alloc;
-  typedef typename SHalfedge_list::iterator        SHalfedge_handle;
-  typedef typename SHalfedge_list::const_iterator  SHalfedge_const_handle;
-  typedef typename SHalfedge_list::iterator        SHalfedge_iterator;
-  typedef typename SHalfedge_list::const_iterator  SHalfedge_const_iterator;
-
-  typedef typename Items::template SHalfloop<Self> SHalfloop;
-  typedef CGAL::In_place_list<SHalfloop,false>     SHalfloop_list;
-  typedef CGAL_ALLOCATOR(SHalfloop)                SHalfloop_alloc;
-  typedef typename SHalfloop_list::iterator        SHalfloop_handle;
-  typedef typename SHalfloop_list::const_iterator  SHalfloop_const_handle;
-  typedef typename SHalfloop_list::iterator        SHalfloop_iterator;
-  typedef typename SHalfloop_list::const_iterator  SHalfloop_const_iterator;
-
-  typedef typename Items::template SFace<Self>     SFace;
-  typedef CGAL::In_place_list<SFace,false>         SFace_list;
-  typedef CGAL_ALLOCATOR(SFace)                    SFace_alloc;
-  typedef typename SFace_list::iterator            SFace_handle;
-  typedef typename SFace_list::const_iterator      SFace_const_handle;
-  typedef typename SFace_list::iterator            SFace_iterator;
-  typedef typename SFace_list::const_iterator      SFace_const_iterator;
+  typedef typename Items::template SFace<SNC_structure>     SFace_base;
+  typedef SNC_in_place_list_sface<SFace_base>               SFace;
+  typedef CGAL::In_place_list<SFace,false>                  SFace_list;
+  typedef CGAL_ALLOCATOR(SFace)                             SFace_alloc;
+  typedef typename SFace_list::iterator                     SFace_handle;
+  typedef typename SFace_list::const_iterator               SFace_const_handle;
+  typedef typename SFace_list::iterator                     SFace_iterator;
+  typedef typename SFace_list::const_iterator               SFace_const_iterator;
 
   typedef CGAL::Object_handle         Object_handle;
   typedef std::list<Object_handle>    Object_list;
@@ -262,6 +219,10 @@ public:
                                SHalfedge_around_svertex_const_circulator;
   typedef typename Sphere_map::SHalfedge_around_sface_const_circulator
                                SHalfedge_around_sface_const_circulator;
+
+  typedef typename Sphere_map::Infi_box   Infi_box;
+  typedef typename Infi_box::Standard_kernel  Standard_kernel;
+
 
   typedef Vertex_handle Constructor_parameter;
   typedef Vertex_const_handle Constructor_const_parameter;
@@ -497,6 +458,11 @@ public:
     return *this;
   }
 
+  void clear_boundary() {
+    boundary_item_.clear();
+    sm_boundary_item_.clear();
+  }
+
   void clear() { 
     boundary_item_.clear();
     sm_boundary_item_.clear();
@@ -509,16 +475,11 @@ public:
     sfaces_.destroy();
   }
 
-  void clear_boundary() {
-    boundary_item_.clear();
-    sm_boundary_item_.clear();
-  }
-
-  template <typename H>
-  bool is_boundary_object(H h) const
-  { return boundary_item_[h]!=undef_; }
   template <typename H>
   bool is_boundary_object(H h) 
+  { return boundary_item_[h]!=undef_; }
+  template <typename H>
+  bool is_sm_boundary_object(H h) 
   { return sm_boundary_item_[h]!=undef_; }
 
   template <typename H>
@@ -548,7 +509,6 @@ public:
   { SVertex_handle sv;
     SHalfedge_handle se;
     SHalfloop_handle sl;
-
     if ( assign(se,*it) ) { 
       if( is_boundary_object(se)) 
 	undef_boundary_item(se); 
@@ -577,17 +537,17 @@ public:
     SHalfedge_handle se;
     SHalfloop_handle sl;
     if ( assign(se,*it) ) { 
-      if( is_boundary_object(se)) 
+      if( is_sm_boundary_object(se)) 
 	undef_sm_boundary_item(se); 
       return; 
     }
     if ( assign(sl,*it) ) { 
-      if( is_boundary_object(sl)) 
+      if( is_sm_boundary_object(sl)) 
 	undef_sm_boundary_item(sl);
       return; 
     }
     if ( assign(sv,*it) ) { 
-      if( is_boundary_object(sv)) 
+      if( is_sm_boundary_object(sv)) 
 	undef_sm_boundary_item(sv); 
       return; 
     }
@@ -742,8 +702,8 @@ public:
 				    Mark m = Mark())
   /*{\Mop creates a new halfedge pair between the vertices $v_1$
   and $v_2$. The edge is marked by |m|.}*/ { 
-    SM_decorator D1(v1);
-    SM_decorator D2(v2);
+    SM_decorator D1(&*v1);
+    SM_decorator D2(&*v2);
     SVertex_handle e1 = D1.new_vertex();
     SVertex_handle e2 = D2.new_vertex();
     make_twins(e1,e2);
@@ -778,7 +738,7 @@ public:
   void delete_vertex(Vertex_handle v)
   /*{\Mop deletes the vertex including the objects in its local graph.}*/  { 
     TRACEN("~ deleting vertex "<<&*v<<" from "<<&*this);
-    v->clear(); 
+    v->clear(true); 
     delete_vertex_only(v);
     TRACEN("~~ vertex deleted"<<&*v);
   }
@@ -789,7 +749,7 @@ public:
     TRACEN("~ deleting halfedges pair "<<&*e<<", "<<&*(e->twin())<<
 	   " from "<<&*this);
     Halfedge_handle et = e->twin();
-    SM_decorator D1(e->center_vertex()), D2(et->center_vertex());
+    SM_decorator D1(&*e->center_vertex()), D2(&*et->center_vertex());
     D1.delete_vertex(e);
     D2.delete_vertex(et);
   }
@@ -891,7 +851,7 @@ public:
 
 
   Vertex_handle new_vertex_only() { 
-    vertices_.push_back( * get_vertex_node(Vertex()));
+    vertices_.push_back(* get_vertex_node(Vertex()));
     TRACEN("  new vertex only "<<&*(--vertices_end()));
     return --vertices_end(); 
   }
@@ -938,7 +898,7 @@ public:
   }
   void delete_halfedge_only(Halfedge_handle h) { 
     TRACEN("~ deleting halfedge only "<<&*h<<" from "<<&*this);
-    CGAL_assertion(!is_boundary_object(h));
+    CGAL_assertion(!is_sm_boundary_object(h));
     halfedges_.erase(h);
     put_halfedge_node(&*h);
   }
@@ -954,13 +914,13 @@ public:
   }
   void delete_shalfedge_only(SHalfedge_handle h)  { 
     TRACEN("~ deleting shalfedge only "<<&*h<<" from "<<&*this);
-    CGAL_assertion(!is_boundary_object(h));
+    CGAL_assertion(!is_sm_boundary_object(h));
     shalfedges_.erase(h);
     put_shalfedge_node(&*h);
   }
   void delete_shalfloop_only(SHalfloop_handle h)  { 
     TRACEN("~ deleting shalfloop only "<<&*h<<" from "<<&*this);
-    CGAL_assertion(!is_boundary_object(h));
+    CGAL_assertion(!is_sm_boundary_object(h));
     shalfloops_.erase(h); 
     put_shalfloop_node(&*h);
   }
@@ -1853,9 +1813,9 @@ protected:
 }; // SNC_structure
 
 
-template <typename Items>
-void SNC_structure<Items>::
-pointer_update(const SNC_structure<Items>& D)
+template <typename Kernel, typename Items>
+void SNC_structure<Kernel,Items>::
+pointer_update(const SNC_structure<Kernel,Items>& D)
 {
   CGAL::Unique_hash_map<Vertex_const_handle,Vertex_handle>       VM;
   CGAL::Unique_hash_map<Halfedge_const_handle,Halfedge_handle>   EM;
@@ -1978,9 +1938,9 @@ pointer_update(const SNC_structure<Items>& D)
   }
 }
 
-template <typename Items> 
-typename SNC_structure<Items>::Object_iterator
-SNC_structure<Items>::undef_;
+template <typename Kernel, typename Items> 
+typename SNC_structure<Kernel, Items>::Object_iterator
+SNC_structure<Kernel,Items>::undef_;
 
 
 CGAL_END_NAMESPACE

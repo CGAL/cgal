@@ -59,22 +59,20 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <typename T> class Nef_polyhedron_3;
-template <typename T> class Nef_polyhedron_3_rep;
-// template <typename K, typename I> class SM_items;
+template <typename K, typename I> class Nef_polyhedron_3;
+template <typename K, typename I> class Nef_polyhedron_3_rep;
 
-template <typename T>
-std::ostream& operator<<(std::ostream&, const Nef_polyhedron_3<T>&); 
-template <typename T>
-std::istream& operator>>(std::istream&, Nef_polyhedron_3<T>&); 
+template <typename K, typename I>
+std::ostream& operator<<(std::ostream&, const Nef_polyhedron_3<K,I>&); 
+template <typename K, typename I>
+std::istream& operator>>(std::istream&, Nef_polyhedron_3<K,I>&); 
 
-template <typename T>
+template <typename K, typename I>
 class Nef_polyhedron_3_rep 
 { 
-  typedef Nef_polyhedron_3_rep<T>                     Self;
-  friend class Nef_polyhedron_3<T>;
- public:
-  typedef CGAL::SNC_structure<T>                       SNC_structure;
+  typedef Nef_polyhedron_3_rep<K,I>                     Self;
+  friend class Nef_polyhedron_3<K,I>;
+  typedef CGAL::SNC_structure<K,I>                     SNC_structure;
   typedef CGAL::SNC_decorator<SNC_structure>           SNC_decorator;
   typedef CGAL::SNC_const_decorator<SNC_structure>     SNC_const_decorator;
   typedef CGAL::SNC_constructor<SNC_structure>         SNC_constructor;
@@ -88,9 +86,10 @@ class Nef_polyhedron_3_rep
   typedef CGAL::SNC_point_locator_by_spatial_subdivision<SNC_structure> SNC_point_locator_default;
 #endif
 
-  typedef CGAL::SM_decorator<SNC_structure>        SM_decorator;
-  typedef CGAL::SM_const_decorator<SNC_structure>  SM_const_decorator;
-  typedef CGAL::SNC_SM_overlayer<SM_decorator>        SM_overlayer;
+  typedef typename SNC_structure::Sphere_map       Sphere_map;
+  typedef CGAL::SM_decorator<Sphere_map>           SM_decorator;
+  typedef CGAL::SM_const_decorator<Sphere_map>     SM_const_decorator;
+  typedef CGAL::SNC_SM_overlayer<SM_decorator>     SM_overlayer;
   typedef CGAL::SM_point_locator<SNC_structure>    SM_point_locator;
   typedef CGAL::SM_io_parser<SNC_structure>        SM_io_parser;
 
@@ -121,26 +120,22 @@ halfspaces. |\Mtype| is closed under all binary set opertions |intersection|,
 |union|, |difference|, |complement| and under the topological operations
 |boundary|, |closure|, and |interior|.}*/
 
-template <typename Items_>
-class Nef_polyhedron_3 : public CGAL::Handle_for< Nef_polyhedron_3_rep<Items_> >, 
-			 public SNC_const_decorator<SNC_structure<Items_> >
+template <typename Kernel_, typename Items_ = SNC_items>
+class Nef_polyhedron_3 : public CGAL::Handle_for< Nef_polyhedron_3_rep<Kernel_, Items_> >, 
+			 public SNC_const_decorator<SNC_structure<Kernel_,Items_> >
 { 
  public:
   /*{\Mtypes 7}*/  
+  
+  typedef Kernel_                                     Kernel;
   typedef Items_                                      Items;
-  typedef Nef_polyhedron_3<Items>                     Self;
-  typedef Handle_for< Nef_polyhedron_3_rep<Items> >   Base;
-  typedef typename Items::Mark                        Mark;
-  typedef typename Items::Kernel                      Kernel;
+  typedef Nef_polyhedron_3<Kernel, Items>             Self;
+  typedef Handle_for< Nef_polyhedron_3_rep<Kernel, Items> >   Base;
   typedef typename Kernel::Point_3                    Point_3;
   typedef typename Kernel::Plane_3                    Plane_3;
   typedef typename Kernel::Vector_3                   Vector_3;
   typedef typename Kernel::Segment_3                  Segment_3;
   typedef typename Kernel::Aff_transformation_3       Aff_transformation_3;
-
-  typedef SM_items<Kernel, Mark>                      SM_items;
-  typedef Nef_polyhedron_S2<SM_items>                 Nef_polyhedron_S2;
-  /*{\Xtypemember marking set membership or exclusion.}*/
  
   enum Boundary { EXCLUDED=0, INCLUDED=1 };
   /*{\Menum construction selection.}*/
@@ -160,7 +155,7 @@ protected:
     { return (b1&&!b2)||(!b1&&b2); } };
 
  public:
-  typedef Nef_polyhedron_3_rep<Items>           Nef_rep;
+  typedef Nef_polyhedron_3_rep<Kernel,Items>    Nef_rep;
   typedef typename Nef_rep::SNC_structure       SNC_structure;
  protected:
   typedef typename Nef_rep::SNC_decorator       SNC_decorator;
@@ -181,6 +176,12 @@ protected:
   typedef typename Nef_rep::SM_visualizor       SM_visualizor;
 #endif // CGAL_NEF3_SM_VISUALIZOR
 
+ typedef typename Nef_rep::Sphere_map                Sphere_map;
+ public:
+ typedef Nef_polyhedron_S2<Kernel,Items,Sphere_map>  Nef_polyhedron_S2;
+ protected:
+ typedef bool   Mark;
+
   SNC_structure& snc() { return ptr()->snc_; } 
   const SNC_structure& snc() const { return ptr()->snc_; } 
 
@@ -188,9 +189,9 @@ protected:
   const SNC_point_locator*& pl() const { return ptr()->pl_; }
 
   friend std::ostream& operator<< <>
-      (std::ostream& os, Nef_polyhedron_3<Items>& NP);
+      (std::ostream& os, Nef_polyhedron_3<Kernel,Items>& NP);
   friend std::istream& operator>> <>
-      (std::istream& is, Nef_polyhedron_3<Items>& NP);
+      (std::istream& is, Nef_polyhedron_3<Kernel,Items>& NP);
 
   typedef typename SNC_decorator::Vertex_handle    Vertex_handle;
   typedef typename SNC_decorator::Halfedge_handle  Halfedge_handle;
@@ -216,6 +217,7 @@ protected:
 
   typedef typename Kernel::RT                       RT;
 
+ public:
   typedef typename SM_decorator::SVertex_handle    SVertex_handle;
   typedef typename SM_decorator::SHalfedge_handle  SHalfedge_handle;
   typedef typename SM_decorator::SFace_handle      SFace_handle;
@@ -254,6 +256,7 @@ protected:
   typedef typename SM_decorator::SFace_const_iterator     
                                                    SFace_const_iterator;
 
+ protected: 
   void initialize_infibox_vertices(Content space) {
     SNC_constructor C(snc()); 
     Infi_box::initialize_infibox_vertices(C, space == COMPLETE);
@@ -287,11 +290,11 @@ protected:
   halfspace on the positive side of |p| including |p| if |b==INCLUDED|,
   excluding |p| if |b==EXCLUDED|.}*/
 
-  Nef_polyhedron_3(const Nef_polyhedron_3<Items>& N1) : Base(N1) {
+  Nef_polyhedron_3(const Nef_polyhedron_3<Kernel,Items>& N1) : Base(N1) {
     set_snc(snc());
   } 
 
-  Nef_polyhedron_3& operator=(const Nef_polyhedron_3<Items>& N1) { 
+  Nef_polyhedron_3& operator=(const Nef_polyhedron_3<Kernel,Items>& N1) { 
     Base::operator=(N1);
     set_snc(snc());
     return (*this); 
@@ -455,7 +458,7 @@ protected:
 	  D.point(vh).z() > D.point(v_max).z())
 	v_max = vh;
     }
-    SM_decorator SD(v_max);
+    SM_decorator SD(&*v_max);
 
     // Add up z-coord. of all normalized normal vectors of the incident facets
     
@@ -600,10 +603,10 @@ protected:
   /*{\Xtext \headerline{Destructive Operations}}*/
 
  protected:
-  void clone_rep() { *this = Nef_polyhedron_3<Items>(snc(), pl()); }
+  void clone_rep() { *this = Nef_polyhedron_3<Kernel,Items>(snc(), pl()); }
   void empty_rep() { 
     SNC_structure rsnc;
-    *this = Nef_polyhedron_3<Items>(rsnc, new SNC_point_locator_default);
+    *this = Nef_polyhedron_3<Kernel,Items>(rsnc, new SNC_point_locator_default);
   }
 
   Nef_polyhedron_3( const SNC_structure& W, 
@@ -648,8 +651,8 @@ protected:
   }
 
  public:
-  const Nef_polyhedron_S2 get_sphere(Vertex_const_handle v) {
-    return Nef_polyhedron_S2(*v->map());
+  const Nef_polyhedron_S2* get_sphere(Vertex_const_handle v) {
+    return new Nef_polyhedron_S2(*v);
   }
 
   void extract_complement();
@@ -678,80 +681,80 @@ protected:
 
   /*{\Mtext \headerline{Constructive Operations}}*/
 
-  Nef_polyhedron_3<Items> complement() const
+  Nef_polyhedron_3<Kernel,Items> complement() const
   /*{\Mop returns the complement of |\Mvar| in the plane. }*/
-  { Nef_polyhedron_3<Items> res = *this;
+  { Nef_polyhedron_3<Kernel,Items> res = *this;
     res.extract_complement();
     return res;
   }
 
-  Nef_polyhedron_3<Items> interior() const
+  Nef_polyhedron_3<Kernel,Items> interior() const
   /*{\Mop    returns the interior of |\Mvar|. }*/
-  { Nef_polyhedron_3<Items> res = *this;
+  { Nef_polyhedron_3<Kernel,Items> res = *this;
     res.extract_interior();
     return res;
   }
 
-  Nef_polyhedron_3<Items> closure() const
+  Nef_polyhedron_3<Kernel,Items> closure() const
   /*{\Mop returns the closure of |\Mvar|. }*/
-  { Nef_polyhedron_3<Items> res = *this;
+  { Nef_polyhedron_3<Kernel,Items> res = *this;
     res.extract_closure();
     return res;
   }
 
-  Nef_polyhedron_3<Items> boundary() const
+  Nef_polyhedron_3<Kernel,Items> boundary() const
   /*{\Mop returns the boundary of |\Mvar|. }*/
-  { Nef_polyhedron_3<Items> res = *this;
+  { Nef_polyhedron_3<Kernel,Items> res = *this;
     res.extract_boundary();
     return res;
   }
 
-  Nef_polyhedron_3<Items> regularization() const
+  Nef_polyhedron_3<Kernel,Items> regularization() const
   /*{\Mop    returns the regularized polyhedron (closure of 
              the interior).}*/
-  { Nef_polyhedron_3<Items> res = *this;
+  { Nef_polyhedron_3<Kernel,Items> res = *this;
     res.extract_regularization();
     return res;
   }
 
-  Nef_polyhedron_3<Items> intersection(Nef_polyhedron_3<Items>& N1 )
+  Nef_polyhedron_3<Kernel,Items> intersection(Nef_polyhedron_3<Kernel,Items>& N1 )
     /*{\Mop returns |\Mvar| $\cap$ |N1|. }*/ {
     TRACEN(" intersection between nef3 "<<&*this<<" and "<<&N1);
     AND _and;
     //CGAL::binop_intersection_tests_allpairs<SNC_decorator, AND> tests_impl;
     SNC_structure rsnc;
     SNC_decorator D( snc(), pl());
-    Nef_polyhedron_3<Items> res(rsnc, new SNC_point_locator_default, false);
+    Nef_polyhedron_3<Kernel,Items> res(rsnc, new SNC_point_locator_default, false);
     D.binary_operation( N1.snc(), N1.pl(), _and, res.snc(), res.pl());
     return res;
   }
 
-  Nef_polyhedron_3<Items> join(Nef_polyhedron_3<Items>& N1) 
+  Nef_polyhedron_3<Kernel,Items> join(Nef_polyhedron_3<Kernel,Items>& N1) 
   /*{\Mop returns |\Mvar| $\cup$ |N1|. }*/ { 
     TRACEN(" join between nef3 "<<&*this<<" and "<<&N1);
     OR _or;
     //CGAL::binop_intersection_tests_allpairs<SNC_decorator, OR> tests_impl;
     SNC_structure rsnc;
     SNC_decorator D( snc(), pl());
-    Nef_polyhedron_3<Items> res(rsnc, new SNC_point_locator_default, false);
+    Nef_polyhedron_3<Kernel,Items> res(rsnc, new SNC_point_locator_default, false);
     D.binary_operation( N1.snc(), N1.pl(), _or, res.snc(), res.pl());
     //delete rpl; // TODO: analize how the improve the Nef_3 constructor so this instruction is not needed
     return res;
   }
 
-  Nef_polyhedron_3<Items> difference(Nef_polyhedron_3<Items>& N1)
+  Nef_polyhedron_3<Kernel,Items> difference(Nef_polyhedron_3<Kernel,Items>& N1)
   /*{\Mop returns |\Mvar| $-$ |N1|. }*/ { 
     TRACEN(" difference between nef3 "<<&*this<<" and "<<&N1);
     DIFF _diff;
     //CGAL::binop_intersection_tests_allpairs<SNC_decorator, DIFF> tests_impl;
     SNC_structure rsnc;
     SNC_decorator D( snc(), pl());
-    Nef_polyhedron_3<Items> res(rsnc, new SNC_point_locator_default, false);
+    Nef_polyhedron_3<Kernel,Items> res(rsnc, new SNC_point_locator_default, false);
     D.binary_operation( N1.snc(), N1.pl(), _diff, res.snc(), res.pl());
     return res;
   }    
 
-  Nef_polyhedron_3<Items> symmetric_difference(Nef_polyhedron_3<Items>& N1)
+  Nef_polyhedron_3<Kernel,Items> symmetric_difference(Nef_polyhedron_3<Kernel,Items>& N1)
   /*{\Mop returns the symmectric difference |\Mvar - T| $\cup$ 
           |T - \Mvar|. }*/ {
     TRACEN(" symmetic difference between nef3 "<<&*this<<" and "<<&N1);
@@ -759,7 +762,7 @@ protected:
     //CGAL::binop_intersection_tests_allpairs<SNC_decorator, XOR> tests_impl;
     SNC_structure rsnc;
     SNC_decorator D( snc(), pl());
-    Nef_polyhedron_3<Items> res(rsnc, new SNC_point_locator_default, false);
+    Nef_polyhedron_3<Kernel,Items> res(rsnc, new SNC_point_locator_default, false);
     D.binary_operation( N1.snc(), N1.pl(), _xor, res.snc(), res.pl());
     return res;
   }
@@ -771,55 +774,55 @@ protected:
   operation \emph{complement}. There are also the corresponding
   modification operations |*=,+=,-=,^=|.}*/
 
-  Nef_polyhedron_3<Items>  operator*(const Nef_polyhedron_3<Items>& N1) const 
+  Nef_polyhedron_3<Kernel,Items>  operator*(const Nef_polyhedron_3<Kernel,Items>& N1) const 
   { return intersection(N1); }
 
-  Nef_polyhedron_3<Items>  operator+(Nef_polyhedron_3<Items>& N1) 
+  Nef_polyhedron_3<Kernel,Items>  operator+(Nef_polyhedron_3<Kernel,Items>& N1) 
   { return join(N1); }
 
-  Nef_polyhedron_3<Items>  operator-(Nef_polyhedron_3<Items>& N1) 
+  Nef_polyhedron_3<Kernel,Items>  operator-(Nef_polyhedron_3<Kernel,Items>& N1) 
   { return difference(N1); }
 
-  Nef_polyhedron_3<Items>  operator^(Nef_polyhedron_3<Items>& N1) 
+  Nef_polyhedron_3<Kernel,Items>  operator^(Nef_polyhedron_3<Kernel,Items>& N1) 
   { return symmetric_difference(N1); }
 
-  Nef_polyhedron_3<Items>  operator!() const
+  Nef_polyhedron_3<Kernel,Items>  operator!() const
   { return complement(); }
    
-  Nef_polyhedron_3<Items>& operator*=(Nef_polyhedron_3<Items>& N1)
-  { this = intersection(N1); return *this; }
+  Nef_polyhedron_3<Kernel,Items>& operator*=(Nef_polyhedron_3<Kernel,Items>& N1)
+  { *this = intersection(N1); return *this; }
 
-  Nef_polyhedron_3<Items>& operator+=(Nef_polyhedron_3<Items>& N1)
-  { this = join(N1); return *this; }
+  Nef_polyhedron_3<Kernel,Items>& operator+=(Nef_polyhedron_3<Kernel,Items>& N1)
+  { *this = join(N1); return *this; }
 
-  Nef_polyhedron_3<Items>& operator-=(Nef_polyhedron_3<Items>& N1)
-  { this = difference(N1); return *this; }
+  Nef_polyhedron_3<Kernel,Items>& operator-=(Nef_polyhedron_3<Kernel,Items>& N1)
+  { *this = difference(N1); return *this; }
 
-  Nef_polyhedron_3<Items>& operator^=(Nef_polyhedron_3<Items>& N1)
-  { this = symmetric_difference(N1); return *this; }
+  Nef_polyhedron_3<Kernel,Items>& operator^=(Nef_polyhedron_3<Kernel,Items>& N1)
+  { *this = symmetric_difference(N1); return *this; }
 
   /*{\Mtext There are also comparison operations like |<,<=,>,>=,==,!=|
   which implement the relations subset, subset or equal, superset, superset
   or equal, equality, inequality.}*/
 
-  bool operator==(Nef_polyhedron_3<Items>& N1) 
+  bool operator==(Nef_polyhedron_3<Kernel,Items>& N1) 
   { TRACEN(" equality comparision between nef3 "<<&*this<<" and "<<&N1);
     return symmetric_difference(N1).is_empty(); }
 
-  bool operator!=(Nef_polyhedron_3<Items>& N1)
+  bool operator!=(Nef_polyhedron_3<Kernel,Items>& N1)
   { TRACEN(" inequality comparision between nef3 "<<&*this<<" and "<<&N1);
     return !operator==(N1); }  
 
-  bool operator<( Nef_polyhedron_3<Items>& N1) 
+  bool operator<( Nef_polyhedron_3<Kernel,Items>& N1) 
   { return !N1.difference(*this).is_empty() && difference(N1).is_empty(); } 
 
-  bool operator>( Nef_polyhedron_3<Items>& N1)    
+  bool operator>( Nef_polyhedron_3<Kernel,Items>& N1)    
   { return difference(*this).is_empty() && !difference(N1).is_empty(); } 
 
-  bool operator<=( Nef_polyhedron_3<Items>& N1) 
+  bool operator<=( Nef_polyhedron_3<Kernel,Items>& N1) 
   { return difference(N1).is_empty(); } 
 
-  bool operator>=( Nef_polyhedron_3<Items>& N1) 
+  bool operator>=( Nef_polyhedron_3<Kernel,Items>& N1) 
   { return N1.difference(*this).is_empty(); } 
 
   void transform( const Aff_transformation_3& aff) {
@@ -843,7 +846,7 @@ protected:
       TRACEN("transform vertex ");
       if (is_standard(vi)) {
 	vi->point() = vi->point().transform( aff);
-	SM_decorator sdeco(vi);
+	SM_decorator sdeco(&*vi);
 	sdeco.transform( linear);
       }
     }
@@ -888,7 +891,7 @@ protected:
     typedef CGAL::SNC_SM_explorer<SM_const_decorator>  SM_explorer;
 
     SM_explorer SMexplorer(Vertex_const_handle v) const { 
-      SM_const_decorator SMCD(v);
+      SM_const_decorator SMCD(&*v);
       return SM_explorer(SMCD); 
     }
 
@@ -986,8 +989,8 @@ protected:
 
 }; // end of Nef_polyhedron_3
 
-template <typename Items>
-Nef_polyhedron_3<Items>::
+template <typename Kernel, typename Items>
+Nef_polyhedron_3<Kernel,Items>::
 Nef_polyhedron_3( Content space, SNC_point_locator* _pl) {
   TRACEN("construction from empty or space.");
   SNC_structure rsnc;
@@ -1004,8 +1007,8 @@ Nef_polyhedron_3( Content space, SNC_point_locator* _pl) {
   }
 }
 
-template <typename Items>
-Nef_polyhedron_3<Items>::
+template <typename Kernel, typename Items>
+Nef_polyhedron_3<Kernel,Items>::
 Nef_polyhedron_3(const Plane_3& h, Boundary b, SNC_point_locator* _pl) {
   TRACEN("construction from plane "<<h);
   empty_rep();
@@ -1016,8 +1019,8 @@ Nef_polyhedron_3(const Plane_3& h, Boundary b, SNC_point_locator* _pl) {
   build_external_structure();
 }
  
-template <typename Items>
-Nef_polyhedron_3<Items>::
+template <typename Kernel, typename Items>
+Nef_polyhedron_3<Kernel,Items>::
 Nef_polyhedron_3( const SNC_structure& W, SNC_point_locator* _pl, 
 		  bool clone_pl,
 		  bool clone_snc) {
@@ -1037,15 +1040,17 @@ Nef_polyhedron_3( const SNC_structure& W, SNC_point_locator* _pl,
     pl() = _pl;
 }
 
-template <typename Items>
-void Nef_polyhedron_3<Items>::extract_complement() {
+template <typename Kernel, typename Items>
+void
+Nef_polyhedron_3<Kernel,Items>::
+extract_complement() {
   TRACEN("extract complement");
   if( is_shared()) clone_rep();
   SNC_decorator D(snc());
   Vertex_iterator v;
   CGAL_forall_vertices(v,D){
     D.mark(v) = !D.mark(v); 
-    SM_decorator SM(v);
+    SM_decorator SM(&*v);
     SM.extract_complement();
   }
   Halffacet_iterator f;
@@ -1057,16 +1062,17 @@ void Nef_polyhedron_3<Items>::extract_complement() {
       D.mark(c) = !D.mark(c);
 }
 
-
-template <typename Items>
-void Nef_polyhedron_3<Items>::extract_interior() {
+template <typename Kernel, typename Items>
+void
+Nef_polyhedron_3<Kernel,Items>::
+extract_interior() {
   TRACEN("extract interior");
   if (is_shared()) clone_rep();
   SNC_decorator D(snc());
   Vertex_iterator v;
   CGAL_forall_vertices(v,D){
     D.mark(v) = false;
-    SM_decorator SM(v);
+    SM_decorator SM(&*v);
     SM.extract_interior();
   }
   Halffacet_iterator f;
@@ -1075,15 +1081,17 @@ void Nef_polyhedron_3<Items>::extract_interior() {
   simplify();
 }
 
-template <typename Items>
-void Nef_polyhedron_3<Items>::extract_boundary() {
+template <typename Kernel, typename Items>
+void
+Nef_polyhedron_3<Kernel,Items>::
+extract_boundary() {
   TRACEN("extract boundary");
   if (is_shared()) clone_rep();
   SNC_decorator D(snc());
   Vertex_iterator v;
   CGAL_forall_vertices(v,D) {
     D.mark(v) = true;
-    SM_decorator SM(v);
+    SM_decorator SM(&*v);
     SM.extract_boundary();
   }
   Halffacet_iterator f;
@@ -1093,21 +1101,21 @@ void Nef_polyhedron_3<Items>::extract_boundary() {
   simplify();
 }
 
-template <typename Items>
+template <typename Kernel, typename Items>
 std::ostream& operator<<
- (std::ostream& os, Nef_polyhedron_3<Items>& NP)
+ (std::ostream& os, Nef_polyhedron_3<Kernel,Items>& NP)
 {
-  typedef typename Nef_polyhedron_3<Items>::SNC_structure SNC_structure;
+  typedef typename Nef_polyhedron_3<Kernel,Items>::SNC_structure SNC_structure;
   CGAL::SNC_io_parser<SNC_structure> O(os, NP.snc());
   O.print();
   return os;
 }
 
-template <typename Items>
+template <typename Kernel, typename Items>
 std::istream& operator>>
-  (std::istream& is, Nef_polyhedron_3<Items>& NP)
+  (std::istream& is, Nef_polyhedron_3<Kernel,Items>& NP)
 {
-  typedef typename Nef_polyhedron_3<Items>::SNC_decorator SNC_decorator;
+  typedef typename Nef_polyhedron_3<Kernel,Items>::SNC_decorator SNC_decorator;
   CGAL::SNC_io_parser<SNC_decorator> I(is, NP.snc());
   I.read();
   I.check_integrity();

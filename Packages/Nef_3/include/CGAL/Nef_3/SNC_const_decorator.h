@@ -42,7 +42,8 @@ class SNC_const_decorator {
   typedef SNC_structure_                            Base;
   typedef SNC_structure_                            SNC_structure;
   typedef SNC_const_decorator<SNC_structure>        Self;
-  typedef CGAL::SM_const_decorator<SNC_structure>   SM_const_decorator;
+  typedef typename SNC_structure::Sphere_map        Sphere_map;
+  typedef CGAL::SM_const_decorator<Sphere_map>      SM_const_decorator;
   const SNC_structure* sncp_;
 
   typedef typename SNC_structure::SHalfedge  SHalfedge;
@@ -315,7 +316,7 @@ visit_shell_objects(SFace_const_handle f, Visitor& V) const
         V.visit(vertex(sf)); // report vertex
       DoneV[vertex(sf)] = true;
       //      SVertex_const_handle sv;
-      SM_const_decorator SD(vertex(sf));
+      SM_const_decorator SD(&*vertex(sf));
       /*      
       CGAL_forall_svertices(sv,SD){
 	if(SD.is_isolated(sv) && !DoneSV[sv])

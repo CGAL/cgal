@@ -56,7 +56,7 @@ class moreLeft : public T {
     if(se2 == SHalfedge_handle())
       return true;
 
-    SM_decorator SM(vertex(se1));
+    SM_decorator SM(&*vertex(se1));
     Vector_3 vec1 = SM.circle(se1).orthogonal_vector();
     Vector_3 vec2 = SM.circle(se2).orthogonal_vector();
 
@@ -267,11 +267,11 @@ class sort_sfaces : public SNC_decorator<T> {
     if(sf1 == sf2)
       return false;
 
-    SM_decorator SD(vertex(sf1));
+    SM_decorator SD(&*vertex(sf1));
     moreLeft<Base> ml((Base) *this);
     Vector_3 plus(1,0,0);
 
-    SVertex_handle sv;
+    CGAL_assertion_code(SVertex_handle sv);
     SHalfedge_handle se;
     SFace_cycle_iterator fc;
   
@@ -399,7 +399,7 @@ class sort_facet_cycle_entries : public T {
     CGAL_assertion(sl1 != SHalfloop_handle() && 
 			sl2 != SHalfloop_handle());
 
-    SM_decorator SD(vertex(sl1));
+    SM_decorator SD(&*vertex(sl1));
     Vector_3 vec1(SD.circle(sl1).orthogonal_vector());
     Vector_3 vec2(SD.circle(sl2).orthogonal_vector());
     //    CGAL_assertion(vec1 == vec2.antipode());
@@ -461,7 +461,7 @@ class sort_sface_cycle_entries : public T {
     }
 
     if(sl1 != SHalfloop_handle() && sl2 != SHalfloop_handle()) {
-      SM_decorator SD(vertex(sl1));
+      SM_decorator SD(&*vertex(sl1));
       Vector_3 vec1(SD.circle(sl1).orthogonal_vector());
       Vector_3 vec2(SD.circle(sl2).orthogonal_vector());
       //      CGAL_assertion(vec1 == vec2.antipode());
@@ -543,7 +543,8 @@ class SNC_io_parser : public SNC_decorator<SNC_structure_>
 { typedef SNC_structure_ SNC_structure;
   typedef CGAL::SNC_io_parser<SNC_structure_> Self;
   typedef CGAL::SNC_decorator<SNC_structure_> Base;
-  typedef CGAL::SM_decorator<SNC_structure_> SM_decorator;
+  typedef typename SNC_structure::Sphere_map  Sphere_map;
+  typedef CGAL::SM_decorator<Sphere_map>      SM_decorator;
   typedef typename SNC_structure::Infi_box       Infi_box;
 
 public:
@@ -1056,7 +1057,7 @@ void SNC_io_parser<EW>::read()
 template <typename EW>
 void SNC_io_parser<EW>::print_vertex(Vertex_handle v) const
 { // syntax: index { svs sve, ses see, sfs sfe, sl | point } mark
-  SM_decorator SD(v);
+  SM_decorator SD(&*v);
   out << index(v) << " { ";
   if(sorted) {
     
@@ -1120,7 +1121,7 @@ read_vertex(Vertex_handle v) const
 template <typename EW>
 void SNC_io_parser<EW>::print_edge(Halfedge_handle e) const
 { // syntax: index { twin, source, isolated incident_object | spoint } mark
-  SM_decorator D(vertex(e));
+  SM_decorator D(&*vertex(e));
   out << index(e) << " { " << index(twin(e)) << ", "
       << index(source(e)) << ", ";
   if ( D.is_isolated(e) ) out << "1 " << index(D.face(e));
@@ -1235,7 +1236,7 @@ template <typename EW>
 void SNC_io_parser<EW>::
 print_sedge(SHalfedge_handle e) const { 
 //index { twin, sprev, snext, source, sface, prev, next, facet | circle } mark
-  SM_decorator D(vertex(e));
+  SM_decorator D(&*vertex(e));
   out << index(e) << " { "
       << index(D.twin(e)) << ", " 
       << index(D.previous(e)) << ", " << index(D.next(e)) << ", "
@@ -1289,7 +1290,7 @@ template <typename EW>
 void SNC_io_parser<EW>::
 print_sloop(SHalfloop_handle l) const
 { // syntax: index { twin, sface, facet | circle } mark
-  SM_decorator D(vertex(l));
+  SM_decorator D(&*vertex(l));
   out << index(l) << " { "
       << index(D.twin(l)) << ", " << index(D.face(l)) << ", "
       << index(facet(l)) 
@@ -1329,7 +1330,7 @@ template <typename EW>
 void SNC_io_parser<EW>::
 print_sface(SFace_handle f) const
 { // syntax: index { vertex, fclist, ivlist, sloop, volume }
-  SM_decorator D(f->center_vertex());
+  SM_decorator D(&*f->center_vertex());
   out << index(f) << " { " << index(f->center_vertex()) << ", "; 
   SFace_cycle_iterator it;
   CGAL_forall_sface_cycles_of(it,f)
@@ -1354,7 +1355,7 @@ read_sface(SFace_handle f) const
     return false;
   CGAL_assertion(vc >= 0 && vc < vn);
   f->center_vertex() = Vertex_of[vc];
-  SM_decorator D(Vertex_of[vc]);
+  SM_decorator D(&*Vertex_of[vc]);
   while (in >> ei) { 
     CGAL_assertion_msg(ei >= 0 && ei < sen, 
       "wrong index in sface cycle list.");
@@ -1380,7 +1381,7 @@ read_sface(SFace_handle f) const
 
 template <typename EW>
 void SNC_io_parser<EW>::print_local_graph(Vertex_handle v) const
-{ SM_decorator D(v);
+{ SM_decorator D(&*v);
   out << "Local Graph " 
       << D.number_of_vertices() << " " << D.number_of_edges() << " "
       << D.number_of_loops() << " " << D.number_of_faces() << " "
