@@ -14,6 +14,7 @@ use File::Find;
 
 $::CURRENT_DIR=cwd();
 $::TEMPFILE="TEMPFILE.$$";
+@::package_versions = ();
 
 $::TESTING = 0;
 
@@ -262,7 +263,7 @@ sub install_packages()
 	    while (<CUR_VERSION>) {
 		next if /^\s*$/;
 		chomp;
-		print VERSIONS "$package_name : $_\n";
+		push @::package_versions, "$package_name : $_\n";
 		last;
 	    }
 	    close CUR_VERSION;
@@ -430,7 +431,6 @@ if ($::CURRENT_DIR ne '/private/CGAL') {
 }
 check_call;
 mkdir "$::VERSION",0775 or die;
-open VERSIONS, ">versions_$::VERSION";
 chdir $::VERSION or die;
 $::CURRENT_DIR=cwd();
 lock;
@@ -438,6 +438,8 @@ lock;
 install_packages();
 install_misc;
 unlock;
+open VERSIONS, ">versions_$::VERSION";
+print VERSIONS sort @::package_versions;
 close VERSIONS;
 CreateExampleTestDirs;
 make_testscripts;
