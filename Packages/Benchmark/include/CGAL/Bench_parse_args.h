@@ -127,7 +127,7 @@ public:
    */
   void printHelp(void)
   {
-    printf("Usage: %s [options]\n\
+    printf("Usage: %s [options] data-file\n\
   -b <options>\tset bench options\n\
   \t\ttype_name=<type>\n\
   \t\ttn=<type>\tset bench type to <type> (default all)\n\
@@ -143,6 +143,7 @@ public:
   \t\t\t\t\tt[rapezoidal]\t(0x1)\n\
   \t\t\t\t\tn[aive]\t\t(0x2)\n\
   \t\t\t\t\tw[alk]\t\t(0x4)\n\
+  \t\t\t\t\td[ummy]\t\t(0x8)\n\
   \t\tstrategy_mask=<mask>\n\
   \t\tsm=<mask>\tset bench strategy mask to <mask>\n\
   \t\th[eader]=<bool>\tprint header (default true)\n\
