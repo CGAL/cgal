@@ -16,6 +16,7 @@ CXXFLAGS = -I../../include \
            $(TESTSUITE_CXXFLAGS) \
            $(CGAL_CXXFLAGS) \
 	   -g -Wall
+	   # -O3 -mcpu=ultrasparc -mtune=ultrasparc -Wall
            # -O2 -xtarget=ultra2
 	   # -Winline
 	   # -mcpu=pentiumpro
