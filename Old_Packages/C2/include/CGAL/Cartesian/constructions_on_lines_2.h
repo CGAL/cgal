@@ -49,7 +49,6 @@ line_from_point_direction( PointC2<R CGAL_CTAG> const& p,
   return LineC2<R CGAL_CTAG>(a,b,c);
 }
 
-
 template < class R >
 inline
 LineC2<R CGAL_CTAG>
@@ -61,7 +60,16 @@ bisector( PointC2<R CGAL_CTAG> const& p,
   return LineC2<R CGAL_CTAG>(a,b,c);
 }
 
-
+template < class R >
+inline
+LineC2<R CGAL_CTAG>
+perpendicular_through_point( LineC2<R CGAL_CTAG> const& l,
+                             PointC2<R CGAL_CTAG> const& p)
+{
+  typename R::FT a,b,c;
+  perpendicular_through_pointC2(l.a(),l.b(),p.x(),p.y(),a,b,c);
+  return LineC2<R CGAL_CTAG>(a,b,c);
+}
 
 template < class R >
 inline
@@ -98,22 +106,9 @@ line_project_point( LineC2<R CGAL_CTAG> const& l,
                     PointC2<R CGAL_CTAG> const& p)
 {
   typename R::FT x, y;
-  line_project_pointC2(l.a(), l.b(), l.c(), p.x(), p.y());
+  line_project_pointC2(l.a(), l.b(), l.c(), p.x(), p.y(), x, y);
   return PointC2<R>(x,y);
 }
-
-template < class R >
-inline
-Oriented_side
-side_of_oriented_line( LineC2<R CGAL_CTAG> const& l,
-                       PointC2<R CGAL_CTAG> const& p)
-{
-  return side_of_oriented_lineC2(l.a(), l.b(), l.c(), p.x(), p.y());
-}
-
-
-
-
 
 CGAL_END_NAMESPACE
 
