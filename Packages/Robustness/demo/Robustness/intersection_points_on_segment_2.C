@@ -110,18 +110,18 @@ main(int argc, char** argv)
   std::vector< CartesianFloat::Segment_2>  CF1;
   std::vector< CartesianFloat::Segment_2>  CF2;
   CGAL::Cartesian_converter<CartesianDouble, CartesianFloat> converter1;
-  std::transform( CD1.begin(), CD1.end(), std::back_inserter( CF1), converter1);
-  std::transform( CD2.begin(), CD2.end(), std::back_inserter( CF2), converter1);
+  std::transform(CD1.begin(), CD1.end(), std::back_inserter( CF1), converter1);
+  std::transform(CD2.begin(), CD2.end(), std::back_inserter( CF2), converter1);
   std::vector< HomogeneousFloat::Segment_2>  HF1;
   std::vector< HomogeneousFloat::Segment_2>  HF2;
   Cartesian_double_to_Homogeneous< HomogeneousFloat::RT > converter2;
-  std::transform( CD1.begin(), CD1.end(), std::back_inserter( HF1), converter2);
-  std::transform( CD2.begin(), CD2.end(), std::back_inserter( HF2), converter2);
+  std::transform(CD1.begin(), CD1.end(), std::back_inserter( HF1), converter2);
+  std::transform(CD2.begin(), CD2.end(), std::back_inserter( HF2), converter2);
   std::vector< HomogeneousDouble::Segment_2>  HD1;
   std::vector< HomogeneousDouble::Segment_2>  HD2;
   Cartesian_double_to_Homogeneous< HomogeneousDouble::RT > converter3;
-  std::transform( CD1.begin(), CD1.end(), std::back_inserter( HD1), converter3);
-  std::transform( CD2.begin(), CD2.end(), std::back_inserter( HD2), converter3);
+  std::transform(CD1.begin(), CD1.end(), std::back_inserter( HD1), converter3);
+  std::transform(CD2.begin(), CD2.end(), std::back_inserter( HD2), converter3);
 
   leda_string str;
 
@@ -132,8 +132,8 @@ main(int argc, char** argv)
   header += leda_string("two vertical bars; in the second set, the segments ");
   header += leda_string("lie on two horizontal bars.\n");
   header += leda_string("Each segment in the first set is intersected with ");
-  header += leda_string("each segment in the second set. Then, it is checked ");
-  header += leda_string("whether the intersection points\n ");
+  header += leda_string("each segment in the second set. Then, it is checked");
+  header += leda_string(" whether the intersection points\n ");
   header += leda_string("lie on the intersecting segments. ");
   header += leda_string("Computation is done with kernels ");
   header += leda_string("differing in representation and float precision.");
