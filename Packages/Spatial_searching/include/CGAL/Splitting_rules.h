@@ -13,7 +13,7 @@
 //
 // file          : include/CGAL/Splitting_rules.h
 // package       : APSPAS
-// revision      : 1.0 
+// revision      : 1.1
 // revision_date : 2001/06/12 
 // maintainer    : Hans Tangelder (<hanst@cs.uu.nl>)
 //
