@@ -108,13 +108,13 @@ public:
     Objects_around_segment() : initialized(false) {}
     Objects_around_segment( const K3_tree& k, const Segment_3& s) : 
       root_node(k.root), segment(s), initialized(true) {
-      TRACEN("Objects_around_segment: input segment: "<<segment);
+      CGAL_NEF_TRACEN("Objects_around_segment: input segment: "<<segment);
     }
     void initialize( const K3_tree& k, const Segment_3& s) {
       root_node = k.root;
       segment = s;
       initialized = true;
-      TRACEN("Objects_around_segment: input segment: "<<s<<" (initialize)");
+      CGAL_NEF_TRACEN("Objects_around_segment: input segment: "<<s<<" (initialize)");
     }
   public:
     Iterator begin() const {
@@ -173,7 +173,7 @@ public:
     Traits traits;	
   public:
     Objects_along_ray( const K3_tree& k, const Ray_3& r) {
-      TRACEN("Objects_along_ray: input ray: "<<r);
+      CGAL_NEF_TRACEN("Objects_along_ray: input ray: "<<r);
       Vector_3 vec(r.to_vector());
       //      CGAL_assertion(vec == Vector_3( -1, 0, 0));
       // First of all, we need to find out wheather we are working over an extended kernel or on a standard kernel. As precondition we have that ray is oriented in the minus x axis direction.  When having an extended kernel, the ray can be subtituted by a segment with the endpoint on the 'intersection' between the ray and the bounding infimaximal box.  In the presence of a standard kernel, the intersection is computed with the bounding box with the vertices of the Nef polyhedron.
@@ -217,6 +217,18 @@ public:
   }
   bool is_point_on_cell( const Point_3& p, const typename Objects_around_segment::Iterator& target) const {
     return is_point_on_cell( p, target.get_node(), root);
+  }
+
+  void add_facet(Halffacet_handle f) {
+    root->add_facet(f);
+  }
+
+  void add_edge(Halfedge_handle e) {
+    root->add_edge(e);	
+  }
+
+  void add_vertex(Vertex_handle v) {
+    root->add_vertex(v);
   }
 
   template<typename SNCd>
@@ -283,7 +295,7 @@ Since all objects on the model are incident to vertices, are they who determine 
 
 <<compute the maximum depth of the subdivision>>=
 typename Object_list::difference_type n_vertices = std::distance(objects.begin(),v_end);
-TRACEN("K3_tree(): n_vertices = " << std::distance(objects.begin(),v_end));
+CGAL_NEF_TRACEN("K3_tree(): n_vertices = " << std::distance(objects.begin(),v_end));
 frexp( (double) n_vertices, &max_depth);
 
 @ 
@@ -293,7 +305,7 @@ The bounding box of the input set of objects is used in two moments.  First, dur
 // TODO: in the presence of a infimaximal bounding box, the bounding box does not have to be computed
 Objects_bbox objects_bbox = traits.objects_bbox_object();
 bounding_box = objects_bbox(objects);
-//TRACEN("bounding box:"<<objects_bbox);
+//CGAL_NEF_TRACEN("bounding box:"<<objects_bbox);
 
 @ 
 Since all the geometric predicates have to be supplied by the traits class, the spatial subdivision has to know only about a general data types for the objects it holds.  Additionally, the data types for the query objects, and geometric constructions must be available.
@@ -339,39 +351,95 @@ template <typename Depth>
 Node* build_kdtree(Object_list& O, Object_iterator v_end, 
 	           Depth depth, Node* parent=0, int non_efective_splits=0) {
   CGAL_precondition( depth >= 0);
-  TRACEN( "build_kdtree: "<<O.size()<<" objects, "<<"depth "<<depth);
-  TRACEN( "build_kdtree: "<<dump_object_list(O));
+  CGAL_NEF_TRACEN( "build_kdtree: "<<O.size()<<" objects, "<<"depth "<<depth);
+  CGAL_NEF_TRACEN( "build_kdtree: "<<dump_object_list(O));
   if( !can_set_be_divided(O.begin(), v_end, depth)) {
-    TRACEN("build_kdtree: set cannot be divided");
+    CGAL_NEF_TRACEN("build_kdtree: set cannot be divided");
     return new Node( parent, 0, 0, Plane_3(), O);
   }
   Object_iterator median; 
   Plane_3 partition_plane = construct_splitting_plane(O.begin(), v_end, median, depth);
-  TRACEN("build_kdtree: plane: "<<partition_plane<< " " << partition_plane.point());
+  CGAL_NEF_TRACEN("build_kdtree: plane: "<<partition_plane<< " " << partition_plane.point());
   Object_list O1, O2;
   Vertex_handle vm,vx;
   CGAL::assign(vm,*median);
+  Side_of_plane sop;
   for(Object_iterator oi=O.begin();oi!=median;++oi) {
     O1.push_back(*oi);
     CGAL::assign(vx,*oi);
-    if(vm->point()[depth%3] == vx->point()[depth%3])
-      O2.push_back(*oi);
+//    std::cerr << vx->point() << " is ";
+    switch(depth%3) {
+    case 0:
+      if(CGAL::compare_x(vm->point(), vx->point())!= EQUAL) {
+//	sop.OnSideMap[vx] = ON_NEGATIVE_SIDE;
+//        std::cerr << "on NEGATIVE side" << std::endl;
+	continue; 
+      }
+      break;
+    case 1: 
+      if(CGAL::compare_y(vm->point(), vx->point())!= EQUAL) {
+//	sop.OnSideMap[vx] = ON_NEGATIVE_SIDE;
+//        std::cerr << "on NEGATIVE side" << std::endl;
+	continue; 
+      }
+      break;
+    case 2: 
+      if(CGAL::compare_z(vm->point(), vx->point())!= EQUAL) {
+//	sop.OnSideMap[vx] = ON_NEGATIVE_SIDE;
+//        std::cerr << "on NEGATIVE side" << std::endl;
+	continue; 
+      }
+      break;
+    }
+    O2.push_back(*oi);
+//    sop.OnSideMap[vx] = ON_ORIENTED_BOUNDARY;
+//    std::cerr << "on BOUNDARY" << std::endl;
   }
+
   O1.push_back(*median);
   O2.push_back(*median);
+  CGAL::assign(vx,*median);
+//  sop.OnSideMap[vx] = ON_ORIENTED_BOUNDARY;
+
   for(Object_iterator oi=median+1;oi!=v_end;++oi) {
     O2.push_back(*oi);
     CGAL::assign(vx,*oi);
-    if(vm->point()[depth%3] == vx->point()[depth%3])
-      O1.push_back(*oi);
+//    std::cerr << vx->point() << " is ";
+    switch(depth%3) {
+    case 0: 
+      if(CGAL::compare_x(vm->point(), vx->point())!= EQUAL) {
+//	sop.OnSideMap[vx] = ON_POSITIVE_SIDE;
+//        std::cerr << "on POSITIVE side" << std::endl;
+	continue; 
+      }
+      break;
+    case 1: 
+      if(CGAL::compare_y(vm->point(), vx->point())!= EQUAL) {
+//	sop.OnSideMap[vx] = ON_POSITIVE_SIDE;
+//        std::cerr << "on POSITIVE side" << std::endl;
+	continue; 
+      }
+      break;
+    case 2: 
+      if(CGAL::compare_z(vm->point(), vx->point())!= EQUAL) {
+//	sop.OnSideMap[vx] = ON_POSITIVE_SIDE;
+//        std::cerr << "on POSITIVE side" << std::endl;
+	continue; 
+      }
+      break;
+    }
+    O1.push_back(*oi);
+//    sop.OnSideMap[vx] = ON_ORIENTED_BOUNDARY;
+//    std::cerr << "on BOUNDARY" << std::endl;
   }
+
   typename Object_list::size_type v_end1 = O1.size();
   typename Object_list::size_type v_end2 = O2.size();
-  bool splitted = classify_objects( v_end, O.end(), partition_plane, depth,
+  bool splitted = classify_objects( v_end, O.end(), partition_plane, sop,
                                     std::back_inserter(O1), 
                                     std::back_inserter(O2));
   if( !splitted) {
-    TRACEN("build_kdtree: splitting plane not found");
+    CGAL_NEF_TRACEN("build_kdtree: splitting plane not found");
     return new Node( parent, 0, 0, Plane_3(), O);
   }
 
@@ -383,7 +451,7 @@ Node* build_kdtree(Object_list& O, Object_iterator v_end,
   else
     non_efective_splits = 0;
   if( non_efective_splits > 2) {
-    TRACEN("build_kdtree: non efective splits reached maximum");
+    CGAL_NEF_TRACEN("build_kdtree: non efective splits reached maximum");
     return new Node( parent, 0, 0, Plane_3(), O);
   }
   Node *node = new Node( parent, 0, 0, partition_plane, Object_list());
@@ -413,12 +481,12 @@ Having the partition plane, it is neccesary first to decide if the plane actuall
 <<definition of the k3 tree construction methods>>=
 template <typename OutputIterator>
 bool classify_objects(Object_iterator start, Object_iterator end, 
-                      Plane_3 partition_plane, int depth,
+                      Plane_3 partition_plane, Side_of_plane& sop,
                       OutputIterator o1, OutputIterator o2) {
   typename Object_list::difference_type on_oriented_boundary = 0;
   typename Object_list::const_iterator o;
   
-  Side_of_plane sop;
+//  Side_of_plane sop;
   for( o = start; o != end; ++o) {
     Oriented_side side = sop( partition_plane, *o);
     if( side == ON_NEGATIVE_SIDE || side == ON_ORIENTED_BOUNDARY) {
@@ -430,7 +498,7 @@ bool classify_objects(Object_iterator start, Object_iterator end,
       ++o2;
     }
     if( side == ON_ORIENTED_BOUNDARY)
-      on_oriented_boundary++;
+      ++on_oriented_boundary;
   }
   return (on_oriented_boundary != std::distance(start,end));
 }
@@ -450,7 +518,13 @@ public:
     Vertex v1,v2;
     CGAL::assign(v1,o1);
     CGAL::assign(v2,o2);
-    return(v1->point()[coord] < v2->point()[coord]); 
+    switch(coord) {
+    case 0: return CGAL::compare_x(v1->point(), v2->point()) == SMALLER;
+    case 1: return CGAL::compare_y(v1->point(), v2->point()) == SMALLER;
+    case 2: return CGAL::compare_z(v1->point(), v2->point()) == SMALLER;
+    default: CGAL_assertion(false);
+    }
+    return false;
   }
 private:
   Coordinate coord;
@@ -508,6 +582,48 @@ public:
   	splitting_plane = splitting_plane.transform(t);
     }
   }
+  void add_facet(Halffacet_handle f) {
+    if(left_node == 0) {
+      object_list.push_back(Object_handle(f));
+      return;
+    }
+
+    Side_of_plane sop;
+    Oriented_side side = sop(splitting_plane, f);
+    if( side == ON_NEGATIVE_SIDE || side == ON_ORIENTED_BOUNDARY)
+      left_node->add_facet(f);
+    if( side == ON_POSITIVE_SIDE || side == ON_ORIENTED_BOUNDARY)
+      right_node->add_facet(f);
+  }
+
+  void add_edge(Halfedge_handle e) {
+    if(left_node == 0) {
+      object_list.push_back(Object_handle(e));
+      return;
+    }
+
+    Side_of_plane sop;
+    Oriented_side side = sop(splitting_plane, e);
+    if( side == ON_NEGATIVE_SIDE || side == ON_ORIENTED_BOUNDARY)
+      left_node->add_edge(e);
+    if( side == ON_POSITIVE_SIDE || side == ON_ORIENTED_BOUNDARY)
+      right_node->add_edge(e);
+  }
+
+  void add_vertex(Vertex_handle v) {
+    if(left_node == 0) {
+      object_list.push_back(Object_handle(v));
+      return;
+    }
+
+    Side_of_plane sop;
+    Oriented_side side = sop(splitting_plane, v);
+    if( side == ON_NEGATIVE_SIDE || side == ON_ORIENTED_BOUNDARY)
+      left_node->add_vertex(v);
+    if( side == ON_POSITIVE_SIDE || side == ON_ORIENTED_BOUNDARY)
+      right_node->add_vertex(v);
+  }
+
   <<definition of the node display method>>
   <<definition of the node destructor>>
 private:
@@ -568,9 +684,9 @@ bool update( Node* node,
   }
   // TODO: protect the code below from optimizations!
   bool left_updated = update( node->left_node, V, E, F);
-  TRACEN("k3_tree::update(): left node updated? "<<left_updated);
+  CGAL_NEF_TRACEN("k3_tree::update(): left node updated? "<<left_updated);
   bool right_updated = update( node->right_node, V, E, F);
-  TRACEN("k3_tree::update(): right node updated? "<<right_updated);
+  CGAL_NEF_TRACEN("k3_tree::update(): right node updated? "<<right_updated);
   return (left_updated || right_updated);
 }
 
@@ -579,13 +695,13 @@ Everything that as a beginning also has an end, and now we define the destructor
 
 <<definition of the k3 tree destructor>>=
 ~K3_tree() {
-  TRACEN("~K3_tree: deleting root...");
+  CGAL_NEF_TRACEN("~K3_tree: deleting root...");
   delete root;
 }
 
 <<definition of the node destructor>>=
 ~Node() {
-  TRACEN("~Node: deleting node...");
+  CGAL_NEF_TRACEN("~Node: deleting node...");
   if( !is_leaf()) {
     delete left_node;
     delete right_node;
@@ -650,11 +766,11 @@ else {
 #ifndef NDEBUG
       if( first_ray) {
         first_ray = false;
-        TRACEN("operator++: prev_ray=(none), ray="<<r);
+        CGAL_NEF_TRACEN("operator++: prev_ray=(none), ray="<<r);
       }
       else {
         CGAL_warning( old_ray.has_on(r.source()));
-        TRACEN("operator++: prev_ray="<<old_ray<<", ray="<<r);
+        CGAL_NEF_TRACEN("operator++: prev_ray="<<old_ray<<", ray="<<r);
       }
       old_ray = r;
 #endif
@@ -662,9 +778,9 @@ else {
       break;
     }
     else {
-      TRACEN("find next intersected cell: node plane: "<<n->plane() <<
+      CGAL_NEF_TRACEN("find next intersected cell: node plane: "<<n->plane() <<
              ", point: "<<n->plane().point());
-      TRACEN("find next intersected cell: segment: "<<r);
+      CGAL_NEF_TRACEN("find next intersected cell: segment: "<<r);
       Oriented_side src_side, tgt_side;
       get_side_of( r, n->plane(), src_side, tgt_side);
       if( src_side == ON_ORIENTED_BOUNDARY && tgt_side == ON_ORIENTED_BOUNDARY)
@@ -891,12 +1007,12 @@ else {
       CGAL_assertion_code(
       if( first_segment) {
         first_segment = false;
-        TRACEN("operator++: prev_segment=(none), segment="<<s);
+        CGAL_NEF_TRACEN("operator++: prev_segment=(none), segment="<<s);
       }
       else {
         CGAL_assertion( prev_segment.target() == s.source());
         CGAL_assertion( prev_segment.direction() == s.direction());
-        TRACEN("operator++: prev_segment="<<prev_segment<<", segment="<<s);
+        CGAL_NEF_TRACEN("operator++: prev_segment="<<prev_segment<<", segment="<<s);
       }
       prev_segment = s);
 #endif
@@ -904,8 +1020,8 @@ else {
       break;
     }
     else {
-      TRACEN("find next intersected cell: segment: "<<s);
-      TRACEN("find next intersected cell: node plane: "<<n->plane() <<
+      CGAL_NEF_TRACEN("find next intersected cell: segment: "<<s);
+      CGAL_NEF_TRACEN("find next intersected cell: node plane: "<<n->plane() <<
              ", point: "<<n->plane().point());
       Oriented_side src_side = n->plane().oriented_side(s.source());
       Oriented_side tgt_side = n->plane().oriented_side(s.target());
@@ -1128,12 +1244,14 @@ template <class SNC_decorator>
 Oriented_side 
 Side_of_plane<SNC_decorator>::operator()
 ( const Plane_3& pl, Halfedge_handle e) {
-  if(!OnSideMap.is_defined(D.source(e)))
-    OnSideMap[D.source(e)] = pl.oriented_side(D.point(D.source(e)));  
-  if(!OnSideMap.is_defined(D.target(e)))
-    OnSideMap[D.target(e)] = pl.oriented_side(D.point(D.target(e)));  
-  Oriented_side src_side = OnSideMap[D.source(e)];
-  Oriented_side tgt_side = OnSideMap[D.target(e)];
+  Vertex_handle v = e->source();
+  Vertex_handle vt = e->twin()->source();
+  if(!OnSideMap.is_defined(v))
+    OnSideMap[v] = pl.oriented_side(v->point());  
+  if(!OnSideMap.is_defined(vt))
+    OnSideMap[vt] = pl.oriented_side(vt->point());  
+  Oriented_side src_side = OnSideMap[v];
+  Oriented_side tgt_side = OnSideMap[vt];
   if( src_side == tgt_side)
     return src_side;
   if( src_side == ON_ORIENTED_BOUNDARY)
@@ -1190,11 +1308,14 @@ Side_of_plane<SNC_decorator>::operator()
   e = SHalfedge_handle(fc);
   SHalfedge_around_facet_circulator sc(e), send(sc);
   //CGAL_assertion( iterator_distance( sc, send) >= 3); // TODO: facet with 2 vertices was found, is it possible?
+
   Oriented_side facet_side;
+  Vertex_handle v;
   do {
-    if(!OnSideMap.is_defined(D.vertex(sc)))
-      OnSideMap[D.vertex(sc)] = pl.oriented_side(D.point(D.vertex(sc)));  
-    facet_side = OnSideMap[D.vertex(sc)];
+    v = sc->source()->center_vertex();
+    if(!OnSideMap.is_defined(v))
+      OnSideMap[v] = pl.oriented_side(v->point());  
+    facet_side = OnSideMap[v];
     ++sc;
   }
   while( facet_side == ON_ORIENTED_BOUNDARY && sc != send);
@@ -1202,9 +1323,10 @@ Side_of_plane<SNC_decorator>::operator()
     return ON_ORIENTED_BOUNDARY;
   CGAL_assertion( facet_side != ON_ORIENTED_BOUNDARY);
   while( sc != send) {
-    if(!OnSideMap.is_defined(D.vertex(sc)))
-      OnSideMap[D.vertex(sc)] = pl.oriented_side(D.point(D.vertex(sc)));  
-    Oriented_side point_side = OnSideMap[D.vertex(sc)];
+    v = sc->source()->center_vertex();
+    if(!OnSideMap.is_defined(v))
+      OnSideMap[v] = pl.oriented_side(v->point());  
+    Oriented_side point_side = OnSideMap[v];
     ++sc;
     if( point_side == ON_ORIENTED_BOUNDARY)
       continue;
@@ -1389,7 +1511,7 @@ int main( int argc, char** argv) {
 
   CGAL::Timer constr_time, boolop_time;
 
-  TRACEN("constructing models...");
+  CGAL_NEF_TRACEN("constructing models...");
   Polyhedron Pp, Qp;
   file1 >> Pp;
   file2 >> Qp;
@@ -1398,7 +1520,7 @@ int main( int argc, char** argv) {
   Nef_polyhedron P(Pp, pl->clone()), Q(Qp, pl->clone());
   constr_time.stop();
 
-  TRACEN("operating models...");
+  CGAL_NEF_TRACEN("operating models...");
   Nef_polyhedron PQ(Nef_polyhedron::EMPTY); 
   // wasted time creating the infimaximal box
   boolop_time.start();
@@ -1413,11 +1535,11 @@ int main( int argc, char** argv) {
   else CGAL_assertion_msg( 0, "wrong boolean operation");
   boolop_time.stop();
 
-  TRACEN("writing output...");
+  CGAL_NEF_TRACEN("writing output...");
   result << PQ;
 
-  TRACEN("nef3 construction: " << constr_time.time());
-  TRACEN("boolean operation: " << boolop_time.time());
+  CGAL_NEF_TRACEN("nef3 construction: " << constr_time.time());
+  CGAL_NEF_TRACEN("boolean operation: " << boolop_time.time());
   return 0;
 }
 
