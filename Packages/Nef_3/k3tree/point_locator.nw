@@ -166,7 +166,7 @@ public:
 
   virtual void initialize(SNC_structure* W) {
     TIMER(ct_t.start());
-    strcpy( version_, "Point Locator by Spatial Subdivision (tm)");
+    strcpy( this->version_, "Point Locator by Spatial Subdivision (tm)");
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
     CLOG(version()<<" (with triangulated facets)");
 #else
@@ -180,11 +180,11 @@ public:
     Vertex_iterator v;
     Halfedge_iterator e;
     Halffacet_iterator f;
-    CGAL_forall_vertices( v, *sncp()) 
+    CGAL_forall_vertices( v, *this->sncp()) 
       objects.push_back(Object_handle(Vertex_handle(v)));
-    CGAL_forall_edges( e, *sncp())
+    CGAL_forall_edges( e, *this->sncp())
       objects.push_back(Object_handle(Halfedge_handle(e)));
-    CGAL_forall_facets( f, *sncp()) {
+    CGAL_forall_facets( f, *this->sncp()) {
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
       typedef typename std::list<Triangle_3> Triangles;
       typedef typename Triangles::const_iterator Triangles_iterator;
@@ -608,10 +608,10 @@ public:
     CGAL_assertion( initialized);
     TRACEN( "intersecting edge: "<< Segment_3(e0->source()->point(),
                                               e0->twin()->source()->point()));
-    SNC_intersection is(*sncp());
+    SNC_intersection is(*this->sncp());
     Segment_3 s(Segment_3(e0->source()->point(),e0->twin()->source()->point()));
     Halfedge_iterator e;
-    CGAL_forall_edges( e, *sncp()) {
+    CGAL_forall_edges( e, *this->sncp()) {
       Point_3 q;
       if( is.does_intersect_internally( s, Segment_3(e->source()->point(),
                                                      e->twin()->source()->point()), q)) {
@@ -630,11 +630,11 @@ public:
     CGAL_assertion( initialized);
     TRACEN( "intersecting edge: "<< Segment_3(e0->source()->point(),
                                               e0->twin()->source()->point()));
-    SNC_intersection is(*sncp());
+    SNC_intersection is(*this->sncp());
     Segment_3 s(Segment_3(e0->source()->point(),
                           e0->twin()->source()->point()));
     Halffacet_iterator f;
-    CGAL_forall_facets( f, *sncp()) {
+    CGAL_forall_facets( f, *this->sncp()) {
       Point_3 q;
       if( is.does_intersect_internally( s, f, q) ) {
         q = normalized(q);

@@ -150,6 +150,8 @@ public:
   class Objects_along_ray : public Objects_around_segment
   {
     typedef Objects_around_segment Base;
+  protected:
+    Traits traits;	
   public:
     Objects_along_ray( const K3_tree& k, const Ray_3& r) {
       TRACEN("Objects_along_ray: input ray: "<<r);
