@@ -95,6 +95,8 @@ public:
 	  return;
 	if(poly.is_clockwise_oriented())
 	  poly.reverse_orientation ();
+	assert( ! poly.is_clockwise_oriented());
+	  
 	widget->new_object(make_object(poly));
 	active = false;
 	first_time = true;
