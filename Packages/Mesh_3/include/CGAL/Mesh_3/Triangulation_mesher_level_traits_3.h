@@ -5,11 +5,32 @@
 
 namespace CGAL {
 
+  namespace Mesh_3 {
+    namespace details {
+
+      template <typename Tag, typename Tr>
+      struct Type_of_points
+      {
+        typedef typename Tr::Point Point;
+      };
+
+      template <typename Tr>
+      struct Type_of_points<Tag_true, Tr>
+      {
+        typedef typename Tr::Weighted_point Point;
+      };
+
+    } // end namespace Mesh_3::details
+  } // end namespace Mesh_3
+
 template <typename Tr>
 struct Triangulation_mesher_level_traits_3
 {
   typedef Tr Triangulation;
-  typedef typename Tr::Weighted_point Point;
+
+  typedef typename  Mesh_3::details::Type_of_points<typename Tr::Weighted_tag,
+                                                    Tr>::Point Point;
+
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Cell_handle Cell_handle;
   typedef typename Tr::Facet Facet;
@@ -43,7 +64,7 @@ struct Triangulation_mesher_level_traits_3
   {
     const Facet& f = *(zone.boundary_facets.begin());
     return t.insert_in_hole(p, zone.cells.begin(), zone.cells.end(),
-                          f.first, f.second);
+                            f.first, f.second);
   }
 
 }; // end Triangulation_mesher_level_traits_3

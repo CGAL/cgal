@@ -9,8 +9,6 @@
 #include <utility>
 
 namespace CGAL {
-
-static Null_mesher_level null_mesher_level;
   
 namespace Mesh_3 {
 
@@ -20,15 +18,17 @@ namespace Mesh_3 {
     {
       typedef typename Tr::Vertex_handle Vertex_handle;
       typedef std::pair<Vertex_handle,
-                        Vertex_handle> Constrained_edge;
+                        Vertex_handle>   Constrained_edge;
+
+      typedef ::CGAL::Mesh_3::Simple_queue_container<Constrained_edge>
+                                         Default_container;
     };
   }; // end namespace details
 
 template <
   class Tr,
-  class Container = Simple_queue_container<
-    typename details::Refine_edges_base_types<Tr>::Constrained_edge 
-  >
+  class Container = 
+    typename details::Refine_edges_base_types<Tr>::Default_container
 >
 class Refine_edges_base
 {
@@ -70,8 +70,15 @@ protected:
     Facet_circulator f_circ = tr.incident_facets(e), end(f_circ);
 
     do {
-      /** @todo: comment trouver le troisième point d'une facet ? */
 
+      // Small algorithm to retrieve the third vertex of a facet
+      // (ch, index), knowing two vertices (Vertex_handle) of the
+      // facets.
+      // Another implementation would be:
+      //   int ia = c->index(va);
+      //   int ib = c->index(vb);
+      //   int k = 6-index-ia-ib;
+      // 
       Vertex_handle v;
       for(int i = 0; i < 4; ++i)
 	{
@@ -134,7 +141,7 @@ protected:
     for(Finite_edges_iterator it = tr.finite_edges_begin();
 	it != tr.finite_edges_end();
 	++it)
-      if(tr.is_constrained(*it) && is_encroached(*it))
+      if(complex_2.is_in_complex(*it) && is_encroached(*it))
 	edges_to_be_conformed.add_element(std::make_pair(it->first->
 						  vertex(it->second),
 						  it->first->
@@ -200,6 +207,9 @@ public:
         const Cell_handle& c = (*fit).first;
         const int index = (*fit).second;
 
+	// @todo Utiliser la table vertex_triple_index et boucler
+	// entre 0 et 2 au lieu de faire la boucle suivante.
+
         // 0 < i_off < j_off <4
         for(int i_off = 1; i_off < 3; ++i_off)
           for(int j_off = i_off+1; j_off < 4; ++j_off)
@@ -210,16 +220,22 @@ public:
               const Vertex_handle& vi = c->vertex(i);
               const Vertex_handle& vj = c->vertex(j);
               if( vi < vj ) // (vi, vj) will be visited twice.
-                if( is_not_locally_Delaunay(vi, vj) )
+		// BUG!!!
+		if( is_not_locally_Delaunay(vi, vj) )
                   one_edge_is_encroached = true;
             }
       }
-    return std::make_pair(!one_edge_is_encroached, true);
+    // The first boolean tells if there is a conflict.
+    // The second one tells if the element can be dropped.
+    return std::make_pair(!one_edge_is_encroached, false);
+    // Here, can_drop=false, because the facet (from which the point
+    // is the circumcenter) should be refined latter.
   }
 
   std::pair<bool, bool> do_private_test_point_conflict(const Point&,
                                                        Zone& ) const
   {
+    // nothing
     return std::make_pair(true, true);
   }
 
@@ -270,7 +286,7 @@ public:
                                 vj->point().point(),
                                 vk->point().point())
                     == CGAL::POSITIVE )
-                  if(tr.is_constrained(vi, vj))
+                  if(complex_2.is_in_complex(*it, i, j))
                     test_if_encroached(vi, vj);
               }
           }

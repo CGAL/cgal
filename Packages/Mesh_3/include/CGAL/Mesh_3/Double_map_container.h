@@ -2,6 +2,7 @@
 #define CGAL_MESH_3_DOUBLE_MAP_CONTAINER_H
 
 #include <set>
+#include <CGAL/Double_map.h>
 
 namespace CGAL {
 
@@ -10,7 +11,7 @@ namespace CGAL {
     /** Example of a \c NON-REMOVABLE container:
         one cannot remove elements from it, but the front. */
     template <typename Element, class Quality>
-    class double_map_container 
+    class Double_map_container 
     {
       // --- private datas ---
       Double_map<Element, Quality> m;
@@ -43,7 +44,7 @@ namespace CGAL {
       {
         m.erase(e);
       }
-    }; // end double_map_container
+    }; // end Double_map_container
     
   }; // end namespace Mesh_3
 }; // end namespace CGAL

@@ -1,11 +1,12 @@
-#ifndef CONFORMING_DELAUNAY_TRIANGULATION_2_TRAITS_3_H
-#define CONFORMING_DELAUNAY_TRIANGULATION_2_TRAITS_3_H
+#ifndef CGAL_CONFORMING_DELAUNAY_TRIANGULATION_2_TRAITS_3_H
+#define CGAL_CONFORMING_DELAUNAY_TRIANGULATION_2_TRAITS_3_H
 
 #include <CGAL/Triangulation_2_traits_3.h>
 namespace CGAL {
 
 template<class K>
-struct Conforming_Delaunay_triangulation_2_traits_3 : public CGAL::Triangulation_2_traits_3<K>
+struct Conforming_Delaunay_triangulation_2_traits_3
+  : public CGAL::Triangulation_2_traits_3<K>
 {
   typedef CGAL::Triangulation_2_traits_3<K> Base;
   typedef typename Base::Rep Rep;
@@ -25,7 +26,8 @@ struct Conforming_Delaunay_triangulation_2_traits_3 : public CGAL::Triangulation
   typedef typename Rep::Vector_3 Vector_2;
   typedef typename Rep::Construct_vector_3 Construct_vector_2;
   typedef typename Rep::Construct_scaled_vector_3 Construct_scaled_vector_2;
-  typedef typename Rep::Construct_translated_point_3 Construct_translated_point_2;
+  typedef typename Rep::Construct_translated_point_3 
+                                   Construct_translated_point_2;
   typedef typename Rep::Construct_midpoint_3 Construct_midpoint_2;
   typedef typename Rep::Compute_squared_distance_3 Compute_squared_distance_2;
   typedef typename Rep::Angle_3 Angle_2;
@@ -64,4 +66,4 @@ struct Conforming_Delaunay_triangulation_2_traits_3 : public CGAL::Triangulation
 
 } // end namespace CGAL
 
-#endif
+#endif //CGAL_CONFORMING_DELAUNAY_TRIANGULATION_2_TRAITS_3_H

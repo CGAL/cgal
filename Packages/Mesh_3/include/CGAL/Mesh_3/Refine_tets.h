@@ -15,50 +15,50 @@ namespace CGAL {
 namespace Mesh_3 {
 
 template <class Tr,
+          class Criteria,
           class Container = 
           Double_map_container<typename Tr::Cell_handle,
-                               typename Tr::typename Geom_traits::Quality> >
+                               typename Criteria::Quality>
 >
 class Refine_tets_base
 {
-  typedef typename Tr::Bare_point Bare_point;
   typedef typename Tr::Point Point;
-  typedef typename Tr::Weighted_point Weighted_point;
+  typedef typename Tr::Point Point;
   typedef typename Tr::Edge Edge;
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Cell_handle Cell_handle;
 
   typedef typename Tr::Geom_traits Geom_traits;
-  typedef typename Triangulation_mesher_level_traits_3<Tr>::Zone Zone;
+  typedef Triangulation_mesher_level_traits_3<Tr> Triangulation_traits;
+  typedef typename Triangulation_traits::Zone Zone;
 
   typedef typename Tr::Finite_facets_iterator Finite_facets_iterator;
   typedef typename Tr::Facet_circulator Facet_circulator;
 
   typedef typename Tr::Facet Facet;
 
-  typedef typename Geom_traits::Quality Quality;
+  typedef typename Criteria::Quality Quality;
 
 public:
   /** \name CONSTRUCTORS */
 
-  Refine_tets_base(Tr& t) : tr(t) {}
+  Refine_tets_base(Tr& t, Criteria crit) : tr(t), criteria(crit) {}
 
 private:
   /* --- private datas --- */
   Tr& tr; /**< The triangulation itself. */
-  Container tets_to_refine/**< The set of tets to refine. */
+  Triangulation_mesher_level_traits_3<Tr> traits;
+  Criteria criteria; /**< Meshing criteria for tetrahedra. */
+  Container tets_to_refine; /**< The set of tets to refine. */
 
-
-  bool should_be_refined(const Cell_handle c, Quality& q) const
+  bool should_be_refined(const Cell_handle c, Quality& qual) const
   {
-    const Bare_point
-      & a = c->vertex(0)->point().point(),
-      & b = c->vertex(1)->point().point(),
-      & c = c->vertex(2)->point().point();
-      & d = c->vertex(3)->point().point();
+    const Point& p = c->vertex(0)->point();
+    const Point& q = c->vertex(1)->point();
+    const Point& r = c->vertex(2)->point();
+    const Point& s = c->vertex(3)->point();
 
-    return geom_traits().is_bad_object()(a,b,c,d,q);
-
+    return criteria.is_bad_object()(p,q,r,s,qual);
   }
 
   bool should_be_refined(const Cell_handle c) const
@@ -66,7 +66,13 @@ private:
     Quality q;
     return should_be_refined(c, q);
   }
-}
+
+  bool test_cell(const Cell_handle c)
+  {
+    Quality q;
+    if( cit->is_is_domain() && should_be_refined(cit, q) )
+      tets_to_refine.add_element(cit, q);
+  }
 
 public:
   /** \name Functions that this level must declare. */
@@ -81,19 +87,22 @@ public:
     return tr;
   }
 
+  Triangulation_traits& get_triangulation_traits()
+  {
+    return traits;
+  }
+
+  const Triangulation_traits& get_triangulation_traits() const
+  {
+    return traits;
+  }
+
   void do_scan_triangulation()
   {
-    for(Cell_iterator cit = tr.finite_cells_begin();
+    for(typename Tr::Cell_iterator cit = tr.finite_cells_begin();
         cit != tr.finite_cells_end();
         ++cit)
       test_cell(cit);
-  }
-
-  bool test_cell(const Cell_handle c)
-  {
-    Quality q;
-    if( cit->is_is_domain() && should_be_refined(cit, q) )
-      tets_to_refine.add_element(cit, q);
   }
 
   bool is_no_longer_element_to_refine() const 
@@ -112,21 +121,20 @@ public:
   }
 
   /** @todo Handle point().point() and Weighted_point. */
-  Weighted_point get_refinement_point(const Cell_handle& c) const
+  Point get_refinement_point(const Cell_handle& c) const
   {
     typename Geom_traits::Construct_circumcenter_3 circumcenter = 
       tr.geom_traits().construct_circumcenter_3_object();
 
-    const Bare_point
-      & a = c->vertex(0)->point().point(),
-      & b = c->vertex(1)->point().point(),
-      & c = c->vertex(2)->point().point();
-      & d = c->vertex(3)->point().point();
+    const Point& p = c->vertex(0)->point();
+    const Point& q = c->vertex(1)->point();
+    const Point& r = c->vertex(2)->point();
+    const Point& s = c->vertex(3)->point();
 
-    return Weighted_point(circumcenter(a, b, c, d);
+    return circumcenter(p, q, r, s);
   }
 
-  void do_before_conflicts(const Facet&, const Point&)
+  void do_before_conflicts(const Cell_handle&, const Point&)
   {}
 
   std::pair<bool, bool> do_private_test_point_conflict(const Point&,
@@ -141,7 +149,7 @@ public:
     return std::make_pair(true, true);
   }
 
-  void do_before_insertion(const Facet&, const Point&,
+  void do_before_insertion(const Cell_handle&, const Point&,
                            const Zone&)
   {
   }
@@ -252,7 +260,8 @@ public:
   }; // end namespace Mesh_3::tets
   
 template <typename Tr,
-          typename Base = Refine_tets_base<Tr>,
+          typename Criteria,
+          typename Base = Refine_tets_base<Tr, Criteria>,
           typename Edges_level = Refine_edges<Tr>
  >
 class Refine_tets : 
@@ -272,8 +281,8 @@ public:
     typename Tr::Facet,
     Edges_level
   > Mesher;
-  Refine_tets(Tr& t, Edges_level* edges_level)
-    : Base(t), Mesher(edges_level) {}
+  Refine_tets(Tr& t, Criteria crit, Edges_level& edges_level)
+    : Base(t, crit), Mesher(edges_level) {}
 };
 
 }; // end namespace Mesh_3

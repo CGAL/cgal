@@ -7,8 +7,8 @@ namespace CGAL {
 
   namespace Mesh_3 {
 
-    /** Example of a \c NON-REMOVABLE container:
-        one cannot remove elements from it, but the front. */
+    /** Example of a \c REMOVABLE container:
+        one can remove any elements from it. */
     template <typename Element>
     class Simple_set_container 
     {

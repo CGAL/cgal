@@ -12,7 +12,7 @@
 #include <queue>
 #include <algorithm>
 #include <CGAL/Constraint_hierarchy_2.h>
-#include <CGAL/Delaunay_mesh_2.h>
+#include <CGAL/Delaunay_mesher_2.h>
 
 CGAL_BEGIN_NAMESPACE
 

@@ -3,6 +3,7 @@
 
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Mesh_3/Triangulation_mesher_level_traits_3.h>
+#include <CGAL/Mesh_3/Complex_2_in_triangulation_3.h>
 
 #include <CGAL/Mesh_3/Refine_edges.h>
 #include <CGAL/Mesh_3/Simple_set_container.h>
@@ -33,15 +34,21 @@ class Refine_facets_base
 
   typedef typename Tr::Facet Facet;
 
+  typedef Complex_2_in_triangulation_3<Tr, void, void> Complex_2;
+
   typedef Container Facets_to_be_conformed;
 public:
   /** \name CONSTRUCTORS */
 
-  Refine_facets_base(Tr& t) : tr(t) {}
+  Refine_facets_base(Tr& t, Complex_2& comp) 
+    : tr(t), complex_2(comp)
+  {
+  }
 
 private:
   /* --- private datas --- */
   Tr& tr; /**< The triangulation itself. */
+  Complex_2& complex_2; /**< The Complex_2_in_triangulation_3 */
   Facets_to_be_conformed facets_to_be_conformed; /**< The set of facets to
                                                     refine. */
   void fill_facets_to_be_conformed()
@@ -49,7 +56,7 @@ private:
     for(Finite_facets_iterator it = tr.finite_facets_begin();
 	it != tr.finite_facets_end();
 	++it)
-      if(tr.is_constrained(*it) && is_not_locally_Delaunay(*it))
+      if(complex_2.is_in_complex(*it) && is_not_locally_Delaunay(*it))
 	facets_to_be_conformed.add_element(*it);
   }
 
@@ -72,19 +79,13 @@ private:
 		       vb->point(),
 		       vc->point(),
 		       v1->point(),
-		       v2->point()) != ON_NEGATIVE_SIDE
-	    ||
-	    power_test(va->point(),
-		       vb->point(),
-		       vc->point(),
-		       v2->point(),
-		       v1->point()) != ON_NEGATIVE_SIDE );
+		       v2->point()) != ON_NEGATIVE_SIDE ); // À VÉRIFIER !
   }
 
 public:
   bool test_for_facet(const Facet& facet)
   {
-    if(tr.is_constrained(facet) &&
+    if(complex_2.is_in_complex(facet) &&
        is_not_locally_Delaunay(facet))
       {
         facets_to_be_conformed.add_element(facet);
