@@ -36,7 +36,7 @@ _test_cls_regular_3(const Triangulation &)
   typedef  typename Cls::Bare_point Point;
   typedef  typename Cls::Weighted_point Weighted_point;
 
-  typedef list<Weighted_point>                        list_point;
+  typedef std::list<Weighted_point>                        list_point;
 
   //  _test_cls_triangulation_3( Cls() );
 

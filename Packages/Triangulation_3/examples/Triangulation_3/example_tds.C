@@ -25,6 +25,8 @@
 #include <fstream>
 // #include <strstream.h>
 
+#include <assert.h>
+
 #include <vector>
 
 #include <CGAL/Cartesian.h>

@@ -415,7 +415,8 @@ public:
 		 Cell* c = NULL ) const;
 
   void
-  incident_vertices(Vertex* v, std::set<Vertex*, std::less<Vertex*> > & vertices,
+  incident_vertices(Vertex* v, 
+		    std::set<Vertex*, std::less<Vertex*> > & vertices,
 		    Cell* c = NULL ) const;
 
   // CHECKING

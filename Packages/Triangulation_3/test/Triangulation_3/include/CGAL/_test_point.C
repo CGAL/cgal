@@ -27,7 +27,7 @@
 #include <list>
 
 typedef Triangulation_test_point Point;
-typedef list<Point>              list_point;
+typedef std::list<Point>              list_point;
 
 
 // list of Points for T1_0 :

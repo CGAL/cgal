@@ -55,7 +55,7 @@ _test_cls_triangulation_3(const Triangulation &)
   typedef typename Cls::Cell_handle          Cell_handle; 
   typedef typename Cls::Vertex_iterator      Vertex_iterator;
   typedef typename Cls::Locate_type          Locate_type;
-  typedef list<Point>                        list_point;
+  typedef std::list<Point>                        list_point;
 
 
   // +++ We define now some points for building triangulations +++++//

@@ -25,6 +25,7 @@
 #include <fstream>
 //#include <strstream.h>
 
+#include <assert.h>
 #include <list>
 #include <vector>
 

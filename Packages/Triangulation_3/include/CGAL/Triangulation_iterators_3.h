@@ -72,8 +72,8 @@ public:
 
   typedef typename Triangulation_3<Gt,Tds>::Cell Cell;
   typedef typename Triangulation_3<Gt,Tds>::Vertex Vertex;
-  typedef typename Vertex::Vertex_handle Vertex_handle;
-  typedef typename Cell::Cell_handle Cell_handle;
+  typedef typename Triangulation_3<Gt,Tds>::Vertex_handle Vertex_handle;  
+  typedef typename Triangulation_3<Gt,Tds>::Cell_handle Cell_handle;
   typedef Triangulation_3<Gt,Tds> Triang;
 
   typedef Triangulation_cell_iterator_3<Gt,Tds> Cell_iterator;
@@ -211,7 +211,7 @@ public:
   typedef typename Tds::Vertex_iterator Iterator_base;
 
   typedef typename Triangulation_3<Gt,Tds>::Vertex Vertex;
-  typedef typename Vertex::Vertex_handle Vertex_handle;
+  typedef typename Triangulation_3<Gt,Tds>::Vertex_handle Vertex_handle;
   typedef Triangulation_3<Gt,Tds> Triang;
 
   typedef Triangulation_vertex_iterator_3<Gt,Tds> Vertex_iterator;

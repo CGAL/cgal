@@ -43,12 +43,12 @@
 
 CGAL_BEGIN_NAMESPACE 
 
-template < class Rep, class Weight = typename Rep::RT>
+template < class Repres, class Weight = typename Repres::RT>
 class Regular_triangulation_euclidean_traits_3
-  : public Triangulation_geom_traits_3<Rep>
+  : public Triangulation_geom_traits_3<Repres>
 {
 public:
-  typedef Triangulation_geom_traits_3 <Rep>     Traits;
+  typedef Triangulation_geom_traits_3 <Repres>     Traits;
   typedef typename Traits::Point                         Bare_point;
   typedef Weighted_point <Bare_point, Weight>   Weighted_point;
   typedef Weighted_point                        Point;
