@@ -26,6 +26,7 @@
 
 #include <CGAL/CLN/common.h>
 #include <cl_complex.h>
+#include <cl_complex_io.h>
 
 CGAL_BEGIN_NAMESPACE
 

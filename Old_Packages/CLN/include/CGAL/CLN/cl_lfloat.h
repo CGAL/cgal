@@ -26,6 +26,7 @@
 
 #include <CGAL/CLN/common.h>
 #include <cl_lfloat.h>
+#include <cl_lfloat_io.h>
 
 CGAL_BEGIN_NAMESPACE
 
