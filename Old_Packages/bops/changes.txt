@@ -1,5 +1,8 @@
 Version history:
 ----------------
+2.4
+  - Renamed template parameters in include/CGAL/bops_traits_2.h.
+
 2.3 (11 Oct 1999)
   - Put the package on the CVS server [Sylvain], and removed a few useless
     files in the process (.ps.gz, *ii), as well as the empty src/ directory.
