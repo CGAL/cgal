@@ -15,6 +15,33 @@
 // coordinator   : Utrecht University
 // ============================================================================
 
+// Portions of code in this file are
+/*
+ *
+ * Copyright (c) 1994
+ * Hewlett-Packard Company
+ *
+ * Copyright (c) 1996,1997
+ * Silicon Graphics Computer Systems, Inc.
+ *
+ * Copyright (c) 1997
+ * Moscow Center for SPARC Technology
+ *
+ * Copyright (c) 1999 
+ * Boris Fomitchev
+ *
+ * This material is provided "as is", with absolutely no warranty expressed
+ * or implied. Any use is at your own risk.
+ *
+ * Permission to use or copy this software for any purpose is hereby
+ * granted 
+ * without fee, provided the above notices are retained on all copies.
+ * Permission to modify the code and to distribute modified code is
+ * granted,
+ * provided the above notices are retained, and a notice that the code was
+ * modified is included with the above copyright notice.
+ *
+ */
 
 #if defined(__BORLANDC__) && __BORLANDC__ > 0x520
 #define CGAL_MASK_FINITE_VALID 1
@@ -25,6 +52,7 @@ using std::size_t;
 using std::time_t;
 #include <iterator>
 #include <functional>
+#include <utility>
 
 #include <float>
 
@@ -173,6 +201,41 @@ compose2(const _Operation1& __fn1, const _Operation2& __fn2,
     (__fn1, __fn2, __fn3);
 }
 
+
+
+// Borrowed from STLPort (and modified)
+// copy_n (not part of the C++ standard)
+
+template <class _InputIter, class _Size, class _OutputIter>
+inline
+std::pair<_InputIter, _OutputIter> __copy_n(_InputIter __first, _Size __count,
+                                          _OutputIter __result,
+                                          std::input_iterator_tag) {
+  for ( ; __count > 0; --__count) {
+    *__result = *__first;
+    ++__first;
+    ++__result;
+  }
+  return std::pair<_InputIter, _OutputIter>(__first, __result);
 }
 
+template <class _RAIter, class _Size, class _OutputIter>
+inline std::pair<_RAIter, _OutputIter>
+__copy_n(_RAIter __first, _Size __count,
+         _OutputIter __result,
+         std::random_access_iterator_tag) {
+  _RAIter __last = __first + __count;
+  return std::pair<_RAIter, _OutputIter>(__last, 
+                                       std::copy(__first, __last, __result));
+}
+
+template <class _InputIter, class _Size, class _OutputIter>
+inline std::pair<_InputIter, _OutputIter>
+copy_n(_InputIter __first, _Size __count, _OutputIter __result) {
+  return __copy_n(__first, __count, __result,
+                std::iterator_category(__first));
+
+  }
+  
+} // namespace std
 #endif
