@@ -1155,7 +1155,7 @@
 
 % appendix changes numbering of chapters
 \newcommand{\appendix}{%
-    \gdef{\thechapter}{\Alpha{chapter}}}
+    \gdef{\thechapter}{\Alph{chapter}}}
 
 \newcommand{\minitoc}{}
 \newcommand{\tableofcontents}{}
@@ -1347,8 +1347,8 @@
 \newcommand{\arabic}[1]{\value{#1}}
 \newcommand{\roman}[1]{\lciExpandedCallOne\lciToRoman{\lciCounter#GC1}}
 \newcommand{\Roman}[1]{\lciExpandedCallOne\lciToRomanUpper{\lciCounter#GC1}}
-\newcommand{\alpha}[1]{\lciExpandedCallOne\lciToAlpha{\lciCounter#GC1}}
-\newcommand{\Alpha}[1]{\lciExpandedCallOne\lciToAlphaUpper{\lciCounter#GC1}}
+\newcommand{\alph}[1]{\lciExpandedCallOne\lciToAlpha{\lciCounter#GC1}}
+\newcommand{\Alph}[1]{\lciExpandedCallOne\lciToAlphaUpper{\lciCounter#GC1}}
 \newcommand{\fnsymbol}[1]{%
     \ifEqualExpanded{\lciCounter#GC1}{1}{\ast}{%
       \ifEqualExpanded{\lciCounter#GC1}{2}{\dag}{%
