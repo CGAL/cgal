@@ -32,7 +32,7 @@ struct Default_Bbox_d : public UniqueNumbers {
         T inf = workaround::numeric_limits< T >::inf();
         T sup = workaround::numeric_limits< T >::sup();
         if( !complete )
-                std::swap( inf, sup );
+            std::swap( inf, sup );
         std::fill( _lo, _lo + DIM, inf );
         std::fill( _hi, _lo + DIM, sup );
     }
@@ -51,10 +51,10 @@ protected:
     T _lo[ DIM ], _hi[ DIM ];
 };
 
-template< class _Box >
+template< class BOX >
 struct Default_Bbox_d_Adapter {
-    typedef _Box Box;
-    typedef typename _Box::NumberType NumberType;
+    typedef BOX Box;
+    typedef typename BOX::NumberType NumberType;
 
     static NumberType get_lo( const Box& b, unsigned int dim )
     { return b.lo( dim ); }

@@ -10,9 +10,9 @@ template< class RandomAccessIter,
           class Callback,
           class Traits >
 void modified_two_way_scan( RandomAccessIter p_begin, RandomAccessIter p_end,
-                   RandomAccessIter i_begin, RandomAccessIter i_end,
-                   Callback& callback, Traits traits, unsigned int last_dim,
-                   bool in_order = true )
+                    RandomAccessIter i_begin, RandomAccessIter i_end,
+                    Callback& callback, Traits traits, unsigned int last_dim,
+                    bool in_order = true )
 {
     typedef typename Traits::Compare Compare;
 
