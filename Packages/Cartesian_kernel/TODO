@@ -3,7 +3,6 @@ Stuff to look at, as time permits:
 
 - Tests :
   - GCOV
-  - G++ 2.97.
   - Write a Checker for full kernels, like Pm_traits_checker.h ?
 
 - Handles :
@@ -11,20 +10,17 @@ Stuff to look at, as time permits:
       typedef T element_type;   (or value_type ? or sthg else ?)
       This way, no need for typedefs Point_ref_2 and co...
   - Having a proper Handle_for_virtual<> is becoming important...
-    - It must have the same interface than Handle_for<>
-    - Must use the allocator, see Stefan's mail.
+    - It must have the same interface than Handle_for<> [due, it can't !]
+    - Must use the allocator, see Stefan's mail. [due, impossible !]
     - Ok, after reflexion : it can't use STL allocators, however we can do
       something clean by looking at auto_ptr<>, I think.  It would also be
       nice if we could remove the ref-counting mecanism easily, like for
       Handle_for<>.
-
-- Aff_transformations :
-  - Finish merging .C files in corresponding .h files.
-  - Use Handle_for_virtual<>.
+    - Apply them to Aff_transformations, then Lazy_exact_nt<>, then... :)
 
 - Advanced Kernel :
   - Rename CGAL_CFG_NO_ADVANCED_KERNEL to CGAL_USE_ADVANCED_KERNEL, definable
-    on the command line, and not in config.h...
+    on the command line, and not in config.h... ?
   - Have a separate (top-level) kernel for the advanced cartesian ? 
 
 - Pierre reported that the operator>>() should test for empty stream,
@@ -49,12 +45,13 @@ diff -ru CGAL-2.3-I-6/include/CGAL/SimpleCartesian/CircleS2.h CGAL-2.3-I-6-new/i
   Try to guess what it was supposed to be used for.
 - Move include/CGAL/Kernel_common_traits.h to
   include/CGAL/Kernel/common_traits.h ?
-- Use CGAL_TYPENAME_MSVC_NULL instead of "#define typename".
+- Use CGAL_TYPENAME_MSVC_NULL instead of "#define typename" ?
   Only in the template parameters, right ?
 - Iso_rectangleC2 should store a twotuple of _non_ ref-counted points ?
   whereas now it's a twotuple of ref-counted points, which is a pure lost.
   (all local, temporary objects don't need any ref-counting)
   Well, when you ask for the point outside, you get a handled point, so...
+  Same thing for Circle/Sphere, BTW.
 - ::bbox() robustness issues : it's not robust, since basically, we use
   to_double().
   The homogeneous kernel uses an epsilon to get this right, in the case
