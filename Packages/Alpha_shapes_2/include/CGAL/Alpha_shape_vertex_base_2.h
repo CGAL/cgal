@@ -35,7 +35,6 @@ CGAL_BEGIN_NAMESPACE
 template <class Gt, class Vb = Triangulation_vertex_base_2<Gt> >
 class Alpha_shape_vertex_base_2 : public Vb
 {
-  typedef Vb                                         Base;
   typedef typename Vb::Triangulation_data_structure  TDS;
 public:
   typedef TDS                             Triangulation_data_structure;
@@ -44,11 +43,11 @@ public:
 
   typedef typename Gt::Coord_type                Coord_type;
   typedef std::pair< Coord_type, Coord_type >    Interval2;
-  typedef typename Base::Point                   Point;
+  typedef typename Vb::Point                   Point;
 
   template < typename TDS2 >
   struct Rebind_TDS {
-    typedef typename Base::template Rebind_TDS<TDS2>::Other    Vb2;
+    typedef typename Vb::template Rebind_TDS<TDS2>::Other    Vb2;
     typedef Alpha_shape_vertex_base_2 <Gt,Vb2>         Other;
   };
 private:
@@ -56,15 +55,15 @@ private:
 
 public:
   Alpha_shape_vertex_base_2()
-    : Base() 
+    : Vb() 
     {}
   
   Alpha_shape_vertex_base_2(const Point & p)
-    : Base(p) 
+    : Vb(p) 
     {}
   
   Alpha_shape_vertex_base_2(const Point & p, Face_handle f)
-    : Base(p, f) 
+    : Vb(p, f) 
     {}
 
 

@@ -29,11 +29,10 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class Gt, class Df = Triangulation_face_base_2<Gt> >
-class Alpha_shape_face_base_2 : public Df
+template < class Gt, class Fb = Triangulation_face_base_2<Gt> >
+class Alpha_shape_face_base_2 : public Fb
 {
-  typedef Df                                         Base;
-  typedef typename Df::Triangulation_data_structure  TDS;
+  typedef typename Fb::Triangulation_data_structure  TDS;
 public:
   typedef TDS                                Triangulation_data_structure;
   typedef typename TDS::Vertex_handle        Vertex_handle;
@@ -44,7 +43,7 @@ public:
 
   template < typename TDS2 >
   struct Rebind_TDS {
-    typedef typename Base::template Rebind_TDS<TDS2>::Other    Fb2;
+    typedef typename Fb::template Rebind_TDS<TDS2>::Other    Fb2;
     typedef Alpha_shape_face_base_2<Gt,Fb2>         Other;
   };
 
@@ -54,14 +53,14 @@ private:
   Coord_type A;
  
 public:
-  Alpha_shape_face_base_2()  : Base()     {}
+  Alpha_shape_face_base_2()  : Fb()     {}
   
   Alpha_shape_face_base_2(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2)
-    : Df(v0, v1, v2)     {}
+    : Fb(v0, v1, v2)     {}
   
   Alpha_shape_face_base_2(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2,
 			  Face_handle n0, Face_handle n1, Face_handle n2)
-    : Df(v0, v1, v2, n0, n1, n2)
+    : Fb(v0, v1, v2, n0, n1, n2)
     {}
 
   const Coord_type & get_alpha() const
