@@ -29,23 +29,20 @@
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>
-#include <CGAL/Polygon_traits_2.h>
 #include <CGAL/is_y_monotone_2.h>
 #include <list>
 #include <vector>
 #include <cassert>
 
-typedef CGAL::Cartesian<double>               CR;
-typedef CR::Point_2                           CPoint_2;
-typedef CGAL::Polygon_traits_2<CR>            CTraits;
-typedef std::list<CPoint_2>                   CContainer;
-typedef CGAL::Polygon_2<CTraits, CContainer>  CPolygon_2;
+typedef CGAL::Cartesian<double>          CR;
+typedef CR::Point_2                      CPoint_2;
+typedef std::list<CPoint_2>              CContainer;
+typedef CGAL::Polygon_2<CR, CContainer>  CPolygon_2;
 
-typedef CGAL::Homogeneous<double>             HR;
-typedef HR::Point_2                           HPoint_2;
-typedef CGAL::Polygon_traits_2<HR>            HTraits;
-typedef std::vector<HPoint_2>                 HContainer;
-typedef CGAL::Polygon_2<HTraits, HContainer>  HPolygon_2;
+typedef CGAL::Homogeneous<double>        HR;
+typedef HR::Point_2                      HPoint_2;
+typedef std::vector<HPoint_2>            HContainer;
+typedef CGAL::Polygon_2<HR, HContainer>  HPolygon_2;
 
 template <class Polygon_2>
 void make_nonmonotone_polygon(Polygon_2& polygon)

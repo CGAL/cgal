@@ -28,17 +28,15 @@
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>
-#include <CGAL/Polygon_traits_2.h>
 #include <CGAL/partition_2.h>
 #include <list>
 #include <cassert>
 
-typedef double                             NT;
-typedef CGAL::Cartesian<NT>                K;
-typedef K::Point_2                         Point_2;
-typedef CGAL::Polygon_traits_2<K>          Traits;
-typedef std::list<Point_2>                 Container;
-typedef CGAL::Polygon_2<Traits, Container> Polygon_2;
+typedef double                        NT;
+typedef CGAL::Cartesian<NT>           K;
+typedef K::Point_2                    Point_2;
+typedef std::list<Point_2>            Container;
+typedef CGAL::Polygon_2<K, Container> Polygon_2;
 
 #include "convex_test_polys.h"
 

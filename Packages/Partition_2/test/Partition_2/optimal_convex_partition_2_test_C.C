@@ -33,11 +33,10 @@
 #include <list>
 #include <cassert>
 
-typedef CGAL::Cartesian<double>            K;
-typedef K::Point_2                         Point_2;
-typedef CGAL::Polygon_traits_2<K>          Traits;
-typedef std::list<Point_2>                 Container;
-typedef CGAL::Polygon_2<Traits, Container> Polygon_2;
+typedef CGAL::Cartesian<double>       K;
+typedef K::Point_2                    Point_2;
+typedef std::list<Point_2>            Container;
+typedef CGAL::Polygon_2<K, Container> Polygon_2;
 
 #include "convex_test_polys.h"
 #include "test_optimal_convex.h"

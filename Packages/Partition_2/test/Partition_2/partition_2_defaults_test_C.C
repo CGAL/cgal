@@ -32,11 +32,11 @@
 #include <list>
 #include <cassert>
 
-typedef CGAL::Cartesian<double>                    K;
-typedef CGAL::Partition_traits_2<K>                Traits;
-typedef Traits::Point_2                            Point_2;
-typedef Traits::Polygon_2                          Polygon_2;
-typedef std::list<Polygon_2>                       Polygon_list;
+typedef CGAL::Cartesian<double>       K;
+typedef CGAL::Partition_traits_2<K>   Traits;
+typedef Traits::Point_2               Point_2;
+typedef Traits::Polygon_2             Polygon_2;
+typedef std::list<Polygon_2>          Polygon_list;
 
 #include "test_defaults.h"
 
