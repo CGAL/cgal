@@ -1,6 +1,10 @@
 Polyhedron_IO Package: Release changes:
 ---------------------------------------------------------------------
 
+3.12 (27 Mar 2003)
+
+     - Fix example/terr_trian.C for MipsPro.
+
 3.11 (26 Apr 2002)
 
      - Added print_polyhedron_ functions that match everything instead of

@@ -42,15 +42,16 @@
 #include "triangulation_print_OFF.h"
 
 using namespace std;
-using CGAL::Point_3;
 
 template <class K>
-struct  Indexed_point: public Point_3<K> {
+class Indexed_point: public CGAL::Point_3<K> {
+    typedef CGAL::Point_3<K>  Point_3;
+public:
     int*  index;
     Indexed_point()                                 {}
-    Indexed_point( Point_3<K> p) : Point_3<K>(p)    {}
+    Indexed_point( Point_3 p) : Point_3(p)    {}
     Indexed_point( double x, double y, double z, int* i) 
-        : Point_3<K>(x,y,z), index(i)               {}
+        : Point_3(x,y,z), index(i)               {}
 };
 
 #ifdef CGAL_USE_LEDA
