@@ -8,11 +8,11 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-2.4-I-7 $
-// release_date  : $CGAL_Date: 2001/09/07 $
+// release       : $CGAL_Revision: CGAL-2.4-I-11 $
+// release_date  : $CGAL_Date: 2001/09/21 $
 //
 // file          : include/CGAL/config.h
-// package       : Configuration (2.11)
+// package       : Configuration (2.14)
 // maintainer    : Geert-Jan Giezeman <geert@cs.uu.nl>
 // source        :
 // revision      : 1.11
@@ -27,8 +27,8 @@
 #ifndef CGAL_CONFIG_H
 #define CGAL_CONFIG_H
 
-#define CGAL_VERSION 2.4-I-7
-#define CGAL_VERSION_NR 1002004007
+#define CGAL_VERSION 2.4-I-11
+#define CGAL_VERSION_NR 1002004011
 
 #define CGAL_CFG_NO_ADVANCED_KERNEL 1
 
@@ -172,13 +172,25 @@ namespace std {
                iterator_traits<ForwardIterator>::iterator_category());
     return n;
   }
-  template <class T>
+
+  template < class T >
   inline typename T::value_type*
   __value_type (const T&)
+  { return (typename T::value_type*)(0); }
+
+  template < class T >
+  inline typename T::difference_type*
+  __distance_type(const T&)
+  { return (typename T::difference_type*)(0); }
+
+  template < class T >
+  inline typename T::iterator_category
+  __iterator_category (const T&)
   {
-    return (typename T::value_type*)(0);
+    typename T::iterator_category tmp;
+    return tmp;
   }
-}
+} // namespace std
 #endif // if defined(__sun) && defined(__SUNPRO_CC)
 
 #endif // CGAL_CONFIG_H
