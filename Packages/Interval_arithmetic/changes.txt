@@ -1,3 +1,7 @@
+5 May 2004 Sylvain Pion
+- ICC is defining __GNUG__ by default on Linux.
+  Protect against it with !defined __INTEL_COMPILER.
+
 18 Apr 2004 Sylvain Pion
 - Rename Huge_val to infinity, and move it to FPU.h.
 

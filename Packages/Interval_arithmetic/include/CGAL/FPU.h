@@ -40,7 +40,7 @@ extern "C" {
 #elif defined __SUNPRO_CC || (defined __KCC && defined __sun)
 #  include <ieeefp.h>
 #elif defined __osf || defined __osf__ 
-#  ifdef __GNUG__
+#  ifdef __GNUG__ && !defined __INTEL_COMPILER
      // GCC seems to remove (fixincludes) read_rnd/write_rnd...
 #    include "/usr/include/float.h"
 #  else
@@ -97,7 +97,7 @@ const double infinity = HUGE_VAL;
 // Inline function to stop compiler optimization.
 inline double IA_force_to_double(double x)
 {
-#if defined __GNUG__ && \
+#if defined __GNUG__ && !defined __INTEL_COMPILER && \
     ! (__GNUG__ == 3 && __GNUC_MINOR__ == 0 && __GNUC_PATCHLEVEL__ == 0)
   // This appears to be faster but is GNU specific,
   // and GCC 3.0.0 has a bug with it.
@@ -127,7 +127,7 @@ inline double IA_force_to_double(double x)
 // because operations are done with a wrong rounding mode at compile time.
 // G++ also uses __builtin_constant_p().
 #ifndef CGAL_IA_DONT_STOP_CONSTANT_PROPAGATION
-#  if defined __GNUG__ && __GNUG__ < 3
+#  if defined __GNUG__ && __GNUG__ < 3 && !defined __INTEL_COMPILER
 	// Note : GCC 3 doesn't guarantee __builtin_constant_p to return false
 	// when he will not do cprop :(.
 #    define CGAL_IA_STOP_CPROP(x) \
