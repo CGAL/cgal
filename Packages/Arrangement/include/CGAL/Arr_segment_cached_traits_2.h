@@ -13,12 +13,12 @@
 //
 // file          : include/CGAL/Pm_segment_traits_2.h
 // package       : Planar_map (5.87)
-// maintainer    : Eyal Flato        <flato@math.tau.ac.il>
+// maintainer    : Efi Fogel         <efif@math.tau.ac.il>
 // source        : 
 // revision      : 
 // revision_date : 
-// author(s)     : Efi Fogel         <efif@post.tau.ac.il>
-//                 Ron Wein          <wein@post.tau.ac.il>
+// author(s)     : Ron Wein          <wein@post.tau.ac.il>
+//                 Efi Fogel         <efif@post.tau.ac.il>
 //
 // coordinator   : Tel-Aviv University (Dan Halperin <halperin@math.tau.ac.il>)
 //
@@ -54,13 +54,13 @@ public:
    */
   class My_segment_cached_2
   {
+    typedef typename Kernel_::Line_2                Line_2;
     typedef typename Kernel_::Segment_2             Segment_2;
     typedef typename Kernel_::Point_2               Point_2;
 
   protected:
 
-    bool      is_orig;          // Is this an original segment.
-    Segment_2 orig_seg;         // The original segment.
+    Line_2    line;             // The line that supports the segment.
     Point_2   ps, pt;           // The source a target points.
     bool      is_vert;          // Is this a vertical segment.
 
@@ -68,21 +68,18 @@ public:
      * Default constructor.
      */
     My_segment_cached_2 () :
-      is_orig(true),
-      orig_seg(),
-      is_vert(-1)
+      is_vert(false)
     {}
 
     /*!
      * Constructor from a segment.
      * \param seg The segment.
      */
-    My_segment_cached_2 (const Segment_2& seg) :
-      is_orig(true),
-      orig_seg(seg)
+    My_segment_cached_2 (const Segment_2& seg)
     {
       Kernel_   kernel;
       
+      line = kernel.construct_line_2_object()(seg);
       is_vert = kernel.is_vertical_2_object()(seg);
       
       typename Kernel_::Construct_vertex_2 
@@ -97,13 +94,12 @@ public:
      * \param source The source point.
      * \param target The target point.
      */
-    My_segment_cached_2 (const Point_2& source, const Point_2& target) :
-      is_orig(true),
-      orig_seg(source,target)
+    My_segment_cached_2 (const Point_2& source, const Point_2& target)
     {
       Kernel_   kernel;
       
-      is_vert = kernel.is_vertical_2_object()(orig_seg);
+      line = kernel.construct_line_2_object()(source, target);
+      is_vert = kernel.is_vertical_2_object()(line);
       
       ps = source;
       pt = target;
@@ -228,7 +224,7 @@ public:
     CGAL_precondition(curve_is_in_x_range(cv2, q));
 
     // Compare using the original segments.
-    return (compare_y_at_x_2_object()(q, cv1.orig_seg, cv2.orig_seg));
+    return (compare_y_at_x_2_object()(q, cv1.line, cv2.line));
   }
 
   /*!
@@ -264,7 +260,7 @@ public:
     // Since the curves are continuous, if they are not equal at q, the same
     // result also applies to q's left.
     Comparison_result res = 
-      compare_y_at_x_2_object()(q, cv1.orig_seg, cv2.orig_seg);
+      compare_y_at_x_2_object()(q, cv1.line, cv2.line);
 
     if (res != EQUAL)
       return (res);     
@@ -272,7 +268,7 @@ public:
     // <cv2> and <cv1> meet at a point with the same x-coordinate as q
     // compare their derivatives.
     // Notice we use the original segments in order to compare the slopes.
-    return (compare_slope_2_object()(cv2.orig_seg, cv1.orig_seg));
+    return (compare_slope_2_object()(cv2.line, cv1.line));
   }
 
   /*!
@@ -306,7 +302,7 @@ public:
     // Since the curves are continuous, if they are not equal at q, the same
     // result also applies to q's right.
     Comparison_result res =
-      compare_y_at_x_2_object()(q, cv1.orig_seg, cv2.orig_seg);
+      compare_y_at_x_2_object()(q, cv1.line, cv2.line);
 
     if (res != EQUAL)
       return (res);     
@@ -314,7 +310,7 @@ public:
     // <cv1> and <cv2> meet at a point with the same x-coordinate as q
     // compare their derivatives
     // Notice we use the original segments in order to compare the slopes.
-    return (compare_slope_2_object()(cv1.orig_seg, cv2.orig_seg));
+    return (compare_slope_2_object()(cv1.line, cv2.line));
   }
     
   /*! 
@@ -335,7 +331,7 @@ public:
     if (! cv.is_vert)
     {
       // Compare with the original segment.
-      Comparison_result res = compare_y_at_x_2_object()(p, cv.orig_seg);
+      Comparison_result res = compare_y_at_x_2_object()(p, cv.line);
       return ((res == LARGER) ? ABOVE_CURVE :
 	      ((res == SMALLER) ? UNDER_CURVE : ON_CURVE));
     }
@@ -620,14 +616,12 @@ public:
     CGAL_precondition(compare_xy(cv.pt, p) != EQUAL);
     
     // Do the split.
-    c1.is_orig = false;
-    c1.orig_seg = cv.orig_seg;
+    c1.line = cv.line;
     c1.ps = cv.ps;
     c1.pt = p;
     c1.is_vert = cv.is_vert;
 
-    c2.is_orig = false;
-    c2.orig_seg = cv.orig_seg;
+    c2.line = cv.line;
     c2.ps = p;
     c2.pt = cv.pt;
     c2.is_vert = cv.is_vert;
@@ -886,13 +880,13 @@ private:
   Comparison_result _curve_compare_slope_left (const X_curve_2& cv1,
 					       const X_curve_2& cv2) const
   { 
-    return (compare_slope_2_object()(cv2.orig_seg, cv1.orig_seg));
+    return (compare_slope_2_object()(cv2.line, cv1.line));
   }
 
   Comparison_result _curve_compare_slope_right (const X_curve_2 & cv1,
 					        const X_curve_2 & cv2) const 
   {
-    return (compare_slope_2_object()(cv1.orig_seg, cv2.orig_seg));
+    return (compare_slope_2_object()(cv1.line, cv2.line));
   }
 
   /*!
@@ -912,7 +906,7 @@ private:
 			   Point_2& p1, Point_2& p2) const
   {
     // Intersect the two original segments.
-    Object    res = intersect_2_object()(cv1.orig_seg, cv2.orig_seg);
+    Object    res = intersect_2_object()(cv1.line, cv2.line);
 
     if (res.is_empty())
     {
@@ -926,76 +920,50 @@ private:
       is_overlap = false;
 
       // Simple case of intersection at a single point.
-      if ((cv1.is_orig || curve_get_point_status(cv1, ip) == ON_CURVE) &&
-	  (cv2.is_orig || curve_get_point_status(cv2, ip) == ON_CURVE))
+      if (curve_get_point_status(cv1, ip) == ON_CURVE &&
+	  curve_get_point_status(cv2, ip) == ON_CURVE)
       {
 	p1 = ip;
 	return (true);
       }
-      
       return (false);
     }
-
-    typename Kernel::Segment_2 iseg;
-    if (assign(iseg, res)) 
+    else // The two supporting lines overlap. 
     {
       // Assign the end-points such that p1 < p2.
       Compare_xy_2       comp_xy = compare_xy_2_object();
-      Construct_vertex_2 construct_vertex = construct_vertex_2_object();
 
-      p1 = construct_vertex(iseg, 0);
-      p2 = construct_vertex(iseg, 1);
-
-      if (! comp_xy(p1, p2) == SMALLER)
+      if (comp_xy(cv1.ps, cv1.pt) == SMALLER)
       {
-        p1 = construct_vertex(iseg, 1);
-        p2 = construct_vertex(iseg, 0);
+        p1 = cv1.ps;
+        p2 = cv1.pt;
+      }
+      else
+      {
+	p1 = cv1.pt;
+	p2 = cv1.ps;
       }
 
-      // Clip the intersection segment with respect to cv1.
-      if (! cv1.is_orig)
-      {
-        Comparison_result res1 = comp_xy(cv1.ps, cv1.pt);
-        const Point_2&    left1 = (res1 == SMALLER) ? cv1.ps : cv1.pt;
-        const Point_2&    right1 = (res1 == LARGER) ? cv1.ps : cv1.pt;
+      // Clip the first segment with respect to cv2.
+      Comparison_result res = comp_xy(cv2.ps, cv2.pt);
+      const Point_2&    left2 = (res == SMALLER) ? cv2.ps : cv2.pt;
+      const Point_2&    right2 = (res == LARGER) ? cv2.ps : cv2.pt;
 
-        if (comp_xy(p2, left1) == SMALLER)
-          return (false);
-        else if (comp_xy(p1, left1) == SMALLER)
-          p1 = left1;
+      if (comp_xy(p2, left2) == SMALLER)
+	return (false);
+      else if (comp_xy(p1, left2) == SMALLER)
+	p1 = left2;
 
-        if (comp_xy(p1, right1) == LARGER)
-          return (false);
-        else if (comp_xy(p2, right1) == LARGER)
-          p2 = right1;
-      }
-
-      // Clip the intersection segment with respect to cv2.
-      if (! cv2.is_orig)
-      {
-        Comparison_result res2 = comp_xy(cv2.ps, cv2.pt);
-        const Point_2&    left2 = (res2 == SMALLER) ? cv2.ps : cv2.pt;
-        const Point_2&    right2 = (res2 == LARGER) ? cv2.ps : cv2.pt;
-
-        if (comp_xy(p2, left2) == SMALLER)
-          return (false);
-        else if (comp_xy(p1, left2) == SMALLER)
-          p1 = left2;
-
-        if (comp_xy(p1, right2) == LARGER)
-          return (false);
-        else if (comp_xy(p2, right2) == LARGER)
-          p2 = right2;
-      }
+      if (comp_xy(p1, right2) == LARGER)
+	return (false);
+      else if (comp_xy(p2, right2) == LARGER)
+	p2 = right2;
 
       // Check if the intersection segment has not become a point.
       is_overlap = (comp_xy(p1,p2) != EQUAL);
       CGAL_assertion(comp_xy(p1,p2) != LARGER);
       return (true);
     }
-
-    // No intersection at all:
-    return (false);
   }
 
 };
