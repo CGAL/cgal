@@ -223,9 +223,7 @@ CGAL_END_NAMESPACE
 
 
 
-
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 #include <CGAL/intersection_3_1.C>
-#endif
+
 
 #endif // CGAL_INTERSECTION_3_1_H
