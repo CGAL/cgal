@@ -359,7 +359,8 @@ operator>>(std::istream &is, CircleC2<R CGAL_CTAG> &c)
         std::cerr << "Stream must be in ascii or binary mode" << std::endl;
         break;
     }
-    c = CircleC2<R CGAL_CTAG>(center, squared_radius, (Orientation)o);
+    if (is)
+	c = CircleC2<R CGAL_CTAG>(center, squared_radius, (Orientation)o);
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_CIRCLEC2

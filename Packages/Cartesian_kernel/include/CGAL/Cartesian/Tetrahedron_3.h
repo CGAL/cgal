@@ -281,7 +281,8 @@ operator>>(std::istream &is, TetrahedronC3<R CGAL_CTAG> &t)
 
     is >> p >> q >> r >> s;
 
-    t = TetrahedronC3<R CGAL_CTAG>(p, q, r, s);
+    if (is)
+	t = TetrahedronC3<R CGAL_CTAG>(p, q, r, s);
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_TETRAHEDRONC3

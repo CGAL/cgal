@@ -261,7 +261,8 @@ operator>>(std::istream &is, SegmentC3<R CGAL_CTAG> &s)
 
     is >> p >> q;
 
-    s = SegmentC3<R CGAL_CTAG>(p, q);
+    if (is)
+	s = SegmentC3<R CGAL_CTAG>(p, q);
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_SEGMENTC3

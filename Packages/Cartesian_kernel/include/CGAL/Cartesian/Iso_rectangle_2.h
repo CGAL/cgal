@@ -279,7 +279,8 @@ operator>>(std::istream &is, Iso_rectangleC2<R CGAL_CTAG> &r)
 
     is >> p >> q;
 
-    r = Iso_rectangleC2<R CGAL_CTAG>(p, q);
+    if (is)
+	r = Iso_rectangleC2<R CGAL_CTAG>(p, q);
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_ISO_RECTANGLEC2

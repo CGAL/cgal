@@ -297,7 +297,7 @@ operator<<(std::ostream &os, const LineC2<R CGAL_CTAG> &l)
 #ifndef CGAL_NO_ISTREAM_EXTRACT_LINEC2
 template < class R >
 std::istream &
-operator>>(std::istream &is, LineC2<R CGAL_CTAG> &p)
+operator>>(std::istream &is, LineC2<R CGAL_CTAG> &l)
 {
     typename LineC2<R CGAL_CTAG>::FT a, b, c;
     switch(is.iword(IO::mode)) {
@@ -314,7 +314,8 @@ operator>>(std::istream &is, LineC2<R CGAL_CTAG> &p)
         std::cerr << "Stream must be in ascii or binary mode" << std::endl;
         break;
     }
-    p = LineC2<R CGAL_CTAG>(a, b, c);
+    if (is)
+	l = LineC2<R CGAL_CTAG>(a, b, c);
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_LINEC2

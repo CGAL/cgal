@@ -185,7 +185,8 @@ operator>>(std::istream &is, TriangleC3<R CGAL_CTAG> &t)
 
     is >> p >> q >> r;
 
-    t = TriangleC3<R CGAL_CTAG>(p, q, r);
+    if (is)
+	t = TriangleC3<R CGAL_CTAG>(p, q, r);
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_TRIANGLEC3

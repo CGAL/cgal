@@ -168,7 +168,7 @@ operator<<(std::ostream &os, const DirectionC3<R CGAL_CTAG> &d)
 #ifndef CGAL_NO_ISTREAM_EXTRACT_DIRECTIONC3
 template < class R >
 std::istream &
-operator>>(std::istream &is, DirectionC3<R CGAL_CTAG> &p)
+operator>>(std::istream &is, DirectionC3<R CGAL_CTAG> &d)
 {
   typename R::FT x, y, z;
   switch(is.iword(IO::mode)) {
@@ -185,7 +185,8 @@ operator>>(std::istream &is, DirectionC3<R CGAL_CTAG> &p)
       std::cerr << "Stream must be in ascii or binary mode" << std::endl;
       break;
   }
-  p = DirectionC3<R CGAL_CTAG>(x, y, z);
+  if (is)
+      d = DirectionC3<R CGAL_CTAG>(x, y, z);
   return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_DIRECTIONC3

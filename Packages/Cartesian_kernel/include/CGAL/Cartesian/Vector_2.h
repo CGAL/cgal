@@ -301,7 +301,8 @@ operator>>(std::istream &is, VectorC2<R CGAL_CTAG> &p)
         std::cerr << "Stream must be in ascii or binary mode" << std::endl;
         break;
     }
-    p = VectorC2<R CGAL_CTAG>(x, y);
+    if (is)
+	p = VectorC2<R CGAL_CTAG>(x, y);
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_VECTORC2

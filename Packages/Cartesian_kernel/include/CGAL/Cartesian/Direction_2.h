@@ -243,7 +243,8 @@ operator>>(std::istream &is, DirectionC2<R CGAL_CTAG> &p)
 	          << std::endl;
         break;
     }
-    p = DirectionC2<R CGAL_CTAG>(x, y);
+    if (is)
+	p = DirectionC2<R CGAL_CTAG>(x, y);
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_DIRECTIONC2

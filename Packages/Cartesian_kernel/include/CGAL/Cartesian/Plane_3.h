@@ -391,7 +391,8 @@ operator>>(std::istream &is, PlaneC3<R CGAL_CTAG> &p)
         std::cerr << "Stream must be in ascii or binary mode" << std::endl;
         break;
     }
-    p = PlaneC3<R CGAL_CTAG>(a, b, c, d);
+    if (is)
+	p = PlaneC3<R CGAL_CTAG>(a, b, c, d);
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_PLANEC3

@@ -197,7 +197,8 @@ operator>>(std::istream &is, LineC3<R CGAL_CTAG> &l)
 {
     typename LineC3<R CGAL_CTAG>::Point_3 p, q;
     is >> p >> q;
-    l = LineC3<R CGAL_CTAG>(p, q);
+    if (is)
+	l = LineC3<R CGAL_CTAG>(p, q);
     return is;
 }
 #endif // CGAL_CARTESIAN_NO_ISTREAM_EXTRACT_LINEC3

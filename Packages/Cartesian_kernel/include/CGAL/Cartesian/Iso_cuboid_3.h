@@ -281,7 +281,8 @@ operator>>(std::istream& is, Iso_cuboidC3<R CGAL_CTAG>& r)
 {
   Iso_cuboidC3<R CGAL_CTAG>::Point_3 p, q;
   is >> p >> q;
-  r = Iso_cuboidC3<R CGAL_CTAG>(p, q);
+  if (is)
+      r = Iso_cuboidC3<R CGAL_CTAG>(p, q);
   return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_ISO_CUBOIDC3

@@ -242,7 +242,8 @@ operator>>(std::istream &is, RayC2<R CGAL_CTAG> &r)
 
     is >> p >> d;
 
-    r = RayC2<R CGAL_CTAG>(p, d);
+    if (is)
+	r = RayC2<R CGAL_CTAG>(p, d);
     return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_RAYC2
