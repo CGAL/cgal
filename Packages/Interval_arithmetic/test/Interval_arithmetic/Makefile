@@ -13,6 +13,7 @@ include $(CGAL_MAKEFILE)
               # -L$(GMP_LIB_DIR) -lgmp -lm \
 
 CXXFLAGS = \
+	-I../../../Triangulation3/include \
 	-I../../../H2/include \
 	-I../../../Kernel_basic/include \
 	-I../../../Cartesian_kernel/include \
@@ -20,7 +21,7 @@ CXXFLAGS = \
 	-I../../include \
 	$(TESTSUITE_CXXFLAGS) \
 	$(CGAL_CXXFLAGS) \
-	-O2 -W -Wold-style-casts # -Winline -O2 -mcpu=pentiumpro -march=pentiumpro -fstrict-aliasing -W -Wall # -pedantic
+	-g -W -Wold-style-casts # -Winline -O2 -mcpu=pentiumpro -march=pentiumpro -fstrict-aliasing -W -Wall # -pedantic
 	# -g -W -Wall -Winline
 	# -O2 -mcpu=pentiumpro -march=pentiumpro -W -Wall -DLOOPS=10000000
 	# -O2 -W -Winline -Wunused -malign-double
@@ -40,8 +41,8 @@ CXXFLAGS = \
 	# /Op /Oi /Od /Za /O2 /Ox
 	# -DCGAL_IA_NEW_FILTERS \
 	# -DCGAL_CHECK_EXPENSIVE \
-	# -DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS -DCGAL_NO_POSTCONDITIONS\
-	# -DCGAL_NO_WARNINGS \
+	# -DCGAL_NO_ASSERTIONS -DCGAL_NO_PRECONDITIONS \
+	# -DCGAL_NO_POSTCONDITIONS -DCGAL_NO_WARNINGS \
 	# -DCGAL_IA_DONT_STOP_CONSTANT_PROPAGATION \
 	# -DCGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT \
 	# -DLOOPS=10000000
