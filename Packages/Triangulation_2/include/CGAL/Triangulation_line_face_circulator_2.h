@@ -95,9 +95,11 @@ public:
   operator Face_handle() const {return pos;}
   bool  operator==(const Line_face_circulator& lfc) const;
   bool  operator!=(const Line_face_circulator& lfc) const;
+  bool  operator==(const Face_handle& fh) const { return fh == pos; }
+  bool  operator!=(const Face_handle& fh) const { return fh != pos; }
   bool  is_empty() const;
-  bool  operator==(CGAL_NULL_TYPE n) const;
-  bool  operator!=(CGAL_NULL_TYPE n) const;
+  bool  operator==(CGAL_NULL_TYPE CGAL_triangulation_assertion_code(n)) const;
+  bool  operator!=(CGAL_NULL_TYPE CGAL_triangulation_assertion_code(n)) const;
   bool  collinear_outside() const;
   bool locate(const Point& t, Locate_type &lt,  int &li);
 
@@ -112,6 +114,23 @@ private:
   void increment();
   void decrement();
 };
+
+
+template < class Gt, class Tds >
+inline
+bool
+operator==(typename Tds::Face_handle fh, Triangulation_line_face_circulator_2<Gt,Tds> fc)
+{
+  return (fc==fh);
+}
+
+template < class Gt, class Tds >
+inline
+bool
+operator!=(typename Tds::Face_handle fh, Triangulation_line_face_circulator_2<Gt, Tds> fc)
+{
+  return (fc!=fh);
+}
 
 
 template < class Gt, class Tds >
@@ -652,8 +671,9 @@ operator==(CGAL_NULL_TYPE CGAL_triangulation_assertion_code(n)) const
 template < class Gt, class Tds >
 inline bool
 Triangulation_line_face_circulator_2<Gt,Tds>:: 
-operator!=(CGAL_NULL_TYPE n) const
+operator!=(CGAL_NULL_TYPE CGAL_triangulation_assertion_code(n)) const
 {
+  CGAL_triangulation_assertion( n == NULL);
   return !(*this == n);
 }
             

@@ -80,6 +80,9 @@ public:
   typedef Triangulation_ds_vertex_circulator_2<Tds>  Vertex_circulator;
   typedef Triangulation_ds_edge_circulator_2<Tds>    Edge_circulator;
 
+  typedef Vertex_iterator Vertex_handle;
+  typedef Face_iterator Face_handle;
+  /*
   // Defining nested classes for the handles instead of typedefs
   // considerably shortens the symbol names (and compile times).
   // It makes error messages more readable as well.
@@ -115,7 +118,7 @@ public:
     void * for_compact_container() const { return _v.for_compact_container(); }
     void * & for_compact_container()     { return _v.for_compact_container(); }
    };
-
+  
   class Face_handle {
     Face_iterator _f;
   public:
@@ -149,7 +152,7 @@ public:
     void * for_compact_container() const { return _f.for_compact_container(); }
     void * & for_compact_container()     { return _f.for_compact_container(); }
    };
-
+  */
   typedef std::pair<Face_handle, int>                Edge;
   typedef std::list<Edge> List_edges;
 
@@ -1264,7 +1267,7 @@ delete_face(Face_handle f)
   CGAL_triangulation_expensive_precondition( dimension() != 1 || is_edge(f,2));
   CGAL_triangulation_expensive_precondition( dimension() != 0 ||
 					     is_vertex(f->vertex(0)) );
-  face_container().erase(f.base());
+  face_container().erase(f);
 }
 
 
@@ -1275,7 +1278,7 @@ Triangulation_data_structure_2<Vb,Fb>::
 delete_vertex(Vertex_handle v)
 {
   CGAL_triangulation_expensive_precondition( is_vertex(v) );
-  vertex_container().erase(v.base());
+  vertex_container().erase(v);
 }
 
 // CHECKING

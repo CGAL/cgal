@@ -72,12 +72,15 @@ public:
   Face_circulator& operator--();
   Face_circulator operator--(int);
 
-  bool operator==(const Face_circulator &fc) const ;
+  bool operator==(const Face_circulator &fc) const;
   bool operator!=(const Face_circulator &fc) const;
+  bool operator==(const Face_handle &fh) const { return pos == fh; }
+  bool operator!=(const Face_handle &fh) const { return pos != fh; }
+
+
   bool is_empty() const;
   bool operator==(CGAL_NULL_TYPE CGAL_triangulation_assertion_code(n)) const;
-  bool operator!=(CGAL_NULL_TYPE CGAL_triangulation_assertion_code(n))
-    const;
+  bool operator!=(CGAL_NULL_TYPE CGAL_triangulation_assertion_code(n)) const;
 
   Face&
   operator*() const
@@ -94,8 +97,23 @@ public:
   }
   
   Face_handle base()  const {return pos;}
-  
+   
+  operator Face_handle()  const {return pos;}
 };
+
+template < class Tds_ >
+bool
+operator==(typename Tds_::Face_handle fh, Triangulation_ds_face_circulator_2<Tds_> fc)
+{
+  return (fc==fh);
+}
+
+template < class Tds_ >
+bool
+operator!=(typename Tds_::Face_handle fh, Triangulation_ds_face_circulator_2<Tds_> fc)
+{
+  return (fc!=fh);
+}
 
 
 template < class Tds >
@@ -132,6 +150,9 @@ public:
  
   bool operator==(const Vertex_circulator &vc) const;
   bool operator!=(const Vertex_circulator &vc) const;
+
+  bool operator==(const Vertex_handle &vh) const { return pos->vertex(_ri) == vh; }
+  bool operator!=(const Vertex_handle &vh) const { return pos->vertex(_ri) != vh; }
   bool is_empty() const;
   bool operator==(CGAL_NULL_TYPE CGAL_triangulation_assertion_code(n)) const;
   bool operator!=(CGAL_NULL_TYPE CGAL_triangulation_assertion_code(n)) const;
@@ -152,8 +173,26 @@ public:
 
    Vertex_handle base() const {return pos->vertex(_ri);}
 
+   operator Vertex_handle() const {return pos->vertex(_ri);}
+
 };
 
+
+template < class Tds_ >
+inline
+bool
+operator==(typename Tds_::Vertex_handle vh, Triangulation_ds_vertex_circulator_2<Tds_> vc)
+{
+  return (vc==vh);
+}
+
+template < class Tds_ >
+inline
+bool
+operator!=(typename Tds_::Vertex_handle vh, Triangulation_ds_vertex_circulator_2<Tds_> vc)
+{
+  return !(vc==vh);
+}
 
 
 template < class Tds >
