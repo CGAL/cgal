@@ -24,17 +24,20 @@ int spiral_test()
   int i=0;
   IA x_i (1), y_i (0), x_ip1, y_ip1, length;
 
-  while (++i < 500)
-  {
-    x_ip1 = x_i - y_i/sqrt((IA)i);
-    y_ip1 = y_i + x_i/sqrt((IA)i);
-    x_i = x_ip1;
-    y_i = y_ip1;
-    length = x_i*x_i + y_i*y_i;
-    DEBUG( cout << i << ": (" << x_i << " , " << y_i << ") : " << length << "\n";)
-    if ((x_i == 0) || (y_i == 0))
-      break;
-  };
+  try {
+    while (++i < 500)
+    {
+      x_ip1 = x_i - y_i/sqrt((IA)i);
+      y_ip1 = y_i + x_i/sqrt((IA)i);
+      x_i = x_ip1;
+      y_i = y_ip1;
+      length = x_i*x_i + y_i*y_i;
+      DEBUG( cout << i << ": (" << x_i << " , " << y_i << ") : " << length << "\n";)
+      if ((x_i == 0) || (y_i == 0))
+        break;
+    };
+  }
+  catch (IA::unsafe_comparison) { }
 
   return (i == 396);
 }
