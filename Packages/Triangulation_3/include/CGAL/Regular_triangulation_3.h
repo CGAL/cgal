@@ -62,7 +62,7 @@ public:
   Regular_triangulation_3(const Regular_triangulation_3<Gt,Tds> & rt)
       : Triangulation_3<Gt,Tds>(rt)
     { 
-      CGAL_triangulation_postcondition( is_valid(true) );  
+      CGAL_triangulation_postcondition( is_valid() );  
     }
   
 #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES

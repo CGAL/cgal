@@ -78,7 +78,7 @@ public:
   Delaunay_triangulation_3(const Delaunay_triangulation_3<Gt,Tds> 
 				& tr)
     : Triangulation_3<Gt,Tds>(tr)
-    { CGAL_triangulation_postcondition( is_valid(true) );  }
+    { CGAL_triangulation_postcondition( is_valid() );  }
   
 #ifndef CGAL_CFG_NO_MEMBER_TEMPLATES
   template < class InputIterator >
