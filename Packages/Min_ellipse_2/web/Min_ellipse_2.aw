@@ -2371,7 +2371,7 @@ number type \ccc{CGAL_Gmpz} or \ccc{integer}.
     #include <string.h>
     #include <fstream.h>
 
-    #ifdef CGAL_USE_LEDA
+    #ifdef CGAL_USE_LEDA_FOR_OPTIMISATION_TEST
     #  include <CGAL/leda_integer.h>
        typedef  leda_integer                     Rt;
        typedef  CGAL_Quotient< leda_integer >    Ft;
@@ -3149,6 +3149,8 @@ end of each file.
         // external test sets
         // -------------------
         @<Min_ellipse_2 test (external test sets)>
+
+        return( 0);
     }
 
     @<end of file line>
