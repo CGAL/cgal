@@ -994,32 +994,35 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       TRACEN("Locating point " << p0);
       Object_handle o = pl2->locate(p0);
       if( CGAL::assign( v, o)) {
+	TRACEN("p0 found on vertex");
 	binop_local_views( v0, v, BOP, *sncp());
 	ignore[v] = true;
-	TRACEN("p0 found on vertex");
       }
       else if( CGAL::assign( e, o)) {
+	TRACEN("p0 found on edge");
 	Vertex_handle v1 = create_local_view_on( p0, e);
 	binop_local_views( v0, v1, BOP, *sncp());
 	sncp()->delete_vertex(v1);
-	TRACEN("p0 found on edge");
       }
       else if( CGAL::assign( f, o)) {
+	TRACEN("p0 found on facet");
 	Vertex_handle v1 = create_local_view_on( p0, f);
 	binop_local_views( v0, v1, BOP, *sncp());
 	sncp()->delete_vertex(v1);
-	TRACEN("p0 found on facet");
       }
       else if( CGAL::assign( c, o)) {
+	TRACEN("p0 found on volume");
 	if( BOP( true, mark(c)) != BOP( false, mark(c))) {
-
 	  SNC_constructor C(*sncp());
 	  Vertex_handle v1 = C.clone_SM(v0);
 	  SM_decorator SM(&*v1);
 	  SM.change_marks(BOP, mark(c));
 	  SM_overlayer O(&*v1);
 	  O.simplify();
-	  TRACEN("p0 found on volume");
+	} else {
+	  TRACEN("vertex in volume deleted " << std::endl << 
+		 "  vertex: " <<  v0->point() << std::endl << 
+		 "  mark of volume: " << mark(c)); 
 	}
       }
       else CGAL_assertion_msg( 0, "wrong handle");
@@ -1039,18 +1042,19 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       CGAL_assertion_code(Vertex_handle v);
       CGAL_assertion( !CGAL::assign( v, o));
       if( CGAL::assign( e, o)) {
+	TRACEN("p1 found on edge");
 	Vertex_handle v1 = create_local_view_on( p1, e);
 	binop_local_views( v1, v0, BOP, *sncp());
 	sncp()->delete_vertex(v1);
-	TRACEN("p1 found on edge");
       } 
       else if( CGAL::assign( f, o)) {
+	TRACEN("p1 found on facet");
 	Vertex_handle v1 = create_local_view_on( p1, f);
 	binop_local_views( v1, v0, BOP, *sncp());
 	sncp()->delete_vertex(v1);
-	TRACEN("p1 found on facet");
       } 
       else if( CGAL::assign( c, o)) {
+	TRACEN("p1 found on volume");
 	if( BOP( mark(c), true) != BOP( mark(c), false)) {
 	  SNC_constructor C(*sncp());
 	  Vertex_handle v1 = C.clone_SM(v0);
@@ -1058,8 +1062,11 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 	  SM.change_marks(mark(c), BOP);
 	  SM_overlayer O(&*v1);
 	  O.simplify();
+	} else {
+	  TRACEN("vertex in volume deleted " << std::endl << 
+		 "  vertex: " <<  v0->point() << std::endl << 
+		 "  mark of volume: " << mark(c)); 
 	}
-	TRACEN("p1 found on volume");
       }
       else CGAL_assertion_msg( 0, "wrong handle");
     }

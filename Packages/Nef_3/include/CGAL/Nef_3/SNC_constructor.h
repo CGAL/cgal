@@ -643,7 +643,12 @@ public:
     }
     
     TRACEN(" ");
+    TRACEN("new vertex ");
     
+    CGAL_forall_svertices(v1, D)
+      TRACEN("|" << v1->point() << "|" << v1->mark());
+    TRACEN(" ");
+
     CGAL_forall_shalfedges(eee,D)
       TRACEN("|" << eee->circle() <<
 	     "|" << eee->mark() << 
