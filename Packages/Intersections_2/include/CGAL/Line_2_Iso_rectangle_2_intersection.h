@@ -243,7 +243,8 @@ intersection(typename K::Segment_2 &result) const
         intersection_type();
     if (_result != SEGMENT)
         return false;
-    result = construct_segment_2(_ref_point + _dir*_min, _ref_point + _dir*_max);
+    result = construct_segment_2(_ref_point + _dir*_min, 
+				 _ref_point + _dir*_max);
     return true;
 }
 
