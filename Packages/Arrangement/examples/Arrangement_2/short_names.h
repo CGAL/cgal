@@ -11,8 +11,8 @@
 #define Topological_map                 TM
 #define Planar_map_2                    PMp
 #define Arrangement_2                   Ar
-#define I_Polyhedron_iterator           IPI
-#define I_Polyhedron_const_iterator     IPCI
+#define I_HalfedgeDS_iterator           IPI
+#define I_HalfedgeDS_const_iterator     IPCI
 #define Arr_2_default_dcel              ADD
 #define Arr_segment_traits_2            AST
 #define Arr_segment_cached_traits_2     ASCT

@@ -1,3 +1,8 @@
+100.19 (27 Nov 2003) [rursu]
+- I_Polyhedron_iterator -> I_HalfedgeDS_iterator
+- I_Polyhedron_const_iterator -> I_HalfedgeDS_const_iterator
+- _Polyhedron_iterator -> I_HalfedgeDS_iterator
+
 100.16 (30 Sep 2003)
 - Moved \chapter in main.tex
 

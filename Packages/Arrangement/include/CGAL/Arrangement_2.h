@@ -114,22 +114,22 @@ public:
   typedef typename In_place_list<Subcurve_node,true>::const_iterator 
   Subcurve_const_iterator;
 
-  typedef _Polyhedron_iterator<
+  typedef I_HalfedgeDS_iterator<
   Subcurve_iterator,
     Curve_node,
     HDifference, Hiterator_category>            Curve_iterator;
 
-  typedef _Polyhedron_const_iterator<
+  typedef I_HalfedgeDS_const_iterator<
   Subcurve_const_iterator, Subcurve_iterator,
     Curve_node,
     HDifference, Hiterator_category>            Curve_const_iterator;
 
-  typedef _Polyhedron_iterator<
+  typedef I_HalfedgeDS_iterator<
   Subcurve_iterator,
     Edge_node,
     HDifference, Hiterator_category>            Edge_iterator;
 
-  typedef _Polyhedron_const_iterator<
+  typedef I_HalfedgeDS_const_iterator<
   Subcurve_const_iterator, Subcurve_iterator,
     Edge_node,
     HDifference, Hiterator_category>            Edge_const_iterator;
@@ -137,35 +137,35 @@ public:
 
   //wrappers for planar map iterators
 
-  typedef _Polyhedron_iterator<
+  typedef I_HalfedgeDS_iterator<
     typename Planar_map::Vertex_iterator,
     Vertex,
     Difference, typename Planar_map::iterator_category> Vertex_iterator;
 
-  typedef _Polyhedron_const_iterator<
+  typedef I_HalfedgeDS_const_iterator<
     typename Planar_map::Vertex_const_iterator, 
     typename Planar_map::Vertex_iterator,
     Vertex,
     Difference, typename Planar_map::iterator_category> Vertex_const_iterator;
 
-  typedef _Polyhedron_iterator<
+  typedef I_HalfedgeDS_iterator<
     typename Planar_map::Halfedge_iterator,
     Halfedge,
     Difference, typename Planar_map::iterator_category> Halfedge_iterator;
 
-  typedef _Polyhedron_const_iterator<
+  typedef I_HalfedgeDS_const_iterator<
     typename Planar_map::Halfedge_const_iterator, 
     typename Planar_map::Halfedge_iterator,
     Halfedge,
     Difference, typename Planar_map::iterator_category>
   Halfedge_const_iterator;
 
-  typedef _Polyhedron_iterator<
+  typedef I_HalfedgeDS_iterator<
     typename Planar_map::Face_iterator,
     Face,
     Difference, typename Planar_map::iterator_category> Face_iterator;
 
-  typedef _Polyhedron_const_iterator<
+  typedef I_HalfedgeDS_const_iterator<
     typename Planar_map::Face_const_iterator,
     typename Planar_map::Face_iterator,
     Face,
@@ -212,12 +212,12 @@ public:
     Halfedge_const_iterator,
     Forward_circulator_tag>     Halfedge_around_vertex_const_circulator;
 
-  typedef _Polyhedron_iterator< 
+  typedef I_HalfedgeDS_iterator< 
     typename Planar_map::Holes_iterator,
     Ccb_halfedge_circulator,
     Difference, std::bidirectional_iterator_tag>        Holes_iterator;
 
-  typedef _Polyhedron_const_iterator<
+  typedef I_HalfedgeDS_const_iterator<
     typename Planar_map::Holes_const_iterator, 
     typename Planar_map::Holes_iterator,
     Ccb_halfedge_const_circulator,
