@@ -443,7 +443,7 @@ OutputIterator partition_y_monotone_2(InputIterator first,
    circ_list.sort(Indirect_not_less_yx_2<Traits>(traits));
 
 #ifdef CGAL_PARTITION_Y_MONOTONE_DEBUG
-   cerr << "Initial vertex list: "<< circ_list << endl;
+   std::cout << "Initial vertex list: "<< circ_list << std::endl;
 #endif
 
    typedef std::map<Circulator, Circulator, 
