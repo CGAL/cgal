@@ -35,78 +35,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class R>
-inline
-PointH3<R>
-operator+  (const Origin &, const VectorH3<R> & v);
-
-template <class R>
-inline
-PointH3<R>
-operator-  (const Origin &, const VectorH3<R> & v);
-
-template <class R>
-inline
-VectorH3<R>
-operator-   ( const PointH3<R> &, const Origin & );
-
-template <class R>
-inline
-VectorH3<R>
-operator-   ( const Origin &, const PointH3<R> & );
-
-template <class R>
-inline
-PointH3<R>
-operator+   ( const Origin &, const VectorH3<R> & );
-
-template <class R>
-inline
-PointH3<R>
-operator-   ( const Origin &, const VectorH3<R> & );
-
-template <class R>
-CGAL_KERNEL_INLINE
-VectorH3<R>
-operator+   ( const VectorH3<R> &, const VectorH3<R> & );
-
-template <class R>
-CGAL_KERNEL_INLINE
-VectorH3<R>
-operator-   ( const VectorH3<R> &, const VectorH3<R> & );
-
-template <class R>
-CGAL_KERNEL_INLINE
-typename VectorH3<R>::FT
-operator*   ( const VectorH3<R> &, const VectorH3<R> & );
-
-template <class R>
-CGAL_KERNEL_INLINE
-VectorH3<R>
-operator*   ( const VectorH3<R> &, const typename R::RT & );
-
-template <class R>
-CGAL_KERNEL_INLINE
-VectorH3<R>
-operator*   ( const typename R::RT &, const VectorH3<R> & );
-
-template <class R>
-CGAL_KERNEL_INLINE
-VectorH3<R>
-operator/   ( const VectorH3<R> &, const typename R::RT & );
-
-template <class R>
-CGAL_KERNEL_INLINE
-VectorH3<R>
-cross_product( const VectorH3<R>& a, const VectorH3<R>& b);
-
-template <class R>
-CGAL_KERNEL_INLINE
-DirectionH3<R>
-cross_product( const DirectionH3<R>& a, const DirectionH3<R>& b);
-
-
-
 template < class R_ >
 class PointH3
   : public R_::Point_handle_3
@@ -159,15 +87,6 @@ class PointH3
   const RT&     hy_ref() const;
   const RT&     hz_ref() const;
   const RT&     hw_ref() const;
-
-friend CGAL_FRIEND_INLINE
-       PointH3<R>
-       operator+  CGAL_NULL_TMPL_ARGS (const Origin &,
-                                       const VectorH3<R> & v);
-friend CGAL_FRIEND_INLINE
-       PointH3<R>
-       operator-  CGAL_NULL_TMPL_ARGS (const Origin &,
-                                       const VectorH3<R> & v);
 };
 
 
@@ -226,50 +145,7 @@ class VectorH3
   bool  operator==( const VectorH3<R>& v) const;
   bool  operator!=( const VectorH3<R>& v) const;
 
-// friends:
-
-/*
-friend CGAL_FRIEND_INLINE
-       VectorH3<R>
-       operator-  CGAL_NULL_TMPL_ARGS ( const PointH3<R> &,
-                                        const Origin & );
-friend CGAL_FRIEND_INLINE
-       VectorH3<R>
-       operator-  CGAL_NULL_TMPL_ARGS ( const Origin &,
-                                        const PointH3<R> & );
-friend CGAL_FRIEND_INLINE
-       PointH3<R>
-       operator-  CGAL_NULL_TMPL_ARGS ( const Origin &,
-                                        const VectorH3<R> & );
-friend CGAL_KERNEL_FRIEND_INLINE
-       VectorH3<R>
-       operator-  CGAL_NULL_TMPL_ARGS ( const VectorH3<R> &,
-                                        const VectorH3<R> & );
-*/
-friend CGAL_FRIEND_INLINE
-       PointH3<R>
-       operator+  CGAL_NULL_TMPL_ARGS ( const Origin &,
-                                        const VectorH3<R> & );
-friend CGAL_KERNEL_FRIEND_INLINE
-       VectorH3<R>
-       operator+  CGAL_NULL_TMPL_ARGS ( const VectorH3<R> &,
-                                        const VectorH3<R> & );
-friend CGAL_KERNEL_FRIEND_INLINE
-       FT
-       operator*  CGAL_NULL_TMPL_ARGS ( const VectorH3<R> &,
-                                        const VectorH3<R> & );
-friend CGAL_KERNEL_FRIEND_INLINE
-       VectorH3<R>
-       operator*  CGAL_NULL_TMPL_ARGS ( const VectorH3<R> &,
-                                        const RT & );
-friend CGAL_KERNEL_FRIEND_INLINE
-       VectorH3<R>
-       operator*  CGAL_NULL_TMPL_ARGS ( const RT &,
-                                        const VectorH3<R> & );
-friend CGAL_KERNEL_FRIEND_INLINE
-       VectorH3<R>
-       operator/  CGAL_NULL_TMPL_ARGS ( const VectorH3<R> &,
-                                        const RT & );
+  FT    operator*( const VectorH3<R>& v) const;
 };
 
 template < class R_ >
@@ -307,7 +183,6 @@ class DirectionH3
   bool  operator!=( const DirectionH3<R>& d) const;
 
   VectorH3<R>    to_vector() const;
-  // VectorH3<R>    vector() const { return to_vector(); }
 
   RT    dx() const;
   RT    dy() const;
@@ -320,13 +195,6 @@ class DirectionH3
   RT    hz() const;
 
   RT    delta(int i) const;
-
-/*
-friend CGAL_KERNEL_FRIEND_INLINE
-DirectionH3<R>
-cross_product CGAL_NULL_TMPL_ARGS (const DirectionH3<R>& d1,
-                                   const DirectionH3<R>& d2);
-*/
 };
 
 #ifdef CGAL_CFG_TYPENAME_BUG
@@ -791,14 +659,14 @@ operator-(const VectorH3<R>& u, const VectorH3<R>& v)
 template <class R>
 CGAL_KERNEL_INLINE
 typename VectorH3<R>::FT
-operator*(const VectorH3<R>& u, const VectorH3<R>& v)
+VectorH3<R>::operator*(const VectorH3<R>& v) const
 {
   typedef typename R::RT RT;
   typedef typename R::FT FT;
-  CGAL_kernel_assertion( u.hw() != RT(0) );
-  CGAL_kernel_assertion( v.hw() != RT(0) );
-  return ( FT( u.hx()*v.hx() + u.hy()*v.hy() + u.hz()*v.hz() ) /
-           FT( u.hw()*v.hw() ) );
+  CGAL_kernel_assertion( hw() != RT(0) );
+  CGAL_kernel_assertion( hw() != RT(0) );
+  return ( FT( hx()*v.hx() + hy()*v.hy() + hz()*v.hz() ) /
+           FT( hw()*v.hw() ) );
 }
 
 template <class R>
