@@ -27,7 +27,7 @@
 #include <CGAL/Extended_homogeneous_3.h>
 
 // #include <CGAL/Nef_S2/Sphere_circle.h>
-// #include <CGAL/Nef_3/SNC_SM_decorator.h>
+// #include <CGAL/Nef_3/SM_decorator.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -57,11 +57,11 @@ class Infimaximal_box {
 
  public:
 
-  static bool standard_Kernel() {
+  static bool standard_kernel() {
     return true;
   }
 
-  static bool extended_Kernel() {
+  static bool extended_kernel() {
     return false;
   }
 
@@ -69,15 +69,11 @@ class Infimaximal_box {
     return true;
   }
 
-  static bool is_standard(Plane_3& p) {
+  static bool is_standard(const Plane_3& p) {
     return true;
   }
 
   static Point_3 simplify(Point_3& p) {
-    return p;
-  }
-
-  static Point_3 box_point(const Point_3& p, NT d=10000) {
     return p;
   }
 
@@ -92,6 +88,8 @@ class Infimaximal_box {
   static Standard_vector standard_vector(Vector_3 p) {
     return p;
   }
+
+  static void set_size_of_infimaximal_box(const NT& size) {}
 
   static int degree(const RT& n) {
     return 0;
@@ -118,7 +116,7 @@ class Infimaximal_box {
 
   static Point_3 create_extended_point(NT x, NT y, NT z) {
     std::cerr << "function should not be called" << std::endl;
-    //    CGAL_nef3_assertion_msg(0,"function should not be called");
+    CGAL_assertion_msg(0,"function should not be called");
     return Point_3(0,0,0);
   }
 
@@ -142,13 +140,13 @@ class Infimaximal_box {
   static void initialize_infibox_vertices(SNC_constructor& C, bool space) {
   }
 
-  template <typename SHalfedge_handle, typename SNC_decorator>
-  static bool is_sedge_on_infibox(SHalfedge_handle sh, SNC_decorator D) {
+  template <typename SHalfedge_handle>
+  static bool is_sedge_on_infibox(SHalfedge_handle sh) {
     return false;
   }
 
-  template <typename Halfedge_handle, typename SNC_decorator>
-  static bool is_edge_on_infibox(Halfedge_handle e, SNC_decorator D) {
+  template <typename Halfedge_handle>
+  static bool is_edge_on_infibox(Halfedge_handle e) {
     return false; 
   }
 
@@ -162,14 +160,15 @@ class Infimaximal_box<Tag_true, Kernel> {
   typedef typename Kernel::Standard_kernel       Standard_kernel;
   typedef typename Standard_kernel::Point_3      Standard_point;
   typedef typename Standard_kernel::Plane_3      Standard_plane;
-  typedef typename Standard_kernel::Vector_3      Standard_vector;
+  typedef typename Standard_kernel::Vector_3     Standard_vector;
   typedef typename Kernel::Point_3               Point_3;
   typedef typename Kernel::Plane_3               Plane_3;
   typedef typename Kernel::Vector_3              Vector_3;
+
   //  typedef typename SNC_structure::Sphere_point   Sphere_point;
   //  typedef typename SNC_structure::Sphere_circle  Sphere_circle;
 
-  //  typedef SNC_SM_decorator<SNC_structure>        SM_decorator;
+  //  typedef SM_decorator<SNC_structure>        SM_decorator;
 
   enum Boundary { EXCLUDED=0, INCLUDED=1 };
   
@@ -178,11 +177,11 @@ class Infimaximal_box<Tag_true, Kernel> {
  public:
 
 
-  static bool standard_Kernel() {
+  static bool standard_kernel() {
     return false;
   }
 
-  static bool extended_Kernel() {
+  static bool extended_kernel() {
     return true;
   }
 
@@ -190,7 +189,7 @@ class Infimaximal_box<Tag_true, Kernel> {
     return Kernel::is_standard(p);
   }
 
-  static bool is_standard(Plane_3& p) {
+  static bool is_standard(const Plane_3& p) {
     return (p.d().degree() == 0);
   }
 
@@ -225,13 +224,6 @@ class Infimaximal_box<Tag_true, Kernel> {
     return Kernel::epoint( -1, 0, 0, p.hy()[0], 0, p.hz()[0], p.hw()[0]);
   }
 
-  static Point_3 box_point(const Point_3& p, NT d=RADIUS) {
-    return Point_3(p.hx().eval_at(d),
-		   p.hy().eval_at(d),
-		   p.hz().eval_at(d),
-		   p.hw().eval_at(1));
-  }
-
   static Standard_point standard_point(Point_3 p, NT d=1) {
     return Standard_point(p.hx().eval_at(d),
 			  p.hy().eval_at(d),
@@ -250,6 +242,10 @@ class Infimaximal_box<Tag_true, Kernel> {
     return Standard_vector(p.hx().eval_at(1),
 			   p.hy().eval_at(1),
 			   p.hz().eval_at(1));
+  }
+
+  static void set_size_of_infimaximal_box(NT size) {
+    RT::set_R(size);
   }
 
   static Point_3 create_extended_point(NT x, NT y, NT z) {
@@ -289,13 +285,13 @@ class Infimaximal_box<Tag_true, Kernel> {
     C.create_extended_box_corner(-1,-1,-1, space ); 
   }
 
-  template <typename SNC_decorator>
-  static bool is_edge_on_infibox(typename SNC_decorator::Halfedge_handle e, SNC_decorator& D) {
+  template <typename SHalfedge_handle>
+  static bool is_edge_on_infibox(SHalfedge_handle e) {
 
-    Point_3 p  = D.point(D.vertex(e));
+    Point_3 p  = e->center_vertex()->point();
     if(Kernel::is_standard(p)) return false;
 
-    Vector_3 v(D.tmp_point(e));
+    Vector_3 v(e->vector());
     CGAL_assertion(p.hw().degree() == 0);
     RT Outer(0,CGAL_NTS abs(p.hw()[0]));
 
@@ -313,27 +309,26 @@ class Infimaximal_box<Tag_true, Kernel> {
     return false; 
   }
 
-  template <typename SHalfedge_handle, typename SNC_decorator>
-  static bool is_sedge_on_infibox(SHalfedge_handle sh, SNC_decorator D) {
-    typedef typename SNC_decorator::SNC_structure  SNC_structure;
-    typedef typename SNC_structure::Sphere_circle  Sphere_circle;
-    typedef typename SNC_decorator::SM_decorator   SM_decorator;
+  template <typename SHalfedge_handle>
+  static bool is_sedge_on_infibox(SHalfedge_handle sh) {
 
-    Point_3 p = D.point(D.vertex(sh));
+    Point_3 p = sh->source()->center_vertex()->point();
     TRACEN("Point " << p);
     if(Kernel::is_standard(p)) return false;
 
-    Sphere_circle c(sh->tmp_circle());
-    TRACEN("Circle " << c << " has signum " << sign_of(c));
+    TRACEN("Circle " << sh->circle() << 
+	   " has signum " << sign_of(sh->circle()));
     CGAL_assertion(p.hw().degree() == 0);
     RT R(0,CGAL_NTS abs(p.hw()[0]));
 
-    SM_decorator SD(D.vertex(sh));
-    if((c.a() == 0 && c.b() == 0 && CGAL_NTS abs(p.hz())== R) || 
-       (c.a() == 0 && c.c() == 0 && CGAL_NTS abs(p.hy())== R) ||
-       (c.b() == 0 && c.c() == 0 && CGAL_NTS abs(p.hx())== R))
-      if(is_edge_on_infibox(SD.source(sh),D) && 
-	 is_edge_on_infibox(SD.target(sh),D))
+    if((sh->circle().a() == 0 && sh->circle().b() == 0 
+	&& CGAL_NTS abs(p.hz())== R) || 
+       (sh->circle().a() == 0 && sh->circle().c() == 0 
+	&& CGAL_NTS abs(p.hy())== R) ||
+       (sh->circle().b() == 0 && sh->circle().c() == 0 
+	&& CGAL_NTS abs(p.hx())== R))
+      if(is_edge_on_infibox(sh->source()) && 
+	 is_edge_on_infibox(sh->twin()->source()))
 	return true;
 
     return false;

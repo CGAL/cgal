@@ -20,7 +20,6 @@
 #define CGAL_NORMALIZING_H
 
 #include <CGAL/assertions.h>
-#include <CGAL/Nef_3/Infimaximal_box.h>
 
 #include <CGAL/basic.h>
 #undef _DEBUG
@@ -65,6 +64,25 @@ CGAL::Sphere_point<R> normalized(CGAL::Sphere_point<R>& p)
 }
 
 template <typename R>
+CGAL::Vector_3<R> normalized(const CGAL::Vector_3<R>& p)
+{
+  typedef typename R::RT     RT;
+
+  RT g = (p.hx()==0) ? ((p.hy()==0) ? ((p.hz()==0) ? 1: p.hz()): p.hy()): p.hx();
+  
+  if(p.hy() != 0) g = gcd(g,p.hy());
+  if(p.hz() != 0) g = gcd(g,p.hz());
+
+  if(g<0) g = -g;
+
+  RT x = p.hx()/g;
+  RT y = p.hy()/g;
+  RT z = p.hz()/g;
+
+  return CGAL::Vector_3<R>(x,y,z);
+}
+
+template <typename R>
 CGAL::Sphere_direction<R> normalized(CGAL::Sphere_direction<R>& c)
 {
   CGAL::Plane_3<R> h = c.plane();
@@ -97,8 +115,8 @@ CGAL::Sphere_direction<R> normalized(CGAL::Sphere_direction<R>& c)
 }
 
 template <typename R>
-CGAL::Plane_3<R> normalized(CGAL::Plane_3<R>& h)
-{ 
+CGAL::Plane_3<R> normalized(CGAL::Plane_3<R>& h) { 
+  
   CGAL_assertion(!(h.a()==0 && h.b()==0 && h.c()==0 && h.d()==0));
   
   typedef typename R::RT     RT;
@@ -128,7 +146,7 @@ CGAL::Plane_3<R> normalized(CGAL::Plane_3<R>& h)
   RT pb = h.b()/x;
   RT pc = h.c()/x;
   RT pd = h.d()/x;
-  
+
   TRACEN("  after normalizing "  << CGAL::Plane_3<R>(pa,pb,pc,pd));
   return CGAL::Plane_3<R>(pa,pb,pc,pd);
 }

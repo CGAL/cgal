@@ -4,7 +4,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
-#include <CGAL/Nef_3/SNC_SM_point_locator.h>
 #include <CGAL/Nef_3/SNC_intersection.h>
 #include <CGAL/Nef_3/SNC_ray_shooter.h>
 #include <CGAL/Nef_3/SNC_k3_tree_traits.h>
@@ -118,7 +117,7 @@ class SNC_point_locator_by_spatial_subdivision :
   typedef SNC_decorator<SNC_structure> SNC_decorator;
   typedef SNC_point_locator<SNC_structure> SNC_point_locator;
   typedef SNC_point_locator_by_spatial_subdivision<SNC_structure> Self;
-  typedef SNC_SM_decorator<SNC_structure> SM_decorator;
+  typedef SM_decorator<SNC_structure> SM_decorator;
   typedef SNC_intersection<SNC_structure> SNC_intersection;
 
   typedef typename SNC_structure::Kernel Kernel;
@@ -170,17 +169,17 @@ public:
     Vertex_iterator v;
     Halfedge_iterator e;
     Halffacet_iterator f;
-    CGAL_nef3_forall_vertices( v, *sncp()) 
+    CGAL_forall_vertices( v, *sncp()) 
       objects.push_back(Object_handle(Vertex_handle(v)));
-    CGAL_nef3_forall_edges( e, *sncp())
+    CGAL_forall_edges( e, *sncp())
       objects.push_back(Object_handle(Halfedge_handle(e)));
-    CGAL_nef3_forall_facets( f, *sncp()) {
+    CGAL_forall_facets( f, *sncp()) {
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
       typedef typename std::list<Triangle_3> Triangles;
       typedef typename Triangles::const_iterator Triangles_iterator;
       typedef Polygon_triangulation_traits_2<Kernel> Triangulation_traits;
       Triangles triangles;
-      triangulate_nef3_facet<SNC_structure>
+      triangulate_facet<SNC_structure>
 	( f, std::back_inserter(triangles), Triangulation_traits());
       for( Triangles_iterator ti = triangles.begin(); 
            ti != triangles.end(); ++ti) {
@@ -316,7 +315,7 @@ public:
           }
         }
         else
-          CGAL_nef3_assertion_msg( 0, "wrong handle");
+          CGAL_assertion_msg( 0, "wrong handle");
       }
       if(!hit)
         ++objects_iterator;
@@ -414,7 +413,7 @@ public:
         /* do nothing */
       }
       else
-        CGAL_nef3_assertion_msg( 0, "wrong handle");
+        CGAL_assertion_msg( 0, "wrong handle");
     }
     TIMER(it_t.stop());
   }
@@ -468,7 +467,7 @@ public:
         }
       }
       else
-        CGAL_nef3_assertion_msg( 0, "wrong handle");
+        CGAL_assertion_msg( 0, "wrong handle");
     }
     TIMER(it_t.stop());
   }
@@ -486,7 +485,7 @@ private:
       if( f_below != Halffacet_handle())
         return volume(f_below);
       SM_decorator SD(v); // now, the vertex has no incident facets
-      CGAL_nef3_assertion( SD.number_of_sfaces() == 1);
+      CGAL_assertion( SD.number_of_sfaces() == 1);
       return volume(SD.sfaces_begin());
     }
     else if( assign( e, o)) {
@@ -495,13 +494,13 @@ private:
       if( f_below != Halffacet_handle())
         return volume(f_below);
       SM_decorator SD(source(e)); // now, the edge has no incident facets
-      CGAL_nef3_assertion(SD.is_isolated(e));
+      CGAL_assertion(SD.is_isolated(e));
       return volume(sface(e));
     }
     else if( assign( f, o)) {
       _TRACEN("facet hit, obtaining volume...");
       f_below = get_visible_facet(f, ray);
-      CGAL_nef3_assertion( f_below != Halffacet_handle());
+      CGAL_assertion( f_below != Halffacet_handle());
       return volume(f_below);
     }
     return Base(*this).volumes_begin(); // TODO: Comment this hack!
@@ -590,7 +589,7 @@ public:
     SNC_intersection is(*sncp());
     Segment_3 s(segment(e0));
     Halfedge_iterator e;
-    CGAL_nef3_forall_edges( e, *sncp()) {
+    CGAL_forall_edges( e, *sncp()) {
       Point_3 q;
       if( is.does_intersect_internally( s, segment(e), q)) {
         q = normalized(q);
@@ -609,7 +608,7 @@ public:
     SNC_intersection is(*sncp());
     Segment_3 s(segment(e0));
     Halffacet_iterator f;
-    CGAL_nef3_forall_facets( f, *sncp()) {
+    CGAL_forall_facets( f, *sncp()) {
       Point_3 q;
       if( is.does_intersect_internally( s, f, q) ) {
         q = normalized(q);

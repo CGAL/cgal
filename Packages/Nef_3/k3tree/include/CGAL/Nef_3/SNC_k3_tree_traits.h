@@ -224,7 +224,7 @@ template <class SNCstructure>
 Oriented_side 
 Side_of_plane<SNCstructure>::operator()
   ( const Plane_3& pl, Halffacet_handle f) {
-    CGAL_nef3_assertion( std::distance( f->facet_cycles_begin(), f->facet_cycles_end()) > 0);
+    CGAL_assertion( std::distance( f->facet_cycles_begin(), f->facet_cycles_end()) > 0);
   Halffacet_cycle_iterator fc(f->facet_cycles_begin());
   SHalfedge_handle e;
   CGAL_assertion( assign( e, fc));

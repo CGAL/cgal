@@ -15,17 +15,18 @@
 // $Revision$ $Date$
 // $Name$
 //
-// Author(s)     : Michael Seel    <seel@mpi-sb.mpg.de>
-//                 Miguel Granados <granados@mpi-sb.mpg.de>
-//                 Susan Hert      <hert@mpi-sb.mpg.de>
-//                 Lutz Kettner    <kettner@mpi-sb.mpg.de>
-
+// Author(s)     : Michael Seel        <seel@mpi-sb.mpg.de>
+//                 Miguel Granados     <granados@mpi-sb.mpg.de>
+//                 Susan Hert          <hert@mpi-sb.mpg.de>
+//                 Lutz Kettner        <kettner@mpi-sb.mpg.de>
+//                 Peter Hachenberger  <hachenberger@mpi-sb.mpg.de>
 #ifndef CGAL_SNC_ITEMS_H
 #define CGAL_SNC_ITEMS_H
 
 #include <CGAL/basic.h>
 #include <CGAL/In_place_list.h>
 #include <CGAL/Nef_2/Object_handle.h>
+#include <CGAL/Nef_3/SNC_sphere_map.h>
 #include <string>
 #include <sstream>
 #include <CGAL/IO/Verbose_ostream.h>
@@ -36,14 +37,13 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template <typename K, typename I> class SNC_sphere_map;
 template <typename K, typename M> class SNC_items;
 template <typename I> class SNC_structure;
 template <typename R> class SNC_decorator;
 template <typename R> class SNC_const_decorator;
-template <typename R> class SNC_io_parser;
-template <typename R> class SNC_SM_decorator;
-template <typename R> class SNC_SM_base_decorator;
-template <typename R> class SNC_SM_const_decorator;
+template <typename R> class SM_decorator;
+template <typename R> class SM_const_decorator;
 template <typename R> class SNC_FM_decorator;
 template <typename EH>
   struct move_shalfedge_around_svertex;
@@ -55,8 +55,9 @@ template <typename HE>
 template <typename Kernel_, typename Mark_>
 class SNC_items {
 public:
-  typedef SNC_items<Kernel_,Mark_>  Self;
-  typedef Kernel_                   Kernel;
+  typedef SNC_items<Kernel_,Mark_>       Self;
+  typedef Kernel_                        Kernel;
+  typedef SNC_sphere_map<Kernel_, Self>  Sphere_map;
   typedef typename Kernel::Point_3  Point_3;
   typedef typename Kernel::Plane_3  Plane_3;
   typedef typename Kernel::Vector_3 Vector_3;
@@ -75,18 +76,13 @@ public:
   class Vertex : public CGAL::In_place_list_base< Vertex<Refs> >
   {
     typedef typename Refs::Items Items;
-    friend class SNC_structure<Items>;
-    friend class SNC_decorator<Refs>;
-    friend class SNC_const_decorator<Refs>;
-    friend class SNC_io_parser<Refs>;
-    friend class SNC_SM_decorator<Refs>;
-    friend class SNC_SM_base_decorator<Refs>;
-    friend class SNC_SM_const_decorator<Refs>;
+    typedef typename Refs::Sphere_map Sphere_map;
     typedef typename Refs::SVertex_iterator SVertex_iterator;
     typedef typename Refs::SHalfedge_iterator SHalfedge_iterator;
     typedef typename Refs::SHalfloop_iterator SHalfloop_iterator;
     typedef typename Refs::SFace_iterator SFace_iterator;
 
+    typedef typename Refs::Vertex_handle Vertex_handle;
     typedef typename Refs::Vertex_iterator Vertex_iterator;
     typedef typename Refs::SHalfloop_handle SHalfloop_handle;
     typedef typename Refs::SHalfloop SHalfloop;
@@ -95,6 +91,8 @@ public:
     typedef typename Refs::SFace_const_iterator SFace_const_iterator;
     typedef typename Refs::SHalfloop_const_handle SHalfloop_const_handle;
     typedef typename Refs::Vertex_const_iterator Vertex_const_iterator;
+
+    typedef typename Refs::Size_type  Size_type;
 
     Point_3            point_at_center_;
     Mark               mark_;
@@ -106,22 +104,24 @@ public:
     SHalfloop_iterator shalfloop_;
     GenPtr             info_;
 
+    Sphere_map         sm_;
+
   public:
 
     Vertex() : point_at_center_(), mark_(), sncp_(), 
       svertices_begin_(), svertices_last_(),
       shalfedges_begin_(), shalfedges_last_(),
       sfaces_begin_(), sfaces_last_(), shalfloop_(),
-      info_() {}
+      info_(), sm_(Vertex_handle(this)) {}
 
     Vertex(const Point_3& p, Mark m) : 
       point_at_center_(p), mark_(m), sncp_(), 
       svertices_begin_(), svertices_last_(),
       shalfedges_begin_(), shalfedges_last_(),
       sfaces_begin_(), sfaces_last_(), shalfloop_(),
-      info_() {}
+      info_(), sm_(Vertex_handle(this)) {}
 
-    Vertex(const Vertex<Refs>& v) 
+    Vertex(const Vertex<Refs>& v) : sm_(Vertex_handle(this))
     { 
       point_at_center_ = v.point_at_center_;
       mark_ = v.mark_;
@@ -148,10 +148,13 @@ public:
       sfaces_begin_ = v.sfaces_begin_;
       sfaces_last_ = v.sfaces_last_;
       shalfloop_ = v.shalfloop_;
+      sm_ = Sphere_map(Vertex_handle(this));
       return *this;
     }
 
+    Sphere_map* map() { return &sm_; }
     Refs* sncp() const { return sncp_; }
+    Refs*& sncp() { return sncp_; }
 
     /* all sobjects of the local graph are stored in a global list
        where each vertex has a continous range in each list for its
@@ -170,9 +173,9 @@ public:
     void init_range(SFace_iterator it)
     { sfaces_begin_ = sfaces_last_ = it; }
 
-    SVertex_iterator svertices_begin() 
+    SVertex_iterator& svertices_begin() 
     { return svertices_begin_; }
-    SVertex_iterator svertices_last() 
+    SVertex_iterator& svertices_last() 
     { return svertices_last_; }
     SVertex_iterator svertices_end() 
     { if ( svertices_last_ == sncp()->svertices_end() ) 
@@ -180,9 +183,9 @@ public:
       else 
 	return ++SVertex_iterator(svertices_last_); }
 
-    SHalfedge_iterator shalfedges_begin() 
+    SHalfedge_iterator& shalfedges_begin() 
     { return shalfedges_begin_; }
-    SHalfedge_iterator shalfedges_last() 
+    SHalfedge_iterator& shalfedges_last() 
     { return shalfedges_last_; }
     SHalfedge_iterator shalfedges_end() 
     { if ( shalfedges_last_ == sncp()->shalfedges_end() ) 
@@ -190,18 +193,15 @@ public:
       else 
 	return ++SHalfedge_iterator(shalfedges_last_); }
 
-    SFace_iterator sfaces_begin() 
+    SFace_iterator& sfaces_begin() 
     { return sfaces_begin_; }
-    SFace_iterator sfaces_last()
+    SFace_iterator& sfaces_last()
     { return sfaces_last_; }
     SFace_iterator sfaces_end()
     { if ( sfaces_last_ == sncp()->sfaces_end() ) 
         return sfaces_last_;
       else 
 	return ++SFace_iterator(sfaces_last_); }
-
-    SHalfloop_handle shalfloop() 
-    { return shalfloop_; }
 
     SVertex_const_iterator svertices_begin() const
     { return svertices_begin_; }
@@ -233,8 +233,45 @@ public:
       else 
 	return ++SFace_const_iterator(sfaces_last_); }
 
-    SHalfloop_const_handle shalfloop() const
-    { return shalfloop_; }
+    SHalfloop_handle& shalfloop() { return shalfloop_; }
+    SHalfloop_handle shalfloop() const { return shalfloop_; }
+
+    bool has_shalfloop() const {
+      return shalfloop_ != sncp()->shalfloops_end();
+    }
+
+    Size_type number_of_svertices() const 
+      /*{\Mop returns the number of vertices.}*/
+      { Size_type n(0);
+      SVertex_const_iterator vit;
+      CGAL_forall_svertices(vit, *this) ++n;
+      return n; }
+    
+    Size_type number_of_shalfedges() const 
+      /*{\Mop returns the number of halfedges.}*/
+      { Size_type n(0);
+      SHalfedge_const_iterator eit;
+      CGAL_forall_shalfedges(eit, *this) ++n;
+      return n;}
+    
+    Size_type number_of_sedges() const 
+      /*{\Mop returns the number of edges.}*/
+      { return number_of_shalfedges()/2; }
+    
+    Size_type number_of_shalfloops() const 
+      /*{\Mop returns the number of halfloops.}*/
+      { return ( has_shalfloop() ? 2 : 0); }
+    
+    Size_type number_of_sloops() const 
+      /*{\Mop returns the number of loops.}*/
+      { return number_of_shalfloops()/2; }
+    
+    Size_type number_of_sfaces() const    
+      /*{\Mop returns the number of faces.}*/
+      { Size_type n(0);
+      SFace_const_iterator fit;
+      CGAL_forall_sfaces(fit, *this) ++n;
+      return n; }
 
 
     /*{\Xtext Vertices provide access to their local graphs via
@@ -247,7 +284,7 @@ public:
     \end{Mverb}
     }*/
 
-    void clear_local_graph() 
+    void clear() 
     /*{\Xop clears the local graph.}*/ { 
       SFace_iterator fit = sfaces_begin(),
                      fend = sfaces_end();
@@ -285,8 +322,9 @@ public:
     Point_3& point() { return point_at_center_; }
     const Point_3& point() const { return point_at_center_; }
     Mark& mark() { return mark_; }
-    Mark mark() const { return mark_;}
+    const Mark& mark() const { return mark_;}
     GenPtr& info() { return info_; }
+    const GenPtr& info() const { return info_; }
 
     ~Vertex() {
       TRACEN("  destroying Vertex item "<<&*this);
@@ -361,14 +399,10 @@ public:
   template <typename Refs>
   class Halfedge : public CGAL::In_place_list_base< Halfedge<Refs> >
   { // == SVertex
+    typedef typename Refs::Kernel Kernel;
     typedef typename Refs::Items Items;
-    friend class SNC_structure<Items>;
-    friend class SNC_decorator<Refs>;
-    friend class SNC_const_decorator<Refs>;
-    friend class SNC_io_parser<Refs>;
-    friend class SNC_SM_decorator<Refs>;
-    friend class SNC_SM_base_decorator<Refs>;
-    friend class SNC_SM_const_decorator<Refs>;
+    typedef typename Refs::Sphere_map Sphere_map;
+    friend class SM_decorator<Refs>;
     typedef typename Refs::Vertex_handle    Vertex_handle;
     typedef typename Refs::Halfedge_handle  Halfedge_handle;
     typedef typename Refs::SVertex_handle   SVertex_handle;
@@ -381,18 +415,17 @@ public:
     SHalfedge_handle   out_sedge_;           
     SFace_handle       incident_sface_;    
     GenPtr             info_;                 
-    // temporary information:
-    Sphere_point       point_on_surface_;   
+    Sphere_point       point_;   
 
   public:
 
     Halfedge() : center_vertex_(), mark_(), twin_(),
       out_sedge_(), incident_sface_(),
-      info_(), point_on_surface_() {}
+      info_(), point_() {}
 
     Halfedge(Mark m) :  center_vertex_(), mark_(m), twin_(),
       out_sedge_(), incident_sface_(),
-      info_(), point_on_surface_() {}
+      info_(), point_() {}
 
     ~Halfedge() {
       TRACEN("  destroying Halfedge item "<<&*this);
@@ -400,7 +433,7 @@ public:
 
     Halfedge(const Halfedge<Refs>& e) 
     { center_vertex_ = e.center_vertex_;
-      point_on_surface_ = e.point_on_surface_;
+      point_ = e.point_;
       mark_ = e.mark_;
       twin_ = e.twin_;
       out_sedge_ = e.out_sedge_;
@@ -410,7 +443,7 @@ public:
 
     Halfedge<Refs>& operator=(const Halfedge<Refs>& e) 
     { center_vertex_ = e.center_vertex_;
-      point_on_surface_ = e.point_on_surface_;
+      point_ = e.point_;
       mark_ = e.mark_;
       twin_ = e.twin_;
       out_sedge_ = e.out_sedge_;
@@ -419,20 +452,34 @@ public:
       return *this;
     }
 
+    Vertex_handle& center_vertex() { return center_vertex_; }
+    Vertex_handle center_vertex() const { return center_vertex_; }
 
     Mark& mark() { return mark_; }
-    Mark mark() const { return mark_; }
+    const Mark& mark() const { return mark_; }
 
-    Sphere_point& tmp_point()
-    { return point_on_surface_; }
-    const Sphere_point& tmp_point() const
-    { return point_on_surface_; }
+    Sphere_point& vector(){ return point_; }
+    const Sphere_point& vector() const { return point_; }
+    Sphere_point& point(){ return point_; }
+    const Sphere_point& point() const { return point_; }
+
+    Halfedge_handle& twin() { return twin_; }
+    Halfedge_handle twin()  const { return twin_; }
+
+    SHalfedge_handle& out_sedge() { return out_sedge_; }
+    SHalfedge_handle out_sedge() const { return out_sedge_; }
+
+    SFace_handle& incident_sface() { return incident_sface_; } 
+    SFace_handle incident_sface() const { return incident_sface_; } 
+
+    GenPtr& info() { return info_; }
+    const GenPtr& info() const { return info_; }
 
   public:
     std::string debug() const
     { std::stringstream os; 
       set_pretty_mode(os);
-      os<<"sv [ "<<tmp_point()<<info_<<" ] ";
+      os<<"sv [ "<<point_<<info_<<" ] ";
       return os.str();
     }
 
@@ -468,14 +515,6 @@ public:
   class Halffacet : public CGAL::In_place_list_base< Halffacet<Refs> >
   {
     typedef typename Refs::Items Items;
-    friend class SNC_structure<Items>;
-    friend class SNC_decorator<Refs>;
-    friend class SNC_const_decorator<Refs>;
-    friend class SNC_io_parser<Refs>;
-    friend class SNC_SM_decorator<Refs>;
-    friend class SNC_SM_base_decorator<Refs>;
-    friend class SNC_SM_const_decorator<Refs>;
-    friend class SNC_FM_decorator<Refs>;
     typedef typename Refs::Halffacet_handle   Halffacet_handle;
     typedef typename Refs::Volume_handle  Volume_handle;
     typedef typename Refs::SHalfedge_handle SHalfedge_handle;
@@ -491,7 +530,7 @@ public:
 
     Plane_3              supporting_plane_;
     Mark                 mark_;
-    Halffacet_handle         twin_;
+    Halffacet_handle     twin_;
     Volume_handle        volume_;
     Object_list          boundary_entry_objects_; // SEdges, SLoops
 
@@ -526,17 +565,23 @@ public:
       return *this;
     }
 
-    Mark& mark()  
-    { if ( this < &*twin_ ) return mark_; 
-      else return twin_->mark_; }
-    Mark mark() const  
-    { if ( this < &*twin_ ) return mark_; 
-      else return twin_->mark_; }
+    Mark& mark() { return mark_; }
+    const Mark& mark() const { return mark_; }
 
-    Plane_3& plane()
-    { return supporting_plane_; }
-    Plane_3 plane() const
-    { return supporting_plane_; }
+    Halffacet_handle& twin() { return twin_; }
+    Halffacet_handle twin() const { return twin_; }
+
+    Plane_3& plane() { return supporting_plane_; }
+    const Plane_3& plane() const { return supporting_plane_; }
+
+    Volume_handle& volume() { return volume_; }
+    Volume_handle volume() const { return volume_; }
+
+    Object_list& boundary_entry_objects() { return boundary_entry_objects_; }
+    const Object_list& boundary_entry_objects() const { return boundary_entry_objects_; }
+
+    GenPtr& info() { return info_; }
+    const GenPtr& info() const { return info_; }
 
     Halffacet_cycle_iterator facet_cycles_begin()
     { return boundary_entry_objects_.begin(); }
@@ -579,23 +624,16 @@ public:
   class Volume : public CGAL::In_place_list_base< Volume<Refs> >
   {
     typedef typename Refs::Items Items;
-    friend class SNC_structure<Items>;
-    friend class SNC_decorator<Refs>;
-    friend class SNC_const_decorator<Refs>;
-    friend class SNC_io_parser<Refs>;
-    friend class SNC_SM_decorator<Refs>;
-    friend class SNC_SM_base_decorator<Refs>;
-    friend class SNC_SM_const_decorator<Refs>;
     typedef typename Refs::Object_handle  Object_handle;
     typedef typename Refs::Volume_handle  Volume_handle;
-    typedef typename Refs::SObject_list   SObject_list;
+    typedef typename Refs::Object_list   Object_list;
     typedef typename Refs::Shell_entry_iterator
                                           Shell_entry_iterator;
     typedef typename Refs::Shell_entry_const_iterator
                                           Shell_entry_const_iterator;
 
     Mark         mark_;
-    SObject_list shell_entry_objects_; // SFaces
+    Object_list shell_entry_objects_; // SFaces
 
   public:
 
@@ -620,7 +658,15 @@ public:
     }
 
     Mark& mark() { return mark_; }
-    Mark mark() const { return mark_; }
+    const Mark& mark() const { return mark_; }
+
+    GenPtr& info() { return info_; }
+    const GenPtr& info() const { return info_; }
+
+    Object_list& shell_entry_objects() { return shell_entry_objects_; }
+    const Object_list& shell_entry_objects() const { 
+      return shell_entry_objects_; 
+    }
 
     Shell_entry_iterator shells_begin()
     { return shell_entry_objects_.begin(); }
@@ -655,19 +701,14 @@ public:
   class SHalfedge : public CGAL::In_place_list_base< SHalfedge<Refs> >
   { 
     typedef typename Refs::Items Items;
+    typedef typename Refs::Sphere_map Sphere_map;
     typedef typename Refs::Halfedge_handle Halfedge_handle;
     typedef typename Refs::SVertex_handle SVertex_handle;
     typedef typename Refs::SHalfedge_handle SHalfedge_handle;
     typedef typename Refs::SHalfedge_const_handle SHalfedge_const_handle;
     typedef typename Refs::SFace_handle SFace_handle;
     typedef typename Refs::Halffacet_handle Halffacet_handle;
-    friend class SNC_structure<Items>;
-    friend class SNC_decorator<Refs>;
-    friend class SNC_const_decorator<Refs>;
-    friend class SNC_io_parser<Refs>;
-    friend class SNC_SM_decorator<Refs>;
-    friend class SNC_SM_base_decorator<Refs>;
-    friend class SNC_SM_const_decorator<Refs>;
+    friend class SM_decorator<Refs>;
     friend class move_shalfedge_around_svertex<SHalfedge_handle>;
     friend class move_shalfedge_around_sface<SHalfedge_handle>;
     friend class move_shalfedge_around_facet<SHalfedge_handle>;
@@ -730,17 +771,38 @@ public:
       return *this;
     }
 
-    Mark& mark() 
-    { return incident_facet_->mark(); }
+    Mark& mark() { return mark_; }
+    const Mark& mark() const { return mark_; }
 
-    // Plane_3& plane() { return incident_facet_->plane(); }
+    SHalfedge_handle& twin() { return twin_; }
+    SHalfedge_handle twin() const { return twin_; }
 
-    Mark& tmp_mark() 
-    { if ( this < &*twin_ ) return mark_;
-      else return twin_->mark_; }
+    SVertex_handle& source() { return source_; }
+    SVertex_handle source() const { return source_; }
 
-    Sphere_circle& tmp_circle() { return circle_; }
-    const Sphere_circle& tmp_circle() const { return circle_; }
+    SHalfedge_handle& prev() { return prev_; }
+    SHalfedge_handle prev() const { return prev_; }
+
+    SHalfedge_handle& next() { return next_; }
+    SHalfedge_handle next() const { return next_; }
+
+    SHalfedge_handle& sprev() { return sprev_; }
+    SHalfedge_handle sprev() const { return sprev_; }
+
+    SHalfedge_handle& snext() { return snext_; }
+    SHalfedge_handle snext() const { return snext_; }
+
+    Sphere_circle& circle() { return circle_; }
+    const Sphere_circle& circle() const { return circle_; }
+    
+    SFace_handle& incident_sface() { return incident_sface_; }
+    SFace_handle incident_sface() const { return incident_sface_; }
+
+    Halffacet_handle& incident_facet() { return incident_facet_; }
+    Halffacet_handle incident_facet() const { return incident_facet_; }
+
+    GenPtr& info() { return info_; }
+    const GenPtr& info() const { return info_; }
 
   public:
     std::string debug() const
@@ -795,18 +857,13 @@ public:
     typedef typename Refs::SFace_handle SFace_handle;
     typedef typename Refs::Halffacet_handle Halffacet_handle;
     typedef typename Refs::Items Items;
-    friend class SNC_structure<Items>;
-    friend class SNC_decorator<Refs>;
-    friend class SNC_const_decorator<Refs>;
-    friend class SNC_io_parser<Refs>;
-    friend class SNC_SM_decorator<Refs>;
-    friend class SNC_SM_base_decorator<Refs>;
-    friend class SNC_SM_const_decorator<Refs>;
+    typedef typename Refs::Sphere_map Sphere_map;
+    friend class SM_decorator<Refs>;
     friend class Self::Vertex<Refs>;
 
     SHalfloop_handle   twin_;
     SFace_handle       incident_sface_;
-    Halffacet_handle       incident_facet_;
+    Halffacet_handle   incident_facet_;
     GenPtr             info_;
     // temporary needed:
     Mark               mark_;
@@ -839,21 +896,35 @@ public:
       return *this;
     }
 
-    Mark& mark() 
-    { return incident_facet_->mark(); }
+    Mark& mark() { 
+      if ( this < &*twin_ ) return mark_;
+      else return twin_->mark_; 
+    }
+    const Mark& mark() const { 
+      if ( this < &*twin_ ) return mark_;
+      else return twin_->mark_; 
+    }
 
-    Mark& tmp_mark() 
-    { if ( this < &*twin_ ) return mark_;
-      else return twin_->mark_; }
+    SHalfloop_handle& twin() { return twin_; }
+    SHalfloop_handle twin() const { return twin_; }
 
-    Sphere_circle& tmp_circle() { return circle_; }
-    const Sphere_circle& tmp_circle() const { return circle_; }
+    Sphere_circle& circle() { return circle_; }
+    const Sphere_circle& circle() const { return circle_; }
+
+    SFace_handle& incident_sface() { return incident_sface_; }
+    SFace_handle incident_sface() const { return incident_sface_; }
+
+    Halffacet_handle& incident_facet() { return incident_facet_; }
+    Halffacet_handle incident_facet() const { return incident_facet_; }
+
+    GenPtr& info() { return info_; }
+    const GenPtr& info() const { return info_; }
 
   public:
     std::string debug() const
     { std::stringstream os; 
       set_pretty_mode(os); 
-      os<<"sl [ "<<tmp_circle()<<" ] ";
+      os<<"sl [ "<<circle_<<" ] ";
       return os.str();
     }
 
@@ -888,31 +959,26 @@ public:
   class SFace : public CGAL::In_place_list_base< SFace<Refs> >
   { 
     typedef typename Refs::Items Items;
-    friend class SNC_structure<Items>;
-    friend class SNC_decorator<Refs>;
-    friend class SNC_const_decorator<Refs>;
-    friend class SNC_io_parser<Refs>;
-    friend class SNC_SM_decorator<Refs>;
-    friend class SNC_SM_base_decorator<Refs>;
-    friend class SNC_SM_const_decorator<Refs>;
+    typedef typename Refs::Sphere_map Sphere_map;
+    friend class SM_decorator<Refs>;
     typedef typename Refs::Vertex_handle  Vertex_handle;
     typedef typename Refs::SFace_handle   SFace_handle;
-    typedef typename Refs::SObject_handle SObject_handle;
+    typedef typename Refs::Object_handle Object_handle;
     typedef typename Refs::Volume_handle  Volume_handle;
-    typedef typename Refs::SObject_list   SObject_list;
+    typedef typename Refs::Object_list   Object_list;
     typedef typename Refs::SFace_cycle_iterator 
                                           SFace_cycle_iterator;
     typedef typename Refs::SFace_cycle_const_iterator 
                                           SFace_cycle_const_iterator;
     Vertex_handle  center_vertex_;
     Volume_handle  incident_volume_;
-    // SObject_list   boundary_entry_objects_; // SEdges, SLoops, SVertices
+    //    Object_list   boundary_entry_objects_; // SEdges, SLoops, SVertices
     GenPtr         info_;
     // temporary needed:
     Mark           mark_;
 
   public:
-    SObject_list   boundary_entry_objects_; // SEdges, SLoops, SVertices
+    Object_list   boundary_entry_objects_; // SEdges, SLoops, SVertices
 
     SFace() : center_vertex_(), incident_volume_(), info_(), mark_() {}
 
@@ -947,11 +1013,20 @@ public:
     SFace_cycle_const_iterator sface_cycles_end() const
     { return boundary_entry_objects_.end(); }
 
-    Mark& mark() 
-    { return incident_volume_->mark(); }
+    Mark& mark() { return mark_; }
+    const Mark& mark() const { return mark_; }
 
-    Mark& tmp_mark() 
-    { return mark_; }
+    Vertex_handle& center_vertex() { return center_vertex_; }
+    Vertex_handle center_vertex() const { return center_vertex_; }
+
+    Volume_handle& incident_volume() { return incident_volume_; }
+    Volume_handle incident_volume() const { return incident_volume_; }
+
+    Object_list& boundary_entry_objects() { return boundary_entry_objects_; }
+    const Object_list& boundary_entry_objects() const { return boundary_entry_objects_; }
+
+    GenPtr& info() { return info_; }
+    const GenPtr& info() const { return info_; }
 
     bool is_valid( bool verb = false, int level = 0) const {
       

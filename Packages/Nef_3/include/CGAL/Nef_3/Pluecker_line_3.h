@@ -126,7 +126,7 @@ int sign() const
 within the ordered tuple of coefficients.}*/
 { for (unsigned i=0; i<6; ++i) 
     if (c_[i]!=RT(0)) return CGAL_NTS sign(c_[i]); 
- CGAL_nef3_assertion_msg(0,"Pluecker line 0 0 0 0 0 0 shouldn't appear!!!"); 
+ CGAL_assertion_msg(0,"Pluecker line 0 0 0 0 0 0 shouldn't appear!!!"); 
   return CGAL_NTS sign(c_[5]); 
 }
 

@@ -714,7 +714,7 @@ const Node *locate_cell_containing( const Point_3& p, const Node* node) const {
     if( side == ON_NEGATIVE_SIDE || side == ON_ORIENTED_BOUNDARY)
       return locate_cell_containing( p, node->left());
     else { // side == ON_POSITIVE_SIDE 
-      CGAL_nef3_assertion( side == ON_POSITIVE_SIDE);
+      CGAL_assertion( side == ON_POSITIVE_SIDE);
       return locate_cell_containing( p, node->right());
     }
   }

@@ -22,7 +22,7 @@
 #ifndef CGAL_SNC_SM_IO_PARSER_H
 #define CGAL_SNC_SM_IO_PARSER_H
 
-#include <CGAL/Nef_3/SNC_SM_decorator.h>
+#include <CGAL/Nef_S2/SM_decorator.h>
 #include <CGAL/Nef_2/Object_index.h>
 #include <vector>
 
@@ -38,12 +38,12 @@ decorator to provide input and output of a sphere map associated to a
 vertex of an SNC.  |\Mtype| is generic with respect to the |Refs_|
 parameter. |Refs_| has to be a model of our |SNC| concept.}*/
 
-/*{\Mgeneralization SNC_SM_decorator<Refs_>}*/
+/*{\Mgeneralization SM_decorator<Refs_>}*/
 
 template <typename Refs_>
-class SNC_SM_io_parser : public SNC_SM_decorator<Refs_>
+class SNC_SM_io_parser : public SM_decorator<Refs_>
 {
-  typedef SNC_SM_decorator<Refs_> Base;
+  typedef SM_decorator<Refs_> Base;
   typedef typename Refs_::Vertex_handle Vertex_handle;
   typedef typename Refs_::Sphere_point  Sphere_point;
   typedef typename Refs_::Sphere_circle Sphere_circle;
@@ -217,13 +217,13 @@ bool SNC_SM_io_parser<Refs_>::read_edge(SHalfedge_handle e)
        !(in >> m) || !check_sep("}") ||
        !(in >> k) || !check_sep("}") )
     return false;
-  CGAL_nef3_assertion_msg 
+  CGAL_assertion_msg 
      (eo >= 0 && eo < en && epr >= 0 && epr < en && ene >= 0 && ene < en &&
       v >= 0 && v < vn && f >= 0 && f < fn ,
       "wrong index in read_edge");
   
   // precond: features exist!
-  CGAL_nef3_assertion(EI[twin(e)]);
+  CGAL_assertion(EI[twin(e)]);
   set_prev(e,Edge_of[epr]);
   set_next(e,Edge_of[ene]);
   set_source(e,Vertex_of[v]);
@@ -253,7 +253,7 @@ bool SNC_SM_io_parser<Refs_>::read_loop(SHalfloop_handle l)
        !(in >> m) || !check_sep("}") ||
        !(in >> k) || !check_sep("}") )
     return false;
-  CGAL_nef3_assertion_msg(
+  CGAL_assertion_msg(
     (lo >= 0 && lo < 2 && f >= 0 && f < fn),"wrong index in read_edge");
   
   set_face(l,Face_of[f]);
@@ -268,13 +268,13 @@ void SNC_SM_io_parser<Refs_>::print_face(SFace_handle f) const
 { // syntax: index { fclist, ivlist, loop, mark }
   out << index(f) << " { "; 
   SFace_cycle_iterator it;
-  CGAL_nef3_forall_sface_cycles_of(it,f)
+  CGAL_forall_sface_cycles_of(it,f)
     if ( it.is_shalfedge() ) out << index(SHalfedge_handle(it)) << ' ';
   out << ", ";
-  CGAL_nef3_forall_sface_cycles_of(it,f)
+  CGAL_forall_sface_cycles_of(it,f)
     if ( it.is_svertex() ) out << index(SVertex_handle(it)) << ' ';
   out << ", ";
-  CGAL_nef3_forall_sface_cycles_of(it,f)
+  CGAL_forall_sface_cycles_of(it,f)
     if ( it.is_shalfloop() ) out << index(SHalfloop_handle(it));
   out << ", " << mark(f) << " }\n";
 }
@@ -285,17 +285,17 @@ bool SNC_SM_io_parser<Refs_>::read_face(SFace_handle f)
   int n, ei, vi, li; Mark m;
   if ( !(in >> n) || !check_sep("{") ) return false;
   while (in >> ei) { 
-    CGAL_nef3_assertion_msg(ei >= 0 && ei < en, "wrong index in face cycle list.");
+    CGAL_assertion_msg(ei >= 0 && ei < en, "wrong index in face cycle list.");
     store_boundary_object(Edge_of[ei],f);
   } in.clear();
   if (!check_sep(",")) { return false; }
   while (in >> vi) { 
-    CGAL_nef3_assertion_msg(vi >= 0 && vi < vn, "wrong index in iso vertex list.");
+    CGAL_assertion_msg(vi >= 0 && vi < vn, "wrong index in iso vertex list.");
     store_boundary_object(Vertex_of[vi],f);
   } in.clear();
   if (!check_sep(",")) { return false; }
   while (in >> li) { 
-    CGAL_nef3_assertion_msg(li >= 0 && li < 2, "wrong index in iso vertex list.");
+    CGAL_assertion_msg(li >= 0 && li < 2, "wrong index in iso vertex list.");
     store_boundary_object(Loop_of[li],f);
   } in.clear();
   if (!check_sep(",") || !(in >> m) || !check_sep("}") ) 
@@ -315,20 +315,20 @@ void SNC_SM_io_parser<Refs_>::print() const
   if (verbose) 
     out << "/* index { isolated ? face : edge, mark, point } */" << endl;
   SVertex_iterator vit;
-  CGAL_nef3_forall_svertices(vit,*this) print_vertex(vit);
+  CGAL_forall_svertices(vit,*this) print_vertex(vit);
   if (verbose) 
     out << "/* index { twin, prev, next, source, face, mark, circle } */" 
 	<< endl;
   SHalfedge_iterator eit;
-  CGAL_nef3_forall_shalfedges(eit,*this) print_edge(eit);
+  CGAL_forall_shalfedges(eit,*this) print_edge(eit);
   if (verbose) 
     out << "/* index { twin, face, mark, circle } */" << endl;
-  if ( has_loop() ) 
+  if ( has_sloop() ) 
   { print_loop(shalfloop()); print_loop(twin(shalfloop())); }
   if (verbose) 
     out << "/* index { fclist, ivlist, loop, mark } */" << endl;
   SFace_iterator fit;
-  CGAL_nef3_forall_sfaces(fit,*this) print_face(fit);
+  CGAL_forall_sfaces(fit,*this) print_face(fit);
   out.flush();
   if (verbose) debug();
 }
@@ -337,15 +337,15 @@ template <typename Refs_>
 void SNC_SM_io_parser<Refs_>::read() 
 {
   if ( !check_sep("Sphere Map") )  
-    CGAL_nef3_assertion_msg(0,"SNC_SM_io_parser::read: no embedded_PM header.");
+    CGAL_assertion_msg(0,"SNC_SM_io_parser::read: no embedded_PM header.");
   if ( !(check_sep("svertices") && (in >> vn)) ) 
-    CGAL_nef3_assertion_msg(0,"SNC_SM_io_parser::read: wrong vertex line.");
+    CGAL_assertion_msg(0,"SNC_SM_io_parser::read: wrong vertex line.");
   if ( !(check_sep("shalfedges") && (in >> en) && (en%2==0)) )
-    CGAL_nef3_assertion_msg(0,"SNC_SM_io_parser::read: wrong edge line.");
+    CGAL_assertion_msg(0,"SNC_SM_io_parser::read: wrong edge line.");
   if ( !(check_sep("shalfloops") && (in >> ln)) )
-    CGAL_nef3_assertion_msg(0,"SNC_SM_io_parser::read: wrong loop line.");
+    CGAL_assertion_msg(0,"SNC_SM_io_parser::read: wrong loop line.");
   if ( !(check_sep("sfaces") && (in >> fn)) )
-    CGAL_nef3_assertion_msg(0,"SNC_SM_io_parser::read: wrong face line.");
+    CGAL_assertion_msg(0,"SNC_SM_io_parser::read: wrong face line.");
 
   Vertex_of.reserve(vn);
   Edge_of.reserve(en);
@@ -360,18 +360,18 @@ void SNC_SM_io_parser<Refs_>::read()
 
   for(i=0; i<vn; i++) {
     if (!read_vertex(Vertex_of[i]))
-      CGAL_nef3_assertion_msg(0,"SNC_SM_io_parser::read: error in node line");
+      CGAL_assertion_msg(0,"SNC_SM_io_parser::read: error in node line");
   }
   for(i=0; i<en; i++) {
     if (!read_edge(Edge_of[i]))
-      CGAL_nef3_assertion_msg(0,"SNC_SM_io_parser::read: error in edge line");
+      CGAL_assertion_msg(0,"SNC_SM_io_parser::read: error in edge line");
   }
   if ( ln == 2 ) {
     read_loop(Loop_of[0]); read_loop(Loop_of[1]);
   }
   for(i=0; i<fn; i++) {
     if (!read_face(Face_of[i]))
-      CGAL_nef3_assertion_msg(0,"SNC_SM_io_parser::read: error in face line");
+      CGAL_assertion_msg(0,"SNC_SM_io_parser::read: error in face line");
   }
 }
 
@@ -413,14 +413,14 @@ void SNC_SM_io_parser<Refs_>::debug() const
   out << "shalfedges: " << number_of_shalfedges() << "\n";
   out << "shalfloops: " << number_of_shalfloops() << "\n";
   SVertex_iterator vit; 
-  CGAL_nef3_forall_svertices(vit,*this) {
+  CGAL_forall_svertices(vit,*this) {
     if ( is_isolated(vit) ) continue;
     typename Base::SHalfedge_around_svertex_circulator
       hcirc = out_edges(vit), hend = hcirc;
     debug_vertex(vit);
     CGAL_For_all(hcirc,hend) { out << "  "; debug_edge(hcirc); }
   }
-  if ( has_loop() ) 
+  if ( has_sloop() ) 
   { debug_loop(shalfloop()); debug_loop(twin(shalfloop())); }
   out << endl;
 }

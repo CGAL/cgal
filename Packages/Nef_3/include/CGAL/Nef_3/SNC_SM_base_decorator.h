@@ -26,7 +26,6 @@
 #include <CGAL/circulator.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Nef_2/Object_index.h>
-#include <CGAL/Nef_3/nef3_assertions.h>
 #include <CGAL/Nef_3/SNC_iteration.h>
 #include <string>
 #include <list>
@@ -113,7 +112,7 @@ handles |SVertex_const_handle|, |SHalfedge_const_handle|, or
 
 protected: 
   Vertex_handle psm_;
-  friend class SNC_SM_decorator<Refs_>;
+  friend class SM_decorator<Refs_>;
 public:
 
 /*{\Mcreation 3}*/
@@ -213,9 +212,9 @@ SHalfloop_const_iterator shalfloops_end() const
 
 SHalfloop_const_handle shalfloop() const
 /*{\Mop returns access to the loop.}*/
-{ return psm_->shalfloop(); }
+{ return psm_->shalfloop_; }
 
-bool has_loop() const
+bool has_sloop() const
 /*{\Mop returns true iff there is a loop.}*/
 { return shalfloop() != sncp()->shalfloops_end(); }
 
@@ -241,14 +240,14 @@ Size_type number_of_svertices() const
 /*{\Mop returns the number of vertices.}*/
 { Size_type n(0);
   SVertex_const_iterator vit;
-  CGAL_nef3_forall_svertices_of(vit,psm_) ++n;
+  CGAL_forall_svertices_of(vit,psm_) ++n;
   return n; }
 
 Size_type number_of_shalfedges() const 
 /*{\Mop returns the number of halfedges.}*/
 { Size_type n(0);
   SHalfedge_const_iterator eit;
-  CGAL_nef3_forall_shalfedges_of(eit,psm_) ++n;
+  CGAL_forall_shalfedges_of(eit,psm_) ++n;
   return n; }
 
 Size_type number_of_sedges() const 
@@ -257,7 +256,7 @@ Size_type number_of_sedges() const
 
 Size_type number_of_shalfloops() const 
 /*{\Mop returns the number of halfloops.}*/
-{ return ( has_loop() ? 2 : 0); }
+{ return ( has_sloop() ? 2 : 0); }
 
 Size_type number_of_sloops() const 
 /*{\Mop returns the number of loops.}*/
@@ -267,7 +266,7 @@ Size_type number_of_sfaces() const
 /*{\Mop returns the number of faces.}*/
 { Size_type n(0);
   SFace_const_iterator fit;
-  CGAL_nef3_forall_sfaces_of(fit,psm_) ++n;
+  CGAL_forall_sfaces_of(fit,psm_) ++n;
   return n; }
 
 Size_type number_of_sface_cycles() const;
@@ -299,21 +298,21 @@ SHalfedge_const_handle cap(SHalfedge_const_handle e) const
 
 template <typename H>
 bool is_boundary_object(H h) const
-{ return psm_->is_sm_boundary_object(h); }
+{ return psm_->is_boundary_object(h); }
 
 /*{\Mtext \headerline{Associated Information}\restoreopdims}*/
 
 const Sphere_point& point(SVertex_const_handle v) const
 /*{\Mop returns the embedding of |v|.}*/
-{ return v->tmp_point(); }
+{ return v->point_; }
 
 const Sphere_circle& circle(SHalfedge_const_handle e) const
 /*{\Mop returns the circle supporting |e|.}*/
-{ return e->tmp_circle(); }
+{ return e->circle_; }
 
 const Sphere_circle& circle(SHalfloop_const_handle l) const
 /*{\Mop returns the circle supporting |l|.}*/
-{ return l->tmp_circle(); }
+{ return l->circle_; }
 
 Mark mark(SVertex_const_handle v) const
 /*{\Mop returns the mark of |v|.}*/
@@ -340,9 +339,9 @@ The iterator range access operations are of the following kind:\\
 |SHalfloop_iterator shalfloops_begin()/shalfloops_end()|\\
 |SFace_iterator     sfaces_begin()/sfaces_end()|
 
-The macros are then |CGAL_nef3_forall_svertices(v,M)|,
-|CGAL_nef3_forall_shalfedges(e,M)|, |CGAL_nef3_forall_sedges(e,M)|,
-|CGAL_nef3_forall_sfaces(f,M)|, |CGAL_nef3_forall_sface_cycles_of(fc,F)| 
+The macros are then |CGAL_forall_svertices(v,M)|,
+|CGAL_forall_shalfedges(e,M)|, |CGAL_forall_sedges(e,M)|,
+|CGAL_forall_sfaces(f,M)|, |CGAL_forall_sface_cycles_of(fc,F)| 
 where |M|is a sphere map and |F| is a face.}*/
 
 }; // SNC_SM_base_decorator
@@ -365,54 +364,54 @@ check_integrity_and_topological_planarity(bool faces) const
   SVertex_const_handle v;
   int iso_vert_num=0;
   /* check the source links of out edges and count isolated vertices */
-  CGAL_nef3_forall_svertices(v,*this) {
+  CGAL_forall_svertices(v,*this) {
     if ( is_isolated(v) ) {
       if ( faces )
-        CGAL_nef3_assertion_msg(face(v) != SFace_const_handle(), 
+        CGAL_assertion_msg(face(v) != SFace_const_handle(), 
 				VI(v).c_str());
       ++iso_vert_num;
     } else {
-      CGAL_nef3_assertion_msg(first_out_edge(v) != SHalfedge_const_handle(),
+      CGAL_assertion_msg(first_out_edge(v) != SHalfedge_const_handle(),
       VI(v).c_str());
       TRACEN(point(v)<<" "<<EI(first_out_edge(v)));
-      CGAL_nef3_assertion_msg(source(first_out_edge(v)) == v ,
+      CGAL_assertion_msg(source(first_out_edge(v)) == v ,
 			      VI(v).c_str());
     }
   }
 
   /* check the bidirected links and the face pointer init */
   SHalfedge_const_iterator e;
-  CGAL_nef3_forall_shalfedges(e,*this) {
-    CGAL_nef3_assertion( twin(twin(e)) == e );
-    CGAL_nef3_assertion( source(e) != SVertex_const_handle() );
-    CGAL_nef3_assertion( next(e) != SHalfedge_const_handle() );
-    CGAL_nef3_assertion( previous(next(e)) == e );
-    CGAL_nef3_assertion( target(e) == source(next(e)) );
-    CGAL_nef3_assertion( previous(e) != SHalfedge_const_handle() );
-    CGAL_nef3_assertion( next(previous(e)) == e );
-    CGAL_nef3_assertion( target(previous(e)) == source(e) );
+  CGAL_forall_shalfedges(e,*this) {
+    CGAL_assertion( twin(twin(e)) == e );
+    CGAL_assertion( source(e) != SVertex_const_handle() );
+    CGAL_assertion( next(e) != SHalfedge_const_handle() );
+    CGAL_assertion( previous(next(e)) == e );
+    CGAL_assertion( target(e) == source(next(e)) );
+    CGAL_assertion( previous(e) != SHalfedge_const_handle() );
+    CGAL_assertion( next(previous(e)) == e );
+    CGAL_assertion( target(previous(e)) == source(e) );
     if ( !faces ) continue;
-    CGAL_nef3_assertion( face(e) != SFace_const_handle() );
-    CGAL_nef3_assertion( face(next(e)) == face(e) );
-    CGAL_nef3_assertion( face(previous(e)) == face(e) );
+    CGAL_assertion( face(e) != SFace_const_handle() );
+    CGAL_assertion( face(next(e)) == face(e) );
+    CGAL_assertion( face(previous(e)) == face(e) );
   }
 
   int fc_num(0),iv_num(0);
   SFace_const_iterator f;
   SFace_cycle_const_iterator fci;
-  CGAL_nef3_forall_sfaces(f,*this) {
-    CGAL_nef3_forall_sface_cycles_of(fci,f) {
+  CGAL_forall_sfaces(f,*this) {
+    CGAL_forall_sface_cycles_of(fci,f) {
       if ( fci.is_shalfedge() ) {
-        CGAL_nef3_assertion( face(SHalfedge_const_handle(fci)) == f ); 
+        CGAL_assertion( face(SHalfedge_const_handle(fci)) == f ); 
 	++fc_num;
       } else if ( fci.is_svertex() ) {
-        CGAL_nef3_assertion( face(SVertex_const_handle(fci)) == f ); 
+        CGAL_assertion( face(SVertex_const_handle(fci)) == f ); 
 	++iv_num;
       } else if( fci.is_shalfloop() ) {
-        CGAL_nef3_assertion( face(SHalfloop_const_handle(fci)) == f );
+        CGAL_assertion( face(SHalfloop_const_handle(fci)) == f );
 	++fc_num;
       }
-      else CGAL_nef3_assertion(0);
+      else CGAL_assertion(0);
     }
   }
 
@@ -430,7 +429,7 @@ check_integrity_and_topological_planarity(bool faces) const
   /* every isolated vertex increases the component count
        one face cycle per component is redundent except one
        finally check the Euler formula: */
-  CGAL_nef3_assertion( v_num - e_num + f_num == 1 + c_num );
+  CGAL_assertion( v_num - e_num + f_num == 1 + c_num );
 }
 
 template <typename SM_>
@@ -442,13 +441,13 @@ number_of_sface_cycles() const
   CGAL::Unique_hash_map<SHalfedge_const_handle,bool> visited; 
     // init with bool() == false
   SHalfedge_const_iterator e;
-  CGAL_nef3_forall_shalfedges(e,*this) {
+  CGAL_forall_shalfedges(e,*this) {
     if ( visited[e] ) continue;
     SHalfedge_around_sface_const_circulator hfc(e), hend(hfc);
     CGAL_For_all(hfc,hend) visited[hfc]=true;
     ++fc_num;
   }
-  if ( has_loop() ) fc_num += 2;
+  if ( has_sloop() ) fc_num += 2;
   return fc_num;
 }
 
@@ -460,7 +459,7 @@ number_of_connected_components() const
   int comp_num=0;
   CGAL::Unique_hash_map<SVertex_const_iterator,bool> visited(false); 
   SVertex_const_iterator v;
-  CGAL_nef3_forall_svertices(v,*this) {
+  CGAL_forall_svertices(v,*this) {
     if (visited[v]) continue;
     std::list<SVertex_const_iterator> L;
     L.push_back(v); visited[v]=true; 

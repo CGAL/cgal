@@ -25,7 +25,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Nef_S2/Sphere_map.h>
 #include <CGAL/Nef_S2/Sphere_geometry_OGL.h>
-#include <CGAL/Nef_3/SNC_SM_decorator.h>
+#include <CGAL/Nef_3/SM_decorator.h>
 #include <CGAL/Nef_3/SNC_SM_triangulator.h>
 
 #define LGREY CGAL::Color(170,170,200)
@@ -65,7 +65,7 @@ public:
   typedef CGAL::SNC_SM_BooleColor<Refs_>    Color_;
   typedef typename Refs_::Sphere_kernel        Sphere_kernel;
   typedef CGAL::Sphere_map<Sphere_kernel>      Sphere_map;
-//  typedef SNC_SM_const_decorator<Refs_>        SM_const_decorator;
+//  typedef SM_const_decorator<Refs_>        SM_const_decorator;
   typedef SNC_SM_triangulator<Refs_,Sphere_map,Sphere_kernel> 
                                                SNC_SM_triangulator;
 
@@ -139,7 +139,7 @@ void draw_map() const
   }
   // draw sphere circles underlying loops of E_:
 
-  if ( E_.has_loop() )
+  if ( E_.has_sloop() )
     S_.push_back(
       Sphere_circle(E_.circle(E_.shalfloop())),
       CO_.color(E_.shalfloop(),E_.mark(E_.shalfloop())));
@@ -156,7 +156,7 @@ void draw_map() const
     if ( Done[h] ) continue;
     SM_Halfedge_const_iterator hn(T_.next(h)),hnn(T_.next(hn));
     TRACEV(T_.incident_triangle(h));
-    CGAL_nef3_assertion(
+    CGAL_assertion(
       T_.incident_mark(h) == T_.incident_mark(hn) &&
       T_.incident_mark(hn) == T_.incident_mark(hnn));
     Mark m = T_.incident_mark(h);
@@ -194,7 +194,7 @@ void draw_triangulation() const
   CGAL_nef3_forall_halfedges(e,T_) {
     if ( Done[e] ) continue;
     SM_Halfedge_const_iterator en(T_.next(e)),enn(T_.next(en));
-    CGAL_nef3_assertion(T_.incident_mark(e)==T_.incident_mark(en)&&
+    CGAL_assertion(T_.incident_mark(e)==T_.incident_mark(en)&&
 			T_.incident_mark(en)==T_.incident_mark(enn));
     Mark m = T_.incident_mark(e);
     Sphere_triangle t = T_.incident_triangle(e);

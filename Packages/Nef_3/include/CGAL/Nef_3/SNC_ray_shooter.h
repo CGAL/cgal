@@ -29,7 +29,7 @@
 #include <CGAL/Nef_3/Pluecker_line_3.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
 #include <CGAL/Nef_3/SNC_SM_overlayer.h>
-#include <CGAL/Nef_3/SNC_SM_point_locator.h>
+#include <CGAL/Nef_S2/SM_point_locator.h>
 #include <CGAL/Nef_3/SNC_FM_decorator.h>
 #include <CGAL/Nef_3/SNC_intersection.h>
 
@@ -62,9 +62,9 @@ protected:
 public:
   typedef typename SNC_structure_::Kernel          Kernel;
   typedef SNC_decorator<SNC_structure>             SNC_decorator;
-  typedef SNC_SM_decorator<SNC_structure>          SM_decorator;
-  typedef SNC_SM_point_locator<SM_decorator>       SM_point_locator;
-  typedef SNC_SM_const_decorator<SNC_structure>    SM_const_decorator;
+  typedef SM_decorator<SNC_structure>          SM_decorator;
+  typedef SM_point_locator<SM_decorator>       SM_point_locator;
+  typedef SM_const_decorator<SNC_structure>    SM_const_decorator;
   typedef SNC_intersection<SNC_structure>          SNC_intersection;
 
   typedef typename SNC_structure::Vertex Vertex;
@@ -150,7 +150,7 @@ public:
 
  private:
   Volume_handle determine_volume(const Ray_3& ray) const {
-    CGAL_nef3_precondition( !ray.is_degenerate());
+    CGAL_precondition( !ray.is_degenerate());
     Object_handle o = shoot(ray);
     Vertex_handle v;
     Halfedge_handle e;
@@ -161,7 +161,7 @@ public:
       if(f_below != Halffacet_handle())
 	return volume(f_below);
       SM_decorator SD(v);
-      CGAL_nef3_assertion( SD.number_of_sfaces() == 1);
+      CGAL_assertion( SD.number_of_sfaces() == 1);
       return volume(SD.sfaces_begin());
     }
     else if( assign(e, o)) {
@@ -170,13 +170,13 @@ public:
       if(f_below != Halffacet_handle())
 	return volume(f_below);
       SM_decorator SD(source(e));
-      CGAL_nef3_assertion(SD.is_isolated(e));
+      CGAL_assertion(SD.is_isolated(e));
       return volume(sface(e));
     }
     else if( assign(f, o)) {
       TRACEN("facet below from from facet...");
       f_below = get_visible_facet(f, ray);
-      CGAL_nef3_assertion( f_below != Halffacet_handle());
+      CGAL_assertion( f_below != Halffacet_handle());
       return volume(f_below);
     }
     
@@ -186,7 +186,7 @@ public:
  public:
   Object_handle shoot(const Ray_3& ray) const
      /*{\Mop returns the nearest object hit by a ray |ray|. }*/ {
-    CGAL_nef3_precondition( !ray.is_degenerate());
+    CGAL_precondition( !ray.is_degenerate());
     bool hit = false;
     Point_3 end_of_seg;
     SNC_intersection is(*sncp());
@@ -194,7 +194,7 @@ public:
     TRACEN( "Shooting ray " << ray);
     Object_handle o;
     Vertex_handle v;
-    CGAL_nef3_forall_vertices( v, *sncp()) {
+    CGAL_forall_vertices( v, *sncp()) {
       if ( ray.source() != point(v) && ray.has_on(point(v))) {
         if(hit && !Segment_3(ray.source(), end_of_seg).has_on(point(v)))
           continue;
@@ -206,7 +206,7 @@ public:
     }
 
     Halfedge_handle e;
-    CGAL_nef3_forall_edges( e, *sncp()) {
+    CGAL_forall_edges( e, *sncp()) {
       Point_3 q;
       if( is.does_intersect_internally( ray, segment(e), q)) {
         if (!hit || 
@@ -220,7 +220,7 @@ public:
     }
 
     Halffacet_handle f;
-    CGAL_nef3_forall_halffacets( f, *sncp()) {
+    CGAL_forall_halffacets( f, *sncp()) {
       Point_3 q;
       if( is.does_intersect_internally( ray, f, q) ) {
         if(!hit || 
@@ -243,7 +243,7 @@ public:
 
     TRACEN( "Point locator for " << p);
     Vertex_handle v;
-    CGAL_nef3_forall_vertices( v, *sncp()) {
+    CGAL_forall_vertices( v, *sncp()) {
       TRACEN("test vertex " << point(v));
       if ( p == point(v)) {
 	TRACEN("on vertex.");
@@ -252,14 +252,14 @@ public:
     }
 
     Halfedge_handle e;
-    CGAL_nef3_forall_edges( e, *sncp()) {
+    CGAL_forall_edges( e, *sncp()) {
       if ( is.does_contain_internally( segment(e), p) ) {
 	TRACEN("on edge.");
 	return Object_handle(e);
       }
     }
     Halffacet_handle f;
-    CGAL_nef3_forall_halffacets( f, *sncp()) {
+    CGAL_forall_halffacets( f, *sncp()) {
       if ( is.does_contain_internally( f, p) ) {
 	TRACEN("on facet.");
 	return Object_handle(f);

@@ -32,13 +32,14 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Gmpz.h>
+#include <CGAL/leda_integer.h>
 #include <CGAL/Simple_homogeneous.h>
 #include <CGAL/Extended_homogeneous_3.h>
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Lazy_exact_nt.h>
+//#include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-
+#include <CGAL/Nef_3/Visualizor.h>
 #include <CGAL/Nef_polyhedron_3.h>
 
 #include <iostream>
@@ -59,12 +60,13 @@ using std::exit;
 
 // #define CGAL_USE_EXTENDED_KERNEL
 
-typedef CGAL::Gmpz                         NT;
+// typedef CGAL::Gmpz                         NT;
+typedef leda_integer                       NT;
 #ifdef CGAL_USE_EXTENDED_KERNEL
 typedef CGAL::Extended_homogeneous_3<NT>   Kernel;
 const char *kernelversion = "Extended homogeneous 3d kernel (tm).";
 #else // #elif CGAL_USE_SIMPLE_KERNEL
-typedef CGAL::Lazy_exact_nt<NT>  LNT;
+// typedef CGAL::Lazy_exact_nt<NT>  LNT;
 // typedef CGAL::Simple_homogeneous<LNT>  Kernel;
 typedef CGAL::Simple_homogeneous<NT> Kernel;
 const char *kernelversion = "Simple homogeneous kernel (tm).";
@@ -72,12 +74,14 @@ const char *kernelversion = "Simple homogeneous kernel (tm).";
 
 typedef CGAL::Polyhedron_3<Kernel>         Polyhedron;
 typedef CGAL::SNC_items<Kernel, bool>      SNC_items;
-typedef CGAL::SNC_structure<SNC_items>     SNC_structure;
 typedef CGAL::Nef_polyhedron_3<SNC_items>  Nef_polyhedron;
 // typedef CGAL::NPX<SNC_items>  Nef_polyhedron;
 // typedef Nef_polyhedron::Explorer           Explorer;
 typedef std::vector< Nef_polyhedron>       Nef_vector;
 typedef Nef_vector::iterator               Iterator;
+#ifdef CGAL_NEF3_VISUALIZOR
+typedef CGAL::Visualizor<Nef_polyhedron>         Visualizor;
+#endif 
 
 // Global data
 Nef_vector nef;  // contains stack of Nef_polyhedron
@@ -198,17 +202,17 @@ int eval( int argc, char* argv[]) {
             }
         } else if ( strcmp( argv[i], "clear") == 0) {
             nef.clear();
-	    /*        } else if ( strcmp( argv[i], "size") == 0) {
-            cout << "Size of stack = " << nef.size() << endl;
-            Explorer exp = nef.back().explorer();
-            cout << "Top: Number of vertices = " << exp.number_of_vertices()
-                 << endl;
-            cout << "Top: Number of edges    = " << exp.number_of_edges()
-                 << endl;
-            cout << "Top: Number of facets   = " << exp.number_of_facets()
-                 << endl;
-            cout << "Top: Number of volumes  = " << exp.number_of_volumes()
-	    << endl;*/
+	} else if ( strcmp( argv[i], "size") == 0) {
+	  cout << "Size of stack = " << nef.size() << endl;
+	  Nef_polyhedron exp = nef.back();
+	  cout << "Top: Number of vertices = " << exp.number_of_vertices()
+	       << endl;
+	  cout << "Top: Number of edges    = " << exp.number_of_edges()
+	       << endl;
+	  cout << "Top: Number of facets   = " << exp.number_of_facets()
+	       << endl;
+	  cout << "Top: Number of volumes  = " << exp.number_of_volumes()
+	       << endl;
 	} else if ( strcmp( argv[i], "bytes") == 0) {
 	  if ( nef.size() == 0) {
 	    cerr << "Error: '" << argv[i] << "' on empty stack." << endl;
@@ -334,7 +338,9 @@ int eval( int argc, char* argv[]) {
                 continue;
             }
 #ifdef CGAL_NEF3_VISUALIZOR
-            nef.back().visualize();
+	    Visualizor V(nef.back());
+	    V.draw();
+	    CGAL::OGL::start_viewer();
 #else
             cout << "Sorry, visualization has not been compiled into this "
                     "program version. " << endl;
@@ -390,9 +396,9 @@ int eval( int argc, char* argv[]) {
                 NT sin_alpha;
                 NT cos_alpha;
                 NT w;
-                rational_rotation_approximation( dirx, diry, 
-                                                 sin_alpha, cos_alpha, w,
-                                                 NT(1), NT( 1000000));
+                CGAL::rational_rotation_approximation( dirx, diry, 
+						       sin_alpha, cos_alpha, w,
+						       NT(1), NT( 1000000));
                 Kernel::Aff_transformation_3 aff( w, NT(0), NT(0),
                                                   NT(0), cos_alpha,-sin_alpha,
                                                   NT(0), sin_alpha, cos_alpha,
@@ -415,9 +421,9 @@ int eval( int argc, char* argv[]) {
                 NT sin_alpha;
                 NT cos_alpha;
                 NT w;
-                rational_rotation_approximation( dirx, diry, 
-                                                 sin_alpha, cos_alpha, w,
-                                                 NT(1), NT( 1000000));
+                CGAL::rational_rotation_approximation( dirx, diry, 
+						       sin_alpha, cos_alpha, w,
+						       NT(1), NT( 1000000));
                 Kernel::Aff_transformation_3 aff( cos_alpha, NT(0), sin_alpha,
                                                   NT(0), w, NT(0),
                                                   -sin_alpha, NT(0), cos_alpha,
@@ -440,9 +446,9 @@ int eval( int argc, char* argv[]) {
                 NT sin_alpha;
                 NT cos_alpha;
                 NT w;
-                rational_rotation_approximation( dirx, diry, 
-                                                 sin_alpha, cos_alpha, w,
-                                                 NT(1), NT( 1000000));
+                CGAL::rational_rotation_approximation( dirx, diry, 
+						       sin_alpha, cos_alpha, w,
+						       NT(1), NT( 1000000));
                 Kernel::Aff_transformation_3 aff( cos_alpha,-sin_alpha, NT(0),
                                                   sin_alpha, cos_alpha, NT(0),
                                                   NT(0), NT(0), w,

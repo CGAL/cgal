@@ -24,7 +24,7 @@
 
 #include <CGAL/Circulator_project.h>
 #include <CGAL/normal_vector_newell_3.h>
-#include <CGAL/Nef_3/SNC_SM_point_locator.h>
+#include <CGAL/Nef_S2/SM_point_locator.h>
 
 #undef _DEBUG
 #define _DEBUG 29
@@ -113,7 +113,7 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
     Point_3 pe_target_0(pe->opposite()->vertex()->point());
     Point_3 sp_point_0(CGAL::ORIGIN+(pe_target_0-pv.point()));
     Sphere_point sp_0(sp_point_0);
-    SVertex_handle sv_0 = SM.new_vertex(sp_0);
+    SVertex_handle sv_0 = SM.new_svertex(sp_0);
     SM.mark(sv_0) = true; 
     pe++;
     CGAL_assertion(pe != pv.vertex_begin());
@@ -129,7 +129,7 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
       Point_3 pe_target = pe->opposite()->vertex()->point();
       Point_3 sp_point = CGAL::ORIGIN+(pe_target-pv.point());
       Sphere_point sp(sp_point);
-      SVertex_handle sv = SM.new_vertex(sp);
+      SVertex_handle sv = SM.new_svertex(sp);
       SM.mark(sv) = true;
       
       TRACEN(pe_prev->facet()->plane());
@@ -149,10 +149,10 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
       CGAL_assertion(ss_circle.has_on(sp));
       CGAL_assertion(ss_circle.has_on(SM.point(sv_prev)));
 
-      SHalfedge_handle e = SM.new_edge_pair(sv_prev, sv);
+      SHalfedge_handle e = SM.new_shalfedge_pair(sv_prev, sv);
       SM.circle(e) = ss_circle;
       SM.circle(SM.twin(e)) = ss_circle.opposite();
-      SM.mark(e) = true;
+      SM.mark(e) = SM.mark(SM.twin(e)) = true;
 	  
       sv_prev = sv;
       pe_prev = pe;
@@ -183,14 +183,14 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
     CGAL_assertion(ss_circle.has_on(sp_0));
     CGAL_assertion(ss_circle.has_on(SM.point(sv_prev)));
     
-    SHalfedge_handle e = SM.new_edge_pair(sv_prev, sv_0);
+    SHalfedge_handle e = SM.new_shalfedge_pair(sv_prev, sv_0);
     SM.circle(e) = ss_circle;
     SM.circle(SM.twin(e)) = ss_circle.opposite();
-    SM.mark(e) = true;
+    SM.mark(e) = SM.mark(SM.twin(e)) = true;
 
     // create faces
-    SFace_handle fint = SM.new_face();
-    SFace_handle fext = SM.new_face();
+    SFace_handle fint = SM.new_sface();
+    SFace_handle fext = SM.new_sface();
     SM.link_as_face_cycle(e, fint);
     SM.link_as_face_cycle(SM.twin(e), fext);
     

@@ -27,7 +27,7 @@
 #include <CGAL/Nef_3/Normalizing.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Nef_3/SNC_iteration.h>
-#include <CGAL/Nef_3/SNC_SM_const_decorator.h>
+#include <CGAL/Nef_S2/SM_const_decorator.h>
 #include <CGAL/Nef_3/SNC_SM_io_parser.h>
 #undef _DEBUG
 #define _DEBUG 191
@@ -40,23 +40,14 @@ class SNC_const_decorator {
   typedef SNC_structure_                            Base;
   typedef SNC_structure_                            SNC_structure;
   typedef SNC_const_decorator<SNC_structure>        Self;
-  typedef SNC_SM_const_decorator<SNC_structure>     SM_const_decorator;
+  typedef SM_const_decorator<SNC_structure>     SM_const_decorator;
   const SNC_structure* sncp_;
 
-public:
-  //typedef typename SNC_structure::SHalfedge SHalfedge;
-  typedef typename SNC_structure::Object_handle Object_handle;
-  typedef typename SNC_structure::SObject_handle SObject_handle;
-  typedef typename SNC_structure::Object_iterator Object_iterator;
+  typedef typename SNC_structure::SHalfedge  SHalfedge;
 
-  typedef typename SNC_structure::Vertex Vertex;
-  typedef typename SNC_structure::Halfedge Halfedge;
-  typedef typename SNC_structure::Halffacet Halffacet;
-  typedef typename SNC_structure::Volume Volume;
-  typedef typename SNC_structure::SVertex SVertex;
-  typedef typename SNC_structure::SHalfedge SHalfedge;
-  typedef typename SNC_structure::SHalfloop SHalfloop;
-  typedef typename SNC_structure::SFace SFace;
+public:
+  typedef typename SNC_structure::Object_const_handle   Object_const_handle;
+  typedef typename SNC_structure::Object_const_iterator Object_const_iterator;
 
   typedef typename SNC_structure::Vertex_const_handle Vertex_const_handle;
   typedef typename SNC_structure::Halfedge_const_handle Halfedge_const_handle;
@@ -96,6 +87,7 @@ public:
   typedef typename SNC_structure::Line_3 Line_3;
   typedef typename SNC_structure::Plane_3 Plane_3;
   typedef typename SNC_structure::Vector_3 Vector_3;
+  typedef typename SNC_structure::Aff_transformation_3 Aff_transformation_3;
 
   typedef typename SNC_structure::Sphere_kernel Sphere_kernel;
   typedef typename SNC_structure::Sphere_point Sphere_point;
@@ -106,7 +98,6 @@ public:
   typedef typename SNC_structure::Size_type Size_type;
   typedef typename SNC_structure::Mark Mark;
   typedef typename SNC_structure::Infi_box Infi_box;
-  typedef typename SNC_structure::Aff_transformation_3 Aff_transformation_3;
 
   typedef typename SM_const_decorator::SHalfedge_around_svertex_const_circulator 
                                        SHalfedge_around_svertex_const_circulator;
@@ -128,90 +119,84 @@ public:
   const SNC_structure* sncp() const { return sncp_; }
   
   Vertex_const_handle vertex( Halfedge_const_handle e) const
-  { return e->center_vertex_; }
+  { return e->center_vertex(); }
   Halfedge_const_handle twin( Halfedge_const_handle e) const
-  { return e->twin_; }
+  { return e->twin(); }
   Vertex_const_handle source( Halfedge_const_handle e) const
-  { return e->center_vertex_; }
+  { return e->center_vertex(); }
   Vertex_const_handle target( Halfedge_const_handle e) const
   { return source(twin(e)); }  
   SFace_const_handle sface( Halfedge_const_handle e) const
-  { return e->incident_sface_; }
+  { return e->incident_sface(); }
   /* SVertex queries*/
 
   Vertex_const_handle vertex(SHalfedge_const_handle e) const
-  { return vertex(e->source_); }
+  { return vertex(e->source()); }
   SHalfedge_const_handle twin(SHalfedge_const_handle e) const
-  { return e->twin_; }
+  { return e->twin(); }
   Vertex_const_handle source(SHalfedge_const_handle e) const
-  { return e->source_->center_vertex_; }
+  { return e->source()->center_vertex(); }
   Vertex_const_handle source(SHalfedge e) const
-  { return e.source_->center_vertex_; }
+  { return e.source()->center_vertex(); }
   Vertex_const_handle target(SHalfedge_const_handle e) const
-  { return e->twin_->source_->twin_->center_vertex_; }
+  { return e->twin()->source()->twin()->center_vertex(); }
   SHalfedge_const_handle previous(SHalfedge_const_handle e) const
-  { return e->prev_; }
+  { return e->prev(); }
   SHalfedge_const_handle next(SHalfedge_const_handle e) const
-  { return e->next_; }
+  { return e->next(); }
   Halffacet_const_handle facet(SHalfedge_const_handle e) const
-  { return e->incident_facet_; }
+  { return e->incident_facet(); }
   SFace_const_handle sface(SHalfedge_const_handle e) const
-  { return e->incident_sface_; }
+  { return e->incident_sface(); }
   Halfedge_const_handle ssource(SHalfedge_const_handle e) const
-  { return e->source_; }
+  { return e->source(); }
   Halfedge_const_handle starget(SHalfedge_const_handle e) const
-  { return e->twin_->source_; }
+  { return e->twin()->source(); }
   /* SHalfedge queries */
 
   SHalfloop_const_handle twin( SHalfloop_const_handle l) const
-  { return l->twin_; }
+  { return l->twin(); }
   Halffacet_const_handle facet( SHalfloop_const_handle l) const
-  { return l->incident_facet_; }
+  { return l->incident_facet(); }
   Vertex_const_handle vertex( SHalfloop_const_handle l) const
-  { return l->incident_sface_->center_vertex_; }
+  { return l->incident_sface()->center_vertex(); }
   SFace_const_handle sface( SHalfloop_const_handle l) const
-  { return l->incident_sface_; }
+  { return l->incident_sface(); }
   /* SHalfloop queries */
 
   Vertex_const_handle vertex(SFace_const_handle f) const
-  { return f->center_vertex_; }
+  { return f->center_vertex(); }
   Volume_const_handle volume(SFace_const_handle f) const
-  { return f->incident_volume_; }
-  /* SHalffacet queries */
+  { return f->incident_volume(); }
+  /* SFace queries */
 
   Halffacet_const_handle twin(Halffacet_const_handle f) const
-  { return f->twin_; }
+  { return f->twin(); }
   Volume_const_handle volume(Halffacet_const_handle f) const
-    { return f->volume_; }
+    { return f->volume(); }
   /* Halffacet queries */
 
   SFace_const_handle adjacent_sface(Halffacet_const_handle f) const {
     Halffacet_cycle_const_iterator fc(f->facet_cycles_begin());
-    CGAL_nef3_assertion( fc != f->facet_cycles_end());
+    CGAL_assertion( fc != f->facet_cycles_end());
     SHalfedge_const_handle se;
     if ( assign(se, fc) ) { 
-      CGAL_nef3_assertion( facet(se) == f);
-      CGAL_nef3_assertion( sface(se) != SFace_const_handle());
-      CGAL_nef3_assertion( volume(sface(twin(se))) == volume(f));
+      CGAL_assertion( facet(se) == f);
+      CGAL_assertion( sface(se) != SFace_const_handle());
+      CGAL_assertion( volume(sface(twin(se))) == volume(f));
       return sface(twin(se));
     } 
     else 
-      CGAL_nef3_assertion_msg( 0, "Facet outer cycle entry point"
+      CGAL_assertion_msg( 0, "Facet outer cycle entry point"
 			     "is not an SHalfedge? ");
     return SFace_const_handle(); // never reached
   }
 
-  // attributes::
   const Point_3& point(Vertex_const_handle v) const
   { return v->point(); }
-  const Sphere_point& tmp_point(Halfedge_const_handle e) const
-  { return e->tmp_point(); }
-  Sphere_point calc_point(Halfedge_const_handle e) const
-  { CGAL_nef3_assertion(twin(e)!=Halfedge_const_handle());
-    Point_3 ps(point(source(e)));
-    Point_3 pt(point(target(e)));
-    return Sphere_point(pt-ps);
-  }
+
+  Vector_3& vector(Halfedge_const_handle e) const
+  { return Vector_3(e->point_); }
 
   Segment_3 segment(Halfedge_const_handle e) const
   { return Segment_3(point(source(e)),
@@ -219,9 +204,6 @@ public:
 
   const Plane_3 plane(Halffacet_const_handle f) const
   { return f->plane(); }
-
-  Vector_3 orthogonal_vector(Halffacet_const_handle f) const
-  { return f->plane().orthogonal_vector(); }
 
   Mark mark(Vertex_const_handle v) const
   { return v->mark(); }
@@ -236,31 +218,30 @@ public:
   bool is_boundary_object(H h) const
   { return sncp()->is_boundary_object(h); }
 
-  bool is_infbox_vertex( Vertex_const_handle v) const {
-    return !Infi_box::is_standard(v->point());
-  }
-
-  /* returns true if |f| is part of the infinimaximal box.*/
-  bool is_infbox_facet(Halffacet_const_handle f) const {
-    return !Infi_box::is_standard(f->plane());
-  }
-
   template <typename Visitor>
   void visit_shell_objects(SFace_const_handle f, Visitor& V) const;
 
-  Vertex_const_iterator   vertices_begin()   { return sncp()->vertices_begin(); }
-  Vertex_const_iterator   vertices_end()     { return sncp()->vertices_end(); }
-  Halfedge_const_iterator halfedges_begin()  { return sncp()->halfedges_begin(); }
-  Halfedge_const_iterator halfedges_end()    { return sncp()->halfedges_end(); }
-  Halffacet_const_iterator halffacets_begin(){ return sncp()->halffacets_begin(); }
-  Halffacet_const_iterator halffacets_end()  { return sncp()->halffacets_end(); }
-  Volume_const_iterator   volumes_begin()    { return sncp()->volumes_begin(); }
-  Volume_const_iterator   volumes_end()      { return sncp()->volumes_end(); }
+  Vertex_const_iterator   vertices_begin() const { 
+    return sncp()->vertices_begin(); }
+  Vertex_const_iterator   vertices_end()   const { 
+    return sncp()->vertices_end(); }
+  Halfedge_const_iterator halfedges_begin()const {
+    return sncp()->halfedges_begin(); }
+  Halfedge_const_iterator halfedges_end()  const { 
+    return sncp()->halfedges_end(); }
+  Halffacet_const_iterator halffacets_begin() const { 
+    return sncp()->halffacets_begin(); }
+  Halffacet_const_iterator halffacets_end() const { 
+    return sncp()->halffacets_end(); }
+  Volume_const_iterator   volumes_begin() const   { 
+    return sncp()->volumes_begin(); }
+  Volume_const_iterator   volumes_end()   const   { 
+    return sncp()->volumes_end(); }
 
-  Shell_entry_const_iterator shells_begin(Volume_const_handle c) {
+  Shell_entry_const_iterator shells_begin(Volume_const_handle c) const {
     return c->shells_begin();
   }
-  Shell_entry_const_iterator shells_end(Volume_const_handle c) {
+  Shell_entry_const_iterator shells_end(Volume_const_handle c) const {
     return c->shells_end();
   }
 
@@ -276,6 +257,18 @@ public:
   { return sncp()->number_of_facets();}
   Size_type number_of_volumes() const   
   { return sncp()->number_of_volumes();}
+
+  static bool is_standard(const Vertex_const_handle v) {
+    return Infi_box::is_standard(v->point());
+  }
+  static bool is_standard(const Halffacet_const_handle f) {
+    return Infi_box::is_standard(f->plane());
+  }
+  static bool standard_kernel() { return Infi_box::standard_kernel(); }
+  static bool extended_kernel() { return Infi_box::extended_kernel(); }
+  static void set_size_of_infimaximal_box(const typename Infi_box::NT& size) { 
+    Infi_box::set_size_of_infimaximal_box(size); 
+  }
 };
 
 template <typename EW>
@@ -299,7 +292,7 @@ visit_shell_objects(SFace_const_handle f, Visitor& V) const
       FacetCandidates.pop_front();
       V.visit(f); // report facet
       Halffacet_cycle_const_iterator fc;
-      CGAL_nef3_forall_facet_cycles_of(fc,f) {
+      CGAL_forall_facet_cycles_of(fc,f) {
         SHalfedge_handle e;
 	SHalfloop_handle l;
         if ( assign(e,fc) ) {
@@ -315,7 +308,7 @@ visit_shell_objects(SFace_const_handle f, Visitor& V) const
           if ( DoneSF[sface(ll)] ) continue;
           SFaceCandidates.push_back(sface(ll));
           DoneSF[sface(ll)] = true;
-        } else CGAL_nef3_assertion_msg(0,"Damn wrong handle.");
+        } else CGAL_assertion_msg(0,"Damn wrong handle.");
       }
     }
     if ( !SFaceCandidates.empty() ) {
@@ -328,13 +321,13 @@ visit_shell_objects(SFace_const_handle f, Visitor& V) const
       //      SVertex_const_handle sv;
       SM_const_decorator SD(vertex(sf));
       /*      
-      CGAL_nef3_forall_svertices(sv,SD){
+      CGAL_forall_svertices(sv,SD){
 	if(SD.is_isolated(sv) && !DoneSV[sv])
 	  V.visit(sv);
       }
       */
       SFace_cycle_const_iterator fc;
-      CGAL_nef3_forall_sface_cycles_of(fc,sf) {
+      CGAL_forall_sface_cycles_of(fc,sf) {
         SVertex_handle v;
 	SHalfedge_handle e;
 	SHalfloop_handle l;
@@ -372,7 +365,7 @@ visit_shell_objects(SFace_const_handle f, Visitor& V) const
           Halffacet_const_handle f = facet(twin(l));
           if ( DoneF[f] ) continue;
           FacetCandidates.push_back(f);  DoneF[f] = true;
-        } else CGAL_nef3_assertion_msg(0,"Damn wrong handle.");
+        } else CGAL_assertion_msg(0,"Damn wrong handle.");
       }
     }
   }

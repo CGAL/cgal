@@ -21,18 +21,16 @@
 #define CGAL_SNC_SM_EXPLORER_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Nef_3/SNC_SM_const_decorator.h>
+#include <CGAL/Nef_S2/SM_const_decorator.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template <typename SMCDEC>
 class SNC_SM_explorer : public SMCDEC {
   typedef SMCDEC                            Base;
-  typedef typename Base::SNC_structure      Refs_;
   typedef SNC_SM_explorer<SMCDEC>           Self;
   //  typedef typename Base::Kernel    Kernel;
   //  typedef typename Kernel::Point_3 Point_3;
-  typedef typename Base::Vertex_const_handle  Vertex_const_handle;
 
  public:
   SNC_SM_explorer(const Base& E) : Base(E) {}
@@ -40,11 +38,6 @@ class SNC_SM_explorer : public SMCDEC {
     Base::operator=(E); 
     return *this;
   }
-
-  //  Point_3 box_point(Vertex_const_handle v) const {
-  //    return Infi_box::box_point(point(v));
-  //  }
-
 };
 
 CGAL_END_NAMESPACE

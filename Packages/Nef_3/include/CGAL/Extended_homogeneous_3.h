@@ -25,12 +25,7 @@
 // #include <CGAL/Line_3_Line_3_intersection.h> 
 #include <CGAL/squared_distance_3.h> 
 #include <CGAL/number_utils.h>
-#if (defined( _MSC_VER) && (_MSC_VER <= 1200))
-#include <CGAL/Nef_2/Polynomial_MSC.h>
-#define Polynomial Polynomial_MSC
-#else
-#include <CGAL/Nef_2/Polynomial.h>
-#endif
+#include <CGAL/Nef_2/Nef_polynomial.h>
 #undef _DEBUG
 #define _DEBUG 5
 #include <CGAL/Nef_3/debug.h>
@@ -41,11 +36,11 @@ template <class T> class Extended_homogeneous_3;
 
 template <class RT_>
 class Extended_homogeneous_3 : public 
-  CGAL::Homogeneous< CGAL::Polynomial<RT_> > { 
+  CGAL::Homogeneous< CGAL::Nef_polynomial<RT_> > { 
 
 public:
 
-  typedef CGAL::Homogeneous< CGAL::Polynomial<RT_> >  Base;
+  typedef CGAL::Homogeneous< CGAL::Nef_polynomial<RT_> >  Base;
   typedef Extended_homogeneous_3<RT_> Self;
 
   typedef CGAL::Homogeneous<RT_>                Standard_kernel;
@@ -468,7 +463,5 @@ public:
 
 };
 
-
-#undef Polynomial
 CGAL_END_NAMESPACE
 #endif // CGAL_EXTENDED_HOMOGENEOUS_3_H

@@ -149,7 +149,7 @@ int compare_xy(const Point_2& p1, const Point_2& p2) const
     CGAL::compare_lexicographically_xyz(p1,p2)); }
 
 Point_2 intersection(const Segment_2& s1, const Segment_2& s2) const
-{ CGAL_nef3_assertion(target(s1)==target(s2)); 
+{ CGAL_assertion(target(s1)==target(s2)); 
   return target(s1); }
 
 bool left_turn(const Point_3& p1, const Point_3& p2, const Point_3& p3) const
@@ -190,7 +190,7 @@ public:
   typedef typename SNC_structure::SFace_cycle_iterator SFace_cycle_iterator;
   typedef typename SNC_structure::Halffacet_cycle_iterator Halffacet_cycle_iterator;
   typedef typename SNC_structure::Shell_entry_iterator Shell_entry_iterator;
-  typedef typename SNC_structure::SObject_handle SObject_handle;
+  typedef typename SNC_structure::Object_handle Object_handle;
   typedef typename SNC_structure::Point_3 Point_3;
   typedef typename SNC_structure::Plane_3 Plane_3;
   typedef typename SNC_structure::Mark Mark;
@@ -202,8 +202,8 @@ public:
     SHalfedge_around_facet_const_circulator;
 #endif
 
-  typedef typename std::list<SObject_handle>::iterator 
-    SObject_list_iterator;
+  typedef typename std::list<Object_handle>::iterator 
+    Object_list_iterator;
 
   typedef Vertex_point<Point_3,Vertex_handle>  Vertex_point;
   typedef std::pair<Vertex_point,Vertex_point> Vertex_segment;
@@ -225,7 +225,7 @@ public:
   { return f_->facet_cycles_end(); }
 
   void create_facet_objects(const Plane_3& h,
-    SObject_list_iterator start, SObject_list_iterator end) const;
+    Object_list_iterator start, Object_list_iterator end) const;
 
 
 protected:
@@ -259,7 +259,7 @@ protected:
     SHalfedge_handle e_min = MinimalEdge[fc];
     SHalfedge_handle e_below = 
       Edge_of[geninfo<unsigned>::access(info(target(e_min)))];
-    CGAL_nef3_assertion( e_below != SHalfedge_handle() );
+    CGAL_assertion( e_below != SHalfedge_handle() );
     Halffacet_handle f = facet(e_below);
     if ( f != Halffacet_handle() ) return f; // has already a facet 
     // e_below also has no facet
@@ -305,7 +305,7 @@ protected:
 template <typename SNC_>
 void SNC_FM_decorator<SNC_>::
 create_facet_objects(const Plane_3& plane_supporting_facet,
-  SObject_list_iterator start, SObject_list_iterator end) const
+  Object_list_iterator start, Object_list_iterator end) const
 { TRACEN(">>>>>create_facet_objects");
 
   CGAL::Unique_hash_map<SHalfedge_handle,int> FacetCycle(-1);
@@ -355,7 +355,7 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
     else if ( CGAL::assign(l,*start) ) 
     { SHalfloops.push_back(l); TRACEN("  appending loop " << point(vertex(l))); 
       Segments.push_back(segment(l)); }
-    else CGAL_nef3_assertion_msg(0,"Damn wrong handle.");
+    else CGAL_assertion_msg(0,"Damn wrong handle.");
   }
 
   /* We iterate all shalfedges and assign a number for each facet
@@ -364,7 +364,7 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
      |MinimalEdge[c]|. */
 
   int i=0; 
-  CGAL_nef3_forall_iterators(eit,SHalfedges) { e = *eit;
+  CGAL_forall_iterators(eit,SHalfedges) { e = *eit;
     if ( FacetCycle[e] >= 0 ) continue; // already assigned
     SHalfedge_around_facet_circulator hfc(e),hend(hfc);
     SHalfedge_handle e_min = e;
@@ -397,7 +397,7 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
     if ( G.left_turn(p1,p2,p3) ) { 
       Halffacet_handle f = sncp()->new_halffacet_pair(plane_supporting_facet);
       link_as_facet_cycle(e,f); link_as_facet_cycle(twin(e),twin(f)); 
-      mark(f) = mark(e);
+      mark(f) = mark(twin(f)) = mark(e);
       TRACEN("  creating new facet object "<<&*f<<" bd "<<&*e);
     }
   }
@@ -418,7 +418,7 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
   if(SHalfloops.size() > 0)
     do_sweep = true;
 
-  CGAL_nef3_forall_iterators(eit,SHalfedges) { 
+  CGAL_forall_iterators(eit,SHalfedges) { 
     if ( facet(*eit) == Halffacet_handle() ) {
       do_sweep = true;
       break;
@@ -432,7 +432,7 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
   Halffacet_sweep FS(Halffacet_sweep::INPUT(
     Segments.begin(),Segments.end()), O, G); FS.sweep();
 
-  CGAL_nef3_forall_iterators(eit,SHalfedges) { 
+  CGAL_forall_iterators(eit,SHalfedges) { 
     e=*eit;
     SHalfedge_handle e_below = Edge_of[geninfo<unsigned>::access(info(vertex(e)))];
     TRACE(debug(e) << " has edge below ");
@@ -441,21 +441,21 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
     TRACEN("");
   }
   
-  CGAL_nef3_forall_iterators(lit,SHalfloops) { 
+  CGAL_forall_iterators(lit,SHalfloops) { 
     l=*lit;
     SHalfedge_handle e_below = Edge_of[geninfo<unsigned>::access(info(vertex(l)))];  
     TRACEN(point(vertex(l)) << " has edge below " << debug(e_below));
   }
 
   
-  CGAL_nef3_forall_iterators(eit,SHalfedges) { e=*eit;
+  CGAL_forall_iterators(eit,SHalfedges) { e=*eit;
   if ( facet(e) != Halffacet_handle() ) continue;
     TRACEN("  linking hole "<<debug(e));
     Halffacet_handle f = determine_facet(e,MinimalEdge,FacetCycle,Edge_of);
     link_as_facet_cycle(e,f); link_as_facet_cycle(twin(e),twin(f));
   }
 
-  CGAL_nef3_forall_iterators(lit,SHalfloops) { l=*lit;
+  CGAL_forall_iterators(lit,SHalfloops) { l=*lit;
     SHalfedge_handle e_below = 
       Edge_of[geninfo<unsigned>::access(info(vertex(l)))];
     
@@ -465,7 +465,7 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
     TRACEN("next    "  << debug(next(next(e_below))));
     TRACEN("next    "  << debug(next(next(next(e_below)))));
     TRACEN("next    "  << debug(next(next(next(next(e_below))))));
-    CGAL_nef3_assertion( e_below != SHalfedge_handle() );
+    CGAL_assertion( e_below != SHalfedge_handle() );
     link_as_interior_loop(l,facet(e_below));
     link_as_interior_loop(twin(l),twin(facet(e_below)));
   }

@@ -2,7 +2,7 @@
 #define SNC_DECORATOR_TRAITS_H
 
 template <class Refs_>
-class SNC_decorator_traits {
+class SNC_decorator_traits : public SM_decorator_traits<Refs_> {
   typedef Refs_ Refs;
  public:
   typedef typename Refs::Vertex_handle Vertex_handle;

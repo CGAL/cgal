@@ -34,6 +34,8 @@ struct binop_intersection_test_segment_tree {
   typedef typename SNC_decorator::SHalfedge_around_facet_circulator
                                   SHalfedge_around_facet_circulator;
 
+  typedef CGAL::SNC_const_decorator<SNC_structure>  Const_decorator;
+
   class Nef_box : public Box_intersection_d::Box_d< double, 3 >
   {
     Halffacet_handle f;
@@ -51,7 +53,7 @@ struct binop_intersection_test_segment_tree {
 
   public:
     Nef_box( Halffacet_handle f ) : f(f), type(FACET) {
-      if( SNC_decorator::is_infbox_facet( f ) ) {
+      if( !Const_decorator::is_standard( f ) ) {
         init( true );
       } else {
         init( false );
@@ -68,14 +70,14 @@ struct binop_intersection_test_segment_tree {
             extend( p );
           }
         } else
-          CGAL_nef3_assertion_msg(0, "is facet first cycle a SHalfloop?");
+          CGAL_assertion_msg(0, "is facet first cycle a SHalfloop?");
       }
     }
 
     Nef_box( Halfedge_handle e ) :  e(e), type(EDGE)
     {
-      if( SNC_decorator::is_infbox_vertex( SNC_decorator::source( e ) ) ||
-          SNC_decorator::is_infbox_vertex( SNC_decorator::target( e ) ) )
+      if(!Const_decorator::is_standard( SNC_decorator::source( e ) ) ||
+         !Const_decorator::is_standard( SNC_decorator::target( e ) ) )
       {
         init( true );
       } else {
@@ -197,8 +199,8 @@ struct binop_intersection_test_segment_tree {
 
     TRACEN("start edge0 edge1");
     Bop_edge0_edge1_callback<Callback> callback_edge0_edge1( is, cb0 );
-    CGAL_nef3_forall_edges( e0, sncp)  a.push_back( Nef_box( e0 ) );
-    CGAL_nef3_forall_edges( e1, snc1i) b.push_back( Nef_box( e1 ) );
+    CGAL_forall_edges( e0, sncp)  a.push_back( Nef_box( e0 ) );
+    CGAL_forall_edges( e1, snc1i) b.push_back( Nef_box( e1 ) );
     box_intersection_d( a.begin(), a.end(), b.begin(), b.end(),
                         callback_edge0_edge1);
     a.clear();
@@ -206,8 +208,8 @@ struct binop_intersection_test_segment_tree {
 
     TRACEN("start edge0 face1");
     Bop_edge0_face1_callback<Callback> callback_edge0_face1( is, cb0 );
-    CGAL_nef3_forall_halfedges( e0, sncp ) a.push_back( Nef_box( e0 ) );
-    CGAL_nef3_forall_facets( f1, snc1i)    b.push_back( Nef_box( f1 ) );
+    CGAL_forall_halfedges( e0, sncp ) a.push_back( Nef_box( e0 ) );
+    CGAL_forall_facets( f1, snc1i)    b.push_back( Nef_box( f1 ) );
     box_intersection_d( a.begin(), a.end(), b.begin(), b.end(),
                         callback_edge0_face1);
     a.clear();
@@ -215,8 +217,8 @@ struct binop_intersection_test_segment_tree {
 
     TRACEN("start edge1 face0");
     Bop_edge1_face0_callback<Callback> callback_edge1_face0( is, cb1 );
-    CGAL_nef3_forall_edges( e1, snc1i)  a.push_back( Nef_box( e1 ) );
-    CGAL_nef3_forall_facets( f0, sncp ) b.push_back( Nef_box( f0 ) );
+    CGAL_forall_edges( e1, snc1i)  a.push_back( Nef_box( e1 ) );
+    CGAL_forall_facets( f0, sncp ) b.push_back( Nef_box( f0 ) );
     box_intersection_d( a.begin(), a.end(), b.begin(), b.end(),
                         callback_edge1_face0);
   }

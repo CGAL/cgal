@@ -30,13 +30,10 @@
 #include <CGAL/Nef_3/SNC_constructor.h>
 #include <CGAL/Nef_3/SNC_io_parser.h>
 //#include <CGAL/Nef_3/SNC_walker.h>
-#ifdef CGAL_NEF3_VISUALIZOR
-#include <CGAL/Nef_3/SNC_visualizor_OGL.h>
-#endif // CGAL_NEF3_VISUALIZOR
-#include <CGAL/Nef_3/SNC_SM_decorator.h>
-#include <CGAL/Nef_3/SNC_SM_const_decorator.h>
+#include <CGAL/Nef_S2/SM_decorator.h>
+#include <CGAL/Nef_S2/SM_const_decorator.h>
 #include <CGAL/Nef_3/SNC_SM_overlayer.h>
-#include <CGAL/Nef_3/SNC_SM_point_locator.h>
+#include <CGAL/Nef_S2/SM_point_locator.h>
 #include <CGAL/Nef_3/SNC_SM_io_parser.h>
 #include <CGAL/Nef_3/SNC_SM_explorer.h>
 
@@ -82,19 +79,17 @@ class Nef_polyhedron_3_rep
   //typedef CGAL::SNC_walker<SNC_structure>              SNC_walker;
   typedef CGAL::SNC_io_parser<SNC_structure>           SNC_io_parser;
   typedef CGAL::SNC_point_locator<SNC_structure>       SNC_point_locator;
+  typedef CGAL::SNC_simplify<SNC_structure>            SNC_simplify;
 #ifdef CGAL_NEF3_POINT_LOCATOR_NAIVE
   typedef CGAL::SNC_point_locator_naive<SNC_structure> SNC_point_locator_default;
 #else
   typedef CGAL::SNC_point_locator_by_spatial_subdivision<SNC_structure> SNC_point_locator_default;
 #endif
 
-#ifdef CGAL_NEF3_VISUALIZOR
-  typedef CGAL::SNC_visualizor_OGL<SNC_structure>      SNC_visualizor;
-#endif // CGAL_NEF3_VISUALIZOR
-  typedef CGAL::SNC_SM_decorator<SNC_structure>        SM_decorator;
-  typedef CGAL::SNC_SM_const_decorator<SNC_structure>  SM_const_decorator;
-  typedef CGAL::SNC_SM_overlayer<SNC_structure>        SM_overlayer;
-  typedef CGAL::SNC_SM_point_locator<SNC_structure>    SM_point_locator;
+  typedef CGAL::SM_decorator<SNC_structure>        SM_decorator;
+  typedef CGAL::SM_const_decorator<SNC_structure>  SM_const_decorator;
+  typedef CGAL::SNC_SM_overlayer<SM_decorator>        SM_overlayer;
+  typedef CGAL::SM_point_locator<SNC_structure>    SM_point_locator;
   typedef CGAL::SNC_SM_io_parser<SNC_structure>        SM_io_parser;
 
 #ifdef CGAL_NEF3_SM_VISUALIZOR
@@ -171,14 +166,12 @@ protected:
   typedef typename Nef_rep::SNC_point_locator_default 
     SNC_point_locator_default;
 
-#ifdef CGAL_NEF3_VISUALIZOR
-  typedef typename Nef_rep::SNC_visualizor      SNC_visualizor;
-#endif // CGAL_NEF3_VISUALIZOR
   typedef typename Nef_rep::SM_decorator        SM_decorator;
   typedef typename Nef_rep::SM_const_decorator  SM_const_decorator;
   typedef typename Nef_rep::SM_overlayer        SM_overlayer;
   typedef typename Nef_rep::SM_point_locator    SM_point_locator;
   typedef typename Nef_rep::SM_io_parser        SM_io_parser;
+  typedef typename Nef_rep::SNC_simplify        SNC_simplify;
 #ifdef CGAL_NEF3_SM_VISUALIZOR
   typedef typename Nef_rep::SM_visualizor       SM_visualizor;
 #endif // CGAL_NEF3_SM_VISUALIZOR
@@ -316,7 +309,7 @@ protected:
     build_external_structure();
     simplify();
     set_snc(snc());
-    CGAL_nef3_assertion(orientation() == 1);
+    //    CGAL_assertion(orientation() == 1);
   }
   
   Nef_polyhedron_3( const char* filename, 
@@ -347,6 +340,7 @@ protected:
     pl()->initialize(&snc());
   }
 
+ protected:  
   template <class HDS>
   class Build_polyhedron : public CGAL::Modifier_base<HDS> {
     
@@ -365,7 +359,7 @@ protected:
 
 	TRACEN("Build_polyhedron: visit facet " << D.plane(opposite_facet));
  
-	CGAL_nef3_assertion(Infi_box::is_standard(D.plane(opposite_facet)));
+	CGAL_assertion(Infi_box::is_standard(D.plane(opposite_facet)));
 	
 	SHalfedge_handle se;
 	Halffacet_cycle_iterator fc;
@@ -405,7 +399,7 @@ protected:
       Polyhedron_incremental_builder_3<HDS> B(hds, true);
 
       int skip_volumes;
-      if(Infi_box::extended_Kernel()) {
+      if(Infi_box::extended_kernel()) {
 	B.begin_surface(D.number_of_vertices()-8, 
 			D.number_of_facets()-6,
 			D.number_of_edges()-12);
@@ -420,7 +414,7 @@ protected:
       
       int vertex_index = 0;
       Vertex_iterator v;
-      CGAL_nef3_forall_vertices(v,snc) {
+      CGAL_forall_vertices(v,snc) {
 	if(Infi_box::is_standard(v->point())) {
 	  VI[v]=vertex_index++;
 	  B.add_vertex(v->point());
@@ -429,14 +423,14 @@ protected:
       
       Visitor V(B,D,VI);
       Volume_handle c;
-      CGAL_nef3_forall_volumes(c,snc)
+      CGAL_forall_volumes(c,snc)
 	if(skip_volumes-- <= 0)
 	  D.visit_shell_objects(SFace_handle(c->shells_begin()),V);
       B.end_surface();
     }
 
   };
-  
+
   int orientation() {
     // Function does not work correctly with every Nef_polyhedron. 
     // It works correctly if v_max is 2-manifold
@@ -451,19 +445,20 @@ protected:
     SNC_decorator D(snc());
     Vertex_handle v_max = D.vertices_begin();
     Vertex_handle vh;
-    CGAL_nef3_forall_vertices(vh, D) {
-      if ( D.point(vh).z() > D.point(v_max).z())
+    CGAL_forall_vertices(vh, D) {
+      if (Infi_box::is_standard(D.point(vh)) && 
+	  D.point(vh).z() > D.point(v_max).z())
 	v_max = vh;
     }
     SM_decorator SD(v_max);
 
     // Add up z-coord. of all normalized normal vectors of the incident facets
     
-    double z=0.0;
+    double z=1.0;
     bool first = true;
     SFace_handle sf;
-    CGAL_nef3_forall_sfaces(sf, SD) {
-      if(D.volume(sf) != D.volumes_begin()) continue;
+    CGAL_forall_sfaces(sf, SD) {
+      if(D.volume(sf) != Infi_box::getNirvana(snc())) continue;
       if(!first) return 0; // orientation can't be decided via v_max
       SHalfedge_around_sface_circulator estart(sf->sface_cycles_begin()), 
 	                                eend(estart);
@@ -479,13 +474,12 @@ protected:
     }
     
     return sign(z);
-    
-
   }
+
+ public:
 
   typedef typename Polyhedron::HalfedgeDS HalfedgeDS;
   void convert_to_Polyhedron(Polyhedron& P) {
-       
     CGAL_precondition(is_simple());
     Build_polyhedron<HalfedgeDS> bp(snc());    
     P.delegate(bp);
@@ -509,17 +503,17 @@ protected:
   bool is_simple() {
 
     Halfedge_iterator e;
-    CGAL_nef3_forall_edges(e,snc())
+    CGAL_forall_edges(e,snc())
       if(!is_edge_2manifold(e))
 	return false;
 
     Vertex_iterator v;
-    CGAL_nef3_forall_vertices(v,snc())
+    CGAL_forall_vertices(v,snc())
       if(!is_vertex_2manifold(v))
 	return false;
 
     Halffacet_iterator f;
-    CGAL_nef3_forall_halffacets(f,snc())
+    CGAL_forall_halffacets(f,snc())
       if(!is_facet_simple(f))
 	return false;
 
@@ -563,7 +557,7 @@ protected:
     
     bool found_first = false;
     Halffacet_cycle_iterator it; 
-    CGAL_nef3_forall_facet_cycles_of(it,f)
+    CGAL_forall_facet_cycles_of(it,f)
       if (found_first || !it.is_shalfedge())
 	return false;
       else
@@ -573,16 +567,7 @@ protected:
   }
 
  public:
-
-  void visualize() { 
-#ifdef CGAL_NEF3_VISUALIZOR
-    SNC_visualizor sncv( snc());
-    sncv.draw();
-    //OGL::polyhedra_.back().debug();
-    OGL::start_viewer();
-#endif // CGAL_NEF3_VISUALIZOR
-  }
-
+   
   void clear(Content space = EMPTY)
     { *this = Nef_polyhedron_3(space, pl->clone()); }
   /*{\Mop makes |\Mvar| the empty set if |space == EMPTY| and the
@@ -627,7 +612,8 @@ protected:
   /*{\Moperations 4 3 }*/
 
   void simplify() {
-    bool simplified = snc().simplify();
+    SNC_simplify simp(snc());
+    bool simplified = simp.simplify();
     TRACEN( "simplify(): structure simplified? "<<simplified);
     
     if( simplified) {
@@ -642,9 +628,9 @@ protected:
       Vertex_iterator v;
       Halfedge_iterator e;
       Halffacet_iterator f;
-      CGAL_nef3_forall_vertices( v, snc()) V[Vertex_handle(v)] = true;
-      CGAL_nef3_forall_halfedges( e, snc()) E[Halfedge_handle(e)] = true;
-      CGAL_nef3_forall_halffacets( f, snc()) F[Halffacet_handle(f)] = true;
+      CGAL_forall_vertices( v, snc()) V[Vertex_handle(v)] = true;
+      CGAL_forall_halfedges( e, snc()) E[Halfedge_handle(e)] = true;
+      CGAL_forall_halffacets( f, snc()) F[Halffacet_handle(f)] = true;
       bool updated = pl()->update( V, E, F);
       TRACEN("simplify(): point locator structure updated? " << updated);
 #else
@@ -655,7 +641,6 @@ protected:
 #endif
     }
   }
-
 
  public:
   void extract_complement();
@@ -720,7 +705,6 @@ protected:
     return res;
   }
 
-
   Nef_polyhedron_3<T> intersection(Nef_polyhedron_3<T>& N1 )
     /*{\Mop returns |\Mvar| $\cap$ |N1|. }*/ {
     TRACEN(" intersection between nef3 "<<&*this<<" and "<<&N1);
@@ -778,7 +762,7 @@ protected:
   operation \emph{complement}. There are also the corresponding
   modification operations |*=,+=,-=,^=|.}*/
 
-  Nef_polyhedron_3<T>  operator*(Nef_polyhedron_3<T>& N1) 
+  Nef_polyhedron_3<T>  operator*(const Nef_polyhedron_3<T>& N1) const 
   { return intersection(N1); }
 
   Nef_polyhedron_3<T>  operator+(Nef_polyhedron_3<T>& N1) 
@@ -845,10 +829,10 @@ protected:
     SNC_decorator deco( snc());
     
     Vertex_iterator vi;
-    CGAL_nef3_forall_vertices( vi, snc()) {
+    CGAL_forall_vertices( vi, snc()) {
       
       TRACEN("transform vertex ");
-      if ( ! deco.is_infbox_vertex(vi)) {
+      if (is_standard(vi)) {
 	vi->point() = vi->point().transform( aff);
 	SM_decorator sdeco(vi);
 	sdeco.transform( linear);
@@ -856,8 +840,8 @@ protected:
     }
 
     Halffacet_iterator fi;
-    CGAL_nef3_forall_halffacets(fi,snc()) {
-      if ( ! deco.is_infbox_facet( fi))
+    CGAL_forall_halffacets(fi,snc()) {
+      if ( deco.is_standard( fi))
         fi->plane() = fi->plane().transform( aff);
     }
 
@@ -870,7 +854,6 @@ protected:
        aff.homogeneous(0,0) != aff.homogeneous(1,1) ||
        aff.homogeneous(0,0) != aff.homogeneous(2,2)) {
 
-      deco.compute_all_marks_of_halfspheres();
       SNC_point_locator* old_pl = pl();
       pl() = pl()->clone();
       pl()->initialize(&snc());
@@ -919,7 +902,7 @@ protected:
   /*{\Mop  returns true iff the object |h| is contained in the set
   represented by |\Mvar|.}*/
     // { SNC_point_locator PL(snc()); return PL.mark(h);} 
-    { CGAL_nef3_assertion_msg( 0, "not implemented."); }
+    { CGAL_assertion_msg( 0, "not implemented."); }
 
   bool contained_in_boundary(Object_handle h) const
   /*{\Mop  returns true iff the object |h| is contained in the $2$-skeleton
@@ -939,12 +922,6 @@ protected:
     CGAL_assertion( pl() != NULL);
     return pl()->locate(p);
   }
-
-  //EW_explorer explorer() const // not implemented, replaced by decorator?
-  /*{\Mop returns a decorator object which allows read-only access of
-  the underlying three-dimensional subdivision structure. 
-  See the manual page |EW_explorer| for its usage.}*/
-  //{ return EW_explorer(snc,EK); }
 
   /*{\Mimplementation Nef polyhedra are implemented on top of an
   extended Wuerzburg structure data structure (EWS) and use linear
@@ -1009,8 +986,9 @@ Nef_polyhedron_3( Content space, SNC_point_locator* _pl) {
   TRACEN("construction from empty or space.");
   SNC_structure rsnc;
   empty_rep();
+  set_snc(snc());
   pl() = _pl;
-  if(Infi_box::extended_Kernel()) {
+  if(Infi_box::extended_kernel()) {
     initialize_infibox_vertices(space);
     build_external_structure();
   } else {
@@ -1025,6 +1003,7 @@ Nef_polyhedron_3<T>::
 Nef_polyhedron_3(const Plane_3& h, Boundary b, SNC_point_locator* _pl) {
   TRACEN("construction from plane "<<h);
   empty_rep();
+  set_snc(snc());
   SNC_constructor C(snc(), pl());
   Infi_box::create_vertices_of_box_with_plane(C,h,(b==INCLUDED));
   pl() = _pl;
@@ -1036,7 +1015,7 @@ Nef_polyhedron_3<T>::
 Nef_polyhedron_3( const SNC_structure& W, SNC_point_locator* _pl, 
 		  bool clone_pl,
 		  bool clone_snc) {
-  CGAL_nef3_assertion( clone_snc == true || clone_pl == false);
+  CGAL_assertion( clone_snc == true || clone_pl == false);
   // TODO: granados: define behavior when clone=false
   //  TRACEN("construction from an existing SNC structure (clone="<<clone<<")"); 
   copy_on_write();
@@ -1058,19 +1037,17 @@ void Nef_polyhedron_3<T>::extract_complement() {
   if( is_shared()) clone_rep();
   SNC_decorator D(snc());
   Vertex_iterator v;
-  CGAL_nef3_forall_vertices(v,D){
+  CGAL_forall_vertices(v,D){
     D.mark(v) = !D.mark(v); 
     SM_decorator SM(v);
     SM.extract_complement();
-    //    SM.mark_of_halfsphere(-1) = !SM.mark_of_halfsphere(-1);    
-    //    SM.mark_of_halfsphere(+1) = !SM.mark_of_halfsphere(+1);    
   }
   Halffacet_iterator f;
-  CGAL_nef3_forall_facets(f,D) D.mark(f) = !D.mark(f); 
+  CGAL_forall_halffacets(f,D) D.mark(f) = !D.mark(f); 
  
   Volume_iterator c;
-  CGAL_nef3_forall_volumes(c,D) 
-    //    if(!(Infi_box::extended_Kernel && c==D.volumes_begin()))
+  CGAL_forall_volumes(c,D) 
+    //    if(!(Infi_box::extended_kernel && c==D.volumes_begin()))
       D.mark(c) = !D.mark(c);
 }
 
@@ -1081,13 +1058,13 @@ void Nef_polyhedron_3<T>::extract_interior() {
   if (is_shared()) clone_rep();
   SNC_decorator D(snc());
   Vertex_iterator v;
-  CGAL_nef3_forall_vertices(v,D){
+  CGAL_forall_vertices(v,D){
     D.mark(v) = false;
     SM_decorator SM(v);
     SM.extract_interior();
   }
   Halffacet_iterator f;
-  CGAL_nef3_forall_facets(f,D) D.mark(f) = false;
+  CGAL_forall_halffacets(f,D) D.mark(f) = false;
 
   simplify();
 }
@@ -1098,16 +1075,15 @@ void Nef_polyhedron_3<T>::extract_boundary() {
   if (is_shared()) clone_rep();
   SNC_decorator D(snc());
   Vertex_iterator v;
-  CGAL_nef3_forall_vertices(v,D) {
+  CGAL_forall_vertices(v,D) {
     D.mark(v) = true;
     SM_decorator SM(v);
     SM.extract_boundary();
-    //    SM.mark_of_halfsphere(-1) = SM.mark_of_halfsphere(+1) = false;
   }
   Halffacet_iterator f;
-  CGAL_nef3_forall_facets(f,D) D.mark(f) = true;
+  CGAL_forall_halffacets(f,D) D.mark(f) = true;
   Volume_iterator c;
-  CGAL_nef3_forall_volumes(c,D) D.mark(c) = false;
+  CGAL_forall_volumes(c,D) D.mark(c) = false;
   simplify();
 }
 

@@ -100,7 +100,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
       const Point_3&, const Point_3*> Circulator;
     Halffacet_cycle_const_iterator fc = f->facet_cycles_begin();
     SHalfedge_handle se;
-    CGAL_nef3_assertion( assign( se, fc));
+    CGAL_assertion( assign( se, fc));
     if ( assign( se, fc) ) {
       SHalfedge_around_facet_circulator hfc(se);
       Circulator c(hfc), cp(c), cend(c);
@@ -138,7 +138,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
 	while( c != cend);
       }
       else 
-	CGAL_nef3_assertion_msg(0, "Damn wrong handle.");
+	CGAL_assertion_msg(0, "Damn wrong handle.");
     }
     return false;
   }
@@ -199,7 +199,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
       ws1(cross_product( vt, vs1)), ws2(cross_product( vt, vs2));
     Plane_3 hs1( s1.source(), ws1);
     Object o = intersection(hs1, ls2);
-    CGAL_nef3_assertion(assign( p, o));
+    CGAL_assertion(assign( p, o));
     // since line(s1) and line(s2) are not parallel they intersects in only
     //   one point 
     assign( p ,o);
@@ -215,9 +215,9 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
     TRACEN("-> Intersection triangle - ray");
     TRACEN(" -> Ray: "<<r);
     TRACEN(" -> Triangle: "<<tr);
-    CGAL_nef3_assertion( !r.is_degenerate());
+    CGAL_assertion( !r.is_degenerate());
     Plane_3 h( tr.supporting_plane());
-    CGAL_nef3_assertion( !h.is_degenerate());
+    CGAL_assertion( !h.is_degenerate());
     if( h.has_on( r.source()))
       return false;
     Object o = intersection( h, r);
@@ -234,9 +234,9 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
     TRACEN("-> Intersection triangle - segment");
     TRACEN(" -> Segment: "<<s);
     TRACEN(" -> Triangle: "<<tr);
-    CGAL_nef3_assertion( !s.is_degenerate());
+    CGAL_assertion( !s.is_degenerate());
     Plane_3 h( tr.supporting_plane());
-    CGAL_nef3_assertion( !h.is_degenerate());
+    CGAL_assertion( !h.is_degenerate());
     if( h.has_on( s.source()) || h.has_on( s.target()))
       return false;
     Object o = intersection( h, s);
@@ -300,7 +300,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
     typedef Container_from_circulator<Circulator> Container;
 
     Plane_3 h(plane(f));
-    CGAL_nef3_assertion(h.has_on(p));
+    CGAL_assertion(h.has_on(p));
     Halffacet_cycle_const_iterator fc = f->facet_cycles_begin();
     SHalfedge_handle se;
     Bounded_side outer_bound_pos;
@@ -308,11 +308,11 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
       SHalfedge_around_facet_circulator hfc(se);
       Circulator c(hfc);
       Container ct(c);
-      CGAL_nef3_assertion( !is_empty_range(ct.begin(), ct.end()));
+      CGAL_assertion( !is_empty_range(ct.begin(), ct.end()));
       outer_bound_pos = bounded_side_3(ct.begin(), ct.end(), p, h);
     } 
     else 
-      CGAL_nef3_assertion_msg(0, "is facet first cycle a SHalfloop?");
+      CGAL_assertion_msg(0, "is facet first cycle a SHalfloop?");
     if( outer_bound_pos != CGAL::ON_BOUNDED_SIDE )
       return outer_bound_pos;
     /* The point p is not in the relative interior of the outer face cycle
@@ -335,12 +335,12 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
 	SHalfedge_around_facet_circulator hfc(se);
 	Circulator c(hfc);
 	Container ct(c);
-	CGAL_nef3_assertion( !is_empty_range(ct.begin(), ct.end()));
+	CGAL_assertion( !is_empty_range(ct.begin(), ct.end()));
         inner_bound_pos = bounded_side_3( ct.begin(), ct.end(), 
 					  p, h.opposite());
       } 
       else 
-	CGAL_nef3_assertion_msg(0, "Damn wrong handle.");
+	CGAL_assertion_msg(0, "Damn wrong handle.");
       if( inner_bound_pos != CGAL::ON_UNBOUNDED_SIDE )
 	return opposite(inner_bound_pos);
       /* At this point the point p belongs to relative interior of the facet's

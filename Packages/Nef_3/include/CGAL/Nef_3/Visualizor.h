@@ -39,12 +39,13 @@
 #define _DEBUG 157
 #include <CGAL/Nef_3/debug.h>
 
-#define CGAL_NEF3_MARKED_VERTEX_COLOR 221,221,255
-#define CGAL_NEF3_UNMARKED_VERTEX_COLOR 180,180,214
-#define CGAL_NEF3_MARKED_EDGE_COLOR 221,221,255
-#define CGAL_NEF3_UNMARKED_EDGE_COLOR 180,180,214
-#define CGAL_NEF3_MARKED_FACET_COLOR 221,255,255
-#define CGAL_NEF3_UNMARKED_FACET_COLOR 214,248,248
+#define CGAL_NEF3_MARKED_VERTEX_COLOR 183,232,92
+#define CGAL_NEF3_MARKED_EDGE_COLOR 171,216,86
+#define CGAL_NEF3_MARKED_FACET_COLOR  157,203,81
+
+#define CGAL_NEF3_UNMARKED_VERTEX_COLOR 255,246,124
+#define CGAL_NEF3_UNMARKED_EDGE_COLOR 255,236,94
+#define CGAL_NEF3_UNMARKED_FACET_COLOR 249,215,44
 
 CGAL_BEGIN_NAMESPACE
 namespace OGL {
@@ -108,7 +109,7 @@ namespace OGL {
     operator double_ptr() const 
     { return const_cast<Double_triple&>(*this).coords_; }
     double operator[](unsigned i) 
-    { CGAL_nef3_assertion(i<3); return coords_[i]; }
+    { CGAL_assertion(i<3); return coords_[i]; }
   }; // Double_triple
 
   static std::ostream& operator << (std::ostream& os,
@@ -176,22 +177,22 @@ namespace OGL {
     { return fc_ends_.size(); }
 
     Coord_iterator facet_cycle_begin(unsigned i) 
-    { CGAL_nef3_assertion(i<number_of_facet_cycles());
+    { CGAL_assertion(i<number_of_facet_cycles());
       if (i==0) return coords_.begin();
       else return coords_.begin()+fc_ends_[i]; }
 
     Coord_iterator facet_cycle_end(unsigned i) 
-    { CGAL_nef3_assertion(i<number_of_facet_cycles());
+    { CGAL_assertion(i<number_of_facet_cycles());
       if (i<fc_ends_.size()-1) return coords_.begin()+fc_ends_[i+1];
       else return coords_.end(); }
 
     Coord_const_iterator facet_cycle_begin(unsigned i) const
-    { CGAL_nef3_assertion(i<number_of_facet_cycles());
+    { CGAL_assertion(i<number_of_facet_cycles());
       if (i==0) return coords_.begin();
       else return coords_.begin()+fc_ends_[i]; }
 
     Coord_const_iterator facet_cycle_end(unsigned i) const
-    { CGAL_nef3_assertion(i<number_of_facet_cycles());
+    { CGAL_assertion(i<number_of_facet_cycles());
       if (i<fc_ends_.size()-1) return coords_.begin()+fc_ends_[i+1];
       else return coords_.end(); }
 
@@ -387,17 +388,17 @@ namespace OGL {
     {
       glNewList(object_list_, GL_COMPILE);
       Vertex_iterator v;
-      CGAL_nef3_forall_iterators(v,vertices_) draw(v);
+      CGAL_forall_iterators(v,vertices_) draw(v);
       glEndList();     
 
       glNewList(object_list_+1, GL_COMPILE);
       Edge_iterator e;
-      CGAL_nef3_forall_iterators(e,edges_) draw(e);
+      CGAL_forall_iterators(e,edges_) draw(e);
       glEndList();     
 
       glNewList(object_list_+2, GL_COMPILE);
       Halffacet_iterator f;
-      CGAL_nef3_forall_iterators(f,halffacets_) draw(f);
+      CGAL_forall_iterators(f,halffacets_) draw(f);
       glEndList();
 
       glNewList(object_list_+3, GL_COMPILE); // axes:
@@ -410,7 +411,7 @@ namespace OGL {
     { if (init_) return;
       init_ = true;
       axes_ = false; 
-      object_list_ = glGenLists(4); CGAL_nef3_assertion(object_list_); 
+      object_list_ = glGenLists(4); CGAL_assertion(object_list_); 
       fill_display_lists();
     }
 
@@ -428,9 +429,9 @@ namespace OGL {
                     -(bbox().ymax() + bbox().ymin()) / 2.0,
                     -(bbox().zmax() + bbox().zmin()) / 2.0);
       if ( surface_ ) {
-	glEnable(GL_LIGHTING); 
+	//glEnable(GL_LIGHTING); 
 	glCallList(object_list_+2); // facets
-	glDisable(GL_LIGHTING);
+	//glDisable(GL_LIGHTING);
       }
       // move edges and vertices a bit towards the view-point, 
       // i.e., 1/100th of the unit vector in camera space
@@ -446,15 +447,15 @@ namespace OGL {
       os << "OGL::Polyhedron" << std::endl;
       os << "Vertices:" << std::endl;
       Vertex_iterator v;
-      CGAL_nef3_forall_iterators(v,vertices_) 
+      CGAL_forall_iterators(v,vertices_) 
 	os << "  "<<*v<<", mark="<<v->mark()<<std::endl;
       os << "Edges:" << std::endl;
       Edge_iterator e;
-      CGAL_nef3_forall_iterators(e,edges_) 
+      CGAL_forall_iterators(e,edges_) 
 	os << "  "<<*e<<", mark="<<e->mark()<<std::endl;
       os << "Facets:" << std::endl;
       Halffacet_iterator f;
-      CGAL_nef3_forall_iterators(f,halffacets_) f->debug(); os << std::endl;
+      CGAL_forall_iterators(f,halffacets_) f->debug(); os << std::endl;
       os << std::endl;
     }
 
@@ -485,7 +486,7 @@ namespace OGL {
   double dx = 0;                     // Translation
   double dy = 0;                     // Translation
   double dz = 0;                     // Translation in Z
-  double s  = 0.5;                   // Skalierung
+  double s  = 0.4;                   // Skalierung
   Affine_3    rotation( IDENTITY);   // Rotation
                        
   long double factor_s;              // Umrechnungsfaktor fuer Skalierung
@@ -514,21 +515,21 @@ static void show (int mode)
       s = 0.5;
       rotation = Affine_3( IDENTITY);
       motion_mode = ROTATE;
-      CGAL_nef3_forall_iterators(it,polyhedra_) it->initialize();
+      CGAL_forall_iterators(it,polyhedra_) it->initialize();
       glutPostRedisplay();
       break;
     case AXES:
-      CGAL_nef3_forall_iterators(it,polyhedra_) it->toggle_axes();
+      CGAL_forall_iterators(it,polyhedra_) it->toggle_axes();
       glutPostRedisplay();
       break;
     case BOUNDARY:
-      CGAL_nef3_forall_iterators(it,polyhedra_) it->boundary_on();
-      //CGAL_nef3_forall_iterators(it,polyhedra_) it->draw();
+      CGAL_forall_iterators(it,polyhedra_) it->boundary_on();
+      //CGAL_forall_iterators(it,polyhedra_) it->draw();
       glutPostRedisplay();
       break;
     case SKELETON:
-      CGAL_nef3_forall_iterators(it,polyhedra_) it->skeleton_on();
-      //CGAL_nef3_forall_iterators(it,polyhedra_) it->draw();
+      CGAL_forall_iterators(it,polyhedra_) it->skeleton_on();
+      //CGAL_forall_iterators(it,polyhedra_) it->draw();
       glutPostRedisplay();
       break;
     case PERSP:
@@ -644,7 +645,7 @@ static void initialize_olg()
   glLoadIdentity();
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-
+  /*
   GLfloat light_ambient[4] = { 1.0, 1.0, 1.0, 1.0 };
   GLfloat light_diffuse[] =  { 1.0, 1.0, 1.0, 1.0 };    // white diffuse light 
   GLfloat light_position[] = { 2.0, 3.0, -4.0, 0.0 }; // infinite location
@@ -669,7 +670,7 @@ static void initialize_olg()
   glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mat_diffuse );
   glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular );
   glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, mat_shininess );
-
+  */
   glDepthFunc( GL_LEQUAL);
   glShadeModel( GL_FLAT);
   glEnable(GL_AUTO_NORMAL);
@@ -795,9 +796,9 @@ static void start_viewer()
 // for similar viewer code see Nef_S2/demo/Nef_S2/Nef_polyhedron_S2-demo.C
 // ----------------------------------------------------------------------------
 
-template<typename SNC_explorer>
+template<typename Nef_polyhedron>
 class Visualizor { 
-  typedef typename SNC_explorer::SNC_structure             SNC_structure;
+  typedef typename Nef_polyhedron::SNC_structure           SNC_structure;
   typedef CGAL::SNC_decorator<SNC_structure>               Base;
   typedef CGAL::SNC_FM_decorator<SNC_structure>            FM_decorator;
 
@@ -810,7 +811,6 @@ public:
   typedef typename SNC_structure::Halffacet_cycle_const_iterator Halffacet_cycle_const_iterator;
 
   typedef typename SNC_structure::Object_const_handle Object_const_handle;
-  typedef typename SNC_structure::SObject_const_handle SObject_const_handle; 
   typedef typename SNC_structure::SHalfedge_const_handle SHalfedge_const_handle; 
   typedef typename SNC_structure::SHalfloop_const_handle SHalfloop_const_handle; 
 
@@ -825,6 +825,7 @@ public:
   typedef typename SNC_structure::Mark Mark;
   typedef typename SNC_structure::SHalfedge_around_facet_const_circulator 
                                   SHalfedge_around_facet_const_circulator;
+   
 
   Nef_polyhedron N;
 
@@ -843,7 +844,7 @@ public:
 
   void draw(Vertex_const_handle v) const
   { 
-    Point_3 bp = N.box_point(v);
+    Point_3 bp = N.point(v);
     TRACEN("vertex " << bp);
     ppoly_->push_back(double_point(bp), N.mark(v)); 
   }
@@ -852,7 +853,7 @@ public:
   { 
     Vertex_const_handle s = N.source(e);
     Vertex_const_handle t = N.source(N.twin(e));
-    Segment_3 seg(N.box_point(s),N.box_point(t));
+    Segment_3 seg(N.point(s),N.point(t));
     TRACEN("edge " << seg);
     ppoly_->push_back(double_segment(seg), N.mark(e)); 
   }
@@ -860,18 +861,18 @@ public:
   void draw(Halffacet_const_handle f) const
   { OGL::DFacet g;
     Halffacet_cycle_const_iterator fc; // all facet cycles:
-    CGAL_nef3_forall_facet_cycles_of(fc,f)
+    CGAL_forall_facet_cycles_of(fc,f)
       if ( fc.is_shalfedge() ) { // non-trivial facet cycle
 	g.new_facet_cycle();
 	SHalfedge_const_handle h = fc;
 	SHalfedge_around_facet_const_circulator hc(h), he(hc);
 	CGAL_For_all(hc,he){ // all vertex coordinates in facet cycle
-	  Point_3 sp = N.box_point(N.source(hc));
+	  Point_3 sp = N.point(N.source(hc));
 	      TRACEN(" ");TRACEN("facet" << sp);
 	  g.push_back_vertex(double_point(sp));
 	}
       }
-    Vector_3 v = N.orthogonal_vector(f);
+    Vector_3 v = N.plane(f).orthogonal_vector();
     g.set_normal(CGAL::to_double(v.x()), 
 		 CGAL::to_double(v.y()), 
 		 CGAL::to_double(v.z()), 
@@ -879,15 +880,54 @@ public:
     ppoly_->push_back(g);
   }
 
-  void draw() const
-  { 
+  // Returns the bounding box of the finite vertices of the polyhedron.
+  // Returns $[-1,+1]^3$ as bounding box if no finite vertex exists.
+
+  Bbox_3  bounded_bbox() const {
+    bool first_vertex = true;
+    Bbox_3 bbox( -1.0, -1.0, -1.0, 1.0, 1.0, 1.0);
+    Vertex_const_iterator vi;
+    CGAL_forall_vertices(vi, N) {
+      Point_3 p = vi->point();
+      double x = CGAL::to_double(p.hx());
+      double y = CGAL::to_double(p.hy());
+      double z = CGAL::to_double(p.hz());
+      double w = CGAL::to_double(p.hw());
+      if (N.is_standard(vi)) {
+	if(first_vertex) {
+	  bbox = Bbox_3(x/w, y/w, z/w, x/w, y/w, z/w);
+	  first_vertex = false;
+	} else {
+	  bbox = bbox + Bbox_3(x/w, y/w, z/w, x/w, y/w, z/w);
+	  first_vertex = false;
+	}
+      }
+    }
+    return bbox;
+  }  
+  
+  void set_R(const Bbox_3 bbox) const {
+    if(N.standard_kernel()) return;
+    double size = abs(bbox.xmin());
+    if(size < bbox.xmax()) size = bbox.xmax();
+    if(size < bbox.ymin()) size = bbox.ymin();
+    if(size < bbox.ymax()) size = bbox.ymax();
+    if(size < bbox.zmin()) size = bbox.zmin();
+    if(size < bbox.zmax()) size = bbox.zmax();
+    N.set_size_of_infimaximal_box(size*10);
+    TRACEN("set infi box size to " << size);
+  }
+
+  void draw() const { 
+    Bbox_3 bbox(bounded_bbox());
+    ppoly_->bbox() = bbox;
+    set_R(bbox);
     Vertex_const_iterator v;
-    CGAL_nef3_forall_vertices(v,*N.sncp()) draw(v);
-    ppoly_->bbox() = N.sncp()->bounded_bbox();
+    CGAL_forall_vertices(v,*N.sncp()) draw(v);
     Halfedge_const_iterator e;
-    CGAL_nef3_forall_edges(e,*N.sncp()) draw(e);
+    CGAL_forall_edges(e,*N.sncp()) draw(e);
     Halffacet_const_iterator f;
-    CGAL_nef3_forall_facets(f,*N.sncp()) draw(f);
+    CGAL_forall_facets(f,*N.sncp()) draw(f);
   }
 
 }; // Visualizor

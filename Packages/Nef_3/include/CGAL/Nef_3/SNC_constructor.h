@@ -32,7 +32,7 @@
 #include <CGAL/Nef_3/Pluecker_line_3.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
 #include <CGAL/Nef_3/SNC_SM_overlayer.h>
-#include <CGAL/Nef_3/SNC_SM_point_locator.h>
+#include <CGAL/Nef_S2/SM_point_locator.h>
 #include <CGAL/Nef_3/SNC_FM_decorator.h>
 #include <CGAL/Nef_3/SNC_point_locator.h>
 #ifdef SM_VISUALIZOR
@@ -121,7 +121,7 @@ struct Halfedge_key_lt {
       return (k1.i < k2.i);
     /* previous code: 
        else return CGAL::lexicographically_xyz_smaller(k1.p,k2.p); */
-    Direction l(Vector(CGAL::ORIGIN, k1.D.tmp_point(k1.e)));
+    Direction l(k1.D.vector(k1.e));
     if( k1.i < 0) l = -l;
     return (Direction( k2.p - k1.p) == l); 
   }
@@ -178,11 +178,14 @@ public:
   typedef CGAL::SNC_decorator<SNC_structure>              SNC_decorator;
   typedef CGAL::SNC_point_locator<SNC_structure>          SNC_point_locator;
   typedef CGAL::SNC_FM_decorator<SNC_structure>           FM_decorator;
-  typedef CGAL::SNC_SM_decorator<SNC_structure>           SM_decorator;
-  typedef CGAL::SNC_SM_const_decorator<SNC_structure>     SM_const_decorator;
-  typedef CGAL::SNC_SM_overlayer<SNC_structure>           SM_overlayer;
-  typedef CGAL::SNC_SM_point_locator<SM_const_decorator>  SM_point_locator;
-  typedef CGAL::SNC_SM_const_decorator<SNC_structure>     SM_const_decorator;
+  typedef CGAL::SM_const_decorator<SNC_structure>     SM_const_decorator;
+  typedef CGAL::SM_point_locator<SM_const_decorator>  SM_point_locator;
+  typedef CGAL::SM_const_decorator<SNC_structure>     SM_const_decorator;
+
+  typedef typename SNC_structure::Items                   Items;
+  typedef SNC_sphere_map<Kernel, Items>                   Sphere_map;
+  typedef SM_decorator<Sphere_map>                    SM_decorator;  
+  typedef CGAL::SNC_SM_overlayer<SM_decorator>           SM_overlayer;
 
   typedef typename SNC_structure::Vertex Vertex;
   typedef typename SNC_structure::Halfedge Halfedge;
@@ -226,9 +229,8 @@ public:
   typedef typename SNC_structure::SFace_const_handle SFace_const_handle; 
 
   typedef typename SNC_structure::Object_handle Object_handle;
-  typedef typename SNC_structure::SObject_handle SObject_handle;
 
-  typedef typename SNC_structure::SHalfedge_around_facet_const_circulator SHalfedge_around_facet_const_circulator;
+  typedef typename SNC_structure::SHalfedge_around_facet_circulator SHalfedge_around_facet_circulator;
   typedef typename SNC_structure::SHalfedge_around_facet_circulator SHalfedge_around_facet_circulator;
   typedef typename SNC_structure::SFace_cycle_iterator SFace_cycle_iterator;
   typedef typename SNC_structure::SFace_cycle_const_iterator SFace_cycle_const_iterator;
@@ -253,10 +255,10 @@ public:
   typedef typename SNC_structure::Mark Mark;
   typedef typename SNC_structure::Infi_box Infi_box;
 
-  typedef typename SM_decorator::SHalfedge_around_svertex_const_circulator 
-                                 SHalfedge_around_svertex_const_circulator;
   typedef typename SM_decorator::SHalfedge_around_svertex_circulator 
                                  SHalfedge_around_svertex_circulator;
+  typedef typename SM_const_decorator::SHalfedge_around_svertex_const_circulator 
+                                       SHalfedge_around_svertex_const_circulator;
 
   enum{NORMAL, CORNER, DEGENERATE};
 
@@ -303,7 +305,7 @@ public:
       //      SFace_handle sf = D.source(h)->sfaces_begin();
       //      if( Closed[sf] ) {
       //	if(SD.is_isolated(h)){
-      //	  if(!SD.has_loop()) Closed[sf] = false;
+      //	  if(!SD.has_shalfloop()) Closed[sf] = false;
       //	}
       //	else {
       //	  if(SD.first_out_edge(h) == SD.last_out_edge(h)) Closed[sf] = false;
@@ -396,13 +398,11 @@ public:
 			    bool boundary, bool fmark0) const;
 
   void build_external_structure() {
-    //      SETDTHREAD(43);
-    //    /*debug*/ sncp()->print_statistics();
+    //    SETDTHREAD(19*43*131);
     pair_up_halfedges();
     link_shalfedges_to_facet_cycles();
     categorize_facet_cycles_and_create_facets();
     create_volumes();
-    SETDTHREAD(1);
   }
 }; // SNC_constructor<SNC>
 
@@ -572,7 +572,7 @@ create_frame_point(Point_3 p, Point_3 sp1, Point_3 sp2,
 		   Plane_3 h, bool boundary) const { 
 
   if(h.d() == 0) {
-    CGAL_nef3_assertion(CGAL_NTS abs(p.hy()) != CGAL_NTS abs(p.hx()) ||
+    CGAL_assertion(CGAL_NTS abs(p.hy()) != CGAL_NTS abs(p.hx()) ||
 			CGAL_NTS abs(p.hz()) != CGAL_NTS abs(p.hx()));
   }
 
@@ -590,7 +590,7 @@ create_frame_point(Point_3 p, Point_3 sp1, Point_3 sp2,
   case 0: SP[2] = Sphere_point(1,0,0); break;
   case 1: SP[2] = Sphere_point(0,1,0); break;
   case 2: SP[2] = Sphere_point(0,0,1); break;
-  default: CGAL_nef3_assertion_msg(0,"wrong value");
+  default: CGAL_assertion_msg(0,"wrong value");
   }
   
   SP[1]=sp1;
@@ -604,7 +604,7 @@ create_frame_point(Point_3 p, Point_3 sp1, Point_3 sp2,
     SP[3] = -Vector_3(SP[2]);
  
   RT delta = h.a()*SP[2].hx()+h.b()*SP[2].hy()+h.c()*SP[2].hz();
-  CGAL_nef3_assertion(delta !=0);
+  CGAL_assertion(delta !=0);
   bool fmark0 = (delta <  0);
 
   create_SM_on_infibox(p, SP, 4, boundary, fmark0);
@@ -616,15 +616,15 @@ SNC_constructor<SNC_>::
 create_corner_frame_point(Point_3 p, Point_3 sp1, Point_3 sp2, 
 			  int max, Plane_3 h, bool boundary) const { 
 
-  CGAL_nef3_assertion(h.d() == 0);
+  CGAL_assertion(h.d() == 0);
 
   Vector_3 vec = h.orthogonal_vector();
   
-  CGAL_nef3_assertion(CGAL_NTS abs(vec.hx()) != CGAL_NTS abs(vec.hy()) &&
+  CGAL_assertion(CGAL_NTS abs(vec.hx()) != CGAL_NTS abs(vec.hy()) &&
 		      CGAL_NTS abs(vec.hy()) != CGAL_NTS abs(vec.hz()) && 
 		      CGAL_NTS abs(vec.hx()) != CGAL_NTS abs(vec.hz()));
 
-  CGAL_nef3_assertion(vec.hx() + vec.hy() == vec.hz() ||
+  CGAL_assertion(vec.hx() + vec.hy() == vec.hz() ||
 		      vec.hx() + vec.hz() == vec.hy() ||
 		      vec.hy() + vec.hz() == vec.hx());
 
@@ -653,7 +653,7 @@ create_corner_frame_point(Point_3 p, Point_3 sp1, Point_3 sp2,
     SP[2]= Sphere_point(0,vp[1],0); 
     SP[4] = Sphere_point(0,0,vp[2]); 
     break;
-  default: CGAL_nef3_assertion_msg(0,"wrong value");
+  default: CGAL_assertion_msg(0,"wrong value");
   }
   
   if (spherical_orientation(SP[3],Sphere_point(sp1),Sphere_point(sp2)) > 0) {
@@ -672,7 +672,7 @@ create_corner_frame_point(Point_3 p, Point_3 sp1, Point_3 sp2,
   }
 
   RT delta = h.a()*SP[4].hx()+h.b()*SP[4].hy()+h.c()*SP[4].hz();
-  CGAL_nef3_assertion(delta !=0);
+  CGAL_assertion(delta !=0);
   bool fmark0 = (delta >  0);
 
   create_SM_on_infibox(p, SP, 5, boundary, fmark0);
@@ -685,11 +685,11 @@ create_degenerate_corner_frame_point(Point_3 p, Point_3 sp1, Point_3 sp2,
 				     int min, int max, Plane_3 h,
 				     bool boundary) const { 
 
-  CGAL_nef3_assertion(h.d() == 0);
+  CGAL_assertion(h.d() == 0);
 
   Vector_3 vec = h.orthogonal_vector();
 
-  CGAL_nef3_assertion(
+  CGAL_assertion(
       (CGAL_NTS abs(vec.hx()) == CGAL_NTS abs(vec.hy()) && vec.hz() == 0) ||
       (CGAL_NTS abs(vec.hy()) == CGAL_NTS abs(vec.hz()) && vec.hx() == 0) || 
       (CGAL_NTS abs(vec.hx()) == CGAL_NTS abs(vec.hz()) && vec.hy() == 0));
@@ -707,13 +707,13 @@ create_degenerate_corner_frame_point(Point_3 p, Point_3 sp1, Point_3 sp2,
   switch(max) { 
   case 0: SP[2] = Sphere_point(vp[0],0,0); break; // plane(x,x,0), plane(x,0,x)
   case 1: SP[2] = Sphere_point(0,vp[1],0); break; // plane(0,x,x)
-  default: CGAL_nef3_assertion_msg(0,"wrong value \"max\"");
+  default: CGAL_assertion_msg(0,"wrong value \"max\"");
   }
 
   switch(min+max) {
   case 1: SP[3] = Sphere_point(0,0,vp[2]); break; // plane(0,x,x), plane(x,0,x)
   case 2: SP[3] = Sphere_point(0,vp[1],0); break; // plane(x,x,0)
-  default: CGAL_nef3_assertion_msg(0,"wrong value \"min+max\"");
+  default: CGAL_assertion_msg(0,"wrong value \"min+max\"");
   }
   
   if (spherical_orientation(SP[2],Sphere_point(sp1),Sphere_point(sp2)) > 0) {
@@ -726,7 +726,7 @@ create_degenerate_corner_frame_point(Point_3 p, Point_3 sp1, Point_3 sp2,
   }
 
   RT delta = h.a()*SP[2].hx()+h.b()*SP[2].hy()+h.c()*SP[2].hz();
-  CGAL_nef3_assertion(delta !=0);
+  CGAL_assertion(delta !=0);
   bool fmark0 = (delta <  0);
 
   create_SM_on_infibox(p, SP, 4, boundary, fmark0);
@@ -744,58 +744,58 @@ create_SM_on_infibox(Point_3 center, Sphere_point* SP, int size,
   TRACEN("create svertices");
   SVertex_handle sv[size];
   for(int i=0; i<size; ++i) {
-    sv[i] = SD.new_vertex(SP[i]);
+    sv[i] = SD.new_svertex(SP[i]);
     mark(sv[i]) = boundary;
   }
   
   TRACEN("create sedges");
   SHalfedge_handle she[size+1];
   for(int si=0; si<size-1;++si) {
-    she[si]=SD.new_edge_pair(sv[si], sv[(si+1)%(size-1)]);
+    she[si]=SD.new_shalfedge_pair(sv[si], sv[(si+1)%(size-1)]);
     SD.circle(she[si])= 
       Sphere_circle(Plane_3(SP[si],SP[(si+1)%(size-1)],Point_3(0,0,0)));
     SD.circle(SD.twin(she[si])) =  SD.circle(she[si]).opposite();
-    SD.mark(she[si]) = boundary;
+    SD.mark(she[si]) = SD.mark(SD.twin(she[si])) = boundary;
   }
 
-  she[size-1] = SD.new_edge_pair(she[0], sv[size-1], -1);
-  she[size]   = SD.new_edge_pair(sv[size-1], SD.twin(she[0]), 1);
+  she[size-1] = SD.new_shalfedge_pair(she[0], sv[size-1], -1);
+  she[size]   = SD.new_shalfedge_pair(sv[size-1], SD.twin(she[0]), 1);
   
-  CGAL_nef3_assertion(SD.next(she[0]) == she[1]);
-  CGAL_nef3_assertion(SD.next(she[1]) == she[2]);
+  CGAL_assertion(SD.next(she[0]) == she[1]);
+  CGAL_assertion(SD.next(she[1]) == she[2]);
   if(size == 4)
-    CGAL_nef3_assertion(SD.next(she[2]) == she[0]);  
+    CGAL_assertion(SD.next(she[2]) == she[0]);  
   else {
-    CGAL_nef3_assertion(SD.next(she[2]) == she[3]);
-    CGAL_nef3_assertion(SD.next(she[3]) == she[0]);
+    CGAL_assertion(SD.next(she[2]) == she[3]);
+    CGAL_assertion(SD.next(she[3]) == she[0]);
   }
 
-  CGAL_nef3_assertion(SD.next(SD.twin(she[0])) == she[size-1]);
-  CGAL_nef3_assertion(SD.next(she[size-1]) == she[size]);
-  CGAL_nef3_assertion(SD.next(she[size]) == SD.twin(she[0]));
+  CGAL_assertion(SD.next(SD.twin(she[0])) == she[size-1]);
+  CGAL_assertion(SD.next(she[size-1]) == she[size]);
+  CGAL_assertion(SD.next(she[size]) == SD.twin(she[0]));
 
-  CGAL_nef3_assertion(SD.next(SD.twin(she[4])) == SD.twin(she[3]));
-  CGAL_nef3_assertion(SD.next(SD.twin(she[3])) == SD.twin(she[2]));
-  CGAL_nef3_assertion(SD.next(SD.twin(she[2])) == SD.twin(she[1]));
+  CGAL_assertion(SD.next(SD.twin(she[4])) == SD.twin(she[3]));
+  CGAL_assertion(SD.next(SD.twin(she[3])) == SD.twin(she[2]));
+  CGAL_assertion(SD.next(SD.twin(she[2])) == SD.twin(she[1]));
   if(size == 4)
-    CGAL_nef3_assertion(SD.next(SD.twin(she[1])) == SD.twin(she[4]));
+    CGAL_assertion(SD.next(SD.twin(she[1])) == SD.twin(she[4]));
   else {
-    CGAL_nef3_assertion(SD.next(SD.twin(she[5])) == SD.twin(she[4]));
-    CGAL_nef3_assertion(SD.next(SD.twin(she[1])) == SD.twin(she[5]));
+    CGAL_assertion(SD.next(SD.twin(she[5])) == SD.twin(she[4]));
+    CGAL_assertion(SD.next(SD.twin(she[1])) == SD.twin(she[5]));
   }
 
   SD.circle(she[size-1])= Sphere_circle(Plane_3(SP[0],SP[size-1],Point_3(0,0,0)));
   SD.circle(SD.twin(she[size-1])) =  SD.circle(she[size-1]).opposite();	  
-  SD.mark(she[size-1]) = boundary;
+  SD.mark(she[size-1]) = SD.mark(SD.twin(she[size-1])) = boundary;
   
   SD.circle(she[size])= Sphere_circle(Plane_3(SP[size-1],SP[1],Point_3(0,0,0)));
   SD.circle(SD.twin(she[size])) =  SD.circle(she[size]).opposite();
-  SD.mark(she[size]) = boundary;
+  SD.mark(she[size]) = SD.mark(SD.twin(she[size])) = boundary;
   
   TRACEN("create sfaces");
   SFace_handle sf[3];
   for(int i=0; i<3; ++i)
-    sf[i] = SD.new_face();
+    sf[i] = SD.new_sface();
   SD.mark(sf[0])= fmark0;
   SD.mark(sf[1])=!fmark0;
   SD.mark(sf[2])=0;
@@ -815,7 +815,7 @@ template <typename SNC_>
 typename SNC_::Vertex_handle 
 SNC_constructor<SNC_>::
 create_box_corner(int x, int y, int z, bool space, bool boundary) const { 
-  CGAL_nef3_assertion(CGAL_NTS abs(x) == CGAL_NTS abs(y) &&
+  CGAL_assertion(CGAL_NTS abs(x) == CGAL_NTS abs(y) &&
 		      CGAL_NTS abs(y) == CGAL_NTS abs(z));
   TRACEN("  constructing box corner on "<<Point_3(x,y,z)<<"...");
   Vertex_handle v = sncp()->new_vertex( Point_3(x, y, z), boundary);
@@ -837,7 +837,7 @@ create_box_corner(int x, int y, int z, bool space, bool boundary) const {
     ss[si] = Sphere_segment(sp[si],sp[(si+1)%3]);
     SD.circle(she[si]) = ss[si].sphere_circle();
     SD.circle(SD.twin(she[si])) = ss[si].opposite().sphere_circle();
-    SD.mark(she[si]) = boundary;
+    SD.mark(she[si]) = SD.mark(SD.twin(she[si])) = boundary;
   }
   /* create facets */
   SFace_handle fi = SD.new_face();
@@ -868,7 +868,7 @@ typename SNC_::Vertex_handle
 SNC_constructor<SNC_>::
 create_extended_box_corner(int x,int y,int z,bool space,bool boundary) const { 
 
-  CGAL_nef3_assertion(CGAL_NTS abs(x) == CGAL_NTS abs(y) &&
+  CGAL_assertion(CGAL_NTS abs(x) == CGAL_NTS abs(y) &&
 		      CGAL_NTS abs(y) == CGAL_NTS abs(z));
 
   TRACEN("  constructing box corner on "<<Point_3(x,y,z)<<"...");
@@ -883,25 +883,25 @@ create_extended_box_corner(int x,int y,int z,bool space,bool boundary) const {
   /* create box vertices */
   SVertex_handle sv[3];
   for(int vi=0; vi<3; ++vi) {
-    sv[vi] = SD.new_vertex(sp[vi]);
+    sv[vi] = SD.new_svertex(sp[vi]);
     mark(sv[vi]) = boundary;
   }
   /* create facet's edge uses */
   //  Sphere_segment ss[3];
   SHalfedge_handle she[3];
   for(int si=0; si<3; ++si)
-    she[si] = SD.new_edge_pair(sv[si], sv[(si+1)%3]);
+    she[si] = SD.new_shalfedge_pair(sv[si], sv[(si+1)%3]);
   
   for(int i=0; i<3;++i) {
     SD.circle(she[i]) = 
       Sphere_circle(Plane_3(sp[i],sp[(i+1)%3],Point_3(0,0,0)));
     SD.circle(SD.twin(she[i])) =  SD.circle(she[i]).opposite();
-    SD.mark(she[i]) = boundary;
+    SD.mark(she[i]) = SD.mark(SD.twin(she[i])) = boundary;
   }
 
   /* create facets */
-  SFace_handle fi = SD.new_face();
-  SFace_handle fe = SD.new_face();
+  SFace_handle fi = SD.new_sface();
+  SFace_handle fe = SD.new_sface();
   SD.link_as_face_cycle(she[0], fi);
   SD.link_as_face_cycle(SD.twin(she[0]), fe);
 
@@ -938,13 +938,13 @@ typename SNC_::Vertex_handle
 SNC_constructor<SNC_>::
 create_from_facet(Halffacet_handle f, const Point_3& p) const
 { 
-  /* TODO: CGAL_nef3_assertion(FM_decorator(f).contains(p));*/
+  /* TODO: CGAL_assertion(FM_decorator(f).contains(p));*/
   Vertex_handle v = sncp()->new_vertex( p, mark(f));
   point(v) = p;
   Sphere_circle c(plane(f)); // circle through origin parallel to h
   SM_decorator D(v);
-  SHalfloop_handle l = D.new_loop_pair();
-  SFace_handle f1 = D.new_face(), f2 = D.new_face();
+  SHalfloop_handle l = D.new_shalfloop_pair();
+  SFace_handle f1 = D.new_sface(), f2 = D.new_sface();
   D.link_as_loop(l,f1);
   D.link_as_loop(twin(l),f2);
 
@@ -953,26 +953,6 @@ create_from_facet(Halffacet_handle f, const Point_3& p) const
   D.mark(f1) = mark(volume(f));
   D.mark(f2) = mark(volume(twin(f)));
   D.mark(l) = mark(f);
-#ifdef CGAL_NEF3_BUGGY_CODE
-  /*
-  Sphere_point q(0,-1,0);
-  CGAL::Oriented_side os = c.oriented_side(q);
-  switch ( os ) {
-    case ON_POSITIVE_SIDE: 
-      D.mark_of_halfsphere(-1) = D.mark_of_halfsphere(+1) = true;
-      break;
-    case ON_NEGATIVE_SIDE:
-      D.mark_of_halfsphere(-1) = D.mark_of_halfsphere(+1) = false;
-      break;
-    case ON_ORIENTED_BOUNDARY:
-      if ( c.a()<=0 && c.c()>=0 ) // normal(c) dx<=0&&dz>=0
-        D.mark_of_halfsphere(+1) = true;
-      if ( c.a()>=0 && c.c()<=0 ) // normal(c) dx<=0&&dz>=0
-        D.mark_of_halfsphere(-1) = true;
-  }
-  */
-  /* TODO: to find why the code chuck above is wrong */
-#endif // CGAL_NEF3_BUGGY_CODE
   return v;
 }
 
@@ -987,13 +967,13 @@ typename SNC_::Vertex_handle
 SNC_constructor<SNC_>::
 create_from_edge(Halfedge_handle e,
 		 const Point_3& p) const
-{ CGAL_nef3_assertion(segment(e).has_on(p));
+{ CGAL_assertion(segment(e).has_on(p));
   Vertex_handle v = sncp()->new_vertex( p, mark(e));
   SM_decorator D(v);
   SM_const_decorator E(source(e));
-  Sphere_point ps = calc_point(e);
-  SVertex_handle v1 = D.new_vertex(ps);
-  SVertex_handle v2 = D.new_vertex(ps.antipode());
+  Sphere_point ps = E.point(e);
+  SVertex_handle v1 = D.new_svertex(ps);
+  SVertex_handle v2 = D.new_svertex(ps.antipode());
   D.mark(v1) = D.mark(v2) = mark(e);
   bool first = true;
 
@@ -1001,7 +981,7 @@ create_from_edge(Halfedge_handle e,
  
   SHalfedge_const_handle ceee;
   TRACEN("---------------------" << point(vertex(e)));
-  CGAL_nef3_forall_shalfedges(ceee,E)
+  CGAL_forall_shalfedges(ceee,E)
     TRACEN("|" << E.circle(ceee) <<
 	   "|" << E.mark(ceee) << 
 	   " " << E.mark(E.face(ceee)));
@@ -1009,7 +989,7 @@ create_from_edge(Halfedge_handle e,
  
 
   if(E.is_isolated(e)) {
-    SFace_handle f = D.new_face();
+    SFace_handle f = D.new_sface();
     D.link_as_isolated_vertex(v1,f);
     D.link_as_isolated_vertex(v2,f);
     D.mark(f) = E.mark(E.face(e));
@@ -1018,15 +998,15 @@ create_from_edge(Halfedge_handle e,
   SHalfedge_around_svertex_const_circulator ec1(E.out_edges(e)), ee(ec1);
   SHalfedge_handle e1,e2;
   CGAL_For_all(ec1,ee) {
-    if (first) e1 = D.new_edge_pair(v1,v2);
-    else       e1 = D.new_edge_pair(e1, e2, SM_decorator::AFTER, 
-				            SM_decorator::BEFORE);
+    if (first) e1 = D.new_shalfedge_pair(v1,v2);
+    else       e1 = D.new_shalfedge_pair(e1, e2, SM_decorator::AFTER, 
+				             SM_decorator::BEFORE);
     e2 = D.twin(e1); 
     first = false;
   }
 
   SHalfedge_handle eee;
-  CGAL_nef3_forall_shalfedges(eee,D)
+  CGAL_forall_shalfedges(eee,D)
     TRACEN("|" << D.circle(eee));
   TRACEN(" ");
  
@@ -1037,10 +1017,10 @@ create_from_edge(Halfedge_handle e,
     TRACEN("|" << E.circle(ec1) <<
 	   "|" << E.mark(ec1) << 
 	   " " << E.mark(E.face(ec1)));
-    D.mark(ec2) = E.mark(ec1);
+    D.mark(ec2) = D.mark(D.twin(ec2)) = E.mark(ec1);
     D.circle(ec2) = E.circle(ec1);
     D.circle(D.twin(ec2)) = E.circle(E.twin(ec1));
-    SFace_handle f = D.new_face();
+    SFace_handle f = D.new_sface();
     D.link_as_face_cycle(ec2,f);
     D.mark(f) = E.mark(E.face(ec1));
     ++ec2;
@@ -1048,7 +1028,7 @@ create_from_edge(Halfedge_handle e,
 
   TRACEN(" ");
 
-  CGAL_nef3_forall_shalfedges(eee,D)
+  CGAL_forall_shalfedges(eee,D)
     TRACEN("|" << D.circle(eee) <<
 	   "|" << D.mark(eee) << 
 	   " " << D.mark(D.face(eee)));
@@ -1078,22 +1058,22 @@ clone_SM( typename SNC_::Vertex_handle vin) {
   SM_decorator D(vout);
   
   SVertex_handle sv;
-  CGAL_nef3_forall_svertices(sv, E)
-    VM[sv] = D.new_vertex(E.point(sv));
+  CGAL_forall_svertices(sv, E)
+    VM[sv] = D.new_svertex(E.point(sv));
 
   SHalfedge_handle se;
-  CGAL_nef3_forall_sedges(se, E) {
-    EM[se] = D.new_edge_pair();
+  CGAL_forall_sedges(se, E) {
+    EM[se] = D.new_shalfedge_pair();
     EM[D.twin(se)] = E.twin(EM[se]);
   }
   
   SFace_handle sf;
-  CGAL_nef3_forall_sfaces(sf, E)
-    FM[sf] = D.new_face();
+  CGAL_forall_sfaces(sf, E)
+    FM[sf] = D.new_sface();
 
   SHalfloop_handle sl;
-  if(E.has_loop()) {
-    sl = LM[E.shalfloop()] = E.new_loop_pair();
+  if(E.has_shalfloop()) {
+    sl = LM[E.shalfloop()] = E.new_shalfloop_pair();
     LM[E.twin(E.shalfloop())] = D.twin(sl);
     D.set_face(sl, FM[E.face(E.shalfloop())]);
     D.set_face(D.twin(sl), FM[E.face(E.twin(E.shalfloop()))]);
@@ -1101,14 +1081,14 @@ clone_SM( typename SNC_::Vertex_handle vin) {
     D.circle(D.twin(sl)) = E.circle(E.twin(E.shalfloop()));
   }
 
-  CGAL_nef3_forall_svertices(sv, E) {
+  CGAL_forall_svertices(sv, E) {
     D.set_first_out_edge(VM[sv], EM[E.first_out_edge(sv)]);
     D.set_face(VM[sv], FM[E.face(sv)]);
     D.mark(VM[sv]) = E.mark(sv);
   }
   
-  CGAL_nef3_forall_shalfedges(se, E) {
-    D.mark(EM[se]) = E.mark(se);
+  CGAL_forall_shalfedges(se, E) {
+    D.mark(EM[se]) = D.mark(D.twin(EM[se])) = E.mark(se);
     D.set_source(EM[se], VM[E.source(se)]);
     D.set_prev(EM[se], EM[E.previous(se)]); 
     D.set_next(EM[se], EM[E.next(se)]);
@@ -1116,7 +1096,7 @@ clone_SM( typename SNC_::Vertex_handle vin) {
     D.circle(EM[se]) = E.circle(se);
   }
 
-  CGAL_nef3_forall_sfaces(sf, E) {
+  CGAL_forall_sfaces(sf, E) {
     D.mark(FM[sf]) = E.mark(sf);
     SFace_cycle_iterator sfc;
     for(sfc = sf->sface_cycles_begin(); sfc != sf->sface_cycles_end(); ++sfc) {
@@ -1126,12 +1106,9 @@ clone_SM( typename SNC_::Vertex_handle vin) {
 	D.store_boundary_object(EM[se],FM[sf]);
       else if ( assign(sl,sfc) )
 	D.store_boundary_object(LM[sl],FM[sf]);
-      else CGAL_nef3_assertion_msg(0,"damn wrong handle.");
+      else CGAL_assertion_msg(0,"damn wrong handle.");
     }
   }
-
-  //  D.mark_of_halfsphere(-1) = E.mark_of_halfsphere(-1);
-  //  D.mark_of_halfsphere(+1) = E.mark_of_halfsphere(+1);
 
   return vout;
 }
@@ -1152,10 +1129,10 @@ create_edge_facet_overlay( typename SNC_::Halfedge_handle e,
   SM_decorator D(sncp()->new_vertex(p, BOP(mark(e), mark(f))));
   SM_const_decorator E(source(e));
   
-  Sphere_point ps = calc_point(e);
+  Sphere_point ps = E.point(e);
   ps = normalized(ps);
-  SVertex_handle v1 = D.new_vertex(ps);
-  SVertex_handle v2 = D.new_vertex(ps.antipode());
+  SVertex_handle v1 = D.new_svertex(ps);
+  SVertex_handle v2 = D.new_svertex(ps.antipode());
   TRACEN("new svertex 1 " << ps);
   TRACEN("new svertex 2 " << ps.antipode());
   Halffacet_handle faces_p(f);
@@ -1170,7 +1147,7 @@ create_edge_facet_overlay( typename SNC_::Halfedge_handle e,
     Mark mf2 = BOP(E.mark(E.face(e)), mark(volume(twin(faces_p))));
     Mark ml = BOP(E.mark(E.face(e)), mark(faces_p));
 
-    SFace_handle f1 = D.new_face();
+    SFace_handle f1 = D.new_sface();
     D.link_as_isolated_vertex(v1, f1);
     D.mark(f1) = mf1;
     
@@ -1178,8 +1155,8 @@ create_edge_facet_overlay( typename SNC_::Halfedge_handle e,
       D.link_as_isolated_vertex(v2, f1);
     }
     else {
-      SHalfloop_handle l = D.new_loop_pair();
-      SFace_handle f2 = D.new_face();    
+      SHalfloop_handle l = D.new_shalfloop_pair();
+      SFace_handle f2 = D.new_sface();    
       D.link_as_isolated_vertex(v2, f2);
       D.link_as_loop(l,f1);
       D.link_as_loop(twin(l),f2);
@@ -1206,17 +1183,17 @@ create_edge_facet_overlay( typename SNC_::Halfedge_handle e,
       TRACEN(seg <<" has_on " << sp);
       if(!seg.has_on(sp))
 	sp = sp.antipode();
-      sv = D.new_vertex(sp);
+      sv = D.new_svertex(sp);
       TRACEN("new svertex 3 " << normalized(sp));
       D.mark(sv) = BOP(E.mark(ec), mark(f));
-      se1 = D.new_edge_pair(v1, sv);
+      se1 = D.new_shalfedge_pair(v1, sv);
       if(next_edge == SHalfedge_handle())
-	se2 = D.new_edge_pair(sv, v2); 
+	se2 = D.new_shalfedge_pair(sv, v2); 
       else
-	se2 = D.new_edge_pair(sv, next_edge, -1);
+	se2 = D.new_shalfedge_pair(sv, next_edge, -1);
       next_edge = twin(se2);
-      D.mark(se1) = BOP(E.mark(ec), mark(volume(faces_p)));
-      D.mark(se2) = BOP(E.mark(ec), mark(volume(twin(faces_p))));
+      D.mark(se1) = D.mark(D.twin(se1)) = BOP(E.mark(ec), mark(volume(faces_p)));
+      D.mark(se2) = D.mark(D.twin(se2)) = BOP(E.mark(ec), mark(volume(twin(faces_p))));
       mark_of_right_sface[se1] = E.mark(E.face(ec));
       D.circle(se1) = D.circle(se2) = E.circle(ec);
       D.circle(D.twin(se1)) = D.circle(D.twin(se2)) = D.circle(se1).opposite();
@@ -1226,16 +1203,17 @@ create_edge_facet_overlay( typename SNC_::Halfedge_handle e,
     CGAL_For_all(ec2,ee2) {
       SHalfedge_around_svertex_circulator en(ec2);
       ++en;
-      se1 = D.new_edge_pair(twin(ec2), twin(en), -1, 1);
-      TRACEN("new edge pair " << ssource(twin(ec2))->tmp_point() << " -> " << ssource(twin(en))->tmp_point());
+      se1 = D.new_shalfedge_pair(twin(ec2), twin(en), -1, 1);
+      TRACEN("new edge pair " << vector(ssource(twin(ec2))) << 
+	     " -> " << vector(ssource(twin(en))));
       D.circle(se1) = Sphere_circle(plane(faces_p));
       D.circle(D.twin(se1)) = D.circle(se1).opposite();
-      D.mark(se1) = BOP(mark_of_right_sface[ec2], mark(faces_p));
+      D.mark(se1) = D.mark(D.twin(se1)) = BOP(mark_of_right_sface[ec2], mark(faces_p));
       
-      sf = D.new_face();
+      sf = D.new_sface();
       D.mark(sf) = BOP(mark_of_right_sface[ec2], mark(volume(faces_p)));
       D.link_as_face_cycle(se1,sf);
-      sf = D.new_face();
+      sf = D.new_sface();
       D.mark(sf) = BOP(mark_of_right_sface[ec2], mark(volume(twin(faces_p))));
       D.link_as_face_cycle(D.twin(se1),sf);
     }   
@@ -1243,378 +1221,6 @@ create_edge_facet_overlay( typename SNC_::Halfedge_handle e,
 
   return D.center_vertex();
 }
-
-/*
-template <typename SNC_>
-template <typename Selection>
-typename SNC_::Vertex_handle
-SNC_constructor<SNC_>::
-create_edge_edge_overlay( typename SNC_::Halfedge_handle e0, 
-			  typename SNC_::Halfedge_handle e1,
-			  const Point_3& p,
-			  const Selection& BOP) {
-
-  SM_const_decorator E0(source(e0));
-  SM_const_decorator E1(source(e1));
-
-  CGAL_nef3_assertion(E0.number_of_edges()==2 &&
-		      E1.number_of_edges()==2);
-
-  SM_decorator D(sncp()->new_vertex(p, BOP(mark(e0), mark(e1))));
-
-  Sphere_point src[2];
-  src[0] = calc_point(e0);
-  src[1] = calc_point(e1);
-  src[0] = normalized(src[0]);
-  src[1] = normalized(src[1]);
-
-  SHalfedge_around_svertex_const_circulator ec0(E1.out_edges(e0)), ee0(ec0);
-  SHalfedge_around_svertex_const_circulator ec1(E2.out_edges(e1)), ee1(ec1); 
-  
-  ++ee0;
-  Sphere_segment test_length(CGAL::ORIGIN + ec0.sphere_circle().orthogonal_vector(),
-			     CGAL::ORIGIN + ee0.sphere_circle().orthogonal_vector());
-  if(test_length.is_short())
-    ++ec0;
-  
-  ++ee1;
-  test_length(CGAL::ORIGIN + ec1.sphere_circle().orthogonal_vector(),
-	      CGAL::ORIGIN + ee1.sphere_circle().orthogonal_vector());
-  if(test_length.is_short())
-    ++ec1;
-
-  SHalfedge_handle orig_edge[2][2];
-  orig_edge[0][0] = ++ec0;
-  orig_edge[0][1] = ++ec0;
-  orig_edge[1][0] = ++ec1;
-  orig_edge[1][1] = ++ec1;
-
-  Mark face_mark[2][2];
-  for(int i=0; i<2; i++) { 
-    face_mark[0][i] = E0.mark(E0.face(orig_edge[0][i]));
-    face_mark[1][i] = E1.mark(E1.face(orig_edge[1][i]));
-  }
-
-  Sphere_segment segs[2][2];
-  for(int i=0; i<2; i++) {
-    segs[0][i] = Sphere_segment(src[0], src[0].antipode(), E0.circle(++ec0));
-    segs[1][i] = Sphere_segment(src[1], src[1].antipode(), E1.circle(++ec1));
-  }
-
-  int noi=0;
-  int add=1;
-  Sphere_point sp[2][2];
-  for(int x=0; x<2; x++) {
-    for(int y=0; y<2; y++) {
-      sp[x][y] = segs[0][x].intersection(segs[1][y]);
-      if(segs[0][x].has_on(sp[x][y]) && segs[1][y].has_on(sp[x][y]))
-	noi+=add;
-      else
-	sp[x][y] = Sphere_point();
-      ++y;
-      add*=2;
-    }
-    ++x;
-  }
-
-  SVertex_handle sv[2][2];
-  sv[0][0] = D.new_vertex(src[0]);
-  sv[0][1] = D.new_vertex(src[0].antipode());
-  sv[1][0] = D.new_vertex(src[1]);
-  sv[1][1] = D.new_vertex(src[1].antipode());
-  D.mark(sv[0][0]) = D.mark(sv[0][1]) = BOP(E0.mark(e0), face_mark[1][0]);
-  D.mark(sv[1][0]) = D.mark(sv[1][1]) = BOP(E1.mark(e1), face_mark[0][0]);
-  
-  SVertex_handle iv[4];
-  for(int i=0; i<4; i++) {
-    if(sp[i] != Sphere_point()) {
-      iv[i] = D.new_vertex(src[0]);
-      D.mark(iv[i]) = BOP(face_mark[0][i/2], face_mark[1][i%2]);
-    }
-  }
-
-  switch(noi) {
-  case 0:    
-    SHalfedge_handle se[2][2];
-    se[0][0] = D.new_edge_pair(sv[0][0], sv[0][1]);
-    se[0][1] = D.new_edge_pair(sv[0][0], sv[0][1]);
-    se[1][0] = D.new_edge_pair(sv[1][0], sv[1][1]);
-    se[1][1] = D.new_edge_pair(sv[1][0], sv[1][1]);
-    D.mark(se[0][0]) = BOP(E0.mark(++ec0), face_mark[1][0]);
-    D.mark(se[0][1]) = BOP(E0.mark(++ec0), face_mark[1][0]);
-    D.mark(se[1][0]) = BOP(E1.mark(++ec1), face_mark[0][0]);
-    D.mark(se[1][1]) = BOP(E1.mark(++ec1), face_mark[0][0]);
-    D.circle(se[0][0]) = E0.circle(++ec0);
-    D.circle(D.twin(se[0][0])) = D.circle(se[0][0]).opposite();
-    D.circle(se[0][1]) = E0.circle(++ec0);
-    D.circle(D.twin(se[0][1])) = D.circle(se[0][1]).opposite();
-    D.circle(se[1][0]) = E1.circle(++ec1);
-    D.circle(D.twin(se[1][0])) = D.circle(se[1][0]).opposite();
-    D.circle(se[1][1]) = E1.circle(++ec1);
-    D.circle(D.twin(se[1][1])) = D.circle(se[1][1]).opposite();
-
-    SFace_handle sf[3];
-    for(int i=0; i<3; ++i)
-      sf[i] = D.new_sface();
-    D.mark(sf[0]) = BOP(face_mark[0][0], face_mark[1][0]);
-    D.link_as_face_cycle(++ec0, sf[0]);
-    D.link_as_face_cycle(++ec1, sf[0]);
-    D.mark(sf[1]) = BOP(face_mark[0][1], face_mark[1][0]);
-    D.link_as_face_cylce(++ec0, sf[1]);
-    D.mark(sf[2]) = BOP(face_mark[0][0], face_mark[1][1]);
-    D.link_as_face_cylce(++ec1, sf[2]);  
-    break;
-  case 6:
-  case 9:
-    SHalfedge_handle se[4];
-    for(int i=0; i<4; i++) {
-      if(iv[i] != SVertex_handle()) {
-	
-	SHalfedge_handle tmp_se = orig[1][i%2];
-	int side=E0.circle(orig_edge[0][0]).oriented_side(sv[1][0]);	
-	if(side > 0)
-	  tmp_se = E1.twin(tmp_se);
-	Sphere_point tmp_sp = E1.point(E1.source(tmp_se));
-
-	se[0][0] = D.new_edge_pair(sv[0][0], iv[i]);
-	se[0][1] = D.new_edge_pair(iv[i], sv[0][1]);
-	se[1][0] = D.new_edge_pair(tmp_sp, D.twin(se[0][0]), -1);
-	se[1][1] = D.new_edge_pair(D.twin(se[0][1]), tmp_sp , -1);
-	
-	D.circle(se[0][0])=D.circle(se[0][1])=E0.circle(orig_edge[0][i/2]);
-	D.circle(D.twin(se[0][0]))
-	  = D.circle(D.twin(se[0][1]))
-	  = E0.circle(E0.twin(orig_edge[0][i/2]));
-	D.circle(se[1][0])=D.circle(se[1][1])=E1.circle(tmp_se);
-	D.circle(D.twin(se[1][0]))
-	  = D.circle(D.twin(se[1][1]))
-	  = E1.circle(tmp_se);
-	
-	D.mark(se[0][0])=BOP(E0.mark(orig[0][i/2]),
-			     E1.mark(E1.face(E1.twin(tmp_se))));
-	D.mark(se[0][1])=BOP(E0.mark(orig[0][i/2]),
-			     E1.mark(E1.face(tmp_se)));
-	D.mark(se[1][0])=BOP(E0.mark(E0.face(orig[0][i/2])),	
-			     E1.mark(tmp_se));
-	D.mark(se[1][1])=BOP(E0.mark(E0.face(E0.twin(orig[0][i/2]))),
-			     E1.mark(tmp_se));
-      }
-    }
-    
-    for(int i=0; i<4; i++) {
-      if(i==0 && (iv[0] != SVertex_handle() || iv[1] != SVertex_handle()))
-	continue;
-      if(i==1 && (iv[0] != SVertex_handle() || iv[2] != SVertex_handle()))
-	continue;
-      if(i==2 && (iv[2] != SVertex_handle() || iv[3] != SVertex_handle()))
-	continue;
-      if(i==3 && (iv[1] != SVertex_handle() || iv[3] != SVertex_handle()))
-	continue;
-
-      SHalfedge_handle se = D.new_edge_pair(sv[i/2][0], sv[i/2][1]);
-      D.circle(se) = E0.circle(orig_edge[i/2][i%2]);
-      D.circle(D.twin(se)) = D.twin(D.circle(se));
-      D.mark(se) = BOP(mark(orig_edge[i/2][i%2]), face_mark[1-i/2][0]);
-    }  
-    
-    
-
-    break;
-  default: CGAL_nef3_assertion_msg(0, "wrong value");
-  }
-  
-  return D.center_vertex();
-}
-*/
-/*
-template <typename SNC_>
-template <typename Selection>
-typename SNC_::Vertex_handle
-SNC_constructor<SNC_>::
-create_edge_edge_overlay( typename SNC_::Halfedge_handle e1, 
-			  typename SNC_::Halfedge_handle e2,
-			  const Point_3& p,
-			  const Selection& BOP) {
-
-  TRACEN("edge edge overlay " << p);
-
-  Unique_hash_map<SHalfedge_handle, Mark> mark_of_right_sface;
-
-  SM_const_decorator E1(source(e1));
-  SM_const_decorator E2(source(e2));
-
-  CGAL_nef3_assertion(!E1.is_isolated(e1) && !E2.is_isolated(e2));
-  CGAL_nef3_assertion(E1.number_of_vertices()>=2 &&
-		      E2.number_of_vertices()>=2);
-
-  SM_decorator D(sncp()->new_vertex(p, BOP(mark(e1), mark(e2))));
-
-  Sphere_point p1 = calc_point(e1);
-  Sphere_point p2 = calc_point(e2);
-  p1 = normalized(p1);
-  p2 = normalized(p2);
-
-  SVertex_handle v11 = D.new_vertex(p1);
-  SVertex_handle v12 = D.new_vertex(p1.antipode());
-  TRACEN("new svertex 1 " << p1);
-  TRACEN("new svertex 2 " << p1.antipode());
-  //  D.mark(v1) = BOP(E.mark(e), mark(volume(faces_p)));
-  //  D.mark(v2) = BOP(E.mark(e), mark(volume(twin(faces_p))));
-
-  SVertex_handle sv;
-  SHalfedge_handle se;
-  SFace_handle sf;
-  
-  SHalfedge_around_svertex_const_circulator ec1(E1.out_edges(e1)), ee1(ec1);
-  SHalfedge_around_svertex_const_circulator ec2(E2.out_edges(e2)); 
-
-  CGAL_For_all(ec1,ee1) {
-    Sphere_segment seg(E1.point(E1.source(ec1)), 
-		       E1.point(E1.source(ec1)).antipode(), 
-		       E1.circle(ec1));
-    se = D.new_edge_pair(v11, v12);
-    D.mark(se) = E1.mark(ec1);
-    mark_of_right_sface[se] = E1.mark(E1.face(ec1));
-    D.circle(se1) = E1.circle(ec1);
-    D.circle(D.twin(se1)) = D.circle(D.circle(se1).opposite());
-  }
-  
-  int i=0;
-  int curr_side;
-  bool set_end = true;
-  bool cut[2];
-  cut[0] = false;
-  cut[1] = false;
-  SHalfedge_around_svertex_const_circulator shalf[2], ehalf[2];
-  int init_side=orientation(Point_3(0,0,0), E1.point(E1.source(ec1)), 
-			    E1.point(E1.target(ec1)), E2.point(E2.source(ec2))); 
-  CGAL_For_all(ec1,ee1) {
-    curr_side=orientation(Point_3(0,0,0), E1.point(E1.source(ec1)), 
-			  E1.point(E1.target(ec1)),E2.point(E2.source(ec2))); 
-    if(curr_side == 0) {
-      ehalf[i] = ec1;
-      set_end = false;
-      cut[i] = true;
-    }
-
-    if(curr_side != 0 && curr_side != init_side) {
-      init_side = curr_side;
-      if(set_end)
-	ehalf[i] = ec1;
-      else
-	set_end = true;
-      shalf[++i%2] = ec1;
-      if(i==2)
-	break;
-    }
-    else {
-      SHalfedge_around_svertex_const_circulator tmp_circ(ec1);
-      ++tmp_circ;
-      int tmp_side=orientation(Point_3(0,0,0), 
-			       E1.point(E1.source(ec1)), E1.point(E1.target(ec1)),
-			       CGAL::ORIGIN+tmp_circ->sphere_circle().orthogonal_vector());
-      if(tmp_side <= 0) {
-	if(tmp_side==0)
-	  cut[i]= true;
-	if(set_end)
-	  ehalf[i] = ec1;
-	shalf[i++] = tmp_circ;
-	break;
-      }
-    }
-  }
-
-  curr_side=orientation(Point_3(0,0,0), E2.point(E2.source(ec2)), 
-			E2.point(E2.target(ec2)),E1.point(E1.source(ec1))); 
-  if(curr>0) {
-    do {
-      SHalfedge_around_svertex_const_circulator tmp_circ(ec2);
-      --ec2;
-      int tmp_side=orientation(Point_3(0,0,0), 
-			       E2.point(E2.source(ec2)), E2.point(E2.target(ec2)),
-			       CGAL::ORIGIN+tmp_circ->sphere_circle().orthogonal_vector());
-      curr_side = orientation(Point_3(0,0,0), E2.point(E2.source(ec2)), 
-			      E2.point(E2.target(ec2)),E1.point(E1.source(ec1)));
-      if(tmp_side <= 0)       
-	break;
-    }
-    while(curr_side>0);
-  }
-  else {
-    do {
-      ++ec2;
-      curr_side = orientation(Point_3(0,0,0), E2.point(E2.source(ec2)), 
-			      E2.point(E2.target(ec2)),E1.point(E1.source(ec1))); 
-    }
-    while(curr_side<=0);
-    --ec2;
-  }
-
-
-
-      curr_side = orientation(Point_3(0,0,0), E2.point(E2.source(ec2)), 
-			      E2.point(E2.target(ec2)),E1.point(E1.source(ec1)));
-    }
-  }
-
-  SHalfedge_around_svertex_const_circulator ec3(ec2);
-  ++ec2;
-  if(init_side==0 || curr_side==0)
-    --ec3;
-  
-  if(orientation(Point_3(0,0,0), E2.point(E2.source(ec2)), 
-		 E2.point(E2.target(ec2)),E1.point(E1.source(ec1)))
-     <0)
-    
-
-  CGAL_For_all(ec2,ee2) {
-    int curr_side=orientation(Point_3(0,0,0), E2.point(E2.source(ec2)), 
-			      E2.point(E2.target(ec2)),E1.point(E1.source(ec1))); 
-
-    
-  }
-
-  CGAL_For_all(ec2,ee2) {
-    if(first) {
-      CGAL_For_all(ec1,ee1) {
-	Sphere_point sp(intersection(c, seg.sphere_circle()));
-	TRACEN(seg <<" has_on " << sp);
-	if(!seg.has_on(sp))
-	  sp = sp.antipode();
-	sv = D.new_vertex(sp);
-	TRACEN("new svertex 3 " << normalized(sp));
-	D.mark(sv) = BOP(E.mark(ec), mark(f));
-	se1 = D.new_edge_pair(v1, sv);
-	se2 = D.new_edge_pair(sv, v2);
-	D.mark(se1) = BOP(E.mark(ec), mark(volume(faces_p)));
-	D.mark(se2) = BOP(E.mark(ec), mark(volume(twin(faces_p))));
-	D.circle(se1) = D.circle(se2) = E.circle(ec);
-	D.circle(D.twin(se1)) = D.circle(D.twin(se2)) = D.circle(se1).opposite();
-      }
-    }
-    else {
-      CGAL_For_all(ec1,ee1) {
-	SHalfedge_around_svertex_circulator en(ec2);
-	++en;
-	se1 = D.new_edge_pair(twin(ec2), twin(en), -1, 1);
-	TRACEN("new edge pair " << ssource(twin(ec2))->tmp_point() << " -> " << ssource(twin(en))->tmp_point());
-	D.circle(se1) = Sphere_circle(plane(faces_p));
-	D.circle(D.twin(se1)) = D.circle(se1).opposite();
-	D.mark(se1) = BOP(mark_of_right_sface[ec2], mark(faces_p));
-	
-	sf = D.new_face();
-	D.mark(sf) = BOP(mark_of_right_sface[ec2], mark(volume(faces_p)));
-	D.link_as_face_cycle(se1,sf);
-	sf = D.new_face();
-	D.mark(sf) = BOP(mark_of_right_sface[ec2], mark(volume(twin(faces_p))));
-	D.link_as_face_cycle(D.twin(se1),sf);
-      }   
-    }
-  }
-
-  return D.center_vertex();
-}
-*/
 
 template <typename SNC_>
 typename SNC_::Halffacet_handle 
@@ -1648,7 +1254,7 @@ get_facet_below( Vertex_handle vi,
       TRACEN("facet below from from vertex...");
       f_below = get_visible_facet(v, ray);
       if( f_below == Halffacet_handle()) {
-	CGAL_nef3_assertion(v->sfaces_begin() == v->sfaces_last());
+	CGAL_assertion(v->sfaces_begin() == v->sfaces_last());
 	f_below = get_facet_below(vertex(MinimalSFace[Shell[v->sfaces_begin()]]), 
 				  MinimalSFace,Shell);
       }
@@ -1657,7 +1263,7 @@ get_facet_below( Vertex_handle vi,
       TRACEN("facet below from from edge...");
       f_below = get_visible_facet(e, ray);
       if( f_below == Halffacet_handle()) {
-	CGAL_nef3_assertion(vertex(e)->sfaces_begin() == vertex(e)->sfaces_last());
+	CGAL_assertion(vertex(e)->sfaces_begin() == vertex(e)->sfaces_last());
 	f_below = get_facet_below(vertex(MinimalSFace[Shell[vertex(e)->sfaces_begin()]]), 
 				  MinimalSFace, Shell);
       }
@@ -1665,7 +1271,7 @@ get_facet_below( Vertex_handle vi,
     else if( assign(f, o)) {
       TRACEN("facet below from from facet...");
       f_below = get_visible_facet(f, ray);
-      CGAL_nef3_assertion( f_below != Halffacet_handle());
+      CGAL_assertion( f_below != Halffacet_handle());
     }
     else { TRACEN("no facet below found..."); }
     return f_below;
@@ -1732,10 +1338,10 @@ pair_up_halfedges() const
   //				    "SNC_constructor: pairing up edges...");
   
   Halfedge_iterator e;
-  CGAL_nef3_forall_halfedges(e,*sncp()) {
+  CGAL_forall_halfedges(e,*sncp()) {
     //    progress++;
     Point_3 p = point(vertex(e));
-    Point_3 q = p + Vector_3(tmp_point(e));
+    Point_3 q = p + vector(e);
     Standard_point_3 sp = Infi_box::standard_point(p);
     Standard_point_3 sq = Infi_box::standard_point(q);
     Pluecker_line_3 l( sp, sq);
@@ -1743,57 +1349,57 @@ pair_up_halfedges() const
     int inverted;
     l = categorize( l, inverted);
 
-    if(Infi_box::is_edge_on_infibox(e, D))
-      M2[l].push_back(Halfedge_key(p,inverted,e,D));
+    if(Infi_box::is_edge_on_infibox(e))
+      M2[l].push_back(Halfedge_key(p,inverted,e, D));
     else
       M[l].push_back(Halfedge_key(p,inverted,e,D));
 
     // the following trace crashes when compiling with optimizations (-O{n})
     //TRACEN(Infi_box::standard_point(point(vertex(e)))+
-    //   Vector_3(tmp_point(e))); 
+    //   Vector_3(point(e))); 
 
     TRACEN(" segment("<<p<<", "<<q<<")"<<
-	   " direction("<<tmp_point(e)<<")"<<
+	   " direction("<<vector(e)<<")"<<
 	   " line("<<l<<")"<<" inverted="<<inverted);
   }
 
   typename Pluecker_line_map::iterator it;
  
-  CGAL_nef3_forall_iterators(it,M2) {
+  CGAL_forall_iterators(it,M2) {
     //    progress++;
     it->second.sort(Halfedge_key_lt());
     TRACEN("search opposite  "<<it->first); 
     typename Halfedge_list::iterator itl;
-    CGAL_nef3_forall_iterators(itl,it->second) {
+    CGAL_forall_iterators(itl,it->second) {
       Halfedge_handle e1 = itl->e;
       ++itl; 
-      CGAL_nef3_assertion(itl != it->second.end());
+      CGAL_assertion(itl != it->second.end());
       Halfedge_handle e2 = itl->e;
       TRACEN("    " << point(vertex(e1)) << " -> " << point(vertex(e2)));
-      TRACEN(tmp_point(e1)<<" -> "<<tmp_point(e2).antipode());
-      CGAL_nef3_assertion(tmp_point(e1)==tmp_point(e2).antipode());
+      TRACEN(vector(e1)<<" -> "<<-vector(e2));
+      CGAL_assertion(normalized(vector(e1))==normalized(-vector(e2)));
       make_twins(e1,e2);
-      CGAL_nef3_assertion(mark(e1)==mark(e2));
+      CGAL_assertion(mark(e1)==mark(e2));
 
       // discard temporary sphere_point ?
     }
   }
 
-  CGAL_nef3_forall_iterators(it,M) {
+  CGAL_forall_iterators(it,M) {
     //    progress++;
     it->second.sort(Halfedge_key_lt());
     TRACEN("search opposite  "<<it->first); 
     typename Halfedge_list::iterator itl;
-    CGAL_nef3_forall_iterators(itl,it->second) {
+    CGAL_forall_iterators(itl,it->second) {
       Halfedge_handle e1 = itl->e;
       ++itl; 
-      CGAL_nef3_assertion(itl != it->second.end());
+      CGAL_assertion(itl != it->second.end());
       Halfedge_handle e2 = itl->e;
       TRACEN("    " << point(vertex(e1)) << " -> " << point(vertex(e2)));
-      TRACEN(tmp_point(e1)<<" -> "<<tmp_point(e2).antipode());
-      CGAL_nef3_assertion(point(vertex(e1)) != point(vertex(e2)));
-      CGAL_nef3_assertion(tmp_point(e1)==tmp_point(e2).antipode());
-      CGAL_nef3_assertion(mark(e1)==mark(e2));
+      TRACEN(vector(e1)<<" -> "<< -vector(e2));
+      CGAL_assertion(normalized(vector(e1))==normalized(-vector(e2)));
+      CGAL_assertion(point(vertex(e1)) != point(vertex(e2)));
+      CGAL_assertion(mark(e1)==mark(e2));
       make_twins(e1,e2);
 
       // discard temporary sphere_point ?
@@ -1809,7 +1415,7 @@ template <typename SNC_>
 void SNC_constructor<SNC_>::
 link_shalfedges_to_facet_cycles() const
 {
-  // SETDTHREAD(43*31);
+  //  SETDTHREAD(43*31);
   TRACEN(">>>>>link_shalfedges_to_facet_cycles");
   
   //  Progress_indicator_clog progress
@@ -1817,7 +1423,7 @@ link_shalfedges_to_facet_cycles() const
   //     "SNC_constructor: building facet cycles...");
 
   Halfedge_iterator e;
-  CGAL_nef3_forall_edges(e,*sncp()) {
+  CGAL_forall_edges(e,*sncp()) {
     //    progress++;
     TRACEN("");
     TRACEN(PH(e));
@@ -1869,15 +1475,15 @@ link_shalfedges_to_facet_cycles() const
     }
     */
 
-    CGAL_nef3_assertion( Dt.circle(cet) == D.circle(ce).opposite() ); 
-    CGAL_nef3_assertion( twin(Dt.source(cet)) == D.source(ce)); 
+    CGAL_assertion( Dt.circle(cet) == D.circle(ce).opposite() ); 
+    CGAL_assertion( twin(Dt.source(cet)) == D.source(ce)); 
     CGAL_For_all(ce,cee) { 
       TRACEN("circles " << Dt.circle(cet) << "   " << D.circle(ce) << 
 	     " sources " << Dt.point(Dt.target(cet)) << 
 	     "   " << D.point(D.target(ce)));
-      CGAL_nef3_assertion( Dt.circle(cet) == D.circle(ce).opposite() ); 
-      CGAL_nef3_assertion( twin(Dt.source(cet)) == D.source(ce)); 
-      CGAL_nef3_assertion(ce->tmp_mark()==cet->tmp_mark());
+      CGAL_assertion( Dt.circle(cet) == D.circle(ce).opposite() ); 
+      CGAL_assertion( twin(Dt.source(cet)) == D.source(ce)); 
+      CGAL_assertion(ce->mark()==cet->mark());
       link_as_prev_next_pair(Dt.twin(cet),ce);
       link_as_prev_next_pair(D.twin(ce),cet);
       --cet; // ce moves ccw, cet moves cw
@@ -1897,8 +1503,8 @@ categorize_facet_cycles_and_create_facets() const
   //  SETDTHREAD(43*31*23);
   TRACEN(">>>>>categorize_facet_cycles_and_create_facets");
 
-  typedef std::list<SObject_handle> SObject_list;
-  typedef std::map<Plane_3, SObject_list, Plane_lt> 
+  typedef std::list<Object_handle> Object_list;
+  typedef std::map<Plane_3, Object_list, Plane_lt> 
     Map_planes;
 
   //  Progress_indicator_clog progress
@@ -1907,34 +1513,34 @@ categorize_facet_cycles_and_create_facets() const
 
   Map_planes M;
   SHalfedge_iterator e;
-  CGAL_nef3_forall_shalfedges(e,*sncp()) {
+  CGAL_forall_shalfedges(e,*sncp()) {
     //    progress++;
-    Sphere_circle c(tmp_circle(e));
+    Sphere_circle c(circle(e));
     Plane_3 h = c.plane_through(point(vertex(e)));
     SM_decorator SD(vertex(e));
     TRACEN(point(target(SD.source(e))) <<" - "<< point(vertex(e)) <<" - "<< 
            point(target(SD.target(e))) << 
-	   " has plane " << h << " has circle " << tmp_circle(e) << 
+	   " has plane " << h << " has circle " << circle(e) << 
 	   " has signum " << sign_of(h));
     if ( sign_of(h)<0 ) continue;
-    //   CGAL_nef3_assertion( h == normalized(h));
-    M[normalized(h)].push_back(SObject_handle(twin(e)));
+    //   CGAL_assertion( h == normalized(h));
+    M[normalized(h)].push_back(Object_handle(twin(e)));
     TRACEN(" normalized as " << normalized(h)); 
   }
   SHalfloop_iterator l;
-  CGAL_nef3_forall_shalfloops(l,*sncp()) {
-    Sphere_circle c(tmp_circle(l));
+  CGAL_forall_shalfloops(l,*sncp()) {
+    Sphere_circle c(circle(l));
     Plane_3 h = c.plane_through(point(vertex(l))); 
     if ( sign_of(h)<0 ) continue;
-    // CGAL_nef3_assertion( h == normalized(h));
-    M[normalized(h)].push_back(SObject_handle(twin(l)));
+    // CGAL_assertion( h == normalized(h));
+    M[normalized(h)].push_back(Object_handle(twin(l)));
   }
 
   //  Progress_indicator_clog progress2 
   //    ( M.size(), "SNC_constructor: creating facets...");
 
   typename Map_planes::iterator it;
-  CGAL_nef3_forall_iterators(it,M) { 
+  CGAL_forall_iterators(it,M) { 
     //    progress2++;
     TRACEN("  plane "<<it->first<<"             "<<(it->first).point());
     FM_decorator D(*sncp());
@@ -1950,7 +1556,7 @@ template <typename SNC_>
 void SNC_constructor<SNC_>::
 create_volumes()
 { 
-  // SETDTHREAD(37*43*19*47);
+  //  SETDTHREAD(37*43*19*47);
 
   TRACEN(">>>>>create_volumes");
   Sface_shell_hash     ShellSf(-1);
@@ -1968,7 +1574,7 @@ create_volumes()
 // First, we classify all the Shere Faces per Shell.  For each Shell we
 //     determine its minimum lexicographyly vertex and we check wheter the
 //     Shell encloses a region (closed surface) or not. 
-  CGAL_nef3_forall_sfaces(f,*sncp()) {
+  CGAL_forall_sfaces(f,*sncp()) {
     //    progress++;
     TRACEN("sface in " << ShellSf[f]);
     if ( Done[f] ) 
@@ -1986,13 +1592,13 @@ create_volumes()
     Closed.push_back(false);
 
   Halffacet_iterator hf;
-  CGAL_nef3_forall_facets(hf,*this) 
+  CGAL_forall_facets(hf,*this) 
     if(ShellF[hf] != ShellF[twin(hf)]) {
       Closed[ShellF[hf]] = true;
       Closed[ShellF[twin(hf)]] = true;
     }
 
-  CGAL_nef3_assertion( pl() != NULL);
+  CGAL_assertion( pl() != NULL);
   pl()->initialize(sncp()); // construct the point locator 
 
   //  Progress_indicator_clog progress2
@@ -2013,14 +1619,14 @@ create_volumes()
        v_min=v;
     TRACEN( "Shell #" << i << " minimal vertex: " << point(v));
     SM_point_locator D(v);
-    SObject_handle o = D.locate(Sphere_point(-1,0,0));
+    Object_handle o = D.locate(Sphere_point(-1,0,0));
     SFace_const_handle sfc;
     if( !assign(sfc, o) || ShellSf[sfc] != i) {
       TRACEN("the shell encloses a volume");
       TRACEN("sface hit? "<<assign(sfc,o));
       if( assign(sfc, o)) TRACEN("sface on another shell? "<<ShellSf[sfc]);
       SFace_handle f = MinimalSFace[i];
-      CGAL_nef3_assertion( ShellSf[f] == i );
+      CGAL_assertion( ShellSf[f] == i );
       if( Closed[i] ) {
 	TRACEN("Shell #" << i << " is closed");
 	SM_decorator SD(v);
@@ -2042,7 +1648,7 @@ create_volumes()
 //    ( sncp()->number_of_sfaces(), 
 //      "SNC_constructor: finding nesting structure...");
 
-  CGAL_nef3_forall_sfaces(f,*sncp()) {
+  CGAL_forall_sfaces(f,*sncp()) {
     //    progress3++;
     if ( volume(f) != Volume_handle() ) 
       continue;
