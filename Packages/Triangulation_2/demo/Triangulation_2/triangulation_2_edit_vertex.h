@@ -60,19 +60,21 @@ public:
   typedef typename T::Face_handle                   Face_handle;
   typedef typename T::Vertex_handle                 Vertex_handle;
   typedef typename T::Geom_traits::FT               FT;
+  typedef typename T::Locate_type                   Locate_type;
 protected:
   FT                                                first_x, first_y;
   FT                                                x2, y2;
   bool                                              wasrepainted;
   bool                                              on_first;
+  bool                                              do_not_remove;
   Vertex_handle                                     current_v;
          //the vertex that will be process
   Point                                             old_point;
   T                                                 *dt;
   QPopupMenu                                        *popup;
 public:
-  triangulation_2_edit_vertex() : wasrepainted(true), on_first(FALSE)
-  {};
+  triangulation_2_edit_vertex() : 
+    wasrepainted(true), on_first(false), do_not_remove(false) {};
   void set_Delaunay (T *t) {dt = t;}
 private:
   QCursor oldcursor;
@@ -112,25 +114,33 @@ private:
       on_first = FALSE;
     }	
   };
-  void mouseMoveEvent(QMouseEvent *e)
-  {
-  if(on_first)
-  {
-    FT x, y;
-    widget->x_real(e->x(), x);
-    widget->y_real(e->y(), y);
+  void mouseMoveEvent(QMouseEvent *e)  {
+    if(on_first)   {
+      FT x, y;
+      widget->x_real(e->x(), x);
+      widget->y_real(e->y(), y);
 		
-    *widget << CGAL::GREEN << CGAL::PointSize (5)
-            << CGAL::PointStyle (CGAL::DISC);
-    if(!wasrepainted)
-      *widget << old_point;
-    *widget << Point(x, y);
-    dt->remove(current_v);
-    current_v = dt->insert(Point(x, y));
-    widget->redraw();	//redraw the scenes
-    old_point = Point(x, y);
-  }
-};
+      *widget << CGAL::GREEN << CGAL::PointSize (5)
+	      << CGAL::PointStyle (CGAL::DISC);
+      if(!wasrepainted)
+	*widget << old_point;
+      *widget << Point(x, y);
+      if(!do_not_remove)  
+	dt->remove(current_v);
+      Locate_type lt;
+      int li;
+      Face_handle fh = dt->locate(Point(x,y), lt, li);
+      if(lt != 0){
+	current_v = dt->insert(Point(x, y), lt, fh, li);
+	do_not_remove = false;
+      } else
+	do_not_remove = true;
+  
+      widget->redraw();	//redraw the scenes
+      old_point = Point(x, y);
+    }
+  };
+ 
   void activating()
   {
     oldcursor = widget->cursor();
