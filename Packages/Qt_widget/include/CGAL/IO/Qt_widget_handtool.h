@@ -93,9 +93,11 @@ private:
     {
       widget->setCursor(QCursor( QPixmap( (const char**)hand_xpm)));
       double x, y, xfirst2, yfirst2;
-      widget->xy_real(e->x(), e->y(), x, y);
-			widget->xy_real(first_x, first_y, xfirst2, yfirst2);
-
+      widget->x_real(e->x(), x);
+      widget->y_real(e->y(), y);
+      widget->x_real(first_x, xfirst2);
+      widget->y_real(first_y, yfirst2);
+			
       double	xmin, xmax, ymin, ymax, distx, disty;
       if(x < xfirst2) {xmin = x; xmax = xfirst2;}
       else {xmin = xfirst2; xmax = x;};
@@ -121,7 +123,8 @@ private:
       widget->lock();
         *widget << CGAL::GRAY;
       if(!wasrepainted) {
-        widget->xy_real(x2 - first_x, y2 - first_y, xcoord, ycoord);
+        widget->x_real(x2 - first_x, xcoord);
+        widget->x_real(y2 - first_y, ycoord);
         CGAL_CLIB_STD::sprintf(tempc1, " dx=%20.6f", xcoord);
         CGAL_CLIB_STD::sprintf(tempc2, ", dy=%20.6f", ycoord);
         strcat(tempc1, tempc2);
@@ -130,7 +133,8 @@ private:
         widget->get_painter().drawText(x2, y2, tempc1, 49);
         *widget << CGAL::GRAY;
       }
-      widget->xy_real(x - first_x, y - first_y, xcoord, ycoord);
+      widget->x_real(x - first_x, xcoord);
+      widget->x_real(y - first_y, ycoord);
       CGAL_CLIB_STD::sprintf(tempc1, " dx=%20.6f", xcoord);
       CGAL_CLIB_STD::sprintf(tempc2, ", dy=%20.6f", ycoord);
       strcat(tempc1, tempc2);

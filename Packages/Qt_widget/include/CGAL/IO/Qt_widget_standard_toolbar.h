@@ -69,13 +69,13 @@ private:
   void fill_toolbar(QMainWindow *mw);
 
 private:
-  Qt_widget           *widget;
-  Qt_widget_history   *history;
-  QButtonGroup*       button_group;
+  Qt_widget          *widget;
+  Qt_widget_history  *history;
+  QButtonGroup*      button_group;
   // this group has no parent and is destroyed manually in the
   // destructor
 
-  QToolButton*        nolayerBt;
+  QToolButton* nolayerBt;
 };//end class
 
 };//end namespace

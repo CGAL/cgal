@@ -84,9 +84,11 @@ private:
     {
       if((e->x() != first_x) && (e->y() != first_y)) {
         double x, y, xfirst2, yfirst2;
-        widget->xy_real(e->x(), e->y(), x, y);
-  			widget->xy_real(first_x, first_y, xfirst2, yfirst2);
-
+        widget->x_real(e->x(), x);
+        widget->y_real(e->y(), y);
+        widget->x_real(first_x, xfirst2);
+        widget->y_real(first_y, yfirst2);
+  			
         double	xmin, xmax, ymin, ymax;
         if(x < xfirst2) {xmin = x; xmax = xfirst2;}
         else {xmin = xfirst2; xmax = x;};
