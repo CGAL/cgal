@@ -26,6 +26,8 @@
 #include <CGAL/functional_base.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/Origin.h>
+#include <CGAL/Bbox_2.h>
+#include <CGAL/Bbox_3.h>
 
 // see kernel functors for original version
 // all deprecated stuff was removed ...
