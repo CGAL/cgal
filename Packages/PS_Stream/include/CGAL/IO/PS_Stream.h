@@ -6,13 +6,14 @@
 #include <CGAL/Cartesian.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
-#include <iostream.h>
-#include <iomanip.h>
+#include <string>
+#include <iostream>
+#include <iomanip>
 #include <fcntl.h>
-#include <fstream.h>
-#include <strstream.h>
-#include <list.h>
+#include <fstream>
+#include <strstream>
+#include <list>
+#include <CGAL/config.h>
 
 #include <LEDA/basic.h>
 #include <CGAL/IO/Color.h>
@@ -28,11 +29,11 @@ CGAL_BEGIN_NAMESPACE
 class PS_Stream;
 
 template <class T>
-class PS_Modifier {
-  friend PS_Stream& operator<<(PS_Stream& pss,
-                                    const PS_Modifier<T> &);
+class PS_Manipulator {
+  friend PS_Stream& operator<< CGAL_NULL_TMPL_ARGS (PS_Stream& ,
+                                    const PS_Manipulator<T> &);
 public:
-  PS_Modifier(PS_Stream& (PS_Stream::*f)(T),T v):
+  PS_Manipulator(PS_Stream& (PS_Stream::*f)(T),T v):
     _PS_func(f), param(v) {}
 private:
   PS_Stream& (PS_Stream::*_PS_func)(T);
@@ -40,26 +41,27 @@ private:
 };
 
 template <class T>
-PS_Stream& operator<<(PS_Stream& pss, const PS_Modifier<T> &m)
+PS_Stream& operator << (PS_Stream& pss, const PS_Manipulator<T> &m)
 {
   (pss.*m._PS_func)(m.param);
   return pss;
-};
+}
 
 template<class T>
-class PS_Modifier_creator {
+class PS_Manipulator_creator {
 public:
-  PS_Modifier_creator(PS_Stream& (PS_Stream::*f)(T)):
+  PS_Manipulator_creator(PS_Stream& (PS_Stream::*f)(T)):
     _PS_func(f) {}
-  PS_Modifier<T> operator() (T param)
+  PS_Manipulator<T> operator() (T param)
   {
-    return PS_Modifier<T>(_PS_func,param);
+    return PS_Manipulator<T>(_PS_func,param);
   }
 private:
   PS_Stream& (PS_Stream::*_PS_func)(T);
 };
 
-#endif //PS_MANIP_H_
+ #endif
+//PS_MANIP_H_
 
 
 typedef const char *DashStyle;
@@ -69,7 +71,7 @@ public:
   
   typedef Bbox_2 PS_BBox;
 
-  static const DashStyle SOLID;
+   static const DashStyle SOLID;
   static const DashStyle DASH1;
   static const DashStyle DASH2;
   static const DashStyle DASH3;
@@ -81,34 +83,34 @@ public:
   static const float POINT;
   
   enum OutputMode {READABLE, QUIET, READABLE_EPS, QUIET_EPS, GS_VIEW};
-  enum DotStyle {NONE, XCROSS, ICROSS, EDOT, FDOT, EBOX, FBOX};
+   enum DotStyle {NONE, XCROSS, ICROSS, EDOT, FDOT, EBOX, FBOX};
   
   
 class Axis {
 
 friend PS_Stream;
-friend PS_Stream &operator<<(PS_Stream &ps, const Axis &g);
+friend PS_Stream & operator << (PS_Stream& ps, const Axis& g);
 
 public:
-  Axis(double x, double y, unsigned int t=0.0)
+  Axis(double x, double y, unsigned int t=0)
     : _stepx(x), _stepy(y), _thick(t) {}
-  Axis(double xy, unsigned int t=0.0)
+  Axis(double xy, unsigned int t=0)
     : _stepx(xy),_stepy(xy), _thick(t) {}
-  Axis(): _stepx(1.0), _stepy(1.0), _thick(0.0) {}
+  Axis(): _stepx(1.0), _stepy(1.0), _thick(0) {}
 
   double stepx()     const { return _stepx;}
   double stepy()     const { return _stepy;}
-  double thickness() const { return _thick;}
+  unsigned int thickness() const { return _thick;}
 private:
   double _stepx;
   double _stepy;
-  bool _thick;
+  unsigned int _thick;
 };
 
 class Grid {
 
 friend PS_Stream;
-friend PS_Stream &operator<<(PS_Stream &ps, const Grid &g);
+friend PS_Stream & operator << (PS_Stream& ps, const Grid& g);
       
 public:
   Grid(double x, double y, DashStyle str="[1 5] 0")
@@ -117,43 +119,51 @@ public:
     : _stepx(xy), _stepy(xy) {_style=strdup(str);}
   Grid() : _stepx(1.0), _stepy(1.0), _style("[1 5] 0") {}
 
-private:
   double    stepx() const { return _stepx;}
   double    stepy() const { return _stepy;}
   DashStyle style() const { return _style;}
 
+private:
   double _stepx;
   double _stepy;
   DashStyle _style;
 };
+
 class Label {
+
 friend PS_Stream;
-  friend PS_Stream &operator<<(PS_Stream &ps, const Label &txt);
+friend PS_Stream & operator << (PS_Stream& ps, const Label& txt);
+
 public:
   Label(const char* txt) { _text=strdup(txt);}
-private:
   Label() { _text="";}
   const char* text() const { return _text;}
+
+private:
   const char* _text;
+ 
 };
       
 class Latex_Label {
+
   friend PS_Stream;
-  friend PS_Stream &operator<<(PS_Stream &ps, Latex_Label &txt);
+  friend PS_Stream& operator << (PS_Stream& ps, Latex_Label& txt);
 public:
   // Only text can be define by user
   Latex_Label(const char* txt) { _text=strdup(txt);posx=0;posy=0;}
   Latex_Label() { _text="";posx=0;posy=0;}
+
+  float xpos() const {return posx;}
+  float ypos() const {return posy;}
+  const char* text() const { return _text;}
+
 private:
   // These functions are private because the position of the string must never appears to the user
   // Only stream modifiers will access these data
   void setposition(float x, float y) { posx=x;posy=y;}
   Latex_Label(const char* txt,float x, float y) {_text=strdup(txt);posx=x;posy=y;}
 
-  float xpos() const {return posx;};
-  float ypos() const {return posy;};
-  const char* text() const { return _text;};
-
+ 
   // Slots
   const char* _text;
   float posx;
@@ -163,12 +173,16 @@ private:
 typedef list<Latex_Label> List_Label;
 
 class Border {
+
   friend PS_Stream;
-  friend PS_Stream &operator<<(PS_Stream &ps, const Border &b);
+  friend PS_Stream& operator << (PS_Stream &ps, const Border &b);
+
 public:
   Border(int s=0) { _size=s;}
+ int size() const { return _size;}
+
 private:
-  int size() const { return _size;}
+ 
   int _size;
 };
 
@@ -194,8 +208,8 @@ Context(const Context& c)
 
 // Accessor
 
-Color   get_border_color()  const {return _border_color;}
-Color   get_fill_color() const {return _fill_color;}
+ Color   get_border_color()  const {return _border_color;}
+ Color   get_fill_color() const {return _fill_color;}
 DotStyle     get_dot_style() const {return _dot_style;}
 unsigned int get_dot_size()  const {return _dot_size;}
 unsigned int get_thickness()     const {return _thickness;}
@@ -205,21 +219,23 @@ const char*  get_font()          const {return _font;}
 bool         get_fill()          const {return _fill;}
 Point_2<Cartesian <double> > get_pos() const {return _anchor_point;}
 
-void set_border_color(Color& c) {_border_color=c;}
-void set_fill_color(Color& c)   {_fill_color=c;}
+void set_border_color(const Color& c) {_border_color=c;}
+void set_fill_color(const Color& c)   {_fill_color=c;}
 void set_dot_style(DotStyle& s)    {_dot_style=s;}
 void set_dot_size(unsigned int s)     {_dot_size=s;}
 void set_thickness(unsigned int t)    {_thickness=t;}
 void set_font_size(unsigned int s)    {_font_size=s;}
-void set_fill(bool&b)     {_fill=b;}
+void set_fill(bool& b)     {_fill=b;}
 void set_current_pos(const Point_2<Cartesian <double> >& p) {_anchor_point=p;}
 void set_line_style(DashStyle style) {_line_style=strdup(style);}
-void set_font(const char *font) {_font=strdup(font);}private:
+void set_font(const char *font) {_font=strdup(font);}
+
+private:
 
 // Store the current border color
-Color _border_color;
+ Color _border_color;
 // Store the current fill color
-Color _fill_color;
+ Color _fill_color;
 // Store the current dot style
 enum DotStyle _dot_style;
 // Store the current dot size
@@ -240,38 +256,40 @@ unsigned int _font_size;
 Point_2<Cartesian <double> > _anchor_point;
 
 };
+// Conctructors
+    PS_Stream(const PS_BBox& bb, ostream& os,
+   OutputMode = QUIET);
+   PS_Stream(const PS_BBox& bb, const char* fname,
+   OutputMode = QUIET);
+   PS_Stream(const PS_BBox& bb,float H, ostream& os,
+   OutputMode = QUIET);
+   PS_Stream(const PS_BBox& bb,float H, const char* fname,
+   OutputMode = QUIET);
+   PS_Stream(const PS_BBox& bb,float L, float H, ostream& os,
+   OutputMode = QUIET);
+   PS_Stream(const PS_BBox& bb,float L, float H, const char* fname,
+   OutputMode = QUIET);
+   PS_Stream(const PS_BBox& bb,float L, float H);
+  
+   ~PS_Stream();
 
-  PS_Stream(const PS_BBox &bb, ostream &os,
-                 OutputMode = QUIET);
-        PS_Stream(const PS_BBox &bb, const char *fname,
-                     OutputMode = QUIET);
-    PS_Stream(const PS_BBox &bb,float H, ostream &os,
-                 OutputMode = QUIET);
-    PS_Stream(const PS_BBox &bb,float H, const char *fname,
-                 OutputMode = QUIET);
-    PS_Stream(const PS_BBox &bb,float L, float H, ostream &os,
-                 OutputMode = QUIET);
-    PS_Stream(const PS_BBox &bb,float L, float H, const char *fname,
-                 OutputMode = QUIET);
-    ~PS_Stream();
-    PS_Stream& _SetBorderColor(Color &);
-  PS_Stream& _SetFillColor(Color &);
-  PS_Stream& _SetPointSize(unsigned int);
-  PS_Stream& _SetLineWidth(unsigned int);
-  PS_Stream& _SetPointStyle(enum DotStyle);
-  PS_Stream& _SetLineStyle(DashStyle);
-  PS_Stream& _SetFill(bool);
-  PS_Stream& _SetDefaultContext(void);
-  PS_Stream& _SetCurrentContext(const Context &);
-  PS_Stream& _ShowDirection(bool);
-  PS_Stream& _MoveTo(Point_2< Cartesian <double> >);
-  PS_Stream& _ShowAxis(Axis &);
-  PS_Stream& _ShowGrid(Grid &);
-  PS_Stream& _PutPsLabel(const char *);
-  PS_Stream& _PutLatexLabel(const char *);
-  PS_Stream& _PutBorder(unsigned int);
-  PS_Stream& _SetFont(const char *);
-  PS_Stream& _SetFontSize(unsigned int);
+  PS_Stream& set_border_color(const Color&);
+  PS_Stream& set_fill_color(const Color&);
+  PS_Stream& set_point_size(unsigned int);
+  PS_Stream& set_line_width(unsigned int);
+  PS_Stream& set_point_style(enum DotStyle);
+  PS_Stream& set_line_style(DashStyle);
+  PS_Stream& set_fill(bool);
+  PS_Stream& set_default_context(void);
+  PS_Stream& set_current_context(const Context&);
+  PS_Stream& set_point(Point_2< Cartesian <double> >);
+  PS_Stream& set_axis(Axis&);
+  PS_Stream& set_grid(Grid&);
+  PS_Stream& put_ps_label(const char*);
+  PS_Stream& put_latex_label(const char*);
+  PS_Stream& put_border(unsigned int);
+  PS_Stream& set_font(const char*);
+  PS_Stream& set_font_size(unsigned int);
 
 
   //Accessors
@@ -287,101 +305,106 @@ Point_2<Cartesian <double> > _anchor_point;
   // Utils
   double xratio() { return _xratio;}
   double yratio() { return _yratio;}
-  double x2ps(double x) {
-    return (x-_bbox.xmin())*xratio();
-  }
-  double y2ps(double y) {
-    return (y-_bbox.ymin())*yratio();
-
-  }
-
-  bool is_eps();
-  bool is_readable();
+  double x2ps(double x) { return (x-_bbox.xmin())*xratio();}
+  double y2ps(double y) { return (y-_bbox.ymin())*yratio();}
+   bool is_eps();
+   bool is_readable();
 
   private:
-PS_Stream(const PS_BBox &bb);
+  //   PS_Stream(const PS_BBox& bb);
 
-PS_Stream(const PS_BBox &bb,float H);
+  // PS_Stream(const PS_BBox& bb,float H);
 
-PS_Stream(const PS_BBox &bb,float L, float H);
-PS_Stream();
+  // PS_Stream(const PS_BBox& bb,float L, float H);
+
+  // PS_Stream();
 
 // Manipulation du contexte.
-void setdefault();
-void setcontext();
+  void setdefault();
+  void setcontext();
 
 // Pour inserer l'entete
-void insert_catalogue();
+  void insert_catalogue();
 
 // Define the scale.
 double _xratio;
 double _yratio;
+
 // Define the boounding box
 PS_BBox _bbox;
+
 // OutputMode
 OutputMode _mode;
-// Size of output.
-int _width,_height;
-// Graphical Context
-Context ctxt;
-// The Output stream
 
-ostream &_os;
+// Size of output.
+int _width;
+int _height;
+
+// Graphical Context
+  Context ctxt;
+
+// The Output stream
+  //ifdef CGAL_WORKAROUND_016
+_IO_ostream_withassign& _os;
+  //else
+  //ostream_withassign& _os;
+  //endif
 
 //List of Latex Labels. They will be inserted at the end of the file.
 List_Label _ll;
+
 };
+
 extern const PS_Stream::Context CTXT_DEFAULT;
 
-PS_Stream &operator<<(PS_Stream &ps, const PS_Stream::Border &b);
+PS_Stream & operator <<(PS_Stream& , const PS_Stream::Border& );
 
-PS_Stream &operator<<(PS_Stream &ps, const PS_Stream::Axis &g);
+PS_Stream & operator <<(PS_Stream& , const PS_Stream::Axis& );
 
-PS_Stream &operator<<(PS_Stream &ps, const PS_Stream::Grid &g);
+PS_Stream & operator <<(PS_Stream& , const PS_Stream::Grid& );
 
-PS_Stream &operator<<(PS_Stream &ps, const PS_Stream::Label &txt);
+PS_Stream & operator <<(PS_Stream& , const PS_Stream::Label&);
 
-PS_Stream &operator<<(PS_Stream &ps, const PS_Stream::Latex_Label &txt);
+PS_Stream& operator << (PS_Stream& , const PS_Stream::Latex_Label& txt);
 
-extern PS_Modifier_creator<Color &> set_fill_color;
+extern PS_Manipulator_creator<const Color&> fill_color;
 
-extern PS_Modifier_creator<Color &> set_border_color;
+extern PS_Manipulator_creator<const Color&> border_color;
 
-extern PS_Modifier_creator<unsigned int> set_point_size;
+extern PS_Manipulator_creator<unsigned int> point_size;
 
-extern PS_Modifier_creator<PS_Stream::DotStyle> set_point_style;
+extern PS_Manipulator_creator<PS_Stream::DotStyle> point_style;
 
-extern PS_Modifier_creator<DashStyle> set_line_style;
+extern PS_Manipulator_creator<DashStyle> line_style;
 
-extern PS_Modifier_creator<unsigned int> set_line_width;
+extern PS_Manipulator_creator<unsigned int> line_width;
 
-extern PS_Modifier_creator<bool> set_fill;
+extern PS_Manipulator_creator<bool> fill;
 
-extern PS_Modifier_creator<const PS_Stream::Context &> set_current_context;
+extern PS_Manipulator_creator<const PS_Stream::Context&> current_context;
 
-extern PS_Modifier_creator<bool> show_direction;
+extern PS_Manipulator_creator<Point_2< Cartesian <double> > > move_to;
 
-extern PS_Modifier_creator<Point_2< Cartesian <double> > > move_to;
+extern PS_Manipulator_creator<PS_Stream::Axis&> show_axis;
 
-//extern PS_Modifier_creator<PS_Stream::Axis &> show_axis;
+extern PS_Manipulator_creator<PS_Stream::Grid&> show_grid;
 
-//extern PS_Modifier_creator<PS_Stream::Grid &> show_grid;
+extern PS_Manipulator_creator<const char*> ps_label;
 
-//extern PS_Modifier_creator<const char *> put_ps_label;
+extern PS_Manipulator_creator<const char*> latex_label;
 
-//extern PS_Modifier_creator<const char *> put_latex_label;
+extern PS_Manipulator_creator<unsigned int> border;
 
-//extern PS_Modifier_creator<unsigned int> put_border;
+extern PS_Manipulator_creator<const char*> font;
 
-extern PS_Modifier_creator<const char *> set_font;
+extern PS_Manipulator_creator<unsigned int> font_size;
 
-extern PS_Modifier_creator<unsigned int> set_font_size;
 
 
 #ifdef CGAL_POINT_2_H
 
 template < class R >
-PS_Stream &operator<<(PS_Stream &ps, const Point_2<R> &p)
+PS_Stream & operator <<(PS_Stream& ps, const Point_2<R>& p)
 {
 
   if (ps.is_readable())
@@ -413,6 +436,7 @@ PS_Stream &operator<<(PS_Stream &ps, const Point_2<R> &p)
     case PS_Stream::XCROSS:
       ps.os() << "xc" << endl;
       break;
+    default : break;  
     }
   return ps;
 }
@@ -421,7 +445,7 @@ PS_Stream &operator<<(PS_Stream &ps, const Point_2<R> &p)
 #ifdef CGAL_SEGMENT_2_H
 
 template < class R >
-PS_Stream &operator<<(PS_Stream &ps, const Segment_2<R> &s)
+PS_Stream & operator <<(PS_Stream& ps, const Segment_2<R>& s)
 {
   if (ps.is_readable())
     {
@@ -442,7 +466,7 @@ PS_Stream &operator<<(PS_Stream &ps, const Segment_2<R> &s)
 #ifdef CGAL_LINE_2_H
 
 template < class R >
-PS_Stream &operator<<(PS_Stream &ps, const Line_2<R> &l)
+PS_Stream & operator <<(PS_Stream& ps, const Line_2<R>& l)
 {
   if (ps.is_readable())
     {
@@ -468,10 +492,12 @@ PS_Stream &operator<<(PS_Stream &ps, const Line_2<R> &l)
       }
   return ps;
 }
+
 #endif // CGAL_LINE_2_H
 #ifdef CGAL_RAY_2_H
+
 template < class R >
-PS_Stream &operator<<(PS_Stream &ps, const Ray_2<R> &r)
+PS_Stream & operator <<(PS_Stream& ps, const Ray_2<R>& r)
 {
   typedef Direction_2<Cartesian <double> > dir;
   Line_2<R> l=r.supporting_line();
@@ -514,7 +540,7 @@ PS_Stream &operator<<(PS_Stream &ps, const Ray_2<R> &r)
 #ifdef PARABOLA_2_H
 
 template < class R >
-PS_Stream &operator<<(PS_Stream &ps,const Parabola<R> &p)
+PS_Stream & operator <<(PS_Stream& ps,const Parabola<R>& p)
 {
 
   if (ps.is_readable())
@@ -525,14 +551,14 @@ PS_Stream &operator<<(PS_Stream &ps,const Parabola<R> &p)
       ps.os() << "%CGAL% Curvature "<<p.curvature()<<endl;
     }
   return ps;
-}X
+}
 
 
 #endif // PARABOLA_2_H
 #ifdef CGAL_TRIANGLE_2_H
 
 template < class R >
-PS_Stream &operator<<(PS_Stream &ps,const Triangle_2<R> &t)
+PS_Stream & operator <<(PS_Stream& ps,const Triangle_2<R>& t)
 {
   if (ps.is_readable())
     {
@@ -561,7 +587,7 @@ PS_Stream &operator<<(PS_Stream &ps,const Triangle_2<R> &t)
 #ifdef CGAL_ISO_RECTANGLE_2_H
 
 template < class R >
-PS_Stream &operator<<(PS_Stream &ps,const Iso_rectangle_2<R> &r)
+PS_Stream & operator <<(PS_Stream& ps,const Iso_rectangle_2<R>& r)
 {
     if (ps.is_readable())
       {
@@ -584,12 +610,12 @@ PS_Stream &operator<<(PS_Stream &ps,const Iso_rectangle_2<R> &r)
     ps.os() << "st" <<endl;
     return ps;
   }
+
 #endif // CGAL_ISO_RECTANGLE_2_H
 #ifdef CGAL_CIRCLE_2_H
 
 template < class R >
-PS_Stream &operator<<(PS_Stream &ps,
-                                   const Circle_2<R> &c)
+PS_Stream & operator <<(PS_Stream& ps, const Circle_2<R>& c)
 {
     if (ps.is_readable())
       {
@@ -612,6 +638,7 @@ PS_Stream &operator<<(PS_Stream &ps,
     ps.os() << "st grestore" <<endl;
     return ps;
   }
+
 #endif // CGAL_CIRCLE_2_H
 
 CGAL_END_NAMESPACE
