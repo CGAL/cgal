@@ -6,12 +6,11 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Regular_triangulation_2.h>
-#include <CGAL/Regular_neighbor_coordinates_traits_2.h>
+#include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/regular_neighbor_coordinates_2.h>
 
 struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
 
-//typedef CGAL::Regular_neighbor_coordinates_traits_2<K> Gt;
 typedef CGAL::Regular_triangulation_euclidean_traits_2<K> Gt;
 typedef CGAL::Regular_triangulation_2<Gt>              Regular_triangulation;
 typedef Regular_triangulation::Weighted_point Weighted_point;
@@ -29,9 +28,6 @@ int main()
   //coordinate computation
   Weighted_point wp(K::Point_2(1.2, 0.7),2);
   Point_coordinate_vector  coords;
- //  K::FT  norm = 
-//     CGAL::regular_neighbor_coordinates_2(rt, wp,
-// 					 std::back_inserter(coords)).second;
   CGAL::Triple<
     std::back_insert_iterator<Point_coordinate_vector>, 
     K::FT, bool> result = 
