@@ -89,7 +89,6 @@ public:
   typedef typename Gt::Coord_type Coord_type;
   typedef typename Gt::Point Point;
 
-  typedef typename Gt::Distance Distance;
   typedef typename Gt::Ray Ray;
   typedef typename Gt::Line Line;
   typedef typename Gt::Direction Direction;

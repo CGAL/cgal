@@ -46,8 +46,8 @@ squared_radius_orthogonalcircleC2(
   FT dpy = py-ry;
   FT dqx = qx-rx;
   FT dqy = qy-ry;
-  FT dpp = square(dpx)+square(dpy)-pw+rw;
-  FT dqq = square(dqx)+square(dqy)-qw+rw;
+  FT dpp = CGAL_NTS square(dpx)+CGAL_NTS square(dpy)-pw+rw;
+  FT dqq = CGAL_NTS square(dqx)+CGAL_NTS square(dqy)-qw+rw;
 
   FT det0 = det2x2_by_formula(dpx, dpy, dqx, dqy);
   
@@ -55,7 +55,7 @@ squared_radius_orthogonalcircleC2(
 
   FT det2 = det2x2_by_formula(dpx, dpp, dqx, dqq);
 
-  return (square(det1)+square(det2))/(FT4*square(det0)) - rw;
+  return (CGAL_NTS square(det1)+CGAL_NTS square(det2))/(FT4*CGAL_NTS square(det0)) - rw;
 }
 
 template< class FT >
@@ -67,9 +67,9 @@ squared_radius_smallest_orthogonalcircleC2(
 
 {
   FT FT4(4);
-  FT dpz = square(px-qx)+square(py-qy);
+  FT dpz = CGAL_NTS square(px-qx)+CGAL_NTS square(py-qy);
 
-  return (square(dpz-pw+qw)/(FT4*dpz)-qw);
+  return (CGAL_NTS square(dpz-pw+qw)/(FT4*dpz)-qw);
 }
 
 //-------------------------------------------------------------------

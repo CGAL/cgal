@@ -80,11 +80,9 @@ public:
   typedef typename Gt::Coord_type Coord_type;
   typedef typename Gt::Point Point;
 
-  typedef typename Gt::Distance Distance;
   typedef typename Gt::Ray Ray;
   typedef typename Gt::Line Line;
   typedef typename Gt::Direction Direction;
-
 
   typedef typename Dt::Face_handle Face_handle;
   typedef typename Dt::Vertex_handle Vertex_handle;
