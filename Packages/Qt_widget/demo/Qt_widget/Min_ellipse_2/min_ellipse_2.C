@@ -69,23 +69,23 @@ public:
   Qt_layer_show_ch(){};
 
 
-  void draw(CGAL::Qt_widget &widget)
+  void draw()
   {
-    widget.lock();
-    widget << CGAL::PointSize(7) << CGAL::PointStyle(CGAL::CROSS);
-    widget << CGAL::GREEN;
+    widget->lock();
+    *widget << CGAL::PointSize(7) << CGAL::PointStyle(CGAL::CROSS);
+    *widget << CGAL::GREEN;
     std::list<Point>::iterator itp = list_of_points.begin();
     while(itp!=list_of_points.end())
     {
-      widget << (*itp++);
+      *widget << (*itp++);
     }
-    widget << CGAL::PointSize(1) << CGAL::PointStyle(CGAL::PIXEL);
-    widget << CGAL::RED;
+    *widget << CGAL::PointSize(1) << CGAL::PointStyle(CGAL::PIXEL);
+    *widget << CGAL::RED;
     Min_ellipse min_ell;
     min_ell.insert(list_of_points.begin(),list_of_points.end());
-    widget << min_ell.ellipse();
+    *widget << min_ell.ellipse();
 
-    widget.unlock();
+    widget->unlock();
   };	
   
 };//end class 
@@ -109,6 +109,8 @@ public:
     menuBar()->insertItem( "&File", file );
     file->insertItem("&New", this, SLOT(new_instance()), CTRL+Key_N);
     file->insertItem("New &Window", this, SLOT(new_window()), CTRL+Key_W);
+    file->insertSeparator();
+    file->insertItem("Print", widget, SLOT(print_to_ps()), CTRL+Key_P);
     file->insertSeparator();
     file->insertItem( "&Close", this, SLOT(close()), CTRL+Key_X );
     file->insertItem( "&Quit", qApp, SLOT( closeAllWindows() ), CTRL+Key_Q );
@@ -161,7 +163,6 @@ public slots:
   }
   void new_instance()
   {
-    widget->detach_current_tool();
     widget->lock();
     list_of_points.clear();
     widget->set_window(-1.1, 1.1, -1.1, 1.1);

@@ -34,6 +34,7 @@
 #include <qobject.h>
 #include <qtoolbutton.h>
 #include <qtoolbar.h>
+#include <qbuttongroup.h>
 #include <qmainwindow.h>
 
 typedef CGAL::Cartesian<double>	  Rp;
@@ -46,34 +47,23 @@ class Tools_toolbar : public QObject
 	Q_OBJECT
 public:
   Tools_toolbar(Qt_widget *w, QMainWindow *mw, std::list<Point> *l1);
-
+  ~Tools_toolbar(){};
   QToolBar*	toolbar(){return maintoolbar;}
 
 signals:
   void new_object(CGAL::Object);
 
-
-private slots:
-  void get_new_object(CGAL::Object obj) { emit(new_object(obj)); }
-
-  void pointtool();
-  void move_deletetool();
-  void notool();
-  
-  void toggle_button();
-
 private:
-  QToolBar		*maintoolbar;
+  QToolBar      *maintoolbar;
   QToolButton		*but[10];
-  Qt_widget		*widget;
-  int			activebutton;
-  bool			is_active;
-  void			setActiveButton(int i);
-  int			nr_of_buttons;
+  QButtonGroup  *button_group;
+  Qt_widget     *widget;
+  
+  int           nr_of_buttons;
 
 
   CGAL::Qt_widget_get_point<Rp>	      pointbut;
-  CGAL::Qt_widget_move_list_point<Rp> *move_deletebut;
+  CGAL::Qt_widget_move_list_point<Rp> move_deletebut;
 };//end class
 
 };//end namespace
