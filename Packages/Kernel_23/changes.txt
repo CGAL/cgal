@@ -1,0 +1,1909 @@
+1.0 (7 January 2003)
+- Merge _2, _3, Kernel_test, Kernel_basic and Doc23 into Kernel_23.
+
+========================================================
+   Packages _2, _3, Kernel_test, Kernel_basic and Doc23 have been merged
+   into Kernel_23.  The old changes.txt files are appended below.
+========================================================
+
+3.33 (? November 2002)
+- Fix buglet : class Origin was declared outside namespace CGAL.
+
+======================== CGAL 2.4 ======================
+
+3.32 (24 January 2002)
+- Remove useless predicate_classes_2.h.
+
+3.31 (23 January 2002)
+- Remove Point_2_base and such typedefs.
+
+3.30 (22 January 2002)
+- Remove global functions and member functions, these are obtained by
+  derivation.
+
+3.29 (9 January 2002)
+- Resubmit.
+
+3.28 (7 January 2002)
+- Comment the now useless member functions of Iso_rectangle_2.
+
+3.27 (29 October 2001)
+- Submission bug.
+
+3.26 (24 October 2001)
+- Simple_Fourtuple -> Fourtuple.
+
+3.25 (18 October 2001)
+- Move code to avoid warning with -Winline.
+
+3.24 (5 October 2001)
+- Remove cartesian_classes.h.
+
+3.23 (27 September 2001)
+- Remove MipsPro warnings.
+
+3.22 (24 September 2001)
+- Nothing : Submission error...
+
+3.21 (24 September 2001)
+- Bboxes don't use ref counting anymore.
+
+3.20 (15 August 2001)
+- Remove CGAL_SCOPE to please SunPro.  Hopefully we don't break anything else.
+
+======================== CGAL 2.3 ======================
+
+3.19 (23 July 2001)
+- renamed cmp_* to compare_* and *_dist_* to *_distance_* and
+  leftturn, Leftturn, LEFTTURN to left_turn, Left_turn, LEFT_TURN and
+  rightturn, Rightturn, RIGHTTURN to right_turn, Right_turn, RIGHT_TURN
+  and compare_lexicographically* to compare_*
+  (deprecated the old names but didn't remove them).
+
+3.18 (20 July 2001)
+- changed Less_distsance_to_point_2 to use default construction
+
+3.17 (27 June 2001)
+- Put the IO operators back in, they are needed by Borland.
+
+3.16 (21 June 2001)
+- New constructors for Direction_2.
+
+3.15 (21 June 2001)
+- Merge point_vector_definitions_2.C into point_vector_declarations_2.h.
+- Remove number_type_tag(const Vector_2<R> &).
+
+3.14 (20 June 2001)
+- remove conditionnal #includes from cartesian/homogeneous.
+- remove member functions for predicates since they are inherited.
+- remove global function predicates.
+
+3.13 (19 June 2001)
+- added centroid
+
+3.12 (1 May 2001)
+- added compare_x_at_y
+
+3.12 (?? Mar 2001)
+- Fix too long lines.
+
+3.11 (17 Mar 2001)
+- Added constructor Vector(Point, Point). 
+
+3.10 (14 Feb 2001)
+- added min_coord() and max_coord() funcions in Iso_rectangle_2 and new
+  constructor
+
+
+3.9  (13 Feb 2001)
+
+- added area() functions for Triangle_2 and Iso_rectangle_2
+- Remove old style casts.
+- Simple_homogeneous<>.
+
+3.8  (24 Jan 2001)
+
+- rearranged some include directives to put them at the top of the file
+  removed others that were unnecessary and added some that were missing
+
+3.7  (22 Jan 2001)
+- Adapts to new simple cartesian kernel.
+- Remove redundant protect macros tests.
+- Added a few missing CGAL_ to the NO_?STREAM* macros.
+
+3.6   (30 Jul 2000)
+
+- id() removed
+- copy assigment (operator=) removed (the compiler will do it the right way)
+
+3.5   (26 Jul 2000)
+
+- identical() removed
+
+3.4   (31 May 2000)
+
+- Reflection added to Aff_transformation_2
+
+3.3   (18 Apr 2000)
+
+- _R -> R_
+- Bbox_2 uses Handle_for<> now
+
+3.2   (06 Apr 2000)
+
+- include_advanced/CGAL/Old_style_kernel/U_2.h files created
+  which define class U_2<R, Old_style_tag> : public R::U_2_base
+
+3.1   (30 Mar 2000)
+
+- Point_2<R>::operator= removed
+  problems with Simple_cartesian, where no copy assignment is defined
+  base class function should match instead
+
+3.0   (02 Feb 2000)
+
+- automatic inclusion for Simple_cartesian added
+
+2.8.1 (01 Feb 2000)
+
+- CGAL_static_cast  replaced by static_cast<>
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 1   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+2.8   -> 2.8.1 (07 Nov 99)
+- constructor for Identity added to Aff_transformation_2
+
+2.7.5 -> 2.8   (28 Oct 99)
+- removed CGAL:: in non member functions in CGAL scope
+
+2.7.4 -> 2.7.5 (14 Oct 99)
+- added to_vector() to Direction_2<R>
+
+2.7.3 -> 2.7.4 (08 Oct 99)
+- Direction_2<R>::vector() now calls to_vector() on implementation
+  classes
+
+2.7.2 -> 2.7.3 (07 Oct 99)
+- used CGAL_SCOPE in Point_2.h and Vector_2.h to resolve 
+  qualification competition between mips and M$ VC++
+
+2.7.1 -> 2.7.2 (24 Sep 99)
+- undo of qualification: problems with M$ VC++
+
+2.7   -> 2.7.1 (21 Sep 99)
+- qualified friends in Point_2 and Vector_2 by CGAL::
+  (as requested by Matthias)
+
+2.6   -> 2.7   (02 Sep 99)   
+- qualified ..._2<_R> by CGAL::
+
+2.5   -> 2.6   (02 Sep 99)   
+- qualified ..._2<R> by CGAL::
+
+2.4   -> 2.5   (01 Sep 99)   
+- #include <..C2.h> replaced #include <../Cartesian/.._2.h>
+
+2.3   -> 2.4   (01 Sep 99)   
+- class p_Equal_xy added to predicate classes
+
+2.2   -> 2.3   (19 Aug 99)
+- _2<R> is now derived from R::_2_base instead of R::_2
+  typedef typename R::_2            R_2;      replaced by
+  typedef typename R::_2_base  R_2;
+
+2.1.2 -> 2.2   (04 Aug 99)
+- updates/workarounds for gcc-2.95:
+  s/friend inline/friend CGAL_FRIEND_INLINE
+  s/friend CGAL_KERNEL_INLINE/friend CGAL_KERNEL_FRIEND_INLINE
+  made all operator-() friends non-friends
+
+  reorganized Point_2 and Vector_2
+  added files point_vector_declarations_2.h
+              point_vector_definitions_2.C
+2.5   -> 2.6   (02 Sep 99)   
+- qualified ..._2<R> by CGAL::
+
+2.4   -> 2.5   (01 Sep 99)   
+- #include <..C2.h> replaced #include <../Cartesian/.._2.h>
+
+2.3   -> 2.4   (01 Sep 99)   
+- class p_Equal_xy added to predicate classes
+
+2.2   -> 2.3   (19 Aug 99)
+- _2<R> is now derived from R::_2_base instead of R::_2
+  typedef typename R::_2            R_2;      replaced by
+  typedef typename R::_2_base  R_2;
+
+2.1.2 -> 2.2   (04 Aug 99)
+- updates/workarounds for gcc-2.95:
+  s/friend inline/friend CGAL_FRIEND_INLINE
+  s/friend CGAL_KERNEL_INLINE/friend CGAL_KERNEL_FRIEND_INLINE
+  made all operator-() friends non-friends
+
+  reorganized Point_2 and Vector_2
+  added files point_vector_declarations_2.h
+              point_vector_definitions_2.C
+2.5   -> 2.6   (02 Sep 99)   
+- qualified ..._2<R> by CGAL::
+
+2.4   -> 2.5   (01 Sep 99)   
+- #include <..C2.h> replaced #include <../Cartesian/.._2.h>
+
+2.3   -> 2.4   (01 Sep 99)   
+- class p_Equal_xy added to predicate classes
+
+2.2   -> 2.3   (19 Aug 99)
+- _2<R> is now derived from R::_2_base instead of R::_2
+  typedef typename R::_2            R_2;      replaced by
+  typedef typename R::_2_base  R_2;
+
+2.1.2 -> 2.2   (04 Aug 99)
+- updates/workarounds for gcc-2.95:
+  s/friend inline/friend CGAL_FRIEND_INLINE
+  s/friend CGAL_KERNEL_INLINE/friend CGAL_KERNEL_FRIEND_INLINE
+  made all operator-() friends non-friends
+
+  reorganized Point_2 and Vector_2
+  added files point_vector_declarations_2.h
+              point_vector_definitions_2.C
+  added conversion fucntions between points and vectors
+  those are friends and used by operator-() - functions that are no friends
+    any longer
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 0   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+2.1.1 -> 2.1.2 (09 May 99)
+- corrected placement of 'inline' in Vector_2.h (caused a warning)
+
+2.1   -> 2.1.1 (06 May 99)
+- call of orientation in predicates_on_points_2.h qualified by CGAL::
+
+2.0.5 -> 2.1   (16 Apr 99)
+- iostream parts prefixed by std::
+
+2.0.4 -> 2.0.5 (19 Mar 99)
+- binary function prefixed by CGAL_STD:: in derivations	in 
+  <predicate_classes_2.h>
+
+2.0.3 -> 2.0.4 (16 Mar 99)
+- SunPro 5.0 doesn't like extra semicolons :)
+  "predicate_classes_2.h", 
+  line 33: Error: Empty declaration (probably an extra semicolon).
+  extra semicolons removed in <predicate_classes_2.h>
+
+2.0.2 -> 2.0.3 (14 Mar 99)
+- CGAL::min/max replaced by std::min/max in Bbox_2.h
+
+2.0.1 -> 2.0.2
+- CGAL_[BEGIN|END]_NAMESPACE used
+
+2.0   -> 2.0.1
+- Quotient declared in <Vector_2.h>
+
+1.3   -> 2.0   (04 Feb 98)
+- namespace CGAL { } introduced
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  1 . 2   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+1.2.5 -> 1.3   (15 Dec 98)
+- file names in header corrected in Bbox_2.h, predicate_classes_2.h
+- Use of CGAL...INLINE made consistent between declarations and
+  definitions (otherwise SunPro CC 4.2 does not like it).
+
+1.2.4 -> 1.2.5 (23 Nov 98)
+- predicate_classes_2.h added (first version)
+
+1.2.3 -> 1.2.4 (03 Sep 98)
+- ORIGIN [!=]= Point_2 added
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  1 . 1   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+1.2.3
+- Ray_2::collinear_has_on(.) added
+- Segment_2::point( int i) added
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  1 . 0   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+1.2.1 -> 1.2.2
+- added typename keyword in basic_constructions_2.h
+
+1.2   -> 1.2.1
+- Vector_2 / Quotient added
+
+1.1.1 -> 1.2
+- made fit for egcs
+
+1.1   -> 1.1.1
+- missing file (basic_constructions_2.h) added
+
+1.0   -> 1.1
+- added typename keyword
+
+0.9   -> 1.0
+- Now CGAL_are_ordered_along_line(p,q,r) have strict
+  versions as well. The strict versions return false,
+  if the test point is equal to one of the end points
+  (the previous H-version behavior) while the fcts 
+  without the strictly in the name allow for equality
+  (the old C-version behavior).
+- Aff_transformations got access mfcts.
+- CGAL_compare_delta... added
+- added typedefs and typename keyword in _2 classes
+3.31 (23 January 2002)
+- Remove Point_2_base and such typedefs.                                                        
+- Declare Origin in Point_3.h and Null_vector in Vector_3.h.
+
+3.30 (22 January 2002)
+- Remove global functions and member functions, these are obtained by
+  derivation.
+
+3.29 (29 October 2001)
+- Submission bug.
+
+3.27 (24 October 2001)
+- Simple_Sixtuple -> Sixtuple.
+
+3.26 (5 October 2001)
+- Remove cartesian_classes.h.
+
+3.25 (24 September 2001)
+- Bboxes don't use ref counting anymore.
+
+3.24 (12 September 2001)
+- Fixes for SunPro.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%  Release 2.3 %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+3.23 (27 Jun 2001)
+- Put the IO operators back in, they are needed by Borland.
+
+3.22 (21 Jun 2001)
+- New constructors for Direction_3.
+
+3.21 (21 Jun 2001)
+- Merge point_vector_definitions_3.C into point_vector_declarations_3.h.
+- Remove number_type_tag(const Vector_3<R> &).
+
+3.20 (20 Jun 2001)
+- nothing, just to resubmit in time...
+
+3.19 (20 Jun 2001)
+- remove global function predicates.
+
+3.18 (20 Jun 2001)
+- remove conditionnal #includes from cartesian/homogeneous.
+- remove member functions for predicates since they are inherited.
+
+3.17 (19 Jun 2001)
+- added centroid
+
+3.16 (?? Mar 2001)
+- Fix too long lines.
+
+3.15 (17 Mar 2001)
+- Added constructor Vector(Point, Point). 
+
+3.14 (19 Feb 2001)
+- Comment out CGAL::Less_xyz<>.
+
+3.13 (14 Feb 2001)
+
+- added min_coord(), max_coord() for Iso_cuboid_3 and new constructor
+
+3.12 (13 Feb 2001)
+
+- added squared_area() function for Triangle_3 and volume() function
+  for Tetrahedron_3 and Iso_cuboid_3
+- Remove old style casts.
+- Simple_homogeneous.
+
+3.11 (24 Jan 2001)
+
+- rearranged some include directives to put them at the top of the file
+  removed others that were unnecessary and added some that were missing
+
+3.10  (22 Jan 2001)
+- Adapts to new simple cartesian kernel.
+- Remove redundant protect macros tests.
+- Added a few missing CGAL_ to the NO_?STREAM* macros.
+
+3.9   (15 Oct 2000)
+
+- Point_3<R> qualified by CGAL:: in Sphere_3.h
+  (Cartesian kernel needs this - homogeneous aparently does not)
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 2   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+3.8   (08 Oct 2000)
+
+- packaging script fixed
+  Sphere_3.h now added
+
+3.7   (16 Aug 2000)
+
+- cross_product added again (see 3.6); package H3 modified instead 
+
+3.6   (11 Aug 2000)
+
+- cross_product removed (hoping that this will solve a Borland
+  problem with H3); The base class function should match instead.
+
+3.5   (30 Jul 2000)
+
+- copy assigment (operator=) removed
+
+3.4   (26 Jul 2000)
+
+- id() functions removed
+
+3.3.1 (27 Jun 2000)
+
+- Sphere_3<R> fixed  ( <FT,RT> left over)
+
+3.3   (19 Jun 2000)
+
+- Sphere_3<R> added
+
+3.2   (18 Apr 2000)
+
+- _R -> R_
+- Bbox_3 uses Handle_for<> now
+
+3.1   (06 Apr 2000)
+
+- include_advanced/CGAL/Old_style_kernel/U_3.h files created
+  which define class U_3<R, Old_style_tag> : public R::U_3_base
+
+3.0   (02 Feb 2000)
+
+- automatic inclusion for Simple_cartesian added
+
+2.9   (01 Feb 2000)
+
+- CGAL_static_cast  replaced by static_cast<>
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 1   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+2.8  -> 2.8.1 (07 Nov 99)
+- constructor for Identity added to Aff_transformation_3
+
+2.7.3-> 2.8   (28 Oct 99)
+- removed CGAL:: in non member functions in CGAL scope
+- put friend CGAL::Vector_3<R> CGAL::Direction_3<R>::vector() const;
+  in comment; is apparently not necessary anymore
+
+2.7.2-> 2.7.3 (14 Oct 99)
+- added to_vector() to Direction_3<R>
+
+2.7.1-> 2.7.2 (08 Oct 99)
+- Direction_3<R>::vector() now calls to_vector() on implementation
+  classes
+
+2.7  -> 2.7.1 (17 Sep 99)
+- distance_predicates_3.h added 
+
+2.6  -> 2.7   (02 Sep 99)
+- qualified ..._3<_R> by CGAL::
+
+2.5  -> 2.6   (02 Sep 99)
+- qualified ..._3<R> by CGAL::
+
+2.4  -> 2.5   (01 Sep 99)
+- #include <..C3.h> replaced #include <../Cartesian/.._3.h>
+- Triangle_3.h fixed: R::Triangle_3 
+
+2.3  -> 2.4   (24 Aug 99)
+- _3<R> is now derived from R::_3_base instead of R::_3
+  typedef typename R::_3            R_3;      replaced by
+  typedef typename R::_3_base  R_3;
+
+2.2  -> 2.3   (04 Aug 99)
+- updates/workarounds for gcc-2.95:
+  s/friend inline/friend CGAL_FRIEND_INLINE
+  s/friend CGAL_KERNEL_INLINE/friend CGAL_KERNEL_FRIEND_INLINE
+  made all operator-() friends non-friends
+  reorganized Point_3 and Vector_3
+  added files point_vector_declarations_3.h
+              point_vector_definitions_3.C
+  added conversion fucntions between points and vectors
+  those are friends and used by operator-() - functions that are no friends
+    any longer
+
+2.1.2-> 2.2   (22 Jun 99)
+- 'inline' placement fixed in Point_3.h and Vector_3.h
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 0   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+2.1.1-> 2.1.2 (21 May 99)
+- packaging script extended ;)
+
+2.1  -> 2.1.1 (21 May 99)
+- Less_xyz defined in a new file <predicate_classes_3.h>
+  used for fixing a bug in TetrahedraH3==
+
+2.0.3-> 2.1   (16 Apr 99)
+- (user reported) bug in operator<<(ostream &os, const Bbox_3& b) fixed:
+  return os << b.xmin() << ' ' << b.ymin() << ' ' << b.zmin();
+  -->                                      ^^^^^^
+- iostream parts prefixed by std::
+ 
+2.0.2-> 2.0.3 (14 Mar 99)
+- std::min/max used in <Bbox_3.h>
+
+2.0.1-> 2.0.2 (24 Feb 99)
+- CGAL_[BEGIN|END]_NAMESPACE used
+
+2.0  -> 2.0.1 (11 Feb 99)
+- Quotient declared in <Vector_3.h>
+
+1.4  -> 2.0
+- namespace CGAL { } introduced
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  1 . 2   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+1.3.1-> 1.4
+- Use of CGAL...INLINE made consistent between declarations and
+  definitions (otherwise SunPro CC 4.2 does not like it).
+
+1.3  -> 1.3.1 (03 Sep 98)
+- ORIGIN [!=]= Point_3 added
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  1 . 1   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+1.2.2-> 1.3
+- basic_constructions_3.h added
+- side_of...sphere revised
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  1 . 0   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+1.2.1-> 1.2.2
+- Plane_3::projection(Point_3) added
+
+1.2  -> 1.2.1
+- Vector_3 / Quotient added
+
+1.1  -> 1.2
+- made fit for egcs
+
+1.0  -> 1.1
+- added typename keyword
+
+0.9  -> 1.0
+- New access functions have been added to Aff_transformation. 
+- typename keyword has been added in most places
+2.58    (20 December 2002)
+- Replace R (and representation class) by Kernel
+- List more models for number type concepts.
+- Introduce SqrtFieldNumberType.
+
+2.57    (9 December 2002)
+- Fix Iso_Cuboid documentation (4<->5 in the picture of .vertex()).
+
+2.56    (6 November 2002)
+- Add and document arity for all functors.
+
+2.55    (??? ??? 2002)
+- documented that all kernel objects should be default constructable
+- added weighted point for 2D and 3D
+- fix a few typos
+
+2.54    (8 Aug 2002)
+- replaced LEFTTURN, RIGHTTURN, etc. by LEFT_TURN, RIGHT_TURN, etc.
+
+2.53    (1 Aug 2002)
+- added CGAL:: to intersection example
+- removed inclusion of ComputeYatX reference page since it is not (currently) 
+  part of the kernel concept.
+
+2.52    (30 May 2002)
+- small fix to doc_tex/kernel/Ref/Plane_3.tex
+- removed kernel_overview from HTML doc (since repeated in reference intro)
+
+-------------------------------  CGAL 2.4 -----------------------------
+
+2.51    (3 May 2002)
+- updated editorial committee
+
+2.50    (17 Apr 2002)
+- corrected doc of LessSignedDistanceToLine_2
+
+2.49    (17 Apr 2002)
+- added sentence in Choosing a kernel about Filtered_kernel and fixed typos
+  in number type concepts.
+
+2.48    (8 Apr 2002)
+- fixed return type of side of oriented sphere concept.
+
+2.47    (20 Mar 2002)
+- added Tag classes used for number type traits
+
+2.46    (20 Mar 2002)
+- updated number type concepts
+
+2.45    (7 Mar 2002)
+- added number type concepts to doc
+- added more explanation about exact vs. inexact number type in the individual
+  kernel reference pages
+
+2.44    (6 Mar 2002)
+- added precondition descriptoins for CompareYAtX_2
+
+2.43    (22 Feb 2002)
+- fixed last parameter name in ConstructCentroid_[23]
+
+2.42    (9 Jan 2002)
+- update compare_y_at_x.
+
+2.41    (21 Dec 2001)
+- compare_y_at_x for segments.
+
+2.40    (12 Dec 2001)
+- Improve Filtered_kernel doc.
+
+2.39    (6 Dec 2001)
+- fixed problem in CompareYatX doc
+
+2.38    (5 Dec 2001)
+- added compare_slopes and Kernel::CompareSlope_2
+
+2.37    (29 Oct 2001)
+- fixed return type for xmin, xmax, ect. functions in Iso_rectangle_2
+
+2.36    (25 July 2001)
+- fixed title page in html and LaTeX
+
+2.35    (24 July 2001)
+- fixed undefined reference problems
+- revised introduction a bit
+
+2.34    (24 July 2001)
+- Remove merge bug.
+
+2.33    (24 July 2001)
+- renamed kernel concepts to follow new capitalization sheme (words
+  separated by capital letters instead of underscores)
+- added many cross references between the pages
+- added a table of contents for the reference pages
+- created a file Ref/ref_manual.tex that does the inclusion of the reference
+  pages (previously done in main.tex) and a file Ref/main.tex that includes
+  this and ordered the pages into sections
+- Update Cartesian_converter and Homogeneous_converter.
+- Update introduction wrt Simple_homogeneous.
+- Add Filtered_predicate<> and Filtered_kernel<>.
+
+2.32    (20 July 2001)
+- restored Less_distance_to_point_[23] with default constructors
+- changed other predicates in kernel traits to use default constructors
+
+2.31    (12 July 2001)
+- Kernel_traits<>
+- Kernel::FT, Kernel::RT
+- Cartesian_converter<>, Homogeneous_converter<>.
+
+2.30    (12 July 2001)
+- Documented which functors are model for AdaptableFunctor.
+
+2.29    (10 July 2001)
+- More additions of function objects as a result of kernel traits discussion
+- New predicate : coplanar_orientation(3 points).
+
+2.28    (26 June 2001)
+- Remove references to obsolete Equal_xy_2, Equal_xyz_3,
+  Less_distance_to_point_2 and Less_distance_to_point_3.
+
+2.27    (21 June 2001)
+- Update Construct_circumcenter_3.
+- Remove \ccInclude of obsolete header files.
+- Big update following the kernel traits discussion.
+
+2.26    (19 June 2001)
+- added centroid and Construct_centroid_[23]
+
+2.25    (19 June 2001)
+- Added Bounded_side_2, Bounded_side_3
+
+2.24    (18 June 2001)
+- Remove obsolete documentation about the order of inclusion of headers.
+
+2.23    (30 May 2001)
+- Remove Compare_distance_to_point_[23].
+
+2.22    (29 May 2001)
+- Fix typo "Cricle".
+- Add Compare_distance_[23].
+
+2.21    (22 May 2001)
+- fixed typo in Kernel_Object_3
+- removed Construct_point_xy_2, Construct_point_xz_2 and Construct_point_yz_2
+
+2.20    (4 May 2001)
+- fixed typo in compare_x_at_y()
+- added Construct_point_xy_2, Construct_point_xz_2 and Construct_point_yz_2
+
+2.19    (1 May 2001)
+- Fix return type of Kernel::Orientation_?.
+- angle()
+- compare_x_at_y()
+- Less_signed_distance_to_plane_3()
+- Has_on_3(Plane_3, Point_3)
+
+2.18    (27 Apr 2001)
+- Rename construct_tetrahedron_object to construct_tetrahedron_3_object.
+
+2.17    (26 Apr 2001)
+- Change coplanar_side_of_oriented_circle
+  to     coplanar_side_of_bounded_circle.
+
+2.16    (18 Apr 2001)
+- removed obsolete command in Ref/Kernel.tex
+
+2.15    (13 Apr 2001)
+- coplanar_side_of_oriented_circle().
+
+2.14    (23 Mar 2001)
+- Add Construct_center_[23].
+
+2.13    (23 Mar 2001)
+- Fix Construct_sphere_3.
+
+2.12    (23 Mar 2001)
+- Fix return type of Construct_circumcenter_[23].
+
+2.11    (20 Mar 2001)
+- Added squared_radius() and Compute_squared_radius_[23].
+
+2.10    (16 Mar 2001)
+- Added constructor Vector(Point, Point).
+- Fix copy-paste bug in Compute_squared_distance that prevented compilation.
+- Rename Kernel::* to Kernel_*.
+- Replace operator*.tex by operatorStar.tex.
+- Add documentation for Side_of_bounded_circle(p,q,t) and
+  Side_of_bounded_sphere(p,q,t) and Side_of_bounded_sphere(p,q,r,t).
+
+2.9     (6 Mar 2001)
+- Add Construct_cross_product_vector_3.
+- Add Simple_homogeneous.
+- Add Compute_squared_distance_2 and 3.
+
+2.8     (14 Feb 2001)
+
+- Added some missing function object classes
+- Added doc for area and volume functions and function objects
+- Added doc for new min_coord, max_coord in Iso_rectangle and Iso_cuboid
+- Added doc for new constructor in Iso_rectangle and Iso_cuboid
+- Added missing xmin, ymin, xmax, ymax documentation in Iso_rectangle
+
+2.7     (26 Sep 2000)
+
+- links for Cartesian and intersection suppressed in many places (certainly 
+  not all where necessary)
+- orientation and opposite are not linked anymore
+- spacing for Kernel fixed (uses \ccAdditionalRefSkip length - thanks to Susan)
+- operators now show up in the postscript version again with Vector/Point (don't 
+  know the exact reason for this problem related to operator Layout
+
+2.6     (07 Sep 2000)
+
+- circumcenter page fixed
+- ray (Ray_2<R>, Ray_3<R>) .... A segment (Segment_2<R>, Segment_3<R>)
+  in kernel_geometry.tex
+
+2.5     (17 Aug 2000)
+
+- ccCreationVariable set to fo for Kernel::FunctionObjects
+- ccSeeAlso added in a number of places
+- rational_rotation_approximation documented
+- dimension fixes in 3D functionality: _2 replaced by _3 
+  (copy and paste errors)
+- html does not work for operator*  !!!??? no fix yet!
+
+2.4     (10 Aug 2000)
+
+- converted to RefManual
+
+3.103  (7 January 2003)
+- Hardcode CGAL_ALLOCATOR to std::allocator, so that libCGAL does not depend
+  on LEDA anymore.
+
+3.102  (10 December 2002)
+- Remove CGAL_NO_LEDA_HANDLE : always use CGAL's handles.
+
+3.101  (9 December 2002)
+- define LEDA_NO_MIN_MAX_TEMPL in basic.h for LEDA 4.4.
+
+3.100  (7 November 2002)
+- Qualify swap() by std::.
+
+3.99   (6 November 2002)
+- Add Arity to all kernel functors.
+- Remove unused include/CGAL/Kernel/traits_aids.h
+
+3.97   (5 November 2002)
+- qualify left_turn with CGAL:: to remove ambiguity when LEDA < 4.4 used
+- remove obsolete config flag in rational_rotation related to std::swap
+
+3.96   (25 October 2002)
+- Rewrite iterator traits pointer specs.
+
+3.95   (9 October 2002)
+- Remove Kernel_traits_common.h.
+
+3.94   (9 October 2002)
+- Missing #include <CGAL/Origin.h>
+
+3.93   (5 October 2002)
+- Functors rewrite.
+- New Is_a_predicate<> to differentiate predicate functors from constructions.
+
+3.92   (12 August 2002)
+- Test if CGAL_ALLOCATOR is already defined before defining it.
+- Introduce CGAL_MEMORY, similar to LEDA_MEMORY.
+- Fixes for New_delete_allocator.
+- Handle_for memory leak fixed : initialize_with() now assigns instead of
+  constructing, so that it works correctly after Handle_for has been default
+  constructed.  There's a new way of constructing a Handle_for :
+  Handle_for(TO_BE_USED_ONLY_WITH_CONSTRUCT_WITH) followed by
+  construct_with(), which is supposed to produce more efficient code.
+  Simple_handle_for also accepts it.
+
+3.91   (16 July 2002)
+- Add #include <CGAL/basic.h> on top of Object.h and Handle_for_virtual.h.
+
+-------------------------- CGAL 2.4 released ---------------------------
+
+3.90   (22 April 2002)
+- Add default ctor to Cartesian_double_to_Homogeneous to shut up warning of
+  SunPro in RobustnessDemo.
+
+3.89   (15 April 2002)
+- some changes for LEDA namespace and VC7
+
+3.88   (27 March 2002)
+- Added Arity_traits for VC7.
+
+3.87   (25 March 2002)
+- removed more iterator traits pointer spec macro calls for Point_d
+
+3.86   (22 March 2002)
+- removed the iterator traits pointer spec macro calls for Point_d
+
+3.85   (20 March 2002)
+- added CGAL_LEDA_SCOPEs where needed for in kernel_to_kernel.h
+
+3.84   (20 March 2002)
+- removed Point_d; better number type stuff
+
+3.83   (19 March 2002)
+- moved LEDA_basic.h and LEDA/allocator.h files to LEDA package
+
+3.82   (18 March 2002)
+- added LEDA basic file to accommodate LEDA namespace to be introduced
+  with LEDA 4.4
+
+3.81   (6 February 2002)
+- Fix the impossibility to derive from Object.
+
+3.80   (25 January 2002)
+- Oops... Missed a "cvs update" before submitting...
+
+3.79   (24 January 2002)
+- Gather function objects in Kernel/function_objects.h.
+
+3.78   (18 January 2002)
+- Fix previous patch.
+
+3.77   (18 January 2002)
+- Constify Origin and Null_vector.
+
+3.76   (16 January 2002)
+- Support namespace LEDA.
+
+3.75   (8 January 2002)
+- Adding CGAL_CLIB_STD:: for abort() and exit() in src/assertions.C.
+- Adding missing opposite(Comparison_result).
+
+3.74   (5 January 2002)
+- Move classes _Twotuple, _Threetuple, _Fourtuple to Cartesian/Rep_tuples.h
+  in package Cd.
+
+3.73   (4 January 2002)
+- Fix Handle_for<> default ctor : it forgot to construct the object.
+
+3.72   (14 December 2001)
+- VC++ 7 support by Radu.
+
+3.71   (5 December 2001)
+- Just resubmit.
+
+3.70   (5 December 2001)
+- added CompareSlopes_2 function object
+
+3.69   (5 December 2001)
+- Add functional_base.h from STL extensions.
+
+3.68   (2 December 2001)
+- Remove useless copy ctor in Object to please VC++.
+- Merges Object_base into Ref_counted_virtual.
+
+3.67   (26 November 2001)
+- Missing namespace CGAL in tags.h.
+
+3.66   (23 November 2001)
+- [Simple_]Handle_for new ptr access : const/non-const Ptr/ptr.
+
+3.65   (21 November 2001)
+- Darwin support.
+- Fix Conic_2
+
+3.64   (19 November 2001)
+- Move assign() to a template member function of Object.
+
+3.63   (31 October 2001)
+- Missing include of cstddef in New_delete_allocator.h
+
+3.62   (29 October 2001)
+- Missing std:: for CodeWarrior.
+
+3.61   (29 October 2001)
+- Submission bug.
+
+3.60   (24 October 2001)
+- New Handle_for_virtual<> and Ref_counted_virtual.
+- Ref_counted is not required anymore.
+- Remove all Simple_* rep classes as deriving from Ref_counted is not
+  necessary anymore.
+- basic.h cleanup.
+
+3.59   (23 October 2001)
+- Delete No_op_allocator.h.
+- removed KERNEL_CTOR* macros and KERNEL_FRIEND_INLINE macros
+- Cleanup Object.h.
+
+3.58   (5 October 2001)
+- [Simple_]Handle_for<> protection cleanup, non-const Ptr() added.
+- Remove cartesian_classes.h.
+- Add New_delete_allocator.h.
+- Handle_for<> should work for virtual hierarchies now.
+
+3.57   (12 September 2001)
+- Fixes for SunPro.
+
+3.56   (15 August 2001)
+- Oops : #ifdef instead of #ifndef.
+
+3.55   (15 August 2001)
+- SunPro has problems with protected/friend.
+
+3.54   (15 August 2001)
+- Add SunPro support in memory.h.
+
+======================== CGAL 2.3 ========================
+
+3.53   (23 July 2001)
+- renamed cmp_* to compare_* and *_dist_* to *_distance_* and 
+  leftturn, Leftturn, LEFTTURN to left_turn, Left_turn, LEFT_TURN and
+  rightturn, Rightturn, RIGHTTURN to right_turn, Right_turn, RIGHT_TURN
+  and compare_lexicographically* to compare_*
+  (deprecated the old names but didn't remove them).
+
+3.52   (18 July 2001)
+- changed Less_distance_to_point_[23] to use default construction
+- changed Less_rotate_ccw_2 to use default construction
+- removed redundant Left_of_line_2
+
+3.51   (12 July 2001)
+- Add Kernel_traits<>.
+
+3.50   (12 July 2001)
+- Added Arity to Call_perpendicular_to_get.
+
+3.49   (10 July 2001)
+- further traits update 
+- New predicate : coplanar_orientation(3 points).
+
+3.48   (26 June 2001)
+- Deprecate Equal_xy_2 and Equal_xyz_3.
+
+3.47   (21 June 2001)
+- Cleanup kernel_to_kernel.h
+- Use new macros for the traits interface so that it can be reused elsewhere.
+
+3.46   (21 June 2001)
+- Traits update.
+
+3.45   (20 June 2001)
+- Cleanup misc.h and don't include it from basic.h.
+- Added Construct_orthogonal_vector_[23]
+- Added Construct_opposite_vector_[23]
+
+3.44   (19 June 2001)
+- Change to support cgal_window instead of LEDA (CGAL_USE_CGAL_WINDOW).
+
+3.43   (19 June 2001)
+- added Construct_centroid_[23]
+
+3.42   (19 June 2001)
+- added Bounded_side_2 and Bounded_side_3 to traits
+
+3.41   (18 June 2001)
+- #include all _2 and _3 classes in user_classes.h.
+
+3.40   (7 June 2001)
+- Move homogeneous-only files to H2.
+
+3.39   (30 May 2001)
+- Remove Compare_distance_to_point_[23].
+
+3.38   (29 May 2001)
+- Add Compare_distance_[23].
+
+3.37   (1 May 2001)
+- angle().
+- compare_x_at_y()
+- Less_signed_distance_to_plane_3
+
+3.36   (27 Apr 2001)
+- Rename construct_tetrahedron_object to construct_tetrahedron_3_object.
+
+3.35   (26 Apr 2001)
+- Change coplanar_side_of_oriented_circle
+  to     coplanar_side_of_bounded_circle.
+
+3.34   (13 Apr 2001)
+- Remove Coplanar_orientation(3 points, 1 vector).
+
+3.33   (13 Apr 2001)
+- Coplanar_side_of_oriented_circle.
+
+3.32   (6  Apr 2001)
+- Port to alpha.
+
+3.31   (23 Mar 2001)
+- Add Construct_center_[23].
+
+3.30   (20 Mar 2001)
+- squared_radius() and Compute_squared_radius_2 and _3.
+
+3.29   (16 Mar 2001)
+- Side_of_bounded_circle_2 and Side_of_bounded_sphere_3.
+
+3.28   (6 Mar 2001)
+- Added Compute_squared_distance_2 and 3.
+- Remove references to point_vector_declarationsH2.h.
+
+3.27   (28 Feb 2001)
+- Added iterator_traits_pointer_specs_for_simple_homogeneous_kernel.h
+
+3.26   (25 Feb 2001)
+- iterator_traits_pointer_specs_for_simple_cartesian_kernel.h fixes.
+- Allow changing inline policy without having to modify CGAL files...
+
+3.25   (21 Feb 2001)
+- Added Construct_cross_product_vector_3, with corresponding template class
+  v_Cross_product<>.
+- iterator_traits_pointer_specs_for_simple_cartesian_kernel.h fixes
+  (PointCd is the same as in Cartesian).
+
+3.24   (20 Feb 2001)
+- Fix result_type of p_Orientation<>.
+
+3.23   (19 Feb 2001)
+- Removed useless operator() in Coplanar_orientation, which caused a problem
+  with VC++.
+- Make SunPro happier.
+
+3.22   (14 Feb 2001)
+
+- moved Kernel_traits_common.h from Cartesian_kernel package
+- moved predicate_objects_on_points.h from Convex_hull_2(?!) package.
+
+3.21   (13 Feb 2001)
+- Added several missing function object classes
+- modified homogeneous_rep.h to include Kernel_common_traits.h to reduce
+  code base
+- added function object classes Compute_area_2, Compute_squared_area_3,
+  Compute_volume_3
+- Towards Simple_homogeneous.
+- Move Data_accessorH2<> in its own file in the H2 package.
+
+3.20   (25 Jan 2001)
+- Added iterator_traits_pointer_specs_for_simple_cartesian_kernel.h
+
+3.19   (18 Jan 2001)
+- Remove warnings in No_op_allocator.
+- long_long.h now defines CGAL_HAS_INTEGER64.
+
+3.18   (12 Jan 2001)
+
+- Simple_Handle_for.h added
+- Simple_Twotuple, Simple_Threetuple, Simple_Fourtuple, Simple_Sixtuple added
+
+3.17   (10 Dec 2000)
+
+- Homogeneous<>::Coplanar_orientation_3 added
+- Homogeneous<>::Compare_distance_to_point_2 added
+- Homogeneous<>::Compare_distance_to_point_3 added
+- function_objects.h: Coplanar_orientation added
+- function_objects.h: Compare_distance_to_point<T> added
+
+3.16   (12 Nov 2000)
+
+- in Handle_for<RefCounted>: typedef RefCounted element_type; added
+
+3.15   (15 Oct 2000)
+
+- const typename Allocator::pointer Ptr() const { return ptr; }
+  added in Handle_for.h as requested by Sylvain 
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 1   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+3.14   (15 Sep 2000)
+
+- CGAL::min/max with 
+  CGAL_CFG_USING_USING_BUG) || defined(CGAL_CFG_BROKEN_USING)
+  now returns NT instead of const NT&
+
+3.13   (10 Aug 2000)
+
+- Homogeneous<>::Compute_y_at_x_2 fixed (_2 added)
+
+3.12   (07 Aug 2000)
+
+- to_double(leda_integer) qualified by :: in kernel_to_kernel.h
+
+3.11   (02 Aug 2000)
+
+- Handle_for<>::id is const now
+
+3.10   (02 Aug 2000)
+
+- include <CGAL/leda_integer.h> added to kernel_to_kernel.h
+
+3.9    (26 Jul 2000)
+
+- added Handle_for<>::identical(const Handle_for& h) to check
+  for sharing RefCounted
+- added Handle_for<>::id(); returns long int
+
+3.8    (14 Jul 2000)
+
+- result_type added to function objects in Kernel/function_objects.h 
+  not for Call_transform (return type depends on template parameter)
+- <kernel_to_kernel.h> added (with preliminary limited functionality)
+
+3.7    (27 Jun 2000)
+
+- CGAL_NTS sign used insteda of CGAL::sign in sign_of_determinant.h
+- Construct_circumcenter_3 added to homogeneous kernel traits
+- CGALi::p_Circumcenter extended to handle 3d case as well
+
+3.6.1  (08 Jun 2000)
+
+- flag test for using std::max and std::min refined
+- CGAL_NTS defined in basic.h
+
+3.6    (05 Jun 2000)
+
+- Handle_for<..., Allocator>::ptr has now type Allocator::pointer
+- Handle_for<RefCounted>::Handle_for(const RefCounted&)
+  constructor added to Handle_for. 
+  Handle_for<RefCounted>::initialize_with(const RefCounted&) added. 
+- CGAL_CFG_BROKEN_USING used now to check for broken using 
+  with using std::max and std::min in <basic.h>
+
+3.5.1  (31 May 2000)
+
+- __MSC_VER (temporarily) used instead of CGAL_CFG_USING...BUG
+  with using std::max and std::min added to <basic.h>
+
+3.5    (30 May 2000)
+
+- Reflection added as transformation tag
+- <No_op_allocator.h> added
+- Compare_x_at_y_2 added to homogeneous traits
+- count in Handle_for is now of type 'unsigned int'
+- using std::max and std::min added to <basic.h>
+
+3.4.2  (19 Apr 2000)
+
+- Tuples modified
+- _Assert_tag_class -> Assert_tag_class
+
+3.4.1  (13 Apr 2000)
+
+- homogeneous traits  makeFT_ is now make_FT again
+  bug was caused by s/_FT/FT_/ ;) 
+
+3.4    (07 Apr 2000)
+
+- <cmath> included before <iostream> for
+  #if ((__GNUC__ == 2) && (__GNUC_MINOR__ == 95))
+- Old_style_tag added to representation_tags.h
+
+3.3.1  (31 Mar 2000)
+
+- added Counterclockwise_in_between_2 to homogeneous traits
+- added CGALi::Counterclockwise_in_between
+
+3.3    (29 Mar 2000)
+
+- nested types Object_2, Object_3, Assign_2, and Assign_3 added
+  to homogeneous traits
+- CGALi::Assign added
+- compare_lexicographically_xy used instead of compare_xy in
+  CGALi::Compare_xy
+
+3.2    (28 Feb 2000)
+
+- since friendship is not inherited, making Handle_for a friend of
+  Ref_counted does not suffice to access count member in the derived
+  class. The referenece counted object now must provide functions
+  add_reference()
+  remove_reference()
+  bool is_referenced()
+  bool is_shared()
+  The Handle_for does not know anymore, where and how the counting takes
+  places. However, it assumes that count is initialized to 1 in default 
+  and copy constructor.
+- <include/LEDA/allocator.h> added to package
+
+3.1.1  (22 Feb 2000)
+
+- added <CGAL/Kernel/traits_aids.h>
+  o defines Rightturn_by_Leftturn<Leftturn> adapter
+
+3.1    (16 Feb 2000)
+
+- new Tuples derived from Ref_counted added to the <...tuple.h> files
+
+3.0    (14 Feb 2000)
+
+- CGAL/Handle_for.h  added; provides classes Handle_for<Type,Allocator> 
+  and Ref_counted; see Developers' manual
+- CGAL/memory.h added; defines the default allocator used by Handle_for<>
+- CGAL::Object revised and simplified as suggested by Michael Seel
+  One level of indirection has been removed.
+  The code now assumes that dynamic_cast<> is supported.
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 1   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+2.8.4 -> 2.9     (04 Dec 99)
+- long long removed from <known_bit_size_integers.h>
+  definitions are now in new <long_long.h>
+
+2.8.3 -> 2.8.4   (15 Nov 99)
+- test for NULL added again and precondition check removed
+  Leda_like_handle in Handle.h
+
+2.8.2 -> 2.8.3   (29 Oct 99)
+- test for NULL removed and precondition check added in class
+  Leda_like_handle in Handle.h
+- further missing file added
+
+2.8.1 -> 2.8.2   (28 Oct 99)
+- further missing files added
+
+2.8   -> 2.8.1   (28 Oct 99)
+- missing file added (Object.h)
+
+2.7.2 -> 2.8     (28 Oct 99)
+- Handle.h revised. CGAL defines handle-rep scheme analogously
+  to the LEDA types even if LEDA Handles are used. Names of the 
+  classes are Leda_like_handle and Leda_like_rep. 
+  NULL used.
+
+2.7.1 -> 2.7.2   (11 Oct 99)
+- ENDIAN definition moved to front in CGAL/basic.h
+
+2.7   -> 2.7.1   (06 Oct 99)
+- definitions for long added to iterator_traits_pointer_specs
+- macro for old style  PointCd  added (new style in comment)
+
+2.6.2 -> 2.7     (05 Oct 99)
+- iterator_traits_pointer_specs_for_cartesian_kernel.h
+  iterator_traits_pointer_specs_for_cartesian_quotient.h
+  iterator_traits_pointer_specs_for_homogeneous_kernel.h added
+- include iterator_traits_pointer_specs_for_homogeneous_kernel.h  
+  added at the end of Homogeneous.h
+
+2.6.1 -> 2.6.2   (14 Sep 99)
+- Object was missing in package
+
+2.6   -> 2.6.1   (11 Sep 99)
+- #include <CGAL/representation_tags.h> added to 
+  <CGAL/homogeneous_rep.h>
+
+2.5.2 -> 2.6     (10 Sep 99)
+- s/Base/Object_base/g
+  s/_Object/Object_rep/g
+  in <Object.h>
+
+2.5.1 -> 2.5.2   (07 Sep 99)
+- added Homogenous_tag to class Homogeneous
+
+2.5   -> 2.5.1   (05 Sep 99)
+- renamed class Identity to Identity_transformation
+
+2.4.3 -> 2.5     (02 Sep 99)
+- homogeneous_rep.h not generated from old source but NewKernel
+
+2.4.2 -> 2.4.3   (02 Sep 99)
+- added id() if CGAL_USE_LEDA
+- added Accessor to Homogeneous
+- added Point_d to Homogeneous
+
+2.4.1 -> 2.4.2   (01 Sep 99)
+- intermediate test version with 'kernel as traits'
+  <CGAL/homogeneous_rep.h>
+  <CGAL/Kernel/function_objects.h>
+
+2.4   -> 2.4.1   (31 Aug 99)
+- added Identity to Aff_transformation_tags
+
+2.3   -> 2.4     (19 Aug 99)
+- Homogeneous revised to reflect 
+  template <class R> CGAL::Point_2 : public R::Point_2_base
+  We have how in CGAL::Homogeneous, e.g.,
+  typedef Homogeneous<RT,FT>           R;
+  typedef PointH2<FT,RT>               Point_2_base;
+  typedef CGAL::Point_2< R >           Point_2;
+  
+2.2   -> 2.3     (04 Aug 99)
+- CGAL_FRIEND_INLINE and CGAL_KERNEL_FRIEND_INLINE defined
+  in <kernel_basic.h> - still needs update for mips
+
+2.2   -> 2.2.1   (26 Jul 99)
+- predicates/sign_of_determinant.h now includes determinant.h, if not 
+  included yet
+
+2.1   -> 2.2     (26 Jul 99)
+- CGAL-2.0/include/CGAL/known_bit_size_integers.h extended
+  for Borland and M$ Visual C++ as suggested by Dima
+- determinant.h split in determinant.h and predicates/sign_of_determinant.h
+  essentially as suggested by Sylvain
+- Circle_2 added to user_classe.h (as requested by Herve)
+- _Vector_?_rft_wrapper removed from user_classe.h
+- homgeneous.h: parameterization of class Homogeneous changed (in the spirit
+  of the implementation classes *H2<FT,RT> ) 
+    #ifndef CGAL_CFG_NO_DEFAULT_TEMPLATE_ARGUMENTS
+    template <class rt, class ft = Quotient<rt> >
+    #else
+    template <class rt>
+    #endif
+    class Homogeneous
+  The flag is most likely redundant for the compilers supported by CGAL.
+
+2.0.11-> 2.1     (26 Jun 99)
+- CGAL-2.0/include/CGAL/known_bit_size_integers.h extended:
+  (defined(__powerpc__) || defined(__powerpc) || defined(powerpc))
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 0   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+2.0.10-> 2.0.11  (06 May 99)
+- compare qualified in determinant.h
+
+2.0.9 -> 2.0.10  (28 Apr 99)
+- flags in <assertions.h> perfixed by CGAL_ again
+
+2.0.8 -> 2.0.9   (30 Mar 99)
+- to_double() prefixed by CGAL::
+
+2.0.7 -> 2.0.8   (30 Mar 99)
+- inclusion order changed in <basic.h>: config first!
+
+2.0.6 -> 2.0.7   (29 Mar 99)
+- inclusion order changed in <basic.h>; <iostream> and <cstdlib> included
+  before <LEDA/basic.h> (if CGAL_USE_LEDA defined).
+
+2.0.5 -> 2.0.6   (24 Mar 99)
+- dirty hack for making g++-2.8.1 happy with function template for
+  identical() 
+
+2.0.4 -> 2.0.5   (20 Mar 99)
+- <kernel_assertions.h> re-generated by new script
+- flag CGAL_NO_NAMESPACE corrected in <rational_rotation.h>
+- Orientation replaced by Sign in <functions_on_enums.h>
+- call of sign() in <determinant.h> 'prefixed' by CGAL::
+
+2.0.3 -> 2.0.4   (15 Mar 99)
+- bug in Handle.h (use without LEDA) fixed (missing prefix in macro call)
+- cerr and endl prefixed by std:: in <assertions.C>
+
+2.0.2 -> 2.0.3   (15 Mar 99)
+- static_cast<Sign>(compare(..)) replaced by 
+  static_cast<Sign>(static_cast<int>(compare(..))) in <CGAL/determinant.h>
+
+2.0.1 -> 2.0.2   (14 Mar 99)
+- #include <CGAL/config.h> added to <assertions.[hC]>
+- #include <CGAL/config.h> added to <Origin.C>
+- <assertions.h> revised
+- swap definition removed from <misc.h> (<algorithm> is now included)
+- sign(compare(...)) replaced by static_cast<Sign>(compare(..)) in
+  <CGAL/determinant.h>
+
+2.0   -> 2.0.1   (24 Feb 99)
+- CGAL_[BEGIN|END]_NAMESPACE used
+
+1.2.12-> 2.0
+- namespace CGAL { } introduced
+- CGAL_Bounded_side reversed
+- EXIT_WITH_SUCCESS added
+- convert_to modified as suggested by Sylvain to ease specialisation
+- convert_from_to added to <misc.h>
+- sign_of_determinant added to <determinant.h>
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  1 . 2   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+1.2.11-> 1.2.12
+- #include <CGAL/config.h> added to functions_on_enum.h
+
+1.2.10-> 1.2.11
+- new improved determinant code by Sylvain's generator 
+- code for det6x6 added (not tested yet)
+
+1.2.9 -> 1.2.10
+- authors for determinant.h updated
+
+1.2.8 -> 1.2.9
+- det4x4_by_formula improved as suggested by Sylvain and Olivier
+
+1.2.7 -> 1.2.8
+- #define CGAL_KERNEL_INLINE inline   added again
+
+1.2.6 -> 1.2.7
+- SunPro CC does not like 
+  #define CGAL_KERNEL_INLINE inline
+  undone!
+
+1.2.5 -> 1.2.6
+- #ifndef CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION
+  now encapsulates definition of CGAL_convert_to()
+
+1.2.4 -> 1.2.5
+- generic CGAL_convert_to() added to <CGAL/misc.h>
+- inline-policy changed in <kernel_basic.h>: #define CGAL_KERNEL_INLINE inline  
+
+1.2.3 -> 1.2.4
+- added include-statements for usage without LEDA as proposed 
+  by Sven on cgal-develop
+
+1.2.2 -> 1.2.3
+- definition of CGAL_opposite() in <functions_on_enums.h> changed
+
+1.2.1 -> 1.2.2
+- headers in <known_bit_size_integers.h>, <Threetuple.h>, and
+  <representation_tags.h> corrected
+
+1.2   -> 1.2.1
+- inclusion order of <CGAL/IO/io.h> and <CGAL/number_type_basic.h>
+  reversed in <CGAL/basic.h>
+
+1.1.4 -> 1.2
+- basic_lk.h mostly integrated into basic.h; 
+  Known size integers are now in known_bit_size_integers.h
+- classes CGAL_PointCd<FT> and CGAL_PointHd<FT,RT> declared in
+  homogeneous_classes.h and cartesian_classes.h .
+  Corresponding typedefs added to the rep classes.
+- Compile-time-tags for representation classes added in new file
+  representation_tags.h (included in ..._rep.h files)
+- Rep_tags added to CGAL_Homogeneous and CGAL_Cartesian
+- Cartesian part separated into Cartesian_basic.tar.gz
+  (for ease of maintenance)
+
+1.1.3 -> 1.1.4
+- bug in Cartesian - homogeneous conversion for points fixed
+
+1.1.2 -> 1.1.3
+- workaround for dynamic cast bug added to Object.h
+
+1.1.1 -> 1.1.2
+- old assertions.h used
+
+1.1   -> 1.1.1
+- missing file and assertion stuff included
+
+1.0   -> 1.1
+- kernel_assertions.h included earlier
+
+0.9   -> 1.0
+- new version of Object.h
+- new workaround names
+- new inlining policy
+- some stuff for optimization package
+- Cartesian - homogeneous conversion for points 
+3.53  (5 Nov 2002)
+- Put all programs in test/Kernel.
+
+3.52  (5 Nov 2002)
+- Merge test programs to speed up and uniformize the test-suite.
+
+3.51  (9 Oct 2002)
+- Remove useless file _test_misc, _test_pvd_[23].
+
+3.50  (8 Oct 2002)
+- Merge .C files into their corresponding .h.
+
+3.49  (8 Oct 2002)
+- Make it work with -DCGAL_NO_DEPRECATED, and other fixes.
+
+3.48  (5 Oct 2002)
+- Better support expression templates NTs (GMP++).
+
+3.47  (14 Aug 2002)
+- added missing test for less_x, less_y
+
+====================== CGAL 2.4 =============================
+
+3.46  (20 March 2002)
+- removed Point_d
+
+3.45   (20 March 2002)
+- moved LedaKernel test to LEDA package.
+
+3.44   (6 February 2002)
+- Add code to test that we can derive from Object.
+
+3.43   (24 January 2002)
+- Remove testing code for predicate_classes_2.h, since it has been removed.
+
+3.41   (21 January 2002)
+- Remove #ifdefs concerning EGCS.
+- Remove implicit conversion for constructor Plane(Origin, Point_3, Point_3).
+
+3.40   (9 January 2002)
+- more tests for compare_y_at_x.
+
+3.39   (7 January 2002)
+- added compare_slopes and CompareSlope_2
+
+3.38   (21 December 2001)
+- Add tests for compare_y_at_x for segments.
+
+3.37   (13 December 2001)
+- Add tests for IO operators.
+
+3.36   (19 November 2001)
+- Remove obsolete #includes.
+
+3.35   (27 September 2001)
+- remove the need to have "-I../Kernel/include" in the submitted makefiles,
+  by hard coding it in the #includes<> inside the test files.  This way it
+  makes it clear in the test files which headers come from CGAL, and which
+  come from the test-suite.
+- a by product of this is that we can use the default makefiles, and so I
+  added "makefile" to dont_submit.
+- I added "-I../../H2/include" and similar in the makefiles, so that we can
+  work more easily with our working copies (didn't you find it painful to
+  have to tweak the makefiles for each submission ?).
+- Fixes a buffer overflow which made SunPro 5.3 fail at run time.
+
+====================== CGAL 2.3 =============================
+
+3.34   (25 July 2001)
+- fixed use of constructive predicate and deprecated cmp_ and _dist_ functions
+- fixed LEDA kernel test by adding predicates with new names
+
+3.33   (23 July 2001)
+- renamed cmp_* to compare_* and *_dist_* to *_distance_* and
+  leftturn, Leftturn, LEFTTURN to left_turn, Left_turn, LEFT_TURN and
+  rightturn, Rightturn, RIGHTTURN to right_turn, Right_turn, RIGHT_TURN
+  and compare_lexicographically* to compare_*
+
+3.32   (23 July 2001)
+- Remove -pedantic from makefiles.  Don't submit cgal_test.
+
+3.31   (20 July 2001)
+- restored Less_distance_to_point_[23] with default constructors
+- removed remaining constructive predicates in Kernel traits
+
+3.30   (10 July 2001)
+- additions of function objects following discussion of kernel traits
+- New predicate : coplanar_orientation(3 points).
+
+3.29   (26 June 2001)
+- Remove references to obsolete Equal_xy_2, Equal_xyz_3,
+  Less_distance_to_point_2 and Less_distance_to_point_3.
+
+3.28   (21 June 2001)
+- Really test circumcenter(3 Point_3).
+- Other updates.
+
+3.27   (20 June 2001)
+- added Construct_orthogonal_vector_3 and Construct_opposite_vector_[23]
+
+3.26   (19 June 2001)
+- added Construct_centroid_[23] and centroid
+
+3.25   (19 June 2001)
+- Add Bounded_side_2 and Bounded_side_3
+
+3.24   (13 June 2001)
+- Add std::endl to test_cls_quotient so that it's more readable.
+
+3.23   (30 May 2001)
+- Remove Compare_distance_to_point_[23].
+
+3.22   (29 May 2001)
+- Add Compare_distance_[23].
+
+3.21   (16 May 2001)
+- Commonize the definition of Precise_[integer|rational].
+- Use MP_Float when neither LEDA or GMP are supported.
+
+3.20   (1 May 2001)
+- angle.
+- Removed obsolete uses of CGAL_STRICT21 and CGAL_STRICT_09.
+- compare_x_at_y 
+- Less_signed_distance_to_plane_3
+- Has_on_3(Plane, Point)
+
+3.19   (27 Apr 2001)
+- Rename construct_tetrahedron_object to construct_tetrahedron_3_object.
+
+3.18   (26 Apr 2001)
+- Change coplanar_side_of_oriented_circle
+  to     coplanar_side_of_bounded_circle.
+
+3.17   (13 Apr 2001)
+- coplanar_side_of_oriented_circle(p,q,r,t).
+
+3.16   (23 Mar 2001)
+- Add Construct_center_[23].
+
+3.15   (20 Mar 2001)
+- Add squared_radius() and Compute_squared_radius_2 and 3.
+
+3.14   (16 Mar 2001)
+- Added constructor Vector(Point, Point).
+- Add side_of_bounded_circle() and side_of_bounded_sphere().
+
+3.13   (6 Mar 2001)
+- Added Compute_squared_distance_2 and 3.
+
+3.12   (21 Feb 2001)
+- Added test for Construct_cross_product_vector_3.
+
+ 3.11   (19 Feb 2001)
+
+- resubmit with test/KernelSimpleHomogeneous.
+
+ 3.10   (14 Feb 2001)
+
+- added test for new function in Iso_* classes
+
+ 3.9   (13 Feb 2001)
+
+- added tests for several function objects in _test_new_2.h and _test_new_3.h
+- added tests for area(), squared_area(), volume()
+- added a test directory for Simple_homogeneous<>.
+
+ 3.8   (08 Oct 2000)
+
+- #ifdef TEST_SPHERE removed in _test_3(.)
+  i.e., sphere test activated by default
+
+ 3.7   (20 Sep 2000)
+
+- test/LedaKernel/include/CGAL/predicates_on_points_rat_leda_2.h
+  modified to please Borland bcc 5.5
+
+ 3.6   (07 Sep 2000)
+
+- test for Line_2::projection() added  :)
+
+ 3.5   (11 Aug 2000)
+
+- bug in test/Kernel/include/CGAL/_test_new_2.h fixed
+  missing _2 with Compute_y_at_x
+
+ 3.4   (27 Jun 2000)
+
+- test for determinant functions added
+- check for flag NEW_KERNEL_TRAITS removed
+- flag TEST_SPHERE added
+
+ 3.3   (19 Jun 2000)
+
+- test for Sphere_3 added
+
+ 3.2   (07 Apr 2000)
+
+- tests for new additional kernel traits added:
+  * * * * * * * * * * * *
+   Object_2
+   Assign_2
+   Construct_perpendicular_direction_2
+   Construct_bisector_2
+   Compare_xy_2
+   Equal_xy_2
+   Less_x_2
+   Less_y_2
+   Counterclockwise_in_between_2
+  * * * * * * * * * * * *
+   Object_3
+   Assign_3
+   Equal_xyz_3
+   Compare_xy_3
+   Equal_xy_3
+   Less_x_3
+   Less_y_3
+   Less_z_3
+   Less_xy_3
+   Less_distance_to_point_3
+  * * * * * * * * * * * *
+  currently active only if flag NEW_KERNEL_TRAITS is defined
+
+ 3.1   (17 Feb 2000)
+
+- test for Direction_2::counterclockwise_in_between added
+
+ 3.0   (02 Feb 2000)
+
+- directory structure reorganized
+  Kernel                : basic tests and include/CGAL/_test*
+  KernelCartesian       : tests for Cartesian Kernel
+  KernelHomogeneous     : tests for homogeneous Kernel
+  KernelSimpleCartesian : tests for simple Cartesian
+  The tests include tests for NewKernel, i.e. NewKernel is obsolete now
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 1   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+2.3.3 -> 2.3.4 (18 Nov 99)
+- missing CFG added in flag for Koenig lookup in 
+  <predicates_on_points_rat_leda_2.h>
+- forward declarations added in <rat_leda.h>
+
+2.3.2 -> 2.3.3 (12 Nov 99)
+- workaround for M$VC++ and LedaKernel (no Koenig lookup) added to 
+  <predicates_on_points_rat_leda_2.h>
+- test for Iso_cuboid_3 added, flagged with CGAL_STRICT21
+- gnuR template parameter renamed to R (Borland problem)
+  (was a workaround for problems with obsolete g++-2.7.2)
+
+2.3.1 -> 2.3.2  (07 Nov 99)
+- IDENTITY transformation used for transformation ident in
+  test_cls_aff_transformation_2()
+- IDENTITY transformation used for transformation ident in
+  test_cls_aff_transformation_3()
+
+2.3   -> 2.3.1  (04 Nov 99)
+- test for LEDA kernel fixed: specialisation for orientation<R>() function
+  template defined
+
+2.2.2 -> 2.3    (14 Oct 99)
+- typedef Precise_integer introduced
+  set to CGAL::Gmpz, if CGAL_USE_GMP is defined
+  else to leda_integer, if CGAL_USE_LEDA is defined
+- #if (__GNUG__ == 2) && (__GNUC_MINOR__==91)
+  CGAL::Vector_3<R> vv = d2.to_vector();
+  #else ...                 ^^^
+  used in _test_cls_direction_3.C instead of call of vector(), which causes
+  i.c.e., idem in _test_cls_plane_3.C
+
+2.2.1 -> 2.2.2  (28 Sep 99)
+- updated use_rat_leda class in test/LedaKernel
+
+2.2   -> 2.2.1  (17 Sep 99)
+- added tiny (=needs extension) test for 3D distance predicates
+
+2.1.2 -> 2.2    (14 Sep 99)
+- revised test for _d part:
+  split into homogeneous and Cartesian test
+- made sure that Homogeneous is included first :)
+
+2.1.1 -> 2.1.2  (05 Sep 99)
+- /bin/rm replaced by rm in cgal_test in test/Kernel
+- new makefile in test/Kernel
+
+2.1   -> 2.1.1  (09 Aug 99)
+- test for coplanar_orientation() added
+
+2.0.6 -> 2.1    (05 Aug 99)
+- cout and endl qualified by std::  (for mips 7.3)
+- $(OBJ_EXT) used in makefile       (for M$ VC++ )
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 0   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+2.0.5 -> 2.0.6  (20 May 99)
+- test for equality of Tetrahedra extended 
+
+2.0.4 -> 2.0.5  (24 Mar 99)
+- packaging script updated
+
+2.0.3 -> 2.0.4  (24 Mar 99)
+- test dir split into Kernel and LedaKernel (test_with_leda_kernel_2.C)
+
+2.0.2 -> 2.0.3  (24 Mar 99)
+- _test-functions moved from namespace CGAL into global scope
+
+2.0.1 -> 2.0.2  (25 Feb 99)
+- CGAL_[BEGIN|END]_NAMESPACE used
+
+2.0   -> 2.0.1  (11 Feb 99)
+- test/Kernel/cgal_test corrected
+- various bugs in testfiles fixed (especially missing includes of
+  <Quotient.h> added)
+
+1.4.2 -> 2.0
+- namespace CGAL { } introduced
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  1 . 2   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+1.4.1 -> 1.4.2
+- fixed bug in CGAL_Point_2<CGAL_use_rat_leda_kernel> in rat_leda.h
+
+1.4   -> 1.4.1
+- make clean in <test/Kernel/makefile> updated
+
+1.3   -> 1.4
+- test for using 2D leda_rat-kernel added
+- test for 2D predicate objects added
+
+1.2.4 -> 1.3
+- test cases (p==r) for CGAL_collinear_are_ordered_along_line(p,q,r) added
+- tests ORIGIN [!=]= Point_[23] encapsulated in #ifdef ENHANCED ,
+  since the current kernel doesn't pass this test
+- Plane_3::to_2d more thoroughly tested
+- Point_[23] [!=]= ORIGIN tests added
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  1 . 1   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+1.2.3 -> 1.2.4
+- copy-and-past mess in point_d_test.C cleaned up
+
+1.2.2 -> 1.2.3
+- in point_d_test.C:  `int 100'  replaced by `const int 100'.
+
+1.2.1 -> 1.2.2
+- point_d_test.C replaced; buffer allocation now static.
+
+1.2   -> 1.2.1
+- point_d_test.C made part of this package
+
+1.1.3 -> 1.2
+- test for basic_constructions_3 added
+- test for basic_constructions_2 added
+- tests test_new_partsC_.C / test_new_partsH_.C added
+  and test_basic_constructionsH3 removed
+- test for order along line 3D revised
+  test for strict order along line 3D added
+- tests for in_sphere tests (side_of...sphere) added
+- tests for consistency between definition of orientation and 
+  bounded side of implicitly defined sphere added
+- test for cross_product checked
+ 
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  1 . 0   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+1.1.2 -> 1.1.3
+- test for basic_constructionsH3 added
+- test for Plane_3::projection(Point_3) added
+
+1.1.1 -> 1.1.2
+- test for point conversion functions added
+  called in test_kernel__.C
+- test for Vector/Quotient added
+
+1.1   -> 1.1.1
+- cgal_test corrected
+
+1.0.1 -> 1.1
+- Fixed some enum problems (CGAL_ON_BOUNDARY where
+  CGAL_ON_ORIENTED_BOUNDARY was expected)
+- flagged test for further new features with CGAL_STRICT09
+- added small `test' for CGAL_Object and CGAL_Quotient.
+  Called in test_kernel__.C
+
+1.0  -> 1.0.1
+- Fixed another scope-reolution problem of g++
+  in testing Line_2 with Cartesian representation
+- added tests for CGAL_are_strictly_ordered_along_line(p,q,r)
+
+0.9  -> 1.0
+Revised version of kernel test 
+- typename keyword has been added
+- additional access mfcts of aff_transformation are checked:
+  define CGAL_STRICT_09 to test release 0.9 or versions 
+  without new additional functionality
+- `bug' caused by g++-bug removed
+- Cartesian and homogeneous version are tested by separate
+  programs now
