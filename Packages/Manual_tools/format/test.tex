@@ -1,0 +1,435 @@
+\documentstyle[12pt]{article}
+%\pagestyle{empty}
+\textwidth 15.4cm 
+\textheight 24 cm
+\topmargin -14mm       
+\evensidemargin 3mm 
+\oddsidemargin 3mm
+
+\input{cgal_manual.sty}
+
+\parindent0em
+\setlength{\parskip}{1ex minus 0.9ex}
+
+\sloppy
+
+\title {cgal\_manual.sty\\
+        The CGAL Kernel User Manual \LaTeX\ style\\
+        \vspace{5mm}
+        \CCrevision}
+\author{Lutz Kettner}
+
+\date{\CCdate}
+
+\begin{document}
+
+\maketitle
+
+% ----------------------------------------------------------------------
+\section{Introduction}
+
+The {\tt cgal\_manual}-style was developed with a tight look at the
+LEDA manual style. It has two facilities. First, it provides a couple
+of macros for structuring the manual as the LEDA manual does. These
+are {\tt \string\definition}, {\tt \string\creation}, {\tt
+  \string\operations}, {\tt \string\implementation}, {\tt
+  \string\example}, and {\tt \string\precond}. There are demonstrated
+in the next section.
+
+The second facility of this style deals with the special handling of
+\CC\ language features. The style will be used in conjunction with a
+tool that extracts a class declaration with all its method and
+function declarations and plugs it in a \CC\ header file. Therefore,
+pure \CC\ code will stay in several arguments and has to be
+reformatted neatly for the manual. Again, the LEDA manual was the
+ideal we want to meet. In our case, \TeX\ will do the complete
+reformatting as it is written as macros in the style. Another
+section below explains all features. Demo classes with and without
+template parameters are defined.
+
+The benefit of using \TeX\ is that no other tool has to be invoked
+before the final specification is printer ready. Thus, no inconsistent
+versions can appear as it is the case e.g.\ for index making
+procedures for \TeX. If the programming turns out to be too slow, I am
+not a \TeX\ wizard, maybe someone can do it better or it can be even
+switched to an external tool.
+
+% ----------------------------------------------------------------------
+\section{Structuring Macros}
+
+\definition Here comes the general introductory explanation for a
+class etc.
+
+\precond Specific conditions can be stated as preconditions in any place.
+
+\creation Constructors are defined and explained here.
+
+\operations The complete list of methods and functions (including
+operators) are defined here.
+
+\implementation Specific notes about implementation issues that belong
+to the user can be given here. These might be space requirements and
+runtime statements.
+
+\example How to solve a small but interesting problem with this class.
+
+
+% ----------------------------------------------------------------------
+\begin{class}{Demo_Class}
+\CCsection{A simple class as an example}
+
+The class with its name is declared by \verb"\begin{class}{Demo_Class}". 
+The macro \verb"\CCsection{"\ldots\verb"}" produces the section
+title from above and appends the class name. Note that the special
+character ``\_'' has not to be quoted as it is usual within \LaTeX.
+In any case, the complete original \CC\ source text is written
+without quoting. The formatting macros handle for example the special
+characters \_, {\tt <}, {\tt >}, and {\tt \&} as they appear in \CC\
+names and the characters \#, \%, \CChat, and \CCtilde\ as they appear
+with operators. See the following example: 
+\CCstyle{
+    #define %^~ Return_Type<Template_Param, X<Y> > fct_foo( const X<Y> &a);}
+
+To achieve this behaviour with \TeX\, the \verb"\catcode" values of
+some characters has to be changed. So within the \CC\ code 
+things like comments with ``\%'' sign wont work. The \TeX\ comment in
+the other parameter works as usual. A sad sideeffect is that these
+changed catcodes wont apply if these macros are invoced within other
+macros. In that case, the argument text was just once parsed from
+\TeX\ and the catcodes are all fixed.
+
+\definition 
+
+The class \classname\ does nothing. The formatted name of the class
+can be accessed using the macro \verb"\classname". The unformatted
+name as it was originally written can be accessed using the
+\verb"\pureclassname" macro.
+
+\creationvariable{p}
+\creation
+
+The constructors create a variable \var\ of the class. The
+\verb"\creationvariable{"\ldots\verb"}" macro sets the name for the
+future use. It can be accessed with the \verb"\var" or
+\verb"\purevar" macro.
+
+The constructors are written using the
+\verb"\constructor{"\ldots\verb"}{"\ldots\verb"}" macro. The first
+parameter contains the \CC\ declaration, the second parameter the comments.
+The declaration is written in the normal \CC\ fashion, as shown at the end
+of the comment. The style formats them as if they are used
+to declare a variable for this class. For convinience,
+\verb"const"\ldots\verb"&" parameter declarations are eliminated in the
+formatting. It makes no difference in the usage of a parameter. If the
+type of a constructor, method, or function parameter equals the
+current class, it is also omitted. In the case that nothing is left,
+the \CCemptyParameter\ symbol is used. See the copy constructor for an
+example. This all together is the way, we achieve very
+natural looking descriptions.
+
+  \constructor{Demo_Class();}{introduces
+     a variable \var\ initialized to the default. \CC\ code:
+     \protect\verb"Demo\_Class();"}
+
+  \constructor{Demo_Class(const Demo_Class &);}{copy
+    constructor. \CC\ code: \verb"Demo\_Class(const Demo\_Class \&);"
+     }
+
+  \constructor{Demo_Class(RT hx, RT hy, RT hw);}{arbitrary constructor.
+     \CC\ code: \verb"Demo\_Class(RT hx, RT hy, RT hw);"}
+
+The font and style in which the declarations are formatted can be
+changed by overwriting the \verb"\CCfont" and \verb"\CCendfont"
+macros. There default settings are
+\verb"\def\CCfont{\it}\def\CCendfont{\/}". They are used within a
+group, so font changing commands are local. The following line is
+formatted using the definitions
+\verb"\def\CCfont{\tt}\def\CCendfont{}".
+
+\begingroup
+\def\CCfont{\tt}\def\CCendfont{}
+  \constructor{Demo_Class(int a, X<Y> &x);}{arbitrary constructor.}
+\endgroup
+
+Also changable are the special characters the formatting has to
+deal with. They are named \verb"\CCunderscore", \verb"\CCopenangle",
+\verb"\CCcloseangle", \verb"\CCampersand", \verb"\CChat", and
+\verb"\CCtilde". The sign for the empty parameter is named
+\verb"\CCemptyParameter".
+
+  \operations
+  \threecolumns{2.8cm}{2.8cm}
+
+The layout of this section can be customized to the width of the
+return types and the declarations. The
+\verb"\threecolumns{"\ldots\verb"}{"\ldots\verb"}" macro sets the
+width of the two leading columns of the total three columns. The other
+dimensions will be computed.
+
+Note that declarations after the closing parantheses like {\tt const}
+for the implicit class parameter of a method will not be printed
+(this might change in the future).
+The return value is handled like a parameter type. That means that
+{\tt const\ldots\&} declarations are removed, but if the type equals
+to the class, it is {\em not} removed.
+
+  \method{FT   x()  const;}{Cartesian x-coordinate. \CC\ code: {\tt
+      FT x() const;}}
+
+  \method{const FT&   y();}{Cartesian y-coordinate. \CC\ code: {\tt
+      const FT\& y();}}
+
+  \method{Demo_Class   
+             transform( const CGAL_HAff_transformation<FT,RT> &t) const;
+             }{ Longish declarations forces the comment to start in
+             the next line.}
+
+  \method{Demo_Class   
+             longish_function_name( 
+                        const CGAL_HAff_transformation<FT,RT> &t,
+                        const Dummy_Type &q,
+                        Long_Type_Name_For_Fun Variable_Also_Long) const;
+             }{ Even more longish declarations forces the parameters printed
+             one per line.}
+
+Reference or pointer parameters can occur on both sides of the
+separating space between the type and the function or method name. The
+formatting normalizes them to the the left side. This formatting is
+not done within the parameters (, but maybe in the future). An example:
+
+    \function{Demo_Class& foo( int& a, int* b);}{}
+
+    \function{Demo_Class* foo( int& a, int* b);}{}
+
+    \function{Demo_Class &foo( int &a, int *b);}{}
+
+    \function{Demo_Class *foo( int &a, int *b);}{}
+
+Operator declarations are formatted as like the operators are
+used.  All operators that are allowed to be overloaded in \CC\ are
+handled. They are listed in the last section for completeness and
+to check the layout. Type casting through an operator is currently
+not supported. It will give an error message. If the error will be
+ignored, the macro formats the operator as a method or function,
+as it was declared. Sometimes, there is a choice between
+implementing an operator as a method or as a function. Both
+declarations will produce the same formatting, as demonstrated
+with the next two declarations.
+
+  \function{Demo_Class
+        operator+(Demo_Class p, Demo_Class q);}{Declaration via function.}
+
+  \method{Demo_Class
+        operator-(Demo_Class q);}{Declaration via method.}
+
+There is some laziness allowed in placing spaces around the operator
+characters. See the following examples:
+
+\method{A
+    operator+(Demo_Class q);}{\CC\ code: {\tt A operator+(Demo\_Class q);}}
+
+\method{A
+    operator +(Demo_Class q);}{\CC\ code: {\tt A operator +(Demo\_Class q);}}
+
+\method{A
+    operator+ (Demo_Class q);}{\CC\ code: {\tt A operator+ (Demo\_Class q);}}
+
+\method{A
+    operator + (Demo_Class q);}{\CC\ code: {\tt A operator + (Demo\_Class q);}}
+
+The keyword {\tt operator} is reserved, but it can appear as a
+substring in another name. See the following examples that this
+style can handle such cases:
+
+\method{A foo_operator(Demo_Class q);}{}
+
+\method{A noperator(Demo_Class q);}{}
+
+\method{A operatoro(Demo_Class q);}{}
+
+\method{A operator_(Demo_Class q);}{}
+
+\method{A operator0(Demo_Class q);}{}
+
+For future extensions, the macro that separates the return type from
+the function or method name recognizes the scope operator (, but
+currently not in the usage as the global scope). An example:
+
+  \function{Demo_Class
+        Class_X :: foo(Demo_Class p, Demo_Class q);}{Declaration with scope.}
+
+Other features should be incorporated. These are: Preprocessor
+constants and macros, normal C variable declarations and constants,
+global functions and their associated file, enums, typedefs, structs
+similar to classes (more ?).
+
+\end{class}
+
+
+% ----------------------------------------------------------------------
+\begin{class}{Demo_Class}
+\section{The list of all operators}
+
+  \function{Ptr_Class
+        operator->(Demo_Class p);}{}
+
+  \function{Demo_Class
+        operator[](Demo_Class p, int i);}{}
+
+  \function{Demo_Class
+        operator()(Demo_Class p);}{}
+
+  \function{Demo_Class
+        operator()(Demo_Class p, int i);}{}
+
+  \function{Demo_Class
+        operator()(Demo_Class p, int i, int j);}{}
+
+  \function{Demo_Class
+        operator()(Demo_Class p, int i, int j, int k);}{}
+
+  \function{Demo_Class
+        operator()(Demo_Class p,
+                   const A& a, B& b, C c, const D& d, Demo_Class
+                   e);}{all number and types of parameters are possible.}
+
+  \function{Demo_Class
+        operator++(Demo_Class p);}{}
+
+  \function{Demo_Class
+        operator++(Demo_Class p, int);}{The postfix incr.\ operator
+        has a hidden {\tt int} parameter that the formatting does not show.}
+
+  \function{Demo_Class
+        operator--(Demo_Class p);}{}
+
+  \function{Demo_Class
+        operator--(Demo_Class p, int);}{}
+
+  \function{Demo_Class
+        operator~(Demo_Class p);}{}
+
+  \function{Demo_Class
+        operator!(Demo_Class p);}{}
+
+  \function{Demo_Class
+        operator-(Demo_Class p);}{}
+
+  \function{Demo_Class
+        operator+(Demo_Class p);}{}
+
+  \function{Demo_Class
+        operator&(Demo_Class p);}{}
+
+  \function{Demo_Class
+        operator*(Demo_Class p);}{}
+
+  \method{void*
+        operator new( size_t);}{Hidden parameters are not shown. \CC\ code: 
+        {\tt $\backslash$method\{void* operator new( size\_t);\}}.}
+
+  \method{void
+        operator delete(void*, size_t);}{Hidden parameters are not shown.
+        \CC\ code: {\tt $\backslash$method\{void operator 
+            delete(void*, size\_t);\}}}
+
+  \method{void
+        operator delete[](void*, size_t);}{Hidden parameters are not
+        shown again. 
+        \CC\ code: {\tt $\backslash$method\{void operator
+            delete[](void*, size\_t);\}}}
+
+  \function{Member_Ptr
+        operator->*(Demo_Class p);}{}
+
+  \function{Demo_Class
+        operator*(Demo_Class p, Demo_Class q);}{}
+
+  \function{Demo_Class
+        operator/(Demo_Class p, Demo_Class q);}{}
+
+  \function{Demo_Class
+        operator%(Demo_Class p, Demo_Class q);}{}
+
+  \function{Demo_Class
+        operator+(Demo_Class p, Demo_Class q);}{}
+
+  \function{Demo_Class
+        operator-(Demo_Class p, Demo_Class q);}{}
+
+  \function{Demo_Class
+        operator<<(Demo_Class p, int i);}{}
+
+  \function{Demo_Class
+        operator>>(Demo_Class p, int i);}{}
+
+  \function{Demo_Class
+        operator<(Demo_Class p, Demo_Class q);}{}
+
+  \function{Demo_Class
+        operator<=(Demo_Class p, Demo_Class q);}{}
+
+  \function{Demo_Class
+        operator>(Demo_Class p, Demo_Class q);}{}
+
+  \function{Demo_Class
+        operator>=(Demo_Class p, Demo_Class q);}{}
+
+  \function{Demo_Class
+        operator==(Demo_Class p, Demo_Class q);}{}
+
+  \function{Demo_Class
+        operator!=(Demo_Class p, Demo_Class q);}{}
+
+  \function{Demo_Class
+        operator&(Demo_Class p, Demo_Class q);}{}
+
+  \function{Demo_Class
+        operator^(Demo_Class p, Demo_Class q);}{}
+
+  \function{Demo_Class
+        operator|(Demo_Class p, Demo_Class q);}{}
+
+  \function{Demo_Class
+        operator&&(Demo_Class p, Demo_Class q);}{}
+
+  \function{Demo_Class
+        operator||(Demo_Class p, Demo_Class q);}{}
+
+  \function{Demo_Class
+        operator=(Demo_Class p, Demo_Class q);}{}
+
+  \function{Demo_Class
+        operator*=(Demo_Class p, Demo_Class q);}{}
+
+  \function{Demo_Class
+        operator/=(Demo_Class p, Demo_Class q);}{}
+
+  \function{Demo_Class
+        operator%=(Demo_Class p, Demo_Class q);}{}
+
+  \function{Demo_Class
+        operator+=(Demo_Class p, Demo_Class q);}{}
+
+  \function{Demo_Class
+        operator-=(Demo_Class p, Demo_Class q);}{}
+
+  \function{Demo_Class
+        operator<<=(Demo_Class p, Demo_Class q);}{}
+
+  \function{Demo_Class
+        operator>>=(Demo_Class p, Demo_Class q);}{}
+
+  \function{Demo_Class
+        operator&=(Demo_Class p, Demo_Class q);}{}
+
+  \function{Demo_Class
+        operator|=(Demo_Class p, Demo_Class q);}{}
+
+  \function{Demo_Class
+        operator^=(Demo_Class p, Demo_Class q);}{}
+
+\end{class}
+
+\end{document}
+
