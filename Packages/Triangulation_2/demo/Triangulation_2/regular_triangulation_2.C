@@ -22,17 +22,12 @@
 // if QT is not installed, a message will be issued in runtime.
 #ifndef CGAL_USE_QT
 #include <iostream>
-
-
 int main(int, char*)
 {
-
   std::cout << "Sorry, this demo needs QT...";
   std::cout << std::endl;
-
   return 0;
 }
-
 #else
 
 #include "regular_cgal_types.h"
@@ -40,9 +35,10 @@ int main(int, char*)
 //Qt_widget headers
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
-#include <CGAL/IO/Qt_widget_helpwindow.h>
+#include <CGAL/IO/Qt_help_window.h>
 #include "regular_triangulation_2_toolbar.h"
 #include "regular_triangulation_2_toolbar_layers.h"
+#include <CGAL/IO/pixmaps/demoicon.xpm>
 
 //Qt headers
 #include <qplatinumstyle.h>
@@ -181,7 +177,7 @@ private slots:
   howto(){
     QString home;
     home = "help/rindex.html";
-    HelpWindow *help = new HelpWindow(home, ".", 0, "help viewer");
+    Qt_help_window *help = new Qt_help_window(home, ".", 0, "help viewer");
     help->resize(400, 400);
     help->setCaption("Demo HowTo");
     help->show();
@@ -247,6 +243,8 @@ main(int argc, char **argv)
   app.setMainWidget(&W);
   W.setCaption(title_string);
   W.setMouseTracking(TRUE);
+  QPixmap cgal_icon = QPixmap((const char**)demoicon_xpm);
+  W.setIcon(cgal_icon);
   W.show();  
   W.init_coordinates();  
   current_state = -1;

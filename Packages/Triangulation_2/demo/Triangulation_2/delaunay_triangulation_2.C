@@ -23,13 +23,10 @@
 #ifndef CGAL_USE_QT
 #include <iostream>
 
-
 int main(int, char*)
 {
-
   std::cout << "Sorry, this demo needs QT...";
   std::cout << std::endl;
-
   return 0;
 }
 
@@ -43,7 +40,8 @@ int main(int, char*)
 //Qt_widget headers
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
-#include <CGAL/IO/Qt_widget_helpwindow.h>
+#include <CGAL/IO/Qt_help_window.h>
+#include <CGAL/IO/pixmaps/demoicon.xpm>
 
 //STL headers
 #include <fstream>
@@ -64,10 +62,9 @@ int main(int, char*)
 #include <qfiledialog.h>
 #include <qtimer.h>
 
-
-
 const QString my_title_string("Delaunay Triangulation Demo with"
 			      " CGAL Qt_widget");
+
 Delaunay	tr1;
 int		current_state;
 Coord_type      xmin, ymin, xmax, ymax;
@@ -178,15 +175,15 @@ private slots:
       widget->redraw();
       widget->lock();
       Line_face_circulator lfc = 
-	tr1.line_walk(l.point(1), l.point(2)), done(lfc);
+         tr1.line_walk(l.point(1), l.point(2)), done(lfc);
       if(lfc == (CGAL_NULL_TYPE) NULL){
       } else {
-	*widget << CGAL::BLUE;
-	*widget << CGAL::FillColor(CGAL::WHITE);
-	do{
-	  if(! tr1.is_infinite( lfc  ))
-	    *widget << tr1.triangle( lfc );
-	}while(++lfc != done);
+        *widget << CGAL::BLUE;
+        *widget << CGAL::FillColor(CGAL::WHITE);
+        do{
+          if(! tr1.is_infinite( lfc  ))
+          *widget << tr1.triangle( lfc );
+        }while(++lfc != done);
       }
       *widget << CGAL::GREEN << l ;
       *widget << CGAL::noFill;
@@ -210,7 +207,7 @@ private slots:
   void howto(){
     QString home;
     home = "help/index.html";
-    HelpWindow *help = new HelpWindow(home, ".", 0, "help viewer");
+    Qt_help_window *help = new Qt_help_window(home, ".", 0, "help viewer");
     help->resize(400, 400);
     help->setCaption("Demo HowTo");
     help->show();
@@ -370,9 +367,9 @@ private:
   Tools_toolbar                     *newtoolbar;
   Layers_toolbar                    *vtoolbar;
   bool                              got_point;	
-	  //if a CGAL::Point is received should be true
+  //if a CGAL::Point is received should be true
   bool                              triangulation_changed;
-          //true only when triangulation has changed
+  //true only when triangulation has changed
   int                               old_state;
 };//endclass
 
@@ -386,6 +383,8 @@ main(int argc, char **argv)
   app.setMainWidget(&W);
   W.setCaption(my_title_string);
   W.setMouseTracking(TRUE);
+  QPixmap cgal_icon = QPixmap((const char**)demoicon_xpm);
+  W.setIcon(cgal_icon);
   W.show();  
   W.init_coordinates();  
   current_state = -1;
