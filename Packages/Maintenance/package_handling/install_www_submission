@@ -1,4 +1,4 @@
-#!/net/bin/perl5 -w
+#!/sw/bin/perl5 -w
 
 use strict;
 use File::Find;
@@ -7,12 +7,13 @@ use Cwd;
 
 
 my $testing=0;
-my $MAIL_PROG='/local/bin/smtp-relay';
+my $MAIL_PROG='/projects/CGAL/admin_scripts/send_cgal_mail';
 
 my ($sender, $submission, $packagedir, $oldpackagedir, $download_dir,
     $maintainer, $console_output, $tempdir, $check_source_file_prog);
 my $WGET;
 
+my $LOCKCMD="/sw/bin/lockfile";
 
 umask 002;
 
@@ -32,14 +33,13 @@ sub init_variables()
 	$download_dir='/projects/CGAL/submissions/download';
 	$maintainer='geert@cs.uu.nl';
 	$console_output=0;
-	$check_source_file_prog=
-	'/projects/CGAL/submissions/autohandle/scripts/check_headers';
+	$check_source_file_prog= '/projects/CGAL/admin_scripts/check_headers';
     }
-    $WGET="/users/wieger/local/bin/wget -Y off -nd -P $download_dir";
+    $WGET="/projects/CGAL/admin_scripts/get_cgal_html";
 }
 
 $ENV{PATH}=
-'/net/bin:/sbin:/usr/sbin:/usr/bsd:/bin:/usr/bin:/usr/bin/X11';
+'/sw/bin:/sbin:/usr/sbin:/usr/bsd:/bin:/usr/bin:/usr/bin/X11';
 
 
 
@@ -364,9 +364,8 @@ sub install_submission($$)
 
 sub do_submission($)
 {
-    my ($url, $url_with_password,$file_name,$package_name);
+    my ($url, $cur_dir,$file_name,$package_name);
     $url = shift;
-    $url_with_password = $url;
     ($file_name) = ($url =~ m|^.*/(.*?)\s*$|);
     $package_name = make_package_name($file_name);
     if ($package_name !~ /^[a-zA-Z_]\w*$/) {
@@ -379,13 +378,20 @@ sub do_submission($)
 	log_msg "WARNING: package $package_name will not go into releases";
 	log_msg "Send a separate mail to cgal_submit if you want that";
     }
-    $url_with_password =~ s|http://|http://member1:cg4any1@|;
     unlink glob("$download_dir/*") if (! $testing);
     log_header "downloading $url";
 #    my $logfileno = fileno(LOGFILE);
 #    die "Log file not open" if ! defined($logfileno);
-    system("$WGET $url_with_password");
-#    system("$WGET $url_with_password >> $ACTUAL_LOGFILE 2>&1") if (! $testing);
+    $cur_dir =cwd();
+    my $lockfile = "$download_dir/$package_name.lock";
+    if ( system("$LOCKCMD", "-r", '10', $lockfile) != 0) {
+	log_msg "ERROR: could not acquire lock!";
+	return 0;
+    }
+    if (chdir "$download_dir") {
+        system("$WGET $url");
+	chdir $cur_dir;
+    }
     if ( ! -f "$download_dir/$file_name" ) {
 	log_msg "ERROR: download failed!";
 	return 0;
@@ -401,8 +407,10 @@ sub do_submission($)
 	log_header "Package was successfully installed!";
     } else {
 	log_header "ERROR: Installation of the package failed!";
+    	unlink $lockfile;
 	return 0;
     }
+    unlink $lockfile;
     return 1;
 }
 
@@ -451,8 +459,8 @@ foreach $submission ( @ARGV) {
 
 close LOGFILE;
 $ARGV[0] =~ s|.*/||;
-system "cat $ACTUAL_LOGFILE | $MAIL_PROG -s \"CGAL submission $ARGV[0]\" $maintainer" if !$testing;
-system "cat $ACTUAL_LOGFILE | $MAIL_PROG -s \"CGAL submission $ARGV[0]\" $sender";
+system "cat $ACTUAL_LOGFILE | $MAIL_PROG \"CGAL submission $ARGV[0]\" $maintainer" if !$testing;
+system "cat $ACTUAL_LOGFILE | $MAIL_PROG \"CGAL submission $ARGV[0]\" $sender";
 
 
 unlink $ACTUAL_LOGFILE;
