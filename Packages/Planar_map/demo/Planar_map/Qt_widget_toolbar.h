@@ -28,7 +28,7 @@
 //
 // ----------------------------------------------------------------------
 //
-// file          : demo/Qt_widget/Planar_map/Qt_widget_toolbar.h
+// file          : demo/Planar_map/Qt_widget_toolbar.h
 // package       : Planar_map
 // author(s)     : Efi Fogel
 // release       : CGAL-2.4
@@ -49,7 +49,7 @@
 #include "snapping_layer.h"
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_get_point.h>
-#include <CGAL/IO/Qt_widget_get_segment.h>
+#include "segment_input_layer_with_snapping.h"
 
 #include <qobject.h>
 #include <qtoolbutton.h>
@@ -76,9 +76,9 @@ private:
   CGAL::Qt_widget * widget;
   int nr_of_buttons;
 
-  CGAL::Qt_widget_get_point<Kernel>   pointbut;
-  CGAL::Qt_widget_get_segment<Kernel> segmentbut;
-  Snapping_layer<Kernel>              snaplayer;
+  CGAL::Qt_widget_get_point<Kernel>   point_layer;
+  Segment_input_layer<Kernel>         segment_layer;
+  Snapping_layer<Kernel>              snapping_layer;
 };
 
 #endif

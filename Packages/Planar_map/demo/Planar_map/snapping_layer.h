@@ -44,14 +44,13 @@ public:
                                 current_v;  //the current point
   QCursor                       cursor;
   std::list<Curve>              *curveslist;
-  bool                          first_time;
   Curve                         selected_curve, old_curve;
   bool                          source, target;
   Planar_map                    *pm;
 
   //constructor
   Snapping_layer(const QCursor c=QCursor(Qt::crossCursor)) :
-      on_first(false), cursor(c), first_time(true), 
+      on_first(false), cursor(c),
       source(false), target(false) {};
   
   void pass_the_structure(std::list<Curve>* l, Planar_map * p) {
@@ -59,11 +58,12 @@ public:
     pm = p;
   }
 private:
-  QCursor oldcursor;
-
-  void redraw(){
+  void draw(){
       wasrepainted = true;
   };
+
+private:
+  QCursor oldcursor;
 
   void mousePressEvent(QMouseEvent *e)
   {

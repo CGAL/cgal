@@ -34,15 +34,16 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget * w,
 			     QMainWindow *mw, std::list<Curve> * l1, Planar_map * pm) :
   QToolBar(mw, "NT")
 {
-  snaplayer.pass_the_structure(l1, pm);
-  w->attach(&pointbut);
-  w->attach(&segmentbut);
-  w->attach(&snaplayer);
+  snapping_layer.pass_the_structure(l1, pm);
+  segment_layer.pass_the_structure(l1, pm);
+  w->attach(&point_layer);
+  w->attach(&segment_layer);
+  w->attach(&snapping_layer);
 
   //    move_deletebut.deactivate();
-  pointbut.deactivate();
-  segmentbut.deactivate();
-  snaplayer.deactivate();
+  point_layer.deactivate();
+  segment_layer.deactivate();
+  snapping_layer.deactivate();
 
   //    move_deletebut.pass_the_structure(l1);
   //set the widget
@@ -80,11 +81,11 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget * w,
   button_group->setExclusive(true);
   
   connect(but[1], SIGNAL(stateChanged(int)),
-          &pointbut, SLOT(stateChanged(int)));
+          &point_layer, SLOT(stateChanged(int)));
   connect(but[2], SIGNAL(stateChanged(int)),
-          &segmentbut, SLOT(stateChanged(int)));
+          &segment_layer, SLOT(stateChanged(int)));
   connect(but[3], SIGNAL(stateChanged(int)),
-          &snaplayer, SLOT(stateChanged(int)));
+          &snapping_layer, SLOT(stateChanged(int)));
 
 };
 

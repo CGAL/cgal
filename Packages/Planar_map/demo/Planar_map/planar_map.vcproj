@@ -172,6 +172,9 @@
 				RelativePath="cgal_types.h">
 			</File>
 			<File
+				RelativePath="segment_input_layer_with_snapping.h">
+			</File>
+			<File
 				RelativePath="snapping_layer.h">
 			</File>
 		</Filter>
