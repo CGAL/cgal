@@ -375,5 +375,9 @@ inline Expr radical(const NT& n, int m) {
   return Expr(new ConstPolyRep<NT>(Q, I));
 }
 
+#include <CORE/poly/Poly.tcc>
+// We include this file here and not from inside Poly.h,
+// because otherwise VC++.net2003 can't compile Expr.cpp
+
 CORE_END_NAMESPACE
 #endif

@@ -322,7 +322,8 @@ template < class NT >
   }
 
 // IMPLEMENTATIONS ARE FOUND IN
-#include <CORE/poly/Poly.tcc>
-
+//#include <CORE/poly/Poly.tcc>
+// and we include this file from CORE/Expr.h  AFTER the definition
+// of class Expr, because otherwise VC++.net2003 can'y compile Expr.cpp
 CORE_END_NAMESPACE
 #endif
