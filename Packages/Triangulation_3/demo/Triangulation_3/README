@@ -1,4 +1,6 @@
 ------- demo -------------------------------------------------
+(this is an elementary demo, a nice one should come in the future)
+
 Construction of a Delaunay triangulation.
 
 Needs an input file "data/points" containing points (given by x y z)
@@ -22,5 +24,5 @@ For a robust version, another arithmetic should be used.
 --------------------------------------------------------------
 
 ------- blind_demo -------------------------------------------
-Same, but without visualization.
+Same, but without visualization...
 --------------------------------------------------------------

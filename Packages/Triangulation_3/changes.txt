@@ -1,3 +1,7 @@
+Version 1.26 (16 dec 99)
+removed : useless #include in the "demos"
+added : pictures in the doc
+
 Version 1.25 (10 dec 99)
 change in the doc:
 \begin{ccClass}{Traits} --> \begin{ccClass}{Triangulation_3_traits}
