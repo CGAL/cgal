@@ -245,8 +245,10 @@ public:
     return it;
   }
 
-  ~Kd_tree() {  
-    delete bbox;
+  ~Kd_tree() {
+    if(is_built()){
+      delete bbox;
+    }
   }
 
 
