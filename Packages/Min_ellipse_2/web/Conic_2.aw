@@ -5,6 +5,8 @@
 @! file  : web/Optimisation/Conic_2.aw
 @! author: Bernd Gärtner, Sven Schönherr (gaertner@inf.ethz.ch)
 @! ----------------------------------------------------------------------------
+@! $CGAL_Chapter: Geometric Optimisation $
+@! $CGAL_Package: Min_ellipse_2 WIP $
 @! $Revision$
 @! $Date$
 @! ============================================================================
@@ -13,26 +15,50 @@
 @usepackage[latin1]{inputenc}
 @usepackage{a4wide2}
 @usepackage{epsf}
+@usepackage{cc_manual}
 @article
 \setcounter{secnumdepth}{4}
 \setcounter{tocdepth}{4}
 
-@thickline
+@! ============================================================================
+@! Title
+@! ============================================================================
+
+\RCSdef{\rcsRevision}{$Revision$}
+\RCSdefDate{\rcsDate}{$Date$}
+\newcommand{\cgalWIP}{{\footnotesize{} (\rcsRevision{} , \rcsDate) }}
 
 @t vskip 5 mm
-@t title titlefont centre "A Conic Class"
-@t vskip 8 mm
+@t title titlefont centre "2D Conic*"
+@t vskip 1 mm
 @t title smalltitlefont centre "Bernd Gärtner"
+\smallskip
+\begin{center}
+  \begin{tabular}{l}
+    \verb+$CGAL_Chapter: Geometric Optimisation $+ \\
+    \verb+$CGAL_Package: Min_ellipse_2 WIP+\cgalWIP\verb+$+ \\
+  \end{tabular}
+\end{center}
 @t vskip 1 mm
 
-@thickline
-@thinline
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\footnotetext[1]{This work was supported by the ESPRIT IV LTR Project
+  No.~21957 (CGAL).}
+
+@! ============================================================================
+@! Introduction and Contents
+@! ============================================================================
+
+@section{Introduction}
+
+We define a class template @prg{CGAL_Conic_2<R>} to store, access and
+manipulate @em{conics} in the plane, a.k.a. @em{second order curves}.
+
 @t table_of_contents
 
-@thinline
-\newcommand{\R}{I\!\!R}
+\renewcommand{\R}{I\!\!R}
 \newcommand{\C}{{\cal C}}
-\newcommand{\E}{{\cal E}}
+\renewcommand{\E}{{\cal E}}
 \newcommand{\Vol}{\mathop{\rm Vol}}
 \renewcommand{\r}{{\cal R}}
 \renewcommand{\d}{\partial}
@@ -43,13 +69,6 @@
 \newtheorem{Definition}{Definition}[section]
 \newtheorem{Lemma}[Definition]{Lemma}
 
-
-@! ---------------------------------------------------------------------------
-@section{Introduction}
-@! ---------------------------------------------------------------------------
-
-We define a class template @prg{Conic_2<R>} to store, access and manipulate
-@em{conics} in the plane, a.k.a. @em{second order curves}.
 
 @! ---------------------------------------------------------------------------
 @subsection{Conics}
@@ -3291,7 +3310,7 @@ web file.
     @<file name>(@1)
     @<file description>(
         "Geometric Optimisation",
-        "Optimisation","Optimisation/Conic_2",
+        "Min_ellipse_2","Optimisation/Conic_2",
         "$Revision$","$Date$",
         "Bernd Gärtner <gaertner@@inf.ethz.ch>",
         "Sven Schönherr",
