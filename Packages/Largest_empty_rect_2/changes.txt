@@ -1,3 +1,6 @@
+version 1.38 [rursu]
+- fixed demo/Largest_empty_rect_2/makefile for FreeBSD
+
 version 1.15 [af]
 - removed some coordiante accesses
 - removed new/delete pairs for local variables
