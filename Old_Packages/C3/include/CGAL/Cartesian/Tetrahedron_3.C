@@ -33,9 +33,10 @@
 #ifndef CGAL_CARTESIAN_TETRAHEDRON_3_C
 #define CGAL_CARTESIAN_TETRAHEDRON_3_C
 
-#ifndef CGAL_CARTESIAN_SOLVE_3_H
 #include <CGAL/Cartesian/solve_3.h>
-#endif // CGAL_CARTESIAN_SOLVE_3_H
+#include <CGAL/predicate_classes_3.h>
+#include <vector>
+#include <functional>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -71,11 +72,9 @@ TetrahedronC3(const typename TetrahedronC3<R CGAL_CTAG>::Point_3 &p,
   PTR = new _Fourtuple< Point_3 >(p, q, r, s);
 }
 
-
 template < class R >
 inline TetrahedronC3<R CGAL_CTAG>::~TetrahedronC3()
 {}
-
 
 template < class R >
 TetrahedronC3<R CGAL_CTAG> &
@@ -91,22 +90,21 @@ TetrahedronC3<R CGAL_CTAG>::operator==(const TetrahedronC3<R CGAL_CTAG> &t) cons
   if ( id() == t.id() ) return true;
   if ( orientation() != t.orientation() ) return false;
 
-  int i;
-  for (i=0; i<4; i++)
-    if ( vertex(0) == t.vertex(i) )
-      break;
-
-  // the following is a fix-up until the proper STL-algorithms can be
-  // used as in H3
-  if (i == 4) return false;
-  return (vertex(1) == t.vertex(i+1))
-            && (vertex(2) == t.vertex(i+2)) && (vertex(3) == t.vertex(i+3)) ||
-    (vertex(1) == t.vertex(i+2))
-            && (vertex(2) == t.vertex(i+3)) && (vertex(3) == t.vertex(i+1)) ||
-    (vertex(1) == t.vertex(i+3))
-            && (vertex(2) == t.vertex(i+1)) && (vertex(3) == t.vertex(i+2));
+  std::vector< Point_3 > V1;
+  std::vector< Point_3 > V2;
+  std::vector< Point_3 >::iterator uniq_end1;
+  std::vector< Point_3 >::iterator uniq_end2;
+  int k;
+  for ( k=0; k < 4; k++) V1.push_back( vertex(k));
+  for ( k=0; k < 4; k++) V2.push_back( t.vertex(k));
+  std::sort(V1.begin(), V1.end(), Less_xyz< Point_3 >());
+  std::sort(V2.begin(), V2.end(), Less_xyz< Point_3 >());
+  uniq_end1 = std::unique( V1.begin(), V1.end());
+  uniq_end2 = std::unique( V2.begin(), V2.end());
+  V1.erase( uniq_end1, V1.end());
+  V2.erase( uniq_end2, V2.end());
+  return V1 == V2;
 }
-
 
 template < class R >
 inline
