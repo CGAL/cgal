@@ -1,5 +1,6 @@
 2.41   (? October 2001)
 - Replace Handle/Rep by Handle_for/Ref_counted.
+- Hardcoded dependencies between classes removed.
 
 2.40   (5 October 2001)
 - Cleanup use of ptr in AffH2.

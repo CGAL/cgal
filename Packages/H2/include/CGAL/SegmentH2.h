@@ -25,33 +25,33 @@
 #ifndef CGAL_SEGMENTH2_H
 #define CGAL_SEGMENTH2_H
 
-#include <CGAL/PointH2.h>
-#include <CGAL/LineH2.h>
-
 CGAL_BEGIN_NAMESPACE
 
 template < class R >
 class Segment_repH2 : public Ref_counted
 {
 public:
+    typedef typename R::Kernel_base::Point_2       Point_2;
+
     Segment_repH2() {}
-    Segment_repH2(const PointH2<R>& sp, const PointH2<R>& ep)
+    Segment_repH2(const Point_2& sp, const Point_2& ep)
 	: start(sp), end(ep) {}
 
-    PointH2<R>  start;
-    PointH2<R>  end;
+    Point_2  start;
+    Point_2  end;
 };
 
 template < class R >
 class Simple_Segment_repH2
 {
 public:
+    typedef typename R::Kernel_base::Point_2       Point_2;
     Simple_Segment_repH2() {}
-    Simple_Segment_repH2(const PointH2<R>& sp, const PointH2<R>& ep)
+    Simple_Segment_repH2(const Point_2& sp, const Point_2& ep)
 	: start(sp), end(ep) {}
 
-    PointH2<R>  start;
-    PointH2<R>  end;
+    Point_2  start;
+    Point_2  end;
 };
 
 template < class R_ >
@@ -62,6 +62,10 @@ public:
   typedef R_                                    R;
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
+  typedef typename R::Kernel_base::Point_2       Point_2;
+  typedef typename R::Kernel_base::Line_2        Line_2;
+  typedef typename R::Kernel_base::Direction_2   Direction_2;
+  typedef typename R::Kernel_base::Aff_transformation_2 Aff_transformation_2;
 
   typedef typename R::Segment_handle_2          Segment_handle_2_;
   typedef typename Segment_handle_2_::element_type Segment_ref_2;
@@ -69,44 +73,44 @@ public:
     SegmentH2()
       : Segment_handle_2_(Segment_ref_2()) {}
 
-    SegmentH2( const PointH2<R>& sp, const PointH2<R>& ep)
+    SegmentH2( const Point_2& sp, const Point_2& ep)
       : Segment_handle_2_(Segment_ref_2(sp, ep)) {}
 
 #if 1 // FIXME : should this exist at all ?
     SegmentH2( const RT& sx, const RT& sy, const RT& sw,
                const RT& ex, const RT& ey, const RT& ew)
-      : Segment_handle_2_( Segment_ref_2( PointH2<R>(sx,sy,sw),
-                                          PointH2<R>(ex,ey,ew) ) ) {}
+      : Segment_handle_2_( Segment_ref_2( Point_2(sx,sy,sw),
+                                          Point_2(ex,ey,ew) ) ) {}
 #endif
 
     bool    operator==(const SegmentH2<R>& s) const;
     bool    operator!=(const SegmentH2<R>& s) const;
 
-    const PointH2<R> & source() const;
-    const PointH2<R> & target() const;
-    const PointH2<R> & start() const;
-    const PointH2<R> & end()   const;
-    const PointH2<R> & vertex(int i) const;
-    const PointH2<R> & point(int i) const;
-    const PointH2<R> & operator[](int i) const;
-    const PointH2<R> & min()   const;
-    const PointH2<R> & max()   const;
-    const PointH2<R> & other_vertex(const PointH2<R>& p) const;
+    const Point_2 & source() const;
+    const Point_2 & target() const;
+    const Point_2 & start() const;
+    const Point_2 & end()   const;
+    const Point_2 & vertex(int i) const;
+    const Point_2 & point(int i) const;
+    const Point_2 & operator[](int i) const;
+    const Point_2 & min()   const;
+    const Point_2 & max()   const;
+    const Point_2 & other_vertex(const Point_2& p) const;
 
     bool    is_horizontal() const;
     bool    is_vertical() const;
-    bool    has_on(const PointH2<R>& p) const;
-    bool    collinear_has_on(const PointH2<R>& p) const;
+    bool    has_on(const Point_2& p) const;
+    bool    collinear_has_on(const Point_2& p) const;
     bool    is_degenerate() const;
 
     FT      squared_length() const;
 
-    DirectionH2<R> direction() const;
-    LineH2<R>      supporting_line() const;
+    Direction_2    direction() const;
+    Line_2         supporting_line() const;
     SegmentH2<R>   opposite() const;
     Bbox_2         bbox() const;
 
-    SegmentH2<R> transform( const Aff_transformationH2<R> & t) const;
+    SegmentH2<R> transform( const Aff_transformation_2 & t) const;
 };
 
 #ifdef CGAL_CFG_TYPENAME_BUG
@@ -115,31 +119,31 @@ public:
 
 template < class R >
 inline
-const PointH2<R> &
+const typename SegmentH2<R>::Point_2 &
 SegmentH2<R>::source() const
 { return Ptr()->start; }
 
 template < class R >
 inline
-const PointH2<R> &
+const typename SegmentH2<R>::Point_2 &
 SegmentH2<R>::start() const
 { return Ptr()->start; }
 
 template < class R >
 inline
-const PointH2<R> &
+const typename SegmentH2<R>::Point_2 &
 SegmentH2<R>::target() const
 { return Ptr()->end; }
 
 template < class R >
 inline
-const PointH2<R> &
+const typename SegmentH2<R>::Point_2 &
 SegmentH2<R>::end() const
 { return Ptr()->end; }
 
 template < class R >
 CGAL_KERNEL_INLINE
-const PointH2<R> &
+const typename SegmentH2<R>::Point_2 &
 SegmentH2<R>::min() const
 {
   return
@@ -148,7 +152,7 @@ SegmentH2<R>::min() const
 
 template < class R >
 CGAL_KERNEL_INLINE
-const PointH2<R> &
+const typename SegmentH2<R>::Point_2 &
 SegmentH2<R>::max() const
 {
   return
@@ -157,8 +161,8 @@ SegmentH2<R>::max() const
 
 template < class R >
 CGAL_KERNEL_INLINE
-const PointH2<R> &
-SegmentH2<R>::other_vertex(const PointH2<R>& p) const
+const typename SegmentH2<R>::Point_2 &
+SegmentH2<R>::other_vertex(const typename SegmentH2<R>::Point_2& p) const
 {
   CGAL_kernel_precondition( (p == end()) || (p == start()) );
   return ( p == start() ) ? end() : start() ;
@@ -166,7 +170,7 @@ SegmentH2<R>::other_vertex(const PointH2<R>& p) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-const PointH2<R> &
+const typename SegmentH2<R>::Point_2 &
 SegmentH2<R>::vertex(int i) const
 {
     return (i%2 == 0) ? start() : end();
@@ -174,13 +178,13 @@ SegmentH2<R>::vertex(int i) const
 
 template < class R >
 inline
-const PointH2<R> &
+const typename SegmentH2<R>::Point_2 &
 SegmentH2<R>::point(int i) const
 { return vertex(i); }
 
 template < class R >
 inline
-const PointH2<R> &
+const typename SegmentH2<R>::Point_2 &
 SegmentH2<R>::operator[](int i) const
 { return vertex(i); }
 
@@ -192,20 +196,20 @@ SegmentH2<R>::squared_length() const
 
 template < class R >
 CGAL_KERNEL_INLINE
-DirectionH2<R>
+typename SegmentH2<R>::Direction_2
 SegmentH2<R>::direction() const
 {
   CGAL_kernel_precondition( !is_degenerate() );
-  return DirectionH2<R>( end() - start() );
+  return Direction_2( end() - start() );
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
-LineH2<R>
+typename SegmentH2<R>::Line_2
 SegmentH2<R>::supporting_line() const
 {
   CGAL_kernel_precondition( !is_degenerate() );
-  return LineH2<R>(start(), end());
+  return Line_2(start(), end());
 }
 
 template < class R >
@@ -218,7 +222,7 @@ template < class R >
 CGAL_KERNEL_INLINE
 SegmentH2<R>
 SegmentH2<R>::
-transform(const Aff_transformationH2<R>& t) const
+transform(const typename SegmentH2<R>::Aff_transformation_2& t) const
 {
   return SegmentH2<R>(t.transform(start()), t.transform(end()) );
 }
@@ -251,7 +255,7 @@ template < class R >
 std::istream &
 operator>>(std::istream &is, SegmentH2<R> &s)
 {
-  PointH2<R> p, q;
+  typename SegmentH2<R>::Point_2 p, q;
   is >> p >> q;
   s = SegmentH2<R>(p, q);
   return is;
@@ -284,7 +288,7 @@ SegmentH2<R>::is_degenerate() const
 template < class R >
 CGAL_KERNEL_INLINE
 bool
-SegmentH2<R>::has_on(const PointH2<R>& p) const
+SegmentH2<R>::has_on(const typename SegmentH2<R>::Point_2& p) const
 {
   if ( collinear(Ptr()->start, p, Ptr()->end ) )
   {
@@ -299,7 +303,7 @@ SegmentH2<R>::has_on(const PointH2<R>& p) const
 template < class R >
 CGAL_KERNEL_INLINE
 bool
-SegmentH2<R>::collinear_has_on(const PointH2<R>& p) const
+SegmentH2<R>::collinear_has_on(const typename SegmentH2<R>::Point_2& p) const
 {
   return (  lexicographically_xy_smaller_or_equal(p, max() )
          && lexicographically_xy_smaller_or_equal(min(),p) );

@@ -25,7 +25,6 @@
 #ifndef CGAL_PVDH2_H
 #define CGAL_PVDH2_H
 
-#include <CGAL/homogeneous_classes.h>
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_2.h>
 
@@ -39,6 +38,9 @@ public:
   typedef R_                                    R;
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
+  typedef typename R::Kernel_base::Vector_2     Vector_2;
+  typedef typename R::Kernel_base::Direction_2  Direction_2;
+  typedef typename R::Kernel_base::Aff_transformation_2 Aff_transformation_2;
 
   typedef typename R::Point_handle_2            Point_handle_2_;
   typedef typename Point_handle_2_::element_type        Point_ref_2;
@@ -46,7 +48,7 @@ public:
             PointH2();
             PointH2(const Origin & o);
             PointH2(const PointH2<R> & p);
-            PointH2(const VectorH2<R>& v);
+            PointH2(const Vector_2& v);
             PointH2(const RT& hx, const RT& hy );
             PointH2(const RT& hx, const RT& hy, const RT& hw );
 
@@ -67,8 +69,8 @@ public:
     int     dimension() const;
     Bbox_2  bbox() const;
 
-    PointH2<R> transform( const Aff_transformationH2<R> & t) const;
-    DirectionH2<R> direction() const;
+    PointH2<R> transform( const Aff_transformation_2 & t) const;
+    Direction_2 direction() const;
 };
 
 template < class R_ >
@@ -79,13 +81,16 @@ public:
   typedef R_                                    R;
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
+  typedef typename R::Kernel_base::Point_2      Point_2;
+  typedef typename R::Kernel_base::Direction_2  Direction_2;
+  typedef typename R::Kernel_base::Aff_transformation_2 Aff_transformation_2;
 
   typedef typename R::Vector_handle_2           Vector_handle_2_;
   typedef typename Vector_handle_2_::element_type  Vector_ref_2;
 
             VectorH2();
             VectorH2(const VectorH2<R>& v);
-            VectorH2(const PointH2<R>& a, const PointH2<R>& b);
+            VectorH2(const Point_2& a, const Point_2& b);
             VectorH2(const Null_vector &);
             VectorH2(const RT& x, const RT& y);
             VectorH2(const RT& x, const RT& y, const RT& w );
@@ -107,8 +112,8 @@ public:
     FT      operator[](int i)  const;
 
     int     dimension() const;
-    DirectionH2<R> direction() const;
-    VectorH2<R> transform(const Aff_transformationH2<R>& t ) const;
+    Direction_2 direction() const;
+    VectorH2<R> transform(const Aff_transformation_2& t ) const;
     VectorH2<R> perpendicular(const Orientation& o ) const;
 
     FT      operator*( const VectorH2<R>& v) const;
@@ -116,9 +121,9 @@ public:
     VectorH2<R> opposite() const;
 
 // undocumented:
-            VectorH2(const DirectionH2<R> & dir);
+            VectorH2(const Direction_2 & dir);
 protected:
-            VectorH2(const PointH2<R> & p);
+            VectorH2(const Point_2 & p);
 };
 
 template < class R_ >
@@ -129,17 +134,23 @@ public:
   typedef R_                                    R;
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
+  typedef typename R::Kernel_base::Point_2      Point_2;
+  typedef typename R::Kernel_base::Vector_2     Vector_2;
+  typedef typename R::Kernel_base::Line_2       Line_2;
+  typedef typename R::Kernel_base::Ray_2        Ray_2;
+  typedef typename R::Kernel_base::Segment_2    Segment_2;
+  typedef typename R::Kernel_base::Aff_transformation_2 Aff_transformation_2;
 
   typedef typename R::Direction_handle_2        Direction_handle_2_;
   typedef typename Direction_handle_2_::element_type  Direction_ref_2;
 
             DirectionH2();
             DirectionH2(const DirectionH2<R>& d );
-            DirectionH2(const PointH2<R> & p );
-            DirectionH2(const VectorH2<R> & v );
-            DirectionH2(const LineH2<R> & l );
-            DirectionH2(const RayH2<R> & r );
-            DirectionH2(const SegmentH2<R> & s );
+            DirectionH2(const Point_2 & p );
+            DirectionH2(const Vector_2 & v );
+            DirectionH2(const Line_2 & l );
+            DirectionH2(const Ray_2 & r );
+            DirectionH2(const Segment_2 & s );
             DirectionH2(const RT& x, const RT& y);
             DirectionH2(const RT& x, const RT& y, const RT& w );
 
@@ -154,7 +165,7 @@ public:
 
     DirectionH2<R> operator-() const;
 
-    VectorH2<R>    to_vector() const;
+    Vector_2       to_vector() const;
 
     const RT & x() const { return Ptr()->e0; };
     const RT & y() const { return Ptr()->e1; };
@@ -164,7 +175,7 @@ public:
     const RT & dy() const { return Ptr()->e1; };
 
     DirectionH2<R> perpendicular(const Orientation &o) const;
-    DirectionH2<R> transform(const Aff_transformationH2<R> &) const;
+    DirectionH2<R> transform(const Aff_transformation_2 &) const;
 };
 
 #ifdef CGAL_CFG_TYPENAME_BUG
@@ -204,7 +215,7 @@ PointH2<R>::PointH2(const RT& hx, const RT& hy, const RT& hw)
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-PointH2<R>::PointH2(const VectorH2<R>& v)
+PointH2<R>::PointH2(const typename PointH2<R>::Vector_2& v)
   : Point_handle_2_ (v)
 {}
 
@@ -262,9 +273,9 @@ PointH2<R>::dimension() const
 
 template < class R >
 CGAL_KERNEL_INLINE
-DirectionH2<R>
+typename PointH2<R>::Direction_2
 PointH2<R>::direction() const
-{ return DirectionH2<R>(*this); }
+{ return typename PointH2<R>::Direction_2(*this); }
 
 
 template < class R >
@@ -284,7 +295,8 @@ VectorH2<R>::VectorH2(const VectorH2<R>& v)
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-VectorH2<R>::VectorH2(const PointH2<R>& a, const PointH2<R>& b)
+VectorH2<R>::VectorH2(const typename VectorH2<R>::Point_2& a,
+	              const typename VectorH2<R>::Point_2& b)
   : Vector_handle_2_ (b-a) {}
 
 template < class R >
@@ -304,12 +316,12 @@ VectorH2<R>::VectorH2(const RT& x, const RT& y, const RT& w)
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-VectorH2<R>::VectorH2(const PointH2<R> & p)
+VectorH2<R>::VectorH2(const typename VectorH2<R>::Point_2 & p)
   : Vector_handle_2_ ( p) {}
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-VectorH2<R>::VectorH2(const DirectionH2<R> & dir)
+VectorH2<R>::VectorH2(const typename VectorH2<R>::Direction_2 & dir)
   : Vector_handle_2_ ( dir) {}
 
 template < class R >
@@ -377,9 +389,10 @@ VectorH2<R>::dimension() const
 
 template < class R >
 CGAL_KERNEL_INLINE
-DirectionH2<R>
+typename VectorH2<R>::Direction_2
 VectorH2<R>::direction() const
-{ return DirectionH2<R>(*this); }
+{ return typename VectorH2<R>::Direction_2(*this); }
+
 template < class R >
 inline
 VectorH2<R>
@@ -404,27 +417,27 @@ DirectionH2<R>::DirectionH2(const DirectionH2<R>& d )
 
 template <class R >
 CGAL_KERNEL_CTOR_INLINE
-DirectionH2<R>::DirectionH2(const PointH2<R> & p )
+DirectionH2<R>::DirectionH2(const typename DirectionH2<R>::Point_2 & p )
   : Direction_handle_2_ ( p) {}
 
 template <class R >
 CGAL_KERNEL_CTOR_INLINE
-DirectionH2<R>::DirectionH2(const VectorH2<R> & v )
+DirectionH2<R>::DirectionH2(const typename DirectionH2<R>::Vector_2 & v )
   : Direction_handle_2_ ( v) {}
 
 template <class R >
 CGAL_KERNEL_CTOR_INLINE
-DirectionH2<R>::DirectionH2(const LineH2<R> & l )
+DirectionH2<R>::DirectionH2(const typename DirectionH2<R>::Line_2 & l )
   : Direction_handle_2_ ( l.direction()) {}
 
 template <class R >
 CGAL_KERNEL_CTOR_INLINE
-DirectionH2<R>::DirectionH2(const RayH2<R> & r )
+DirectionH2<R>::DirectionH2(const typename DirectionH2<R>::Ray_2 & r )
   : Direction_handle_2_ ( r.direction()) {}
 
 template <class R >
 CGAL_KERNEL_CTOR_INLINE
-DirectionH2<R>::DirectionH2(const SegmentH2<R> & s )
+DirectionH2<R>::DirectionH2(const typename DirectionH2<R>::Segment_2 & s )
   : Direction_handle_2_ ( s.direction()) {}
 
 template <class R >
@@ -696,7 +709,7 @@ PointH2<R>::bbox() const
 template < class R >
 inline
 PointH2<R>
-PointH2<R>::transform(const Aff_transformationH2<R>& t) const
+PointH2<R>::transform(const typename PointH2<R>::Aff_transformation_2& t) const
 { return t.transform(*this); }
 
 #ifndef CGAL_NO_OSTREAM_INSERT_POINTH2
@@ -766,7 +779,8 @@ VectorH2<R>::perpendicular(const Orientation& o) const
 template < class R >
 inline
 VectorH2<R>
-VectorH2<R>::transform(const Aff_transformationH2<R>& t) const
+VectorH2<R>::
+transform(const typename VectorH2<R>::Aff_transformation_2& t) const
 { return t.transform(*this); }
 
 
@@ -838,14 +852,14 @@ template <class R >
 inline
 DirectionH2<R>
 DirectionH2<R>::
-transform(const Aff_transformationH2<R>& t) const
+transform(const typename DirectionH2<R>::Aff_transformation_2& t) const
 { return t.transform(*this); }
 
 template <class R >
 CGAL_KERNEL_INLINE
-VectorH2<R>
+typename DirectionH2<R>::Vector_2
 DirectionH2<R>::to_vector() const
-{ return VectorH2<R>( x(), y() ); }
+{ return typename DirectionH2<R>::Vector_2( x(), y() ); }
 
 
 #ifndef CGAL_NO_OSTREAM_INSERT_DIRECTIONH2

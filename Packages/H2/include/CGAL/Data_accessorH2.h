@@ -24,24 +24,22 @@
 #ifndef CGAL_DATA_ACCESSORH2_H
 #define CGAL_DATA_ACCESSORH2_H
 
-#include <CGAL/PointH2.h>
-
 CGAL_BEGIN_NAMESPACE
 
 template < class R >
 class Data_accessorH2
 {
 public:
-    typedef  typename R::FT FT;
-    typedef  typename R::RT RT;
-    typedef  PointH2<R>      Point;
+    typedef typename R::FT FT;
+    typedef typename R::RT RT;
+    typedef typename R::Kernel_base::Point_2      Point_2;
 
-    RT  get_hx( Point const& p) const { return( p.hx()); }
-    RT  get_hy( Point const& p) const { return( p.hy()); }
-    RT  get_hw( Point const& p) const { return( p.hw()); }
+    RT  get_hx( const Point_2 & p) const { return( p.hx()); }
+    RT  get_hy( const Point_2 & p) const { return( p.hy()); }
+    RT  get_hw( const Point_2 & p) const { return( p.hw()); }
 
     void
-    get( Point const& p, RT& hx, RT& hy, RT& hw) const
+    get( const Point_2 & p, RT& hx, RT& hy, RT& hw) const
     {
         hx = get_hx( p);
         hy = get_hy( p);
@@ -49,9 +47,9 @@ public:
     }
 
     void
-    set( Point& p, RT const& hx, RT const& hy, RT const& hw) const
+    set( Point_2& p, const RT & hx, const RT & hy, const RT & hw) const
     {
-        p = Point( hx, hy, hw);
+        p = Point_2( hx, hy, hw);
     }
 };
 

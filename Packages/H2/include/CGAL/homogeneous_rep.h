@@ -31,11 +31,14 @@
 
 #include <CGAL/Quotient.h>
 
-#include <CGAL/homogeneous_classes.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/predicate_objects_on_points_2.h>
 #include <CGAL/Kernel/function_objects.h>
 #include <CGAL/New_delete_allocator.h>
+#include <CGAL/PointHd.h>
+
+template < class PT, class DA >
+class ConicHPA2;
 
 CGAL_BEGIN_NAMESPACE
 
@@ -173,7 +176,6 @@ class Homogeneous
     typedef CGAL::Sphere_3< R >                    Sphere_3;
     typedef CGAL::Aff_transformation_3< R >        Aff_transformation_3;
 
-    // we have: template <class R> CGAL::Point_d : public R::Point_d_base
     typedef CGAL::Point_d< R >                     Point_d;
 
     typedef Data_accessorH2<R>                     Data_accessor_2;

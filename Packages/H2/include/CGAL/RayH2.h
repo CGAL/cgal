@@ -31,24 +31,26 @@ template < class R >
 class Ray_repH2 : public Ref_counted
 {
 public:
+    typedef typename R::Kernel_base::Point_2  Point_2;
     Ray_repH2() {}
-    Ray_repH2(const PointH2<R>& fp, const PointH2<R>& sp)
+    Ray_repH2(const Point_2& fp, const Point_2& sp)
 	: start(fp), second(sp) {}
 
-    PointH2<R>  start;
-    PointH2<R>  second;
+    Point_2  start;
+    Point_2  second;
 };
 
 template < class R >
 class Simple_Ray_repH2
 {
 public:
+    typedef typename R::Kernel_base::Point_2  Point_2;
     Simple_Ray_repH2() {}
-    Simple_Ray_repH2(const PointH2<R>& fp, const PointH2<R>& sp)
+    Simple_Ray_repH2(const Point_2& fp, const Point_2& sp)
 	: start(fp), second(sp) {}
 
-    PointH2<R>  start;
-    PointH2<R>  second;
+    Point_2  start;
+    Point_2  second;
 };
 
 template < class R_ >
@@ -59,61 +61,66 @@ public:
     typedef R_                                    R;
     typedef typename R::FT                        FT;
     typedef typename R::RT                        RT;
+    typedef typename R::Kernel_base::Point_2            Point_2;
+    typedef typename R::Kernel_base::Direction_2        Direction_2;
+    typedef typename R::Kernel_base::Line_2             Line_2;
+    typedef typename R::Kernel_base::Vector_2           Vector_2;
+    typedef typename R::Kernel_base::Aff_transformation_2 Aff_transformation_2;
 
     typedef typename R::Ray_handle_2              Ray_handle_2_;
     typedef typename Ray_handle_2_::element_type   Ray_ref_2;
 
     RayH2()
       : Ray_handle_2_(Ray_ref_2()) {}
-    RayH2( const PointH2<R>& sp, const PointH2<R>& secondp)
+    RayH2( const Point_2& sp, const Point_2& secondp)
       : Ray_handle_2_(Ray_ref_2(sp, secondp)) {}
-    RayH2( const PointH2<R>& sp, const DirectionH2<R>& d)
+    RayH2( const Point_2& sp, const Direction_2& d)
       : Ray_handle_2_(Ray_ref_2(sp, sp + d.to_vector())) {}
 
     bool    operator==(const RayH2<R>& r) const;
     bool    operator!=(const RayH2<R>& r) const;
 
-    const PointH2<R> & start() const;
-    const PointH2<R> & source() const;
-    const PointH2<R> & second_point() const;
-    PointH2<R>     point(int i) const;
-    DirectionH2<R> direction() const;
-    LineH2<R>      supporting_line() const;
+    const Point_2 & start() const;
+    const Point_2 & source() const;
+    const Point_2 & second_point() const;
+    Point_2     point(int i) const;
+    Direction_2    direction() const;
+    Line_2         supporting_line() const;
     RayH2<R>       opposite() const;
 
     bool    is_horizontal() const;
     bool    is_vertical() const;
-    bool    has_on(const PointH2<R> p) const;
-    bool    collinear_has_on(const PointH2<R> p) const;
+    bool    has_on(const Point_2& p) const;
+    bool    collinear_has_on(const Point_2& p) const;
     bool    is_degenerate() const;
 
-    RayH2<R> transform( const Aff_transformationH2<R> & t) const;
+    RayH2<R> transform( const Aff_transformation_2 & t) const;
 };
 
 
 template < class R >
 inline
-const PointH2<R> &
+const typename RayH2<R>::Point_2 &
 RayH2<R>::source() const
 { return Ptr()->start; }
 
 template < class R >
 inline
-const PointH2<R> &
+const typename RayH2<R>::Point_2 &
 RayH2<R>::start() const
 { return Ptr()->start; }
 
 template < class R >
 CGAL_KERNEL_INLINE
-DirectionH2<R>
+typename RayH2<R>::Direction_2
 RayH2<R>::direction() const
 {
   CGAL_kernel_precondition( !is_degenerate() );
-  return DirectionH2<R>( second_point() - start() );
+  return Direction_2( second_point() - start() );
 }
 template < class R >
 inline
-const PointH2<R> &
+const typename RayH2<R>::Point_2 &
 RayH2<R>::second_point() const
 {
   CGAL_kernel_precondition( !is_degenerate() );
@@ -122,22 +129,22 @@ RayH2<R>::second_point() const
 
 template < class R >
 CGAL_KERNEL_INLINE
-PointH2<R>
+typename RayH2<R>::Point_2
 RayH2<R>::point(int i) const
 {
   CGAL_kernel_precondition( !is_degenerate() );
   CGAL_kernel_precondition( i>= 0 );
-  VectorH2<R> v = direction().to_vector();
+  Vector_2 v = direction().to_vector();
   return start() + RT(i) * v;
 }
 
 template < class R >
 inline
-LineH2<R>
+typename RayH2<R>::Line_2
 RayH2<R>::supporting_line() const
 {
   CGAL_kernel_precondition( !is_degenerate() );
-  return LineH2<R>(*this);
+  return Line_2(*this);
 }
 
 template < class R >
@@ -150,7 +157,7 @@ template < class R >
 CGAL_KERNEL_INLINE
 RayH2<R>
 RayH2<R>::
-transform(const Aff_transformationH2<R> & t) const
+transform(const typename RayH2<R>::Aff_transformation_2 & t) const
 {
   return RayH2<R>(t.transform(start()), t.transform(second_point()) );
 }
@@ -177,7 +184,7 @@ template < class R >
 std::istream &
 operator>>(std::istream &is, RayH2<R> &r)
 {
-  PointH2<R> p, q;
+  typename RayH2<R>::Point_2 p, q;
   is >> p >> q;
   r = RayH2<R>(p, q);
   return is;
@@ -203,9 +210,9 @@ RayH2<R>::is_vertical() const
 template < class R >
 CGAL_KERNEL_INLINE
 bool
-RayH2<R>::has_on(const PointH2<R> p) const
+RayH2<R>::has_on(const typename RayH2<R>::Point_2& p) const
 {
-  return p == start() || DirectionH2<R>(p - start()) == direction();
+  return p == start() || Direction_2(p - start()) == direction();
 }
 
 template < class R >
@@ -217,7 +224,7 @@ RayH2<R>::is_degenerate() const
 template < class R >
 inline
 bool
-RayH2<R>::collinear_has_on(const PointH2<R> p) const
+RayH2<R>::collinear_has_on(const typename RayH2<R>::Point_2& p) const
 { return has_on(p); }
 
 template < class R >

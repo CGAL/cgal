@@ -25,8 +25,6 @@
 #ifndef CGAL_LINEH2_H
 #define CGAL_LINEH2_H
 
-#include <CGAL/PointH2.h>
-
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
@@ -37,16 +35,22 @@ public:
     typedef R_                                    R;
     typedef typename R::FT                        FT;
     typedef typename R::RT                        RT;
+    typedef typename R::Kernel_base::Point_2      Point_2;
+    typedef typename R::Kernel_base::Vector_2     Vector_2;
+    typedef typename R::Kernel_base::Direction_2  Direction_2;
+    typedef typename R::Kernel_base::Segment_2    Segment_2;
+    typedef typename R::Kernel_base::Ray_2        Ray_2;
+    typedef typename R::Kernel_base::Aff_transformation_2 Aff_transformation_2;
 
     typedef typename R::Line_handle_2             Line_handle_2_;
     typedef typename Line_handle_2_::element_type Line_ref_2;
 
     LineH2();
-    LineH2(const PointH2<R>& p, const PointH2<R>& q);
+    LineH2(const Point_2& p, const Point_2& q);
     LineH2(const RT& a, const RT& b, const RT& c);
-    LineH2(const SegmentH2<R>& s);
-    LineH2(const RayH2<R>& r);
-    LineH2(const PointH2<R>& p, const DirectionH2<R>& d);
+    LineH2(const Segment_2& s);
+    LineH2(const Ray_2& r);
+    LineH2(const Point_2& p, const Direction_2& d);
 
     bool           operator==(const LineH2<R>& l) const ;
     bool           operator!=(const LineH2<R>& l) const ;
@@ -58,23 +62,22 @@ public:
     FT             x_at_y(FT y) const;
     FT             y_at_x(FT x) const;
 
-    LineH2<R>  perpendicular(const PointH2<R>& p ) const;
+    LineH2<R>  perpendicular(const Point_2& p ) const;
     LineH2<R>  opposite() const;
-    PointH2<R> point() const;
-    PointH2<R> point(int i) const;
-    PointH2<R> projection(const PointH2<R>& p) const;
-    DirectionH2<R>
-                   direction() const;
-    Oriented_side  oriented_side( const PointH2<R>& p ) const;
-    bool           has_on( const PointH2<R>& p ) const;
-    bool           has_on_boundary( const PointH2<R>& p ) const;
-    bool           has_on_positive_side( const PointH2<R>& p ) const;
-    bool           has_on_negative_side( const PointH2<R>& p ) const;
+    Point_2    point() const;
+    Point_2    point(int i) const;
+    Point_2    projection(const Point_2& p) const;
+    Direction_2 direction() const;
+    Oriented_side  oriented_side( const Point_2& p ) const;
+    bool           has_on( const Point_2& p ) const;
+    bool           has_on_boundary( const Point_2& p ) const;
+    bool           has_on_positive_side( const Point_2& p ) const;
+    bool           has_on_negative_side( const Point_2& p ) const;
     bool           is_horizontal() const;
     bool           is_vertical()   const;
     bool           is_degenerate() const;
 
-    LineH2<R>  transform(const Aff_transformationH2<R>&) const;
+    LineH2<R>  transform(const Aff_transformation_2&) const;
 };
 
 #ifdef CGAL_CFG_TYPENAME_BUG
@@ -89,7 +92,8 @@ LineH2<R>::LineH2()
 
 template < class R >
 CGAL_KERNEL_CTOR_MEDIUM_INLINE
-LineH2<R>::LineH2(const PointH2<R>& p, const PointH2<R>& q)
+LineH2<R>::LineH2(const typename LineH2<R>::Point_2& p,
+	          const typename LineH2<R>::Point_2& q)
  : Line_handle_2_ ( Line_ref_2(
   //  a() * X + b() * Y + c() * W() == 0
   //      |    X        Y       W     |
@@ -109,10 +113,10 @@ LineH2<R>::LineH2(const RT& a, const RT& b, const RT& c)
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-LineH2<R>::LineH2(const SegmentH2<R>& s)
+LineH2<R>::LineH2(const typename LineH2<R>::Segment_2& s)
 {
-  PointH2<R> p = s.start();
-  PointH2<R> q = s.end();
+  Point_2 p = s.start();
+  Point_2 q = s.end();
   initialize_with( Line_ref_2 (
             p.hy()*q.hw() - p.hw()*q.hy(),
             p.hw()*q.hx() - p.hx()*q.hw(),
@@ -121,10 +125,10 @@ LineH2<R>::LineH2(const SegmentH2<R>& s)
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-LineH2<R>::LineH2(const RayH2<R>& r)
+LineH2<R>::LineH2(const typename LineH2<R>::Ray_2& r)
 {
-  PointH2<R> p = r.start();
-  PointH2<R> q = r.second_point();
+  Point_2 p = r.start();
+  Point_2 q = r.second_point();
   initialize_with( Line_ref_2 (
             p.hy()*q.hw() - p.hw()*q.hy(),
             p.hw()*q.hx() - p.hx()*q.hw(),
@@ -133,10 +137,10 @@ LineH2<R>::LineH2(const RayH2<R>& r)
 
 template < class R >
 CGAL_KERNEL_CTOR_INLINE
-LineH2<R>::LineH2(const PointH2<R>& p,
-                      const DirectionH2<R>& d)
+LineH2<R>::LineH2(const typename LineH2<R>::Point_2& p,
+		  const typename LineH2<R>::Direction_2& d)
 {
-  PointH2<R> q = p + VectorH2<R>(d);
+  Point_2 q = p + Vector_2(d);
   initialize_with( Line_ref_2 (
             p.hy()*q.hw() - p.hw()*q.hy(),
             p.hw()*q.hx() - p.hx()*q.hw(),
@@ -164,7 +168,7 @@ LineH2<R>::y_at_x(FT x) const
 template < class R >
 CGAL_KERNEL_INLINE
 LineH2<R>
-LineH2<R>::perpendicular(const PointH2<R>& p ) const
+LineH2<R>::perpendicular(const typename LineH2<R>::Point_2& p ) const
 {
   CGAL_kernel_precondition( !is_degenerate() );
   return LineH2<R>( -b()*p.hw(), a()*p.hw(), b()*p.hx() - a()*p.hy() );
@@ -178,54 +182,54 @@ LineH2<R>::opposite() const
 
 template < class R >
 CGAL_KERNEL_INLINE
-PointH2<R>
+typename LineH2<R>::Point_2
 LineH2<R>::point() const
 {
   CGAL_kernel_precondition( !is_degenerate() );
   if (is_vertical() )
   {
-      return PointH2<R>(-c(), RT(0)  , a() );
+      return Point_2(-c(), RT(0)  , a() );
   }
   else
   {
-      return PointH2<R>(RT(0)  , -c(), b() );
+      return Point_2(RT(0)  , -c(), b() );
   }
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
-PointH2<R>
+typename LineH2<R>::Point_2
 LineH2<R>::point(int i) const
 { return point() + RT(i) * (direction().to_vector()); }
 
 template < class R >
 CGAL_KERNEL_INLINE
-PointH2<R>
-LineH2<R>::projection(const PointH2<R>& p) const
+typename LineH2<R>::Point_2
+LineH2<R>::projection(const typename LineH2<R>::Point_2& p) const
 {
   CGAL_kernel_precondition( !is_degenerate() );
-  LineH2<R>  l( p, DirectionH2<R>( a(), b() ));
-  return PointH2<R>( b()*l.c() - l.b()*c(),
-                              l.a()*c() - a()*l.c(),
-                              a()*l.b() - l.a()*b() );
+  LineH2<R>  l( p, Direction_2( a(), b() ));
+  return Point_2( b()*l.c() - l.b()*c(),
+                  l.a()*c() - a()*l.c(),
+                  a()*l.b() - l.a()*b() );
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
-DirectionH2<R>
+typename LineH2<R>::Direction_2
 LineH2<R>::direction() const
 {
   CGAL_kernel_precondition( !is_degenerate() );
-  return DirectionH2<R>( b(), -a() );
+  return Direction_2( b(), -a() );
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
 LineH2<R>
-LineH2<R>::transform(const Aff_transformationH2<R>& t) const
+LineH2<R>::transform(const typename LineH2<R>::Aff_transformation_2& t) const
 {
   CGAL_kernel_precondition( !is_degenerate() );
-  PointH2<R> p = point() + direction().to_vector();
+  Point_2 p = point() + direction().to_vector();
   return LineH2<R>( t.transform(point() ), t.transform(p) );
 }
 
@@ -278,7 +282,7 @@ operator>>(std::istream &is, LineH2<R> &p)
 template < class R >
 CGAL_KERNEL_INLINE
 bool
-LineH2<R>::has_on( const PointH2<R>& p ) const
+LineH2<R>::has_on( const typename LineH2<R>::Point_2& p ) const
 {
   CGAL_kernel_precondition( !is_degenerate() );
   return ( ( a()*p.hx() + b()*p.hy() + c()*p.hw() ) == RT(0)   );
@@ -287,7 +291,7 @@ LineH2<R>::has_on( const PointH2<R>& p ) const
 template < class R >
 CGAL_KERNEL_INLINE
 bool
-LineH2<R>::has_on_boundary( const PointH2<R>& p ) const
+LineH2<R>::has_on_boundary( const typename LineH2<R>::Point_2& p ) const
 {
   CGAL_kernel_precondition( !is_degenerate() );
   return ( ( a()*p.hx() + b()*p.hy() + c()*p.hw() ) == RT(0)   );
@@ -296,7 +300,7 @@ LineH2<R>::has_on_boundary( const PointH2<R>& p ) const
 template < class R >
 CGAL_KERNEL_INLINE
 bool
-LineH2<R>::has_on_positive_side( const PointH2<R>& p ) const
+LineH2<R>::has_on_positive_side( const typename LineH2<R>::Point_2& p ) const
 {
   CGAL_kernel_precondition( !is_degenerate() );
   return ( ( a()*p.hx() + b()*p.hy() + c()*p.hw() ) > RT(0)   );
@@ -305,7 +309,7 @@ LineH2<R>::has_on_positive_side( const PointH2<R>& p ) const
 template < class R >
 CGAL_KERNEL_INLINE
 bool
-LineH2<R>::has_on_negative_side( const PointH2<R>& p ) const
+LineH2<R>::has_on_negative_side( const typename LineH2<R>::Point_2& p ) const
 {
   CGAL_kernel_precondition( !is_degenerate() );
   return ( ( a()*p.hx() + b()*p.hy() + c()*p.hw() ) < RT(0)   );
@@ -314,7 +318,7 @@ LineH2<R>::has_on_negative_side( const PointH2<R>& p ) const
 template < class R >
 CGAL_KERNEL_INLINE
 Oriented_side
-LineH2<R>::oriented_side( const PointH2<R>& p ) const
+LineH2<R>::oriented_side( const typename LineH2<R>::Point_2& p ) const
 {
   CGAL_kernel_precondition( !is_degenerate() );
   RT v = a()*p.hx() + b()*p.hy() + c()*p.hw();

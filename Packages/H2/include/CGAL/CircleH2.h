@@ -25,28 +25,25 @@
 #ifndef CGAL_CIRCLEH2_H
 #define CGAL_CIRCLEH2_H
 
-#include <CGAL/enum.h>
-#include <CGAL/PointH2.h>
-#include <CGAL/predicates_on_pointsH2.h>
-#include <CGAL/distance_predicatesH2.h>
-#include <CGAL/basic_constructionsH2.h>
-
 CGAL_BEGIN_NAMESPACE
+
+template <class R_> class CircleH2;
 
 template <class R>
 class Circle_repH2 : public Ref_counted
 {
 public:
   typedef typename R::FT     FT;
+  typedef typename R::Kernel_base::Point_2      Point_2;
 
 friend class CircleH2<R>;
 
   Circle_repH2() {}
-  Circle_repH2(const PointH2<R> p, const FT sq_rad, const Orientation& o)
+  Circle_repH2(const Point_2& p, const FT sq_rad, const Orientation& o)
     : center(p), squared_radius(sq_rad), orientation_(o) {}
 
 protected:
-  PointH2<R>   center;
+  Point_2      center;
   FT           squared_radius;
   Orientation  orientation_;
 };
@@ -56,15 +53,16 @@ class Simple_Circle_repH2
 {
 public:
   typedef typename R::FT     FT;
+  typedef typename R::Kernel_base::Point_2      Point_2;
 
 friend class CircleH2<R>;
 
   Simple_Circle_repH2() {}
-  Simple_Circle_repH2(const PointH2<R> p, const FT sq_rad, const Orientation&o)
+  Simple_Circle_repH2(const Point_2& p, const FT sq_rad, const Orientation&o)
     : center(p), squared_radius(sq_rad), orientation_(o) {}
 
 protected:
-  PointH2<R>   center;
+  Point_2      center;
   FT           squared_radius;
   Orientation  orientation_;
 };
@@ -77,6 +75,9 @@ public:
     typedef R_                                    R;
     typedef typename R::FT                        FT;
     typedef typename R::RT                        RT;
+    typedef typename R::Kernel_base::Point_2      Point_2;
+    typedef typename R::Kernel_base::Vector_2     Vector_2;
+    typedef typename R::Kernel_base::Aff_transformation_2 Aff_transformation_2;
 
     typedef typename R::Circle_handle_2           Circle_handle_2_;
     typedef typename Circle_handle_2_::element_type Circle_ref_2;
@@ -84,24 +85,24 @@ public:
     CircleH2()
       : Circle_handle_2_() {}
 
-    CircleH2(const PointH2<R>& p, const PointH2<R>& q, const PointH2<R>& r)
+    CircleH2(const Point_2& p, const Point_2& q, const Point_2& r)
     {
       Orientation o = CGAL::orientation( p, q, r);
       CGAL_kernel_precondition( o != COLLINEAR);
 
-      PointH2<R> cp   = circumcenter( p, q, r);
+      Point_2    cp   = circumcenter( p, q, r);
       FT         sq_r = squared_distance( p, cp);
 
       initialize_with( Circle_ref_2( cp, sq_r, o));
     }
 
-    CircleH2(const PointH2<R>& p, const PointH2<R>& q, const Orientation& o)
+    CircleH2(const Point_2& p, const Point_2& q, const Orientation& o)
     {
       CGAL_kernel_precondition( o != COLLINEAR);
 
       if ( p != q)
       {
-         PointH2<R> cp   = midpoint( p, q);
+         Point_2    cp   = midpoint( p, q);
          FT         sq_r = squared_distance( cp, p);
          initialize_with( Circle_ref_2( cp, sq_r, o));
       }
@@ -109,7 +110,7 @@ public:
          initialize_with( Circle_ref_2( p, FT( 0), o));
     }
 
-    CircleH2(const PointH2<R>& cp, const FT& squared_radius,
+    CircleH2(const Point_2& cp, const FT& squared_radius,
              const Orientation& o)
     {
       CGAL_precondition( ( ! CGAL_NTS is_negative( squared_radius)) &&
@@ -121,9 +122,9 @@ public:
     bbox() const;
 
     CircleH2<R>
-    orthogonal_transform(const Aff_transformationH2<R>&) const;
+    orthogonal_transform(const Aff_transformation_2&) const;
 
-    const PointH2<R> &
+    const Point_2 &
     center() const;
 
     Orientation
@@ -136,18 +137,18 @@ public:
     opposite() const;
 
     Oriented_side
-    oriented_side(const PointH2<R>& ) const;
+    oriented_side(const Point_2& ) const;
 
     Bounded_side
-    bounded_side(const PointH2<R>& ) const;
+    bounded_side(const Point_2& ) const;
 
     bool  operator==( const CircleH2<R>& ) const;
     bool  operator!=( const CircleH2<R>& ) const;
-    bool  has_on_positive_side(const PointH2<R>& ) const;
-    bool  has_on_negative_side(const PointH2<R>& ) const;
-    bool  has_on_boundary( const PointH2<R>& ) const;
-    bool  has_on_bounded_side( const PointH2<R>& ) const;
-    bool  has_on_unbounded_side(const PointH2<R>&) const;
+    bool  has_on_positive_side(const Point_2& ) const;
+    bool  has_on_negative_side(const Point_2& ) const;
+    bool  has_on_boundary( const Point_2& ) const;
+    bool  has_on_bounded_side( const Point_2& ) const;
+    bool  has_on_unbounded_side(const Point_2&) const;
     bool  is_degenerate() const;
 
     // bool  oriented_equal( const CircleH2<R>& ) const;
@@ -160,7 +161,7 @@ public:
 
 template <class R>
 inline
-const PointH2<R> &
+const typename CircleH2<R>::Point_2 &
 CircleH2<R>::center() const
 { return Ptr()->center; }
 
@@ -189,7 +190,7 @@ CircleH2<R>::orientation() const
 template <class R>
 CGAL_KERNEL_INLINE
 Oriented_side
-CircleH2<R>::oriented_side( const PointH2<R>& p) const
+CircleH2<R>::oriented_side( const typename CircleH2<R>::Point_2& p) const
 {
   FT sq_dist = squared_distance( p, center() );
   FT sq_rad  = squared_radius();
@@ -208,7 +209,7 @@ CircleH2<R>::oriented_side( const PointH2<R>& p) const
 template <class R>
 CGAL_KERNEL_INLINE
 bool
-CircleH2<R>::has_on_positive_side( const PointH2<R>& p) const
+CircleH2<R>::has_on_positive_side( const typename CircleH2<R>::Point_2& p) const
 {
   if ( orientation() == POSITIVE )
   { return (has_on_bounded_side(p) ); }
@@ -219,7 +220,7 @@ CircleH2<R>::has_on_positive_side( const PointH2<R>& p) const
 template <class R>
 CGAL_KERNEL_INLINE
 bool
-CircleH2<R>::has_on_boundary(const PointH2<R>& p) const
+CircleH2<R>::has_on_boundary(const typename CircleH2<R>::Point_2& p) const
 {
   FT sq_dist = squared_distance( p, center() );
   FT sq_rad  = squared_radius();
@@ -229,7 +230,7 @@ CircleH2<R>::has_on_boundary(const PointH2<R>& p) const
 template <class R>
 CGAL_KERNEL_INLINE
 bool
-CircleH2<R>::has_on_negative_side( const PointH2<R>& p) const
+CircleH2<R>::has_on_negative_side( const typename CircleH2<R>::Point_2&p) const
 {
   if ( orientation() == NEGATIVE )
   {
@@ -244,7 +245,7 @@ CircleH2<R>::has_on_negative_side( const PointH2<R>& p) const
 template <class R>
 CGAL_KERNEL_INLINE
 Bounded_side
-CircleH2<R>::bounded_side(const PointH2<R>& p) const
+CircleH2<R>::bounded_side(const typename CircleH2<R>::Point_2& p) const
 {
   FT sq_dist = squared_distance( p, center() );
   FT sq_rad  = squared_radius();
@@ -258,7 +259,7 @@ CircleH2<R>::bounded_side(const PointH2<R>& p) const
 template <class R>
 CGAL_KERNEL_INLINE
 bool
-CircleH2<R>::has_on_bounded_side(const PointH2<R>& p) const
+CircleH2<R>::has_on_bounded_side(const typename CircleH2<R>::Point_2& p) const
 {
   FT sq_dist = squared_distance( p, center() );
   FT sq_rad  = squared_radius();
@@ -268,7 +269,7 @@ CircleH2<R>::has_on_bounded_side(const PointH2<R>& p) const
 template <class R>
 CGAL_KERNEL_INLINE
 bool
-CircleH2<R>::has_on_unbounded_side(const PointH2<R>& p) const
+CircleH2<R>::has_on_unbounded_side(const typename CircleH2<R>::Point_2&p) const
 {
   FT sq_dist = squared_distance( p, center() );
   FT sq_rad  = squared_radius();
@@ -325,9 +326,9 @@ template <class R>
 CGAL_KERNEL_INLINE
 CircleH2<R>
 CircleH2<R>::
-orthogonal_transform(const Aff_transformationH2<R>& t) const
+orthogonal_transform(const typename CircleH2<R>::Aff_transformation_2& t) const
 {
-  VectorH2<R> vec( RT(1), RT(0) );   // unit vector
+  Vector_2 vec( RT(1), RT(0) );   // unit vector
   vec = vec.transform(t);                     // transformed
   FT  sq_scale = FT( vec*vec );               // squared scaling factor
 
@@ -395,7 +396,7 @@ std::ostream &operator<<(std::ostream &os, const CircleH2<R> &c)
 template < class R >
 std::istream& operator>>(std::istream &is, CircleH2<R> &c)
 {
-  PointH2<R> center;
+  typename CircleH2<R>::Point_2 center;
   typename R::FT squared_radius;
   int o;
   switch(is.iword(IO::mode))

@@ -46,15 +46,18 @@ class Aff_transformation_rep_baseH2 : public Ref_counted
   public:
     typedef typename R::RT RT;
     typedef typename R::FT FT;
+    typedef typename R::Kernel_base::Point_2      Point_2;
+    typedef typename R::Kernel_base::Vector_2     Vector_2;
+    typedef typename R::Kernel_base::Direction_2  Direction_2;
 
     virtual             ~Aff_transformation_rep_baseH2(){}
 
-    virtual  PointH2<R>
-                        transform(const PointH2<R>& p) const = 0;
-    virtual  VectorH2<R>
-                        transform(const VectorH2<R>& v) const = 0;
-    virtual  DirectionH2<R>
-                        transform(const DirectionH2<R>& d) const = 0;
+    virtual  Point_2
+                        transform(const Point_2& p) const = 0;
+    virtual  Vector_2
+                        transform(const Vector_2& v) const = 0;
+    virtual  Direction_2
+                        transform(const Direction_2& d) const = 0;
     virtual  Aff_transformationH2<R>
                         inverse() const = 0;
     virtual  Aff_transformation_repH2<R>
@@ -71,6 +74,9 @@ class Aff_transformation_repH2 : public Aff_transformation_rep_baseH2<R>
   public:
     typedef typename R::RT RT;
     typedef typename R::FT FT;
+    typedef typename R::Kernel_base::Point_2      Point_2;
+    typedef typename R::Kernel_base::Vector_2     Vector_2;
+    typedef typename R::Kernel_base::Direction_2  Direction_2;
 
     Aff_transformation_repH2()
     {}
@@ -85,39 +91,39 @@ class Aff_transformation_repH2 : public Aff_transformation_rep_baseH2<R>
              {}
 
 
-    virtual  PointH2<R>
-             transform(const PointH2<R>& p) const
+    virtual  Point_2
+             transform(const Point_2& p) const
              {
-               return PointH2<R>( a * p.hx() + b * p.hy() + c * p.hw(),
-                                      d * p.hx() + e * p.hy() + f * p.hw(),
-                                      g * p.hw() );
+               return Point_2( a * p.hx() + b * p.hy() + c * p.hw(),
+                               d * p.hx() + e * p.hy() + f * p.hw(),
+                               g * p.hw() );
              }
 
-    virtual  VectorH2<R>
-             transform(const VectorH2<R>& v) const
+    virtual  Vector_2
+             transform(const Vector_2& v) const
              {
-               return VectorH2<R>( a * v.hx() + b * v.hy(),
-                                       d * v.hx() + e * v.hy(),
-                                       g * v.hw() );
+               return Vector_2( a * v.hx() + b * v.hy(),
+                                d * v.hx() + e * v.hy(),
+                                g * v.hw() );
              }
 
-    virtual  DirectionH2<R>
-             transform(const DirectionH2<R>& dir) const
+    virtual  Direction_2
+             transform(const Direction_2& dir) const
              {
                const RT RT0(0);
                if ( g > RT0 )
                {
-                   return DirectionH2<R>( a * dir.x() + b * dir.y(),
-                                              d * dir.x() + e * dir.y() );
+                   return Direction_2( a * dir.x() + b * dir.y(),
+                                       d * dir.x() + e * dir.y() );
                }
                else if ( g < RT0 )
                {
-                   return - DirectionH2<R>(a * dir.x() + b * dir.y(),
-                                               d * dir.x() + e * dir.y() );
+                   return - Direction_2(a * dir.x() + b * dir.y(),
+                                        d * dir.x() + e * dir.y() );
                }
-               return DirectionH2<R>( a * dir.x() + b * dir.y(),
-                                          d * dir.x() + e * dir.y(),
-                                          g );
+               return Direction_2( a * dir.x() + b * dir.y(),
+                                   d * dir.x() + e * dir.y(),
+                                   g );
              }
 
     virtual  Aff_transformationH2<R>
@@ -168,6 +174,9 @@ class Identity_repH2 : public Aff_transformation_rep_baseH2<R>
   public:
     typedef typename R::RT         RT;
     typedef typename R::FT         FT;
+    typedef typename R::Kernel_base::Point_2      Point_2;
+    typedef typename R::Kernel_base::Vector_2     Vector_2;
+    typedef typename R::Kernel_base::Direction_2  Direction_2;
 
              Identity_repH2()
              {}
@@ -176,16 +185,16 @@ class Identity_repH2 : public Aff_transformation_rep_baseH2<R>
              {}
 
 
-    virtual  PointH2<R>
-             transform(const PointH2<R> & p) const
+    virtual  Point_2
+             transform(const Point_2 & p) const
              { return p; }
 
-    virtual  VectorH2<R>
-             transform(const VectorH2<R> & v) const
+    virtual  Vector_2
+             transform(const Vector_2 & v) const
              { return v; }
 
-    virtual  DirectionH2<R>
-             transform(const DirectionH2<R> & d) const
+    virtual  Direction_2
+             transform(const Direction_2 & d) const
              { return d; }
 
     virtual  Aff_transformationH2<R>
@@ -218,28 +227,31 @@ template < class R >
 class Translation_repH2 : public Aff_transformation_rep_baseH2<R>
 {
   public:
-      typedef typename R::RT RT;
-      typedef typename R::FT FT;
+    typedef typename R::RT RT;
+    typedef typename R::FT FT;
+    typedef typename R::Kernel_base::Point_2      Point_2;
+    typedef typename R::Kernel_base::Vector_2     Vector_2;
+    typedef typename R::Kernel_base::Direction_2  Direction_2;
 
              Translation_repH2()
              {}
 
-             Translation_repH2(const VectorH2<R> & tv) : _tv(tv)
+             Translation_repH2(const Vector_2 & tv) : _tv(tv)
              {}
 
     virtual  ~Translation_repH2()
              {}
 
-    virtual  PointH2<R>
-             transform(const PointH2<R> & p) const
+    virtual  Point_2
+             transform(const Point_2 & p) const
              { return (p + _tv); }
 
-    virtual  VectorH2<R>
-             transform(const VectorH2<R> & v) const
+    virtual  Vector_2
+             transform(const Vector_2 & v) const
              { return (v); }
 
-    virtual  DirectionH2<R>
-             transform(const DirectionH2<R> & d) const
+    virtual  Direction_2
+             transform(const Direction_2 & d) const
              { return (d); }
 
     virtual  Aff_transformationH2<R>
@@ -263,15 +275,18 @@ class Translation_repH2 : public Aff_transformation_rep_baseH2<R>
     virtual  FT   cartesian(int i, int j) const;
 
   private:
-    VectorH2<R> _tv;
+    Vector_2 _tv;
 };
 
 template < class R >
 class Rotation_repH2 : public Aff_transformation_rep_baseH2<R>
 {
   public:
-      typedef typename R::RT RT;
-      typedef typename R::FT FT;
+    typedef typename R::RT RT;
+    typedef typename R::FT FT;
+    typedef typename R::Kernel_base::Point_2      Point_2;
+    typedef typename R::Kernel_base::Vector_2     Vector_2;
+    typedef typename R::Kernel_base::Direction_2  Direction_2;
 
              Rotation_repH2()
              {
@@ -290,25 +305,25 @@ class Rotation_repH2 : public Aff_transformation_rep_baseH2<R>
              {
              }
 
-    virtual  PointH2<R>
-             transform(const PointH2<R> & p) const
+    virtual  Point_2
+             transform(const Point_2 & p) const
              {
-               return PointH2<R>( p.hx()*_cos  - p.hy()*_sin,
-                                           p.hx()*_sin  + p.hy()*_cos,
-                                           p.hw()*_den );
+               return Point_2( p.hx()*_cos  - p.hy()*_sin,
+                               p.hx()*_sin  + p.hy()*_cos,
+                               p.hw()*_den );
              }
-    virtual  VectorH2<R>
-             transform(const VectorH2<R> & v) const
+    virtual  Vector_2
+             transform(const Vector_2 & v) const
              {
-               return VectorH2<R>( v.hx()*_cos  - v.hy()*_sin,
+               return Vector_2( v.hx()*_cos  - v.hy()*_sin,
                                             v.hx()*_sin  + v.hy()*_cos,
                                             v.hw()*_den );
              }
-    virtual  DirectionH2<R>
-             transform(const DirectionH2<R> & d) const
+    virtual  Direction_2
+             transform(const Direction_2 & d) const
              {
-               return DirectionH2<R>( d.x()*_cos  - d.y()*_sin,
-                                               d.x()*_sin  + d.y()*_cos);
+               return Direction_2( d.x()*_cos  - d.y()*_sin,
+                                   d.x()*_sin  + d.y()*_cos);
              }
     virtual  Aff_transformationH2<R>
              inverse() const
@@ -343,8 +358,11 @@ template < class R >
 class Scaling_repH2 : public Aff_transformation_rep_baseH2<R>
 {
   public:
-      typedef typename R::RT RT;
-      typedef typename R::FT FT;
+    typedef typename R::RT RT;
+    typedef typename R::FT FT;
+    typedef typename R::Kernel_base::Point_2      Point_2;
+    typedef typename R::Kernel_base::Vector_2     Vector_2;
+    typedef typename R::Kernel_base::Direction_2  Direction_2;
 
              Scaling_repH2()
              {}
@@ -363,22 +381,22 @@ class Scaling_repH2 : public Aff_transformation_rep_baseH2<R>
     virtual  ~Scaling_repH2()
              {}
 
-    virtual  PointH2<R>
-             transform(const PointH2<R> & p) const
+    virtual  Point_2
+             transform(const Point_2 & p) const
              {
-               return PointH2<R>( p.hx() * _sf_num,
-                                      p.hy() * _sf_num,
-                                      p.hw() * _sf_den );
+               return Point_2( p.hx() * _sf_num,
+                               p.hy() * _sf_num,
+                               p.hw() * _sf_den );
              }
-    virtual  VectorH2<R>
-             transform(const VectorH2<R> & v) const
+    virtual  Vector_2
+             transform(const Vector_2 & v) const
              {
-               return VectorH2<R>( v.hx() * _sf_num,
-                                       v.hy() * _sf_num,
-                                       v.hw() * _sf_den );
+               return Vector_2( v.hx() * _sf_num,
+                                v.hy() * _sf_num,
+                                v.hw() * _sf_den );
              }
-    virtual  DirectionH2<R>
-             transform(const DirectionH2<R> & d) const
+    virtual  Direction_2
+             transform(const Direction_2 & d) const
              { return (d); }
 
     virtual  Aff_transformationH2<R>
@@ -411,33 +429,37 @@ template < class R >
 class Reflection_repH2 : public Aff_transformation_rep_baseH2<R>
 {
   public:
-      typedef typename R::RT RT;
-      typedef typename R::FT FT;
+    typedef typename R::RT RT;
+    typedef typename R::FT FT;
+    typedef typename R::Kernel_base::Point_2      Point_2;
+    typedef typename R::Kernel_base::Vector_2     Vector_2;
+    typedef typename R::Kernel_base::Direction_2  Direction_2;
+    typedef typename R::Kernel_base::Line_2       Line_2;
 
-             Reflection_repH2(const LineH2<R>& l_) : l(l_) {}
+             Reflection_repH2(const Line_2& l_) : l(l_) {}
 
     virtual  ~Reflection_repH2()
              {}
 
-    virtual  PointH2<R>
-             transform(const PointH2<R> & p) const
+    virtual  Point_2
+             transform(const Point_2 & p) const
              {
-               PointH2<R> pp = l.projection(p);
+               Point_2 pp = l.projection(p);
                return p + (pp - p)*RT(2);
              }
 
-    virtual  VectorH2<R>
-             transform(const VectorH2<R> & v) const
+    virtual  Vector_2
+             transform(const Vector_2 & v) const
              {
-               LineH2<R> l0( l.a(), l.b(), RT(0));
-               PointH2<R> p = ORIGIN + v;
-               PointH2<R> pp = l0.projection(p);
+               Line_2 l0( l.a(), l.b(), RT(0));
+               Point_2 p = ORIGIN + v;
+               Point_2 pp = l0.projection(p);
                return (p + (pp - p)*RT(2)) - ORIGIN;
              }
 
-    virtual  DirectionH2<R>
-             transform(const DirectionH2<R> & d) const
-             { return transform( VectorH2<R>(d) ).direction(); }
+    virtual  Direction_2
+             transform(const Direction_2 & d) const
+             { return transform( Vector_2(d) ).direction(); }
 
     virtual  Aff_transformationH2<R>
              inverse() const
@@ -475,7 +497,7 @@ class Reflection_repH2 : public Aff_transformation_rep_baseH2<R>
 
 
   private:
-    LineH2<R>   l;
+    Line_2   l;
 };
 
 
@@ -487,6 +509,10 @@ class Aff_transformationH2
   typedef R_                                    R;
   typedef typename R::FT                        FT;
   typedef typename R::RT                        RT;
+  typedef typename R::Kernel_base::Point_2      Point_2;
+  typedef typename R::Kernel_base::Vector_2     Vector_2;
+  typedef typename R::Kernel_base::Direction_2  Direction_2;
+  typedef typename R::Kernel_base::Line_2       Line_2;
 
           Aff_transformationH2();
 
@@ -496,7 +522,7 @@ class Aff_transformationH2
 
           // Translation:
 
-          Aff_transformationH2(const Translation, const VectorH2<R>& v);
+          Aff_transformationH2(const Translation, const Vector_2& v);
 
           // Scaling:
 
@@ -507,7 +533,7 @@ class Aff_transformationH2
                                               const RT& ya, const RT& yb);
 
           // Reflection:
-          Aff_transformationH2(const Reflection, const LineH2<R>& l);
+          Aff_transformationH2(const Reflection, const Line_2& l);
 
           // Rational Rotation:
 
@@ -517,13 +543,13 @@ class Aff_transformationH2
                                const RT& denominator);
 
           Aff_transformationH2(const Rotation,
-                               const DirectionH2<R>& dir,
+                               const Direction_2& dir,
                                const RT& n,
                                const RT& d = RT(1));
 
           // Orthogonal Transformation:
 
-          Aff_transformationH2(const VectorH2<R>& v,
+          Aff_transformationH2(const Vector_2& v,
                                const RT& sine,
                                const RT& cosine,
                                const RT& denominator,
@@ -554,10 +580,10 @@ class Aff_transformationH2
                                const RT& d, const RT& e,
                                                          const RT& g = RT(1));
 
-    PointH2<R>     transform(const PointH2<R>& p) const;
-    VectorH2<R>    transform(const VectorH2<R>& v) const;
-    DirectionH2<R> transform(const DirectionH2<R>& d) const;
-    LineH2<R>      transform(const LineH2<R>& l) const;
+    Point_2     transform(const Point_2& p) const;
+    Vector_2    transform(const Vector_2& v) const;
+    Direction_2 transform(const Direction_2& d) const;
+    Line_2      transform(const Line_2& l) const;
 
     Aff_transformationH2<R> inverse() const;
     bool                    is_even() const;
@@ -599,7 +625,8 @@ Aff_transformationH2(const Identity_transformation)
 
 template < class R >
 Aff_transformationH2<R>::
-Aff_transformationH2(const Translation,const VectorH2<R>& v)
+Aff_transformationH2(const Translation,
+	             const typename Aff_transformationH2<R>::Vector_2& v)
 { initialize_with(Translation_repH2<R>( v )); }
 
 template < class R >
@@ -619,7 +646,8 @@ Aff_transformationH2( const Scaling, const RT& xa, const RT& xb,
 
 template < class R >
 Aff_transformationH2<R>::
-Aff_transformationH2(const Reflection, const LineH2<R>& l)
+Aff_transformationH2(const Reflection,
+	             const typename Aff_transformationH2<R>::Line_2& l)
 { initialize_with(Reflection_repH2<R>( l)); }
 
 template < class R >
@@ -631,10 +659,11 @@ Aff_transformationH2(const Rotation,
 { initialize_with(Rotation_repH2<R>(sine, cosine, denominator)); }
 
 template < class R >
-Aff_transformationH2<R>::Aff_transformationH2(const Rotation,
-                                                  const DirectionH2<R>& dir,
-                                                  const RT& n,
-                                                  const RT& d)
+Aff_transformationH2<R>::
+Aff_transformationH2(const Rotation,
+                     const typename Aff_transformationH2<R>::Direction_2& dir,
+                     const RT& n,
+                     const RT& d)
 {
  const RT   RTzero = RT(0)  ;
  CGAL_kernel_precondition( n > RTzero );
@@ -670,25 +699,29 @@ Aff_transformationH2( const RT& a, const RT& b,
 }
 
 template < class R >
-PointH2<R>
-Aff_transformationH2<R>::transform(const PointH2<R>& p) const
+typename Aff_transformationH2<R>::Point_2
+Aff_transformationH2<R>::
+transform(const typename Aff_transformationH2<R>::Point_2& p) const
 { return Ptr()->transform(p); }
 
 
 template < class R >
-VectorH2<R>
-Aff_transformationH2<R>::transform( const VectorH2<R>& v) const
+typename Aff_transformationH2<R>::Vector_2
+Aff_transformationH2<R>::
+transform( const typename Aff_transformationH2<R>::Vector_2& v) const
 { return Ptr()->transform(v); }
 
 template < class R >
-DirectionH2<R>
-Aff_transformationH2<R>::transform( const DirectionH2<R>& d) const
+typename Aff_transformationH2<R>::Direction_2
+Aff_transformationH2<R>::
+transform( const typename Aff_transformationH2<R>::Direction_2& d) const
 { return Ptr()->transform(d); }
 
 template < class R >
-LineH2<R>
-Aff_transformationH2<R>::transform(const LineH2<R>& l) const
-{ return LineH2<R>( transform( l.point(0)), transform( l.point(1)) ); }
+typename Aff_transformationH2<R>::Line_2
+Aff_transformationH2<R>::
+transform( const typename Aff_transformationH2<R>::Line_2& l) const
+{ return Line_2( transform( l.point(0)), transform( l.point(1)) ); }
 
 template < class R >
 Aff_transformationH2<R>

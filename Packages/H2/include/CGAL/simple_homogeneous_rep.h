@@ -31,12 +31,15 @@
 
 #include <CGAL/Quotient.h>
 
-#include <CGAL/homogeneous_classes.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/predicate_objects_on_points_2.h>
 #include <CGAL/Kernel/function_objects.h>
 #include <CGAL/New_delete_allocator.h>
+#include <CGAL/PointHd.h>
 
+template < class PT, class DA >
+class ConicHPA2;
+ 
 CGAL_BEGIN_NAMESPACE
 
 template <class R_, class RT_, class FT_>

@@ -25,21 +25,22 @@
 #ifndef CGAL_TRIANGLEH2_H
 #define CGAL_TRIANGLEH2_H
 
-#include <CGAL/PointH2.h>
-#include <CGAL/predicates_on_pointsH2.h>
-
 CGAL_BEGIN_NAMESPACE
+
+template <class R_> class TriangleH2;
 
 template <class R>
 class Triangle_repH2 : public Ref_counted
 {
   public:
 
+    typedef typename R::Kernel_base::Point_2   Point_2;
+
     Triangle_repH2() {}
 
-    Triangle_repH2(const PointH2<R> v1,
-                   const PointH2<R> v2,
-                   const PointH2<R> v3)
+    Triangle_repH2(const Point_2& v1,
+                   const Point_2& v2,
+                   const Point_2& v3)
     {
         A[0] = v1;
         A[1] = v2;
@@ -50,7 +51,7 @@ class Triangle_repH2 : public Ref_counted
  friend class TriangleH2<R>;
 
  private:
-    PointH2<R>   A[3];
+    Point_2      A[3];
     Orientation  _orientation;
 };
 
@@ -59,11 +60,13 @@ class Simple_Triangle_repH2
 {
   public:
 
+    typedef typename R::Kernel_base::Point_2   Point_2;
+
     Simple_Triangle_repH2() {}
 
-    Simple_Triangle_repH2(const PointH2<R> v1,
-                          const PointH2<R> v2,
-                          const PointH2<R> v3)
+    Simple_Triangle_repH2(const Point_2& v1,
+                          const Point_2& v2,
+                          const Point_2& v3)
     {
         A[0] = v1;
         A[1] = v2;
@@ -74,8 +77,8 @@ class Simple_Triangle_repH2
  friend class TriangleH2<R>;
 
  private:
-    PointH2<R>   A[3];
-    Orientation      _orientation;
+    Point_2        A[3];
+    Orientation    _orientation;
 };
 
 template <class R_>
@@ -86,6 +89,9 @@ public:
     typedef R_                                    R;
     typedef typename R::FT                        FT;
     typedef typename R::RT                        RT;
+    typedef typename R::Kernel_base::Point_2              Point_2;
+    typedef typename R::Kernel_base::Vector_2             Vector_2;
+    typedef typename R::Kernel_base::Aff_transformation_2 Aff_transformation_2;
 
     typedef typename R::Triangle_handle_2         Triangle_handle_2_;
     typedef typename Triangle_handle_2_::element_type Triangle_ref_2;
@@ -93,23 +99,23 @@ public:
     TriangleH2()
       : Triangle_handle_2_(Triangle_ref_2()) {}
 
-    TriangleH2(const PointH2<R>& p, const PointH2<R>& q, const PointH2<R>& r)
+    TriangleH2(const Point_2& p, const Point_2& q, const Point_2& r)
       : Triangle_handle_2_(Triangle_ref_2(p, q, r)) {}
 
     Bbox_2             bbox() const;
 
     TriangleH2<R>  opposite() const;
-    TriangleH2<R>  transform(const Aff_transformationH2<R>&) const;
+    TriangleH2<R>  transform(const Aff_transformation_2&) const;
 
     Orientation        orientation() const;
 
-    Oriented_side      oriented_side(const PointH2<R>& ) const;
-    Bounded_side       bounded_side(const PointH2<R>& ) const;
-    bool               has_on_positive_side( const PointH2<R>& ) const;
-    bool               has_on_negative_side( const PointH2<R>& ) const;
-    bool               has_on_boundary( const PointH2<R>& ) const;
-    bool               has_on_bounded_side( const PointH2<R>& ) const;
-    bool               has_on_unbounded_side(const PointH2<R>& )const;
+    Oriented_side      oriented_side(const Point_2& ) const;
+    Bounded_side       bounded_side(const Point_2& ) const;
+    bool               has_on_positive_side( const Point_2& ) const;
+    bool               has_on_negative_side( const Point_2& ) const;
+    bool               has_on_boundary( const Point_2& ) const;
+    bool               has_on_bounded_side( const Point_2& ) const;
+    bool               has_on_unbounded_side(const Point_2& )const;
     bool               is_degenerate() const;
 
     bool               operator==( const TriangleH2<R>& ) const;
@@ -118,8 +124,8 @@ public:
     // bool               oriented_equal( const TriangleH2<R>& ) const;
     // bool               unoriented_equal( const TriangleH2<R>& ) const;
 
-    const PointH2<R> & vertex(int i) const;
-    const PointH2<R> & operator[](int i) const;
+    const Point_2 & vertex(int i) const;
+    const Point_2 & operator[](int i) const;
 
     FT                 area() const;
 };
@@ -130,7 +136,7 @@ public:
 
 template <class R>
 CGAL_KERNEL_INLINE
-const PointH2<R> &
+const typename TriangleH2<R>::Point_2 &
 TriangleH2<R>::vertex(int i) const
 {
   if (i>2) i = i%3;
@@ -140,7 +146,7 @@ TriangleH2<R>::vertex(int i) const
 
 template <class R>
 inline
-const PointH2<R> &
+const typename TriangleH2<R>::Point_2 &
 TriangleH2<R>::operator[](int i) const
 { return vertex(i); }
 
@@ -149,9 +155,8 @@ inline
 typename TriangleH2<R>::FT
 TriangleH2<R>::area() const
 { 
-   typedef typename TriangleH2<R>::FT    FT;
-   VectorH2<R> v1 = vertex(1) - vertex(0);
-   VectorH2<R> v2 = vertex(2) - vertex(0);
+   Vector_2 v1 = vertex(1) - vertex(0);
+   Vector_2 v2 = vertex(2) - vertex(0);
 
    return (v1.hx()*v2.hy() - v2.hx()*v1.hy())/(FT(2)*(v1.hw() * v2.hw()));
 }
@@ -165,7 +170,7 @@ TriangleH2<R>::orientation() const
 template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 Oriented_side
-TriangleH2<R>::oriented_side( const PointH2<R>& p) const
+TriangleH2<R>::oriented_side( const typename TriangleH2<R>::Point_2& p) const
 {
   Orientation o12 = CGAL::orientation( vertex(1), vertex(2), p);
   Orientation o23 = CGAL::orientation( vertex(2), vertex(3), p);
@@ -215,26 +220,26 @@ template <class R>
 inline
 bool
 TriangleH2<R>::
-has_on_positive_side( const PointH2<R>& p) const
+has_on_positive_side( const typename TriangleH2<R>::Point_2& p) const
 { return ( oriented_side(p) == ON_POSITIVE_SIDE ); }
 
 template <class R>
 inline
 bool
-TriangleH2<R>::has_on_boundary(const PointH2<R>& p) const
+TriangleH2<R>::has_on_boundary(const typename TriangleH2<R>::Point_2& p) const
 { return oriented_side(p) == ON_ORIENTED_BOUNDARY; }
 
 template <class R>
 inline
 bool
 TriangleH2<R>::
-has_on_negative_side( const PointH2<R>& p) const
+has_on_negative_side( const typename TriangleH2<R>::Point_2& p) const
 { return  oriented_side(p) == ON_NEGATIVE_SIDE; }
 
 template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 Bounded_side
-TriangleH2<R>::bounded_side(const PointH2<R>& p) const
+TriangleH2<R>::bounded_side(const typename TriangleH2<R>::Point_2& p) const
 {
   CGAL_kernel_precondition( ! is_degenerate() );
 
@@ -258,7 +263,7 @@ TriangleH2<R>::bounded_side(const PointH2<R>& p) const
 template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 bool
-TriangleH2<R>::has_on_bounded_side(const PointH2<R>& p) const
+TriangleH2<R>::has_on_bounded_side(const typename TriangleH2<R>::Point_2& p) const
 {
   CGAL_kernel_precondition( ! is_degenerate() );
 
@@ -273,7 +278,7 @@ TriangleH2<R>::has_on_bounded_side(const PointH2<R>& p) const
 template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 bool
-TriangleH2<R>::has_on_unbounded_side(const PointH2<R>& p) const
+TriangleH2<R>::has_on_unbounded_side(const typename TriangleH2<R>::Point_2& p) const
 {
   CGAL_kernel_precondition( ! is_degenerate() );
 
@@ -301,7 +306,7 @@ template <class R>
 CGAL_KERNEL_INLINE
 TriangleH2<R>
 TriangleH2<R>::
-transform( const Aff_transformationH2<R>& t) const
+transform( const typename TriangleH2<R>::Aff_transformation_2& t) const
 {
   return TriangleH2<R>(t.transform(Ptr()->A[0]),
                            t.transform(Ptr()->A[1]),
@@ -359,7 +364,7 @@ template < class R >
 std::istream &
 operator>>(std::istream &is, TriangleH2<R> &t)
 {
-  PointH2<R> p, q, r;
+  typename TriangleH2<R>::Point_2 p, q, r;
   is >> p >> q >> r;
   t = TriangleH2<R>(p, q, r);
   return is;
