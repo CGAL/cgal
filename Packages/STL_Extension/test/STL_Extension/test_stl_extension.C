@@ -226,7 +226,6 @@ void test_Iterator_identity() {
     
         // Default constructor.
         Iterator z = Iterator();
-        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -319,7 +318,6 @@ void test_Iterator_identity() {
     
         // Default constructor.
         Iterator z = Iterator();
-        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -429,7 +427,6 @@ void test_Iterator_identity() {
     
         // Default constructor.
         C_Iterator z = C_Iterator();
-        z = C_Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         C_Iterator i = c_begin;
@@ -546,13 +543,12 @@ void test_Iterator_identity() {
     
         // Default constructor.
         Iterator z = Iterator();
-        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
     
         // Check general support for circulators and iterators.
-        CGAL_assertion( CGAL::is_empty_range( z, z));
+        CGAL_assertion( CGAL::is_empty_range( i, i));
         CGAL_assertion( ! CGAL::is_empty_range( i, end));
     
         int su = 0;
@@ -639,13 +635,12 @@ void test_Iterator_identity() {
     
         // Default constructor.
         Iterator z = Iterator();
-        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
     
         // Check general support for circulators and iterators.
-        CGAL_assertion( CGAL::is_empty_range( z, z));
+        CGAL_assertion( CGAL::is_empty_range( i, i));
         CGAL_assertion( ! CGAL::is_empty_range( i, end));
     
         int su = 0;
@@ -735,13 +730,12 @@ void test_Iterator_identity() {
     
         // Default constructor.
         Iterator z = Iterator();
-        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
     
         // Check general support for circulators and iterators.
-        CGAL_assertion( CGAL::is_empty_range( z, z));
+        CGAL_assertion( CGAL::is_empty_range( i, i));
         CGAL_assertion( ! CGAL::is_empty_range( i, end));
     
         int su = 0;
@@ -932,13 +926,12 @@ void test_Iterator_identity() {
     
         // Default constructor.
         C_Iterator z = C_Iterator();
-        z = C_Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         C_Iterator i = c_begin;
     
         // Check general support for circulators and iterators.
-        CGAL_assertion( CGAL::is_empty_range( z, z));
+        CGAL_assertion( CGAL::is_empty_range( i, i));
         CGAL_assertion( ! CGAL::is_empty_range( i, c_end));
     
         int su = 0;
@@ -1115,7 +1108,6 @@ void test_Circulator_identity() {
     
         // Default constructor.
         Circulator z = Circulator();
-        z = Circulator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
@@ -1208,7 +1200,6 @@ void test_Circulator_identity() {
     
         // Default constructor.
         Circulator z = Circulator();
-        z = Circulator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
@@ -1319,7 +1310,6 @@ void test_Circulator_identity() {
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        z = Circulator(); // avoids warning with NDEBUG
         CGAL_assertion(   z == CGAL_CIRC_NULL);
         CGAL_assertion( ! (z != CGAL_CIRC_NULL));
         Circulator i = begin;
@@ -1375,7 +1365,6 @@ Assert_bidirectional_category(c_begin);
 
     // Default constructor.
     C_Circulator z = C_Circulator();
-    z = C_Circulator(); // avoids warning with NDEBUG
     CGAL::Assert_circulator_or_iterator(z);
     // Copy constructor.
     C_Circulator i = c_begin;
@@ -1486,7 +1475,6 @@ Assert_bidirectional_category(c_begin);
 
     // Check tests for empty data structures.
     C_Circulator z = C_Circulator();
-    z = C_Circulator(); // avoids warning with NDEBUG
     CGAL_assertion(   z == CGAL_CIRC_NULL);
     CGAL_assertion( ! (z != CGAL_CIRC_NULL));
     C_Circulator i = c_begin;
@@ -1548,8 +1536,7 @@ l2.destroy();
         CGAL_assertion(1==test_distance_type(static_cast< DT* >(0)));
     
         // Default constructor.
-        Circulator z = Circulator();
-        z = Circulator(); // avoids warning with NDEBUG
+        Circulator z;
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
@@ -1642,7 +1629,6 @@ l2.destroy();
     
         // Default constructor.
         Circulator z = Circulator();
-        z = Circulator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
@@ -1738,7 +1724,6 @@ l2.destroy();
     
         // Default constructor.
         Circulator z = Circulator();
-        z = Circulator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
@@ -1912,7 +1897,6 @@ l2.destroy();
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        z = Circulator(); // avoids warning with NDEBUG
         CGAL_assertion(   z == CGAL_CIRC_NULL);
         CGAL_assertion( ! (z != CGAL_CIRC_NULL));
         Circulator i = begin;
@@ -1991,7 +1975,6 @@ Assert_random_access_category(c_begin);
 
     // Default constructor.
     C_Circulator z = C_Circulator();
-    z = C_Circulator(); // avoids warning with NDEBUG
     CGAL::Assert_circulator_or_iterator(z);
     // Copy constructor.
     C_Circulator i = c_begin;
@@ -2145,7 +2128,6 @@ Assert_random_access_category(c_begin);
 
     // Check tests for empty data structures.
     C_Circulator z = C_Circulator();
-    z = C_Circulator(); // avoids warning with NDEBUG
     CGAL_assertion(   z == CGAL_CIRC_NULL);
     CGAL_assertion( ! (z != CGAL_CIRC_NULL));
     C_Circulator i = c_begin;
@@ -2233,7 +2215,6 @@ void test_Iterator_project() {
     
         // Default constructor.
         Iterator z = Iterator();
-        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -2326,7 +2307,6 @@ void test_Iterator_project() {
     
         // Default constructor.
         Iterator z = Iterator();
-        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -2436,7 +2416,6 @@ void test_Iterator_project() {
     
         // Default constructor.
         C_Iterator z = C_Iterator();
-        z = C_Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         C_Iterator i = c_begin;
@@ -2554,7 +2533,6 @@ void test_Iterator_project() {
     
         // Default constructor.
         Iterator z = Iterator();
-        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -2647,7 +2625,6 @@ void test_Iterator_project() {
     
         // Default constructor.
         Iterator z = Iterator();
-        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -2757,7 +2734,6 @@ void test_Iterator_project() {
     
         // Default constructor.
         C_Iterator z = C_Iterator();
-        z = C_Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         C_Iterator i = c_begin;
@@ -2875,7 +2851,6 @@ void test_Iterator_project() {
     
         // Default constructor.
         Iterator z = Iterator();
-        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -2968,7 +2943,6 @@ void test_Iterator_project() {
     
         // Default constructor.
         Iterator z = Iterator();
-        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -3064,7 +3038,6 @@ void test_Iterator_project() {
     
         // Default constructor.
         Iterator z = Iterator();
-        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -3261,7 +3234,6 @@ void test_Iterator_project() {
     
         // Default constructor.
         C_Iterator z = C_Iterator();
-        z = C_Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         C_Iterator i = c_begin;
@@ -3446,7 +3418,6 @@ void test_Circulator_project() {
     
         // Default constructor.
         Circulator z = Circulator();
-        z = Circulator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
@@ -3539,7 +3510,6 @@ void test_Circulator_project() {
     
         // Default constructor.
         Circulator z = Circulator();
-        z = Circulator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
@@ -3650,7 +3620,6 @@ void test_Circulator_project() {
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        z = Circulator(); // avoids warning with NDEBUG
         CGAL_assertion(   z == CGAL_CIRC_NULL);
         CGAL_assertion( ! (z != CGAL_CIRC_NULL));
         Circulator i = begin;
@@ -3706,7 +3675,6 @@ Assert_bidirectional_category(c_begin);
 
     // Default constructor.
     C_Circulator z = C_Circulator();
-    z = C_Circulator(); // avoids warning with NDEBUG
     CGAL::Assert_circulator_or_iterator(z);
     // Copy constructor.
     C_Circulator i = c_begin;
@@ -3817,7 +3785,6 @@ Assert_bidirectional_category(c_begin);
 
     // Check tests for empty data structures.
     C_Circulator z = C_Circulator();
-    z = C_Circulator(); // avoids warning with NDEBUG
     CGAL_assertion(   z == CGAL_CIRC_NULL);
     CGAL_assertion( ! (z != CGAL_CIRC_NULL));
     C_Circulator i = c_begin;
@@ -3882,7 +3849,6 @@ l2.destroy();
     
         // Default constructor.
         Circulator z = Circulator();
-        z = Circulator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
@@ -3975,7 +3941,6 @@ l2.destroy();
     
         // Default constructor.
         Circulator z = Circulator();
-        z = Circulator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
@@ -4086,7 +4051,6 @@ l2.destroy();
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        z = Circulator(); // avoids warning with NDEBUG
         CGAL_assertion(   z == CGAL_CIRC_NULL);
         CGAL_assertion( ! (z != CGAL_CIRC_NULL));
         Circulator i = begin;
@@ -4142,7 +4106,6 @@ Assert_bidirectional_category(c_begin);
 
     // Default constructor.
     C_Circulator z = C_Circulator();
-    z = C_Circulator(); // avoids warning with NDEBUG
     CGAL::Assert_circulator_or_iterator(z);
     // Copy constructor.
     C_Circulator i = c_begin;
@@ -4253,7 +4216,6 @@ Assert_bidirectional_category(c_begin);
 
     // Check tests for empty data structures.
     C_Circulator z = C_Circulator();
-    z = C_Circulator(); // avoids warning with NDEBUG
     CGAL_assertion(   z == CGAL_CIRC_NULL);
     CGAL_assertion( ! (z != CGAL_CIRC_NULL));
     C_Circulator i = c_begin;
@@ -4318,7 +4280,6 @@ l2.destroy();
     
         // Default constructor.
         Circulator z = Circulator();
-        z = Circulator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
@@ -4411,7 +4372,6 @@ l2.destroy();
     
         // Default constructor.
         Circulator z = Circulator();
-        z = Circulator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
@@ -4507,7 +4467,6 @@ l2.destroy();
     
         // Default constructor.
         Circulator z = Circulator();
-        z = Circulator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
@@ -4681,7 +4640,6 @@ l2.destroy();
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        z = Circulator(); // avoids warning with NDEBUG
         CGAL_assertion(   z == CGAL_CIRC_NULL);
         CGAL_assertion( ! (z != CGAL_CIRC_NULL));
         Circulator i = begin;
@@ -4760,7 +4718,6 @@ Assert_random_access_category(c_begin);
 
     // Default constructor.
     C_Circulator z = C_Circulator();
-    z = C_Circulator(); // avoids warning with NDEBUG
     CGAL::Assert_circulator_or_iterator(z);
     // Copy constructor.
     C_Circulator i = c_begin;
@@ -4914,7 +4871,6 @@ Assert_random_access_category(c_begin);
 
     // Check tests for empty data structures.
     C_Circulator z = C_Circulator();
-    z = C_Circulator(); // avoids warning with NDEBUG
     CGAL_assertion(   z == CGAL_CIRC_NULL);
     CGAL_assertion( ! (z != CGAL_CIRC_NULL));
     C_Circulator i = c_begin;
@@ -5011,7 +4967,6 @@ void test_Circulator_on_node() {
     
         // Default constructor.
         Circulator z = Circulator();
-        z = Circulator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
@@ -5119,7 +5074,6 @@ void test_Circulator_on_node() {
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        z = Circulator(); // avoids warning with NDEBUG
         CGAL_assertion(   z == CGAL_CIRC_NULL);
         CGAL_assertion( ! (z != CGAL_CIRC_NULL));
         Circulator i = begin;
@@ -5161,7 +5115,6 @@ void test_Circulator_on_node() {
     
         // Default constructor.
         C_Circulator z = C_Circulator();
-        z = C_Circulator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         C_Circulator i = c_begin;
@@ -5236,7 +5189,6 @@ void test_Circulator_on_node() {
     
         // Check tests for empty data structures.
         C_Circulator z = C_Circulator();
-        z = C_Circulator(); // avoids warning with NDEBUG
         CGAL_assertion(   z == CGAL_CIRC_NULL);
         CGAL_assertion( ! (z != CGAL_CIRC_NULL));
         C_Circulator i = c_begin;
@@ -5296,7 +5248,6 @@ void test_N_step_adaptor() {
     
         // Default constructor.
         Iterator z = Iterator();
-        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -5389,7 +5340,6 @@ void test_N_step_adaptor() {
     
         // Default constructor.
         Iterator z = Iterator();
-        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -5496,7 +5446,6 @@ Assert_bidirectional_category(c_end);
 
     // Default constructor.
     C_Iterator z = C_Iterator();
-    z = C_Iterator(); // avoids warning with NDEBUG
     CGAL::Assert_circulator_or_iterator(z);
     // Copy constructor.
     C_Iterator i = c_begin;
@@ -5617,7 +5566,6 @@ l2.destroy();
     
         // Default constructor.
         Iterator z = Iterator();
-        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -5710,7 +5658,6 @@ l2.destroy();
     
         // Default constructor.
         Iterator z = Iterator();
-        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -5806,7 +5753,6 @@ l2.destroy();
     
         // Default constructor.
         Iterator z = Iterator();
-        z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
@@ -6000,7 +5946,6 @@ l2.destroy();
     
         // Default constructor.
         C_Iterator z = C_Iterator();
-        z = C_Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         C_Iterator i = c_begin;
@@ -6186,7 +6131,6 @@ l2.destroy();
     
         // Default constructor.
         Circulator z = Circulator();
-        z = Circulator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
@@ -6279,7 +6223,6 @@ l2.destroy();
     
         // Default constructor.
         Circulator z = Circulator();
-        z = Circulator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
@@ -6375,7 +6318,6 @@ l2.destroy();
     
         // Default constructor.
         Circulator z = Circulator();
-        z = Circulator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
@@ -6549,7 +6491,6 @@ l2.destroy();
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        z = Circulator(); // avoids warning with NDEBUG
         CGAL_assertion(   z == CGAL_CIRC_NULL);
         CGAL_assertion( ! (z != CGAL_CIRC_NULL));
         Circulator i = begin;
@@ -6627,7 +6568,6 @@ Assert_random_access_category(c_begin);
 
     // Default constructor.
     C_Circulator z = C_Circulator();
-    z = C_Circulator(); // avoids warning with NDEBUG
     CGAL::Assert_circulator_or_iterator(z);
     // Copy constructor.
     C_Circulator i = c_begin;
@@ -6781,7 +6721,6 @@ Assert_random_access_category(c_begin);
 
     // Check tests for empty data structures.
     C_Circulator z = C_Circulator();
-    z = C_Circulator(); // avoids warning with NDEBUG
     CGAL_assertion(   z == CGAL_CIRC_NULL);
     CGAL_assertion( ! (z != CGAL_CIRC_NULL));
     C_Circulator i = c_begin;
@@ -6872,7 +6811,6 @@ void test_N_step_adaptor_derived() {
         
             // Default constructor.
             Iterator z = Iterator();
-            z = Iterator(); // avoids warning with NDEBUG
             CGAL::Assert_circulator_or_iterator(z);
             // Copy constructor.
             Iterator i = begin;
@@ -6965,7 +6903,6 @@ void test_N_step_adaptor_derived() {
         
             // Default constructor.
             Iterator z = Iterator();
-            z = Iterator(); // avoids warning with NDEBUG
             CGAL::Assert_circulator_or_iterator(z);
             // Copy constructor.
             Iterator i = begin;
@@ -7072,7 +7009,6 @@ void test_N_step_adaptor_derived() {
         
             // Default constructor.
             C_Iterator z = C_Iterator();
-            z = C_Iterator(); // avoids warning with NDEBUG
             CGAL::Assert_circulator_or_iterator(z);
             // Copy constructor.
             C_Iterator i = c_begin;
@@ -7193,7 +7129,6 @@ void test_N_step_adaptor_derived() {
         
             // Default constructor.
             Circulator z = Circulator();
-            z = Circulator(); // avoids warning with NDEBUG
             CGAL::Assert_circulator_or_iterator(z);
             // Copy constructor.
             Circulator i = begin;
@@ -7286,7 +7221,6 @@ void test_N_step_adaptor_derived() {
         
             // Default constructor.
             Circulator z = Circulator();
-            z = Circulator(); // avoids warning with NDEBUG
             CGAL::Assert_circulator_or_iterator(z);
             // Copy constructor.
             Circulator i = begin;
@@ -7382,7 +7316,6 @@ void test_N_step_adaptor_derived() {
         
             // Default constructor.
             Circulator z = Circulator();
-            z = Circulator(); // avoids warning with NDEBUG
             CGAL::Assert_circulator_or_iterator(z);
             // Copy constructor.
             Circulator i = begin;
@@ -7556,7 +7489,6 @@ void test_N_step_adaptor_derived() {
         
             // Check tests for empty data structures.
             Circulator z = Circulator();
-            z = Circulator(); // avoids warning with NDEBUG
             CGAL_assertion(   z == CGAL_CIRC_NULL);
             CGAL_assertion( ! (z != CGAL_CIRC_NULL));
             Circulator i = begin;
@@ -7634,7 +7566,6 @@ void test_N_step_adaptor_derived() {
         
             // Default constructor.
             C_Circulator z = C_Circulator();
-            z = C_Circulator(); // avoids warning with NDEBUG
             CGAL::Assert_circulator_or_iterator(z);
             // Copy constructor.
             C_Circulator i = c_begin;
@@ -7788,7 +7719,6 @@ void test_N_step_adaptor_derived() {
         
             // Check tests for empty data structures.
             C_Circulator z = C_Circulator();
-            z = C_Circulator(); // avoids warning with NDEBUG
             CGAL_assertion(   z == CGAL_CIRC_NULL);
             CGAL_assertion( ! (z != CGAL_CIRC_NULL));
             C_Circulator i = c_begin;

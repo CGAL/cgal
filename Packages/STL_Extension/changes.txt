@@ -1,4 +1,8 @@
-June 24 2004 Menelaos Karavelas
+24 September 2004 Sylvain Pion
+- test_stl_extension.C : remove some warning preventing code when NDEBUG that
+  bugs with -D_GLIBCXX_DEBUG (the right fix is to not use assert).
+
+24 June 2004 Menelaos Karavelas
 - test suite for concatenate iterator is more verbose; also added
   test cases where at least one container is empty
 - fixed bug in copy constructor and assignment operator for nested
